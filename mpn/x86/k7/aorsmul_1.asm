@@ -1,29 +1,29 @@
-# AMD K7 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
-#
-# K7: 3.9 cycles/limb.
-#
-# Future: It should be possible to avoid the separate mul after the unrolled
-# loop by moving the movl/adcl to the top.
+dnl  AMD K7 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
+dnl 
+dnl  K7: 3.9 cycles/limb.
+dnl 
+dnl  Future: It should be possible to avoid the separate mul after the
+dnl  unrolled loop by moving the movl/adcl to the top.
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
@@ -58,13 +58,13 @@ ifdef(`OPERATION_addmul_1',`
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_addmul_1c mpn_submul_1 mpn_submul_1c)
 
 
-`#' mp_limb_t M4_function_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-`#'                            mp_limb_t mult);
-`#' mp_limb_t M4_function_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
-`#'                             mp_limb_t mult, mp_limb_t carry);
-`#'
-`#' Calculate src,size multiplied by mult and M4_description dst,size.
-`#' Return the M4_desc_retval limb from the top of the result.
+C mp_limb_t M4_function_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                            mp_limb_t mult);
+C mp_limb_t M4_function_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                             mp_limb_t mult, mp_limb_t carry);
+C
+C Calculate src,size multiplied by mult and M4_description dst,size.
+C Return the M4_desc_retval limb from the top of the result.
 
 ifdef(`PIC',`
 deflit(UNROLL_THRESHOLD, 9)
@@ -131,19 +131,19 @@ PROLOGUE(M4_function_1c)
 	ret
 
 
-	# offset 0x44 so close enough to aligned
+	C offset 0x44 so close enough to aligned
 L(more_than_one_limb):
 	movl	PARAM_CARRY, %ecx
 L(start_1):
-	# eax	src
-	# ecx	initial carry
-	# edx	size-1
+	C eax	src
+	C ecx	initial carry
+	C edx	size-1
 	subl	$SAVE_SIZE, %esp
 deflit(`FRAME',16)
 
 	movl	%ebx, SAVE_EBX
 	movl	%esi, SAVE_ESI
-	movl	%edx, %ebx	# size-1
+	movl	%edx, %ebx	C size-1
 
 	movl	PARAM_SRC, %esi
 	movl	%ebp, SAVE_EBP
@@ -152,29 +152,29 @@ deflit(`FRAME',16)
 	movl	PARAM_MULTIPLIER, %ebp
 	movl	%edi, SAVE_EDI
 
-	movl	(%esi), %eax	# src low limb
+	movl	(%esi), %eax	C src low limb
 	movl	PARAM_DST, %edi
 	ja	L(unroll)
 
 
-	# simple loop
+	C simple loop
 
-	leal	4(%esi,%ebx,4), %esi	# point one limb past last
-	leal	(%edi,%ebx,4), %edi	# point at last limb
+	leal	4(%esi,%ebx,4), %esi	C point one limb past last
+	leal	(%edi,%ebx,4), %edi	C point at last limb
 	negl	%ebx
 
-	# The movl to load the next source limb is done well ahead of the
-	# mul.  This is necessary for full speed, and leads to one limb
-	# handled separately at the end.
+	C The movl to load the next source limb is done well ahead of the
+	C mul.  This is necessary for full speed, and leads to one limb
+	C handled separately at the end.
 
 L(simple):
-	# eax	src limb
-	# ebx	loop counter
-	# ecx	carry limb
-	# edx	scratch
-	# esi	src
-	# edi	dst
-	# ebp	multiplier
+	C eax	src limb
+	C ebx	loop counter
+	C ecx	carry limb
+	C edx	scratch
+	C esi	src
+	C edi	dst
+	C ebp	multiplier
 
 	mull	%ebp
 
@@ -209,23 +209,23 @@ L(simple):
 
 
 
-#-----------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 	ALIGN(16)
 L(unroll):
-	# eax	src low limb
-	# ebx	size-1
-	# ecx	carry
-	# edx	size-1
-	# esi	src
-	# edi	dst
-	# ebp	multiplier
+	C eax	src low limb
+	C ebx	size-1
+	C ecx	carry
+	C edx	size-1
+	C esi	src
+	C edi	dst
+	C ebp	multiplier
 	
 dnl  overlapping with parameters no longer needed
 define(VAR_COUNTER,`PARAM_SIZE')
 define(VAR_JUMP,   `PARAM_MULTIPLIER')
 
-	subl	$2, %ebx	# (size-2)-1
-	decl	%edx		# size-2
+	subl	$2, %ebx	C (size-2)-1
+	decl	%edx		C size-2
 	
 	shrl	$UNROLL_LOG2, %ebx
 	negl	%edx
@@ -247,16 +247,16 @@ L(here):
 
 	mull	%ebp
 
-	addl	%eax, %ecx	# initial carry, becomes low carry
+	addl	%eax, %ecx	C initial carry, becomes low carry
 	adcl	$0, %edx
 	testb	$1, %bl
 
-	movl	4(%esi), %eax	# src second limb
+	movl	4(%esi), %eax	C src second limb
 	leal	ifelse(UNROLL_BYTES,256,128+) 8(%esi,%ebx,4), %esi
 	leal	ifelse(UNROLL_BYTES,256,128)   (%edi,%ebx,4), %edi
 
-	movl	%edx, %ebx	# high carry
-	cmovnz_ecx_ebx		# high,low carry other way around
+	movl	%edx, %ebx	C high carry
+	cmovnz_ecx_ebx		C high,low carry other way around
 	cmovnz_edx_ecx
 
 	jmp	*VAR_JUMP
@@ -264,7 +264,7 @@ L(here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	# See README.family about old gas bugs
+	C See README.family about old gas bugs
 	leal	(%edx,%ebx,1), %edx
 	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
@@ -272,30 +272,30 @@ L(pic_calc):
 ')
 
 
-#-----------------------------------------------------------------------
-# This code uses a "two carry limbs" scheme.  At the top of the loop the
-# carries are ebx=lo, ecx=hi, then they swap for each limb processed.  For
-# the computed jump an odd size means they start one way around, an even
-# size the other.  Either way one limb is handled separately at the start of
-# the loop.
-#
-# The positioning of the movl to load the next source limb is important.
-# Moving it after the adcl with a view to avoiding a separate mul at the end
-# of the loop slows the code down.
+C -----------------------------------------------------------------------------
+C This code uses a "two carry limbs" scheme.  At the top of the loop the
+C carries are ebx=lo, ecx=hi, then they swap for each limb processed.  For
+C the computed jump an odd size means they start one way around, an even
+C size the other.  Either way one limb is handled separately at the start of
+C the loop.
+C
+C The positioning of the movl to load the next source limb is important.
+C Moving it after the adcl with a view to avoiding a separate mul at the end
+C of the loop slows the code down.
 
 	ALIGN(32)
 L(top):
-	# eax	src limb
-	# ebx	carry high
-	# ecx	carry low
-	# edx	scratch
-	# esi	src+8
-	# edi	dst
-	# ebp	multiplier
-	#
-	# VAR_COUNTER  loop counter
-	#
-	# 17 bytes each limb
+	C eax	src limb
+	C ebx	carry high
+	C ecx	carry low
+	C edx	scratch
+	C esi	src+8
+	C edi	dst
+	C ebp	multiplier
+	C
+	C VAR_COUNTER  loop counter
+	C
+	C 17 bytes each limb
 
 L(entry):
 deflit(CHUNK_COUNT,2)
@@ -332,13 +332,13 @@ Zdisp(	movl,	disp0,(%esi), %eax)
 	jns	L(top)
 
 
-	# eax	src limb
-	# ebx	carry high
-	# ecx	carry low
-	# edx
-	# esi
-	# edi	dst (points at second last limb)
-	# ebp	multiplier
+	C eax	src limb
+	C ebx	carry high
+	C ecx	carry low
+	C edx
+	C esi
+	C edi	dst (points at second last limb)
+	C ebp	multiplier
 deflit(`disp0', ifelse(UNROLL_BYTES,256,-128))
 deflit(`disp1', eval(disp0-0 + 4))
 

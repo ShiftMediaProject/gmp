@@ -1,47 +1,47 @@
-# AMD K7 mpn_copyi -- copy limb vector, incrementing.
-#
-#    alignment dst/src, A=0mod8 N=4mod8
-#       A/A   A/N   N/A   N/N
-# K7    0.75  1.0   1.0   0.75
+dnl  AMD K7 mpn_copyi -- copy limb vector, incrementing.
+dnl 
+dnl     alignment dst/src, A=0mod8 N=4mod8
+dnl        A/A   A/N   N/A   N/N
+dnl  K7    0.75  1.0   1.0   0.75
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
 
 
-# void mpn_copyi (mp_ptr dst, mp_srcptr src, mp_size_t size);
-#
-# Copy src,size to dst,size.
-#
-# This code at 0.75 or 1.0 c/l is always faster than a plain rep movsl at
-# 1.33 c/l.
-#
-# The K7 can do two loads, or two stores, or a load and a store, in one
-# cycle, so if those are 64-bit operations then 0.5 c/l should be possible,
-# however nothing under 0.7 c/l is known.
-#
-# If both source and destination are unaligned then one limb is processed at
-# the start to make them aligned and so get 0.75 c/l, whereas if they'd been
-# used unaligned it would be 1.5 c/l.
+C void mpn_copyi (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C
+C Copy src,size to dst,size.
+C
+C This code at 0.75 or 1.0 c/l is always faster than a plain rep movsl at
+C 1.33 c/l.
+C
+C The K7 can do two loads, or two stores, or a load and a store, in one
+C cycle, so if those are 64-bit operations then 0.5 c/l should be possible,
+C however nothing under 0.7 c/l is known.
+C
+C If both source and destination are unaligned then one limb is processed at
+C the start to make them aligned and so get 0.75 c/l, whereas if they'd been
+C used unaligned it would be 1.5 c/l.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
@@ -71,12 +71,12 @@ deflit(`FRAME',0)
 	jz	L(simple_done)
 
 L(simple):
-	# eax	src, incrementing
-	# ebx	scratch
-	# ecx	counter
-	# edx	dst, incrementing
-	#
-	# this loop is 2 cycles/limb
+	C eax	src, incrementing
+	C ebx	scratch
+	C ecx	counter
+	C edx	dst, incrementing
+	C
+	C this loop is 2 cycles/limb
 
 	movl	(%eax), %ebx
 	movl	%ebx, (%edx)
@@ -92,17 +92,17 @@ L(simple_done):
 
 L(unroll):
 	movl	%eax, %ebx
-	leal	-12(%eax,%ecx,4), %eax	# src end - 12
-	subl	$3, %ecx		# size-3
+	leal	-12(%eax,%ecx,4), %eax	C src end - 12
+	subl	$3, %ecx		C size-3
 
 	andl	%edx, %ebx
-	leal	(%edx,%ecx,4), %edx	# dst end - 12
+	leal	(%edx,%ecx,4), %edx	C dst end - 12
 	negl	%ecx
 
-	testl	$4, %ebx   # testl to pad code closer to 16 bytes for L(top)
+	testl	$4, %ebx   C testl to pad code closer to 16 bytes for L(top)
 	jz	L(aligned)
 
-	# both src and dst unaligned, process one limb to align them
+	C both src and dst unaligned, process one limb to align them
 	movl	(%eax,%ecx,4), %ebx
 	movl	%ebx, (%edx,%ecx,4)
 	incl	%ecx
@@ -111,20 +111,20 @@ L(aligned):
 
 	ALIGN(16)
 L(top):
-	# eax	src end - 12
-	# ebx
-	# ecx	counter, negative, limbs
-	# edx	dst end - 12
+	C eax	src end - 12
+	C ebx
+	C ecx	counter, negative, limbs
+	C edx	dst end - 12
 
 	movq	(%eax,%ecx,4), %mm0
 	movq	8(%eax,%ecx,4), %mm1
 	addl	$4, %ecx
 	movq	%mm0, -16(%edx,%ecx,4)
 	movq	%mm1, -16+8(%edx,%ecx,4)
-	ja	L(top)		# jump no carry and not zero
+	ja	L(top)		C jump no carry and not zero
 
 
-	# now %ecx is 0 to 3 representing respectively 3 to 0 limbs remaining
+	C now %ecx is 0 to 3 representing respectively 3 to 0 limbs remaining
 
 	test	$2, %cl
 	jnz	L(finish_not_two)

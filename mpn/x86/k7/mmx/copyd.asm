@@ -1,36 +1,36 @@
-# AMD K7 mpn_copyd -- copy limb vector, decrementing.
-#
-#    alignment dst/src, A=0mod8 N=4mod8
-#       A/A   A/N   N/A   N/N
-# K7    0.75  1.0   1.0   0.75
+dnl  AMD K7 mpn_copyd -- copy limb vector, decrementing.
+dnl 
+dnl     alignment dst/src, A=0mod8 N=4mod8
+dnl        A/A   A/N   N/A   N/N
+dnl  K7    0.75  1.0   1.0   0.75
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
 
 
-# void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);
-#
-# The various comments in mpn/x86/k7/copyi.asm apply here too.
+C void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C
+C The various comments in mpn/x86/k7/copyi.asm apply here too.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
@@ -61,12 +61,12 @@ PROLOGUE(mpn_copyd)
 	jz	L(simple_done)
 
 L(simple):
-	# eax	src
-	# ebx	scratch
-	# ecx	counter
-	# edx	dst
-	#
-	# this loop is 2 cycles/limb
+	C eax	src
+	C ebx	scratch
+	C ecx	counter
+	C edx	dst
+	C
+	C this loop is 2 cycles/limb
 
 	movl	-4(%eax,%ecx,4), %ebx
 	movl	%ebx, -4(%edx,%ecx,4)
@@ -85,12 +85,12 @@ L(unroll):
 
 	andl	%esi, %ebx
 	movl	SAVE_ESI, %esi
-	subl	$4, %ecx		# size-4
+	subl	$4, %ecx		C size-4
 
-	testl	$4, %ebx   # testl to pad code closer to 16 bytes for L(top)
+	testl	$4, %ebx   C testl to pad code closer to 16 bytes for L(top)
 	jz	L(aligned)
 
-	# both src and dst unaligned, process one limb to align them
+	C both src and dst unaligned, process one limb to align them
 	movl	12(%eax,%ecx,4), %ebx
 	movl	%ebx, 12(%edx,%ecx,4)
 	decl	%ecx
@@ -99,10 +99,10 @@ L(aligned):
 
 	ALIGN(16)
 L(top):
-	# eax	src
-	# ebx
-	# ecx	counter, limbs
-	# edx	dst
+	C eax	src
+	C ebx
+	C ecx	counter, limbs
+	C edx	dst
 
 	movq	8(%eax,%ecx,4), %mm0
 	movq	(%eax,%ecx,4), %mm1
@@ -112,7 +112,7 @@ L(top):
 	jns	L(top)
 
 
-	# now %ecx is -4 to -1 representing respectively 0 to 3 limbs remaining
+	C now %ecx is -4 to -1 representing respectively 0 to 3 limbs remaining
 
 	test	$2, %cl
 	jz	L(finish_not_two)
