@@ -1,7 +1,7 @@
 /* Test modlimb_invert. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,7 +25,7 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-#include "urandom.h"
+#include "tests.h"
 
 
 void
