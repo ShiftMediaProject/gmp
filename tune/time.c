@@ -1,6 +1,6 @@
 /* Time routines for speed measurments.
 
-Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -633,6 +633,62 @@ getrusage_microseconds_p (void)
                   call_getrusage, rusage_tv_sec, rusage_tv_usec);
 }
 
+/* Test whether getrusage goes backwards, return non-zero if it does
+   (suggesting it's flawed).
+
+   On a macintosh m68040-unknown-netbsd1.4.1 getrusage looks like it's
+   microsecond accurate, but has been seen remaining unchanged after many
+   microseconds have elapsed.  It also regularly goes backwards by 1000 to
+   5000 usecs, this has been seen after between 500 and 4000 attempts taking
+   perhaps 0.03 seconds.  We consider this too broken for good measuring.
+   We used to have configure pretend getrusage didn't exist on this system,
+   but a runtime test should be more reliable, since we imagine the problem
+   is not confined to just this exact system tuple.  */
+
+int
+getrusage_backwards_p (void)
+{
+  static int result = -1;
+  struct rusage  start, prev, next;
+  long  d;
+  int   i;
+
+  if (result != -1)
+    return result;
+
+  getrusage (0, &start);
+  memcpy (&next, &start, sizeof (next));
+
+  result = 0;
+  i = 0;
+  for (;;)
+    {
+      memcpy (&prev, &next, sizeof (prev));
+      getrusage (0, &next);
+
+      if (next.ru_utime.tv_sec < prev.ru_utime.tv_sec
+          || (next.ru_utime.tv_sec == prev.ru_utime.tv_sec
+              && next.ru_utime.tv_usec < prev.ru_utime.tv_usec))
+        {
+          if (speed_option_verbose)
+            printf ("getrusage went backwards (attempt %d: %ld.%06ld -> %ld.%06ld)\n",
+                    i,
+                    prev.ru_utime.tv_sec, prev.ru_utime.tv_usec,
+                    next.ru_utime.tv_sec, next.ru_utime.tv_usec);
+          result = 1;
+          break;
+        }
+
+      /* stop after 0.1 seconds and at least 1000 attempts */
+      d = 1000000 * (next.ru_utime.tv_sec - start.ru_utime.tv_sec)
+        - (next.ru_utime.tv_usec - start.ru_utime.tv_usec);
+      i++;
+      if (d > 100000 && i > 1000)
+        break;
+    }
+
+  return result;
+}
 
 /* CLOCK_PROCESS_CPUTIME_ID looks like it's going to be in a future version
    of glibc (some time post 2.2).
@@ -898,7 +954,7 @@ speed_time_init (void)
       cycles_limit = (have_cycles == 1 ? M_2POW32 : M_2POW64) / 2.0
         * speed_cycletime;
 
-      if (have_grus && getrusage_microseconds_p())
+      if (have_grus && getrusage_microseconds_p() && ! getrusage_backwards_p())
         {
           /* this is a good combination */
           use_grus = 1;
@@ -1026,7 +1082,7 @@ speed_time_init (void)
       DEFAULT (speed_precision, 10000);
       goto choose_times;
     }
-  else if (have_grus && getrusage_microseconds_p())
+  else if (have_grus && getrusage_microseconds_p() && ! getrusage_backwards_p())
     {
       use_grus = 1;
       speed_unittime = grus_unittime = 1.0e-6;
