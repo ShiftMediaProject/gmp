@@ -96,7 +96,7 @@ MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 ifdef(`PIC',,`
 	dnl  non-PIC
 
-	.section .rodata
+	RODATA
 	ALIGN(8)
 
 define(LS,
