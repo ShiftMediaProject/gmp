@@ -198,7 +198,6 @@ analyze_dat (int i, int final)
 double
 tuneup_measure (speed_function_t fun, struct speed_params *s)
 {
-  static mp_ptr  xp, yp;
   double   t;
   TMP_DECL (marker);
 
@@ -217,15 +216,27 @@ tuneup_measure (speed_function_t fun, struct speed_params *s)
 
 
 void
-print_define (const char *name, mp_size_t value)
+print_define_start (const char *name)
 {
   printf ("#ifndef %s\n", name);
+}
+
+void
+print_define_end (const char *name, mp_size_t value)
+{
   printf ("#define %-23s  ", name);
   if (value == MP_SIZE_T_MAX)
     printf ("MP_SIZE_T_MAX\n");
   else
     printf ("%5ld\n", value);
   printf ("#endif\n");
+}
+
+void
+print_define (const char *name, mp_size_t value)
+{
+  print_define_start (name);
+  print_define_end (name, value);
 }
 
 
@@ -255,6 +266,8 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
     {
       int  since_positive, since_thresh_change;
       int  thresh_idx, new_thresh_idx;
+
+      print_define_start (param->name[i]);
 
       ndat = 0;
       since_positive = 0;
@@ -317,7 +330,7 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
 
 
           if (option_trace >= 2)
-            printf ("i=%d size=%ld  %.9f  %.9f  % .4f %c  %d\n",
+            printf ("i=%d size=%ld  %.9f  %.9f  % .4f %c  %ld\n",
                     i, s.size, ti, tiplus1, d,
                     ti > tiplus1 ? '#' : ' ',
                     dat[new_thresh_idx].size);
@@ -392,7 +405,7 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
 
       table[i] = dat[analyze_dat (i, 1)].size;
 
-      print_define (param->name[i], table[i]);
+      print_define_end (param->name[i], table[i]);
 
       /* Look for the next threshold starting from the current one, but back
          a bit. */
@@ -503,7 +516,7 @@ fft (struct fft_param_t *p)
         abort ();
 
       if (option_trace >= 2)
-        printf ("at %ld   size=%ld  k=%d  %.9lf   k=%d %.9lf\n",
+        printf ("at %ld   size=%ld  k=%d  %.9f   k=%d %.9f\n",
                 size, s.size, k, tk, k+1, tk1);
 
       /* declare the k+1 threshold as soon as it's faster at its midpoint */
@@ -563,7 +576,7 @@ fft (struct fft_param_t *p)
         abort ();
 
       if (option_trace >= 2)
-        printf ("at %ld   size=%ld   k=%d  %.9lf   size=%ld %s mul %.9lf\n",
+        printf ("at %ld   size=%ld   k=%d  %.9f   size=%ld %s mul %.9f\n",
                 size,
                 size + fft_step_size (k) / 2, k, tk,
                 s.size, modf ? "modf" : "full", tm);
@@ -597,9 +610,16 @@ all (void)
   s.yp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, 0);
 
   speed_time_init ();
-  fprintf (stderr, "speed_precision %d, speed_unittime %.2e\n",
-           speed_precision, speed_unittime);
-  fprintf (stderr, "MAX_SIZE %ld, fft_max_size %ld, STEP_FACTOR %.3f\n",
+  fprintf (stderr, "Using: %s\n", speed_time_string);
+
+  if (speed_unittime == 1.0)
+    fprintf (stderr, "speed_precision %d, speed_unittime 1 cycle\n",
+             speed_precision);
+  else
+    fprintf (stderr, "speed_precision %d, speed_unittime %.2e secs\n",
+             speed_precision, speed_unittime);
+
+  fprintf (stderr, "MAX_SIZE %d, fft_max_size %ld, STEP_FACTOR %.3f\n",
            MAX_SIZE, option_fft_max_size, STEP_FACTOR);
   fprintf (stderr, "\n");
 
