@@ -154,6 +154,9 @@ MA 02111-1307, USA.
 /* Define if the compiler accepts gcc style __attribute__ ((const)) */
 #undef HAVE_ATTRIBUTE_CONST
 
+/* Define if the compiler accepts gcc style __attribute__ ((malloc)) */
+#undef HAVE_ATTRIBUTE_MALLOC
+
 /* Define if the compiler accepts gcc style __attribute__ ((mode (XX))) */
 #undef HAVE_ATTRIBUTE_MODE
 
@@ -262,9 +265,6 @@ MA 02111-1307, USA.
 
 /* Define if the system has the type `void'. */
 #undef HAVE_VOID
-
-/* Assembler local label prefix */
-#undef LSYM_PREFIX
 
 /* Name of package */
 #undef PACKAGE
