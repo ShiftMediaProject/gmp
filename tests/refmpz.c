@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #define WANT_ASSERT  1
 
 #include <stdio.h>
+#include <stdlib.h> /* for free */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
