@@ -22,11 +22,23 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if __STDC__
 void ref_mpf_add (mpf_t, const mpf_t, const mpf_t);
 void ref_mpf_sub (mpf_t, const mpf_t, const mpf_t);
+#else
+void ref_mpf_add ();
+void ref_mpf_sub ();
+#endif
 
 void
+#if __STDC__
 ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
+#else
+ref_mpf_add (w, u, v)
+     mpf_t w;
+     const mpf_t u;
+     const mpf_t v;
+#endif
 {
   mp_size_t hi, lo, size;
   mp_ptr ut, vt, wt;
@@ -40,7 +52,7 @@ ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
   if (SIZ (u) == 0)
     {
       size = ABSIZ (v);
-      wt = TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (v), size);
       exp = EXP (v);
       neg = SIZ (v) < 0;
@@ -49,7 +61,7 @@ ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
   if (SIZ (v) == 0)
     {
       size = ABSIZ (u);
-      wt = TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (u), size);
       exp = EXP (u);
       neg = SIZ (u) < 0;
@@ -70,9 +82,9 @@ ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
   hi = MAX (EXP (u), EXP (v));
   lo = MIN (EXP (u) - ABSIZ (u), EXP (v) - ABSIZ (v));
   size = hi - lo;
-  ut = TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
-  vt = TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
-  wt = TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+  ut = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+  vt = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+  wt = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   MPN_ZERO (ut, size);
   MPN_ZERO (vt, size);
   {int off;
@@ -100,7 +112,14 @@ done:
 }
 
 void
+#if __STDC__
 ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
+#else
+ref_mpf_sub (w, u, v)
+     mpf_t w;
+     const mpf_t u;
+     const mpf_t v;
+#endif
 {
   mp_size_t hi, lo, size;
   mp_ptr ut, vt, wt;
@@ -113,7 +132,7 @@ ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
   if (SIZ (u) == 0)
     {
       size = ABSIZ (v);
-      wt = TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (v), size);
       exp = EXP (v);
       neg = SIZ (v) > 0;
@@ -122,7 +141,7 @@ ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
   if (SIZ (v) == 0)
     {
       size = ABSIZ (u);
-      wt = TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (u), size);
       exp = EXP (u);
       neg = SIZ (u) < 0;
@@ -145,9 +164,9 @@ ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
   hi = MAX (EXP (u), EXP (v));
   lo = MIN (EXP (u) - ABSIZ (u), EXP (v) - ABSIZ (v));
   size = hi - lo;
-  ut = TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
-  vt = TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
-  wt = TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+  ut = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+  vt = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+  wt = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   MPN_ZERO (ut, size);
   MPN_ZERO (vt, size);
   {int off;
