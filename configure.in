@@ -1496,7 +1496,7 @@ done
 # C on MS-DOS systems).
 #
 if test $found_compiler = no && test -n "$path"; then
-  AC_MSG_ERROR([could not find a working compiler])
+  AC_MSG_ERROR([could not find a working compiler, see config.log for details])
 fi
 
 
@@ -1693,7 +1693,7 @@ if test $enable_cxx != no; then
 
   # If --enable-cxx=yes but a C++ compiler can't be found, then abort.
   if test $want_cxx = no && test $enable_cxx = yes; then
-    AC_MSG_ERROR([C++ compiler not available])
+    AC_MSG_ERROR([C++ compiler not available, see config.log for details])
   fi
 fi
 
