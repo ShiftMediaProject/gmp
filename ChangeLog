@@ -1,3 +1,14 @@
+2000-12-31  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in ([cjt]90,sv1-cray-unicos*): Preserve user specified
+	MPN_PATH, amend test program indenting.
+
+	* config.sub (j90, t90): Preserve these, don't let configfsf.sub turn
+	them into c90.
+
+	* config.guess (m68k-*-nextstep*,m68k-*-openstep*): Don't transform
+	m68k to m68020, since m68k is already interpreted as 68020.
+
 2000-12-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/neg.c: Rewrite, use mpn, avoid denominator copy if unnecessary.
