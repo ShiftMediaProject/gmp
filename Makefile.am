@@ -110,14 +110,16 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/addmul_ui$U.lo mpz/and$U.lo mpz/array_init$U.lo mpz/bin_ui$U.lo	\
   mpz/bin_uiui$U.lo mpz/cdiv_q$U.lo mpz/cdiv_q_ui$U.lo			\
   mpz/cdiv_qr$U.lo mpz/cdiv_qr_ui$U.lo mpz/cdiv_r$U.lo			\
-  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo mpz/clear$U.lo mpz/clrbit$U.lo	\
+  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo					\
+  mpz/cfdiv_q_2exp$U.lo mpz/cfdiv_r_2exp$U.lo				\
+  mpz/clear$U.lo mpz/clrbit$U.lo					\
   mpz/cmp$U.lo mpz/cmp_si$U.lo mpz/cmp_ui$U.lo mpz/cmpabs$U.lo		\
   mpz/cmpabs_ui$U.lo mpz/com$U.lo					\
   mpz/divexact$U.lo mpz/divegcd$U.lo					\
   mpz/divis$U.lo mpz/divis_ui$U.lo mpz/divis_2exp$U.lo mpz/dump$U.lo	\
-  mpz/fac_ui$U.lo mpz/fdiv_q$U.lo mpz/fdiv_q_2exp$U.lo			\
+  mpz/fac_ui$U.lo mpz/fdiv_q$U.lo					\
   mpz/fdiv_q_ui$U.lo mpz/fdiv_qr$U.lo mpz/fdiv_qr_ui$U.lo		\
-  mpz/fdiv_r$U.lo mpz/fdiv_r_2exp$U.lo mpz/fdiv_r_ui$U.lo		\
+  mpz/fdiv_r$U.lo mpz/fdiv_r_ui$U.lo					\
   mpz/fdiv_ui$U.lo mpz/fib_ui$U.lo mpz/fits_sint$U.lo			\
   mpz/fits_slong$U.lo mpz/fits_sshort$U.lo mpz/fits_uint$U.lo		\
   mpz/fits_ulong$U.lo mpz/fits_ushort$U.lo mpz/gcd$U.lo			\
