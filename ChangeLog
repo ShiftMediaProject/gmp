@@ -1,3 +1,14 @@
+2000-04-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/pprime_p.c: Pass 0L for mpz_scan1.  mpz_mmod => mpz_mod.
+
+	* mpz/nextprime.c: New file.
+	* gmp.h: Declare mpz_nextprime.
+	* mpz/Makefile.am: List nextprime.c.
+	* mpz/Makefile.in: Regenerate.
+	* Makefile.am: List mpz/nextprime.lo.
+	* Makefile.in: Regenerate.
+
 2000-04-10  Kevin Ryde  <kevin@swox.se>
 
 	* move-if-change: Removed, no longer used.
@@ -54,7 +65,7 @@
 
 	* mpn/Makefile.am: Use $(CCAS) for assembling.
 	(.asm.obj): Add rule.
-	* mpn/Makefile.in: Regenerate.	
+	* mpn/Makefile.in: Regenerate.
 
 	* gmp.texi (Miscellaneous Integer Functions): Fix typos.
 
@@ -74,13 +85,13 @@
 	(MPQ_OBJECTS): Add mpq/set_d.lo.
 	(MPZ_OBJECTS): Add mpz/fits*.lo.
 	* Makefile.in: Regenerate.
-	
+
 	* mpz/cmpabs.c: New name for mpz/cmp_abs.c.
 	* mpz/cmpabs_ui.c: New name for mpz/cmp_abs_ui.c.
 	* mpz/Makefile.am: Corresponding changes.
 	* mpz/Makefile.in: Regenerate.
 	* gmp.h: mpz_cmp_abs* => mpz_cmpabs*.
-	
+
 	* mpz/addmul_ui.c (mpn_neg1): Don't depend on ANSI C features.
 
 	* mpz/invert.c: Use TMP_MARK since we invoke MPZ_TMP_INIT.
@@ -89,7 +100,7 @@
 	(mpz_root): Use _PROTO.
 	(mpz_remove): Use _PROTO.
 	(mpf_pow_iu): Use _PROTO.
-	
+
 	* mpn/asm-defs.m4 (MPN_PREFIX): Revert previous change.
 	* gmp.h (__MPN): Revert previous change.
 
