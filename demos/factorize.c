@@ -27,22 +27,6 @@ int flag_verbose = 0;
 
 static unsigned add[] = {4, 2, 4, 2, 4, 6, 2, 6};
 
-#if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
-/* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
-long mrand48 ();
-static long
-random ()
-{
-  return mrand48 ();
-}
-#else
-/* Glibc stdlib.h has "int32_t random();" which, on i386 at least, conflicts
-   with a redeclaration as "long". */
-#ifndef __GLIBC__
-long random ();
-#endif
-#endif
-
 void
 factor_using_division (mpz_t t, unsigned int limit)
 {
@@ -240,7 +224,11 @@ S4:
       if (!mpz_probab_prime_p (g, 3))
 	{
 	  do
-	    a_int = random ();
+            {
+              mp_limb_t a_limb;
+              mpn_random (&a_limb, (mp_size_t) 1);
+              a_int = (int) a_limb;
+            }
 	  while (a_int == -2 || a_int == 0);
 
 	  if (flag_verbose)
