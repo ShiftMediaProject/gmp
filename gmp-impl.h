@@ -1404,12 +1404,11 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_divexact_1 takes roughly 2 multiplies, so don't bother unless that's
-   faster than a division.  When divexact is worth doing it has to calculate
-   a modular inverse, so it's probably only above a certain size it'll be
-   best, choose 5 as an guess for that.  */
+   faster than a division.  On most processors where mul is twice as fast as
+   division the threshold comes out as 0, so make that the default.  */
 #ifndef DIVEXACT_1_THRESHOLD
 #if 2*UMUL_TIME < UDIV_TIME
-#define DIVEXACT_1_THRESHOLD  5
+#define DIVEXACT_1_THRESHOLD  0
 #else
 #define DIVEXACT_1_THRESHOLD  MP_SIZE_T_MAX
 #endif
