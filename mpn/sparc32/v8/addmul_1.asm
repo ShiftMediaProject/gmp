@@ -1,4 +1,4 @@
-dnl  SPARC v8 __mpn_addmul_1 -- Multiply a limb vector with a limb and
+dnl  SPARC v8 mpn_addmul_1 -- Multiply a limb vector with a limb and
 dnl  add the result to a second limb vector.
 
 dnl  Copyright (C) 1992, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.

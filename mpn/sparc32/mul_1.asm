@@ -1,4 +1,4 @@
-dnl  SPARC __mpn_mul_1 -- Multiply a limb vector with a limb and store
+dnl  SPARC mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
 dnl  Copyright (C) 1992, 1993, 1994, 2000 Free Software Foundation, Inc.
