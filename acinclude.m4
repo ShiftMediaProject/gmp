@@ -253,10 +253,11 @@ dnl
 dnl  FIXME: This can be removed and just AM_PROG_LEX used, one that macro
 dnl  works properly.
 
-AC_DEFUN(GMP_PROG_LEX
+AC_DEFUN(GMP_PROG_LEX,
 [AC_REQUIRE(AC_PROG_LEX)
 if test "$LEX" = :; then
   LEX=${am_missing_run}flex
+fi
 ])
 
 
