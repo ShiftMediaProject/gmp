@@ -182,6 +182,22 @@ case "$target" in
     ;;
 esac
 
+case "$target" in
+  i386*-*-*)    gmp_optcflags_gcc="-mcpu=i386 -march=i386";;
+  i486*-*-*)    gmp_optcflags_gcc="-mcpu=i486 -march=i486";;
+  i586*-*-* | pentium-*-* | pentiummmx-*-*)
+                gmp_optcflags_gcc="-mcpu=pentium -march=pentium";;
+  [i686*-*-* | pentiumpro-*-* | pentium[23]-*-*])
+                gmp_optcflags_gcc="-mcpu=pentiumpro -march=pentiumpro";;
+  k6*-*-*)      gmp_optcflags_gcc="-mcpu=k6 -march=k6";;
+
+  # Athlon instruction costs are probably a bit closer to p6 than k6
+  # (3 cycle load latency, 4-6 cycle mul, 40 cycle div, ...).
+  # FIXME: Change this when gcc gets something specific for Athlon.
+  athlon-*-*)   gmp_optcflags_gcc="-mcpu=pentiumpro -march=pentiumpro";;
+esac
+
+
 # Find compiler.
 dnl  NOTE: This is our own AC_PROG_CC.  See acinclude.m4.
 GMP_PROG_CC_FIND($cclist, $os_64bit)
