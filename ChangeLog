@@ -19,6 +19,16 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-02  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/set_str.c: Use MP_PTR_SWAP and POW2_P, add __GMP_PROTO
+	to convert_blocks prototype, disable SET_STR_BLOCK_SIZE sanity check.
+
+	* tune/set_strb.c, tune/set_strs.c: New files.
+	* tune/speed.h, tune/speed.c, tune/common.c,tune/Makefile.am: Add them.
+	* tune/tuneup.c: Tune SET_STR_THRESHOLD.
+	(DEFAULT_MAX_SIZE): Renamed from MAX_SIZE, allow any param.max_size[].
+
 2002-02-01  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/convert.c: Increase operand size.  Add (yet disabled) code
