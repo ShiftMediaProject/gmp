@@ -21,13 +21,25 @@ AC_ARG_ENABLE(assert,
 AC_HELP_STRING([--enable-assert],[enable ASSERT checking [default=no]]),
 [case "${enableval}" in
 yes|no) ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-assert) ;;
+*) AC_MSG_ERROR([bad value ${enableval} for --enable-assert, need yes or no]) ;;
 esac],
 [enable_assert=no])
 
-if test "$enable_assert" = "yes"
-then
+if test "$enable_assert" = "yes"; then
   AC_DEFINE(WANT_ASSERT)
+fi
+
+
+AC_ARG_ENABLE(alloca,
+AC_HELP_STRING([--enable-alloca],[use alloca for temp space [default=yes]]),
+[case "${enableval}" in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value ${enableval} for --enable-alloca, need yes or no]) ;;
+esac],
+[enable_alloca=yes])
+
+if test "$enable_alloca" = "no"; then
+  AC_DEFINE(USE_STACK_ALLOC)
 fi
 
 
