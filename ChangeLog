@@ -58,7 +58,8 @@ MA 02111-1307, USA.
 	* randsdui.c: Use gmp_randseed.
 	* randraw.c: Remove file.
 	* randlc2x.c: Collect up lc_2exp related code from randsd.c, randclr.c
-	and randraw.c, use function pointer scheme.
+	and randraw.c, use function pointer scheme, integrate seed==0/a==0
+	into main case and fix case where bits(a) < m2exp.
 
 	* randlc.c: Remove file, never documented and never worked.
 	* gmp-h.in (gmp_randinit_lc): Remove prototype.
