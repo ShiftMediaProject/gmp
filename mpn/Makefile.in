@@ -29,6 +29,7 @@ INCLUDES = -I. -I.. -I$(srcdir) -I$(srcdir)/..
 AR = ar
 AR_FLAGS = rc
 SFLAGS=
+CCAS = $(CC)
 
 #### host and target specific makefile fragments come in here.
 ###
@@ -43,11 +44,11 @@ libmpn.a: Makefile mp_bases.o $(MPN_OBJECTS)
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
 .s.o:
-	$(CC) -c $(SFLAGS) $(CFLAGS) $<
+	$(CCAS) -c $(SFLAGS) $(CFLAGS) $<
 
 .S.o:
 	$(CPP) $(SFLAGS) $(INCLUDES) $(CFLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CC) -c $(SFLAGS) $(CFLAGS) tmp-$*.s -o $@
+	$(CCAS) -c $(SFLAGS) $(CFLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 
 clean mostlyclean:
@@ -80,8 +81,9 @@ gcdext.o: gcdext.c $(H) $(L)
 get_str.o: get_str.c $(H) $(L)
 hamdist.o: hamdist.c $(H)
 inlines.o: inlines.c $(srcdir)/../gmp.h
-mod_1.o: mod_1.c $(H) $(L)
 mul.o: mul.c $(H)
+mod_1.o: mod_1.c $(H) $(L)
+mul_basecase.o: mul_basecase.c $(H) $(L)
 mul_n.o: mul_n.c $(H)
 perfsqr.o: perfsqr.c $(H) $(L)
 popcount.o: popcount.c $(H)
@@ -91,4 +93,5 @@ random2.o: random2.c $(H)
 scan0.o: scan0.c $(H) $(L)
 scan1.o: scan1.c $(H) $(L)
 set_str.o: set_str.c $(H)
+sqr_basecase.o: sqr_basecase.c $(H) $(L)
 sqrtrem.o: sqrtrem.c $(H) $(L)
