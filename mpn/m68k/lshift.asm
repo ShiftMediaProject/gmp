@@ -37,9 +37,7 @@ define(s_ptr,   `a0')
 define(s_size,  `d6')
 define(cnt,     `d4')
 
-
 PROLOGUE(mpn_lshift)
-
 C Save used registers on the stack.
 	moveml	d2-d6/a2, M(-,sp)
 

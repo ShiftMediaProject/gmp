@@ -1,4 +1,4 @@
-dnl  mc68020 mpn_rshift -- Shift right a low-level natural-number integer.
+dnl  mc68020 mpn_rshift -- mpn right shift.
 dnl
 dnl            cycles/limb
 dnl         shift==1  shift>1
@@ -31,7 +31,6 @@ C res_ptr	(sp + 4)
 C s_ptr		(sp + 8)
 C s_size	(sp + 16)
 C cnt		(sp + 12)
-
 
 define(res_ptr, `a1')
 define(s_ptr,   `a0')
