@@ -24,8 +24,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* FIXME: Rename file to urandomb.c. */
-
 void
 #if __STDC__
 mpz_urandomb (mpz_t rop, gmp_rand_state s, unsigned long int nbits)
