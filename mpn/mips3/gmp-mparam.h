@@ -1,6 +1,6 @@
 /* gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,13 +20,8 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
-/* Note that BITS_PER_LONGINT is 32 in ABI=n32 but 64 in ABI=64, so it's
-   left to ./configure to determine the value at build time.  */
 #define BITS_PER_MP_LIMB 64
 #define BYTES_PER_MP_LIMB 8
-#define BITS_PER_INT 32
-#define BITS_PER_SHORTINT 16
-#define BITS_PER_CHAR 8
 
 
 /* These values are for the R10000.  */

@@ -1,6 +1,6 @@
 /* AMD K6 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,10 +21,6 @@ MA 02111-1307, USA. */
 
 #define BITS_PER_MP_LIMB 32
 #define BYTES_PER_MP_LIMB 4
-#define BITS_PER_LONGINT 32
-#define BITS_PER_INT 32
-#define BITS_PER_SHORTINT 16
-#define BITS_PER_CHAR 8
 
 
 #ifndef UMUL_TIME

@@ -1,6 +1,6 @@
 /* Sparc64 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,10 +21,6 @@ MA 02111-1307, USA. */
 
 #define BITS_PER_MP_LIMB 64
 #define BYTES_PER_MP_LIMB 8
-#define BITS_PER_LONGINT 64
-#define BITS_PER_INT 32
-#define BITS_PER_SHORTINT 16
-#define BITS_PER_CHAR 8
 
 /* Tell the toom3 multiply implementation to call low-level mpn
    functions instead of open-coding operations in C.  */

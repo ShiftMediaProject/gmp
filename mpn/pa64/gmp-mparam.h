@@ -1,6 +1,6 @@
 /* gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,10 +21,6 @@ MA 02111-1307, USA. */
 
 #define BITS_PER_MP_LIMB 64
 #define BYTES_PER_MP_LIMB 8
-#define BITS_PER_LONGINT 32
-#define BITS_PER_INT 32
-#define BITS_PER_SHORTINT 16
-#define BITS_PER_CHAR 8
 
 /* These values were measured in a PA8000 using the system compiler version
    A.10.32.30.  Presumably the PA8200 and PA8500 have the same timing
