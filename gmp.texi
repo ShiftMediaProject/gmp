@@ -515,7 +515,7 @@ example @command{m68k-mac-linux-gnu-ranlib} is checked for, then plain
 to co-exist with native tools.  The prefix is the argument to @samp{--host},
 and this can be an alias, such as @samp{m68k-linux}.  But note that tools
 don't have to be setup this way, it's enough to just have a @env{PATH} with a
-suitable cross-compiling @command{gcc} etc.
+suitable cross-compiling @command{cc} etc.
 
 Compiling for a different CPU in the same family as the build system is a form
 of cross-compilation, though very possibly this would merely be with special
@@ -640,8 +640,8 @@ generic C code can be selected with CPU @samp{none}.  For example,
 ./configure --build=none-unknown-freebsd3.5
 @end example
 
-The generic C code will run quite slowly, but it should be portable and so
-should make it possible to at least get something running if all else fails.
+Note that this will run quite slowly, but it should be portable and should at
+least make it possible to get something running if all else fails.
 
 @item @option{ABI}
 
@@ -663,7 +663,7 @@ with @command{gcc} normally preferred if it's present.  The usual
 @samp{CC=whatever} can be passed to @samp{./configure} to choose something
 different.
 
-For some systems, specific compiler flags are set based on the CPU and
+For some systems, default compiler flags are set based on the CPU and
 compiler.  The usual @samp{CFLAGS="-whatever"} can be passed to
 @samp{./configure} to use something different or to set good flags for systems
 GMP doesn't otherwise know.
@@ -673,7 +673,7 @@ and can be found in each generated @file{Makefile}.  This is the easiest way
 to check the defaults when considering changing or adding something.
 
 Note that when @samp{CC} and @samp{CFLAGS} are specified on a system
-supporting multiple ABIs, it's important to give an explicit
+supporting multiple ABIs it's important to give an explicit
 @samp{ABI=whatever}, since GMP can't determine the ABI just from the flags and
 won't be able to select the correct assembler code.
 
@@ -688,7 +688,8 @@ preprocessor should be set in @samp{CPPFLAGS} rather than @samp{CFLAGS}.
 Compiling is done with both @samp{CPPFLAGS} and @samp{CFLAGS}, but
 preprocessing uses just @samp{CPPFLAGS}.  This distinction is because most
 preprocessors won't accept all the flags the compiler does.  Preprocessing is
-done separately for @samp{ansi2knr} and for some autoconf tests.
+done separately in some configure tests, and in the @samp{ansi2knr} support
+for K&R compilers.
 
 @item @option{--enable-alloca=yes/no/detect}, @option{--disable-alloca}
 @cindex Stack overflow segfaults
@@ -702,10 +703,10 @@ always uses @code{malloc}.  @samp{--enable-alloca=yes} always uses
 
 @code{alloca} is fast and is recommended, but when working with large numbers
 it can overflow the available stack space.  It might be possible to increase
-available stack space with @command{limit}, @command{ulimit} or
-@code{setrlimit}, or under DJGPP with @command{stubedit} or
-@code{@w{_stklen}}.  Depending on the system, the only indication of stack
-overflow might be a segmentation violation.
+available stack with @command{limit}, @command{ulimit} or @code{setrlimit}, or
+under DJGPP with @command{stubedit} or @code{@w{_stklen}}.  Note that
+depending on the system, the only indication of stack overflow might be a
+segmentation violation.
 
 When @code{malloc} is used, it's actually the memory allocation functions
 selected by @code{mp_set_memory_functions} that are used, these being
@@ -852,9 +853,11 @@ CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
 @need 1000
 @item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]}
 
-IRIX 6 and up supports the n32 and 64 ABIs, and requires a MIPS 3 or better
-CPU, so a 64-bit limb is always used on that system.  Note that GNU/Linux, as
-of kernel version 2.2, doesn't have the necessary support for n32 or 64.
+IRIX 6 and up supports the n32 and 64 ABIs, and always has a MIPS 3 or better
+CPU, so a 64-bit limb is used on that system.  A new enough @command{gcc} is
+required (2.95 for instance).  Note that GNU/Linux, as of kernel version 2.2,
+doesn't have the necessary support for n32 or 64 and so only uses a 32-bit
+limb.
 
 @table @asis
 @item @samp{ABI=64}
@@ -913,8 +916,9 @@ for applications.
 @table @asis
 @item @samp{ABI=64}
 
-The 64-bit V9 ABI is available on Solaris 2.7 and up, and on GNU/Linux.
-Applications must be compiled with
+The 64-bit V9 ABI is available on Solaris 2.7 and up, and on GNU/Linux, when
+using @command{gcc} 2.95 or up, or Sun @command{cc}.  Applications must be
+compiled with
 
 @example
 gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
@@ -933,6 +937,8 @@ within the V8 ABI is recommended.
 gcc  -mv8plus
 cc   -xarch=v8plus
 @end example
+
+@command{gcc} 2.8 and earlier only supports @samp{-mv8} though.
 @end table
 
 Don't be confused by the names of these sparc options, they're called
