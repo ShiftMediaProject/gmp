@@ -451,6 +451,11 @@ MA 02111-1307, USA.
 	facilitate cut and paste when re-running.
 	* tests/mpz/t-inp_str.c (check_data): Add more diagnostic prints.
 
+2001-09-30  Kent Boortz  <kent@swox.com>
+
+	* macos/configure, macos/Makefile.in, macos/README: Updates for gmp 4.
+	* gmp-h.in (_GMP_H_HAVE_FILE): Recognise Apple MPW.
+
 2001-09-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/ieee/submul_1.c: Rewrite.  Streamline multiplications;
