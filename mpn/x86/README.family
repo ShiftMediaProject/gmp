@@ -60,9 +60,9 @@ Local variables and saved registers can be similarly defined, with negative
 offsets representing stack space below the initial stack pointer.  For
 example,
 
-	defframe(SAVE_ESI,    -4)
-	defframe(SAVE_EDI,    -8)
-	defframe(VAR_COUNTER, -12)
+	defframe(SAVE_ESI,   -4)
+	defframe(SAVE_EDI,   -8)
+	defframe(VAR_COUNTER,-12)
 
 	deflit(STACK_SPACE, 12)
 
@@ -70,21 +70,38 @@ Here STACK_SPACE gets used in a "subl $STACK_SPACE, %esp" to allocate the
 space, and that instruction must be followed by a redefinition of FRAME
 (setting it equal to STACK_SPACE) to reflect the change in esp.
 
-Definitions for saved registers are only put in where they're going to be
-used.  If registers are just saved and restored with pushes and pops then
-they're omitted.
+Definitions for pushed registers are only put in where they're going to be
+used.  If registers are just restored with pops then definitions aren't
+made.
+
+
+
+ASSEMBLER DIVIDE OPERATOR
+
+Divisions can't be done in assembler expressions, because in some versions
+of gas "/" anywhere in a line is a comment character, apparently for SVR4
+compatibility.  If a divide is needed, m4 eval() must be used instead.
+
+The problem shows up on something like the following, which gives an error
+because it's read as just "addl $32".
+
+	addl	$32/2, %eax
+
+Binutils gas/config/tc-i386.c has an alternative behaviour where "/" is a
+comment only at the start of a line.  FreeBSD patches binutils 2.9.1 to
+select this, and as of binutils 2.9.5 it's the default for GNU/Linux too.
 
 
 
 ZERO DISPLACEMENTS
 
 In a couple of places addressing modes like 0(%ebx) with a byte-sized zero
-displacement are wanted, rather than (%ebx) with no displacement.  These are
-either for computed jumps or to get desirable code alignment.  Explicit
+displacement are wanted, rather than say (%ebx) with no displacement.  These
+are either for computed jumps or to get desirable code alignment.  Explicit
 .byte sequences are used to ensure the assembler doesn't turn 0(%ebx) into
 (%ebx).  The Zdisp macro in x86-defs.m4 is used for this.
 
-Current gas 2.95 or recent 2.9.1 leave 0(%ebx) as written, but old gas
+Current gas 2.9.5 or recent 2.9.1 leave 0(%ebx) as written, but old gas
 1.92.3 changes it.  In general changing would be the sort of "optimization"
 an assembler might perform, hence explicit .bytes are used where necessary.
 
@@ -107,7 +124,7 @@ POSITION INDEPENDENT CODE
 Defining the symbol PIC in the m4 processing will select position
 independent code.  Calls from assembler code to some other function use the
 normal C procedure linkage table.  Computed jumps do their calculations in a
-self-contained fashion, without using the global offset table.
+self-contained fashion (without using the global offset table).
 
 PIC code is necessary for ELF shared libraries that can be mapped into
 different processes at different addresses.  Text relocations in shared
@@ -116,7 +133,7 @@ such a relocation isn't shared.
 
 PIC adds a certain fixed cost to each function call, which is small but
 might be noticable when working with smallish size operands.  For maximum
-performance use non-PIC code and link with the plain static libgmp.a.
+performance use non-PIC code and the plain static libgmp.a.
 
 
 
@@ -206,19 +223,6 @@ and mpn_copyb), the calculations change as follows.
 
 
 
-GAS 2.9.1
-
-RedHat Linux 6.1 has a version of this which doesn't support divisions in
-constants, for example the following gives an error
-
-	addl	$32/2, %eax
-
-The FreeBSD 3.3 and 3.4 versions of the same 2.9.1 support divisions, and
-even the old gas 1.92.3 does too in fact.  But in order to work everywhere,
-expressions with divisions should be done with m4 eval() instead.
-
-
-
 OLD GAS 1.92.3
 
 This version, which comes with FreeBSD 2.2.8, has a couple of gremlins that
@@ -266,20 +270,20 @@ addl.
 
 REFERENCES
 
-Intel Architecture Software Developer's Manual, volumes 1 to 3, 1999, order
-numbers 243190, 243191 and 243192.  Available on-line,
+"Intel Architecture Software Developer's Manual", volumes 1 to 3, 1999,
+order numbers 243190, 243191 and 243192.  Available on-line,
 
 	ftp://download.intel.com/design/PentiumII/manuals/243190.htm
 	ftp://download.intel.com/design/PentiumII/manuals/243191.htm
 	ftp://download.intel.com/design/PentiumII/manuals/243192.htm
 
-Intel386 Family Binary Compatibility Specification 2, Intel Corporation,
+"Intel386 Family Binary Compatibility Specification 2", Intel Corporation,
 published by McGraw-Hill, 1991, ISBN 0-07-031219-2.
 
-System V Application Binary Interface, Unix System Laboratories Inc, 1992,
-published by Pretice Hall, ISBN 0-13-880410-9.  And the Intel386 Processor
-Supplement, AT&T, 1991, ISBN 0-13-877689-X.  (This has details of ELF shared
-library PIC coding.)
+"System V Application Binary Interface", Unix System Laboratories Inc, 1992,
+published by Pretice Hall, ISBN 0-13-880410-9.  And the "Intel386 Processor
+Supplement", AT&T, 1991, ISBN 0-13-877689-X.  (These have details of ELF
+shared library PIC coding.)
 
 
 
