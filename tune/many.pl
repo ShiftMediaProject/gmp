@@ -558,14 +558,14 @@ if (defined $ENV{table2}) {
 my %pictable = 
     (
      'yes' => {
-       'suffix' => '_pic',
-       '-D'     => '$(ASMFLAGS_PIC)',
-       'cflags' => '$(CFLAGS_PIC)',
+       'suffix' =>  '_pic',
+       'asmflags'=> '$(ASMFLAGS_PIC)',
+       'cflags' =>  '$(CFLAGS_PIC)',
      },
      'no' => {
-       'suffix' => '',
-       '-D'     => '',
-       'cflags' => '',
+       'suffix' =>  '',
+       'asmflags'=> '',
+       'cflags' =>  '',
      },
      );
 
@@ -770,10 +770,10 @@ foreach my $file_full (@files) {
       if ($lang eq '.asm') {
 	print MAKEFILE
 	    "$objbase.o: $file_full \$(ASM_HEADERS)\n" .
-	    "	\$(M4) \$(M4FLAGS) -DOPERATION_$obj $pic->{'-D'} \\\n" .
+	    "	\$(M4) \$(M4FLAGS) -DOPERATION_$obj $pic->{'asmflags'} \\\n" .
   	    "$renaming" .
 	    "		$file_full >tmp-$objbase.s\n" .
-            "	\$(CCAS) \$(COMPILE_FLAGS) tmp-$objbase.s -o $objbase.o\n" .
+            "	\$(CCAS) \$(COMPILE_FLAGS) $pic->{'cflags'} tmp-$objbase.s -o $objbase.o\n" .
             "	\$(RM_TMP_S) tmp-$objbase.s\n";
       } elsif ($lang eq '.c') {
 	print MAKEFILE
@@ -784,7 +784,7 @@ foreach my $file_full (@files) {
       } elsif ($lang eq '.S') {
 	print MAKEFILE
 	    "$objbase.o: $file_full\n" .
-            "	\$(COMPILE) -g $pic->{'-D'} \\\n" .
+            "	\$(COMPILE) -g $pic->{'asmflags'} \\\n" .
   	    "$renaming" .
             "	-c $file_full -o $objbase.o\n";
       }
