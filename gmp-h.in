@@ -137,20 +137,20 @@ typedef enum
 
 /* Linear congruential data struct.  */
 typedef struct {
-  mpz_t a;			/* Multiplier. */
-  unsigned long int c;		/* Adder. */
-  mpz_t m;			/* Modulus (valid only if m2exp == 0).  */
-  unsigned long int m2exp;	/* If != 0, modulus is 2 ^ m2exp.  */
+  mpz_t _mp_a;			/* Multiplier. */
+  unsigned long int _mp_c;	/* Adder. */
+  mpz_t _mp_m;			/* Modulus (valid only if m2exp == 0).  */
+  unsigned long int _mp_m2exp;	/* If != 0, modulus is 2 ^ m2exp.  */
 } __gmp_randata_lc;
 
 /* Random state struct.  */
 typedef struct
 {
-  mpz_t seed;			/* Current seed.  */
-  gmp_randalg_t alg;		/* Algorithm used.  */
+  mpz_t _mp_seed;		/* Current seed.  */
+  gmp_randalg_t _mp_alg;	/* Algorithm used.  */
   union {			/* Algorithm specific data.  */
-    __gmp_randata_lc *lc;	/* Linear congruential.  */
-  } algdata;
+    __gmp_randata_lc *_mp_lc;	/* Linear congruential.  */
+  } _mp_algdata;
 } __gmp_randstate_struct;
 typedef __gmp_randstate_struct gmp_randstate_t[1];
 
