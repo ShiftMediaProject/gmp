@@ -961,9 +961,9 @@ all (void)
     static struct param_t  param;
     double   t1, t2;
 
-    param.data_high_lt_r = 1; /* let mpn_mod_1 skip one division */    
-    s.size = 200;             /* generous but not too big */
-    s.r = randlimb_norm();    /* divisor */
+    param.data_high = DATA_HIGH_LT_R; /* let mpn_mod_1 skip one division */
+    s.size = 200;                     /* generous but not too big */
+    s.r = randlimb_norm();            /* divisor */
 
     t1 = tuneup_measure (speed_mpn_preinv_mod_1, &param, &s);
     t2 = tuneup_measure (SPEED_MPN_MOD_1, &param, &s);
