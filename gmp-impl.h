@@ -2208,6 +2208,24 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 
+/* 3 cycles on 604 or 750 since shifts and rlwimi's can pair.  gcc (as of
+   version 3.1 at least) doesn't seem to know how to generate rlwimi for
+   anything other than bit-fields, so use "asm".  */
+#if defined (__GNUC__) && ! defined (NO_ASM)                    \
+  && HAVE_HOST_CPU_FAMILY_powerpc && BITS_PER_MP_LIMB == 32
+#define BSWAP_LIMB(dst, src)                                            \
+  do {                                                                  \
+    mp_limb_t  __src = (src);                                           \
+    mp_limb_t  __tmp1 = __src >> 24;                   /* low byte */   \
+    mp_limb_t  __tmp2 = __src << 24;                   /* high byte */  \
+    asm ("rlwimi %0, %2, 24, 16, 23"                   /* 2nd low */    \
+         : "=r" (__tmp1) : "0" (__tmp1), "r" (__src));                  \
+    asm ("rlwimi %0, %2,  8,  8, 15"                   /* 3nd high */   \
+         : "=r" (__tmp2) : "0" (__tmp2), "r" (__src));                  \
+    (dst) = __tmp1 | __tmp2;                           /* whole */      \
+  } while (0)
+#endif
+
 /* bswap is available on i486 and up and is fast.  A combination rorw $8 /
    roll $16 / rorw $8 is used in glibc for plain i386 (and in the linux
    kernel with xchgb instead of rorw), but this is not done here, because
@@ -2220,13 +2238,27 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
   do {                                          \
     asm ("bswap %0" : "=r" (dst) : "0" (src));  \
   } while (0)
-#endif /* x86 */
+#endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM)    \
   && defined (__ia64) && BITS_PER_MP_LIMB == 64
 #define BSWAP_LIMB(dst, src)                                    \
   do {                                                          \
     asm ("mux1 %0 = %1, @rev" : "=r" (dst) :  "r" (src));       \
+  } while (0)
+#endif
+
+/* As per glibc. */
+#if defined (__GNUC__) && ! defined (NO_ASM)                    \
+  && HAVE_HOST_CPU_FAMILY_m68k && BITS_PER_MP_LIMB == 32
+#define BSWAP_LIMB(dst, src)            \
+  do {                                  \
+    mp_limb_t  __src = (src);           \
+    asm ("ror%.w %#8, %0\n"             \
+         "swap   %0\n"                  \
+         "ror%.w %#8, %0"               \
+         : "=d" (dst)                   \
+         : "0" (__src));                \
   } while (0)
 #endif
 
@@ -2265,6 +2297,21 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       + ((src) >> 56);                  \
   } while (0)
 #endif
+#endif
+
+#if ! defined (BSWAP_LIMB)
+#define BSWAP_LIMB(dst, src)                            \
+  do {                                                  \
+    mp_limb_t  __src = (src);                           \
+    mp_limb_t  __dst = 0;                               \
+    int        __i;                                     \
+    for (__i = 0; __i < BYTES_PER_MP_LIMB; __i++)       \
+      {                                                 \
+        __dst = (__dst << 8) | (__src & 0xFF);          \
+        __src >>= 8;                                    \
+      }                                                 \
+    (dst) = __dst;                                      \
+  } while (0)
 #endif
 
 
