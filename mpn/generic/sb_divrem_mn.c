@@ -83,7 +83,6 @@ mpn_sb_divrem_mn (qp, np, nsize, dp, dsize)
       if (n0 > dx || mpn_cmp (np, dp, dsize - 1) >= 0)
 	{
 	  mpn_sub_n (np, np, dp, dsize);
-	  // n0 = np[dsize - 1];
 	  most_significant_q_limb = 1;
 	}
     }

@@ -96,7 +96,6 @@ mpn_divrem (qp, qxn, np, nn, dp, dn)
 	  q2p = (mp_ptr) TMP_ALLOC ((nn - dn + 1) * BYTES_PER_MP_LIMB);
 	  rp = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 	  mpn_tdiv_qr (q2p, rp, 0L, np, nn, dp, dn);
-	  //qhl = mpn_sb_divrem_mn (q2p, np, nn, dp, dn);
 	  MPN_COPY (np, rp, dn);	/* overwrite np area with remainder */
 	  qn = nn - dn;
 	  MPN_COPY (qp, q2p, qn);
