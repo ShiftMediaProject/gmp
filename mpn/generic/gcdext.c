@@ -23,8 +23,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef THRESHOLD
-#define THRESHOLD 16
+#ifndef GCDEXT_THRESHOLD
+#define GCDEXT_THRESHOLD 16
 #endif
 
 #ifndef EXTEND
@@ -67,8 +67,6 @@ int arr[BITS_PER_MP_LIMB];
 	   do things in single-limb arithmetic until the quotients differ,
 	   and then switch to double-limb arithmetic.  */
 
-#define swapptr(xp,yp) \
-do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 
 /* Division optimized for small quotients.  If the quotient is more than one limb,
    store 1 in *qh and return 0.  */
@@ -192,7 +190,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 
   TMP_MARK (mark);
 
-  use_double_flag = (size > THRESHOLD);
+  use_double_flag = (size >= GCDEXT_THRESHOLD);
 
   tp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   wp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
@@ -233,7 +231,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  mpn_rshift (up, up, size, cnt);
 	  mpn_rshift (vp, vp, size, cnt);
 	}
-      swapptr (up, vp);
+      MP_PTR_SWAP (up, vp);
     }
 
   for (;;)
@@ -491,8 +489,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  }
 
 	  sign = -sign;
-	  swapptr (s0p, s1p);
-	  swapptr (s1p, tp);
+	  MP_PTR_SWAP (s0p, s1p);
+	  MP_PTR_SWAP (s1p, tp);
 #endif
 	  size = vsize;
 	  if (cnt != 0)
@@ -500,7 +498,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      mpn_rshift (up, up, size, cnt);
 	      mpn_rshift (vp, vp, size, cnt);
 	    }
-	  swapptr (up, vp);
+	  MP_PTR_SWAP (up, vp);
 	}
       else
 	{
@@ -523,8 +521,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      MPN_COPY (tp, vp, size);
 	      MPN_COPY (wp, up, size);
 	      mpn_submul_1 (wp, vp, size, D);
-	      swapptr (tp, up);
-	      swapptr (wp, vp);
+	      MP_PTR_SWAP (tp, up);
+	      MP_PTR_SWAP (wp, vp);
 #if EXTEND
 	      MPN_COPY (tp, s1p, ssize);
 	      tsize = ssize;
@@ -533,8 +531,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      cy = mpn_addmul_1 (wp, s1p, ssize, D);
 	      wp[ssize] = cy;
 	      wsize = ssize + (cy != 0);
-	      swapptr (tp, s0p);
-	      swapptr (wp, s1p);
+	      MP_PTR_SWAP (tp, s0p);
+	      MP_PTR_SWAP (wp, s1p);
 	      ssize = MAX (wsize, tsize);
 #endif
 	    }
@@ -547,8 +545,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 		  mpn_submul_1 (tp, up, size, A);
 		  mpn_mul_1 (wp, up, size, C);
 		  mpn_submul_1 (wp, vp, size, D);
-		  swapptr (tp, up);
-		  swapptr (wp, vp);
+		  MP_PTR_SWAP (tp, up);
+		  MP_PTR_SWAP (wp, vp);
 #if EXTEND
 		  cy = mpn_mul_1 (tp, s1p, ssize, B);
 		  cy += mpn_addmul_1 (tp, s0p, ssize, A);
@@ -558,8 +556,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 		  cy += mpn_addmul_1 (wp, s1p, ssize, D);
 		  wp[ssize] = cy;
 		  wsize = ssize + (cy != 0);
-		  swapptr (tp, s0p);
-		  swapptr (wp, s1p);
+		  MP_PTR_SWAP (tp, s0p);
+		  MP_PTR_SWAP (wp, s1p);
 		  ssize = MAX (wsize, tsize);
 #endif
 		}
@@ -570,8 +568,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 		  mpn_submul_1 (tp, vp, size, B);
 		  mpn_mul_1 (wp, vp, size, D);
 		  mpn_submul_1 (wp, up, size, C);
-		  swapptr (tp, up);
-		  swapptr (wp, vp);
+		  MP_PTR_SWAP (tp, up);
+		  MP_PTR_SWAP (wp, vp);
 #if EXTEND
 		  cy = mpn_mul_1 (tp, s0p, ssize, A);
 		  cy += mpn_addmul_1 (tp, s1p, ssize, B);
@@ -581,8 +579,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 		  cy += mpn_addmul_1 (wp, s0p, ssize, C);
 		  wp[ssize] = cy;
 		  wsize = ssize + (cy != 0);
-		  swapptr (tp, s0p);
-		  swapptr (wp, s1p);
+		  MP_PTR_SWAP (tp, s0p);
+		  MP_PTR_SWAP (wp, s1p);
 		  ssize = MAX (wsize, tsize);
 #endif
 		}
@@ -651,8 +649,8 @@ mpn_gcd (gp, up, size, vp, vsize)
       ssize -= tp[ssize - 1] == 0;
 
       sign = -sign;
-      swapptr (s0p, s1p);
-      swapptr (s1p, tp);
+      MP_PTR_SWAP (s0p, s1p);
+      MP_PTR_SWAP (s1p, tp);
 #else
       t = mpn_mod_1 (up, size, vl);
 #endif
@@ -680,8 +678,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  ssize -= tp[ssize - 1] == 0;
 
 	  sign = -sign;
-	  swapptr (s0p, s1p);
-	  swapptr (s1p, tp);
+	  MP_PTR_SWAP (s0p, s1p);
+	  MP_PTR_SWAP (s1p, tp);
 #else
 	  t = ul % vl;
 #endif
