@@ -1,7 +1,7 @@
 /* mpz_sqrtrem(root,rem,x) -- Set ROOT to floor(sqrt(X)) and REM
    to the remainder, i.e. X - ROOT**2.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -54,7 +54,7 @@ msqrt (op, root, rem)
   TMP_MARK (marker);
   op_size = op->_mp_size;
   if (op_size < 0)
-    op_size = 1 / (op_size > 0); /* Divide by zero for negative OP.  */
+    SQRT_OF_NEGATIVE;
 
   if (rem->_mp_alloc < op_size)
     _mpz_realloc (rem, op_size);

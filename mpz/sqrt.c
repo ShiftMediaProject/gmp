@@ -1,6 +1,6 @@
 /* mpz_sqrt(root, u) --  Set ROOT to floor(sqrt(U)).
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,7 +40,7 @@ mpz_sqrt (root, op)
   TMP_MARK (marker);
   op_size = op->_mp_size;
   if (op_size < 0)
-    op_size = 1 / (op_size > 0); /* Divide by zero for negative OP.  */
+    SQRT_OF_NEGATIVE;
 
   /* The size of the root is accurate after this simple calculation.  */
   root_size = (op_size + 1) / 2;
