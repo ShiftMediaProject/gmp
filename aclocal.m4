@@ -2605,11 +2605,8 @@ BEGIN {
           exit
         }
 
-      # ARM style little endian but with the two 4-byte halves swapped
-      #
-      # gcc 2.95.4 on one arm system has been seen generating 000 in the
-      # last byte, whereas 124 is correct.  Not sure where the bug actually
-      # lies, but it seems easy enough to tolerate it here.
+      # Little endian with the two 4-byte halves swapped, as used by ARM
+      # when the chip is in little endian mode.
       #
       if (got[8]  == "064" &&  \
           got[9]  == "157" &&  \
@@ -2618,9 +2615,32 @@ BEGIN {
           got[12] == "000" &&  \
           got[13] == "000" &&  \
           got[14] == "000" &&  \
-          (got[15] == "124" || got[15] == "000"))
+          got[15] == "124")
         {
           print "IEEE little endian, swapped halves"
+          found = 1
+          exit
+        }
+
+      # gcc 2.95.4 on one GNU/Linux ARM system was seen generating 000 in
+      # the last byte, whereas 124 is correct.  Not sure where the bug
+      # actually lies, but a running program didn't seem to get a full
+      # mantissa worth of working bits.
+      #
+      # We match this case explicitly so we can give a nice result message,
+      # but we deliberately exclude it from the normal IEEE double setups
+      # since it's too broken.
+      #
+      if (got[8]  == "064" &&  \
+          got[9]  == "157" &&  \
+          got[10] == "235" &&  \
+          got[11] == "301" &&  \
+          got[12] == "000" &&  \
+          got[13] == "000" &&  \
+          got[14] == "000" &&  \
+          got[15] == "000")
+        {
+          print "bad ARM software floats"
           found = 1
           exit
         }
@@ -2732,11 +2752,13 @@ case $gmp_cv_c_double_format in
     AC_DEFINE(HAVE_DOUBLE_VAX_G, 1) ;;
   "Cray CFP")
     AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1) ;;
+  "bad ARM software floats")
+    ;;
   unknown*)
     AC_MSG_WARN([Could not determine float format.])
     AC_MSG_WARN([Conversions to and from "double" may be slow.])
     ;;
-  *) 
+  *)
     AC_MSG_WARN([oops, unrecognised float format: $gmp_cv_c_double_format])
     ;;
 esac
