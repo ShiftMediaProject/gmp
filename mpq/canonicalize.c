@@ -41,8 +41,11 @@ mpq_canonicalize (op)
 			      ABS (op->_mp_den._mp_size)));
 
   mpz_gcd (gcd, &(op->_mp_num), &(op->_mp_den));
-  mpz_divexact (&(op->_mp_num), &(op->_mp_num), gcd);
-  mpz_divexact (&(op->_mp_den), &(op->_mp_den), gcd);
+  if (! MPZ_EQUAL_1_P (gcd))
+    {
+      mpz_divexact (&(op->_mp_num), &(op->_mp_num), gcd);
+      mpz_divexact (&(op->_mp_den), &(op->_mp_den), gcd);
+    }
 
   if (op->_mp_den._mp_size < 0)
     {

@@ -421,6 +421,8 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
       _mpz_realloc (what, needed);				\
   } while (0)
 
+#define MPZ_EQUAL_1_P(z)  (SIZ(z)==1 && PTR(z)[0] == 1)
+
 
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 /* n==0 is allowed and is considered a zero value.  */

@@ -60,7 +60,7 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
      with the numerators of OP1 and OP2.  */
 
   mpz_gcd (gcd, &(op1->_mp_den), &(op2->_mp_den));
-  if (gcd->_mp_size > 1 || gcd->_mp_d[0] != 1)
+  if (! MPZ_EQUAL_1_P (gcd))
     {
       mpz_t t;
 
@@ -74,11 +74,13 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
 
       VARIATION (t, tmp1, tmp2);
       mpz_divexact (tmp2, &(op1->_mp_den), gcd);
+
       mpz_gcd (gcd, t, gcd);
-
-      mpz_divexact (&(rop->_mp_num), t, gcd);
-
-      mpz_divexact (tmp1, &(op2->_mp_den), gcd);
+      if (! MPZ_EQUAL_1_P (gcd))
+        {
+          mpz_divexact (&(rop->_mp_num), t, gcd);
+          mpz_divexact (tmp1, &(op2->_mp_den), gcd);
+        }
       mpz_mul (&(rop->_mp_den), tmp1, tmp2);
     }
   else
