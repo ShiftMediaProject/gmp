@@ -19,6 +19,43 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-31  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpz/dive.c: Better diagnostics.
+
+	* tests/devel/try.c (mpn_get_str, mpn_umul_ppmm_r): New tests.
+
+	* tests/misc.c, tests/tests.h (byte_diff_lowest, byte_diff_highest):
+	New functions.
+
+	* tests/t-bswap.c: New file.
+	* tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* tests/mpn/t-aors_1.c, tests/mpn/t-iord_u.c: Add nails support.
+
+	* gmp-impl.h (MPN_IORD_U) [x86]: Eliminate unnecessary jiord and iord,
+	rename "n" to incr per generic versions, restrict to nails==0.
+	(mpn_incr_u, mpn_decr_u): Add nails support.
+	(GMP_NAIL_LOWBIT, GMP_NUMB_MAX): New macros.
+
+	* tests/trace.c, tests/tests.h (byte_trace, byte_tracen): New
+	functions.
+	* tests/trace.c: Handle NULL operands.
+
+	* tests/refmpn.c, tests/devel/try.c, tune/speed.c: Add preliminary
+	nail support.
+
+	* tests/refmpn.c, test/tests.h (byte_overlap_p, refmpn_equal_anynail,
+	refmpn_umul_ppmm_r, refmpn_udiv_qrnnd_r, refmpn_get_str,
+	refmpn_bswap_limb, refmpn_random, refmpn_random2, refmpn_bswap_limb):
+	New functions.
+
+	* gmp-impl.h, tests/refmpn.c (ASSERT_LIMB): Renamed from
+	ASSERT_MP_LIMB_T.
+
+	* mpn/x86/*/*.asm, mpn/powerpc32/*/*.asm, mpn/powerpc64/*/*.asm: Put
+	speeds after the copyright notice, so as to keep that clear.
+
 2002-03-29  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (powerpc*-*-aix*): Correction to xlc -qarch selection,
