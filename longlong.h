@@ -538,6 +538,11 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #define COUNT_LEADING_ZEROS_0   31   /* n==0 indistinguishable from n==1 */
 
+/* count_trailing_zeros for pentium is done by the generic code below using
+   count_leading_zeros.  This should be a fixed 15 or 16 cycles, possibly
+   plus an L1 miss.  P5 "bsfl" on the other hand takes between 18 and 42
+   depending where the least significant 1 bit is.  */
+
 #else
 #define count_leading_zeros(count, x)                                   \
   do {                                                                  \
@@ -546,13 +551,12 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
     __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));      \
     (count) = __cbtmp ^ 31;                                             \
   } while (0)
-#endif
-
 #define count_trailing_zeros(count, x)                                  \
   do {                                                                  \
     ASSERT ((x) != 0);                                                  \
     __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));        \
   } while (0)
+#endif
 
 #ifndef UMUL_TIME
 #define UMUL_TIME 10
