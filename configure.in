@@ -939,7 +939,8 @@ if test $found_compiler = yes; then
 
 
   # Can easily have this in config.h too, if desired.
-  GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_ABI_$ABI')", POST)
+# disable for now, it breaks `.asm' builds on HP-PA
+#  GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_ABI_$ABI')", POST)
 
 
   # GMP_LDFLAGS substitution, selected according to ABI.
@@ -1373,6 +1374,7 @@ if test "$gmp_asm_syntax_testing" != no; then
   GMP_ASM_DATA
   GMP_ASM_RODATA
   GMP_ASM_GLOBL
+  GMP_ASM_GLOBL_ATTR
   GMP_ASM_LABEL_SUFFIX
   GMP_ASM_TYPE
   GMP_ASM_SIZE
