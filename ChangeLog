@@ -1,3 +1,8 @@
+2000-03-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/unicos.m4 (cvttqc): New define.
+	* mpn/alpha/invert_limb.asm: Use new define for cvttqc.
+
 2000-03-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/sqr_basecase.asm: Tiny amendments for 3x3 case.
@@ -30,7 +35,7 @@
 	linus]
 	* mpn/alpha/default.m4: New file.
 	* configure.in (alpha*-*-*): Use it.
-	
+
 2000-03-17  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/rshift.S: Use plain rcrl (not rcrl $1) for
