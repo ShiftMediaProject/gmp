@@ -44,11 +44,14 @@ dnl    a_out.exe - OpenVMS DEC C called via GNV wrapper (gnv.sourceforge.net)
 dnl    conftest.exe - various DOS compilers
 
 
-define(X86_PATTERN,
-[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
+define(IA64_PATTERN,
+[[ia64*-*-* | itanium-*-* | itanium2-*-*]])
 
 define(POWERPC64_PATTERN,
 [[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
+
+define(X86_PATTERN,
+[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
 
 dnl  AC_LANG_FUNC_LINK_TRY(C)(FUNCTION)
@@ -934,7 +937,8 @@ AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([for assembler label suffix],
                 gmp_cv_asm_label_suffix,
-[for i in "" ":"; do
+[gmp_cv_asm_label_suffix=unknown
+for i in "" ":"; do
   echo "trying $i" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
@@ -944,7 +948,7 @@ somelabel$i],
      break],
     [cat conftest.out >&AC_FD_CC])
 done
-if test -z "$gmp_cv_asm_label_suffix"; then
+if test "$gmp_cv_asm_label_suffix" = "unknown"; then
   AC_MSG_ERROR([Cannot determine label suffix])
 fi
 ])
@@ -1243,29 +1247,28 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
-dnl  .globl - is usual.
-dnl  .global - required by ia64 (on hpux at least).
-dnl  .export - required by hppa on hpux.
+dnl  The assembler directive to mark a label as a global symbol.
+dnl
+dnl  ia64 - .global is standard, according to the Intel documentation.
+dnl
+dnl  hppa - ".export foo,entry" is demanded by HP hppa "as".
+dnl      HP hppa "as" accepts .global, but it's not clear what it does, only
+dnl      .export actually creates a global symbol.
+dnl
+dnl  other - .globl is usual.
+dnl
+dnl  "gas" tends to accept .globl everywhere, in addition to .export or
+dnl  .global or whatever the system assembler demands.  
 
 AC_DEFUN(GMP_ASM_GLOBL,
 [AC_REQUIRE([GMP_ASM_TEXT])
-AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([for assembler global directive],
                 gmp_cv_asm_globl,
-[for i in .globl .global .export; do
-  echo "trying $i" >&AC_FD_CC
-  GMP_TRY_ASSEMBLE(
-[	$gmp_cv_asm_text
-	$i	foo
-foo$gmp_cv_asm_label_suffix],
-    [gmp_cv_asm_globl=$i
-     rm -f conftest*
-     break],
-    [cat conftest.out >&AC_FD_CC])
-done
-if test -z "$gmp_cv_asm_globl"; then
-  AC_MSG_ERROR([Cannot determine how to maks a symbol global])
-fi
+[case $host in
+  hppa*-*-*)     gmp_cv_asm_globl=.export ;;
+  IA64_PATTERN)  gmp_cv_asm_globl=.global ;;
+  *)             gmp_cv_asm_globl=.globl  ;;
+esac
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 ])
@@ -2763,6 +2766,7 @@ for i in .exe ,ff8 ""; do
     fi
   fi
 done
+rm -f conftest*
 if test "${gmp_cv_prog_exeext_for_build+set}" != set; then
   AC_MSG_ERROR([Cannot determine executable suffix])
 fi
@@ -2793,6 +2797,7 @@ if AC_TRY_EVAL(gmp_compile); then
 else
   gmp_cv_c_for_build_ansi=no
 fi
+rm -f conftest* a.out b.out a.exe a_out.exe
 ])
 if test "$gmp_cv_c_for_build_ansi" = yes; then
   U_FOR_BUILD=
@@ -2832,6 +2837,7 @@ if AC_TRY_EVAL(gmp_compile); then
 else
   gmp_cv_check_libm_for_build=no
 fi
+rm -f conftest* a.out b.out a.exe a_out.exe
 ])
 case $gmp_cv_check_libm_for_build in
   yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
