@@ -58,6 +58,10 @@
 
 2000-04-15  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tdiv_qr.c: Fix typo.
+	* mpz/tdiv_r.c: Fix typo.
+	* mpz/tdiv_q.c: Fix typo.
+
 	* configure.in: Disable -march=pentiumpro due to apparent compiler
 	problems.
 	
