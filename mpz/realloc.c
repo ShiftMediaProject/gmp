@@ -30,9 +30,7 @@ _mpz_realloc (mpz_ptr m, mp_size_t new_alloc)
   /* Never allocate zero space. */
   new_alloc = MAX (new_alloc, 1);
 
-  mp = (mp_ptr) (*__gmp_reallocate_func) (PTR(m),
-					  ALLOC(m) * BYTES_PER_MP_LIMB,
-					  new_alloc * BYTES_PER_MP_LIMB);
+  mp = __GMP_REALLOCATE_FUNC_LIMBS (PTR(m), ALLOC(m), new_alloc);
   PTR(m) = mp;
   ALLOC(m) = new_alloc;
 
