@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-01-13  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (MPN_SIZEINBASE): Count bits in type size_t.
+	(MPN_SIZEINBASE_16): Likewise.
+
 2004-12-17  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.c (run_gnuplot): Use lines, not linespoints.
