@@ -82,11 +82,16 @@ MA 02111-1307, USA.
 #if HAVE_PENTIUM_RDTSC
 #define SPEED_USE_PENTIUM_RDTSC              1
 #else
-#define SPEED_USE_MICROSECOND_GETTIMEOFDAY   1
+#define SPEED_USE_MICROSECOND_GETRUSAGE      1
+#define SPEED_USE_MICROSECOND_GETTIMEOFDAY   0
 #define SPEED_USE_TMS_UTIME                  0
 #endif
 
+
 #define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
+
+#define TIMEVAL_SECS(tp) \
+  ((double) (tp)->tv_sec + (double) (tp)->tv_usec * 1.0e-6)
 
 
 /* Look for an environment variable for CPU clock frequency.
@@ -350,6 +355,54 @@ speed_endtime (void)
 
 
 /* ---------------------------------------------------------------------- */
+#if SPEED_USE_MICROSECOND_GETRUSAGE
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+
+const char *speed_time_string
+  = "Time measurements using microsecond accurate getrusage.\n";
+
+int speed_precision = 1000;
+
+double speed_unittime = 1.0e-6;
+double speed_cycletime = 1.0;
+
+static struct rusage  speed_starttime_save;
+static int  speed_time_initialized = 0;
+
+void
+speed_time_init (void)
+{
+  if (speed_time_initialized)
+    return;
+  speed_time_initialized = 1;
+
+  speed_cycletime_init ();
+}
+
+void
+speed_starttime (void)
+{
+  if (!speed_time_initialized)
+    speed_time_init ();
+
+  getrusage (0, &speed_starttime_save);
+}
+
+double
+speed_endtime (void)
+{
+  struct rusage r;
+
+  getrusage (0, &r);
+  return TIMEVAL_SECS (&r.ru_utime)
+    - TIMEVAL_SECS (&speed_starttime_save.ru_utime);
+}
+#endif
+
+
+/* ---------------------------------------------------------------------- */
 #if SPEED_USE_MICROSECOND_GETTIMEOFDAY
 /* This method is for systems with a microsecond accurate gettimeofday().
 
@@ -386,15 +439,13 @@ speed_starttime (void)
   struct timezone  tz;
   if (!speed_time_initialized)
     speed_time_init ();
+
   gettimeofday (&speed_starttime_save, &tz);
 }
 
 double
 speed_endtime (void)
 {
-#define TIMEVAL_SECS(tp) \
-  ((double) (tp)->tv_sec + (double) (tp)->tv_usec * 1.0e-6)
-
   struct timeval   t;
   struct timezone  tz;
 
