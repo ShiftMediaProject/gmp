@@ -2987,8 +2987,8 @@ the next higher integer, @code{mpf_floor} to the next lower, and
 @end deftypefun
 
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits}) 
-Generate a uniformly distributed random float such that 0 <= @var{rop} < 1,
-with a mantissa of with @var{nbits} significant bits.
+Generate a uniformly distributed random float in @var{rop}, such that 0 <=
+@var{rop} < 1, with @var{nbits} significant bits in the mantissa.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization})
