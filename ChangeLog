@@ -1,8 +1,9 @@
 2000-04-13  Kevin Ryde  <kevin@swox.se>
 
-	* mpn/generic/mul_n.c: Add K&R function definitions.
-	* mpz/remove.c: Ditto.
-	* mpz/root.c: Ditto.
+	* mpn/generic/mul_n.c, mpn/generic/gcdext.c, mpz/nextprime.c,
+	mpz/remove.c, mpz/root.c: Add K&R function definitions.
+	* mpz/rrandomb.c: Fix typo in K&R part.
+	* stack-alloc.c: Add K&R style function pointer declarations.
 
 	* mpz/root.c: Use SQRT_OF_NEGATIVE on even roots of negatives.
 	Use DIVIDE_BY_ZERO on a "zero'th" root.
