@@ -74,9 +74,11 @@ __mpn_submul_1:
 	addcc	%i0,%o0,%i0		! add cy_limb to low 64 bits of result
 	mov	0,%g5
 	movcs	%xcc,1,%g5
+	add	%i1,%g5,%i1
 	add	%o7,1,%o7
 	ldx	[%o4+%g1],%l1
 	subcc	%l1,%i0,%i0
+	mov	0,%g5
 	movcs	%xcc,1,%g5
 	stx	%i0,[%o4+%g1]
 	brnz	%o7,.Loop
