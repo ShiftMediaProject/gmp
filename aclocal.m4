@@ -546,7 +546,7 @@ AC_DEFUN(GMP_HPC_HPPA_2_0,
 #   ccom: HP92453-01 A.10.32.30 HP C Compiler
 # Let A.10.32.30 or higher be ok.
 echo >conftest.c
-gmp_tmp_vs=`$1 $2 -V -c -o conftest.$ac_objext conftest.c 2>&1 | grep "^ccom:"`
+gmp_tmp_vs=`$1 $2 -V -c -o conftest.$OBJEXT conftest.c 2>&1 | grep "^ccom:"`
 echo "Version string: $gmp_tmp_vs" >&AC_FD_CC
 rm conftest*
 gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
@@ -986,7 +986,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$ac_objext conftes2.$ac_objext >&AC_FD_CC"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
@@ -1036,7 +1036,7 @@ AC_CACHE_CHECK([if .align assembly directive is logarithmic],
 	.align	4
 foo$gmp_cv_asm_label_suffix
 	.byte	2],
-  [gmp_tmp_val=[`$NM conftest.$ac_objext | grep foo | \
+  [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
      sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_asm_align_log=yes
@@ -1327,7 +1327,7 @@ AC_CACHE_CHECK([what prefix to use for a local label],
   GMP_TRY_ASSEMBLE(
 [dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
-  [if $NM conftest.$ac_objext >conftest.nm 2>&AC_FD_CC; then : ; else
+  [if $NM conftest.$OBJEXT >conftest.nm 2>&AC_FD_CC; then : ; else
     cat conftest.nm >&AC_FD_CC
     AC_MSG_WARN(["$NM" failure])
     break
@@ -1387,7 +1387,7 @@ AC_CACHE_CHECK([how to define a 32-bit word],
 	$gmp_tmp_op	0
 foo$gmp_cv_asm_label_suffix
 	.byte	0],
-        [gmp_tmp_val=[`$NM conftest.$ac_objext | grep foo | \
+        [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
           sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
         if test "$gmp_tmp_val" = 4; then
           gmp_cv_asm_w32="$gmp_tmp_op"
@@ -1428,7 +1428,7 @@ AC_DEFUN(GMP_ASM_X86_MMX,
 [gmp_cv_asm_x86_mmx=yes
 case $host in
 *-*-solaris*)
-  if (dis conftest.$ac_objext >conftest.out) 2>/dev/null; then
+  if (dis conftest.$OBJEXT >conftest.out) 2>/dev/null; then
     if grep "0f 6f c1" conftest.out >/dev/null; then
       gmp_cv_asm_x86_mmx=movq-bug
     fi
@@ -1824,6 +1824,168 @@ if test $gmp_cv_c_attribute_noreturn = yes; then
   AC_DEFINE(HAVE_ATTRIBUTE_NORETURN, 1,
   [Define if the compiler accepts gcc style __attribute__ ((noreturn))])
 fi
+])
+
+
+dnl  GMP_C_DOUBLE_FORMAT
+dnl  -------------------
+dnl  Determine the floating point format.
+dnl
+dnl  The number -123456789.0 should appear in the object file, with the
+dnl  special start and end sequences to avoid false matches.  "od -b" is
+dnl  supported even by Unix V7, and the awk used to do the matching doesn't
+dnl  use functions or anything, so even an "old" awk will suffice.
+
+AC_DEFUN(GMP_C_DOUBLE_FORMAT,
+[AC_REQUIRE([AC_PROG_CC])
+AC_REQUIRE([AC_PROG_AWK])
+AC_CACHE_CHECK([format of `double' floating point],
+                gmp_cv_c_double_format,
+[gmp_cv_c_double_format=unknown
+cat >conftest.c <<\EOF
+[struct {
+  char    before[8];
+  double  x;
+  char    after[8];
+} foo = {
+  { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF },
+  -123456789.0,
+  { 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10 },
+};]
+EOF
+gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC 2>&1"
+if AC_TRY_EVAL(gmp_compile); then
+cat >conftest.awk <<\EOF
+[
+BEGIN {
+  found = 0
+}
+
+{
+  for (f = 2; f <= NF; f++)
+    {
+      for (i = 0; i < 23; i++)
+        got[i] = got[i+1];
+      got[23] = $f;
+
+      # match the special begin and end sequences
+      if (! (got[0] == "001" &&
+             got[1] == "043" &&
+             got[2] == "105" &&
+             got[3] == "147" &&
+             got[4] == "211" &&
+             got[5] == "253" &&
+             got[6] == "315" &&
+             got[7] == "357" &&
+             got[16] == "376" &&
+             got[17] == "334" &&
+             got[18] == "272" &&
+             got[19] == "230" &&
+             got[20] == "166" &&
+             got[21] == "124" &&
+             got[22] == "062" &&
+             got[23] == "020"))
+        continue
+
+      saw = " (" got[8] " " got[9] " " got[10] " " got[11] " " got[12] " " got[13] " " got[14] " " got[15] ")"
+
+      if (got[8]  == "000" &&
+          got[9]  == "000" &&
+          got[10] == "000" &&
+          got[11] == "124" &&
+          got[12] == "064" &&
+          got[13] == "157" &&
+          got[14] == "235" &&
+          got[15] == "301")
+        {
+          print "IEEE little endian"
+          found = 1
+          exit
+        }
+
+      if (got[15] == "000" &&
+          got[14] == "000" &&
+          got[13] == "000" &&
+          got[12] == "124" &&
+          got[11] == "064" &&
+          got[10] == "157" &&
+          got[9]  == "235" &&
+          got[8]  == "301")
+        {
+          print "IEEE big endian"
+          found = 1
+          exit
+        }
+
+      if (got[8]  == "353" &&
+          got[9]  == "315" &&
+          got[10] == "242" &&
+          got[11] == "171" &&
+          got[12] == "000" &&
+          got[13] == "240" &&
+          got[14] == "000" &&
+          got[15] == "000")
+        {
+          print "VAX D"
+          found = 1
+          exit
+        }
+
+      if (got[8]  == "275" &&
+          got[9]  == "301" &&
+          got[10] == "064" &&
+          got[11] == "157" &&
+          got[12] == "000" &&
+          got[13] == "124" &&
+          got[14] == "000" &&
+          got[15] == "000")
+        {
+          print "VAX G"
+          found = 1
+          exit
+        }
+    }
+}
+
+END {
+  if (! found)
+    print "unknown", saw
+}
+]
+EOF
+  gmp_cv_c_double_format=`od -b conftest.$OBJEXT | awk -f conftest.awk`
+  case $gmp_cv_c_double_format in
+  unknown*)
+    echo "cannot match anything, conftest.$OBJEXT contains" >&AC_FD_CC
+    od -b conftest.$OBJEXT >&AC_FD_CC
+    ;;
+  esac
+else
+  AC_MSG_WARN([oops, cannot compile test program])
+fi
+])
+
+case $gmp_cv_c_double_format in
+  "IEEE big endian")
+    AC_DEFINE(HAVE_DOUBLE_IEEE_BIG_ENDIAN, 1,
+              [Define if `double' is IEEE format, big endian])
+    ;;
+  "IEEE little endian")
+    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN, 1,
+              [Define if `double' is IEEE format, little endian])
+    ;;
+  "VAX D")
+    AC_DEFINE(HAVE_DOUBLE_VAX_D, 1, [Define if `double' is VAX D format])
+    ;;
+  "VAX G")
+    AC_DEFINE(HAVE_DOUBLE_VAX_G, 1, [Define if `double' is VAX G format])
+    ;;
+  unknown*)
+    ;;
+  *) 
+    AC_MSG_WARN([oops, unrecognised float format: $gmp_cv_c_double_format])
+    ;;
+esac
 ])
 
 
