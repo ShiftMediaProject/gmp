@@ -28,7 +28,7 @@
 @c  "make dist".
 @c
 @c  "cindex" entries have been made for function categories and programming
-@c  topics.  Minutae like particular systems and processors mentioned in
+@c  topics.  Minutiae like particular systems and processors mentioned in
 @c  various places have been left out so as not to bury important topics under
 @c  a lot of junk.  "mpn" functions aren't in the concept index because a
 @c  beginner looking for "GCD" or something is only going to be confused by
@@ -3381,7 +3381,7 @@ function, provided @var{rp} >= @var{sp}.
 This function is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limp_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
+@deftypefun mp_limb_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
 Shift @{@var{sp}, @var{n}@} @var{count} bits to the right, and write the
 @var{n} most significant limbs of the result to @var{rp}.  @var{count} must be
 in the range 1 to @code{mp_bits_per_limb}@minus{}1.  The bits shifted out to
@@ -4582,7 +4582,7 @@ effective @ma{N} is a multiple of @m{2^{2k-1},2^(2k-1)} bits.  The @ma{+k+3}
 means some values of @ma{N} just under such a multiple will be rounded to the
 next.  The complexity calculations above assume that a favourable size is
 used, meaning one which isn't padded through rounding, and it's also assumed
-that the extra @ma{+k+3} bits are negligable at typical FFT sizes.
+that the extra @ma{+k+3} bits are negligible at typical FFT sizes.
 
 The practical effect of the @m{2^{2k-1},2^(2k-1)} constraint is to introduce a
 step-effect into measured speeds.  For example @ma{k=8} will round @ma{N} up
@@ -4590,7 +4590,7 @@ to a multiple of 32768 bits, so for a 32-bit limb there'll be 512 limb groups
 of sizes for which @code{mpn_mul_n} runs at the same speed.  Or for @ma{k=9}
 groups of 2048 limbs, @ma{k=10} groups of 8192 limbs, etc.  In practice it's
 been found each @ma{k} is used at quite small multiples of its size constraint
-and so the effect is quite noticable in a time versus size graph.
+and so the effect is quite noticeable in a time versus size graph.
 
 The threshold determinations currently measure at the mid-points of size
 steps, but this is sub-optimal since at the start of a new step it can happen
@@ -4632,7 +4632,7 @@ was available then a further split and speedup would be possible, but no such
 root exists for plain integers.  Going to complex integers with
 @m{i=\sqrt{-1}, i=sqrt(-1)} doesn't help, essentially because in cartesian
 form it takes three real multiplications to do a complex multiply.  The
-existance of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets
+existence of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets
 the fast fourier transform keep splitting and get to @m{O(N \log r),
 O(N*log(r))}.
 
@@ -4736,7 +4736,7 @@ offering a ready-made advantage over repeated @code{mpn_submul_1} calls.
 Divide and conquer is asymptotically @m{O(M(N)\log N),O(M(N)*log(N))} where
 @ma{M(N)} is the time for an N@cross{}N multiplication.  The actual time is a
 sum over multiplications of the recursed sizes, as can be seen near the end of
-section 2.2 of Burnikel and Zeigler.  In practice, at moderate to large sizes,
+section 2.2 of Burnikel and Ziegler.  In practice, at moderate to large sizes,
 a 2N@cross{}N division tends to be about 2 to 4 times slower than an
 N@cross{}N multiplication.
 
