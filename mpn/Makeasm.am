@@ -50,11 +50,11 @@ SUFFIXES = .s .S .asm
 # .s assembler, no preprocessing.
 #
 .s.o:
-	$(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
+	$(CCAS) $(COMPILE_FLAGS) `test -f '$<' || echo '$(srcdir)/'`$<
 .s.obj:
-	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
+	$(CCAS) $(COMPILE_FLAGS) `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 .s.lo:
-	$(LIBTOOL) --mode=compile --tag=CC $(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
+	$(LIBTOOL) --mode=compile --tag=CC $(CCAS) $(COMPILE_FLAGS) `test -f '$<' || echo '$(srcdir)/'`$<
 
 
 # can be overridden during development, eg. "make RM_TMP=: mul_1.lo"
@@ -70,15 +70,15 @@ RM_TMP = rm -f
 # For .lo we need a helper script, as described below for .asm.lo.
 #
 .S.o:
-	$(CPP) $(PREPROCESS_FLAGS) `test -f $< || echo '$(srcdir)/'`$< | grep -v '^#' >tmp-$*.s
+	$(CPP) $(PREPROCESS_FLAGS) `test -f '$<' || echo '$(srcdir)/'`$< | grep -v '^#' >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .S.obj:
-	$(CPP) $(PREPROCESS_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
+	$(CPP) $(PREPROCESS_FLAGS) `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi` | grep -v '^#' >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .S.lo:
-	$(LIBTOOL) --mode=compile --tag=CC $(top_srcdir)/mpn/cpp-ccas --cpp="$(CPP) $(PREPROCESS_FLAGS)" $(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
+	$(LIBTOOL) --mode=compile --tag=CC $(top_srcdir)/mpn/cpp-ccas --cpp="$(CPP) $(PREPROCESS_FLAGS)" $(CCAS) $(COMPILE_FLAGS) `test -f '$<' || echo '$(srcdir)/'`$<
 
 
 # .asm assembler, preprocessed with m4.
@@ -99,12 +99,12 @@ RM_TMP = rm -f
 # -fPIC.  (Later versions of gas are happy to accept PIC stuff any time.)
 #
 .asm.o:
-	$(M4) -DOPERATION_$* `test -f $< || echo '$(srcdir)/'`$< >tmp-$*.s
+	$(M4) -DOPERATION_$* `test -f '$<' || echo '$(srcdir)/'`$< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .asm.obj:
-	$(M4) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
+	$(M4) -DOPERATION_$* `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi` >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .asm.lo:
-	$(LIBTOOL) --mode=compile --tag=CC $(top_srcdir)/mpn/m4-ccas --m4="$(M4)" $(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
+	$(LIBTOOL) --mode=compile --tag=CC $(top_srcdir)/mpn/m4-ccas --m4="$(M4)" $(CCAS) $(COMPILE_FLAGS) `test -f '$<' || echo '$(srcdir)/'`$<
