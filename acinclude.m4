@@ -91,8 +91,8 @@ for c in $gmp_cc_list; do
       eval c_flags=\$gmp_cflags64_$c
       GMP_CHECK_CC_64BIT($c, $c_flags)
       if test "$gmp_cv_cc_64bit" = "yes"; then
-        test -z "$CC64" && CC64=$c
-        test -z "$CFLAGS64" && CFLAGS64=$c_flags
+        test -z "$CC64" && CC64="$c"
+        test -z "$CFLAGS64" && CFLAGS64="$c_flags"
 	# We have CC64 so we're done.
         break
       fi
@@ -107,6 +107,7 @@ CC="$CC32"
 
 dnl  GMP_PROG_CC_SELECT
 dnl  Check that `CC' works with `CFLAGS'.  Check if `CC' is a GNU compiler.
+dnl  Cache the result as `ac_cv_prog_CC'.
 AC_DEFUN(GMP_PROG_CC_SELECT,
 [AC_BEFORE([$0], [CC_PROG_CPP])
 AC_PROG_CC_WORKS
@@ -127,6 +128,7 @@ if test -z "$CFLAGS"; then
 fi
 
 AC_SUBST(CC)
+AC_CACHE_VAL(ac_cv_prog_CC, ac_cv_prog_CC="$CC")
 AC_PROVIDE([AC_PROG_CC])
 ])dnl
 
@@ -193,35 +195,6 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
   CC="$gmp_tmp_CC_save"
   CFLAGS="$gmp_tmp_CFLAGS_save"
   AC_MSG_RESULT($gmp_cv_cc_64bit)
-])dnl
-
-dnl  GMP_PROG_LIBTOOL
-dnl  [ Wrap AC_PROG_LIBTOOL to avoid invoking AC_PROG_CC since AC_PROVIDE      ]
-dnl  [ in our own PROG_CC doesn't seem to have any effect.  FIXME: Find out    ]
-dnl  [ what's wrong with the AC_PROVIDE idea.                                  ]
-AC_DEFUN(GMP_PROG_LIBTOOL, [
-dnl  [ Save any variables that AC_PROG_CC may possibly set, invoke AC_PROG_CC, ]
-dnl  [ and restore the variables.  Finally, invoke AC_PROG_LIBTOOL.	       ]
-dnl  [ This is highly dependant on Autoconf version and generally a mess.      ]
-gmp_save_CC=$CC
-gmp_save_CFLAGS=$CFLAGS
-gmp_save_ac_cv_prog_gcc=$ac_cv_prog_gcc
-gmp_save_GCC=$GCC
-gmp_save_ac_cv_prog_cc_g=$ac_cv_prog_cc_g
-gmp_save_ac_cv_prog_cc_works=$ac_cv_prog_cc_works
-gmp_save_ac_cv_prog_cc_cross=$ac_cv_prog_cc_cross
-
-AC_PROG_CC
-
-CC=$gmp_save_CC
-CFLAGS=$gmp_save_CFLAGS
-ac_cv_prog_gcc=$gmp_save_ac_cv_prog_gcc
-GCC=$gmp_save_GCC
-ac_cv_prog_cc_g=$gmp_save_ac_cv_prog_cc_g
-ac_cv_prog_cc_works=$gmp_save_ac_cv_prog_cc_works
-ac_cv_prog_cc_cross=$gmp_save_ac_cv_prog_cc_cross
-
-AC_PROG_LIBTOOL
 ])dnl
 
 dnl  GMP_INIT([M4-DEF-FILE])
