@@ -102,7 +102,8 @@ SUFFIXES = .asm
 SQR_GENERIC_MAX = 200
 
 LIBGMPTUNE_OBJS = \
-  mul_n.o mul.o bz_divrem_n.o tdiv_qr.o fib_ui.o powm.o gcd.o gcdext.o
+  mul_n.o mul_fft.o mul.o \
+  bz_divrem_n.o tdiv_qr.o fib_ui.o powm.o gcd.o gcdext.o
 
 sqr_basecase.h: libgmptune.a
 
@@ -141,37 +142,38 @@ sqr-basecase-generic:
 sqr-basecase-asm:
 	cp $(top_builddir)/mpn/sqr_basecase.asm .
 	$(MAKE) $(AM_MAKEFLAGS) \
-		M4FLAGS='-DKARATSUBA_SQR_THRESHOLD_OVERRIDE=KARATSUBA_SQR_THRESHOLD_MAX' \
+		M4FLAGS='$(M4FLAGS) -DKARATSUBA_SQR_THRESHOLD_OVERRIDE=KARATSUBA_SQR_THRESHOLD_MAX' \
 		sqr_basecase.o
 	ar r libgmptmp.a sqr_basecase.o
 	echo "#define KARATSUBA_SQR_MAX  `sed -n 's/def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' sqr_basecase.asm`" >sqr_basecase.h
 
 
-THRESHOLDS = -DTUNE_PROGRAM_BUILD=1
-
 mul_n.o: $(top_builddir)/mpn/mul_n.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/mul_n.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul_n.c
+
+mul_fft.o: $(top_builddir)/mpn/mul_fft.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul_fft.c
 
 mul.o: $(top_builddir)/mpn/mul.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/mul.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul.c
 
 bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/bz_divrem_n.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/bz_divrem_n.c
 
 tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/tdiv_qr.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/tdiv_qr.c
 
 fib_ui.o: $(top_srcdir)/mpz/fib_ui.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_srcdir)/mpz/fib_ui.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_srcdir)/mpz/fib_ui.c
 
 powm.o: $(top_srcdir)/mpz/powm.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_srcdir)/mpz/powm.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_srcdir)/mpz/powm.c
 
 gcd.o: $(top_builddir)/mpn/gcd.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/gcd.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/gcd.c
 
 gcdext.o: $(top_builddir)/mpn/gcdext.c
-	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/gcdext.c
+	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/gcdext.c
 
 
 
@@ -197,7 +199,6 @@ st:
 	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n | less
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
-
 
 bz:
 	./speed -s 5-40 -c mpn_bz_divrem_sb mpn_bz_divrem_n mpn_bz_tdiv_qr
