@@ -643,6 +643,13 @@ check_f (void)
     { "%F.1a", "65535","0x1.0p+16" },
     { "%F.0a", "65535","0x1p+16" },
 
+    { "%.2Ff", "0.99609375", "1.00" },
+    { "%.Ff",  "0.99609375", "0.99609375" },
+    { "%.Fe",  "0.99609375", "9.9609375e-01" },
+    { "%.Fg",  "0.99609375", "0.99609375" },
+    { "%.20Fg",  "1000000", "1000000" },
+    { "%.Fg",  "1000000", "1000000" },
+
   };
 
   int     i;
@@ -673,7 +680,9 @@ check_f (void)
 void
 check_n (void)
 {
-  int  n;
+  int    n;
+  long   l;
+  short  h[2];
 
   check_one ("blah", "%nblah", &n);
   ASSERT_ALWAYS (n == 0);
@@ -683,12 +692,30 @@ check_n (void)
 
   check_one ("hello  world", "hello %n world", &n);
   ASSERT_ALWAYS (n == 6);
+
+  /* should write whole of l */
+  l = -1;
+  check_one ("", "%ln", &l);
+  ASSERT_ALWAYS (l == 0);
+
+  /* should write only h[0] */
+  h[0] = -123;
+  h[1] = -456;
+  check_one ("", "%hn", &h[0]);
+  ASSERT_ALWAYS (h[0] == 0);
+  ASSERT_ALWAYS (h[1] == -456);
 }
 
 
 void
 check_misc (void)
 {
+  mpz_t  z;
+  mpf_t  f;
+
+  mpz_init (z);
+  mpf_init2 (f, 128L);
+
   check_one ("!", "%c", '!');
   check_one ("hello world", "hello %s", "world");
 
@@ -697,6 +724,19 @@ check_misc (void)
     memset (xs, 'x', sizeof(xs)-1);
     check_one (xs, "%s", xs);
   }
+
+  mpz_set_ui (z, 12345L);
+  check_one ("     12345", "%*Zd", 10, z);
+  check_one ("0000012345", "%0*Zd", 10, z);
+  check_one ("12345     ", "%*Zd", -10, z);
+
+  mpf_set_str_or_abort (f, "0.99609375", 10);
+  check_one ("0.99609375",    "%.*Ff", -1, f);
+  check_one ("9.9609375e-01", "%.*Fe", -1, f);
+  check_one ("0.99609375",    "%.*Fg", -1, f);
+
+  mpz_clear (z);
+  mpf_clear (f);
 }
 
 
