@@ -549,6 +549,19 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 #endif
 
 
+/* It seems the bigcase code usually cuts in almost immediately (ie. only a
+   few sizes want the simple addition based code), so set the defaults like
+   that.  */
+#ifndef FIB_THRESHOLD
+#if BITS_PER_MP_LIMB == 32
+#define FIB_THRESHOLD  100
+#endif
+#if BITS_PER_MP_LIMB == 64
+#define FIB_THRESHOLD  200
+#endif
+#endif
+
+
 /* Return non-zero if xp,xsize and yp,ysize overlap.
    If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
    overlap.  If both these are false, there's an overlap. */

@@ -56,19 +56,6 @@ MA 02111-1307, USA. */
 #define TRACE(x)
 
 
-/* It seems the bigcase code usually cuts in almost immediately (ie. only a
-   few sizes want the simple addition based code), so set the defaults like
-   that.  */
-#ifndef FIB_THRESHOLD
-#if BITS_PER_MP_LIMB == 32
-#define FIB_THRESHOLD  100
-#endif
-#if BITS_PER_MP_LIMB == 64
-#define FIB_THRESHOLD  200
-#endif
-#endif
-
-
 /* table1[i] is F[i], table2[i] is F[i+numberof(table1)].
    table2[i][0] is the low limb, table2[i][1] the high limb.  */
 
