@@ -1,3 +1,42 @@
+2000-11-22  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (ABOVE_THRESHOLD, BELOW_THRESHOLD): New macros.
+	* mpn/generic/gcdext.c: Use them.
+
+	* mpn/generic/gcdext.c [WANT_GCDEXT_ONE_STEP]: Force only one step.
+	* tune/gcdexto{s,d}.c: New files, one step gcdext, single and double.
+	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
+	(TUNE_MPN_SRCS): Remove gcdext.c.
+	* tune/{speed.h,common.c,speed.c}: Add measuring.
+	* tune/tuneup.c: Use for GCDEXT_THRESHOLD, plus check if double limb
+	is ever better.  Should be more accurate, and hopefully faster.
+
+	* tune/gcdext_single.c: New file, gcdext forced to single limbs.
+	* tune/Makefile.am: Add it.
+	* tune/{speed.h,common.c,speed.c}: Add measuring, and of invert_limb.
+
+	* tune/speed.h (speed_params r): Use mp_limb_t, not long.
+	* tune/speed.c (r_string): Accept limb sized constants.
+	(choice scale): Add a scale factor (eg. "2.33*mpn_add_n").
+	* tune/common.c (SPEED_ROUTINE_UDIV_QRNND_A): Default r to
+	__mp_bases[10].big_base, being a full limb value.
+
+	* configure.in (alphapca56*-*-*): Use ev5 mpn path.
+	(am29000*-*-*): Remove this, leave the canonical a29k.
+	(z8k*-*-*, z8kx*-*-*): Changed from z8000, since z8k is canonical.
+	(gmp_mpn_functions_optional): Add invert_limb, use for alpha and ia64.
+
+	* configure.in (alloca): Accept yes/no/detect, generate an error if
+	"yes" but not available.
+	* gmp.texi (Build Options): Update.
+
+	* acinclude.m4 (GMP_TRY_ASSEMBLE): Make conftest.out available.
+	(GMP_ASM_ALIGN_FILL_0x90): Use it.
+
+	* acinclude.m4 (GMP_ASM_X86_MMX) [*-*-solaris*]: Check for solaris
+	2.6 "as" movq bug.
+	* gmp.texi (Notes for Particular Systems): Update x86 MMX note.
+
 2000-11-21  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/Makefile.am (EXTRA_DIST): List hppa2w.asm.
