@@ -602,7 +602,6 @@ dnl  FIXME: Shared libs seem to fail on aix4.3.
 dnl  FIXME: HP assembly code not PIC aware yet.
 dnl  FIXME: Should invoke [AC_DISABLE_SHARED], but m4 recurses to death.
 case "$target" in
-  hppa*-*-*) enable_shared=no ;;
   *-*-aix*) enable_shared=no ;;
 esac
 AC_PROG_LIBTOOL
