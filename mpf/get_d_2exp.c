@@ -55,7 +55,7 @@ mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
      rounding takes place now and won't become 1.0 in the caller.  */
 #if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86)     \
   && defined (__GNUC__)
-  asm ("" : "=m" (res) : "0" (res));
+  __asm__ ("" : "=m" (res) : "0" (res));
 #endif
 
   /* if hardware floats are in round upwards mode then res might be 1.0 */
