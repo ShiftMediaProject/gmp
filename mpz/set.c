@@ -22,14 +22,21 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void
-#if __STDC__
-mpz_set (mpz_ptr w, mpz_srcptr u)
+
+#ifdef BERKELEY_MP
+#include "mp.h"
+#undef  mpz_set
+#define mpz_set    move
+#define ARGUMENTS  mpz_srcptr u, mpz_ptr w
+
 #else
-mpz_set (w, u)
-     mpz_ptr w;
-     mpz_srcptr u;
+#define ARGUMENTS  mpz_ptr w, mpz_srcptr u
+
 #endif
+
+
+void
+mpz_set (ARGUMENTS)
 {
   mp_ptr wp, up;
   mp_size_t usize, size;
