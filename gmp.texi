@@ -656,7 +656,6 @@ Motorola:
 @samp{m68060},
 @samp{m68302},
 @samp{m68360},
-@samp{m5200},
 @samp{m88k},
 @samp{m88110}
 
