@@ -36,12 +36,14 @@ MPF_SRCS = init.c init2.c set.c set_ui.c set_si.c set_str.c set_d.c set_z.c \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c set_q.c get_d.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c
-MPF_OBJS = init.o init2.o set.o set_ui.o set_si.o set_str.o set_d.o set_z.o \
+MPF_OBJS = init.o init2.o \
+  set.o set_ui.o set_si.o set_str.o set_d.o set_z.o set_q.o \
   iset.o iset_ui.o iset_si.o iset_str.o iset_d.o clear.o get_str.o \
   dump.o size.o eq.o reldiff.o sqrt.o random2.o inp_str.o out_str.o \
   add.o add_ui.o sub.o sub_ui.o ui_sub.o mul.o mul_ui.o div.o div_ui.o \
-  cmp.o cmp_ui.o cmp_si.o mul_2exp.o div_2exp.o abs.o neg.o set_q.o get_d.o \
-  set_dfl_prec.o set_prc.o set_prc_raw.o get_prc.o ui_div.o sqrt_ui.o
+  cmp.o cmp_ui.o cmp_si.o mul_2exp.o div_2exp.o abs.o neg.o get_d.o \
+  set_dfl_prec.o set_prc.o set_prc_raw.o get_prc.o ui_div.o sqrt_ui.o \
+  floor.o ceil.o trunc.o
 
 LATER_OBJS = inp_raw.o out_raw.o random.o pow_ui.o fac_ui.o
 
@@ -51,20 +53,32 @@ libmpf.a: Makefile $(MPF_OBJS)
 	rm -f $@
 	$(AR) $(AR_FLAGS) $@ $(MPF_OBJS)
 
+ALLCFLAGS = $(INCLUDES) $(CFLAGS) $(XCFLAGS)
+
 .c.o:
-	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
+	$(CC) -c $(ALLCFLAGS) $<
 
 clean mostlyclean:
-	rm -f *.o libmpf.a
-	-cd tests; $(MAKE) $@
+	rm -f *.o floor.c ceil.c trunc.c libmpf.a
+	@cd tests; $(MAKE) $@
 distclean maintainer-clean: clean
 	rm -f Makefile config.status
-	-cd tests; $(MAKE) $@
+	@cd tests; $(MAKE) $@
 
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) ./config.status
 
 H = $(srcdir)/../gmp.h $(srcdir)/../gmp-impl.h ../mpn/gmp-mparam.h
+
+floor.o: $(srcdir)/integer.c $(H)
+	cp $(srcdir)/integer.c floor.c
+	$(CC) -c $(ALLCFLAGS) -DMPF_FLOOR floor.c
+ceil.o: $(srcdir)/integer.c $(H)
+	cp $(srcdir)/integer.c ceil.c
+	$(CC) -c $(ALLCFLAGS) -DMPF_CEIL ceil.c
+trunc.o: $(srcdir)/integer.c $(H)
+	cp $(srcdir)/integer.c trunc.c
+	$(CC) -c $(ALLCFLAGS) -DMPF_TRUNC trunc.c
 
 abs.o: $(srcdir)/abs.c $(H)
 add.o: $(srcdir)/add.c $(H)
