@@ -898,8 +898,15 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
 
 /* Two dependent multiplies, plus about 6 cycles of other dependent
    calculations. */
-#ifndef UDIV_PREINV_TIME
-#define UDIV_PREINV_TIME   (2*UMUL_TIME + 6)
+#ifndef UDIV_NORM_PREINV_TIME
+#define UDIV_NORM_PREINV_TIME    (2*UMUL_TIME + 6)
+#endif
+
+/* When divisor was unnormalized there's going to be some shifting, so
+   assume a couple of extra cycles.  (The shifting isn't on the dependent
+   chain, but on some chips it seems to upset the code generation a bit.)  */
+#ifndef UDIV_UNNORM_PREINV_TIME
+#define UDIV_UNNORM_PREINV_TIME  (UDIV_NORM_PREINV_TIME + 2)
 #endif
 
 
