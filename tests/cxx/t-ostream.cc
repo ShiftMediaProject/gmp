@@ -20,9 +20,8 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <cstdlib>
-#include <cstring>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -44,9 +43,7 @@ int   option_check_standard = 0;
     else                                                \
       got.fill (data[i].fill);                          \
                                                         \
-    expr;                                               \
-                                                        \
-    if (! got)                                          \
+    if (! (expr))                                       \
       {                                                 \
         cout << "\"got\" output error\n";               \
         abort ();                                       \
@@ -150,10 +147,10 @@ check_mpz (void)
               : 1)
           )
         {
-          ostrstream  got;
+          ostringstream  got;
           long  n = mpz_get_si (z);
-          CALL (got << n << '\0');
-          if (strcmp (got.str(), data[i].want) != 0)
+          CALL (got << n);
+          if (got.str().compare (data[i].want) != 0)
             {
               cout << "check_mpz data[" << i
 		   << "] doesn't match standard ostream output\n";
@@ -164,13 +161,12 @@ check_mpz (void)
         }
 
       {
-        ostrstream  got;
-        CALL (operator<< (got, z) << '\0');
-        if (strcmp (got.str(), data[i].want) != 0)
+        ostringstream  got;
+        CALL (got << z);
+        if (got.str().compare (data[i].want) != 0)
           {
             cout << "mpz operator<< wrong, data[" << i << "]\n";
             cout << "  z:     " << data[i].z << "\n";
-            mpz_trace ("  z", z);
             ABORT ();
           }
       }
@@ -231,10 +227,10 @@ check_mpq (void)
           && mpz_fits_slong_p (mpq_numref(q))
           && mpq_integer_p (q))
         {
-          ostrstream  got;
+          ostringstream  got;
           long  n = mpz_get_si (mpq_numref(q));
-          CALL (got << n << '\0');
-          if (strcmp (got.str(), data[i].want) != 0)
+          CALL (got << n);
+          if (got.str().compare (data[i].want) != 0)
             {
               cout << "check_mpq data[" << i
 		   << "] doesn't match standard ostream output\n";
@@ -245,13 +241,12 @@ check_mpq (void)
         }
 
       {
-        ostrstream  got;
-        CALL (operator<< (got, q) << '\0');
-        if (strcmp (got.str(), data[i].want) != 0)
+        ostringstream  got;
+        CALL (got << q);
+        if (got.str().compare (data[i].want) != 0)
           {
             cout << "mpq operator<< wrong, data[" << i << "]\n";
             cout << "  q:     " << data[i].q << "\n";
-            mpq_trace ("  q", q);
             ABORT ();
           }
       }
@@ -411,9 +406,9 @@ check_mpf (void)
       if (option_check_standard && mpf_cmp (f, f2) == 0
           && ! (data[i].flags & (ios::hex | ios::oct | ios::showbase)))
         {
-          ostrstream  got;
-          CALL (got << d << '\0');
-          if (strcmp (got.str(), data[i].want) != 0)
+          ostringstream  got;
+          CALL (got << d);
+          if (got.str().compare (data[i].want) != 0)
             {
               cout << "check_mpf data[" << i
 		   << "] doesn't match standard ostream output\n";
@@ -424,13 +419,12 @@ check_mpf (void)
         }
 
       {
-        ostrstream  got;
-        CALL (operator<< (got, f) << '\0');
-        if (strcmp (got.str(), data[i].want) != 0)
+        ostringstream  got;
+        CALL (got << f);
+        if (got.str().compare (data[i].want) != 0)
           {
             cout << "mpf operator<< wrong, data[" << i << "]\n";
             cout << "  f:     " << data[i].f << "\n";
-            mpf_trace ("  f", f);
             ABORT ();
           }
       }
