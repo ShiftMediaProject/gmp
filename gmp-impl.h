@@ -934,7 +934,7 @@ extern const int __gmp_0;
 #endif
 #endif /* _LONG_LONG_LIMB */
 
-/*** Stuff used by mpn/generic/prefsqr.c and mpn/generic/next_prime.c ***/
+/*** Stuff used by mpn/generic/perfsqr.c and mpn/generic/next_prime.c ***/
 #if BITS_PER_MP_LIMB == 32
 #define PP 0xC0CFD797L		/* 3 x 5 x 7 x 11 x 13 x ... x 29 */
 #define PP_INVERTED 0x53E5645CL
