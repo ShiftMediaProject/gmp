@@ -3612,6 +3612,9 @@ if test -f $gmp_tmpconfigm4i; then
   rm $gmp_tmpconfigm4i
 fi
 
+# After include(`asm-defs.m4')
+echo "define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')" >> $gmp_configm4
+ 
 trap '' 1 2 15
 cat >confcache <<\EOF
 # This file is a shell script that caches the results of configure

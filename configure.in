@@ -636,6 +636,9 @@ dnl [AC_SUBST(LTALLOCA)]
 dnl  Create config.m4
 GMP_FINISH
 
+# After include(`asm-defs.m4')
+echo "define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')" >> $gmp_configm4
+ 
 dnl  Create Makefiles
 dnl  FIXME: Upcoming version of autoconf/automake may not like broken lines.
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
