@@ -45,10 +45,22 @@ __gmp_scale2 (d, exp)
     x.d = d;
     exp += x.s.exp;
     x.s.exp = exp;
-    if (exp >= 2048)
+    if (exp >= 2047)
       {
+	/* Return +-infinity */
 	x.s.exp = 2047;
 	x.s.manl = x.s.manh = 0;
+      }
+    else if (exp < 1)
+      {
+	x.s.exp = 1;		/* smallest exponent (biased) */
+	/* Divide result by 2 until we have scaled it to the right IEEE
+	   denormalized number, but stop if it becomes zero.  */
+	while (exp < 1 && x.d != 0)
+	  {
+	    x.d *= 0.5;
+	    exp++;
+	  }
       }
     return x.d;
   }
