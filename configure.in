@@ -1279,7 +1279,7 @@ AC_SUBST(gmp_srclinks)
 
 # A recompiled sqr_basecase for use in the tune program, if necessary.
 TUNE_SQR_OBJ=
-mkdir tune
+test -d tune || mkdir tune
 case $sqr_basecase_source in
   *.asm)
     sqr_max=[`sed -n 's/^def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' $sqr_basecase_source`]
