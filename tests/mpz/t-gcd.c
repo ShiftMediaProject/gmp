@@ -92,9 +92,9 @@ main (int argc, char **argv)
   mpz_t temp1, temp2;
   mp_size_t op1_size, op2_size, x_size;
   int i;
-  int reps = 1000;
   gmp_randstate_ptr rands;
   mpz_t bs;
+  double fsize_range;
   unsigned long bsi, size_range;
   const struct test_value *tv;
   
@@ -102,9 +102,6 @@ main (int argc, char **argv)
   rands = RANDS;
 
   mpz_init (bs);
-
-  if (argc == 2)
-    reps = atoi (argv[1]);
 
   mpz_init (op1);
   mpz_init (op2);
@@ -127,10 +124,15 @@ main (int argc, char **argv)
 	dump_abort (i, op1, op2);
     }
   
-  for (i = 0; i < reps; i++)
+  fsize_range = 1.0;
+  for (;;)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 14 + 2; /* 0..21767 bit operands */
+
+      size_range = fsize_range;
+      if (size_range > 17)
+	break;
+      fsize_range = fsize_range * 1.02;
 
       mpz_urandomb (bs, rands, size_range);
       op1_size = mpz_get_ui (bs);
