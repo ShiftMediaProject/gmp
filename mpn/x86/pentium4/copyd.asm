@@ -22,9 +22,8 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 dnl  The std/rep/movsl/cld is very slow for small blocks on pentium4.  Its
-dnl  startup time seems to be about 165 cycles.  It then copies at a rate of
-dnl  one limb per cycle.  We therefore fall back to an open-coded 2 c/l
-dnl  copying loop for smaller sizes.
+dnl  startup time seems to be about 165 cycles.  It then needs 2.6 c/l.
+dnl  We therefore use an open-coded 2 c/l copying loop.
 
 dnl  Ultimately, we may want to use 64-bit movq or 128-bit movdqu in some
 dnl  nifty unrolled arrangement.  Clearly, that could reach much higher
