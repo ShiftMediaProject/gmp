@@ -219,15 +219,27 @@ the same "_GLOBAL_OFFSET_TABLE_" on an underscore or non-underscore system.
 Certainly this is true for instance of NetBSD 1.4 which is an underscore
 system but requires "_GLOBAL_OFFSET_TABLE_".
 
-Current versions of gas (binutils 2.10) wrongly assemble the following
+Old gas 1.92.3 which comes with FreeBSD 2.2.8 gets a segmentation fault when
+asked to assemble the following,
 
-	L1:
-	    addl  $_GLOBAL_OFFSET_TABLE_+[.-L1], %eax
+        L1:
+            addl  $_GLOBAL_OFFSET_TABLE_+[.-L1], %ebx
 
-generating a "2" displacement in the R_386_GOTPC rather than a "1" as would
-be appropriate for the one byte opcode for addl $n,%eax.  The best
-workaround is just to use any other register, since then it'll then be a two
-byte opcode+mod/rm.  GCC for example always uses %ebx.
+The problem might be using the label in the same instruction it refers to,
+since a nop in between fixes it.  But the simplest workaround is to follow
+gcc and omit the +[.-L1] since it's zero in this case.
+
+            addl  $_GLOBAL_OFFSET_TABLE_, %ebx
+
+Current gas 2.10 generates incorrect object code when %eax is used in such a
+construction (or with +[.-L1]),
+
+            addl  $_GLOBAL_OFFSET_TABLE_, %eax
+
+A 2 displacement in the R_386_GOTPC is generated rather than a 1 as would be
+appropriate for the 1 byte opcode for addl $n,%eax.  The best workaround is
+just to use any other register, since then it'll then be a two byte
+opcode+mod/rm.  GCC for example always uses %ebx.
 
 
 
