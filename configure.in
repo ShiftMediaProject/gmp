@@ -572,47 +572,50 @@ case $host in
 
   # IRIX 5 and earlier can only run 32-bit o32.
   #
-  # IRIX 6 and up can run n32 or 64, and GMP uses a 64-bit limb on both.  It
-  # could run the mpn/mips32 code in n32 with a 32-bit limb, which we could
-  # perhaps call 32, but since that would just create a slower library, we
-  # don't give that option.
+  # IRIX 6 and up always has a 64-bit mips CPU can run n32 or 64.  n32 is
+  # preferred over 64, but only because that's been the default in past
+  # versions of GMP.  The two are equally efficient.
   #
   # Linux kernel 2.2.13 arch/mips/kernel/irixelf.c has a comment about not
   # supporting n32 or 64.
   #
-  # We here use ldflags for passing options with libtool to the compiler
-  # when generating the shared library.
-
-  [mips*-*-irix[6789]*])
-    abilist="n32 64"
-
-    # let the $found_compiler test below know that the cpu is recognised
-    path=dummy
-
-    cclist_n32="gcc cc"
-    gcc_n32_cflags="-g -O2 -mabi=n32"
-    gcc_n32_ldflags="-Wc,-mabi=n32"
-    cc_n32_cflags="-O2 -n32"		# no -g, it disables all optimizations
-    cc_n32_ldflags="-Wc,-n32"
-    limb_n32=longlong
-    path_n32="mips64"
-    extra_functions_n32="umul"
-
-    cclist_64="gcc cc"
-    gcc_64_cflags="-g -O2 -mabi=64"
-    gcc_64_ldflags="-Wc,-mabi=64"
-    cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
-    cc_64_ldflags="-Wc,-64"
-    path_64="mips64"
-    extra_functions_64="umul"
-
-    GMP_INCLUDE_MPN(mips64/mips.m4)
-    ;;
-
+  # FIXME: It's necessary to pass -mabi or -n32 to the compiler when
+  # linking.  Libtool used to strip them, hence the ldflags here.  It
+  # looks like it has something equivalent itself now, so perhaps
+  # these can be removed.
+  #
   mips*-*-*)
+    abilist="o32"
+    gcc_cflags_optlist="abi"
+    gcc_cflags_abi="-mabi=32"
+    gcc_testlist="gcc-mips-o32"
     path="mips32"
     extra_functions="umul"
-    GMP_INCLUDE_MPN(mips32/mips.m4)
+    # this suits both mips32 and mips64
+    GMP_INCLUDE_MPN(mips32/mips-defs.m4)
+
+    case $host in
+      mips64*-*-* | mips*-*-irix[6789]*)
+        abilist="n32 64 o32"
+
+        cclist_n32="gcc cc"
+        gcc_n32_cflags="-g -O2 -mabi=n32"
+        gcc_n32_ldflags="-Wc,-mabi=n32"
+        cc_n32_cflags="-O2 -n32"        # no -g, it disables all optimizations
+        cc_n32_ldflags="-Wc,-n32"
+        limb_n32=longlong
+        path_n32="mips64"
+        extra_functions_n32="umul"
+
+        cclist_64="gcc cc"
+        gcc_64_cflags="-g -O2 -mabi=64"
+        gcc_64_ldflags="-Wc,-mabi=64"
+        cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
+        cc_64_ldflags="-Wc,-64"
+        path_64="mips64"
+        extra_functions_64="umul"
+        ;;
+    esac
     ;;
 
 
@@ -1128,6 +1131,7 @@ for abi in $abilist; do
         case $tst in
         hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
         gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
+        gcc-mips-o32)   GMP_GCC_MIPS_O32($cc,,testlist_pass=no) ;;
         esac
         if test $testlist_pass = no; then break; fi
       done
