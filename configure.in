@@ -371,6 +371,7 @@ case $host in
     # gcc 2.95 knows -mcpu= ev4, ev5, ev56, pca56, ev6.
     # gcc 3.0 adds nothing.
     # gcc 3.1 adds ev45, ev67 (but ev45 is the same as ev4).
+    # gcc 3.2 adds nothing.
     #
     case $host_cpu in
       alpha)        gcc_cflags_cpu="-mcpu=ev4" ;;
@@ -754,8 +755,9 @@ case $host in
     #   801, 821, 823, 860.
     # gcc 3.0 adds 630, rs64a.
     # gcc 3.1 adds 405, 7400, 7450.
-    # gcc 3.2 or 3.3 is adding power3, power4, 8540.  power3 seems to
-    #   be just a synonym for 630.
+    # gcc 3.2 adds nothing.
+    # gcc pre-release 3.3 adds power3, power4, 8540.  power3 seems to be
+    #   just a synonym for 630.
     #
     # FIXME: The way 603e falls back to 603 for gcc 2.7.2 should be
     # done for all the others too.  But what would be the correct
@@ -989,21 +991,21 @@ case $host in
     # gcc 2.7.2 only knows i386 and i486, using -m386 or -m486.  These
     #     represent -mcpu= since -m486 doesn't generate 486 specific insns.
     #     The -mcpu= and -march= options will fail, leaving just -m486.
-    # gcc 2.95.2 adds k6, pentium and pentiumpro, and allows -march= and
-    #     -mcpu=.
+    # gcc 2.95 adds k6, pentium and pentiumpro, and allows -march= and -mcpu=.
     # gcc 3.0 adds athlon.
     # gcc 3.1 adds pentium4.
+    # gcc 3.2 adds k6-2, k6-3, pentium-mmx, pentium2, pentium3,
+    #     athlon-tbird, athlon-4, athlon-xp, athlon-mp.
     #
     # In gcc 2.95.[0123], -march=pentiumpro provoked a stack slot bug in an
     # old version of mpz/powm.c.  Seems to be fine with the current code, so
     # no need for any restrictions on that option.
-
-    # Defaults for anything not otherwise mentioned.
-    path="x86"
+    #
+    # -march=pentiumpro can fail if the assembler doesn't know "cmov"
+    # (eg. solaris 2.8 native "as"), so always have -march=pentium as a
+    # fallback.
+    #
     gcc_cflags_optlist="cpu arch"
-    gcc_cflags_cpu="-mcpu=i486 -m486"
-    gcc_cflags_arch="-march=i486"
-
     case $host in
       i386*-*-*)
         # Because i386 means generic x86, -mcpu=i486 is used since that
@@ -1013,31 +1015,55 @@ case $host in
         gcc_cflags_cpu="-mcpu=i486 -m486"
         gcc_cflags_arch="-march=i386"
         ;;
-      i586*-*-* | pentium-*-* | pentiummmx-*-*)
+      i586*-*-* | pentium-*-*)
         gcc_cflags_cpu="-mcpu=pentium -m486"
         gcc_cflags_arch="-march=pentium"
         ;;
-      [i686*-*-* | pentiumpro-*-* | pentium[23]-*-*])
-        gcc_cflags_cpu="-mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=pentiumpro -march=pentium -march=i486"
+      pentiummmx-*-*)
+        gcc_cflags_cpu="-mcpu=pentium-mmx -mcpu=pentium -m486"
+        gcc_cflags_arch="-march=pentium-mmx -march=pentium"
         ;;
-      k6*-*-*)
+      i686*-*-* | pentiumpro-*-*)
+        gcc_cflags_cpu="-mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=pentiumpro -march=pentium"
+        ;;
+      pentium2-*-*)
+        gcc_cflags_cpu="-mcpu=pentium2 -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=pentium2 -march=pentiumpro -march=pentium"
+        ;;
+      pentium3-*-*)
+        gcc_cflags_cpu="-mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=pentium3 -march=pentiumpro -march=pentium"
+        ;;
+      k6-*-*)
         gcc_cflags_cpu="-mcpu=k6 -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=k6 -march=i486"
+        gcc_cflags_arch="-march=k6"
+        ;;
+      k62-*-*)
+        gcc_cflags_cpu="-mcpu=k6-2 -mcpu=k6 -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=k6-2 -march=k6"
+        ;;
+      k63-*-*)
+        gcc_cflags_cpu="-mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=k6-3 -march=k6"
         ;;
       athlon-*-*)
         # Athlon instruction costs are close to P6 (3 cycle load latency,
         # 4-6 cycle mul, 40 cycle div, pairable adc, etc) so if gcc doesn't
         # know athlon (eg. 2.95.2 doesn't) then fall back on pentiumpro.
         gcc_cflags_cpu="-mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium -march=i486"
+        gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium"
         ;;
       pentium4-*-*)
         # pentium4 is known to gcc 3.1 and up, not sure what cpu choice
         # would best suit previous versions, pentiumpro will get us cmov
         # from gcc 2.95.4 up, otherwise let's just try i486.
         gcc_cflags_cpu="-mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=pentium4 -march=pentiumpro -march=pentium -march=i486"
+        gcc_cflags_arch="-march=pentium4 -march=pentiumpro -march=pentium"
+        ;;
+      *)
+        gcc_cflags_cpu="-mcpu=i486 -m486"
+        gcc_cflags_arch="-march=i486"
         ;;
     esac
 
@@ -1052,6 +1078,7 @@ case $host in
       k6*-*-*)        path="x86/k6/mmx x86/k6 x86" ;;
       athlon-*-*)     path="x86/k7/mmx x86/k7 x86" ;;
       pentium4-*-*)   path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
+      *)              path="x86" ;;
     esac
     ;;
 
