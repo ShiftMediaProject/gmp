@@ -1215,8 +1215,7 @@ extern const mp_limb_t __gmp_fib_table[];
 #endif
 
 void __gmp_assert_header _PROTO ((const char *filename, int linenum));
-void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
-                               const char *expr)) ATTRIBUTE_NORETURN;
+__GMP_DECLSPEC void __gmp_assert_fail _PROTO ((const char *filename, int linenum, const char *expr)) ATTRIBUTE_NORETURN;
 
 #if HAVE_STRINGIZE
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
@@ -2551,9 +2550,9 @@ struct gmp_asprintf_t {
       }                                                                 \
   } while (0)
 
-int __gmp_asprintf_memory _PROTO ((struct gmp_asprintf_t *d, const char *str, size_t len));
-int __gmp_asprintf_reps _PROTO ((struct gmp_asprintf_t *d, int c, int reps));
-int __gmp_asprintf_final _PROTO ((struct gmp_asprintf_t *d));
+__GMP_DECLSPEC int __gmp_asprintf_memory _PROTO ((struct gmp_asprintf_t *d, const char *str, size_t len));
+__GMP_DECLSPEC int __gmp_asprintf_reps _PROTO ((struct gmp_asprintf_t *d, int c, int reps));
+__GMP_DECLSPEC int __gmp_asprintf_final _PROTO ((struct gmp_asprintf_t *d));
 
 /* buf is where to write the next output, and size is how much space is left
    there.  If the application passed size==0 then that's what we'll have
@@ -2599,18 +2598,9 @@ struct gmp_snprintf_t {
       DOPRNT_MEMORY (ptr, len);         \
   } while (0)
 
-int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *funs,
-                          void *data,
-                          const char *fmt,
-                          va_list ap));
-int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *funs,
-                                  void *data,
-                                  const struct doprnt_params_t *p,
-                                  const char *s));
-int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *funs,
-                              void * data,
-                              const struct doprnt_params_t *p,
-                              mpf_srcptr f));
+__GMP_DECLSPEC int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *funs, void *data, const char *fmt, va_list ap));
+__GMP_DECLSPEC int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *funs, void *data, const struct doprnt_params_t *p, const char *s));
+__GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *funs, void * data, const struct doprnt_params_t *p, mpf_srcptr f));
 int __gmp_replacement_vsnprintf _PROTO ((char *buf, size_t buf_size,
                                          const char *fmt, va_list ap));
 #endif /* _GMP_H_HAVE_VA_LIST */
