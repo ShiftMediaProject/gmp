@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.156
+# From configure.in Revision: 1.157
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -1294,8 +1294,8 @@ fi
     # options below fail.
     os_64bit=yes
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
-    gmp_cflags_gcc="$gmp_cflags_gcc -m32"
-    gmp_xoptflags_gcc="-mcpu=ultrasparc -mvis"
+    gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
+    gmp_xoptflags_gcc="-mcpu=ultrasparc"
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
