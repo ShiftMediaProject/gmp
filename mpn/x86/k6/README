@@ -18,8 +18,9 @@ STATUS
 Times for the loops, with all code and data in L1 cache, are as follows.
 
                                  cycles/limb
-	mpn_add/sub_n              2.9 or 3.2   (2.9 when in-place)
+	mpn_add/sub_n              3.25 normal, 2.75 in-place
 
+	mpn_copyd                  1.0
 	mpn_copyi                  0.56 or 1.0  \
                                                 |
 	mpn_com_n                  1.0-1.2      | varying with
@@ -30,7 +31,7 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_divrem_1              20.0
 	mpn_mod_1                 20.0
 
-	mpn_l/rshift               1.8
+	mpn_l/rshift               1.75
 
 	mpn_mul_1                  6.4
 	mpn_add/submul_1           7.65-8.4     (varying with data values)
@@ -117,8 +118,8 @@ Instructions in general code are shown paired if they can decode and execute
 together, meaning two short decode instructions with the second not
 depending on the first and only the first using the shifter.  K6 does some
 out of order execution so this isn't essential, it just shows what slots are
-available.  When decoding is the limiting factor it makes sense to schedule
-things that might not execute until later.
+available.  When decoding is the limiting factor things can be scheduled
+that might not execute until later.
 
 
 
