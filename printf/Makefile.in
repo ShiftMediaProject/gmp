@@ -1,0 +1,434 @@
+# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+# Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# Copyright 2001 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_HEADER = $(INSTALL_DATA)
+transform = @program_transform_name@
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AMTAR = @AMTAR@
+AR = @AR@
+AS = @AS@
+ASMFLAGS_PIC = @ASMFLAGS_PIC@
+AWK = @AWK@
+CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
+CC = @CC@
+CCAS = @CCAS@
+CFLAGS_PIC = @CFLAGS_PIC@
+CPP = @CPP@
+CXX = @CXX@
+DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
+DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EXEEXT = @EXEEXT@
+GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR = @HAVE_MPFR@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LIBM = @LIBM@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+M4 = @M4@
+MAINT = @MAINT@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+PRINTF_CXX_OBJECTS = @PRINTF_CXX_OBJECTS@
+RANLIB = @RANLIB@
+SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
+STRIP = @STRIP@
+TAL_OBJECT = @TAL_OBJECT@
+TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
+U = @U@
+VERSION = @VERSION@
+__GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
+__GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
+__GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
+_am_include = @_am_include@
+_am_quote = @_am_quote@
+gmp_srclinks = @gmp_srclinks@
+install_sh = @install_sh@
+mpn_objects = @mpn_objects@
+mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
+mpn_objs_in_libmp = @mpn_objs_in_libmp@
+
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
+
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
+
+@HAVE_CXX_TRUE@OPTION_CXX = doprntfx.cc doprntix.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
+
+noinst_LTLIBRARIES = libprintf.la
+
+libprintf_la_SOURCES = \
+  asprintf.c doprnt.c doprntf.c doprnti.c				 \
+  fprintf.c obprintf.c obvprintf.c obprntffuns.c			 \
+  printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
+  vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c		 \
+  $(OPTION_CXX)
+
+subdir = printf
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES =
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+
+libprintf_la_LDFLAGS =
+libprintf_la_LIBADD =
+@HAVE_CXX_TRUE@am_libprintf_la_OBJECTS = asprintf$U.lo doprnt$U.lo \
+@HAVE_CXX_TRUE@	doprntf$U.lo doprnti$U.lo fprintf$U.lo \
+@HAVE_CXX_TRUE@	obprintf$U.lo obvprintf$U.lo obprntffuns$U.lo \
+@HAVE_CXX_TRUE@	printf$U.lo printffuns$U.lo snprintf$U.lo \
+@HAVE_CXX_TRUE@	snprntffuns$U.lo sprintf$U.lo sprintffuns$U.lo \
+@HAVE_CXX_TRUE@	vasprintf$U.lo vfprintf$U.lo vprintf$U.lo \
+@HAVE_CXX_TRUE@	vsnprintf$U.lo vsprintf$U.lo doprntfx.lo \
+@HAVE_CXX_TRUE@	doprntix.lo osfuns.lo osmpf.lo osmpq.lo osmpz.lo
+@HAVE_CXX_FALSE@am_libprintf_la_OBJECTS = asprintf$U.lo doprnt$U.lo \
+@HAVE_CXX_FALSE@	doprntf$U.lo doprnti$U.lo fprintf$U.lo \
+@HAVE_CXX_FALSE@	obprintf$U.lo obvprintf$U.lo obprntffuns$U.lo \
+@HAVE_CXX_FALSE@	printf$U.lo printffuns$U.lo snprintf$U.lo \
+@HAVE_CXX_FALSE@	snprntffuns$U.lo sprintf$U.lo sprintffuns$U.lo \
+@HAVE_CXX_FALSE@	vasprintf$U.lo vfprintf$U.lo vprintf$U.lo \
+@HAVE_CXX_FALSE@	vsnprintf$U.lo vsprintf$U.lo
+libprintf_la_OBJECTS = $(am_libprintf_la_OBJECTS)
+
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+depcomp =
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CXXFLAGS = @CXXFLAGS@
+DIST_SOURCES = $(libprintf_la_SOURCES)
+DIST_COMMON = Makefile.am Makefile.in
+SOURCES = $(libprintf_la_SOURCES)
+
+all: all-am
+
+.SUFFIXES:
+.SUFFIXES: .c .cc .lo .o .obj
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  printf/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+libprintf.la: $(libprintf_la_OBJECTS) $(libprintf_la_DEPENDENCIES)
+	$(CXXLINK)  $(libprintf_la_LDFLAGS) $(libprintf_la_OBJECTS) $(libprintf_la_LIBADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
+
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+.c.o:
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
+.c.lo:
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+asprintf_.c: asprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/asprintf.c; then echo $(srcdir)/asprintf.c; else echo asprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > asprintf_.c || rm -f asprintf_.c
+doprnt_.c: doprnt.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/doprnt.c; then echo $(srcdir)/doprnt.c; else echo doprnt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > doprnt_.c || rm -f doprnt_.c
+doprntf_.c: doprntf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/doprntf.c; then echo $(srcdir)/doprntf.c; else echo doprntf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > doprntf_.c || rm -f doprntf_.c
+doprnti_.c: doprnti.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/doprnti.c; then echo $(srcdir)/doprnti.c; else echo doprnti.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > doprnti_.c || rm -f doprnti_.c
+fprintf_.c: fprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fprintf.c; then echo $(srcdir)/fprintf.c; else echo fprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fprintf_.c || rm -f fprintf_.c
+obprintf_.c: obprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/obprintf.c; then echo $(srcdir)/obprintf.c; else echo obprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > obprintf_.c || rm -f obprintf_.c
+obprntffuns_.c: obprntffuns.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/obprntffuns.c; then echo $(srcdir)/obprntffuns.c; else echo obprntffuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > obprntffuns_.c || rm -f obprntffuns_.c
+obvprintf_.c: obvprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/obvprintf.c; then echo $(srcdir)/obvprintf.c; else echo obvprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > obvprintf_.c || rm -f obvprintf_.c
+printf_.c: printf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/printf.c; then echo $(srcdir)/printf.c; else echo printf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > printf_.c || rm -f printf_.c
+printffuns_.c: printffuns.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/printffuns.c; then echo $(srcdir)/printffuns.c; else echo printffuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > printffuns_.c || rm -f printffuns_.c
+snprintf_.c: snprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/snprintf.c; then echo $(srcdir)/snprintf.c; else echo snprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > snprintf_.c || rm -f snprintf_.c
+snprntffuns_.c: snprntffuns.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/snprntffuns.c; then echo $(srcdir)/snprntffuns.c; else echo snprntffuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > snprntffuns_.c || rm -f snprntffuns_.c
+sprintf_.c: sprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sprintf.c; then echo $(srcdir)/sprintf.c; else echo sprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sprintf_.c || rm -f sprintf_.c
+sprintffuns_.c: sprintffuns.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sprintffuns.c; then echo $(srcdir)/sprintffuns.c; else echo sprintffuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sprintffuns_.c || rm -f sprintffuns_.c
+vasprintf_.c: vasprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vasprintf.c; then echo $(srcdir)/vasprintf.c; else echo vasprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vasprintf_.c || rm -f vasprintf_.c
+vfprintf_.c: vfprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vfprintf.c; then echo $(srcdir)/vfprintf.c; else echo vfprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vfprintf_.c || rm -f vfprintf_.c
+vprintf_.c: vprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vprintf.c; then echo $(srcdir)/vprintf.c; else echo vprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vprintf_.c || rm -f vprintf_.c
+vsnprintf_.c: vsnprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vsnprintf.c; then echo $(srcdir)/vsnprintf.c; else echo vsnprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vsnprintf_.c || rm -f vsnprintf_.c
+vsprintf_.c: vsprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vsprintf.c; then echo $(srcdir)/vsprintf.c; else echo vsprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vsprintf_.c || rm -f vsprintf_.c
+asprintf_.$(OBJEXT) asprintf_.lo doprnt_.$(OBJEXT) doprnt_.lo \
+doprntf_.$(OBJEXT) doprntf_.lo doprnti_.$(OBJEXT) doprnti_.lo \
+fprintf_.$(OBJEXT) fprintf_.lo obprintf_.$(OBJEXT) obprintf_.lo \
+obprntffuns_.$(OBJEXT) obprntffuns_.lo obvprintf_.$(OBJEXT) \
+obvprintf_.lo printf_.$(OBJEXT) printf_.lo printffuns_.$(OBJEXT) \
+printffuns_.lo snprintf_.$(OBJEXT) snprintf_.lo snprntffuns_.$(OBJEXT) \
+snprntffuns_.lo sprintf_.$(OBJEXT) sprintf_.lo sprintffuns_.$(OBJEXT) \
+sprintffuns_.lo vasprintf_.$(OBJEXT) vasprintf_.lo vfprintf_.$(OBJEXT) \
+vfprintf_.lo vprintf_.$(OBJEXT) vprintf_.lo vsnprintf_.$(OBJEXT) \
+vsnprintf_.lo vsprintf_.$(OBJEXT) vsprintf_.lo : $(ANSI2KNR)
+
+.cc.o:
+	$(CXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+.cc.obj:
+	$(CXXCOMPILE) -c -o $@ `cygpath -w $<`
+
+.cc.lo:
+	$(LTCXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+uninstall-info-am:
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	mkid -fID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
+
+distclean-tags:
+	-rm -f TAGS ID
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
+	done
+check-am: all-am
+check: check-am
+all-am: Makefile $(LTLIBRARIES)
+
+installdirs:
+
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+
+installcheck: installcheck-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
+clean: clean-am
+
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
+
+distclean: distclean-am
+
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-libtool distclean-tags
+
+dvi: dvi-am
+
+dvi-am:
+
+info: info-am
+
+info-am:
+
+install-data-am:
+
+install-exec-am:
+
+install-info: install-info-am
+
+install-man:
+
+installcheck-am:
+
+maintainer-clean: maintainer-clean-am
+
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool
+
+uninstall-am: uninstall-info-am
+
+uninstall-info: uninstall-info-am
+
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	clean-noinstLTLIBRARIES distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
+	uninstall uninstall-am uninstall-info-am
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
