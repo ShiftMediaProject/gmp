@@ -46,7 +46,8 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
                       const char *s)
 {
   int         retval = 0;
-  int         justlen, showbaselen, sign, signlen, justify;
+  int         slen, justlen, showbaselen, sign, signlen, slashlen, zeros;
+  int         justify;
   const char  *slash, *showbase;
   
   /* '+' or ' ' if wanted, and don't already have '-' */
@@ -57,9 +58,7 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
       s++;
     }
   signlen = (sign != '\0');
-  
-  slash = strchr (s, '/');
-  
+
   showbase = NULL;
   showbaselen = 0;
   switch (p->showbase) {
@@ -81,8 +80,17 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
     break;
   }
 
+  /* if the precision was explicitly 0, print nothing for a 0 value */
+  if (*s == '0' && p->prec == 0)
+    s++;
+  
+  slen = strlen (s);
+  slash = strchr (s, '/');
+
+  zeros = MAX (0, p->prec - slen);
+
   /* space left over after actual output length */
-  justlen = p->width - (strlen(s) + signlen + showbaselen);
+  justlen = p->width - (strlen(s) + signlen + showbaselen + zeros);
   if (slash != NULL)
     justlen -= showbaselen;
 
@@ -97,17 +105,21 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
 
   DOPRNT_MEMORY_MAYBE (showbase, showbaselen);     /* base */
 
+  DOPRNT_REPS_MAYBE ('0', zeros);                  /* zeros */
+
   if (justify == DOPRNT_JUSTIFY_INTERNAL)          /* pad internal */
     DOPRNT_REPS (p->fill, justlen);
 
   if (slash != NULL && showbaselen != 0)
     {
-      DOPRNT_MEMORY (s, slash+1-s);                /* possible numerator */
-      s = slash+1;
+      slashlen = slash+1 - s;
+      DOPRNT_MEMORY (s, slashlen);                 /* possible numerator */
+      slen -= slashlen;
+      s += slashlen;
       DOPRNT_MEMORY_MAYBE (showbase, showbaselen); /* possible extra base */
     }
 
-  DOPRNT_STRING (s);                               /* number or denominator */
+  DOPRNT_MEMORY (s, slen);                         /* number or denominator */
 
   if (justify == DOPRNT_JUSTIFY_LEFT)              /* pad left */
     DOPRNT_REPS (p->fill, justlen);
