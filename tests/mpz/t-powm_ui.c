@@ -1,4 +1,4 @@
-/* Test mpz_powm_ui, mpz_mul. mpz_mod, mpz_mod_ui, mpz_div_ui.
+/* Test mpz_powm_ui, mpz_mul. mpz_mod.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
