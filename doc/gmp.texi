@@ -6245,9 +6245,11 @@ between it and @var{z}.
 @deftypefunx void mpz_class::mpz_class (const char *@var{s}, int @var{base} = 0)
 @deftypefunx void mpz_class::mpz_class (const string& @var{s})
 @deftypefunx void mpz_class::mpz_class (const string& @var{s}, int @var{base} = 0)
-Construct an @code{mpz_class} converted from a string using
-@code{mpz_set_str}, (@pxref{Assigning Integers}).  If the string is not a
-valid integer, the results are undefined.
+Construct an @code{mpz_class} converted from a string using @code{mpz_set_str}
+(@pxref{Assigning Integers}).
+
+If the string is not a valid integer, an @code{std::invalid_argument}
+exception is thrown.  The same applies to @code{operator=}.
 @end deftypefun
 
 @deftypefun mpz_class operator/ (mpz_class @var{a}, mpz_class @var{d})
@@ -6337,9 +6339,11 @@ between it and @var{q}.
 @deftypefunx void mpq_class::mpq_class (const char *@var{s}, int @var{base} = 0)
 @deftypefunx void mpq_class::mpq_class (const string& @var{s})
 @deftypefunx void mpq_class::mpq_class (const string& @var{s}, int @var{base} = 0)
-Construct an @code{mpq_class} converted from a string using
-@code{mpq_set_str}, (@pxref{Initializing Rationals}).  If the string is not a
-valid rational, the results are undefined.
+Construct an @code{mpq_class} converted from a string using @code{mpq_set_str}
+(@pxref{Initializing Rationals}).
+
+If the string is not a valid rational, an @code{std::invalid_argument}
+exception is thrown.  The same applies to @code{operator=}.
 @end deftypefun
 
 @deftypefun void mpq_class::canonicalize ()
@@ -6411,7 +6415,7 @@ used.
 
 If @var{prec} is given, the initial precision is that value, in bits.  If
 @var{prec} is not given, then the initial precision is determined by the type
-of @var{op} given.  An @code{mpz_class}, @code{mpq_class}, string, or C++
+of @var{op} given.  An @code{mpz_class}, @code{mpq_class}, or C++
 builtin type will give the default @code{mpf} precision (@pxref{Initializing
 Floats}).  An @code{mpf_class} or expression will give the precision of that
 value.  The precision of a binary expression is the higher of the two
@@ -6425,8 +6429,19 @@ mpf_class f(abs(x));     // precision of x
 mpf_class f(-g, 1000);   // 1000 bits (at least)
 mpf_class f(x+y);        // greater of precisions of x and y
 @end example
+@end deftypefun
 
-If a string given to to the constructor is invalid, the results are undefined.
+@deftypefun void mpf_class::mpf_class (const char *@var{s})
+@deftypefunx void mpf_class::mpf_class (const char *@var{s}, unsigned long @var{prec}, int @var{base} = 0)
+@deftypefunx void mpf_class::mpf_class (const string& @var{s})
+@deftypefunx void mpf_class::mpf_class (const string& @var{s}, unsigned long @var{prec}, int @var{base} = 0)
+Construct an @code{mpf_class} converted from a string using @code{mpf_set_str}
+(@pxref{Assigning Floats}).  If @var{prec} is given, the initial precision is
+that value, in bits.  If not, the default @code{mpf} precision
+(@pxref{Initializing Floats}) is used.
+
+If the string is not a valid float, an @code{std::invalid_argument} exception
+is thrown.  The same applies to @code{operator=}.
 @end deftypefun
 
 @deftypefun mpf_class abs (mpf_class @var{op})
@@ -6523,9 +6538,8 @@ gmp_randclass r3 (gmp_randinit_lc_2exp, a, c, m2exp);
 gmp_randclass r4 (gmp_randinit_mt);
 @end example
 
-@code{gmp_randinit_lc_2exp_size} can fail if the size requested is too big,
-the behaviour of @code{gmp_randclass::gmp_randclass} is undefined in this case
-(perhaps this will change in the future).
+@code{gmp_randinit_lc_2exp_size} will fail if the size requested is too big,
+an @code{std::length_error} exception is thrown in that case.
 @end deftypefun
 
 @deftypefun {} gmp_randclass::gmp_randclass (gmp_randalg_t @var{alg}, @dots{})
