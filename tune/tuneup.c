@@ -1,6 +1,5 @@
-/* Create tuned thresholds for various algorithms. */
+/* Create tuned thresholds for various algorithms.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
+
 
 /* Usage: tune [-t] [-t] [-p precision]
 
@@ -801,15 +800,20 @@ all (void)
   mpn_random (s.xp_block, SPEED_BLOCK_SIZE);
   mpn_random (s.yp_block, SPEED_BLOCK_SIZE);
 
+  fprintf (stderr, "Parameters for %s\n", GMP_MPARAM_H_FILENAME);
+
   speed_time_init ();
   fprintf (stderr, "Using: %s\n", speed_time_string);
 
+  fprintf (stderr, "speed_precision %d", speed_precision);
   if (speed_unittime == 1.0)
-    fprintf (stderr, "speed_precision %d, speed_unittime 1 cycle\n",
-             speed_precision);
+    fprintf (stderr, ", speed_unittime 1 cycle");
   else
-    fprintf (stderr, "speed_precision %d, speed_unittime %.2e secs\n",
-             speed_precision, speed_unittime);
+    fprintf (stderr, ", speed_unittime %.2e secs", speed_unittime);
+  if (speed_cycletime == 1.0)
+    fprintf (stderr, ", CPU freq unknown\n");
+  else
+    fprintf (stderr, ", CPU freq %.2f MHz\n", 1e-6/speed_cycletime);
 
   fprintf (stderr, "MAX_SIZE %d, fft_max_size %ld\n",
            MAX_SIZE, option_fft_max_size);
