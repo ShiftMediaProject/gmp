@@ -1,6 +1,6 @@
-/* Test mp*_class arithmetic expressions.
+/* Test mp*_class expression templates.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,364 +19,454 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <iostream>
-#include <strstream>
-#include <string>
 #include <cstdlib>
+#include <iostream>
+#include <string>
 #include "gmp.h"
-#include "gmp-impl.h"
 #include "gmpxx.h"
+#include "gmp-impl.h"
 #include "tests.h"
 
 using namespace std;
 
 
-#define CHECK_MPZ(expr, want)                                   \
-  do {                                                          \
-    mpz_set_str (ref, want, 0);                                 \
-    if (mpz_cmp (z.get_mpz_t(), ref) != 0)                      \
-      {                                                         \
-        cout << "mpz_class expression wrong: " << expr << "\n"; \
-        cout << "  want:  " << ref << "\n";                     \
-        cout << "  got:   " << z.get_mpz_t() << "\n";           \
-        abort ();                                               \
-      }                                                         \
-  } while (0)
+#define CHECK_GMP(type, message, want)                         \
+  do                                                           \
+    {                                                          \
+      type##_set_str(ref, want, 0);                            \
+      if (type##_cmp(val.get_##type##_t(), ref) != 0)          \
+        {                                                      \
+          cout << "error on " #type "_class expression: "      \
+	       << message << "\n";                             \
+          cout << "  want:  " << ref << "\n";                  \
+          cout << "  got:   " << val.get_##type##_t() << "\n"; \
+          abort();                                             \
+        }                                                      \
+    }                                                          \
+  while (0)
 
-#define CHECK_MPQ(expr, want)                                   \
-  do {                                                          \
-    mpq_set_str (ref, want, 0);                                 \
-    if (mpq_cmp (q.get_mpq_t(), ref) != 0)                      \
-      {                                                         \
-        cout << "mpq_class expression wrong: " << expr << "\n"; \
-        cout << "  want:  " << ref << "\n";                     \
-        cout << "  got:   " << q.get_mpq_t() << "\n";           \
-        abort ();                                               \
-      }                                                         \
-  } while (0)
+#define CHECK_MPZ(expr, want) CHECK_GMP(mpz, expr, want)
+#define CHECK_MPQ(expr, want) CHECK_GMP(mpq, expr, want)
+#define CHECK_MPF(expr, want) CHECK_GMP(mpf, expr, want)
 
-#define CHECK_MPF(expr, want)                                    \
-  do {                                                           \
-    mpf_set_str (ref, want, 10);                                 \
-    if (mpf_cmp (f.get_mpf_t(), ref) != 0)                       \
-      {                                                          \
-        cout << "mpf_class constructor wrong: " << expr << "\n"; \
-        cout << "  want:  " << ref << "\n";                      \
-        cout << "  got:   " << f.get_mpf_t() << "\n";            \
-        abort ();                                                \
-      }                                                          \
-  } while (0)
 
-void
-check_mpz (void)
+void check_mpz(void)
 {
-  mpz_class z, w (1), v (2), u(3);
+  mpz_class val;
   mpz_t ref;
   mpz_init(ref);
 
-  // simple assignments
+  mpz_class z(1), w(2), v(3);
 
-  // mpz_class
-  z = w;
-  CHECK_MPZ ("z = w", "1");
-
-  // int
-  z = -1;
-  CHECK_MPZ ("z = -1", "-1");
-
-  // unsigned long
-  z = 3456789012ul;
-  CHECK_MPZ ("z = 3456789012ul", "3456789012");
-
-  // char *
-  z = "12345678901234567890";
-  CHECK_MPZ ("z = \"12345678901234567890\"", "12345678901234567890");
-
-  // string
-  z = string ("1234567890");
-  CHECK_MPZ ("z = string (\"1234567890\")", "1234567890");
-
-  // compound expressions
+  // unary expressions
 
   // template<class Op>
   // __gmp_expr<__gmpz_value, __gmp_unary_expr<mpz_class, Op> >
-  // [Op = __gmp_unary_minus]
-  z = -w;
-  CHECK_MPZ ("z = -w", "-1");
+  val = +z; CHECK_MPZ("val = +z", "1");
+  val = -w; CHECK_MPZ("val = -w", "-2");
+  val = ~v; CHECK_MPZ("val = ~v", "-4");
+
+  // template <class T, class U, class Op>
+  // __gmp_expr<__gmpz_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  val = -(-z); CHECK_MPZ("val = -(-z)", "1");
+
+  // binary expressions
 
   // template<class Op>
   // __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, mpz_class, Op> >
-  // [Op = __gmp_binary_plus]
-  z = w + v;
-  CHECK_MPZ ("z = w + v", "3");
+  val = z + w; CHECK_MPZ("val = z + w", "3");
+  val = z * v; CHECK_MPZ("val = z * v", "3");
+  val = v % w; CHECK_MPZ("val = v * w", "1");
 
   // template<class T, class Op>
   // __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, T, Op> >
-  // [T = int, Op = __gmp_binary_minus]
-  z = w - 2;
-  CHECK_MPZ ("z = w - 2", "-1");
+  val = z - 3;   CHECK_MPZ("val = z - 3"  , "-2");
+  val = w / 2u;  CHECK_MPZ("val = w / 2u" , "1" );
+  val = v + 4.0; CHECK_MPZ("val = v + 4.0", "7" );
 
   // template<class T, class Op>
   // __gmp_expr<__gmpz_value, __gmp_binary_expr<T, mpz_class, Op> >
-  // [T = int, Op = __gmp_binary_divides]
-  z = 3 / w;
-  CHECK_MPZ ("z = 3 / w", "3");
+  val = 3 / z; CHECK_MPZ("val = 3 / z", "3");
 
   // template<class T, class U, class Op>
   // __gmp_expr
   // <__gmpz_value, __gmp_binary_expr<mpz_class, __gmp_expr<T, U>, Op>
-  // [T = __gmpz_value, U = __gmp_unary_expr<mpz_class, __gmp_unary_minus>,
-  // Op = __gmp_binary_multiplies]
-  z = w * (-v);
-  CHECK_MPZ ("z = w * (-v)", "-2");
+  val = z * (-w); CHECK_MPZ("val = z * (-w)", "-2");
 
   // template<class T, class U, class Op>
-  // __gmp_expr<__gmpz_value,
-  // __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op>
-  // [T = __gmpz_value,
-  // U = __gmp_binary_expr<mpz_class, mpz_class, __gmp_binary_modulus>,
-  // Op = __gmp_binary_plus]
-  z = (w % v) + u;
-  CHECK_MPZ ("z = (w % v) + u", "4");
+  // __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op>
+  val = (z % w) + v; CHECK_MPZ("val = (z % w) + v", "4");
 
   // template<class T, class U, class V, class Op>
   // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op>
-  // [T = __gmpz_value, U = __gmp_unary_expr<mpz_class, __gmp_unary_minus>,
-  // V = int, Op = __gmp_binary_lshift]
-  z = (-w) << 2;
-  CHECK_MPZ ("z = (-w) << 2", "-4");
+  val = (-z) << 2; CHECK_MPZ("val = (-z) << 2", "-4");
 
   // template<class T, class U, class V, class Op>
   // __gmp_expr<__gmpz_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op>
-  // [T = double, U = __gmpz_value,
-  // V = __gmp_binary_expr<mpz_class, mpz_class, __gmp_binary_plus>,
-  // Op = __gmp_binary_divides]
-  z = 6.0 / (w + v);
-  CHECK_MPZ ("z = 6.0 / (w + v)", "2");
+  val = 6.0 / (z + w); CHECK_MPZ("val = 6.0 / (z + w)", "2");
 
   // template<class T, class U, class V, class W, class Op>
   // __gmp_expr
   // <__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op>
-  // [T = __gmpz_value,
-  // U = __gmp_binary_expr<mpz_class, mpz_class, __gmp_binary_minus>,
-  // V = __gmpz_value, W = __gmp_unary_expr<mpz_class, __gmp_unary_minus>,
-  // Op = __gmp_binary_multiplies]
-  z = (w - v) * (-u);
-  CHECK_MPZ ("z = (w - v) * (-u)", "3");
+  val = (z - w) * (-v); CHECK_MPZ("val = (z - w) * (-v)", "3");
+
+  // ternary expressions
+
+  // template<class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<mpz_class, mpz_class, Op1> >, Op2> >
+  val = z + w * v; CHECK_MPZ("val = z + w * v", "7" );
+  val = z - w * v; CHECK_MPZ("val = z - w * v", "-5");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<mpz_class, T, Op1> >, Op2> >
+  val = z + w * 3; CHECK_MPZ("val = z + w * 3", "7" );
+  val = z - w * 3; CHECK_MPZ("val = z - w * 3", "-5");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<T, mpz_class, Op1> >, Op2> >
+  val = z + 2 * v; CHECK_MPZ("val = z + 2 * v", "7" );
+  val = z - 2 * v; CHECK_MPZ("val = z - 2 * v", "-5");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, T>, Op1> >, Op2> >
+  val = z + w * (v + 4); CHECK_MPZ("val = z + w * (v + 4)", "15" );
+  val = z - w * (v + 4); CHECK_MPZ("val = z - w * (v + 4)", "-13");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, mpz_class, Op1> >, Op2> >
+  val = z + (w - 5) * v; CHECK_MPZ("val = z + (w - 5) * v", "-8");
+  val = z - (w - 5) * v; CHECK_MPZ("val = z - (w - 5) * v", "10");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, U, Op1> >, Op2> >
+  val = z + (w + 1) * 2; CHECK_MPZ("val = z + (w + 1) * 2", "7" );
+  val = z - (w + 1) * 2; CHECK_MPZ("val = z - (w + 1) * 2", "-5");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <T, __gmp_expr<__gmpz_value, U>, Op1> >, Op2> >
+  val = z + 2 * (v + 3); CHECK_MPZ("val = z + 2 * (v + 3)", "13" );
+  val = z - 2 * (v + 3); CHECK_MPZ("val = z - 2 * (v + 3)", "-11");
+
+  // template <class T, class U, class Op1, class Op2>
+  // class __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, __gmp_expr<__gmpz_value, U>, Op1> >, Op2> >
+  val = z + (w - 1) * (v + 2); CHECK_MPZ("val = z + (w - 1) * (v + 2)", "6" );
+  val = z - (w - 1) * (v + 2); CHECK_MPZ("val = z - (w - 1) * (v + 2)", "-4");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<mpz_class, mpz_class, Op1> >, Op2> >
+  val = (z + 3) + w * v; CHECK_MPZ("val = (z + 3) + w * v", "10");
+  val = (z + 3) - w * v; CHECK_MPZ("val = (z + 3) - w * v", "-2");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<mpz_class, U, Op1> >, Op2> >
+  val = (z - 2) + w * 4; CHECK_MPZ("val = (z - 2) + w * 4", "7" );
+  val = (z - 2) - w * 4; CHECK_MPZ("val = (z - 2) - w * 4", "-9");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, __gmp_expr
+  // <__gmpz_value, __gmp_binary_expr<U, mpz_class, Op1> >, Op2> >
+  val = (z + 1) + 2 * v; CHECK_MPZ("val = (z + 1) + 2 * v", "8" );
+  val = (z + 1) - 2 * v; CHECK_MPZ("val = (z + 1) - 2 * v", "-4");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, U>, Op1> >, Op2> >
+  val = (z + 2) + w * (v - 2); CHECK_MPZ("val = (z + 2) + w * (v - 2)", "5");
+  val = (z + 2) - w * (v - 2); CHECK_MPZ("val = (z + 2) - w * (v - 2)", "1");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, U>, mpz_class, Op1> >, Op2> >
+  val = (z - 3) + (w + 3) * v;
+  CHECK_MPZ("val = (z - 3) + (w + 3) * v", "13" );
+  val = (z - 3) - (w + 3) * v;
+  CHECK_MPZ("val = (z - 3) - (w + 3) * v", "-17");
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, U>, V, Op1> >, Op2> >
+  val = (z + 1) + (w + 2) * 3;
+  CHECK_MPZ("val = (z + 1) + (w + 2) * 3", "14" );
+  val = (z + 1) - (w + 2) * 3;
+  CHECK_MPZ("val = (z + 1) - (w + 2) * 3", "-10");
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <U, __gmp_expr<__gmpz_value, V>, Op1> >, Op2> >
+  val = (z - 2) + 3 * (v - 4); CHECK_MPZ("val = (z - 2) + 3 * (v - 4)", "-4");
+  val = (z - 2) - 3 * (v - 4); CHECK_MPZ("val = (z - 2) - 3 * (v - 4)", "2" );
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, U>, __gmp_expr<__gmpz_value, V>, Op1> >, Op2> >
+  val = (z + 2) + (w - 3) * (v + 4);
+  CHECK_MPZ("val = (z + 2) + (w - 3) * (v + 4)", "-4");
+  val = (z + 2) - (w - 3) * (v + 4);
+  CHECK_MPZ("val = (z + 2) - (w - 3) * (v + 4)", "10");
+
+  // template <class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<mpz_class, mpz_class, Op1> >, mpz_class, Op2> >
+  val = z * w + v; CHECK_MPZ("val = z * w + v", "5" );
+  val = z * w - v; CHECK_MPZ("val = z * w - v", "-1");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<mpz_class, T, Op1> >, mpz_class, Op2> >
+  val = z * 2 + v; CHECK_MPZ("val = z * 2 + v", "5" );
+  val = z * 2 - v; CHECK_MPZ("val = z * 2 - v", "-1");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<T, mpz_class, Op1> >, mpz_class, Op2> >
+  val = z * w + 3; CHECK_MPZ("val = z * w + 3", "5" );
+  val = z * w - 3; CHECK_MPZ("val = z * w - 3", "-1");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<__gmpz_value, T>, Op1> >, mpz_class, Op2> >
+  val = z * (w + 4) + v; CHECK_MPZ("val = z * (w + 4) + v", "9");
+  val = z * (w + 4) - v; CHECK_MPZ("val = z * (w + 4) - v", "3");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, mpz_class, Op1> >, mpz_class, Op2> >
+  val = (z - 5) * w + v; CHECK_MPZ("val = (z - 5) * w + v", "-5" );
+  val = (z - 5) * w - v; CHECK_MPZ("val = (z - 5) * w - v", "-11");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, T>, U, Op1> >, mpz_class, Op2> >
+  val = (z + 1) * 2 + v; CHECK_MPZ("val = (z + 1) * 2 + v", "7");
+  val = (z + 1) * 2 - v; CHECK_MPZ("val = (z + 1) * 2 - v", "1");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <T, __gmp_expr<__gmpz_value, U>, Op1> >, mpz_class, Op2> >
+  val = 3 * (w - 4) + v; CHECK_MPZ("val = 3 * (w - 4) + v", "-3");
+  val = 3 * (w - 4) - v; CHECK_MPZ("val = 3 * (w - 4) - v", "-9");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, U>, Op1> >, mpz_class, Op2> >
+  val = (z - 2) * (w + 2) + v; CHECK_MPZ("val = (z - 2) * (w + 2) + v", "-1");
+  val = (z - 2) * (w + 2) - v; CHECK_MPZ("val = (z - 2) * (w + 2) - v", "-7");
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, mpz_class, Op1> >, __gmp_expr<__gmpz_value, T>, Op2> >
+  val = z * w + (v - 4); CHECK_MPZ("val = z * w + (v - 4)", "1");
+  val = z * w - (v - 4); CHECK_MPZ("val = z * w - (v - 4)", "3");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <mpz_class, T, Op1> >, __gmp_expr<__gmpz_value, U>, Op2> >
+  val = z * 2 + (v + 3); CHECK_MPZ("val = z * 2 + (v + 3)", "8" );
+  val = z * 2 - (v + 3); CHECK_MPZ("val = z * 2 - (v + 3)", "-4");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <__gmp_expr<__gmpz_value, __gmp_binary_expr
+  // <T, mpz_class, Op1> >, __gmp_expr<__gmpz_value, U>, Op2> >
+  val = 4 * w + (v - 5); CHECK_MPZ("val = 4 * w + (v - 5)", "6" );
+  val = 4 * w - (v - 5); CHECK_MPZ("val = 4 * w - (v - 5)", "10");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<mpz_class, __gmp_expr<__gmpz_value, T>, Op1> >,
+  // __gmp_expr<__gmpz_value, U>, Op2> >
+  val = z * (w - 1) + (v + 1); CHECK_MPZ("val = z * (w - 1) + (v + 1)", "5" );
+  val = z * (w - 1) - (v + 1); CHECK_MPZ("val = z * (w - 1) - (v + 1)", "-3");
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<__gmp_expr<__gmpz_value, T>, mpz_class, Op1> >,
+  // __gmp_expr<__gmpz_value, U>, Op2> >
+  val = (z + 2) * w + (v - 2); CHECK_MPZ("val = (z + 2) * w + (v - 2)", "7");
+  val = (z + 2) * w - (v - 2); CHECK_MPZ("val = (z + 2) * w - (v - 2)", "5");
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<__gmp_expr<__gmpz_value, T>, U, Op1> >,
+  // __gmp_expr<__gmpz_value, V>, Op2> >
+  val = (z + 1) * 2 + (v + 3); CHECK_MPZ("val = (z + 1) * 2 + (v + 3)", "10");
+  val = (z + 1) * 2 - (v + 3); CHECK_MPZ("val = (z + 1) * 2 - (v + 3)", "-2");
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<T, __gmp_expr<__gmpz_value, U>, Op1> >,
+  // __gmp_expr<__gmpz_value, V>, Op2> >
+  val = 3 * (w + 2) + (v - 1); CHECK_MPZ("val = 3 * (w + 2) + (v - 1)", "14");
+  val = 3 * (w + 2) - (v - 1); CHECK_MPZ("val = 3 * (w + 2) - (v - 1)", "10");
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<__gmpz_value,
+  // __gmp_binary_expr<__gmp_expr<__gmpz_value, T>,
+  // __gmp_expr<__gmpz_value, U>, Op1> >, __gmp_expr<__gmpz_value, V>, Op2> >
+  val = (z + 2) * (w - 3) + (v + 4);
+  CHECK_MPZ("val = (z + 2) * (w - 3) + (v + 4)", "4"  );
+  val = (z + 2) * (w - 3) - (v + 4);
+  CHECK_MPZ("val = (z + 2) * (w - 3) - (v + 4)", "-10");
 
   mpz_clear(ref);
 }
 
-void
-check_mpq (void)
+void check_mpq(void)
 {
-  mpq_class q, r ("1/2"), s ("3/4"), t ("5/6");
+  mpq_class val;
   mpq_t ref;
   mpq_init(ref);
 
-  // simple assignments
+  mpq_class q(1, 2), r(3, 4), s(5, 6);
 
-  // mpq_class
-  q = r;
-  CHECK_MPQ ("q = r", "1/2");
-
-  // int
-  q = -1;
-  CHECK_MPQ ("q = -1", "-1");
-
-  // unsigned long
-  q = 3456789012ul;
-  CHECK_MPQ ("q = 3456789012ul", "3456789012");
-
-  // char *
-  q = "12345678901234567890";
-  CHECK_MPQ ("q = \"12345678901234567890\"", "12345678901234567890");
-
-  // string
-  q = string ("1234567890");
-  CHECK_MPQ ("q = string (\"1234567890\")", "1234567890");
-
-  // compound expressions
+  // unary expressions
 
   // template<class Op>
   // __gmp_expr<__gmpq_value, __gmp_unary_expr<mpq_class, Op> >
-  // [Op = __gmp_unary_minus]
-  q = -r;
-  CHECK_MPQ ("q = -r", "-1/2");
+  val = -q; CHECK_MPQ("val = -q", "-1/2");
+
+  // template <class T, class U, class Op>
+  // __gmp_expr<__gmpq_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  val = -(-q); CHECK_MPQ("val = -(-q)", "1/2");
+
+  // binary expressions
 
   // template<class Op>
   // __gmp_expr<__gmpq_value, __gmp_binary_expr<mpq_class, mpq_class, Op> >
-  // [Op = __gmp_binary_plus]
-  q = r + s;
-  CHECK_MPQ ("q = r + s", "5/4");
+  val = q + r; CHECK_MPQ("val = q + r", "5/4");
 
   // template<class T, class Op>
   // __gmp_expr<__gmpq_value, __gmp_binary_expr<mpq_class, T, Op> >
-  // [T = int, Op = __gmp_binary_minus]
-  q = r - 2;
-  CHECK_MPQ ("q = r - 2", "-3/2");
+  val = q - 2; CHECK_MPQ("val = q - 2", "-3/2");
 
   // template<class T, class Op>
   // __gmp_expr<__gmpq_value, __gmp_binary_expr<T, mpq_class, Op> >
-  // [T = int, Op = __gmp_binary_divides]
-  q = 3 / r;
-  CHECK_MPQ ("q = 3 / r", "6");
+  val = 3 / q; CHECK_MPQ("val = 3 / q", "6");
 
   // template<class T, class U, class Op>
   // __gmp_expr
   // <__gmpq_value, __gmp_binary_expr<mpq_class, __gmp_expr<T, U>, Op>
-  // [T = __gmpq_value, U = __gmp_unary_expr<mpq_class, __gmp_unary_minus>,
-  // Op = __gmp_binary_multiplies]
-  q = r * (-s);
-  CHECK_MPQ ("q = r * (-s)", "-3/8");
+  val = q * (-r); CHECK_MPQ("val = q * (-r)", "-3/8");
 
   // template<class T, class U, class Op>
   // __gmp_expr<__gmpq_value,
   // __gmp_binary_expr<__gmp_expr<T, U>, mpq_class, Op>
-  // [T = __gmpq_value,
-  // U = __gmp_binary_expr<mpq_class, mpq_class, __gmp_binary_divides>,
-  // Op = __gmp_binary_plus]
-  q = (r / s) + t;
-  CHECK_MPQ ("q = (r / s) + t", "3/2");
+  val = (q / r) + s; CHECK_MPQ("val = (q / r) + s", "3/2");
 
   // template<class T, class U, class V, class Op>
   // __gmp_expr<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op>
-  // [T = __gmpq_value, U = __gmp_unary_expr<mpq_class, __gmp_unary_minus>,
-  // V = int, Op = __gmp_binary_lshift]
-  q = (-r) << 2;
-  CHECK_MPQ ("q = (-r) << 2", "-2");
+  val = (-q) << 2; CHECK_MPQ("val = (-q) << 2", "-2");
 
   // template<class T, class U, class V, class Op>
   // __gmp_expr<__gmpq_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op>
-  // [T = double, U = __gmpq_value,
-  // V = __gmp_binary_expr<mpq_class, mpq_class, __gmp_binary_plus>,
-  // Op = __gmp_binary_divides]
-  q = 6.0 / (r + s);
-  CHECK_MPQ ("q = 6.0 / (r + s)", "24/5");
+  val = 6.0 / (q + r); CHECK_MPQ("val = 6.0 / (q + r)", "24/5");
 
   // template<class T, class U, class V, class W, class Op>
   // __gmp_expr
   // <__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op>
-  // [T = __gmpq_value,
-  // U = __gmp_binary_expr<mpq_class, mpq_class, __gmp_binary_minus>,
-  // V = __gmpq_value, W = __gmp_unary_expr<mpq_class, __gmp_unary_minus>,
-  // Op = __gmp_binary_multiplies]
-  q = (r - s) * (-t);
-  CHECK_MPQ ("q = (r - s) * (-t)", "5/24");
+  val = (q - r) * (-s); CHECK_MPQ("val = (q - r) * (-s)", "5/24");
 
   mpq_clear(ref);
 }
 
-void
-check_mpf (void)
+void check_mpf(void)
 {
-  mpf_class f, g ("1.0"), h ("0.25"), i ("3e+2");
+  mpf_class val;
   mpf_t ref;
   mpf_init(ref);
 
-  // simple assignments
+  mpf_class f(1.0), g(0.25), h(3e+2);
 
-  // mpf_class
-  f = g;
-  CHECK_MPF ("f = g", "1.0");
-
-  // int
-  f = -1;
-  CHECK_MPF ("f = -1", "-1.0");
-
-  // unsigned long
-  f = 3456789012ul;
-  CHECK_MPF ("f = 3456789012ul", "3456789012.0");
-
-  // char *
-  f = "1234567890";
-  CHECK_MPF ("f = \"1234567890\"", "1234567890.0");
-
-  // string
-  f = string ("123456");
-  CHECK_MPF ("f = string (\"123456\")", "123456");
-
-  // compound expressions
+  // unary expressions
 
   // template<class Op>
   // __gmp_expr<__gmpf_value, __gmp_unary_expr<mpf_class, Op> >
-  // [Op = __gmp_unary_minus]
-  f = -g;
-  CHECK_MPF ("f = -g", "-1.0");
+  val = -f; CHECK_MPF("val = -f", "-1.0");
+
+  // template <class T, class U, class Op>
+  // __gmp_expr<__gmpf_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  val = -(-f); CHECK_MPF("val = -(-f)", "1.0");
+
+  // binary expressions
 
   // template<class Op>
   // __gmp_expr<__gmpf_value, __gmp_binary_expr<mpf_class, mpf_class, Op> >
-  // [Op = __gmp_binary_plus]
-  f = g + h;
-  CHECK_MPF ("f = g + h", "1.25");
+  val = f + g; CHECK_MPF("val = f + g", "1.25");
 
   // template<class T, class Op>
   // __gmp_expr<__gmpf_value, __gmp_binary_expr<mpf_class, T, Op> >
-  // [T = int, Op = __gmp_binary_minus]
-  f = g - 2;
-  CHECK_MPF ("f = g - 2", "-1.0");
+  val = f - 2; CHECK_MPF("val = f - 2", "-1.0");
 
   // template<class T, class Op>
   // __gmp_expr<__gmpf_value, __gmp_binary_expr<T, mpf_class, Op> >
-  // [T = int, Op = __gmp_binary_divides]
-  f = 3 / g;
-  CHECK_MPF ("f = 3 / g", "3.0");
+  val = 3 / f; CHECK_MPF("val = 3 / f", "3.0");
 
   // template<class T, class U, class Op>
   // __gmp_expr
   // <__gmpf_value, __gmp_binary_expr<mpf_class, __gmp_expr<T, U>, Op>
-  // [T = __gmpf_value, U = __gmp_unary_expr<mpf_class, __gmp_unary_minus>,
-  // Op = __gmp_binary_multiplies]
-  f = g * (-h);
-  CHECK_MPF ("f = g * (-h)", "-0.25");
+  val = f * (-g); CHECK_MPF("val = f * (-g)", "-0.25");
 
   // template<class T, class U, class Op>
   // __gmp_expr<__gmpf_value,
   // __gmp_binary_expr<__gmp_expr<T, U>, mpf_class, Op>
-  // [T = __gmpf_value,
-  // U = __gmp_binary_expr<mpf_class, mpf_class, __gmp_binary_divides>,
-  // Op = __gmp_binary_plus]
-  f = (g / h) + i;
-  CHECK_MPF ("f = (g / h) + i", "304.0");
+  val = (f / g) + h; CHECK_MPF("val = (f / g) + h", "304.0");
 
   // template<class T, class U, class V, class Op>
   // __gmp_expr<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op>
-  // [T = __gmpf_value, U = __gmp_unary_expr<mpf_class, __gmp_unary_minus>,
-  // V = int, Op = __gmp_binary_lshift]
-  f = (-g) << 2;
-  CHECK_MPF ("f = (-g) << 2", "-4.0");
+  val = (-f) << 2; CHECK_MPF("val = (-f) << 2", "-4.0");
 
   // template<class T, class U, class V, class Op>
   // __gmp_expr<__gmpqfvalue, __gmp_binary_expr<T, __gmp_expr<U, V>, Op>
-  // [T = double, U = __gmpf_value,
-  // V = __gmp_binary_expr<mpf_class, mpf_class, __gmp_binary_plus>,
-  // Op = __gmp_binary_divides]
-  f = 5.0 / (g + h);
-  CHECK_MPF ("f = 5.0 / (g + h)", "4.0");
+  val = 5.0 / (f + g); CHECK_MPF("val = 5.0 / (f + g)", "4.0");
 
   // template<class T, class U, class V, class W, class Op>
   // __gmp_expr
   // <__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op>
-  // [T = __gmpf_value,
-  // U = __gmp_binary_expr<mpf_class, mpf_class, __gmp_binary_minus>,
-  // V = __gmpf_value, W = __gmp_unary_expr<mpf_class, __gmp_unary_minus>,
-  // Op = __gmp_binary_multiplies]
-  f = (g - h) * (-i);
-  CHECK_MPF ("f = (g - h) * (-i)", "-225.0");
+  val = (f - g) * (-h); CHECK_MPF("val = (f - g) * (-h)", "-225.0");
 
   mpf_clear(ref);
 }
 
 
-int
-main (int argc, char *argv[])
+int main()
 {
-  tests_start ();
+  tests_start();
 
-  check_mpz ();
-  check_mpq ();
-  check_mpf ();
+  check_mpz();
+  check_mpq();
+  check_mpf();
 
-  tests_end ();
-  exit (0);
+  tests_end();
+  return 0;
 }
