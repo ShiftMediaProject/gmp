@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-17  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/random2.c: Add a cast to silence some compilers.
+
 2002-11-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/powm.c: Cap allocation by limiting k to 10 (512 precomputed
