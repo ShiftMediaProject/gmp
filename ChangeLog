@@ -34,6 +34,29 @@ MA 02111-1307, USA.
 	* mpn/powerpc32/addlsh1_n.asm: New file.
 	* mpn/powerpc32/sublsh1_n.asm: New file.
 
+2003-10-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/sparc64/divrem_1.c, mpn/sparc64/mod_1.c: New files.
+	* mpn/sparc64/sparc64.h (HALF_ENDIAN_ADJ, count_leading_zeros_32,
+	invert_half_limb, udiv_qrnnd_half_preinv): New macros.
+
+	* gmp-impl.h (udiv_qrnnd_preinv2): Use a ? : for getting the n1 bit,
+	so as not to depend on signed right shifts being arithmetic.
+
+	* mpn/powerpc32/diveby3.asm: New file.
+
+	* mpn/generic/divrem_1.c: Use CNST_LIMB(0) to avoid warnings from
+	udiv_qrnnd_preinv about shift count when int<long.  Do the same with
+	udiv_qrnnd, for consistency.
+
+	* Makefile.am (install-data-hook): Print a warning recommending "make
+	check" to watch out for compiler bugs.
+
+	* mpn/ia64/README (mpn_lshift, mpn_rshift): Amend prospective itanium2
+	speed, 0.75 c/l with shrp plus shl/shr.
+
+	* mpn/ia64/popcount.asm: Add comment on optimality.
+
 2003-10-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/rsh1aors_n.asm: New file.
