@@ -46,10 +46,12 @@ mpz_mod (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
   if (rem->_mp_size != 0)
     {
       if (dividend->_mp_size < 0)
-	if (divisor->_mp_size < 0)
-	  mpz_sub (rem, rem, divisor);
-	else
-	  mpz_add (rem, rem, divisor);
+	{
+	  if (divisor->_mp_size < 0)
+	    mpz_sub (rem, rem, divisor);
+	  else
+	    mpz_add (rem, rem, divisor);
+	}
     }
 
   TMP_FREE (marker);
