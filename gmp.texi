@@ -7453,7 +7453,7 @@ $$ L_{2k} = L_k^2 - 2(-1)^k $$
 @ifnottex
 
 @example
-L[2k] = = L[k]^2 - 2*(-1)^k
+L[2k] = L[k]^2 - 2*(-1)^k
 @end example
 
 @end ifnottex
