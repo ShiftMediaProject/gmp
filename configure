@@ -2533,7 +2533,7 @@ echo "include_mpn(\`arm/arm-defs.m4')" >> $gmp_tmpconfigm4i
 	gcc_20n_cflags="-g -O2 -mpa-risc-2-0"
         gcc_20n_testlist="sizeof-long-4"
         # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-        cc_20n_cflags="+DA2.0 +e +O3"
+        cc_20n_cflags="+DA2.0 +e +O3 -Wl,+vnocompatwarnings"
         cc_20n_testlist="hpc-hppa-2-0"
         path_20n="pa64"
 	limb_20n=longlong
