@@ -1075,15 +1075,23 @@ GMP_DEFINE_RAW(["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
 
 dnl  GMP_ASM_TEXT
 dnl  ------------
+dnl  .text - is usual.
+dnl  .code - is needed by the hppa on HP-UX (but ia64 HP-UX uses .text)
+dnl  .csect .text[PR] - is for AIX.
 
 AC_DEFUN(GMP_ASM_TEXT,
 [AC_CACHE_CHECK([how to switch to text section],
                 gmp_cv_asm_text,
-[case $host in
-  *-*-aix*)  gmp_cv_asm_text=[".csect .text[PR]"] ;;
-  *-*-hpux*) gmp_cv_asm_text=".code" ;;
-  *)         gmp_cv_asm_text=".text" ;;
-esac
+[for i in ".text" ".code" [".csect .text[PR]"]; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE([	$i],
+    [gmp_cv_asm_text=$i
+     rm -f conftest*
+     break])
+done
+if test -z "$gmp_cv_asm_text"; then
+  AC_MSG_ERROR([Cannot determine text section directive])
+fi
 ])
 echo ["define(<TEXT>, <$gmp_cv_asm_text>)"] >> $gmp_tmpconfigm4
 ])
@@ -1608,8 +1616,7 @@ AC_DEFUN(GMP_ASM_M68K_INSTRUCTION,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([assembler instruction and register style],
 		gmp_cv_asm_m68k_instruction,
-[gmp_cv_asm_m68k_instruction=unknown
-for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
+[for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
   GMP_TRY_ASSEMBLE(
     [	$gmp_cv_asm_text
 	$i],
@@ -1617,13 +1624,16 @@ for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
     rm -f conftest*
     break])
 done
+if test -z "$gmp_cv_asm_m68k_instruction"; then
+  AC_MSG_ERROR([cannot determine assembler instruction and register style])
+fi
 ])
 case $gmp_cv_asm_m68k_instruction in
 "addl d0,d1")    want_dot_size=no;  want_register_percent=no  ;;
 "addl %d0,%d1")  want_dot_size=no;  want_register_percent=yes ;;
 "add.l d0,d1")   want_dot_size=yes; want_register_percent=no  ;;
 "add.l %d0,%d1") want_dot_size=yes; want_register_percent=yes ;;
-*) AC_MSG_ERROR([cannot determine assembler instruction and register style]) ;;
+*) AC_MSG_ERROR([oops, unrecognised instruction and register style]) ;;
 esac
 GMP_DEFINE_RAW(["define(<WANT_REGISTER_PERCENT>, <\`$want_register_percent'>)"])
 GMP_DEFINE_RAW(["define(<WANT_DOT_SIZE>, <\`$want_dot_size'>)"])
@@ -1674,8 +1684,7 @@ AC_DEFUN(GMP_ASM_M68K_BRANCHES,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([assembler shortest branches],
 		gmp_cv_asm_m68k_branches,
-[gmp_cv_asm_m68k_branches=unknown
-for i in jra jbra bra; do
+[for i in jra jbra bra; do
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
 foo$gmp_cv_asm_label_suffix
@@ -1684,10 +1693,10 @@ foo$gmp_cv_asm_label_suffix
   rm -f conftest*
   break])
 done
-])
-if test "$gmp_cv_asm_m68k_branches" = unknown; then
+if test -z "$gmp_cv_asm_m68k_branches"; then
   AC_MSG_ERROR([cannot determine assembler branching style])
 fi
+])
 GMP_DEFINE_RAW(["define(<WANT_BRANCHES>, <\`$gmp_cv_asm_m68k_branches'>)"])
 ])
 
@@ -2531,19 +2540,47 @@ esac
 
 dnl  GMP_PROG_CC_FOR_BUILD
 dnl  ---------------------
-dnl  Find CC_FOR_BUILD, a C compiler for the build system.
+dnl  Establish CC_FOR_BUILD, a C compiler for the build system.
 dnl
-dnl  If CC_FOR_BUILD is set, it's used without testing, likewise $HOST_CC,
-dnl  otherwise some likely candidates are tried, as per configfsf.guess.
-dnl
-dnl  HOST_CC is the old name for what's now normally CC_FOR_BUILD.  HOST_CC
-dnl  is tested in case the user has set that name.  HOST_CC is established
-dnl  in the output for use by libtool in some configurations when generating
-dnl  Windows DLLs (the impgen.c program).
+dnl  If CC_FOR_BUILD is set, it's used without testing, likewise the old
+dnl  style HOST_CC, otherwise some likely candidates are tried, as per
+dnl  configfsf.guess.
 
 AC_DEFUN(GMP_PROG_CC_FOR_BUILD,
-[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
-AC_REQUIRE([AC_PROG_CC])
+[AC_REQUIRE([AC_PROG_CC])
+if test -n "$CC_FOR_BUILD"; then
+  GMP_PROG_CC_FOR_BUILD_WORKS($CC_FOR_BUILD,,
+    [AC_MSG_ERROR([Specified CC_FOR_BUILD doesn't seem to work])])
+elif test -n "$HOST_CC"; then
+  GMP_PROG_CC_FOR_BUILD_WORKS($HOST_CC,
+    [CC_FOR_BUILD=$HOST_CC],
+    [AC_MSG_ERROR([Specified HOST_CC doesn't seem to work])])
+else
+  for i in "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
+    GMP_PROG_CC_FOR_BUILD_WORKS($i,
+      [CC_FOR_BUILD=$i
+       break])
+  done
+  if test -z "$CC_FOR_BUILD"; then
+    AC_MSG_ERROR([Cannot find a build system compiler])
+  fi
+fi
+    
+AC_ARG_VAR(CC_FOR_BUILD,[build system C compiler])
+AC_SUBST(CC_FOR_BUILD)
+])
+
+
+dnl  GMP_PROG_CC_FOR_BUILD_WORKS(cc/cflags[,[action-if-good][,action-if-bad]])
+dnl  -------------------------------------------------------------------------
+dnl  See if the given cc/cflags works on the build system.
+dnl
+dnl  It seems easiest to just use the default compiler output, rather than
+dnl  figuring out the .exe or whatever at this stage.
+
+AC_DEFUN(GMP_PROG_CC_FOR_BUILD_WORKS,
+[AC_MSG_CHECKING([build system compiler $1])
+rm -f conftest* a.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
 main ()
@@ -2551,39 +2588,32 @@ main ()
   exit(0);
 }
 EOF
-found=no
-for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
-  if test -z "$i"; then
-    continue
+gmp_compile="$1 conftest.c"
+cc_for_build_works=no
+if AC_TRY_EVAL(gmp_compile); then
+  if (./a.out || ./a.exe || ./a_out.exe || ./conftest) >&AC_FD_CC 2>&1; then
+    cc_for_build_works=yes
   fi
-  AC_MSG_CHECKING([build system compiler $i])
-  gmp_compile="$i conftest.c"
-  if AC_TRY_EVAL(gmp_compile); then
-    if (./a.out || ./a.exe || ./a_out.exe) >&AC_FD_CC 2>&1; then
-      AC_MSG_RESULT([yes])
-      found=yes
-      break
-    fi
-  fi
-  AC_MSG_RESULT([no])
-
-  # no more probing if a user specified compiler didnt work
-  if test -n "$CC_FOR_BUILD" || test -n "$HOST_CC"; then
-    break
-  fi
-done
+fi
 rm -f conftest* a.out a.exe a_out.exe
-
-if test $found = no; then
-  AC_MSG_ERROR([Cannot find a build system compiler])
+AC_MSG_RESULT($cc_for_build_works)
+if test "$cc_for_build_works" = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
 fi
+])
 
-AC_ARG_VAR(CC_FOR_BUILD,[build system C compiler])
-if test -z "$CC_FOR_BUILD"; then
-  AC_SUBST(CC_FOR_BUILD,$i)
-fi
+
+dnl  GMP_PROG_HOST_CC
+dnl  ----------------
+dnl  Establish a value for $HOST_CC.
+
+AC_DEFUN(GMP_PROG_HOST_CC,
+[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
+AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
 if test -z "$HOST_CC"; then
-  HOST_CC=$i
+  HOST_CC=$CC_FOR_BUILD
 fi
 ])
 
@@ -2596,13 +2626,10 @@ dnl  CC_FOR_BUILD.
 
 AC_DEFUN(GMP_PROG_CPP_FOR_BUILD,
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
-AC_CACHE_CHECK([for build system preprocessor],
-               gmp_cv_prog_cpp_for_build,
-[gmp_cv_prog_cpp_for_build="no"
-if test -n "$CPP_FOR_BUILD"; then
-  gmp_cv_prog_cpp_for_build=$CPP_FOR_BUILD
-else
-  cat >conftest.c <<EOF
+AC_MSG_CHECKING([for build system preprocessor])
+if test -z "$CPP_FOR_BUILD"; then
+  AC_CACHE_VAL(gmp_cv_prog_cpp_for_build,
+  [cat >conftest.c <<EOF
 #define FOO BAR
 EOF
   for i in "$CC_FOR_BUILD -E" "$CC_FOR_BUILD -E -traditional-cpp" "/lib/cpp"; do
@@ -2613,29 +2640,29 @@ EOF
     fi
   done
   rm -f conftest* a.out a.exe a_out.exe
+  if test -z "$gmp_cv_prog_cpp_for_build"; then
+    AC_MSG_ERROR([Cannot find build system C preprocessor.])
+  fi
+  ])
+  CPP_FOR_BUILD=$gmp_cv_prog_cpp_for_build
 fi
-])
-if test "$gmp_cv_prog_cpp_for_build" = "no"; then
-  AC_MSG_ERROR([Cannot find build system C preprocessor.])
-fi
-AC_ARG_VAR(CPP_FOR_BUILD,[build system C preprocessor])
-if test -z "$CPP_FOR_BUILD"; then
-  AC_SUBST(CPP_FOR_BUILD,$gmp_cv_prog_cpp_for_build)
-fi
-])
+AC_MSG_RESULT([$CPP_FOR_BUILD])
 
+AC_ARG_VAR(CPP_FOR_BUILD,[build system C preprocessor])
+AC_SUBST(CPP_FOR_BUILD)
+])
 
 
 dnl  GMP_PROG_EXEEXT_FOR_BUILD
 dnl  -------------------------
 dnl  Determine EXEEXT_FOR_BUILD, the build system executable suffix.
 dnl
-dnl  If a program "conftest.exe" can be run with "./conftest" then assume
-dnl  ".exe" is the correct suffix.
-dnl
-dnl  Autoconf has some hairier tests in _AC_COMPILER_EXEEXT_DEFAULT, based
-dnl  on the default compiler output a.out, a.exe, a_out.exe or whatever.
-dnl  But are there any systems that aren't either .exe or nothing?
+dnl  The idea is to find what "-o conftest$foo" will make it possible to run
+dnl  the program with ./conftest.  On Unix-like systems this is of course
+dnl  nothing, for DOS it's ".exe", or for a strange RISC OS foreign file
+dnl  system cross compile it can be ",ff8" apparently.  Not sure if the
+dnl  latter actually applies to a build-system executable, maybe it doesn't,
+dnl  but it won't hurt to try.
 
 AC_DEFUN(GMP_PROG_EXEEXT_FOR_BUILD,
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
@@ -2648,15 +2675,17 @@ main ()
   exit (0);
 }
 EOF
-gmp_compile="$CC_FOR_BUILD conftest.c -o conftest.exe"
-if AC_TRY_EVAL(gmp_compile); then
-  if (./conftest) 2>&AC_FD_CC; then
-    gmp_cv_prog_exeext_for_build=".exe"
-  else
-    gmp_cv_prog_exeext_for_build=
+for i in .exe ,ff8 ""; do
+  gmp_compile="$CC_FOR_BUILD conftest.c -o conftest$i"
+  if AC_TRY_EVAL(gmp_compile); then
+    if (./conftest) 2>&AC_FD_CC; then
+      gmp_cv_prog_exeext_for_build=$i
+      break
+    fi
   fi
-else
-  AC_MSG_ERROR([Oops, CC_FOR_BUILD doesnt work])
+done
+if test "${gmp_cv_prog_exeext_for_build+set}" != set; then
+  AC_MSG_ERROR([Cannot determine executable suffix])
 fi
 ])
 AC_SUBST(EXEEXT_FOR_BUILD,$gmp_cv_prog_exeext_for_build)
