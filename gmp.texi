@@ -484,6 +484,7 @@ probably a good idea to glance through it.
 @chapter Installing GMP
 @cindex Installing GMP
 @cindex Configuring GMP
+@cindex Building GMP
 
 @noindent
 GMP has an autoconf/automake/libtool based configuration system.  On a
@@ -1200,6 +1201,8 @@ dependent.
 @node Notes for Particular Systems, Known Build Problems, Notes for Package Builds, Installing GMP
 @section Notes for Particular Systems
 @cindex Build notes for particular systems
+@cindex Particular systems
+@cindex Systems
 @table @asis
 
 @c This section is more or less meant for notes about performance or about
@@ -2093,6 +2096,23 @@ or detect memory not released.  In a normal build, on the other hand,
 temporary memory is allocated in blocks which GMP divides up for its own use,
 or may be allocated with a compiler builtin @code{alloca} which will go
 nowhere near any malloc debugger hooks.
+
+@item Checker
+The checker program (@uref{http://savannah.gnu.org/projects/checker}) can be
+used with GMP.  It contains a stub library which means GMP applications
+compiled with checker can use a normal GMP build.
+
+A build of GMP with checking within GMP itself can be made.  This will run
+very very slowly.  Configure with
+
+@example
+./configure --host=none-pc-linux-gnu CC=checkergcc
+@end example
+
+@samp{--host=none} must be used, since the GMP assembler code doesn't support
+the checking scheme.  The GMP C++ features cannot be used, since current
+versions of checker (0.9.9.1) don't yet support the standard C++ library.
+
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -3664,8 +3684,8 @@ Here is an example on how to initialize floating-point variables:
 @example
 @{
   mpf_t x, y;
-  mpf_init (x);			/* use default precision */
-  mpf_init2 (y, 256);		/* precision @emph{at least} 256 bits */
+  mpf_init (x);           /* use default precision */
+  mpf_init2 (y, 256);     /* precision @emph{at least} 256 bits */
   @dots{}
   /* Unless the program is about to exit, do ... */
   mpf_clear (x);
@@ -6189,19 +6209,18 @@ The inputs @ma{x} and @ma{y} are treated as each split into two parts of equal
 length (or the most significant part one limb shorter if N is odd).
 
 @tex
-\global\newdimen\GMPboxwidth \GMPboxwidth=5em
-\global\newdimen\GMPboxheight \GMPboxheight=3ex
+% GMPboxwidth used for all the multiplication pictures
+\global\newdimen\GMPboxwidth \global\GMPboxwidth=5em
+% GMPboxdepth and GMPboxheight are also used for the float pictures
+\global\newdimen\GMPboxdepth  \global\GMPboxdepth=1ex
+\global\newdimen\GMPboxheight \global\GMPboxheight=2ex
+\gdef\GMPvrule{\vrule height \GMPboxheight depth \GMPboxdepth}
 \def\GMPbox#1#2{%
   \vbox {%
     \hrule
-    \hbox{%
-      \vrule height 2ex depth 1ex
-      \hbox to \GMPboxwidth {\hfil\hbox{$#1$}\hfil}%
-      \vrule
-      \hbox to \GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
-      \vrule}
-    \hrule
-}}
+    \hbox to 2\GMPboxwidth{%
+      \GMPvrule \hfil $#1$\hfil \vrule \hfil $#2$\hfil \vrule}%
+    \hrule}}
 \GMPdisplay{%
 \vbox{%
   \hbox to 2\GMPboxwidth {high \hfil low}
@@ -6210,10 +6229,6 @@ length (or the most significant part one limb shorter if N is odd).
   \vskip 0.5ex
   \GMPbox{y_1}{y_0}
 }}
-%}
-%\moveright \lispnarrowing 
-%\vskip 0.5 ex
-%\vskip 0.5 ex
 @end tex
 @ifnottex
 @example
@@ -6247,29 +6262,26 @@ multiplies of (N/2)@cross{}(N/2).  The factors @ma{(b^2+b)} etc represent the
 positions where the three products must be added.
 
 @tex
-\global\newdimen\GMPboxwidth \GMPboxwidth=5em
-\global\newdimen\GMPboxheight \GMPboxheight=3ex
 \def\GMPboxA#1#2{%
-  \vbox to \GMPboxheight{%
-    \hrule \vfil
+  \vbox{%
+    \hrule
     \hbox{%
-      \strut \vrule
+      \GMPvrule
       \hbox to 2\GMPboxwidth {\hfil\hbox{$#1$}\hfil}%
       \vrule
       \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
       \vrule}
-    \vfil \hrule}}
+    \hrule}}
 \def\GMPboxB#1#2{%
   \hbox{%
-    \vbox to \GMPboxheight{%
-      \vfil \hbox to \GMPboxwidth {\hfil #1} \vfil }
-    \vbox to \GMPboxheight{%
-      \hrule \vfil
+    \raise \GMPboxdepth \hbox to \GMPboxwidth {\hfil #1\hskip 0.5em}%
+    \vbox{%
+      \hrule
       \hbox{%
-        \strut \vrule
-        \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}
-        \vrule}
-      \vfil \hrule}}}
+        \GMPvrule
+        \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
+        \vrule}%
+      \hrule}}}
 \GMPdisplay{%
 \vbox{%
   \hbox to 4\GMPboxwidth {high \hfil low}
@@ -6356,22 +6368,18 @@ calculation after Theorem A.  The 3-way form used in GMP is described here.
 The operands are each considered split into 3 pieces of equal length (or the
 most significant part 1 or 2 limbs shorter than the others).
 
-@iftex
-@global@newdimen@GMPboxwidth @GMPboxwidth=5em
-@global@newdimen@GMPboxheight @GMPboxheight=3ex
-@end iftex
 @tex
 \def\GMPbox#1#2#3{%
-  \vbox to \GMPboxheight{%
+  \vbox{%
     \hrule \vfil
-    \hbox{%
-      \strut \vrule
-      \hbox to \GMPboxwidth {\hfil\hbox{$#1$}\hfil}%
+    \hbox to 3\GMPboxwidth {%
+      \GMPvrule
+      \hfil$#1$\hfil
       \vrule
-      \hbox to \GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
+      \hfil$#2$\hfil
       \vrule
-      \hbox to \GMPboxwidth {\hfil\hbox{$#3$}\hfil}%
-      \vrule}
+      \hfil$#3$\hfil
+      \vrule}%
     \vfil \hrule
 }}
 \GMPdisplay{%
@@ -6433,17 +6441,17 @@ be an addition like,
 @tex
 \def\GMPbox#1#2{%
   \moveright #1\GMPboxwidth
-  \vbox to \GMPboxheight{%
-    \hrule \vfil
+  \vbox{%
+    \hrule
     \hbox{%
-      \strut \vrule
-      \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
-      \vrule}
-    \vfil \hrule
+      \GMPvrule
+      \hbox to 2\GMPboxwidth {\hfil$#2$\hfil}%
+      \vrule}%
+    \hrule
 }}
 \GMPdisplay{%
 \vbox{%
-  \hbox to 6\GMPboxwidth {high \hfil low}
+  \hbox to 6\GMPboxwidth {high \hfil low}%
   \vskip 0.7ex
   \GMPbox{0}{w_4}
   \vskip 0.5ex
@@ -6556,38 +6564,35 @@ addition then is as follows.
 
 @tex
 \def\GMPboxT#1{%
-  \vbox to \GMPboxheight{%
+  \vbox{%
     \hrule
-    \hbox {\strut \vrule{} #1 \vrule}%
+    \hbox {\GMPvrule\hskip 0.4em #1\hskip 0.4em \vrule}%
     \hrule
 }}
 \GMPdisplay{%
-\advance\baselineskip by 1ex
 \vbox{%
-  \hbox to 6\GMPboxwidth {high \hfil low}
-  \vbox to \GMPboxheight{%
-    \hrule \vfil
+  \hbox to 6\GMPboxwidth {high \hfil low}%
+  \vskip 0.7ex
+  \vbox{%
+    \hrule
     \hbox{%
-      \strut \vrule
+      \GMPvrule
       \hbox to 2\GMPboxwidth {\hfil@code{E}\hfil}
       \vrule
       \hbox to 2\GMPboxwidth {\hfil@code{C}\hfil}
       \vrule
       \hbox to 2\GMPboxwidth {\hfil@code{A}\hfil}
+      \vrule}%
+    \hrule}%
+  \vskip 0.5ex
+  \moveright \GMPboxwidth \vbox{%
+    \hrule
+    \hbox to 4\GMPboxwidth {%
+      \GMPvrule \hfil @code{D}\hfil
+      \vrule \hfil @code{B}\hfil
       \vrule}
-    \vfil \hrule
-  }%
-  \moveright \GMPboxwidth
-  \vbox to \GMPboxheight{%
-    \hrule \vfil
-    \hbox{%
-      \strut \vrule
-      \hbox to 2\GMPboxwidth {\hfil@code{D}\hfil}
-      \vrule
-      \hbox to 2\GMPboxwidth {\hfil@code{B}\hfil}
-      \vrule}
-    \vfil \hrule
-  }%
+    \hrule}%
+  \vskip 0.5ex
   \hbox{%
     \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tD}}}%
     \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tC}}}%
@@ -6805,6 +6810,13 @@ root exists for plain integers.  Going to complex integers with
 form it takes three real multiplies to do a complex multiply.  The existence
 of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets the fast
 fourier transform keep splitting and get to @m{O(N \log r), O(N*log(r))}.
+
+Floating point FFTs use complex numbers approximating Nth roots of unity.
+Some processors have special support for such FFTs.  But these are not used in
+GMP since it's very difficult to guarantee an exact result (to some number of
+bits).  An occasional difference of 1 in the last bit might not matter to a
+typical signal processing algorithm, but is of course of vital importance to
+GMP.
 
 
 @node Division Algorithms, Greatest Common Divisor Algorithms, Multiplication Algorithms, Algorithms
@@ -7692,23 +7704,204 @@ prefetching, since reading past the end of an operand must be avoided.
 @subsection Floating Point
 
 Floating point arithmetic is used in GMP for multiplications on CPUs with poor
-integer multipliers.  Floating point generally doesn't suit other operations
-like additions or shifts, due to difficulties implementing carry handling.
+integer multipliers.  It's mostly useful for @code{mpn_mul_1},
+@code{mpn_addmul_1} and @code{mpn_submul_1} on 64-bit machines, and
+@code{mpn_mul_basecase} on both 32-bit and 64-bit machines.
 
 With IEEE 53-bit double precision floats, integer multiplications producing up
-to 53 bits will give exact results.  Breaking a multiplication into
-16@cross{}@ma{32@rightarrow{}48} bit pieces is convenient.  With some care
-though three 21@cross{}@ma{32@rightarrow{}53} bit products can be used to do a
-64@cross{}32 multiply, if one of those 21@cross{}32 parts uses the sign bit.
+to 53 bits will give exact results.  Breaking a 64@cross{}64 multiplication
+into eight 16@cross{}@ma{32@rightarrow{}48} bit pieces is convenient.  With
+some care though six 21@cross{}@ma{32@rightarrow{}53} bit products can be
+used, if one of the lower two 21-bit pieces also uses the sign bit.
 
-Generally limbs want to be treated as unsigned, but on some CPUs floating
-point conversions only treat integers as signed.  Copying through a zero
-extended memory region or testing and adjusting for a sign bit may be
-necessary.
+For the @code{mpn_mul_1} family of functions on a 64-bit machine, the
+invariant single limb is split at the start, into 3 or 4 pieces.  Inside the
+loop, the bignum operand is split into 32-bit pieces.  Fast conversion of
+these unsigned 32-bit pieces to floating point is highly machine-dependent.
+In some cases, reading the data into the integer unit, zero-extending to
+64-bits, then transferring to the floating point unit back via memory is the
+only option.
 
-Currently floating point FFTs aren't used for large multiplications.  On some
-processors they probably have a good chance of being worthwhile, if great care
-is taken with precision control.
+Converting partial products back to 64-bit limbs is usually best done as a
+signed conversion.  Since all values are smaller than @m{2^{53},2^53}, signed
+and unsigned are the same, but most processors lack unsigned conversions.
+
+@sp 2
+
+Here is a diagram showing 16@cross{}32 bit products for an @code{mpn_mul_1} or
+@code{mpn_addmul_1} with a 64-bit limb.  The single limb operand V is split
+into four 16-bit parts.  The multi-limb operand U is split in the loop into
+two 32-bit parts.
+
+@tex
+\global\newdimen\GMPbits      \global\GMPbits=0.18em
+\def\GMPbox#1#2#3{%
+  \hbox{%
+    \hbox to 128\GMPbits{\hfil
+      \vbox{%
+        \hrule
+        \hbox to 48\GMPbits {\GMPvrule \hfil$#2$\hfil \vrule}%
+        \hrule}%
+      \hskip #1\GMPbits}%
+    \raise \GMPboxdepth \hbox{\hskip 2em #3}}}
+%
+\GMPdisplay{%
+  \vbox{%
+    \hbox{%
+      \hbox to 128\GMPbits {\hfil
+        \vbox{%
+          \hrule
+          \hbox to 64\GMPbits{%
+            \GMPvrule \hfil$v48$\hfil
+            \vrule    \hfil$v32$\hfil
+            \vrule    \hfil$v16$\hfil
+            \vrule    \hfil$v00$\hfil
+            \vrule}
+          \hrule}}%
+       \raise \GMPboxdepth \hbox{\hskip 2em V Operand}}
+    \vskip 0.5ex
+    \hbox{%
+      \hbox to 128\GMPbits {\hfil
+        \raise \GMPboxdepth \hbox{$\times$\hskip 1.5em}%
+        \vbox{%
+          \hrule
+          \hbox to 64\GMPbits {%
+            \GMPvrule \hfil$u32$\hfil
+            \vrule \hfil$u00$\hfil
+            \vrule}%
+          \hrule}}%
+       \raise \GMPboxdepth \hbox{\hskip 2em U Operand (one limb)}}%
+    \vskip 0.5ex
+    \hbox{\vbox to 2ex{\hrule width 128\GMPbits}}%
+    \GMPbox{0}{u00 \times v00}{$p00$\hskip 1.5em 48-bit products}%
+    \vskip 0.5ex
+    \GMPbox{16}{u00 \times v16}{$p16$}
+    \vskip 0.5ex
+    \GMPbox{32}{u00 \times v32}{$p32$}
+    \vskip 0.5ex
+    \GMPbox{48}{u00 \times v48}{$p48$}
+    \vskip 0.5ex
+    \GMPbox{32}{u32 \times v00}{$r32$}
+    \vskip 0.5ex
+    \GMPbox{48}{u32 \times v16}{$r48$}
+    \vskip 0.5ex
+    \GMPbox{64}{u32 \times v32}{$r64$}
+    \vskip 0.5ex
+    \GMPbox{80}{u32 \times v48}{$r80$}
+}}
+@end tex
+@ifnottex
+@example
+@group
+                +---+---+---+---+
+                |v48|v32|v16|v00|    V operand
+                +---+---+---+---+
+
+                +-------+---+---+
+            x   |  u32  |  u00  |    U operand (one limb)
+                +---------------+
+
+---------------------------------
+
+                    +-----------+
+                    | u00 x v00 |    p00    48-bit products
+                    +-----------+
+                +-----------+
+                | u00 x v16 |        p16
+                +-----------+
+            +-----------+
+            | u00 x v32 |            p32
+            +-----------+
+        +-----------+
+        | u00 x v48 |                p48
+        +-----------+
+            +-----------+
+            | u32 x v00 |            r32
+            +-----------+
+        +-----------+
+        | u32 x v16 |                r48
+        +-----------+
+    +-----------+
+    | u32 x v32 |                    r64
+    +-----------+
++-----------+
+| u32 x v48 |                        r80
++-----------+
+@end group
+@end example
+@end ifnottex
+
+@ma{p32} and @ma{r32} can be summed using floating-point addition, and
+likewise @ma{p48} and @ma{r48}.  @ma{p00} and @ma{p16} can be summed with
+@ma{r64} and @ma{r80} from the previous iteration.
+
+For each loop then, four 49-bit quantities are transfered to the integer unit,
+aligned as follows,
+
+@tex
+% GMPbox here should be 49 bits wide, but use 51 to better show p16+r80'
+% crossing into the upper 64 bits.
+\def\GMPbox#1#2#3{%
+  \hbox{%
+    \hbox to 128\GMPbits {%
+      \hfil
+      \vbox{%
+        \hrule
+        \hbox to 51\GMPbits {\GMPvrule \hfil$#2$\hfil \vrule}%
+        \hrule}%
+      \hskip #1\GMPbits}%
+    \raise \GMPboxdepth \hbox{\hskip 1.5em $#3$\hfil}%
+}}
+\newbox\b \setbox\b\hbox{64 bits}%
+\newdimen\bw \bw=\wd\b \advance\bw by 2em
+\newdimen\x \x=128\GMPbits
+\advance\x by -2\bw
+\divide\x by4
+\GMPdisplay{%
+  \vbox{%
+    \hbox to 128\GMPbits {%
+      \GMPvrule
+      \raise 0.5ex \vbox{\hrule \hbox to \x {}}%
+      \hfil 64 bits\hfil
+      \raise 0.5ex \vbox{\hrule \hbox to \x {}}%
+      \vrule
+      \raise 0.5ex \vbox{\hrule \hbox to \x {}}%
+      \hfil 64 bits\hfil
+      \raise 0.5ex \vbox{\hrule \hbox to \x {}}%
+      \vrule}%
+    \vskip 0.7ex
+    \GMPbox{0}{p00+r64'}{i00}
+    \vskip 0.5ex
+    \GMPbox{16}{p16+r80'}{i16}
+    \vskip 0.5ex
+    \GMPbox{32}{p32+r32}{i32}
+    \vskip 0.5ex
+    \GMPbox{48}{p48+r48}{i48}
+}}
+@end tex
+@ifnottex
+@example
+@group
+|-----64bits----|-----64bits----|
+                   +------------+
+                   | p00 + r64' |    i00
+                   +------------+
+               +------------+
+               | p16 + r80' |        i16
+               +------------+
+           +------------+
+           | p32 + r32  |            i32
+           +------------+
+       +------------+
+       | p48 + r48  |                i48
+       +------------+
+@end group
+@end example
+@end ifnottex
+
+The challenge then is to sum these efficiently and add in a carry limb,
+generating a low 64-bit result limb and a high 33-bit carry limb (@ma{i48}
+extends 33 bits into the high half).
 
 
 @node Assembler SIMD Instructions, Assembler Software Pipelining, Assembler Floating Point, Assembler Coding
