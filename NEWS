@@ -19,6 +19,7 @@ Changes between MP version 3.1.1 and 3.2
   mpz_congruent_2exp_p.
 * New Fibonacci function: mpz_fib2_ui.
 * New Lucas number functions: mpz_lucnum_ui, mpz_lucnum2_ui.
+* New mpz_hamdist support for negative operands.
 * New rational functions: mpq_abs, mpq_cmp_si, mpq_div_2exp, mpq_mul_2exp,
   mpq_set_f.
 * New rational I/O: mpq_get_str, mpq_inp_str, mpq_out_str, mpq_set_str.
