@@ -93,9 +93,11 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
+#include <errno.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h> /* for getenv() */
 
 #if HAVE_STDINT_H
@@ -215,7 +217,8 @@ static const int have_cgt = 1;
 #define struct_timespec  struct timespec
 #else
 static const int have_cgt = 0;
-#define clock_gettime(id,ts)  abort()
+#define clock_gettime(id,ts)  (-1)
+#define clock_getres(id,ts)   (-1)
 #define struct_timespec       struct timespec_dummy
 #endif
 #ifdef CLOCK_PROCESS_CPUTIME_ID
@@ -223,6 +226,8 @@ static const int have_cgt = 0;
 #else
 # ifdef CLOCK_VIRTUAL
 #  define CGT_ID  CLOCK_VIRTUAL
+# else
+#  define CGT_ID  -1
 # endif
 #endif
 
@@ -487,9 +492,19 @@ getrusage_microseconds_p (void)
 int
 cgt_works_p (void)
 {
-#if HAVE_CLOCK_GETTIME
   static int  result = -1;
   struct_timespec  unit;
+
+  if (! have_cgt)
+    return 0;
+
+  if (CGT_ID == -1)
+    {
+      if (speed_option_verbose)
+        printf ("clock_gettime don't know what ID to use\n");
+      result = 0;
+      return result;
+    }
 
   if (result != -1)
     return result;
@@ -498,7 +513,7 @@ cgt_works_p (void)
   if (clock_gettime (CGT_ID, &unit) != 0)
     {
       if (speed_option_verbose)
-        printf ("clock_gettime doesn't work\n");
+        printf ("clock_gettime id=%d error: %s\n", CGT_ID, strerror (errno));
       result = 0;
       return result;
     }
@@ -507,7 +522,7 @@ cgt_works_p (void)
   if (clock_getres (CGT_ID, &unit) != 0)
     {
       if (speed_option_verbose)
-        printf ("clock_gettime doesn't work\n");
+        printf ("clock_getres id=%d error: %s\n", CGT_ID, strerror (errno));
       result = 0;
       return result;
     }
@@ -517,10 +532,6 @@ cgt_works_p (void)
           unittime_string (cgt_unittime));
   result = 1;
   return result;
-
-#else
-  return 0;
-#endif
 }
 
 
@@ -529,7 +540,6 @@ cgt_works_p (void)
     if (! (var))        \
       (var) = (n);      \
   } while (0)
-
 
 void
 speed_time_init (void)
