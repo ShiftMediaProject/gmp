@@ -48,7 +48,7 @@ refmpz_combit (mpz_ptr r, unsigned long bit)
 unsigned long
 refmpz_hamdist (mpz_srcptr x, mpz_srcptr y)
 {
-  mp_size_t      tsize;
+  mp_size_t      xsize, ysize, tsize;
   mp_ptr         xp, yp;
   unsigned long  ret;
 
@@ -56,15 +56,17 @@ refmpz_hamdist (mpz_srcptr x, mpz_srcptr y)
       || (SIZ(y) < 0 && SIZ(x) >= 0))
     return ULONG_MAX;
 
-  tsize = MAX (ABSIZ(x), ABSIZ(y));
+  xsize = ABSIZ(x);
+  ysize = ABSIZ(y);
+  tsize = MAX (xsize, ysize);
 
   xp = refmpn_malloc_limbs (tsize);
   refmpn_zero (xp, tsize);
-  refmpn_copy (xp, PTR(x), ABSIZ(x));
-  
+  refmpn_copy (xp, PTR(x), xsize);
+
   yp = refmpn_malloc_limbs (tsize);
   refmpn_zero (yp, tsize);
-  refmpn_copy (yp, PTR(y), ABSIZ(y));
+  refmpn_copy (yp, PTR(y), ysize);
 
   if (SIZ(x) < 0)
     refmpn_neg_n (xp, xp, tsize);
