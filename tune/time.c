@@ -42,8 +42,8 @@ MA 02111-1307, USA.
    gets a default based on the measuring method chosen.
 
    speed_cycletime - the time in seconds for each CPU cycle, for example on
-   a 100 MHz CPU this would be 1.0e-8.  This is 0.0 if the CPU frequency is
-   unknown.
+   a 100 MHz CPU this would be 1.0e-8.  This is 0.0 when uninitialized, or
+   1.0 if the CPU frequency couldn't be determined.
 
 
    speed_endtime() and speed_unittime are normally in seconds, but if a
@@ -329,7 +329,9 @@ clk_tck (void)
 
 
 /* Assume that if a time difference that's non-zero but less than CLK_TCK/2
-   is seen then the routine is microsecond accurate. */
+   is seen then the routine is microsecond accurate.
+
+   FIXME: What if clk_tck() is some big value (like 1000000). */
 
 #define MICROSECONDS_P(name, decl, tv, call)                            \
   do {                                                                  \
