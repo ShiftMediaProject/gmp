@@ -27,30 +27,35 @@ MA 02111-1307, USA. */
 #define UDIV_TIME	2360
 #endif
 
-#define KARATSUBA_MUL_THRESHOLD       90
-#define TOOM3_MUL_THRESHOLD          167
+#define KARATSUBA_MUL_THRESHOLD       87
+#define TOOM3_MUL_THRESHOLD          159
 
 #define KARATSUBA_SQR_THRESHOLD      199
 #define TOOM3_SQR_THRESHOLD          399
 
-#define DC_THRESHOLD                1000 /* failed to determine */
-#define POWM_THRESHOLD               113
+#define SB_PREINV_THRESHOLD            0  /* (preinv always) */
+#define DC_THRESHOLD                 874
+#define POWM_THRESHOLD               257
 
-#define FIB_THRESHOLD                202
+#define FIB_THRESHOLD                200
 
 #define GCD_ACCEL_THRESHOLD            3
-#define GCDEXT_THRESHOLD              27
+#define GCDEXT_THRESHOLD              35
 
-#define DIVREM_1_NORM_THRESHOLD    0  /* (preinv always) */
-#define DIVREM_1_UNNORM_THRESHOLD  0
-#define MOD_1_NORM_THRESHOLD       0
-#define MOD_1_UNNORM_THRESHOLD     0
-#define USE_PREINV_MOD_1           1   /* (preinv always) */
+#define DIVREM_1_NORM_THRESHOLD        0  /* (preinv always) */
+#define DIVREM_1_UNNORM_THRESHOLD      0
+#define MOD_1_NORM_THRESHOLD           0
+#define MOD_1_UNNORM_THRESHOLD         0
+#define USE_PREINV_MOD_1               1  /* (preinv always) */
+#define DIVREM_2_THRESHOLD             0  /* (preinv always) */
+#define MODEXACT_1_ODD_THRESHOLD       0
 
-#define FFT_MUL_TABLE  { 496, 992, 1984, 3840, 9216, 20480, 49152, 0 }
-#define FFT_MODF_MUL_THRESHOLD       232
-#define FFT_MUL_THRESHOLD           1056
+#define FFT_MUL_TABLE  { 336, 672, 1344, 2816, 5120, 12288, 49152, 0 }
+#define FFT_MODF_MUL_THRESHOLD       216
+#define FFT_MUL_THRESHOLD            736
 
-#define FFT_SQR_TABLE  { 1104, 2336, 4928, 9984, 21504, 53248, 0 }
+#define FFT_SQR_TABLE  { 1104, 2336, 5184, 9984, 21504, 45056, 0 }
 #define FFT_MODF_SQR_THRESHOLD       600
-#define FFT_SQR_THRESHOLD           3616
+#define FFT_SQR_THRESHOLD           3488
+
+/* Tuneup completed successfully, took 302 seconds */
