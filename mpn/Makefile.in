@@ -100,9 +100,10 @@ AUTOMAKE_OPTIONS = gnu
 
 CPP = @CPP@
 
-# $top_srcdir is needed for `#include "gmp-impl.h"'.  FIXME?
-# FIXME: Need `-I$(srcdir)' and `-I.'?  Where to find config.h?
-INCLUDES = -I$(top_srcdir)
+# $top_srcdir is needed for `#include "gmp-impl.h"'.
+# Tell multi-function files which function to produce.  (This should be
+# put in DEFS, but then we lose some `-I':s.)
+INCLUDES = -I$(top_srcdir) -DOPERATION_$*
 
 GENERIC_SOURCES = mp_bases.c
 OFILES = @mpn_objects@
@@ -389,15 +390,15 @@ mostlyclean distclean maintainer-clean
 
 # *.m4 are preprocessed with m4.
 .asm.o:
-	$(M4) $< >tmp-$*.s
+	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(COMPILE) -c tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.obj:
 	@echo NIY: Can't build .obj from .asm.  FIXME.
 .asm.lo:
-	$(M4) -DPIC $< >tmp-$*.s
+	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
 	$(LTCOMPILE) -c tmp-$*.s -o $@
-	$(M4) $< >tmp-$*.s
+	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(COMPILE) -c tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
 

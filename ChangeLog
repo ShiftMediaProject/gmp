@@ -1,3 +1,23 @@
+2000-02-21  Linus Nordberg  <linus@swox.se>
+
+	* mpn/x86/k7/aorsmul_1.asm: Change OPERATION_ADDMUL -->
+	OPERATION_addmul_1.  Change OPERATION_SUBMUL -->
+	OPERATION_submul_1.
+
+	* mpn/x86/k7/aors_n.asm: Change OPERATION_ADD --> OPERATION_add_n.
+	Change OPERATION_SUB --> OPERATION_sub_n.
+
+	* mpn/Makefile.am: Pass -DOPERATION_$* to preprocessors.
+	* mpn/Makefile.in: Regenerate.
+
+	* configure.in: Symlink mpn/asm-defs.m4 to build-dir/mpn.  Link
+	multi-function files to mpn/<function>.asm and remove function
+	name from `gmp_mpn_functions'.
+	* configure: Regenerate.
+
+	* acinclude.m4 (GMP_FINISH): Tell user what we're doing.
+	* aclocal.m4: Regenerate.
+
 2000-02-21  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h: Rename __gmpn_mul_basecase to mpn_mul_basecase and
