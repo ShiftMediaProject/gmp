@@ -48,11 +48,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* If MIN (usize, vsize) > ACCEL_THRESHOLD, then the accelerated algorithm is
-   used, otherwise the binary algorithm is used.  This may be adjusted for
-   different architectures.  */
-#ifndef ACCEL_THRESHOLD
-#define ACCEL_THRESHOLD 4
+/* If MIN (usize, vsize) >= GCD_ACCEL_THRESHOLD, then the accelerated
+   algorithm is used, otherwise the binary algorithm is used.  This may be
+   adjusted for different architectures.  */
+#ifndef GCD_ACCEL_THRESHOLD
+#define GCD_ACCEL_THRESHOLD 5
 #endif
 
 /* When U and V differ in size by more than BMOD_THRESHOLD, the accelerated
@@ -65,11 +65,6 @@ enum
 
 #define SIGN_BIT  (~(~(mp_limb_t)0 >> 1))
 
-
-#define SWAP_LIMB(UL, VL) do{mp_limb_t __l=(UL);(UL)=(VL);(VL)=__l;}while(0)
-#define SWAP_PTR(UP, VP) do{mp_ptr __p=(UP);(UP)=(VP);(VP)=__p;}while(0)
-#define SWAP_SZ(US, VS) do{mp_size_t __s=(US);(US)=(VS);(VS)=__s;}while(0)
-#define SWAP_MPN(UP, US, VP, VS) do{SWAP_PTR(UP,VP);SWAP_SZ(US,VS);}while(0)
 
 /* Use binary algorithm to compute V <-- GCD (V, U) for usize, vsize == 2.
    Both U and V must be odd.  */
@@ -172,8 +167,8 @@ find_a (cp)
       if (n1_h > n2_h || (n1_h == n2_h && n1_l >= n2_l))
 	n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
 
-      SWAP_LIMB (n1_h, n2_h);
-      SWAP_LIMB (n1_l, n2_l);
+      MP_LIMB_T_SWAP (n1_h, n2_h);
+      MP_LIMB_T_SWAP (n1_l, n2_l);
     }
 
   return n2_l;
@@ -198,9 +193,9 @@ mpn_gcd (gp, up, usize, vp, vsize)
 
   TMP_MARK (marker);
 
-  /* Use accelerated algorithm if vsize is over ACCEL_THRESHOLD.
+  /* Use accelerated algorithm if vsize is over GCD_ACCEL_THRESHOLD.
      Two EXTRA limbs for U and V are required for kary reduction.  */
-  if (vsize > ACCEL_THRESHOLD)
+  if (vsize >= GCD_ACCEL_THRESHOLD)
     {
       unsigned long int vbitsize, d;
       mp_ptr orig_up = up;
@@ -254,7 +249,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 	  else if (anchor_up != up)
 	    MPN_COPY (anchor_up, up, usize);
 
-	  SWAP_MPN (anchor_up, usize, vp, vsize);
+	  MPN_PTR_SWAP (anchor_up, usize, vp, vsize);
 	  up = anchor_up;
 
 	  if (vsize <= 2)		/* Kary can't handle < 2 limbs and  */
@@ -355,7 +350,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 
 	  /* Keep usize >= vsize.  */
 	  if (usize < vsize)
-	    SWAP_MPN (up, usize, vp, vsize);
+	    MPN_PTR_SWAP (up, usize, vp, vsize);
 
 	  if (usize <= 2)				/* Double precision. */
 	    {
@@ -380,7 +375,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 		size--;
 	      while (up[size] == vp[size]);
 	      if (up[size] < vp[size])			/* usize == vsize.  */
-		SWAP_PTR (up, vp);
+		MP_PTR_SWAP (up, vp);
 	      up += zeros, usize = size + 1 - zeros;
 	      mpn_sub_n (up, up, vp + zeros, usize);
 	    }
