@@ -1,3 +1,9 @@
+2000-02-19  Linus Nordberg  <linus@swox.se>
+
+	* configure.in: Don't try to symlink more than one multi-func
+	file.
+	* configure: Regenerate.
+
 2000-02-18  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_UNDERSCORE): GMP_DEFINE
@@ -7,6 +13,7 @@
 	* aclocal.m4: Regenerate.  
 
 	* configure.in: Don't define GSYM_PREFIX or ALIGN.
+	Add mechanism for multi-function files.
 	* configure: Regenerate.
 
 2000-02-18  Kevin Ryde  <kevin@swox.se>
