@@ -23,7 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static mp_limb_t mpn_neg1 (mp_ptr, mp_size_t);
+static mp_limb_t mpn_neg1 ();
 
 #if 0
 #undef  MPN_NORMALIZE
@@ -190,7 +190,9 @@ mpz_addmul_ui (rz, az, bu)
 }
 
 static mp_limb_t
-mpn_neg1 (mp_ptr rp, mp_size_t rn)
+mpn_neg1 (rp, rn)
+     mp_ptr rp;
+     mp_size_t rn;
 {
   mp_size_t i;
 
