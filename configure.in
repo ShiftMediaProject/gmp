@@ -209,6 +209,8 @@ fi
 # also set here, with an ABI suffix.
 
 
+AC_ARG_VAR(ABI,[intended ABI (for processors supporting more than one ABI)])
+
 # abilist needs to be non-empty, "standard" is just a generic name here
 abilist="standard"
 
