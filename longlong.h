@@ -119,6 +119,7 @@ MA 02111-1307, USA. */
   } while (0)
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
+long __count_leading_zeros ();
 #define count_leading_zeros(count, x) \
   ((count) = __count_leading_zeros (x))
 #endif /* LONGLONG_STANDALONE */
