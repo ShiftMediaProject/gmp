@@ -128,20 +128,20 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -DBERKELEY_MP -D__GMP_WITHIN_GMP -D__gmpz_realloc=_mp_realloc \
-	-I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
+	-I$(top_srcdir)
 
 
-nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c powm.c realloc.c \
-	set.c sqrtrem.c sub.c tdiv_qr.c
-
+# The mpz sources here all know to look for -DBERKELEY_MP to compile to in
+# mpbsd form.
+#
 libmpbsd_la_SOURCES = \
-	itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c
+	itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c		  \
+	../mpz/add.c ../mpz/cmp.c ../mpz/gcd.c ../mpz/mul.c ../mpz/powm.c \
+	../mpz/realloc.c ../mpz/set.c ../mpz/sqrtrem.c ../mpz/sub.c	  \
+	../mpz/tdiv_qr.c
 
 
 @WANT_MPBSD_TRUE@noinst_LTLIBRARIES = libmpbsd.la
-
-CLEANFILES = $(nodist_libmpbsd_la_SOURCES)
 subdir = mpbsd
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -151,12 +151,10 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libmpbsd_la_LDFLAGS =
 libmpbsd_la_LIBADD =
 am_libmpbsd_la_OBJECTS = itom$U.lo mfree$U.lo min$U.lo mout$U.lo \
-	mtox$U.lo rpow$U.lo sdiv$U.lo xtom$U.lo
-nodist_libmpbsd_la_OBJECTS = add$U.lo cmp$U.lo gcd$U.lo mul$U.lo \
-	powm$U.lo realloc$U.lo set$U.lo sqrtrem$U.lo sub$U.lo \
-	tdiv_qr$U.lo
-libmpbsd_la_OBJECTS = $(am_libmpbsd_la_OBJECTS) \
-	$(nodist_libmpbsd_la_OBJECTS)
+	mtox$U.lo rpow$U.lo sdiv$U.lo xtom$U.lo add$U.lo cmp$U.lo \
+	gcd$U.lo mul$U.lo powm$U.lo realloc$U.lo set$U.lo sqrtrem$U.lo \
+	sub$U.lo tdiv_qr$U.lo
+libmpbsd_la_OBJECTS = $(am_libmpbsd_la_OBJECTS)
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -174,7 +172,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libmpbsd_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libmpbsd_la_SOURCES) $(nodist_libmpbsd_la_SOURCES)
+SOURCES = $(libmpbsd_la_SOURCES)
 
 all: all-am
 
@@ -199,6 +197,16 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+add$U.lo: ../mpz/add.c
+cmp$U.lo: ../mpz/cmp.c
+gcd$U.lo: ../mpz/gcd.c
+mul$U.lo: ../mpz/mul.c
+powm$U.lo: ../mpz/powm.c
+realloc$U.lo: ../mpz/realloc.c
+set$U.lo: ../mpz/set.c
+sqrtrem$U.lo: ../mpz/sqrtrem.c
+sub$U.lo: ../mpz/sub.c
+tdiv_qr$U.lo: ../mpz/tdiv_qr.c
 libmpbsd.la: $(libmpbsd_la_OBJECTS) $(libmpbsd_la_DEPENDENCIES) 
 	$(LINK)  $(libmpbsd_la_LDFLAGS) $(libmpbsd_la_OBJECTS) $(libmpbsd_la_LIBADD) $(LIBS)
 
@@ -223,6 +231,96 @@ mostlyclean-kr:
 
 .c.lo:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+add.o: ../mpz/add.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o add.o `test -f ../mpz/add.c || echo '$(srcdir)/'`../mpz/add.c
+
+add.obj: ../mpz/add.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o add.obj `cygpath -w ../mpz/add.c`
+
+add.lo: ../mpz/add.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o add.lo `test -f ../mpz/add.c || echo '$(srcdir)/'`../mpz/add.c
+
+cmp.o: ../mpz/cmp.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cmp.o `test -f ../mpz/cmp.c || echo '$(srcdir)/'`../mpz/cmp.c
+
+cmp.obj: ../mpz/cmp.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cmp.obj `cygpath -w ../mpz/cmp.c`
+
+cmp.lo: ../mpz/cmp.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cmp.lo `test -f ../mpz/cmp.c || echo '$(srcdir)/'`../mpz/cmp.c
+
+gcd.o: ../mpz/gcd.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gcd.o `test -f ../mpz/gcd.c || echo '$(srcdir)/'`../mpz/gcd.c
+
+gcd.obj: ../mpz/gcd.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gcd.obj `cygpath -w ../mpz/gcd.c`
+
+gcd.lo: ../mpz/gcd.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gcd.lo `test -f ../mpz/gcd.c || echo '$(srcdir)/'`../mpz/gcd.c
+
+mul.o: ../mpz/mul.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mul.o `test -f ../mpz/mul.c || echo '$(srcdir)/'`../mpz/mul.c
+
+mul.obj: ../mpz/mul.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mul.obj `cygpath -w ../mpz/mul.c`
+
+mul.lo: ../mpz/mul.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mul.lo `test -f ../mpz/mul.c || echo '$(srcdir)/'`../mpz/mul.c
+
+powm.o: ../mpz/powm.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o powm.o `test -f ../mpz/powm.c || echo '$(srcdir)/'`../mpz/powm.c
+
+powm.obj: ../mpz/powm.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o powm.obj `cygpath -w ../mpz/powm.c`
+
+powm.lo: ../mpz/powm.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o powm.lo `test -f ../mpz/powm.c || echo '$(srcdir)/'`../mpz/powm.c
+
+realloc.o: ../mpz/realloc.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o realloc.o `test -f ../mpz/realloc.c || echo '$(srcdir)/'`../mpz/realloc.c
+
+realloc.obj: ../mpz/realloc.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o realloc.obj `cygpath -w ../mpz/realloc.c`
+
+realloc.lo: ../mpz/realloc.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o realloc.lo `test -f ../mpz/realloc.c || echo '$(srcdir)/'`../mpz/realloc.c
+
+set.o: ../mpz/set.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o set.o `test -f ../mpz/set.c || echo '$(srcdir)/'`../mpz/set.c
+
+set.obj: ../mpz/set.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o set.obj `cygpath -w ../mpz/set.c`
+
+set.lo: ../mpz/set.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o set.lo `test -f ../mpz/set.c || echo '$(srcdir)/'`../mpz/set.c
+
+sqrtrem.o: ../mpz/sqrtrem.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sqrtrem.o `test -f ../mpz/sqrtrem.c || echo '$(srcdir)/'`../mpz/sqrtrem.c
+
+sqrtrem.obj: ../mpz/sqrtrem.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sqrtrem.obj `cygpath -w ../mpz/sqrtrem.c`
+
+sqrtrem.lo: ../mpz/sqrtrem.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sqrtrem.lo `test -f ../mpz/sqrtrem.c || echo '$(srcdir)/'`../mpz/sqrtrem.c
+
+sub.o: ../mpz/sub.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sub.o `test -f ../mpz/sub.c || echo '$(srcdir)/'`../mpz/sub.c
+
+sub.obj: ../mpz/sub.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sub.obj `cygpath -w ../mpz/sub.c`
+
+sub.lo: ../mpz/sub.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sub.lo `test -f ../mpz/sub.c || echo '$(srcdir)/'`../mpz/sub.c
+
+tdiv_qr.o: ../mpz/tdiv_qr.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tdiv_qr.o `test -f ../mpz/tdiv_qr.c || echo '$(srcdir)/'`../mpz/tdiv_qr.c
+
+tdiv_qr.obj: ../mpz/tdiv_qr.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tdiv_qr.obj `cygpath -w ../mpz/tdiv_qr.c`
+
+tdiv_qr.lo: ../mpz/tdiv_qr.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tdiv_qr.lo `test -f ../mpz/tdiv_qr.c || echo '$(srcdir)/'`../mpz/tdiv_qr.c
 add_.c: add.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c || rm -f add_.c
 cmp_.c: cmp.c $(ANSI2KNR)
@@ -344,7 +442,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
@@ -403,36 +500,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
-
-add.c: $(top_srcdir)/mpz/aors.c
-	cp $(top_srcdir)/mpz/aors.c add.c
-
-cmp.c: $(top_srcdir)/mpz/cmp.c
-	cp $(top_srcdir)/mpz/cmp.c cmp.c
-
-gcd.c: $(top_srcdir)/mpz/gcd.c
-	cp $(top_srcdir)/mpz/gcd.c gcd.c
-
-mul.c: $(top_srcdir)/mpz/mul.c
-	cp $(top_srcdir)/mpz/mul.c mul.c
-
-powm.c: $(top_srcdir)/mpz/powm.c
-	cp $(top_srcdir)/mpz/powm.c powm.c
-
-realloc.c: $(top_srcdir)/mpz/realloc.c
-	cp $(top_srcdir)/mpz/realloc.c realloc.c
-
-set.c: $(top_srcdir)/mpz/set.c
-	cp $(top_srcdir)/mpz/set.c set.c
-
-sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
-	cp $(top_srcdir)/mpz/sqrtrem.c sqrtrem.c
-
-sub.c: $(top_srcdir)/mpz/aors.c
-	cp $(top_srcdir)/mpz/aors.c sub.c
-
-tdiv_qr.c: $(top_srcdir)/mpz/tdiv_qr.c
-	cp $(top_srcdir)/mpz/tdiv_qr.c tdiv_qr.c
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
