@@ -22,6 +22,7 @@ MA 02111-1307, USA.
 
 	* gen-psqr.c (print): Add CNST_LIMB in PERFSQR_MOD_TEST, for benefit
 	of K&R.
+	* tests/mpn/t-perfsqr.c (PERFSQR_MOD_1): Use CNST_LIMB for K&R.
 
 	* doc/configuration (Configure): Remove mkinstalldirs, no longer used.
 
