@@ -8,11 +8,8 @@
    to a real mpn routine being compared.  */
 
 /* always do assertion checking */
-#ifdef NDEBUG
-#undef NDEBUG
-#endif
+#define DEBUG  1
 
-#include <assert.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -53,11 +50,11 @@ mp_ptr
 refmpn_malloc_limbs (mp_size_t size)
 {
   mp_ptr  p;
-  assert (size >= 0);
+  ASSERT (size >= 0);
   if (size == 0)
     size = 1;
   p = malloc (size * BYTES_PER_MP_LIMB);
-  assert (p != NULL);
+  ASSERT (p != NULL);
   return p;
 }
 
@@ -74,7 +71,7 @@ void
 refmpn_fill (mp_ptr ptr, mp_size_t size, mp_limb_t value)
 {
   mp_size_t  i;
-  assert (size >= 0);
+  ASSERT (size >= 0);
   for (i = 0; i < size; i++)
     ptr[i] = value;
 }
@@ -85,8 +82,8 @@ refmpn_copyi (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 {
   mp_size_t i;
 
-  assert (refmpn_overlap_low_to_high_p (rp, sp, size));
-  assert (size >= 0);
+  ASSERT (refmpn_overlap_low_to_high_p (rp, sp, size));
+  ASSERT (size >= 0);
 
   for (i = 0; i < size; i++)
     rp[i] = sp[i];
@@ -97,8 +94,8 @@ refmpn_copyd (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 {
   mp_size_t i;
 
-  assert (refmpn_overlap_high_to_low_p (rp, sp, size));
-  assert (size >= 0);
+  ASSERT (refmpn_overlap_high_to_low_p (rp, sp, size));
+  ASSERT (size >= 0);
 
   for (i = size-1; i >= 0; i--)
     rp[i] = sp[i];
@@ -109,8 +106,8 @@ refmpn_com_n (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 {
   mp_size_t i;
 
-  assert (refmpn_overlap_fullonly_p (rp, sp, size));
-  assert (size >= 1);
+  ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));
+  ASSERT (size >= 1);
 
   for (i = 0; i < size; i++)
     rp[i] = ~sp[i];
@@ -128,7 +125,7 @@ refmpn_cmp (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 
   mp_size_t  i;
 
-  assert (size >= 1);
+  ASSERT (size >= 1);
 
   for (i = size-1; i >= 0; i--)
     COMPARE (s1p[i], s2p[i]);
@@ -142,8 +139,8 @@ refmpn_cmp (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
   {                                                                     \
     mp_size_t  i;                                                       \
                                                                         \
-    assert (refmpn_overlap_fullonly_two_p (rp, s1p, s2p, size));        \
-    assert (size >= 1);                                                 \
+    ASSERT (refmpn_overlap_fullonly_two_p (rp, s1p, s2p, size));        \
+    ASSERT (size >= 1);                                                 \
                                                                         \
     for (i = 0; i < size; i++)                                          \
       rp[i] = operation;                                                \
@@ -179,7 +176,7 @@ mp_limb_t
 adc (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
 {
   mp_limb_t  r;
-  assert (c == 0 || c == 1);
+  ASSERT (c == 0 || c == 1);
   r = add (w, x, y);
   return r + add (w, *w, c);
 }
@@ -189,7 +186,7 @@ mp_limb_t
 sbb (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
 {
   mp_limb_t  r;
-  assert (c == 0 || c == 1);
+  ASSERT (c == 0 || c == 1);
   r = sub (w, x, y);
   return r + sub (w, *w, c);
 }
@@ -201,8 +198,8 @@ sbb (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
   {                                                                     \
     mp_limb_t  i;                                                       \
                                                                         \
-    assert (refmpn_overlap_fullonly_p (rp, sp, size));                  \
-    assert (size >= 1);                                                 \
+    ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));                  \
+    ASSERT (size >= 1);                                                 \
                                                                         \
     for (i = 0; i < size; i++)                                          \
       n = operation (&rp[i], sp[i], n);                                 \
@@ -219,9 +216,9 @@ AORS_1 (refmpn_sub_1, sub)
   {                                                                     \
     mp_size_t  i;                                                       \
                                                                         \
-    assert (refmpn_overlap_fullonly_two_p (rp, s1p, s2p, size));        \
-    assert (carry == 0 || carry == 1);                                  \
-    assert (size >= 1);                                                 \
+    ASSERT (refmpn_overlap_fullonly_two_p (rp, s1p, s2p, size));        \
+    ASSERT (carry == 0 || carry == 1);                                  \
+    ASSERT (size >= 1);                                                 \
                                                                         \
     for (i = 0; i < size; i++)                                          \
       carry = operation (&rp[i], s1p[i], s2p[i], carry);                \
@@ -260,12 +257,12 @@ mul (mp_limb_t *hi, mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
   *hi = HIGHPART(x) * HIGHPART(y);
 
   s = LOWPART(x) * HIGHPART(y);
-  assert_nocarry (add (hi, *hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
-  assert_nocarry (add (hi, *hi, HIGHPART(s)));
+  ASSERT_NOCARRY (add (hi, *hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
+  ASSERT_NOCARRY (add (hi, *hi, HIGHPART(s)));
 
   s = HIGHPART(x) * LOWPART(y);
-  assert_nocarry (add (hi, *hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
-  assert_nocarry (add (hi, *hi, HIGHPART(s)));
+  ASSERT_NOCARRY (add (hi, *hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
+  ASSERT_NOCARRY (add (hi, *hi, HIGHPART(s)));
 }
 
 mp_limb_t
@@ -275,13 +272,13 @@ refmpn_mul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier,
   mp_size_t  i;
   mp_limb_t  hi, lo;
   
-  assert (refmpn_overlap_fullonly_p (rp, sp, size));
-  assert (size >= 1);
+  ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));
+  ASSERT (size >= 1);
                                                                           
   for (i = 0; i < size; i++)
     {
       mul (&hi, &lo, sp[i], multiplier);
-      assert_nocarry (add (&hi, hi, add (&lo, lo, carry)));
+      ASSERT_NOCARRY (add (&hi, hi, add (&lo, lo, carry)));
       rp[i] = lo;
       carry = hi;
     }
@@ -304,8 +301,8 @@ refmpn_mul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
     mp_ptr     p = refmpn_malloc_limbs (size);                             \
     mp_limb_t  ret;                                                        \
                                                                            \
-    assert (refmpn_overlap_fullonly_p (rp, sp, size));                    \
-    assert (size >= 1);                                                    \
+    ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));                    \
+    ASSERT (size >= 1);                                                    \
                                                                            \
     ret = refmpn_mul_1c (p, sp, size, multiplier, carry);                  \
     ret += operation_n (rp, rp, p, size);                                  \
@@ -334,10 +331,10 @@ refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
   mp_limb_t acy, scy;
 
   /* Destinations can't overlap at all. */
-  assert (! MPN_OVERLAP_P (r1p, size, r2p, size));
-  assert (refmpn_overlap_fullonly_two_p (r1p, s1p, s2p, size));
-  assert (refmpn_overlap_fullonly_two_p (r2p, s1p, s2p, size));
-  assert (size >= 1);
+  ASSERT (! MPN_OVERLAP_P (r1p, size, r2p, size));
+  ASSERT (refmpn_overlap_fullonly_two_p (r1p, s1p, s2p, size));
+  ASSERT (refmpn_overlap_fullonly_two_p (r2p, s1p, s2p, size));
+  ASSERT (size >= 1);
 
   p = refmpn_malloc_limbs (size);
   acy = mpn_add_n (p, s1p, s2p, size);
@@ -353,7 +350,7 @@ refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
 mp_limb_t
 rshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 {
-  assert (shift >= 0 && shift < BITS_PER_MP_LIMB);
+  ASSERT (shift >= 0 && shift < BITS_PER_MP_LIMB);
   if (shift == 0)
     return lo;
   else
@@ -365,7 +362,7 @@ rshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 mp_limb_t
 lshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 {
-  assert (shift >= 0 && shift < BITS_PER_MP_LIMB);
+  ASSERT (shift >= 0 && shift < BITS_PER_MP_LIMB);
   if (shift == 0)
     return hi;
   else
@@ -379,9 +376,9 @@ refmpn_rshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
   mp_limb_t  ret;
   mp_size_t  i;
 
-  assert (refmpn_overlap_low_to_high_p (rp, sp, size));
-  assert (size >= 1);
-  assert (shift >= 1 && shift < BITS_PER_MP_LIMB);
+  ASSERT (refmpn_overlap_low_to_high_p (rp, sp, size));
+  ASSERT (size >= 1);
+  ASSERT (shift >= 1 && shift < BITS_PER_MP_LIMB);
 
   ret = rshift_make (sp[0], 0, shift);
 
@@ -398,9 +395,9 @@ refmpn_lshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
   mp_limb_t  ret;
   mp_size_t  i;
 
-  assert (refmpn_overlap_high_to_low_p (rp, sp, size));
-  assert (size >= 1);
-  assert (shift >= 1 && shift < BITS_PER_MP_LIMB);
+  ASSERT (refmpn_overlap_high_to_low_p (rp, sp, size));
+  ASSERT (size >= 1);
+  ASSERT (shift >= 1 && shift < BITS_PER_MP_LIMB);
 
   ret = lshift_make (0, sp[size-1], shift);
 
@@ -422,8 +419,8 @@ div (mp_limb_t *q, mp_limb_t *r, mp_limb_t h, mp_limb_t l, mp_limb_t d)
 {
   int  n;
 
-  assert (d != 0);
-  assert (h < d);
+  ASSERT (d != 0);
+  ASSERT (h < d);
 
 #if 0
   udiv_qrnnd (*q, *r, h, l, d);
@@ -449,9 +446,9 @@ refmpn_divmod_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
   mp_limb_t  carry_orig;
   mp_size_t  i;
 
-  assert (refmpn_overlap_fullonly_p (rp, sp, size));
-  assert (size >= 0);
-  assert (carry < divisor);
+  ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));
+  ASSERT (size >= 0);
+  ASSERT (carry < divisor);
 
   if (size == 0)
     return carry;
@@ -472,8 +469,8 @@ refmpn_divmod_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
   printf ("mul_1c %lX\n", refmpn_mul_1c (prod, rp, size, divisor, carry));
   mpn_trace("p",prod,size);
 #endif
-  assert (refmpn_mul_1c (prod, rp, size, divisor, carry) == carry_orig);
-  assert (refmpn_cmp (prod, sp_orig, size) == 0);
+  ASSERT (refmpn_mul_1c (prod, rp, size, divisor, carry) == carry_orig);
+  ASSERT (refmpn_cmp (prod, sp_orig, size) == 0);
   free (sp_orig);
   free (prod);
 
@@ -529,6 +526,39 @@ refmpn_divrem_1 (mp_ptr rp, mp_size_t xsize,
 }
 
 
+/* The divexact method gives quotient q and return value c satisfying
+
+           c*b^n+a - 3*q == 0
+
+   where a=dividend, b=2^BITS_PER_MP_LIMB the size of a limb, and n=size the
+   number of limbs in the dividend.
+
+   If a is divisible by 3 then c==0 and a plain divmod gives the quotient.
+   If a%3==r then c is a high limb added in that will turn r into 0.
+   Because 2^BITS_PER_MP_LIMB==1mod3 (so long as BITS_PER_MP_LIMB is even)
+   it's enough to set c=3-r, ie. if r=1 then c=2, or if r=2 then c=1.  */
+
+mp_limb_t
+refmpn_divexact_by3 (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  mp_limb_t  c;
+  mp_ptr     spcopy;
+
+  spcopy = refmpn_memdup_limbs (sp, size);
+
+  c = refmpn_divmod_1 (rp, sp, size, 3);
+  if (c != 0)
+    {
+      ASSERT ((BITS_PER_MP_LIMB % 2) == 0);
+      c = 3-c;
+      ASSERT_NOCARRY (refmpn_divmod_1c (rp, spcopy, size, 3, c));
+    }
+
+  free (spcopy);
+  return c;
+}
+
+
 /* The same as mpn/generic/mul_basecase.c, but using refmpn functions. */
 void
 refmpn_mul_basecase (mp_ptr prodp,
@@ -537,10 +567,10 @@ refmpn_mul_basecase (mp_ptr prodp,
 {
   mp_size_t i;
 
-  assert (! MPN_OVERLAP_P (prodp, usize+vsize, up, usize));
-  assert (! MPN_OVERLAP_P (prodp, usize+vsize, vp, vsize));
-  assert (usize >= vsize);
-  assert (vsize >= 1);
+  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, up, usize));
+  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, vp, vsize));
+  ASSERT (usize >= vsize);
+  ASSERT (vsize >= 1);
 
   prodp[usize] = refmpn_mul_1 (prodp, up, usize, vp[0]);
   for (i = 1; i < vsize; i++)
@@ -558,3 +588,5 @@ refmpn_sqr (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
   refmpn_mul_basecase (dst, src, size, src, size);
 }
+
+
