@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 18 Sep 2002.  An up-to-date version is available at
+  This file current as of 28 Sep 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -426,6 +426,47 @@ MA 02111-1307, USA.
       requirement for an odd divisor in <code>modexact</code> can be handled
       by some shifting on-the-fly, or perhaps by an extra partial-limb step at
       the end.
+
+
+<p> <li> <strong>Factorial</strong>
+
+  <p> Conrad Curry found that a factorial can be efficiently calculated using
+      the prime factorization and a simultaneous powering (Handbook of Applied
+      Cryptography algorithm 14.88).  The power for a prime p is of course
+      floor(n/p)+floor(n/p^2)+...
+
+  <p> A difficulty with this is that quite large n can be calculated on a
+      system with enough memory, larger than we'd probably want for a table of
+      primes, so some sort of sieving would be wanted.
+
+<p> <li> <strong>Binomial Coefficients</strong>
+
+  <p> Conrad Curry also reports a big speedup for binomial coefficients using
+      a prime powering scheme, at least for k near n/2.  Of course this is
+      only practical for moderate size n since again it requires primes up to
+      n.
+
+  <p> When k is small the current (n-k+1)...n/(1...k) will be fastest.  Some
+      sort of rule would be needed for when to use this or when to use prime
+      powering.  Such a rule will be a function of n and k.  Some
+      investigation is needed to see what sort of shape the crossover line
+      will have, the usual parameter tuning can of course find machine
+      dependent constants to fill in where necessary.
+
+  <p> An easier possibility also reported by Conrad Curry is that it may be
+      faster not to divide out the denominator (1...k) one-limb at a time, but
+      do one big division at the end.  Is this because a big divisor in
+      <code>mpn_bdivmod</code> trades the latency of
+      <code>mpn_divexact_1</code> for the throughput of
+      <code>mpn_submul_1</code>?  Overheads must hurt though.
+
+  <p> Another reason a big divisor might help is that
+      <code>mpn_divexact_1</code> won't be getting a full limb in
+      <code>mpz_bin_uiui</code>.  It's called when the n accumulator is full
+      but the k may not be.  Perhaps the two could be decoupled so k is
+      applied when full.  It'd be necessary to delay consideration of k terms
+      until the corresponding n terms had been applied though, since otherwise
+      the division won't be exact.
 
 
 </ul>
