@@ -86,8 +86,6 @@ CC = @CC@
 CCAS = @CCAS@
 CFLAGS_PIC = @CFLAGS_PIC@
 CPP = @CPP@
-CXX = @CXX@
-CXXLIBS = @CXXLIBS@
 DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -96,7 +94,6 @@ EXEEXT = @EXEEXT@
 GMP_LDFLAGS = @GMP_LDFLAGS@
 HAVE_MPFR = @HAVE_MPFR@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LIBCXXPRINTF_LA = @LIBCXXPRINTF_LA@
 LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -105,7 +102,6 @@ MAINT = @MAINT@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
-PRINTF_CXX_OBJECTS = @PRINTF_CXX_OBJECTS@
 RANLIB = @RANLIB@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
@@ -128,23 +124,13 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
-
-# Need C objects in their own convenience library since if a C++ object is
-# there then $(CXX) will be used in the libtool command, and that's not
-# always available.
-EXTRA_LTLIBRARIES = libcxxprintf.la
-noinst_LTLIBRARIES = libprintf.la @LIBCXXPRINTF_LA@
+noinst_LTLIBRARIES = libprintf.la
 
 libprintf_la_SOURCES = \
   asprintf.c doprnt.c doprntf.c doprnti.c				 \
   fprintf.c obprintf.c obvprintf.c obprntffuns.c			 \
   printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
-  vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c		 \
-  $(OPTION_CXX)
-
-
-libcxxprintf_la_SOURCES = \
-  doprntfx.cc doprntix.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
+  vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c
 
 subdir = printf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -152,11 +138,6 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
-libcxxprintf_la_LDFLAGS =
-libcxxprintf_la_LIBADD =
-am_libcxxprintf_la_OBJECTS = doprntfx.lo doprntix.lo osfuns.lo osmpf.lo \
-	osmpq.lo osmpz.lo
-libcxxprintf_la_OBJECTS = $(am_libcxxprintf_la_OBJECTS)
 libprintf_la_LDFLAGS =
 libprintf_la_LIBADD =
 am_libprintf_la_OBJECTS = asprintf$U.lo doprnt$U.lo doprntf$U.lo \
@@ -180,23 +161,14 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(libcxxprintf_la_SOURCES) $(libprintf_la_SOURCES)
+DIST_SOURCES = $(libprintf_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libcxxprintf_la_SOURCES) $(libprintf_la_SOURCES)
+SOURCES = $(libprintf_la_SOURCES)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .lo .o .obj
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  printf/Makefile
@@ -207,8 +179,6 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-libcxxprintf.la: $(libcxxprintf_la_OBJECTS) $(libcxxprintf_la_DEPENDENCIES)
-	$(CXXLINK)  $(libcxxprintf_la_LDFLAGS) $(libcxxprintf_la_OBJECTS) $(libcxxprintf_la_LIBADD) $(LIBS)
 libprintf.la: $(libprintf_la_OBJECTS) $(libprintf_la_DEPENDENCIES)
 	$(LINK)  $(libprintf_la_LDFLAGS) $(libprintf_la_OBJECTS) $(libprintf_la_LIBADD) $(LIBS)
 
@@ -290,15 +260,6 @@ snprntffuns_.lo sprintf_.$(OBJEXT) sprintf_.lo sprintffuns_.$(OBJEXT) \
 sprintffuns_.lo vasprintf_.$(OBJEXT) vasprintf_.lo vfprintf_.$(OBJEXT) \
 vfprintf_.lo vprintf_.$(OBJEXT) vprintf_.lo vsnprintf_.$(OBJEXT) \
 vsnprintf_.lo vsprintf_.$(OBJEXT) vsprintf_.lo : $(ANSI2KNR)
-
-.cc.o:
-	$(CXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.cc.obj:
-	$(CXXCOMPILE) -c -o $@ `cygpath -w $<`
-
-.cc.lo:
-	$(LTCXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 uninstall-info-am:
 
 tags: TAGS
