@@ -40,8 +40,12 @@ MA 02111-1307, USA. */
 #include <locale.h>    /* for localeconv */
 #endif
 
-#if HAVE_STDINT_H
-#include <stdint.h>    /* for intmax_t */
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
 #endif
 
 #if HAVE_SYS_TYPES_H
