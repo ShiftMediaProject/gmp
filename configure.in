@@ -1949,7 +1949,10 @@ if test $enable_mpfr = yes; then
   esac
   AC_SUBST(CFLAGS_IEEE_WITH_INEXACT)  
 
+  gmp_save_CFLAGS=$CFLAGS
   MPFR_CONFIGS
+  AC_SUBST(MPFR_CFLAGS,$CFLAGS)
+  CFLAGS=$gmp_save_CFLAGS
 fi
 
 
