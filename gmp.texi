@@ -4796,7 +4796,8 @@ Multiply @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@}, and write the
 2*@var{n}-limb result to @var{rp}.
 
 The destination has to have space for 2*@var{n} limbs, even if the product's
-most significant limb is zero.
+most significant limb is zero.  No overlap is permitted between the
+destination and either source.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_mul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
@@ -5739,8 +5740,8 @@ hexadecimal.
 @samp{o}, @samp{u}, @samp{x} and @samp{X} all read positive or negative
 values.  For the standard C types these are described as ``unsigned''
 conversions, but that merely affects certain overflow handling, negatives are
-still allowed (see @code{strtoul}, @ref{Parsing of Integers,,,libc,The GNU C
-Library Reference Manual}).  For GMP types there are no overflows, so
+still allowed (per @code{strtoul}, @pxref{Parsing of Integers,,, libc, The GNU
+C Library Reference Manual}).  For GMP types there are no overflows, so
 @samp{d} and @samp{u} are identical.
 
 @samp{Q} type reads the numerator and (optional) denominator as given.  If the
