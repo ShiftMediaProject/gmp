@@ -44,8 +44,11 @@ check_itom (void)
 
     {  SHORT_MAX,  1, SHORT_MAX },
     { -SHORT_MAX, -1, SHORT_MAX },
-
+#if !defined (_CRAY) || defined (_CRAYIEEE)
+    /* These values are computed such that it will not work on traditional
+       Cray systems.  The bit size is 64 bits but just 24 of them are valid. */
     { SHORT_HIGHBIT, -1, USHORT_HIGHBIT },
+#endif
   };
 
   MINT  *m;
