@@ -1,6 +1,7 @@
-/* mpn_mul_1 for Cray vector computers utilizing IEEE fp.
+/* Cray PVP/IEEE mpn_mul_1 -- multiply a limb vector with a limb and store the
+   result in a second limb vector.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +20,8 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.  */
 
+/* This code runs at 5 cycles/limb on a T90.  That would probably
+   be hard to improve upon, even with assembly code.  */
 
 #include <intrinsics.h>
 #include "gmp.h"
@@ -27,20 +30,57 @@ MA 02111-1307, USA.  */
 mp_limb_t
 mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
 {
-  mp_limb_t p0[n], p1[n];
-  mp_limb_t cyl;
+  mp_limb_t cy[n];
+  mp_limb_t a, b, r, s0, s1, c0, c1;
   mp_size_t i;
+  int more_carries;
 
+  a = up[0] * vl;
+  rp[0] = a;
+  cy[0] = 0;
+
+  /* Main multiply loop.  Generate a raw accumulated output product in rp[]
+     and a carry vector in cy[].  */
 #pragma _CRI ivdep
-  for (i = 0; i < n; i++)
+  for (i = 1; i < n; i++)
     {
-      mp_limb_t ul = up[i];
-      p0[i] = ul * vl;
-      p1[i] = _int_mult_upper (ul, vl);
+      a = up[i] * vl;
+      b = _int_mult_upper (up[i - 1], vl);
+      s0 = a + b;
+      c0 = ((a & b) | ((a | b) & ~s0)) >> 63;
+      rp[i] = s0;
+      cy[i] = c0;
     }
-  rp[0] = p0[0];
-  cyl = mpn_add_n (rp + 1, p0 + 1, p1, n - 1);
-  cyl += p1[n - 1];
+  /* Carry add loop.  Add the carry vector cy[] to the raw sum rp[] and
+     store the new sum back to rp[0].  */
+  more_carries = 0;
+#pragma _CRI ivdep
+  for (i = 1; i < n; i++)
+    {
+      r = rp[i];
+      c0 = cy[i - 1];
+      s0 = r + c0;
+      rp[i] = s0;
+      c0 = (r & ~s0) >> 63;
+      more_carries += c0;
+    }
+  /* If that second loop generated carry, handle that in scalar loop.  */
+  if (more_carries)
+    {
+      mp_limb_t cyrec = 0;
+      /* Look for places where rp[k] is zero and cy[k-1] is non-zero.
+	 These are where we got a recurrency carry.  */
+      for (i = 1; i < n; i++)
+	{
+	  r = rp[i];
+	  c0 = (r == 0 && cy[i - 1] != 0);
+	  s0 = r + cyrec;
+	  rp[i] = s0;
+	  c1 = (r & ~s0) >> 63;
+	  cyrec = c0 | c1;
+	}
+      return _int_mult_upper (up[n - 1], vl) + cyrec + cy[n - 1];
+    }
 
-  return cyl;
+  return _int_mult_upper (up[n - 1], vl) + cy[n - 1];
 }
