@@ -28,5 +28,5 @@ endif
 
 # osfuns.cc is handled from the top-level Makefile.am
 libcxx_la_SOURCES = \
-  isfuns.cc ismpf.cc ismpq.cc ismpz.cc \
+  isfuns.cc ismpf.cc ismpq.cc ismpz.cc ismpznw.cc \
   osdoprnti.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
