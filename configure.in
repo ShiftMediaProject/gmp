@@ -37,10 +37,6 @@ dnl  GMP specific
 GMP_INIT(config.m4)
 
 
-define(X86_PATTERN,
-[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
-
-
 AC_ARG_ENABLE(assert,
 AC_HELP_STRING([--enable-assert],[enable ASSERT checking [default=no]]),
 [case "${enableval}" in

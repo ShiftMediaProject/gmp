@@ -21,6 +21,10 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
+define(X86_PATTERN,
+[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
+
+
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
 dnl  ----------------------------
 dnl  Expand to the value of a "#define NAME" from the given FILE.
@@ -625,7 +629,7 @@ AC_DEFUN(GMP_ASM_RODATA,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_DATA])
 case "$target" in
-[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+X86_PATTERN)
   gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
 *)
   gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
@@ -783,7 +787,7 @@ echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
 dnl  -----------------------------------------------------
-dnl  Determine wither the assembler supports MMX instructions.
+dnl  Determine whether the assembler supports MMX instructions.
 dnl
 dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
 dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
