@@ -2,14 +2,15 @@ dnl Process this file with autoconf to produce a configure script.
 dnl [AC_REVISION([$CVSid$])]
 AC_PREREQ(2.14)dnl
 AC_INIT(gmp-impl.h)
+AC_CONFIG_HEADERS(config.h:config.in)
 
 dnl Check system.
 AC_CANONICAL_SYSTEM
 
 dnl  Automake
 AM_INIT_AUTOMAKE(gmp, 2.99)
-dnl  FIXME: [AM_CONFIG_HEADER] invokes obsolete macro [AC_OUTPUT_COMMANDS].
-AM_CONFIG_HEADER(config.h:config.in)
+dnl [ AM_CONFIG_HEADER makes autoconf confused. ]
+dnl [AM_CONFIG_HEADER]
 AM_MAINTAINER_MODE
 
 dnl  GMP specific
@@ -493,9 +494,8 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#define C_SYMBOL_NAME(name) name' >asm-syntax.h;;
 esac
 
-dnl  `files' and `links' are not used.  FIXME: Remove.
-files=
-links=
+# Set up `gmp_links'.  It's a list of link:file pairs that configure will
+# process to create link -> file.
 gmp_links=
 
 # Include assembly definition files and link them to mpn/.
@@ -561,6 +561,14 @@ for m in $gmp_mulfunc_files; do
   rm -f mpn/$m.asm
   for d in $path; do
     if test -f $srcdir/mpn/$d/$m.asm; then
+      # find entry points
+changequote(<<, >>)
+      gmp_ep=`grep -h "^[ 	]*MULFUNC_PROLOGUE" $srcdir/mpn/$d/$m.asm \
+             | sed 's/MULFUNC_PROLOGUE(_*\(.*\))/\1/'`
+changequote([, ])
+      for gmp_tmp in $gmp_ep; do
+        AC_DEFINE_UNQUOTED(HAVE_NATIVE_${gmp_tmp})
+      done
       eval mf=\$gmp_mf_$m
       for f in $mf; do
         gmp_links="$gmp_links mpn/$f.asm:mpn/$d/$m.asm"
@@ -576,38 +584,43 @@ for m in $gmp_mulfunc_files; do
   done
 done
 
+# Create links for .asm, .S, .s, or .c files.
 for tmp_fn in ${gmp_mpn_functions} ; do
   rm -f mpn/${tmp_fn}.[Ssc] mpn/${tmp_fn}.asm
+  gmp_ep=
+  gmp_tmp=
   for tmp_dir in $path ; do
     if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.asm"
-      links="$links mpn/${tmp_fn}.asm"
       gmp_links="$gmp_links mpn/${tmp_fn}.asm:mpn/${tmp_dir}/${tmp_fn}.asm"
+changequote(<<, >>)
+      gmp_ep=`grep -h "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm \
+             | sed 's/PROLOGUE(_*\(.*\))/\1/'`
+changequote([, ])
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.S ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.S"
-      links="$links mpn/${tmp_fn}.S"
       gmp_links="$gmp_links mpn/${tmp_fn}.S:mpn/${tmp_dir}/${tmp_fn}.S"
+changequote(<<, >>)
+      gmp_ep=`grep -h "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.S \
+             | sed 's/PROLOGUE(C_SYMBOL_NAME(_*\(.*\)))/\1/'`
+changequote([, ])
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.s ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.s"
-      links="$links mpn/${tmp_fn}.s"
       gmp_links="$gmp_links mpn/${tmp_fn}.s:mpn/${tmp_dir}/${tmp_fn}.s"
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.c ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.c"
-      links="$links mpn/${tmp_fn}.c"
       gmp_links="$gmp_links mpn/${tmp_fn}.c:mpn/${tmp_dir}/${tmp_fn}.c"
       break
     fi
   done
+  for gmp_tmp in $gmp_ep; do
+    AC_DEFINE_UNQUOTED(HAVE_NATIVE_${gmp_tmp})
+  done
 done
 
+# Create link for gmp-mparam.h.
 for tmp_dir in $path ; do
   rm -f gmp-mparam.h
   if test -f $srcdir/mpn/${tmp_dir}/gmp-mparam.h ; then
-    files="$files mpn/${tmp_dir}/gmp-mparam.h"
-    links="$links gmp-mparam.h"
     gmp_links="$gmp_links gmp-mparam.h:mpn/${tmp_dir}/gmp-mparam.h"
     break
   fi
@@ -626,24 +639,13 @@ dnl
 [echo "***DEBUG*** CC64=$CC64, CFLAGS64=$CFLAGS64"]
 [echo "***DEBUG*** path=$path"]
 dnl [echo "***DEBUG*** mpn_objects=$mpn_objects"]
-dnl [echo "***DEBUG*** files=$files"]
-dnl [echo "***DEBUG*** links=$links"]
 dnl [echo "***DEBUG*** gmp_links=$gmp_links"]
 
 dnl  ----------------------------------------
 dnl  Make links.
-dnl autoconfig 2.13 style:
-dnl [AC_LINK_FILES($files, $links)]
-dnl autoconfig 2.14a style: 
 AC_CONFIG_LINKS($gmp_links)
 
-dnl  Set LTLIBOBJS.
-dnl LTLIBOBJS=`echo "$LIBOBJS" | sed 's/\.o/.lo/g'`
-dnl [AC_SUBST(LTLIBOBJS)]
-dnl LTALLOCA=`echo "$ALLOCA" | sed 's/\.o/.lo/g'`
-dnl [AC_SUBST(LTALLOCA)]
-
-dnl  Create config.m4
+dnl  Create config.m4.
 GMP_FINISH
 
 dnl  Create Makefiles
