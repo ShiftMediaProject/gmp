@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -40,8 +40,8 @@ open(FD, "<m68k-defs.m4")
     or die "Cannot open m68k-defs.m4: $!\nIs this the mpn/m68k source directory?\n";
 my ($srcdir, $top_srcdir);
 while (<FD>) {
-    if (/^m68k_defbranch\(\s*(.*)\)/) { %branch->{"b".$1}=1; }
-    if (/^m68k_definsn\(\s*(.*),\s*(.*)\)/) { %insn->{$1.$2}=1; }
+    if (/^m68k_defbranch\(\s*(.*)\)/) { $branch{"b".$1} = 1; }
+    if (/^m68k_definsn\(\s*(.*),\s*(.*)\)/) { $insn{$1.$2} = 1; }
 }
 close(FD);
 
@@ -62,8 +62,8 @@ foreach my $file (glob("*.asm"), glob("*/*.asm")) {
 	    # instructions with an l, w or b suffix should have a definsn
 	    # (unless they're already a defbranch)
 	    if ($opcode =~ /[lwb]$/
-		&& ! defined %insn->{$opcode}
-		&& ! defined %branch->{$opcode})
+		&& ! defined $insn{$opcode}
+		&& ! defined $branch{$opcode})
 	    {
 		print "$file: $.: missing m68k_definsn: $opcode\n";
 	    }
@@ -71,8 +71,8 @@ foreach my $file (glob("*.asm"), glob("*/*.asm")) {
 	    # instructions bXX should have a defbranch (unless they're
 	    # already a definsn)
 	    if ($opcode =~ /^b/
-		&& ! defined %insn->{$opcode}
-		&& ! defined %branch->{$opcode})
+		&& ! defined $insn{$opcode}
+		&& ! defined $branch{$opcode})
 	    {
 		print "$file: $.: missing m68k_defbranch: $opcode\n";
 	    }
