@@ -47,17 +47,17 @@ $Loop:	ldq	r0,0(r17)		C E0
 	stq	r0,0(r16)		C E0
 	lda	r17,64(r17)		C E1
 	stq	r1,8(r16)		C E0
-	nop				C E1
+	bis	r31, r31, r31		C E1
 	stq	r2,16(r16)		C E0
 	lda	r18,-8(r18)		C E1
 	stq	r3,24(r16)		C E0
-	nop				C E1
+	bis	r31, r31, r31		C E1
 	stq	r4,32(r16)		C E0
-	nop				C E1
+	bis	r31, r31, r31		C E1
 	stq	r5,40(r16)		C E0
-	nop				C E1
+	bis	r31, r31, r31		C E1
 	stq	r6,48(r16)		C E0
-	nop				C E1
+	bis	r31, r31, r31		C E1
 	stq	r7,56(r16)		C E0
 	lda	r16,64(r16)		C E1
 	bge	r18,$Loop		C E1
