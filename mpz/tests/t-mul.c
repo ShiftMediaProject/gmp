@@ -26,7 +26,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-#include "urandom.h"
 
 void debug_mp ();
 mp_size_t _mpn_mul_classic ();
