@@ -30,7 +30,7 @@ PROLOGUE(speed_cyclecounter)
 	mov	r14 = ar.itc
 	;;
 	st4	[r32] = r14, 4
-	srl	r14 = r14, 32
+	shr.u	r14 = r14, 32
 	;;
 	st4	[r32] = r14
 	br.ret.sptk.many b0
