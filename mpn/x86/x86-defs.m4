@@ -202,12 +202,12 @@ define(movl_GOT_ebx,
 m4_assert_numargs(-1)
 `	call	L(movl_GOT_ebx_C`'movl_GOT_ebx_counter)
 L(movl_GOT_ebx_H`'movl_GOT_ebx_counter):
-	jmp	Lnum(movl_GOT_ebx_J`'movl_GOT_ebx_counter)
+	jmp	L(movl_GOT_ebx_J`'movl_GOT_ebx_counter)
 L(movl_GOT_ebx_C`'movl_GOT_ebx_counter):
 	movl	(%esp), %ebx
 	ret
 L(movl_GOT_ebx_J`'movl_GOT_ebx_counter):
-	addl	$GSYM_PREFIX`'_GLOBAL_OFFSET_TABLE_+[.-Lnum(1)], %ebx
+	addl	$GSYM_PREFIX`'_GLOBAL_OFFSET_TABLE_+[.-L(movl_GOT_ebx_H`'movl_GOT_ebx_counter)], %ebx
 define(`movl_GOT_ebx_counter',incr(movl_GOT_ebx_counter))')
 
 define(movl_GOT_ebx_counter,1)
