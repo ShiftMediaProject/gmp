@@ -1,5 +1,5 @@
-/* mpn_add_n -- Add two limb vectors of equal, non-zero length.
-   For Cray vector processors.
+/* Cray PVP/IEEE mpn_add_n -- add two limb vectors and store their sum in a
+   third limb vector.
 
 Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
@@ -19,6 +19,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.  */
+
+/* This code runs at 4 cycles/limb.  It may be possible to bring it down
+   to 3 cycles/limb.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
