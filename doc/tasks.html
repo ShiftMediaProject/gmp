@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 23 Jan 2002.  An up-to-date version is available at
+  This file current as of 1 Feb 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -46,8 +46,6 @@ MA 02111-1307, USA.
 
 <h4>Correctness and Completeness</h4>
 <ul>
-<li> mpn/generic/get_str.c stores <code>mp_size_t</code> data in several int
-     variables.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c:
@@ -107,11 +105,6 @@ MA 02111-1307, USA.
      (Peter Montgomery has some ideas on this subject.)
 <li> Improve the default <code>umul_ppmm</code> code in longlong.h: Add partial
      products with fewer operations.
-<li> Write new <code>mpn_get_str</code> and <code>mpn_set_str</code> running in
-     the sub O(n^2) range, using some divide-and-conquer approach, preferably
-     without using division.
-<li> Copy tricky code for converting a limb from development version of
-     <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
 <li> Consider inlining <code>mpz_set_ui</code>.  This would be both small and
      fast, especially for compile-time constants, but would make application
      binaries depend on having 1 limb allocated to an <code>mpz_t</code>,
@@ -311,9 +304,8 @@ MA 02111-1307, USA.
 <li> <code>__mp_bases</code> field <code>big_base_inverted</code> is only used
      if <code>USE_PREINV_DIVREM_1</code> is true, and could be omitted
      otherwise, to save space.
-<li> <code>mpf_get_str</code> could just shift and mask for conversions to
-     power of 2 bases, like <code>mpn_get_str</code> does.  Even something
-     simple would probably be a considerable speedup.
+<li> Make <code>mpf_get_str</code> and <code>mpf_set_str</code> call the
+     corresponding, much faster, mpn functions.
 <li> <code>mpn_mod_1</code> could pre-calculate values of R mod N, R^2 mod N,
      R^3 mod N, etc, with R=2^<code>BITS_PER_MP_LIMB</code>, and use them to
      process multiple limbs at each step by multiplying.  Suggested by Peter
