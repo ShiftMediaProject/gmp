@@ -27,7 +27,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort _PROTO ((mpz_t, mpz_t));
 void debug_mp _PROTO ((mpz_t, int));
 
 int
@@ -91,13 +90,6 @@ main (int argc, char **argv)
 
       /* printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod)); */
 
-#if 0
-      putc ('\n', stderr);
-      debug_mp (base, -16);
-      debug_mp (exp, -16);
-      debug_mp (mod, -16);
-#endif
-
       mpz_powm (r1, base, exp, mod);
 
       mpz_set_ui (r2, 1);
@@ -118,13 +110,18 @@ main (int argc, char **argv)
 	  mpz_div_ui (exp2, exp2, 2);
 	}
 
-#if 0
-      debug_mp (r1, -16);
-      debug_mp (r2, -16);
-#endif
-
       if (mpz_cmp (r1, r2) != 0)
-	abort ();
+	{
+	  fprintf (stderr, "\nIncorrect results for operands:\n");
+	  debug_mp (base, -16);
+	  debug_mp (exp, -16);
+	  debug_mp (mod, -16);
+	  fprintf (stderr, "mpz_powm result:\n");
+	  debug_mp (r1, -16);
+	  fprintf (stderr, "reference result:\n");
+	  debug_mp (r2, -16);
+	  abort ();
+	}
     }
 
   mpz_clear (bs);
@@ -139,15 +136,6 @@ main (int argc, char **argv)
 
   tests_end ();
   exit (0);
-}
-
-void
-dump_abort (mpz_t dividend, mpz_t divisor)
-{
-  fprintf (stderr, "ERROR\n");
-  fprintf (stderr, "dividend = "); debug_mp (dividend, -16);
-  fprintf (stderr, "divisor  = "); debug_mp (divisor, -16);
-  abort();
 }
 
 void
