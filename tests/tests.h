@@ -148,6 +148,7 @@ int refmpn_cmp_twosizes _PROTO ((mp_srcptr xp, mp_size_t xsize,
                                  mp_srcptr yp, mp_size_t ysize));
 
 void refmpn_com_n _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
+void refmpn_copy  _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyi _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyd _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 
