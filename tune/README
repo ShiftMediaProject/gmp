@@ -37,7 +37,7 @@ sparc32/v9 (eg. ultrasparc under solaris 2.6)
 
 FreeBSD 4.2 i486 getrusage
 
-    This getrusage seems to be a bit doubtful, it looks like ru_utime is
+    This getrusage seems to be a bit doubtful, it looks like it's
     microsecond accurate, but sometimes ru_utime remains unchanged after a
     time of many microseconds has elapsed.  It'd be good to detect this in
     the time.c initializations, but for now the suggestion is to pretend
@@ -65,9 +65,11 @@ into gmp-mparam.h.  The program is built and run with
 
 If the thresholds indicated are grossly different from the values in the
 selected gmp-mparam.h then there may be a performance boost in relevant size
-ranges by changing gmp-mparam.h accordingly.  Do a full reconfigure and
-rebuild to get them to take effect (a partial rebuild might be enough
-sometimes, but a fresh configure and make is certain to be correct).
+ranges by changing gmp-mparam.h accordingly.
+
+Be sure to do a full reconfigure and rebuild to get new thresholds to take
+effect (a partial rebuild is enough sometimes, but a fresh configure and
+make is certain to be correct).
 
 If a CPU has specific tuned parameters coming from a gmp-mparam.h in one of
 the mpn subdirectories then the values from "make tune" should be similar.
@@ -144,7 +146,7 @@ when a cycle counter is supplemented by getrusage() etc.  The speed program
 will convert as necessary according to the output format requested.  The
 tune program will work with either cycles or seconds.
 
-freq.c knows how to get the frequency on some systems, and can measure a
+freq.c knows how to get the frequency on some systems, or can measure a
 cycle counter against gettimeofday(), but when that fails, or needs to be
 overridden, an environment variable GMP_CPU_FREQUENCY can be used (in
 Hertz).  For example in "bash" on a 650 MHz machine,
@@ -152,7 +154,7 @@ Hertz).  For example in "bash" on a 650 MHz machine,
 	export GMP_CPU_FREQUENCY=650e6
 
 A high precision time base makes it possible to get accurate measurements in
-a shorter time.  Support for systems and CPUs not already covered is wanted.
+a shorter time.
 
 
 
@@ -428,9 +430,6 @@ FUTURE
 Make a program to check the time base is working properly, for small and
 large measurements.  Make it able to test each available method, including
 perhaps the apparent resolution of each.
-
-Add versions of the generic C mpn_divrem_1 using straight division versus a
-multiply by inverse, so the two can be compared.
 
 Make an option in struct speed_parameters to specify operand overlap,
 perhaps 0 for none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1
