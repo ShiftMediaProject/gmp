@@ -1,6 +1,6 @@
 /* mpfr expression evaluation.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -74,6 +74,12 @@ e_mpfr_atan (mpfr_ptr dst, mpfr_srcptr src)
   mpfr_atan (dst, src, ROUND);
 }
 
+static void
+e_mpfr_cbrt (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_cbrt (dst, src, ROUND);
+}
+
 /* because mpfr_cmp is a macro */
 static int
 e_mpfr_cmp (mpfr_srcptr x, mpfr_srcptr y)
@@ -142,6 +148,12 @@ e_mpfr_exp (mpfr_ptr dst, mpfr_srcptr src)
 }
 
 static void
+e_mpfr_exp2 (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_exp2 (dst, src, ROUND);
+}
+
+static void
 e_mpfr_expm1 (mpfr_ptr dst, mpfr_srcptr src)
 {
   mpfr_expm1 (dst, src, ROUND);
@@ -151,6 +163,12 @@ static void
 e_mpfr_fma (mpfr_ptr w, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr z)
 {
   mpfr_fma (w, x, y, z, ROUND);
+}
+
+static void
+e_mpfr_gamma (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_gamma (dst, src, ROUND);
 }
 
 static void
@@ -305,17 +323,21 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "agm",     (mpexpr_fun_t) e_mpfr_agm,     MPEXPR_TYPE_BINARY       },
   { "asin",    (mpexpr_fun_t) e_mpfr_asin,    MPEXPR_TYPE_UNARY        },
   { "atan",    (mpexpr_fun_t) e_mpfr_atan,    MPEXPR_TYPE_UNARY        },
+  { "cbrt",    (mpexpr_fun_t) e_mpfr_cbrt,    MPEXPR_TYPE_UNARY        },
   { "ceil",    (mpexpr_fun_t) mpfr_ceil,      MPEXPR_TYPE_UNARY        },
   { "cmp",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_I_BINARY     },
+  { "cmpabs",  (mpexpr_fun_t) mpfr_cmpabs,    MPEXPR_TYPE_I_BINARY     },
   { "cos",     (mpexpr_fun_t) e_mpfr_cos,     MPEXPR_TYPE_UNARY        },
   { "cosh",    (mpexpr_fun_t) e_mpfr_cosh,    MPEXPR_TYPE_UNARY        },
   { "dim",     (mpexpr_fun_t) e_mpfr_dim,     MPEXPR_TYPE_BINARY       },
   { "eq",      (mpexpr_fun_t) mpfr_eq,        MPEXPR_TYPE_I_TERNARY_UI },
   { "exp",     (mpexpr_fun_t) e_mpfr_exp,     MPEXPR_TYPE_UNARY        },
+  { "exp2",    (mpexpr_fun_t) e_mpfr_exp2,    MPEXPR_TYPE_UNARY        },
   { "expm1",   (mpexpr_fun_t) e_mpfr_expm1,   MPEXPR_TYPE_UNARY        },
   { "fac",     (mpexpr_fun_t) e_mpfr_fac_ui,  MPEXPR_TYPE_UNARY_UI     },
   { "floor",   (mpexpr_fun_t) mpfr_floor,     MPEXPR_TYPE_UNARY        },
   { "fma",     (mpexpr_fun_t) e_mpfr_fma,     MPEXPR_TYPE_TERNARY      },
+  { "gamma",   (mpexpr_fun_t) e_mpfr_gamma,   MPEXPR_TYPE_UNARY        },
   { "hypot",   (mpexpr_fun_t) e_mpfr_hypot,   MPEXPR_TYPE_BINARY       },
   { "inf_p",   (mpexpr_fun_t) mpfr_inf_p,     MPEXPR_TYPE_I_UNARY      },
   { "log",     (mpexpr_fun_t) e_mpfr_log,     MPEXPR_TYPE_UNARY        },
@@ -327,6 +349,9 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "min",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_MIN
                                               | MPEXPR_TYPE_PAIRWISE   },
   { "nan_p",   (mpexpr_fun_t) mpfr_nan_p,     MPEXPR_TYPE_I_UNARY      },
+  { "nextabove",  (mpexpr_fun_t) mpfr_nextabove,  MPEXPR_TYPE_UNARY    },
+  { "nextbelow",  (mpexpr_fun_t) mpfr_nextbelow,  MPEXPR_TYPE_UNARY    },
+  { "nexttoward", (mpexpr_fun_t) mpfr_nexttoward, MPEXPR_TYPE_BINARY   },
   { "number_p",(mpexpr_fun_t) mpfr_number_p,  MPEXPR_TYPE_I_UNARY      },
   { "reldiff", (mpexpr_fun_t) e_mpfr_reldiff, MPEXPR_TYPE_BINARY       },
   { "round",   (mpexpr_fun_t) mpfr_round,     MPEXPR_TYPE_UNARY        },
