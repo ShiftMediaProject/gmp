@@ -148,7 +148,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
       if (rbits < 32)
 	{
 	  NEXT_RANDOM;
-	  dest[nlimbs] = (mp_limb_t) (y & ~(~0UL << rbits))
+	  dest[nlimbs] = (mp_limb_t) (y & ~(~0UL << rbits));
 	}
       else
 	{
