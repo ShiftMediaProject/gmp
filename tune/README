@@ -31,6 +31,7 @@ determinations of the multiply and square thresholds.
 
 
 
+
 PARAMETER TUNING
 
 The "tuneup" program runs some tests designed to find the best settings for
@@ -104,9 +105,9 @@ configured target has available.  A microsecond accurate gettimeofday() will
 work well, but there's code to use better methods, such as the cycle
 counters on various CPUs.
 
-Currently, all methods (except possibly the alpha cycle counter) depend on
-the machine being otherwise idle, or rather on other jobs not stealing CPU
-time from the measuring program.  Short routines (that complete within a
+Currently, all methods except possibly the alpha cycle counter depend on the
+machine being otherwise idle, or rather on other jobs not stealing CPU time
+from the measuring program.  Short routines (that complete within a
 timeslice) should work even on a busy machine.  Some trouble is taken by
 speed_measure() in common.c to avoid the ill effects of sporadic interrupts,
 or other intermittent things (like cron waking up every minute).  But
@@ -401,10 +402,10 @@ various algorithm thresholds.
       Asymptotic behaviour
 
          At the fairly small sizes where the thresholds occur it's worth
-         remembering that the asymptotic behaviour expected for karatsuba
-         and toom3 can't be expected to make accurate predictions, due of
-         course to the big influence of all sorts of overheads, and the fact
-         that only a few recursions of each are being performed.
+         remembering that the asymptotic behaviour for karatsuba and toom3
+         can't be expected to make accurate predictions, due of course to
+         the big influence of all sorts of overheads, and the fact that only
+         a few recursions of each are being performed.
 
 	 Even at large sizes there's a good chance machine dependent effects
 	 like cache architecture will mean actual performance deviates from
@@ -416,12 +417,41 @@ various algorithm thresholds.
       The same factors apply to squaring as to multiplying, though with
       overheads being proportionally a bit bigger.
 
+   FFT_MUL_THRESHOLD, etc
+
+      When configured with --enable-fft, a Fermat style FFT is used for
+      multiplication above FFT_MUL_THRESHOLD, and a further threshold
+      FFT_MODF_MUL_THRESHOLD exists for where FFT is used for a modulo 2^N+1
+      multiply.  FFT_MUL_TABLE is the thresholds at which each split size
+      "k" is used in the FFT.
+
+      step effect - coarse grained thresholds
+
+         The FFT has size restrictions that mean it rounds up sizes to
+         certain multiples and therefore does the same amount of work for a
+         range of different sized operands.  For example at k=8 the size is
+         internally rounded to a multiple of 1024 limbs.  The current single
+         values for the various thresholds are set to give good average
+         performance, but in the future multiple values might be wanted to
+         take into account the different step sizes for different "k"s.
+
+   FFT_SQR_THRESHOLD, etc
+
+      The same considerations apply as for multiplications, plus the
+      following.
+
+      similarity to mul thresholds
+
+         On some CPUs the squaring thresholds are nearly the same as those
+         for multiplying.  It's not quite clear why this is, it might be
+         similar shaped size/time graphs for the mul and sqrs recursed into.
+
    BZ_THRESHOLD
 
       The B-Z division algorithm rearranges a traditional multi-precision
       long division so that NxN multiplies can be done rather than repeated
       Nx1 multiplies, thereby exploiting the algorithmic advantages of
-      karatsuba and toom3, and leading to a significant speedup.
+      karatsuba and toom3, and leading to significant speedups.
 
       fast mul_basecase - decreases threshold
 
@@ -429,10 +459,53 @@ various algorithm thresholds.
          threshold due to the helping hand such a mul_basecase will give to
          B-Z as compared to submul_1 used in the schoolbook method.
 
+   GCD_ACCEL_THRESHOLD
+
+      Below this threshold a simple binary subtract and shift is used, above
+      it Ken Weber's accelerated algorithm is used.  The accelerated GCD
+      performs far fewer steps than the binary GCD and will normally kick in
+      at quite small sizes.
+
+      modlimb_invert and find_a - affect threshold
+
+         At small sizes the performance of modlimb_invert and find_a will
+         affect the accelerated algorithm and CPUs where those routines are
+         not well optimized may see a higher threshold.  (At large sizes
+         mpn_addmul_1 and mpn_submul_1 come to dominate the accelerated
+         algorithm.)
+
+   GCDEXT_THRESHOLD
+
+      mpn/generic/gcdext.c is based on Lehmer's multi-step improvement of
+      Euclid's algorithm.  The multipliers are found using single limb
+      calculations below GCDEXT_THRESHOLD, or double limb calculations
+      above.  The single limb code is fast but doesn't produce full-limb
+      multipliers.
+
+      data-dependent multiplier - big threshold
+
+         If multiplications done by mpn_mul_1, addmul_1 and submul_1 run
+         slower when there's more bits in the multiplier, then producing
+         bigger multipliers with the double limb calculation doesn't save
+         much more than some looping and function call overheads.  A large
+         threshold can then be expected.
+
+      slow division - low threshold
+
+         The single limb calculation does some plain "/" divisions, whereas
+         the double limb calculation has a divide routine optimized for the
+         small quotients that often occur.  Until the single limb code does
+         something similar a slow hardware divide will count against it.
+
+
 
 
 
 FUTURE
+
+Make a program to check the time base is working properly, for small and
+large measurements.  Make it able to test each available method, including
+perhaps the apparent resolution of each.
 
 Add versions of the toom3 multiplication using either the mpn calls or the
 open-coded style, so the two can be compared.
@@ -441,14 +514,11 @@ Add versions of the generic C mpn_divrem_1 using straight division versus a
 multiply by inverse, so the two can be compared.  Include the branch-free
 version of multiply by inverse too.
 
-Add measuring of udiv_qrnnd, udiv_qrnnd_preinv and udiv_qrnnd_preinv2norm to
-see which is better.  Watch out for function call overhead when udiv_qrnnd
-is actually an mpn_udiv_qrnnd subroutine.
-
-Make an option in struct speed_parameters to specify the overlap, perhaps 0
-for none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1 dst2=src2, 4 for
-dst1=src2 dst2=src1.  This is done for addsub_n with the r parameter (though
-addsub_n isn't yet enabled), and could be done for add_n, xor_n, etc too.
+Make an option in struct speed_parameters to specify operand overlap,
+perhaps 0 for none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1
+dst2=src2, 4 for dst1=src2 dst2=src1.  This is done for addsub_n with the r
+parameter (though addsub_n isn't yet enabled), and could be done for add_n,
+xor_n, etc too.
 
 When speed_measure() divides the total time measured by repetitions
 performed, it divides the fixed overheads imposed by speed_starttime() and
