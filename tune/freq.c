@@ -270,9 +270,13 @@ freq_sysctl_hw_cpufrequency (int help)
 }
 
 
-/* Alpha FreeBSD 4.1 and NetBSD 1.4 sysctl hw.model string gives "Digital
-   AlphaPC 164LX 599 MHz".  NetBSD 1.4 doesn't seem to have sysctlbyname, so
-   sysctl() is used.  */
+/* The following ssyctl hw.model strings have been observed,
+
+       Alpha FreeBSD 4.1:   Digital AlphaPC 164LX 599 MHz
+       NetBSD 1.4:          Digital AlphaPC 164LX 599 MHz
+       NetBSD 1.6.1:        CY7C601 @ 40 MHz, TMS390C602A FPU
+
+   NetBSD 1.4 doesn't seem to have sysctlbyname, so sysctl() is used.  */
 
 static int
 freq_sysctl_hw_model (int help)
@@ -292,28 +296,17 @@ freq_sysctl_hw_model (int help)
   size = sizeof(str);
   if (sysctl (mib, 2, str, &size, NULL, 0) == 0)
     {
-      /* find the second last space */
-      p = &str[size-1];
-      for (i = 0; i < 2; i++)
+      for (p = str; *p != '\0'; p++)
         {
-          for (;;)
+          end = 0;
+          if (sscanf (p, "%u MHz%n", &val, &end) == 1 && end != 0)
             {
-              if (p <= str)
-                return 0;
-              p--;
-              if (*p == ' ')
-                break;
+              speed_cycletime = 1e-6 / (double) val;
+              if (speed_option_verbose)
+                printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
+                        val, speed_cycletime);
+              return 1;
             }
-        }
-
-      end = 0;
-      if (sscanf (p, "%u MHz%n", &val, &end) == 1 && end != 0)
-        {
-          speed_cycletime = 1e-6 / (double) val;
-          if (speed_option_verbose)
-            printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
-                    val, speed_cycletime);
-          return 1;
         }
     }
 #endif
