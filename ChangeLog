@@ -25,6 +25,7 @@ MA 02111-1307, USA.
 
 	* mpz/millerrabin.c: New file with code from pprime.c.
 	* mpz/Makefile.am: Compile millerrabin.c.
+	* Makefile.am (MPZ_OBJECTS): Ditto.
 	* gmp-h.in: Declare mpz_millerrabin.
 
 2001-10-22  Torbjorn Granlund  <tege@swox.com>
