@@ -1,5 +1,11 @@
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
+	* configure.in: If `mpn_path' is set by user on configure command
+	line, use that as path.
+	* configure: Regenerate.
+
+2000-04-15  Linus Nordberg  <linus@swox.se>
+
 	* configure.in (hppa2.0*): Use path "hppa/hppa1_1 hppa" if no
 	64-bit compiler was found.
 	* configure: Regenerate.
