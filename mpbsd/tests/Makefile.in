@@ -123,7 +123,7 @@ INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libmp.la
 dummy_LDADD = 
 
-@WANT_MPBSD_TRUE@MPBSD_check_OPTION = @WANT_MPBSD_TRUE@allfuns
+@WANT_MPBSD_TRUE@MPBSD_check_OPTION = @WANT_MPBSD_TRUE@allfuns t-misc
 
 check_PROGRAMS = dummy $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)
@@ -132,7 +132,8 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 @WANT_MPBSD_FALSE@check_PROGRAMS =  dummy$(EXEEXT)
-@WANT_MPBSD_TRUE@check_PROGRAMS =  dummy$(EXEEXT) allfuns$(EXEEXT)
+@WANT_MPBSD_TRUE@check_PROGRAMS =  dummy$(EXEEXT) allfuns$(EXEEXT) \
+@WANT_MPBSD_TRUE@t-misc$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -148,12 +149,17 @@ dummy_SOURCES = dummy.c
 dummy_OBJECTS =  dummy$U.$(OBJEXT)
 dummy_DEPENDENCIES = 
 dummy_LDFLAGS = 
+t_misc_SOURCES = t-misc.c
+t_misc_OBJECTS =  t-misc$U.$(OBJEXT)
+t_misc_LDADD = $(LDADD)
+t_misc_DEPENDENCIES =  $(top_builddir)/libmp.la
+t_misc_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  allfuns.c dummy.c
+DIST_SOURCES =  allfuns.c dummy.c t-misc.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -161,8 +167,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = allfuns.c dummy.c
-OBJECTS = allfuns$U.$(OBJEXT) dummy$U.$(OBJEXT)
+SOURCES = allfuns.c dummy.c t-misc.c
+OBJECTS = allfuns$U.$(OBJEXT) dummy$U.$(OBJEXT) t-misc$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -227,6 +233,10 @@ allfuns$(EXEEXT): $(allfuns_OBJECTS) $(allfuns_DEPENDENCIES)
 dummy$(EXEEXT): $(dummy_OBJECTS) $(dummy_DEPENDENCIES)
 	@rm -f dummy$(EXEEXT)
 	$(LINK) $(dummy_LDFLAGS) $(dummy_OBJECTS) $(dummy_LDADD) $(LIBS)
+
+t-misc$(EXEEXT): $(t_misc_OBJECTS) $(t_misc_DEPENDENCIES)
+	@rm -f t-misc$(EXEEXT)
+	$(LINK) $(t_misc_LDFLAGS) $(t_misc_OBJECTS) $(t_misc_LDADD) $(LIBS)
 .c.o:
 	$(COMPILE) -c $<
 .c.obj:
@@ -237,7 +247,10 @@ allfuns_.c: allfuns.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/allfuns.c; then echo $(srcdir)/allfuns.c; else echo allfuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > allfuns_.c
 dummy_.c: dummy.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dummy.c; then echo $(srcdir)/dummy.c; else echo dummy.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dummy_.c
-allfuns_.$(OBJEXT) allfuns_.lo dummy_.$(OBJEXT) dummy_.lo : $(ANSI2KNR)
+t-misc_.c: t-misc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-misc.c; then echo $(srcdir)/t-misc.c; else echo t-misc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-misc_.c
+allfuns_.$(OBJEXT) allfuns_.lo dummy_.$(OBJEXT) dummy_.lo \
+t-misc_.$(OBJEXT) t-misc_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
