@@ -3,7 +3,7 @@
 # Future: On P6 an MMX loop should be able to go faster than this code.
 
 
-# Copyright (C) 1999-2000 Free Software Foundation, Inc.
+# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
