@@ -1,6 +1,6 @@
 /* mpf expression evaluation
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,8 +17,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
+
 
 /* Future: Bitwise "&", "|" and "&" could be done, if desired.  Not sure
    those functions would be much value though.  */
@@ -171,7 +171,7 @@ mpf_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_clear       = (mpexpr_fun_one_t)      mpf_clear;
   p.mpX_ulong_p     = (mpexpr_fun_i_unary_t)  e_mpf_ulong_p;
   p.mpX_get_ui      = (mpexpr_fun_get_ui_t)   mpf_get_ui;
-  p.mpX_init        = (mpexpr_fun_unary_ui_t) mpf_init;
+  p.mpX_init        = (mpexpr_fun_unary_ui_t) mpf_init2;
   p.mpX_number      = (mpexpr_fun_number_t)   e_mpf_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    mpf_set;
   p.mpX_set_or_swap = (mpexpr_fun_unary_t)    e_mpf_set_or_swap;
