@@ -1,6 +1,6 @@
 /* Tests of mpz_scan0 and mpz_scan1.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -65,7 +65,6 @@ check_ref (void)
   mpz_t          z;
   int            test, neg, sought, oindex, o;
   mp_size_t      size, isize;
-  long           isigned;
   unsigned long  start, got, want;
 
   mpz_init (z);
