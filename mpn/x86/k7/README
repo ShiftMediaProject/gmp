@@ -31,6 +31,8 @@ Times for the loops, with all code and data in L1 cache.
 
 	mpn_mul_basecase          4.42 cycles/crossproduct (approx)
 
+	mpn_popcount		   5.0
+	mpn_hamdist		   6.0
 
 Prefetching of sources hasn't yet been tried.
 
