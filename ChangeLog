@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-02  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (BSWAP_LIMB_FETCH, BSWAP_LIMB_STORE) [powerpc]:
+	Corrections to constraints, and restrict to bigendian.
+
 2002-03-31  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/dive.c: Better diagnostics.
