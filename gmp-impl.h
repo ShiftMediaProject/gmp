@@ -1471,7 +1471,7 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
       {                                                 \
         __asm__ __volatile__                            \
           ("\n" ASM_L(top) ":\n"                        \
-           "\t" aors "$1, (%0)\n"                       \
+           "\t" aors " $1, (%0)\n"                      \
            "\tleal 4(%0),%0\n"                          \
            "\tjc " ASM_L(top)                           \
            : "=r" (__ptr_dummy)                         \
@@ -1484,7 +1484,7 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
           (   aors  " %2,(%0)\n"                        \
            "\tjnc " ASM_L(done) "\n"                    \
            ASM_L(top) ":\n"                             \
-           "\t" aors "$1,4(%0)\n"                       \
+           "\t" aors " $1,4(%0)\n"                      \
            "\tleal 4(%0),%0\n"                          \
            "\tjc " ASM_L(top) "\n"                      \
            ASM_L(done) ":\n"                            \
