@@ -1,7 +1,7 @@
 /* Factoring with Pollard's rho method.
 
-Copyright 1995, 1997, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1995, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
+Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -180,7 +180,7 @@ S2:
 	}
 S3:
       k--;
-      if (k != 0)
+      if (k > 0)
 	goto S2;
 
       mpz_gcd (g, P, n);
