@@ -2052,6 +2052,7 @@ fi
 # of any sensible system.  In a generic C build, grepping LONG_BIT out of
 # <limits.h> might be an alternative, for maximum portability.
 #
+AC_CHECK_SIZEOF(unsigned)
 AC_CHECK_SIZEOF(unsigned long)
 AC_CHECK_SIZEOF(mp_limb_t, , GMP_INCLUDE_GMP_H)
 if test "$ac_cv_sizeof_mp_limb_t" = 0; then
