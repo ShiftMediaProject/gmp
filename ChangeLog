@@ -1,3 +1,7 @@
+2000-10-07  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_n.c (USE_MORE_MPN): Revert last change.
+
 2000-10-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips3/add_n.s: Decrease carry recurrence from 4 to 3 cycles.
