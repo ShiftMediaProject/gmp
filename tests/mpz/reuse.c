@@ -455,7 +455,8 @@ main (int argc, char **argv)
 	}
 
       /* Don't run mpz_powm for huge exponents or when undefined.  */
-      if (mpz_sizeinbase (in2, 2) < 250 && mpz_sgn (in3) != 0)
+      if (mpz_sizeinbase (in2, 2) < 250 && mpz_sgn (in3) != 0
+	  && mpz_sgn (in2) >= 0)
 	{
 	  mpz_powm (ref1, in1, in2, in3);
 
