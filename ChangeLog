@@ -1,3 +1,8 @@
+2000-12-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/cntlz.asm: Don't use `ldbu', use slightly slower
+	`ldq_u' + `extbl' instead.
+
 2000-12-21  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/unicos.m4 (GSYM_PREFIX): Define for the benefit of
