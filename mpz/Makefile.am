@@ -30,7 +30,9 @@ libmpz_la_SOURCES = \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   cfdiv_q_2exp.c cfdiv_r_2exp.c \
-  clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
+  clear.c clrbit.c \
+  cmp.c cmp_d.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_d.c cmpabs_ui.c \
+  com.c \
   cong.c cong_2exp.c cong_ui.c \
   divexact.c divegcd.c dive_si.c dive_ui.c divis.c divis_ui.c divis_2exp.c \
   dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
