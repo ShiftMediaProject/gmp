@@ -1,3 +1,18 @@
+2000-05-22  Kevin Ryde  <kevin@swox.se>
+
+	* mp.h (_PROTO): Copy from gmp.h, use on prototypes.
+        Add extern "C" too.
+	* mpbsd/tests/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr.
+	* mpbsd/tests/allfuns.c: Don't execute mout, just link to it.
+	(main): ANSI style definition.
+
+	* gmp-impl.h (MP_BASE_AS_DOUBLE): Change the expression to
+	something that works on SunOS native cc.  Seems to fix the
+	mp*_get_d problems.
+
+	* mpn/tests/ref.c (refmpn_strip_twos): Use MPN_COPY_INCR.
+	* mpn/tests/Makefile.am: Let .asm.o rules work with absolute $srcdir.
+
 2000-05-21  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k7/sqr_basecase.asm: Replace file with K7 specific code.
