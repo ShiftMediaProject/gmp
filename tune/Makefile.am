@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 
-EXTRA_DIST = pentium.asm sparcv9.asm sparc64.asm
+EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm sparc64.asm
 noinst_HEADERS = speed.h
 
 # No dependency on libgmp, so can use libgmptune instead for tune program
@@ -175,7 +175,7 @@ gcdext.o: $(top_builddir)/mpn/gcdext.c
 # "g" forms produce graphs
 
 mk:
-	./speed -s 5-40 -c mpn_mul_basecase.0 mpn_kara_mul_n
+	./speed -s 5-40 -c mpn_mul_basecase mpn_kara_mul_n
 
 MTS = -s 50-150 -c
 mt:
