@@ -20,6 +20,17 @@ MA 02111-1307, USA.
 
 2003-09-22  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/mul.c (mpn_sqr_n): Move from here...
+	* mpn/generic/mul_n.c (mpn_sqr_n): ...to here.
+	(mpn_sqr_n): Allocate workspace for toom3 using	TMP_* mechanism except
+	for very large operands when !WANT_FFT.
+
+	* mpn/generic/mul_n.c: Add a missing ";". Misc comment fixes.
+
+	* mpn/generic/mul.c: Remove spurious #include <stdio.h>.
+
+	* mpn/x86/k7/gmp-mparam.h: Retune.
+
 	* mpn/generic/mul_n.c (mpn_mul_n): Allocate workspace for toom3 using
 	TMP_* mechanism except for very large operands when !WANT_FFT.
 
