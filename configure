@@ -1103,10 +1103,10 @@ case "$target" in
     gmp_cflags_cc="$gmp_cflags_cc -O"
     ;;
   alpha*-*-*)
-    taste=`echo $target_cpu | sed 's/^alpha//g'`
-    if test -n "$taste"; then
-      gmp_optcflags_gcc="-mcpu=$taste"
-      gmp_cflags_cc="$gmp_cflags_cc -arch $taste -tune $taste"
+    flavour=`echo $target_cpu | sed 's/^alpha//g'`
+    if test -n "$flavour"; then
+      gmp_optcflags_gcc="-mcpu=$flavour"
+      gmp_cflags_cc="$gmp_cflags_cc -arch $flavour -tune $flavour"
     fi
     ;;
 
@@ -1138,11 +1138,11 @@ case "$target" in
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
-  microsparc*-*-solaris2.*)
+  sparcv8*-*-solaris2.* | microsparc*-*-solaris2.*)
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
-  microsparc*-*-*)		# SunOS, Linux, *BSD
+  sparcv8*-*-* | microsparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
     gmp_cflags_acc="-g -O2 -cg92"

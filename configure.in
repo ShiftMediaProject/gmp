@@ -102,11 +102,11 @@ case "$target" in
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
-  microsparc*-*-solaris2.*)
+  sparcv8*-*-solaris2.* | microsparc*-*-solaris2.*)
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
-  microsparc*-*-*)		# SunOS, Linux, *BSD
+  sparcv8*-*-* | microsparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
     gmp_cflags_acc="-g -O2 -cg92"
