@@ -344,7 +344,7 @@ dnl  at the end doesn't work.  Instead calculate the implied end using the
 dnl  start and how many chunks of code there are.
 
 deflit(UNROLL_INNER_END,
-`L(unroll_inner_start)+UNROLL_COUNT*CODE_BYTES_PER_LIMB')
+`L(unroll_inner_start)+eval(UNROLL_COUNT*CODE_BYTES_PER_LIMB)')
 
 	C eax
 	C ebx	carry
