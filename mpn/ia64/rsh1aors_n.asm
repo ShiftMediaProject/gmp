@@ -144,6 +144,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, v3
 	br.cloop.dptk	.Lb11_grt7
+	;;
 
 	cmp.PRED	p7, p0 = w3, u3
    (p9)	cmp.eq.or	p6, p0 = LIM, w2
@@ -201,6 +202,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, v3
 	br.cloop.dptk	.Lb10_grt6
+	;;
 
 	cmp.PRED	p7, p0 = w3, u3
    (p9)	cmp.eq.or	p6, p0 = LIM, w2
@@ -230,6 +232,7 @@ ifdef(`HAVE_ABI_32',`
 .Lb01:	ld8		v2 = [vp], 8
 	ld8		u2 = [up], 8
 	br.cloop.dptk	.Lb01_grt1
+	;;
 
 	ADDSUB		w2 = u2, v2
 	;;
@@ -258,6 +261,7 @@ ifdef(`HAVE_ABI_32',`
 	and		r8 = 1, w2
 	ADDSUB		w3 = u3, v3
 	br.cloop.dptk	.Lb01_grt5
+	;;
 
 	cmp.PRED	p7, p0 = w3, u3
 	;;
@@ -310,6 +314,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, v3
 	br.cloop.dptk	.Lb00_grt4
+	;;
 
 	cmp.PRED	p7, p0 = w3, u3
 	and		r8 = 1, w3
@@ -399,6 +404,7 @@ C *** MAIN LOOP START ***
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, v3
 	br.cloop.dptk	.Loop
+	;;
 C *** MAIN LOOP END ***
 
 .Lskip:	st8		[rp] = x3, 8

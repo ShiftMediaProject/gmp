@@ -135,9 +135,9 @@ ifdef(`OPERATION_lshift',`
 	br.cloop.sptk	.Ltop
 	br		.Lbot
 
-
 .Lb01:	ld8		r17 = [up], UPD
 	br.cloop.sptk	.L_grt_1
+	;;
 
 	BSH		r8 = r17, tnc		C function return value
 	FSH		r22 = r17, cnt
@@ -155,6 +155,7 @@ ifdef(`OPERATION_lshift',`
 	BSH		r23 = r18, tnc
 	ld8		r17 = [up], UPD
 	br.cloop.sptk	.L_grt_5
+	;;
 
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
@@ -213,6 +214,7 @@ ifdef(`OPERATION_lshift',`
 	BSH		r23 = r18, tnc
 	ld8		r17 = [up], UPD
 	br.cloop.sptk	.L_grt_6
+	;;
 
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
@@ -312,6 +314,7 @@ C *** MAIN LOOP START ***
 	st8		[rp] = r15, UPD
 	ld8		r17 = [up], UPD
 	br.cloop.sptk	.Ltop
+	;;
 C *** MAIN LOOP END ***
 
 .Lbot:	or		r15 = r27, r26

@@ -187,7 +187,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, x3
 	br.cloop.dptk	.Lb00_grt4
-					C n = 4
+	;;				C n = 4
 	shrp		x0 = v0, v3, 63
 	cmp.PRED	p8, p9 = w3, u3
 	;;
@@ -217,7 +217,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		v2 = [vp], 8
 	ld8		u2 = [up], 8
 	br.cloop.dptk	.Lb01_grt1
-					C n = 1
+	;;				C n = 1
 	shl		x2 = v2, 1
 	;;
 	ADDSUB		w2 = u2, x2
@@ -245,7 +245,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, x3
 	br.cloop.dptk	.Lb01_grt5
-					C n = 5
+	;;				C n = 5
 	shrp		x0 = v0, v3, 63
 	cmp.PRED	p8, p9 = w3, u3
 	br		.Lcj5
@@ -296,6 +296,7 @@ C *** MAIN LOOP START ***
 	ld8		u2 = [up], 8
 	ADDSUB		w3 = u3, x3
 	br.cloop.dptk	.Loop
+	;;
 C *** MAIN LOOP END ***
 
 .Lskip:	st8		[rp] = w1, 8
