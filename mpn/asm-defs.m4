@@ -848,6 +848,11 @@ dnl  The intermediate ".s" files will end up with no comments, just code.
 dnl
 dnl  Using C is not intended to cause offence to anyone who doesn't like
 dnl  FORTRAN; but if that happens it's an unexpected bonus.
+dnl
+dnl  During development, if comments are wanted in the .s files to help see
+dnl  what's expanding where, C can be redefined with something like
+dnl
+dnl         define(`C',`#')
 
 define(C, `
 dnl')
@@ -973,7 +978,7 @@ dnl  plain "ret" doesn't want to give an error when used that way.
 define(m4_instruction_wrapper,
 m4_assert_numargs(0)
 ``m4_instruction_wrapper_internal'(m4_doublequote($`'0),dnl
-m4_doublequote(ifdef(`__file__',__file__,`the m4 sources')),dnl
+ifdef(`__file__',`m4_doublequote(__file__)',``the m4 sources''),dnl
 $`#',m4_doublequote($`'1))`dnl'')
 
 dnl  Called: m4_instruction_wrapper_internal($0,`filename',$#,$1)
