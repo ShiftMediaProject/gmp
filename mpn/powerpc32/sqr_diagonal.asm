@@ -1,6 +1,6 @@
 dnl PowerPC-32 mpn_sqr_diagonal.
 
-dnl Copyright 2001 Free Software Foundation, Inc.
+dnl Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl This file is part of the GNU MP Library.
 
@@ -36,32 +36,33 @@ PROLOGUE(mpn_sqr_diagonal)
 	mtctr	r5
 
 	addi	r3,r3,-4
-	bdz	.Lend1
+	bdz	L(end1)
 
 	lwzu	r7,4(r4)
 	mullw	r9,r6,r6
 	mulhwu	r11,r6,r6
-	bdz	.Lend2
+	bdz	L(end2)
 
 	lwzu	r6,4(r4)
 	mullw	r8,r7,r7
 	mulhwu	r10,r7,r7
-	bdz	.Lende
+	bdz	L(ende)
 
-.Loop:	lwzu	r7,4(r4)
+L(oop):	lwzu	r7,4(r4)
 	stw	r9,4(r3)
 	mullw	r9,r6,r6
 	stwu	r11,8(r3)
 	mulhwu	r11,r6,r6
-	bdz	.Lendo
+	bdz	L(endo)
 	lwzu	r6,4(r4)
 	stw	r8,4(r3)
 	mullw	r8,r7,r7
 	stwu	r10,8(r3)
 	mulhwu	r10,r7,r7
-	bdnz	.Loop
+	bdnz	L(oop)
 
-.Lende:	stw	r9,4(r3)
+L(ende):
+	stw	r9,4(r3)
 	mullw	r9,r6,r6
 	stw	r11,8(r3)
 	mulhwu	r11,r6,r6
@@ -70,7 +71,8 @@ PROLOGUE(mpn_sqr_diagonal)
 	stw	r9,20(r3)
 	stw	r11,24(r3)
 	blr
-.Lendo:	stw	r8,4(r3)
+L(endo):
+	stw	r8,4(r3)
 	mullw	r8,r7,r7
 	stw	r10,8(r3)
 	mulhwu	r10,r7,r7
@@ -80,14 +82,16 @@ PROLOGUE(mpn_sqr_diagonal)
 	stw	r10,24(r3)
 	blr
 
-.Lend2:	mullw	r8,r7,r7
+L(end2):
+	mullw	r8,r7,r7
 	stw	r9,4(r3)
 	mulhwu	r10,r7,r7
 	stw	r11,8(r3)
 	stw	r8,12(r3)
 	stw	r10,16(r3)
 	blr
-.Lend1:	mullw	r9,r6,r6
+L(end1):
+	mullw	r9,r6,r6
 	mulhwu	r11,r6,r6
 	stw	r9,4(r3)
 	stw	r11,8(r3)

@@ -1,7 +1,7 @@
 dnl PowerPC-32 mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl the result in a second limb vector.
 
-dnl Copyright 1995, 1997, 2000 Free Software Foundation, Inc.
+dnl Copyright 1995, 1997, 2000, 2002 Free Software Foundation, Inc.
 
 dnl This file is part of the GNU MP Library.
 
@@ -41,27 +41,28 @@ PROLOGUE(mpn_mul_1)
 	addic	r0,r0,0		C clear cy
 C Start software pipeline
 	lwz	r8,0(r4)
-	bdz	.Lend3
+	bdz	L(end3)
 	stmw	r30,-8(r1)	C save registers we are supposed to preserve
 	lwzu	r9,4(r4)
 	mullw	r11,r8,r6
 	mulhwu	r0,r8,r6
-	bdz	.Lend1
+	bdz	L(end1)
 C Software pipelined main loop
-.Loop:	lwz	r8,4(r4)
+L(oop):	lwz	r8,4(r4)
 	mullw	r10,r9,r6
 	adde	r30,r11,r12
 	mulhwu	r12,r9,r6
 	stw	r30,4(r3)
-	bdz	.Lend2
+	bdz	L(end2)
 	lwzu	r9,8(r4)
 	mullw	r11,r8,r6
 	adde	r31,r10,r0
 	mulhwu	r0,r8,r6
 	stwu	r31,8(r3)
-	bdnz	.Loop
+	bdnz	L(oop)
 C Finish software pipeline
-.Lend1:	mullw	r10,r9,r6
+L(end1):
+	mullw	r10,r9,r6
 	adde	r30,r11,r12
 	mulhwu	r12,r9,r6
 	stw	r30,4(r3)
@@ -70,7 +71,8 @@ C Finish software pipeline
 	addze	r3,r12
 	lmw	r30,-8(r1)	C restore registers from stack
 	blr
-.Lend2:	mullw	r11,r8,r6
+L(end2):
+	mullw	r11,r8,r6
 	adde	r31,r10,r0
 	mulhwu	r0,r8,r6
 	stwu	r31,8(r3)
@@ -79,7 +81,8 @@ C Finish software pipeline
 	addze	r3,r0
 	lmw	r30,-8(r1)	C restore registers from stack
 	blr
-.Lend3:	mullw	r11,r8,r6
+L(end3):
+	mullw	r11,r8,r6
 	stw	r11,4(r3)
 	mulhwu	r3,r8,r6
 	blr
