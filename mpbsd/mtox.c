@@ -33,7 +33,6 @@ mtox (const MINT *x)
   unsigned char *str, *s;
   size_t str_size, i;
   int zeros;
-  char *num_to_text;
   TMP_DECL (marker);
 
   if (xsize == 0)

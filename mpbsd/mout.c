@@ -32,7 +32,6 @@ mout (const MINT *x)
   mp_size_t x_size = x->_mp_size;
   unsigned char *str;
   size_t str_size;
-  char *num_to_text;
   int i;
   TMP_DECL (marker);
 
