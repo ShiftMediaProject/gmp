@@ -99,6 +99,9 @@ esac],
 AM_CONDITIONAL(WANT_MPFR, test "$enable_mpfr" = "yes")
 
 
+AC_DEFINE_UNQUOTED(HAVE_TARGET_CPU_$target_cpu)
+
+
 dnl Switch on OS and determine what compiler to use.
 dnl
 dnl  os_64bit	           Set to "yes" if OS is 64-bit capable.
