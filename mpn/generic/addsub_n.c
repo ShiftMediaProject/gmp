@@ -51,7 +51,7 @@ mpn_addsub_n (r1p, r2p, s1p, s2p, n)
 
   /* We alternatingly add and subtract in chunks that fit into the (L1)
      cache.  Since the chunks are several hundred limbs, the function call
-     overhead is indignificant, but we get much better locality.  */
+     overhead is insignificant, but we get much better locality.  */
 
   /* We have three variant of the inner loop, the proper loop is chosen
      depending on whether r1 or r2 are the same operand as s1 or s2.  */
