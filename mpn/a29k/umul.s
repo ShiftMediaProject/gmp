@@ -18,8 +18,6 @@
 ; MA 02111-1307, USA.
 
 	.sect .lit,lit
-gcc2_compiled.:
-___gnu_compiled_c:
 	.text
 	.align 4
 	.global ___umul_ppmm
