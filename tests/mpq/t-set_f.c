@@ -28,6 +28,7 @@ MA 02111-1307, USA. */
 int
 main (int argc, char **argv)
 {
+#if GMP_NAIL_BITS == 0
   static const struct {
     int         f_base;
     const char  *f;
@@ -166,5 +167,6 @@ main (int argc, char **argv)
   mpz_clear (want_den);
 
   tests_end ();
+#endif
   exit (0);
 }
