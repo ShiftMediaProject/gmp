@@ -219,10 +219,10 @@ fi
 rm -f conftest*
 ])
 if test "$gmp_cv_check_asm_underscore" = "yes"; then
-  GMP_DEFINE(GSYM_PREFIX, [_$][1])
+  GMP_DEFINE(GSYM_PREFIX, [_])
   ifelse([$1], , :, [$1])
 else
-  GMP_DEFINE(GSYM_PREFIX, [$][1])
+  GMP_DEFINE(GSYM_PREFIX, [])
   ifelse([$2], , :, [$2])
 fi    
 ])dnl
