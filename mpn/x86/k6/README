@@ -27,17 +27,19 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_iorn/xnor_n            1.5-2.0      |
 	mpn_nand/nior_n            1.75-2.0     /
 
-	mpn_divrem_1              20.0
-	mpn_mod_1                 20.0
-
 	mpn_l/rshift               1.75
 
-	mpn_mul_1                  6.4
+	mpn_mul_1                  6.25
 	mpn_add/submul_1           7.65-8.4     (varying with data values)
 
 	mpn_mul_basecase           9.25 cycles/crossproduct (approx)
 	mpn_sqr_basecase           6.5  cycles/crossproduct (approx)
                                    or 12 cycles/triangleproduct (approx)
+
+	mpn_divrem_1              20.0
+	mpn_mod_1                 20.0
+
+	mpn_divexact_by3          11.0
 
 
 Prefetching of sources hasn't yet given any joy.  With the 3DNow "prefetch"
