@@ -83,7 +83,7 @@ ifelse(dollarhash(x),1,`define(t1,Y)',
 ``bad: $][# not supported (SunOS /usr/bin/m4)
 '')dnl
 ifelse(eval(89),89,`define(t2,Y)',
-`bad: eval() doesnt support 8 and 9 in a constant (OpenBSD 2.6 m4)
+`bad: eval() doesnt support 8 or 9 in a constant (OpenBSD 2.6 m4)
 ')dnl
 ifelse(t1`'t2,YY,`good
 ')dnl]
@@ -165,12 +165,21 @@ for c in $gmp_cc_list; do
     fi
     if test "$gmp_req_64bit_cc" = "yes"; then
       eval c_flags=\$gmp_cflags64_$c
-      GMP_CHECK_CC_64BIT($c, $c_flags)
-      if test "$gmp_cv_cc_64bit" = "yes"; then
-        test -z "$CC64" && CC64="$c"
-        test -z "$CFLAGS64" && CFLAGS64="$c_flags"
-	# We have CC64 so we're done.
-        break
+
+      # Verify that the compiler works in 64-bit mode as well.
+      # /usr/ucb/cc on Solaris 7 can *compile* in 64-bit mode, but not link.
+      GMP_PROG_CC_WORKS($c, $c_flags,
+		      	gmp_prog_cc_works=yes, 
+		      	gmp_prog_cc_works=no)
+
+      if test "$gmp_prog_cc_works" = "yes"; then
+        GMP_CHECK_CC_64BIT($c, $c_flags)
+        if test "$gmp_cv_cc_64bit" = "yes"; then
+          test -z "$CC64" && CC64="$c"
+          test -z "$CFLAGS64" && CFLAGS64="$c_flags"
+	  # We have CC64 so we're done.
+          break
+        fi
       fi
     else
       # We have CC32, and we don't need a 64-bit compiler so we're done.
@@ -210,12 +219,17 @@ AC_PROVIDE([AC_PROG_CC])
 
 dnl  GMP_CHECK_CC_64BIT(cc, cflags64)
 dnl  Find out if `CC' can produce 64-bit code.
+dnl  Requires NM to be set to nm for target.
 dnl  FIXME: Cache result.
 AC_DEFUN(GMP_CHECK_CC_64BIT,
 [
   gmp_tmp_CC_save="$CC"
   CC="[$1]"
   AC_MSG_CHECKING([whether the C compiler ($CC) is 64-bit capable])
+  if test -z "$NM"; then
+    echo; echo ["configure: $0: fatal: need nm"]
+    exit 1
+  fi
   gmp_tmp_CFLAGS_save="$CFLAGS"
   CFLAGS="[$2]"
 
@@ -258,13 +272,29 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
                      gmp_cv_cc_64bit=no)
       ;;
     *-*-*)
-      # FIXME: Avoid running anything on target at configure time.  Someone
-      # may want to cross compile.  Instead, compile something like
-      # [int pre; char arr[sizeof (void *)]; int post;]
-      # and look at the distance between pre and post.
-      AC_TRY_RUN([
-        int main() { return (sizeof (void *) != 8); }
-      ], gmp_cv_cc_64bit=yes, gmp_cv_cc_64bit=no, gmp_cv_cc_64bit=no)
+      # Allocate an array of size sizeof (void *) and use nm to determine its 
+      # size.  We depend on the first declared variable being put at address 0.
+      cat >conftest.c <<EOF
+[char arr[sizeof (void *)]={0};
+char post=0;]
+EOF
+      ac_compile="$CC $CFLAGS -c conftest.c 1>&AC_FD_CC"
+      if AC_TRY_EVAL(ac_compile); then
+        changequote(<,>)dnl
+	gmp_tmp_val=`$NM conftest.o | grep post | sed -e 's;[[][0-9][]]\(.*\);\1;' \
+          -e 's;[^1-9]*\([0-9]*\).*;\1;'`
+        changequote([, ])dnl
+        if test "$gmp_tmp_val" = "8"; then
+	  gmp_cv_cc_64bit=yes
+	else
+	  gmp_cv_cc_64bit=no
+        fi
+      else
+        echo "configure: failed program was:" >&AC_FD_CC
+        cat conftest.$ac_ext >&AC_FD_CC
+        gmp_cv_cc_64bit=no
+      fi
+      rm -f conftest*
       ;;
   esac
 
@@ -676,6 +706,7 @@ AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_LANG_C	dnl  Note: Destructive.
 CC="[$1]"
 CFLAGS="[$2]"
+AC_MSG_CHECKING([if the C compiler ($CC) works with flags $CFLAGS])
 
 # Simple test for all targets.
 AC_TRY_COMPILER([int main(){return(0);}],
@@ -698,6 +729,8 @@ if test "$tmp_works" = "yes"; then
 else
   ifelse([$4], , :, [$4])
 fi
+
+AC_MSG_RESULT($tmp_works)
 ])dnl
 
 
