@@ -131,8 +131,10 @@
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
 <li> <code>mpz_and</code>, <code>mpz_ior</code> and <code>mpz_xor</code> should
-     use <code>mpn_and</code> etc.  Need to be careful not to pass size==0.  Is
-     some code sharing possible between the <code>mpz</code>s?
+     use <code>mpn_and</code> etc for the benefit of the small number of
+     targets with native versions of those routines.  Need to be careful not to
+     pass size==0.  Is some code sharing possible between the
+     <code>mpz</code>s?
 </ul>
 
 
