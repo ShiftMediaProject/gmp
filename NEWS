@@ -3,9 +3,9 @@ Changes between MP version 3.1.1 and 3.2
 * Bug fixes.
 * Revamped configure featuring ABI selection and fixes for host/target
   confusion.
-* Support for new CPUs: IA-64.
+* New CPU support: IA-64.
 * Improved CPU support: 21264, Cray vector systems.
-* Support for new systems: SCO 5.
+* New systems supported: SCO 5.
 * New C++ wrapper.
 * New Karatsuba Square Root algorithm.
 * New algorithms chapter in the manual.
@@ -15,6 +15,8 @@ Changes between MP version 3.1.1 and 3.2
 * New integer functions: mpz_si_pow_ui, mpz_cdiv_q_2exp, mpz_cdiv_r_2exp.
 * New divisibility tests: mpz_divisible_p, mpz_divisible_ui_p,
   mpz_divisible_2exp_p.
+* New congruence tests: mpz_congruent_p, mpz_congruent_ui_p,
+  mpz_congruent_2exp_p.
 * New rational functions: mpq_abs, mpq_div_2exp, mpq_mul_2exp, mpq_set_f.
 * New float conversion functions: mpf_get_si, mpf_get_ui.
 * New float test functions: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
