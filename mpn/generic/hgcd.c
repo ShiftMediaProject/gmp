@@ -652,10 +652,6 @@ mpn_hgcd_fix (mp_size_t k,
       MP_SRCPTR_SWAP (ap, bp);
     }
 
-  /* We will usually (always?) have uvsize <= k.
-
-     FIXME: See if we can guarantee uvsize <= k? */
-
   tsize = k + uvsize;
 
   ASSERT (k + hsize <= ralloc);
