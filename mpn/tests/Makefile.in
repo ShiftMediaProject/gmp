@@ -123,9 +123,11 @@ INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
 EXTRA_PROGRAMS = \
-  add_n addmul_1 addsub_n addsub_n_2 copy divmod_1 divrem lshift mul_1 rshift \
+  add_n addmul_1 copy divmod_1 divrem lshift mul_1 rshift \
   sub_n submul_1 tst-addsub try
 
+
+# addsub_n addsub_n_2 not yet build since mpn_addsub_n doesn't yet exist
 
 EXTRA_HEADERS = ref.h try.h
 EXTRA_DIST = x86call.asm x86check.c
@@ -157,16 +159,6 @@ addmul_1_OBJECTS =  addmul_1$U.$(OBJEXT)
 addmul_1_LDADD = $(LDADD)
 addmul_1_DEPENDENCIES =  $(top_builddir)/libgmp.la
 addmul_1_LDFLAGS = 
-addsub_n_SOURCES = addsub_n.c
-addsub_n_OBJECTS =  addsub_n$U.$(OBJEXT)
-addsub_n_LDADD = $(LDADD)
-addsub_n_DEPENDENCIES =  $(top_builddir)/libgmp.la
-addsub_n_LDFLAGS = 
-addsub_n_2_SOURCES = addsub_n_2.c
-addsub_n_2_OBJECTS =  addsub_n_2$U.$(OBJEXT)
-addsub_n_2_LDADD = $(LDADD)
-addsub_n_2_DEPENDENCIES =  $(top_builddir)/libgmp.la
-addsub_n_2_LDFLAGS = 
 copy_SOURCES = copy.c
 copy_OBJECTS =  copy$U.$(OBJEXT)
 copy_LDADD = $(LDADD)
@@ -221,9 +213,8 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  add_n.c addmul_1.c addsub_n.c addsub_n_2.c copy.c \
-divmod_1.c divrem.c lshift.c mul_1.c rshift.c sub_n.c submul_1.c \
-$(try_SOURCES) tst-addsub.c
+DIST_SOURCES =  add_n.c addmul_1.c copy.c divmod_1.c divrem.c lshift.c \
+mul_1.c rshift.c sub_n.c submul_1.c $(try_SOURCES) tst-addsub.c
 DIST_COMMON =  README $(EXTRA_HEADERS) Makefile.am Makefile.in
 
 
@@ -231,8 +222,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = add_n.c addmul_1.c addsub_n.c addsub_n_2.c copy.c divmod_1.c divrem.c lshift.c mul_1.c rshift.c sub_n.c submul_1.c $(try_SOURCES) tst-addsub.c
-OBJECTS = add_n$U.$(OBJEXT) addmul_1$U.$(OBJEXT) addsub_n$U.$(OBJEXT) addsub_n_2$U.$(OBJEXT) copy$U.$(OBJEXT) divmod_1$U.$(OBJEXT) divrem$U.$(OBJEXT) lshift$U.$(OBJEXT) mul_1$U.$(OBJEXT) rshift$U.$(OBJEXT) sub_n$U.$(OBJEXT) submul_1$U.$(OBJEXT) $(am_try_OBJECTS) tst-addsub$U.$(OBJEXT)
+SOURCES = add_n.c addmul_1.c copy.c divmod_1.c divrem.c lshift.c mul_1.c rshift.c sub_n.c submul_1.c $(try_SOURCES) tst-addsub.c
+OBJECTS = add_n$U.$(OBJEXT) addmul_1$U.$(OBJEXT) copy$U.$(OBJEXT) divmod_1$U.$(OBJEXT) divrem$U.$(OBJEXT) lshift$U.$(OBJEXT) mul_1$U.$(OBJEXT) rshift$U.$(OBJEXT) sub_n$U.$(OBJEXT) submul_1$U.$(OBJEXT) $(am_try_OBJECTS) tst-addsub$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -289,14 +280,6 @@ addmul_1$(EXEEXT): $(addmul_1_OBJECTS) $(addmul_1_DEPENDENCIES)
 	@rm -f addmul_1$(EXEEXT)
 	$(LINK) $(addmul_1_LDFLAGS) $(addmul_1_OBJECTS) $(addmul_1_LDADD) $(LIBS)
 
-addsub_n$(EXEEXT): $(addsub_n_OBJECTS) $(addsub_n_DEPENDENCIES)
-	@rm -f addsub_n$(EXEEXT)
-	$(LINK) $(addsub_n_LDFLAGS) $(addsub_n_OBJECTS) $(addsub_n_LDADD) $(LIBS)
-
-addsub_n_2$(EXEEXT): $(addsub_n_2_OBJECTS) $(addsub_n_2_DEPENDENCIES)
-	@rm -f addsub_n_2$(EXEEXT)
-	$(LINK) $(addsub_n_2_LDFLAGS) $(addsub_n_2_OBJECTS) $(addsub_n_2_LDADD) $(LIBS)
-
 copy$(EXEEXT): $(copy_OBJECTS) $(copy_DEPENDENCIES)
 	@rm -f copy$(EXEEXT)
 	$(LINK) $(copy_LDFLAGS) $(copy_OBJECTS) $(copy_LDADD) $(LIBS)
@@ -346,10 +329,6 @@ add_n_.c: add_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_n.c; then echo $(srcdir)/add_n.c; else echo add_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_n_.c
 addmul_1_.c: addmul_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_1.c; then echo $(srcdir)/addmul_1.c; else echo addmul_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_1_.c
-addsub_n_.c: addsub_n.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addsub_n.c; then echo $(srcdir)/addsub_n.c; else echo addsub_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addsub_n_.c
-addsub_n_2_.c: addsub_n_2.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addsub_n_2.c; then echo $(srcdir)/addsub_n_2.c; else echo addsub_n_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addsub_n_2_.c
 copy_.c: copy.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/copy.c; then echo $(srcdir)/copy.c; else echo copy.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > copy_.c
 divmod_1_.c: divmod_1.c $(ANSI2KNR)
@@ -377,7 +356,6 @@ try_.c: try.c $(ANSI2KNR)
 tst-addsub_.c: tst-addsub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tst-addsub.c; then echo $(srcdir)/tst-addsub.c; else echo tst-addsub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tst-addsub_.c
 add_n_.$(OBJEXT) add_n_.lo addmul_1_.$(OBJEXT) addmul_1_.lo \
-addsub_n_.$(OBJEXT) addsub_n_.lo addsub_n_2_.$(OBJEXT) addsub_n_2_.lo \
 copy_.$(OBJEXT) copy_.lo divmod_1_.$(OBJEXT) divmod_1_.lo \
 divrem_.$(OBJEXT) divrem_.lo lshift_.$(OBJEXT) lshift_.lo \
 mul_1_.$(OBJEXT) mul_1_.lo ref_.$(OBJEXT) ref_.lo rshift_.$(OBJEXT) \
