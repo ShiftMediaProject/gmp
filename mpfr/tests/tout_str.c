@@ -137,20 +137,20 @@ main (int argc, char *argv[])
   check (7.02293374921793516813e-84, GMP_RNDN, 10);
 
   /* random tests */
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   for (i=0;i<N;i++)
     {
       do
         {
-          d = drand ();
+          d = DBL_RAND ();
         }
 #ifdef HAVE_DENORMS
       while (0);
 #else
       while (ABS(d) < DBL_MIN);
 #endif
-      r = LONG_RAND() % 4;
-      p = 2 + LONG_RAND() % 35;
+      r = randlimb () % 4;
+      p = 2 + randlimb () % 35;
       check (d, r, p);
     }
 

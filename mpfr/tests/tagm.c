@@ -28,6 +28,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
+#if 0
+/* The following function is buggy and must not be used any longer. */
 static double
 drand_agm (void)
 {
@@ -42,6 +44,7 @@ drand_agm (void)
 
   return d;
 }
+#endif
 
 #define check(a,b,r) check4(a,b,r,0.0)
 
@@ -90,6 +93,7 @@ check_large (void)
   mpfr_clear(a); mpfr_clear(b); mpfr_clear(agm);
 }
 
+#if 0
 static void
 slave (int N, int p)
 {
@@ -105,11 +109,12 @@ slave (int N, int p)
     b = drand_agm();
     mpfr_set_d(ta, a, GMP_RNDN);
     mpfr_set_d(tb, b, GMP_RNDN);
-    mpfr_agm(tres, ta, tb, LONG_RAND() % 4 );
+    mpfr_agm(tres, ta, tb, randlimb () % 4 );
   }
     mpfr_clear(ta); mpfr_clear(ta); mpfr_clear(tres); 
     printf("fin\n");
 }
+#endif
 
 static void
 check_nans (void)
@@ -154,34 +159,34 @@ check_nans (void)
 int
 main (int argc, char* argv[])
 {
-   int N;
-
-   SEED_RAND (time(NULL));
-
    tests_start_mpfr ();
+
+   randseed (time(NULL));
 
    check_nans ();
 
    if (argc == 3) /* tagm N p : N calculus with precision p*/
-     {   
+     {
+       /*
        printf ("Doing %d random tests in %d precision\n", atoi (argv[1]),
                atoi (argv[2]));
-     slave (atoi (argv[1]), atoi (argv[2]));
-     return 0;
+       slave (atoi (argv[1]), atoi (argv[2]));
+       */
+       return 0;
      }
 
    if (argc == 2) /* tagm N: N tests with random double's */
      {
-       int i;
+       int N, i;
        double a, b;
 
        N = atoi (argv[1]);
        for (i = 0; i < N; i++)
          {
-           a = drand(); 
-           b = drand();
-           check(a, b, LONG_RAND() % 4);
-         } 
+           a = DBL_RAND (); 
+           b = DBL_RAND ();
+           check(a, b, randlimb () % 4);
+         }
        return 0;
      }
    else

@@ -1,6 +1,6 @@
 /* Test file for mpfr_fma.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -267,14 +267,14 @@ main (int argc, char *argv[])
 	  mpfr_random (y);
 	  mpfr_random (z);
 
-          if (random() % 2)
+          if (randlimb () % 2)
             mpfr_neg (x, x, GMP_RNDN);
-          if (random() % 2)
+          if (randlimb () % 2)
             mpfr_neg (y, y, GMP_RNDN);
-          if (random() % 2)
+          if (randlimb () % 2)
             mpfr_neg (z, z, GMP_RNDN);
 
-	  rnd = random () % 4;
+	  rnd = randlimb () % 4;
 	  mpfr_set_prec (slong, 2 * prec);
 	  if (mpfr_mul (slong, x, y, rnd))
 	    {

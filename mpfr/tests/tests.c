@@ -19,8 +19,23 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#if HAVE_CONFIG_H
+#include "config.h"     /* for a build within gmp */
+#endif
+
 #include <stdio.h>
 #include <float.h>
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>  /* for struct timeval */
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -33,15 +48,21 @@ MA 02111-1307, USA. */
 #endif
 
 
+void tests_rand_start _PROTO ((void));
+void tests_rand_end   _PROTO ((void));
+void randseed         _PROTO ((unsigned int));
+
 void
 tests_start_mpfr (void)
 {
   tests_memory_start ();
+  tests_rand_start ();
 }
 
 void
 tests_end_mpfr (void)
 {
+  tests_rand_end ();
   if (__gmpfr_const_pi_prec != 0)
     {
       mpfr_clear (__mpfr_const_pi);
@@ -61,6 +82,53 @@ tests_end_mpfr (void)
     }
 
   tests_memory_end ();
+}
+
+void
+tests_rand_start (void)
+{
+  gmp_randstate_ptr  rands;
+  char           *perform_seed;
+  unsigned long  seed;
+
+  if (__gmp_rands_initialized)
+    {
+      printf ("Please let tests_start() initialize the global __gmp_rands.\n");
+      printf ("ie. ensure that function is called before the first use of RANDS.\n");
+      abort ();
+    }
+  rands = RANDS;
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != NULL)
+    {
+      seed = atoi (perform_seed);
+      if (! (seed == 0 || seed == 1))
+        {
+          printf ("Re-seeding with GMP_CHECK_RANDOMIZE=%lu\n", seed);
+          gmp_randseed_ui (rands, seed);
+        }
+      else
+        {
+#if HAVE_GETTIMEOFDAY
+          struct timeval  tv;
+          gettimeofday (&tv, NULL);
+          seed = tv.tv_sec + tv.tv_usec;
+#else
+          time_t  tv;
+          time (&tv);
+          seed = tv;
+#endif
+          gmp_randseed_ui (rands, seed);
+          printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
+        }
+    }
+}
+
+void
+tests_rand_end (void)
+{
+  RANDS_CLEAR ();
 }
 
 /* initialization function for tests using the hardware floats */
@@ -129,27 +197,26 @@ tests_machine_prec_long_double (void)
 }
 
 
-/* generate a random double using the whole range of possible values,
-   including denormalized numbers, NaN, infinities, ... */
-double
-drand (void)
+/* generate a random limb */
+mp_limb_t
+randlimb (void)
 {
-  double d; int *i, expo;
+  mp_limb_t limb;
 
-  i = (int*) &d;
-  d = 1.0;
-  if (i[0] == 0)
-    expo = 1; /* little endian, exponent in i[1] */
-  else
-    expo = 0;
-  i[0] = LONG_RAND();
-  i[1] = LONG_RAND();
-  while (i[expo] >= 2146435072)
-    i[expo] = LONG_RAND(); /* avoids NaNs */
-  if ((LONG_RAND() % 2) && !Isnan(d))
-    d = -d; /* generates negative numbers */
-  return d;
+  _gmp_rand (&limb, RANDS, GMP_NUMB_BITS);
+  return limb;
 }
+
+void
+randseed (unsigned int s)
+{
+  mpz_t t;
+
+  mpz_init_set_ui (t, s);
+  gmp_randseed (RANDS, t);
+  mpz_clear (t);
+}
+
 
 /* returns ulp(x) for x a 'normal' double-precision number */
 double

@@ -216,7 +216,7 @@ mpfr_TEXINFOS = ../fdl.texi
 AM_MAKEINFOFLAGS = -I$(top_srcdir)
 TEXINFO_TEX = ../texinfo.tex
 
-libmpfr_a_SOURCES = mpfr.h mpf2mpfr.h mpfr-impl.h mpfr-math.h mpfr-test.h log_b2.h exceptions.c save_expo.c extract.c uceil_exp2.c uceil_log2.c ufloor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_si.c cmp_ui.c comparisons.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c frac.c get_d.c get_exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c next.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c round_prec.c set.c setmax.c setmin.c set_d.c set_dfl_prec.c set_exp.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c get_z_exp.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c sin_cos.c set_nan.c set_inf.c powerof2.c gamma.c set_ld.c get_ld.c cbrt.c volatile.c fits_s.h fits_sshort.c fits_sint.c fits_slong.c fits_u.h fits_ushort.c fits_uint.c fits_ulong.c get_si.c get_ui.c zeta.c cmp_d.c
+libmpfr_a_SOURCES = mpfr.h mpf2mpfr.h mpfr-impl.h mpfr-math.h mpfr-test.h log_b2.h exceptions.c save_expo.c extract.c uceil_exp2.c uceil_log2.c ufloor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_si.c cmp_ui.c comparisons.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c frac.c get_d.c get_exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c next.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c round_prec.c set.c setmax.c setmin.c set_d.c set_dfl_prec.c set_exp.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c get_z_exp.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c sin_cos.c set_nan.c set_inf.c powerof2.c gamma.c set_ld.c get_ld.c cbrt.c volatile.c fits_s.h fits_sshort.c fits_sint.c fits_slong.c fits_u.h fits_ushort.c fits_uint.c fits_ulong.c get_si.c get_ui.c zeta.c cmp_d.c erf.c
 
 libmpfr_a_LIBADD = @LIBOBJS@
 
@@ -275,7 +275,7 @@ am_libmpfr_a_OBJECTS = exceptions$U.$(OBJEXT) save_expo$U.$(OBJEXT) \
 	fits_sint$U.$(OBJEXT) fits_slong$U.$(OBJEXT) \
 	fits_ushort$U.$(OBJEXT) fits_uint$U.$(OBJEXT) \
 	fits_ulong$U.$(OBJEXT) get_si$U.$(OBJEXT) get_ui$U.$(OBJEXT) \
-	zeta$U.$(OBJEXT) cmp_d$U.$(OBJEXT)
+	zeta$U.$(OBJEXT) cmp_d$U.$(OBJEXT) erf$U.$(OBJEXT)
 libmpfr_a_OBJECTS = $(am_libmpfr_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -442,6 +442,8 @@ dump_.c: dump.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 eq_.c: eq.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/eq.c; then echo $(srcdir)/eq.c; else echo eq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+erf_.c: erf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/erf.c; then echo $(srcdir)/erf.c; else echo erf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 exceptions_.c: exceptions.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exceptions.c; then echo $(srcdir)/exceptions.c; else echo exceptions.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 exp_.c: exp.c $(ANSI2KNR)
@@ -659,16 +661,16 @@ cos_.$(OBJEXT) cos_.lo cosh_.$(OBJEXT) cosh_.lo dim_.$(OBJEXT) dim_.lo \
 div_.$(OBJEXT) div_.lo div_2exp_.$(OBJEXT) div_2exp_.lo \
 div_2si_.$(OBJEXT) div_2si_.lo div_2ui_.$(OBJEXT) div_2ui_.lo \
 div_ui_.$(OBJEXT) div_ui_.lo dump_.$(OBJEXT) dump_.lo eq_.$(OBJEXT) \
-eq_.lo exceptions_.$(OBJEXT) exceptions_.lo exp_.$(OBJEXT) exp_.lo \
-exp2_.$(OBJEXT) exp2_.lo exp3_.$(OBJEXT) exp3_.lo exp_2_.$(OBJEXT) \
-exp_2_.lo expm1_.$(OBJEXT) expm1_.lo extract_.$(OBJEXT) extract_.lo \
-factorial_.$(OBJEXT) factorial_.lo fits_sint_.$(OBJEXT) fits_sint_.lo \
-fits_slong_.$(OBJEXT) fits_slong_.lo fits_sshort_.$(OBJEXT) \
-fits_sshort_.lo fits_uint_.$(OBJEXT) fits_uint_.lo \
-fits_ulong_.$(OBJEXT) fits_ulong_.lo fits_ushort_.$(OBJEXT) \
-fits_ushort_.lo fma_.$(OBJEXT) fma_.lo frac_.$(OBJEXT) frac_.lo \
-gamma_.$(OBJEXT) gamma_.lo get_d_.$(OBJEXT) get_d_.lo \
-get_exp_.$(OBJEXT) get_exp_.lo get_ld_.$(OBJEXT) get_ld_.lo \
+eq_.lo erf_.$(OBJEXT) erf_.lo exceptions_.$(OBJEXT) exceptions_.lo \
+exp_.$(OBJEXT) exp_.lo exp2_.$(OBJEXT) exp2_.lo exp3_.$(OBJEXT) \
+exp3_.lo exp_2_.$(OBJEXT) exp_2_.lo expm1_.$(OBJEXT) expm1_.lo \
+extract_.$(OBJEXT) extract_.lo factorial_.$(OBJEXT) factorial_.lo \
+fits_sint_.$(OBJEXT) fits_sint_.lo fits_slong_.$(OBJEXT) fits_slong_.lo \
+fits_sshort_.$(OBJEXT) fits_sshort_.lo fits_uint_.$(OBJEXT) \
+fits_uint_.lo fits_ulong_.$(OBJEXT) fits_ulong_.lo \
+fits_ushort_.$(OBJEXT) fits_ushort_.lo fma_.$(OBJEXT) fma_.lo \
+frac_.$(OBJEXT) frac_.lo gamma_.$(OBJEXT) gamma_.lo get_d_.$(OBJEXT) \
+get_d_.lo get_exp_.$(OBJEXT) get_exp_.lo get_ld_.$(OBJEXT) get_ld_.lo \
 get_si_.$(OBJEXT) get_si_.lo get_str_.$(OBJEXT) get_str_.lo \
 get_ui_.$(OBJEXT) get_ui_.lo get_z_exp_.$(OBJEXT) get_z_exp_.lo \
 gmp_op_.$(OBJEXT) gmp_op_.lo hypot_.$(OBJEXT) hypot_.lo init_.$(OBJEXT) \

@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
@@ -162,8 +163,8 @@ main (void)
 
   for (i=0; i<1000000; )
     {
-      x = drand();
-      y = drand();
+      x = DBL_RAND ();
+      y = DBL_RAND ();
       if (!Isnan(x) && !Isnan(y))
         {
           i++;

@@ -25,8 +25,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-#define PIP 150
-#define PFP 150
+#define PIP 70
+#define PFP 70
 #define PMAX (PIP+2*PFP)
 
 static void

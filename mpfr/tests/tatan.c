@@ -89,7 +89,7 @@ main (int argc, char *argv[])
       for (n=0; n<N; n++)
 	{
 	  mpfr_random (x);
-	  rnd = random () % 4;
+	  rnd = randlimb () % 4;
 	  mpfr_set_prec (y, yprec);
 	  mpfr_atan (y, x, rnd);
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;

@@ -69,9 +69,9 @@ main (int argc, char *argv[])
 	  mpfr_random (x);
 
 	  mpfr_random (s);
-          if (random() % 2)
+          if (randlimb () % 2)
             mpfr_neg (s, s, GMP_RNDN);
-	  rnd = random () % 4;
+	  rnd = randlimb () % 4;
 	  mpfr_set_prec (y, yprec);
 	  compare = mpfr_pow (y, x, s, rnd);
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;

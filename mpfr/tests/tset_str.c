@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <time.h>
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -53,13 +54,13 @@ main (int argc, char *argv[])
 
   mpfr_init2 (x, 2);
 
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   
   nc = (argc > 1) ? atoi(argv[1]) : 53;
   if (nc < 100)
     nc = 100;
 
-  bd = LONG_RAND() & 8;
+  bd = randlimb () & 8;
   
   str2 = str = (*__gmp_allocate_func) (nc * sizeof(char));
 
@@ -67,7 +68,7 @@ main (int argc, char *argv[])
 
     {
       for(k = 1; k <= bd; k++)
-	*(str2++) = (LONG_RAND() & 1) + '0';
+	*(str2++) = (randlimb () & 1) + '0';
     }
   else
     *(str2++) = '0';
@@ -75,10 +76,10 @@ main (int argc, char *argv[])
   *(str2++) = '.'; 
 
   for (k = 1; k < nc - 17 - bd; k++)
-    *(str2++) = '0' + (LONG_RAND() & 1);
+    *(str2++) = '0' + (randlimb () & 1);
 
   *(str2++) = 'e'; 
-  sprintf (str2, "%d", (int) LONG_RAND() - (1 << 30)); 
+  sprintf (str2, "%d", (int) (randlimb () & INT_MAX) + INT_MIN/2);
 
   mpfr_set_prec (x, nc + 10); 
   mpfr_set_str_raw (x, str);
@@ -151,8 +152,8 @@ main (int argc, char *argv[])
   for (i=0;i<100000;i++)
     {
       mpfr_random (x);
-      k = LONG_RAND() % 4;
-      logbase = (LONG_RAND() % 5) + 1;
+      k = randlimb () % 4;
+      logbase = (randlimb () % 5) + 1;
       base = 1 << logbase;
       /* Warning: the number of bits needed to print exactly a number of 
 	 'prec' bits in base 2^logbase may be greater than ceil(prec/logbase),

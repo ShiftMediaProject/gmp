@@ -77,6 +77,7 @@ AC_DEFUN(MPFR_CONFIGS,
 [
 AC_REQUIRE([AC_OBJEXT])
 AC_REQUIRE([MPFR_CHECK_LIBM])
+AC_REQUIRE([AC_HEADER_TIME])
 
 # CPU-dependent objects for the test programs
 case $host in
@@ -87,7 +88,12 @@ case $host in
     ;;
 esac
 
+AC_CHECK_HEADERS(sys/time.h)
 
+# Reasons for testing:
+#   gettimeofday - not in mingw
+#
+AC_CHECK_FUNCS(gettimeofday)
 AC_REPLACE_FUNCS(strcasecmp strncasecmp)
 
 dnl Check for IEEE-754 switches on Alpha
@@ -127,9 +133,6 @@ LIBS="$saved_LIBS"
 if test "$mpfr_cv_have_fesetround" = "yes"; then
   AC_DEFINE(MPFR_HAVE_FESETROUND,1,[Define if you have the `fesetround' function via the <fenv.h> header file.])
 fi
-
-dnl Check random functions
-AC_CHECK_FUNCS(lrand48)
 
 dnl Check whether 0/0, 1/0, -1/0, sqrt(-1) are valid expressions
 AC_CACHE_CHECK([for valid NaN], mpfr_cv_valid_nan, [

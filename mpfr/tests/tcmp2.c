@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
@@ -95,7 +96,7 @@ worst_cases (void)
       set_bit (y, i + 1, 0);
       for (j=0; j<64; j++) /* |v| = j */
 	{
-	  b = random () % 2;
+	  b = randlimb () % 2;
 	  set_bit (x, i + j + 2, b);
 	  set_bit (y, i + j + 2, b);
 

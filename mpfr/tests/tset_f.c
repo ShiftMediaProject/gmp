@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_f.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -45,9 +45,9 @@ main (void)
   mpfr_set_prec (x, 100);
   mpfr_set_f (x, y, GMP_RNDN);
 
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   mpf_random2(y, 10, 0); 
-  mpfr_set_f(x, y, LONG_RAND() & 3);
+  mpfr_set_f(x, y, randlimb () & 3);
 
   /* bug found by Jean-Pierre Merlet */
   mpfr_set_prec(x, 256);
@@ -73,7 +73,7 @@ main (void)
 
   for (k = 1; k <= 100000; k++)
     {
-      pr = 2 + (LONG_RAND()&255);
+      pr = 2 + (randlimb () & 255);
       mpf_set_prec (z, pr);
       mpf_random2 (z, z->_mp_prec, 0);
       mpfr_init2 (x, pr);

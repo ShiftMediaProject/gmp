@@ -40,7 +40,7 @@ check_inexact (mp_prec_t p)
   mpfr_init (y);
   mpfr_init2 (z, p + mp_bits_per_limb);
   mpfr_random (x);
-  u = LONG_RAND();
+  u = randlimb ();
   if (mpfr_mul_ui (z, x, u, GMP_RNDN))
     {
       fprintf (stderr, "Error: result should be exact\n");

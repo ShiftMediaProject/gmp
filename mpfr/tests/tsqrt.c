@@ -210,6 +210,17 @@ special (void)
   mpfr_sqrt(x, z, GMP_RNDN);
   mpfr_sqrt(z, x, GMP_RNDN);
 
+  mpfr_set_prec (x, 53);
+  mpfr_set_str (x, "8093416094703476.0", 10, GMP_RNDN);
+  mpfr_div_2exp (x, x, 1075, GMP_RNDN);
+  mpfr_sqrt (x, x, GMP_RNDN);
+  mpfr_set_str (z, "1e55596835b5ef@-141", 16, GMP_RNDN);
+  if (mpfr_cmp (x, z))
+    {
+      fprintf (stderr, "Error: square root of 8093416094703476*2^(-1075)\n");
+      exit (1);
+    }
+
   mpfr_clear (x);
   mpfr_clear (z);
 }
@@ -225,7 +236,7 @@ check_inexact (mp_prec_t p)
   mpfr_init2 (y, p);
   mpfr_init2 (z, 2*p);
   mpfr_random (x);
-  rnd = LONG_RAND() % 4;
+  rnd = randlimb () % 4;
   inexact = mpfr_sqrt (y, x, rnd);
   if (mpfr_mul (z, y, y, rnd)) /* exact since prec(z) = 2*prec(y) */
     {
@@ -376,19 +387,6 @@ main (void)
   check4 (a*6703494707970582.0, GMP_RNDD, "1.3853ee10c9c98@13");
   check4 (a*8010323124937260.0, GMP_RNDD, "1.556abe212b56e@13");
   check4 (a*2.0*8010776873384260.0, GMP_RNDD, "1.e2d9a51977e6d@13");
-
-  /* This test is disabled because it fails on mips64-sgi-irix6.5 with SGI
-     cc in n32 mode.  Looks like "a" is truncated to zero rather than
-     becoming a denorm.  FIXME: This test could be reinstated, but only if
-     done purely with mpfr operations.  We're not interested in exploring
-     the dark corners of hardware floats.  */
-#if 0
-  /* 8093416094703476*2^(-1075) -> 8538091790120431*2^(-564) */
-  a = 8093416094703476.0;
-  for (k = 0; k < 1075; k++)
-    a = a / 2.0;
-  check4 (a, GMP_RNDN, "1e55596835b5ef@-141");
-#endif
 
   tests_end_mpfr ();
   return 0;

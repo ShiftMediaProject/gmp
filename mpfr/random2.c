@@ -1,6 +1,6 @@
-/* mpf_random2 -- Generate a positive random mpf_t of specified size, with
+/* mpfr_random2 -- Generate a positive random mpfr_t of specified size, with
    long runs of consecutive ones and zeros in the binary representation.
-   Intended for testing of other MP routines.
+   Intended for testing.
 
 Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 (Copied from the GNU MP Library.)
@@ -22,7 +22,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -34,27 +33,37 @@ mpfr_random2 (mpfr_ptr x, mp_size_t size, mp_exp_t exp)
 {
   mp_size_t xn;
   unsigned long cnt;
-  mp_ptr xp = MPFR_MANT(x), yp[1];
-  mp_size_t prec = (MPFR_PREC(x) - 1)/BITS_PER_MP_LIMB;
+  mp_ptr xp;
+  mp_size_t prec;
+  mp_limb_t elimb;
 
   MPFR_CLEAR_FLAGS(x);
+  MPFR_SET_POS(x);
   xn = ABS (size);
-  if (xn != 0)
-    {
-      if (xn > prec + 1)
-        xn = prec + 1;
+  prec = (MPFR_PREC(x) - 1) / GMP_NUMB_BITS;
+  xp = MPFR_MANT(x);
 
-      mpn_random2 (xp, xn);
+  if (xn == 0)
+    {
+      MPFR_SET_ZERO(x);
+      return;
     }
 
-  count_leading_zeros (cnt, xp[xn - 1]);
-  if (cnt)
-    mpn_lshift (xp, xp, xn, cnt);
+  if (xn > prec + 1)
+    xn = prec + 1;
 
-  mpn_random ((mp_limb_t*) yp, 1);
-  MPFR_SET_EXP (x, ABS ((mp_exp_t) yp[0] % (2 * exp + 1)) - exp);
+  /* General random mantissa.  */
+  mpn_random2 (xp, xn);
 
-  cnt = xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
-  /* cnt is the number of non significant bits in the low limb */
-  xp[0] &= ~((MP_LIMB_T_ONE << cnt) - MP_LIMB_T_ONE);
+  /* Set mandatory most significant bit.  */
+  xp[xn - 1] |= MPFR_LIMB_HIGHBIT;
+
+  /* Generate random exponent.  */
+  _gmp_rand (&elimb, RANDS, GMP_NUMB_BITS);
+  exp = ABS (exp);
+  MPFR_SET_EXP (x, elimb % (2 * exp + 1) - exp);
+
+  /* Mask off non significant bits in the low limb.  */
+  cnt = xn * GMP_NUMB_BITS - MPFR_PREC(x);
+  xp[0] &= ~((MP_LIMB_T_ONE << cnt) - 1);
 }

@@ -257,6 +257,7 @@ int mpfr_number_p _PROTO((mpfr_srcptr));
 int mpfr_acos _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_asin _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_atan _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_erf _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 int mpfr_sinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
 int mpfr_tanh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));

@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_si and mpfr_set_ui.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
@@ -39,13 +40,13 @@ main (int argc, char *argv[])
 
   mpfr_init2(x, 100);
 
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
 
   N = (argc==1) ? 1000000 : atoi(argv[1]);
 
   for (k = 1; k <= N; k++)
     {
-      z = random() - (1 << 30);      
+      z = (long) (randlimb () & LONG_MAX) + LONG_MIN/2;
       inex = mpfr_set_si(x, z, GMP_RNDZ);
       d = (long) mpfr_get_d1 (x);
       if (d != z) {
@@ -62,7 +63,7 @@ main (int argc, char *argv[])
 
   for (k = 1; k <= N; k++)
     {
-      zl = random();
+      zl = randlimb ();
       inex = mpfr_set_ui (x, zl, GMP_RNDZ);
       dl = (unsigned long) mpfr_get_d1 (x);
       if (dl != zl) {

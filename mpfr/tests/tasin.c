@@ -1,6 +1,6 @@
 /* Test file for mpfr_asin.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Original version by Mathieu Dutour.
 
 This file is part of the MPFR Library.
@@ -61,7 +61,7 @@ main (void)
       for (n = 0; n < 10; n++)
 	{
 	  mpfr_random (x);
-	  rnd = random () % 4;
+	  rnd = randlimb () % 4;
 	  mpfr_set_prec (y, yprec);
 	  mpfr_asin (y, x, rnd);
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;

@@ -1,6 +1,6 @@
 /* Test file for mpfr_hypot.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -108,11 +108,11 @@ main (int argc, char *argv[])
 	{
 	  mpfr_random(x1);
 	  mpfr_random(x2);
-          if (random() % 2)
+          if (randlimb () % 2)
 	    mpfr_neg (x1, x1, GMP_RNDN);
-          if (random() % 2)
+          if (randlimb () % 2)
 	    mpfr_neg (x2, x2, GMP_RNDN);
-	  rnd = random () % 4;
+	  rnd = randlimb () % 4;
 	  mpfr_set_prec (y, yprec);
 
 	  compare =TEST_FUNCTION (y, x1,x2, rnd);

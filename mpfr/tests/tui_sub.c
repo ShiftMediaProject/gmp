@@ -165,11 +165,11 @@ check_two_sum (mp_prec_t p)
   mpfr_init2 (w, p);
   do
     {
-      x = LONG_RAND ();
+      x = randlimb ();
     }
   while (x < 1);
   mpfr_random (y);
-  rnd = LONG_RAND() % 4;
+  rnd = randlimb () % 4;
   rnd = GMP_RNDN;
   inexact = mpfr_ui_sub (u, x, y, GMP_RNDN);
   mpfr_sub_ui (v, u, x, GMP_RNDN);

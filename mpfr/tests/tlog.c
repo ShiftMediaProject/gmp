@@ -32,6 +32,8 @@ MA 02111-1307, USA. */
 #define INT32 int
 #endif
 
+#if 0
+/* The following function is buggy and must not be used any longer. */
 static double
 drand_log (void)
 {
@@ -47,6 +49,7 @@ drand_log (void)
 					 in double calculus in sqrt(u*v) */
   return d;
 }
+#endif
 
 #define check2(a,rnd,res) check1(a,rnd,res,1,0)
 #define check(a,r) check2(a,r,0.0)
@@ -87,14 +90,19 @@ check3 (double d, unsigned long prec, mp_rnd_t rnd)
 {
   mpfr_t x, y;
   
-  mpfr_init2(x, prec); mpfr_init2(y, prec);
-  mpfr_set_d(x, d, rnd);
-  mpfr_log(y, x, rnd);
-  mpfr_out_str(stdout, 10, 0, y, rnd); puts ("");
-  mpfr_print_binary(y); puts ("");
-  mpfr_clear(x); mpfr_clear(y);
+  mpfr_init2 (x, prec);
+  mpfr_init2 (y, prec);
+  mpfr_set_d (x, d, rnd);
+  mpfr_log (y, x, rnd);
+  mpfr_out_str (stdout, 10, 0, y, rnd);
+  puts ("");
+  mpfr_print_binary (y);
+  puts ("");
+  mpfr_clear (x);
+  mpfr_clear (y);
 }
 
+#if 0
 static void
 check4 (int N)
 {
@@ -105,7 +113,7 @@ check4 (int N)
   for(i=0;i<N;i++)
     {
       d = drand_log ();
-      rnd = LONG_RAND() % 4;
+      rnd = randlimb () % 4;
       cur = check1 (d, rnd, 0.0, 0, max);
       if (cur < 0)
         cur = -cur;
@@ -130,11 +138,12 @@ slave (int N, int p)
     {
       d = drand_log(); 
       mpfr_set_d (ta, d, GMP_RNDN);
-      mpfr_log (tres, ta, LONG_RAND() % 4 );
+      mpfr_log (tres, ta, randlimb () % 4 );
     }
   mpfr_clear(ta); mpfr_clear(tres); 
   printf("fin\n");
 }
+#endif
 
 /* examples from Jean-Michel Muller and Vincent Lefevre 
    Cf http://www.ens-lyon.fr/~jmmuller/Intro-to-TMD.htm
@@ -256,31 +265,32 @@ special (void)
 int
 main (int argc, char *argv[])
 {
-  int N = 0;
   double d;
 
   tests_start_mpfr ();
 
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   if (argc==4)
     {   /* tlog x prec rnd */
-      check3(atof(argv[1]), atoi(argv[2]), atoi(argv[3]));
+      check3 (atof(argv[1]), atoi(argv[2]), atoi(argv[3]));
       goto done;
     }
 
   if (argc==3)
     {   /* tlog N p : N calculus with precision p*/
-      printf("Doing %d random tests in %d precision\n",
+      printf ("Doing %d random tests in %d precision\n",
              atoi(argv[1]),atoi(argv[2]));
-      slave(atoi(argv[1]),atoi(argv[2]));
+      /* slave(atoi(argv[1]),atoi(argv[2])); */
       goto done;
     }
 
   if (argc==2)
     { /* tlog N: N tests with random double's */
+      /*
       N=atoi(argv[1]);
       printf("Doing %d random tests in double precision\n", N);
       check4(N);
+      */
     }
   else
     {

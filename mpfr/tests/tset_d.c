@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include <float.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-test.h"
 
@@ -95,7 +96,7 @@ main (int argc, char *argv[])
 	   mpfr_get_d1 (x)); exit(1);
   }
 
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   mpfr_set_d(x, 8.06294740693074521573e-310, 0); 
   d = -6.72658901114033715233e-165;
   mpfr_set_d(x, d, 0);
@@ -109,7 +110,7 @@ main (int argc, char *argv[])
     {      
       do
 	{
-	  d = drand();
+	  d = DBL_RAND ();
 	}
 #ifdef HAVE_DENORMS
       while (0);

@@ -23,7 +23,9 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <float.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 static void
@@ -45,7 +47,7 @@ check_inexact (void)
       mpfr_set_prec (x, p);
       mpfr_set_prec (absx, p);
       mpfr_random (x);
-      if (LONG_RAND () % 2)
+      if (randlimb () % 2)
 	{
 	  mpfr_set (absx, x, GMP_RNDN);
 	  mpfr_neg (x, x, GMP_RNDN);
@@ -124,7 +126,7 @@ main (int argc, char *argv[])
      {
        do
 	 {
-	   d = drand ();
+	   d = DBL_RAND ();
 	   absd = ABS(d);
 	 }
 #ifdef HAVE_DENORMS
@@ -132,7 +134,7 @@ main (int argc, char *argv[])
 #else
        while (absd < DBL_MIN);
 #endif
-       rnd = LONG_RAND() % 4;
+       rnd = randlimb () % 4;
        mpfr_set_d (x, d, 0);
        mpfr_abs (x, x, rnd);
        dd = mpfr_get_d1 (x);

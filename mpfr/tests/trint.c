@@ -1,6 +1,6 @@
 /* Test file for mpfr_trunc, mpfr_floor, mpfr_ceil, mpfr_round.
 
-Copyright 2002 Free Software Foundation.
+Copyright 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -47,7 +47,7 @@ main (void)
       /* z has exactly s bits */
       
       mpz_mul_2exp (z, z, 1);
-      if (LONG_RAND () % 2)
+      if (randlimb () % 2)
         mpz_add_ui (z, z, 1);
       mpfr_set_prec (x, s);
       mpfr_set_prec (t, s);

@@ -167,6 +167,8 @@ check_convergence (void)
   mpfr_clear(x); mpfr_clear(y);
 }
 
+#define KMAX 10000
+
 static void
 check_lowr (void)
 {
@@ -181,7 +183,7 @@ check_lowr (void)
   mpfr_init2 (z2, 10);
   mpfr_init2 (z3, 50); 
 
-  for (k = 1; k < 10000; k++) 
+  for (k = 1; k < KMAX; k++) 
     {
       mpfr_random (z);
       mpfr_random (tmp);
@@ -200,7 +202,7 @@ check_lowr (void)
     }
 
   mpfr_set_prec(z2, 9); 
-  for (k = 1; k < 10000; k++) 
+  for (k = 1; k < KMAX; k++) 
     {
       mpfr_random(z); 
       mpfr_random(tmp); 
@@ -252,7 +254,7 @@ check_lowr (void)
   mpfr_set_prec(z2, 10);
 
   /* almost exact divisions */
-  for (k = 1; k < 10000; k++) 
+  for (k = 1; k < KMAX; k++) 
     {
       mpfr_random(z); 
       mpfr_random(tmp); 
@@ -295,7 +297,7 @@ check_lowr (void)
   mpfr_clear (tmp);
 }
 
-#define MAX_PREC 100
+#define MAX_PREC 70
 
 static void
 check_inexact (void)

@@ -23,9 +23,13 @@ MA 02111-1307, USA. */
 #include <stddef.h>  /* needed before math.h by gcc 3.2 on hppa2.0w hpux11 */
 
 #include <float.h>
+
+/* For developers: Compile with -DNO_MATH_DEFS to test the alternate
+   macros NAN... defined in mpfr-math.h */
 #ifndef NO_MATH_DEFS
 #include <math.h>
 #endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"

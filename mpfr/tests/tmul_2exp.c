@@ -1,6 +1,6 @@
 /* Test file for mpfr_mul_2exp.
 
-Copyright 1999, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
@@ -47,7 +48,7 @@ main (int argc, char *argv[])
   mpfr_mul_2exp (w, w, 10, GMP_RNDZ); 
   if (!MPFR_IS_NAN(w)) { fprintf(stderr, "NaN != NaN"); exit(-1); }
 
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   for (k = 0; k < 100000; k++) {
     x = DBL_RAND ();
     mpfr_set_d (w, x, 0);

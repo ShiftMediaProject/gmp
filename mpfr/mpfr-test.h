@@ -28,27 +28,9 @@ MA 02111-1307, USA. */
 #include "config.h"
 #endif
 
-/* Because of the SunOS 4 compiler */
-#ifndef RAND_MAX
-#define RAND_MAX 0x7FFFFFFF
-#endif
-
 /* generates a random long int, a random double,
    and corresponding seed initializing */
-#ifdef HAVE_LRAND48
-#define LONG_RAND lrand48
-#define DBL_RAND  drand48
-#define SEED_RAND srand48
-#else
-#define LONG_RAND random
-#define DBL_RAND() ((double) random() / (double) RAND_MAX)
-#define SEED_RAND srandom
-#endif
-
-#if defined (__hpux)
-#define srandom srand48
-#define random() (mrand48() & 0x7fffffff)
-#endif
+#define DBL_RAND() ((double) randlimb() / (double) MP_LIMB_T_MAX)
 
 #define MINNORM 2.2250738585072013831e-308 /* 2^(-1022), smallest normalized */
 #define MAXNORM 1.7976931348623157081e308 /* 2^(1023)*(2-2^(-52)) */
@@ -78,12 +60,12 @@ void x86_fldcw _PROTO ((unsigned short cw));
 
 int mpfr_set_machine_rnd_mode _PROTO ((mp_rnd_t));
 void mpfr_test_init _PROTO ((void));
-double drand _PROTO ((void));
 double drand48 _PROTO ((void));
 long int lrand48 _PROTO ((void));
 void srand48 _PROTO ((long int));
+mp_limb_t randlimb _PROTO ((void));
+void randseed _PROTO ((unsigned int));
 int ulp _PROTO ((double, double));
 double dbl _PROTO ((double, int));
 double Ulp _PROTO ((double));
-
 int Isnan _PROTO ((double));

@@ -132,7 +132,7 @@ check_inexact (void)
     {
       mpfr_set_prec (x, px);
       mpfr_random (x);
-      do { u = LONG_RAND (); } while (u == 0);
+      do { u = randlimb (); } while (u == 0);
       for (py=2; py<300; py++)
 	{
 	  mpfr_set_prec (y, py);

@@ -82,7 +82,7 @@ check_inexact (mp_prec_t p)
   mpfr_init (z);
   mpfr_init (t);
   mpfr_random (x);
-  u = LONG_RAND() % 2;
+  u = randlimb () % 2;
   for (q=2; q<=p; q++)
     for (rnd=0; rnd<4; rnd++)
       {

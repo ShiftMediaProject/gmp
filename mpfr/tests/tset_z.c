@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
@@ -69,10 +70,10 @@ main (int argc, char *argv[])
   tests_start_mpfr ();
 
   check_large();
-  SEED_RAND (time(NULL));
+  randseed (time(NULL));
   check(0, 0);
   for (j=0; j<1000000; j++)
-    check(LONG_RAND(), LONG_RAND()%4);
+    check(randlimb () & LONG_MAX, randlimb () % 4);
 
   tests_end_mpfr ();
   return 0;

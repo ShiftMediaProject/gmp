@@ -1285,6 +1285,13 @@ Set @var{rop} to the value of the Riemann Zeta function on @var{op},
 rounded to the direction @var{rnd} with the precision of @var{rop}.
 @end deftypefun
 
+@deftypefun int mpfr_erf (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Set @var{rop} to the value of the error function on @var{op},
+rounded to the direction @var{rnd} with the precision of @var{rop}.
+Return 0 iff the result is exact (which only happens for plus or minus
+infinity, and plus or minus zero).
+@end deftypefun
+
 @deftypefun int mpfr_fma (mpfr_t @var{rop}, mpfr_t @var{opx},mpfr_t @var{opy},mpfr_t @var{opz}, mp_rnd_t @var{rnd}) 
 Set @var{rop} to @math{@var{opx} @GMPtimes{} @var{opy} + @var{opz}}, rounded to the direction 
 @var{rnd} with the precision of @var{rop}. Return 0 iff the result is exact,

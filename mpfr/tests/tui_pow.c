@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_pow.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -40,7 +41,7 @@ main (int argc, char *argv[])
   mpfr_init (x);
   mpfr_init (y);
 
-  n = abs(random());
+  n = randlimb ();
 
   MPFR_CLEAR_NAN(x);
   MPFR_SET_INF(x);
@@ -96,9 +97,9 @@ main (int argc, char *argv[])
       for (n=0; n<N; n++)
 	{
           int nt;
-          nt = abs(random());
+          nt = randlimb () & INT_MAX;
 	  mpfr_random (x);
-	  rnd = random () % 4;
+	  rnd = randlimb () % 4;
 	  mpfr_set_prec (y, yprec);
 	  compare = mpfr_ui_pow (y, nt, x, rnd);
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
