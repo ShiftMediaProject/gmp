@@ -17,9 +17,11 @@
 	* tests/t-modlinv.c: New file.
 	* tests/Makefile.am (check_PROGRAMS): Add it.
 
-	* gmp-impl.h (MPQ_CHECK_FORMAT): New macro.
 	* mpq/tests/t-set_f.c: New file.
 	* mpq/tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* gmp-impl.h (MPQ_CHECK_FORMAT): New macro.
+	* mpq/tests/t-get_d.c: Use it.
 
 	* mpq/set_f.c: New file.
 	* mpq/Makefile.am (libmpq_la_SOURCES): Add it.
