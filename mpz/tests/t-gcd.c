@@ -40,7 +40,7 @@ main (argc, argv)
   mpz_t temp1, temp2;
   mp_size_t op1_size, op2_size, x_size;
   int i;
-  int reps = 1000;
+  int reps = 2000;
 
   if (argc == 2)
      reps = atoi (argv[1]);
