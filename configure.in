@@ -734,7 +734,7 @@ for abi in $abilist; do
   cclist_chosen=
   if test -n "$CC"; then
     for cclist_chosen in $CC; do break; done
-    cclist_chosen=`echo $cclist_chosen | sed 's/.*\///'`
+    cclist_chosen=`echo $cclist_chosen | sed 's:.*/::'`
   fi  
   test -n "$cclist_chosen" || eval cclist_chosen=\"\$cclist$abi1\"
   test -n "$cclist_chosen" || cclist_chosen="$cclist"
