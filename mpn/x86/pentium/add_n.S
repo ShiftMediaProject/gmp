@@ -1,7 +1,7 @@
 /* Pentium __mpn_add_n -- Add two limb vectors of the same length > 0 and store
    sum in a third limb vector.
 
-Copyright (C) 1992, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1992, 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,6 +31,38 @@ MA 02111-1307, USA. */
 #include "asm-syntax.h"
 
 .text
+	ALIGN (3)
+	.globl C_SYMBOL_NAME(__mpn_add_nc)
+C_SYMBOL_NAME(__mpn_add_nc:)
+	pushl	%edi
+	pushl	%esi
+	pushl	%ebx
+	pushl	%ebp
+
+	movl	20(%esp),%edi		/* res_ptr */
+	movl	24(%esp),%esi		/* s1_ptr */
+	movl	28(%esp),%ebp		/* s2_ptr */
+	movl	32(%esp),%ecx		/* size */
+
+	movl	(%ebp),%ebx
+
+	decl	%ecx
+	movl	%ecx,%edx
+	shrl	$3,%ecx
+	andl	$7,%edx
+	testl	%ecx,%ecx		/* zero carry flag */
+	jz	Lendgo
+	pushl	%edx
+
+	movl	40(%esp),%eax
+	shrl	$1,%eax			/* shift bit 0 into carry */
+	jmp	Loop
+
+Lendgo:	movl	36(%esp),%eax
+	shrl	$1,%eax			/* shift bit 0 into carry */
+	jmp	Lend
+
+
 	ALIGN (3)
 	.globl C_SYMBOL_NAME(__mpn_add_n)
 C_SYMBOL_NAME(__mpn_add_n:)

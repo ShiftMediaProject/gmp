@@ -32,6 +32,49 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
+	.globl C_SYMBOL_NAME(__mpn_add_nc)
+C_SYMBOL_NAME(__mpn_add_nc:)
+	pushl %edi
+	pushl %esi
+
+	movl 12(%esp),%edi		/* res_ptr */
+	movl 16(%esp),%esi		/* s1_ptr */
+	movl 20(%esp),%edx		/* s2_ptr */
+	movl 24(%esp),%ecx		/* size */
+
+	movl	%ecx,%eax
+	shrl	$3,%ecx			/* compute count for unrolled loop */
+	negl	%eax
+	andl	$7,%eax			/* get index where to start loop */
+	jz	Loopgo			/* necessary special case for 0 */
+	incl	%ecx			/* adjust loop count */
+	shll	$2,%eax			/* adjustment for pointers... */
+	subl	%eax,%edi		/* ... since they are offset ... */
+	subl	%eax,%esi		/* ... by a constant when we ... */
+	subl	%eax,%edx		/* ... enter the loop */
+	shrl	$2,%eax			/* restore previous value */
+#ifdef PIC
+/* Calculate start address in loop for PIC.  Due to limitations in some
+   assemblers, Loop-L0-3 cannot be put into the leal */
+	call	L0
+L0:	leal	(%eax,%eax,8),%eax
+	addl	(%esp),%eax
+	addl	$(Loop-L0-3),%eax
+	addl	$4,%esp
+#else
+/* Calculate start address in loop for non-PIC.  */
+ 	leal	Loop-3(%eax,%eax,8),%eax
+#endif
+/* These lines initialize carry from the 5th parameter.  Should be possible to
+   simplify.  */
+	pushl	%ebp
+	movl	32(%esp),%ebp
+	shrl	$1,%ebp			/* shift bit 0 into carry */
+	popl	%ebp
+
+	jmp	*%eax			/* jump into loop */
+
+	ALIGN (3)
 	.globl C_SYMBOL_NAME(__mpn_add_n)
 C_SYMBOL_NAME(__mpn_add_n:)
 	pushl %edi
@@ -66,6 +109,12 @@ L0:	leal	(%eax,%eax,8),%eax
  	leal	Loop-3(%eax,%eax,8),%eax
 #endif
 	jmp	*%eax			/* jump into loop */
+
+Loopgo:	pushl	%ebp
+	movl	32(%esp),%ebp
+	shrl	$1,%ebp			/* shift bit 0 into carry */
+	popl	%ebp
+
 	ALIGN (3)
 Loop:	movl	(%esi),%eax
 	adcl	(%edx),%eax
