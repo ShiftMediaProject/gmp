@@ -19,6 +19,24 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-11  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (LIBC211): New AC_DEFINE, for mpfr.
+	
+	* configure.in (mips*-*-*): Support ABI=o32 on irix 6, allow gcc 2.7.2
+	to fall back on it, but detect it doesn't work with gcc 2.95.  Use
+	single mips-defs.m4 for both mips32 and mips64.
+	* acinclude.m4 (GMP_GCC_MIPS_O32): New macro.
+	* mpn/mips32/mips-defs.m4: Renamed from mips.m4.
+	* mpn/mips64/mips.m4: Remove (was a copy of mips32/mips.m4).
+
+	* mpn/powerpc32/750: New directory.
+	* configure.in (powerpc740, powerpc750, powerpc7400): Use it.
+	* mpn/powerpc32/750/gmp-mparam.h: New file.
+
+	* config.sub, gmp.texi (ultrasparc1): Remove this, just use plain
+	"ultrasparc".
+
 2002-03-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr: Update to 20020301, except internal_ceil_exp2.c,
