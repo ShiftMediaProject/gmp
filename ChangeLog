@@ -1,3 +1,79 @@
+2001-01-07  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (gmp_mpn_functions): Add mode1o, remove mod_1_rs.
+
+	* mpn/generic/mod_1_rs.c: Remove file, no longer needed.
+	* gmp-h.in (mpn_mod_1_rshift): Remove prototype and define.
+
+	* mpq/set_f.c: Use MPN_STRIP_LOW_ZEROS_NOT_ZERO.
+
+	* mpz/kronzu.c, mpz/kronzs.c, mpz/kronuz.c, mpz/kronsz.c: Use
+	mpn_modexact_1_odd, new style MPN_STRIP_LOW_ZEROS_NOT_ZERO, and new
+	JACOBI macros.  Various rearrangements supporting all this.
+
+	* mpn/generic/gcd_1.c: Use mpn_modexact_1_odd, reduce u%v if u much
+	bigger than v when size==1, some rearrangements supporting this.
+
+	* gmp-impl.h (JACOBI_*): More macros, add some casts to "int".
+	(MPN_STRIP_LOW_ZEROS_NOT_ZERO): Add a "low" parameter.
+	(mpn_modexact_1_odd, mpn_modexact_1c_odd): Add prototype and defines.
+	(MODEXACT_1_ODD_THRESHOLD): New threshold.
+	(MPN_MOD_OR_MODEXACT_1_ODD, JACOBI_MOD_OR_MODEXACT_1_ODD): New macros.
+
+	* mpn/generic/mode1o.c: New file.
+
+	* tests/mpz/reuse.c: Add testing of mpz_divexact_gcd.
+	* tests/mpz/t-fac_ui.c: Use libtests for memory leak checking.
+	* tests/mpz/t-fib_ui.c: Add a usage comment.
+
+	* tests/mpz/bit.c: Use libtests.
+	* tests/mpz/t-scan.c: Remove unused subroutines.
+	* tests/devel/try.c: Use libtests, define PROT_NONE if the system
+	doesn't.
+
+	* tests/spinner.c, tests/x86check.c: Use tests.h.
+	* tests/trace.c: Use tests.h, add mpf_trace.
+	* tests/refmpn.c: Use tests.h, add refmpn_malloc_limbs_aligned,
+	refmpn_tstbit, refmpn_neg.
+	
+	* tune/common.c, tune/speed.h: Update for functions moved to
+	tests/misc.c.
+
+	* tune/Makefile.am, tests/mpz/Makefile.am, tests/mpq/Makefile.am,
+	tests/mpf/Makefile.am: Use tests/libtests.la.
+
+	* configure.in (AC_OUTPUT): Update for new directories.
+	(x86 CALLING_CONVENTIONS_OBJS): Use .lo for libtests.la, allow
+	ansi2knr on x86check.c.
+
+	* tests/Makefile.am: Establish new libtests.la convenience library,
+	add mpz, mpq, mpf, mpbsd subdirectories.
+	* tests/tests.h: New file.
+	* mpn/tests/ref.h,try.h: Remove files, now in tests.h.
+
+	* tests/mpf/ref.c: Move to tests/refmpf.c, rename functions to refmpf.
+	* tests/mpf/t-add.c, tests/mpf/t-sub.c: Use libtests.
+	* tests/mpf/Makefile.am: Update.
+
+	* tests/memory.c: New file.
+	* tests/misc.c: New file, a few subroutines from the test programs.
+
+	* mpz/tests, mpq/tests, mpf/tests, mpbsd/tests: Move directories to
+	tests/mpz etc.
+	* mpz/Makefile.am, mpq/Makefile.am, mpf/Makefile.am, mpbsd/Makefile.am
+	(SUBDIRS): Remove.
+
+	* tests/devel: New directory.
+	* mpn/tests/*.c: Move programs to tests/devel.
+	* mpn/tests/Makefile.am, mpn/tests/README: Move to tests/devel, update.
+
+	* mpn/tests/ref.c: Move to tests/refmpn.c.
+	* mpn/tests/spinner.c,trace.c,x86call.asm,x86check.c: Move to tests
+	directory.
+
+	* tests/t-constants.c: Add checks of HIGHBIT, MAX and MIN constants,
+	simplify ANSI vs K&R stringizing, use correct printf format types, do
+	all tests before aborting.
 2001-01-05  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (mp.h): Only create this under --enable-mpbsd.
