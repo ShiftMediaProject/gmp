@@ -150,6 +150,7 @@ double speed_mpn_divrem_2 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
+double speed_mpn_get_str _PROTO ((struct speed_params *s));
 double speed_mpn_hamdist _PROTO ((struct speed_params *s));
 double speed_mpn_ior_n _PROTO ((struct speed_params *s));
 double speed_mpn_iorn_n _PROTO ((struct speed_params *s));
@@ -171,6 +172,7 @@ double speed_mpn_nand_n _PROTO ((struct speed_params *s));
 double speed_mpn_nior_n _PROTO ((struct speed_params *s));
 double speed_mpn_popcount _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
+double speed_mpn_set_str _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
 double speed_mpn_sqrtrem _PROTO ((struct speed_params *s));
@@ -235,6 +237,13 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
 extern int  speed_option_addrs;
 void speed_option_set _PROTO((const char *s));
+
+void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
+                                   mp_ptr));
+void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+void mpn_toom3_mul_n_mpn _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
+                                  mp_ptr));
+void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 
 #define SPEED_RESTRICT_COND(cond)   if (!(cond)) return -1.0;
@@ -1047,6 +1056,103 @@ void speed_option_set _PROTO((const char *s));
                                                                 \
     TMP_FREE (marker);                                          \
     return t;                                                   \
+  }  
+
+
+/* s->size controls the number of limbs in the input, s->r is the base, or
+   decimal by default. */
+#define SPEED_ROUTINE_MPN_GET_STR(function)                             \
+  {                                                                     \
+    char      *wp;                                                      \
+    size_t    wsize;                                                    \
+    mp_ptr    xp;                                                       \
+    int       base;                                                     \
+    unsigned  i;                                                        \
+    double    t;                                                        \
+    TMP_DECL (marker);                                                  \
+                                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                                 \
+                                                                        \
+    base = s->r == 0 ? 10 : s->r;                                       \
+    SPEED_RESTRICT_COND (base >= 2 && base <= 255);                     \
+                                                                        \
+    TMP_MARK (marker);                                                  \
+    xp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);              \
+                                                                        \
+    wsize = ((size_t) (s->size * BITS_PER_MP_LIMB                       \
+                        * __mp_bases[base].chars_per_bit_exactly)) + 2; \
+    wp = TMP_ALLOC (wsize);                                             \
+                                                                        \
+    /* use this during development to guard against overflowing wp */   \
+    /*                                                                  \
+    MPN_COPY (xp, s->xp, s->size);                                      \
+    ASSERT_ALWAYS (mpn_get_str (wp, base, xp, s->size) <= wsize);       \
+    */                                                                  \
+                                                                        \
+    speed_operand_src (s, s->xp, s->size);                              \
+    speed_operand_dst (s, xp, s->size);                                 \
+    speed_operand_dst (s, (mp_ptr) wp, wsize/BYTES_PER_MP_LIMB);        \
+    speed_cache_fill (s);                                               \
+                                                                        \
+    speed_starttime ();                                                 \
+    i = s->reps;                                                        \
+    do                                                                  \
+      {                                                                 \
+        MPN_COPY (xp, s->xp, s->size);                                  \
+        function (wp, base, xp, s->size);                               \
+      }                                                                 \
+    while (--i != 0);                                                   \
+    t = speed_endtime ();                                               \
+                                                                        \
+    TMP_FREE (marker);                                                  \
+    return t;                                                           \
+  }  
+
+/* s->size controls the number of digits in the input, s->r is the base, or
+   decimal by default. */
+#define SPEED_ROUTINE_MPN_SET_STR(function)                                  \
+  {                                                                          \
+    char       *xp;                                                          \
+    mp_ptr     wp;                                                           \
+    mp_size_t  wsize;                                                        \
+    unsigned   i;                                                            \
+    int        base;                                                         \
+    double     t;                                                            \
+    TMP_DECL (marker);                                                       \
+                                                                             \
+    SPEED_RESTRICT_COND (s->size >= 1);                                      \
+                                                                             \
+    base = s->r == 0 ? 10 : s->r;                                            \
+    SPEED_RESTRICT_COND (base >= 2 && base <= 255);                          \
+                                                                             \
+    TMP_MARK (marker);                                                       \
+                                                                             \
+    xp = TMP_ALLOC (s->size);                                                \
+    for (i = 0; i < s->size; i++)                                            \
+      xp[i] = s->xp[i] % base;                                               \
+                                                                             \
+    wsize = ((mp_size_t) (s->size / __mp_bases[base].chars_per_bit_exactly)) \
+      / BITS_PER_MP_LIMB + 2;                                                \
+    wp = SPEED_TMP_ALLOC_LIMBS (wsize, s->align_wp);                         \
+                                                                             \
+    /* use this during development to check wsize is big enough */           \
+    /*                                                                       \
+    ASSERT_ALWAYS (mpn_set_str (wp, xp, s->size, base) <= wsize);            \
+    */                                                                       \
+                                                                             \
+    speed_operand_src (s, (mp_ptr) xp, s->size/BYTES_PER_MP_LIMB);           \
+    speed_operand_dst (s, wp, s->size);                                      \
+    speed_cache_fill (s);                                                    \
+                                                                             \
+    speed_starttime ();                                                      \
+    i = s->reps;                                                             \
+    do                                                                       \
+      function (wp, xp, s->size, base);                                      \
+    while (--i != 0);                                                        \
+    t = speed_endtime ();                                                    \
+                                                                             \
+    TMP_FREE (marker);                                                       \
+    return t;                                                                \
   }  
 
 #endif
