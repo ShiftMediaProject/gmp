@@ -1,17 +1,18 @@
 
-                        INTEL P6 MPN SUBROUTINES
+                      INTEL P6 MPN SUBROUTINES
 
 
 
 This directory contains code optimized for Intel P6 class CPUs, meaning
-PentiumPro, Pentium II and Pentium III.
+PentiumPro, Pentium II and Pentium III.  The mmx subdirectory contains
+routines using MMX instructions.
 
 
 
 STATUS
 
 Times for the loops, with all code and data in L1 cache, are as follows.
-Some of these can be improved.
+Some of these might be able to be improved.
 
                                cycles/limb
 
@@ -20,8 +21,9 @@ Some of these can be improved.
 	mpn_copyi                 0.75
 	mpn_copyd                 2.4
 
-	mpn_divrem_1             40.0
-	mpn_mod_1                40.0
+	mpn_divrem_1             39.0
+	mpn_mod_1                39.0
+	mpn_divexact_by3         14.5
 
 	mpn_mul_1                 5.5
 	mpn_addmul/submul_1       6.35
@@ -34,6 +36,9 @@ Some of these can be improved.
 	                          or 11.2 cycles/triangleproduct (approx)
 
 Pentium II and III have MMX and get the following improvements.
+
+	mpn_divrem_1             25.0 integer part, 17.5 fractional part
+	mpn_mod_1                24.0
 
 	mpn_l/rshift              1.75
 
