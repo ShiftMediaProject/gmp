@@ -407,6 +407,49 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define GMP_NAIL_LOWBIT   (CNST_LIMB(1) << GMP_NUMB_BITS)
 #endif
 
+#if GMP_NAIL_BITS != 0
+/* Set various *_THRESHOLD values to be used for nails.  Thus we avoid using
+   code that has not yet been qualified.  */
+
+#define MUL_KARATSUBA_THRESHOLD          30
+#define MUL_TOOM3_THRESHOLD             150
+
+#define SQR_BASECASE_THRESHOLD            0
+#define SQR_KARATSUBA_THRESHOLD          50
+#define SQR_TOOM3_THRESHOLD             250
+
+#define DIV_SB_PREINV_THRESHOLD           MP_SIZE_T_MAX
+#define DIV_DC_THRESHOLD                  MP_SIZE_T_MAX
+#define POWM_THRESHOLD                    0
+
+#define GCD_ACCEL_THRESHOLD               3
+#define GCDEXT_THRESHOLD                  0  /* always */
+#define JACOBI_BASE_METHOD                2
+
+#define DIVREM_1_NORM_THRESHOLD           MP_SIZE_T_MAX  /* preinv always */
+#define DIVREM_1_UNNORM_THRESHOLD         MP_SIZE_T_MAX  /* always */
+#define MOD_1_NORM_THRESHOLD              MP_SIZE_T_MAX  /* always */
+#define MOD_1_UNNORM_THRESHOLD            MP_SIZE_T_MAX  /* always */
+#define USE_PREINV_DIVREM_1               0  /* preinv never */
+#define USE_PREINV_MOD_1                  0  /* preinv never */
+#define DIVREM_2_THRESHOLD                MP_SIZE_T_MAX  /* preinv never */
+#define DIVEXACT_1_THRESHOLD              MP_SIZE_T_MAX  /* always */
+#define MODEXACT_1_ODD_THRESHOLD          MP_SIZE_T_MAX  /* always */
+
+#define GET_STR_DC_THRESHOLD             22
+#define GET_STR_PRECOMPUTE_THRESHOLD     42
+#define SET_STR_THRESHOLD              3259
+
+#define MUL_FFT_TABLE  { 400, 928, 1856, 3840, 7168, 20480, 0 }
+#define MUL_FFT_MODF_THRESHOLD          416
+#define MUL_FFT_THRESHOLD                MP_SIZE_T_MAX
+
+#define SQR_FFT_TABLE  { 400, 992, 1984, 3840, 9216, 20480, 0 }
+#define SQR_FFT_MODF_THRESHOLD          416
+#define SQR_FFT_THRESHOLD                MP_SIZE_T_MAX
+
+#endif
+
 /* Swap macros. */
 
 #define MP_LIMB_T_SWAP(x, y)                    \
@@ -2753,9 +2796,14 @@ int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *, void *,
 
 /* For testing and debugging.  */
 #define MPZ_CHECK_FORMAT(z)					\
-  do {								\
+  do { mp_size_t _i;						\
     ASSERT_ALWAYS (SIZ(z) == 0 || PTR(z)[ABSIZ(z) - 1] != 0);	\
     ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z));			\
+    for (_i = ABSIZ(z) - 1; _i >= 0; _i--)			\
+      {								\
+	if (PTR(z)[_i] > GMP_NUMB_MAX)				\
+	  abort ();						\
+      }								\
   } while (0)
 
 #define MPQ_CHECK_FORMAT(q)                             \
