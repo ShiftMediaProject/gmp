@@ -1,6 +1,6 @@
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003
 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -738,6 +738,9 @@ __GMP_DECLSPEC int mpz_cmpabs_ui __GMP_PROTO ((mpz_srcptr, unsigned long int)) _
 
 #define mpz_com __gmpz_com
 __GMP_DECLSPEC void mpz_com __GMP_PROTO ((mpz_ptr, mpz_srcptr));
+
+#define mpz_combit __gmpz_combit
+__GMP_DECLSPEC void mpz_combit __GMP_PROTO ((mpz_ptr, unsigned long int));
 
 #define mpz_congruent_p __gmpz_congruent_p
 __GMP_DECLSPEC int mpz_congruent_p __GMP_PROTO ((mpz_srcptr, mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
