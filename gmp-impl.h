@@ -3714,6 +3714,19 @@ extern mp_size_t                     sqr_fft_modf_threshold;
 #undef  SQR_FFT_TABLE
 #define SQR_FFT_TABLE                { 0 }
 
+#undef  MULLOW_BASECASE_THRESHOLD
+#define MULLOW_BASECASE_THRESHOLD    mullow_basecase_threshold
+extern mp_size_t                     mullow_basecase_threshold;
+
+#undef  MULLOW_DC_THRESHOLD
+#define MULLOW_DC_THRESHOLD          mullow_dc_threshold
+extern mp_size_t                     mullow_dc_threshold;
+
+#undef  MULLOW_MUL_N_THRESHOLD
+#define MULLOW_MUL_N_THRESHOLD       mullow_mul_n_threshold
+extern mp_size_t                     mullow_mul_n_threshold;
+
+
 #if ! UDIV_PREINV_ALWAYS
 #undef  DIV_SB_PREINV_THRESHOLD
 #define DIV_SB_PREINV_THRESHOLD      div_sb_preinv_threshold
