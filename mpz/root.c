@@ -79,5 +79,5 @@ mpz_root (mpz_ptr root, mpz_srcptr u, unsigned long int nth)
   else
     __GMP_FREE_FUNC_LIMBS (rootp, rootn);
 
-  return remn = 0;
+  return remn == 0;
 }
