@@ -166,7 +166,7 @@ have is not what we distributed, so that any problems introduced by others
 will not reflect on our reputation.@refill
 
 The precise conditions of the license for the GNU MP library are found in the
-Library General Public License that accompany the source code.@refill
+Lesser General Public License that accompany the source code.@refill
 
 
 @node Introduction to GMP, Installing GMP, Copying, Top
