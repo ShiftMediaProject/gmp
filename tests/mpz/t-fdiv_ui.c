@@ -68,7 +68,7 @@ main (int argc, char **argv)
       do
 	{
 	  mpz_rrandomb (bs, rands, 64);
-	  divisor = mpz_get_ui (bs) & GMP_NUMB_MASK;
+	  divisor = mpz_get_ui (bs);
 	}
       while (divisor == 0);
 
