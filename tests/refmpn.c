@@ -1562,7 +1562,6 @@ refmpn_mod2 (mp_limb_t r[2], const mp_limb_t a[2], const mp_limb_t d[2])
   mp_limb_t  D[2];
   int        n;
 
-  ASSERT (! refmpn_overlap_p (r, (mp_size_t) 2, a, (mp_size_t) 2));
   ASSERT (! refmpn_overlap_p (r, (mp_size_t) 2, d, (mp_size_t) 2));
   ASSERT_MPN (a, 2);
   ASSERT_MPN (d, 2);
@@ -1594,7 +1593,8 @@ refmpn_mod2 (mp_limb_t r[2], const mp_limb_t a[2], const mp_limb_t d[2])
 }
 
 
-/* Find n where 0<n<2^GMP_NUMB_BITS and n==c mod m */
+/* Return n with 0 < n < 2^GMP_NUMB_BITS such that there exists 0 < |d| <
+   2^GMP_NUMB_BITS, and n == d * c mod 2^(2*GMP_NUMB_BITS).  */
 mp_limb_t
 refmpn_gcd_finda (const mp_limb_t c[2])
 {
