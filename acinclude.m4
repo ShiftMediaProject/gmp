@@ -1234,15 +1234,18 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
+dnl  The assembler directive to mark a label as a global symbol.
+dnl
 dnl  ia64 - .global is standard, according to the Intel documentation.
-dnl  hppa - ".export foo,entry" is demanded by HP "as".
-dnl  other - .globl is usual
+dnl
+dnl  hppa - ".export foo,entry" is demanded by HP hppa "as".
+dnl      HP hppa "as" accepts .global, but it's not clear what it does, only
+dnl      .export actually creates a global symbol.
+dnl
+dnl  other - .globl is usual.
 dnl
 dnl  "gas" tends to accept .globl everywhere, in addition to .export or
 dnl  .global or whatever the system assembler demands.  
-dnl
-dnl  HP "as" accepts .global, but it doesn't seem to mean what one would
-dnl  expect.  Only .export creates a global symbol.
 
 AC_DEFUN(GMP_ASM_GLOBL,
 [AC_REQUIRE([GMP_ASM_TEXT])
