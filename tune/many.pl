@@ -547,6 +547,16 @@ my @table =
      },
 
      {
+       # not for use with hppa reversed argument versions of mpn_umul_ppmm
+       'regexp'=> 'udiv',
+       'funs'  => ['udiv_qrnnd'],
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_limb_t *remptr, mp_limb_t n1, mp_limb_t n0, mp_limb_t d',
+       'speed' => 'none',
+       'try-minsize' => 2,
+     },
+
+     {
        'regexp'=> 'mode1o',
        'funs'  => ['modexact_1_odd'],
        'ret'   => 'mp_limb_t',
