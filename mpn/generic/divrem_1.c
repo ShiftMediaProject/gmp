@@ -1,7 +1,7 @@
 /* mpn_divrem_1 -- mpn by limb division.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2000 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2000, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,35 +25,21 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* udiv_qrnnd_preinv takes UDIV_NORM_PREINV_TIME (or UDIV_UNNORM_PREINV_TIME),
-   but requires roughly UDIV_TIME to calculate the inverse, so the default
-   threshold is wherever the saving would overcome that extra, if ever.  */
+/* The size where udiv_qrnnd_preinv should be used rather than udiv_qrnnd,
+   meaning the quotient size where that should happen, the quotient size
+   being how many udiv divisions will be done.
+
+   The default is to use preinv always, CPUs where this doesn't suit have
+   tuned thresholds.  Note in particular that preinv should certainly be
+   used if that's the only division available (USE_PREINV_ALWAYS).  */
 
 #ifndef DIVREM_1_NORM_THRESHOLD
-# if UDIV_PREINV_ALWAYS
-#  define DIVREM_1_NORM_THRESHOLD    0
-# else
-#  if UDIV_TIME <= UDIV_NORM_PREINV_TIME
-#  define DIVREM_1_NORM_THRESHOLD    MP_LIMB_T_MAX
-#  else
-#   define DIVREM_1_NORM_THRESHOLD \
-      (1 + UDIV_TIME / (UDIV_TIME - UDIV_NORM_PREINV_TIME))
-#  endif
-# endif
+#define DIVREM_1_NORM_THRESHOLD  0
+#endif
+#ifndef DIVREM_1_UNNORM_THRESHOLD
+#define DIVREM_1_UNNORM_THRESHOLD  0
 #endif
 
-#ifndef DIVREM_1_UNNORM_THRESHOLD
-# if UDIV_PREINV_ALWAYS
-#  define DIVREM_1_UNNORM_THRESHOLD    0
-# else
-#  if UDIV_TIME <= UDIV_UNNORM_PREINV_TIME
-#  define DIVREM_1_UNNORM_THRESHOLD    MP_LIMB_T_MAX
-#  else
-#   define DIVREM_1_UNNORM_THRESHOLD \
-      (1 + UDIV_TIME / (UDIV_TIME - UDIV_UNNORM_PREINV_TIME))
-#  endif
-# endif
-#endif
 
 
 /* If the cpu only has multiply-by-inverse division (eg. alpha), then NORM

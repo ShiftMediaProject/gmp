@@ -7,8 +7,8 @@
    RELEASE.
 
 
-Copyright 1993, 1994, 1995, 1996, 1999, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 1993, 1994, 1995, 1996, 1999, 2000, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,23 +34,14 @@ MA 02111-1307, USA. */
 
 /* The size where udiv_qrnnd_preinv should be used rather than udiv_qrnnd,
    meaning the quotient size where that should happen, the quotient size
-   being how many udiv divisions will be done.  */
+   being how many udiv divisions will be done.
+
+   The default is to use preinv always, CPUs where this doesn't suit have
+   tuned thresholds.  Note in particular that preinv should certainly be
+   used if that's the only division available (USE_PREINV_ALWAYS).  */
 
 #ifndef DIVREM_2_THRESHOLD
-# if UDIV_PREINV_ALWAYS
-#  define DIVREM_2_THRESHOLD      0
-# else
-#  ifdef DIVREM_1_NORM_THRESHOLD
-#   define DIVREM_2_THRESHOLD     DIVREM_1_NORM_THRESHOLD
-#  else
-#   if UDIV_TIME <= UDIV_NORM_PREINV_TIME
-#    define DIVREM_2_THRESHOLD    MP_LIMB_T_MAX
-#   else
-#    define DIVREM_2_THRESHOLD \
-       (1 + UDIV_TIME / (UDIV_TIME - UDIV_NORM_PREINV_TIME))
-#   endif
-#  endif
-# endif
+#define DIVREM_2_THRESHOLD  0
 #endif
 
 
