@@ -1,6 +1,6 @@
 /* Test mpz_add, mpz_add_ui, mpz_cmp, mpz_cmp, mpz_mul, mpz_sqrtrem.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
