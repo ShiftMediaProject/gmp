@@ -1,3 +1,10 @@
+2001-08-24  Kevin Ryde  <kevin@swox.se>
+
+	* longlong.h: Test __ppc__ for apple darwin cc, reported by Jon
+	Becker.  Also test __POWERPC__, PPC and __vxworks__.
+
+	* tune/speed.h (speed_cyclecounter) [x86]: Don't clobber ebx in PIC.
+
 2001-08-22  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (x86 mmx): Correction to mmx path stripping.
