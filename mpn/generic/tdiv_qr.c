@@ -65,6 +65,14 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
   if (qxn != 0)
     abort ();
 
+  ASSERT (qxn >= 0);
+  ASSERT (nn >= 0);
+  ASSERT (dn >= 0);
+  ASSERT (dn == 0 || dp[dn-1] != 0);
+  ASSERT (! MPN_OVERLAP_P (np, nn, dp, dn));
+  ASSERT (! MPN_OVERLAP_P (qp, nn-dn+1+qxn, np, nn));
+  ASSERT (! MPN_OVERLAP_P (qp, nn-dn+1+qxn, dp, dn));
+
   switch (dn)
     {
     case 0:
