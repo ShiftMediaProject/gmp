@@ -92,7 +92,7 @@ STATUS
   It would be possible to save two instructions: (1) The `mov' could be avoided
   if ths std/ldx were less scheduled.  (2) The ldx of `rlimb' could be split
   into two `ld' instructions, saving the shifts/masks.
-  
+
 * mpn_mul_1: The current code is a straightforward edit of the mpn_addmul_1
   code.  It would be possible to shave one or two cycles from it, with some
   labour.
