@@ -1,3 +1,38 @@
+2001-01-08  Kevin Ryde  <kevin@swox.se>
+
+	* tune/many.pl: Updates for move to tests/devel, add modexact_1_odd,
+	don't assume C files can't have carry-in entrypoints, remove
+	$(TRY_TESTS_OBJS) now in libtests.
+
+	* tests/devel/try.c, tests/refmpn.c, tests/tests.h: Remove
+	mpn_mod_1_rshift testing.
+
+	* tune/tuneup.c (fft_step_size): Test for overflow using the actual
+	mp_size_t, don't use BITS_PER_INT.
+
+	* tune/speed.c (r_string): "r" is a limb, use BITS_PER_MP_LIMB and
+	change LONG_ONES to LIMB_ONES.
+	* tune/time.c (M_2POWU): Use INT_MAX rather than BITS_PER_INT.
+
+	* extract-dbl.c (BITS_PER_PART): Use BITS_PER_MP_LIMB not
+	BITS_PER_LONGINT.
+
+	* mpz/inp_raw.c, mpz/out_raw.c: Add private defines of BITS_PER_CHAR.
+	* mpz/fac_ui.c, tests/mpz/t-fac_ui.c: Don't use BITS_PER_LONGINT.
+	* tests/mpz/t-get_si.c: Don't use BITS_PER_LONGINT, do the LONG_MAX
+	tests with some explicit code.
+
+	* mpn/*/gmp-mparam.h, acinclude.m4, tests/t-constants.c
+	(BITS_PER_LONGINT, BITS_PER_INT, BITS_PER_SHORTINT, BITS_PER_CHAR):
+	Remove defines, remove probings, remove tests.
+
+	* tune/tuneup.c (MODEXACT_1_ODD_THRESHOLD): Add tuning.
+
+	* tune/speed.c,speed.h,common.c: Add measuring of mpn_modexact_1_odd,
+	mpn_gcd_finda, and an "N" form for mpn_gcd_1.
+
+	* tests/mpz/t-jac.c (check_squares_zi): Ensure random a,b != 0.
+
 2001-01-07  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (gmp_mpn_functions): Add mode1o, remove mod_1_rs.
