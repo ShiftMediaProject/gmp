@@ -629,6 +629,25 @@ main ()
 }
 ])
 
+# A certain _GLOBAL_OFFSET_TABLE_ problem in past versions of gas, tickled
+# by recent versions of gcc.
+#
+if test "$gmp_prog_cc_works" = yes; then
+  case $host in
+    X86_PATTERN)
+      # this problem only arises in PIC code, so don't need to test when
+      # --disable-shared.  We don't necessarily have $enable_shared set to
+      # yes at this point, it will still be unset for the default (which is
+      # yes); hence the use of "!= no".
+      if test "$enable_shared" != no; then
+        GMP_PROG_CC_X86_GOT_EAX_EMITTED([$1],
+          [GMP_ASM_X86_GOT_EAX_OK([$1],,
+            [gmp_prog_cc_works="no, bad gas GOT with eax"])])
+      fi
+      ;;
+  esac
+fi
+
 AC_MSG_RESULT($gmp_prog_cc_works)
 case $gmp_prog_cc_works in
   yes)
@@ -818,6 +837,57 @@ AC_DEFUN([GMP_PROG_CC_IS_XLC],
 if AC_TRY_EVAL(gmp_command); then
   AC_MSG_CHECKING([whether $1 is xlc])
   AC_MSG_RESULT(yes)
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
+dnl  GMP_PROG_CC_X86_GOT_EAX_EMITTED(CC+CFLAGS, [ACTION-YES] [, ACTION-NO])
+dnl  ----------------------------------------------------------------------
+dnl  Determine whether CC+CFLAGS emits instructions using %eax with
+dnl  _GLOBAL_OFFSET_TABLE_.  This test is for use on x86 systems.
+dnl
+dnl  Recent versions of gcc will use %eax for the GOT in leaf functions, for
+dnl  instance gcc 3.3.3 with -O3.  This avoids having to save and restore
+dnl  %ebx which otherwise usually holds the GOT, and is what gcc used in the
+dnl  past.
+dnl
+dnl  %ecx and %edx are also candidates for this sort of optimization, and
+dnl  are used under lesser optimization levels, like -O2 in 3.3.3.  FIXME:
+dnl  It's not quite clear what the conditions for using %eax are, we might
+dnl  need more test code to provoke it.
+dnl
+dnl  The motivation for this test is that past versions of gas have bugs
+dnl  affecting this usage, see GMP_ASM_X86_GOT_EAX_OK.
+dnl
+dnl  This test is not specific to gcc, other compilers might emit %eax GOT
+dnl  insns like this, though we've not investigated that.
+dnl
+dnl  This is for use by compiler probing in GMP_PROG_CC_WORKS, so we doesn't
+dnl  cache the result.
+dnl
+dnl  -fPIC is hard coded here, because this test is for use before libtool
+dnl  has established the pic options.  It's right for gcc, but perhaps not
+dnl  other compilers.
+
+AC_DEFUN([GMP_PROG_CC_X86_GOT_EAX_EMITTED],
+[echo "Testing gcc GOT with eax emitted" >&AC_FD_CC
+cat >conftest.c <<\EOF
+[int foo;
+int bar () { return foo; }
+]EOF
+tmp_got_emitted=no
+gmp_compile="$1 -fPIC -S conftest.c >&AC_FD_CC 2>&1"
+if AC_TRY_EVAL(gmp_compile); then
+  if grep "addl.*_GLOBAL_OFFSET_TABLE_.*eax" conftest.s >/dev/null; then
+    tmp_got_emitted=yes
+  fi
+fi
+rm -f conftest.*
+echo "Result: $tmp_got_emitted" >&AC_FD_CC
+if test "$tmp_got_emitted" = yes; then
   ifelse([$2],,:,[$2])
 else
   ifelse([$3],,:,[$3])
@@ -2160,6 +2230,122 @@ if test "$gmp_cv_asm_x86_got_underscore" = "yes"; then
 else
   GMP_DEFINE(GOT_GSYM_PREFIX, [])
 fi    
+])
+
+
+dnl  GMP_ASM_X86_GOT_EAX_OK(CC+CFLAGS, [ACTION-YES] [, ACTION-NO])
+dnl  -------------------------------------------------------------
+dnl  Determine whether _GLOBAL_OFFSET_TABLE_ used with %eax is ok.
+dnl
+dnl  An instruction
+dnl
+dnl          addl  $_GLOBAL_OFFSET_TABLE_, %eax
+dnl
+dnl  is incorrectly assembled by gas 2.12 (or thereabouts) and earlier.  It
+dnl  puts an addend 2 into the R_386_GOTPC relocation, but it should be 1
+dnl  for this %eax form being a 1 byte opcode (with other registers it's 2
+dnl  opcode bytes).  See note about this in mpn/x86/README too.
+dnl
+dnl  We assemble this, surrounded by some unlikely byte sequences as
+dnl  delimiters, and check for the bad output.
+dnl
+dnl  This is for use by compiler probing in GMP_PROG_CC_WORKS, so the result
+dnl  is not cached.
+dnl
+dnl  This test is not specific to gas, but old gas is the only assembler we
+dnl  know of with this problem.  The Solaris has been seen coming out ok.
+dnl
+dnl  ".text" is hard coded because this macro is wanted before GMP_ASM_TEXT.
+dnl  This should be fine, ".text" is normal on x86 systems, and certainly
+dnl  will be fine with the offending gas.
+dnl
+dnl  If an error occurs when assembling, we consider the assembler ok, since
+dnl  the bad output does not occur.  This happens for instance on mingw,
+dnl  where _GLOBAL_OFFSET_TABLE_ results in a bfd error, since there's no
+dnl  GOT etc in PE object files.
+dnl
+dnl  This test is used before the object file extension has been determined,
+dnl  so we force output to conftest.o.  Using -o with -c is not portable,
+dnl  but we think all x86 compilers will accept -o with -c, certainly gcc
+dnl  does.
+dnl
+dnl  -fPIC is hard coded here, because this test is for use before libtool
+dnl  has established the pic options.  It's right for gcc, but perhaps not
+dnl  other compilers.
+
+AC_DEFUN([GMP_ASM_X86_GOT_EAX_OK],
+[echo "Testing gas GOT with eax good" >&AC_FD_CC
+cat >conftest.awk <<\EOF
+[BEGIN {
+  want[0]  = "001"
+  want[1]  = "043"
+  want[2]  = "105"
+  want[3]  = "147"
+  want[4]  = "211"
+  want[5]  = "253"
+  want[6]  = "315"
+  want[7]  = "357"
+
+  want[8]  = "005"
+  want[9]  = "002"
+  want[10] = "000"
+  want[11] = "000"
+  want[12] = "000"
+
+  want[13] = "376"
+  want[14] = "334"
+  want[15] = "272"
+  want[16] = "230"
+  want[17] = "166"
+  want[18] = "124"
+  want[19] = "062"
+  want[20] = "020"
+
+  result = "yes"
+}
+{
+  for (f = 2; f <= NF; f++)
+    {
+      for (i = 0; i < 20; i++)
+        got[i] = got[i+1];
+      got[20] = $f;
+
+      found = 1
+      for (i = 0; i < 21; i++)
+        if (got[i] != want[i])
+          {
+            found = 0
+            break
+          }
+      if (found)
+        {
+          result = "no"
+          exit
+        }
+    }
+}
+END {
+  print result
+}
+]EOF
+cat >conftest.s <<\EOF
+[	.text
+	.byte	1, 35, 69, 103, 137, 171, 205, 239
+	addl	$_GLOBAL_OFFSET_TABLE_, %eax
+	.byte	254, 220, 186, 152, 118, 84, 50, 16
+]EOF
+tmp_got_good=yes
+gmp_compile="$1 -fPIC -o conftest.o -c conftest.s >&AC_FD_CC 2>&1"
+if AC_TRY_EVAL(gmp_compile); then
+  tmp_got_good=`od -b conftest.o | $AWK -f conftest.awk`
+fi
+rm -f conftest.*
+echo "Result: $tmp_got_good" >&AC_FD_CC
+if test "$tmp_got_good" = no; then
+  ifelse([$3],,:,[$3])
+else
+  ifelse([$2],,:,[$2])
+fi
 ])
 
 
