@@ -1,4 +1,4 @@
-/* gmp_randinit (state, size, alg) -- Initialize a random state.
+/* gmp_randinit (state, algorithm, ...) -- Initialize a random state.
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
@@ -18,6 +18,12 @@ You should have received a copy of the GNU Library General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
+
+#if __STDC__
+# include <stdarg.h>
+#else
+# include <varargs.h>
+#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -63,22 +69,32 @@ struct __gmp_rand_lc_scheme_struct __gmp_rand_lc_scheme[] =
 void
 #if __STDC__
 gmp_randinit (gmp_randstate_t rstate,
-	      unsigned long int size,
-	      gmp_randalg_t alg)
+	      gmp_randalg_t alg,
+	      ...)
 #else
-gmp_randinit (rstate, size, alg)
+gmp_randinit (rstate, alg, va_alist)
      gmp_randstate_t rstate;
-     unsigned long int size;
      gmp_randalg_t alg;
+     va_dcl
 #endif
 {
+  va_list ap;
+
+#if __STDC__
+  va_start (ap, alg);
+#else
+  va_start (ap);
+#endif
+
   switch (alg)
     {
     case GMP_RAND_ALG_LC:	/* Linear congruential.  */
       {
+	unsigned long int size;
 	struct __gmp_rand_lc_scheme_struct *sp;
 	mpz_t a;
 
+	size = va_arg (ap, unsigned long int);
 
 	/* Pick a scheme.  */
 	for (sp = __gmp_rand_lc_scheme; sp->m2exp != 0; sp++)
@@ -143,4 +159,6 @@ gmp_randinit (rstate, size, alg)
     default:			/* Bad choice. */
       gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
     }
+
+  va_end (ap);
 }
