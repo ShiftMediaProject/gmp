@@ -1,3 +1,7 @@
+2001-02-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64w/udiv_qrnnd.asm: New file.
+
 2001-02-26  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (arm): Optimize sub_ddmmss by testing for constant operands.

@@ -5,8 +5,9 @@ RELEVANT OPTIMIZATION ISSUES
 The Ultra I/II pipeline executes up to two simple integer arithmetic operations
 per cycle.  The 64-bit integer multiply instruction mulx takes from 5 cycles to
 35 cycles, depending on the position of the most significant bit of the 1st
-source operand.  It stalls the processor while executing.  We stay away from
-that instruction, and instead use floating-point operations.
+source operand.  When used for 32x32->64 multiplication, it needs 20 cycles.
+Furthermore, it stalls the processor while executing.  We stay away from that
+instruction, and instead use floating-point operations.
 
 Integer conditional move instructions cannot dual-issue with other integer
 instructions.  No conditional move can issue 1-5 cycles after a load.  (Or
@@ -22,10 +23,8 @@ Timings on UltraSPARC-1/2:
 
 * lshift, rshift: The code is well-optimized and runs at 2.0 cycles/limb.
 
-* add_n, sub_n: currently runs at 5 cycles/limb.  Using logic on the
-  most significant bit of the two operands and the result, we would
-  get down to 4 cycles/limb.
+* add_n, sub_n: The current code runs at 4 cycles/limb.
 
-* mul_1/addmul_1/submul_1: Split invariant operand in 16-bit chunks and other
-  operand in 32-bit chunks.  Confirmed that such a loop can be made to run in
-  14 cycles, albeit with a 4-way deep software pipeline.
+* mul_1/addmul_1/submul_1: The current code runs at about 33 cycles/limb.  By
+  splitting the invariant operand into 16-bit chunks and other operand into
+  32-bit chunks, we could reach 14 cycles/limb.
