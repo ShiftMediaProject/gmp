@@ -447,10 +447,15 @@ IBM ROMP (RT),
 and
 Pyramid AP/XP.
 
-@cindex Mailing list
-There is a mailing list for GMP users.  To join it, send a mail to
-@email{gmp-request@@swox.com} with the word @samp{subscribe} in the message
-@strong{body} (not in the subject line).
+@cindex Mailing lists
+There are two public mailing lists of interest.  One for general questions and
+discussions about usage of the GMP library and one for discussions about
+development of GMP.  There's more information about the mailing lists at
+@uref{http://swox.com/mailman/listinfo/}.  These lists are @strong{not} for
+bug reports.
+
+The proper place for bug reports is @email{bug-gmp@@gnu.org}.  See
+@ref{Reporting Bugs} for info about reporting bugs.
 
 @cindex Home page
 @cindex Web page
