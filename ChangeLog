@@ -1,3 +1,8 @@
+2000-03-23  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (mpz_eval_expr): Properly initialize rhs/lhs
+	for ROOT.
+
 2000-03-23  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess (i?86:*:*:*): Use uname -m if detection program fails.
