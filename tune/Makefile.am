@@ -28,7 +28,7 @@ EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm hppa2w.asm ia6
 noinst_HEADERS = speed.h
 
 
-EXTRA_LTLIBRARIES = libspeed.la libdummy.la
+EXTRA_LTLIBRARIES = libspeed.la
 
 libspeed_la_SOURCES =							\
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
@@ -47,9 +47,6 @@ libspeed_la_LDFLAGS = -static
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
-
-# create an ansi2knr rule for sqr_basecase.c in case it's recompiled
-nodist_libdummy_la_SOURCES = sqr_basecase.c
 
 
 # The library code is faster static than shared on some systems, so do
