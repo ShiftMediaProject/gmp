@@ -35,31 +35,33 @@ MA 02111-1307, USA. */
    Mixed-type swapped-order assignments like "$a = 123; $a += mpz(456);"
    invoke the plain overloaded "+", not "+=", which makes life easier.
 
-   The various mpz_assume types are used with the overloaded operators since
-   we know they always pass a class object as the first argument and we can
-   save an sv_derived_from() lookup.  There's assert()s in MPX_ASSUME() to
-   check though.
+   mpz_assume etc types are used with the overloaded operators since such
+   operators are always called with a class object as the first argument, we
+   don't need an sv_derived_from() lookup to check.  There's assert()s in
+   MPX_ASSUME() for this though.
 
    The overload_constant routines reached via overload::constant get 4
    arguments in perl 5.6, not the 3 as documented.  This is apparently a
    bug, using "..." lets us ignore the extra one.
 
-   There's only a few "si" functions in gmp, so generally SvIV values get
+   There's only a few "si" functions in gmp, so usually SvIV values get
    handled with an mpz_set_si into a temporary and then a full precision mpz
    routine.  This is reasonably efficient.
 
-   Strings are identified with "SvPOK(sv)||SvPOKp(sv)" so that magic
-   SVt_PVLV returns from substr() will work.  SvPV() always gives a plain
-   actual string.
+   Argument types are checked, with a view to preserving all bits in the
+   operand.  Perl is a bit looser in its arithmetic, allowing rounding or
+   truncation to an intended operand type (IV or NV).
 
    Bugs:
 
-   Should IV's and/or NV's be identified with the same dual test as for
-   strings?
+   Giving NULL to sv_setref_pv then sv_bless'ing separately would save a
+   gv_stashpv on the class name every time.
 
    The memory leak detection attempted in GMP::END() doesn't work when mpz's
    are created as constants because END() is called before they're
-   destroyed.  What's the right place to hook such a check?  */
+   destroyed.  What's the right place to hook such a check?
+
+   See the bugs section of GMP.pm too.  */
 
 
 /* Comment this out to get assertion checking. */
@@ -80,6 +82,16 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 
 
+/* Perl 5.005 doesn't have SvIsUV, only 5.6 and up.
+   Perl 5.8 has SvUOK, but not 5.6, so we don't use that.  */
+#ifndef SvIsUV
+#define SvIsUV(sv)  0
+#endif
+#ifndef SvUVX
+#define SvUVX(sv)  (croak("GMP: oops, shouldn't be using SvUVX"), 0)
+#endif
+
+
 /* Code which doesn't check anything itself, but exists to support other
    assert()s.  */
 #ifdef NDEBUG
@@ -88,12 +100,28 @@ MA 02111-1307, USA. */
 #define assert_support(x) x
 #endif
 
+/* LONG_MAX + 1 and ULONG_MAX + 1, as a doubles */
+#define LONG_MAX_P1_AS_DOUBLE   ((double) ((unsigned long) LONG_MAX + 1))
+#define ULONG_MAX_P1_AS_DOUBLE  (2.0 * (double) ((unsigned long) ULONG_MAX/2 + 1))
+
+/* Check for perl version "major.minor".
+   Perl 5.004 doesn't have PERL_REVISION and PERL_VERSION, but that's ok,
+   we're only interested in tests above that.  */
+#if defined (PERL_REVISION) && defined (PERL_VERSION)
+#define PERL_GE(major,minor)                                    \
+    (PERL_REVISION > (major)                                    \
+     || ((major) == PERL_REVISION && PERL_VERSION >= (minor)))
+#else
+#define PERL_GE(major,minor)  (0)
+#endif
+#define PERL_LT(major,minor)  (! PERL_GE(major,minor))
+
 /* sv_derived_from etc in 5.005 took "char *" rather than "const char *".
    Avoid some compiler warnings by using const only where it works.  */
-#if PERL_REVISION > 5 || (PERL_REVISION == 5 && PERL_VERSION >= 6)
-#define classconst const
-#else
+#if PERL_LT (5,6)
 #define classconst
+#else
+#define classconst const
 #endif
 
 #define GMP_MALLOC_ID  42
@@ -128,7 +156,6 @@ assert_support (static long rand_count = 0;)
   typedef struct type##_elem  *type;                    \
   typedef struct type##_elem  *type##_assume;           \
   typedef type##_ptr          type##_coerce;            \
-  typedef type##_ptr          type##_mutate;            \
                                                         \
   static type type##_freelist = NULL;                   \
                                                         \
@@ -278,10 +305,6 @@ typedef __gmp_randstate_struct *randstate;
 
 #define x_mpq_integer_p(q) \
   (mpz_cmp_ui (mpq_denref(q), 1L) == 0)
-#define x_mpq_equal_si(q,n,d) \
-  (mpz_cmp_si (mpq_numref(q), n) == 0 && mpz_cmp_ui (mpq_denref(q), d) == 0)
-#define x_mpq_equal_z(q,z) \
-  (x_mpq_integer_p(q) && mpz_cmp (mpq_numref(q), z) == 0)
 
 #define assert_table(ix)  assert (ix >= 0 && ix < numberof (table))
 
@@ -290,7 +313,6 @@ typedef __gmp_randstate_struct *randstate;
 #define MPF_PTR_SWAP(x,y) \
   do { mpf_ptr __tmp = (x); (x) = (y); (y) = __tmp; } while (0)
 
-#define SvPOKorp(sv)  (SvPOK(sv) || SvPOKp(sv))
 
 static void
 class_or_croak (SV *sv, classconst char *cl)
@@ -354,7 +376,7 @@ my_gmp_free (void *p, size_t n)
     const char  *str;                                           \
     STRLEN      len;                                            \
     TRACE (printf ("  my_" #type "_set_svstr\n"));              \
-    assert (SvPOKorp (sv));                                     \
+    assert (SvPOK(sv) || SvPOKp(sv));                           \
     str = SvPV (sv, len);                                       \
     TRACE (printf ("  str \"%s\"\n", str));                     \
     if (type##_set_str (x, str, 0) != 0)                        \
@@ -406,212 +428,397 @@ x_mpz_cmp_f (mpz_srcptr x, mpf_srcptr y)
 }
 
 
+#define USE_UNKNOWN  0
+#define USE_IVX      1
+#define USE_UVX      2
+#define USE_NVX      3
+#define USE_PVX      4
+#define USE_MPZ      5
+#define USE_MPQ      6
+#define USE_MPF      7
+
+/* An NV used as an IV will leave IOK set, but with a rounded value in the
+   IV.  So when both IOK and NOK are set we check the NV and if it's not an
+   integer then rounding will have occurred and the NV is the true value.
+
+   Prior to perl 5.8, an NV too big for an IV leaves IOK set and a truncated
+   value 0xFFFFFFFF.  So when both IOK and NOK are set we check the NV and
+   if it's bigger than an IV, then truncation will have occured and the NV
+   is the true value.
+
+   Perl 5.8 and up is good in that a truncation doesn't set IOK (only IOKp),
+   so the range check is not required.  But when going via a tie or other
+   magic, 5.8 and indeed all versions leave both IOKp and NOKp, and the
+   range check is needed in that case.
+
+   We don't simply use the NV unconditionally, firstly because on a 64-bit
+   perl an NV converted from an IV may have lost some bits, and secondly
+   because we can use an IV more efficiently in various places.
+
+   If IOK or NOK is set and POK too, then we prefer the IV or NV.  This
+   means we take the numerical part of dual-type scalars like $!.  It seems
+   sensible to prefer the number part in the context of a numerical
+   operation.
+
+   mg_get is called every time we get a value, even if the private flags are
+   still set from a previous such call.  This is the same as as SvIV and
+   friends do.
+
+   We'd like to call mg_get just once, but unfortunately sv_derived_from()
+   will call it for each of our checks.  We could do a string compare like
+   sv_isa ourselves, but that only tests the exact class, it doesn't
+   recognise subclassing.  There doesn't seem to be a public interface to
+   the subclassing tests in the internal isa_lookup().  */
+
+int
+use_sv (SV *sv)
+{
+  double  d;
+
+  if (SvGMAGICAL(sv))
+    {
+      mg_get(sv);
+
+      if (SvIOKp(sv))
+        {
+          if (SvIsUV(sv))
+            {
+              if (SvNOKp(sv))
+                goto u_or_n;
+              return USE_UVX;
+            }
+          else
+            {
+              if (SvNOKp(sv))
+                goto i_or_n;
+              return USE_IVX;
+            }
+        }
+
+      if (SvNOKp(sv))
+        return USE_NVX;
+
+      if (SvPOKp(sv))
+        return USE_PVX;
+
+      goto rok_or_unknown;
+    }
+
+  if (SvIOK(sv))
+    {
+      if (SvIsUV(sv))
+        {
+          if (SvNOK(sv))
+            {
+              if (PERL_LT (5, 8))
+                {
+                u_or_n:
+                  d = SvNVX(sv);
+                  if (d >= ULONG_MAX_P1_AS_DOUBLE || d < 0.0)
+                    return USE_NVX;
+                }
+              d = SvNVX(sv);
+              if (d == floor (d))
+                return USE_NVX;
+            }
+          return USE_UVX;
+        }
+      else
+        {
+          if (SvNOK(sv))
+            {
+              if (PERL_LT (5, 8))
+                {
+                i_or_n:
+                  d = SvNVX(sv);
+                  if (d >= LONG_MAX_P1_AS_DOUBLE || d < (double) LONG_MIN)
+                    return USE_NVX;
+                }
+              d = SvNVX(sv);
+              if (d == floor (d))
+                return USE_NVX;
+            }
+          return USE_IVX;
+        }
+    }
+
+  if (SvNOK(sv))
+    return USE_NVX;
+
+  if (SvPOK(sv))
+    return USE_PVX;
+
+ rok_or_unknown:
+  if (SvROK(sv))
+    {
+      if (sv_derived_from (sv, mpz_class))
+        return USE_MPZ;
+      if (sv_derived_from (sv, mpq_class))
+        return USE_MPQ;
+      if (sv_derived_from (sv, mpf_class))
+        return USE_MPF;
+    }
+
+  return USE_UNKNOWN;
+}
+
+
 /* Coerce sv to an mpz.  Use tmp to hold the converted value if sv isn't
    already an mpz (or an mpq of which the numerator can be used).  Return
    the chosen mpz (tmp or the contents of sv).  */
+
 static mpz_ptr
-coerce_mpz (mpz_ptr tmp, SV *sv)
+coerce_mpz_using (mpz_ptr tmp, SV *sv, int use)
 {
-  if (SvIOK(sv))
+  switch (use) {
+  case USE_IVX:
+    mpz_set_si (tmp, SvIVX(sv));
+    return tmp;
+
+  case USE_UVX:
+    mpz_set_ui (tmp, SvUVX(sv));
+    return tmp;
+
+  case USE_NVX:
     {
-      mpz_set_si (tmp, SvIVX(sv));
-      return tmp;
-    }
-  if (SvPOKorp(sv))
-    {
-      my_mpz_set_svstr (tmp, sv);
-      return tmp;
-    }
-  if (SvNOK(sv))
-    {
-      double d = SvNVX(sv);
+      double d;
+      d = SvNVX(sv);
       if (! double_integer_p (d))
         croak ("cannot coerce non-integer double to mpz");
       mpz_set_d (tmp, d);
       return tmp;
     }
-  if (SvROK(sv))
+
+  case USE_PVX:
+    my_mpz_set_svstr (tmp, sv);
+    return tmp;
+
+  case USE_MPZ:
+    return SvMPZ(sv)->m;
+
+  case USE_MPQ:
     {
-      if (sv_derived_from (sv, mpz_class))
-        {
-          return SvMPZ(sv)->m;
-        }
-      if (sv_derived_from (sv, mpq_class))
-        {
-          mpq q = SvMPQ(sv);
-          if (! x_mpq_integer_p (q->m))
-            croak ("cannot coerce non-integer mpq to mpz");
-          return mpq_numref(q->m);
-        }
-      if (sv_derived_from (sv, mpf_class))
-        {
-          mpf f = SvMPF(sv);
-          if (! mpf_integer_p (f))
-            croak ("cannot coerce non-integer mpf to mpz");
-          mpz_set_f (tmp, f);
-          return tmp;
-        }
+      mpq q = SvMPQ(sv);
+      if (! x_mpq_integer_p (q->m))
+        croak ("cannot coerce non-integer mpq to mpz");
+      return mpq_numref(q->m);
     }
-  croak ("cannot coerce to mpz");
+
+  case USE_MPF:
+    {
+      mpf f = SvMPF(sv);
+      if (! mpf_integer_p (f))
+        croak ("cannot coerce non-integer mpf to mpz");
+      mpz_set_f (tmp, f);
+      return tmp;
+    }
+
+  default:
+    croak ("cannot coerce to mpz");
+  }
+}
+static mpz_ptr
+coerce_mpz (mpz_ptr tmp, SV *sv)
+{
+  return coerce_mpz_using (tmp, sv, use_sv (sv));
 }
 
 
 /* Coerce sv to an mpq.  If sv is an mpq then just return that, otherwise
    use tmp to hold the converted value and return that.  */
+
+static mpq_ptr
+coerce_mpq_using (mpq_ptr tmp, SV *sv, int use)
+{
+  TRACE (printf ("coerce_mpq_using %p %d\n", tmp, use));
+  switch (use) {
+  case USE_IVX:
+    mpq_set_si (tmp, SvIVX(sv), 1L);
+    return tmp;
+
+  case USE_UVX:
+    mpq_set_ui (tmp, SvUVX(sv), 1L);
+    return tmp;
+
+  case USE_NVX:
+    mpq_set_d (tmp, SvNVX(sv));
+    return tmp;
+
+  case USE_PVX:
+    my_mpq_set_svstr (tmp, sv);
+    return tmp;
+
+  case USE_MPZ:
+    mpq_set_z (tmp, SvMPZ(sv)->m);
+    return tmp;
+
+  case USE_MPQ:
+    return SvMPQ(sv)->m;
+
+  case USE_MPF:
+    mpq_set_f (tmp, SvMPF(sv));
+    return tmp;
+
+  default:
+    croak ("cannot coerce to mpq");
+  }
+}
 static mpq_ptr
 coerce_mpq (mpq_ptr tmp, SV *sv)
 {
-  if (SvIOK(sv))
-    {
-      mpq_set_si (tmp, SvIVX(sv), 1L);
-      return tmp;
-    }
-  if (SvNOK(sv))
-    {
-      mpq_set_d (tmp, SvNVX(sv));
-      return tmp;
-    }
-  if (SvPOKorp(sv))
-    {
-      my_mpq_set_svstr (tmp, sv);
-      return tmp;
-    }
-  if (SvROK(sv))
-    {
-      if (sv_derived_from (sv, mpz_class))
-        {
-          mpq_set_z (tmp, SvMPZ(sv)->m);
-          return tmp;
-        }
-      if (sv_derived_from (sv, mpq_class))
-        {
-          return SvMPQ(sv)->m;
-        }
-      if (sv_derived_from (sv, mpf_class))
-        {
-          mpq_set_f (tmp, SvMPF(sv));
-          return tmp;
-        }
-    }
-  croak ("cannot coerce to mpq");
+  return coerce_mpq_using (tmp, sv, use_sv (sv));
 }
 
 
 static void
-my_mpf_set_sv (mpf_ptr f, SV *sv)
+my_mpf_set_sv_using (mpf_ptr f, SV *sv, int use)
 {
-  if (SvIOK(sv))
+  switch (use) {
+  case USE_IVX:
     mpf_set_si (f, SvIVX(sv));
-  else if (SvPOKorp(sv))
-    my_mpf_set_svstr (f, sv);
-  else if (SvNOK(sv))
+    break;
+
+  case USE_UVX:
+    mpf_set_ui (f, SvUVX(sv));
+    break;
+
+  case USE_NVX:
     mpf_set_d (f, SvNVX(sv));
-  else if (SvROK(sv))
-    {
-      if (sv_derived_from (sv, mpz_class))
-        mpf_set_z (f, SvMPZ(sv)->m);
-      else if (sv_derived_from (sv, mpq_class))
-        mpf_set_q (f, SvMPQ(sv)->m);
-      else if (sv_derived_from (sv, mpf_class))
-        mpf_set (f, SvMPF(sv));
-      else
-        goto invalid;
-    }
-  else
-    {
-    invalid:
-      croak ("cannot coerce to mpf");
-    }
+    break;
+
+  case USE_PVX:
+    my_mpf_set_svstr (f, sv);
+    break;
+
+  case USE_MPZ:
+    mpf_set_z (f, SvMPZ(sv)->m);
+    break;
+
+  case USE_MPQ:
+    mpf_set_q (f, SvMPQ(sv)->m);
+    break;
+
+  case USE_MPF:
+    mpf_set (f, SvMPF(sv));
+    break;
+
+  default:
+    croak ("cannot coerce to mpf");
+  }
 }
 
 /* Coerce sv to an mpf.  If sv is an mpf then just return that, otherwise
    use tmp to hold the converted value (with prec precision).  */
 static mpf_ptr
-coerce_mpf (tmp_mpf_ptr tmp, SV *sv, unsigned long prec)
+coerce_mpf_using (tmp_mpf_ptr tmp, SV *sv, unsigned long prec, int use)
 {
-  if (SvROK(sv) && sv_derived_from (sv, mpf_class))
+  if (use == USE_MPF)
     return SvMPF(sv);
 
   tmp_mpf_set_prec (tmp, prec);
-  my_mpf_set_sv (tmp->m, sv);
+  my_mpf_set_sv_using (tmp->m, sv, use);
   return tmp->m;
+}
+static mpf_ptr
+coerce_mpf (tmp_mpf_ptr tmp, SV *sv, unsigned long prec)
+{
+  return coerce_mpf_using (tmp, sv, prec, use_sv (sv));
 }
 
 
 /* Coerce xv to an mpf and store the pointer in x, ditto for yv to x.  If
    one of xv or yv is an mpf then use it for the precision, otherwise use
    the default precision.  */
-#define COERCE_MPF_PAIR(prec, x,xv, y,yv)                       \
-  do {                                                          \
-    if (SvROK(xv) && sv_derived_from (xv, mpf_class))           \
-      {                                                         \
-        x = SvMPF(xv);                                          \
-        prec = mpf_get_prec (x);                                \
-        y = coerce_mpf (tmp_mpf_0, yv, prec);                   \
-      }                                                         \
-    else                                                        \
-      {                                                         \
-        y = coerce_mpf (tmp_mpf_0, yv, mpf_get_default_prec()); \
-        prec = mpf_get_prec (y);                                \
-        x = coerce_mpf (tmp_mpf_1, xv, prec);                   \
-      }                                                         \
-  } while (0)
-      
+unsigned long
+coerce_mpf_pair (mpf *xp, SV *xv, mpf *yp, SV *yv)
+{
+  int x_use = use_sv (xv);
+  int y_use = use_sv (yv);
+  unsigned long  prec;
+  mpf  x, y;
 
+  if (x_use == USE_MPF)
+    {
+      x = SvMPF(xv);
+      prec = mpf_get_prec (x);
+      y = coerce_mpf_using (tmp_mpf_0, yv, prec, y_use);
+    }
+  else
+    {
+      y = coerce_mpf_using (tmp_mpf_0, yv, mpf_get_default_prec(), y_use);
+      prec = mpf_get_prec (y);
+      x = coerce_mpf_using (tmp_mpf_1, xv, prec, x_use);
+    }
+  *xp = x;
+  *yp = y;
+  return prec;
+}
+
+
+/* Note that SvUV is not used, since it merely treats the signed IV as if it
+   was unsigned.  We get an IV and check its sign. */
 static unsigned long
 coerce_ulong (SV *sv)
 {
   long  n;
-  if (SvIOK(sv))
+
+  switch (use_sv (sv)) {
+  case USE_IVX:
+    n = SvIVX(sv);
+  negative_check:
+    if (n < 0)
+      goto range_error;
+    return n;
+
+  case USE_UVX:
+    return SvUVX(sv);
+
+  case USE_NVX:
     {
-      n = SvIVX(sv);
-    negative_check:
-      if (n < 0)
-        goto range_error;
-      return n;
-    }
-  if (SvNOK(sv))
-    {
-      double d = SvNVX(sv);
+      double d;
+      d = SvNVX(sv);
       if (! double_integer_p (d))
         goto integer_error;
       n = SvIV(sv);
-      goto negative_check;
     }
-  if (SvPOKorp(sv))
+    goto negative_check;
+
+  case USE_PVX:
+    /* FIXME: Check the string is an integer. */
+    n = SvIV(sv);
+    goto negative_check;
+
+  case USE_MPZ:
     {
-      n = SvIV(sv);
-      goto negative_check;
+      mpz z = SvMPZ(sv);
+      if (! mpz_fits_ulong_p (z->m))
+        goto range_error;
+      return mpz_get_ui (z->m);
     }
-  if (SvROK(sv))
+
+  case USE_MPQ:
     {
-      if (sv_derived_from (sv, mpz_class))
-        {
-          mpz z = SvMPZ(sv);
-          if (! mpz_fits_ulong_p (z->m))
-            goto range_error;
-          return mpz_get_ui (z->m);
-        }
-      if (sv_derived_from (sv, mpq_class))
-        {
-          mpq q = SvMPQ(sv);
-          if (! x_mpq_integer_p (q->m))
-            goto integer_error;
-          if (! mpz_fits_ulong_p (mpq_numref (q->m)))
-            goto range_error;
-          return mpz_get_ui (mpq_numref (q->m));
-        }
-      if (sv_derived_from (sv, mpf_class))
-        {
-          mpf f = SvMPF(sv);
-          if (! mpf_integer_p (f))
-            goto integer_error;
-          if (! mpf_fits_ulong_p (f))
-            goto range_error;
-          return mpf_get_ui (f);
-        }
+      mpq q = SvMPQ(sv);
+      if (! x_mpq_integer_p (q->m))
+        goto integer_error;
+      if (! mpz_fits_ulong_p (mpq_numref (q->m)))
+        goto range_error;
+      return mpz_get_ui (mpq_numref (q->m));
     }
-  croak ("cannot coerce to ulong");
+
+  case USE_MPF:
+    {
+      mpf f = SvMPF(sv);
+      if (! mpf_integer_p (f))
+        goto integer_error;
+      if (! mpf_fits_ulong_p (f))
+        goto range_error;
+      return mpf_get_ui (f);
+    }
+
+  default:
+    croak ("cannot coerce to ulong");
+  }
 
  integer_error:
   croak ("not an integer");
@@ -624,10 +831,19 @@ coerce_ulong (SV *sv)
 static long
 coerce_long (SV *sv)
 {
-  if (SvIOK(sv))
+  switch (use_sv (sv)) {
+  case USE_IVX:
     return SvIVX(sv);
 
-  if (SvNOK(sv))
+  case USE_UVX:
+    {
+      UV u = SvUVX(sv);
+      if (u > (UV) LONG_MAX)
+        goto range_error;
+      return u;
+    }
+
+  case USE_NVX:
     {
       double d = SvNVX(sv);
       if (! double_integer_p (d))
@@ -635,90 +851,47 @@ coerce_long (SV *sv)
       return SvIV(sv);
     }
 
-  if (SvPOKorp(sv))
+  case USE_PVX:
+    /* FIXME: Check the string is an integer. */
     return SvIV(sv);
 
-  if (SvROK(sv))
+  case USE_MPZ:
     {
-      if (sv_derived_from (sv, mpz_class))
-        {
-          mpz z = SvMPZ(sv);
-          if (! mpz_fits_slong_p (z->m))
-            goto range_error;
-          return mpz_get_si (z->m);
-        }
-      if (sv_derived_from (sv, mpq_class))
-        {
-          mpq q = SvMPQ(sv);
-          if (! x_mpq_integer_p (q->m))
-            goto integer_error;
-          if (! mpz_fits_slong_p (mpq_numref (q->m)))
-            goto range_error;
-          return mpz_get_si (mpq_numref (q->m));
-        }
-      if (sv_derived_from (sv, mpf_class))
-        {
-          mpf f = SvMPF(sv);
-          if (! mpf_integer_p (f))
-            goto integer_error;
-          if (! mpf_fits_slong_p (f))
-            goto range_error;
-          return mpf_get_si (f);
-        }
+      mpz z = SvMPZ(sv);
+      if (! mpz_fits_slong_p (z->m))
+        goto range_error;
+      return mpz_get_si (z->m);
     }
-  croak ("cannot coerce to long");
+
+  case USE_MPQ:
+    {
+      mpq q = SvMPQ(sv);
+      if (! x_mpq_integer_p (q->m))
+        goto integer_error;
+      if (! mpz_fits_slong_p (mpq_numref (q->m)))
+        goto range_error;
+      return mpz_get_si (mpq_numref (q->m));
+    }
+
+  case USE_MPF:
+    {
+      mpf f = SvMPF(sv);
+      if (! mpf_integer_p (f))
+        goto integer_error;
+      if (! mpf_fits_slong_p (f))
+        goto range_error;
+      return mpf_get_si (f);
+    }
+
+  default:
+    croak ("cannot coerce to long");
+  }
 
  integer_error:
   croak ("not an integer");
 
  range_error:
   croak ("out of range for ulong");
-}
-
-
-#define mpx_set_maybe(dst,src,type) \
-  do { if ((dst) != (src)) type##_set (dst, src); } while (0)
-
-#define coerce_mpx_into(p,sv,type)                      \
-  do {                                                  \
-    type##_ptr  __new_p = coerce_##type (p, sv);        \
-    mpx_set_maybe (p, __new_p, type);                   \
-  } while (0)
-
-/* Like plain coerce_mpz or coerce_mpq, but force the result into p by
-   copying if necessary.  */
-#define coerce_mpz_into(z,sv)   coerce_mpx_into(z,sv,mpz)
-#define coerce_mpq_into(q,sv)   coerce_mpx_into(q,sv,mpq)
-
-
-/* Prepare sv to be a changable mpz.  If it's not an mpz then turn it into
-   one.  If it is an mpz then ensure the reference count is 1.  */
-static mpz_ptr
-mutate_mpz (SV *sv)
-{
-  mpz  old_z, new_z;
-
-  TRACE (printf ("mutate_mpz %p\n", sv));
-  TRACE (printf ("  type %d\n", SvTYPE(sv)));
-
-  if (SvROK (sv) && sv_derived_from (sv, mpz_class))
-    {
-      old_z = SvMPZ(sv);
-      if (SvREFCNT(SvRV(sv)) == 1)
-        return SvMPZ(sv)->m;
-
-      TRACE (printf ("mutate_mpz(): forking new mpz\n"));
-      new_z = new_mpz ();
-      mpz_set (new_z->m, old_z->m);
-    }
-  else
-    {
-      TRACE (printf ("mutate_mpz(): coercing new mpz\n"));
-      new_z = new_mpz ();
-      coerce_mpz_into (new_z->m, sv);
-    }
-  sv_setref_pv (sv, mpz_class, new_z);
-  return new_z->m;
 }
 
 
@@ -761,18 +934,27 @@ OUTPUT:
 bool
 fits_slong_p (sv)
     SV *sv
-PREINIT:
-    mpq_srcptr  q;
 CODE:
-    if (SvIOK(sv))
+    switch (use_sv (sv)) {
+    case USE_IVX:
       RETVAL = 1;
-    else if (SvNOK(sv))
+      break;
+
+    case USE_UVX:
+      {
+        UV u = SvUVX(sv);
+        RETVAL = (u <= LONG_MAX);
+      }
+      break;
+
+    case USE_NVX:
       {
         double  d = SvNVX(sv);
-        RETVAL = (d >= (double) LONG_MIN
-                  && d < (double) ((unsigned long) LONG_MAX + 1));
+        RETVAL = (d >= (double) LONG_MIN && d < LONG_MAX_P1_AS_DOUBLE);
       }
-    else if (SvPOKorp(sv))
+      break;
+
+    case USE_PVX:
       {
         STRLEN len;
         const char *str = SvPV (sv, len);
@@ -787,22 +969,23 @@ CODE:
             RETVAL = mpf_fits_slong_p (tmp_mpf_0->m);
           }
       }
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          RETVAL = mpz_fits_slong_p (SvMPZ(sv)->m);
-        else if (sv_derived_from (sv, mpq_class))
-          RETVAL = x_mpq_fits_slong_p (SvMPQ(sv)->m);
-        else if (sv_derived_from (sv, mpf_class))
-          RETVAL = mpf_fits_slong_p (SvMPF(sv));
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::fits_slong_p invalid argument");
-      }
+      break;
+
+    case USE_MPZ:
+      RETVAL = mpz_fits_slong_p (SvMPZ(sv)->m);
+      break;
+
+    case USE_MPQ:
+      RETVAL = x_mpq_fits_slong_p (SvMPQ(sv)->m);
+      break;
+
+    case USE_MPF:
+      RETVAL = mpf_fits_slong_p (SvMPF(sv));
+      break;
+
+    default:
+      croak ("GMP::fits_slong_p invalid argument");
+    }
 OUTPUT:
     RETVAL
 
@@ -811,31 +994,41 @@ double
 get_d (sv)
     SV *sv
 CODE:
-    if (SvIOK(sv))
+    switch (use_sv (sv)) {
+    case USE_IVX:
       RETVAL = (double) SvIVX(sv);
-    else if (SvNOK(sv))
+      break;
+
+    case USE_UVX:
+      RETVAL = (double) SvUVX(sv);
+      break;
+
+    case USE_NVX:
       RETVAL = SvNVX(sv);
-    else if (SvPOKorp(sv))
+      break;
+
+    case USE_PVX:
       {
         STRLEN len;
         RETVAL = atof(SvPV(sv, len));
       }
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          RETVAL = mpz_get_d (SvMPZ(sv)->m);
-        else if (sv_derived_from (sv, mpq_class))
-          RETVAL = mpq_get_d (SvMPQ(sv)->m);
-        else if (sv_derived_from (sv, mpf_class))
-          RETVAL = mpf_get_d (SvMPF(sv));
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::get_d invalid argument");
-      }
+      break;
+
+    case USE_MPZ:
+      RETVAL = mpz_get_d (SvMPZ(sv)->m);
+      break;
+
+    case USE_MPQ:
+      RETVAL = mpq_get_d (SvMPQ(sv)->m);
+      break;
+
+    case USE_MPF:
+      RETVAL = mpf_get_d (SvMPF(sv));
+      break;
+
+    default:
+      croak ("GMP::get_d invalid argument");
+    }
 OUTPUT:
     RETVAL
 
@@ -847,12 +1040,16 @@ PREINIT:
     double ret;
     long   exp;
 PPCODE:
-    if (SvIOK(sv))
-      {
-        ret = (double) SvIVX(sv);
-        goto use_frexp;
-      }
-    else if (SvNOK(sv))
+    switch (use_sv (sv)) {
+    case USE_IVX:
+      ret = (double) SvIVX(sv);
+      goto use_frexp;
+
+    case USE_UVX:
+      ret = (double) SvUVX(sv);
+      goto use_frexp;
+
+    case USE_NVX:
       {
         int i_exp;
         ret = SvNVX(sv);
@@ -860,36 +1057,32 @@ PPCODE:
         ret = frexp (ret, &i_exp);
         exp = i_exp;
       }
-    else if (SvPOKorp(sv))
-      {
-        /* put strings through mpf to give full exp range */
-        tmp_mpf_set_prec (tmp_mpf_0, DBL_MANT_DIG);
-        my_mpf_set_svstr (tmp_mpf_0->m, sv);
-        ret = mpf_get_d_2exp (&exp, tmp_mpf_0->m);
-      }
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          ret = mpz_get_d_2exp (&exp, SvMPZ(sv)->m);
-        else if (sv_derived_from (sv, mpq_class))
-          {
-            tmp_mpf_set_prec (tmp_mpf_0, DBL_MANT_DIG);
-            mpf_set_q (tmp_mpf_0->m, SvMPQ(sv)->m);
-            ret = mpf_get_d_2exp (&exp, tmp_mpf_0->m);
-          }
-        else if (sv_derived_from (sv, mpf_class))
-          {
-            ret = mpf_get_d_2exp (&exp, SvMPF(sv));
-            printf ("exp %d\n", exp);
-          }
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::get_d_2exp invalid argument");
-      }
+      break;
+
+    case USE_PVX:
+      /* put strings through mpf to give full exp range */
+      tmp_mpf_set_prec (tmp_mpf_0, DBL_MANT_DIG);
+      my_mpf_set_svstr (tmp_mpf_0->m, sv);
+      ret = mpf_get_d_2exp (&exp, tmp_mpf_0->m);
+      break;
+
+    case USE_MPZ:
+      ret = mpz_get_d_2exp (&exp, SvMPZ(sv)->m);
+      break;
+
+    case USE_MPQ:
+      tmp_mpf_set_prec (tmp_mpf_0, DBL_MANT_DIG);
+      mpf_set_q (tmp_mpf_0->m, SvMPQ(sv)->m);
+      ret = mpf_get_d_2exp (&exp, tmp_mpf_0->m);
+      break;
+
+    case USE_MPF:
+      ret = mpf_get_d_2exp (&exp, SvMPF(sv));
+      break;
+
+    default:
+      croak ("GMP::get_d_2exp invalid argument");
+    }
     PUSHs (sv_2mortal (newSVnv (ret)));
     PUSHs (sv_2mortal (newSViv (exp)));
 
@@ -898,38 +1091,46 @@ long
 get_si (sv)
     SV *sv
 CODE:
-    if (SvIOK(sv))
+    switch (use_sv (sv)) {
+    case USE_IVX:
       RETVAL = SvIVX(sv);
-    else if (SvNOK(sv))
+      break;
+
+    case USE_UVX:
+      RETVAL = SvUVX(sv);
+      break;
+
+    case USE_NVX:
       RETVAL = (long) SvNVX(sv);
-    else if (SvPOKorp(sv))
+      break;
+
+    case USE_PVX:
       RETVAL = SvIV(sv);
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          RETVAL = mpz_get_si (SvMPZ(sv)->m);
-        else if (sv_derived_from (sv, mpq_class))
-          {
-            mpz_set_q (tmp_mpz_0, SvMPQ(sv)->m);
-            RETVAL = mpz_get_si (tmp_mpz_0);
-          }
-        else if (sv_derived_from (sv, mpf_class))
-          RETVAL = mpf_get_si (SvMPF(sv));
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::get_si invalid argument");
-      }
+      break;
+
+    case USE_MPZ:
+      RETVAL = mpz_get_si (SvMPZ(sv)->m);
+      break;
+
+    case USE_MPQ:
+      mpz_set_q (tmp_mpz_0, SvMPQ(sv)->m);
+      RETVAL = mpz_get_si (tmp_mpz_0);
+      break;
+
+    case USE_MPF:
+      RETVAL = mpf_get_si (SvMPF(sv));
+      break;
+
+    default:
+      croak ("GMP::get_si invalid argument");
+    }
 OUTPUT:
     RETVAL
 
 
 void
 get_str (sv, ...)
-    SV   *sv
+    SV *sv
 PREINIT:
     char      *str;
     mp_exp_t  exp;
@@ -954,23 +1155,27 @@ PPCODE:
     TRACE (printf (" ndigits=%d\n", ndigits));
 
     EXTEND (SP, 2);
-    
-    if (SvIOK(sv))
-      {
-        mpz_set_si (tmp_mpz_0, SvIVX(sv));
-        z = tmp_mpz_0;
-        goto get_mpz;
-      }
-    else if (SvNOK(sv))
-      {
-        /* only digits in the original double, not in the coerced form */
-        if (ndigits == 0)
-          ndigits = DBL_DIG;
-        mpf_set_d (tmp_mpf_0->m, SvNVX(sv));
-        f = tmp_mpf_0->m;
-        goto get_mpf;
-      }
-    else if (SvPOKorp(sv))
+
+    switch (use_sv (sv)) {
+    case USE_IVX:
+      mpz_set_si (tmp_mpz_0, SvIVX(sv));
+    get_tmp_mpz_0:
+      z = tmp_mpz_0;
+      goto get_mpz;
+
+    case USE_UVX:
+      mpz_set_ui (tmp_mpz_0, SvUVX(sv));
+      goto get_tmp_mpz_0;
+
+    case USE_NVX:
+      /* only digits in the original double, not in the coerced form */
+      if (ndigits == 0)
+        ndigits = DBL_DIG;
+      mpf_set_d (tmp_mpf_0->m, SvNVX(sv));
+      f = tmp_mpf_0->m;
+      goto get_mpf;
+
+    case USE_PVX:
       {
         /* get_str on a string is not much more than a base conversion */
         STRLEN len;
@@ -1000,50 +1205,50 @@ PPCODE:
               croak ("GMP::get_str invalid string format");
           }
       }
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          {
-            z = SvMPZ(sv)->m;
-          get_mpz:
-            str = mpz_get_str (NULL, base, z);
-          push_str:
-            PUSHs (sv_2mortal (newSVpv (str, 0)));
-          }
-        else if (sv_derived_from (sv, mpq_class))
-          {
-            q = SvMPQ(sv)->m;
-          get_mpq:
-            str = mpq_get_str (NULL, base, q);
-            goto push_str;
-          }
-        else if (sv_derived_from (sv, mpf_class))
-          {
-            f = SvMPF(sv);
-          get_mpf:
-            str = mpf_get_str (NULL, &exp, base, 0, f);
-            PUSHs (sv_2mortal (newSVpv (str, 0)));
-            PUSHs (sv_2mortal (newSViv (exp)));
-          }
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::get_str invalid argument");
-      }
+      break;
+
+    case USE_MPZ:
+      z = SvMPZ(sv)->m;
+    get_mpz:
+      str = mpz_get_str (NULL, base, z);
+    push_str:
+      PUSHs (sv_2mortal (newSVpv (str, 0)));
+      break;
+
+    case USE_MPQ:
+      q = SvMPQ(sv)->m;
+    get_mpq:
+      str = mpq_get_str (NULL, base, q);
+      goto push_str;
+
+    case USE_MPF:
+      f = SvMPF(sv);
+    get_mpf:
+      str = mpf_get_str (NULL, &exp, base, 0, f);
+      PUSHs (sv_2mortal (newSVpv (str, 0)));
+      PUSHs (sv_2mortal (newSViv (exp)));
+      break;
+
+    default:
+      croak ("GMP::get_str invalid argument");
+    }
 
 
 bool
 integer_p (sv)
     SV *sv
 CODE:
-    if (SvIOK(sv))
+    switch (use_sv (sv)) {
+    case USE_IVX:
+    case USE_UVX:
       RETVAL = 1;
-    else if (SvNOK(sv))
+      break;
+
+    case USE_NVX:
       RETVAL = double_integer_p (SvNVX(sv));
-    else if (SvPOKorp(sv))
+      break;
+
+    case USE_PVX:
       {
         /* FIXME: Maybe this should be done by parsing the string, not by an
            actual conversion.  */
@@ -1061,22 +1266,23 @@ CODE:
               croak ("GMP::integer_p invalid string format");
           }
       }
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          RETVAL = 1;
-        else if (sv_derived_from (sv, mpq_class))
-          RETVAL = x_mpq_integer_p (SvMPQ(sv)->m);
-        else if (sv_derived_from (sv, mpf_class))
-          RETVAL = mpf_integer_p (SvMPF(sv));
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::integer_p invalid argument");
-      }
+      break;
+
+    case USE_MPZ:
+      RETVAL = 1;
+      break;
+
+    case USE_MPQ:
+      RETVAL = x_mpq_integer_p (SvMPQ(sv)->m);
+      break;
+
+    case USE_MPF:
+      RETVAL = mpf_integer_p (SvMPF(sv));
+      break;
+
+    default:
+      croak ("GMP::integer_p invalid argument");
+    }
 OUTPUT:
     RETVAL
 
@@ -1085,11 +1291,20 @@ int
 sgn (sv)
     SV *sv
 CODE:
-    if (SvIOK(sv))
+    switch (use_sv (sv)) {
+    case USE_IVX:
       RETVAL = SGN (SvIVX(sv));
-    else if (SvNOK(sv))
+      break;
+
+    case USE_UVX:
+      RETVAL = (SvUVX(sv) > 0);
+      break;
+
+    case USE_NVX:
       RETVAL = SGN (SvNVX(sv));
-    else if (SvPOKorp(sv))
+      break;
+
+    case USE_PVX:
       {
         /* FIXME: Maybe this should be done by parsing the string, not by an
            actual conversion.  */
@@ -1107,22 +1322,23 @@ CODE:
               croak ("GMP::sgn invalid string format");
           }
       }
-    else if (SvROK(sv))
-      {
-        if (sv_derived_from (sv, mpz_class))
-          RETVAL = mpz_sgn (SvMPZ(sv)->m);
-        else if (sv_derived_from (sv, mpq_class))
-          RETVAL = mpq_sgn (SvMPQ(sv)->m);
-        else if (sv_derived_from (sv, mpf_class))
-          RETVAL = mpf_sgn (SvMPF(sv));
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("GMP::sgn invalid argument");
-      }
+      break;
+
+    case USE_MPZ:
+      RETVAL = mpz_sgn (SvMPZ(sv)->m);
+      break;
+
+    case USE_MPQ:
+      RETVAL = mpq_sgn (SvMPQ(sv)->m);
+      break;
+
+    case USE_MPF:
+      RETVAL = mpf_sgn (SvMPF(sv));
+      break;
+
+    default:
+      croak ("GMP::sgn invalid argument");
+    }
 OUTPUT:
     RETVAL
 
@@ -1180,32 +1396,51 @@ ALIAS:
 PREINIT:
     SV *sv;
 CODE:
-    TRACE (printf ("%s new, ix=%ld, items=%d\n", mpz_class, ix, items));
+    TRACE (printf ("%s new, ix=%ld, items=%d\n", mpz_class, ix, (int) items));
     RETVAL = new_mpz();
 
     switch (items) {
     case 0:
       mpz_set_ui (RETVAL->m, 0L);
       break;
+
     case 1:
       sv = ST(0);
-      if (SvIOK(sv))         mpz_set_si (RETVAL->m, SvIVX(sv));
-      else if (SvNOK(sv))    mpz_set_d  (RETVAL->m, SvNVX(sv));
-      else if (SvPOKorp(sv)) my_mpz_set_svstr (RETVAL->m, sv);
-      else if (SvROK(sv))
-        {
-          if (sv_derived_from (sv, mpz_class))
-            mpz_set   (RETVAL->m, SvMPZ(sv)->m);
-          else if (sv_derived_from (sv, mpq_class))
-            mpz_set_q (RETVAL->m, SvMPQ(sv)->m);
-          else if (sv_derived_from (sv, mpf_class))
-            mpz_set_f (RETVAL->m, SvMPF(sv));
-          else
-            goto invalid;
-        }
-      else
+      TRACE (printf ("  use %d\n", use_sv (sv)));
+      switch (use_sv (sv)) {
+      case USE_IVX:
+        mpz_set_si (RETVAL->m, SvIVX(sv));
+        break;
+
+      case USE_UVX:
+        mpz_set_ui (RETVAL->m, SvUVX(sv));
+        break;
+
+      case USE_NVX:
+        mpz_set_d (RETVAL->m, SvNVX(sv));
+        break;
+
+      case USE_PVX:
+        my_mpz_set_svstr (RETVAL->m, sv);
+        break;
+
+      case USE_MPZ:
+        mpz_set (RETVAL->m, SvMPZ(sv)->m);
+        break;
+
+      case USE_MPQ:
+        mpz_set_q (RETVAL->m, SvMPQ(sv)->m);
+        break;
+
+      case USE_MPF:
+        mpz_set_f (RETVAL->m, SvMPF(sv));
+        break;
+
+      default:
         goto invalid;
+      }
       break;
+
     default:
     invalid:
       croak ("%s new: invalid arguments", mpz_class);
@@ -1440,28 +1675,31 @@ PREINIT:
 CODE:
     TRACE (printf ("%s overload_spaceship\n", mpz_class));
     MPZ_ASSUME (x, xv);
-    if (SvIOK(yv))
+    switch (use_sv (yv)) {
+    case USE_IVX:
       RETVAL = mpz_cmp_si (x->m, SvIVX(yv));
-    else if (SvPOKorp(yv))
+      break;
+    case USE_UVX:
+      RETVAL = mpz_cmp_ui (x->m, SvUVX(yv));
+      break;
+    case USE_PVX:
       RETVAL = mpz_cmp (x->m, coerce_mpz (tmp_mpz_0, yv));
-    else if (SvNOK(yv))
+      break;
+    case USE_NVX:
       RETVAL = mpz_cmp_d (x->m, SvNVX(yv));
-    else if (SvROK(yv))
-      {
-        if (sv_derived_from (yv, mpz_class))
-          RETVAL = mpz_cmp (x->m, SvMPZ(yv)->m);
-        else if (sv_derived_from (yv, mpq_class))
-          RETVAL = x_mpz_cmp_q (x->m, SvMPQ(yv)->m);
-        else if (sv_derived_from (yv, mpf_class))
-          RETVAL = x_mpz_cmp_f (x->m, SvMPF(yv));
-        else
-          goto invalid;
-      }
-    else
-      {
-      invalid:
-        croak ("%s <=>: invalid operand", mpz_class);
-      }
+      break;
+    case USE_MPZ:
+      RETVAL = mpz_cmp (x->m, SvMPZ(yv)->m);
+      break;
+    case USE_MPQ:
+      RETVAL = x_mpz_cmp_q (x->m, SvMPQ(yv)->m);
+      break;
+    case USE_MPF:
+      RETVAL = x_mpz_cmp_f (x->m, SvMPF(yv));
+      break;
+    default:
+      croak ("%s <=>: invalid operand", mpz_class);
+    }
     RETVAL = SGN (RETVAL);
     if (order == &PL_sv_yes)
       RETVAL = -RETVAL;
@@ -1831,7 +2069,7 @@ mpz_import (order, size, endian, nails, sv)
     size_t  nails
     SV      *sv
 PREINIT:
-    size_t      count, bytes;
+    size_t      count;
     const char  *data;
     STRLEN      len;
 CODE:
@@ -1904,7 +2142,6 @@ PREINIT:
     SV             *sv;
     mpz            rem;
     unsigned long  mult;
-    dTARG;
 PPCODE:
     rem = new_mpz();
     mult = mpz_remove (rem->m, z, f);
@@ -1967,8 +2204,8 @@ OUTPUT:
 
 
 void
-setbit (z, bit)
-    mpz_mutate   z
+setbit (sv, bit)
+    SV           *sv
     ulong_coerce bit
 ALIAS:
     GMP::Mpz::clrbit = 1
@@ -1981,10 +2218,30 @@ PREINIT:
       { mpz_clrbit }, /* 1 */
       { mpz_combit }, /* 2 */
     };
+    int  use;
+    mpz  z;
 CODE:
-    assert (SvROK(ST(0)) && SvREFCNT(SvRV(ST(0))) == 1);
-    assert_table (ix);
-    (*table[ix].op) (z, bit);
+    use = use_sv (sv);
+    if (use == USE_MPZ && SvREFCNT(SvRV(sv)) == 1 && ! SvSMAGICAL(sv))
+      {
+        /* our operand is a non-magical mpz with a reference count of 1, so
+           we can just modify it */
+        (*table[ix].op) (SvMPZ(sv)->m, bit);
+      }
+    else
+      {
+        /* otherwise we need to make a new mpz, from whatever we have, and
+           operate on that, possibly invoking magic when storing back */
+        SV   *new_sv;
+        mpz  z = new_mpz ();
+        mpz_ptr  coerce_ptr = coerce_mpz_using (z->m, sv, use);
+        if (coerce_ptr != z->m)
+          mpz_set (z->m, coerce_ptr);
+        (*table[ix].op) (z->m, bit);
+        new_sv = sv_newmortal();
+        sv_setref_pv (new_sv, mpz_class, z);
+        SvSetMagicSV (sv, new_sv);
+      }
 
 
 void
@@ -2033,21 +2290,33 @@ mpq
 mpq (...)
 ALIAS:
     GMP::Mpq::new = 1
-PREINIT:
 CODE:
-    TRACE (printf ("%s new\n", mpq_class));
+    TRACE (printf ("%s new, ix=%ld, items=%d\n", mpq_class, ix, (int) items));
     RETVAL = new_mpq();
-
     switch (items) {
     case 0:
       mpq_set_ui (RETVAL->m, 0L, 1L);
       break;
     case 1:
-      coerce_mpq_into (RETVAL->m, ST(0));
+      {
+        mpq_ptr rp = RETVAL->m;
+        mpq_ptr cp = coerce_mpq (rp, ST(0));
+        if (cp != rp)
+          mpq_set (rp, cp);
+      }
       break;
     case 2:
-      coerce_mpz_into (mpq_numref(RETVAL->m), ST(0));
-      coerce_mpz_into (mpq_denref(RETVAL->m), ST(1));
+      {
+        mpz_ptr rp, cp;
+        rp = mpq_numref (RETVAL->m);
+        cp = coerce_mpz (rp, ST(0));
+        if (cp != rp)
+          mpz_set (rp, cp);
+        rp = mpq_denref (RETVAL->m);
+        cp = coerce_mpz (rp, ST(1));
+        if (cp != rp)
+          mpz_set (rp, cp);
+      }
       break;
     default:
       croak ("%s new: invalid arguments", mpq_class);
@@ -2284,23 +2553,39 @@ overload_eq (x, yv, d)
     dummy      d
 ALIAS:
     GMP::Mpq::overload_ne = 1
+PREINIT:
+    int  use;
 CODE:
-    if (SvIOK(yv))
-      RETVAL = x_mpq_equal_si (x->m, SvIVX(yv), 1L);
-    else if (SvROK(yv))
-      {
-        if (sv_derived_from (yv, mpz_class))
-          RETVAL = x_mpq_equal_z (x->m, SvMPZ(yv)->m);
-        else if (sv_derived_from (yv, mpq_class))
-          RETVAL = mpq_equal (x->m, SvMPQ(yv)->m);
-        else
-          goto coerce;
-      }
-    else
-      {
-      coerce:
-        RETVAL = mpq_equal (x->m, coerce_mpq (tmp_mpq_0, yv));
-      }
+    use = use_sv (yv);
+    switch (use) {
+    case USE_IVX:
+    case USE_UVX:
+    case USE_MPZ:
+      RETVAL = 0;
+      if (x_mpq_integer_p (x->m))
+        {
+          switch (use) {
+          case USE_IVX:
+            RETVAL = (mpz_cmp_si (mpq_numref(x->m), SvIVX(yv)) == 0);
+            break;
+          case USE_UVX:
+            RETVAL = (mpz_cmp_ui (mpq_numref(x->m), SvUVX(yv)) == 0);
+            break;
+          case USE_MPZ:
+            RETVAL = (mpz_cmp (mpq_numref(x->m), SvMPZ(yv)->m) == 0);
+            break;
+          }
+        }
+      break;
+
+    case USE_MPQ:
+      RETVAL = (mpq_equal (x->m, SvMPQ(yv)->m) != 0);
+      break;
+
+    default:
+      RETVAL = (mpq_equal (x->m, coerce_mpq_using (tmp_mpq_0, yv, use)) != 0);
+      break;
+    }
     RETVAL ^= ix;
 OUTPUT:
     RETVAL
@@ -2354,7 +2639,10 @@ CODE:
     prec = (items == 2 ? coerce_ulong (ST(1)) : mpf_get_default_prec());
     RETVAL = new_mpf (prec);
     if (items >= 1)
-      my_mpf_set_sv (RETVAL, ST(0));
+      {
+        SV *sv = ST(0);
+        my_mpf_set_sv_using (RETVAL, sv, use_sv(sv));
+      }
 OUTPUT:
     RETVAL
 
@@ -2364,8 +2652,6 @@ overload_constant (sv, d1, d2, ...)
     SV     *sv
     dummy  d1
     dummy  d2
-PREINIT:
-    mpf f;
 CODE:
     assert (SvPOK (sv));
     TRACE (printf ("%s constant: %s\n", mpq_class, SvPVX(sv)));
@@ -2417,7 +2703,6 @@ PREINIT:
       { mpf_mul }, /* 2 */
       { mpf_div }, /* 3 */
     };
-    unsigned long prec;
 CODE:
     assert_table (ix);
     RETVAL = new_mpf (mpf_get_prec (x));
@@ -2557,11 +2842,17 @@ PREINIT:
     mpf x;
 CODE:
     MPF_ASSUME (x, xv);
-    if (SvIOK(yv))
+    switch (use_sv (yv)) {
+    case USE_IVX:
       RETVAL = mpf_cmp_si (x, SvIVX(yv));
-    else if (SvNOK(yv))
+      break;
+    case USE_UVX:
+      RETVAL = mpf_cmp_ui (x, SvUVX(yv));
+      break;
+    case USE_NVX:
       RETVAL = mpf_cmp_d (x, SvNVX(yv));
-    else if (SvPOKorp(yv))
+      break;
+    case USE_PVX:
       {
         STRLEN len;
         const char *str = SvPV (yv, len);
@@ -2571,21 +2862,18 @@ CODE:
           croak ("%s <=>: invalid string format", mpf_class);
         RETVAL = mpf_cmp (x, tmp_mpf_0->m);
       }
-    else if (SvROK(yv))
-      {
-        if (sv_derived_from (yv, mpz_class))
-          RETVAL = - x_mpz_cmp_f (SvMPZ(yv)->m, x);
-        else if (sv_derived_from (yv, mpf_class))
-          RETVAL = mpf_cmp (x, SvMPF(yv));
-        else
-          goto use_mpq;
-      }
-    else
-      {
-      use_mpq:
-        RETVAL = mpq_cmp (coerce_mpq (tmp_mpq_0, xv),
-                          coerce_mpq (tmp_mpq_1, yv));
-      }
+      break;
+    case USE_MPZ:
+      RETVAL = - x_mpz_cmp_f (SvMPZ(yv)->m, x);
+      break;
+    case USE_MPF:
+      RETVAL = mpf_cmp (x, SvMPF(yv));
+      break;
+    default:
+      RETVAL = mpq_cmp (coerce_mpq (tmp_mpq_0, xv),
+                        coerce_mpq (tmp_mpq_1, yv));
+      break;
+    }
     RETVAL = SGN (RETVAL);
     if (order == &PL_sv_yes)
       RETVAL = -RETVAL;
@@ -2652,10 +2940,9 @@ mpf_eq (xv, yv, bits)
     ulong_coerce bits
 PREINIT:
     mpf  x, y;
-    unsigned long  prec;
 CODE:
     TRACE (printf ("%s eq\n", mpf_class));
-    COERCE_MPF_PAIR (prec, x,xv, y,yv);
+    coerce_mpf_pair (&x,xv, &y,yv);
     RETVAL = mpf_eq (x, y, bits);
 OUTPUT:
     RETVAL
@@ -2670,7 +2957,7 @@ PREINIT:
     unsigned long prec;
 CODE:
     TRACE (printf ("%s reldiff\n", mpf_class));
-    COERCE_MPF_PAIR (prec, x,xv, y,yv);
+    prec = coerce_mpf_pair (&x,xv, &y,yv);
     RETVAL = new_mpf (prec);
     mpf_reldiff (RETVAL, x, y);
 OUTPUT:
@@ -2691,9 +2978,11 @@ set_prec (sv, prec)
     ulong_coerce prec
 PREINIT:
     mpf_ptr  old_f, new_f;
+    int      use;
 CODE:
     TRACE (printf ("%s set_prec to %lu\n", mpf_class, prec));
-    if (SvROK (sv) && sv_derived_from (sv, mpf_class))
+    use = use_sv (sv);
+    if (use == USE_MPF)
       {
         old_f = SvMPF(sv);
         if (SvREFCNT(SvRV(sv)) == 1)
@@ -2710,7 +2999,7 @@ CODE:
       {
         TRACE (printf ("  coerce to mpf\n"));
         new_f = new_mpf (prec);
-        my_mpf_set_sv (new_f, sv);
+        my_mpf_set_sv_using (new_f, sv, use);
       setref:
         sv_setref_pv (sv, mpf_class, new_f);
       }
