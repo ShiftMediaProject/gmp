@@ -25,6 +25,9 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
+#define BITS_PER_CHAR  8
+
 size_t
 mpz_out_raw (FILE *stream, mpz_srcptr x)
 {
