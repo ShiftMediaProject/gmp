@@ -35,6 +35,14 @@ MA 02111-1307, USA. */
 #define UDIV_TIME   41 /* cycles */
 #endif
 
+/* In an isolated test udiv_qrnnd_preinv can measure about 32 cycles, but in
+   practice it's not that good due to using up registers.  For instance
+   sb_divrem_mn is about the same speed using plain or preinv, so pretend
+   preinv is a touch slower than plain.  */
+#ifndef UDIV_PREINV_TIME
+#define UDIV_PREINV_TIME   42 /* cycles */
+#endif
+
 /* bsf takes 18-42 cycles, put an average for uniform random numbers */
 #ifndef COUNT_TRAILING_ZEROS_TIME
 #define COUNT_TRAILING_ZEROS_TIME   20  /* cycles */
