@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 /* Set c <- tp/R^n mod m.
    tp should have space for 2*n+1 limbs; clobber its most significant limb. */
 
-#if WANT_REDC_GLOBAL
+#if ! WANT_REDC_GLOBAL
 static
 #endif
 void
