@@ -1,3 +1,14 @@
+2000-09-29  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_C_SIZES): New macro.
+	* configure.in: Use it.
+	* acconfig.in (BYTES_PER_MP_LIMB etc): Add #undefs.
+	* mpn/generic/gmp-mparam.h (BYTES_PER_MP_LIMB etc): Remove #defines.
+	* gmp.texi (Known Build Problems): Remove 64-bit generic C
+	gmp-mparam.h problem, now fixed.
+
+	* configure.in: Only run GMP_PROG_M4 if it's actually needed.
+
 2000-09-27  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c: Clean up code for systems not supporting
