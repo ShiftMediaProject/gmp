@@ -2,6 +2,7 @@
 
 	* configure, config.in, INSTALL.autoconf: Update to autoconf 2.52.
 	* */Makefile.in, aclocal.m4, configure: Update to automake 1.5.
+	* configfsf.guess, configfsf.sub: Update to 2001-08-23.
 
 2001-08-24  Torbjorn Granlund  <tege@swox.com>
 
@@ -1032,7 +1033,8 @@
 	(Notes for Particular Systems): Add m68k means 68020 or up.
 	(Rational Conversions): New section, with mpq_get_d, mpq_set_d and
 	mpq_set_f from Miscellaneous, and new mpq_set_str.
-	(Applying Integer Functions): Move mpq_{get,set}_{num,den} from Misc.
+	(Applying Integer Functions): Move mpq_get_num, mpq_get_den,
+	mpq_set_num and mpq_set_den from Misc.
 	(Miscellaneous Rational Functions): Remove section.
 	(Custom Allocation): Partial rewrite for various clarifications.
 	(References): Improve line breaks near URLs.
@@ -1454,9 +1456,10 @@
 
 2001-02-24  Kevin Ryde  <kevin@swox.se>
 
-	* tune/many.pl: Add mpn_count_{leading,trailing}_zeros and
-	mpn_invert_limb.  Add count_{leading,trailing}_zeros from a .h file.
-	Correction to modexact_1_odd prototype.  Support ansi2knr.
+	* tune/many.pl: Add mpn_count_leading_zeros, mpn_count_trailing_zeros
+	and mpn_invert_limb.  Add count_leading_zeros, count_trailing_zeros
+	from a .h file.  Correction to modexact_1_odd prototype.  Support
+	ansi2knr.
 	* tune/speed.h, tune/common.c: Consequent changes.
 
 	* demos/expr/*: Make a few more functions available in expressions,
@@ -1759,8 +1762,8 @@
 	* NEWS: Updates.
 
 	* tune/divrem1div.c, tune/divrem1inv.c, tune/divrem2div.c,
-	tune/divrem2inv.c: Renamed from divrem_{1,2}_{div,inv}.c, to be unique
-	in DOS 8.3 filenames.
+	tune/divrem2inv.c: Renamed from divrem_1_div.c, divrem_1_inv.c,
+	divrem_2_div.c, divrem_2_inv.c, to be unique in DOS 8.3 filenames.
 	* tune/Makefile.am (libspeed_la_SOURCES): Update.
 
 	* mpn/x86/*/README, mpn/x86/README.family: Misc updates.
@@ -2499,7 +2502,8 @@
 	* tune/many.pl: New file.
 
 	* mpn/tests/try.c,ref.[ch] (mpn_preinv_mod_1, mpn_sb_divrem_mn,
-	mpn_tdiv_qr, mpn_gcd_finda, mpn_{kara,toom3}_{mul,sqr}_n): Add testing.
+	mpn_tdiv_qr, mpn_gcd_finda, mpn_kara_mul_n, mpn_kara_sqr_n,
+	mpn_toom3_mul_n, mpn_toom3_sqr_n): Add testing.
 	* mpn/tests/ref.c: Cast some "0"s in function calls.
 
 	* mpn/x86/k7/mmx/mod_1.asm: Add preinv_mod_1 entrypoint, remove extra
@@ -2537,7 +2541,7 @@
 
 	* mpn/asm-defs.m4 (changecom): Comments on portability.
 	(__clz_tab, modlimb_invert_table): New macros, matching gmp-impl.h.
-	(count_{leading,trailing}_zeros): New define_mpn's.
+	(count_leading_zeros, count_trailing_zeros): New define_mpn's.
 	(PROLOGUE etc): Comments on usage, add some asserts.
 	(OPERATION_[lr]shift): Use m4_not_for_expansion, for the benefit of
 	lorrshift multifunc.
@@ -2650,8 +2654,9 @@
 
 2000-12-10  Kevin Ryde  <kevin@swox.se>
 
-	* tune/Makefile.am ({speed,speed_ext,tune}_LDFLAGS): Don't use
-	-all-static, as gcc 2.95.2 on i386 solaris 8 doesn't like it.
+	* tune/Makefile.am ({speed_LDFLAGS, speed_ext_LDFLAGS, tune_LDFLAGS):
+	Don't use -all-static, as gcc 2.95.2 on i386 solaris 8 doesn't like
+	it.
 
 	* configure.in (mips3,mips64): Add ABI=64, name the others ABI=n32 and
 	ABI=o32.
@@ -2691,10 +2696,10 @@
 
 2000-12-06  Kevin Ryde  <kevin@swox.se>
 
-	* tune/{divrem,mod}_1_{div,inv}.c,gcdext_double.c: New files for
-	measuring.
+	* tune/divrem_1_div.c,divrem_1_inv.c,mod_1_div.c,mod_1_inv.c,
+	gcdext_double.c: New files for measuring.
 	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
-	* tune/speed.[ch],common.c: Add measuring of them.
+	* tune/speed.c,speed.h,common.c: Add measuring of them.
 	(mpn_preinv_mod_1, mpz_jacobi, mpz_powm_ui): Add measuring.
 
 	* speed.c (getopt_long): Don't use this, just plain getopt.
