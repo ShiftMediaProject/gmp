@@ -18,6 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-11  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (hppa*-*-*): Don't use gcc -mpa-risc-2-0 in ABI=1.0.
+
+	* mpn/pa32/pa-defs.m4: New file, arranging for .proc/.procend.
+	* configure.in (hppa*-*-*): Use it.
+
+	* printf/doprnt.c: Comments on "ll" versus "L".
+
+	* tests/mpz/t-div_2exp.c: Reduce tests, especially the random ones.
+
 2002-12-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/get_d.c (limb2dbl): New macro for conversion to `double'.
