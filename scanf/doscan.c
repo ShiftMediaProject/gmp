@@ -214,12 +214,12 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
     {
       if (base == 16)
         {
-          if (! (isascii (c) && isxdigit (c)))
+          if (! isxdigit (c))
             break;
         }
       else
         {
-          if (! (isascii (c) && isdigit (c)))
+          if (! isdigit (c))
             break;
           if (base == 8 && (c == '8' || c == '9'))
             break;
@@ -367,7 +367,7 @@ skip_white (const struct gmp_doscan_funs_t *funs, void *data)
       c = (funs->get) (data);
       ret++;
     }
-  while (isascii (c) && isspace (c));
+  while (isspace (c));
 
   (funs->unget) (c, data);
   ret--;
@@ -422,7 +422,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
       if (fchar == '\0')
         break;
 
-      if (isascii (fchar) && isspace (fchar))
+      if (isspace (fchar))
         {
           chars += skip_white (funs, data);
           continue;
@@ -656,7 +656,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
             do {
               param.width = param.width * 10 + (fchar-'0');
               fchar = *fmt++;
-            } while (isascii (fchar) && isdigit (fchar));
+            } while (isdigit (fchar));
             fmt--; /* unget the non-digit */
             break;
 
