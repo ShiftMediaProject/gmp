@@ -77,14 +77,17 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	    i = n2 - 1;
 	    while ((w0 = up[i]) == (w1 = up[n3 + i]) && i != 0)
 	      i--;
-	    x = y = up;
 	    if (w0 < w1)
 	      {
-		x += n3;
+		y = up;
+		x = up + n3;
 		sign = 1;
 	      }
 	    else
-	      y += n3;
+	      {
+		x = up;
+		y = up + n3;
+	      }
 	    mpn_sub_n (prodp, x, y, n2);
 	  }
 	prodp[n2] = w;
@@ -102,14 +105,17 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	    i = n2 - 1;
 	    while ((w0 = vp[i]) == (w1 = vp[n3 + i]) && i != 0)
 	      i--;
-	    x = y = vp;
 	    if (w0 < w1)
 	      {
-		x += n3;
+		y = vp;
+		x = vp + n3;
 		sign ^= 1;
 	      }
 	    else
-	      y += n3;
+	      {
+		x = vp;
+		y = vp + n3;
+	      }
 	    mpn_sub_n (prodp + n3, x, y, n2);
 	  }
 	prodp[n] = w;
@@ -159,14 +165,17 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	while ((w0 = up[i]) == (w1 = up[n2 + i]) && i != 0)
 	  i--;
 	sign = 0;
-	x = y = up;
 	if (w0 < w1)
 	  {
-	    x += n2;
+	    y = up;
+	    x = up + n2;
 	    sign = 1;
 	  }
 	else
-	  y += n2;
+	  {
+	    x = up;
+	    y = up + n2;
+	  }
 	mpn_sub_n (prodp, x, y, n2);
       }
 
@@ -174,16 +183,19 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	mp_limb_t w0, w1; mp_size_t i; mp_srcptr x, y;
 	/* Subtract smaller half of vp[] from larger half. */
 	i = n2-1UL;
-	while ((w0 = vp[i]) == (w1 = vp[n2+i]) && i)
+	while ((w0 = vp[i]) == (w1 = vp[n2+i]) && i != 0)
 	  i--;
-	x = y = vp;
 	if (w0 < w1)
 	  {
-	    x += n2;
+	    y = vp;
+	    x = vp + n2;
 	    sign ^= 1;
 	  }
 	else
-	  y += n2;
+	  {
+	    x = vp;
+	    y = vp + n2;
+	  }
 	mpn_sub_n (prodp + n2, x, y, n2);
       }
 
@@ -240,11 +252,16 @@ __gmpn_sqr (prodp, up, n, tspace)
 	    i = n2 - 1;
 	    while ((w0 = up[i]) == (w1 = up[n3 + i]) && i != 0)
 	      i--;
-	    x = y = up;
 	    if (w0 < w1)
-	      x += n3;
+	      {
+		y = up;
+		x = up + n3;
+	      }
 	    else
-	      y += n3;
+	      {
+		x = up;
+		y = up + n3;
+	      }
 	    mpn_sub_n (prodp, x, y, n2);
 	  }
 	prodp[n2] = w;
@@ -289,11 +306,16 @@ __gmpn_sqr (prodp, up, n, tspace)
 	i = n2 - 1;
 	while ((w0 = up[i]) == (w1 = up[n2 + i]) && i != 0)
 	  i--;
-	x = y = up;
 	if (w0 < w1)
-	  x += n2;
+	  {
+	    y = up;
+	    x = up + n2;
+	  }
 	else
-	  y += n2;
+	  {
+	    x = up;
+	    y = up + n2;
+	  }
 	mpn_sub_n (prodp, x, y, n2);
       }
 
