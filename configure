@@ -4410,7 +4410,7 @@ for tmp_fn in ${gmp_mpn_functions} ; do
   for tmp_dir in $path ; do
     if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.asm:mpn/${tmp_dir}/${tmp_fn}.asm"
-      gmp_ep=`sed -n 's/^[ 	]*PROLOGUE(\(.*\))/\1/p' $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm`
+      gmp_ep=`sed -n 's/^[ 	]*PROLOGUE.*(\(.*\))/\1/p' $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm`
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.S ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.S:mpn/${tmp_dir}/${tmp_fn}.S"
