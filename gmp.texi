@@ -449,7 +449,6 @@ reports.)
 @section Build Options
 @cindex Build options
 
-@noindent
 All the usual autoconf configure options are available, run @samp{./configure
 --help} for a summary.  The file @file{INSTALL.autoconf} has some generic
 installation information too.
@@ -472,29 +471,70 @@ all the code is there, but unfortunately you'll be on your own.
 
 To compile in a separate object directory, @command{cd} to that directory, and
 prefix the configure command with the path to the GMP source directory.  For
-example @samp{../src/gmp/configure}.  Not all @samp{make} programs have the
-necessary features (@code{VPATH}) to support this.  In particular, SunOS and
-Slowaris @command{make} have bugs that make them unable to build from a
-separate object directory.  Use GNU @command{make} instead.
+example @samp{../src/gmp-@value{VERSION}/configure}.  Not all @samp{make}
+programs have the necessary features (@code{VPATH}) to support this.  In
+particular, SunOS and Slowaris @command{make} have bugs that make them unable
+to build from a separate object directory.  Use GNU @command{make} instead.
 
 @item @option{--disable-shared}, @option{--disable-static}
 
 By default both shared and static libraries are built (where possible), but
-one or other can be disabled.  Shared libraries are very slightly slower,
-having a small cost on each function call, but result in smaller executables
-and permit code sharing between separate running processes.
+one or other can be disabled.  Shared libraries result in smaller executables
+and permit code sharing between separate running processes, but on some CPUs
+are slightly slower, having a small cost on each function call.
 
-@item @option{--target=CPU-VENDOR-OS}
+@item Native Compilation, @option{--build=CPU-VENDOR-OS}
 
-The build target can be specified in the usual way, for either native or cross
-compilation.
+For normal native compilation, the system can be specified with
+@samp{--build}.  By default @samp{./configure} uses the output from running
+@samp{./config.guess}.  On some systems @samp{./config.guess} can determine
+the exact CPU type, on others it will be necessary to give the exact CPU
+explicitly.  For example,
 
-If @option{--target} isn't given, @samp{./configure} builds for the host
-system as determined by @samp{./config.guess}.  On some systems this can't
-distinguish between different CPUs in a family, and you should check the
-guess.  Running @samp{./config.guess} on the target system will also show the
-relevant @samp{VENDOR-OS}, if you don't already know what it should be.  The
-@samp{OS} part is important for libtool.
+@example
+./configure --build=ultrasparc-sun-solaris2.7
+@end example
+
+In all cases the @samp{OS} part is important, since it controls how libtool
+generates shared libraries.  Running @samp{./config.guess} is the simplest way
+to see what it should be, if you don't know already.
+
+@item Cross Compilation, @option{--host=CPU-VENDOR-OS}
+
+When cross-compiling, the system used for compiling is given by @samp{--build}
+and the system where the library will run is given by @samp{--host}.  For
+example when using a FreeBSD Athlon system to build GNU/Linux m68k binaries,
+
+@example
+./configure --build=athlon-pc-freebsd3.5 --host=m68k-mac-linux-gnu
+@end example
+
+Compiler tools are sought first with the host system type as a prefix.  For
+example @command{m68k-mac-linux-gnu-ranlib} is checked for, then plain
+@command{ranlib}.  This makes it possible for a set of cross-compiling tools
+to co-exist with native tools.  The prefix is the argument to @samp{--host},
+and this can be an alias, such as @samp{m68k-linux}.  But note that tools
+don't have to be setup this way, it's enough to just have a @env{PATH} with a
+suitable cross-compiling @command{gcc} etc.
+
+Compiling for a different CPU in the same family as the build system is a form
+of cross-compilation, though very possibly this would merely be with special
+options on a native compiler.  In any case @samp{./configure} will avoid
+trying to run anything on the build system, and this can be important when
+creating binaries for a newer CPU, since they might not run on the build
+system.
+
+Currently autoconf requires an explicit @samp{--build} whenever
+cross-compiling.  It can simply be the output from running
+@samp{./config.guess}.  In the future that might be the default.
+
+Note that the @samp{--target} option is not appropriate for GMP.  It's for use
+when building compiler tools, with @samp{--host} being where they will run,
+and @samp{--target} what they'll produce code for.  Ordinary programs or
+libraries like GMP are only interested in the @samp{--host} part, being where
+they'll run.  (Some past versions of GMP used @samp{--target} incorrectly.)
+
+@item CPU types
 
 In general, if you want a library that runs as fast as possible, you should
 configure GMP for the exact CPU type your system uses.  However, this may mean
@@ -502,19 +542,22 @@ the binaries won't run on older members of the family, and might run slower on
 other members, older or newer.  The best idea is always to build GMP for the
 exact machine type you intend to run it on.
 
-The following CPU targets have specific assembly code support.  See
-@file{configure.in} for which @file{mpn} subdirectories get used by each.
+The following CPUs have specific support.  See @file{configure.in} for details
+of which code and what compiler options they select.
 
 @itemize @bullet
 
 @c Keep this formatting, it's easy to read and it can be grepped to
-@c automatically test that targets listed get through ./config.sub
+@c automatically test that CPUs listed get through ./config.sub
 
 @item
 Alpha:
 @samp{alpha},
 @samp{alphaev5},
-@samp{alphaev6}
+@samp{alphaev56},
+@samp{alphapca56},
+@samp{alphaev6},
+@samp{alphaev67}
 
 @item
 Hitachi:
@@ -526,6 +569,7 @@ HPPA:
 @samp{hppa1.0},
 @samp{hppa1.1},
 @samp{hppa2.0},
+@samp{hppa2.0n},
 @samp{hppa2.0w}
 
 @item
@@ -542,6 +586,7 @@ Motorola:
 
 @item
 POWER: 
+@samp{power},
 @samp{power1},
 @samp{power2},
 @samp{power2sc},
@@ -585,24 +630,60 @@ Other:
 @samp{z8k}
 @end itemize
 
-CPUs not listed use generic C code.  If some of the assembly code causes
-problems, the generic C code can be selected with CPU @samp{none}.
+CPUs not listed will use generic C code.
 
-@item @option{CC}, @option{CFLAGS}
+@item Generic C Build
 
-The C compiler used is chosen from among some likely candidates, with GCC
-normally preferred if it's present.  The usual @samp{CC=whatever} can be
-passed to @samp{./configure} to choose something different.
+If some of the assembly code causes problems, or if otherwise desired, the
+generic C code can be selected with CPU @samp{none}.  For example,
 
-For some configurations specific compiler flags are set based on the target
-CPU and compiler, see @samp{CFLAGS} in the generated @file{Makefile}s.  The
-usual @samp{CFLAGS="-whatever"} can be passed to @samp{./configure} to use
-something different or to set good flags for systems GMP doesn't otherwise
-know.
+@example
+./configure --build=none-unknown-freebsd3.5
+@end example
 
-Note that if @samp{CC} is set then @samp{CFLAGS} must also be set.  This
-applies even if @samp{CC} is merely one of the choices GMP would make itself.
-This may change in a future release.
+The generic C code will run quite slowly, but it should be portable and so
+should make it possible to at least get something running if all else fails.
+
+@item @option{ABI}
+
+On some systems GMP supports multiple ABIs (application binary interfaces),
+meaning data type sizes and calling conventions.  By default GMP chooses the
+best ABI available, but a particular ABI can be selected.  See @ref{ABI and
+ISA}, for the available choices and relevant CPUs.
+
+@item @option{CC}, @option{CFLAGS}, @option{CPPFLAGS}
+
+By default the C compiler used is chosen from among some likely candidates,
+with @command{gcc} normally preferred if it's present.  The usual
+@samp{CC=whatever} can be passed to @samp{./configure} to choose something
+different.
+
+For some systems, specific compiler flags are set based on the CPU and
+compiler.  The usual @samp{CFLAGS="-whatever"} can be passed to
+@samp{./configure} to use something different or to set good flags for systems
+GMP doesn't otherwise know.
+
+After running @samp{./configure}, each generated @file{Makefile} will contain
+the final @samp{CFLAGS}.  This is the easiest way to check the defaults, when
+considering changing or adding something.
+
+When @samp{CC} and @samp{CFLAGS} are specified on a system supporting multiple
+ABIs, it's important to given an explicit @samp{ABI=whatever}, since GMP can't
+determine the ABI just from the flags and won't be able to select the correct
+assembler code.
+
+If just @samp{CC} is selected then normal default @samp{CFLAGS} for that
+compiler will be used (if GMP recognises it).  For example @samp{CC=gcc} can
+be used to force the use of GCC, with default flags (and default ABI).
+
+@item @option{CPPFLAGS}
+
+Any flags like @samp{-D} defines or @samp{-I} includes required by the
+preprocessor should be set in @samp{CPPFLAGS} rather than @samp{CFLAGS}.
+Compiling is done with both @samp{CPPFLAGS} and @samp{CFLAGS}, but
+preprocessing uses just @samp{CPPFLAGS}.  This distinction is because most
+preprocessors won't accept all the flags the compiler does.  Preprocessing is
+done separately for @samp{ansi2knr} and for some autoconf tests.
 
 @item @option{--enable-alloca=yes/no/detect}, @option{--disable-alloca}
 @cindex Stack overflow segfaults
@@ -614,54 +695,55 @@ The default @samp{--enable-alloca=detect} uses @code{alloca} if available, or
 always uses @code{malloc}.  @samp{--enable-alloca=yes} always uses
 @code{alloca} (generating an error if that function isn't avaiable).
 
-@code{alloca} is fast but when working with large numbers it can overflow the
-available stack space.  Depending on the system, the only indication of stack
-overflow might be a segmentation violation.  It may be possible to increase
+@code{alloca} is fast and is recommended, but when working with large numbers
+it can overflow the available stack space.  It might be possible to increase
 available stack space with @command{limit}, @command{ulimit} or
-@code{setrlimit}, or under DJGPP with @command{stubedit} or @code{_stklen}.
+@code{setrlimit}, or under DJGPP with @command{stubedit} or
+@code{@w{_stklen}}.  Depending on the system, the only indication of stack
+overflow might be a segmentation violation.
 
 When @code{malloc} is used, it's actually the memory allocation functions
 selected by @code{mp_set_memory_functions} that are used, these being
 @code{malloc} and friends by default.  @xref{Custom Allocation}.
 
-Currently when @code{malloc} is used the library is not re-entrant or thread
-safe, due to the implementation of @file{stack-alloc.c}.  @xref{Reentrancy}.
+Currently when @code{malloc} is used the library is not re-entrant and not
+thread safe, due to the implementation of @file{stack-alloc.c}.
+@xref{Reentrancy}.
 
 @item @option{--enable-fft}
 
 By default multiplications are done using Karatsuba and 3-way Toom-Cook
 algorithms, but a Fermat FFT can be enabled, for use on large to very large
 operands.  Currently the FFT is recommended only for knowledgeable users who
-check the algorithm thresholds for their CPU.
+check the algorithm thresholds for their system.
 
 @item @option{--enable-mpbsd}
 
 The Berkeley MP compatibility library (@file{libmp}) and header file
-(@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
+(@file{mp.h}) are built and installed if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item @option{--enable-assert}
 
-Enable some consistency checking within the library.  This can be of use while
-debugging, @pxref{Debugging}.
+This option enables some consistency checking within the library.  This can be
+of use while debugging, @pxref{Debugging}.
 
 @item @option{--enable-profiling=prof/gprof}
 
 Profiling support can be enabled either for @command{prof} or @command{gprof}.
-This adds @samp{-p} or @samp{-pg} respectively to the default @samp{CFLAGS}
-and for some targets adds corresponding @code{mcount} calls to the assembler
-code.  @xref{Profiling}.
+This adds @samp{-p} or @samp{-pg} respectively to @samp{CFLAGS}, and for some
+systems adds corresponding @code{mcount} calls to the assembler code.
+@xref{Profiling}.
 
 @item @option{MPN_PATH}
 
 Various assembler versions of mpn subroutines are provided, and, for a given
-CPU target, a search is made though a path to choose a version of each.  For
-example @samp{sparcv8} has path @samp{"sparc32/v8 sparc32 generic"}, which
-means it looks first for v8 code, falls back on plain sparc32, and finally
-falls back on generic C.  Knowledgeable users with special requirements can
-specify a path with @samp{MPN_PATH="dir list"}.  This will normally be
-unnecessary because all sensible paths should be available under one or other
-CPU target.
+CPU, a search is made though a path to choose a version of each.  For example
+@samp{sparcv8} has path @samp{sparc32/v8 sparc32 generic}, which means it
+looks first for v8 code, then plain sparc32, and finally falls back on generic
+C.  Knowledgeable users with special requirements can specify a path with
+@samp{MPN_PATH="dir list"}.  This will normally be unnecessary because all
+sensible paths should be available under one or other CPU.
 
 @item Demonstration Programs
 @cindex Demonstration programs
@@ -669,14 +751,24 @@ CPU target.
 
 The @file{demos} subdirectory has some sample programs using GMP.  These
 aren't built or installed, but there's a @file{Makefile} with rules for them.
-For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
+For instance,
+
+@example
+make pexpr
+./pexpr 68^975+10
+@end example
 
 @item Documentation
 
 The document you're now reading is @file{gmp.texi}.  The usual automake
 targets are available to make @file{gmp.ps} and/or @file{gmp.dvi}.  HTML can
-be made with @samp{makeinfo --html} or @samp{texi2html}.  Some supplementary
-notes can be found in the @file{doc} subdirectory.
+be made with @samp{makeinfo --html} (@pxref{makeinfo html,Generating
+HTML,Generating HTML,texinfo,Texinfo}) or @samp{texi2html}.  PDF can be made
+with @samp{pdftex} or @samp{texi2dvi --pdf} (@pxref{PDF
+Output,PDF,,texinfo,Texinfo}).
+
+Some supplementary notes can be found in the @file{doc} subdirectory.
+
 @end table
 
 
@@ -692,96 +784,137 @@ types are.  ISA (Instruction Set Architecture) refers to the instructions and
 registers a CPU has available.
 
 Some 64-bit ISA CPUs have both a 64-bit ABI and a 32-bit ABI defined, the
-latter for compatibility with older CPUs in the family.  GMP chooses the best
-ABI available for a given target system, and this generally gives
-significantly greater speed.
+latter for compatibility with older CPUs in the family.  GMP supports some
+CPUs like this in both ABIs.  In fact within GMP the @samp{ABI} means both the
+chip ABI, plus how GMP chooses to use it.  For example in some 32-bit ABIs,
+GMP has support for a limb as either a 32-bit @code{long} or a 64-bit
+@code{long long}.
 
-The burden is on application programs and cooperating libraries to ensure they
-match the ABI chosen by GMP.  Fortunately this presents a difficulty only on a
-few systems, and if you have one of them then the performance gains are enough
-to make it worth the trouble.
+By default GMP chooses the best ABI available for a given system, and this
+generally gives significantly greater speed.  But an ABI can be chosen
+explicitly to make GMP compatible with other libraries, or particular
+application requirements.  In all cases it's important that applications and
+cooperating libraries are compiled with the same ABI.
 
-Some of what's described in this section may change in future releases of GMP.
+Usually a limb is implemented as a @code{long}.  When a @code{long long} limb
+is used, this is encoded in a generated @file{gmp.h}.  This is convenient for
+applications, but it does mean @file{gmp.h} will vary from system to system,
+and can't be just copied around.  Note that whether a limb is a @code{long} or
+a @code{long long} for a particular ABI, it will be the same for all compilers
+on that system in that ABI.
 
 @table @asis
 @need 1000
-@item HPPA 2.0
+@item HPPA 2.0 (@samp{hppa2.0*})
 
-CPU target @samp{hppa2.0} uses the hppa2.0n 32-bit ABI, but either a 32-bit or
-64-bit limb.
+@table @asis
+@item @samp{ABI=2.0w}
 
-A 64-bit limb is available on HP-UX 10 or up when using @command{c89}.  No
-@command{gcc} support is planned for 64-bit operations in this ABI.
-Applications must be compiled with the same options as GMP, which means
-
-@example
-c89  +DA2.0 +e -D_LONG_LONG_LIMB
-@end example
-
-A 32-bit limb is used in other cases, and no special compiler options are
-needed.
-
-CPU target @samp{hppa2.0w} uses the hppa2.0w 64-bit ABI, which is available on
-HP-UX 11 or up when using @command{c89}.  @command{gcc} support for this is in
-progress.  Applications must be compiled for the same ABI, which means
+The 2.0w ABI uses 64-bit limbs and pointers and is available on HP-UX 11 or up
+when using @command{cc}.  @command{gcc} support for this is in progress.
+Applications must be compiled with
 
 @example
-c89  +DD64
+cc  +DD64
 @end example
+
+@item @samp{ABI=2.0n}
+
+The 2.0n ABI means the 32-bit HPPA 1.0 ABI but with a 64-bit limb using
+@code{long long}.  This is available on HP-UX 10 or up when using
+@command{cc}.  No @command{gcc} support is planned for this.  Applications
+must be compiled with
+
+@example
+cc  +DA2.0 +e
+@end example
+
+@item @samp{ABI=1.0}
+
+HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
+No special compiler options are needed for applications.
+@end table
+
+CPU type @samp{hppa2.0w} forces @samp{ABI=2.0w} and CPU @samp{hppa2.0n} forces
+@samp{ABI=2.0n}.  Plain @samp{hppa2.0} will use whichever of the above is
+available.
 
 @need 1000
-@item MIPS 3 and 4 under IRIX 6
+@item MIPS 3 and 4 (@samp{mips[34]})
 
-Targets @samp{mips*-*-irix6*} use the n32 ABI and a 64-bit limb.  Applications
-must be compiled for the same ABI, which means either
+@table @asis
+@item @samp{ABI=n32L}
+
+The n32 ABI with a 64-bit limb is available on systems @samp{mips*-*-irix6*}.
+Applications must be compiled with
 
 @example
 gcc  -mabi=n32
 cc   -n32
 @end example
 
-@need 1000
-@item PowerPC 64
+@item @samp{ABI=32}
 
-CPU target @samp{powerpc64} uses either the 32-bit ABI or the AIX 64-bit ABI.
-The latter is used on targets @samp{powerpc64-*-aix*} and applications must be
-compiled using either
+The plain 32-bit MIPS ABI with a 32-bit limb can also be used on newer CPUs,
+and no special compiler options are required.
+@end table
+
+@need 1000
+@item PowerPC 64 (@samp{powerpc64*})
+
+@table @asis
+@item @samp{ABI=aix64}
+
+The AIX 64 ABI uses 64-bit limbs and pointers and is available on systems
+@samp{powerpc64*-*-aix*}.  Applications must be compiled (and linked) with
 
 @example
 gcc  -maix64
 xlc  -q64
 @end example
 
-On other systems the 32-bit ABI is used, but with 64-bit limbs provided by
-@code{long long} in @command{gcc}.  Applications must be compiled using
+@item @samp{ABI=32L}
+
+This uses the 32-bit ABI but a 64-bit limb using GCC @code{long long} and
+64-bit registers.  Applications must be compiled with
 
 @example
-gcc  -D_LONG_LONG_LIMB
+gcc  -mpowerpc64
 @end example
+
+@item @samp{ABI=32}
+
+This is the basic 32-bit PowerPC ABI.  No special compiler options are needed
+for applications.
+@end table
 
 @need 1000
-@item Sparc V9
+@item Sparc V9 (@samp{sparcv9} and @samp{ultrasparc*})
 
-On a sparc v9 CPU, either the v8plus 32-bit ABI or v9 64-bit ABI is used.
-Targets @samp{ultrasparc*-*-solaris2.[7-9]}, @samp{sparcv9-*-solaris2.[7-9]}
-and @samp{sparc64-*-linux*} use the v9 ABI, if the compiler supports it.
-Other targets use the v8plus ABI (but with as much of the v9 ISA as possible
-in the circumstances).  Note that Solaris prior to 2.7 doesn't save all
-registers properly, and hence uses the v8plus ABI.
+@table @asis
+@item @samp{ABI=64}
 
-For the v8plus ABI, applications can be compiled with either
-
-@example
-gcc  -mv8plus
-cc   -xarch=v8plus
-@end example
-
-For the v9 ABI, applications must be compiled with either
+The 64-bit V9 ABI is available on Solaris 2.7 and up, and on GNU/Linux.
+Applications must be compiled with
 
 @example
 gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
 cc   -xarch=v9
 @end example
+
+@item @samp{ABI=32}
+
+On Solaris 2.6 and earlier only the plain V8 32-bit ABI can be used, since the
+kernel doesn't save all registers.  GMP still uses as much of the V9 ISA as it
+can in these circumstances.  No special compiler options are required for
+applications, though using something like the following requesting V9 code
+within the V8 ABI is recommended.
+
+@example
+gcc  -mv8plus
+cc   -xarch=v8plus
+@end example
+@end table
 
 Don't be confused by the names of these options, they're called @samp{arch}
 but they effectively control the ABI.
@@ -807,16 +940,16 @@ that a dynamic linked application depends on a new enough minor version of
 GMP.
 
 When building a package for a CPU family, care should be taken to use
-@samp{--target} to choose the least common denominator among the CPUs which
-might use the package.  For example this might necessitate @samp{i386} for
-x86s, or plain @samp{sparc} (meaning V7) for SPARCs.
+@samp{--host} (or @samp{--build}) to choose the least common denominator among
+the CPUs which might use the package.  For example this might necessitate
+@samp{i386} for x86s, or plain @samp{sparc} (meaning V7) for SPARCs.
 
 Users who care about speed will want GMP built for their exact CPU type, to
 make use of the available optimizations.  Providing a way to suitably rebuild
 a package may be useful.  This could be as simple as making it possible for a
-user to omit @samp{--target} in a build so @samp{./config.guess} will detect
-the CPU.  But a way to manually specify a @samp{--target} will be wanted for
-systems where @samp{./config.guess} is inexact.
+user to omit @samp{--build} (and @samp{--host}) so @samp{./config.guess} will
+detect the CPU.  But a way to manually specify a @samp{--build} will be wanted
+for systems where @samp{./config.guess} is inexact.
 
 
 @need 2000
@@ -830,10 +963,12 @@ systems where @samp{./config.guess} is inexact.
 @c scratching their head.  Fun with different ABIs on a system belongs in the
 @c above section.
 
-@item AIX 4.3
+@item AIX
 
-Targets @samp{*-*-aix4.[3-9]*} have shared libraries disabled since they seem
-to fail on AIX 4.3.
+Currently on systems @samp{*-*-aix*} libtool can't build shared and static
+libraries simultaneously, because when building a shared library it makes
+@file{libgmp.a} a symlink to @file{libgmp.so}.  Either @samp{--disable-shared}
+or @samp{--disable-static} should be used.
 
 @item OpenBSD 2.6
 
@@ -844,18 +979,19 @@ is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 
 @item Power Variants
 
-CPU targets @samp{power} and @samp{powerpc} will each use instructions not
+CPU types @samp{power} and @samp{powerpc} will each use instructions not
 available on the other, so it's important to choose the right one for the CPU
 that will be used.  Currently GMP has no assembler code support for using just
 the common instruction subset.  To get executables that run on both, the
-current suggestion is to use the generic C code (CPU target @samp{none}),
-possibly with appropriate compiler options (like @samp{-mcpu=common} for
-@command{gcc}).  CPU target @samp{rs6000} is accepted by @file{config.sub},
-but is currently equivalent to @samp{none}.
+current suggestion is to use the generic C code (CPU @samp{none}), possibly
+with appropriate compiler options (like @samp{-mcpu=common} for
+@command{gcc}).  CPU @samp{rs6000} (which is not a CPU but a family of
+workstations) is accepted by @file{config.sub}, but is currently equivalent to
+@samp{none}.
 
 @item Sparc V8
 
-Using CPU target @samp{sparcv8} or @samp{supersparc} on relevant systems will
+Using CPU type @samp{sparcv8} or @samp{supersparc} on relevant systems will
 give a significant performance increase over the V7 code.
 
 @item SunOS 4
@@ -871,16 +1007,16 @@ The Intel Pentium P5 code is good for its intended P5, but quite slow when run
 on Intel P6 class chips (PPro, P-II, P-III)@.  @samp{i386} is a better choice
 when making binaries that must run on both.
 
-@item x86 MMX and old GAS
+@item x86 MMX Assembler Code
 
 If the CPU selected has MMX code but the assembler doesn't support it, a
 warning is given and non-MMX code is used instead.  This will be an inferior
 build, since the MMX code that's present is there because it's faster than the
 corresponding plain integer code.
 
-Old versions of GAS don't support MMX instructions, in particular version
-1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately there's no
-newer assembler for that system).
+Old versions of @samp{gas} don't support MMX instructions, in particular
+version 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately
+there's no newer assembler for that system).
 
 Solaris 2.6 @command{as} generates incorrect object code for register to
 register @code{movq} instructions, making it unusable.  Install GNU binutils
@@ -888,9 +1024,9 @@ register @code{movq} instructions, making it unusable.  Install GNU binutils
 
 @item x86 GCC @samp{-march=pentiumpro}
 
-GCC 2.95.2 miscompiles @file{mpz/powm.c} when @samp{-march=pentiumpro} is
-used, so for relevant CPUs that option is only in the default @env{CFLAGS} for
-GCC 2.96 and up.
+GCC 2.95.2 miscompiled some versions of @file{mpz/powm.c} when
+@samp{-march=pentiumpro} was used, so for relevant CPUs that option is only in
+the default @env{CFLAGS} for GCC 2.96 and up.
 @end table
 
 
@@ -927,8 +1063,8 @@ if it's just debugging which is unwanted.
 
 The system compiler on old versions of NeXT was a massacred and old GCC, even
 if it called itself @file{cc}.  This compiler cannot be used to build GMP, you
-need to get a real GCC, and install that before you compile GMP.  (NeXT may
-have fixed this in release 3.3 of their system.)
+need to get a real GCC, and install that.  (NeXT may have fixed this in
+release 3.3 of their system.)
 
 @item POWER and PowerPC
 
@@ -940,45 +1076,6 @@ later).
 
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
-
-@item SCO shared libraries @samp{-lc}
-
-Some versions of SCO OpenServer and UnixWare don't allow @samp{-lc} when
-creating a shared library.  One symptom of this is @code{<ctype.h>} macros not
-working, leading to failures from @code{mpz_set_str} and similar functions,
-either in @samp{make check} or in application programs.  Currently the
-suggested workaround is to delete the line
-
-@example
-deplibs="$deplibs -lc"
-@end example
-
-from @file{ltmain.sh} before running @samp{./configure} (or from
-@file{libtool} after running it).
-
-@item SunOS 4 Native Tools
-
-The @command{ranlib} command will need to be run manually when building a
-static library with the native @command{ar}.  After @samp{make}, run
-
-@example
-ranlib .libs/libgmp.a
-@end example
-
-and when using @option{--enable-mpbsd} also run
-
-@example
-ranlib .libs/libmp.a
-@end example
-
-@item @file{version.c} compilation
-
-The current @samp{./configure} relies on certain features of @command{sed}
-that some old systems don't have.  One symptom is @code{VERSION} not being set
-correctly in the generated @file{config.h}, leading to @file{version.c}
-failing to compile.  Irix 5.3, MIPS RISC/OS and Ultrix 4.4 are believed to be
-affected.  GNU @command{sed} is recommended, though it might be possible to
-build by editing @file{config.h} manually instead.
 
 @item VAX running Ultrix
 
@@ -1504,7 +1601,7 @@ Applications using the low-level @code{mpn} functions, however, will benefit
 from @option{--enable-assert} since it adds checks on the parameters of most
 such functions, many of which have subtle restrictions on their usage.  Note
 however that only the generic C code has checks, not the assembler code, so
-@samp{--target=none} should be used for maximum checking.
+CPU @samp{none} should be used for maximum checking.
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -1529,7 +1626,7 @@ The @samp{--enable-profiling} build option can be used to add suitable
 compiler flags, either for @command{prof} (@samp{-p}) or @command{gprof}
 (@samp{-pg}), see @ref{Build Options}.  Which of the two is available and what
 they do will depend on the system, and possibly on support available in
-@file{libc}.  For some targets appropriate corresponding @code{mcount} calls
+@file{libc}.  For some systems appropriate corresponding @code{mcount} calls
 are added to the assembler code too.
 
 On x86 systems @command{prof} gives call counting, so that average time spent
@@ -3209,9 +3306,9 @@ least significant limbs of the result to @var{rp}.  Return carry, either 0 or
 1.
 
 This is the lowest-level function for addition.  It is the preferred function
-for addition, since it is written in assembly for most targets.  For addition
-of a variable to itself (i.e., @var{s1p} equals @var{s2p}, use
-@code{mpn_lshift} with a count of 1 for optimal speed.
+for addition, since it is written in assembly for most CPUs.  For addition of
+a variable to itself (i.e., @var{s1p} equals @var{s2p}, use @code{mpn_lshift}
+with a count of 1 for optimal speed.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_add_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
@@ -3233,7 +3330,7 @@ Subtract @{@var{s2p}, @var{n}@} from @{@var{s1p}, @var{n}@}, and write the
 either 0 or 1.
 
 This is the lowest-level function for subtraction.  It is the preferred
-function for subtraction, since it is written in assembly for most targets.
+function for subtraction, since it is written in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_sub_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
@@ -3265,7 +3362,7 @@ of the product.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP.  It is written in assembly
-for most targets.
+for most CPUs.
 
 Don't call this function if @var{s2limb} is a power of 2; use @code{mpn_lshift}
 with a count equal to the logarithm of @var{s2limb} instead, for optimal speed.
@@ -3279,7 +3376,7 @@ from the addition.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP.  It is written in assembly
-for most targets.
+for most CPUs.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_submul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
@@ -3290,7 +3387,7 @@ borrow-out from the subtraction.
 
 This is a low-level function that is a building block for general
 multiplication and division as well as other operations in GMP.  It is written
-in assembly for most targets.
+in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
@@ -3422,7 +3519,7 @@ are returned.
 Overlapping of the destination space and the source space is allowed in this
 function, provided @var{rp} >= @var{sp}.
 
-This function is written in assembly for most targets.
+This function is written in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
@@ -3434,7 +3531,7 @@ the right are returned.
 Overlapping of the destination space and the source space is allowed in this
 function, provided @var{rp} <= @var{sp}.
 
-This function is written in assembly for most targets.
+This function is written in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
@@ -3564,8 +3661,8 @@ The allowed size of the @{@var{s1p},@var{s1n}@} operand varies; @var{s1n}
 greater than KARATSUBA_MUL_THRESHOLD will give unpredictable results.
 
 This is an internal low-level routine that is implemented in assembly for some
-targets.  If it is not provided in assembly, a default version is provided
-that uses @code{mpn_addmul_1} and @code{mpn_mul_1}.  For high-performance
+CPUs.  If it is not provided in assembly, a default version is provided that
+uses @code{mpn_addmul_1} and @code{mpn_mul_1}.  For high-performance
 microarchitectures, implementing @code{mpn_mul_basecase} can provide a very
 significant performance advantage, since it will allow for more
 micro-parallelism and less recurrences than @code{mpn_addmul_1}.
