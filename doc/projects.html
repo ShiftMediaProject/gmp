@@ -333,6 +333,28 @@ MA 02111-1307, USA.
       seeds used, and perhaps to snapshot operands before performing
       each test, so any problem exposed can be reproduced.
 
+
+<p> <li> <strong>Performance Tool</strong>
+
+  <p> It'd be nice to have some sort of tool for getting an overview of
+      performance.  Clearly a great many things could be done, but some
+      primary uses would be,
+
+      <ol>
+        <li> Checking speed variations between compilers.
+        <li> Checking relative performance between systems or CPUs.
+      </ol>
+
+  <p> A combination of measuring some fundamental routines and some
+      representative application routines might satisfy these.
+
+  <p> The tune/time.c routines would be the easiest way to get good
+      accurate measurements on lots of different systems.  The high level
+      <code>speed_measure</code> may or may not suit, but the basic
+      <code>speed_starttime</code> and <code>speed_endtime</code> would cover
+      lots of portability and accuracy questions.
+
+
 </ul>
 <hr>
 
