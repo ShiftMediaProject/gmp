@@ -4885,10 +4885,10 @@ invoking this function.
 @deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{exp})
 Generate a random float of at most @var{max_size} limbs, with long strings of
 zeros and ones in the binary representation.  The exponent of the number is in
-the interval @minus{}@var{exp} to @var{exp}.  This function is useful for
-testing functions and algorithms, since this kind of random numbers have proven
-to be more likely to trigger corner-case bugs.  Negative random numbers are
-generated when @var{max_size} is negative.
+the interval @minus{}@var{exp} to @var{exp} (in limbs).  This function is
+useful for testing functions and algorithms, since these kind of random
+numbers have proven to be more likely to trigger corner-case bugs.  Negative
+random numbers are generated when @var{max_size} is negative.
 @end deftypefun
 
 @c @deftypefun size_t mpf_size (mpf_t @var{op})
