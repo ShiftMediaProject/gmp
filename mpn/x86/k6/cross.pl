@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -120,8 +120,10 @@ sub disassemble {
 	    && $opcode !~ /a[89]/     # test+imm
 	    && $opcode !~ /a[a-f]/    # stos/lods/scas
 	    && $opcode !~ /b8/        # movl $imm32,%eax
+	    && $opcode !~ /d[0123]/   # rcl
 	    && $opcode !~ /e[0123]/   # loop/loopz/loopnz/jcxz
-	    && $opcode !~ /e[b9]/     # jmp disp8/disp32
+	    && $opcode !~ /e8/        # call disp32
+	    && $opcode !~ /e[9b]/     # jmp disp32/disp8
 	    && $opcode !~ /f[89abcd]/ # clc,stc,cli,sti,cld,std
 	    && !($opcode =~ /f[67]/          # grp 1
 		 && $modrm =~ /^[2367abef]/) # mul, imul, div, idiv
@@ -133,7 +135,9 @@ sub disassemble {
 	if (($align==32 && $addr =~ /[13579bdf][f]$/
 	     || $align==16 && $addr =~ /f$/
 	     || $align==8 && $addr =~ /[7f]$/)
-	    && $prefix =~ /0f/) {
+	    && $prefix =~ /0f/
+	    && $opcode !~ /af/        # imul
+	    ) {
 	    print "ZZ ($file) prefix/opcode cross 32-byte boundary\n";
 	}
 
@@ -143,6 +147,7 @@ sub disassemble {
 	     || $align==8 && $addr =~ /[6e]$/)
 	    && $prefix =~ /0f/
 	     && $opcode !~ /^8/        # jcond disp32
+	     && $opcode !~ /^af/       # imull reg,reg
 	    && $modrm !~ /^$/) {
 	    print "ZZ ($file) prefix/opcode/modrm cross 32-byte boundary\n";
 	}
