@@ -1407,8 +1407,14 @@ esac
 AC_HEADER_STDC
 AC_HEADER_TIME
 
+# Reasons for testing:
+#   sys/processor.h - solaris specific, but also present in macos
+#   sys/resource.h - not present in mingw
+#   sys/systemcfg.h - AIX specific
+#
 # stdint.h, unistd.h and sys/types.h are already in the autoconf default
 # tests
+#
 AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # optarg should be in unistd.h, which is already in the default includes
@@ -1440,9 +1446,14 @@ GMP_OPTION_ALLOCA
 GMP_H_HAVE_FILE
 GMP_IMPL_H_IEEE_FLOATS
 
+# FIXME: Autoconf 2.52 AC_C_BIGENDIAN bombs when cross compiling, but in the
+# future the probes will be better and this override can be removed.
+if test "$cross_compiling" = yes; then
+  ac_cv_c_bigendian=unknown
+fi
+AC_C_BIGENDIAN
 # Enhancement: In the future AC_C_BIGENDIAN will accept these actions as
 # parameters.
-AC_C_BIGENDIAN
 case $ac_cv_c_bigendian in
   yes)  AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1,
                   [Define if `mp_limb_t' is big endian]) ;;
@@ -1465,7 +1476,21 @@ case $host in
   m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
 esac
 
-AC_CHECK_FUNCS(alarm getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time strchr strnlen strtoul sysconf sysctl sysctlbyname times)
+# Reasons for testing:
+#   alarm - not in mingw
+#   cputime - not in glibc
+#   gettimeofday - not in mingw
+#   mmap - not in mingw, djgpp
+#   obstack_vprintf - glibc specific
+#   processor_info - solaris specific
+#   read_real_time - AIX specific
+#   sigaction - not in mingw
+#   sigaltstack - not in mingw, old AIX (reputedly)
+#   sigstack - not in mingw
+#   strnlen - glibc extension
+#   times - not in mingw
+#
+AC_CHECK_FUNCS(alarm clock cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack strchr strnlen strtoul sysconf sysctl sysctlbyname times)
 
 # FIXME: Would have done this with an AM_CONDITIONAL, but automake 1.5
 # doesn't like that under libgmp_la_DEPENDENCIES.
@@ -1573,10 +1598,10 @@ for tmp_fn in $gmp_mpn_functions; do
 
           # Duplicate AC_DEFINEs are harmless, so it doesn't matter
           # that multi-function files get grepped here repeatedly.
-	  # The PROLOGUE pattern has ".*" so that alpha PROLOGUE_GP matches.
+          # The PROLOGUE pattern excludes the optional second parameter.
           gmp_ep=[`
             sed -n 's/^[ 	]*MULFUNC_PROLOGUE(\(.*\))/\1/p' $tmp_file ;
-            sed -n 's/^[ 	]*PROLOGUE.*(\(.*\))/\1/p' $tmp_file
+            sed -n 's/^[ 	]*PROLOGUE(\([^,]*\).*)/\1/p' $tmp_file
           `]
           for gmp_tmp in $gmp_ep; do
             AC_DEFINE_UNQUOTED(HAVE_NATIVE_$gmp_tmp)
@@ -1754,6 +1779,11 @@ EOF
 esac
 AC_SUBST(TUNE_SQR_OBJ)
 
+
+# Configs for demos/pexpr.c.
+AC_CONFIG_FILES(demos/pexpr-config.h:demos/pexpr-config-h.in)
+GMP_SUBST_CHECK_FUNCS(clock, cputime, getrusage, gettimeofday, sigaction, sigaltstack, sigstack)
+GMP_SUBST_CHECK_HEADERS(sys/resource.h)
 
 # Configs for demos/calc directory
 #
