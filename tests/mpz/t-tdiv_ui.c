@@ -1,7 +1,7 @@
 /* Test mpz_abs, mpz_add, mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr_ui, mpz_tdiv_q_ui,
    mpz_tdiv_r_ui, mpz_mul_ui.
 
-Copyright 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -44,6 +44,7 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
+  unsigned long r_rq, r_q, r_r;
 
   tests_start ();
   rands = RANDS;
@@ -83,9 +84,9 @@ main (int argc, char **argv)
 
       /* printf ("%ld\n", SIZ (dividend)); */
 
-      mpz_tdiv_qr_ui (quotient, remainder, dividend, divisor);
-      mpz_tdiv_q_ui (quotient2, dividend, divisor);
-      mpz_tdiv_r_ui (remainder2, dividend, divisor);
+      r_rq = mpz_tdiv_qr_ui (quotient, remainder, dividend, divisor);
+      r_q = mpz_tdiv_q_ui (quotient2, dividend, divisor);
+      r_r = mpz_tdiv_r_ui (remainder2, dividend, divisor);
 
       /* First determine that the quotients and remainders computed
 	 with different functions are equal.  */
@@ -116,6 +117,16 @@ main (int argc, char **argv)
       mpz_abs (remainder, remainder);
       if (mpz_cmp_ui (remainder, divisor) >= 0)
 	dump_abort ("remainder greater than divisor", dividend, divisor);
+
+      if (mpz_cmp_ui (remainder, r_rq) != 0)
+	dump_abort ("remainder returned from mpz_fdiv_qr_ui is wrong",
+		    dividend, divisor);
+      if (mpz_cmp_ui (remainder, r_q) != 0)
+	dump_abort ("remainder returned from mpz_fdiv_q_ui is wrong",
+		    dividend, divisor);
+      if (mpz_cmp_ui (remainder, r_r) != 0)
+	dump_abort ("remainder returned from mpz_fdiv_r_ui is wrong",
+		    dividend, divisor);
     }
 
   mpz_clear (bs);
