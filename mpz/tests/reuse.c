@@ -1,6 +1,10 @@
-/* Test that routines allow reusing a source variable as destination.  */
+/* Test that routines allow reusing a source variable as destination.
 
-/*
+   Test all relevant functions except:
+	mpz_bin_ui
+	mpz_nextprime
+	mpz_mul_si
+
 Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +22,7 @@ License for more details.
 You should have received a copy of the GNU Library General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 #include <stdio.h>
@@ -65,21 +68,24 @@ mpz_xinvert (r, a, b)
 
 dss_func dss_funcs[] =
 {
-  mpz_add, mpz_and, mpz_cdiv_q, mpz_cdiv_r, mpz_fdiv_q, mpz_fdiv_r,
-  mpz_gcd, mpz_ior, mpz_mul, mpz_sub, mpz_tdiv_q, mpz_tdiv_r, mpz_xinvert
+  mpz_add, mpz_sub, mpz_mul,
+  mpz_cdiv_q, mpz_cdiv_r, mpz_fdiv_q, mpz_fdiv_r, mpz_tdiv_q, mpz_tdiv_r,
+  mpz_xinvert,
+  mpz_gcd, mpz_lcm, mpz_and, mpz_ior, mpz_xor
 };
 char *dss_func_names[] =
 {
-  "mpz_add", "mpz_and", "mpz_cdiv_q", "mpz_cdiv_r", "mpz_fdiv_q", "mpz_fdiv_r",
-  "mpz_gcd", "mpz_ior", "mpz_mul", "mpz_sub", "mpz_tdiv_q", "mpz_tdiv_r",
-  "mpz_xinvert"
+  "mpz_add", "mpz_sub", "mpz_mul",
+  "mpz_cdiv_q", "mpz_cdiv_r", "mpz_fdiv_q", "mpz_fdiv_r", "mpz_tdiv_q", "mpz_tdiv_r",
+  "mpz_xinvert",
+  "mpz_gcd", "mpz_lcm", "mpz_and", "mpz_ior", "mpz_xor"
 };
-char dss_func_division[] = {0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1};
+char dss_func_division[] = {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
 
 dsi_func dsi_funcs[] =
 {
   /* Don't change order here without changing the code in main(). */
-  mpz_add_ui, mpz_mul_ui, mpz_sub_ui,
+  mpz_add_ui, mpz_mul_ui, mpz_sub_ui, mpz_addmul_ui,
   mpz_fdiv_q_2exp, mpz_fdiv_r_2exp,
   mpz_tdiv_q_2exp, mpz_tdiv_r_2exp,
   mpz_mul_2exp,
@@ -87,7 +93,7 @@ dsi_func dsi_funcs[] =
 };
 char *dsi_func_names[] =
 {
-  "mpz_add_ui", "mpz_mul_ui", "mpz_sub_ui",
+  "mpz_add_ui", "mpz_mul_ui", "mpz_sub_ui", "mpz_addmul_ui",
   "mpz_fdiv_q_2exp", "mpz_fdiv_r_2exp",
   "mpz_tdiv_q_2exp", "mpz_tdiv_r_2exp",
   "mpz_mul_2exp",
@@ -142,6 +148,13 @@ char *ds_func_names[] =
   "mpz_abs", "mpz_com", "mpz_neg", "mpz_sqrt"
 };
 
+#define FAIL(class,indx,op1,op2,op3) \
+  do {									\
+  class##_funcs[indx] = 0;						\
+  dump_abort (class##_func_names[indx], op1, op2, op3);			\
+  failures++;								\
+  } while (0)
+
 main (argc, argv)
      int argc;
      char **argv;
@@ -154,6 +167,7 @@ main (argc, argv)
   mpz_t ref1, ref2, ref3;
   mpz_t t;
   unsigned long int r1, r2;
+  long failures = 0;
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -177,7 +191,9 @@ main (argc, argv)
 
       for (i = 0; i < sizeof (dss_funcs) / sizeof (dss_func); i++)
 	{
-	  if (dss_func_division[i] && mpz_cmp_ui (in2, 0) == 0)
+	  if (dss_funcs[i] == 0)
+	    continue;
+	  if (dss_func_division[i] && mpz_sgn (in2) == 0)
 	    continue;
 
 	  (dss_funcs[i]) (ref1, in1, in2);
@@ -185,17 +201,19 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  (dss_funcs[i]) (res1, res1, in2);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort (dss_func_names[i], in1, in2, NULL);
+	    FAIL (dss, i, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
 	  (dss_funcs[i]) (res1, in1, res1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort (dss_func_names[i], in1, in2, NULL);
+	    FAIL (dss, i, in1, in2, NULL);
 	}
 
       for (i = 0; i < sizeof (ddss_div_funcs) / sizeof (ddss_div_func); i++)
 	{
-	  if (mpz_cmp_ui (in2, 0) == 0)
+	  if (ddss_div_funcs[i] == 0)
+	    continue;
+	  if (mpz_sgn (in2) == 0)
 	    continue;
 
 	  (ddss_div_funcs[i]) (ref1, ref2, in1, in2);
@@ -203,26 +221,28 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  (ddss_div_funcs[i]) (res1, res2, res1, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
-	    dump_abort (ddss_div_func_names[i], in1, in2, NULL);
+	    FAIL (ddss_div, i, in1, in2, NULL);
 
 	  mpz_set (res2, in1);
 	  (ddss_div_funcs[i]) (res1, res2, res2, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
-	    dump_abort (ddss_div_func_names[i], in1, in2, NULL);
+	    FAIL (ddss_div, i, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
 	  (ddss_div_funcs[i]) (res1, res2, in1, res1);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
-	    dump_abort (ddss_div_func_names[i], in1, in2, NULL);
+	    FAIL (ddss_div, i, in1, in2, NULL);
 
 	  mpz_set (res2, in2);
 	  (ddss_div_funcs[i]) (res1, res2, in1, res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
-	    dump_abort (ddss_div_func_names[i], in1, in2, NULL);
+	    FAIL (ddss_div, i, in1, in2, NULL);
 	}
 
       for (i = 0; i < sizeof (ds_funcs) / sizeof (ds_func); i++)
 	{
+	  if (ds_funcs[i] == 0)
+	    continue;
 	  if (strcmp (ds_func_names[i], "mpz_sqrt") == 0
 	      && mpz_sgn (in1) < 0)
 	    continue;
@@ -232,13 +252,15 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  (ds_funcs[i]) (res1, res1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort (ds_func_names[i], in1, in2, NULL);
+	    FAIL (ds, i, in1, in2, NULL);
 	}
 
       in2i = mpz_get_ui (in2);
 
       for (i = 0; i < sizeof (dsi_funcs) / sizeof (dsi_func); i++)
 	{
+	  if (dsi_funcs[i] == 0)
+	    continue;
 	  if (strcmp (dsi_func_names[i], "mpz_fdiv_q_2exp") == 0)
 	    /* Limit exponent to something reasonable for the division
 	       functions.  Without this, we'd  normally shift things off
@@ -256,7 +278,7 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  (dsi_funcs[i]) (res1, res1, in2i);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort (dsi_func_names[i], in1, in2, NULL);
+	    FAIL (dsi, i, in1, in2, NULL);
 	}
 
       if (in2i != 0)	  /* Don't divide by 0.  */
@@ -268,7 +290,7 @@ main (argc, argv)
 	      mpz_set (res1, in1);
 	      r2 = (dsi_div_funcs[i]) (res1, res1, in2i);
 	      if (mpz_cmp (ref1, res1) != 0 || r1 != r2)
-		dump_abort (dsi_div_func_names[i], in1, in2, NULL);
+		FAIL (dsi_div, i, in1, in2, NULL);
 	    }
 
 	  for (i = 0; i < sizeof (ddsi_div_funcs) / sizeof (ddsi_div_funcs); i++)
@@ -278,16 +300,16 @@ main (argc, argv)
 	      mpz_set (res1, in1);
 	      r2 = (ddsi_div_funcs[i]) (res1, res2, res1, in2i);
 	      if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0 || r1 != r2)
-		dump_abort (ddsi_div_func_names[i], in1, in2, NULL);
+		FAIL (ddsi_div, i, in1, in2, NULL);
 
 	      mpz_set (res2, in1);
 	      (ddsi_div_funcs[i]) (res1, res2, res2, in2i);
 	      if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0 || r1 != r2)
-		dump_abort (ddsi_div_func_names[i], in1, in2, NULL);
+		FAIL (ddsi_div, i, in1, in2, NULL);
 	    }
 	}
 
-      if (mpz_cmp_ui (in1, 0) >= 0)
+      if (mpz_sgn (in1) >= 0)
 	{
 	  mpz_sqrtrem (ref1, ref2, in1);
 
@@ -300,6 +322,16 @@ main (argc, argv)
 	  mpz_sqrtrem (res1, res2, res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
 	    dump_abort ("mpz_sqrtrem", in1, NULL, NULL);
+	}
+
+      if (mpz_sgn (in1) >= 0)
+	{
+	  mpz_root (ref1, in1, in2i % 0x100 + 1);
+
+	  mpz_set (res1, in1);
+	  mpz_root (res1, res1, in2i % 0x100 + 1);
+	  if (mpz_cmp (ref1, res1) != 0)
+	    dump_abort ("mpz_root", in1, in2, NULL);
 	}
 
       if (pass < reps / 2)	/* run fewer tests since gcdext lots of time */
@@ -413,11 +445,26 @@ main (argc, argv)
 	  dump_abort ("mpz_gcd_ui", in1, in2, NULL);
       }
 
-      if (mpz_cmp_ui (in2, 0) != 0)
+      if (mpz_cmp_ui (in2, 1L) > 0 && mpz_sgn (in1) != 0)
+	{
+	  /* Test mpz_remove */
+	  mpz_remove (ref1, in1, in2);
+
+	  mpz_set (res1, in1);
+	  mpz_remove (res1, res1, in2);
+	  if (mpz_cmp (ref1, res1) != 0)
+	    dump_abort ("mpz_remove", in1, in2, NULL);
+
+	  mpz_set (res1, in2);
+	  mpz_remove (res1, in1, res1);
+	  if (mpz_cmp (ref1, res1) != 0)
+	    dump_abort ("mpz_remove", in1, in2, NULL);
+	}
+
+      if (mpz_sgn (in2) != 0)
 	{
 	  /* Test mpz_divexact */
 	  mpz_mul (t, in1, in2);
-
 	  mpz_divexact (ref1, t, in2);
 
 	  mpz_set (res1, t);
@@ -430,6 +477,12 @@ main (argc, argv)
 	  if (mpz_cmp (ref1, res1) != 0)
 	    dump_abort ("mpz_divexact", t, in2, NULL);
 	}
+    }
+
+  if (failures != 0)
+    {
+      fprintf (stderr, "mpz/reuse: %d error%s\n", failures, "s" + (failures == 1));
+      exit (1);
     }
 
   exit (0);
@@ -452,5 +505,4 @@ dump_abort (name, in1, in2, in3)
       mpz_out_str (stdout, -16, in3);
     }
   printf (")\n");
-  abort ();
 }
