@@ -1,8 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001 Free Software
-# Foundation, Inc.
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002 Free
+# Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -202,9 +202,10 @@ SCANF_OBJECTS =							\
   scanf/scanf$U.lo scanf/sscanf$U.lo scanf/sscanffuns$U.lo	\
   scanf/vfscanf$U.lo scanf/vscanf$U.lo scanf/vsscanf$U.lo
 
-CXX_OBJECTS =								\
-   cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
-   cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
+CXX_OBJECTS =							\
+  cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo	\
+  cxx/osdoprnti$U.lo cxx/osfuns$U.lo				\
+  cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
 
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/powm$U.lo mpbsd/sub$U.lo mpbsd/cmp$U.lo mpbsd/mfree$U.lo	\
@@ -246,7 +247,7 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 if WANT_CXX
 GMPXX_LTLIBRARIES_OPTION = libgmpxx.la
 endif
-libgmpxx_la_SOURCES = cxx/osfuns.cc
+libgmpxx_la_SOURCES = dummy.cc
 libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS)
 libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES) libgmp.la
 libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
