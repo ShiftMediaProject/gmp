@@ -57,6 +57,22 @@ Misc pipeline limitations:
 * At most four integer instructions/cycle.
 * Nops take up resources like any plain instructions.
 
+
+
+ASSEMBLER SYNTAX
+
+gas doesn't accept "foo::" to create a global symbol, use separate
+".global foo" and "foo:" instead.
+
+.global is the standard global directive.  gas accepts .globl, but
+hpux "as" doesn't.
+
+.proc / .endp generates the appropriate .type and .size information
+for ELF, so those directives don't need to be given explicitly.
+
+
+
+
 ================================================================
 mpn_add_n, mpn_sub_n:
 
