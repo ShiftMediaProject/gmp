@@ -19,6 +19,8 @@ void refmpn_com_n (mp_ptr rp, mp_srcptr sp, mp_size_t size);
 void refmpn_copyi (mp_ptr rp, mp_srcptr sp, mp_size_t size);
 void refmpn_copyd (mp_ptr rp, mp_srcptr sp, mp_size_t size);
 
+mp_limb_t refmpn_divexact_by3 (mp_ptr rp, mp_srcptr sp, mp_size_t size);
+
 mp_limb_t refmpn_divmod_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size,
                            mp_limb_t divisor);
 mp_limb_t refmpn_divmod_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size,
@@ -69,3 +71,6 @@ mp_limb_t refmpn_submul_1c (mp_ptr wp, mp_srcptr xp, mp_size_t size,
 
 void refmpn_xnor_n (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size);
 void refmpn_xor_n  (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size);
+
+mp_ptr refmpn_memdup_limbs (mp_srcptr ptr, mp_size_t size);
+mp_ptr refmpn_malloc_limbs (mp_size_t size);
