@@ -1165,7 +1165,7 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 
 @sp 1
 @need 1000
-@item PowerPC 64 (@samp{powerpc64*}, @samp{powerpc620}, @samp{powerpc630})
+@item PowerPC 64 (@samp{powerpc64}, @samp{powerpc620}, @samp{powerpc630})
 @cindex PowerPC
 @table @asis
 @item @samp{ABI=aix64}
@@ -1175,14 +1175,6 @@ The AIX 64 ABI uses 64-bit limbs and pointers and is available on systems
 @example
 gcc  -maix64
 xlc  -q64
-@end example
-
-@item @samp{ABI=32L}
-This uses the 32-bit ABI but a 64-bit limb using GCC @code{long long} in
-64-bit registers.  Applications must be compiled with
-
-@example
-gcc  -mpowerpc64
 @end example
 
 @item @samp{ABI=32}
