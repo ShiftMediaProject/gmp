@@ -2759,27 +2759,30 @@
 	* speed.c (getopt_long): Don't use this, just plain getopt.
 	* configure.in (getopt_long): Remove test.
 
-	* gmp-impl.h (MPN_{KARA,TOOM3}_MUL_N_{TSIZE,MINSIZE}): New macros, and
+	* gmp-impl.h (MPN_KARA_MUL_N_TSIZE, MPN_KARA_MUL_N_MINSIZE,
+	MPN_TOOM3_MUL_N_TSIZE, MPN_TOOM3_MUL_N_MINSIZE): New macros, and
 	assume toom3 square tsize was meant to be the same as the mul (both
 	are overestimates).
-	* tune/tuneup.c, mpn/generic/{mul,mul_n}.c: Use them.
+	* tune/tuneup.c, mpn/generic/mul.c, mpn/generic/mul_n.c: Use them.
 	* mpn/generic/mul_n.c (mpn_toom3_sqr_n): Fix an ASSERT to use
 	TOOM3_SQR_THRESHOLD not TOOM3_MUL_THRESHOLD, add a few that might
 	be more realistic size checks.
-	* tune/speed.h (SPEED_ROUTINE_MPN_{MUL,SQR}_N_TSPACE etc): Use minsize.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MUL_N_TSPACE etc): Use minsize.
 
 	* mpn/generic/divrem_1.c: Partial rewrite, merge fractional part
 	calculation, skip a divide step in more cases, introduce
-	DIVREM_1_{NORM,UNNORM}_THRESHOLD.
+	DIVREM_1_NORM_THRESHOLD and DIVREM_1_UNNORM_THRESHOLD.
 	* mpn/generic/mod_1.c: Partial rewrite, skip a divide step in more
-	cases, introduce MOD_1_{NORM,UNNORM}_THRESHOLD.
+	cases, introduce MOD_1_NORM_THRESHOLD, MOD_1_UNNORM_THRESHOLD.
 	* longlong.h (UDIV_PREINV_ALWAYS): New define, set for alpha and ia64.
-	* tune/tuneup.c ({DIVREM,MOD}_1_{NORM,UNNORM}_THRESHOLD): Tune these.
+	* tune/tuneup.c (DIVREM_1_NORM_THRESHOLD, DIVREM_1_UNNORM_THRESHOLD,
+	MOD_1_NORM_THRESHOLD, MOD_1_UNNORM_THRESHOLD): Tune these.
 	* gmp-impl.h [TUNE_PROGRAM_BUILD]: Support for this.
 	* tune/Makefile.am (TUNE_MPN_SRCS): Add divrem_1.c and mod_1.c.
 
 	* gmp-impl.h (UDIV_NORM_PREINV_TIME): Renamed from UDIV_PREINV_TIME.
-	* mpn/generic/{perfsqr,sb_divrem_mn}.c, mpn/x86/*/gmp-mparam.h: Ditto.
+	* mpn/generic/perfsqr.c, mpn/generic/sb_divrem_mn.c,
+	mpn/x86/*/gmp-mparam.h: Ditto.
 	* gmp-impl.h (UDIV_UNNORM_PREINV_TIME): New define.
 
 	* configure.in (AC_C_INLINE, HAVE_INLINE): New test and define.
@@ -2908,7 +2911,8 @@
 	* configure.in (GMP_LDFLAGS): New AC_SUBST flags for libtool link.
 	(powerpc64*-*-aix*): Use for -Wc,-maix to fix shared library creation,
 	but can't build shared and static at the same time.
-	* Makefile.am (lib{gmp,mp}_la_LDFLAGS): Use $(GMP_LDFLAGS).
+	* Makefile.am (libgmp_la_LDFLAGS, libmp_la_LDFLAGS): Use
+	$(GMP_LDFLAGS).
 	* gmp.texi (Notes for Particular Systems): Update AIX problem
 
 	* configure.in (AC_CONFIG_LINKS): Use where needed, not via gmp_links.
@@ -2977,7 +2981,8 @@
 	* mpn/generic/gcdext.c: Use them.
 
 	* mpn/generic/gcdext.c [WANT_GCDEXT_ONE_STEP]: Force only one step.
-	* tune/gcdexto{s,d}.c: New files, one step gcdext, single and double.
+	* tune/gcdextos.c, tune/gcdextod.c: New files, one step gcdext, single
+	and double.
 	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
 	(TUNE_MPN_SRCS): Remove gcdext.c.
 	* tune/{speed.h,common.c,speed.c}: Add measuring.
@@ -3400,11 +3405,13 @@
 
 	* * (__gmp_allocate_func etc): Rename from _mp_allocate_func etc.
 	(__gmp_default_allocate etc): Rename from _mp_default_allocate etc.
-	* gmp-impl.h (__GMP_REALLOCATE_FUNC_{TYPE,LIMBS}): New macros.
+	* gmp-impl.h (__GMP_REALLOCATE_FUNC_TYPE,
+	__GMP_REALLOCATE_FUNC_LIMBS): New macros.
 
 	* gmp-impl.h (DC_THRESHOLD): Establish default here, set to 3*KARA
 	since that's the measured average.
-	* mpn/generic/{dc_divrem_n.c,tdiv_qr.c} (DC_THRESHOLD): Remove default.
+	* mpn/generic/dc_divrem_n.c, mpn/generic/tdiv_qr.c (DC_THRESHOLD):
+	Remove default.
 
 2000-10-21  Torbjorn Granlund  <tege@swox.com>
 
@@ -3463,7 +3470,8 @@
 	* configure.in [compiler switch]:
 	(hppa2.0w-*-*): Match with same regexp in both places.
 	(hppa*-*-*): New case.
-	(all hppa alternatives): Don't inherit default gmp_cflags_{cc,c89}.
+	(all hppa alternatives): Don't inherit default gmp_cflags_cc,
+	gmp_cflags_c89.
 
 2000-10-18  Torbjorn Granlund  <tege@swox.com>
 
@@ -3704,8 +3712,8 @@
 	* mpn/x86/pentium/com_n.asm: New file.
 
 	* gmp.texi (Rational Arithmetic): Add mpq_abs.
-	(Miscellaneous Rational Functions): Merge and simplify
-	descriptions of mpq_{get,set}_{num,den}.
+	(Miscellaneous Rational Functions): Merge and simplify descriptions of
+	mpq_get_num, mpq_get_den, mpq_set_num, mpq_set_den.
 
 	* mpq/abs.c: New file.
 	* mpq/Makefile.am (libmpq_la_SOURCES): Add it.
@@ -3765,10 +3773,10 @@
 
 	* mpz/aors_ui.c: New file merging add_ui.c and sub_ui.c, no object
 	code changes.
-	* mpz/{add_ui.c,sub_ui.c}: Remove files.
+	* mpz/add_ui.c, mpz/sub_ui.c: Remove files.
 	* mpz/Makefile.am: Update.
 
-	* gmp-impl.h (MPZ_FITS_{S,U}TYPE_SDT): New macros.
+	* gmp-impl.h (MPZ_FITS_STYPE_SDT, MPZ_FITS_UTYPE_SDT): New macros.
 	* mpz/fits.c: New file merging six separate fits*.c.
 	* mpz/fits_sshort_p.c, fits_sint_p.c, fits_slong_p.c, fits_ushort_p.c,
 	fits_uint_p.c, fits_ulong_p.c: Remove files
@@ -3785,12 +3793,12 @@
 2000-09-02  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/aors.c: New file merging add.c and sub.c, no object code changes.
-	* mpq/{add.c,sub.c}: Remove files.
+	* mpq/add.c, mpq/sub.c: Remove files.
 	* mpq/Makefile.am: Update.
 
 	* mpz/aors.c: New file merging add.c and sub.c, no object code changes.
-	* mpz/{add.c,sub.c}: Remove files.
-	* mp{z,bsd}/Makefile.am: Update.
+	* mpz/add.c, mpz/sub.c: Remove files.
+	* mpz/Makefile.am, mpbsd/Makefile.am: Update.
 
 	* configure.in: Re-apply "PROLOGUE.*" regexp change for the
 	benefit of alpha PROLOGUE_GP, lost in path search reorganisation.
@@ -3908,8 +3916,8 @@
 
 2000-08-16  Kevin Ryde  <kevin@swox.se>
 
-	* tune/mul_n_{mpn,open}.c: New files, being forced open-coded and
-	mpn #includes of mpn/generic/mul_n.c.
+	* tune/mul_n_mpn.c, tune/mul_n_open.c: New files, being forced
+	open-coded and mpn #includes of mpn/generic/mul_n.c.
 	* tune/*: Add measuring of them.
 	* tune/speed.c: Print command line into *.gnuplot file.
 
@@ -4019,7 +4027,7 @@
 
 	* configure.in (--enable-fft): New option, default "no".
 	* gmp.texi (Build Options): Describe it.
-	* mpn/generic/{mul,mul_n}.c [WANT_FFT]: Use it.
+	* mpn/generic/mul.c, mpn/generic/mul_n.c [WANT_FFT]: Use it.
 	* tune/tuneup.c [WANT_FFT]: By default don't probe FFTs if not enabled.
 	* NEWS: Multiplication optionally using FFT.
 
@@ -4050,7 +4058,7 @@
 	* mpn/generic/mul_fft.c: New file, by Paul Zimmermann, minor mods
 	applied.
 	* configure.in (gmp_mpn_functions): Add it.
-	* mpn/generic/{mul,mul_n}.c: Use it.
+	* mpn/generic/mul.c, mpn/generic/mul_n.c: Use it.
 	* doc/multiplication: Describe it (briefly).
 
 	* gmp-impl.h (FFT_MUL_THRESHOLD etc): New thresholds.
@@ -4219,13 +4227,14 @@
 
 	* mpn/x86/k6/k62mmx: New directory.
 	* configure.in (k6[23]*-*-*): Use it.
-	* mpn/x86/k6/k62mmx/copy{i,d}.asm: Move from mmx directory,
-	improve code alignment a bit.
-	* mpn/x86/k6/k62mmx/{l,r}shift.asm: Ditto, and improve addressing
-	modes for pre-CXT cores.
+	* mpn/x86/k6/k62mmx/copyi.asm, mpn/x86/k6/k62mmx/copyd.asm: Move from
+	mmx directory, improve code alignment a bit.
+	* mpn/x86/k6/k62mmx/lshift.asm, mpn/x86/k6/k62mmx/rshift.asm: Ditto,
+	and improve addressing modes for pre-CXT cores.
 	* mpn/x86/x86-defs.m4 (Zdisp): Add an instruction.
-	* mpn/x86/k6/mmx/{l,r}shift.asm: New files, suiting plain K6.
-	* mpn/x86/{README,k6/README}: Updates.
+	* mpn/x86/k6/mmx/lshift.asm, mpn/x86/k6/mmx/rshift.asm: New files,
+	suiting plain K6.
+	* mpn/x86/README, mpn/x86/k6/README: Updates.
 	* mpn/x86/k6/mmx/*.asm: Update some comments.
 
 	* mpn/tests/Makefile.am: Use $(MAKE) in .asm rules, not "m".
@@ -4394,8 +4403,8 @@
 	parameters and "l" variables.
 	* gmp-impl.h (mpn_toom3_mul_n, mpn_toom3_sqr_n): Update prototypes.
 
-	* mpbsd/{itom,sdiv}.c: Add casts for correct handling of -0x80...00
-	on systems with sizeof(short)==sizeof(int).
+	* mpbsd/itom.c, mpbsd/sdiv.c: Add casts for correct handling of
+	-0x80...00 on systems with sizeof(short)==sizeof(int).
 
 	* mpz/tests/t-misc.c: Move "bin" test from here ...
 	* mpz/tests/t-bin.c: ... to here, and add a new (2k,k) test too.
@@ -4481,20 +4490,21 @@
 
 2000-06-10  Kevin Ryde  <kevin@swox.se>
 
-	* mpn/x86/{pentium/mmx,p6/mmx,p6/p3mmx}/popham.asm,
-	mpn/x86/p6/diveby3.asm: Add MULFUNC_PROLOGUE for correct
-	HAVE_NATIVE_* matching.
+	* mpn/x86/pentium/mmx/popham.asm, mpn/x86/p6/mmx/popham.asm,
+	mpn/x86/p6/p3mmx/popham.asm, mpn/x86/p6/diveby3.asm: Add
+	MULFUNC_PROLOGUE for correct HAVE_NATIVE_* matching.
 
 	* mpn/x86/x86-defs.m4 (cmov_bytes_tttn): Use eval() on expressions.
 	(cmov_available_p): Switch to list CPUs which do have cmov.
-	* mpn/x86/{p6,k6,k7}/sqr_basecase.asm: Use eval() for multiplication.
+	* mpn/x86/p6/sqr_basecase.asm, mpn/x86/k6/sqr_basecase.asm,
+	mpn/x86/k7/sqr_basecase.asm: Use eval() for multiplication.
 	* mpn/x86/README.family: Various updates.
 
 2000-06-09  Kevin Ryde  <kevin@swox.se>
 
 	* mpbsd/tests/allfuns.c (main): Call exit() instead of doing return.
 
-	* doc/{tasks.html,projects.html}: Moved from projects directory.
+	* doc/tasks.html, doc/projects.html: Moved from projects directory.
 	* doc/multiplication: New file.
 	* Makefile.am (EXTRA_DIST): Remove projects, add doc.
 
@@ -4508,8 +4518,8 @@
 	* configure.in: Update configs for speed_cyclecounter.
 
 	* gmp-impl.h (MP_LIMB_T_MAX, MP_LIMB_T_HIGHBIT): New macros.
-	* mpn/generic/{diveby3,mul_n,gcd}, tune/speed.c, mpn/tests/ref.c:
-	Use them.
+	* mpn/generic/diveby3.c, mpn/generic/mul_n.c, mpn/generic/gcd.c,
+	tune/speed.c, mpn/tests/ref.c: Use them.
 
 	* mpn/tests/spinner.c: Remove setitimer, just alarm is enough.
 	* configure.in (AC_CHECK_FUNCS): Remove setitimer.
@@ -5269,7 +5279,7 @@
 	(SUBDIRS): Add tune, reorder directories.
 	(MPZ_OBJECTS): Add mpz/mul_si.lo.
 	(libmp_la_SOURCES): Use this for top-level objects, not .lo's.
-	* ansi2knr.{c,1}: New files, provided by automake.
+	* ansi2knr.c, ansi2knr.1: New files, provided by automake.
 
 	* mpn/x86/aors_n.asm: Convert add_n.S and sub_n.S to a
 	multi-function aors_n.asm, no object code change.
