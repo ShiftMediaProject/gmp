@@ -1,3 +1,21 @@
+2001-04-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k6/mmx/dive_1.asm: New file.
+	* mpn/x86/x86-defs.m4 (Zdisp): Two more insns.
+
+	* mpn/x86/pentium/mul_2.asm: New file.
+	* mpn/asm-defs.m4: Add define_mpn(mul_2).
+	* acconfig.h (HAVE_NATIVE_mpn_divexact_1, mul_2): Add templates.
+
+	* configure.in (ABI): Use AC_ARG_VAR.
+
+	* tests/devel/try.c: Run reference function when validate fails.
+
+	* mpq/get_str.c: Fixes for negative bases.
+	* tests/mpq/t-get_str.c: Check negative bases.
+	* tests/misc.c,tests.h (__gmp_allocate_strdup, strtoupper): New
+	functions.
+
 2001-04-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/lcm.c (mpz_lcm): Make result always positive.
