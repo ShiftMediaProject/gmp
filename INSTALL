@@ -126,7 +126,7 @@ gmp.dvi" or "make gmp.ps".  This requires various "tex" commands.
 To install the library, do "make install" (you can then use -lgmp instead of
 .libs/libgmp.a).
 
-If you decide to use GMP, It is a good idea you read at least the chapter "GMP
+If you decide to use GMP, it is a good idea you read at least the chapter "GMP
 Basics" in the manual.
 
 Some known build problems are noted in the "Installing GMP" chapter of
