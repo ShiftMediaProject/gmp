@@ -1,5 +1,19 @@
 2000-04-12  Linus Nordberg  <linus@swox.se>
 
+	* Makefile.am, demos/Makefile.am, mpbsd/Makefile.am,
+	mpbsd/tests/Makefile.am, mpf/Makefile.am, mpf/tests/Makefile.am,
+	mpn/Makefile.am, mpq/Makefile.am, mpq/tests/Makefile.am,
+	mpz/Makefile.am, mpz/tests/Makefile.am, tests/Makefile.am,
+	tests/rand/Makefile.am (AUTOMAKE_OPTIONS): Add 'no-dependencies'.
+
+	* Makefile.in, demos/Makefile.in, mpbsd/Makefile.in,
+	mpbsd/tests/Makefile.in, mpf/Makefile.in, mpf/tests/Makefile.in,
+	mpn/Makefile.in, mpq/Makefile.in, mpq/tests/Makefile.in,
+	mpz/Makefile.in, mpz/tests/Makefile.in, tests/Makefile.in,
+	tests/rand/Makefile.in: Regenerate.
+	
+2000-04-12  Linus Nordberg  <linus@swox.se>
+
 	* randlc.c (gmp_randinit_lc): Disable function.
 	* gmp.texi (Random State Initialization): Remove gmp_randinit_lc.
 
