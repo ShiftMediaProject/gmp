@@ -37,9 +37,15 @@ double Ulp _PROTO ((double));
 #define MINNORM 2.2250738585072013831e-308 /* 2^(-1022), smallest normalized */
 #define MAXNORM 1.7976931348623157081e308 /* 2^(1023)*(2-2^(-52)) */
 
+#ifndef MAX
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef ABS
 #define ABS(x) (((x)>0) ? (x) : (-x))
+#endif
 
 /* generate a random double using the whole range of possible values,
    including denormalized numbers, NaN, infinities, ... */
