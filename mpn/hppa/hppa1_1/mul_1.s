@@ -1,7 +1,7 @@
 ; HP-PA-1.1 __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 ; the result in a second limb vector.
 
-; Copyright 1992, 1993, 1994, 2000 Free Software Foundation, Inc.
+; Copyright 1992, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 
@@ -46,7 +46,7 @@
 
 	.code
 	.export		__gmpn_mul_1
-__gmpn_mul_1
+	.label		__gmpn_mul_1
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry
@@ -69,7 +69,8 @@ __gmpn_mul_1
 	 ldw		-12(%r30),%r1
 
 ; Main loop
-L$loop	fldws,ma	4(%r25),%fr5
+	.label	L$loop
+	fldws,ma	4(%r25),%fr5
 	stws,ma		%r19,4(%r26)
 	addc		%r28,%r1,%r19
 	xmpyu		%fr4,%fr5,%fr6
@@ -78,7 +79,8 @@ L$loop	fldws,ma	4(%r25),%fr5
 	addib,<>	-1,%r24,L$loop
 	 ldw		-12(%r30),%r1
 
-L$end	stws,ma		%r19,4(%r26)
+	.label	L$end
+	stws,ma		%r19,4(%r26)
 	addc		%r28,%r1,%r19
 	ldw		-16(%r30),%r28
 	stws,ma		%r19,4(%r26)
@@ -86,7 +88,7 @@ L$end	stws,ma		%r19,4(%r26)
 	bv		0(%r2)
 	 ldo		-64(%r30),%r30
 
-L$just_one_limb
+	.label	L$just_one_limb
 	xmpyu		%fr4,%fr5,%fr6
 	fstds		%fr6,-16(%r30)
 	ldw		-16(%r30),%r28
