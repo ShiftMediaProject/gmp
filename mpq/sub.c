@@ -64,12 +64,12 @@ mpq_sub (rop, op1, op2)
       MPZ_TMP_INIT (t, MAX (ABS (tmp1->_mp_size), ABS (tmp2->_mp_size)) + 1);
 
       mpz_sub (t, tmp1, tmp2);
-      mpz_divexact (tmp1, &(op1->_mp_den), gcd);
+      mpz_divexact (tmp2, &(op1->_mp_den), gcd);
       mpz_gcd (gcd, t, gcd);
 
       mpz_divexact (&(rop->_mp_num), t, gcd);
 
-      mpz_divexact (tmp2, &(op2->_mp_den), gcd);
+      mpz_divexact (tmp1, &(op2->_mp_den), gcd);
       mpz_mul (&(rop->_mp_den), tmp1, tmp2);
     }
   else
