@@ -322,7 +322,7 @@ const struct routine_t {
   { "mpz_powm_ui",       speed_mpz_powm_ui          },
 
   { "mpz_mod",           speed_mpz_mod              },
-  { "redc",              speed_redc                 },
+  { "mpn_redc_1",        speed_mpn_redc_1           },
 
   { "MPN_COPY",          speed_MPN_COPY             },
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },
@@ -733,12 +733,14 @@ run_gnuplot (int argc, char *argv[])
   fprintf (fp, "\n");
   fprintf (fp, "\n");
 
+  fprintf (fp, "reset\n");
+
   /* Putting the key at the top left is usually good, and you can change it
      interactively if it's not. */
   fprintf (fp, "set key left\n");
 
   /* designed to make it possible to see crossovers easily */
-  fprintf (fp, "set data style linespoints\n");
+  fprintf (fp, "set data style lines\n");
 
   fprintf (fp, "plot ");
   for (i = 0; i < num_choices; i++)
