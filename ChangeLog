@@ -1,3 +1,8 @@
+2001-09-11  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in: Let __DECC mean __GMP_HAVE_CONST, etc.
+	* mp-h.in: Likewise.
+
 2001-09-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/mmx/lshift.asm: New file.
