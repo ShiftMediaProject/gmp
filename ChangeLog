@@ -1,5 +1,9 @@
 2000-09-27  Torbjorn Granlund  <tege@swox.com>
 
+	* demos/pexpr.c: Clean up code for systems not supporting
+	sigaltstack.  Handle old Linux without sigaltstack.  Properly
+	disable all stuff related to sigaltstack under Unicos.
+
 	* mpn/alpha/ev6/addmul_1.asm: Use explicit offset for all load and
 	store insns.  Helps old gas.
 
