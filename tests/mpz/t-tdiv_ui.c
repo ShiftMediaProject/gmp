@@ -27,7 +27,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort _PROTO ((mpz_t, unsigned long));
+void dump_abort _PROTO ((char *, mpz_t, unsigned long));
 void debug_mp _PROTO ((mpz_t, int));
 
 int
@@ -90,30 +90,32 @@ main (int argc, char **argv)
       /* First determine that the quotients and remainders computed
 	 with different functions are equal.  */
       if (mpz_cmp (quotient, quotient2) != 0)
-	dump_abort (dividend, divisor);
+	dump_abort ("quotients from mpz_tdiv_qr_ui and mpz_tdiv_q_ui differ",
+		    dividend, divisor);
       if (mpz_cmp (remainder, remainder2) != 0)
-	dump_abort (dividend, divisor);
+	dump_abort ("remainders from mpz_tdiv_qr_ui and mpz_tdiv_r_ui differ",
+		    dividend, divisor);
 
       /* Check if the sign of the quotient is correct.  */
       if (mpz_cmp_ui (quotient, 0) != 0)
 	if ((mpz_cmp_ui (quotient, 0) < 0)
 	    != (mpz_cmp_ui (dividend, 0) < 0))
-	dump_abort (dividend, divisor);
+	dump_abort ("quotient sign wrong", dividend, divisor);
 
       /* Check if the remainder has the same sign as the dividend
 	 (quotient rounded towards 0).  */
       if (mpz_cmp_ui (remainder, 0) != 0)
 	if ((mpz_cmp_ui (remainder, 0) < 0) != (mpz_cmp_ui (dividend, 0) < 0))
-	  dump_abort (dividend, divisor);
+	  dump_abort ("remainder sign wrong", dividend, divisor);
 
       mpz_mul_ui (temp, quotient, divisor);
       mpz_add (temp, temp, remainder);
       if (mpz_cmp (temp, dividend) != 0)
-	dump_abort (dividend, divisor);
+	dump_abort ("n mod d != n - [n/d]*d", dividend, divisor);
 
       mpz_abs (remainder, remainder);
       if (mpz_cmp_ui (remainder, divisor) >= 0)
-	dump_abort (dividend, divisor);
+	dump_abort ("remainder greater than divisor", dividend, divisor);
     }
 
   mpz_clear (bs);
@@ -129,9 +131,9 @@ main (int argc, char **argv)
 }
 
 void
-dump_abort (mpz_t dividend, unsigned long divisor)
+dump_abort (char *str, mpz_t dividend, unsigned long divisor)
 {
-  fprintf (stderr, "ERROR\n");
+  fprintf (stderr, "ERROR: %s\n", str);
   fprintf (stderr, "dividend = "); debug_mp (dividend, -16);
   fprintf (stderr, "divisor  = %lX\n", divisor);
   abort();
