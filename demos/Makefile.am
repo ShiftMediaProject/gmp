@@ -32,25 +32,32 @@ calc_SOURCES = calc.c calclex.c calc.h
 qcn_LDADD = $(LDADD) -lm
 
 # None of these programs are built by default, but "make <whatever>" will
-# build them once libgmp.la has been built.
+# build them once libgmp.la is built.
 #
 EXTRA_PROGRAMS = calc factorize isprime pexpr primes qcn
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 
-
 allprogs: $(EXTRA_PROGRAMS)
 
 
 # The distribution includes calc.c, calc.h and calclex.c, generated with
-# bison and flex, so the calc program can be built even if yacc and lex
-# aren't available.  The rules below will regenerate those files if you
-# modify calc.y or calclex.l.
+# bison and flex, so the calc program will build even if yacc and lex aren't
+# available.  The rules below regenerate those files if you modify calc.y or
+# calclex.l.
 #
-# The "cd"s ensure $(srcdir) doesn't get into the "#line"s in the generated
-# files.
+# Using "cd"s instead of a $(srcdir) path ensures $(srcdir) doesn't get into
+# the "#line"s in the generated files.
+#
+# FIXME: Automake yacc handling isn't quite right when building in a
+# separate object directory, hence the explicit rules used for now.
+#
+# FIXME: With ansi2knr and no-dependencies, there doesn't seem any easy way
+# to manually express that calclex$U.lo depends on calc.h.  Making calclex.c
+# depend on calc.h gets the right result, but the extra lex runs are
+# unnecessary.
 
-$(srcdir)/calclex.c: calclex.l
+$(srcdir)/calclex.c: calclex.l calc.h
 	cd $(srcdir); lex -ocalclex.c calclex.l
 $(srcdir)/calc.c $(srcdir)/calc.h: calc.y
 	cd $(srcdir); yacc -d -ocalc.c calc.y
