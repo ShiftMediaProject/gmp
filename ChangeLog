@@ -22,6 +22,8 @@ MA 02111-1307, USA.
 
 	* config.guess: Recognize "power2" systems.
 
+	* mpn/powerpc64/gmp-mparam.h: Fix indentation.
+	* mpn/power/gmp-mparam.h: Retune.
 	* mpn/alpha/ev6/nails/gmp-mparam.h: Retune.
 	* mpn/sparc64/gmp-mparam.h: Retune.
 	* mpn/pa64/gmp-mparam.h: Retune.
