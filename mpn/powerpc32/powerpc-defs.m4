@@ -49,6 +49,7 @@ dnl  test.
 
 ifelse(WANT_R_REGISTERS,no,`
 forloop(i,0,31,`deflit(`r'i,i)')
+forloop(i,0,31,`deflit(`f'i,i)')
 forloop(i,0,7, `deflit(`cr'i,i)')
 ')
 
