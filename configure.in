@@ -529,7 +529,6 @@ case ${target} in
   *-cray-unicos*)
     path="cray"
     extra_functions="mulww";;
-  am29000*-*-*) path="a29k";;
   a29k*-*-*) path="a29k";;
 
   # AMD and Intel x86 configurations
@@ -644,8 +643,8 @@ case ${target} in
 
   vax*-*-*) path="vax"; extra_functions="udiv_w_sdiv";;
 
-  z8000x*-*-*) path="z8000x"; extra_functions="udiv_w_sdiv";;
-  z8000*-*-*) path="z8000"; extra_functions="udiv_w_sdiv";;
+  z8kx*-*-*) path="z8000x"; extra_functions="udiv_w_sdiv";;
+  z8k*-*-*) path="z8000"; extra_functions="udiv_w_sdiv";;
 
   clipper*-*-*) path="clipper";;
 esac
