@@ -35,7 +35,7 @@ SHELL = /bin/sh
 #### host and target specific makefile fragments come in here.
 ###
 
-MPZ_SRCS = init.c set.c set_ui.c set_si.c set_str.c set_d.c set_f.c \
+MPZ_SRCS = init.c set.c set_ui.c set_si.c set_str.c set_d.c set_f.c set_q.c \
   iset.c iset_ui.c iset_si.c iset_str.c iset_d.c clear.c \
   get_ui.c get_si.c get_str.c get_d.c size.c sizeinbase.c \
   add.c add_ui.c sub.c sub_ui.c mul.c mul_ui.c \
@@ -50,7 +50,7 @@ MPZ_SRCS = init.c set.c set_ui.c set_si.c set_str.c set_d.c set_f.c \
   tdiv_qr.c tdiv_q.c tdiv_r.c tdiv_qr_ui.c tdiv_q_ui.c tdiv_r_ui.c \
   mod.c divexact.c array_init.c scan0.c scan1.c \
   jacobi.c legendre.c invert.c
-MPZ_OBJS = init.o set.o set_ui.o set_si.o set_str.o set_d.o set_f.o \
+MPZ_OBJS = init.o set.o set_ui.o set_si.o set_str.o set_d.o set_f.o set_q.o \
   iset.o iset_ui.o iset_si.o iset_str.o iset_d.o clear.o \
   get_ui.o get_si.o get_str.o get_d.o size.o sizeinbase.o \
   add.o add_ui.o sub.o sub_ui.o mul.o mul_ui.o \
@@ -160,6 +160,7 @@ scan1.o: $(srcdir)/scan1.c $(H)
 set.o: $(srcdir)/set.c $(H)
 set_d.o: $(srcdir)/set_d.c $(H)
 set_f.o: $(srcdir)/set_f.c $(H)
+set_q.o: $(srcdir)/set_q.c $(H)
 set_si.o: $(srcdir)/set_si.c $(H)
 set_str.o: $(srcdir)/set_str.c $(H) $(srcdir)/../longlong.h
 set_ui.o: $(srcdir)/set_ui.c $(H)

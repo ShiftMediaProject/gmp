@@ -167,6 +167,7 @@ gcc -c -I. -I.. -I../mpn -g -O scan1.c
 gcc -c -I. -I.. -I../mpn -g -O set.c
 gcc -c -I. -I.. -I../mpn -g -O set_d.c
 gcc -c -I. -I.. -I../mpn -g -O set_f.c
+gcc -c -I. -I.. -I../mpn -g -O set_q.c
 gcc -c -I. -I.. -I../mpn -g -O set_si.c
 gcc -c -I. -I.. -I../mpn -g -O set_str.c
 gcc -c -I. -I.. -I../mpn -g -O set_ui.c
