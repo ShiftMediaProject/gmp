@@ -103,6 +103,8 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
    mode.  Note in particular it works on IEEE systems too.
 
 
+   Traps:
+
    Hardware traps for overflow to infinity, underflow to zero, or
    unsupported denorms may or may not be taken.	 The IEEE code works bitwise
    and so probably won't trigger them, the generic code works by float
@@ -110,6 +112,18 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
    than ideal, but again its felt straightforward code is better than trying
    to get intimate with hardware exceptions (of perhaps unknown nature).
 
+
+   Not done:
+
+   mpz_get_d in the past handled size==1 with a cast limb->double.  This
+   might still be worthwhile there (for up to the mantissa many bits), but
+   for mpn_get_d here, the cost of applying "exp" to the resulting exponent
+   would probably use up any benefit a cast may have over bit twiddling.
+   Also, if the exponent is pushed into denorm range then bit twiddling is
+   the only option, to ensure the desired truncation is obtained.
+
+
+   Other:
 
    For reference, note that HPPA 8000, 8200, 8500 and 8600 trap FCNV,UDW,DBL
    to the kernel for values >= 2^63.  This makes it slow, and worse the
