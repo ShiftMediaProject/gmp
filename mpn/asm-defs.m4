@@ -683,9 +683,17 @@ m4_assert_defined(`CONFIG_TOP_SRCDIR')
 
 dnl  Usage: C comment ...
 dnl
-dnl  Define C as a FORTRAN-style comment character.  This can be used for
+dnl  "C" works like a FORTRAN-style comment character.  This can be used for
 dnl  comments to the right of an assembly instructions, where just dnl would
 dnl  remove the linefeed, and concatenate adjacent lines.
+dnl
+dnl  "C" and/or "dnl" are useful when an assembler doesn't support comments,
+dnl  or where different assemblers for a particular CPU have different
+dnl  comment styles.  The intermediate ".s" files will end up with no
+dnl  comments, just code.
+dnl
+dnl  Using "C" is not intended to cause offence to anyone who doesn't like
+dnl  FORTRAN; but if that happens it's an unexpected bonus.
 
 define(C, `
 dnl')
