@@ -45,7 +45,7 @@ MA 02111-1307, USA. */
 
 
 #define MPZ_FIB_SIZE_FLOAT(n) \
-  ((mp_size_t) ((n) * 0.6942419 / BITS_PER_MP_LIMB + 1))
+  ((mp_size_t) ((n) * 0.6942419 / GMP_NUMB_BITS + 1))
 
 
 /* If the data put into the table by mpn/generic/fib_ui.c doesn't match the
