@@ -27,7 +27,7 @@ void
 mpz_array_init (mpz_ptr arr, mp_size_t arr_size, mp_size_t nbits)
 {
   register mp_ptr p;
-  register size_t i;
+  register mp_size_t i;
   mp_size_t nlimbs;
 
   nlimbs = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
