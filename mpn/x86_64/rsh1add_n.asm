@@ -26,6 +26,8 @@ C         cycles/limb
 C Hammer:     2.14	(mpn_add_n + mpn_rshift need 4.125)
 C (The exact timing seems to be 15/7 = 2.1429 c/l.  Odd.)
 
+C It should be possible to get well under 2 c/l for this operation, to
+C about 40/8/3 = 1.667 c/l.
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
