@@ -1,3 +1,12 @@
+2000-04-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/set_d.c: Misc cleanups.
+
+	* mpq/set_d: New file.
+	* gmp.h: Declare mpq_set_d.
+	* mpq/Makefile.am: List set_d.c.
+	* mpq/Makefile.in: Regenerate.
+
 2000-04-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/fits_sint_p.c: New file.
@@ -8,6 +17,7 @@
 	* mpz/fits_ushort_p.c: New file.
 	* gmp.h: Declare mpz_fits_*.
 	* mpz/Makefile.am: List fits_* files.
+	* mpz/Makefile.in: Regenerate.
 
 2000-04-06  Kevin Ryde  <kevin@swox.se>
 
