@@ -20,7 +20,8 @@ MA 02111-1307, USA.
 
 2002-12-06  Torbjorn Granlund  <tege@swox.com>
 
-	* configure.in (hppa*-*-*): Pass -Wl,+vnocompatwarnings with +DA2.0.
+	* configure.in: Remove -g.
+	(hppa*-*-*): Pass -Wl,+vnocompatwarnings with +DA2.0.
 
 2002-12-05  Torbjorn Granlund  <tege@swox.com>
 
