@@ -1,3 +1,18 @@
+2000-10-22  Kevin Ryde  <kevin@swox.se>
+
+	* tune/gcd_bin.c: New file.
+	* tune/gcd_finda_gen.c: New file.
+	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
+	* tune/speed.[ch],common.c (mpn_gcd_binary, find_a): Add measuring.
+
+	* * (__gmp_allocate_func etc): Rename from _mp_allocate_func etc.
+	(__gmp_default_allocate etc): Rename from _mp_default_allocate etc.
+	* gmp-impl.h (__GMP_REALLOCATE_FUNC_{TYPE,LIMBS}): New macros.
+
+	* gmp-impl.h (DC_THRESHOLD): Establish default here, set to 3*KARA
+	since that's the measured average.
+	* mpn/generic/{dc_divrem_n.c,tdiv_qr.c} (DC_THRESHOLD): Remove default.
+	
 2000-10-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/Makefile.am (TARG_DIST): Add ia64.
