@@ -20,7 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
-/* Usage: ./run-expr [-z] [-q] [-f] [-r] [-p prec] [-b base] expression...
+/* Usage: ./run-expr [-z] [-q] [-f] [-p prec] [-b base] expression...
 
    Evaluate each argument as a simple expression.  By default this is in mpz
    integers, but -q selects mpq or -f selects mpf.  For mpf the float
@@ -67,7 +67,7 @@ main (int argc, char *argv[])
   mp_size_t  prec = 64;
   int        obase, opt, i, ret;
 
-  while ((opt = getopt (argc, argv, "b:fp:qrz")) != EOF)
+  while ((opt = getopt (argc, argv, "b:fp:qz")) != EOF)
     {
       switch (opt) {
       case 'f':
@@ -92,7 +92,7 @@ main (int argc, char *argv[])
 
   if (optind >= argc)
     {
-      printf ("Usage: %s [-z] [-q] [-f] [-r] [-p prec] [-b base] expression...\n", argv[0]);
+      printf ("Usage: %s [-z] [-q] [-f] [-p prec] [-b base] expression...\n", argv[0]);
       exit (1);
     }
 
