@@ -140,11 +140,12 @@ case "${target}" in
   *-*-sunos*)
     underscore=yes; asm_align=log;;
   rs6000-*-aix[456789]* | rs6000-*-aix3.2.[456789])
-    target_makefile_frag=config/t-pwr-aix;;
+    #target_makefile_frag=config/t-pwr-aix
+    ;;
   ppc601-*-aix[456789]* | ppc601-*-aix3.2.[456789] | \
   ppc60[234]*-*-aix[456789]* | ppc60[234]*-*-aix3.2.[456789] | \
   powerpc*-*-aix[456789]* | powerpc*-*-aix3.2.[456789])
-    target_makefile_frag=config/t-ppc-aix
+    #target_makefile_frag=config/t-ppc-aix
     syntax=aix;;
   ppc601-apple-mach | \
   ppc60[234]*-apple-mach | ppc60[234]*-apple-mach | \
