@@ -1,3 +1,11 @@
+2001-02-02  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (TIME): New macro.
+	(main): Use TIME--print timing more accurately.
+	(setup_error_handler): Increase RLIMIT_DATA to 16 Mibyte.
+
+	* longlong.h (arm): Add __CLOBBER_CC to add_ssaaaa and sub_ddmmss.
+
 2001-02-02  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in: Don't remove gmp-mparam.h and mpn source links under
