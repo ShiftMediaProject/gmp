@@ -20,7 +20,7 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
@@ -31,12 +31,13 @@ TESTS = $(check_PROGRAMS)
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
 gen_static_SOURCES = gen.c
 gen_static_LDFLAGS = -static
+findlc_LDADD = libstat.la
 spect_LDADD = libstat.la
 stat_LDADD = libstat.la
 
 EXTRA_LTLIBRARIES = libstat.la
 libstat_la_SOURCES = statlib.c zdiv_round.c
-libstat_la_LIBADD = $(top_builddir)/libgmp.la
+libstat_la_LIBADD = $(top_builddir)/libgmp.la -lm
 
 EXTRA_DIST = gmpstat.h
 
