@@ -23,7 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-void *_mpz_realloc ();
 
 void
 mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
@@ -31,8 +30,6 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
   mpz_t g;
   mp_size_t usize, vsize, size;
   TMP_DECL (marker);
-
-  TMP_MARK (marker);
 
   usize = SIZ (u);
   vsize = SIZ (v);
@@ -73,6 +70,7 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
       goto one;
     }
   
+  TMP_MARK (marker);
   size = MAX (usize, vsize);
   MPZ_TMP_INIT (g, size);
 
