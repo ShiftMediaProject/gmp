@@ -1,3 +1,14 @@
+2000-06-10  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/{pentium/mmx,p6/mmx,p6/p3mmx}/popham.asm,
+	mpn/x86/p6/diveby3.asm: Add MULFUNC_PROLOGUE for correct
+	HAVE_NATIVE_* matching.
+
+	* mpn/x86/x86-defs.m4 (cmov_bytes_tttn): Use eval() on expressions.
+	(cmov_available_p): Switch to list CPUs which do have cmov.
+	* mpn/x86/{p6,k6,k7}/sqr_basecase.asm: Use eval() for multiplication.
+	* mpn/x86/README.family: Various updates.
+
 2000-06-09  Kevin Ryde  <kevin@swox.se>
 
 	* mpbsd/tests/allfuns.c (main): Call exit() instead of doing return.
