@@ -265,6 +265,9 @@
      as <code>mpn_lshift</code>.  Some judicious use of m4 might let the two
      share source code, or with a register to control the loop direction
      perhaps even share object code.
+<li> PPC630: <code>mpn_lshift</code> could use an <code>adde</code> for a
+     shift-by-1.  A simple loop seems to be about 1.4 c/l, compared to 1.6 for
+     the unrolled general case.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
