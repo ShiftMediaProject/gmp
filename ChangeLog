@@ -554,8 +554,6 @@ MA 02111-1307, USA.
 	(mpn_hgcd): To use Lehmer's algorithm, call hgcd_final directly,
 	not mpn_hgcd_lehmer.
 
-2004-01-14  Niels Möller  <niels@lysator.liu.se>
-
 	* mpn/generic/gcd.c (gcd_schoenhage): Updated for changes to
 	mpn_hgcd and mpn_hgcd_fix. (Schoenhage code is still disabled).
 
@@ -593,8 +591,6 @@ MA 02111-1307, USA.
 
 	* tests/mpn/t-hgcd.c (hgcd_values): One more test value.
 
-2004-01-13  Niels Möller  <niels@lysator.liu.se>
-
 	* tests/mpn/t-hgcd.c (hgcd_values): Added values that trigged the
 	hgcd_jebelean bug.
 
@@ -616,8 +612,6 @@ MA 02111-1307, USA.
 	steps instead of a division loop.
 	(mpn_hgcd_lehmer): Deleted old Lehmer code, instead just
 	initialize and then call hgcd_final.
-
-2004-01-12  Niels Möller  <niels@lysator.liu.se>
 
 	* tests/tests.h: Added refmpn_free_limbs prototype.
 	* tests/refmpn.c (refmpn_free_limbs): New function.
@@ -866,17 +860,6 @@ MA 02111-1307, USA.
 	CPP to wrap assertion checks around all calls to
 	mpn_diff_smaller_p.
 
-2003-12-19  Torbjorn Granlund  <tege@swox.com>
-
-	* tests/mpf/t-get_d.c: Print message before aborting.
-
-	* mpn/generic/hgcd2.c (mpn_hgcd2): Substitute always-zero variable
-	with 0.  Remove bogus comment.
-
-	* mpn/generic/get_d.c: Make ONE_LIMB case actually work for nails.
-
-2003-12-19  Niels Möller  <nisse@lysator.liu.se>
-
 	* mpn/generic/hgcd.c (mpn_addmul2_n_1) [nails]: Fixed carry handling.
 
 	* mpn/generic/hgcd.c (mpn_diff_smaller_p) [nails]: Use
@@ -887,6 +870,15 @@ MA 02111-1307, USA.
 
 	* mpn/generic/qstack.c (mpn_hgcd_max_recursion): ... moved from
 	here.
+
+2003-12-19  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpf/t-get_d.c: Print message before aborting.
+
+	* mpn/generic/hgcd2.c (mpn_hgcd2): Substitute always-zero variable
+	with 0.  Remove bogus comment.
+
+	* mpn/generic/get_d.c: Make ONE_LIMB case actually work for nails.
 
 2003-12-18  Niels Möller  <niels@lysator.liu.se>
 
@@ -1081,8 +1073,6 @@ MA 02111-1307, USA.
 
 	* mpn/generic/gcd.c (gcd_schoenhage): TMP_DECL must be the final
 	declaration in the declaration section of a block.
-
-2003-12-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (mpn_gcd_accel): Added prototype.
 
