@@ -1,0 +1,266 @@
+/* mpfr expression evaluation */
+
+/*
+Copyright 2000, 2001 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+The GNU MP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
+option) any later version.
+
+The GNU MP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+MA 02111-1307, USA.
+*/
+
+/* Future: Bitwise "&", "|" and "&" could be done.  Not sure those functions
+   would be much value though.  */
+
+
+#include <stdio.h>
+
+#include "gmp.h"
+#include "expr-impl.h"
+
+
+/* Change this to "#define TRACE(x) x" to get some traces. */
+#define TRACE(x)
+
+
+/* This set of functions makes it possible to add the ROUND parameter, and a
+   few of the mpfr's are macros and need a wrapper anyway.
+
+   A whole new set of functions just like this is a bit horrible, but it's
+   the easiest way.  There doesn't seem much use having a rounding parameter
+   passed down through mpfr_expr_a, since a single rounding for all
+   operations in an expression doesn't give close enough control to be
+   useful.  */
+
+static void
+e_mpfr_abs (mpfr_ptr dst, mpfr_srcptr src)
+{
+  return mpfr_abs (dst, src, ROUND);
+}
+
+static void
+e_mpfr_add (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
+{
+  return mpfr_add (dst, src1, src2, ROUND);
+}
+
+static int
+e_mpfr_cmp (mpfr_srcptr x, mpfr_srcptr y)
+{
+  return mpfr_cmp (x, y);
+}
+
+static void
+e_mpfr_const_log2 (mpfr_ptr dst)
+{
+  mpfr_const_log2 (dst, ROUND);
+}
+
+static void
+e_mpfr_const_pi (mpfr_ptr dst)
+{
+  mpfr_const_pi (dst, ROUND);
+}
+
+static void
+e_mpfr_cos (mpfr_ptr c, mpfr_srcptr a)
+{
+  mpfr_t s;
+  mpfr_init2 (s, 1);
+  mpfr_sin_cos (s, c, a, ROUND);
+  mpfr_clear (s);
+}
+
+static void
+e_mpfr_div (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
+{
+  mpfr_div (dst, src1, src2, ROUND);
+}
+
+static void
+e_mpfr_div_2exp (mpfr_ptr dst, mpfr_srcptr src, unsigned long n)
+{
+  mpfr_div_2exp (dst, src, n, ROUND);
+}
+
+static void
+e_mpfr_exp (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_exp (dst, src, ROUND);
+}
+
+static void
+e_mpfr_log (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_log (dst, src, ROUND);
+}
+
+static void
+e_mpfr_mul (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
+{
+  mpfr_mul (dst, src1, src2, ROUND);
+}
+
+static void
+e_mpfr_mul_2exp (mpfr_ptr dst, mpfr_srcptr src, unsigned long n)
+{
+  return mpfr_mul_2exp (dst, src, n, ROUND);
+}
+
+static void
+e_mpfr_neg (mpfr_ptr dst, mpfr_srcptr src)
+{
+  return mpfr_neg (dst, src, ROUND);
+}
+
+static void
+e_mpfr_reldiff (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
+{
+  return mpfr_reldiff (dst, src1, src2, ROUND);
+}
+
+static int
+e_mpfr_sgn (mpfr_srcptr x)
+{
+  /* return mpfr_sgn (x); */
+  return mpfr_cmp_ui (x, 0L);
+}
+
+static void
+e_mpfr_sin (mpfr_ptr s, mpfr_srcptr a)
+{
+  mpfr_t c;
+  mpfr_init2 (c, 1);
+  mpfr_sin_cos (s, c, a, ROUND);
+  mpfr_clear (c);
+}
+
+static void
+e_mpfr_sqrt (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_sqrt (dst, src, ROUND);
+}
+
+static void
+e_mpfr_sub (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
+{
+  return mpfr_sub (dst, src1, src2, ROUND);
+}
+
+static void
+e_mpfr_pow_ui (mpfr_ptr p, mpfr_srcptr b, unsigned long e)
+{
+  mpfr_pow_ui (p, b, e, ROUND);
+}
+
+
+static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
+
+  { "**",  (mpexpr_fun_t) e_mpfr_pow_ui,
+    MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC,                   220 },
+  
+  { "!",   (mpexpr_fun_t) e_mpfr_sgn,
+    MPEXPR_TYPE_LOGICAL_NOT | MPEXPR_TYPE_PREFIX,                     210 },
+  { "-",   (mpexpr_fun_t) e_mpfr_neg,
+    MPEXPR_TYPE_UNARY | MPEXPR_TYPE_PREFIX,                           210 },
+
+  { "*",   (mpexpr_fun_t) e_mpfr_mul,        MPEXPR_TYPE_BINARY,      200 },
+  { "/",   (mpexpr_fun_t) e_mpfr_div,        MPEXPR_TYPE_BINARY,      200 },
+
+  { "+",   (mpexpr_fun_t) e_mpfr_add,        MPEXPR_TYPE_BINARY,      190 },
+  { "-",   (mpexpr_fun_t) e_mpfr_sub,        MPEXPR_TYPE_BINARY,      190 },
+
+  { "<<",  (mpexpr_fun_t) e_mpfr_mul_2exp,   MPEXPR_TYPE_BINARY_UI,   180 },
+  { ">>",  (mpexpr_fun_t) e_mpfr_div_2exp,   MPEXPR_TYPE_BINARY_UI,   180 },
+
+  { "<=",  (mpexpr_fun_t) e_mpfr_cmp,        MPEXPR_TYPE_CMP_LE,      170 },
+  { "<",   (mpexpr_fun_t) e_mpfr_cmp,        MPEXPR_TYPE_CMP_LT,      170 },
+  { ">=",  (mpexpr_fun_t) e_mpfr_cmp,        MPEXPR_TYPE_CMP_GE,      170 },
+  { ">",   (mpexpr_fun_t) e_mpfr_cmp,        MPEXPR_TYPE_CMP_GT,      170 },
+
+  { "==",  (mpexpr_fun_t) e_mpfr_cmp,        MPEXPR_TYPE_CMP_EQ,      160 },
+  { "!=",  (mpexpr_fun_t) e_mpfr_cmp,        MPEXPR_TYPE_CMP_NE,      160 },
+
+  { "&&",  (mpexpr_fun_t) e_mpfr_sgn,        MPEXPR_TYPE_LOGICAL_AND, 120 },
+  { "||",  (mpexpr_fun_t) e_mpfr_sgn,        MPEXPR_TYPE_LOGICAL_OR,  110 },
+
+  { ":",   NULL,                             MPEXPR_TYPE_COLON,       101 },
+  { "?",   (mpexpr_fun_t) e_mpfr_sgn,        MPEXPR_TYPE_QUESTION,    100 },
+
+  { ")",   NULL,                             MPEXPR_TYPE_CLOSEPAREN,    4 },
+  { "(",   NULL,                             MPEXPR_TYPE_OPENPAREN,     3 },
+  { ",",   NULL,                             MPEXPR_TYPE_ARGSEP,        2 },
+  { "$",   NULL,                             MPEXPR_TYPE_VARIABLE,      1 },
+
+  { "abs",     (mpexpr_fun_t) e_mpfr_abs,     MPEXPR_TYPE_UNARY       },
+  { "ceil",    (mpexpr_fun_t) mpfr_ceil,      MPEXPR_TYPE_UNARY       },
+  { "cmp",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_I_BINARY    },
+  { "cos",     (mpexpr_fun_t) e_mpfr_cos,     MPEXPR_TYPE_UNARY       },
+  { "exp",     (mpexpr_fun_t) e_mpfr_exp,     MPEXPR_TYPE_UNARY       },
+  { "floor",   (mpexpr_fun_t) mpfr_floor,     MPEXPR_TYPE_UNARY       },
+  { "log",     (mpexpr_fun_t) e_mpfr_log,     MPEXPR_TYPE_UNARY       },
+  { "max",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_MAX
+                                              | MPEXPR_TYPE_PAIRWISE  },
+  { "min",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_MIN
+                                              | MPEXPR_TYPE_PAIRWISE  },
+  { "reldiff", (mpexpr_fun_t) e_mpfr_reldiff, MPEXPR_TYPE_BINARY      },
+  { "sgn",     (mpexpr_fun_t) e_mpfr_sgn,     MPEXPR_TYPE_I_UNARY     },
+  { "sin",     (mpexpr_fun_t) e_mpfr_sin,     MPEXPR_TYPE_UNARY       },
+  { "sqrt",    (mpexpr_fun_t) e_mpfr_sqrt,    MPEXPR_TYPE_UNARY       },
+  { "trunc",   (mpexpr_fun_t) mpfr_trunc,     MPEXPR_TYPE_UNARY       },
+
+  { "log2",    (mpexpr_fun_t) e_mpfr_const_log2, MPEXPR_TYPE_CONSTANT },
+  { "pi",      (mpexpr_fun_t) e_mpfr_const_pi,   MPEXPR_TYPE_CONSTANT },
+
+  { NULL }
+};
+
+__gmp_const struct mpexpr_operator_t * __gmp_const mpfr_expr_standard_table
+= _mpfr_expr_standard_table;
+
+
+int
+#if __STDC__
+mpfr_expr (mpfr_ptr res, int base, __gmp_const char *e, ...)
+#else
+mpfr_expr (va_alist)
+     va_dcl
+#endif
+{
+  mpfr_srcptr  var[MPEXPR_VARIABLES];
+  va_list     ap;
+  int         ret;
+#if __STDC__
+  va_start (ap, e);
+#else
+  mpfr_ptr          res;
+  int               base;
+  __gmp_const char  *e;
+  va_start (ap);
+  res  = va_arg (ap, mpfr_ptr);
+  base = va_arg (ap, int);
+  e    = va_arg (ap, __gmp_const char *);
+#endif
+
+  TRACE (printf ("mpfr_expr(): base %d, %s\n", base, e));
+  ret = mpexpr_va_to_var ((void **) var, ap);
+  va_end (ap);
+
+  if (ret != MPEXPR_RESULT_OK)
+    return ret;
+
+  return mpfr_expr_a (mpfr_expr_standard_table, res, base,
+                      mpfr_get_prec (res), e, strlen(e), var);
+}
