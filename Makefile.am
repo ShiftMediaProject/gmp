@@ -161,9 +161,10 @@ MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
   mp_minv_tab.c mp_set_fns.c stack-alloc.c
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			    \
-  mpz/add.lo mpz/clear.lo mpz/init.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo \
-  mpz/realloc.lo mpz/set.lo mpz/set_ui.lo mpz/tdiv_r.lo mpz/sub.lo
+libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			\
+  mpz/add.lo mpz/clear.lo mpz/cmp.lo mpz/init.lo mpz/mod.lo mpz/mul.lo	\
+  mpz/mul_2exp.lo mpz/realloc.lo mpz/set.lo mpz/set_ui.lo mpz/tdiv_r.lo	\
+  mpz/sub.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
 libmp_la_LDFLAGS = \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
