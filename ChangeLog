@@ -1,3 +1,10 @@
+2000-11-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/t-mul.c (base_mul): Fix re-evaluation problems in macro
+	invocations.
+	(ref_mpz_mul): New name from mpz_refmul.  Make static.
+	(base_mul): New name for _mpn_mul_classic.
+
 2000-11-30  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in: Rewrite of CC/CFLAGS selection scheme, introduce a
@@ -152,7 +159,7 @@
 	* tune/hppa2.asm: Change level directive to "2.0n".
 	* tune/hppa2w.asm: New file.
 	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]: Separate out hppa2.0w.
-	
+
 	* mpn/pa64/gmp-mparam.h (BITS_PER_LONGINT): 64 => 32.
 
 2000-11-21  Kevin Ryde  <kevin@swox.se>
@@ -186,7 +193,7 @@
 	* mpz/tests/t-powm_ui.c: Likewise.
 	* mpz/tests/t-pow_ui.c: Likewise.
 	* mpz/tests/t-root.c: Likewise.
-	
+
 	* configure.in [compiler switch]: Pass "-Aa -D_HPUX_SOURCE" to cc for
 	all hppa versions.
 
