@@ -1528,8 +1528,11 @@ for abi in $abilist; do
         test -n "$cflags" || eval cflags=\"\$${ccbase}${abi2}_cflags\"
 
 	if test "$tmp_cflags_maybe" = yes; then
+          # don't try cflags_maybe when the user set CFLAGS
+          if test "$test_CFLAGS" = set; then continue; fi
                                      eval cflags_maybe=\"\$${ccbase}${abi1}_cflags_maybe\"
           test -n "$cflags_maybe" || eval cflags_maybe=\"\$${ccbase}${abi2}_cflags_maybe\"
+          # don't try cflags_maybe if there's nothing set
           if test -z "$cflags_maybe"; then continue; fi
           cflags="$cflags_maybe $cflags"
         fi
