@@ -779,7 +779,8 @@
 	mpf_set_prec_raw a bit.
 	(Float Comparison): Note current mpf_eq deficiencies.
 
-	* gmp-h.in: Merge gnu ansidecl.h tests for ANSI compilers.
+	* gmp-h.in (__GMP_HAVE_CONST, __GMP_HAVE_PROTOTYPES,
+	__GMP_HAVE_TOKEN_PASTE): Merge GNU ansidecl.h tests for ANSI compilers.
 	* demos/expr/expr-impl-h.in: Ditto.
 
 	* gmp-impl.h (BITS_PER_MP_LIMB): Define from __GMP_BITS_PER_MP_LIMB if
