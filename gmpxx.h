@@ -5505,7 +5505,10 @@ public:
   // gmp_randinit_lc_2exp_size
   gmp_randclass(__gmp_randinit_lc_2exp_size_t* f,
 		unsigned long int size)
-  { f(state, size); }
+  {
+    if (f (state, size) == 0)
+      throw std::length_error ("gmp_randinit_lc_2exp_size");
+  }
 
   ~gmp_randclass() { gmp_randclear(state); }
 
