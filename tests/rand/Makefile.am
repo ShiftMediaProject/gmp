@@ -20,7 +20,7 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu
+AUTOMAKE_OPTIONS = gnu no-dependencies
 
 INCLUDES = -I$(top_srcdir)
 LDADD = libstat.la $(top_builddir)/libgmp.la

@@ -43,7 +43,7 @@
 #     listed in the Makefile.am's in the subdirectories.
 
 
-AUTOMAKE_OPTIONS = gnu check-news
+AUTOMAKE_OPTIONS = gnu check-news no-dependencies
 
 SUBDIRS = mpf mpz mpn mpq tests demos mpbsd
 
