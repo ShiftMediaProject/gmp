@@ -323,7 +323,7 @@ void
 mpz_negrandom (mpz_ptr rop, gmp_randstate_t rstate)
 {
   mp_limb_t  n;
-  _gmp_rand (&n, RANDS, 1);
+  _gmp_rand (&n, rstate, 1);
   if (n != 0)
     mpz_neg (rop, rop);
 }
