@@ -344,7 +344,7 @@ extern mp_size_t __gmp_default_fp_limb_precision;
 /* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
    between GCC 2 releases from 2.5, since __GNUC_MINOR__ wasn't introduced
    until then.  */
-#if __GNUC__ - 0 > 2 || defined (__GNUC_MINOR__)
+#if __GNUC__ - 0 > 2 || defined (__GNUC_MINOR__) && ! defined (__APPLE_CC__)
 /* Define stuff for longlong.h.  */
 typedef unsigned int UQItype	__attribute__ ((mode (QI)));
 typedef		 int SItype	__attribute__ ((mode (SI)));
