@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.129
+# From configure.in Revision: 1.130
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4438,8 +4438,14 @@ for tmp_fn in ${gmp_mpn_functions} ; do
         if test -f $tmp_file; then
           found=yes
 
-          mpn_objects="$mpn_objects ${tmp_fn}.lo"
-          mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}.lo"
+          if test $tmp_ext = c; then
+            tmp_u='$U'
+          else
+            tmp_u=
+          fi
+
+          mpn_objects="$mpn_objects ${tmp_fn}${tmp_u}.lo"
+          mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}${tmp_u}.lo"
           gmp_links="$gmp_links mpn/$tmp_fn.$tmp_ext:mpn/$tmp_dir/$tmp_base.$tmp_ext"
 
           # duplicate AC_DEFINEs are harmless, so it doesn't matter
@@ -5174,3 +5180,4 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
+
