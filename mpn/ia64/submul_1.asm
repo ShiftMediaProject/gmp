@@ -30,14 +30,13 @@ C v = r35
 
 C         cycles/limb
 C Itanium:    4
-C Itanium 2:  7
-
+C Itanium 2:  3.5
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
 	.prologue
 	.save	ar.pfs, r21
-		alloc		r21 = ar.pfs, 4, 12, 0, 16
+		alloc		r21 = ar.pfs, 4, 4, 0, 8
 	.save	ar.lc, r2
 		mov		r2 = ar.lc
 		mov		r20 = ar.ec
@@ -47,7 +46,7 @@ PROLOGUE(mpn_submul_1)
 ifdef(`HAVE_ABI_32',
 `		addp4	r32 = 0, r32
 		addp4	r33 = 0, r33
-		sxt4	r34 = r34
+		zxt4	r34 = r34
 ')
 		sub r35 = r0, r35			C negate v
 		;;
@@ -61,7 +60,7 @@ ifdef(`HAVE_ABI_32',
 		mov		ar.lc = r19
 		nop.b		0
 } { .mib;	mov		r17 = r33
-		mov		ar.ec = 7
+		mov		ar.ec = 8
 		nop.b		0
 } { .mib;	mov		r19 = r33
 		mov		pr.rot = 1<<16
@@ -75,20 +74,20 @@ ifdef(`HAVE_ABI_32',
 .Loop:
   { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
 	  (p19)	xma.l		f40 = f35, f6, f39	C  0  3  6 >9 12 15 18
-	  (p22)	cmp.ltu		p6, p7 = r33, r23	C  0  3  6  9 12 15>18
+	  (p23)	cmp.ltu		p6, p7 = r34, r23	C  0  3  6  9 12 15>18
 } { .mfi; (p16)	ldf8		f36 = [r16], 8		C >0  3  6  9 12 15 18
 	  (p19)	xma.hu		f44 = f35, f6, f39	C  0  3  6 >9 12 15 18
-	  (p22)	sub		r14 = r33, r23	;;	C  0  3  6  9 12 15>18
+	  (p23)	sub		r14 = r34, r23	;;	C  0  3  6  9 12 15>18
 } { .mib; (p21)	getf.sig	r32 = f42		C  1  4  7 10 13>16 19
-	  (p22)	sub		r23 = r24, r37		C  1  4  7 10 13 16>19
+	  (p23)	sub		r23 = r24, r38		C  1  4  7 10 13 16>19
 		nop.b		0			C  1  4  7 10 13 16 19
-} { .mib; (p21)	ld8		r24 = [r19], 8		C  1  4  7 10 13>16 19
+} { .mib; (p22)	ld8		r24 = [r19], 8		C  1  4  7 10 13>16 19
 		nop.i		0			C  1  4  7 10 13 16>19
 		nop.b		0		;;	C  1  4  7 10 13 16 19
 } { .mib; (p21)	getf.sig	r36 = f46		C  2  5  8 11 14>17 20
 	   (p6)	add		r23 = 1, r23		C  2  5  8 11 14 17 20
 		nop.b		0			C  2  5  8 11 14 17 20
-} { .mib; (p22)	st8		[r18] = r14, 8		C  2  5  8 11 14 17>20
+} { .mib; (p23)	st8		[r18] = r14, 8		C  2  5  8 11 14 17>20
 		nop.i		0			C  2  5  8 11 14 17 20
 		br.ctop.sptk.few .Loop		;;	C  2  5  8 11 14 17 20
 }
