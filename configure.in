@@ -64,7 +64,7 @@ fi
 
 
 AC_ARG_ENABLE(alloca,
-AC_HELP_STRING([--enable-alloca],[use alloca for temp space [default=yes]]),
+AC_HELP_STRING([--enable-alloca],[use alloca for temp space [default=detect]]),
 [case $enableval in
 yes|no|detect) ;;
 *) AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect]) ;;
