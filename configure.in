@@ -507,7 +507,7 @@ case $host in
   # IRIX 5 and earlier can only run 32-bit o32.
   #
   # IRIX 6 and up can run n32 or 64, and GMP uses a 64-bit limb on both.  It
-  # could run the mips2 code in n32 with a 32-bit limb, which we could
+  # could run the mpn/mips32 code in n32 with a 32-bit limb, which we could
   # perhaps call 32, but since that would just create a slower library, we
   # don't give that option.
   #
@@ -529,7 +529,7 @@ case $host in
     cc_n32_cflags="-O2 -n32"		# no -g, it disables all optimizations
     cc_n32_ldflags="-Wc,-n32"
     limb_n32=longlong
-    path_n32="mips3"
+    path_n32="mips64"
     extra_functions="umul"
 
     cclist_64="gcc cc"
@@ -537,15 +537,16 @@ case $host in
     gcc_64_ldflags="-Wc,-mabi=64"
     cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
     cc_64_ldflags="-Wc,-64"
-    path_64="mips3"
+    path_64="mips64"
     extra_functions_64="umul"
 
-    GMP_INCLUDE_MPN(mips3/mips.m4)
+    GMP_INCLUDE_MPN(mips64/mips.m4)
     ;;
 
   mips*-*-*)
-    path="mips2"
+    path="mips32"
     extra_functions="umul"
+    GMP_INCLUDE_MPN(mips32/mips.m4)
     ;;
 
 
