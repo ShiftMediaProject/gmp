@@ -45,7 +45,11 @@ check_zero (unsigned long m2exp)
     {
       mpz_urandomb (a, r, 123L);
       if (mpz_sgn (a) != 0)
-        printf ("check_zero m2exp=%lu: didn't get zero\n", m2exp);
+        {
+          printf ("check_zero m2exp=%lu: didn't get zero\n", m2exp);
+          gmp_printf ("  rand=%#Zx\n", a);
+          abort ();
+        }
     }
 
   mpz_clear (a);
@@ -104,7 +108,7 @@ check_bigc (void)
         {
           printf     ("check_bigc: mpz_urandomb out of range\n");
           printf     ("   m2exp=%lu\n", m2exp);
-          gmp_printf ("   a=%#ZX\n", a);
+          gmp_printf ("   rand=%#ZX\n", a);
           gmp_printf ("   sizeinbase2=%u\n", mpz_sizeinbase (a, 2));
         }
     }
