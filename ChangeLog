@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-27  Niels Möller  <nisse@harpo.hack.org>
+
+	* tests/mpz/t-gcd.c (gcd_values): Moved definition, so that we
+	don't need to forward declare the array.
+
 2003-11-26  Niels Möller  <nisse@harpo.hack.org>
 
 	* mpn/generic/hgcd.c (mpn_hgcd2_fix): Deleted duplicate definition
