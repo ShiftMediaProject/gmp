@@ -137,6 +137,8 @@ ks_table (mpf_t p, mpf_t val, const unsigned int n)
 
      Pr(Kp(n) <= s) = 1 - pow(e, -2*s^2) * (1 - 2/3*s/sqrt(n) + O(1/n)) */
 
+  /* We have 's' in variable VAL and store the result in P. */
+
   mpf_t t1, t2;
 
   mpf_init (t1); mpf_init (t2);
@@ -149,8 +151,13 @@ ks_table (mpf_t p, mpf_t val, const unsigned int n)
   mpf_ui_sub (t1, 1, t1);
 
   /* t2 = pow(e, -2*s^2) */
+#ifndef OLDGMP
+  mpf_pow_ui (t2, val, 2);	/* t2 = s^2 */
+  mpf_set_d (t2, exp (-(2.0 * mpf_get_d (t2))));
+#else
   /* hmmm, gmp doesn't have pow() for floats.  use doubles. */
   mpf_set_d (t2, pow (M_E, -(2 * pow (mpf_get_d (val), 2))));
+#endif  
 
   /* p = 1 - t1 * t2 */
   mpf_mul (t1, t1, t2);
@@ -334,5 +341,15 @@ mpz_freqt (mpf_t V,
   return (usedn);
 }
 
-
-
+/* debug dummy to drag in dump funcs */
+void
+foo_debug () 
+{
+  if (0)
+    {
+      mpf_dump (0); 
+#ifndef OLDGMP
+      mpz_dump (0);
+#endif      
+    }
+}

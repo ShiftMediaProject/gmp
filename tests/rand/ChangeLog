@@ -1,5 +1,7 @@
 1999-03-16  Linus Nordberg  <linus.nordberg@canit.se>
 
+	* statlib.c (ks_table): Use mpf_pow_ui() and exp().
+
 	* gen.c: Include unistd.h for getopt.
 
 1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
