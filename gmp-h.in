@@ -1428,11 +1428,11 @@ mpf_size (mpf_srcptr f)
            "  jnz  " __GMP_ASM_L(top) "\n"              \
            __GMP_ASM_L(done) ":\n"                      \
            "  sbbl   %0, %0\n"                          \
-           : "=r"  (cout),                              \
-             "=r"  (__dummy1),                          \
-             "=rm" (__dummy2)                           \
-           : "1"   (ptr),                               \
-             "2"   (size)                               \
+           : "=r"   (cout),                             \
+             "=&r"  (__dummy1),                         \
+             "=&rm" (__dummy2)                          \
+           : "1"    (ptr),                              \
+             "2"    (size)                              \
            : "memory");                                 \
       }                                                 \
     else                                                \
@@ -1448,12 +1448,12 @@ mpf_size (mpf_srcptr f)
            "  jc   " __GMP_ASM_L(top) "\n"              \
            __GMP_ASM_L(done) ":\n"                      \
            "  sbbl   %0, %0\n"                          \
-           : "=r"  (cout),                              \
-             "=r"  (__dummy1),                          \
-             "=rm" (__dummy2)                           \
-           : "1"   (ptr),                               \
-             "2"   (size),                              \
-             "ri"  (n)                                  \
+           : "=r"   (cout),                             \
+             "=&r"  (__dummy1),                         \
+             "=&rm" (__dummy2)                          \
+           : "1"    (ptr),                              \
+             "2"    (size),                             \
+             "ri"   (n)                                 \
            : "memory");                                 \
       }                                                 \
     (cout) = -(cout);                                   \
@@ -1478,10 +1478,10 @@ mpf_size (mpf_srcptr f)
        "  jc   " __GMP_ASM_L(top) "\n"                          \
        __GMP_ASM_L(done) ":\n"                                  \
        "  sbbl   %0, %0\n"                                      \
-       : "=r"  (cout),                                          \
-         "=r"  (__dst),                                         \
-         "=r"  (__src),                                         \
-         "=rm" (__size)                                         \
+       : "=&r"  (cout),                                         \
+         "=&r"  (__dst),                                        \
+         "=&r"  (__src),                                        \
+         "=&rm" (__size)                                        \
        : "1" (dst),                                             \
          "2" (src),                                             \
          "3" (size)                                             \
@@ -1526,10 +1526,10 @@ mpf_size (mpf_srcptr f)
                "  jc   " __GMP_ASM_L(top) "\n"                          \
                __GMP_ASM_L(done) ":\n"                                  \
                "  sbbl   %0, %0\n"                                      \
-               : "=r"  (cout),                                          \
-                 "=r"  (__dst),                                         \
-                 "=r"  (__src),                                         \
-                 "=rm" (__size)                                         \
+               : "=&r"  (cout),                                         \
+                 "=&r"  (__dst),                                        \
+                 "=&r"  (__src),                                        \
+                 "=&rm" (__size)                                        \
                : "1"   (dst),                                           \
                  "2"   (src),                                           \
                  "3"   (size),                                          \
@@ -1578,15 +1578,15 @@ mpf_size (mpf_srcptr f)
                "  jc   " __GMP_ASM_L(top) "\n"                          \
                __GMP_ASM_L(done) ":\n"                                  \
                "  sbbl   %0, %0\n"                                      \
-               : "=r"  (cout),                                          \
-                 "=r"  (__dst),                                         \
-                 "=r"  (__src),                                         \
-                 "=rm" (__size),                                        \
-                 "=rm" (__dummy)                                        \
-               : "1"   (dst),                                           \
-                 "2"   (src),                                           \
-                 "3"   (size),                                          \
-                 "4"   (n)                                              \
+               : "=&r"  (cout),                                         \
+                 "=&r"  (__dst),                                        \
+                 "=&r"  (__src),                                        \
+                 "=&rm" (__size),                                       \
+                 "=&rm" (__dummy)                                       \
+               : "1"    (dst),                                          \
+                 "2"    (src),                                          \
+                 "3"    (size),                                         \
+                 "4"    (n)                                             \
                : "memory");                                             \
                                                                         \
             (cout) = -(cout);                                           \
