@@ -30,9 +30,9 @@ MA 02111-1307, USA. */
 #define KARATSUBA_MUL_THRESHOLD 28
 #endif
 
-/* This is with mpn/generic/sqr_basecase.c. */
+/* mpn/generic/sqr_basecase.c, gcc -O2, and no K7 specific lshift yet */
 #ifndef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD 82
+#define KARATSUBA_SQR_THRESHOLD 88
 #endif
 
 #define UMUL_TIME   4   /* cycles back-to-back */
