@@ -26,8 +26,7 @@ MA 02111-1307, USA.
 
    To add a new routine foo() to measure, create a speed_foo() function in
    the style of the existing ones and add an entry in the routine[] array.
-   Put FLAG_R if the routine needs an "r" parameter.  See speed-ext.c for an
-   example of doing this temporarily.
+   Put FLAG_R if the routine needs an "r" parameter.
 
    The routines don't have help messages or descriptions, but most have
    pretty suggestive names.  See the source code for full details.
@@ -40,6 +39,10 @@ MA 02111-1307, USA.
    Better error message when a routine is used wrongly with/without .r.
 
 */
+
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #if HAVE_GETOPT_H
 #include <getopt.h>  /* for getopt_long() */
@@ -127,8 +130,8 @@ const struct routine_t {
   { "mpn_add_n_self",    speed_mpn_add_n_self       },
   { "mpn_add_n_inplace", speed_mpn_add_n_inplace    },
 
-  { "mpn_addmul_1",      speed_mpn_addmul_1         },
-  { "mpn_submul_1",      speed_mpn_submul_1         },
+  { "mpn_addmul_1",      speed_mpn_addmul_1, FLAG_R },
+  { "mpn_submul_1",      speed_mpn_submul_1, FLAG_R },
 
   { "mpn_divmod_1",      speed_mpn_divmod_1, FLAG_R },
   { "mpn_divrem_1",      speed_mpn_divrem_1, FLAG_R },
@@ -145,27 +148,38 @@ const struct routine_t {
   { "mpn_lshift",        speed_mpn_lshift,   FLAG_R },
   { "mpn_rshift",        speed_mpn_rshift,   FLAG_R },
 
+  { "mpn_and_n",         speed_mpn_and_n            },
+  { "mpn_andn_n",        speed_mpn_andn_n           },
+  { "mpn_nand_n",        speed_mpn_nand_n           },
+
+  { "mpn_ior_n",         speed_mpn_ior_n            },
+  { "mpn_iorn_n",        speed_mpn_iorn_n           },
+  { "mpn_nior_n",        speed_mpn_nior_n           },
+
+  { "mpn_xor_n",         speed_mpn_xor_n            },
+  { "mpn_xnor_n",        speed_mpn_xnor_n           },
+
   { "mpn_popcount",      speed_mpn_popcount         },
 
   { "mpz_fac_ui",        speed_mpz_fac_ui           },
   { "mpz_fib_ui",        speed_mpz_fib_ui           },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R },
-  { "mpn_sqr_basecase",  speed_mpn_sqr_basecase },
+  { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
 
-  { "mpn_mul_n",         speed_mpn_mul_n },
-  { "mpn_sqr_n",         speed_mpn_sqr_n },
+  { "mpn_mul_n",         speed_mpn_mul_n            },
+  { "mpn_sqr_n",         speed_mpn_sqr_n            },
 
-  { "mpn_kara_mul_n",    speed_mpn_kara_mul_n },
-  { "mpn_kara_sqr_n",    speed_mpn_kara_sqr_n },
+  { "mpn_kara_mul_n",    speed_mpn_kara_mul_n       },
+  { "mpn_kara_sqr_n",    speed_mpn_kara_sqr_n       },
 
-  { "mpn_toom3_mul_n",   speed_mpn_toom3_mul_n },
-  { "mpn_toom3_sqr_n",   speed_mpn_toom3_sqr_n },
+  { "mpn_toom3_mul_n",   speed_mpn_toom3_mul_n      },
+  { "mpn_toom3_sqr_n",   speed_mpn_toom3_sqr_n      },
 
-  { "MPN_COPY",          speed_MPN_COPY      },
-  { "MPN_COPY_INCR",     speed_MPN_COPY_INCR },
-  { "MPN_COPY_DECR",     speed_MPN_COPY_DECR },
-  { "memcpy",            speed_memcpy        },
+  { "MPN_COPY",          speed_MPN_COPY             },
+  { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },
+  { "MPN_COPY_DECR",     speed_MPN_COPY_DECR        },
+  { "memcpy",            speed_memcpy               },
 
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
