@@ -43,12 +43,6 @@ size_t
 mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 {
   mp_limb_t big_base;
-#if UDIV_NEEDS_NORMALIZATION || UDIV_TIME > 2 * UMUL_TIME
-  int normalization_steps;
-#endif
-#if UDIV_TIME > 2 * UMUL_TIME
-  mp_limb_t big_base_inverted;
-#endif
   unsigned int dig_per_u;
   mp_size_t out_len;
   register unsigned char *s;
@@ -123,17 +117,11 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
     {
       /* General case.  The base is not a power of 2.  Make conversion
 	 from least significant end.  */
-
-      /* If udiv_qrnnd only handles divisors with the most significant bit
-	 set, prepare BIG_BASE for being a divisor by shifting it to the
-	 left exactly enough to set the most significant bit.  */
-#if UDIV_NEEDS_NORMALIZATION || UDIV_TIME > 2 * UMUL_TIME
+#if USE_PREINV_DIVREM_1
+      unsigned   normalization_steps;
+      mp_limb_t  big_base_inverted;
       count_leading_zeros (normalization_steps, big_base);
-      big_base <<= normalization_steps;
-#if UDIV_TIME > 2 * UMUL_TIME
-      /* Get the fixed-point approximation to 1/(BIG_BASE << NORMALIZATION_STEPS).  */
       big_base_inverted = __mp_bases[base].big_base_inverted;
-#endif
 #endif
 
       dig_per_u = __mp_bases[base].chars_per_limb;
@@ -144,61 +132,19 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
       while (msize != 0)
 	{
 	  int i;
-	  mp_limb_t n0, n1;
+	  mp_limb_t n1;
 
-#if UDIV_NEEDS_NORMALIZATION || UDIV_TIME > 2 * UMUL_TIME
-	  /* If we shifted BIG_BASE above, shift the dividend too, to get
-	     the right quotient.  We need to do this every loop,
-	     since the intermediate quotients are OK, but the quotient from
-	     one turn in the loop is going to be the dividend in the
-	     next turn, and the dividend needs to be up-shifted.  */
-	  if (normalization_steps != 0)
-	    {
-	      n0 = mpn_lshift (mptr, mptr, msize, normalization_steps);
-
-	      /* If the shifting gave a carry out limb, store it and
-		 increase the length.  */
-	      if (n0 != 0)
-		{
-		  mptr[msize] = n0;
-		  msize++;
-		}
-	    }
-#endif
-
-	  /* Divide the number at TP with BIG_BASE to get a quotient and a
-	     remainder.  The remainder is our new digit in base BIG_BASE.  */
-	  i = msize - 1;
-	  n1 = mptr[i];
-
-	  if (n1 >= big_base)
-	    n1 = 0;
-	  else
-	    {
-	      msize--;
-	      i--;
-	    }
-
-	  for (; i >= 0; i--)
-	    {
-	      n0 = mptr[i];
-#if UDIV_TIME > 2 * UMUL_TIME
-	      udiv_qrnnd_preinv (mptr[i], n1, n1, n0, big_base, big_base_inverted);
-#else
-	      udiv_qrnnd (mptr[i], n1, n1, n0, big_base);
-#endif
-	    }
-
-#if UDIV_NEEDS_NORMALIZATION || UDIV_TIME > 2 * UMUL_TIME
-	  /* If we shifted above (at previous UDIV_NEEDS_NORMALIZATION tests)
-	     the remainder will be up-shifted here.  Compensate.  */
-	  n1 >>= normalization_steps;
-#endif
+          n1 = MPN_DIVREM_OR_PREINV_DIVREM_1 (mptr, (mp_size_t) 0,
+                                              mptr, msize, big_base,
+                                              big_base_inverted,
+                                              normalization_steps);
+          msize -= (mptr[msize-1] == 0);
 
 	  /* Convert N1 from BIG_BASE to a string of digits in BASE
 	     using single precision operations.  */
 	  for (i = dig_per_u - 1; i >= 0; i--)
 	    {
+              ASSERT (s >= str);
 	      *--s = n1 % base;
 	      n1 /= base;
 	      if (n1 == 0 && msize == 0)
@@ -207,7 +153,10 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 	}
 
       while (s != str)
-	*--s = 0;
+        {
+          ASSERT (s >= str);
+          *--s = 0;
+        }
       return out_len;
     }
 }
