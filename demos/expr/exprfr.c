@@ -189,6 +189,12 @@ e_mpfr_inf_p (mpfr_srcptr f)
   return (mpfr_inf_p (f) != 0);
 }
 
+static int
+e_mpfr_integer_p (mpfr_srcptr f)
+{
+  return (mpfr_integer_p (f) != 0);
+}
+
 static void
 e_mpfr_log (mpfr_ptr dst, mpfr_srcptr src)
 {
@@ -371,6 +377,7 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "gamma",   (mpexpr_fun_t) e_mpfr_gamma,   MPEXPR_TYPE_UNARY        },
   { "hypot",   (mpexpr_fun_t) e_mpfr_hypot,   MPEXPR_TYPE_BINARY       },
   { "inf_p",   (mpexpr_fun_t) e_mpfr_inf_p,   MPEXPR_TYPE_I_UNARY      },
+  { "integer_p",(mpexpr_fun_t)e_mpfr_integer_p,MPEXPR_TYPE_I_UNARY      },
   { "log",     (mpexpr_fun_t) e_mpfr_log,     MPEXPR_TYPE_UNARY        },
   { "log2",    (mpexpr_fun_t) e_mpfr_log2,    MPEXPR_TYPE_UNARY        },
   { "log10",   (mpexpr_fun_t) e_mpfr_log10,   MPEXPR_TYPE_UNARY        },

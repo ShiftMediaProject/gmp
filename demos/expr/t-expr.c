@@ -331,6 +331,15 @@ const struct data_t  data_r[] = {
   { 0, "inf == -inf",     "0" },
   { 0, "inf != -inf",     "1" },
 
+  { 0, "integer_p(0)",    "1" },
+  { 0, "integer_p(1)",    "1" },
+  { 0, "integer_p(-1)",   "1" },
+  { 0, "integer_p(1.5)",  "0" },
+  { 0, "integer_p(-1.5)", "0" },
+  { 0, "integer_p(nan)",  "0" },
+  { 0, "integer_p(inf)",  "0" },
+  { 0, "integer_p(-inf)", "0" },
+
   { 0, "nan_p(log(-1))",  "1" },
   { 0, "inf_p(log(0))",   "1" },
   { 0, "log(0) == -inf",  "1" },
