@@ -55,11 +55,11 @@ C_SYMBOL_NAME(__mpn_add_nc:)
 	shrl	$2,%eax			/* restore previous value */
 #ifdef PIC
 /* Calculate start address in loop for PIC.  Due to limitations in some
-   assemblers, Loop-L0-3 cannot be put into the leal */
-	call	L0
-L0:	leal	(%eax,%eax,8),%eax
+   assemblers, Loop-L0a-3 cannot be put into the leal */
+	call	L0a
+L0a:	leal	(%eax,%eax,8),%eax
 	addl	(%esp),%eax
-	addl	$(Loop-L0-3),%eax
+	addl	$(Loop-L0a-3),%eax
 	addl	$4,%esp
 #else
 /* Calculate start address in loop for non-PIC.  */
@@ -98,11 +98,11 @@ C_SYMBOL_NAME(__mpn_add_n:)
 	shrl	$2,%eax			/* restore previous value */
 #ifdef PIC
 /* Calculate start address in loop for PIC.  Due to limitations in some
-   assemblers, Loop-L0-3 cannot be put into the leal */
-	call	L0
-L0:	leal	(%eax,%eax,8),%eax
+   assemblers, Loop-L0b-3 cannot be put into the leal */
+	call	L0b
+L0b:	leal	(%eax,%eax,8),%eax
 	addl	(%esp),%eax
-	addl	$(Loop-L0-3),%eax
+	addl	$(Loop-L0b-3),%eax
 	addl	$4,%esp
 #else
 /* Calculate start address in loop for non-PIC.  */
