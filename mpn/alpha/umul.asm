@@ -32,3 +32,4 @@ PROLOGUE(mpn_umul_ppmm)
 	stq	r1, 0(r16)
 	ret	r31, (r26), 1
 EPILOGUE()
+ASM_END()
