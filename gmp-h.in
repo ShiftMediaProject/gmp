@@ -67,13 +67,16 @@ typedef long int		mp_limb_signed_t;
 #endif
 #endif
 
+/* NOTE: __GMP_MP_SIZE_T_INT is strictly for internal use only. */
 typedef mp_limb_t *		mp_ptr;
 typedef __gmp_const mp_limb_t *	mp_srcptr;
 #if defined (_CRAY) && ! defined (_CRAYMPP)
 /* plain `int' is much faster (48 bits) */
+#define __GMP_MP_SIZE_T_INT     1
 typedef int			mp_size_t;
 typedef int			mp_exp_t;
 #else
+#define __GMP_MP_SIZE_T_INT     0
 typedef long int		mp_size_t;
 typedef long int		mp_exp_t;
 #endif
