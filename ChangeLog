@@ -26,6 +26,9 @@
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Rewrite.
 	(mpn_lc): New static function.
 
+	* mpz/urandomb.c (mpz_urandomb): Use ABSIZ() instead of SIZ() for
+	determining size of ROP.
+
 	* mpf/urandom.c (mpf_urandomb): Add third parameter, nbits.  (Not
 	used yet!)  
 	Change parameter order to mpn_rawrandom().
