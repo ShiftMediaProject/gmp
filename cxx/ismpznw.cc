@@ -1,4 +1,4 @@
-/* operator>> -- C++-style input of mpz_t.
+/* __gmpz_operator_in_nowhite -- C++-style input of mpz_t, no whitespace skip.
 
 Copyright 2001, 2003 Free Software Foundation, Inc.
 
@@ -32,23 +32,33 @@ using namespace std;
 // include/bits/locale_facets.tcc.
 
 istream &
-operator>> (istream &i, mpz_ptr z)
+__gmpz_operator_in_nowhite (istream &i, mpz_ptr z, char c)
 {
-  char c = 0;
-  i.get(c); // start reading
+  int base;
+  string s;
+  bool ok = false, zero, showbase;
 
-  if (i.flags() & ios::skipws) // skip initial whitespace
+  if (c == '-' || c == '+') // sign
     {
-#if HAVE_STD__LOCALE
-      const ctype<char>& ct = use_facet< ctype<char> >(i.getloc());
-#define cxx_isspace(c)  (ct.is(ctype_base::space,(c)))
-#else
-#define cxx_isspace(c)  isspace(c)
-#endif
-
-      while (cxx_isspace(c) && i.get(c))
-        ;
+      if (c == '-') // mpz_set_str doesn't accept '+'
+	s = "-";
+      i.get(c);
     }
 
-  return __gmpz_operator_in_nowhite (i, z, c);
+  base = __gmp_istream_set_base(i, c, zero, showbase); // select the base
+  __gmp_istream_set_digits(s, i, c, ok, base);         // read the number
+
+  if (i.good()) // last character read was non-numeric
+    i.putback(c);
+  else if (i.eof() && (ok || zero)) // stopped just before eof
+    i.clear();
+
+  if (ok)
+    ASSERT_NOCARRY (mpz_set_str (z, s.c_str(), base)); // extract the number
+  else if (zero)
+    mpz_set_ui(z, 0);
+  else
+    i.setstate(ios::failbit); // read failed
+
+  return i;
 }
