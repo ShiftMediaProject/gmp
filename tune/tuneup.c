@@ -1139,6 +1139,7 @@ all (void)
     int        low, i;
 
     param.name[0] = "DIVEXACT_1_THRESHOLD";
+    param.data_high = DATA_HIGH_GE_R;
     param.check_size = 256;
     param.min_size[0] = 2;
     param.stop_factor = 1.5;
