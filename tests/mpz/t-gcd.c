@@ -110,6 +110,10 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
+  int reps = 50;
+
+  if (argc == 2)
+     reps = atoi (argv[1]);
 
   tests_start ();
   rands = RANDS;
@@ -127,7 +131,7 @@ main (int argc, char **argv)
   mpz_init (s);
   mpz_init (t);
 
-  for (i = 0; i < 50; i++)
+  for (i = 0; i < reps; i++)
     {
       /* Generate plain operands with unknown gcd.  These types of operands
 	 have proven to trigger certain bugs in development versions of the
