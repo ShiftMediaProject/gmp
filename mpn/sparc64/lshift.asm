@@ -1,97 +1,149 @@
-! SPARC v9 __gmpn_lshift --
+dnl  SPARC v9 mpn_lshift
 
-! Copyright 1996, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
-! This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-! The GNU MP Library is free software; you can redistribute it and/or modify
-! it under the terms of the GNU Lesser General Public License as published by
-! the Free Software Foundation; either version 2.1 of the License, or (at your
-! option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published by
+dnl  the Free Software Foundation; either version 2.1 of the License, or (at your
+dnl  option) any later version.
 
-! The GNU MP Library is distributed in the hope that it will be useful, but
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-! or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-! License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-! You should have received a copy of the GNU Lesser General Public License
-! along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-! the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-! MA 02111-1307, USA.
-
-
-! INPUT PARAMETERS
-! res_ptr	%o0
-! src_ptr	%o1
-! size		%o2
-! cnt		%o3
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
+
+C INPUT PARAMETERS
+define(`rp',`%i0')
+define(`up',`%i1')
+define(`n',`%i2')
+define(`cnt',`%i3')
+
+define(`u0',`%l0')
+define(`u1',`%l2')
+define(`u2',`%l4')
+define(`u3',`%l6')
+
+define(`tnc',`%i4')
+
+define(`fanop',`fitod %f0,%f2')		dnl  A quasi nop running in the FA pipe
+define(`fmnop',`fmuld %f0,%f0,%f4')	dnl  A quasi nop running in the FM pipe
 
 ASM_START()
 	.register	%g2,#scratch
 	.register	%g3,#scratch
 PROLOGUE(mpn_lshift)
-	sllx	%o2,3,%g1
-	add	%o1,%g1,%o1	! make %o1 point at end of src
-	ldx	[%o1-8],%g2	! load first limb
-	sub	%g0,%o3,%o5	! negate shift count
-	add	%o0,%g1,%o0	! make %o0 point at end of res
-	add	%o2,-1,%o2
-	and	%o2,4-1,%g4	! number of limbs in first loop
-	srlx	%g2,%o5,%g1	! compute function result
-	brz,pn	%g4,L(0)		! if multiple of 4 limbs, skip first loop
-	mov	%g1,%g5
+	save	%sp,-160,%sp
 
-	sub	%o2,%g4,%o2	! adjust count for main loop
+	sllx	n,3,%g1
+	sub	%g0,cnt,tnc		C negate shift count
+	add	up,%g1,up		C make %o1 point at end of src
+	add	rp,%g1,rp		C make %o0 point at end of res
+	ldx	[up-8],u3		C load first limb
+	subcc	n,5,n
+	srlx	u3,tnc,%i5		C compute function result
+	sllx	u3,cnt,%g3
+	bl,pn	%icc,.Lend1234
+	fanop
 
-L(loop0):
-	ldx	[%o1-16],%g3
-	add	%o0,-8,%o0
-	add	%o1,-8,%o1
-	add	%g4,-1,%g4
-	sllx	%g2,%o3,%o4
-	srlx	%g3,%o5,%g1
-	mov	%g3,%g2
-	or	%o4,%g1,%o4
-	brnz,pt	%g4,L(loop0)
-	 stx	%o4,[%o0+0]
+	subcc	n,4,n
+	ldx	[up-16],u0
+	ldx	[up-24],u1
+	add	up,-32,up
+	ldx	[up-0],u2
+	ldx	[up-8],u3
+	srlx	u0,tnc,%g2
 
-L(0):	brz,pn	%o2,L(end)
-	 nop
+	bl,pn	%icc,.Lend5678
+	fanop
 
-L(loop1):
-	ldx	[%o1-16],%g3
-	add	%o0,-32,%o0
-	add	%o2,-4,%o2
-	sllx	%g2,%o3,%o4
-	srlx	%g3,%o5,%g1
+	b,a	.Loop
+	.align	16
+.Loop:
+	sllx	u0,cnt,%g1
+	or	%g3,%g2,%g3
+	ldx	[up-16],u0
+	fanop
+C --
+	srlx	u1,tnc,%g2
+	subcc	n,4,n
+	stx	%g3,[rp-8]
+	fanop
+C --
+	sllx	u1,cnt,%g3
+	or	%g1,%g2,%g1
+	ldx	[up-24],u1
+	fanop
+C --
+	srlx	u2,tnc,%g2
+	stx	%g1,[rp-16]
+	add	up,-32,up
+	fanop
+C --
+	sllx	u2,cnt,%g1
+	or	%g3,%g2,%g3
+	ldx	[up-0],u2
+	fanop
+C --
+	srlx	u3,tnc,%g2
+	stx	%g3,[rp-24]
+	add	rp,-32,rp
+	fanop
+C --
+	sllx	u3,cnt,%g3
+	or	%g1,%g2,%g1
+	ldx	[up-8],u3
+	fanop
+C --
+	srlx	u0,tnc,%g2
+	stx	%g1,[rp-0]
+	bge,pt	%icc,.Loop
+	fanop
+C --
+.Lend5678:
+	sllx	u0,cnt,%g1
+	or	%g3,%g2,%g3
+	srlx	u1,tnc,%g2
+	stx	%g3,[rp-8]
+	sllx	u1,cnt,%g3
+	or	%g1,%g2,%g1
+	srlx	u2,tnc,%g2
+	stx	%g1,[rp-16]
+	sllx	u2,cnt,%g1
+	or	%g3,%g2,%g3
+	srlx	u3,tnc,%g2
+	stx	%g3,[rp-24]
+	add	rp,-32,rp
+	sllx	u3,cnt,%g3		C carry...
+	or	%g1,%g2,%g1
+	stx	%g1,[rp-0]
 
-	ldx	[%o1-24],%g2
-	sllx	%g3,%o3,%g4
-	or	%o4,%g1,%o4
-	stx	%o4,[%o0+24]
-	srlx	%g2,%o5,%g1
-
-	ldx	[%o1-32],%g3
-	sllx	%g2,%o3,%o4
-	or	%g4,%g1,%g4
-	stx	%g4,[%o0+16]
-	srlx	%g3,%o5,%g1
-
-	ldx	[%o1-40],%g2
-	sllx	%g3,%o3,%g4
-	or	%o4,%g1,%o4
-	stx	%o4,[%o0+8]
-	srlx	%g2,%o5,%g1
-
-	add	%o1,-32,%o1
-	or	%g4,%g1,%g4
-	brnz,pt	%o2,L(loop1)
-	 stx	%g4,[%o0+0]
-
-L(end):	sllx	%g2,%o3,%g2
-	stx	%g2,[%o0-8]
-	retl
-	mov	%g5,%o0
+.Lend1234:
+	addcc	n,4,n
+	bz,pn	%icc,.Lret
+	fanop
+.Loop0:
+	add	rp,-8,rp
+	subcc	n,1,n
+	ldx	[up-16],u3
+	add	up,-8,up
+	srlx	u3,tnc,%g2
+	or	%g3,%g2,%g3
+	stx	%g3,[rp]
+	sllx	u3,cnt,%g3
+	bnz,pt	%icc,.Loop0
+	fanop
+.Lret:
+	stx	%g3,[rp-8]
+	mov	%i5,%i0
+	ret
+	restore
 EPILOGUE(mpn_lshift)
