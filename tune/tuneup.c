@@ -140,6 +140,8 @@ mp_size_t  divrem_2_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  modexact_1_odd_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  get_str_basecase_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  get_str_precompute_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  set_str_threshold[2] = { MP_SIZE_T_MAX };
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
@@ -170,6 +172,10 @@ struct param_t {
 
   int               noprint;
 };
+
+#ifndef UDIV_PREINV_ALWAYS
+#define UDIV_PREINV_ALWAYS 0
+#endif
 
 
 mp_limb_t
@@ -321,26 +327,43 @@ tuneup_measure (speed_function_t fun,
 }
 
 
+#define PRINT_WIDTH  28
+
 void
 print_define_start (const char *name)
 {
-  printf ("#define %-25s  ", name);
+  printf ("#define %-*s  ", PRINT_WIDTH, name);
   if (option_trace)
     printf ("...\n");
 }
 
 void
-print_define_end (const char *name, mp_size_t value)
+print_define_end_remark (const char *name, mp_size_t value, const char *remark)
 {
   if (option_trace)
-    printf ("#define %-23s  ", name);
+    printf ("#define %-*s  ", PRINT_WIDTH, name);
 
   if (value == MP_SIZE_T_MAX)
-    printf ("MP_SIZE_T_MAX  /* never */\n");
-  else if (value == 0)
-    printf ("    0  /* always */\n");
+    printf ("MP_SIZE_T_MAX");
   else
-    printf ("%5ld\n", value);
+    printf ("%5ld", value);
+
+  if (remark != NULL)
+    printf ("  /* %s */", remark);
+  printf ("\n");
+}
+
+void
+print_define_end (const char *name, mp_size_t value)
+{
+  const char  *remark;
+  if (value == MP_SIZE_T_MAX)
+    remark = "never";
+  else if (value == 0)
+    remark = "always";
+  else
+    remark = NULL;
+  print_define_end_remark (name, value, remark);
 }
 
 void
@@ -348,6 +371,13 @@ print_define (const char *name, mp_size_t value)
 {
   print_define_start (name);
   print_define_end (name, value);
+}
+
+void
+print_define_remark (const char *name, mp_size_t value, const char *remark)
+{
+  print_define_start (name);
+  print_define_end_remark (name, value, remark);
 }
 
 
@@ -837,10 +867,11 @@ tune_sb_preinv (void)
 {
   static struct param_t  param;
 
-#if UDIV_PREINV_ALWAYS
-  printf ("#define SB_PREINV_THRESHOLD            0  /* (preinv always) */\n");
-  return;
-#endif
+  if (UDIV_PREINV_ALWAYS)
+    {
+      print_define_remark ("SB_PREINV_THRESHOLD", 0L, "preinv always");
+      return;
+    }
 
   param.check_size = 256;
   param.min_size[0] = 3;
@@ -950,18 +981,22 @@ tune_divrem_1 (void)
   /* plain version by default */
   tuned_speed_mpn_divrem_1 = speed_mpn_divrem_1;
 
-#if HAVE_NATIVE_mpn_divrem_1
+#ifndef HAVE_NATIVE_mpn_divrem_1
+#define HAVE_NATIVE_mpn_divrem_1 0
+#endif
+
   /* No support for tuning native assembler code, do that by hand and put
      the results in the .asm file, there's no need for such thresholds to
      appear in gmp-mparam.h.  */
-  return;
-#endif
+  if (HAVE_NATIVE_mpn_divrem_1)
+    return;
 
-#if UDIV_PREINV_ALWAYS
-  printf ("#define DIVREM_1_NORM_THRESHOLD        0  /* (preinv always) */\n");
-  printf ("#define DIVREM_1_UNNORM_THRESHOLD      0\n");
-  return;
-#endif
+  if (UDIV_PREINV_ALWAYS)
+    {
+      print_define_remark ("DIVREM_1_NORM_THRESHOLD", 0L, "preinv always");
+      print_define ("DIVREM_1_UNNORM_THRESHOLD", 0L);
+      return;
+    }
 
   tuned_speed_mpn_divrem_1 = speed_mpn_divrem_1_tune;
 
@@ -995,18 +1030,22 @@ tune_mod_1 (void)
   /* plain version by default */
   tuned_speed_mpn_mod_1 = speed_mpn_mod_1;
 
-#if HAVE_NATIVE_mpn_mod_1
+#ifndef HAVE_NATIVE_mpn_mod_1
+#define HAVE_NATIVE_mpn_mod_1 0
+#endif
+
   /* No support for tuning native assembler code, do that by hand and put
      the results in the .asm file, there's no need for such thresholds to
      appear in gmp-mparam.h.  */
-  return;
-#endif
+  if (HAVE_NATIVE_mpn_mod_1)
+    return;
 
-#if UDIV_PREINV_ALWAYS
-  printf ("#define MOD_1_NORM_THRESHOLD           0\n");
-  printf ("#define MOD_1_UNNORM_THRESHOLD         0\n");
-  return;
-#endif
+  if (UDIV_PREINV_ALWAYS)
+    {
+      print_define ("MOD_1_NORM_THRESHOLD", 0L);
+      print_define ("MOD_1_UNNORM_THRESHOLD", 0L);
+      return;
+    }
 
   tuned_speed_mpn_mod_1 = speed_mpn_mod_1_tune;
 
@@ -1040,19 +1079,25 @@ tune_preinv_divrem_1 (void)
   static struct param_t  param;
   double   t1, t2;
 
-#if HAVE_NATIVE_mpn_preinv_divrem_1
-  /* Any native version of mpn_preinv_divrem_1 is assumed to exist because
-     it's faster than mpn_divrem_1.  */
-  printf ("#define USE_PREINV_DIVREM_1            1  /* (native) */\n");
-  return;
+#ifndef HAVE_NATIVE_mpn_preinv_divrem_1
+#define HAVE_NATIVE_mpn_preinv_divrem_1 0
 #endif
 
-#if UDIV_PREINV_ALWAYS
+  /* Any native version of mpn_preinv_divrem_1 is assumed to exist because
+     it's faster than mpn_divrem_1.  */
+  if (HAVE_NATIVE_mpn_preinv_divrem_1)
+    {
+      print_define_remark ("USE_PREINV_DIVREM_1", 1, "native");
+      return;
+    }
+
   /* If udiv_qrnnd_preinv is the only division method then of course
      mpn_preinv_divrem_1 should be used.  */
-  printf ("#define USE_PREINV_DIVREM_1            1  /* (preinv always) */\n");
-  return;
-#endif
+  if (UDIV_PREINV_ALWAYS)
+    {
+      print_define_remark ("USE_PREINV_DIVREM_1", 1, "preinv always");
+      return;
+    }
 
   param.data_high = DATA_HIGH_LT_R; /* allow skip one division */
   s.size = 200;                     /* generous but not too big */
@@ -1074,7 +1119,7 @@ tune_preinv_divrem_1 (void)
     printf ("size=%ld, mpn_preinv_divrem_1 %.9f, mpn_divrem_1 %.9f\n",
             s.size, t1, t2);
 
-  printf ("#define USE_PREINV_DIVREM_1            %d\n", t1 < t2);
+  print_define ("USE_PREINV_DIVREM_1", (mp_size_t) (t1 < t2));
 }
 
 
@@ -1088,20 +1133,27 @@ tune_preinv_mod_1 (void)
   static struct param_t  param;
   double   t1, t2;
 
-#if HAVE_NATIVE_mpn_preinv_mod_1
+#ifndef HAVE_NATIVE_mpn_preinv_mod_1
+#define HAVE_NATIVE_mpn_preinv_mod_1 0
+#endif
+
   /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
      faster than mpn_mod_1.  */
-  printf ("#define USE_PREINV_MOD_1               1  /* (native) */\n");
-  return;
-#endif
+  if (HAVE_NATIVE_mpn_preinv_mod_1)
+    {
+      print_define_remark ("USE_PREINV_MOD_1", 1, "native");
+      return;
+    }
 
-#if UDIV_PREINV_ALWAYS
   /* If udiv_qrnnd_preinv is the only division method then of course
      mpn_preinv_mod_1 should be used.  */
-  printf ("#define USE_PREINV_MOD_1               1  /* (preinv always) */\n");
-  return;
-#endif
-
+  if (UDIV_PREINV_ALWAYS)
+    {
+      printf ("#define %-*s    1  /* preinv always */\n",
+              PRINT_WIDTH, "USE_PREINV_MOD_1");
+      return;
+    }
+  
   param.data_high = DATA_HIGH_LT_R; /* let mpn_mod_1 skip one division */
   s.size = 200;                     /* generous but not too big */
   s.r = randlimb_norm();            /* divisor */
@@ -1118,7 +1170,7 @@ tune_preinv_mod_1 (void)
     printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1_div %.9f\n",
             s.size, t1, t2);
 
-  printf ("#define USE_PREINV_MOD_1               %d\n", t1 < t2);
+  print_define ("USE_PREINV_MOD_1", (mp_size_t) (t1 < t2));
 }
 
 
@@ -1127,17 +1179,21 @@ tune_divrem_2 (void)
 {
   static struct param_t  param;
 
-#if HAVE_NATIVE_mpn_divrem_2
+#ifndef HAVE_NATIVE_mpn_divrem_2
+#define HAVE_NATIVE_mpn_divrem_2 0
+#endif
+
   /* No support for tuning native assembler code, do that by hand and put
      the results in the .asm file, and there's no need for such thresholds
      to appear in gmp-mparam.h.  */
-  return;
-#endif
+  if (HAVE_NATIVE_mpn_divrem_2)
+    return;
 
-#if UDIV_PREINV_ALWAYS
-  printf ("#define DIVREM_2_THRESHOLD             0  /* (preinv always) */\n");
-  return;
-#endif
+  if (UDIV_PREINV_ALWAYS)
+    {
+      print_define_remark ("DIVREM_2_THRESHOLD", 0L, "preinv always");
+      return;
+    }
 
   /* Tune for the integer part of mpn_divrem_2.  This will very possibly be
      a bit out for the fractional part, but that's too bad, the integer part
@@ -1318,7 +1374,33 @@ tune_jacobi_base (void)
   else
     method = 3;
 
-  printf ("#define JACOBI_BASE_METHOD             %d\n", method);
+  print_define ("JACOBI_BASE_METHOD", method);
+}
+
+
+void
+tune_get_str (void)
+{
+  /* Tune for decimal, it being most common.  Some rough testing suggests
+     other bases are different, but not by very much.  */
+  s.r = 10;
+  {
+    static struct param_t  param;
+    get_str_precompute_threshold[0] = 0;
+    param.name[0] = "GET_STR_BASECASE_THRESHOLD";
+    param.function = speed_mpn_get_str;
+    param.min_size[0] = 2;
+    param.max_size[0] = GET_STR_THRESHOLD_LIMIT;
+    one (get_str_basecase_threshold, 1, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name[0] = "GET_STR_PRECOMPUTE_THRESHOLD";
+    param.function = speed_mpn_get_str;
+    param.min_size[0] = get_str_basecase_threshold[0];
+    param.max_size[0] = GET_STR_THRESHOLD_LIMIT;
+    one (get_str_precompute_threshold, 1, &param);
+  }
 }
 
 
@@ -1327,7 +1409,7 @@ tune_set_str (void)
 {
   static struct param_t  param;
 
-  s.r = 10;
+  s.r = 10;  /* decimal */
   param.step_factor = 0.04;
   param.name[0] = "SET_STR_THRESHOLD";
   param.function = speed_mpn_set_str_basecase;
@@ -1472,6 +1554,7 @@ all (void)
   tune_modexact_1_odd ();
   printf("\n");
 
+  tune_get_str ();
   tune_set_str ();
   printf("\n");
 
