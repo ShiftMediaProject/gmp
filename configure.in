@@ -1363,7 +1363,7 @@ esac
 AC_HEADER_STDC
 AC_HEADER_TIME
 
-# inttypes.h, unistd.h and sys/types.h are already in the autoconf default
+# stdint.h, unistd.h and sys/types.h are already in the autoconf default
 # tests
 AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
 
