@@ -1712,11 +1712,11 @@ GMP_FINISH
 
 AC_OUTPUT(Makefile							\
   mpbsd/Makefile mpf/Makefile mpfr/Makefile mpn/Makefile mpq/Makefile	\
-  mpz/Makefile printf/Makefile cxx/Makefile				\
+  mpz/Makefile printf/Makefile scanf/Makefile cxx/Makefile		\
   mpfr/tests/Makefile							\
   tests/Makefile tests/devel/Makefile tests/mpbsd/Makefile		\
   tests/mpf/Makefile tests/mpn/Makefile tests/mpq/Makefile		\
-  tests/mpz/Makefile tests/rand/Makefile tests/printf/Makefile		\
+  tests/mpz/Makefile tests/rand/Makefile tests/misc/Makefile		\
   tests/cxx/Makefile							\
   tune/Makefile								\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
