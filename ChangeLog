@@ -10,8 +10,10 @@
 	to avoid compiler bug.
 	* configure: Regenerate.
 
-	* Makefile.am (EXTRA_DIST): Add `macos'.
+	* Makefile.am (EXTRA_DIST): Add `macos', `.gdbinit'.
 	* Makefile.in: Regenerate.
+	* mpn/Makefile.am (EXTRA_DIST): Add `m88k', `lisp'.
+	* mpn/Makefile.in: Regenerate.
 
 2000-04-16  Kevin Ryde  <kevin@swox.se>
 
