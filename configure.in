@@ -305,8 +305,9 @@ case ${target} in
     path="cray";;
   [f30[01]-fujitsu-sysv*])
     path=fujitsu;;
-  alphaev5*-*-*) path="alpha/ev5 alpha"; extra_functions="invert-limb cntlz";;
-  alpha*-*-*) path="alpha"; extra_functions="invert-limb cntlz";;
+  alphaev6*-*-*) path="alpha/ev6 alpha"; extra_functions="invert_limb cntlz";;
+  alphaev5*-*-*) path="alpha/ev5 alpha"; extra_functions="invert_limb cntlz";;
+  alpha*-*-*) path="alpha"; extra_functions="invert_limb cntlz";;
   am29000*-*-*) path="am29000";;
   a29k*-*-*) path="am29000";;
 
@@ -512,6 +513,9 @@ gmp_m4postinc=
 case "$target" in
   alpha*-cray-unicos*)
     gmp_m4postinc="$gmp_m4postinc mpn/alpha/unicos.m4"
+    ;;
+  alpha*-*-*)
+    gmp_m4postinc="$gmp_m4postinc mpn/alpha/default.m4"
     ;;
   i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
     gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
