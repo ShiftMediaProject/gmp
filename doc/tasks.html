@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 9 Oct 2001.  An up-to-date version is available at
+  This file current as of 10 Oct 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -415,11 +415,11 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <li> IRIX 6 MIPSpro compiler has an <code>__inline</code> which could perhaps
      be used in <code>__GMP_EXTERN_INLINE</code>.  What would be the right way
      to identify suitable versions of that compiler?
-<li> VAX D and G format <code>double</code>s are straightforward and could
-     perhaps be handled directly in <code>__gmp_extract_double</code> and
-     maybe in <code>mpz_get_d</code>, rather than falling back on the generic
-     code.  GCC defines <code>__GFLOAT</code> when -mg has selected G format
-     (which would be possible via a user <code>CFLAGS</code>).
+<li> VAX D and G format <code>double</code> floats are straightforward and
+     could perhaps be handled directly in <code>__gmp_extract_double</code>
+     and maybe in <code>mpz_get_d</code>, rather than falling back on the
+     generic code.  GCC defines <code>__GFLOAT</code> when -mg has selected G
+     format (which would be possible via a user <code>CFLAGS</code>).
 </ul>
 
 <h4>New Functionality</h4>
@@ -431,14 +431,31 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
 <li> <code>mpz_init</code> and <code>mpq_init</code> could do lazy allocation.
-     Set <code>ALLOC(var)</code> to 0, and have <code>mpz_realloc</code>
-     special-handle that case.  Would mean the size required for the first use
-     is the first allocated, rather than allocating a small size and then
-     reallocing it.  Update functions that rely on a single limb like
-     <code>mpz_set_ui</code>, <code>mpz_{t,f,c}div_{qr,r}_ui</code>, and
-     others.  Would need the initial <code>z-&gt;_mp_d</code> to point to a
-     dummy initial location, so it can be fetched from by
-     <code>mpz_odd_p</code> and similar macros.
+     Set <code>ALLOC(var)</code> to 0 to indicate nothing allocated, and let
+     <code>_mpz_realloc</code> do the initial alloc.  Set
+     <code>z-&gt;_mp_d</code> to a dummy that <code>mpz_get_ui</code> and
+     similar can unconditionally fetch from.  Niels Möller has had a go at
+     this.
+     <br>
+     The advantages of the lazy scheme would be:
+     <ul>
+     <li> Initial allocate would be the size required for the first value
+          stored, rather than getting 1 limb in <code>mpz_init</code> and then
+          more or less immediately reallocating.
+     <li> <code>mpz_init</code> would only store magic values in the
+          <code>mpz_t</code> fields, and could be inlined.
+     <li> A fixed initializer could even be used by applications, like
+          <code>mpz_t z = MPZ_INITIALIZER;</code>, which might be convenient
+          for globals.
+     </ul>
+     The advantages of the current scheme are:
+     <ul>
+     <li> <code>mpz_set_ui</code> and other similar routines needn't check the
+          size allocated and can just store unconditionally.
+     <li> <code>mpz_set_ui</code> and perhaps others like
+          <code>mpz_tdiv_r_ui</code> and a prospective
+          <code>mpz_set_ull</code> could be inlined.
+     </ul>
 <li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
      format is portable between 32-bit and 64-bit machines, and between
      little-endian and big-endian machines.
