@@ -374,6 +374,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
           case 'q': /* quad_t    */
           case 'Q': /* mpq_t     */
           case 't': /* ptrdiff_t */
+          case 'z': /* size_t    */
           case 'Z': /* mpz_t     */
           set_type:
             type = fchar;
@@ -450,11 +451,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 #else
               case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
 #endif
-#if HAVE_SIZE_T
               case 'z':  * (size_t    *) p = retval; break;
-#else
-              case 'z':  ASSERT_FAIL (size_t not available); break;
-#endif
               case 'Z':  mpz_set_si ((mpz_ptr) p, (long) retval); break;
               }
             }
