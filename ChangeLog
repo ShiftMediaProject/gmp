@@ -1,3 +1,8 @@
+2000-06-29  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Recognize cray vector processors with a broad `*';
+	move after alpha* not to match that.
+
 2000-06-28  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/tests/io.c: Use a disk file, not a pipe, switch to ansi2knr
@@ -1935,8 +1940,8 @@
 	* configure.in: Assign special "path" for alphaev6.
 
 	* mpn/alpha/unicos.m4: New file.
-	* configure.in (alpha*-cray-unicos*): [This part of the change commited 2000-03-13 by
-	linus]
+	* configure.in (alpha*-cray-unicos*): [This part of the change
+	commited 2000-03-13 by linus]
 	* mpn/alpha/default.m4: New file.
 	* configure.in (alpha*-*-*): Use it.
 
@@ -3149,8 +3154,7 @@
 
 	* mpz/urandom.c (gmp_rand_init, gmp_rand_clear): Move to new file
 	urandom.c in top-dir.
-	(mpz_urandomb): Add function parameter nbits.  Call
-	mpn_rawrandom().
+	(mpz_urandomb): Add function parameter nbits.  Call mpn_rawrandom().
 
 	* mpf/urandom.c (mpf_urandomb): Call mpn_rawrandom().
 
@@ -3913,13 +3917,13 @@ Fri Oct 18 03:13:54 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 	* mpn/x86/pentium/[lr]shift.S: Likewise.
 	* mpn/config/t-oldgas (SFLAGS): Pass -DOLD_GAS.
 
-	* gmp-impl.h: In code for determining endianess, test also __BIG_ENDIAN__
-	and __hppa__.  Remove test of __NeXT__.
+	* gmp-impl.h: In code for determining endianess, test also
+	__BIG_ENDIAN__ and __hppa__.  Remove test of __NeXT__.
 
 Wed Oct 16 03:50:34 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
-	* mpf/set_str.c: Let `prec' determine precision used in exponentialization
-	code; decrease allocation accordingly.
+	* mpf/set_str.c: Let `prec' determine precision used in
+	exponentialization code; decrease allocation accordingly.
 
 	* mpn/vax: Change `jsob*' to `sob*' in all files.
 
@@ -3937,8 +3941,8 @@ Tue Oct 15 03:54:06 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 	* mpn/mp_bases.c (__mp_bases): Give 17 digits for chars_per_bit_exactly
 	field.
 
-	* mpf/get_str.c: Let `prec' determine precision used in exponentialization
-	code; decrease allocation accordingly.
+	* mpf/get_str.c: Let `prec' determine precision used in
+	exponentialization code; decrease allocation accordingly.
 
 Sun Oct 13 03:31:53 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
@@ -4039,12 +4043,6 @@ Wed Sep 18 11:22:45 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
 Sun Sep 15 03:13:02 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
-	* mpn/cray/mul_1.c: New file.
-	* mpn/cray/addmul_1.c: New file.
-	* mpn/cray/submul_1.c: New file.
-	* mpn/cray/add_n.c: Rewrite.
-	* mpn/cray/sub_n.c: Rewrite.
-
 	* mpn/generic/random.c: New file.
 	* mpn/configure.in (functions): Add `random'.
 
@@ -4082,13 +4080,6 @@ Wed Sep 11 11:34:38 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 	* mpn/x86/mul_basecase.S: New file.
 	* mpn/generic/mul_basecase.c: New file.
 	* mpn/generic/sqr_basecase.c: New file.
-
-Tue Sep 10 00:07:54 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
-
-	* mpn/cray/lshift.c: New file.
-	* mpn/cray/rshift.c: New file.
-	* mpn/cray/add_n.c: New file.
-	* mpn/cray/sub_n.c: New file.
 
 Wed Sep  4 02:59:21 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
