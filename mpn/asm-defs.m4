@@ -102,7 +102,7 @@ dnl       expression seems to be ok, it just can't be a final result.  "-("
 dnl       will of course upset parsing, with all sorts of strange effects.
 dnl
 dnl  eval() <<,>> - SysV m4 doesn't support shift operators in eval() (on
-dnl       Solaris 7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
+dnl       SunOS 5.7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
 dnl       m4_lshift() and m4_rshift() below for workarounds.
 dnl
 dnl  __file__,__line__ - GNU m4 and the latest OpenBSD m4 provide these,
