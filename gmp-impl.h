@@ -1194,6 +1194,10 @@ extern const unsigned char  modlimb_invert_table[128];
 #define MODLIMB_INVERSE_3   ((MP_LIMB_T_MAX / 3) * 2 + 1)
 
 
+/* A bit mask of all the least significant zero bits of n, or -1 if n==0. */
+#define LOW_ZEROS_MASK(n)  (((n) & -(n)) - 1)
+
+
 /* Set "p" to 1 if there's an odd number of 1 bits in "n", or to 0 if
    there's an even number.  */
 
