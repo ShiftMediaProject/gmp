@@ -1,3 +1,41 @@
+2001-04-15  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/powerpc64/*.asm: Add speeds on ppc630.
+
+	* acconfig.h: Add dummy templates for _LONG_LONG_LIMB and HAVE_MPFR.
+	* configure.in: Ensure config.in is the last AM_CONFIG_HEADER,
+	which autoheader requires.
+
+	* mpn/x86/pentium/popcount.asm: New file.
+	* mpn/x86/pentium/hamdist.asm: New file.
+
+	* mpn/asm-defs.m4: (m4_popcount): New macro.
+	Amend a few comments elsewhere.
+
+	* acinclude.m4 (GMP_ASM_RODATA): If possible, grep compiler output for
+	the right directive.
+
+	* tune/speed.c: Print clock speed in MHz, not cycle time.
+
+	* configure.in (AC_CHECK_HEADERS): Check for sys/processor.h.
+	* tune/freq.c (speed_cpu_frequency_processor_info): Require
+	<sys/processor.h> to exist, to differentiate the different
+	processor_info on Darwin.
+	(speed_cpu_frequency_sysctlbyname): Remove hw.model test which is in
+	speed_cpu_frequency_sysctl.
+	(speed_cpu_frequency_sysctl): Add hw.cpufrequency for Darwin.
+
+	* gmp-impl.h (MPN_LOGOPS_N_INLINE, mpn_and_n ... mpn_xnor_n): Use a
+	single expression argument for the different operations, necessary for
+	the Darwin "smart" preprocessor.
+
+	* mpn/m68k/t-m68k-defs.pl: Allow white space in m4_definsn and
+	m4_defbranch.
+
+	* tune/many.pl: Change RM_TMP_S to RM_TMP to match mpn/Makeasm.am,
+	avoid a possibly undefined array in a diagnostic, add more renaming to
+	hamdist.
+
 2001-04-13  Kevin Ryde  <kevin@swox.se>
 
 	* ltmain.sh, aclocal.m4, configure, config.in: Update to libtool 1.3d.
