@@ -1,3 +1,8 @@
+2000-07-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64/gmp-mparam.h: Only #define *_THRESHOLD if not already
+	defined.
+
 2000-07-25  Kevin Ryde  <kevin@swox.se>
 
 	* INSTALL: It's "info -f ./gmp.info" to be sure of hitting the
@@ -12,13 +17,12 @@
 
 2000-07-24  Torbjorn Granlund  <tege@swox.com>
 
-	* Update header of all files previous under GNU Library General
-	Public License to instead be user GNU Lesser General Public
-	License.
+	* Update header of all files previously under the Library GPL
+	to instead be under the Lesser GPL.
 
-	* COPYING.LIB: Now GNU Lesser General Public License.
-	* demos/primes.c: Change license to GPL (was LPGL).
-	* demos/isprime.c: Change license to GPL (was LPGL).
+	* COPYING.LIB: Now Lesser GPL.
+	* demos/primes.c: Change license to GPL (was Library GPL).
+	* demos/isprime.c: Change license to GPL (was Library GPL).
 
 	* gmp.h (error code enum): Add GMP_ERROR_BAD_STRING (currently unused).
 
