@@ -18,6 +18,54 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-03-04  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (hppa2.0*-*-*): Test sizeof(long) == 4 or 8 to verify
+	ABI=2.0n versus ABI=2.0w.  In particular this lets CC=cc_bundled
+	correctly fall back to ABI=2.0n (we don't automatically add CC=+DD64
+	to that compiler, currently).
+
+	* doc/gmp.texi (Reentrancy): Note C++ mpf_class constructors using
+	global default precision.
+	(Random State Miscellaneous): Describe gmp_urandomb_ui as giving N
+	bits.
+	(C++ Interface Floats): Describe operator= copying the value, not the
+	precision, and what this can mean about copy constructor versus
+	default constructor plus assignment.
+
+	* mpf/set_q.c: Use mpn_tdiv_qr rather than mpn_divrem, so no shifting.
+	Don't truncate the divisor, it can make the result inaccurate.
+	* tests/mpf/t-set_q.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpf/set.c: Use MPN_COPY_INCR, in case r==u and ABSIZ(u) > PREC(r)+1.
+	No actual bug here, because MPN_COPY has thusfar been an alias for
+	MPN_COPY_INCR, only an ASSERT failure.
+	* tests/mpf/t-set.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+	
+	* mpf/set.c, mpf/iset.c: Do MPN_COPY last, for possible tail call.
+
+	* mpf/set_d.c: Rate d==0 as UNLIKELY.  Store size before extract call,
+	to shorten lifespan of "negative".
+
+	* mpf/init.c, mpf/init2.c, mpf/iset_d.c, mpf/iset_si.c,
+	mpf/iset_str.c, mpf/iset_ui.c: Store prec before alloc call, for one
+	less live quantity across that call.
+	* mpf/init.c, mpf/init2.c, mpf/iset_str.c: Store size and exp before
+	alloc call, to overlap with other operations.
+
+	* tests/refmpf.c, tests/tests.h (refmpf_fill, refmpf_normalize,
+	refmpf_validate, refmpf_validate_division): New functions.
+
+	* tests/refmpn.c, tests/tests.h (refmpn_copy_extend,
+	refmpn_lshift_or_copy_any, refmpn_rshift_or_copy_any): New functions.
+
+	* tal-debug.c: Add <string.h> for strcmp.
+
+	* tests/cxx/t-istream.cc (check_mpz, check_mpq, check_mpf): Use size_t
+	for loop index, to quieten g++ warning.
+
 2004-03-02  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpn/t-hgcd.c: Use __GMP_PROTO on prototypes.
