@@ -25,8 +25,9 @@ dnl  The following all have their own optimized versions of this routine,
 dnl  but for reference the code here runs as follows.
 dnl
 dnl       cycles/limb
-dnl  P5      17.0
-dnl  P6      13.5
+dnl  P54     18.0
+dnl  P55     17.0
+dnl  P6      14.5
 dnl  K6      14.0
 dnl  K7      10.0
 
@@ -90,7 +91,7 @@ L(top):
 
 	setc	%bl
 
-	mull	%esi
+	imull	%esi
 
 	cmpl	$ONE_THIRD_CEIL, %eax
 	movl	%eax, (%edi,%ebp,4)
