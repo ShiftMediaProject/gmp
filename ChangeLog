@@ -31,9 +31,6 @@
 	* mpn/generic/mul_n.c (mpn_kara_sqr_n): Delete code performing
 	superfluous mpn_sub_n calls.
 
-	* gmp.texi (Integer Division): Fix 2exp function descriptions,
-	tdiv_q_2exp is the arithmetic shift, not fdiv.
-
 	* configure.in (found_asm, M4): Account for SPEED_CYCLECOUNTER_OBJ,
 	for the benefit of targets whose only .asm is a cycle counter.
 
