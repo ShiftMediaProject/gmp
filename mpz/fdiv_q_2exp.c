@@ -86,9 +86,18 @@ mpz_fdiv_q_2exp (w, u, cnt)
   if (usize < 0 && round != 0)
     {
       mp_limb_t cy;
-      cy = mpn_add_1 (wp, wp, wsize, 1);
-      wp[wsize] = cy;
-      wsize += cy;
+      if (wsize != 0)
+	{
+	  cy = mpn_add_1 (wp, wp, wsize, 1);
+	  wp[wsize] = cy;
+	  wsize += cy;
+	}
+      else
+	{
+	  /* We shifted something negative to zero.  The result is -1.  */
+	  wp[0] = 1;
+	  wsize = 1;
+	}
     }
   w->_mp_size = usize >= 0 ? wsize : -wsize;
 }
