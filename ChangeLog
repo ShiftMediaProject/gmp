@@ -1,5 +1,7 @@
 2001-03-06  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/cray/ieee/submul_1.c: Don't call mpn_sub_n with size 0.
+
 	* mpn/cray/ieee/mul_basecase.c: New file.
 	* mpn/cray/ieee/sqr_basecase.c: New file, derived from mul_basecase.c.
 
