@@ -23,6 +23,12 @@ MA 02111-1307, USA. */
 #ifndef __GMP_H__
 
 
+/* Instantiated by configure, for internal use only */
+#if ! __GMP_WITHIN_CONFIGURE
+#define __GMP_BITS_PER_MP_LIMB  @__GMP_BITS_PER_MP_LIMB@
+#endif
+
+
 /* The following (everything under ifndef __GNU_MP__) must be identical in
    gmp.h and mp.h to allow both to be included in an application or during
    the library build.  */
@@ -32,7 +38,6 @@ MA 02111-1307, USA. */
 #define __need_size_t
 #include <stddef.h>
 #undef __need_size_t
-
 
 /* Instantiated by configure, for internal use only */
 #if ! __GMP_WITHIN_CONFIGURE
@@ -59,7 +64,6 @@ MA 02111-1307, USA. */
 #else
 #define __GMP_HAVE_TOKEN_PASTE  0
 #endif
-
 
 #if __GMP_HAVE_CONST
 #define __gmp_const   const
@@ -234,11 +238,23 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 
 
-#define __GMP_ABS(x)  ((x) >= 0 ? (x) : -(x))
+#define __GMP_ABS(x)   ((x) >= 0 ? (x) : -(x))
+#define __GMP_MAX(h,i) ((h) > (i) ? (h) : (i))
 
 #define __GMP_UINT_MAX   (~ (unsigned) 0)
 #define __GMP_ULONG_MAX  (~ (unsigned long) 0)
 #define __GMP_USHRT_MAX  ((unsigned short) ~0)
+
+
+/* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
+   limb and adds an extra limb.  __GMPF_PREC_TO_BITS drops that extra limb,
+   hence giving back the user's size in bits rounded up.  Notice that
+   converting prec->bits->prec gives an unchanged value.  */
+#define __GMPF_BITS_TO_PREC(n)                                          \
+  ((mp_size_t) ((__GMP_MAX (53, n) + 2 * __GMP_BITS_PER_MP_LIMB - 1)    \
+                / __GMP_BITS_PER_MP_LIMB))
+#define __GMPF_PREC_TO_BITS(n) \
+  ((unsigned long) (n) * __GMP_BITS_PER_MP_LIMB - __GMP_BITS_PER_MP_LIMB)
 
 
 /* Allow direct user access to numerator and denominator of a mpq_t object.  */
@@ -262,6 +278,7 @@ extern __gmp_const int mp_bits_per_limb;
 extern void * (*__gmp_allocate_func) _PROTO ((size_t));
 extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
 extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
+extern mp_size_t __gmp_default_fp_limb_precision;
 
 
 /**************** Random number routines.  ****************/
@@ -1168,6 +1185,28 @@ mpf_abs (mpf_ptr w, mpf_srcptr u)
 }
 #endif
 
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_get_default_prec
+#if ! __GMP_FORCE_mpf_get_default_prec
+__GMP_EXTERN_INLINE
+#endif
+unsigned long
+mpf_get_default_prec (void)
+{
+  return __GMPF_PREC_TO_BITS (__gmp_default_fp_limb_precision);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_get_prec
+#if ! __GMP_FORCE_mpf_get_prec
+__GMP_EXTERN_INLINE
+#endif
+unsigned long int
+mpf_get_prec (mpf_srcptr x)
+{
+  return __GMPF_PREC_TO_BITS (x->_mp_prec);
+}
+#endif
+
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_neg
 __GMP_EXTERN_INLINE void
 mpf_neg (mpf_ptr w, mpf_srcptr u)
@@ -1175,6 +1214,28 @@ mpf_neg (mpf_ptr w, mpf_srcptr u)
   if (w != u)
     mpf_set (w, u);
   w->_mp_size = - w->_mp_size;
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_default_prec
+#if ! __GMP_FORCE_mpf_set_default_prec
+__GMP_EXTERN_INLINE
+#endif
+void
+mpf_set_default_prec (unsigned long int prec_in_bits)
+{
+  __gmp_default_fp_limb_precision = __GMPF_BITS_TO_PREC (prec_in_bits);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_prec_raw
+#if ! __GMP_FORCE_mpf_set_prec_raw
+__GMP_EXTERN_INLINE
+#endif
+void
+mpf_set_prec_raw (mpf_ptr x, unsigned long int prec_in_bits)
+{
+  x->_mp_prec = __GMPF_BITS_TO_PREC (prec_in_bits);
 }
 #endif
 
