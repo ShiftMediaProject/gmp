@@ -1,7 +1,7 @@
 /* IA-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
    the result from a second limb vector.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,10 +20,9 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
-This code runs at 14 cycles/limb on the Itanium.  That's pretty poor, and
-very far from the peak execution speed of the Itanium pipeline.  With
-well-tuned assembly code we should be able to get to around 3 cycles/limb.
-See README.  */
+This code runs at about 9 cycles/limb on the Itanium.  That's far from the peak
+execution speed of the Itanium pipeline.  With well-tuned assembly code we
+should be able to get to around 3 cycles/limb.  See README.  */
 
 
 #include "gmp.h"
@@ -35,7 +34,7 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr s1p, mp_size_t n, mp_limb_t s2d)
   mp_ptr tp;
   mp_limb_t cy;
 
-  tp = alloca (n * BYTES_PER_MP_LIMB);
+  tp = TMP_ALLOC_LIMBS (n);
   cy = mpn_mul_1 (tp, s1p, n, s2d);
   cy += mpn_sub_n (rp, rp, tp, n);
   return cy;
