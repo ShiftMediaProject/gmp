@@ -93,7 +93,8 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
       tp[tsize - 1] = dividend_low;
       if (dividend_high != 0)
 	{
-	  if (GMP_NAIL_BITS != 0 && dividend_high > vp[vsize - 1])
+#if GMP_NAIL_BITS != 0
+	  if (dividend_high > vp[vsize - 1])
 	    {
 	      tp[tsize - 2] = dividend_low;
 	      tp[tsize - 1] = dividend_high & GMP_NUMB_MASK;
@@ -102,6 +103,7 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
 	      rexp += 2;
 	    }
 	  else
+#endif
 	    {
 	      tp[tsize] = dividend_high;
 	      tsize++;
