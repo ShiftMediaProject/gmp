@@ -41,7 +41,8 @@ mpz_divexact_ui (mpz_ptr dst, mpz_srcptr src, unsigned long divisor)
       ALLOC(dz) = 2;
       PTR(dz) = dlimbs;
       mpz_set_ui (dz, divisor);
-      return mpz_divexact (dst, src, dz);
+      mpz_divexact (dst, src, dz);
+      return;
     }
 
   size = SIZ(src);
