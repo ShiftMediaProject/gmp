@@ -420,13 +420,13 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_EXTERN_INLINE  inline
 #endif
 
-/* Don't do any of this inlining stuff within a configure run, since if
-   unused "static inline" routines are not omitted it can end up demanding
-   the various support routines like mpn_popcount for linking, making the
-   "alloca" test and perhaps others fail.  And on hppa ia64 a pre-release
-   gcc 3.2 was seen not respecting the "extern" in "extern __inline__",
-   triggering this problem too.  */
-#if __GMP_WITHIN_CONFIGURE
+/* Don't do any inlining within a configure run, since if the compiler ends
+   up emitting copies of the code into the object file it can end up
+   demanding the various support routines (like mpn_popcount) for linking,
+   making the "alloca" test and perhaps others fail.  And on hppa ia64 a
+   pre-release gcc 3.2 was seen not respecting the "extern" in "extern
+   __inline__", triggering this problem too.  */
+#if __GMP_WITHIN_CONFIGURE && ! __GMP_WITHIN_CONFIGURE_INLINE
 #undef __GMP_EXTERN_INLINE
 #endif
 
