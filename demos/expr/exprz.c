@@ -179,7 +179,7 @@ __gmp_const struct mpexpr_operator_t * __gmp_const mpz_expr_standard_table
 
 
 int
-#if __STDC__
+#if HAVE_STDARG
 mpz_expr (mpz_ptr res, int base, __gmp_const char *e, ...)
 #else
 mpz_expr (va_alist)
@@ -189,7 +189,7 @@ mpz_expr (va_alist)
   mpz_srcptr  var[MPEXPR_VARIABLES];
   va_list     ap;
   int         ret;
-#if __STDC__
+#if HAVE_STDARG
   va_start (ap, e);
 #else
   mpz_ptr           res;

@@ -96,7 +96,7 @@ __gmp_const struct mpexpr_operator_t * __gmp_const mpf_expr_standard_table
 
 
 int
-#if __STDC__
+#if HAVE_STDARG
 mpf_expr (mpf_ptr res, int base, __gmp_const char *e, ...)
 #else
 mpf_expr (va_alist)
@@ -106,7 +106,7 @@ mpf_expr (va_alist)
   mpf_srcptr  var[MPEXPR_VARIABLES];
   va_list     ap;
   int         ret;
-#if __STDC__
+#if HAVE_STDARG
   va_start (ap, e);
 #else
   mpf_ptr           res;

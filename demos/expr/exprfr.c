@@ -231,7 +231,7 @@ __gmp_const struct mpexpr_operator_t * __gmp_const mpfr_expr_standard_table
 
 
 int
-#if __STDC__
+#if HAVE_STDARG
 mpfr_expr (mpfr_ptr res, int base, __gmp_const char *e, ...)
 #else
 mpfr_expr (va_alist)
@@ -241,7 +241,7 @@ mpfr_expr (va_alist)
   mpfr_srcptr  var[MPEXPR_VARIABLES];
   va_list     ap;
   int         ret;
-#if __STDC__
+#if HAVE_STDARG
   va_start (ap, e);
 #else
   mpfr_ptr          res;

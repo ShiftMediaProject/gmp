@@ -130,7 +130,7 @@ __gmp_const struct mpexpr_operator_t * __gmp_const mpq_expr_standard_table
 
 
 int
-#if __STDC__
+#if HAVE_STDARG
 mpq_expr (mpq_ptr res, int base, __gmp_const char *e, ...)
 #else
 mpq_expr (va_alist)
@@ -140,7 +140,7 @@ mpq_expr (va_alist)
   mpq_srcptr  var[MPEXPR_VARIABLES];
   va_list     ap;
   int         ret;
-#if __STDC__
+#if HAVE_STDARG
   va_start (ap, e);
 #else
   mpq_ptr           res;
