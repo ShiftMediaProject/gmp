@@ -130,8 +130,10 @@ mpz_inp_str (mpz_ptr x, FILE *stream, int base)
       str[str_size++] = dig;
       c = getc (stream);
     }
+  nread += str_size;
 
   ungetc (c, stream);
+  nread--;
 
   /* Make sure the string is not empty, mpn_set_str would fail.  */
   if (str_size == 0)
@@ -151,5 +153,5 @@ mpz_inp_str (mpz_ptr x, FILE *stream, int base)
   x->_mp_size = negative ? -xsize : xsize;
 
   (*__gmp_free_func) (str, alloc_size);
-  return str_size + nread;
+  return nread;
 }
