@@ -1,4 +1,4 @@
-dnl  HP-PA 2.0N 64-bit mpn_udiv_qrnnd.
+dnl  HP-PA 2.0 64-bit mpn_udiv_qrnnd.
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 
@@ -53,18 +53,22 @@ define(`divstep',
 	add,dc		q,q,q
 ')
 
-	.level	2.0N
+ifdef(`HAVE_ABI_2_0w',
+`	.level	2.0W
+',`	.level	2.0N
+')
 PROLOGUE(mpn_udiv_qrnnd)
 	.proc
 	.entry
 	.callinfo	frame=0,no_calls,save_rp,entry_gr=7
 
-	depd		%r25,31,32,%r26
+ifdef(`HAVE_ABI_2_0n',
+`	depd		%r25,31,32,%r26
 	depd		%r23,31,32,%r24
 	copy		%r24,%r25
 	ldd		-56(%r30),%r24
 	ldw		-60(%r30),%r23
-
+')
 	ldi		0,q
 	cmpib,*>=	0,d,large_divisor
 	ldi		8,%r31		C setup loop counter
@@ -74,8 +78,10 @@ Loop	divstep divstep divstep divstep divstep divstep divstep divstep
 	addib,<>	-1,%r31,Loop
 	nop
 
-	copy		%r28,%r29
+ifdef(`HAVE_ABI_2_0n',
+`	copy		%r28,%r29
 	extrd,u		%r28,31,32,%r28
+')
 	bve		(%r2)
 	std		n1,0(remptr)	C store remainder
 
@@ -108,8 +114,10 @@ Loop2	divstep divstep divstep divstep divstep divstep divstep divstep
 	add,dc		%r0,q,q		C adjust quotient
 
 even_divisor
-	copy		%r28,%r29
+ifdef(`HAVE_ABI_2_0n',
+`	copy		%r28,%r29
 	extrd,u		%r28,31,32,%r28
+')
 	bve		(%r2)
 	std		n1,0(remptr)	C store remainder
 
