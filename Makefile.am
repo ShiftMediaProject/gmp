@@ -203,7 +203,7 @@ info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = \
-  memory.c mp_set_fns.c mp_clz_tab.c rand.c randui.c randclr.c \
+  assert.c memory.c mp_set_fns.c mp_clz_tab.c rand.c randui.c randclr.c \
   randlc.c randlcui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c \
   insert-dbl.c
 libgmp_la_LIBADD = \
