@@ -161,19 +161,18 @@ try_si_zi (int a, mpz_srcptr b, int answer)
 }
 
 
+/* Don't bother checking mpz_jacobi, since it only differs for b even, and
+   we don't have an actual expected answer for it.  tests/devel/try.c does
+   some checks though.  */
 void
 try_zi_zi (mpz_srcptr a, mpz_srcptr b, int answer)
 {
   int  got;
 
-  /* gmp 2.0.2 mpz_jacobi() doesn't handle negative or even b */
-  if (mpz_sgn (b) <= 0 || mpz_even_p (b))
-    return;
-
-  got = mpz_jacobi (a, b);
+  got = mpz_kronecker (a, b);
   if (got != answer)
     {
-      printf ("mpz_jacobi (");
+      printf ("mpz_kronecker (");
       mpz_out_str (stdout, 10, a); 
       printf (", ");
       mpz_out_str (stdout, 10, b);
@@ -593,6 +592,9 @@ check_data (void)
     { "15",  "17",  1 },
     { "67",  "89",  1 },
 
+    /* special values inducing a==b==1 at the end of jac_or_kron() */
+    { "0x10000000000000000000000000000000000000000000000001",
+      "0x10000000000000000000000000000000000000000000000003", 1 },
   };
 
   int    i, answer;
