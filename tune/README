@@ -123,6 +123,12 @@ Hertz).  For example in "bash" on a 650 MHz machine,
 A high precision time base makes it possible to get accurate measurements in
 a shorter time.  Support for systems and CPUs not already covered is wanted.
 
+When setting up a method, be sure not to claim a higher accuracy than is
+really available.  For example the default gettimeofday() code is set for
+microsecond accuracy, but if only 10ms or 55ms is available then
+inconsistent results can be expected.
+
+
 
 
 
