@@ -1,4 +1,4 @@
-/* double mpf_set_q (mpf_t dst, mpq_t src) -- Convert the rational SRC to the float DST.
+/* mpf_set_q (mpf_t rop, mpq_t op) -- Convert the rational op to the float rop.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
 
@@ -22,8 +22,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-
-#include <math.h>
 
 /* Algorithm:
    1. Develop >= n bits of src.num / src.den, where n is the number of bits
