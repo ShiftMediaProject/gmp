@@ -38,6 +38,8 @@ Changes between MP version 4.0.1 and 4.1
 * Generalized low-level number format, reserving a `nails' part of each
   limb.  (Please note that this is really experimental; some functions
   are likely to compute garbage when nails are enabled.)
+* Nails-enabled Alpha 21264 assembly code, allowing up to 60% faster
+  performance.  (Use --enable-nails=4 to enable it.)
 
 Changes between MP version 4.0 and 4.0.1
 
