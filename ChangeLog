@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-09-16  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.c (run_one): Don't scale the -1.0 not-available return.
+	Print "n/a" for times not-available.
+	
 2003-09-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
 
 	* mpn/generic/mul_n.c (toom3_interpolate): New function.
