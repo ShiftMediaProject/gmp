@@ -72,15 +72,38 @@ trace (const char *format, ...)
   ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
    ((xl) >> (GMP_LIMB_BITS - (count))))
 
-/* Checks if a - b < c. Overwrites c. */
+/* Checks if a - b < c. Overwrites c.
+
+   Let W = 2^GMP_NUMB_BITS, k = csize.
+   
+   Write a = A W^k + a', b = B W^k + b', so that a - b < c is
+   equivalent to
+
+     (A - B) W^k < c + b' - a'     (*)
+
+   For the right hand side, we have - W^k < c + b' - a' < 2 W^k. We
+   can divide into cases based on either side of (*).
+
+   L1. A = B: a - b < c iff a' < c + b'.
+
+   L2. A - B = 1: a - b < c iff W^k < c + b' - a', or W^k <= c
+      + b' - 1 - a'
+
+   L3. A - B > 1: a - b > c.
+
+   R1. a' >= c + b': a - b >= c.
+
+   R2. 0 < c + b' - a' <= W^k: a - b < c iff A == B.
+
+   R3. W^k < c + b' - a': a - b < c iff A - B < 2
+*/
+
 static int
 mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
 		    mp_srcptr bp, mp_size_t bsize,
 		    mp_ptr cp, mp_size_t csize)
 {
   mp_limb_t ch;
-  mp_limb_t dh;
-  unsigned i;
 
   ASSERT (MPN_LEQ_P (bp, bsize, ap, asize));
 
@@ -90,36 +113,62 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
   if (asize < csize)
     return 1;
 
-  if (asize > bsize)
+  if (asize == csize)
     {
-      /* #(a - b) >= asize - 1 */
-      if (asize > csize + 1)
-	return 0;
-      else
+      ASSERT (bsize <= csize);
+
+      if (bsize)
 	{
-	  ASSERT (bsize <= csize);
+	  /* A - B == 0, check a' < c + b' */
 	  ch = mpn_add (cp, cp, csize, bp, bsize);
 	  if (ch)
-	    {
-	      if (asize == csize)
-		return 0;
-	      ASSERT (asize == csize + 1);
-	      if (ap[asize - 1] < ch)
-		return 1;
-	      else if (ap[asize - 1] > ch)
-		return 0;
-
-	      /* The high limb of a is canceled by ch. */
-	      asize--;
-	    }
-
-	  return MPN_LESS_P (ap, asize, cp, csize);
+	    return 1;
 	}
+      
+      return mpn_cmp (ap, cp, csize) < 0;
     }
 
-  /* a and b are of the same size. Equal high limbs cancel out, so
-     ignore them */
-  while (asize && ap[asize - 1] == bp[asize - 1])
+  if (bsize <= csize)
+    {
+      /* B == 0, so A - B = A */
+      if (asize > csize + 1 || ap[csize] > 1)
+	return 0;
+      
+      if (bsize == 0)
+	return 0;
+
+      /* A - B == 1, so check W^k <= c + b' - 1 - a' */
+      ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
+      ch = mpn_add (cp, cp, csize, bp, bsize);
+
+      /* FIXME: mpn_sub_n calls should be replaced with mpn_cmp */
+      return ch == 1 && 0 == mpn_sub_n (cp, cp, ap, csize);
+    }
+
+  /* Compute A - B, and abort as soon as we know the difference is larger than 1 */
+
+  if (asize > bsize)
+    {
+      /* The only way we can have A - B = 1 is if A = (1, 0, ..., 0),
+	 B = (0, MAX, ..., MAX) */
+      unsigned i;
+      
+      if (asize > bsize + 1 || ap[bsize] > 1)
+	return 0;
+
+      for (i = csize; i < bsize; i++)
+	if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
+	  return 0;
+
+      /* A - B == 1, so check W^k <= c + b' - 1 - a' */
+      ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
+      ch = mpn_add_n (cp, cp, bp, csize);
+      
+      return ch == 1 && 0 == mpn_sub_n (cp, cp, ap, csize);
+    }
+
+  /* Equal high limbs cancel out, so ignore them */
+  while (asize >= csize && ap[asize - 1] == bp[asize - 1])
     asize--;
 
   if (asize < csize)
@@ -128,60 +177,89 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
   /* Now asize = bsize >= csize */
   if (asize == csize)
     {
+      /* A - B == 0, check a' < c + b' */
       ch = mpn_add_n (cp, cp, bp, csize);
-      if (ch)
-	return 1;
-
-      return MPN_LESS_P (ap, csize, cp, csize);
+      
+      return ch || mpn_cmp (ap, cp, csize) < 0;
     }
 
   /* asize == bsize > csize. */
-  if (csize == 0)
-    return 0;
-
-  /* Subtract one from c, transforming the check to a - b <= c */
-  ASSERT_NOCARRY (mpn_sub_1 (cp, cp, csize, 1));
-  MPN_NORMALIZE (cp, csize);
-
-  if (csize == 0)
-    return 0;
-
-  /* Write a = ah W^k + al, b = bh W^k + bl, where c, al, bl < W^k.
-     Then a - b <= c is equivalent to
-
-     (ah - bh) W^k <= c + bl - al
-
-     We always have (ah - bh) >= 0, and
-
-     -W^k < c + bl - ah < 2 W^k
-  */
-
-  /* We know that ah - bh >= 1. Do we have ah - bh >= 2? */
-  dh = ap[asize - 1] - bp[asize - 1];
-  if (dh >= 2)
-    return 0;
-
-  /* Compute c += bl - al */
-  ch = mpn_add_n (cp, cp, bp, csize);
-  if (ch == 0)
-    /* c + bl < W^k */
-    return 0;
-
-  ch -= mpn_sub_n (cp, cp, ap, csize);
-
-  if (ch == 0)
-    return 0;
-
-  /* W^k <= c + bl - al < 2 W^k. Then (ah - bh) W^k is smaller iff ah
-     = bh + 1, which happens iff ah ends with 0...0, and bh with
-     f...f. */
-
-  for (i = csize; i < asize - 1; i++)
-    if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
+  {
+    unsigned i;
+    
+    /* We know that A - B >= 1. Do we have A - B > 1? */
+    /* The only way we can have A - B = 1 is if A = (X, 0, ..., 0), B =
+       (X-1, MAX, ..., MAX). */
+    
+    if (ap[asize - 1] - bp[asize - 1] > 1)
+      /* A - B > 1 */
       return 0;
 
-  return 1;
+    for (i = csize; i < asize - 1; i++)
+      if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
+	return 0;
+    
+    /* A - B == 1, so check W^k <= c + b' - 1 - a' */
+    ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
+    ch = mpn_add_n (cp, cp, bp, csize);
+      
+    return ch == 1 && 0 == mpn_sub_n (cp, cp, ap, csize);
+  }
 }
+
+#if WANT_ASSERT
+static int
+slow_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
+		     mp_srcptr bp, mp_size_t bsize,
+		     mp_ptr cp, mp_size_t csize)
+{
+  if (csize == 0)
+    return 0;
+  else if (bsize == 0)
+    return MPN_LESS_P (ap, asize, cp, csize);
+  else
+    {
+      int res;
+      mp_ptr tp;
+      mp_size_t tsize;
+      TMP_DECL (marker);
+      TMP_MARK (marker);
+
+      tp = TMP_ALLOC_LIMBS (asize);
+      mpn_sub (tp, ap, asize, bp, bsize);
+      tsize = asize;
+      MPN_NORMALIZE (tp, tsize);
+
+      res = MPN_LESS_P (tp, tsize, cp, csize);
+      TMP_FREE (marker);
+
+      return res;
+    }
+}
+
+static int
+wrap_mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
+			 mp_srcptr bp, mp_size_t bsize,
+			 mp_ptr cp, mp_size_t csize)
+{
+  int r1; 
+  int r2;
+
+#if WANT_TRACE
+  trace ("wrap_mpn_diff_smaller_p:\n"
+	 "  a = %Nd;\n"
+	 "  b = %Nd;\n"
+	 "  c = %Nd;\n", ap, asize, bp, bsize, cp, csize);
+#endif
+  
+  r1 = slow_diff_smaller_p (ap, asize, bp, bsize, cp, csize);
+  r2 = mpn_diff_smaller_p (ap, asize, bp, bsize, cp, csize);
+  ASSERT (r1 == r2);
+  return r1;
+}
+#define mpn_diff_smaller_p wrap_mpn_diff_smaller_p
+#endif /* WANT_ASSERT */
+
 
 /* Compute au + bv. u and v are single limbs, a and b are n limbs each.
    Stores n+1 limbs in rp, and returns the (n+2)'nd limb. */
@@ -471,7 +549,7 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
   /* NOTE: We really need only asize + bsize + 2*L, but since we're
    * swapping the pointers around, we allocate 2*(asize + L). */
   talloc = 2*(asize + L);
-  tp = __GMP_ALLOCATE_FUNC_LIMBS(talloc);
+  tp = __GMP_ALLOCATE_FUNC_LIMBS (talloc);
   t1p = tp;
   t2p = t1p + (asize + L);
 
@@ -503,7 +581,7 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
       MPN_NORMALIZE (t1p, t1size);
       ASSERT (MPN_EQUAL_P (t1p, t1size, r->rp, r->rsize));
     }
-  __GMP_FREE_FUNC_LIMBS(tp, talloc);
+  __GMP_FREE_FUNC_LIMBS (tp, talloc);
   for (i = start; i < end - 1; i++)
     {
       /* We should have strict inequality after each reduction step,
@@ -1014,7 +1092,7 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
   if (bsize < 2)
     return 0;
 
-#if WANT_TRACE
+#if 0 && WANT_TRACE
   trace ("lehmer_step:\n"
 	 "  a = %Nd\n"
 	 "  b = %Nd\n",
@@ -1044,8 +1122,8 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
       ASSERT (asize > 2);
 
       count_leading_zeros (shift, ap[asize-1]);
-#if WANT_TRACE
-      trace("shift = %d\n", shift);
+#if 0 && WANT_TRACE
+      trace ("shift = %d\n", shift);
 #endif
       if (bsize == asize)
 	bh = MPN_EXTRACT_LIMB (shift, bp[asize - 1], bp[asize - 2]);
@@ -1119,13 +1197,13 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 #if WANT_TRACE
   trace ("hgcd_jebelean: sign = %d\n", hgcd->sign);
 
-  if (L < 50)
+  if (L < 200)
     {
       unsigned i;
       for (i = 0; i<4; i++)
-	trace (" r%d = %Nd; u%d = %Nd; v%d = %Nd\n",
-	       i, hgcd->row[i].rp, hgcd->row[i].rsize,
-	       i, hgcd->row[i].uvp[0], hgcd->size,
+	trace (" r%d = %Nd; u%d = %Nd; v%d = %Nd;\n",
+	       i, hgcd->row[i].rp, hgcd->row[i].rsize, 
+	       i, hgcd->row[i].uvp[0], hgcd->size, 
 	       i, hgcd->row[i].uvp[1], hgcd->size);
     }
 #endif
