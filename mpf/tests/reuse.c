@@ -159,13 +159,14 @@ main (argc, argv)
       for (i = 0; i < sizeof (dis_funcs) / sizeof (dis_func); i++)
 	{
 	  /* Don't divide by 0.  */
-	  if (i == 0 && mpf_cmp_ui (in2, 0) == 0)
+	  if (strcmp (dis_func_names[i], "mpf_ui_div") == 0
+	      && mpf_cmp_ui (in2, 0) == 0)
 	    continue;
 
 	  (dis_funcs[i]) (res1, in1i, in2);
 
 	  mpf_set (out1, in2);
-	  (dis_funcs[i]) (out1, in1i, in2);
+	  (dis_funcs[i]) (out1, in1i, out1);
 	  mpf_set (res2, out1);
 
 	  if (mpf_cmp (res1, res2) != 0)
@@ -200,9 +201,6 @@ oo (x)
 }
 
 #if 0
-void mpf_div_2exp	_PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
-void mpf_mul_2exp	_PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
-
 void mpf_abs		_PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_sqrt		_PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_neg		_PROTO ((mpf_ptr, mpf_srcptr));
