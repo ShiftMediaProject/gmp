@@ -20,6 +20,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#include "gmp-mparam.h"
+/* #include "longlong.h" */
+
 /* When using gcc, make sure to use its builtin alloca.  */
 #if ! defined (alloca) && defined (__GNUC__)
 #define alloca __builtin_alloca
@@ -83,12 +89,6 @@ MA 02111-1307, USA. */
 #define EXP(x) ((x)->_mp_exp)
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-#include "gmp-mparam.h"
-/* #include "longlong.h" */
 
 #if (__STDC__-0) || defined (__cplusplus)
 void *malloc (size_t);
