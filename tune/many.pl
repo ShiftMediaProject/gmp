@@ -461,7 +461,6 @@ my @table =
        'regexp'=> 'gcd_1',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr xp, mp_size_t xsize, mp_limb_t y',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R_OPTIONAL',
        'speed_suffixes' => ['N'],
      },
@@ -474,7 +473,6 @@ my @table =
        'regexp'=> 'gcd_finda',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr cp',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      
 
@@ -484,7 +482,6 @@ my @table =
        'mpX'   => 'mpz',
        'ret'   => 'int',
        'args'  => 'mpz_srcptr a, mpz_srcptr b',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'try-legendre' => 'TYPE_MPZ_JACOBI',
      },
      {
@@ -492,7 +489,6 @@ my @table =
        'funs'  => ['jacobi_base'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_limb_t a, mp_limb_t b, int bit1',
-       'attrib'=> 'ATTRIBUTE_CONST',
        'speed' => 'SPEED_ROUTINE_MPN_JACBASE',
        'try'   => 'none',
      },
@@ -520,7 +516,6 @@ my @table =
        'ret'   => 'mp_limb_t',
        'args_mod_1'       => 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor',
        'args_preinv_mod_1'=> 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor, mp_limb_t inverse',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R',
      },
      {
@@ -528,20 +523,17 @@ my @table =
        'funs'  => ['preinv_mod_1'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor, mp_limb_t inverse',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R',
      },
      {
        'regexp'=> 'mod_34lsub1',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr src, mp_size_t len',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      {
        'regexp'=> 'invert_limb',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_limb_t divisor',
-       'attrib'=> 'ATTRIBUTE_CONST',
        'speed_flags'=> 'FLAG_R_OPTIONAL',
        'try'   => 'none',
      },
@@ -562,7 +554,6 @@ my @table =
        'funs'  => ['modexact_1_odd'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr src, mp_size_t size, mp_limb_t divisor',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R',
      },
      {
@@ -570,7 +561,6 @@ my @table =
        'funs'  => ['modlimb_invert'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_limb_t v',
-       'attrib'=> 'ATTRIBUTE_CONST',
        'carrys'=> [''],
        'try'   => 'none',
      },
@@ -617,19 +607,16 @@ my @table =
        'ret'   => 'unsigned long',
        'args_popcount'=> 'mp_srcptr xp, mp_size_t size',
        'args_hamdist' => 'mp_srcptr xp, mp_srcptr yp, mp_size_t size',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      {
        'regexp'=> 'popcount',
        'ret'   => 'unsigned long',
        'args'  => 'mp_srcptr xp, mp_size_t size',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      {
        'regexp'=> 'hamdist',
        'ret'   => 'unsigned long',
        'args'  => 'mp_srcptr xp, mp_srcptr yp, mp_size_t size',
-       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        # extra renaming to support sharing a data table with mpn_popcount
        'rename'=> ['popcount'],
      },
@@ -660,7 +647,6 @@ my @table =
        'funs'  => ['count_leading_zeros'],
        'ret'   => 'unsigned',
        'args'  => 'mp_limb_t',
-       'attrib'=> 'ATTRIBUTE_CONST',
        'macro-before' => "#undef COUNT_LEADING_ZEROS_0",
        'macro-speed'  =>
 '#ifdef COUNT_LEADING_ZEROS_0
@@ -679,7 +665,6 @@ my @table =
        'funs'  => ['count_trailing_zeros'],
        'ret'   => 'unsigned',
        'args'  => 'mp_limb_t',
-       'attrib'=> 'ATTRIBUTE_CONST',
        'macro-speed' => '
   SPEED_ROUTINE_COUNT_ZEROS_A (0, 0);
   $fun (c, n);
@@ -1136,11 +1121,7 @@ EOF
 	  print "funfull $funfull\n" if $opt{'t'};
 
 	  if ($lang ne '.h') {
-	    my $attrib = $t->{'attrib'};
-	    if (defined $attrib) { $attrib = " $attrib"; }
-	    else { $attrib = ''; }
-
-	    my $proto = "$t->{'ret'} $funfull _PROTO (($args$carryarg))$attrib; \\\n";
+	    my $proto = "$t->{'ret'} $funfull _PROTO (($args$carryarg)); \\\n";
 	    $SPEED_EXTRA_PROTOS .= $proto;
 	    $TRY_EXTRA_PROTOS .= $proto;
 	  }
