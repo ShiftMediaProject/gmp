@@ -204,6 +204,9 @@ struct param_t {
 #ifndef UDIV_PREINV_ALWAYS
 #define UDIV_PREINV_ALWAYS 0
 #endif
+#ifndef HAVE_NATIVE_mpn_divexact_1
+#define HAVE_NATIVE_mpn_divexact_1 0
+#endif
 #ifndef HAVE_NATIVE_mpn_divrem_1
 #define HAVE_NATIVE_mpn_divrem_1 0
 #endif
@@ -212,6 +215,9 @@ struct param_t {
 #endif
 #ifndef HAVE_NATIVE_mpn_mod_1
 #define HAVE_NATIVE_mpn_mod_1 0
+#endif
+#ifndef HAVE_NATIVE_mpn_modexact_1_odd
+#define HAVE_NATIVE_mpn_modexact_1_odd 0
 #endif
 #ifndef HAVE_NATIVE_mpn_preinv_divrem_1
 #define HAVE_NATIVE_mpn_preinv_divrem_1 0
@@ -843,7 +849,7 @@ tune_sqr (void)
 
   if (HAVE_NATIVE_mpn_sqr_basecase)
     {
-      print_define_remark ("SQR_BASECASE_THRESHOLD", 0, "native");
+      print_define_remark ("SQR_BASECASE_THRESHOLD", 0, "always (native)");
       sqr_basecase_threshold = 0;
     }
   else
@@ -1325,6 +1331,14 @@ tune_divexact_1 (void)
   mp_size_t  thresh[2], average;
   int        low, i;
 
+  /* Any native mpn_divexact_1 is assumed to incorporate all the speed of a
+     full mpn_divrem_1.  */
+  if (HAVE_NATIVE_mpn_divexact_1)
+    {
+      print_define_remark ("DIVEXACT_1_THRESHOLD", 0, "always (native)");
+      return;
+    }
+
   ASSERT_ALWAYS (tuned_speed_mpn_divrem_1 != NULL);
 
   param.name = "DIVEXACT_1_THRESHOLD";
@@ -1393,6 +1407,14 @@ tune_modexact_1_odd (void)
 {
   static struct param_t  param;
   mp_size_t  thresh_lt, thresh_ge, average;
+
+  /* Any native mpn_modexact_1_odd is assumed to incorporate all the speed
+     of a full mpn_mod_1.  */
+  if (HAVE_NATIVE_mpn_modexact_1_odd)
+    {
+      print_define_remark ("MODEXACT_1_ODD_THRESHOLD", 0, "always (native)");
+      return;
+    }
 
   ASSERT_ALWAYS (tuned_speed_mpn_mod_1 != NULL);
 
