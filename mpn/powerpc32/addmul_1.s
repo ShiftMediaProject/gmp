@@ -61,7 +61,7 @@ Loop:	lwzu	0,4(4)
 	lwz	9,4(3)
 	addze	10,10
 	addc	8,7,9
-	bdn	Loop
+	bdnz	Loop
 
 Lend:	stw	8,4(3)
 	addze	3,10

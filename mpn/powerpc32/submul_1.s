@@ -63,7 +63,7 @@ Loop:	lwzu	0,4(4)
 	addze	10,10
 	subfc	8,7,9
 	addc	7,7,8		# invert cy (r7 is junk)
-	bdn	Loop
+	bdnz	Loop
 
 Lend:	stw	8,4(3)
 	addze	3,10

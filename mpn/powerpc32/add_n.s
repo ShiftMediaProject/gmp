@@ -48,8 +48,8 @@ Loop:	lwzu	8,4(4)		# load s1 limb and update s1_ptr
 	lwzu	0,4(5)		# load s2 limb and update s2_ptr
 	stwu	7,4(3)		# store previous limb in load latency slot
 	adde	7,0,8		# add new limbs with cy, set cy
-	bdn	Loop		# decrement CTR and loop back
+	bdnz	Loop		# decrement CTR and loop back
 Lend:	stw	7,4(3)		# store ultimate result limb
 	li	3,0		# load cy into ...
-	aze	3,3		# ... return value register
+	addze	3,3		# ... return value register
 	blr

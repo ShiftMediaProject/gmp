@@ -54,7 +54,7 @@ Loop:	lwzu	10,4(4)
 	slw	12,11,8
 	or	9,9,12
 	stwu	9,4(7)
-	bdn	Loop
+	bdnz	Loop
 
 Lend1:	srw	0,11,6
 	stw	0,4(7)
