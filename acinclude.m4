@@ -1916,7 +1916,7 @@ BEGIN {
           got[12] == "124" &&  \
           got[13] == "000" &&  \
           got[14] == "000" &&  \
-	  got[15] == "000" &&)
+	  got[15] == "000")
         {
           print "IEEE big endian"
           found = 1
