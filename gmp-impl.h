@@ -2071,6 +2071,21 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 #define TARGET_REGISTER_STARVED 0
 #endif
 
+/* LIMB_HIGHBIT_TO_MASK(n) gives 0xFF..FF if the high bit of n is 1, or
+   gives 0 if the high bit is 0.
+   This is intended to be an arithmetic right shift by GMP_LIMB_BITS-1, but
+   C doesn't guarantee signed right shifts are arithmetic, so we only do
+   that if configure says it's ok.  The fallback is to a ?:.  Recent
+   versions of gcc (eg. 3.3) will in fact optimize such a ?: to an
+   arithmetic shift.  */
+#if HAVE_RIGHT_SHIFT_ARITHMETIC
+#define LIMB_HIGHBIT_TO_MASK(n) \
+  ((mp_limb_signed_t) (n) >> (GMP_LIMB_BITS-1))
+#else
+#define LIMB_HIGHBIT_TO_MASK(n) \
+  ((n) & GMP_LIMB_HIGHBIT ? MP_LIMB_T_MAX : CNST_LIMB(0))
+#endif
+
 /* Use a library function for invert_limb, if available. */
 #define mpn_invert_limb  __MPN(invert_limb)
 mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
@@ -2130,21 +2145,14 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (q) = _q;								\
   } while (0)
 
-/* Like udiv_qrnnd_preinv, but branch-free.
-
-   Recent versions of gcc (eg. 3.3) know to turn the _n1 highbit test into
-   an arithmetic right shift (eg. sarl on i386).  Previous gcc would be
-   better with say "(mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1)", but
-   that's not portable since C doesn't guarantee a signed right shift is
-   arithmetic (and on Cray vector systems it isn't).  */
-
+/* Like udiv_qrnnd_preinv, but branch-free. */
 #define udiv_qrnnd_preinv2(q, r, nh, nl, d, di)                         \
   do {									\
     mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
     _n2 = (nh);								\
     _n10 = (nl);							\
-    _n1 = (_n10 & GMP_LIMB_HIGHBIT ? MP_LIMB_T_MAX : 0);                \
+    _n1 = LIMB_HIGHBIT_TO_MASK (_n10);                                  \
     _nadj = _n10 + (_n1 & (d));						\
     umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
@@ -2164,7 +2172,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     mp_limb_t _xh, _xl;							\
     _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
     _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
-    _n1 = ((mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1));		\
+    _n1 = LIMB_HIGHBIT_TO_MASK (_n10);                                  \
     _nadj = _n10 + (_n1 & (dnorm));					\
     umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
@@ -2873,7 +2881,7 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
 #define FORCE_DOUBLE(d)  do { } while (0)
 #endif
 
-
+                                                                       
 extern int __gmp_junk;
 extern const int __gmp_0;
 void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
