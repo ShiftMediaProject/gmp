@@ -67,7 +67,11 @@ mpn_sqr_n (prodp, up, un)
       mpn_kara_sqr_n (prodp, up, un, tspace);
       TMP_FREE (marker);
     }
+#if WANT_FFT || TUNE_PROGRAM_BUILD
   else if (un < FFT_SQR_THRESHOLD)
+#else
+  else
+#endif
     { /* toom3 multiplication */
       mp_ptr tspace;
       TMP_DECL (marker);
@@ -76,11 +80,13 @@ mpn_sqr_n (prodp, up, un)
       mpn_toom3_sqr_n (prodp, up, un, tspace);
       TMP_FREE (marker);
     }
+#if WANT_FFT || TUNE_PROGRAM_BUILD
   else
     {
       /* schoenhage multiplication */
       mpn_mul_fft_full (prodp, up, un, up, un);
     }
+#endif
 }
 
 mp_limb_t

@@ -1319,7 +1319,11 @@ mpn_mul_n (p, a, b, n)
 #endif
       mpn_kara_mul_n (p, a, b, n, ws);
     }
+#if WANT_FFT || TUNE_PROGRAM_BUILD
   else if (n < FFT_MUL_THRESHOLD)
+#else
+  else
+#endif
     {
       /* Use workspace of unknown size in heap, as stack space may
        * be limited.  Since n is at least TOOM3_MUL_THRESHOLD, the
@@ -1330,8 +1334,10 @@ mpn_mul_n (p, a, b, n)
       mpn_toom3_mul_n (p, a, b, n, ws);
       (*_mp_free_func) (ws, (size_t) wsLen * sizeof (mp_limb_t));
     }
+#if WANT_FFT || TUNE_PROGRAM_BUILD
   else
     {
       mpn_mul_fft_full (p, a, n, b, n);      
     }
+#endif
 }
