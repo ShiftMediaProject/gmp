@@ -537,11 +537,12 @@ case "$target" in
   powerpc*-*-*)
     case "$target" in
       *-*-mach* | *-*-rhapsody* | *-*-nextstep*)
-        ;;	# these use non-concentional assembly syntax.
+        ;;	# these use non-conventional assembly syntax.
       *)
 	gmp_m4postinc="$gmp_m4postinc mpn/powerpc32/regmap.m4"
 	;;
     esac
+    ;;
 esac
 changequote([,])dnl
 
