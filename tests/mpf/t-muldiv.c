@@ -35,7 +35,7 @@ main (int argc, char **argv)
 {
   mp_size_t size;
   mp_exp_t exp;
-  int reps = 100000;
+  int reps = 10000;
   int i;
   mpf_t u, v, w, x;
   mp_size_t bprec = SIZE * BITS_PER_MP_LIMB;

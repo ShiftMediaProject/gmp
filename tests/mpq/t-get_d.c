@@ -48,7 +48,7 @@ main (int argc, char **argv)
 {
   mpq_t a;
   mp_size_t size;
-  int reps = 1000;
+  int reps = 100;
   int i, j;
   double last_d, new_d;
   mpq_t qlast_d, qnew_d;

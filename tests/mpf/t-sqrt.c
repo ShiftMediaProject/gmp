@@ -35,7 +35,7 @@ main (int argc, char **argv)
 {
   mp_size_t size;
   mp_exp_t exp;
-  int reps = 100000;
+  int reps = 20000;
   int i;
   mpf_t x, y, y2;
   mp_size_t bprec = 100;

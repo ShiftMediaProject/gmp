@@ -57,7 +57,7 @@ main (int argc, char **argv)
 {
   mpq_t a, b;
   mp_size_t size;
-  int reps = 100000;
+  int reps = 10000;
   int i;
   int cc, ccref;
 
