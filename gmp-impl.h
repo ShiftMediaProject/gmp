@@ -1466,6 +1466,7 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #define MPN_IORD_U(ptr, incr, aors)                     \
   do {                                                  \
+    mp_ptr  __ptr_dummy;                                \
     if (__builtin_constant_p (incr) && (incr) == 1)     \
       {                                                 \
         __asm__ __volatile__                            \
@@ -1473,13 +1474,12 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
            "\t" aors "$1, (%0)\n"                       \
            "\tleal 4(%0),%0\n"                          \
            "\tjc " ASM_L(top)                           \
-           : "=r" (__dummy)                             \
+           : "=r" (__ptr_dummy)                         \
            : "0"  (ptr)                                 \
            : "memory");                                 \
       }                                                 \
     else                                                \
       {                                                 \
-        mp_ptr  __ptr_dummy;                            \
         __asm__ __volatile__                            \
           (   aors  " %2,(%0)\n"                        \
            "\tjnc " ASM_L(done) "\n"                    \
