@@ -23,6 +23,8 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define _GNU_SOURCE    /* for DECIMAL_POINT in glibc langinfo.h */
+
 #include "config.h"
 
 #if HAVE_STDARG
@@ -43,6 +45,14 @@ MA 02111-1307, USA. */
 # if HAVE_STDINT_H
 #  include <stdint.h>
 # endif
+#endif
+
+#if HAVE_LANGINFO_H
+#include <langinfo.h>  /* for nl_langinfo */
+#endif
+
+#if HAVE_LOCALE_H
+#include <locale.h>    /* for localeconv */
 #endif
 
 #if HAVE_SYS_TYPES_H
@@ -346,6 +356,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             case 'F':
               FLUSH ();
               DOPRNT_ACCUMULATE (__gmp_doprnt_mpf (funs, data, &param,
+                                                   GMP_DECIMAL_POINT,
                                                    va_arg (ap, mpf_srcptr)));
               va_copy (last_ap, ap);
               last_fmt = fmt;
