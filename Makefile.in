@@ -36,7 +36,7 @@ AR_FLAGS = rc
 RANLIB_TEST = [ -f /usr/bin/ranlib -o -f /bin/ranlib ]
 RANLIB = ranlib
 SHELL = /bin/sh
-INSTALL = install -c
+INSTALL = $(srcdir)/install.sh -c
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 MAKEINFO = makeinfo
@@ -131,8 +131,13 @@ html: gmp_toc.html
 gmp_toc.html: $(srcdir)/gmp.texi
 	texi2html -acc -split_chapter $(srcdir)/gmp.texi
 
-install-strip: install
-install: installdirs libgmp.a gmp.info install-info-files
+# The semicolon is to prevent the install.sh -> install default rule
+# from doing anything.  Having it run true helps avoid problems and
+# noise from versions of make which don't like to have null commands.
+install: install-normal ; @true
+
+install-strip: install-normal
+install-normal: installdirs libgmp.a gmp.info install-info-files
 	$(INSTALL_DATA) libgmp.a $(libdir)/libgmp.a
 	-chmod a-x $(libdir)/libgmp.a
 	$(INSTALL_DATA) $(srcdir)/gmp.h $(includedir)/gmp.h
