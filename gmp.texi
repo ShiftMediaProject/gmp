@@ -9,17 +9,6 @@
 @end iftex
 @comment %**end of header
 
-@dircategory GNU libraries
-@direntry
-* gmp: (gmp).                   GNU Multiple Precision Arithmetic Library.
-@end direntry
-
-@c smallbook
-
-@iftex
-@finalout
-@end iftex
-
 @c  Texinfo version 4 or up will be needed to process this into .info files.
 @c
 @c  The edition number is in three places and the month/year in one, all taken
@@ -33,6 +22,91 @@
 @c  a lot of junk.  "mpn" functions aren't in the concept index because a
 @c  beginner looking for "GCD" or something is only going to be confused by
 @c  pointers to low level routines.
+
+@dircategory GNU libraries
+@direntry
+* gmp: (gmp).                   GNU Multiple Precision Arithmetic Library.
+@end direntry
+
+@c smallbook
+@finalout
+@setchapternewpage on
+
+@ifnottex
+@node Top, Copying, (dir), (dir)
+@top GNU MP
+This manual describes how to install and use the GNU multiple precision
+arithmetic library, version @value{VERSION}.
+@end ifnottex
+
+@iftex
+@titlepage
+@c  use the new format for titles
+@title GNU MP
+@subtitle The GNU Multiple Precision Arithmetic Library
+@subtitle Edition @value{EDITION}
+@subtitle @value{UPDATED}
+
+@author by Torbj@"orn Granlund, Swox AB
+@email{tege@@swox.com}
+
+@c Include the Distribution inside the titlepage so
+@c that headings are turned off.
+
+@tex
+\global\parindent=0pt
+\global\parskip=8pt
+\global\baselineskip=13pt
+@end tex
+
+@page
+@vskip 0pt plus 1filll
+
+@c  Ensure copyright stuff gets into info and html output.
+@end iftex
+
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.1 or any later
+version published by the Free Software Foundation; with no Invariant Sections,
+with the Front-Cover Texts being "A GNU Manual", and with no Back-Cover Texts.
+A copy of the license is included in the section @ref{GNU Free Documentation
+License}.
+
+@iftex
+@end titlepage
+@headings double
+
+@c  Don't bother with contents for "makeinfo --html", the menus seem adequate.
+@contents
+@end iftex
+
+@menu
+* Copying::                    GMP Copying Conditions (LGPL).
+* Introduction to GMP::        Brief introduction to GNU MP.
+* Installing GMP::             How to configure and compile the GMP library.
+* GMP Basics::                 What every GMP user should know.
+* Reporting Bugs::             How to usefully report bugs.
+* Integer Functions::          Functions for arithmetic on signed integers.
+* Rational Number Functions::  Functions for arithmetic on rational numbers.
+* Floating-point Functions::   Functions for arithmetic on floats.
+* Low-level Functions::        Fast functions for natural numbers.
+* Random Number Functions::    Functions for generating random numbers.
+* Formatted Output::           @code{printf} style output.
+* BSD Compatible Functions::   All functions found in BSD MP.
+* Custom Allocation::          How to customize the internal allocation.
+* Language Bindings::          Using GMP from other languages.
+* Algorithms::                 What happens behind the scenes.
+* Internals::                  How values are represented behind the scenes.
+
+* Contributors::	       Who brings your this library?
+* References::                 Some useful papers and books to read.
+* GNU Free Documentation License::
+* Concept Index::
+* Function Index::
+@end menu
 
 
 @c  @m{T,N} is $T$ in tex or @math{N} otherwise.  This is an easy way to give
@@ -267,116 +341,6 @@ x
 @end ifnottex
 
 
-@ifnottex
-This file documents GNU MP, a library for arbitrary-precision arithmetic.
-
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
-Free Software Foundation, Inc.
-
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-@ignore
-Permission is granted to process this file through TeX and print the
-results, provided the printed document carries copying permission
-notice identical to this one except for the removal of this paragraph
-(this paragraph not being relevant to the printed manual).
-@end ignore
-
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions,
-except that this permission notice may be stated in a translation approved
-by the Foundation.
-@end ifnottex
-
-@setchapternewpage on
-@titlepage
-@c  use the new format for titles
-
-@title GNU MP
-@subtitle The GNU Multiple Precision Arithmetic Library
-@subtitle Edition @value{EDITION}
-@subtitle @value{UPDATED}
-
-@author by Torbj@"orn Granlund, Swox AB
-@email{tege@@swox.com}
-
-@c Include the Distribution inside the titlepage so
-@c that headings are turned off.
-
-@tex
-\global\parindent=0pt
-\global\parskip=8pt
-\global\baselineskip=13pt
-@end tex
-
-@page
-@vskip 0pt plus 1filll
-Copyright @copyright{} 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-2001 Free Software Foundation, Inc.
-
-@sp 2
-
-Published by the Free Software Foundation @*
-59 Temple Place - Suite 330 @*
-Boston, MA 02111-1307, USA @*
-
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions,
-except that this permission notice may be stated in a translation approved
-by the Foundation.
-@end titlepage
-@headings double
-
-@ifnottex
-@node Top, Copying, (dir), (dir)
-
-@top GNU MP
-
-This manual documents how to install and use the GNU multiple precision
-arithmetic library, version @value{VERSION}.
-
-@end ifnottex
-
-@menu
-* Copying::                    GMP Copying Conditions (LGPL).
-* Introduction to GMP::        Brief introduction to GNU MP.
-* Installing GMP::             How to configure and compile the GMP library.
-* GMP Basics::                 What every GMP user should know.
-* Reporting Bugs::             How to usefully report bugs.
-* Integer Functions::          Functions for arithmetic on signed integers.
-* Rational Number Functions::  Functions for arithmetic on rational numbers.
-* Floating-point Functions::   Functions for arithmetic on floats.
-* Low-level Functions::        Fast functions for natural numbers.
-* Random Number Functions::    Functions for generating random numbers.
-* Formatted Output::           @code{printf} style output.
-* BSD Compatible Functions::   All functions found in BSD MP.
-* Custom Allocation::          How to customize the internal allocation.
-* Language Bindings::          Using GMP from other languages.
-* Algorithms::                 What happens behind the scenes.
-* Internals::                  How values are represented behind the scenes.
-
-* Contributors::	       Who brings your this library?
-* References::                 Some useful papers and books to read.
-* Concept Index::
-* Function Index::
-@end menu
-
 @node Copying, Introduction to GMP, Top, Top
 @comment  node-name, next, previous,  up
 @unnumbered GNU MP Copying Conditions
@@ -410,7 +374,9 @@ have is not what we distributed, so that any problems introduced by others
 will not reflect on our reputation.@refill
 
 The precise conditions of the license for the GNU MP library are found in the
-Lesser General Public License that accompanies the source code.@refill
+Lesser General Public License version 2.1 that accompanies the source code,
+see @file{COPYING.LIB}.  Certain demonstration programs are provided under the
+terms of the plain General Public License version 2, see @file{COPYING}.
 
 
 @node Introduction to GMP, Installing GMP, Copying, Top
@@ -724,6 +690,7 @@ SPARC:
 @nisamp{pentiumpro},
 @nisamp{pentium2},
 @nisamp{pentium3},
+@nisamp{pentium4},
 @nisamp{k6},
 @nisamp{k62},
 @nisamp{k63},
@@ -1911,6 +1878,7 @@ the standard C library @code{malloc} has some diagnostic facilities, see
 @uref{http://dmalloc.com}
 @uref{http://www.perens.com/FreeSoftware} @ (electric fence)
 @uref{http://packages.debian.org/fda}
+@uref{http://www.gnupdate.org/components/leakbug}
 @uref{http://people.redhat.com/~otaylor/memprof}
 @end display
 
@@ -3351,14 +3319,13 @@ recommended instead of these functions.
 @cindex Output functions
 @cindex I/O functions
 
-Functions that perform input from a stdio stream, and functions that output to
-a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to
-any of these functions will make them read from @code{stdin} and write to
-@code{stdout}, respectively.
-
-When using any of these functions, it is a good idea to include @file{stdio.h}
+When using any of these functions, it's a good idea to include @file{stdio.h}
 before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
 for these functions.
+
+Passing a @code{NULL} pointer for a @var{stream} argument to any of these
+functions will make them read from @code{stdin} and write to @code{stdout},
+respectively.
 
 @deftypefun size_t mpq_out_str (FILE *@var{stream}, int @var{base}, mpq_t @var{op})
 Output @var{op} on stdio stream @var{stream}, as a string of digits in base
@@ -3366,6 +3333,25 @@ Output @var{op} on stdio stream @var{stream}, as a string of digits in base
 @samp{num/den} or if the denominator is 1 then just @samp{num}.
 
 Return the number of bytes written, or if an error occurred, return 0.
+@end deftypefun
+
+@deftypefun size_t mpq_inp_str (mpq_t @var{rop}, FILE *@var{stream}, int @var{base})
+Read a string of digits from @var{stream} and convert them to a rational in
+@var{rop}.  Any initial white-space characters are read and discarded.  Return
+the number of characters read (including white space), or 0 if a rational
+could not be read.
+
+The input can be a fraction like @samp{17/63} or just an integer like
+@samp{123}.  Reading stops at the first character not in this form, and white
+space is not permitted within the string.  If the input might not be in
+canonical form, then @code{mpq_canonicalize} must be called (@pxref{Rational
+Number Functions}).
+
+The @var{base} can be between 2 and 36, or can be 0 in which case the leading
+characters of the string determine the base, @samp{0x} or @samp{0X} for
+hexadecimal, @samp{0} for octal, or decimal otherwise.  The leading characters
+are examined separately for the numerator and denominator of a fraction, so
+for instance @samp{0x10/11} is 16/11, whereas @samp{0x10/0x11} is 16/17.
 @end deftypefun
 
 
@@ -7092,7 +7078,7 @@ makes the data easy to read in a hex dump of a file.
 
 @node Contributors, References, Internals, Top
 @comment  node-name,  next,  previous,  up
-@unnumbered Contributors
+@appendix Contributors
 @cindex Contributors
 
 Torbjorn Granlund wrote the original GMP library and is still developing and
@@ -7172,9 +7158,9 @@ contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
 about the omission!)
 
 
-@node References, Concept Index, Contributors, Top
+@node References, GNU Free Documentation License, Contributors, Top
 @comment  node-name,  next,  previous,  up
-@unnumbered References
+@appendix References
 @cindex References
 
 @c  FIXME: In tex, the @uref's are unhyphenated, which is good for clarity,
@@ -7297,7 +7283,12 @@ volume 43, number 8, August 1994, pp. 899-908.
 @end itemize
 
 
-@node Concept Index, Function Index, References, Top
+@node GNU Free Documentation License, Concept Index, References, Top
+@appendix GNU Free Documentation License
+@include fdl.texi
+
+
+@node Concept Index, Function Index, GNU Free Documentation License, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Concept Index
 @printindex cp
@@ -7307,8 +7298,6 @@ volume 43, number 8, August 1994, pp. 899-908.
 @unnumbered Function and Type Index
 @printindex fn
 
-
-@contents
 @bye
 
 @c Local variables:
