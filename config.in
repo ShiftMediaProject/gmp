@@ -270,6 +270,9 @@ MA 02111-1307, USA. */
 /* Define if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define if you have the `strnlen' function. */
+#undef HAVE_STRNLEN
+
 /* Define if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
