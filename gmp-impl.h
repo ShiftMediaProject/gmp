@@ -1191,6 +1191,39 @@ extern const unsigned char  modlimb_invert_table[128];
 #define MODLIMB_INVERSE_3   ((MP_LIMB_T_MAX / 3) * 2 + 1)
 
 
+/* Set "p" to 1 if there's an odd number of 1 bits in "n", or to 0 if
+   there's an even number.  */
+
+#if defined (__GNUC__) && ! defined (NO_ASM) \
+  && (defined (__i386__) || defined (__i486__))
+#define ULONG_PARITY(p, n)              \
+  do {                                  \
+    char           __p;                 \
+    unsigned long  __n = (n);           \
+    __n ^= (__n >> 16);                 \
+    asm ("xorb   %h1, %b1\n"            \
+         "setpo  %0\n"                  \
+         : "=qm" (__p), "=q" (__n)      \
+         : "1" (__n));                  \
+    (p) = __p;                          \
+  } while (0)
+#else
+#define ULONG_PARITY(p, n)                      \
+  do {                                          \
+    unsigned long  __n = (n);                   \
+    int  __p = 0;                               \
+    do                                          \
+      {                                         \
+        __p ^= 0x96696996L >> (__n & 0x1F);     \
+        __n >>= 5;                              \
+      }                                         \
+    while (__n != 0);                           \
+                                                \
+    (p) = __p;                                  \
+  } while (0)
+#endif
+
+
 /* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
    between GCC 2 releases from 2.5, since __GNUC_MINOR__ wasn't introduced
    until then.  */
