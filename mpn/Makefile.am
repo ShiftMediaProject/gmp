@@ -45,7 +45,8 @@ nodist_libdummy_la_SOURCES =						      \
   rshift.c sb_divrem_mn.c scan0.c scan1.c set_str.c sqr_basecase.c sqrtrem.c  \
   sub_n.c submul_1.c tdiv_qr.c						      \
   copyi.c copyd.c com_n.c and_n.c andn_n.c nand_n.c ior_n.c iorn_n.c nior_n.c \
-  xor_n.c xnor_n.c
+  xor_n.c xnor_n.c							      \
+  udiv_qrnnd.c udiv_w_sdiv.c
 
 
 noinst_LTLIBRARIES = libmpn.la
