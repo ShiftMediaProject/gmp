@@ -135,9 +135,14 @@ mpz_fac_ui (mpz_ptr result, unsigned long int n)
       /* Multiply the partial product in P with K.  */
       umul_ppmm (p1, p0, p, (mp_limb_t) k);
 
+#if GMP_NAIL_BITS == 0
+#define OVERFLOW (p1 != 0)
+#else
+#define OVERFLOW ((p1 | (p0 >> GMP_NUMB_BITS)) != 0)
+#endif
       /* Did we get overflow into the high limb, i.e. is the partial
 	 product now more than one limb?  */
-      if (p1 != 0)
+      if OVERFLOW
 	{
 	  tree_cnt++;
 
