@@ -39,7 +39,7 @@ into gmp-mparam.h.  The program can be built and run with
 
         make tune
 
-If the thresholds indicated are grossly different to the values in the
+If the thresholds indicated are grossly different from the values in the
 selected gmp-mparam.h then you may get a performance boost in relevant size
 ranges by changing gmp-mparam.h accordingly.
 
@@ -65,12 +65,12 @@ thresholds for instance.
 
 SPEED PROGRAM
 
-The "speed" program can be used for measuring and comparing all sorts of
-routines and producing tables of data or gnuplot graphs.  Compile it with
+The "speed" program can be used for measuring and comparing various
+routines, and producing tables of data or gnuplot graphs.  Compile it with
 
 	make speed
 
-Here are some examples of how to use it.  See the speed.c code for all the
+Here are some examples of how to use it.  Check the code for all the
 options.
 
 Draw a graph of mpn_mul_n, stepping through sizes by 10 or a factor of 1.05
@@ -94,10 +94,6 @@ corresponding routine is fastest at that size.  This is a convenient visual
 cue when comparing different routines.  The graph data files <name>.data
 don't get this since it would upset gnuplot or other data viewers.
 
-Potentially lots of things could be made available in this program, but it's
-been left at only the things that have actually been wanted and that are
-likely to be reasonably useful in the future.
-
 
 
 
@@ -120,7 +116,7 @@ The CPU frequency is needed if times in cycles are to be displayed, and it's
 always needed when using a cycle counter time base.  time.c knows how to get
 the frequency on some systems, but when that fails, or needs to be
 overridden, an environment variable GMP_CPU_FREQUENCY can be used (in
-Hertz).  For example in "bash" on a 650MHz machine,
+Hertz).  For example in "bash" on a 650 MHz machine,
 
 	export GMP_CPU_FREQUENCY=650e6
 
@@ -146,7 +142,7 @@ the times printed or anything.
 
 If you want to know how many cycles per limb a routine is taking, look at
 the time increase when the size increments, using option -D.  This avoids
-fixed overhead in the measuring.  Also, remember many of the assembler
+fixed overheads in the measuring.  Also, remember many of the assembler
 routines have unrolled loops, so it might be necessary to compare times at,
 say, 16, 32, 48, 64 etc to see what the unrolled part is taking, as opposed
 to any finishing off.
@@ -162,10 +158,10 @@ affect results at large sizes.
 
 Once a calculation stops fitting in the CPU data cache, it's going to start
 taking longer.  Exactly where this happens depends on the cache priming in
-speed_measure(), or in the routine being measured, and on what sort of
-"least recently used" the caching does.  Here's an example for a CPU with a
-16kbyte L1 data cache and 32-bit limb, showing a suddenly steeper curve for
-mpn_add_n at about 2000 limbs.
+the measuring routines, and on what sort of "least recently used" the
+hardware does.  Here's an example for a CPU with a 16kbyte L1 data cache and
+32-bit limb, showing a suddenly steeper curve for mpn_add_n at about 2000
+limbs.
 
         ./speed -s 1-4000 -t 5 -f 1.02 -P foo mpn_add_n
 	gnuplot foo.gnuplot
@@ -183,7 +179,6 @@ If mpn_lshift and mpn_rshift for your CPU have special case code for shifts
 by 1, it ought to be faster (or at least not slower) than shifting by, say,
 2 bits.
 
-        ./speed -s 1-200 -c mpn_lshift.1 mpn_lshift.2
         ./speed -s 1-200 -c mpn_rshift.1 mpn_rshift.2
 
 An mpn_lshift by 1 can be done by mpn_add_n adding a number to itself, and
@@ -191,15 +186,15 @@ if the lshift isn't faster there's an obvious improvement that's possible.
 
         ./speed -s 1-200 -c mpn_lshift.1 mpn_add_n_self
 
-On some CPUs an "in-place" mpn_add_n where the destination is one of the
-sources is faster than a separate destination.  (K6 for example.)  Here's an
-example to see this.  (mpn_add_n_inplace is a special measuring routine, not
-available for other operations.)
+On some CPUs (AMD K6 for example) an "in-place" mpn_add_n where the
+destination is one of the sources is faster than a separate destination.
+Here's an example to see this.  (mpn_add_n_inplace is a special measuring
+routine, not available for other operations.)
 
         ./speed -s 1-200 -c mpn_add_n mpn_add_n_inplace
 
-The gmp manual recommends divisions by a powers of two should be done using
-a right shift because it'll be significantly faster.  Here's how you can see
+The gmp manual recommends divisions by powers of two should be done using a
+right shift because it'll be significantly faster.  Here's how you can see
 by what factor mpn_rshift is faster, using division by 32 as an example.
 
         ./speed -s 10-20 -r mpn_rshift.5 mpn_divrem_1.32
@@ -242,7 +237,7 @@ is the triangular products sqr_basecase does.  For example,
 Both -E and -F are preliminary and might change.  A consistent approach to
 using them when claiming certain per crossproduct or per triangularproduct
 speeds hasn't really been established, but the increment between speeds in
-the range Karatsuba will call seems sensible, that being k to k/2.  For
+the range karatsuba will call seems sensible, that being k to k/2.  For
 instance, if the karatasuba threshold was 20 for the multiply and 30 for the
 square,
 
@@ -250,15 +245,37 @@ square,
         ./speed -s 15-30 -t 15 -CDF mpn_sqr_basecase
 
 The gmp manual recommends application programs avoid excessive initializing
-and clearing of mpz_t variables (and mpq_t and mpf_t too).  At the moment
-every new variable will at a minimum go through an init, a realloc for its
-first store, and finally a clear.  Quite how long that takes depends on the
-C library, and possibly whether the program is static or dynamic linked.
-The following compares an mpz_init/realloc/clear to a 10 limb mpz_add.
-There's measuring routines available for other init/clears, and for just
-malloc/free too.
+and clearing of mpz_t variables (and mpq_t and mpf_t too).  Every new
+variable will at a minimum go through an init, a realloc for its first
+store, and finally a clear.  Quite how long that takes depends on the C
+library.  The following compares an mpz_init/realloc/clear to a 10 limb
+mpz_add.
 
         ./speed -s 10 -c mpz_init_realloc_clear mpz_add
+
+The normal libtool link of the speed program does a static link to libgmp.la
+and libspeed.la, but will end up dynamic linked to libc.  Depending on the
+system, a dynamic linked malloc may be noticably slower than static linked,
+and you may want to re-run the libtool link invocation to static link libc
+for comparison.  The example below does a 10 limb malloc/free or
+malloc/realloc/free to test the C library.  Of course a real world program
+has big problems if it's doing so many mallocs and frees that it gets slowed
+down by a dynamic linked malloc.
+
+        ./speed -s 10 -c malloc_free malloc_realloc_free
+
+
+
+
+SPEED PROGRAM EXTENSIONS
+
+Potentially lots of things could be made available in the program, but it's
+been left at only the things that have actually been wanted and are likely
+to be reasonably useful in the future.
+
+Extensions should be fairly easy to make though.  speed-ext.c is an example,
+in a style that should suit one-off tests, or new code fragments under
+development.
 
 
 
@@ -411,11 +428,12 @@ various algorithm thresholds.
 
 FUTURE
 
-Add versions of toom3 using either the mpn calls or the open-coded style, so
-the two can be compared.
+Add versions of the toom3 multiplication using either the mpn calls or the
+open-coded style, so the two can be compared.
 
-Add versions of mpn_divrem_1() using straight division versus a multiply by
-inverse, so the two can be compared.
+Add versions of the generic C mpn_divrem_1 using straight division versus a
+multiply by inverse, so the two can be compared.  Include the branch-free
+version of multiply by inverse too.
 
 Add measuring of udiv_qrnnd, udiv_qrnnd_preinv and udiv_qrnnd_preinv2norm to
 see which is better.  Watch out for function call overhead when udiv_qrnnd
@@ -423,8 +441,8 @@ is actually an mpn_udiv_qrnnd subroutine.
 
 Make an option in struct speed_parameters to specify the overlap, perhaps 0
 for none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1 dst2=src2, 4 for
-dst1=src2 dst2=src1.  This is done for addsub_n (which is actually yet to be
-enabled), and could be done for add_n, xor_n, etc too.
+dst1=src2 dst2=src1.  This is done for addsub_n with the r parameter (though
+addsub_n isn't yet enabled), and could be done for add_n, xor_n, etc too.
 
 When speed_measure() divides the total time measured by repetitions
 performed, it divides the fixed overheads imposed by speed_starttime() and
