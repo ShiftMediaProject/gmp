@@ -1,3 +1,23 @@
+1999-07-07  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (factor): Change alloca call to a malloc/free pair.
+
+	* mpn/powerpc32/syntax.h: Add #define's for crN.
+
+	* gmp.h (gmp_rand_algorithm): Remove spurious `,'.
+
+1999-07-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divrem_1.c: Normalize divisor when needed.
+
+1999-07-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/configure.in (powerpc*-apple-mach): New configuration.
+	* mpn/powerpc32/*: Add support for apple-macho syntax.
+	* mpn/powerpc32/syntax.h: New file.
+	* gmp-impl.h: Don't use `__attribute__' syntax for Apple's perversion
+	of GCC.
+	
 1999-05-26  Linus Nordberg  <linus@swox.se>
 
 	* rand.c (gmp_rand_init): Fix typo.
