@@ -56,7 +56,7 @@ modename="$progname"
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.4e
-TIMESTAMP=" (1.1216 2003/03/31 17:36:26)"
+TIMESTAMP=" (1.1218 2003/04/03 05:45:22)"
 
 default_mode=
 help="Try \`$progname --help' for more information."
@@ -2319,7 +2319,7 @@ EOF
 		  *-*-darwin* )
 		    # if the lib is a module then we can not link against it, someone
 		    # is ignoring the new warnings I added
-		    if test -z `otool -XD $add` ; then
+		    if /usr/bin/file -L $add 2> /dev/null | grep "bundle" >/dev/null ; then
 		      $echo "** Warning, lib $linklib is a module, not a shared library"
 		      if test -z "$old_library" ; then
 		        $echo
@@ -2411,6 +2411,12 @@ EOF
 	      *) finalize_shlibpath="$finalize_shlibpath$libdir:" ;;
 	      esac
 	      add="-l$name"
+	    elif test "$hardcode_automatic" = yes; then
+	      if test -n "$inst_prefix_dir" && test -f "$inst_prefix_dir$libdir/$linklib" ; then
+	        add="$inst_prefix_dir$libdir/$linklib"
+	      else
+	        add="$libdir/$linklib"
+	      fi
 	    else
 	      # We cannot seem to hardcode it, guess we'll fake it.
 	      add_dir="-L$libdir"
