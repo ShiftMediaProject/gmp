@@ -924,6 +924,7 @@ An additional choice @samp{--enable-alloca=debug} is available, to help when
 debugging memory related problems (@pxref{Debugging}).
 
 @item FFT Multiplication, @option{--disable-fft}
+@cindex FFT multiplication
 By default multiplications are done using Karatsuba, 3-way Toom-Cook, and
 Fermat FFT.  The FFT is only used on large to very large operands and can be
 disabled to save code size if desired.
@@ -960,18 +961,6 @@ MPN_PATH="sparc32/v8 sparc32 generic"
 which means look first for v8 code, then plain sparc32 (which is v7), and
 finally fall back on generic C.  Knowledgeable users with special requirements
 can specify a different path.  Normally this is completely unnecessary.
-
-@item Demonstration Programs
-@cindex Demonstration programs
-@cindex Example programs
-The @file{demos} subdirectory has some sample programs using GMP.  These
-aren't built or installed, but there's a @file{Makefile} with rules for them.
-For instance,
-
-@example
-make pexpr
-./pexpr 68^975+10
-@end example
 
 @item Documentation
 The document you're now reading is @file{gmp.texi}.  The usual automake
@@ -1505,6 +1494,7 @@ to be incompatible with future versions of GMP.}
 * Reentrancy::                  
 * Useful Macros and Constants::  
 * Compatibility with older versions::  
+* Demonstration Programs::      
 * Efficiency::                  
 * Debugging::                   
 * Profiling::                   
@@ -1759,7 +1749,7 @@ expects to be compatible with future GMP releases.
 @need 1000
 @node Memory Management, Reentrancy, Parameter Conventions, GMP Basics
 @section Memory Management
-@cindex Memory Management
+@cindex Memory management
 
 The GMP types like @code{mpz_t} are small, containing only a couple of sizes,
 and pointers to allocated data.  Once a variable is initialized, GMP takes
@@ -1861,7 +1851,7 @@ The GMP version number, as a null-terminated string, in the form ``i.j'' or
 @end deftypevr
 
 
-@node Compatibility with older versions, Efficiency, Useful Macros and Constants, GMP Basics
+@node Compatibility with older versions, Demonstration Programs, Useful Macros and Constants, GMP Basics
 @section Compatibility with older versions
 @cindex Compatibility with older versions
 @cindex Upward compatibility
@@ -1939,7 +1929,51 @@ source and binary compatible with the standard @file{libmp}.
 
 
 @need 1000
-@node Efficiency, Debugging, Compatibility with older versions, GMP Basics
+@node Demonstration Programs, Efficiency, Compatibility with older versions, GMP Basics
+@section Demonstration programs
+@cindex Demonstration programs
+@cindex Example programs
+The @file{demos} subdirectory has some sample programs using GMP.  These
+aren't built or installed, but there's a @file{Makefile} with rules for them.
+For instance,
+
+@example
+make pexpr
+./pexpr 68^975+10
+@end example
+
+@noindent
+The following programs are provided
+
+@itemize @bullet
+@item
+@samp{pexpr} is an expression evaluator, the program used on the GMP web page.
+@item
+The @samp{calc} subdirectory has a similar but simpler evaluator using
+@command{lex} and @command{yacc}.
+@item
+The @samp{expr} subdirectory is yet another expression evaluator, a library
+designed for ease of use within a C program.  See @file{demos/expr/README} for
+more information.
+@item
+@samp{factorize} is a Pollard-Rho factorization program.
+@item
+@samp{isprime} is a command-line interface to the @code{mpz_probab_prime_p}
+function.
+@item
+@samp{primes} counts or lists primes in an interval, using a sieve.
+@item
+@samp{qcn} is an example use of @code{mpz_kronecker_ui} to estimate quadratic
+class numbers.
+@item
+The @samp{perl} subdirectory is a comprehensive perl interface to GMP.  See
+@file{demos/perl/INSTALL} for more information.  Documentation is in POD
+format in @file{demos/perl/GMP.pm}.
+@end itemize
+
+
+@need 1000
+@node Efficiency, Debugging, Demonstration Programs, GMP Basics
 @section Efficiency
 @cindex Efficiency
 
@@ -2633,8 +2667,10 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @node Simultaneous Integer Init & Assign, Converting Integers, Assigning Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Combined Initialization and Assignment Functions
-@cindex Initialization and assignment functions
-@cindex Integer init and assign
+@cindex Integer assignment functions
+@cindex Assignment functions
+@cindex Integer initialization functions
+@cindex Initialization functions
 
 For convenience, GMP provides a parallel series of initialize-and-set functions
 which initialize the output and then store the value there.  These functions'
@@ -2971,6 +3007,7 @@ undefined.
 @end deftypefun
 
 @deftypefun int mpz_perfect_power_p (mpz_t @var{op})
+@cindex Perfect power functions
 Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
 @m{a,@var{a}} and @m{b,@var{b}}, with @m{b>1, @var{b}>1}, such that
 @m{@var{op}=a^b, @var{op} equals @var{a} raised to the power @var{b}}.
@@ -2981,6 +3018,7 @@ perfect powers.
 @end deftypefun
 
 @deftypefun int mpz_perfect_square_p (mpz_t @var{op})
+@cindex Perfect square functions
 Return non-zero if @var{op} is a perfect square, i.e., if the square root of
 @var{op} is an integer.  Under this definition both 0 and 1 are considered to
 be perfect squares.
@@ -3010,6 +3048,7 @@ which pass are considered probably prime.
 @end deftypefun
 
 @deftypefun void mpz_nextprime (mpz_t @var{rop}, mpz_t @var{op})
+@cindex Next prime function
 Set @var{rop} to the next prime greater than @var{op}.
 
 This function uses a probabilistic algorithm to identify primes.  For
@@ -3032,6 +3071,7 @@ extremely small.
 
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @cindex Greatest common divisor functions
+@cindex GCD functions
 Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.
 The result is always positive even if one or both input operands
 are negative.
@@ -3061,6 +3101,7 @@ If @var{t} is @code{NULL} then that value is not computed.
 @deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_lcm_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long @var{op2})
 @cindex Least common multiple functions
+@cindex LCM functions
 Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @var{rop} is always positive, irrespective of the signs of @var{op1} and
 @var{op2}.  @var{rop} will be zero if either @var{op1} or @var{op2} is zero.
@@ -3206,6 +3247,7 @@ multiple times.
 @section Logical and Bit Manipulation Functions
 @cindex Logical functions
 @cindex Bit manipulation functions
+@cindex Integer logical functions
 @cindex Integer bit manipulation functions
 
 These functions behave as if twos complement arithmetic were used (although
@@ -3621,8 +3663,10 @@ Remove any factors that are common to the numerator and denominator of
 @node Initializing Rationals, Rational Conversions, Rational Number Functions, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Initialization and Assignment Functions
-@cindex Initialization and assignment functions
-@cindex Rational init and assign
+@cindex Rational assignment functions
+@cindex Assignment functions
+@cindex Rational initialization functions
+@cindex Initialization functions
 
 @deftypefun void mpq_init (mpq_t @var{dest_rational})
 Initialize @var{dest_rational} and set it to 0/1.  Each variable should
@@ -4090,8 +4134,10 @@ precisions of the two variables are swapped.
 @node Simultaneous Float Init & Assign, Converting Floats, Assigning Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Combined Initialization and Assignment Functions
-@cindex Initialization and assignment functions
-@cindex Float init and assign functions
+@cindex Float assignment functions
+@cindex Assignment functions
+@cindex Float initialization functions
+@cindex Initialization functions
 
 For convenience, GMP provides a parallel series of initialize-and-set functions
 which initialize the output and then store the value there.  These functions'
@@ -4164,7 +4210,7 @@ allocation function (@pxref{Custom Allocation}).  The block will be
 null-terminator.
 
 If @var{str} is not @code{NULL}, it should point to a block of
-@math{@var{n\_digits} + 2} bytes, that being enough for the mantissa, a
+@math{@var{n_digits} + 2} bytes, that being enough for the mantissa, a
 possible minus sign, and a null-terminator.  When @var{n_digits} is 0 to get
 all significant digits, an application won't be able to know the space
 required, and @var{str} should be @code{NULL} in that case.
@@ -5236,6 +5282,7 @@ function handle that.
 
 @deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, ...)
 @deftypefunx int gmp_obstack_vprintf (struct obstack *@var{ob}, const char *@var{fmt}, va_list @var{ap})
+@cindex @code{obstack} output
 Append to the current object in @var{ob}.  The return value is the number of
 characters written.  A null-terminator is not written.
 
@@ -6313,7 +6360,7 @@ this is a problem.
 
 @node Language Bindings, Algorithms, Custom Allocation, Top
 @chapter Language Bindings
-@cindex Language Bindings
+@cindex Language bindings
 
 The following packages and projects offer access to GMP from languages other
 than C, though perhaps with varying levels of functionality and efficiency.
@@ -6629,6 +6676,7 @@ routine should be used always.
 
 @node Karatsuba Multiplication, Toom-Cook 3-Way Multiplication, Basecase Multiplication, Multiplication Algorithms
 @subsection Karatsuba Multiplication
+@cindex Karatsuba multiplication
 
 The Karatsuba multiplication algorithm is described in Knuth section 4.3.3
 part A, and various other textbooks.  A brief description is given here.
@@ -6787,6 +6835,7 @@ thresholds are merely of academic interest.
 
 @node Toom-Cook 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
 @subsection Toom-Cook 3-Way Multiplication
+@cindex Toom-Cook multiplication
 
 The Karatsuba formula is the simplest case of a general approach to splitting
 inputs that leads to both Toom-Cook and FFT algorithms.  A description of
@@ -7096,6 +7145,7 @@ done.
 
 @node FFT Multiplication, Other Multiplication, Toom-Cook 3-Way Multiplication, Multiplication Algorithms
 @subsection FFT Multiplication
+@cindex FFT multiplication
 
 At large to very large sizes a Fermat style FFT multiplication is used,
 following Sch@"onhage and Strassen (@pxref{References}).  Descriptions of FFTs
@@ -7209,6 +7259,7 @@ needed.
 
 @node Other Multiplication,  , FFT Multiplication, Multiplication Algorithms
 @subsection Other Multiplication
+@cindex Toom-Cook multiplication
 
 The 3-way Toom-Cook algorithm described above (@pxref{Toom-Cook 3-Way
 Multiplication}) generalizes to split into an arbitrary number of pieces, as
@@ -7534,6 +7585,7 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 @node Greatest Common Divisor Algorithms, Powering Algorithms, Division Algorithms, Algorithms
 @section Greatest Common Divisor
 @cindex Greatest common divisor algorithms
+@cindex GCD algorithms
 
 @menu
 * Binary GCD::                  
