@@ -1508,7 +1508,11 @@ main (int argc, char *argv[])
         }
       }
 
+    srand (seed);
+    srand48 (seed);
+#if HAVE_SRANDOM
     srandom (seed);
+#endif
   }
 
   try_init();
