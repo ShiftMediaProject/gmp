@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (mpn_sb_get_str): Change declaration of rp to
+	accommodate tuneup compiles.
+
 2002-02-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/default.m4, mpn/alpha/unicos.m4 (PROLOGUE_cpu): Add
