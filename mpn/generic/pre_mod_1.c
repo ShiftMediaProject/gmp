@@ -5,7 +5,7 @@
    - 2^BITS_PER_MP_LIMB.
    Return the single-limb remainder.
 
-Copyright 1991, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,6 +28,10 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+/* This function used to be documented, but is now considered obsolete.  It
+   continues to exist for binary compatibility, even when not required
+   internally.  */
 
 mp_limb_t
 mpn_preinv_mod_1 (mp_srcptr dividend_ptr, mp_size_t dividend_size,
