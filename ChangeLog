@@ -1,5 +1,29 @@
 2000-04-04  Linus Nordberg  <linus@swox.se>
 
+	* mpn/generic/rawrandom.c: Remove file and replace with randraw.c
+	on top level.
+	(mpn_rawrandom): Rename to gmp_rand_getraw.
+	
+	* randraw.c: New file; essentially a copy of
+	mpn/generic/rawrandom.c.
+	(gmp_rand_getraw): New function (formerly known as mpn_rawrandom).
+
+	* mpz/urandomb.c (mpz_urandomb): Change mpn_rawrandom -->
+	gmp_rand_getraw.
+	* mpz/urandomm.c (mpz_urandomb): Ditto.
+	* mpf/urandom.c (mpf_urandomb): Ditto.
+
+	* gmp.h (gmp_rand_getraw): Add function prototype.
+	(mpn_rawrandom): Remove function prototype.
+
+	* Makefile.am (libgmp_la_SOURCES): Add randraw.c.
+	* Makefile.in: Regenerate.
+
+	* configure.in (gmp_mpn_functions): Remove rawrandom.
+	* configure: Regenerate.	
+	
+2000-04-04  Linus Nordberg  <linus@swox.se>
+
 	* gmp.h (GMP_ERROR enum): Remove comma after last enumeration
 	since the AIX compiler (xlc) doesn't like that.
 
