@@ -1,6 +1,6 @@
 ; HP-PA 2.0 __gmpn_rshift --
 
-; Copyright (C) 1997, 2000 Free Software Foundation, Inc.
+; Copyright 1997, 2000 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 

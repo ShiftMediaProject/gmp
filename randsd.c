@@ -1,7 +1,7 @@
 /* gmp_randseed (state, seed) -- Set initial seed SEED in random state
    STATE.
 
-Copyright (C) 2000  Free Software Foundation, Inc.
+Copyright 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -2,7 +2,7 @@ dnl  SuperSPARC mpn_udiv_qrnnd division support, used from longlong.h.
 dnl  This is for SuperSPARC only, to compensate for its semi-functional
 dnl  udiv instruction.
 
-dnl  Copyright (C) 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

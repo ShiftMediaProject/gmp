@@ -1,6 +1,6 @@
 /* mpn_random -- Generate random numbers.
 
-Copyright (C) 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

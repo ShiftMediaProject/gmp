@@ -1,7 +1,7 @@
 /* mpz_init_set (src_integer) -- Make a new multiple precision number with
    a value copied from SRC_INTEGER.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

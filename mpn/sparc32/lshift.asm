@@ -1,7 +1,7 @@
 dnl  SPARC mpn_lshift -- Shift a number left.
 dnl  
 
-dnl  Copyright (C) 1995, 1996, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1995, 1996, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

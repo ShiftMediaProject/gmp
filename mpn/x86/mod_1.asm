@@ -1,7 +1,7 @@
 dnl  x86 mpn_mod_1 -- mpn by limb remainder.
 
 
-dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

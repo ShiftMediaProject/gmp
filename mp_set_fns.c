@@ -1,7 +1,7 @@
 /* mp_set_memory_functions -- Set the allocate, reallocate, and free functions
    for use by the mp package.
 
-Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

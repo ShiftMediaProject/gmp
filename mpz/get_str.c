@@ -4,7 +4,7 @@
    result.  If STRING is not NULL, the caller must ensure enough space is
    available to store the result.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

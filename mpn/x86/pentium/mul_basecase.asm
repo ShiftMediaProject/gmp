@@ -3,7 +3,7 @@ dnl
 dnl  P5: 14.2 cycles/crossproduct (approx)
 
 
-dnl  Copyright (C) 1996, 1998, 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1996, 1998, 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

@@ -1,6 +1,6 @@
 /* mpq_get_den(den,rat_src) -- Set DEN to the denominator of RAT_SRC.
 
-Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

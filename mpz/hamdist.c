@@ -3,7 +3,7 @@
    could make the function well-defined when both operands are negative, but
    that would probably not be worth the trouble.
 
-Copyright (C) 1994, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

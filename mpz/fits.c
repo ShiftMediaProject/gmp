@@ -1,6 +1,6 @@
 /* int mpz_fits_X_p (mpz_t z) -- test whether z fits type X.
 
-Copyright (C) 1997, 2000 Free Software Foundation, Inc.
+Copyright 1997, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

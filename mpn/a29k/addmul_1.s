@@ -1,7 +1,7 @@
 ; 29000 __gmpn_addmul_1 -- Multiply a limb vector with a single limb and
 ; add the product to a second limb vector.
 
-; Copyright (C) 1992, 1994, 2000 Free Software Foundation, Inc.
+; Copyright 1992, 1994, 2000 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* Test mpz_powm, mpz_mul. mpz_mod, mpz_mod_ui, mpz_div_ui.
 
-Copyright (C) 1991, 1993, 1994, 1996, 1999, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1999, 2000 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

@@ -1,6 +1,6 @@
 /* Test that routines allow reusing a source variable as destination.
 
-Copyright (C) 1996, 2000 Free Software Foundation, Inc.
+Copyright 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

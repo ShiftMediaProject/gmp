@@ -1,7 +1,7 @@
 /* mpq_equal(u,v) -- Compare U, V.  Return non-zero if they are equal, zero
    if they are non-equal.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -4,7 +4,7 @@ dnl  K6-2: 0.56 or 1.0 cycles/limb (at 32 limbs/loop), depending on data
 dnl  alignment.
 
 
-dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

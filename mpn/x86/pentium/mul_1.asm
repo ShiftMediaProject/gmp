@@ -2,7 +2,7 @@ dnl  Intel Pentium mpn_mul_1 -- mpn by limb multiplication.
 dnl
 dnl  P5: 13.0 cycles/limb
 
-dnl  Copyright (C) 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
+dnl  Copyright 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
 dnl  Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.

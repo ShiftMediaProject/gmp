@@ -3,7 +3,7 @@
    always fit into the return type, the negative of the true remainder is
    returned.
 
-Copyright (C) 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1995, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

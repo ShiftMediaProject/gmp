@@ -1,7 +1,7 @@
 divert(-1)
 dnl  m4 macros for AIX 32-bit assembly.
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl

@@ -2,7 +2,7 @@
    linear congruential generator with multiplier A, adder C, and
    modulus M.
 
-Copyright (C) 1999, 2000  Free Software Foundation, Inc.
+Copyright 1999, 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

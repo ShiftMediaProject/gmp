@@ -1,6 +1,6 @@
 dnl  mpn_umul_ppmm -- 1x1->2 limb multiplication
 
-dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

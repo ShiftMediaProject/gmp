@@ -4,7 +4,7 @@ dnl  K6: approx 9.0 cycles per cross product on 30x30 limbs (with 16 limbs/loop
 dnl      unrolling).
 
 
-dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

@@ -3,7 +3,7 @@ dnl
 dnl  K7: 3.4 cycles/limb (at 16 limbs/loop).
 
 
-dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

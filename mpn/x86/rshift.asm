@@ -1,6 +1,6 @@
 dnl  x86 mpn_rshift -- mpn right shift.
 
-dnl  Copyright (C) 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
+dnl  Copyright 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
 dnl  Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.

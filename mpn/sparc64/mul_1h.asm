@@ -1,6 +1,6 @@
 dnl  SPARC 64-bit mull -- Helper for mpn_mul_1.
 
-dnl  Copyright (C) 1998, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

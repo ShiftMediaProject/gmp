@@ -3,7 +3,7 @@
    limb vector pointed to by RES_PTR.  Return the number of limbs in
    RES_PTR.
 
-Copyright (C) 1991, 1992, 1993, 1994, 1996, 2000 Free Software Foundation,
+Copyright 1991, 1992, 1993, 1994, 1996, 2000 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

@@ -2,7 +2,7 @@
    the float OP to STREAM in base BASE.  Return the number of characters
    written, or 0 if an error occurred.
 
-Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+Copyright 1996, 1997 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

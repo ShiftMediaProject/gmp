@@ -1,7 +1,7 @@
 /* gen.c -- Generate pseudorandom numbers. */
 
 /*
-Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* mpf_pow_ui -- Compute b^e.
 
-Copyright (C) 1998, 1999 Free Software Foundation, Inc.
+Copyright 1998, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

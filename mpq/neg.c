@@ -1,6 +1,6 @@
 /* mpq_neg(dst, src) -- Assign the negated value of SRC to DST.
 
-Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

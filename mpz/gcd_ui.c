@@ -1,6 +1,6 @@
 /* mpz_gcd_ui -- Calculate the greatest common divisior of two integers.
 
-Copyright (C) 1994, 1996, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1994, 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 # IBM POWER __gmpn_lshift -- 
 
-# Copyright (C) 1992, 1994, 1999, 2000 Free Software Foundation, Inc.
+# Copyright 1992, 1994, 1999, 2000 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 

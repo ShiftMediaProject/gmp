@@ -1,7 +1,7 @@
 /* mpq_set_si(dest,ulong_num,ulong_den) -- Set DEST to the retional number
    ULONG_NUM/ULONG_DEN.
 
-Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl PowerPC-32 umul_ppmm -- support for longlong.h
 
-dnl Copyright (C) 2000 Free Software Foundation, Inc.
+dnl Copyright 2000 Free Software Foundation, Inc.
 
 dnl This file is part of the GNU MP Library.
 

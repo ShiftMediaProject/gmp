@@ -1,7 +1,7 @@
 /* mpz_out_str(stream, base, integer) -- Output to STREAM the multi prec.
    integer INTEGER in base BASE.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* Test mpf_div, mpf_div_2exp, mpf_mul_2exp.
 
-Copyright (C) 1996, 2000 Free Software Foundation, Inc.
+Copyright 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

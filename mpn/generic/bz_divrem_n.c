@@ -6,7 +6,7 @@
    FUTURE GNU MP RELEASE.
 
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright 2000 Free Software Foundation, Inc.
 Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.

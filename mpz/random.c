@@ -1,7 +1,7 @@
 /* mpz_random -- Generate a random mpz_t of specified size.
    This function is non-portable and generates poor random numbers.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

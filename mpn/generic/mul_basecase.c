@@ -5,7 +5,7 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright (C) 1991, 1992, 1993, 1994, 1996, 1997, 2000 Free Software
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

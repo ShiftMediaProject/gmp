@@ -1,7 +1,7 @@
 /* mpz_gcdext(g, s, t, a, b) -- Set G to gcd(a, b), and S and T such that
    g = as + bt.
 
-Copyright (C) 1991, 1993, 1994, 1995, 1996, 1997, 2000 Free Software
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 2000 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

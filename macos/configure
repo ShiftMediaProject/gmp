@@ -2,7 +2,7 @@
 # Note that this script can't be run directly from MPW perl
 # because it has the wrong end-of-line characters. See README.
 
-# Copyright (C) 2000 Free Software Foundation, Inc.
+# Copyright 2000 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #

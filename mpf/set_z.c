@@ -1,6 +1,6 @@
 /* mpf_set_z -- Assign a float from an integer.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,7 +1,7 @@
 /* mpn_get_str -- Convert a MSIZE long limb vector pointed to by MPTR
    to a printable string in STR in base BASE.
 
-Copyright (C) 1991, 1992, 1993, 1994, 1996, 2000 Free Software Foundation,
+Copyright 1991, 1992, 1993, 1994, 1996, 2000 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

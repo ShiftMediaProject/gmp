@@ -1,6 +1,6 @@
 /* mpf_set -- Assign a float from another float.
 
-Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

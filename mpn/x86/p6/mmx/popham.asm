@@ -5,7 +5,7 @@ dnl  P6MMX: popcount 11 cycles/limb (approx), hamdist 11.5 cycles/limb
 dnl  (approx)
 
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

@@ -1,6 +1,6 @@
 /* itom -- BSD compatible allocate and initiate a MINT.
 
-Copyright (C) 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

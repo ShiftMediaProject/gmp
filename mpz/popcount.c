@@ -1,7 +1,7 @@
 /* mpz_popcount(mpz_ptr op) -- Population count of OP.  If the operand is
    negative, return ~0 (a novel representation of infinity).
 
-Copyright (C) 1994, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

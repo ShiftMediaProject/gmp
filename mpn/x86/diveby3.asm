@@ -1,7 +1,7 @@
 dnl  x86 mpn_divexact_by3 -- mpn division by 3, expecting no remainder.
 
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

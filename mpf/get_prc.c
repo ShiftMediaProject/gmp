@@ -1,6 +1,6 @@
 /* mpf_get_prec(x) -- Return the precision in bits of x.
 
-Copyright (C) 1996, 2000 Free Software Foundation, Inc.
+Copyright 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

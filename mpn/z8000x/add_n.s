@@ -1,7 +1,7 @@
 ! Z8000 (32 bit limb version) __gmpn_add_n -- Add two limb vectors of equal,
 ! non-zero length.
 
-! Copyright (C) 1993, 1994, 2000 Free Software Foundation, Inc.
+! Copyright 1993, 1994, 2000 Free Software Foundation, Inc.
 
 ! This file is part of the GNU MP Library.
 

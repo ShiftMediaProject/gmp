@@ -6,7 +6,7 @@ dnl  Future: It should be possible to avoid the separate mul after the
 dnl  unrolled loop by moving the movl/adcl to the top.
 
 
-dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

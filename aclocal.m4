@@ -13,7 +13,7 @@ dnl PARTICULAR PURPOSE.
 dnl  GMP specific autoconf macros
 
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

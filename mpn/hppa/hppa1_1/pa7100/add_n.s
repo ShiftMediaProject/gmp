@@ -2,7 +2,7 @@
 ; sum in a third limb vector.
 ; This is optimized for the PA7100, where is runs at 4.25 cycles/limb
 
-; Copyright (C) 1992, 1994, 2000 Free Software Foundation, Inc.
+; Copyright 1992, 1994, 2000 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 

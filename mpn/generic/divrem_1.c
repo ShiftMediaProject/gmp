@@ -6,7 +6,7 @@
 
    QUOT_PTR and DIVIDEND_PTR might point to the same limb.
 
-Copyright (C) 1991, 1993, 1994, 1996, 1998, 1999, 2000 Free Software
+Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2000 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

@@ -1,7 +1,7 @@
 # Pyramid __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 # sum in a third limb vector.
 
-# Copyright (C) 1995, 2000 Free Software Foundation, Inc.
+# Copyright 1995, 2000 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 

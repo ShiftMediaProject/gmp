@@ -2,7 +2,7 @@
    long runs of consecutive ones and zeros in the binary representation.
    Intended for testing of other MP routines.
 
-Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+Copyright 1995, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

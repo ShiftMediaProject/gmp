@@ -1,7 +1,7 @@
 ; HP-PA 2.0 64-bit __gmpn_submul_1 -- Multiply a limb vector with a limb and
 ; subtract the result from a second limb vector.
 
-; Copyright (C) 1998, 1999, 2000 Free Software Foundation, Inc.
+; Copyright 1998, 1999, 2000 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 

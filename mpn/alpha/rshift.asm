@@ -1,6 +1,6 @@
 dnl  Alpha mpn_rshift -- Shift a number right.
 
-dnl  Copyright (C) 1994, 1995, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1994, 1995, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* mpz_ui_pow_ui(res, base, exp) -- Set RES to BASE**EXP.
 
-Copyright (C) 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

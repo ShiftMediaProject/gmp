@@ -5,7 +5,7 @@
 	mpz_nextprime
 	mpz_mul_si
 	mpz_addmul_ui (should this really allow a+=a*c?)
-Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

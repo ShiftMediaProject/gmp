@@ -1,6 +1,6 @@
 /* mpf_set_q (mpf_t rop, mpq_t op) -- Convert the rational op to the float rop.
 
-Copyright (C) 1996, 1999 Free Software Foundation, Inc.
+Copyright 1996, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

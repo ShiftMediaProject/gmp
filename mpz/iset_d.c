@@ -1,7 +1,7 @@
 /* mpz_init_set_d(integer, val) -- Initialize and assign INTEGER with a double
    value VAL.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

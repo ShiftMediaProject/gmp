@@ -1,6 +1,6 @@
 /* Test mpz_mul, mpz_divexact.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

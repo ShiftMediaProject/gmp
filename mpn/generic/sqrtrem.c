@@ -12,7 +12,7 @@
    the function is 0 if OP is a perfect square, and *any* non-zero number
    otherwise.
 
-Copyright (C) 1993, 1994, 1996, 1997, 1998, 1999, 2000 Free Software
+Copyright 1993, 1994, 1996, 1997, 1998, 1999, 2000 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

@@ -1,7 +1,7 @@
 /* zdiv_round() -- divide integers, round to nearest */
 
 /*
-Copyright (C) 1999 Free Software Foundation, Inc.
+Copyright 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

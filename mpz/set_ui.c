@@ -1,6 +1,6 @@
 /* mpz_set_ui(integer, val) -- Assign INTEGER with a small value VAL.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

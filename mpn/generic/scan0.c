@@ -1,6 +1,6 @@
 /* mpn_scan0 -- Scan from a given bit position for the next clear bit.
 
-Copyright (C) 1994, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

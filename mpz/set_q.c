@@ -1,7 +1,7 @@
 /* mpz_set_q (dest_integer, src_rational) -- Assign DEST_INTEGER from
    SRC_rational.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

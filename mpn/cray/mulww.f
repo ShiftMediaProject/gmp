@@ -1,6 +1,6 @@
 c     Helper for mpn_mul_1, mpn_addmul_1, and mpn_submul_1 for Cray PVP.
 
-c     Copyright (C) 1996, 2000 Free Software Foundation, Inc.
+c     Copyright 1996, 2000 Free Software Foundation, Inc.
 
 c     This file is part of the GNU MP Library.
 

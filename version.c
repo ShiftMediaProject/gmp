@@ -1,7 +1,7 @@
 /* gmp_version -- version number compiled into the library */
 
 /*
-Copyright (C) 1996, 1999, 2000  Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl  Alpha auxiliary for longlong.h's count_leading_zeros
 
-dnl  Copyright (C) 1997, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1997, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

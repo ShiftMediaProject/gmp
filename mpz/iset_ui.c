@@ -1,7 +1,7 @@
 /* mpz_init_set_ui(val) -- Make a new multiple precision number with
    value val.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

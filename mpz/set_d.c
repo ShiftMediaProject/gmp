@@ -1,6 +1,6 @@
 /* mpz_set_d(integer, val) -- Assign INTEGER with a double value VAL.
 
-Copyright (C) 1995, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

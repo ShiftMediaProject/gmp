@@ -1,7 +1,7 @@
 /* mpz_jacobi (op1, op2).
    Contributed by Bennet Yee (bsy) at Carnegie-Mellon University
 
-Copyright (C) 1991, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

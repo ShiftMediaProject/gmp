@@ -1,6 +1,6 @@
 /* mpz_tstbit -- test a specified bit.  Simulate 2's complement representation.
 
-Copyright (C) 1997 Free Software Foundation, Inc.
+Copyright 1997 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

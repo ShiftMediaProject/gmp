@@ -5,7 +5,7 @@
    - 2^BITS_PER_MP_LIMB.
    Return the single-limb remainder.
 
-Copyright (C) 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

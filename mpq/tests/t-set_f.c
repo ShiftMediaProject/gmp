@@ -1,6 +1,6 @@
 /* Test mpq_set_f.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

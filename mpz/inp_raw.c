@@ -1,7 +1,7 @@
 /* mpz_inp_raw -- Input a mpz_t in raw, but endianess, and wordsize
    independent format (as output by mpz_out_raw).
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

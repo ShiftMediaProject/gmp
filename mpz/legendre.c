@@ -1,7 +1,7 @@
 /* mpz_legendre (op1, op2).
    Contributed by Bennet Yee (bsy) at Carnegie-Mellon University
 
-Copyright (C) 1992, 1996 Free Software Foundation, Inc.
+Copyright 1992, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

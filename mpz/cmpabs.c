@@ -1,7 +1,7 @@
 /* mpz_cmpabs(u,v) -- Compare U, V.  Return postive, zero, or negative
    based on if U > V, U == V, or U < V.
 
-Copyright (C) 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

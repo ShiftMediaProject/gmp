@@ -6,7 +6,7 @@
    THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 
-Copyright (C) 1991, 1993, 1994, 1996, 1997, 1999, 2000 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

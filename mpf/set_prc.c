@@ -1,6 +1,6 @@
 /* mpf_set_prec(x) -- Change the precision of x.
 
-Copyright (C) 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

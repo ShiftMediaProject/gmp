@@ -1,6 +1,6 @@
 /* Test mpq_mul_2exp and mpq_div_2exp.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -3,7 +3,7 @@ dnl
 dnl  P5: 2.375 cycles/limb
 
 
-dnl  Copyright (C) 1992, 1994, 1995, 1996, 1999, 2000 Free Software
+dnl  Copyright 1992, 1994, 1995, 1996, 1999, 2000 Free Software
 dnl  Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.

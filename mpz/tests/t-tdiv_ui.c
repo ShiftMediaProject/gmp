@@ -1,7 +1,7 @@
 /* Test mpz_abs, mpz_add, mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr_ui, mpz_tdiv_q_ui,
    mpz_tdiv_r_ui, mpz_mul_ui.
 
-Copyright (C) 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

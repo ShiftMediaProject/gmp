@@ -1,6 +1,6 @@
 /* __clz_tab -- support for longlong.h
 
-Copyright (C) 1991, 1993, 1994, 1996, 1997 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,7 +1,7 @@
 /* Classify numbers as probable primes, primes or composites.
    With -q return true if the folowing argument is a (probable) prime.
 
-Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

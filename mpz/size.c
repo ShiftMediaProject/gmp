@@ -1,7 +1,7 @@
 /* mpz_size(x) -- return the number of lims currently used by the
    value of integer X.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
  # Alpha 21064 __udiv_qrnnd
 
- # Copyright (C) 1992, 1994, 1995, 1997, 2000 Free Software Foundation, Inc.
+ # Copyright 1992, 1994, 1995, 1997, 2000 Free Software Foundation, Inc.
 
  # This file is part of the GNU MP Library.
 

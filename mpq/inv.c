@@ -1,7 +1,7 @@
 /* mpq_inv(dest,src) -- invert a rational number, i.e. set DEST to SRC
    with the numerator and denominator swapped.
 
-Copyright (C) 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

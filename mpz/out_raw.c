@@ -1,7 +1,7 @@
 /* mpz_out_raw -- Output a mpz_t in binary.  Use an endianess and word size
    independent format.
 
-Copyright (C) 1995 Free Software Foundation, Inc.
+Copyright 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
