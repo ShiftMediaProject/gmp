@@ -1709,6 +1709,13 @@ rm -f conftest* a.out
 if test $have_cxx = no && test $enable_cxx = yes; then
   AC_MSG_ERROR([C++ compiler not available])
 fi
+
+if test $have_cxx = yes; then
+  if test "${CXXFLAGS+set}" != set; then
+    AC_CHECK_LIB(stdc++, main, [CXXLIBS=-lstdc++])
+  fi
+  AC_SUBST(CXXLIBS)
+fi
 ])
 
 
