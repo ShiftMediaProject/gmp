@@ -1,7 +1,7 @@
-dnl  Alpha __gmpn_submul_1 -- Multiply a limb vector with a limb and subtract
+dnl  Alpha mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1992, 1994, 1995, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 1995, 2000, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,14 +22,17 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-dnl  INPUT PARAMETERS
-dnl  res_ptr	r16
-dnl  s1_ptr	r17
-dnl  size	r18
-dnl  s2_limb	r19
+C      cycles/limb
+C EV4:     42
+C EV5:     18
+C EV6:      7
 
-dnl  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and 7
-dnl  cycles/limb on EV6.
+C  INPUT PARAMETERS
+C  rp	r16
+C  up	r17
+C  n	r18
+C  limb	r19
+
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
