@@ -66,7 +66,7 @@ mpn_sqr_n (prodp, up, un)
       mp_ptr tspace;
       TMP_DECL (marker);
       TMP_MARK (marker);
-      tspace = (mp_ptr) TMP_ALLOC (2 * (un + BITS_PER_MP_LIMB) * BYTES_PER_MP_LIMB);
+      tspace = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (un));
       mpn_kara_sqr_n (prodp, up, un, tspace);
       TMP_FREE (marker);
     }
@@ -79,7 +79,7 @@ mpn_sqr_n (prodp, up, un)
       mp_ptr tspace;
       TMP_DECL (marker);
       TMP_MARK (marker);
-      tspace = (mp_ptr) TMP_ALLOC (2 * (un + BITS_PER_MP_LIMB) * BYTES_PER_MP_LIMB);
+      tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (un));
       mpn_toom3_sqr_n (prodp, up, un, tspace);
       TMP_FREE (marker);
     }
