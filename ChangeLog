@@ -18,6 +18,62 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-13  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (__GMP_EXTERN_INLINE): Don't use this during configure,
+	ie. __GMP_WITHIN_CONFIGURE, to avoid needing dependent routines.
+
+	* gmp-impl.h, mpn/asm-defs.m4 (mpn_addmul_2, mpn_addmul_3,
+	mpn_addmul_4): Add prototypes and defines.
+
+	* gmp.texi (Number Theoretic Functions): Clarify return value.
+	Reported by Peter Keller.
+
+2002-07-10  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, acinclude.m4 (GMP_PROG_LEX): Remove this in favour of
+	AM_PROG_LEX, now ok when lex is missing.
+
+	* longlong.h (count_leading_zeros) [pentiummmx]: Don't use __clz_tab
+	variant under LONGLONG_STANDALONE.
+	(count_trailing_zeros) [ia64 __GNUC__]: Use __builtin_ffs.
+
+	* gmp-impl.h (popc_limb): Add an ia64 asm version.
+	(DItype): Use HAVE_LONG_LONG to choose long long, avoiding _LONGLONG
+	which is in gcc but means something unrelated in MS Visual C 7.0.
+	Reported by David Librik.
+
+	* mpz/divexact.c: Add an ASSERT that den divides num.
+
+	* mpn/asm-defs.m4 (LDEF): New macro.
+	(INT32, INT64): Use it.
+	* mpn/pa32/*.asm: Use it.
+	* mpn/pa32/README: Update notes on labels.
+
+	* tests/refmpn.c, tests/tests.h, tests/t-bswap.c (ref_bswap_limb):
+	Renamed from refmpn_bswap_limb.
+	* tests/t-bswap.c: Add tests_start/tests_end for randomization.
+
+	* tests/refmpn.c, tests/tests.h (ref_popc_limb): New function.
+	* tests/t-popc.c: New file.
+	* tests/Makefile.am: Add it.
+
+	* mpn/ia64/invert_limb.asm: Use RODATA since ".section .rodata" is not
+	accepted by ia64-*-hpux*.
+
+	* acinclude.m4 (GMP_ASM_BYTE): New macro.
+	(GMP_ASM_ALIGN_LOG, GMP_ASM_W32): Use it.
+	(GMP_ASM_LABEL_SUFFIX): Use test compiles, not $host.
+	(GMP_ASM_GLOBL): Ditto, and add .global for ia64-*-hpux*.
+	(GMP_ASM_GLOBL_ATTR): Use GMP_ASM_GLOBL result, not $host.
+	(GMP_ASM_LSYM_PREFIX): Allow any "a-z" nm symbol code, add ".text" to
+	test program, required by ia64-*-hpux*.
+	(GMP_ASM_LABEL_SUFFIX): Make LABEL_SUFFIX just the value, not a "$1:",
+	the former being how it's currently being used in fact.
+
+	* configure.in, acinclude.m4 (GMP_PROG_CC_WORKS_LONGLONG): New macro.
+	* configure.in (ia64-*-hpux*): Add 32 and 64 bit ABI modes.
+
 2002-07-06  Kevin Ryde  <kevin@swox.se>
 
 	* tests/cxx/t-allfuns.cc: New file.
