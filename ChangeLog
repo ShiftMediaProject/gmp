@@ -15,6 +15,7 @@
 	* longlong.h (alpha count_leading_zeros): Wrap in __MPN.
 	* mpn/alpha/cntlz.asm: Use __gmpn prefix (by means of __MPN).
 
+	* longlong.h (__umul_ppmm, __udiv_qrnnd): Wrap in __MPN.
 	* mpn/alpha/udiv_qrnnd.S: Use __gmpn prefix.
 	* mpn/hppa/udiv_qrnnd.s: Likewise.
 	* mpn/hppa/hppa1_1/udiv_qrnnd.s: Likewise.
