@@ -1475,7 +1475,7 @@ __GMP_DECLSPEC int mpn_cmp __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t)) __GMP
 __GMP_DECLSPEC mp_limb_t mpn_divexact_by3c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #define mpn_divmod_1(qp,np,nsize,dlimb) \
-  mpn_divrem_1 (qp, (mp_size_t) 0, np, nsize, dlimb)
+  mpn_divrem_1 (qp, __GMP_CAST (mp_size_t, 0), np, nsize, dlimb)
 
 #define mpn_divrem __MPN(divrem)
 __GMP_DECLSPEC mp_limb_t mpn_divrem __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
