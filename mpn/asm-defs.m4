@@ -111,13 +111,20 @@ ifdef(`__ASM_DEFS_M4_INCLUDED__',
 ')m4exit(1)')
 define(`__ASM_DEFS_M4_INCLUDED__')
 
-
-dnl  --------------------------------------------------------------------------
-dnl  Define a C as a FORTRAN-style comment character.  We need this for
-dnl  comments to the right of an assembly instructions.  Using dnl would
-dnl  remove the linefeed, and thus concatenate adjacent lines.
-define(`C', `
-dnl')
+dnl  Detect and give a message about the unsuitable SunOS m4.  
+dnl
+dnl  Unfortunately SunOS m4 doesn't have an m4exit(), nor does an invalid
+dnl  eval() kill it.  But unexpanded $#'s below will comment out some
+dnl  closing parentheses and kill it with "m4: arg stack overflow".
+dnl
+define(m4_dollarhash_exists_test,``$#'')
+ifelse(m4_dollarhash_exists_test,`$#',
+`errprint(
+`This version of m4 doesnt support $# and cant be used for GMP .asm processing.
+If this is on SunOS, try configuring with M4=/usr/5bin/m4 if you have that,
+or install GNU m4 and use a similar M4=/wherever/m4
+')')
+undefine(`m4_dollarhash_exists_test')
 
 
 dnl  --------------------------------------------------------------------------
@@ -662,6 +669,16 @@ define(deflit_emptyargcheck,
 dnl  --------------------------------------------------------------------------
 dnl  Various assembler things, not specific to any particular CPU.
 dnl
+
+
+dnl  Usage: C comment ...
+dnl
+dnl  Define C as a FORTRAN-style comment character.  This can be used for
+dnl  comments to the right of an assembly instructions, where just dnl would
+dnl  remove the linefeed, and concatenate adjacent lines.
+
+define(C, `
+dnl')
 
 
 dnl  Various possible defines passed from the makefile that are to be tested
