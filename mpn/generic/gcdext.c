@@ -23,6 +23,18 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#if defined (__i386__)
+#ifndef THRESHOLD
+#define THRESHOLD 15
+#endif
+#endif
+
+#define STEPDIV
+
+#ifndef THRESHOLD
+#define THRESHOLD 4
+#endif
+
 #ifndef EXTEND
 #define EXTEND 1
 #endif
@@ -55,10 +67,131 @@ int arr[BITS_PER_MP_LIMB];
    Idea 3: The input numbers need less space as the computation progresses,
 	   while the s0 and s1 variables need more space.  To save space, we
 	   could make them share space, and have the latter variables grow
-	   into the former.  */
+	   into the former.
+   Idea 4: We should not do double-limb arithmetic from the start.  Instead,
+	   do things in single-limb arithmetic until the quotients differ,
+	   and then switch to double-limb arithmetic.
+*/
 
 #define swapptr(xp,yp) \
 do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
+
+#ifdef STEPDIV
+
+/* Division optimized for small quotients.  Not general, 1) expects the most
+   significant bits of both numerator and denominator to be clear.  2) error
+   return if quotient is more than one limb.  */
+static mp_limb_t
+div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
+{
+  unsigned q;
+  int cnt;
+
+  if (d1 == 0)
+    {
+      *qh = 1;
+      return 0;
+    }
+
+  for (cnt = 0; n1 > d1 || (n1 == d1 && n0 >= d0); cnt++)
+    {
+      d1 = (d1 << 1) | (d0 >> (BITS_PER_MP_LIMB - 1));
+      d0 = d0 << 1;
+    }
+
+  q = 0;
+  while (cnt)
+    {
+      d0 = (d1 << (BITS_PER_MP_LIMB - 1)) | (d0 >> 1);
+      d1 = d1 >> 1;
+      q <<= 1;
+      if (n1 > d1 || (n1 == d1 && n0 >= d0))
+	{
+	  sub_ddmmss (n1, n0, n1, n0, d1, d0);
+	  q |= 1;
+	}
+      cnt--;
+    }
+
+  *qh = 0;
+  return q;
+}
+
+#else
+
+static mp_limb_t
+div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
+{
+  mp_limb_t n2;
+  mp_limb_t q0;
+  int b, bm;
+
+  if (d1 == 0)
+    {
+      *qh = 1;
+      return 0;
+    }
+
+  if (d1 > n1)
+    {
+      /* 00 = nn / DD */
+
+      q0 = 0;
+    }
+  else
+    {
+      /* 0q = NN / dd */
+
+      count_leading_zeros (bm, d1);
+      if (bm == 0)
+	{
+	  /* From (n1 >= d1) /\ (the most significant bit of d1 is set),
+	     conclude (the most significant bit of n1 is set) /\ (the
+	     quotient digit q0 = 0 or 1).
+
+	     This special case is necessary, not an optimization.  */
+
+	  /* The condition on the next line takes advantage of that
+	     n1 >= d1 (true due to program flow).  */
+	  if (n1 > d1 || n0 >= d0)
+	    {
+	      q0 = 1;
+	      sub_ddmmss (n1, n0, n1, n0, d1, d0);
+	    }
+	  else
+	    q0 = 0;
+	}
+      else
+	{
+	  USItype m1, m0;
+	  /* Normalize.  */
+
+	  b = BITS_PER_MP_LIMB - bm;
+
+	  d1 = (d1 << bm) | (d0 >> b);
+	  d0 = d0 << bm;
+	  n2 = n1 >> b;
+	  n1 = (n1 << bm) | (n0 >> b);
+	  n0 = n0 << bm;
+
+	  udiv_qrnnd (q0, n1, n2, n1, d1);
+	  umul_ppmm (m1, m0, q0, d0);
+
+	  if (m1 > n1 || (m1 == n1 && m0 > n0))
+	    {
+	      q0--;
+	      sub_ddmmss (m1, m0, m1, m0, d1, d0);
+	    }
+	}
+    }
+
+  *qh = 0;
+  return q0;
+}
+#endif
+
+#define SEXT(x) ((mp_limb_t) ((mp_limb_signed_t) (x) >> (BITS_PER_MP_LIMB - 1)))
+
 
 mp_size_t
 #if EXTEND
@@ -89,7 +222,6 @@ mpn_gcd (gp, up, size, vp, vsize)
 #endif
 #endif
 {
-  mp_limb_t uh, vh;
   mp_limb_signed_t A, B, C, D;
   int cnt;
   mp_ptr tp, wp;
@@ -101,12 +233,17 @@ mpn_gcd (gp, up, size, vp, vsize)
   mp_ptr orig_s0p = s0p;
   mp_size_t ssize;
   int sign = 1;
+#endif
+  int use_double_flag;
   TMP_DECL (mark);
 
   TMP_MARK (mark);
 
+  use_double_flag = (size > THRESHOLD);
+
   tp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   wp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
+#if EXTEND
   s1p = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
 
   MPN_ZERO (s0p, size);
@@ -154,44 +291,126 @@ mpn_gcd (gp, up, size, vp, vsize)
       if (vsize <= 1)
 	break;
 
-      /* Make UH be the most significant limb of U, and make VH be
-	 corresponding bits from V.  */
-      uh = up[size - 1];
-      vh = vp[size - 1];
-      count_leading_zeros (cnt, uh);
-      if (cnt != 0)
+      if (use_double_flag)
 	{
-	  uh = (uh << cnt) | (up[size - 2] >> (BITS_PER_MP_LIMB - cnt));
-	  vh = (vh << cnt) | (vp[size - 2] >> (BITS_PER_MP_LIMB - cnt));
-	}
+	  mp_limb_t uh, vh, ul, vl;
+	  /* Let UH,UL be the most significant limbs of U, and let VH,VL be
+	     the corresponding bits from V.  */
+	  uh = up[size - 1];
+	  vh = vp[size - 1];
+	  ul = up[size - 2];
+	  vl = vp[size - 2];
+	  count_leading_zeros (cnt, uh);
+	  if (cnt != 0)
+	    {
+	      uh = (uh << cnt) | (ul >> (BITS_PER_MP_LIMB - cnt));
+	      vh = (vh << cnt) | (vl >> (BITS_PER_MP_LIMB - cnt));
+	      vl <<= cnt;
+	      ul <<= cnt;
+	      if (size >= 3)
+		{
+		  ul |= (up[size - 3] >> (BITS_PER_MP_LIMB - cnt));
+		  vl |= (vp[size - 3] >> (BITS_PER_MP_LIMB - cnt));
+		}
+	    }
 
-      A = 1;
-      B = 0;
-      C = 0;
-      D = 1;
+	  /* A, B, C, D below would overflow if full double-limb operands
+	     were used.  Therefore, shift them down one bit.  */
+	  ul = (uh << (BITS_PER_MP_LIMB - 1)) | (ul >> 1);
+	  uh >>= 1;
+	  vl = (vh << (BITS_PER_MP_LIMB - 1)) | (vl >> 1);
+	  vh >>= 1;
 
-      for (;;)
-	{
-	  mp_limb_signed_t q, T;
-	  if (vh + C == 0 || vh + D == 0)
-	    break;
+	  A = 1;
+	  B = 0;
+	  C = 0;
+	  D = 1;
 
-	  q = (uh + A) / (vh + C);
-	  if (q != (uh + B) / (vh + D))
-	    break;
+	  for (;;)
+	    {
+	      mp_limb_signed_t q, T;
+	      mp_limb_t qh, q1, q2;
+	      mp_limb_t nh, nl, dh, dl;
+	      mp_limb_t t1, t0;
+	      mp_limb_t Th, Tl;
 
-	  T = A - q * C;
-	  A = C;
-	  C = T;
-	  T = B - q * D;
-	  B = D;
-	  D = T;
-	  T = uh - q * vh;
-	  uh = vh;
-	  vh = T;
+	      add_ssaaaa (dh, dl, vh, vl, SEXT (C), C);
+	      if ((dl | dh) == 0)
+		break;
+	      add_ssaaaa (nh, nl, uh, ul, SEXT (A), A);
+	      q1 = div2 (&qh, nh, nl, dh, dl);
+	      if (qh != 0)
+		break;		/* could handle this */
+
+	      add_ssaaaa (dh, dl, vh, vl, SEXT (D), D);
+	      if ((dl | dh) == 0)
+		break;
+	      add_ssaaaa (nh, nl, uh, ul, SEXT (B), B);
+	      q2 = div2 (&qh, nh, nl, dh, dl);
+	      if (qh != 0)
+		break;		/* could handle this */
+
+	      if (q1 != q2)
+		break;
+
+	      T = A - q1 * C;
+	      A = C;
+	      C = T;
+	      T = B - q1 * D;
+	      B = D;
+	      D = T;
+	      umul_ppmm (t1, t0, q1, vl);
+	      t1 += q1 * vh;
+	      sub_ddmmss (Th, Tl, uh, ul, t1, t0);
+	      uh = vh, ul = vl;
+	      vh = Th, vl = Tl;
 #if EXTEND
-	  sign = -sign;
+	      sign = -sign;
 #endif
+	    }
+	}
+      else /* Same, but using single-limb calculations.  */
+	{
+	  mp_limb_t uh, vh;
+	  /* Make UH be the most significant limb of U, and make VH be
+	     corresponding bits from V.  */
+	  uh = up[size - 1];
+	  vh = vp[size - 1];
+	  count_leading_zeros (cnt, uh);
+	  if (cnt != 0)
+	    {
+	      uh = (uh << cnt) | (up[size - 2] >> (BITS_PER_MP_LIMB - cnt));
+	      vh = (vh << cnt) | (vp[size - 2] >> (BITS_PER_MP_LIMB - cnt));
+	    }
+
+	  A = 1;
+	  B = 0;
+	  C = 0;
+	  D = 1;
+
+	  for (;;)
+	    {
+	      mp_limb_signed_t q, T;
+	      if (vh + C == 0 || vh + D == 0)
+		break;
+
+	      q = (uh + A) / (vh + C);
+	      if (q != (uh + B) / (vh + D))
+		break;
+
+	      T = A - q * C;
+	      A = C;
+	      C = T;
+	      T = B - q * D;
+	      B = D;
+	      D = T;
+	      T = uh - q * vh;
+	      uh = vh;
+	      vh = T;
+    #if EXTEND
+	      sign = -sign;
+    #endif
+	    }
 	}
 
 #if RECORD
@@ -383,8 +602,16 @@ mpn_gcd (gp, up, size, vp, vsize)
     }
 
 #if RECORD
-  printf ("min: %ld\n", min);
-  printf ("max: %ld\n", max);
+  printf ("min: -%lx\n", -min);
+  printf ("max: %lx\n", max);
+#endif
+
+#if STAT
+  {
+    int i;
+    for (i = 0; i < BITS_PER_MP_LIMB; i++)
+      printf ("%d:%d\n", i, arr[i]);
+  }
 #endif
 
   if (vsize == 0)
@@ -456,12 +683,12 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  MPN_COPY (tp, s0p, ssize);
 
 	  MPN_ZERO (s1p + ssize, 1); /* zero s1 too */
-	  for (i = 0; i < 1; i++)
-	    {
-	      mp_limb_t cy;
-	      cy = mpn_addmul_1 (tp + i, s1p, ssize, q);
-	      tp[ssize + i] = cy;
-	    }
+
+	  {
+	    mp_limb_t cy;
+	    cy = mpn_addmul_1 (tp, s1p, ssize, q);
+	    tp[ssize] = cy;
+	  }
 
 	  ssize += 1;
 	  ssize -= tp[ssize - 1] == 0;
