@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 1 Oct 2002.  An up-to-date version is available at
+  This file current as of 8 Oct 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -428,11 +428,6 @@ MA 02111-1307, USA.
      Does it?  <code>bits_per_digit</code> and the inner loop over bits in a
      limb might prevent it.  Perhaps special cases for binary, octal and hex
      would be worthwhile (very possibly for all processors too).
-<li> Cray: <code>popc_limb</code> could use the Cray <code>_popc</code>
-     intrinsic.  That would help <code>mpz_hamdist</code> and might make the
-     generic C versions of <code>mpn_popcount</code> and
-     <code>mpn_hamdist</code> suffice for Cray (if it vectorizes, or can be
-     given a hint to do so).
 <li> S390: <code>BSWAP_LIMB_FETCH</code> looks like it could be done with
      <code>lrvg</code>, as per glibc sysdeps/s390/s390-64/bits/byteswap.h.
      This is only for 64-bit mode or something is it, since 32-bit mode has
@@ -801,6 +796,8 @@ MA 02111-1307, USA.
      Currently we pretend in configure that the dodgy m68k netbsd 1.4.1
      <code>getrusage</code> doesn't exist.  If a test might take a long time
      to run then perhaps cache the result in a file somewhere.
+<li> tune/time.c could choose the default precision based on the
+     <code>speed_unittime</code> determined, independent of the method in use.
 </ul>
 
 
