@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-24  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: For sparc under solaris2.[7-9], pass -fast instead of
+	other optimization options.
+
 2002-02-23  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/asm-defs.m4 (GMP_NUMB_MASK): New macro.
