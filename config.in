@@ -246,8 +246,8 @@ MA 02111-1307, USA. */
 /* Define if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
-/* Define if you have the <fenv.h> header file. */
-#undef HAVE_FENV_H
+/* Define if `fesetround' and <fenv.h> exist. */
+#undef HAVE_FESETROUND
 
 /* Define if you have the <fpu_control.h> header file. */
 #undef HAVE_FPU_CONTROL_H
