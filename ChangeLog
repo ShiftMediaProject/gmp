@@ -19,6 +19,18 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-12  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Detect cmov problems with gcc
+	-march=pentiumpro on solaris 2.8.
+
+	* tune/common.c, tune/speed.h: Allow for commas in count_leading_zeros
+	and count_trailing_zeros macros.
+
+	* demos/expr/Makefile.am: Distribute exprfr.c and exprfra.c.
+
+	* tune/Makefile.am (speed_ext_SOURCES): Should be speed-ext.c.
+
 2001-12-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/s390/addmul_1.asm: New file.
