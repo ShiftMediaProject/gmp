@@ -48,7 +48,7 @@ MA 02111-1307, USA. */
    4. DSIZE >= 2.  */
 
 
-#define PREINVERT_VIABLE   (UDIV_TIME > UDIV_PREINV_TIME)
+#define PREINVERT_VIABLE   (UDIV_TIME > UDIV_NORM_PREINV_TIME)
 
 
 mp_limb_t
@@ -97,7 +97,7 @@ mpn_sb_divrem_mn (qp, np, nsize, dp, dsize)
   if (PREINVERT_VIABLE)
     {
       have_preinv = 0;
-      if ((UDIV_TIME - UDIV_PREINV_TIME) * (nsize - dsize) > UDIV_TIME)
+      if ((UDIV_TIME - UDIV_NORM_PREINV_TIME) * (nsize - dsize) > UDIV_TIME)
 	{
 	  invert_limb (dxinv, dx);
 	  have_preinv = 1;

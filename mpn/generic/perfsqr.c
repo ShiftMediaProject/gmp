@@ -77,7 +77,7 @@ mpn_perfect_square_p (up, usize)
      is even more on continuing up to p=53 in the 64-bit case.  */
 
   /* Firstly, compute REM = A mod PP.  */
-  if (UDIV_TIME > UDIV_PREINV_TIME)
+  if (UDIV_TIME > UDIV_NORM_PREINV_TIME)
     rem = mpn_preinv_mod_1 (up, usize, (mp_limb_t) PP, (mp_limb_t) PP_INVERTED);
   else
     rem = mpn_mod_1 (up, usize, (mp_limb_t) PP);
