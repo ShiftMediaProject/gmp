@@ -23,7 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#if defined (__hpux) || defined (alpha__)  || defined (__svr4__) || defined (__SVR4)
+#if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
 /* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
 long mrand48 ();
 static inline long
