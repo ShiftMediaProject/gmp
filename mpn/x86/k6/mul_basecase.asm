@@ -52,11 +52,6 @@ deflit(UNROLL_COUNT, 16)
 #
 # Future:
 #
-# If the karatsuba threshold is about 20, then maybe unroll to fully that
-# size and not have an inner unrolled loop at all, just a computed jump to a
-# straight run through a block of code.  Would mean xp is a constant in the
-# outer loop and wp only incrementing.
-#
 # The unrolled loop could be shared by mpn_addmul_1, with some extra stack
 # setups and maybe 2 or 3 wasted cycles at the end.  Code saving would be
 # 256 bytes.
@@ -288,7 +283,7 @@ L(ysize_more_than_one_limb):
 #
 # Using ebx and edi pointing at the ends of their respective locations saves
 # a couple of instructions in the outer loop.  The inner loop is still 11
-# cycles, the same as in aorsmul_1.asm.
+# cycles, the same as the simple loop in aorsmul_1.asm.
 
 	# eax	yp
 	# ebx	xp end
@@ -563,7 +558,7 @@ forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 
 	movl	disp1(%ebx), %eax
 	mull	%ebp
-	addl	%ecx, disp0(%edi)
+Zdisp(	addl,	%ecx, disp0,(%edi))
 	adcl	%eax, %esi
 	movl	%edx, %ecx
 	jadcl0( %ecx)
