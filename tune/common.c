@@ -997,8 +997,8 @@ speed_mpn_hgcd (struct speed_params *s)
 
   TMP_MARK (marker);
 
-  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
-  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
+  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);
+  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_yp);
 
   MPN_COPY (ap, s->xp, s->size);
   MPN_COPY (bp, s->yp, s->size);
@@ -1055,8 +1055,8 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
 
   TMP_MARK (marker);
 
-  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
-  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
+  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);
+  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_yp);
 
   MPN_COPY (ap, s->xp, s->size);
   MPN_COPY (bp, s->yp, s->size);
