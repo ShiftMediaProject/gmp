@@ -1047,7 +1047,6 @@ test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
 case $limb_chosen in
 longlong) DEFN_LONG_LONG_LIMB="#define _LONG_LONG_LIMB 1"    ;;
 *)        DEFN_LONG_LONG_LIMB="/* #undef _LONG_LONG_LIMB */" ;;
-;;
 esac
 AC_SUBST(DEFN_LONG_LONG_LIMB)
 
