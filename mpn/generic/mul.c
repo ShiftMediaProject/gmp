@@ -149,12 +149,9 @@ mpn_mul (mp_ptr prodp,
 	    The parts marked with X are the parts whose sums are copied into
 	    the temporary buffer.  */
 
-#if TUNE_PROGRAM_BUILD
-	  mp_limb_t tp[MUL_TOOM3_THRESHOLD_LIMIT];
-#else
-	  mp_limb_t tp[MUL_KARATSUBA_THRESHOLD];
-#endif
+	  mp_limb_t tp[MUL_KARATSUBA_THRESHOLD_LIMIT];
 	  mp_limb_t cy;
+          ASSERT (MUL_KARATSUBA_THRESHOLD <= MUL_KARATSUBA_THRESHOLD_LIMIT);
 
 	  mpn_mul_basecase (prodp, up, MUL_BASECASE_MAX_UN, vp, vn);
 	  prodp += MUL_BASECASE_MAX_UN;

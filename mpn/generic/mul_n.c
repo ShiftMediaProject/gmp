@@ -1148,11 +1148,8 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
   else if (n < MUL_TOOM3_THRESHOLD)
     {
       /* Allocate workspace of fixed size on stack: fast! */
-#if TUNE_PROGRAM_BUILD
       mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
-#else
-      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD-1)];
-#endif
+      ASSERT (MUL_TOOM3_THRESHOLD <= MUL_TOOM3_THRESHOLD_LIMIT);
       mpn_kara_mul_n (p, a, b, n, ws);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
