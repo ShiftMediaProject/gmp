@@ -31,12 +31,6 @@ C  * Try to make this run at closer to 1.5 c/l.
 C  * Set up register aliases (define(`u0',`%r19')).
 C  * Explicitly align loop.
 
-C INPUT PARAMETERS
-define(`rp',`r32')
-define(`up',`r33')
-define(`vp',`r34')
-define(`n',`r35')
-
 ifdef(`OPERATION_addlsh1_n',`
   define(ADCSBC,	`add,dc')
   define(INITC,		`ldi	0,')
@@ -56,51 +50,69 @@ define(`n',`%r23')
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
 
-ifdef(`HAVE_ABI_2_0w',
-`	.level	2.0w
-',`	.level	2.0
+ifdef(`HAVE_ABI_2_0w',`
+  define(LEVEL,		`.level 2.0w')
+  define(RETREG,	`%r28')
+  define(CLRRET1,	`dnl')
 ')
-PROLOGUE(func)
-	std,ma		%r3, 0x100(%r30)
-	std		%r4, -0xf8(%r30)
-	std		%r5, -0xf0(%r30)
-	std		%r6, -0xe8(%r30)
-	std		%r7, -0xe0(%r30)
-	std		%r8, -0xd8(%r30)
-	std		%r9, -0xd0(%r30)
+ifdef(`HAVE_ABI_2_0n',`
+  define(LEVEL,		`.level 2.0')
+  define(RETREG,	`%r29')
+  define(CLRRET1,	`ldi	0, %r28')
+')
 
-	INITC		%r1		C init saved cy
+	LEVEL
+PROLOGUE(func)
+	std,ma		%r3, 0x100(%r30)	C save reg
+
+	INITC		%r1			C init saved cy
 
 C Primitive code for the first (n mod 8) limbs:
-	extrd,u	n,	63, 3, %r22	C count for loop0
-	comib,=	0,	%r22, L(unrolled)	C skip loop0?
+	extrd,u		n, 63, 3, %r22		C count for loop0
+	comib,=		0, %r22, L(unrolled)	C skip loop0?
 	copy		%r0, %r28
 LDEF(loop0)
-	ldd	0(vp), %r4
-	shrpd	%r4, %r28, 63, %r31
-	addi		-1, %r1, %r0	C restore cy
+	ldd	0(vp), %r21
+	ldo		8(vp), vp
 	ldd	0(up), %r19
+	ldo		8(up), up
+	shrpd	%r21, %r28, 63, %r31
+	addi		-1, %r1, %r0		C restore cy
 	ADCSBC	%r19, %r31, %r29
 	std	%r29, 0(rp)
-	add,dc		%r0, %r0, %r1	C save cy
-	copy	%r4, %r28
-	ldo		8(vp), vp
-	ldo		8(up), up
+	add,dc		%r0, %r0, %r1		C save cy
+	copy	%r21, %r28
 	addib,>		-1, %r22, L(loop0)
 	ldo		8(rp), rp
 
-	addib,<		-8, n, L(ret)
-	addi		-1, %r1, %r0	C restore cy
+	addib,>=	-8, n, L(unrolled)
+	addi		-1, %r1, %r0		C restore cy
+
+	shrpd	%r0, %r28, 63, %r28
+	ADCSBC	%r0, %r28, RETREG
+ifdef(`OPERATION_sublsh1_n',
+`	sub	%r0, RETREG, RETREG')
+	CLRRET1
+
+	bve		(%r2)
+	ldd,mb		-0x100(%r30), %r3
+
 
 LDEF(unrolled)
+	std		%r4, -0xf8(%r30)	C save reg
 	ldd	0(vp), %r4
+	std		%r5, -0xf0(%r30)	C save reg
 	ldd	8(vp), %r5
+	std		%r6, -0xe8(%r30)	C save reg
 	ldd	16(vp), %r6
+	std		%r7, -0xe0(%r30)	C save reg
 
 	ldd	24(vp), %r7
 	shrpd	%r4, %r28, 63, %r31
+	std		%r8, -0xd8(%r30)	C save reg
 	ldd	32(vp), %r8
 	shrpd	%r5, %r4, 63, %r4
+	std		%r9, -0xd0(%r30)	C save reg
 	ldd	40(vp), %r9
 	shrpd	%r6, %r5, 63, %r5
 	ldd	48(vp), %r3
@@ -115,9 +127,9 @@ LDEF(unrolled)
 	shrpd	%r28, %r3, 63, %r3
 	ldd	24(up), %r22
 
-	nop				C alignment FIXME
+	nop					C alignment FIXME
 	addib,<=	-8, n, L(end)
-	addi		-1, %r1, %r0	C restore cy
+	addi		-1, %r1, %r0		C restore cy
 LDEF(loop)
 	ADCSBC	%r19, %r31, %r29
 	ldd	32(up), %r19
@@ -167,7 +179,7 @@ LDEF(loop)
 	ldo		64(rp), rp
 	ldo		64(up), up
 	addib,>		-8, n, L(loop)
-	addi		-1, %r1, %r0	C restore cy
+	addi		-1, %r1, %r0		C restore cy
 LDEF(end)
 	ADCSBC	%r19, %r31, %r29
 	ldd	32(up), %r19
@@ -182,31 +194,26 @@ LDEF(end)
 	ldd	56(up), %r22
 	std	%r29, 24(rp)
 	ADCSBC	%r19, %r7, %r29
+	ldd		-0xf8(%r30), %r4	C restore reg
 	std	%r29, 32(rp)
 	ADCSBC	%r20, %r8, %r29
+	ldd		-0xf0(%r30), %r5	C restore reg
 	std	%r29, 40(rp)
 	ADCSBC	%r21, %r9, %r29
+	ldd		-0xe8(%r30), %r6	C restore reg
 	std	%r29, 48(rp)
 	ADCSBC	%r22, %r3, %r29
+	ldd		-0xe0(%r30), %r7	C restore reg
 	std	%r29, 56(rp)
 
-LDEF(ret)
 	shrpd	%r0, %r28, 63, %r28
-	ADCSBC	%r0, %r28, %r28
+	ldd		-0xd8(%r30), %r8	C restore reg
+	ADCSBC	%r0, %r28, RETREG
 ifdef(`OPERATION_sublsh1_n',
-`	sub	%r0, %r28, %r28')
+`	sub	%r0, RETREG, RETREG')
+	CLRRET1
 
-ifdef(`HAVE_ABI_2_0n',
-`	copy	%r28, %r29
-	ldi	0, %r28
-')
-
-	ldd		-0xd0(%r30), %r9
-	ldd		-0xd8(%r30), %r8
-	ldd		-0xe0(%r30), %r7
-	ldd		-0xe8(%r30), %r6
-	ldd		-0xf0(%r30), %r5
-	ldd		-0xf8(%r30), %r4
+	ldd		-0xd0(%r30), %r9	C restore reg
 	bve		(%r2)
-	ldd,mb		-0x100(%r30), %r3
+	ldd,mb		-0x100(%r30), %r3	C restore reg
 EPILOGUE()
