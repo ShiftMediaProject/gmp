@@ -31,7 +31,9 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_add_n               
 #undef HAVE_NATIVE_mpn_add_nc              
 #undef HAVE_NATIVE_mpn_addmul_1            
+#undef HAVE_NATIVE_mpn_addmul_1c
 #undef HAVE_NATIVE_mpn_addsub_n            
+#undef HAVE_NATIVE_mpn_addsub_nc
 #undef HAVE_NATIVE_mpn_and_n               
 #undef HAVE_NATIVE_mpn_andn_n              
 #undef HAVE_NATIVE_mpn_bdivmod             
@@ -40,9 +42,9 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_copyd               
 #undef HAVE_NATIVE_mpn_copyi               
 #undef HAVE_NATIVE_mpn_divexact_by3c
-#undef HAVE_NATIVE_mpn_divmod_1            
 #undef HAVE_NATIVE_mpn_divrem              
 #undef HAVE_NATIVE_mpn_divrem_1            
+#undef HAVE_NATIVE_mpn_divrem_1c
 #undef HAVE_NATIVE_mpn_divrem_2            
 #undef HAVE_NATIVE_mpn_divrem_newton       
 #undef HAVE_NATIVE_mpn_divrem_classic      
@@ -57,8 +59,10 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_iorn_n              
 #undef HAVE_NATIVE_mpn_lshift              
 #undef HAVE_NATIVE_mpn_mod_1               
+#undef HAVE_NATIVE_mpn_mod_1c
 #undef HAVE_NATIVE_mpn_mul                 
 #undef HAVE_NATIVE_mpn_mul_1               
+#undef HAVE_NATIVE_mpn_mul_1c
 #undef HAVE_NATIVE_mpn_mul_basecase        
 #undef HAVE_NATIVE_mpn_mul_n               
 #undef HAVE_NATIVE_mpn_nand_n              
@@ -80,72 +84,73 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_sub_n               
 #undef HAVE_NATIVE_mpn_sub_nc              
 #undef HAVE_NATIVE_mpn_submul_1            
+#undef HAVE_NATIVE_mpn_submul_1c
 #undef HAVE_NATIVE_mpn_udiv_w_sdiv         
 #undef HAVE_NATIVE_mpn_umul_ppmm
 #undef HAVE_NATIVE_mpn_udiv_qrnnd
 #undef HAVE_NATIVE_mpn_xor_n               
 #undef HAVE_NATIVE_mpn_xnor_n              
 
-/* Define if mpn/tests has calling conventions checking for the CPU */
-#undef HAVE_CALLING_CONVENTIONS
-
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
 #undef HAVE_DECL_OPTARG
 
-/* Define if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
-
-/* Define if you have the `getopt_long' function. */
-#undef HAVE_GETOPT_LONG
-
-/* Define if you have the `getpagesize' function. */
-#undef HAVE_GETPAGESIZE
-
-/* Define if the 80x86 rdtsc instruction is available (pentium and up). */
-#undef HAVE_PENTIUM_RDTSC
-
-/* Define if you have the `setitimer' function. */
-#undef HAVE_SETITIMER
-
-/* Define if cpp supports the ANSI # stringizing operator. */
-#undef HAVE_STRINGIZE
-
-/* Define if you have the <string.h> header file. */
-#undef HAVE_STRING_H
-
-/* Define if you have the `strtoul' function. */
-#undef HAVE_STRTOUL
-
-/* Define if you have the `sysconf' function. */
-#undef HAVE_SYSCONF
-
-/* Define if you have the `sysctlbyname' function. */
-#undef HAVE_SYSCTLBYNAME
+/* ./configure --enable-assert option, to enable some ASSERT()s */
+#undef WANT_ASSERT
 
 /* Define if you have the <sys/sysctl.h> header file. */
 #undef HAVE_SYS_SYSCTL_H
 
-/* Define if you have the <sys/time.h> header file. */
-#undef HAVE_SYS_TIME_H
-
-/* Define if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
-
-/* Define if the system has the type `void'. */
-#undef HAVE_VOID
+/* Define if you have the `strtoul' function. */
+#undef HAVE_STRTOUL
 
 /* Name of package */
 #undef PACKAGE
 
-/* Define if you have the ANSI C header files. */
-#undef STDC_HEADERS
+/* Define if you have the `sysctlbyname' function. */
+#undef HAVE_SYSCTLBYNAME
+
+/* Define if you have the `setitimer' function. */
+#undef HAVE_SETITIMER
+
+/* Define if the system has the type `void'. */
+#undef HAVE_VOID
 
 /* ./configure --disable-alloca option, to use stack-alloc.c, not alloca */
 #undef USE_STACK_ALLOC
 
+/* Define if cpp supports the ANSI # stringizing operator. */
+#undef HAVE_STRINGIZE
+
+/* Define if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define if you have the `sysconf' function. */
+#undef HAVE_SYSCONF
+
+/* Define if you have the `getpagesize' function. */
+#undef HAVE_GETPAGESIZE
+
 /* Version number of package */
 #undef VERSION
 
-/* ./configure --enable-assert option, to enable some ASSERT()s */
-#undef WANT_ASSERT
+/* Define if you have the `getopt_long' function. */
+#undef HAVE_GETOPT_LONG
+
+/* Define if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
+
+/* Define if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define if the 80x86 rdtsc instruction is available (pentium and up). */
+#undef HAVE_PENTIUM_RDTSC
+
+/* Define if mpn/tests has calling conventions checking for the CPU */
+#undef HAVE_CALLING_CONVENTIONS
+
+/* Define if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
