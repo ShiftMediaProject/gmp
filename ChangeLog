@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-09-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Remove unused
+	variables.
+	(mpn_toom3_mul_n, mpn_toom3_sqr_n): Use offset `+ 1', not `+ 2' in last
+	MPN_DECR_U calls.
+
 2003-09-12  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
 
 	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Rewrite.
