@@ -432,6 +432,7 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   rand.c randclr.c randdef.c randlc2s.c randlc2x.c randmt.c		\
   rands.c randsd.c randsdui.c version.c
 
+EXTRA_libgmp_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPQ_OBJECTS)	\
   $(MPN_OBJECTS) @mpn_objs_in_libgmp@		\
@@ -475,12 +476,6 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -export-symbols $(srcdir)/libmp.sym
 
 
-# Optional objects, listed in a dummy library to generate ansi2knr rules and
-# get them in "make dist".
-#
-EXTRA_LTLIBRARIES = libdummy.la
-libdummy_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
-
 info_TEXINFOS = gmp.texi
 gmp_TEXINFOS = fdl.texi
 subdir = .
@@ -490,10 +485,6 @@ CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = gmp.h mp.h
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
-libdummy_la_LDFLAGS =
-libdummy_la_LIBADD =
-am_libdummy_la_OBJECTS = tal-debug$U.lo tal-notreent$U.lo tal-reent$U.lo
-libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
 	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_get_fns$U.lo \
@@ -526,7 +517,7 @@ LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) \
+DIST_SOURCES = $(libgmp_la_SOURCES) $(EXTRA_libgmp_la_SOURCES) \
 	$(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
 am__TEXINFO_TEX_DIR = $(srcdir)
 INFO_DEPS = gmp.info
@@ -550,7 +541,7 @@ DIST_COMMON = README $(gmp_TEXINFOS) $(include_HEADERS) AUTHORS COPYING \
 	texinfo.tex version.texi
 DIST_SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd mpfr demos \
 	tune
-SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
+SOURCES = $(libgmp_la_SOURCES) $(EXTRA_libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
 
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -622,8 +613,6 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
-	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES) 
 	$(LINK) -rpath $(libdir) $(libgmp_la_LDFLAGS) $(libgmp_la_OBJECTS) $(libgmp_la_LIBADD) $(LIBS)
 libgmpxx.la: $(libgmpxx_la_OBJECTS) $(libgmpxx_la_DEPENDENCIES) 
