@@ -185,8 +185,8 @@ case "$target" in
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
   sparc64-*-linux*)
-   os_64bit=yes
-    gmp_cflags64_gcc="$gmp_cflags_gcc -m64"
+    os_64bit=yes
+    gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
     gmp_cflags_gcc="$gmp_cflags_gcc -m32"
     gmp_xoptflags_gcc="-mcpu=ultrasparc -mvis"
     ;;
