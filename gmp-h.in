@@ -312,6 +312,8 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 #endif
 
+/* For reference, "defined(EOF)" cannot be used here.  In g++ 2.95.4,
+   <iostream> defines EOF but not FILE.  */
 #if defined (FILE)                                              \
   || defined (H_STDIO)                                          \
   || defined (_H_STDIO)               /* AIX */                 \
@@ -477,6 +479,8 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_ABS(x)   ((x) >= 0 ? (x) : -(x))
 #define __GMP_MAX(h,i) ((h) > (i) ? (h) : (i))
 
+/* __GMP_USHRT_MAX is not "~ (unsigned short) 0" because short is promoted
+   to int by "~".  */
 #define __GMP_UINT_MAX   (~ (unsigned) 0)
 #define __GMP_ULONG_MAX  (~ (unsigned long) 0)
 #define __GMP_USHRT_MAX  ((unsigned short) ~0)
