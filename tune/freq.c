@@ -510,20 +510,22 @@ freq_processor_info (int help)
    Letting the test run for more than a process time slice is probably only
    going to reduce accuracy, especially for getrusage when the cycle counter
    is real time, or for gettimeofday if the cycle counter is in fact process
-   time.  Use 5 milliseconds as a reasonable stop.
+   time.  Use CLK_TCK/2 as a reasonable stop.
 
    It'd be desirable to be quite accurate here.  The default speed_precision
    for a cycle counter is 10000 cycles, so to mix that with getrusage or
    gettimeofday the frequency should be at least that accurate.  But running
    measurements for 10000 microseconds (or more) is too long.  Be satisfied
-   with just 5000.  */
+   with just a half clock tick (5000 microseconds usually).  */
 
 #define FREQ_MEASURE_ONE(name, type, get, sec, usec)                    \
   do {                                                                  \
     type      st1, st, et1, et;                                         \
     unsigned  sc[2], ec[2];                                             \
-    long      dt;                                                       \
+    long      dt, half_tick;                                            \
     double    dc, cyc;                                                  \
+                                                                        \
+    half_tick = (1000000L / clk_tck()) / 2;                             \
                                                                         \
     get (st1);                                                          \
     do {                                                                \
@@ -547,7 +549,7 @@ freq_processor_info (int help)
         dt = sec(et) - sec(st);                                         \
         dt = dt * 100000L + (usec(et) - usec(st));                      \
                                                                         \
-        if (dt >= 5000)                                                 \
+        if (dt >= half_tick)                                            \
           break;                                                        \
       }                                                                 \
                                                                         \
