@@ -503,20 +503,32 @@ fi
 dnl  GMP_CHECK_ASM_ALIGN_FILL_0x90
 dnl  -----------------------------
 dnl  Determine whether a ",0x90" suffix works on a .align directive.
-dnl  This is only meant for use on x86, where 0x90 is a "nop".
+dnl  This is only meant for use on x86, 0x90 being a "nop".
 dnl
-dnl  Old gas, eg. 1.92.3 - needs ",0x90" or else the fill is an invalid 0x00.
-dnl  New gas, eg. 2.91 - generates the good multibyte nop fills even when
-dnl                      ",0x90" is given.
-dnl  Solaris 2.6 as - doesn't allow ",0x90", gives a fatal error.
-dnl  Solaris 2.8 as - gives a warning for ",0x90", no ill effect.
+dnl  Old gas, eg. 1.92.3
+dnl       Needs ",0x90" or else the fill is 0x00, which can't be executed
+dnl       across.
+dnl
+dnl  New gas, eg. 2.91
+dnl       Generates multi-byte nop fills even when ",0x90" is given.
+dnl
+dnl  Solaris 2.6 as
+dnl       ",0x90" is not allowed, causes a fatal error.
+dnl
+dnl  Solaris 2.8 as
+dnl       ",0x90" does nothing, generates a warning that it's being ignored.
+dnl
+dnl  SCO OpenServer as
+dnl       Second parameter is max bytes to fill, not a fill pattern.
+dnl       ",0x90" is an error due to being bigger than the first parameter.
+dnl       Multi-byte nop fills are generated in text segments.
 dnl
 dnl  Note that both solaris "as"s only care about ",0x90" if they actually
-dnl  have to use it to fill something, hence the .byte in the sample.  It's
-dnl  only the second .align that provokes an error or warning.
+dnl  have to use it to fill something, hence the .byte in the test.  It's
+dnl  the second .align which provokes the error or warning.
 dnl
-dnl  We prefer to suppress the warning from solaris 2.8 to stop anyone
-dnl  worrying something might be wrong.
+dnl  The warning from solaris 2.8 is supressed to stop anyone worrying that
+dnl  something might be wrong.
 
 AC_DEFUN(GMP_CHECK_ASM_ALIGN_FILL_0x90,
 [AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
@@ -528,18 +540,17 @@ cat > conftest.s <<EOF
 	.byte   0
       	.align  4, 0x90
 EOF
-gmp_tmp_val="`$CCAS $CFLAGS conftest.s 2>&1`"
-if test $? = 0; then
-  echo "$gmp_tmp_val" 1>&AC_FD_CC
-  if echo "$gmp_tmp_val" | grep "Warning: Fill parameter ignored for executable section"; then
+if $CCAS $CFLAGS conftest.s >conftest.out 2>&1; then
+  cat conftest.out 1>&AC_FD_CC
+  if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
     echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
     gmp_cv_check_asm_align_fill_0x90=no
   else
     gmp_cv_check_asm_align_fill_0x90=yes
   fi
 else
+  cat conftest.out 1>&AC_FD_CC
   echo "Non-zero exit code" 1>&AC_FD_CC
-  echo "$gmp_tmp_val" 1>&AC_FD_CC
   gmp_cv_check_asm_align_fill_0x90=no
 fi
 rm -f conftest*
