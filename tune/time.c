@@ -63,6 +63,9 @@ MA 02111-1307, USA.
 
 #include <stdio.h>
 #include <stdlib.h> /* for getenv */
+#if HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #include <sys/types.h>
 #if HAVE_SYS_SYSCTL_H
@@ -75,9 +78,6 @@ MA 02111-1307, USA.
 
 #include "speed.h"
 
-/* gmp-impl.h and stdlib.h conflict on SunOS, so copy some things here */
-char *getenv _PROTO ((const char *var));
-double atof _PROTO ((const char *s));
 
 #if HAVE_PENTIUM_RDTSC
 #define SPEED_USE_PENTIUM_RDTSC              1
@@ -203,6 +203,42 @@ speed_cpu_frequency_sunos_sysinfo (void)
 }
 
 
+/* This is for SunOS 5.7.  The psrinfo command in the command-line interface
+   to processor_info().  "prtconf -vp" gives similar information.  */
+
+#if HAVE_PROCESSOR_INFO
+#include <sys/unistd.h>     /* for _SC_NPROCESSORS_CONF */
+#include <sys/processor.h>  /* for processor_info_t */
+int
+speed_cpu_frequency_processor_info (void)
+{
+  processor_info_t  p;
+  int  i, n, mhz = 0;
+
+  n = sysconf (_SC_NPROCESSORS_CONF);
+  for (i = 0; i < n; i++)
+    {
+      if (processor_info (i, &p) != 0)
+        continue;
+      if (p.pi_state != P_ONLINE)
+        continue;
+
+      if (mhz != 0 && p.pi_clock != mhz)
+        {
+          fprintf (stderr,
+                   "speed_cpu_frequency_processor_info(): There's more than one CPU and they have different clock speeds\n");
+          return 0;
+        }
+
+      mhz = p.pi_clock;
+    }
+
+  speed_cycletime = 1.0e-6 / (double) mhz;
+  return 1;
+}
+#endif
+
+
 /* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
    if not.  */
 
@@ -220,6 +256,11 @@ static const struct {
 #if HAVE_SYSCTLBYNAME
   { speed_cpu_frequency_sysctlbyname,
     "sysctlbyname() machdep.tsc_freq or machdep.i586_freq" },
+#endif
+
+#if HAVE_PROCESSOR_INFO
+  { speed_cpu_frequency_processor_info,
+    "processor_info() pi_clock" },
 #endif
 
   { speed_cpu_frequency_proc_cpuinfo,
