@@ -29,14 +29,14 @@ See README.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-mp_limb_1
-mpn_submul_1 (mp_ptr rp, mp_srcptr s1p, mp_size_t n, mp_limb_1 s2d)
+mp_limb_t
+mpn_submul_1 (mp_ptr rp, mp_srcptr s1p, mp_size_t n, mp_limb_t s2d)
 {
   mp_ptr tp;
   mp_limb_t cy;
 
   tp = alloca (n * BYTES_PER_MP_LIMB);
   cy = mpn_mul_1 (tp, s1p, n, s2d);
-  cy -= mpn_sub_n (rp, rp, tp, n);
+  cy += mpn_sub_n (rp, rp, tp, n);
   return cy;
 }
