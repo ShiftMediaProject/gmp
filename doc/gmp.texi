@@ -2480,7 +2480,6 @@ particular order, include
 
 @display
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
-@uref{http://quorum.tamu.edu/jon/gnu/} @ (debauch)
 @uref{http://dmalloc.com/}
 @uref{http://www.perens.com/FreeSoftware/} @ (electric fence)
 @uref{http://packages.debian.org/fda/}
@@ -6934,8 +6933,7 @@ polynomials using templates.
 Arithmos @spaceuref{http://win-www.uia.ac.be/u/cant/arithmos/} @* Rationals
 with infinities and square roots.
 @item
-CLN @spaceuref{http://clisp.cons.org/~haible/packages-cln.html} @* High level
-classes for arithmetic.
+CLN @spaceuref{http://www.ginac.de/CLN/} @* High level classes for arithmetic.
 @item
 LiDIA @spaceuref{http://www.informatik.tu-darmstadt.de/TI/LiDIA/} @* A C++
 library for computational number theory.
@@ -6948,8 +6946,8 @@ NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
 @item Fortran
 @itemize @bullet
 @item
-Omni F77 @spaceuref{http://pdplab.trc.rwcp.or.jp/pdperf/Omni/home.html} @*
-Arbitrary precision floats.
+Omni F77 @spaceuref{http://phase.hpcc.jp/Omni/home.html} @* Arbitrary
+precision floats.
 @end itemize
 
 @item Haskell
@@ -7016,7 +7014,7 @@ normal Math::BigInt operations.
 @item Pike
 @itemize @bullet
 @item
-mpz module in the standard distribution, @uref{http://pike.idonex.com/}
+mpz module in the standard distribution, @uref{http://pike.ida.liu.se/}
 @end itemize
 
 @need 500
@@ -7070,7 +7068,7 @@ GiNaC @spaceuref{http://www.ginac.de/} @* C++ computer algebra using CLN.
 Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
 computer algebra using GCL.
 @item
-Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q} @* Equational
+Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q/} @* Equational
 programming system.
 @item
 Regina @spaceuref{http://regina.sourceforge.net/} @* Topological calculator.
@@ -9998,7 +9996,7 @@ volume 21, number 1, March 1995, pp.@: 111-122.
 
 @item
 Paul Zimmermann, ``Karatsuba Square Root'', INRIA Research Report 3805,
-November 1999, @uref{http://www.inria.fr/RRRT/RR-3805.html}
+November 1999, @uref{http://www.inria.fr/rrrt/rr-3805.html}
 
 @item
 Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
