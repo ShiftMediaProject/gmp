@@ -27,7 +27,6 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 #include "tests.h"
 
-#include "mpn_incr_u_x86.c"
 
 #define M     MP_LIMB_T_MAX
 #define SIZE  ((mp_size_t) 10)
