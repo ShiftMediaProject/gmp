@@ -70,7 +70,7 @@ __gmp_tmp_alloc (unsigned long size)
 	{
 	  /* We need more temporary memory than ever before.  Increase
 	     for future needs.  */
-	  now = now * 3 / 2;
+	  now = (now * 3 / 2 + __TMP_ALIGN - 1) & -__TMP_ALIGN;
 	  chunk_size = now - current_total_allocation + HSIZ;
 	  current_total_allocation = now;
 	  max_total_allocation = current_total_allocation;
