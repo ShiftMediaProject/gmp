@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
    2. Bit index should be 'unsigned'?
 
    Argument constraints:
-   1. U must sooner ot later have a limb with a clear bit.
+   1. U must sooner or later have a limb with a clear bit.
  */
 
 unsigned long int
