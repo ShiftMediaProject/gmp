@@ -58,6 +58,8 @@
 
 2000-04-15  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/tdiv_qr.c: Don't use alloca directly.
+
 	* mpz/tdiv_qr.c: Fix typo.
 	* mpz/tdiv_r.c: Fix typo.
 	* mpz/tdiv_q.c: Fix typo.
