@@ -85,7 +85,10 @@ tests_rand_start (void)
       printf ("ie. ensure that function is called before the first use of RANDS.\n");
       abort ();
     }
-  rands = RANDS;
+
+  gmp_randinit_default (__gmp_rands);
+  __gmp_rands_initialized = 1;
+  rands = __gmp_rands;
 
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
   if (perform_seed != NULL)
