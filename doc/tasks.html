@@ -49,7 +49,6 @@
      X.
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
-<li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
 <li> <code>TMP_ALLOC</code> is not reentrant when using stack-alloc.c.  Perhaps
      make it so by default and leave a --enable-alloca=malloc-nonreentrant with
      the current code.  A reentrant version will probably be slower since it
@@ -87,8 +86,8 @@
      without using division.
 <li> <code>mpn_get_str</code> should use a fast native
      <code>mpn_divrem_1</code> when available (athlon, p6mmx), possibly via a
-     new <code>mpn_divrem_1_preinv</code> interface.  New functions like
-     <code>mpn_divrem_1_norm</code> or <code>mpn_divrem_1_preinvnorm</code>
+     new <code>mpn_preinv_divrem_1</code> interface.  New functions like
+     <code>mpn_divrem_1_norm</code> or <code>mpn_preinv_divrem_1_norm</code>
      could exist for those targets where pre-shifting helps (p6 maybe).
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
@@ -129,6 +128,11 @@
      always smallish.
 <li> <code>mpn_perfect_square_p</code> on small operands might be better off
      skipping the residue tests and just taking a square root.
+<li> <code>mpn_perfect_square_p</code> could take a remainder mod 15 instead
+     of 3 and 5 separately, and use a bit table which indicates whether an N
+     mod 15 is a quadratic residue mod both 3 and 5.  More combining would
+     work too, like say 3*11 and 5*7, in whatever good combinations, possibly
+     aiming to keep under 64 or 128 bits.
 <li> <code>mpz_perfect_power_p</code> could be improved in a number of ways.
      Test for Nth power residues modulo small primes like
      <code>mpn_perfect_square_p</code> does.  Use p-adic arithmetic to find
@@ -139,7 +143,8 @@
      be tested by grouping into a limb like <code>PP</code>.
 <li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
      <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
-     quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).
+     quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).  A
+     remainder mod 2^24-1 can be taken at adder throughput speed.
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
@@ -293,7 +298,9 @@
      #ifdef mess for FP format in gmp-impl.h.
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
 <li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
-     "hinv -c processor" gives lots of information on Irix.
+     "hinv -c processor" gives lots of information on Irix.  Standard
+     config.guess etc append "el" to indicate endianness, but GMP probably
+     doesn't care about endianness and could forget about that.
 <li> Power: config.guess might be able to use AIX 4
      <code>_system_configuration.implementation</code> for more accurate CPU
      determination.
@@ -303,17 +310,6 @@
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
-<li> Extend the "optional" compiler arguments to choose the first that works
-     from from a set, so when gcc gets athlon support it can try
-     -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486, whichever works.
-<li> Build multiple variants of the library under certain systems.  An
-     example is -n32 and -64 on Irix.
-<li> There are a few filenames that don't fit in 14 chars, if this matters.
-<li> Enable support for FORTRAN versions of mpn files (eg. for
-     mpn/cray/mulww.f).  Add "f" to MPN_SUFFIXES, run <code>AC_PROG_F77</code>
-     if such a file is found.  Automake will generate some of what's needed in
-     the makefiles, but libtool doesn't know fortran and so rules like the
-     current ".asm.lo" will be needed.
 <li> Configure in demos directory.  Now pexpr.c is becoming the usual *nix
      mess of nested ifdefs.
 <li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
@@ -329,18 +325,7 @@
      be conditionalized, and the appropriate form could be selected with the
      <code>HAVE_NATIVE</code> scheme if/when the code switches to use a
      <code>PROLOGUE</code> style.
-<li> Think about a --enable-abi=FOO to select which abi to use on systems that
-     support multiple calling conventions and/or data sizes.  The default could
-     be "guess", other choices could be made by users wanting compatibility
-     with other object code.  Doing the right thing with where and how to
-     install library files probably needs a lot of help from automake and
-     libtool.  A few simple cases like /usr/lib/sparcv9 might be easy enough
-     though.
 </ul>
-
-<p> In general, getting the exact right configuration, passing the
-exact right options to the compiler, etc, might mean that the GMP
-performance more than doubles.
 
 <p> When testing, make sure to test at least the following for all out
 target machines: (1) Both gcc and cc (and c89).  (2) Both 32-bit mode
@@ -364,12 +349,14 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> <code>TMP_ALLOC</code> could do a separate <code>malloc</code> for each
      allocated block, to help a redzoning malloc debugger.  Perhaps a config
      option --enable-alloca=debug.
-<li> Add <code>ASSERT</code>s at the start of each user-visible
-     mpz/mpq/mpf function to check the validity of each
-     <code>mp?_t</code> parameter, in particular to check they've been
-     <code>mp?_init</code>ed.  This might catch elementary mistakes in
-     user programs.  Care would need to be taken over
-     <code>MPZ_TMP_INIT</code>ed variables used internally.
+<li> Add <code>ASSERT</code>s at the start of each user-visible mpz/mpq/mpf
+     function to check the validity of each <code>mp?_t</code> parameter, in
+     particular to check they've been <code>mp?_init</code>ed.  This might
+     catch elementary mistakes in user programs.  Care would need to be taken
+     over <code>MPZ_TMP_INIT</code>ed variables used internally.  If nothing
+     else then consistency checks like size&lt;=alloc, ptr not
+     <code>NULL</code> and ptr+size not wrapping around the address space,
+     would be possible.
 <li> The test programs could use <code>mp_set_memory_functions</code> and a
      check at program end to guard against memory leaks.  This could also check
      that the sizes passed to allocate and free are the same.
@@ -382,6 +369,42 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
      bit counts/ranges, and that <code>mp_size_t</code> is used for limb counts.
 <li> <code>mpz_inp_str</code> (etc) doesn't say when it stops reading digits.
 </ul>
+
+
+<h4>Bright Ideas</h4>
+
+The following may or may not be feasible, and aren't likely to get done in the
+near future, but are at least worth thinking about.
+
+<ul>
+<li> Nx1 division (<code>divrem_1</code> or <code>mod_1</code>) could be done
+     two limbs at a time, by following <code>udiv_qrnnd_preinv</code> but with
+     two limbs everywhere one is used.  This would mean 3 or 4 multiplies each
+     place 1 is currently done, but they'll be independent and so 2 limbs can
+     be processed with the same latency as 1 would have been.  This idea would
+     apply to CPUs with long latency but good thoughput multipliers.  Clearly
+     it can be extended to 3 limbs at a time, or 4, or however many, though
+     each time more are used then more time will be taken creating an initial
+     multi-limb inverse (<code>invert_limb</code> style), and the
+     quadratically increasing number of cross-products will at some point see
+     throughput unable to offer a saving over latency.
+<li> Build multiple variants of the library under certain systems.  An example
+     is -n32 and -64 on Irix.  Autoconf/automake/libtool give pretty much no
+     help for this, and currently the best that can be done is to recommend
+     users rebuild in the various possible or desired configurations, perhaps
+     installing with different <code>libdir</code> settings, or whatever.
+<li> Enable support for FORTRAN versions of mpn files (eg. for
+     mpn/cray/mulww.f).  Add "f" to MPN_SUFFIXES, run <code>AC_PROG_F77</code>
+     if such a file is found.  Automake will generate some of what's needed in
+     the makefiles, but libtool doesn't know fortran and so rules like the
+     current ".asm.lo" will be needed (the multi-language branch of libtool
+     doesn't look like it's got fortran yet either).
+<li> There are a few filenames that don't fit in 14 chars, if this matters.
+<li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000, whereas it's
+     sort of supposed to return the low 31 (or 63) bits.  But this is
+     undocumented, and perhaps not too important.
+</ul>
+
 
 <hr>
 
