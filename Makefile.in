@@ -144,7 +144,7 @@ MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
-  config.in
+  config.in tests
 
 
 DISTCLEANFILES = @gmp_srclinks@
@@ -394,7 +394,6 @@ dist-info: $(INFO_DEPS)
 	  d=$(srcdir); \
 	  for file in `CDPATH=: && cd $$d && eval echo $$base*`; do \
 	    test -f $(distdir)/$$file \
-	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	    || cp -p $$d/$$file $(distdir)/$$file; \
 	  done; \
 	done
@@ -566,7 +565,6 @@ distdir: $(DISTFILES)
 	    cp -pR $$d/$$file $(distdir); \
 	  else \
 	    test -f $(distdir)/$$file \
-	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done

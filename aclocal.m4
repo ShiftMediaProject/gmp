@@ -114,12 +114,13 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
 ])dnl
 
 dnl  GMP_PROG_LIBTOOL
-dnl  Wrap [AC_PROG_LIBTOOL] to avoid the [AC_PROG_CC] problems.
+dnl  [ Wrap AC_PROG_LIBTOOL to avoid invoking AC_PROG_CC since AC_PROVIDE      ]
+dnl  [ in our own PROG_CC doesn't seem to have any effect.  FIXME: Find out    ]
+dnl  [ what's wrong with the AC_PROVIDE idea.                                  ]
 AC_DEFUN(GMP_PROG_LIBTOOL, [
-dnl  Save any variable that [AC_PROG_CC] may possibly set, invoke [AC_PROG_CC], and
-dnl  restore the variables.  Finally, invoke [AC_PROG_LIBTOOL].
-dnl  This is highly dependant on Autoconf version and
-dnl  generally a mess.
+dnl  [ Save any variables that AC_PROG_CC may possibly set, invoke AC_PROG_CC, ]
+dnl  [ and restore the variables.  Finally, invoke AC_PROG_LIBTOOL.	       ]
+dnl  [ This is highly dependant on Autoconf version and generally a mess.      ]
 gmp_save_CC=$CC
 gmp_save_CFLAGS=$CFLAGS
 gmp_save_ac_cv_prog_gcc=$ac_cv_prog_gcc
@@ -127,7 +128,9 @@ gmp_save_GCC=$GCC
 gmp_save_ac_cv_prog_cc_g=$ac_cv_prog_cc_g
 gmp_save_ac_cv_prog_cc_works=$ac_cv_prog_cc_works
 gmp_save_ac_cv_prog_cc_cross=$ac_cv_prog_cc_cross
+
 AC_PROG_CC
+
 CC=$gmp_save_CC
 CFLAGS=$gmp_save_CFLAGS
 ac_cv_prog_gcc=$gmp_save_ac_cv_prog_gcc
@@ -135,6 +138,7 @@ GCC=$gmp_save_GCC
 ac_cv_prog_cc_g=$gmp_save_ac_cv_prog_cc_g
 ac_cv_prog_cc_works=$gmp_save_ac_cv_prog_cc_works
 ac_cv_prog_cc_cross=$gmp_save_ac_cv_prog_cc_cross
+
 AC_PROG_LIBTOOL
 ])dnl
 
@@ -531,6 +535,10 @@ else
 fi
 ])dnl
 
+dnl  Deal with bad synchronization of Autoconf with Libtool.
+AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
+AC_DEFUN(AC_CHECK_TOOL_PREFIX, [_AC_CHECK_TOOL_PREFIX])
+
 
 # serial 42 AC_PROG_LIBTOOL
 AC_DEFUN(AC_PROG_LIBTOOL,
@@ -541,7 +549,7 @@ AC_CACHE_SAVE
 
 # Actually configure libtool.  ac_aux_dir is where install-sh is found.
 AR="$AR" CC="$CC" CFLAGS="$CFLAGS" CPPFLAGS="$CPPFLAGS" \
-FILE="$FILE" LD="$LD" LDFLAGS="$LDFLAGS" LIBS="$LIBS" \
+MAGIC="$MAGIC" LD="$LD" LDFLAGS="$LDFLAGS" LIBS="$LIBS" \
 LN_S="$LN_S" NM="$NM" RANLIB="$RANLIB" STRIP="$STRIP" \
 AS="$AS" DLLTOOL="$DLLTOOL" OBJDUMP="$OBJDUMP" \
 objext="$OBJEXT" exeext="$EXEEXT" reload_flag="$reload_flag" \
@@ -585,8 +593,8 @@ dnl
 # Only perform the check for file, if the check method requires it
 case "$deplibs_check_method" in
 file_magic*)
-  if test "$file_magic_cmd" = '$FILE'; then
-    AC_PATH_FILE
+  if test "$file_magic_cmd" = '${MAGIC}'; then
+    AC_PATH_MAGIC
   fi
   ;;
 esac
@@ -648,7 +656,10 @@ case "$lt_target" in
   SAVE_CFLAGS="$CFLAGS"
   CFLAGS="$CFLAGS -belf"
   AC_CACHE_CHECK([whether the C compiler needs -belf], lt_cv_cc_needs_belf,
-    [AC_TRY_LINK([],[],[lt_cv_cc_needs_belf=yes],[lt_cv_cc_needs_belf=no])])
+    [AC_LANG_SAVE
+     AC_LANG_C
+     AC_TRY_LINK([],[],[lt_cv_cc_needs_belf=yes],[lt_cv_cc_needs_belf=no])
+     AC_LANG_RESTORE])
   if test x"$lt_cv_cc_needs_belf" != x"yes"; then
     # this is probably gcc 2.8.0, egcs 1.0 or newer; no need for -belf
     CFLAGS="$SAVE_CFLAGS"
@@ -798,16 +809,16 @@ AC_ENABLE_FAST_INSTALL(no)])
 # AC_PATH_TOOL_PREFIX - find a file program which can recognise shared library
 AC_DEFUN(AC_PATH_TOOL_PREFIX,
 [AC_MSG_CHECKING([for $1])
-AC_CACHE_VAL(lt_cv_path_FILE,
-[case "$FILE" in
+AC_CACHE_VAL(lt_cv_path_MAGIC,
+[case "$MAGIC" in
   /*)
-  lt_cv_path_FILE="$FILE" # Let the user override the test with a path.
+  lt_cv_path_MAGIC="$MAGIC" # Let the user override the test with a path.
   ;;
   ?:/*)
-  ac_cv_path_FILE="$FILE" # Let the user override the test with a dos path.
+  ac_cv_path_MAGIC="$MAGIC" # Let the user override the test with a dos path.
   ;;
   *)
-  ac_save_file="$FILE"
+  ac_save_MAGIC="$MAGIC"
   IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS=":"
 dnl $ac_dummy forces splitting on constant user-supplied paths.
 dnl POSIX.2 word splitting is done only on the output of word expansions,
@@ -816,17 +827,17 @@ dnl not every word.  This closes a longstanding sh security hole.
   for ac_dir in $ac_dummy; do
     test -z "$ac_dir" && ac_dir=.
     if test -f $ac_dir/$1; then
-      lt_cv_path_FILE="$ac_dir/$1"
+      lt_cv_path_MAGIC="$ac_dir/$1"
       if test -n "$file_magic_test_file"; then
-        case "$deplibs_check_method" in
-        "file_magic "*)
-          file_magic_regex="`expr \"$deplibs_check_method\" : \"file_magic \(.*\)\"`"
-	  FILE="$lt_cv_path_FILE"
-          if eval $file_magic_cmd \$file_magic_test_file 2> /dev/null |
-            egrep "$file_magic_regex" > /dev/null; then
-            :
-          else
-            cat <<EOF 1>&2
+	case "$deplibs_check_method" in
+	"file_magic "*)
+	  file_magic_regex="`expr \"$deplibs_check_method\" : \"file_magic \(.*\)\"`"
+	  MAGIC="$lt_cv_path_MAGIC"
+	  if eval $file_magic_cmd \$file_magic_test_file 2> /dev/null |
+	    egrep "$file_magic_regex" > /dev/null; then
+	    :
+	  else
+	    cat <<EOF 1>&2
 
 *** Warning: the command libtool uses to detect shared libraries,
 *** $file_magic_cmd, produces output that libtool cannot recognize.
@@ -838,34 +849,34 @@ dnl not every word.  This closes a longstanding sh security hole.
 *** bug-libtool@gnu.org
 
 EOF
-          fi ;;
-        esac
+	  fi ;;
+	esac
       fi
       break
     fi
   done
   IFS="$ac_save_ifs"
-  FILE="$ac_save_file"
+  MAGIC="$ac_save_MAGIC"
   ;;
 esac])
-FILE="$lt_cv_path_FILE"
-if test -n "$FILE"; then
-  AC_MSG_RESULT($FILE)
+MAGIC="$lt_cv_path_MAGIC"
+if test -n "$MAGIC"; then
+  AC_MSG_RESULT($MAGIC)
 else
   AC_MSG_RESULT(no)
 fi
 ])
 
 
-# AC_PATH_FILE - find a file program which can recognise a shared library
-AC_DEFUN(AC_PATH_FILE,
+# AC_PATH_MAGIC - find a file program which can recognise a shared library
+AC_DEFUN(AC_PATH_MAGIC,
 [AC_REQUIRE([AC_CHECK_TOOL_PREFIX])dnl
 AC_PATH_TOOL_PREFIX(${ac_tool_prefix}file, /usr/bin:$PATH)
-if test -z "$lt_cv_path_FILE"; then
+if test -z "$lt_cv_path_MAGIC"; then
   if test -n "$ac_tool_prefix"; then
     AC_PATH_TOOL_PREFIX(file, /usr/bin:$PATH)
   else
-    FILE=:
+    MAGIC=:
   fi
 fi
 ])
@@ -971,9 +982,9 @@ test -n "$reload_flag" && reload_flag=" $reload_flag"
 # AC_DEPLIBS_CHECK_METHOD - how to check for library dependencies
 #  -- PORTME fill in with the dynamic library characteristics
 AC_DEFUN(AC_DEPLIBS_CHECK_METHOD,
-[AC_CACHE_CHECK([how to recognise dependant libraries], 
+[AC_CACHE_CHECK([how to recognise dependant libraries],
 lt_cv_deplibs_check_method,
-[lt_cv_file_magic_cmd='$FILE'
+[lt_cv_file_magic_cmd='${MAGIC}'
 lt_cv_file_magic_test_file=
 lt_cv_deplibs_check_method='unknown'
 # Need to set the preceding variable on all platforms that support
@@ -991,11 +1002,13 @@ case "$host_os" in
 aix4* | beos*)
   lt_cv_deplibs_check_method=pass_all
   ;;
-  
+
 bsdi4*)
+  changequote(,)dnl
   lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib)'
+  changequote([, ])dnl
   lt_cv_file_magic_test_file=/shlib/libc.so
-  ;;  
+  ;;
 
 cygwin* | mingw*)
   lt_cv_deplibs_check_method='file_magic file format pei*-i386(.*architecture: i386)?'
@@ -1009,11 +1022,11 @@ freebsd*)
     ;;
   esac
   ;;
-  
+
 gnu*)
   lt_cv_deplibs_check_method=pass_all
   ;;
-  
+
 irix5* | irix6*)
   case "$host_os" in
   irix5*)
@@ -1028,7 +1041,9 @@ irix5* | irix6*)
     *) libmagic=never-match;;
     esac
     # this will be overridden with pass_all, but let us keep it just in case
+    changequote(,)dnl
     lt_cv_deplibs_check_method="file_magic ELF ${libmagic} MSB mips-[1234] dynamic lib MIPS - version 1"
+    changequote([, ])dnl
     ;;
   esac
   lt_cv_file_magic_test_file=`echo /lib${libsuff}/libc.so*`
@@ -1038,11 +1053,13 @@ irix5* | irix6*)
 # This must be Linux ELF.
 linux-gnu*)
   case "$host_cpu" in
-  alpha* | i*86 | sparc* )
+  alpha* | i*86 | powerpc* | sparc* )
     lt_cv_deplibs_check_method=pass_all ;;
   *)
     # glibc up to 2.1.1 does not perform some relocations on ARM
+    changequote(,)dnl
     lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [LM]SB (shared object|dynamic lib )' ;;
+    changequote([, ])dnl
   esac
   lt_cv_file_magic_test_file=`echo /lib/libc.so* /lib/libc-*.so`
   ;;
@@ -1057,7 +1074,7 @@ osf3* | osf4* | osf5*)
 sco3.2v5*)
   lt_cv_deplibs_check_method=pass_all
   ;;
-  
+
 solaris*)
   lt_cv_deplibs_check_method=pass_all
   lt_cv_file_magic_test_file=/lib/libc.so
@@ -1069,7 +1086,9 @@ sysv4 | sysv4.2uw2* | sysv4.3* | sysv5*)
     lt_cv_deplibs_check_method=pass_all
     ;;
   motorola)
+    changequote(,)dnl
     lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib) M[0-9][0-9]* Version [0-9]'
+    changequote([, ])dnl
     lt_cv_file_magic_test_file=`echo /usr/lib/libc.so*`
     ;;
   esac
@@ -1148,8 +1167,7 @@ AC_DEFUN(AC_LIBLTDL_CONVENIENCE, [AC_BEFORE([$0],[AC_LIBTOOL_SETUP])dnl
       ac_configure_args="$ac_configure_args --enable-ltdl-convenience" ;;
   esac
   LIBLTDL=ifelse($#,1,$1,['${top_builddir}/libltdl'])/libltdlc.la
-  INCLTDL=ifelse($#,1,-I$1,
-  ['-I${top_builddir}/libltdl -I${top_srcdir}/libltdl'])
+  INCLTDL=ifelse($#,1,-I$1,['-I${top_srcdir}/libltdl'])
 ])
 
 # AC_LIBLTDL_INSTALLABLE[(dir)] - sets LIBLTDL to the link flags for
@@ -1173,8 +1191,7 @@ AC_DEFUN(AC_LIBLTDL_INSTALLABLE, [AC_BEFORE([$0],[AC_LIBTOOL_SETUP])dnl
   if test x"$enable_ltdl_install" = x"yes"; then
     ac_configure_args="$ac_configure_args --enable-ltdl-install"
     LIBLTDL=ifelse($#,1,$1,['${top_builddir}/libltdl'])/libltdl.la
-    INCLTDL=ifelse($#,1,-I$1,
-    ['-I${top_builddir}/libltdl -I${top_srcdir}/libltdl'])
+    INCLTDL=ifelse($#,1,-I$1,['-I${top_srcdir}/libltdl'])
   else
     ac_configure_args="$ac_configure_args --enable-ltdl-install=no"
     LIBLTDL="-lltdl"
@@ -1314,7 +1331,8 @@ if eval "$MISSING --run :"; then
   am_missing_run="$MISSING --run "
 else
   am_missing_run=
-  AC_MSG_WARN([`missing' script is too old or missing])
+  am_backtick='`'
+  AC_MSG_WARN([${am_backtick}missing' script is too old or missing])
 fi
 ])
 
