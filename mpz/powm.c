@@ -193,6 +193,7 @@ pow (base, exp, mod, res)
 
 	    mpn_mul_n (xp, rp, rp, rsize);
 	    xsize = 2 * rsize;
+	    xsize -= xp[xsize - 1] == 0;
 	    if (xsize > msize)
 	      {
 		mpn_divmod (xp + msize, xp, xsize, mp, msize);
@@ -206,6 +207,7 @@ pow (base, exp, mod, res)
 	      {
 		mpn_mul (xp, rp, rsize, bp, bsize);
 		xsize = rsize + bsize;
+		xsize -= xp[xsize - 1] == 0;
 		if (xsize > msize)
 		  {
 		    mpn_divmod (xp + msize, xp, xsize, mp, msize);
