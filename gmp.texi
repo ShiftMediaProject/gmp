@@ -1696,6 +1696,22 @@ The @code{mpq_numref} and @code{mpq_denref} macros give access to the
 numerator and denominator to do things outside the scope of the @code{mpq}
 functions.  @xref{Applying Integer Functions}.
 
+It will be noted that the canonical form for rationals allows mixed-type
+@code{mpq_t} and integer additions or subtractions to be done directly with
+multiples of the denominator.  This will somewhat touch faster than using
+@code{mpq_add}.  For example,
+
+@example
+/* mpq increment */
+mpz_add (mpq_numref(q), mpq_numref(q), mpq_denref(q));
+
+/* mpq += unsigned long */
+mpz_addmul_ui (mpq_numref(q), mpq_denref(q), 123UL);
+
+/* mpq -= mpz */
+mpz_submul (mpq_numref(q), mpq_denref(q), z);
+@end example
+
 @item @code{2exp} functions
 It's up to an application to call functions like @code{mpz_mul_2exp} when
 appropriate.  General purpose functions like @code{mpz_mul} make no attempt to
@@ -1708,6 +1724,13 @@ convenience and should be used where applicable.  But if for example an
 @code{mpz_t} contains a value that fits in an @code{unsigned long} there's no
 need extract it and call a @code{ui} function, just use the regular @code{mpz}
 function.
+
+@item In-Place Operations
+@code{mpz_abs}, @code{mpq_abs}, @code{mpf_abs}, @code{mpz_neg}, @code{mpq_neg}
+and @code{mpf_neg} are fast when used for an in-place operation like
+@code{mpz_abs(x,x)}, in the current implementation only a single field of
+@code{x} needs changing.  On suitable compilers (GCC for instance) this is
+inlined too.
 
 @item Number Sequences
 Functions like @code{mpz_fac_ui}, @code{mpz_fib_ui} and @code{mpz_bin_uiui}
@@ -2259,8 +2282,14 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 Set @var{rop} to @ma{@var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
-@deftypefun void mpz_addmul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefun void mpz_addmul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx void mpz_addmul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 Set @var{rop} to @ma{@var{rop} + @var{op1} @GMPtimes{} @var{op2}}.
+@end deftypefun
+
+@deftypefun void mpz_submul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx void mpz_submul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+Set @var{rop} to @ma{@var{rop} - @var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
@@ -2934,6 +2963,25 @@ Assign @var{rop} from @var{op}.
 Set the value of @var{rop} to @var{op1}/@var{op2}.  Note that if @var{op1} and
 @var{op2} have common factors, @var{rop} has to be passed to
 @code{mpq_canonicalize} before any operations are performed on @var{rop}.
+@end deftypefun
+
+@deftypefun int mpq_set_str (mpq_t @var{rop}, char *@var{str}, int @var{base})
+Set @var{rop} from a null-terminated string @var{str} in the given @var{base}.
+
+The string can be an integer like "41" or a fraction like "41/152".  The
+fraction must be in canonical form (@pxref{Rational Number Functions}), or if
+not then @code{mpq_canonicalize} must be called.
+
+The numerator and optional denomintor are parsed the same as in
+@code{mpz_set_str} (@pxref{Assigning Integers}).  White space is allowed in
+the string, and is simply ignored.  The @var{base} can vary from 2 to 36, or
+if @var{base} is 0 then the leading characters are used: @code{0x} for hex,
+@code{0} for octal, or decimal otherwise.  Note that this is done separately
+for the numerator and denominator, so for instance @code{0xEF/100} is 239/100,
+whereas @code{0xEF/0x100} is 239/256.
+
+The return value is 0 if the entire string is a valid number, or @minus{}1 if
+not.
 @end deftypefun
 
 @deftypefun void mpq_swap (mpq_t @var{rop1}, mpq_t @var{rop2})
@@ -3972,7 +4020,8 @@ represented by a @var{s1n} long limb array, plus one extra character.
 
 @deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{r1p}, const char *@var{str}, size_t @var{strsize}, int @var{base})
 Convert the raw unsigned char array at @var{str} of length @var{strsize} to a
-limb array.  The base of @var{str} is @var{base}.
+limb array.  The base of @var{str} is @var{base}.  @var{strsize} must be at
+least 1.
 
 Return the number of limbs stored in @var{r1p}.
 @end deftypefun
