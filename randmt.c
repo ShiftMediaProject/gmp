@@ -52,7 +52,7 @@ typedef struct
 static void
 recalc_buffer (unsigned long int mt[])
 {
-  static __gmp_const unsigned long int a_times_y[2] = {0, MATRIX_A};
+  static const unsigned long int a_times_y[2] = {0, MATRIX_A};
   /* a_times_y[y] = y * MATRIX_A  for y=0,1 */
 
   unsigned long int y;
@@ -81,9 +81,9 @@ static void
 randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 {
   unsigned long int y;
-  long int nlimbs;
   int rbits;
-  long int i;
+  mp_size_t i;
+  mp_size_t nlimbs;
   int *pmti;
   unsigned long int *mt;
 
@@ -92,7 +92,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 
   /* Use a default seed if randseed_mt has not been yet called.  */
   if (*pmti == N + 1)
-    gmp_randseed_ui (rstate, DEFAULT_SEED);
+    gmp_randseed_ui (rstate, (unsigned long int) DEFAULT_SEED);
 
   nlimbs = nbits / GMP_NUMB_BITS;
   rbits = nbits % GMP_NUMB_BITS;
@@ -130,7 +130,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
   if (rbits)
     {
       NEXT_RANDOM;
-      dest[nlimbs] = (mp_limb_t) (y & ~(~0UL << rbits));
+      dest[nlimbs] = (mp_limb_t) (y & ~(ULONG_MAX << rbits));
     }
 
 #else /* GMP_NUMB_BITS != 32 */
@@ -148,7 +148,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
       if (rbits < 32)
 	{
 	  NEXT_RANDOM;
-	  dest[nlimbs] = (mp_limb_t) (y & ~(~0UL << rbits));
+	  dest[nlimbs] = (mp_limb_t) (y & ~(ULONG_MAX << rbits));
 	}
       else
 	{
@@ -158,7 +158,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 	    {
 	      NEXT_RANDOM;
 	      dest[nlimbs] |=
-		((mp_limb_t) (y & ~(~0UL << (rbits-32)))) << 32;
+		((mp_limb_t) (y & ~(ULONG_MAX << (rbits-32)))) << 32;
 	    }
 	}
     }
@@ -178,7 +178,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
     int bits_to_fill;		/* Holds total number of bits to put in
 				   destination.  */
     int bitidx;			/* Holds the destination bit position.  */
-    int nlimbs2;	/* Number of whole+partial limbs to fill.  */
+    mp_size_t nlimbs2;		/* Number of whole+partial limbs to fill.  */
 
     nlimbs2 = nlimbs + (rbits != 0);
 
@@ -198,7 +198,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 		/* 64-bit right shift. */
 		NEXT_RANDOM;
 		bitpool_h = y;
-		bitpool_l |= (bitpool_h << bits_in_pool) & 0xFFFFFFFFUL;
+		bitpool_l |= (bitpool_h << bits_in_pool) & 0xFFFFFFFF;
 		if (bits_in_pool == 0)
 		  bitpool_h = 0;
 		else
@@ -221,7 +221,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 	      {
 		NEXT_RANDOM;
 		bitpool_h = y;
-		bitpool_l |= (bitpool_h << bits_in_pool) & 0xFFFFFFFFUL;
+		bitpool_l |= (bitpool_h << bits_in_pool) & 0xFFFFFFFF;
 		if (bits_in_pool == 0)
 		  bitpool_h = 0;
 		else
@@ -233,7 +233,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 			 & ~(~CNST_LIMB (0) << bits_to_fill))
 			<< bitidx);
 	    bitpool_l = ((bitpool_l >> bits_to_fill)
-			 | (bitpool_h << (32 - bits_to_fill))) & 0xFFFFFFFFUL;
+			 | (bitpool_h << (32 - bits_to_fill))) & 0xFFFFFFFF;
 	    bitpool_h >>= bits_to_fill;
 	    bits_in_pool -= bits_to_fill;
 	  }
@@ -279,6 +279,8 @@ static int
 randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
 {
   int i;
+  size_t cnt;
+
   gmp_rand_mt_struct *p;
   mpz_t mod;    /* Modulus.  */
   mpz_t seed1;  /* Intermediate result.  */
@@ -288,20 +290,27 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
   mpz_init (mod);
   mpz_init (seed1);
 
-  mpz_set_ui (mod, 0);
-  mpz_setbit (mod, 19937);
-  mpz_sub_ui (mod, mod, 20027);
+  mpz_set_ui (mod, 0L);
+  mpz_setbit (mod, 19937L);
+  mpz_sub_ui (mod, mod, 20027L);
   mpz_mod (seed1, seed, mod);	/* Reduce `seed' modulo `mod'.  */
-  mpz_add_ui (seed1, seed1, 2);	/* seed1 is now ready.  */
-  mpz_add_ui (mod, mod, 4);	/* Prepare modulus for powering.  */
-  mpz_powm_ui (seed1, seed1, 1074888996, mod);
+  mpz_add_ui (seed1, seed1, 2L);	/* seed1 is now ready.  */
+  mpz_add_ui (mod, mod, 4L);	/* Prepare modulus for powering.  */
+  mpz_powm_ui (seed1, seed1, 1074888996L, mod);
 
   /* Split seed1 into N 32-bit chunks.  */
+  /*FIXME: Remove or reenable:
   for (i = 0; i < N; i++)
     {
       p->mt[i] = mpz_get_ui (seed1) & 0xFFFFFFFF;
-      mpz_tdiv_q_2exp (seed1, seed1, 32);
+      mpz_tdiv_q_2exp (seed1, seed1, 32L);
     }
+  */
+
+  mpz_export ((void *) p->mt, &cnt, -1, sizeof (unsigned long int), 0, 0,
+	      seed1);
+  while (cnt < N)
+    p->mt[cnt++] = 0;
 
   mpz_clear (mod);
   mpz_clear (seed1);
@@ -328,14 +337,15 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
 static void
 randclear_mt (gmp_randstate_t rstate)
 {
-  (*__gmp_free_func) (RNG_STATE (rstate), sizeof (gmp_rand_mt_struct));
+  (*__gmp_free_func) ((void *) RNG_STATE (rstate),
+		      sizeof (gmp_rand_mt_struct));
 }
 
 
-static __gmp_const gmp_randfnptr_t Mersenne_Twister_Generator = {
+static const gmp_randfnptr_t Mersenne_Twister_Generator = {
   randseed_mt,
   randget_mt,
-  randclear_mt,
+  randclear_mt
 };
 
 /* Initialize MT-specific data.  */
@@ -343,10 +353,11 @@ void
 gmp_randinit_mt (gmp_randstate_t rstate)
 {
   /* Set the generator functions.  */
-  RNG_FNPTR (rstate) = &Mersenne_Twister_Generator;
+  RNG_FNPTR (rstate) = (void *) &Mersenne_Twister_Generator;
 
   /* Allocate the MT-specific state.  */
-  RNG_STATE (rstate) = (*__gmp_allocate_func) (sizeof (gmp_rand_mt_struct));
+  RNG_STATE (rstate) =
+    (mp_ptr) (*__gmp_allocate_func) (sizeof (gmp_rand_mt_struct));
 
   /* mti = N + 1 means use default seed.  */
   ((gmp_rand_mt_struct *) RNG_STATE (rstate))->mti = N + 1;
