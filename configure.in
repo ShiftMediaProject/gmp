@@ -177,8 +177,8 @@ esac],
 
 
 
-# Table of compilers, options, and mpn paths.  This code has a couple of
-# related purposes
+# Table of compilers, options, and mpn paths.  This code has various related
+# purposes
 #
 #   - better default CC/CFLAGS selections than autoconf otherwise gives
 #   - default CC/CFLAGS selections for extra CPU types specific to GMP
@@ -252,9 +252,23 @@ esac],
 #
 # SPEED_CYCLECOUNTER, cyclecounter_size and CALLING_CONVENTIONS_OBJS are
 # also set here, with an ABI suffix.
+#
+#
+#
+# A table-driven approach like this to mapping cpu type to good compiler
+# options is a bit of a maintenance burden, but there's not much uniformity
+# between options specifications on different compilers.  Some sort of
+# separately updatable tool might be cute.
+#
+# The use of lots of variables like this, direct and indirect, tends to
+# obscure when and how various things are done, but unfortunately it's
+# pretty much the only way.  If shell subroutines were portable then actual
+# code like "if this .. do that" could be written, but attempting the same
+# with full copies of GMP_PROG_CC_WORKS etc expanded at every point would
+# hugely bloat the output.
 
 
-AC_ARG_VAR(ABI,[intended ABI (for processors supporting more than one ABI)])
+AC_ARG_VAR(ABI, [desired ABI (for processors supporting more than one ABI)])
 
 # abilist needs to be non-empty, "standard" is just a generic name here
 abilist="standard"
@@ -282,8 +296,8 @@ case $host in
 
   alpha*-*-*)
     case $host_cpu in
-      alphaev5 | alphapca56) path="alpha/ev5 alpha" ;;
-      alphaev6)              path="alpha/ev6 alpha/ev5 alpha" ;;
+      alphaev5 | alphapca5*) path="alpha/ev5 alpha" ;;
+      alphaev6*)             path="alpha/ev6 alpha/ev5 alpha" ;;
       *)                     path="alpha" ;;
     esac
     extra_functions="cntlz"
@@ -304,10 +318,24 @@ case $host in
                     gcc_cflags_cpu="-mcpu=ev67 -mcpu=ev6" ;;
     esac
 
-    # only need ev5 and ev6 for current asm code, nothing more specific
+    # On old versions of gcc, which don't know -mcpu=, we believe an
+    # explicit -Wa,-mev5 etc will be necessary to put the assembler in
+    # the right mode for our .asm files and longlong.h asm blocks.
+    #
+    # On newer versions of gcc, when -mcpu= is known, we must give a
+    # -Wa which is at least as high as the code gcc will generate,
+    # since the options ordering seems to make our setting override
+    # that passed by gcc.
+    #
     case $host_cpu in
-      alphaev56 | alphapca5*) gcc_cflags_asm="-Wa,-arch,ev56 -Wa,-mev56" ;;
-      alphaev6*)              gcc_cflags_asm="-Wa,-arch,ev6 -Wa,-mev6" ;;
+      alpha)        gcc_cflags_asm="-Wa,-arch,ev4 -Wa,-mev4" ;;
+      alphaev5)     gcc_cflags_asm="-Wa,-arch,ev5 -Wa,-mev5" ;;
+      alphaev56)    gcc_cflags_asm="-Wa,-arch,ev56 -Wa,-mev56" ;;
+      alphapca56 | alphapca57)
+                    gcc_cflags_asm="-Wa,-arch,pca56 -Wa,-mpca56" ;;
+      alphaev6)     gcc_cflags_asm="-Wa,-arch,ev6 -Wa,-mev6" ;;
+      alphaev67 | alphaev68)
+                    gcc_cflags_asm="-Wa,-arch,ev67 -Wa,-mev67 -Wa,-arch,ev6 -Wa,-mev6" ;;
     esac
 
     # It might be better to ask "cc" whether it's Cray C or DEC C,
@@ -1574,6 +1602,10 @@ esac
 #   sigstack - not in mingw
 #   strnlen - glibc extension
 #   times - not in mingw
+#
+# clock_gettime is in librt on *-*-osf5.1.  We could look for it
+# there, but that's not worth bothering with unless it has a decent
+# resolution (in a quick test clock_getres said only 1 millisecond).
 #
 AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack strchr strnlen strtoul sysconf sysctl sysctlbyname times)
 
