@@ -756,7 +756,8 @@ check: all
 
 # Don't ship CVS directories.
 dist-hook:
-	-find $(distdir) -name CVS -type d | xargs rm -rf
+	-find $(distdir) \( -name CVS -type d \) -o -name "*.~*" \
+		| xargs rm -rf
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

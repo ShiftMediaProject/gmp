@@ -220,4 +220,5 @@ check: all
 
 # Don't ship CVS directories.
 dist-hook:
-	-find $(distdir) -name CVS -type d | xargs rm -rf
+	-find $(distdir) \( -name CVS -type d \) -o -name "*.~*" \
+		| xargs rm -rf
