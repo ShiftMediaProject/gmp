@@ -194,7 +194,7 @@ mpf_set_str (x, str, base)
 	madj = msize - prec;
 	mp += msize - prec;
 	msize = prec;
-      }      
+      }
 
     if (expflag != 0)
       exp_in_base = strtol (str + 1, (char **) 0,
@@ -215,8 +215,9 @@ mpf_set_str (x, str, base)
 	return 0;
       }
 
-    ralloc = (((mp_size_t) (exp_in_base / __mp_bases[base].chars_per_bit_exactly))
-	     / BITS_PER_MP_LIMB + 3);
+    radj = 0;			/* counts number of ignored low limbs in r */
+
+    ralloc = 2 * (prec + 1);
     rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
     tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
@@ -228,7 +229,16 @@ mpf_set_str (x, str, base)
 	mpn_mul_n (tp, rp, rp, rsize);
 	rsize = 2 * rsize;
 	rsize -= tp[rsize - 1] == 0;
-	swapptr (rp, tp);
+	radj <<= 1;
+
+	if (rsize > prec)
+	  {
+	    radj += rsize - prec;
+	    MPN_COPY_INCR (rp, tp + rsize - prec, prec);
+	    rsize = prec;
+	  }
+	else
+	  swapptr (rp, tp);
 
 	if (((exp_in_base >> i) & 1) != 0)
 	  {
@@ -239,7 +249,6 @@ mpf_set_str (x, str, base)
 	  }
       }
 
-    radj = 0;
     if (rsize > prec)
       {
 	radj += rsize - prec;
