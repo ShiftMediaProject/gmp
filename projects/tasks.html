@@ -48,8 +48,8 @@
 <li> In the development sources, we return abs(a%b) in the
      <code>mpz_*_ui</code> division routines.  Perhaps make them return the
      real remainder instead?  Changes return type to <code>signed long int</code>.
-<li> libmp/mout calls strlen with incompatible type.
-<li> libmp/mtox returns from incompatible type.
+<li> libmp/mout calls strlen with incompatible type (possibly fixed now).
+<li> libmp/mtox returns from incompatible type (possibly fixed now).
 <li> <code>mpf_eq</code> is not always correct, when one operand is
      1000000000... and the other operand is 0111111111..., i.e., extremely
      close.  There is a special case in <code>mpf_sub</code> for this
