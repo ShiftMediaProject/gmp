@@ -93,7 +93,7 @@
 @end macro
 @end ifnotinfo
 
-@c  Usage: GMPtimes{}
+@c  Usage: @GMPtimes{}
 @c  Give either \times or the word "times".
 @tex
 \gdef\GMPtimes{\times}
@@ -143,6 +143,17 @@ abs
 @ifnottex
 @macro cross
 x
+@end macro
+@end ifnottex
+
+@c  Usage: @W{text}
+@c  Like @w{} but working in math mode too.
+@tex
+\gdef\W#1{\ifmmode{#1}\else\w{#1}\fi}
+@end tex
+@ifnottex
+@macro W {S}
+@w{\S\}
 @end macro
 @end ifnottex
 
@@ -1951,7 +1962,7 @@ return value is the absolute value of the remainder.
 The @code{2exp} functions do a right shift of @var{n} by @var{b} bits to form
 @var{q}, and a mask leaving the low @var{b} bits for @var{r}, although the
 effect of rounding is then applied.  The @code{fdiv} @code{2exp} forms will be
-simple shifts and masks on positive @var{n}, or for negative @var{n} will be
+simple shifts and masks for positive @var{n}, or for negative @var{n} will be
 effectively twos complement arithmetic shifts and masks (although the
 implementation is actually signed magnitude).
 
@@ -3884,17 +3895,17 @@ documented functions.
 @cindex Multiplication algorithms
 
 N@cross{}N limb multiplications and squares are done using one of four
-algorithms, according to the size N.
-@c  @display doesn't seem to work around @multitable in tex
+algorithms, as the size N increases.
 
+@c  @display doesn't seem to work around @multitable in tex
 @iftex
 {@advance@leftskip by @lispnarrowing@noindent
 @multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
-@item Algorithm @tab Sizes
-@item Basecase  @tab @code{< KARATSUBA_MUL_THRESHOLD}
-@item Karatsuba @tab @code{>= KARATSUBA_MUL_THRESHOLD}
-@item Toom-3    @tab @code{>= TOOM3_MUL_THRESHOLD}
-@item FFT       @tab @code{>= FFT_MUL_THRESHOLD}
+@item Algorithm @tab Threshold
+@item Basecase  @tab (none)
+@item Karatsuba @tab @code{KARATSUBA_MUL_THRESHOLD}
+@item Toom-3    @tab @code{TOOM3_MUL_THRESHOLD}
+@item FFT       @tab @code{FFT_MUL_THRESHOLD}
 @end multitable
 @par}
 @end iftex
@@ -3902,11 +3913,11 @@ algorithms, according to the size N.
 
 @display
 @multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
-@item Algorithm @tab Sizes
-@item Basecase  @tab @nicode{< KARATSUBA_MUL_THRESHOLD}
-@item Karatsuba @tab @nicode{>= KARATSUBA_MUL_THRESHOLD}
-@item Toom-3    @tab @nicode{>= TOOM3_MUL_THRESHOLD}
-@item FFT       @tab @nicode{>= FFT_MUL_THRESHOLD}
+@item Algorithm @tab Threshold
+@item Basecase  @tab (none)
+@item Karatsuba @tab @nicode{KARATSUBA_MUL_THRESHOLD}
+@item Toom-3    @tab @nicode{TOOM3_MUL_THRESHOLD}
+@item FFT       @tab @nicode{FFT_MUL_THRESHOLD}
 @end multitable
 @end display
 @end ifnottex
@@ -4072,14 +4083,14 @@ With that @m{x=x_1b+x_0,x=x1*b+x0} and @m{y=y_1b+y_0,y=y1*b+y0}, and the
 following holds,
 
 @display
-@m{xy = (b^2+b)x_1y_1 + b(x_1-x_0)(y_1-y_0) + (b+1)x_0y_0,
-  x*y = (b^2+b)*x1*y1 + b*(x1-x0)*(y1-y0) + (b+1)*x0*y0}
+@m{xy = (b^2+b)x_1y_1 - b(x_1-x_0)(y_1-y_0) + (b+1)x_0y_0,
+  x*y = (b^2+b)*x1*y1 - b*(x1-x0)*(y1-y0) + (b+1)*x0*y0}
 @end display
 
 This formula means doing only three multiplies of (N/2)@cross{}(N/2) limbs,
 whereas a basecase multiply of N@cross{}N limbs is equivalent to four
 multiplies of (N/2)@cross{}(N/2).  The factors @ma{(b^2+b)} etc represent the
-positions where the three products must be added in.
+positions where the three products must be added.
 
 @tex
 \global\newdimen\GMPboxwidth \GMPboxwidth=5em
@@ -4094,26 +4105,28 @@ positions where the three products must be added in.
       \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
       \vrule}
     \vfil \hrule}}
-\def\GMPboxB#1{%
-  \moveright \GMPboxwidth 
-  \vbox to \GMPboxheight{%
-    \hrule \vfil
-    \hbox{%
-      \strut \vrule
-      \hbox to 2\GMPboxwidth {\hfil\hbox{$#1$}\hfil}
-      \vrule}
-    \vfil \hrule}}
+\def\GMPboxB#1#2{%
+  \hbox{%
+    \vbox to \GMPboxheight{%
+      \vfil \hbox to \GMPboxwidth {\hfil #1} \vfil }
+    \vbox to \GMPboxheight{%
+      \hrule \vfil
+      \hbox{%
+        \strut \vrule
+        \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}
+        \vrule}
+      \vfil \hrule}}}
 \GMPdisplay{%
 \vbox{%
   \hbox to 4\GMPboxwidth {high \hfil low}
   \vskip 0.7ex
   \GMPboxA{x_1y_1}{x_0y_0}
   \vskip 0.5ex
-  \GMPboxB{x_1y_1}
+  \GMPboxB{$+$}{x_1y_1}
   \vskip 0.5ex
-  \GMPboxB{x_0y_0}
+  \GMPboxB{$+$}{x_0y_0}
   \vskip 0.5ex
-  \GMPboxB{(x_1-x_0)(y_1-y_0)}
+  \GMPboxB{$-$}{(x_1-x_0)(y_1-y_0)}
 }}
 @end tex
 @ifnottex
@@ -4124,30 +4137,31 @@ positions where the three products must be added in.
 |      x1*y1      | |      x0*y0      |
 +--------+--------+ +--------+--------+
           +--------+--------+
-          |      x1*y1      |
+      add |      x1*y1      |
           +--------+--------+
           +--------+--------+
-          |      x0*y0      |
+      add |      x0*y0      |
           +--------+--------+
           +--------+--------+
-          | (x1-x0)*(y1-y0) |
+      sub | (x1-x0)*(y1-y0) |
           +--------+--------+
 @end group
 @end example
 @end ifnottex
 
-The term @m{(x_1-x_0)(y_1-y_0),(x1-x0)*(y1-y0)} can be negative, but the final
-result is of course always positive.  Notice the sum @m{\mathop{\rm
-high}(x_0y_0)+\mathop{\rm low}(x_1y_1), high(x0*y0)+low(x1*y1)} occurs twice,
-so it's possible to do @m{5k,5*k} limb additions, rather than @m{6k,6*k}, but
-in GMP extra function call overheads outweigh the saving.
+The term @m{(x_1-x_0)(y_1-y_0),(x1-x0)*(y1-y0)} is best calculated as an
+absolute value, and the sign used to choose to add or subtract.  Notice the
+sum @m{\mathop{\rm high}(x_0y_0)+\mathop{\rm low}(x_1y_1),
+high(x0*y0)+low(x1*y1)} occurs twice, so it's possible to do @m{5k,5*k} limb
+additions, rather than @m{6k,6*k}, but in GMP extra function call overheads
+outweigh the saving.
 
 Squaring is similar to multiplying, but with @ma{x=y} the formula reduces to
 an equivalent with three squares,
 
 @display
-@m{x^2 = (b^2+b)*x_1^2 + b(x_1-x_0)^2 + (b+1)x_0^2,
-   x^2 = (b^2+b)*x1^2 + b*(x1-x0)^2 + (b+1)*x0^2}
+@m{x^2 = (b^2+b)x_1^2 - b(x_1-x_0)^2 + (b+1)x_0^2,
+   x^2 = (b^2+b)*x1^2 - b*(x1-x0)^2 + (b+1)*x0^2}
 @end display
 
 The final result is accumulated from those three squares the same way as for
@@ -4159,16 +4173,16 @@ middle term @m{(x_1+x_0)(y_1+y_0),(x1+x0)*(y1+y0)}.  But those sums can exceed
 @ma{k} limbs, leading to more carry handling and additions than the form
 above.
 
-Karatsuba multiplication is asymptotically an @m{O(N^{1.585}),O(N^1.585)}
-algorithm, the exponent being @m{\log3/\log2,log(3)/log(2)}, representing 3
-multiplies each 1/2 the size of the inputs.  This is a big improvement over
-the basecase multiply at @ma{O(N^2)} and the advantage soon overcomes the
-extra additions karatsuba performs.
+Karatsuba multiplication is asymptotically an @ma{O(N^@W{1.585})} algorithm,
+the exponent being @m{\log3/\log2,log(3)/log(2)}, representing 3 multiplies
+each 1/2 the size of the inputs.  This is a big improvement over the basecase
+multiply at @ma{O(N^2)} and the advantage soon overcomes the extra additions
+Karatsuba performs.
 
 @code{KARATSUBA_MUL_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
 threshold is usually about twice the @code{MUL}.  A fast @code{mpn_addmul_1}
 or @code{mpn_mul_basecase} can make the thresholds higher by staying faster
-than the karatsuba overheads for longer.  Unrolling in those functions can
+than the Karatsuba overheads for longer.  Unrolling in those functions can
 further raise the thresholds, by becoming proportionally more efficient as the
 size increases.
 
@@ -4176,7 +4190,7 @@ size increases.
 @node Toom-Cook 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
 @subsection Toom-Cook 3-Way Multiplication
 
-The karatsuba formula is the simplest case of a general approach to splitting
+The Karatsuba formula is the simplest case of a general approach to splitting
 inputs that leads to both Toom-Cook and FFT algorithms.  A description of
 Toom-Cook can be found in Knuth section 4.3.3, with an example 3-way
 calculation after Theorem A.  The 3-way form used in GMP is described here.
@@ -4345,7 +4359,7 @@ At @m{t={1\over2},t=1/2} the value calculated is actually
 @m{16X({1\over2})Y({1\over2}), 16*X(1/2)*Y(1/2)}, giving a value for
 @m{16W({1\over2}),16*W(1/2)}, and this is always an integer.  At
 @m{t=\infty,t=inf} the value is actually @m{\lim_{t\to\infty} {X(t)Y(t)\over
-t^2}, X(t)*Y(t)/t^2 in the limit as t approaches infinity}, but it's much
+t^4}, X(t)*Y(t)/t^4 in the limit as t approaches infinity}, but it's much
 easier to think of as simply @m{x_2y_2,x2*y2} giving @ms{w,4} immediately
 (much like @m{x_0y_0,x0*y0} at @ma{t=0} gives @ms{w,0} immediately).
 
@@ -4467,11 +4481,11 @@ Squaring follows the same procedure as multiplication, but there's only one
 values of @ma{W(t)}.  The interpolation is then identical, and in fact the
 same @code{interpolate3} is used for both squaring and multiplying.
 
-Toom-3 is asymptotically @m{O(N^{1.465}),O(N^1.465)}, the exponent being
+Toom-3 is asymptotically @ma{O(N^@W{1.465})}, the exponent being
 @m{\log5/\log3,log(5)/log(3)}, representing 5 recursive multiplies of 1/3 the
-original size.  This is an improvement over Karatsuba at
-@m{O(N^{1.585}),O(N^1.585)}, though Toom-Cook does more work in the evaluation
-and interpolation and so it only realizes its advantage above a certain size.
+original size.  This is an improvement over Karatsuba at @ma{O(N^@W{1.585})},
+though Toom-Cook does more work in the evaluation and interpolation and so it
+only realizes its advantage above a certain size.
 
 Near the crossover between Toom-3 and Karatsuba there's generally a range of
 sizes where the difference between the two is small.
@@ -4516,32 +4530,43 @@ The multiplication done is @m{xy \bmod 2^N+1, x*y mod 2^N+1}, for a given
 @ma{x} and @ma{y} with high zero limbs.  The modular product is the native
 form for the algorithm, so padding to get a full product is unavoidable.
 
-The algorithm follows a split, evaluate, pointwise multiply and interpolate
-similar to that described above for Karatsuba and Toom-3.  A @ma{k} parameter
-controls the split, with an FFT-@ma{k} splitting into @ma{2^k} pieces of
-@ma{M=N/2^k} bits each.  @ma{N} must be a multiple of @ma{2^k} and @ma{M} must
-be a multiple of @code{mp_bits_per_limb}.
+The algorithm follows a split, evaluate, pointwise multiply, interpolate and
+combine similar to that described above for Karatsuba and Toom-3.  A @ma{k}
+parameter controls the split, with an FFT-@ma{k} splitting into @ma{2^k}
+pieces of @ma{M=N/2^k} bits each.  @ma{N} must be a multiple of @ma{2^k} and
+@ma{M} must be a multiple of @code{mp_bits_per_limb}, the latter condition
+avoiding shifts in the split and combine.
 
 The evaluations, pointwise multiplications, and interpolation, are all done
 modulo @m{2^{N'}+1, 2^N'+1} where @ma{N'} is @ma{2M+k+3} rounded up to a
 multiple of @ma{2^k} and of @code{mp_bits_per_limb}.  The results of
-interpolation will be certain sums @m{\sum_{i=0}^{2^k-1} x_i y_j, x[i]*y[i]
-for i=0 to 2^k-1} where @m{x_i,x[i]} and @m{y_j,y[j]} are the input pieces,
-and this choice of @ma{N'} ensures those sums aren't truncated.
+interpolation will be the following negacyclic convolution of the input
+pieces, and the choice of @ma{N'} ensures these sums aren't truncated.
+@tex
+$$w_n = \sum_{i+j \equiv n \bmod 2^k} (-1)^t x_i y_j
+  \hskip3em
+  t = \left\lbrace \matrix{0 & i+j<2^k \cr 1 & i+j\ge2^k} \right.$$
+@end tex
+@ifnottex
 
-The points used for the evaluation are @ma{g^i} for @ma{i=0} to @ma{2^k} where
-@m{g=2^{2N'/2^k}, g=2^(2N'/2^k)}.  @ma{g} is a @m{2^k,2^k'}th root of unity
-mod @m{2^{N'}+1,2^N'+1}, which produces necessary cancellations at the
+@example
+                          t
+w[n] =      sum       (-1) * x[i] * y[j]     t=0 if i+j<2^k
+       i+j==n mod 2^k                        t=1 if i+j>=2^k
+@end example
+
+@end ifnottex
+The points used for the evaluation are @ma{g^i} for @ma{i=0} to @ma{2^k-1}
+where @m{g=2^{2N'/2^k}, g=2^(2N'/2^k)}.  @ma{g} is a @m{2^k,2^k'}th root of
+unity mod @m{2^{N'}+1,2^N'+1}, which produces necessary cancellations at the
 interpolation stage, and it's also a power of 2 so the fast fourier transforms
 used for the evaluation and interpolation do only shifts, adds and negations.
 
 The pointwise multiplications are done modulo @m{2^{N'}+1, 2^N'+1} and either
-recurse into a further FFT or use a plain Toom-3 multiplication, whichever is
-optimal at the size @ma{N'}.
-
-The interpolation is an inverse fast fourier transform.  The resulting set of
-convoluted sums of @m{x_iy_j,x[i]*y[j]} are added at appropriate offsets to
-give the final result.
+recurse into a further FFT or use a plain multiplication (Toom-3, Karatsuba or
+basecase), whichever is optimal at the size @ma{N'}.  The interpolation is an
+inverse fast fourier transform.  The resulting set sums of @m{x_iy_j,
+x[i]*y[j]} are added at appropriate offsets to give the final result.
 
 Squaring is the same, but @ma{x} is the only input so it's one transform at
 the evaluate stage and the pointwise multiplies are squares.  The
@@ -4557,13 +4582,12 @@ only faster at bigger and bigger sizes.  In the code, @code{FFT_MUL_TABLE} and
 
 A mod @ma{2^N+1} product can be formed with a normal
 @ma{N@cross{}N@rightarrow{}2N} bit multiply plus a subtraction, so an FFT and
-Toom-3 etc can be compared directly.  A @ma{k=4} FFT at @m{O(N^{1.333}),
-O(N^1.333)} can be expected to be the first faster than Toom-3 at
-@m{O(N^{1.465}), O(N^1.465)}.  In practice this is what's found, with
-@code{FFT_MODF_MUL_THRESHOLD} and @code{FFT_MODF_SQR_THRESHOLD} being between
-300 and 1000 limbs, depending on the CPU.  So far it's been found that larger
-FFTs are brought on at small enough sizes that their pointwise multiplies are
-below these thresholds.
+Toom-3 etc can be compared directly.  A @ma{k=4} FFT at @ma{O(N^@W{1.333})}
+can be expected to be the first faster than Toom-3 at @ma{O(N^@W{1.465})}.  In
+practice this is what's found, with @code{FFT_MODF_MUL_THRESHOLD} and
+@code{FFT_MODF_SQR_THRESHOLD} being between 300 and 1000 limbs, depending on
+the CPU.  So far it's been found that only very large FFTs recurse into
+pointwise multiplies above these sizes.
 
 When an FFT is to get a full product, the change of @ma{N} to @ma{2N} doesn't
 alter the theoretical complexity for a given @ma{k}, but for the purposes of
@@ -4571,9 +4595,9 @@ deciding where an FFT might be first used it can be assumed that the FFT is
 recursing into a normal multiply and that on that basis it's doing @ma{2^k}
 recursed multiplies each @m{1/2^{k-2},1/2^(k-2)} the size of the inputs,
 making it @m{O(N^{k/(k-2)}), O(N^(k/(k-2)))}.  This would mean @ma{k=7} at
-@m{O(N^{1.399}), O(N^1.399)} would be the first FFT faster than Toom-3.  In
-practice @code{FFT_MUL_THRESHOLD} and @code{FFT_SQR_THRESHOLD} have been found
-to be in the @ma{k=8} range, somewhere between 3000 and 10000 limbs.
+@ma{O(N^@W{1.4})} would be the first FFT faster than Toom-3.  In practice
+@code{FFT_MUL_THRESHOLD} and @code{FFT_SQR_THRESHOLD} have been found to be in
+the @ma{k=8} range, somewhere between 3000 and 10000 limbs.
 
 The way @ma{N} is split into @ma{2^k} pieces and then @ma{2M+k+3} is rounded
 up to a multiple of @ma{2^k} and @code{mp_bits_per_limb} means that when
@@ -4610,7 +4634,7 @@ are merely for interest.
 
 In general a split into @ma{r+1} pieces is made, and evaluations and pointwise
 multiplications done at @m{2r+1,2*r+1} points.  A 4-way split does 7 pointwise
-multiplies, 5-way does 9, etc.  Asymptotically an @ma{r+1}-way algorithm is
+multiplies, 5-way does 9, etc.  Asymptotically an @ma{(r+1)}-way algorithm is
 @m{O(N^{log(2r+1)/log(r+1)}, O(N^(log(2*r+1)/log(r+1)))}.  Only the pointwise
 multiplications count towards big-@ma{O} complexity, but the time spent in the
 evaluate and interpolate stages grows with @ma{r} and has a significant
@@ -4676,12 +4700,16 @@ hardware divide instruction that needs it that way, the division performed is
 the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The shift for
 the dividend is usually accomplished ``on the fly'' meaning by extracting the
 appropriate bits at each step.  Done this way the quotient limbs come out
-aligned ready to store.  An alternative for @code{mpn_mod_1}, which doesn't
-want the quotients, is to take the dividend limbs unshifted and do one shift
-and an extra divide step at the end.
+aligned ready to store.
 
-N@cross{}1 division isn't used to construct N@cross{}M divisions, it's only
-for small divisors (which are fairly common), and for radix conversion.
+For an N@cross{}1 remainder with a normalized divisor, an alternative is to
+take the dividend limbs unshifted and calculate @m{r = a \bmod d2^k, r = a mod
+d*2^k} followed by an extra final step @m{r2^k \bmod d2^k, r*2^k mod d*2^k}.
+This can help on CPUs with poor bit shifts or few registers.
+
+N@cross{}1 division is used for small divisors (which are fairly common), and
+for radix conversion.  It's not used to construct N@cross{}M divisions, though
+the same 2@cross{}1 divisions find a use.
 
 
 @node Basecase Division, Divide and Conquer Division, Single Limb Division, Division Algorithms
@@ -4712,7 +4740,7 @@ divide for each of the Q quotient limbs.
 
 For divisors larger than @code{DC_THRESHOLD}, division is done by dividing.
 Or to be precise by a recursive divide and conquer algorithm based on work by
-Moenck and Borodin, Jebelean, and Burnikel and Ziegler, @pxref{References}.
+Moenck and Borodin, Jebelean, and Burnikel and Ziegler (@pxref{References}).
 
 The algorithm consists essentially of recognising that a 2N@cross{}N division
 can be done with the basecase division algorithm (@pxref{Basecase Division}),
@@ -4728,17 +4756,24 @@ call overheads and with some subtractions separated from the multiplies.
 These overheads mean that it's only when N/2 is above
 @code{KARATSUBA_MUL_THRESHOLD} that divide and conquer is of use.
 
-Since @code{DC_THRESHOLD} is based on the size N, it will be somewhere above
-twice @code{KARATSUBA_MUL_THRESHOLD}, but how much above depends on the CPU.
-An optimized @code{mpn_mul_basecase} can lower @code{DC_THRESHOLD} a little by
-offering a ready-made advantage over repeated @code{mpn_submul_1} calls.
+Since @code{DC_THRESHOLD} is based on the divisor size N, it will be somewhere
+above twice @code{KARATSUBA_MUL_THRESHOLD}, but how much above depends on the
+CPU.  An optimized @code{mpn_mul_basecase} can lower @code{DC_THRESHOLD} a
+little by offering a ready-made advantage over repeated @code{mpn_submul_1}
+calls.
 
 Divide and conquer is asymptotically @m{O(M(N)\log N),O(M(N)*log(N))} where
-@ma{M(N)} is the time for an N@cross{}N multiplication.  The actual time is a
-sum over multiplications of the recursed sizes, as can be seen near the end of
-section 2.2 of Burnikel and Ziegler.  In practice, at moderate to large sizes,
-a 2N@cross{}N division tends to be about 2 to 4 times slower than an
-N@cross{}N multiplication.
+@ma{M(N)} is the time for an N@cross{}N multiplication done with FFTs.  The
+actual time is a sum over multiplications of the recursed sizes, as can be
+seen near the end of section 2.2 of Burnikel and Ziegler.  For example, within
+the Toom-3 range, divide and conquer is @m{2.63M(N), 2.63*M(N)}.  With higher
+algorithms the @ma{M(N)} term improves and the multiplier tends to @m{\log N,
+log(N)}.  In practice, at moderate to large sizes, a 2N@cross{}N division is
+about 2 to 4 times slower than an N@cross{}N multiplication.
+
+Newton's method used for division is asymptotically @ma{O(M(N))} and should
+therefore be superior to divide and conquer, but it's believed this would only
+be for large to very large N.
 
 
 @node Exact Division, Small Quotient Division, Divide and Conquer Division, Division Algorithms
@@ -4784,10 +4819,14 @@ in @file{gmp-impl.h}.  This does four multiplies for a 32-bit limb, or six for
 a 64-bit limb.  @file{tune/modlinv.c} has some alternate implementations that
 might suit processors better at bit twiddling than multiplying.
 
-The sub-quadratic exact division described by Jebelean in "Exact Division with
-Karatsuba Complexity" is not currently implemented.  It uses a rearrangement
-similar to the divide and conquer for normal division (@pxref{Divide and
-Conquer Division}), but operating from low to high.
+The sub-quadratic exact division described by Jebelean in ``Exact Division
+with Karatsuba Complexity'' is not currently implemented.  It uses a
+rearrangement similar to the divide and conquer for normal division
+(@pxref{Divide and Conquer Division}), but operating from low to high.  A
+further possibility not currently implemented is ``Bidirectional Exact Integer
+Division'' by Krandick and Jebelean which forms quotient limbs from both the
+high and low ends of the dividend, and can halve once more the number of
+crossproducts needed in a 2N@cross{}N division.
 
 A special case exact division by 3 exists in @code{mpn_divexact_by3},
 supporting Toom-3 multiplication and currently not otherwise available from
@@ -4926,7 +4965,7 @@ algorithm and isn't very fast when both inputs are large.  Lehmer's multi-step
 improvement or a binary based multi-step algorithm is likely to be better.
 
 @code{mpz_kronecker_ui} and friends consist simply of an @code{mpn_mod_1}
-followed by a binary style single limb jacobi symbol as implemented in
+followed by a binary style single limb Jacobi symbol as implemented in
 @file{mpn/generic/jacbase.c}.  Sign changes for the result are efficiently
 accumulated using some bit twiddling, avoiding table lookups and conditional
 jumps.
@@ -4955,17 +4994,12 @@ easy and can be done with somewhat less temporary memory.
 @node Modular Powering Algorithm,  , Normal Powering Algorithm, Powering Algorithms
 @subsection Modular Powering
 
-Modular powering is implemented using a @ma{2^k}-ary sliding window with
-@ma{k} chosen according to the size of the exponent.  Larger exponents use
-larger values of @ma{k}, the choice being made to minimize the average number
-of multiplications that must supplement the squaring.
-
-Fixed window @ma{m}-ary powering is described in Knuth section 4.6.3 under
-``Fewer multiplications''.  The sliding window improvement is to observe that
-while the part of the exponent being considered has a low bit of 0 then a
-square can be done and the window slid along, until it contains an odd value.
-This means only @ma{m/2} pre-calculated powers are needed, and it may do fewer
-multiplications depending on the bits of the exponent.
+Modular powering is implemented using a @ma{2^k}-ary sliding window algorithm,
+as per ``Handbook of Applied Cryptography'' algorithm 14.85
+(@pxref{References}).  @ma{k} is chosen according to the size of the exponent.
+Larger exponents use larger values of @ma{k}, the choice being made to
+minimize the average number of multiplications that must supplement the
+squaring.
 
 The modular multiplies and squares use either a simple division or the REDC
 method by Montgomery (@pxref{References}).  REDC is a little faster,
@@ -5010,15 +5044,24 @@ a[i+1] = - * ( ---- + a[i] )
 The initial approximation @m{a_1,a[1]} is taken from a small table, or from a
 CPU square root instruction if available and worthwhile.  Convergence is
 quadratic, meaning each @m{a_i,a[i]} has twice as many accurate bits as
-@m{a_{i-1},a[i-1]}.  Currently the divisions don't exploit the fact that
-@m{a_{i+1},a[i+1]} has many high limbs identical to @m{a_i,a[i]}.
+@m{a_{i-1},a[i-1]}.
+
+These calculations are all done in integers and the resulting
+@code{mpn_sqrtrem} is used for both @code{mpz_sqrt} and @code{mpf_sqrt}.  The
+extended precision given by @code{mpf_sqrt_ui} is obtained by padding with
+zero limbs.
+
+Currently the divisions don't exploit the fact that @m{a_{i+1},a[i+1]} has
+many high limbs identical to @m{a_i,a[i]}.  ``Karatsuba Square Root'' by Paul
+Zimmermann (@pxref{References}) is effectively able to do this, using a divide
+and conquer algorithm.  This will be implemented in a future version of GMP.
 
 
 @node Nth Root Algorithm, Perfect Square Algorithm, Square Root Algorithm, Root Extraction Algorithms
 @subsection Nth Root
 
-Nth roots are taken using Newton's method with the following iteration, where
-@ma{A} is then input and @ma{n} is the root to be taken.
+Integer Nth roots are taken using Newton's method with the following
+iteration, where @ma{A} is the input and @ma{n} is the root to be taken.
 @tex
 $$a_{i+1} = {1\over n} \left({A \over a_i^{n-1}} + (n-1)a_i \right)$$
 @end tex
@@ -5436,7 +5479,7 @@ The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
 Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, ``Handbook of
-Applied Cryptography'', @* @uref{http://cacr.math.uwaterloo.ca/hac/}
+Applied Cryptography'', @* @uref{http://www.cacr.math.uwaterloo.ca/hac/}
 
 @item
 Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
@@ -5486,6 +5529,12 @@ pp. 111-116.  Technical report available online, @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1993/93-01.ps.gz}
 
 @item
+Werner Krandick and Tudor Jebelean, ``Bidirectional Exact Integer Division'',
+Journal of Symbolic Computation, volume 21, 1996, pp. 441-455.  Early
+technical report version available online, @*
+@uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1994/94-50.ps.gz}
+
+@item
 R. Moenck and A. Borodin, ``Fast Modular Transforms via Division'',
 Proceedings of the 13th Annual IEEE Symposium on Switching and Automata
 Theory, October 1972, pp. 90-96.  Reprinted as ``Fast Modular Transforms'',
@@ -5500,6 +5549,11 @@ Zahlen'', Computing 7, 1971, pp. 281-292.
 Kenneth Weber, ``The accelerated integer GCD algorithm'',
 ACM Transactions on Mathematical Software,
 volume 21, number 1, March 1995, pp. 111-122.
+
+@item
+Paul Zimmermann, ``Karatsuba Square Root'', INRIA Research Report 3805,
+November 1999, available online @*
+@uref{http://www.inria.fr/RRRT/RR-3805.html}
 
 @item
 Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
