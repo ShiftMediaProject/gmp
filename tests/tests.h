@@ -1,6 +1,5 @@
-/* Tests support prototypes etc. */
+/* Tests support prototypes etc.
 
-/*
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 #ifndef __TESTS_H__
@@ -92,6 +90,9 @@ mp_limb_t urandom _PROTO ((void));
 
 
 void mpf_set_str_or_abort _PROTO ((mpf_ptr f, const char *str, int base));
+
+
+void mpq_set_str_or_abort _PROTO ((mpq_ptr q, const char *str, int base));
 
 
 void mpz_erandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
@@ -212,6 +213,9 @@ mp_limb_t refmpn_mul_2 _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
 void refmpn_mul_basecase _PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,
                                   mp_srcptr vp, mp_size_t vsize));
+void refmpn_mul_any _PROTO ((mp_ptr prodp,
+                             mp_srcptr up, mp_size_t usize,
+                             mp_srcptr vp, mp_size_t vsize));
 void refmpn_mul_n _PROTO ((mp_ptr prodp, mp_srcptr up, mp_srcptr vp,
                            mp_size_t size));
 
