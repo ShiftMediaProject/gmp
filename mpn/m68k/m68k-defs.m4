@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for 68k assembler.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -154,12 +154,14 @@ m68k_definsn(addx, l)
 m68k_definsn(addq, l)
 m68k_definsn(asl,  l)
 m68k_definsn(cmp,  l)
+m68k_definsn(cmp,  w)
 m68k_definsn(clr,  l)
 m68k_definsn(divu, l)
 m68k_definsn(eor,  w)
 m68k_definsn(lsl,  l)
 m68k_definsn(lsr,  l)
 m68k_definsn(move, l)
+m68k_definsn(move, w)
 m68k_definsn(movem,l)
 m68k_definsn(moveq,l)
 m68k_definsn(mulu, l)
