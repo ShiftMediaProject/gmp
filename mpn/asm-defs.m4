@@ -112,9 +112,18 @@ dnl  eval() <<,>> - SysV m4 doesn't support shift operators in eval() (on
 dnl       SunOS 5.7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
 dnl       m4_lshift() and m4_rshift() below for workarounds.
 dnl
-dnl  m4wrap() - in BSD m4, m4wrap() replaces any previous m4wrap() string,
-dnl       in SysV m4 it appends to it, and in GNU m4 it prepends.  See
-dnl       m4wrap_prepend() below which brings uniformity to this.
+dnl  m4wrap() sequence - in BSD m4, m4wrap() replaces any previous m4wrap()
+dnl       string, in SysV m4 it appends to it, and in GNU m4 it prepends.
+dnl       See m4wrap_prepend() below which brings uniformity to this.
+dnl
+dnl  m4wrap() 0xFF - old versions of BSD m4 store EOF in a C "char" under an
+dnl       m4wrap() and on systems where char is unsigned by default a
+dnl       spurious 0xFF is output.  This has been observed on recent Unicos
+dnl       Alpha and MacOS X systems.  An autoconf test is used to check for
+dnl       this, see the m4wrap handling below.  It might work to end the
+dnl       m4wrap string with a dnl to consume the 0xFF, but that probably
+dnl       induces the offending m4's to read from an already closed "FILE
+dnl       *", which could be very bad on a glibc style stdio.
 dnl
 dnl  __file__,__line__ - GNU m4 and OpenBSD 2.7 m4 provide these, and
 dnl       they're used here to make error messages more informative.  GNU m4
@@ -218,8 +227,13 @@ define(m4wrap_prepend,
 m4_assert_numargs(1)
 `define(`m4wrap_string',`$1'defn(`m4wrap_string'))')
 
-m4wrap(`m4wrap_string')
 define(m4wrap_string,`')
+
+define(m4wrap_works_p,
+`ifelse(M4WRAP_SPURIOUS,yes,0,1)')
+
+ifelse(m4wrap_works_p,1,
+`m4wrap(`m4wrap_string')')
 
 
 dnl  Usage: m4_file_and_line
@@ -283,7 +297,8 @@ define(m4_warning,
 `m4_errprint_commas(m4_file_and_line`'$@)')
 
 define(m4_error,
-`define(`m4_error_occurred',1)m4_warning($@)')
+`define(`m4_error_occurred',1)m4_warning($@)dnl
+ifelse(m4wrap_works_p,0,`m4exit(1)')')
 
 define(`m4_error_occurred',0)
 
