@@ -1,4 +1,4 @@
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -77,3 +77,15 @@ Once installed, programs using the GMP module become simply
 And the documentation read directly too
 
 	man GMP
+
+
+
+NOTES FOR PARTICULAR SYSTEMS
+
+On Mingw or Cygwin with a DLL build of GMP, the array initializers in
+GMP.xs fail to compile, due to being function pointers coming from a
+DLL and hence not constants.  This is a problem for all such code,
+perhaps GCC will address this itself one day.  For now the suggestion
+is to build the main libgmp static, or to compile GMP.xs as C++ using
+for instance "make CC=g++".  (In C++, non-constant initializers are
+allowed.)
