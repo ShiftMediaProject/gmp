@@ -41,7 +41,7 @@ MA 02111-1307, USA. */
    the underlying random number generator is slow.  Keep returned bits in
    ranm/ran, and a count of how many bits remaining in ran_nbits.  */
 
-#define LOGBITS_PER_BLOCK 5
+#define LOGBITS_PER_BLOCK 4
 
 /* Ask _gmp_rand for 32 bits per call unless that's more than a limb can hold.
    Thus, we get the same random number sequence in the common cases.
