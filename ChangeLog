@@ -19,6 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-05  Kevin Ryde  <kevin@swox.se>
+
+	* mpq/inp_str.c: Remove unused variable "ret".
+
+	* mpn/x86/k7/sqr_basecase.asm: Fix a 0(%edi) to use Zdisp, so the
+	computed jumps hit the right spot on old gas.
+
+	* mpq/canonicalize.c: DIVIDE_BY_ZERO if denominator is zero.
+
+	* mpn/lisp/gmpasm-mode.el (comment-start-skip): Correction to the way
+	the first \( \) pair is setup.
+	(gmpasm-font-lock-keywords): Don't fontify the space before a "#" etc.
+	Misc tweaks to some comments.
+
 2001-11-03  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/refmpn.c (refmpn_overlap_p): Reverse return values.
