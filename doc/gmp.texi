@@ -1540,7 +1540,7 @@ in @file{gmp.h} must be different.
 
 A MINGW DLL build of GMP can be used with Microsoft C.  Libtool doesn't
 install a @file{.lib} format import library, but it can be created with MS
-@command{lib} as follows and copied to the install directory.  Similarly for
+@command{lib} as follows, and copied to the install directory.  Similarly for
 @file{libmp} and @file{libgmpxx}.
 
 @example
@@ -3920,16 +3920,24 @@ yes, zero if no.  These macros evaluate their argument more than once.
 @end deftypefn
 
 @deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
-Return the size of @var{op} measured in number of digits in base @var{base}.
-The base may vary from 2 to 36.  The sign of @var{op} is ignored, just the
-absolute value is used.  The result will be exact or 1 too big.  If @var{base}
-is a power of 2, the result will always be exact.  If @var{op} is zero the
-return value is always 1.
+@cindex Size in digits
+@cindex Digits in an integer
+Return the size of @var{op} measured in number of digits in the given
+@var{base}.  @var{base} can vary from 2 to 36.  The sign of @var{op} is
+ignored, just the absolute value is used.  The result will be either exact or
+1 too big.  If @var{base} is a power of 2, the result is always exact.  If
+@var{op} is zero the return value is always 1.
 
-This function is useful in order to allocate the right amount of space before
-converting @var{op} to a string.  The right amount of allocation is normally
-two more than the value returned by @code{mpz_sizeinbase} (one extra for a
-minus sign and one for the null-terminator).
+This function can be used to determine the space required when converting
+@var{op} to a string.  The right amount of allocation is normally two more
+than the value returned by @code{mpz_sizeinbase}, one extra for a minus sign
+and one for the null-terminator.
+
+@cindex Most significant bit
+It will be noted that @code{mpz_sizeinbase(@var{op},2)} can be used to locate
+the most significant 1 bit in @var{op}, counting from 1.  (Unlike the bitwise
+functions which start from 0, @xref{Integer Logic and Bit Fiddling,, Logical
+and Bit Manipulation Functions}.)
 @end deftypefun
 
 
