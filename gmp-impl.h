@@ -299,28 +299,20 @@ typedef unsigned int UHWtype;
 #define impn_sqr_n_basecase	__MPN(impn_sqr_n_basecase)
 #define impn_sqr_n		__MPN(impn_sqr_n)
 
-#if defined (__alpha) || defined (__cris) || defined (__i386__) \
- || defined (MIPSEL) || defined (_MIPSEL) || defined (__i960)
-#define IEEE_DOUBLE_BIG_ENDIAN 0
-#endif
+/* Define ieee_double_extract and _GMP_IEEE_FLOATS.  */
 
-#ifndef IEEE_DOUBLE_BIG_ENDIAN
-#define IEEE_DOUBLE_BIG_ENDIAN 1
-#endif
-
-#if IEEE_DOUBLE_BIG_ENDIAN
-union ieee_double_extract
-{
-  struct
-    {
-      unsigned int sig:1;
-      unsigned int exp:11;
-      unsigned int manh:20;
-      unsigned int manl:32;
-    } s;
-  double d;
-};
-#else
+#if defined (_LITTLE_ENDIAN) || defined (__LITTLE_ENDIAN__)		\
+ || defined (__alpha)							\
+ || (defined (__arm__) && defined (__ARMWEL__))				\
+ || defined (__clipper__)						\
+ || defined (__cris)							\
+ || defined (__i386__)							\
+ || defined (__i860__)							\
+ || defined (__i960__)							\
+ || defined (MIPSEL) || defined (_MIPSEL)				\
+ || defined (__ns32000__)						\
+ || defined (__WINNT) || defined (_WIN32)
+#define _GMP_IEEE_FLOATS 1
 union ieee_double_extract
 {
   struct
@@ -332,4 +324,34 @@ union ieee_double_extract
     } s;
   double d;
 };
+#else /* Need this as an #else since the tests aren't made exclusive.  */
+#if defined (_BIG_ENDIAN)						\
+ || defined (__a29k__) || defined (_AM29K)				\
+ || defined (__arm__)							\
+ || (defined (__convex__) && defined (_IEEE_FLOAT_))			\
+ || defined (__i370__) || defined (__mvs__)				\
+ || defined (__mc68000__) || defined (__mc68020__) || defined (__NeXT__)\
+    || defined(mc68020)							\
+ || defined (__m88000__)						\
+ || defined (MIPSEB) || defined (_MIPSEB)				\
+ || defined (__hppa)							\
+ || defined (__pyr__)							\
+ || defined (__ibm032__)						\
+ || defined (_IBMR2) || defined (_ARCH_PPC)				\
+ || defined (__sh__)							\
+ || defined (__sparc__)							\
+ || defined (__we32k__)
+#define _GMP_IEEE_FLOATS 1
+union ieee_double_extract
+{
+  struct
+    {
+      unsigned int sig:1;
+      unsigned int exp:11;
+      unsigned int manh:20;
+      unsigned int manl:32;
+    } s;
+  double d;
+};
+#endif
 #endif
