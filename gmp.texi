@@ -5399,7 +5399,7 @@ accurately represented by the operand, the same as @code{mpf_get_str} does.
 Zeros will be used if necessary to pad to the requested precision.  This
 happens even for an @samp{f} conversion of an @code{mpf_t} which is an
 integer, for instance @math{2^@W{1024}} in an @code{mpf_t} of 128 bits
-precision will only produce about 20 digits, then pad with zeros to the
+precision will only produce about 40 digits, then pad with zeros to the
 decimal point.  An empty precision field like @samp{%.Fe} or @samp{%.Ff} can
 be used to specifically request just the significant digits.
 
@@ -5641,8 +5641,8 @@ and the C library for the input.
 @item @nicode{hh} @tab @nicode{char}
 @item @nicode{j}  @tab @nicode{intmax_t} or @nicode{uintmax_t}
 @item @nicode{l}  @tab @nicode{long} or @nicode{wchar_t}
-@item @nicode{ll} @tab same as @nicode{L}
-@item @nicode{L}  @tab @nicode{long long} or @nicode{long double}
+@item @nicode{ll} @tab @nicode{long long}
+@item @nicode{L}  @tab @nicode{long double}
 @item @nicode{q}  @tab @nicode{quad_t} or @nicode{u_quad_t}
 @item @nicode{t}  @tab @nicode{ptrdiff_t}
 @item @nicode{z}  @tab @nicode{size_t}
