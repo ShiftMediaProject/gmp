@@ -57,6 +57,7 @@ EV5
 
 2. mulq has a latency of 12 cycles and an issue rate of 1 each 8th cycle.
    umulh has a latency of 14 cycles and an issue rate of 1 each 10th cycle.
+   (Note that published documentation gets these numbers slightly wrong.)
 
 3. mpn_add_n.  With 4-fold unrolling, we need 37 instructions, whereof 12
    are memory operations.  This will take at least
