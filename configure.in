@@ -677,21 +677,21 @@ AC_CHECK_DECLS((optarg))
 dnl Checks for header files.
 dnl ------------------------
 AC_HEADER_STDC
-AC_CHECK_HEADERS(getopt.h unistd.h sys/sysctl.h sys/time.h)
+AC_HEADER_TIME
+AC_CHECK_HEADERS(getopt.h unistd.h sys/resource.h sys/sysctl.h sys/time.h sys/times.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl --------------------------------------------------------------
+AC_TYPE_SIGNAL
 AC_CHECK_TYPES((void))
 AC_C_STRINGIZE
 
 dnl Checks for library functions.
 dnl -----------------------------
-dnl Most of these are only for the benefit of supplementary programs.  The
-dnl library itself doesn't use anything weird.
-dnl AC_FUNC_MEMCMP
-dnl AC_TYPE_SIGNAL
-dnl AC_CHECK_FUNCS(strtol)
-AC_CHECK_FUNCS(getopt_long getpagesize popen processor_info strtoul sysconf sysctlbyname)
+dnl These are mainly for the benefit of supplementary programs.  The library
+dnl itself doesn't use anything weird.
+
+AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info strtoul sysconf sysctlbyname times)
 
 dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
 dnl for ansi2knr, and instead use our own test.  (It's only a warning
@@ -984,12 +984,14 @@ AC_SUBST(gmp_srclinks)
 
 
 SPEED_CYCLECOUNTER_OBJ=
+cyclecounter_size=2
 case ${target} in
   [i[5-8]86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
     # rdtsc is in pentium and up, not in i386 and i486
     SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
   alpha*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=alpha.lo ;;
+    SPEED_CYCLECOUNTER_OBJ=alpha.lo
+    cyclecounter_size=1 ;;
   sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
     SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
   hppa2*-*-*)
@@ -1000,8 +1002,8 @@ esac
 AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
 if test -n "$SPEED_CYCLECOUNTER_OBJ"
 then
-  AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 1,
-  [Define if the CPU has a speed_cyclecounter in the tune directory)])
+  AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
+  [Tune directory speed_cyclecounter, 0=none, 1=32bits, 2=64bits)])
 fi
 
 # A recompiled sqr_basecase for use in the tune program, if necessary.
