@@ -1,0 +1,204 @@
+===========================================================================
+
+                  GMP port to Power Macintosh and MacOS
+
+                       Kent Boortz <kent@swox.se>
+
+===========================================================================
+
+
+
+This is an unsupported port of GMP to Power Macintosh and MacOS. It
+will use the optimized 'mpn' assembler routines written for 32 bit
+PowerPC to gain speed.
+
+The output is a library
+
+        $GMP_SOURCE_DIR/macos/libgmp.$GMP_VERSION
+
+Not all tests pass
+
+	I never run the 'io' test the source don't compile
+
+	If using Apple's compilers I never run the mpz t-mul, mpf t-add
+	and mpf t-sub because they don't compile with MrC 4.1
+
+	The 'mpf/t-muldiv' test fails, see PROBLEMS section below
+
+	
+
+REQUIREMENTS
+============
+
+To compile into the library you need
+
+        Apple MPW (free) or CodeWarrior MPW
+	(GMP build was tested with CodeWarrior Pro 5)
+
+        MacPerl 5 for MPW
+
+MacPerl is free, download and install the MPW tool version from
+
+        http://www.macperl.com
+
+You need the "Appl" and "Tool" archive, for example
+
+    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_appl.bin
+    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_tool.bin
+
+See the file "Install.MPW_Perl" for MPW Perl installation instructions.
+
+For compiling with the free Apple MPW development system you need a
+68K Macintosh with a 68020 or higher microprocessor, or any Power
+Macintosh with at least 8 Mb of memory and MacOS 7.5 or later.
+
+See the CodeWarrior documentation for the CodeWarrior MPW requirements.
+
+
+
+INSTALLATION
+============
+
+The MPW development system can be found on February 2000 Apple developer
+"tool chest" CD or be downloaded from
+
+    http://developer.apple.com/tools/mpw-tools/
+
+You need "StuffIt Expander" to unpack the source. You can download
+"StuffIt Expander" for free from
+
+    http://www.aladdinsys.com/expander/expander_mac_login.html
+
+Unpack the installation instructions 
+
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./About_MPW_etc.sit.hqx
+
+This result is a PDF file that can be read with the free Acrobat Reader
+
+    http://www.adobe.com/products/acrobat/readstep.html
+
+From the MPW development environment you need at least
+
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/MPW_Shell.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Scripts.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/GetFileName.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/Make.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/MrC.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/PPCAsm.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/PPCLink.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/Libraries.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/RuntimeLibraries.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/Interfaces/CIncludes.sit.hqx
+
+Put these into a folder and drag the whole folder to the "StuffIt
+Expander" icon to unpack them.
+
+Create a folder "Tools" inside the "MPW_Shell Folder" and move "Make",
+"PPCAsm", "MrC" and "PPCLink" down into the "Tools" folder.
+
+Move "Scripts" folder down into the "MPW_Shell Folder".
+
+Create a folder "Interfaces&Libraries" at the same level as the
+"MPW_Shell Folder" and inside this folder a new folders
+"Interfaces". Put "RuntimeLibraries", "Libraries" and "CInlcudes" into
+the corresponding folder.
+
+You can see the expected file structure in
+
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./FileList.txt
+
+Follow the rest of the installation instructions in "About MPW etc.".
+
+
+
+BUILD PROCESS
+=============
+
+The "macos" folder/directory should be inside the top directory in the
+GMP source tree and should contain three files
+
+        README          This file
+        configure       Create files and directories needed
+        unix2mac        Used to convert "configure" end-of-line chars
+        Makefile.in     Source for the final "Makefile"
+
+Double click on the "MPW Shell" icon and set the directory using the
+"Directory" menu to the "$GMP_SOURCE_DIR:macos:" folder/directory.
+
+Run "configure" in a two step process
+
+        % perl unix2mac configure > configure.mac
+        % perl configure.mac
+  or    % perl configure.mac cw
+
+If you use CodeWarrior MPW you need to add the argument "cw" to the
+configure script. Then run "Make"
+
+        % make
+
+This will not execute the commands. It is like "make -n" on Unix, and
+will display the commands to execute. You select the commands and
+hit "enter" to actually execute the commands.
+
+To test the code you execute the output from
+
+        % Make check
+
+If there is an error the test program will complain. Note that the
+test programs can contain errors so a test failure doesn't always
+mean the library is broken.
+
+To cleanup to the state before configure you execute the output from
+
+        % Make clean
+
+Note that this will remove the resulting library as well.
+
+
+
+PROBLEMS
+========
+
+Bug reports should be sent directly to Kent Boortz <kent@swox.se> and
+*not* to "gmp-bugs@gnu.org".
+
+This is a quick and dirty port. I can imagine tons of problems if for
+example your unpacking of the source files results in some sort of
+conversion of the end-of-file characters. Also the configure script
+isn't in sync with the rest of the GMP source and a new GMP release
+is likely to break this MacOS port.
+
+The library uses stream I/O operations for some of the GMP functions
+and maybe for some error messages. This means that to link this
+library to form a normal Mac application you may get link problems,
+i.e.  a Mac normally has no console/shell to write to. I "think" there
+is some sort of glue library or something to link with but
+unfortunately I don't really know at the moment.
+
+The "return" key and the "enter" key mean different things to MPW.
+The first just add a line break, the second send the line your 
+pointer is at or the selection you have to the MPW command 
+interpreter.
+
+If you mount the GMP source from a Unix netatalk server don't edit or
+remote files from the Unix side. MPW and MacOS gets very confused
+about what file and directories that are there or not.
+
+If you really need a MacOS m68k version of GMP let me know and I may
+take the time to do the port.
+
+The 'mpf/t-muldiv' test fails if compiled with MWPPC
+
+    ERROR in mpf_mul or mpf_div after 97366 tests
+       u = 0.5048709791063773838898876874312608802911e-28
+       v = 0.9313190219018526546832738459330147632116e-9
+       x = 0.50487097910637738388988768743126088029113124439203043966433e-28
+       w = 0.54210315394973578595915199220823233621433472905573800979413e-19
+
+The values 'u' and 'x' should be "close" but are not close enough for
+the test case. This may or may not indicate a bug in the MWPCC
+compiler. There is no complaint using the MrC compiler but I'm not sure
+the same semi-random sequence is used.
+
+
+Kent Boortz <kent@swox.se>

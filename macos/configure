@@ -1,0 +1,319 @@
+# This is a simple configure script for MacOS and MPW.
+# Note that this script can't be run directly from MPW perl
+# because it has the wrong end-of-line characters. See README.
+
+###########################################################################
+#
+#  Constants
+#
+###########################################################################
+
+my $cfg;			# Will point to %cfg_apple or %cfg_cw
+
+my %cfg_apple =
+  (
+   'cc'          =>  'MrC',
+   'coptions'    => ['-ansi on -i : -i :: -i ::mpn:powerpc32 -i ::mpz',
+		     '-opt speed -inline on -d random=rand -d srandom=srand'],
+   'link'        => 'PPCLink',
+   'linkoptions' => '-sym on -xm library',
+   'tooloptions' => "-t 'MPST' -c 'MPS'",
+   'asm'         => 'PPCAsm',
+   'aoptions'    => '-sym on',
+   'syslibs'     => [
+		     '"{SharedLibraries}"StdCLib',
+		     '"{SharedLibraries}"InterfaceLib',
+		     '"{SharedLibraries}"MathLib',
+		     '"{PPCLibraries}"StdCRuntime.o',
+		     '"{PPCLibraries}"PPCCRuntime.o',
+		    ],
+  );
+
+%cfg_cw =
+  (
+   'cc'          =>  'MWCPPC',
+   'coptions'    => [
+		     '-opt all -w nounused,noextended',
+		     '-i :: -i ::mpn:powerpc32 -i ::mpz',
+		     '-sym full -d random=rand -d srandom=srand',
+		    ],
+   'link'        => 'MWLinkPPC',
+   'linkoptions' => '-sym fullpath -library',
+   'tooloptions' => '-mpwtool',
+   'asm'         => 'PPCAsm',
+   'aoptions'    => '-sym on',
+   'syslibs'     => [
+		     '"{SharedLibraries}"InterfaceLib',
+		     '"{MWPPCLibraries}MSL MPWCRuntime.Lib"',
+		     '"{MWPPCLibraries}MSL C.PPC MPW(NL).Lib"',
+		     '"{SharedLibraries}"MathLib',
+		    ],
+  );
+
+
+$/ = "\012";			# Input files use Unix end-of-line chars
+
+# A directory can't be on the right side so this is just a script
+
+my @dirs =
+  (
+   'MpfObj',
+   'MpnObj',
+   'MpqObj',
+   'MpzObj',
+   'CmnObj',
+   'AsmObj',
+   'Asm',
+   'MpfBin',
+   'MpqBin',
+   'MpzBin',
+  );
+
+
+# If I somehow could generate this list I would be happy....
+
+%mpn_objects =
+  (
+   'mp_bases' => 1,
+   'inlines' => 1,
+   'add_n' => 1,
+   'sub_n' => 1,
+   'mul_1' => 1,
+   'addmul_1' => 1,
+   'submul_1' => 1,
+   'lshift' => 1,
+   'rshift' => 1,
+   'divmod_1' => 1,
+   'divrem' => 1,
+   'divrem_1' => 1,
+   'divrem_1n' => 1,
+   'divrem_2' => 1,
+   'divrem_newt' => 1,
+   'mod_1' => 1,
+   'pre_mod_1' => 1,
+   'dump' => 1,
+   'mul' => 1,
+   'mul_n' => 1,
+   'mul_basecase' => 1,
+   'sqr_basecase' => 1,
+   'random' => 1,
+   'random2' => 1,
+   'rawrandom' => 1,
+   'sqrtrem' => 1,
+   'get_str' => 1,
+   'set_str' => 1,
+   'scan0' => 1,
+   'scan1' => 1,
+   'popcount' => 1,
+   'hamdist' => 1,
+   'cmp' => 1,
+   'perfsqr' => 1,
+   'bdivmod' => 1,
+   'gcd_1' => 1,
+   'gcd' => 1,
+   'gcdext' => 1,
+  );
+
+
+$make_in      = 'Makefile.in';
+$make         = 'Makefile';
+$configure_in = '::configure.in';
+$config_in    = '::config.in';
+$config_h     = 'config.h';
+$mpn_asm_dir  = '::mpn:powerpc32';
+
+$asm_start    = "\ttoc";	# No dot, like ".dot"?
+
+sub asm_epilogue {
+    my $func = shift;
+    return "\tcsect .__$func\[pr]";
+}
+
+sub asm_prologue {
+    my $func = shift;
+
+    $asm = <<HERE;
+	EXPORT __$func\[DS]
+	EXPORT .__$func\[PR]
+
+	TC __$func\[TC], __$func\[DS]
+			
+	CSECT __$func\[DS]
+	DC.L .__$func\[PR]
+	DC.L TOC[tc0]
+		
+	CSECT .__$func\[PR]
+	FUNCTION .__$func\[PR]	
+HERE
+    return $asm;
+}
+
+
+###########################################################################
+#
+#  Read command line
+#
+###########################################################################
+
+$cfg = \%cfg_apple;		# Default
+
+$cfg = \%cfg_cw
+  if @ARGV && $ARGV[0] =~ /^cw|co/i;
+
+
+###########################################################################
+#
+#  Find package name and version from "../configure.in"
+#
+###########################################################################
+
+open(CONFIGURE_IN, $configure_in)
+  or die "Can't open \"$configure_in\"\n";
+while (<CONFIGURE_IN>) {
+  if (/AM_INIT_AUTOMAKE\s*\(\s*([\w-]+)\s*,\s*([\w\d\.]+)/) {
+    $package = $1;
+    $version = $2;
+  }
+}
+close CONFIGURE_IN;
+
+defined $package or die "Can't find package name in \"$configure_in\"\n";
+defined $version or die "Can't find package name in \"$configure_in\"\n";
+
+
+###########################################################################
+#
+#  Create directories
+#
+###########################################################################
+
+foreach (@dirs) {
+  -d $_ or mkdir $_, 0775
+    or die "Can't create directory \"$_\"\n";
+}
+
+
+###########################################################################
+#
+#  Create config.h from ../config.in
+#
+###########################################################################
+
+open(CONFIG_IN, $config_in)
+  or die "Can't open \"$config_in\"\n";
+open(CONFIG_H, ">$config_h")
+  or die "Can't create \"$config_h\"\n";
+
+while (<CONFIG_IN>) {
+  chomp;
+
+  if (/^\s*#\s*undef\s+HAVE_NATIVE_mpn_(\w+)/ &&
+      -r "$mpn_asm_dir:$1.asm") {
+    push(@asm_files, $1);
+    defined delete $mpn_objects{$1}
+      or print STDERR "Warning: Found asm file but no corresponding C file\n";
+    print CONFIG_H "\#define HAVE_NATIVE_mpn_$1 1\n";
+  } elsif (/^\s*#\s*undef\s+PACKAGE/) {
+    print CONFIG_H "\#define PACKAGE \"$package\"\n";
+  } elsif (/^\s*#\s*undef\s+VERSION/) {
+    print CONFIG_H "\#define VERSION \"$version\"\n";
+  } elsif (/^\s*#\s*undef\s+STDC_HEADERS/) {
+    print CONFIG_H "\#define STDC_HEADERS 1\n";
+  } elsif (m&^\s*/\*&) {	# Comment, leave it
+    print CONFIG_H "$_\n";
+  } elsif (/\S/) {		# Something else, comment it out
+    print CONFIG_H "/* $_ */\n";
+  } else {			# Blank line, leave it
+    print CONFIG_H "$_\n";
+  }
+}
+
+close CONFIG_H;
+close CONFIG_IN;
+
+
+###########################################################################
+#
+#  Parse the *.asm files found and convert them to MPW format
+#
+###########################################################################
+
+foreach $file (@asm_files) {
+  $ifile = "$mpn_asm_dir:$file.asm";
+  $ofile = ":Asm:$file.s";
+
+  open(ASM, $ifile)
+    or die "Can't read file \"$ifile\"\n";
+  open(NEW, ">$ofile")
+    or die "Can't create file \"$ofile\"\n";
+
+  while (<ASM>) {
+    chomp;			# Remove whatever ending it was
+
+    s/include\s*\(.*?\)//;	# Don't use include macro
+    s/ASM_START\s*\(.*?\)/$asm_start/;
+
+    s/PROLOGUE\s*\(\s*(.*?)\s*\)/asm_prologue($1)/e;
+
+    s/EPILOGUE\s*\(\s*(.*?)\s*\)/asm_epilogue($1)/e;
+
+    s/\n/\x0D/g;
+    print NEW "$_\x0D";		# Use MacOS end-of-line character
+  }
+  
+  close ASM;
+  close NEW;
+}
+
+
+###########################################################################
+#
+#  Parse the Makefile.in and produce the Makefile
+#
+###########################################################################
+
+my $mpn_objects = join(' ', map {"{MpnObjDir}$_.o"}  keys %mpn_objects);
+$mpn_objects =~ s/(.{1,66})\s/$1 \xB6\n\t/g;
+
+@asm_objects = @asm_sources = @asm_files;
+
+# Adjust configuration
+
+foreach (keys %{$cfg}) {
+  $$cfg{$_} = join(" \xB6\x0D\t\t", @{$$cfg{$_}})
+    if ref $$cfg{$_};
+}
+
+%config =
+  (
+   'version' => $version,
+   'package' => $package,
+   'c'       => "\xB6",
+   'dep'     => "\xC4",
+   'wildcard'=> "\xC5",
+   'asm_objects' =>
+   	join(" \xB6\x0D\t",map {$_ = "{AsmObjDir}$_.o"} @asm_objects),
+   'asm_sources' =>
+   	join(" \xB6\x0D\t",map {$_ = "{AsmSrcDir}$_.s"} @asm_sources),
+   'mpn_objects' => $mpn_objects,
+   %{$cfg},
+  );
+
+
+open(IN, $make_in)
+  or die "Can't read file \"$make_in\"\n";
+open(OUT, ">$make")
+  or die "Can't create file \"$make\"\n";
+
+while (<IN>) {
+  chomp;			# Remove whatever ending it was
+
+  # Do the variable substitution
+
+  s/\@([^\@]+)\@/exists $config{$1} ? $config{$1} : ''/ge;
+
+  print OUT "$_\x0D";		# Use MacOS end-of-line character
+}
+  
+close IN;
+close OUT;
