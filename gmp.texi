@@ -738,12 +738,6 @@ if it's just debugging which is unwanted.
 
 @item SunOS 4 Native Tools
 
-The setting for @code{GSYM_PREFIX} in @file{config.m4} may be incorrectly
-determined when using the native @command{grep}, leading at link-time to
-undefined symbols like @code{___gmpn_add_n}.  To fix this, after running
-@samp{./configure}, change the relevant line in @file{config.m4} to
-@samp{define(<GSYM_PREFIX>, <_>)}.
-
 The @command{ranlib} command will need to be run manually when building a
 static library with the native @command{ar}.  After @samp{make}, run
 @samp{ranlib .libs/libgmp.a}, and when using @option{--enable-mpbsd} run
