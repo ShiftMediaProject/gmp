@@ -56,6 +56,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
   unsigned char *tstr;
   mp_exp_t exp_in_base;
   int cnt;
+  size_t alloc_size = 0;
   TMP_DECL (marker);
 
   TMP_MARK (marker);
@@ -98,6 +99,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
     {
       /* We didn't get a string from the user.  Allocate one (and return
 	 a pointer to it) with space for `-' and terminating null.  */
+      alloc_size = n_digits + 2;
       digit_ptr = (char *) (*__gmp_allocate_func) (n_digits + 2);
     }
 
@@ -105,7 +107,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
     {
       *exp = 0;
       *digit_ptr = 0;
-      return digit_ptr;
+      goto done;
     }
 
   str = (unsigned char *) digit_ptr;
@@ -415,6 +417,18 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 
   *str = 0;
   *exp = exp_in_base;
+
+ done:
   TMP_FREE (marker);
+
+  /* If the string was alloced then resize it down to the actual space
+     required.  */
+  if (alloc_size != 0)
+    {
+      size_t  actual_size = strlen (digit_ptr) + 1;
+      if (actual_size != alloc_size)
+        (*__gmp_reallocate_func) (digit_ptr, alloc_size, actual_size);
+    }
+
   return digit_ptr;
 }
