@@ -229,7 +229,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
               *s++ = digit;
             }
 	  i = MP_BASES_CHARS_PER_LIMB_10 - (4-MP_BASES_NORMALIZATION_STEPS_10);
-	  frac >>= 4;
+	  frac = (frac + 0xf) >> 4;
 	  do
             {
 	      frac *= 10;
