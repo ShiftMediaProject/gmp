@@ -1,20 +1,20 @@
-/*
+/* generic file for evaluation of hypergeometric series using binary splitting
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPdFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -23,26 +23,16 @@ MA 02111-1307, USA. */
  # error You should specify a name 
 #endif
 
-/* TODO: Reflechir a un traitement generique des infinis ? */
-
 #ifdef B
 #  ifndef A
  #   error B cannot be used without A
 #  endif
 #endif
 
-/* Calcule les 2^m premiers termes de la serie hypergeometrique
-   avec x = p / 2^r */
-int
-#if __STDC__
+/* Compute the first 2^m terms from the hypergeometric series
+   with x = p / 2^r */
+static int
 GENERIC (mpfr_ptr y, mpz_srcptr p, int r, int m)
-#else
-GENERIC (y, p, r, m)
-     mpfr_ptr y;
-     mpz_srcptr p;
-     int r;
-     int m;
-#endif
 {
   int n,i,k,j,l;
   int is_p_one = 0;
@@ -57,26 +47,33 @@ GENERIC (y, p, r, m)
 #endif
   int diff, expo;
   int precy = MPFR_PREC(y);
+  TMP_DECL(marker);
+
+  TMP_MARK(marker);
   MPFR_CLEAR_FLAGS(y); 
   n = 1 << m;
-  P = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t));
-  S = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t));
-  ptoj = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t)); /* ptoj[i] = mantissa^(2^i) */
+  P = (mpz_t*) TMP_ALLOC ((m+1) * sizeof(mpz_t));
+  S = (mpz_t*) TMP_ALLOC ((m+1) * sizeof(mpz_t));
+  ptoj = (mpz_t*) TMP_ALLOC ((m+1) * sizeof(mpz_t)); /* ptoj[i] = mantissa^(2^i) */
 #ifdef A
-  T = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t));
+  T = (mpz_t*) TMP_ALLOC ((m+1) * sizeof(mpz_t));
 #endif
 #ifdef R_IS_RATIONAL
-    qtoj = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t)); 
+  qtoj = (mpz_t*) TMP_ALLOC ((m+1) * sizeof(mpz_t));
 #endif
-  for (i=0;i<=m;i++) { mpz_init(P[i]); mpz_init(S[i]); mpz_init(ptoj[i]);
+  for (i=0;i<=m;i++)
+    {
+      mpz_init (P[i]);
+      mpz_init (S[i]);
+      mpz_init (ptoj[i]);
 #ifdef R_IS_RATIONAL
-  mpz_init(qtoj[i]);
+      mpz_init (qtoj[i]);
 #endif
 #ifdef A
-  mpz_init(T[i]);
+      mpz_init (T[i]);
 #endif
- }
-  mpz_set(ptoj[0], p);
+    }
+  mpz_set (ptoj[0], p);
 #ifdef C
 #  if C2 != 1
   mpz_mul_ui(ptoj[0], ptoj[0], C2);
@@ -184,32 +181,28 @@ GENERIC (y, p, r, m)
   MPFR_EXP(y) += expo; 
 
 #ifdef R_IS_RATIONAL
-  /* division exacte */
-  mpz_div_ui(qtoj[m], qtoj[m], r);
-  mpfr_init2(tmp, MPFR_PREC(y));
-  mpfr_set_z(tmp, qtoj[m] , GMP_RNDD);
-  mpfr_div(y, y, tmp, GMP_RNDD);
-  mpfr_clear(tmp);
+  /* exact division */
+  mpz_div_ui (qtoj[m], qtoj[m], r);
+  mpfr_init2 (tmp, MPFR_PREC(y));
+  mpfr_set_z (tmp, qtoj[m] , GMP_RNDD);
+  mpfr_div (y, y, tmp, GMP_RNDD);
+  mpfr_clear (tmp);
 #else
   mpfr_div_2exp(y, y, r*(i-1), GMP_RNDN);
 #endif
-  for (i=0;i<=m;i++) { mpz_clear(P[i]); mpz_clear(S[i]); mpz_clear(ptoj[i]); 
+  for (i=0;i<=m;i++)
+    {
+      mpz_clear (P[i]);
+      mpz_clear (S[i]);
+      mpz_clear (ptoj[i]); 
 #ifdef R_IS_RATIONAL
-  mpz_clear(qtoj[i]);
+      mpz_clear (qtoj[i]);
 #endif
 #ifdef A
-  mpz_clear(T[i]);
+      mpz_clear (T[i]);
 #endif
-  }
-  (*__gmp_free_func) (P, (m+1) * sizeof(mpz_t));
-  (*__gmp_free_func) (S, (m+1) * sizeof(mpz_t));
-  (*__gmp_free_func) (ptoj, (m+1) * sizeof(mpz_t));
-#ifdef R_IS_RATIONAL
-  (*__gmp_free_func) (qtoj, (m+1) * sizeof(mpz_t));
-#endif
-#ifdef A
-  (*__gmp_free_func) (T, (m+1) * sizeof(mpz_t));
-#endif
+    }
+  TMP_FREE(marker);
   return 0;
 }
 

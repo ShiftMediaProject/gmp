@@ -1,21 +1,21 @@
 /* mpfr_print_raw -- print the internal binary representation of a 
                      floating-point number
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -26,24 +26,16 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void mpfr_get_str_raw _PROTO ((char *, mpfr_srcptr));
+static void mpfr_get_str_raw _PROTO ((char *, mpfr_srcptr));
 
-void
-#if __STDC__
+static void
 mpfr_get_str_raw (char *digit_ptr, mpfr_srcptr x)
-#else
-mpfr_get_str_raw (digit_ptr, x)
-     char *digit_ptr; 
-     mpfr_srcptr x; 
-#endif
 {
   mp_limb_t *mx, wd, t; long ex, sx, k, l, p;
 
   mx = MPFR_MANT(x); 
   ex = MPFR_EXP(x); 
   p = MPFR_PREC(x); 
-
-  /* TODO: utilite de gerer l'infini a ce niveau ? */
 
   if (MPFR_SIGN(x) < 0) { *digit_ptr = '-'; digit_ptr++; }
   sprintf(digit_ptr, "0."); digit_ptr += 2; 
@@ -52,7 +44,7 @@ mpfr_get_str_raw (digit_ptr, x)
   for (k = sx - 1; k >= 0 ; k--)
     { 
       wd = mx[k]; 
-      t = ((mp_limb_t)1) << (BITS_PER_MP_LIMB - 1); 
+      t = MP_LIMB_T_HIGHBIT;
       for (l = BITS_PER_MP_LIMB - 1; l>=0; l--)
 	{
 	  if (wd & t) 
@@ -67,12 +59,7 @@ mpfr_get_str_raw (digit_ptr, x)
 }
  
 void
-#if __STDC__
-mpfr_print_raw(mpfr_srcptr x)
-#else
-mpfr_print_raw(x)
-     mpfr_srcptr x; 
-#endif
+mpfr_print_raw (mpfr_srcptr x)
 {
   char *str;
   unsigned long alloc_size;

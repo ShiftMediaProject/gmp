@@ -1,20 +1,20 @@
 /* mpfr_div_2exp -- divide a floating-point number by a power of two
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -25,20 +25,15 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void
-#if __STDC__
+int
 mpfr_div_2exp (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mp_rnd_t rnd_mode)
-#else
-mpfr_div_2exp (y, x, n, rnd_mode)
-     mpfr_ptr y;
-     mpfr_srcptr x;
-     unsigned long int n;
-     mp_rnd_t rnd_mode;
-#endif
 {
+  int inexact = 0;
+
   /* Important particular case */ 
-  if (y != x) mpfr_set(y, x, rnd_mode);
-  MPFR_EXP(y) -= n; 
-  return; 
+  if (y != x)
+    inexact = mpfr_set (y, x, rnd_mode);
+  return ((MPFR_EXP(y) -= n) < __mpfr_emin)
+    ? mpfr_set_underflow (y, rnd_mode, MPFR_SIGN(y)) : inexact;
 }
 

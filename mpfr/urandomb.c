@@ -3,22 +3,22 @@
    using STATE as the random state previously initialized by a call to
    gmp_randinit().
 
-Copyright (C) 1999, 2000  Free Software Foundation, Inc.
+Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
-This file is part of the GNU MP Library.
+This file is part of the MPFR Library.
 
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+The MPFR Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
-The GNU MP Library is distributed in the hope that it will be useful, but
+The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+You should have received a copy of the GNU Lesser General Public License
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -30,13 +30,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 void
-#if __STDC__
 mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
-#else
-mpfr_urandomb (rop, rstate)
-     mpfr_ptr rop;
-     gmp_randstate_t rstate;
-#endif
 {
   mp_ptr rp;
   mp_size_t nlimbs;
@@ -72,7 +66,7 @@ mpfr_urandomb (rop, rstate)
 
   cnt = nlimbs*BITS_PER_MP_LIMB - nbits; 
   /* cnt is the number of non significant bits in the low limb */
-  rp[0] &= ~((((mp_limb_t) 1) << cnt) - 1);
+  rp[0] &= ~((MP_LIMB_T_ONE << cnt) - 1);
 
   MPFR_EXP (rop) = exp;
 }

@@ -1,21 +1,21 @@
 /* mpfr_swap (U, V) -- Swap U and V.
 
-Copyright (C) 1997, 1998, 2000 Free Software Foundation, Inc.
+Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
-This file is part of the GNU MP Library.
+This file is part of the MPFR Library.
 
-The GNU MP Library is free software; you can redistribute it and/or modify
+The MPFR Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
-The GNU MP Library is distributed in the hope that it will be useful, but
+The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 void
-#if __STDC__
 mpfr_swap (mpfr_ptr u, mpfr_ptr v)
-#else
-mpfr_swap (u, v)
-     mpfr_ptr u;
-     mpfr_ptr v;
-#endif
 {
   mp_ptr up, vp;
   mp_size_t usize, vsize;

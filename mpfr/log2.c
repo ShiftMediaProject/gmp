@@ -1,37 +1,37 @@
 /* mpfr_const_log2 -- compute natural logarithm of 2
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
-#include "gmp-impl.h"
 #include "mpfr-impl.h"
 
 mpfr_t __mpfr_const_log2; /* stored value of log(2) */
 int __mpfr_const_log2_prec=0; /* precision of stored value */
 mp_rnd_t __mpfr_const_log2_rnd; /* rounding mode of stored value */
 
-int mpfr_aux_log2 _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
-int mpfr_const_aux_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
+static int mpfr_aux_log2 _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+static int mpfr_const_aux_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
 
 #define A
 #define A1 1
@@ -53,14 +53,8 @@ int mpfr_const_aux_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
 #undef C1
 #undef C2
 
-int
-#if __STDC__
+static int
 mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
-#else
-mpfr_const_aux_log2 (mylog, rnd_mode)
-     mpfr_ptr mylog;
-     mp_rnd_t rnd_mode;
-#endif
 {
   int prec;
   mpfr_t tmp1, tmp2, result,tmp3; 
@@ -112,6 +106,11 @@ mpfr_const_aux_log2 (mylog, rnd_mode)
   return 0;
 }
 
+/* Cross-over point from nai"ve Taylor series to binary splitting,
+   obtained experimentally on a Pentium II. Optimal value for
+   target machine should be determined by tuneup. */
+#define LOG2_THRESHOLD 25000
+
 /* set x to log(2) rounded to precision MPFR_PREC(x) with direction rnd_mode 
 
    use formula log(2) = sum(1/k/2^k, k=1..infinity)
@@ -126,11 +125,7 @@ mpfr_const_aux_log2 (mylog, rnd_mode)
    Then 2^N*log(2)-S'(N) <= N-1+2/N <= N for N>=2.
 */
 void 
-#if __STDC__
 mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
-#else
-mpfr_const_log2 (x, rnd_mode) mpfr_ptr x; mp_rnd_t rnd_mode;
-#endif
 {
   int N, oldN, k, precx; mpz_t s, t, u;
 
@@ -147,38 +142,45 @@ mpfr_const_log2 (x, rnd_mode) mpfr_ptr x; mp_rnd_t rnd_mode;
   }
 
   /* need to recompute */
-  if (precx < 30000){ /* use nai"ve Taylor series evaluation */
-     N=2;
-     do {
-       oldN = N;
-       N = precx + _mpfr_ceil_log2 ((double) N);
-     } while (N != oldN);
-     mpz_init (s); /* set to zero */
-     mpz_init (u);
-     mpz_init_set_ui (t, 1);
-
-     /* use log(2) = sum((6*k-1)/(2*k^2-k)/2^(2*k+1), k=1..infinity) */
-     mpz_mul_2exp (t, t, N-1);
-     for (k=1; k<N/2; k++) {
-       mpz_div_2exp (t, t, 2);
-       mpz_mul_ui (u, t, 6*k-1);
-       mpz_fdiv_q_ui (u, u, k*(2*k-1));
-       mpz_add (s, s, u);
-     }
-
-     mpfr_set_z(x, s, rnd_mode);
-     MPFR_EXP(x) -= N;
-     mpz_clear(s); mpz_clear(t); mpz_clear(u);
-  } else
+  if (precx < LOG2_THRESHOLD) /* use nai"ve Taylor series evaluation */
     {
-      /* use binary splitting method */
-      mpfr_const_aux_log2(x, rnd_mode);
+      N=2;
+      do
+        {
+          oldN = N;
+          N = precx + _mpfr_ceil_log2 ((double) N);
+        }
+      while (N != oldN);
+      mpz_init (s); /* set to zero */
+      mpz_init (u);
+      mpz_init_set_ui (t, 1);
+
+      /* use log(2) = sum((6*k-1)/(2*k^2-k)/2^(2*k+1), k=1..infinity) */
+      mpz_mul_2exp (t, t, N-1);
+      for (k=1; k<N/2; k++)
+        {
+          mpz_div_2exp (t, t, 2);
+          mpz_mul_ui (u, t, 6*k-1);
+          mpz_fdiv_q_ui (u, u, k*(2*k-1));
+          mpz_add (s, s, u);
+        }
+
+      mpfr_set_z (x, s, rnd_mode);
+      MPFR_EXP(x) -= N;
+      mpz_clear (s);
+      mpz_clear (t);
+      mpz_clear (u);
     }
+  else /* use binary splitting method */
+    mpfr_const_aux_log2(x, rnd_mode);
 
   /* store computed value */
-  if (__mpfr_const_log2_prec==0) mpfr_init2(__mpfr_const_log2, precx);
-  else mpfr_set_prec(__mpfr_const_log2, precx);
-  mpfr_set(__mpfr_const_log2, x, rnd_mode);
-  __mpfr_const_log2_prec=precx;
-  __mpfr_const_log2_rnd=rnd_mode;
+  if (__mpfr_const_log2_prec == 0)
+    mpfr_init2 (__mpfr_const_log2, precx);
+  else
+    mpfr_set_prec (__mpfr_const_log2, precx);
+
+  mpfr_set (__mpfr_const_log2, x, rnd_mode);
+  __mpfr_const_log2_prec = precx;
+  __mpfr_const_log2_rnd = rnd_mode;
 }

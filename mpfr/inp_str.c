@@ -1,21 +1,22 @@
 /* mpf_inp_str(dest_float, stream, base) -- Input a number in base
    BASE from stdio stream STREAM and store the result in DEST_FLOAT.
 
-Copied from GMP, file mpf/inp_str.c.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+(Copied from GMP, file mpf/inp_str.c)
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -28,15 +29,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 size_t
-#if __STDC__
 mpfr_inp_str (mpfr_ptr rop, FILE *stream, int base, mp_rnd_t rnd_mode)
-#else
-mpfr_inp_str (rop, stream, base, rnd_mode)
-     mpfr_ptr rop;
-     FILE *stream;
-     int base;
-     mp_rnd_t rnd_mode;
-#endif
 {
   char *str;
   size_t alloc_size, str_size;
@@ -85,9 +78,10 @@ mpfr_inp_str (rop, stream, base, rnd_mode)
   str[str_size] = 0;
 
   retval = mpfr_set_str (rop, str, base, rnd_mode);
+  (*__gmp_free_func) (str, alloc_size);
+
   if (retval == -1)
     return 0;			/* error */
 
-  (*__gmp_free_func) (str, alloc_size);
   return str_size + nread;
 }

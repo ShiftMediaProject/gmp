@@ -1,20 +1,20 @@
 /* mpfr_add_ui -- add a floating-point number with a machine integer
 
-Copyright (C) 2000 Free Software Foundation.
+Copyright (C) 2000-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -26,29 +26,32 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void
-#if __STDC__
+int
 mpfr_add_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
-#else
-mpfr_add_ui (y, x, u, rnd_mode)
-     mpfr_ptr y;
-     mpfr_srcptr x;
-     unsigned long int u;
-     mp_rnd_t rnd_mode;
-#endif
 {
-  mpfr_t uu;
-  mp_limb_t up[1];
-  unsigned long cnt;
 
-  if (u) { /* if u=0, do nothing */
-    MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
-    count_leading_zeros(cnt, (mp_limb_t) u);
-    *up = (mp_limb_t) u << cnt;
-    MPFR_EXP(uu) = BITS_PER_MP_LIMB-cnt;
+  if (u)  /* if u=0, do nothing */
+    {
+      mpfr_t uu;
+      mp_limb_t up[1];
+      unsigned long cnt;
+      int inex_add, inex_cr;
 
-    mpfr_add(y, x, uu, rnd_mode);
-  }
+      MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
+      count_leading_zeros(cnt, (mp_limb_t) u);
+      *up = (mp_limb_t) u << cnt;
+      MPFR_EXP(uu) = BITS_PER_MP_LIMB-cnt;
+
+      /* Optimization note: Exponent operations may be removed
+	 if mpfr_add works even when uu is out-of-range. */
+      mpfr_save_emin_emax();
+      inex_add = mpfr_add(y, x, uu, rnd_mode);
+      mpfr_restore_emin_emax(); /* flags are restored too */
+      inex_cr = mpfr_check_range(y, rnd_mode);
+      if (inex_cr)
+        return inex_cr; /* underflow or overflow */
+      MPFR_RET(inex_add);
+    }
   else
-    mpfr_set (y, x, rnd_mode);
+    return mpfr_set (y, x, rnd_mode);
 }

@@ -1,20 +1,20 @@
 /* mpfr_set_default_prec, mpfr_get_default_prec -- set/get default precision
 
-Copyright (C) 1999, 2000 Free Software Foundation.
+Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -27,12 +27,7 @@ MA 02111-1307, USA. */
 mp_prec_t __mpfr_default_fp_bit_precision = 53;
 
 void
-#if __STDC__
 mpfr_set_default_prec (mp_prec_t prec_in_bits)
-#else
-mpfr_set_default_prec (prec_in_bits)
-     mp_prec_t prec_in_bits;
-#endif
 {
   __mpfr_default_fp_bit_precision = prec_in_bits;
 }

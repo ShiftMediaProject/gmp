@@ -5,21 +5,22 @@ Copyright (C) 1999, 2001 Free Software Foundation.
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -61,22 +62,18 @@ _mpfr_ceil_exp2 (double d)
   /* now exp = ceil(d) */
   x.d = 1.0;
   if (exp < -1022) exp = -1022;
+  else if (exp > 1024) {
+    fprintf (stderr, "Overflow in _mpfr_ceil_exp2\n");
+    exit (1);
+  }
   x.s.exp = 1023 + exp;
   return x.d;
 }
 
 void 
-#ifdef __STDC__
 mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
-#else
-mpfr_agm (r, op2, op1, rnd_mode)
-     mpfr_ptr r;
-     mpfr_srcptr op2;
-     mpfr_srcptr op1;
-     mp_rnd_t rnd_mode;
-#endif
 {
-  int s, go_on;
+  int s, go_on, compare;
   mp_prec_t p, q;
   double uo, vo;
   mp_limb_t *up, *vp, *tmpp, *tmpup, *tmpvp, *ap, *bp;
@@ -84,25 +81,36 @@ mpfr_agm (r, op2, op1, rnd_mode)
   TMP_DECL(marker1);
 
   /* If a or b is NaN, the result is NaN */
-  if (MPFR_IS_NAN(op1) || MPFR_IS_NAN(op2)) 
-    { MPFR_SET_NAN(r); return; }
+  if (MPFR_IS_NAN(op1) || MPFR_IS_NAN(op2))
+    {
+      MPFR_SET_NAN(r);
+      return;
+    }
 
   /* If a or b is negative (including -Infinity), the result is NaN */
   if ((MPFR_SIGN(op1) < 0) || (MPFR_SIGN(op2) < 0))
-    { MPFR_SET_NAN(r); return; }
+    {
+      MPFR_SET_NAN(r);
+      return;
+    }
 
   MPFR_CLEAR_NAN(r);
 
   /* If a or b is +Infinity, the result is +Infinity */
   if (MPFR_IS_INF(op1) || MPFR_IS_INF(op2))
-    { MPFR_SET_INF(r); MPFR_SET_SAME_SIGN(r, op1); return; }
+    {
+      MPFR_SET_INF(r);
+      MPFR_SET_SAME_SIGN(r, op1);
+      return;
+    }
 
   MPFR_CLEAR_INF(r);
   
   /* If a or b is 0, the result is 0 */
   if ((MPFR_NOTZERO(op1) && MPFR_NOTZERO(op2)) == 0)
-    { MPFR_SET_ZERO(r);
-    return;
+    {
+      MPFR_SET_ZERO(r);
+      return;
     }
 
  /* precision of the following calculus */
@@ -116,7 +124,6 @@ mpfr_agm (r, op2, op1, rnd_mode)
   s=(p-1)/BITS_PER_MP_LIMB+1;
   MPFR_INIT(ap, a, p, s);  
   MPFR_INIT(bp, b, p, s);
-
   {
   TMP_DECL(marker2);
   TMP_MARK(marker2);
@@ -128,13 +135,22 @@ mpfr_agm (r, op2, op1, rnd_mode)
 
 
 
-  /* b and a will be the 2 operands but I want b>= a */
-  if (mpfr_cmp(op1,op2) > 0) {
-    mpfr_set(b,op1,GMP_RNDN); mpfr_set(a,op2,GMP_RNDN);  
-  }
-  else {
-    mpfr_set(b,op2,GMP_RNDN); mpfr_set(a,op1,GMP_RNDN);  
-  }
+  /* b and a are the 2 operands but we want b >= a */
+  if ((compare = mpfr_cmp (op1,op2)) > 0)
+    {
+      mpfr_set (b,op1,GMP_RNDN);
+      mpfr_set (a,op2,GMP_RNDN);  
+    }
+  else if (compare == 0)
+    {
+      mpfr_set (r, op1, rnd_mode);
+      return;
+    }
+  else
+    {
+      mpfr_set (b,op2,GMP_RNDN);
+      mpfr_set (a,op1,GMP_RNDN);  
+    }
     
   vo=mpfr_get_d(b);
   uo=mpfr_get_d(a);
@@ -167,16 +183,11 @@ mpfr_agm (r, op2, op1, rnd_mode)
       mpfr_div_2exp(tmpv,tmp,1,GMP_RNDN);
       mpfr_set(u,tmpu,GMP_RNDN);
       mpfr_set(v,tmpv,GMP_RNDN);
-      if (mpfr_cmp(v,u)>=0)
-	eq=mpfr_cmp2(v,u);
+      if (mpfr_cmp(v,u) >= 0)
+	eq = mpfr_cmp2(v,u);
       else
-	eq=mpfr_cmp2(u,v);
+	eq = mpfr_cmp2(u,v);
     }
-
-    /*  printf("avant can_round %i bits faux\n v : ",err+3);  
-	mpfr_print_raw(v); printf("\n u : ");
-	mpfr_print_raw(u);printf("\n");*/ 
-    
 
     /* Roundability of the result */
       can_round=mpfr_can_round(v,p-err-3,GMP_RNDN,rnd_mode,q);
@@ -204,8 +215,6 @@ mpfr_agm (r, op2, op1, rnd_mode)
   /* Setting of the result */
 
     mpfr_set(r,v,rnd_mode);
-
-  TMP_FREE(marker2);
   }
 
   /* Let's clean */

@@ -1,33 +1,34 @@
 /* mpfr_const_pi -- compute Pi
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int mpfr_aux_pi _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
-int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
+static int mpfr_aux_pi _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+static int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
 
 #define A
 #define A1 1
@@ -42,14 +43,8 @@ int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
 #include "generic.c" 
 
 
-int
-#if __STDC__
+static int
 mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode) 
-#else
-mpfr_pi_machin3 (mylog, rnd_mode) 
-     mpfr_ptr mylog;
-     mp_rnd_t rnd_mode;
-#endif
 {
   int prec, logn, prec_x;
   int prec_i_want=MPFR_PREC(mylog);
@@ -158,13 +153,7 @@ int __mpfr_const_pi_prec=0; /* precision of stored value */
 mp_rnd_t __mpfr_const_pi_rnd; /* rounding mode of stored value */
 
 void 
-#if __STDC__
-mpfr_const_pi(mpfr_ptr x, mp_rnd_t rnd_mode) 
-#else
-mpfr_const_pi(x, rnd_mode) 
-     mpfr_ptr x;
-     mp_rnd_t rnd_mode;
-#endif
+mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode) 
 {
   int N, oldN, n, prec; mpz_t pi, num, den, d3, d2, tmp; mpfr_t y;
 

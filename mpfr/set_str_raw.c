@@ -1,31 +1,27 @@
 /* mpfr_set_str_raw -- set a floating-point number from a binary string
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef HAS_STRING_H
 #include <string.h>
-#else
-#include <strings.h>
-#endif
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -37,13 +33,7 @@ MA 02111-1307, USA. */
    to hold all the bits of str. */
 
 void
-#if __STDC__
 mpfr_set_str_raw (mpfr_ptr x, char *str)
-#else
-mpfr_set_str_raw (x, str)
-     mpfr_ptr x; 
-     char *str; 
-#endif
 {
   char *str2, *str0, negative = 0; 
   unsigned long j, l, k = 0, xsize, cnt, alloc; mp_limb_t *xp; 
@@ -52,7 +42,6 @@ mpfr_set_str_raw (x, str)
   xp = MPFR_MANT(x);
   xsize = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
   alloc = (strlen(str)+1) * sizeof(char);
-  str0 = str2 = (char *) (*__gmp_allocate_func) (alloc);
 
   if (*str == '-') { negative = 1; str++; }
   else if (*str == '+') str++;
@@ -60,7 +49,8 @@ mpfr_set_str_raw (x, str)
   if (*str == 'I') 
     { 
       MPFR_SET_INF(x);
-      if (MPFR_ISNEG(x) != negative) MPFR_CHANGE_SIGN(x);
+      if (MPFR_ISNEG(x) != negative)
+	MPFR_CHANGE_SIGN(x);
       return; 
     }
      
@@ -72,6 +62,8 @@ mpfr_set_str_raw (x, str)
 
   MPFR_CLEAR_FLAGS(x);
  
+  str0 = str2 = (char *) (*__gmp_allocate_func) (alloc);
+
   while (*str == '0') { str++; } 
 
   while (*str == '0' || *str == '1')

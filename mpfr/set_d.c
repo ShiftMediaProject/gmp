@@ -1,21 +1,21 @@
 /* mpfr_set_d, mpfr_get_d -- convert a multiple precision floating-point number
                              from/to a machine double precision float
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -28,12 +28,14 @@ MA 02111-1307, USA. */
 
 #if (BITS_PER_MP_LIMB==32)
 #define MPFR_LIMBS_PER_DOUBLE 2
-#elif (BITS_PER_MP_LIMB==64)
+#elif (BITS_PER_MP_LIMB >= 64)
 #define MPFR_LIMBS_PER_DOUBLE 1
+#elif (BITS_PER_MP_LIMB == 16)
+#define MPFR_LIMBS_PER_DOUBLE 4
 #endif
 
-int __mpfr_extract_double _PROTO ((mp_ptr, double, int));
-double __mpfr_scale2 _PROTO ((double, int));
+static int __mpfr_extract_double _PROTO ((mp_ptr, double, int));
+static double __mpfr_scale2 _PROTO ((double, int));
 
 #define NaN (0./0.) /* ensures a machine-independent NaN */
 #define Infp (1/0.)
@@ -49,15 +51,8 @@ double __mpfr_scale2 _PROTO ((double, int));
 #define _GMP_IEEE_FLOATS 0
 #endif
 
-int
-#if __STDC__
+static int
 __mpfr_extract_double (mp_ptr rp, double d, int e)
-#else
-__mpfr_extract_double (rp, d, e)
-     mp_ptr rp;
-     double d;
-     int e;
-#endif
      /* e=0 iff BITS_PER_MP_LIMB=32 and rp has only one limb */
 {
   long exp;
@@ -92,10 +87,10 @@ __mpfr_extract_double (rp, d, e)
     if (exp) 
       {
 #if BITS_PER_MP_LIMB == 64
-	manl = (((mp_limb_t) 1 << 63)
+	manl = ((MP_LIMB_T_ONE << 63)
 		| ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
 #else
-	manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
+	manh = (MP_LIMB_T_ONE << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
 	manl = x.s.manl << 11;      
 #endif
       }
@@ -174,14 +169,8 @@ __mpfr_extract_double (rp, d, e)
 
 /* End of part included from gmp-2.0.2 */
 /* Part included from gmp temporary releases */
-double
-#if __STDC__
+static double
 __mpfr_scale2 (double d, int exp)
-#else
-__mpfr_scale2 (d, exp)
-     double d;
-     int exp;
-#endif
 {
 #if _GMP_IEEE_FLOATS
   {
@@ -240,87 +229,101 @@ __mpfr_scale2 (d, exp)
 
 /* End of part included from gmp */
 
-void
-#if __STDC__
+int
 mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
-#else
-mpfr_set_d (r, d, rnd_mode)
-     mpfr_ptr r;
-     double d;
-     mp_rnd_t rnd_mode;
-#endif
 {
-  int signd, sizer; unsigned int cnt;
+  int signd, sizer, sizetmp, inexact;
+  unsigned int cnt;
+  mpfr_ptr tmp;
+  TMP_DECL(marker); 
 
+  TMP_MARK(marker);
   MPFR_CLEAR_FLAGS(r);
-  if (d == 0) {
-    union ieee_double_extract x;
-    MPFR_SET_ZERO(r);
-    /* set correct sign */
-    x.d = d;
-    if (((x.s.sig==1) && (MPFR_SIGN(r)>0)) 
-	|| ((x.s.sig==0) && (MPFR_SIGN(r)<0)))
-      MPFR_CHANGE_SIGN(r);
-    return;
+
+  if (d == 0)
+    {
+      union ieee_double_extract x;
+
+      MPFR_SET_ZERO(r);
+      /* set correct sign */
+      x.d = d;
+      if (((x.s.sig == 1) && (MPFR_SIGN(r) > 0)) 
+	  || ((x.s.sig == 0) && (MPFR_SIGN(r) < 0)))
+	MPFR_CHANGE_SIGN(r);
+      return 0; /* 0 is exact */
   }
-  else if (DOUBLE_ISNAN(d)) { MPFR_SET_NAN(r); return; }
+
+  else if (DOUBLE_ISNAN(d))
+    {
+      MPFR_SET_NAN(r);
+      return 1; /* a NaN is always inexact */
+    }
+
   else if (DOUBLE_ISINF(d))
     { 
       MPFR_SET_INF(r); 
       if ((d > 0 && (MPFR_SIGN(r) == -1)) || (d < 0 && (MPFR_SIGN(r) == 1)))
 	MPFR_CHANGE_SIGN(r); 
-      return;
+      return 0; /* infinity is exact */
     }
+
+  sizer = (MPFR_PREC(r) - 1) / BITS_PER_MP_LIMB + 1;
+
+  /* warning: don't use tmp=r here, even if sizer >= MPFR_LIMBS_PER_DOUBLE,
+     since PREC(r) may be different from PREC(tmp), and then both variables
+     would have same precision in the mpfr_set4 call below. */
+  tmp = (mpfr_ptr) TMP_ALLOC(sizeof(mpfr_t));
+  MPFR_MANT(tmp) = TMP_ALLOC(MPFR_LIMBS_PER_DOUBLE * BYTES_PER_MP_LIMB);
+  MPFR_PREC(tmp) = 53;
+  MPFR_SIZE(tmp) = MPFR_LIMBS_PER_DOUBLE;
+  sizetmp = MPFR_LIMBS_PER_DOUBLE;
 
   signd = (d < 0) ? -1 : 1;
   d = ABS (d);
-  sizer = (MPFR_PREC(r)-1)/BITS_PER_MP_LIMB + 1;
 
-  /* warning: __mpfr_extract_double requires at least two limbs */
-  if (sizer < MPFR_LIMBS_PER_DOUBLE)
-    MPFR_EXP(r) = __mpfr_extract_double (MPFR_MANT(r), d, 0);
-  else
-    MPFR_EXP(r) = __mpfr_extract_double (MPFR_MANT(r) + sizer - MPFR_LIMBS_PER_DOUBLE, d, 1);
+  MPFR_EXP(tmp) = __mpfr_extract_double (MPFR_MANT(tmp), d, 1);
+
+  count_leading_zeros(cnt, MPFR_MANT(tmp)[sizetmp - 1]);
+
+  if (cnt)
+    mpn_lshift (MPFR_MANT(tmp), MPFR_MANT(tmp), sizetmp, cnt);
   
-  if (sizer > MPFR_LIMBS_PER_DOUBLE)
-    MPN_ZERO(MPFR_MANT(r), sizer - MPFR_LIMBS_PER_DOUBLE); 
+  MPFR_EXP(tmp) -= cnt; 
 
-  count_leading_zeros(cnt, MPFR_MANT(r)[sizer-1]);
-  if (cnt) mpn_lshift(MPFR_MANT(r), MPFR_MANT(r), sizer, cnt); 
-  
-  MPFR_EXP(r) -= cnt; 
-  if (MPFR_SIGN(r)*signd<0) MPFR_CHANGE_SIGN(r);
+  /* tmp is exact since PREC(tmp)=53 */
+  inexact = mpfr_set4(r, tmp, rnd_mode, signd); 
 
-  mpfr_round(r, rnd_mode, MPFR_PREC(r)); 
-  return; 
+  TMP_FREE(marker); 
+  return inexact;
 }
 
 double
-#if __STDC__
-mpfr_get_d2(mpfr_srcptr src, long e)
-#else
-mpfr_get_d2(src, e)
-     mpfr_srcptr(src); 
-     long e; 
-#endif
+mpfr_get_d2 (mpfr_srcptr src, long e)
 {
   double res;
   mp_size_t size, i, n_limbs_to_use;
   mp_ptr qp;
   int negative;
 
-  if (MPFR_IS_NAN(src)) { 
+  if (MPFR_IS_NAN(src))
+    { 
 #ifdef DEBUG
-    printf("recognized NaN\n");
+      printf("recognized NaN\n");
 #endif
-    return NaN; }
-  if (MPFR_IS_INF(src)) { 
+      return NaN;
+    }
+
+  if (MPFR_IS_INF(src))
+    { 
 #ifdef DEBUG
-    printf("Found Inf.\n");
+      printf("Found Inf.\n");
 #endif
-    return (MPFR_SIGN(src) == 1 ? Infp : Infm); 
-  }
-  if (MPFR_NOTZERO(src)==0) return 0.0;
+      return (MPFR_SIGN(src) == 1 ? Infp : Infm); 
+    }
+
+  if (MPFR_NOTZERO(src) == 0)
+    return 0.0;
+
   size = 1+(MPFR_PREC(src)-1)/BITS_PER_MP_LIMB;
   qp = MPFR_MANT(src);
   negative = (MPFR_SIGN(src) < 0);
@@ -345,7 +348,7 @@ mpfr_get_d2(src, e)
 #else
 #if (BITS_PER_MP_LIMB == 64)
     mp_limb_t q;
-    q = qp[size - i] & (mp_limb_t) 4294967295;
+    q = qp[size - i] & CNST_LIMB(0xFFFFFFFF);
     res = res / MP_BASE_AS_DOUBLE + ((negative) ? -(double)q : q);
     q = qp[size - i] - q;
     res = res + ((negative) ? -(double)q : q);
@@ -358,13 +361,8 @@ mpfr_get_d2(src, e)
 }
 
 double 
-#if __STDC__
-mpfr_get_d(mpfr_srcptr src)
-#else
-mpfr_get_d(src)
-     mpfr_srcptr src; 
-#endif
+mpfr_get_d (mpfr_srcptr src)
 {
-  return mpfr_get_d2(src, MPFR_EXP(src));
+  return mpfr_get_d2 (src, MPFR_EXP(src));
 }
 

@@ -1,20 +1,20 @@
 /* mpfr_log -- natural logarithm of a floating-point number
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -42,16 +42,9 @@ MA 02111-1307, USA. */
 /* #define DEBUG */
 
 int
-#if __STDC__
 mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode) 
-#else
-mpfr_log (r, a, rnd_mode)
-     mpfr_ptr r;
-     mpfr_srcptr a;
-     mp_rnd_t rnd_mode;
-#endif
 {
-  int m, bool, size, cancel;
+  int m, bool, size, cancel, inexact = 0;
   mp_prec_t p, q;
   mpfr_t cst, rapport, agm, tmp1, tmp2, s, mm;
   mp_limb_t *cstp, *rapportp, *agmp, *tmp1p, *tmp2p, *sp, *mmp;
@@ -59,36 +52,55 @@ mpfr_log (r, a, rnd_mode)
   TMP_DECL(marker);
 
   /* If a is NaN, the result is NaN */
-  if (MPFR_IS_NAN(a)) {
-    MPFR_SET_NAN(r);
-    return 1;
-  }
+  if (MPFR_IS_NAN(a))
+    {
+      MPFR_SET_NAN(r);
+      return 1; /* NaN is inexact */
+    }
 
   MPFR_CLEAR_NAN(r);
 
   /* check for infinity before zero */
   if (MPFR_IS_INF(a))
     {
-      MPFR_SET_INF(r); 
-      if (MPFR_SIGN(r) > 0) MPFR_CHANGE_SIGN(r);
-      return 1; 
-    }
-
-  if (MPFR_IS_ZERO(a)) 
-    {
-      MPFR_SET_INF(r); 
-      if (MPFR_SIGN(r) < 0) MPFR_CHANGE_SIGN(r);
-      return 1; 
+      if (MPFR_SIGN(a) < 0) /* log(-Inf) = NaN */
+	{
+	  MPFR_SET_NAN(r);
+	  return 1;
+	}
+      else /* log(+Inf) = +Inf */
+	{
+	  MPFR_SET_INF(r);
+	  if (MPFR_SIGN(r) < 0)
+	    MPFR_CHANGE_SIGN(r);
+	  return 0;
+	}
     }
 
   /* Now we can clear the flags without damage even if r == a */
   MPFR_CLEAR_INF(r); 
 
+  if (MPFR_IS_ZERO(a)) 
+    {
+      MPFR_SET_INF(r); 
+      if (MPFR_SIGN(r) > 0)
+	MPFR_CHANGE_SIGN(r);
+      return 0; /* log(0) is an exact infinity */
+    }
+
+  /* If a is negative, the result is NaN */
+  if (MPFR_SIGN(a) < 0)
+    {
+      MPFR_SET_NAN(r);
+      return 1;
+    }
+
   /* If a is 1, the result is 0 */
-  if (mpfr_cmp_ui_2exp(a,1,0)==0){
-    MPFR_SET_ZERO(r);
-    return 0; /* only case where the result is exact */
-  }
+  if (mpfr_cmp_ui_2exp (a, 1, 0) == 0)
+    {
+      MPFR_SET_ZERO(r);
+      return 0; /* only "normal" case where the result is exact */
+    }
 
   q=MPFR_PREC(r);
   
@@ -149,7 +161,7 @@ mpfr_log (r, a, rnd_mode)
        4 ulps from the 4/s^2 second order term,
        plus the cancelled bits */
     if (mpfr_can_round (cst, p - cancel - 4, GMP_RNDN, rnd_mode, q) == 1) {
-      mpfr_set (r, cst, rnd_mode);
+      inexact = mpfr_set (r, cst, rnd_mode);
 #ifdef DEBUG
       printf("result="); mpfr_print_raw(r); putchar('\n');
 #endif
@@ -164,7 +176,7 @@ mpfr_log (r, a, rnd_mode)
     TMP_FREE(marker);
     
   }
-  return 1; /* result is inexact */
+  return inexact; /* result is inexact */
 }
 
 

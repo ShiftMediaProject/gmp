@@ -1,25 +1,23 @@
 /* mpfr_get_str -- output a floating-point number to a string
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
-
-/* #define DEBUG */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,18 +36,8 @@ MA 02111-1307, USA. */
   For op = 3.1416 we get str = "31416" and expptr=1.
  */
 char*
-#if __STDC__
 mpfr_get_str (char *str, mp_exp_t *expptr, int base, size_t n,
 		  mpfr_srcptr op, mp_rnd_t rnd_mode)
-#else
-mpfr_get_str (str, expptr, base, n, op, rnd_mode)
-     char *str;
-     mp_exp_t *expptr;
-     int base;
-     size_t n;
-     mpfr_srcptr op;
-     mp_rnd_t rnd_mode;
-#endif
 {
   double d;
   long e, q, div, p, err, prec, sh;
@@ -65,7 +53,7 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
     exit(1);
   }
   
-  neg = (MPFR_SIGN(op)<0) ? 1 : 0;
+  neg = MPFR_SIGN(op) < 0;
 
   if (MPFR_IS_INF(op)) { 
     if (str == NULL)
@@ -87,7 +75,7 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
     return str0; /* strlen(str0) = neg + n */
   }
 
-  count_leading_zeros(pow2, (mp_limb_t)base); 
+  count_leading_zeros(pow2, (mp_limb_t) base);
   pow2 = BITS_PER_MP_LIMB - pow2 - 1;
   if (base != (1<<pow2)) pow2=0; 
   /* if pow2 <> 0, then base = 2^pow2 */
@@ -100,11 +88,18 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
      i.e. f = 1 + floor(log(|op|)/log(base))
      = 1 + floor((log(|m|)+e*log(2))/log(base)) */
   /* f = 1 + (int) floor((log(d)/LOG2+(double)e)*LOG2/log((double)base)); */
-  d = ((double) e + (double) _mpfr_floor_log2(d))
+  /* when base = 2^pow2, then |op| < 2^(pow2*f)
+     i.e. e <= pow2*f and f = ceil(e/pow2) */
+  if (pow2)
+      f = ((e < 0) ? e : (e + pow2 - 1)) / pow2;
+  else
+    {
+      d = ((double) e + (double) _mpfr_floor_log2(d))
                       * __mp_bases[base].chars_per_bit_exactly;
-  /* warning: (int) d rounds towards 0 */
-  f = (int) d; /* f equals floor(d) if d >= 0 and ceil(d) if d < 0 */
-  if (f <= d) f++;
+      /* warning: (int) d rounds towards 0 */
+      f = (int) d; /* f equals floor(d) if d >= 0 and ceil(d) if d < 0 */
+      if (f <= d) f++;
+    }
   if (n==0) {
     /* performs exact rounding, i.e. returns y such that for GMP_RNDU
        for example, we have:       x*2^(e-p) <= y*base^(f-n)
@@ -112,19 +107,13 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
     n = (int) (__mp_bases[base].chars_per_bit_exactly * MPFR_PREC(op));
     if (n==0) n=1;
   }
-#ifdef DEBUG  
-  printf("f=%d n=%d MPFR_EXP(op)=%d MPFR_PREC(op)=%d\n", f, n, e, MPFR_PREC(op));
-#endif
   /* now the first n digits of the mantissa are obtained from
      rnd(op*base^(n-f)) */
   if (pow2) prec = n*pow2;
   else
     prec = 1 + (long) ((double) n / __mp_bases[base].chars_per_bit_exactly);
-#ifdef DEBUG
-  printf("prec=%d\n", prec);
-#endif
   err = 5;
-  q = prec+err;
+  q = prec + err;
   /* one has to use at least q bits */
   q = (((q-1)/BITS_PER_MP_LIMB)+1)*BITS_PER_MP_LIMB;
   mpfr_init2(a, q); mpfr_init2(b, q);
@@ -142,10 +131,13 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
       }
     }
 
-    if (pow2) {
-      if (div) mpfr_div_2exp(b, op, pow2*p, rnd_mode);
-      else mpfr_mul_2exp(b, op, pow2*p, rnd_mode);
-    } 
+    if (pow2)
+      {
+	if (div)
+	  mpfr_div_2exp (b, op, pow2*p, rnd_mode);
+	else
+	  mpfr_mul_2exp (b, op, pow2*p, rnd_mode);
+      }
     else {
        /* compute base^p with q bits and rounding towards zero */
        mpfr_set_prec(b, q);
@@ -158,17 +150,10 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
 	   mpfr_div(a, b, a, rnd_mode);
 	 }
 	 /* now a is an approximation by default of 1/base^(f-n) */
-#ifdef DEBUG
-	 printf("base^(n-f)=%1.20e\n", mpfr_get_d(a));
-#endif
 	 mpfr_mul(b, op, a, rnd_mode);
        }
     }
     if (neg) MPFR_CHANGE_SIGN(b); /* put b positive */
-#ifdef DEBUG
-    printf("p=%d b=%1.20e\n", p, mpfr_get_d(b));
-    printf("q=%d 2*prec+BITS_PER_MP_LIMB=%d\n", q, 2*prec+BITS_PER_MP_LIMB);
-#endif
     if (q>2*prec+BITS_PER_MP_LIMB) {
       /* if the intermediate precision exceeds twice that of the input,
 	 a worst-case for the division cannot occur */
@@ -185,7 +170,8 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
     case GMP_RNDD: rnd_mode=GMP_RNDU; break;
   }
 
-  if (ok) mpfr_round(b, rnd_mode, MPFR_EXP(b));
+  if (ok)
+    mpfr_round (b, rnd_mode, MPFR_EXP(b));
 
   prec=MPFR_EXP(b); /* may have changed due to rounding */
 
