@@ -18,12 +18,39 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-04-20  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (LIMB_HIGHBIT_TO_MASK): Use a compile-time constant
+	expression, rather than a configure test.
+	* acinclude.m4, configure.in (GMP_C_RIGHT_SHIFT): Remove, no longer
+	needed.
+	* tests/t-hightomask.c: New file.
+	* tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* macos/configure (parse_top_configure): Look for PACKAGE_NAME and
+	PACKAGE_VERSION now used by autoconf.
+	(what_objects): Only demand 9 object files, as for instance occurs in
+	the scanf directory.
+	(asm files): Transform labels L(foo) -> Lfoo.  Take func name from
+	PROLOGUE to support empty "EPILOGUE()".  Recognise and subsitute
+	register name "define()"s.
+	* macos/Makefile.in (CmnObjs): Add tal-notreent.o.
+
 2004-04-19  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_ROOTREM): New #define.
 	(speed_mpn_rootrem): Declare.
 	* tune/common.c (speed_mpn_rootrem): New function.
 	* tune/speed.c (routine): Add entry for mpn_rootrem.
+
+2004-04-16  Kevin Ryde  <kevin@swox.se>
+	
+	* doc/fdl.texi: Update from FSF, just fixing a couple of typos.
+
+	* macos/configure, macos/Makefile.in: Add printf and scanf directories.
+
+	* tests/mpz/t-gcd.c (check_data): New function, exercising K6
+	gcd_finda bug.
 
 2004-04-14  Kevin Ryde  <kevin@swox.se>
 
