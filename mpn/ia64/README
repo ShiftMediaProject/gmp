@@ -25,27 +25,45 @@ registers and then use setf.sig to move it to a fp register.
 
 
 ================================================================
-mpn_addmul_1
-	ldfp8
-	ldfp8
-	xma.l
-	xma.hu
-	xma.l
-	xma.hu
-	getf.sig
-	getf.sig
-	getf.sig
-	getf.sig
-	cmp.ltu
-	cmp.leu
-	add 1
-	add
-	cmp.ltu
-	cmp.leu
-	add 1
-	add
-	stf8
-	stf8
+mpn_addmul_1:
+
+  { .mfi
+		getf.sig
+		xma.l
+		cmp.leu
+} { .mfi
+		getf.sig
+		xma.hu
+		cmp.ltu
+		;;
+} { .mib
+		ldfp8
+		add 1
+		nop.b
+} { .mib
+		stf8
+		add
+		nop.b
+		;;
+} { .mfi
+		getf.sig
+		xma.l
+		cmp.leu
+} { .mfi
+		getf.sig
+		xma.hu
+		cmp.ltu
+		;;
+} { .mib
+		ldfp8
+		add 1
+		nop.b
+} { .mib
+		stf8
+		add
+		nop.b
+		;;
+} 
 
 2 limbs/20 instructions
 	   20 insn/max 6 insn/cycle:		3.3 cycles/2limb
@@ -54,32 +72,36 @@ mpn_addmul_1
 	   4 fpops/max 2 fpops/cycle:		2.0 cycles/2limb
 
 ================================================================
-mpn_mul_1
-	ldfp8
-	xma.l
-	xma.hu
-	xma.l
-	xma.hu
-	getf.sig
-	getf.sig
-	getf.sig
-	getf.sig
-	cmp.ltu
-	cmp.leu
-	add 1
-	add
-	cmp.ltu
-	cmp.leu
-	add 1
-	add
-	stf8
-	stf8
+mpn_submul_1:
 
-2 limbs/19 instructions
-	   19 insn/max 6 insn/cycle:		3.2 cycles/2limb
-	   7 memops/max 2 memops/cycle:		3.5 cycles/2limb
-	   8 intops/max 2 intops/cycle:		4.0 cycles/2limb
-	   4 fpops/max 2 fpops/cycle:		2.0 cycles/2limb
+Like mpn_addmul_1, but complement s2limb.  When s2limb is
+complemented, the low product limb becomes complement of true product.
+This should allow us to use the accumulation of xma.
+
+================================================================
+mpn_mul_1:
+
+  { .mfi	getf.sig	r14 = f34
+		xma.l		f34 = f32, f97, f0
+	   (p6) cmp.leu
+} { .mfi	getf.sig	r15 = f35
+		xma.hu		f35 = f32, f97, f0
+	   (p7) cmp.ltu
+		;;
+} { .mfi	ldf8		f32 = [r33], 8
+		nop.f
+	   (p6) add 1
+} { .mfi	stf8
+		nop.f
+	   (p7) add
+		;;
+}
+
+1 limb/10 instructions
+	   10 insn/max 6 insn/cycle:		1.67 cycles/limb
+	   4 memops/max 2 memops/cycle:		2.0 cycles/limb
+	   4 intops/max 2 intops/cycle:		2.0 cycles/limb
+	   2 fpops/max 2 fpops/cycle:		1.0 cycles/limb
 
 ================================================================
 mpn_mul_8
@@ -117,120 +139,17 @@ Loop:	ldf8		u0 = [r33], 8
 	getf.sig	l5 = lp5
 	getf.sig	l6 = lp6
 	getf.sig	l7 = lp7
-	getf.sig	h0 = hp0
-	getf.sig	h1 = hp1
-	getf.sig	h2 = hp2
-	getf.sig	h3 = hp3
-	getf.sig	h4 = hp4
-	getf.sig	h5 = hp5
-	getf.sig	h6 = hp6
-	getf.sig	h7 = hp7
-	add		l0, l0, h0
-	add		l1, l1, h1
-	add		l2, l2, h2
-	add		l3, l3, h3
-	add		l4, l4, h4
-	add		l5, l5, h5
-	add		l6, l6, h6
-	add		l7, l7, h7
-	setf.sig
-	setf.sig
-	setf.sig
-	setf.sig
-	setf.sig
-	setf.sig
-	setf.sig
-	setf.sig
-	st8/stf8	[r32] = xx, 8
+	add+add+cmp+cmp	l0, l0, h0
+	add+add+cmp+cmp	l1, l1, h1
+	add+add+cmp+cmp	l2, l2, h2
+	add+add+cmp+cmp	l3, l3, h3
+	add+add+cmp+cmp	l4, l4, h4
+	add+add+cmp+cmp	l5, l5, h5
+	add+add+cmp+cmp	l6, l6, h6
+	add+add+cmp+cmp	l7, l7, h7
+	st8		[r32] = xx, 8
 	br.cloop Loop
 ================================================================
-
-For mpn_mul_1, start by doing a series of 8 ldf8 and non-accumulating
-xma.l.  Then, with about 8 cycles skew, start doing accumulating
-xma.hu, taking the acc operand from the previous xma.l outputs.
-
-WRONG.  Ignores carry-out from high limb.
-
-
-       ldf8		f24 = [r33], 8	;;
-       ldf8		f25 = [r33], 8	;;
-       ldf8		f26 = [r33], 8	;;
-       ldf8		f27 = [r33], 8	;;
-       ldf8		f28 = [r33], 8	;;
-       ldf8		f29 = [r33], 8	;;
-       ldf8		f30 = [r33], 8	;;
-       ldf8		f31 = [r33], 8	;;
-
-       xma.l		 f7 = s2, f24, f0
-       ldf8		f32 = [r33], 8	;;
-       xma.l		 f8 = s2, f25, f0
-       ldf8		f33 = [r33], 8	;;
-       xma.l		 f9 = s2, f26, f0
-       ldf8		f34 = [r33], 8	;;
-       xma.l		f10 = s2, f27, f0
-       ldf8		f35 = [r33], 8	;;
-       xma.l		f11 = s2, f28, f0
-       ldf8		f36 = [r33], 8	;;
-       xma.l		f12 = s2, f29, f0
-       ldf8		f37 = [r33], 8	;;
-       xma.l		f13 = s2, f30, f0
-       ldf8		f38 = [r33], 8	;;
-       xma.l		f14 = s2, f31, f0
-       ldf8		f39 = [r33], 8	;;
-# will need another warmup phase here, after stf8 instruction have been added to the loop
-.Loop
-       xma.hu		f16 = s2, f24, f8
-       ldf8		f24 = [r33], 8
-       xma.l		 f8 = s2, f32, f0;;
-       xma.hu		f16 = s2, f25, f9
-       ldf8		f25 = [r33], 8
-       xma.l		 f9 = s2, f33, f0;;
-       xma.hu		f16 = s2, f26, f10
-       ldf8		f26 = [r33], 8
-       xma.l		f10 = s2, f34, f0;;
-       xma.hu		f16 = s2, f27, f11
-       ldf8		f27 = [r33], 8
-       xma.l		f11 = s2, f35, f0;;
-       xma.hu		f16 = s2, f28, f12
-       ldf8		f28 = [r33], 8
-       xma.l		f12 = s2, f36, f0;;
-       xma.hu		f16 = s2, f29, f13
-       ldf8		f29 = [r33], 8
-       xma.l		f13 = s2, f37, f0;;
-       xma.hu		f16 = s2, f30, f14
-       ldf8		f30 = [r33], 8
-       xma.l		f14 = s2, f38, f0;;
-       xma.hu		f16 = s2, f31, f15
-       ldf8		f31 = [r33], 8
-       xma.l		f15 = s2, f39, f0;;
-
-       xma.hu		f16 = s2, f32, f8
-       ldf8		f24 = [r33], 8
-       xma.l		 f8 = s2, f24, f0;;
-       xma.hu		f16 = s2, f33, f9
-       ldf8		f25 = [r33], 8
-       xma.l		 f9 = s2, f25, f0;;
-       xma.hu		f16 = s2, f34, f10
-       ldf8		f26 = [r33], 8
-       xma.l		f10 = s2, f26, f0;;
-       xma.hu		f16 = s2, f35, f11
-       ldf8		f27 = [r33], 8
-       xma.l		f11 = s2, f27, f0;;
-       xma.hu		f16 = s2, f36, f12
-       ldf8		f28 = [r33], 8
-       xma.l		f12 = s2, f28, f0;;
-       xma.hu		f16 = s2, f37, f13
-       ldf8		f29 = [r33], 8
-       xma.l		f13 = s2, f29, f0;;
-       xma.hu		f16 = s2, f38, f14
-       ldf8		f30 = [r33], 8
-       xma.l		f14 = s2, f30, f0;;
-       xma.hu		f16 = s2, f39, f15
-       ldf8		f31 = [r33], 8
-       xma.l		f15 = s2, f31, f0;;
-       br.cloop.dptk	.Loop
-
-
 
 mpn_lshift
 mpn_rshift

@@ -7,6 +7,17 @@ The cfp subdirectory is for systems utilizing the traditional Cray
 floating-point format, and the ieee subdirectory is for the newer
 systems that use the IEEE floating-point format.  
 
+There are several issues that reduces speed on Cray systems.  For
+systems with cfp floating point, the main obstacle is the forming of
+128-bit products.  For IEEE systems, adding, and in particular
+computing carry is the main issue.  There are no vectorizing
+unsigned-less-than instructions, and the sequence that implement that
+opetration is very long.
+
+Shifting is the only operation that s simple to make fast.  All Cray
+systems have a bitblt instructions (Vi Vj,Vj<Ak and Vi Vj,Vj>Ak) that
+should be really useful.
+
 For best speed for cfp systems, we need a mul_basecase, since that
 reduces the need for carry propagation to a minimum.  Depending on the
 size (vn) of the smaller of the two operands (V), we should split U and V
@@ -36,32 +47,7 @@ max allowed vn		65536
 number of multiplies	16
 peak cycles/limb	8
 
-(Each T90 CPU can accumulate two products per cycle.)
-
-
-The corresponding tables for ieee systems:
-
-U split in 2 32-bit parts
-V split according to the table:
-parts			4	5	6	7	8
-bits/part		16	13	11	10	8
-max allowed vn		32	256	1024	2048	8192
-number of multiplies	8	10	12	14	16
-
-U split in 3 22-bit parts
-V split according to the table:
-parts			3	4	5
-bits/part		22	16	13
-max allowed vn		512	32768	262144
-number of multiplies	9	12	15
-
-U split in 4 16-bit parts
-V split according to the table:
-parts			4
-bits/part		16
-max allowed vn		2097152
-number of multiplies	16
-
+(A T90 CPU can accumulate two products per cycle.)
 
 IDEA:
 * Rewrite mpn_add_n:
