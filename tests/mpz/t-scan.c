@@ -25,27 +25,6 @@ MA 02111-1307, USA. */
 #include "urandom.h"
 
 
-/* Twos complement, return borrow.  Same as mpn_sub_n(dst,zeros,src,size)
-   where zero contains size many 0 limbs. */
-
-mp_limb_t
-mpn_neg (mp_ptr dst, mp_srcptr src, mp_size_t size)
-{
-  mpn_com_n (dst, src, size);
-  return mpn_add_1 (dst, dst, size, 1) ^ 1;
-}
-
-void
-mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
-{
-  ASSERT (size >= 0);
-  MPN_NORMALIZE (p, size);
-  MPZ_REALLOC (z, size);
-  MPN_COPY (PTR(z), p, size);
-  SIZ(z) = size;
-}
-
-
 unsigned long
 refmpz_scan (mpz_srcptr z, unsigned long i, int sought)
 {
