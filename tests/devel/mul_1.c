@@ -104,8 +104,8 @@ refmpn_mul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
   j = -s1_size;
 
   /* Offset the base pointers to compensate for the negative indices.  */
-  s1_ptr -= j;
   res_ptr -= j;
+  s1_ptr -= j;
 
   cy_limb = 0;
   do
@@ -210,18 +210,27 @@ main (argc, argv)
       if (cyx != cyy || mpn_cmp (dx, dy, size+2) != 0
 	  || dx[size+1] != 0x12345678 || dx[0] != 0x87654321)
 	{
-#if ! (defined (PRINT) || defined (XPRINT))
-	  printf ("xlimb=%*lX\n", (int) (2 * sizeof(mp_limb_t)), xlimb);
-#endif
 #ifndef PRINT
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyx);
 	  mpn_print (dx+1, size);
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy);
 	  mpn_print (dy+1, size);
 #endif
-	  printf ("TEST NUMBER %d\n", test);
+	  printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "DIFF:");
+	  for (i = size; i != 0; i--)
+	    {
+	      mp_limb_t diff = dy[i] - dx[i];
+	      if (diff != 0)
+		printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), diff);
+	      else
+		printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
+	    }
+	  printf ("\nTEST NUMBER %d\n", test);
 	  abort();
 	}
+#endif
+#ifdef ONE
+      return 0;
 #endif
     }
 }

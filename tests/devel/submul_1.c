@@ -100,7 +100,7 @@ refmpn_submul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
   register mp_limb_t prod_high, prod_low;
   register mp_limb_t x;
 
-  /* The loop counter and index J goes from -SIZE to -1.  This way
+  /* The loop counter and index J goes from -S1_SIZE to -1.  This way
      the loop becomes faster.  */
   j = -s1_size;
 
@@ -221,9 +221,21 @@ main (argc, argv)
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy);
 	  mpn_print (dy+1, size);
 #endif
-	  printf ("TEST NUMBER %d\n", test);
+	  printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "DIFF:");
+	  for (i = size; i != 0; i--)
+	    {
+	      mp_limb_t diff = dy[i] - dx[i];
+	      if (diff != 0)
+		printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), diff);
+	      else
+		printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
+	    }
+	  printf ("\nTEST NUMBER %d\n", test);
 	  abort();
 	}
+#endif
+#ifdef ONE
+      return 0;
 #endif
     }
 }
