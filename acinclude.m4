@@ -1850,6 +1850,17 @@ main ()
               [Define if you have vsnprintf and it works properly.])
   fi
 fi
+case $gmp_cv_func_vsnprintf in
+  yes|probably) ;;
+  *)
+    AC_MSG_WARN([+----------------------------------------------------------])
+    AC_MSG_WARN([| WARNING WARNING WARNING])
+    AC_MSG_WARN([| Usable C library vsnprintf is not available.])
+    AC_MSG_WARN([| The following GMP functions will not be built:])
+    AC_MSG_WARN([| gmp_asprintf, gmp_snprintf, gmp_vasprintf, gmp_vsnprintf])
+    AC_MSG_WARN([+----------------------------------------------------------])
+    ;;
+esac
 ])
 
 
