@@ -237,6 +237,9 @@ MA 02111-1307, USA.
 /* Define if <stdarg.h> exists and works */
 #undef HAVE_STDARG
 
+/* Define if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
 /* Define if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
@@ -275,6 +278,9 @@ MA 02111-1307, USA.
 
 /* Define if you have the <sys/resource.h> header file. */
 #undef HAVE_SYS_RESOURCE_H
+
+/* Define if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
 
 /* Define if you have the <sys/sysctl.h> header file. */
 #undef HAVE_SYS_SYSCTL_H
