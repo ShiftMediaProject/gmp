@@ -2096,9 +2096,9 @@ cat >conftest.c <<\EOF
   double  x;
   char    after[8];
 } foo = {
-  { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF },
+  { '\x01', '\x23', '\x45', '\x67', '\x89', '\xAB', '\xCD', '\xEF' },
   -123456789.0,
-  { 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10 },
+  { '\xFE', '\xDC', '\xBA', '\x98', '\x76', '\x54', '\x32', '\x10' },
 };]
 EOF
 gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC 2>&1"
