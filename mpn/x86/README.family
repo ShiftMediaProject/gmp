@@ -107,6 +107,19 @@ an assembler might perform, hence explicit .bytes are used where necessary.
 
 
 
+SHLD/SHRD INSTRUCTIONS
+
+The %cl count forms of double shift instructions like "shldl %cl,%eax,%ebx"
+must be written "shldl %eax,%ebx" for some assemblers.  gas takes either,
+gcc generates %cl for gas and NeXT (which might be gas), and omits %cl
+elsewhere.
+
+For GMP an autoconf test is used to determine whether %cl should be used and
+the macros shldl, shrdl, shldw and shrdw in mpn/x86/x86-defs.m4 then pass
+through or omit %cl as necessary.  See comments with those macros for usage.
+
+
+
 DIRECTION FLAG
 
 The x86 calling conventions say that the direction flag should be clear at
