@@ -141,7 +141,7 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
       step = MIN (usize, vsize);
       if (step != 0)
         {
-          count += mpn_hamdist (up, vp, vsize);
+          count += mpn_hamdist (up, vp, step);
           usize -= step;
           vsize -= step;
           up += step;
@@ -152,7 +152,7 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
       if (usize != 0)
         {
         remaining:
-          count += usize * BITS_PER_MP_LIMB - mpn_popcount (up, usize);
+          count += mpn_popcount (up, usize);
         }
       else if (vsize != 0)
         {
