@@ -20,23 +20,24 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 Changes between MP version 3.1.1 and 4.0
 
 * Bug fixes.
-* Still upwardly binary compatible with 3.x versions.
+* Speed improvements.
+* Upwardly binary compatible with 3.x versions.
 * New CPU support: IA-64, Pentium 4.
 * Improved CPU support: 21264, Cray vector systems.
-* Support for the MIPS ABIs: o32, n32, 64.
+* Support for all MIPS ABIs: o32, n32, 64.
 * New systems supported: Darwin, SCO, Windows DLLs.
 * New divide-and-conquer square root algorithm.
 * New algorithms chapter in the manual.
 * New reentrant malloc temporary memory method.
-* New C++ class interface by Gerardo Ballabio (preliminary).
+* New C++ class interface by Gerardo Ballabio (beta).
 * Revamped configure, featuring ABI selection.
-* Updated mpfr (floating-point function set).
 * Speed improvements for mpz_powm and mpz_powm_ui (mainly affecting small
   operands).
+* mpz_perfect_power_p now properly recognizes 0, 1, and negative perfect
+  powers.
+* mpz_hamdist now supports negative operands.
 * Float input and output uses locale specific decimal point where available.
 * New gmp_printf, gmp_scanf and related functions.
-* New integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_init2, mpz_lcm_ui,
-  mpz_realloc2.
 * New division functions: mpz_cdiv_q_2exp, mpz_cdiv_r_2exp, mpz_divexact_ui.
 * New mpz_kronecker function, and mpz_jacobi accepts non-positive denominators.
 * New divisibility tests: mpz_divisible_p, mpz_divisible_ui_p,
@@ -44,21 +45,21 @@ Changes between MP version 3.1.1 and 4.0
   mpz_congruent_2exp_p.
 * New Fibonacci function: mpz_fib2_ui.
 * New Lucas number functions: mpz_lucnum_ui, mpz_lucnum2_ui.
-* New mpz_hamdist support for negative operands.
-* mpz_perfect_power_p now properly recognizes 0, 1, and negative perfect
-  powers.
-* New rational functions: mpq_abs, mpq_cmp_si, mpq_div_2exp, mpq_mul_2exp,
-  mpq_set_f.
+* New functions for importing/exporting byte arrays: mpz_import_bytes,
+  mpz_export_bytes.
+* Other new integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_init2, mpz_lcm_ui,
+  mpz_realloc2, mpz_get_d_2exp.
 * New rational I/O: mpq_get_str, mpq_inp_str, mpq_out_str, mpq_set_str.
-* New float functions: mpf_cmp_d, mpf_get_default_prec, mpf_get_si, mpf_get_ui.
+* Other new rational functions: mpq_abs, mpq_cmp_si, mpq_div_2exp,
+  mpq_mul_2exp, mpq_set_f.
 * New float tests: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
   mpf_fits_sshort_p, mpf_fits_uint_p, mpf_fits_ulong_p, mpf_fits_ushort_p.
+* Other new float functions: mpf_cmp_d, mpf_get_default_prec, mpf_get_si,
+  mpf_get_ui, mpf_get_d_2exp.
 * New random functions: gmp_randinit_default, gmp_randinit_lc_2exp_size.
 * New demo expression string parser (see demos/expr).
 * New preliminary perl interface (see demos/perl).
-* More tuned algorithm thresholds.
-* The semi-internal _mpz_realloc now zero numbers that doesn't fit when
-  decreasing allocation.  Previously, invalid numbers were created.
+* Tuned algorithm thresholds for many more CPUs.
 
 Changes between MP version 3.1 and 3.1.1
 
