@@ -873,7 +873,11 @@ case ${target} in
   sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
     SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
   hppa2*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
+    if test -n "$CC64"; then
+      SPEED_CYCLECOUNTER_OBJ=hppa2.lo
+    else
+      SPEED_CYCLECOUNTER_OBJ=hppa.lo
+    fi;;
   hppa*-*-*)
     SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
   ia64*-*-*)
