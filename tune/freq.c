@@ -65,13 +65,23 @@ MA 02111-1307, USA. */
 #include "speed.h"
 
 
+#define HELP(str)                       \
+  if (help)                             \
+    {                                   \
+      printf ("    - %s\n", str);       \
+      return 0;                         \
+    }
+
+
 /* GMP_CPU_FREQUENCY environment variable.  Should be in Hertz and can be
    floating point, for example "450e6". */
-int
-speed_cpu_frequency_environment (void)
+static int
+freq_environment (int help)
 {
   char  *e;
- 
+
+  HELP ("environment variable GMP_CPU_FREQUENCY (in Hertz)");
+
   e = getenv ("GMP_CPU_FREQUENCY");
   if (e == NULL)
     return 0;
@@ -86,42 +96,16 @@ speed_cpu_frequency_environment (void)
 }
 
 
-/* sysctl() and sysctlbyname() for BSD flavours.  The "sysctl -a" command
-   prints everything available.
-
-   FreeBSD 2.2.8 i386 - machdep.i586_freq is in Hertz.
-
-   FreeBSD 3.3 i368 - machdep.tsc_freq is in Hertz.  There's no obvious
-       define for tsc_freq in sysctl.h, but sysctlbyname works fine.
-
-   FreeBSD 4.1 and NetBSD 1.4 alpha - hw.model string gives "Digital AlphaPC
-       164LX 599 MHz".  NetBSD 1.4 doesn't have sysctlbyname, so sysctl() is
-       used.
-
-   Darwin 1.3 powerpc - hw.cpufrequency is in hertz, but for some reason
-       only seems to be available from sysctl(), not sysctlbyname().
-
-   GNU/Linux with glibc 2.2 has a sysctl call, but it doesn't give a cpu
-       frequency as such, not in kernel 2.2 at least.  */
-
-#if HAVE_SYSCTLBYNAME
-#define HAVE_SPEED_CPU_FREQUENCY_SYSCTLBYNAME 1
-int
-speed_cpu_frequency_sysctlbyname (void)
+/* i386 FreeBSD 2.2.8 sysctlbyname machdep.i586_freq is in Hertz.
+   There's no obvious defines available to get this from plain sysctl.  */
+static int
+freq_sysctlbyname_i586_freq (int help)
 {
+#if HAVE_SYSCTLBYNAME
   unsigned  val;
   size_t    size;
 
-  size = sizeof(val);
-  if (sysctlbyname ("machdep.tsc_freq", &val, &size, NULL, 0) == 0
-      && size == sizeof(val))
-    {
-      if (speed_option_verbose)
-        printf ("Using sysctlbyname() machdep.tsc_freq %u for cycle time %.3g\n",
-                val, speed_cycletime);
-      speed_cycletime = 1.0 / (double) val;
-      return 1;
-    }
+  HELP ("sysctlbyname() machdep.i586_freq");
 
   size = sizeof(val);
   if (sysctlbyname ("machdep.i586_freq", &val, &size, NULL, 0) == 0
@@ -133,80 +117,115 @@ speed_cpu_frequency_sysctlbyname (void)
       speed_cycletime = 1.0 / (double) val;
       return 1;
     }
-
+#endif
   return 0;
 }
-#endif
 
-#if HAVE_SYSCTL
-#define HAVE_SPEED_CPU_FREQUENCY_SYSCTL 1
-int
-speed_cpu_frequency_sysctl (void)
+
+/* i368 FreeBSD 3.3 sysctlbyname machdep.tsc_freq is in Hertz.
+   There's no obvious defines to get this from plain sysctl.  */
+
+static int
+freq_sysctlbyname_tsc_freq (int help)
 {
-#if defined (CTL_HW) && defined (HW_CPU_FREQ)
-  {
-    int       mib[2];
-    unsigned  val;
-    size_t    size;
+#if HAVE_SYSCTLBYNAME
+  unsigned  val;
+  size_t    size;
 
-    mib[0] = CTL_HW;
-    mib[1] = HW_CPU_FREQ;
-    size = sizeof(val);
-    if (sysctl (mib, 2, &val, &size, NULL, 0) == 0)
-      {
-        if (speed_option_verbose)
-          printf ("Using sysctl() hw.cpufrequency %u for cycle time %.3g\n",
-                  val, speed_cycletime);
-        speed_cycletime = 1.0 / (double) val;
-        return 1;
-      }
-  }
+  HELP ("sysctlbyname() machdep.tsc_freq");
+
+  size = sizeof(val);
+  if (sysctlbyname ("machdep.tsc_freq", &val, &size, NULL, 0) == 0
+      && size == sizeof(val))
+    {
+      if (speed_option_verbose)
+        printf ("Using sysctlbyname() machdep.tsc_freq %u for cycle time %.3g\n",
+                val, speed_cycletime);
+      speed_cycletime = 1.0 / (double) val;
+      return 1;
+    }
 #endif
-
-#if defined (CTL_HW) && defined (HW_MODEL)
-  {
-    int       mib[2];
-    char      str[128];
-    unsigned  val;
-    size_t    size;
-
-    mib[0] = CTL_HW;
-    mib[1] = HW_MODEL;
-    size = sizeof(str);
-    if (sysctl (mib, 2, str, &size, NULL, 0) == 0)
-      {
-        char  *p = &str[size-1];
-        int   i;
-
-        /* find the second last space */
-        for (i = 0; i < 2; i++)
-          {
-            for (;;)
-              {
-                if (p <= str)
-                  goto hw_model_fail;
-                p--;
-                if (*p == ' ')
-                  break;
-              }
-          }
-
-        if (sscanf (p, "%u MHz", &val) != 1)
-          goto hw_model_fail;
-
-        if (speed_option_verbose)
-          printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
-                  val, speed_cycletime);
-        speed_cycletime = 1e-6 / (double) val;
-        return 1;
-      }
-  }
- hw_model_fail:
-#endif
-
   return 0;
 }
+
+
+/* Apple powerpc Darwin 1.3 sysctl hw.cpufrequency is in hertz.  For some
+   reason only seems to be available from sysctl(), not sysctlbyname().  */
+
+static int
+freq_sysctl_hw_cpufrequency (int help)
+{
+#if HAVE_SYSCTL && defined (CTL_HW) && defined (HW_CPU_FREQ)
+  int       mib[2];
+  unsigned  val;
+  size_t    size;
+
+  HELP ("sysctl() hw.cpufrequency");
+
+  mib[0] = CTL_HW;
+  mib[1] = HW_CPU_FREQ;
+  size = sizeof(val);
+  if (sysctl (mib, 2, &val, &size, NULL, 0) == 0)
+    {
+      if (speed_option_verbose)
+        printf ("Using sysctl() hw.cpufrequency %u for cycle time %.3g\n",
+                val, speed_cycletime);
+      speed_cycletime = 1.0 / (double) val;
+      return 1;
+    }
 #endif
+  return 0;
+}
+
+
+/* Alpha FreeBSD 4.1 and NetBSD 1.4 sysctl- hw.model string gives "Digital
+   AlphaPC 164LX 599 MHz".  NetBSD 1.4 doesn't seem to have sysctlbyname, so
+   sysctl() is used.  */
+
+static int
+freq_sysctl_hw_model (int help)
+{
+#if HAVE_SYSCTL && defined (CTL_HW) && defined (HW_MODEL)
+  int       mib[2];
+  char      str[128];
+  unsigned  val;
+  size_t    size;
+  char  *p;
+  int   i;
+
+  HELP ("sysctl() hw.model");
+
+  mib[0] = CTL_HW;
+  mib[1] = HW_MODEL;
+  size = sizeof(str);
+  if (sysctl (mib, 2, str, &size, NULL, 0) == 0)
+    {
+      /* find the second last space */
+      p = &str[size-1];
+      for (i = 0; i < 2; i++)
+        {
+          for (;;)
+            {
+              if (p <= str)
+                return 0;
+              p--;
+              if (*p == ' ')
+                break;
+            }
+        }
+
+      if (sscanf (p, "%u MHz", &val) != 1)
+        return 0;
+
+      if (speed_option_verbose)
+        printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
+                val, speed_cycletime);
+      speed_cycletime = 1e-6 / (double) val;
+      return 1;
+    }
+#endif
+  return 0;
+}
 
 
 /* /proc/cpuinfo for linux kernel.
@@ -226,13 +245,15 @@ speed_cpu_frequency_sysctl (void)
                  "BogoMIPS" seems near enough.
   */
 
-int
-speed_cpu_frequency_proc_cpuinfo (void)
+static int
+freq_proc_cpuinfo (int help)
 {
   FILE    *fp;
   char    buf[128];
   double  val;
   int     ret = 0;
+
+  HELP ("linux kernel /proc/cpuinfo file, cpu MHz or bogomips");
 
   if ((fp = fopen ("/proc/cpuinfo", "r")) != NULL)
     {
@@ -272,17 +293,17 @@ speed_cpu_frequency_proc_cpuinfo (void)
 
 
 /* /bin/sysinfo for SunOS 4.
-   It prints a line like: cpu0 is a "75 MHz TI,TMS390Z55" CPU */
-
-#if HAVE_POPEN
-#define HAVE_SPEED_CPU_FREQUENCY_SUNOS_SYSINFO 1
-int
-speed_cpu_frequency_sunos_sysinfo (void)
+   Prints a line like: cpu0 is a "75 MHz TI,TMS390Z55" CPU */
+static int
+freq_sunos_sysinfo (int help)
 {
+  int     ret = 0;
+#if HAVE_POPEN
   FILE    *fp;
   char    buf[128];
   double  val;
-  int     ret = 0;
+
+  HELP ("SunOS /bin/sysinfo program output, cpu0");
 
   /* Error messages are sent to /dev/null in case /bin/sysinfo doesn't
      exist.  The brackets are necessary for some shells. */
@@ -301,24 +322,23 @@ speed_cpu_frequency_sunos_sysinfo (void)
         }
       pclose (fp);
     }
+#endif
   return ret;
 }
-#endif
 
 
 /* "/etc/hw -r cpu" for SCO OpenUnix 8, printing a line like
-	The speed of the CPU is approximately 450Mhz
-*/
-
-#if HAVE_POPEN
-#define HAVE_SPEED_CPU_FREQUENCY_SCO_ETCHW 1
-int
-speed_cpu_frequency_sco_etchw (void)
+	The speed of the CPU is approximately 450Mhz  */
+static int
+freq_sco_etchw (int help)
 {
+  int     ret = 0;
+#if HAVE_POPEN
   FILE    *fp;
   char    buf[128];
   double  val;
-  int     ret = 0;
+
+  HELP ("SCO /etc/hw program output");
 
   /* Error messages are sent to /dev/null in case /etc/hw doesn't exist.
      The brackets are necessary for some shells. */
@@ -326,7 +346,8 @@ speed_cpu_frequency_sco_etchw (void)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
-          if (sscanf (buf, " The speed of the CPU is approximately %lfMhz", &val) == 1)
+          if (sscanf (buf, " The speed of the CPU is approximately %lfMhz",
+                      &val) == 1)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
@@ -338,23 +359,24 @@ speed_cpu_frequency_sco_etchw (void)
         }
       pclose (fp);
     }
+#endif
   return ret;
 }
-#endif
 
 
 /* "hinv -c processor" for IRIX.
    The first line printed is for instance "2 195 MHZ IP27 Processors".  */
-
-#if HAVE_POPEN
-#define HAVE_SPEED_CPU_FREQUENCY_IRIX_HINV 1
-int
-speed_cpu_frequency_irix_hinv (void)
+static int
+freq_irix_hinv (int help)
 {
+  int     ret = 0;
+#if HAVE_POPEN
   FILE    *fp;
   char    buf[128];
   double  val;
-  int     nproc, ret = 0;
+  int     nproc;
+
+  HELP ("IRIX \"hinv -c processor\" output");
 
   /* Error messages are sent to /dev/null in case hinv doesn't exist.  The
      brackets are necessary for some shells. */
@@ -373,9 +395,9 @@ speed_cpu_frequency_irix_hinv (void)
         }
       pclose (fp);
     }
+#endif
   return ret;
 }
-#endif
 
 
 /* FreeBSD on i386 gives a line like the following at bootup, and which can
@@ -391,13 +413,15 @@ speed_cpu_frequency_irix_hinv (void)
    latter prints the current system message buffer, which is a limited size
    and can wrap around if the system is up for a long time.  */
 
-int
-speed_cpu_frequency_bsd_dmesg (void)
+static int
+freq_bsd_dmesg (int help)
 {
   FILE    *fp;
   char    buf[256], *p;
   double  val;
   int     ret = 0;
+
+  HELP ("BSD /var/run/dmesg.boot file");
 
   if ((fp = fopen ("/var/run/dmesg.boot", "r")) != NULL)
     {
@@ -427,16 +451,17 @@ speed_cpu_frequency_bsd_dmesg (void)
 /* processor_info() for Solaris.  "psrinfo" is the command-line interface to
    this.  "prtconf -vp" gives similar information.
 
-   Darwin has a processor_info, but in a different style.  It doesn't have
-   <sys/processor.h> so we can differentiate it on that basis.  */
+   Apple Darwin has a processor_info, but in an incompatible style.  It
+   doesn't have <sys/processor.h>, so test for that.  */
 
-#if HAVE_PROCESSOR_INFO && HAVE_SYS_PROCESSOR_H
-#define HAVE_SPEED_CPU_FREQUENCY_PROCESSOR_INFO 1
-int
-speed_cpu_frequency_processor_info (void)
+static int
+freq_processor_info (int help)
 {
+#if HAVE_PROCESSOR_INFO && HAVE_SYS_PROCESSOR_H
   processor_info_t  p;
   int  i, n, mhz = 0;
+
+  HELP ("processor_info() pi_clock");
 
   n = sysconf (_SC_NPROCESSORS_CONF);
   for (i = 0; i < n; i++)
@@ -449,7 +474,7 @@ speed_cpu_frequency_processor_info (void)
       if (mhz != 0 && p.pi_clock != mhz)
         {
           fprintf (stderr,
-                   "speed_cpu_frequency_processor_info(): There's more than one CPU and they have different clock speeds\n");
+                   "freq_processor_info(): There's more than one CPU and they have different clock speeds\n");
           return 0;
         }
 
@@ -461,20 +486,19 @@ speed_cpu_frequency_processor_info (void)
   if (speed_option_verbose)
     printf ("Using processor_info() %d mhz for cycle time %.3g\n",
             mhz, speed_cycletime);
-
   return 1;
-}
+
+#else
+  return 0;
 #endif
+}
 
-
-#if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
 
 /* The cycle counter is sampled on the same side of gettimeofday for greater
    accuracy.  The return value is a cycle time period in seconds.  */
-
-#define HAVE_SPEED_CPU_FREQUENCY_MEASURE 1
-double
-speed_cpu_frequency_measure_one (void)
+#if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
+static double
+freq_measure_one (void)
 {
   struct timeval  st, et;
   unsigned        sc[2], ec[2];
@@ -483,7 +507,7 @@ speed_cpu_frequency_measure_one (void)
 
   gettimeofday (&st, NULL);
   speed_cyclecounter (sc);
-  
+
   for (;;)
     {
       gettimeofday (&et, NULL);
@@ -496,15 +520,18 @@ speed_cpu_frequency_measure_one (void)
 
   dc = speed_cyclecounter_diff (ec, sc);
   if (speed_option_verbose >= 2)
-    printf ("speed_cpu_frequency_measure_one() dc=%.1f dt=%ld\n", dc, dt);
+    printf ("freq_measure_one() dc=%.1f dt=%ld\n", dc, dt);
   return dt * 1e-6 / dc;
 }
+#endif
+
+static int
+freq_measure (int help)
+{
+#if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
 
 /* MEASURE_MATCH is how many readings within MEASURE_TOLERANCE of each other
    are required.  This must be at least 2.  */
-int
-speed_cpu_frequency_measure (void)
-{
 #define MEASURE_MAX_ATTEMPTS   20
 #define MEASURE_TOLERANCE      1.005  /* 0.5% */
 #define MEASURE_MATCH          3
@@ -517,11 +544,13 @@ speed_cpu_frequency_measure (void)
   if (! cycles_works_p ())
     return 0;
 
+  HELP ("cycle counter measured with microsecond gettimeofday()");
+
   for (i = 0; i < numberof (t); i++)
     {
-      t[i] = speed_cpu_frequency_measure_one ();
+      t[i] = freq_measure_one ();
       if (speed_option_verbose >= 2)
-        printf ("speed_cpu_frequency_measure() t[%d] is %.6g\n", i, t[i]);
+        printf ("freq_measure() t[%d] is %.6g\n", i, t[i]);
 
       qsort (t, i+1, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
       if (speed_option_verbose >= 3)
@@ -541,9 +570,9 @@ speed_cpu_frequency_measure (void)
             }
         }
     }
+#endif
   return 0;
 }
-#endif
 
 
 /* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
@@ -554,59 +583,29 @@ speed_cpu_frequency_measure (void)
    are noted.  The measuring is last since it's time consuming, and rather
    wasteful of cpu.  */
 
-const struct {
-  int         (*fun) _PROTO ((void));
-  const char  *description;
+static int
+freq_all (int help)
+{
+  return
+    /* This should be first, so an environment variable can override
+       anything the system gives. */
+    freq_environment (help)
 
-} speed_cpu_frequency_table[] = {
+    || freq_sysctl_hw_model (help)
+    || freq_sysctl_hw_cpufrequency (help)
+    || freq_sysctlbyname_i586_freq (help)
+    || freq_sysctlbyname_tsc_freq (help)
 
-  /* This should be first, so an environment variable can override anything
-     the system gives. */
-  { speed_cpu_frequency_environment,
-    "environment variable GMP_CPU_FREQUENCY (in Hertz)" },
+    /* SCO openunix 8 puts a dummy pi_clock==16 in processor_info, so be
+       sure to check /etc/hw before that function. */
+    || freq_sco_etchw (help)
 
-#if HAVE_SPEED_CPU_FREQUENCY_SYSCTL
-  { speed_cpu_frequency_sysctl,
-    "sysctl() hw.model" },
-#endif
-
-#if HAVE_SPEED_CPU_FREQUENCY_SYSCTLBYNAME
-  { speed_cpu_frequency_sysctlbyname,
-    "sysctlbyname() machdep.tsc_freq or machdep.i586_freq" },
-#endif
-
-  /* SCO openunix 8 puts a dummy pi_clock==16 in processor_info, so be sure
-     to check /etc/hw before that function. */
-#if HAVE_SPEED_CPU_FREQUENCY_SCO_ETCHW
-  { speed_cpu_frequency_sco_etchw,
-    "SCO /etc/hw program output" },
-#endif
-
-#if HAVE_SPEED_CPU_FREQUENCY_PROCESSOR_INFO
-  { speed_cpu_frequency_processor_info,
-    "processor_info() pi_clock" },
-#endif
-
-  { speed_cpu_frequency_proc_cpuinfo,
-    "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
-
-  { speed_cpu_frequency_bsd_dmesg,
-    "BSD /var/run/dmesg.boot file" },
-
-#if HAVE_SPEED_CPU_FREQUENCY_IRIX_HINV
-  { speed_cpu_frequency_irix_hinv,
-    "IRIX \"hinv -c processor\" output" },
-#endif
-
-#if HAVE_SPEED_CPU_FREQUENCY_SUNOS_SYSINFO
-  { speed_cpu_frequency_sunos_sysinfo,
-    "SunOS /bin/sysinfo program output, cpu0" },
-#endif
-
-#if HAVE_SPEED_CPU_FREQUENCY_MEASURE
-  { speed_cpu_frequency_measure,
-    "cycle counter measured with microsecond gettimeofday()" },
-#endif
+    || freq_processor_info (help)
+    || freq_proc_cpuinfo (help)
+    || freq_bsd_dmesg (help)
+    || freq_irix_hinv (help)
+    || freq_sunos_sysinfo (help)
+    || freq_measure (help);
 };
 
 
@@ -614,15 +613,13 @@ void
 speed_cycletime_init (void)
 {
   static int  attempted = 0;
-  int  i;
 
   if (attempted)
     return;
   attempted = 1;
 
-  for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
-    if ((*speed_cpu_frequency_table[i].fun)())
-      return;
+  if (freq_all (0))
+    return;
 
   if (speed_option_verbose)
     printf ("CPU frequency couldn't be determined\n");
@@ -632,12 +629,10 @@ speed_cycletime_init (void)
 void
 speed_cycletime_fail (const char *str)
 {
-  int  i;
   fprintf (stderr, "Measuring with: %s\n", speed_time_string);
   fprintf (stderr, "%s,\n", str);
   fprintf (stderr, "but none of the following are available,\n");
-  for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
-    fprintf (stderr, "    - %s\n", speed_cpu_frequency_table[i].description);
+  freq_all (1);
   abort ();
 }
 
