@@ -111,7 +111,7 @@ double speed_measure _PROTO ((speed_function_t fun, struct speed_params *s));
 
 /* Prototypes for speed measuring routines */
 
-double speed_back_to_back (struct speed_params *s);
+double speed_back_to_back _PROTO ((struct speed_params *s));
 double speed_count_leading_zeros _PROTO ((struct speed_params *s));
 double speed_count_trailing_zeros _PROTO ((struct speed_params *s));
 double speed_find_a _PROTO ((struct speed_params *s));
@@ -253,8 +253,8 @@ double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));
 double speed_noop_wxys _PROTO ((struct speed_params *s));
 
-double speed_operator_div (struct speed_params *s);
-double speed_operator_mod (struct speed_params *s);
+double speed_operator_div _PROTO ((struct speed_params *s));
+double speed_operator_mod _PROTO ((struct speed_params *s));
 
 double speed_udiv_qrnnd _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv _PROTO ((struct speed_params *s));
