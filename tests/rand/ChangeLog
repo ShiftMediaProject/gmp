@@ -3,8 +3,8 @@
 	* spect.c: Include <unistd.h>.
 
 	* findcl.c (main): Input is `m', not all factors of `m'.  Print
-	all matching multipliers, not only the 10 first.
-	Include <unistd.h>.  Flush stdout.
+	only the very first matching multiplier.  Include <unistd.h>.
+	Flush stdout.
 
 	* spect.c: Move everything but main() to statlib.c.
 

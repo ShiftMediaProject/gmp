@@ -80,6 +80,7 @@ main (int argc, char *argv[])
 	  mpz_out_str (stdout, 10, a);
 	  puts ("");
 	  fflush (stdout);
+	  break;		/* leave loop */
 	}
 
       if (lose < best)
