@@ -44,7 +44,7 @@ MA 02111-1307, USA. */
 
    No attempt is made to identify perfect squares.  It's considered this can
    be left to an application if it might occur with any frequency.  As it
-   stands, mpn_sqrtrem does it's normal amount of work on a perfect square
+   stands, mpn_sqrtrem does its normal amount of work on a perfect square
    followed by zero limbs, though of course only an mpn_sqrtrem1 would be
    actually needed.  We also end up leaving our mpf result with lots of low
    trailing zeros, slowing down subsequent operations.
