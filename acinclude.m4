@@ -2032,6 +2032,8 @@ case $gmp_cv_c_double_format in
   "Cray CFP")
     AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1) ;;
   unknown*)
+    AC_MSG_WARN([Could not determine float format.])
+    AC_MSG_WARN([Conversions to and from "double" may be slow.])
     ;;
   *) 
     AC_MSG_WARN([oops, unrecognised float format: $gmp_cv_c_double_format])
@@ -2109,75 +2111,6 @@ case $gmp_cv_c_restrict in
                  or to nothing if it is not supported.]) ;;
   *)  AC_DEFINE_UNQUOTED(restrict, $gmp_cv_c_restrict) ;;
 esac
-])
-
-
-dnl  GMP_C_SIZES
-dnl  -----------
-dnl  Determine some sizes, if not alredy provided by gmp-mparam.h.
-dnl  $gmp_mparam_source is the selected gmp-mparam.h.
-dnl
-dnl  BITS_PER_MP_LIMB, BYTES_PER_MP_LIMB and BITS_PER_ULONG are needed at
-dnl  preprocessing time when building the library, for use in #if
-dnl  conditionals.
-dnl
-dnl  BITS_PER_MP_LIMB is also wanted as a plain constant for some macros in
-dnl  the generated gmp.h, and is instantiated as BITS_PER_MP_LIMB.
-dnl
-dnl  If some assembler code depends on a particular type size it's probably
-dnl  best to put explicit #defines for these in gmp-mparam.h.  That way if
-dnl  strange compiler options change the size then a mismatch will be
-dnl  detected by t-constants.c rather than only by the code crashing or
-dnl  giving wrong results.
-dnl
-dnl  None of the assembler code depends on BITS_PER_ULONG currently, so it's
-dnl  just as easy to let configure find its size as to put explicit values.
-dnl
-dnl  The tests here assume bits=8*sizeof, but that might not be universally
-dnl  true.  It'd be better to probe for how many bits seem to work, like
-dnl  t-constants does.  But all currently supported systems have limbs and
-dnl  ulongs with bits=8*sizeof, so it's academic.  Strange systems can
-dnl  always have the right values put in gmp-mparam.h explicitly.
-
-AC_DEFUN(GMP_C_SIZES,
-[BITS_PER_MP_LIMB=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
-if test -n "$BITS_PER_MP_LIMB" \
-   && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
-else
-  AC_CHECK_SIZEOF(mp_limb_t,,
-[#include <stdio.h>]
-GMP_INCLUDE_GMP_H)
-  if test "$ac_cv_sizeof_mp_limb_t" = 0; then
-    AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
-  fi
-  if test -z "$BITS_PER_MP_LIMB"; then
-    BITS_PER_MP_LIMB=`expr 8 \* $ac_cv_sizeof_mp_limb_t`
-  fi
-  if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
-  else
-    AC_DEFINE_UNQUOTED(BYTES_PER_MP_LIMB, $ac_cv_sizeof_mp_limb_t,
-                       [bytes per mp_limb_t, if not in gmp-mparam.h])
-  fi
-fi
-AC_SUBST(BITS_PER_MP_LIMB)
-define([GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB],
-[[#define __GMP_BITS_PER_MP_LIMB $BITS_PER_MP_LIMB
-#define GMP_LIMB_BITS $BITS_PER_MP_LIMB]])
-
-if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
-else
-  case $limb_chosen in
-  longlong)
-    AC_CHECK_SIZEOF(unsigned long)
-    AC_DEFINE_UNQUOTED(BITS_PER_ULONG, (8 * $ac_cv_sizeof_unsigned_long),
-                       [bits per unsigned long, if not in gmp-mparam.h])
-    ;;
-  *)
-    # Copy the limb size when a limb is a ulong
-    AC_DEFINE(BITS_PER_ULONG, BITS_PER_MP_LIMB)
-    ;;
-  esac
-fi
 ])
 
 
@@ -2500,44 +2433,6 @@ die die die
 #endif
 ],,,
   [AC_MSG_WARN([gmp.h doesnt recognise <stdio.h>, FILE prototypes will be unavailable])])
-])
-
-
-dnl  GMP_IMPL_H_IEEE_FLOATS
-dnl  ----------------------
-dnl  Check whether the #ifdef's in gmp-impl.h recognise IEEE format and
-dnl  endianness.
-
-AC_DEFUN(GMP_IMPL_H_IEEE_FLOATS,
-[case $host in
-  vax*-*-*)
-    # not IEEE (neither D nor G formats are IEEE)
-    ;;
-  none-*-*)
-    # don't worry about this when CPU "none"
-    ;;
-  *)
-    case $path in
-      *cray/cfp*)
-        # not IEEE
-        ;;
-      *)
-        AC_TRY_COMPILE(
-[#include <stdio.h>]
-GMP_INCLUDE_GMP_H
-[#include "$srcdir/gmp-impl.h"
-#ifndef _GMP_IEEE_FLOATS
-die die die
-#endif
-],,,[
-          AC_MSG_WARN([gmp-impl.h doesnt recognise "double" as IEEE.])
-          AC_MSG_WARN([If your CPU floats are in fact IEEE then you])
-	  AC_MSG_WARN([might like to augment the tests there.])
-        ])
-        ;;
-    esac
-    ;;
-esac
 ])
 
 
