@@ -212,15 +212,16 @@
      little-endian and big-endian machines.
 <li> Handle numeric exceptions: Call an error handler, and/or set
      <code>gmp_errno</code>.
+
 <li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
-     <code>gmp_snprintf</code>.
+     <code>gmp_snprintf</code>.  Think about some sort of wrapper
+     around <code>printf</code> so it and its several variants don't
+     have to be completely reimplemented.
+
 <li> Implement some <code>mpq</code> input and output functions.
 
 <li> Implement a full precision <code>mpz_kronecker</code>, leave
-     <code>mpz_jacobi</code> for compatibility.  An efficient
-     algorithm would be wanted (for both), probably binary GCD with
-     Lehmer style multi-steps, possibly sharing code with
-     <code>mpz_gcdext</code>.
+     <code>mpz_jacobi</code> for compatibility.
 
 <li> Make the mpn logops and copys available in gmp.h.  Since they can
      be either library functions or inlines gmp.h would need to be
