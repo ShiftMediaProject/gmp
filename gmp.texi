@@ -439,6 +439,13 @@ segmentation violation.  It might be possible to increase available stack
 space with @command{limit}, @command{ulimit} or @code{setrlimit}, or under
 DJGPP with @command{stubedit} or @code{_stklen}.
 
+@item @option{--enable-fft}
+
+By default multiplications are done using Karatsuba and 3-way Toom-Cook
+algorithms, but a Fermat FFT can be enabled, for use on large to very large
+operands.  Currently the FFT is recommended only for knowledgable users who
+check the algorithm thresholds for their CPU.
+
 @item @option{--enable-mpbsd}
 
 The Berkeley MP compatibility library (@file{libmp.a}) and header file
