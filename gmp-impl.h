@@ -120,6 +120,22 @@ extern "C" {
 #endif
 
 
+/* Usage: TMP_DECL (marker);
+          TMP_MARK (marker);
+          ptr = TMP_ALLOC (bytes);
+          TMP_FREE (marker);
+
+   TMP_DECL just declares a variable, but might be empty and so must be last
+   in a list of variables.  TMP_MARK must be done before any TMP_ALLOC.
+   TMP_ALLOC(0) is not allowed.  TMP_FREE doesn't need to be done if a
+   TMP_MARK was made, but then no TMP_ALLOCs.
+
+   The name "marker" isn't used by the malloc-reentrant and debug methods,
+   instead they hardcode a name which TMP_ALLOC will know.  For that reason
+   two TMP_DECLs are not allowed, unless one is in a nested "{ }" block, and
+   in that case TMP_MARK, TMP_ALLOC and TMP_FREE will refer to the TMP_DECL
+   which is in scope, irrespective of the marker name given.  */
+
 /* The alignment in bytes, used for TMP_ALLOCed blocks, when alloca or
    __gmp_allocate_func doesn't already determine it.  Currently TMP_ALLOC
    isn't used for "double"s, so that's not in the union.  */
@@ -190,14 +206,18 @@ struct tmp_debug_entry_t {
   char                      *block;
   size_t                    size;
 };
-void  __gmp_tmp_debug_mark  _PROTO ((const char *, int, struct tmp_debug_t **));
-void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, struct tmp_debug_t **, size_t)) ATTRIBUTE_MALLOC;
+void  __gmp_tmp_debug_mark  _PROTO ((const char *, int, struct tmp_debug_t **,
+                                     struct tmp_debug_t *));
+void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, struct tmp_debug_t **,
+                                     size_t)) ATTRIBUTE_MALLOC;
 void  __gmp_tmp_debug_free  _PROTO ((const char *, int, struct tmp_debug_t **));
 /* don't demand NULL, just cast a zero */
 #define TMP_DECL(marker)                                        \
+  struct tmp_debug_t  __tmp_marker_struct;                      \
   struct tmp_debug_t  *__tmp_marker = (struct tmp_debug_t *) 0
 #define TMP_MARK(marker)                                                \
-  __gmp_tmp_debug_mark  (ASSERT_FILE, ASSERT_LINE, &__tmp_marker)
+  __gmp_tmp_debug_mark  (ASSERT_FILE, ASSERT_LINE,                      \
+                         &__tmp_marker, &__tmp_marker_struct)
 #define TMP_ALLOC(size)                                                 \
   __gmp_tmp_debug_alloc (ASSERT_FILE, ASSERT_LINE, &__tmp_marker, size)
 #define TMP_FREE(marker)                                                \
