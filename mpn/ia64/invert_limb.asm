@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -25,56 +25,70 @@ C INPUT PARAMETERS
 C d = r32
 
 C           cycles
-C Itanium:    87  (revision 4 chips need 100 cycles)
-C Itanium 2:  66
+C Itanium:    ?
+C Itanium 2:  50+6
 
 C It should be possible to avoid the xmpy.hu and the following tests by
 C explicitly chopping in the last fma.  That would save about 10 cycles.
 
 ASM_START()
-	.rodata
+	.sdata
 	.align 16
 ifdef(`HAVE_DOUBLE_IEEE_LITTLE_ENDIAN',`
 .LC0:	data4 0x00000000, 0x80000000, 0x0000403f, 0x00000000	C 2^64
-	data4 0x00000000, 0x80000000, 0x0000407f, 0x00000000	C 2^128
+.LC1:	data4 0x00000000, 0x80000000, 0x0000407f, 0x00000000	C 2^128
 
 ',`ifdef(`HAVE_DOUBLE_IEEE_BIG_ENDIAN',`
 .LC0:	data4 0x403f8000, 0x00000000, 0x00000000, 0x00000000	C 2^64
-	data4 0x407f8000, 0x00000000, 0x00000000, 0x00000000	C 2^128
+.LC1:	data4 0x407f8000, 0x00000000, 0x00000000, 0x00000000	C 2^128
 
 ',`m4_error(`Oops, need to know float endianness
 ')')')
 
 
 PROLOGUE(mpn_invert_limb)
-	addl		r14 = @ltoff(.LC0),gp
-	add		r8 = r32,r32;;			C check for d = 2^63
-	ld8		r14 = [r14]
-	cmp.eq		p6,p7 = 0,r8;;			C check for d = 2^63
-	ldfe		f10 = [r14],16			C 2^64
+		C 00
+	addl		r14 = @gprel(.LC0), gp
+	addl		r15 = @gprel(.LC1), gp
 	setf.sig	f7 = r32
-	mov		r8 = -1
-   (p6)	br.ret.spnt.many b0;;
-	ldfe		f8 = [r14]			C 2^128
-	fmpy.s1		f11 = f7,f10;;			C scale by 2^64
-	fsub.s1		f6 = f8,f11;;
-	frcpa.s1	f8,p6 = f6,f7;;
-   (p6) fnma.s1		f9 = f7,f8,f1
-   (p6) fmpy.s1		f10 = f6,f8;;
-   (p6) fmpy.s1		f11 = f9,f9
-   (p6) fma.s1		f10 = f9,f10,f10;;
-   (p6) fma.s1		f8 = f9,f8,f8
-   (p6) fma.s1		f9 = f11,f10,f10;;
-   (p6) fma.s1		f8 = f11,f8,f8
-   (p6) fnma.s1		f10 = f7,f9,f6;;
-   (p6) fma.s1		f8 = f10,f8,f9;;
-	fcvt.fxu.trunc.s1 f8 = f8;;
-	xmpy.hu		f10 = f8,f7;;			C di * d
+	add		r9 = r32, r32		C check for d = 2^63
+	;;	C 01
+	ldfe		f10 = [r14]		C 2^64
+	ldfe		f8 = [r15]		C 2^128
+	cmp.eq		p6, p0 = 0, r9		C check for d = 2^63
+	mov		r8 = -1			C retval for 2^63
+   (p6)	br.ret.spnt.many b0
+	;;	C 07
+	fmpy.s1		f11 = f7, f10		C f11 = d * 2^64
+	fnma.s1		f6 = f7, f10, f8	C f6 = 2^128 - d * 2^64
+	;;	C 11
+	frcpa.s1	f8, p6 = f6, f7
+	;;	C 15
+   (p6)	fnma.s1		f9 = f7, f8, f1
+   (p6)	fmpy.s1		f10 = f6, f8
+	;;	C 19
+   (p6)	fmpy.s1		f11 = f9, f9
+   (p6)	fma.s1		f10 = f9, f10, f10
+	;;	C 23
+   (p6)	fma.s1		f8 = f9, f8, f8
+   (p6)	fma.s1		f9 = f11, f10, f10
+	;;	C 27
+   (p6)	fma.s1		f8 = f11, f8, f8
+   (p6)	fnma.s1		f10 = f7, f9, f6
+	;;	C 31
+   (p6)	fma.s1		f8 = f10, f8, f9
+	;;	C 35
+	fcvt.fxu.trunc.s1 f8 = f8
+	;;	C 39
 	getf.sig	r8 = f8
-	getf.sig	r14 = f10;;
-	add		r32 = r32,r14;;
-	cmp.ltu		p6,p7 = r32,r14;;		C got overflow?
-   (p6) add		r8 = -1,r8			C adjust di down
-	br.ret.sptk.many	b0
-EPILOGUE(mpn_invert_limb)
+	xmpy.hu		f10 = f8, f7		C di * d
+	;;	C 43
+	getf.sig	r14 = f10
+	andcm		r9 = -1, r32		C one's complement
+	;;	C 48
+	cmp.ltu		p6, p0 = r9, r14	C got overflow?
+	;;	C 49
+   (p6)	add		r8 = -1, r8		C adjust di down
+	br.ret.sptk.many b0
+EPILOGUE()
 ASM_END()
