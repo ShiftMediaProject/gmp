@@ -1,5 +1,9 @@
 Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mp?/Makefile.in (libmp?.a): Depend on Makefile, not Makefile.in.
+	* mpf/Makefile.in (test): Delete spurious target.
+	* mpq/Makefile.in (test): Likewise.
+
 	* mpf/out_str.c: Use `e' to separate exponent when base <= 10.
 
 	* mpn/configure.in: Treat ultrasparc just like sparc v8,
