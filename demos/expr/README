@@ -124,9 +124,8 @@ All the standard C operators are available, with the usual precedences, plus
          ||              110
          ? :             100/101
 
-Note however that currently only mpz_expr has the bitwise ~ % & ^ and |
-operators.  The precedence numbers are relevant to the advanced usage
-described below.
+Currently only mpz_expr has the bitwise ~ % & ^ and | operators.  The
+precedence numbers are of interest in the advanced usage described below.
 
 Various functions are available too.  For example,
 
@@ -246,10 +245,10 @@ indicates what parameters the function takes (among other things), and
 "precedence" sets its operator precedence.
 
 A NULL for "name" indicates the end of the table, so for example an mpf
-table with nothing but addition would be
+table with nothing but addition could be
 
         struct mpexpr_operator_t  table[] = {
-          { "+", (mpexpr_fun_t) mpf_add, MPEXPR_TYPE_BINARY, 200 },
+          { "+", (mpexpr_fun_t) mpf_add, MPEXPR_TYPE_BINARY, 190 },
           { NULL }
         };
 
@@ -267,7 +266,7 @@ parses as "(45+26)mod7".
 
 
 Functions are designated by a precedence of 0.  They always occur as
-"foo(expr)" and so have no need for precedence.  For example mpq_abs in the
+"foo(expr)" and so have no need for a precedence level.  mpq_abs in the
 standard mpq table is
 
 	{ "abs", (mpexpr_fun_t) mpq_abs, MPEXPR_TYPE_UNARY },
@@ -275,7 +274,7 @@ standard mpq table is
 Functions expecting no arguments as in "foo()" can be given with
 MPEXPR_TYPE_0ARY, or actual constants to be parsed as just "foo" are
 MPEXPR_TYPE_CONSTANT.  For example if a "void mpf_const_pi(mpf_t f)"
-function existed it could be,
+function existed (which it doesn't) it could be,
 
 	{ "pi", (mpexpr_fun_t) mpf_const_pi, MPEXPR_TYPE_CONSTANT },
 
@@ -297,7 +296,7 @@ Binary operators are left associative by default, meaning they're evaluated
 from left to right, so for example "1+2+3" is treated as "(1+2)+3".
 MPEXPR_TYPE_RIGHTASSOC can be ORed into the operator type to work from right
 to left as in "1+(2+3)".  This is generally what's wanted for
-exponentiation, so for example the standard mpz table has
+exponentiation, and for example the standard mpz table has
 
         { "**", (mpexpr_fun_t) mpz_pow_ui,
           MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC, 220 }
@@ -320,11 +319,11 @@ parsing the context determines which style is sought.  But note that the
 same operator can't be both a postfix unary and a binary, since the parser
 doesn't try to look ahead to decide which ought to be used.
 
-When there's two entries for an operator, with both prefix or both postfix
-(or binary), then the first in the table will be used.  This makes it
-possible to override an entry in a standard table, for example to change the
-function it calls, or perhaps its precedence level.  The following would
-change mpz division from tdiv to cdiv,
+When there's two entries for an operator, both prefix or both postfix (or
+binary), then the first in the table will be used.  This makes it possible
+to override an entry in a standard table, for example to change the function
+it calls, or perhaps its precedence level.  The following would change mpz
+division from tdiv to cdiv,
 
         struct mpexpr_operator_t  table[] = {
           { "/", (mpexpr_fun_t) mpz_cdiv_q, MPEXPR_TYPE_BINARY, 200 },
@@ -337,29 +336,29 @@ The type field indicates what parameters the given function expects.  The
 following styles of functions are supported.  mpz_t is shown, but of course
 this is mpq_t for mpq_expr_a, mpf_t for mpf_expr_a, etc.
 
-    MPEXPR_TYPE_CONSTANT     void zeroary (mpz_t result);
+    MPEXPR_TYPE_CONSTANT     void func (mpz_t result);
 
-    MPEXPR_TYPE_0ARY         void zeroary (mpz_t result);
-    MPEXPR_TYPE_I_0ARY       int zeroary (void);
+    MPEXPR_TYPE_0ARY         void func (mpz_t result);
+    MPEXPR_TYPE_I_0ARY       int func (void);
 
-    MPEXPR_TYPE_UNARY        void unary (mpz_t result, mpz_t op);
-    MPEXPR_TYPE_UNARY_UI     void unary (mpz_t result, unsigned long op);
-    MPEXPR_TYPE_I_UNARY      int unary (mpz_t op);
-    MPEXPR_TYPE_I_UNARY_UI   int unary (unsigned long op);
+    MPEXPR_TYPE_UNARY        void func (mpz_t result, mpz_t op);
+    MPEXPR_TYPE_UNARY_UI     void func (mpz_t result, unsigned long op);
+    MPEXPR_TYPE_I_UNARY      int func (mpz_t op);
+    MPEXPR_TYPE_I_UNARY_UI   int func (unsigned long op);
 
-    MPEXPR_TYPE_BINARY       void binary (mpz_t result, mpz_t op1, mpz_t op2);
-    MPEXPR_TYPE_BINARY_UI    void binary (mpz_t result, mpz_t op1,
-                                          unsigned long op2);
-    MPEXPR_TYPE_I_BINARY     int binary (mpz_t op1, mpz_t op2);
-    MPEXPR_TYPE_I_BINARY_UI  int binary (mpz_t op1, unsigned long op2);
+    MPEXPR_TYPE_BINARY       void func (mpz_t result, mpz_t op1, mpz_t op2);
+    MPEXPR_TYPE_BINARY_UI    void func (mpz_t result,
+                                        mpz_t op1, unsigned long op2);
+    MPEXPR_TYPE_I_BINARY     int func (mpz_t op1, mpz_t op2);
+    MPEXPR_TYPE_I_BINARY_UI  int func (mpz_t op1, unsigned long op2);
 
-    MPEXPR_TYPE_TERNARY      void ternary (mpz_t result,
-                                           mpz_t op1, mpz_t op2, mpz_t op3);
-    MPEXPR_TYPE_TERNARY_UI   void ternary (mpz_t result, mpz_t op1, mpz_t op2,
-                                           unsigned long op3);
-    MPEXPR_TYPE_I_TERNARY    int ternary (mpz_t op1, mpz_t op2, mpz_t op3);
-    MPEXPR_TYPE_I_TERNARY_UI int ternary (mpz_t op1, mpz_t op2,
-                                          unsigned long op3);
+    MPEXPR_TYPE_TERNARY      void func (mpz_t result,
+                                        mpz_t op1, mpz_t op2, mpz_t op3);
+    MPEXPR_TYPE_TERNARY_UI   void func (mpz_t result, mpz_t op1, mpz_t op2,
+                                        unsigned long op3);
+    MPEXPR_TYPE_I_TERNARY    int func (mpz_t op1, mpz_t op2, mpz_t op3);
+    MPEXPR_TYPE_I_TERNARY_UI int func (mpz_t op1, mpz_t op2,
+                                       unsigned long op3);
 
 Notice the pattern of "UI" for the last parameter as an unsigned long, or
 "I" for the result as an "int" return value.
@@ -416,7 +415,7 @@ User definable operator tables will have various uses.  For example,
 The only fixed parts of the parsing are the treatment of numbers, whitespace
 and the two styles of operator/function name recognition.
 
-As a final example, the following would be a complete table implementing
+As a final example, the following would be a complete mpz table implementing
 some operators with a more mathematical syntax.  Notice there's no need to
 preserve the standard precedence values, anything can be used so long as
 they're in the desired relation to each other.  There's also no need to have
