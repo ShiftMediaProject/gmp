@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-08-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/mmx/hamdist.asm: New file, adapted from
+	mpn/x86/pentium/mmx/popham.asm.
+	* mpn/x86/pentium/mmx/popham.asm: Remove file, not faster than plain
+	mpn/x86/pentium/popcount.asm for the popcount.
+
+	* mpn/alpha/umul.asm: Use PROLOGUE/EPILOGUE, rename it mpn_umul_ppmm.
+	* configure.in (alpha*-*-*): Add umul to extra_functions.
+
+	* mpz/remove.c: Make src==0 return 0, not do DIVIDE_BY_ZERO.
+
 2002-08-05  Torbjorn Granlund  <tege@swox.com>
 
 	* acconfig.h: Remove spurious undefs for mpn_divrem_newton and
