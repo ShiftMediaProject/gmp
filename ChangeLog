@@ -20,6 +20,10 @@ MA 02111-1307, USA.
 
 2003-10-13  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/powerpc32/diveby3.asm, mpn/powerpc64/diveby3.asm: src[] in
+	second operand of mullw, to allow possible early-out, which the
+	0xAA..AB inverse cannot give.  This improvement noticed by Torbjorn.
+
 	* acinclude.m4 (GMP_ASM_LSYM_PREFIX): Print to config.log whether
 	local label is purely temporary or appears in object files, for
 	development purposes.
