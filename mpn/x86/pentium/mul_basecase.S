@@ -1,4 +1,4 @@
-/* x86 mpn_mul_basecase -- Multiply two limb vectors and store
+/* Pentium mpn_mul_basecase -- Multiply two limb vectors and store
    the result in a third limb vector.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
