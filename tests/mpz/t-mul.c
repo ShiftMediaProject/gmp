@@ -1,6 +1,6 @@
 /* Test mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr, mpz_mul.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -126,17 +126,20 @@ main (int argc, char **argv)
   /* Make sure to test the FFT multiply code.  The loop above will generate
      large numbers, up to 32767 bits, but that is typically not large enough
      for the FFT thresholds.  */
+  if (SQR_FFT_THRESHOLD != MP_SIZE_T_MAX && MUL_FFT_THRESHOLD != MP_SIZE_T_MAX)
+    {
+      mpz_urandomb (bs, rands, 32);
+      max_fft_thres = GMP_NUMB_BITS * MAX (SQR_FFT_THRESHOLD,
+                                           MUL_FFT_THRESHOLD);
+      size = mpz_get_ui (bs) % max_fft_thres + max_fft_thres;
 
-  mpz_urandomb (bs, rands, 32);
-  max_fft_thres = GMP_NUMB_BITS * MAX (SQR_FFT_THRESHOLD, MUL_FFT_THRESHOLD);
-  size = mpz_get_ui (bs) % max_fft_thres + max_fft_thres;
+      mpz_rrandomb (multiplier, rands, size);
+      mpz_rrandomb (multiplicand, rands, size);
 
-  mpz_rrandomb (multiplier, rands, size);
-  mpz_rrandomb (multiplicand, rands, size);
+      /* printf ("%d %d\n", SIZ (multiplier), SIZ (multiplicand)); */
 
-  /* printf ("%d %d\n", SIZ (multiplier), SIZ (multiplicand)); */
-
-  one (-1, multiplicand, multiplier);
+      one (-1, multiplicand, multiplier);
+    }
 
   mpz_clear (bs);
   mpz_clear (multiplier);
