@@ -926,16 +926,12 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
  * ws is workspace.
  */
 
-/* TO DO: If MUL_TOOM3_THRESHOLD is much bigger than MUL_KARATSUBA_THRESHOLD then the
- *	  recursion in mpn_toom3_mul_n() will always bottom out with mpn_kara_mul_n()
- *	  because the "n < MUL_KARATSUBA_THRESHOLD" test here will always be false.
- */
-
 #define TOOM3_MUL_REC(p, a, b, n, ws) \
   do {								\
-    if (n < MUL_KARATSUBA_THRESHOLD)				\
+    if (MUL_TOOM3_THRESHOLD / 3 < MUL_KARATSUBA_THRESHOLD	\
+	&& BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))	\
       mpn_mul_basecase (p, a, n, b, n);				\
-    else if (n < MUL_TOOM3_THRESHOLD)				\
+    else if (BELOW_THRESHOLD (n, MUL_TOOM3_THRESHOLD))		\
       mpn_kara_mul_n (p, a, b, n, ws);				\
     else							\
       mpn_toom3_mul_n (p, a, b, n, ws);				\
@@ -1043,18 +1039,18 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 
 /* Like previous function but for squaring */
 
-/* FIXME: If SQR_TOOM3_THRESHOLD is big enough it might never get into the
-   basecase range.  Try to arrange those conditonals go dead.  */
-#define TOOM3_SQR_REC(p, a, n, ws)                              \
-  do {                                                          \
-    if (BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))            \
-      mpn_mul_basecase (p, a, n, a, n);                         \
-    else if (BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))      \
-      mpn_sqr_basecase (p, a, n);                               \
-    else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))          \
-      mpn_kara_sqr_n (p, a, n, ws);                             \
-    else                                                        \
-      mpn_toom3_sqr_n (p, a, n, ws);                            \
+#define TOOM3_SQR_REC(p, a, n, ws)				\
+  do {								\
+    if (SQR_TOOM3_THRESHOLD / 3 < SQR_BASECASE_THRESHOLD	\
+	&& BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))		\
+      mpn_mul_basecase (p, a, n, a, n);				\
+    else if (SQR_TOOM3_THRESHOLD / 3 < SQR_KARATSUBA_THRESHOLD	\
+	&& BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))	\
+      mpn_sqr_basecase (p, a, n);				\
+    else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))		\
+      mpn_kara_sqr_n (p, a, n, ws);				\
+    else							\
+      mpn_toom3_sqr_n (p, a, n, ws);				\
   } while (0)
 
 void
