@@ -34,6 +34,7 @@ define(`ASM_END',
 	.end')
 
 define(`unop',`bis r31,r31,r31') ; Unicos assembler lacks unop
+define(`cvttqc',`cvttq/c')
 
 define(`ALIGN',`')		; Unicos assembler seems to align using garbage
 
