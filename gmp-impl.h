@@ -68,6 +68,10 @@ MA 02111-1307, USA. */
 #define TMP_FREE(m)
 #endif
 
+/* Allocating mp_limb_t's, not bytes. */
+#define TMP_ALLOC_LIMBS(n)  ((mp_ptr) TMP_ALLOC ((n) * sizeof (mp_limb_t)))
+
+
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif
