@@ -334,6 +334,7 @@ void mpf_set_d _PROTO ((mpf_ptr, double));
 void mpf_set_default_prec _PROTO ((unsigned long int));
 void mpf_set_prec _PROTO ((mpf_ptr, unsigned long int));
 void mpf_set_prec_raw _PROTO ((mpf_ptr, unsigned long int));
+void mpf_set_q _PROTO ((mpf_ptr, mpq_srcptr));
 void mpf_set_si _PROTO ((mpf_ptr, signed long int));
 int mpf_set_str _PROTO ((mpf_ptr, const char *, int));
 void mpf_set_ui _PROTO ((mpf_ptr, unsigned long int));
