@@ -1,5 +1,5 @@
-dnl  PowerPC-64/mode32 mpn_sub_n -- Subtract two limb vectors of the same length
-dnl  and store difference in a third limb vector.
+dnl  PowerPC-64/mode32 mpn_sub_n -- Subtract two limb vectors of the same
+dnl  length and store difference in a third limb vector.
 
 dnl  Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
 
@@ -35,44 +35,45 @@ C n	r6
 ASM_START()
 PROLOGUE(mpn_sub_n)
 	mtctr	r6		C copy size into CTR
-	addic	r0,r6,-1	C set cy
-	ld	r8,0(r4)	C load least significant s1 limb
-	ld	r0,0(r5)	C load least significant s2 limb
-	addi	r3,r3,-8	C offset res_ptr, it's updated before it's used
+	addic	r0, r6, -1	C set cy
+	ld	r8, 0(r4)	C load least significant s1 limb
+	ld	r0, 0(r5)	C load least significant s2 limb
+	addi	r3, r3, -8	C offset res_ptr, it's updated before it's used
 	bdz	.Lend		C If done, skip loop
-.Loop:	ld	r9,8(r4)	C load s1 limb
-	ld	r10,8(r5)	C load s2 limb
-	subfe	r7,r0,r8	C subtract limbs with cy, set cy
+
+.Loop:	ld	r9, 8(r4)	C load s1 limb
+	ld	r10, 8(r5)	C load s2 limb
+	subfe	r7, r0, r8	C subtract limbs with cy, set cy
 	srdi	r6, r0, 32
 	srdi	r11, r8, 32
 	subfe	r6, r6, r11
-	std	r7,8(r3)	C store result limb
+	std	r7, 8(r3)	C store result limb
 	bdz	.Lexit		C decrement CTR and exit if done
-	ldu	r8,16(r4)	C load s1 limb and update s1_ptr
-	ldu	r0,16(r5)	C load s2 limb and update s2_ptr
-	subfe	r7,r10,r9	C subtract limbs with cy, set cy
+	ldu	r8, 16(r4)	C load s1 limb and update s1_ptr
+	ldu	r0, 16(r5)	C load s2 limb and update s2_ptr
+	subfe	r7, r10, r9	C subtract limbs with cy, set cy
 	srdi	r6, r10, 32
 	srdi	r11, r9, 32
 	subfe	r6, r6, r11
-	stdu	r7,16(r3)	C store result limb and update res_ptr
+	stdu	r7, 16(r3)	C store result limb and update res_ptr
 	bdnz	.Loop		C decrement CTR and loop back
 
-.Lend:	subfe	r7,r0,r8
+.Lend:	subfe	r7, r0, r8
 	srdi	r6, r0, 32
 	srdi	r11, r8, 32
 	subfe	r6, r6, r11
-	std	r7,8(r3)	C store ultimate result limb
-	subfe	r3,r0,r0	C load !cy into ...
-	subfic	r4,r3,0		C ... return value register
+	std	r7, 8(r3)	C store ultimate result limb
+	subfe	r3, r0, r0	C load !cy into ...
+	subfic	r4, r3, 0	C ... return value register
 	li	r3, 0		C zero extend return value
 	blr
-.Lexit:	subfe	r7,r10,r9
+.Lexit:	subfe	r7, r10, r9
 	srdi	r6, r10, 32
 	srdi	r11, r9, 32
 	subfe	r6, r6, r11
-	std	r7,16(r3)
-	subfe	r3,r0,r0	C load !cy into ...
-	subfic	r4,r3,0		C ... return value register
+	std	r7, 16(r3)
+	subfe	r3, r0, r0	C load !cy into ...
+	subfic	r4, r3, 0	C ... return value register
 	li	r3, 0		C zero extend return value
 	blr
 EPILOGUE()

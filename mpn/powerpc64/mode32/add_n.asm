@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     ?
-C POWER4/PPC970:     4.25?
+C POWER4/PPC970:     4.25
 
 C INPUT PARAMETERS
 C rp	r3
