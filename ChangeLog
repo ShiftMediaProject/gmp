@@ -18,10 +18,39 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-22  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (powerpc64-*-darwin*): Make ABI=32 available as the
+	final fallback, remove mode64 until we know how it will work.
+
+	* doc/gmp.texi (Build Options): Add powerpc970 to available CPUs.
+	(ABI and ISA): Add mode32 for Darwin.
+
+	* configure.in (gettimeofday): Use an explicit AC_TRY_LINK, to avoid
+	known autoconf 2.57 problems with gettimeofday in AC_CHECK_FUNCS on
+	HP-UX.
+
+	* configure.in (powerpc*-*-*): Use ABI=32 instead of ABI=standard for
+	the default 32-bit ABI.  Fixes powerpc64-*-aix* which is documented as
+	choices "aix64 32" but had "aix64 standard".
+
+	* mpfr/*: Update to mpfr-2-0-2-branch 2003-10-22.
+
+	* doc/gmp.texi (Notes for Particular Systems): Note m68k gcc -mshort
+	and PalmOS calling conventions not supported.  Reported by Patrick
+	Pelissier.
+	(References): Add Paul Zimmermann's Inria 4475 paper.
+
 2003-10-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/submul_1.asm: Slightly reschedule loop to accomodate Itanium 2
 	getf.sig latency.
+
+2003-10-21  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpn/t-instrument.c: Add mpn_addlsh1_n, mpn_rsh1add_n,
+	mpn_rsh1sub_n, mpn_sub_nc, mpn_sublsh1_n.  Typo in mpn_preinv_divrem_1
+	conditional.
 
 2003-10-20  Torbjorn Granlund  <tege@swox.com>
 
