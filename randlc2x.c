@@ -30,6 +30,10 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 		      unsigned long int c,
 		      unsigned long int m2exp)
 {
+  mp_limb_t  climb;
+
+  ASSERT_ALWAYS (m2exp >= 2);
+
   mpz_init_set_ui (rstate->_mp_seed, 1);
   _mpz_realloc (rstate->_mp_seed, (m2exp + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS);
 
@@ -38,10 +42,22 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
     (*__gmp_allocate_func) (sizeof (__gmp_randata_lc));
 
   mpz_init_set (rstate->_mp_algdata._mp_lc->_mp_a, a);
-  rstate->_mp_algdata._mp_lc->_mp_c = c;
+
+  /* avoid negative a */
+  mpz_fdiv_r_2exp (rstate->_mp_algdata._mp_lc->_mp_a,
+                   rstate->_mp_algdata._mp_lc->_mp_a, m2exp);
+
+  /* internally c < 2^m2exp
+     FIXME: May need two limbs when using nails. */
+  climb = c;
+  if (m2exp < GMP_LIMB_BITS)
+    climb &= (CNST_LIMB(1) << m2exp) - 1;
+
+  rstate->_mp_algdata._mp_lc->_mp_c = climb;
 
   /* Cover weird case where m2exp is 0, which means that m is used
-     instead of m2exp.  */
+     instead of m2exp.
+     FIXME: This is probably bogus. */
   if (m2exp == 0)
     mpz_init_set_ui (rstate->_mp_algdata._mp_lc->_mp_m, 0);
   rstate->_mp_algdata._mp_lc->_mp_m2exp = m2exp;
