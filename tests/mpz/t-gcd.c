@@ -37,7 +37,7 @@ mpz_t gcd, s, t, temp1, temp2;
 
 /* Define this to make all operands be large enough for Schoenhage gcd
    to be used.  */
-#define WHACK_SCHOENHAGE 0
+#define WHACK_SCHOENHAGE 1
 
 #if WHACK_SCHOENHAGE
 #define MIN_OPERAND_SIZE (GCD_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
@@ -67,7 +67,7 @@ main (int argc, char **argv)
   mpz_init (s);
   mpz_init (t);
 
-  for (i = 0; i < 50; i++)
+  for (i = 0; i < 100; i++)
     {
       /* Generate plain operands with unknown gcd.  These types of operands
 	 have proven to trigger certain bugs in development versions of the
@@ -92,7 +92,6 @@ main (int argc, char **argv)
 
       ref_mpz_gcd (ref, op1, op2);
       one_test (op1, op2, ref, i);
-
 
       /* Generate a division chain backwards, allowing otherwise unlikely huge
 	 quotients.  */
