@@ -31,24 +31,24 @@ include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
-	mtctr	5
-	li	9,0		# cy_limb = 0
-	addic	0,0,0
-	cal	3,-8(3)
-	cal	4,-8(4)
+	mtctr	r5
+	li	r9,0		# cy_limb = 0
+	addic	r0,r0,0
+	cal	r3,-8(r3)
+	cal	r4,-8(r4)
 .Loop:
-	ldu	0,8(4)
-	ld	10,8(3)
-	mulld	7,0,6
-	adde	7,7,9
-	mulhdu	9,0,6
-	addze	9,9
-	subfc	7,7,10
-	stdu	7,8(3)
-	subfe	11,11,11	# invert ...
-	addic	11,11,1		# ... carry
+	ldu	r0,8(r4)
+	ld	r10,8(r3)
+	mulld	r7,r0,r6
+	adde	r7,r7,r9
+	mulhdu	r9,r0,r6
+	addze	r9,r9
+	subfc	r7,r7,r10
+	stdu	r7,8(r3)
+	subfe	r11,r11,r11	# invert ...
+	addic	r11,r11,1		# ... carry
 	bdnz	.Loop
 
-	addze	3,9
+	addze	r3,r9
 	blr
 EPILOGUE(mpn_submul_1)
