@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_Xshift.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,14 +21,17 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C This code runs at 2 cycles/limb for large operands on the Itanium.  It needs
-C a very deep software pipeline, since shl/shr.u have a 4 cycle latency.  The
-C main loop here is not great; it is oversheduled with respect to the shr.u
-C instructions, and this actually turns out to give considerably more complex
-C wind down code.  The code runs slowly for operands with <= 8 limbs, since we
-C have a non-scheduled loop for that case.  We also have a primitive loop for
-C the unrolling edge, and as a consequence of the main loop stupidity it is
-C executed 1-4 steps instead of 0-3 steps.
+C         cycles/limb
+C Itanium:    2.0
+C Itanium 2:  1.5
+
+C This code needs a very deep software pipeline, since shl/shr.u have a 4 cycle
+C latency.  The main loop here is not great; it is oversheduled with respect to
+C the shr.u instructions, and this actually turns out to give considerably more
+C complex wind down code.  The code runs slowly for operands with <= 8 limbs,
+C since we have a non-scheduled loop for that case.  We also have a primitive
+C loop for the unrolling edge, and as a consequence of the main loop stupidity
+C it is executed 1-4 steps instead of 0-3 steps.
 
 C By having 63 separate loops using the shrp instruction, we could easily reach
 C 1 cycle/limb.  Such loops would require a less deep software pipeline, since
