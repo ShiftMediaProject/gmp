@@ -1,8 +1,8 @@
 /* mpn_get_str -- Convert a MSIZE long limb vector pointed to by MPTR
    to a printable string in STR in base BASE.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,7 +73,6 @@ size_t
 mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 {
   mp_limb_t big_base;
-  unsigned int dig_per_u;
   mp_size_t out_len;
   unsigned char *s;
 
@@ -148,44 +147,79 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
       /* General case.  The base is not a power of 2.  Make conversion
 	 from least significant end.  */
       mp_limb_t n1, c;
-#if USE_PREINV_DIVREM_1
-      unsigned   normalization_steps;
-      mp_limb_t  big_base_inverted;
-      count_leading_zeros (normalization_steps, big_base);
-      big_base_inverted = __mp_bases[base].big_base_inverted;
-#endif
 
-      dig_per_u = __mp_bases[base].chars_per_limb;
       out_len = ((size_t) msize * BITS_PER_MP_LIMB
-		 * __mp_bases[base].chars_per_bit_exactly) + 1;
+                 * __mp_bases[base].chars_per_bit_exactly) + 1;
       s += out_len;
 
-      while (msize > 1)
+      if (base == 10)
         {
-	  int i;
-          n1 = MPN_DIVREM_OR_PREINV_DIVREM_1 (mptr, (mp_size_t) 0,
-                                              mptr, msize, big_base,
-                                              big_base_inverted,
-                                              normalization_steps);
-          msize -= mptr[msize-1] == 0;
-
-	  /* Convert N1 from BIG_BASE to a string of digits in BASE
-	     using single precision operations.  */
-          i = dig_per_u;
-          do
+          /* Special case code for base==10 so that the compiler has a
+             chance to optimize divisions by 10 in udiv_qrnd_unnorm.  */
+          while (msize > 1)
             {
-	      udiv_qrnd_unnorm (n1, c, n1, base);
-	      *--s = c;
-              i--;
-            }
-          while (i != 0);
-	}
+              int i;
+              n1 = MPN_DIVREM_OR_PREINV_DIVREM_1
+                (mptr, (mp_size_t) 0, mptr, msize,
+                 MP_BASES_BIG_BASE_10,
+                 MP_BASES_BIG_BASE_INVERTED_10,
+                 MP_BASES_NORMALIZATION_STEPS_10);
+              msize -= mptr[msize-1] == 0;
 
-      n1 = mptr[0];
-      while (n1 != 0)
+              /* Convert N1 from BIG_BASE to a string of digits in BASE
+                 using single precision operations.  */
+              i = MP_BASES_CHARS_PER_LIMB_10;
+              do
+                {
+                  udiv_qrnd_unnorm (n1, c, n1, 10);
+                  *--s = c;
+                  i--;
+                }
+              while (i != 0);
+            }
+
+          n1 = mptr[0];
+          while (n1 != 0)
+            {
+              udiv_qrnd_unnorm (n1, c, n1, 10);
+              *--s = c;
+            }
+        }
+      else
         {
-          udiv_qrnd_unnorm (n1, c, n1, base);
-          *--s = c;
+          unsigned   dig_per_u = __mp_bases[base].chars_per_limb;
+#if USE_PREINV_DIVREM_1
+          unsigned   normalization_steps;
+          mp_limb_t  big_base_inverted = __mp_bases[base].big_base_inverted;
+          count_leading_zeros (normalization_steps, big_base);
+#endif
+          while (msize > 1)
+            {
+              int i;
+              n1 = MPN_DIVREM_OR_PREINV_DIVREM_1 (mptr, (mp_size_t) 0,
+                                                  mptr, msize, big_base,
+                                                  big_base_inverted,
+                                                  normalization_steps);
+              msize -= mptr[msize-1] == 0;
+
+              /* Convert N1 from BIG_BASE to a string of digits in BASE
+                 using single precision operations.  */
+              i = dig_per_u;
+              do
+                {
+                  udiv_qrnd_unnorm (n1, c, n1, base);
+                  *--s = c;
+                  i--;
+                }
+              while (i != 0);
+            }
+
+          n1 = mptr[0];
+          while (n1 != 0)
+            {
+              udiv_qrnd_unnorm (n1, c, n1, base);
+              *--s = c;
+            }
         }
 
       ASSERT (s >= str);
