@@ -635,13 +635,8 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_add_nc		__MPN(add_nc)
 #define mpn_addmul_1		__MPN(addmul_1)
 #define mpn_addsub_n		__MPN(addsub_n)
-#define mpn_and_n		__MPN(and_n)
-#define mpn_andn_n		__MPN(andn_n)
 #define mpn_bdivmod		__MPN(bdivmod)
 #define mpn_cmp			__MPN(cmp)
-#define mpn_com_n		__MPN(com_n)
-#define mpn_copyd		__MPN(copyd)
-#define mpn_copyi		__MPN(copyi)
 #define mpn_divmod_1		__MPN(divmod_1)
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
@@ -654,16 +649,12 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_gcdext		__MPN(gcdext)
 #define mpn_get_str		__MPN(get_str)
 #define mpn_hamdist		__MPN(hamdist)
-#define mpn_ior_n		__MPN(ior_n)
-#define mpn_iorn_n		__MPN(iorn_n)
 #define mpn_lshift		__MPN(lshift)
 #define mpn_mod_1		__MPN(mod_1)
 #define mpn_mul			__MPN(mul)
 #define mpn_mul_1		__MPN(mul_1)
 #define mpn_mul_basecase	__MPN(mul_basecase)
 #define mpn_mul_n		__MPN(mul_n)
-#define mpn_nand_n		__MPN(nand_n)
-#define mpn_nior_n		__MPN(nior_n)
 #define mpn_perfect_square_p	__MPN(perfect_square_p)
 #define mpn_popcount		__MPN(popcount)
 #define mpn_preinv_mod_1	__MPN(preinv_mod_1)
@@ -682,8 +673,6 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_sub_nc		__MPN(sub_nc)
 #define mpn_submul_1		__MPN(submul_1)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
-#define mpn_xor_n		__MPN(xor_n)
-#define mpn_xnor_n		__MPN(xnor_n)
 
 #if defined (__cplusplus)
 extern "C" {
@@ -694,13 +683,8 @@ mp_limb_t mpn_add_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_add_nc _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_addmul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_addsub_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_and_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_andn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
 int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
-void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
-void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_divrem _PROTO((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
@@ -713,16 +697,12 @@ mp_limb_t mpn_gcd_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
 mp_size_t mpn_gcdext _PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 size_t mpn_get_str _PROTO ((unsigned char *, int, mp_ptr, mp_size_t));
 unsigned long int mpn_hamdist _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_ior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_lshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 mp_limb_t mpn_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_mul _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_mul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 void mpn_mul_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 void mpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_nand_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_nior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 int mpn_perfect_square_p _PROTO ((mp_srcptr, mp_size_t));
 unsigned long int mpn_popcount _PROTO ((mp_srcptr, mp_size_t));
 mp_limb_t mpn_preinv_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
@@ -740,8 +720,6 @@ mp_limb_t mpn_sub_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_sub_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sub_nc _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_submul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
-void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_xor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #if defined (__cplusplus)
 }
 #endif
