@@ -252,7 +252,7 @@ libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPN_OBJECTS) @mpn_objs_in_libgmp@		\
   $(PRINTF_OBJECTS)  $(SCANF_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
-libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
+libgmp_la_LDFLAGS = $(GMP_LDFLAGS) $(LIBGMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
 
@@ -266,7 +266,7 @@ endif
 libgmpxx_la_SOURCES = cxx/dummy.cc
 libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS) libgmp.la
 libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES)
-libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
+libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) $(LIBGMPXX_LDFLAGS) \
   -version-info $(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)
 
 
