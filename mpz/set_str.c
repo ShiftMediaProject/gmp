@@ -131,7 +131,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   str_size = s - begs;
 
   xsize = (((mp_size_t) (str_size / __mp_bases[base].chars_per_bit_exactly))
-	   / BITS_PER_MP_LIMB + 2);
+	   / GMP_NUMB_BITS + 2);
   if (x->_mp_alloc < xsize)
     _mpz_realloc (x, xsize);
 

@@ -31,8 +31,7 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 		      unsigned long int m2exp)
 {
   mpz_init_set_ui (rstate->_mp_seed, 1);
-  _mpz_realloc (rstate->_mp_seed, m2exp / BITS_PER_MP_LIMB
-		+ (m2exp % BITS_PER_MP_LIMB != 0));
+  _mpz_realloc (rstate->_mp_seed, (m2exp + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS);
 
   /* Allocate algorithm specific data. */
   rstate->_mp_algdata._mp_lc = (__gmp_randata_lc *)
