@@ -2014,7 +2014,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 /* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
    0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
-#define MODLIMB_INVERSE_3   ((MP_LIMB_T_MAX / 3) * 2 + 1)
+#define MODLIMB_INVERSE_3   ((GMP_NUMB_MAX / 3) * 2 + 1)
 
 
 /* Set r to -a mod d.  a>=d is allowed.  Can give r>d.  All should be limbs.
