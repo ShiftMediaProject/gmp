@@ -75,3 +75,23 @@ MA 02111-1307, USA. */
 #ifndef GCDEXT_THRESHOLD
 #define GCDEXT_THRESHOLD          25
 #endif
+
+#ifndef FFT_MUL_TABLE
+#define FFT_MUL_TABLE  { 496, 928, 1920, 4608, 14336, 40960, 0 }
+#endif
+#ifndef FFT_MODF_MUL_THRESHOLD
+#define FFT_MODF_MUL_THRESHOLD     512
+#endif
+#ifndef FFT_MUL_THRESHOLD
+#define FFT_MUL_THRESHOLD         3840
+#endif
+
+#ifndef FFT_SQR_TABLE
+#define FFT_SQR_TABLE  { 496, 1184, 1920, 5632, 14336, 40960, 0 }
+#endif
+#ifndef FFT_MODF_SQR_THRESHOLD
+#define FFT_MODF_SQR_THRESHOLD     512
+#endif
+#ifndef FFT_SQR_THRESHOLD
+#define FFT_SQR_THRESHOLD         3840
+#endif
