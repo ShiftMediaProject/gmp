@@ -1319,7 +1319,7 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 /* If MUL_TOOM3_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
 #ifndef MUL_TOOM3_THRESHOLD
-#define MUL_TOOM3_THRESHOLD 256
+#define MUL_TOOM3_THRESHOLD 128
 #endif
 
 /* MUL_KARATSUBA_THRESHOLD_LIMIT is the maximum for MUL_KARATSUBA_THRESHOLD.
@@ -1354,7 +1354,7 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #endif
 
 #ifndef SQR_TOOM3_THRESHOLD
-#define SQR_TOOM3_THRESHOLD (2*MUL_TOOM3_THRESHOLD)
+#define SQR_TOOM3_THRESHOLD 128
 #endif
 
 /* First k to use for an FFT modF multiply.  A modF FFT is an order
