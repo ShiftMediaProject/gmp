@@ -310,6 +310,10 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the `read_real_time' function. */
 #undef HAVE_READ_REAL_TIME
 
+/* Define to 1 if signed right shifts are "arithmetic", ie. shift in copies of
+   the sign bit. */
+#undef HAVE_RIGHT_SHIFT_ARITHMETIC
+
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
 
