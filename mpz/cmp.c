@@ -27,36 +27,25 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-#ifndef BERKELEY_MP
-mpz_cmp (mpz_srcptr u, mpz_srcptr v)
-#else /* BERKELEY_MP */
+#ifdef BERKELEY_MP
 mcmp (mpz_srcptr u, mpz_srcptr v)
-#endif /* BERKELEY_MP */
+#else
+mpz_cmp (mpz_srcptr u, mpz_srcptr v)
+#endif
 {
-  mp_size_t usize = u->_mp_size;
-  mp_size_t vsize = v->_mp_size;
-  mp_size_t size;
-  mp_srcptr up, vp;
-  int cmp;
+  mp_size_t  usize, vsize, dsize, asize;
+  mp_srcptr  up, vp;
+  int        cmp;
 
-  if (usize != vsize)
-    return usize - vsize;
+  usize = SIZ(u);
+  vsize = SIZ(v);
+  dsize = usize - vsize;
+  if (dsize != 0)
+    return dsize;
 
-  if (usize == 0)
-    return 0;
-
-  size = ABS (usize);
-
-  up = u->_mp_d;
-  vp = v->_mp_d;
-
-  cmp = mpn_cmp (up, vp, size);
-
-  if (cmp == 0)
-    return 0;
-
-  if ((cmp < 0) == (usize < 0))
-    return 1;
-  else
-    return -1;
+  asize = ABS (usize);
+  up = PTR(u);
+  vp = PTR(v);
+  MPN_CMP (cmp, up, vp, asize);
+  return (usize >= 0 ? cmp : -cmp);
 }
