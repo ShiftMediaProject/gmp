@@ -401,6 +401,13 @@ The optional Berkley MP compability library (@file{libmp.a}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
+@item Demonstration Programs
+
+The @file{demos} subdirectory has some sample programs using MP.  These aren't
+built or installed by default, but there's @command{make} rules available to
+compile them.  For instance @command{make pexpr}, and then run say
+@command{./pexpr 68^975+10}.
+
 @item Documentation
 
 The document you're now reading is @file{gmp.texi}.  The usual automake targets
