@@ -21,6 +21,9 @@ MA 02111-1307, USA.
 
 2001-12-30  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/pa64/udiv_qrnnd.c: Remove file.
+	* mpn/pa64w/udiv_qrnnd.c: Remove file.
+
 	* gmp-impl.h (MPN_IORD_U): Change formatting (labels in pos 0, insns
 	indented by tab).
 	(MPN_INCR_U): Use "addl $1,foo; jc", not "incl foo; jz".
