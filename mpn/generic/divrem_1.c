@@ -76,33 +76,3 @@ mpn_divrem_1 (qp, qxn, np, nn, d)
 
   return rlimb;
 }
-
-/* Botch.  Called from mpn_divrem in gmp.h.  */
-mp_limb_t
-#if __STDC__
-__gmpn_divrem_1n (mp_ptr qp, mp_size_t qxn,
-	      mp_ptr np, mp_size_t nn,
-	      mp_limb_t d)
-#else
-__gmpn_divrem_1n (qp, qxn, np, nn, d)
-     mp_ptr qp;
-     mp_size_t qxn;
-     mp_ptr np;
-     mp_size_t nn;
-     mp_limb_t d;
-#endif
-{
-  mp_limb_t ret;
-  mp_ptr qp2;
-  TMP_DECL (mark);
-
-  TMP_MARK (mark);
-  qp2 = (mp_ptr) TMP_ALLOC ((nn + qxn) * sizeof (mp_limb_t));
-
-  np[0] = mpn_divrem_1 (qp2, qxn, np, nn, d);
-  MPN_COPY (qp, qp2, (nn + qxn) - 1);
-  ret =  qp2[nn + qxn - 1];
-
-  TMP_FREE (mark);
-  return ret;
-}
