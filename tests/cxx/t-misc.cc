@@ -384,14 +384,18 @@ check_mpfr_hypot (void)
   // hypot(mpfr_t,long)
   {
     mpfr_class  x(0), got;
-    got = hypot (x, LONG_MIN);
-    ASSERT_ALWAYS (got == LONG_MIN);
+    long        y = LONG_MIN;
+    unsigned long  want = - (unsigned long) LONG_MIN;
+    got = hypot (x, y);
+    ASSERT_ALWAYS (got == want);
   }
   // hypot(long,mpfr_t)
   {
     mpfr_class  y(0), got;
-    got = hypot (LONG_MIN, y);
-    ASSERT_ALWAYS (got == LONG_MIN);
+    long        x = LONG_MIN;
+    unsigned long  want = - (unsigned long) LONG_MIN;
+    got = hypot (x, y);
+    ASSERT_ALWAYS (got == want);
   }
 
   // hypot(mpfr_t,double)
