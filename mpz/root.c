@@ -20,12 +20,6 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-/* Naive implementation of nth root extraction.  It would probably be a
-   better idea to use a division-free Newton iteration.  It is insane
-   to use full precision from iteration 1.  The mpz_scan1 trick compensates
-   to some extent.  It would be natural to avoid representing the low zero
-   bits mpz_scan1 is counting, and at the same time call mpn directly.  */
-
 #include <stdio.h>  /* for NULL */
 #include <stdlib.h> /* for abort */
 #include "gmp.h"
@@ -33,13 +27,10 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 int
-mpz_root (mpz_ptr r, mpz_srcptr u, unsigned long int nth)
+mpz_root (mpz_ptr root, mpz_srcptr u, unsigned long int nth)
 {
   mp_ptr rootp, up;
-  mp_size_t us, un, rootn;
-  int exact;
-  unsigned int cnt;
-  unsigned long int rootnb, unb;
+  mp_size_t us, un, rootn, remn;
 
   up = PTR(u);
   us = SIZ(u);
@@ -55,21 +46,17 @@ mpz_root (mpz_ptr r, mpz_srcptr u, unsigned long int nth)
 
   if (us == 0)
     {
-      if (r != NULL)
-	SIZ(r) = 0;
+      if (root != NULL)
+	SIZ(root) = 0;
       return 1;			/* exact result */
     }
 
   un = ABS (us);
+  rootn = (un - 1) / nth + 1;
 
-  count_leading_zeros (cnt, up[un - 1]);
-  unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
-  rootnb = (unb + nth - 1) / nth;
-  rootn = (rootnb + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
-
-  if (r != NULL)
+  if (root != NULL)
     {
-      rootp = MPZ_REALLOC (r, rootn);
+      rootp = MPZ_REALLOC (root, rootn);
       up = PTR(u);
     }
   else
@@ -80,17 +67,17 @@ mpz_root (mpz_ptr r, mpz_srcptr u, unsigned long int nth)
   if (nth == 1)
     {
       MPN_COPY (rootp, up, un);
-      exact = 1;
+      remn = 0;
     }
   else
     {
-      exact = 0 == mpn_rootrem (rootp, NULL, up, un, nth);
+      remn = mpn_rootrem (rootp, NULL, up, un, nth);
     }
 
-  if (r != NULL)
-    SIZ(r) = us >= 0 ? rootn : -rootn;
+  if (root != NULL)
+    SIZ(root) = us >= 0 ? rootn : -rootn;
   else
     __GMP_FREE_FUNC_LIMBS (rootp, rootn);
 
-  return exact;
+  return remn = 0;
 }
