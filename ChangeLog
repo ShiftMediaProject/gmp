@@ -106,7 +106,7 @@ MA 02111-1307, USA.
 	* mpn/powerpc32/lshift.asm: Add more cycle counts.
 	* mpn/powerpc32/rshift.asm: Add more cycle counts.
 
-	* mpn/ia64/addmul_1.asm: Reformat commsnts for 80 columns.
+	* mpn/ia64/addmul_1.asm: Reformat comments for 80 columns.
 
 	* gmp-impl.h (udiv_qrnnd_preinv1): New name for udiv_qrnnd_preinv.
 	(udiv_qrnnd_preinv2): New name for udiv_qrnnd_preinv2norm.
