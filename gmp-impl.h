@@ -1140,8 +1140,8 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
           ...
           if (CACHED_BELOW_THRESHOLD (use_foo, size, FOO_THRESHOLD))
 
-   When "use_foo" is a constant (thresh is 0 or MP_SIZE_T), it seems gcc (as
-   of version 3.1) can't optimize away a test "if (use_foo)" when within a
+   When "use_foo" is a constant (thresh is 0 or MP_SIZE_T), gcc prior to
+   version 3.3 doesn't optimize away a test "if (use_foo)" when within a
    loop.  CACHED_BELOW_THRESHOLD helps it do so.  */
 
 #define CACHED_ABOVE_THRESHOLD(cache, thresh)           \
