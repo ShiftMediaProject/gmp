@@ -28,8 +28,13 @@ MA 02111-1307, USA. */
 
 /* gmp-impl.h and stack-alloc.h conflict when not USE_STACK_ALLOC, so these
    declarations are copied here */
+#if __STDC__
 extern void *	(*_mp_allocate_func) (size_t);
 extern void	(*_mp_free_func) (void *, size_t);
+#else
+extern void *	(*_mp_allocate_func) ();
+extern void	(*_mp_free_func) ();
+#endif
 
 typedef struct tmp_stack tmp_stack;
 
