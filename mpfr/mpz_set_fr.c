@@ -1,6 +1,6 @@
 /* mpz_set_fr -- set a multiple-precision integer from a floating-point number
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -51,7 +51,7 @@ mpz_set_fr (mpz_ptr z, mpfr_srcptr f)
   else
     MPN_COPY (PTR(z), MPFR_MANT(f), fn);
 
-  SIZ(z) = fn;
+  SIZ(z) = (MPFR_MANT(f)[fn-1] == 0 ? 0 : fn);
 
   return MPFR_EXP(f) - MPFR_PREC(f);
 }
