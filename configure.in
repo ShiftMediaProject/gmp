@@ -515,6 +515,7 @@ dnl Checks for libraries.
 dnl ---------------------
 dnl FIXME: need libm?
 dnl [AC_CHECK_LIB(m, acos)]
+AC_CHECK_DECLS((optarg))
 
 dnl Checks for header files.
 dnl ------------------------
