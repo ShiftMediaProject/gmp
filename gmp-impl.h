@@ -396,7 +396,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define SHRT_HIGHBIT       SHRT_MIN
 
 
-#define GMP_NUMB_MASK     (MP_LIMB_T_MAX >> GMP_NAIL_BITS)
+  /* #define GMP_NUMB_MASK     (MP_LIMB_T_MAX >> GMP_NAIL_BITS) */
 #define GMP_NAIL_MASK     (~ GMP_NUMB_MASK)
 #define GMP_NUMB_HIGHBIT  (CNST_LIMB(1) << (GMP_NUMB_BITS-1))
 #define GMP_NUMB_MAX      GMP_NUMB_MASK
@@ -406,7 +406,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #else
 #define GMP_NAIL_LOWBIT   (CNST_LIMB(1) << GMP_NUMB_BITS)
 #endif
-
 
 /* Swap macros. */
 
@@ -1561,9 +1560,9 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
       }							\
     else						\
       {							\
-	__x = (*__p + (incr)) & GMP_NUMB_MASK;		\
-	*__p = __x;					\
-	if (__x == 0)					\
+	__x = (*__p + (incr));				\
+	*__p++ = __x & GMP_NUMB_MASK;			\
+	if (__x >> GMP_NUMB_BITS != 0)			\
 	  {						\
 	    do						\
 	      {						\
@@ -1591,9 +1590,9 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
       }							\
     else						\
       {							\
-	__x = *__p;					\
-	*__p = (__x - (incr)) & GMP_NUMB_MASK;		\
-	if (__x == 0)					\
+	__x = *__p - (incr);				\
+	*__p++ = __x & GMP_NUMB_MASK;			\
+	if (__x >> GMP_NUMB_BITS != 0)			\
 	  {						\
 	    do						\
 	      {						\
