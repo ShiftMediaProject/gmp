@@ -710,9 +710,12 @@ typedef struct {
 /* Macro to obtain a void pointer to the generator's state */
 #define RNG_STATE(rstate) ((void *)((rstate)->_mp_seed->_mp_d))
 
-/* _gmp_rand function (as macro.) */
-#define _gmp_rand(rp, state, bits) \
-  (*RNG_FNPTR (state)->randget_fn) (state, rp, bits)
+/* Write a given number of random bits to rp. */
+#define _gmp_rand(rp, state, bits)                              \
+  do {                                                          \
+    gmp_randstate_ptr  __rstate = (state);                      \
+    (*RNG_FNPTR (__rstate)->randget_fn) (__rstate, rp, bits);   \
+  } while (0)
 
 
 /* __gmp_rands is the global state for the old-style random functions, and
