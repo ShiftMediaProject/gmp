@@ -75,7 +75,7 @@ deflit(`FRAME',0)
 	movl	(%eax), %eax	# yp low limb
 
 	cmpl	$2, %ecx
-	ja	L(xsize_more_than_two_limbs)
+	ja	L(xsize_more_than_two)
 	je	L(two_by_something)
 
 
@@ -192,7 +192,7 @@ dnl  FRAME carries on from previous
 	
 #------------------------------------------------------------------------------
 	ALIGN(16)
-L(xsize_more_than_two_limbs):
+L(xsize_more_than_two):
 
 # The first limb of yp is processed with a simple mpn_mul_1 style loop
 # inline.  Unrolling this doesn't seem worthwhile since it's only run once
@@ -262,16 +262,20 @@ L(mul1):
 	movl	%ebx, (%edi)		# final carry
 	decl	%edx
 
-	jnz	L(ysize_more_than_one_limb)
+	jnz	L(ysize_more_than_one)
 
-	popl	%ebp
-	popl	%edi
-	popl	%esi
-	popl	%ebx
+
+	movl	SAVE_EDI, %edi
+	movl	SAVE_EBX, %ebx
+
+	movl	SAVE_EBP, %ebp
+	movl	SAVE_ESI, %esi
+	addl	$FRAME, %esp
+
 	ret
 
 
-L(ysize_more_than_one_limb):
+L(ysize_more_than_one):
 	cmpl	$UNROLL_THRESHOLD, %ecx
 	movl	PARAM_YP, %eax
 
@@ -365,7 +369,7 @@ L(simple_inner):
 
 	movl	SAVE_EDI, %edi
 	movl	SAVE_EBP, %ebp
-	addl	$16, %esp
+	addl	$FRAME, %esp
 
 	ret
 
