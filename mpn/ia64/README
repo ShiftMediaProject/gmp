@@ -1,0 +1,213 @@
+================================================================
+mpn_addmul_1
+	ldfp8
+	ldfp8
+	xma.l
+	xma.hu
+	xma.l
+	xma.hu
+	stf8
+	stf8
+	add 1
+	add
+	getf.sig
+	getf.sig
+	getf.sig
+	getf.sig
+	cmp.ltu
+	cmp.leu
+	add 1
+	add
+	cmp.ltu
+	cmp.leu
+
+2 limbs/20 instructions
+	   20 insn/max 6 insn/cycle:		3.3 cycles/2limb
+	   8 memops/max 2 memops/cycle:		4.0 cycles/2limb
+	   8 intops/max 2 intops/cycle:		4.0 cycles/2limb
+	   4 fpops/max 2 fpops/cycle:		2.0 cycles/2limb
+
+================================================================
+mpn_mul_1
+	ldfp8
+	xma.l
+	xma.hu
+	xma.l
+	xma.hu
+	stf8
+	stf8
+	add 1
+	add
+	getf.sig
+	getf.sig
+	getf.sig
+	getf.sig
+	cmp.ltu
+	cmp.leu
+	add 1
+	add
+	cmp.ltu
+	cmp.leu
+
+2 limbs/19 instructions
+	   19 insn/max 6 insn/cycle:		3.2 cycles/2limb
+	   7 memops/max 2 memops/cycle:		3.5 cycles/2limb
+	   8 intops/max 2 intops/cycle:		4.0 cycles/2limb
+	   4 fpops/max 2 fpops/cycle:		2.0 cycles/2limb
+
+================================================================
+mpn_mul_basecase8
+
+/* First load the 8 values from v */
+	ldfp8		v0, v1 = [r35], 16;;
+	ldfp8		v2, v3 = [r35], 16;;
+	ldfp8		v4, v5 = [r35], 16;;
+	ldfp8		v6, v7 = [r35], 16;;
+
+/* In the inner loop, get a new U limb and store a result limb. */
+	mov		lc = un
+Loop:	ldf8		u0 = [r33], 8
+	xma.l		lp0 = v0, u0, hp0
+	xma.hu		hp0 = v0, u0, hp0
+	xma.l		lp1 = v1, u0, hp1
+	xma.hu		hp1 = v1, u0, hp1
+	xma.l		lp2 = v2, u0, hp2
+	xma.hu		hp2 = v2, u0, hp2
+	xma.l		lp3 = v3, u0, hp3
+	xma.hu		hp3 = v3, u0, hp3
+	xma.l		lp4 = v4, u0, hp4
+	xma.hu		hp4 = v4, u0, hp4
+	xma.l		lp5 = v5, u0, hp5
+	xma.hu		hp5 = v5, u0, hp5
+	xma.l		lp6 = v6, u0, hp6
+	xma.hu		hp6 = v6, u0, hp6
+	xma.l		lp7 = v7, u0, hp7
+	xma.hu		hp7 = v7, u0, hp7
+	getf.sig	l0 = lp0
+	getf.sig	l1 = lp1
+	getf.sig	l2 = lp2
+	getf.sig	l3 = lp3
+	getf.sig	l4 = lp4
+	getf.sig	l5 = lp5
+	getf.sig	l6 = lp6
+	getf.sig	l7 = lp7
+	getf.sig	h0 = hp0
+	getf.sig	h1 = hp1
+	getf.sig	h2 = hp2
+	getf.sig	h3 = hp3
+	getf.sig	h4 = hp4
+	getf.sig	h5 = hp5
+	getf.sig	h6 = hp6
+	getf.sig	h7 = hp7
+	add		l0, l0, h0
+	add		l1, l1, h1
+	add		l2, l2, h2
+	add		l3, l3, h3
+	add		l4, l4, h4
+	add		l5, l5, h5
+	add		l6, l6, h6
+	add		l7, l7, h7
+	setf.sig
+	setf.sig
+	setf.sig
+	setf.sig
+	setf.sig
+	setf.sig
+	setf.sig
+	setf.sig
+	st8/stf8	[r32] = xx, 8
+	br.cloop Loop
+================================================================
+
+For mpn_mul_1, start by doing a series of 8 ldf8 and non-accumulating
+xma.hu.  Then, with about 8 cycles skew, start doing accumulating
+xma.l, taking the acc operand from the previous xma.hu outputs.
+
+WRONG.  Ignores carry-out from low limb.  We normally should either
+have same same forms for both xma.l and xma.hu, but we could use the
+accumulating form for xma.hu to avoid all carry handling.
+
+       ldf8		f24 = [r33], 8
+       ldf8		f25 = [r33], 8
+       ldf8		f26 = [r33], 8
+       ldf8		f27 = [r33], 8
+       ldf8		f28 = [r33], 8
+       ldf8		f29 = [r33], 8
+       ldf8		f30 = [r33], 8
+       ldf8		f31 = [r33], 8
+
+       xma.l		 f7 = s2, f24, f0
+       ldf8		f32 = [r33], 8
+       xma.l		 f8 = s2, f25, f0
+       ldf8		f33 = [r33], 8
+       xma.l		 f9 = s2, f26, f0
+       ldf8		f34 = [r33], 8
+       xma.l		f10 = s2, f27, f0
+       ldf8		f35 = [r33], 8
+       xma.l		f11 = s2, f28, f0
+       ldf8		f36 = [r33], 8
+       xma.l		f12 = s2, f29, f0
+       ldf8		f37 = [r33], 8
+       xma.l		f13 = s2, f30, f0
+       ldf8		f38 = [r33], 8
+       xma.l		f14 = s2, f31, f0
+       ldf8		f39 = [r33], 8
+# will need another warmup phase here, after stf8 instruction have been added to the loop
+.Loop
+       xma.hu		f16 = s2, f24, f8
+       ldf8		f24 = [r33], 8
+       xma.l		 f8 = s2, f32, f0;;
+       xma.hu		f16 = s2, f25, f9
+       ldf8		f25 = [r33], 8
+       xma.l		 f9 = s2, f33, f0;;
+       xma.hu		f16 = s2, f26, f10
+       ldf8		f26 = [r33], 8
+       xma.l		f10 = s2, f34, f0;;
+       xma.hu		f16 = s2, f27, f11
+       ldf8		f27 = [r33], 8
+       xma.l		f11 = s2, f35, f0;;
+       xma.hu		f16 = s2, f28, f12
+       ldf8		f28 = [r33], 8
+       xma.l		f12 = s2, f36, f0;;
+       xma.hu		f16 = s2, f29, f13
+       ldf8		f29 = [r33], 8
+       xma.l		f13 = s2, f37, f0;;
+       xma.hu		f16 = s2, f30, f14
+       ldf8		f30 = [r33], 8
+       xma.l		f14 = s2, f38, f0;;
+       xma.hu		f16 = s2, f31, f15
+       ldf8		f31 = [r33], 8
+       xma.l		f15 = s2, f39, f0;;
+
+       xma.hu		f16 = s2, f32, f8
+       ldf8		f24 = [r33], 8
+       xma.l		 f8 = s2, f24, f0;;
+       xma.hu		f16 = s2, f33, f9
+       ldf8		f25 = [r33], 8
+       xma.l		 f9 = s2, f25, f0;;
+       xma.hu		f16 = s2, f34, f10
+       ldf8		f26 = [r33], 8
+       xma.l		f10 = s2, f26, f0;;
+       xma.hu		f16 = s2, f35, f11
+       ldf8		f27 = [r33], 8
+       xma.l		f11 = s2, f27, f0;;
+       xma.hu		f16 = s2, f36, f12
+       ldf8		f28 = [r33], 8
+       xma.l		f12 = s2, f28, f0;;
+       xma.hu		f16 = s2, f37, f13
+       ldf8		f29 = [r33], 8
+       xma.l		f13 = s2, f29, f0;;
+       xma.hu		f16 = s2, f38, f14
+       ldf8		f30 = [r33], 8
+       xma.l		f14 = s2, f30, f0;;
+       xma.hu		f16 = s2, f39, f15
+       ldf8		f31 = [r33], 8
+       xma.l		f15 = s2, f31, f0;;
+       br.cloop.dptk	.Loop
+
+
+
+mpn_lshift
+mpn_rshift
+	shrp	r1=r2,r3,imm			// only immediate count
+						// will need 63 loops.  Cute.
