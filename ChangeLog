@@ -1,3 +1,17 @@
+2000-06-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/tests/reuse.c (dsi_funcs): Add mpf_mul_2exp and mpf_div_2exp.
+	(main): Clean up test for mpf_div_ui.
+
+	* mpf/mul_2exp.c: Correct criterion for whether to use mpn_lshift or
+	mpn_rshift.  MPN_COPY => MPN_COPY_INCR.  Coerce the two assignments to
+	r->_mp_size.
+
+	* mpf/div_2exp.c: Use mpn_rshift instead of mpn_lshift when overlap
+	so requires.  MPN_COPY => MPN_COPY_INCR.
+
+	* mpf/tests/t-dm2exp.c: Correct type of res_prec.
+
 2000-06-04  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/bin_uiui.c: Fix result for n==0 and n==k.
@@ -38,10 +52,11 @@
 
 2000-05-29  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/power/mul_1.s: Remove [PR] from first word in function descriptor.
+	* mpn/power/mul_1.s: Remove [PR] from first word in function
+	descriptor.
 	* mpn/power/addmul_1.s: Likewise.
 	* mpn/power/submul_1.s: Likewise.
-	
+
 2000-05-28  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, tune/*: Change pentium rdtsc cycle scheme to
