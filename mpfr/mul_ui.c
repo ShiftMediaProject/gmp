@@ -1,6 +1,6 @@
 /* mpfr_mul_ui -- multiply a floating-point number by a machine integer
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -87,8 +87,12 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   /* since the case u=1 was treated above, we have u >= 2, thus
      my[xn] >= 1 since x was msb-normalized */
   MPFR_ASSERTN(my[xn] != 0);
-  count_leading_zeros(cnt, my[xn]);
-  mpn_lshift (my, my, xn + 1, cnt);
+  cnt = 0;
+  if ((my[xn] & MP_LIMB_T_HIGHBIT) == 0)
+    {
+      count_leading_zeros(cnt, my[xn]);
+      mpn_lshift (my, my, xn + 1, cnt);
+    }
 
   /* now my[xn], ..., my[0] is msb-normalized too, and has at most
      PREC(x) + (BITS_PER_MP_LIMB - cnt) non-zero bits */
