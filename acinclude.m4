@@ -150,7 +150,7 @@ AC_DEFUN(GMP_SUBST_CHECK_FUNCS,
 [_GMP_SUBST_CHECK_FUNCS(ac_cv_func_[$1],HAVE_[]m4_translit([$1],[a-z],[A-Z])_01)
 GMP_SUBST_CHECK_FUNCS(m4_shift($@))])])
 
-dnl  Called: _GMP_SUBST_CHECK_FUNCS(cachvar,substvar)
+dnl  Called: _GMP_SUBST_CHECK_FUNCS(cachevar,substvar)
 AC_DEFUN(_GMP_SUBST_CHECK_FUNCS,
 [case $[$1] in
 yes) AC_SUBST([$2],1) ;;
@@ -169,7 +169,7 @@ AC_DEFUN(GMP_SUBST_CHECK_HEADERS,
 HAVE_[]m4_translit([$1],[a-z./],[A-Z__])_01)
 GMP_SUBST_CHECK_HEADERS(m4_shift($@))])])
 
-dnl  Called: _GMP_SUBST_CHECK_HEADERS(cachvar,substvar)
+dnl  Called: _GMP_SUBST_CHECK_HEADERS(cachevar,substvar)
 AC_DEFUN(_GMP_SUBST_CHECK_HEADERS,
 [case $[$1] in
 yes) AC_SUBST([$2],1) ;;
