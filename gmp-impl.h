@@ -795,6 +795,10 @@ extern const unsigned char  modlimb_invert_table[128];
   } while (0)
 #endif
 
+/* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
+   0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
+#define MODLIMB_INVERSE_3   ((MP_LIMB_T_MAX / 3) * 2 + 1)
+
 
 /* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
    between GCC 2 releases from 2.5, since __GNUC_MINOR__ wasn't introduced
