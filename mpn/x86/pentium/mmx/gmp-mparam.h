@@ -1,4 +1,4 @@
-/* Intel P5 gmp-mparam.h -- Compiler/machine parameter header file.
+/* Intel P55 gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright (C) 1991, 1993, 1994, 1999, 2000 Free Software Foundation, Inc.
 
