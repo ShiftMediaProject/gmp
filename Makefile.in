@@ -164,7 +164,7 @@ LIBMP_LT_CURRENT = 4
 LIBMP_LT_REVISION = 2
 LIBMP_LT_AGE = 1
 
-AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
+AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 
 # FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
 # conditionalized.  We want mpfr/mpfr.info only installed under
@@ -178,6 +178,9 @@ AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 #
 SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd $(MPFR_DIR) demos tune
 
+@WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
+@WANT_CXX_TRUE@@WANT_MPFR_TRUE@MPFRXX_HEADERS_OPTION = mpfrxx.h
+include_HEADERS = $(GMPXX_HEADERS_OPTION) $(MPFRXX_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
@@ -288,6 +291,7 @@ PRINTF_OBJECTS = \
 
 
 CXX_OBJECTS = \
+   cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
    cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
 
 
@@ -419,19 +423,19 @@ DIST_SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) \
 INFO_DEPS = gmp.info
 DVIS = gmp.dvi
 TEXINFOS = gmp.texi
-HEADERS = $(nodist_include_HEADERS)
+HEADERS = $(include_HEADERS) $(nodist_include_HEADERS)
 
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
-DIST_COMMON = README $(gmp_TEXINFOS) ./stamp-h.in AUTHORS COPYING \
-	COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS \
-	acconfig.h acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c \
-	config.guess config.in config.sub configure configure.in \
-	gmp-h.in install-sh ltmain.sh mdate-sh missing mkinstalldirs \
-	mp-h.in stamp-vti texinfo.tex version.texi
+DIST_COMMON = README $(gmp_TEXINFOS) $(include_HEADERS) ./stamp-h.in \
+	AUTHORS COPYING COPYING.LIB ChangeLog INSTALL Makefile.am \
+	Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 ansi2knr.1 \
+	ansi2knr.c config.guess config.in config.sub configure \
+	configure.in gmp-h.in install-sh ltmain.sh mdate-sh missing \
+	mkinstalldirs mp-h.in stamp-vti texinfo.tex version.texi
 DIST_SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd mpfr demos tune
 SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
 
@@ -709,6 +713,23 @@ maintainer-clean-aminfo:
 	    rm -f $$i-[0-9]*; \
 	  fi; \
 	done
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(includedir)
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(includedir)/$$f"; \
+	  $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(includedir)/$$f; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " rm -f $(DESTDIR)$(includedir)/$$f"; \
+	  rm -f $(DESTDIR)$(includedir)/$$f; \
+	done
 install-nodist_includeHEADERS: $(nodist_include_HEADERS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(includedir)
@@ -828,11 +849,6 @@ distdir = $(PACKAGE)-$(VERSION)
 GZIP_ENV = --best
 
 distdir: $(DISTFILES)
-	@if sed 15q $(srcdir)/NEWS | fgrep -e "$(VERSION)" >/dev/null; \
-	then :; else \
-	  echo "NEWS not updated; not releasing" 1>&2; \
-	  exit 1; \
-	fi
 	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
 	$(mkinstalldirs) $(distdir)/. $(distdir)/demos/expr
@@ -913,7 +929,7 @@ all-am: Makefile $(INFO_DEPS) $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) \
 		config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) $(DESTDIR)$(includedir)
+	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) $(DESTDIR)$(includedir) $(DESTDIR)$(includedir)
 
 install: install-recursive
 install-exec: install-exec-recursive
@@ -961,7 +977,8 @@ info: info-recursive
 
 info-am: $(INFO_DEPS)
 
-install-data-am: install-info-am install-nodist_includeHEADERS
+install-data-am: install-includeHEADERS install-info-am \
+	install-nodist_includeHEADERS
 
 install-exec-am: install-libLTLIBRARIES
 
@@ -1004,8 +1021,8 @@ mostlyclean-am: mostlyclean-aminfo mostlyclean-compile \
 	mostlyclean-generic mostlyclean-kr mostlyclean-libtool \
 	mostlyclean-vti
 
-uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES \
-	uninstall-nodist_includeHEADERS
+uninstall-am: uninstall-includeHEADERS uninstall-info-am \
+	uninstall-libLTLIBRARIES uninstall-nodist_includeHEADERS
 
 uninstall-info: uninstall-info-recursive
 
@@ -1017,8 +1034,8 @@ uninstall-info: uninstall-info-recursive
 	dvi dvi-am dvi-recursive info info-am info-recursive install \
 	install-am install-data install-data-am install-data-recursive \
 	install-exec install-exec-am install-exec-recursive \
-	install-info install-info-am install-info-recursive \
-	install-libLTLIBRARIES install-man \
+	install-includeHEADERS install-info install-info-am \
+	install-info-recursive install-libLTLIBRARIES install-man \
 	install-nodist_includeHEADERS install-recursive install-strip \
 	installcheck installcheck-am installdirs installdirs-am \
 	installdirs-recursive maintainer-clean maintainer-clean-aminfo \
@@ -1026,14 +1043,15 @@ uninstall-info: uninstall-info-recursive
 	maintainer-clean-vti mostlyclean mostlyclean-aminfo \
 	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
 	mostlyclean-libtool mostlyclean-recursive mostlyclean-vti tags \
-	tags-recursive uninstall uninstall-am uninstall-info-am \
-	uninstall-info-recursive uninstall-libLTLIBRARIES \
-	uninstall-nodist_includeHEADERS uninstall-recursive
+	tags-recursive uninstall uninstall-am uninstall-includeHEADERS \
+	uninstall-info-am uninstall-info-recursive \
+	uninstall-libLTLIBRARIES uninstall-nodist_includeHEADERS \
+	uninstall-recursive
 
 
 # Don't ship CVS directories or emacs backups.
 dist-hook:
-	-find $(distdir) \( -name CVS -type d \) -o -name "*.~*" \
+	-find $(distdir) \( -name CVS -type d \) -o -name "*~" \
 		| xargs rm -rf
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
