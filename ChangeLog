@@ -1,3 +1,9 @@
+2000-06-28  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/tests/io.c: Use a disk file, not a pipe, switch to ansi2knr
+	style, switch from MP_INT to mpz_t, add a couple of error checks.
+	* mpz/tests/Makefile.am (CLEANFILES): Add io.tmp, in case io.c fails.
+
 2000-06-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/tests/t-get_d.c: Be more lax about relative error, to
