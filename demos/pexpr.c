@@ -59,6 +59,11 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include "gmp.h"
 
+/* SunOS 4 doesn't define a canonical SIGSTKSZ, provide a default. */
+#ifndef SIGSTKSZ
+#define SIGSTKSZ  4096
+#endif
+
 
 #define TIME(t,func)							\
   do { int __t0, __times, __t, __tmp;					\
@@ -171,6 +176,20 @@ cputime (void)
 #endif
 
 
+int
+stack_downwards_helper (char *xp)
+{
+  char  y;
+  return &y < xp;
+}
+int
+stack_downwards_p (void)
+{
+  char  x;
+  return stack_downwards_helper (&x);
+}
+
+
 void
 setup_error_handler (void)
 {
@@ -190,7 +209,8 @@ setup_error_handler (void)
      overflown stack.  */
 #if HAVE_SIGALTSTACK
   {
-    /* AIX uses stack_t, MacOS uses struct sigaltstack. */
+    /* AIX uses stack_t, MacOS uses struct sigaltstack, various other
+       systems have both. */
 #if HAVE_STACK_T
     stack_t s;
 #else
@@ -206,8 +226,10 @@ setup_error_handler (void)
 #else
 #if HAVE_SIGSTACK
   {
-    struct sigstack sigstk;
+    struct sigstack s;
     s.ss_sp = malloc (SIGSTKSZ);
+    if (stack_downwards_p ())
+      s.ss_sp += SIGSTKSZ;
     s.ss_onstack = 0;
     if (sigstack (&s, NULL) != 0)
       perror("sigstack");
