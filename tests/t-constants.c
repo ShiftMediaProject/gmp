@@ -28,11 +28,12 @@ MA 02111-1307, USA.
 
 
 #if HAVE_STRINGIZE
-#define CHECK_CONSTANT(x,y)                                     \
-  if ((x) != (y))                                               \
-    {                                                           \
-      printf ("%s == %lx, but %s == %lx\n", #x, x, #y, y);        \
-      abort ();                                                 \
+#define CHECK_CONSTANT(x,y)                                               \
+  if ((x) != (y))                                                         \
+    {                                                                     \
+      printf ("%s == %lx, but %s == %lx\n",                               \
+	      #x, (unsigned long int) (x), #y, (unsigned long int) (y));  \
+      abort ();                                                           \
     }
 #define CHECK_CONDITION(x)              \
   if (!(x))                             \
@@ -42,11 +43,12 @@ MA 02111-1307, USA.
     }
 
 #else
-#define CHECK_CONSTANT(x,y)                     \
-  if ((x) != (y))                               \
-    {                                           \
-      printf ("x == %lx, but y == %lx\n", x, y);  \
-      abort ();                                 \
+#define CHECK_CONSTANT(x,y)                                               \
+  if ((x) != (y))                                                         \
+    {                                                                     \
+      printf ("x == %lx, but y == %lx\n",                                 \
+              (unsigned long int) (x), (unsigned long int) (y));          \
+      abort ();                                                           \
     }
 #define CHECK_CONDITION(x)      \
   if (!(x))                     \
