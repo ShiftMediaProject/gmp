@@ -52,6 +52,9 @@
 
 2000-04-15  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in: Disable -march=pentiumpro due to apparent compiler
+	problems.
+	
 	* mpz/powm.c: Replace with new code from Paul Zimmermann.
 
 	* mpz/tdiv_q.c: Remove debug code.
