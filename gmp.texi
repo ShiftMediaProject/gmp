@@ -950,7 +950,7 @@ debugging memory related problems (@pxref{Debugging}).
 
 @item FFT Multiplication, @option{--disable-fft}
 @cindex FFT multiplication
-By default multiplications are done using Karatsuba, 3-way Toom-Cook, and
+By default multiplications are done using Karatsuba, 3-way Toom, and
 Fermat FFT.  The FFT is only used on large to very large operands and can be
 disabled to save code size if desired.
 
@@ -6708,7 +6708,7 @@ future.
 @menu
 * Basecase Multiplication::     
 * Karatsuba Multiplication::    
-* Toom-Cook 3-Way Multiplication::  
+* Toom 3-Way Multiplication::  
 * FFT Multiplication::          
 * Other Multiplication::        
 @end menu
@@ -6803,7 +6803,7 @@ the size at which to use @code{mpn_sqr_basecase}, this will be zero if that
 routine should be used always.
 
 
-@node Karatsuba Multiplication, Toom-Cook 3-Way Multiplication, Basecase Multiplication, Multiplication Algorithms
+@node Karatsuba Multiplication, Toom 3-Way Multiplication, Basecase Multiplication, Multiplication Algorithms
 @subsection Karatsuba Multiplication
 @cindex Karatsuba multiplication
 
@@ -6962,13 +6962,13 @@ course all speedups reduce total time, and in that sense the algorithm
 thresholds are merely of academic interest.
 
 
-@node Toom-Cook 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
-@subsection Toom-Cook 3-Way Multiplication
-@cindex Toom-Cook multiplication
+@node Toom 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
+@subsection Toom 3-Way Multiplication
+@cindex Toom multiplication
 
 The Karatsuba formula is the simplest case of a general approach to splitting
-inputs that leads to both Toom-Cook and FFT algorithms.  A description of
-Toom-Cook can be found in Knuth section 4.3.3, with an example 3-way
+inputs that leads to both Toom and FFT algorithms.  A description of
+Toom can be found in Knuth section 4.3.3, with an example 3-way
 calculation after Theorem A.  The 3-way form used in GMP is described here.
 
 The operands are each considered split into 3 pieces of equal length (or the
@@ -7240,7 +7240,7 @@ same @code{interpolate3} subroutine is used for both squaring and multiplying.
 Toom-3 is asymptotically @math{O(N^@W{1.465})}, the exponent being
 @m{\log5/\log3,log(5)/log(3)}, representing 5 recursive multiplies of 1/3 the
 original size.  This is an improvement over Karatsuba at @math{O(N^@W{1.585})},
-though Toom-Cook does more work in the evaluation and interpolation and so it
+though Toom does more work in the evaluation and interpolation and so it
 only realizes its advantage above a certain size.
 
 Near the crossover between Toom-3 and Karatsuba there's generally a range of
@@ -7272,7 +7272,7 @@ and for example with a bit of rearrangement just one division by 6 can be
 done.
 
 
-@node FFT Multiplication, Other Multiplication, Toom-Cook 3-Way Multiplication, Multiplication Algorithms
+@node FFT Multiplication, Other Multiplication, Toom 3-Way Multiplication, Multiplication Algorithms
 @subsection FFT Multiplication
 @cindex FFT multiplication
 
@@ -7388,9 +7388,9 @@ needed.
 
 @node Other Multiplication,  , FFT Multiplication, Multiplication Algorithms
 @subsection Other Multiplication
-@cindex Toom-Cook multiplication
+@cindex Toom multiplication
 
-The 3-way Toom-Cook algorithm described above (@pxref{Toom-Cook 3-Way
+The 3-way Toom algorithm described above (@pxref{Toom 3-Way
 Multiplication}) generalizes to split into an arbitrary number of pieces, as
 per Knuth section 4.3.3 algorithm C.  This is not currently used, though it's
 possible a Toom-4 might fit in between Toom-3 and the FFTs.  The notes here
