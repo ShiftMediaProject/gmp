@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 31 Jul 2003.  An up-to-date version is available at
+  This file current as of 15 Sep 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -351,18 +351,6 @@ MA 02111-1307, USA.
      could process 32 bits at a time when the divisor fits 32-bits.  This will
      need only 4 <code>mulx</code>'s per limb instead of 8 in the general
      case.
-<li> UltraSPARC/64: <code>mpn_divexact_1</code> and
-     <code>mpn_modexact_1_odd</code> currently use 5 <code>mulx</code>'s per
-     limb, but when the divisor fits 32-bits there only needs to be 3 (one for
-     l*inv and two for q*d).
-<li> UltraSPARC/64: <code>mpn_divexact_1</code> and
-     <code>mpn_modexact_1_odd</code> can take advantage of the fact that the
-     low half of q*d is known to be equal to the input limb l.  This means
-     it's not necessary to calculate the lowest 32x32 part of that, instead it
-     can be inferred from l, or rather whether there's a carry into the high
-     limb can be inferred, which is all that's of interest.  This applies to
-     both 64-bit divisor and 32-bit divisor, taking them down to 4 and 2
-     <code>mulx</code>'s per limb respectively.
 <li> UltraSPARC/32: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
      Will give 2 cycles/limb.  Trivial modifications of mpn/sparc64 should do.
 <li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 &lt; 2^16.
@@ -493,10 +481,6 @@ MA 02111-1307, USA.
      exist on some IRIX 6.5 systems tried.  If it does actually exist
      somewhere it would very likely be an improvement over a function call to
      umul.asm.
-<li> VAX D and G format <code>double</code> floats are straightforward and
-     could perhaps be handled directly in <code>__gmp_extract_double</code>
-     and maybe in <code>mpz_get_d</code>, rather than falling back on the
-     generic code.  (Both formats are detected by <code>configure</code>.)
 <li> <code>mpn_get_str</code> final divisions by the base with
      <code>udiv_qrnd_unnorm</code> could use some sort of multiply-by-inverse
      on suitable machines.  This ends up happening for decimal by presenting
@@ -548,7 +532,8 @@ MA 02111-1307, USA.
      </ul>
 <li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
      format is portable between 32-bit and 64-bit machines, and between
-     little-endian and big-endian machines.
+     little-endian and big-endian machines.  A format which MPFR can use too
+     would be good.
 <li> <code>mpn_and_n</code> ... <code>mpn_copyd</code>: Perhaps make the mpn
      logops and copys available in gmp.h, either as library functions or
      inlines, with the availability of library functions instantiated in the
@@ -576,12 +561,10 @@ MA 02111-1307, USA.
 <li> <code>GMP_LONG_LONG_LIMB</code> or some such could become a documented
      feature of gmp.h, so applications could know whether to
      <code>printf</code> a limb using <code>%lu</code> or <code>%Lu</code>.
-<li> <code>PRIdMP_LIMB</code> and similar defines following C99
-     &lt;inttypes.h&gt; might be of use to applications printing limbs.
-     Perhaps they should be defined only if specifically requested, the way
-     &lt;inttypes.h&gt; does.  But if <code>GMP_LONG_LONG_LIMB</code> or
-     whatever is added then perhaps this can easily enough be left to
-     applications.
+<li> <code>GMP_PRIdMP_LIMB</code> and similar defines following C99
+     &lt;inttypes.h&gt; might be of use to applications printing limbs.  But
+     if <code>GMP_LONG_LONG_LIMB</code> or whatever is added then perhaps this
+     can easily enough be left to applications.
 <li> <code>mpf_get_ld</code> and <code>mpf_set_ld</code> converting
      <code>mpf_t</code> to and from <code>long double</code>.  Other
      <code>long double</code> routines would be desirable too, but these would
@@ -959,6 +942,10 @@ them.
      used.  The file could go somewhere suitable in the mpn search if any
      chips might benefit from it, though it's possible we don't currently
      differentiate enough exact cpu types to do this properly.
+<li> VAX D and G format <code>double</code> floats are straightforward and
+     could perhaps be handled directly in <code>__gmp_extract_double</code>
+     and maybe in <code>mpn_get_d</code>, rather than falling back on the
+     generic code.  (Both formats are detected by <code>configure</code>.)
 <li> z8k: The use of a 32-bit limb in mpn/z8000x as opposed to 16-bits in
      mpn/z8000 could be an ABI choice.  But this chip is obsolete and nothing
      is likely to be done unless someone is actively using it.
