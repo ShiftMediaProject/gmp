@@ -71,9 +71,9 @@ L(top):
 	C edi
 	C ebp
 
-	movq	(%eax,%ecx,8), %mm0
+	movq	-8(%eax,%ecx,8), %mm0
 	pxor	%mm7, %mm0
-	movq	%mm0, (%edx,%ecx,8)
+	movq	%mm0, -8(%edx,%ecx,8)
 	loop	L(top)
 
 
