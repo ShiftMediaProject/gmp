@@ -35,6 +35,10 @@ C s2limb = r35
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
+	.prologue
+	.save	ar.lc, r2
+		mov	r2 = ar.lc
+	.body
 		cmp.eq	p8, p9 = 1, r34
 		cmp.eq	p10, p11 = 2, r34
 		add	r34 = -3, r34
@@ -82,6 +86,7 @@ PROLOGUE(mpn_mul_1)
 		mov	r8 = r15
 		st8	[r20] = r14;;
 	(p6)	add	r8 = 1, r8
+		mov	ar.lc = r2
 		br.ret.sptk.many b0
 .Lend2:
 		stf8	[r20] = f98, 8
@@ -94,10 +99,12 @@ PROLOGUE(mpn_mul_1)
 		cmp.ltu	p6, p7 = r14, r16
 		st8	[r20] = r14;;
 	(p6)	add	r8 = 1, r8
+		mov	ar.lc = r2
 		br.ret.sptk.many b0
 .Lend1:
 		stf8	[r20] = f98
 		getf.sig r8 = f99
+		mov	ar.lc = r2
 		br.ret.sptk.many b0
 EPILOGUE(mpn_mul_1)
 ASM_END()

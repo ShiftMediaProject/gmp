@@ -30,6 +30,10 @@ C n = r35
 
 ASM_START()
 PROLOGUE(mpn_add_n)
+	.prologue
+	.save	ar.lc, r2
+		mov	r2 = ar.lc
+	.body
 		add	r35 = -1, r35;;
 		mov	ar.lc = r35
 		cmp.ne	p8, p9 = r0, r0
@@ -45,6 +49,7 @@ PROLOGUE(mpn_add_n)
 	;;
 	(p8)	mov	r8 = 1
 	(p9)	mov	r8 = 0
+		mov	ar.lc = r2
 		br.ret.sptk.many b0
 EPILOGUE(mpn_add_n)
 ASM_END()
