@@ -396,8 +396,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define SHRT_HIGHBIT       SHRT_MIN
 
 
-  /* #define GMP_NUMB_MASK     (MP_LIMB_T_MAX >> GMP_NAIL_BITS) */
-#define GMP_NAIL_MASK     (~ GMP_NUMB_MASK)
 #define GMP_NUMB_HIGHBIT  (CNST_LIMB(1) << (GMP_NUMB_BITS-1))
 #define GMP_NUMB_MAX      GMP_NUMB_MASK
 

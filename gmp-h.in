@@ -35,8 +35,9 @@ MA 02111-1307, USA. */
 #define GMP_LIMB_BITS                      @BITS_PER_MP_LIMB@
 #define GMP_NAIL_BITS                      @GMP_NAIL_BITS@
 #endif
-#define GMP_NUMB_BITS  (GMP_LIMB_BITS - GMP_NAIL_BITS)
+#define GMP_NUMB_BITS     (GMP_LIMB_BITS - GMP_NAIL_BITS)
 #define GMP_NUMB_MASK     ((~(mp_limb_t) 0) >> GMP_NAIL_BITS)
+#define GMP_NAIL_MASK     (~ GMP_NUMB_MASK)
 
 
 /* The following (everything under ifndef __GNU_MP__) must be identical in
