@@ -132,6 +132,11 @@ libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 
 # Both libspeed and the programs are built static-only since static is
 # fastest and will be preferred by users who care about maximizing speed.
+#
+# Actually libtool doesn't seem to pass -static through to gcc, it only
+# chooses the ".a" versions of libtool libraries.  Rerun the gcc link
+# invocation with -static if you want a static link of libc and libm.
+#
 LDFLAGS = -static
 LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
 
