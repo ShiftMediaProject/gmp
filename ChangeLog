@@ -30,6 +30,7 @@ MA 02111-1307, USA.
 	* tests/mpf/t-get_ui.c: New file.
 	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
 	* tests/mpf/t-get_si.c (check_limbdata): Further tests.
+	* gmp-impl.h (MP_EXP_T_MAX, MP_EXP_T_MIN): New defines.
 
 	* mpf/get_ui.c, mpf/get_si.c: Remove size==0 test, it's covered by
 	other conditions.  Attempt greater clarity by expressing conditions as
