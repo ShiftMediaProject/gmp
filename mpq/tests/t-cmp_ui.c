@@ -79,11 +79,12 @@ main (argc, argv)
       while (mpz_cmp_ui (DEN (a), 0) == 0);
 
       mpz_random2 (NUM (b), 1);
-      do
-	{
-	  mpz_random2 (DEN (b), 1);
-	}
-      while (mpz_cmp_ui (DEN (b), 0) == 0);
+      mpz_mod_ui (NUM (b), NUM (b), ~(unsigned long int) 0);
+      mpz_add_ui (NUM (b), NUM (b), 1);
+
+      mpz_random2 (DEN (b), 1);
+      mpz_mod_ui (DEN (b), DEN (b), ~(unsigned long int) 0);
+      mpz_add_ui (DEN (b), DEN (b), 1);
 
       mpq_canonicalize (a);
       mpq_canonicalize (b);
