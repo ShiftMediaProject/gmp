@@ -1,6 +1,6 @@
 /* double mpf_get_d_2exp (signed long int *exp, mpf_t src).
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,7 +27,6 @@ MA 02111-1307, USA. */
 double
 mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
 {
-  double res;
   mp_size_t size, abs_size;
   mp_srcptr ptr;
   int cnt;
@@ -45,29 +44,9 @@ mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
   count_leading_zeros (cnt, ptr[abs_size - 1]);
   cnt -= GMP_NAIL_BITS;
 
-  res = mpn_get_d (ptr, abs_size, (mp_size_t) 0,
-                   (long) - (abs_size * GMP_NUMB_BITS - cnt));
-
   exp = EXP(src) * GMP_NUMB_BITS - cnt;
-
-  /* gcc on m68k and x86 holds floats in the coprocessor, which may mean
-     "res" has extra precision.  Force it through memory to ensure any
-     rounding takes place now and won't become 1.0 in the caller.  */
-#if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86)     \
-  && defined (__GNUC__)
-  __asm__ ("" : "=m" (res) : "0" (res));
-#endif
-
-  /* if hardware floats are in round upwards mode then res might be 1.0 */
-  if (UNLIKELY (res >= 1.0))
-    {
-      res *= 0.5;
-      exp++;
-    }
-
-  ASSERT (res >= 0.5);
-  ASSERT (res < 1.0);
-
   *exp2 = exp;
-  return (size >= 0 ? res : -res);
+
+  return mpn_get_d (ptr, abs_size, (mp_size_t) 0,
+                    (long) - (abs_size * GMP_NUMB_BITS - cnt));
 }
