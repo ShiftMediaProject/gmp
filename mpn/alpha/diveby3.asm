@@ -231,7 +231,7 @@ C 5
 	stq	x, 24(rp)			C L1
 	lda	up, 32(up)
 C
-	lds	f31, 256(up)			C prefetch
+	ldl	r31, 256(up)			C prefetch
 	unop
 	lda	rp, 32(rp)
 	bge	n, $Ltop			C U1
