@@ -48,10 +48,10 @@ libmpq.a: Makefile $(MPQ_OBJS)
 
 clean mostlyclean:
 	rm -f *.o libmpq.a
-	-cd tests; $(MAKE) $@
+	@cd tests; $(MAKE) $@
 distclean maintainer-clean: clean
 	rm -f Makefile config.status
-	-cd tests; $(MAKE) $@
+	@cd tests; $(MAKE) $@
 
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) ./config.status
