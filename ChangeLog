@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-22  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/alpha/mode1o.c, mpn/alpha/dive_1.c: Moved from ev5/mode1o.c and
+	ev5/dive_1.c, these are good for ev4, and would like them in a generic
+	alpha build.
+
 2003-12-21  Kevin Ryde  <kevin@swox.se>
 
 	* doc/gmp.texi (Integer Logic and Bit Fiddling): Say "bitwise" in
