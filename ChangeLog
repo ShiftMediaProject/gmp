@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-04-18  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (m68060-*-*): Fallback to gcc -m68000 when -m68060 not
+	available, and don't use mpn/m68k/mc68020 asm routines.  (Avoids 32x32
+	mul and 64/32 div which trap to the kernel on 68060.)
+	* mpn/m68k/README: Update notes on directory usage.
+	
+	* tests/cxx/Makefile.am (TESTS_ENVIRONMENT): Add a hack to let the
+	test programs run with a shared libgmpxx on openbsd 3.2.
+
+	* gmp.texi (Language Bindings): Add Guile.
+
 2003-04-12  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (cygwin*, mingw*, pw32*, os2*): Add
