@@ -33,19 +33,19 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 int
-mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
+mpz_root (mpz_ptr r, mpz_srcptr u, unsigned long int nth)
 {
-  mpz_t x, t0, t1, t2;
-  __mpz_struct ccs, *cc = &ccs;
-  unsigned long int nbits;
-  int bit;
+  mp_ptr rootp, up;
+  mp_size_t us, un, rootn;
   int exact;
-  int i;
-  unsigned long int lowz;
-  unsigned long int rl;
+  unsigned int cnt;
+  unsigned long int rootnb, unb;
+
+  up = PTR(u);
+  us = SIZ(u);
 
   /* even roots of negatives provoke an exception */
-  if (mpz_sgn (c) < 0 && (nth & 1) == 0)
+  if (us < 0 && (nth & 1) == 0)
     SQRT_OF_NEGATIVE;
 
   /* root extraction interpreted as c^(1/nth) means a zeroth root should
@@ -53,125 +53,44 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
   if (nth == 0)
     DIVIDE_BY_ZERO;
 
-  if (mpz_sgn (c) == 0)
+  if (us == 0)
     {
       if (r != NULL)
-	mpz_set_ui (r, 0);
+	SIZ(r) = 0;
       return 1;			/* exact result */
     }
 
-  PTR(cc) = PTR(c);
-  SIZ(cc) = ABSIZ(c);
+  un = ABS (us);
 
-  nbits = (mpz_sizeinbase (cc, 2) - 1) / nth;
-  if (nbits == 0)
-    {
-      if (r != NULL)
-	mpz_set_ui (r, 1);
-      if (mpz_sgn (c) < 0)
-	{
-	  if (r != NULL)
-	    SIZ(r) = -SIZ(r);
-	  return mpz_cmp_si (c, -1L) == 0;
-	}
-      return mpz_cmp_ui (c, 1L) == 0;
-    }
-
-  mpz_init (x);
-  mpz_init (t0);
-  mpz_init (t1);
-  mpz_init (t2);
-
-  /* Create a one-bit approximation.  */
-  mpz_set_ui (x, 0);
-  mpz_setbit (x, nbits);
-
-  /* Make the approximation better, one bit at a time.  This odd-looking
-     termination criteria makes large nth get better initial approximation,
-     which avoids slow convergence for such values.  */
-  bit = nbits - 1;
-  for (i = 1; (nth >> i) != 0; i++)
-    {
-      mpz_setbit (x, bit);
-      mpz_tdiv_q_2exp (t0, x, bit);
-      mpz_pow_ui (t1, t0, nth);
-      mpz_mul_2exp (t1, t1, bit * nth);
-      if (mpz_cmp (cc, t1) < 0)
-	mpz_clrbit (x, bit);
-
-      bit--;			/* check/set next bit */
-      if (bit < 0)
-	{
-	  /* We're done.  */
-	  mpz_pow_ui (t1, x, nth);
-	  goto done;
-	}
-    }
-  mpz_setbit (x, bit);
-  mpz_set_ui (t2, 0); mpz_setbit (t2, bit);  mpz_add (x, x, t2);
-
-#if DEBUG
-  /* Check that the starting approximation is >= than the root.  */
-  mpz_pow_ui (t1, x, nth);
-  if (mpz_cmp (cc, t1) >= 0)
-    abort ();
-#endif
-
-  mpz_add_ui (x, x, 1);
-
-  /* Main loop */
-  do
-    {
-      lowz = mpz_scan1 (x, 0);
-      mpz_tdiv_q_2exp (t0, x, lowz);
-      mpz_pow_ui (t1, t0, nth - 1);
-      mpz_mul_2exp (t1, t1, lowz * (nth - 1));
-      mpz_tdiv_q (t2, cc, t1);
-      mpz_sub (t2, x, t2);
-      rl = mpz_tdiv_q_ui (t2, t2, nth);
-      mpz_sub (x, x, t2);
-    }
-  while (mpz_sgn (t2) != 0);
-
-  /* If we got a non-zero remainder in the last division, we know our root
-     is too large.  */
-  mpz_sub_ui (x, x, (unsigned long) (rl != 0));
-
-  /* Adjustment loop.  If we spend more care on rounding in the loop above,
-     we could probably get rid of this, or greatly simplify it.  */
-  {
-    int bad = 0;
-    lowz = mpz_scan1 (x, 0);
-    mpz_tdiv_q_2exp (t0, x, lowz);
-    mpz_pow_ui (t1, t0, nth);
-    mpz_mul_2exp (t1, t1, lowz * nth);
-    while (mpz_cmp (cc, t1) < 0)
-      {
-	bad++;
-	if (bad > 2)
-	  abort ();			/* abort if our root is far off */
-	mpz_sub_ui (x, x, 1);
-	lowz = mpz_scan1 (x, 0);
-	mpz_tdiv_q_2exp (t0, x, lowz);
-	mpz_pow_ui (t1, t0, nth);
-	mpz_mul_2exp (t1, t1, lowz * nth);
-      }
-  }
-
- done:
-  exact = mpz_cmp (t1, cc) == 0;
+  count_leading_zeros (cnt, up[un - 1]);
+  unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
+  rootnb = (unb + nth - 1) / nth;
+  rootn = (rootnb + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
 
   if (r != NULL)
     {
-      mpz_set (r, x);
-      if (mpz_sgn (c) < 0)
-	SIZ(r) = -SIZ(r);
+      rootp = MPZ_REALLOC (r, rootn + 1);
+      up = PTR(u);
+    }
+  else
+    {
+      rootp = __GMP_ALLOCATE_FUNC_LIMBS (rootn + 1);
     }
 
-  mpz_clear (t2);
-  mpz_clear (t1);
-  mpz_clear (t0);
-  mpz_clear (x);
+  if (nth == 1)
+    {
+      MPN_COPY (rootp, up, un);
+      exact = 1;
+    }
+  else
+    {
+      exact = 0 == mpn_rootrem (rootp, NULL, up, un, nth);
+    }
+
+  if (r != NULL)
+    SIZ(r) = us >= 0 ? rootn : -rootn;
+  else
+    __GMP_FREE_FUNC_LIMBS (rootp, rootn + 1);
 
   return exact;
 }
