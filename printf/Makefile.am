@@ -24,11 +24,12 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
-if HAVE_CXX
-OPTION_CXX = doprntfx.cc doprntix.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
-endif
+# Need C objects in their own convenience library since if a C++ object is
+# there then $(CXX) will be used in the libtool command, and that's not
+# always available.
 
-noinst_LTLIBRARIES = libprintf.la
+EXTRA_LTLIBRARIES = libxprintf.la
+noinst_LTLIBRARIES = libprintf.la @LIBCXXPRINTF_LA@
 
 libprintf_la_SOURCES =							 \
   asprintf.c doprnt.c doprntf.c doprnti.c				 \
@@ -36,3 +37,6 @@ libprintf_la_SOURCES =							 \
   printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
   vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c		 \
   $(OPTION_CXX)
+
+libxprintf_la_SOURCES =							 \
+  doprntfx.cc doprntix.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
