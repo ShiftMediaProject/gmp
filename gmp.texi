@@ -3157,7 +3157,8 @@ This function returns 0 if the entire string is a valid number in base
 @end deftypefun
 
 @deftypefun void mpf_swap (mpf_t @var{rop1}, mpf_t @var{rop2})
-Swap the values @var{rop1} and @var{rop2} efficiently.
+Swap @var{rop1} and @var{rop2} efficiently.  Both the values and the
+precisions of the two variables are swapped.
 @end deftypefun
 
 
@@ -3767,10 +3768,9 @@ Return the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
 Compute the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
 @{@var{s2p}, @var{s2n}@}.  Store the gcd at @{@var{r1p}, @var{retval}@}.
 Store the first cofactor at @{@var{r2p}, *@var{r2n}@}.  If the cofactor is
-negative, *@var{r2n} is negative and the absolute value is stored at
-@var{r2p}.  @var{r1p} and @var{r2p} should each have room for @var{s1n} limbs,
-the return value and value stored through @var{r2n} indicate the actual number
-produced.
+negative, *@var{r2n} is negative.  @var{r1p} and @var{r2p} should each have
+room for @var{s1n} limbs, the return value and value stored through @var{r2n}
+indicate the actual number produced.
 
 @{@var{s1p}, @var{s1n}@} must be greater than or equal to @{@var{s2p},
 @var{s2n}@}.  Both operands must be non-zero.  Both source regions are
@@ -5600,9 +5600,8 @@ Powering this way is much faster than simple addition, and in fact
 additions.  For large @ma{n}, Karatsuba and higher multiplication algorithms
 get used for the multiplications since the operands are roughly the same size.
 
-Alternate formulas using the Lucas numbers as an auxiliary sequence exist
-and are probably faster since they use two squares per bit rather than two
-multiplies.
+Alternate formulas using two squares per bit rather than two multiplies exist,
+and will be used in the future.
 
 
 @node Assembler Coding,  , Other Algorithms, Algorithms
