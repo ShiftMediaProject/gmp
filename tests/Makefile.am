@@ -27,5 +27,5 @@ SUBDIRS = rand
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-constants
+check_PROGRAMS = t-constants t-modlinv
 TESTS = $(check_PROGRAMS)
