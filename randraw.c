@@ -94,7 +94,6 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   mp_ptr tp, seedp, ap;
   mp_size_t ta;
   mp_size_t tn, seedn, an;
-  int shiftcount = 0;
   unsigned long int m2exp;
   mp_limb_t c;
   TMP_DECL (mark);
