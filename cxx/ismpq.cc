@@ -1,6 +1,6 @@
 /* operator>> -- C++-style input of mpq_t.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,18 +39,23 @@ operator>> (istream &i, mpq_ptr q)
   i.get(c); // start reading
 
   if (i.flags() & ios::skipws) // skip initial whitespace
-    while (isspace(c) && i.get(c))
-      ;
+    {
+#if HAVE_STD__LOCALE
+      const ctype<char>& ct = use_facet< ctype<char> >(i.getloc());
+#define cxx_isspace(c)  (ct.is(ctype_base::space,(c)))
+#else
+#define cxx_isspace(c)  isspace(c)
+#endif
 
+      while (cxx_isspace(c) && i.get(c))
+        ;
+    }
   if (c == '-' || c == '+') // sign
     {
       if (c == '-')
 	s = "-";
       i.get(c);
     }
-
-  while (isspace(c) && i.get(c)) // skip whitespace
-    ;
 
   base = __gmp_istream_set_base(i, c, zero, showbase); // select the base
   __gmp_istream_set_digits(s, i, c, ok, base);         // read the numerator
@@ -62,10 +67,6 @@ operator>> (istream &i, mpq_ptr q)
       ok = true;
     }
 
-  if (i.flags() & ios::skipws)
-    while (isspace(c) && i.get(c)) // skip whitespace
-      ;
-
   if (c == '/') // there's a denominator
     {
       bool zero2 = false;
@@ -74,9 +75,6 @@ operator>> (istream &i, mpq_ptr q)
       s += '/';
       ok = false; // denominator is mandatory
       i.get(c);
-
-      while (isspace(c) && i.get(c)) // skip whitespace
-	;
 
       if (showbase) // check base of denominator
 	base2 = __gmp_istream_set_base(i, c, zero2, showbase);
