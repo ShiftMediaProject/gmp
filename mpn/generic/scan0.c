@@ -1,6 +1,6 @@
 /* mpn_scan0 -- Scan from a given bit position for the next clear bit.
 
-Copyright 1994, 1996, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1994, 1996, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,11 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Design issues:
-   1. What if starting_bit is not within U?  Caller's problem?
-   2. Bit index should be 'unsigned'?
-
-   Argument constraints:
+/* Argument constraints:
    1. U must sooner or later have a limb with a clear bit.
  */
 
