@@ -332,6 +332,10 @@ EOF
     CRAY-2:*:*:*)
 	echo cray2-cray-unicos
         exit 0 ;;
+    F30?:UNIX_System_V:*:*)
+	UNAME_REL=`echo ${UNAME_RELEASE} | awk '{print $1}'`
+	echo ${UNAME_MACHINE}-fujitsu-sysv${UNAME_REL} | sed 's/^F/f/'
+	exit 0 ;;
     hp3[0-9][05]:NetBSD:*:*)
 	echo m68k-hp-netbsd${UNAME_RELEASE}
 	exit 0 ;;
