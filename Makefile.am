@@ -157,7 +157,7 @@ MPBSD_HEADERS_OPTION = mp.h
 MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
-  assert.lo errno.lo memory.lo mp_bpl.lo stack-alloc.lo
+  assert.lo errno.lo memory.lo mp_bpl.lo mp_clz_tab.lo stack-alloc.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES) -lm
 libmp_la_SOURCES =
 libmp_la_LDFLAGS = -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
