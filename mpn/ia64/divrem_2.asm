@@ -63,6 +63,7 @@ C HP's assembler requires these declarations for importing mpn_invert_limb
 	.type	mpn_invert_limb,@function
 
 PROLOGUE(mpn_divrem_2)
+	.prologue
 	.save ar.pfs, r42
 	.save ar.lc, r44
 	.save rp, r41
