@@ -699,12 +699,11 @@ gcd_schoenhage_itch (mp_size_t asize)
   /* Size for hgcd calls */
   mp_size_t ralloc = asize + 1;
   mp_size_t hgcd_size = (asize + 1) / 2;
-  return
-    + 4 * ralloc                      /* Remainder storage */
-    + mpn_hgcd_init_itch (hgcd_size)  /* hgcd storage */
-    + qstack_itch (hgcd_size)
-    + mpn_hgcd_itch (hgcd_size)       /* nhgcd call */
-    + 1+ 3 * asize / 4;               /* hgcd_fix */
+  return (4 * ralloc				/* Remainder storage */
+	  + mpn_hgcd_init_itch (hgcd_size)	/* hgcd storage */
+	  + qstack_itch (hgcd_size)
+	  + mpn_hgcd_itch (hgcd_size)		/* nhgcd call */
+	  + 1+ 3 * asize / 4);			/* hgcd_fix */
 }
 
 static mp_size_t
@@ -881,16 +880,11 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 mp_size_t
 mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 {
-  TMP_DECL (marker);
-
   if (BELOW_THRESHOLD (usize, GCD_SCHOENHAGE_THRESHOLD))
     return gcd_binary_odd (gp, up, usize, vp, vsize);
 
-  /* The algorithms below require normalized input, and up >= vp */
-  MPN_NORMALIZE (up, usize);
-  MPN_NORMALIZE (vp, vsize);
-  ASSERT (usize >= vsize);
-
+  /* The algorithms below require U >= V, while mpn_gcd is long documented as
+     requiring only that the position of U's msb >= V's msb.  */
   if (usize == vsize && mpn_cmp (up, vp, usize) < 0)
     MP_PTR_SWAP (up, vp);
 
@@ -900,11 +894,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       mp_size_t scratch;
       mp_ptr tp;
       mp_size_t gsize;
+      TMP_DECL (marker);
 
       TMP_MARK (marker);
 
       scratch = GCD_LEHMER_ITCH (usize);
-      tp = TMP_ALLOC (scratch * sizeof (mp_limb_t));
+      tp = TMP_ALLOC_LIMBS (scratch);
 
       gsize = gcd_lehmer (gp, up, usize, vp, vsize, tp, scratch);
       TMP_FREE (marker);
@@ -917,13 +912,11 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       mp_ptr tp;
       mp_size_t gsize;
 
-      TMP_MARK (marker);
-
       scratch = gcd_schoenhage_itch (usize);
-      tp = TMP_ALLOC (scratch * sizeof (mp_limb_t));
+      tp = __GMP_ALLOCATE_FUNC_LIMBS (scratch);
 
       gsize = gcd_schoenhage (gp, up, usize, vp, vsize, tp, scratch);
-      TMP_FREE (marker);
+      __GMP_FREE_FUNC_LIMBS (tp, scratch);
       return gsize;
     }
 }
