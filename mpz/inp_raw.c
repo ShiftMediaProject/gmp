@@ -35,7 +35,7 @@ MA 02111-1307, USA. */
    separate byte fetches, so if we know the host is little endian then
    instead use a single load and a purely arithmetic BSWAP_LIMB.  */
 #if HAVE_LIMB_LITTLE_ENDIAN
-#define NTOH_LIMB_FETCH(limb, src)  BSWAP_LIMB (limb, *(src))
+#define NTOH_LIMB_FETCH(limb, src)  BSWAP_LIMB_FETCH (limb, src)
 #endif
 
 #if ! defined (NTOH_LIMB_FETCH)

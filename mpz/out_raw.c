@@ -36,7 +36,7 @@ MA 02111-1307, USA. */
    separate byte stores, so if we know the host is little endian then
    instead use a purely arithmetic BSWAP_LIMB and a single store.  */
 #if HAVE_LIMB_LITTLE_ENDIAN
-#define HTON_LIMB_STORE(dst, limb)  BSWAP_LIMB (*dst, limb)
+#define HTON_LIMB_STORE(dst, limb)  BSWAP_LIMB_STORE (dst, limb)
 #endif
 
 #if ! defined (HTON_LIMB_STORE)
