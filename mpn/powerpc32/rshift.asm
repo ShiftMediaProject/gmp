@@ -27,6 +27,7 @@ C 604e:            3.0
 C 75x (G3):        3,0
 C 7400,7410 (G4):  3.0
 C 744x,745x (G4+): 2.5
+C power4/ppc970:   2.5
 
 C INPUT PARAMETERS
 C rp	r3
@@ -36,7 +37,7 @@ C cnt	r6
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	cmpi	cr0, r5, 12	C more than 12 limbs?
+	cmpwi	cr0, r5, 12	C more than 12 limbs?
 	addi	r7, r3, -4	C dst-4
 	bgt	L(BIG)		C branch if more than 12 limbs
 

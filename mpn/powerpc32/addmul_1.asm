@@ -29,6 +29,7 @@ C 604e:            6.75
 C 75x (G3):        8.7-14.3
 C 7400,7410 (G4):  8.7-14.3
 C 744x,745x (G4+): 9.5
+C power4/ppc970:   6.250
 
 C INPUT PARAMETERS
 C rp	r3
@@ -55,7 +56,7 @@ C issue control.
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
-	cmpi	cr0,r5,9	C more than 9 limbs?
+	cmpwi	cr0,r5,9	C more than 9 limbs?
 	bgt	cr0,L(big)	C branch if more than 9 limbs
 
 	mtctr	r5

@@ -28,6 +28,7 @@ C 604e:            7.5
 C 75x (G3):        9.3-15
 C 7400,7410 (G4):  9.3-15
 C 744x,745x (G4+): 10.5
+C power4/ppc970:   6.75
 
 C INPUT PARAMETERS
 C rp	r3
@@ -39,7 +40,7 @@ C This is optimized for the PPC604.  See addmul_1.asm for additional comments.
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
-	cmpi	cr0,r5,9	C more than 9 limbs?
+	cmpwi	cr0,r5,9	C more than 9 limbs?
 	bgt	cr0,L(big)	C branch if more than 9 limbs
 
 	mtctr	r5

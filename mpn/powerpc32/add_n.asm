@@ -27,6 +27,7 @@ C 604e:            3.25
 C 75x (G3):        3.5
 C 7400,7410 (G4):  3.5
 C 744x,745x (G4+): 4.25
+C power4/ppc970:   2.0
 
 C INPUT PARAMETERS
 C rp	r3
@@ -36,7 +37,7 @@ C n	r6
 
 ASM_START()
 PROLOGUE(mpn_add_n)
-	cmpi	cr0,r6,15	C more than 15 limbs?
+	cmpwi	cr0,r6,15	C more than 15 limbs?
 	bgt	L(BIG)		C branch if more than 15 limbs
 
 	mtctr	r6		C copy size into CTR
