@@ -1000,8 +1000,8 @@ AC_SUBST(gmp_srclinks)
 SPEED_CYCLECOUNTER_OBJ=
 cyclecounter_size=2
 case ${target} in
-  [i[5-8]86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
-    # rdtsc is in pentium and up, not in i386 and i486
+  X86_PATTERN)
+    # Availability of rdtsc is checked at run-time.
     SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
   alpha*-*-*)
     SPEED_CYCLECOUNTER_OBJ=alpha.lo
