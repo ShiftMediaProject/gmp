@@ -23,4 +23,4 @@ MA 02111-1307, USA. */
 #define FUNCTION  mpf_fits_ushort_p
 #define MAXIMUM   USHRT_MAX
 
-#include "fits_u.i"
+#include "fits_u.h"
