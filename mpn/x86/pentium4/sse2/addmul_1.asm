@@ -66,7 +66,7 @@ L(start_1c):
 	C mm4	carry, low 32-bits
 	C mm7	multiplier
 
-	movd		(%eax), %mm2	# ul = up[i]
+	movd		(%eax), %mm2	C ul = up[i]
 	pmuludq		%mm7, %mm2
 
 	shrl	$1, %ecx
@@ -83,28 +83,28 @@ L(start_1c):
 	jz	L(ret)
 	leal	4(%edx), %edx
 
-	movd		(%eax), %mm2	# ul = up[i]
+	movd		(%eax), %mm2	C ul = up[i]
 	pmuludq		%mm7, %mm2
 L(even):
-	movd		4(%eax), %mm0	# ul = up[i]
-	movd		(%edx), %mm1	# rl = rp[0]
+	movd		4(%eax), %mm0	C ul = up[i]
+	movd		(%edx), %mm1	C rl = rp[0]
 	pmuludq		%mm7, %mm0
 
 	subl	$1, %ecx
 	jz	L(end)
 L(loop):
-	paddq		%mm2, %mm1	# rl += prod
-	movd		8(%eax), %mm2	# ul = up[i]
-	paddq		%mm1, %mm4	# mm4 = prod + cy
-	movd		4(%edx), %mm3	# rl = rp[0]
+	paddq		%mm2, %mm1	C rl += prod
+	movd		8(%eax), %mm2	C ul = up[i]
+	paddq		%mm1, %mm4	C mm4 = prod + cy
+	movd		4(%edx), %mm3	C rl = rp[0]
 	pmuludq		%mm7, %mm2
 	movd		%mm4, (%edx)
 	psrlq		$32, %mm4
 
-	paddq		%mm0, %mm3	# rl += prod
-	movd		12(%eax), %mm0	# ul = up[i]
-	paddq		%mm3, %mm4	# mm4 = prod + cy
-	movd		8(%edx), %mm1	# rl = rp[0]
+	paddq		%mm0, %mm3	C rl += prod
+	movd		12(%eax), %mm0	C ul = up[i]
+	paddq		%mm3, %mm4	C mm4 = prod + cy
+	movd		8(%edx), %mm1	C rl = rp[0]
 	pmuludq		%mm7, %mm0
 	movd		%mm4, 4(%edx)
 	psrlq		$32, %mm4
@@ -114,13 +114,13 @@ L(loop):
 	subl	$1, %ecx
 	jnz	L(loop)
 L(end):
-	paddq		%mm2, %mm1	# rl += prod
-	paddq		%mm1, %mm4	# mm4 = prod + cy
-	movd		4(%edx), %mm3	# rl = rp[0]
+	paddq		%mm2, %mm1	C rl += prod
+	paddq		%mm1, %mm4	C mm4 = prod + cy
+	movd		4(%edx), %mm3	C rl = rp[0]
 	movd		%mm4, (%edx)
 	psrlq		$32, %mm4
-	paddq		%mm0, %mm3	# rl += prod
-	paddq		%mm3, %mm4	# mm4 = prod + cy
+	paddq		%mm0, %mm3	C rl += prod
+	paddq		%mm3, %mm4	C mm4 = prod + cy
 	movd		%mm4, 4(%edx)
 	psrlq		$32, %mm4
 L(ret):
