@@ -33,8 +33,8 @@
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
-<li> When printing mpf_t numbers with exponents > 2^53 on machines with 64-bit
-     <code>mp_exp_t</code>, the precision of
+<li> When printing mpf_t numbers with exponents &gt;2^53 on machines with
+     64-bit <code>mp_exp_t</code>, the precision of
      <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
      <code>mpf_get_str</code> aborts.  Detect and compensate.
 <li> Make the string reading functions allow the `0x' prefix when the base is
