@@ -232,7 +232,7 @@ MA 02111-1307, USA.
 
 	* mpz/powm_ui.c: Rewrite along the lines of mpz/powm.c (except still no
 	redc).
-	* mpz/powm.c: Adjust for negative b, efter exponentiation done.  Add
+	* mpz/powm.c: Adjust for negative b, after exponentiation done.  Add
 	(still disabled) code for handling negative exponents.  Misc cleanups.
 
 2001-11-14  Kevin Ryde  <kevin@swox.se>
