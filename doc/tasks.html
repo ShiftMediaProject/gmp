@@ -134,11 +134,6 @@ MA 02111-1307, USA.
      <code>count_leading_zeros</code>.
 <li> Toom3 could use a low to high cache localized evaluate and interpolate.
      The necessary <code>mpn_divexact_by3c</code> exists.
-<li> <code>mpn_mul_basecase</code> on NxM with big N but small M could try for
-     better cache locality by taking N piece by piece.  The current code could
-     be left available for CPUs without caching.  Depending how karatsuba etc
-     is applied to unequal size operands it might be possible to assume M is
-     always smallish.
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
