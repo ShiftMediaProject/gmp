@@ -57,7 +57,7 @@ define(`NAIL_BITS',`GMP_NAIL_BITS')
 define(`NUMB_BITS',`GMP_NUMB_BITS')
 
 dnl  This declaration is munged by configure
-dnl NAILS_SUPPORT(3-63)
+NAILS_SUPPORT(4-63)
 
 dnl  Runs at 2.5 cycles/limb.  With unrolling, the ulimb load and the 3
 dnl  bookkeeping increments and the `bis' that copies from r23 to r7 could be
