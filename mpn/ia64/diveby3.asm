@@ -48,7 +48,7 @@ ASM_START()
 PROLOGUE(mpn_divexact_by3c)
 	.prologue
 	.save	ar.lc, r2
-	mov	r2 = ar.lc
+	mov		r2 = ar.lc
 	.body
 ifdef(`HAVE_ABI_32',`
 	addp4		rp = 0, rp
@@ -79,7 +79,7 @@ ifdef(`HAVE_ABI_32',`
 	tbit.z		p6, p0 = n, 0
 	cmp.ltu		p0, p12 = 2, n
 	;;
-   (p6)	br		.Lkeepgoing		C jump if n is even
+   (p6)	br.dptk		.Lkeepgoing		C jump if n is even
 	ldf8		f11 = [upf], 8
 	;;
 	xma.lu		f9 = f6, f11, f0
@@ -105,7 +105,7 @@ ifdef(`HAVE_ABI_32',`
    (p7)	add		l0 = l0, r0x5555555555555555
 	;;
 
-  (p12)	br	.Lret
+  (p12)	br.dpnt		.Lret
 
 .Lkeepgoing:
 	ldf8		f10 = [upf], 8
@@ -171,21 +171,21 @@ C n = 4
 C *** MAIN LOOP START ***
 	ALIGN(32)
 .Ltop:
-.mfi;	ld8		s0 = [up], 8
+	ld8		s0 = [up], 8
 	xma.lu		f8 = f6, f10, f0
 	add		x = l0, r9
-.mmi;	ldf8		f10 = [upf], 8
+	ldf8		f10 = [upf], 8
 	cmp.ltu		p10, p11 = s1, cy
 	mov		cy = 0
 	;;
-.mmi;	st8		[rp] = x, 8
+	st8		[rp] = x, 8
   (p10)	mov		cy = 1
 	cmp.gtu		p6, p0 = x, r0x5555555555555555
-.mmi;	cmp.gtu		p7, p0 = x, r0xAAAAAAAAAAAAAAAA
+	cmp.gtu		p7, p0 = x, r0xAAAAAAAAAAAAAAAA
   (p11)	mov		l0 = 0
   (p10)	mov		l0 = r0x5555555555555555
 	;;
-.mmi;	getf.sig	r9 = f9
+	getf.sig	r9 = f9
    (p6)	add		cy = 1, cy
    (p6)	add		l0 = l0, r0x5555555555555555
 	;;
@@ -194,21 +194,21 @@ C *** MAIN LOOP START ***
 	nop.b		0
 	;;
 .Lmid:
-.mfi;	ld8		s1 = [up], 8
+	ld8		s1 = [up], 8
 	xma.lu		f9 = f6, f11, f0
 	add		x = l0, r8
-.mmi;	ldf8		f11 = [upf], 8
+	ldf8		f11 = [upf], 8
 	cmp.ltu		p10, p11 = s0, cy
 	mov		cy = 0
 	;;
-.mmi;	st8		[rp] = x, 8
+	st8		[rp] = x, 8
   (p10)	mov		cy = 1
 	cmp.gtu		p6, p0 = x, r0x5555555555555555
-.mmi;	cmp.gtu		p7, p0 = x, r0xAAAAAAAAAAAAAAAA
+	cmp.gtu		p7, p0 = x, r0xAAAAAAAAAAAAAAAA
   (p11)	mov		l0 = 0
   (p10)	mov		l0 = r0x5555555555555555
 	;;
-.mmi;	getf.sig	r8 = f8
+	getf.sig	r8 = f8
    (p6)	add		cy = 1, cy
    (p6)	add		l0 = l0, r0x5555555555555555
 	;;
