@@ -121,6 +121,22 @@ MA 02111-1307, USA. */
 #define classconst const
 #endif
 
+/* In a MINGW DLL build of gmp, the various gmp functions are given with
+   dllimport directives, which prevents them being used as initializers for
+   constant data.  We give function tables as "static_functable const ...",
+   which is normally "static const", but for mingw expands to just "const"
+   making the table an automatic with a run-time initializer.
+
+   In gcc 3.3.1, the function tables initialized like this end up getting
+   all the __imp__foo values fetched, even though just one or two will be
+   used.  This is wasteful, but probably not too bad.  */
+
+#ifdef __MINGW32__
+#define static_functable
+#else
+#define static_functable  static
+#endif
+
 #define GMP_MALLOC_ID  42
 
 static classconst char mpz_class[]  = "GMP::Mpz";
@@ -1532,7 +1548,7 @@ ALIAS:
     GMP::Mpz::overload_ior = 6
     GMP::Mpz::overload_xor = 7
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, mpz_srcptr);
     } table[] = {
       { mpz_add    }, /* 0 */
@@ -1570,7 +1586,7 @@ ALIAS:
     GMP::Mpz::overload_ioreq = 6
     GMP::Mpz::overload_xoreq = 7
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, mpz_srcptr);
     } table[] = {
       { mpz_add    }, /* 0 */
@@ -1597,7 +1613,7 @@ ALIAS:
     GMP::Mpz::overload_rshift   = 1
     GMP::Mpz::overload_pow      = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, unsigned long);
     } table[] = {
       { mpz_mul_2exp }, /* 0 */
@@ -1623,7 +1639,7 @@ ALIAS:
     GMP::Mpz::overload_rshifteq   = 1
     GMP::Mpz::overload_poweq      = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, unsigned long);
     } table[] = {
       { mpz_mul_2exp }, /* 0 */
@@ -1646,7 +1662,7 @@ ALIAS:
     GMP::Mpz::overload_com  = 2
     GMP::Mpz::overload_sqrt = 3
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr w, mpz_srcptr x);
     } table[] = {
       { mpz_abs  }, /* 0 */
@@ -1670,7 +1686,7 @@ overload_inc (z, d1, d2)
 ALIAS:
     GMP::Mpz::overload_dec = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr w, mpz_srcptr x, unsigned long y);
     } table[] = {
       { mpz_add_ui }, /* 0 */
@@ -1744,7 +1760,7 @@ ALIAS:
     GMP::Mpz::root = 1
 PREINIT:
     /* mpz_root returns an int, hence the cast */
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, unsigned long);
     } table[] = {
       {                                                mpz_bin_ui }, /* 0 */
@@ -1766,7 +1782,7 @@ ALIAS:
     GMP::Mpz::fdiv = 1
     GMP::Mpz::tdiv = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr);
     } table[] = {
       { mpz_cdiv_qr }, /* 0 */
@@ -1792,7 +1808,7 @@ ALIAS:
     GMP::Mpz::fdiv_2exp = 1
     GMP::Mpz::tdiv_2exp = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*q) (mpz_ptr, mpz_srcptr, unsigned long);
       void (*r) (mpz_ptr, mpz_srcptr, unsigned long);
     } table[] = {
@@ -1843,7 +1859,7 @@ divexact (a, d)
 ALIAS:
     GMP::Mpz::mod = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, mpz_srcptr);
     } table[] = {
       { mpz_divexact }, /* 0 */
@@ -1885,7 +1901,7 @@ ALIAS:
     GMP::Mpz::perfect_square_p = 2
     GMP::Mpz::perfect_power_p  = 3
 PREINIT:
-    static const struct {
+    static_functable const struct {
       int (*op) (mpz_srcptr z);
     } table[] = {
       { x_mpz_even_p         }, /* 0 */
@@ -1907,7 +1923,7 @@ ALIAS:
     GMP::Mpz::fib    = 1
     GMP::Mpz::lucnum = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr r, unsigned long n);
     } table[] = {
       { mpz_fac_ui },    /* 0 */
@@ -1928,7 +1944,7 @@ fib2 (n)
 ALIAS:
     GMP::Mpz::lucnum2 = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr r, mpz_ptr r2, unsigned long n);
     } table[] = {
       { mpz_fib2_ui },    /* 0 */
@@ -1951,7 +1967,7 @@ gcd (x, ...)
 ALIAS:
     GMP::Mpz::lcm = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr w, mpz_srcptr x, mpz_srcptr y);
       void (*op_ui) (mpz_ptr w, mpz_srcptr x, unsigned long y);
     } table[] = {
@@ -2218,7 +2234,7 @@ scan0 (z, start)
 ALIAS:
     GMP::Mpz::scan1 = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       unsigned long (*op) (mpz_srcptr, unsigned long);
     } table[] = {
       { mpz_scan0  }, /* 0 */
@@ -2241,7 +2257,7 @@ ALIAS:
     GMP::Mpz::clrbit = 1
     GMP::Mpz::combit = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, unsigned long);
     } table[] = {
       { mpz_setbit }, /* 0 */
@@ -2415,7 +2431,7 @@ ALIAS:
     GMP::Mpq::overload_mul   = 2
     GMP::Mpq::overload_div   = 3
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpq_ptr, mpq_srcptr, mpq_srcptr);
     } table[] = {
       { mpq_add }, /* 0 */
@@ -2446,7 +2462,7 @@ ALIAS:
     GMP::Mpq::overload_muleq = 2
     GMP::Mpq::overload_diveq = 3
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpq_ptr, mpq_srcptr, mpq_srcptr);
     } table[] = {
       { mpq_add    }, /* 0 */
@@ -2469,7 +2485,7 @@ ALIAS:
     GMP::Mpq::overload_rshift   = 1
     GMP::Mpq::overload_pow      = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpq_ptr, mpq_srcptr, unsigned long);
     } table[] = {
       { mpq_mul_2exp }, /* 0 */
@@ -2495,7 +2511,7 @@ ALIAS:
     GMP::Mpq::overload_rshifteq   = 1
     GMP::Mpq::overload_poweq      = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpq_ptr, mpq_srcptr, unsigned long);
     } table[] = {
       { mpq_mul_2exp }, /* 0 */
@@ -2516,7 +2532,7 @@ overload_inc (q, d1, d2)
 ALIAS:
     GMP::Mpq::overload_dec = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpz_ptr, mpz_srcptr, mpz_srcptr);
     } table[] = {
       { mpz_add }, /* 0 */
@@ -2535,7 +2551,7 @@ overload_abs (q, d1, d2)
 ALIAS:
     GMP::Mpq::overload_neg = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpq_ptr w, mpq_srcptr x);
     } table[] = {
       { mpq_abs }, /* 0 */
@@ -2725,7 +2741,7 @@ ALIAS:
     GMP::Mpf::overload_mul   = 2
     GMP::Mpf::overload_div   = 3
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr, mpf_srcptr, mpf_srcptr);
     } table[] = {
       { mpf_add }, /* 0 */
@@ -2753,7 +2769,7 @@ ALIAS:
     GMP::Mpf::overload_muleq = 2
     GMP::Mpf::overload_diveq = 3
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr, mpf_srcptr, mpf_srcptr);
     } table[] = {
       { mpf_add }, /* 0 */
@@ -2776,7 +2792,7 @@ ALIAS:
     GMP::Mpf::overload_rshift = 1
     GMP::Mpf::overload_pow    = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr, mpf_srcptr, unsigned long);
     } table[] = {
       { mpf_mul_2exp }, /* 0 */
@@ -2807,7 +2823,7 @@ ALIAS:
     GMP::Mpf::overload_rshifteq   = 1
     GMP::Mpf::overload_poweq      = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr, mpf_srcptr, unsigned long);
     } table[] = {
       { mpf_mul_2exp }, /* 0 */
@@ -2829,7 +2845,7 @@ ALIAS:
     GMP::Mpf::overload_neg   = 1
     GMP::Mpf::overload_sqrt  = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr w, mpf_srcptr x);
     } table[] = {
       { mpf_abs  }, /* 0 */
@@ -2852,7 +2868,7 @@ overload_inc (f, d1, d2)
 ALIAS:
     GMP::Mpf::overload_dec = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr w, mpf_srcptr x, unsigned long y);
     } table[] = {
       { mpf_add_ui }, /* 0 */
@@ -2931,7 +2947,7 @@ ALIAS:
     GMP::Mpf::floor = 1
     GMP::Mpf::trunc = 2
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*op) (mpf_ptr w, mpf_srcptr x);
     } table[] = {
       { mpf_ceil  }, /* 0 */
@@ -3130,7 +3146,7 @@ mpz_urandomb (r, bits)
 ALIAS:
     GMP::Rand::mpz_rrandomb = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       void (*fun) (mpz_ptr, gmp_randstate_t r, unsigned long bits);
     } table[] = {
       { mpz_urandomb }, /* 0 */
@@ -3173,7 +3189,7 @@ gmp_urandomb_ui (r, bits)
 ALIAS:
     GMP::Rand::gmp_urandomm_ui = 1
 PREINIT:
-    static const struct {
+    static_functable const struct {
       unsigned long (*fun) (gmp_randstate_t r, unsigned long bits);
     } table[] = {
       { gmp_urandomb_ui }, /* 0 */
