@@ -40,7 +40,6 @@ define(X86_PATTERN,
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
 dnl  ----------------------------
-dnl
 dnl  Expand at autoconf time to the value of a "#define NAME" from the given
 dnl  FILE.  The regexps here aren't very rugged, but are enough for gmp.
 dnl  /dev/null as a parameter prevents a hang if $2 is accidentally omitted.
@@ -55,7 +54,6 @@ esyscmd([grep "^#define $1 " $2 /dev/null 2>/dev/null]),
 
 dnl  GMP_VERSION
 dnl  -----------
-dnl
 dnl  The gmp version number, extracted from the #defines in gmp-h.in at
 dnl  autoconf time.  Two digits like 3.0 if patchlevel <= 0, or three digits
 dnl  like 3.0.1 if patchlevel > 0.
@@ -69,7 +67,6 @@ ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in) > 0),1,
 
 dnl  GMP_COMPARE_GE(A1,B1, A2,B2, ...)
 dnl  ---------------------------------
-dnl
 dnl  Compare two version numbers A1.A2.etc and B1.B2.etc.  Set
 dnl  $gmp_compare_ge to yes or no accoring to the result.  The A parts
 dnl  should be variables, the B parts fixed numbers.  As many parts as
@@ -133,7 +130,6 @@ fi
 
 dnl  GMP_PROG_M4
 dnl  -----------
-dnl
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
 dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
 dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
@@ -351,7 +347,6 @@ fi
 
 dnl  GMP_GCC_VERSION_GE(CC,MAJOR[,MINOR[,SUBMINOR]])
 dnl  -----------------------------------------------
-dnl
 dnl  Test whether the version of CC (which must be GNU C) is >=
 dnl  MAJOR.MINOR.SUBMINOR.  Set $gmp_compare_ge to "yes" or "no"
 dnl  accordingly, or to "error" if the version number string can't be
@@ -391,7 +386,6 @@ fi
 
 dnl  GMP_GCC_ARM_UMODSI(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
 dnl  ---------------------------------------------------------
-dnl
 dnl  gcc 2.95.3 and earlier on arm has a bug in the libgcc __umodsi routine
 dnl  making "%" give wrong results for some operands, eg. "0x90000000 % 3".
 dnl  We're hoping it'll be fixed in 2.95.4, and we know it'll be fixed in
@@ -418,16 +412,11 @@ AC_MSG_RESULT([$gmp_gcc_arm_umodsi_result])
 
 dnl  GMP_GCC_MARCH_PENTIUMPRO(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
 dnl  ---------------------------------------------------------------
-dnl
-dnl  mpz/powm.c swox cvs rev 1.4 tickled a bug in gcc 2.95.2 when
-dnl  -march=pentiumpro was used.  The problem appears to be fixed in 2.96,
-dnl  so that option is used only on 2.96 and up.
-dnl
-dnl  The bug was incorrect code generated for a simple ABSIZ(z) expression
-dnl  in mpz_redc(), some registers being clobbered near a cmov.  There's no
-dnl  obvious reason for this, and there's many similar or identical
-dnl  expressions throughout the library, so it seems wisest to disable
-dnl  -march=pentiumpro until 2.96.
+dnl  mpz/powm.c swox cvs rev 1.4 tickled a bug in gcc 2.95.2 and 2.95.3 when
+dnl  -march=pentiumpro was used.  The bug was wrong handling of the input to
+dnl  an ABSIZ(z) expression in mpz_redc().  Fixed in 2.95.4 and pre-release
+dnl  3.0, and didn't seem to occur in unofficial 2.96, so test for 2.95.4
+dnl  and up.
 dnl
 dnl  This macro is used only once, after finalizing a choice of CC, so the
 dnl  result is cached.
@@ -435,7 +424,7 @@ dnl  result is cached.
 AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
 [AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
                 gmp_cv_gcc_march_pentiumpro,
-[GMP_GCC_VERSION_GE([$1], 2,96)
+[GMP_GCC_VERSION_GE([$1], 2,95,4)
 case $gmp_compare_ge in
 yes|no)  gmp_cv_gcc_march_pentiumpro=$gmp_compare_ge ;;
 error|*) gmp_cv_gcc_march_pentiumpro=no ;;
@@ -631,9 +620,8 @@ echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconf
 ])
 
 
-dnl  GMP_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl  -------------------------------------------------------------
-dnl
+dnl  GMP_ASM_UNDERSCORE
+dnl  ------------------
 dnl  Determine whether global symbols need to be prefixed with an underscore.
 dnl  A test program is linked to an assembler module with or without an
 dnl  underscore to see which works.
@@ -694,16 +682,14 @@ rm -f conftes1* conftes2* a.out
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
-  ifelse([$1],,:,[$1])
 else
   GMP_DEFINE(GSYM_PREFIX, [])
-  ifelse([$2],,:,[$2])
 fi    
 ])
 
 
-dnl  GMP_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl  ------------------------------------------------------------
+dnl  GMP_ASM_ALIGN_LOG
+dnl  -----------------
 dnl  Is parameter to `.align' logarithmic?
 
 AC_DEFUN(GMP_ASM_ALIGN_LOG,
@@ -731,11 +717,6 @@ foo$gmp_cv_asm_label_suffix
   [AC_MSG_ERROR([cannot assemble alignment test])])])
 
 GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)"])
-if test "$gmp_cv_asm_align_log" = "yes"; then
-  ifelse([$1],,:,[$1])
-else
-  ifelse([$2],,:,[$2])
-fi  
 ])
 
 
@@ -862,12 +843,12 @@ gmp_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   echo "Compiler output:" >&AC_FD_CC
   cat conftest.s >&AC_FD_CC
-  # must see our label
   if test $gmp_cv_asm_underscore = yes; then
     tmp_gsym_prefix=_
   else
     tmp_gsym_prefix=
   fi
+  # must see our label
   if grep "^${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix" conftest.s >/dev/null 2>&AC_FD_CC; then
     # take the last directive before our label (hence skipping segments
     # getting debugging info etc)
@@ -908,7 +889,7 @@ echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 
 
 dnl  GMP_ASM_GLOBL_ATTR
-dnl  -----------------------
+dnl  ------------------
 dnl  Do we need something after `.global symbol'?
 
 AC_DEFUN(GMP_ASM_GLOBL_ATTR,
@@ -927,13 +908,20 @@ dnl  GMP_ASM_TYPE
 dnl  ------------
 dnl  Can we say ".type", and how?
 dnl
-dnl  For ELF systems .type is important, and failing to have it can lead to
-dnl  strange problems.  For instance on i386 GNU/Linux if a program refers
-dnl  to a function in a shared library that doesn't have .type, then calls
-dnl  to it either from the program or the library get immediate segvs,
-dnl  apparently due to an uninitialized program PLT entry.  If the only
-dnl  references are from within the library then calls from there work fine
-dnl  (and that can hide the problem).
+dnl  For i386 GNU/Linux ELF systems, and very likely other ELF systems,
+dnl  .type and .size are important on functions in shared libraries.  If
+dnl  .type is omitted and the mainline program references that function then
+dnl  the code will be copied down to the mainline at load time like a piece
+dnl  of data.  If .size is wrong or missing (it defaults to 4 bytes or some
+dnl  such) then incorrect bytes will be copied and a segv is the most likely
+dnl  result.  In any case such copying is not what's wanted, a .type
+dnl  directive will ensure a PLT entry is used.
+dnl
+dnl  In GMP the assembler functions are normally only used from within the
+dnl  library (since most programs are not interested in the low level
+dnl  routines), and in those circumstances a missing .type isn't fatal,
+dnl  letting the problem go unnoticed.  tests/mpn/t-asmtype.c aims to check
+dnl  for it.
 
 AC_DEFUN(GMP_ASM_TYPE,
 [AC_CACHE_CHECK([how the .type assembly directive should be used],
@@ -1289,7 +1277,7 @@ GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
 	$movel	$dreg, -($areg)],
   [gmp_cv_asm_m68k_addressing=motorola],
-  [AC_MSG_ERROR([cannot determine assembler addressing style])])])
+[AC_MSG_ERROR([cannot determine assembler addressing style])])])
 ])
 GMP_DEFINE_RAW(["define(<WANT_ADDRESSING>, <\`$gmp_cv_asm_m68k_addressing'>)"])
 ])
@@ -1299,7 +1287,7 @@ dnl  GMP_ASM_M68K_BRANCHES
 dnl  ---------------------
 dnl  "bra" is the standard branch instruction.  "jra" or "jbra" are
 dnl  preferred where available, since on gas for instance they give a
-dnl  displacement only as bit as it needs to be, whereas "bra" is always
+dnl  displacement only as big as it needs to be, whereas "bra" is always
 dnl  16-bits.  This applies to the conditional branches "bcc" etc too.
 dnl  However "dbcc" etc on gas are already only as big as they need to be.
 
@@ -1327,7 +1315,6 @@ GMP_DEFINE_RAW(["define(<WANT_BRANCHES>, <\`$gmp_cv_asm_m68k_branches'>)"])
 
 dnl  GMP_ASM_POWERPC_R_REGISTERS
 dnl  ---------------------------
-dnl
 dnl  Determine whether the assembler takes powerpc registers with an "r" as
 dnl  in "r6", or as plain "6".  The latter is standard, but NeXT, Rhapsody,
 dnl  and MacOS-X require the "r" forms.
@@ -1387,7 +1374,6 @@ fi
 
 dnl  GMP_C_SIZES
 dnl  -----------
-dnl
 dnl  Determine some sizes, if not alredy provided by gmp-mparam.h.  These
 dnl  are needed by GMP at preprocessing time, for use in #if conditionals.
 dnl  $gmp_mparam_source is the selected gmp-mparam.h.
@@ -1456,7 +1442,6 @@ fi
 
 dnl  GMP_FUNC_ALLOCA
 dnl  ---------------
-dnl
 dnl  Determine whether "alloca" is available.  This is AC_FUNC_ALLOCA from
 dnl  autoconf, but changed so it doesn't use alloca.c if alloca() isn't
 dnl  available, and also to use gmp-impl.h for the conditionals detecting
