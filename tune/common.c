@@ -532,6 +532,16 @@ speed_mpn_divrem_2 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DIVREM_2 (mpn_divrem_2);
 }
+double
+speed_mpn_divrem_2_div (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_2 (mpn_divrem_2_div);
+}
+double
+speed_mpn_divrem_2_inv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_2 (mpn_divrem_2_inv);
+}
 
 double
 speed_mpn_mod_1 (struct speed_params *s)
@@ -574,6 +584,11 @@ speed_mpn_modexact_1c_odd (struct speed_params *s)
 
 
 double
+speed_mpn_dc_tdiv_qr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DC_TDIV_QR (mpn_tdiv_qr);
+}
+double
 speed_mpn_dc_divrem_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DC_DIVREM_N (mpn_dc_divrem_n);
@@ -584,10 +599,32 @@ speed_mpn_dc_divrem_sb (struct speed_params *s)
   SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn);
 }
 double
-speed_mpn_dc_tdiv_qr (struct speed_params *s)
+speed_mpn_dc_divrem_sb_div (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_DC_TDIV_QR (mpn_tdiv_qr);
+  SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn_div);
 }
+double
+speed_mpn_dc_divrem_sb_inv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn_inv);
+}
+
+double
+speed_mpn_sb_divrem_m3 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SB_DIVREM_M3 (mpn_sb_divrem_mn);
+}
+double
+speed_mpn_sb_divrem_m3_div (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SB_DIVREM_M3 (mpn_sb_divrem_mn_div);
+}
+double
+speed_mpn_sb_divrem_m3_inv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SB_DIVREM_M3 (mpn_sb_divrem_mn_inv);
+}
+
 double
 speed_mpz_mod (struct speed_params *s)
 {
@@ -1468,6 +1505,91 @@ double
 speed_invert_limb (struct speed_params *s)
 {
   SPEED_ROUTINE_INVERT_LIMB_CALL (invert_limb (dinv, d));
+}
+
+
+/* xp[0] might not be particularly random, but should give an indication how
+   "/" runs.  Same for speed_operator_mod below.  */
+double
+speed_operator_div (struct speed_params *s)
+{
+  double     t;
+  unsigned   i;
+  mp_limb_t  x, q, d;
+
+  s->time_divisor = 10;
+
+  /* divisor from "r" parameter, or a default */
+  d = s->r;
+  if (d == 0)
+    d = __mp_bases[10].big_base;
+
+  x = s->xp[0];
+  q = 0;
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    {
+      q ^= x; q /= d;
+       q ^= x; q /= d;
+       q ^= x; q /= d;
+      q ^= x; q /= d;
+       q ^= x; q /= d;
+       q ^= x; q /= d;
+      q ^= x; q /= d;
+       q ^= x; q /= d;
+       q ^= x; q /= d;
+      q ^= x; q /= d;
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  /* stop the compiler optimizing away the whole calculation! */
+  noop_1 (q);
+
+  return t;
+}
+
+double
+speed_operator_mod (struct speed_params *s)
+{
+  double     t;
+  unsigned   i;
+  mp_limb_t  x, r, d;
+
+  s->time_divisor = 10;
+
+  /* divisor from "r" parameter, or a default */
+  d = s->r;
+  if (d == 0)
+    d = __mp_bases[10].big_base;
+
+  x = s->xp[0];
+  r = 0;
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    {
+      r ^= x; r %= d;
+       r ^= x; r %= d;
+       r ^= x; r %= d;
+      r ^= x; r %= d;
+       r ^= x; r %= d;
+       r ^= x; r %= d;
+      r ^= x; r %= d;
+       r ^= x; r %= d;
+       r ^= x; r %= d;
+      r ^= x; r %= d;
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  /* stop the compiler optimizing away the whole calculation! */
+  noop_1 (r);
+
+  return t;
 }
 
 

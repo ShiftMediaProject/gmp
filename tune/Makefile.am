@@ -30,11 +30,13 @@ noinst_HEADERS = speed.h
 
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
-libspeed_la_SOURCES =							  \
-  common.c divrem_1_div.c divrem_1_inv.c freq.c gcd_bin.c gcd_finda_gen.c \
-  gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			  \
-  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		  \
-  noop.c powm_mod.c powm_redc.c time.c
+libspeed_la_SOURCES =							\
+  common.c divrem_1_div.c divrem_1_inv.c divrem_2_div.c divrem_2_inv.c	\
+  freq.c gcd_bin.c gcd_finda_gen.c					\
+  gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
+  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
+  noop.c powm_mod.c powm_redc.c time.c					\
+  sb_div.c sb_inv.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
   $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
@@ -99,15 +101,22 @@ DISTCLEANFILES = sqr_basecase.c
 # Generating these little files at build time seems better than including
 # them in the distribution, since the list can be changed more easily.
 #
-# mpn/generic/tdiv_qr.c uses mpn_divrem_1, but only for a 1 limb divisor,
-# which is never used during tuning, so it doesn't matter whether it picks
-# up a tuned or untuned version of that routine.
+# mpn/generic/tdiv_qr.c uses mpn_divrem_1 and mpn_divrem_2, but only for 1
+# and 2 limb divisors, which are never used during tuning, so it doesn't
+# matter whether it picks up a tuned or untuned version of those.
+#
+# divrem_1 and mod_1 are recompiled renamed to "_tune" to avoid a linking
+# problem.  If a native divrem_1 provides an mpn_divrem_1c entrypoint then
+# common.c will want that, but the generic divrem_1 doesn't provide it,
+# likewise for mod_1.  The simplest way around this is to have the tune
+# build versions renamed suitably.
 #
 # FIXME: Would like say mul_n.c to depend on $(top_builddir)/mul_n.c so the
 # recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
-TUNE_MPN_SRCS_BASIC = dc_divrem_n.c gcd.c mul_n.c mul_fft.c mul.c tdiv_qr.c
+TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c mul_n.c mul_fft.c mul.c \
+  sb_divrem_mn.c tdiv_qr.c
 TUNE_MPZ_SRCS = fib_ui.c
 
 $(TUNE_MPN_SRCS_BASIC):
