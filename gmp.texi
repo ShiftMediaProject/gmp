@@ -117,26 +117,26 @@ arithmetic library, version @value{VERSION}.
 @end ifnottex
 
 @menu
-* Copying::                   GMP Copying Conditions (LGPL).
-* Introduction to MP::        Brief introduction to GNU MP.
-* Installing MP::             How to configure and compile the MP library.
-* MP Basics::                 What every MP user should now.
-* Reporting Bugs::            How to usefully report bugs.
-* Integer Functions::         Functions for arithmetic on signed integers.
-* Rational Number Functions:: Functions for arithmetic on rational numbers.
-* Floating-point Functions::  Functions for arithmetic on floats.
-* Low-level Functions::       Fast functions for natural numbers.
-* Random Number Functions::   Functions for generating random numbers.
-* BSD Compatible Functions::  All functions found in BSD MP.
-* Custom Allocation::         How to customize the internal allocation.
+* Copying::                    GMP Copying Conditions (LGPL).
+* Introduction to GMP::        Brief introduction to GNU MP.
+* Installing GMP::             How to configure and compile the GMP library.
+* GMP Basics::                 What every GMP user should now.
+* Reporting Bugs::             How to usefully report bugs.
+* Integer Functions::          Functions for arithmetic on signed integers.
+* Rational Number Functions::  Functions for arithmetic on rational numbers.
+* Floating-point Functions::   Functions for arithmetic on floats.
+* Low-level Functions::        Fast functions for natural numbers.
+* Random Number Functions::    Functions for generating random numbers.
+* BSD Compatible Functions::   All functions found in BSD MP.
+* Custom Allocation::          How to customize the internal allocation.
 
-* Contributors::
-* References::
+* Contributors::	       Who brings your this library?
+* References::                 Some useful papers and books to read.
 * Concept Index::
 * Function Index::
 @end menu
 
-@node Copying, Introduction to MP, Top, Top
+@node Copying, Introduction to GMP, Top, Top
 @comment  node-name, next, previous,  up
 @unnumbered GNU MP Copying Conditions
 @cindex Copying conditions
@@ -170,7 +170,7 @@ will not reflect on our reputation.@refill
 The precise conditions of the license for the GNU MP library are found in the
 Library General Public License that accompany the source code.@refill
 
-@node Introduction to MP, Installing MP, Copying, Top
+@node Introduction to GMP, Installing GMP, Copying, Top
 @comment  node-name,  next,  previous,  up
 @chapter Introduction to GNU MP
 
@@ -181,11 +181,11 @@ the fastest possible arithmetic for all applications that need higher
 precision than is directly supported by the basic C types.
 
 Many applications use just a few hundred bits of precision; but some
-applications may need thousands or even millions of bits.  MP is designed to
+applications may need thousands or even millions of bits.  GMP is designed to
 give good performance for both, by choosing algorithms based on the sizes of
 the operands, and by carefully keeping the overhead at a minimum.
 
-The speed of MP is achieved by using fullwords as the basic arithmetic type,
+The speed of GMP is achieved by using fullwords as the basic arithmetic type,
 by using sophisticated algorithms, by including carefully optimized assembly
 code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
@@ -214,25 +214,25 @@ gmp-request@swox.com with the word ``subscribe'' in the message *body* (not in
 the subject line).
 @end ignore
 
-For up-to-date information on MP, please see the GMP Home Pages at
+For up-to-date information on GMP, please see the GMP Home Pages at
 @uref{http://www.swox.com/gmp/}.
 
 
 @section How to use this Manual
 
-Everyone should read @ref{MP Basics}.  If you need to install the library
-yourself, you need to read @ref{Installing MP}, too.
+Everyone should read @ref{GMP Basics}.  If you need to install the library
+yourself, you need to read @ref{Installing GMP}, too.
 
 The rest of the manual can be used for later reference, although it is
 probably a good idea to glance through it.
 
 
-@node Installing MP, MP Basics, Introduction to MP, Top
+@node Installing GMP, GMP Basics, Introduction to GMP, Top
 @comment  node-name,  next,  previous,  up
-@chapter Installing MP
+@chapter Installing GMP
 @cindex Installation
 
-MP has an autoconf/automake/libtool based configuration system.  On a
+GMP has an autoconf/automake/libtool based configuration system.  On a
 Unix-like system a basic build can be done with
 
 @example
@@ -272,7 +272,7 @@ own.
 @item Object Directory
 
 To compile in a separate object directory, @command{cd} to that directory, and
-prefix the configure command with the path to the MP source directory.  Not
+prefix the configure command with the path to the GMP source directory.  Not
 all @samp{make} programs have the necessary features (@code{VPATH}) to support
 this.  In particular, SunOS and Slowaris @command{make} have bugs that make
 them unable to build from a separate object directory.  Use GNU @command{make}
@@ -294,13 +294,13 @@ different CPUs in a family, and you should check its guess (run
 @samp{./config.guess} to see it).
 
 In general, if you want a library that runs as fast as possible, you should
-configure MP for the exact CPU type your system uses.  However, this may mean
+configure GMP for the exact CPU type your system uses.  However, this may mean
 the binaries won't run on older members of the family, and might run slower on
-other members, older or newer.  The best idea is always to build MP for the
+other members, older or newer.  The best idea is always to build GMP for the
 exact machine type you intend to run it on.
 
 If you need to create binaries that will run on several processors in a family,
-MP should be configured for the lowest common denominator among them, something
+GMP should be configured for the lowest common denominator among them, something
 with which all the desired processors are upwardly compatible.
 
 The following CPUs have specific assembly code support.  See
@@ -407,15 +407,19 @@ For some configurations specific compiler flags are set based on the target
 CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
 choose the best flags.
 
+@c For some configurations specific compiler flags are set based on the target
+@c CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
+@c choose the best flags.
+
 @item @option{--disable-alloca}
 
-By default, MP allocates temporary workspace using @code{alloca} if that
+By default, GMP allocates temporary workspace using @code{alloca} if that
 function is available, or @code{malloc} if not.  If you're working with large
 numbers and @code{alloca} overflows the available stack space, you can build
 with @option{--disable-alloca} to use @code{malloc} instead.  @code{malloc}
 will probably be slightly slower than @code{alloca}.
 
-When not using @code{alloca}, it's actually the the allocation function
+When not using @code{alloca}, it's actually the allocation function
 selected with @code{mp_set_memory_functions} that's used, this being
 @code{malloc} by default.  @xref{Custom Allocation}.
 
@@ -425,13 +429,14 @@ might be able to increase the stack space available to programs.
 
 @item @option{--enable-mpbsd}
 
+
 The Berkley MP compatibility library (@file{libmp.a}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item Demonstration Programs
 
-The @file{demos} subdirectory has some sample programs using MP.  These aren't
+The @file{demos} subdirectory has some sample programs using GMP.  These aren't
 built or installed, but there's @command{make} rules available to compile
 them.  For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
 
@@ -453,14 +458,14 @@ on AIX 4.3.
 
 @item AIX with PowerPC 64
 
-Currently only a 64-bit version of the MP library is built, and when linking
+Currently only a 64-bit version of the GMP library is built, and when linking
 your application you need to pass @option{-maix64} to @command{gcc} or
 @option{-q64} to @command{xlc}.  We hope this will change in a future version
-of MP.
+of GMP.
 
 @item HPPA
 
-The MP assembly code for HPPA is not currently position-independent, so shared
+The GMP assembly code for HPPA is not currently position-independent, so shared
 libraries are disabled for targets @samp{hppa*-*-*}.
 
 @item Sparc
@@ -496,12 +501,12 @@ You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
 The system compiler on old versions of NeXT was a massacred and old GCC, even
 if the compiler called itself @file{cc}.  This compiler cannot be used to build
-MP, you need to get a real GCC, and install that before you compile MP.  (NeXT
+GMP, you need to get a real GCC, and install that before you compile GMP.  (NeXT
 may have fixed this in release 3.3 of their system.)
 
 @item POWER and PowerPC
 
-Bugs in GCC 2.7.2 (and 2.6.3) mean it can't be used to compile MP on POWER or
+Bugs in GCC 2.7.2 (and 2.6.3) mean it can't be used to compile GMP on POWER or
 PowerPC.  If you want to use GCC for these machines, get GCC 2.7.2.1 (or
 later).
 
@@ -536,43 +541,43 @@ static library with the native @command{ar}.  After @samp{make}, run
 
 @item VAX running Ultrix
 
-You need to build and install the GNU assembler before you compile MP.  The VAX
-assembly in MP uses an instruction (@code{jsobgtr}) that cannot be assembled by
+You need to build and install the GNU assembler before you compile GMP.  The VAX
+assembly in GMP uses an instruction (@code{jsobgtr}) that cannot be assembled by
 the Ultrix assembler.
 @end table
 
 
 
-@node MP Basics, Reporting Bugs, Installing MP, Top
+@node GMP Basics, Reporting Bugs, Installing GMP, Top
 @comment  node-name,  next,  previous,  up
-@chapter MP Basics
+@chapter GMP Basics
 
 @cindex @file{gmp.h}
-All declarations needed to use MP are collected in the include file
+All declarations needed to use GMP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
 
 @strong{Using functions, macros, data types, etc.@: not documented in this
 manual is strongly discouraged.  If you do so your application is guaranteed
-to be incompatible with future versions of MP.}
+to be incompatible with future versions of GMP.}
 
 @menu
 * Nomenclature and Types::      	Which datatypes are there?
 * Function Classes::            	How the functions are organized.
-* MP Variable Conventions::     	Some rules and hints about variables.
-* MP and reentrancy::           	What about reentrancy?
+* GMP Variable Conventions::     	Some rules and hints about variables.
+* GMP and reentrancy::           	What about reentrancy?
 * Useful Macros and Constants::  	Convenient helpers.
 * Compatibility with older versions::	Compatibility issues.
-* Getting the Latest Version of MP::  	How to get the software.
+* Getting the Latest Version of GMP::  	How to get the software.
 @end menu
 
-@node Nomenclature and Types, Function Classes, MP Basics, MP Basics
+@node Nomenclature and Types, Function Classes, GMP Basics, GMP Basics
 @section Nomenclature and Types
 
 @cindex Integer
 @tindex @code{mpz_t}
 @noindent
 In this manual, @dfn{integer} usually means a multiple precision integer, as
-defined by the MP library.  The C data type for such integers is @code{mpz_t}.
+defined by the GMP library.  The C data type for such integers is @code{mpz_t}.
 Here are some examples of how to declare such integers:
 
 @example
@@ -609,10 +614,10 @@ digit, only larger, and containing several digits.)  Normally a limb contains
 32 or 64 bits.  The C data type for a limb is @code{mp_limb_t}.
 
 
-@node Function Classes, MP Variable Conventions, Nomenclature and Types, MP Basics
+@node Function Classes, GMP Variable Conventions, Nomenclature and Types, GMP Basics
 @section Function Classes
 
-There are six classes of functions in the MP library:
+There are six classes of functions in the GMP library:
 
 @enumerate
 @item
@@ -632,7 +637,7 @@ Functions for floating-point arithmetic, with names beginning with
 functions is this class.
 
 @item
-Functions compatible with Berkeley MP, such as @code{itom}, @code{madd}, and
+Functions compatible with Berkeley GMP, such as @code{itom}, @code{madd}, and
 @code{mult}.  The associated type is @code{MINT}.
 
 @item
@@ -649,20 +654,20 @@ functions for generating random numbers.
 @end enumerate
 
 
-@node MP Variable Conventions, MP and reentrancy, Function Classes, MP Basics
-@section MP Variable Conventions
+@node GMP Variable Conventions, GMP and reentrancy, Function Classes, GMP Basics
+@section GMP Variable Conventions
 
-As a general rule, all MP functions expect output arguments before input
+As a general rule, all GMP functions expect output arguments before input
 arguments.  This notation is based on an analogy with the assignment operator.
 (The BSD MP compatibility functions disobey this rule, having the output
 argument(s) last.)
 
-MP allows you to use the same variable for both input and output in the same
+GMP allows you to use the same variable for both input and output in the same
 expression.  For example, the main function for integer multiplication,
 @code{mpz_mul}, can be used like this: @code{mpz_mul (x, x, x)}.  This
 computes the square of @var{x} and puts the result back in @var{x}.
 
-Before you can assign to an MP variable, you need to initialize it by calling
+Before you can assign to an GMP variable, you need to initialize it by calling
 one of the special initialization functions.  When you're done with a
 variable, you need to clear it out, using one of the functions for that
 purpose.  Which function to use depends on the type of variable.  See the
@@ -673,21 +678,21 @@ A variable should only be initialized once, or at least cleared out between
 each initialization.  After a variable has been initialized, it may be
 assigned to any number of times.
 
-For efficiency reasons, avoid initializing and clearing out an MP variable in
+For efficiency reasons, avoid initializing and clearing out an GMP variable in
 a loop.  Instead, initialize it before entering the loop, and clear it out
 after the loop has exited
 
-Once you have initialized an MP variable, you don't need to worry about space
-allocation for that variable.  All functions in MP automatically allocate
+Once you have initialized an GMP variable, you don't need to worry about space
+allocation for that variable.  All functions in GMP automatically allocate
 additional space when a variable does not already have enough space.  They do
 not, however, reduce the space when a smaller number is stored in the object.
 Most of the time, this policy is best, since it avoids frequent re-allocation.
 
 
-@node MP and reentrancy, Useful Macros and Constants, MP Variable Conventions, MP Basics
-@section MP and reentrancy
+@node GMP and reentrancy, Useful Macros and Constants, GMP Variable Conventions, GMP Basics
+@section GMP and reentrancy
 
-The MP code is reentrant and thred-safe, with some exceptions:
+The GMP code is reentrant and thred-safe, with some exceptions:
 
 @itemize @bullet
 @item
@@ -699,7 +704,7 @@ The function @code{mp_set_memory_functions} uses several global
 variables for storing the selected memory allocation functions.
 
 @item
-The memory allocation functions, @code{malloc} and friends, that MP
+The memory allocation functions, @code{malloc} and friends, that GMP
 uses unless directed to use custom allocation, may not be reentrant.
 
 @item
@@ -711,10 +716,10 @@ global state.
 
 If the memory allocation functions (@code{malloc} and friends, or
 whatever functions set by a call to @code{mp_set_memory_functions}),
-are not reentrant, MP will not be reentrant either.
+are not reentrant, GMP will not be reentrant either.
 
 
-@node Useful Macros and Constants, Compatibility with older versions, MP and reentrancy, MP Basics
+@node Useful Macros and Constants, Compatibility with older versions, GMP and reentrancy, GMP Basics
 @section Useful Macros and Constants
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
@@ -724,13 +729,13 @@ The number of bits per limb.
 @defmac __GNU_MP_VERSION
 @defmacx __GNU_MP_VERSION_MINOR
 @defmacx __GNU_MP_VERSION_PATCHLEVEL
-The major and minor MP version, and patch level, respectively, as integers.
+The major and minor GMP version, and patch level, respectively, as integers.
 For GMP i.j, these numbers will be i, j, and 0, respectively.
 For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @end defmac
 
 
-@node Compatibility with older versions, Getting the Latest Version of MP, Useful Macros and Constants, MP Basics
+@node Compatibility with older versions, Getting the Latest Version of GMP, Useful Macros and Constants, GMP Basics
 @section Compatibility with older versions
 
 @menu
@@ -741,7 +746,7 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @node    Compatibility with Version 1.x, Compatibility with Version 2.0.x, Compatibility with older versions, Compatibility with older versions
 @subsection Compatibility with Version 1.x
 
-This version of MP is upward compatible with previous versions of MP, with a
+This version of GMP is upward compatible with previous versions of GMP, with a
 few exceptions.
 
 @enumerate
@@ -790,25 +795,25 @@ for 0^0.  (In version 1, they yielded 0.)
 @node  Compatibility with Version 2.0.x,  , Compatibility with Version 1.x, Compatibility with older versions
 @subsection Compatibility with Version 2.0.x
 
-This version of MP is upward compatible with version 2.0, 2.0.1, and 2.0.2 at
-the source level.  Programs will need to be recompiled with the new
-@file{gmp.h}.
+This version of GMP is upward compatible with version 2.0, 2.0.1, and 2.0.2 at
+the source level, with the exception of @code{mpn_gcd} which has had its
+source arguments swapped.
 
 
-@node  Getting the Latest Version of MP,  , Compatibility with older versions, MP Basics
-@section Getting the Latest Version of MP
+@node  Getting the Latest Version of GMP,  , Compatibility with older versions, GMP Basics
+@section Getting the Latest Version of GMP
 
-The latest version of the MP library is available by at
+The latest version of the GMP library is available by at
 @samp{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
 @samp{ftp.gnu.org}; please use a mirror site near you.
 
 
-@node Reporting Bugs, Integer Functions, MP Basics, Top
+@node Reporting Bugs, Integer Functions, GMP Basics, Top
 @comment  node-name,  next,  previous,  up
 @chapter Reporting Bugs
 @cindex Reporting bugs
 
-If you think you have found a bug in the MP library, please investigate it and
+If you think you have found a bug in the GMP library, please investigate it and
 report it.  We have made this library available to you, and it is not too much
 to ask you to report the bugs that you find.
 
@@ -825,7 +830,7 @@ You also have to explain what is wrong; if you get a crash, or if the results
 printed are incorrect and in that case, in what way.
 
 It is not uncommon that an observed problem is actually due to a bug in the
-compiler used when building MP; the MP code tends to explore interesting
+compiler used when building GMP; the GMP code tends to explore interesting
 corners in compilers.  Therefore, please include compiler version information
 in your bug report.  This can be extracted using @samp{what `which cc`}, or,
 if you're using gcc, @samp{gcc -v}.  Also, include the output from @samp{uname
@@ -846,10 +851,10 @@ the language needs to be improved, please send a note to the same address.
 @chapter Integer Functions
 @cindex Integer functions
 
-This chapter describes the MP functions for performing integer arithmetic.
+This chapter describes the GMP functions for performing integer arithmetic.
 These functions start with the prefix @code{mpz_}.
 
-MP integers are stored in objects of type @code{mpz_t}.
+GMP integers are stored in objects of type @code{mpz_t}.
 
 @menu
 * Initializing Integers::
@@ -962,7 +967,7 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @subsection Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
 
-For convenience, MP provides a parallel series of initialize-and-set functions
+For convenience, GMP provides a parallel series of initialize-and-set functions
 which initialize the output and then store the value there.  These functions'
 names have the form @code{mpz_init_set@dots{}}
 
@@ -1009,8 +1014,8 @@ an error occurs.  (I.e., you have to call @code{mpz_clear} for it.)
 @cindex Integer conversion functions
 @cindex Conversion functions
 
-This section describes functions for converting MP integers to standard C
-types.  Functions for converting @emph{to} MP integers are described in
+This section describes functions for converting GMP integers to standard C
+types.  Functions for converting @emph{to} GMP integers are described in
 @ref{Assigning Integers} and @ref{I/O of Integers}.
 
 @deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
@@ -1904,7 +1909,7 @@ minus sign and one for the terminating '\0').
 @chapter Rational Number Functions
 @cindex Rational number functions
 
-This chapter describes the MP functions for performing arithmetic on rational
+This chapter describes the GMP functions for performing arithmetic on rational
 numbers.  These functions start with the prefix @code{mpq_}.
 
 Rational numbers are stored in objects of type @code{mpq_t}.
@@ -2139,17 +2144,17 @@ This function is equivalent to
 @cindex Floating-point functions
 @cindex Float functions
 
-This is a description of the @emph{preliminary} interface for floating-point
-arithmetic in GNU MP 2.
+This chapter describes the GMP functions for performing floating point
+arithmetic.  These functions start with the prefix @code{mpf_}.
 
-The floating-point functions expect arguments of type @code{mpf_t}.
+GMP integers are stored in objects of type @code{mpf_t}.
 
-The MP floating-point functions have an interface that is similar to the MP
+The GMP floating-point functions have an interface that is similar to the GMP
 integer functions.  The function prefix for floating-point operations is
 @code{mpf_}.
 
 There is one significant characteristic of floating-point numbers that has
-motivated a difference between this function class and other MP function
+motivated a difference between this function class and other GMP function
 classes: the inherent inexactness of floating point arithmetic.  The user has
 to specify the precision of each variable.  A computation that assigns a
 variable will take place with the precision of the assigned variable; the
@@ -2159,12 +2164,12 @@ precision of variables used as input is ignored.
 The precision of a calculation is defined as follows: Compute the requested
 operation exactly (with ``infinite precision''), and truncate the result to
 the destination variable precision.  Even if the user has asked for a very
-high precision, MP will not calculate with superfluous digits.  For example,
+high precision, GMP will not calculate with superfluous digits.  For example,
 if two low-precision numbers of nearly equal magnitude are added, the
 precision of the result will be limited to what is required to represent the
 result accurately.
 
-The MP floating-point functions are @emph{not} intended as a smooth extension
+The GMP floating-point functions are @emph{not} intended as a smooth extension
 to the IEEE P754 arithmetic.  Specifically, the results obtained on one
 computer often differs from the results obtained on a computer with a
 different word size.
@@ -2295,7 +2300,7 @@ in base @var{base}.  Otherwise it returns @minus{}1.
 @subsection Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
 
-For convenience, MP provides a parallel series of initialize-and-set functions
+For convenience, GMP provides a parallel series of initialize-and-set functions
 which initialize the output and then store the value there.  These functions'
 names have the form @code{mpf_init_set@dots{}}
 
@@ -2612,7 +2617,7 @@ before invoking this function.
 @c zero, the returned value will be zero.  (@xref{Nomenclature}, for an
 @c explanation of the concept @dfn{limb}.)
 @c
-@c @strong{This function is obsolete.  It will disappear from future MP
+@c @strong{This function is obsolete.  It will disappear from future GMP
 @c releases.}
 @c @end deftypefun
 
@@ -2621,8 +2626,8 @@ before invoking this function.
 @chapter Low-level Functions
 @cindex Low-level functions
 
-This chapter describes low-level MP functions, used to implement the high-level
-MP functions, but also intended for time-critical user code.
+This chapter describes low-level GMP functions, used to implement the high-level
+GMP functions, but also intended for time-critical user code.
 
 These functions start with the prefix @code{mpn_}.
 
@@ -2729,7 +2734,7 @@ Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and write the
 the most significant limb of the product.
 
 This is a low-level function that is a building block for general
-multiplication as well as other operations in MP.  It is written in assembly
+multiplication as well as other operations in GMP.  It is written in assembly
 for most targets.
 
 Don't call this function if @var{s2limb} is a power of 2; use
@@ -2744,7 +2749,7 @@ Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and add the
 the most significant limb of the product, plus carry-out from the addition.
 
 This is a low-level function that is a building block for general
-multiplication as well as other operations in MP.  It is written in assembly
+multiplication as well as other operations in GMP.  It is written in assembly
 for most targets.
 @end deftypefun
 
@@ -2755,7 +2760,7 @@ Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and subtract the
 significant limb of the product, minus borrow-out from the subtraction.
 
 This is a low-level function that is a building block for general
-multiplication and division as well as other operations in MP.  It is written
+multiplication and division as well as other operations in GMP.  It is written
 in assembly for most targets.
 @end deftypefun
 
@@ -2897,9 +2902,6 @@ common divisor is returned.
 
 @{@var{s1p}, @var{s1size}@} must have at least as many bits as
 @{@var{s2p}, @var{s2size}@}, and @{@var{s2p}, @var{s2size}@} must be odd.
-
-@strong{This interface is preliminary.  It might change incompatibly in
-future revisions.}
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
@@ -2910,8 +2912,8 @@ must be different from 0.
 
 @deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2size}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
 Compute the greatest common divisor of @{@var{s1p}, @var{s1size}@} and
-@{@var{s2p}, @var{s2size}@}, and store it at @var{r1p}.  Write the the
-first cofactor at @var{r2p}.  Both source operands are clobbered.
+@{@var{s2p}, @var{s2size}@}, and store it at @var{r1p}.  Write the first
+cofactor at @var{r2p}.  Both source operands are clobbered.
 
 @{@var{s1p}, @var{s1size}@} must be greater or equal to @{@var{s2p},
 @var{s2size}@}.  Neither operand may equal 0.
@@ -2943,9 +2945,6 @@ The area at @var{r1p} needs to have space for $\lceil@var{size}/2\rceil$ limbs.
 @end tex
 @end iftex
 The area at @var{r2p} needs to be @var{size} limbs large.
-
-@strong{This interface is preliminary.  It might change incompatibly in
-future revisions.}
 @end deftypefun
 
 @deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size})
@@ -2975,9 +2974,6 @@ Scan @var{s1p} from bit position @var{bit} for the next clear bit.
 
 It is required that there be a clear bit within the area at @var{s1p} at or
 beyond bit position @var{bit}, so that the function has something to return.
-
-@strong{This interface is preliminary.  It might change incompatibly in
-future revisions.}
 @end deftypefun
 
 @deftypefun {unsigned long int} mpn_scan1 (const mp_limb_t *@var{s1p}, unsigned long int @var{bit})
@@ -2985,9 +2981,6 @@ Scan @var{s1p} from bit position @var{bit} for the next set bit.
 
 It is required that there be a set bit within the area at @var{s1p} at or
 beyond bit position @var{bit}, so that the function has something to return.
-
-@strong{This interface is preliminary.  It might change incompatibly in
-future revisions.}
 @end deftypefun
 
 @deftypefun void mpn_random (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
@@ -3183,7 +3176,7 @@ them.
 These functions are intended to be fully compatible with the Berkeley MP
 library which is available on many BSD derived U*ix systems.  The
 @samp{--enable-mpbsd} option must be used when building GNU MP to make these
-available (@pxref{Installing MP}).
+available (@pxref{Installing GMP}).
 
 The original Berkeley MP library has a usage restriction: you cannot use the
 same variable as both source and destination in a single function call.  The
@@ -3304,9 +3297,9 @@ only be passed a value returned by @code{itom} or @code{xtom}.}
 @comment  node-name,  next,  previous,  up
 @chapter Custom Allocation
 
-By default, the MP functions use @code{malloc}, @code{realloc}, and
+By default, the GMP functions use @code{malloc}, @code{realloc}, and
 @code{free} for memory allocation.  If @code{malloc} or @code{realloc} fails,
-the MP library terminates execution after printing a fatal error message to
+the GMP library terminates execution after printing a fatal error message to
 standard error.
 
 For some applications, you may wish to allocate memory in other ways, or you
@@ -3318,9 +3311,9 @@ Replace the current allocation functions from the arguments.  If an argument
 is NULL, the corresponding default function is retained.
 
 @strong{Make sure to call this function in such a way that there are no active
-MP objects that were allocated using the previously active allocation
+GMP objects that were allocated using the previously active allocation
 function!  Usually, that means that you have to call this function before any
-other MP function.}
+other GMP function.}
 @end deftypefun
 
 The functions you supply should fit the following declarations:
@@ -3357,9 +3350,9 @@ the size of an object, normally an 8 bit byte.)
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 
-Torbjorn Granlund authored the original GMP library and keeps maintaining
-it.  But several other individuals and organizations have contributed to GMP
-in various ways.
+Torbjorn Granlund authored the original GMP library and is still developing
+and maintaining it.  Several other individuals and organizations have
+contributed to GMP in various ways.  Here is a list in chronological order:
 
 Gunnar Sjoedin and Hans Riesel helped with mathematical problems in early
 versions of the library.
@@ -3380,7 +3373,7 @@ Ken Weber (Kent State University, Universidade Federal do Rio Grande do Sul)
 contributed @code{mpz_gcd}, @code{mpz_divexact}, @code{mpn_gcd}, and
 @code{mpn_bdivmod}, partially supported by CNPq (Brazil) grant 301314194-2.
 
-Per Bothner of Cygnus Support helped to set up MP to use Cygnus' configure.
+Per Bothner of Cygnus Support helped to set up GMP to use Cygnus' configure.
 He has also made valuable suggestions and tested numerous intermediary
 releases.
 
@@ -3397,18 +3390,34 @@ by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
 System SOlving).
 
 GNU MP 2 was finished and released by SWOX AB (formerly known as TMG
-Datakonsult), Swedenborgsgatan 23, 118 27 STOCKHOLM, SWEDEN, in
+Datakonsult), Swedenborgsgatan 23, SE-118 27 STOCKHOLM, SWEDEN, in
 cooperation with the IDA Center for Computing Sciences, USA.
 
 Robert Harley of Inria, France and David Seal of ARM, England, suggested clever
 improvements for population count.
 
-Robert Harley also wrote a template Karatsuba multiplication function for GMP
-3 on which the current implementation is based.
+Robert Harley also wrote highly optimized Karatsuba and 3-way Toom
+multiplication functions for GMP 3.
 
 Torsten Ekedahl of the Mathematical department of Stockholm University provided
 significant inspiration during several phases of the GMP development.  His
 mathematical expertise helped improve several algorithms.
+
+Paul Zimmermann wrote the Burnikel-Ziegler division code, the REDC code, and
+the new mpz_powm code that uses Hensel lifting.  The ECMNET project Paul is
+organizing has been a driving force behind many of the optimization of GMP 3.
+
+Linus Nordberg wrote the new configure system based on autoconf and
+implemented the new random functions.
+
+Kent Boortz made the Macintosh port.
+
+Kevin Ryde wrote a lot of very high quality x86 code, optimized for most CPU
+variants.  He also made countless other valuable contributions.
+
+GNU MP 3 was finished and released by Torbjorn Granlund and Linus Nordberg of
+SWOX AB, and volunteer Kevin Ryde.  The work was partially funded by the IDA
+Center for Computing Sciences, USA.
 
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
@@ -3422,7 +3431,7 @@ about the omission!)
 
 @item
 Donald E. Knuth, "The Art of Computer Programming", vol 2,
-"Seminumerical Algorithms", 2nd edition, Addison-Wesley, 1981.
+"Seminumerical Algorithms", 3rd edition, Addison-Wesley, 1988.
 
 @item
 John D. Lipson, "Elements of Algebra and Algebraic Computing",
@@ -3430,7 +3439,7 @@ The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
 Richard M. Stallman, "Using and Porting GCC", Free Software Foundation,
-1995.
+1999, @url{ftp://ftp.gnu.org/pub/gnu/gcc/}.
 
 @item
 Peter L. Montgomery, "Modular Multiplication Without Trial Division", in
@@ -3451,6 +3460,11 @@ v. 15, 1993, pp. 169-180.
 Kenneth Weber, "The accelerated integer GCD algorithm",
 ACM Transactions on Mathematical Software,
 v. 21 (March), 1995, pp. 111-122.
+
+@item
+Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
+Max-Planck-Institut fuer Informatik Reseach Report MPI-I-98-1-022,
+@url{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
 @end itemize
 
 @node Concept Index, , , Top
