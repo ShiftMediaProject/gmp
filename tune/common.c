@@ -118,7 +118,8 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
 
   struct speed_params  s_dummy;
   int     i, j, e;
-  double  t[20];
+  double  t[30];
+  double  t_unsorted[30];
 
   /* Use dummy parameters if caller doesn't provide any.  Only a few special
      "fun"s will cope with this, speed_noop() is one.  */
@@ -138,6 +139,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           s->dst_num = 0;
 
           t[i] = (*fun) (s);
+          t_unsorted[i] = t[i];
 
           TRACE (printf("size=%ld reps=%u r=%d attempt=%d  %.9f\n", 
                         s->size, s->reps, s->r, i, t[i]));
@@ -177,10 +179,10 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
 
   fprintf (stderr, "speed_measure() could not get %d results within %.1f%%\n",
            e, (TOLERANCE-1.0)*100.0);
-  fprintf (stderr, "  %.09lf is about 0.5%%\n", t[0]*(TOLERANCE-1.0));
+  fprintf (stderr, "  %.12f is about 0.5%%\n", t[0]*(TOLERANCE-1.0));
   for (i = 0; i < numberof (t); i++)
     {
-      fprintf (stderr, "  %.09lf\n", t[i]);
+      fprintf (stderr, "  %.09lf\n", t_unsorted[i]);
     }
 
   return -1.0;
