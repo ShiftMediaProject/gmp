@@ -2137,10 +2137,10 @@ struct doprnt_params_t {
 
 #if _GMP_H_HAVE_VA_LIST
 
-typedef int (*doprnt_format_t) (void *data, const char *fmt, va_list ap);
-typedef int (*doprnt_memory_t) (void *data, const char *str, size_t len);
-typedef int (*doprnt_reps_t) (void *data, int c, int reps);
-typedef int (*doprnt_final_t) (void *data);
+typedef int (*doprnt_format_t) _PROTO ((void *data, const char *fmt, va_list ap));
+typedef int (*doprnt_memory_t) _PROTO ((void *data, const char *str, size_t len));
+typedef int (*doprnt_reps_t) _PROTO ((void *data, int c, int reps));
+typedef int (*doprnt_final_t) _PROTO ((void *data));
 
 struct doprnt_funs_t {
   doprnt_format_t  format;
