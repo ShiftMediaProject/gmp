@@ -19,4 +19,4 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 
 /* Define if GNU readline should be used. */
-#undef WITH_READLINE
+#define WITH_READLINE @WITH_READLINE_01@
