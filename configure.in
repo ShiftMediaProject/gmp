@@ -229,7 +229,8 @@ dnl  for these are under the cpu specific setups below.
 
 AH_VERBATIM([HAVE_HOST_CPU_1],
 [/* Define one of these to 1 for the host CPU family.
-   If your CPU is not in any of these families, leave all undefined. */
+   If your CPU is not in any of these families, leave all undefined.
+   For an AMD64 chip, define "x86" in ABI=32, but not in ABI=64. */
 #undef HAVE_HOST_CPU_FAMILY_alpha
 #undef HAVE_HOST_CPU_FAMILY_m68k
 #undef HAVE_HOST_CPU_FAMILY_power
@@ -503,18 +504,6 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ=alpha.lo
         cyclecounter_size=1 ;;
     esac
-    ;;
-
-
-  amd64-*-* | x86_64-*-*)
-    # "x86_64" is the canonical name from config.sub, and "amd64" is changed
-    # to that.  We probably prefer "amd64" since it's what AMD likes to call
-    # the arch these days, and perhaps might let that through our config.sub
-    # in the future.
-    #
-    SPEED_CYCLECOUNTER_OBJ=amd64.lo
-    path="amd64"
-    GMP_INCLUDE_MPN(amd64/amd64-defs.m4)
     ;;
 
 
@@ -1218,13 +1207,26 @@ case $host in
     ;;
 
 
-  # AMD and Intel x86 configurations
+  # AMD and Intel x86 configurations, including AMD64
+  #
+  # Rumour has it gcc -O2 used to give worse register allocation than just
+  # -O, but lets assume that's no longer true.
+  #
+  # -m32 forces 32-bit mode on a bi-arch 32/64 amd64 build of gcc.  -m64 is
+  # the default in such a build (we think), so -m32 is essential for ABI=32.
+  # This is, of course, done for any $host_cpu, not just x86_64, so we can
+  # get such a gcc into the right mode to cross-compile to say i486-*-*.
+  #
+  # -m32 is not available in gcc 2.95 and earlier, hence cflags_maybe to use
+  # it when it works.  We check sizeof(long)==4 to ensure we get the right
+  # mode, in case -m32 has failed not because it's an old gcc, but because
+  # it's a 64-bit gcc without a 32-bit libc, or whatever.
+  #
   X86_PATTERN)
-    AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86)
-    # Rumour has it gcc -O2 used to give worse register allocation than just
-    # -O, but lets assume that's no longer true.
+    abilist="32"
     gcc_cflags="-O2 $fomit_frame_pointer"
-    GMP_INCLUDE_MPN(x86/x86-defs.m4)
+    gcc_32_cflags_maybe="-m32"
+    any_32_testlist="sizeof-long-4"
     CALLING_CONVENTIONS_OBJS='x86call.lo x86check$U.lo'
 
     # Availability of rdtsc is checked at run-time.
@@ -1238,7 +1240,8 @@ case $host in
     #     athlon-tbird, athlon-4, athlon-xp, athlon-mp.
     # gcc 3.2 adds winchip2.
     # gcc 3.3 adds winchip-c6.
-    # gcc pre-release 3.4 adds c3, c3-2.
+    # gcc 3.3.1 from mandrake adds k8.
+    # gcc pre-release 3.4 adds c3, c3-2, k8.
     #
     # In gcc 2.95.[0123], -march=pentiumpro provoked a stack slot bug in an
     # old version of mpz/powm.c.  Seems to be fine with the current code, so
@@ -1320,6 +1323,10 @@ case $host in
         gcc_cflags_cpu="-mcpu=c3 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=c3 -march=pentium-mmx -march=pentium"
         ;;
+      x86_64-*-*)
+        gcc_cflags_cpu="-mcpu=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=k8 -march=athlon -march=pentiumpro -march=pentium"
+        ;;
       *)
         gcc_cflags_cpu="-mcpu=i486 -m486"
         gcc_cflags_arch="-march=i486"
@@ -1352,13 +1359,26 @@ case $host in
       pentium3-*-*)   path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]*-*-*])  path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6*-*-*)        path="x86/k6/mmx x86/k6 x86" ;;
-      athlon-*-*)     path="x86/k7/mmx x86/k7 x86" ;;
+      # we don't have any specific 32-bit code for opteron (x86_64), the
+      # athlon code should be reasonable
+      athlon-*-* | x86_64-*-*)    path="x86/k7/mmx x86/k7 x86" ;;
       i786-*-* | pentium4-*-*)  
         path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
       # VIA/Centaur processors, sold as CyrixIII and C3.
       viac32-*-*)   path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       viac3*-*-*)   path="x86/pentium/mmx x86/pentium x86";;
       *)              path="x86" ;;
+    esac
+ 
+    case $host in
+      x86_64-*-*)
+        abilist="64 32"
+        path_64="amd64"
+        cclist_64="gcc"
+        gcc_64_cflags="-O2 -m64"
+        gcc_64_cflags_optlist="cpu"
+        SPEED_CYCLECOUNTER_OBJ_64=amd64.lo
+        ;;
     esac
     ;;
 
@@ -2850,11 +2870,20 @@ if test "$gmp_asm_syntax_testing" != no; then
       ;;
     X86_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
-      GMP_ASM_COFF_TYPE
-      GMP_ASM_X86_GOT_UNDERSCORE
-      GMP_ASM_X86_SHLDL_CL
-      case $enable_profiling in
-        prof | gprof)  GMP_ASM_X86_MCOUNT ;;
+      case $ABI in
+        32)
+          GMP_INCLUDE_MPN(x86/x86-defs.m4)
+          AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86)
+          GMP_ASM_COFF_TYPE
+          GMP_ASM_X86_GOT_UNDERSCORE
+          GMP_ASM_X86_SHLDL_CL
+      	  case $enable_profiling in
+      	    prof | gprof)  GMP_ASM_X86_MCOUNT ;;
+      	  esac
+          ;;
+        64)
+          GMP_INCLUDE_MPN(amd64/amd64-defs.m4)
+          ;;
       esac
       ;;
   esac
