@@ -127,11 +127,14 @@ Gas on hppa GNU/Linux however requires a colon,
 
 	L$loop: ldws,mb -4(0,%r25),%r22
 
-Fortunately both accept a ".label" pseudo-op,
+This is covered by using LDEF() from asm-defs.m4.  An alternative would be
+to use ".label" which is accepted by both,
 
 		.label  L$loop
 		ldws,mb -4(0,%r25),%r22
 
+but that's not as nice to look at, not if you're used to assembler code
+having labels in column 0.
 
 
 
