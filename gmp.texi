@@ -2516,11 +2516,13 @@ With this way of specifying operands, it is possible to perform computations
 on subranges of an argument, and store the result into a subrange of a
 destination.
 
-A common requirement for all functions is that each source area needs at least
-one limb.  No size argument may be zero.
+A common requirement for all functions is that each source area needs at
+least one limb.  No size argument may be zero.  Unless otherwise stated,
+in-place operations are allowed where source and destination are the
+same, but not where they only partly overlap.
 
-The @code{mpn} functions is the base for the implementation of the @code{mpz_},
-@code{mpf_}, and @code{mpq_} functions.
+The @code{mpn} functions are the base for the implementation of the
+@code{mpz_}, @code{mpf_}, and @code{mpq_} functions.
 
 This example adds the number beginning at @var{s1p} and the number
 beginning at @var{s2p} and writes the sum at @var{destp}.  All areas
