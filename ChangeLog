@@ -1,5 +1,7 @@
 2001-03-05  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/cray/sub_n.c: Rewrite using `majority' logic.
+
 	* mpz/cfdiv_r_2exp.c (cfdiv_r_2exp): Reread `up' after realloc of w.
 
 	* mpn/cray/ieee/mul_1.c: Rewrite.  Streamline multiplications;
