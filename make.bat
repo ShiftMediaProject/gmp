@@ -259,6 +259,7 @@ gcc -c -I. -I.. -I../mpn -g -O set_den.c
 gcc -c -I. -I.. -I../mpn -g -O set_num.c
 gcc -c -I. -I.. -I../mpn -g -O set_si.c
 gcc -c -I. -I.. -I../mpn -g -O set_ui.c
+gcc -c -I. -I.. -I../mpn -g -O set_z.c
 gcc -c -I. -I.. -I../mpn -g -O sub.c
 gcc -c -I. -I.. -I../mpn -g -O equal.c
 del libmpq.a
