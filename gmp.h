@@ -162,7 +162,9 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 #endif
 
-#if defined (FILE) || defined (_STDIO_H_) || defined (__STDIO_H__) || defined (H_STDIO)
+#if defined (FILE) || defined (H_STDIO) || defined (_H_STDIO) \
+ || defined (_STDIO_H) || defined (_STDIO_H_) || defined (__STDIO_H__) \
+ || defined (_STDIO_INCLUDED) 
 #define _GMP_H_HAVE_FILE 1
 #endif
 
