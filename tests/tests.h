@@ -1,6 +1,6 @@
 /* Tests support prototypes etc.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -207,7 +207,7 @@ mp_limb_t refmpn_mod_1 __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
                                 mp_limb_t divisor));
 mp_limb_t refmpn_mod_1c __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
                                  mp_limb_t divisor, mp_limb_t carry));
-mp_limb_t refmpn_mod_34lsub1 (mp_srcptr p, mp_size_t n);
+mp_limb_t refmpn_mod_34lsub1 __GMP_PROTO ((mp_srcptr p, mp_size_t n));
 
 mp_limb_t refmpn_mul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                 mp_limb_t multiplier));
