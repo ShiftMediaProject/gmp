@@ -75,7 +75,7 @@ trace (const char *format, ...)
 /* Checks if a - b < c.  Prerequisite a >= b.  Overwrites c.
 
    Let W = 2^GMP_NUMB_BITS, k = csize.
-   
+
    Write a = A W^k + a', b = B W^k + b', so that a - b < c is
    equivalent to
 
@@ -117,14 +117,14 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
     {
       ASSERT (bsize <= csize);
 
-      if (bsize)
+      if (bsize != 0)
 	{
 	  /* A - B == 0, check a' < c + b' */
 	  ch = mpn_add (cp, cp, csize, bp, bsize);
 	  if (ch)
 	    return 1;
 	}
-      
+
       return mpn_cmp (ap, cp, csize) < 0;
     }
 
@@ -133,7 +133,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
       /* B == 0, so A - B = A */
       if (asize > csize + 1 || ap[csize] > 1)
 	return 0;
-      
+
       if (bsize == 0)
 	return 0;
 
@@ -141,8 +141,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
       ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
       ch = mpn_add (cp, cp, csize, bp, bsize);
 
-      /* FIXME: mpn_sub_n calls should be replaced with mpn_cmp */
-      return ch == 1 && 0 == mpn_sub_n (cp, cp, ap, csize);
+      return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
     }
 
   /* Compute A - B, and abort as soon as we know the difference is larger than 1 */
@@ -151,8 +150,8 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
     {
       /* The only way we can have A - B = 1 is if A = (1, 0, ..., 0),
 	 B = (0, MAX, ..., MAX) */
-      unsigned i;
-      
+      mp_size_t i;
+
       if (asize > bsize + 1 || ap[bsize] > 1)
 	return 0;
 
@@ -163,8 +162,8 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
       /* A - B == 1, so check W^k <= c + b' - 1 - a' */
       ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
       ch = mpn_add_n (cp, cp, bp, csize);
-      
-      return ch == 1 && 0 == mpn_sub_n (cp, cp, ap, csize);
+
+      return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
     }
 
   /* Equal high limbs cancel out, so ignore them */
@@ -179,18 +178,18 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
     {
       /* A - B == 0, check a' < c + b' */
       ch = mpn_add_n (cp, cp, bp, csize);
-      
+
       return ch || mpn_cmp (ap, cp, csize) < 0;
     }
 
   /* asize == bsize > csize. */
   {
-    unsigned i;
-    
+    mp_size_t i;
+
     /* We know that A - B >= 1. Do we have A - B > 1? */
     /* The only way we can have A - B = 1 is if A = (X, 0, ..., 0), B =
        (X-1, MAX, ..., MAX). */
-    
+
     if (ap[asize - 1] - bp[asize - 1] > 1)
       /* A - B > 1 */
       return 0;
@@ -198,12 +197,12 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
     for (i = csize; i < asize - 1; i++)
       if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
 	return 0;
-    
+
     /* A - B == 1, so check W^k <= c + b' - 1 - a' */
     ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
     ch = mpn_add_n (cp, cp, bp, csize);
-      
-    return ch == 1 && 0 == mpn_sub_n (cp, cp, ap, csize);
+
+    return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
   }
 }
 
@@ -242,7 +241,7 @@ wrap_mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
 			 mp_srcptr bp, mp_size_t bsize,
 			 mp_ptr cp, mp_size_t csize)
 {
-  int r1; 
+  int r1;
   int r2;
 
 #if WANT_TRACE
@@ -251,7 +250,7 @@ wrap_mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
 	 "  b = %Nd;\n"
 	 "  c = %Nd;\n", ap, asize, bp, bsize, cp, csize);
 #endif
-  
+
   r1 = slow_diff_smaller_p (ap, asize, bp, bsize, cp, csize);
   r2 = mpn_diff_smaller_p (ap, asize, bp, bsize, cp, csize);
   ASSERT (r1 == r2);
@@ -1202,8 +1201,8 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
       unsigned i;
       for (i = 0; i<4; i++)
 	trace (" r%d = %Nd; u%d = %Nd; v%d = %Nd;\n",
-	       i, hgcd->row[i].rp, hgcd->row[i].rsize, 
-	       i, hgcd->row[i].uvp[0], hgcd->size, 
+	       i, hgcd->row[i].rp, hgcd->row[i].rsize,
+	       i, hgcd->row[i].uvp[0], hgcd->size,
 	       i, hgcd->row[i].uvp[1], hgcd->size);
     }
 #endif
