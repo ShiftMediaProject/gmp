@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4f from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -11,95 +11,7 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-SHELL = @SHELL@
-
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = @srcdir@
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-
-bindir = @bindir@
-sbindir = @sbindir@
-libexecdir = @libexecdir@
-datadir = @datadir@
-sysconfdir = @sysconfdir@
-sharedstatedir = @sharedstatedir@
-localstatedir = @localstatedir@
-libdir = @libdir@
-infodir = @infodir@
-mandir = @mandir@
-includedir = @includedir@
-oldincludedir = /usr/include
-
-pkgdatadir = $(datadir)/@PACKAGE@
-pkglibdir = $(libdir)/@PACKAGE@
-pkgincludedir = $(includedir)/@PACKAGE@
-
-top_builddir = ..
-
-ACLOCAL = @ACLOCAL@
-AUTOCONF = @AUTOCONF@
-AUTOMAKE = @AUTOMAKE@
-AUTOHEADER = @AUTOHEADER@
-
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA = @INSTALL_DATA@
-INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
-transform = @program_transform_name@
-
-NORMAL_INSTALL = :
-PRE_INSTALL = :
-POST_INSTALL = :
-NORMAL_UNINSTALL = :
-PRE_UNINSTALL = :
-POST_UNINSTALL = :
-
 @SET_MAKE@
-host_alias = @host_alias@
-host_triplet = @host@
-AMDEP = @AMDEP@
-AMTAR = @AMTAR@
-AR = @AR@
-AS = @AS@
-ASMFLAGS_PIC = @ASMFLAGS_PIC@
-AWK = @AWK@
-CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
-CC = @CC@
-CCAS = @CCAS@
-CFLAGS_PIC = @CFLAGS_PIC@
-CPP = @CPP@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
-DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
-ECHO = @ECHO@
-EXEEXT = @EXEEXT@
-GMP_LDFLAGS = @GMP_LDFLAGS@
-HAVE_MPFR = @HAVE_MPFR@
-LIBM = @LIBM@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
-M4 = @M4@
-MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
-OBJDUMP = @OBJDUMP@
-OBJEXT = @OBJEXT@
-PACKAGE = @PACKAGE@
-RANLIB = @RANLIB@
-SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
-STRIP = @STRIP@
-TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
-U = @U@
-VERSION = @VERSION@
-gmp_srclinks = @gmp_srclinks@
-install_sh = @install_sh@
-mpn_objects = @mpn_objects@
-mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
-mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 # Copyright 2000, 2001 Free Software Foundation, Inc.
 #
@@ -143,6 +55,90 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 # COMPILE minus CC.
 # FIXME: Really pass *_CFLAGS to CPP?
 
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_HEADER = $(INSTALL_DATA)
+transform = @program_transform_name@
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AMTAR = @AMTAR@
+AR = @AR@
+AS = @AS@
+ASMFLAGS_PIC = @ASMFLAGS_PIC@
+AWK = @AWK@
+CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
+CC = @CC@
+CCAS = @CCAS@
+CFLAGS_PIC = @CFLAGS_PIC@
+CPP = @CPP@
+DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
+DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EXEEXT = @EXEEXT@
+GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR = @HAVE_MPFR@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LIBM = @LIBM@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+M4 = @M4@
+MAINT = @MAINT@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
+STRIP = @STRIP@
+TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
+U = @U@
+VERSION = @VERSION@
+__GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
+_am_include = @_am_include@
+_am_quote = @_am_quote@
+gmp_srclinks = @gmp_srclinks@
+install_sh = @install_sh@
+mpn_objects = @mpn_objects@
+mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
+mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = . devel mpn mpz mpq mpf rand mpbsd
@@ -171,11 +167,10 @@ INCLUDES = -I$(top_srcdir)
 LDADD = libtests.la $(top_builddir)/libgmp.la
 
 EXTRA_DIST = x86call.asm
-EXTRA_HEADERS = tests.h
 EXTRA_LTLIBRARIES = libdummy.la
 check_LTLIBRARIES = libtests.la
 
-libtests_la_SOURCES = \
+libtests_la_SOURCES = tests.h \
   memory.c misc.c refmpf.c refmpn.c refmpz.c spinner.c trace.c
 
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
@@ -188,80 +183,86 @@ check_PROGRAMS = t-constants t-modlinv
 TESTS = $(check_PROGRAMS)
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h
-CONFIG_CLEAN_FILES = 
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES =
+libdummy_la_LDFLAGS =
+libdummy_la_LIBADD =
+am_libdummy_la_OBJECTS = x86check$U.lo
+libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
+libtests_la_LDFLAGS =
+am_libtests_la_OBJECTS = memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
+	refmpz$U.lo spinner$U.lo trace$U.lo
+libtests_la_OBJECTS = $(am_libtests_la_OBJECTS)
+check_PROGRAMS = t-constants$(EXEEXT) t-modlinv$(EXEEXT)
+t_constants_SOURCES = t-constants.c
+t_constants_OBJECTS = t-constants$U.$(OBJEXT)
+t_constants_LDADD = $(LDADD)
+t_constants_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
+t_constants_LDFLAGS =
+t_modlinv_SOURCES = t-modlinv.c
+t_modlinv_OBJECTS = t-modlinv$U.$(OBJEXT)
+t_modlinv_LDADD = $(LDADD)
+t_modlinv_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
+t_modlinv_LDFLAGS =
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-ANSI2KNR = $(top_builddir)/ansi2knr
-libdummy_la_LDFLAGS = 
-libdummy_la_LIBADD = 
-am_libdummy_la_OBJECTS =  x86check$U.lo
-libdummy_la_OBJECTS =  $(am_libdummy_la_OBJECTS)
-libtests_la_LDFLAGS = 
-am_libtests_la_OBJECTS =  memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
-refmpz$U.lo spinner$U.lo trace$U.lo
-libtests_la_OBJECTS =  $(am_libtests_la_OBJECTS)
-check_PROGRAMS =  t-constants$(EXEEXT) t-modlinv$(EXEEXT)
-t_constants_SOURCES = t-constants.c
-t_constants_OBJECTS =  t-constants$U.$(OBJEXT)
-t_constants_LDADD = $(LDADD)
-t_constants_DEPENDENCIES =  libtests.la $(top_builddir)/libgmp.la
-t_constants_LDFLAGS = 
-t_modlinv_SOURCES = t-modlinv.c
-t_modlinv_OBJECTS =  t-modlinv$U.$(OBJEXT)
-t_modlinv_LDADD = $(LDADD)
-t_modlinv_DEPENDENCIES =  libtests.la $(top_builddir)/libgmp.la
-t_modlinv_LDFLAGS = 
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
+depcomp =
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libdummy_la_SOURCES) $(libtests_la_SOURCES) \
-t-constants.c t-modlinv.c
-depcomp = 
-DIST_COMMON =  $(EXTRA_HEADERS) Makefile.am Makefile.in
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+DIST_SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) \
+	t-constants.c t-modlinv.c
 
-
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-
-GZIP_ENV = --best
+RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
+	uninstall-info-recursive all-recursive install-data-recursive \
+	install-exec-recursive installdirs-recursive install-recursive \
+	uninstall-recursive check-recursive installcheck-recursive
+DIST_COMMON = Makefile.am Makefile.in
+DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-constants.c t-modlinv.c
-OBJECTS = $(am_libdummy_la_OBJECTS) $(am_libtests_la_OBJECTS) t-constants$U.$(OBJEXT) t-modlinv$U.$(OBJEXT)
 
-all: all-redirect
+all: all-recursive
+
 .SUFFIXES:
 .SUFFIXES: .s .S .asm .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) $(srcdir)/../mpn/Makeasm.am
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/Makefile
-
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
-
-mostlyclean-checkLTLIBRARIES:
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(srcdir)/../mpn/Makeasm.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  tests/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
 
 clean-checkLTLIBRARIES:
 	-test -z "$(check_LTLIBRARIES)" || rm -f $(check_LTLIBRARIES)
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
+	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
+libtests.la: $(libtests_la_OBJECTS) $(libtests_la_DEPENDENCIES)
+	$(LINK)  $(libtests_la_LDFLAGS) $(libtests_la_OBJECTS) $(libtests_la_LIBADD) $(LIBS)
 
-distclean-checkLTLIBRARIES:
-
-maintainer-clean-checkLTLIBRARIES:
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
+	@rm -f t-constants$(EXEEXT)
+	$(LINK) $(t_constants_LDFLAGS) $(t_constants_OBJECTS) $(t_constants_LDADD) $(LIBS)
+t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES)
+	@rm -f t-modlinv$(EXEEXT)
+	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
 
 mostlyclean-compile:
-	-rm -f *.o core *.core
-	-rm -f *.$(OBJEXT)
-
-clean-compile:
+	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
-
-maintainer-clean-compile:
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -270,77 +271,49 @@ clean-libtool:
 	-rm -rf .libs _libs
 
 distclean-libtool:
+	-rm -f libtool
 
-maintainer-clean-libtool:
-$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
-
-$(top_builddir)/ansi2knr.$(OBJEXT):
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
-
 
 mostlyclean-kr:
 	-rm -f *_.c
 
-clean-kr:
-
-distclean-kr:
-
-maintainer-clean-kr:
-
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
-	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
-
-libtests.la: $(libtests_la_OBJECTS) $(libtests_la_DEPENDENCIES)
-	$(LINK)  $(libtests_la_LDFLAGS) $(libtests_la_OBJECTS) $(libtests_la_LIBADD) $(LIBS)
-
-mostlyclean-checkPROGRAMS:
-
-clean-checkPROGRAMS:
-	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-
-distclean-checkPROGRAMS:
-
-maintainer-clean-checkPROGRAMS:
-
-t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
-	@rm -f t-constants$(EXEEXT)
-	$(LINK) $(t_constants_LDFLAGS) $(t_constants_OBJECTS) $(t_constants_LDADD) $(LIBS)
-
-t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES)
-	@rm -f t-modlinv$(EXEEXT)
-	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
 .c.o:
-	$(COMPILE) -c $<
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
 .c.obj:
 	$(COMPILE) -c `cygpath -w $<`
+
 .c.lo:
-	$(LTCOMPILE) -c -o $@ $<
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 memory_.c: memory.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memory.c; then echo $(srcdir)/memory.c; else echo memory.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memory_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memory.c; then echo $(srcdir)/memory.c; else echo memory.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memory_.c || rm -f memory_.c
 misc_.c: misc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/misc.c; then echo $(srcdir)/misc.c; else echo misc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > misc_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/misc.c; then echo $(srcdir)/misc.c; else echo misc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > misc_.c || rm -f misc_.c
 refmpf_.c: refmpf.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpf.c; then echo $(srcdir)/refmpf.c; else echo refmpf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpf_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpf.c; then echo $(srcdir)/refmpf.c; else echo refmpf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpf_.c || rm -f refmpf_.c
 refmpn_.c: refmpn.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpn.c; then echo $(srcdir)/refmpn.c; else echo refmpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpn_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpn.c; then echo $(srcdir)/refmpn.c; else echo refmpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpn_.c || rm -f refmpn_.c
 refmpz_.c: refmpz.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpz.c; then echo $(srcdir)/refmpz.c; else echo refmpz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpz_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpz.c; then echo $(srcdir)/refmpz.c; else echo refmpz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpz_.c || rm -f refmpz_.c
 spinner_.c: spinner.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/spinner.c; then echo $(srcdir)/spinner.c; else echo spinner.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > spinner_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/spinner.c; then echo $(srcdir)/spinner.c; else echo spinner.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > spinner_.c || rm -f spinner_.c
 t-constants_.c: t-constants.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-constants.c; then echo $(srcdir)/t-constants.c; else echo t-constants.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-constants_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-constants.c; then echo $(srcdir)/t-constants.c; else echo t-constants.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-constants_.c || rm -f t-constants_.c
 t-modlinv_.c: t-modlinv.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-modlinv_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-modlinv_.c || rm -f t-modlinv_.c
 trace_.c: trace.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trace.c; then echo $(srcdir)/trace.c; else echo trace.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trace_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trace.c; then echo $(srcdir)/trace.c; else echo trace.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trace_.c || rm -f trace_.c
 x86check_.c: x86check.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/x86check.c; then echo $(srcdir)/x86check.c; else echo x86check.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > x86check_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/x86check.c; then echo $(srcdir)/x86check.c; else echo x86check.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > x86check_.c || rm -f x86check_.c
 memory_.$(OBJEXT) memory_.lo misc_.$(OBJEXT) misc_.lo refmpf_.$(OBJEXT) \
 refmpf_.lo refmpn_.$(OBJEXT) refmpn_.lo refmpz_.$(OBJEXT) refmpz_.lo \
 spinner_.$(OBJEXT) spinner_.lo t-constants_.$(OBJEXT) t-constants_.lo \
 t-modlinv_.$(OBJEXT) t-modlinv_.lo trace_.$(OBJEXT) trace_.lo \
 x86check_.$(OBJEXT) x86check_.lo : $(ANSI2KNR)
+uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -348,10 +321,7 @@ x86check_.$(OBJEXT) x86check_.lo : $(ANSI2KNR)
 # (1) if the variable is set in `config.status', edit `config.status'
 #     (which will cause the Makefiles to be regenerated when you run `make');
 # (2) otherwise, pass the desired values on the `make' command line.
-
-all-recursive install-data-recursive install-exec-recursive \
-installdirs-recursive install-recursive uninstall-recursive  \
-check-recursive installcheck-recursive info-recursive dvi-recursive:
+$(RECURSIVE_TARGETS):
 	@set fnord $(MAKEFLAGS); amf=$$2; \
 	dot_seen=no; \
 	target=`echo $@ | sed s/-recursive//`; \
@@ -374,7 +344,11 @@ mostlyclean-recursive clean-recursive distclean-recursive \
 maintainer-clean-recursive:
 	@set fnord $(MAKEFLAGS); amf=$$2; \
 	dot_seen=no; \
-	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
+	case "$@" in \
+	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+	  *) list='$(SUBDIRS)' ;; \
+	esac; \
+	rev=''; for subdir in $$list; do \
 	  if test "$$subdir" = "."; then :; else \
 	    rev="$$subdir $$rev"; \
 	  fi; \
@@ -412,9 +386,9 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	tags=; \
 	here=`pwd`; \
 	list='$(SUBDIRS)'; for subdir in $$list; do \
-   if test "$$subdir" = .; then :; else \
+	  if test "$$subdir" = .; then :; else \
 	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
-   fi; \
+	  fi; \
 	done; \
 	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -425,14 +399,14 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
-mostlyclean-tags:
-
-clean-tags:
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
 distclean-tags:
 	-rm -f TAGS ID
 
-maintainer-clean-tags:
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
 	srcdir=$(srcdir); export srcdir; \
@@ -488,11 +462,18 @@ check-TESTS: $(TESTS)
 	  test "$$failed" -eq 0; \
 	fi
 
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -507,99 +488,101 @@ distdir: $(DISTFILES)
 	    test -d $(distdir)/$$subdir \
 	    || mkdir $(distdir)/$$subdir \
 	    || exit 1; \
-	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(top_distdir) distdir=../$(distdir)/$$subdir distdir) \
+	    (cd $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$(top_distdir)" \
+	        distdir=../$(distdir)/$$subdir \
+	        distdir) \
 	      || exit 1; \
 	  fi; \
 	done
-info-am:
-info: info-recursive
-dvi-am:
-dvi: dvi-recursive
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_LTLIBRARIES) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-installcheck-am:
-installcheck: installcheck-recursive
-install-exec-am:
-install-exec: install-exec-recursive
-
-install-data-am:
-install-data: install-data-recursive
-
-install-am: all-am
-	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-recursive
-uninstall-am:
-uninstall: uninstall-recursive
 all-am: Makefile
-all-redirect: all-recursive
-install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs: installdirs-recursive
 installdirs-am:
 
+install: install-recursive
+install-exec: install-exec-recursive
+install-data: install-data-recursive
+uninstall: uninstall-recursive
 
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+
+installcheck: installcheck-recursive
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-checkLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-kr \
-		mostlyclean-checkPROGRAMS mostlyclean-tags \
-		mostlyclean-generic
-
-mostlyclean: mostlyclean-recursive
-
-clean-am:  clean-checkLTLIBRARIES clean-compile clean-libtool clean-kr \
-		clean-checkPROGRAMS clean-tags clean-generic \
-		mostlyclean-am
-
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-distclean-am:  distclean-checkLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-kr distclean-checkPROGRAMS \
-		distclean-tags distclean-generic clean-am
-	-rm -f libtool
+clean-am: clean-checkLTLIBRARIES clean-checkPROGRAMS clean-generic \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 
-maintainer-clean-am:  maintainer-clean-checkLTLIBRARIES \
-		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-kr maintainer-clean-checkPROGRAMS \
-		maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-libtool distclean-tags
+
+dvi: dvi-recursive
+
+dvi-am:
+
+info: info-recursive
+
+info-am:
+
+install-data-am:
+
+install-exec-am:
+
+install-info: install-info-recursive
+
+install-man:
+
+installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
 
-.PHONY: mostlyclean-checkLTLIBRARIES distclean-checkLTLIBRARIES \
-clean-checkLTLIBRARIES maintainer-clean-checkLTLIBRARIES \
-mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
-clean-kr maintainer-clean-kr mostlyclean-checkPROGRAMS \
-distclean-checkPROGRAMS clean-checkPROGRAMS \
-maintainer-clean-checkPROGRAMS install-recursive uninstall-recursive \
-install-data-recursive uninstall-data-recursive install-exec-recursive \
-uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
-all-recursive check-recursive installcheck-recursive info-recursive \
-dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
-maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags check-TESTS distdir \
-info-am info dvi-am dvi check check-am installcheck-am installcheck \
-install-exec-am install-exec install-data-am install-data install-am \
-install uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs-am installdirs mostlyclean-generic distclean-generic \
-clean-generic maintainer-clean-generic clean mostlyclean distclean \
-maintainer-clean
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-recursive
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool
+
+uninstall-am: uninstall-info-am
+
+uninstall-info: uninstall-info-recursive
+
+.PHONY: $(RECURSIVE_TARGETS) all all-am check check-TESTS check-am clean \
+	clean-checkLTLIBRARIES clean-checkPROGRAMS clean-generic \
+	clean-libtool clean-recursive distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-recursive \
+	distclean-tags distdir dvi dvi-am dvi-recursive info info-am \
+	info-recursive install install-am install-data install-data-am \
+	install-data-recursive install-exec install-exec-am \
+	install-exec-recursive install-info install-info-recursive \
+	install-man install-recursive install-strip installcheck \
+	installcheck-am installdirs installdirs-am \
+	installdirs-recursive maintainer-clean maintainer-clean-generic \
+	maintainer-clean-recursive mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-kr mostlyclean-libtool \
+	mostlyclean-recursive tags tags-recursive uninstall \
+	uninstall-am uninstall-info-recursive uninstall-recursive
 
 
 # *.s not preprocessed at all.
@@ -657,7 +640,6 @@ maintainer-clean
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	$(RM_TMP) tmp-$*.s
 	mv tmp-$*.o $*.lo
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
