@@ -1,3 +1,8 @@
+2000-04-16  Linus Nordberg  <linus@swox.se>
+
+	* t-rand.c (main): Add non-ANSI function declaration.  Don't use
+	`const'.
+
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.am: Don't do anything for target 'all'.
