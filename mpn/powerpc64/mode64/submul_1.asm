@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     6-18
-C POWER4/PPC970:     ?
+C POWER4/PPC970:     12
 
 C INPUT PARAMETERS
 C res_ptr	r3
@@ -50,8 +50,8 @@ PROLOGUE(mpn_submul_1c)
 	mulhdu	r7,r0,r6
 	addze	r7,r7
 	subfc	r9,r9,r10
-	stdu	r9,8(r3)
 	subfe	r11,r11,r11		C invert ...
+	stdu	r9,8(r3)
 	addic	r11,r11,1		C ... carry
 	bdnz	.Loop
 
