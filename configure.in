@@ -552,20 +552,24 @@ case $host in
 
     case $host in
       hppa2.0*-*-* | hppa64-*-*)
-        abilist="2.0n 1.0"
-
-        # no gcc support for long long in 2.0n
 	cclist_20n="gcc cc"
-	gcc_20n_cflags="-O2 -mpa-risc-2-0"
-        gcc_20n_testlist="sizeof-long-4"
-        # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-        cc_20n_cflags="+DA2.0 +e +O3 -Wl,+vnocompatwarnings"
-        cc_20n_testlist="hpc-hppa-2-0"
+        abilist="2.0n 1.0"
         path_20n="pa64"
 	limb_20n=longlong
         extra_functions_20n="umul udiv"
         SPEED_CYCLECOUNTER_OBJ_20n=hppa2.lo
         cyclecounter_size_20n=2
+
+        # -mpa-risc-2-0 is only an optional flag, in case an old gcc is
+        # used.  Assembler support for our 2.0 asm files is essential
+        # though.
+	gcc_20n_cflags="-O2"
+	gcc_20n_cflags_optlist="arch"
+        gcc_20n_testlist="sizeof-long-4 hppa-level-2.0"
+
+        # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
+        cc_20n_cflags="+DA2.0 +e +O3 -Wl,+vnocompatwarnings"
+        cc_20n_testlist="hpc-hppa-2-0"
 
 	# ABI=2.0w is available for hppa2.0w and hppa2.0, but not for
 	# hppa2.0n, on the assumption that that the latter indicates a
@@ -1395,6 +1399,7 @@ for abi in $abilist; do
         hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
         gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
         gcc-mips-o32)   GMP_GCC_MIPS_O32($cc,,testlist_pass=no) ;;
+        hppa-level-2.0) GMP_HPPA_LEVEL_20($cc $cflags,,testlist_pass=no) ;;
         sizeof*)       GMP_C_TEST_SIZEOF($cc $cflags,$tst,,testlist_pass=no) ;;
         esac
         if test $testlist_pass = no; then break; fi
