@@ -19,6 +19,19 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-24  Kevin Ryde  <kevin@swox.se>
+
+	* configure, aclocal.m4: Regenerate with a libtool patch for a stray
+	quote in AC_LIBTOOL_PROG_LD_SHLIBS under mingw and cygwin.
+
+	* gmp-impl.h (modlimb_invert): More comments.
+
+	* printf/doprnti.c: Use the precision field to print leading zeros.
+	* tests/printf/t-printf.c: Test this.
+	* cxx/osdoprnti.cc, gmp-impl.h: Ignore precision in operator<<.
+
+	* tune/speed.c, tune/speed.h, tune/common.c: Add mpn_mul_1_inplace.
+
 2001-10-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/pprime_p.c (mpz_millerrabin): Remove function and its descendant.
