@@ -140,6 +140,78 @@ mips-*-irix[6789]*)
   exact_cpu=mips64
   ;;
 
+m68k-*-*)
+  # NetBSD (and presumably other *BSD) "sysctl hw.model" gives
+  #   hw.model = Apple Macintosh Quadra 610  (68040)
+  exact_cpu=`(sysctl hw.model) 2>/dev/null | sed -n 's/^.*\(680[012346]0\).*$/m\1/p'`
+  if test -z "$exact_cpu"; then
+    # See if we can run: movel #0,%d0, rts
+    # .byte is used to avoid problems with assembler syntax variations.
+    # For testing, add "illegal" using ".byte 0x4A, 0xFC" to provoke failures.
+    cat >$dummy.s <<EOF
+	.text
+	.globl main
+	.globl _main
+main:
+_main:
+	.byte	0x70, 0x00
+	.byte	0x4e, 0x75
+EOF
+    ($CC_FOR_BUILD $dummy.s -o $dummy && ./$dummy) >/dev/null 2>&1
+    if test "$?" = 0; then
+      # Now try: trapf, movel #0,%d0, rts
+      cat >$dummy.s <<EOF
+	.text
+	.globl main
+	.globl _main
+main:
+_main:
+	.byte	0x51, 0xFC
+	.byte	0x70, 0x00
+	.byte	0x4e, 0x75
+EOF
+      $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1
+      if test "$?" = 0; then
+        # Use sh -c here, since (./$dummy) 2>/dev/null still prints the
+        # SIGILL message.
+        sh -c ./$dummy >/dev/null 2>&1
+        if test "$?" != 0; then
+          # trapf didn't work, must have 68000.
+          # Another possibility for identifying 68000 and 68010 is the
+          # different behaviour of "movem a0,(a0)+" compared to cpu32 and
+          # m68020 and up.
+          exact_cpu=m68000
+        else
+          # now try: bfffo %d1{0:31},%d0, movel #0,%d0, rts
+          cat >$dummy.s <<EOF
+	.text
+	.globl main
+	.globl _main
+main:
+_main:
+	.byte	0xED, 0xC1, 0x00, 0x1F
+	.byte	0x70, 0x00
+	.byte	0x4e, 0x75
+EOF
+          $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1
+          if test "$?" = 0; then
+            sh -c ./$dummy >/dev/null 2>&1
+            if test "$?" != 0; then
+              # bfffo didn't work, must have CPU32
+              exact_cpu=m68302
+            else
+              # Now we know m68020 or up, which is how gmp interprets plain
+              # m68k, so just leave that.
+              # FIXME: Do some tests for 030, 040 and 060.  But how?
+            fi
+          fi
+        fi
+      fi
+    fi
+    rm -f $dummy.s $dummy $dummy.core core
+  fi
+  ;;
+
 rs6000-*-aix4* | powerpc-*-aix4*)
   cat >$dummy.c <<EOF
 #include <stdio.h>
