@@ -68,17 +68,27 @@ LIBMP_LT_AGE =      1
 
 AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
+# FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
+# conditionalized.  We want mpfr/mpfr.info only installed under
+# --enable-mpfr, but it and the test of mpfr always included in a "make
+# dist".
+if WANT_MPFR
+MPFR_DIR = mpfr
+else
+if MAINTAINER_MODE
+MPFR_DIR = mpfr
+endif
+endif
+
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf mpbsd mpfr demos tune
+SUBDIRS = tests mpn mpz mpq mpf mpbsd $(MPFR_DIR) demos tune
 
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
-EXTRA_DIST = doc macos \
-  configfsf.guess configfsf.sub .gdbinit gmp-impl.h \
-  INSTALL.autoconf longlong.h stack-alloc.h
+EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
 
 DISTCLEANFILES = $(nodist_include_HEADERS) asm-syntax.h config.m4 \
   @gmp_srclinks@
@@ -182,7 +192,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # something extra.  The source files for each .lo are listed in the
 # Makefile.am's in the subdirectories.
 
-libgmp_la_SOURCES = \
+libgmp_la_SOURCES = gmp-impl.h longlong.h stack-alloc.h			\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
