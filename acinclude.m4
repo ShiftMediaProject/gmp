@@ -194,16 +194,16 @@ fi
 dnl  GMP_PROG_CC_WORKS(CC/CFLAGS,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
 dnl  --------------------------------------------------------------------
 dnl  Check if CC/CFLAGS can compile and link.
-dnl
-dnl  This funcptr stuff provokes an internal error from gcc 2.95.2 under
-dnl  -mpowerpc64 (without -maix64), thereby detecting an unusable compiler.
 
 AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_MSG_CHECKING([compiler $1])
 cat >conftest.c <<EOF
-void *g();
+/* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
+   (without -maix64), hence detecting an unusable compiler */
+void *g() { return (void *) 0; }
 void *f() { return g(); }
-int main () {}
+
+int main () { return 0; }
 EOF
 gmp_compile="$1 conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
