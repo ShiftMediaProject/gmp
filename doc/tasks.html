@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 31 Dec 2003.  An up-to-date version is available at
+  This file current as of 2 Jan 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -513,13 +513,6 @@ MA 02111-1307, USA.
      generated gmp.h at build time.
 <li> <code>mpz_set_str</code> etc variants taking string lengths rather than
      null-terminators.
-<li> Consider changing the thresholds to apply the simpler algorithm when
-     "<code>&lt;=</code>" rather than "<code>&lt;</code>", so a threshold can
-     be set to <code>MP_SIZE_T_MAX</code> to get only the simpler code (the
-     compiler will know <code>size &lt;= MP_SIZE_T_MAX</code> is always true).
-     Alternately it looks like the <code>ABOVE_THRESHOLD</code> and
-     <code>BELOW_THRESHOLD</code> macros can do this adequately, and also pick
-     up cases where a threshold of zero should mean only the second algorithm.
 <li> <code>mpz_andn</code>, <code>mpz_iorn</code>, <code>mpz_nand</code>,
      <code>mpz_nior</code>, <code>mpz_xnor</code> might be useful additions,
      if they could share code with the current such functions (which should be
@@ -871,12 +864,7 @@ near future, but are at least worth thinking about.
      <code>mpn_add_1</code> and one from <code>mpn_sub_1</code>.  If those two
      routines were opened up a bit maybe that code could be shared.  When a
      copy needs to be done there's no carry to append for the add, and if the
-     copy is non-empty no high zero for the sub. <br> An alternative would be
-     to do a copy at the start and then an in-place add or sub.  Obviously
-     that duplicates the fetches and stores for carry propagation, but that's
-     normally only one or two limbs.  The same applies to <code>mpz_add</code>
-     when one operand is longer than the other, and to <code>mpz_com</code>
-     since it's just -(x+1).
+     copy is non-empty no high zero for the sub.
 </ul>
 
 
