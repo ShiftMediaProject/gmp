@@ -1,6 +1,6 @@
 # Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -162,7 +162,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm hppa2w.asm ia64.asm many.pl
 noinst_HEADERS = speed.h
 
-EXTRA_LTLIBRARIES = libspeed.la libdummy.la
+EXTRA_LTLIBRARIES = libspeed.la
 
 libspeed_la_SOURCES = \
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
@@ -180,9 +180,6 @@ libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
 
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(LIBM)
 libspeed_la_LDFLAGS = -static
-
-# create an ansi2knr rule for sqr_basecase.c in case it's recompiled
-nodist_libdummy_la_SOURCES = sqr_basecase.c
 
 
 # The library code is faster static than shared on some systems, so do
@@ -280,10 +277,6 @@ subdir = tune
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-libdummy_la_LDFLAGS =
-libdummy_la_LIBADD =
-nodist_libdummy_la_OBJECTS = sqr_basecase$U.lo
-libdummy_la_OBJECTS = $(nodist_libdummy_la_OBJECTS)
 am_libspeed_la_OBJECTS = common$U.lo divrem1div$U.lo divrem1inv$U.lo \
 	divrem2div$U.lo divrem2inv$U.lo freq$U.lo gcd_bin$U.lo \
 	gcd_finda_gen$U.lo gcdext_single$U.lo gcdext_double$U.lo \
@@ -335,7 +328,7 @@ DIST_SOURCES = $(libspeed_la_SOURCES) $(speed_SOURCES) \
 HEADERS = $(noinst_HEADERS)
 
 DIST_COMMON = README $(noinst_HEADERS) Makefile.am Makefile.in
-SOURCES = $(nodist_libdummy_la_SOURCES) $(libspeed_la_SOURCES) $(speed_SOURCES) $(speed_dynamic_SOURCES) $(speed_ext_SOURCES) $(tuneup_SOURCES) $(nodist_tuneup_SOURCES)
+SOURCES = $(libspeed_la_SOURCES) $(speed_SOURCES) $(speed_dynamic_SOURCES) $(speed_ext_SOURCES) $(tuneup_SOURCES) $(nodist_tuneup_SOURCES)
 
 all: all-am
 
@@ -357,8 +350,6 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
-	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libspeed.la: $(libspeed_la_OBJECTS) $(libspeed_la_DEPENDENCIES) 
 	$(LINK)  $(libspeed_la_LDFLAGS) $(libspeed_la_OBJECTS) $(libspeed_la_LIBADD) $(LIBS)
 speed$(EXEEXT): $(speed_OBJECTS) $(speed_DEPENDENCIES) 
