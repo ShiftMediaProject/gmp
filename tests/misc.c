@@ -127,3 +127,28 @@ mpn_diff_highest (mp_srcptr p1, mp_srcptr p2, mp_size_t size)
   /* no differences */
   return -1;
 }
+
+
+void
+mpz_set_str_or_abort (mpz_ptr z, const char *str, int base)
+{
+  if (mpz_set_str (z, str, base) != 0)
+    {
+      fprintf (stderr, "ERROR: mpz_set_str failed\n");
+      fprintf (stderr, "   str  = \"%s\"\n", str);
+      fprintf (stderr, "   base = %d\n", base);
+      abort();
+    }
+}
+
+void
+mpf_set_str_or_abort (mpf_ptr f, const char *str, int base)
+{
+  if (mpf_set_str (f, str, base) != 0)
+    {
+      fprintf (stderr, "ERROR mpf_set_str failed\n");
+      fprintf (stderr, "   str  = \"%s\"\n", str);
+      fprintf (stderr, "   base = %d\n", base);
+      abort();
+    }
+}
