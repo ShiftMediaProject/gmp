@@ -474,6 +474,35 @@ int __GMP_DECLSPEC gmp_vsprintf _PROTO ((char *, const char *, va_list));
 #endif
 
 
+/**************** Formatted input routines.  ****************/
+
+#define gmp_fscanf __gmp_fscanf
+#if _GMP_H_HAVE_FILE
+int __GMP_DECLSPEC gmp_fscanf _PROTO ((FILE *, const char *, ...));
+#endif
+
+#define gmp_scanf __gmp_scanf
+int __GMP_DECLSPEC gmp_scanf _PROTO ((const char *, ...));
+
+#define gmp_sscanf __gmp_sscanf
+int __GMP_DECLSPEC gmp_sscanf _PROTO ((const char *, const char *, ...));
+
+#define gmp_vfscanf __gmp_vfscanf
+#if _GMP_H_HAVE_FILE && _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vfscanf _PROTO ((FILE *, const char *, va_list));
+#endif
+
+#define gmp_vscanf __gmp_vscanf
+#if _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vscanf _PROTO ((const char *, va_list));
+#endif
+
+#define gmp_vsscanf __gmp_vsscanf
+#if _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vsscanf _PROTO ((const char *, const char *, va_list));
+#endif
+
+
 /**************** Integer (i.e. Z) routines.  ****************/
 
 #define _mpz_realloc __gmpz_realloc

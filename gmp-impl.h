@@ -2249,7 +2249,6 @@ struct gmp_snprintf_t {
   size_t  size;
 };
 
-
 /* Add the bytes printed by the call to the total retval, or bail out on an
    error.  */
 #define DOPRNT_ACCUMULATE(call) \
@@ -2299,6 +2298,33 @@ int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *funs,
                               const struct doprnt_params_t *p,
                               mpf_srcptr f));
 #endif /* _GMP_H_HAVE_VA_LIST */
+
+
+struct gmp_doscan_params_t {
+  int   base;
+  int   ignore;
+  char  type;
+  int   width;
+};
+
+typedef int (*gmp_doscan_scan_t)  _PROTO ((void *data, const char *fmt, ...));
+typedef void *(*gmp_doscan_step_t) _PROTO ((void *data, int new_chars));
+typedef int (*gmp_doscan_get_t)   _PROTO ((void *data));
+typedef int (*gmp_doscan_unget_t) _PROTO ((int c, void *data));
+
+struct gmp_doscan_funs_t {
+  gmp_doscan_scan_t   scan;
+  gmp_doscan_step_t   step;
+  gmp_doscan_get_t    get;
+  gmp_doscan_unget_t  unget;
+};
+extern const struct gmp_doscan_funs_t  __gmp_fscanf_funs;
+extern const struct gmp_doscan_funs_t  __gmp_sscanf_funs;
+
+#if _GMP_H_HAVE_VA_LIST
+int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *funs, void *data,
+                          const char *orig_fmt, va_list orig_ap));
+#endif
 
 
 /* For testing and debugging.  */

@@ -78,7 +78,7 @@ endif
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd $(MPFR_DIR) demos tune
+SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
 
 if WANT_CXX
 GMPXX_HEADERS_OPTION = gmpxx.h
@@ -194,6 +194,11 @@ PRINTF_OBJECTS =							\
   printf/vsnprintf$U.lo printf/vsprintf$U.lo				\
   @REPL_VSNPRINTF_PRINTF_OBJ@
 
+SCANF_OBJECTS =							\
+  scanf/doscan$U.lo scanf/fscanf$U.lo scanf/fscanffuns$U.lo	\
+  scanf/scanf$U.lo scanf/sscanf$U.lo scanf/sscanffuns$U.lo	\
+  scanf/vfscanf$U.lo scanf/vscanf$U.lo scanf/vsscanf$U.lo
+
 CXX_OBJECTS =								\
    cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
    cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
@@ -224,7 +229,8 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
   version.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) $(PRINTF_OBJECTS)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
+  $(PRINTF_OBJECTS)  $(SCANF_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
