@@ -152,12 +152,13 @@ LDADD = $(top_builddir)/tests/libtests.la \
   $(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
 
 
-@WANT_CXX_TRUE@check_PROGRAMS = t-headers t-ostream t-locale t-constr t-expr
+@WANT_CXX_TRUE@check_PROGRAMS = t-headers t-ostream t-locale t-constr t-expr t-allfuns
 @WANT_CXX_TRUE@TESTS = $(check_PROGRAMS)
 
-t_headers_SOURCES = t-headers.cc
+t_allfuns_SOURCES = t-allfuns.cc
 t_constr_SOURCES = t-constr.cc
 t_expr_SOURCES = t-expr.cc
+t_headers_SOURCES = t-headers.cc
 t_locale_SOURCES = t-locale.cc
 t_ostream_SOURCES = t-ostream.cc
 subdir = tests/cxx
@@ -166,8 +167,14 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 @WANT_CXX_TRUE@check_PROGRAMS = t-headers$(EXEEXT) t-ostream$(EXEEXT) \
 @WANT_CXX_TRUE@	t-locale$(EXEEXT) t-constr$(EXEEXT) \
-@WANT_CXX_TRUE@	t-expr$(EXEEXT)
+@WANT_CXX_TRUE@	t-expr$(EXEEXT) t-allfuns$(EXEEXT)
 @WANT_CXX_FALSE@check_PROGRAMS =
+am_t_allfuns_OBJECTS = t-allfuns.$(OBJEXT)
+t_allfuns_OBJECTS = $(am_t_allfuns_OBJECTS)
+t_allfuns_LDADD = $(LDADD)
+t_allfuns_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_allfuns_LDFLAGS =
 am_t_constr_OBJECTS = t-constr.$(OBJEXT)
 t_constr_OBJECTS = $(am_t_constr_OBJECTS)
 t_constr_LDADD = $(LDADD)
@@ -215,10 +222,11 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(t_constr_SOURCES) $(t_expr_SOURCES) \
-	$(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES)
+DIST_SOURCES = $(t_allfuns_SOURCES) $(t_constr_SOURCES) \
+	$(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) \
+	$(t_ostream_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES)
+SOURCES = $(t_allfuns_SOURCES) $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES)
 
 all: all-am
 
@@ -232,6 +240,9 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+t-allfuns$(EXEEXT): $(t_allfuns_OBJECTS) $(t_allfuns_DEPENDENCIES) 
+	@rm -f t-allfuns$(EXEEXT)
+	$(CXXLINK) $(t_allfuns_LDFLAGS) $(t_allfuns_OBJECTS) $(t_allfuns_LDADD) $(LIBS)
 t-constr$(EXEEXT): $(t_constr_OBJECTS) $(t_constr_DEPENDENCIES) 
 	@rm -f t-constr$(EXEEXT)
 	$(CXXLINK) $(t_constr_LDFLAGS) $(t_constr_OBJECTS) $(t_constr_LDADD) $(LIBS)
