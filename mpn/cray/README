@@ -38,7 +38,7 @@ computing carry is the main issue.  There are no vectorizing
 unsigned-less-than instructions, and the sequence that implement that
 opetration is very long.
 
-Shifting is the only operation that s simple to make fast.  All Cray
+Shifting is the only operation that is simple to make fast.  All Cray
 systems have a bitblt instructions (Vi Vj,Vj<Ak and Vi Vj,Vj>Ak) that
 should be really useful.
 
