@@ -21,9 +21,10 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
-dnl  This runs at 2 cycles/limb on PA8000 and 1.875 cycles/limb.  It should be
-dnl  possible to do 1.5 cycles/limb for both processors, perhaps with some
-dnl  latency scheduling.
+dnl  This runs at 2 cycles/limb on PA8000 and 1.75 cycles/limb on PA8500.  It
+dnl  should be possible to reach the cache bandwith 1.5 cycles/limb at least
+dnl  with PA8500.  The problem now is stalling of the first SUB,DB after LDO,
+dnl  where the processor gets confused about where carry comes from.
 
 include(`../config.m4')
 
@@ -75,9 +76,9 @@ L(2)	ldd		48(up), %r20
 	sub,db		%r20, %r31, %r20
 	std		%r20, 48(rp)
 L(1)	ldd		56(up), %r21
-	ldo		64(up), up
 	ldd		56(vp),%r19
 	sub, db		%r21, %r19, %r21
+	ldo		64(up), up
 	std		%r21, 56(rp)
 	ldo		64(vp), vp
 	addib,>		-8, n, L(loop)
