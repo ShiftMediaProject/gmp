@@ -275,6 +275,28 @@ typedef __mpq_struct *mpq_ptr;
 #define _GMP_H_HAVE_FILE 1
 #endif
 
+/* In ISO C, if a prototype involving "struct obstack *" is given without
+   that structure defined, then the struct is scoped down to just the
+   prototype, causing a conflict if it's subsequently defined for real.  So
+   only give prototypes if we've got obstack.h.  */
+#if defined (_OBSTACK_H)   /* glibc <obstack.h> */
+#define _GMP_H_HAVE_OBSTACK 1
+#endif
+
+/* The prototypes for gmp_vprintf etc are provided only if va_list is
+   available, via an application having included <stdarg.h> or <varargs.h>.
+   Usually va_list is a typedef so can't be tested directly, but va_start is
+   almost certainly a macro, so look for that.
+
+   <stdio.h> will define some sort of va_list for vprintf and vfprintf, but
+   let's not bother trying to use that since it's not standard and since
+   application uses for gmp_vprintf etc will almost certainly require the
+   whole <stdarg.h> or <varargs.h> anyway.  */
+
+#ifdef va_start
+#define _GMP_H_HAVE_VA_LIST 1
+#endif
+
 /* Test for gcc >= maj.min, as per __GNUC_PREREQ in glibc */
 #if defined (__GNUC__) && defined (__GNUC_MINOR__)
 #define __GMP_GNUC_PREREQ(maj, min) \
@@ -370,6 +392,61 @@ void __GMP_DECLSPEC gmp_randinit_lc_2exp _PROTO ((gmp_randstate_t,
 void __GMP_DECLSPEC gmp_randseed _PROTO ((gmp_randstate_t, mpz_srcptr));
 void __GMP_DECLSPEC gmp_randseed_ui _PROTO ((gmp_randstate_t, unsigned long int));
 void __GMP_DECLSPEC gmp_randclear _PROTO ((gmp_randstate_t));
+
+
+/**************** Formatted output routines.  ****************/
+
+#define gmp_asprintf __gmp_asprintf
+int __GMP_DECLSPEC gmp_asprintf _PROTO ((char **, const char *, ...));
+
+#define gmp_fprintf __gmp_fprintf
+#if _GMP_H_HAVE_FILE
+int __GMP_DECLSPEC gmp_fprintf _PROTO ((FILE *, const char *, ...));
+#endif
+
+#define gmp_obstack_printf __gmp_obstack_printf
+#if _GMP_H_HAVE_OBSTACK
+int __GMP_DECLSPEC gmp_obstack_printf _PROTO ((struct obstack *, const char *, ...));
+#endif
+
+#define gmp_obstack_vprintf __gmp_obstack_vprintf
+#if _GMP_H_HAVE_OBSTACK && _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_obstack_vprintf _PROTO ((struct obstack *, const char *, va_list));
+#endif
+
+#define gmp_printf __gmp_printf
+int __GMP_DECLSPEC gmp_printf _PROTO ((const char *, ...));
+
+#define gmp_snprintf __gmp_snprintf
+int __GMP_DECLSPEC gmp_snprintf _PROTO ((char *, size_t, const char *, ...));
+
+#define gmp_sprintf __gmp_sprintf
+int __GMP_DECLSPEC gmp_sprintf _PROTO ((char *, const char *, ...));
+
+#define gmp_vasprintf __gmp_vasprintf
+#if _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vasprintf _PROTO ((char **, const char *, va_list));
+#endif
+
+#define gmp_vfprintf __gmp_vfprintf
+#if _GMP_H_HAVE_FILE && _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vfprintf _PROTO ((FILE *, const char *, va_list));
+#endif
+
+#define gmp_vprintf __gmp_vprintf
+#if _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vprintf _PROTO ((const char *, va_list));
+#endif
+
+#define gmp_vsnprintf __gmp_vsnprintf
+#if _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vsnprintf _PROTO ((char *, size_t, const char *, va_list));
+#endif
+
+#define gmp_vsprintf __gmp_vsprintf
+#if _GMP_H_HAVE_VA_LIST
+int __GMP_DECLSPEC gmp_vsprintf _PROTO ((char *, const char *, va_list));
+#endif
 
 
 /**************** Integer (i.e. Z) routines.  ****************/
@@ -1653,10 +1730,18 @@ mpn_sub_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
 }
 #endif
 
-
-
 #if defined (__cplusplus)
 }
+#endif
+
+
+/**************** C++ routines ****************/
+
+#ifdef __cplusplus
+class ostream;
+ostream& __GMP_DECLSPEC mpz_out_ostream (ostream &o, mpz_srcptr z);
+ostream& __GMP_DECLSPEC mpq_out_ostream (ostream &o, mpq_srcptr q);
+ostream& __GMP_DECLSPEC mpf_out_ostream (ostream &o, mpf_srcptr f);
 #endif
 
 

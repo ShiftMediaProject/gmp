@@ -114,6 +114,20 @@ MA 02111-1307, USA. */
 #define ATTRIBUTE_MALLOC
 #endif
 
+#if ! HAVE_STRCHR
+#define strchr(s,c)  index(s,c)
+#endif
+
+#if ! HAVE_MEMSET
+#define memset(p, c, n)                 \
+  do {                                  \
+    ASSERT (n >= 0);                    \
+    int  __i;                           \
+    for (__i = 0; __i < (n); __i++)     \
+      (p)[__i] = (c);                   \
+  } while (0)
+#endif
+
 
 #if defined (__cplusplus)
 extern "C" {
@@ -980,6 +994,9 @@ extern const mp_limb_t __gmp_fib_table[];
    overlap.  If both these are false, there's an overlap. */
 #define MPN_OVERLAP_P(xp, xsize, yp, ysize) \
   ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
+#define MEM_OVERLAP_P(xp, xsize, yp, ysize)     \
+  (   (char *) (xp) + (xsize) > (char *) (yp)   \
+   && (char *) (yp) + (ysize) > (char *) (xp))
 
 /* Return non-zero if xp,xsize and yp,ysize are either identical or not
    overlapping.  Return zero if they're partially overlapping. */
@@ -1939,6 +1956,133 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
   } while (0)
 
 
+#define DOPRNT_CONV_FIXED        1
+#define DOPRNT_CONV_SCIENTIFIC   2
+#define DOPRNT_CONV_GENERAL      3
+
+#define DOPRNT_JUSTIFY_NONE      0
+#define DOPRNT_JUSTIFY_LEFT      1
+#define DOPRNT_JUSTIFY_RIGHT     2
+#define DOPRNT_JUSTIFY_INTERNAL  3
+
+#define DOPRNT_SHOWBASE_YES      1
+#define DOPRNT_SHOWBASE_NO       2
+#define DOPRNT_SHOWBASE_NONZERO  3
+
+struct doprnt_params_t {
+  int         base;          /* negative for upper case */
+  int         conv;          /* choices above */
+  const char  *expfmt;       /* exponent format */
+  int         exptimes4;     /* exponent multiply by 4 */
+  char        fill;          /* character */
+  int         justify;       /* choices above */
+  int         prec;
+  int         showbase;      /* choices above */
+  int         showpoint;     /* if radix point always shown */
+  int         showtrailing;  /* if trailing zeros wanted */
+  char        sign;          /* '+', ' ', or '\0' */
+  int         width;
+};
+
+#if _GMP_H_HAVE_VA_LIST
+
+typedef int (*doprnt_format_t) (void *data, const char *fmt, va_list ap);
+typedef int (*doprnt_memory_t) (void *data, const char *str, size_t len);
+typedef int (*doprnt_reps_t) (void *data, int c, int reps);
+typedef int (*doprnt_final_t) (void *data);
+
+struct doprnt_funs_t {
+  doprnt_format_t  format;
+  doprnt_memory_t  memory;
+  doprnt_reps_t    reps;
+  doprnt_final_t   final;   /* NULL if not required */
+};
+
+extern const struct doprnt_funs_t  __gmp_fprintf_funs;
+extern const struct doprnt_funs_t  __gmp_sprintf_funs;
+extern const struct doprnt_funs_t  __gmp_snprintf_funs;
+extern const struct doprnt_funs_t  __gmp_obstack_printf_funs;
+extern const struct doprnt_funs_t  __gmp_ostream_funs;
+
+/* buf is where to write the next output, and size is how much space is left
+   there.  If the application passed size==0 then that's what we'll have
+   here, and nothing at all should be written.  */
+struct gmp_snprintf_t {
+  char    *buf;
+  size_t  size;
+};
+
+/* Add the bytes printed by the call to the total retval, or bail out on an
+   error.  */
+#define DOPRNT_ACCUMULATE(call) \
+  do {                          \
+    int  __ret;                 \
+    __ret = call;               \
+    if (__ret == -1)            \
+      goto error;               \
+    retval += __ret;            \
+  } while (0)
+#define DOPRNT_ACCUMULATE_FUN(fun, params)      \
+  do {                                          \
+    ASSERT ((fun) != NULL);                     \
+    DOPRNT_ACCUMULATE ((*(fun)) params);        \
+  } while (0)
+    
+#define DOPRNT_FORMAT(fmt, ap)                          \
+  DOPRNT_ACCUMULATE_FUN (funs->format, (data, fmt, ap))
+#define DOPRNT_MEMORY(ptr, len)                                 \
+  DOPRNT_ACCUMULATE_FUN (funs->memory, (data, ptr, len))
+#define DOPRNT_REPS(c, n)                               \
+  DOPRNT_ACCUMULATE_FUN (funs->reps, (data, c, n))
+
+#define DOPRNT_STRING(str)      DOPRNT_MEMORY (str, strlen (str))
+
+#define DOPRNT_REPS_MAYBE(c, n) \
+  do {                          \
+    if ((n) != 0)               \
+      DOPRNT_REPS (c, n);       \
+  } while (0)
+#define DOPRNT_MEMORY_MAYBE(ptr, len)   \
+  do {                                  \
+    if ((len) != 0)                     \
+      DOPRNT_MEMORY (ptr, len);         \
+  } while (0)
+
+/* check the ndigits calculation for fixed in __gmp_doprnt_float_digits */
+#define ASSERT_DOPRNT_NDIGITS(param,ndigits,exp)                        \
+  ASSERT ((param).conv == DOPRNT_CONV_FIXED                             \
+          ? (ndigits) >= MIN (1, (exp) + (param).prec + 2) : 1);
+
+int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *funs,
+                          void *data,
+                          const char *fmt,
+                          va_list ap));
+int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *funs,
+                                  void *data,
+                                  const struct doprnt_params_t *p,
+                                  const char *s));
+int __gmp_doprnt_float _PROTO ((const struct doprnt_funs_t *funs,
+                                void * data,
+                                const struct doprnt_params_t *p,
+                                char *s,
+                                mp_exp_t exp));
+int __gmp_doprnt_float_digits _PROTO ((const struct doprnt_params_t *p,
+                                       mpf_srcptr f));
+int __gmp_doprnt_integer_cxx _PROTO ((const struct doprnt_funs_t *funs,
+                                      void *data,
+                                      const struct doprnt_params_t *p,
+                                      const char *s));
+int __gmp_doprnt_float_cxx _PROTO ((const struct doprnt_funs_t *funs,
+                                    void * data,
+                                    const struct doprnt_params_t *p,
+                                    char *s,
+                                    mp_exp_t exp));
+int __gmp_doprnt_float_digits_cxx _PROTO ((const struct doprnt_params_t *p,
+                                           mpf_srcptr f));
+
+#endif /* _GMP_H_HAVE_VA_LIST */
+
+
 /* For testing and debugging.  */
 #define MPZ_CHECK_FORMAT(z)					\
   do {								\
@@ -2068,5 +2212,22 @@ extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #if defined (__cplusplus)
 }
 #endif
+
+
+#ifdef __cplusplus
+
+/* A little helper for a null-terminated __gmp_allocate_func string, to
+   ensure it's freed if an exception is thrown.  */
+class gmp_allocated_string {
+ public:
+  char *str;
+  gmp_allocated_string(char *arg) { str = arg; }
+  ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
+};
+
+class ios;
+void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o);
+
+#endif /* __cplusplus */
 
 #endif
