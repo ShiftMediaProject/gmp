@@ -200,7 +200,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-asmtype t-aors_1 t-divrem_1 t-instrument t-iord_u \
+check_PROGRAMS = t-asmtype t-aors_1 t-divrem_1 t-get_d t-instrument t-iord_u \
   t-mp_bases t-perfsqr t-scan
 
 
@@ -210,8 +210,9 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-asmtype$(EXEEXT) t-aors_1$(EXEEXT) \
-	t-divrem_1$(EXEEXT) t-instrument$(EXEEXT) t-iord_u$(EXEEXT) \
-	t-mp_bases$(EXEEXT) t-perfsqr$(EXEEXT) t-scan$(EXEEXT)
+	t-divrem_1$(EXEEXT) t-get_d$(EXEEXT) t-instrument$(EXEEXT) \
+	t-iord_u$(EXEEXT) t-mp_bases$(EXEEXT) t-perfsqr$(EXEEXT) \
+	t-scan$(EXEEXT)
 t_aors_1_SOURCES = t-aors_1.c
 t_aors_1_OBJECTS = t-aors_1$U.$(OBJEXT)
 t_aors_1_LDADD = $(LDADD)
@@ -230,6 +231,12 @@ t_divrem_1_LDADD = $(LDADD)
 t_divrem_1_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_divrem_1_LDFLAGS =
+t_get_d_SOURCES = t-get_d.c
+t_get_d_OBJECTS = t-get_d$U.$(OBJEXT)
+t_get_d_LDADD = $(LDADD)
+t_get_d_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_get_d_LDFLAGS =
 t_instrument_SOURCES = t-instrument.c
 t_instrument_OBJECTS = t-instrument$U.$(OBJEXT)
 t_instrument_LDADD = $(LDADD)
@@ -271,10 +278,10 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = t-aors_1.c t-asmtype.c t-divrem_1.c t-instrument.c \
-	t-iord_u.c t-mp_bases.c t-perfsqr.c t-scan.c
+DIST_SOURCES = t-aors_1.c t-asmtype.c t-divrem_1.c t-get_d.c \
+	t-instrument.c t-iord_u.c t-mp_bases.c t-perfsqr.c t-scan.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = t-aors_1.c t-asmtype.c t-divrem_1.c t-instrument.c t-iord_u.c t-mp_bases.c t-perfsqr.c t-scan.c
+SOURCES = t-aors_1.c t-asmtype.c t-divrem_1.c t-get_d.c t-instrument.c t-iord_u.c t-mp_bases.c t-perfsqr.c t-scan.c
 
 all: all-am
 
@@ -301,6 +308,9 @@ t-asmtype$(EXEEXT): $(t_asmtype_OBJECTS) $(t_asmtype_DEPENDENCIES)
 t-divrem_1$(EXEEXT): $(t_divrem_1_OBJECTS) $(t_divrem_1_DEPENDENCIES) 
 	@rm -f t-divrem_1$(EXEEXT)
 	$(LINK) $(t_divrem_1_LDFLAGS) $(t_divrem_1_OBJECTS) $(t_divrem_1_LDADD) $(LIBS)
+t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES) 
+	@rm -f t-get_d$(EXEEXT)
+	$(LINK) $(t_get_d_LDFLAGS) $(t_get_d_OBJECTS) $(t_get_d_LDADD) $(LIBS)
 t-instrument$(EXEEXT): $(t_instrument_OBJECTS) $(t_instrument_DEPENDENCIES) 
 	@rm -f t-instrument$(EXEEXT)
 	$(LINK) $(t_instrument_LDFLAGS) $(t_instrument_OBJECTS) $(t_instrument_LDADD) $(LIBS)
@@ -344,6 +354,8 @@ t-asmtype_.c: t-asmtype.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-asmtype.c; then echo $(srcdir)/t-asmtype.c; else echo t-asmtype.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-divrem_1_.c: t-divrem_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-divrem_1.c; then echo $(srcdir)/t-divrem_1.c; else echo t-divrem_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-get_d_.c: t-get_d.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_d.c; then echo $(srcdir)/t-get_d.c; else echo t-get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-instrument_.c: t-instrument.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-instrument.c; then echo $(srcdir)/t-instrument.c; else echo t-instrument.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-iord_u_.c: t-iord_u.c $(ANSI2KNR)
@@ -355,10 +367,10 @@ t-perfsqr_.c: t-perfsqr.c $(ANSI2KNR)
 t-scan_.c: t-scan.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-scan.c; then echo $(srcdir)/t-scan.c; else echo t-scan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-aors_1_.$(OBJEXT) t-aors_1_.lo t-asmtype_.$(OBJEXT) t-asmtype_.lo \
-t-divrem_1_.$(OBJEXT) t-divrem_1_.lo t-instrument_.$(OBJEXT) \
-t-instrument_.lo t-iord_u_.$(OBJEXT) t-iord_u_.lo t-mp_bases_.$(OBJEXT) \
-t-mp_bases_.lo t-perfsqr_.$(OBJEXT) t-perfsqr_.lo t-scan_.$(OBJEXT) \
-t-scan_.lo : $(ANSI2KNR)
+t-divrem_1_.$(OBJEXT) t-divrem_1_.lo t-get_d_.$(OBJEXT) t-get_d_.lo \
+t-instrument_.$(OBJEXT) t-instrument_.lo t-iord_u_.$(OBJEXT) \
+t-iord_u_.lo t-mp_bases_.$(OBJEXT) t-mp_bases_.lo t-perfsqr_.$(OBJEXT) \
+t-perfsqr_.lo t-scan_.$(OBJEXT) t-scan_.lo : $(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
