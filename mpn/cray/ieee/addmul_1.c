@@ -25,22 +25,23 @@ MA 02111-1307, USA.  */
 #include "gmp-impl.h"
 
 mp_limb_t
-mpn_addmul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
+mpn_addmul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
 {
   mp_limb_t p0[n], p1[n], tp[n];
-  mp_limb_t cy_limb;
+  mp_limb_t cyl;
   mp_size_t i;
 
 #pragma _CRI ivdep
   for (i = 0; i < n; i++)
     {
-      p0[i] = up[i] * limb;
-      p1[i] = _int_mult_upper (up[i], limb);
+      mp_limb_t ul = up[i];
+      p0[i] = ul * vl;
+      p1[i] = _int_mult_upper (ul, vl);
     }
-  cy_limb = mpn_add_n (tp, rp, p0, n);
+  cyl = mpn_add_n (tp, rp, p0, n);
   rp[0] = tp[0];
-  cy_limb += mpn_add_n (rp + 1, tp + 1, p1, n - 1);
-  cy_limb += p1[n - 1];
+  cyl += mpn_add_n (rp + 1, tp + 1, p1, n - 1);
+  cyl += p1[n - 1];
 
-  return cy_limb;
+  return cyl;
 }
