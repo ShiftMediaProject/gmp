@@ -21,8 +21,8 @@ MA 02111-1307, USA.
 
 2002-01-04  Kevin Ryde  <kevin@swox.se>
 
-	* gmp-h.in: Rename _PROTO to __GMP_PROTO, and don't use #ifndef just
-	define it ourselves.
+	* gmp-h.in, mp-h.in, tests/tests.h: Rename _PROTO to __GMP_PROTO, and
+	don't use #ifndef just define it ourselves.
 	* gmp-impl.h: Provide _PROTO as an alias for __GMP_PROTO, to avoid big
 	edits internally, for the moment.
 
