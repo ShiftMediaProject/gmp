@@ -19,6 +19,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-16  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess (alpha-*-*): Do alpha exact cpu probes on any system,
+	and only if configfsf.guess gives a plain "alpha".
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Detect a gcc 3.0.3 powerpc64
+	linker invocation problem.
+
 2002-02-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/get_str.c (mpn_sb_get_str): For base 10, develop initial
