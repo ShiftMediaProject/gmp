@@ -1,3 +1,10 @@
+2000-03-24  Kevin Ryde  <kevin@swox.se>
+
+	* INSTALL: Updates for new configure system.
+
+	* configure.in: Add gmp_optcflags_gcc for the x86s, setting -mcpu
+	and -march.
+
 2000-03-23  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (mpz_eval_expr): Properly initialize rhs/lhs
