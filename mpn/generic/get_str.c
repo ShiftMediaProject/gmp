@@ -425,7 +425,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
   if (un < GET_STR_PRECOMPUTE_THRESHOLD)
     {
-      struct powers ptab[0];
+      struct powers ptab[1];
       ptab[0].base = base;
       return mpn_sb_get_str (str, (size_t) 0, up, un, ptab) - str;
     }
