@@ -2518,8 +2518,6 @@ dnl  HOST_CC is the old name for what's now normally CC_FOR_BUILD.  HOST_CC
 dnl  is tested in case the user has set that name.  HOST_CC is established
 dnl  in the output for use by libtool in some configurations when generating
 dnl  Windows DLLs (the impgen.c program).
-dnl
-dnl  The default compiler output 
 
 AC_DEFUN(GMP_PROG_CC_FOR_BUILD,
 [AC_BEFORE([$0],[AC_PROG_LIBTOOL])
@@ -2532,7 +2530,7 @@ main ()
 }
 EOF
 found=no
-for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89; do
+for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
   if test -z "$i"; then
     continue
   fi
