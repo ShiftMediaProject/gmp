@@ -665,6 +665,10 @@ case $host in
     gcc_cflags_precomp="-no-cpp-precomp"
     extra_functions="umul"
 
+    # grab this object, though it's not a true cycle counter routine
+    SPEED_CYCLECOUNTER_OBJ=powerpc.lo
+    cyclecounter_size=0
+
     case $host_cpu in
       powerpc740 | powerpc750 | powerpc7400)
         path="powerpc32/750 powerpc32" ;;
@@ -740,6 +744,8 @@ case $host in
         limb_32L=longlong
         path_32L="powerpc64"
         extra_functions_32L="umul"
+        SPEED_CYCLECOUNTER_OBJ_32L=powerpc.lo
+        cyclecounter_size_32L=0
 
         # On AIX a true 64-bit ABI is available.
         case $host in
@@ -757,6 +763,8 @@ case $host in
 	    nm_aix64_flags="-X64"
             path_aix64="powerpc64"
             extra_functions_aix64="umul"
+            SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
+            cyclecounter_size_aix64=0
             ;;
         esac
         ;;
