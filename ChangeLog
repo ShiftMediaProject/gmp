@@ -1,3 +1,15 @@
+2000-07-25  Kevin Ryde  <kevin@swox.se>
+
+	* INSTALL: It's "info -f ./gmp.info" to be sure of hitting the
+	gmp.info in the current directory.
+
+	* Makefile.am (libmp_la_DEPENDENCIES): Add mpz/cmp.lo, for last
+	mpz/powm.c fix.
+
+	* mpn/sparc64/{add,sub}mul1h.asm: Renamed from {add,sub}mul_1h.asm
+	to avoid name conflicts on an 8.3 filesystem.
+	* mpn/sparc64/{add,sub,}mul_1.asm: Update include_mpn()s.
+
 2000-07-24  Torbjorn Granlund  <tege@swox.com>
 
 	* Update header of all files previous under GNU Library General
