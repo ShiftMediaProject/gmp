@@ -28,6 +28,17 @@ MA 02111-1307, USA.
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
+#ifndef LONG_BIT
+#define LONG_BIT  (sizeof(long) * 8)
+#endif
+
+#define ULONG_HIGHBIT  ((unsigned long) 1 << (LONG_BIT-1))
+#define LONG_HIGHBIT   ((long) ULONG_HIGHBIT)
+
+#ifndef LONG_MAX
+#define LONG_MAX       ((long) (ULONG_HIGHBIT-1))
+#endif
+
 
 void
 bin (void)
@@ -210,11 +221,48 @@ oddeven (void)
 }
 
 
+void
+check_mpz_set_si (void)
+{
+  static const struct {
+    long       n;
+    mp_size_t  want_size;
+    mp_limb_t  want_limb;
+  } data[] = {
+    { 0L,  0 },
+    { 1L,  1, 1 },
+    { -1L, -1, 1 },
+    { LONG_MAX, 1, LONG_MAX },
+    { -LONG_MAX, -1, LONG_MAX },
+    { LONG_HIGHBIT, -1, ULONG_HIGHBIT },
+  };
+
+  mpz_t  n;
+  int    i;
+
+  mpz_init (n);
+  for (i = 0; i < numberof (data); i++)
+    {
+      mpz_set_si (n, data[i].n);
+
+      if (n->_mp_size != data[i].want_size
+          || (n->_mp_size != 0 && n->_mp_d[0] != data[i].want_limb))
+        {
+          printf ("mpz_set_si wrong on data[%d]\n", i); 
+          abort();                                    
+        }
+    }
+
+  mpz_clear (n);
+}
+
+
 int
 main (void)
 {
   bin ();
   oddeven ();
+  check_mpz_set_si ();
 
   exit (0);
 }
