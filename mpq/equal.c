@@ -38,6 +38,6 @@ mpq_equal (op1, op2)
   mp_size_t den2_size = op2->_mp_den._mp_size;
 
   return (num1_size == num2_size && den1_size == den2_size
-	  && mpn_cmp (op1->_mp_num._mp_d, op2->_mp_num._mp_d, num1_size) == 0
+	  && mpn_cmp (op1->_mp_num._mp_d, op2->_mp_num._mp_d, ABS (num1_size)) == 0
 	  && mpn_cmp (op1->_mp_den._mp_d, op2->_mp_den._mp_d, den1_size) == 0);
 }
