@@ -2743,7 +2743,7 @@ extremely small.
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @cindex Greatest common divisor functions
 Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.
-The result is always positive even if either of or both input operands
+The result is always positive even if one or both input operands
 are negative.
 @end deftypefun
 
