@@ -23,6 +23,7 @@ MA 02111-1307, USA.
 
 #include <stdio.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
