@@ -364,6 +364,7 @@ arithmetic library, version @value{VERSION}.
 * Floating-point Functions::   Functions for arithmetic on floats.
 * Low-level Functions::        Fast functions for natural numbers.
 * Random Number Functions::    Functions for generating random numbers.
+* Formatted Output::           @code{printf} style output.
 * BSD Compatible Functions::   All functions found in BSD MP.
 * Custom Allocation::          How to customize the internal allocation.
 * Language Bindings::          Using GMP from other languages.
@@ -855,6 +856,16 @@ default.  @xref{Custom Allocation}.
 
 An additional choice @samp{--enable-alloca=debug} is available, to help when
 debugging memory related problems (@pxref{Debugging}).
+
+@item @option{--enable-cxx=yes/no/detect}
+
+The default @samp{--enable-cxx=detect} will use a C++ compiler if available.
+@samp{--enable-cxx=yes} will insist on having one, or @samp{--enable-cxx=no}
+(equivalent to @samp{--disable-cxx}) won't look for one at all.
+
+Currently a C++ compiler is only used for some @code{ostream} formatted output
+functions (@pxref{Formatted Output Functions}).  These are optional, and
+nothing else in the library depends on them.
 
 @item @option{--enable-fft}
 
@@ -1752,9 +1763,9 @@ as efficient as it can on both large and small operands.
 @item Static Linking
 On some CPUs, in particular the x86s, the static @file{libgmp.a} should be
 used for maximum speed, since the PIC code in the shared @file{libgmp.so} will
-have a small overhead on each function call and global data addressing.  For
-many programs this will be insignificant, but for long calculations there's a
-gain to be had.
+have a small overhead on each function call and global data address.  For many
+programs this will be insignificant, but for long calculations there's a gain
+to be had.
 
 @item Initializing and clearing
 Avoid excessive initializing and clearing of variables, since this can be
@@ -1810,7 +1821,7 @@ that copying will only be a tiny fraction of the time for the multiply, so
 this is not a particularly important consideration.
 
 @code{mpz_set}, @code{mpq_set}, @code{mpq_set_num}, @code{mpf_set}, etc, make
-no attempt to recognise in-place operations, so a call like
+no attempt to recognise a copy of something to itself, so a call like
 @code{mpz_set(x,x)} will be wasteful.  Naturally that would never be written
 deliberately, but if it might arise from two pointers to the same object then
 a test to avoid it might be desirable.
@@ -1839,9 +1850,9 @@ remainder modulo @ma{23@times{}29@times{}31 = 20677} and then test that.
 
 The division functions like @code{mpz_tdiv_q_ui} which give a quotient as well
 as a remainder are generally a little slower than the remainder-only functions
-like @code{mpz_tdiv_ui}.  If the quotient is only rarely wanted, perhaps only
-on finding a divisor, then it's probably best to just take a remainder and
-then go back and calculate the quotient if and when it's wanted.
+like @code{mpz_tdiv_ui}.  If the quotient is only rarely wanted then it's
+probably best to just take a remainder and then go back and calculate the
+quotient if and when it's wanted (possibly using @code{mpz_divexact_ui}).
 
 @item Rational Arithmetic
 The @code{mpq} functions operate on @code{mpq_t} values with no common factors
@@ -3380,7 +3391,7 @@ GMP floating point numbers are stored in objects of type @code{mpf_t} and
 functions operating on them have an @code{mpf_} prefix.
 
 The mantissa of each float has a user-selectable precision, limited only by
-available memory.  Each variable has its own precision, and it can be
+available memory.  Each variable has its own precision, and that can be
 increased or decreased at any time.
 
 The exponent of each float is a fixed precision, one machine word on most
@@ -3507,10 +3518,9 @@ The value in @var{rop} is unchanged, and in particular if it had a higher
 precision than @var{prec} it will retain that higher precision.  New values
 written to @var{rop} will use the new @var{prec}.
 
-Before calling @code{mpf_clear}, or using the full @code{mpf_set_prec},
-another @code{mpf_set_prec_raw} call must be used to restore @var{rop} to its
-original allocated precision.  Failing to do so will have unpredictable
-results.
+Before calling @code{mpf_clear} or the full @code{mpf_set_prec}, another
+@code{mpf_set_prec_raw} call must be made to restore @var{rop} to its original
+allocated precision.  Failing to do so will have unpredictable results.
 
 @code{mpf_get_prec} can be used before @code{mpf_set_prec_raw} to get the
 original allocated precision.  After @code{mpf_set_prec_raw} it reflects the
@@ -3633,23 +3643,24 @@ See also @code{mpf_fits_slong_p} and @code{mpf_fits_ulong_p}
 @end deftypefun
 
 @deftypefun {char *} mpf_get_str (char *@var{str}, mp_exp_t *@var{expptr}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
-Convert @var{op} to a string of digits in base @var{base}.  The base may vary
-from 2 to 36.  Generate at most @var{n_digits} significant digits, or if
-@var{n_digits} is 0, the maximum number of digits accurately representable by
-@var{op}.
+Convert @var{op} to a string of digits in base @var{base}.  @var{base} can be
+2 to 36.
 
-If @var{str} is @code{NULL}, the string is allocated using the current
+Up to @var{n_digits} digits will be generated.  Trailing zeros are not
+returned, and no more digits than can be accurately represented by @var{op}
+are ever generated.  If @var{n_digits} is 0 then that accurate maximum number
+of digits are generated.
+
+If @var{str} is @code{NULL}, the result string is allocated using the current
 allocation function (@pxref{Custom Allocation}).  The block will be
 @code{strlen(str)+1} bytes, that being exactly enough for the string and
 null-terminator.
 
 If @var{str} is not @code{NULL}, it should point to a block of
 @ma{@var{n\_digits} + 2} bytes, that being enough for the mantissa, a possible
-minus sign, and a null-terminator.
-
-When @var{n_digits} is 0, to get all significant digits, an application won't
-be able to know the space required, and @var{str} should be @code{NULL} in
-that case.
+minus sign, and a null-terminator.  When @var{n_digits} is 0 to get all
+significant digits, an application won't be able to know the space required,
+and @var{str} should be @code{NULL} in that case.
 
 The generated string is a fraction, with an implicit radix point immediately
 to the left of the first digit.  The applicable exponent is written through
@@ -4228,14 +4239,14 @@ A return value of zero indicates a perfect square.  See also
 @end deftypefun
 
 @deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n})
-Convert @{@var{s1p}, @var{s1n}@} to a raw unsigned char array in base
-@var{base}.  There may be leading zeros in the string.  The string is not in
-ASCII; to convert it to printable format, add the ASCII codes for @samp{0} or
-@samp{A}, depending on the base and range.
+Convert @{@var{s1p}, @var{s1n}@} to a raw unsigned char array at @var{str} in
+base @var{base}, and return the number of characters produced.  There may be
+leading zeros in the string.  The string is not in ASCII; to convert it to
+printable format, add the ASCII codes for @samp{0} or @samp{A}, depending on
+the base and range.
 
-The area @{@var{s1p}, @var{s1n}+1@} is clobbered.
-
-Return the number of characters in @var{str}.
+The most significant limb of the input @{@var{s1p}, @var{s1n}@} must be
+non-zero.  The area @{@var{s1p}, @var{s1n}+1@} is clobbered.
 
 The area at @var{str} has to have space for the largest possible number
 represented by a @var{s1n} long limb array, plus one extra character.
@@ -4288,7 +4299,7 @@ Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @end deftypefun
 
 
-@node Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
+@node Random Number Functions, Formatted Output, Low-level Functions, Top
 @chapter Random Number Functions
 @cindex Random number functions
 
@@ -4400,7 +4411,272 @@ all @code{gmp_randstate_t} variables when you are done with them.
 @end deftypefun
 
 
-@node BSD Compatible Functions, Custom Allocation, Random Number Functions, Top
+@node Formatted Output, BSD Compatible Functions, Random Number Functions, Top
+@chapter Formatted Output
+@cindex Formatted output
+@cindex @code{printf} formatted output
+
+@menu
+* Formatted Output Strings::    
+* Formatted Output Functions::  
+* C++ Formatted Output::        
+@end menu
+
+@node Formatted Output Strings, Formatted Output Functions, Formatted Output, Formatted Output
+@section Format Strings
+
+GMP format strings are the same as @code{printf} (@pxref{Formatted
+Output,,,libc,The GNU C Library Reference Manual}), with the addition of
+@samp{Z}, @samp{Q} and @samp{F} as type markers for @code{mpz_t}, @code{mpq_t}
+and @code{mpf_t} respectively.  @samp{Z} and @samp{Q} behave like integers,
+and @samp{Q} will include a @samp{/} if a denominator is needed.  @samp{F}
+behaves like a float.  For example,
+
+@example
+mpz_t z;
+gmp_printf ("%s is an mpz %Zd\n", "here", z);
+
+mpf_t f;
+int   n;
+gmp_printf ("fixed point mpf %.*f with %d digits\n", n, f, n);
+@end example
+
+All the standard C @code{printf} types behave the same as the C library
+@code{printf}, and can be freely intermixed with the GMP extensions.  In the
+current implementation the standard parts of the format string are simply
+handed to @code{printf} and only the GMP extensions handled directly.
+
+The flags accepted are as follows.  GLIBC style @nisamp{'} is only for the
+standard C types (not the GMP types), and only if the C library supports it.
+
+@quotation
+@multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item @nicode{0} @tab pad with zeros (rather than spaces)
+@item @nicode{#} @tab show the base with @samp{0x}, @samp{0X} or @samp{0}
+@item @nicode{+} @tab always show a sign
+@item (space)    @tab show a space or a @samp{-} sign
+@item @nicode{'} @tab group digits, GLIBC
+@end multitable
+@end quotation
+
+The standard types accepted are as follows.  Each depends on support from both
+the compiler and C library.
+
+@quotation
+@multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item @nicode{h}  @tab @nicode{short}
+@item @nicode{hh} @tab @nicode{char}
+@item @nicode{j}  @tab @nicode{intmax_t} or @nicode{uintmax_t}
+@item @nicode{l}  @tab @nicode{long}
+@item @nicode{ll} @tab same as @nicode{L}
+@item @nicode{L}  @tab @nicode{long long}, @nicode{long double}, or @nicode{wchar_t}
+@item @nicode{q}  @tab @nicode{quad_t} or @nicode{u_quad_t}
+@item @nicode{t}  @tab @nicode{ptrdiff_t}
+@item @nicode{z}  @tab @nicode{size_t}
+@end multitable
+@end quotation
+
+@noindent
+The GMP types are
+
+@quotation
+@multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item @nicode{F}  @tab @nicode{mpf_t}, float conversions
+@item @nicode{Q}  @tab @nicode{mpq_t}, integer conversions
+@item @nicode{Z}  @tab @nicode{mpz_t}, integer conversions
+@end multitable
+@end quotation
+
+The conversions accepted are as follows.  @samp{a} and @samp{A} are always
+supported for @code{mpf_t} but depend on the C library for standard C float
+types.  @samp{m} and @samp{p} depend on the C library.
+
+@quotation
+@multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item @nicode{a} @nicode{A} @tab hex floats, GLIBC style
+@item @nicode{c}            @tab character
+@item @nicode{d}            @tab decimal integer
+@item @nicode{e} @nicode{E} @tab scientific format float
+@item @nicode{f}            @tab fixed point float
+@item @nicode{i}            @tab same as @nicode{d}
+@item @nicode{g} @nicode{G} @tab fixed or scientific float
+@item @nicode{m}            @tab @code{strerror} string, GLIBC style
+@item @nicode{n}            @tab characters written so far
+@item @nicode{o}            @tab octal integer
+@item @nicode{p}            @tab pointer
+@item @nicode{s}            @tab string
+@item @nicode{u}            @tab unsigned integer
+@item @nicode{x} @nicode{X} @tab hex integer
+@end multitable
+@end quotation
+
+@samp{o}, @samp{x} and @samp{X} are unsigned for the standard C types, but for
+@code{mpz_t} and @code{mpq_t} a sign is included.  @samp{u} is not meaningful
+for @code{mpz_t} and @code{mpq_t}.
+
+Other types or conversions that might be accepted by the C library
+@code{printf} cannot be used through @code{gmp_printf}, this includes for
+instance extensions registered with GLIBC @code{register_printf_function}.
+Also, currently there's no support for POSIX @samp{$} style numbered arguments
+(this might change in the future).
+
+@code{mpf_t} conversions only ever generate as many digits as can be
+accurately represented by the operand, the same as @code{mpf_get_str}.  Zeros
+will be used if necessary to pad to the requested precision.  This happens
+even for an @samp{f} conversion of an integer value, for instance
+@ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision will only generate
+about 20 digits, then pad with zeros to the decimal point.
+
+For @code{mpf_t}, the decimal point character (or string) is taken from the
+current locale settings on systems which provide @code{localeconv}
+(@pxref{Locales,,Locales and Internationalization,libc,The GNU C Library
+Reference Manual}).  The C library will normally do the same for standard
+float output.
+
+
+@node Formatted Output Functions, C++ Formatted Output, Formatted Output Strings, Formatted Output
+@section Functions
+
+Each of the following functions is similar to the corresponding C library
+function.  The basic @code{printf} forms take a variable argument list.  The
+@code{vprintf} forms take an argument pointer, see @ref{Variadic
+Functions,,,libc,The GNU C Library Reference Manual}, or @samp{man 3
+va_start}.
+
+It should be emphasised that if a format string is invalid, or the arguments
+don't match what the format specifies, then the behaviour of any of these
+functions will be unpredictable.  GCC format string checking is not available,
+since it doesn't recognise the GMP extensions.
+
+The file based functions @code{gmp_printf} and @code{gmp_fprintf} will return
+@ma{-1} to indicate a file error.  All the functions can return @ma{-1} if the
+C library @code{printf} variant in use returns @ma{-1}, but this shouldn't
+normally occur.
+
+@deftypefun int gmp_printf (const char *@var{fmt}, ...)
+@deftypefunx int gmp_vprintf (const char *@var{fmt}, va_list @var{ap})
+Print to the standard output @code{stdout}.  Return the number of characters
+written, or @ma{-1} if an error occurred.
+@end deftypefun
+
+@deftypefun int gmp_fprintf (FILE *@var{fp}, const char *@var{fmt}, ...)
+@deftypefunx int gmp_vfprintf (FILE *@var{fp}, const char *@var{fmt}, va_list @var{ap})
+Print to the file @var{fp}.  Return the number of characters written, or
+@ma{-1} if an error occurred.
+@end deftypefun
+
+@deftypefun int gmp_sprintf (char *@var{buf}, const char *@var{fmt}, ...)
+@deftypefunx int gmp_vsprintf (char *@var{buf}, const char *@var{fmt}, va_list @var{ap})
+Form a null-terminated string in @var{buf}.  Return the number of characters
+written, excluding the terminating null.
+
+No overlap is permitted between the space at @var{buf} and the string
+@var{fmt}.
+
+These functions are not recommended, since there's no protection against
+exceeding the space available at @var{buf}.
+@end deftypefun
+
+@deftypefun int gmp_snprintf (char *@var{buf}, size_t @var{size}, const char *@var{fmt}, ...)
+@deftypefunx int gmp_vsnprintf (char *@var{buf}, size_t @var{size}, const char *@var{fmt}, va_list @var{ap})
+Form a null-terminated string in @var{buf}.  No more than @var{size} bytes
+will be written.  To get the full output, @var{size} must be enough for the
+string and null-terminator.
+
+The return value is the total number of characters which ought to have been
+produced, excluding the terminating null.  If @ma{@var{retval} >= @var{size}}
+then then the actual output has been truncated to the first @ma{@var{size}-1}
+characters, and a null appended.
+
+No overlap is permitted between the region @{@var{buf},@var{size}@} and the
+@var{fmt} string.
+
+Notice the return value is in ISO C99 @code{snprintf} style.  This is so even
+if the C library @code{vsnprintf} is the older GLIBC 2.0.x style.
+
+These functions are available only when the C library provides
+@code{vsnprintf}.
+@end deftypefun
+
+@deftypefun int gmp_asprintf (char **@var{pp}, const char *@var{fmt}, ...)
+@deftypefunx int gmp_vasprintf (char *@var{pp}, const char *@var{fmt}, va_list @var{ap})
+Form a null-terminated string in a block of memory obtained from the current
+memory allocation function (@pxref{Custom Allocation}).  The block will be the
+size of the string and null-terminator.  Put the address of the block in
+*@var{pp}.  Return the number of characters produced, excluding the
+null-terminator.
+
+Unlike the C library @code{asprintf}, @code{gmp_asprintf} doesn't return
+@ma{-1} if there's no more memory available, it lets the current allocation
+function handle that.
+
+These functions are available only when the C library provides either
+@code{vasprintf} or @code{vsnprintf}.
+@end deftypefun
+
+@deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, ...)
+@deftypefunx int gmp_obstack_vprintf (struct obstack *@var{ob}, const char *@var{fmt}, va_list @var{ap})
+Append to the current obstack object, in the same style as
+@code{obstack_printf}.  Return the number of characters written.  A
+null-terminator is not written.
+
+@var{fmt} cannot be within the current obstack object, since it might move as
+it grows.
+
+These functions are available only when the C library provides the obstack
+feature, which probably means only on GNU systems, see
+@ref{Obstacks,,,libc,The GNU C Library Reference Manual}.
+@end deftypefun
+
+
+@node C++ Formatted Output,  , Formatted Output Functions, Formatted Output
+@section C++ Formatted Output
+
+The following functions are provided only if a C++ compiler was available when
+GMP was built (@pxref{Build Options}).
+
+@deftypefun ostream& mpz_out_ostream (ostream& @var{stream}, mpz_t @var{op})
+@deftypefunx ostream& mpq_out_ostream (ostream& @var{stream}, mpq_t @var{op})
+@deftypefunx ostream& mpf_out_ostream (ostream& @var{stream}, mpf_t @var{op})
+@cindex C++ ostream output
+@cindex ostream output
+Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
+@code{ios::width()} is reset to 0 after output, the same as the standard
+@code{ostream operator<<} routines do.
+
+Conversions @code{ios::hex} or @code{ios::oct} will include a sign, and will
+respect @code{ios::showpos}, unlike the twos complement given by the standard
+integer @code{operator<<} routines.  Also, @code{ios::hex} or @code{ios::oct}
+are accepted by @code{mpf_out_ostream}, unlike the standard float
+@code{operator<<} routines, and both mantissa and exponent will be in hex or
+octal.  For hex the exponent delimiter is an @samp{@@}, as per
+@code{mpf_out_str}.
+
+It's easy to define an @code{operator<<} form for these routines, if desired,
+
+@example
+inline ostream&
+operator<< (ostream &stream, mpz_t op)
+@{
+  return mpz_out_ostream (stream, op);
+@}
+@end example
+
+and then use, for example,
+
+@example
+mpz_t  z;
+mpz_init_set_ui (z, 123L);
+cout << z << "\n";
+@end example
+
+but care should be taken since that would be the only overloaded operator
+available for @code{mpz_t}.  GMP++ or one of the other C++ interfaces
+(@pxref{Language Bindings}) is recommended for a full set of overloads.
+@end deftypefun
+
+
+@node BSD Compatible Functions, Custom Allocation, Formatted Output, Top
 @comment  node-name,  next,  previous,  up
 @chapter Berkeley MP Compatible Functions
 @cindex Berkeley MP compatible functions
@@ -4776,9 +5052,7 @@ documented functions.
 N@cross{}N limb multiplications and squares are done using one of four
 algorithms, as the size N increases.
 
-@c  @display doesn't seem to work around @multitable in tex
-@iftex
-{@advance@leftskip by @lispnarrowing@noindent
+@quotation
 @multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item Algorithm @tab Threshold
 @item Basecase  @tab (none)
@@ -4786,20 +5060,7 @@ algorithms, as the size N increases.
 @item Toom-3    @tab @code{TOOM3_MUL_THRESHOLD}
 @item FFT       @tab @code{FFT_MUL_THRESHOLD}
 @end multitable
-@par}
-@end iftex
-@ifnottex
-
-@display
-@multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
-@item Algorithm @tab Threshold
-@item Basecase  @tab (none)
-@item Karatsuba @tab @nicode{KARATSUBA_MUL_THRESHOLD}
-@item Toom-3    @tab @nicode{TOOM3_MUL_THRESHOLD}
-@item FFT       @tab @nicode{FFT_MUL_THRESHOLD}
-@end multitable
-@end display
-@end ifnottex
+@end quotation
 
 Similarly for squaring, with the @code{SQR} thresholds.  Note though that the
 FFT is only used if GMP is configured with @samp{--enable-fft}, @pxref{Build
@@ -5219,29 +5480,16 @@ to a basecase multiply.  Instead the following approach is used.
 values of @ma{W(t)} at those points.  The points used can be chosen in
 various ways, but in GMP the following are used
 
-@tex
-\GMPdisplay{%
-  \def\GMPbox#1{\hbox to 4em{$#1$\hfil}}%
-  \GMPbox{\rm Point}   Value\hfil\break
-  \GMPbox{t=0}         $x_0y_0$, which gives $w_0$ immediately\hfil\break
-  \GMPbox{t=2}         $(4x_2+2x_1+x_0)(4y_2+2y_1+y_0)$\hfil\break
-  \GMPbox{t=1}         $(x_2+x_1+x_0)(y_2+y_1+y_0)$\hfil\break
-  \GMPbox{t={1\over2}} $(x_2+2x_1+4x_0)(y_2+2y_1+4y_0)$\hfil\break
-  \GMPbox{t=\infty}    $x_2y_2$, which gives $w_4$ immediately
-}
-@end tex
-@ifnottex
-@display
-@multitable {@ma{t=infM}} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
-@item Point      @tab Value
-@item @ma{t=0}   @tab @ma{x0*y0}, which gives w0 immediately
-@item @ma{t=2}   @tab @ma{(4*x2+2*x1+x0)*(4*y2+2*y1+y0)}
-@item @ma{t=1}   @tab @ma{(x2+x1+x0)*(y2+y1+y0)}
-@item @ma{t=1/2} @tab @ma{(x2+2*x1+4*x0)*(y2+2*y1+4*y0)}
-@item @ma{t=inf} @tab @ma{x2*y2}, which gives @ma{w4} immediately
+@quotation
+@multitable {@m{t=\infty,t=inf}M} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item Point                 @tab Value
+@item @ma{t=0}              @tab @m{x_0y_0,x0*y0}, which gives @ms{w,0} immediately
+@item @ma{t=2}              @tab @m{(4x_2+2x_1+x_0)(4y_2+2y_1+y_0),(4*x2+2*x1+x0)*(4*y2+2*y1+y0)}
+@item @ma{t=1}              @tab @m{(x_2+x_1+x_0)(y_2+y_1+y_0),(x2+x1+x0)*(y2+y1+y0)}
+@item @m{t={1\over2},t=1/2} @tab @m{(x_2+2x_1+4x_0)(y_2+2y_1+4y_0),(x2+2*x1+4*x0)*(y2+2*y1+4*y0)}
+@item @m{t=\infty,t=inf}    @tab @m{x_2y_2,x2*y2}, which gives @ms{w,4} immediately
 @end multitable
-@end display
-@end ifnottex
+@end quotation
 
 At @m{t={1\over2},t=1/2} the value calculated is actually
 @m{16X({1\over2})Y({1\over2}), 16*X(1/2)*Y(1/2)}, giving a value for
@@ -5288,7 +5536,7 @@ from another as necessary, values which are each @m{w_i,w[i]} alone are
 arrived at.  This involves only a few subtractions of small multiples (some of
 which are powers of 2), and so is fast.  A couple of divisions remain by
 powers of 2 and one division by 3 (or by 6 rather), and that last uses the
-special @code{mpn_divexact_by3}.
+special @code{mpn_divexact_by3} (@pxref{Exact Division}).
 
 In the code the values @ms{w,4}, @ms{w,2} and @ms{w,0} are formed in the
 destination with pointers @code{E}, @code{C} and @code{A}, and @ms{w,3} and
@@ -6214,10 +6462,10 @@ two squares per bit of @ma{n}.
 
 It'd be possible to handle the first few @ma{n} above the single limb table
 with simple additions, using the defining Fibonacci recurrance @m{F_{k+1} =
-F_k + F_{k-1}, F[k+1]=F[k]+F[k-1]}, but this is not done since it turns out to
-be faster for only about 10 or 20 values of @ma{n}, and including a block of
-code for just those doesn't seem worthwhile.  If they really mattered it'd be
-better to extend the data table.
+F_k + F_{k-1}, F[k+1]=F[k]+F[k-1]}, but this is not done since it usually
+turns out to be faster for only about 10 or 20 values of @ma{n}, and including
+a block of code for just those doesn't seem worthwhile.  If they really
+mattered it'd be better to extend the data table.
 
 Using a table avoids lots of calculations on small numbers, and makes small
 @ma{n} go fast.  A bigger table would make more small @ma{n} go fast, it's
