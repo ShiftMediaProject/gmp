@@ -307,6 +307,10 @@ MA 02111-1307, USA.
      making <code>configure</code> choose the slower
      <code>malloc-reentrant</code> allocation method.  Is there a better way?
      Maybe variable-length arrays per notes below.
+<li> Alpha Unicos 21164, 21264: <code>.align</code> is not used since it pads
+     with garbage.  Does the code get the intended slotting required for the
+     claimed speeds?  <code>.align</code> at the start of a function would
+     presumably be safe no matter how it pads.
 <li> ARM V5: <code>count_leading_zeros</code> can use the <code>clz</code>
      instruction.  For GCC 3.4 and up, do this via <code>__builtin_clzl</code>
      since then gcc knows it's "predicable".
