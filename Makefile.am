@@ -1,11 +1,61 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = gnu
 
-SUBDIRS = mpf mpz mpn mpq
+# Copyright (C) 1991, 1993, 1994, 1996, 1997, 1999, 2000 Free Software
+# Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
-## Each object file going into libgmp has to be listed
-## The accompanying sources are listed in their appropriate Makefile.am.
+
+# make check
+#
+#     It'd be good if "make check" first did a "make all" or whatever to
+#     build libgmp.la, but it's not clear how best to do this.  Putting a
+#     "check:" target is overridden by automake, and a "check-local:" runs
+#     too late (due to depth-first subdirectory processing).  For now it's
+#     necessary to do "make && make check".
+#
+# MPF_OBJECTS etc
+#
+#     Libtool needs all the .lo files passed to it if it's going to build
+#     both a static and shared library.  If a convenience library like
+#     mpf/libmpf.la is passed then the resulting libgmp.a gets the PIC .lo
+#     objects rather than the non-PIC .o's.
+#
+#     Unfortunately this leads to the big lists of objects below.  Something
+#     like mpz/*.lo would probably work, but might risk missing something
+#     out or getting something extra.  The source files for each .lo are
+#     listed in the Makefile.am's in the subdirectories.
+
+
+AUTOMAKE_OPTIONS = gnu check-news
+
+SUBDIRS = mpf mpz mpn mpq tests demos mpbsd
+
+include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
+EXTRA_HEADERS = mp.h
+
+lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
+
+EXTRA_DIST = gmp-impl.h longlong.h stack-alloc.h urandom.h
+DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
+
+
 MPF_OBJECTS = mpf/init.lo mpf/init2.lo mpf/set.lo mpf/set_ui.lo mpf/set_si.lo \
   mpf/set_str.lo mpf/set_d.lo mpf/set_z.lo mpf/iset.lo mpf/iset_ui.lo \
   mpf/iset_si.lo mpf/iset_str.lo mpf/iset_d.lo mpf/clear.lo mpf/get_str.lo \
@@ -49,28 +99,34 @@ MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/set_z.lo mpq/set_d.lo
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
-## FIXME: Remove `config.in' when AM_CONFIG_HEADER is used in configure.in.
-EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
-  config.in tests
+MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
+  mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo mpbsd/realloc.lo \
+  mpbsd/xtom.lo mpbsd/gcd.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/sdiv.lo	  \
+  mpbsd/itom.lo mpbsd/mout.lo mpbsd/pow_ui.lo mpbsd/sqrtrem.lo
 
-DISTCLEANFILES = @gmp_srclinks@
 
-info_TEXINFOS = gmp.texi
-
-lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
   version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 libgmp_la_LIBADD = \
-	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
+	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) -lm
 libgmp_la_DEPENDENCIES = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_LDFLAGS = -release @VERSION@
 
-check: all
-	cd mpz/tests && $(MAKE) $(FLAGS_TO_PASS) check
-	cd mpq/tests && $(MAKE) $(FLAGS_TO_PASS) check
-	cd mpf/tests && $(MAKE) $(FLAGS_TO_PASS) check
+
+if WANT_MPBSD
+MPBSD_HEADERS_OPTION = mp.h
+MPBSD_LTLIBRARIES_OPTION = libmp.la
+endif
+libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)
+libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
+libmp_la_SOURCES =
+libmp_la_LDFLAGS = -release @VERSION@
+
+
+info_TEXINFOS = gmp.texi
+
 
 # Don't ship CVS directories.
 dist-hook:
