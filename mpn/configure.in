@@ -177,7 +177,7 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#undef AIX_SYNTAX' >asm-syntax.h;;
   sparc-yes-log-*)
     cat $srcdir/underscore.h >asm-syntax.h;;
-  sparc)
+  sparc-*)
     echo '#define C_SYMBOL_NAME(name) name' >asm-syntax.h;;
 esac
 
