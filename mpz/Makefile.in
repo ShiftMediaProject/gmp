@@ -112,7 +112,6 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-__GMP_LSYM_PREFIX = @__GMP_LSYM_PREFIX@
 _am_include = @_am_include@
 _am_quote = @_am_quote@
 gmp_srclinks = @gmp_srclinks@
@@ -140,7 +139,9 @@ libmpz_la_SOURCES = \
   divexact.c divegcd.c dive_ui.c divis.c divis_ui.c divis_2exp.c \
   dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_ui.c fdiv_ui.c \
-  fib_ui.c fib2_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
+  fib_ui.c fib2_ui.c \
+  fits_uint.c fits_ulong.c fits_ushort.c \
+  gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
@@ -155,13 +156,12 @@ libmpz_la_SOURCES = \
   urandomb.c urandomm.c xor.c
 
 
-EXTRA_DIST = aors.c aors_ui.c fits_s.c fits_u.c mul_siui.c
+EXTRA_DIST = aors.c aors_ui.c fits_s.c mul_siui.c
 
 nodist_libmpz_la_SOURCES = \
   add.c sub.c					\
   add_ui.c sub_ui.c 				\
   fits_sint.c fits_slong.c fits_sshort.c	\
-  fits_uint.c fits_ulong.c fits_ushort.c	\
   mul_si.c mul_ui.c
 
 
@@ -184,7 +184,8 @@ am_libmpz_la_OBJECTS = abs$U.lo aorsmul$U.lo aorsmul_i$U.lo and$U.lo \
 	divegcd$U.lo dive_ui$U.lo divis$U.lo divis_ui$U.lo \
 	divis_2exp$U.lo dump$U.lo fac_ui$U.lo fdiv_q$U.lo \
 	fdiv_q_ui$U.lo fdiv_qr$U.lo fdiv_qr_ui$U.lo fdiv_r$U.lo \
-	fdiv_r_ui$U.lo fdiv_ui$U.lo fib_ui$U.lo fib2_ui$U.lo gcd$U.lo \
+	fdiv_r_ui$U.lo fdiv_ui$U.lo fib_ui$U.lo fib2_ui$U.lo \
+	fits_uint$U.lo fits_ulong$U.lo fits_ushort$U.lo gcd$U.lo \
 	gcd_ui$U.lo gcdext$U.lo get_d$U.lo get_si$U.lo get_str$U.lo \
 	get_ui$U.lo getlimbn$U.lo hamdist$U.lo init$U.lo inp_raw$U.lo \
 	inp_str$U.lo invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo \
@@ -202,8 +203,8 @@ am_libmpz_la_OBJECTS = abs$U.lo aorsmul$U.lo aorsmul_i$U.lo and$U.lo \
 	tdiv_qr_ui$U.lo tdiv_r$U.lo tdiv_r_2exp$U.lo tdiv_r_ui$U.lo \
 	tstbit$U.lo ui_pow_ui$U.lo urandomb$U.lo urandomm$U.lo xor$U.lo
 nodist_libmpz_la_OBJECTS = add$U.lo sub$U.lo add_ui$U.lo sub_ui$U.lo \
-	fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
-	fits_ulong$U.lo fits_ushort$U.lo mul_si$U.lo mul_ui$U.lo
+	fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo mul_si$U.lo \
+	mul_ui$U.lo
 libmpz_la_OBJECTS = $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -763,13 +764,6 @@ fits_slong.c: $(srcdir)/fits_s.c
 	cp $(srcdir)/fits_s.c fits_slong.c
 fits_sshort.c: $(srcdir)/fits_s.c
 	cp $(srcdir)/fits_s.c fits_sshort.c
-
-fits_uint.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_uint.c
-fits_ulong.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_ulong.c
-fits_ushort.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_ushort.c
 
 mul_si.c: $(srcdir)/mul_siui.c
 	cp $(srcdir)/mul_siui.c mul_si.c

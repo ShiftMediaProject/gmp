@@ -115,7 +115,6 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-__GMP_LSYM_PREFIX = @__GMP_LSYM_PREFIX@
 _am_include = @_am_include@
 _am_quote = @_am_quote@
 gmp_srclinks = @gmp_srclinks@
