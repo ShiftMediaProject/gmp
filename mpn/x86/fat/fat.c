@@ -31,7 +31,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 /* Change this to "#define TRACE(x) x" for some traces. */
-#define TRACE(x) x
+#define TRACE(x)
 
 /* Change this to 1 to take the cpuid from GMP_CPU_TYPE env var. */
 #define WANT_FAKE_CPUID  0
