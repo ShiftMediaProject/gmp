@@ -4,9 +4,12 @@
 
 2000-08-02  Kevin Ryde  <kevin@swox.se>
 
-	* mpfr/round.c: Un typo in le K&R part.
+	* mpfr/round.c: Correction to K&R part.
 	* mpfr/set.c: Likewise.
-	
+	* mpfr/mul_ui: Likewise.
+	* mpfr/set_d.c: Likewise.
+	* mpfr/log.c: Likewise.
+
 	* Makefile.am (EXTRA_HEADERS): Omit $(MPFR_HEADERS_OPTION).
 	* mpfr/Makefile.am (EXTRA_DIST): Add mpfr.h.
 
