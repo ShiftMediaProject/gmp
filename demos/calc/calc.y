@@ -21,45 +21,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 /* This is a simple program, meant only to show one way to use GMP for this
    sort of thing.  There's few features, and error checking is minimal.
-   Standard input is read, there's no command line options.
-
-   Examples:
-       2+3*4        expressions are evaluated
-       x=5^6        variables a to z can be set and used
-
-   Operators:
-       + - *        arithmetic
-       / %          division and remainder (rounding towards negative infinity)
-       ^            exponentiation
-       !            factorial
-       << >>        left and right shifts
-       <= >= >      \ comparisons, giving 1 if true, 0 if false
-       == != <      /
-       && ||        logical and/or, giving 1 if true, 0 if false
-
-   Functions:
-       abs(n)       absolute value
-       bin(n,m)     binomial coefficient
-       fib(n)       fibonacci number
-       gcd(a,b,..)  greatest common divisor
-       kron(a,b)    kronecker symbol
-       lcm(a,b,..)  least common multiple
-       nextprime(n) next prime after n
-       powm(b,e,m)  modulo powering, b^e%m
-       root(n,r)    r-th root
-       sqrt(n)      square root
-
-   Other:
-       hex          \ set hex or decimal for input and output
-       decimal      /   ("0x" can be used for hex too)
-       quit         exit program (EOF works too)
-       ;            statements are separated with a ; or newline
-       \            continue expressions with \ before newline
-       # xxx        comments are # though to newline
-
-   Hex numbers must be entered in upper case, to distinguish them from the
-   variables a to f (like in bc).
-
+   Standard input is read, calc_help() below shows the inputs accepted.
 
    Expressions are evaluated as they're read.  If user defined functions
    were wanted it'd be necessary to build a parse tree like pexpr.c does, or
@@ -84,10 +46,52 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include "gmp.h"
+#define NO_CALC_H /* because it conflicts with normal calc.c stuff */
+#include "calc-common.h"
+
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
+
+
+void
+calc_help (void)
+{
+  printf ("Examples:\n");
+  printf ("    2+3*4        expressions are evaluated\n");
+  printf ("    x=5^6        variables a to z can be set and used\n");
+  printf ("Operators:\n");
+  printf ("    + - *        arithmetic\n");
+  printf ("    / %%          division and remainder (rounding towards negative infinity)\n");
+  printf ("    ^            exponentiation\n");
+  printf ("    !            factorial\n");
+  printf ("    << >>        left and right shifts\n");
+  printf ("    <= >= >      \\ comparisons, giving 1 if true, 0 if false\n");
+  printf ("    == != <      /\n");
+  printf ("    && ||        logical and/or, giving 1 if true, 0 if false\n");
+  printf ("Functions:\n");
+  printf ("    abs(n)       absolute value\n");
+  printf ("    bin(n,m)     binomial coefficient\n");
+  printf ("    fib(n)       fibonacci number\n");
+  printf ("    gcd(a,b,..)  greatest common divisor\n");
+  printf ("    kron(a,b)    kronecker symbol\n");
+  printf ("    lcm(a,b,..)  least common multiple\n");
+  printf ("    lucnum(n)    lucas number\n");
+  printf ("    nextprime(n) next prime after n\n");
+  printf ("    powm(b,e,m)  modulo powering, b^e%%m\n");
+  printf ("    root(n,r)    r-th root\n");
+  printf ("    sqrt(n)      square root\n");
+  printf ("Other:\n");
+  printf ("    hex          \\ set hex or decimal for input and output\n");
+  printf ("    decimal      /   (\"0x\" can be used for hex too)\n");
+  printf ("    quit         exit program (EOF works too)\n");
+  printf ("    ;            statements are separated with a ; or newline\n");
+  printf ("    \\            continue expressions with \\ before newline\n");
+  printf ("    # xxx        comments are # though to newline\n");
+  printf ("Hex numbers must be entered in upper case, to distinguish them from the\n");
+  printf ("variables a to f (like in bc).\n");
+}
 
 
 int  ibase = 0;
@@ -143,8 +147,8 @@ mpz_t  variable[26];
 }
 
 %token EOS BAD
-%token HEX DECIMAL QUIT
-%token ABS BIN FIB GCD KRON LCM NEXTPRIME POWM ROOT SQRT
+%token HELP HEX DECIMAL QUIT
+%token ABS BIN FIB GCD KRON LCM LUCNUM NEXTPRIME POWM ROOT SQRT
 %token <str> NUMBER
 %token <var> VARIABLE
 
@@ -183,6 +187,7 @@ statement:
       sp--;
       CHECK_EMPTY ();
     }
+  | HELP    ={ calc_help (); }
   | HEX     ={ ibase = 16; obase = -16; }
   | DECIMAL ={ ibase = 0;  obase = 10; }
   | QUIT    ={ exit (0); }
@@ -226,6 +231,8 @@ e:
     | KRON '(' e ',' e ')'       ={ sp--; mpz_set_si (sp,
                                           mpz_kronecker (sp, sp+1)); }
     | LCM '(' lcmlist ')'        /* value on stack */
+    | LUCNUM '(' e ')'           ={ CHECK_UI ("lucnum", sp);
+                                    mpz_lucnum_ui (sp, mpz_get_ui (sp)); }
     | NEXTPRIME '(' e ')'        ={ mpz_nextprime (sp, sp); }
     | POWM '(' e ',' e ',' e ')' ={ sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); }
     | ROOT '(' e ',' e ')'       ={ sp--; CHECK_UI ("nth-root", sp+1);
@@ -263,10 +270,45 @@ yyerror (char *s)
   fprintf (stderr, "%s\n", s);
 }
 
+int calc_option_readline = -1;
+
 int
-main (void)
+main (int argc, char *argv[])
 {
   int  i;
+
+  for (i = 1; i < argc; i++)
+    {
+      if (strcmp (argv[i], "--readline") == 0)
+        calc_option_readline = 1;
+      else if (strcmp (argv[i], "--noreadline") == 0)
+        calc_option_readline = 0;
+      else if (strcmp (argv[i], "--help") == 0)
+        {
+          printf ("Usage: calc [--option]...\n");
+          printf ("  --readline    use readline\n");
+          printf ("  --noreadline  don't use readline\n");
+          printf ("  --help        this message\n");
+          printf ("Readline is only available when compiled in,\n");
+          printf ("and in that case it's the default on a tty.\n");
+          exit (0);
+        }
+      else
+        {
+          fprintf (stderr, "Unrecognised option: %s\n", argv[i]);
+          exit (1);
+        }
+    }
+
+#if WITH_READLINE
+  calc_init_readline ();
+#else
+  if (calc_option_readline == 1)
+    {
+      fprintf (stderr, "Readline support not available\n");
+      exit (1);
+    }
+#endif
 
   for (i = 0; i < numberof (variable); i++)
     mpz_init (variable[i]);

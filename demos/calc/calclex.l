@@ -1,4 +1,4 @@
-/* Lexical analyzer for calc.y.
+/* Lexical analyzer for calc program.
 
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
@@ -18,9 +18,40 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 %{
-#include "calc.h"
+#include "calc-common.h"
 
-#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
+
+#if WITH_READLINE
+/* Let GNU flex use readline.  See the calcread.c redefined input() for a
+   way that might work for a standard lex too.  */
+#define YY_INPUT(buf,result,max_size)   \
+  result = calc_input (buf, max_size);
+#endif
+
+
+/* Non-zero when reading the second or subsequent line of an expression,
+   used to give a different prompt when using readline.  */
+int  calc_more_input = 0;
+
+
+const struct calc_keywords_t  calc_keywords[] = {
+  { "abs",       ABS },
+  { "bin",       BIN },
+  { "decimal",   DECIMAL },
+  { "fib",       FIB },
+  { "hex",       HEX },
+  { "help",      HELP },
+  { "gcd",       GCD },
+  { "kron",      KRON },
+  { "lcm",       LCM },
+  { "lucnum",    LUCNUM },
+  { "nextprime", NEXTPRIME },
+  { "powm",      POWM },
+  { "quit",      QUIT },
+  { "root",      ROOT },
+  { "sqrt",      SQRT },
+  { NULL }
+};
 %}
 
 %%
@@ -28,6 +59,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 [ \t\f] { /* white space is skipped */ }
 
 [;\n]   { /* semicolon or newline separates statements */
+          calc_more_input = 0;
           return EOS; }
 \\\n    { /* escaped newlines are skipped */ }
 
@@ -35,6 +67,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 #(([^\\\n]*)\\)+\n {
             /* comment through to escaped newline is skipped */ }
 #[^\n]*\n { /* comment through to newline is a separator */
+            calc_more_input = 0;
             return EOS; }
 #[^\n]* {   /* comment through to EOF skipped */ }
 
@@ -54,29 +87,11 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
         return NUMBER; }
 
 [a-zA-Z][a-zA-Z0-9]* {
-        static struct {
-          char  *name;
-          int   value;
-        } table[] = {
-          { "abs",       ABS },
-          { "bin",       BIN },
-          { "decimal",   DECIMAL },
-          { "fib",       FIB },
-          { "hex",       HEX },
-          { "gcd",       GCD },
-          { "kron",      KRON },
-          { "lcm",       LCM },
-          { "nextprime", NEXTPRIME },
-          { "powm",      POWM },
-          { "quit",      QUIT },
-          { "root",      ROOT },
-          { "sqrt",      SQRT },
-        };
         int  i;
 
-        for (i = 0; i < numberof (table); i++)
-          if (strcmp (yytext, table[i].name) == 0)
-            return table[i].value;
+        for (i = 0; calc_keywords[i].name != NULL; i++)
+          if (strcmp (yytext, calc_keywords[i].name) == 0)
+            return calc_keywords[i].value;
 
         if (yytext[0] >= 'a' && yytext[0] <= 'z' && yytext[1] == '\0')
           {
