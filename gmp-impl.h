@@ -1768,14 +1768,28 @@ union ieee_double_extract
   double d;
 };
 #else /* Need this as an #else since the tests aren't made exclusive.  */
+#if defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
+    || defined(mc68020)
+#define _GMP_IEEE_FLOATS 1
+union ieee_double_extract
+{
+  struct
+    {
+      /* "int" might be only 16 bits, so use "long" */
+      unsigned long sig:1;
+      unsigned long exp:11;
+      unsigned long manh:20;
+      unsigned long manl:32;
+    } s;
+  double d;
+};
+#else
 #if defined (_BIG_ENDIAN) || defined (__BIG_ENDIAN__)			\
  || defined (__a29k__) || defined (_AM29K)				\
  || defined (__arm__)							\
  || (defined (__convex__) && defined (_IEEE_FLOAT_))			\
  || defined (_CRAYMPP) || defined (_CRAYIEEE)				\
  || defined (__i370__) || defined (__mvs__)				\
- || defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
-    || defined(mc68020)							\
  || defined (__m88000__)						\
  || defined (MIPSEB) || defined (_MIPSEB)				\
  || defined (__hppa) || defined (__hppa__)				\
@@ -1797,6 +1811,7 @@ union ieee_double_extract
     } s;
   double d;
 };
+#endif
 #endif
 #endif
 #endif
@@ -1987,8 +2002,11 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 
    There are prec many limbs, but the high might be only "1" so forget it
    and just count prec-1 limbs into chars.  +1 rounds that upwards, and a
-   further +1 is because the limbs usually won't fall on digit boundaries
-   (unless the base is 2, 4 or 16).  */
+   further +1 is because the limbs usually won't fall on digit boundaries.
+
+   FIXME: If base is a power of 2 and the bits per digit divides
+   BITS_PER_MP_LIMB then the +2 is unnecessary.  This happens always for
+   base==2, and in base==16 with the current 32 or 64 bit limb sizes. */
 
 #define MPF_SIGNIFICANT_DIGITS(n, base, prec)                           \
   do {                                                                  \
