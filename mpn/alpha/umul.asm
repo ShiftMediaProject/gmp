@@ -1,7 +1,7 @@
 dnl  Currently unused.
 
 
-dnl  Copyright (C) 1999 Free Software Foundation, Inc.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

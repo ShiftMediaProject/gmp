@@ -1,6 +1,7 @@
 /* mpn_mul_n and helper function -- Multiply/square natural numbers.
 
-Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
