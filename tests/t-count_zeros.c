@@ -1,6 +1,6 @@
 /* Test count_leading_zeros and count_trailing_zeros.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -59,14 +59,13 @@ check_ctz (int want, mp_limb_t n)
 void
 check_various (void)
 {
-  mp_limb_t  n;
   int        i;
 
 #ifdef COUNT_LEADING_ZEROS_0
   check_clz (COUNT_LEADING_ZEROS_0, CNST_LIMB(0));
 #endif
 
-  for (n=1, i=0; i < BITS_PER_MP_LIMB; n<<=1, i++)
+  for (i=0; i < BITS_PER_MP_LIMB; i++)
     {
       check_clz (i, CNST_LIMB(1) << (BITS_PER_MP_LIMB-1-i));
       check_ctz (i, CNST_LIMB(1) << i);
