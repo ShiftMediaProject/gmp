@@ -1,7 +1,7 @@
 ! SPARC v7 __udiv_qrnnd division support, used from longlong.h.
 ! This is for v7 CPUs with a floating-point unit.
 
-! Copyright (C) 1993, 1994, 1996 Free Software Foundation, Inc.
+! Copyright (C) 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 ! This file is part of the GNU MP Library.
 
@@ -30,7 +30,14 @@
 include(`../config.m4')
 
 ASM_START()
-	DATA
+
+ifdef(`PIC',
+`	TEXT
+L(getpc):
+	retl
+	nop')
+
+	TEXT
 	ALIGN(8)
 L(C0):	.double	0r4294967296
 L(C1):	.double	0r2147483648
@@ -39,9 +46,14 @@ PROLOGUE(__udiv_qrnnd)
 	save	%sp,-104,%sp
 	st	%i1,[%fp-8]
 	ld	[%fp-8],%f10
-	sethi	%hi(L(C0)),%o7
+
+ifdef(`PIC',
+`L(pc):	call	L(getpc)		! put address of this insn in %o7
+	ldd	[%o7+L(C0)-L(pc)],%f8',
+`	sethi	%hi(L(C0)),%o7
+	ldd	[%o7+%lo(L(C0))],%f8')
+
 	fitod	%f10,%f4
-	ldd	[%o7+%lo(L(C0))],%f8
 	cmp	%i1,0
 	bge	L(248)
 	mov	%i0,%i5
@@ -64,8 +76,12 @@ L(249):
 	faddd	%f4,%f8,%f4
 L(250):
 	fdivd	%f2,%f4,%f2
-	sethi	%hi(L(C1)),%o7
-	ldd	[%o7+%lo(L(C1))],%f4
+
+ifdef(`PIC',
+`	ldd	[%o7+L(C1)-L(pc)],%f4',
+`	sethi	%hi(L(C1)),%o7
+	ldd	[%o7+%lo(L(C1))],%f4')
+
 	fcmped	%f2,%f4
 	nop
 	fbge,a	L(251)

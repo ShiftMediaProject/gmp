@@ -30,14 +30,26 @@
 include(`../config.m4')
 
 ASM_START()
-	DATA
+
+ifdef(`PIC',
+`	TEXT
+L(getpc):
+	retl
+	nop')
+
+	TEXT
 	ALIGN(4)
 L(noll):
 	.word	0
+
 PROLOGUE(mpn_mul_1)
 	save %sp,-256,%sp
-	sethi	%hi(L(noll)),%g1
-	ld	[%g1+%lo(L(noll))],%f10
+
+ifdef(`PIC',
+`L(pc):	call	L(getpc)
+	ld	[%o7+L(noll)-L(pc)],%f10',
+`	sethi	%hi(L(noll)),%g1
+	ld	[%g1+%lo(L(noll))],%f10')
 
 	sethi	%hi(0xffff0000),%o0
 	andn	 %i3,%o0,%o0
