@@ -100,6 +100,8 @@ e_mpfr_number (mpfr_ptr res, __gmp_const char *e, size_t elen, int base)
 {
   char    *edup;
   size_t  i, j, ret, extra=0;
+  void    *(*allocate_func) (size_t);
+  void    (*free_func) (void *, size_t);
 
   TRACE (printf ("mpfr_number prec=%lu, base=%d, \"%.*s\"\n",
                  mpfr_get_prec (res), base, (int) elen, e));
@@ -167,7 +169,8 @@ e_mpfr_number (mpfr_ptr res, __gmp_const char *e, size_t elen, int base)
   /* mpfr_set_str doesn't currently accept upper case for hex, so convert to
      lower here instead.  FIXME: Would prefer to let mpfr_set_str handle
      this.  */
-  edup = (*__gmp_allocate_func) (i+1);
+  mp_get_memory_functions (&allocate_func, NULL, &free_func);
+  edup = (*allocate_func) (i+1);
   for (j = 0; j < i; j++)
     edup[j] = tolower (e[j]);
   edup[i] = '\0';
@@ -179,7 +182,7 @@ e_mpfr_number (mpfr_ptr res, __gmp_const char *e, size_t elen, int base)
   else
     ret = 0;
 
-  (*__gmp_free_func) (edup, i+1);
+  (*free_func) (edup, i+1);
   return ret;
 }
 

@@ -34,6 +34,8 @@ mpexpr_mpz_number (mpz_ptr res, __gmp_const char *e, size_t elen, int base)
   char    *edup;
   size_t  i, ret;
   int     base_effective = (base == 0 ? 10 : base);
+  void    *(*allocate_func) (size_t);
+  void    (*free_func) (void *, size_t);
 
   i = 0;
   if (e[i] == '0')
@@ -47,7 +49,8 @@ mpexpr_mpz_number (mpz_ptr res, __gmp_const char *e, size_t elen, int base)
     if (! isasciidigit_in_base (e[i], base_effective))
       break;
 
-  edup = (*__gmp_allocate_func) (i+1);
+  mp_get_memory_functions (&allocate_func, NULL, &free_func);
+  edup = (*allocate_func) (i+1);
   memcpy (edup, e, i);
   edup[i] = '\0';
 
@@ -56,7 +59,7 @@ mpexpr_mpz_number (mpz_ptr res, __gmp_const char *e, size_t elen, int base)
   else
     ret = 0;
 
-  (*__gmp_free_func) (edup, i+1);
+  (*free_func) (edup, i+1);
   return ret;
 }
 
