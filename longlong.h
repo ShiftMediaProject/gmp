@@ -162,7 +162,7 @@ MA 02111-1307, USA. */
   __asm__("ctlz %1,%0" : "=r"(COUNT) : "r"(X))
 #define count_trailing_zeros(COUNT,X) \
   __asm__("cttz %1,%0" : "=r"(COUNT) : "r"(X))
-#else /* ! (ev67 || ev68) */
+#else /* ! CIX */
 #ifndef LONGLONG_STANDALONE
 #if HAVE_ATTRIBUTE_CONST
 long __MPN(count_leading_zeros) _PROTO ((UDItype)) __attribute__ ((const));
@@ -172,7 +172,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #define count_leading_zeros(count, x) \
   ((count) = __MPN(count_leading_zeros) (x))
 #endif /* LONGLONG_STANDALONE */
-#endif /* ! (ev67 || ev68) */
+#endif /* ! CIX */
 #endif /* __alpha */
 
 #if defined (_CRAY) && W_TYPE_SIZE == 64
