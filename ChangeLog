@@ -1,3 +1,7 @@
+2000-09-27  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (count_leading_zeros): Define for ia64.
+
 2000-09-27  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
 
 	* mpn/generic/bz_divrem_n.c: Fix qhl handling, simplify.
