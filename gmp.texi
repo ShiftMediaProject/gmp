@@ -2605,30 +2605,29 @@ Compute the @var{n}th Fibonacci number and store the result in @var{rop}.
 @cindex Integer comparison functions
 @cindex Comparison functions
 
-@deftypefun int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
-Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
-@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
-@ma{@var{op1} < @var{op2}}.
-@end deftypefun
-
-@deftypefn Macro int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefn Function int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefnx Function int mpz_cmp_d (mpz_t @var{op1}, double @var{op2})
 @deftypefnx Macro int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
+@deftypefnx Macro int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
-@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
+@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, or a negative value if
 @ma{@var{op1} < @var{op2}}.
 
-These functions are actually implemented as macros.  They evaluate their
-arguments multiple times.
+Note that @code{mpz_cmp_ui} and @code{mpz_cmp_si} are macros and will evaluate
+their arguments more than once.
 @end deftypefn
 
-
-@deftypefun int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefn Function int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefnx Function int mpz_cmpabs_d (mpz_t @var{op1}, double @var{op2})
+@deftypefnx Function int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
 value if @ma{@GMPabs{@var{op1}} > @GMPabs{@var{op2}}}, zero if
-@ma{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, and a negative value if
+@ma{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, or a negative value if
 @ma{@GMPabs{@var{op1}} < @GMPabs{@var{op2}}}.
-@end deftypefun
+
+Note that @code{mpz_cmpabs_si} is a macro and will evaluate its arguments more
+than once.
+@end deftypefn
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
 Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
@@ -2637,6 +2636,7 @@ Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
 This function is actually implemented as a macro.  It evaluates its argument
 multiple times.
 @end deftypefn
+
 
 @node Integer Logic and Bit Fiddling, I/O of Integers, Integer Comparisons, Integer Functions
 @comment  node-name,  next,  previous,  up
@@ -3193,6 +3193,10 @@ size.
 Set the default precision to be @strong{at least} @var{prec} bits.  All
 subsequent calls to @code{mpf_init} will use this precision, but previously
 initialized variables are unaffected.
+@end deftypefun
+
+@deftypefun {unsigned long int} mpf_get_default_prec (void)
+Return the default default precision actually used.
 @end deftypefun
 
 An @code{mpf_t} object must be initialized before storing the first value in
