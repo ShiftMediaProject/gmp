@@ -579,9 +579,14 @@ void __gmp_default_free _PROTO ((void *, size_t));
 
 /* In gcc 2.96 and up on i386, tail calls are optimized to jumps if the
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
-   putting leading parameters in registers, avoiding extra stack.  */
+   putting leading parameters in registers, avoiding extra stack.
 
-#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96) && ! PIC
+   regparm cannot be used with calls going through the PLT, because the
+   binding code there may clobber the registers (%eax, %edx, %ecx) used for
+   the regparm parameters.  Calls to local (ie. static) functions could
+   still use this, if we cared to differentiate locals and globals.  */
+
+#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96) && ! defined (PIC)
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
@@ -2688,7 +2693,7 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
    fetch of low limb always valid, even if size is zero */
 #define JACOBI_Z0(a)   JACOBI_LS0 (PTR(a)[0], SIZ(a))
 
-/* (0/b), with b unsigned; is 1 if b=+/-1, 0 otherwise */
+/* (0/b), with b unsigned; is 1 if b=1, 0 otherwise */
 #define JACOBI_0U(b)   ((b) == 1)
 
 /* (0/b), with b unsigned; is 1 if b=+/-1, 0 otherwise */
