@@ -1,6 +1,6 @@
 /* Support for diagnostic traces.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -293,4 +293,28 @@ byte_tracen (const char *name, int num, const void *ptr, mp_size_t size)
       putchar ('=');
     }
   byte_trace (NULL, ptr, size);
+}
+
+
+void
+d_trace (const char *name, double d)
+{
+  union {
+    double         d;
+    unsigned char  b[sizeof(double)];
+  } u;
+  int  i;
+
+  if (name != NULL && name[0] != '\0')
+    printf ("%s=", name);
+
+  u.d = d;
+  printf ("[");
+  for (i = 0; i < sizeof (u.b); i++)
+    {
+      if (i != 0)
+        printf (" ");
+      printf ("%02X", (int) u.b[i]);
+    }
+  printf ("] %.20g\n", d);
 }
