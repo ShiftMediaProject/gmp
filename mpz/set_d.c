@@ -32,9 +32,9 @@ mpz_set_d (r, d)
 #endif
 {
   int negative;
-  mp_size_t size;
   mp_limb_t tp[3];
   mp_ptr rp;
+  mp_size_t rn;
 
   negative = d < 0;
   d = ABS (d);
@@ -49,19 +49,20 @@ mpz_set_d (r, d)
       return;
     }
 
-  size = __gmp_extract_double (tp, d);
+  rn = __gmp_extract_double (tp, d);
 
-  if (ALLOC(r) < size)
-    _mpz_realloc (r, size);
+  if (ALLOC(r) < rn)
+    _mpz_realloc (r, rn);
 
   rp = PTR (r);
 
 #if BITS_PER_MP_LIMB == 32
-  switch (size)
+  switch (rn)
     {
     default:
-      MPN_ZERO (rp, size - 3);
-      rp += size - 3;
+      MPN_ZERO (rp, rn - 3);
+      rp += rn - 3;
+      /* fall through */
     case 3:
       rp[2] = tp[2];
       rp[1] = tp[1];
@@ -72,22 +73,24 @@ mpz_set_d (r, d)
       rp[0] = tp[1];
       break;
     case 1:
+      /* handled in "small aguments" case above */
       abort ();
     }
 #else
-  switch (size)
+  switch (rn)
     {
     default:
-      MPN_ZERO (rp, size - 2);
-      rp += size - 2;
+      MPN_ZERO (rp, rn - 2);
+      rp += rn - 2;
+      /* fall through */
     case 2:
-      rp[1] = tp[1];
-      rp[0] = tp[0];
+      rp[1] = tp[1], rp[0] = tp[0];
       break;
     case 1:
+      /* handled in "small aguments" case above */
       abort ();
     }
 #endif
 
-  SIZ(r) = negative ? -size : size;
+  SIZ(r) = negative ? -rn : rn;
 }
