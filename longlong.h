@@ -521,15 +521,15 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   } while (0)
 #endif /* hppa */
 
-#if (defined (__i370__) || defined (__mvs__)) && W_TYPE_SIZE == 32
+#if (defined (__i370__) || defined (__s390__) || defined (__mvs__)) && W_TYPE_SIZE == 32
 #define smul_ppmm(xh, xl, m0, m1) \
   do {									\
     union {DItype __ll;							\
 	   struct {USItype __h, __l;} __i;				\
 	  } __x;							\
-    __asm__ ("mr %0,%3"							\
-	     : "=r" (__x.__i.__h), "=r" (__x.__i.__l)			\
-	     : "%1" (m0), "r" (m1));					\
+    __asm__ ("lr %N0,%1\n\tmr %0,%2"					\
+	     : "=&r" (__x.__ll)						\
+	     : "r" (m0), "r" (m1));					\
     (xh) = __x.__i.__h; (xl) = __x.__i.__l;				\
   } while (0)
 #define sdiv_qrnnd(q, r, n1, n0, d) \
