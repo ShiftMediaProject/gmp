@@ -1937,16 +1937,16 @@ struct __gmp_hypot_function
   static void eval(mpfr_ptr f, mpfr_srcptr g, double d)
   {
     mpfr_t temp;
-    mpfr_init2 (temp, 8*sizeof(l));
-    mpfr_set_d (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_init2 (temp, 8*sizeof(d));
+    mpfr_set_d (temp, d, GMP_RNDZ);  /* no rounding */
     mpfr_hypot (f, g, temp, __gmpfr_default_rounding_mode);
     mpfr_clear(temp);
   }
   static void eval(mpfr_ptr f, double d, mpfr_srcptr g)
   {
     mpfr_t temp;
-    mpfr_init2 (temp, 8*sizeof(l));
-    mpfr_set_d (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_init2 (temp, 8*sizeof(d));
+    mpfr_set_d (temp, d, GMP_RNDZ);  /* no rounding */
     mpfr_hypot (f, g, temp, __gmpfr_default_rounding_mode);
     mpfr_clear(temp);
   }
