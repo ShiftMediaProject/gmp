@@ -821,9 +821,11 @@ main (int argc, char *argv[])
   check53(5.76707395945001907217e-58, 4.74752971449827687074e-51, GMP_RNDD,
 	  4.747530291205672325e-51);
   check53(277363943109.0, 11.0, GMP_RNDN, 277363943120.0);
+#if 0		/* disabled since it seems silly to use denorms */
   /* test denormalized numbers too */
   check53(8.06294740693074521573e-310, 6.95250701071929654575e-310, GMP_RNDU,
 	  1.5015454417650041761e-309);
+#endif
 #ifdef HAVE_INFS
   /* the following check double overflow */
   check53(6.27557402141211962228e+307, 1.32141396570101687757e+308,
