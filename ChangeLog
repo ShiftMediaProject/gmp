@@ -9,6 +9,12 @@
 
 	* configure.in: Recognise sparc64-*-*, not just sparc64-*-linux*.
 
+2001-02-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/asm-defs.m4 (sqr_diagonal): New define_mpn.
+
+	* mpn/alpha/sqr_diagonal.asm: New file.
+
 2001-02-11  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Low-level Functions): Note mpn_get_str clobbers its input
