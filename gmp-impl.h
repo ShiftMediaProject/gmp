@@ -65,7 +65,8 @@ MA 02111-1307, USA. */
 #define NULL ((void *) 0)
 #endif
 
-#if ! defined (__GNUC__)
+#if ! defined (__GNUC__)	/* FIXME: Test for C++ compilers here,
+				   __DECC understands __inline */
 #define inline			/* Empty */
 #endif
 
@@ -143,6 +144,14 @@ void _mp_default_free ();
 #define mpn_copyi __MPN(copyi)
 void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
+
+/* Remap names of internal mpn functions.  */
+#define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
+#define mpn_kara_sqr_n		__MPN(kara_sqr_n)
+#define mpn_toom3_sqr_n		__MPN(toom3_sqr_n)
+#define mpn_kara_mul_n		__MPN(kara_mul_n)
+#define mpn_toom3_mul_n		__MPN(toom3_mul_n)
+#define mpn_reciprocal		__MPN(reciprocal)
 
 /* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
 #ifndef MPN_COPY_INCR
@@ -239,21 +248,6 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
     __x->_mp_alloc = (NLIMBS);						\
     __x->_mp_d = (mp_ptr) TMP_ALLOC ((NLIMBS) * BYTES_PER_MP_LIMB);	\
   } while (0)
-
-#define MPN_MUL_N_RECURSE(prodp, up, vp, size, tspace) \
-  do {									\
-    if ((size) < KARATSUBA_MUL_THRESHOLD)				\
-      mpn_mul_basecase (prodp, up, size, vp, size);			\
-    else								\
-      __gmpn_mul_n (prodp, up, vp, size, tspace);			\
-  } while (0);
-#define MPN_SQR_RECURSE(prodp, up, size, tspace) \
-  do {									\
-    if ((size) < KARATSUBA_SQR_THRESHOLD)				\
-      mpn_sqr_basecase (prodp, up, size);				\
-    else								\
-      __gmpn_sqr (prodp, up, size, tspace);				\
-  } while (0);
 
 /* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
@@ -440,6 +434,12 @@ struct bases
 
 extern const struct bases __mp_bases[];
 extern mp_size_t __gmp_default_fp_limb_precision;
+
+#if defined (__i386__)
+#define TARGET_REGISTER_STARVED 1
+#else
+#define TARGET_REGISTER_STARVED 0
+#endif
 
 #if defined (__alpha)
 mp_limb_t __mpn_invert_normalized_limb ();
@@ -633,9 +633,6 @@ union ieee_double_extract
 
 double __gmp_scale2 _PROTO ((double, int));
 int __gmp_extract_double _PROTO ((mp_ptr, double));
-
-void __gmpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
-void __gmpn_sqr _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 extern int __gmp_junk;
 extern const int __gmp_0;
