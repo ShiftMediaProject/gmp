@@ -1501,6 +1501,28 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #endif
 
 
+/* ADDC_LIMB sets w=x+y and cout to 0 or 1 for a carry from that addition. */
+#if GMP_NAIL_BITS == 0
+#define ADDC_LIMB(cout, w, x, y)        \
+  do {                                  \
+    mp_limb_t  __x = (x);               \
+    mp_limb_t  __y = (y);               \
+    mp_limb_t  __w = __x + __y;         \
+    (w) = __w;                          \
+    (cout) = __w < __x;                 \
+  } while (0)
+#else
+#define ADDC_LIMB(cout, w, x, y)        \
+  do {                                  \
+    mp_limb_t  __w;                     \
+    ASSERT_LIMB (x);                    \
+    ASSERT_LIMB (y);                    \
+    __w = (x) + (y);                    \
+    (w) = __w & GMP_NUMB_MASK;          \
+    (cout) = __w >> GMP_NUMB_BITS;      \
+  } while (0)
+#endif
+
 /* SUBC_LIMB sets w=x-y and cout to 0 or 1 for a borrow from that
    subtract.  */
 #if GMP_NAIL_BITS == 0
