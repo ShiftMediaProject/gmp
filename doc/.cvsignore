@@ -1,2 +1,4 @@
 Makefile
 gmp.info*
+stamp-vti
+version.texi
