@@ -24,12 +24,12 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpf_reldiff (mpf_t rdiff, const mpf_t x, const mpf_t y)
+mpf_reldiff (mpf_t rdiff, mpf_srcptr x, mpf_srcptr y)
 #else
 mpf_reldiff (rdiff, x, y)
      mpf_t rdiff;
-     const mpf_t x;
-     const mpf_t y;
+     mpf_srcptr x;
+     mpf_srcptr y;
 #endif
 {
   if (mpf_cmp_ui (x, 0) == 0)
