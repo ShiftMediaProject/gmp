@@ -20,6 +20,21 @@ MA 02111-1307, USA.
 
 2003-09-24  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/speed.c (routine): Add entires for mpn_addlsh1_n, mpn_sublsh1_n,
+	mpn_rsh1add_n, and mpn_rsh1sub_n.
+
+	* tune/speed.h: Declare speed_mpn_addlsh1_n, speed_mpn_sublsh1_n,
+	speed_mpn_rsh1add_n, and speed_mpn_rsh1sub_n.
+
+	* tune/common.c (speed_mpn_addlsh1_n, speed_mpn_sublsh1_n,
+	speed_mpn_rsh1add_n, speed_mpn_rsh1sub_n): New functions.
+
+	* gmp-impl.h: Declare mpn_addlsh1_n, mpn_sublsh1_n, mpn_rsh1add_n, and
+	mpn_rsh1sub_n.
+
+	* mpn/asm-defs.m4: Add define_mpn's for addlsh1_n, sublsh1_n,
+	rsh1add_n, and rsh1sub_n.
+
 	* mpn/powerpc64/*.asm: Add cycle counts in consistent style.  Misc
 	styling edits.
 
