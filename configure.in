@@ -549,6 +549,7 @@ case $host in
 
 
   *sparc*-*-*)
+    # For cc and acc, -g disables -O, so it's not used
     cclist="gcc acc cc"
     path="sparc32"
     gcc_cflags="-g -O2"
