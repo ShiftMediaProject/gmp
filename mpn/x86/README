@@ -160,9 +160,10 @@ TEMPORARY LABELS
 
 Temporary numbered labels like "1:" used as "1f" or "1b" are available in
 "gas" and Solaris "as", but not in SCO "as".  Normal L() labels should be
-used instead, possibly with a counter to make them unique, see jadcl0() for
-instance.  A separate counter for each macro makes it possible to nest them,
-for instance movl_text_address() can be used within an ASSERT().
+used instead, possibly with a counter to make them unique, see jadcl0() in
+x86-defs.m4 for instance.  A separate counter for each macro makes it
+possible to nest them, for instance movl_text_address() can be used within
+an ASSERT().
 
 "1:" etc must be avoided in gcc __asm__ blocks too.  "%=" for generating a
 unique number looks like a good alternative, but is that actually a
@@ -258,13 +259,17 @@ exercise for the reader.
 
 
 
-GLOBAL OFFSET TABLE CODING
+GLOBAL OFFSET TABLE
 
-It's believed the magic _GLOBAL_OFFSET_TABLE_ used by code establishing the
-address of the GOT should be written without a GSYM_PREFIX, ie. that it's
-the same "_GLOBAL_OFFSET_TABLE_" on an underscore or non-underscore system.
-Certainly this is true for instance of NetBSD 1.4 which is an underscore
-system but requires "_GLOBAL_OFFSET_TABLE_".
+The magic _GLOBAL_OFFSET_TABLE_ used by code establishing the address of the
+GOT sometimes requires an extra underscore prefix.  SVR4 systems and NetBSD
+don't need a prefix, OpenBSD does need one.  Note that NetBSD and OpenBSD
+are both a.out underscore systems, so the prefix for _GLOBAL_OFFSET_TABLE_
+is not simply the same as the prefix for ordinary globals.
+
+In any case in the asm code we write _GLOBAL_OFFSET_TABLE_ and let a macro
+in x86-defs.m4 add an extra underscore if required (according to a configure
+test).
 
 Old gas 1.92.3 which comes with FreeBSD 2.2.8 gets a segmentation fault when
 asked to assemble the following,
@@ -294,6 +299,7 @@ A similar problem occurs in an leal (again with or without a +[.-L1]),
 
 This time the R_386_GOTPC gets a displacement of 0 rather than the 2
 appropriate for the opcode and mod/rm, making this form unusable.
+
 
 
 
