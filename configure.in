@@ -1144,12 +1144,13 @@ case $host in
 
     # gcc 2.7.2 only knows i386 and i486, using -m386 or -m486.  These
     #     represent -mcpu= since -m486 doesn't generate 486 specific insns.
-    #     The -mcpu= and -march= options will fail, leaving just -m486.
-    # gcc 2.95 adds k6, pentium and pentiumpro, and allows -march= and -mcpu=.
+    # gcc 2.95 adds k6, pentium and pentiumpro, and takes -march= and -mcpu=.
     # gcc 3.0 adds athlon.
     # gcc 3.1 adds k6-2, k6-3, pentium-mmx, pentium2, pentium3, pentium4,
     #     athlon-tbird, athlon-4, athlon-xp, athlon-mp.
-    # gcc 3.2 adds nothing.
+    # gcc 3.2 adds winchip2.
+    # gcc 3.3 adds winchip-c6.
+    # gcc pre-release 3.4 adds c3, c3-2.
     #
     # In gcc 2.95.[0123], -march=pentiumpro provoked a stack slot bug in an
     # old version of mpz/powm.c.  Seems to be fine with the current code, so
@@ -1219,6 +1220,17 @@ case $host in
         #
         gcc_cflags_cpu="-mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium4 -march=pentium4~-mno-sse2 -march=pentiumpro -march=pentium"
+        ;;
+      viac32-*-*)
+        # Not sure of the best fallbacks here for -mcpu.
+        # c3-2 has sse and mmx, so pentium3 is good for -march.
+        gcc_cflags_cpu="-mcpu=c3-2 -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=c3-2 -march=pentium3 -march=pentiumpro -march=pentium"
+        ;;
+      viac3*-*-*)
+        # Not sure of the best fallbacks here.
+        gcc_cflags_cpu="-mcpu=c3 -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=c3 -march=pentium-mmx -march=pentium"
         ;;
       *)
         gcc_cflags_cpu="-mcpu=i486 -m486"
