@@ -1523,7 +1523,8 @@ all (void)
     printf ("Sun C %d.%d */\n", __SUNPRO_C / 0x100, __SUNPRO_C % 0x100);
 #define PRINTED_COMPILER
 #endif
-#if defined (__sgi) && defined (_COMPILER_VERSION)
+#if ! defined (__GNUC__) && defined (__sgi) && defined (_COMPILER_VERSION)
+    /* gcc defines __sgi and _COMPILER_VERSION on irix 6, avoid that */
     printf ("MIPSpro C %d.%d.%d */\n",
 	    _COMPILER_VERSION / 100,
 	    _COMPILER_VERSION / 10 % 10,
