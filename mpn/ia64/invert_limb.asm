@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -28,7 +28,7 @@ C It should be possible to avoid the xmpy.hu and the following tests by
 C explicitly chopping in the last fma.  That would save about 10 cycles.
 
 ASM_START()
-	.section	.rodata
+	RODATA
 	.align 16
 .LC0:	data4 0x00000000, 0x80000000, 0x0000403f, 0x00000000	C 2^64
 	data4 0x00000000, 0x80000000, 0x0000407f, 0x00000000	C 2^128
