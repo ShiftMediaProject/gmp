@@ -33,6 +33,11 @@ C
 C The slightly strange combination of indexing and pointer incrementing
 C that's used seems to work best.  Not sure why, but %ecx,4 with src1 and/or
 C src2 is a slowdown.
+C
+C The dependent chain is simply the paddq of x+2*y to the previous carry,
+C then psrlq to get the new carry.  That makes 4 c/l the target speed, which
+C is almost achieved for separate src/dst but when src==dst the write
+C combining anomalies slow it down.
 
 defframe(PARAM_CARRY,20)
 defframe(PARAM_SIZE, 16)
