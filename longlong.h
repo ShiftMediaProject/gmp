@@ -135,6 +135,14 @@ MA 02111-1307, USA. */
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
+#endif /* LONGLONG_STANDALONE */
+#if HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68
+#define count_leading_zeros(COUNT,X) \
+  __asm__("ctlz %1,%0" : "=r"(COUNT) : "r"(X))
+#define count_trailing_zeros(COUNT,X) \
+  __asm__("cttz %1,%0" : "=r"(COUNT) : "r"(X))
+#else /* ! (ev67 || ev68) */
+#ifndef LONGLONG_STANDALONE
 #if HAVE_ATTRIBUTE_CONST
 long __MPN(count_leading_zeros) _PROTO ((UDItype)) __attribute__ ((const));
 #else
@@ -144,6 +152,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
   ((count) = __MPN(count_leading_zeros) (x))
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #endif /* LONGLONG_STANDALONE */
+#endif /* ! (ev67 || ev68) */
 #endif /* __alpha */
 
 #if defined (_CRAY) && W_TYPE_SIZE == 64
