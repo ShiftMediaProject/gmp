@@ -27,7 +27,11 @@ MA 02111-1307, USA. */
 void debug_mp ();
 
 #ifndef SIZE
-#define SIZE 8
+#define SIZE 50
+#endif
+
+#ifndef EXP_SIZE
+#define EXP_SIZE 2
 #endif
 
 main (argc, argv)
@@ -38,7 +42,7 @@ main (argc, argv)
   mpz_t r1, r2, t1, exp2, base2;
   mp_size_t base_size, exp_size, mod_size;
   int i;
-  int reps = 10000;
+  int reps = 2500;
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -54,10 +58,10 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      base_size = urandom () % SIZE - SIZE/2;
+      base_size = urandom () % 2 * SIZE - SIZE;
       mpz_random2 (base, base_size);
 
-      exp_size = urandom () % SIZE;
+      exp_size = urandom () % (EXP_SIZE + 1);
       mpz_random2 (exp, exp_size);
 
       mod_size = urandom () % SIZE /* - SIZE/2 */;
