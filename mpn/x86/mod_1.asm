@@ -89,22 +89,21 @@ deflit(`FRAME',0)
 	movl	PARAM_SRC, %ebx
 	pushl	%esi		FRAME_pushl()
 
-	movl	PARAM_DIVISOR, %esi
 	orl	%ecx, %ecx
+	jz	L(done_zero)
 
-	movl	$0, %edx
-	jz	L(done)
-
+	movl	PARAM_DIVISOR, %esi
 	movl	-4(%ebx,%ecx,4), %eax	C src high limb
+
 	cmpl	%esi, %eax
-	jae	L(entry)
 
-	C high<divisor, so avoid one div
+	sbbl	%edx, %edx		C -1 if high<divisor
 
-	decl	%ecx
-	movl	%eax, %edx
+	addl	%edx, %ecx		C skip one division if high<divisor
+	jz	L(done_eax)
 
-	jz	L(done)
+	andl	%eax, %edx		C carry if high<divisor
+
 
 L(top):
 	C eax	scratch (quotient)
@@ -116,17 +115,28 @@ L(top):
 	C ebp
 
 	movl	-4(%ebx,%ecx,4), %eax
-L(entry):
+
 	divl	%esi
 
 	loop_or_decljnz	L(top)
 
-L(done):
-	popl	%esi
 
 	movl	%edx, %eax
+L(done_eax):
+	popl	%esi
+
 	popl	%ebx
 
 	ret
+
+
+L(done_zero):
+	popl	%esi
+	xorl	%eax, %eax
+
+	popl	%ebx
+
+	ret
+	
 
 EPILOGUE()
