@@ -2381,7 +2381,6 @@ the return value is wanted.
 @end deftypefun
 
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx void mpz_divexact_si (mpz_t @var{q}, mpz_t @var{n}, long @var{d})
 @deftypefunx void mpz_divexact_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long @var{d})
 @cindex Exact division functions
 Set @var{q} to @var{n}/@var{d}.  These functions produce correct results only
