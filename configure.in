@@ -567,8 +567,8 @@ case $host in
 	gcc_20n_cflags_optlist="arch"
         gcc_20n_testlist="sizeof-long-4 hppa-level-2.0"
 
-        # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-        cc_20n_cflags="+DA2.0 +e +O3 -Wl,+vnocompatwarnings"
+        # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
+        cc_20n_cflags="+DA2.0 +e +O2 -Wl,+vnocompatwarnings"
         cc_20n_testlist="hpc-hppa-2-0"
 
 	# ABI=2.0w is available for hppa2.0w and hppa2.0, but not for
@@ -587,7 +587,8 @@ case $host in
           cclist_20w="gcc cc"
 	  gcc_20w_cflags="-O2 -mpa-risc-2-0"
 	  gcc_20w_testlist="sizeof-long-8"
-          cc_20w_cflags="+DD64 +O3"
+	  # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
+          cc_20w_cflags="+DD64 +O2"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
           extra_functions_20w="umul udiv"
