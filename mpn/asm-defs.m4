@@ -2,9 +2,9 @@ divert(-1)
 dnl
 dnl  m4 macros for gmp assembler, shared by all CPUs.
 dnl
-dnl  These macros are designed for use with any m4.  GNU m4 and BSD m4 work.
-dnl  GNU m4 has some advantages, like filenames and line numbers in error
-dnl  messages.
+dnl  These macros are designed for use with any m4 and have been used on
+dnl  GNU, BSD and SysV.  GNU m4 has some advantages, like filenames and line
+dnl  numbers in error messages.
 
 
 dnl  Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -69,37 +69,41 @@ dnl  expansions done on that line.  This can make the .s more readable to
 dnl  humans, but it won't make a blind bit of difference to the assembler.
 dnl
 dnl  All the above applies, mutatis mutandis, when changecom() is used to
-dnl  select @ ! ; or whatever other commenting a particular assembler uses.
+dnl  select @ ! ; or whatever other commenting.
 dnl
 dnl
-dnl  Variations in m4:
+dnl  Variations in m4 affecting gmp:
 dnl
 dnl  $# - When a macro is called as "foo" with no brackets, BSD m4 sets $#
-dnl       to 1, whereas GNU m4 sets it to 0.  In both, "foo()" sets $# to 1.
-dnl       This is worked around in various places.
+dnl       to 1, whereas GNU or SysV m4 set it to 0.  In all though "foo()"
+dnl       sets $# to 1.  This is worked around in various places.
 dnl
 dnl  len() - When "len()" is given an empty argument, BSD m4 evaluates to
-dnl       nothing, whereas GNU m4 evaluates to 0.  See m4_length() below
+dnl       nothing, whereas GNU or SysV evaluate to 0.  See m4_length() below
 dnl       which works around this.
 dnl
-dnl  translit() - GNU m4 accepts character ranges like A-Z, but BSD m4
-dnl       doesn't.
+dnl  translit() - GNU m4 accepts character ranges like A-Z, but BSD and SysV
+dnl       don't.
 dnl
-dnl  popdef() - BSD m4 popdef() takes multiple arguments and pops each,
-dnl       but GNU m4 only takes one argument.
+dnl  popdef() - BSD and SysV m4 popdef() takes multiple arguments and pops
+dnl       each, but GNU m4 only takes one argument.
 dnl
 dnl  push back - BSD m4 has some limits on the amount of text that can be
 dnl       pushed back.  The limit is reasonably big and so long as macros
-dnl       don't gratuitously duplicate big arguments, it isn't a problem.
+dnl       don't gratuitously duplicate big arguments it isn't a problem.
 dnl       Normally an error message is given, but sometimes it just hangs.
 dnl
 dnl  eval() ?: - The C ternary operator "?:" is available in BSD m4, but not
-dnl       in GNU m4 (version 1.4 at least).
+dnl       in SysV or GNU m4 (as of GNU m4 1.4 and betas of 1.5).
 dnl
 dnl  eval() -2^31 - BSD m4 has a bug where an eval() resulting in -2^31
 dnl       (ie. -2147483648) gives "-(".  Using -2147483648 within an
 dnl       expression seems to be ok, it just can't be a final result.  "-("
 dnl       will of course upset parsing, with all sorts of strange effects.
+dnl
+dnl  eval() <<,>> - SysV m4 doesn't support shift operators in eval() (on
+dnl       SunOS /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
+dnl       m4_lshift() and m4_rshift() below for workarounds.
 
 
 ifdef(`__ASM_DEFS_M4_INCLUDED__',
@@ -145,7 +149,7 @@ define(m4_file_and_line,
 `__file__: __line__: ')')')
 
 
-dnl  Usage: m4_errprint_commas(args...)
+dnl  Usage: m4_errprint_commas(arg,...)
 dnl
 dnl  The same as errprint(), but commas are printed between arguments
 dnl  instead of spaces.
@@ -291,7 +295,7 @@ define(m4_Narguments,
 
 
 dnl  --------------------------------------------------------------------------
-dnl  Additional error testing things.
+dnl  Additional error checking things.
 
 
 dnl  Usage: m4_file_seen()
@@ -323,7 +327,8 @@ dnl          m4_assert_onearg()
 dnl          `blah blah $1 blah blah')
 dnl
 dnl  Calls "foo(xyz)" or "foo()" are accepted.  A call "foo(xyz,abc)" fails.
-dnl  A call "foo" fails too, but BSD m4 can't detect this case (GNU m4 can).
+dnl  A call "foo" fails too, but BSD m4 can't detect this case (GNU and SysV
+dnl  m4 can).
 
 define(m4_assert_onearg,
 m4_assert_numargs(0)
@@ -346,9 +351,9 @@ dnl          define(foo,
 dnl          m4_assert_defined(`FOO_PREFIX')
 dnl          `FOO_PREFIX whatever')
 dnl
-dnl  This is a convenient way to check that the user, ./configure, etc, has
-dnl  defined whatever is needed by a macro, as opposed to silently
-dnl  generating garbage.
+dnl  This is a convenient way to check that the user or ./configure or
+dnl  whatever has defined the things needed by a macro, as opposed to
+dnl  silently generating garbage.
 
 define(m4_assert_defined,
 m4_assert_numargs(1)
@@ -370,13 +375,13 @@ dnl  will give an error if expanded.  For example,
 dnl
 dnl         m4_not_for_expansion(`PIC')
 dnl
-dnl  define_not_for_expansion is the similar, but always makes a definition.
+dnl  define_not_for_expansion is the same, but always makes a definition.
 dnl
-dnl  This is for symbols that should be tested with ifdef(`FOO',...) rather
-dnl  than be expanded as such.  It stops you accidentally omitting the
-dnl  quotes, as in ifdef(FOO,...).  Note though that it only catches this
-dnl  when FOO is defined, so be sure to test code both with and without each
-dnl  definition.
+dnl  These are for symbols that should be tested with ifdef(`FOO',...)
+dnl  rather than be expanded as such.  They guard against accidentally
+dnl  omitting the quotes, as in ifdef(FOO,...).  Note though that they only
+dnl  catches this when FOO is defined, so be sure to test code both with and
+dnl  without each definition.
 
 define(m4_not_for_expansion,
 m4_assert_numargs(1)
@@ -398,14 +403,15 @@ dnl  --------------------------------------------------------------------------
 dnl  Various generic m4 things.
 
 
-dnl  Usage: m4_ifdef_anyof_p(symbol,...)
+dnl  Usage: m4_ifdef_anyof_p(`symbol',...)
 dnl
-dnl  Expand to 1 if any of the symbols in the argument list is defined, or
-dnl  expand to 0 if not.
+dnl  Expand to 1 if any of the symbols in the argument list are defined, or
+dnl  to 0 if not.
 
 define(m4_ifdef_anyof_p,
 `ifelse(eval($#<=1 && m4_length(`$1')==0),1, 0,
-`ifdef(`$1',1,`m4_ifdef_anyof_p(shift($@))')')')
+`ifdef(`$1', 1,
+`m4_ifdef_anyof_p(shift($@))')')')
 
 
 dnl  Usage: m4_length(string)
@@ -419,7 +425,7 @@ m4_assert_onearg()
 `eval(len(`$1')-0)')
 
 
-dnl  Usage: m4_stringequal(x,y)
+dnl  Usage: m4_stringequal_p(x,y)
 dnl
 dnl  Expand to 1 or 0 according as strings x and y are equal or not.
 
@@ -534,28 +540,70 @@ m4_assert_onearg()
 dnl  Usage: m4_log2(x)
 dnl
 dnl  Calculate a logarithm to base 2.
-dnl  x must be an integral power of 2, between 2^0 and 2^30.
+dnl  x must be an integral power of 2, between 2**0 and 2**30.
 dnl  x is eval()ed, so it can be an expression.
 dnl  An error results if x is invalid.
 dnl
-dnl  2^31 isn't supported, because an unsigned 2147483648 is out of range of
-dnl  a 32-bit int.  Also, the bug in BSD m4 where an eval() resulting in
-dnl  2147483648 (or -2147483648 as the case may be) gives `-(' means tests
-dnl  like eval(1<<31==(x)) would be necessary, but that then gives an
-dnl  unattractive explosion of eval() error messages if x isn't numeric.
+dnl  2**31 isn't supported, because an unsigned 2147483648 is out of range
+dnl  of a 32-bit signed int.  Also, the bug in BSD m4 where an eval()
+dnl  resulting in 2147483648 (or -2147483648 as the case may be) gives `-('
+dnl  means tests like eval(1<<31==(x)) would be necessary, but that then
+dnl  gives an unattractive explosion of eval() error messages if x isn't
+dnl  numeric.
 
 define(m4_log2,
 m4_assert_numargs(1)
-`m4_log2_internal(0,eval(`$1'))')
+`m4_log2_internal(0,1,eval(`$1'))')
 
-dnl  Called: m4_log2_internal(n,target)
+dnl  Called: m4_log2_internal(n,2**n,target)
 define(m4_log2_internal,
-m4_assert_numargs(2)
-`ifelse(eval(1<<$1),`$2',$1,
+m4_assert_numargs(3)
+`ifelse($2,$3,$1,
 `ifelse($1,30,
-`m4_error(`m4_log2() argument too big or not a power of two: $2
+`m4_error(`m4_log2() argument too big or not a power of two: $3
 ')',
-`m4_log2_internal(incr($1),`$2')')')')
+`m4_log2_internal(incr($1),eval(2*$2),$3)')')')
+
+
+dnl  Usage:  m4_div2_towards_zero
+dnl
+dnl  m4 division is probably whatever a C signed division is, and C doesn't
+dnl  specify what rounding gets used on negatives, so this expression forces
+dnl  a rounding towards zero.
+
+define(m4_div2_towards_zero,
+m4_assert_numargs(1)
+`eval((($1) + ((($1)<0) & ($1))) / 2)')
+
+
+dnl  Usage: m4_lshift(n,count)
+dnl         m4_rshift(n,count)
+dnl
+dnl  Calculate n shifted left or right by count many bits.  Both n and count
+dnl  are eval()ed and so can be expressions.
+dnl
+dnl  Negative counts are allowed and mean a shift in the opposite direction.
+dnl  Negative n is allowed and right shifts will be arithmetic (meaning
+dnl  divide by 2**count, rounding towards zero, also meaning the sign bit is
+dnl  duplicated).
+dnl
+dnl  Use these macros instead of << and >> in eval() since the basic ccs
+dnl  SysV m4 doesn't have those operators.
+
+define(m4_rshift,
+m4_assert_numargs(2)
+`m4_lshift(`$1',-(`$2'))')
+
+define(m4_lshift,
+m4_assert_numargs(2)
+`m4_lshift_internal(eval(`$1'),eval(`$2'))')
+
+define(m4_lshift_internal,
+m4_assert_numargs(2)
+`ifelse(eval($2-0==0),1,$1,
+`ifelse(eval($2>0),1,
+`m4_lshift_internal(eval($1*2),decr($2))',
+`m4_lshift_internal(m4_div2_towards_zero($1),incr($2))')')')
 
 
 dnl  Usage: deflit(name,value)
@@ -569,12 +617,12 @@ dnl  $ characters in the value part must have quotes to stop them looking
 dnl  like macro parameters.  For example, deflit(reg,`123+$`'4+567').  See
 dnl  defreg() below for handling simple register definitions like $7 etc.
 dnl
-dnl  "name()" is turned into "name", unfortunately.  In GNU m4 an error is
-dnl  generated when this happens, but in BSD m4 it will happen silently.
-dnl  The problem is that in BSD m4 $# is 1 in both "name" or "name()", so
-dnl  there's no way to differentiate them.  Because we want plain "name" to
-dnl  turn into plain "value", we end up with "name()" turning into plain
-dnl  "value" too.
+dnl  "name()" is turned into "name", unfortunately.  In GNU and SysV m4 an
+dnl  error is generated when this happens, but in BSD m4 it will happen
+dnl  silently.  The problem is that in BSD m4 $# is 1 in both "name" or
+dnl  "name()", so there's no way to differentiate them.  Because we want
+dnl  plain "name" to turn into plain "value", we end up with "name()"
+dnl  turning into plain "value" too.
 dnl
 dnl  "name(foo)" will lose any whitespace after commas in "foo", for example
 dnl  "disp(%eax, %ecx)" would become "128(%eax,%ecx)".
@@ -586,12 +634,6 @@ dnl  isn't acceptable in the output, then write "name`'()" or "name`'(foo)".
 dnl  The `' is stripped when read, but again stops the parentheses looking
 dnl  like parameters.
 
-dnl  Called: deflit_emptyargcheck(macroname,$#,`$1')
-define(deflit_emptyargcheck,
-`ifelse(eval($2==1 && !m4_dollarhash_1_if_noparen_p && m4_length(`$3')==0),1,
-`m4_error(`dont use a deflit as $1() because it loses the brackets (see deflit in asm-incl.m4 for more information)
-')')')
-
 dnl  Quoting for deflit_emptyargcheck is similar to m4_assert_numargs.  The
 dnl  stuff in the ifelse gives a $#, $1 and $@ evaluated in the new macro
 dnl  created, not in deflit.
@@ -601,6 +643,41 @@ m4_assert_numargs(2)
 `deflit_emptyargcheck'(``$1'',$`#',m4_doublequote($`'1))`dnl
 $2`'dnl
 ifelse(eval($'`#>1 || m4_length('m4_doublequote($`'1)`)!=0),1,($'`@))')')
+
+dnl  Called: deflit_emptyargcheck(macroname,$#,`$1')
+define(deflit_emptyargcheck,
+`ifelse(eval($2==1 && !m4_dollarhash_1_if_noparen_p && m4_length(`$3')==0),1,
+`m4_error(`dont use a deflit as $1() because it loses the brackets (see deflit in asm-incl.m4 for more information)
+')')')
+
+
+dnl  --------------------------------------------------------------------------
+dnl  Various assembler things, not specific to any particular CPU.
+dnl
+
+
+dnl  Various possible defines passed from the makefile that are to be tested
+dnl  with ifdef() rather than be expanded.
+
+m4_not_for_expansion(`PIC')
+
+dnl  aors_n
+m4_not_for_expansion(`OPERATION_ADD')
+m4_not_for_expansion(`OPERATION_SUB')
+
+dnl  aorsmul_n
+m4_not_for_expansion(`OPERATION_ADDMUL')
+m4_not_for_expansion(`OPERATION_SUBMUL')
+
+dnl  logops_n
+m4_not_for_expansion(`OPERATION_AND')
+m4_not_for_expansion(`OPERATION_ANDN')
+m4_not_for_expansion(`OPERATION_NAND')
+m4_not_for_expansion(`OPERATION_IOR')
+m4_not_for_expansion(`OPERATION_IORN')
+m4_not_for_expansion(`OPERATION_NIOR')
+m4_not_for_expansion(`OPERATION_XOR')
+m4_not_for_expansion(`OPERATION_XNOR')
 
 
 dnl  Usage: defreg(name,reg)
@@ -646,35 +723,6 @@ m4_assert_numargs(2)
 substr(`$2',0,1)``''substr(`$2',1))')
 
 
-dnl  --------------------------------------------------------------------------
-dnl  Various assembler things, not specific to any particular CPU.
-dnl
-
-
-dnl  Various possible defines passed from the makefile that are to be tested
-dnl  with ifdef() rather than be expanded.
-
-m4_not_for_expansion(`PIC')
-
-dnl  aors_n
-m4_not_for_expansion(`OPERATION_ADD')
-m4_not_for_expansion(`OPERATION_SUB')
-
-dnl  aorsmul_n
-m4_not_for_expansion(`OPERATION_ADDMUL')
-m4_not_for_expansion(`OPERATION_SUBMUL')
-
-dnl  logops_n
-m4_not_for_expansion(`OPERATION_AND')
-m4_not_for_expansion(`OPERATION_ANDN')
-m4_not_for_expansion(`OPERATION_NAND')
-m4_not_for_expansion(`OPERATION_IOR')
-m4_not_for_expansion(`OPERATION_IORN')
-m4_not_for_expansion(`OPERATION_NIOR')
-m4_not_for_expansion(`OPERATION_XOR')
-m4_not_for_expansion(`OPERATION_XNOR')
-
-
 dnl  Usage: UNROLL_LOG2, UNROLL_MASK, UNROLL_BYTES
 dnl         CHUNK_LOG2, CHUNK_MASK, CHUNK_BYTES
 dnl
@@ -708,8 +756,7 @@ dnl
 dnl  Note that none of these macros do anything except give conventional
 dnl  names to commonly used things.  You still have to write your own
 dnl  expressions for a forloop() and the resulting address displacements.
-dnl  Something like the following would be typical if you have 4 bytes per
-dnl  limb.
+dnl  Something like the following would be typical for 4 bytes per limb.
 dnl
 dnl         forloop(`i',0,UNROLL_COUNT-1,`
 dnl                 deflit(`disp',eval(i*4))
@@ -757,7 +804,7 @@ m4_assert_defined(`BYTES_PER_MP_LIMB')
 dnl  Usage: MPN(name)
 dnl
 dnl  Add MPN_PREFIX to a name.
-dnl  MPN_PREFIX defaults to "__mpn" if not defined.
+dnl  MPN_PREFIX defaults to "__mpn_" if not defined.
 
 ifdef(`MPN_PREFIX',,
 `define(`MPN_PREFIX',`__mpn_')')
@@ -769,9 +816,8 @@ m4_assert_numargs(1)
 
 dnl  Usage: mpn_add_n, etc
 dnl
-dnl  These are convenience definitions using MPN().  Each function that
-dnl  might be implemented in assembler is here.  These are like the #defines
-dnl  in gmp.h.
+dnl  Convenience definitions using MPN(), like the #defines in gmp.h.  Each
+dnl  function that might be implemented in assembler is here.
 
 define(define_mpn,
 m4_assert_numargs(1)
