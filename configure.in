@@ -1256,6 +1256,7 @@ case $ac_cv_c_inline in
 no) ;;
 *)  AC_DEFINE(HAVE_INLINE,1,[Define if an actual "inline" is available]) ;;
 esac
+GMP_H_EXTERN_INLINE
 
 # from libtool
 AC_CHECK_LIBM
@@ -1263,6 +1264,8 @@ AC_SUBST(LIBM)
 
 GMP_FUNC_ALLOCA
 GMP_OPTION_ALLOCA
+
+GMP_H_HAVE_FILE
 
 
 # On m68k NetBSD 1.4.1 getrusage() is doubtful.  ru_utime looks microsecond
@@ -1301,14 +1304,14 @@ AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info 
 #           % (cd macos; perl configure)
 #
 # Note: $gmp_mpn_functions must have mod_1 before pre_mod_1 so the former
-#       can optionally have the latter as an extra entrypoint.
+#       can optionally provide the latter as an extra entrypoint.
 
 gmp_mpn_functions_optional="copyi copyd com_n		\
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n	\
   gcd_finda invert_limb sqr_diagonal"
 
 gmp_mpn_functions="$extra_functions					   \
-  inlines add_1 add_n sub_1 sub_n mul_1 addmul_1			   \
+  add add_1 add_n sub sub_1 sub_n mul_1 addmul_1			   \
   submul_1 lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2     \
   fib2_ui mod_1 mode1o pre_mod_1 dump                                      \
   mul mul_fft mul_n mul_basecase sqr_basecase random                       \
