@@ -659,8 +659,8 @@ extern const int __gmp_0;
 #endif
 
 /* For testing and debugging.  */
-#define MPZ_CHECK_FORMAT(z)						\
-  do { if (SIZ(z) != 0 && PTR(z)[ABSIZ(z) - 1] == 0) abort ();		\
-       if (ALLOC(z) < ABSIZ(z)) abort (); } while (0)
+#define MPZ_CHECK_FORMAT(z)                                     	\
+  (ASSERT_ALWAYS (SIZ(z) == 0 || PTR(z)[ABSIZ(z) - 1] != 0),    	\
+   ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z)))
 #define MPZ_PROVOKE_REALLOC(z)						\
   do { ALLOC(z) = ABSIZ(z); } while (0)
