@@ -25,7 +25,7 @@
 define(res_ptr,%o0)
 define(s1_ptr,%o1)
 define(s2_ptr,%o2)
-define(size,%o3)
+define(n,%o3)
 
 include(`../config.m4')
 
@@ -44,17 +44,17 @@ L(0):	andcc	res_ptr,4,%g0		! res_ptr unaligned? Side effect: cy=0
 	add	s1_ptr,4,s1_ptr
 	ld	[s2_ptr],%g2
 	add	s2_ptr,4,s2_ptr
-	add	size,-1,size
+	add	n,-1,n
 	addcc	%g4,%g2,%o4
 	st	%o4,[res_ptr]
 	add	res_ptr,4,res_ptr
 L(v1):	addx	%g0,%g0,%o4		! save cy in register
-	cmp	size,2			! if size < 2 ...
+	cmp	n,2			! if n < 2 ...
 	bl	L(end2)			! ... branch to tail code
 	subcc	%g0,%o4,%g0		! restore cy
 
 	ld	[s1_ptr+0],%g4
-	addcc	size,-10,size
+	addcc	n,-10,n
 	ld	[s1_ptr+4],%g1
 	ldd	[s2_ptr+0],%g2
 	blt	L(fin1)
@@ -86,7 +86,7 @@ L(loop1):
 	ldd	[s2_ptr+32],%g2
 	std	%o4,[res_ptr+24]
 	addx	%g0,%g0,%o4		! save cy in register
-	addcc	size,-8,size
+	addcc	n,-8,n
 	add	s1_ptr,32,s1_ptr
 	add	s2_ptr,32,s2_ptr
 	add	res_ptr,32,res_ptr
@@ -94,7 +94,7 @@ L(loop1):
 	subcc	%g0,%o4,%g0		! restore cy
 
 L(fin1):
-	addcc	size,8-2,size
+	addcc	n,8-2,n
 	blt	L(end1)
 	subcc	%g0,%o4,%g0		! restore cy
 /* Add blocks of 2 limbs until less than 2 limbs remain */
@@ -106,7 +106,7 @@ L(loope1):
 	ldd	[s2_ptr+8],%g2
 	std	%o4,[res_ptr+0]
 	addx	%g0,%g0,%o4		! save cy in register
-	addcc	size,-2,size
+	addcc	n,-2,n
 	add	s1_ptr,8,s1_ptr
 	add	s2_ptr,8,s2_ptr
 	add	res_ptr,8,res_ptr
@@ -118,7 +118,7 @@ L(end1):
 	std	%o4,[res_ptr+0]
 	addx	%g0,%g0,%o4		! save cy in register
 
-	andcc	size,1,%g0
+	andcc	n,1,%g0
 	be	L(ret1)
 	subcc	%g0,%o4,%g0		! restore cy
 /* Add last limb */
@@ -147,7 +147,7 @@ L(1):	xor	s1_ptr,res_ptr,%g1
    things can be aligned (that we care about) we now know that the alignment
    of s1_ptr and s2_ptr are the same.  */
 
-L(2):	cmp	size,1
+L(2):	cmp	n,1
 	be	L(jone)
 	nop
 	andcc	s1_ptr,4,%g0		! s1_ptr unaligned? Side effect: cy=0
@@ -158,13 +158,13 @@ L(2):	cmp	size,1
 	add	s1_ptr,4,s1_ptr
 	ld	[s2_ptr],%g2
 	add	s2_ptr,4,s2_ptr
-	add	size,-1,size
+	add	n,-1,n
 	addcc	%g4,%g2,%o4
 	st	%o4,[res_ptr]
 	add	res_ptr,4,res_ptr
 
 L(v2):	addx	%g0,%g0,%o4		! save cy in register
-	addcc	size,-8,size
+	addcc	n,-8,n
 	blt	L(fin2)
 	subcc	%g0,%o4,%g0		! restore cy
 /* Add blocks of 8 limbs until less than 8 limbs remain */
@@ -194,7 +194,7 @@ L(loop2):
 	addxcc	%g3,%o5,%g3
 	st	%g3,[res_ptr+28]
 	addx	%g0,%g0,%o4		! save cy in register
-	addcc	size,-8,size
+	addcc	n,-8,n
 	add	s1_ptr,32,s1_ptr
 	add	s2_ptr,32,s2_ptr
 	add	res_ptr,32,res_ptr
@@ -202,7 +202,7 @@ L(loop2):
 	subcc	%g0,%o4,%g0		! restore cy
 
 L(fin2):
-	addcc	size,8-2,size
+	addcc	n,8-2,n
 	blt	L(end2)
 	subcc	%g0,%o4,%g0		! restore cy
 L(loope2):
@@ -213,14 +213,14 @@ L(loope2):
 	addxcc	%g3,%o5,%g3
 	st	%g3,[res_ptr+4]
 	addx	%g0,%g0,%o4		! save cy in register
-	addcc	size,-2,size
+	addcc	n,-2,n
 	add	s1_ptr,8,s1_ptr
 	add	s2_ptr,8,s2_ptr
 	add	res_ptr,8,res_ptr
 	bge	L(loope2)
 	subcc	%g0,%o4,%g0		! restore cy
 L(end2):
-	andcc	size,1,%g0
+	andcc	n,1,%g0
 	be	L(ret2)
 	subcc	%g0,%o4,%g0		! restore cy
 /* Add last limb */
