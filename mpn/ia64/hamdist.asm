@@ -73,22 +73,23 @@ define(yp,       r18)
 
 	.prologue
 ifdef(`HAVE_ABI_32',
-`.mmi;		addp4	xp_param = 0, xp_param	C M
+`		addp4	xp_param = 0, xp_param	C M
 		addp4	yp_param = 0, yp_param	C M
 		sxt4	siz = siz		C I
-.mmi;		nop.m	0			C pad for 32-byte alignment
+		nop.m	0			C pad for 32-byte alignment
 		nop.m	0			C   at .Ltop
 		nop.i	0
 		;;
 ')
 
-.mmi;		mov	xp = xp_param		C M0
+		mov	xp = xp_param		C M0
 		mov	yp = yp_param		C M1
 	.save	ar.lc, save_lc
 		mov	save_lc = ar.lc		C I0
-.mmi;	.save	ar.pfs, save_pfs
+	.save	ar.pfs, save_pfs
 		alloc	save_pfs = ar.pfs, 3,21,0,24	C M2
 		add	siz = -1, siz		C M3  size-1
+		nop.i	0
 		;;
 
 		mov	r8 = 0			C M0  total
@@ -129,18 +130,18 @@ ifdef(`HAVE_ABI_32',
 
 		ALIGN(32)
 .Ltop:
-.mmi;	(p16)	ld8	r32 = [xp], 8		C M0
+	(p16)	ld8	r32 = [xp], 8		C M0
 	(p16)	ld8	r44 = [yp], 8		C M1
 	(p24)	popcnt	r40 = r40		C I0
-.mib;	(p21)	xor	r37 = r37, r49		C M2
+	(p21)	xor	r37 = r37, r49		C M2
 	(p27)	add	r8 = r8, r43		C I1
 		br.cexit.spnt.few.clr .Ldone	C B0
 		;;
 
-.mmi;	(p16)	ld8	r32 = [xp], 8		C M0
+	(p16)	ld8	r32 = [xp], 8		C M0
 	(p16)	ld8	r44 = [yp], 8		C M1
 	(p24)	popcnt	r40 = r40		C I0
-.mib;	(p21)	xor	r37 = r37, r49		C M2
+	(p21)	xor	r37 = r37, r49		C M2
 	(p27)	add	r8 = r8, r43		C I1
 		br.ctop.sptk.few.clr .Ltop	C B0
 		;;
@@ -148,12 +149,12 @@ ifdef(`HAVE_ABI_32',
 .Ldone:
 		ASSERT(p25)			C last limb of source data
 
-.mmi;	(p27)	add	r8 = r8, r43		C M0
+	(p27)	add	r8 = r8, r43		C M0
 		mov	ar.lc = save_lc		C I0
 		;;
 
-.mmi;	(p26)	add	r8 = r8, r42		C M0
-		mov	pr = save_pr, 0xfffffffffffffffe C I0
+	(p26)	add	r8 = r8, r42		C M0
+		mov	pr = save_pr, 0x1fffe	C I0
 		;;
 
 		add	r8 = r8, r41		C M0
