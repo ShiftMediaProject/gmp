@@ -271,6 +271,16 @@ down by a dynamic linked malloc.
 
         ./speed -s 10 -c malloc_free malloc_realloc_free
 
+Two versions of toom3 interpolation and evaluation are available in
+mpn/generic/mul_n.c, either a one-pass open-coded form or simple mpn
+subroutine calls.  The former is used on RISCs with lots of registers, the
+latter on other CPUs.  The two can be compared directly to check which is
+best.  Sizes where toom3 is faster than karatsuba are of interest.
+
+        ./speed -s 80-120 -c mpn_toom3_mul_n_mpn mpn_toom3_mul_n_open
+        ./speed -s 80-120 -c mpn_toom3_sqr_n_mpn mpn_toom3_sqr_n_open
+
+
 
 
 
