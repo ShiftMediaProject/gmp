@@ -1,5 +1,7 @@
 2000-12-15  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in (powerpc*-*-*): Pass -Wa,-mppc when using gcc.
+
 	* gmp-impl.h (_EXTERN_INLINE): #define different for GCC and other
 	compilers.
 
