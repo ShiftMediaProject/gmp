@@ -765,6 +765,15 @@ refmpn_preinv_mod_1 (mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
   return refmpn_mod_1 (sp, size, divisor);
 }
 
+/* This implementation will be rather slow, but has the advantage of being
+   in a different style than the libgmp versions.  */
+mp_limb_t
+refmpn_mod_34lsub1 (mp_srcptr p, mp_size_t n)
+{
+  ASSERT ((BITS_PER_MP_LIMB % 4) == 0);
+  return mpn_mod_1 (p, n, (CNST_LIMB(1) << (3 * BITS_PER_MP_LIMB / 4)) - 1);
+}
+
 
 mp_limb_t
 refmpn_divrem_1c (mp_ptr rp, mp_size_t xsize,
