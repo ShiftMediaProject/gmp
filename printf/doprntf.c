@@ -36,10 +36,6 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 
-#if HAVE_LOCALE_H
-#include <locale.h>    /* for localeconv */
-#endif
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -60,6 +56,7 @@ int
 __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
                   void *data,
                   const struct doprnt_params_t *p,
+                  const char *point,
                   mpf_srcptr f)
 {
   int         prec, ndigits, free_size, len, newlen, justify, justlen, explen;
@@ -69,7 +66,6 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
   mp_exp_t    exp;
   char        exponent[BITS_PER_MP_LIMB + 10];
   const char  *showbase;
-  const char  *point;
   int         retval = 0;
 
   TRACE (printf ("__gmp_doprnt_float\n");
@@ -312,15 +308,8 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
                  prec, p->showtrailing, preczeros));
 
   /* radix point if needed, or if forced */
-  point = ".";
-  pointlen = ((fraczeros + fraclen + preczeros) != 0 || p->showpoint != 0);
-#if HAVE_LOCALECONV
-  if (pointlen)
-    {
-      point = localeconv()->decimal_point;
-      pointlen = strlen (point);
-    }
-#endif
+  pointlen = ((fraczeros + fraclen + preczeros) != 0 || p->showpoint != 0)
+    ? strlen (point) : 0;
   TRACE (printf ("  point |%s|  pointlen %d\n", point, pointlen));
 
   /* Notice the test for a non-zero value is done after any truncation for
