@@ -64,6 +64,7 @@ int calling_conventions_check __GMP_PROTO ((void));
 
 
 extern int mp_trace_base;
+void mp_limb_trace __GMP_PROTO ((const char *, mp_limb_t));
 void mpn_trace __GMP_PROTO ((const char *name, mp_srcptr ptr, mp_size_t size));
 void mpn_tracea __GMP_PROTO ((const char *name, const mp_ptr *a, int count,
                  mp_size_t size));

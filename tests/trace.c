@@ -147,6 +147,20 @@ mpn_trace (const char *name, mp_srcptr ptr, mp_size_t size)
   mpz_trace (name, z);
 }
 
+/* Print "name=value\n" to stdout for a limb, nail doesn't have to be zero. */
+void
+mp_limb_trace (const char *name, mp_limb_t n)
+{
+#if GMP_NAIL_BITS != 0
+  mp_limb_t  a[2];
+  a[0] = n & GMP_NUMB_MASK;
+  a[1] = n >> GMP_NUMB_BITS;
+  mpn_trace (name, a, (mp_size_t) 2);
+#else
+  mpn_trace (name, &n, (mp_size_t) 1);
+#endif
+}
+
 
 /* Print "namenum=value\n" to stdout for an mpn style ptr,size.
    "name" should have a "%d" to get the number.  */
