@@ -554,8 +554,8 @@ case $host in
     gcc_cflags="-g -O2"
     gcc_cflags_optlist="cpu"
     gcc_cflags_cpu=
-    acc_cflags="-g -O2"
-    cc_cflags="-g -O2"
+    acc_cflags="-O2"
+    cc_cflags="-O2"
 
     # FIXME: This should be selected according to the CPU
     if test x${floating_point} = xno
@@ -566,7 +566,7 @@ case $host in
     case $host in
       sparcv8*-*-* | supersparc*-*-* | microsparc*-*-*)
         gcc_cflags_cpu="-mcpu=v8 -mv8"
-        acc_cflags="-g -O2 -cg92"
+        acc_cflags="-O2 -cg92"
         path="sparc32/v8 sparc32"
 
         case $host in
