@@ -94,10 +94,10 @@ mpn_sqrtrem1 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
       q = q * q;
       r = u - q;
       if (u < q)
-        {
-          r += 2 * s - 1;
-          s --;
-        }
+	{
+	  r += 2 * s - 1;
+	  s --;
+	}
       np0 <<= prec;
       prec = 2 * prec;
     }
@@ -168,7 +168,7 @@ mpn_dq_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
 
   if (n == 1)
     return mpn_sqrtrem2 (sp, np, np);
-    
+
   l = n / 2;
   h = n - l;
   q = mpn_dq_sqrtrem (sp + l, np + 2 * l, h);
@@ -198,9 +198,9 @@ mpn_dq_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
 mp_size_t
 mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 {
-  mp_limb_t *tp, s0[1], cc, high;
-  int c, tn;
-  mp_size_t rn;
+  mp_limb_t *tp, s0[1], cc, high, rl;
+  int c;
+  mp_size_t rn, tn;
   TMP_DECL (marker);
 
   ASSERT (nn >= 0);
@@ -229,16 +229,16 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
       tp[0] = 0; /* needed only when 2*tn > nn, but saves a test */
       if (c) mpn_lshift(tp + 2*tn - nn, np, nn, 2 * c);
       else MPN_COPY (tp + 2*tn - nn, np, nn);
-      rn = mpn_dq_sqrtrem (sp, tp, tn);
+      rl = mpn_dq_sqrtrem (sp, tp, tn);
       /* we have 2^(2k)*N = S^2 + R where k = c + (2tn-nn)*BITS_PER_MP_LIMB/2,
-         thus 2^(2k)*N = (S-s0)^2 + 2*S*s0 - s0^2 + R where s0=S mod 2^k */
+	 thus 2^(2k)*N = (S-s0)^2 + 2*S*s0 - s0^2 + R where s0=S mod 2^k */
       c += (nn % 2) * BITS_PER_MP_LIMB / 2; /* c now represents k */
       s0[0] = sp[0] & (((mp_limb_t) 1 << c) - 1); /* S mod 2^k */
-      rn += mpn_addmul_1 (tp, sp, tn, 2 * s0[0]); /* R = R + 2*s0*S */
+      rl += mpn_addmul_1 (tp, sp, tn, 2 * s0[0]); /* R = R + 2*s0*S */
       cc = mpn_submul_1 (tp, s0, 1, s0[0]);
-      rn -= (tn > 1) ? mpn_sub_1(tp + 1, tp + 1, tn - 1, cc) : cc;
+      rl -= (tn > 1) ? mpn_sub_1(tp + 1, tp + 1, tn - 1, cc) : cc;
       mpn_rshift (sp, sp, tn, c);
-      tp[tn] = rn;
+      tp[tn] = rl;
       if (rp == NULL) rp = tp;
       c = c << 1;
       if (c < BITS_PER_MP_LIMB) tn++; else { tp++; c -= BITS_PER_MP_LIMB; }
@@ -248,7 +248,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   else
     {
       if (rp == NULL)
-        rp = TMP_ALLOC_LIMBS (nn);
+	rp = TMP_ALLOC_LIMBS (nn);
       if (rp != np) MPN_COPY (rp, np, nn);
       rn = tn + (rp[tn] = mpn_dq_sqrtrem (sp, rp, tn));
     }
