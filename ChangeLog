@@ -19,6 +19,37 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/root.c: Use unsigned long with mpz_sub_ui not mp_limb_t.
+
+	* tune/README: Misc updates including sparc32/v9 smoothness, low res
+	timebase, and mpn_add_n operand overlaps.
+	* tune/many.pl: Add udiv.asm support.
+
+	* gmp.texi (Build Options): A couple of --build better as --host.
+	(Known Build Problems, Notes for Package Builds): Add DESTDIR problem.
+	(Compatibility with older versions): Compatible with 4.x versions.
+	(Converting Integers): Remove mpz_get_ui + mpz_tdiv_q_2exp decompose.
+	(Integer Import and Export): New section.
+	(Miscellaneous Integer Functions): Clarify mpz_sizeinbase returns 1
+	for operand of 0.
+	(Language Bindings): Add GNU Pascal.
+	(Low-level Functions): Add GMP_NUMB_MAX.
+
+	* tests/mpz/t-import.c, tests/mpz/t-export.c, tests/mpz/t-get_d.c:
+	New tests.
+	* tests/mpz/Makefile.am: Add them.
+
+	* mpz/import.c, mpz/export.c: New files.
+	* Makefile.am, mpz/Makefile.am, gmp-h.in: Add them.
+
+	* gmp-h.in, gmp-impl.h (GMP_NUMB_MAX): Move to gmp.h.
+	* gmp-impl.h (CNST_LIMB): Add cast to mp_limb_t to ensure unsigned.
+	(CRAY_Pragma, MPN_REVERSE, MPN_BSWAP, MPN_BSWAP_REVERSE,
+	ASSERT_ALWAYS_LIMB, ASSERT_ALWAYS_MPN): New macros.
+	(MPZ_CHECK_FORMAT): Use ASSERT_ALWAYS_MPN.
+
 2002-05-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/aors_ui.h: Nailify.
