@@ -594,11 +594,7 @@ case ${target} in
     SPEED_CYCLECOUNTER_OBJS=alpha.lo
     ;;
   [sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-* | athlon-*-*])
-    if test -n "$CC64"; then
-      SPEED_CYCLECOUNTER_OBJS=sparc64.lo
-    else
-      SPEED_CYCLECOUNTER_OBJS=sparcv9.lo
-    fi
+    SPEED_CYCLECOUNTER_OBJS=sparcv9.lo
     ;;
 esac
 
