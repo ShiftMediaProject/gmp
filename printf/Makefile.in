@@ -106,6 +106,8 @@ OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 RC = @RC@
+REPL_VSNPRINTF_OBJ = @REPL_VSNPRINTF_OBJ@
+REPL_VSNPRINTF_PRINTF_OBJ = @REPL_VSNPRINTF_PRINTF_OBJ@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
 TAL_OBJECT = @TAL_OBJECT@
@@ -129,7 +131,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
-noinst_LTLIBRARIES = libprintf.la
+noinst_LTLIBRARIES = libdummy.la libprintf.la
 
 libprintf_la_SOURCES = \
   asprintf.c asprntffuns.c doprnt.c doprntf.c doprnti.c			 \
@@ -137,14 +139,22 @@ libprintf_la_SOURCES = \
   printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
   vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c
 
+libprintf_la_LIBADD = @REPL_VSNPRINTF_OBJ@
+libprintf_la_DEPENDENCIES = $(libprintf_la_LIBADD)
+
+# Ensure there's an ansi2knr rule for this, if it's needed.
+libdummy_la_SOURCES = repl-vsnprintf.c
 subdir = printf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
+libdummy_la_LDFLAGS =
+libdummy_la_LIBADD =
+am_libdummy_la_OBJECTS = repl-vsnprintf$U.lo
+libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 libprintf_la_LDFLAGS =
-libprintf_la_LIBADD =
 am_libprintf_la_OBJECTS = asprintf$U.lo asprntffuns$U.lo doprnt$U.lo \
 	doprntf$U.lo doprnti$U.lo fprintf$U.lo obprintf$U.lo \
 	obvprintf$U.lo obprntffuns$U.lo printf$U.lo printffuns$U.lo \
@@ -167,9 +177,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(libprintf_la_SOURCES)
+DIST_SOURCES = $(libdummy_la_SOURCES) $(libprintf_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libprintf_la_SOURCES)
+SOURCES = $(libdummy_la_SOURCES) $(libprintf_la_SOURCES)
 
 all: all-am
 
@@ -194,6 +204,8 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
+	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libprintf.la: $(libprintf_la_OBJECTS) $(libprintf_la_DEPENDENCIES) 
 	$(LINK)  $(libprintf_la_LDFLAGS) $(libprintf_la_OBJECTS) $(libprintf_la_LIBADD) $(LIBS)
 
@@ -240,6 +252,8 @@ printf_.c: printf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/printf.c; then echo $(srcdir)/printf.c; else echo printf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > printf_.c || rm -f printf_.c
 printffuns_.c: printffuns.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/printffuns.c; then echo $(srcdir)/printffuns.c; else echo printffuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > printffuns_.c || rm -f printffuns_.c
+repl-vsnprintf_.c: repl-vsnprintf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/repl-vsnprintf.c; then echo $(srcdir)/repl-vsnprintf.c; else echo repl-vsnprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > repl-vsnprintf_.c || rm -f repl-vsnprintf_.c
 snprintf_.c: snprintf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/snprintf.c; then echo $(srcdir)/snprintf.c; else echo snprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > snprintf_.c || rm -f snprintf_.c
 snprntffuns_.c: snprntffuns.c $(ANSI2KNR)
@@ -263,7 +277,8 @@ doprnt_.$(OBJEXT) doprnt_.lo doprntf_.$(OBJEXT) doprntf_.lo \
 doprnti_.$(OBJEXT) doprnti_.lo fprintf_.$(OBJEXT) fprintf_.lo \
 obprintf_.$(OBJEXT) obprintf_.lo obprntffuns_.$(OBJEXT) obprntffuns_.lo \
 obvprintf_.$(OBJEXT) obvprintf_.lo printf_.$(OBJEXT) printf_.lo \
-printffuns_.$(OBJEXT) printffuns_.lo snprintf_.$(OBJEXT) snprintf_.lo \
+printffuns_.$(OBJEXT) printffuns_.lo repl-vsnprintf_.$(OBJEXT) \
+repl-vsnprintf_.lo snprintf_.$(OBJEXT) snprintf_.lo \
 snprntffuns_.$(OBJEXT) snprntffuns_.lo sprintf_.$(OBJEXT) sprintf_.lo \
 sprintffuns_.$(OBJEXT) sprintffuns_.lo vasprintf_.$(OBJEXT) \
 vasprintf_.lo vfprintf_.$(OBJEXT) vfprintf_.lo vprintf_.$(OBJEXT) \
