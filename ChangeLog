@@ -1,5 +1,8 @@
 2000-12-31  Torbjorn Granlund  <tege@swox.com>
 
+	* ltmain.sh: Remove space between `#!' and `$SHELL' when generating
+	`libtool'.
+
 	* mpbsd/tests/t-misc.c (check_itom): Exclude test for all Cray
 	vector systems.  Correct comment.
 
