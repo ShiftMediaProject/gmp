@@ -20,13 +20,13 @@
 @ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 @ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 @ MA 02111-1307, USA.
-        
+
 #define d r0
 #define a r1
 #define b r2
 #define n r3
 
-#define sl r10 /* Do not use, reserved for PIC. */
+#define sl r10
 #define fp r11
 #define ip r12
 #define sp r13
@@ -41,38 +41,39 @@ __gmpn_sub_n:
 	stmfd	sp!, { r8, r9, lr }
 	subs	ip, ip, ip
 	tst	n, #1
-	beq	Lskip1
+	beq	skip1
 	ldr	ip, [a], #4
 	ldr	lr, [b], #4
 	subs	ip, ip, lr
 	str	ip, [d], #4
-Lskip1:
+skip1:
 	tst	n, #2
-	beq	Lskip2
+	beq	skip2
 	ldmia	a!, { r8, r9 }
 	ldmia	b!, { ip, lr }
 	sbcs	r8, r8, ip
 	sbcs	r9, r9, lr
 	stmia	d!, { r8, r9 }
-Lskip2:
+skip2:
 	bics	n, n, #3
-	beq	Lreturn
+	beq	return
 	stmfd	sp!, { r4, r5, r6, r7 }
-LLoop:
+sub_n_loop:
 	ldmia	a!, { r4, r5, r6, r7 }
 	ldmia	b!, { r8, r9, ip, lr }
 	sbcs	r4, r4, r8
+	ldr	r8, [d] /* Bring stuff into cache. */
 	sbcs	r5, r5, r9
 	sbcs	r6, r6, ip
 	sbcs	r7, r7, lr
 	stmia	d!, { r4, r5, r6, r7 }
 	sub	n, n, #4
 	teq	n, #0
-	bne	LLoop
+	bne	sub_n_loop
 	ldmfd	sp!, { r4, r5, r6, r7 }
-Lreturn:
+return:
 	sbc	r0, r0, r0
 	and	r0, r0, #1
-	ldmfd	sp!, { r8, r9, pc }^
-Lend:
-	.size	__gmpn_sub_n, Lend - __gmpn_sub_n
+	ldmfd	sp!, { r8, r9, pc }
+end:
+	.size	__gmpn_sub_n, end - __gmpn_sub_n

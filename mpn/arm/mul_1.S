@@ -26,7 +26,7 @@
 #define n r2
 #define w r3
 
-#define sl r10 /* Do not use, reserved for PIC. */
+#define sl r10
 #define fp r11
 #define ip r12
 #define sp r13
@@ -38,45 +38,44 @@
 	.global	__gmpn_mul_1
 	.type	__gmpn_mul_1,%function
 __gmpn_mul_1:
-	stmfd	sp!, { r7, r8, r9, lr }
-	mov	lr, #0
-	movs	n, n, lsr #1
-	bcc	Lskip1
-	ldmia	a!, { lr }
-	umull	ip, lr, w, lr
-	stmia	p!, { ip }
-Lskip1:
-	movs	n, n, lsr #1
-	bcc	Lskip2
-	ldmia	a!, { r9, ip }
-	umull	r7, r8, w, r9
-	umull	r9, ip, w, ip
-	adds	r7, r7, lr
-	adcs	r8, r8, r9
-	adc	lr, ip, #0
-	stmia	p!, { r7, r8 }
-Lskip2:
-	teq	n, #0
-	beq	Lreturn
-	stmfd	sp!, { r5, r6 }
-LLoop:
-	ldmia	a!, { r7, r8, r9, ip }
-	umull	r5, r6, w, r7
-	umull	r7, r8, w, r8
-	adds	r5, r5, lr
-	adcs	r6, r6, r7
-	adc	r7, r8, #0
-	umull	lr, r8, w, r9
-	umull	r9, ip, w, ip
-	adds	r7, r7, lr
-	adcs	r8, r8, r9
-	adc	lr, ip, #0
-	stmia	p!, { r5, r6, r7, r8 }
-	subs	n, n, #1
-	bne	LLoop
-	ldmfd	sp!, { r5, r6 }
-Lreturn:
-	mov	r0, lr
-	ldmfd	sp!, { r7, r8, r9, pc }^
-Lend:
-	.size	__gmpn_mul_1, Lend - __gmpn_mul_1
+	stmfd	sp!, { r8, r9, lr }
+	ands	ip, n, #1
+	beq	skip1
+	ldr	lr, [a], #4
+	umull	r9, ip, w, lr
+	str	r9, [p], #4
+skip1:
+	tst	n, #2
+	beq	skip2
+	mov	r8, ip
+	ldmia	a!, { ip, lr }
+	mov	r9, #0
+	umlal	r8, r9, w, ip
+	mov	ip, #0
+	umlal	r9, ip, w, lr
+	stmia	p!, { r8, r9 }
+skip2:
+	bics	n, n, #3
+	beq	return
+	stmfd	sp!, { r6, r7 }
+mul_1_loop:
+	mov	r6, ip
+	ldmia	a!, { r8, r9, ip, lr }
+	ldr	r7, [p] /* Bring stuff into cache. */
+	mov	r7, #0
+	umlal	r6, r7, w, r8
+	mov	r8, #0
+	umlal	r7, r8, w, r9
+	mov	r9, #0
+	umlal	r8, r9, w, ip
+	mov	ip, #0
+	umlal	r9, ip, w, lr
+	subs	n, n, #4
+	stmia	p!, { r6, r7, r8, r9 }
+	bne	mul_1_loop
+	ldmfd	sp!, { r6, r7 }
+return:
+	mov	r0, ip
+	ldmfd	sp!, { r8, r9, pc }
+end:
+	.size	__gmpn_mul_1, end - __gmpn_mul_1
