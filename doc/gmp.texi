@@ -5487,9 +5487,15 @@ currently supported is 128.
 Initialize @var{rop} with a copy of the algorithm and state from @var{op}.
 @end deftypefun
 
+@c  Although gmp_randinit, gmp_errno and related constants are obsolete, we
+@c  still put @findex entries for them, since they're still documented and
+@c  someone might be looking them up when perusing old application code.
+
 @deftypefun void gmp_randinit (gmp_randstate_t @var{state}, @w{gmp_randalg_t @var{alg}}, @dots{})
 @strong{This function is obsolete.}
 
+@findex GMP_RAND_ALG_LC
+@findex GMP_RAND_ALG_DEFAULT
 Initialize @var{state} with an algorithm selected by @var{alg}.  The only
 choice is @code{GMP_RAND_ALG_LC}, which is @code{gmp_randinit_lc_2exp_size}
 described above.  A third parameter of type @code{unsigned long} is required,
@@ -5498,6 +5504,9 @@ are the same as @code{GMP_RAND_ALG_LC}.
 
 @c  For reference, this is the only place gmp_errno has been documented, and
 @c  due to being non thread safe we won't be adding to it's uses.
+@findex gmp_errno
+@findex GMP_ERROR_UNSUPPORTED_ARGUMENT
+@findex GMP_ERROR_INVALID_ARGUMENT
 @code{gmp_randinit} sets bits in the global variable @code{gmp_errno} to
 indicate an error.  @code{GMP_ERROR_UNSUPPORTED_ARGUMENT} if @var{alg} is
 unsupported, or @code{GMP_ERROR_INVALID_ARGUMENT} if the @var{size} parameter
