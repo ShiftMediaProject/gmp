@@ -72,57 +72,57 @@ mpn_mod_1 (mp_srcptr ap, mp_size_t size, mp_limb_t d)
   if ((d & MP_LIMB_T_HIGHBIT) != 0)
     {
       /* High limb is initial remainder, possibly with one subtract of
-         d to get r<d.  */
+	 d to get r<d.  */
       r = ap[size-1];
       if (r >= d)
-        r -= d;
+	r -= d;
       size--;
       if (size == 0)
-        return r;
+	return r;
 
       if (BELOW_THRESHOLD (size, MOD_1_NORM_THRESHOLD))
-        {
-        plain:
-          for (i = size-1; i >= 0; i--)
-            {
-              n0 = ap[i];
-              udiv_qrnnd (dummy, r, r, n0, d);
-            }
-          return r;
-        }
+	{
+	plain:
+	  for (i = size-1; i >= 0; i--)
+	    {
+	      n0 = ap[i];
+	      udiv_qrnnd (dummy, r, r, n0, d);
+	    }
+	  return r;
+	}
       else
-        {
-          mp_limb_t  inv;
-          invert_limb (inv, d);
-          for (i = size-1; i >= 0; i--)
-            {
-              n0 = ap[i];
-              udiv_qrnnd_preinv (dummy, r, r, n0, d, inv);
-            }
-          return r;
-        }
+	{
+	  mp_limb_t  inv;
+	  invert_limb (inv, d);
+	  for (i = size-1; i >= 0; i--)
+	    {
+	      n0 = ap[i];
+	      udiv_qrnnd_preinv (dummy, r, r, n0, d, inv);
+	    }
+	  return r;
+	}
     }
   else
     {
       int norm;
 
       /* Skip a division if high < divisor.  Having the test here before
-         normalizing will still skip as often as possible.  */
+	 normalizing will still skip as often as possible.  */
       r = ap[size-1];
       if (r < d)
-        {
-          size--;
-          if (size == 0)
-            return r;
-        }
+	{
+	  size--;
+	  if (size == 0)
+	    return r;
+	}
       else
-        r = 0;
+	r = 0;
 
       /* If udiv_qrnnd doesn't need a normalized divisor, can use the simple
-         code above. */
+	 code above. */
       if (! UDIV_NEEDS_NORMALIZATION
-          && BELOW_THRESHOLD (size, MOD_1_UNNORM_THRESHOLD))
-        goto plain;
+	  && BELOW_THRESHOLD (size, MOD_1_UNNORM_THRESHOLD))
+	goto plain;
 
       count_leading_zeros (norm, d);
       d <<= norm;
@@ -130,33 +130,34 @@ mpn_mod_1 (mp_srcptr ap, mp_size_t size, mp_limb_t d)
       n1 = ap[size-1];
       r = (r << norm) | (n1 >> (BITS_PER_MP_LIMB - norm));
 
-#define EXTRACT   ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)))
-
       if (UDIV_NEEDS_NORMALIZATION
-          && BELOW_THRESHOLD (size, MOD_1_UNNORM_THRESHOLD))
-        {
-          for (i = size-2; i >= 0; i--)
-            {
-              n0 = ap[i];
-              udiv_qrnnd (dummy, r, r, EXTRACT, d);
-              n1 = n0;
-            }
-          udiv_qrnnd (dummy, r, r, n1 << norm, d);
-          return r >> norm;
-        }
+	  && BELOW_THRESHOLD (size, MOD_1_UNNORM_THRESHOLD))
+	{
+	  for (i = size-2; i >= 0; i--)
+	    {
+	      n0 = ap[i];
+	      udiv_qrnnd (dummy, r, r,
+			  (n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)), d);
+	      n1 = n0;
+	    }
+	  udiv_qrnnd (dummy, r, r, n1 << norm, d);
+	  return r >> norm;
+	}
       else
-        {
-          mp_limb_t inv;
-          invert_limb (inv, d);
+	{
+	  mp_limb_t inv;
+	  invert_limb (inv, d);
 
-          for (i = size-2; i >= 0; i--)
-            {
-              n0 = ap[i];
-              udiv_qrnnd_preinv (dummy, r, r, EXTRACT, d, inv);
-              n1 = n0;
-            }
-          udiv_qrnnd_preinv (dummy, r, r, n1 << norm, d, inv);
-          return r >> norm;
-        }
+	  for (i = size-2; i >= 0; i--)
+	    {
+	      n0 = ap[i];
+	      udiv_qrnnd_preinv (dummy, r, r,
+				 (n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)),
+				 d, inv);
+	      n1 = n0;
+	    }
+	  udiv_qrnnd_preinv (dummy, r, r, n1 << norm, d, inv);
+	  return r >> norm;
+	}
     }
 }

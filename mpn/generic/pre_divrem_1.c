@@ -47,8 +47,8 @@ MA 02111-1307, USA. */
 
 mp_limb_t
 mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t xsize,
-                     mp_srcptr ap, mp_size_t size, mp_limb_t d_unnorm,
-                     mp_limb_t dinv, int shift)
+		     mp_srcptr ap, mp_size_t size, mp_limb_t d_unnorm,
+		     mp_limb_t dinv, int shift)
 {
   mp_limb_t  ahigh, qhigh, r;
   mp_size_t  i;
@@ -85,37 +85,37 @@ mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t xsize,
       size--;
 
       for (i = size-1; i >= 0; i--)
-        {
-          n0 = ap[i];
-          udiv_qrnnd_preinv (*qp, r, r, n0, d, dinv);
-          qp--;
-        }
+	{
+	  n0 = ap[i];
+	  udiv_qrnnd_preinv (*qp, r, r, n0, d, dinv);
+	  qp--;
+	}
     }
   else
     {
       r = 0;
       if (ahigh < d_unnorm)
-        {
-          r = ahigh << shift;
-          *qp-- = 0;
-          size--;
-          if (size == 0)
-            goto done_integer;
-        }
-
-#define EXTRACT   ((n1 << shift) | (n0 >> (BITS_PER_MP_LIMB - shift)))
+	{
+	  r = ahigh << shift;
+	  *qp-- = 0;
+	  size--;
+	  if (size == 0)
+	    goto done_integer;
+	}
 
       n1 = ap[size-1];
       r |= n1 >> (BITS_PER_MP_LIMB - shift);
 
       for (i = size-2; i >= 0; i--)
-        {
-          ASSERT (r < d);
-          n0 = ap[i];
-          udiv_qrnnd_preinv (*qp, r, r, EXTRACT, d, dinv);
-          qp--;
-          n1 = n0;
-        }
+	{
+	  ASSERT (r < d);
+	  n0 = ap[i];
+	  udiv_qrnnd_preinv (*qp, r, r,
+			     ((n1 << shift) | (n0 >> (BITS_PER_MP_LIMB - shift))),
+			     d, dinv);
+	  qp--;
+	  n1 = n0;
+	}
       udiv_qrnnd_preinv (*qp, r, r, n1 << shift, d, dinv);
       qp--;
     }
