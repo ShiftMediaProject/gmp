@@ -2328,14 +2328,19 @@ struct __gmp_rand_function
 
 /**************** Auxiliary classes ****************/
 
-/* this is the same as gmp_allocated_string in gmp-impl.h
+/* this is much the same as gmp_allocated_string in gmp-impl.h
    since gmp-impl.h is not publicly available, I redefine it here
    I use a different name to avoid possible clashes */
 struct __gmp_alloc_cstring
 {
   char *str;
   __gmp_alloc_cstring(char *s) { str = s; }
-  ~__gmp_alloc_cstring() { __gmp_free_func(str, strlen(str)+1); }
+  ~__gmp_alloc_cstring()
+  {
+    void (*freefunc) (void *, size_t);
+    mp_get_memory_functions (NULL, NULL, &freefunc);
+    (*freefunc) (str, strlen(str)+1);
+  }
 };
 
 
