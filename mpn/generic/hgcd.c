@@ -712,25 +712,28 @@ hgcd_mul (struct hgcd_row *P, mp_size_t alloc,
     return psize - (h == 0);
 }
 
-/* Computes R = W^k H + u A' - v B', which must be non-negative. W
-   denotes 2^(GMP_NUMB_BITS). Temporary space needed is k + uvsize.
+/* Computes R = W^k s->r + s->u A' - s->v B', which must be
+   non-negative. W denotes 2^(GMP_NUMB_BITS). Temporary space needed
+   is k + uvsize.
 
-   H and R must not overlap. Must have v > 0, v >= u. */
+   Must have v > 0, v >= u. */
 
 mp_size_t
 mpn_hgcd_fix (mp_size_t k,
 	      mp_ptr rp, mp_size_t ralloc,
-	      mp_ptr hp, mp_size_t hsize,
-	      int sign,
-	      mp_srcptr up, mp_srcptr ap,
-	      mp_srcptr vp, mp_srcptr bp,
-	      mp_size_t uvsize,
+	      int sign, mp_size_t uvsize,
+	      const struct hgcd_row *s, 
+	      mp_srcptr ap,
+	      mp_srcptr bp,
 	      mp_ptr tp, mp_size_t talloc)
 {
   mp_size_t tsize;
   mp_limb_t cy;
   mp_size_t rsize;
+  mp_srcptr up;
+  mp_srcptr vp;
 
+  up = s->uvp[0]; vp = s->uvp[1];
   MPN_NORMALIZE (vp, uvsize);
   ASSERT (uvsize > 0);
   
@@ -742,26 +745,26 @@ mpn_hgcd_fix (mp_size_t k,
 
   tsize = k + uvsize;
 
-  ASSERT (k + hsize <= ralloc);
+  ASSERT (k + s->rsize <= ralloc);
   ASSERT (tsize <= talloc);
   ASSERT (tsize <= ralloc);
 
-  ASSERT (rp != hp);
+  ASSERT (rp != s->rp);
 
-  /* r = W^k h + u a */
+  /* r = W^k s + u a */
   if (uvsize <= k)
     mpn_mul (rp, ap, k, up, uvsize);
   else
     mpn_mul (rp, up, uvsize, ap, k);
 
-  if (uvsize <= hsize)
+  if (uvsize <= s->rsize)
     {
-      cy = mpn_add (rp + k, hp, hsize, rp + k, uvsize);
-      rsize = k + hsize;
+      cy = mpn_add (rp + k, s->rp, s->rsize, rp + k, uvsize);
+      rsize = k + s->rsize;
     }
   else
     {
-      cy = mpn_add (rp + k, rp + k, uvsize, hp, hsize);
+      cy = mpn_add (rp + k, rp + k, uvsize, s->rp, s->rsize);
       rsize = k + uvsize;
     }
 
@@ -1960,20 +1963,14 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* Store new values in rows 2 and 3, to avoid overlap */
 	  hgcd->row[2].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[2].rp, ralloc,
-			    R.row[1].rp, R.row[1].rsize,
-			    ~R.sign,
-			    R.row[1].uvp[0], hgcd->row[0].rp,
-			    R.row[1].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    ~R.sign, R.size, &R.row[1], 
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  hgcd->row[3].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[3].rp, ralloc,
-			    R.row[2].rp, R.row[2].rsize,
-			    R.sign,
-			    R.row[2].uvp[0], hgcd->row[0].rp,
-			    R.row[2].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    R.sign, R.size, &R.row[2],
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  ASSERT (hgcd->row[2].rsize > M);
@@ -2029,20 +2026,14 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* Store new values in rows 2 and 3, to avoid overlap */
 	  hgcd->row[2].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[2].rp, ralloc,
-			    R.row[1].rp, R.row[1].rsize,
-			    ~R.sign,
-			    R.row[1].uvp[0], hgcd->row[0].rp,
-			    R.row[1].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    ~R.sign, R.size, &R.row[1],
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  hgcd->row[3].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[3].rp, ralloc,
-			    R.row[2].rp, R.row[2].rsize,
-			    R.sign,
-			    R.row[2].uvp[0], hgcd->row[0].rp,
-			    R.row[2].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    R.sign, R.size, &R.row[2],
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  ASSERT (hgcd->row[2].rsize > M);
@@ -2073,20 +2064,14 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* Store new values in rows 2 and 3, to avoid overlap */
 	  hgcd->row[2].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[2].rp, ralloc,
-			    R.row[2].rp, R.row[2].rsize,
-			    R.sign,
-			    R.row[2].uvp[0], hgcd->row[0].rp,
-			    R.row[2].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    R.sign, R.size, &R.row[2],
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  hgcd->row[3].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[3].rp, ralloc,
-			    R.row[3].rp, R.row[3].rsize,
-			    ~R.sign,
-			    R.row[3].uvp[0], hgcd->row[0].rp,
-			    R.row[3].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    ~R.sign, R.size, &R.row[3], 
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  ASSERT (hgcd->row[2].rsize > M);
@@ -2222,20 +2207,14 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* Store new values in rows 2 and 3, to avoid overlap */
 	  hgcd->row[2].rsize
 	    = mpn_hgcd_fix (k, hgcd->row[2].rp, hgcd->row[0].rsize + 1,
-			    R.row[0].rp, R.row[0].rsize,
-			    R.sign,
-			    R.row[0].uvp[0], hgcd->row[0].rp,
-			    R.row[0].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    R.sign, R.size, &R.row[0],
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 	  
 	  hgcd->row[3].rsize
 	    = mpn_hgcd_fix (k, hgcd->row[3].rp, hgcd->row[1].rsize + 1,
-			    R.row[1].rp, R.row[1].rsize,
-			    ~R.sign,
-			    R.row[1].uvp[0], hgcd->row[0].rp,
-			    R.row[1].uvp[1], hgcd->row[1].rp,
-			    R.size,
+			    ~R.sign, R.size, &R.row[1],
+			    hgcd->row[0].rp, hgcd->row[1].rp,
 			    tp, talloc);
 
 	  ASSERT (hgcd->row[2].rsize > M);
