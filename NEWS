@@ -8,7 +8,7 @@ Changes between MP version 3.0 and 3.1
   and P-Pro/II/III.
 * The mpf_get_prec function now works as it did in GMP 2.
 * New utilities for auto-tuning and speed measuring.
-* Multiplication now uses FFT for very large operands.
+* Multiplication now optionally uses FFT for very large operands.
 * Support for new systems: Solaris running on x86, FreeBSD 5,
   HP-UX 11, Cray vector computers, Rhapsody, Nextstep/Openstep.
 * Support for shared libraries on 32-bit HPPA.
