@@ -886,7 +886,7 @@ AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
 if test -n "$SPEED_CYCLECOUNTER_OBJ"
 then
   AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
-  [Tune directory speed_cyclecounter, 0=none, 1=32bits, 2=64bits)])
+  [Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits)])
 
   # All cycle counters are .asm files currently
   found_asm=yes
