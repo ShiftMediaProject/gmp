@@ -1,6 +1,6 @@
 /* mpz_lucnum2_ui -- calculate Lucas numbers.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -63,8 +63,12 @@ mpz_lucnum2_ui (mpz_ptr ln, mpz_ptr lnsub1, unsigned long n)
   size = mpn_fib2_ui (l1p, f1p, n);
 
   /* L[n] = F[n] + 2F[n-1] */
+#if HAVE_NATIVE_mpn_addlsh1_n
+  c = mpn_addlsh1_n (lp, l1p, f1p, size);
+#else
   c = mpn_lshift (lp, f1p, size, 1);
   c += mpn_add_n (lp, lp, l1p, size);
+#endif
   lp[size] = c;
   SIZ(ln) = size + (c != 0);
 
