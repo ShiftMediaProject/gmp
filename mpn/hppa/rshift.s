@@ -28,7 +28,7 @@
 
 	.code
 	.export		__gmpn_rshift
-__gmpn_rshift
+	.label		__gmpn_rshift
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry
@@ -41,7 +41,8 @@ __gmpn_rshift
 	addib,=		-1,%r24,L$0002
 	vshd		%r29,%r22,%r20
 
-L$loop	ldws,ma		4(0,%r25),%r22
+	.label	L$loop
+	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
 	addib,=		-1,%r24,L$0003
 	vshd		%r22,%r29,%r20
@@ -50,12 +51,17 @@ L$loop	ldws,ma		4(0,%r25),%r22
 	addib,<>	-1,%r24,L$loop
 	vshd		%r29,%r22,%r20
 
-L$0002	stws,ma		%r20,4(0,%r26)
+	.label	L$0002
+	stws,ma		%r20,4(0,%r26)
 	vshd		%r0,%r29,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
-L$0003	stws,ma		%r20,4(0,%r26)
-L$0004	vshd		%r0,%r22,%r20
+
+	.label	L$0003
+	stws,ma		%r20,4(0,%r26)
+
+	.label	L$0004
+	vshd		%r0,%r22,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
 
