@@ -1,3 +1,24 @@
+2000-02-20  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GSYM_PREFIX): Drop $1, change by Linus.
+	* mpn/asm-defs.m4 (PROLOGUE,EPILOGUE): Use GSYM_PREFIX as a
+	string, change by Linus.
+	* mpn/x86/x86-defs.m4: Use GSYM_PREFIX as a string.
+
+	* mpn/x86/k6/gmp-mparam.h: New file.
+	* mpn/asm-defs.m4 (m4_warning): New macro.
+
+	* mpn/x86/README: Amendments per new code and directories.
+	* mpn/x86/README.family: New file.
+	* mpn/x86/k6/README: New file.
+	* mpn/x86/k7/README: New file.
+
+	* mpn/generic/mul_n.c: Rename __gmpn_mul_basecase to
+	mpn_mul_basecase and __gmpn_sqr_basecase to mpn_sqr_basecase.
+	* mpn/generic/mul_basecase.c: Ditto.
+	* mpn/generic/sqr_basecase.c: Ditto.
+	* mpn/generic/mul.c: Ditto.
+
 2000-02-19  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Don't try to symlink more than one multi-func
