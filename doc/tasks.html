@@ -89,6 +89,11 @@
 <li> Write new <code>mpn_get_str</code> and <code>mpn_set_str</code> running in
      the sub O(n^2) range, using some divide-and-conquer approach, preferably
      without using division.
+<li> <code>mpn_get_str</code> should use a fast native
+     <code>mpn_divrem_1</code> when available (athlon, p6mmx), possibly via a
+     new <code>mpn_divrem_1_preinv</code> interface.  New functions like
+     <code>mpn_divrem_1_norm</code> or <code>mpn_divrem_1_preinvnorm</code>
+     could exist for those targets where pre-shifting helps (p6 maybe).
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
 <li> Consider inlining these functions: <code>mpz_size</code>,
