@@ -100,7 +100,7 @@ EOF
 	rm -f dummy.s dummy
 	echo ${UNAME_MACHINE}-dec-osf`echo ${UNAME_RELEASE} | sed -e 's/^[VTX]//' | tr [[A-Z]] [[a-z]]`
 	exit 0 ;;
-    alpha:NetBSD:*:*)
+    alpha:NetBSD:*:* | alpha:FreeBSD:*:*)
 	cat <<EOF >dummy.s
 	.globl main
 	.ent main
@@ -140,7 +140,7 @@ EOF
 		esac
 	fi
 	rm -f dummy.s dummy
-	echo ${UNAME_MACHINE}-unknown-netbsd`echo ${UNAME_RELEASE} | sed -e 's/^[VTX]//' | tr [[A-Z]] [[a-z]]`
+	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM}${UNAME_RELEASE} | sed -e 's/^[VTX]//' -e 's/[-(].*//' | tr [[A-Z]] [[a-z]]`
 	exit 0 ;;
     21064:Windows_NT:50:3)
 	echo alpha-dec-winnt3.5
