@@ -13,6 +13,8 @@
 	* randlc.c, randcm.c, randclr.c, rand.c: Change #include of
 	<gmp.h> to "gmp.h".
 
+	* randclr.c: Include stdlib.h for free().
+	
 1999-05-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/configure.in: Put generic m68k alternative last.
