@@ -1,6 +1,5 @@
-/* Miscellaneous test program support routines. */
+/* Miscellaneous test program support routines.
 
-/*
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "config.h"
 
@@ -222,6 +220,18 @@ mpz_set_str_or_abort (mpz_ptr z, const char *str, int base)
   if (mpz_set_str (z, str, base) != 0)
     {
       fprintf (stderr, "ERROR: mpz_set_str failed\n");
+      fprintf (stderr, "   str  = \"%s\"\n", str);
+      fprintf (stderr, "   base = %d\n", base);
+      abort();
+    }
+}
+
+void
+mpq_set_str_or_abort (mpq_ptr q, const char *str, int base)
+{
+  if (mpq_set_str (q, str, base) != 0)
+    {
+      fprintf (stderr, "ERROR: mpq_set_str failed\n");
       fprintf (stderr, "   str  = \"%s\"\n", str);
       fprintf (stderr, "   base = %d\n", base);
       abort();
