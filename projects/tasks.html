@@ -30,9 +30,6 @@
      that directive.  How very clever of HP.  We will have to pass assembler
      options, and make sure it works with new and old systems and GNU
      assembler.
-<li> HPUX 10 C compiler supports alloca.  Cannot find any symbol to test in
-     order to know if we're on HPUX 10.  Damn.  Maybe an autoconf test can
-     help.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
