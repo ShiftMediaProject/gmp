@@ -12128,7 +12128,7 @@ Wed Apr 24 05:33:28 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Version 2.0 released.
 
-	* All files: Upfate FSF's address.
+	* All files: Update FSF's address.
 
 	* Makefile.in (gmp_toc.html): New name for gmp.html.
 	(TAGS): Depend on force.
