@@ -249,8 +249,10 @@ libgmp_la_LDFLAGS = -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(L
 # -lm wanted on libmp_la_LIBADD for the same reason as libgmp
 @WANT_MPBSD_TRUE@MPBSD_HEADERS_OPTION = @WANT_MPBSD_TRUE@mp.h
 @WANT_MPBSD_TRUE@MPBSD_LTLIBRARIES_OPTION = @WANT_MPBSD_TRUE@libmp.la
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
-  assert.lo errno.lo memory.lo mp_bpl.lo mp_clz_tab.lo stack-alloc.lo
+libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			    \
+  assert.lo errno.lo memory.lo mp_bpl.lo mp_clz_tab.lo stack-alloc.lo	    \
+  mpz/add.lo mpz/clear.lo mpz/init.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo \
+  mpz/realloc.lo mpz/set.lo mpz/set_ui.lo mpz/tdiv_r.lo mpz/sub.lo
 
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES) -lm
 libmp_la_SOURCES = 
