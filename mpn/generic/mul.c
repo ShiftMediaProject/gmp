@@ -29,6 +29,11 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
+#ifndef MUL_BASECASE_MAX_UN
+#define MUL_BASECASE_MAX_UN 500
+#endif
+
 /* Multiply the natural numbers u (pointed to by UP, with UN limbs) and v
    (pointed to by VP, with VN limbs), and store the result at PRODP.  The
    result is UN + VN limbs.  Return the most significant limb of the result.
@@ -40,65 +45,6 @@ MA 02111-1307, USA. */
    1. UN >= VN.
    2. PRODP != UP and PRODP != VP, i.e. the destination must be distinct from
       the multiplier and the multiplicand.  */
-
-void
-mpn_sqr_n (mp_ptr prodp,
-	   mp_srcptr up, mp_size_t un)
-{
-  ASSERT (un >= 1);
-  ASSERT (! MPN_OVERLAP_P (prodp, 2*un, up, un));
-
-  /* FIXME: Can this be removed? */
-  if (un == 0)
-    return;
-
-  if (BELOW_THRESHOLD (un, SQR_BASECASE_THRESHOLD))
-    { /* mul_basecase is faster than sqr_basecase on small sizes sometimes */
-      mpn_mul_basecase (prodp, up, un, up, un);
-    }
-  else if (BELOW_THRESHOLD (un, SQR_KARATSUBA_THRESHOLD))
-    { /* plain schoolbook multiplication */
-      mpn_sqr_basecase (prodp, up, un);
-    }
-  else if (BELOW_THRESHOLD (un, SQR_TOOM3_THRESHOLD))
-    { /* karatsuba multiplication */
-      mp_ptr tspace;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
-      tspace = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (un));
-      mpn_kara_sqr_n (prodp, up, un, tspace);
-      TMP_FREE (marker);
-    }
-#if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (BELOW_THRESHOLD (un, SQR_FFT_THRESHOLD))
-#else
-  else
-#endif
-    { /* Toom3 multiplication.
-	 Use workspace from the heap, as stack may be limited.  Since n is
-	 at least MUL_TOOM3_THRESHOLD, the multiplication will take much
-	 longer than malloc()/free().  */
-      mp_ptr     tspace;
-      mp_size_t  tsize;
-      tsize = MPN_TOOM3_SQR_N_TSIZE (un);
-      tspace = __GMP_ALLOCATE_FUNC_LIMBS (tsize);
-      mpn_toom3_sqr_n (prodp, up, un, tspace);
-      __GMP_FREE_FUNC_LIMBS (tspace, tsize);
-    }
-#if WANT_FFT || TUNE_PROGRAM_BUILD
-  else
-    {
-      /* schoenhage multiplication */
-      mpn_mul_fft_full (prodp, up, un, up, un);
-    }
-#endif
-}
-
-#ifndef MUL_BASECASE_MAX_UN
-#define MUL_BASECASE_MAX_UN 500
-#endif
-
-#include <stdio.h>
 
 mp_limb_t
 mpn_mul (mp_ptr prodp,
