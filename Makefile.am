@@ -286,7 +286,13 @@ info_TEXINFOS = gmp.texi
 gmp_TEXINFOS = fdl.texi
 
 
-# Don't ship CVS directories or emacs backups.
+# Avoid: CVS - cvs directories
+#        *~  - emacs backups
+#        .#* - cvs merge originals
+#
+# *~ and .#* only occur when a whole directory without it's own Makefile.am
+# is distributed, like "doc" or the mpn cpu subdirectories.
+#
 dist-hook:
-	-find $(distdir) \( -name CVS -type d \) -o -name "*~" \
+	-find $(distdir) \( -name CVS -type d \) -o -name "*~" -o -name ".#*" \
 		| xargs rm -rf
