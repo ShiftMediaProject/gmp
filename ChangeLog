@@ -18,13 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-06-12  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_GCC_VERSION_GE): Recognise mingw gcc 3.1 version.
+	(GMP_PROG_CC_WORKS): Allow for a_out.exe, as per autoconf.
+	(GMP_GCC_NO_CPP_PRECOMP, GMP_ASM_UNDERSCORE): Ditto, plus a.exe.
+	
 2002-06-09  Torbjorn Granlund  <tege@swox.com>
 
 	* randraw.c (lc): Remove broken ASSERT_ALWAYS.
 
 	* mpn/x86: Update gmp-mparam.h files with current measures *_THRESHOLD
 	values.
-	* mpn/x86/p6/mmx/gmp-mparam.g: New file.
+	* mpn/x86/p6/mmx/gmp-mparam.h: New file.
 
 2002-06-09  Kevin Ryde  <kevin@swox.se>
 
