@@ -1,3 +1,12 @@
+2001-07-28  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Random Number Functions): Old rand functions no longer use
+	the C library.
+
+	* configure.in, acinclude.m4 (GMP_FUNC_VSNPRINTF): New macro.
+
+	* mpn/generic/get_str.c: Add an ASSERT for high limb non-zero.
+	
 2001-07-24  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Add --enable-cxx.
