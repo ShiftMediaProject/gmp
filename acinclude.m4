@@ -845,17 +845,11 @@ dnl  needed at all, at least for just checking instruction syntax.
 AC_DEFUN(GMP_ASM_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_asm_mmx,
-[cat > conftest.s <<EOF
-	.text
-	por	%mm0, %mm0
-EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_asm_mmx=yes
-else 
-  gmp_cv_asm_mmx=no
-fi
-rm -f conftest*
+[GMP_TRY_ASSEMBLE(
+[	.text
+	por	%mm0, %mm0],
+  gmp_cv_asm_mmx=yes,
+  gmp_cv_asm_mmx=no)
 ])
 if test "$gmp_cv_asm_mmx" = "yes"; then
   ifelse([$1], , :, [$1])
@@ -878,18 +872,12 @@ dnl  ----------------------------------------------------------
 AC_DEFUN(GMP_ASM_SHLDL_CL,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
-               gmp_cv_asm_shldl_cl,
-[cat > conftest.s <<EOF
-	$gmp_cv_asm_text
-	shldl	%cl, %eax, %ebx
-EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_asm_shldl_cl=yes
-else 
-  gmp_cv_asm_shldl_cl=no
-fi
-rm -f conftest*
+		gmp_cv_asm_shldl_cl,
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	shldl	%cl, %eax, %ebx],
+  gmp_cv_asm_shldl_cl=yes,
+  gmp_cv_asm_shldl_cl=no)
 ])
 if test "$gmp_cv_asm_shldl_cl" = "yes"; then
   ifelse([$1], , :, [$1])
