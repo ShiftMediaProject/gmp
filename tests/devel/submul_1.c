@@ -40,8 +40,6 @@ cputime ()
 #include <sys/time.h>
 #include <sys/resource.h>
 
-static void mpn_print (mp_ptr, mp_size_t);
-
 int
 cputime ()
 {
@@ -51,6 +49,8 @@ cputime ()
   return rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000;
 }
 #endif
+
+static void mpn_print (mp_ptr, mp_size_t);
 
 #define M * 1000000
 
