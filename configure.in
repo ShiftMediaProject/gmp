@@ -903,6 +903,34 @@ for tmp_fn in ${gmp_mpn_functions} ; do
   fi
 done
 
+SPEED_CYCLECOUNTER_OBJ=
+cyclecounter_size=2
+case ${target} in
+  X86_PATTERN)
+    # Availability of rdtsc is checked at run-time.
+    SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
+  alpha*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=alpha.lo
+    cyclecounter_size=1 ;;
+  sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
+  hppa2*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
+  hppa*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
+  ia64*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
+esac
+AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
+if test -n "$SPEED_CYCLECOUNTER_OBJ"
+then
+  AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
+  [Tune directory speed_cyclecounter, 0=none, 1=32bits, 2=64bits)])
+
+  # All cycle counters are .asm files currently
+  found_asm=yes
+fi
+
 # Don't demand an m4 unless it's actually needed.
 if test $found_asm = yes; then
   GMP_PROG_M4
@@ -991,31 +1019,6 @@ AC_SUBST(mpn_objects)
 AC_SUBST(mpn_objs_in_libgmp)
 AC_SUBST(gmp_srclinks)
 
-
-SPEED_CYCLECOUNTER_OBJ=
-cyclecounter_size=2
-case ${target} in
-  X86_PATTERN)
-    # Availability of rdtsc is checked at run-time.
-    SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
-  alpha*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=alpha.lo
-    cyclecounter_size=1 ;;
-  sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
-  hppa2*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
-  hppa*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
-  ia64*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
-esac
-AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
-if test -n "$SPEED_CYCLECOUNTER_OBJ"
-then
-  AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
-  [Tune directory speed_cyclecounter, 0=none, 1=32bits, 2=64bits)])
-fi
 
 # A recompiled sqr_basecase for use in the tune program, if necessary.
 TUNE_SQR_OBJ=
