@@ -2483,8 +2483,9 @@ case $gmp_cv_c_inline in
 no) ;;
 *)
   AC_TRY_COMPILE(
-GMP_INCLUDE_GMP_H
-[#ifndef __GMP_EXTERN_INLINE
+[#define __GMP_WITHIN_CONFIGURE_INLINE 1
+]GMP_INCLUDE_GMP_H[
+#ifndef __GMP_EXTERN_INLINE
 die die die
 #endif
 ],,,
