@@ -53,8 +53,8 @@ dnl  -------------
 dnl 
 dnl  Find a working m4, either in $PATH or likely locations.  Setup $M4 and
 dnl  an AC_SUBST accordingly.  If $M4 is already set then it's from the user
-dnl  is accepted with no checks.  GMP_PROG_M4 is like AC_PATH_PROG or
-dnl  AC_CHECK_PROG, but testing for a good enough m4.
+dnl  and is accepted with no checks.  GMP_PROG_M4 is like AC_PATH_PROG or
+dnl  AC_CHECK_PROG, but testing each m4 found to see if it's good enough.
 dnl 
 dnl  SunOS /usr/bin/m4 is old and lacks features we need, like $# and
 dnl  command line -D.  SunOS has a /usr/5bin/m4 which is a SysV m4 and will
@@ -600,7 +600,7 @@ AC_DEFUN(GMP_CHECK_ASM_MMX,
 AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_check_asm_mmx,
 [cat > conftest.s <<EOF
-	$gmp_check_asm_text
+	$gmp_cv_check_asm_text
 	por	%mm0, %mm0
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
@@ -631,7 +631,7 @@ AC_DEFUN(GMP_CHECK_ASM_SHLDL_CL,
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
 		gmp_cv_check_asm_shldl_cl,
 [cat > conftest.s <<EOF
-	$gmp_check_asm_text
+	$gmp_cv_check_asm_text
 	shldl	%cl, %eax, %ebx
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
@@ -679,6 +679,48 @@ else
   ifelse([$4], , :, [$4])
 fi
 ])dnl
+
+
+dnl  GMP_C_ANSI2KNR
+dnl  --------------
+dnl  Setup to use ansi2knr if necessary.
+dnl
+dnl  The test here is simply that if an ANSI style function works then
+dnl  ansi2knr isn't needed.  The normal tests for whether $CC works mean we
+dnl  don't need to worry here about anything badly broken.
+dnl
+dnl  AM_C_PROTOTYPES is the normal way to set up ansi2knr, but (in automake
+dnl  March 2000) it gives the wrong answer on a C++ compiler because its
+dnl  test requires that the compiler accept both ANSI and K&R, or otherwise
+dnl  ansi2knr is used.  A C++ compiler fails on the K&R part, which makes
+dnl  AM_C_PROTOTYPES think it needs ansi2knr!  GMP has no bare K&R so we
+dnl  only need ANSI or K&R to work, not both.
+
+AC_DEFUN(GMP_C_ANSI2KNR,
+[AC_CACHE_CHECK([if ansi2knr should be used],
+                gmp_cv_c_ansi2knr,
+[cat >conftest.c <<EOF
+int main (int argc, char *argv[]) { return 0; }
+EOF
+if AC_TRY_EVAL(ac_compile); then
+  gmp_cv_c_ansi2knr=no
+else
+  gmp_cv_c_ansi2knr=yes
+fi
+rm -f conftest.*
+])
+if test $gmp_cv_c_ansi2knr = no; then
+  U= ANSI2KNR=
+else
+  U=  ANSI2KNR=./ansi2knr
+  # Ensure some checks needed by ansi2knr itself.
+  AC_HEADER_STDC
+  AC_CHECK_HEADERS(string.h)
+fi
+AC_SUBST(U)
+AC_SUBST(ANSI2KNR)
+])
+
 
 dnl  Deal with bad synchronization of Autoconf with Libtool.
 AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
