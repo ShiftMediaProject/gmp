@@ -284,7 +284,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 
 	  MPN_NORMALIZE (dp, dsize);
 	  MPN_COPY (rp, dp, dsize);
-	  __GMP_FREE_FUNC_LIMBS (pow_mem, alloc);
+	  __GMP_FREE_FUNC_LIMBS (pow_mem, 2 * alloc);
 	  __GMP_FREE_FUNC_LIMBS (dp, alloc);
 	  return dsize;
 	}
