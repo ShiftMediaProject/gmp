@@ -608,9 +608,9 @@ getrusage_microseconds_p (void)
 # endif
 #endif
 #ifdef CGT_ID
-# define HAVE_CGT_ID  1
+const int  have_cgt_id = 1;
 #else
-# define HAVE_CGT_ID  0
+const int  have_cgt_id = 0;
 # define CGT_ID       (ASSERT_FAIL (CGT_ID not determined), -1)
 #endif
 
@@ -623,7 +623,7 @@ cgt_works_p (void)
   if (! have_cgt)
     return 0;
 
-  if (! HAVE_CGT_ID)
+  if (! have_cgt_id)
     {
       if (speed_option_verbose)
         printf ("clock_gettime don't know what ID to use\n");
