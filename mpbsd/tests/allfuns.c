@@ -26,9 +26,7 @@ MA 02111-1307, USA.
 #include "mp.h"
 
 int
-main (argc, argv)
-int argc;
-char *argv[];
+main (int argc, char *argv[])
 {
   MINT *a, *b, *c, *d;
   short  h;
@@ -49,8 +47,10 @@ char *argv[];
   gcd (a, b, c);
   mcmp (a, b);
   if (argc > 1)
-    min (c);
-  mout (a);
+    {
+      min (c);
+      mout (a);
+    }
   mtox (b);
 
   mfree(a);
