@@ -1395,6 +1395,16 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("ediv %3,%2,%0,%1"						\
 	     : "=g" (q), "=g" (r) : "g" (__x.__ll), "g" (d));		\
   } while (0)
+#if 0
+/* FIXME: This instruction appears to be unimplemented on some systems (vax
+   8800 maybe). */
+#define count_trailing_zeros(count,x)                                   \
+  do {									\
+    __asm__ ("ffs 0, 31, %1, %0"                                        \
+	     : "=g" ((USItype) (count))					\
+	     : "g" ((USItype) (x)));                                    \
+  } while (0)
+#endif
 #endif /* __vax__ */
 
 #if defined (__z8000__) && W_TYPE_SIZE == 16
