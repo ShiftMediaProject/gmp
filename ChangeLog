@@ -1,5 +1,12 @@
 2000-12-05  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/sparc32/v8/supersparc/gmp-mparam.h: Retune.
+	* mpn/alpha/gmp-mparam.h: Tune for 21064.
+
+	* longlong.h: Reformat to avoid newlines within strings.
+
+	* gmp-impl.h (inline): Disable if GCC has defined __STRICT_ANSI__.
+
 	* configure.in: Do a `mkdir tune' before creating tune/sqr_basecase.c.
 
 	* Makefile.am: Treat mp.h analogously to gmp.h.
