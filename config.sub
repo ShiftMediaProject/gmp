@@ -116,44 +116,49 @@ case $os in
 	-hiux*)
 		os=-hiuxwe2
 		;;
+
+        # GMP change: don't demand "86" in the CPU for SCO and similar
+        # systems when changing the VENDOR to "pc" (or "sequent"),
+        # since "pentium" etc is also valid in GMP.
+
 	-sco5)
 		os=-sco3.2v5
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-sco4)
 		os=-sco3.2v4
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-sco3.2.[4-9]*)
 		os=`echo $os | sed -e 's/sco3.2./sco3.2v/'`
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-sco3.2v[4-9]*)
 		# Don't forget version if it is 3.2v4 or newer.
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-sco*)
 		os=-sco3.2v2
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-udk*)
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-isc)
 		os=-isc2.2
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-clix*)
 		basic_machine=clipper-intergraph
 		;;
 	-isc*)
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-pc/'`
 		;;
 	-lynx*)
 		os=-lynxos
 		;;
 	-ptx*)
-		basic_machine=`echo $1 | sed -e 's/86-.*/86-sequent/'`
+		basic_machine=`echo $1 | sed -e 's/-.*/-sequent/'`
 		;;
 	-windowsnt*)
 		os=`echo $os | sed -e 's/windowsnt/winnt/'`
