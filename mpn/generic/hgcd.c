@@ -715,7 +715,7 @@ hgcd_mul (struct hgcd_row *P, mp_size_t alloc,
 /* Computes R = W^k H + u A' - v B', which must be non-negative. W
    denotes 2^(GMP_NUMB_BITS). Temporary space needed is k + uvsize.
 
-   H and R must not overlap. */
+   H and R must not overlap. Must have v > 0, v >= u. */
 
 mp_size_t
 mpn_hgcd_fix (mp_size_t k,
@@ -731,6 +731,9 @@ mpn_hgcd_fix (mp_size_t k,
   mp_limb_t cy;
   mp_size_t rsize;
 
+  MPN_NORMALIZE (vp, uvsize);
+  ASSERT (uvsize > 0);
+  
   if (sign < 0)
     {
       MP_SRCPTR_SWAP (up, vp);
@@ -1138,6 +1141,18 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
   return mpn_hgcd2 (hgcd, ah, al, bh, bl, quotients);
 }
 
+/* Only the first row has v = 0, a = 1 * a + 0 * b */
+static int
+hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
+{
+  mp_size_t i;
+  for (i = 0; i < n; i++)
+    if (r->uvp[1][i] != 0)
+      return 0;
+
+  return 1;
+}
+
 /* Scratch space needed to compute |u2| + |u1| or |v2| + |v1|, where
    all terms are at most floor (asize/2) limbs. */
 #define HGCD_JEBELEAN_ITCH(asize) ((asize)/2 + 1)
@@ -1150,7 +1165,11 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
 
      r[k] - r[k-1] >= max (u[k+1] - u[k], v[k+1] - v[k])
 
-   Returns 2, 3 or 4.
+   Return 0 on failure, i.e. if B or A mod B < W^M. Return 1 in case
+   r0 and r1 are correct, but we still make no progress because r0 =
+   A, r1 = B.
+   
+   Otherwise return 2, 3 or 4, the number of r:s that are correct.
  */
 static int
 hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
@@ -1218,7 +1237,7 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 
   if (mpn_diff_smaller_p (hgcd->row[1].rp, hgcd->row[1].rsize,
 			  hgcd->row[2].rp, hgcd->row[2].rsize, tp, tsize))
-    return 2;
+    return 2 - (hgcd_start_row_p (hgcd->row, hgcd->size));
 
   /* Ok, r2 is correct */
 
@@ -1279,18 +1298,6 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 
   /* Ok, r3 is correct */
   return 4;
-}
-
-/* Only the first row has v = 0, a = 1 * a + 0 * b */
-static int
-hgcd_start_row_p (struct hgcd_row *r, mp_size_t n)
-{
-  mp_size_t i;
-  for (i = 0; i < n; i++)
-    if (r->uvp[1][i] != 0)
-      return 0;
-
-  return 1;
 }
 
 /* Called when r2 has been computed, and it is too small. Top element
@@ -1474,8 +1481,8 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
   /* FIXME: Can avoid branches */
   if (c1 != 0)
     {
-      r[3].uvp[0][size] = c0;
-      r[3].uvp[1][size] = c1;
+      r[1].uvp[0][size] = c0;
+      r[1].uvp[1][size] = c1;
       size++;
     }
   else
@@ -1916,51 +1923,43 @@ mpn_hgcd (struct hgcd *hgcd,
     {
       /* Max size after reduction, plus one */
       mp_size_t ralloc = hgcd->row[1].rsize + 1;
-      switch (mpn_hgcd (&R,
-			hgcd->row[0].rp + M, hgcd->row[0].rsize - M,
-			hgcd->row[1].rp + M, hgcd->row[1].rsize - M,
-			quotients, tp, talloc))
+      
+      int res = mpn_hgcd (&R,
+			  hgcd->row[0].rp + M, hgcd->row[0].rsize - M,
+			  hgcd->row[1].rp + M, hgcd->row[1].rsize - M,
+			  quotients, tp, talloc);
+
+      if (res == 0)
 	{
-	default:
-	  ASSERT_FAIL (1);
+	  /* We must divide to make progress */
+	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
-	case 0:
-	euclid_1:
-	  {
-	    /* The first remainder was small. Then there's a good chance
-	       that the remainder A % B is also small. */
-	    int res = euclid_step (hgcd, M, quotients, tp, talloc);
+	  if (res > 0)
+	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
+	  if (res >= 0)
+	    return res;
 
-	    if (res > 0)
-	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
-	    if (res >= 0)
-	      return res;
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
+	}
+      else if (res <= 2)
+	{
+	  /* The reason we use hgcd_adjust also when res == 2 is that
+	     either r2 is correct, and we get it for free.
 
-	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
-	    break;
-	  }
+	     Or r2 is too large. Then can correct it by a few bignum
+	     subtractions, and we are *guaranteed* that the result is
+	     small enough that we don't need another run through this
+	     loop. */
 
-	case 2:
-	  qstack_drop(quotients);
-	  qstack_drop(quotients);
-
-	  if (hgcd_start_row_p (&R.row[0], R.size))
-	    /* It might be cheaper to compute r1 and r2, and adjust
-	     * r3. To do that, we need the most recent quotient */
-	    goto euclid_1;
+	  /* FIXME: For res == 1, the newly computed row[2] will be
+	     the same as the old row[1], so we do some unnecessary
+	     computations. */
+	  
+	  qstack_drop (quotients);
 	  
 	  /* Store new values in rows 2 and 3, to avoid overlap */
 	  hgcd->row[2].rsize
 	    = mpn_hgcd_fix (M, hgcd->row[2].rp, ralloc,
-			    R.row[0].rp, R.row[0].rsize,
-			    R.sign,
-			    R.row[0].uvp[0], hgcd->row[0].rp,
-			    R.row[0].uvp[1], hgcd->row[1].rp,
-			    R.size,
-			    tp, talloc);
-
-	  hgcd->row[3].rsize
-	    = mpn_hgcd_fix (M, hgcd->row[3].rp, ralloc,
 			    R.row[1].rp, R.row[1].rsize,
 			    ~R.sign,
 			    R.row[1].uvp[0], hgcd->row[0].rp,
@@ -1968,25 +1967,61 @@ mpn_hgcd (struct hgcd *hgcd,
 			    R.size,
 			    tp, talloc);
 
-	  /* FIXME: This is true, for an up-to-date m, but currently m
-	     is not updated through this loop. */
-	  /* ASSERT (hgcd->row[2].rsize > M + m); */
+	  hgcd->row[3].rsize
+	    = mpn_hgcd_fix (M, hgcd->row[3].rp, ralloc,
+			    R.row[2].rp, R.row[2].rsize,
+			    R.sign,
+			    R.row[2].uvp[0], hgcd->row[0].rp,
+			    R.row[2].uvp[1], hgcd->row[1].rp,
+			    R.size,
+			    tp, talloc);
+
 	  ASSERT (hgcd->row[2].rsize > M);
 	  ASSERT (hgcd->row[3].rsize > M);
 
+	  /* Computes the uv matrix for the (possibly incorrect)
+	     values r1, r2. The elements must be smaller than the
+	     correct ones, since they correspond to a too small q. */
+	  
 	  hgcd->size = hgcd_mul (hgcd->row + 2, hgcd->alloc,
-				 R.row, R.size,
+				 R.row + 1, R.size,
 				 hgcd->row, hgcd->size,
 				 tp, talloc);
-	  hgcd->sign ^= R.sign;
+	  hgcd->sign ^= ~R.sign;
 
-	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
+	  if (MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
+			  hgcd->row[2].rp, hgcd->row[2].rsize))
+	    {
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
-	  HGCD_SWAP4_2 (hgcd->row);
-	  break;
+	      HGCD_SWAP4_2 (hgcd->row);
+	    }
+	  else
+	    {
+	      /* r2 was too large, i.e. q0 too small. In this case we
+		 must have r2 % r1 <= r2 - r1 smaller than M + m + 1. */
+	  
+	      hgcd->size = hgcd_adjust (hgcd->row + 2, hgcd->size, quotients);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
-	case 3:
+	      ASSERT (hgcd->row[3].rsize <= M + m + 1);
+	  
+	      if (hgcd->row[3].rsize <= M)
+		{
+		  /* Backup two steps */
+		  ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
+	      
+		  return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+		}
+	  
+	      HGCD_SWAP4_2 (hgcd->row);
 
+	      /* Loop always terminates here. */
+	      break;
+	    }
+	}
+      else if (res == 3)
+	{
 	  qstack_drop(quotients);
 
 	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
@@ -2022,9 +2057,11 @@ mpn_hgcd (struct hgcd *hgcd,
 	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
 	  HGCD_SWAP4_2 (hgcd->row);
-	  break;
+	}
+      else
+	{
+	  ASSERT (res == 4);
 
-	case 4:
 	  /* All of r0, r1, r3 and r3 are correct.
 	     Compute r2 and r3 */
 
@@ -2073,12 +2110,12 @@ mpn_hgcd (struct hgcd *hgcd,
 	      return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
 	    }
 	  HGCD_SWAP4_2 (hgcd->row);
-	  /* Short cut, we would exit the loop anyway. */
-	  goto reduction_done;
+
+	  /* Always exit the loop. */
+	  break;
 	}
     }
   
- reduction_done:
   ASSERT (hgcd->row[0].rsize >= hgcd->row[1].rsize);
   ASSERT (hgcd->row[1].rsize > M);
   ASSERT (hgcd->row[1].rsize <= M + m + 1);
@@ -2122,7 +2159,7 @@ mpn_hgcd (struct hgcd *hgcd,
 		      hgcd->row[1].rp + k, hgcd->row[1].rsize - k,
 		      quotients, tp, talloc);
 
-      if (!res)
+      if (res == 0)
 	{
 	  /* The first remainder was small. Then there's a good chance
 	     that the remainder A % B is also small. */
@@ -2138,67 +2175,102 @@ mpn_hgcd (struct hgcd *hgcd,
 	  continue;
 	}
 
-      /* Now r0 and r1 are always correct. */
-
-      if (res == 2 && hgcd_start_row_p(&R.row[0], R.size))
+      if (res == 1)
 	{
-	  qstack_drop (quotients);
-	  qstack_drop (quotients);
+	  mp_srcptr qp;
+	  mp_size_t qsize;
 	  
-	  goto euclid_2;
-	}
+	  qstack_drop (quotients);
+
+	  /* Compute possibly incorrect r2 and corresponding u2, v2.
+	     Incorrect matrix elements must be smaller than the
+	     correct ones, since they correspond to a too small q. */
+	  qsize = qstack_get_0 (quotients, &qp);
 	  
-      /* Store new values in rows 2 and 3, to avoid overlap */
-      hgcd->row[2].rsize
-	= mpn_hgcd_fix (k, hgcd->row[2].rp, hgcd->row[0].rsize + 1,
-			R.row[0].rp, R.row[0].rsize,
-			R.sign,
-			R.row[0].uvp[0], hgcd->row[0].rp,
-			R.row[0].uvp[1], hgcd->row[1].rp,
-			R.size,
-			tp, talloc);
+	  ASSERT (qsize + hgcd->size <= hgcd->alloc);
+	  hgcd_update_r (hgcd->row, qp, qsize);
+	  hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size,
+				       qp, qsize);
+	  ASSERT (hgcd->size < hgcd->alloc);
+	  
+	  if (!MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
+			   hgcd->row[2].rp, hgcd->row[2].rsize))
+	    hgcd->size = hgcd_adjust (hgcd->row + 1, hgcd->size, quotients);
 
-      hgcd->row[3].rsize
-	= mpn_hgcd_fix (k, hgcd->row[3].rp, hgcd->row[1].rsize + 1,
-			R.row[1].rp, R.row[1].rsize,
-			~R.sign,
-			R.row[1].uvp[0], hgcd->row[0].rp,
-			R.row[1].uvp[1], hgcd->row[1].rp,
-			R.size,
-			tp, talloc);
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 3);
 
-      ASSERT (hgcd->row[2].rsize > M);
-      ASSERT (hgcd->row[3].rsize > k);
-
-      hgcd->size = hgcd_mul (hgcd->row+2, hgcd->alloc,
-			     R.row, R.size, hgcd->row, hgcd->size,
-			     tp, talloc);
-      hgcd->sign ^= R.sign;
-
-      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
-
-      if (hgcd->row[3].rsize <= M)
-	{
-	  /* Backup two steps */
-
-	  /* We don't use R.row[2] and R.row[3], so drop the
-	     corresponding quotients. */
-	  qstack_drop (quotients);
-	  qstack_drop (quotients);
-
-	  return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
-	}
-
-      HGCD_SWAP4_2 (hgcd->row);
-
-      if (res == 2)
-	{
-	  qstack_drop (quotients);
-	  qstack_drop (quotients);
-
+	  if (hgcd->row[2].rsize <= M)
+	    {
+	      /* Backup one steps */
+	      ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
+	      
+	      return hgcd_small_1 (hgcd, M, quotients, tp, talloc);
+	    }
+	  
+	  HGCD_SWAP4_LEFT (hgcd->row);
+	  hgcd->sign = ~hgcd->sign;
 	  continue;
 	}
 
+      /* Now r0 and r1 are always correct. */
+
+      /* It's possible that first two "new" r:s are the same as the
+	 old ones. In that case skip recomputing them. */
+      
+      if (!hgcd_start_row_p (&R.row[0], R.size))
+	{
+	  /* Store new values in rows 2 and 3, to avoid overlap */
+	  hgcd->row[2].rsize
+	    = mpn_hgcd_fix (k, hgcd->row[2].rp, hgcd->row[0].rsize + 1,
+			    R.row[0].rp, R.row[0].rsize,
+			    R.sign,
+			    R.row[0].uvp[0], hgcd->row[0].rp,
+			    R.row[0].uvp[1], hgcd->row[1].rp,
+			    R.size,
+			    tp, talloc);
+	  
+	  hgcd->row[3].rsize
+	    = mpn_hgcd_fix (k, hgcd->row[3].rp, hgcd->row[1].rsize + 1,
+			    R.row[1].rp, R.row[1].rsize,
+			    ~R.sign,
+			    R.row[1].uvp[0], hgcd->row[0].rp,
+			    R.row[1].uvp[1], hgcd->row[1].rp,
+			    R.size,
+			    tp, talloc);
+
+	  ASSERT (hgcd->row[2].rsize > M);
+	  ASSERT (hgcd->row[3].rsize > k);
+
+	  hgcd->size = hgcd_mul (hgcd->row+2, hgcd->alloc,
+				 R.row, R.size, hgcd->row, hgcd->size,
+				 tp, talloc);
+	  hgcd->sign ^= R.sign;
+
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
+
+	  if (hgcd->row[3].rsize <= M)
+	    {
+	      /* Backup two steps */
+	      
+	      /* We don't use R.row[2] and R.row[3], so drop the
+		 corresponding quotients. */
+	      qstack_drop (quotients);
+	      qstack_drop (quotients);
+	      
+	      return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+	    }
+	  
+	  HGCD_SWAP4_2 (hgcd->row);
+
+	  if (res == 2)
+	    {
+	      qstack_drop (quotients);
+	      qstack_drop (quotients);
+	      
+	      continue;
+	    }
+	}
+      
       ASSERT (res >= 3);
 
       /* We already know the correct q */
