@@ -1396,16 +1396,21 @@ subdirectories uses up memory.
 @cindex @samp{DESTDIR}
 
 @samp{make install DESTDIR=/my/staging/area} or the same with a @samp{prefix}
-override to install to a temporary directory may fail when building a shared
-version of @file{libgmpxx}.
+override to install to a temporary directory is not fully supported by current
+versions of libtool when building a shared version of a library which depends
+on another being built at the same time, like @file{libgmpxx} and
+@file{libgmp}.
 
-If @file{libgmp} is already installed in its final location then there's no
-problem, but if not then unfortunately libtool doesn't know to look in the
-temporary directory for @file{libgmp} when relinking @file{libgmpxx}.
+The problem is that @file{libgmpxx} is relinked at the install stage to ensure
+that if the system puts a hard-coded path to @file{libgmp} within
+@file{libgmpxx} then that path will be correct.  Naturally the linker is
+directed to look only at the final location, not the staging area, so if
+@file{libgmp} is not already in that final location then the link will fail.
 
-A workaround, at least for SVR4 style systems such as GNU/Linux, is to insert
-a suitable @code{-L} in the @code{relink_command} of @file{libgmpxx.la} after
-building but before installing.  This can be automated with something like
+On systems which don't hard-code library paths, for instance SVR4 style
+systems such as GNU/Linux, a workaround is to insert a suitable @code{-L} in
+the @code{relink_command} of @file{libgmpxx.la} after building but before
+installing.  This can be automated with something like
 
 @example
 sed '/^relink_command/s:libgmp.la:-L /my/staging/area libgmp.la:' \
@@ -8969,6 +8974,7 @@ Jonathan M. Borwein and Peter B. Borwein, ``Pi and the AGM: A Study in
 Analytic Number Theory and Computational Complexity'', Wiley, John & Sons,
 1998.
 
+@item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.
 @texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen}
