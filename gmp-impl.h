@@ -316,8 +316,10 @@ void __gmp_default_free _PROTO ((void *, size_t));
 
 #if defined (__GNUC__) && defined (__i386__)
 #if 0
-/* Check that these actually improve things.
-   Need a cld after each std too. */
+/* FIXME: Check that these actually improve things.
+   FIXME: Need a cld after each std.
+   FIXME: Can't have inputs in clobbered registers, must describe them as
+   dummy outputs, and add volatile. */
 #define MPN_COPY_INCR(DST, SRC, N)					\
   __asm__ ("cld\n\trep\n\tmovsl" : :					\
 	   "D" (DST), "S" (SRC), "c" (N) :				\
