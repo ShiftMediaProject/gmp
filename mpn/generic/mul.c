@@ -36,10 +36,10 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpn_sqr (mp_ptr prodp,
+mpn_sqr_n (mp_ptr prodp,
          mp_srcptr up, mp_size_t un)
 #else
-mpn_sqr (prodp, up, un)
+mpn_sqr_n (prodp, up, un)
      mp_ptr prodp;
      mp_srcptr up;
      mp_size_t un;
@@ -100,7 +100,7 @@ mpn_mul (prodp, up, un, vp, vn)
 
   if (up == vp && un == vn)
     {
-      mpn_sqr (prodp, up, un);
+      mpn_sqr_n (prodp, up, un);
       return prodp[2 * un - 1];
     }
 
