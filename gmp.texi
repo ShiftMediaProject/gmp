@@ -837,7 +837,7 @@ C++ support in GMP can be enabled with @samp{--enable-cxx}, in which case a
 C++ compiler will be required.  As a convenience @samp{--enable-cxx=detect}
 can be used to enable C++ support only if a compiler can be found.  The C++
 support consists of a library @file{libgmpxx.la} and header file
-@file{gmpxx.h}.
+@file{gmpxx.h} (@pxref{Headers and Libraries}).
 
 A separate @file{libgmpxx.la} has been adopted rather than having C++ objects
 within @file{libgmp.la} in order to ensure dynamic linked C programs aren't
@@ -4536,7 +4536,7 @@ These routines use a multiply-by-inverse and will be faster than
 
 The source @math{a}, result @math{q}, size @math{n}, initial carry @math{i},
 and return value @math{c} satisfy @m{cb^n+a-i=3q, c*b^n + a-i = 3*q}, where
-@m{b=2\GMPraise{@code{mp\_bits\_per\_limb}}, b=2^mp_bits_per_limb}.  The
+@m{b=2\GMPraise{@code{GMP\_NUMB\_BITS}}, b=2^GMP_NUMB_BITS}.  The
 return @math{c} is always 0, 1 or 2, and the initial carry @math{i} must also
 be 0, 1 or 2 (these are both borrows really).  When @math{c=0} clearly
 @math{q=(a-i)/3}.  When @m{c \neq 0, c!=0}, the remainder @math{(a-i) @bmod{}
@@ -5159,9 +5159,9 @@ feature, which probably means only on GNU systems, see
 @cindex C++ @code{ostream} output
 @cindex @code{ostream} output
 
-The following functions are provided in @file{libgmpxx}, which is built if C++
-support is enabled (@pxref{Build Options}).  Prototypes are available from
-@code{<gmp.h>}.
+The following functions are provided in @file{libgmpxx} (@pxref{Headers and
+Libraries}), which is built if C++ support is enabled (@pxref{Build Options}).
+Prototypes are available from @code{<gmp.h>}.
 
 @deftypefun ostream& operator<< (ostream& @var{stream}, mpz_t @var{op})
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
@@ -5420,9 +5420,9 @@ match.
 @cindex C++ @code{istream} input
 @cindex @code{istream} input
 
-The following functions are provided in @file{libgmpxx}, which is built only
-if C++ support is enabled (@pxref{Build Options}).  Prototypes are available
-from @code{<gmp.h>}.
+The following functions are provided in @file{libgmpxx} (@pxref{Headers and
+Libraries}), which is built only if C++ support is enabled (@pxref{Build
+Options}).  Prototypes are available from @code{<gmp.h>}.
 
 @deftypefun istream& operator>> (istream& @var{stream}, mpz_t @var{rop})
 Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
@@ -5494,6 +5494,13 @@ All the C++ classes and functions are available with
 @cindex gmpxx.h
 @example
 #include <gmpxx.h>
+@end example
+
+Programs should be linked with the @file{libgmpxx} and @file{libgmp}
+libraries.  For example,
+
+@example
+g++ mycxxprog.cc -lgmpxx -lgmp
 @end example
 
 @noindent
@@ -5805,8 +5812,8 @@ mpf_class f(x+y);        // greater of precisions of x and y
 @deftypefunx string mpf_class::get_str (mp_exp_t& @var{exp}, int @var{base} = 10, size_t @var{digits} = 0)
 @deftypefunx {unsigned long} mpf_class::get_ui (void)
 @maybepagebreak
-@deftypefunx int mpq_class::set_str (const char *@var{str}, int @var{base})
-@deftypefunx int mpq_class::set_str (const string& @var{str}, int @var{base})
+@deftypefunx int mpf_class::set_str (const char *@var{str}, int @var{base})
+@deftypefunx int mpf_class::set_str (const string& @var{str}, int @var{base})
 @deftypefunx int sgn (mpf_class @var{op})
 @deftypefunx mpf_class sqrt (mpf_class @var{op})
 @deftypefunx mpf_class trunc (mpf_class @var{op})
@@ -6524,9 +6531,9 @@ usually around 1.5@cross{}.  Less than 1.5@cross{} probably indicates
 @code{mpn_sqr_basecase} wants improving on that CPU.
 
 On some CPUs @code{mpn_mul_basecase} can be faster than the generic C
-@code{mpn_sqr_basecase}.  @code{SQR_BASECASE_THRESHOLD} is the size at which
-to use @code{mpn_sqr_basecase}, this will be zero if that routine should be
-used always.
+@code{mpn_sqr_basecase} on some small sizes.  @code{SQR_BASECASE_THRESHOLD} is
+the size at which to use @code{mpn_sqr_basecase}, this will be zero if that
+routine should be used always.
 
 
 @node Karatsuba Multiplication, Toom-Cook 3-Way Multiplication, Basecase Multiplication, Multiplication Algorithms
@@ -7397,8 +7404,9 @@ Notice that @math{r} generally gives no useful information about the ordinary
 remainder @math{a @bmod d} since @math{b^n @bmod d} could be anything.  If
 however @math{b^n @equiv{} 1 @bmod d}, then @math{r} is the negative of the
 ordinary remainder.  This occurs whenever @math{d} is a factor of
-@math{b^n-1}, as for example with 3 in @code{mpn_divexact_by3}.  Other such
-factors include 5, 17 and 257, but no particular use has been found for this.
+@math{b^n-1}, as for example with 3 in @code{mpn_divexact_by3}.  For a 32 or
+64 bit limb other such factors include 5, 17 and 257, but no particular use
+has been found for this.
 
 
 @node Small Quotient Division,  , Exact Remainder, Division Algorithms
