@@ -41,9 +41,11 @@ define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 	`.code
 	ALIGN(8)
-	.proc	`$1'
 	.export	`$1',entry
-`$1'LABEL_SUFFIX')
+`$1'LABEL_SUFFIX'
+	.proc
+	.callinfo)	dnl  This is really bogus, but allows us to compile
+			dnl  again on hppa machines.
 
 
 define(`EPILOGUE_cpu',
