@@ -804,6 +804,13 @@ speed_mpn_jacobi_base (struct speed_params *s)
 
 
 double
+speed_mpn_sqrtrem (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQRTREM (mpn_sqrtrem);
+}
+
+
+double
 speed_mpz_fac_ui (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_UI (mpz_fac_ui);

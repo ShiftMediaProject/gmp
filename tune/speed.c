@@ -193,6 +193,8 @@ const struct routine_t {
   { "mpn_toom3_sqr_n_mpn",   speed_mpn_toom3_sqr_n_mpn   },
   { "mpn_toom3_sqr_n_open",  speed_mpn_toom3_sqr_n_open  },
 
+  { "mpn_sqrtrem",       speed_mpn_sqrtrem          },
+
   { "mpz_add",           speed_mpz_add              },
   { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
