@@ -2093,8 +2093,8 @@ if test "$gmp_asm_syntax_testing" != no; then
       case $host in
         powerpc*-*-aix*)
 	  case $ABI in
-	    64) GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
-            *)  GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
+	    64 | aix64) GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
+            *)          GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
           esac
           ;;
       esac
