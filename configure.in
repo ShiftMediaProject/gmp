@@ -12,7 +12,7 @@ srcname="GNU Multi-Precision library"
 
 case "${target}" in
   sparc*-*-none | supersparc*-*-none | ultrasparc*-*-none | microsparc*-*-none | \
-  i[3456]86*-*-none | pentium-*-none | pentiumpro-*-none)
+  i[3456]86*-*-none | pentium*-*-none | k6*-*-none | athlon-*-none)
     echo "*** Operating system specification required for this cpu." 1>&2
     exit 1;;
   sparc9-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
@@ -55,7 +55,7 @@ case "${target}" in
       target_makefile_frag=config/mt-m68k
     fi
     ;;
-  i[3456]86*-*-* | pentium-*-* | pentiumpro-*-* | k[5678]-*-*)
+  i[3456]86*-*-* | pentium*-*-* | k[5678]*-*-* | athlon-*-*)
     if [ x$with_gcc != xno ]
     then
       target_makefile_frag=config/mt-x86
