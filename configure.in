@@ -854,6 +854,7 @@ case $host in
       powerpc403)   gcc_cflags_cpu="-mcpu=403" ;;
       powerpc405)   gcc_cflags_cpu="-mcpu=405" ;;
       powerpc505)   gcc_cflags_cpu="-mcpu=505" ;;
+      powerpc601)   gcc_cflags_cpu="-mcpu=601" ;;
       powerpc602)   gcc_cflags_cpu="-mcpu=602" ;;
       powerpc603)   gcc_cflags_cpu="-mcpu=603" ;;
       powerpc603e)  gcc_cflags_cpu="-mcpu=603e -mcpu=603" ;;
@@ -885,6 +886,7 @@ case $host in
         #
     	case $host_cpu in
 	  powerpc403)   xlc_cflags_arch="-qarch=403 -qarch=ppc" ;;
+	  powerpc601)   xlc_cflags_arch="-qarch=601 -qarch=ppc" ;;
 	  powerpc602)   xlc_cflags_arch="-qarch=602 -qarch=ppc" ;;
 	  powerpc603)   xlc_cflags_arch="-qarch=603 -qarch=ppc" ;;
 	  powerpc603e)  xlc_cflags_arch="-qarch=603 -qarch=ppc" ;;
@@ -985,12 +987,6 @@ case $host in
       xlc_cflags="-O2 -qarch=pwr -qmaxmem=20000"
       ;;
     esac
-    ;;
-
-
-  # FIXME: ppc601 isn't accepted by config.sub.
-  ppc601-*-*)
-    path="power powerpc32"
     ;;
 
 
