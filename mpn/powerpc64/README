@@ -1,4 +1,4 @@
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,10 +21,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 
 
-PPC630 (aka Power3) pipeline information:
+POWER3/PPC630 pipeline information:
 
-Decoding is 4-way and issue is 8-way with some out-of-order capability.
-Branches are handled separately, and are not part of the 4-way issue limit.
+Decoding is 4-way + branch and issue is 8-way with some out-of-order
+capability.
 
 Functional units:
 LS1  - ld/st unit 1
@@ -44,14 +44,14 @@ Integer multiply: 1 operation every 9th cycle worst case; exact timing depends
 		  cycle).  Multiply unit is not pipelined, only one multiply
 		  operation in progress is allowed.
 Integer divide:	  ?
-Floating-point:	  Any plain 2 arithmetic instructions (such as fmul, fadd, fmadd)
-		  Latency = 4.
+Floating-point:	  Any plain 2 arithmetic instructions (such as fmul, fadd, and
+		  fmadd), latency 4 cycles.
 Floating-point divide:
 		  ?
 Floating-point square root:
 		  ?
 
-Best possible times for the main loops:
+POWER3/PPC630 best possible times for the main loops:
 shift:	      1.5 cycles limited by integer unit contention.
 	      With 63 special loops, one for each shift count, we could
 	      reduce the needed integer instructions to 2, which would
@@ -61,6 +61,36 @@ mul:	      18 cycles (average) unless floating-point operations are used,
 	      but that would only help for multiplies of perhaps 10 and more
 	      limbs.
 addmul/submul:Same situation as for mul.
+
+
+POWER4/PPC970 and POWER5 pipeline information:
+
+Decoding is 4-way + branch, issue is 8-way deep out-of-order.
+
+Functional units:
+LS1  - ld/st unit 1
+LS2  - ld/st unit 2
+FXU1 - integer unit 1, handles any integer instruction
+FXU2 - integer unit 2, handles any integer instruction
+FPU1 - floating-point unit 1
+FPU2 - floating-point unit 2
+
+While this is one integer unit less than POWER3/PPC630, the remaining units
+are more powerful; here they handle multiply and divide.
+
+Memory:		  2 ld/st.  (Verify that two store can issue per cycle.)
+		  L1 load latency: to gregs 3-4 cycles, to fregs 5-6 cycles.
+		  Operations that modify the address register might be split
+		  to use also a an integer issue slot.
+Simple integer:	  2 operations every cycle, latency 2.
+Integer multiply: 2 operations every 6th cycle, latency 7 cycles.
+Integer divide:	  ?
+Floating-point:	  Any plain 2 arithmetic instructions (such as fmul, fadd, and
+		  fmadd), latency 6 cycles.
+Floating-point divide:
+		  ?
+Floating-point square root:
+		  ?
 
 
 IDEAS
