@@ -335,26 +335,6 @@ speed_cache_fill (struct speed_params *s)
 }
 
 
-/* Adjust ptr to align to CACHE_LINE_SIZE bytes plus "align" limbs.  ptr
-   needs to have room for up to CACHE_LINE_SIZE-4 extra bytes.  */
-
-mp_ptr
-speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
-{
-  /*
-  printf("%p %ld -> %p %X %X\n", ptr, align,
-         (mp_ptr) ptr
-         + ((align - ((mp_size_t) ptr >> 2)) &
-            SPEED_TMP_ALLOC_ADJUST_MASK),
-         ((mp_size_t) ptr >> 2) & SPEED_TMP_ALLOC_ADJUST_MASK,
-         SPEED_TMP_ALLOC_ADJUST_MASK);
-  */
-
-  return (mp_ptr) ptr
-    + ((align - ((mp_size_t) ptr >> 2)) & SPEED_TMP_ALLOC_ADJUST_MASK);
-}
-
-
 /* Miscellanous options accepted by tune and speed programs under -o. */
 
 void
@@ -940,7 +920,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
                                                         \
     TMP_MARK (marker);                                  \
     pl = mpn_fft_next_size (s->size, k);                \
-    wp = SPEED_TMP_ALLOC_LIMBS (pl+1, s->align_wp);     \
+    SPEED_TMP_ALLOC_LIMBS (wp, pl+1, s->align_wp);      \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
     if (!sqr)                                           \
@@ -997,8 +977,8 @@ speed_mpn_hgcd (struct speed_params *s)
 
   TMP_MARK (marker);
 
-  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);
-  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
 
   MPN_COPY (ap, s->xp, s->size);
   MPN_COPY (bp, s->yp, s->size);
@@ -1009,11 +989,11 @@ speed_mpn_hgcd (struct speed_params *s)
   if (mpn_cmp (ap, bp, s->size) < 0)
     MP_PTR_SWAP (ap, bp);
 
-  tmp1 = SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp);
+  SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
   mpn_hgcd_init (&hgcd, s->size, tmp1);
-  tmp2 = SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp);
+  SPEED_TMP_ALLOC_LIMBS (tmp2, qstack_scratch, s->align_wp);
   qstack_init (&quotients, s->size, tmp2, qstack_scratch);
-  wp = SPEED_TMP_ALLOC_LIMBS (hgcd_scratch, s->align_wp);
+  SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
 
   speed_starttime ();
   i = s->reps;
@@ -1055,8 +1035,8 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
 
   TMP_MARK (marker);
 
-  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);
-  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
 
   MPN_COPY (ap, s->xp, s->size);
   MPN_COPY (bp, s->yp, s->size);
@@ -1067,11 +1047,11 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   if (mpn_cmp (ap, bp, s->size) < 0)
     MP_PTR_SWAP (ap, bp);
 
-  tmp1 = SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp);
+  SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
   mpn_hgcd_init (&hgcd, s->size, tmp1);
-  tmp2 = SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp);
+  SPEED_TMP_ALLOC_LIMBS (tmp2, qstack_scratch, s->align_wp);
   qstack_init (&quotients, s->size, tmp2, qstack_scratch);
-  wp = SPEED_TMP_ALLOC_LIMBS (hgcd_scratch, s->align_wp);
+  SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
 
   speed_starttime ();
   i = s->reps;
