@@ -103,17 +103,24 @@ case "$target" in
   alpha*-*-osf*)
     flavour=`echo $target_cpu | sed 's/^alpha//g'`
     if test -n "$flavour"; then
+      case $flavour in	   # compilers don't seem to understand `ev67' and such.
+	ev6? | ev7*) flavour=ev6;;
+      esac
       gmp_optcflags_gcc="-mcpu=$flavour"
       # FIXME: We shouldn't fail fatally if none of these work, but that's
       # how xoptcflags work and we don't have any other mechanism right now.
+      # Why do we need this here and not for alpha*-*-* below?
       gmp_xoptcflags_gcc="-Wa,-arch,${flavour} -Wa,-m${flavour}"
-      gmp_cflags_cc="$gmp_cflags_cc -arch $flavour -tune $flavour"
+      gmp_optcflags_cc="-arch $flavour -tune $flavour"
     fi
     ;;
   alpha*-*-*)
     cclist="gcc"
     flavour=`echo $target_cpu | sed 's/^alpha//g'`
     if test -n "$flavour"; then
+      case $flavour in
+	ev6? | ev7*) flavour=ev6;;
+      esac
       gmp_optcflags_gcc="-mcpu=$flavour"
     fi
     ;;
