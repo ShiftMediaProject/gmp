@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -78,9 +78,11 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
   ASSERT_MPN (src, size);
   ASSERT_LIMB (divisor);
 
+  s = src[0];
+
   if (size == 1)
     {
-      dst[0] = src[0] / divisor;
+      dst[0] = s / divisor;
       return;
     }
 
@@ -97,18 +99,12 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 
   if (shift != 0)
     {
-      s = src[0];
       c = 0;
       i = 0;
       size--;
-      goto even_entry;
 
       do
 	{
-	  umul_ppmm (l, dummy, l, divisor);
-	  c += l;
-
-	even_entry:
 	  s_next = src[i+1];
 	  ls = ((s >> shift) | (s_next << (GMP_NUMB_BITS-shift))) & GMP_NUMB_MASK;
 	  s = s_next;
@@ -117,12 +113,14 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 
 	  l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
-	  i++;
+
+          umul_ppmm (l, dummy, l, divisor);
+	  c += l;
+
+          i++;
 	}
       while (i < size);
 
-      umul_ppmm (l, dummy, l, divisor);
-      c += l;
       ls = s >> shift;
       l = ls - c;
       l = (l * inverse) & GMP_NUMB_MASK;
@@ -130,8 +128,7 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
     }
   else
     {
-      l = src[0];
-      l = (l * inverse) & GMP_NUMB_MASK;
+      l = (s * inverse) & GMP_NUMB_MASK;
       dst[0] = l;
       i = 1;
       c = 0;
