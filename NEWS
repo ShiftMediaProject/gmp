@@ -22,7 +22,7 @@ Changes between MP version 4.1.2 and 4.2
 
 * Bug fixes.
 * New systems supported: HP-UX IA-64, HPPA 64-bit gcc.
-* New i386 fat binary for x86 family, selecting optimized code at runtime.
+* New i386 fat binaries, selecting optimized code at runtime.
 * New build option: --enable-profiling=instrument.
 * New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
   gmp_randinit_default.
