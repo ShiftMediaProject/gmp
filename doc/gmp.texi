@@ -7038,8 +7038,8 @@ Librep @spaceuref{http://librep.sourceforge.net/}
 @item
 @c  FIXME: When there's a stable release with gmp support, just refer to it
 @c  rather than bothering to talk about betas.
-XEmacs (21.5.18 betas and up) @spaceuref{http://xemacs.org} @* Optional big
-integers, rationals and floats using GMP.
+XEmacs (21.5.18 betas and up) @spaceuref{http://www.xemacs.org} @* Optional
+big integers, rationals and floats using GMP.
 @end itemize
 
 @item M4
