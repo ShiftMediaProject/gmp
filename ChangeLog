@@ -18,6 +18,21 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-27  Kevin Ryde  <kevin@swox.se>
+
+	* tests/cxx/t-misc.cc: Don't use <climits>, on g++ 2.95.4 (debian 3.0)
+	-mcpu=ultrasparc LONG_MIN is wrong and kills the compile.
+
+	* tests/cxx/t-istream.cc: Correction to tellg tests, don't assume
+	streampos is zero based.
+
+	* configure.in (HAVE_HOST_CPU_FAMILY_alpha): New define for config.h.
+	* mpn/generic/get_d.c: Use it instead of __alpha for alpha workaround,
+	since Cray cc doesn't define __alpha.
+
+	* mpn/x86/README: Revise PIC coding notes a bit, add gcc visibility
+	attribute.
+
 2003-10-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/ia64/gcd_1.asm: New file.
