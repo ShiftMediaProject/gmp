@@ -918,6 +918,10 @@ case $host in
     #     -mcpu=.
     # gcc 3.0 adds athlon.
     # gcc 3.1 adds pentium4.
+    #
+    # In gcc 2.95.[0123], -march=pentiumpro provoked a stack slot bug in an
+    # old version of mpz/powm.c.  Seems to be fine with the current code, so
+    # no need for any restrictions on that option.
 
     # Defaults for anything not otherwise mentioned.
     path="x86"
@@ -1229,10 +1233,6 @@ if test $found_compiler = yes; then
         flag=`echo "$flag" | tr '~' ' '`
 
         case $flag in
-          -march=pentiumpro)
-            # tickles stack slot bugs on some gcc, exclude as necessary
-            GMP_GCC_MARCH_PENTIUMPRO($cc,,continue)
-            ;;
           -O*)
             # ease back to just -O on m68k gcc 2.95.x
             GMP_GCC_M68K_OPTIMIZE($ccbase,$cc,flag)
