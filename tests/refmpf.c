@@ -166,6 +166,29 @@ refmpf_normalize (mpf_ptr f)
     EXP(f) = 0;
 }
 
+/* refmpf_set_overlap sets up dst as a copy of src, but with PREC(dst)
+   unchanged, in preparation for an overlap test.
+
+   The full value of src is copied, and the space at PTR(dst) is extended as
+   necessary.  The way PREC(dst) is unchanged is as per an mpf_set_prec_raw.
+   The return value is the new PTR(dst) space precision, in bits, ready for
+   a restoring mpf_set_prec_raw before mpf_clear.  */
+
+unsigned long
+refmpf_set_overlap (mpf_ptr dst, mpf_srcptr src)
+{
+  mp_size_t  dprec = PREC(dst);
+  mp_size_t  ssize = ABSIZ(src);
+  unsigned long  ret;
+
+  refmpf_set_prec_limbs (dst, (unsigned long) MAX (dprec, ssize));
+  mpf_set (dst, src);
+
+  ret = mpf_get_prec (dst);
+  PREC(dst) = dprec;
+  return ret;
+}
+
 /* Like mpf_set_prec, but taking a precision in limbs.
    PREC(f) ends up as the given "prec" value.  */
 void
