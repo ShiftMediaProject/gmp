@@ -92,10 +92,10 @@ SPEED_EXTRA_PROTOS2
 
 
 #if BITS_PER_MP_LIMB == 32
-#define MP_LIMB_T_0xAA  CNST_LIMB(0xAAAAAAAA)
+#define GMP_NUMB_0xAA  (CNST_LIMB(0xAAAAAAAA) & GMP_NUMB_MASK)
 #endif
 #if BITS_PER_MP_LIMB == 64
-#define MP_LIMB_T_0xAA  CNST_LIMB(0xAAAAAAAAAAAAAAAA)
+#define GMP_NUMB_0xAA  (CNST_LIMB(0xAAAAAAAAAAAAAAAA) & GMP_NUMB_MASK)
 #endif
 
 
@@ -377,13 +377,13 @@ data_fill (mp_ptr ptr, mp_size_t size)
     MPN_ZERO (ptr, size);
     break;
   case DATA_AAS:
-    MPN_FILL (ptr, size, MP_LIMB_T_0xAA);
+    MPN_FILL (ptr, size, GMP_NUMB_0xAA);
     break;
   case DATA_FFS:
-    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
+    MPN_FILL (ptr, size, GMP_NUMB_MAX);
     break;
   case DATA_2FD:
-    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
+    MPN_FILL (ptr, size, GMP_NUMB_MAX);
     ptr[0] -= 2;
     break;
   default:
@@ -707,10 +707,12 @@ run_gnuplot (int argc, char *argv[])
 }
 
 
-/* Return a long with n many one bits (starting from the least significant) */
+/* Return a limb with n many one bits (starting from the least significant) */
 
 #define LIMB_ONES(n) \
-  ((n) == BITS_PER_MP_LIMB ? -1L : (n) == 0 ? 0L : (1L << (n)) - 1)
+  ((n) == BITS_PER_MP_LIMB ? MP_LIMB_T_MAX      \
+    : (n) == 0 ? CNST_LIMB(0)                   \
+    : (CNST_LIMB(1) << (n)) - 1)
 
 mp_limb_t
 r_string (const char *s)
@@ -719,7 +721,7 @@ r_string (const char *s)
   long        n;
 
   if (strcmp (s, "aas") == 0)
-    return MP_LIMB_T_0xAA;
+    return GMP_NUMB_0xAA;
 
   {
     mpz_t      z;
