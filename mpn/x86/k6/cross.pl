@@ -103,6 +103,7 @@ sub disassemble {
 	    && $opcode !~ /b8/        # movl $imm32,%eax
 	    && $opcode !~ /e[0123]/   # loop/loopz/loopnz/jcxz
 	    && $opcode !~ /e[b9]/     # jmp disp8/disp32
+	    && $opcode !~ /f[89abcd]/ # clc,stc,cli,sti,cld,std
 	    && !($opcode =~ /f[67]/          # grp 1
 		 && $modrm =~ /^[2367abef]/) # mul, imul, div, idiv
 	    && $modrm !~ /^$/) {
