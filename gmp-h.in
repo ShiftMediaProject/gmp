@@ -236,6 +236,10 @@ typedef __mpq_struct *mpq_ptr;
 
 #define __GMP_ABS(x)  ((x) >= 0 ? (x) : -(x))
 
+#define __GMP_UINT_MAX   (~ (unsigned) 0)
+#define __GMP_ULONG_MAX  (~ (unsigned long) 0)
+#define __GMP_USHRT_MAX  ((unsigned short) ~0)
+
 
 /* Allow direct user access to numerator and denominator of a mpq_t object.  */
 #define mpq_numref(Q) (&((Q)->_mp_num))
@@ -1005,6 +1009,44 @@ mpz_abs (mpz_ptr w, mpz_srcptr u)
 }
 #endif
 
+#define __GMPZ_FITS_UTYPE_P(z,maxval)                   \
+  mp_size_t  size = z->_mp_size;                        \
+  mp_limb_t  data = z->_mp_d[0];                        \
+  return (size == 0 || (size == 1 && data <= maxval));
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_fits_uint_p
+#if ! __GMP_FORCE_mpz_fits_uint_p
+__GMP_EXTERN_INLINE
+#endif
+int
+mpz_fits_uint_p (mpz_srcptr z)
+{
+  __GMPZ_FITS_UTYPE_P (z, __GMP_UINT_MAX);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_fits_ulong_p
+#if ! __GMP_FORCE_mpz_fits_ulong_p
+__GMP_EXTERN_INLINE
+#endif
+int
+mpz_fits_ulong_p (mpz_srcptr z)
+{
+  __GMPZ_FITS_UTYPE_P (z, __GMP_ULONG_MAX);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_fits_ushort_p
+#if ! __GMP_FORCE_mpz_fits_ushort_p
+__GMP_EXTERN_INLINE
+#endif
+int
+mpz_fits_ushort_p (mpz_srcptr z)
+{
+  __GMPZ_FITS_UTYPE_P (z, __GMP_USHRT_MAX);
+}
+#endif
+
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_get_ui
 #if ! __GMP_FORCE_mpz_get_ui
 __GMP_EXTERN_INLINE
@@ -1066,7 +1108,7 @@ mpz_popcount (mpz_srcptr u)
   mp_size_t usize = u->_mp_size;
 
   if (usize <= 0)
-    return (usize < 0 ? ~ (unsigned long) 0 : 0);
+    return (usize < 0 ? __GMP_ULONG_MAX : 0);
   else
     return mpn_popcount (u->_mp_d, usize);
 }
