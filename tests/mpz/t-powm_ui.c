@@ -72,7 +72,7 @@ main (int argc, char **argv)
 	  mpz_urandomb (bs, rands, 6L);
 	  exp_size = mpz_get_ui (bs);
 	  mpz_rrandomb (exp, rands, exp_size);
-	  exp2 = mpz_getlimbn (exp, 0);
+	  exp2 = mpz_getlimbn (exp, (mp_size_t) 0);
 	}
       while (mpz_cmp_ui (base, 0) == 0 && exp2 == 0);
 
