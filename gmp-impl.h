@@ -52,6 +52,7 @@ MA 02111-1307, USA. */
 
 #ifdef __cplusplus
 #include <cstring>  /* for strlen */
+#include <string>   /* for std::string */
 #endif
 
 /* Might search and replace _PROTO to __GMP_PROTO internally one day, to
