@@ -27,29 +27,6 @@ MA 02111-1307, USA. */
 #include "mp.h"
 #endif
 
-/* returns -1/m mod 2^BITS_PER_MP_LIMB, suppose m odd */
-static mp_limb_t
-#if __STDC__
-mpz_dmprepare (mpz_srcptr m)
-#else
-mpz_dmprepare (m)
-     mpz_srcptr m;
-#endif
-{
-  mp_limb_t m0, x; int k;
-
-  m0 = PTR (m)[0];
-  ASSERT_ALWAYS (m0 % 2 != 0);
-
-  /* quadratic Hensel lifting (or Newton iteration) */
-  x = 1; k = 1; /* invariant: x * m0 = 1 mod 2^k */
-  while (k < BITS_PER_MP_LIMB)
-    {
-      x += x * (1 - x * m0);
-      k <<= 1;
-    }
-  return -x;
-}
 
 /* set c <- (a*b)/R^n mod m c has to have at least (2n) allocated limbs */
 static void
@@ -164,8 +141,8 @@ pow (base, e, mod, res)
      for example using Burnikel-Ziegler's algorithm. This gives a theoretical
      threshold of a*KARATSUBA_SQR_THRESHOLD, with a=(3/2)^(1/(2-ln(3)/ln(2))) ~
      2.66.  */
-  /* For now, also disable REDC when MOD is even, as mpz_dmprepare cannot cope
-     with that.  */
+  /* For now, also disable REDC when MOD is even, as the inverse can't
+     handle that.  */
 
 #ifndef POWM_THRESHOLD
 #define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
@@ -173,7 +150,11 @@ pow (base, e, mod, res)
 
   use_redc = (n < POWM_THRESHOLD && PTR(mod)[0] % 2 != 0);
   if (use_redc)
-    invm = mpz_dmprepare (mod);
+    {
+      /* invm = -1/m mod 2^BITS_PER_MP_LIMB, must have m odd */
+      modlimb_invert (invm, PTR(mod)[0]);
+      invm = -invm;
+    }
 
   /* determines optimal value of k */
   l = ABSIZ (e) * BITS_PER_MP_LIMB; /* number of bits of exponent */
