@@ -390,7 +390,7 @@ case $host in
       alphaev6* | alphaev7*)  path="alpha/ev6 alpha/ev5 alpha" ;;
       *)                      path="alpha" ;;
     esac
-    extra_functions="cntlz umul"
+    extra_functions="cntlz"
     gcc_cflags_optlist="asm cpu oldas" # need asm ahead of cpu, see below
     gcc_cflags_oldas="-Wa,-oldas"     # see GMP_GCC_WA_OLDAS.
 
@@ -527,7 +527,6 @@ case $host in
     path="arm"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     gcc_testlist="gcc-arm-umodsi"
-    extra_functions="udiv"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     ;;
 
@@ -559,7 +558,6 @@ case $host in
     gcc_cflags="-O2"
     gcc_cflags_optlist="arch"
     gcc_testlist="sizeof-long-4"
-    extra_functions="udiv"
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
     cyclecounter_size=1
 
@@ -603,7 +601,6 @@ case $host in
         abilist="2.0n 1.0"
         path_20n="pa64"
 	limb_20n=longlong
-        extra_functions_20n="umul udiv"
         SPEED_CYCLECOUNTER_OBJ_20n=hppa2.lo
         cyclecounter_size_20n=2
 
@@ -639,7 +636,6 @@ case $host in
           cc_20w_cflags="+DD64 +O2"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
-          extra_functions_20w="umul udiv"
           SPEED_CYCLECOUNTER_OBJ_20w=hppa2w.lo
           cyclecounter_size_20w=2
 	  ;;
@@ -724,8 +720,7 @@ case $host in
     # tested.  Will need to introduce an m68k/cpu32 if m68k/mc68020 ever uses
     # the bitfield instructions.
     case $host in
-    [m680[234]0-*-* | m68360-*-*])  path="m68k/mc68020 m68k"
-                                    extra_functions="udiv umul" ;;
+    [m680[234]0-*-* | m68360-*-*])  path="m68k/mc68020 m68k" ;;
     *)                              path="m68k" ;; 
     esac
     ;;
@@ -769,7 +764,6 @@ case $host in
     gcc_testlist="gcc-mips-o32"
     path="mips32"
     cc_cflags="-O2 -o32"   # no -g, it disables all optimizations
-    extra_functions="umul"
     # this suits both mips32 and mips64
     GMP_INCLUDE_MPN(mips32/mips-defs.m4)
 
@@ -784,7 +778,6 @@ case $host in
         cc_n32_ldflags="-Wc,-n32"
         limb_n32=longlong
         path_n32="mips64"
-        extra_functions_n32="umul"
 
         cclist_64="gcc cc"
         gcc_64_cflags="-O2 -mabi=64"
@@ -792,7 +785,6 @@ case $host in
         cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
         cc_64_ldflags="-Wc,-64"
         path_64="mips64"
-        extra_functions_64="umul"
         ;;
     esac
     ;;
@@ -829,7 +821,6 @@ case $host in
     gcc_cflags="-O2 -mpowerpc"
     gcc_cflags_optlist="precomp cpu"
     gcc_cflags_precomp="-no-cpp-precomp"
-    extra_functions="umul"
 
     # grab this object, though it's not a true cycle counter routine
     SPEED_CYCLECOUNTER_OBJ=powerpc.lo
@@ -918,7 +909,6 @@ case $host in
 	    ar_aix64_flags="-X64"
 	    nm_aix64_flags="-X64"
             path_aix64="powerpc64/mode64 powerpc64"
-            extra_functions_aix64="umul"
             # grab this object, though it's not a true cycle counter routine
             SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
             cyclecounter_size_aix64=0
@@ -1016,7 +1006,6 @@ case $host in
   *sparc*-*-*)
     abilist="32"
     cclist="gcc acc cc"
-    extra_functions="udiv umul"
     GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
 
     case $host_cpu in
@@ -1202,7 +1191,6 @@ case $host in
     # -O, but lets assume that's no longer true.
     gcc_cflags="-O2 $fomit_frame_pointer"
     GMP_INCLUDE_MPN(x86/x86-defs.m4)
-    extra_functions="udiv umul"
     CALLING_CONVENTIONS_OBJS='x86call.lo x86check$U.lo'
 
     # Availability of rdtsc is checked at run-time.
@@ -2236,11 +2224,6 @@ fi
 # .s, or .c extension.  Certain multi-function files with special names
 # can provide some functions too.  (mpn/Makefile.am passes
 # -DOPERATION_<func> to get them to generate the right code.)
-
-# FIXME: udiv and umul aren't in $gmp_mpn_functions_optional yet since
-# there's some versions of those files which should be checked for bit
-# rot first.  Put them in $extra_functions for each host for now,
-# change to standard optionals when all are ready.
 
 # Note: The following lines defining $gmp_mpn_functions_optional
 #       and $gmp_mpn_functions are parsed by the "macos/configure"
