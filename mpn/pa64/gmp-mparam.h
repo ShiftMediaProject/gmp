@@ -22,7 +22,7 @@ MA 02111-1307, USA. */
 #define BITS_PER_MP_LIMB 64
 #define BYTES_PER_MP_LIMB 8
 
-/* These values were measured in a PA8000 using the system compiler version
+/* These values were measured on a PA8000 using the system compiler version
    A.10.32.30.  Presumably the PA8200 and PA8500 have the same timing
    characteristic, but GCC might give somewhat different results.  */
 
@@ -51,7 +51,6 @@ MA 02111-1307, USA. */
 #define USE_PREINV_MOD_1               1
 #define DIVREM_2_THRESHOLD             0
 #define MODEXACT_1_ODD_THRESHOLD       0
-
 
 #define FFT_MUL_TABLE  { 464, 992, 2112, 3840, 9216, 28672, 0 }
 #define FFT_MODF_MUL_THRESHOLD     328
