@@ -20,17 +20,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpz_popcount 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-
-unsigned long int
-mpz_popcount (mpz_srcptr u)
-{
-  mp_size_t usize = u->_mp_size;
-
-  if (usize <= 0)
-    return (usize < 0 ? ~ (unsigned long) 0 : 0);
-
-  return mpn_popcount (u->_mp_d, usize);
-}

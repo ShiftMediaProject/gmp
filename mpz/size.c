@@ -20,11 +20,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpz_size 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-size_t
-mpz_size (mpz_srcptr x)
-{
-  return ABS (x->_mp_size);
-}

@@ -19,14 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpz_getlimbn 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-mp_limb_t
-mpz_getlimbn (mpz_srcptr integer, mp_size_t n)
-{
-  if (ABS (integer->_mp_size) <= n || n < 0)
-    return 0;
-  else
-    return integer->_mp_d[n];
-}

@@ -19,27 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpf_set_si 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-void
-mpf_set_si (mpf_ptr x, long int val)
-{
-  if (val > 0)
-    {
-      x->_mp_d[0] = val;
-      x->_mp_size = 1;
-      x->_mp_exp = 1;
-    }
-  else if (val < 0)
-    {
-      x->_mp_d[0] = (unsigned long) -val;
-      x->_mp_size = -1;
-      x->_mp_exp = 1;
-    }
-  else
-    {
-      x->_mp_size = 0;
-      x->_mp_exp = 0;
-    }
-}

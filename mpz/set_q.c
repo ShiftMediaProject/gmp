@@ -20,11 +20,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpz_set_q 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-void
-mpz_set_q (mpz_ptr w, mpq_srcptr u)
-{
-  mpz_tdiv_q (w, mpq_numref (u), mpq_denref (u));
-}

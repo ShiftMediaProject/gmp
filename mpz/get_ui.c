@@ -19,12 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpz_get_ui 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-unsigned long int
-mpz_get_ui (mpz_srcptr integer)
-{
-  mp_limb_t l = integer->_mp_d[0];
-  return integer->_mp_size ? l : 0;
-}

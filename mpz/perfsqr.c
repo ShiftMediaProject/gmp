@@ -20,21 +20,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpz_perfect_square_p 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-int
-mpz_perfect_square_p (mpz_srcptr a)
-{
-  mp_size_t asize = a->_mp_size;
-
-  /* No negative numbers are perfect squares.  */
-  if (asize < 0)
-    return 0;
-
-  /* Zero is a perfect square.  */
-  if (asize == 0)
-    return 1;
-
-  return mpn_perfect_square_p (a->_mp_d, asize);
-}
