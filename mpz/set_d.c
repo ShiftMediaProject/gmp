@@ -28,6 +28,14 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
+/* We used to have a special case for d < MP_BASE_AS_DOUBLE, just casting
+   double -> limb.  Unfortunately gcc 3.3 on powerpc970-apple-darwin6.8.5
+   got this wrong.  (It assumed __fixunsdfdi returned its result in a single
+   64-bit register, where instead that function followed the calling
+   conventions and gave the result in two parts r3 and r4.)  Hence the use
+   of __gmp_extract_double in all cases.  */
+
 void
 mpz_set_d (mpz_ptr r, double d)
 {
@@ -42,16 +50,6 @@ mpz_set_d (mpz_ptr r, double d)
 
   negative = d < 0;
   d = ABS (d);
-
-  /* Handle small arguments quickly.  */
-  if (d < MP_BASE_AS_DOUBLE)
-    {
-      mp_limb_t tmp;
-      tmp = d;
-      PTR(r)[0] = tmp;
-      SIZ(r) = negative ? -(tmp != 0) : (tmp != 0);
-      return;
-    }
 
   rn = __gmp_extract_double (tp, d);
 
@@ -77,8 +75,10 @@ mpz_set_d (mpz_ptr r, double d)
       rp[0] = tp[1];
       break;
     case 1:
-      /* handled in "small aguments" case above */
-      ASSERT_ALWAYS (0);
+      rp[0] = tp[2];
+      break;
+    case 0:
+      break;
     }
 #else
   switch (rn)
@@ -91,8 +91,10 @@ mpz_set_d (mpz_ptr r, double d)
       rp[1] = tp[1], rp[0] = tp[0];
       break;
     case 1:
-      /* handled in "small aguments" case above */
-      ASSERT_ALWAYS (0);
+      rp[0] = tp[1];
+      break;
+    case 0:
+      break;
     }
 #endif
 
