@@ -62,11 +62,15 @@ MA 02111-1307, USA.
 
 #define TUNE_PROGRAM_BUILD  1
 
+#include "config.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -101,7 +105,7 @@ int  allocdat = 0;
 
 
 /* Each "_threshold" array must be 1 bigger than the number of thresholds
-   being tuned in a set, because one() stores an value in the entry above
+   being tuned in a set, because one() stores a value in the entry above
    the one it's determining. */
 
 mp_size_t  mul_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
@@ -127,6 +131,7 @@ struct param_t {
   double            function_fudge; /* multiplier for "function" speeds */
   int               stop_since_change;
   mp_size_t         min_size;
+  int               min_is_zero;
   mp_size_t         max_size[MAX_TABLE];
   mp_size_t         check_size;
 };
@@ -279,7 +284,8 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         }
       t1 *= param->function_fudge;
 
-      if (t1 < t2)
+      /* ask that t2 is at least 5% above t1 */
+      if (t1*1.05 < t2)
         {
           if (option_trace)
             printf ("function2 never faster: t1=%.9f t2=%.9f\n", t1, t2);
@@ -434,6 +440,9 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         break;
 
       table[i] = dat[analyze_dat (i, 1)].size;
+
+      if (param->min_is_zero && table[i] == param->min_size)
+        table[i] = 0;
 
       print_define_end (param->name[i], table[i]);
 
@@ -722,13 +731,26 @@ all (void)
     param.min_size = 1;
     one (gcd_accel_threshold, 1, &param);
   }
+
+  /* A comparison between the speed of a single limb step and a double limb
+     step is made.  On a 32-bit limb the ratio is about 2.2 single steps to
+     equal a double step, or on a 64-bit limb about 2.09.  (These were found
+     from counting the steps on a 10000 limb gcdext.  */
   {
     static struct param_t  param;
     param.name[0] = "GCDEXT_THRESHOLD";
     param.function = speed_mpn_gcdext_one_single;
-    param.function_fudge = 2.0;
     param.function2 = speed_mpn_gcdext_one_double;
-    param.min_size = 10;
+    switch (BITS_PER_MP_LIMB) {
+    case 32: param.function_fudge = 2.2; break;
+    case 64: param.function_fudge = 2.09; break;
+    default: 
+      printf ("Don't know GCDEXT_THERSHOLD factor for BITS_PER_MP_LIMB == %d\n",
+              BITS_PER_MP_LIMB);
+      abort ();
+    }
+    param.min_size = 5;
+    param.min_is_zero = 1;
     param.max_size[0] = 300;
     param.check_size = 300;
     one (gcdext_threshold, 1, &param);
