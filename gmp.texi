@@ -2285,9 +2285,8 @@ Free the space occupied by @var{integer}.  Call this function for all
 @end deftypefun
 
 @deftypefun void mpz_realloc2 (mpz_t @var{integer}, unsigned long @var{n})
-Change the space allocated for @var{integer} to @var{n} bits.  If the current
-value in @var{integer} requires more than @var{n} bits then the space is just
-changed down to that required size.
+Change the space allocated for @var{integer} to @var{n} bits.  The value in
+@var{integer} is preserved if it fits, or is set to 0 if not.
 
 This function can be used to increase the space for a variable in order to
 avoid repeated automatic reallocations, or to decrease it to give memory back
@@ -2335,12 +2334,13 @@ function.  Don't call @code{mpz_clear}!
 @end deftypefun
 
 @deftypefun {void *} _mpz_realloc (mpz_t @var{integer}, mp_size_t @var{new_alloc})
-Change the space for @var{integer} to @var{new_alloc} limbs.  The return value
-is not useful to applications and should be ignored.  @code{mpz_realloc2} is
-the preferred way to accomplish size changes like this.
+Change the space for @var{integer} to @var{new_alloc} limbs.  The value in
+@var{integer} is preserved if it fits, or is set to 0 if not.  The return
+value is not useful to applications and should be ignored.
 
-If the requested new space is not sufficient for the current variable value,
-the value is cleared to 0.
+@code{mpz_realloc2} is the preferred way to accomplish allocation changes like
+this.  @code{mpz_realloc2} and @code{_mpz_realloc} are the same except that
+@code{_mpz_realloc} takes the new size in limbs.
 @end deftypefun
 
 
