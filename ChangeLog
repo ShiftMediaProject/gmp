@@ -18,6 +18,28 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-13  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_ASM_LSYM_PREFIX): Print to config.log whether
+	local label is purely temporary or appears in object files, for
+	development purposes.
+
+	* doc/gmp.texi, doc/fdl.texi, doc/texinfo.tex, doc/mdate-sh: Moved
+	from top-level.
+	* doc/Makefile.am: New file.
+	* configure.in (AC_OUTPUT): Add doc/Makefile.
+	* Makefile.am (SUBDIRS): Move doc subdirectory from EXTRA_DIST.
+	(info_TEXINFOS, gmp_TEXINFOS): Moved to doc/Makefile.am.
+	* mpfr/Makefile.am (mpfr_TEXINFOS): fdl.texi now in doc subdir.
+	(TEXINFO_TEX): texinfo.tex now in doc subdir.
+	(AM_MAKEINFOFLAGS): Set -I to doc subdir.
+
+	* mpz/and.c: For positive/positive, use mpn_and_n, rate a realloc as
+	UNLIKELY.
+
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Don't test
+	for high zero limbs.
+
 2003-10-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/diveby3.asm: New file (trivial edits of
