@@ -97,12 +97,12 @@ sh2)
   test_cpu=sh ;;
 
 *)
-  # Don't need or want to change what the given name, just run configfsf.sub
+  # Don't need or want to change the given name, just run configfsf.sub
   $SHELL $configfsf_sub "$given_full"
   if test $? = 0; then
     exit 0
   else
-    echo "(GNU MP wrapped config.sub testing $given_full)"
+    echo "(GNU MP wrapped config.sub, testing \"$given_full\")"
     exit 1
   fi
 esac
@@ -113,7 +113,7 @@ canonical_full=`$SHELL $configfsf_sub "$test_full"`
 if test $? = 0; then
   :
 else
-  echo "(GNU MP wrapped config.sub testing $given_full as $test_full)"
+  echo "(GNU MP wrapped config.sub, testing \"$given_full\" as \"$test_full\")"
   exit 1
 fi
 
