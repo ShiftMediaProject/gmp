@@ -184,8 +184,7 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libexpr_la_SOURCES) run-expr.c t-expr.c
 depcomp = 
-DIST_COMMON =  README Makefile.am Makefile.in demos/expr/expr-impl-h.in \
-expr-impl-h.in
+DIST_COMMON =  README Makefile.am Makefile.in expr-impl-h.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -326,7 +325,6 @@ maintainer-clean-tags:
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
 distdir: $(DISTFILES)
-	$(mkinstalldirs) $(distdir)/demos/expr
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
