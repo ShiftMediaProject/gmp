@@ -1,7 +1,7 @@
 /* SPARC v8 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002, 2003 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -57,10 +57,10 @@ MA 02111-1307, USA. */
 #define GET_STR_PRECOMPUTE_THRESHOLD     38
 #define SET_STR_THRESHOLD              1679
 
-#define MUL_FFT_TABLE  { 336, 800, 1408, 3584, 10240, 24576, 0 }
-#define MUL_FFT_MODF_THRESHOLD          296
-#define MUL_FFT_THRESHOLD              2816
+#define MUL_FFT_TABLE  { 272, 672, 1152, 2560, 10240, 24576, 0 }
+#define MUL_FFT_MODF_THRESHOLD          200
+#define MUL_FFT_THRESHOLD              1216
 
-#define SQR_FFT_TABLE  { 368, 864, 1408, 3584, 10240, 24576, 0 }
-#define SQR_FFT_MODF_THRESHOLD          328
-#define SQR_FFT_THRESHOLD              2304
+#define SQR_FFT_TABLE  { 304, 672, 1152, 3584, 10240, 24576, 0 }
+#define SQR_FFT_MODF_THRESHOLD          200
+#define SQR_FFT_THRESHOLD              1344
