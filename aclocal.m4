@@ -1363,6 +1363,22 @@ fi
 ])
 
 
+dnl  GMP_C_ATTRIBUTE_MALLOC
+dnl  ----------------------
+
+AC_DEFUN(GMP_C_ATTRIBUTE_MALLOC,
+[AC_CACHE_CHECK([whether gcc __attribute__ ((malloc)) works],
+                gmp_cv_c_attribute_malloc,
+[AC_TRY_COMPILE([void *foo (int x) __attribute__ ((malloc));], ,
+  gmp_cv_c_attribute_malloc=yes, gmp_cv_c_attribute_malloc=no)
+])
+if test $gmp_cv_c_attribute_malloc = yes; then
+  AC_DEFINE(HAVE_ATTRIBUTE_MALLOC, 1,
+  [Define if the compiler accepts gcc style __attribute__ ((malloc))])
+fi
+])
+
+
 dnl  GMP_C_ATTRIBUTE_MODE
 dnl  --------------------
 dnl  Introduced in gcc 2.2, but perhaps not in all Apple derived versions.
@@ -1543,6 +1559,61 @@ if test $gmp_cv_header_alloca = yes; then
   AC_DEFINE(HAVE_ALLOCA_H, 1,
     [Define if you have <alloca.h> and it should be used (not on Ultrix).])
 fi
+])
+
+
+dnl  GMP_OPTION_ALLOCA
+dnl  -----------------
+dnl  Decide what to do about --enable-alloca from the user.
+dnl  This is a macro so it can require GMP_FUNC_ALLOCA.
+
+AC_DEFUN(GMP_OPTION_ALLOCA,
+[AC_REQUIRE([GMP_FUNC_ALLOCA])
+AC_CACHE_CHECK([how to allocate temporary memory],
+               gmp_cv_option_alloca,
+[case $enable_alloca in
+  alloca | malloc-reentrant | malloc-notreentrant)
+    gmp_cv_option_alloca=$enable_alloca
+    ;;
+  yes)
+    gmp_cv_option_alloca=alloca
+    ;;
+  no)
+    gmp_cv_option_alloca=malloc-reentrant
+    ;;
+  reentrant | notreentrant)
+    case $gmp_cv_func_alloca in
+    yes)  gmp_cv_option_alloca=alloca ;;
+    *)    gmp_cv_option_alloca=malloc-$enable_alloca ;;
+    esac
+    ;;
+esac
+])
+case $gmp_cv_option_alloca in
+  alloca)
+    if test $gmp_cv_func_alloca = no; then
+      AC_MSG_ERROR([--enable-alloca=alloca specified, but alloca not available])
+    fi
+    AC_DEFINE(WANT_TMP_ALLOCA, 1, [--enable-alloca=yes])
+    ;;
+  malloc-reentrant)
+    AC_DEFINE(WANT_TMP_REENTRANT, 1, [--enable-alloca=malloc-reentrant])
+    TAL_OBJECT=tal-reent$U.lo
+    ;;
+  malloc-notreentrant)
+    AC_DEFINE(WANT_TMP_NOTREENTRANT, 1, [--enable-alloca=malloc-notreentrant])
+    TAL_OBJECT=stack_alloc$U.lo
+    ;;
+  debug)
+    AC_DEFINE(WANT_TMP_DEBUG, 1, [--enable-alloca=debug])
+    TAL_OBJECT=tal-debug$U.lo
+    ;;
+  *)
+    # checks at the start of configure.in should protect us
+    AC_MSG_ERROR([unrecognised --enable-alloca=$gmp_cv_option_alloca])
+    ;;
+esac
+AC_SUBST(TAL_OBJECT)
 ])
 
 # libtool.m4 - Configure libtool for the host system. -*-Shell-script-*-
