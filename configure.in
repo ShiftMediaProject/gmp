@@ -548,8 +548,8 @@ case $host in
     gcc_cflags_optlist="optimize arch"
     gcc_cflags_optimize="-O2"   # munged below on gcc 2.95.x
 
-    # gcc 2.7.2 doesn't know -m68060 or -mcpu32, so let them fall back
-    # appropriately.
+    # gcc 2.7.2 knows -m68000, -m68020, -m68030, -m68040.
+    # gcc 2.95 adds -mcpu32, -m68060.
     # FIXME: Maybe "-m68020 -mnobitfield" would suit cpu32 on 2.7.2.
     #
     case $host in
@@ -829,20 +829,14 @@ case $host in
     gcc_cflags_cpu=
     acc_cflags="-O2"
     cc_cflags="-O2"
+    extra_functions="udiv"
     GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
-
-    # FIXME: This should be selected according to the CPU
-    if test x${floating_point} = xno
-    then extra_functions="udiv_nfp"
-    else extra_functions="udiv_fp"
-    fi
 
     case $host in
       sparcv8*-*-* | supersparc*-*-* | microsparc*-*-*)
         gcc_cflags_cpu="-mcpu=v8 -mv8"
         acc_cflags="-O2 -cg92"
         path="sparc32/v8 sparc32"
-        extra_functions="udiv"
 
         case $host in
           *-*-solaris2.*)  cc_cflags="-xtarget=native -xarch=v8 -xO4" ;;
@@ -862,7 +856,6 @@ case $host in
       #
       sparcv9*-*-* | ultrasparc*-*-* | sparc64-*-*)
         path="sparc32/v9 sparc32/v8 sparc32"
-        extra_functions="udiv_fp"
 
         SPEED_CYCLECOUNTER_OBJ=sparcv9.lo
 
@@ -919,14 +912,11 @@ case $host in
     SPEED_CYCLECOUNTER_OBJ=pentium.lo
 
     # gcc 2.7.2 only knows i386 and i486, using -m386 or -m486.  These
-    # represent -mcpu= since -m486 doesn't generate 486 specific insns.  The
-    # -mcpu= and -march= options will fail, leaving just -m486.
-    #
+    #     represent -mcpu= since -m486 doesn't generate 486 specific insns.
+    #     The -mcpu= and -march= options will fail, leaving just -m486.
     # gcc 2.95.2 adds k6, pentium and pentiumpro, and allows -march= and
-    # -mcpu=.
-    #
+    #     -mcpu=.
     # gcc 3.0 adds athlon.
-    #
     # gcc 3.1 adds pentium4.
 
     # Defaults for anything not otherwise mentioned.
@@ -1615,7 +1605,13 @@ AC_HEADER_TIME
 #
 AC_CHECK_HEADERS(fcntl.h locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
-# optarg should be in unistd.h, which is already in the default includes
+# Reasons for testing:
+#   optarg - not declared in mingw
+#   fgetc, fscanf, ungetc, vfprintf - not declared in SunOS 4
+#
+# optarg should be in unistd.h and the rest in stdio.h, both of which are
+# in the autoconf default includes.
+#
 AC_CHECK_DECLS([fgetc, fscanf, optarg, ungetc, vfprintf])
 
 AC_TYPE_SIGNAL
