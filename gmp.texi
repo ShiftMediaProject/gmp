@@ -2332,9 +2332,8 @@ Change the space for @var{integer} to @var{new_alloc} limbs.  The return value
 is not useful to applications and should be ignored.  @code{mpz_realloc2} is
 the preferred way to accomplish size changes like this.
 
-Note that currently there is no protection against @var{new_alloc} being
-smaller than the current value in @var{integer}.  This might change in the
-future.
+If the requested new space is not sufficient for the current variable value,
+the value is cleared to 0.
 @end deftypefun
 
 
