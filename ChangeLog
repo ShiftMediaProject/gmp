@@ -1,3 +1,23 @@
+2001-09-02  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (m68k-*-*): Let m68k mean 68000, not 68020.
+	* gmp.texi (Notes for Particular Systems): Update.
+
+	* gmp-impl.h (union ieee_double_extract) [m68k]: Use longs, since int
+	might be only 16 bits.
+
+	* tests/mpq/t-aors.c: New file.
+	* tests/mpq/Makefile.am: Add it.
+
+	* tests/refmpq.c: New file.
+	* tests/Makefile.am: Add it.
+	* tests/tests.h: Add prototypes.
+
+	* mpq/aors.c: Share object code for mpq_add and mpq_sub.
+	* Makefile.am, mpq/Makefile.am: Single mpq/aors.lo now.
+
+	* tests/devel/try.c (TYPE_SUBMUL_1): Use correct reference routine.
+
 2001-08-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/x86-defs.m4 (cmov_available_p): Add pentium4.	
