@@ -443,12 +443,6 @@ inline void __gmp_set_expr(mpfr_ptr f, const mpz_class &z)
 }
 
 template <class T>
-inline void __gmp_set_expr(mpfr_ptr f, const mpz_classref &z)
-{
-  mpfr_set_z(f, z.get_mpz_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
 inline void __gmp_set_expr
 (mpfr_ptr f, const __gmp_expr<__gmpz_value, T> &expr)
 {

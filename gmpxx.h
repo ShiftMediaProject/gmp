@@ -2128,7 +2128,6 @@ private:
 
 
 class __gmpz_value { };
-class __gmpzref_value { };
 class __gmpq_value { };
 class __gmpf_value { };
 
@@ -2172,34 +2171,6 @@ __GMPZN_DECLARE_COMPOUND_OPERATOR(fun)
 #define __GMPZ_DECLARE_INCREMENT_OPERATOR(fun) \
   inline __gmp_expr & fun();                   \
   inline __gmp_expr fun(int);
-
-#define __GMPZRR_DECLARE_COMPOUND_OPERATOR(fun)                              \
-  template <class T, class U>                                                \
-  __gmp_expr<__gmpz_value, __gmpzref_value> & fun(const __gmp_expr<T, U> &);
-
-#define __GMPZRN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(signed char);                \
-  __gmp_expr & fun(unsigned char);              \
-  __gmp_expr & fun(signed int);                 \
-  __gmp_expr & fun(unsigned int);               \
-  __gmp_expr & fun(signed short int);           \
-  __gmp_expr & fun(unsigned short int);         \
-  __gmp_expr & fun(signed long int);            \
-  __gmp_expr & fun(unsigned long int);          \
-  __gmp_expr & fun(float);                      \
-  __gmp_expr & fun(double);                     \
-  __gmp_expr & fun(long double);
-
-#define __GMPZR_DECLARE_COMPOUND_OPERATOR(fun) \
-__GMPZRR_DECLARE_COMPOUND_OPERATOR(fun)        \
-__GMPZRN_DECLARE_COMPOUND_OPERATOR(fun)
-
-#define __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(fun) \
-  __gmp_expr & fun(unsigned long int);
-
-#define __GMPZR_DECLARE_INCREMENT_OPERATOR(fun) \
-  inline __gmp_expr & fun();                    \
-  inline mpz_class fun(int);
 
 #define __GMPQQ_DECLARE_COMPOUND_OPERATOR(fun)                            \
   template <class T, class U>                                             \
@@ -2410,122 +2381,6 @@ inline std::istream & operator>>(std::istream &i, mpz_class &z)
 }
 
 
-/**************** mpz_classref -- num/den of mpq_t ****************/
-
-template <>
-class __gmp_expr<__gmpz_value, __gmpzref_value>
-{
-  friend class __gmp_expr<__gmpq_value, __gmpq_value>;
-private:
-  mpz_ptr ref;
-
-  __gmp_expr();
-  // __gmp_expr(const __gmp_expr &);
-  __gmp_expr(mpz_ptr z) : ref(z) { }
-  __gmp_expr(mpz_srcptr z) : ref((mpz_ptr) z) { }
-public:
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-
-  // assignment operators
-  __gmp_expr & operator=(const __gmp_expr &z)
-  { mpz_set(ref, z.ref); return *this; }
-  __gmp_expr & operator=(const mpz_class &z)
-  { mpz_set(ref, z.get_mpz_t()); return *this; }
-  template <class T, class U>
-  __gmp_expr<__gmpz_value, __gmpzref_value> & operator=
-  (const __gmp_expr<T, U> &expr)
-  { __gmp_set_expr(ref, expr); return *this; }
-
-  __gmp_expr & operator=(signed char c) { mpz_set_si(ref, c); return *this; }
-  __gmp_expr & operator=(unsigned char c)
-  { mpz_set_ui(ref, c); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpz_set_si(ref, i); return *this; }
-  __gmp_expr & operator=(unsigned int i) { mpz_set_ui(ref, i); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpz_set_si(ref, s); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpz_set_ui(ref, s); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpz_set_si(ref, l); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpz_set_ui(ref, l); return *this; }
-
-  __gmp_expr & operator=(float f) { mpz_set_d(ref, f); return *this; }
-  __gmp_expr & operator=(double d) { mpz_set_d(ref, d); return *this; }
-  /*
-  __gmp_expr & operator=(long double ld)
-  { mpz_set_ld(ref, ld); return *this; }
-  */
-
-  __gmp_expr & operator=(const char *s)
-  { mpz_set_str(ref, s, 0); return *this; }
-  __gmp_expr & operator=(const std::string &s)
-  { mpz_set_str(ref, s.c_str(), 0); return *this; }
-
-  // string input/output functions
-  int set_str(const std::string &s, int base)
-  { return mpz_set_str(ref, s.c_str(), base); }
-  std::string get_str(int base = 10) const
-  {
-    __gmp_alloc_cstring temp(mpz_get_str(0, base, ref));
-    return std::string(temp.str);
-  }
-
-  // conversion functions
-  mpz_srcptr get_mpz_t() const { return ref; }
-  mpz_ptr get_mpz_t() { return ref; }
-
-  signed long int get_si() const { return mpz_get_si(ref); }
-  unsigned long int get_ui() const { return mpz_get_ui(ref); }
-  double get_d() const { return mpz_get_d(ref); } // should be long double
-
-  // bool fits_bool_p() const { return mpz_fits_bool_p(ref); }
-  // bool fits_schar_p() const { return mpz_fits_schar_p(ref); }
-  // bool fits_uchar_p() const { return mpz_fits_uchar_p(ref); }
-  bool fits_sint_p() const { return mpz_fits_sint_p(ref); }
-  bool fits_uint_p() const { return mpz_fits_uint_p(ref); }
-  bool fits_sshort_p() const { return mpz_fits_sshort_p(ref); }
-  bool fits_ushort_p() const { return mpz_fits_ushort_p(ref); }
-  bool fits_slong_p() const { return mpz_fits_slong_p(ref); }
-  bool fits_ulong_p() const { return mpz_fits_ulong_p(ref); }
-  // bool fits_float_p() const { return mpz_fits_float_p(ref); }
-  // bool fits_double_p() const { return mpz_fits_double_p(ref); }
-  // bool fits_ldouble_p() const { return mpz_fits_ldouble_p(ref); }
-
-  // member operators
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator+=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator-=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator*=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator/=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator%=)
-
-  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator&=)
-  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator|=)
-  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator^=)
-
-  __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
-
-  __GMPZR_DECLARE_INCREMENT_OPERATOR(operator++)
-  __GMPZR_DECLARE_INCREMENT_OPERATOR(operator--)
-};
-
-typedef __gmp_expr<__gmpz_value, __gmpzref_value> mpz_classref;
-
-
-inline std::ostream & operator<<(std::ostream &o, const mpz_classref &z)
-{
-  return o << z.get_mpz_t();
-}
-
-inline std::istream & operator>>(std::istream &i, mpz_classref &z)
-{
-  return i >> z.get_mpz_t();
-}
-
 /**************** mpq_class -- wrapper for mpq_t ****************/
 
 template <>
@@ -2633,10 +2488,18 @@ public:
   }
 
   // conversion functions
-  const mpz_classref get_num() const { return mpz_classref(mpq_numref(mp)); }
-  mpz_classref get_num() { return mpz_classref(mpq_numref(mp)); }
-  const mpz_classref get_den() const { return mpz_classref(mpq_denref(mp)); }
-  mpz_classref get_den() { return mpz_classref(mpq_denref(mp)); }
+
+  // casting a reference to an mpz_t to mpz_class & is a dirty hack,
+  // but works because the internal representation of mpz_class is
+  // exactly an mpz_t
+  const mpz_class & get_num() const
+  { return reinterpret_cast<const mpz_class &>(*mpq_numref(mp)); }
+  mpz_class & get_num()
+  { return reinterpret_cast<mpz_class &>(*mpq_numref(mp)); }
+  const mpz_class & get_den() const
+  { return reinterpret_cast<const mpz_class &>(*mpq_denref(mp)); }
+  mpz_class & get_den()
+  { return reinterpret_cast<mpz_class &>(*mpq_denref(mp)); }
 
   mpq_srcptr get_mpq_t() const { return mp; }
   mpq_ptr get_mpq_t() { return mp; }
@@ -2884,7 +2747,6 @@ private:
   void operator=(const __gmpz_temp &);
 public:
   __gmpz_temp(const mpz_class &z) : mp(z.get_mpz_t()), is_temp(false) { }
-  __gmpz_temp(const mpz_classref &z) : mp(z.get_mpz_t()), is_temp(false) { }
   template <class T, class U>
   __gmpz_temp(const __gmp_expr<T, U> &expr)
   {
@@ -3054,12 +2916,6 @@ inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<__gmpz_value, T> &expr)
 }
 
 template <>
-inline void __gmp_set_expr(mpz_ptr z, const mpz_classref &w)
-{
-  mpz_set(z, w.get_mpz_t());
-}
-
-template <>
 inline void __gmp_set_expr(mpz_ptr z, const mpq_class &q)
 {
   mpz_set_q(z, q.get_mpq_t());
@@ -3096,12 +2952,6 @@ inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpz_value, T> &expr)
 {
   mpz_class temp(expr);
   mpq_set_z(q, temp.get_mpz_t());
-}
-
-template <>
-inline void __gmp_set_expr(mpq_ptr q, const mpz_classref &z)
-{
-  mpq_set_z(q, z.get_mpz_t());
 }
 
 template <>
@@ -3143,12 +2993,6 @@ inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpz_value, T> &expr)
 }
 
 template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const mpz_classref &z)
-{
-  mpf_set_z(f, z.get_mpz_t());
-}
-
-template <class T>
 inline void __gmp_set_expr(mpf_ptr f, const mpq_class &q)
 {
   mpf_set_q(f, q.get_mpq_t());
@@ -3176,7 +3020,7 @@ inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpf_value, T> &expr)
 
 /**************** Specializations of __gmp_expr ****************/
 /* The eval() method of __gmp_expr<T, U> evaluates the corresponding
-   expression assigning the result to its argument, which is either an
+   expression and assigns the result to its argument, which is either an
    mpz_t, mpq_t, or mpf_t -- this depends on the T argument, which is
    either __gmpz_value, __gmpq_value, or __gmpf_value, respectively.
    Compound expressions are evaluated recursively (temporaries are created
@@ -3187,7 +3031,7 @@ inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpf_value, T> &expr)
 
 /**************** Unary expressions ****************/
 /* cases:
-   - simple:   argument is mp[zqf]_class, or mpz_classref
+   - simple:   argument is mp[zqf]_class
    - compound: argument is __gmp_expr<...> */
 
 
@@ -3200,17 +3044,6 @@ private:
   __gmp_unary_expr<mpz_class, Op> expr;
 public:
   __gmp_expr(const mpz_class &val) : expr(val) { }
-  void eval(mpz_ptr z) const { Op::eval(z, expr.val.get_mpz_t()); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class Op>
-class __gmp_expr<__gmpz_value, __gmp_unary_expr<mpz_classref, Op> >
-{
-private:
-  __gmp_unary_expr<mpz_classref, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val) : expr(val) { }
   void eval(mpz_ptr z) const { Op::eval(z, expr.val.get_mpz_t()); }
   unsigned long int get_prec() const { return mpf_get_default_prec(); }
 };
@@ -3290,10 +3123,10 @@ public:
 
 /**************** Binary expressions ****************/
 /* simple:
-   - arguments are both mp[zqf]_class, or mpz_classref
-   - one argument is mp[zqf]_class(ref), one is a built-in type
+   - arguments are both mp[zqf]_class
+   - one argument is mp[zqf]_class, one is a built-in type
    compound:
-   - one is mp[zqf]_class(ref), one is __gmp_expr<...>
+   - one is mp[zqf]_class, one is __gmp_expr<...>
    - one is __gmp_expr<...>, one is built-in
    - both arguments are __gmp_expr<...> */
 
@@ -3307,48 +3140,6 @@ private:
   __gmp_binary_expr<mpz_class, mpz_class, Op> expr;
 public:
   __gmp_expr(const mpz_class &val1, const mpz_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_class, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_class, mpz_classref, Op> expr;
-public:
-  __gmp_expr(const mpz_class &val1, const mpz_classref &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_classref, mpz_class, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, mpz_class, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, const mpz_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_classref, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, mpz_classref, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, const mpz_classref &val2)
     : expr(val1, val2) { }
   void eval(mpz_ptr z) const
   { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
@@ -3408,30 +3199,6 @@ private:
   __gmp_binary_expr<T, mpz_class, Op> expr;
 public:
   __gmp_expr(T val1, const mpz_class &val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1, expr.val2.get_mpz_t()); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_classref, T, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, T, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, T val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2); }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<T, mpz_classref, Op> expr;
-public:
-  __gmp_expr(T val1, const mpz_classref &val2) : expr(val1, val2) { }
   void eval(mpz_ptr z) const
   { Op::eval(z, expr.val1, expr.val2.get_mpz_t()); }
   unsigned long int get_prec() const { return mpf_get_default_prec(); }
@@ -3523,40 +3290,6 @@ private:
   __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op> expr;
 public:
   __gmp_expr(const __gmp_expr<T, U> &val1, const mpz_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val1);
-    Op::eval(z, temp.get_mpz_t(), expr.val2.get_mpz_t());
-  }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_classref, __gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, __gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, const __gmp_expr<T, U> &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val2);
-    Op::eval(z, expr.val1.get_mpz_t(), temp.get_mpz_t());
-  }
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, mpz_classref, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const mpz_classref &val2)
     : expr(val1, val2) { }
   void eval(mpz_ptr z) const
   {
@@ -4491,115 +4224,6 @@ inline mpz_class mpz_class::fun(int)                    \
 }
 
 
-// member operators for mpz_classref
-
-#define __GMPZRR_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)              \
-                                                                      \
-template <class T, class U>                                           \
-inline mpz_classref & mpz_classref::fun(const __gmp_expr<T, U> &expr) \
-{                                                                     \
-  __gmpz_temp temp(expr);                                             \
-  eval_fun::eval(ref, ref, temp.get_mp());                            \
-  return *this;                                                       \
-}
-
-#define __GMPZRN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)      \
-                                                              \
-inline mpz_classref & mpz_classref::fun(signed char c)        \
-{                                                             \
-  eval_fun::eval(ref, ref, (signed long int) c);              \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(unsigned char c)      \
-{                                                             \
-  eval_fun::eval(ref, ref, (unsigned long int) c);            \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(signed int i)         \
-{                                                             \
-  eval_fun::eval(ref, ref, (signed long int) i);              \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(unsigned int i)       \
-{                                                             \
-  eval_fun::eval(ref, ref, (unsigned long int) i);            \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(signed short int s)   \
-{                                                             \
-  eval_fun::eval(ref, ref, (signed long int) s);              \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(unsigned short int s) \
-{                                                             \
-  eval_fun::eval(ref, ref, (unsigned long int) s);            \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(signed long int l)    \
-{                                                             \
-  eval_fun::eval(ref, ref, l);                                \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(unsigned long int l)  \
-{                                                             \
-  eval_fun::eval(ref, ref, l);                                \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(float f)              \
-{                                                             \
-  eval_fun::eval(ref, ref, (double) f);                       \
-  return *this;                                               \
-}                                                             \
-                                                              \
-inline mpz_classref & mpz_classref::fun(double d)             \
-{                                                             \
-  eval_fun::eval(ref, ref, d);                                \
-  return *this;                                               \
-}                                                             \
-                                                              \
-/*                                                            \
-inline mpz_classref & mpz_classref::fun(long double ld)       \
-{                                                             \
-  eval_fun::eval(ref, ref, ld);                               \
-  return *this;                                               \
-} */
-
-#define __GMPZR_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)        \
-__GMPZRN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)
-
-#define __GMPZR_DEFINE_COMPOUND_OPERATOR_UI(fun, eval_fun)   \
-                                                             \
-inline mpz_classref & mpz_classref::fun(unsigned long int l) \
-{                                                            \
-  eval_fun::eval(ref, ref, l);                               \
-  return *this;                                              \
-}
-
-#define __GMPZR_DEFINE_INCREMENT_OPERATOR(fun, eval_fun) \
-                                                         \
-inline mpz_classref & mpz_classref::fun()                \
-{                                                        \
-  eval_fun::eval(ref, ref);                              \
-  return *this;                                          \
-}                                                        \
-                                                         \
-inline mpz_class mpz_classref::fun(int)                  \
-{                                                        \
-  mpz_class temp(*this);                                 \
-  eval_fun::eval(ref, ref);                              \
-  return temp;                                           \
-}
-
-
 // member operators for mpq_class
 
 #define __GMPQQ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)         \
@@ -4874,24 +4498,6 @@ __GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
 __GMPZ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
 __GMPZ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
 
-// member operators for mpz_classref
-
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator%=, __gmp_binary_modulus)
-
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
-
-__GMPZR_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
-__GMPZR_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
-
-__GMPZR_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
-__GMPZR_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
-
 // member operators for mpq_class
 
 __GMPQ_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
@@ -5047,18 +4653,6 @@ public:
 #undef __GMPZ_DEFINE_COMPOUND_OPERATOR
 #undef __GMPZ_DEFINE_COMPOUND_OPERATOR_UI
 #undef __GMPZ_DEFINE_INCREMENT_OPERATOR
-
-#undef __GMPZRR_DECLARE_COMPOUND_OPERATOR
-#undef __GMPZRN_DECLARE_COMPOUND_OPERATOR
-#undef __GMPZR_DECLARE_COMPOUND_OPERATOR
-#undef __GMPZR_DECLARE_COMPOUND_OPERATOR_UI
-#undef __GMPZR_DECLARE_INCREMENT_OPERATOR
-
-#undef __GMPZRR_DEFINE_COMPOUND_OPERATOR
-#undef __GMPZRN_DEFINE_COMPOUND_OPERATOR
-#undef __GMPZR_DEFINE_COMPOUND_OPERATOR
-#undef __GMPZR_DEFINE_COMPOUND_OPERATOR_UI
-#undef __GMPZR_DEFINE_INCREMENT_OPERATOR
 
 #undef __GMPQQ_DECLARE_COMPOUND_OPERATOR
 #undef __GMPQN_DECLARE_COMPOUND_OPERATOR
