@@ -35,8 +35,8 @@ mpz_fake_bits (mpz_ptr z, unsigned long totbits)
   unsigned long     zero_bits, zero_limbs;
 
   zero_bits = totbits - 1;
-  zero_limbs = zero_bits / BITS_PER_MP_LIMB;
-  zero_bits %= BITS_PER_MP_LIMB;
+  zero_limbs = zero_bits / GMP_NUMB_BITS;
+  zero_bits %= GMP_NUMB_BITS;
 
   SIZ(z) = zero_limbs + 1;
   PTR(z) = (&n) - (SIZ(z) - 1);
