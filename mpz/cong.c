@@ -54,7 +54,7 @@ MA 02111-1307, USA.
 int
 mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
 {
-  mp_size_t  asize, csize, dsize, xor;
+  mp_size_t  asize, csize, dsize, sign;
   mp_srcptr  ap, cp, dp;
   mp_ptr     xp;
   mp_limb_t  alow, clow, dlow, dmask, r;
@@ -72,7 +72,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
 
   asize = SIZ(a);
   csize = SIZ(c);
-  xor = (asize ^ csize);
+  sign = (asize ^ csize);
 
   asize = ABS(asize);
   ap = PTR(a);
@@ -90,7 +90,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
   /* Check a==c mod low zero bits of dlow.  This might catch a few cases of
      a!=c quickly, and it helps the csize==1 special cases below.  */
   dmask = LOW_ZEROS_MASK (dlow);
-  alow = (xor >= 0 ? alow : -alow);
+  alow = (sign >= 0 ? alow : -alow);
   if (((alow-clow) & dmask) != 0)
     return 0;
 
@@ -99,7 +99,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
       if (dsize == 1)
         {
         cong_1:
-          if (xor < 0)
+          if (sign < 0)
             NEG_MOD (clow, clow, dlow);
 
           if (BELOW_THRESHOLD (asize, MODEXACT_1_ODD_THRESHOLD))
@@ -149,7 +149,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
   xp = TMP_ALLOC_LIMBS (asize+1);
 
   /* calculate abs(a-c) */
-  if (xor >= 0)
+  if (sign >= 0)
     {
       /* same signs, subtract */
       if (asize > csize || mpn_cmp (ap, cp, asize) >= 0)
