@@ -660,7 +660,7 @@ mpn_fft_norm_modF (mp_ptr rp, mp_size_t n, mp_ptr ap, mp_size_t an)
    T must have space for at least (nprime + 1) limbs.
    We must have nl <= 2*K*l.
 */
-static inline void
+static void
 mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
                        mp_size_t nl, int l, int Mp, mp_ptr T)
 {
