@@ -48,7 +48,8 @@ __mpn_mul_1:
 	lwz	0,0(4)
 	mullw	7,0,6
 	mulhwu	10,0,6
-	addic	3,3,-4		# adjust res_ptr and reset carry
+	addi	3,3,-4		# adjust res_ptr
+	addic	5,5,0		# clear cy with dummy insn
 	bdz	Lend
 
 Loop:	lwzu	0,4(4)
@@ -56,7 +57,7 @@ Loop:	lwzu	0,4(4)
 	mullw	8,0,6
 	adde	7,8,10
 	mulhwu	10,0,6
-	bdn	Loop
+	bdnz	Loop
 
 Lend:	stw	7,4(3)
 	addze	3,10
