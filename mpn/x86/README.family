@@ -121,7 +121,8 @@ SHLD/SHRD INSTRUCTIONS
 
 The %cl count forms of double shift instructions like "shldl %cl,%eax,%ebx"
 must be written "shldl %eax,%ebx" for some assemblers.  gas takes either,
-gcc generates %cl for gas and NeXT (which is gas), and omits %cl elsewhere.
+Solaris "as" doesn't allow %cl, gcc generates %cl for gas and NeXT (which is
+gas), and omits %cl elsewhere.
 
 For GMP an autoconf test is used to determine whether %cl should be used and
 the macros shldl, shrdl, shldw and shrdw in mpn/x86/x86-defs.m4 then pass
