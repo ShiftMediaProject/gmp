@@ -1,6 +1,6 @@
 /* Test mpq_inp_str.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -92,7 +92,8 @@ check_data (void)
           mpq_set_str_or_abort (want, data[i].want, 0);
           MPQ_CHECK_FORMAT (want);
 
-          ASSERT_ALWAYS ((fp = fopen (FILENAME, "w+")) != NULL);
+          fp = fopen (FILENAME, "w+");
+          ASSERT_ALWAYS (fp != NULL);
           fputs (data[i].inp, fp);
           for (j = 0; j < post; j++)
             putc (' ', fp);
