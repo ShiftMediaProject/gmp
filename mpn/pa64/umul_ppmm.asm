@@ -17,6 +17,15 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
+
+dnl  Optimizations:
+dnl  * Avoid skip instructions
+dnl  * Put carry-generating and carry-consuming insns consecutively
+dnl  * Don't allocate any stack, "home" positions for parameteters could be
+dnl    used.
+
+include(`../config.m4')
+
 define(`p0',`%r28')
 define(`p1',`%r29')
 define(`t32',`%r19')
@@ -25,11 +34,6 @@ define(`t1',`%r21')
 define(`x',`%r22')
 define(`m0',`%r23')
 define(`m1',`%r24')
-
-C Optimizations:
-C * Avoid skip instructions
-C * Put carry-generating and carry-consuming insns consecutively
-C * Don't allocate any stack, "home" positions for parameteters could be used.
 
 ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0W
