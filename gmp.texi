@@ -8965,6 +8965,10 @@ about the omission!)
 
 @itemize @bullet
 @item
+Jonathan M. Borwein and Peter B. Borwein, ``Pi and the AGM: A Study in
+Analytic Number Theory and Computational Complexity'', Wiley, John & Sons,
+1998.
+
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.
 @texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen}
