@@ -1,3 +1,41 @@
+2001-05-17  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (ge): Fix definition for info.
+	(Notes for Particular Systems): Mention 68k dragonball and cpu32.
+	(Efficiency): Add static linking, more about in-place operations,
+	describe mpq+/-integer using addmul.
+	(Reporting Bugs): A couple of words about self-contained reports.
+	(Floating-point Functions): Note exponent limitations of mpf_get_str
+	and mpf_set_str.
+	(Initializing Floats): Clarify mpf_get_prec, mpf_set_prec and
+	mpf_set_prec_raw a bit.
+	(Float Comparison): Note current mpf_eq deficiencies.
+
+	* gmp-h.in: Merge binutils ansidecl.h tests for ANSI compilers.
+	* demos/expr/expr-impl-h.in: Ditto.
+
+	* gmp-impl.h (BITS_PER_MP_LIMB): Define from __GMP_BITS_PER_MP_LIMB if
+	not already in gmp-mparam.h.
+	* tests/t-constants.c (BITS_PER_MP_LIMB, __GMP_BITS_PER_MP_LIMB):
+	Check these are the same.
+
+	* gmp-h.in (mpf_get_default_prec, mpf_get_prec, mpf_set_default_prec,
+	mpf_set_prec_raw): Provide "extern inline" versions, use __GMPF on the
+	macros.
+	* mpf/get_dfl_prc.c, mpf/get_prc.c, mpf/set_dfl_prc.c,
+	mpf/set_prc_raw.c: Get code from gmp.h using __GMP_FORCE.
+
+	* gmp-h.in, gmp-impl.h (__gmp_default_fp_limb_precision): Move from
+	gmp-impl.h to gmp-h.in.
+	(__GMPF_BITS_TO_PREC, __GMPF_PREC_TO_BITS): Ditto, and use __GMPF
+	prefix and add a couple of casts.
+	* gmp-h.in (__GMP_MAX): New macro.
+	* mpf/init2.c mpf/set_prc.c: Update for __GMPF prefix.
+
+	* gmp-h.in (__GMP_BITS_PER_MP_LIMB): New templated define.
+	* acinclude.m4 (GMP_C_SIZES): Add AC_SUBST __GMP_BITS_PER_MP_LIMB,
+	remove AC_DEFINE BITS_PER_MP_LIMB.
+
 2001-05-13  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in, gmp.texi, Makefile.am, mpz/Makefile.am, tests/mpz/t-pow.c:
