@@ -134,7 +134,7 @@ mpn_mod_1 (mp_srcptr up, mp_size_t un, mp_limb_t d)
       d <<= norm;
 
       n1 = up[un - 1] << GMP_NAIL_BITS;
-      r = (r << norm) | (n1 >> (BITS_PER_MP_LIMB - norm));
+      r = (r << norm) | (n1 >> (GMP_LIMB_BITS - norm));
 
       if (UDIV_NEEDS_NORMALIZATION
 	  && BELOW_THRESHOLD (un, MOD_1_UNNORM_THRESHOLD))
@@ -143,7 +143,8 @@ mpn_mod_1 (mp_srcptr up, mp_size_t un, mp_limb_t d)
 	    {
 	      n0 = up[i] << GMP_NAIL_BITS;
 	      udiv_qrnnd (dummy, r, r,
-			  (n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)), d);
+			  (n1 << norm) | (n0 >> (GMP_NUMB_BITS - norm)),
+			  d);
 	      r >>= GMP_NAIL_BITS;
 	      n1 = n0;
 	    }
@@ -160,7 +161,7 @@ mpn_mod_1 (mp_srcptr up, mp_size_t un, mp_limb_t d)
 	    {
 	      n0 = up[i] << GMP_NAIL_BITS;
 	      udiv_qrnnd_preinv (dummy, r, r,
-				 (n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)),
+				 (n1 << norm) | (n0 >> (GMP_NUMB_BITS - norm)),
 				 d, inv);
 	      r >>= GMP_NAIL_BITS;
 	      n1 = n0;
