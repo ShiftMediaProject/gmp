@@ -101,7 +101,9 @@ AUTOMAKE_OPTIONS = gnu
 INCLUDES = -I$(top_srcdir) -I..
 LDADD = libstat.la ../../libgmp.la -lm
 
-noinst_PROGRAMS = findcl gen spect stat
+noinst_PROGRAMS = findlc gen gen.static spect stat
+gen_static_SOURCES = gen.c
+gen_static_LDFLAGS = -static
 
 noinst_LTLIBRARIES = libstat.la
 libstat_la_SOURCES = statlib.c zdiv_round.c
@@ -119,20 +121,24 @@ libstat_la_LDFLAGS =
 libstat_la_LIBADD = 
 am_libstat_la_OBJECTS =  statlib.lo zdiv_round.lo
 libstat_la_OBJECTS =  $(am_libstat_la_OBJECTS)
-noinst_PROGRAMS =  findcl$(EXEEXT) gen$(EXEEXT) spect$(EXEEXT) \
-stat$(EXEEXT)
+noinst_PROGRAMS =  findlc$(EXEEXT) gen$(EXEEXT) gen.static \
+spect$(EXEEXT) stat$(EXEEXT)
 PROGRAMS =  $(noinst_PROGRAMS)
 
-findcl_SOURCES = findcl.c
-findcl_OBJECTS =  findcl.$(OBJEXT)
-findcl_LDADD = $(LDADD)
-findcl_DEPENDENCIES =  libstat.la ../../libgmp.la
-findcl_LDFLAGS = 
+findlc_SOURCES = findlc.c
+findlc_OBJECTS =  findlc.$(OBJEXT)
+findlc_LDADD = $(LDADD)
+findlc_DEPENDENCIES =  libstat.la ../../libgmp.la
+findlc_LDFLAGS = 
 gen_SOURCES = gen.c
 gen_OBJECTS =  gen.$(OBJEXT)
 gen_LDADD = $(LDADD)
 gen_DEPENDENCIES =  libstat.la ../../libgmp.la
 gen_LDFLAGS = 
+am_gen_static_OBJECTS =  gen.$(OBJEXT)
+gen_static_OBJECTS =  $(am_gen_static_OBJECTS)
+gen_static_LDADD = $(LDADD)
+gen_static_DEPENDENCIES =  libstat.la ../../libgmp.la
 spect_SOURCES = spect.c
 spect_OBJECTS =  spect.$(OBJEXT)
 spect_LDADD = $(LDADD)
@@ -148,7 +154,8 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libstat_la_SOURCES) findcl.c gen.c spect.c stat.c
+DIST_SOURCES =  $(libstat_la_SOURCES) findlc.c gen.c \
+$(gen_static_SOURCES) spect.c stat.c
 DIST_COMMON =  ChangeLog Makefile.am Makefile.in
 
 
@@ -156,11 +163,11 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/findcl.Po $(DEPDIR)/gen.Po \
+DEP_FILES =  @AMDEP@ $(DEPDIR)/findlc.Po $(DEPDIR)/gen.Po \
 $(DEPDIR)/spect.Po $(DEPDIR)/stat.Po $(DEPDIR)/statlib.Plo \
 $(DEPDIR)/zdiv_round.Plo
-SOURCES = $(libstat_la_SOURCES) findcl.c gen.c spect.c stat.c
-OBJECTS = $(am_libstat_la_OBJECTS) findcl.$(OBJEXT) gen.$(OBJEXT) spect.$(OBJEXT) stat.$(OBJEXT)
+SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c
+OBJECTS = $(am_libstat_la_OBJECTS) findlc.$(OBJEXT) gen.$(OBJEXT) $(am_gen_static_OBJECTS) spect.$(OBJEXT) stat.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -215,13 +222,17 @@ distclean-noinstPROGRAMS:
 
 maintainer-clean-noinstPROGRAMS:
 
-findcl$(EXEEXT): $(findcl_OBJECTS) $(findcl_DEPENDENCIES)
-	@rm -f findcl$(EXEEXT)
-	$(LINK) $(findcl_LDFLAGS) $(findcl_OBJECTS) $(findcl_LDADD) $(LIBS)
+findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES)
+	@rm -f findlc$(EXEEXT)
+	$(LINK) $(findlc_LDFLAGS) $(findlc_OBJECTS) $(findlc_LDADD) $(LIBS)
 
 gen$(EXEEXT): $(gen_OBJECTS) $(gen_DEPENDENCIES)
 	@rm -f gen$(EXEEXT)
 	$(LINK) $(gen_LDFLAGS) $(gen_OBJECTS) $(gen_LDADD) $(LIBS)
+
+gen.static: $(gen_static_OBJECTS) $(gen_static_DEPENDENCIES)
+	@rm -f gen.static
+	$(LINK) $(gen_static_LDFLAGS) $(gen_static_OBJECTS) $(gen_static_LDADD) $(LIBS)
 
 spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES)
 	@rm -f spect$(EXEEXT)
@@ -277,7 +288,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 
-@AMDEP@include $(DEPDIR)/findcl.Po
+@AMDEP@include $(DEPDIR)/findlc.Po
 @AMDEP@include $(DEPDIR)/gen.Po
 @AMDEP@include $(DEPDIR)/spect.Po
 @AMDEP@include $(DEPDIR)/stat.Po
