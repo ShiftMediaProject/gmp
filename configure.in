@@ -60,9 +60,11 @@ GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_HOST_CPU_$tmp_host')", POST)
 # can't be done yet as automake insists on AM_CONFIG_HEADER).
 
 AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
-AM_CONFIG_HEADER(config.h:config.in)
 AM_CONFIG_HEADER(gmp.h:gmp-h.in)
 AM_CONFIG_HEADER(mp.h:mp-h.in)
+AM_CONFIG_HEADER(demos/expr/expr-impl.h:demos/expr/expr-impl-h.in)
+dnl  autoheader requires config.in to be the last AM_CONFIG_HEADER here
+AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
 
@@ -1517,7 +1519,6 @@ if test $enable_mpfr = yes; then
 else
   AC_DEFINE(HAVE_MPFR,0)
 fi
-AM_CONFIG_HEADER(demos/expr/expr-impl.h:demos/expr/expr-impl-h.in)
 
 
 # Create config.m4.
