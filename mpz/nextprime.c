@@ -141,7 +141,7 @@ mpz_millerrabin (n, nruns)
   mpz_t n_minus_1, q;
   mp_size_t nn;
   unsigned long int nb;
-  gmp_rand_state rstate;
+  gmp_randstate_t rstate;
   unsigned long int k;
   int run;
   TMP_DECL (marker);
@@ -155,7 +155,7 @@ mpz_millerrabin (n, nruns)
   MPZ_TMP_INIT (n_minus_1, nn + 1);
   MPZ_TMP_INIT (q, nn);
 
-  gmp_rand_init (rstate, 32L, GMP_RAND_ALG_DEFAULT);
+  gmp_randinit (rstate, 32L, GMP_RAND_ALG_DEFAULT);
 
   mpz_sub_ui (n_minus_1, n, 1L);
   k = mpz_scan1 (n_minus_1, 0L);
@@ -189,7 +189,7 @@ mpz_millerrabin (n, nruns)
       return 0;
     }
 
-  gmp_rand_clear (rstate);
+  gmp_randclear (rstate);
   TMP_FREE (marker);
 }
 #endif
