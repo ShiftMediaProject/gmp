@@ -140,6 +140,13 @@ EOF
 		X86CPU=`./dummy`
 	    fi
 	fi
+
+	# Default to believing uname -m if the program fails to compile or
+	# run.  Will fail to run on 386 since cpuid was only added on 486.
+	if test -z "$X86CPU"
+	then
+	    X86CPU="$UNAME_MACHINE"
+	fi
 	rm -f dummy.c dummy.s dummy1.s dummy2.c dummy
   ;;
 esac
