@@ -1596,9 +1596,6 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
       struct hgcd2 R;
       int res;
 
-      /* Max size after reduction, plus one */
-      ralloc = hgcd->row[1].rsize + 1;
-
       /* We don't want hgcd2 to pickup any bits below r0p[M-1], so
 	 don't tell mpn_hgcd2_lehmer_step about them. */      
       res = mpn_hgcd2_lehmer_step (&R,
@@ -1651,6 +1648,9 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 
       /* Now r0 and r1 are always correct. */
       /* Store new values in rows 2 and 3, to avoid overlap */
+
+      /* Max size after reduction, plus one */
+      ralloc = hgcd->row[1].rsize + 1;
 
       hgcd->row[2].rsize
 	= mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
