@@ -290,7 +290,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
       (sh) = (ah) - (bh);                       \
     (sl) = __x;                                 \
   } while (0)
-#if defined (__GNUC__)
+#if defined (__GNUC__) && ! defined (__INTEL_COMPILER)
 /* Do both product parts in assembly, since that gives better code with
    all gcc versions.  Some callers will just use the upper part, and in
    that situation we waste an instruction, but not any cycles.  */
