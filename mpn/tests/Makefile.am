@@ -26,8 +26,10 @@ INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
 EXTRA_PROGRAMS = \
-  add_n addmul_1 addsub_n addsub_n_2 copy divmod_1 divrem lshift mul_1 rshift \
+  add_n addmul_1 copy divmod_1 divrem lshift mul_1 rshift \
   sub_n submul_1 tst-addsub try
+
+# addsub_n addsub_n_2 not yet built since mpn_addsub_n doesn't yet exist
 
 EXTRA_HEADERS = ref.h try.h
 EXTRA_DIST = x86call.asm x86check.c
