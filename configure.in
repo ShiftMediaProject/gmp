@@ -2805,6 +2805,7 @@ if test "$ac_cv_sizeof_mp_limb_t" = 0; then
   AC_MSG_ERROR([Oops, mp_limb_t doesn't seem to work])
 fi
 AC_SUBST(BITS_PER_MP_LIMB, `expr 8 \* $ac_cv_sizeof_mp_limb_t`)
+GMP_DEFINE_RAW(["define(<SIZEOF_UNSIGNED>,<$ac_cv_sizeof_unsigned>)"])
 
 # Check compiler limb size matches gmp-mparam.h
 #
