@@ -1,3 +1,24 @@
+2000-11-13  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/Makeasm.am: New file, splitting out assembler rules.
+	* mpn/Makefile.am, tune/Makefile.am: Use it.
+
+	* mpn/Makefile.am (@CPP@): Remove this, automake already gives it.
+
+	* configure.in (AC_CHECK_LIBM): New test, and AC_SUBST it.
+	* Makefile.am (MPFR_LIBADD_OPTION): Use it.
+	* demos/Makefile.am (qcn_LDADD): Ditto.
+	* tune/Makefile.am (libspeed_la_LIBADD): Ditto.
+	* tests/rand/Makefile.am (libstat_la_LIBADD): Ditto.
+
+	* tune/time.c (timeval_diff_secs): Better calculation.
+	(read_real_time): New measuring method for AIX power/powerpc.
+	(speed_endtime): Protect against negative times.
+	* tune/common.c (speed_measure): Protect against big reps.
+	* tune/freq.c (speed_cpu_frequency_measure_one): Better timeval diff.
+	* tune/speed.h (TIMEVAL_DIFF_SEC,USEC): Remove macros.
+	* configure.in: (sys/systemcfg.h, read_real_time): New tests.
+
 2000-11-13  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-mul.c: Don't #include urandom.h.
