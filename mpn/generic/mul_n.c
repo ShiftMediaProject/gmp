@@ -430,7 +430,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
                                                               +lo(v0) */
 
   ASSERT_NOCARRY (mpn_divexact_by3 (v2, v2, kk1));    /* v2 <- v2 / 3 */
-#ifdef HAVE_MPN_RSH1ADD_N
+#ifdef HAVE_NATIVE_mpn_rsh1add_n
   mpn_rsh1add_n (v2, v2, v0, twok); /* v2 <- (lo(v2)+v0) / 2, exact */
   cy = v2[twok] & 1; /* add high limb of v2 divided by 2 */
   v2[twok] >>= 1;
@@ -449,7 +449,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
      No carry comes out from {v1, kk1} +/- {vm1, kk1},
      and the division by two is exact */
   if (sa >= 0)
-#ifdef HAVE_MPN_RSH1ADD_N
+#ifdef HAVE_NATIVE_mpn_rsh1add_n
     mpn_rsh1add_n (vm1, v1, vm1, kk1);
 #else
   {
@@ -458,7 +458,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   }
 #endif
   else
-#ifdef HAVE_MPN_RSH1SUB_N
+#ifdef HAVE_NATIVE_mpn_rsh1sub_n
     mpn_rsh1sub_n (vm1, v1, vm1, kk1);
 #else
   {
@@ -474,7 +474,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
      result is t1 := a0*b0+a0*b2+a1*b1+a1*b2+a2*b0+a2*b1+a2*b2 >= 0 */
   saved = c4[0];
   c4[0] = vinf0;
-#ifdef HAVE_MPN_SUBLSH1_N
+#ifdef HAVE_NATIVE_mpn_sublsh1_n
   cy = mpn_sublsh1_n (v2, v2, c4, twor);
 #else
   cy = mpn_lshift (ws, c4, twor, 1);
@@ -686,7 +686,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
 
   /* compute a0+2a1+4a2 in {c, k+1} and b0+2b1+4b2 in {c+4k+2, k+1}
      [requires 5k+3 <= 2n, i.e. n >= 17] */
-#ifdef HAVE_MPN_ADDLSH1_N
+#ifdef HAVE_NATIVE_mpn_addlsh1_n
   c1[0] = mpn_addlsh1_n (c, a + k, a + twok, r);
   c5[2] = mpn_addlsh1_n (c4 + 2, b + k, b + twok, r);
   if (r < k)
@@ -733,7 +733,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
      Uses temporary space {t+4k+2,2k+1}, requires T(n) >= 6k+3.
   */
   if (sa >= 0)
-#ifdef HAVE_MPN_ADDLSH1_N
+#ifdef HAVE_NATIVE_mpn_addlsh1_n
     mpn_addlsh1_n (v2, v2, c2, kk1);
 #else
   {
@@ -743,7 +743,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   }
 #endif
   else
-#ifdef HAVE_MPN_SUBLSH1_N
+#ifdef HAVE_NATIVE_mpn_sublsh1_n
     mpn_sublsh1_n (v2, v2, c2, kk1);
 #else
   {
@@ -822,7 +822,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 
   TOOM3_SQR_REC (c2, c, k1, trec);
 
-#ifdef HAVE_MPN_ADDLSH1_N
+#ifdef HAVE_NATIVE_mpn_addlsh1_n
   c1[0] = mpn_addlsh1_n (c, a + k, a + twok, r);
   if (r < k)
     c1[0] = mpn_add_1 (c + r, a + k + r, k - r, c1[0]);
@@ -840,7 +840,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 
   TOOM3_SQR_REC (c, a, k, trec);
 
-#ifdef HAVE_MPN_ADDLSH1_N
+#ifdef HAVE_NATIVE_mpn_addlsh1_n
   mpn_addlsh1_n (v2, v2, c2, kk1);
 #else
   mpn_lshift (t + 4 * k + 2, c2, kk1, 1);
