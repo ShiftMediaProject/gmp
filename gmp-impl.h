@@ -1449,11 +1449,8 @@ extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 
-/* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
-   between GCC 2 releases from 2.5, since __GNUC_MINOR__ wasn't introduced
-   until then.  */
-#if (__GNUC__ - 0 > 2 || defined (__GNUC_MINOR__)) && ! defined (__APPLE_CC__)
 /* Define stuff for longlong.h.  */
+#if HAVE_ATTRIBUTE_MODE
 typedef unsigned int UQItype	__attribute__ ((mode (QI)));
 typedef		 int SItype	__attribute__ ((mode (SI)));
 typedef unsigned int USItype	__attribute__ ((mode (SI)));
