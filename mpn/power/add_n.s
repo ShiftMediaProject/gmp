@@ -49,7 +49,7 @@ __mpn_add_n:
 
 # We have an odd # of limbs.  Add the first limbs separately.
 	cmpi	1,10,0		# is count for unrolled loop zero?
-	bne	1,L1		# branch if not
+	bc	4,6,L1		# bne cr1,L1 (misassembled by gas)
 	st	7,4(3)
 	aze	3,10		# use the fact that r10 is zero...
 	br			# return
