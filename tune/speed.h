@@ -81,6 +81,7 @@ void speed_cycletime_need_seconds _PROTO ((void));
 void speed_starttime _PROTO ((void));
 double speed_endtime _PROTO ((void));
 
+
 struct speed_params {
   unsigned   reps;      /* how many times to run the routine */
   mp_ptr     xp;        /* first argument */
@@ -248,6 +249,19 @@ double speed_umul_ppmm _PROTO ((struct speed_params *s));
 
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter _PROTO ((unsigned p[2]));
+
+#if defined(__GNUC__) && ! defined (NO_ASM) \
+  && (defined (__i386__) || defined (__i486__))
+#define speed_cyclecounter(p)                                   \
+  do {                                                          \
+    __asm__ __volatile__ ("cpuid\n"                             \
+                          "rdtsc"                               \
+                          : "=a" ((p)[0]), "=d" ((p)[1])        \
+                          :                                     \
+                          : "ebx", "ecx");                      \
+  } while (0)
+#endif
+
 double speed_cyclecounter_diff _PROTO ((const unsigned end[2],
                                         const unsigned start[2]));
 int gettimeofday_microseconds_p _PROTO ((void));
