@@ -128,18 +128,13 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
-  abs.c canonicalize.c clear.c cmp.c cmp_si.c cmp_ui.c div.c equal.c	\
+  abs.c aors.c canonicalize.c clear.c					\
+  cmp.c cmp_si.c cmp_ui.c div.c equal.c					\
   get_d.c get_den.c get_num.c get_str.c					\
   init.c inp_str.c inv.c md_2exp.c mul.c neg.c out_str.c		\
   set.c set_den.c set_num.c set_si.c set_str.c set_ui.c set_z.c set_d.c	\
   set_f.c swap.c
 
-
-nodist_libmpq_la_SOURCES = add.c sub.c
-
-CLEANFILES = $(nodist_libmpq_la_SOURCES)
-
-EXTRA_DIST = aors.c
 subdir = mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -148,14 +143,13 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libmpq_la_LDFLAGS =
 libmpq_la_LIBADD =
-am_libmpq_la_OBJECTS = abs$U.lo canonicalize$U.lo clear$U.lo cmp$U.lo \
-	cmp_si$U.lo cmp_ui$U.lo div$U.lo equal$U.lo get_d$U.lo \
+am_libmpq_la_OBJECTS = abs$U.lo aors$U.lo canonicalize$U.lo clear$U.lo \
+	cmp$U.lo cmp_si$U.lo cmp_ui$U.lo div$U.lo equal$U.lo get_d$U.lo \
 	get_den$U.lo get_num$U.lo get_str$U.lo init$U.lo inp_str$U.lo \
 	inv$U.lo md_2exp$U.lo mul$U.lo neg$U.lo out_str$U.lo set$U.lo \
 	set_den$U.lo set_num$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo \
 	set_z$U.lo set_d$U.lo set_f$U.lo swap$U.lo
-nodist_libmpq_la_OBJECTS = add$U.lo sub$U.lo
-libmpq_la_OBJECTS = $(am_libmpq_la_OBJECTS) $(nodist_libmpq_la_OBJECTS)
+libmpq_la_OBJECTS = $(am_libmpq_la_OBJECTS)
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -173,7 +167,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libmpq_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libmpq_la_SOURCES) $(nodist_libmpq_la_SOURCES)
+SOURCES = $(libmpq_la_SOURCES)
 
 all: all-am
 
@@ -224,8 +218,8 @@ mostlyclean-kr:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 abs_.c: abs.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/abs.c; then echo $(srcdir)/abs.c; else echo abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > abs_.c || rm -f abs_.c
-add_.c: add.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c || rm -f add_.c
+aors_.c: aors.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/aors.c; then echo $(srcdir)/aors.c; else echo aors.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > aors_.c || rm -f aors_.c
 canonicalize_.c: canonicalize.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/canonicalize.c; then echo $(srcdir)/canonicalize.c; else echo canonicalize.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > canonicalize_.c || rm -f canonicalize_.c
 clear_.c: clear.c $(ANSI2KNR)
@@ -280,11 +274,9 @@ set_ui_.c: set_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_ui.c; then echo $(srcdir)/set_ui.c; else echo set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_ui_.c || rm -f set_ui_.c
 set_z_.c: set_z.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_z.c; then echo $(srcdir)/set_z.c; else echo set_z.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_z_.c || rm -f set_z_.c
-sub_.c: sub.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c || rm -f sub_.c
 swap_.c: swap.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c || rm -f swap_.c
-abs_.$(OBJEXT) abs_.lo add_.$(OBJEXT) add_.lo canonicalize_.$(OBJEXT) \
+abs_.$(OBJEXT) abs_.lo aors_.$(OBJEXT) aors_.lo canonicalize_.$(OBJEXT) \
 canonicalize_.lo clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) cmp_.lo \
 cmp_si_.$(OBJEXT) cmp_si_.lo cmp_ui_.$(OBJEXT) cmp_ui_.lo \
 div_.$(OBJEXT) div_.lo equal_.$(OBJEXT) equal_.lo get_d_.$(OBJEXT) \
@@ -296,8 +288,8 @@ neg_.lo out_str_.$(OBJEXT) out_str_.lo set_.$(OBJEXT) set_.lo \
 set_d_.$(OBJEXT) set_d_.lo set_den_.$(OBJEXT) set_den_.lo \
 set_f_.$(OBJEXT) set_f_.lo set_num_.$(OBJEXT) set_num_.lo \
 set_si_.$(OBJEXT) set_si_.lo set_str_.$(OBJEXT) set_str_.lo \
-set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo sub_.$(OBJEXT) \
-sub_.lo swap_.$(OBJEXT) swap_.lo : $(ANSI2KNR)
+set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo swap_.$(OBJEXT) \
+swap_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
@@ -375,7 +367,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
@@ -434,11 +425,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
-
-add.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c add.c
-sub.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c sub.c
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
