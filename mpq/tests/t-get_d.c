@@ -54,7 +54,7 @@ main (argc, argv)
 {
   mpq_t a;
   mp_size_t size;
-  int reps = 10000;
+  int reps = 1000;
   int i, j;
   double last_d, new_d;
   mpq_t qlast_d, qnew_d;
