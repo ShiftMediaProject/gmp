@@ -1095,6 +1095,7 @@ echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_CPP
+GMP_H_ANSI
 
 
 case $host_cpu in
