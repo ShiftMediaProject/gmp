@@ -6,7 +6,7 @@
 
 ===========================================================================
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,13 +29,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 
 This is an unsupported port of GMP to Power Macintosh and MacOS. This
-port is *not* for OS X that is a Unix derivate and follow the standard
-GMP installation for Darwin/OS X.
+port is *not* for OS X which is a Unix derivative, that system can use
+the normal configure and make described in the GMP manual.
 
 This port will use the optimized 'mpn' assembler routines written for
 32 bit PowerPC to gain speed. The BSD MP compatible library is not
-built. The MacOS configuration uses the '--malloc-notreentrant'
-option to optimize for speed.
+built. The MacOS configuration uses the 'malloc-notreentrant' option
+to optimize for speed.
 
 The output is a library
 
@@ -213,8 +213,9 @@ To remove the the resulting library as well you do
 PROBLEMS
 ========
 
-Bug reports should be sent directly to Kent Boortz <kent@swox.se> and
-*not* to "bug-gmp@gnu.org".
+Bug reports can be sent to bug-gmp@gnu.org.  Unfortunately the
+developers don't use this port and can offer only very general help.
+Reports including any fixes or updates necessary would be welcomed.
 
 There may be problems if the program you use for unpacking the source
 use automatic conversion of end-of-line characters.
@@ -222,8 +223,7 @@ use automatic conversion of end-of-line characters.
 This port may be out of sync with minor GMP releases or patches.
 The MacOS build is very different from the Unix build process and
 for some changes in the Unix build the build process for MacOS has
-to be changed manually. Swox has no build or test machine for this
-port.
+to be changed manually.
 
 The library uses stream I/O operations for some of the GMP functions
 and maybe for some error messages. This means that to link this
