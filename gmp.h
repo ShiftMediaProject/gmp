@@ -828,6 +828,9 @@ mp_limb_t mpn_submul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 #define mpn_submul_1c  __MPN(submul_1c)
 mp_limb_t mpn_submul_1c _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
+#define mpn_tdiv_qr  __MPN(tdiv_qr)
+void mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+
 #if defined (__cplusplus)
 }
 #endif
