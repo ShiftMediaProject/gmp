@@ -615,46 +615,70 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_rand_state));
 #define mpn_add_n		__MPN(add_n)
 #define mpn_add_nc		__MPN(add_nc)
 #define mpn_addmul_1		__MPN(addmul_1)
+#define mpn_addmul_1c		__MPN(addmul_1c)
 #define mpn_addsub_n		__MPN(addsub_n)
+#define mpn_addsub_nc		__MPN(addsub_nc)
+/* #define mpn_and_n		__MPN(and_n) */
+/* #define mpn_andn_n		__MPN(andn_n) */
 #define mpn_bdivmod		__MPN(bdivmod)
 #define mpn_cmp			__MPN(cmp)
+/* #define mpn_com_n		__MPN(com_n) */
+#define mpn_copyd		__MPN(copyd)
+#define mpn_copyi		__MPN(copyi)
 #define mpn_divexact_by3        __MPN(divexact_by3)
 #define mpn_divmod_1		__MPN(divmod_1)
+#define mpn_divmod_1c		__MPN(divmod_1c)
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
+#define mpn_divrem_1c		__MPN(divrem_1c)
 #define mpn_divrem_2		__MPN(divrem_2)
-#define mpn_divrem_newton	__MPN(divrem_newton)
 #define mpn_divrem_classic	__MPN(divrem_classic)
+#define mpn_divrem_newton	__MPN(divrem_newton)
 #define mpn_dump		__MPN(dump)
 #define mpn_gcd			__MPN(gcd)
 #define mpn_gcd_1		__MPN(gcd_1)
 #define mpn_gcdext		__MPN(gcdext)
 #define mpn_get_str		__MPN(get_str)
 #define mpn_hamdist		__MPN(hamdist)
+#define mpn_invert_normalized_limb __MPN(invert_normalized_limb)
+/* #define mpn_ior_n		__MPN(ior_n) */
+/* #define mpn_iorn_n		__MPN(iorn_n) */
+/* #define mpn_kara_mul_n		__MPN(kara_mul_n)  internal */
+/* #define mpn_kara_sqr_n		__MPN(kara_sqr_n)  internal */
 #define mpn_lshift		__MPN(lshift)
+#define mpn_lshiftc		__MPN(lshiftc)
 #define mpn_mod_1		__MPN(mod_1)
+#define mpn_mod_1c		__MPN(mod_1c)
 #define mpn_mul			__MPN(mul)
 #define mpn_mul_1		__MPN(mul_1)
+#define mpn_mul_1c		__MPN(mul_1c)
 #define mpn_mul_basecase	__MPN(mul_basecase)
 #define mpn_mul_n		__MPN(mul_n)
 #define mpn_perfect_square_p	__MPN(perfect_square_p)
 #define mpn_popcount		__MPN(popcount)
 #define mpn_preinv_mod_1	__MPN(preinv_mod_1)
-#define mpn_random2		__MPN(random2)
+/* #define mpn_nand_n		__MPN(nand_n) */
+/* #define mpn_nior_n		__MPN(nior_n) */
 #define mpn_random		__MPN(random)
+#define mpn_random2		__MPN(random2)
 #define mpn_rshift		__MPN(rshift)
+#define mpn_rshiftc		__MPN(rshiftc)
 #define mpn_scan0		__MPN(scan0)
 #define mpn_scan1		__MPN(scan1)
 #define mpn_set_str		__MPN(set_str)
-#define mpn_sqrtrem		__MPN(sqrtrem)
-#define mpn_sqr_n		__MPN(sqr_n)
 #define mpn_sqr_basecase	__MPN(sqr_basecase)
+#define mpn_sqr_n		__MPN(sqr_n)
+#define mpn_sqrtrem		__MPN(sqrtrem)
 #define mpn_sub			__MPN(sub)
 #define mpn_sub_1		__MPN(sub_1)
 #define mpn_sub_n		__MPN(sub_n)
 #define mpn_sub_nc		__MPN(sub_nc)
 #define mpn_submul_1		__MPN(submul_1)
-#define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
+#define mpn_submul_1c		__MPN(submul_1c)
+/* #define mpn_toom3_mul_n		__MPN(toom3_mul_n)  internal */
+/* #define mpn_toom3_sqr_n		__MPN(toom3_sqr_n)  internal */
+/* #define mpn_xnor_n		__MPN(xnor_n) */
+/* #define mpn_xor_n		__MPN(xor_n) */
 
 #if defined (__cplusplus)
 extern "C" {
