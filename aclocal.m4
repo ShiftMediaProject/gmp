@@ -1098,20 +1098,19 @@ gmp_prog_cxx_works=yes
 GMP_PROG_CXX_WORKS_PART([$1], [])
 
 GMP_PROG_CXX_WORKS_PART([$1], [namespace],
-[using namespace std;
+[namespace foo { }
+using namespace foo;
 ])
 
+# GMP requires the standard C++ iostream classes
 GMP_PROG_CXX_WORKS_PART([$1], [std iostream],
-[/* GMP requires the standard C++ iostream classes.  This test rejects g++
-   2.7.2 which has only a pre-standard iostream.h.  */
+[/* This test rejects g++ 2.7.2 which doesn't have <iostream>, only a
+    pre-standard iostream.h. */
 #include <iostream>
-using namespace std;
-void
-foo (void)
-{
-  cout.setf (ios::hex);
-  cout << 123;
-}
+
+/* This test rejects OSF 5.1 Compaq C++ in its default pre-standard iostream
+   mode, since that mode puts cout in the global namespace, not "std".  */
+void someoutput (void) { std::cout << 123; }
 ])
 
 AC_MSG_RESULT($gmp_prog_cxx_works)
@@ -1129,12 +1128,12 @@ dnl  Called: GMP_PROG_CXX_WORKS_PART(CXX+CXXFLAGS, FAIL-MESSAGE [,CODE])
 dnl
 AC_DEFUN(GMP_PROG_CXX_WORKS_PART,
 [if test "$gmp_prog_cxx_works" = yes; then
-  cat >conftest.c <<EOF
+  cat >conftest.cc <<EOF
 [$3]
 int main (void) { return 0; }
 EOF
   echo "Test compile: [$2]" >&AC_FD_CC
-  gmp_cxxcompile="$1 conftest.c >&AC_FD_CC"
+  gmp_cxxcompile="$1 conftest.cc >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_cxxcompile); then
     if test "$cross_compiling" = no; then
       if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
@@ -1148,7 +1147,7 @@ EOF
   case $gmp_prog_cxx_works in
     no*)
       echo "failed program was:" >&AC_FD_CC
-      cat conftest.c >&AC_FD_CC
+      cat conftest.cc >&AC_FD_CC
       ;;
   esac
   rm -f conftest* a.out b.out a.exe a_out.exe
