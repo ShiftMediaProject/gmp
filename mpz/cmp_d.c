@@ -1,6 +1,6 @@
 /* mpz_cmp_d -- compare absolute values of mpz and double.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,8 +17,13 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
+
+#include "config.h"
+
+#if HAVE_FLOAT_H
+#include <float.h>  /* for DBL_MAX */
+#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -50,12 +55,19 @@ mpz_cmp_d (mpz_srcptr z, double d)
   mp_size_t  zsize;
   int        dexp, ret;
 
+  /* d=NaN is an invalid operation, there's no sensible return value.
+     d=Inf or -Inf is always bigger than z.  */
+  DOUBLE_NAN_INF_ACTION (d, __gmp_invalid_operation (), goto z_zero);
+
   /* 1. Either operand zero. */
   zsize = SIZ(z);
   if (d == 0.0)
     return zsize;
   if (zsize == 0)
-    return (d < 0.0 ? 1 : -1);
+    {
+    z_zero:
+      return (d < 0.0 ? 1 : -1);
+    }
 
   /* 2. Opposite signs. */
   if (zsize >= 0)
