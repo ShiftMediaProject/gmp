@@ -4,20 +4,20 @@ c     Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 
 c     This file is part of the GNU MP Library.
 
-c     The GNU MP Library is free software; you can redistribute it and/or modify
-c     it under the terms of the GNU Library General Public License as published by
-c     the Free Software Foundation; either version 2 of the License, or (at your
-c     option) any later version.
+c     The GNU MP Library is free software; you can redistribute it and/or
+c     modify it under the terms of the GNU Lesser General Public License as
+c     published by the Free Software Foundation; either version 2.1 of the
+c     License, or (at your option) any later version.
 
-c     The GNU MP Library is distributed in the hope that it will be useful, but
-c     WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-c     or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-c     License for more details.
+c     The GNU MP Library is distributed in the hope that it will be useful,
+c     but WITHOUT ANY WARRANTY; without even the implied warranty of
+c     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+c     Lesser General Public License for more details.
 
-c     You should have received a copy of the GNU Library General Public License
-c     along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-c     the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-c     MA 02111-1307, USA.
+c     You should have received a copy of the GNU Lesser General Public
+c     License along with the GNU MP Library; see the file COPYING.LIB.  If
+c     not, write to the Free Software Foundation, Inc., 59 Temple Place -
+c     Suite 330, Boston, MA 02111-1307, USA.
 
 c     p1[] = hi(a[]*s); the upper limbs of each product
 c     p0[] = low(a[]*s); the corresponding lower limbs

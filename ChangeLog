@@ -1,5 +1,13 @@
 2000-07-24  Torbjorn Granlund  <tege@swox.com>
 
+	* Update header of all files previous under GNU Library General
+	Public License to instead be user GNU Lesser General Public
+	License.
+
+	* COPYING.LIB: Now GNU Lesser General Public License.
+	* demos/primes.c: Change license to GPL (was LPGL).
+	* demos/isprime.c: Change license to GPL (was LPGL).
+
 	* gmp.h (error code enum): Add GMP_ERROR_BAD_STRING (currently unused).
 
 	* mpz/tests/t-mul.c: Default SIZE to a function of TOOM3_MUL_THRESHOLD.
