@@ -1,3 +1,88 @@
+2000-11-30  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in: Rewrite of CC/CFLAGS selection scheme, introduce a
+	notion of ABI, merge compiler and mpn path selection, add flags
+	selection for AR and NM, let CC without CFLAGS work.
+	(AC_PROG_CC): Use this, not GMP_SELECT_CC.
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Don't use AC_TRY_COMPILE, combine
+	cc/cflags parameter.
+	(GMP_PROG_CC_FIND, GMP_CHECK_CC_64BIT, GMP_PROG_CC_SELECT): Remove.
+	* gmp.texi (Installing GMP): Updates for new scheme.
+
+	* configure.in (AC_CANONICAL_HOST): Use this and $host, not $target.
+	* acinclude.m4, acconfig.h, longlong.h, mpn/x86/x86-defs.m4,
+	mpn/x86/k7/mmx/popham.asm: Ditto, renaming HAVE_TARGET_CPU to
+	HAVE_HOST_CPU.
+	* gmp.texi (Build Options, and elsewhere): Update.
+
+	* acinclude.m4 (GMP_COMPARE_GE): New macro.
+	(GMP_GCC_MARCH_PENTIUMPRO): Use it, add CC parameter, check for GCC.
+	(GMP_HPC_HPPA_2_0): New macro, adapted from GMP_CHECK_CC_64BIT.
+
+	* acinclude.m4 (GMP_PROG_AR): New macro, using AC_CHECK_TOOL, adding
+	GMP flags.
+	* configure.in: Use it
+
+	* gmp-h.in: Renamed from gmp.h.
+	(@define_LONG_LONG_LIMB@): Placeholder for instantiation.
+	(__GNU_MP__): Bump to 3.
+	* acinclude.m4 (GMP_VERSION): Get version from gmp-h.in.
+	* configure.in: Create gmp.h from gmp-h.in to set _LONG_LONG_LIMB.
+	* gmp.texi.h (ABI and ISA): Mention this.
+	* acconfig.h (_LONG_LONG_LIMB): Remove undef.
+	* Makefile.am: Distribute gmp-h.in, not gmp.h.
+
+	* configure.in (AC_PROG_CPP, AC_PROG_INSTALL, AC_PROG_LN_S): Remove,
+	dragged in by other macros.
+	(gmp_asm_syntax_testing): Renamed from gmp_no_asm_syntax_testing.
+	(AC_EXEEXT, AC_OBJEXT): Remove, done automatically by libtool.
+	* configure.in, acinclude.m4: Remove "" from "`foo`", being
+	unnecessary and not portable.
+
+	* configure.in (GMP_LDFLAGS): New AC_SUBST flags for libtool link.
+	(powerpc64*-*-aix*): Use for -Wc,-maix to fix shared library creation,
+	but can't build shared and static at the same time.
+	* Makefile.am (lib{gmp,mp}_la_LDFLAGS): Use $(GMP_LDFLAGS).
+	* gmp.texi (Notes for Particular Systems): Update AIX problem
+
+	* configure.in (AC_CONFIG_LINKS): Use where needed, not via gmp_links.
+	(gmp_srclinks): Build up as needed, not via gmp_links.
+
+	* acinclude.m4 (GMP_INIT): Do CONFIG_TOP_SRCDIR and asm-defs.m4 here.
+	* configure.in (asm-defs.m4): Consequent changes.
+
+	* acinclude.m4 (GMP_INCLUDE_MPN): Replacing GMP_INCLUDE, using
+	include_mpn.
+	* configure.in (gmp_m4postinc): Remove this scheme, use
+	GMP_INCLUDE_MPN instead.
+
+	* configure.in (*-*-sco3.2v5*): Force ac_cv_archive_cmds_need_lc=no,
+	until libtool does this itself.
+	* gmp.texi (Known Build Problems): Remove SCO -lc problem.
+
+	* configure, INSTALL.autoconf, etc: Update to autoconf 2000-11-29.
+	* acinclude.m4 (GMP_C_SIZES): Use AC_CHECK_SIZEOF.
+	* gmp.texi (Known Build Problems): Remove version.c sed/config.h
+	problem, fixed.
+
+	* ltmain.sh, aclocal.m4: Update to libtool 2000-11-25.
+	* ltconfig: No longer required, but leave an empty dummy for automake.
+	* gmp.texi (Known Build Problems): Remove SunOS native ar ranlib
+	problem, fixed.
+
+	* */Makefile.in, aclocal.m4: Update to automake 2000-11-25.
+	* mpbsd/tests/Makefile.am, mpfr/tests/Makefile.am (check_PROGRAMS):
+	Remove dummy, no longer required.
+	* mpbsd/tests/dummy.c, mpfr/tests/dummy.c: Remove files.
+	* depcomp: Remove file, no longer required (with no-dependencies).
+
+	* texinfo.tex: Update to 2000-11-09.
+	* gmp.texi (Build Options): Mention PDF from gmp.texi.
+	* Makefile.am (MOSTLYCLEANFILES): Add gmp.tmp, from new texinfo.tex.
+
+	* gmp.texi (Build Options): List alphaev56, alphapca56, alphaev67,
+	hppa2.0n and power among supported CPUs.
+
 2000-11-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-mul.c: Increase max operand size from 2^17 bits
