@@ -409,6 +409,7 @@ struct region_t {
 #define TRAP_NOWHERE 0
 #define TRAP_REF     1
 #define TRAP_FUN     2
+#define TRAP_SETUPS  3
 int trap_location = TRAP_NOWHERE;
 
 
@@ -1059,6 +1060,8 @@ try_one (void)
     spinner();
   spinner_count++;
 
+  trap_location = TRAP_SETUPS;
+
   for (i = 0; i < numberof (s); i++)
     {
       if (s[i].high)
@@ -1267,6 +1270,10 @@ trap (int sig)
     printf ("  in test function: %s\n", tr->fun.name);
     print_all ();
     break;
+  case TRAP_SETUPS:
+    printf ("  in parameter setups\n");
+    print_all ();
+    break;
   default:
     printf ("  somewhere unknown\n");
     break;
@@ -1309,21 +1316,21 @@ Error, error, cannot get page size
 
     for (i = 0; i < numberof (s); i++)
       {
-        malloc_region (&s[i].region, 2*option_lastsize);
+        malloc_region (&s[i].region, 2*option_lastsize+ALIGNMENTS-1);
         printf ("s[%d] %p to %p (0x%lX bytes)\n",
                 i, s[i].region.ptr,
                 s[i].region.ptr + s[i].region.size,
                 s[i].region.size * BYTES_PER_MP_LIMB);
       }
 
-#define INIT_EACH(e,es)                                         \
-    for (i = 0; i < numberof (e.d); i++)                        \
-      {                                                         \
-        malloc_region (&e.d[i].region, 2*option_lastsize);      \
-        printf ("%s d[%d] %p to %p (0x%lX bytes)\n",            \
-                es, i, e.d[i].region.ptr,                       \
-                e.d[i].region.ptr + e.d[i].region.size,         \
-                e.d[i].region.size * BYTES_PER_MP_LIMB);        \
+#define INIT_EACH(e,es)                                                 \
+    for (i = 0; i < numberof (e.d); i++)                                \
+      {                                                                 \
+        malloc_region (&e.d[i].region, 2*option_lastsize+ALIGNMENTS-1); \
+        printf ("%s d[%d] %p to %p (0x%lX bytes)\n",                    \
+                es, i, e.d[i].region.ptr,                               \
+                e.d[i].region.ptr + e.d[i].region.size,                 \
+                e.d[i].region.size * BYTES_PER_MP_LIMB);                \
       }
 
     INIT_EACH(ref, "ref");
