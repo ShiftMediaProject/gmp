@@ -47,6 +47,13 @@ dnl    conftest.exe - various DOS compilers
 define(IA64_PATTERN,
 [[ia64*-*-* | itanium-*-* | itanium2-*-*]])
 
+dnl  Need to be careful not to match m6811, m6812, m68hc11 and m68hc12, all
+dnl  of which config.sub accepts.  (Though none of which are likely to work
+dnl  with GMP.)
+dnl
+define(M68K_PATTERN,
+[[m68k-*-* | m68[0-9][0-9][0-9]-*-*]])
+
 define(POWERPC64_PATTERN,
 [[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
 
@@ -638,7 +645,7 @@ dnl  removed.
 
 AC_DEFUN(GMP_GCC_M68K_OPTIMIZE,
 [case $host in
-m68*-*-*)
+M68K_PATTERN)
   if test $1 = gcc; then
     case `$2 --version` in
     2.95*) $3=-O ;;
@@ -2109,9 +2116,9 @@ cat >conftest.c <<\EOF
   double  x;
   char    after[8];
 } foo = {
-  { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF },
+  { '\x01', '\x23', '\x45', '\x67', '\x89', '\xAB', '\xCD', '\xEF' },
   -123456789.0,
-  { 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10 },
+  { '\xFE', '\xDC', '\xBA', '\x98', '\x76', '\x54', '\x32', '\x10' },
 };]
 EOF
 gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC 2>&1"
