@@ -79,9 +79,10 @@
 @end macro
 @end ifnottex
 
-@c  nicode{S} is plain S in info, or @code{S} elsewhere.  This can be used
+@c  @nicode{S} is plain S in info, or @code{S} elsewhere.  This can be used
 @c  when the quotes that @code{} gives in info aren't wanted, but the
-@c  fontification in tex or html is wanted.
+@c  fontification in tex or html is wanted.  Doesn't work as @nicode{'\\0'}
+@c  though (gives two backslashes in tex).
 @ifinfo
 @macro nicode {S}
 \S\
@@ -234,8 +235,8 @@ by the Foundation.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
-Free Software Foundation, Inc.
+Copyright @copyright{} 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+2001 Free Software Foundation, Inc.
 
 @sp 2
 
@@ -351,10 +352,10 @@ There is carefully optimized assembly code for these CPUs:
 ARM,
 DEC Alpha 21064, 21164, and 21264,
 AMD 29000,
-AMD K6 and Athlon,
+AMD K6, K6-2 and Athlon,
 Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
-Intel Pentium, Pentium Pro/Pentium II, generic x86,
+Intel Pentium, Pentium Pro/II/III, generic x86,
 Intel i960,
 Motorola MC68000, MC68020, MC88100, and MC88110,
 Motorola/IBM PowerPC 32 and 64,
@@ -363,8 +364,14 @@ IBM POWER,
 MIPS R3000, R4000,
 SPARCv7, SuperSPARC, generic SPARCv8, UltraSPARC,
 DEC VAX,
-and Zilog Z8000.
-Some optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
+and
+Zilog Z8000.
+Some optimizations also for
+Cray vector systems,
+Clipper,
+IBM ROMP (RT),
+and
+Pyramid AP/XP.
 
 @cindex Mailing list
 There is a mailing list for GMP users.  To join it, send a mail to
@@ -560,6 +567,13 @@ Alpha:
 @samp{alphaev67}
 
 @item
+Cray:
+@samp{c90},
+@samp{j90},
+@samp{t90},
+@samp{sv1}
+
+@item
 HPPA:
 @samp{hppa1.0},
 @samp{hppa1.1},
@@ -699,7 +713,7 @@ GMP allocates temporary workspace using either @code{alloca} or @code{malloc}.
 The default @samp{--enable-alloca=detect} uses @code{alloca} if available, or
 @code{malloc} if not.  @option{--disable-alloca} or @samp{--enable-alloca=no}
 always uses @code{malloc}.  @samp{--enable-alloca=yes} always uses
-@code{alloca} (generating an error if that function isn't avaiable).
+@code{alloca} (generating an error if that function isn't available).
 
 @code{alloca} is fast and is recommended, but when working with large numbers
 it can overflow the available stack space.  It might be possible to increase
@@ -728,6 +742,13 @@ check the algorithm thresholds for their system.
 The Berkeley MP compatibility library (@file{libmp}) and header file
 (@file{mp.h}) are built and installed if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
+
+@item @option{--enable-mpfr}
+
+The optional MPFR functions are built and installed only if
+@option{--enable-mpfr} is used.  These are in a separate library
+@file{libmpfr.a} and are documented separately too (@pxref{Introduction to
+MPFR,, Introduction to MPFR, mpfr, MPFR}).
 
 @item @option{--enable-assert}
 
@@ -1001,8 +1022,8 @@ used.  A shared build can be attempted with
 Note that the @samp{--disable-static} is necessary because in a shared build
 libtool makes @file{libgmp.a} a symlink to @file{libgmp.so}, apparently for
 the benefit of old versions of @command{ld} which only recognise @file{.a},
-but unfortunately this is done even if an @command{ld} without that
-restriction is available.
+but unfortunately this is done even if a fully functional @command{ld} is
+available.
 
 @item OpenBSD 2.6
 
@@ -1145,6 +1166,7 @@ to be incompatible with future versions of GMP.}
 * Efficiency::                  
 * Debugging::                   
 * Profiling::                   
+* Autoconf::                    
 @end menu
 
 @node Nomenclature and Types, Function Classes, GMP Basics, GMP Basics
@@ -1624,6 +1646,21 @@ note that these functions shouldn't be used in final application code since
 they're undocumented and may be subject to incompatible changes in future
 versions of GMP.
 
+@item Source File Paths
+GMP has multiple source files with the same name, in different directories.
+For example @file{mpz}, @file{mpq}, @file{mpf} and @file{mpfr} each have an
+@file{init.c}.  If the debugger can't already determine the right one it can
+help to build with absolute paths on each C file.  One way to do that is to
+use a separate object directory with an absolute path to the source directory.
+
+@example
+cd /my/build/dir
+/my/source/dir/gmp-@value{VERSION}/configure
+@end example
+
+This works via @code{VPATH}, and might require GNU Make.  Alternately it might
+be possible to change the @code{.c.lo} rules appropriately.
+
 @item Assertion Checking
 The build option @option{--enable-assert} is available to add some consistency
 checks to the library (see @ref{Build Options}).  These are likely to be of
@@ -1642,7 +1679,7 @@ application problem, see @ref{Reporting Bugs}.
 @end table
 
 
-@node Profiling,  , Debugging, GMP Basics
+@node Profiling, Autoconf, Debugging, GMP Basics
 @section Profiling
 @cindex Profiling
 
@@ -1673,6 +1710,79 @@ selected, which may result in poorer code generation.  If @command{prof}
 profiling is selected instead it should still be possible to use
 @command{gprof}, but only the @samp{gprof -p} flat profile and call counts can
 be expected to be valid, not the @samp{gprof -q} call graph.
+
+
+@node Autoconf,  , Profiling, GMP Basics
+@section Autoconf
+@cindex Autoconf detections
+
+It should be easy for autoconf based applications to check whether GMP is
+installed.  The only thing to be noted is that GMP 3 library symbols have
+prefixes like @code{__gmpz}.  The following would be a simple test,
+
+@example
+AC_CHECK_LIB(gmp, __gmpz_init)
+@end example
+
+This just uses the default @code{AC_CHECK_LIB} actions for found or not found,
+but an application that must have GMP available would want to generate an
+error if not found.  For example,
+
+@example
+AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
+[GNU MP 3 not found, see http://www.swox.com/gmp])])
+@end example
+
+If functions added in some particular version of GMP are required, then one of
+those can be used when checking.  For example @code{mpz_mul_si} was added in
+GMP 3.1,
+    
+@example
+AC_CHECK_LIB(gmp, __gmpz_mul_si, , [AC_MSG_ERROR(
+[GNU MP not found, or not 3.1 or up, see http://www.swox.com/gmp])])
+@end example
+
+An alternative would be to test the version number in @file{gmp.h} using say
+@code{AC_EGREP_CPP}.  That would make it possible to test the exact version,
+if some particular sub-minor release is known to be necessary.
+
+An application that can use either GMP 2 or 3 will need to test for
+@code{__gmpz_init} (GMP 3) or @code{mpz_init} (GMP 2), and it's also worth
+checking for @file{libgmp2} since Debian GNU/Linux systems used that name in
+the past.  For example,
+
+@example
+AC_CHECK_LIB(gmp, __gmpz_init, ,
+  [AC_CHECK_LIB(gmp, mpz_init, ,
+    [AC_CHECK_LIB(gmp2, mpz_init)])])
+@end example
+
+In general it's suggested that applications should simply demand a new enough
+GMP rather than trying to provide supplements for features not available in
+past versions.
+
+Occasionally an application will need or want to know the size of a type at
+configuration or preprocessing time, not just with @code{sizeof} in the code.
+This can be done in the normal way with @code{mp_limb_t} etc, but GMP 3.2 or
+up is best for this, since prior versions needed certain @samp{-D} defines on
+systems using a @code{long long} limb.  The following would suit Autoconf 2.50
+or up,
+
+@example
+AC_CHECK_SIZEOF(mp_limb_t, , [#include <gmp.h>])
+@end example
+
+The optional @code{mpfr} functions are provided in a separate @file{libmpfr},
+and this might be from GMP @option{--enable-mpfr} or from MPFR installed
+separately.  Either way @file{libmpfr} depends on @file{libgmp}, it doesn't
+stand alone.  Currently only a static @file{libmpfr.a} will be available, not
+a shared library, since upward binary compatibility is not guaranteed.
+
+@example
+AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
+[Need MPFR either from GNU MP 3.2 or separate MPFR package.
+See http://www.loria.fr/projets/mpfr or http://www.swox.com/gmp])
+@end example
 
 
 @node Reporting Bugs, Integer Functions, GMP Basics, Top
@@ -1873,18 +1983,21 @@ These functions assign new values to already initialized integers
 @deftypefunx void mpz_set_q (mpz_t @var{rop}, mpq_t @var{op})
 @deftypefunx void mpz_set_f (mpz_t @var{rop}, mpf_t @var{op})
 Set the value of @var{rop} from @var{op}.
+
+@code{mpz_set_d}, @code{mpz_set_q} and @code{mpz_set_f} truncate @var{op} to
+make it an integer.
 @end deftypefun
 
 @deftypefun int mpz_set_str (mpz_t @var{rop}, char *@var{str}, int @var{base})
-Set the value of @var{rop} from @var{str}, a @nicode{'\0'}-terminated C string
-in base @var{base}.  White space is allowed in the string, and is simply
-ignored.  The base may vary from 2 to 36.  If @var{base} is 0, the actual base
-is determined from the leading characters: if the first two characters are
-``0x'' or ``0X'', hexadecimal is assumed, otherwise if the first character is
-``0'', octal is assumed, otherwise decimal is assumed.
+Set the value of @var{rop} from @var{str}, a null-terminated C string in base
+@var{base}.  White space is allowed in the string, and is simply ignored.  The
+base may vary from 2 to 36.  If @var{base} is 0, the actual base is determined
+from the leading characters: if the first two characters are ``0x'' or ``0X'',
+hexadecimal is assumed, otherwise if the first character is ``0'', octal is
+assumed, otherwise decimal is assumed.
 
-This function returns 0 if the entire string up to the @nicode{'\0'} is a
-valid number in base @var{base}.  Otherwise it returns @minus{}1.
+This function returns 0 if the entire string is a valid number in base
+@var{base}.  Otherwise it returns @minus{}1.
 
 [It turns out that it is not entirely true that this function ignores
 white-space.  It does ignore it between digits, but not after a minus sign or
@@ -1981,24 +2094,25 @@ the function @code{mpz_fits_slong_p}.
 @end deftypefun
 
 @deftypefun double mpz_get_d (mpz_t @var{op})
-Convert @var{op} to a double.
+Convert @var{op} to a @code{double}.
 @end deftypefun
 
 @deftypefun {char *} mpz_get_str (char *@var{str}, int @var{base}, mpz_t @var{op})
 Convert @var{op} to a string of digits in base @var{base}.  The base may vary
 from 2 to 36.
 
-If @var{str} is @code{NULL}, space for the result string is allocated using the
-default allocation function.
+If @var{str} is @code{NULL}, the result string is allocated using the current
+allocation function (@pxref{Custom Allocation}).  The block will be
+@code{strlen(str)+1} bytes, that being exactly enough for the string and
+null-terminator.
 
-If @var{str} is not @code{NULL}, it should point to a block of storage enough large
-for the result.  To find out the right amount of space to provide for
-@var{str}, use @code{mpz_sizeinbase (@var{op}, @var{base}) + 2}.  The two
-extra bytes are for a possible minus sign, and for the terminating null
-character.
+If @var{str} is not @code{NULL}, it should point to a block of storage enough
+large for the result, that being @code{mpz_sizeinbase (@var{op}, @var{base}) +
+2}.  The two extra bytes are for a possible minus sign, and the
+null-terminator.
 
-A pointer to the result string is returned.  This pointer will will either
-equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
+A pointer to the result string is returned, being either the allocated block,
+or the given @var{str}.
 @end deftypefun
 
 
@@ -2611,7 +2725,7 @@ big.  If @var{base} is a power of 2, the returned value will always be exact.
 This function is useful in order to allocate the right amount of space before
 converting @var{op} to a string.  The right amount of allocation is normally
 two more than the value returned by @code{mpz_sizeinbase} (one extra for a
-minus sign and one for the terminating @nicode{'\0'}).
+minus sign and one for the null-terminator).
 @end deftypefun
 
 
@@ -2823,7 +2937,7 @@ Return the number of bytes written, or if an error occurred, return 0.
 @cindex Miscellaneous rational functions
 
 @deftypefun double mpq_get_d (mpq_t @var{op})
-Convert @var{op} to a double.
+Convert @var{op} to a @code{double}.
 @end deftypefun
 
 @deftypefun void mpq_set_d (mpq_t @var{rop}, double @var{op})
@@ -2856,37 +2970,46 @@ that way the rule about canonicalizing still applies of course.
 @chapter Floating-point Functions
 @cindex Floating-point functions
 @cindex Float functions
-
-This chapter describes the GMP functions for performing floating point
-arithmetic.  These functions start with the prefix @code{mpf_}.
-
-GMP floating point numbers are stored in objects of type @code{mpf_t}.
-
-The GMP floating-point functions have an interface that is similar to the GMP
-integer functions.  The function prefix for floating-point operations is
-@code{mpf_}.
-
-There is one significant characteristic of floating-point numbers that has
-motivated a difference between this function class and other GMP function
-classes: the inherent inexactness of floating point arithmetic.  The user has
-to specify the precision of each variable.  A computation that assigns a
-variable will take place with the precision of the assigned variable; the
-precision of variables used as input is ignored.
-
 @cindex User-defined precision
 @cindex Precision of floats
-The precision of a calculation is defined as follows: Compute the requested
-operation exactly (with ``infinite precision''), and truncate the result to
-the destination variable precision.  Even if the user has asked for a very
-high precision, GMP will not calculate with superfluous digits.  For example,
-if two low-precision numbers of nearly equal magnitude are added, the
-precision of the result will be limited to what is required to represent the
-result accurately.
 
-The GMP floating-point functions are @emph{not} intended as a smooth extension
-to the IEEE P754 arithmetic.  Specifically, the results obtained on one
-computer often differs from the results obtained on a computer with a
-different word size.
+GMP floating point numbers are stored in objects of type @code{mpf_t} and
+functions operating on them have an @code{mpf_} prefix.
+
+The mantissa of each float has a user-selectable precision, limited only by
+available memory.  Each variable has its own precision, which can be increased
+or decreased at any time.
+
+The exponent of each float is a fixed precision, one machine word on most
+systems.  In the current implementation the exponent is a count of limbs, so
+for example on a 32-bit system this means a range of roughly
+@ma{2^@W{-68719476768}} to @ma{2^@W{68719476736}}.  On a 64-bit system this
+will be greater.
+
+In each variable the current size of the mantissa data is maintained.  This
+means that if the mantissa is exactly represented in only a few bits then only
+those bits will be used in a calculation, even if the selected precision is
+high.
+
+All calculations are performed to the precision of the destination variable.
+Each function is defined to calculate with ``infinite precision'' followed by
+a truncation to the destination precision, but of course the actual work done
+is only what's needed to determine a result under that definition.
+
+The precision set for each variable is actually a minimum value, GMP may
+increase it a little to facilitate efficient calculation.  Currently this
+means rounding up to a whole limb, and then sometimes having a further partial
+limb, depending on the high limb of the mantissa.  But applications shouldn't
+be concerned by such details.
+
+@code{mpf} functions and variables have no special notion of infinity or
+not-a-number, and applications must take care not to overflow the exponent or
+results will be unpredictable.  This might change in a future release.
+
+Note that the @code{mpf} functions are @emph{not} intended as a smooth
+extension to IEEE P754 arithmetic.  In particular results obtained on one
+computer often differ from the results on a computer with a different word
+size.
 
 @menu
 * Initializing Floats::         
@@ -3014,8 +3137,8 @@ it fail when there is any white-space in the input, since that makes a lot of
 sense.  Please tell us your opinion about this change.  Do you really want it
 to accept @nicode{"3 14"} as meaning 314 as it does now?]
 
-This function returns 0 if the entire string up to the @nicode{'\0'} is a
-valid number in base @var{base}.  Otherwise it returns @minus{}1.
+This function returns 0 if the entire string is a valid number in base
+@var{base}.  Otherwise it returns @minus{}1.
 @end deftypefun
 
 @deftypefun void mpf_swap (mpf_t @var{rop1}, mpf_t @var{rop2})
@@ -3067,7 +3190,17 @@ set by @code{mpf_set_default_prec}.
 @cindex Conversion functions
 
 @deftypefun double mpf_get_d (mpf_t @var{op})
-Convert @var{op} to a double.
+Convert @var{op} to a @code{double}.
+@end deftypefun
+
+@deftypefun long mpf_get_si (mpf_t @var{op})
+@deftypefunx {unsigned long} mpf_get_ui (mpf_t @var{op})
+Convert @var{op} to a @code{long} or @code{unsigned long}, truncating any
+fraction part.  If @var{op} is too big for the return type, the result is
+undefined.
+
+See also @code{mpf_fits_slong_p} and @code{mpf_fits_ulong_p}
+(@pxref{Miscellaneous Float Functions}).
 @end deftypefun
 
 @deftypefun {char *} mpf_get_str (char *@var{str}, mp_exp_t *@var{expptr}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
@@ -3076,27 +3209,29 @@ from 2 to 36.  Generate at most @var{n_digits} significant digits, or if
 @var{n_digits} is 0, the maximum number of digits accurately representable by
 @var{op}.
 
-If @var{str} is @code{NULL}, space for the mantissa is allocated using the default
-allocation function.
+If @var{str} is @code{NULL}, the string is allocated using the current
+allocation function (@pxref{Custom Allocation}).  The block will be
+@code{strlen(str)+1} bytes, that being exactly enough for the string and
+null-terminator.
 
-If @var{str} is not @code{NULL}, it should point to a block of storage enough large
-for the mantissa, i.e., @var{n_digits} + 2.  The two extra bytes are for a
-possible minus sign, and for the terminating null character.
+If @var{str} is not @code{NULL}, it should point to a block of storage enough
+large for the mantissa, that being @var{n_digits} + 2.  The two extra bytes
+are for a possible minus sign, and for the null-terminator.
 
-The exponent is written through the pointer @var{expptr}.
-
-If @var{n_digits} is 0, the maximum number of digits meaningfully achievable
-from the precision of @var{op} will be generated.  Note that the space
-requirements for @var{str} in this case will be impossible for the user to
-predetermine.  Therefore, you need to pass @code{NULL} for the string argument
-whenever @var{n_digits} is 0.
+When @var{n_digits} is 0, to get all significant digits, an application won't
+be able to know the space required, and @var{STR} should be @code{NULL} in
+that case.
 
 The generated string is a fraction, with an implicit radix point immediately
-to the left of the first digit.  For example, the number 3.1416 would be
-returned as @nicode{"31416"} in the string and 1 written at @var{expptr}.
+to the left of the first digit.  The applicable exponent is written through
+the @var{expptr} pointer.  For example, the number 3.1416 would be returned as
+string @nicode{"31416"} and exponent 1.
 
-A pointer to the result string is returned.  This pointer will will either
-equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
+When @var{op} is zero, an empty string is produced and the exponent returned
+is 0.
+
+A pointer to the result string is returned, being either the allocated block
+or the given @var{str}.
 @end deftypefun
 
 
@@ -3185,7 +3320,8 @@ equal.
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 Compute the relative difference between @var{op1} and @var{op2} and store the
-result in @var{rop}.
+result in @var{rop}.  This is
+@m{|@var{op1}-@var{op2}| / @var{op2}, abs(@var{op1}-@var{op2})/@var{op2}}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
@@ -3271,6 +3407,20 @@ next higher integer, @code{mpf_floor} to the next lower, and @code{mpf_trunc}
 to the integer towards zero.
 @end deftypefun
 
+@deftypefun int mpf_integer_p (mpf_t @var{op})
+Return non-zero if @var{op} is an integer.
+@end deftypefun
+
+@deftypefun int mpf_fits_ulong_p (mpf_t @var{op})
+@deftypefunx int mpf_fits_slong_p (mpf_t @var{op})
+@deftypefunx int mpf_fits_uint_p (mpf_t @var{op})
+@deftypefunx int mpf_fits_sint_p (mpf_t @var{op})
+@deftypefunx int mpf_fits_ushort_p (mpf_t @var{op})
+@deftypefunx int mpf_fits_sshort_p (mpf_t @var{op})
+Return non-zero if @var{op} would fit in the respective C data type, when
+truncated.
+@end deftypefun
+
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits})
 Generate a uniformly distributed random float in @var{rop}, such that 0 <=
 @var{rop} < 1, with @var{nbits} significant bits in the mantissa.
@@ -3289,8 +3439,6 @@ to be more likely to trigger corner-case bugs.  Negative random numbers are
 generated when @var{max_size} is negative.
 @end deftypefun
 
-
-
 @c @deftypefun size_t mpf_size (mpf_t @var{op})
 @c Return the size of @var{op} measured in number of limbs.  If @var{op} is
 @c zero, the returned value will be zero.  (@xref{Nomenclature}, for an
@@ -3299,6 +3447,7 @@ generated when @var{max_size} is negative.
 @c @strong{This function is obsolete.  It will disappear from future GMP
 @c releases.}
 @c @end deftypefun
+
 
 @node Low-level Functions, Random Number Functions, Floating-point Functions, Top
 @comment  node-name,  next,  previous,  up
@@ -3727,37 +3876,34 @@ product's most significant limb is zero.
 @chapter Random Number Functions
 @cindex Random number functions
 
-There are two groups of random number functions in GNU MP; older functions that
-call C library random number generators, rely on a global state, and aren't
-very random; and newer functions that don't have these problems.  The newer
-functions are self-contained, they accept a random state parameter that
-supplants global state, and generate good random numbers.
+There are two groups of random number functions in GMP; older functions that
+call C library random number generators, rely on global state, and aren't very
+random; and newer functions that don't have these problems.  The newer
+functions are self-contained, they accept a state parameter, and generate good
+random numbers.
 
-The random state parameter is of the type @code{gmp_randstate_t}.  It must be
+The random state parameter is of type @code{gmp_randstate_t}.  It must be
 initialized by a call to one of the @code{gmp_randinit} functions (@ref{Random
 State Initialization}).  The initial seed is set using one of the
 @code{gmp_randseed} functions (@ref{Random State Initialization}).
 
 The size of the seed determines the number of different sequences of random
-numbers that is possible to generate.  The ``quality'' of the seed is the
-randomness of a given seed compared to the previous seed used and affects the
-randomness of separate number sequences.
+numbers that it's possible to generate.  The ``quality'' of the seed is the
+randomness of a given seed compared to the previous seed used and this affects
+the randomness of separate number sequences.
 
-The algorithm for assigning seed is critical if the generated random numbers
-are to be used for important applications, such as generating cryptographic
-keys.
+The method for choosing a seed is critical if the generated numbers are to be
+used for important applications, such as generating cryptographic keys.
 
-The traditional method is to use the current system time for seeding.  One has
-to be careful when using the current time though.  If the application seeds the
-random functions very often, say several times per second, and the resolution
-of the system clock is comparatively low, like one second, the same sequence of
-numbers will be generated until the system clock ticks.  Furthermore, the
-current system time is quite easy to guess, so a system depending on any
-unpredictability of the random number sequence should absolutely not use that
-as its only source for a seed value.
+The traditional method is to use the current system time for seeding, but some
+care needs to be taken.  If an application seeds the random functions very
+often and the resolution of the system clock is low, then the same sequence of
+numbers might be generated until the clock ticks over.  Furthermore, the
+current system time is quite easy to guess, so if unpredictability is required
+then the time should definitely not be the only source for seed values.
 
-On some systems there is a special device, often called @file{/dev/random},
-which provides a randomness source more usable seed.
+On some systems there's a special device @file{/dev/random} which provides
+random data better suited for use as a seed.
 
 The functions actually generating random functions are documented in
 @ref{Miscellaneous Integer Functions} and @ref{Miscellaneous Float Functions}.
@@ -3770,46 +3916,38 @@ The functions actually generating random functions are documented in
 @section Random State Initialization
 @cindex Random number state
 
-See @ref{Random Number Functions} for a discussion on how to choose the
-initial seed value passed to these functions.
-
 @deftypefun void gmp_randinit (gmp_randstate_t @var{state}, gmp_randalg_t @var{alg}, ...)
-Initialize random state variable @var{state}.
+Initialize @var{state}, for the algorithm indicated by @var{alg}.  Currently
+only one algorithm is supported:
 
-@var{alg} denotes what algorithm to use for random number generation.
-Currently only one algorithm is supported:
 @itemize @minus
 @item @code{GMP_RAND_ALG_LC} --- Linear congruential.
 
-A fast generator defined by @ma{X = (aX + c) @bmod{} m}.
+A fast generator defined by @ma{X = (aX + c) @bmod m}.
 
 A third argument @var{size} of type @code{unsigned long int} is required.
-@var{size} is the size of the largest good quality random number to be
-generated, expressed in number of bits.  If the random generation functions
-are asked for a bigger random number than indicated by this parameter, two or
-more numbers of @var{size} bits will be generated and concatenated, resulting
-in a ``bad'' random number.  This can be used to generate big random numbers
-relatively cheap if the quality of randomness isn't of great importance.
+This is the size of the largest good quality random number to be generated,
+expressed in number of bits.  If the random generation functions are asked for
+a bigger random number then two or more numbers of @var{size} bits will be
+generated and concatenated, resulting in a ``bad'' random number.  But this
+can be used to generate big random numbers relatively cheaply if the quality
+of randomness isn't of great importance.
 
-@ma{a}, @ma{c}, and @ma{m} are picked from a table where the modulus @ma{m} is
-a power of 2 and the multiplier is congruent to 5 (mod 8).  The choice is
-based on the @var{size} parameter.  The maximum @var{size} supported by this
-algorithm is 128.  If you need bigger random numbers, use your own scheme and
-call one of the other @code{gmp_randinit} functions.
-
+Parameters @ma{a}, @ma{c}, and @ma{m} are chosen from a table where the
+modulus @ma{m} is a power of 2 and the multiplier is congruent to 5 (mod 8).
+The choice is based on the @var{size} parameter.  The maximum @var{size}
+supported by the table is 128.  If you need bigger random numbers, use your
+own scheme and call one of the other @code{gmp_randinit} functions.
 @ignore
 @item @code{GMP_RAND_ALG_BBS} --- Blum, Blum, and Shub.
 @end ignore
 @end itemize
 
 If @var{alg} is 0 or @code{GMP_RAND_ALG_DEFAULT}, the default algorithm is
-used.  The default algorithm is the linear congruential and requires a third
-@var{size} argument (see @code{GMP_RAND_ALG_LC}).
-
-When you're done with a @var{state} variable, call @code{gmp_randclear} to
-deallocate any memory allocated by this function.
+used, this being @code{GMP_RAND_ALG_LC} described above.
 
 @code{gmp_randinit} may set the following bits in @code{gmp_errno}:
+
 @itemize
 @item @code{GMP_ERROR_UNSUPPORTED_ARGUMENT} --- @var{alg} is unsupported
 @item @code{GMP_ERROR_INVALID_ARGUMENT} --- @var{size} is too big
@@ -3817,48 +3955,28 @@ deallocate any memory allocated by this function.
 @end deftypefun
 
 
+@c  Not yet in the library.
 @ignore
 @deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
-
-Initialize random state variable @var{state} with given linear congruential
-scheme.
-
-Parameters @var{a}, @var{c}, and @var{m} are the multiplier, adder, and modulus
-for the linear congruential scheme to use, respectively.
-
-When you're done with a @var{state} variable, call @code{gmp_randclear} to
-deallocate any memory allocated by this function.
+Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
+@var{c}) @bmod @var{m}, X = (@var{a}*X + @var{c}) mod 2^@var{m}}.
 @end deftypefun
 @end ignore
 
+
 @deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a}, @w{unsigned long int @var{c}}, @w{unsigned long int @var{m2exp}})
-
-Initialize random state variable @var{state} with given linear congruential
-scheme.
-
-Parameters @var{a}, @var{c}, and @var{m2exp} are the multiplier, adder, and
-modulus for the linear congruential scheme to use, respectively.  The modulus
-is expressed as a power of 2, so that @m{m = 2^{m2exp}, @var{m} =
+Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
+@var{c}) @bmod 2 \GMPraise{@var{m2exp}}, X = (@var{a}*X + @var{c}) mod
 2^@var{m2exp}}.
 
-The least significant bits of a random number generated by the linear
-congruential algorithm where the modulus is a power of two are not very random.
-Therefore, the lower half of a random number generated by an LC scheme
-initialized with this function is discarded.  Thus, the size of a random number
-is @var{m2exp}/2 (rounded upwards) bits when this function has been used for
-initializing the random state.
-
-When you're done with a @var{state} variable, call @code{gmp_randclear} to
-deallocate any memory allocated by this function.
+The low bits of random numbers from this scheme are not very random, so the
+low half of each number generated is discarded.  This should be taken into
+account when choosing @var{m2exp}.
 @end deftypefun
 
 @deftypefun void gmp_randseed (gmp_randstate_t @var{state}, mpz_t @var{seed})
 @deftypefunx void gmp_randseed_ui (gmp_randstate_t @var{state}, @w{unsigned long int @var{seed}})
-Set the initial seed value.
-
-Parameter @var{seed} is the initial random seed.  The function
-@code{gmp_randseed_ui} takes the @var{seed} as an unsigned long int rather than
-as an @code{mpz_t}.
+Set an initial seed value into @var{state}.
 @end deftypefun
 
 @deftypefun void gmp_randclear (gmp_randstate_t @var{state})
@@ -3904,7 +4022,7 @@ Initialize the integer to @var{initial_value}.  Return a pointer to the
 @deftypefun {MINT *} xtom (char *@var{initial_value})
 Allocate an integer consisting of a @code{MINT} object and dynamic limb space.
 Initialize the integer from @var{initial_value}, a hexadecimal,
-@nicode{'\0'}-terminate C string.  Return a pointer to the @code{MINT} object.
+null-terminated C string.  Return a pointer to the @code{MINT} object.
 @end deftypefun
 
 @deftypefun void move (MINT *@var{src}, MINT *@var{dest})
@@ -3991,24 +4109,24 @@ passed a value returned by @code{itom} or @code{xtom}.}
 @cindex Memory allocation
 @cindex Allocation of memory
 
-By default, GMP uses @code{malloc}, @code{realloc} and @code{free} for memory
+By default GMP uses @code{malloc}, @code{realloc} and @code{free} for memory
 allocation.  If @code{malloc} or @code{realloc} fails, GMP prints a message to
-the standard error output and terminates execution.
+the standard error output and terminates the program.
 
 Some applications might want to allocate memory in other ways, or might not
-want a fatal error when there is no more memory available.  To accomplish
-this, you can specify alternative memory allocation functions.
+want a fatal error when no more is available.  To accomplish this you can
+specify alternative memory allocation functions.
 
-This can be done in the Berkeley compatibility library as well as the main GMP
-library.
+This feature is available in the Berkeley compatibility library as well as the
+main GMP library.
 
 @deftypefun void mp_set_memory_functions (@* void *(*@var{alloc_func_ptr}) (size_t), @* void *(*@var{realloc_func_ptr}) (void *, size_t, size_t), @* void (*@var{free_func_ptr}) (void *, size_t))
 Replace the current allocation functions from the arguments.  If an argument
 is @code{NULL}, the corresponding default function is retained.
 
 @strong{Be sure to call this function only when there are no active GMP
-objects allocated using the previous memory functions!  Usually, that means
-that you have to call this function before any other GMP function.}
+objects allocated using the previous memory functions!  Usually that means
+calling this before any other GMP function.}
 @end deftypefun
 
 The functions you supply should fit the following declarations:
@@ -4020,30 +4138,36 @@ This function should return a pointer to newly allocated space with at least
 
 @deftypefun {void *} reallocate_function (void *@var{ptr}, size_t @var{old_size}, size_t @var{new_size})
 This function should return a pointer to newly allocated space of at least
-@var{new_size} storage units, after copying at least the first @var{old_size}
-storage units from @var{ptr}.  It should also de-allocate the space at
-@var{ptr}.
+@var{new_size} storage units, after copying at least the smaller of
+@var{old_size} and @var{new_size} storage units from @var{ptr}.  It should
+also de-allocate the space at @var{ptr}.
 
 You can assume that the space at @var{ptr} was formerly returned from
 @code{allocate_function} or @code{reallocate_function}, for a request for
-@var{old_size} storage units.
+@var{old_size} storage units.  It's possible @var{new_size} will be smaller
+than @var{old_size}.  @var{ptr} will never be @code{NULL}.
 @end deftypefun
 
 @deftypefun void deallocate_function (void *@var{ptr}, size_t @var{size})
 De-allocate the space pointed to by @var{ptr}.
 
 You can assume that the space at @var{ptr} was formerly returned from
-@code{allocate_function} or @code{reallocate_function}, for a request for
+@code{allocate_function} or @code{reallocate_function}, from a request for
 @var{size} storage units.
-
-Sometimes GMP will call @code{deallocate_function} with a size argument of 0,
-because it was unable to determine the amount allocated.  This is a flaw in
-GMP, which will be hard to fix.  Please tell @email{bug-gmp@@gnu.org} if this
-is a problem in your application.
 @end deftypefun
 
-(A @dfn{storage unit} is the unit in which the @code{sizeof} operator returns
-the size of an object, normally an 8 bit byte.)
+A @dfn{storage unit} is the unit used by the @code{sizeof} operator, normally
+an 8 bit byte.
+
+Note that no error return is allowed from these functions.  They must perform
+the specified operation, or take their own fatal error action (possibly after
+attempting a garbage collect or whatever).  Getting a different fatal error
+action is one good use for setting new allocation functions.
+
+The @var{old_size} parameters to @code{reallocate_function} and
+@code{deallocate_function} are passed for convenience, but of course can be
+ignored if not needed.  The default functions using @code{malloc} for instance
+don't use them.
 
 
 @node Algorithms, Contributors, Custom Allocation, Top
@@ -4659,7 +4783,7 @@ version.
 Squaring follows the same procedure as multiplication, but there's only one
 @ma{X(t)} and it's evaluated at 5 points, and those values squared to give
 values of @ma{W(t)}.  The interpolation is then identical, and in fact the
-same @code{interpolate3} is used for both squaring and multiplying.
+same @code{interpolate3} subroutine is used for both squaring and multiplying.
 
 Toom-3 is asymptotically @ma{O(N^@W{1.465})}, the exponent being
 @m{\log5/\log3,log(5)/log(3)}, representing 5 recursive multiplies of 1/3 the
@@ -4714,9 +4838,9 @@ The algorithm follows a split, evaluate, pointwise multiply, interpolate and
 combine similar to that described above for Karatsuba and Toom-3.  A @ma{k}
 parameter controls the split, with an FFT-@ma{k} splitting into @ma{2^k}
 pieces of @ma{M=N/2^k} bits each.  @ma{N} must be a multiple of
-@m{2^k\times@code{mp\_bits\_per\_limb}, 2^k*@nicode{mp_bits_per_limb}} so the
-split falls on limb boundaries, avoiding bit shifts in the split and combine
-stages.
+@m{2^k\times@code{mp\_bits\_per\_limb}, (2^k)*@nicode{mp_bits_per_limb}} so
+the split falls on limb boundaries, avoiding bit shifts in the split and
+combine stages.
 
 The evaluations, pointwise multiplications, and interpolation, are all done
 modulo @m{2^{N'}+1, 2^N'+1} where @ma{N'} is @ma{2M+k+3} rounded up to a
@@ -4771,7 +4895,7 @@ pointwise multiplies above these sizes.
 
 When an FFT is to give a full product, the change of @ma{N} to @ma{2N} doesn't
 alter the theoretical complexity for a given @ma{k}, but for the purposes of
-deciding where an FFT might be first used it can be assumed that the FFT is
+considering where an FFT might be first used it can be assumed that the FFT is
 recursing into a normal multiply and that on that basis it's doing @ma{2^k}
 recursed multiplies each @m{1/2^{k-2},1/2^(k-2)} the size of the inputs,
 making it @m{O(N^{k/(k-2)}), O(N^(k/(k-2)))}.  This would mean @ma{k=7} at
@@ -4794,7 +4918,7 @@ to a multiple of 32768 bits, so for a 32-bit limb there'll be 512 limb groups
 of sizes for which @code{mpn_mul_n} runs at the same speed.  Or for @ma{k=9}
 groups of 2048 limbs, @ma{k=10} groups of 8192 limbs, etc.  In practice it's
 been found each @ma{k} is used at quite small multiples of its size constraint
-and so the effect is quite noticeable in a time versus size graph.
+and so the step effect is quite noticeable in a time versus size graph.
 
 The threshold determinations currently measure at the mid-points of size
 steps, but this is sub-optimal since at the start of a new step it can happen
@@ -4849,6 +4973,7 @@ fourier transform keep splitting and get to @m{O(N \log r), O(N*log(r))}.
 * Basecase Division::           
 * Divide and Conquer Division::  
 * Exact Division::              
+* Exact Remainder::             
 * Small Quotient Division::     
 @end menu
 
@@ -4955,7 +5080,7 @@ therefore be superior to divide and conquer, but it's believed this would only
 be for large to very large N.
 
 
-@node Exact Division, Small Quotient Division, Divide and Conquer Division, Division Algorithms
+@node Exact Division, Exact Remainder, Divide and Conquer Division, Division Algorithms
 @subsection Exact Division
 
 A so-called exact division is when the dividend is known to be an exact
@@ -4965,8 +5090,8 @@ knowledge to make some significant optimizations (@pxref{References}).
 The idea can be illustrated in decimal for example with 368154 divided by
 543.  Because the low digit of the dividend is 4, the low digit of the
 quotient must be 8.  This is arrived at from @m{4 \mathord{\times} 7 \bmod 10,
-4*7 mod 10}, using the fact 7 is the modular inverse of 3, the low digit of
-the divisor, since @m{3 \mathord{\times} 7 \mathop{\equiv} 1 \bmod 10, 3*7
+4*7 mod 10}, using the fact 7 is the modular inverse of 3 (the low digit of
+the divisor), since @m{3 \mathord{\times} 7 \mathop{\equiv} 1 \bmod 10, 3*7
 @equiv{} 1 mod 10}.  So @m{8\mathord{\times}543 = 4344,8*543=4344} can be
 subtracted from the dividend leaving 363810.  Notice the low digit has become
 zero.
@@ -5016,7 +5141,60 @@ the effect of the borrows is applied.  Only a few optimized assembler
 implementations currently exist.
 
 
-@node Small Quotient Division,  , Exact Division, Division Algorithms
+@node Exact Remainder, Small Quotient Division, Exact Division, Division Algorithms
+@subsection Exact Remainder
+
+If the exact division algorithm is done with a full subtraction at each stage
+and the dividend isn't a multiple of the divisor, then low zero limbs are
+produced but with a remainder in the high limbs.  For dividend @ma{a}, divisor
+@ma{d}, quotient @ma{q}, and @m{b = 2 \GMPraise{@code{mp\_bits\_per\_limb}}, b
+= 2^mp_bits_per_limb}, then this remainder @ma{r} is of the form
+@tex
+$$ r b^n + a = qd $$
+@end tex
+@ifnottex
+
+@example
+r*b^n + a = q*d
+@end example
+
+@end ifnottex
+@ma{n} represents the number of zero limbs produced by the subtractions, that
+generally being the number of limbs produced for @ma{q}.
+
+Carrying out full subtractions at each stage means the same number of cross
+products must be done as a normal division, but as noted for the exact
+division there's still some single limb divisions saved.  When @ma{d} is a
+single limb the simplifications also provide good speedups on a number of
+processors, see the internal function @code{mpn_modexact_1c_odd}.
+
+@code{mpn_bdivmod}, @code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the
+@code{redc} function in @code{mpz_powm} differ subtly in how they return
+@ma{r} but are all essentially the same.  @code{redc} is based on additions
+though, so it ends up with @m{r b^n = a + qd, r*b^n = a + q*d}.
+
+In all cases @ma{r} is in the range @m{0 \leq r < d, 0<=r<d} (or possibly
+@m{\leq d, <=d}) and can be viewed as a remainder, but one shifted up by a
+factor of @ma{b^n}.
+
+Clearly @ma{r} is zero when @ma{a} is a multiple of @ma{d}, and this leads to
+divisibility or congruence tests which are potentially more efficient than a
+normal division.  Code implementing this is in progress.
+
+The factor of @ma{b^n} on @ma{r} can be ignored in a GCD (with @ma{d} odd),
+hence the use of @code{mpn_bdivmod} by @code{mpn_gcd}, and the use of
+@code{mpn_modexact_1_odd} by @code{mpn_gcd_1}, @code{mpz_kronecker_ui} etc.
+(@pxref{Greatest Common Divisor Algorithms})
+
+Notice that @ma{r} generally gives no useful information about the ordinary
+remainder @ma{a @bmod d} since @ma{b^n @bmod d} could be anything.  If however
+@ma{b^n @equiv{} 1 @bmod d}, then @ma{r} is the negative of the ordinary
+remainder.  This occurs whenever @ma{d} is a factor of @ma{b^n-1}, as for
+example with 3 in @code{mpn_divexact_by3}.  Other such factors include 5, 17
+and 257, but no particular use has been found for this.
+
+
+@node Small Quotient Division,  , Exact Remainder, Division Algorithms
 @subsection Small Quotient Division
 
 An N@cross{}M division where the number of quotient limbs Q=N@minus{}M is
@@ -5046,6 +5224,7 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 + u_2, v2*q>b*r+u2} condition appropriately relaxed.
 
 
+@need 1000
 @node Greatest Common Divisor Algorithms, Powering Algorithms, Division Algorithms, Algorithms
 @section Greatest Common Divisor
 @cindex Greatest common divisor algorithms
@@ -5079,17 +5258,22 @@ is usually small, so often only one or two subtractions are needed to get the
 same effect as a division.  Quotients 1, 2 and 3 for example occur 67.7% of
 the time, see Knuth section 4.5.3 Theorem E.
 
+When the implied quotient is large, meaning @ma{b} is much smaller than
+@ma{a}, then a division is worthwhile.  This is the basis for the initial
+@ma{a @bmod b} reductions in @code{mpn_gcd} and @code{mpn_gcd_1} (the latter
+for both Nx1 and 1x1 cases).  But after that initial reduction, big quotients
+occur too rarely to make it worth checking for them.
+
 
 @node Accelerated GCD, Extended GCD, Binary GCD, Greatest Common Divisor Algorithms
 @subsection Accelerated GCD
 
 For sizes above @code{GCD_ACCEL_THRESHOLD}, GMP uses the Accelerated GCD
-algorithm described independently by Weber and Jebelean (as the ``Generalized
-Binary'' algorithm in the latter case), @pxref{References}.  This algorithm is
+algorithm described independently by Weber and Jebelean (the latter as the
+``Generalized Binary'' algorithm), @pxref{References}.  This algorithm is
 still @ma{O(N^2)}, but is much faster than the binary algorithm since it does
-fewer multi-precision operations.  It consists of the @ma{k}-ary reduction by
-Sorenson, but with larger coefficients, and between each reduction a dmod
-similar to an exact division.
+fewer multi-precision operations.  It consists of alternating the @ma{k}-ary
+reduction by Sorenson, and a ``dmod'' exact remainder reduction.
 
 For operands @ma{u} and @ma{v} the @ma{k}-ary reduction replaces @ma{u} with
 @m{nv-du,n*v-d*u} where @ma{n} and @ma{d} are single limb values chosen to
@@ -5099,20 +5283,19 @@ give two trailing zero limbs on that value, which can be stripped.  @ma{n} and
 
 When @ma{u} and @ma{v} differ in size by more than a certain number of bits, a
 dmod is performed to zero out bits at the low end of the larger.  It consists
-of a single step of Jebelean's exact division algorithm applied to an
-appropriate number of bits (@pxref{Exact Division}).  This is faster than a
-@ma{k}-ary reduction but is useful only when the operands differ in size.
+of an exact remainder style division applied to an appropriate number of bits
+(@pxref{Exact Division}, and @pxref{Exact Remainder}).  This is faster than a
+@ma{k}-ary reduction but useful only when the operands differ in size.
 There's a dmod after each @ma{k}-ary reduction, and if the dmod leaves the
 operands still differing in size then it's repeated.
 
 The @ma{k}-ary reduction step can introduce spurious factors into the GCD
-@ma{g} calculated, and these are eliminated at the end by taking GCDs with the
+calculated, and these are eliminated at the end by taking GCDs with the
 original inputs @ma{@gcd{}(u,@gcd{}(v,g))} using the binary algorithm.  Since
 @ma{g} is almost always small this takes very little time.
 
 At small sizes the algorithm needs a good implementation of @code{find_a}.  At
-larger sizes it's dominated by @code{mpn_addmul_1} calls applying @ma{n} and
-@ma{d}.
+larger sizes it's dominated by @code{mpn_addmul_1} applying @ma{n} and @ma{d}.
 
 
 @node Extended GCD, Jacobi Symbol, Accelerated GCD, Greatest Common Divisor Algorithms
@@ -5131,6 +5314,7 @@ The single limb code is faster but doesn't produce full-limb multipliers.
 When a CPU has a data-dependent multiplier, meaning one which is faster on
 operands with fewer bits, the extra work in the double-limb calculation might
 only save some looping overheads, leading to a large @code{GCDEXT_THRESHOLD}.
+
 Currently the single limb calculation doesn't optimize for the small quotients
 that often occur, and this can lead to unusually low values of
 @code{GCDEXT_THRESHOLD}, depending on the CPU.
@@ -5139,19 +5323,29 @@ An analysis of double-limb calculations can be found in ``A Double-Digit
 Lehmer-Euclid Algorithm'' by Jebelean (@pxref{References}).  The code in GMP
 was developed independently.
 
+It should be noted that when a double limb calculation is used, it's used for
+the whole of that GCD, it doesn't fall back to single limb part way through.
+This is because as the algorithm proceeds, the inputs @ma{a} and @ma{b} are
+reduced, but the cofactors @ma{x} and @ma{y} grow, so the multipliers at each
+step are applied to a roughly constant total number of limbs.
+
 
 @node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
 @subsection Jacobi Symbol
 
-Currently @code{mpz_jacobi} is implemented with a simple Euclidean division
-algorithm and isn't very fast when both inputs are large.  Lehmer's multi-step
+@code{mpz_jacobi} and @code{mpz_kronecker} are currently implemented with a
+simple binary algorithm similar to that described for the GCDs (@pxref{Binary
+GCD}).  They're not very fast when both inputs are large.  Lehmer's multi-step
 improvement or a binary based multi-step algorithm is likely to be better.
 
-@code{mpz_kronecker_ui} and friends consist simply of an @code{mpn_mod_1}
-followed by a binary style single limb Jacobi symbol as implemented in
-@file{mpn/generic/jacbase.c}.  Sign changes for the result are efficiently
-accumulated using some bit twiddling, avoiding table lookups and conditional
-jumps.
+When one operand fits a single limb, and that includes @code{mpz_kronecker_ui}
+and friends, an initial reduction is done with either @code{mpn_mod_1} or
+@code{mpn_modexact_1_odd}, followed by the binary algorithm on a single limb.
+The binary algorithm is well suited to a single limb, and the whole
+calculation in this case is quite efficient.
+
+In all the routines sign changes for the result are accumulated using some bit
+twiddling, avoiding table lookups or conditional jumps.
 
 
 @node Powering Algorithms, Root Extraction Algorithms, Greatest Common Divisor Algorithms, Algorithms
@@ -5186,13 +5380,12 @@ squaring.
 
 The modular multiplies and squares use either a simple division or the REDC
 method by Montgomery (@pxref{References}).  REDC is a little faster,
-essentially saving N single limb divisions in a fashion similar to exact
-division (@pxref{Exact Division}), but because a full remainder is wanted no
-crossproducts are saved.  The current REDC has some limitations.  It's only
-@ma{O(N^2)} so above @code{POWM_THRESHOLD} division becomes faster and is
-used.  It doesn't attempt to detect small bases, but rather always uses a REDC
-form, which is usually a full size operand.  And lastly it's only applied to
-odd moduli.
+essentially saving N single limb divisions in a fashion similar to an exact
+remainder (@pxref{Exact Remainder}).  The current REDC has some limitations.
+It's only @ma{O(N^2)} so above @code{POWM_THRESHOLD} division becomes faster
+and is used.  It doesn't attempt to detect small bases, but rather always uses
+a REDC form, which is usually a full size operand.  And lastly it's only
+applied to odd moduli.
 
 
 @node Root Extraction Algorithms, Radix Conversion Algorithms, Powering Algorithms, Algorithms
@@ -5210,10 +5403,10 @@ odd moduli.
 @node Square Root Algorithm, Nth Root Algorithm, Root Extraction Algorithms, Root Extraction Algorithms
 @subsection Square Root
 
-Square roots are taken using the ``Karatsuba Square Root'' algorithm by
-Paul Zimmermann (@pxref{References}).  This is expressed in a divide and
-conquer form, but as noted in the paper can also be viewed as a discrete
-variant of Newton's method.
+Square roots are taken using the ``Karatsuba Square Root'' algorithm by Paul
+Zimmermann (@pxref{References}).  This is expressed in a divide and conquer
+form, but as noted in the paper it can also be viewed as a discrete variant of
+Newton's method.
 
 In the Karatsuba multiplication range this is an @m{O({3\over2}
 M(N/2)),O(1.5*M(N/2))} algorithm, where @ma{M(n)} is the time to multiply two
@@ -5363,8 +5556,8 @@ $$\eqalign{
 @ifnottex
 
 @example
-F[2n]   = F[n]*(2F[n-1]+F[n])
-F[2n-2] = F[n-1]*(2F[n]-F[n-1])
+F[2n]   = F[n]   * (2*F[n-1] + F[n])
+F[2n-2] = F[n-1] * (2*F[n]   - F[n-1])
 @end example
 
 @end ifnottex
@@ -5482,7 +5675,7 @@ rarely needs to fall through to a loop propagating further carries.
 On the x86s, GCC (as of version 2.95.2) doesn't generate particularly good code
 for the RISC style idioms that are necessary to handle carry bits in
 C.  Often conditional jumps are generated where @code{adc} or @code{sbb} forms
-would be better.  Unfortunately almost any loop involving carry bits
+would be better.  And so unfortunately almost any loop involving carry bits
 eventually needs to be coded in assembler for best results.
 
 
@@ -5550,9 +5743,10 @@ work as one 32@cross{}32 from GMP's point of view, and need some shifts and
 adds besides.  But of course if say the SIMD form is fully pipelined and uses
 less instruction decoding then it may still be worthwhile.
 
-On the x86 chips, MMX has so far found a use only in shifts, where it allows
-64-bit operations and has good instruction decoding.  3DNow and SSE haven't
-been found useful.
+On the 80x86 chips, MMX has so far found a use in @code{mpn_rshift} and
+@code{mpn_lshift} since it allows 64-bit operations, and is used in a special
+case for 16-bit multipliers in the P55 @code{mpn_mul_1}.  3DNow and SSE
+haven't found a use so far.
 
 
 @node Assembler Software Pipelining, Assembler Loop Unrolling, Assembler SIMD Instructions, Assembler Coding
@@ -5590,8 +5784,10 @@ alternately using one register combination and then another.  Judicious use of
 
 Unrolling is generally best done to a power of 2 multiple.  This makes it
 possible to calculate the number of unrolled loops and the number of remaining
-limbs using a shift and mask.  Sizes not a multiple of the unrolling can be
-handled in various ways, for example
+limbs using a shift and mask.
+
+Sizes not a multiple of the unrolling can be handled in various ways, for
+example
 
 @itemize @bullet
 @item
@@ -5681,7 +5877,7 @@ Torsten Ekedahl of the Mathematical department of Stockholm University provided
 significant inspiration during several phases of the GMP development.  His
 mathematical expertise helped improve several algorithms.
 
-Paul Zimmermann wrote the Burnikel-Ziegler division code, the REDC code, the
+Paul Zimmermann wrote the Divide and Conquer division code, the REDC code, the
 REDC-based mpz_powm code, and the FFT multiply code.  The ECMNET project Paul
 is organizing has been a driving force behind many of the optimization of GMP
 3.
@@ -5746,10 +5942,10 @@ Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @*
 @uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}
 
 @item
-Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant
-Integers using Multiplication'', in Proceedings of the SIGPLAN
-PLDI'94 Conference, June 1994.  Available online, @*
-@uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz} (and .psl.gz too).
+Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
+using Multiplication'', in Proceedings of the SIGPLAN PLDI'94 Conference, June
+1994.  Also available @uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz}
+(and .psl.gz).
 
 @item
 Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
@@ -5760,34 +5956,34 @@ Tudor Jebelean,
 ``An algorithm for exact division'',
 Journal of Symbolic Computation,
 volume 15, 1993, pp. 169-180.
-Research report version available online @*
+Research report version available @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-35.ps.gz}
 
 @item
 Tudor Jebelean, ``Exact Division with Karatsuba Complexity - Extended
-Abstract'', RISC-Linz technical report 96-31, available online @*
+Abstract'', RISC-Linz technical report 96-31, @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-31.ps.gz}
 
 @item
 Tudor Jebelean, ``Practical Integer Division with Karatsuba Complexity'',
-ISSAC 97, pp. 339-341.  Technical report available online, @*
+ISSAC 97, pp. 339-341.  Technical report available @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-29.ps.gz}
 
 @item
 Tudor Jebelean, ``A Generalization of the Binary GCD Algorithm'', ISSAC 93,
-pp. 111-116.  Technical report available online, @*
+pp. 111-116.  Technical report version available @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1993/93-01.ps.gz}
 
 @item
 Tudor Jebelean, ``A Double-Digit Lehmer-Euclid Algorithm for Finding the GCD
 of Long Integers'', Journal of Symbolic Computation, volume 19, 1995,
-pp. 145-157.  Technical report version available online, @*
+pp. 145-157.  Technical report version also available @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-69.ps.gz}
 
 @item
 Werner Krandick and Tudor Jebelean, ``Bidirectional Exact Integer Division'',
 Journal of Symbolic Computation, volume 21, 1996, pp. 441-455.  Early
-technical report version available online, @*
+technical report version also available
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1994/94-50.ps.gz}
 
 @item
@@ -5808,8 +6004,12 @@ volume 21, number 1, March 1995, pp. 111-122.
 
 @item
 Paul Zimmermann, ``Karatsuba Square Root'', INRIA Research Report 3805,
-November 1999, available online @*
-@uref{http://www.inria.fr/RRRT/RR-3805.html}
+November 1999, @uref{http://www.inria.fr/RRRT/RR-3805.html}
+
+@item
+Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
+Implementations'', @*
+@uref{http://www.loria.fr/~zimmerma/papers/proof-div-sqrt.ps.gz}
 
 @item
 Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
