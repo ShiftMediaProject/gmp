@@ -18,6 +18,30 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-11  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/set_str.c: Don't use memcmp for decimal point testing, just a
+	loop is enough and avoids any chance of memcmp reading past the end of
+	the given string.
+
+	* randmts.c, randmt.h: New files.
+	* Makefile.am (libgmp_la_SOURCES): Add randmts.c.
+	* randmt.c: Move seeding to randmts.c, common defines in randmt.h.
+	* gmp-impl.h (RANDS): Use __gmp_randinit_mt_noseed.
+	* tests/misc.c (tests_rand_start): Use gmp_randinit_default
+	explicitly, not RANDS.
+
+	* mpn/ia64/ia64-defs.m4 (PROLOGUE_cpu): Use 32-byte alignment, for the
+	benefit of itanium 2.
+	* mpn/ia64/gcd_1.asm: Remove own .align 32.
+
+	* mpn/ia64/ia64-defs.m4 (ALIGN): New define, using IA64_ALIGN_OK.
+	* mpn/ia64/hamdist.asm: Use ALIGN instead of .align.
+
+	* acinclude.m4 (GMP_ASM_IA64_ALIGN_OK): New macro.
+	* configure.in (IA64_PATTERN): Use it.
+	* mpn/ia64/README: Add notes on gas big endian align problem.
+	
 2003-11-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/mul_1.asm: Rewrite.
