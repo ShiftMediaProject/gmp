@@ -218,7 +218,8 @@ deflit(`FRAME',8)
 
 	movl	PARAM_DST, %edi
 
-	rep stosl
+	rep
+	stosl
 
 	popl	%esi
 	popl	%edi
