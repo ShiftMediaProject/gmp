@@ -494,6 +494,19 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 #endif
 
 
+/* For a threshold between algorithms A and B, size>=thresh is where B
+   should be used.  Special value MP_SIZE_T_MAX means only ever use A, or
+   value 0 means only ever use B.  The tests for these special values will
+   be compile-time constants, so the compiler should be able to eliminate
+   the code for the unwanted algorithm.  */
+
+#define ABOVE_THRESHOLD(size,thresh)    \
+  ((thresh) == 0                        \
+   || (! (thresh) == MP_SIZE_T_MAX      \
+       && (size) >= (thresh)))
+#define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
+
+
 /* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
 #ifndef KARATSUBA_MUL_THRESHOLD
