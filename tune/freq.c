@@ -21,14 +21,27 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
+#if HAVE_INVENT_H
+#include <invent.h> /* for IRIX invent_cpuinfo_t */
+#endif
+
 #include <stdio.h>
 #include <stdlib.h> /* for getenv, qsort */
 #include <string.h> /* for memcmp */
+
 #if HAVE_UNISTD_H
 #include <unistd.h> /* for sysconf */
 #endif
 
 #include <sys/types.h>
+
+#if HAVE_SYS_ATTRIBUTES_H
+#include <sys/attributes.h>   /* for IRIX attr_get(), needs sys/types.h */
+#endif
+
+#if HAVE_SYS_IOGRAPH_H
+#include <sys/iograph.h>      /* for IRIX INFO_LBL_DETAIL_INVENT */
+#endif
 
 #if HAVE_SYS_PARAM_H     /* for constants needed by NetBSD <sys/sysctl.h> */
 #include <sys/param.h>   /* and needed by HPUX <sys/pstat.h> */
@@ -73,7 +86,6 @@ MA 02111-1307, USA. */
 #if HAVE_MACHINE_HAL_SYSINFO_H
 #include <machine/hal_sysinfo.h>  /* for OSF GSI_CPU_INFO, struct cpu_info */
 #endif
-
 
 /* Remove definitions from NetBSD <sys/param.h>, to avoid conflicts with
    gmp-impl.h. */
@@ -258,7 +270,7 @@ freq_sysctl_hw_cpufrequency (int help)
 }
 
 
-/* Alpha FreeBSD 4.1 and NetBSD 1.4 sysctl- hw.model string gives "Digital
+/* Alpha FreeBSD 4.1 and NetBSD 1.4 sysctl hw.model string gives "Digital
    AlphaPC 164LX 599 MHz".  NetBSD 1.4 doesn't seem to have sysctlbyname, so
    sysctl() is used.  */
 
@@ -418,7 +430,8 @@ freq_sunos_sysinfo (int help)
 
 
 /* "/etc/hw -r cpu" for SCO OpenUnix 8, printing a line like
-	The speed of the CPU is approximately 450Mhz  */
+	The speed of the CPU is approximately 450Mhz
+ */
 static int
 freq_sco_etchw (int help)
 {
@@ -454,39 +467,33 @@ freq_sco_etchw (int help)
 }
 
 
-/* "hinv -c processor" for IRIX.  The following outputs have been seen
-           2 195 MHZ IP27 Processors
-           Processor 0: 500 MHZ IP35
- */
+/* attr_get("/hw/cpunum/0",INFO_LBL_DETAIL_INVENT) ic_cpu_info.cpufq for
+   IRIX.
+
+   The same information is available from the "hinv -c processor" command,
+   but it seems better to make a system call than to parse that output.  */
+
 static int
-freq_irix_hinv (int help)
+freq_attr_get_invent (int help)
 {
   int     ret = 0;
-#if HAVE_POPEN
-  FILE    *fp;
-  char    buf[128];
-  double  val;
-  int     nproc;
+#if HAVE_ATTR_GET && HAVE_INVENT_H
+  invent_cpuinfo_t  inv;
+  int               len, val;
 
-  HELP ("IRIX \"hinv -c processor\" output");
+  HELP ("attr_get(\"/hw/cpunum/0\") ic_cpu_info.cpufq");
 
-  /* Error messages are sent to /dev/null in case hinv doesn't exist.  The
-     brackets are necessary for some shells. */
-  if ((fp = popen ("(hinv -c processor) 2>/dev/null", "r")) != NULL)
+  len = sizeof (inv);
+  if (attr_get ("/hw/cpunum/0", INFO_LBL_DETAIL_INVENT,
+                (char *) &inv, &len, 0) == 0
+      && len == sizeof (inv)
+      && inv.ic_gen.ig_invclass == INV_PROCESSOR)
     {
-      while (fgets (buf, sizeof (buf), fp) != NULL)
-        {
-          if (sscanf (buf, "Processor 0: %lf MHZ", &val) == 1
-              || sscanf (buf, "%d %lf MHZ", &nproc, &val) == 2)
-            {
-              speed_cycletime = 1e-6 / val;
-              if (speed_option_verbose)
-                printf ("Using hinv -c processor \"%.2f MHZ\" for cycle time %.3g\n", val, speed_cycletime);
-              ret = 1;
-              break;
-            }
-        }
-      pclose (fp);
+      val = inv.ic_cpu_info.cpufq;
+      speed_cycletime = 1e-6 / val;
+      if (speed_option_verbose)
+        printf ("Using attr_get(\"/hw/cpunum/0\") ic_cpu_info.cpufq %d MHz for cycle time %.3g\n", val, speed_cycletime);
+      ret = 1;
     }
 #endif
   return ret;
@@ -719,6 +726,7 @@ freq_all (int help)
        anything the system gives. */
     freq_environment (help)
 
+    || freq_attr_get_invent (help)
     || freq_getsysinfo (help)
     || freq_pstat_getprocessor (help)
     || freq_sysctl_hw_model (help)
@@ -733,7 +741,6 @@ freq_all (int help)
     || freq_processor_info (help)
     || freq_proc_cpuinfo (help)
     || freq_bsd_dmesg (help)
-    || freq_irix_hinv (help)
     || freq_sunos_sysinfo (help)
     || freq_measure_getrusage (help)
     || freq_measure_gettimeofday (help);
