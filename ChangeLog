@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-12-19  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/hgcd2.c (mpn_hgcd2): Substitute always-zero variable
+	with 0.  Remove bogus comment.
+
 	* mpn/generic/get_d.c: Make ONE_LIMB case actually work for nails.
 
 2003-12-19  Niels Möller  <nisse@harpo.hack.org>
