@@ -1582,10 +1582,11 @@ overestimating memory required will waste space though.
 
 @item Divisibility Testing (Small Integers)
 
-@code{mpz_divisible_ui_p} is the best function for testing whether an
-@code{mpz_t} is divisible by an individual small integer.  It uses an
-algorithm which is faster than @code{mpz_tdiv_ui}, but which gives no useful
-information about the actual remainder, only whether it's zero.
+@code{mpz_divisible_ui_p} and @code{mpz_congruent_ui_p} are the best functions
+for testing whether an @code{mpz_t} is divisible by an individual small
+integer.  They use an algorithm which is faster than @code{mpz_tdiv_ui}, but
+which gives no useful information about the actual remainder, only whether
+it's zero (or a particular value).
 
 However when testing divisibility by several small integers, it's best to take
 a remainder modulo their product, in order to save multi-precision operations.
@@ -2312,6 +2313,13 @@ rational to lowest terms.
 @deftypefunx int mpz_divisible_2exp_p (mpz_t @var{n}, unsigned long int @var{b})
 Return non-zero if @var{n} is exactly divisible by @var{d}, or in the case of
 @code{mpz_divisible_2exp_p} by @m{2^b,2^@var{b}}.
+@end deftypefun
+
+@deftypefun int mpz_congruent_p (mpz_t @var{n}, mpz_t @var{c}, mpz_t @var{d})
+@deftypefunx int mpz_congruent_ui_p (mpz_t @var{n}, unsigned long int @var{c}, unsigned long int @var{d})
+@deftypefunx int mpz_congruent_2exp_p (mpz_t @var{n}, unsigned long int @var{c}, unsigned long int @var{b})
+Return non-zero if @var{n} is congruent to @var{c} modulo @var{d}, or in the
+case of @code{mpz_congruent_2exp_p} modulo @m{2^b,2^@var{b}}.
 @end deftypefun
 
 
