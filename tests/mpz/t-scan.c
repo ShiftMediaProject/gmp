@@ -58,13 +58,18 @@ refmpz_scan1 (mpz_srcptr z, unsigned long starting_bit)
 void
 check_ref (void)
 {
+  static const int offset[] = {
+    -2, -1, 0, 1, 2, 3
+  };
+
   mpz_t          z;
-  int            test, neg, sought;
-  mp_size_t      size;
-  unsigned long  i, got, want;
+  int            test, neg, sought, oindex, o;
+  mp_size_t      size, isize;
+  long           isigned;
+  unsigned long  start, got, want;
 
   mpz_init (z);
-  for (test = 0; test < 10; test++)
+  for (test = 0; test < 5; test++)
     {
       for (size = 0; size < 5; size++)
         {
@@ -75,30 +80,39 @@ check_ref (void)
               if (neg)
                 mpz_neg (z, z);
 
-              for (i = 0; i < size * GMP_NUMB_BITS + 8; i++)
+              for (isize = 0; isize <= size; isize++)
                 {
-                  for (sought = 0; sought <= 1; sought++)
+                  for (oindex = 0; oindex <= numberof (offset); oindex++)
                     {
-                      if (sought == 0)
-                        {
-                          got = mpz_scan0 (z, i);
-                          want = refmpz_scan0 (z, i);
-                        }
-                      else
-                        {
-                          got = mpz_scan1 (z, i);
-                          want = refmpz_scan1 (z, i);
-                        }
+                      o = offset[oindex];
+                      if ((int) isize*GMP_NUMB_BITS < -o)
+                        continue;  /* start would be negative */
 
-                      if (got != want)
+                      start = isize*GMP_NUMB_BITS + o;
+
+                      for (sought = 0; sought <= 1; sought++)
                         {
-                          printf ("wrong at test=%d, size=%ld, neg=%d, i=%lu, sought=%d\n",
-                                  test, size, neg, i, sought);
-                          printf ("   z 0x");
-                          mpz_out_str (stdout, -16, z);
-                          printf ("\n");
-                          printf ("   got=%lu, want=%lu\n", got, want);
-                          exit (1);                  
+                          if (sought == 0)
+                            {
+                              got = mpz_scan0 (z, start);
+                              want = refmpz_scan0 (z, start);
+                            }
+                          else
+                            {
+                              got = mpz_scan1 (z, start);
+                              want = refmpz_scan1 (z, start);
+                            }
+
+                          if (got != want)
+                            {
+                              printf ("wrong at test=%d, size=%ld, neg=%d, start=%lu, sought=%d\n",
+                                      test, size, neg, start, sought);
+                              printf ("   z 0x");
+                              mpz_out_str (stdout, -16, z);
+                              printf ("\n");
+                              printf ("   got=%lu, want=%lu\n", got, want);
+                              exit (1);
+                            }
                         }
                     }
                 }
