@@ -1844,7 +1844,7 @@ MA 02111-1307, USA.
 	udiv_qrnnd, for consistency.
 
 	* Makefile.am (install-data-hook): Print a warning recommending "make
-	check" to watch out for compiler bugs.
+	check" to watch out for compiler bugs.  Proposed by Torbjorn.
 
 	* mpn/ia64/README (mpn_lshift, mpn_rshift): Amend prospective itanium2
 	speed, 0.75 c/l with shrp plus shl/shr.
