@@ -20,47 +20,27 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdlib.h>		/* for random(), mrand48() */
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#ifdef __MINGW32__
-/* msvcrt.dll lacks random() */
-static inline long
-myrandom ()
-{
-  return rand();
-}
-#else
-#if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
-/* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
-static inline long
-myrandom ()
-{
-  return mrand48 ();
-}
-#else
-static inline long
-myrandom ()
-{
-  return random ();
-}
-#endif
-#endif
 
 /* It's a bit tricky to get this right, so please test the code well
    if you hack with it.  Some early versions of the function produced
    random numbers with the leading limb == 0, and some versions never
-   made the most significant bit set.  */
+   made the most significant bit set.
+
+   This code and mpz_rrandomb are almost identical, though the latter makes
+   bit runs of only 1 to 16, and doesn't force the first chunk to 1
+   bits.  */
 
 void
 mpn_random2 (mp_ptr res_ptr, mp_size_t size)
 {
+  gmp_randstate_ptr rands = RANDS;
   int n_bits;
   int bit_pos;
   mp_size_t limb_pos;
-  unsigned int ran;
+  mp_limb_t ran;
   mp_limb_t limb;
 
   /* FIXME: Is size==0 supposed to be allowed? */
@@ -69,11 +49,13 @@ mpn_random2 (mp_ptr res_ptr, mp_size_t size)
   limb = 0;
 
   /* Start off in a random bit position in the most significant limb.  */
-  bit_pos = myrandom () & (BITS_PER_MP_LIMB - 1);
+  _gmp_rand (&ran, rands, BITS_PER_MP_LIMB);
+  bit_pos = ran & (BITS_PER_MP_LIMB - 1);
 
   /* Least significant bit of RAN chooses string of ones/string of zeroes.
      Make most significant limb be non-zero by setting bit 0 of RAN.  */
-  ran = myrandom () | 1;
+  _gmp_rand (&ran, rands, BITS_PER_MP_LIMB);
+  ran |= 1;
 
   for (limb_pos = size - 1; limb_pos >= 0; )
     {
@@ -103,6 +85,6 @@ mpn_random2 (mp_ptr res_ptr, mp_size_t size)
 	    }
 	}
       bit_pos -= n_bits;
-      ran = myrandom ();
+      _gmp_rand (&ran, rands, BITS_PER_MP_LIMB);
     }
 }
