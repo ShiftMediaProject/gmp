@@ -21,6 +21,9 @@ MA 02111-1307, USA.
 
 2002-02-10  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/set_str.c (mpn_set_str): Undo this:
+	Change invocations of mpn_add_1 to instead use mpn_incr_u.
+
 	* tests/mpz/convert.c: Free str only after it is used in error message.
 
 	* mpn/generic/get_str.c (mpn_sb_get_str): Combine tail code for base 10
