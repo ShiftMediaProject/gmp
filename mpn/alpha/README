@@ -5,32 +5,32 @@ RELEVANT OPTIMIZATION ISSUES
 EV4
 
 1. This chip has very limited store bandwidth.  The on-chip L1 cache is
-write-through, and a cache line is transfered from the store buffer to the
-off-chip L2 in as much 15 cycles on most systems.  This delay hurts
-mpn_add_n, mpn_sub_n, mpn_lshift, and mpn_rshift.
+   write-through, and a cache line is transfered from the store buffer to
+   the off-chip L2 in as much 15 cycles on most systems.  This delay hurts
+   mpn_add_n, mpn_sub_n, mpn_lshift, and mpn_rshift.
 
 2. Pairing is possible between memory instructions and integer arithmetic
-instructions.
+   instructions.
 
-3. mulq and umulh is documented to have a latency of 23 cycles, but 2 of
-these cycles are pipelined.  Thus, multiply instructions can be issued at a
-rate of one each 21st cycle.
+3. mulq and umulh are documented to have a latency of 23 cycles, but 2 of
+   these cycles are pipelined.  Thus, multiply instructions can be issued at
+   a rate of one each 21st cycle.
 
 EV5
 
 1. The memory bandwidth of this chip seems excellent, both for loads and
-stores.  Even when the working set is larger than the on-chip L1 and L2
-caches, the performance remain almost unaffected.
+   stores.  Even when the working set is larger than the on-chip L1 and L2
+   caches, the performance remain almost unaffected.
 
-2. mulq has a measured latency of 13 cycles and an issue rate of 1 each 8th
-cycle.  umulh has a measured latency of 15 cycles and an issue rate of 1
-each 10th cycle.  But the exact timing is somewhat confusing.
+2. mulq has a latency of 12 cycles and an issue rate of 1 each 8th cycle.
+   umulh has a measured latency of 14 cycles and an issue rate of 1 each
+   10th cycle.  But the exact timing is somewhat confusing.
 
 3. mpn_add_n.  With 4-fold unrolling, we need 37 instructions, whereof 12
    are memory operations.  This will take at least
-	ceil(37/2) [dual issue] + 1 [taken branch] = 20 cycles
+	ceil(37/2) [dual issue] + 1 [taken branch] = 19 cycles
    We have 12 memory cycles, plus 4 after-store conflict cycles, or 16 data
-   cache cycles, which should be completely hidden in the 20 issue cycles.
+   cache cycles, which should be completely hidden in the 19 issue cycles.
    The computation is inherently serial, with these dependencies:
 
 	       ldq  ldq
@@ -44,15 +44,22 @@ each 10th cycle.  But the exact timing is somewhat confusing.
 		  or
 
    I.e., 3 operations are needed between carry-in and carry-out, making 12
-   cycles the absolute minimum for the 4 limbs.  We could replace the `or' with
-   a cmoveq/cmovne, which would save a cycle on EV5, but that might waste a
-   cycle on EV4.  Also, cmov takes 2 cycles.
+   cycles the absolute minimum for the 4 limbs.  We could replace the `or'
+   with a cmoveq/cmovne, which could issue one cycle earlier that the `or',
+   but that might waste a cycle on EV4.  The total depth remain unaffected,
+   since cmov has a latency of 2 cycles.
 
      addq
      /   \
    addq  cmpult
      |      \
    cmpult -> cmovne
+
+Montgomery has a slightly different way of computing carry that requires one
+less instruction, but has depth 4 (instead of the current 3).  Since the
+code is currently instruction issue bound, Montgomery's idea should save us
+1/2 cycle per limb, or bring us down to a total of 17 cycles or 4.25
+cycles/limb.  Unfortunately, this method will not be good for the EV6.
 
 EV6
 
@@ -70,7 +77,7 @@ serializing because of carry propagation is trickier; the ultimate performance
 of the code will be determined of the number of latency cycles it takes from
 accepting carry-in to a vector point until we can generate carry-out.
 
-addmul_1 dependency diagram:
+addmul_1 dependency diagram (needs 175 columns wide screen):
 
    i  
    s
