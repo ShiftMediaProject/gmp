@@ -1,7 +1,7 @@
 dnl  HP-PA 2.0 64-bit mpn_addmul_1 -- Multiply a limb vector with a limb and
 dnl  add the result to a second limb vector.
 
-dnl  Copyright 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1998, 1999, 2000, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -96,7 +96,7 @@ define(`vlimb',`%r23')	dnl
 define(`climb',`%r23')	dnl
 
 ifdef(`HAVE_ABI_2_0w',
-`	.level	2.0W
+`	.level	2.0w
 ',`	.level	2.0
 ')
 PROLOGUE(mpn_addmul_1)

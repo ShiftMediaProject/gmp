@@ -1,6 +1,6 @@
 dnl  HP-PA 2.0 64-bit mpn_sqr_diagonal.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -38,7 +38,7 @@ define(`t0',`%r19')
 define(`t1',`%r20')
 
 ifdef(`HAVE_ABI_2_0w',
-`	.level	2.0W
+`	.level	2.0w
 ',`	.level	2.0
 ')
 PROLOGUE(mpn_sqr_diagonal)
