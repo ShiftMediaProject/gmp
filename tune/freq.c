@@ -247,6 +247,8 @@ freq_sysctl_hw_model (int help)
 
    alpha 2.2.18pre21 - "cycle frequency [Hz]" is 0 on at least one system,
                  "BogoMIPS" seems near enough.
+
+   powerpc 2.2.19 - "clock" is the frequency, bogomips is something weird
   */
 
 static int
@@ -272,11 +274,19 @@ freq_proc_cpuinfo (int help)
               ret = 1;
               break;
             }
-          if (sscanf (buf, "cpu MHz  : %lf\n", &val) == 1)
+          if (sscanf (buf, "cpu MHz : %lf\n", &val) == 1)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
                 printf ("Using /proc/cpuinfo \"cpu MHz\" %.2f for cycle time %.3g\n", val, speed_cycletime);
+              ret = 1;
+              break;
+            }
+          if (sscanf (buf, "clock : %lfMHz\n", &val) == 1)
+            {
+              speed_cycletime = 1e-6 / val;
+              if (speed_option_verbose)
+                printf ("Using /proc/cpuinfo \"clock\" %.2f for cycle time %.3g\n", val, speed_cycletime);
               ret = 1;
               break;
             }
