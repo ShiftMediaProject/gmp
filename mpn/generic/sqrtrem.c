@@ -179,7 +179,7 @@ mpn_dq_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
   sp[l-1] |= q << (BITS_PER_MP_LIMB - 1);
   q >>= 1;
   if (c) c = mpn_add_n (np + l, np + l, sp + l, h);
-  mpn_mul_n (np + n, sp, sp, l);
+  mpn_sqr_n (np + n, sp, l);
   b = q + mpn_sub_n (np, np, np + n, 2 * l);
   c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, b);
   q = mpn_add_1 (sp + l, sp + l, h, q);
