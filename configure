@@ -1103,7 +1103,7 @@ case "$target" in
     gmp_cflags_cc="$gmp_cflags_cc -O"
     ;;
   alpha*-*-*)
-    taste=`echo $target_cpu | sed s/^alpha//g`
+    taste=`echo $target_cpu | sed 's/^alpha//g'`
     if test -n "$taste"; then
       gmp_optcflags_gcc="-mcpu=$taste"
       gmp_cflags_cc="$gmp_cflags_cc -arch $taste -tune $taste"
