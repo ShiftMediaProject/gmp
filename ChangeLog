@@ -1,3 +1,7 @@
+2000-06-07  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/set_prc.c: MPN_COPY => MPN_COPY_INCR.
+
 2000-06-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n):
