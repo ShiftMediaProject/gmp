@@ -21,8 +21,6 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
-#if HAVE_VSNPRINTF
-
 #if HAVE_STDARG
 #include <stdarg.h>
 #else
@@ -35,6 +33,10 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+
+#if ! HAVE_VSNPRINTF
+#define vsnprintf  __gmp_replacement_vsnprintf
+#endif
 
 
 /* vasprintf isn't used since we prefer all GMP allocs to go through
@@ -111,5 +113,3 @@ gmp_vasprintf (char **result, const char *fmt, va_list ap)
   GMP_ASPRINTF_T_INIT (d, result);
   return __gmp_doprnt (&__gmp_asprintf_funs, &d, fmt, ap);
 }
-
-#endif /* HAVE_VSNPRINTF */

@@ -21,8 +21,6 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
-#if HAVE_VSNPRINTF
-
 #if HAVE_STDARG
 #include <stdarg.h>
 #else
@@ -46,5 +44,3 @@ gmp_vsnprintf (char *buf, size_t size, const char *fmt, va_list ap)
   d.size = size;
   return __gmp_doprnt (&__gmp_snprintf_funs, &d, fmt, ap);
 }
-
-#endif /* HAVE_VSNPRINTF */
