@@ -1130,7 +1130,7 @@ yes
     [add_path="cray/cfp"; extra_functions="mulwwc90"]) ;;
   j90 | sv1)
     extra_functions="mulwwj90"
-    add_path="cray/cfp $path" ;;
+    add_path="cray/cfp" ;;
 esac
 
 if test -z "$MPN_PATH"; then
