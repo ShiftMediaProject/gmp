@@ -1,5 +1,6 @@
 2000-10-02  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/ev6/gmp-mparam.h: Retune.
 	* mpn/powerpc32/gmp-mparam.h: Retune.
 	* mpn/powerpc64/gmp-mparam.h: Retune.
 	* mpn/x86/pentium/gmp-mparam.h: Retune.
@@ -10,6 +11,7 @@
 	* mpn/x86/k7/gmp-mparam.h: Retune.
 	* mpn/sparc64/gmp-mparam.h: Retune.
 
+	* mpn/m68k/gmp-mparam.h: New file.
 	* mpn/alpha/ev5/gmp-mparam.h: New file.
 
 	* gmp-impl.h (default MPN_COPY): Remove final `;'.
