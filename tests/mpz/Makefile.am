@@ -31,7 +31,7 @@ check_PROGRAMS = t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   t-root t-jac t-bin t-misc t-get_si                                 \
   t-fac_ui t-fib_ui t-lucnum_ui t-scan t-fits                        \
   t-divis t-divis_2exp t-cong t-cong_2exp t-sizeinbase t-set_str     \
-  t-aorsmul t-cmp_d t-popcount
+  t-aorsmul t-cmp_d t-popcount t-set_f
 
 TESTS = $(check_PROGRAMS)
 
