@@ -43,7 +43,7 @@ mpz_urandomb (rop, s, nbits)
 
   rp = PTR (rop);
 
-  mpn_rawrandom (rp, s, nbits);
+  gmp_rand_getraw (rp, s, nbits);
   MPN_NORMALIZE (rp, size);
   SIZ (rop) = size;
 }

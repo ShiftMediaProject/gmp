@@ -61,7 +61,7 @@ mpz_urandomm (rop, s, n)
   tp = PTR (t);
   do
     {
-      mpn_rawrandom (tp, s, nbits);
+      gmp_rand_getraw (tp, s, nbits);
       MPN_NORMALIZE (tp, size);	/* FIXME: Really necessary?  */
       SIZ (t) = size;
     }

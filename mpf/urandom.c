@@ -49,7 +49,7 @@ mpf_urandomb (rop, s, nbits)
   rp = PTR (rop);
   prec = PREC (rop);
 
-  mpn_rawrandom (rp, s, prec * BITS_PER_MP_LIMB);
+  gmp_rand_getraw (rp, s, prec * BITS_PER_MP_LIMB);
   MPN_NORMALIZE (rp, prec);
   SIZ (rop) = prec;
   EXP (rop) = 0;
