@@ -1,6 +1,9 @@
 1999-11-21  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/sparc64/sub_n.s: Get operand order for main subcc right.
+	* mpn/sparc64/sub_n.s: Rewrite.
+
+	* mpn/sparc64/sub_n.s: Get operand order for main subcc right
+	(before scrapping this code for new code).
 
 1999-11-20  Torbjorn Granlund  <tege@swox.com>
 
