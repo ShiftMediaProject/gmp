@@ -19,6 +19,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-21  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (32-bit powerpc add_ssaaaa): Remove spurious commutative
+	declaration.
+	(64-bit powerpc add_ssaaaa): Likewise.
+
 2002-01-20  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Use %n to better detect sparc
