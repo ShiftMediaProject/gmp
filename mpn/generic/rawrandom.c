@@ -120,7 +120,7 @@ static mp_size_t
 #if __STDC__
 mpn_lc (mp_ptr rp, gmp_rand_state s)
 #else
-mpn_rawrandom (rp, s)
+mpn_lc (rp, s)
      mp_ptr rp;
      gmp_rand_state s;
 #endif
