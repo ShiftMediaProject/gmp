@@ -1689,8 +1689,7 @@ dnl  ----------------------
 dnl  Determine whether the assembler accepts the ".register" directive.
 dnl  Old versions of solaris "as" don't.
 dnl
-dnl  See also mpn/powerpc32/powerpc-defs.m4 which uses the result of this
-dnl  test.
+dnl  See also mpn/sparc32/sparc-defs.m4 which uses the result of this test.
 
 AC_DEFUN(GMP_ASM_SPARC_REGISTER,
 [AC_REQUIRE([GMP_ASM_TEXT])
