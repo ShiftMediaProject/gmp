@@ -128,8 +128,7 @@ mpn_bz_divrem_n (qp, np, dp, n)
       TMP_MARK (marker);
       tmp = (mp_ptr) TMP_ALLOC (n * BYTES_PER_MP_LIMB);
       qhl = mpn_bz_div_3_halves_by_2 (qp + n2, np + n2, dp, n2, tmp);
-      ASSERT_ALWAYS (qhl == 0);
-      qhl = mpn_add_1 (qp + n2, qp + n2, n2,
+      qhl += mpn_add_1 (qp + n2, qp + n2, n2,
 		       mpn_bz_div_3_halves_by_2 (qp, np, dp, n2, tmp));
       TMP_FREE (marker);
     }
@@ -178,8 +177,7 @@ mpn_bz_divrem_aux (qp, np, dp, n, tmp)
     {
       mp_size_t n2 = n/2;
       qhl = mpn_bz_div_3_halves_by_2 (qp + n2, np + n2, dp, n2, tmp);
-      ASSERT_ALWAYS (qhl == 0);
-      qhl = mpn_add_1 (qp + n2, qp + n2, n2,
+      qhl += mpn_add_1 (qp + n2, qp + n2, n2,
 		       mpn_bz_div_3_halves_by_2 (qp, np, dp, n2, tmp));
     }
   return qhl;
