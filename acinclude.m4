@@ -408,7 +408,7 @@ dnl  ABI=64 is still available as a cross-compile.
 AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_MSG_CHECKING([compiler $1])
 cat >conftest.c <<EOF
-
+[
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
 void *g() { return (void *) 0; }
@@ -442,7 +442,42 @@ unsigned long fneg () { return -fneg_data; }
 double ftod_data;
 float ftod () { return (float) ftod_data; }
 
+/* The following provokes an internal compiler error from gcc version
+   "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
+   values being spilled into floating point registers.  The problem doesn't
+   show up all the time, but has enough in GMP for us to reject this
+   compiler+flags.  */
+struct try_t
+{
+ char dst[2];
+ char size;
+ long d0, d1, d2, d3, d4, d5, d6;
+ char overlap;
+};
+struct try_t param[6];
+void
+param_init (void)
+{
+ struct try_t *p;
+ memcpy (p, &param[ 2 ], sizeof (*p));
+ memcpy (p, &param[ 2 ], sizeof (*p));
+ p->size = 2;
+ memcpy (p, &param[ 1 ], sizeof (*p));
+ p->dst[0] = 1;
+ p->overlap = 2;
+ memcpy (p, &param[ 3 ], sizeof (*p));
+ p->dst[0] = 1;
+ p->overlap = 8;
+ memcpy (p, &param[ 4 ], sizeof (*p));
+ memcpy (p, &param[ 4 ], sizeof (*p));
+ p->overlap = 8;
+ memcpy (p, &param[ 5 ], sizeof (*p));
+ memcpy (p, &param[ 5 ], sizeof (*p));
+ memcpy (p, &param[ 5 ], sizeof (*p));
+}
+
 int main () { return 0; }
+]
 EOF
 gmp_prog_cc_works=no
 gmp_compile="$1 conftest.c >&AC_FD_CC"
