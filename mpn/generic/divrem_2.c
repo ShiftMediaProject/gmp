@@ -68,6 +68,11 @@ mpn_divrem_2 (qp, qxn, np, nsize, dp)
   mp_limb_t d1inv;
   int have_preinv;
 
+  ASSERT (nsize >= 2);
+  ASSERT (qxn >= 0);
+  ASSERT (dp[1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (! MPN_OVERLAP_P (qp, nsize-2+qxn, np, nsize) || qp+2 >= np);
+
   np += nsize - 2;
   d1 = dp[1];
   d0 = dp[0];

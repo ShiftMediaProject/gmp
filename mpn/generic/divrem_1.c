@@ -215,6 +215,12 @@ mpn_divrem_1 (qp, qxn, np, nn, d)
   mp_limb_t rlimb;
   mp_size_t i;
 
+  ASSERT (qxn >= 0);
+  ASSERT (nn >= 0);
+  ASSERT (d != 0);
+  /* FIXME: What's the correct overlap rule when qxn!=0? */
+  ASSERT (qp==np || ! MPN_OVERLAP_P (qp, nn+qxn, np, nn));
+
   /* Develop integer part of quotient.  */
   rlimb = __gmpn_divmod_1_internal (qp + qxn, np, nn, d);
 
