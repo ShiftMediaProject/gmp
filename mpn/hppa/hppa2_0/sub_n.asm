@@ -1,7 +1,7 @@
 dnl  HP-PA 2.0 32-bit mpn_sub_n -- Subtract two limb vectors of the same
 dnl  length > 0 and store difference in a third limb vector.
 
-dnl  Copyright 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1997, 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -40,56 +40,56 @@ PROLOGUE(mpn_sub_n)
 	blr		%r28,%r0		C branch into loop
 	sub		%r26,%r22,%r26		C offset res_ptr and set carry
 
-	.label	L$loop
+	.label	L(loop)
 	ldw		0(%r25),%r20
 	ldw		0(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,0(%r26)
 
-	.label	L$7
+	.label	L(7)
 	ldw		4(%r25),%r21
 	ldw		4(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,4(%r26)
 
-	.label	L$6
+	.label	L(6)
 	ldw		8(%r25),%r20
 	ldw		8(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,8(%r26)
 
-	.label	L$5
+	.label	L(5)
 	ldw		12(%r25),%r21
 	ldw		12(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,12(%r26)
 
-	.label	L$4
+	.label	L(4)
 	ldw		16(%r25),%r20
 	ldw		16(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,16(%r26)
 
-	.label	L$3
+	.label	L(3)
 	ldw		20(%r25),%r21
 	ldw		20(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,20(%r26)
 
-	.label	L$2
+	.label	L(2)
 	ldw		24(%r25),%r20
 	ldw		24(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,24(%r26)
 
-	.label	L$1
+	.label	L(1)
 	ldw		28(%r25),%r21
 	ldo		32(%r25),%r25
 	ldw		28(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,28(%r26)
 	ldo		32(%r24),%r24
-	addib,>		-8,%r23,L$loop
+	addib,>		-8,%r23,L(loop)
 	ldo		32(%r26),%r26
 
 	addc		%r0,%r0,%r28

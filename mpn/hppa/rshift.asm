@@ -1,6 +1,6 @@
 dnl  HP-PA  mpn_rshift -- Shift a number right.
 
-dnl  Copyright 1992, 1994, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -31,32 +31,32 @@ ASM_START()
 PROLOGUE(mpn_rshift)
 	ldws,ma		4(0,%r25),%r22
 	mtsar		%r23
-	addib,=		-1,%r24,L$0004
+	addib,=		-1,%r24,L(0004)
 	vshd		%r22,%r0,%r28		C compute carry out limb
 	ldws,ma		4(0,%r25),%r29
-	addib,=		-1,%r24,L$0002
+	addib,=		-1,%r24,L(0002)
 	vshd		%r29,%r22,%r20
 
-	.label	L$loop
+	.label	L(loop)
 	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
-	addib,=		-1,%r24,L$0003
+	addib,=		-1,%r24,L(0003)
 	vshd		%r22,%r29,%r20
 	ldws,ma		4(0,%r25),%r29
 	stws,ma		%r20,4(0,%r26)
-	addib,<>	-1,%r24,L$loop
+	addib,<>	-1,%r24,L(loop)
 	vshd		%r29,%r22,%r20
 
-	.label	L$0002
+	.label	L(0002)
 	stws,ma		%r20,4(0,%r26)
 	vshd		%r0,%r29,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
 
-	.label	L$0003
+	.label	L(0003)
 	stws,ma		%r20,4(0,%r26)
 
-	.label	L$0004
+	.label	L(0004)
 	vshd		%r0,%r22,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)

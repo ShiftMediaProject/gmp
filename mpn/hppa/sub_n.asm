@@ -37,17 +37,17 @@ PROLOGUE(mpn_sub_n)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 
-	addib,=		-1,%r23,L$end	C check for (SIZE == 1)
+	addib,=		-1,%r23,L(end)	C check for (SIZE == 1)
 	 sub		%r20,%r19,%r28	C subtract first limbs ignoring cy
 
-	.label	L$loop
+	.label	L(loop)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 	stws,ma		%r28,4(0,%r26)
-	addib,<>	-1,%r23,L$loop
+	addib,<>	-1,%r23,L(loop)
 	 subb		%r20,%r19,%r28
 
-	.label	L$end
+	.label	L(end)
 	stws		%r28,0(0,%r26)
 	addc		%r0,%r0,%r28
 	bv		0(%r2)
