@@ -1,5 +1,5 @@
-/* Cray PVP/IEEE mpn_sub_n -- subtract two limb vectors and store their
-   difference in a third limb vector.
+/* Cray PVP mpn_sub_n -- subtract two limb vectors and store their difference
+   in a third limb vector.
 
 Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 

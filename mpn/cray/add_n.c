@@ -1,5 +1,5 @@
-/* Cray PVP/IEEE mpn_add_n -- add two limb vectors and store their sum in a
-   third limb vector.
+/* Cray PVP mpn_add_n -- add two limb vectors and store their sum in a third
+   limb vector.
 
 Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
@@ -47,7 +47,8 @@ mpn_add_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
       cy[i] = c0;
     }
   /* Carry add loop.  Add the carry vector cy[] to the raw sum rp[] and
-     store the new sum back to rp[0].  */
+     store the new sum back to rp[0].  If this generates further carry, set
+     more_carries.  */
   more_carries = 0;
 #pragma _CRI ivdep
   for (i = 1; i < n; i++)
