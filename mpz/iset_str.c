@@ -5,7 +5,8 @@
    i.e.  0xhh...h means base 16, 0oo...o means base 8, otherwise
    assume base 10.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -35,6 +36,11 @@ mpz_init_set_str (mpz_ptr x, const char *str, int base)
 
   /* if str has no digits mpz_set_str leaves x->_mp_size unset */
   x->_mp_size = 0;
+
+#ifdef __CHECKER__
+  /* let the low limb look initialized, for the benefit of mpz_get_ui etc */
+  x->_mp_d[0] = 0;
+#endif
 
   return mpz_set_str (x, str, base);
 }
