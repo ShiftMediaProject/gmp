@@ -68,7 +68,7 @@ mpz_set_d (mpz_ptr r, double d)
       break;
     case 1:
       /* handled in "small aguments" case above */
-      abort ();
+      ASSERT_ALWAYS (0);
     }
 #else
   switch (rn)
@@ -82,7 +82,7 @@ mpz_set_d (mpz_ptr r, double d)
       break;
     case 1:
       /* handled in "small aguments" case above */
-      abort ();
+      ASSERT_ALWAYS (0);
     }
 #endif
 

@@ -116,8 +116,7 @@ __gmp_extract_double (mp_ptr rp, double d)
     exp = 0;
     if (d >= 1.0)
       {
-	if (d * 0.5 == d)
-	  abort ();
+	ASSERT_ALWAYS (d * 0.5 != d);
 
 	while (d >= 32768.0)
 	  {
