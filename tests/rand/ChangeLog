@@ -1,7 +1,8 @@
 2000-04-10  Kevin Ryde  <kevin@swox.se>
 
 	* Makefile.am (LDADD): Don't need -lm (now in libgmp.la).
-	Use EXTRA_PROGRAMS not noinst_PROGRAMS.
+	(EXTRA_PROGRAMS): Not noinst_PROGRAMS.
+	(INCLUDES): Shorten to -I$(top_srcdir) now using AM_CONFIG_HEADER.
 
 2000-04-01  Linus Nordberg  <linus@swox.se>
 
