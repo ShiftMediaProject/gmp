@@ -169,7 +169,9 @@ EXTRA_HEADERS = mp.h
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
-EXTRA_DIST = .gdbinit gmp-impl.h longlong.h stack-alloc.h urandom.h doc macos
+EXTRA_DIST = doc macos \
+ .gdbinit INSTALL.autoconf gmp-impl.h longlong.h stack-alloc.h urandom.h
+
 
 DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
 
