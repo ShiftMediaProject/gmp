@@ -1,101 +1,90 @@
- # Alpha mpn_invert_normalized_limb -- Invert a normalized limb.
+dnl  Alpha mpn_invert_normalized_limb -- Invert a normalized limb.
 
- # Copyright (C) 1996 Free Software Foundation, Inc.
+dnl  Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 
- # This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
- # The GNU MP Library is free software; you can redistribute it and/or modify
- # it under the terms of the GNU Library General Public License as published by
- # the Free Software Foundation; either version 2 of the License, or (at your
- # option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Library General Public License as published by
+dnl  the Free Software Foundation; either version 2 of the License, or (at your
+dnl  option) any later version.
 
- # The GNU MP Library is distributed in the hope that it will be useful, but
- # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
- # License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+dnl  License for more details.
 
- # You should have received a copy of the GNU Library General Public License
- # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
- # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
- # MA 02111-1307, USA.
+dnl  You should have received a copy of the GNU Library General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
- #
- # This is based on sophie:/gmp-stuff/dbg-inv-limb.c.
- # The ideas are due to Peter L. Montgomery
- #
- # The table below uses 4096 bytes.  The file mentioned above has an
- # alternative function that doesn't require the table, but it runs 50%
- # slower than this.
+dnl 
+dnl  This is based on sophie:/gmp-stuff/dbg-inv-limb.c.
+dnl  The ideas are due to Peter L. Montgomery
+dnl 
+dnl  The table below uses 4096 bytes.  The file mentioned above has an
+dnl  alternative function that doesn't require the table, but it runs 50%
+dnl  slower than this.
 
-	.set	noreorder
-	.set	volatile
-	.set	noat
-.text
-	.align	3
-$C36:
-	.t_floating	9223372036854775808.0
-.text
-	.align	3
-	.globl	__mpn_invert_normalized_limb
-	.ent	__mpn_invert_normalized_limb
-__mpn_invert_normalized_limb:
-	ldgp	$29,0($27)
-__mpn_invert_normalized_limb..ng:
-	lda	$30,-16($30)
-	.frame	$30,16,$26,0
-	.prologue	1
-	addq	$16,$16,$1
-	bne	$1,$73
-	lda	$0,-1
-	br	$31,.Lend
+include(`../config.m4')
+
+ASM_START()
+
+INT64($C36,X(43e0000000000000))		C 2^63
+
+PROLOGUE_GP(mpn_invert_normalized_limb)
+	lda	r30,-16(r30)
+	addq	r16,r16,r1
+	bne	r1,$73
+	lda	r0,-1
+	br	r31,$Lend
 $73:
-	srl	$16,1,$1
-	stq	$1,0($30)
-	ldt	$f11,0($30)
-	cvtqt	$f11,$f1
-	lda	$1,$C36
-	ldt	$f10,0($1)
-	divt	$f10,$f1,$f10
-	lda	$2,invtab-4096
-	srl	$16,52,$1
-	addq	$1,$1,$1
-	addq	$1,$2,$1
-	bic	$1,6,$2
-	ldq	$2,0($2)
-	bic	$1,1,$1
-	extwl	$2,$1,$2
-	sll	$2,48,$0
-	umulh	$16,$0,$1
-	addq	$16,$1,$3
-	stq	$3,0($30)
-	ldt	$f11,0($30)
-	cvtqt	$f11,$f1
-	mult	$f1,$f10,$f1
-	cvttqc	$f1,$f1
-	stt	$f1,0($30)
-	ldq	$4,0($30)
-	subq	$0,$4,$0
-	umulh	$16,$0,$1
-	mulq	$16,$0,$2
-	addq	$16,$1,$3
-	bge	$3,.Loop2
-.Loop1:	addq	$2,$16,$2
-	cmpult	$2,$16,$1
-	addq	$3,$1,$3
-	addq	$0,1,$0
-	blt	$3,.Loop1
-.Loop2:	cmpult	$2,$16,$1
-	subq	$0,1,$0
-	subq	$3,$1,$3
-	subq	$2,$16,$2
-	bge	$3,.Loop2
-.Lend:
-	addq	$30,16,$30
-	ret	$31,($26),1
-	.end	__mpn_invert_normalized_limb
-.text
-	.align 1
-invtab:
+	srl	r16,1,r1
+	stq	r1,0(r30)
+	ldt	f11,0(r30)
+	cvtqt	f11,f1
+	lda	r1,$C36
+	ldt	f10,0(r1)
+	divt	f10,f1,f10
+	lda	r2,$invtab-4096
+	srl	r16,52,r1
+	addq	r1,r1,r1
+	addq	r1,r2,r1
+	bic	r1,6,r2
+	ldq	r2,0(r2)
+	bic	r1,1,r1
+	extwl	r2,r1,r2
+	sll	r2,48,r0
+	umulh	r16,r0,r1
+	addq	r16,r1,r3
+	stq	r3,0(r30)
+	ldt	f11,0(r30)
+	cvtqt	f11,f1
+	mult	f1,f10,f1
+	cvttq/c	f1,f1
+	stt	f1,0(r30)
+	ldq	r4,0(r30)
+	subq	r0,r4,r0
+	umulh	r16,r0,r1
+	mulq	r16,r0,r2
+	addq	r16,r1,r3
+	bge	r3,$Loop2
+$Loop1:	addq	r2,r16,r2
+	cmpult	r2,r16,r1
+	addq	r3,r1,r3
+	addq	r0,1,r0
+	blt	r3,$Loop1
+$Loop2:	cmpult	r2,r16,r1
+	subq	r0,1,r0
+	subq	r3,r1,r3
+	subq	r2,r16,r2
+	bge	r3,$Loop2
+$Lend:
+	lda	r30,16(r30)
+	ret	r31,(r26),1
+EPILOGUE(mpn_invert_normalized_limb)
+DATASTART(`$invtab',4)
 	.word 0xffff,0xffc0,0xff80,0xff40,0xff00,0xfec0,0xfe81,0xfe41
 	.word 0xfe01,0xfdc2,0xfd83,0xfd43,0xfd04,0xfcc5,0xfc86,0xfc46
 	.word 0xfc07,0xfbc8,0xfb8a,0xfb4b,0xfb0c,0xfacd,0xfa8e,0xfa50
@@ -352,3 +341,5 @@ invtab:
 	.word 0x0182,0x0172,0x0161,0x0151,0x0141,0x0131,0x0121,0x0111
 	.word 0x0101,0x00f0,0x00e0,0x00d0,0x00c0,0x00b0,0x00a0,0x0090
 	.word 0x0080,0x0070,0x0060,0x0050,0x0040,0x0030,0x0020,0x0010
+DATAEND()
+ASM_END()

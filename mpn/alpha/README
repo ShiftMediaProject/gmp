@@ -1,5 +1,15 @@
 This directory contains mpn functions optimized for DEC Alpha processors.
 
+ALPHA ASSEMBLY RULES AND REGULATIONS
+
+The `.prologue N' pseudo op marks the end of instruction that needs
+special handling by unwinding.  It also says whether $27 is really
+needed for computing the gp.  The `.mask M' pseudo op says which
+registers are saved on the stack, and at what offset in the frame.
+
+Cray code is very very different...
+
+
 RELEVANT OPTIMIZATION ISSUES
 
 EV4
