@@ -78,7 +78,7 @@ tests_rand_start (void)
       seed = atoi (perform_seed);
       if (! (seed == 0 || seed == 1))
         {
-          printf ("GMP_CHECK_RANDOMIZE re-seeding with %lu\n", seed);
+          printf ("Re-seeding with GMP_CHECK_RANDOMIZE=%lu\n", seed);
           gmp_randseed_ui (rands, seed);
         }
       else
@@ -88,7 +88,7 @@ tests_rand_start (void)
           gettimeofday (&tv, NULL);
           seed = tv.tv_sec + tv.tv_usec;
           gmp_randseed_ui (rands, seed);
-          printf ("GMP_CHECK_RANDOMIZE seed %lu (include this in bug reports)\n", seed);
+          printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
 #else
           printf ("tests_rand_start(): Oops, gettimeofday() not available\n");
           abort ();
