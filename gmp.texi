@@ -7930,9 +7930,9 @@ Kent Boortz made the Macintosh port.
 Kevin Ryde worked on a number of things: optimized x86 code, m4 asm macros,
 parameter tuning, speed measuring, the configure system, function inlining,
 divisibility tests, bit scanning, Jacobi symbols, Fibonacci and Lucas number
-functions, printf functions, perl interface, demo expression parser, the
-algorithms chapter in the manual, gmpasm-mode.el, and various miscellaneous
-improvements elsewhere.
+functions, printf and scanf functions, perl interface, demo expression parser,
+the algorithms chapter in the manual, gmpasm-mode.el, and various
+miscellaneous improvements elsewhere.
 
 Steve Root helped write the optimized alpha 21264 assembly code.
 
