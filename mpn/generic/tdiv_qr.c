@@ -139,9 +139,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		nn += adjust;
 	      }
 
-	    if (dn == 2)
-	      mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
-	    else if (dn < DIV_DC_THRESHOLD)
+	    if (dn < DIV_DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
 	    else
 	      {
@@ -159,27 +157,22 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		if (nn != dn)
 		  {
 		    n2p -= nn - dn;
-		    if (dn == 2)
-		      mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
-		    else
-		      {
-			/* We have now dn < nn - dn < 2dn.  Make a recursive
-			   call, since falling out to the code below isn't
-			   pretty.  Unfortunately, mpn_tdiv_qr returns nn-dn+1
-			   quotient limbs, which would overwrite one already
-			   generated quotient limbs.  Preserve it with an ugly
-			   hack.  */
-			/* FIXME: This suggests that we should have an
-			   mpn_tdiv_qr_internal that instead returns the most
-			   significant quotient limb and move the meat of this
-			   function there.  */
-			/* FIXME: Perhaps call mpn_sb_divrem_mn here for
-			   certain operand ranges, to decrease overhead for
-			   small operands?  */
-			mp_limb_t ql = qp[nn - dn];
-			mpn_tdiv_qr (qp, n2p, 0L, n2p, nn, d2p, dn);
-			qp[nn - dn] = ql;
-		      }
+
+		    /* We have now dn < nn - dn < 2dn.  Make a recursive call,
+		       since falling out to the code below isn't pretty.
+		       Unfortunately, mpn_tdiv_qr returns nn-dn+1 quotient
+		       limbs, which would overwrite one already generated
+		       quotient limbs.  Preserve it with an ugly hack.  */
+		    /* FIXME: This suggests that we should have an
+		       mpn_tdiv_qr_internal that instead returns the most
+		       significant quotient limb and move the meat of this
+		       function there.  */
+		    /* FIXME: Perhaps call mpn_sb_divrem_mn here for certain
+		       operand ranges, to decrease overhead for small
+		       operands?  */
+		    mp_limb_t ql = qp[nn - dn];
+		    mpn_tdiv_qr (qp, n2p, 0L, n2p, nn, d2p, dn);
+		    qp[nn - dn] = ql;
 		  }
 	      }
 
