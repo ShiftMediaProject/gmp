@@ -638,6 +638,16 @@ int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
   } while (0)
 #endif
 
+#if defined (_CRAY)
+#define MPN_COPY_INCR(dst, src, n)					\
+  do {									\
+    int i;		/* Faster on some Crays with plain int */	\
+    _Pragma ("_CRI ivdep");						\
+    for (i = 0; i < (n); i++)						\
+      (dst)[i] = (src)[i];						\
+  } while (0)
+#endif
+
 #define mpn_copyi __MPN(copyi)
 void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
@@ -681,6 +691,16 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
+#if defined (_CRAY)
+#define MPN_COPY_DECR(dst, src, n)					\
+  do {									\
+    int i;		/* Faster on some Crays with plain int */	\
+    _Pragma ("_CRI ivdep");						\
+    for (i = (n) - 1; i >= 0; i--)					\
+      (dst)[i] = (src)[i];						\
+  } while (0)
+#endif
+
 #define mpn_copyd __MPN(copyd)
 void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
@@ -705,23 +725,6 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-
-/* Define MPN_COPY for vector computers.  Since #pragma cannot be in a macro,
-   rely on function inlining.
-   Enhancement: Does this suit MPN_COPY_INCR too, and maybe MPN_COPY_DECR if
-   the loop direction is reversed?  */
-#if defined (_CRAY) || defined (__uxp__)
-static inline void
-_MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
-{
-  int i;				/* Faster for Cray with plain int */
-#pragma _CRI ivdep			/* Cray PVP systems */
-#pragma loop noalias d,s		/* Fujitsu VPP systems */
-  for (i = 0; i < n; i++)
-    d[i] = s[i];
-}
-#define MPN_COPY _MPN_COPY
-#endif
 
 #ifndef MPN_COPY
 #define MPN_COPY(d,s,n)                         \
