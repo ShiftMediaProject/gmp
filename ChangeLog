@@ -1,3 +1,27 @@
+2000-02-17  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4: Many additions making up initial version.
+	* mpn/asm-defs.m4 (L): Use defn(`LSYM_PREFIX').
+	* mpn/x86/x86-defs.m4: New file.
+	* mpn/x86/k6/aors_n.asm: New file.
+	* mpn/x86/k6/divmod_1.asm: New file.
+	* mpn/x86/k6/divrem_1.asm: New file.
+	* mpn/x86/k6/lshift.S: Removed (was a copy of the pentium version).
+	* mpn/x86/k6/lshift.asm: New file.
+	* mpn/x86/k6/mod_1.asm: New file.
+	* mpn/x86/k6/mul_1.S: Removed (was a copy of the pentium version).
+	* mpn/x86/k6/mul_1.asm: New file.
+	* mpn/x86/k6/rshift.S: Removed (was a copy of the pentium version).
+	* mpn/x86/k6/rshift.asm: New file.
+	* mpn/x86/k7/aors_n.asm: New file.
+	* mpn/x86/k7/aorsmul_1.asm: New file.
+	* mpn/x86/k7/mul_1.asm: New file.
+	* mpn/x86/k7/rshift.asm: New file.
+	* mpn/x86/p6/aorsmul_1.asm: New file.
+	* mpn/x86/copyi.asm: New file.
+	* mpn/x86/copyd.asm: New file.
+	* mpn/lisp/gmpasm-mode.el: New file.
+
 2000-02-16  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Add mechanism for including target specific
