@@ -1,8 +1,8 @@
 /* Reference mpn functions, designed to be simple, portable and independent
    of the normal gmp code.  Speed isn't a consideration.
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -619,7 +619,7 @@ refmpn_rsh1add_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
   ASSERT_MPN (vp, n);
 
   cya = mpn_add_n (rp, up, vp, n);
-  cys = mpn_rshift (rp, rp, n, 1) >> GMP_NUMB_BITS - 1;
+  cys = mpn_rshift (rp, rp, n, 1) >> (GMP_NUMB_BITS - 1);
   rp[n - 1] |= cya << (GMP_NUMB_BITS - 1);
   return cys;
 }
@@ -634,7 +634,7 @@ refmpn_rsh1sub_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
   ASSERT_MPN (vp, n);
 
   cya = mpn_sub_n (rp, up, vp, n);
-  cys = mpn_rshift (rp, rp, n, 1) >> GMP_NUMB_BITS - 1;
+  cys = mpn_rshift (rp, rp, n, 1) >> (GMP_NUMB_BITS - 1);
   rp[n - 1] |= cya << (GMP_NUMB_BITS - 1);
   return cys;
 }
