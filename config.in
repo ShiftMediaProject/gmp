@@ -450,7 +450,9 @@ MA 02111-1307, USA.
 
 /* Define as `__inline' if that's what the C compiler calls it, or to nothing
    if it is not supported. */
+#ifndef __cplusplus
 #undef inline
+#endif
 
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */

@@ -19557,10 +19557,11 @@ fi
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_c_inline" >&5
 echo "${ECHO_T}$gmp_cv_c_inline" >&6
+
+
 case $gmp_cv_c_inline in
   inline | yes) ;;
-  no)
-cat >>confdefs.h <<\_ACEOF
+  no) cat >>confdefs.h <<\_ACEOF
 #define inline
 _ACEOF
  ;;
