@@ -272,9 +272,15 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 #endif
 
-#if defined (FILE) || defined (H_STDIO) || defined (_H_STDIO) \
- || defined (_STDIO_H) || defined (_STDIO_H_) || defined (__STDIO_H__) \
- || defined (_STDIO_INCLUDED) || defined (__dj_include_stdio_h_)
+#if defined (FILE)                                      \
+  || defined (H_STDIO)                                  \
+  || defined (_H_STDIO)               /* AIX */         \
+  || defined (_STDIO_H)               /* glibc, Sun */  \
+  || defined (_STDIO_H_)              /* BSD, OSF */    \
+  || defined (__STDIO_H__)            /* IRIX */        \
+  || defined (_STDIO_INCLUDED)        /* HPUX */        \
+  || defined (__dj_include_stdio_h_)  /* DJGPP */       \
+  || defined (_FILE_DEFINED)          /* Microsoft */
 #define _GMP_H_HAVE_FILE 1
 #endif
 
@@ -757,6 +763,10 @@ void __GMP_DECLSPEC mpq_div_2exp _PROTO ((mpq_ptr, mpq_srcptr, unsigned long));
 void __GMP_DECLSPEC mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
 
 int __GMP_DECLSPEC mpq_cmp _PROTO ((mpq_srcptr, mpq_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define _mpq_cmp_si __gmpq_cmp_si
+int __GMP_DECLSPEC _mpq_cmp_si _PROTO ((mpq_srcptr, long, unsigned long)) __GMP_ATTRIBUTE_PURE;
+
 int __GMP_DECLSPEC _mpq_cmp_ui _PROTO ((mpq_srcptr, unsigned long int, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 int __GMP_DECLSPEC mpq_equal _PROTO ((mpq_srcptr, mpq_srcptr)) __GMP_ATTRIBUTE_PURE;
 void __GMP_DECLSPEC mpq_inv _PROTO ((mpq_ptr, mpq_srcptr));
@@ -1873,10 +1883,15 @@ mpn_sub (register mp_ptr res_ptr,
 #define mpq_cmp_ui(Q,NUI,DUI) \
   (__builtin_constant_p (NUI) && (NUI) == 0				\
    ? mpq_sgn (Q) : _mpq_cmp_ui (Q,NUI,DUI))
+#define mpq_cmp_si(q,n,d)                       \
+  (__builtin_constant_p ((n) >= 0) && (n) >= 0  \
+   ? mpq_cmp_ui (q, (unsigned long) (n), d)     \
+   : _mpq_cmp_si (q, n, d))
 #else
 #define mpz_cmp_ui(Z,UI) _mpz_cmp_ui (Z,UI)
 #define mpz_cmp_si(Z,UI) _mpz_cmp_si (Z,UI)
 #define mpq_cmp_ui(Q,NUI,DUI) _mpq_cmp_ui (Q,NUI,DUI)
+#define mpq_cmp_si(q,n,d)  _mpq_cmp_si(q,n,d)
 #endif
 
 
