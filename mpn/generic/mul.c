@@ -58,7 +58,7 @@ mpn_mul (prodp, up, usize, vp, vsize)
 	{
 	  if (vsize == 0)
 	    return 0;
-	  __gmpn_sqr_basecase (prodp, vp, vsize);
+	  mpn_sqr_basecase (prodp, vp, vsize);
 	}
       else
 	{
@@ -73,7 +73,7 @@ mpn_mul (prodp, up, usize, vp, vsize)
 
   if (vsize < KARATSUBA_MUL_THRESHOLD)
     {
-      __gmpn_mul_basecase (prodp, up, usize, vp, vsize);
+      mpn_mul_basecase (prodp, up, usize, vp, vsize);
       return *prod_endp;
     }
 
