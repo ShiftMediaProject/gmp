@@ -250,7 +250,7 @@ case $host in
     case "$flavour" in
       # compilers don't seem to understand `ev67' and such.
       ev6? | ev7*)  flavour=ev6 ;;
-      ev*) ;;
+      ev* | pca*) ;;
       *) flavour=ev4 ;;
     esac
 
