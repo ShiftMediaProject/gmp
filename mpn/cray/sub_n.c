@@ -56,7 +56,9 @@ mpn_sub_n (c, a, b, n)
 	  MPN_COPY (bx, b, n);
 	  b = (mp_srcptr) bx;
 	}
+      carry_out = mpn_sub_n (c, a, b, n);
       TMP_FREE (marker);
+      return carry_out;
     }
 
   carry_out = a[nm1] < b[nm1];
