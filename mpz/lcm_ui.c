@@ -1,6 +1,6 @@
 /* mpz_lcm_ui -- least common multiple of mpz and ulong.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -32,6 +32,20 @@ mpz_lcm_ui (mpz_ptr r, mpz_srcptr u, unsigned long v)
   mp_ptr         rp;
   unsigned long  g;
   mp_limb_t      c;
+
+#if GMP_NAIL_BITS != 0
+  if (v > GMP_NUMB_MAX)
+    {
+      mpz_t vz;
+      mp_limb_t vlimbs[2];
+      vlimbs[0] = v & GMP_NUMB_MASK;
+      vlimbs[1] = v >> GMP_NUMB_BITS;
+      PTR(vz) = vlimbs;
+      SIZ(vz) = 2;
+      mpz_lcm (r, u, vz);
+      return;
+    }
+#endif
 
   /* result zero if either operand zero */
   usize = SIZ(u);
