@@ -1,3 +1,28 @@
+2000-11-08  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_FUNC_ALLOCA): New macro.
+	* configure.in: Use it.
+	* gmp-impl.h (alloca): Conditionals and setups as per autoconf
+	(should make alloca available on more non-gcc compilers).
+
+	* acinclude.m4: Misc reformatting, simplify some quoting.
+	(GMP_ASM_UNDERSCORE, GMP_ASM_X86_MCOUNT): Use $CC $CFLAGS $CPPFLAGS.
+	(GMP_ASM_UNDERSCORE, GMP_ASM_ALIGN_FILL_0x90, GMP_ASM_RODATA): Put
+	AC_REQUIREs outside AC_CACHE_CHECK.
+	(GMP_C_SIZES): Use $srcdir/gmp.h, not -I; use $CPPFLAGS.
+	(GMP_ASM_UNDERSCORE): Use "gmp_compile" variable, and only rm
+	conftes1* conftes2*.
+	(GMP_PROG_NM): New macro, require it in appropriate GMP_ASM_*.
+	(GMP_TRY_ASSEMBLE): New macro, use it in various GMP_ASM_*.
+	* configure.in: Use GMP_PROG_NM.
+
+	* mpn/tests/spinner.c (spinner_signal): Use RETSIGTYPE.
+	(spinner_init): Force output to unbuffered.
+
+	* mpn/x86/README.family: Notes about GOT table and imul, misc updates.
+	* mpn/x86/k7/diveby3.asm: Change to 3 operands for immediate imul.
+	* mpn/x86/k6/diveby3.asm: Ditto.
+
 2000-11-06  Torbjorn Granlund  <tege@swox.com>
 
 	* urandom.h: Simplify and make it work properly for 64-bit
@@ -25,7 +50,7 @@
 
 	* acinclude.m4 (GMP_ASM_POWERPC_R_REGISTERS): New macro.
 	* mpn/powerpc32/powerpc-defs.m4: New file, regmap.m4 r0 etc macros
-	conditionalized by GMP_ASM_POWERPC_REGISTERS.
+	conditionalized by GMP_ASM_POWERPC_R_REGISTERS.
 	* mpn/powerpc32/regmap.m4: Remove file.
 	* configure.in (powerpc*-*-*): Use all this.
 
