@@ -504,6 +504,9 @@ MA 02111-1307, USA.
 /* Define to 1 to enable FFTs for multiplication, per --enable-fft */
 #undef WANT_FFT
 
+/* Define to 1 if --enable-mpfr */
+#undef WANT_MPFR
+
 /* Define to 1 if --enable-profiling=instrument */
 #undef WANT_PROFILING_INSTRUMENT
 
