@@ -729,6 +729,10 @@ SPARC:
 @nisamp{supersparc},
 @nisamp{sparcv9},
 @nisamp{ultrasparc},
+@nisamp{ultrasparc1},
+@nisamp{ultrasparc2},
+@nisamp{ultrasparc2i},
+@nisamp{ultrasparc3},
 @nisamp{sparc64}
 
 @item
@@ -6048,6 +6052,9 @@ GMP module, see @file{demos/perl} in the GMP sources.
 @item
 Math::GMP @spaceuref{http://www.cpan.org} @* Compatible with Math::BigInt, but
 not as many functions as the GMP module above.
+@item
+Math::BigInt::GMP @spaceuref{http://www.cpan.org} @* Plug Math::GMP into
+normal Math::BigInt operations.
 @end itemize
 
 @need 1000
