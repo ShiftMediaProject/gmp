@@ -19,6 +19,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-29  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/*/gmp-mparam.h: Update measured thresholds.
+	* mpn/s370/gmp-mparam.h: New file.
+
+	* mpz/millerrabin.c: Mark for internal use only, for now.
+	* gmp.texi (Number Theoretic Functions): Remove documentation.
+
 2001-11-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/get_d_2exp.c: New file.
