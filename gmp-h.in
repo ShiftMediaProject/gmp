@@ -985,6 +985,9 @@ __GMP_DECLSPEC void mpz_sub __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #define mpz_sub_ui __gmpz_sub_ui
 __GMP_DECLSPEC void mpz_sub_ui __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 
+#define mpz_ui_sub __gmpz_ui_sub
+__GMP_DECLSPEC void mpz_ui_sub __GMP_PROTO ((mpz_ptr, unsigned long int, mpz_srcptr));
+
 #define mpz_submul __gmpz_submul
 __GMP_DECLSPEC void mpz_submul __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
