@@ -1,3 +1,7 @@
+2001-03-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64/udiv_qrnnd.asm: New file.
+
 2001-03-01  Kevin Ryde  <kevin@swox.se>
 
 	* mpbsd/rpow.c: New file.
