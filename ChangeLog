@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/cray/ieee/addmul_1.c: Fix logic for more_carries scalar loop.
+	* mpn/cray/ieee/submul_1.c: Likewise.
+
 2001-11-20  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Known Build Problems): Note an out of memory on DJGPP.
