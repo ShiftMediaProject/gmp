@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void
+unsigned long int
 #if __STDC__
 mpz_tdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 #else
@@ -71,4 +71,6 @@ mpz_tdiv_qr_ui (quot, rem, dividend, divisor)
   /* The quotient is SIZE limbs, but the most significant might be zero. */
   size -= size != 0 && quot_ptr[size - 1] == 0;
   quot->_mp_size = dividend_size >= 0 ? size : -size;
+
+  return remainder_limb;
 }

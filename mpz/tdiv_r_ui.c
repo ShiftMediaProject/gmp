@@ -23,7 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void
+unsigned long int
 #if __STDC__
 mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 #else
@@ -58,4 +58,6 @@ mpz_tdiv_r_ui (rem, dividend, divisor)
       rem->_mp_size = dividend_size >= 0 ? 1 : -1;
       rem->_mp_d[0] = remainder_limb;
     }
+
+  return remainder_limb;
 }
