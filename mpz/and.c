@@ -116,7 +116,7 @@ mpz_and (res, op1, op2)
 	      _mpz_realloc (res, res_alloc);
 	      res_ptr = res->_mp_d;
 	      /* Don't re-read OP1_PTR and OP2_PTR.  They point to
-		 temporary space--never to the space RES->_mp_D used
+		 temporary space--never to the space RES->_mp_d used
 		 to point to before reallocation.  */
 	    }
 
@@ -173,7 +173,7 @@ mpz_and (res, op1, op2)
        operand as the result for those limbs is going to become zero
        anyway.  */
 
-    /* Scan for the least significant. non-zero OP2 limb, and zero the
+    /* Scan for the least significant non-zero OP2 limb, and zero the
        result meanwhile for those limb positions.  (We will surely
        find a non-zero limb, so we can write the loop with one
        termination condition only.)  */
@@ -237,7 +237,7 @@ mpz_and (res, op1, op2)
 	    res_ptr = res->_mp_d;
 	    op1_ptr = op1->_mp_d;
 	    /* Don't re-read OP2_PTR.  It points to temporary space--never
-	       to the space RES->_mp_D used to point to before reallocation.  */
+	       to the space RES->_mp_d used to point to before reallocation.  */
 	  }
 
 	MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
@@ -264,7 +264,7 @@ mpz_and (res, op1, op2)
 	    res_ptr = res->_mp_d;
 	    op1_ptr = op1->_mp_d;
 	    /* Don't re-read OP2_PTR.  It points to temporary space--never
-	       to the space RES->_mp_D used to point to before reallocation.  */
+	       to the space RES->_mp_d used to point to before reallocation.  */
 	  }
 
 	for (i = res_size - 1; i >= 0; i--)
