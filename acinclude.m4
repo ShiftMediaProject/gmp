@@ -381,7 +381,7 @@ if AC_TRY_EVAL(gmp_compile); then
 fi
 rm -f conftest* a.out a.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
-if test $gmp_prog_cc_works; then
+if test $gmp_prog_cc_works = yes; then
   ifelse([$2],,:,[$2])
 else
   ifelse([$3],,:,[$3])
