@@ -341,7 +341,7 @@ case $host in
     	               cc_cflags_cpu="-arch~pca56~-tune~pca56" ;;
     	  alphaev6)    cc_cflags_cpu="-arch~ev6~-tune~ev6" ;;
     	  alphaev67 | alphaev68)
-    	               cc_cflags_cpu="-arch~ev67~-tune~ev67" ;;
+    	               cc_cflags_cpu="-arch~ev67~-tune~ev67 -arch~ev6~-tune~ev6" ;;
     	esac
         ;;
       *)
