@@ -2354,6 +2354,16 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    to 0 if there's an even number.  "n" should be an unsigned long and "p"
    an int.  */
 
+#if defined (__GNUC__) && ! defined (NO_ASM)                    \
+  && (HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68)
+#define ULONG_PARITY(p, n)                              \
+  do {                                                  \
+    int __p;                                            \
+    __asm__ ("ctpop %1, %0" : "=r" (__p) : "r" (n));    \
+    (p) = __p & 1;                                      \
+  } while (0)
+#endif
+
 /* Cray intrinsic _popcnt. */
 #ifdef _CRAY
 #define ULONG_PARITY(p, n)      \
@@ -2610,6 +2620,14 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 #endif
 
+#if defined (__GNUC__) && ! defined (NO_ASM)                    \
+  && (HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68)
+#define popc_limb(result, input)                                \
+  do {                                                          \
+    __asm__ ("ctpop %1, %0" : "=r" (result) : "r" (input));     \
+  } while (0)
+#endif
+
 /* Cray intrinsic. */
 #ifdef _CRAY
 #define popc_limb(result, input)        \
@@ -2828,7 +2846,7 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
   } while (0)
 #endif
 
-
+                                                                       
 extern int __gmp_junk;
 extern const int __gmp_0;
 void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
