@@ -23,31 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Algorithm:
-   1. Develop >= n bits of src.num / src.den, where n is the number of bits
-      in a double.  This (partial) division will use all bits from the
-      denominator.
-   2. Use the remainder to determine how to round the result.
-   3. Assign the integral result to a temporary double.
-   4. Scale the temporary double, and return the result.
-
-   An alternative algorithm, that would be faster:
-   0. Let n be somewhat larger than the number of significant bits in a double.
-   1. Extract the most significant n bits of the denominator, and an equal
-      number of bits from the numerator.
-   2. Interpret the extracted numbers as integers, call them a and b
-      respectively, and develop n bits of the fractions ((a + 1) / b) and
-      (a / (b + 1)) using mpn_divrem.
-   3. If the computed values are identical UP TO THE POSITION WE CARE ABOUT,
-      we are done.  If they are different, repeat the algorithm from step 1,
-      but first let n = n * 2.
-   4. If we end up using all bits from the numerator and denominator, fall
-      back to the first algorithm above.
-   5. Just to make life harder, The computation of a + 1 and b + 1 above
-      might give carry-out...  Needs special handling.  It might work to
-      subtract 1 in both cases instead.
-*/
-
 void
 #if __STDC__
 mpf_set_q (mpf_t r, mpq_srcptr q)
@@ -132,13 +107,17 @@ mpf_set_q (r, q)
 	}
       else
 	{
-	  nlimb = mpn_lshift (rp, np, nsize, normalization_steps);
+	  nlimb = mpn_lshift (rp, np, rsize, normalization_steps);
 	}
       if (nlimb != 0)
 	{
 	  rp[rsize] = nlimb;
-	  rsize++;
 	  exp++;
+	  /* Don't just increase rsize, chop off rp at the low end instead.  */
+	  if (rsize == prec)
+	    rp++;
+	  else
+	    rsize++;
 	}
     }
   else
@@ -164,7 +143,7 @@ mpf_set_q (r, q)
     }
 
   EXP (r) = exp;
-  SIZ (r) = qsize;
+  SIZ (r) = sign_quotient >= 0 ? qsize : -qsize;
 
   TMP_FREE (marker);
 }
