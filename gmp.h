@@ -404,6 +404,19 @@ void mpz_init_set_ui _PROTO ((mpz_ptr, unsigned long int));
 int mpz_invert _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_ior _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_jacobi _PROTO ((mpz_srcptr, mpz_srcptr));
+
+#define mpz_kronecker_zi_si __gmpz_kronecker_zi_si
+int mpz_kronecker_zi_si _PROTO ((mpz_srcptr, long));
+
+#define mpz_kronecker_zi_ui __gmpz_kronecker_zi_ui
+int mpz_kronecker_zi_ui _PROTO ((mpz_srcptr, unsigned long));
+
+#define mpz_kronecker_si_zi __gmpz_kronecker_si_zi
+int mpz_kronecker_si_zi _PROTO ((long, mpz_srcptr));
+
+#define mpz_kronecker_ui_zi __gmpz_kronecker_ui_zi
+int mpz_kronecker_ui_zi _PROTO ((unsigned long, mpz_srcptr));
+
 void mpz_lcm _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_legendre _PROTO ((mpz_srcptr, mpz_srcptr));
 void mpz_mod _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -656,7 +669,6 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 #define mpn_add_n		__MPN(add_n)
 #define mpn_add_nc		__MPN(add_nc)
 #define mpn_addmul_1		__MPN(addmul_1)
-#define mpn_addmul_1c		__MPN(addmul_1c)
 #define mpn_addsub_n		__MPN(addsub_n)
 #define mpn_addsub_nc		__MPN(addsub_nc)
 /* #define mpn_and_n		__MPN(and_n) */
@@ -666,11 +678,8 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 /* #define mpn_com_n		__MPN(com_n) */
 #define mpn_copyd		__MPN(copyd)
 #define mpn_copyi		__MPN(copyi)
-#define mpn_divmod_1		__MPN(divmod_1)
-#define mpn_divmod_1c		__MPN(divmod_1c)
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
-#define mpn_divrem_1c		__MPN(divrem_1c)
 #define mpn_divrem_2		__MPN(divrem_2)
 #define mpn_dump		__MPN(dump)
 #define mpn_gcd			__MPN(gcd)
@@ -686,10 +695,8 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 #define mpn_lshift		__MPN(lshift)
 #define mpn_lshiftc		__MPN(lshiftc)
 #define mpn_mod_1		__MPN(mod_1)
-#define mpn_mod_1c		__MPN(mod_1c)
 #define mpn_mul			__MPN(mul)
 #define mpn_mul_1		__MPN(mul_1)
-#define mpn_mul_1c		__MPN(mul_1c)
 #define mpn_mul_basecase	__MPN(mul_basecase)
 #define mpn_mul_n		__MPN(mul_n)
 #define mpn_perfect_square_p	__MPN(perfect_square_p)
@@ -712,7 +719,6 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 #define mpn_sub_n		__MPN(sub_n)
 #define mpn_sub_nc		__MPN(sub_nc)
 #define mpn_submul_1		__MPN(submul_1)
-#define mpn_submul_1c		__MPN(submul_1c)
 /* #define mpn_toom3_mul_n		__MPN(toom3_mul_n)  internal */
 /* #define mpn_toom3_sqr_n		__MPN(toom3_sqr_n)  internal */
 /* #define mpn_xnor_n		__MPN(xnor_n) */
@@ -725,7 +731,12 @@ mp_limb_t mpn_add _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
 mp_limb_t mpn_add_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_add_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_add_nc _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
 mp_limb_t mpn_addmul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_addmul_1c  __MPN(addmul_1c)
+mp_limb_t mpn_addmul_1c _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
 mp_limb_t mpn_addsub_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
 int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
@@ -736,9 +747,16 @@ int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divexact_by3c _PROTO ((mp_ptr dst, mp_srcptr src,
                                      mp_size_t size, mp_limb_t carry));
 
-mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+#define mpn_divmod_1(qp,np,nsize,dlimb) mpn_divrem_1 (qp,0,np,nsize,dlimb)
+
 mp_limb_t mpn_divrem _PROTO((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+
 mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_divrem_1c  __MPN(divrem_1c)
+mp_limb_t mpn_divrem_1c _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t,
+                                 mp_limb_t, mp_limb_t));
+
 mp_limb_t mpn_divrem_2 _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr));
 void mpn_dump _PROTO ((mp_srcptr, mp_size_t));
 mp_size_t mpn_gcd _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
@@ -746,10 +764,25 @@ mp_limb_t mpn_gcd_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
 mp_size_t mpn_gcdext _PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 size_t mpn_get_str _PROTO ((unsigned char *, int, mp_ptr, mp_size_t));
 unsigned long int mpn_hamdist _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
+
+#define mpn_jacobi_base __MPN(jacobi_base)
+int mpn_jacobi_base _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1));
+
 mp_limb_t mpn_lshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 mp_limb_t mpn_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_mod_1c  __MPN(mod_1c)
+mp_limb_t mpn_mod_1c _PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
+#define mpn_mod_1_rshift __MPN(mod_1_rshift)
+mp_limb_t mpn_mod_1_rshift _PROTO ((mp_srcptr, mp_size_t, unsigned,mp_limb_t));
+
 mp_limb_t mpn_mul _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_mul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_mul_1c  __MPN(mul_1c)
+mp_limb_t mpn_mul_1c _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
 void mpn_mul_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 void mpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 int mpn_perfect_square_p _PROTO ((mp_srcptr, mp_size_t));
@@ -769,6 +802,10 @@ mp_limb_t mpn_sub_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_sub_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sub_nc _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_submul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_submul_1c  __MPN(submul_1c)
+mp_limb_t mpn_submul_1c _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
 #if defined (__cplusplus)
 }
 #endif
@@ -959,14 +996,35 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 #define mpq_cmp_ui(Q,NUI,DUI) _mpq_cmp_ui (Q,NUI,DUI)
 #endif
 
+
+/* Using "&" rather than "&&" means these can come out branch-free.  Every
+   mpz_t has at least one limb allocated, so fetching the low limb is always
+   allowed.  */
+
+#define mpz_mod2(z) \
+  ((unsigned long) ((z)->_mp_size != 0) & (unsigned long) (z)->_mp_d[0])
+
+#define __gmpz_lowulong_twoscomplement(z)                                  \
+  ((unsigned long)((z)->_mp_size<0)                                        \
+   + ((-(unsigned long)((z)->_mp_size<0)) ^ (unsigned long)(z)->_mp_d[0]))
+#define __gmpz_lowmodmask(z, m)         \
+  ((-(unsigned long)((z)->_mp_size!=0)) \
+   & __gmpz_lowulong_twoscomplement(z)  \
+   & (unsigned long)(m))
+#define mpz_mod4(z)  __gmpz_lowmodmask (z, 0x3)
+#define mpz_mod8(z)  __gmpz_lowmodmask (z, 0x7)
+
+#define mpz_odd_p(z)   ((int) ((z)->_mp_size != 0) & (int) (z)->_mp_d[0])
+#define mpz_even_p(z)  (! mpz_odd_p (z))
+
+
 /* Allow direct user access to numerator and denominator of a mpq_t object.  */
 #define mpq_numref(Q) (&((Q)->_mp_num))
 #define mpq_denref(Q) (&((Q)->_mp_den))
 
+
+/* Compatibility with GMP 2 and earlier. */
 #define mpn_divmod(qp,np,nsize,dp,dsize) mpn_divrem (qp,0,np,nsize,dp,dsize)
-#if 0
-#define mpn_divmod_1(qp,np,nsize,dlimb) mpn_divrem_1 (qp,0,np,nsize,dlimb)
-#endif
 
 /* Compatibility with GMP 1.  */
 #define mpz_mdiv	mpz_fdiv_q
