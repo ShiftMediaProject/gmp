@@ -1,6 +1,6 @@
 dnl  HP-PA 2.0 64-bit mpn_sqr_diagonal.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -19,10 +19,12 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-include(`../config.m4')
 
-C This code runs at 7.5 cycles/limb on PA8x00.  The cache would saturate at 7.0
-C cycles/limb, so there isn't much point in trying to optimize this further.
+C This code runs at 7.25 cycles/limb on PA8000 and 7.75 cycles/limb on PA8500.
+C The cache would saturate at 5 cycles/limb, so there is some room for
+C optimization.
+
+include(`../config.m4')
 
 C INPUT PARAMETERS
 define(`rp',`%r26')
@@ -35,7 +37,10 @@ define(`p64',`%r31')
 define(`t0',`%r19')
 define(`t1',`%r20')
 
-	.level	2.0N
+ifdef(`HAVE_ABI_2_0w',
+`	.level	2.0W
+',`	.level	2.0N
+')
 PROLOGUE(mpn_sqr_diagonal)
 	.proc
 	.entry
@@ -89,7 +94,6 @@ L(loop)	fldds,ma	8(up),%fr8		C load next up limb
 	extrd,u		p32,32,33,t1
 	add,dc		t1,p64,p64
 	std		p64,-8(rp)
-
 	addib,<>	-1,n,L(loop)
 	ldo		16(rp),rp
 
