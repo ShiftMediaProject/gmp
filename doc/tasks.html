@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 23 Jan 2004.  An up-to-date version is available at
+  This file current as of 7 Feb 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -576,7 +576,7 @@ MA 02111-1307, USA.
      supported in the future, or perhaps for <code>mpq_t</code>.  Something
      like <code>&amp;*r</code> (r for rounding, and mpfr style
      <code>GMP_RND</code> parameter).
-<li> <code>mpz_scan0_reverse</code> or <code>mpz_scan0low</code> or some such
+<li> <code>mpz_rscan0</code> or <code>mpz_revscan0</code> or some such
      searching towards the low end of an integer might match
      <code>mpz_scan0</code> nicely.  Likewise for <code>scan1</code>.
      Suggested by Roberto Bagnara.
@@ -612,8 +612,9 @@ MA 02111-1307, USA.
      <code>mpz_get_sll</code>, <code>mpz_get_sll</code>: Conversions for
      <code>long long</code>.  These would aid interoperability, though a
      mixture of GMP and <code>long long</code> would probably not be too
-     common.  Since <code>long long</code> is not always available,
-     disadvantages of using <code>long long</code> in libgmp.a would be
+     common.  Since <code>long long</code> is not always available (it's in
+     C99 and GCC though), disadvantages of using <code>long long</code> in
+     libgmp.a would be
      <ul>
      <li> Library contents vary according to the build compiler.
      <li> gmp.h would need an ugly <code>#ifdef</code> block to decide if the
