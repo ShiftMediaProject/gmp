@@ -32,16 +32,20 @@ MA 02111-1307, USA. */
    Return both F[n] and F[n-1], so that an application can iterate from that
    pair.  Currently that would require a wasteful second call to get F[n-1].
 
-   The doubling steps can be done with two squares rather than two
-   multiplies.
+   In the bigcase code the doublings can be two squares rather than two
+   multiplies.  If just F[n] (not a pair) is wanted then the last step,
+   which is the slowest, can be just one multiply (both odd and even n).
 
-       F[2n-1] =   F[n]^2 +   F[n-1]^2
-       F[2n]   = 3*F[n]^2 - 2*F[n-1]^2 + 2*(-1)^n
-       F[2n+1] = 4*F[n]^2 -   F[n-1]^2 + 2*(-1)^n
+   Lucas number functions could be added.  A pair L[n],L[n-1] is a simple
+   function of F[n],F[n-1].  If just L[n] is wanted then the doublings for
+   trailing zero bits on n can be one square each, and the last 1 bit can be
+   one multiply.
 
-   The speedup is less than might be expected, because the last step (if
-   only F[n] is wanted) remains a multiply, and that's the biggest and hence
-   slowest step.  Work on this is in progress.  */
+   The equivalence between a pair F[n],F[n-1] and L[n],L[n-1] or even
+   F[n],L[n] means there's a free choice of what to power up within the
+   bigcase code.  F[n],F[n-1] seems simple enough.
+
+   Work on all the above is in progress.  */
 
 
 #include <stdio.h>
