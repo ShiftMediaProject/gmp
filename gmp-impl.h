@@ -927,7 +927,7 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 #endif
 
 /* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
-   negative.  */
+   negative.  size==0 is allowed.  */
 #define MPN_CMP(result, xp, yp, size)           \
   do {                                          \
     mp_size_t  __i;                             \
