@@ -47,11 +47,10 @@ MA 02111-1307, USA. */
   since the required b^g power will be readily accessible.
 
   Optimization ideas:
-  1. The recursive function of (C) could avoid TMP allocation:
-     a) Overwrite dividend with quotient and remainder, just as permitted by
-        mpn_sb_divrem_mn.
-     b) If TMP memory is anyway needed, pass it as a parameter, similarly to
-        how we do it in Karatsuba multiplication.
+  1. The recursive function of (C) could use less temporary memory.  The powtab
+     allocation could be trimmed with some computation, and the tmp area could
+     be reduced, or perhaps eliminated if up is reused for both quotient and
+     remainder (it is currently used just for remainder).
   2. Store the powers of (C) in normalized form, with the normalization count.
      Quotients will usually need to be left-shifted before each divide, and
      remainders will either need to be left-shifted of right-shifted.
@@ -317,7 +316,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 static unsigned char *
 mpn_dc_get_str (unsigned char *str, size_t len,
 		mp_ptr up, mp_size_t un,
-		const powers_t *powtab)
+		const powers_t *powtab, mp_ptr tmp)
 {
   if (un < GET_STR_DC_THRESHOLD)
     {
@@ -342,22 +341,19 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 
       if (un < pwn || (un == pwn && mpn_cmp (up, pwp, un) < 0))
 	{
-	  str = mpn_dc_get_str (str, len, up, un, powtab - 1);
+	  str = mpn_dc_get_str (str, len, up, un, powtab - 1, tmp);
 	}
       else
 	{
-	  TMP_DECL (marker);
-	  TMP_MARK (marker);
-	  qp = TMP_ALLOC_LIMBS (un - pwn + 1);
-	  rp = TMP_ALLOC_LIMBS (pwn);
+	  qp = tmp;		/* (un - pwn + 1) limbs for qp */
+	  rp = up;		/* pwn limbs for rp; overwrite up area */
 
 	  mpn_tdiv_qr (qp, rp, 0L, up, un, pwp, pwn);
 	  qn = un - pwn; qn += qp[qn] != 0;		/* quotient size */
 	  if (len != 0)
 	    len = len - powtab->digits_in_base;
-	  str = mpn_dc_get_str (str, len, qp, qn, powtab - 1);
-	  str = mpn_dc_get_str (str, powtab->digits_in_base, rp, pwn, powtab - 1);
-	  TMP_FREE (marker);
+	  str = mpn_dc_get_str (str, len, qp, qn, powtab - 1, tmp + un - pwn + 1);
+	  str = mpn_dc_get_str (str, powtab->digits_in_base, rp, pwn, powtab - 1, tmp);
 	}
     }
   return str;
@@ -378,6 +374,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
   mp_size_t n;
   mp_ptr p, t;
   size_t out_len;
+  mp_ptr tmp;
 
   /* Special case zero, as the code below doesn't handle it.  */
   if (un == 0)
@@ -449,8 +446,9 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
   /* Allocate one large block for the powers of big_base.  With the current
      scheme, we need to allocate twice as much as would be possible if a
      minimal set of powers were generated.  */
-#define ALLOC_SIZE (2 * un + 30)
-  powtab_mem = __GMP_ALLOCATE_FUNC_LIMBS (ALLOC_SIZE);
+#define POWTAB_ALLOC_SIZE (2 * un + 30)
+#define TMP_ALLOC_SIZE (un + 30)
+  powtab_mem = __GMP_ALLOCATE_FUNC_LIMBS (POWTAB_ALLOC_SIZE);
   powtab_mem_ptr = powtab_mem;
 
   /* Compute a table of powers: big_base^1, big_base^2, big_base^4, ...,
@@ -489,12 +487,14 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
       if (2 * n > un)
 	break;
     }
-  ASSERT_ALWAYS (ALLOC_SIZE > powtab_mem_ptr - powtab_mem);
+  ASSERT_ALWAYS (POWTAB_ALLOC_SIZE > powtab_mem_ptr - powtab_mem);
 
   /* Using our precomputed powers, now in powtab[], convert our number.  */
-  out_len = mpn_dc_get_str (str, 0, up, un, powtab + pi) - str;
+  tmp = __GMP_ALLOCATE_FUNC_LIMBS (TMP_ALLOC_SIZE);
+  out_len = mpn_dc_get_str (str, 0, up, un, powtab + pi, tmp) - str;
+  __GMP_FREE_FUNC_LIMBS (tmp, TMP_ALLOC_SIZE);
 
-  __GMP_FREE_FUNC_LIMBS (powtab_mem, ALLOC_SIZE);
+  __GMP_FREE_FUNC_LIMBS (powtab_mem, POWTAB_ALLOC_SIZE);
 
   return out_len;
 }
