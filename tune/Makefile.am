@@ -93,20 +93,34 @@ DISTCLEANFILES = sqr_basecase.c
 
 
 # Generating these little files at build time seems better than including
-# them in the distribution, since the list can be changed easily.
+# them in the distribution, since the list can be changed more easily.
 #
-# FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
-# so the recompiled object will be rebuilt if that file changes.
+# mpn/generic/tdiv_qr.c uses mpn_divrem_1, but only for a 1 limb divisor,
+# which is never used during tuning, so it doesn't matter whether it picks
+# up a tuned or untuned version of that routine.
+#
+# FIXME: Would like say mul_n.c to depend on $(top_builddir)/mul_n.c so the
+# recompiled object will be rebuilt if that file changes.
 
-TUNE_MPN_SRCS = \
-  dc_divrem_n.c divrem_1.c gcd.c mod_1.c mul_n.c mul_fft.c mul.c tdiv_qr.c
+TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
+TUNE_MPN_SRCS_BASIC = dc_divrem_n.c gcd.c mul_n.c mul_fft.c mul.c tdiv_qr.c
 TUNE_MPZ_SRCS = fib_ui.c
 
-$(TUNE_MPN_SRCS):
+$(TUNE_MPN_SRCS_BASIC):
 	for i in $(TUNE_MPN_SRCS); do \
 	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
 	  echo "#include \"mpn/generic/$$i\"" >>$$i; \
 	done
+
+divrem_1.c:
+	echo "#define TUNE_PROGRAM_BUILD 1"                >divrem_1.c
+	echo "#define __gmpn_divrem_1  mpn_divrem_1_tune" >>divrem_1.c
+	echo "#include \"mpn/generic/divrem_1.c\""        >>divrem_1.c
+
+mod_1.c:
+	echo "#define TUNE_PROGRAM_BUILD 1"          >mod_1.c
+	echo "#define __gmpn_mod_1  mpn_mod_1_tune" >>mod_1.c
+	echo "#include \"mpn/generic/mod_1.c\""     >>mod_1.c
 
 $(TUNE_MPZ_SRCS):
 	for i in $(TUNE_MPZ_SRCS); do \
