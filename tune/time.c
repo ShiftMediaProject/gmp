@@ -108,7 +108,7 @@ MA 02111-1307, USA. */
 
    On PowerPC the timebase registers could be used, but would have to do
    something to find out the speed.  On 6xx chips it's normally 1/4 bus
-   speed, on 4xx chips it's wither that or an external clock.  Measuring
+   speed, on 4xx chips it's either that or an external clock.  Measuring
    against gettimeofday might be ok.  */
 
 
