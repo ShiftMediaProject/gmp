@@ -41,47 +41,6 @@ define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
 
-dnl  AC_LANG_FUNC_LINK_TRY(C)(FUNCTION)
-dnl  ----------------------------------
-dnl  This is a dirty hack to replace autoconf 2.53 or 2.54
-dnl  AC_LANG_FUNC_LINK_TRY(C) with a version that works with recent HP cc
-dnl  +O3.
-dnl
-dnl  HP cc +O3 will optimize away f=$1 if it's in main(), apparently on the
-dnl  basis that if the program is about to exit then the store is not
-dnl  needed.
-dnl
-dnl  FIXME: Remove this when autoconf 2.55 is adopted.
-
-m4_define([AC_LANG_FUNC_LINK_TRY(C)],
-[AC_LANG_PROGRAM(
-[/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $1 (); below.  */
-#include <assert.h>
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char $1 ();
-char (*f) ();
-],
-[}
-int
-conftest_$1 ()
-{
- /* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_$1) || defined (__stub___$1)
-choke me
-#else
-f = $1;
-#endif
-])])
-
-
 dnl  GMP_STRIP_PATH(subdir)
 dnl  ----------------------
 dnl  Strip entries */subdir from $path.
