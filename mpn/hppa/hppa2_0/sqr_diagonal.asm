@@ -1,6 +1,6 @@
 dnl  HP-PA 32-bit mpn_sqr_diagonal optimized for the PA8x00.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -33,31 +33,31 @@ ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
 
 	fldws,ma	4(up),%fr4r
-	addib,=		-1,n,L$end1
+	addib,=		-1,n,L(end1)
 	ldo		4(rp),rp
 
 	fldws,ma	4(up),%fr6r
-	addib,=		-1,n,L$end2
+	addib,=		-1,n,L(end2)
 	xmpyu		%fr4r,%fr4r,%fr5
 
 	fldws,ma	4(up),%fr4r
-	addib,=		-1,n,L$end3
+	addib,=		-1,n,L(end3)
 	xmpyu		%fr6r,%fr6r,%fr7
 
 
-	.label	L$loop
+	.label	L(loop)
 	fldws,ma	4(up),%fr6r
 	fstws		%fr5r,-4(rp)
 	fstws,ma	%fr5l,8(rp)
-	addib,=		-1,n,L$exite
+	addib,=		-1,n,L(exite)
 	xmpyu		%fr4r,%fr4r,%fr5
 	fldws,ma	4(up),%fr4r
 	fstws		%fr7r,-4(rp)
 	fstws,ma	%fr7l,8(rp)
-	addib,<>	-1,n,L$loop
+	addib,<>	-1,n,L(loop)
 	xmpyu		%fr6r,%fr6r,%fr7
 
-	.label	L$exito
+	.label	L(exito)
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	xmpyu		%fr4r,%fr4r,%fr5
@@ -67,7 +67,7 @@ PROLOGUE(mpn_sqr_diagonal)
 	bv		0(%r2)
 	fstws		%fr5l,4(rp)
 
-	.label	L$exite
+	.label	L(exite)
 	fstws		%fr7r,-4(rp)
 	fstws		%fr7l,0(rp)
 	xmpyu		%fr6r,%fr6r,%fr7
@@ -77,13 +77,13 @@ PROLOGUE(mpn_sqr_diagonal)
 	bv		0(%r2)
 	fstws		%fr7l,4(rp)
 
-	.label	L$end1
+	.label	L(end1)
 	xmpyu		%fr4r,%fr4r,%fr5
 	fstws		%fr5r,-4(rp)
 	bv		0(%r2)
 	fstws,ma	%fr5l,8(rp)
 
-	.label	L$end2
+	.label	L(end2)
 	xmpyu		%fr6r,%fr6r,%fr7
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
@@ -91,7 +91,7 @@ PROLOGUE(mpn_sqr_diagonal)
 	bv		0(%r2)
 	fstws		%fr7l,8(rp)
 
-	.label	L$end3
+	.label	L(end3)
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	xmpyu		%fr4r,%fr4r,%fr5
