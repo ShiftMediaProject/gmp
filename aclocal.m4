@@ -379,7 +379,6 @@ AC_DEFUN(GMP_CHECK_ASM_DATA,
     gmp_cv_check_asm_data={".csect .data[RW]"}
     changequote([, ])
     ;;
-  *-*-hpux*) gmp_cv_check_asm_data=[".code"] ;;
   *) gmp_cv_check_asm_data=[".data"] ;;
 esac
 ])
