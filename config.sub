@@ -78,7 +78,7 @@ p5 | p54)   given_cpu=pentium ;;
 p55)        given_cpu=pentiummmx ;;
 p6)         given_cpu=pentiumpro ;;
 pentiumii)  given_cpu=pentium2 ;;
-pentiumiii) given_cpu=pentium2 ;;
+pentiumiii) given_cpu=pentium3 ;;
 esac
 given_full="$given_cpu$given_rest"
 
