@@ -26,6 +26,7 @@ Changes between MP version 4.0.1 and 4.1
 * mpn_get_str parameter restrictions relaxed.
 * Major speed improvments for HPPA 2.0 systems.
 * Major speed improvments for IA-64 systems (but still sub-optimal code).
+* Various exact PowerPC cpu types.
 * mpfr is back, with many bug fixes and portability improvements.
 
 Changes between MP version 4.0 and 4.0.1
