@@ -1,6 +1,6 @@
 /* Test modlimb_invert.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,7 +34,7 @@ one (mp_limb_t n)
   mp_limb_t  inv, prod;
 
   modlimb_invert (inv, n);
-  prod = inv * n;
+  prod = (inv * n) & GMP_NUMB_MASK;
   if (prod != 1)
     {
       printf ("modlimb_invert wrong on n=0x%lX, got 0x%lX, product 0x%lX\n",
@@ -48,7 +48,7 @@ some (void)
 {
   int  i;
   for (i = 0; i < 10000; i++)
-    one (urandom () | 1);
+    one (refmpn_random_limb () | 1);
 }
 
 void
