@@ -1,3 +1,8 @@
+2001-05-20  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/powerpc64/addmul_1.asm,mul_1.asm,submul_1.asm: Add carry-in
+	entrypoints.
+
 2001-05-17  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (ge): Fix definition for info.
