@@ -1,3 +1,19 @@
+2000-04-13  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mul_n.c: Add K&R function definitions.
+	* mpz/remove.c: Ditto.
+	* mpz/root.c: Ditto.
+
+	* mpz/root.c: Use SQRT_OF_NEGATIVE on even roots of negatives.
+	Use DIVIDE_BY_ZERO on a "zero'th" root.
+
+	* configure: Regenerate with autoconf backpatched to fix --srcdir
+	absolute path wildcards that bash doesn't like, change by Linus.
+
+	* gmp.texi (Integer Arithmetic): Document mpz_nextprime.
+	(Miscellaneous Integer Functions): Fix mpz_fits_* formatting.
+	(Installing MP): Comment-out CC and CFLAGS description.
+
 2000-04-13  Linus Nordberg  <linus@swox.se>
 
 	* rand.c (gmp_randinit): Don't combine va_alist with ordinary
@@ -119,7 +135,7 @@
 
 2000-04-11  Kevin Ryde  <kevin@swox.se>
 
-	* mpz/fib_ui.c: Add alternate non-ANSI function definitions.
+	* mpz/fib_ui.c: Add K&R function definitions.
 
 	* mpbsd/tests/Makefile.am (TESTS): Add a dummy test to avoid a
 	shell problem with an empty "for tst in $(TESTS) ; ...".
