@@ -11250,7 +11250,7 @@ echo $ECHO_N "checking whether the $compiler linker ($LD) supports shared librar
     fi
     ;;
   cygwin* | mingw* | pw32*)
-    export_symbols_cmds_CXX="$ltdll_cmds"'
+    export_symbols_cmds_CXX="$ltdll_cmds"
   ;;
   *)
     export_symbols_cmds_CXX='$NM $libobjs $convenience | $global_symbol_pipe | sed '\''s/.* //'\'' | sort | uniq > $export_symbols'
