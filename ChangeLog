@@ -1,3 +1,44 @@
+2001-05-03  Kevin Ryde  <kevin@swox.se>
+
+	* extract-dbl.c: Add ASSERT d>=0.
+
+	* gmp.texi (Efficiency): Add mpz_addmul etc for mpz+=integer, add
+	mpz_neg etc in-place.
+	(Integer Arithmetic): Add mpz_addmul, mpz_submul, mpz_submul_ui.
+	(Initializing Rationals): Add mpq_set_str.
+	(Low-level Functions): mpn_set_str requires strsize >= 1.
+	
+	* gmp-h.in (__GMP_EXTERN_INLINE, __GMP_ABS): New macros.
+	(mpz_abs, mpq_abs, mpf_abs, mpz_neg, mpq_neg, mpf_neg): Provide inline
+	versions.
+	* mpz/abs.c, mpq/abs.c, mpf/abs.c, mpz/neg.c, mpq/neg.c, mpf/neg.c:
+	Add suitable __GMP_FORCE to turn off inline versions.
+
+	* tests/mpz/t-aorsmul.c,t-cmp_d.c,t-popcount,t-set_str.c: New files.
+	* tests/mpz/Makefile.am: Add them.
+
+	* mpz/aorsmul_i.c: New file, rewrite of addmul_ui.c.  Add
+	mpz_submul_ui entrypoint, share more code between some of the
+	conditionals, use mpn_mul_1c if available.
+	* mpz/addmul_ui.c: Remove file.
+	* mpz/aorsmul.c: New file.
+	* Makefile.am, mpz/Makefile.am: Update.
+	* gmp-h.in (mpz_addmul, mpz_submul, mpz_submul_ui): Add prototypes.
+	* gmp-impl.h (mpz_aorsmul_1): Add prototype.
+
+	* tests/mpq/t-set_str.c: New file.
+	* tests/mpq/Makefile.am: Add it.
+
+	* mpq/set_str.c: New file.
+	* Makefile.am, mpq/Makefile.am: Add it.
+	* gmp-h.in (mpq_set_str): Add prototype.
+
+	* mpz/set_str.c: Fix for trailing white space on zero, eg. "0 ".
+	* mpn/generic/set_str.c: Add ASSERT str_len >= 1.
+
+	* gmp-h.in, gmp-impl.h (mpn_incr_u, mpn_decr_u): Move to gmp-impl.h.
+	* gmp-impl.h (MPN_INCR_U, MPN_DECR_U): New macros.
+
 2001-04-30  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/t-lcm.c: New file.
