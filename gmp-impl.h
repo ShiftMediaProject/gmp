@@ -358,45 +358,6 @@ int __gmp_assert_fail _PROTO((const char *filename, int linenum,
 #endif
 
 
-/* When WANT_ASSERT is set, ASSERT_NOREALLOC() temporarily changes the
-   normal memory allocation function pointers to abort()s.  This can be used
-   when a destination in an mpz call is an MPZ_TMP_INIT() allocated
-   variable, which can't be reallocated, and shouldn't be so long as it was
-   created with enough space.  For example,
-
-       MPZ_TMP_INIT (w, 100);
-       ASSERT_NOREALLOC (mpz_mul (w, x, y));
-
-   This works well with simple functions like mpz_mul, but doesn't suit
-   calls to complicated functions that're doing mpz_init()s for their own
-   purposes (eg. mpz_fib_ui).  But complicated routines are likely to have
-   complicated size requirements and be unsuitable for MPZ_TMP_INIT anyway.  */
-
-#if WANT_ASSERT
-#else
-/*  #define ASSERT_NOREALLOC(statements)   statements */
-#endif
-#define ASSERT_NOREALLOC(statements)                                     \
-  {                                                                      \
-    void * (*__assert_norealloc_alloc)                                   \
-      _PROTO ((size_t))                  = _mp_allocate_func;            \
-    void * (*__assert_norealloc_realloc)                                 \
-      _PROTO ((void *, size_t, size_t))  = _mp_reallocate_func;          \
-    void   (*__assert_norealloc_free)                                    \
-      _PROTO ((void *, size_t))          = _mp_free_func;                \
-                                                                         \
-    _mp_allocate_func   = (void*(*)_PROTO((size_t)))              abort; \
-    _mp_reallocate_func = (void*(*)_PROTO((void*,size_t,size_t))) abort; \
-    _mp_free_func       = (void (*)_PROTO((void*,size_t)))        abort; \
-                                                                         \
-    { statements; }                                                      \
-                                                                         \
-    _mp_allocate_func   = __assert_norealloc_alloc;                      \
-    _mp_reallocate_func = __assert_norealloc_realloc;                    \
-    _mp_free_func       = __assert_norealloc_free;                       \
-  }
-
-
 #if HAVE_NATIVE_mpn_com_n
 #define mpn_com_n __MPN(com_n)
 void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
