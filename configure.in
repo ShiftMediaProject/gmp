@@ -306,32 +306,27 @@ case "$target" in
 
   # HP
   hppa1.0*-*-*)
-    cclist="gcc c89 cc"
-    gmp_cflags_c89="+O2"
+    cclist="gcc cc"
     gmp_cflags_cc="+O2"
     ;;
   hppa2.0w-*-*)
-    cclist="c89 cc"
-    gmp_cflags_c89="+DD64 +O3"
+    cclist="cc"
     gmp_cflags_cc="+DD64 +O3"
     ;;
   hppa2.0*-*-*)
     os_64bit=yes
-    cclist="gcc c89 cc"
+    cclist="gcc cc"
     gmp_cflags64_gcc="$gmp_cflags64_gcc -mWHAT -D_LONG_LONG_LIMB"
     # 2.0 code generation disabled: we need an assembler feature test checking
     # if 2.0 operations work #gmp_xoptcflags_gcc="-mpa-risc-2-0 -mpa-risc-1-1"
     gmp_xoptcflags_gcc="-mpa-risc-1-1"
     # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-    gmp_cflags64_c89="+DA2.0 +e +O3 -D_LONG_LONG_LIMB"
     gmp_cflags64_cc="+DA2.0 +e +O3 -D_LONG_LONG_LIMB"
-    gmp_cflags_c89="+DA1.1 +O2"		# Probably never used, 64-bit c89 options should work
     gmp_cflags_cc="+DA1.1 +O2"		# Probably never used, 64-bit cc options should work
     ;;
   hppa*-*-*)
-    cclist="gcc c89 cc"
+    cclist="gcc cc"
     gmp_cflags_gcc="$gmp_cflags_gcc -mpa-risc-1-1"
-    gmp_cflags_c89="+DA1.1 +O2"
     gmp_cflags_cc="+DA1.1 +O2"
     ;;
 
