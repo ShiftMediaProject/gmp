@@ -1,3 +1,7 @@
+2000-10-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/Makefile.am (TARG_DIST): Add ia64.
+
 2000-10-21  Kevin Ryde  <kevin@swox.se>
 
 	* *: Change BZ -> DC.
