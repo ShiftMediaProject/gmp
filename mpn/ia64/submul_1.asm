@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract the
 dnl  result from a second limb vector.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,15 +22,15 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C         cycles/limb
+C Itanium:    4.0?
+C Itanium 2:  3.0
+
 C INPUT PARAMETERS
 C rp = r32
 C up = r33
 C n = r34
 C v = r35
-
-C         cycles/limb
-C Itanium:    4
-C Itanium 2:  3.5
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
@@ -73,19 +73,19 @@ ifdef(`HAVE_ABI_32',
 		br.sptk		.Loop
 		.align	32
 .Loop:
-  { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
+  { .mfi; (p21)	getf.sig	r32 = f42		C  0  3  6  9 12>15 18
 	  (p19)	xma.l		f40 = f35, f6, f39	C  0  3  6 >9 12 15 18
 	  (p23)	cmp.ltu		p6, p7 = r34, r23	C  0  3  6  9 12 15>18
-} { .mfi; (p16)	ldf8		f36 = [r16], 8		C >0  3  6  9 12 15 18
+} { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
 	  (p19)	xma.hu		f44 = f35, f6, f39	C  0  3  6 >9 12 15 18
 	  (p23)	sub		r14 = r34, r23	;;	C  0  3  6  9 12 15>18
-} { .mib; (p21)	getf.sig	r32 = f42		C  1  4  7 10 13>16 19
+} { .mib; (p21)	getf.sig	r36 = f46		C  1  4  7 10 13>16 19
 	  (p23)	sub		r23 = r24, r38		C  1  4  7 10 13 16>19
 		nop.b		0			C  1  4  7 10 13 16 19
 } { .mib; (p22)	ld8		r24 = [r19], 8		C  1  4  7 10 13>16 19
 		nop.i		0			C  1  4  7 10 13 16>19
 		nop.b		0		;;	C  1  4  7 10 13 16 19
-} { .mib; (p21)	getf.sig	r36 = f46		C  2  5  8 11 14>17 20
+} { .mib; (p16)	ldf8		f36 = [r16], 8		C >2  5  8 11 14 17 20
 	   (p6)	add		r23 = 1, r23		C  2  5  8 11 14 17 20
 		nop.b		0			C  2  5  8 11 14 17 20
 } { .mib; (p23)	st8		[r18] = r14, 8		C  2  5  8 11 14 17>20
