@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.170
+# From configure.in Revision: 1.171
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -1170,7 +1170,7 @@ cat >>confdefs.h <<EOF
 #define HAVE_TARGET_CPU_$tmp 1
 EOF
 
-os_64bit="no"
+check_64bit_compiler="no"
 cclist="gcc cc"		# FIXME: Prefer c89 to cc.
 gmp_cflags_gcc="-g -O2"
 gmp_cflags64_gcc="-g -O2"
@@ -1280,7 +1280,7 @@ fi
 
   # Sparc
   ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9])
-    os_64bit=yes
+    check_64bit_compiler=yes
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
@@ -1292,7 +1292,7 @@ fi
     # for any 64-bit operations in user mode.  We assume that a future release
     # will have some 64-bit support, and therefore guess the needed compiler
     # options.
-    os_64bit=yes
+    check_64bit_compiler=yes
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
@@ -1358,7 +1358,7 @@ EOF
 
   # MIPS
   mips-sgi-irix6.*)
-    os_64bit=yes
+    check_64bit_compiler=yes
     gmp_cflags64_gcc="-g -O2 -mabi=n32 -mips3"
     gmp_cflags64_cc="$gmp_cflags64_cc -O2 -n32 -mips3"
     ;;
@@ -1380,7 +1380,7 @@ EOF
     gmp_cflags_cc="+DD64 +O3"
     ;;
   hppa2.0*-*-*)
-    os_64bit=yes
+    check_64bit_compiler=yes
     cclist="gcc cc"
     gmp_cflags64_gcc="$gmp_cflags64_gcc -mWHAT -D_LONG_LONG_LIMB"
     # 2.0 code generation disabled: we need an assembler feature test checking
@@ -1472,7 +1472,7 @@ else
 fi
 
 gmp_cc_list="$cclist"
-gmp_req_64bit_cc="$os_64bit"
+gmp_req_64bit_cc="$check_64bit_compiler"
 
 CC32=
 CC64=
@@ -1822,7 +1822,7 @@ done
 CC="$CC32"
 
   # If 64-bit OS and we have a 64-bit compiler, use it.
-  if test -n "$os_64bit" && test -n "$CC64"; then
+  if test -n "$check_64bit_compiler" && test -n "$CC64"; then
     CC=$CC64
     CFLAGS=$CFLAGS64
   else
