@@ -4120,7 +4120,7 @@ done
 # The regexp testing for an absolute path is the same as in
 # _AC_OUTPUT_FILES of autoconf acgeneral.m4.
 case "$srcdir" in
-[/\\]* | ?:[/\\]* )
+[\\/]* | ?:[\\/]* )
 
 echo "define(<CONFIG_SRCDIR>,<\`$srcdir'>)" >> $gmp_tmpconfigm4
     ;;
