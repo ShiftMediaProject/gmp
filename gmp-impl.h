@@ -1703,6 +1703,84 @@ extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 
+/* No processor claiming to be SPARC v9 compliant seems to
+   implement the POPC instruction.  Disable pattern for now.  */
+#if 0
+#if defined __GNUC__ && defined __sparc_v9__ && BITS_PER_MP_LIMB == 64
+#define popc_limb(result, input)                        \
+  do {                                                  \
+    DItype __res;                                       \
+    asm ("popc %1,%0" : "=r" (result) : "rI" (input));  \
+  } while (0)
+#endif
+#endif
+
+/* Cool population count of an mp_limb_t.
+   You have to figure out how this works, I won't tell you!
+
+   The constants could also be expressed as:
+     0xAA... = [2^(N+1) / 3] = [(2^N-1)/3*2]
+     0x33... = [2^N / 5]     = [(2^N-1)/5]
+     0x0f... = [2^N / 17]    = [(2^N-1)/17]
+     (N is BITS_PER_MP_LIMB, [] denotes truncation.) */
+
+#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 64
+#define popc_limb(result, input)                                \
+  do {                                                          \
+    mp_limb_t  __x = (input);                                   \
+    __x -= (__x & CNST_LIMB(0xaaaaaaaaaaaaaaaa)) >> 1;          \
+    __x = ((__x >> 2) & CNST_LIMB(0x3333333333333333))          \
+      +    (__x       & CNST_LIMB(0x3333333333333333));         \
+    __x = ((__x >> 4) + __x) & CNST_LIMB(0x0f0f0f0f0f0f0f0f);   \
+    __x = ((__x >> 8) + __x);                                   \
+    __x = ((__x >> 16) + __x);                                  \
+    __x = ((__x >> 32) + __x) & 0xff;                           \
+    (result) = __x;                                             \
+  } while (0)
+#endif
+#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 32
+#define popc_limb(result, input)                                \
+  do {                                                          \
+    mp_limb_t  __x = (input);                                   \
+    __x -= (__x & 0xaaaaaaaaL) >> 1;                            \
+    __x = ((__x >> 2) & 0x33333333L) + (__x & 0x33333333L);     \
+    __x = ((__x >> 4) + __x) & 0x0f0f0f0fL;                     \
+    __x = ((__x >> 8) + __x);                                   \
+    __x = ((__x >> 16) + __x) & 0xff;                           \
+    (result) = __x;                                             \
+  } while (0)
+#endif
+#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 16
+#define popc_limb(result, input)                        \
+  do {                                                  \
+    mp_limb_t  __x = (input);                           \
+    __x -= (__x & 0xaaaa) >> 1;                         \
+    __x = ((__x >> 2) & 0x3333) + (__x & 0x3333);       \
+    __x = ((__x >> 4) + __x) & 0x0f0f;                  \
+    __x = ((__x >> 8) + __x) & 0xff;                    \
+    (result) = __x;                                     \
+  } while (0)
+#endif
+#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 8
+#define popc_limb(result, input)                \
+  do {                                          \
+    mp_limb_t  __x = (input);                   \
+    __x -= (__x & 0xaa) >> 1;                   \
+    __x = ((__x >> 2) & 0x33) + (__x & 0x33);   \
+    __x = ((__x >> 4) + __x) & 0xf;             \
+    (result) = __x;                             \
+  } while (0)
+#endif
+#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 4
+#define popc_limb(result, input)                                              \
+  do {                                                                        \
+    mp_limb_t  __x = (input);                                                 \
+    __x = (__x & 1) + ((__x >> 1) & 1) + ((__x >> 2) & 1) + ((__x >> 3) & 1); \
+    (result) = __x;                                                           \
+  } while (0)
+#endif
+
+
 /* Define stuff for longlong.h.  */
 #if HAVE_ATTRIBUTE_MODE
 typedef unsigned int UQItype	__attribute__ ((mode (QI)));
