@@ -240,6 +240,8 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
           case 'u':
           integer:
             TRACE (printf ("integer, base=%d\n", param.base));
+            if (! seen_precision)
+              param.prec = -1;
             switch (type) {
             case 'j':
               /* Let's assume uintmax_t is the same size as intmax_t. */
@@ -260,9 +262,9 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 #endif
               break;
             case 'q':
-              /* quad_t and is probably the same as long long, but let's
-                 treat it separately just to be sure.  Also let's assume
-                 u_quad_t will be the same size as quad_t.  */
+              /* quad_t is probably the same as long long, but let's treat
+                 it separately just to be sure.  Also let's assume u_quad_t
+                 will be the same size as quad_t.  */
 #if HAVE_QUAD_T
               (void) va_arg (ap, quad_t);
 #else
