@@ -29,7 +29,7 @@ urandom ()
 #define __URANDOM
 #endif
 
-#if defined (__alpha__) && !defined (__URANDOM)
+#if defined (__alpha) && !defined (__URANDOM)
 /* DEC OSF/1 1.2 random() returns a double.  */
 long mrand48 ();
 static inline unsigned long
