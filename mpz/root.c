@@ -135,7 +135,7 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
 
   /* If we got a non-zero remainder in the last division, we know our root
      is too large.  */
-  mpz_sub_ui (x, x, (mp_limb_t) (rl != 0));
+  mpz_sub_ui (x, x, (unsigned long) (rl != 0));
 
   /* Adjustment loop.  If we spend more care on rounding in the loop above,
      we could probably get rid of this, or greatly simplify it.  */
