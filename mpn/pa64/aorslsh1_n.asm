@@ -54,6 +54,8 @@ define(`up',`%r25')
 define(`vp',`%r24')
 define(`n',`%r23')
 
+MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
+
 ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0w
 ',`	.level	2.0
