@@ -22,6 +22,8 @@ MA 02111-1307, USA.
 
 	* tests/mpz/t-gcd.c: Decrease # of tests run.
 
+	* mpn/*/gmp-mparam.h: Add HGCD values, update TOOM values.
+
 2004-02-01  Torbjorn Granlund  <tege@swox.com>
 
 	From Kevin:
