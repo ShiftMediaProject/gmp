@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 12 Sep 2001.  An up-to-date version is available at
+  This file current as of 2 Oct 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -155,7 +155,11 @@
 <li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
      <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
      quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).  A
-     remainder mod 2^24-1 can be taken at adder throughput speed.
+     remainder mod 2^24-1 can be taken at adder throughput speed.  This could
+     either replace the <code>PP</code> division currently done, or allow
+     <code>PP</code> to do larger primes, depending how many residue tests
+     seem worthwhile before launching into full root extractions or
+     Miller-Rabin etc.
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
@@ -212,6 +216,15 @@
      internal uses are in-place.  Sometimes a block of code is executed based
      on the carry-out, rather than using it arithmetically, and those places
      might want to do their own loops entirely.
+<li> <code>__gmp_extract_double</code> on 64-bit systems could use just one
+     bitfield for the mantissa extraction, not two, when endianness permits.
+     Might depend on the compiler allowing <code>long long</code> bit fields
+     when that's the only actual 64-bit type.
+<li> <code>mpf_get_d</code> could be more like <code>mpz_get_d</code> and do
+     more in integers and give the float conversion as such a chance to round
+     in its preferred direction.  Some code sharing ought to be possible.  Or
+     if nothing else then for consistency the two ought to give identical
+     results on integer operands (not clear if this is so right now).
 </ul>
 
 
@@ -277,6 +290,11 @@
      since <code>mulx</code> speed depends on the highest bit set.  Either
      explicit masks or small types like <code>short</code> and
      <code>int</code> ought to work.
+<li> Sparc64 HAL R1: <code>mpn_popcount</code> and <code>mpn_hamdist</code>
+     could use <code>popc</code> currently commented out in gmp-impl.h.  This
+     chip reputedly implements <code>popc</code> properly (see gcc sparc.md),
+     would need to recognise the chip as <code>sparchalr1</code> or something
+     in configure / config.sub / config.guess.
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current code runs at 11 cycles/limb.  It
      should be possible to saturate the cache, which will happen at 8
@@ -361,6 +379,11 @@
 <li> IRIX 6 MIPSpro compiler has an <code>__inline</code> which could perhaps
      be used in <code>__GMP_EXTERN_INLINE</code>.  What would be the right way
      to identify suitable versions of that compiler?
+<li> VAX D and G format <code>double</code>s are straightforward and could
+     perhaps be handled directly in <code>__gmp_extract_double</code> and
+     maybe in <code>mpz_get_d</code>, rather than falling back on the generic
+     code.  GCC defines <code>__GFLOAT</code> when -mg has selected G format
+     (which would be possible via a user <code>CFLAGS</code>).
 </ul>
 
 <h4>New Functionality</h4>
