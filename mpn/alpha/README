@@ -1,5 +1,5 @@
-Copyright 1996, 1997, 1999, 2000, 2001, 2002, 2003 Free Software Foundation,
-Inc.
+Copyright 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -50,6 +50,10 @@ the Unicos assembler.  The full "ornot" must be used.
 "unop" is not available in Unicos.  We make an m4 define to the usual "ldq_u
 r31,0(r30)", and in fact use that define on all systems since it comes out the
 same.
+
+"!literal!123" etc explicit relocations as per Tru64 4.0 are apparently not
+available in older alpha assemblers (including gas prior to 2.12), according to
+the GCC manual, so the assembler macro forms must be used (eg. ldgp).
 
 
 
@@ -173,6 +177,20 @@ All of the above are available online from
 
   http://ftp.digital.com/pub/Digital/info/semiconductor/literature/dsc-library.html
   ftp://ftp.compaq.com/pub/products/alphaCPUdocs
+
+"Tru64 Unix Assembly Language Programmer's Guide", Compaq, March 1996, part
+number AA-PS31D-TE.
+
+"Digital UNIX Calling Standard for Alpha Systems", Digital Equipment Corp,
+March 1996, part number AA-PY8AC-TE.
+
+The above are available online,
+
+  http://h30097.www3.hp.com/docs/pub_page/V40F_DOCS.HTM
+
+(Dunno what h30097 means in this URL, but if it moves try searching for "tru64
+online documentation" from the main www.hp.com page.)
+
 
 
 ----------------
