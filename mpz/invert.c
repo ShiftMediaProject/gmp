@@ -35,6 +35,7 @@ mpz_invert (inverse, x, n)
 {
   mpz_t gcd, tmp;
   mp_size_t xsize, nsize, size;
+  TMP_DECL (marker);
 
   xsize = SIZ (x);
   nsize = SIZ (n);
@@ -47,13 +48,18 @@ mpz_invert (inverse, x, n)
   if (xsize == 0 || (nsize == 1 && (PTR (n))[0] == 1))
     return 0;
 
+  TMP_MARK (marker);
+
   MPZ_TMP_INIT (gcd, size);
   MPZ_TMP_INIT (tmp, size);
   mpz_gcdext (gcd, tmp, (mpz_ptr) 0, x, n);
 
   /* If no inverse existed, return with an indication of that.  */
   if (gcd->_mp_size != 1 || (gcd->_mp_d)[0] != 1)
-    return 0;
+    {
+      TMP_FREE (marker);
+      return 0;
+    }
 
   /* Make sure we return a positive inverse.  */
   if (SIZ (tmp) < 0)
@@ -66,5 +72,6 @@ mpz_invert (inverse, x, n)
   else
     mpz_set (inverse, tmp);
 
+  TMP_FREE (marker);
   return 1;
 }
