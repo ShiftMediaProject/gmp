@@ -49,4 +49,4 @@ libmpfr_a_SOURCES = mpfr.h mpf2mpfr.h mpfr-impl.h mpfr-test.h log_b2.h exception
 
 libmpfr_a_LIBADD = @LIBOBJS@
 
-EXTRA_DIST = BUGS generic.c
+EXTRA_DIST = BUGS generic.c round_raw_generic.c
