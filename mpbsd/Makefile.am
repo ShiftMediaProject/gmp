@@ -25,6 +25,9 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 	-I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
+# Tell mp.h it's building gmp, not an application, used by windows DLL stuff.
+AM_CPPFLAGS=-D__GMP_WITHIN_GMP
+
 nodist_libmpbsd_la_SOURCES = \
 	add.c cmp.c gcd.c mul.c powm.c realloc.c \
 	set.c sqrtrem.c sub.c tdiv_qr.c
