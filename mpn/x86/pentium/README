@@ -9,6 +9,7 @@ processors.  The mmx subdirectory has code for Pentium with MMX (P55).
 STATUS
 
                                 cycles/limb
+
 	mpn_add_n/sub_n            2.375
 
 	mpn_copyi/copyd            1.0
@@ -63,7 +64,7 @@ they might or might not be to the same cache bank.
 REFERENCES
 
 "Intel Architecture Optimization Manual", 1997, order number 242816.  This
-is mostly about p5, the parts about p6 aren't relevant.  Available on-line:
+is mostly about P5, the parts about P6 aren't relevant.  Available on-line:
 
         http://download.intel.com/design/PentiumII/manuals/242816.htm
 

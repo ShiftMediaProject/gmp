@@ -2,9 +2,9 @@
                       AMD K7 MPN SUBROUTINES
 
 
-This directory contains code optimized for the AMD Athalon CPU.
+This directory contains code optimized for the AMD Athlon CPU.
 
-The mmx subdirectory has routines using MMX instructions.  All Athalons have
+The mmx subdirectory has routines using MMX instructions.  All Athlons have
 MMX, the separate directory is just so that configure can omit it if the
 assembler doesn't support MMX.
 
@@ -105,7 +105,8 @@ movd mem   direct
 mull       issue every 3 cycles, latency 4 cycles low word, 6 cycles high word
 popl	   vector (use movl for more than one pop)
 pushl	   direct, will pair with a load
-shrdl %cl  vector, 3 cycles, seems to be 3 execute too
+shrdl %cl  vector, 3 cycles, seems to be 3 decode too
+xorl r,r   false read dependency recognised
 
 
 
@@ -123,7 +124,7 @@ This describes the femms and prefetch instructions.  Available on-line,
 
 "AMD Extensions to the 3DNow and MMX Instruction Sets Manual", AMD
 publication number 22466, revision B, August 1999.  This describes
-instructions added in the Athalon processor, such as pswapd and the extra
+instructions added in the Athlon processor, such as pswapd and the extra
 prefetch forms.  Available on-line,
 
 	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22466.pdf

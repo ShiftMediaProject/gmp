@@ -151,10 +151,10 @@ linkage table.
 
 PIC is necessary for ELF shared libraries because they can be mapped into
 different processes at different virtual addresses.  Text relocations in
-shared libraries are supposed to be allowed, but that presumably means a
-page with such a relocation isn't shared.  The use of the PLT for PIC adds a
-fixed cost to every function call, which is small but might be noticable
-when working with small operands.
+shared libraries are allowed, but that presumably means a page with such a
+relocation isn't shared.  The use of the PLT for PIC adds a fixed cost to
+every function call, which is small but might be noticable when working with
+small operands.
 
 Calls from one library function to another don't need to go through the PLT,
 since of course the call instruction uses a displacement, not an absolute

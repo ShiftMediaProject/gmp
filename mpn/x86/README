@@ -12,8 +12,11 @@ CODE ORGANIZATION
 	x86/pentium/mmx  Intel Pentium with MMX (P55)
 	x86/p6           Intel Pentium Pro
 	x86/p6/mmx       Intel Pentium II, III
-	x86/k6           AMD K6 (and K6-2, K6-3)
-	x86/k7           AMD Athalon
+	x86/p6/p3mmx     Intel Pentium III
+	x86/k6           \ AMD K6 (and K6-2, K6-3)
+	x86/k6/mmx       /
+	x86/k7           \ AMD Athlon
+	x86/k7/mmx       /
 
 
 The x86 directory is also the main support for P6 at the moment, and

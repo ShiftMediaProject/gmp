@@ -18,6 +18,7 @@ STATUS
 Times for the loops, with all code and data in L1 cache, are as follows.
 
                                  cycles/limb
+
 	mpn_add_n/sub_n            3.25 normal, 2.75 in-place
 
 	mpn_copyi/copyd            0.56 or 1.0  \
@@ -44,8 +45,8 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_hamdist		  11.5
 
 
-Plain K6 and pre-CXT K6-2 chips get the following slowdowns, due to the use
-of certain addressing modes.  It should be possible to improve this.
+Plain K6 and pre-CXT core K6-2 chips get the following slowdown.  This will
+hopefully be fixed or improved some time.
 
 	mpn_l/rshift               3.5
 
@@ -117,50 +118,52 @@ CODING
 Instructions in general code are shown paired if they can decode and execute
 together, meaning two short decode instructions with the second not
 depending on the first, only the first using the shifter, no more than one
-load. and no more than one store.
+load, and no more than one store.
 
-K6 does some out of order execution so this isn't essential, it just shows
-what slots might be available.  When decoding is the limiting factor things
-can be scheduled that might not execute until later.
+K6 does some out of order execution so the pairings aren't essential, they
+just show what slots might be available.  When decoding is the limiting
+factor things can be scheduled that might not execute until later.
 
 
 
 NOTES
 
-code alignment
+Code alignment
 
 - if an opcode/modrm or 0Fh/opcode/modrm crosses a cache line boundary,
-  short decode is inhibited.  See cross.pl detects this.
+  short decode is inhibited.  The script cross.pl detects this.
 
 - loops should be aligned to 32 bytes, or ensure at least 2 instructions
   before a 32 byte boundary.
 
-addressing modes
+Addressing modes
 
 - (%esi) degrades decoding from short to vector.  0(%esi) doesn't have this
   problem, and can be used as an equivalent, or easier is just to use a
   different register, like %ebx.
 
-- if more than 3 bytes are needed to determine instruction length then
+- K6 and pre-CXT core K6-2 have the following problem, but it's fixed on
+  K6-2 CXT and K6-3, these being cpuid function 1 signatures 0x588 to 0x58F.
+
+  If more than 3 bytes are needed to determine instruction length then
   decoding degrades from direct to long, or from long to vector.  This
   happens with forms like "0F opcode mod/rm" with mod/rm=00-xxx-100 since
-  with mod=00 the sib determines whether theres's a displacement.
+  with mod=00 the sib determines whether there's a displacement.
 
-  This affects all MMX and 3DNow instructions, and others with an 0F prefix.
-  The modes affected are anything with an index and no displacement, or an
-  index but no base, and this includes (%esp) which is really (,%esp,1).
-  K6-2 CXT cores and all K6-3s have this problem fixed (cpuid function 1
-  signatures 0x588 to 0x58F).
+  This affects all MMX and 3DNow instructions, and others with an 0F prefix
+  like movzbl.  The modes affected are anything with an index and no
+  displacement, or an index but no base, and this includes (%esp) which is
+  really (,%esp,1).
 
   See Optimization Manual rev D page 67 and 3DNow Porting Guide rev B pages
   13-14 and 36-37.
 
-calls
+Calls
 
 - indirect jumps and calls are not branch predicted, they measure about 6
   cycles
 
-various instructions
+Various
 
 - adcl      2 cycles of decode, maybe 2 cycles executing in the X pipe
 - bsf       12-27 cycles
@@ -174,9 +177,9 @@ various instructions
 - rcll/rcrl implicit by one bit: 2 cycles
             immediate or %cl count: 11 + 2 per bit for dword
                                     13 + 4 per bit for byte
+- setCC	    2 cycles
 - xchgl	%eax,reg  1.5 cycles, back-to-back (strange)
         reg,reg   2 cycles, back-to-back
-- setCC	    2 cycles
 
 
 
