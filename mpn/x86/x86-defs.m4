@@ -679,7 +679,7 @@ m4_assert_defined(`WANT_SHLDL_CL')
 ``$1'	`$2', `$3', `$4'')')
 
 
-dnl  Usage: ASSERT(cond, instructions)
+dnl  Usage: ASSERT([cond][,instructions])
 dnl
 dnl  If WANT_ASSERT is 1, output the given instructions and expect the given
 dnl  flags condition to then be satisfied.  For example,
@@ -695,10 +695,18 @@ dnl  When `instructions' is not empty, a pushf/popf is added to preserve the
 dnl  flags, but the instructions themselves must preserve any registers that
 dnl  matter.  FRAME is adjusted for the push and pop, so the instructions
 dnl  given can use defframe() stack variables.
+dnl
+dnl  The condition can be omitted to just output the given instructions when
+dnl  assertion checking is wanted.  In this case the pushf/popf is omitted.
+dnl  For example,
+dnl
+dnl         ASSERT(, `movl %eax, VAR_KEEPVAL')
 
 define(ASSERT,
 m4_assert_numargs_range(1,2)
 `ifelse(WANT_ASSERT,1,
+`ifelse(`$1',,
+	`$2',
 	`C ASSERT
 ifelse(`$2',,,`	pushf	ifdef(`FRAME',`FRAME_pushl()')')
 	$2
@@ -706,7 +714,7 @@ ifelse(`$2',,,`	pushf	ifdef(`FRAME',`FRAME_pushl()')')
 	ud2	C assertion failed
 L(ASSERT_ok`'ASSERT_counter):
 ifelse(`$2',,,`	popf	ifdef(`FRAME',`FRAME_popl()')')
-define(`ASSERT_counter',incr(ASSERT_counter))')')
+define(`ASSERT_counter',incr(ASSERT_counter))')')')
 
 define(ASSERT_counter,1)
 
