@@ -117,7 +117,7 @@ DISTCLEANFILES = sqr_basecase.c
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c mul_n.c mul_fft.c mul.c \
   sb_divrem_mn.c tdiv_qr.c
-TUNE_MPZ_SRCS = fib_ui.c
+TUNE_MPZ_SRCS =
 
 $(TUNE_MPN_SRCS_BASIC):
 	for i in $(TUNE_MPN_SRCS_BASIC); do \
@@ -175,7 +175,7 @@ dc:
 	./speed -s 5-40 -c mpn_dc_divrem_sb mpn_dc_divrem_n mpn_dc_tdiv_qr
 
 fib:
-	./speed -s 80-120 -c mpz_fib_ui
+	./speed -s 40-60 -c mpz_fib_ui
 fibg:
 	./speed -s 10-300 -P fibg mpz_fib_ui
 

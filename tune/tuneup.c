@@ -131,7 +131,6 @@ mp_size_t  mul_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  sqr_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  sb_preinv_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  dc_threshold[2] = { MP_SIZE_T_MAX };
-mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  powm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
@@ -918,30 +917,6 @@ all (void)
     param.step_factor = 0.03;
     param.function_fudge = 1.04;
     one (powm_threshold, 1, &param);
-  }
-  printf("\n");
-
-  {
-    static struct param_t  param;
-    param.name[0] = "FIB_THRESHOLD";
-    param.function = speed_mpz_fib_ui;
-
-    /* Bigcase odd and even sizes run at noticably different speeds, so
-       always step by 1, and don't let stop_factor truncate the search.  */
-    param.step_factor = 0.001;
-    param.stop_factor = 5.0;
-
-    /* start the search from a point after the table data */
-    switch (BITS_PER_MP_LIMB) {
-    case 32: param.min_size[0] = 93; break;
-    case 64: param.min_size[0] = 186; break;
-    default:
-      printf ("Don't know FIB_THRESHOLD starting point for BITS_PER_MP_LIMB == %d\n",
-              BITS_PER_MP_LIMB);
-      abort ();
-    }
-
-    one (fib_threshold, 1, &param);
   }
   printf("\n");
 
