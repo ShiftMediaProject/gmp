@@ -42,7 +42,7 @@ void refmpn_and_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void refmpn_andn_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
-mp_limb_t refmpn_cmp _PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
+int refmpn_cmp _PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
 
 void refmpn_com_n _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyi _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
@@ -67,6 +67,8 @@ mp_limb_t refmpn_divrem_1c _PROTO ((mp_ptr rp, mp_size_t xsize,
 void refmpn_fill _PROTO ((mp_ptr p, mp_size_t s, mp_limb_t v));
 
 mp_limb_t refmpn_gcd_1 _PROTO ((mp_srcptr xp, mp_size_t xsize, mp_limb_t y));
+mp_limb_t refmpn_gcd _PROTO ((mp_ptr gp, mp_ptr xp, mp_size_t xsize,
+                              mp_ptr yp, mp_size_t ysize));
 
 unsigned long refmpn_hamdist _PROTO ((mp_srcptr s1p, mp_srcptr s2p,
                                       mp_size_t size));
@@ -80,6 +82,8 @@ mp_limb_t refmpn_lshift _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
 
 mp_ptr refmpn_malloc_limbs _PROTO ((mp_size_t size));
+mp_limb_t refmpn_msbone _PROTO ((mp_limb_t x));
+mp_limb_t refmpn_msbone_mask _PROTO ((mp_limb_t x));
 mp_ptr refmpn_memdup_limbs _PROTO ((mp_srcptr ptr, mp_size_t size));
 
 mp_limb_t refmpn_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
