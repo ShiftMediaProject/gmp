@@ -2838,6 +2838,39 @@ esac
 ])
 
 
+dnl  GMP_C_RIGHT_SHIFT
+dnl  -----------------
+dnl  Test whether a signed right shift is arithmetic, ie. high bit positions
+dnl  are filled with copies of the sign bit.
+dnl
+dnl  C99 says a signed right shift of a negative is "implementation
+dnl  defined".  We take that to mean it might be arithmetic or it might not,
+dnl  but that it's consistently one way or another way and not merely
+dnl  random.
+dnl
+dnl  Right shifts are usually arithmetic in C.  Cray vector systems are the
+dnl  only place we know of where this isn't so.  Those systems don't have an
+dnl  arithmetic right shift instruction so the compiler gives a logical
+dnl  shift (ie. high bits filled with zeros) instead.
+dnl
+dnl  The test here generates a negative array size and hence a compiler
+dnl  error if a right shift doesn't replicate the sign bit.
+
+AC_DEFUN(GMP_C_RIGHT_SHIFT,
+[AC_CACHE_CHECK([whether signed right shifts are arithmetic],
+                gmp_cv_c_right_shift,
+[AC_TRY_COMPILE(
+[int foo [(-1L >> 1) < 0L ? 1 : -1];],,
+gmp_cv_c_right_shift=yes, gmp_cv_c_right_shift=no)
+])
+if test $gmp_cv_c_right_shift = yes; then
+  AC_DEFINE(HAVE_RIGHT_SHIFT_ARITHMETIC, 1,
+            [Define to 1 if signed right shifts are "arithmetic",
+             ie. shift in copies of the sign bit.])
+fi
+])
+
+
 dnl  GMP_C_STDARG
 dnl  ------------
 dnl  Test whether to use <stdarg.h> or <varargs.h>.
