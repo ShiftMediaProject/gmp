@@ -1467,7 +1467,7 @@ extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
     ASSERT (__inv * __n == 1);                                  \
     (inv) = __inv;                                              \
   } while (0)
@@ -1478,7 +1478,7 @@ extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
     __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
     ASSERT (__inv * __n == 1);                                  \
     (inv) = __inv;                                              \
@@ -1490,7 +1490,7 @@ extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
     __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
     __inv = 2 * __inv - __inv * __inv * __n;    /* 32 */        \
     ASSERT (__inv * __n == 1);                                  \
@@ -1503,7 +1503,7 @@ extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
     __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
     __inv = 2 * __inv - __inv * __inv * __n;    /* 32 */        \
     __inv = 2 * __inv - __inv * __inv * __n;    /* 64 */        \
