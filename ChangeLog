@@ -1,3 +1,8 @@
+2000-12-07  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/gcdext.c: Handle double carry when computing s1.
+	Merge two code blocks for computing s0 and s1.
+
 2000-12-07  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (hppa*-*-*): Remove -Aa -D_HPUX_SOURCE from
