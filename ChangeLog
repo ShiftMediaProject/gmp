@@ -12,20 +12,20 @@
 	* mpn/x86/p6/p3mmx/popham.asm: New file (include_mpn of K7 version).
 	* configure.in (pentium3-*-*): Add p3mmx to $path.
 
-	* gmp.texi (Integer Arithmetic): Add mpz_mod2,4,8; clarify
-	mpz_jacobi op2; add mpz_kronecker_*;
+	* gmp.texi (Integer Arithmetic): Add mpz_mod2,4,8;
+	clarify	mpz_jacobi op2; add mpz_kronecker_*;
 	(Miscellaneous Integer Functions): Add mpz_odd_p and mpz_even_p.
 	(Low-level Functions): Put mpn_divmod_1 with mpn_divrem_1 and note
 	it's now a macro.
 	(References): Add Henri Cohen.
 
 	* gmp.h (mpn_addmul_1c, mpn_divrem_1c, mpn_mod_1c, mpn_mul_1c,
-	mpn_submul_1c): Add missing prototypes.
+	mpn_submul_1c): Add prototypes.
 	(mpz_mod2, mpz_mod4, mpz_mod8, mpz_odd_p, mpz_even_p): New macros.
 	
-	* mpn/asm-defs.m4 (m4warp_prepend): New macro.
+	* mpn/asm-defs.m4 (m4wrap_prepend): New macro.
 	(m4_error): Use it.
-	(m4_not_for_expansion): Corrections to OPERATION symbols protected.
+	(m4_not_for_expansion): Corrections to OPERATION symbols.
 	More comments about variations between m4 versions.
 	* mpn/x86/x86-defs.m4 (PROLOGUE): Use m4wrap_prepend (fixes error
 	exit under BSD m4, previously m4_error printed the message but the
@@ -77,7 +77,7 @@
 	(GMP_PROG_M4): Put "good" message through to config.log.
 
 	* mpz/powm.c: Use a POWM_THRESHOLD for where redc stops.
-	* tune/*: Add mpz_powm measuring and tune POWM_THRESHOLD.
+	* tune/*: Add mpz_powm measuring, and tune POWM_THRESHOLD.
 	* gmp-impl.h [TUNE_PROGRAM_BUILD] (POWM_THRESHOLD): Conditional
 	redefinition for use when tuning.
 
