@@ -45,12 +45,6 @@ MA 02111-1307, USA. */
 #define __gmp_const
 #endif
 
-#if defined (__GNUC__)
-#define __gmp_inline __inline__
-#else
-#define __gmp_inline
-#endif
-
 #ifndef _EXTERN_INLINE
 #ifdef __GNUC__
 #define _EXTERN_INLINE extern __inline__
