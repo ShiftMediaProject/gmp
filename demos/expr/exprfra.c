@@ -45,52 +45,16 @@ e_mpfr_set (mpfr_ptr dst, mpfr_srcptr src)
   mpfr_set (dst, src, ROUND);
 }
 
-/* Test whether fits and is an integer.  FIXME: Use mpfr_integer_p and
-   mpfr_fits_ulong_p (or just mpfr_cmp_ui), if/when these exist. */
 static int
 e_mpfr_ulong_p (mpfr_srcptr f)
 {
-  mp_size_t  size = f->_mpfr_size;
-  mp_srcptr  ptr = f->_mpfr_d;
-  mp_exp_t   exp = f->_mpfr_exp;
-  mp_prec_t  high_index = (f->_mpfr_prec-1) / mp_bits_per_limb;
-  mp_prec_t  i;
-  mp_limb_t  high = ptr[high_index];
-
-  if ((size & 0x60000000) != 0)  /* nan or inf don't fit */
-    return 0;
-
-  if (high == 0)  /* zero fits */
-    return 1;
-
-  for (i = 0; i < high_index; i++)  /* low limbs must be zero */
-    if (ptr[i] != 0)
-      return 0;
-
-  if (exp <= 0)  /* fractions don't fit */
-    return 0;
-
-  if (exp > mp_bits_per_limb)  /* bigger than a limb doesn't fit */
-    return 0;
-
-  /* any fraction bits in the high limb must be zero */
-  if (exp < mp_bits_per_limb && (high << exp) != 0)
-    return 0;
-
-  /* value must fit a ulong */
-  return (high >> (mp_bits_per_limb - exp)) <= ULONG_MAX;
+  return mpfr_integer_p (f) && mpfr_fits_ulong_p (f, GMP_RNDZ);
 }
 
-/* FIXME: Use mpfr_get_ui if/when it exists. */
 static unsigned long
 e_mpfr_get_ui_fits (mpfr_srcptr f)
 {
-  mp_srcptr  ptr = f->_mpfr_d;
-  mp_exp_t   exp = f->_mpfr_exp;
-  mp_prec_t  high_index = (f->_mpfr_prec-1) / mp_bits_per_limb;
-  mp_limb_t  high = ptr[high_index];
-
-  return high >> (mp_bits_per_limb - exp);
+  return mpfr_get_ui (f, GMP_RNDZ);
 }
 
 static size_t
