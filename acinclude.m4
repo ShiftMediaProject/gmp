@@ -2955,8 +2955,10 @@ dnl
 dnl  Right shifts are usually arithmetic in C.  Cray vector systems are the
 dnl  only place we know of where this isn't so.  Those systems don't have an
 dnl  arithmetic right shift instruction so the compiler gives a logical
-dnl  shift (ie. high bits filled with zeros) instead.  Cray alpha systems
-dnl  have a cc -hnosignedshifts option to do the same there too.
+dnl  shift (ie. high bits filled with zeros) instead.  Or at least this
+dnl  happens for operations on "long"s, but not sure about "int", they might
+dnl  be arithmetic.  Cray alpha systems have a cc -hnosignedshifts option to
+dnl  do the same there too.
 dnl
 dnl  The test here generates a negative array size and hence a compiler
 dnl  error if a right shift doesn't replicate the sign bit.
@@ -2970,7 +2972,7 @@ gmp_cv_c_right_shift=yes, gmp_cv_c_right_shift=no)
 ])
 if test $gmp_cv_c_right_shift = yes; then
   AC_DEFINE(HAVE_RIGHT_SHIFT_ARITHMETIC, 1,
-            [Define to 1 if signed right shifts are "arithmetic",
+            [Define to 1 if signed right shifts (of longs) are "arithmetic",
              ie. shift in copies of the sign bit.])
 fi
 ])
