@@ -1370,6 +1370,44 @@ mpf_size (mpf_srcptr f)
 
 /**************** mpn inlines ****************/
 
+/* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
+   negative.  size==0 is allowed.  On random data usually only one limb will
+   need to be examined to get a result, so it's worth having it inline.  */
+#define __GMPN_CMP(result, xp, yp, size)        \
+  do {                                          \
+    mp_size_t  __i;                             \
+    mp_limb_t  __x, __y;                        \
+                                                \
+    /* ASSERT ((size) >= 0); */                 \
+                                                \
+    (result) = 0;                               \
+    __i = (size);                               \
+    while (--__i >= 0)                          \
+      {                                         \
+        __x = (xp)[__i];                        \
+        __y = (yp)[__i];                        \
+        if (__x != __y)                         \
+          {                                     \
+            (result) = (__x > __y ? 1 : -1);    \
+            break;                              \
+          }                                     \
+      }                                         \
+  } while (0)
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_cmp
+#if ! __GMP_FORCE_mpn_cmp
+__GMP_EXTERN_INLINE
+#endif
+int
+mpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
+{
+  int result;
+  __GMPN_CMP (result, xp, yp, size);
+  return result;
+}
+#endif
+
+
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 _EXTERN_INLINE mp_limb_t
 mpn_add_1 (register mp_ptr res_ptr,
