@@ -18,10 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-06-17  Kevin Ryde  <kevin@swox.se>
+
+	* doc/gmp.texi: Use @. when sentence ends with a capital, for good
+	spacing in tex.
+	(Language Bindings): Add gmp-d, reported by Ben Hinkle.  Update SWI
+	Prolog URL, reported by Jan Wielemaker.
+
 2004-06-09  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Handle --enable-fat.  Use that to enable x86 fat
 	builds, remove magic meaning of i386-*-*.
+
+2004-06-03  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (memset): Use a local char* pointer, in case parameter is
+	something else (eg. tune/common.c).  Reported by Emmanuel Thomé.
 
 2004-06-01  Kevin Ryde  <kevin@swox.se>
 
