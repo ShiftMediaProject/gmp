@@ -18,6 +18,27 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-03-26  Kevin Ryde  <kevin@swox.se>
+
+	* demos/expr/exprfr.c (cbrt, cmpabs, exp2, gamma, nextabove,
+	nextbelow, nexttoward): New functions.
+	* demos/expr/t-expr.c: Exercise these.
+
+	* mpfr/*: Update to mpfr cvs 2003-03-26.
+
+	* gmp-impl.h (MPZ_REALLOC): Use UNLIKELY, to expect no realloc.
+
+	* tune/time.c (cycles_works_p): Scope variables down to relevant part
+	to avoid warnings about unused.
+
+	* configfsf.guess, configfsf.sub: Update to 2003-02-22.
+	* config.guess: Fake a $RANDOM variable when running configfsf.guess,
+	to workaround a problem on m68k NetBSD 1.4.1.
+
+	* mpz/fac_ui.c: Remove unused variable "z1".
+
+	* tune/freq.c (freq_irix_hinv): Allow "Processor 0" line from IRIX 6.5.
+
 2003-03-17  Torbjorn Granlund  <tege@swox.com>
 
 	* Makefile.am (libgmp_la_SOURCES): Add mp_dv_tab.c.
