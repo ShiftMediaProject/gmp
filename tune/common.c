@@ -1012,13 +1012,14 @@ speed_mpn_hgcd (struct speed_params *s)
   TMP_FREE (marker);
   return t;
 }
+#if 0
 double
 speed_mpn_hgcd_lehmer (struct speed_params *s)
 {
   mp_ptr wp;
   mp_size_t hgcd_init_scratch = mpn_hgcd_init_itch (s->size);
   mp_size_t qstack_scratch = qstack_itch (s->size);
-  mp_size_t hgcd_scratch = mpn_hgcd_lehmer_itch (s->size);
+  mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
   mp_ptr ap;
   mp_ptr bp;
   mp_ptr tmp1, tmp2;
@@ -1071,6 +1072,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   TMP_FREE (marker);
   return t;
 }
+#endif
 double
 speed_mpn_gcd (struct speed_params *s)
 {
@@ -1101,6 +1103,13 @@ speed_mpn_gcdext (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext);
 }
+#if 0
+double
+speed_mpn_gcdext_lehmer (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCDEXT (__gmpn_gcdext_lehmer);
+}
+#endif
 double
 speed_mpn_gcdext_single (struct speed_params *s)
 {

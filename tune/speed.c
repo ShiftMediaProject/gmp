@@ -248,7 +248,9 @@ const struct routine_t {
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
   { "mpn_hgcd",          speed_mpn_hgcd             },
+#if 0
   { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
+#endif
   { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
@@ -265,7 +267,9 @@ const struct routine_t {
   { "mpn_gcdext_double",     speed_mpn_gcdext_double     },
   { "mpn_gcdext_one_single", speed_mpn_gcdext_one_single },
   { "mpn_gcdext_one_double", speed_mpn_gcdext_one_double },
-
+#if 0
+  { "mpn_gcdext_lehmer",     speed_mpn_gcdext_lehmer     },
+#endif
   { "mpz_jacobi",        speed_mpz_jacobi           },
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
   { "mpn_jacobi_base_1", speed_mpn_jacobi_base_1    },
