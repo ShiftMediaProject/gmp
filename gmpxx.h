@@ -413,25 +413,9 @@ struct __gmp_binary_multiplies
   static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
   { mpz_mul_ui(z, w, l); }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
-  {
-    if (l >= 0)
-      mpz_mul_ui(z, w, l);
-    else
-      {
-	mpz_mul_ui(z, w, -l);
-	mpz_neg(z, z);
-      }
-  }
+  { mpz_mul_si (z, w, l); }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
-  {
-    if (l >= 0)
-      mpz_mul_ui(z, w, l);
-    else
-      {
-	mpz_mul_ui(z, w, -l);
-	mpz_neg(z, z);
-      }
-  }
+  { mpz_mul_si (z, w, l); }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
   {
     mpz_t temp;
