@@ -80,7 +80,7 @@ mpf_out_str (stream, base, n_digits, op)
   /* Write exponent */
   {
     int fpret;
-    fpret = fprintf (stream, "@%ld", exp);
+    fpret = fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), exp);
     written += fpret;
   }
 
