@@ -527,7 +527,7 @@ case "$target" in
   hppa*-*-*) enable_shared=no ;;
   *-*-aix*) enable_shared=no ;;
 esac
-GMP_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 
 dnl Checks for libraries.
 dnl ---------------------
