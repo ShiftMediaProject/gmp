@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
 dnl  mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -22,8 +22,36 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C         cycles/limb
-C Itanium 2:  1
+C           cycles/limb
+C Itanium 2:    1
+
+C   n	      Itanium 2
+C     1	       11.05
+C     2		5.52
+C     3		4.35
+C     4		3.76
+C     5		3.41
+C     6		3.18
+C     7		2.72
+C     8		2.51
+C     9		2.34
+C    10		2.21
+C    11		2.10
+C    12		2.00
+C    13		1.93
+C    14		1.86
+C    15		1.80
+C    50		1.24
+C   100		1.12
+C   200		1.06
+C   400		1.03#
+C  1000		1.04
+C  2000		2.23
+C  4000		2.13
+C  8000		2.13
+C 16000		4.13
+C 32000		5.20
+C 64000	       11.74
 
 ifdef(`OPERATION_and_n',
 `	define(`func',`mpn_and_n')
@@ -78,41 +106,45 @@ ifdef(`HAVE_ABI_32',
 	zxt4	n = n				C I
 	;;
 ')
-.mmi
-C	ld8		r24 = [up], 8		C M
-C	ld8		r25 = [vp], 8		C M
-	nop		0			C M I
-.mmi
+{.mmi
+	ld8		r30 = [up], 8		C M
+	ld8		r31 = [vp], 8		C M
+	mov.i		r2 = ar.lc		C I0
+}
+{.mmi
 	and		r14 = 3, n		C M I
 	adds		n = -1, n		C M I
-	mov		r2 = ar.lc		C I0
+	nop		0			C M I
 	;;
-.mmi
+}
+{.mmi
 	cmp.eq		p6, p0 = 0, r14		C M I
 	cmp.eq		p7, p9 = 1, r14		C M I
 	shr.u		r15 = n, 2		C I
-.mmi
+}
+{.mmi
 	cmp.eq		p8, p0 = 3, r14		C M I
 	nop		0			C M I
 	nop		0			C M I
 	;;
-.mmi
+}
+{.mmi
 	nop		0			C M I
 	nop		0			C M I
 	mov.i		ar.lc = r15		C I0
-.bbb
+}
+{.bbb
    (p6)	br.dptk		.Lb00			C B
    (p7)	br.dptk		.Lb01			C B
    (p8)	br.dptk		.Lb11			C B
-
-.Lb10:	ld8		r18 = [up], 8
-	ld8		r22 = [vp], 8
 	;;
-	ld8		r19 = [up], 8
+}
+
+.Lb10:	ld8		r19 = [up], 8
 	ld8		r23 = [vp], 8
 	br.cloop.dptk	.grt2
 
-	logop(		r14, r18, r22)
+	logop(		r14, r30, r31)
 	;;
 	logop(		r15, r19, r23)
 	notormov(	r8, r14)
@@ -124,7 +156,7 @@ C	ld8		r25 = [vp], 8		C M
 	ld8		r17 = [up], 8
 	ld8		r21 = [vp], 8
 	;;
-	logop(		r14, r18, r22)
+	logop(		r14, r30, r31)
 	ld8		r18 = [up], 8
 	ld8		r22 = [vp], 8
 	;;
@@ -135,17 +167,14 @@ C	ld8		r25 = [vp], 8		C M
 	br.cloop.dptk	.Loop
 	br		.Lcj6
 
-.Lb11:	ld8		r17 = [up], 8
-	ld8		r21 = [vp], 8
-	;;
-	ld8		r18 = [up], 8
+.Lb11:	ld8		r18 = [up], 8
 	ld8		r22 = [vp], 8
 	;;
 	ld8		r19 = [up], 8
 	ld8		r23 = [vp], 8
 	br.cloop.dptk	.grt3
 
-	logop(		r15, r17, r21)
+	logop(		r15, r30, r31)
 	;;
 	logop(		r14, r18, r22)
 	notormov(	r9, r15)
@@ -154,7 +183,7 @@ C	ld8		r25 = [vp], 8		C M
 .grt3:	ld8		r16 = [up], 8
 	ld8		r20 = [vp], 8
 	;;
-	logop(		r15, r17, r21)
+	logop(		r15, r30, r31)
 	ld8		r17 = [up], 8
 	ld8		r21 = [vp], 8
 	;;
@@ -164,10 +193,7 @@ C	ld8		r25 = [vp], 8		C M
 	ld8		r22 = [vp], 8
 	br		.LL11
 
-.Lb00:	ld8		r16 = [up], 8
-	ld8		r20 = [vp], 8
-	;;
-	ld8		r17 = [up], 8
+.Lb00:	ld8		r17 = [up], 8
 	ld8		r21 = [vp], 8
 	;;
 	ld8		r18 = [up], 8
@@ -177,13 +203,13 @@ C	ld8		r25 = [vp], 8		C M
 	ld8		r23 = [vp], 8
 	br.cloop.dptk	.grt4
 
-	logop(		r14, r16, r20)
+	logop(		r14, r30, r31)
 	;;
 	logop(		r15, r17, r21)
 	notormov(	r8, r14)
 	br		.Lcj4
 
-.grt4:	logop(		r14, r16, r20)
+.grt4:	logop(		r14, r30, r31)
 	ld8		r16 = [up], 8
 	ld8		r20 = [vp], 8
 	;;
@@ -193,12 +219,10 @@ C	ld8		r25 = [vp], 8		C M
 	ld8		r21 = [vp], 8
 	br		.LL00
 
-.Lb01:	ld8		r19 = [up], 8
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.grt1
+.Lb01:	br.cloop.dptk	.grt1
 	;;
 
-	logop(		r15, r19, r23)
+	logop(		r15, r30, r31)
 	;;
 	notormov(	r9, r15)
 	br		.Lcj1
@@ -212,7 +236,7 @@ C	ld8		r25 = [vp], 8		C M
 	ld8		r18 = [up], 8
 	ld8		r22 = [vp], 8
 	;;
-	logop(		r15, r19, r23)
+	logop(		r15, r30, r31)
 	ld8		r19 = [up], 8
 	ld8		r23 = [vp], 8
 	br.cloop.dptk	.grt5
@@ -279,7 +303,7 @@ C *** MAIN LOOP END ***
 	notormov(	r9, r15)
 	;;
 .Lcj1:	st8		[rp] = r9, 8
-	mov	ar.lc = r2
+	mov.i		ar.lc = r2
 	br.ret.sptk.many b0
 EPILOGUE()
 ASM_END()
