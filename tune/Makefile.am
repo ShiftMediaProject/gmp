@@ -153,13 +153,13 @@ udiv:
 	./speed -s 1 -c udiv_qrnnd udiv_qrnnd_preinv udiv_qrnnd_preinv2norm invert_limb udiv_qrnnd_c
 
 divn:
-	./speed -s 1-30 -c mpn_divrem_1_div.-1 mpn_divrem_1_mul.-1
+	./speed -s 1-30 -c mpn_divrem_1_div.-1 mpn_divrem_1_inv.-1
 divun:
-	./speed -s 1-30 -c mpn_divrem_1_div.12345 mpn_divrem_1_mul.12345
+	./speed -s 1-30 -c mpn_divrem_1_div.12345 mpn_divrem_1_inv.12345
 modn:
-	./speed -s 1-30 -c mpn_mod_1_div.-1 mpn_mod_1_mul.-1
+	./speed -s 1-30 -c mpn_mod_1_div.-1 mpn_mod_1_inv.-1
 modun:
-	./speed -s 1-30 -c mpn_mod_1_div.12345 mpn_mod_1_mul.12345
+	./speed -s 1-30 -c mpn_mod_1_div.12345 mpn_mod_1_inv.12345
 
 
 graph:
