@@ -163,14 +163,21 @@ AC_ARG_ENABLE(profiling,
 AC_HELP_STRING([--enable-profiling],
                [build with profiler support [[default=no]]]),
 [case $enableval in
-no|prof|gprof) ;;
-*) AC_MSG_ERROR([bad value $enableval for --enable-profiling, need no/prof/gprof]) ;;
+no|prof|gprof|instrument) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-profiling, need no/prof/gprof/instrument]) ;;
 esac],
 [enable_profiling=no])
 
+case $enable_profiling in
+  instrument)
+    AC_DEFINE(WANT_PROFILING_INSTRUMENT, 1,
+              [Define to 1 if --enable-profiling=instrument])
+    ;;
+esac
+
 GMP_DEFINE_RAW(["define(<WANT_PROFILING>,<\`$enable_profiling'>)"])
 
-# -fomit-frame-pointer is incompatible with -pg, on x86s at least
+# -fomit-frame-pointer is incompatible with -pg on some chips
 if test "$enable_profiling" = gprof; then
   fomit_frame_pointer=
 else
@@ -1190,6 +1197,7 @@ for abi in $abilist; do
       case "$enable_profiling" in
       prof)  cflags="$cflags -p" ;;
       gprof) cflags="$cflags -pg" ;;
+      instrument) cflags="$cflags -finstrument-functions" ;;
       esac
 
       GMP_PROG_CC_WORKS($cc $cflags $cppflags,,continue)
@@ -2008,9 +2016,9 @@ if test "$gmp_asm_syntax_testing" != no; then
     X86_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
       GMP_ASM_X86_SHLDL_CL
-      if test "$enable_profiling" != no; then
-        GMP_ASM_X86_MCOUNT
-      fi
+      case $enable_profiling in
+        prof | gprof)  GMP_ASM_X86_MCOUNT ;;
+      esac
       ;;
   esac
 fi
