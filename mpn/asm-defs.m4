@@ -1495,6 +1495,24 @@ m4_assert_numargs(1)
 )
 
 
+dnl  Usage: NAILS_SUPPORT(spec spec ...)
+dnl
+dnl  A dummy macro which is grepped for by ./configure to know what nails
+dnl  are supported in an asm file.
+dnl
+dnl  Ranges can be given, or just individual values.  Multiple values or
+dnl  ranges can be given, separated by spaces.  Multiple NAILS_SUPPORT
+dnl  declarations work too.  Some examples,
+dnl
+dnl         NAILS_SUPPORT(1-20)
+dnl         NAILS_SUPPORT(1 6 9-12)
+dnl         NAILS_SUPPORT(1-10 16-20)
+
+define(NAILS_SUPPORT,
+m4_assert_numargs(1)
+)
+
+
 dnl  Usage: GMP_NUMB_MASK
 dnl
 dnl  A bit masks for the number part of a limb.  Eg.  with 6 bit nails in a
