@@ -1,6 +1,6 @@
 /* Exercise mpz_*_kronecker_*() and mpz_jacobi() functions.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -158,7 +158,7 @@ try_si_zi (long a, mpz_srcptr b, int answer)
   got = mpz_si_kronecker (a, b);
   if (got != answer)
     {
-      printf ("mpz_si_kronecker (%d, ", a);
+      printf ("mpz_si_kronecker (%ld, ", a);
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
       abort ();

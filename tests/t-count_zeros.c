@@ -1,6 +1,6 @@
 /* Test count_leading_zeros and count_trailing_zeros.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,10 +33,10 @@ check_clz (int want, mp_limb_t n)
   count_leading_zeros (got, n);
   if (got != want)
     {
-      printf ("count_leading_zeros wrong\n");
-      printf    ("  n    %lX\n", n);
-      printf    ("  want %d\n", want);
-      printf    ("  got  %d\n", got);
+      printf        ("count_leading_zeros wrong\n");
+      mp_limb_trace ("  n    ", n);
+      printf        ("  want %d\n", want);
+      printf        ("  got  %d\n", got);
       abort ();
     }
 }
