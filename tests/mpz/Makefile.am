@@ -30,7 +30,7 @@ check_PROGRAMS = t-cmp t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   t-powm t-powm_ui t-pow t-div_2exp reuse                            \
   t-root t-jac t-bin t-misc t-get_si t-fac_ui t-fib_ui t-scan t-fits \
   t-divis t-divis_2exp t-cong t-cong_2exp t-sizeinbase t-set_str     \
-  t-aorsmul t-cmp_d
+  t-aorsmul t-cmp_d t-popcount
 
 TESTS = $(check_PROGRAMS)
 
