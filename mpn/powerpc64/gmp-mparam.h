@@ -35,8 +35,8 @@ MA 02111-1307, USA. */
 #define SQR_KARATSUBA_THRESHOLD          14
 #define SQR_TOOM3_THRESHOLD              81
 
-#define DIV_SB_PREINV_THRESHOLD               0
-#define DIV_DC_THRESHOLD                     28
+#define DIV_SB_PREINV_THRESHOLD           0
+#define DIV_DC_THRESHOLD                 28
 #define POWM_THRESHOLD                   40
 
 #define GCD_ACCEL_THRESHOLD               3
@@ -53,7 +53,7 @@ MA 02111-1307, USA. */
 #define DIVEXACT_1_THRESHOLD              0  /* always */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always */
 
-#define GET_STR_DC_THRESHOLD       21
+#define GET_STR_DC_THRESHOLD             21
 #define GET_STR_PRECOMPUTE_THRESHOLD     25
 #define SET_STR_THRESHOLD              1815
 
