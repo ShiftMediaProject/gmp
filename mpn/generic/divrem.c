@@ -34,10 +34,12 @@ mpn_divrem (mp_ptr qp, mp_size_t qxn,
   ASSERT (qxn >= 0);
   ASSERT (nn >= dn);
   ASSERT (dn >= 1);
-  ASSERT (dp[dn-1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (np, nn, dp, dn));
   ASSERT (! MPN_OVERLAP_P (qp, nn-dn+qxn, np, nn) || qp==np+dn+qxn);
   ASSERT (! MPN_OVERLAP_P (qp, nn-dn+qxn, dp, dn));
+  ASSERT_MPN (np, nn);
+  ASSERT_MPN (dp, dn);
 
   if (dn == 1)
     {
