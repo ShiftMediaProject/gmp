@@ -26,7 +26,7 @@ ASM_START()
 EXTERN(__clz_tab)
 PROLOGUE_GP(mpn_count_leading_zeros)
 	cmpbge	r31,  r16, r1
-	lda	r3,   __clz_tab
+	LEA(r3,__clz_tab)
 	sra	r1,   1,   r1
 	xor	r1,   127, r1
 	srl	r16,  1,   r16

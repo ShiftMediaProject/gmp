@@ -44,10 +44,10 @@ $73:
 	stq	r1,0(r30)
 	ldt	f11,0(r30)
 	cvtqt	f11,f1
-	lda	r1,$C36
+	LEA(r1,$C36)
 	ldt	f10,0(r1)
 	divt	f10,f1,f10
-	lda	r2,$invtab-4096
+	LEA(r2,$invtab-4096)
 	srl	r16,52,r1
 	addq	r1,r1,r1
 	addq	r1,r2,r1
