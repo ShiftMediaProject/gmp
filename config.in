@@ -64,11 +64,14 @@
 #undef HAVE_NATIVE_mpn_xor_n               
 #undef HAVE_NATIVE_mpn_xnor_n              
 
+/* Define if cpp supports the ANSI # stringizing operator. */
+#undef HAVE_STRINGIZE
+
 /* Name of package */
 #undef PACKAGE
 
-/* Version number of package */
-#undef VERSION
-
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
