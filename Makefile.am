@@ -114,9 +114,9 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/div$U.lo mpf/div_ui$U.lo						    \
   mpf/cmp$U.lo mpf/cmp_d$U.lo mpf/cmp_ui$U.lo mpf/cmp_si$U.lo		    \
   mpf/mul_2exp$U.lo mpf/div_2exp$U.lo mpf/abs$U.lo mpf/neg$U.lo		    \
-  mpf/set_q$U.lo mpf/get_d$U.lo mpf/set_dfl_prec$U.lo mpf/set_prc$U.lo	    \
-  mpf/set_prc_raw$U.lo mpf/get_dfl_prec$U.lo mpf/get_prc$U.lo               \
-  mpf/ui_div$U.lo mpf/sqrt_ui$U.lo                                          \
+  mpf/set_q$U.lo mpf/get_d$U.lo mpf/get_d_2exp$U.lo mpf/set_dfl_prec$U.lo   \
+  mpf/set_prc$U.lo mpf/set_prc_raw$U.lo mpf/get_dfl_prec$U.lo               \
+  mpf/get_prc$U.lo mpf/ui_div$U.lo mpf/sqrt_ui$U.lo                         \
   mpf/ceilfloor$U.lo mpf/trunc$U.lo mpf/pow_ui$U.lo			    \
   mpf/urandomb$U.lo mpf/swap$U.lo					    \
   mpf/fits_sint$U.lo mpf/fits_slong$U.lo mpf/fits_sshort$U.lo		    \
@@ -127,9 +127,9 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
 MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/aorsmul$U.lo mpz/aorsmul_i$U.lo mpz/and$U.lo mpz/array_init$U.lo	\
   mpz/bin_ui$U.lo mpz/bin_uiui$U.lo					\
-  mpz/cdiv_q$U.lo  mpz/cdiv_q_ui$U.lo					\
+  mpz/cdiv_q$U.lo mpz/cdiv_q_ui$U.lo					\
   mpz/cdiv_qr$U.lo mpz/cdiv_qr_ui$U.lo					\
-  mpz/cdiv_r$U.lo  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo			\
+  mpz/cdiv_r$U.lo mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo			\
   mpz/cfdiv_q_2exp$U.lo mpz/cfdiv_r_2exp$U.lo				\
   mpz/clear$U.lo mpz/clrbit$U.lo					\
   mpz/cmp$U.lo mpz/cmp_d$U.lo mpz/cmp_si$U.lo mpz/cmp_ui$U.lo		\
@@ -144,10 +144,10 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/fdiv_ui$U.lo mpz/fib_ui$U.lo mpz/fib2_ui$U.lo mpz/fits_sint$U.lo	\
   mpz/fits_slong$U.lo mpz/fits_sshort$U.lo mpz/fits_uint$U.lo		\
   mpz/fits_ulong$U.lo mpz/fits_ushort$U.lo mpz/gcd$U.lo			\
-  mpz/gcd_ui$U.lo mpz/gcdext$U.lo mpz/get_d$U.lo mpz/get_si$U.lo	\
-  mpz/get_str$U.lo mpz/get_ui$U.lo mpz/getlimbn$U.lo mpz/hamdist$U.lo	\
-  mpz/init$U.lo mpz/init2$U.lo mpz/inp_raw$U.lo mpz/inp_str$U.lo	\
-  mpz/invert$U.lo							\
+  mpz/gcd_ui$U.lo mpz/gcdext$U.lo mpz/get_d$U.lo mpz/get_d_2exp$U.lo	\
+  mpz/get_si$U.lo mpz/get_str$U.lo mpz/get_ui$U.lo mpz/getlimbn$U.lo	\
+  mpz/hamdist$U.lo mpz/init$U.lo mpz/init2$U.lo mpz/inp_raw$U.lo	\
+  mpz/inp_str$U.lo mpz/invert$U.lo					\
   mpz/ior$U.lo mpz/iset$U.lo mpz/iset_d$U.lo mpz/iset_si$U.lo		\
   mpz/iset_str$U.lo mpz/iset_ui$U.lo mpz/jacobi$U.lo mpz/kronsz$U.lo	\
   mpz/kronuz$U.lo mpz/kronzs$U.lo mpz/kronzu$U.lo			\
