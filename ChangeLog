@@ -1,6 +1,7 @@
 2000-04-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/pprime_p.c: Pass 0L for mpz_scan1.  mpz_mmod => mpz_mod.
+	(millerrabin): Use new random interface.
 
 	* mpz/nextprime.c: New file.
 	* gmp.h: Declare mpz_nextprime.
