@@ -19,6 +19,16 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-26  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/tests/tdiv.c, mpfr/tests/tui_div.c: Don't depend on nan and inf
+	handling in "double", for the benefit of alpha.
+
+	* configure (hppa2.0w): Set path to "pa64w pa64".
+
+	* acinclude.m4, configure.in (GMP_C_INLINE): New macro.
+	* acinclude.m4 (GMP_H_EXTERN_INLINE): Use it, and fix "yes" handling.
+
 2002-03-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/pa64w/add_n.s: Remove.
@@ -46,6 +56,31 @@ MA 02111-1307, USA.
 	* mpn/pa64/sub_n.s: Remove.
 	* mpn/pa64/lshift.s: Remove.
 	* mpn/pa64/rshift.s: Remove.
+
+2002-03-24  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (BSWAP_LIMB_FETCH, BSWAP_LIMB_STORE): New macros.
+	* mpz/inp_raw.c, mpz/out_raw.c: Use them.
+	* acconfig.h (HAVE_HOST_CPU): Add some powerpc types.
+
+	* mpn/powerpc32/750/com_n.asm: New file.
+
+	* mpfr/tests/tout_str.c: Disable random tests, since they fail on
+	alphaev56-unknown-freebsd4.1 and do nothing by default.
+
+	* mpfr/tests/tsqrt.c: Don't depend on nan, inf or -0 in "double", for
+	the benefit of alpha.
+	* mpfr/sqrt.c: Clear nan flag on -0.
+
+	* demos/factorize.c: Use mpn_random() instead of random(), to avoid
+	portability problems.
+
+	* demos/isprime.c (print_usage_and_exit): Declare as "void" to avoid
+	warnings.
+
+	* demos/pexpr.c (setup_error_handler): Corrections to sigstack code.
+
+	* demos/calc/calc.y: Add some `;'s to make bison 1.34 happy.
 
 2002-03-23  Torbjorn Granlund  <tege@swox.com>
 
