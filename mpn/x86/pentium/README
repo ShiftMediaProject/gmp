@@ -1,5 +1,4 @@
-This directory contains mpn functions optimized for Intel Pentium
-processors.
+This directory contains mpn functions optimized for Intel Pentium processors.
 
 RELEVANT OPTIMIZATION ISSUES
 
@@ -15,9 +14,9 @@ they might or might not be to the same cache bank.
 
 STATUS
 
-1. mpn_lshift and mpn_rshift run at about 6 cycles/limb, but the Pentium
+1. mpn_lshift and mpn_rshift run at about 6 cycles/limb on P5 and P54, but the
 documentation indicates that they should take only 43/8 = 5.375 cycles/limb,
-or 5 cycles/limb asymptotically.
+or 5 cycles/limb asymptotically.  The P55 runs them at the expected speed.
 
 2. mpn_add_n and mpn_sub_n run at asymptotically 2 cycles/limb.  Due to loop
 overhead and other delays (cache refill?), they run at or near 2.5 cycles/limb.
