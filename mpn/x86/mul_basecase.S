@@ -21,14 +21,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 /* This was written in a haste since the Pentium optimized code that was used
-   for all x86 machines was slow for teh Pentium II.  This code would benefit
+   for all x86 machines was slow for the Pentium II.  This code would benefit
    from some cleanup.
 
    To shave off some percentage of the run-time, one should make 4 variants of
    the Louter loop, for the four different outcomes of un mod 4.  That would
    avoid Loop0 altogether.  Code expansion would be > 4-fold for that part of
-   the function, but since it is not very large, such bloat would be
-   acceptable.
+   the function, but since it is not very large, that would be acceptable.
 
    The mul loop (at LoopM) might need some tweaking.  It's current speed is
    unknown.  */
