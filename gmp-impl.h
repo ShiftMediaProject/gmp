@@ -96,6 +96,8 @@ MA 02111-1307, USA. */
 #define TMP_ALLOC_LIMBS(n)     TMP_ALLOC_TYPE(n,mp_limb_t)
 #define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
 
+/* From gmp.h, nicer names for internal use. */
+#define MPN_CMP(result, xp, yp, size)  __GMPN_CMP(result, xp, yp, size)
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
@@ -975,28 +977,6 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
   return 1;
 }
 #endif
-
-/* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
-   negative.  size==0 is allowed.  */
-#define MPN_CMP(result, xp, yp, size)           \
-  do {                                          \
-    mp_size_t  __i;                             \
-    mp_limb_t  __x, __y;                        \
-                                                \
-    ASSERT ((size) >= 0);                       \
-                                                \
-    (result) = 0;                               \
-    for (__i = (size) - 1; __i >= 0; __i--)     \
-      {                                         \
-        __x = (xp)[__i];                        \
-        __y = (yp)[__i];                        \
-        if (__x != __y)                         \
-          {                                     \
-            (result) = (__x > __y ? 1 : -1);    \
-            break;                              \
-          }                                     \
-      }                                         \
-  } while (0)
 
 
 /* MPN_INCR_U does {ptr,size} += n, MPN_DECR_U does {ptr,size} -= n, both
