@@ -83,7 +83,7 @@ AC_CACHE_CHECK([for CC ($CC) invoking assembler],
                gmp_cv_prog_ccas,
 [ac_assemble="$CC -c $CFLAGS conftest.s 1>&AC_FD_CC"
 rm -f conftest*
-echo ".byte	1" > conftest.s
+echo "	.byte	1" > conftest.s
 if AC_TRY_EVAL(ac_assemble); then
   if test -f conftest.o; then
     gmp_cv_prog_ccas="$CC -c $CFLAGS"
@@ -181,11 +181,15 @@ echo ['define(<$1>, <$2>)'] >> $gmp_tmpconfigm4
 ])dnl
 
 dnl  GMP_CHECK_ASM_LABEL_SUFFIX
-dnl  FIXME: Actually check.
+dnl  Should a label have a colon or not?
 AC_DEFUN(GMP_CHECK_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([if assembly label needs a suffix],
                gmp_cv_check_asm_label_suffix,
-[gmp_cv_check_asm_label_suffix=:])
+[case "$target" in 
+  *-*-hpux*) gmp_cv_check_asm_label_suffix=[""] ;;
+  *) gmp_cv_check_asm_label_suffix=[":"] ;;
+esac
+])
 echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_check_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 ])dnl
 
@@ -302,7 +306,7 @@ dnl  Can we say `.global'?
 AC_DEFUN(GMP_CHECK_ASM_GLOBL,
 [AC_CACHE_CHECK([how to export a symbol], gmp_cv_check_asm_globl,
 [case "$target" in
-  *-*-hpux*) gmp_cv_check_asm_globl=[".xport"] ;;
+  *-*-hpux*) gmp_cv_check_asm_globl=[".export"] ;;
   *) gmp_cv_check_asm_globl=[".globl"] ;;
 esac
 ])
@@ -317,7 +321,7 @@ AC_CACHE_CHECK([how the .type assembly directive should be used],
 gmp_cv_check_asm_type,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 for gmp_tmp_prefix in @ \# %; do
-  echo ".type	sym,${gmp_tmp_prefix}function" > conftest.s
+  echo "	.type	sym,${gmp_tmp_prefix}function" > conftest.s
   if AC_TRY_EVAL(ac_assemble); then
     gmp_cv_check_asm_type="[.type	\$][1,${gmp_tmp_prefix}\$][2]"
     break
@@ -336,7 +340,7 @@ AC_DEFUN(GMP_CHECK_ASM_SIZE,
 [AC_REQUIRE([GMP_PROG_CCAS])
 AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_check_asm_size,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-echo '.size	sym,1' > conftest.s
+echo '	.size	sym,1' > conftest.s
 if AC_TRY_EVAL(ac_assemble); then
   gmp_cv_check_asm_size="[.size	\$][1,\$][2]"
 else
@@ -361,14 +365,22 @@ fi
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 gmp_cv_check_asm_lsym_prefix="L"
 for gmp_tmp_pre in .L $ L$; do
-  echo "${gmp_tmp_pre}gurkmacka${gmp_cv_check_asm_label_suffix}	.byte 0" > conftest.s
+  cat > conftest.s <<EOF
+${gmp_tmp_pre}gurkmacka${gmp_cv_check_asm_label_suffix}
+	.byte 0
+EOF
   if AC_TRY_EVAL(ac_assemble); then
     if $NM conftest.o | grep gurkmacka >/dev/null; then true; else
       gmp_cv_check_asm_lsym_prefix="$gmp_tmp_pre"
       break
     fi
+  else
+    echo "configure: failed program was:" >&AC_FD_CC
+    cat conftest.s >&AC_FD_CC
+    # Use default.
   fi
 done
+rm -f conftest*
 ])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
