@@ -53,7 +53,7 @@
 # MA 02111-1307, USA.
 
 # COMPILE minus CC.
-# FIXME: Really pass *_CFLAGS to CPP?
+#
 
 SHELL = @SHELL@
 
@@ -102,19 +102,20 @@ host_triplet = @host@
 AMTAR = @AMTAR@
 AR = @AR@
 AS = @AS@
-ASMFLAGS_PIC = @ASMFLAGS_PIC@
 AWK = @AWK@
 CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
 CC = @CC@
 CCAS = @CCAS@
-CFLAGS_PIC = @CFLAGS_PIC@
 CPP = @CPP@
 CXX = @CXX@
+CXXCPP = @CXXCPP@
 DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 ECHO = @ECHO@
 EXEEXT = @EXEEXT@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
 HAVE_MPFR = @HAVE_MPFR@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -127,6 +128,7 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
+RC = @RC@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
 TAL_OBJECT = @TAL_OBJECT@
@@ -149,16 +151,17 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = . devel mpn mpz mpq mpf rand printf cxx mpbsd
 
-COMPILE_FLAGS = \
-	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+COMPILE_FLAGS = $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 
 
-# Recent versions of automake append automake generated suffixes to this
-# $(SUFFIXES) list.  This is essential for us, since .c must come after .s,
-# .S and .asm.  If .c is before .s, for instance, then in the mpn directory
-# "make" will see add_n.c mentioned in an explicit rule (the ansi2knr stuff)
-# and decide it must have add_n.c, even if add_n.c doesn't exist but add_n.s
-# does.  See GNU make documentation (make)Implicit Rule Search, part 5c.
+# Recent versions of automake (1.5 and up for instance) append automake
+# generated suffixes to this $(SUFFIXES) list.  This is essential for us,
+# since .c must come after .s, .S and .asm.  If .c is before .s, for
+# instance, then in the mpn directory "make" will see add_n.c mentioned in
+# an explicit rule (the ansi2knr stuff) and decide it must have add_n.c,
+# even if add_n.c doesn't exist but add_n.s does.  See GNU make
+# documentation "(make)Implicit Rule Search", part 5c.
 #
 # On IRIX 6 native make this doesn't work properly though.  Somehow .c
 # remains ahead of .s, perhaps because .c.s is a builtin rule.  .asm works
@@ -617,48 +620,51 @@ uninstall-info: uninstall-info-recursive
 	uninstall-info-recursive uninstall-recursive
 
 
-# *.s not preprocessed at all.
+# .s assembler, no preprocessing.
+#
 .s.o:
-	$(CCAS) $(COMPILE_FLAGS) $<
+	$(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
 .s.obj:
 	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
 .s.lo:
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) $<
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
 
-# Notice .S.lo and .asm.lo both have the creation of the .lo file last, so a
-# re-make won't find a .lo unless all the commands succeeded.
+# .S assembler, preprocessed with cpp.
 #
-# $(LIBTOOL) used to be used rather than $(CC) $(CFLAGS_PIC), but that fails
-# on FreeBSD 2.2.8 where gas 1.92.3 requires -k to process PIC constructs
-# like "@GOT".  With libtool the PIC .s was assembled (via gcc) once with -k
-# and an unnecessary second time without, the latter failing.
+# It was vaguely intended that CCAS would just be asked to assemble .s
+# files, not do a combined preprocess and assemble, certainly that's how it
+# was in the past.  But arranging that for .S.lo would require something
+# like the .asm.lo handling below, so instead take the easy way and pass .S
+# directly.  Since normally CCAS="$CC -c" the only thing lost from the past
+# is removing "#line" and "#file" lines left by cpp.  Let's hope CCAS is
+# smart enough to do that itself if it's needed.
 #
-# FIXME: .S.lo and .asm.lo create both a PIC .lo and a non-PIC .o, even if
-# only one of the two is required.  Hopefully this won't cause any problems,
-# it can't be too bad because it's been so in GMP since version 3.0.  It'd
-# be nice if libtool could support assembler code directly.
-
-# *.S preprocessed with cpp.
 .S.o:
-	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	$(RM_TMP) tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
 .S.obj:
-	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	$(RM_TMP) tmp-$*.s
-
+	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
 .S.lo:
-	$(CPP) $(COMPILE_FLAGS) $(ASMFLAGS_PIC) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o tmp-$*.o
-	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	$(RM_TMP) tmp-$*.s
-	mv tmp-$*.o $*.lo
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) -o $@ `test -f $< || echo '$(srcdir)/'`$<
 
-# *.asm preprocessed with m4.
+# .asm assembler, preprocessed with m4.
+#
+# .o and .obj are non-PIC and just need m4 followed by a compile.
+#
+# .lo is a bit tricky.  Libtool (as of version 1.5) has foo.lo as a little
+# text file, and .libs/foo.o and foo.o as the PIC and non-PIC objects,
+# respectively.  It'd be asking for lots of trouble to try to create foo.lo
+# ourselves, so instead arrange to invoke libtool like a --mode=compile, but
+# with a special m4-ccas script which first m4 preprocesses, then compiles.
+# --tag=CC is necessary since foo.asm is otherwise unknown to libtool.
+#
+# Libtool adds -DPIC when building a shared object and the .asm files look
+# for that.  But it should be noted that the other PIC flags are on occasion
+# important too, in particular FreeBSD 2.2.8 gas 1.92.3 requires -k before
+# it accepts PIC constructs like @GOT, and gcc adds that flag only under
+# -fPIC.  (Later versions of gas are happy to accept PIC stuff any time.)
+#
 .asm.o:
-	$(M4) -DOPERATION_$* $< >tmp-$*.s
+	$(M4) -DOPERATION_$* `test -f $< || echo '$(srcdir)/'`$< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .asm.obj:
@@ -666,12 +672,7 @@ uninstall-info: uninstall-info-recursive
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .asm.lo:
-	$(M4) $(ASMFLAGS_PIC) -DOPERATION_$* $< >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) $(CFLAGS_PIC) tmp-$*.s -o tmp-$*.o
-	$(M4) -DOPERATION_$* $< >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	$(RM_TMP) tmp-$*.s
-	mv tmp-$*.o $*.lo
+	$(LIBTOOL) --mode=compile --tag=CC $(top_srcdir)/mpn/m4-ccas --m4="$(M4)" $(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
