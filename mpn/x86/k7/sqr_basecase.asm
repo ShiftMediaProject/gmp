@@ -468,8 +468,8 @@ Zdisp(  movl,	disp_src,(%esi), %eax)
 
 	mull    %ebp
 
-dnl Zdisp(	addl	%ebx, disp_src,(%edi))
-	addl	%ebx, disp_dst(%edi)
+Zdisp(	addl,	%ebx, disp_dst,(%edi))
+
 ifelse(forloop_last,0,
 `	movl	$0, %ebx')
 
