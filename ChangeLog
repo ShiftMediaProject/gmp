@@ -13,6 +13,10 @@
 
 	* configure.in (hppa2.0*-*-*): Pass `+O3' to cc/c89 in 64-bit mode
 	to avoid compiler bug.
+	(ns32k*-*-*): Fix typo in path.  Change by Kevin.
+	(alpha*-*-osf*): New case.  Pass assembly flags for architecture
+	to gcc.
+	(alpha*-*-*): Don't bother searching for cc.
 	* configure: Regenerate.
 
 	* Makefile.am (EXTRA_DIST): Add `macos', `.gdbinit'.
