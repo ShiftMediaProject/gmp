@@ -53,7 +53,7 @@ mpz_gcd_ui (w, u, v)
       return size > 1 ? 0 : w->_mp_d[0];
     }
   else
-    res = mpn_gcd_1 (u->_mp_d, size, v);
+    res = mpn_gcd_1 (u->_mp_d, size, (mp_limb_t) v);
 
   if (w != NULL)
     {

@@ -88,7 +88,7 @@ mpz_fdiv_q_2exp (w, u, cnt)
       mp_limb_t cy;
       if (wsize != 0)
 	{
-	  cy = mpn_add_1 (wp, wp, wsize, 1);
+	  cy = mpn_add_1 (wp, wp, wsize, (mp_limb_t) 1);
 	  wp[wsize] = cy;
 	  wsize += cy;
 	}
