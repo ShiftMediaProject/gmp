@@ -152,15 +152,22 @@ struct cpuvec_t __gmpn_cpuvec = {
 };
 
 
-/* The following setups start with generic x86, then overwrite it with
+/* The following setups start with generic x86, then overwrite with
    specifics for a chip, and higher versions of that chip.
 
-   The setups here will normally be the same as the $path selections in
-   configure.in for the respective chips.
+   The arrangement of the setups here will normally be the same as the $path
+   selections in configure.in for the respective chips.
 
    This code is reentrant and thread safe.  We always calculate the same
    decided_cpuvec, so if two copies of the code are running it doesn't
-   matter which completes first, both write the same to __gmpn_cpuvec.  */
+   matter which completes first, both write the same to __gmpn_cpuvec.
+
+   We need to go via decided_cpuvec because if one thread has completed
+   __gmpn_cpuvec then it may be making use of the threshold values in that
+   vector.  If another thread is still running __gmpn_cpuvec_init then we
+   don't want it to write different values to those fields since some of the
+   asm routines only operate correctly up to their own defined threshold,
+   not an arbitrary value.  */
 
 void
 __gmpn_cpuvec_init (void)
@@ -285,17 +292,18 @@ __gmpn_cpuvec_init (void)
         }
     }
 
-  /* There's no x86 generic mpn_preinv_divrem_1 or mpn_preinv_mod_1, instead
-     if necessary default to the plain versions from whichever CPU we
-     detected.  The function arguments are compatible, no need for any glue
-     code.  */
+  /* There's no x86 generic mpn_preinv_divrem_1 or mpn_preinv_mod_1.
+     Instead default to the plain versions from whichever CPU we detected.
+     The function arguments are compatible, no need for any glue code.  */
   if (decided_cpuvec.preinv_divrem_1 == NULL)
     decided_cpuvec.preinv_divrem_1 =(preinv_divrem_1_t)decided_cpuvec.divrem_1;
   if (decided_cpuvec.preinv_mod_1 == NULL)
     decided_cpuvec.preinv_mod_1    =(preinv_mod_1_t)   decided_cpuvec.mod_1;
 
-  decided_cpuvec.initialized = 1;
   ASSERT_CPUVEC (decided_cpuvec);
+  CPUVEC_INSTALL (decided_cpuvec);
 
-  memcpy (&__gmpn_cpuvec, &decided_cpuvec, sizeof (__gmpn_cpuvec));
+  /* Set this once the threshold fields are ready.
+     Use volatile to prevent it getting moved.  */
+  ((volatile struct cpuvec_t *) &__gmpn_cpuvec)->initialized = 1;
 }
