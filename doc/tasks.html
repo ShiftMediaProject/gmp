@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 28 Feb 2004.  An up-to-date version is available at
+  This file current as of 14 Mar 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -79,11 +79,6 @@ MA 02111-1307, USA.
 <li> <code>mpf_add</code> doesn't check for a carry from truncated portions of
      the inputs, and in that respect doesn't implement the "infinite precision
      followed by truncate" specified in the manual.
-<li> <code>mpf_div</code> of x/x doesn't always give 1, reported by Peter
-     Moulder.  Perhaps it suffices to put +1 on the effective divisor prec, so
-     that data bits rather than zeros are shifted in when normalizing.  Would
-     prefer to switch to <code>mpn_tdiv_qr</code>, where all shifting should
-     disappear.
 <li> Windows DLLs: tests/mpz/reuse.c and tests/mpf/reuse.c initialize global
      variables with pointers to <code>mpz_add</code> etc, which doesn't work
      when those routines are coming from a DLL (because they're effectively
@@ -104,6 +99,11 @@ MA 02111-1307, USA.
 
 <h4>Machine Independent Optimization</h4>
 <ul>
+<li> <code>mpf_cmp</code>: For better cache locality, don't test for low zero
+     limbs until the high limbs fail to give an ordering.  Reduce code size by
+     turning the three <code>mpn_cmp</code>'s into a single loop stopping when
+     the end of one operand is reached (and then looking for a non-zero in the
+     rest of the other).
 <li> <code>mpf_mul_2exp</code>, <code>mpf_div_2exp</code>: The use of
      <code>mpn_lshift</code> for any size&lt;=prec means repeated
      <code>mul_2exp</code> and <code>div_2exp</code> calls accumulate low zero
@@ -333,11 +333,6 @@ MA 02111-1307, USA.
      operations, the single-limb multiplier should be split into three 21-bit
      chunks, or perhaps even better in four 16-bit chunks.  Probably possible
      to reach 9 cycles/limb.
-<li> Alpha 21164: <code>count_leading_zeros</code> in mpn/alpha/cntlz.asm is
-     probably small enough to inline, which would make a few routines into
-     leaf functions (eg. <code>mpn_divrem_1</code>).  This would be only for
-     GCC, since an <code>asm</code> for <code>cmpbge</code> would be needed,
-     or <code>__builtin_alpha_cmpbge</code> in GCC 3.4 and up.
 <li> Alpha: GCC 3.4 will introduce <code>__builtin_ctzl</code>,
      <code>__builtin_clzl</code> and <code>__builtin_popcountl</code> using
      the corresponding CIX <code>ct</code> instructions, and
@@ -796,13 +791,6 @@ MA 02111-1307, USA.
      possible some attention could be paid to the order of the tests, so a
      <code>libgmp</code> routine is only used for tests once it seems to be
      good.
-<li> <code>mpf_set_q</code> is very similar to <code>mpf_div</code>, it'd be
-     good for the two to share code.  Perhaps <code>mpf_set_q</code> should
-     make some <code>mpf_t</code> aliases for its numerator and denominator
-     and just call <code>mpf_div</code>.  Both would be simplified a good deal
-     by switching to <code>mpn_tdiv_qr</code> perhaps making them small enough
-     not to bother with sharing (especially since <code>mpf_set_q</code>
-     wouldn't need to watch out for overlaps).
 <li> <code>MUL_FFT_THRESHOLD</code> etc: the FFT thresholds should allow a
      return to a previous k at certain sizes.  This arises basically due to
      the step effect caused by size multiples effectively used for each k.
