@@ -213,23 +213,6 @@ fi
 ])
 
 
-dnl  GMP_PROG_LEX
-dnl  ------------
-dnl  AC_PROG_LEX bombs if $LEX is set to ${am_missing_run}flex by
-dnl  AM_PROG_LEX.  It needs to see LEX=: if lex is missing.  Avoid this by
-dnl  running AC_PROG_LEX first and then using "missing".
-dnl
-dnl  FIXME: This can be removed and just AM_PROG_LEX used, one that macro
-dnl  works properly.
-
-AC_DEFUN(GMP_PROG_LEX,
-[AC_REQUIRE([AC_PROG_LEX])
-if test "$LEX" = :; then
-  LEX=${am_missing_run}flex
-fi
-])
-
-
 dnl  GMP_PROG_M4
 dnl  -----------
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
