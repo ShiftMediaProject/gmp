@@ -193,28 +193,36 @@
      and <code>mpn_mul_1</code> for the 21164.  This should use both integer
      multiplies and floating-point multiplies.  For the floating-point
      operations, the single-limb multiplier should be split into three 21-bit
-     chunks.
+     chunks, or perhaps even better in four 16-bit chunks.  Probably possible
+     to reach 9 cycles/limb.
 <li> UltraSPARC/64: Rewrite <code>mpn_addmul_1</code>,
      <code>mpn_submul_1</code>, and <code>mpn_mul_1</code>.  Should use
      floating-point operations, and split the invariant single-limb multiplier
-     into 21-bit chunks.  Should give about 18 cycles/limb, but the pipeline
-     will become very deep.  (Torbjörn has C code that is useful as a starting
-     point.)
-<li> UltraSPARC/64: Rewrite <code>mpn_lshift</code> and
-     <code>mpn_rshift</code>.  Will give 2 cycles/limb.  (Torbjörn has code
-     that just needs to be finished.)
-<li> UltraSPARC/32: Rewrite <code>mpn_lshift</code> and
-     <code>mpn_rshift</code>.  Will give 2 cycles/limb.  (Torbjörn has code
-     that just needs to be finished.)
+     into 16-bit chunks.  Will give 14 cycles/limb, but with a deep pipeline.
+<li> UltraSPARC/64: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
+     Will give 2 cycles/limb.  (Torbjörn has code that just needs to be
+     finished.)
+<li> UltraSPARC/64: Rewrite <code>mpn_add_n</code>, <code>mpn_sub_n</code>.
+     Will give < 4 cycles/limb.  Use majority function of msb.
+<li> UltraSPARC/64: Write <code>umul_ppmm</code>.  Important in particular for
+     <code>mpn_sqr_basecase</code>.  Using four "<code>mulx</code>"s either
+     with an asm block or via the generic C code is about 90 cycles.
+<li> UltraSPARC/32: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
+     Will give 2 cycles/limb.  (Torbjörn has code that just needs to be
+     finished.)
 <li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 < 2^16.
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
-     saturate the cache, which will happen at 7.5 cycles/limb.  Write special
-     mpn_Xmul_1 loops for s2 < 2^32.
-<li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
-     <code>mpn_sqr_basecase</code>.  Using four "<code>mulx</code>"s either
-     with an asm block or via the generic C code is about 90 cycles.
+     saturate the cache, which will happen at 8 cycles/limb (7.5 for
+     mpn_mul_1).  Write special loops for s2 < 2^32; it should be possible to
+     make them run at about 5 cycles/limb.
+<li> PPC630: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
+     <code>mpn_mul_1</code>.  Use both integer and floating-point operations,
+     possibly two floating-point and one integer limb per loop.  Split operands
+     into four 16-bit chunks for fast fp operations.  Should easily reach 9
+     cycles/limb (using one int + one fp), but perhaps even 7 cycles/limb
+     (using one int + two fp).
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
