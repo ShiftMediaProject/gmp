@@ -332,6 +332,9 @@ case $host in
     # since the options ordering seems to make our setting override
     # that passed by gcc.
     #
+    # gas 2.10.0 doesn't accept -mev67, but -mev6 is enough for ctlz
+    # and cttz, as used by longlong.h on ev67.
+    #
     case $host_cpu in
       alpha)        gcc_cflags_asm="-Wa,-arch,ev4 -Wa,-mev4" ;;
       alphaev5)     gcc_cflags_asm="-Wa,-arch,ev5 -Wa,-mev5" ;;
