@@ -32,8 +32,26 @@ MA 02111-1307, USA.
 #undef BITS_PER_SHORTINT
 #undef BITS_PER_CHAR
 
+/* Define one (and only one) of these for the CPU target.
+   Only targets that are going to be tested for need to be in this list,
+   not everything that can possibly be selected. */
+#undef HAVE_TARGET_CPU_alpha
+#undef HAVE_TARGET_CPU_alphaev5
+#undef HAVE_TARGET_CPU_alphaev6
+#undef HAVE_TARGET_CPU_alphaev67
+#undef HAVE_TARGET_CPU_sparc
+#undef HAVE_TARGET_CPU_sparcv8
+#undef HAVE_TARGET_CPU_supersparc
+#undef HAVE_TARGET_CPU_sparclite
+#undef HAVE_TARGET_CPU_microsparc
+#undef HAVE_TARGET_CPU_ultrasparc1
+#undef HAVE_TARGET_CPU_ultrasparc2
+#undef HAVE_TARGET_CPU_sparc64
+
+/* a dummy to make autoheader happy */
+#undef HAVE_TARGET_CPU_
+
 /* Define if we have native implementation of function. */
-#undef HAVE_NATIVE_
 #undef HAVE_NATIVE_mpn_add                 
 #undef HAVE_NATIVE_mpn_add_1               
 #undef HAVE_NATIVE_mpn_add_n               
@@ -98,6 +116,9 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_udiv_qrnnd
 #undef HAVE_NATIVE_mpn_xor_n               
 #undef HAVE_NATIVE_mpn_xnor_n              
+
+/* a dummy to make autoheader happy */
+#undef HAVE_NATIVE_
 
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
