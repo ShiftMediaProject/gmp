@@ -42,47 +42,42 @@ mpz_kronecker_si (mpz_srcptr a, long b)
 {
   mp_srcptr  a_ptr = PTR(a);
   int        a_size;
-  mp_limb_t  a_rem;
+  mp_limb_t  a_rem, b_limb;
   int        result_bit1;
 
   a_size = SIZ(a);
   if (a_size == 0)
     return JACOBI_0S (b);
 
-  if ((b & 1) != 0)
-    {
-      result_bit1 = JACOBI_BSGN_SS_BIT1 (a_size, b);
-    }
-  else
+  result_bit1 = JACOBI_BSGN_SS_BIT1 (a_size, b);
+  b_limb = (unsigned long) ABS (b);
+
+  if ((b_limb & 1) == 0)
     {
       mp_limb_t  a_low = a_ptr[0];
       int        twos;
 
-      if (b == 0)
+      if (b_limb == 0)
         return JACOBI_LS0 (a_low, a_size);   /* (a/0) */
 
       if (! (a_low & 1))
         return 0;  /* (even/even)=0 */
 
       /* (a/2)=(2/a) for a odd */
-      count_trailing_zeros (twos, b);  
-      b >>= twos;
-      result_bit1 = (JACOBI_TWOS_U_BIT1 (twos, a_low)
-                     ^ JACOBI_BSGN_SS_BIT1 (a_size, b));
+      count_trailing_zeros (twos, b_limb);  
+      b_limb >>= twos;
+      result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, a_low);
     }
 
-  b = ABS (b);
-
-  if (b == 1)
+  if (b_limb == 1)
     return JACOBI_BIT1_TO_PN (result_bit1);  /* (a/1)=1 for any a */
 
-  result_bit1 ^= JACOBI_ASGN_SU_BIT1 (a_size, b);
+  result_bit1 ^= JACOBI_ASGN_SU_BIT1 (a_size, b_limb);
   a_size = ABS(a_size);
 
   /* (a/b) = (a mod b / b) */
-  JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, a_rem, a_ptr, a_size,
-                                (unsigned long) b);
-  return mpn_jacobi_base (a_rem, (mp_limb_t) (unsigned long) b, result_bit1);
+  JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, a_rem, a_ptr, a_size, b_limb);
+  return mpn_jacobi_base (a_rem, b_limb, result_bit1);
 }
 
 
