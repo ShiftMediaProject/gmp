@@ -97,6 +97,13 @@ main (int argc, char **argv)
       if (mpz_cmp (gcd, x) < 0 && mpz_sgn (op1) != 0 && mpz_sgn (op2) != 0)
 	dump_abort (i, op1, op2);
 
+      if (mpz_fits_ulong_p (op2))
+	{
+	  mpz_gcd_ui (gcd2, op1, mpz_get_ui (op2));
+	  if (mpz_cmp (gcd, gcd2))
+	    dump_abort (i, op1, op2);
+	}
+
       mpz_gcdext (gcd2, s, t, op1, op2);
       if (mpz_cmp (gcd, gcd2))
 	dump_abort (i, op1, op2);
