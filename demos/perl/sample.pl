@@ -2,7 +2,7 @@
 
 # Some sample GMP module operations
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -22,6 +22,10 @@
 # MA 02111-1307, USA.
 
 use strict;
+
+
+use GMP;
+print "GMP module version $GMP::VERSION using GMP library $GMP::version\n";
 
 
 use GMP::Mpz qw(:all);
