@@ -501,15 +501,26 @@ case $host in
     ;;
 
 
-  # Darwin (powerpc-apple-darwin1.3) has gcc installed as cc.  -Wa,-mppc is
-  # unnecessary (and in fact doesn't work, it'd be -arch ppc or some such).
+  # Darwin (powerpc-apple-darwin1.3) has gcc installed as cc.
+  #
+  # The darwin assembler doesn't accept "-mppc", so gcc_cflags_asm is
+  # optional.  The right flag would be "-arch ppc" or some such, but that's
+  # already the default.
+  #
+  # The darwin pre-compiling preprocessor is disabled with -no-cpp-precomp
+  # since it doesn't like "__attribute__ ((mode (SI)))" etc in gmp-impl.h,
+  # and so always ends up running the plain preprocessor anyway.  This could
+  # be done in CPPFLAGS rather than CFLAGS, but there's not many places
+  # preprocessing is done separately, and this is only a speedup, the normal
+  # preprocessor gets run if there's any problems.
   #
   powerpc*-*-*)
     cclist="gcc cc"
     cc_cflags="-g -O2"
     gcc_cflags="-g -O2 -mpowerpc"
-    gcc_cflags_optlist="asm"
+    gcc_cflags_optlist="asm precomp"
     gcc_cflags_asm="-Wa,-mppc"
+    gcc_cflags_precomp="-no-cpp-precomp"
     path="powerpc32"
     extra_functions="umul"
     case $host in
