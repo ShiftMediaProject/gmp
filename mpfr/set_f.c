@@ -1,6 +1,6 @@
 /* mpfr_set_f -- set a MPFR number from a GNU MPF number
 
-Copyright (C) 1999-2000 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999-2000 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,30 +24,34 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void 
 #if __STDC__
-mpfr_set_f(mpfr_ptr y, mpf_srcptr x, char rnd_mode)
+mpfr_set_f(mpfr_ptr y, mpf_srcptr x, mp_rnd_t rnd_mode)
 #else
 mpfr_set_f(y, x, rnd_mode)
      mpfr_ptr y;
      mpf_srcptr x;
-     char rnd_mode; 
+     mp_rnd_t rnd_mode;
 #endif
 {
   mp_limb_t *my, *mx, *tmp; unsigned long cnt, sx, sy;
   TMP_DECL(marker);
 
-  sx = ABS(SIZ(x)); sy = ABSSIZE(y);
-  my = MANT(y); mx = MANT(x);
+  if (SIZ(x) * MPFR_SIGN(y) < 0) MPFR_CHANGE_SIGN(y);
+
+  MPFR_CLEAR_FLAGS(y);
+
+  TMP_MARK(marker);
+  sx = ABS(SIZ(x)); sy = MPFR_ABSSIZE(y);
+  my = MPFR_MANT(y); mx = PTR(x);
 
   if (sx==0) { /* x is zero */
-    SET_ZERO(y); return;
+    MPFR_SET_ZERO(y); return;
   }
 
   count_leading_zeros(cnt, mx[sx - 1]);  
-
-  if (SIZ(x)*SIGN(y)<0) CHANGE_SIGN(y);
 
   if (sy < sx)
     {
@@ -56,7 +60,7 @@ mpfr_set_f(y, x, rnd_mode)
       tmp = (mp_limb_t*) TMP_ALLOC(xprec);
       if (cnt) mpn_lshift(tmp, mx, sx, cnt); 
       else MPN_COPY(tmp, mx, sx); 
-      mpfr_round_raw(my, tmp, xprec, (SIZ(x)<0), PREC(y), rnd_mode);  
+      mpfr_round_raw(my, tmp, xprec, (SIZ(x)<0), MPFR_PREC(y), rnd_mode);  
     }
   else
     {
@@ -66,7 +70,7 @@ mpfr_set_f(y, x, rnd_mode)
       /* no rounding necessary, since y has a larger mantissa */
     }
   
-  EXP(y) = EXP(x) * BITS_PER_MP_LIMB - cnt;
+  MPFR_EXP(y) = EXP(x) * BITS_PER_MP_LIMB - cnt;
 
   TMP_FREE(marker);
 }

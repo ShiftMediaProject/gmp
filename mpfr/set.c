@@ -1,6 +1,6 @@
 /* mpfr_set -- copy of a floating-point number
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,22 +23,34 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void 
 #if __STDC__
-mpfr_set4(mpfr_ptr a, mpfr_srcptr b, unsigned char rnd_mode, int signb)
+mpfr_set4 (mpfr_ptr a, mpfr_srcptr b, mp_rnd_t rnd_mode, int signb)
 #else
-mpfr_set4(a, b, rnd_mode, signb) 
+mpfr_set4 (a, b, rnd_mode, signb)
      mpfr_ptr a; 
      mpfr_srcptr b; 
-     unsigned char rnd_mode;
+     mp_rnd_t rnd_mode;
      int signb;
 #endif
 {
-  int carry, an, preca = PREC(a), sh; mp_limb_t *ap = MANT(a);
+  int carry, an, preca = MPFR_PREC(a), sh; mp_limb_t *ap = MPFR_MANT(a);
 
-  carry = mpfr_round_raw(ap, MANT(b), PREC(b), (signb<0), preca, rnd_mode);
-  EXP(a) = EXP(b);
+  if (MPFR_IS_NAN(b))
+    { MPFR_CLEAR_FLAGS(a); MPFR_SET_NAN(a); return; }
+  if (MPFR_IS_INF(b)) 
+    { 
+      MPFR_CLEAR_FLAGS(a);
+      MPFR_SET_INF(a); 
+      if (MPFR_SIGN(a) * signb < 0) MPFR_CHANGE_SIGN(a); 
+      return; 
+    }
+  MPFR_CLEAR_FLAGS(a);
+
+  carry = mpfr_round_raw(ap, MPFR_MANT(b), MPFR_PREC(b), (signb<0), preca, rnd_mode);
+  MPFR_EXP(a) = MPFR_EXP(b);
   if (carry) {
     an = (preca-1)/BITS_PER_MP_LIMB + 1;
     sh = an * BITS_PER_MP_LIMB - preca;
@@ -47,7 +59,7 @@ mpfr_set4(a, b, rnd_mode, signb)
     }
     mpn_rshift(ap, ap, an, 1);
     ap[an-1] |= (mp_limb_t) 1 << (BITS_PER_MP_LIMB-1);
-    EXP(a)++;
+    MPFR_EXP(a)++;
   }
-  if (SIGN(a) != signb) CHANGE_SIGN(a);
+  if (MPFR_SIGN(a) * signb < 0) MPFR_CHANGE_SIGN(a);
 }

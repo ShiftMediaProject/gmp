@@ -1,7 +1,7 @@
 /* mpfr_print_raw -- print the internal binary representation of a 
                      floating-point number
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,26 +24,31 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
+
+void mpfr_get_str_raw (char *, mpfr_srcptr);
 
 void
 #if __STDC__
-mpfr_get_str_raw(char *digit_ptr, mpfr_srcptr x)
+mpfr_get_str_raw (char *digit_ptr, mpfr_srcptr x)
 #else
-mpfr_get_str_raw(digit_ptr, x)
+mpfr_get_str_raw (digit_ptr, x)
      char *digit_ptr; 
      mpfr_srcptr x; 
 #endif
 {
   mp_limb_t *mx, wd, t; long ex, sx, k, l, p;
 
-  mx = MANT(x); 
-  ex = EXP(x); 
-  p = PREC(x); 
+  mx = MPFR_MANT(x); 
+  ex = MPFR_EXP(x); 
+  p = MPFR_PREC(x); 
 
-  if (SIGN(x) < 0) { *digit_ptr = '-'; digit_ptr++; }
+  /* TODO: utilite de gerer l'infini a ce niveau ? */
+
+  if (MPFR_SIGN(x) < 0) { *digit_ptr = '-'; digit_ptr++; }
   sprintf(digit_ptr, "0."); digit_ptr += 2; 
 
-  sx = 1+(p-1)/mp_bits_per_limb; /* number of significant limbs */
+  sx = 1+(p-1)/BITS_PER_MP_LIMB; /* number of significant limbs */
   for (k = sx - 1; k >= 0 ; k--)
     { 
       wd = mx[k]; 
@@ -69,23 +74,35 @@ mpfr_print_raw(x)
      mpfr_srcptr x; 
 #endif
 {
-  char *str; 
+  char *str;
+  unsigned long alloc_size;
 
-  if (FLAG_NAN(x)) printf("NaN");
-  else if (!NOTZERO(x)) printf("0");
+  if (MPFR_IS_NAN(x)) printf("NaN");
+  else if (MPFR_IS_INF(x)) {
+    if (MPFR_SIGN(x) == 1) { printf("Inf"); } else printf("-Inf"); 
+  }
+  else if (!MPFR_NOTZERO(x)) {
+    if (MPFR_SIGN(x) < 0) printf("-");
+    printf("0");
+  }
   else {
      /* 3 char for sign + 0 + binary point
-	+ ABSSIZE(x) * BITS_PER_MP_LIMB for mantissa
+	+ MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB for mantissa
 	+ 2 for brackets in mantissa
 	+ 1 for 'E'
 	+ 11 for exponent (including sign)
-	= 17 + ABSSIZE(x) * BITS_PER_MP_LIMB
+	= 17 + MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB
       */
-     str = (char *) malloc((17 + ABSSIZE(x) * BITS_PER_MP_LIMB)*sizeof(char));
+    alloc_size = 17 + MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB;
+     str = (char *) (*_mp_allocate_func) (alloc_size * sizeof(char));
+     if (str == NULL) {
+       fprintf (stderr, "Error in mpfr_print_raw: no more memory available\n");
+       exit (1);
+     }
      mpfr_get_str_raw(str, x);
 
      printf("%s", str); 
-     free(str); 
+     (*_mp_free_func) (str, alloc_size * sizeof(char));
   }
 }
 

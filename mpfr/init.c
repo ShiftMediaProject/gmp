@@ -1,6 +1,6 @@
 /* mpfr_init -- initialize a floating-point number
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,27 +23,44 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void
 #if __STDC__
-mpfr_init2 (mpfr_t x, unsigned long int p)
+mpfr_init2 (mpfr_ptr x, mp_prec_t p)
 #else
 mpfr_init2 (x, p)
-     mpfr_t x;
-     unsigned long int p;
+     mpfr_ptr x;
+     mp_prec_t p;
 #endif
 {
-  unsigned long xsize; 
+  mp_prec_t xsize; 
 
   if (p==0) {
-    printf("*** cannot initialize mpfr with precision 0\n"); exit(1);
+    fprintf(stderr, "*** cannot initialize mpfr with precision 0\n"); exit(1);
   }
 
   xsize = (p - 1)/BITS_PER_MP_LIMB + 1; 
 
-  x -> _mp_prec = p;
-  x -> _mp_d = (mp_ptr) (*__gmp_allocate_func) 
-    (xsize * BYTES_PER_MP_LIMB);
-  x -> _mp_size = xsize;
-  x -> _mp_exp = 0; /* avoids uninitialized memory reads for zero */
+  MPFR_PREC(x) = p;
+  MPFR_MANT(x) = (mp_ptr) (*_mp_allocate_func) (xsize * BYTES_PER_MP_LIMB);
+  if (MPFR_MANT(x) == NULL) {
+    fprintf (stderr, "Error in mpfr_init2: no more memory available\n");
+    exit (1);
+  }
+  MPFR_SIZE(x) = xsize;
+  MPFR_CLEAR_FLAGS(x); 
+  MPFR_SET_ZERO(x); /* initializes to zero */
+  MPFR_EXP(x) = 0; /* avoids uninitialized memory reads for zero */
+}
+
+void
+#if __STDC__
+mpfr_init (mpfr_ptr x)
+#else
+mpfr_init (x)
+     mpfr_ptr x;
+#endif
+{
+  mpfr_init2(x, __gmp_default_fp_bit_precision);
 }

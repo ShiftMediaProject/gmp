@@ -1,6 +1,6 @@
 /* mpfr_set_str_raw -- set a floating-point number from a binary string
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -30,6 +30,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 /* Currently the number should be of the form +/- xxxx.xxxxxxEyy, with 
    decimal exponent. The mantissa of x is supposed to be large enough 
@@ -37,24 +38,45 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpfr_set_str_raw(mpfr_ptr x, char *str)
+mpfr_set_str_raw (mpfr_ptr x, char *str)
 #else
-mpfr_set_str_raw(x, str)
+mpfr_set_str_raw (x, str)
      mpfr_ptr x; 
      char *str; 
 #endif
 {
   char *str2, *str0, negative = 0; 
-  unsigned long j, l, k = 0, xsize, cnt; mp_limb_t *xp; 
+  unsigned long j, l, k = 0, xsize, cnt, alloc; mp_limb_t *xp; 
   long expn = 0, e; char *endstr2;
 
-  xp = x -> _mp_d; 
-  xsize = 1 + (PREC(x)-1)/BITS_PER_MP_LIMB;
-  str0 = str2 = (char *) malloc((strlen(str)+1)*sizeof(char)); 
+  xp = MPFR_MANT(x);
+  xsize = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
+  alloc = (strlen(str)+1) * sizeof(char);
+  str0 = str2 = (char *) (*_mp_allocate_func) (alloc);
+
+  if (str0 == NULL) {
+    fprintf (stderr, "Error in mpfr_set_str_raw: no more memory available\n");
+    exit (1);
+  }
 
   if (*str == '-') { negative = 1; str++; }
   else if (*str == '+') str++;
+  
+  if (*str == 'I') 
+    { 
+      MPFR_SET_INF(x);
+      if (MPFR_ISNEG(x) != negative) MPFR_CHANGE_SIGN(x);
+      return; 
+    }
+     
+  if (*str == 'N')
+    {
+      MPFR_SET_NAN(x);
+      return;
+    }
 
+  MPFR_CLEAR_FLAGS(x);
+ 
   while (*str == '0') { str++; } 
 
   while (*str == '0' || *str == '1')
@@ -82,7 +104,11 @@ mpfr_set_str_raw(x, str)
 
   endstr2 = str2;
   *str2 = (char) 0; /* end of string */
-  l = (strlen(str0) - 1) / BITS_PER_MP_LIMB + 1; str2 = str0; 
+  l = (strlen(str0) - 1) / BITS_PER_MP_LIMB + 1; str2 = str0;
+  if (l > xsize) {
+    fprintf (stderr, "Error: mantissa larger than precision of destination variable in mpfr_set_str_raw\n");
+    exit (1);
+  }
 
   /* str2[0]..endstr2[-1] contains the mantissa */
   for (k = 1; k <= l; k++)
@@ -102,10 +128,10 @@ mpfr_set_str_raw(x, str)
   count_leading_zeros(cnt, xp[xsize - 1]); 
   if (cnt) mpn_lshift(xp, xp, xsize, cnt); 
 
-  x -> _mp_exp = expn - cnt; 
-  x -> _mp_size = xsize; if (negative) CHANGE_SIGN(x);
+  MPFR_EXP(x) = expn - cnt; 
+  MPFR_SIZE(x) = xsize; if (negative) MPFR_CHANGE_SIGN(x);
 
-  free(str0); 
+  (*_mp_free_func) (str0, alloc);
   
   /* May change to take into account : syntax errors, overflow in exponent, 
      string truncated because of size of x */

@@ -1,6 +1,6 @@
 /* mpfr_set_prec -- reset the precision of a floating-point number
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,17 +23,18 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void
 #if __STDC__
-mpfr_set_prec (mpfr_t x, unsigned long int p)
+mpfr_set_prec (mpfr_ptr x, mp_prec_t p)
 #else
 mpfr_set_prec (x, p)
-     mpfr_t x;
-     unsigned long int p;
+     mpfr_ptr x;
+     mp_prec_t p;
 #endif
 {
-  unsigned long xsize;
+  mp_prec_t xsize;
 
   if (p==0) {
     printf("*** cannot set precision to 0 bits\n"); exit(1);
@@ -41,22 +42,26 @@ mpfr_set_prec (x, p)
 
   xsize = (p - 1)/BITS_PER_MP_LIMB + 1; /* new limb size */
 
-  if (xsize > ABSSIZE(x)) {
-    x -> _mp_d = (mp_ptr) (*__gmp_reallocate_func) 
-      (x -> _mp_d, ABSSIZE(x)*BYTES_PER_MP_LIMB, xsize * BYTES_PER_MP_LIMB);
-    SIZE(x) = xsize; /* new number of allocated limbs */
+  if (xsize > MPFR_ABSSIZE(x)) {
+    MPFR_MANT(x) = (mp_ptr) (*_mp_reallocate_func) (MPFR_MANT(x), 
+		 MPFR_ABSSIZE(x)*BYTES_PER_MP_LIMB, xsize * BYTES_PER_MP_LIMB);
+    if (MPFR_MANT(x) == NULL) {
+      fprintf (stderr, "Error in mpfr_set_prec: no more memory available\n");
+      exit (1);
+    }
+    MPFR_SIZE(x) = xsize; /* new number of allocated limbs */
   }
 
-  x -> _mp_prec = p;
+  MPFR_PREC(x) = p;
 }
 
-unsigned long int
+mp_prec_t
 #if __STDC__
-mpfr_get_prec (mpfr_t x)
+mpfr_get_prec (mpfr_srcptr x)
 #else
 mpfr_get_prec (x)
-     mpfr_t x;
+     mpfr_srcptr x;
 #endif
 {
-  return x -> _mp_prec;
+  return MPFR_PREC(x);
 }

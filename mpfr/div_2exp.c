@@ -1,6 +1,6 @@
 /* mpfr_div_2exp -- divide a floating-point number by a power of two
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,21 +23,22 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void
 #if __STDC__
-mpfr_div_2exp(mpfr_ptr y, mpfr_srcptr x, unsigned long int n, unsigned char rnd_mode)
+mpfr_div_2exp (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mp_rnd_t rnd_mode)
 #else
-mpfr_div_2exp(y, x, n, rnd_mode)
+mpfr_div_2exp (y, x, n, rnd_mode)
      mpfr_ptr y;
-     mpfr_srcptr x;  
-     unsigned long int n; 
-     unsigned char rnd_mode; 
+     mpfr_srcptr x;
+     unsigned long int n;
+     mp_rnd_t rnd_mode;
 #endif
 {
   /* Important particular case */ 
   if (y != x) mpfr_set(y, x, rnd_mode);
-  EXP(y) -= n; 
+  MPFR_EXP(y) -= n; 
   return; 
 }
 

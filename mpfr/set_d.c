@@ -1,7 +1,7 @@
 /* mpfr_set_d, mpfr_get_d -- convert a multiple precision floating-point number
                              from/to a machine double precision float
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -20,17 +20,24 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#if __GNUC__ /* gcc "patched" headers seem to omit isnan... */
-extern int isnan(double);
-#endif
-#include <math.h> /* for isnan and NaN */
-
 #include "gmp.h"
+#include "mpfr.h"
+#include "mpfr-impl.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-#include "mpfr.h"
 
-#define NaN sqrt(-1) /* ensures a machine-independent NaN */
+#if (BITS_PER_MP_LIMB==32)
+#define MPFR_LIMBS_PER_DOUBLE 2
+#elif (BITS_PER_MP_LIMB==64)
+#define MPFR_LIMBS_PER_DOUBLE 1
+#endif
+
+int __mpfr_extract_double (mp_ptr, double, int);
+double __mpfr_scale2 (double, int);
+
+#define NaN (0./0.) /* ensures a machine-independent NaN */
+#define Infp (1/0.)
+#define Infm (-1/0.)
 
 /* Included from gmp-2.0.2, patched to support denorms */
 
@@ -235,39 +242,56 @@ __mpfr_scale2 (d, exp)
 
 void
 #if __STDC__
-mpfr_set_d(mpfr_t r, double d, unsigned char rnd_mode)
+mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
 #else
-mpfr_set_d(r, d, rnd_mode)
-     mpfr_t r;
+mpfr_set_d (r, d, rnd_mode)
+     mpfr_ptr r;
      double d;
-     unsigned char rnd_mode;
+     mp_rnd_t rnd_mode;
 #endif
 {
   int signd, sizer; unsigned int cnt;
 
-  if (d == 0) { SET_ZERO(r); return; }
-  else if (isnan(d)) { SET_NAN(r); return; }
+  MPFR_CLEAR_FLAGS(r);
+  if (d == 0) {
+    union ieee_double_extract x;
+    MPFR_SET_ZERO(r);
+    /* set correct sign */
+    x.d = d;
+    if (((x.s.sig==1) && (MPFR_SIGN(r)>0)) 
+	|| ((x.s.sig==0) && (MPFR_SIGN(r)<0)))
+      MPFR_CHANGE_SIGN(r);
+    return;
+  }
+  else if (DOUBLE_ISNAN(d)) { MPFR_SET_NAN(r); return; }
+  else if (DOUBLE_ISINF(d))
+    { 
+      MPFR_SET_INF(r); 
+      if ((d > 0 && (MPFR_SIGN(r) == -1)) || (d < 0 && (MPFR_SIGN(r) == 1)))
+	MPFR_CHANGE_SIGN(r); 
+      return;
+    }
 
   signd = (d < 0) ? -1 : 1;
   d = ABS (d);
-  sizer = (PREC(r)-1)/BITS_PER_MP_LIMB + 1;
+  sizer = (MPFR_PREC(r)-1)/BITS_PER_MP_LIMB + 1;
 
   /* warning: __mpfr_extract_double requires at least two limbs */
   if (sizer < MPFR_LIMBS_PER_DOUBLE)
-    EXP(r) = __mpfr_extract_double (MANT(r), d, 0);
+    MPFR_EXP(r) = __mpfr_extract_double (MPFR_MANT(r), d, 0);
   else
-    EXP(r) = __mpfr_extract_double (MANT(r) + sizer - MPFR_LIMBS_PER_DOUBLE, d, 1);
+    MPFR_EXP(r) = __mpfr_extract_double (MPFR_MANT(r) + sizer - MPFR_LIMBS_PER_DOUBLE, d, 1);
   
   if (sizer > MPFR_LIMBS_PER_DOUBLE)
-    MPN_ZERO(MANT(r), sizer - MPFR_LIMBS_PER_DOUBLE); 
+    MPN_ZERO(MPFR_MANT(r), sizer - MPFR_LIMBS_PER_DOUBLE); 
 
-  count_leading_zeros(cnt, MANT(r)[sizer-1]);
-  if (cnt) mpn_lshift(MANT(r), MANT(r), sizer, cnt); 
+  count_leading_zeros(cnt, MPFR_MANT(r)[sizer-1]);
+  if (cnt) mpn_lshift(MPFR_MANT(r), MPFR_MANT(r), sizer, cnt); 
   
-  EXP(r) -= cnt; 
-  if (SIZE(r)*signd<0) CHANGE_SIGN(r);
+  MPFR_EXP(r) -= cnt; 
+  if (MPFR_SIGN(r)*signd<0) MPFR_CHANGE_SIGN(r);
 
-  mpfr_round(r, rnd_mode, PREC(r)); 
+  mpfr_round(r, rnd_mode, MPFR_PREC(r)); 
   return; 
 }
 
@@ -285,15 +309,21 @@ mpfr_get_d2(src, e)
   mp_ptr qp;
   int negative;
 
-  if (FLAG_NAN(src)) { 
+  if (MPFR_IS_NAN(src)) { 
 #ifdef DEBUG
     printf("recognized NaN\n");
 #endif
     return NaN; }
-  if (NOTZERO(src)==0) return 0.0;
-  size = 1+(PREC(src)-1)/BITS_PER_MP_LIMB;
-  qp = MANT(src);
-  negative = (SIGN(src)==-1);
+  if (MPFR_IS_INF(src)) { 
+#ifdef DEBUG
+    printf("Found Inf.\n");
+#endif
+    return (MPFR_SIGN(src) == 1 ? Infp : Infm); 
+  }
+  if (MPFR_NOTZERO(src)==0) return 0.0;
+  size = 1+(MPFR_PREC(src)-1)/BITS_PER_MP_LIMB;
+  qp = MPFR_MANT(src);
+  negative = (MPFR_SIGN(src) < 0);
 
   /* Warning: don't compute the abs(res) and set the sign afterwards,
      otherwise the current machine rounding mode will not be taken
@@ -324,6 +354,6 @@ mpfr_get_d(src)
      mpfr_srcptr src; 
 #endif
 {
-  return mpfr_get_d2(src, EXP(src));
+  return mpfr_get_d2(src, MPFR_EXP(src));
 }
 

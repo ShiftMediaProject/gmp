@@ -1,6 +1,6 @@
 /* mpfr_set_si, mpfr_set_ui -- set a MPFR number from a machine integer
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,57 +24,86 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void
 #if __STDC__
-mpfr_set_si(mpfr_ptr x, long i, unsigned char rnd_mode)
+mpfr_set_si (mpfr_ptr x, long int i, mp_rnd_t rnd_mode)
 #else
-mpfr_set_si(x, i, rnd_mode)
+mpfr_set_si (x, i, rnd_mode)
      mpfr_ptr x;
-     long i;
-     unsigned char rnd_mode;
+     long int i;
+     mp_rnd_t rnd_mode;
 #endif
 {
-  unsigned long xn, cnt; mp_limb_t ai;
+  unsigned long xn, cnt; mp_limb_t ai, *xp;
 
-  if (i==0) { SET_ZERO(x); return; }
-  xn = (PREC(x)-1)/BITS_PER_MP_LIMB;
+  MPFR_CLEAR_FLAGS(x);
+  if (i==0) { MPFR_SET_ZERO(x); return; }
+  xn = (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
   ai = ABS(i); 
 
   count_leading_zeros(cnt, ai); 
 
-  x -> _mp_d[xn] = ai << cnt;
+  xp = MPFR_MANT(x);
+  xp[xn] = ai << cnt;
   /* don't forget to put zero in lower limbs */
-  MPN_ZERO(MANT(x), xn);
-  x -> _mp_exp = BITS_PER_MP_LIMB - cnt;
+  MPN_ZERO(xp, xn);
+
+  MPFR_EXP(x) = BITS_PER_MP_LIMB - cnt;
+
+  /* round if MPFR_PREC(x) smaller than length of i */
+  if (MPFR_PREC(x) < BITS_PER_MP_LIMB-cnt) {
+    cnt = mpfr_round_raw(xp+xn, xp+xn, BITS_PER_MP_LIMB-cnt, (ai<0), MPFR_PREC(x), 
+		   rnd_mode);
+    if (cnt) { /* special case 1.000...000 */
+      MPFR_EXP(x)++;
+      xp[xn] = ((mp_limb_t) 1) << (BITS_PER_MP_LIMB-1);
+    }
+  }
+
   /* warning: don't change the precision of x! */
-  if (i*SIGN(x) < 0) CHANGE_SIGN(x);
+  if (i*MPFR_SIGN(x) < 0) MPFR_CHANGE_SIGN(x);
 
   return; 
 }
 
 void
 #if __STDC__
-mpfr_set_ui(mpfr_ptr x, unsigned long i, unsigned char rnd_mode)
+mpfr_set_ui (mpfr_ptr x, unsigned long int i, mp_rnd_t rnd_mode)
 #else
-mpfr_set_ui(x, i, rnd_mode)
+mpfr_set_ui (x, i, rnd_mode)
      mpfr_ptr x;
-     long i;
-     unsigned char rnd_mode;
+     unsigned long int i;
+     mp_rnd_t rnd_mode;
 #endif  
 {
-  unsigned int xn, cnt;
+  unsigned int xn, cnt; mp_limb_t *xp;
 
-  if (i==0) { SET_ZERO(x); return; }
-  xn = (PREC(x)-1)/BITS_PER_MP_LIMB;
+  MPFR_CLEAR_FLAGS(x);
+  if (i==0) { MPFR_SET_ZERO(x); return; }
+  xn = (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
   count_leading_zeros(cnt, (mp_limb_t) i); 
 
-  x -> _mp_d[xn] = ((mp_limb_t) i) << cnt; 
+  xp = MPFR_MANT(x);
+  xp[xn] = ((mp_limb_t) i) << cnt; 
   /* don't forget to put zero in lower limbs */
-  MPN_ZERO(MANT(x), xn);
-  x -> _mp_exp = BITS_PER_MP_LIMB - cnt;
+  MPN_ZERO(xp, xn);
+
+  MPFR_EXP(x) = BITS_PER_MP_LIMB - cnt;
+
+  /* round if MPFR_PREC(x) smaller than length of i */
+  if (MPFR_PREC(x) < BITS_PER_MP_LIMB-cnt) {
+    cnt = mpfr_round_raw(xp+xn, xp+xn, BITS_PER_MP_LIMB-cnt, 0, MPFR_PREC(x), 
+			 rnd_mode);
+    if (cnt) { /* special case 1.000...000 */
+      MPFR_EXP(x)++;
+      xp[xn] = ((mp_limb_t) 1) << (BITS_PER_MP_LIMB-1);
+    }
+  }
+
   /* warning: don't change the precision of x! */
-  if (SIGN(x) < 0) CHANGE_SIGN(x);
+  if (MPFR_SIGN(x) < 0) MPFR_CHANGE_SIGN(x);
 
   return; 
 }

@@ -1,6 +1,6 @@
 /* mpfr_clear -- free the memory space allocated for a floating-point number
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 void
 #if __STDC__
@@ -32,5 +33,6 @@ mpfr_clear (m)
      mpfr_ptr m;
 #endif
 {
-  (*__gmp_free_func) (m->_mp_d, ((m->_mp_prec>>3) + 1));
+  /* be careful to always free an entire number of limbs */
+  (*_mp_free_func) (MPFR_MANT(m), MPFR_ABSSIZE(m) * BYTES_PER_MP_LIMB);
 }

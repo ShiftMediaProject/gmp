@@ -1,6 +1,6 @@
 /* mpfr_add_one_ulp, mpfr_sub_one_ulp -- add/subtract one unit in last place
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -20,11 +20,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include "gmp.h"
-#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
+#include "gmp-impl.h"
 
-/* sets x to x+sign(x)*2^(EXP(x)-PREC(x)) */
-int 
+/* sets x to x+sign(x)*2^(MPFR_EXP(x)-MPFR_PREC(x)) */
+void
 #if __STDC__
 mpfr_add_one_ulp(mpfr_ptr x)
 #else
@@ -34,31 +35,34 @@ mpfr_add_one_ulp(x)
 {
   int xn, sh; mp_limb_t *xp;
 
-  xn = 1 + (PREC(x)-1)/BITS_PER_MP_LIMB;
-  sh = xn*BITS_PER_MP_LIMB - PREC(x);
-  xp = MANT(x);
+  if (MPFR_IS_INF(x)) { return; }
+  xn = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
+  sh = xn*BITS_PER_MP_LIMB - MPFR_PREC(x);
+  xp = MPFR_MANT(x);
   if (mpn_add_1(xp, xp, xn, (mp_limb_t)1<<sh)) {
-    EXP(x)++;
+    MPFR_EXP(x)++;
     mpn_rshift(xp, xp, xn, 1);
     xp[xn-1] += (mp_limb_t)1<<(BITS_PER_MP_LIMB-1);
   }
-  return 0;
+  return;
 }
 
 /* sets x to x-sign(x)*ulp(x) */
-int mpfr_sub_one_ulp(mpfr_ptr x)
+void
+mpfr_sub_one_ulp(mpfr_ptr x)
 {
   int xn, sh; mp_limb_t *xp;
 
-  xn = 1 + (PREC(x)-1)/BITS_PER_MP_LIMB;
-  sh = xn*BITS_PER_MP_LIMB-PREC(x);
-  xp = MANT(x);
+  if (MPFR_IS_INF(x)) { return; }
+  xn = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
+  sh = xn*BITS_PER_MP_LIMB-MPFR_PREC(x);
+  xp = MPFR_MANT(x);
   mpn_sub_1(xp, xp, xn, (mp_limb_t)1<<sh);
   if (xp[xn-1] >> (BITS_PER_MP_LIMB-1) == 0) {
     /* was an exact power of two: not normalized any more */
-    EXP(x)--;
+    MPFR_EXP(x)--;
     mpn_lshift(xp, xp, xn, 1);
     *xp |= ((mp_limb_t)1 << sh);
   }
-  return 0;
+  return;
 }

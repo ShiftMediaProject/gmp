@@ -1,6 +1,6 @@
 /* mpfr_cmp -- compare two floating-point numbers
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 /* returns 0 iff b = c
             a positive value iff b > c
@@ -41,9 +42,9 @@ of b and c, i.e. one plus the number of bits shifts to align b and c
 /* compares b and sign(s)*c */
 int 
 #if __STDC__
-mpfr_cmp3 ( mpfr_srcptr b, mpfr_srcptr c, long int s)
+mpfr_cmp3 (mpfr_srcptr b, mpfr_srcptr c, long int s)
 #else
-mpfr_cmp3(b, c, s)
+mpfr_cmp3 (b, c, s)
      mpfr_srcptr b;
      mpfr_srcptr c; 
      long int s;
@@ -53,22 +54,34 @@ mpfr_cmp3(b, c, s)
    unsigned long bn, cn;
    mp_limb_t *bp, *cp;
 
-   if (!NOTZERO(b) && !NOTZERO(c)) { return 0; }
-   s = s*SIGN(b)*SIGN(c);
-   if (s<0) return(SIGN(b));
+   if (MPFR_IS_NAN(b) || MPFR_IS_NAN(c)) return 1;
+
+   if (MPFR_IS_INF(b)) {
+     if (MPFR_IS_INF(c) && (MPFR_SIGN(b) * s * MPFR_SIGN(c) > 0))
+       return 0;
+     else 
+       return MPFR_SIGN(b);
+   }
+
+   if (!MPFR_NOTZERO(b)) {
+     if (!MPFR_NOTZERO(c)) return 0; else return -(s*MPFR_SIGN(c));
+   }
+   else if (!MPFR_NOTZERO(c)) return MPFR_SIGN(b);
+
+   s = s * MPFR_SIGN(b) * MPFR_SIGN(c);
+   if (s<0) return(MPFR_SIGN(b));
 
    /* now signs are equal */
-
-   diff_exp = EXP(b)-EXP(c);
-   s = (SIGN(b)>0) ? 1 : -1;
+   diff_exp = MPFR_EXP(b)-MPFR_EXP(c);
+   s = (MPFR_SIGN(b) > 0) ? 1 : -1;
 
    if (diff_exp>0) return(s*(1+diff_exp));
    else if (diff_exp<0) return(s*(-1+diff_exp));
    /* both signs and exponents are equal */
 
-   bn = (PREC(b)-1)/mp_bits_per_limb+1;
-   cn = (PREC(c)-1)/mp_bits_per_limb+1;
-   bp = MANT(b); cp = MANT(c);
+   bn = (MPFR_PREC(b)-1)/BITS_PER_MP_LIMB+1;
+   cn = (MPFR_PREC(c)-1)/BITS_PER_MP_LIMB+1;
+   bp = MPFR_MANT(b); cp = MPFR_MANT(c);
 
    while (bn && cn) {
      if (bp[--bn] != cp[--cn])
@@ -82,8 +95,10 @@ mpfr_cmp3(b, c, s)
 }
 
 /* returns the number of cancelled bits when one subtracts abs(c) from abs(b). 
-   Assumes b>=c, which implies EXP(b)>=EXP(c).
+   Assumes b>=c, which implies MPFR_EXP(b)>=MPFR_EXP(c).
    if b=c, returns prec(b).
+
+   In other terms mpfr_cmp2 (b, c) returns EXP(b) - EXP(b-c).
 */
 int 
 #if __STDC__
@@ -101,44 +116,45 @@ mpfr_cmp2(b, c)
   printf("b="); mpfr_print_raw(b); putchar('\n');
   printf("c="); mpfr_print_raw(c); putchar('\n');
 #endif  
-  if (NOTZERO(c)==0) return (NOTZERO(b)) ? 0 : PREC(b);
-  d = EXP(b)-EXP(c);
+  if (MPFR_NOTZERO(c)==0) return (MPFR_NOTZERO(b)) ? 0 : MPFR_PREC(b);
+  d = MPFR_EXP(b)-MPFR_EXP(c);
   k = 0; /* result can be d or d+1 if d>1, or >= d otherwise */
   /* k is the number of identical bits in the high part,
      then z is the number of possibly cancelled bits */
 #ifdef DEBUG
-  if (d<0) { printf("assumption EXP(b)<EXP(c) violated\n"); exit(1); }
+  printf("d=%u\n", d);
+  if (d<0) { printf("assumption MPFR_EXP(b)<MPFR_EXP(c) violated\n"); exit(1); }
 #endif
-  bn = (PREC(b)-1)/mp_bits_per_limb;
-  cn = (PREC(c)-1)/mp_bits_per_limb;
-  bp = MANT(b); cp = MANT(c);
+  bn = (MPFR_PREC(b)-1)/BITS_PER_MP_LIMB;
+  cn = (MPFR_PREC(c)-1)/BITS_PER_MP_LIMB;
+  bp = MPFR_MANT(b); cp = MPFR_MANT(c);
   /* subtract c from b from most significant to less significant limbs,
      and first determines first non zero limb difference */
   if (d)
     {
       cc = bp[bn--];
-      if (d<mp_bits_per_limb)
-	cc -= cp[cn]>>d; 
+      if (d < BITS_PER_MP_LIMB)
+	cc -= cp[cn] >> d;
     }
   else { /* d=0 */
     while (bn>=0 && cn>=0 && (cc=(bp[bn--]-cp[cn--]))==0) {
-      k+=mp_bits_per_limb;
+      k+=BITS_PER_MP_LIMB;
     }
 
     if (cc==0) { /* either bn<0 or cn<0 */
-      while (bn>=0 && (cc=bp[bn--])==0) k+=mp_bits_per_limb;
+      while (bn>=0 && (cc=bp[bn--])==0) k+=BITS_PER_MP_LIMB;
     }
     /* now bn<0 or cc<>0 */
-    if (cc==0 && bn<0) return(PREC(b));
+    if (cc==0 && bn<0) return(MPFR_PREC(b));
   }
 
   /* the first non-zero limb difference is cc, and the number
      of cancelled bits in the upper limbs is k */
 
   count_leading_zeros(u, cc);
-  k += u; 
+  k += u;
 
-  if (cc != (1<<(mp_bits_per_limb-u-1))) return k;
+  if (cc != ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - u - 1))) return k;
 
   /* now cc is an exact power of two */
   if (cc != 1) 
@@ -151,11 +167,11 @@ mpfr_cmp2(b, c)
 	{
 	  if (cn < 0) { return k; }
 	  t = bp[bn--]; 
-	  if (d < mp_bits_per_limb)
+	  if (d < BITS_PER_MP_LIMB)
 	    {
 	      if (d) 
 		{ 
-		  u = cp[cn--] << (mp_bits_per_limb - d); 
+		  u = cp[cn--] << (BITS_PER_MP_LIMB - d); 
 		  if (cn >= 0) u+=(cp[cn]>>d); 
 		}
 	      else u = cp[cn--]; 
@@ -164,12 +180,12 @@ mpfr_cmp2(b, c)
 	      if (t < u) return k+1; 
 	    }
 	  else
-	    if (t) return k; else d -= mp_bits_per_limb; 
+	    if (t) return k; else d -= BITS_PER_MP_LIMB; 
 	}
 	  
       /* bn < 0; if some limb of c is nonzero, return k+1, otherwise return k*/
 
-      if (cn>=0 && (cp[cn--] << (mp_bits_per_limb - d))) { return k+1; }
+      if (cn>=0 && (cp[cn--] << (BITS_PER_MP_LIMB - d))) { return k+1; }
 
       while (cn >= 0) 
 	if (cp[cn--]) return k+1; 
@@ -180,16 +196,18 @@ mpfr_cmp2(b, c)
   z = 0; /* number of possibly cancelled bits - 1 */
   /* thus result is either k if low(b) >= low(c)
                         or k+z+1 if low(b) < low(c) */
-  if (d > mp_bits_per_limb) { return k; }
+  if (d > BITS_PER_MP_LIMB) return k;
 
-  while (bn >= 0)
+  while (bn >= 0) /* the next limb of b to be considered is b[bn] */
     { 
-      if (cn < 0) { return k; }
+      /* for c we have to consider the low d bits of c[cn]
+	 and the high (BITS_PER_MP_LIMB-d) bits of c[cn-1] */
+      if (cn < 0) return k;
 
       if (d) 
 	 { 
-	   u = cp[cn--] << (mp_bits_per_limb - d); 
-	   if (cn >= 0) u+=(cp[cn]>>d);
+	   u = cp[cn--] << (BITS_PER_MP_LIMB - d);
+	   if (cn >= 0) u += cp[cn] >> d;
 	 }
        else u = cp[cn--]; 
 
@@ -198,21 +216,30 @@ mpfr_cmp2(b, c)
          bp[bn--] < cp[cn--] : borrow
       */
        if ((cc = bp[bn--]) != u) {
-	 if (cc>u) return k;
-	 else { count_leading_zeros(u, cc-u); return k + 1 + z + u; }
+	 if (cc > u) return k;
+	 else {
+	   count_leading_zeros(u, cc-u);
+	   z += u + 1;
+	   if (u + 1 < BITS_PER_MP_LIMB) return k + z;
+	 }
        }
-       else z += mp_bits_per_limb; 
+       else z += BITS_PER_MP_LIMB; 
     }
 
-  if (cn >= 0)
-    count_leading_zeros(cc, ~(cp[cn--] << (mp_bits_per_limb - d))); 
-  else { cc = 0; }
+  /* warning: count_leading_zeros doesn't work with zero */
+  if ((cn >= 0) && d && (u = ~(cp[cn--] << (BITS_PER_MP_LIMB - d))))
+    count_leading_zeros(cc, u);
+  else
+    cc = 0;
 
-  k += cc; 
+  /* here d=0 or d=1: if d=1, we have one more cancelled bit if we don't
+   shift cp[cn] */
+  k += cc;
   if (cc < d) return k;
   
-  while (cn >= 0 && !~cp[cn--]) { z += mp_bits_per_limb; } 
-  if (cn >= 0) { count_leading_zeros(cc, ~cp[cn--]); return (k + z + cc); }
+  while (cn >= 0 && !~cp[cn]) { z += BITS_PER_MP_LIMB; cn--; } 
+  /* now either cn<0 or cp[cn] is not 111...111 */
+  if (cn >= 0) { count_leading_zeros(cc, ~cp[cn]); return (k + 1 + z + cc); }
 
   return k; /* We **need** that the nonsignificant limbs of c are set
 	       to zero there */	       
