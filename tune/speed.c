@@ -188,8 +188,12 @@ const struct routine_t {
   { "mpn_gcd_binary",    speed_mpn_gcd_binary       },
   { "find_a",            speed_find_a, FLAG_NODATA  },
 
+  { "mpn_gcdext",            speed_mpn_gcdext            },
+  { "mpn_gcdext_single",     speed_mpn_gcdext_single     },
+  { "mpn_gcdext_one_double", speed_mpn_gcdext_one_double },
+  { "mpn_gcdext_one_single", speed_mpn_gcdext_one_single },
+
   { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
-  { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
@@ -264,6 +268,7 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_udiv_qrnnd
   { "mpn_udiv_qrnnd",         speed_mpn_udiv_qrnnd,         FLAG_R_OPTIONAL },
 #endif
+  { "invert_limb",            speed_invert_limb,            FLAG_R_OPTIONAL },
 
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
@@ -274,6 +279,7 @@ const struct routine_t {
 struct choice_t {
   const struct routine_t  *p;
   int                     r;
+  double                  scale;
   double                  time;
   int                     no_time;
   double                  prev_time;
@@ -366,7 +372,7 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
       s->r = choice[i].r;
       choice[i].time = speed_measure (choice[i].p->fun, s);
       choice[i].no_time = (choice[i].time == -1.0);
-
+      choice[i].time *= choice[i].scale;
 
       /* Apply the effect of CMP_DIFFPREV, but the new choice[i].prev_time
          is before any differences.  */
@@ -628,11 +634,30 @@ run_gnuplot (int argc, char *argv[])
 #define LONG_ONES(n) \
   ((n) == BITS_PER_LONGINT ? -1L : (n) == 0 ? 0L : (1L << (n)) - 1)
 
-long
+mp_limb_t
 r_string (const char *s)
 {
   const char  *s_orig = s;
-  long  n;
+  long        n;
+
+  {
+    mpz_t      z;
+    mp_limb_t  l;
+    int        set, siz;
+
+    mpz_init (z);
+    set = mpz_set_str (z, s, 0);
+    siz = SIZ(z);
+    l = (siz == 0 ? 0 : siz > 0 ? PTR(z)[0] : -PTR(z)[0]);
+    mpz_clear (z);
+    if (set == 0)
+      {
+        if (siz > 1 || siz < -1)
+          printf ("Warning, r parameter %s truncated to %d bits\n",
+                  BITS_PER_MP_LIMB);
+        return l;
+      }
+  }
 
   if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
     n = strtoul (s+2, (char **) &s, 16);
@@ -672,10 +697,24 @@ r_string (const char *s)
 
 
 void
-routine_find (struct choice_t *c, const char *s)
+routine_find (struct choice_t *c, const char *s_orig)
 {
+  const char  *s;
   int     i;
   size_t  nlen;
+
+  c->name = s_orig;
+  s = strchr (s_orig, '*');
+  if (s != NULL)
+    {
+      c->scale = atof(s_orig);
+      s++;
+    }
+  else
+    {
+      c->scale = 1.0;
+      s = s_orig;
+    }
 
   for (i = 0; i < numberof (routine); i++)
     {
@@ -689,13 +728,14 @@ routine_find (struct choice_t *c, const char *s)
 
           if (! (routine[i].flag & (FLAG_R|FLAG_R_OPTIONAL)))
             {
-              fprintf (stderr, "Choice %s bad: doesn't take a \".<r>\" paramater\n", s);
+              fprintf (stderr,
+                       "Choice %s bad: doesn't take a \".<r>\" parameter\n",
+                       s_orig);
               exit (1);
             }
 
           c->p = &routine[i];
           c->r = r_string (s + nlen + 1);
-          c->name = s;
           return;
         }
 
@@ -705,18 +745,19 @@ routine_find (struct choice_t *c, const char *s)
 
           if (routine[i].flag & FLAG_R)
             {
-              fprintf (stderr, "Choice %s bad: needs a \".<r>\" paramater\n", s);
+              fprintf (stderr,
+                       "Choice %s bad: needs a \".<r>\" parameter\n",
+                       s_orig);
               exit (1);
             }
 
           c->p = &routine[i];
           c->r = 0;
-          c->name = s;
           return;
         }
     }
 
-  fprintf (stderr, "Choice %s unrecognised\n", s);
+  fprintf (stderr, "Choice %s unrecognised\n", s_orig);
   exit (1);
 }
 
@@ -726,6 +767,8 @@ usage (void)
 {
   int  i;
   
+  speed_time_init ();
+
   printf ("\
 Usage: speed [-options] -s size <routine>...\n\
 Measure the speed of some routines.\n\
