@@ -18,10 +18,18 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
 
 
-Changes between MP version 4.1 and 4.2
+Changes between MP version 4.1.1 and 4.2
 
 * Bug fixes.
-* New system support: HP-UX IA-64.
+* New systems supported: HP-UX IA-64.
+* New gmp_randinit_mt Mersenne Twister random numbers, used for
+  gmp_randinit_default too.
+* New --enable-profiling=instrument build option.
+
+Changes between MP version 4.1 and 4.1.1
+
+* Bug fixes.
+* New systems supported: NetBSD and OpenBSD sparc64.
 
 Changes between MP version 4.0.1 and 4.1
 

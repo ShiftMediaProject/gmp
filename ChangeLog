@@ -18,6 +18,27 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-05  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/pa64/sub_n.asm: Remove space in "sub, db" which gas objects to.
+	* mpn/pa64/*.asm: Use ".level 2.0" for 2.0n, since gas doesn't like
+	".level 2.0N".
+
+	* configure.in (hppa*-*-*): Group path and flags choices, for clarity.
+	(hppa1.0*-*-*): Use gcc -mpa-risc-1-0 when available.
+	(hppa2.0*-*-*): Ditto -mpa-risc-2-0.
+	(*-*-hpux*): Exclude ABI=2.0w for hpux[1-9] and hpux10, rather than
+	the converse of allowing it for hpux1[1-9]; ie. list the bad systems
+	rather than try to guess the good systems.
+	(hppa2.0*-*-*) [ABI=2.0n ABI=2.0w]: Add gcc to likely compilers.
+	(hppa*-*-*) [gcc]: Test sizeof(long) to differentiate a 32-bit or
+	64-bit build of the compiler.
+	(hppa64-*-*): Add this as equivalent to hppa2.0-*-*.
+	* acinclude.m4 (GMP_C_TEST_SIZEOF): New macro.
+
+	* tests/tests.h (ostringstream::str): Must null-terminate
+	ostrstream::str() for the string constructor.
+
 2002-12-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/pa32/hppa1_1/udiv.asm: Don't wrap symbol to INT64 in L() stuff. 
