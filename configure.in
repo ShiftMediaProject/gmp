@@ -559,13 +559,22 @@ case $host in
   # preprocessing is done separately, and this is only a speedup, the normal
   # preprocessor gets run if there's any problems.
   #
+  # gcc 2.7.2 knows -mcpu 403, 603, 604.
+  #
+  # gcc 2.95 adds 401, 505, 602, 603e, ec603e, 604e, 620, 740, 750,
+  # 801, 821, 823, 860.
+  #
+  # gcc 3.0 adds 630, rs64a.
+  #
+  # gcc 3.1 adds 405, 7400, 7450.
+  #
   powerpc*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     __GMP_HAVE_HOST_CPU_FAMILY_powerpc=1
     cclist="gcc cc"
     cc_cflags="-g -O2"
     gcc_cflags="-g -O2 -mpowerpc"
-    gcc_cflags_optlist="asm precomp"
+    gcc_cflags_optlist="asm precomp cpu"
     gcc_cflags_asm="-Wa,-mppc"
     gcc_cflags_precomp="-no-cpp-precomp"
     path="powerpc32"
@@ -575,8 +584,34 @@ case $host in
                 xlc_cflags="-g -O2 -qarch=ppc -qmaxmem=20000" ;;
     esac
 
+    # FIXME: The way 603e falls back to 603 for gcc 2.7.2 should be
+    # done for all the others too.  But what would be the correct
+    # arrangements?
+    case $host_cpu in
+      powerpc401)   gcc_cflags_cpu="-mcpu=401" ;;
+      powerpc403)   gcc_cflags_cpu="-mcpu=403" ;;
+      powerpc405)   gcc_cflags_cpu="-mcpu=405" ;;
+      powerpc505)   gcc_cflags_cpu="-mcpu=505" ;;
+      powerpc602)   gcc_cflags_cpu="-mcpu=602" ;;
+      powerpc603)   gcc_cflags_cpu="-mcpu=603" ;;
+      powerpc603e)  gcc_cflags_cpu="-mcpu=603e -mcpu=603" ;;
+      powerpc604)   gcc_cflags_cpu="-mcpu=604" ;;
+      powerpc604e | powerpc640ev5)
+                    gcc_cflags_cpu="-mcpu=604e -mcpu=604" ;;
+      powerpc620)   gcc_cflags_cpu="-mcpu=620" ;;
+      powerpc630)   gcc_cflags_cpu="-mcpu=630" ;;
+      powerpc740)   gcc_cflags_cpu="-mcpu=740" ;;
+      powerpc7400)  gcc_cflags_cpu="-mcpu=7400" ;;
+      powerpc7450)  gcc_cflags_cpu="-mcpu=7450" ;;
+      powerpc750)   gcc_cflags_cpu="-mcpu=750" ;;
+      powerpc801)   gcc_cflags_cpu="-mcpu=801" ;;
+      powerpc821)   gcc_cflags_cpu="-mcpu=821" ;;
+      powerpc823)   gcc_cflags_cpu="-mcpu=823" ;;
+      powerpc860)   gcc_cflags_cpu="-mcpu=860" ;;
+    esac
+
     case $host in
-      powerpc64*-*-*)
+      powerpc64-*-* | powerpc630-*-*)
         # CPU type powerpc64 forces to a 64-bit limb
         case $host in
           powerpc64-*-*) abilist="32L" ;;
@@ -1674,7 +1709,8 @@ if test "$gmp_asm_syntax_testing" != no; then
       GMP_ASM_POWERPC_R_REGISTERS
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
       case $host in
-      powerpc64*-*-aix*) GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
+      powerpc64-*-aix* | powerpc630-*-aix*)
+                         GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
       *-*-aix*)          GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
       esac
       ;;
