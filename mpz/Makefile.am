@@ -26,4 +26,4 @@ libmpz_la_SOURCES = \
   set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c \
   sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
-  urandom.c xor.c
+  urandomb.c urandomm.c xor.c
