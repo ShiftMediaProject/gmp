@@ -95,10 +95,54 @@ install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
+# Copyright (C) 1991, 1993, 1994, 1996, 1999, 2000 Free Software Foundation,
+# Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
-AUTOMAKE_OPTIONS = gnu
+# make check
+#
+#     It'd be good if "make check" first did a "make all" or whatever to
+#     build libgmp.la, but it's not clear what the best way to do this is.
+#     Putting in a "check:" target is overridden by automake, and a
+#     "check-local:" target runs too late (due to depth-first subdirectory
+#     processing).  For now it's necessary to do "make && make check".
+#
+# MPF_OBJECTS etc
+#
+#     Libtool needs all the .lo files passed to it to build both a static
+#     and shared library.  If a convenience library like mpf/libmpf.la is
+#     passed the resulting libgmp.a gets the PIC .lo objects rather than the
+#     non-PIC .o objects.
 
-SUBDIRS = mpf mpz mpn mpq
+
+AUTOMAKE_OPTIONS = gnu check-news
+
+SUBDIRS = mpf mpz mpn mpq tests demos mpbsd
+
+include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
+EXTRA_HEADERS = mp.h
+
+lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
+
+EXTRA_DIST = gmp-impl.h longlong.h stack-alloc.h urandom.h
+
+DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
 
 MPF_OBJECTS = mpf/init.lo mpf/init2.lo mpf/set.lo mpf/set_ui.lo mpf/set_si.lo \
   mpf/set_str.lo mpf/set_d.lo mpf/set_z.lo mpf/iset.lo mpf/iset_ui.lo \
@@ -146,57 +190,110 @@ MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
 
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
-EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
-  config.in tests
+MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
+  mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo mpbsd/realloc.lo \
+  mpbsd/xtom.lo mpbsd/gcd.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/sdiv.lo	  \
+  mpbsd/itom.lo mpbsd/mout.lo mpbsd/pow_ui.lo mpbsd/sqrtrem.lo
 
 
-DISTCLEANFILES = @gmp_srclinks@
-
-info_TEXINFOS = gmp.texi
-
-lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
   version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 
 libgmp_la_LIBADD = \
-	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
-
-libgmp_la_DEPENDENCIES = \
-	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
+	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) -lm
 
 libgmp_la_LDFLAGS = -release @VERSION@
+
+@WANT_MPBSD_TRUE@MPBSD_HEADERS_OPTION = @WANT_MPBSD_TRUE@mp.h
+@WANT_MPBSD_TRUE@MPBSD_LTLIBRARIES_OPTION = @WANT_MPBSD_TRUE@libmp.la
+libmp_la_LIBADD = $(MPBSD_OBJECTS) $(MPN_OBJECTS)
+libmp_la_SOURCES = 
+libmp_la_LDFLAGS = -release @VERSION@
+
+info_TEXINFOS = gmp.texi
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
 LTLIBRARIES =  $(lib_LTLIBRARIES)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir)
+DEFS = @DEFS@ -I. -I$(srcdir) -I.
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
+libgmp_la_DEPENDENCIES =  mpf/init.lo mpf/init2.lo mpf/set.lo \
+mpf/set_ui.lo mpf/set_si.lo mpf/set_str.lo mpf/set_d.lo mpf/set_z.lo \
+mpf/iset.lo mpf/iset_ui.lo mpf/iset_si.lo mpf/iset_str.lo mpf/iset_d.lo \
+mpf/clear.lo mpf/get_str.lo mpf/dump.lo mpf/size.lo mpf/eq.lo \
+mpf/reldiff.lo mpf/sqrt.lo mpf/random2.lo mpf/inp_str.lo mpf/out_str.lo \
+mpf/add.lo mpf/add_ui.lo mpf/sub.lo mpf/sub_ui.lo mpf/ui_sub.lo \
+mpf/mul.lo mpf/mul_ui.lo mpf/div.lo mpf/div_ui.lo mpf/cmp.lo \
+mpf/cmp_ui.lo mpf/cmp_si.lo mpf/mul_2exp.lo mpf/div_2exp.lo mpf/abs.lo \
+mpf/neg.lo mpf/set_q.lo mpf/get_d.lo mpf/set_dfl_prec.lo mpf/set_prc.lo \
+mpf/set_prc_raw.lo mpf/get_prc.lo mpf/ui_div.lo mpf/sqrt_ui.lo \
+mpf/floor.lo mpf/ceil.lo mpf/trunc.lo mpf/pow_ui.lo mpf/urandom.lo \
+mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
+mpz/array_init.lo mpz/bin_ui.lo mpz/bin_uiui.lo mpz/cdiv_q.lo \
+mpz/cdiv_q_ui.lo mpz/cdiv_qr.lo mpz/cdiv_qr_ui.lo mpz/cdiv_r.lo \
+mpz/cdiv_r_ui.lo mpz/cdiv_ui.lo mpz/clear.lo mpz/clrbit.lo mpz/cmp.lo \
+mpz/cmp_si.lo mpz/cmp_ui.lo mpz/cmpabs.lo mpz/cmpabs_ui.lo mpz/com.lo \
+mpz/divexact.lo mpz/dump.lo mpz/fac_ui.lo mpz/fdiv_q.lo \
+mpz/fdiv_q_2exp.lo mpz/fdiv_q_ui.lo mpz/fdiv_qr.lo mpz/fdiv_qr_ui.lo \
+mpz/fdiv_r.lo mpz/fdiv_r_2exp.lo mpz/fdiv_r_ui.lo mpz/fdiv_ui.lo \
+mpz/fib_ui.lo mpz/fits_sint_p.lo mpz/fits_slong_p.lo \
+mpz/fits_sshort_p.lo mpz/fits_uint_p.lo mpz/fits_ulong_p.lo \
+mpz/fits_ushort_p.lo mpz/gcd.lo mpz/gcd_ui.lo mpz/gcdext.lo \
+mpz/get_d.lo mpz/get_si.lo mpz/get_str.lo mpz/get_ui.lo mpz/getlimbn.lo \
+mpz/hamdist.lo mpz/init.lo mpz/inp_raw.lo mpz/inp_str.lo mpz/invert.lo \
+mpz/ior.lo mpz/iset.lo mpz/iset_d.lo mpz/iset_si.lo mpz/iset_str.lo \
+mpz/iset_ui.lo mpz/jacobi.lo mpz/lcm.lo mpz/legendre.lo mpz/mod.lo \
+mpz/mul.lo mpz/mul_2exp.lo mpz/mul_ui.lo mpz/neg.lo mpz/out_raw.lo \
+mpz/out_str.lo mpz/perfpow.lo mpz/perfsqr.lo mpz/popcount.lo \
+mpz/pow_ui.lo mpz/powm.lo mpz/powm_ui.lo mpz/pprime_p.lo mpz/random.lo \
+mpz/random2.lo mpz/realloc.lo mpz/remove.lo mpz/root.lo mpz/scan0.lo \
+mpz/scan1.lo mpz/set.lo mpz/set_d.lo mpz/set_f.lo mpz/set_q.lo \
+mpz/set_si.lo mpz/set_str.lo mpz/set_ui.lo mpz/setbit.lo mpz/size.lo \
+mpz/sizeinbase.lo mpz/sqrt.lo mpz/sqrtrem.lo mpz/sub.lo mpz/sub_ui.lo \
+mpz/swap.lo mpz/tdiv_ui.lo mpz/tdiv_q.lo mpz/tdiv_q_2exp.lo \
+mpz/tdiv_q_ui.lo mpz/tdiv_qr.lo mpz/tdiv_qr_ui.lo mpz/tdiv_r.lo \
+mpz/tdiv_r_2exp.lo mpz/tdiv_r_ui.lo mpz/tstbit.lo mpz/ui_pow_ui.lo \
+mpz/urandomb.lo mpz/urandomm.lo mpz/xor.lo mpq/add.lo \
+mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo mpq/cmp_ui.lo mpq/div.lo \
+mpq/get_d.lo mpq/get_den.lo mpq/get_num.lo mpq/init.lo mpq/inv.lo \
+mpq/mul.lo mpq/neg.lo mpq/set.lo mpq/set_den.lo mpq/set_num.lo \
+mpq/set_si.lo mpq/set_ui.lo mpq/sub.lo mpq/equal.lo mpq/set_z.lo \
+mpq/set_d.lo
 am_libgmp_la_OBJECTS =  assert.lo errno.lo memory.lo mp_set_fns.lo \
 mp_clz_tab.lo rand.lo randclr.lo randlc.lo randlc2x.lo randraw.lo \
 randsd.lo randsdui.lo version.lo stack-alloc.lo mp_bpl.lo \
 extract-dbl.lo insert-dbl.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
+libmp_la_DEPENDENCIES =  mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo \
+mpbsd/powm.lo mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo \
+mpbsd/realloc.lo mpbsd/xtom.lo mpbsd/gcd.lo mpbsd/min.lo mpbsd/mul.lo \
+mpbsd/sdiv.lo mpbsd/itom.lo mpbsd/mout.lo mpbsd/pow_ui.lo \
+mpbsd/sqrtrem.lo
+libmp_la_OBJECTS =  $(am_libmp_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libgmp_la_SOURCES)
+DIST_SOURCES =  $(libgmp_la_SOURCES) $(libmp_la_SOURCES)
 TEXI2DVI = texi2dvi
 INFO_DEPS = gmp.info
 DVIS = gmp.dvi
 TEXINFOS = gmp.texi
-DIST_COMMON =  README AUTHORS COPYING COPYING.LIB ChangeLog INSTALL \
-Makefile.am Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 \
-config.guess config.sub configure configure.in depcomp install-sh \
-ltconfig ltmain.sh mdate-sh missing mkinstalldirs stamp-vti texinfo.tex \
-version.texi
+HEADERS =  $(include_HEADERS)
+
+DIST_COMMON =  README $(EXTRA_HEADERS) $(include_HEADERS) ./stamp-h.in \
+AUTHORS COPYING COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in \
+NEWS acconfig.h acinclude.m4 aclocal.m4 config.guess config.in \
+config.sub configure configure.in depcomp install-sh ltconfig ltmain.sh \
+mdate-sh missing mkinstalldirs stamp-vti texinfo.tex version.texi
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -209,8 +306,8 @@ $(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mp_clz_tab.Plo $(DEPDIR)/mp_set_fns.Plo \
 $(DEPDIR)/rand.Plo $(DEPDIR)/randclr.Plo $(DEPDIR)/randlc.Plo \
 $(DEPDIR)/randlc2x.Plo $(DEPDIR)/randraw.Plo $(DEPDIR)/randsd.Plo \
 $(DEPDIR)/randsdui.Plo $(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
-SOURCES = $(libgmp_la_SOURCES)
-OBJECTS = $(am_libgmp_la_OBJECTS)
+SOURCES = $(libgmp_la_SOURCES) $(libmp_la_SOURCES)
+OBJECTS = $(am_libgmp_la_OBJECTS) $(am_libmp_la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -229,6 +326,38 @@ config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
+
+config.h: stamp-h
+	@if test ! -f $@; then \
+		rm -f stamp-h; \
+		$(MAKE) stamp-h; \
+	else :; fi
+stamp-h: $(srcdir)/config.in $(top_builddir)/config.status
+	@rm -f stamp-h stamp-hT
+	@echo timestamp > stamp-hT 2> /dev/null
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=config.h:config.in \
+	     $(SHELL) ./config.status
+	@mv stamp-hT stamp-h
+$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h.in
+	@if test ! -f $@; then \
+		rm -f $(srcdir)/./stamp-h.in; \
+		$(MAKE) $(srcdir)/./stamp-h.in; \
+	else :; fi
+$(srcdir)/./stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+	@rm -f $(srcdir)/./stamp-h.in $(srcdir)/./stamp-h.inT
+	@echo timestamp > $(srcdir)/./stamp-h.inT 2> /dev/null
+	cd $(top_srcdir) && $(AUTOHEADER)
+	@mv $(srcdir)/./stamp-h.inT $(srcdir)/./stamp-h.in
+
+mostlyclean-hdr:
+
+clean-hdr:
+
+distclean-hdr:
+	-rm -f config.h
+
+maintainer-clean-hdr:
 
 mostlyclean-libLTLIBRARIES:
 
@@ -279,6 +408,9 @@ maintainer-clean-libtool:
 
 libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libgmp_la_LDFLAGS) $(libgmp_la_OBJECTS) $(libgmp_la_LIBADD) $(LIBS)
+
+libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES)
+	$(LINK) -rpath $(libdir) $(libmp_la_LDFLAGS) $(libmp_la_OBJECTS) $(libmp_la_LIBADD) $(LIBS)
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@stamp-vti
 	@:
@@ -420,6 +552,24 @@ maintainer-clean-aminfo:
 	  fi; \
 	done
 
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(includedir)
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$f"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$f; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " rm -f $(DESTDIR)$(includedir)/$$f"; \
+	  rm -f $(DESTDIR)$(includedir)/$$f; \
+	done
+
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
 # To change the values of `make' variables: instead of editing Makefiles,
@@ -484,7 +634,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -f$$here/ID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -499,8 +649,8 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)config.in$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags config.in $$unique $(LISP)
 
 mostlyclean-tags:
 
@@ -562,6 +712,10 @@ dist-all: distdir
 	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 distdir: $(DISTFILES)
+	@if sed 15q $(srcdir)/NEWS | fgrep -e "$(VERSION)" > /dev/null; then :; else \
+	  echo "NEWS not updated; not releasing" 1>&2; \
+	  exit 1; \
+	fi
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
 	@for file in $(DISTFILES); do \
@@ -640,24 +794,29 @@ check-am: all-am
 check: check-recursive
 installcheck-am:
 installcheck: installcheck-recursive
+all-recursive-am: config.h
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+
 install-exec-am: install-libLTLIBRARIES
 install-exec: install-exec-recursive
 
-install-data-am: install-info-am
+install-data-am: install-info-am install-includeHEADERS
 install-data: install-data-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 install: install-recursive
-uninstall-am: uninstall-libLTLIBRARIES uninstall-info
+uninstall-am: uninstall-libLTLIBRARIES uninstall-info \
+		uninstall-includeHEADERS
 uninstall: uninstall-recursive
-all-am: Makefile $(INFO_DEPS) $(LTLIBRARIES)
-all-redirect: all-recursive
+all-am: Makefile $(INFO_DEPS) $(LTLIBRARIES) $(HEADERS) config.h
+all-redirect: all-recursive-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs: installdirs-recursive
 installdirs-am:
-	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(infodir)
+	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) \
+		$(DESTDIR)$(includedir)
 
 
 mostlyclean-generic:
@@ -671,19 +830,20 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-vti mostlyclean-aminfo \
-		mostlyclean-tags mostlyclean-depend mostlyclean-generic
+mostlyclean-am:  mostlyclean-hdr mostlyclean-libLTLIBRARIES \
+		mostlyclean-compile mostlyclean-libtool mostlyclean-vti \
+		mostlyclean-aminfo mostlyclean-tags mostlyclean-depend \
+		mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
-clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-vti \
-		clean-aminfo clean-tags clean-depend clean-generic \
-		mostlyclean-am
+clean-am:  clean-hdr clean-libLTLIBRARIES clean-compile clean-libtool \
+		clean-vti clean-aminfo clean-tags clean-depend \
+		clean-generic mostlyclean-am
 
 clean: clean-recursive
 
-distclean-am:  distclean-libLTLIBRARIES distclean-compile \
+distclean-am:  distclean-hdr distclean-libLTLIBRARIES distclean-compile \
 		distclean-libtool distclean-vti distclean-aminfo \
 		distclean-tags distclean-depend distclean-generic \
 		clean-am
@@ -692,7 +852,8 @@ distclean-am:  distclean-libLTLIBRARIES distclean-compile \
 distclean: distclean-recursive
 	-rm -f config.status
 
-maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
+maintainer-clean-am:  maintainer-clean-hdr \
+		maintainer-clean-libLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-vti maintainer-clean-aminfo \
 		maintainer-clean-tags maintainer-clean-depend \
@@ -703,14 +864,16 @@ maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
 maintainer-clean: maintainer-clean-recursive
 	-rm -f config.status
 
-.PHONY: mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
+.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
+mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
 clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
 uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
 distclean-compile clean-compile maintainer-clean-compile \
 mostlyclean-libtool distclean-libtool clean-libtool \
 maintainer-clean-libtool mostlyclean-vti distclean-vti clean-vti \
 maintainer-clean-vti install-info-am uninstall-info mostlyclean-aminfo \
-distclean-aminfo clean-aminfo maintainer-clean-aminfo install-recursive \
+distclean-aminfo clean-aminfo maintainer-clean-aminfo \
+uninstall-includeHEADERS install-includeHEADERS install-recursive \
 uninstall-recursive install-data-recursive uninstall-data-recursive \
 install-exec-recursive uninstall-exec-recursive installdirs-recursive \
 uninstalldirs-recursive all-recursive check-recursive \
@@ -720,17 +883,13 @@ maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir \
 mostlyclean-depend distclean-depend clean-depend \
 maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs-am installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+installcheck-am installcheck all-recursive-am install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs-am installdirs mostlyclean-generic distclean-generic \
+clean-generic maintainer-clean-generic clean mostlyclean distclean \
+maintainer-clean
 
-
-check: all
-	cd mpz/tests && $(MAKE) $(FLAGS_TO_PASS) check
-	cd mpq/tests && $(MAKE) $(FLAGS_TO_PASS) check
-	cd mpf/tests && $(MAKE) $(FLAGS_TO_PASS) check
 
 # Don't ship CVS directories.
 dist-hook:

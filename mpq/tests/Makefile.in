@@ -95,38 +95,57 @@ install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
+# Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir) -I../..
-LDADD = ../../libgmp.la
+INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+LDADD = $(top_builddir)/libgmp.la
 
-noinst_PROGRAMS = t-cmp t-cmp_ui t-get_d
+check_PROGRAMS = t-cmp t-cmp_ui t-get_d
+TESTS = $(check_PROGRAMS)
 subdir = mpq/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-noinst_PROGRAMS =  t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-get_d$(EXEEXT)
-PROGRAMS =  $(noinst_PROGRAMS)
+check_PROGRAMS =  t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-get_d$(EXEEXT)
 
-
-DEFS = @DEFS@ -I. -I$(srcdir)
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 t_cmp_SOURCES = t-cmp.c
 t_cmp_OBJECTS =  t-cmp.$(OBJEXT)
 t_cmp_LDADD = $(LDADD)
-t_cmp_DEPENDENCIES =  ../../libgmp.la
+t_cmp_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_cmp_LDFLAGS = 
 t_cmp_ui_SOURCES = t-cmp_ui.c
 t_cmp_ui_OBJECTS =  t-cmp_ui.$(OBJEXT)
 t_cmp_ui_LDADD = $(LDADD)
-t_cmp_ui_DEPENDENCIES =  ../../libgmp.la
+t_cmp_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_cmp_ui_LDFLAGS = 
 t_get_d_SOURCES = t-get_d.c
 t_get_d_OBJECTS =  t-get_d.$(OBJEXT)
 t_get_d_LDADD = $(LDADD)
-t_get_d_DEPENDENCIES =  ../../libgmp.la
+t_get_d_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_get_d_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -157,14 +176,14 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 
-mostlyclean-noinstPROGRAMS:
+mostlyclean-checkPROGRAMS:
 
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 
-distclean-noinstPROGRAMS:
+distclean-checkPROGRAMS:
 
-maintainer-clean-noinstPROGRAMS:
+maintainer-clean-checkPROGRAMS:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -278,11 +297,64 @@ maintainer-clean-depend:
 @AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `cygpath -w $<`
 
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; \
+	srcdir=$(srcdir); export srcdir; \
+	for tst in $(TESTS); do \
+	  if test -f ./$$tst; then dir=./; \
+	  elif test -f $$tst; then dir=; \
+	  else dir="$(srcdir)/"; fi; \
+	  if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xpass=`expr $$xpass + 1`; \
+	      failed=`expr $$failed + 1`; \
+	      echo "XPASS: $$tst"; \
+	    ;; \
+	    *) \
+	      echo "PASS: $$tst"; \
+	    ;; \
+	    esac; \
+	  elif test $$? -ne 77; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xfail=`expr $$xfail + 1`; \
+	      echo "XFAIL: $$tst"; \
+	    ;; \
+	    *) \
+	      failed=`expr $$failed + 1`; \
+	      echo "FAIL: $$tst"; \
+	    ;; \
+	    esac; \
+	  fi; \
+	done; \
+	if test "$$failed" -eq 0; then \
+	  if test "$$xfail" -eq 0; then \
+	    banner="All $$all tests passed"; \
+	  else \
+	    banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	  fi; \
+	else \
+	  if test "$$xpass" -eq 0; then \
+	    banner="$$failed of $$all tests failed"; \
+	  else \
+	    banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	  fi; \
+	fi; \
+	dashes=`echo "$$banner" | sed s/./=/g`; \
+	echo "$$dashes"; \
+	echo "$$banner"; \
+	echo "$$dashes"; \
+	test "$$failed" -eq 0
 info-am:
 info: info-am
 dvi-am:
 dvi: dvi-am
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 installcheck-am:
 installcheck: installcheck-am
@@ -297,7 +369,7 @@ install-am: all-am
 install: install-am
 uninstall-am:
 uninstall: uninstall-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -314,25 +386,25 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-noinstPROGRAMS mostlyclean-compile \
+mostlyclean-am:  mostlyclean-checkPROGRAMS mostlyclean-compile \
 		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-noinstPROGRAMS clean-compile clean-libtool clean-tags \
+clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-tags \
 		clean-depend clean-generic mostlyclean-am
 
 clean: clean-am
 
-distclean-am:  distclean-noinstPROGRAMS distclean-compile \
+distclean-am:  distclean-checkPROGRAMS distclean-compile \
 		distclean-libtool distclean-tags distclean-depend \
 		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-noinstPROGRAMS \
+maintainer-clean-am:  maintainer-clean-checkPROGRAMS \
 		maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-tags maintainer-clean-depend \
 		maintainer-clean-generic distclean-am
@@ -341,33 +413,19 @@ maintainer-clean-am:  maintainer-clean-noinstPROGRAMS \
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-noinstPROGRAMS distclean-noinstPROGRAMS \
-clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
-mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir \
-mostlyclean-depend distclean-depend clean-depend \
-maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+.PHONY: mostlyclean-checkPROGRAMS distclean-checkPROGRAMS \
+clean-checkPROGRAMS maintainer-clean-checkPROGRAMS mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend check-TESTS \
+info-am info dvi-am dvi check check-am installcheck-am installcheck \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-check: Makefile st-cmp st-cmp_ui st-get_d
-	@echo "The tests passed."
-
-st-cmp: t-cmp@EXEEXT@
-	./t-cmp
-	touch $@
-st-cmp_ui: t-cmp_ui@EXEEXT@
-	./t-cmp_ui
-	touch $@
-st-get_d: t-get_d@EXEEXT@
-	./t-get_d
-	touch $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -99,21 +99,20 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 AUTOMAKE_OPTIONS = gnu
 
 INCLUDES = -I$(top_srcdir) -I..
-LDADD = libstat.la ../../libgmp.la -lm
+LDADD = libstat.la $(top_builddir)/libgmp.la -lm
 
-noinst_PROGRAMS = findlc gen gen.static spect stat
+EXTRA_PROGRAMS = findlc gen gen.static spect stat
 gen_static_SOURCES = gen.c
 gen_static_LDFLAGS = -static
 
-noinst_LTLIBRARIES = libstat.la
+EXTRA_LTLIBRARIES = libstat.la
 libstat_la_SOURCES = statlib.c zdiv_round.c
 subdir = tests/rand
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-LTLIBRARIES =  $(noinst_LTLIBRARIES)
 
-
-DEFS = @DEFS@ -I. -I$(srcdir)
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -121,33 +120,29 @@ libstat_la_LDFLAGS =
 libstat_la_LIBADD = 
 am_libstat_la_OBJECTS =  statlib.lo zdiv_round.lo
 libstat_la_OBJECTS =  $(am_libstat_la_OBJECTS)
-noinst_PROGRAMS =  findlc$(EXEEXT) gen$(EXEEXT) gen.static \
-spect$(EXEEXT) stat$(EXEEXT)
-PROGRAMS =  $(noinst_PROGRAMS)
-
 findlc_SOURCES = findlc.c
 findlc_OBJECTS =  findlc.$(OBJEXT)
 findlc_LDADD = $(LDADD)
-findlc_DEPENDENCIES =  libstat.la ../../libgmp.la
+findlc_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
 findlc_LDFLAGS = 
 gen_SOURCES = gen.c
 gen_OBJECTS =  gen.$(OBJEXT)
 gen_LDADD = $(LDADD)
-gen_DEPENDENCIES =  libstat.la ../../libgmp.la
+gen_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
 gen_LDFLAGS = 
 am_gen_static_OBJECTS =  gen.$(OBJEXT)
 gen_static_OBJECTS =  $(am_gen_static_OBJECTS)
 gen_static_LDADD = $(LDADD)
-gen_static_DEPENDENCIES =  libstat.la ../../libgmp.la
+gen_static_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
 spect_SOURCES = spect.c
 spect_OBJECTS =  spect.$(OBJEXT)
 spect_LDADD = $(LDADD)
-spect_DEPENDENCIES =  libstat.la ../../libgmp.la
+spect_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
 spect_LDFLAGS = 
 stat_SOURCES = stat.c
 stat_OBJECTS =  stat.$(OBJEXT)
 stat_LDADD = $(LDADD)
-stat_DEPENDENCIES =  libstat.la ../../libgmp.la
+stat_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
 stat_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -180,15 +175,6 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 
-mostlyclean-noinstLTLIBRARIES:
-
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-
-distclean-noinstLTLIBRARIES:
-
-maintainer-clean-noinstLTLIBRARIES:
-
 mostlyclean-compile:
 	-rm -f *.o core *.core
 	-rm -f *.$(OBJEXT)
@@ -212,15 +198,6 @@ maintainer-clean-libtool:
 
 libstat.la: $(libstat_la_OBJECTS) $(libstat_la_DEPENDENCIES)
 	$(LINK)  $(libstat_la_LDFLAGS) $(libstat_la_OBJECTS) $(libstat_la_LIBADD) $(LIBS)
-
-mostlyclean-noinstPROGRAMS:
-
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
-
-distclean-noinstPROGRAMS:
-
-maintainer-clean-noinstPROGRAMS:
 
 findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES)
 	@rm -f findlc$(EXEEXT)
@@ -343,7 +320,7 @@ install-am: all-am
 install: install-am
 uninstall-am:
 uninstall: uninstall-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
+all-am: Makefile
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -360,50 +337,41 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-noinstLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-noinstPROGRAMS \
+mostlyclean-am:  mostlyclean-compile mostlyclean-libtool \
 		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool \
-		clean-noinstPROGRAMS clean-tags clean-depend \
+clean-am:  clean-compile clean-libtool clean-tags clean-depend \
 		clean-generic mostlyclean-am
 
 clean: clean-am
 
-distclean-am:  distclean-noinstLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-noinstPROGRAMS \
-		distclean-tags distclean-depend distclean-generic \
-		clean-am
+distclean-am:  distclean-compile distclean-libtool distclean-tags \
+		distclean-depend distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-noinstLTLIBRARIES \
-		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-noinstPROGRAMS maintainer-clean-tags \
-		maintainer-clean-depend maintainer-clean-generic \
-		distclean-am
+maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-noinstLTLIBRARIES distclean-noinstLTLIBRARIES \
-clean-noinstLTLIBRARIES maintainer-clean-noinstLTLIBRARIES \
-mostlyclean-compile distclean-compile clean-compile \
+.PHONY: mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool mostlyclean-noinstPROGRAMS \
-distclean-noinstPROGRAMS clean-noinstPROGRAMS \
-maintainer-clean-noinstPROGRAMS tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all install-strip installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 test: gen stat

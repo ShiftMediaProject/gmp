@@ -95,120 +95,140 @@ install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
+# Copyright (C) 1996, 1997, 1999, 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir) -I../..
-LDADD = ../../libgmp.la
+INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+LDADD = $(top_builddir)/libgmp.la
 
-noinst_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
+check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
   t-root
 
+
+TESTS = $(check_PROGRAMS)
 subdir = mpz/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-noinst_PROGRAMS =  t-mul$(EXEEXT) t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) \
+check_PROGRAMS =  t-mul$(EXEEXT) t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) \
 t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-gcd$(EXEEXT) dive$(EXEEXT) \
 t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) logic$(EXEEXT) \
 bit$(EXEEXT) t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow_ui$(EXEEXT) \
 t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT)
-PROGRAMS =  $(noinst_PROGRAMS)
 
-
-DEFS = @DEFS@ -I. -I$(srcdir)
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 bit_SOURCES = bit.c
 bit_OBJECTS =  bit.$(OBJEXT)
 bit_LDADD = $(LDADD)
-bit_DEPENDENCIES =  ../../libgmp.la
+bit_DEPENDENCIES =  $(top_builddir)/libgmp.la
 bit_LDFLAGS = 
 convert_SOURCES = convert.c
 convert_OBJECTS =  convert.$(OBJEXT)
 convert_LDADD = $(LDADD)
-convert_DEPENDENCIES =  ../../libgmp.la
+convert_DEPENDENCIES =  $(top_builddir)/libgmp.la
 convert_LDFLAGS = 
 dive_SOURCES = dive.c
 dive_OBJECTS =  dive.$(OBJEXT)
 dive_LDADD = $(LDADD)
-dive_DEPENDENCIES =  ../../libgmp.la
+dive_DEPENDENCIES =  $(top_builddir)/libgmp.la
 dive_LDFLAGS = 
 io_SOURCES = io.c
 io_OBJECTS =  io.$(OBJEXT)
 io_LDADD = $(LDADD)
-io_DEPENDENCIES =  ../../libgmp.la
+io_DEPENDENCIES =  $(top_builddir)/libgmp.la
 io_LDFLAGS = 
 logic_SOURCES = logic.c
 logic_OBJECTS =  logic.$(OBJEXT)
 logic_LDADD = $(LDADD)
-logic_DEPENDENCIES =  ../../libgmp.la
+logic_DEPENDENCIES =  $(top_builddir)/libgmp.la
 logic_LDFLAGS = 
 reuse_SOURCES = reuse.c
 reuse_OBJECTS =  reuse.$(OBJEXT)
 reuse_LDADD = $(LDADD)
-reuse_DEPENDENCIES =  ../../libgmp.la
+reuse_DEPENDENCIES =  $(top_builddir)/libgmp.la
 reuse_LDFLAGS = 
 t_2exp_SOURCES = t-2exp.c
 t_2exp_OBJECTS =  t-2exp.$(OBJEXT)
 t_2exp_LDADD = $(LDADD)
-t_2exp_DEPENDENCIES =  ../../libgmp.la
+t_2exp_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_2exp_LDFLAGS = 
 t_fdiv_SOURCES = t-fdiv.c
 t_fdiv_OBJECTS =  t-fdiv.$(OBJEXT)
 t_fdiv_LDADD = $(LDADD)
-t_fdiv_DEPENDENCIES =  ../../libgmp.la
+t_fdiv_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_fdiv_LDFLAGS = 
 t_fdiv_ui_SOURCES = t-fdiv_ui.c
 t_fdiv_ui_OBJECTS =  t-fdiv_ui.$(OBJEXT)
 t_fdiv_ui_LDADD = $(LDADD)
-t_fdiv_ui_DEPENDENCIES =  ../../libgmp.la
+t_fdiv_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_fdiv_ui_LDFLAGS = 
 t_gcd_SOURCES = t-gcd.c
 t_gcd_OBJECTS =  t-gcd.$(OBJEXT)
 t_gcd_LDADD = $(LDADD)
-t_gcd_DEPENDENCIES =  ../../libgmp.la
+t_gcd_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_gcd_LDFLAGS = 
 t_mul_SOURCES = t-mul.c
 t_mul_OBJECTS =  t-mul.$(OBJEXT)
 t_mul_LDADD = $(LDADD)
-t_mul_DEPENDENCIES =  ../../libgmp.la
+t_mul_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_mul_LDFLAGS = 
 t_pow_ui_SOURCES = t-pow_ui.c
 t_pow_ui_OBJECTS =  t-pow_ui.$(OBJEXT)
 t_pow_ui_LDADD = $(LDADD)
-t_pow_ui_DEPENDENCIES =  ../../libgmp.la
+t_pow_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_pow_ui_LDFLAGS = 
 t_powm_SOURCES = t-powm.c
 t_powm_OBJECTS =  t-powm.$(OBJEXT)
 t_powm_LDADD = $(LDADD)
-t_powm_DEPENDENCIES =  ../../libgmp.la
+t_powm_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_powm_LDFLAGS = 
 t_powm_ui_SOURCES = t-powm_ui.c
 t_powm_ui_OBJECTS =  t-powm_ui.$(OBJEXT)
 t_powm_ui_LDADD = $(LDADD)
-t_powm_ui_DEPENDENCIES =  ../../libgmp.la
+t_powm_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_powm_ui_LDFLAGS = 
 t_root_SOURCES = t-root.c
 t_root_OBJECTS =  t-root.$(OBJEXT)
 t_root_LDADD = $(LDADD)
-t_root_DEPENDENCIES =  ../../libgmp.la
+t_root_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_root_LDFLAGS = 
 t_sqrtrem_SOURCES = t-sqrtrem.c
 t_sqrtrem_OBJECTS =  t-sqrtrem.$(OBJEXT)
 t_sqrtrem_LDADD = $(LDADD)
-t_sqrtrem_DEPENDENCIES =  ../../libgmp.la
+t_sqrtrem_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_sqrtrem_LDFLAGS = 
 t_tdiv_SOURCES = t-tdiv.c
 t_tdiv_OBJECTS =  t-tdiv.$(OBJEXT)
 t_tdiv_LDADD = $(LDADD)
-t_tdiv_DEPENDENCIES =  ../../libgmp.la
+t_tdiv_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_tdiv_LDFLAGS = 
 t_tdiv_ui_SOURCES = t-tdiv_ui.c
 t_tdiv_ui_OBJECTS =  t-tdiv_ui.$(OBJEXT)
 t_tdiv_ui_LDADD = $(LDADD)
-t_tdiv_ui_DEPENDENCIES =  ../../libgmp.la
+t_tdiv_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_tdiv_ui_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -245,14 +265,14 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 
-mostlyclean-noinstPROGRAMS:
+mostlyclean-checkPROGRAMS:
 
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 
-distclean-noinstPROGRAMS:
+distclean-checkPROGRAMS:
 
-maintainer-clean-noinstPROGRAMS:
+maintainer-clean-checkPROGRAMS:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -441,11 +461,64 @@ maintainer-clean-depend:
 @AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `cygpath -w $<`
 
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; \
+	srcdir=$(srcdir); export srcdir; \
+	for tst in $(TESTS); do \
+	  if test -f ./$$tst; then dir=./; \
+	  elif test -f $$tst; then dir=; \
+	  else dir="$(srcdir)/"; fi; \
+	  if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xpass=`expr $$xpass + 1`; \
+	      failed=`expr $$failed + 1`; \
+	      echo "XPASS: $$tst"; \
+	    ;; \
+	    *) \
+	      echo "PASS: $$tst"; \
+	    ;; \
+	    esac; \
+	  elif test $$? -ne 77; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xfail=`expr $$xfail + 1`; \
+	      echo "XFAIL: $$tst"; \
+	    ;; \
+	    *) \
+	      failed=`expr $$failed + 1`; \
+	      echo "FAIL: $$tst"; \
+	    ;; \
+	    esac; \
+	  fi; \
+	done; \
+	if test "$$failed" -eq 0; then \
+	  if test "$$xfail" -eq 0; then \
+	    banner="All $$all tests passed"; \
+	  else \
+	    banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	  fi; \
+	else \
+	  if test "$$xpass" -eq 0; then \
+	    banner="$$failed of $$all tests failed"; \
+	  else \
+	    banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	  fi; \
+	fi; \
+	dashes=`echo "$$banner" | sed s/./=/g`; \
+	echo "$$dashes"; \
+	echo "$$banner"; \
+	echo "$$dashes"; \
+	test "$$failed" -eq 0
 info-am:
 info: info-am
 dvi-am:
 dvi: dvi-am
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 installcheck-am:
 installcheck: installcheck-am
@@ -460,7 +533,7 @@ install-am: all-am
 install: install-am
 uninstall-am:
 uninstall: uninstall-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -477,25 +550,25 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-noinstPROGRAMS mostlyclean-compile \
+mostlyclean-am:  mostlyclean-checkPROGRAMS mostlyclean-compile \
 		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-noinstPROGRAMS clean-compile clean-libtool clean-tags \
+clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-tags \
 		clean-depend clean-generic mostlyclean-am
 
 clean: clean-am
 
-distclean-am:  distclean-noinstPROGRAMS distclean-compile \
+distclean-am:  distclean-checkPROGRAMS distclean-compile \
 		distclean-libtool distclean-tags distclean-depend \
 		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-noinstPROGRAMS \
+maintainer-clean-am:  maintainer-clean-checkPROGRAMS \
 		maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-tags maintainer-clean-depend \
 		maintainer-clean-generic distclean-am
@@ -504,80 +577,19 @@ maintainer-clean-am:  maintainer-clean-noinstPROGRAMS \
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-noinstPROGRAMS distclean-noinstPROGRAMS \
-clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
-mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir \
-mostlyclean-depend distclean-depend clean-depend \
-maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+.PHONY: mostlyclean-checkPROGRAMS distclean-checkPROGRAMS \
+clean-checkPROGRAMS maintainer-clean-checkPROGRAMS mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend check-TESTS \
+info-am info dvi-am dvi check check-am installcheck-am installcheck \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-check: Makefile st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-dive \
-  st-sqrtrem st-convert st-io st-logic st-bit st-powm st-powm_ui st-pow_ui \
-  st-2exp st-reuse st-root
-	@echo "The tests passed."
-
-st-mul: t-mul@EXEEXT@
-	./t-mul
-	touch $@
-st-tdiv: t-tdiv@EXEEXT@
-	./t-tdiv
-	touch $@
-st-tdiv_ui: t-tdiv_ui@EXEEXT@
-	./t-tdiv_ui
-	touch $@
-st-fdiv: t-fdiv@EXEEXT@
-	./t-fdiv
-	touch $@
-st-fdiv_ui: t-fdiv_ui@EXEEXT@
-	./t-fdiv_ui
-	touch $@
-st-gcd: t-gcd@EXEEXT@
-	./t-gcd
-	touch $@
-st-dive: dive@EXEEXT@
-	./dive
-	touch $@
-st-sqrtrem: t-sqrtrem@EXEEXT@
-	./t-sqrtrem
-	touch $@
-st-convert: convert@EXEEXT@
-	./convert
-	touch $@
-st-io: io@EXEEXT@
-	./io
-	touch $@
-st-logic: logic@EXEEXT@
-	./logic
-	touch $@
-st-bit: bit@EXEEXT@
-	./bit
-	touch $@
-st-powm: t-powm@EXEEXT@
-	./t-powm
-	touch $@
-st-powm_ui: t-powm_ui@EXEEXT@
-	./t-powm_ui
-	touch $@
-st-pow_ui: t-pow_ui@EXEEXT@
-	./t-pow_ui
-	touch $@
-st-2exp: t-2exp@EXEEXT@
-	./t-2exp
-	touch $@
-st-reuse: reuse@EXEEXT@
-	./reuse
-	touch $@
-st-root: t-root@EXEEXT@
-	./t-root
-	touch $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
