@@ -26,24 +26,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static int
-digit_value_in_base (int c, int base)
-{
-  int digit;
-
-  if (isdigit (c))
-    digit = c - '0';
-  else if (islower (c))
-    digit = c - 'a' + 10;
-  else if (isupper (c))
-    digit = c - 'A' + 10;
-  else
-    return -1;
-
-  if (digit < base)
-    return digit;
-  return -1;
-}
+extern const unsigned char __gmp_digit_value_tab[];
+#define digit_value_tab __gmp_digit_value_tab
 
 void
 min (MINT *dest)
@@ -53,6 +37,9 @@ min (MINT *dest)
   int c;
   int negative;
   mp_size_t dest_size;
+  const unsigned char *digit_value;
+
+  digit_value = digit_value_tab;
 
   alloc_size = 100;
   str = (char *) (*__gmp_allocate_func) (alloc_size);
@@ -70,24 +57,25 @@ min (MINT *dest)
       c = getc (stdin);
     }
 
-  if (digit_value_in_base (c, 10) < 0)
+  if (c == EOF || digit_value[c] >= 10)
     return;			/* error if no digits */
 
-  for (;;)
+  do
     {
       int dig;
+      dig = digit_value[c];
+      if (dig >= 10)
+	break;
       if (str_size >= alloc_size)
 	{
 	  size_t old_alloc_size = alloc_size;
 	  alloc_size = alloc_size * 3 / 2;
 	  str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
 	}
-      dig = digit_value_in_base (c, 10);
-      if (dig < 0)
-	break;
       str[str_size++] = dig;
       c = getc (stdin);
     }
+  while (c != EOF);
 
   ungetc (c, stdin);
 
