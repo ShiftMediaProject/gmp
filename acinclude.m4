@@ -1062,15 +1062,23 @@ GMP_DEFINE_RAW(["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
 
 dnl  GMP_ASM_TEXT
 dnl  ------------
+dnl  .text - is usual.
+dnl  .code - is needed by the hppa on HP-UX (but ia64 HP-UX uses .text)
+dnl  .csect .text[PR] - is for AIX.
 
 AC_DEFUN(GMP_ASM_TEXT,
 [AC_CACHE_CHECK([how to switch to text section],
                 gmp_cv_asm_text,
-[case $host in
-  *-*-aix*)  gmp_cv_asm_text=[".csect .text[PR]"] ;;
-  *-*-hpux*) gmp_cv_asm_text=".code" ;;
-  *)         gmp_cv_asm_text=".text" ;;
-esac
+[for i in ".text" ".code" [".csect .text[PR]"]; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE([	$i],
+    [gmp_cv_asm_text=$i
+     rm -f conftest*
+     break])
+done
+if test -z "$gmp_cv_asm_text"; then
+  AC_MSG_ERROR([Cannot determine text section directive])
+fi
 ])
 echo ["define(<TEXT>, <$gmp_cv_asm_text>)"] >> $gmp_tmpconfigm4
 ])
