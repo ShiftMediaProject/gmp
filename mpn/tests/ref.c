@@ -66,8 +66,7 @@ refmpn_memdup_limbs (mp_srcptr ptr, mp_size_t size)
 {
   mp_ptr  p;
   p = refmpn_malloc_limbs (size);
-  if (size != 0)
-    refmpn_copyi (p, ptr, size);
+  refmpn_copyi (p, ptr, size);
   return p;
 }
 
@@ -87,7 +86,7 @@ refmpn_copyi (mp_ptr rp, mp_srcptr sp, mp_size_t size)
   mp_size_t i;
 
   assert (refmpn_overlap_low_to_high_p (rp, sp, size));
-  assert (size >= 1);
+  assert (size >= 0);
 
   for (i = 0; i < size; i++)
     rp[i] = sp[i];
@@ -99,7 +98,7 @@ refmpn_copyd (mp_ptr rp, mp_srcptr sp, mp_size_t size)
   mp_size_t i;
 
   assert (refmpn_overlap_high_to_low_p (rp, sp, size));
-  assert (size >= 1);
+  assert (size >= 0);
 
   for (i = size-1; i >= 0; i--)
     rp[i] = sp[i];
