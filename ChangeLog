@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/realloc.c: Clear variable when decreasing allocation to less than
+	needed.  Misc updates.
+
 2001-11-25  Kevin Ryde  <kevin@swox.se>
 
 	* tests/misc/t-locale.c: Avoid printf in the normal case, since the
