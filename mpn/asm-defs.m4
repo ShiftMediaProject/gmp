@@ -1051,7 +1051,8 @@ m4_assert_numargs(1)
 `ifdef(`$1',,
 `m4_error(`$1 is not defined.
 	"configure" should have extracted this from gmp-mparam.h and put it
-	in config.m4, but somehow this has failed.
+	in config.m4 (or in <cpu>_<file>.asm for a fat binary), but somehow
+        this has failed.
 ')m4exit(1)')')
 
 
@@ -1227,13 +1228,17 @@ dnl  Usage: MPN(name)
 dnl
 dnl  Add MPN_PREFIX to a name.
 dnl  MPN_PREFIX defaults to "__gmpn_" if not defined.
+dnl
+dnl  m4_unquote is used in MPN so that when it expands to say __gmpn_foo,
+dnl  that identifier will be subject to further macro expansion.  This is
+dnl  used by some of the fat binary support for renaming symbols.
 
 ifdef(`MPN_PREFIX',,
 `define(`MPN_PREFIX',`__gmpn_')')
 
 define(MPN,
 m4_assert_numargs(1)
-`MPN_PREFIX`'$1')
+`m4_unquote(MPN_PREFIX`'$1)')
 
 
 dnl  Usage: mpn_add_n, etc
