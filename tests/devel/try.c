@@ -1602,6 +1602,8 @@ mp_limb_t  divisor_array[] = {
   1, 2, 3,
   CNST_LIMB(1) << 8,
   CNST_LIMB(1) << 16,
+  CNST_LIMB(1) << (GMP_NUMB_BITS/2 - 1),
+  GMP_NUMB_MAX >> (GMP_NUMB_BITS/2),
   GMP_NUMB_HIGHBIT,
   GMP_NUMB_HIGHBIT + 1,
   GMP_NUMB_MAX - 2,
