@@ -28,7 +28,7 @@ Changes between MP version 3.1.1 and 4.0
 * New systems supported: Darwin, SCO, Windows DLLs.
 * New divide-and-conquer square root algorithm.
 * New algorithms chapter in the manual.
-* New reentrant malloc temporary memory method.
+* New malloc reentrant temporary memory method.
 * New C++ class interface by Gerardo Ballabio (beta).
 * Revamped configure, featuring ABI selection.
 * Speed improvements for mpz_powm and mpz_powm_ui (mainly affecting small
@@ -36,6 +36,9 @@ Changes between MP version 3.1.1 and 4.0
 * mpz_perfect_power_p now properly recognizes 0, 1, and negative perfect
   powers.
 * mpz_hamdist now supports negative operands.
+* mpz_jacobi now accepts non-positive denominators.
+* mpz_powm now supports negative exponents.
+* mpn_mul_1 operand overlap requirements relaxed.
 * Float input and output uses locale specific decimal point where available.
 * New gmp_printf, gmp_scanf and related functions.
 * New division functions: mpz_cdiv_q_2exp, mpz_cdiv_r_2exp, mpz_divexact_ui.
@@ -44,13 +47,8 @@ Changes between MP version 3.1.1 and 4.0
   mpz_congruent_2exp_p.
 * New Fibonacci function: mpz_fib2_ui.
 * New Lucas number functions: mpz_lucnum_ui, mpz_lucnum2_ui.
-* New functions for importing/exporting byte arrays: mpz_import_bytes,
-  mpz_export_bytes.
 * Other new integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_get_d_2exp,
   mpz_init2, mpz_kronecker, mpz_lcm_ui, mpz_realloc2.
-* mpz_hamdist now supports negative operands.
-* mpz_jacobi now accepts non-positive denominators.
-* mpz_powm now supports negative exponents.
 * New rational I/O: mpq_get_str, mpq_inp_str, mpq_out_str, mpq_set_str.
 * Other new rational functions: mpq_abs, mpq_cmp_si, mpq_div_2exp,
   mpq_mul_2exp, mpq_set_f.
