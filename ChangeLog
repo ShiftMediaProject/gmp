@@ -1,7 +1,10 @@
 2001-01-15  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/alpha/ev5/mode1o.c: New file.
+
 	* tune/freq.c (speed_cpu_frequency_measure): Check cycles_works_p
 	before running speed_cyclecounter.
+	* tune/speed.h (cycles_works_p): Add prototype.
 
 2001-01-12  Kevin Ryde  <kevin@swox.se>
 
