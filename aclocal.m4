@@ -547,7 +547,8 @@ dnl
 dnl  gcc 2.7.2, 2.95 and 3.0 just gave something like "2.7.2.3" or "2.95.3".
 dnl  egcs 2.91 gave something like "egcs-2.91".
 dnl  gcc 3.1 gives something like "gcc-3.1" on GNU/Linux, or "gcc.exe (GCC)
-dnl    3.1" on MINGW, or "gcc (GCC) 3.1" on Solaris.
+dnl    3.1" on MINGW, or "gcc (GCC) 3.1" on Solaris, plus extra lines about
+dnl    the copyright.
 dnl
 dnl  "[a-zA-Z(). -]*" is used to match the prefixes.  (Solaris 8 sed doesn't
 dnl  support "?" or "*" of a group, like "\(...\)?"  or "\(...\)*".)
@@ -555,7 +556,7 @@ dnl
 dnl  There's no caching here, so different CC's can be tested.
 
 AC_DEFUN(GMP_GCC_VERSION_GE,
-[tmp_version=`($1 --version) 2>&AC_FD_CC`
+[tmp_version=`($1 --version | sed 1q) 2>&AC_FD_CC`
 echo "$1 --version '$tmp_version'" >&AC_FD_CC
 
 major=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`

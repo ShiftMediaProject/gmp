@@ -3317,7 +3317,7 @@ fi
  ;;
         gcc-arm-umodsi) echo "$as_me:$LINENO: checking whether gcc unsigned division works" >&5
 echo $ECHO_N "checking whether gcc unsigned division works... $ECHO_C" >&6
-tmp_version=`($cc --version) 2>&5`
+tmp_version=`($cc --version | sed 1q) 2>&5`
 echo "$cc --version '$tmp_version'" >&5
 
 major=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p') 2>&5`
@@ -3458,7 +3458,7 @@ echo $ECHO_N "checking whether gcc -march=pentiumpro is good... $ECHO_C" >&6
 if test "${gmp_cv_gcc_march_pentiumpro+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  tmp_version=`($cc --version) 2>&5`
+  tmp_version=`($cc --version | sed 1q) 2>&5`
 echo "$cc --version '$tmp_version'" >&5
 
 major=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p') 2>&5`
