@@ -450,23 +450,23 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
      No carry comes out from {v1, kk1} +/- {vm1, kk1},
      and the division by two is exact */
   if (sa >= 0)
+    {
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
-    mpn_rsh1add_n (vm1, v1, vm1, kk1);
+      mpn_rsh1add_n (vm1, v1, vm1, kk1);
 #else
-  {
-    mpn_add_n (vm1, vm1, v1, kk1);
-    mpn_rshift (vm1, vm1, kk1, 1);
-  }
+      mpn_add_n (vm1, vm1, v1, kk1);
+      mpn_rshift (vm1, vm1, kk1, 1);
 #endif
+    }
   else
+    {
 #ifdef HAVE_NATIVE_mpn_rsh1sub_n
-    mpn_rsh1sub_n (vm1, v1, vm1, kk1);
+      mpn_rsh1sub_n (vm1, v1, vm1, kk1);
 #else
-  {
-    mpn_sub_n (vm1, v1, vm1, kk1);
-    mpn_rshift (vm1, vm1, kk1, 1);
-  }
+      mpn_sub_n (vm1, v1, vm1, kk1);
+      mpn_rshift (vm1, vm1, kk1, 1);
 #endif
+    }
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0       t2        hi(vinf)       v1         t1       vinf+lo(v0) */
@@ -731,25 +731,25 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
      Uses temporary space {t+4k+2,2k+1}, requires T(n) >= 6k+3.
   */
   if (sa >= 0)
+    {
 #ifdef HAVE_NATIVE_mpn_addlsh1_n
-    mpn_addlsh1_n (v2, v2, c2, kk1);
+      mpn_addlsh1_n (v2, v2, c2, kk1);
 #else
-  {
-    /* we can use vinf=t+4k+2 as workspace since it is not full yet */
-    mpn_lshift (vinf, c2, kk1, 1);
-    mpn_add_n (v2, v2, vinf, kk1);
-  }
+      /* we can use vinf=t+4k+2 as workspace since it is not full yet */
+      mpn_lshift (vinf, c2, kk1, 1);
+      mpn_add_n (v2, v2, vinf, kk1);
 #endif
+    }
   else
+    {
 #ifdef HAVE_NATIVE_mpn_sublsh1_n
-    mpn_sublsh1_n (v2, v2, c2, kk1);
+      mpn_sublsh1_n (v2, v2, c2, kk1);
 #else
-  {
-    /* we can use vinf=t+4k+2 as workspace since it is not full yet */
-    mpn_lshift (vinf, c2, kk1, 1);
-    mpn_sub_n (v2, v2, vinf, kk1);
-  }
+      /* we can use vinf=t+4k+2 as workspace since it is not full yet */
+      mpn_lshift (vinf, c2, kk1, 1);
+      mpn_sub_n (v2, v2, vinf, kk1);
 #endif
+    }
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0       vm1                      v1       v2+2vm1             */
