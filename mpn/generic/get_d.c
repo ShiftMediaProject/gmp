@@ -294,8 +294,9 @@ mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
 
 	 Note no attention is paid to DBL_MANT_DIG, since the effective
 	 number of bits in the mantissa isn't constant when in denorm range.
-	 We also encountered an ARM system with an apparently broken
-	 emulator where DBL_MANT_DIG claimed 53 bits but only 32 worked.  */
+	 We also encountered an ARM system with apparently somewhat doubtful
+	 software floats where DBL_MANT_DIG claimed 53 bits but only 32
+	 actually worked.  */
 
       d = factor;  /* high bit */
       for (;;)
