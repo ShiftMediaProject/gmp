@@ -119,6 +119,13 @@ MA 02111-1307, USA. */
 #define ATTRIBUTE_MALLOC
 #endif
 
+#ifdef _CRAY
+#define CRAY_Pragma(str)  _Pragma (str)
+#else
+#define CRAY_Pragma(str)
+#endif
+
+
 #if ! HAVE_STRCHR
 #define strchr(s,c)  index(s,c)
 #endif
@@ -397,7 +404,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 
 
 #define GMP_NUMB_HIGHBIT  (CNST_LIMB(1) << (GMP_NUMB_BITS-1))
-#define GMP_NUMB_MAX      GMP_NUMB_MASK
 
 #if GMP_NAIL_BITS == 0
 #define GMP_NAIL_LOWBIT   CNST_LIMB(0)
@@ -939,6 +945,25 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 
+/* Set {dst,size} to the limbs of {src,size} in reverse order. */
+#define MPN_REVERSE(dst, src, size)                     \
+  do {                                                  \
+    mp_ptr     __dst = (dst);                           \
+    mp_size_t  __size = (size);                         \
+    mp_srcptr  __src = (src) + __size - 1;              \
+    mp_size_t  __i;                                     \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (! MPN_OVERLAP_P (dst, size, src, size));    \
+    CRAY_Pragma ("_CRI ivdep");                         \
+    for (__i = 0; __i < __size; __i++)                  \
+      {                                                 \
+        *__dst = *__src;                                \
+        __dst++;                                        \
+        __src--;                                        \
+      }                                                 \
+  } while (0)
+
+
 /* Zero n limbs at dst.
 
    For power and powerpc we want an inline stu/bdnz loop for zeroing.  On
@@ -1364,23 +1389,26 @@ __GMP_DECLSPEC void __gmp_assert_fail _PROTO ((const char *filename, int linenum
 #endif
 
 /* Check that the nail parts are zero. */
-#if WANT_ASSERT
-#define ASSERT_LIMB(limb)                       \
+#define ASSERT_ALWAYS_LIMB(limb)                \
   do {                                          \
     mp_limb_t  __nail = (limb) & GMP_NAIL_MASK; \
-    ASSERT (__nail == 0);                       \
+    ASSERT_ALWAYS (__nail == 0);                \
   } while (0)
-#define ASSERT_MPN(ptr, size)                   \
+#define ASSERT_ALWAYS_MPN(ptr, size)            \
   do {                                          \
+    /* let whole loop go dead when no nails */  \
     if (GMP_NAIL_BITS != 0)                     \
       {                                         \
         mp_size_t  __i;                         \
         for (__i = 0; __i < (size); __i++)      \
-          ASSERT_LIMB ((ptr)[__i]);             \
+          ASSERT_ALWAYS_LIMB ((ptr)[__i]);      \
       }                                         \
   } while (0)
+#if WANT_ASSERT
+#define ASSERT_LIMB(limb)       ASSERT_ALWAYS_LIMB (limb)
+#define ASSERT_MPN(ptr, size)   ASSERT_ALWAYS_MPN (ptr, size)
 #else
-#define ASSERT_LIMB(limb)  do {} while (0)
+#define ASSERT_LIMB(limb)       do {} while (0)
 #define ASSERT_MPN(ptr, size)   do {} while (0)
 #endif
 
@@ -2302,6 +2330,43 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 
+/* Byte swap limbs from {src,size} and store at {dst,size}. */
+#define MPN_BSWAP(dst, src, size)                       \
+  do {                                                  \
+    mp_ptr     __dst = (dst);                           \
+    mp_srcptr  __src = (src);                           \
+    mp_size_t  __size = (size);                         \
+    mp_size_t  __i;                                     \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size));   \
+    CRAY_Pragma ("_CRI ivdep");                         \
+    for (__i = 0; __i < __size; __i++)                  \
+      {                                                 \
+        BSWAP_LIMB_FETCH (*__dst, __src);               \
+        __dst++;                                        \
+        __src++;                                        \
+      }                                                 \
+  } while (0)
+
+/* Byte swap limbs from {dst,size} and store in reverse order at {src,size}. */
+#define MPN_BSWAP_REVERSE(dst, src, size)               \
+  do {                                                  \
+    mp_ptr     __dst = (dst);                           \
+    mp_size_t  __size = (size);                         \
+    mp_srcptr  __src = (src) + __size - 1;              \
+    mp_size_t  __i;                                     \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (! MPN_OVERLAP_P (dst, size, src, size));    \
+    CRAY_Pragma ("_CRI ivdep");                         \
+    for (__i = 0; __i < __size; __i++)                  \
+      {                                                 \
+        BSWAP_LIMB_FETCH (*__dst, __src);               \
+        __dst++;                                        \
+        __src--;                                        \
+      }                                                 \
+  } while (0)
+
+
 /* No processor claiming to be SPARC v9 compliant seems to
    implement the POPC instruction.  Disable pattern for now.  */
 #if 0
@@ -2514,15 +2579,15 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 #if defined _LONG_LONG_LIMB
 #if __GMP_HAVE_TOKEN_PASTE
-#define CNST_LIMB(C) C##LL
+#define CNST_LIMB(C) ((mp_limb_t) C##LL)
 #else
-#define CNST_LIMB(C) C/**/LL
+#define CNST_LIMB(C) ((mp_limb_t) C/**/LL)
 #endif
 #else /* not _LONG_LONG_LIMB */
 #if __GMP_HAVE_TOKEN_PASTE
-#define CNST_LIMB(C) C##L
+#define CNST_LIMB(C) ((mp_limb_t) C##L)
 #else
-#define CNST_LIMB(C) C/**/L
+#define CNST_LIMB(C) ((mp_limb_t) C/**/L)
 #endif
 #endif /* _LONG_LONG_LIMB */
 
@@ -2878,14 +2943,10 @@ int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *, void *,
 
 /* For testing and debugging.  */
 #define MPZ_CHECK_FORMAT(z)					\
-  do { mp_size_t _i;						\
+  do {                                                          \
     ASSERT_ALWAYS (SIZ(z) == 0 || PTR(z)[ABSIZ(z) - 1] != 0);	\
     ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z));			\
-    for (_i = ABSIZ(z) - 1; _i >= 0; _i--)			\
-      {								\
-	if (PTR(z)[_i] > GMP_NUMB_MAX)				\
-	  abort ();						\
-      }								\
+    ASSERT_ALWAYS_MPN (PTR(z), ABSIZ(z));                       \
   } while (0)
 
 #define MPQ_CHECK_FORMAT(q)                             \
