@@ -1,7 +1,8 @@
 /* mpz_init_set (src_integer) -- Make a new multiple precision number with
    a value copied from SRC_INTEGER.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,4 +41,10 @@ mpz_init_set (mpz_ptr w, mpz_srcptr u)
 
   MPN_COPY (wp, up, size);
   w->_mp_size = usize;
+
+#ifdef __CHECKER__
+  /* let the low limb look initialized, for the benefit of mpz_get_ui etc */
+  if (size == 0)
+    wp[0] = 0;
+#endif
 }
