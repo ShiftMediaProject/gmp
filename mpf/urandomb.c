@@ -1,6 +1,7 @@
-/* mpf_urandomb (rop, state) -- Generate a uniform pseudorandom real
-   number between 0 (inclusive) and 1 (exclusive), using STATE as the
-   random state previously initialized by a call to gmp_randinit().
+/* mpf_urandomb (rop, state, nbits) -- Generate a uniform pseudorandom
+   real number between 0 (inclusive) and 1 (exclusive) of size NBITS,
+   using STATE as the random state previously initialized by a call to
+   gmp_randinit().
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
@@ -24,15 +25,14 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* FIXME: Rename file to urandomb.c. */
-
 void
 #if __STDC__
-mpf_urandomb (mpf_t rop, gmp_randstate_t rstate)
+mpf_urandomb (mpf_t rop, gmp_randstate_t rstate, unsigned long int nbits)
 #else
-mpf_urandomb (rop, rstate)
+mpf_urandomb (rop, rstate, nbits)
      mpf_t rop;
      gmp_randstate_t rstate;
+     unsigned long int nbits;
 #endif
 {
   mp_ptr rp;
@@ -40,9 +40,17 @@ mpf_urandomb (rop, rstate)
   mp_exp_t exp;
 
   rp = PTR (rop);
-  nlimbs = PREC (rop);
+  nlimbs = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
 
-  _gmp_rand (rp, rstate, nlimbs * BITS_PER_MP_LIMB);
+  _gmp_rand (rp, rstate, nbits);
+
+  /* If nbits isn't a multiple of BITS_PER_MP_LIMB, shift up.  */
+  if (nlimbs != 0)
+    {
+      if (nbits % BITS_PER_MP_LIMB != 0)
+	mpn_lshift (rp, rp, nlimbs,
+		    BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
+    }
 
   exp = 0;
   while (nlimbs != 0 && rp[nlimbs - 1] == 0)
@@ -53,13 +61,4 @@ mpf_urandomb (rop, rstate)
   EXP (rop) = exp;
   SIZ (rop) = nlimbs;
 
-#if 0
-  /* If nbits isn't a multiple of BITS_PER_MP_LIMB, shift.  */
-  if (nlimbs != 0)
-    {
-      if (nbits % BITS_PER_MP_LIMB != 0)
-	mpn_lshift (rp, rp, nlimbs,
-		    BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
-    }
-#endif
 }
