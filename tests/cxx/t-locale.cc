@@ -1,6 +1,6 @@
 /* Test locale support in C++ functions, or attempt to do so.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,16 +40,7 @@ using namespace std;
 
 #if HAVE_LOCALECONV
 
-char *decimal_point;
-
-/* Replace the libc localeconv with one we can manipulate. */
-struct lconv *
-localeconv (void)
-{
-  static struct lconv  l;
-  l.decimal_point = decimal_point;
-  return &l;
-}
+extern char *decimal_point; /* localeconv.c */
 
 void
 check_input (void)
