@@ -1,3 +1,10 @@
+2000-02-17  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/v9/mul_1.asm: Use `rd' to get current PC; get rid of
+	getpc function.
+	* mpn/sparc32/v9/addmul_1.asm: Likewise.
+	* mpn/sparc32/v9/submul_1.asm: Likewise.
+
 2000-02-17  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.h: Add prototypes and defines for mpn_and_n, mpn_andn_n,
@@ -26,6 +33,14 @@
 	* mpn/x86/copyi.asm: New file.
 	* mpn/x86/copyd.asm: New file.
 	* mpn/lisp/gmpasm-mode.el: New file.
+
+2000-02-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/v9/mul_1.asm: Conditionalize for PIC.
+	* mpn/sparc32/v9/addmul_1.asm: Likewise.
+	* mpn/sparc32/v9/submul_1.asm: Likewise.
+	* mpn/sparc32/v8/supersparc/udiv.asm: Likewise.
+	* mpn/sparc32/udiv_fp.asm: Likewise.
 
 2000-02-16  Linus Nordberg  <linus@swox.se>
 
@@ -99,6 +114,12 @@
 	* mpz/tests/Makefile.in: Regenerate.
 	
 2000-02-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/udiv_fp.asm: Change `RODATA' to `DATA'.
+	* mpn/sparc32/v8/supersparc/udiv.asm: Likewise.
+	* mpn/sparc32/v9/addmul_1.asm: Likewise.
+	* mpn/sparc32/v9/submul_1.asm: Likewise.
+	* mpn/sparc32/v9/mul_1.asm: Likewise.
 
 	* mpn/sparc32/add_n.asm: Rename `size' -> `n'.
 	* mpn/sparc32/sub_n.asm: Likewise.
