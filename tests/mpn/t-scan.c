@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 
-#define SIZE  3
+#define SIZE  ((mp_size_t) 3)
 mp_limb_t  x[SIZE+1];
 
 void
