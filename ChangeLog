@@ -23,6 +23,38 @@ MA 02111-1307, USA.
 
 	* mpn/alpha/ev6/mul_1.asm: New file.
 
+2001-10-09  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Introduction to GMP): Add pentium 4 to optimized CPUs.
+	(Build Options): Note macos directory.
+	(Notes for Package Builds): GMP 4 series binary compatible with 3.
+	(Known Build Problems): Remove $* and ansi2knr note, now fixed, except
+	possibly under --host=none.
+	(Formatted Output Strings): Remove -1 prec for all digits.
+
+	* mpz/add.c, mpz/sub.c: Don't use mpz path on #include (helps macos).
+	* mpbsd/Makefile.am (INCLUDES): Add -I$(top_srcdir)/mpz.
+
+	* printf/doprnt.c, tests/printf/t-printf.c: Remove support for %.*Fe
+	prec -1 meaning all digits.
+	
+	* acinclude.m4 (GMP_PROG_AR): Override libtool, use AR_FLAGS="cq".
+	(GMP_HPC_HPPA_2_0): Print version string to config.log.
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Remove check-news (permission notice
+	in NEWS file is too big).
+	(dist-hook): Don't distribute numbered or unnumbered emacs backups.
+
+	* Makefile.am, cxx/Makefile.am: Updates for Gerardo's stuff.
+	
+2001-10-09  Gerardo Ballabio  <ballabio@sissa.it>
+
+	* cxx/isfuns.cc: New file.
+	* gmp-impl.h: Add prototypes.
+	* cxx/ismpf.cc, cxx/ismpq.cc, cxx/ismpz.cc: New files.
+	* gmp-h.in: Add prototypes.
+	* gmpxx.h, mpfrxx.h: New files.
+
 2001-10-08  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (with_tags): Establish a default based on --enable-cxx.
