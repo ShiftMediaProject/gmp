@@ -49,17 +49,17 @@ MA 02111-1307, USA. */
        "defined" and not "__STDC__-0".  In particular Sun workshop C 5.0
        sets __STDC__ to 0, but requires "##" for token pasting.
 
-   _AIX - binutils ansidecl.h asserts that all known AIX compilers are ANSI
-       but don't always define __STDC__.
+   _AIX - gnu ansidecl.h asserts that all known AIX compilers are ANSI but
+       don't always define __STDC__.
 
-   _mips - binutils ansidecl.h says the RISC/OS MIPS compiler is ANSI in
-       SVR4 mode, but doesn't define __STDC__.
+   _mips - gnu ansidecl.h says the RISC/OS MIPS compiler is ANSI in SVR4
+       mode, but doesn't define __STDC__.
 
    _MSC_VER - Microsoft C is ANSI, but __STDC__ is undefined unless the /Za
        option is given (in which case it's 1).
 
-   _WIN32 - tested for by binutils ansidecl.h, no doubt on the assumption
-      that all w32 compilers are ansi.  */
+   _WIN32 - tested for by gnu ansidecl.h, no doubt on the assumption that
+      all w32 compilers are ansi.  */
 
 #if  defined (__STDC__)                                 \
   || defined (__cplusplus)                              \
