@@ -218,7 +218,7 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   version.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) $(PRINTF_OBJECTS)
-libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
+libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) $(CXXLIBS)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
