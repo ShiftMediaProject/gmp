@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/Makefile.am (AR): Explicit AR=@AR@ to override automake
+	default, necessary for powerpc64 ABI=aix64.
+
 2001-11-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/powm.c: Move TMP_MARK to before any TMP_ALLOCs.
