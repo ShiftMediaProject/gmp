@@ -172,6 +172,9 @@ const struct routine_t {
   { "mpn_mod_1_inv",     speed_mpn_mod_1_inv,     FLAG_R },
 
   { "mpn_divrem_2",      speed_mpn_divrem_2,        },
+  { "mpn_divrem_2_div",  speed_mpn_divrem_2_div,    },
+  { "mpn_divrem_2_inv",  speed_mpn_divrem_2_inv,    },
+
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
 
 #if HAVE_NATIVE_mpn_modexact_1c_odd
@@ -179,9 +182,15 @@ const struct routine_t {
 #endif
   { "mpn_modexact_1c_odd", speed_mpn_modexact_1c_odd, FLAG_R },
 
-  { "mpn_dc_divrem_n",   speed_mpn_dc_divrem_n      },
-  { "mpn_dc_divrem_sb",  speed_mpn_dc_divrem_sb     },
-  { "mpn_dc_tdiv_qr",    speed_mpn_dc_tdiv_qr       },
+  { "mpn_dc_tdiv_qr",       speed_mpn_dc_tdiv_qr       },
+  { "mpn_dc_divrem_n",      speed_mpn_dc_divrem_n      },
+  { "mpn_dc_divrem_sb",     speed_mpn_dc_divrem_sb     },
+  { "mpn_dc_divrem_sb_div", speed_mpn_dc_divrem_sb_div },
+  { "mpn_dc_divrem_sb_inv", speed_mpn_dc_divrem_sb_inv },
+
+  { "mpn_sb_divrem_m3",     speed_mpn_sb_divrem_m3     },
+  { "mpn_sb_divrem_m3_div", speed_mpn_sb_divrem_m3_div },
+  { "mpn_sb_divrem_m3_inv", speed_mpn_sb_divrem_m3_inv },
 
   { "mpn_lshift",        speed_mpn_lshift, FLAG_R   },
   { "mpn_rshift",        speed_mpn_rshift, FLAG_R   },
@@ -291,6 +300,9 @@ const struct routine_t {
   { "mpn_udiv_qrnnd",         speed_mpn_udiv_qrnnd,         FLAG_R_OPTIONAL },
 #endif
   { "invert_limb",            speed_invert_limb,            FLAG_R_OPTIONAL },
+
+  { "operator_div",           speed_operator_div,           FLAG_R_OPTIONAL },
+  { "operator_mod",           speed_operator_mod,           FLAG_R_OPTIONAL },
 
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
