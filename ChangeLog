@@ -1,6 +1,14 @@
+2000-09-07  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/alpha.asm: Rewrite to actually work right.
+
 2000-09-07  Kevin Ryde  <kevin@swox.se>
 
 	* tune/common.c,speed.[ch]: Add measuring of mpn_sqrtrem.
+
+2000-09-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/fits.c: Correct type of `data'.
 
 2000-09-06  Kevin Ryde  <kevin@swox.se>
 
