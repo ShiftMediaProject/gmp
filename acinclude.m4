@@ -1139,15 +1139,29 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
-dnl  Can we say `.globl'?
+dnl  .globl - is usual.
+dnl  .global - required by ia64 (on hpux at least).
+dnl  .export - required by hppa on hpux.
 
 AC_DEFUN(GMP_ASM_GLOBL,
-[AC_CACHE_CHECK([how to export a symbol],
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_CACHE_CHECK([for assembler global directive],
                 gmp_cv_asm_globl,
-[case $host in
-  *-*-hpux*) gmp_cv_asm_globl=".export" ;;
-  *)         gmp_cv_asm_globl=".globl" ;;
-esac
+[for i in .globl .global .export; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	$i	foo
+foo$gmp_cv_asm_label_suffix],
+    [gmp_cv_asm_globl=$i
+     rm -f conftest*
+     break],
+    [cat conftest.out >&AC_FD_CC])
+done
+if test -z "$gmp_cv_asm_globl"; then
+  AC_MSG_ERROR([Cannot determine how to maks a symbol global])
+fi
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 ])
