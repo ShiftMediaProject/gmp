@@ -73,6 +73,15 @@ We should probably split the single-limb operand in 32-bit chunks, and
 the multi-limb operand in 16-bit chunks, allowing us to accumulate
 well in fp registers.
 
+Problem is to get 32-bit or 16-bit words to the fp registers.  Only
+64-bit fp memops copies bits without fiddling with them.  We might
+therefore need to load to integer registers with zero extension, store
+as 64 bits into temp space, and then load to fp regs.  Alternatively,
+load directly to fp space and add well-chosen constants to get
+cancelation.  (Other part after given by subsequent subtraction.)
+
+Possible code mix for load-via-intregs variant:
+
 lwz,std,lfd
 fmadd,fmadd,fmul,fmul
 fctidz,stfd,ld,fctidz,stfd,ld

@@ -47,7 +47,7 @@ to GMP.
 
 STATUS
 
-Timings on UltraSPARC-1/2:
+(Timings are for UltraSPARC-1/2.  UltraSPARC-3 is a few cycles slower.)
 
 * mpn_lshift, mpn_rshift: The current code runs at 2.0 cycles/limb.
   The IEU0 functional unit is saturated with shifts.
@@ -60,7 +60,19 @@ Timings on UltraSPARC-1/2:
   way of summing the intermediate 49-bit operands, but it is unlikely that it
   will save enough instructions to save an entire cycle.
 
-* mpn_mul_1: The current code is a straightforward edit of the mpn_addmul_1
-  code.  It would be possible to shave one cycle from it, with some labour.
+  The load-use of the `rlimb' operand is not enough scheduled for good L2 cache
+  performance.  Since UltraSPARC-1/2 L1 cache is direct mapped, we miss to L2
+  very often.  The load-use of the std/ldx pairs via the stack somewhat are
+  over-scheduled.
 
-* mpn_submul_1: Braindead code just calling mpn_mul_1 + mpn_sub_n.  FIXME.
+  It would be possible to save two instructions: (1) The `mov' could be avoided
+  if ths std/ldx were less scheduled.  (2) The ldx of `rlimb' could be split
+  into two `ld' instructions, saving the shifts/masks.
+  
+* mpn_mul_1: The current code is a straightforward edit of the mpn_addmul_1
+  code.  It would be possible to shave one or two cycles from it, with some
+  labour.
+
+* mpn_submul_1: Braindead code just calling mpn_mul_1 + mpn_sub_n.  It would be
+  possible to either match the mpn_addmul_1 performance, or in the worst case
+  use one more instruction group.
