@@ -54,6 +54,23 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include "gmp.h"
 
+#define TIME(t,func)							\
+  do { int __t0, __times, __t, __tmp;					\
+    __times = 1;							\
+    __t0 = cputime ();							\
+    {func;}								\
+    __tmp = cputime () - __t0;						\
+    while (__tmp < 100)							\
+      {									\
+	__times <<= 1;							\
+	__t0 = cputime ();						\
+	for (__t = 0; __t < __times; __t++)				\
+	  {func;}							\
+	__tmp = cputime () - __t0;					\
+      }									\
+    (t) = (double) __tmp / __times;					\
+  } while (0)
+
 /* GMP version 1.x compatibility.  */
 #if ! (__GNU_MP_VERSION >= 2)
 typedef MP_INT __mpz_struct;
@@ -169,7 +186,7 @@ setup_error_handler ()
     limit.rlim_max = 4;
     setrlimit (RLIMIT_CPU, &limit);
 
-    limit.rlim_cur = limit.rlim_max = 4 * 1024 * 1024;
+    limit.rlim_cur = limit.rlim_max = 16 * 1024 * 1024;
     setrlimit (RLIMIT_DATA, &limit);
 
     getrlimit (RLIMIT_STACK, &limit);
@@ -329,17 +346,14 @@ main (int argc, char **argv)
 	  continue;
 	}
 
-      {
-	int t0;
-
-	if (print_timing)
-	  t0 = cputime ();
-
+      if (print_timing)
+	{
+	  double t;
+	  TIME (t, mpz_eval_expr (r, e));
+	  printf ("computation took %.2f ms%s\n", t, newline);
+	}
+      else
 	mpz_eval_expr (r, e);
-
-	if (print_timing)
-	  printf ("computation took %d ms%s\n", cputime () - t0, newline);
-      }
 
       if (flag_print)
 	{
@@ -351,18 +365,14 @@ main (int argc, char **argv)
 	  tmp = malloc (out_len);
 
 	  if (print_timing)
-	    t0 = cputime ();
-
-	  if (print_timing)
-	    /* Print first half of message... */
-	    printf ("output conversion ");
-
-	  mpz_get_str (tmp, -base, r);
-
-	  if (print_timing)
-	    /* ...print 2nd half of message unless we caught a time limit
-	       and therefore longjmp'ed */
-	    printf ("took %d ms%s\n", cputime () - t0, newline);
+	    {
+	      double t;
+	      printf ("output conversion ");
+	      TIME (t, mpz_get_str (tmp, -base, r));
+	      printf ("took %.2f ms%s\n", t, newline);
+	    }
+	  else
+	    mpz_get_str (tmp, -base, r);
 
 	  out_len = strlen (tmp);
 	  if (flag_splitup_output)
