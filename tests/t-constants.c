@@ -28,9 +28,15 @@ MA 02111-1307, USA.
 
 
 #ifdef _LONG_LONG_LIMB
-#define LL(l,ll)   ll
+#define LL(l,ll)  ll
 #else
-#define LL(l,ll)   l
+#define LL(l,ll)  l
+#endif
+
+#if __GMP_MP_SIZE_T_INT
+#define SS(i,l)   i
+#else
+#define SS(i,l)   l
 #endif
 
 
@@ -91,37 +97,49 @@ MA 02111-1307, USA.
   } while (0)
 
 
-#define CHECK_HIGHBIT(value, type)              \
-  do {                                          \
-    type  n = value;                            \
-    if (n == 0)                                 \
-      {                                         \
-        printf ("%s == 0\n", #value);           \
-        error = 1;                              \
-      }                                         \
-    n <<= 1;                                    \
-    if (n != 0)                                 \
-      {                                         \
-        printf ("%s << 1 != 0\n", #value);      \
-        error = 1;                              \
-      }                                         \
+#define CHECK_HIGHBIT_S(value, value_name, type, format)        \
+  do {                                                          \
+    type  n = value;                                            \
+    if (n == 0)                                                 \
+      {                                                         \
+        printf ("%s == 0\n", value_name);                       \
+        error = 1;                                              \
+      }                                                         \
+    n <<= 1;                                                    \
+    if (n != 0)                                                 \
+      {                                                         \
+        printf ("%s << 1 = ", value_name);                      \
+        printf (format, n);                                     \
+        printf (" != 0\n");                                     \
+        error = 1;                                              \
+      }                                                         \
   } while (0)
 
 
-#define CHECK_MAX_S(max_val, max_name, min_val, min_name, type) \
-  do {                                                          \
-    type  n = max_val;                                          \
-    n++;                                                        \
-    if (n != min_val)                                           \
-      {                                                         \
-        printf ("%s + 1 != %s\n", max_name, min_name);          \
-        error = 1;                                              \
-      }                                                         \
-    if (max_val <= min_val)                                     \
-      {                                                         \
-        printf ("%s <= %s\n", max_name, min_name);              \
-        error = 1;                                              \
-      }                                                         \
+#define CHECK_MAX_S(max_val, max_name, min_val, min_name, type, format) \
+  do {                                                                  \
+    type  maxval = max_val;                                             \
+    type  minval = min_val;                                             \
+    type  n = maxval;                                                   \
+    n++;                                                                \
+    if (n != minval)                                                    \
+      {                                                                 \
+        printf ("%s + 1 = ", max_name);                                 \
+        printf (format, n);                                             \
+        printf (" != %s = ", min_name);                                 \
+        printf (format, minval);                                        \
+        printf ("\n");                                                  \
+        error = 1;                                                      \
+      }                                                                 \
+    if (maxval <= minval)                                               \
+      {                                                                 \
+        printf ("%s = ", max_name);                                     \
+        printf (format, maxval);                                        \
+        printf (" <= %s = ", min_name);                                 \
+        printf (format, minval);                                        \
+        printf ("\n");                                                  \
+        error = 1;                                                      \
+      }                                                                 \
   } while (0)
 
 
@@ -129,17 +147,19 @@ MA 02111-1307, USA.
 /* FIXME: printf formats not right for a long long limb. */
 
 #if HAVE_STRINGIZE
-#define CHECK_LIMB(x,y)     CHECK_LIMB_S (x, #x, y, #y)
-#define CHECK_INT(x,y)      CHECK_INT_S (x, #x, y, #y)
-#define CHECK_CONDITION(x)  CHECK_CONDITION_S (x, #x)
-#define CHECK_BITS(c,t)     CHECK_BITS_S (c, #c, t)
-#define CHECK_MAX(m,n,t)    CHECK_MAX_S (m, #m, n, #n, t)
+#define CHECK_LIMB(x,y)      CHECK_LIMB_S (x, #x, y, #y)
+#define CHECK_INT(x,y)       CHECK_INT_S (x, #x, y, #y)
+#define CHECK_CONDITION(x)   CHECK_CONDITION_S (x, #x)
+#define CHECK_BITS(c,t)      CHECK_BITS_S (c, #c, t)
+#define CHECK_MAX(m,n,t,f)   CHECK_MAX_S (m, #m, n, #n, t, f)
+#define CHECK_HIGHBIT(n,t,f) CHECK_HIGHBIT_S (n, #n, t, f)
 #else
-#define CHECK_LIMB(x,y)     CHECK_LIMB_S (x, "x", y, "y")
-#define CHECK_INT(x,y)      CHECK_INT_S (x, "x", y, "y")
-#define CHECK_CONDITION(x)  CHECK_CONDITION_S (x, "x")
-#define CHECK_BITS(c,t)     CHECK_BITS_S (c, "c", t)
-#define CHECK_MAX(m,n,t)    CHECK_MAX_S (m, "m", n, "n", t)
+#define CHECK_LIMB(x,y)      CHECK_LIMB_S (x, "x", y, "y")
+#define CHECK_INT(x,y)       CHECK_INT_S (x, "x", y, "y")
+#define CHECK_CONDITION(x)   CHECK_CONDITION_S (x, "x")
+#define CHECK_BITS(c,t)      CHECK_BITS_S (c, "c", t)
+#define CHECK_MAX(m,n,t,f)   CHECK_MAX_S (m, "m", n, "n", t, f)
+#define CHECK_HIGHBIT(n,t,f) CHECK_HIGHBIT_S (n, "n", t, f)
 #endif
 
 
@@ -157,21 +177,21 @@ main (void)
   CHECK_BITS (BITS_PER_SHORTINT, short);
   CHECK_BITS (BITS_PER_CHAR,     char);
 
-  CHECK_HIGHBIT (MP_LIMB_T_HIGHBIT, mp_limb_t);
-  CHECK_HIGHBIT (ULONG_HIGHBIT,     unsigned long);
-  CHECK_HIGHBIT (UINT_HIGHBIT,      unsigned int);
-  CHECK_HIGHBIT (USHRT_HIGHBIT,     unsigned short);
-  CHECK_HIGHBIT (LONG_HIGHBIT,      long);
-  CHECK_HIGHBIT (INT_HIGHBIT,       int);
-  CHECK_HIGHBIT (SHRT_HIGHBIT,      short);
+  CHECK_HIGHBIT (MP_LIMB_T_HIGHBIT, mp_limb_t,      LL("0x%lX","0x%lX"));
+  CHECK_HIGHBIT (ULONG_HIGHBIT,     unsigned long,  "0x%lX");
+  CHECK_HIGHBIT (UINT_HIGHBIT,      unsigned int,   "0x%X");
+  CHECK_HIGHBIT (USHRT_HIGHBIT,     unsigned short, "0x%hX");
+  CHECK_HIGHBIT (LONG_HIGHBIT,      long,           "0x%lX");
+  CHECK_HIGHBIT (INT_HIGHBIT,       int,            "0x%X");
+  CHECK_HIGHBIT (SHRT_HIGHBIT,      short,          "0x%hX");
 
-  CHECK_MAX (LONG_MAX,      LONG_MIN,      long);
-  CHECK_MAX (INT_MAX,       INT_MIN,       int);
-  CHECK_MAX (SHRT_MAX,      SHRT_MIN,      short);
-  CHECK_MAX (ULONG_MAX,     0,             unsigned long);
-  CHECK_MAX (UINT_MAX,      0,             unsigned int);
-  CHECK_MAX (USHRT_MAX,     0,             unsigned short);
-  CHECK_MAX (MP_SIZE_T_MAX, MP_SIZE_T_MIN, mp_size_t);
+  CHECK_MAX (LONG_MAX,      LONG_MIN,      long,           "%ld");
+  CHECK_MAX (INT_MAX,       INT_MIN,       int,            "%d");
+  CHECK_MAX (SHRT_MAX,      SHRT_MIN,      short,          "%hd");
+  CHECK_MAX (ULONG_MAX,     0,             unsigned long,  "%lu");
+  CHECK_MAX (UINT_MAX,      0,             unsigned int,   "%u");
+  CHECK_MAX (USHRT_MAX,     0,             unsigned short, "%hu");
+  CHECK_MAX (MP_SIZE_T_MAX, MP_SIZE_T_MIN, mp_size_t,      SS("%d","%ld"));
 
   /* UHWtype should have at least enough bits for half a UWtype */
   {
