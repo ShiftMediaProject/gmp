@@ -74,6 +74,7 @@
 	* tests/t-constants.c: Add checks of HIGHBIT, MAX and MIN constants,
 	simplify ANSI vs K&R stringizing, use correct printf format types, do
 	all tests before aborting.
+
 2001-01-05  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (mp.h): Only create this under --enable-mpbsd.
