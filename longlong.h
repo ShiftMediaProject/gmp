@@ -673,6 +673,27 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif
 #endif /* 80x86 */
 
+#if defined (__x86_64) && W_TYPE_SIZE == 64
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ ("addq %5,%1\n\tadcq %3,%0"					\
+	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
+	   : "%0" ((UDItype)(ah)), "g" ((UDItype)(bh)),			\
+	     "%1" ((UDItype)(al)), "g" ((UDItype)(bl)))
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  __asm__ ("subq %5,%1\n\tsbbq %3,%0"					\
+	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
+	   : "0" ((UDItype)(ah)), "g" ((UDItype)(bh)),			\
+	     "1" ((UDItype)(al)), "g" ((UDItype)(bl)))
+#define umul_ppmm(w1, w0, u, v) \
+  __asm__ ("mulq %3"							\
+	   : "=a" (w0), "=d" (w1)					\
+	   : "%0" ((UDItype)(u)), "rm" ((UDItype)(v)))
+#define udiv_qrnnd(q, r, n1, n0, dx) /* d renamed to dx avoiding "=d" */\
+  __asm__ ("divq %4"		     /* stringification in K&R C */	\
+	   : "=a" (q), "=d" (r)						\
+	   : "0" ((UDItype)(n0)), "1" ((UDItype)(n1)), "rm" ((UDItype)(dx)))
+#endif /* x86_64 */
+
 #if defined (__i860__) && W_TYPE_SIZE == 32
 #define rshift_rhlc(r,h,l,c) \
   __asm__ ("shr %3,r0,r0\;shrd %1,%2,%0"				\
