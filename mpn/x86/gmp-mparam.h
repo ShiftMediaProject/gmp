@@ -39,3 +39,8 @@ MA 02111-1307, USA. */
 #ifndef UDIV_NORM_PREINV_TIME
 #define UDIV_NORM_PREINV_TIME   50 /* cycles */
 #endif
+
+/* Generic x86 mpn_divexact_1 is faster than generic x86 mpn_divrem_1 on all
+   of p5, p6, k6 and k7, so use it always.  It's probably slower on 386 and
+   486, but that's too bad.  */
+#define DIVEXACT_1_THRESHOLD  0
