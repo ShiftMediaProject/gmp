@@ -33,7 +33,11 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
+<<<<<<< tasks.html
+  This file current as of 29 Dec 2001.  An up-to-date version is available at
+=======
   This file current as of 22 Dec 2001.  An up-to-date version is available at
+>>>>>>> 1.120
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -352,10 +356,10 @@ MA 02111-1307, USA.
 	#endif	</pre>
 <li> <code>invert_limb</code> on various processors might benefit from the
      little Newton iteration done for alpha and ia64.
-<li> Alpha 21264: Improve feed-in code for <code>mpn_addmul_1</code> and
-     <code>mpn_submul_1</code>.  Integrate new <code>mpn_mul_1</code> code.
-<li> Alpha 21164: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>,
-     and <code>mpn_mul_1</code> for the 21164.  This should use both integer
+<li> Alpha 21264: Improve feed-in code for <code>mpn_mul_1</code>,
+     <code>mpn_addmul_1</code>, and <code>mpn_submul_1</code>.
+<li> Alpha 21164: Rewrite <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
+     and <code>mpn_submul_1</code> for the 21164.  This should use both integer
      multiplies and floating-point multiplies.  For the floating-point
      operations, the single-limb multiplier should be split into three 21-bit
      chunks, or perhaps even better in four 16-bit chunks.  Probably possible
@@ -381,14 +385,6 @@ MA 02111-1307, USA.
      "<code>mulx</code>"s either with an asm block or via the generic C code is
      about 90 cycles.  Try using fp operations, and also try using karatsuba
      for just three "<code>mulx</code>"s.
-<li> UltraSPARC/64: Write <code>mpn_sqr_diagonal</code>.  Since we're
-     squaring each limb, it seems best to split limbs into one 22-bit chunk
-     (for most significant part) and two 21 bit chunks.  Things magically
-     align to 64-bits borders with that splitting.  Will need 19 memory
-     operations, and won't therefore run faster than at about 20 cycles/limb.
-     (The current umul_ppmm loop of mpn_sqr_basecase runs at around 60
-     cycles/limb.)  If we use VIS <code>fand</code> for splitting operands,
-     just 13 memory are needed.
 <li> UltraSPARC/64: <code>mpn_divrem_1</code>, <code>mpn_mod_1</code>,
      <code>mpn_divexact_1</code> and <code>mpn_modexact_1_odd</code> could
      process 32 bits at a time when the divisor fits 32-bits.  This will need
