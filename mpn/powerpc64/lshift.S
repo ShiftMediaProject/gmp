@@ -45,7 +45,7 @@ __mpn_lshift:
 	.globl C_SYMBOL_NAME(__mpn_lshift)
 C_SYMBOL_NAME(__mpn_lshift):
 #endif
-	cmpdi	cr0,r5,20	/* more than 12 limbs? */
+	cmpdi	cr0,r5,20	/* more than 20 limbs? */
 	sldi	r0,r5,3
 	add	r4,r4,r0	/* make r4 point at end of s1 */
 	add	r7,r3,r0	/* make r7 point at end of res */
