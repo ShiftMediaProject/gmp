@@ -1,3 +1,14 @@
+2001-02-19  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64/sqr_diagonal.asm: Use PROLOGUE/EPILOGUE.
+	* mpn/pa642/sqr_diagonal.asm: Likewise.
+
+	* configure.in (HAVE_ABI_$abi): Disable for now.
+
+	* mpn/asm-defs.m4 (PROLOGUE): Use LABEL_SUFFIX.
+
+	* acinclude.m4 (GMP_ASM_GLOBL): New check, for hppa oddities.
+
 2001-02-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/hppa/hppa1_1/gmp-mparam.h: New file.
