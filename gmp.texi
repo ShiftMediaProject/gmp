@@ -846,6 +846,8 @@ SPARC:
 @nisamp{k62},
 @nisamp{k63},
 @nisamp{athlon}
+@nisamp{viac3}
+@nisamp{viac32}
 
 @item
 Other:
@@ -1152,6 +1154,7 @@ with a fresh @command{./configure} and @command{make} each.
 @need 1000
 @item HPPA 2.0 (@samp{hppa2.0*}, @samp{hppa64})
 @cindex HPPA
+@cindex HP-UX
 @table @asis
 @item @samp{ABI=2.0w}
 The 2.0w ABI uses 64-bit limbs and pointers and is available on HP-UX 11 or
@@ -1194,6 +1197,7 @@ GMP will detect how it was built, and skip to the corresponding @samp{ABI}.
 @need 1500
 @item IA-64 under HP-UX (@samp{ia64*-*-hpux*})
 @cindex IA-64
+@cindex HP-UX
 HP-UX supports two ABIs for IA-64.  GMP performance is the same in both.
 
 @table @asis
@@ -1225,6 +1229,7 @@ choice.
 @need 1000
 @item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]})
 @cindex MIPS
+@cindex IRIX
 IRIX 6 always has a 64-bit MIPS 3 or better CPU, and supports ABIs o32, n32,
 and 64.  n32 or 64 are recommended, and GMP performance will be the same in
 each.  The default is n32.
@@ -1269,6 +1274,7 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 @cindex PowerPC
 @table @asis
 @item @samp{ABI=aix64}
+@cindex AIX
 The AIX 64 ABI uses 64-bit limbs and pointers and is available on systems
 @samp{powerpc64*-*-aix*}.  Applications must be compiled with
 
@@ -1286,6 +1292,8 @@ for applications.
 @need 1000
 @item Sparc V9 (@samp{sparc64}, @samp{sparcv9}, @samp{ultrasparc*})
 @cindex Sparc V9
+@cindex Solaris
+@cindex Sun
 @table @asis
 @item @samp{ABI=64}
 The 64-bit V9 ABI is available on Solaris 2.7 and up (when the kernel is in
@@ -1315,10 +1323,15 @@ cc   -xarch=v8plus
 @command{gcc} 2.8 and earlier only supports @samp{-mv8} though.
 @end table
 
-Don't be confused by the names of these sparc @samp{-m} and @samp{-x} options,
-they're called @samp{arch} but they effectively control both ABI and ISA.
+GMP speed is greatest in @samp{ABI=64}, so it's the default where available.
+The speed is partly because there are extra registers available and partly
+because 64-bits is considered the more important case and has therefore had
+better code written for it.
 
-On Solaris 2.6 and earlier only @samp{ABI=32} is available since the kernel
+Don't be confused by the names of the @samp{-m} and @samp{-x} compiler
+options, they're called @samp{arch} but effectively control both ABI and ISA.
+
+On Solaris 2.6 and earlier only @samp{ABI=32}, is available since the kernel
 doesn't save all registers.
 
 On Solaris 2.7 with the kernel in 32-bit mode, a normal native build will
