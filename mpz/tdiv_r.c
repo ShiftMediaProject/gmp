@@ -36,7 +36,7 @@ mpz_tdiv_r (rem, num, den)
   mp_size_t ql;
   mp_size_t ns, ds, nl, dl;
   mp_ptr np, dp, qp, rp;
-  TMP_DECL (marker)
+  TMP_DECL (marker);
 
   ns = SIZ (num);
   ds = SIZ (den);
@@ -89,7 +89,7 @@ mpz_tdiv_r (rem, num, den)
       np = tp;
     }
 
-    mpn_tdiv_qr (qp, rp, 0L, np, nl, dp, dl);
+  mpn_tdiv_qr (qp, rp, 0L, np, nl, dp, dl);
 
   MPN_NORMALIZE (rp, dl);
 

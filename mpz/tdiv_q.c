@@ -36,7 +36,7 @@ mpz_tdiv_q (quot, num, den)
   mp_size_t ql;
   mp_size_t ns, ds, nl, dl;
   mp_ptr np, dp, qp, rp;
-  TMP_DECL (marker)
+  TMP_DECL (marker);
 
   ns = SIZ (num);
   ds = SIZ (den);
