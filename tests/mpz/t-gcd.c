@@ -37,7 +37,7 @@ mpz_t gcd, s, t, temp1, temp2;
 
 /* Define this to make all operands be large enough for Schoenhage gcd
    to be used.  */
-#define WHACK_SCHOENHAGE 1
+#define WHACK_SCHOENHAGE 0
 
 #if WHACK_SCHOENHAGE
 #define MIN_OPERAND_SIZE (GCD_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
