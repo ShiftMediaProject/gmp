@@ -1,7 +1,7 @@
 dnl  Alpha ev6 mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,42 +22,46 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-dnl  INPUT PARAMETERS
-dnl  res_ptr	r16
-dnl  s1_ptr	r17
-dnl  s2_ptr	r18
-dnl  size	r19
+C      cycles/limb
+C EV4:     ?
+C EV5:     5.4
+C EV6:     2.125
 
-dnl  This code runs at 5.4 cycles/limb on EV5, and 2.1 cycles/limb on EV6.
+C  INPUT PARAMETERS
+C  rp	r16
+C  up	r17
+C  vp	r18
+C  n	r19
 
-dnl This code was written in close cooperation with ev6 pipeline expert
-dnl Steve Root.  Any errors are tege's fault, though.
 
-dnl  work triplet  0-2
-dnl  work triplet  3-5
-dnl  work triplet  6-8
-dnl  work triplet  9-11
-dnl  carry's 20-23
+C This code was written in close cooperation with ev6 pipeline expert
+C Steve Root.  Any errors are tege's fault, though.
 
-dnl  sustains 8 adds in 17 cycles !
-dnl   (from the d_cache)
+C  work triplet  0-2
+C  work triplet  3-5
+C  work triplet  6-8
+C  work triplet  9-11
+C  carry's 20-23
 
-dnl  pair loads and stores where possible
-dnl  store pairs oct-aligned where possible
-dnl    (didn't need it here)
-dnl  stores are delayed every third cycle
-dnl  loads and stores are delayed by fills
-dnl  U stays still, put code there where possible
-dnl   (note alternation of U1 and U0)
-dnl  L moves because of loads and stores
-dnl  note dampers in L to limit damage
-dnl  note, load ahead of time where possible
+C  sustains 8 adds in 17 cycles !
+C   (from the d_cache)
 
-dnl  this odd-looking optimization expects
-dnl  that were having random bits in our data, so
-dnl  that a pure zero result is unlikely. so we
-dnl  penalize the unlikely case to help the
-dnl  common case.
+C  pair loads and stores where possible
+C  store pairs oct-aligned where possible
+C    (didn't need it here)
+C  stores are delayed every third cycle
+C  loads and stores are delayed by fills
+C  U stays still, put code there where possible
+C   (note alternation of U1 and U0)
+C  L moves because of loads and stores
+C  note dampers in L to limit damage
+C  note, load ahead of time where possible
+
+C  this odd-looking optimization expects
+C  that were having random bits in our data, so
+C  that a pure zero result is unlikely. so we
+C  penalize the unlikely case to help the
+C  common case.
 
 ASM_START()
 PROLOGUE(mpn_add_n)

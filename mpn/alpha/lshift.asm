@@ -1,6 +1,6 @@
 dnl  Alpha mpn_lshift -- Shift a number left.
 
-dnl  Copyright 1994, 1995, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1994, 1995, 2000, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C      cycles/limb
 C EV4:     4.75
-C EV5:     3.25
+C EV5:     4
 C EV6:     2
 
 C  INPUT PARAMETERS
@@ -48,8 +48,7 @@ PROLOGUE(mpn_lshift)
 	subq	r18,r20,r18
 
 	ALIGN(8)
-$Loop0:
-	ldq	r3,-8(r17)
+$Loop0:	ldq	r3,-8(r17)
 	subq	r16,8,r16
 	subq	r17,8,r17
 	subq	r20,1,r20

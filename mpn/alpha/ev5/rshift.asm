@@ -1,4 +1,4 @@
-dnl  Alpha EV5 __gmpn_rshift -- Shift a number right.
+dnl  Alpha EV5 mpn_rshift -- Shift a number right.
 
 dnl  Copyright 1994, 1995, 2000 Free Software Foundation, Inc.
 
@@ -21,13 +21,17 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-dnl  INPUT PARAMETERS
-dnl  res_ptr	r16
-dnl  s1_ptr	r17
-dnl  size	r18
-dnl  cnt	r19
+C      cycles/limb
+C EV4:     ?
+C EV5:     3.25
+C EV6:     1.75
 
-dnl  This code runs at 3.25 cycles/limb on the EV5.
+C  INPUT PARAMETERS
+C  rp	r16
+C  up	r17
+C  n	r18
+C  cnt	r19
+
 
 ASM_START()
 PROLOGUE(mpn_rshift)

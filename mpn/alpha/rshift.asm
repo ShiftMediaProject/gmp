@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C      cycles/limb
 C EV4:     4.75
-C EV5:     3.25
+C EV5:     3.75
 C EV6:     2
 
 C  INPUT PARAMETERS
@@ -46,8 +46,7 @@ PROLOGUE(mpn_rshift)
 	subq	r18,r20,r18
 
 	ALIGN(8)
-$Loop0:
-	ldq	r3,0(r17)
+$Loop0:	ldq	r3,0(r17)
 	addq	r16,8,r16
 	addq	r17,8,r17
 	subq	r20,1,r20
