@@ -139,7 +139,7 @@ check_single (void)
 }
 
 
-int
+void
 check_random (int argc, char *argv[])
 {
   mpz_t x, s0, s1, s2, s3, m;
