@@ -20,8 +20,6 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-
 INCLUDES = -I$(top_srcdir)
 
 # $(LEXLIB) seems to be unnecessary when using flex, but put it here for the

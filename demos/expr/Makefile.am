@@ -20,8 +20,6 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I$(top_srcdir)/mpfr
 
 if WANT_MPFR

@@ -20,7 +20,6 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = . devel mpn mpz mpq mpf rand misc cxx mpbsd
 
 include ../mpn/Makeasm.am

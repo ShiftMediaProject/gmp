@@ -23,8 +23,6 @@
 # Only a libmpfr.a is built, since upward binary compatibility is not yet
 # guaranteed.
 
-
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
 INCLUDES = -I$(top_srcdir)

@@ -64,7 +64,6 @@ LIBMP_LT_REVISION = 4
 LIBMP_LT_AGE =      1
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 ACLOCAL_AMFLAGS = -I mpfr
 
 

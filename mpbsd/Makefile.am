@@ -20,8 +20,6 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-
 # -I$(top_srcdir)/mpz is for #includes done by mpz .c files.  Perhaps most
 # compilers are smart enough to look in the same directory as the .c file
 # already, but lets make absolutely sure.

@@ -20,8 +20,6 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libprintf.la
