@@ -1,7 +1,7 @@
 1999-05-20  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.in: Rename randi.c --> rand.c, randi_lc.c --> randlc.c,
-	randicom.c --> randcom.c.  
+	randicom.c --> randcm.c.  
 	* make.bat: Ditto.
 
 1999-05-12  Torbjorn Granlund  <tege@swox.com>
