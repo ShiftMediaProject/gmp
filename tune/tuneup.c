@@ -978,7 +978,7 @@ all (void)
         printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1 %.9f\n",
                 s.size, t1, t2);
 
-    printf ("#define USE_PREINV_MOD_1           %d\n", t1 < t2);
+    printf ("#define USE_PREINV_MOD_1               %d\n", t1 < t2);
   }
 #endif /* ! UDIV_PREINV_ALWAYS */
 #endif /* ! HAVE_NATIVE_mpn_preinv_mod_1 */
