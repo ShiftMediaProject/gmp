@@ -21,7 +21,7 @@ MA 02111-1307, USA. */
 
 #ifndef __MP_H__
 
-#ifndef __GNU_MP__
+#ifndef __GNU_MP__		/* to allow inclusion of both gmp.h and mp.h */
 #define __GNU_MP__ 2
 #define __need_size_t
 #include <stddef.h>
@@ -65,29 +65,16 @@ typedef __gmp_const mp_limb_t *	mp_srcptr;
 typedef int			mp_size_t;
 typedef long int		mp_exp_t;
 
-#ifndef __MP_SMALL__
 typedef struct
 {
-  mp_size_t _mp_alloc;		/* Number of *limbs* allocated and pointed
+  int _mp_alloc;		/* Number of *limbs* allocated and pointed
 				   to by the D field.  */
-  mp_size_t _mp_size;		/* abs(SIZE) is the number of limbs
-				   the last field points to.  If SIZE
-				   is negative this is a negative
-				   number.  */
-  mp_limb_t *_mp_d;			/* Pointer to the limbs.  */
-} __mpz_struct;
-#else
-typedef struct
-{
-  short int _mp_alloc;		/* Number of *limbs* allocated and pointed
-				   to by the D field.  */
-  short int _mp_size;		/* abs(SIZE) is the number of limbs
+  int _mp_size;			/* abs(SIZE) is the number of limbs
 				   the last field points to.  If SIZE
 				   is negative this is a negative
 				   number.  */
   mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
 } __mpz_struct;
-#endif
 #endif /* __GNU_MP__ */
 
 /* User-visible types.  */
