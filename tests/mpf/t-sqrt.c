@@ -84,6 +84,15 @@ check_rand1 (int argc, char **argv)
 	      printf ("   x = "); mpf_dump (x);
 	      printf ("   y = "); mpf_dump (y);
 	      printf ("  y2 = "); mpf_dump (y2);
+	      printf ("   rerr       = "); mpf_dump (rerr);
+	      printf ("   limit_rerr = "); mpf_dump (limit_rerr);
+              printf ("in hex:\n");
+              mp_trace_base = 16;
+	      mpf_trace ("   x  ", x);
+	      mpf_trace ("   y  ", y);
+	      mpf_trace ("   y2 ", y2);
+	      mpf_trace ("   rerr      ", rerr);
+	      mpf_trace ("   limit_rerr", limit_rerr);
 	      abort ();
 	    }
 	}
