@@ -40,9 +40,9 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-/* glibc 2.0.x vsnprintf returns size-1 for an overflow, with no indication
-   how big the output would have been.  It's necessary to re-run to
-   determine that size.
+/* glibc 2.0.x vsnprintf returns either -1 or size-1 for an overflow, with
+   no indication how big the output would have been.  It's necessary to
+   re-run to determine that size.
 
    "size-1" would mean sucess from a C99 vsnprintf, and the re-run is
    unnecessary in this case, but we don't bother to try to detect what sort
@@ -61,7 +61,10 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt, va_list ap)
     {
       ret = vsnprintf (d->buf, d->size, fmt, ap);
       if (ret == -1)
-        return ret;
+        {
+          ASSERT (strlen (d->buf) == d->size-1);
+          ret = d->size-1;
+        }
 
       step = MIN (ret, d->size-1);
       d->size -= step;
@@ -86,7 +89,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt, va_list ap)
       ret = vsnprintf (p, alloc, fmt, ap);
       (*__gmp_free_func) (p, alloc);
     }
-  while (ret == alloc-1);
+  while (ret <= alloc-1);
 
   return ret;
 }
