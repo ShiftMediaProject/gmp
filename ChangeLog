@@ -1,3 +1,16 @@
+2000-07-26  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options): Mention djgpp stack size.
+	(Notes for Package Builds): New section.
+	(Compatibility with older versions): Update for 3.1, add mpf_get_prec.
+
+	* demos/factorize.c: Don't declare random() for glibc.
+
+	* gmp.h (gmp_version): Add prototype and define.
+
+	* Makefile.am: Keep macos directory generated files up-to-date
+	during development and on a "make dist".
+
 2000-07-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/hppa/gmp-mparam.h: Update threshold values from new `tune' run.
