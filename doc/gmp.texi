@@ -7091,6 +7091,11 @@ GNU Guile (1.8) @spaceuref{http://www.gnu.org/software/guile/guile.html}
 RScheme @spaceuref{http://www.rscheme.org/}
 @item
 STklos @spaceuref{http://kaolin.unice.fr/STklos/}
+@c
+@c  For reference, MzScheme uses some of gmp, but (as of version 205) it only
+@c  has copies of some of the generic C code, and we don't consider that a
+@c  language binding to gmp.
+@c
 @end itemize
 
 @item Smalltalk
