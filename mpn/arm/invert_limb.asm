@@ -24,7 +24,6 @@ include(`../config.m4')
 C INPUT PARAMETERS
 define(`d',`r0')	C number to be inverted
 
-changecom(@)		C need this since # is used for constants
 
 PROLOGUE(mpn_invert_limb)
 	stmfd	sp!, {r4, lr}
@@ -51,11 +50,11 @@ PROLOGUE(mpn_invert_limb)
 	umull	ip, r1, d, r2		C start adjustment step
 	add	r1, r1, d
 	cmn	r1, #1
-	beq	.L1
+	beq	L(1)
 	adds	ip, ip, d
 	adc	r1, r1, #0
 	add	r2, r2, #1
-.L1:
+L(1):
 	adds	r3, ip, d
 	adcs	r1, r1, #0
 	moveq	r0, r2

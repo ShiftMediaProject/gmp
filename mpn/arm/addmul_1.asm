@@ -32,9 +32,6 @@ define(`up',`r1')
 define(`n',`r2')
 define(`v',`r3')
 
-define(`sp',`r13')
-define(`lr',`r14')
-define(`pc',`r15')
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
@@ -42,14 +39,14 @@ PROLOGUE(mpn_addmul_1)
 	mov	r11, #0
 	mov	ip, #0
 	movs	n, n, lsr #1
-	bcc	.Lskip1
+	bcc	L(skip1)
 	ldr	lr, [up], #4
 	ldr	r9, [rp]
 	umlal	r9, ip, v, lr
 	str	r9, [rp], #4
-.Lskip1:
+L(skip1):
 	movs	n, n, lsr #1
-	bcc	.Lskip2
+	bcc	L(skip2)
 	ldmia	rp, { r9, r10 }
 	adds	r8, ip, r9
 	adc	r9, r11, #0
@@ -59,11 +56,11 @@ PROLOGUE(mpn_addmul_1)
 	adc	ip, r11, #0
 	umlal	r9, ip, v, lr
 	stmia	rp!, { r8, r9 }
-.Lskip2:
+L(skip2):
 	teq	n, #0
-	beq	.Lreturn
+	beq	L(return)
 	stmfd	sp!, { r4-r7 }
-.Laddmul_loop:
+L(addmul_loop):
 	ldmia	rp, { r5, r6, r7, r8 }
 	adds	r4, ip, r5
 	adc	r5, r11, #0
@@ -80,9 +77,9 @@ PROLOGUE(mpn_addmul_1)
 	umlal	r7, ip, v, lr
 	subs	n, n, #1
 	stmia	rp!, { r4, r5, r6, r7 }
-	bne	.Laddmul_loop
+	bne	L(addmul_loop)
 	ldmfd	sp!, { r4-r7 }
-.Lreturn:
+L(return):
 	mov	r0, ip
 	ldmfd	sp!, { r8-r11, pc }
 EPILOGUE(mpn_addmul_1)
