@@ -19,6 +19,29 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-17  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (__GMP_REALLOCATE_FUNC_MAYBE_TYPE): New macro.
+	* gmp-impl.h, mpz/get_str.c, mpz/out_raw.c, mpq/get_str.c,
+	mpq/set_str.c, mpf/get_str.c, printf/asprntffuns.c, printf/doprnt.c,
+	printf/repl-vsnprintf.c, printf/snprntffuns.c, scanf/doscan.c,
+	mpbsd/mtox.c: Some fixes to compile as C++.
+
+	* mpn/generic/jacbase.c (JACOBI_BASE_METHOD): New tuned parameter,
+	replacing COUNT_TRAILING_ZEROS_TIME test.  Add a third method too.
+	* tune/speed.c, tune/speed.h, tune/common.c, tune/Makefile.am: Add
+	measuring of mpn_jacobi_base methods.
+	* tune/jacbase1.c, tune/jacbase2.c, tune/jacbase3.c: New files.
+	* tune/tuneup.c (JACOBI_BASE_METHOD): Tune this.
+	* mpn/x86/*/gmp-mparam.h (COUNT_TRAILING_ZEROS_TIME): Remove macro.
+
+	* gmp-h.in: Use __gmp prefix on variables in inlines.
+
+	* gmp-impl.h (MPN_COPY_INCR, MPN_COPY_DECR): Remove __i, unused.
+
+	* mpn/generic/mul_fft.c: Use HAVE_NATIVE_mpn_addsub_n, not ADDSUB.
+	Use CNST_LIMB for some constants.
+
 2002-01-15  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpbsd/Makefile.am: Add a convenience rule for ../libtests.la.
