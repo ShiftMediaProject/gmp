@@ -1,7 +1,7 @@
 2000-11-01  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in [compiler switch] (sparc64-*-linux*): Spell
-	gmp_xoptcflags_gcc properly, and pass same options for other
+	gmp_xoptcflags_gcc properly, and pass same options as for other
 	sparcv9 configs.
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_GET_STR): Fix type of wsize.
