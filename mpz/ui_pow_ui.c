@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 void
 mpz_ui_pow_ui (mpz_ptr r, unsigned long b, unsigned long e)
 {
-#if GMP_LIMB_BITS != 0
+#if GMP_NAIL_BITS != 0
   if (b > GMP_NUMB_MAX)
     {
       mp_limb_t bb[2];
