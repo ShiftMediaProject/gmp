@@ -298,6 +298,17 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
 }
 
 
+void
+mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
+{
+  ASSERT (size >= 0);
+  MPN_NORMALIZE (p, size);
+  MPZ_REALLOC (z, size);
+  MPN_COPY (PTR(z), p, size);
+  SIZ(z) = size;
+}
+
+
 /* The following are basic speed running routines for various gmp functions.
    Many are very similar and use speed.h macros.
 
@@ -397,22 +408,44 @@ speed_mpn_rshift (struct speed_params *s)
 }
 
 
-double
-speed_mpn_divmod_1 (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_UNARY_1_CALL (mpn_divmod_1 (wp, s->xp, s->size, s->r));
-}
+/* The carry-in variants (if available) are good for measuring because they
+   won't skip a division if high<divisor.  Alternately, use -1 as a divisor
+   with the plain _1 forms. */
 double
 speed_mpn_divrem_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DIVREM_1 (mpn_divrem_1);
 }
 double
+speed_mpn_divrem_1f (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1F (mpn_divrem_1);
+}
+#if HAVE_NATIVE_mpn_divrem_1c
+double
+speed_mpn_divrem_1c (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1C (mpn_divrem_1c);
+}
+double
+speed_mpn_divrem_1cf (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1CF (mpn_divrem_1c);
+}
+#endif
+
+double
 speed_mpn_mod_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1);
 }
-
+#if HAVE_NATIVE_mpn_mod_1c
+double
+speed_mpn_mod_1c (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1C (mpn_mod_1c);
+}
+#endif
 
 #if 0
 double
@@ -601,6 +634,13 @@ speed_mpn_gcd_1 (struct speed_params *s)
 
 
 double
+speed_mpn_jacobi_base (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_JACBASE (mpn_jacobi_base);
+}
+
+
+double
 speed_mpz_fac_ui (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_UI (mpz_fac_ui);
@@ -609,6 +649,13 @@ double
 speed_mpz_fib_ui (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_UI (mpz_fib_ui);
+}
+
+
+double
+speed_mpz_powm (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_POWM (mpz_powm);
 }
 
 
