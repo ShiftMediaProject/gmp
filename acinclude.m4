@@ -43,15 +43,70 @@ esyscmd([grep "^#define $1 " $2 /dev/null 2>/dev/null]),
 dnl  GMP_VERSION
 dnl  -----------
 dnl
-dnl  The gmp version number, extracted from the #defines in gmp.h at
+dnl  The gmp version number, extracted from the #defines in gmp-h.in at
 dnl  autoconf time.  Two digits like 3.0 if patchlevel <= 0, or three digits
 dnl  like 3.0.1 if patchlevel > 0.
 
 define(GMP_VERSION,
-[GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp.h)[]dnl
-.GMP_HEADER_GETVAL(__GNU_MP_VERSION_MINOR,gmp.h)[]dnl
-ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
-[.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h)])])
+[GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp-h.in)[]dnl
+.GMP_HEADER_GETVAL(__GNU_MP_VERSION_MINOR,gmp-h.in)[]dnl
+ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in) > 0),1,
+[.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in)])])
+
+
+dnl  GMP_COMPARE_GE(A1,B1, A2,B2, ...)
+dnl  ---------------------------------
+dnl
+dnl  Compare two version numbers A1.A2.etc and B1.B2.etc.  Set
+dnl  gmp_compare_ge to yes or no accoring to the result.  The A parts should
+dnl  be variables, the B parts fixed numbers.  As many parts as desired can
+dnl  be included.  An empty string in an A part is taken to be zero, the B
+dnl  parts should be non-empty and non-zero.
+dnl
+dnl  For example,
+dnl
+dnl      GMP_COMPARE($major,10, $minor,3, $subminor,1)
+dnl
+dnl  would test whether $major.$minor.$subminor is greater than or equal to
+dnl  10.3.1.
+
+AC_DEFUN(GMP_COMPARE_GE,
+[gmp_compare_ge=no
+GMP_COMPARE_GE_INTERNAL($@)
+])
+
+AC_DEFUN(GMP_COMPARE_GE_INTERNAL,
+[ifelse(len([$3]),0,
+[if test -n "$1" && test "$1" -ge $2; then
+  gmp_compare_ge=yes
+fi],
+[if test "$1" -gt $2; then
+  gmp_compare_ge=yes
+else
+  if test "$1" -eq $2; then
+    GMP_COMPARE_GE_INTERNAL(m4_shift(m4_shift($@)))
+  fi
+fi])
+])
+  
+
+dnl  GMP_PROG_AR
+dnl  -----------
+dnl  GMP additions to $AR.
+dnl
+dnl  Not sure if it's really necessary to use AC_CHECK_TOOL and look for a
+dnl  ${host_alias}-ar, but it won't hurt.
+
+AC_DEFUN(GMP_PROG_AR,
+[dnl  Make sure we establish $AR before libtool initialization.
+AC_BEFORE([$0],[AC_PROG_LIBTOOL])
+AC_CHECK_TOOL(AR, ar, ar)
+                      eval arflags=\"\$ar${abi1}_flags\"
+test -n "$arflags" || eval arflags=\"\$ar${abi2}_flags\"
+if test -n "$arflags"; then
+  AR="$AR $arflags"
+fi
+])
 
 
 dnl  GMP_PROG_M4
@@ -83,9 +138,9 @@ ifelse(eval(89),89,`define(t2,Y)',
 ifelse(t1`'t2,YY,`good
 ')dnl]
 EOF
-  echo "trying m4" 1>&AC_FD_CC
-  gmp_tmp_val="`(m4 conftest.m4) 2>&AC_FD_CC`"
-  echo "$gmp_tmp_val" 1>&AC_FD_CC
+  echo "trying m4" >&AC_FD_CC
+  gmp_tmp_val=`(m4 conftest.m4) 2>&AC_FD_CC`
+  echo "$gmp_tmp_val" >&AC_FD_CC
   if test "$gmp_tmp_val" = good; then
     gmp_cv_prog_m4="m4"
   else
@@ -96,9 +151,9 @@ dnl not every word.  This closes a longstanding sh security hole.
     ac_dummy="$PATH:/usr/5bin"
     for ac_dir in $ac_dummy; do
       test -z "$ac_dir" && ac_dir=.
-      echo "trying $ac_dir/m4" 1>&AC_FD_CC
-      gmp_tmp_val="`($ac_dir/m4 conftest.m4) 2>&AC_FD_CC`"
-      echo "$gmp_tmp_val" 1>&AC_FD_CC
+      echo "trying $ac_dir/m4" >&AC_FD_CC
+      gmp_tmp_val=`($ac_dir/m4 conftest.m4) 2>&AC_FD_CC`
+      echo "$gmp_tmp_val" >&AC_FD_CC
       if test "$gmp_tmp_val" = good; then
         gmp_cv_prog_m4="$ac_dir/m4"
         break
@@ -118,204 +173,124 @@ AC_SUBST(M4)
 
 dnl  GMP_PROG_NM
 dnl  -----------
-dnl  A small addition to libtool AC_PROG_NM.
-dnl
-dnl  FIXME: Is this -X specific to what GMP does with powerpc64, or
-dnl  should it be folded into libtool somehow?
+dnl  GMP additions to libtool AC_PROG_NM.
 dnl
 dnl  Note that if AC_PROG_NM can't find a working nm it still leaves
 dnl  $NM set to "nm", so $NM can't be assumed to actually work.
 
 AC_DEFUN(GMP_PROG_NM,
-[AC_REQUIRE([AC_PROG_NM])
-case "$target" in
-  powerpc64*-*-aix*)
-    # nm on 64-bit AIX needs to know the object file format
-    NM="$NM -X 64" ;;
-esac
+[dnl  Make sure we're the first to call AC_PROG_NM, so our extra flags are
+ dnl  used by everyone.
+AC_BEFORE([$0],[AC_PROG_NM])
+AC_PROG_NM
+                      eval nmflags=\"\$nm${abi1}_flags\"
+test -n "$nmflags" || eval nmflags=\"\$nm${abi2}_flags\"
+if test -n "$nmflags"; then
+  NM="$NM $nmflags"
+fi
 ])
 
 
-dnl  GMP_PROG_CC_FIND([CC_LIST], [REQ_64BIT_CC])
-dnl  Find first working compiler in CC_LIST.
-dnl  If REQ_64BIT_CC is "yes", the compiler is required to be able to 
-dnl  produce 64-bit code.
-dnl  NOTE: If a compiler needs any special flags for producing 64-bit code,
-dnl  these have to be found in shell variable `gmp_cflags64_{cc}', where `{cc}'
-dnl  is the name of the compiler.
-dnl  Set CC to the name of the first working compiler.
-dnl  If a 64-bit compiler is found, set CC64 to the name of the compiler and
-dnl  CFLAGS64 to flags to use.
-dnl  This macro does not test if any of the compilers found is a GNU compiler.
-dnl  To do this, when you have finally made up your mind on which one to use, 
-dnl  and set CC accordingly, invoke [GMP_PROG_CC_SELECT].  That macro will 
-dnl  also make sure that your selection of CFLAGS is valid.
+dnl  GMP_PROG_CC_WORKS(CC/CFLAGS,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
+dnl  --------------------------------------------------------------------
 dnl
-AC_DEFUN(GMP_PROG_CC_FIND,
-[AC_BEFORE([$0], [CC_PROG_CPP])
-ifelse([$1], , gmp_cc_list="gcc cc", gmp_cc_list="[$1]")
-ifelse([$2], , gmp_req_64bit_cc="no", gmp_req_64bit_cc="[$2]")
+dnl  Check if CC/CFLAGS can compile and link.
+dnl
+dnl  This funcptr stuff provokes an internal error from gcc -mpowerpc64
+dnl  (without -maix64), thereby detecting an unusable compiler.
 
-CC32=
-CC64=
-for c in $gmp_cc_list; do
-  # Avoid cache hits.
-  unset CC
-  unset ac_cv_prog_CC
-  AC_CHECK_TOOL(CC, $c, $c)
-  if test -n "$CC"; then
-    eval c_flags=\$gmp_cflags_$c
-    GMP_PROG_CC_WORKS($CC, $c_flags,
-		      gmp_prog_cc_works=yes, 
-		      gmp_prog_cc_works=no)
-
-    if test "$gmp_prog_cc_works" != "yes"; then
-      continue
-    fi
-
-    # Save first working compiler, whether 32- or 64-bit capable.
-    if test -z "$CC32"; then
-      CC32="$CC"
-    fi
-    if test "$gmp_req_64bit_cc" = "yes"; then
-      eval c_flags=\$gmp_cflags64_$c
-
-      # Verify that the compiler works in 64-bit mode as well.
-      # /usr/ucb/cc on Solaris 7 can *compile* in 64-bit mode, but not link.
-      GMP_PROG_CC_WORKS($c, $c_flags,
-		      	gmp_prog_cc_works=yes, 
-		      	gmp_prog_cc_works=no)
-
-      if test "$gmp_prog_cc_works" = "yes"; then
-        GMP_CHECK_CC_64BIT($c, $c_flags)
-        if test "$gmp_cv_cc_64bit" = "yes"; then
-          test -z "$CC64" && CC64="$c"
-          test -z "$CFLAGS64" && CFLAGS64="$c_flags"
-	  # We have CC64 so we're done.
-          break
-        fi
-      fi
-    else
-      # We have CC32, and we don't need a 64-bit compiler so we're done.
-      break
-    fi
-  fi
-done
-CC="$CC32"
-])dnl
-
-dnl  GMP_PROG_CC_SELECT
-dnl  Check that `CC' works with `CFLAGS'.  Check if `CC' is a GNU compiler.
-dnl  Cache the result as `ac_cv_prog_CC'.
-AC_DEFUN(GMP_PROG_CC_SELECT,
-[AC_BEFORE([$0], [CC_PROG_CPP])
-AC_PROG_CC_WORKS
-AC_PROG_CC_GNU
-
-if test "$ac_cv_prog_gcc" = "yes"; then
-  GCC=yes
-else
-  GCC=
-fi
-
-# Set CFLAGS if not already set.
-if test -z "$CFLAGS"; then
-  CFLAGS="-g"
-  if test "$GCC" = "yes"; then
-    CFLAGS="$CFLAGS -O2"
-  fi
-fi
-
-AC_SUBST(CC)
-AC_CACHE_VAL(ac_cv_prog_CC, ac_cv_prog_CC="$CC")
-AC_PROVIDE([AC_PROG_CC])
-])dnl
-
-dnl  GMP_CHECK_CC_64BIT(cc, cflags64)
-dnl  Find out if `CC' can produce 64-bit code.
-dnl  Requires NM to be set to nm for target.
-dnl  FIXME: Cache result.
-AC_DEFUN(GMP_CHECK_CC_64BIT,
-[
-  gmp_tmp_CC_save="$CC"
-  CC="[$1]"
-  AC_MSG_CHECKING([whether the C compiler ($CC) is 64-bit capable])
-  if test -z "$NM"; then
-    echo; echo ["configure: $0: fatal: need nm"]
-    exit 1
-  fi
-  gmp_tmp_CFLAGS_save="$CFLAGS"
-  CFLAGS="[$2]"
-
-  case "$target" in 
-    hppa2.0*-*-*)
-      # FIXME: If gcc is installed under another name than "gcc", we will 
-      # test the wrong thing.
-      if test "$CC" != "gcc"; then
-        dnl Let compiler version A.10.32.30 or higher be ok.
-        dnl Bad compiler output:
-        dnl   ccom: HP92453-01 G.10.32.05 HP C Compiler
-        dnl Good compiler output:
-        dnl   ccom: HP92453-01 A.10.32.30 HP C Compiler
-        echo >conftest.c
-        gmp_tmp_vs=`$CC $CFLAGS -V -c -o conftest.o conftest.c 2>&1 | grep "^ccom:"`
-        rm conftest*
-        gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
-        gmp_tmp_v2=`echo $gmp_tmp_vs | sed 's/.* .\..*\.\(.*\)\..* HP C.*/\1/'`
-        gmp_tmp_v3=`echo $gmp_tmp_vs | sed 's/.* .\..*\..*\.\(.*\) HP C.*/\1/'`
-	gmp_cv_cc_64bit=no
-	test -n "$gmp_tmp_v1" && test "$gmp_tmp_v1" -ge "10" \
-  	  && test -n "$gmp_tmp_v2" && test "$gmp_tmp_v2" -ge "32" \
-    	  && test -n "$gmp_tmp_v3" && test "$gmp_tmp_v3" -ge "30" \
-	  && gmp_cv_cc_64bit=yes
-      else	# gcc
-	# FIXME: Compile a minimal file and determine if the resulting object 
-	# file is an ELF file.  If so, gcc can produce 64-bit code.
-	# Do we have file(1) for target?
-	gmp_cv_cc_64bit=no
-      fi
-      ;;
-    mips-sgi-irix6.*)
-      # We use `-n32' to cc and `-mabi=n32' to gcc, resulting in 64-bit 
-      # arithmetic but not 64-bit pointers, so the general test for sizeof
-      # (void *) is not valid.
-      # Simply try to compile an empty main.  If that succeeds return
-      # true.
-      AC_TRY_COMPILE( , ,
-                     gmp_cv_cc_64bit=yes, gmp_cv_cc_64bit=no,
-                     gmp_cv_cc_64bit=no)
-      ;;
-    *-*-*)
-      # Allocate an array of size sizeof (void *) and use nm to determine its 
-      # size.  We depend on the first declared variable being put at address 0.
-      cat >conftest.c <<EOF
-[char arr[sizeof (void *)]={0};
-char post=0;]
+AC_DEFUN(GMP_PROG_CC_WORKS,
+[AC_MSG_CHECKING([compiler $1])
+cat >conftest.c <<EOF
+void *g();
+void *f() { return g(); }
 EOF
-      gmp_compile="$CC $CFLAGS -c conftest.c 1>&AC_FD_CC"
-      if AC_TRY_EVAL(gmp_compile); then
-        changequote(<,>)dnl
-	gmp_tmp_val=`$NM conftest.o | grep post | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-          -e 's;[^1-9]*\([0-9]*\).*;\1;'`
-        changequote([, ])dnl
-        if test "$gmp_tmp_val" = "8"; then
-	  gmp_cv_cc_64bit=yes
-	else
-	  gmp_cv_cc_64bit=no
-        fi
-      else
-        echo "configure: failed program was:" >&AC_FD_CC
-        cat conftest.$ac_ext >&AC_FD_CC
-        gmp_cv_cc_64bit=no
-      fi
-      rm -f conftest*
-      ;;
-  esac
+gmp_compile="$1 -c conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  AC_MSG_RESULT(yes)
+  ifelse([$2],,:,[$2])
+else
+  AC_MSG_RESULT(no)
+  ifelse([$3],,:,[$3])
+fi
+])
 
-  CC="$gmp_tmp_CC_save"
-  CFLAGS="$gmp_tmp_CFLAGS_save"
-  AC_MSG_RESULT($gmp_cv_cc_64bit)
-])dnl
+
+dnl  GMP_HPC_HPPA_2_0(cc,cflags,[ACTION-IF-GOOD][,ACTION-IF-BAD])
+dnl  ---------------------------------------------------------
+dnl  Find out whether a HP compiler is good enough to generate hppa 2.0.
+dnl
+dnl  This test might be used a couple of times while searching for a
+dnl  compiler, so don't cache the result.
+
+AC_DEFUN(GMP_HPC_HPPA_2_0,
+[AC_MSG_CHECKING([whether HP compiler $1 is good for 64-bits])
+# Bad compiler output:
+#   ccom: HP92453-01 G.10.32.05 HP C Compiler
+# Good compiler output:
+#   ccom: HP92453-01 A.10.32.30 HP C Compiler
+# Let A.10.32.30 or higher be ok.
+echo >conftest.c
+gmp_tmp_vs=`$1 $2 -V -c -o conftest.o conftest.c 2>&1 | grep "^ccom:"`
+rm conftest*
+gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
+gmp_tmp_v2=`echo $gmp_tmp_vs | sed 's/.* .\..*\.\(.*\)\..* HP C.*/\1/'`
+gmp_tmp_v3=`echo $gmp_tmp_vs | sed 's/.* .\..*\..*\.\(.*\) HP C.*/\1/'`
+if test -n "$gmp_tmp_v1"; then
+  gmp_hpc_64bit=not-applicable
+else
+  GMP_COMPARE_GE($gmp_tmp_v1, 10, $gmp_tmp_v2, 32, $gmp_tmp_v3, 30)
+  gmp_hpc_64bit=$gmp_compare_ge
+fi
+AC_MSG_RESULT($gmp_hpc_64bit)
+if test $gmp_hpc_64bit = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
+dnl  GMP_GCC_MARCH_PENTIUMPRO(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
+dnl  ------------------------------------------------------------
+dnl
+dnl  mpz/powm.c swox cvs rev 1.4 tickles a bug in gcc 2.95.2 when
+dnl  -march=pentiumpro is used.  The problem appears to be fixed in 2.96, so
+dnl  that option is used only on 2.96 and up.
+dnl
+dnl  The bug is incorrect code generated for a simple ABSIZ(z) expression in
+dnl  mpz_redc(), some registers being clobbered near a cmov.  There's no
+dnl  obvious reason for this, and there's many similar or identical
+dnl  expressions throughout the library, so it seems wisest to disable the
+dnl  option until 2.96.
+dnl
+dnl  This macro is used only once, after finalizing a choice of CC, so it's
+dnl  ok to cache the result.
+
+AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
+[AC_CACHE_CHECK([whether $1 -march=pentiumpro is good],
+                gmp_cv_gcc_march_pentiumpro,
+[cat >conftest.c <<EOF
+#ifdef __GNUC__
+  yes;
+#endif
+EOF
+gmp_preprocess="$1 -E conftest.c"
+if AC_TRY_EVAL(gmp_preprocess) | grep yes >/dev/null; then
+  major=`($1 --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+  minor=`($1 --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+  echo "$1 major '$major', minor '$minor'" >&AC_FD_CC
+  GMP_COMPARE_GE($major, 2, $minor, 96)
+  gmp_cv_gcc_march_pentiumpro="$gmp_compare_ge"
+else
+  gmp_cv_gcc_march_pentiumpro=not-applicable
+fi])
+if test $gmp_cv_gcc_march_pentiumpro = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
 
 
 dnl  GMP_INIT([M4-DEF-FILE])
@@ -326,9 +301,19 @@ AC_DEFUN(GMP_INIT,
 gmp_tmpconfigm4=cnfm4.tmp
 gmp_tmpconfigm4i=cnfm4i.tmp
 gmp_tmpconfigm4p=cnfm4p.tmp
-test -f $gmp_tmpconfigm4 && rm $gmp_tmpconfigm4
-test -f $gmp_tmpconfigm4i && rm $gmp_tmpconfigm4i
-test -f $gmp_tmpconfigm4p && rm $gmp_tmpconfigm4p
+rm -f $gmp_tmpconfigm4 $gmp_tmpconfigm4i $gmp_tmpconfigm4p
+
+# The pattern here tests for an absolute path the same way as
+# _AC_OUTPUT_FILES in autoconf acgeneral.m4.
+case $srcdir in
+[[\\/]]* | ?:[[\\/]]* )  tmp="$srcdir"    ;;
+*)                       tmp="../$srcdir" ;;
+esac
+echo ["dnl  CONFIG_TOP_SRCDIR is a path from the mpn builddir to the top srcdir"] >>$gmp_tmpconfigm4
+echo ["define(<CONFIG_TOP_SRCDIR>,<\`$tmp'>)"] >>$gmp_tmpconfigm4
+
+# All CPUs use asm-defs.m4 
+echo ["include(CONFIG_TOP_SRCDIR\`/mpn/asm-defs.m4')"] >>$gmp_tmpconfigm4i
 ])
 
 
@@ -375,21 +360,15 @@ echo ["define(\`__CONFIG_M4_INCLUDED__')"] >> $gmp_configm4
 ])
 
 
-dnl  GMP_INCLUDE(FILE)
-dnl  -----------------
+dnl  GMP_INCLUDE_MPN(FILE)
+dnl  ---------------------
+dnl  Add an include_mpn(`FILE') to config.m4.
+dnl  FILE should be a path relative to the mpn source directory, for example
+dnl  x86/x86-defs.m4.
 
-AC_DEFUN(GMP_INCLUDE,
+AC_DEFUN(GMP_INCLUDE_MPN,
 [AC_REQUIRE([GMP_INIT])
-echo ["include(\`$1')"] >> $gmp_tmpconfigm4i
-])
-
-
-dnl  GMP_SINCLUDE(FILE)
-dnl  ------------------
-
-AC_DEFUN(GMP_SINCLUDE,
-[AC_REQUIRE([GMP_INIT])
-echo ["sinclude(\`$1')"] >> $gmp_tmpconfigm4i
+echo ["include_mpn(\`$1')"] >> $gmp_tmpconfigm4i
 ])
 
 
@@ -405,7 +384,8 @@ dnl  characters for all defines.
 
 AC_DEFUN(GMP_DEFINE, 
 [AC_REQUIRE([GMP_INIT])
-echo ['define(<$1>, <$2>)'] >> ifelse([$3], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
+echo ['define(<$1>, <$2>)'] >>ifelse([$3], [POST],
+                              $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
 ])
 
 
@@ -460,7 +440,7 @@ dnl  Should a label have a colon or not?
 AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([what assembly label suffix to use],
                 gmp_cv_asm_label_suffix,
-[case "$target" in 
+[case $host in 
   *-*-hpux*) gmp_cv_asm_label_suffix=  ;;
   *)         gmp_cv_asm_label_suffix=: ;;
 esac
@@ -496,7 +476,7 @@ for tmp_underscore in "" "_"; do
 	$gmp_cv_asm_globl ${tmp_underscore}underscore_test
 ${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
-  case "$target" in
+  case $host in
   *-*-aix*)
     cat >>conftes2.s <<EOF
 	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
@@ -529,10 +509,10 @@ rm -f conftes1* conftes2* a.out
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
-  ifelse([$1], , :, [$1])
+  ifelse([$1],,:,[$1])
 else
   GMP_DEFINE(GSYM_PREFIX, [])
-  ifelse([$2], , :, [$2])
+  ifelse([$2],,:,[$2])
 fi    
 ])
 
@@ -563,13 +543,13 @@ foo$gmp_cv_asm_label_suffix
   else
     gmp_cv_asm_align_log=no
   fi],
-  [AC_MSG_ERROR([cannot assemble alignment test])])
-])
+  [AC_MSG_ERROR([cannot assemble alignment test])])])
+
 GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)"])
 if test "$gmp_cv_asm_align_log" = "yes"; then
-  ifelse([$1], , :, [$1])
+  ifelse([$1],,:,[$1])
 else
-  ifelse([$2], , :, [$2])
+  ifelse([$2],,:,[$2])
 fi  
 ])
 
@@ -614,7 +594,7 @@ AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
 	.byte   0
       	.align  4, 0x90],
 [if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
-  echo "Supressing this warning by omitting 0x90" >&AC_FD_CC
+  echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
   gmp_cv_asm_align_fill_0x90=no
 else
   gmp_cv_asm_align_fill_0x90=yes
@@ -631,7 +611,7 @@ dnl  ------------
 AC_DEFUN(GMP_ASM_TEXT,
 [AC_CACHE_CHECK([how to switch to text section],
                 gmp_cv_asm_text,
-[case "$target" in
+[case $host in
   *-*-aix*)  gmp_cv_asm_text=[".csect .text[PR]"] ;;
   *-*-hpux*) gmp_cv_asm_text=".code" ;;
   *)         gmp_cv_asm_text=".text" ;;
@@ -648,7 +628,7 @@ dnl  Can we say `.data'?
 AC_DEFUN(GMP_ASM_DATA,
 [AC_CACHE_CHECK([how to switch to data section],
                 gmp_cv_asm_data,
-[case "$target" in
+[case $host in
   *-*-aix*) gmp_cv_asm_data=[".csect .data[RW]"] ;;
   *)        gmp_cv_asm_data=".data" ;;
 esac
@@ -680,7 +660,7 @@ AC_DEFUN(GMP_ASM_RODATA,
 AC_REQUIRE([GMP_ASM_DATA])
 AC_CACHE_CHECK([how to switch to read-only data section],
                gmp_cv_asm_rodata,
-[case "$target" in
+[case $host in
 X86_PATTERN) gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
 *)           gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
@@ -696,7 +676,7 @@ dnl  Can we say `.global'?
 AC_DEFUN(GMP_ASM_GLOBL,
 [AC_CACHE_CHECK([how to export a symbol],
                 gmp_cv_asm_globl,
-[case "$target" in
+[case $host in
   *-*-hpux*) gmp_cv_asm_globl=".export" ;;
   *)         gmp_cv_asm_globl=".globl" ;;
 esac
@@ -756,11 +736,12 @@ AC_CACHE_CHECK([what prefix to use for a local label],
 [gmp_cv_asm_lsym_prefix="L"
 gmp_found=no
 for gmp_tmp_pre in L .L $ L$; do
+  echo "Trying $gmp_tmp_pre" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
 	.byte 0],
-  [$NM conftest.o >/dev/null 2>&1
+  [$NM conftest.o >&AC_FD_CC 2>&AC_FD_CC
   if test $? != 0; then
     AC_MSG_WARN([NM failure, using default local label $gmp_cv_asm_lsym_prefix])
     gmp_found=yes
@@ -792,7 +773,7 @@ AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([how to define a 32-bit word],
 	       gmp_cv_asm_w32,
-[case "$target" in 
+[case $host in 
   *-*-hpux*)
     # FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
     # that it's at 0x0.  We'll have to declare another symbol before the
@@ -851,12 +832,12 @@ AC_DEFUN(GMP_ASM_X86_MMX,
 [gmp_cv_asm_x86_mmx=yes
 case $host in
 *-*-solaris*)
-  if (dis conftest.o >conftest.out) 2>&AC_FD_CC; then
+  if (dis conftest.o >conftest.out) 2>/dev/null; then
     if grep "0f 6f c1" conftest.out >/dev/null; then
       gmp_cv_asm_x86_mmx=movq-bug
     fi
   else
-    AC_MSG_WARN([\"dis\" not available to check for \"as\" movq bug])
+    AC_MSG_WARN(["dis" not available to check for "as" movq bug])
   fi
 esac],
 [gmp_cv_asm_x86_mmx=no])])
@@ -865,7 +846,7 @@ case $gmp_cv_asm_x86_mmx in
 movq-bug)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
-  AC_MSG_WARN([| Target CPU has MMX code, but the assembler])
+  AC_MSG_WARN([| Host CPU has MMX code, but the assembler])
   AC_MSG_WARN([|     $CCAS $CFLAGS])
   AC_MSG_WARN([| has the Solaris 2.6 bug where reg->reg movqs are reversed.])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
@@ -875,7 +856,7 @@ movq-bug)
 no)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
-  AC_MSG_WARN([| Target CPU has MMX code, but it can't be assembled by])
+  AC_MSG_WARN([| Host CPU has MMX code, but it can't be assembled by])
   AC_MSG_WARN([|     $CCAS $CFLAGS])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
@@ -888,8 +869,6 @@ else
   ifelse([$2],,:,[$2])
 fi
 ])
-
-
 
 
 dnl  GMP_ASM_X86_SHLDL_CL
@@ -909,49 +888,6 @@ if test "$gmp_cv_asm_x86_shldl_cl" = "yes"; then
   GMP_DEFINE(WANT_SHLDL_CL,1)
 else
   GMP_DEFINE(WANT_SHLDL_CL,0)
-fi
-])
-
-
-dnl  GMP_GCC_MARCH_PENTIUMPRO([ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
-dnl  ------------------------------------------------------------
-dnl
-dnl  mpz/powm.c swox cvs rev 1.4 tickles a bug in gcc 2.95.2 when
-dnl  -march=pentiumpro is used.  The problem appears to be fixed in 2.96, so
-dnl  that option is used only on 2.96 and up.
-dnl
-dnl  The bug is incorrect code generated for a simple ABSIZ(z) expression in
-dnl  mpz_redc(), some registers being clobbered near a cmov.  There's no
-dnl  obvious reason for this, and there's many similar or identical
-dnl  expressions throughout the library, so it seems wisest to disable the
-dnl  option until 2.96.
-
-AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
-[AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
-                gmp_cv_gcc_march_pentiumpro,
-[tmp_major="`(gcc --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
- tmp_minor="`(gcc --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
-echo "gcc major '$tmp_major', minor '$tmp_minor'" 1>&AC_FD_CC
-
-gmp_cv_gcc_march_pentiumpro=no
-if test -n "$tmp_major"; then
-  if test "$tmp_major" -gt 2; then
-    gmp_cv_gcc_march_pentiumpro=yes
-  else
-    if test "$tmp_major" -eq 2; then
-      if test -n "$tmp_minor"; then
-        if test "$tmp_minor" -ge 96; then
-          gmp_cv_gcc_march_pentiumpro=yes
-        fi
-      fi
-    fi
-  fi
-fi
-])
-if test $gmp_cv_gcc_march_pentiumpro = yes; then
-  ifelse([$1], , :, [$1])
-else
-  ifelse([$2], , :, [$2])
 fi
 ])
 
@@ -1004,11 +940,11 @@ if test "$enable_static" = yes; then
   gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
-      mcount_nonpic_reg="`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
+      mcount_nonpic_reg=`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`
     else
       mcount_nonpic_reg=
     fi
-    mcount_nonpic_call="`grep 'call.*mcount' conftest.s`"
+    mcount_nonpic_call=`grep 'call.*mcount' conftest.s`
     if test -z "$mcount_nonpic_call"; then
       AC_MSG_ERROR([Cannot find mcount call for non-PIC])
     fi
@@ -1021,11 +957,11 @@ if test "$enable_shared" = yes; then
   gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
-      mcount_pic_reg="`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
+      mcount_pic_reg=`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`
     else
       mcount_pic_reg=
     fi
-    mcount_pic_call="`grep 'call.*mcount' conftest.s`"
+    mcount_pic_call=`grep 'call.*mcount' conftest.s`
     if test -z "$mcount_pic_call"; then
       AC_MSG_ERROR([Cannot find mcount call for PIC])
     fi
@@ -1066,42 +1002,9 @@ AC_CACHE_CHECK([if the assembler needs r on registers],
 [	$gmp_cv_asm_text
 	mtctr	r6],
 [gmp_cv_asm_powerpc_r_registers=yes],
-[AC_MSG_ERROR([neither \"mtctr 6\" nor \"mtctr r6\" works])])])])
+[AC_MSG_ERROR([neither "mtctr 6" nor "mtctr r6" works])])])])
 
 GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
-])
-
-
-dnl  GMP_PROG_CC_WORKS(CC, CFLAGS, ACTION-IF-WORKS, [ACTION-IF-NOT-WORKS])
-dnl  Check if CC can compile and link.  Perform various target specific tests.
-dnl  FIXME: Require `$target'.
-AC_DEFUN(GMP_PROG_CC_WORKS,
-[AC_LANG_C	dnl  Note: Destructive.
-CC="[$1]"
-CFLAGS="[$2]"
-AC_MSG_CHECKING([if the C compiler ($CC) works with flags $CFLAGS])
-
-# Simple test for all targets.
-AC_TRY_COMPILER([int main(){return(0);}],
-                tmp_works, tmp_cross)
-
-# Target specific tests.
-if test "$tmp_works" = "yes"; then
-  case "$target" in 
-    *-*-aix*)	# Returning a funcptr.
-      AC_TRY_COMPILE( , [} void *g(); void *f() { return g(); } int bar(){],
-                      tmp_works=yes, tmp_works=no)
-      ;;
-  esac
-fi
-
-if test "$tmp_works" = "yes"; then
-  [$3]
-else
-  ifelse([$4], , :, [$4])
-fi
-
-AC_MSG_RESULT($tmp_works)
 ])
 
 
@@ -1148,76 +1051,49 @@ AC_SUBST(ANSI2KNR)
 
 dnl  GMP_C_SIZES
 dnl  -----------
-dnl  Probe for the sizes of various data types, if they aren't already
-dnl  provided by gmp-mparam.h.  $gmp_mparam_source is the selected
-dnl  gmp-mparam.h.
+dnl
+dnl  Determine various sizes needed by GMP at preprocessing time (for use in
+dnl  #if conditionals), if they aren't already provided by gmp-mparam.h.
+dnl  $gmp_mparam_source is the selected gmp-mparam.h.
 dnl
 dnl  These sizes need to be known at pre-processing time, for use in #if
 dnl  conditionals.  Most preprocessors won't accept sizeof(), GNU cpp
 dnl  doesn't for instance.
-dnl
-dnl  The test probes by creating an array which will have a negative size if
-dnl  $tmp_try doesn't equal sizeof($tmp_type), thereby inducing an error.
-dnl
-dnl  This method won't work if some dumb compiler treats array sizes as
-dnl  unsigned or doesn't test for negatives, but requiring that exactly one
-dnl  of the test values succeeds should protect against this.  Values are
-dnl  also double checked by tests/t-constants.c.
 dnl
 dnl  When assembler code depends on particular sizes it's probably best to
 dnl  put explicit #defines in gmp-mparam.h.  That way if strange compiler
 dnl  options change the size of some type then the mismatch will be detected
 dnl  by t-constants.c rather than only by the code crashing or giving wrong
 dnl  results.
-dnl
-dnl  The lastest AC_CHECK_SIZEOF does something similar to this, with a
-dnl  binary search to probe the size.  Unfortunately it doesn't give a way
-dnl  to include gmp.h to test mp_limb_t.
 
 AC_DEFUN(GMP_C_SIZES,
-[for tmp_pair in BITS_PER_MP_LIMB:mp_limb_t \
-                 BITS_PER_LONGINT:long \
-                 BITS_PER_INT:int \
-                 BITS_PER_SHORTINT:short \
-                 BITS_PER_CHAR:char; do
-  tmp_def=`echo $tmp_pair | sed 's/:.*//'`
-  tmp_type=`echo $tmp_pair | sed 's/.*://'`
-  if grep "#define $tmp_def" $gmp_mparam_source >/dev/null; then
-    continue
-  fi
-  AC_CACHE_CHECK([sizeof $tmp_type],
-                 gmp_cv_c_sizes_$tmp_type,
-    [tmp_val=
-    rm -f conftest.out
-    for tmp_try in 1 2 4 8 16 32; do
-      echo "Trying $tmp_try:" >>conftest.out
-      cat >conftest.c <<EOF
-#include "$srcdir/gmp.h"
-[int test [2*(sizeof($tmp_type) == $tmp_try) - 1];]
-EOF
-      cat conftest.c >>conftest.out
-      echo "$CC $CFLAGS $CPPFLAGS -c conftest.c" >>conftest.out
-      if ($CC $CFLAGS $CPPFLAGS -c conftest.c) >>conftest.out 2>&1; then
-        if test -n "$tmp_val"; then
-          cat conftest.out 1>&AC_FD_CC
-          AC_MSG_ERROR([$tmp_def $tmp_type passes both $tmp_val and $tmp_try])
-        fi
-        tmp_val=$tmp_try
-      fi
-    done
-    if test -z "$tmp_val"; then
-      cat conftest.out 1>&AC_FD_CC
-      AC_MSG_ERROR([$tmp_def $tmp_type: size not determined])
-    fi
-    eval gmp_cv_c_sizes_$tmp_type=$tmp_val
-    ])
-  eval tmp_val=\$gmp_cv_c_sizes_$tmp_type
-  AC_DEFINE_UNQUOTED($tmp_def, (8*$tmp_val))
-  if test $tmp_def = BITS_PER_MP_LIMB; then
-    AC_DEFINE_UNQUOTED(BYTES_PER_MP_LIMB, $tmp_val)
-  fi
-done
-rm -f conftest.*
+[GMP_C_SIZES_ONE(BITS_PER_LONGINT, long)
+GMP_C_SIZES_ONE(BITS_PER_INT,      int)
+GMP_C_SIZES_ONE(BITS_PER_SHORTINT, short)
+GMP_C_SIZES_ONE(BITS_PER_MP_LIMB,  mp_limb_t,
+[#include <stdio.h>
+#include "gmp.h"])
+
+if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
+else
+  AC_DEFINE(BYTES_PER_MP_LIMB, [(BITS_PER_MP_LIMB / 8)],
+            [bytes per mp_limb_t, if not in gmp-mparam.h])
+fi
+if grep "^#define BITS_PER_CHAR" $gmp_mparam_source >/dev/null; then : ;
+else
+  AC_DEFINE(BITS_PER_CHAR, 8,
+            [bits per char, if not in gmp-mparam.h])
+fi
+])
+
+dnl  Called: GMP_C_SIZES_ONE(bits,type,includes)
+AC_DEFUN(GMP_C_SIZES_ONE,
+[if grep "^#define $1" $gmp_mparam_source >/dev/null; then : ;
+else
+  AC_CHECK_SIZEOF($2,,[$3])
+  AC_DEFINE_UNQUOTED($1, (8 * $ac_cv_sizeof_$2),
+                     [bits per $2, if not in gmp-mparam.h])  
+fi
 ])
 
 
@@ -1235,7 +1111,7 @@ AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
                gmp_cv_func_alloca,
 [AC_TRY_LINK(
 [#define GMP_FUNC_ALLOCA_TEST 1
-#include "$srcdir/gmp.h"
+#include "gmp.h"
 #include "$srcdir/gmp-impl.h"],
   [char *p = (char *) alloca (1);],
   gmp_cv_func_alloca=yes,
@@ -1260,8 +1136,3 @@ if test $gmp_cv_header_alloca = yes; then
     [Define if you have <alloca.h> and it should be used (not on Ultrix).])
 fi
 ])
-
-
-dnl  Deal with bad synchronization of Autoconf with Libtool.
-AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
-AC_DEFUN(AC_CHECK_TOOL_PREFIX, [_AC_CHECK_TOOL_PREFIX])
