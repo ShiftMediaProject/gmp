@@ -2045,8 +2045,15 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
   } while (0)
 
 /* Multiplicative inverse of 3, modulo 2^GMP_NUMB_BITS.
-   0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
-#define MODLIMB_INVERSE_3   ((GMP_NUMB_MAX / 3) * 2 + 1)
+   Eg. 0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits.
+   GMP_NUMB_MAX/3*2+1 is right when GMP_NUMB_BITS is even, but when it's odd
+   we need to start from GMP_NUMB_MAX>>1. */
+#define MODLIMB_INVERSE_3 (((GMP_NUMB_MAX >> (GMP_NUMB_BITS % 2)) / 3) * 2 + 1)
+
+/* ceil(GMP_NUMB_MAX/3) and ceil(2*GMP_NUMB_MAX/3).
+   These expressions work because GMP_NUMB_MAX%3 != 0 for all GMP_NUMB_BITS. */
+#define GMP_NUMB_CEIL_MAX_DIV3   (GMP_NUMB_MAX / 3 + 1)
+#define GMP_NUMB_CEIL_2MAX_DIV3  ((GMP_NUMB_MAX>>1) / 3 + 1 + GMP_NUMB_HIGHBIT)
 
 
 /* Set r to -a mod d.  a>=d is allowed.  Can give r>d.  All should be limbs.
