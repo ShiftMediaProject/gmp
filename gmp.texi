@@ -1368,9 +1368,9 @@ system Cygwin, DJGPP and MINGW can be used.  All three are excellent ports of
 GCC and the various GNU tools.
 
 @display
-@uref{http://www.cygnus.com/cygwin}
-@uref{http://www.delorie.com/djgpp}
-@uref{http://www.mingw.org}
+@uref{http://www.cygwin.com/}
+@uref{http://www.delorie.com/djgpp/}
+@uref{http://www.mingw.org/}
 @end display
 
 Microsoft also publishes an Interix ``Services for Unix'' which can be used to
@@ -2333,14 +2333,14 @@ the standard C library @code{malloc} has some diagnostic facilities, see
 @samp{man 3 malloc}.  Other possibilities, in no particular order, include
 
 @display
-@uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc}
-@uref{http://quorum.tamu.edu/jon/gnu} @ (debauch)
-@uref{http://dmalloc.com}
-@uref{http://www.perens.com/FreeSoftware} @ (electric fence)
-@uref{http://packages.debian.org/fda}
-@uref{http://www.gnupdate.org/components/leakbug}
-@uref{http://people.redhat.com/~otaylor/memprof}
-@uref{http://www.cbmamiga.demon.co.uk/mpatrol}
+@uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
+@uref{http://quorum.tamu.edu/jon/gnu/} @ (debauch)
+@uref{http://dmalloc.com/}
+@uref{http://www.perens.com/FreeSoftware/} @ (electric fence)
+@uref{http://packages.debian.org/fda/}
+@uref{http://www.gnupdate.org/components/leakbug/}
+@uref{http://people.redhat.com/~otaylor/memprof/}
+@uref{http://www.cbmamiga.demon.co.uk/mpatrol/}
 @end display
 
 The GMP default allocation routines in @file{memory.c} also have a simple
@@ -2418,7 +2418,7 @@ For C++, add @samp{--enable-cxx CXXFLAGS=-g}.
 @item Checker
 @cindex Checker
 @cindex GCC Checker
-The GCC checker (@uref{http://savannah.gnu.org/projects/checker}) can be used
+The GCC checker (@uref{http://savannah.gnu.org/projects/checker/}) can be used
 with GMP.  It contains a stub library which means GMP applications compiled
 with checker can use a normal GMP build.
 
@@ -2435,7 +2435,7 @@ versions of checker (0.9.9.1) don't yet support the standard C++ library.
 
 @item Valgrind
 @cindex Valgrind
-The valgrind program (@uref{http://devel-home.kde.org/~sewardj}) is a memory
+The valgrind program (@uref{http://devel-home.kde.org/~sewardj/}) is a memory
 checker for x86s.  It translates and emulates machine instructions to do
 strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
@@ -2528,7 +2528,7 @@ This instrumenting is not normally a standard system feature and will require
 support from an external library, such as
 
 @display
-@uref{http://sourceforge.net/projects/fnccheck}
+@uref{http://sourceforge.net/projects/fnccheck/}
 @end display
 
 This should be included in @samp{LIBS} during the GMP configure so that test
@@ -2567,7 +2567,7 @@ found.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, ,
-  [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp])])
+  [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp/])])
 @end example
 
 If functions added in some particular version of GMP are required, then one of
@@ -2577,7 +2577,7 @@ GMP 3.1,
 @example
 AC_CHECK_LIB(gmp, __gmpz_mul_si, ,
   [AC_MSG_ERROR(
-  [GNU MP not found, or not 3.1 or up, see http://swox.com/gmp])])
+  [GNU MP not found, or not 3.1 or up, see http://swox.com/gmp/])])
 @end example
 
 An alternative would be to test the version number in @file{gmp.h} using say
@@ -2621,7 +2621,7 @@ compatibility is not guaranteed.
 AC_CHECK_LIB(mpfr, mpfr_add, ,
   [AC_MSG_ERROR(
 [Need MPFR either from GNU MP 4 or separate MPFR package.
-See http://www.mpfr.org or http://swox.com/gmp])
+See http://www.mpfr.org/ or http://swox.com/gmp/])
 @end example
 
 
@@ -6685,21 +6685,21 @@ than C, though perhaps with varying levels of functionality and efficiency.
 GMP C++ class interface, @pxref{C++ Class Interface} @* Straightforward
 interface, expression templates to eliminate temporaries.
 @item
-ALP @spaceuref{http://www.inria.fr/saga/logiciels/ALP} @* Linear algebra and
+ALP @spaceuref{http://www.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
 polynomials using templates.
 @item
-Arithmos @spaceuref{http://win-www.uia.ac.be/u/cant/arithmos} @* Rationals
+Arithmos @spaceuref{http://win-www.uia.ac.be/u/cant/arithmos/} @* Rationals
 with infinities and square roots.
 @item
 CLN @spaceuref{http://clisp.cons.org/~haible/packages-cln.html} @* High level
 classes for arithmetic.
 @item
-LiDIA @spaceuref{http://www.informatik.tu-darmstadt.de/TI/LiDIA} @* A C++
+LiDIA @spaceuref{http://www.informatik.tu-darmstadt.de/TI/LiDIA/} @* A C++
 library for computational number theory.
 @item
-Linbox @spaceuref{http://www.linalg.org} @* Sparse vectors and matrices.
+Linbox @spaceuref{http://www.linalg.org/} @* Sparse vectors and matrices.
 @item
-NTL @spaceuref{http://www.shoup.net/ntl} @* A C++ number theory library.
+NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
 @end itemize
 
 @item Fortran
@@ -6712,15 +6712,15 @@ Arbitrary precision floats.
 @item Haskell
 @itemize @bullet
 @item
-Glasgow Haskell Compiler @spaceuref{http://www.haskell.org/ghc}
+Glasgow Haskell Compiler @spaceuref{http://www.haskell.org/ghc/}
 @end itemize
 
 @item Java
 @itemize @bullet
 @item
-Kaffe @spaceuref{http://www.kaffe.org}
+Kaffe @spaceuref{http://www.kaffe.org/}
 @item
-Kissme @spaceuref{http://kissme.sourceforge.net}
+Kissme @spaceuref{http://kissme.sourceforge.net/}
 @end itemize
 
 @item Lisp
@@ -6729,32 +6729,32 @@ Kissme @spaceuref{http://kissme.sourceforge.net}
 GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html} @* In the
 process of switching to GMP for bignums.
 @item
-Librep @spaceuref{http://librep.sourceforge.net}
+Librep @spaceuref{http://librep.sourceforge.net/}
 @end itemize
 
 @item M4
 @itemize @bullet
 @item
-GNU m4 betas @spaceuref{http://www.seindal.dk/rene/gnu} @* Optionally provides
+GNU m4 betas @spaceuref{http://www.seindal.dk/rene/gnu/} @* Optionally provides
 an arbitrary precision @code{mpeval}.
 @end itemize
 
 @item ML
 @itemize @bullet
 @item
-MLton compiler @spaceuref{http://www.mlton.org}
+MLton compiler @spaceuref{http://www.mlton.org/}
 @end itemize
 
 @item Oz
 @itemize @bullet
 @item
-Mozart @spaceuref{http://www.mozart-oz.org}
+Mozart @spaceuref{http://www.mozart-oz.org/}
 @end itemize
 
 @item Pascal
 @itemize @bullet
 @item
-GNU Pascal Compiler @spaceuref{http://www.gnu-pascal.de} @* GMP unit.
+GNU Pascal Compiler @spaceuref{http://www.gnu-pascal.de/} @* GMP unit.
 @end itemize
 
 @item Perl
@@ -6762,10 +6762,10 @@ GNU Pascal Compiler @spaceuref{http://www.gnu-pascal.de} @* GMP unit.
 @item
 GMP module, see @file{demos/perl} in the GMP sources.
 @item
-Math::GMP @spaceuref{http://www.cpan.org} @* Compatible with Math::BigInt, but
+Math::GMP @spaceuref{http://www.cpan.org/} @* Compatible with Math::BigInt, but
 not as many functions as the GMP module above.
 @item
-Math::BigInt::GMP @spaceuref{http://www.cpan.org} @* Plug Math::GMP into
+Math::BigInt::GMP @spaceuref{http://www.cpan.org/} @* Plug Math::GMP into
 normal Math::BigInt operations.
 @end itemize
 
@@ -6773,31 +6773,31 @@ normal Math::BigInt operations.
 @item Pike
 @itemize @bullet
 @item
-mpz module in the standard distribution, @uref{http://pike.idonex.com}
+mpz module in the standard distribution, @uref{http://pike.idonex.com/}
 @end itemize
 
 @need 500
 @item Prolog
 @itemize @bullet
 @item
-SWI Prolog @spaceuref{http://www.swi.psy.uva.nl/projects/SWI-Prolog} @*
+SWI Prolog @spaceuref{http://www.swi.psy.uva.nl/projects/SWI-Prolog/} @*
 Arbitrary precision floats.
 @end itemize
 
 @item Python
 @itemize @bullet
 @item
-mpz module in the standard distribution, @uref{http://www.python.org}
+mpz module in the standard distribution, @uref{http://www.python.org/}
 @item
-GMPY @uref{http://gmpy.sourceforge.net}
+GMPY @uref{http://gmpy.sourceforge.net/}
 @end itemize
 
 @item Scheme
 @itemize @bullet
 @item
-RScheme @spaceuref{http://www.rscheme.org}
+RScheme @spaceuref{http://www.rscheme.org/}
 @item
-STklos @spaceuref{http://kaolin.unice.fr/STklos}
+STklos @spaceuref{http://kaolin.unice.fr/STklos/}
 @end itemize
 
 @item Smalltalk
@@ -6809,10 +6809,10 @@ GNU Smalltalk @spaceuref{http://www.smalltalk.org/versions/GNUSmalltalk.html}
 @item Other
 @itemize @bullet
 @item
-DrGenius @spaceuref{http://drgenius.seul.org} @* Geometry system and
+DrGenius @spaceuref{http://drgenius.seul.org/} @* Geometry system and
 mathematical programming language.
 @item
-GiNaC @spaceuref{http://www.ginac.de} @* C++ computer algebra using CLN.
+GiNaC @spaceuref{http://www.ginac.de/} @* C++ computer algebra using CLN.
 @item
 Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
 computer algebra using GCL.
@@ -6820,7 +6820,7 @@ computer algebra using GCL.
 Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q} @* Equational
 programming system.
 @item
-Regina @spaceuref{http://regina.sourceforge.net} @* Topological calculator.
+Regina @spaceuref{http://regina.sourceforge.net/} @* Topological calculator.
 @item
 Yacas @spaceuref{http://www.xs4all.nl/~apinkus/yacas.html} @* Yet another
 computer algebra system.
@@ -9537,7 +9537,7 @@ Analytic Number Theory and Computational Complexity'', Wiley, 1998.
 @item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.
-@texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen}
+@texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen/}
 
 @item
 Donald E. Knuth, ``The Art of Computer Programming'', volume 2,
