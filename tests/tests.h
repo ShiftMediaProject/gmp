@@ -252,6 +252,8 @@ int refmpz_kronecker_ui _PROTO ((mpz_srcptr, unsigned long));
 int refmpz_si_kronecker _PROTO ((long, mpz_srcptr));
 int refmpz_ui_kronecker _PROTO ((unsigned long, mpz_srcptr));
 
+void refmpz_pow_ui _PROTO ((mpz_ptr w, mpz_srcptr b, unsigned long e));
+
 
 #if defined (__cplusplus)
 }
