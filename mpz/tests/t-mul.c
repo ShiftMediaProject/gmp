@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 
 void debug_mp ();
 static void base_mul ();
-void ref_mpz_mul ();
+static void ref_mpz_mul ();
 
 main (argc, argv)
      int argc;
@@ -130,7 +130,7 @@ main (argc, argv)
   exit (0);
 }
 
-void
+static void
 ref_mpz_mul (w, u, v)
      mpz_t w;
      const mpz_t u;
@@ -235,8 +235,11 @@ base_mul (wp, up, un, vp, vn)
   cy_dig = 0;
   for (j = un; j > 0; j--)
     {
-      umul_ppmm (prod_high, prod_low, *up++, v_limb);
-      add_ssaaaa (cy_dig, *wp++, prod_high, prod_low, 0, cy_dig);
+      mp_limb_t u_limb, w_limb;
+      u_limb = *up++;
+      umul_ppmm (prod_high, prod_low, u_limb, v_limb);
+      add_ssaaaa (cy_dig, w_limb, prod_high, prod_low, 0, cy_dig);
+      *wp++ = w_limb;
     }
 
   *wp++ = cy_dig;
@@ -252,8 +255,11 @@ base_mul (wp, up, un, vp, vn)
 
       for (j = un; j > 0; j--)
 	{
-	  umul_ppmm (prod_high, prod_low, *up++, v_limb);
-	  add_ssaaaa (prod_high, prod_low, prod_high, prod_low, 0, *wp);
+	  mp_limb_t u_limb, w_limb;
+	  u_limb = *up++;
+	  umul_ppmm (prod_high, prod_low, u_limb, v_limb);
+	  w_limb = *wp;
+	  add_ssaaaa (prod_high, prod_low, prod_high, prod_low, 0, w_limb);
 	  prod_low += cy_dig;
 	  cy_dig = prod_high + (prod_low < cy_dig);
 	  *wp++ = prod_low;
