@@ -1,7 +1,11 @@
-2000-07-13  Kevin Ryde  <kevin@swox.se>
+2000-07-14  Kevin Ryde  <kevin@swox.se>
 
-	* Makefile.am (manual-test, manual-bigtest): Add $(EXEEXT) to
-	dependencies.
+	* Makefile.am (allprogs): Pseudo-target to build everything.
+	(CLEANFILES): Add EXTRA_PROGRAMS and EXTRA_LTLIBRARIES.
+	(manual-test, manual-bigtest): Add $(EXEEXT) to	dependencies.
+
+	* */Makefile.in: Regenerate with patched automake that adds
+	$(EXEEXT) to EXTRA_PROGRAMS.
 
 2000-06-11  Kevin Ryde  <kevin@swox.se>
 
