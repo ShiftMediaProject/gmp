@@ -388,11 +388,6 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
-GTAGS:
-	here=`CDPATH=: && cd $(top_builddir) && pwd` \
-	  && cd $(top_srcdir) \
-	  && gtags -i $$here
-
 mostlyclean-tags:
 
 clean-tags:
