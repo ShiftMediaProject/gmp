@@ -1,3 +1,8 @@
+2000-12-21  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/alpha/unicos.m4 (GSYM_PREFIX): Define for the benefit of
+	__clz_tab.
+
 2000-12-20  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h: Add udiv_qrnnd and count_leading_zeros for _CRAYMPP
