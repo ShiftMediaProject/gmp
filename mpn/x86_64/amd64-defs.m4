@@ -50,4 +50,44 @@ $1:
 ')
 
 
+dnl  Usage: ASSERT([cond][,instructions])
+dnl
+dnl  If WANT_ASSERT is 1, output the given instructions and expect the given
+dnl  flags condition to then be satisfied.  For example,
+dnl
+dnl         ASSERT(ne, `cmpq %rax, %rbx')
+dnl
+dnl  The instructions can be omitted to just assert a flags condition with
+dnl  no extra calculation.  For example,
+dnl
+dnl         ASSERT(nc)
+dnl
+dnl  When `instructions' is not empty, a pushfq/popfq is added for
+dnl  convenience to preserve the flags, but the instructions themselves must
+dnl  preserve any registers that matter.
+dnl
+dnl  The condition can be omitted to just output the given instructions when
+dnl  assertion checking is wanted.  In this case the pushf/popf is omitted.
+dnl  For example,
+dnl
+dnl         ASSERT(, `movq %rax, VAR_KEEPVAL')
+
+define(ASSERT,
+m4_assert_numargs_range(1,2)
+m4_assert_defined(`WANT_ASSERT')
+`ifelse(WANT_ASSERT,1,
+`ifelse(`$1',,
+`	$2',
+`ifelse(`$2',,,
+`	pushfq')
+	$2
+	j`$1'	L(ASSERT_ok`'ASSERT_counter)
+	ud2	C assertion failed
+L(ASSERT_ok`'ASSERT_counter):
+ifelse(`$2',,,`	popfq')
+define(`ASSERT_counter',incr(ASSERT_counter))')')')
+
+define(ASSERT_counter,1)
+
+
 divert`'dnl
