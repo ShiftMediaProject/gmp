@@ -1735,6 +1735,29 @@ GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
 ])
 
 
+dnl  GMP_ASM_SPARC_REGISTER
+dnl  ----------------------
+dnl  Determine whether the assembler accepts the ".register" directive.
+dnl  Old versions of solaris "as" don't.
+dnl
+dnl  See also mpn/powerpc32/powerpc-defs.m4 which uses the result of this
+dnl  test.
+
+AC_DEFUN(GMP_ASM_SPARC_REGISTER,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([if the assembler accepts ".register"],
+               gmp_cv_asm_sparc_register,
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	.register	%g2,#scratch
+],
+[gmp_cv_asm_sparc_register=yes],
+[gmp_cv_asm_sparc_register=no])])
+
+GMP_DEFINE_RAW(["define(<HAVE_REGISTER>,<$gmp_cv_asm_sparc_register>)"])
+])
+
+
 dnl  GMP_C_ATTRIBUTE_CONST
 dnl  ---------------------
 
