@@ -81,6 +81,8 @@ MA 02111-1307, USA. */
 #endif
 
 
+#define ROUNDUP   ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB)
+
 size_t
 mpz_out_raw (FILE *fp, mpz_srcptr x)
 {
@@ -94,10 +96,10 @@ mpz_out_raw (FILE *fp, mpz_srcptr x)
   xsize = SIZ(x);
   abs_xsize = ABS (xsize);
   bytes = BYTES_PER_MP_LIMB * abs_xsize;
-  tsize = ROUND_UP_MULTIPLE (4, BYTES_PER_MP_LIMB) + bytes;
+  tsize = ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB) + bytes;
 
   tp = (*__gmp_allocate_func) (tsize);
-  bp = tp + ROUND_UP_MULTIPLE (4, BYTES_PER_MP_LIMB);
+  bp = tp + ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB);
 
   if (bytes != 0)
     {
