@@ -608,12 +608,12 @@ param_init (void)
   REFERENCE (refmpn_sub_nc);
 
 
-  /* should try overlap low to high */
   p = &param[TYPE_MUL_1];
   p->retval = 1;
   p->dst[0] = 1;
   p->src[0] = 1;
   p->multiplier = 1;
+  p->overlap = OVERLAP_LOW_TO_HIGH;
   REFERENCE (refmpn_mul_1);
 
   p = &param[TYPE_MUL_1C];
