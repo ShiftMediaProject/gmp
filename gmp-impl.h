@@ -1106,11 +1106,11 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #ifndef MPN_NORMALIZE
 #define MPN_NORMALIZE(DST, NLIMBS) \
   do {									\
-    while (NLIMBS > 0)							\
+    while ((NLIMBS) > 0)                                                \
       {									\
 	if ((DST)[(NLIMBS) - 1] != 0)					\
 	  break;							\
-	NLIMBS--;							\
+	(NLIMBS)--;							\
       }									\
   } while (0)
 #endif
@@ -1122,7 +1122,7 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
       {                                         \
 	if ((DST)[(NLIMBS) - 1] != 0)           \
 	  break;                                \
-	NLIMBS--;                               \
+	(NLIMBS)--;                             \
       }                                         \
   } while (0)
 #endif
