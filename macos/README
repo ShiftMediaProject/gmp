@@ -213,7 +213,7 @@ PROBLEMS
 ========
 
 Bug reports should be sent directly to Kent Boortz <kent@swox.se> and
-*not* to "gmp-bugs@gnu.org".
+*not* to "bug-gmp@gnu.org".
 
 There may be problems if the program you use for unpacking the source
 use automatic conversion of end-of-line characters.
