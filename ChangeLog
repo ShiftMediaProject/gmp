@@ -18,6 +18,32 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-31  Kevin Ryde  <kevin@swox.se>
+
+	* demos/perl/GMP.xs (scan0, scan1): Return ~0 for not-found.
+	* demos/perl/GMP.pm: Describe this, remove the note about ULONG_MAX
+	being the same as ~0 (which is not true in old perl).
+	* demos/perl/test.pl: Update tests.
+	* demos/perl/typemap (gmp_UV): New type.
+
+	* demos/perl/test.pl (fits_slong_p): Comment out uv_max test, it won't
+	necessarily exceed a long.
+
+	* demos/perl/GMP.pm: Add a remark about get_str to the bugs section.
+
+	* mpn/generic/sqrtrem.c, mpz/fac_ui.c: Add casts for K&R.
+	* tests/mpf/t-muldiv.c: Make ulimb, vlimb into ulongs, which is how
+	they're used, for the benefit of K&R calling.
+
+	* doc/gmp.texi (Square Root Algorithm): Add a summary of the algorithm.
+	And add further index entries in various places.
+	
+	* mpz/lucnum_ui.c, mpz/lucnum2_ui.c: Use mpn_addlsh1_n when available.
+
+	* gmp-impl.h, mpn/generic/mul_n.c (mpn_addlsh1_n, mpn_sublsh1_n,
+	mpn_rsh1add_n, mpn_rsh1sub_n): Move descriptions to gmp-impl.h with
+	the prototypes, for ease of locating.
+
 2003-12-30  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/tuneup.c (all): Disable calls of tune_gcd_schoenhage and
