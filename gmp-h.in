@@ -168,7 +168,6 @@ typedef long int		mp_limb_signed_t;
 #endif
 #endif
 
-/* NOTE: __GMP_MP_SIZE_T_INT is strictly for internal use only. */
 typedef mp_limb_t *		mp_ptr;
 typedef __gmp_const mp_limb_t *	mp_srcptr;
 #if defined (_CRAY) && ! defined (_CRAYMPP)
@@ -971,8 +970,8 @@ void __GMP_DECLSPEC mpf_swap _PROTO ((mpf_ptr, mpf_ptr));
 #define mpn_bdivmod		__MPN(bdivmod)
 #define mpn_cmp			__MPN(cmp)
 /* #define mpn_com_n		__MPN(com_n) */
-#define mpn_copyd		__MPN(copyd)
-#define mpn_copyi		__MPN(copyi)
+/* #define mpn_copyd		__MPN(copyd) */
+/* #define mpn_copyi		__MPN(copyi) */
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
 #define mpn_divrem_2		__MPN(divrem_2)
@@ -1100,13 +1099,12 @@ void __GMP_DECLSPEC mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, m
 
 /**************** mpz inlines ****************/
 
-/* The inlining here is for the benefit of applications.  Library
-   entrypoints are retained so function pointers work, but inline versions
-   offered as well.
+/* The following are provided as inlines where possible, but always exist as
+   library functions too, for binary compatibility.
 
-   Within gmp itself this inlining isn't relied on, since it doesn't get
-   done for all compilers, whereas if it's worth inlining something then
-   it's worth arranging that it happens everywhere.  */
+   Within gmp itself this inlining generally isn't relied on, since it
+   doesn't get done for all compilers, whereas if something is worth
+   inlining then it's worth arranging that happens always.  */
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
 __GMP_EXTERN_INLINE void
@@ -1756,9 +1754,48 @@ mpf_size (mpf_srcptr f)
   } while (0)
 
 
+/* For power and powerpc we want an inline ldu/stu/bdnz loop for copying.
+   On ppc630 for instance this is optimal since it can sustain only 1 store
+   per cycle.
+
+   gcc 2.95.x (for powerpc64 -maix64, or powerpc32) doesn't recognise the
+   "for" loop in the generic code below can become ldu/stu/bdnz.  The
+   do/while here helps it get to that.
+
+   In gcc -mpowerpc64 mode, without -maix64, __size seems to want to be an
+   mp_limb_t to get into the ctr register, and even then the loop is a
+   curious ldu/stu/bdz/b.  But let's not worry about that unless there's a
+   system using this.  An asm block could force what we want if necessary.
+
+   xlc 3.1 already generates ldu/stu/bdnz from the generic C, and does so
+   from this loop too.  */
+
+#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#define __GMPN_COPY_INCR(dst, src, size)                \
+  do {                                                  \
+    /* ASSERT ((size) >= 0); */                         \
+    /* ASSERT (MPN_SAME_OR_INCR_P (dst, src, size)); */ \
+    if ((size) != 0)                                    \
+      {                                                 \
+        mp_ptr     __dst = (dst) - 1;                   \
+        mp_srcptr  __src = (src) - 1;                   \
+        mp_size_t  __size = (size);                     \
+        do                                              \
+          *++__dst = *++__src;                          \
+        while (--__size != 0);                          \
+      }                                                 \
+  } while (0)
+#define __GMPN_COPY(dst, src, size)                             \
+  do {                                                          \
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */     \
+  } while (0)
+#endif
+
 /* Enhancement: Use some of the smarter code from gmp-impl.h.  Maybe use
    mpn_copyi if there's a native version, and if we don't mind demanding
    binary compatibility for it (on targets which use it).  */
+
+#ifndef __GMPN_COPY
 #define __GMPN_COPY(dst, src, size)                             \
   do {                                                          \
     mp_size_t __j;                                              \
@@ -1767,7 +1804,7 @@ mpf_size (mpf_srcptr f)
     for (__j = 0; __j < (size); __j++)                          \
       (dst)[__j] = (src)[__j];                                  \
   } while (0)
-
+#endif
 
 
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_add_1

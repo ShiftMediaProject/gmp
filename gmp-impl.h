@@ -456,11 +456,6 @@ void __gmp_default_free _PROTO ((void *, size_t));
 void __gmpz_aorsmul_1 _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, mp_limb_t v, mp_size_t sub))) REGPARM_ATTR(1);
 #define mpz_aorsmul_1(w,u,v,sub)  __gmpz_aorsmul_1 (REGPARM_3_1 (w, u, v, sub))
 
-#if HAVE_NATIVE_mpn_copyi
-#define mpn_copyi __MPN(copyi)
-void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
-#endif
-
 #define mpn_fib2_ui __gmpn_fib2_ui
 mp_size_t mpn_fib2_ui _PROTO ((mp_ptr, mp_ptr, unsigned long));
 
@@ -570,34 +565,78 @@ int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
                                  mp_srcptr dp, mp_size_t dsize)) __GMP_ATTRIBUTE_PURE;
 
 
+/* from gmp.h */
+#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#define MPN_COPY_INCR(dst, src, size)                   \
+  do {                                                  \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (MPN_SAME_OR_INCR_P (dst, src, size));       \
+    __GMPN_COPY_INCR (dst, src, size);                  \
+  } while (0)
+#endif
+
+#define mpn_copyi __MPN(copyi)
+void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
+#if ! defined (MPN_COPY_INCR) && HAVE_NATIVE_mpn_copyi
+#define MPN_COPY_INCR(dst, src, size)                   \
+  do {                                                  \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (MPN_SAME_OR_INCR_P (dst, src, size));       \
+    mpn_copyi (dst, src, size);                         \
+  } while (0)
+#endif
+
 /* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
 #ifndef MPN_COPY_INCR
-#if HAVE_NATIVE_mpn_copyi
-#define MPN_COPY_INCR(DST, SRC, NLIMBS)   mpn_copyi (DST, SRC, NLIMBS)
-#else
 #define MPN_COPY_INCR(DST, SRC, NLIMBS)                 \
   do {                                                  \
     mp_size_t __i;                                      \
+    ASSERT ((NLIMBS) >= 0);                             \
     ASSERT (MPN_SAME_OR_INCR_P (DST, SRC, NLIMBS));     \
     for (__i = 0; __i < (NLIMBS); __i++)                \
       (DST)[__i] = (SRC)[__i];                          \
   } while (0)
 #endif
+
+
+/* As per __GMPN_COPY_INCR in gmp.h. */
+#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#define MPN_COPY_DECR(dst, src, size)                   \
+  do {                                                  \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (MPN_SAME_OR_DECR_P (dst, src, size));       \
+    if ((size) != 0)                                    \
+      {                                                 \
+        mp_ptr     __dst = (dst) + (size);              \
+        mp_srcptr  __src = (src) + (size);              \
+        mp_size_t  __size = (size);                     \
+        do                                              \
+          *--__dst = *--__src;                          \
+        while (--__size != 0);                          \
+      }                                                 \
+  } while (0)
 #endif
 
-#if HAVE_NATIVE_mpn_copyd
 #define mpn_copyd __MPN(copyd)
 void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
-#endif
+
+#if ! defined (MPN_COPY_DECR) && HAVE_NATIVE_mpn_copyd
+#define MPN_COPY_DECR(dst, src, size)                   \
+  do {                                                  \
+    ASSERT ((size) >= 0);                               \
+    ASSERT (MPN_SAME_OR_INCR_P (dst, src, size));       \
+    mpn_copyd (dst, src, size);                         \
+  } while (0)
+#else
+
 
 /* NLIMBS==0 allowed */
 #ifndef MPN_COPY_DECR
-#if HAVE_NATIVE_mpn_copyd
-#define MPN_COPY_DECR(DST, SRC, NLIMBS)   mpn_copyd (DST, SRC, NLIMBS)
-#else
 #define MPN_COPY_DECR(DST, SRC, NLIMBS)                 \
   do {                                                  \
     mp_size_t __i;                                      \
+    ASSERT ((NLIMBS) >= 0);                             \
     ASSERT (MPN_SAME_OR_DECR_P (DST, SRC, NLIMBS));     \
     for (__i = (NLIMBS) - 1; __i >= 0; __i--)           \
       (DST)[__i] = (SRC)[__i];                          \
@@ -627,6 +666,34 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   do {                                          \
     ASSERT (MPN_SAME_OR_SEPARATE_P (d, s, n));  \
     MPN_COPY_INCR (d, s, n);                    \
+  } while (0)
+#endif
+
+
+/* For power and powerpc we want an inline stu/bdnz loop for zeroing.  On
+   ppc630 for instance this is optimal since it can sustain only 1 store per
+   cycle.
+
+   gcc 2.95.x (for powerpc64 -maix64, or powerpc32) doesn't recognise the
+   "for" loop in the generic code below can become stu/bdnz.  The do/while
+   here helps it get to that.  The same caveat about plain -mpowerpc64 mode
+   applies here as to __GMPN_COPY_INCR in gmp.h.
+
+   xlc 3.1 already generates stu/bdnz from the generic C, and does so from
+   this loop too.  */
+
+#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#define MPN_ZERO(dst, size)             \
+  do {                                  \
+    ASSERT ((size) >= 0);               \
+    if ((size) != 0)                    \
+      {                                 \
+        mp_ptr     __dst  = (dst) - 1;  \
+        mp_size_t  __size = (size);     \
+        do                              \
+          *++__dst = 0;                 \
+        while (--__size);               \
+      }                                 \
   } while (0)
 #endif
 
@@ -1682,7 +1749,8 @@ union ieee_double_extract
 #endif
 #endif
 
-/* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers.  */
+/* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers
+   that don't convert ulong->double correctly (eg. SunOS 4 native cc).  */
 #define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 2)))
 /* Maximum number of limbs it will take to store any `double'.
    We assume doubles have 53 mantissam bits.  */
