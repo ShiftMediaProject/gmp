@@ -19,6 +19,66 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-22  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/x86-defs.m4, mpn/x86/*/*.asm: Remove L / LF scheme putting
+	function name in local labels.
+
+	* mpn/generic/get_str.c: Use mpn_preinv_divrem_1, add a couple of
+	ASSERTs.
+
+	* mpn/generic/pre_divrem_1.c: New file.
+	* configure.in (gmp_mpn_functions): Add it.
+	* gmp-impl.h (mpn_preinv_divrem_1): Add prototype.
+	(USE_PREINV_DIVREM_1, MPN_DIVREM_OR_PREINV_DIVREM_1): New macros.
+	* tests/devel/try.c, tune/speed.c, tune/speed.h, tune/common.c,
+	tune/many.pl, tune/Makefile.am (mpn_preinv_divrem_1): Add testing and
+	measuring.
+	* tune/tuneup.c: Determine USE_PREINV_DIVREM_1.
+	* tune/pre_divrem_1.c: New file.
+	* tests/refmpn.c, tests/tests.h (refmpn_preinv_divrem_1): New function.
+
+	* tests/mpz/t-io_raw.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/inp_raw.c, mpz/out_raw.c: Rewrite.
+	* acinclude.m4, configure.in (AC_C_BIGENDIAN): New test.
+	* gmp-impl.h (BSWAP_LIMB): New macro.
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): For a native compile, demand
+	executables will run, per AC_PROG_CC.  This detects ABI=64 is unusable
+	in a native sparc solaris 7 build with the kernel in 32-bit mode.
+	* gmp.texi (ABI and ISA): Add notes on this, add an example configure
+	setting an ABI.
+
+	* tune/tuneup.c, configure.in: Print the gmp-mparam.h filename.
+	* tune/tuneup.c: Print the CPU frequency.
+
+	* tune/time.c, tune/speed.h: Add s390 "stck" method, flatten
+	conditionals in speed_time_init a bit, use have_* variables to let
+	some code go dead in speed_starttime and speed_endtime.
+
+	* tune/freq.c (speed_cpu_frequency_irix_hinv): New function.
+
+	* Makefile.am, configure.in: Restore mpfr.
+
+	* configure.in: Add --with-readline, AC_PROG_YACC and AM_PROG_LEX.
+	* demos/calc/calc.y, demos/calc/calclex.l: Add readline support, add
+	lucnum function.
+	* demos/calc/Makefile.am: Add calcread.c, calc-common.h, use $(YACC),
+	$(LEX) and $(LEXLIB).
+	* demos/calc/calcread.c, demos/calc/calc-common.h,
+	demos/calc/calc-config-h.in, demos/calc/README: New files.
+
+	* configure.in: Put demos/expr configs in expr-config.h.
+	* demos/expr/expr-config-h.in: New file.
+	* demos/expr/expr-impl.h: Renamed from expr-impl-h.in, get configs
+	from expr-config.h.
+	* demos/expr/Makefile.am: Update.
+
+	* demos/expr/exprfr.c: Use mpfr_sin and mpfr_cos, remove some spurious
+	returns.
+
 2001-12-20  Torbjorn Granlund  <tege@swox.com>
 
 
