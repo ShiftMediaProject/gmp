@@ -134,22 +134,22 @@ corresponding GMP mpz functions,
 =item
 
 bin, cdiv, cdiv_2exp, clrbit, congruent_p, congruent_2exp_p, divexact,
-divisible_p, divisible_2exp_p, even_p, fac, fdiv, fdiv_2exp, fib, gcd,
-gcdext, hamdist, invert, jacobi, kronecker, lcm, mod, nextprime, odd_p,
-perfect_power_p, perfect_square_p, popcount, powm, probab_prime_p, realloc,
-remove, root, roote, scan0, scan1, setbit, sizeinbase, sqrtrem, tdiv,
-tdiv_2exp, tstbit
+divisible_p, divisible_2exp_p, even_p, fac, fdiv, fdiv_2exp, fib, fib2, gcd,
+gcdext, hamdist, invert, jacobi, kronecker, lcm, lucnum, lucnum2, mod,
+nextprime, odd_p, perfect_power_p, perfect_square_p, popcount, powm,
+probab_prime_p, realloc, remove, root, roote, scan0, scan1, setbit,
+sizeinbase, sqrtrem, tdiv, tdiv_2exp, tstbit
 
 =back
 
 C<cdiv>, C<fdiv> and C<tdiv> and their C<2exp> variants return a
-quotient/remainder pair.  C<gcd> and C<lcm> accept a variable number of
-arguments (one or more).  C<gcdext> returns a triplet of gcd and two
-cofactors.  C<invert> returns the inverse, or undef if it doesn't exist.
-C<remove> returns a remainder/multiplicty pair.  C<root> returns the nth
-root, and C<roote> returns a root/bool pair, the bool indicating whether the
-root is exact.  C<sqrtrem> returns a root/remainder pair.  An example
-C<gcdext> would be
+quotient/remainder pair.  C<fib2> returns a pair F[n] and F[n-1], similarly
+C<lucnum2>.  C<gcd> and C<lcm> accept a variable number of arguments (one or
+more).  C<gcdext> returns a triplet of gcd and two cofactors.  C<invert>
+returns the inverse, or undef if it doesn't exist.  C<remove> returns a
+remainder/multiplicty pair.  C<root> returns the nth root, and C<roote>
+returns a root/bool pair, the bool indicating whether the root is exact.
+C<sqrtrem> returns a root/remainder pair.  An example C<gcdext> would be
 
     use GMP::Mpz qw(:all);
     $a = 7257;
@@ -483,9 +483,9 @@ GMP manual, L<perl>, L<overload>.
 
 =head1 BUGS
 
-The overloaded constants provoke seg faults from perl 5.005_03 on i386
-FreeBSD.  Don't know if that's a perl bug or a GMP module bug, though it
-seems to go bad before reaching anything in GMP.xs.
+The overloaded constants sometimes provoke seg faults from perl 5.005_03 on
+i386 FreeBSD.  Don't know if that's a perl bug or a GMP module bug, though
+it does seem to go bad before reaching anything in GMP.xs.
 
 There's no way to specify an arbitrary base when converting a string to an
 mpz (or mpq or mpf), only hex or octal with 0x or 0 (for mpz and mpq, but

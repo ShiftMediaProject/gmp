@@ -31,11 +31,12 @@ require Exporter;
 			     bin cdiv cdiv_2exp clrbit congruent_p
 			     congruent_2exp_p divexact divisible_p
 			     divisible_2exp_p even_p fac fdiv fdiv_2exp fib
-			     gcd gcdext hamdist invert jacobi kronecker lcm
-			     mod mpz nextprime odd_p perfect_power_p
-			     perfect_square_p popcount powm probab_prime_p
-			     realloc remove root roote scan0 scan1 setbit
-			     sizeinbase sqrtrem tdiv tdiv_2exp tstbit)],
+			     fib2 gcd gcdext hamdist invert jacobi kronecker
+			     lcm lucnum lucnum2 mod mpz nextprime odd_p
+			     perfect_power_p perfect_square_p popcount powm
+			     probab_prime_p realloc remove root roote scan0
+			     scan1 setbit sizeinbase sqrtrem tdiv tdiv_2exp
+			     tstbit)],
 		'constants'   => [@EXPORT],
 		'noconstants' => [@EXPORT]);
 Exporter::export_ok_tags('all');
