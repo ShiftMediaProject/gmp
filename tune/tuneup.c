@@ -837,6 +837,9 @@ tune_mul (void)
   param.max_size[0] = TOOM3_MUL_THRESHOLD_LIMIT-1;
   param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT-1;
   one (mul_threshold, 2, &param);
+
+  /* disabled until tuned */
+  FFT_MUL_THRESHOLD = MP_SIZE_T_MAX;
 }
 
 
@@ -859,6 +862,9 @@ tune_sqr (void)
   param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
   param.max_size[1] = TUNE_KARATSUBA_SQR_MAX;
   one (sqr_threshold, 3, &param);
+
+  /* disabled until tuned */
+  FFT_SQR_THRESHOLD = MP_SIZE_T_MAX;
 }
 
 
