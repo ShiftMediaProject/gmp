@@ -380,8 +380,8 @@ validate_mod_34lsub1 (void)
 
   if (got_mod != want_mod)
     {
-      printf ("got   0x%lX reduced from 0x%lX\n", got_mod, got);
-      printf ("want  0x%lX reduced from 0x%lX\n", want_mod, want);
+      gmp_printf ("got   0x%MX reduced from 0x%MX\n", got_mod, got);
+      gmp_printf ("want  0x%MX reduced from 0x%MX\n", want_mod, want);
       error = 1;
     }
   
@@ -405,7 +405,7 @@ validate_divexact_1 (void)
     rem = refmpn_divrem_1 (tp, 0, src, size, divisor);
     if (rem != 0)
       {
-        printf ("Remainder a%%d == 0x%lX, mpn_divexact_1 undefined\n", rem);
+        gmp_printf ("Remainder a%%d == 0x%MX, mpn_divexact_1 undefined\n", rem);
         error = 1;
       }
     if (! refmpn_equal_anynail (tp, dst, size))
@@ -501,7 +501,7 @@ validate_sqrtrem (void)
 
   if (rem_size < 0 || rem_size > size)
     {
-      printf ("Bad remainder size retval %ld\n", rem_size);
+      printf ("Bad remainder size retval %ld\n", (long) rem_size);
       validate_fail ();
     }
 
@@ -1724,13 +1724,13 @@ print_all (void)
   int  i;
 
   printf ("\n");
-  printf ("size  %ld\n", size);
+  printf ("size  %ld\n", (long) size);
   if (tr->size2)
-    printf ("size2 %ld\n", size2);
+    printf ("size2 %ld\n", (long) size2);
 
   for (i = 0; i < NUM_DESTS; i++)
     if (d[i].size != size)
-      printf ("d[%d].size %ld\n", i, d[i].size);
+      printf ("d[%d].size %ld\n", i, (long) d[i].size);
 
   if (tr->multiplier)
     mpn_trace ("   multiplier", &multiplier, 1);
@@ -1746,14 +1746,15 @@ print_all (void)
   for (i = 0; i < NUM_DESTS; i++)
     if (tr->dst[i])
       printf ("   d[%d] %s, align %ld, size %ld\n",
-              i, d[i].high ? "high" : "low", d[i].align, d[i].size);
+              i, d[i].high ? "high" : "low",
+              (long) d[i].align, (long) d[i].size);
 
   for (i = 0; i < NUM_SOURCES; i++)
     {
       if (tr->src[i])
         {
           printf ("   s[%d] %s, align %ld, ",
-                  i, s[i].high ? "high" : "low", s[i].align);
+                  i, s[i].high ? "high" : "low", (long) s[i].align);
           switch (overlap->s[i]) {
           case -1:
             printf ("no overlap\n");
@@ -1789,8 +1790,8 @@ compare (void)
 
   if (tr->retval && ref.retval != fun.retval)
     {
-      printf ("Different return values (%lu, %lu)\n",
-              ref.retval, fun.retval);
+      gmp_printf ("Different return values (%Mu, %Mu)\n",
+                  ref.retval, fun.retval);
       error = 1;
     }
 
@@ -1814,8 +1815,8 @@ compare (void)
             {
               printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
                       i,
-                      byte_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
-                      byte_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
+                      (long) byte_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+                      (long) byte_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
               error = 1;
             }
         }
@@ -1826,8 +1827,8 @@ compare (void)
             {
               printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
                       i,
-                      mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
-                      mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
+                      (long) mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+                      (long) mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
               error = 1;
             }
         }
@@ -2654,7 +2655,7 @@ Error, error, cannot get page size
         printf ("s[%d] %p to %p (0x%lX bytes)\n",
                 i, s[i].region.ptr,
                 s[i].region.ptr + s[i].region.size,
-                s[i].region.size * BYTES_PER_MP_LIMB);
+                (long) s[i].region.size * BYTES_PER_MP_LIMB);
       }
 
 #define INIT_EACH(e,es)                                                 \
@@ -2664,7 +2665,7 @@ Error, error, cannot get page size
         printf ("%s d[%d] %p to %p (0x%lX bytes)\n",                    \
                 es, i, e.d[i].region.ptr,                               \
                 e.d[i].region.ptr + e.d[i].region.size,                 \
-                e.d[i].region.size * BYTES_PER_MP_LIMB);                \
+                (long) e.d[i].region.size * BYTES_PER_MP_LIMB);         \
       }
 
     INIT_EACH(ref, "ref");

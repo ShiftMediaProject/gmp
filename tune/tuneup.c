@@ -293,7 +293,7 @@ analyze_dat (int final)
       printf ("\n");
       printf ("x is the sum of the badness from setting thresh at given size\n");
       printf ("  (minimum x is sought)\n");
-      printf ("size=%ld  first x=%.4f\n", dat[j].size, x);
+      printf ("size=%ld  first x=%.4f\n", (long) dat[j].size, x);
     }
 
   min_x = x;
@@ -306,7 +306,7 @@ analyze_dat (int final)
   for (j = 0; j < ndat; x -= dat[j].d, j++)
     {
       if (option_trace >= 2 && final)
-        printf ("size=%ld  x=%.4f\n", dat[j].size, x);
+        printf ("size=%ld  x=%.4f\n", (long) dat[j].size, x);
 
       if (x < min_x)
         {
@@ -398,7 +398,7 @@ print_define_end_remark (const char *name, mp_size_t value, const char *remark)
   if (value == MP_SIZE_T_MAX)
     printf ("MP_SIZE_T_MAX");
   else
-    printf ("%5ld", value);
+    printf ("%5ld", (long) value);
 
   if (remark != NULL)
     printf ("  /* %s */", remark);
@@ -461,7 +461,8 @@ one (mp_size_t *threshold, struct param_t *param)
       t2 = tuneup_measure (param->function2, param, &s);
       if (t1 == -1.0 || t2 == -1.0)
         {
-          printf ("Oops, can't run both functions at size %ld\n", s.size);
+          printf ("Oops, can't run both functions at size %ld\n",
+                  (long) s.size);
           abort ();
         }
       t1 *= param->function_fudge;
@@ -479,7 +480,7 @@ one (mp_size_t *threshold, struct param_t *param)
 
       if (option_trace >= 2)
         printf ("function2 enough faster at size=%ld: t1=%.9f t2=%.9f\n",
-                s.size, t1, t2);
+                (long) s.size, t1, t2);
     }
 
   if (! param->noprint || option_trace)
@@ -509,7 +510,7 @@ one (mp_size_t *threshold, struct param_t *param)
         {
           if (option_trace)
             printf ("Reached maximum size (%ld) without otherwise stopping\n",
-                    param->max_size);
+                    (long) param->max_size);
           break;
         }
 
@@ -544,9 +545,9 @@ one (mp_size_t *threshold, struct param_t *param)
 
       if (option_trace >= 2)
         printf ("size=%ld  %.9f  %.9f  % .4f %c  %ld\n",
-                s.size, ti, tiplus1, d,
+                (long) s.size, ti, tiplus1, d,
                 ti > tiplus1 ? '#' : ' ',
-                dat[new_thresh_idx].size);
+                (long) dat[new_thresh_idx].size);
 
       /* Stop if the last time method i was faster was more than a
          certain number of measurements ago.  */
@@ -604,7 +605,7 @@ one (mp_size_t *threshold, struct param_t *param)
         {
           fprintf (stderr, "%s\n", param->name);
           fprintf (stderr, "sizes %ld to %ld total %d measurements\n",
-                   dat[0].size, dat[ndat-1].size, ndat);
+                   (long) dat[0].size, (long) dat[ndat-1].size, ndat);
           fprintf (stderr, "    max size reached before end of crossover\n");
           break;
         }
@@ -612,7 +613,7 @@ one (mp_size_t *threshold, struct param_t *param)
 
   if (option_trace >= 1)
     printf ("sizes %ld to %ld total %d measurements\n",
-            dat[0].size, dat[ndat-1].size, ndat);
+            (long) dat[0].size, (long) dat[ndat-1].size, ndat);
 
   *threshold = dat[analyze_dat (1)].size;
 
@@ -732,13 +733,13 @@ fft (struct fft_param_t *p)
 
       if (option_trace >= 2)
         printf ("at %ld   size=%ld  k=%d  %.9f   k=%d %.9f\n",
-                size, s.size, k, tk, k+1, tk1);
+                (long) size, (long) s.size, k, tk, k+1, tk1);
 
       /* declare the k+1 threshold as soon as it's faster at its midpoint */
       if (tk1 < tk)
         {
           mpn_fft_table[p->sqr][k-FFT_FIRST_K] = s.size;
-          printf (" %ld,", s.size);
+          printf (" %ld,", (long) s.size);
           if (option_trace >= 2) printf ("\n");
           k++;
         }
@@ -765,7 +766,7 @@ fft (struct fft_param_t *p)
         {
           size = mpn_fft_table[p->sqr][2];
           if (option_trace >= 2)
-            printf ("jump to size=%ld\n", size);
+            printf ("jump to size=%ld\n", (long) size);
         }
 
       size = fft_next_size (size+1, mpn_fft_best_k (size, p->sqr));
@@ -787,9 +788,9 @@ fft (struct fft_param_t *p)
 
       if (option_trace >= 2)
         printf ("at %ld   size=%ld   k=%d  %.9f   size=%ld %s mul %.9f\n",
-                size,
-                size + fft_step_size (k) / 2, k, tk,
-                s.size, modf ? "modf" : "full", tm);
+                (long) size,
+                (long) size + fft_step_size (k) / 2, k, tk,
+                (long) s.size, modf ? "modf" : "full", tm);
 
       if (tk < tm)
         {
@@ -1193,12 +1194,12 @@ tune_preinv_divrem_1 (void)
   if (t1 == -1.0 || t2 == -1.0)
     {
       printf ("Oops, can't measure mpn_preinv_divrem_1 and %s at %ld\n",
-              divrem_1_name, s.size);
+              divrem_1_name, (long) s.size);
       abort ();
     }
   if (option_trace >= 1)
     printf ("size=%ld, mpn_preinv_divrem_1 %.9f, %s %.9f\n",
-            s.size, t1, divrem_1_name, t2);
+            (long) s.size, t1, divrem_1_name, t2);
 
   print_define_remark ("USE_PREINV_DIVREM_1", (mp_size_t) (t1 < t2), NULL);
 }
@@ -1260,12 +1261,12 @@ tune_preinv_mod_1 (void)
   if (t1 == -1.0 || t2 == -1.0)
     {
       printf ("Oops, can't measure mpn_preinv_mod_1 and %s at %ld\n",
-              mod_1_name, s.size);
+              mod_1_name, (long) s.size);
       abort ();
     }
   if (option_trace >= 1)
     printf ("size=%ld, mpn_preinv_mod_1 %.9f, %s %.9f\n",
-            s.size, t1, mod_1_name, t2);
+            (long) s.size, t1, mod_1_name, t2);
 
   print_define_remark ("USE_PREINV_MOD_1", (mp_size_t) (t1 < t2), NULL);
 }
@@ -1360,7 +1361,7 @@ tune_divexact_1 (void)
 
       one (&thresh[low], &param);
       if (option_trace)
-        printf ("low=%d thresh %ld\n", low, thresh[low]);
+        printf ("low=%d thresh %ld\n", low, (long) thresh[low]);
 
       if (thresh[low] == MP_SIZE_T_MAX)
         {
@@ -1373,7 +1374,7 @@ tune_divexact_1 (void)
     {
       printf ("average of:");
       for (i = 0; i < numberof(thresh); i++)
-        printf (" %ld", thresh[i]);
+        printf (" %ld", (long) thresh[i]);
       printf ("\n");
     }
 
@@ -1430,7 +1431,7 @@ tune_modexact_1_odd (void)
   param.data_high = DATA_HIGH_LT_R;
   one (&thresh_lt, &param);
   if (option_trace)
-    printf ("lt thresh %ld\n", thresh_lt);
+    printf ("lt thresh %ld\n", (long) thresh_lt);
 
   average = thresh_lt;
   if (thresh_lt != MP_SIZE_T_MAX)
@@ -1438,7 +1439,7 @@ tune_modexact_1_odd (void)
       param.data_high = DATA_HIGH_GE_R;
       one (&thresh_ge, &param);
       if (option_trace)
-        printf ("ge thresh %ld\n", thresh_ge);
+        printf ("ge thresh %ld\n", (long) thresh_ge);
 
       if (thresh_ge != MP_SIZE_T_MAX)
         {
@@ -1463,20 +1464,20 @@ tune_jacobi_base (void)
 
   t1 = tuneup_measure (speed_mpn_jacobi_base_1, &param, &s);
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_1 %.9f\n", s.size, t1);
+    printf ("size=%ld, mpn_jacobi_base_1 %.9f\n", (long) s.size, t1);
 
   t2 = tuneup_measure (speed_mpn_jacobi_base_2, &param, &s);
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_2 %.9f\n", s.size, t2);
+    printf ("size=%ld, mpn_jacobi_base_2 %.9f\n", (long) s.size, t2);
 
   t3 = tuneup_measure (speed_mpn_jacobi_base_3, &param, &s);
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_jacobi_base_3 %.9f\n", s.size, t3);
+    printf ("size=%ld, mpn_jacobi_base_3 %.9f\n", (long) s.size, t3);
 
   if (t1 == -1.0 || t2 == -1.0 || t3 == -1.0)
     {
       printf ("Oops, can't measure all mpn_jacobi_base methods at %ld\n",
-              s.size);
+              (long) s.size);
       abort ();
     }
 
@@ -1606,7 +1607,7 @@ all (void)
     fprintf (stderr, ", CPU freq %.2f MHz\n", 1e-6/speed_cycletime);
 
   fprintf (stderr, "DEFAULT_MAX_SIZE %d, fft_max_size %ld\n",
-           DEFAULT_MAX_SIZE, option_fft_max_size);
+           DEFAULT_MAX_SIZE, (long) option_fft_max_size);
   fprintf (stderr, "\n");
 
   time (&start_time);

@@ -1,6 +1,6 @@
 /* Shared speed subroutines.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -153,8 +153,8 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           t[i] = (*fun) (s);
 
           if (speed_option_verbose >= 3)
-            printf("size=%ld reps=%u r=%ld attempt=%d  %.9f\n", 
-                   s->size, s->reps, s->r, i, t[i]);
+            gmp_printf("size=%ld reps=%u r=%Md attempt=%d  %.9f\n", 
+                       (long) s->size, s->reps, s->r, i, t[i]);
 
           if (t[i] == -1.0)
             return -1.0;
