@@ -28,7 +28,7 @@ void
 #if __STDC__
 mpz_urandomb (mpz_t rop, gmp_rand_state s, unsigned long int nbits)
 #else
-mpz_urandomb (rop, nbits, s)
+mpz_urandomb (rop, s, nbits)
      mpz_t rop;
      gmp_rand_state s;
      unsigned long int nbits;
