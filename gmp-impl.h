@@ -417,7 +417,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define SQR_TOOM3_THRESHOLD             250
 
 #define DIV_SB_PREINV_THRESHOLD           MP_SIZE_T_MAX
-#define DIV_DC_THRESHOLD                  MP_SIZE_T_MAX
+#define DIV_DC_THRESHOLD                 50
 #define POWM_THRESHOLD                    0
 
 #define GCD_ACCEL_THRESHOLD               3
