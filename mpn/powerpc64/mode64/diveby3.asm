@@ -28,11 +28,11 @@ C POWER4/PPC970:     17
 
 C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
-C mullw has the src[] limb in the second operand, since there's at least a
+C mulld has the src[] limb in the second operand, since there's at least a
 C chance of it giving an early-out on ppc630, which the inverse 0xAA..AB
 C will never give.
 C
-C mulhwu has the "3" multiplier in the second operand, which is an early-out
+C mulhdu has the "3" multiplier in the second operand, which is an early-out
 C for ppc630.
 
 ASM_START()
