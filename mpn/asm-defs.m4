@@ -113,6 +113,14 @@ define(`__ASM_DEFS_M4_INCLUDED__')
 
 
 dnl  --------------------------------------------------------------------------
+dnl  Define a C as a FORTRAN-style comment character.  We need this for
+dnl  comments to the right of an assembly instructions.  Using dnl would
+dnl  remove the linefeed, and thus concatenate adjacent lines.
+define(`C', `
+dnl')
+
+
+dnl  --------------------------------------------------------------------------
 dnl  Basic error handling things.
 
 
