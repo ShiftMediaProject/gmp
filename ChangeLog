@@ -18,7 +18,8 @@
 	are overestimates).
 	* tune/tuneup.c, mpn/generic/{mul,mul_n}.c: Use them.
 	* mpn/generic/mul_n.c (mpn_toom3_sqr_n): Fix an ASSERT to use
-	TOOM3_SQR_THRESHOLD not TOOM3_MUL_THRESHOLD.
+	TOOM3_SQR_THRESHOLD not TOOM3_MUL_THRESHOLD, add a few that might
+	be more realistic size checks.
 	* tune/speed.h (SPEED_ROUTINE_MPN_{MUL,SQR}_N_TSPACE etc): Use minsize.
 	
 	* mpn/generic/divrem_1.c: Partial rewrite, merge fractional part
