@@ -1,7 +1,7 @@
 2000-02-10  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Use Autoconf.
-	* Makefile.am: Use Automake.
+	* Makefile.am: New file.
 	
 	* AUTHORS: New file.
 	* COPYING: New file.
@@ -18,6 +18,31 @@
 	* missing: New file from Automake.
 	* ltconfig: New file from Libtool.
 	* ltmain.sh: New file from Libtool.
+
+	* mpf/Makefile.am: New file.
+	* mpf/Makefile.in: Generate.
+	* mpf/configure.in: Remove.
+	* mpf/tests/Makefile.am: New file.
+	* mpf/tests/Makefile.in: Generate.
+	* mpf/tests/configure.in: Remove.
+
+	* mpn/Makefile.am: New file.
+	* mpn/Makefile.in: Generate.
+	* mpn/configure.in: Remove.
+
+	* mpq/Makefile.am: New file.
+	* mpq/Makefile.in: Generate.
+	* mpq/configure.in: Remove.
+	* mpq/tests/Makefile.am: New file.
+	* mpq/tests/Makefile.in: Generate.
+	* mpq/tests/configure.in: Remove.
+
+	* mpz/Makefile.am: New file.
+	* mpz/Makefile.in: Generate.
+	* mpz/configure.in: Remove.
+	* mpz/tests/Makefile.am: New file.
+	* mpz/tests/Makefile.in: Generate.
+	* mpz/tests/configure.in: Remove.
 
 2000-02-10  Torbjorn Granlund  <tege@swox.com>
 
