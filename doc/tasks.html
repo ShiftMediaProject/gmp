@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 4 Jan 2004.  An up-to-date version is available at
+  This file current as of 7 Jan 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -46,6 +46,13 @@ MA 02111-1307, USA.
 
 <h4>Correctness and Completeness</h4>
 <ul>
+<li> <code>_LONG_LONG_LIMB</code> in gmp.h is not namespace clean.  Reported
+     by Patrick Pelissier.
+     <br>
+     We sort of mentioned <code>_LONG_LONG_LIMB</code> in past releases, so
+     need to be careful about changing it.  It used to be a define
+     applications had to set for long long limb systems, but that in
+     particular is no longer relevant now that it's established automatically.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c:
