@@ -35,9 +35,13 @@ do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 long int strtol _PROTO ((const char *, char **ptr, int));
 
 static int
+#if __STDC__
+digit_value_in_base (int c, int base)
+#else
 digit_value_in_base (c, base)
      int c;
      int base;
+#endif
 {
   int digit;
 
