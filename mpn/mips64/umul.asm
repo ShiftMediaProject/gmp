@@ -28,7 +28,7 @@ C v     $6
 
 ASM_START()
 PROLOGUE(mpn_umul_ppmm)
-        dmultu	$5,$6
+	dmultu	$5,$6
 	mflo	$3
 	mfhi	$2
 	j	$31

@@ -25,7 +25,7 @@
 #define x	%r22
 #define m0	%r23
 #define m1	%r24
-	.level  2.0n
+	.level	2.0n
 	.code
 	.export __gmpn_umul_ppmm,entry
 __gmpn_umul_ppmm
@@ -40,8 +40,8 @@ __gmpn_umul_ppmm
 
 	ldw		-180(%r30),%r31
 
-        fldd		-64(%r30),%fr4
-        fldd		-56(%r30),%fr5
+	fldd		-64(%r30),%fr4
+	fldd		-56(%r30),%fr5
 
 	xmpyu		%fr5R,%fr4R,%fr6
 	fstd		%fr6,-128(%r30)
