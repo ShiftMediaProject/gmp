@@ -1,6 +1,6 @@
 /* Check the values of some constants.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -263,6 +263,16 @@ main (int argc, char *argv[])
     CHECK_LIMB (PP_INVERTED, pp_inverted_calc);
   }
 #endif
+
+  /* These defines are supposed to be the same as the table. */
+  CHECK_INT  (MP_BASES_CHARS_PER_LIMB_10,    __mp_bases[10].chars_per_limb);
+  CHECK_LIMB (MP_BASES_BIG_BASE_10,          __mp_bases[10].big_base);
+  CHECK_LIMB (MP_BASES_BIG_BASE_INVERTED_10, __mp_bases[10].big_base_inverted);
+  {
+    int  normalization_steps_calc;
+    count_leading_zeros (normalization_steps_calc, __mp_bases[10].big_base);
+    CHECK_INT (MP_BASES_NORMALIZATION_STEPS_10, normalization_steps_calc);
+  }
 
   if (argc >= 2 || error)
     {
