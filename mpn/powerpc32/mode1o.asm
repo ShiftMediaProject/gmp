@@ -1,6 +1,6 @@
 dnl  PowerPC-32 mpn_modexact_1_odd -- mpn by limb exact remainder.
 
-dnl  Copyright 2002 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
