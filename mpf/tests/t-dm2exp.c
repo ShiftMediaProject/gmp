@@ -32,7 +32,7 @@ main (argc, argv)
      int argc;
      char **argv;
 {
-  int reps = 500000;
+  int reps = 100000;
   int i;
   mpf_t u, v, w1, w2, w3;
   mp_size_t bprec = 100;

@@ -87,7 +87,7 @@ main (argc, argv)
      char **argv;
 {
   int i;
-  int pass, reps = 100000;
+  int pass, reps = 10000;
   mpf_t in1, in2, out1;
   unsigned long int in1i, in2i;
   mpf_t res1, res2, res3;

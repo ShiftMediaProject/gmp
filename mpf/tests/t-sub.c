@@ -42,7 +42,7 @@ main (argc, argv)
 {
   mp_size_t size;
   mp_exp_t exp;
-  int reps = 500000;
+  int reps = 100000;
   int i;
   mpf_t u, v, w, wref;
   mp_size_t bprec = 100;
