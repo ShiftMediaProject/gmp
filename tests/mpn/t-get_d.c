@@ -200,9 +200,11 @@ check_inf (void)
                 {
                   printf  ("mpn_get_d wrong, didn't get infinity\n");
                 bad:
-                  printf  ("  nsize  %ld\n", (long) nsize);
-                  printf  ("  exp    %ld\n", exp);
-                  d_trace ("  got    ", got);
+                  printf  ("  nsize    %ld\n", (long) nsize);
+                  printf  ("  exp      %ld\n", exp);
+                  printf  ("  sign     %ld\n", (long) sign);
+                  d_trace ("  got      ", got);
+                  printf  ("  got sign %ld\n", (long) got_sign);
                   abort ();
                 }
               if (got_sign != sign)
