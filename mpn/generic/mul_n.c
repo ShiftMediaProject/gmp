@@ -988,32 +988,42 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
   /** Second stage: pointwise multiplies. **/
   TOOM3_MUL_REC(D, C, C + l, l, W);
   tD = cD*dD;
-  if (cD) tD += mpn_addmul_1 (D + l, C + l, l, cD);
-  if (dD) tD += mpn_addmul_1 (D + l, C, l, dD);
+  if (cD != 0)
+    tD += mpn_addmul_1 (D + l, C + l, l, cD);
+  if (dD != 0)
+    tD += mpn_addmul_1 (D + l, C, l, dD);
   ASSERT (tD < 49);
   TOOM3_MUL_REC(C, B, B + l, l, W);
   tC = cC*dC;
   /* TO DO: choose one of the following alternatives. */
 #if 0
-  if (cC) tC += mpn_addmul_1 (C + l, B + l, l, cC);
-  if (dC) tC += mpn_addmul_1 (C + l, B, l, dC);
+  if (cC != 0)
+    tC += mpn_addmul_1 (C + l, B + l, l, cC);
+  if (dC != 0)
+    tC += mpn_addmul_1 (C + l, B, l, dC);
 #else
-  if (cC)
+  if (cC != 0)
     {
-      if (cC == 1) tC += mpn_add_n (C + l, C + l, B + l, l);
-      else tC += add2Times (C + l, C + l, B + l, l);
+      if (cC == 1)
+	tC += mpn_add_n (C + l, C + l, B + l, l);
+      else
+	tC += add2Times (C + l, C + l, B + l, l);
     }
-  if (dC)
+  if (dC != 0)
     {
-      if (dC == 1) tC += mpn_add_n (C + l, C + l, B, l);
-      else tC += add2Times (C + l, C + l, B, l);
+      if (dC == 1)
+	tC += mpn_add_n (C + l, C + l, B, l);
+      else
+	tC += add2Times (C + l, C + l, B, l);
     }
 #endif
   ASSERT (tC < 9);
   TOOM3_MUL_REC(B, A, A + l, l, W);
   tB = cB*dB;
-  if (cB) tB += mpn_addmul_1 (B + l, A + l, l, cB);
-  if (dB) tB += mpn_addmul_1 (B + l, A, l, dB);
+  if (cB != 0)
+    tB += mpn_addmul_1 (B + l, A + l, l, cB);
+  if (dB != 0)
+    tB += mpn_addmul_1 (B + l, A, l, dB);
   ASSERT (tB < 49);
   TOOM3_MUL_REC(A, a, b, l, W);
   TOOM3_MUL_REC(E, a + l2, b + l2, ls, W);
@@ -1093,15 +1103,17 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
   /** Second stage: pointwise multiplies. **/
   TOOM3_SQR_REC(D, C, l, W);
   tD = cD*cD;
-  if (cD) tD += mpn_addmul_1 (D + l, C, l, 2*cD);
+  if (cD != 0)
+    tD += mpn_addmul_1 (D + l, C, l, 2*cD);
   ASSERT (tD < 49);
   TOOM3_SQR_REC(C, B, l, W);
   tC = cC*cC;
   /* TO DO: choose one of the following alternatives. */
 #if 0
-  if (cC) tC += mpn_addmul_1 (C + l, B, l, 2*cC);
+  if (cC != 0)
+    tC += mpn_addmul_1 (C + l, B, l, 2*cC);
 #else
-  if (cC >= 1)
+  if (cC != 0)
     {
       tC += add2Times (C + l, C + l, B, l);
       if (cC == 2)
@@ -1111,7 +1123,8 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
   ASSERT (tC < 9);
   TOOM3_SQR_REC(B, A, l, W);
   tB = cB*cB;
-  if (cB) tB += mpn_addmul_1 (B + l, A, l, 2*cB);
+  if (cB != 0)
+    tB += mpn_addmul_1 (B + l, A, l, 2*cB);
   ASSERT (tB < 49);
   TOOM3_SQR_REC(A, a, l, W);
   TOOM3_SQR_REC(E, a + l2, ls, W);
