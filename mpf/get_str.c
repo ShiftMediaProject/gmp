@@ -317,13 +317,18 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
       /* fall out to general code... */
     }
 
+  /* Now that we have normalized the number, develop the digits, essentially by
+     multiplying it by BASE.  We initially develop at least 3 extra digits,
+     since the two leading digits might become zero, and we need one extra for
+     rounding the output properly.  */
+
   /* Allocate temporary digit space.  We can't put digits directly in the user
      area, since we generate more digits than requested.  (We allocate
-     BITS_PER_MP_LIMB + 1 extra bytes because of the digit block nature of the
+     BITS_PER_MP_LIMB extra bytes because of the digit block nature of the
      conversion.)  */
-  tstr = (unsigned char *) TMP_ALLOC (n_digits + BITS_PER_MP_LIMB + 1);
+  tstr = (unsigned char *) TMP_ALLOC (n_digits + BITS_PER_MP_LIMB + 3);
 
-  for (digits_computed_so_far = 0; digits_computed_so_far <= n_digits;
+  for (digits_computed_so_far = 0; digits_computed_so_far < n_digits + 3;
        digits_computed_so_far += dig_per_u)
     {
       mp_limb_t cy;

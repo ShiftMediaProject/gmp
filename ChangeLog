@@ -1,3 +1,7 @@
+2000-07-31  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/get_str.c: Develop three extra digits, not just one.
+
 2000-07-31  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (References): Add URL for invariant division.
@@ -56,7 +60,7 @@
 	New functions.
 	(numberof, TMP_ALLOC_TYPE etc, _MP_ALLOCATE_FUNC_TYPE etc,
 	UNSIGNED_TYPE_MAX etc): New macros.
-	
+
 	* tune/*: Add FFT threshold tuning and speed measuring.
 	* tune/common.c: Avoid huge macro expansions for umul and udiv.
 
@@ -99,7 +103,7 @@
 
 	* configure.in: Add sparc64-*-linux* support (from Jakub Jelinek).
 	* configure: Regenerate.
-	
+
 	* mpn/sparc64/rshift.asm: Use %g5 instead of volatile stack frame area
 	for return value (from Jakub Jelinek).
 	* mpn/sparc64/lshift.asm: Likewise.
