@@ -1,3 +1,14 @@
+2001-02-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mul.c, mpn/generic/mul_n.c, gmp-impl.h: Use
+	mpn_mul_basecase for squaring below new BASECASE_SQR_THRESHOLD.
+	* tune/tuneup.c gmp-impl.h: Tune BASECASE_SQR_THRESHOLD.
+
+	* Makefile.am (libgmp.la, libmp.la): Revert change to build from
+	mpn/libmpn.la etc, go back to explicitly listed objects.
+
+	* configure.in: Recognise sparc64-*-*, not just sparc64-*-linux*.
+
 2001-02-11  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Low-level Functions): Note mpn_get_str clobbers its input
