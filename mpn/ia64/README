@@ -38,27 +38,26 @@ latter is what we concentrate on.
 CHIP NOTES
 
 The IA-64 ISA keeps instructions three and three in 128 bit bundles.
-Programmers/compilers need to put explicit breaks `;;' when there are
-WAW or RAW dependencies, with some notable exceptions.  Such "breaks"
-are typically be at the end of a bundle, but can be put between
-operations within a bundle too.
+Programmers/compilers need to put explicit breaks `;;' when there are WAW or
+RAW dependencies, with some notable exceptions.  Such "breaks" are typically
+be at the end of a bundle, but can be put between operations within a bundle
+too.
 
 The Itanium 1 and Itanium 2 implementations can under ideal conditions
-execute two bundles per cycle.  The Itanium 2 allows 4 of these
-instructions to do integer operations, while the Itanium 2 allows all 6
-to be integer operations.
+execute two bundles per cycle.  The Itanium 2 allows 4 of these instructions
+to do integer operations, while the Itanium 2 allows all 6 to be integer
+operations.
 
-Taken cloop branches seem to insert a bubble into the pipeline most of
-the time on Itanium 1.
+Taken cloop branches seem to insert a bubble into the pipeline most of the
+time on Itanium 1.
 
-Loads to the fp registers bypass the L1 cache and thus get extremely
-long latencies, 9 cycles on the Itanium 1 and 6 cycles on the Itanium 2.
+Loads to the fp registers bypass the L1 cache and thus get extremely long
+latencies, 9 cycles on the Itanium 1 and 6 cycles on the Itanium 2.
 
-The software pipeline stuff using br.ctop instruction causes delays,
-since many issue slots are taken up by instructions with zero
-predicates, and since about many extra instructions are needed to set
-things up.  These features are designed for code density, not maximum
-speed.
+The software pipeline stuff using br.ctop instruction causes delays, since
+many issue slots are taken up by instructions with zero predicates, and
+since about many extra instructions are needed to set things up.  These
+features are designed for code density, not maximum speed.
 
 Misc pipeline limitations (Itanium 1):
 * The getf.sig instruction can only execute in M0.
@@ -73,31 +72,30 @@ Misc pipeline limitations (Itanium 2):
 ASSEMBLY SYNTAX
 
 .align pads with nops in a text segment, but gas 2.14 and earlier
-incorrectly byte-swaps its nop bundle in big endian mode (eg. hpux),
-making it come out as break instructions.  We use the ALIGN() macro in
+incorrectly byte-swaps its nop bundle in big endian mode (eg. hpux), making
+it come out as break instructions.  We use the ALIGN() macro in
 mpn/ia64/ia64-defs.m4 when it might be executed across.  That macro
-suppresses any .align if the problem is detected by configure.  Lack
-of alignment might hurt performance but will at least be correct.
+suppresses any .align if the problem is detected by configure.  Lack of
+alignment might hurt performance but will at least be correct.
 
-foo:: to create a global symbol is not accepted by gas.  Use
-separate ".global foo" and "foo:" instead.
+foo:: to create a global symbol is not accepted by gas.  Use separate
+".global foo" and "foo:" instead.
 
-.global is the standard global directive.  gas accepts .globl, but
-hpux "as" doesn't.
+.global is the standard global directive.  gas accepts .globl, but hpux "as"
+doesn't.
 
-.proc / .endp generates the appropriate .type and .size information
-for ELF, so the latter directives don't need to be given explicitly.
+.proc / .endp generates the appropriate .type and .size information for ELF,
+so the latter directives don't need to be given explicitly.
 
 .pred.rel "mutex"... is standard for annotating predicate register
-relationships.  gas also accepts .pred.rel.mutex, but hpux "as"
-doesn't.
+relationships.  gas also accepts .pred.rel.mutex, but hpux "as" doesn't.
 
 .pred directives can't be put on a line with a label, like
 ".Lfoo: .pred ...", the HP assembler on HP-UX 11.23 rejects that.
 gas is happy with it, and past versions of HP had seemed ok.
 
-// is the standard comment sequence, but we prefer "C" since it
-inhibits m4 macro expansion.  See comments in ia64-defs.m4.
+// is the standard comment sequence, but we prefer "C" since it inhibits m4
+macro expansion.  See comments in ia64-defs.m4.
 
 
 
@@ -124,69 +122,39 @@ mpn_addmul_1:
 
 The current code runs at 3 c/l on Itanium 1 and 2 c/l on Itanium 2.
 
-It would be possible to reach 2 c/l for Itanium 1, using the ldpf8
-instruction.  Since rp and up might be mutually aligned in two ways, we
-will need two loop variants, with the same basic structure:
-
-  { .mfi	getf.sig
-		xma.l
-	   (p6)	cmp.leu		p6, p7 =
-} { .mfi	stf8
-		xma.hu
-	   (p7)	cmp.ltu		p6, p7 =
-		;;
-} { .mib	getf.sig
-	   (p6)	add 1
-		nop.b
-} { .mib	ldfp8		 = [up], 16
-	   (p7)	add
-		nop.b
-		;;
-  { .mfi	getf.sig
-		xma.l
-	   (p6)	cmp.leu		p6, p7 =
-} { .mfi	stf8
-		xma.hu
-	   (p7)	cmp.ltu		p6, p7 =
-		;;
-} { .mib	getf.sig
-	   (p6)	add 1
-		nop.b
-} { .mib	ldfp8		 = [rp], 16
-	   (p7)	add
-		br.cloop
-		;;
-}
-
-We could do even better on Itanium 2 using the carry propagation scheme
-of mpn_add_n above, 1.67 c/l.
+We could do even better on Itanium 2 using ldfp8 and the carry propagation
+scheme of mpn_add_n, 1.67 c/l.  But that would probably give very little
+actual speedup.
 
 ================================================================
 mpn_submul_1:
 
-The current code runs at 4 c/l on Itanium 1 and 3 c/l on Itanium 2.
-Getting to 2 c/l requires ldfp8 with all alignment overhead that
-implies.  Getting to 2.25 c/l would be straightforward with 4x
-unrolling.
+The current code runs at 4 c/l on Itanium 1 and 3 c/l on Itanium 2.  Getting
+to 2 c/l requires ldfp8 with all alignment overhead that implies.  Getting
+to 2.25 c/l would be straightforward with 4x unrolling.
+
+The current code uses modulo scheduled loops.  Not good.
 
 ================================================================
 mpn_mul_1:
 
 The current code runs at 2.5 c/l on Itanium 1 and 2 c/l on Itanium 2.
 
+Using a blocked approach, working off of 4 separate places in the operands,
+one could make use of the xma accumulation, and approach 1 c/l.
+
 ================================================================
 mpn_addmul_N
 
-For best speed, we need to give up using mpn_addmul_1 as the main
-multiply building block, and instead take multiple v limbs per loop.
-For the Itanium 1, we need to take about 8 limbs at a time for full
-speed.  For the Itanium 2, something like mpn_addmul_4 should be
-enough.
+For best speed, we need to give up using mpn_addmul_1 as the main multiply
+building block, and instead take multiple v limbs per loop.  For the Itanium
+1, we need to take about 8 limbs at a time for full speed.  For the Itanium
+2, something like mpn_addmul_4 should be enough.
 
 The add+cmp+cmp+add we use on the other codes is optimal for shortening
-recurrencies (1 cycle) but the sequence takes up 4 execution slots.
-When recurrency depth is not critical, a more standard 3-cycle
-add+cmp+add is better.
+recurrencies (1 cycle) but the sequence takes up 4 execution slots.  When
+recurrency depth is not critical, a more standard 3-cycle add+cmp+add is
+better.
 
 /* First load the 8 values from v */
 	ldfp8		v0, v1 = [r35], 16;;
@@ -241,28 +209,26 @@ Loop:	ldf8		u0 = [r33], 8
 ================================================================
 mpn_lshift, mpn_rshift
 
-The current code runs at 2 c/l on Itanium 1 and 1 cycle/limb on Itanium
-2.
+The current code runs at 2 c/l on Itanium 1 and 1 cycle/limb on Itanium 2.
 
 Using 63 separate loops, we could use the double-word shrp instruction.
-That instruction has a plain single-cycle latency.  We need 63 loops
-since this instruction only accept immediate count.  That would lead to
-a somewhat silly code size, but the speed would be 1 c/l on itanium,
-and 0.75 c/l on itanium2 (by using shrp each cycle plus shl/shr going
-down I1 for a further limb every second cycle).
+That instruction has a plain single-cycle latency.  We need 63 loops since
+this instruction only accept immediate count.  That would lead to a somewhat
+silly code size, but the speed would be 1 c/l on itanium, and 0.75 c/l on
+itanium2 (by using shrp each cycle plus shl/shr going down I1 for a further
+limb every second cycle).
 
 ================================================================
 mpn_copyi, mpn_copyd
 
-The current code runs at 1 cycle/limb on Itanium 1 and 0.5 c/l on
-Itanium 2.  But that is just for L1 cache hit.  On Itanium 2, the 4-way
-unrolled loop takes just 2 cycles, and thus load-use scheduling isn't
-great.  It might be best to use modulo scheduled loops, since that will
-allow us to do better load-use scheduling without too much unrolling.
+The current code runs at 1 cycle/limb on Itanium 1 and 0.5 c/l on Itanium 2.
+But that is just for L1 cache hit.  On Itanium 2, the 4-way unrolled loop
+takes just 2 cycles, and thus load-use scheduling isn't great.  It might be
+best to use modulo scheduled loops, since that will allow us to do better
+load-use scheduling without too much unrolling.
 
-Something is strange with these routines, depending on size or operand
-alignment, we get 1 c/l or 0.5 c/l on Itanium 2, according to
-tests/devel/try.  Cache bank conflicts?
+Depending on size or operand alignment, we get 1 c/l or 0.5 c/l on Itanium
+2, according to tests/devel/try.  Cache bank conflicts?
 
 
 
@@ -272,23 +238,23 @@ Intel Itanium Architecture Software Developer's Manual, volumes 1 to 3,
 Intel document 245317-004, 245318-004, 245319-004 October 2002.  Volume 1
 includes an Itanium optimization guide.
 
-Intel Itanium Processor-specific Application Binary Interface (ABI),
-Intel document 245370-003, May 2001.  Describes C type sizes, dynamic
-linking, etc.
+Intel Itanium Processor-specific Application Binary Interface (ABI), Intel
+document 245370-003, May 2001.  Describes C type sizes, dynamic linking,
+etc.
 
-Intel Itanium Architecture Assembly Language Reference Guide, Intel
-document 248801-004, 2000-2002.  Describes assembly instruction
-syntax and other directives.
+Intel Itanium Architecture Assembly Language Reference Guide, Intel document
+248801-004, 2000-2002.  Describes assembly instruction syntax and other
+directives.
 
-Itanium Software Conventions and Runtime Architecture Guide, Intel
-document 245358-003, May 2001.  Describes calling conventions,
-including stack unwinding requirements.
+Itanium Software Conventions and Runtime Architecture Guide, Intel document
+245358-003, May 2001.  Describes calling conventions, including stack
+unwinding requirements.
 
-Intel Itanium Processor Reference Manual for Software Optimization,
-Intel document 245473-003, November 2001.
+Intel Itanium Processor Reference Manual for Software Optimization, Intel
+document 245473-003, November 2001.
 
-Intel Itanium-2 Processor Reference Manual for Software Development
-and Optimization, Intel document 251110-002, April 2003.
+Intel Itanium-2 Processor Reference Manual for Software Development and
+Optimization, Intel document 251110-003, May 2004.
 
 All the above documents can be found online at
 
@@ -298,5 +264,5 @@ All the above documents can be found online at
 ----------------
 Local variables:
 mode: text
-fill-column: 70
+fill-column: 76
 End:
