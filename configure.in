@@ -303,11 +303,11 @@ case "$target" in
   # HP
   hppa1.0*-*-*)
     cclist="gcc cc"
-    gmp_cflags_cc="+O2"
+    gmp_cflags_cc="+O2 -Aa -D_HPUX_SOURCE"
     ;;
   hppa2.0w-*-*)
     cclist="cc"
-    gmp_cflags_cc="+DD64 +O3"
+    gmp_cflags_cc="+DD64 +O3 -Aa -D_HPUX_SOURCE"
     ;;
   hppa2.0*-*-*)
     check_64bit_compiler=yes
@@ -317,13 +317,13 @@ case "$target" in
     # if 2.0 operations work #gmp_xoptcflags_gcc="-mpa-risc-2-0 -mpa-risc-1-1"
     gmp_xoptcflags_gcc="-mpa-risc-1-1"
     # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-    gmp_cflags64_cc="+DA2.0 +e +O3 -D_LONG_LONG_LIMB"
-    gmp_cflags_cc="+DA1.1 +O2"		# Probably never used, 64-bit cc options should work
+    gmp_cflags64_cc="+DA2.0 +O3 -Aa -D_HPUX_SOURCE +e -D_LONG_LONG_LIMB"
+    gmp_cflags_cc="+DA1.1 +O2 -Aa -D_HPUX_SOURCE" # Probably never used, 64-bit cc options work
     ;;
   hppa*-*-*)
     cclist="gcc cc"
     gmp_cflags_gcc="$gmp_cflags_gcc -mpa-risc-1-1"
-    gmp_cflags_cc="+DA1.1 +O2"
+    gmp_cflags_cc="+DA1.1 +O2 -Aa -D_HPUX_SOURCE"
     ;;
 
   # VAX
