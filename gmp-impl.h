@@ -3266,19 +3266,12 @@ __gmpn_hgcd_sanity __GMP_PROTO ((const struct hgcd *hgcd,
 int
 mpn_hgcd_equal __GMP_PROTO ((const struct hgcd *A, const struct hgcd *B));
 
-/* Computes R = 2^k H + u A' - v B', which must be non-negative.
-   Temporary space needed is k + uvsize.
-
-   H and R must not overlap. */
-
 mp_size_t
 mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
 			   mp_ptr rp, mp_size_t ralloc,
-			   mp_ptr hp, mp_size_t hsize,
-			   int sign,
-			   mp_srcptr up, mp_srcptr ap,
-			   mp_srcptr vp, mp_srcptr bp,
-			   mp_size_t uvsize,
+			   int sign, mp_size_t uvsize,
+			   const struct hgcd_row *s,
+			   mp_srcptr ap, mp_srcptr bp,
 			   mp_ptr tp, mp_size_t talloc));
 
 #ifndef HGCD_SCHOENHAGE_THRESHOLD
