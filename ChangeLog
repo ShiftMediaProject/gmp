@@ -1,3 +1,11 @@
+2000-02-25  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (power): Move factorial handing code from `factor'
+	to `power'.
+
+	* demos/factorize.c (factor_using_pollard_rho): Move resetting of `c'
+	to before checking for a non-zero gcd.
+
 2000-02-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/asm-defs.m4 (MULFUNC_PROLOGUE): New macro by Linus.
@@ -102,7 +110,7 @@
 	
 2000-02-22  Torbjorn Granlund  <tege@swox.com>
 
-	* mpz/root.c: Complete rewrite.  Still primitive, but at least correct.
+	* mpz/root.c: Complete rewrite; still primitive, but at least correct.
 	* mpz/tests/t-root.c: New test.
 
 2000-02-22  Kevin Ryde  <kevin@swox.se>
