@@ -128,10 +128,10 @@ char *long_max_def = "not defined";
   } while (0)
 
 
-/* gcc 2.95.2 -mpowerpc64 -maix64 needs "static" on maxval and minval or it
-   thinks LONG_MAX<=LONG_MIN (when those values are decimal constants
-   provided by the AIX 4.3 headers at least).  Presumably some gremlin in
-   the constant folding.  */
+/* On AIX 4.3 <stdio.h> drags in some definitions of LONG_MAX etc which are
+   decimal constants without "L" suffixes.  gcc 2.95.2 -mpowerpc64 -maix64
+   needs "static" on maxval and minval or else it seems to truncate them to
+   plain "unsigned" thereby making maxval<=minval.  */
 
 #define CHECK_MAX_S(max_val, max_name, min_val, min_name, type, format) \
   do {                                                                  \
