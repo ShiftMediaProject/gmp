@@ -57,7 +57,7 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      mp_size_t res_prec;
+      unsigned long int res_prec;
       unsigned long int pow2;
 
       res_prec = urandom () % (bprec + 100);
