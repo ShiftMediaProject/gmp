@@ -1332,8 +1332,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_MARK (marker);                                          \
     xtmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_xp);      \
     ytmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_yp);      \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);          \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);        \
+    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp2);      \
                                                                 \
     pieces = SPEED_BLOCK_SIZE * datafactor / s->size / s->size; \
     pieces = MIN (pieces, SPEED_BLOCK_SIZE / s->size);          \
@@ -1412,8 +1412,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     MPN_COPY (xtmp, s->xp, s->size);                                    \
     MPN_COPY (ytmp, s->yp, s->size);                                    \
                                                                         \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);                  \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);                \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);                \
+    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp2);              \
                                                                         \
     pieces = SPEED_BLOCK_SIZE / 3;                                      \
     psize = 3 * pieces;                                                 \
