@@ -1,8 +1,8 @@
 /* mpz_init_set_ui(dest,val) -- Make a new multiple precision in DEST and
    assign VAL to the new number.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002, 2004 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -35,7 +35,7 @@ mpz_init_set_ui (mpz_ptr dest, unsigned long int val)
   dest->_mp_d[0] = val & GMP_NUMB_MASK;
   size = val != 0;
 
-#if GMP_NAIL_BITS != 0
+#if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */
   if (val > GMP_NUMB_MAX)
     {
       MPZ_REALLOC (dest, 2);

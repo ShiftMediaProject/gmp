@@ -1,6 +1,6 @@
 /* mpz_ui_sub -- Subtract an unsigned one-word integer and an mpz_t.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,7 +29,7 @@ mpz_ui_sub (mpz_ptr w, unsigned long int uval, mpz_srcptr v)
   mp_size_t vn, wn;
   mp_limb_t cy;
 
-#if GMP_NAIL_BITS != 0
+#if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */
   if (uval > GMP_NUMB_MAX)
     {
       mpz_t u;

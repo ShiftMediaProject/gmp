@@ -1,6 +1,7 @@
 /* mpf_div_ui -- Divide a float with an unsigned integer.
 
-Copyright 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001, 2002, 2004 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,7 +37,7 @@ mpf_div_ui (mpf_ptr r, mpf_srcptr u, unsigned long int v)
   mp_exp_t rexp;
   TMP_DECL (marker);
 
-#if GMP_NAIL_BITS != 0
+#if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */
   if (v > GMP_NUMB_MAX)
     {
       mpf_t vf;

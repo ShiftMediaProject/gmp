@@ -1,7 +1,8 @@
 /* mpz_fdiv_q_ui -- Division rounding the quotient towards -infinity.
    The remainder gets the same sign as the denominator.
 
-Copyright 1994, 1995, 1996, 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1994, 1995, 1996, 1999, 2001, 2002, 2004 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,7 +46,7 @@ mpz_fdiv_q_ui (mpz_ptr quot, mpz_srcptr dividend, unsigned long int divisor)
   qp = PTR(quot);
   np = PTR(dividend);
 
-#if GMP_NAIL_BITS != 0
+#if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */
   if (divisor > GMP_NUMB_MAX)
     {
       mp_limb_t dp[2], rp[2];

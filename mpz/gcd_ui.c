@@ -30,7 +30,7 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
   mp_size_t un;
   mp_limb_t res;
 
-#if GMP_NAIL_BITS != 0
+#if BITS_PER_ULONG > GMP_NUMB_BITS  /* avoid warnings about shift amount */
   if (v > GMP_NUMB_MAX)
     {
       mpz_t vz;
