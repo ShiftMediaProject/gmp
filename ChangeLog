@@ -1,3 +1,26 @@
+2000-08-16  Kevin Ryde  <kevin@swox.se>
+
+	* tune/mul_n_{mpn,open}.c: New files, being forced open-coded and
+	mpn #includes of mpn/generic/mul_n.c.
+	* tune/*: Add measuring of them.
+	* tune/speed.c: Print command line into *.gnuplot file.
+
+	* mpn/generic/mul_n.c (USE_MORE_MPN): Change to #if not #ifdef for
+	using the value, add #ifndef for providing the default.
+	* mpn/sparc64/gmp-mparam.h (USE_MORE_MPN): Add #ifndef.
+
+	* tests/t-constants.c: New file.
+	* tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/get_si.c: Use LONG_MAX, not BITS_PER_MP_LIMB, so the result
+	doesn't depend on limb size when outside the range of a long
+	(though such such results are not actually documented).
+	* mpz/tests/t-get_si.c: New file.
+	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpn/tests/try.c (call): Cast popcount and hamdist calls,
+	for the benefit of long long limb.
+
 2000-08-15  Kevin Ryde  <kevin@swox.se>
 
 	* mp.h (mp_set_memory_functions): Add missing #define.
