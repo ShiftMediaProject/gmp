@@ -43,18 +43,11 @@ CLEANFILES = $(EXTRA_PROGRAMS)
 
 SUFFIXES = .asm
 
-# m4 processing fudged for use in a second-level subdirectory
+# Copying the rules straight from mpn/Makefile.am doesn't work because we're
+# in a second-level subdirectory here.
 .asm.o:
-	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
 .asm.obj:
-	cd ..; $(M4) -DOPERATION_$* `cygpath -w tests/$<` >tests/tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
 .asm.lo:
-	cd ..; $(M4) -DPIC -DOPERATION_$* tests/$< >tests/tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
+	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
