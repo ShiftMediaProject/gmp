@@ -33,7 +33,7 @@ mpf_urandomb (mpf_t rop, gmp_randstate_t rstate, unsigned long int nbits)
   mp_exp_t exp;
 
   rp = PTR (rop);
-  nlimbs = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
+  nlimbs = BITS_TO_LIMBS (nbits);
 
   _gmp_rand (rp, rstate, nbits);
 
