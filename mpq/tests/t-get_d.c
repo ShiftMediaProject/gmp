@@ -1,6 +1,6 @@
 /* Test mpq_get_d and mpq_set_d
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,9 +34,7 @@ MA 02111-1307, USA. */
 #endif
 
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpq_t a;
   mp_size_t size;
@@ -108,8 +106,7 @@ main (argc, argv)
   exit (0);
 }
 
-dump (x)
-     mpq_t x;
+dump (mpq_t x)
 {
   mpz_out_str (stdout, 10, mpq_numref (x));
   printf ("/");

@@ -1,6 +1,6 @@
 /* Test mpq_cmp_ui.
 
-Copyright 1996, 1997 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,9 +28,7 @@ MA 02111-1307, USA. */
 
 #define SGN(x) ((x) < 0 ? -1 : (x) > 0 ? 1 : 0)
 
-ref_mpq_cmp_ui (a, bn, bd)
-     mpq_t a;
-     unsigned long int bn, bd;
+ref_mpq_cmp_ui (mpq_t a, unsigned long int bn, unsigned long int bd)
 {
   mpz_t ai, bi;
   int cc;
@@ -50,9 +48,7 @@ ref_mpq_cmp_ui (a, bn, bd)
 #define SIZE 8	/* increasing this lowers the probabilty of finding an error */
 #endif
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpq_t a, b;
   mp_size_t size;
