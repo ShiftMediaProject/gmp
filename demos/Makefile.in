@@ -416,13 +416,13 @@ allprogs: $(EXTRA_PROGRAMS)
 # Using "cd"s instead of a $(srcdir) path ensures $(srcdir) doesn't get into
 # the "#line"s in the generated files.
 #
+# FIXME: Automake yacc handling isn't quite right when building in a
+# separate object directory, hence the explicit rules used for now.
+#
 # FIXME: With ansi2knr and no-dependencies, there doesn't seem any easy way
-# to manually express that calclex$U.o depends on calc.h.  Making calclex.c
+# to manually express that calclex$U.lo depends on calc.h.  Making calclex.c
 # depend on calc.h gets the right result, but the extra lex runs are
 # unnecessary.
-#
-# FIXME: Automake yacc handling isn't quite right when building in a
-# separate object directory, so explicit rules are used for now.
 
 $(srcdir)/calclex.c: calclex.l calc.h
 	cd $(srcdir); lex -ocalclex.c calclex.l
