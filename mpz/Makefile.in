@@ -22,11 +22,6 @@ srcdir = .
 
 CC = gcc
 
-# If you cross compile on a machine with the same sizes of the integral
-# types ("int", "long int", "short int", and "char") define this as the
-# local compiler.  Otherwise, you need to look for the uses of LOCAL_CC below,
-# and handle those cases manually.
-LOCAL_CC = $(CC)
 CFLAGS = -g -O
 AR = ar
 AR_FLAGS = rc
@@ -50,24 +45,6 @@ MPZ_SRCS = abs.c add.c add_ui.c addmul_ui.c and.c array_init.c cdiv_q.c \
   set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c \
   sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c xor.c
-MPZS_OBJS = zsabs.o zsadd.o zsadd_ui.o zsaddmul_ui.o zsand.o zsarray_init.o zscdiv_q.o \
-  zscdiv_q_ui.o zscdiv_qr.o zscdiv_qr_ui.o zscdiv_r.o zscdiv_r_ui.o \
-  zscdiv_ui.o zsclear.o zsclrbit.o zscmp.o zscmp_si.o zscmp_ui.o zscmp_abs.o \
-  zscmp_abs_ui.o zscom.o \
-  zsdivexact.o zsfac_ui.o zsfdiv_q.o zsfdiv_q_2exp.o zsfdiv_q_ui.o \
-  zsfdiv_qr.o zsfdiv_qr_ui.o zsfdiv_r.o zsfdiv_r_2exp.o zsfdiv_r_ui.o \
-  zsfdiv_ui.o zsgcd.o zsgcd_ui.o zsgcdext.o zsget_d.o zsget_si.o zsget_str.o \
-  zsget_ui.o zsgetlimbn.o zshamdist.o zsinit.o zsinp_raw.o zsinp_str.o \
-  zsinvert.o zsior.o zsiset.o zsiset_d.o zsiset_si.o zsiset_str.o zsiset_ui.o \
-  zsjacobi.o zslcm.o zslegendre.o zsmod.o zsmul.o zsmul_2exp.o zsmul_ui.o \
-  zsneg.o zsout_raw.o zsout_str.o zsperfsqr.o zspopcount.o zspow_ui.o \
-  zspowm.o zspowm_ui.o zspprime_p.o zsrandom.o zsrandom2.o zsrealloc.o \
-  zsscan0.o zsscan1.o zsset.o zsset_d.o zsset_f.o zsset_q.o zsset_si.o \
-  zsset_str.o zsset_ui.o zssetbit.o zssize.o zssizeinbase.o zssqrt.o \
-  zssqrtrem.o zssub.o zssub_ui.o zsswap.o zstdiv_ui.o zstdiv_q.o zstdiv_q_2exp.o \
-  zstdiv_q_ui.o \
-  zstdiv_qr.o zstdiv_qr_ui.o zstdiv_r.o zstdiv_r_2exp.o zstdiv_r_ui.o \
-  zststbit.o zsui_pow_ui.o zsxor.o
 MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o cdiv_q.o \
   cdiv_q_ui.o cdiv_qr.o cdiv_qr_ui.o cdiv_r.o cdiv_r_ui.o \
   cdiv_ui.o clear.o clrbit.o cmp.o cmp_si.o cmp_ui.o cmp_abs.o \
@@ -89,15 +66,13 @@ INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/.. -I$(srcdir)
 
 libmpz.a: Makefile $(MPZ_OBJS)
 	rm -f $@
-	$(AR) $(AR_FLAGS) $@ $(MPZS_OBJS) $(MPZ_OBJS)
+	$(AR) $(AR_FLAGS) $@ $(MPZ_OBJS)
 
 .c.o:
-	@echo "Compiling $<"
-	@$(CC) -c -DGMP_SMALL $(INCLUDES) $(CFLAGS) $(XCFLAGS) $< -o zs`basename $@`
-	@$(CC) -c -UGMP_SMALL $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
+	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
 clean mostlyclean:
-	rm -f *.o zs*.c libmpz.a
+	rm -f *.o libmpz.a
 	@cd tests; $(MAKE) $@
 distclean maintainer-clean: clean
 	rm -f Makefile config.status
