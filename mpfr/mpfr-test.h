@@ -24,9 +24,9 @@ MA 02111-1307, USA. */
 #include <sys/fpu.h>
 #endif
 
-#if defined (hpux)
+#if defined (__hpux)
 #define srandom srand48
-#define random mrand48
+#define random() (mrand48() & 0x7fffffff)
 #endif
 
 double drand _PROTO ((void)); 
