@@ -23,7 +23,6 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
 LDADD = $(top_builddir)/libgmp.la
-dummy_LDADD = 
 
 if WANT_MPFR
 # FIXME: The following tests need mpfr_set_machine_rnd_mode() which is not 
@@ -33,5 +32,5 @@ MPBSD_check_OPTION = tcmp2 tmul_ui tcmp_ui tround tset_si tcmp tmul_2exp \
   tset_d tset_str tpi tset_z tlog2 tcan_round tzeta
 endif
 
-check_PROGRAMS = dummy $(MPBSD_check_OPTION)
+check_PROGRAMS = $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)

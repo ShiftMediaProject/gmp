@@ -24,11 +24,10 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libmp.la
-dummy_LDADD =
 
 if WANT_MPBSD
 MPBSD_check_OPTION = allfuns t-misc
 endif
 
-check_PROGRAMS = dummy $(MPBSD_check_OPTION)
+check_PROGRAMS = $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)
