@@ -1,4 +1,5 @@
 Authors of GNU MP (in chronological order of initial contribution)
+
 Torbjörn Granlund	Main author
 John Amanatides		Original version of mpz/pprime_p.c
 Paul Zimmermann		mpn/generic/mul_fft.c, mpn/generic/dc_divrem_n.c,
@@ -13,3 +14,8 @@ Kevin Ryde		Most x86 assembly, new autoconfery, and countless other
 			things (please see the GMP manual for complete list)
 Guillaume Hanrot	mpfr functions (with Paul Zimmermann)
 Gerardo Ballabio	gmpxx.h and C++ istream input
+Pedro Gimeno		Mersenne Twister random generator, other random number
+			revisions
+Jason Moxham		New mpz/fac_ui.c and gen-fac_ui.c
+
+See also mpfr/AUTHORS.
