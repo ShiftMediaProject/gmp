@@ -1,6 +1,6 @@
-/* gmp-mparam.h -- Compiler/machine parameter header file.
+/* Generic C gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,9 +19,6 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#define BITS_PER_MP_LIMB 32
-#define BYTES_PER_MP_LIMB 4
-#define BITS_PER_LONGINT 32
-#define BITS_PER_INT 32
-#define BITS_PER_SHORTINT 16
-#define BITS_PER_CHAR 8
+
+/* Values for BITS_PER_MP_LIMB etc will be determined by ./configure and put
+   in config.h. */
