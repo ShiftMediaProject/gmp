@@ -142,6 +142,9 @@ MA 02111-1307, USA.
 /* Define if the system has the type `void'. */
 #undef HAVE_VOID
 
+/* Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD */
+#undef TUNE_KARATSUBA_SQR_MAX
+
 /* Define if you have the `popen' function. */
 #undef HAVE_POPEN
 
@@ -172,11 +175,11 @@ MA 02111-1307, USA.
 /* Define if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
 
+/* Define if the CPU has a speed_cyclecounter in the tune directory) */
+#undef HAVE_SPEED_CYCLECOUNTER
+
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Define if a speed_cyclecounter exists (for the tune programs) */
-#undef HAVE_SPEED_CYCLECOUNTER
 
 /* Define if mpn/tests has calling conventions checking for the CPU */
 #undef HAVE_CALLING_CONVENTIONS
