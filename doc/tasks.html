@@ -58,9 +58,6 @@
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
-<li> <code>mpz_cdiv_q_2exp</code> and <code>mpz_cdiv_r_2exp</code>
-     could be implemented to match the corresponding tdiv and fdiv.
-     Maybe some code sharing is possible.
 </ul>
 
 
@@ -114,11 +111,11 @@
 <li> Implement a cache localized evaluate and interpolate for the
      toom3 <code>USE_MORE_MPN</code> code.  The necessary
      right-to-left <code>mpn_divexact_by3c</code> exists.
-<li> <code>mpn_mul_basecase</code> doing an NxM with big N but small M
-     could try for better cache locality by taking N piece by piece.
-     The current code could be left available for CPUs without
-     caching.  Depending how karatsuba etc is applied to unequal size
-     operands it might be possible to assume M is always smallish.
+<li> <code>mpn_mul_basecase</code> on NxM with big N but small M could try for
+     better cache locality by taking N piece by piece.  The current code could
+     be left available for CPUs without caching.  Depending how karatsuba etc
+     is applied to unequal size operands it might be possible to assume M is
+     always smallish.
 </ul>
 
 
@@ -147,7 +144,7 @@
      Should give 2 cycles/limb.  (Torbjörn has code that just needs to be
      finished.)
 <li> SPARC32/V9: Find out why the speed of <code>mpn_addmul_1</code>
-     and the other multiplies vary so much on successive sizes.
+     and the other multiplies varies so much on successive sizes.
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
@@ -156,7 +153,9 @@
      longlong.h umul_ppmm is suspected to be causing sqr_basecase to
      be slower than mul_basecase.
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
-     <code>mpn_sqr_basecase</code>.
+     <code>mpn_sqr_basecase</code>.  The generic C code turns into sensible
+     enough "<code>mulx</code>"s, but it's about 90 cycles and something better
+     should be possible, maybe with floating point.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
@@ -186,8 +185,6 @@
 <li> Cray: Write <code>mpn_mul_basecase</code> and
      <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
      same functions for Fujitsu VPP.
-<li> Integrate Paul Zimmermann's FFT multiply code.  (If you want to work on
-     this, ask Torbjörn for the code.)
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
 
   <pre>
@@ -231,6 +228,9 @@
      "<code>&lt;=</code>" rather than "<code>&lt;</code>", so a threshold can
      be set to <code>MP_SIZE_T_MAX</code> to get only the simpler code (the
      compiler will know <code>size &lt;= MP_SIZE_T_MAX</code> is always true).
+<li> <code>mpz_cdiv_q_2exp</code> and <code>mpz_cdiv_r_2exp</code>
+     could be implemented to match the corresponding tdiv and fdiv.
+     Maybe some code sharing is possible.
 </ul>
 
 
@@ -255,7 +255,7 @@
      registers.  For SPARC we therefore sometimes need to choose GMP
      configuration depending both on processor and operating system.
 
-     (Remember to make sure config.sub accepts any guess.)
+<li> Remember to make sure config.sub accepts any output from config.guess.
 
 <li> Find out whether there's an alloca available and how to use it.
      AC_FUNC_ALLOCA has various system dependencies covered, but we
@@ -299,7 +299,7 @@
      matters.
 <li> Enable support for FORTRAN versions of mpn files (eg. for
      mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
-     AC_PROG_F77 if such a file is found, .  Hopefully automake will
+     AC_PROG_F77 if such a file is found.  Hopefully automake will
      generate everything needed in the makefiles.
 <li> Only run GMP_PROG_M4 if it's needed, ie. if there's .asm files
      selected from the mpn path.  This might help say a generic C
