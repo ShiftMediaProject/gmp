@@ -973,7 +973,7 @@ speed_mpn_mul_fft_sqr (struct speed_params *s)
     (mpn_mul_fft (wp, pl, s->xp, s->size, s->xp, s->size, k), 1);
 }
 
-
+#if GMP_NAIL_BITS == 0
 double
 speed_mpn_hgcd (struct speed_params *s)
 {
@@ -1090,6 +1090,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   TMP_FREE (marker);
   return t;
 }
+#endif /* GMP_NAIL_BITS == 0 */
 double
 speed_mpn_gcd (struct speed_params *s)
 {

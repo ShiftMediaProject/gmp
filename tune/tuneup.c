@@ -976,12 +976,14 @@ tune_powm (void)
 void
 tune_hgcd (void)
 {
+#if GMP_NAIL_BITS == 0
   static struct param_t  param;
   param.name = "HGCD_SCHOENHAGE_THRESHOLD";
   param.function = speed_mpn_hgcd;
   /* We seem to get strange results for small sizes */
   param.min_size = 50;
   one (&hgcd_schoenhage_threshold, &param);
+#endif
 }
 
 void
