@@ -600,6 +600,10 @@ mpn_gcd (gp, up, size, vp, vsize)
 
 	  size -= up[size - 1] == 0;
 	}
+
+#if WANT_GCDEXT_ONE_STEP
+      return 0;
+#endif
     }
 
 #if RECORD
