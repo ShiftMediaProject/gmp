@@ -283,6 +283,9 @@ MA 02111-1307, USA.
 /* Define to 1 if the system has the type `quad_t'. */
 #undef HAVE_QUAD_T
 
+/* Define to 1 if you have the `raise' function. */
+#undef HAVE_RAISE
+
 /* Define to 1 if you have the `read_real_time' function. */
 #undef HAVE_READ_REAL_TIME
 
