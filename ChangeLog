@@ -1,3 +1,23 @@
+2000-09-03  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/aors_ui.c: New file merging add_ui.c and sub_ui.c, no object
+	code changes.
+	* mpz/{add_ui.c,sub_ui.c}: Remove files.
+	* mpz/Makefile.am: Update.
+
+	* gmp-impl.h (MPZ_FITS_{S,U}TYPE_SDT): New macros.
+	* mpz/fits.c: New file merging six separate fits*.c.
+	* mpz/fits_{s,u}{short,int,long}_p.c: Remove files.
+	* mpz/Makefile.am: Use new fits.c, change object names from
+	fits_*_p.lo to fits_*.lo to avoid SunOS 4 native "ar" warnings.
+	* Makefile.am (MPZ_OBJECTS): Change from fits_*_p.lo to fits_*.lo.
+
+	* acinclude.m4 (GMP_CHECK_ASM_RODATA): New macro, defining RODATA.
+	* configure.in: Use it.
+	* mpn/x86/k[67]/mmx/popham.asm: Use it.
+
+	* mpn/x86/*/*.asm: Use "TEXT" not ".text".
+
 2000-09-02  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/aors.c: New file merging add.c and sub.c, no object code changes.
@@ -13,7 +33,7 @@
 
 	* mpn/x86/x86-defs.m4 (jadcl0, cmov_simulate, ASSERT,
 	movl_text_address): Don't use "1:" style labels.
-	(Zdisp): Sort by opcode.
+	(Zdisp): Rearrange a bit, switch to all hex.
 	* mpn/x86/README.family: Note SCO "as" doesn't support "1:" style
 	local labels, misc rewordings.
 
