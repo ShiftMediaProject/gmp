@@ -117,16 +117,30 @@ dnl IEEE-754 compatible rounding mode).
 if test -n "$GCC"; then
   AC_CACHE_CHECK([for gcc float-conversion bug], mpfr_cv_gcc_floatconv_bug, [
   AC_TRY_RUN([
+#include <float.h>
+#ifdef MPFR_HAVE_FESETROUND
+#include <fenv.h>
+#endif
 int main()
 {
   double x = 0.5;
   int i;
   for (i = 1; i <= 11; i++)
     x *= x;
-  return x == 0;
+  if (x != 0)
+    return 1;
+#ifdef MPFR_HAVE_FESETROUND
+  /* Useful test for the G4 PowerPC */
+  fesetround(FE_TOWARDZERO);
+  x = DBL_MAX;
+  x *= 2.0;
+  if (x != DBL_MAX)
+    return 1;
+#endif
+  return 0;
 }
-  ], [mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"],
-     [mpfr_cv_gcc_floatconv_bug="no"],
+  ], [mpfr_cv_gcc_floatconv_bug="no"],
+     [mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"],
      [mpfr_cv_gcc_floatconv_bug="cannot test, use -ffloat-store"])
   ])
   if test "$mpfr_cv_gcc_floatconv_bug" != "no"; then
