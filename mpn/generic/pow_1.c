@@ -36,6 +36,20 @@ mpn_pow_1 (mp_ptr rp, mp_srcptr bp, mp_size_t bn, mp_limb_t exp, mp_ptr tp)
   mp_size_t rn;
   int par;
 
+  if (exp <= 1)
+    {
+      if (exp == 0)
+	{
+	  rp[0] = 1;
+	  return 1;
+	}
+      else
+	{
+	  MPN_COPY (rp, bp, bn);
+	  return bn;
+	}
+    }
+
   /* Count number of bits in exp, and compute where to put initial square in
      order to magically get results in the entry rp.  Use simple code,
      optimized for small exp.  For large exp, the bignum operations will take
@@ -53,7 +67,7 @@ mpn_pow_1 (mp_ptr rp, mp_srcptr bp, mp_size_t bn, mp_limb_t exp, mp_ptr tp)
     {
       mp_limb_t bl = bp[0];
 
-      if ((cnt & 1) == 0)
+      if ((cnt & 1) != 0)
 	MP_PTR_SWAP (rp, tp);
 
       mpn_sqr_n (rp, bp, bn);
