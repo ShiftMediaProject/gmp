@@ -46,7 +46,10 @@ defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
 defframe(PARAM_DST, 4)
 
-dnl  must be at least 5 since the unrolled code can't handle less than 5
+dnl  parameter space reused
+define(SAVE_EBX,`PARAM_SIZE')
+
+dnl  minimum 5 since the unrolled code can't handle less than 5
 deflit(UNROLL_THRESHOLD, 5)
 
 	.text
@@ -55,8 +58,7 @@ PROLOGUE(mpn_copyi)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%ebx
-FRAME_pushl()
+	movl	%ebx, SAVE_EBX
 
 	movl	PARAM_SRC, %eax
 	movl	PARAM_DST, %edx
@@ -83,7 +85,7 @@ L(simple):
 	jnz	L(simple)
 
 L(simple_done):
-	popl	%ebx
+	movl	SAVE_EBX, %ebx
 	ret
 
 
@@ -96,7 +98,7 @@ L(unroll):
 	leal	(%edx,%ecx,4), %edx	# dst end - 12
 	negl	%ecx
 
-	testb	$4, %bl
+	testl	$4, %ebx   # testl to pad code closer to 16 bytes for L(top)
 	jz	L(aligned)
 
 	# both src and dst unaligned, process one limb to align them
@@ -106,7 +108,7 @@ L(unroll):
 L(aligned):
 
 
-	# this is 0x41, close enough to aligned
+	ALIGN(16)
 L(top):
 	# eax	src end - 12
 	# ebx
@@ -137,7 +139,7 @@ L(finish_not_two):
 	movl	%ebx, 8(%edx)
 
 L(done):
-	popl	%ebx
+	movl	SAVE_EBX, %ebx
 	femms
 	ret
 

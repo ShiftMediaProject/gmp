@@ -31,22 +31,24 @@ include(`../config.m4')
 #
 # The various comments in mpn/x86/k7/copyi.asm apply here too.
 
-
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
 defframe(PARAM_DST, 4)
+deflit(`FRAME',0)
 
-dnl  must be at least 5 since the unrolled code can't handle less than 5
+dnl  parameter space reused
+define(SAVE_EBX,`PARAM_SIZE')
+define(SAVE_ESI,`PARAM_SRC')
+
+dnl  minimum 5 since the unrolled code can't handle less than 5
 deflit(UNROLL_THRESHOLD, 5)
 
 	.text
 	ALIGN(32)
 PROLOGUE(mpn_copyd)
-deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%ebx
-FRAME_pushl()
+	movl	%ebx, SAVE_EBX
 
 	movl	PARAM_SRC, %eax
 	movl	PARAM_DST, %edx
@@ -71,20 +73,20 @@ L(simple):
 	jnz	L(simple)
 
 L(simple_done):
-	popl	%ebx
+	movl	SAVE_EBX, %ebx
 	ret
 
 
 L(unroll):
-	pushl	%esi
+	movl	%esi, SAVE_ESI
 	leal	(%eax,%ecx,4), %ebx
 	leal	(%edx,%ecx,4), %esi
 
 	andl	%esi, %ebx
-	popl	%esi
+	movl	SAVE_ESI, %esi
 	subl	$4, %ecx		# size-4
 
-	testb	$4, %bl
+	testl	$4, %ebx   # testl to pad code closer to 16 bytes for L(top)
 	jz	L(aligned)
 
 	# both src and dst unaligned, process one limb to align them
@@ -94,7 +96,7 @@ L(unroll):
 L(aligned):
 
 
-	ALIGN(32)	# avoid 0x3e
+	ALIGN(16)
 L(top):
 	# eax	src
 	# ebx
@@ -106,10 +108,10 @@ L(top):
 	subl	$4, %ecx
 	movq	%mm0, 16+8(%edx,%ecx,4)
 	movq	%mm1, 16(%edx,%ecx,4)
-	jns	L(top)		# jump no carry and not zero
+	jns	L(top)
 
 
-	# now %ecx is -1 to -4 representing respectively 3 to 0 limbs remaining
+	# now %ecx is -4 to -1 representing respectively 0 to 3 limbs remaining
 
 	test	$2, %cl
 	jz	L(finish_not_two)
@@ -125,7 +127,7 @@ L(finish_not_two):
 	movl	%ebx, (%edx)
 
 L(done):
-	popl	%ebx
+	movl	SAVE_EBX, %ebx
 	femms
 	ret
 
