@@ -25,7 +25,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-cmp t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
+check_PROGRAMS = t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   t-lcm dive dive_ui t-sqrtrem convert io logic bit                  \
   t-powm t-powm_ui t-pow t-div_2exp reuse                            \
   t-root t-jac t-bin t-misc t-get_si t-fac_ui t-fib_ui t-scan t-fits \
