@@ -144,15 +144,20 @@ check_bigs (void)
 
   mpz_init (sd);
   mpz_setbit (sd, 300L);
-  mpz_sub_ui (sd, sd, 1);
+  mpz_sub_ui (sd, sd, 1L);
   mpz_clrbit (sd, 13L);
   mpz_init_set_ui (a, 123456789L);
 
   gmp_randinit_lc_2exp (rstate, a, 5L, 64L);
-  gmp_randseed (rstate, sd);
 
   for (i = 0; i < 20; i++)
-    mpz_urandomb (a, rstate, 80L);
+    {
+      mpz_neg (sd, sd);
+      gmp_randseed (rstate, sd);
+      mpz_mul_ui (sd, sd, 7L);
+
+      mpz_urandomb (a, rstate, 80L);
+    }
 
   gmp_randclear (rstate);
   mpz_clear (a);
