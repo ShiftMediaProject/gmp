@@ -533,7 +533,7 @@ AC_DEFUN(GMP_HPC_HPPA_2_0,
 #   ccom: HP92453-01 A.10.32.30 HP C Compiler
 # Let A.10.32.30 or higher be ok.
 echo >conftest.c
-gmp_tmp_vs=`$1 $2 -V -c -o conftest.$ac_objext conftest.c 2>&1 | grep "^ccom:"`
+gmp_tmp_vs=`$1 $2 -V -c -o conftest.$OBJEXT conftest.c 2>&1 | grep "^ccom:"`
 echo "Version string: $gmp_tmp_vs" >&AC_FD_CC
 rm conftest*
 gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
@@ -973,7 +973,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$ac_objext conftes2.$ac_objext >&AC_FD_CC"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
@@ -1023,7 +1023,7 @@ AC_CACHE_CHECK([if .align assembly directive is logarithmic],
 	.align	4
 foo$gmp_cv_asm_label_suffix
 	.byte	2],
-  [gmp_tmp_val=[`$NM conftest.$ac_objext | grep foo | \
+  [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
      sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_asm_align_log=yes
@@ -1314,7 +1314,7 @@ AC_CACHE_CHECK([what prefix to use for a local label],
   GMP_TRY_ASSEMBLE(
 [dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
-  [if $NM conftest.$ac_objext >conftest.nm 2>&AC_FD_CC; then : ; else
+  [if $NM conftest.$OBJEXT >conftest.nm 2>&AC_FD_CC; then : ; else
     cat conftest.nm >&AC_FD_CC
     AC_MSG_WARN(["$NM" failure])
     break
@@ -1374,7 +1374,7 @@ AC_CACHE_CHECK([how to define a 32-bit word],
 	$gmp_tmp_op	0
 foo$gmp_cv_asm_label_suffix
 	.byte	0],
-        [gmp_tmp_val=[`$NM conftest.$ac_objext | grep foo | \
+        [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
           sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
         if test "$gmp_tmp_val" = 4; then
           gmp_cv_asm_w32="$gmp_tmp_op"
@@ -1415,7 +1415,7 @@ AC_DEFUN(GMP_ASM_X86_MMX,
 [gmp_cv_asm_x86_mmx=yes
 case $host in
 *-*-solaris*)
-  if (dis conftest.$ac_objext >conftest.out) 2>/dev/null; then
+  if (dis conftest.$OBJEXT >conftest.out) 2>/dev/null; then
     if grep "0f 6f c1" conftest.out >/dev/null; then
       gmp_cv_asm_x86_mmx=movq-bug
     fi
