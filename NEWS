@@ -21,16 +21,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 Changes between MP version 4.1.2 and 4.2
 
 * Bug fixes.
-* New systems supported: HP-UX IA-64.
+* New systems supported: HP-UX IA-64, HPPA 64-bit gcc.
+* New i386 fat binary for x86 family, selecting optimized code at runtime.
 * New build option: --enable-profiling=instrument.
 * New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
   gmp_randinit_default.
 * New memory function: mp_get_memory_functions.
 * New random functions: gmp_randinit_set, gmp_urandomb_ui, gmp_urandomm_ui.
+* New integer functions: mpz_combit, mpz_rootrem.
 * gmp_printf etc new type "M" for mp_limb_t.
 * gmp_scanf and friends now accept C99 hex floats.
 * Numeric input and output can now be in bases up to 62.
 * Comparisons mpz_cmp_d, mpz_cmpabs_d, mpf_cmp_d recognise infinities.
+* Conversions mpz_get_d, mpq_get_d, mpf_get_d truncate towards zero,
+  previously their behaviour was unspecified.
 
 Changes between MP version 4.1.1 and 4.1.2
 
