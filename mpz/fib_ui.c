@@ -62,15 +62,13 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
       return;
     }
 
-  TMP_MARK (marker);
   n2 = n/2;
   xalloc = MPN_FIB2_SIZE (n2) + 1;
-  xp = TMP_ALLOC_LIMBS (2 * xalloc);
-  yp = xp + xalloc;
-
   MPZ_REALLOC (fn, 2*xalloc+1);
   fp = PTR (fn);
 
+  TMP_MARK (marker);
+  TMP_ALLOC_LIMBS_2 (xp,xalloc, yp,xalloc);
   size = mpn_fib2_ui (xp, yp, n2);
 
   TRACE (printf ("mpz_fib_ui last step n=%lu size=%ld bit=%lu\n",
