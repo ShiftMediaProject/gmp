@@ -1,3 +1,30 @@
+2001-06-15  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpz/t-set_f.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/set_f.c: Share MPN_COPY between pad and trunc cases, do exp<=0
+	test earlier, store SIZ(w) earlier.
+
+	* tests/t-count_zeros.c: New file.
+	* tests/t-gmpmax.c: New file.
+	* tests/Makefile.am (check_PROGRAMS): Add them.
+
+	* mp_clz_tab.c: Compile the table only if longlong.h says it's needed;
+	add an internal-use-only comment.
+	* tune/common.c: Force a __clz_tab for convenience when testng.
+	
+	* mpn/x86/pentium/gmp-mparam.h, mpn/x86/pentium/mmx/gmp-mparam.h: Add
+	COUNT_LEADING_ZEROS_NEED_CLZ_TAB, for mod_1.asm.
+
+	* longlong.h (count_leading_zeros) [pentium]: Decide to go with float
+	method for p54.
+	(count_leading_zeros) [alpha]: Add COUNT_LEADING_ZEROS_NEED_CLZ_TAB.
+	(__clz_tab): Provide a prototype only if it's needed.
+
+	* tests/trace.c (mpz_trace): Don't use = on structures.
+	(mpn_trace): Set _mp_alloc when creating mpz.
+
 2001-06-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/divrem_1.asm: Amend some comments about P5 speed.
