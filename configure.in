@@ -1111,6 +1111,23 @@ case $host in
   [*-*-aix[34]*])
     if test -z "$enable_shared"; then enable_shared=no; fi ;;
 
+  # On Windows, build only static by default, and don't allow both static
+  # and DLL.  libtool -no-undefined is needed for a DLL, as per the
+  # AC_LIBTOOL_WIN32_DLL doco.
+  #
+  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+    if test -z "$enable_shared"; then
+      enable_shared=no
+    fi
+    if test "$enable_shared" != no && test "$enable_static" != no; then
+      AC_MSG_ERROR([cannot build both static and DLL, since gmp.h is different for each.
+Use --disable-static --enable-shared to build just a DLL.])
+    fi
+    if test "$enable_shared" = yes; then
+      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
+    fi
+    ;;
+
   # FIXME: On SCO 5, an explicit -lc is not wanted when making shared
   # libraries.  Giving it makes strange things happen, like ctype.h macros
   # not working and profiler mcount calls segfaulting.  Libtool ought to
@@ -1132,6 +1149,7 @@ case $host in
     enable_shared=no ;;
 esac
 
+AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 # Generate an error here if attempting to build both shared and static when
@@ -1145,6 +1163,26 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
       ;;
   esac
 fi
+
+# Encode in gmp.h whether a shared or static library is available.
+# Currently only used for the windows DLL stuff.
+#
+case $enable_shared in
+yes) __GMP_LIBGMP_SHARED=1 ;;
+no)  __GMP_LIBGMP_SHARED=0 ;;
+esac
+AC_SUBST(__GMP_LIBGMP_SHARED)
+
+case $enable_static in
+yes) __GMP_LIBGMP_STATIC=1 ;;
+no)  __GMP_LIBGMP_STATIC=0 ;;
+esac
+AC_SUBST(__GMP_LIBGMP_STATIC)
+
+# Tell gmp.h it's building gmp, not an application.
+# Currently only used to help the windows DLL stuff.
+#
+DEFS="$DEFS -D__GMP_WITHIN_GMP"
 
 
 # libtool $pic_flag for use by mpn/Makeasm.am.
