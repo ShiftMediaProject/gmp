@@ -2106,7 +2106,8 @@ then naturally GMP is not reentrant.
 
 @item
 @code{mpf_set_default_prec} and @code{mpf_init} use a global variable for the
-selected precision.  @code{mpf_init2} can be used instead.
+selected precision.  @code{mpf_init2} can be used instead, and in the C++
+interface an explicit precision to the @code{mpf_class} constructor.
 
 @item
 @code{mpz_random} and the other old random number functions use a global
@@ -5530,9 +5531,9 @@ random data better suited for use as a seed.
 @section Random State Miscellaneous
 
 @deftypefun {unsigned long} gmp_urandomb_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
-Return a uniformly distributed random number in the range 0 to
-@m{2^n-1,2^@var{n}-1}, inclusive.  @var{n} must be less than or equal to the
-number of bits in an @code{unsigned long}.
+Return a uniformly distributed random number of @var{n} bits, ie.@: in the
+range 0 to @m{2^n-1,2^@var{n}-1} inclusive.  @var{n} must be less than or
+equal to the number of bits in an @code{unsigned long}.
 @end deftypefun
 
 @deftypefun {unsigned long} gmp_urandomm_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
@@ -6488,6 +6489,31 @@ that value, in bits.  If not, the default @code{mpf} precision
 
 If the string is not a valid float, an @code{std::invalid_argument} exception
 is thrown.  The same applies to @code{operator=}.
+@end deftypefun
+
+@deftypefun void mpf_class::operator= (type @var{op})
+Convert and store the given @var{op} value to an @code{mpf_class} object.  The
+same types are accepted as for the constructors above.
+
+Note that @code{operator=} only stores a new value, it doesn't copy or change
+the precision of the destination, instead the value is truncated if necessary.
+This is the same as @code{mpf_set} etc.  Note in particular this means for
+@code{mpf_class} a copy constructor is not the same as a default constructor
+plus assignment.
+
+@example
+mpf_class x (y);   // x created with precision of y
+
+mpf_class x;       // x default precision
+x = y;             // value truncated to that precision
+@end example
+
+Applications using templated code may need to be careful about the assumptions
+the code makes in this area, when working with @code{mpf_class} values of
+various different or non-default precisions.  For instance implementations of
+the standard @code{complex} template have been seen in both styles above,
+though of course @code{complex} is normally only actually specified for use
+with the builtin float types.
 @end deftypefun
 
 @deftypefun mpf_class abs (mpf_class @var{op})
