@@ -57,7 +57,7 @@ TARG_DIST = a29k alpha arm clipper cray generic hppa i960 ia64 lisp m68k m88k \
   mips2 mips3 ns32k pa64 pa64w power powerpc32 powerpc64 pyr sh sparc32 \
   sparc64 thumb vax x86 z8000 z8000x
 
-EXTRA_DIST = asm-defs.m4 m4-ccas $(TARG_DIST)
+EXTRA_DIST = asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
 
 
 include Makeasm.am
