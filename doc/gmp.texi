@@ -2576,7 +2576,7 @@ versions of checker (0.9.9.1) don't yet support the standard C++ library.
 
 @item Valgrind
 @cindex Valgrind
-The valgrind program (@uref{http://devel-home.kde.org/~sewardj/}) is a memory
+The valgrind program (@uref{http://valgrind.kde.org/}) is a memory
 checker for x86s.  It translates and emulates machine instructions to do
 strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
