@@ -71,6 +71,7 @@ AR = @AR@
 AS = @AS@
 AWK = @AWK@
 CC = @CC@
+CCAS = @CCAS@
 CC_TEST = @CC_TEST@
 CPP = @CPP@
 CXX = @CXX@
@@ -748,8 +749,6 @@ maintainer-clean
 
 # FIXME: Build libmp.a?
 
-# FIXME: `make check' doesn't build libgmp.la the same way as `make' does.
-#        Let `check' depend on something else (`all'?).
 check: all
 	cd mpz/tests && $(MAKE) $(FLAGS_TO_PASS) check
 	cd mpq/tests && $(MAKE) $(FLAGS_TO_PASS) check
@@ -757,7 +756,7 @@ check: all
 
 # Don't ship CVS directories.
 dist-hook:
-	-find $(distdir) -name CVS -type d | xargs rm
+	-find $(distdir) -name CVS -type d | xargs rm -rf
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
