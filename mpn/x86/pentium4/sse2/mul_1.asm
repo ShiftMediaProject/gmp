@@ -1,6 +1,7 @@
-dnl  Intel Pentium-4 mpn_mul_1 -- mpn by limb multiplication.
+dnl  Intel Pentium-4 mpn_mul_1 -- Multiply a limb vector with a limb and store
+dnl  the result in a second limb vector.
 dnl 
-dnl  P4: 4.0 cycles/limb
+dnl  Pentium4: 4 cycles/limb
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 dnl 
