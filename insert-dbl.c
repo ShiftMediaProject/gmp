@@ -43,7 +43,13 @@ __gmp_scale2 (d, exp)
   {
     union ieee_double_extract x;
     x.d = d;
-    x.s.exp += exp;
+    exp += x.s.exp;
+    x.s.exp = exp;
+    if (exp >= 2048)
+      {
+	x.s.exp = 2047;
+	x.s.manl = x.s.manh = 0;
+      }
     return x.d;
   }
 #else
