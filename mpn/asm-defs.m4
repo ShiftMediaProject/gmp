@@ -126,9 +126,16 @@ dnl       filename in __file__, so care should be taken that no macro has
 dnl       the same name as a file, or an unwanted expansion will occur when
 dnl       printing an error or warning.
 dnl
-dnl  OpenBSD 2.6 m4 - this m4 rejects decimal constants containing an 8 or 9
-dnl       in eval(), making it pretty much unusable.  This bug is confined
-dnl       to version 2.6 (it's not in 2.5, and has been fixed in 2.7).
+dnl  changecom() - BSD m4 changecom doesn't quite work like the man page
+dnl       suggests, in particular "changecom" or "changecom()" doesn't
+dnl       disable the comment feature and multi-character comment sequences
+dnl       don't seem to work.  If the default `#' and newline aren't
+dnl       suitable it's necessary to change it to something else,
+dnl       eg. changecom(;).
+dnl
+dnl  OpenBSD 2.6 m4 - in this m4, eval() rejects decimal constants containing
+dnl       an 8 or 9, making it pretty much unusable.  The bug is confined to
+dnl       version 2.6 (it's not in 2.5, and has been fixed in 2.7).
 dnl
 dnl  SunOS /usr/bin/m4 - this m4 lacks a number of desired features,
 dnl       including $# and $@, defn(), m4exit(), m4wrap(), pushdef(),
@@ -803,7 +810,7 @@ dnl  Usage: C comment ...
 dnl
 dnl  "C" works like a FORTRAN-style comment character.  This can be used for
 dnl  comments to the right of assembly instructions, where just dnl would
-dnl  remove the linefeed, and concatenate adjacent lines.
+dnl  remove the newline and concatenate adjacent lines.
 dnl
 dnl  "C" and/or "dnl" are useful when an assembler doesn't support comments,
 dnl  or where different assemblers for a particular CPU have different
@@ -826,7 +833,7 @@ dnl  aors_n
 m4_not_for_expansion(`OPERATION_add_n')
 m4_not_for_expansion(`OPERATION_sub_n')
 
-dnl  aorsmul_n
+dnl  aorsmul_1
 m4_not_for_expansion(`OPERATION_addmul_1')
 m4_not_for_expansion(`OPERATION_submul_1')
 
@@ -844,6 +851,10 @@ dnl  popham
 m4_not_for_expansion(`OPERATION_popcount')
 m4_not_for_expansion(`OPERATION_hamdist')
 
+dnl  lorrshift
+m4_not_for_expansion(`OPERATION_lshift')
+m4_not_for_expansion(`OPERATION_rshift')
+
 
 dnl  Usage: m4_config_gmp_mparam(`symbol')
 dnl
@@ -851,9 +862,8 @@ dnl  Check that `symbol' is defined.  If it isn't, issue an error and
 dnl  terminate immediately.  The error message explains that the symbol
 dnl  should be in config.m4, copied from gmp-mparam.h.
 dnl
-dnl  Processing is terminated immediately since missing something like
-dnl  KARATSUBA_SQR_THRESHOLD can lead to infinite loops with endless error
-dnl  messages.
+dnl  Termination is immediate since missing say KARATSUBA_SQR_THRESHOLD can
+dnl  lead to infinite loops and endless error messages.
 
 define(m4_config_gmp_mparam,
 m4_assert_numargs(1)
@@ -907,7 +917,7 @@ m4_assert_numargs(2)
 substr(`$2',0,1)``''substr(`$2',1))')
 
 
-dnl  Usage: m4_instruction_wrapper(num)
+dnl  Usage: m4_instruction_wrapper()
 dnl
 dnl  Put this, unquoted, on a line on its own, at the start of a macro
 dnl  that's a wrapper around an assembler instruction.  It adds code to give
@@ -928,8 +938,8 @@ dnl  "jmp foo" instead of the intended "jmp( foo)".  "jmp()" with no
 dnl  argument also provokes the error message.
 dnl
 dnl  m4_instruction_wrapper should only be used with wrapped instructions
-dnl  that take arguments, since obviously something meant to be used as
-dnl  plain "ret", say, doesn't want to give an error when used that way.
+dnl  that take arguments, since obviously something meant to be used as say
+dnl  plain "ret" doesn't want to give an error when used that way.
 
 define(m4_instruction_wrapper,
 m4_assert_numargs(0)
@@ -1115,49 +1125,86 @@ define_mpn(udiv_qrnnd)
 define_mpn(xnor_n)
 define_mpn(xor_n)
 
-define(`ASM_START',
-	`')
 
-define(`PROLOGUE',
-	`
-	TEXT
+dnl  Defines for C global arrays and variables, with names matching what's
+dnl  used in the C code.
+dnl
+dnl  Notice that GSYM_PREFIX is included, unlike with the function defines
+dnl  above.  Also, "deflit" is used so that something like __clz_tab(%ebx)
+dnl  comes out as __gmpn_clz_tab(%ebx), for the benefit of CPUs with that
+dnl  style assembler syntax.
+
+deflit(__clz_tab,            `GSYM_PREFIX`'MPN(`clz_tab')')
+deflit(modlimb_invert_table, `GSYM_PREFIX`'__gmp_modlimb_invert_table')
+
+
+dnl  Usage: ASM_START()
+dnl
+dnl  Emit any directives needed once at the start of an assembler file, like
+dnl  ".set noreorder" or whatever.  The default for this is nothing, but
+dnl  it's redefined by CPU specific m4 files.
+
+define(ASM_START)
+
+
+dnl  Usage: PROLOGUE(foo)
+dnl         EPILOGUE(foo)
+dnl
+dnl  Emit directives to start and end a function.  Notice that GSYM_PREFIX
+dnl  is added to the name given, so from C the function is simply called
+dnl  foo().
+dnl
+dnl  The defaults here are something typical and sensible, but CPU or system
+dnl  specific m4 files redefine it as necessary.
+
+define(PROLOGUE,
+`	TEXT
 	ALIGN(4)
 	GLOBL	GSYM_PREFIX`$1'
 	TYPE(GSYM_PREFIX`$1',`function')
 GSYM_PREFIX`$1':')
 
 define(`EPILOGUE',
-	`
-	SIZE(GSYM_PREFIX`$1',.-GSYM_PREFIX`$1')')
+`	SIZE(GSYM_PREFIX`$1',.-GSYM_PREFIX`$1')')
 
+
+dnl  Usage: L(name)
+dnl
+dnl  Generate a local label with the given name.  This is simply a
+dnl  convenient way to add LSYM_PREFIX.
+dnl
 dnl  LSYM_PREFIX might be L$, so defn() must be used to quote it or the L
-dnl  will expand as the L macro, an infinite recursion.
+dnl  will expand again as the L macro, making an infinite recursion.
+
 define(`L',`defn(`LSYM_PREFIX')$1')
 
+
+dnl  Usage: INT32(label,value)
+dnl         INT64(label,first,second)
+
 define(`INT32',
-	`
-	ALIGN(4)
+m4_assert_defined(`W32')
+`	ALIGN(4)
 $1:
-	W32	$2
-	')
+	W32	$2')
 
 define(`INT64',
-	`
-	ALIGN(8)
+m4_assert_defined(`W32')
+`	ALIGN(8)
 $1:
 	W32	$2
-	W32	$3
-	')
+	W32	$3')
 
 
 dnl  Usage: ALIGN(bytes)
 dnl
 dnl  Emit a ".align" directive.  The alignment is specified in bytes, and
 dnl  will normally need to be a power of 2.  The actual ".align" generated
-dnl  is either bytes or logarithmic according to what ./configure detects.
+dnl  is either bytes or logarithmic according to what ./configure finds the
+dnl  assembler needs.
 dnl
-dnl  ALIGN_FILL_0x90, if defined and equal to "yes", means a ", 0x90" should
-dnl  be appended (this is for x86).
+dnl  If ALIGN_FILL_0x90 is defined and equal to "yes", means ", 0x90" should
+dnl  be appended.  (This is for x86.)
 
 define(ALIGN,
 m4_assert_numargs(1)
@@ -1177,7 +1224,7 @@ dnl  names separated by spaces.
 
 define(`MULFUNC_PROLOGUE',
 m4_assert_numargs(1)
-`')
+)
 
 
 divert`'dnl
