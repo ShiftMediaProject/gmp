@@ -34,7 +34,13 @@ MA 02111-1307, USA. */
 #ifndef __GMP_PLUSPLUS__
 #define __GMP_PLUSPLUS__
 
+/* normally only need iosfwd, but must have full iostream for mpfr inlines */
+#ifdef __MPFR_H
+#include <iostream>
+#else
 #include <iosfwd>
+#endif
+
 #include <string>
 #include <gmp.h>
 
