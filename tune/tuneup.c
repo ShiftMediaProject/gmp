@@ -117,6 +117,10 @@ mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  powm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  divrem_1_norm_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  divrem_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  mod_1_norm_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  mod_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 
 
 #ifndef TUNE_KARATSUBA_SQR_MAX
@@ -132,10 +136,34 @@ struct param_t {
   int               stop_since_change;
   double            stop_factor;
   mp_size_t         min_size;
-  int               min_is_zero;
+  int               min_is_always;
   mp_size_t         max_size[MAX_TABLE];
   mp_size_t         check_size;
+  mp_size_t         threshold_offset;
+  int               data_high_lt_r;
 };
+
+
+mp_limb_t
+randlimb_norm (void)
+{
+  mp_limb_t  n;
+  mpn_random (&n, 1);
+  n |= MP_LIMB_T_HIGHBIT;
+  return n;
+}
+
+#define MP_LIMB_T_HALFMASK  ((CNST_LIMB(1) << (BITS_PER_MP_LIMB/2)) - 1)
+
+mp_limb_t
+randlimb_half (void)
+{
+  mp_limb_t  n;
+  mpn_random (&n, 1);
+  n &= MP_LIMB_T_HALFMASK;
+  n += (n==0);
+  return n;
+}
 
 
 /* Add an entry to the end of the dat[] array, reallocing to make it bigger
@@ -206,7 +234,9 @@ analyze_dat (int i, int final)
 
 
 double
-tuneup_measure (speed_function_t fun, struct speed_params *s)
+tuneup_measure (speed_function_t fun,
+                const struct param_t *param,
+                struct speed_params *s)
 {
   double   t;
   TMP_DECL (marker);
@@ -218,6 +248,15 @@ tuneup_measure (speed_function_t fun, struct speed_params *s)
   mpn_random (s->xp, s->size);
   mpn_random (s->yp, s->size);
 
+  if (param != NULL && param->data_high_lt_r)
+    {
+      s->xp[s->size-1] %= s->r;
+      s->yp[s->size-1] %= s->r;
+    }
+
+  MPN_ZERO (s->xp, s->size);
+  MPN_ZERO (s->yp, s->size);
+
   t = speed_measure (fun, s);
 
   TMP_FREE (marker);
@@ -228,7 +267,7 @@ tuneup_measure (speed_function_t fun, struct speed_params *s)
 void
 print_define_start (const char *name)
 {
-  printf ("#define %-23s  ", name);
+  printf ("#define %-25s  ", name);
   if (option_trace)
     printf ("...\n");
 }
@@ -277,8 +316,14 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
     {
       double   t1, t2;
       s.size = param->check_size;
-      t1 = tuneup_measure (param->function, &s);
-      t2 = tuneup_measure (param->function2, &s);
+
+      table[0] = s.size+1;
+      table[1] = MAX_SIZE;
+      t1 = tuneup_measure (param->function, param, &s);
+
+      table[0] = s.size + param->threshold_offset;
+      table[1] = s.size+1;
+      t2 = tuneup_measure (param->function2, param, &s);
       if (t1 == -1.0 || t2 == -1.0)
         {
           printf ("Oops, can't run both functions at size %ld\n", s.size);
@@ -286,15 +331,19 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         }
       t1 *= param->function_fudge;
 
-      /* ask that t2 is at least 5% above t1 */
-      if (t1*1.05 < t2)
+      /* ask that t2 is at least 4% below t1 */
+      if (t1 < t2*1.04)
         {
           if (option_trace)
-            printf ("function2 never faster: t1=%.9f t2=%.9f\n", t1, t2);
+            printf ("function2 never enough faster: t1=%.9f t2=%.9f\n", t1, t2);
           table[0] = MP_SIZE_T_MAX;
           print_define (param->name[0], table[0]);
           return;
         }
+
+      if (option_trace >= 2)
+        printf ("function2 enough faster at size=%ld: t1=%.9f t2=%.9f\n",
+                s.size, t1, t2);
     }
 
   s.size = param->min_size;
@@ -317,8 +366,9 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
           printf ("              (seconds)    (seconds)    diff    thresh\n");
         }
 
-      for ( ; s.size < MAX_SIZE; 
-            s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), 1))
+      for (;
+           s.size < MAX_SIZE; 
+           s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), 1))
         {
           double   ti, tiplus1, d;
 
@@ -336,22 +386,20 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
           /*
             FIXME: check minimum size requirements are met, possibly by just
             checking for the -1 returns from the speed functions.
-            if (s.size < MPN_TOOM_TABLE_TO_MINSIZE (i))
-            continue;
           */
 
           /* using method i at this size */
           table[i] = s.size+1;
           table[i+1] = MAX_SIZE;
-          ti = tuneup_measure (param->function, &s);
+          ti = tuneup_measure (param->function, param, &s);
           if (ti == -1.0)
             abort ();
           ti *= param->function_fudge;
 
           /* using method i+1 at this size */
-          table[i] = s.size;
+          table[i] = s.size + param->threshold_offset;
           table[i+1] = s.size+1;
-          tiplus1 = tuneup_measure (param->function2, &s);
+          tiplus1 = tuneup_measure (param->function2, param, &s);
           if (tiplus1 == -1.0)
             abort ();
 
@@ -442,7 +490,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
 
       table[i] = dat[analyze_dat (i, 1)].size;
 
-      if (param->min_is_zero && table[i] == param->min_size)
+      if (param->min_is_always && table[i] == param->min_size)
         table[i] = 0;
 
       print_define_end (param->name[i], table[i]);
@@ -541,12 +589,12 @@ fft (struct fft_param_t *p)
       /* compare k to k+1 in the middle of the current k+1 step */
       s.size = size + fft_step_size (k+1) / 2;
       s.r = k;
-      tk = tuneup_measure (p->function, &s);
+      tk = tuneup_measure (p->function, NULL, &s);
       if (tk == -1.0)
         abort ();
 
       s.r = k+1;
-      tk1 = tuneup_measure (p->function, &s);
+      tk1 = tuneup_measure (p->function, NULL, &s);
       if (tk1 == -1.0)
         abort ();
 
@@ -596,12 +644,12 @@ fft (struct fft_param_t *p)
 
       s.size = size + fft_step_size (k) / 2;
       s.r = k;
-      tk = tuneup_measure (p->function, &s);
+      tk = tuneup_measure (p->function, NULL, &s);
       if (tk == -1.0)
         abort ();
 
       if (!modf)  s.size /= 2;
-      tm = tuneup_measure (p->mul_function, &s);
+      tm = tuneup_measure (p->mul_function, NULL, &s);
       if (tm == -1.0)
         abort ();
 
@@ -670,6 +718,7 @@ all (void)
     param.name[0] = "KARATSUBA_MUL_THRESHOLD";
     param.name[1] = "TOOM3_MUL_THRESHOLD";
     param.function = speed_mpn_mul_n;
+    param.min_size = MPN_KARA_MUL_N_MINSIZE;
     param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT;
     one (mul_threshold, numberof(mul_threshold)-1, &param);
   }
@@ -680,6 +729,7 @@ all (void)
     param.name[0] = "KARATSUBA_SQR_THRESHOLD";
     param.name[1] = "TOOM3_SQR_THRESHOLD";
     param.function = speed_mpn_sqr_n;
+    param.min_size = MPN_KARA_SQR_N_MINSIZE;
     param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
     one (sqr_threshold, numberof(sqr_threshold)-1, &param);
   }
@@ -756,11 +806,75 @@ all (void)
       abort ();
     }
     param.min_size = 5;
-    param.min_is_zero = 1;
+    param.min_is_always = 1;
     param.max_size[0] = 300;
     param.check_size = 300;
     one (gcdext_threshold, 1, &param);
   }
+  printf("\n");
+
+#if UDIV_PREINV_ALWAYS
+  /* When udiv_qrnnd is implemented using udiv_qrnnd_preinv there's no need
+     to tune, just always use the latter.  */
+  printf ("#define DIVREM_1_NORM_THRESHOLD    0\n");
+  printf ("#define DIVREM_1_UNNORM_THRESHOLD  0\n");
+  printf ("#define MOD_1_NORM_THRESHOLD       0\n");
+  printf ("#define MOD_1_UNNORM_THRESHOLD     0\n");
+
+#else
+  /* threshold_offset reflects the fact that with high<divisor one division
+     is always skipped.  Forcing high<divisor while testing ensures
+     consistency while stepping through sizes, ie. that size-1 divides will
+     be done each time.  */
+#define DIV_1_PARAMS            \
+  param.check_size = 256;       \
+  param.min_size = 2;           \
+  param.min_is_always = 1;      \
+  param.data_high_lt_r = 1;     \
+  param.threshold_offset = -1;  \
+  param.stop_factor = 2.0;
+
+  /* No support for tuning native assembler code, do that by hand and put
+     the results in the .asm file. */
+#if ! HAVE_NATIVE_mpn_divrem_1
+  /* Tune for the integer part of divrem_1.  This will very possibly be a
+     bit out for the fractional part, but that's too bad. */
+  {
+    static struct param_t  param;
+    param.name[0] = "DIVREM_1_NORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_divrem_1;
+    one (divrem_1_norm_threshold, 1, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name[0] = "DIVREM_1_UNNORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_half ();
+    param.function = speed_mpn_divrem_1;
+    one (divrem_1_unnorm_threshold, 1, &param);
+  }
+#endif
+#if ! HAVE_NATIVE_mpn_mod_1
+  {
+    static struct param_t  param;
+    param.name[0] = "MOD_1_NORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_mod_1;
+    one (mod_1_norm_threshold, 1, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name[0] = "MOD_1_UNNORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_half ();
+    param.function = speed_mpn_mod_1;
+    one (mod_1_unnorm_threshold, 1, &param);
+  }
+#endif
+#endif
   printf("\n");
 
   if (option_fft_max_size != 0)
@@ -840,4 +954,27 @@ main (int argc, char *argv[])
 		
   all ();
   exit (0);
+}
+
+
+
+
+
+/* The tune program uses a recompiled mpn/generic/divrem_1.c, which doesn't
+   provide an mpn_divrem_1c.  If a native divrem_1 is instead being used
+   then common.c will want an mpn_divrem_1c, so provide a dummy here.
+   Without this the linker would drag in divrem_1.o from libgmp.la and
+   mpn_divrem_1 there would conflict with the recompiled divrem_1.c.  */
+
+mp_limb_t
+mpn_divrem_1c (mp_ptr dst, mp_size_t xsize, mp_srcptr src, mp_size_t size,
+               mp_limb_t divisor, mp_limb_t carry)
+{
+  abort ();
+}
+
+mp_limb_t
+mpn_mod_1c (mp_srcptr src, mp_size_t size, mp_limb_t divisor, mp_limb_t carry)
+{
+  abort ();
 }
