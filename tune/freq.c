@@ -468,16 +468,17 @@ freq_sco_etchw (int help)
 
 
 /* attr_get("/hw/cpunum/0",INFO_LBL_DETAIL_INVENT) ic_cpu_info.cpufq for
-   IRIX.
+   IRIX 6.5.  Past versions don't have INFO_LBL_DETAIL_INVENT,
+   invent_cpuinfo_t, or /hw/cpunum/0.
 
    The same information is available from the "hinv -c processor" command,
-   but it seems better to make a system call than to parse that output.  */
+   but it seems better to make a system call where possible. */
 
 static int
 freq_attr_get_invent (int help)
 {
   int     ret = 0;
-#if HAVE_ATTR_GET && HAVE_INVENT_H
+#if HAVE_ATTR_GET && HAVE_INVENT_H && defined (INFO_LBL_DETAIL_INVENT)
   invent_cpuinfo_t  inv;
   int               len, val;
 
@@ -544,6 +545,51 @@ freq_bsd_dmesg (int help)
         }
       fclose (fp);
     }
+  return ret;
+}
+
+
+/* "hinv -c processor" for IRIX.  The following lines have been seen,
+
+              1 150 MHZ IP20 Processor
+              2 195 MHZ IP27 Processors
+              Processor 0: 500 MHZ IP35
+
+   This information is available from attr_get() on IRIX 6.5 (see above),
+   but on IRIX 6.2 it's not clear where to look, so fall back on
+   parsing.  */
+
+static int
+freq_irix_hinv (int help)
+{
+  int     ret = 0;
+#if HAVE_POPEN
+  FILE    *fp;
+  char    buf[128];
+  double  val;
+  int     nproc;
+
+  HELP ("IRIX \"hinv -c processor\" output");
+
+  /* Error messages are sent to /dev/null in case hinv doesn't exist.  The
+     brackets are necessary for some shells. */
+  if ((fp = popen ("(hinv -c processor) 2>/dev/null", "r")) != NULL)
+    {
+      while (fgets (buf, sizeof (buf), fp) != NULL)
+        {
+          if (sscanf (buf, "Processor 0: %lf MHZ", &val) == 1
+              || sscanf (buf, "%d %lf MHZ", &nproc, &val) == 2)
+            {
+              speed_cycletime = 1e-6 / val;
+              if (speed_option_verbose)
+                printf ("Using hinv -c processor \"%.2f MHZ\" for cycle time %.3g\n", val, speed_cycletime);
+              ret = 1;
+              break;
+            }
+        }
+      pclose (fp);
+    }
+#endif
   return ret;
 }
 
@@ -741,6 +787,7 @@ freq_all (int help)
     || freq_processor_info (help)
     || freq_proc_cpuinfo (help)
     || freq_bsd_dmesg (help)
+    || freq_irix_hinv (help)
     || freq_sunos_sysinfo (help)
     || freq_measure_getrusage (help)
     || freq_measure_gettimeofday (help);
