@@ -1181,7 +1181,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_MARK (marker);                                  \
     xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);  \
     MPN_COPY (xp, s->xp, s->size);                      \
-    xp[0] |= mpn_zero_p (xp, s->size);                  \
+    xp[0] |= refmpn_zero_p (xp, s->size);               \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
     speed_cache_fill (s);                               \
