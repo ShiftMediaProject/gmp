@@ -1,3 +1,10 @@
+2001-01-18  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (main): Accept -vml option.
+	(fns): List `hamdist', `pow', `nextprime'.
+	(mpz_eval_expr): Return -1 for `popc' of negative.
+	(mpz_eval_expr): Handle `hamdist', `pow', `nextprime'.
+
 2001-01-15  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/ev5/mode1o.c: New file.
