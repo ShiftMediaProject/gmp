@@ -100,7 +100,8 @@ MA 02111-1307, USA. */
 #define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
 
 
-#if ! defined (__GNUC__)	/* FIXME: Test for C++ compilers here,
+#if !defined (__GNUC__) || defined (__STRICT_ANSI__)
+				/* FIXME: Test for C++ compilers here,
 				   __DECC understands __inline */
 #define inline			/* Empty */
 #endif
