@@ -1137,17 +1137,20 @@ fi
 dnl  GMP_C_SIZES
 dnl  -----------
 dnl
-dnl  Determine the size of a limb, if it isn't already provided by
-dnl  gmp-mparam.h.  $gmp_mparam_source is the selected gmp-mparam.h.  This
-dnl  is needed by GMP at preprocessing time, for use in #if conditionals.
+dnl  Determine a couple of sizes, if not alredy provided by gmp-mparam.h.
+dnl  These sizes are needed by GMP at preprocessing time, for use in #if
+dnl  conditionals.  $gmp_mparam_source is the selected gmp-mparam.h.
 dnl
 dnl  If some assembler code depends on a particular limb size it's probably
-dnl  best to put explicit #defines in gmp-mparam.h.  That way if strange
-dnl  compiler options change it then the mismatch will be detected by
-dnl  t-constants.c rather than only by the code crashing or giving wrong
-dnl  results.
+dnl  best to put explicit #defines for these in gmp-mparam.h.  That way if
+dnl  strange compiler options change the size then a mismatch will be
+dnl  detected by t-constants.c rather than only by the code crashing or
+dnl  giving wrong results.
 dnl
-dnl  The test here assumes bits=8*sizeof, but that might not be universally
+dnl  None of the assembler code depends on BITS_PER_ULONG currently, so it's
+dnl  just as easy to let configure find it's size as put in explicit values.
+dnl
+dnl  The tests here assume bits=8*sizeof, but that might not be universally
 dnl  true.  It'd be better to probe for how many bits seem to work, like
 dnl  t-constants does.  But all currently supported systems have limbs with
 dnl  bits=8*sizeof, so it's academic.  Strange systems can always have the
@@ -1161,7 +1164,7 @@ else
 [#include <stdio.h>
 #include "gmp.h"
 ])
-  if "$ac_cv_sizeof_mp_limb_t" = 0; then
+  if test "$ac_cv_sizeof_mp_limb_t" = 0; then
     AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
   fi
 
@@ -1175,6 +1178,21 @@ else
     AC_DEFINE_UNQUOTED(BYTES_PER_MP_LIMB, $ac_cv_sizeof_mp_limb_t,
                        [bytes per mp_limb_t, if not in gmp-mparam.h])
   fi
+fi
+
+if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
+else
+  case $limb_chosen in
+  longlong)
+    AC_CHECK_SIZEOF(unsigned long)
+    AC_DEFINE_UNQUOTED(BITS_PER_ULONG, (8 * $ac_cv_sizeof_unsigned_long),
+                       [bits per unsigned long, if not in gmp-mparam.h])
+    ;;
+  *)
+    # Copy the limb size when a limb is a ulong
+    AC_DEFINE(BITS_PER_ULONG, BITS_PER_MP_LIMB)
+    ;;
+  esac
 fi
 ])
 
