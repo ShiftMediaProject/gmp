@@ -94,6 +94,13 @@ MA 02111-1307, USA. */
    "Z" was a type marker for size_t in old glibc, but there seems no need to
    provide access to that now "z" is standard.
 
+   In GMP 4.1.1 we documented "ll" and "L" as being equivalent, but in C99
+   in fact "ll" is just for long long and "L" just for long double.
+   Apparentely GLIBC allows "L" for long long though.  This doesn't affect
+   us as such, since both are passed through to the C library.  To be
+   consistent with what we said before, the two are treated equivalently
+   here, and it's left to the C library to do what it thinks with them.
+
    Possibilities:
 
    "b" might be nice for binary output, and could even be supported for the
