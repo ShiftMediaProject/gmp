@@ -139,9 +139,9 @@ used instead, possibly with a counter to make them unique, see jadcl0() for
 instance.  A separate counter for each macro makes it possible to nest them,
 for instance movl_text_address() can be used within an ASSERT().
 
-"1:" etc must be avoided in gcc __asm__ blocks too, but of course code there
-doesn't go through m4 processing, so other arrangements are needed to make
-labels unique.  This doesn't arise currently.
+"1:" etc must be avoided in gcc __asm__ blocks too.  "%=" for generating a
+unique number looks like a good alternative, but is that actually a
+documented feature?  In any case this problem doesn't currently arise.
 
 
 
