@@ -4,8 +4,8 @@
   example, the number 3.1416 would be returned as "31416" in DIGIT_PTR and
   1 in EXP.
 
-Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -427,7 +427,8 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
   if (alloc_size != 0)
     {
       size_t  actual_size = strlen (digit_ptr) + 1;
-      __GMP_REALLOCATE_FUNC_MAYBE (digit_ptr, alloc_size, actual_size);
+      __GMP_REALLOCATE_FUNC_MAYBE_TYPE (digit_ptr, alloc_size, actual_size,
+                                        char);
     }
 
   return digit_ptr;
