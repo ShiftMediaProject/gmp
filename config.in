@@ -175,31 +175,35 @@ MA 02111-1307, USA. */
 /* bytes per mp_limb_t, if not in gmp-mparam.h */
 #undef BYTES_PER_MP_LIMB
 
-/* The gmp-mparam.h to update when tuning. */
+/* The gmp-mparam.h file (a string) the tune program should suggest updating.
+   */
 #undef GMP_MPARAM_H_SUGGEST
 
 /* Define to 1 if you have the `alarm' function. */
 #undef HAVE_ALARM
 
-/* Define if alloca() works (via gmp-impl.h). */
+/* Define to 1 if alloca() works (via gmp-impl.h). */
 #undef HAVE_ALLOCA
 
-/* Define if you have <alloca.h> and it should be used (not on Ultrix). */
+/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
+   */
 #undef HAVE_ALLOCA_H
 
-/* Define if the compiler accepts gcc style __attribute__ ((const)) */
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((const)) */
 #undef HAVE_ATTRIBUTE_CONST
 
-/* Define if the compiler accepts gcc style __attribute__ ((malloc)) */
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((malloc)) */
 #undef HAVE_ATTRIBUTE_MALLOC
 
-/* Define if the compiler accepts gcc style __attribute__ ((mode (XX))) */
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((mode (XX)))
+   */
 #undef HAVE_ATTRIBUTE_MODE
 
-/* Define if the compiler accepts gcc style __attribute__ ((noreturn)) */
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((noreturn)) */
 #undef HAVE_ATTRIBUTE_NORETURN
 
-/* Define if tests/libtests has calling conventions checking for the CPU */
+/* Define to 1 if tests/libtests has calling conventions checking for the CPU
+   */
 #undef HAVE_CALLING_CONVENTIONS
 
 /* Define to 1 if you have the `clock' function. */
@@ -237,10 +241,10 @@ MA 02111-1307, USA. */
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define one (and only one) of the following for the format of a `double'.
+/* Define one of the following to 1 for the format of a `double'.
    If your format is not among these choices, or you don't know what it is,
-   then leave all of them undefined.
-   "IEEE_LITTLE_SWAPPED" means little endian, but with the two 4-byte halves
+   then leave all undefined.
+   IEEE_LITTLE_SWAPPED means little endian, but with the two 4-byte halves
    swapped, as used by ARM CPUs in little endian mode.  */
 #undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
 #undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
@@ -339,7 +343,7 @@ MA 02111-1307, USA. */
 /* Define to 1 if the system has the type `stack_t'. */
 #undef HAVE_STACK_T
 
-/* Define if <stdarg.h> exists and works */
+/* Define to 1 if <stdarg.h> exists and works */
 #undef HAVE_STDARG
 
 /* Define to 1 if you have the <stdint.h> header file. */
@@ -420,7 +424,7 @@ MA 02111-1307, USA. */
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define if you have vsnprintf and it works properly. */
+/* Define to 1 if you have the `vsnprintf' function and it works properly. */
 #undef HAVE_VSNPRINTF
 
 /* Assembler local label prefix */
@@ -460,7 +464,7 @@ MA 02111-1307, USA. */
 /* The size of a `unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
 
-/* Define if sscanf requires writable inputs */
+/* Define to 1 if sscanf requires writable inputs */
 #undef SSCANF_WRITABLE_INPUT
 
 /* Define to 1 if you have the ANSI C header files. */
@@ -475,23 +479,18 @@ MA 02111-1307, USA. */
 /* Version number of package */
 #undef VERSION
 
-/* ./configure --enable-assert option, to enable some ASSERT()s */
+/* Define to 1 to enable ASSERT checking, per --enable-assert */
 #undef WANT_ASSERT
 
-/* ./configure --enable-fft option, to enable FFTs for multiplication */
+/* Define to 1 to enable FFTs for multiplication, per --enable-fft */
 #undef WANT_FFT
 
-/* --enable-alloca=yes */
+/* Define one of these to 1 for the desired temporary memory allocation
+   method, per --enable-alloca. */
 #undef WANT_TMP_ALLOCA
-
-/* --enable-alloca=debug */
-#undef WANT_TMP_DEBUG
-
-/* --enable-alloca=malloc-notreentrant */
-#undef WANT_TMP_NOTREENTRANT
-
-/* --enable-alloca=malloc-reentrant */
 #undef WANT_TMP_REENTRANT
+#undef WANT_TMP_NOTREENTRANT
+#undef WANT_TMP_DEBUG
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
