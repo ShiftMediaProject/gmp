@@ -154,7 +154,7 @@ C -----------------------------------------------------------------------------
 L(unroll):
 deflit(`FRAME',STACK_SPACE)
 	movl	%ebp, SAVE_EBP
-	andl	$~1, %ecx		C size low bit masked out
+	andl	$-2, %ecx		C size low bit masked out
 	andl	$1, PARAM_SIZE		C size low bit kept
 
 	movl	%ecx, %edi

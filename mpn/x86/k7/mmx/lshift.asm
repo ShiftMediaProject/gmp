@@ -247,7 +247,7 @@ L(start_dst_aligned):
 	movq	%mm1, %mm2		C copy of src high qword
 	negl	%ecx
 
-	andl	$~1, %eax		C round size down to even
+	andl	$-2, %eax		C round size down to even
 	addl	$64, %ecx
 
 	movl	%eax, %ebx

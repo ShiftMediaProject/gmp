@@ -156,7 +156,7 @@ ifdef(`OPERATION_add_n',`
 
 	movl	%ecx, %esi
 
-	andl	$~3, %ecx
+	andl	$-4, %ecx
 	andl	$3, %esi
 
 	leal	(%ebx,%ecx,4), %ebx
@@ -252,7 +252,7 @@ L(inplace):
 	leal	-1(%ecx), %esi
 	decl	%ecx
 
-	andl	$~3, %ecx
+	andl	$-4, %ecx
 	andl	$3, %esi
 
  	movl	(%edx), %ebx		C src low limb

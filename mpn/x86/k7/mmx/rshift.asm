@@ -245,7 +245,7 @@ L(start_dst_aligned):
 
 	movq	%mm1, %mm2		C copy of src low two limbs
 	negl	%ecx
-	andl	$~1, %eax		C round size down to even
+	andl	$-2, %eax		C round size down to even
 
 	movl	%eax, %ebx
 	negl	%eax

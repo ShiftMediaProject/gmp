@@ -432,7 +432,7 @@ L(unroll):
 	decl	%ecx				C xsize-1
 
 	movl	(%esi), %eax		C xp low limb
-	andl	$~UNROLL_MASK, %ebx
+	andl	$-UNROLL_MASK-1, %ebx
 	negl	%ecx
 
 	subl	$VAR_EXTRA_SPACE, %esp
