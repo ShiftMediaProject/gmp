@@ -107,6 +107,13 @@ DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@
 INCLUDES=-D__GMP_WITHIN_GMP
 
 
+# configure.lineno is created by configure if the shell doesn't support
+# $LINENO.  FIXME: Hopefully automake will delete this automatically some
+# day.
+#
+DISTCLEANFILES += configure.lineno
+
+
 MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/set_si$U.lo mpf/set_str$U.lo mpf/set_d$U.lo mpf/set_z$U.lo	    \
   mpf/iset$U.lo mpf/iset_ui$U.lo mpf/iset_si$U.lo mpf/iset_str$U.lo	    \
