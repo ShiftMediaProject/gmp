@@ -1,7 +1,10 @@
-2000-05-11  Kevin Ryde  <kevin@king.swox.se>
+2000-05-12  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (CONFIG_TOP_SRCDIR): Fix to use $srcdir not
 	$top_srcdir (which doesn't exist).
+	* acinclude.m4 (GMP_C_ANSI2KNR): Fix setting U=_.
+	* gmp-impl.h (mpn_com_n, MPN_LOGOPS_N_INLINE): Fix missing "do"
+	(not currently used, probably no ill effect anyway).
 
 2000-05-11  Torbjorn Granlund  <tege@swox.com>
 
