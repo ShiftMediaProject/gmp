@@ -127,7 +127,7 @@ EXTRA_PROGRAMS = \
   sub_n submul_1 tst-addsub try
 
 
-# addsub_n addsub_n_2 not yet build since mpn_addsub_n doesn't yet exist
+# addsub_n addsub_n_2 not yet built since mpn_addsub_n doesn't yet exist
 
 EXTRA_HEADERS = ref.h try.h
 EXTRA_DIST = x86call.asm x86check.c
