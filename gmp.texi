@@ -5627,9 +5627,6 @@ mpz_fdiv_q (q.get_mpz_t(), a.get_mpz_t(), d.get_mpz_t());
 @deftypefun mpz_class abs (mpz_class @var{op1})
 @deftypefunx int cmp (mpz_class @var{op1}, type @var{op2})
 @deftypefunx int cmp (type @var{op1}, mpz_class @var{op2})
-@deftypefunx double mpz_class::get_d (void)
-@deftypefunx long mpz_class::get_si (void)
-@deftypefunx {unsigned long} mpz_class::get_ui (void)
 @maybepagebreak
 @deftypefunx bool mpz_class::fits_sint_p (void)
 @deftypefunx bool mpz_class::fits_slong_p (void)
@@ -5639,6 +5636,13 @@ mpz_fdiv_q (q.get_mpz_t(), a.get_mpz_t(), d.get_mpz_t());
 @deftypefunx bool mpz_class::fits_ulong_p (void)
 @deftypefunx bool mpz_class::fits_ushort_p (void)
 @maybepagebreak
+@deftypefunx double mpz_class::get_d (void)
+@deftypefunx long mpz_class::get_si (void)
+@deftypefunx string mpz_class::get_str (int @var{base} = 10)
+@deftypefunx {unsigned long} mpz_class::get_ui (void)
+@maybepagebreak
+@deftypefunx int mpz_class::set_str (const char *@var{str}, int @var{base})
+@deftypefunx int mpz_class::set_str (const string& @var{str}, int @var{base})
 @deftypefunx int sgn (mpz_class @var{op})
 @deftypefunx mpz_class sqrt (mpz_class @var{op})
 These functions provide a C++ class interface to the corresponding GMP C
@@ -5706,6 +5710,10 @@ form, and will return results in canonical form.
 @deftypefunx int cmp (type @var{op1}, mpq_class @var{op2})
 @maybepagebreak
 @deftypefunx double mpq_class::get_d (void)
+@deftypefunx string mpq_class::get_str (int @var{base} = 10)
+@maybepagebreak
+@deftypefunx int mpq_class::set_str (const char *@var{str}, int @var{base})
+@deftypefunx int mpq_class::set_str (const string& @var{str}, int @var{base})
 @deftypefunx int sgn (mpq_class @var{op})
 These functions provide a C++ class interface to the corresponding GMP C
 routines.
@@ -5781,12 +5789,6 @@ mpf_class f(x+y);        // greater of precisions of x and y
 @deftypefunx int cmp (mpf_class @var{op1}, type @var{op2})
 @deftypefunx int cmp (type @var{op1}, mpf_class @var{op2})
 @maybepagebreak
-@deftypefunx mpf_class floor (mpf_class @var{op})
-@deftypefunx mpf_class hypot (mpf_class @var{op1}, mpf_class @var{op2})
-@deftypefunx double mpf_class::get_d (void)
-@deftypefunx long mpf_class::get_si (void)
-@deftypefunx {unsigned long} mpf_class::get_ui (void)
-@maybepagebreak
 @deftypefunx bool mpf_class::fits_sint_p (void)
 @deftypefunx bool mpf_class::fits_slong_p (void)
 @deftypefunx bool mpf_class::fits_sshort_p (void)
@@ -5795,6 +5797,16 @@ mpf_class f(x+y);        // greater of precisions of x and y
 @deftypefunx bool mpf_class::fits_ulong_p (void)
 @deftypefunx bool mpf_class::fits_ushort_p (void)
 @maybepagebreak
+@deftypefunx mpf_class floor (mpf_class @var{op})
+@deftypefunx mpf_class hypot (mpf_class @var{op1}, mpf_class @var{op2})
+@maybepagebreak
+@deftypefunx double mpf_class::get_d (void)
+@deftypefunx long mpf_class::get_si (void)
+@deftypefunx string mpf_class::get_str (mp_exp_t& @var{exp}, int @var{base} = 10, size_t @var{digits} = 0)
+@deftypefunx {unsigned long} mpf_class::get_ui (void)
+@maybepagebreak
+@deftypefunx int mpq_class::set_str (const char *@var{str}, int @var{base})
+@deftypefunx int mpq_class::set_str (const string& @var{str}, int @var{base})
 @deftypefunx int sgn (mpf_class @var{op})
 @deftypefunx mpf_class sqrt (mpf_class @var{op})
 @deftypefunx mpf_class trunc (mpf_class @var{op})
