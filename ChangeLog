@@ -1,3 +1,10 @@
+2000-03-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/regmap.m4: New file.
+	* mpn/powerpc32: Translate `.S' files to `.asm'.
+	* configure.in: Use mpn/powerpc32/regmap.m4 for powerpc targets
+	except some weird ones.
+	
 2000-03-03  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in: Add --enable-assert, enable k6 logops functions.
