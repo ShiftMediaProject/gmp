@@ -284,7 +284,7 @@
 2000-12-10  Kevin Ryde  <kevin@swox.se>
 
 	* tune/Makefile.am ({speed,speed_ext,tune}_LDFLAGS): Don't use
-	-all-static, as gcc 2.95.2 on solaris 8 doesn't like it.
+	-all-static, as gcc 2.95.2 on i386 solaris 8 doesn't like it.
 
 	* configure.in (mips3,mips64): Add ABI=64, name the others ABI=n32 and
 	ABI=o32.
@@ -314,7 +314,7 @@
 	cc_cflags/cppflags, and instead let AM_C_PROTOTYPES add it, or -Ae,
 	whichever works.
 
-	* configure.in ([*-*-aix[34]*]): Disable shared by default, but let
+	* configure.in (*-*-aix[34]*): Disable shared by default, but let
 	the user override that, if desired.
 	* gmp.texi (Notes for Particular Systems): Update.
 
