@@ -522,6 +522,7 @@ my @table =
        'regexp'=> 'mod_34lsub1',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr src, mp_size_t len',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      {
        'regexp'=> 'invert_limb',

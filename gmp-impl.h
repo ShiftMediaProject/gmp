@@ -1522,7 +1522,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 #endif
 
 #define mpn_mod_34lsub1 __MPN(mod_34lsub1)
-void    mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t));
+mp_limb_t mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
 
 #define mpn_divexact_1 __MPN(divexact_1)
