@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
+#include "tests.h"
 
 #ifndef SIZE
 #define SIZE 10
@@ -84,7 +85,7 @@ main (int argc, char **argv)
       else
 	sprintf (buf, "0.%s@%ld", str, bexp);
 
-      MPF_SET_STR_OR_ABORT (y, buf, -base);
+      mpf_set_str_or_abort (y, buf, -base);
       (*__gmp_free_func) (str, 0);
 
       mpf_reldiff (rerr, x, y);

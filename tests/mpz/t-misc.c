@@ -1,7 +1,7 @@
 /* Exercise various mpz functions. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,6 +24,7 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #define SGN(x)       ((x) < 0 ? -1 : (x) == 0 ? 0 : 1)
 
@@ -63,7 +64,7 @@ check_oddeven (void)
   mpz_init (n);
   for (i = 0; i < numberof (data); i++)
     {
-      MPZ_SET_STR_OR_ABORT (n, data[i].n, 0);
+      mpz_set_str_or_abort (n, data[i].n, 0);
 
       if ((mpz_odd_p (n) != 0) != data[i].odd)
         {
@@ -169,8 +170,8 @@ check_mpz_cmp_si (void)
   mpz_init (bz);
   for (i = 0; i < numberof (data); i++)
     {
-      MPZ_SET_STR_OR_ABORT (a, data[i].a, 0);
-      MPZ_SET_STR_OR_ABORT (bz, data[i].b, 0);
+      mpz_set_str_or_abort (a, data[i].a, 0);
+      mpz_set_str_or_abort (bz, data[i].b, 0);
 
       if (mpz_fits_slong_p (bz))
         {

@@ -1,6 +1,6 @@
 /* Test mpq_mul_2exp and mpq_div_2exp.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 
 struct pair_t {
@@ -129,8 +130,8 @@ main (void)
 
           for (sign = 0; sign <= 1; sign++)
             {
-              MPZ_SET_STR_OR_ABORT (mpq_numref(want), p_want->num, 0);
-              MPZ_SET_STR_OR_ABORT (mpq_denref(want), p_want->den, 0);
+              mpz_set_str_or_abort (mpq_numref(want), p_want->num, 0);
+              mpz_set_str_or_abort (mpq_denref(want), p_want->den, 0);
               if (sign)
                 mpq_neg (want, want);
 
@@ -141,8 +142,8 @@ main (void)
                   /* initial garbage in "got" */
                   mpq_set_ui (got, 123L, 456L);
 
-                  MPZ_SET_STR_OR_ABORT (mpq_numref(q), p_start->num, 0);
-                  MPZ_SET_STR_OR_ABORT (mpq_denref(q), p_start->den, 0);
+                  mpz_set_str_or_abort (mpq_numref(q), p_start->num, 0);
+                  mpz_set_str_or_abort (mpq_denref(q), p_start->den, 0);
                   if (sign)
                     mpq_neg (q, q);
 

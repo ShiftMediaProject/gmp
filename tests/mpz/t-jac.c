@@ -43,6 +43,7 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 
 int option_pari = 0;
@@ -602,8 +603,8 @@ check_data (void)
 
   for (i = 0; i < numberof (data); i++)
     {
-      MPZ_SET_STR_OR_ABORT (a, data[i].a, 0);
-      MPZ_SET_STR_OR_ABORT (b, data[i].b, 0);
+      mpz_set_str_or_abort (a, data[i].a, 0);
+      mpz_set_str_or_abort (b, data[i].b, 0);
 
       answer = data[i].answer;
       try_all (a, b, data[i].answer);

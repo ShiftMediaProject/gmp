@@ -1,6 +1,6 @@
 /* Test mpq_set_f.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 int
 main (int argc, char **argv)
@@ -113,9 +114,9 @@ main (int argc, char **argv)
     {
       for (neg = 0; neg <= 1; neg++)
         {
-          MPF_SET_STR_OR_ABORT (f, data[i].f, data[i].f_base);
-          MPZ_SET_STR_OR_ABORT (want_num, data[i].want_num, data[i].z_base);
-          MPZ_SET_STR_OR_ABORT (want_den, data[i].want_den, data[i].z_base);
+          mpf_set_str_or_abort (f, data[i].f, data[i].f_base);
+          mpz_set_str_or_abort (want_num, data[i].want_num, data[i].z_base);
+          mpz_set_str_or_abort (want_den, data[i].want_den, data[i].z_base);
 
           if (neg)
             {
