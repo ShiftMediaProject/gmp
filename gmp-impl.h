@@ -431,7 +431,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #undef GCD_ACCEL_THRESHOLD
 #undef GCDEXT_THRESHOLD
 #define GCD_ACCEL_THRESHOLD               3
-#define GCDEXT_THRESHOLD                  0  /* always */
+#define GCDEXT_THRESHOLD                 20
 
 #undef DIVREM_1_NORM_THRESHOLD
 #undef DIVREM_1_UNNORM_THRESHOLD
@@ -2073,9 +2073,9 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
-    ASSERT (__inv * __n == 1);                                  \
-    (inv) = __inv;                                              \
+    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */      \
+    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);                \
+    (inv) = __inv & GMP_NUMB_MASK;                              \
   } while (0)
 #else
 #if BITS_PER_MP_LIMB <= 16
@@ -2084,10 +2084,10 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
-    __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
-    ASSERT (__inv * __n == 1);                                  \
-    (inv) = __inv;                                              \
+    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */      \
+    __inv = 2 * __inv - __inv * __inv * __n;      /* 16 */      \
+    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);                \
+    (inv) = __inv & GMP_NUMB_MASK;                              \
   } while (0)
 #else
 #if BITS_PER_MP_LIMB <= 32
@@ -2096,11 +2096,11 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
-    __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
-    __inv = 2 * __inv - __inv * __inv * __n;    /* 32 */        \
-    ASSERT (__inv * __n == 1);                                  \
-    (inv) = __inv;                                              \
+    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */      \
+    __inv = 2 * __inv - __inv * __inv * __n;      /* 16 */      \
+    __inv = 2 * __inv - __inv * __inv * __n;      /* 32 */      \
+    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);                \
+    (inv) = __inv & GMP_NUMB_MASK;                              \
   } while (0)
 #else
 #if BITS_PER_MP_LIMB <= 64
@@ -2109,12 +2109,12 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __n = (n);                                       \
     mp_limb_t  __inv;                                           \
     ASSERT ((__n & 1) == 1);                                    \
-    __inv = modlimb_invert_table[(__n/2)&0x7F]; /*  8 */        \
-    __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
-    __inv = 2 * __inv - __inv * __inv * __n;    /* 32 */        \
-    __inv = 2 * __inv - __inv * __inv * __n;    /* 64 */        \
-    ASSERT (__inv * __n == 1);                                  \
-    (inv) = __inv;                                              \
+    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */      \
+    __inv = 2 * __inv - __inv * __inv * __n;      /* 16 */      \
+    __inv = 2 * __inv - __inv * __inv * __n;      /* 32 */      \
+    __inv = 2 * __inv - __inv * __inv * __n;      /* 64 */      \
+    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);                \
+    (inv) = __inv & GMP_NUMB_MASK;                              \
   } while (0)
 #endif /* 64 */
 #endif /* 32 */
