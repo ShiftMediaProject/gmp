@@ -1,5 +1,5 @@
-/* mpz_init_set_si(val) -- Make a new multiple precision number with
-   value val.
+/* mpz_init_set_si(dest,val) -- Make a new multiple precision in DEST and
+   assign VAL to the new number.
 
 Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
 Inc.
@@ -25,10 +25,27 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-mpz_init_set_si (mpz_ptr x, signed long int val)
+mpz_init_set_si (mpz_ptr dest, signed long int val)
 {
-  x->_mp_alloc = 1;
-  x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
-  x->_mp_d[0] = (unsigned long) (val >= 0 ? val : -val);
-  x->_mp_size = (val > 0 ? 1 : val == 0 ? 0 : -1);
+  mp_size_t size;
+  mp_limb_t vl;
+
+  dest->_mp_alloc = 1;
+  dest->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+
+  vl = val >= 0 ? val : -val;
+
+  dest->_mp_d[0] = vl & GMP_NUMB_MASK;
+  size = vl != 0;
+
+#if GMP_NAIL_BITS != 0
+  if (vl > GMP_NUMB_MAX)
+    {
+      MPZ_REALLOC (dest, 2);
+      dest->_mp_d[1] = vl >> GMP_NUMB_BITS;
+      size = 2;
+    }
+#endif
+
+  dest->_mp_size = val >= 0 ? size : -size;
 }
