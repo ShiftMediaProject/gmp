@@ -2419,9 +2419,27 @@ Set @var{product} to $@var{multiplier} \times @var{multiplicand}$.
 @end tex
 @end deftypefun
 
+@deftypefun void mpq_mul_2exp (mpq_t @var{rop}, mpq_t @var{op1}, unsigned long int @var{op2})
+@ifnottex
+Set @var{rop} to @var{op1} times 2 raised to @var{op2}.
+@end ifnottex
+@tex
+Set @var{rop} to $@var{op1} \times 2^{op2}$.
+@end tex
+@end deftypefun
+
 @deftypefun void mpq_div (mpq_t @var{quotient}, mpq_t @var{dividend}, mpq_t @var{divisor})
 @cindex Division functions
 Set @var{quotient} to @var{dividend}/@var{divisor}.
+@end deftypefun
+
+@deftypefun void mpq_div_2exp (mpq_t @var{rop}, mpq_t @var{op1}, unsigned long int @var{op2})
+@ifnottex
+Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.
+@end ifnottex
+@tex
+Set @var{rop} to $@var{op1}/2^{op2}$.
+@end tex
 @end deftypefun
 
 @deftypefun void mpq_neg (mpq_t @var{negated_operand}, mpq_t @var{operand})
