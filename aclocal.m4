@@ -14,7 +14,7 @@
 dnl  GMP specific autoconf macros
 
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -1070,6 +1070,38 @@ AC_CACHE_CHECK([if the assembler needs r on registers],
 [AC_MSG_ERROR([neither "mtctr 6" nor "mtctr r6" works])])])])
 
 GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
+])
+
+
+dnl  GMP_C_ATTRIBUTE_CONST
+dnl  ---------------------
+
+AC_DEFUN(GMP_C_ATTRIBUTE_CONST,
+[AC_CACHE_CHECK([whether gcc __attribute__ ((const)) works],
+                gmp_cv_c_attribute_const,
+[AC_TRY_COMPILE([int foo (int x) __attribute__ ((const));], ,
+  gmp_cv_c_attribute_const=yes, gmp_cv_c_attribute_const=no)
+])
+if test $gmp_cv_c_attribute_const = yes; then
+  AC_DEFINE(HAVE_ATTRIBUTE_CONST, 1,
+  [Define if the compiler accepts gcc style __attribute__ ((const))])
+fi
+])
+
+
+dnl  GMP_C_ATTRIBUTE_NORETURN
+dnl  ------------------------
+
+AC_DEFUN(GMP_C_ATTRIBUTE_NORETURN,
+[AC_CACHE_CHECK([whether gcc __attribute__ ((noreturn)) works],
+                gmp_cv_c_attribute_noreturn,
+[AC_TRY_COMPILE([void foo (int x) __attribute__ ((noreturn));], ,
+  gmp_cv_c_attribute_noreturn=yes, gmp_cv_c_attribute_noreturn=no)
+])
+if test $gmp_cv_c_attribute_noreturn = yes; then
+  AC_DEFINE(HAVE_ATTRIBUTE_NORETURN, 1,
+  [Define if the compiler accepts gcc style __attribute__ ((noreturn))])
+fi
 ])
 
 
