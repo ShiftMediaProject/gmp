@@ -106,12 +106,12 @@ my %cfg_cw =
 # We only set the variables that have a value
 my %vars =
   (
-   '__GMP_BITS_PER_MP_LIMB' => 32,
-   '__GMP_HAVE_HOST_CPU_FAMILY_power' => 0,
-   '__GMP_HAVE_HOST_CPU_FAMILY_powerpc' => 1,
+   'BITS_PER_MP_LIMB' => 32,
+   'HAVE_HOST_CPU_FAMILY_power' => 0,
+   'HAVE_HOST_CPU_FAMILY_powerpc' => 1,
    'GMP_NAIL_BITS' => 0,
    'DEFN_LONG_LONG_LIMB' => '',
-   '__GMP_LIBGMP_DLL' => 0,
+   'LIBGMP_DLL' => 0,
   );
 
 my $make_in      = 'Makefile.in';
