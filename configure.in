@@ -842,6 +842,12 @@ for abi in $abilist; do
       # instance when specifying CC=gcc272 on Debian GNU/Linux, or the
       # native cc which is really gcc on NeXT or MacOS-X.
       #
+      # FIXME: There's a slight misfeature here.  If cc is actually gcc but
+      # gcc is not a known compiler under this $abi then we'll end up
+      # testing it with no flags and it'll work, but chances are it won't be
+      # in the right mode for the ABI we desire.  Let's quietly hope this
+      # doesn't happen.
+      #
       if test $ccbase != gcc; then
         GMP_PROG_CC_IS_GNU($cc,ccbase=gcc)
       fi
