@@ -178,6 +178,7 @@ double speed_mpn_mul_n_sqr _PROTO ((struct speed_params *s));
 double speed_mpn_nand_n _PROTO ((struct speed_params *s));
 double speed_mpn_nior_n _PROTO ((struct speed_params *s));
 double speed_mpn_popcount _PROTO ((struct speed_params *s));
+double speed_mpn_redc _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
 double speed_mpn_set_str _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
@@ -204,7 +205,10 @@ double speed_mpz_fac_ui _PROTO ((struct speed_params *s));
 double speed_mpz_fib_ui _PROTO ((struct speed_params *s));
 double speed_mpz_init_clear _PROTO ((struct speed_params *s));
 double speed_mpz_init_realloc_clear _PROTO ((struct speed_params *s));
+double speed_mpz_mod _PROTO ((struct speed_params *s));
 double speed_mpz_powm _PROTO ((struct speed_params *s));
+double speed_mpz_powm_mod _PROTO ((struct speed_params *s));
+double speed_mpz_powm_redc _PROTO ((struct speed_params *s));
 
 double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));
@@ -271,6 +275,11 @@ void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 void mpn_toom3_mul_n_mpn _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                   mp_ptr));
 void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+void mpz_powm_mod _PROTO ((mpz_ptr res, mpz_srcptr base, mpz_srcptr e,
+                           mpz_srcptr mod));
+void mpz_powm_redc _PROTO ((mpz_ptr res, mpz_srcptr base, mpz_srcptr e,
+                            mpz_srcptr mod));
 
 void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                               mp_ptr xp, int leading,
@@ -624,8 +633,8 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_DC_DIVREM_CALL(call)                  \
   {                                                             \
-    unsigned   i;                                               \
-    mp_ptr     a, d, q, r;                                      \
+    unsigned  i;                                                \
+    mp_ptr    a, d, q, r;                                       \
     double    t;                                                \
     TMP_DECL (marker);                                          \
                                                                 \
@@ -673,6 +682,81 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_ROUTINE_MPN_DC_TDIV_QR(function)          \
   SPEED_ROUTINE_MPN_DC_DIVREM_CALL                      \
     ((*function) (q, r, 0, a, 2*s->size, d, s->size))
+
+
+/* A remainder 2*s->size by s->size limbs */
+
+#define SPEED_ROUTINE_MPZ_MOD(function)                         \
+  {                                                             \
+    unsigned   i;                                               \
+    mpz_t      a, d, r;                                         \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+                                                                \
+    mpz_init_set_n (d, s->yp, s->size);                         \
+                                                                \
+    /* high part less than d, low part a duplicate copied in */ \
+    mpz_init_set_n (a, s->xp, s->size);                         \
+    mpz_mod (a, a, d);                                          \
+    mpz_mul_2exp (a, a, BITS_PER_MP_LIMB * s->size);            \
+    MPN_COPY (PTR(a), s->xp, s->size);                          \
+                                                                \
+    mpz_init (r);                                               \
+                                                                \
+    speed_operand_src (s, PTR(a), SIZ(a));                      \
+    speed_operand_src (s, PTR(d), SIZ(d));                      \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      function (r, a, d);                                       \
+    while (--i != 0);                                           \
+    return speed_endtime ();                                    \
+  }  
+
+
+#define SPEED_ROUTINE_MPN_REDC(function)                        \
+  {                                                             \
+    unsigned   i;                                               \
+    mp_ptr     cp, mp, tp, ap;                                  \
+    mp_limb_t  Nprim;                                           \
+    double     t;                                               \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+                                                                \
+    TMP_MARK (marker);                                          \
+    ap = SPEED_TMP_ALLOC_LIMBS (2*s->size+1, s->align_xp);      \
+    mp = SPEED_TMP_ALLOC_LIMBS (s->size,     s->align_yp);      \
+    cp = SPEED_TMP_ALLOC_LIMBS (s->size,     s->align_wp);      \
+    tp = SPEED_TMP_ALLOC_LIMBS (2*s->size+1, s->align_wp2);     \
+                                                                \
+    MPN_COPY (ap,         s->xp, s->size);                      \
+    MPN_COPY (ap+s->size, s->xp, s->size);                      \
+                                                                \
+    /* modulus must be odd */                                   \
+    MPN_COPY (mp, s->yp, s->size);                              \
+    mp[0] |= 1;                                                 \
+    modlimb_invert (Nprim, mp[0]);                              \
+                                                                \
+    speed_operand_src (s, ap, 2*s->size+1);                     \
+    speed_operand_dst (s, tp, 2*s->size+1);                     \
+    speed_operand_src (s, mp, s->size);                         \
+    speed_operand_dst (s, cp, s->size);                         \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do {                                                        \
+      MPN_COPY (tp, ap, 2*s->size);                             \
+      function (cp, mp, s->size, Nprim, tp);                    \
+    } while (--i != 0);                                         \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+    return t;                                                   \
+  }  
 
 
 #define SPEED_ROUTINE_MPN_POPCOUNT(function)    \
