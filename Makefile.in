@@ -427,7 +427,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # tune and speed programs, and perhaps some of the test programs, want to
 # access undocumented symbols.
 libgmp_la_SOURCES = gmp-impl.h longlong.h				\
-  assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
+  assert.c compat.c errno.c extract-dbl.c insert-dbl.c invalid.c memory.c   \
   mp_bpl.c mp_clz_tab.c mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c \
   rand.c randclr.c randdef.c randiset.c randlc2s.c randlc2x.c randmt.c	\
   rands.c randsd.c randsdui.c randbui.c randmui.c version.c
@@ -486,12 +486,12 @@ CONFIG_CLEAN_FILES = gmp.h mp.h
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
-	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
-	mp_clz_tab$U.lo mp_dv_tab$U.lo mp_minv_tab$U.lo mp_get_fns$U.lo \
-	mp_set_fns$U.lo rand$U.lo randclr$U.lo randdef$U.lo \
-	randiset$U.lo randlc2s$U.lo randlc2x$U.lo randmt$U.lo \
-	rands$U.lo randsd$U.lo randsdui$U.lo randbui$U.lo randmui$U.lo \
-	version$U.lo
+	extract-dbl$U.lo insert-dbl$U.lo invalid$U.lo memory$U.lo \
+	mp_bpl$U.lo mp_clz_tab$U.lo mp_dv_tab$U.lo mp_minv_tab$U.lo \
+	mp_get_fns$U.lo mp_set_fns$U.lo rand$U.lo randclr$U.lo \
+	randdef$U.lo randiset$U.lo randlc2s$U.lo randlc2x$U.lo \
+	randmt$U.lo rands$U.lo randsd$U.lo randsdui$U.lo randbui$U.lo \
+	randmui$U.lo version$U.lo
 libgmp_la_OBJECTS = $(am_libgmp_la_OBJECTS)
 am_libgmpxx_la_OBJECTS = dummy.lo
 libgmpxx_la_OBJECTS = $(am_libgmpxx_la_OBJECTS)
@@ -652,6 +652,8 @@ extract-dbl_.c: extract-dbl.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/extract-dbl.c; then echo $(srcdir)/extract-dbl.c; else echo extract-dbl.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 insert-dbl_.c: insert-dbl.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/insert-dbl.c; then echo $(srcdir)/insert-dbl.c; else echo insert-dbl.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+invalid_.c: invalid.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/invalid.c; then echo $(srcdir)/invalid.c; else echo invalid.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 memory_.c: memory.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memory.c; then echo $(srcdir)/memory.c; else echo memory.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 mp_bpl_.c: mp_bpl.c $(ANSI2KNR)
@@ -700,19 +702,19 @@ version_.c: version.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/version.c; then echo $(srcdir)/version.c; else echo version.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 assert_.$(OBJEXT) assert_.lo compat_.$(OBJEXT) compat_.lo \
 errno_.$(OBJEXT) errno_.lo extract-dbl_.$(OBJEXT) extract-dbl_.lo \
-insert-dbl_.$(OBJEXT) insert-dbl_.lo memory_.$(OBJEXT) memory_.lo \
-mp_bpl_.$(OBJEXT) mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo \
-mp_dv_tab_.$(OBJEXT) mp_dv_tab_.lo mp_get_fns_.$(OBJEXT) mp_get_fns_.lo \
-mp_minv_tab_.$(OBJEXT) mp_minv_tab_.lo mp_set_fns_.$(OBJEXT) \
-mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randbui_.$(OBJEXT) randbui_.lo \
-randclr_.$(OBJEXT) randclr_.lo randdef_.$(OBJEXT) randdef_.lo \
-randiset_.$(OBJEXT) randiset_.lo randlc2s_.$(OBJEXT) randlc2s_.lo \
-randlc2x_.$(OBJEXT) randlc2x_.lo randmt_.$(OBJEXT) randmt_.lo \
-randmui_.$(OBJEXT) randmui_.lo rands_.$(OBJEXT) rands_.lo \
-randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
-tal-debug_.$(OBJEXT) tal-debug_.lo tal-notreent_.$(OBJEXT) \
-tal-notreent_.lo tal-reent_.$(OBJEXT) tal-reent_.lo version_.$(OBJEXT) \
-version_.lo : $(ANSI2KNR)
+insert-dbl_.$(OBJEXT) insert-dbl_.lo invalid_.$(OBJEXT) invalid_.lo \
+memory_.$(OBJEXT) memory_.lo mp_bpl_.$(OBJEXT) mp_bpl_.lo \
+mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo mp_dv_tab_.$(OBJEXT) mp_dv_tab_.lo \
+mp_get_fns_.$(OBJEXT) mp_get_fns_.lo mp_minv_tab_.$(OBJEXT) \
+mp_minv_tab_.lo mp_set_fns_.$(OBJEXT) mp_set_fns_.lo rand_.$(OBJEXT) \
+rand_.lo randbui_.$(OBJEXT) randbui_.lo randclr_.$(OBJEXT) randclr_.lo \
+randdef_.$(OBJEXT) randdef_.lo randiset_.$(OBJEXT) randiset_.lo \
+randlc2s_.$(OBJEXT) randlc2s_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
+randmt_.$(OBJEXT) randmt_.lo randmui_.$(OBJEXT) randmui_.lo \
+rands_.$(OBJEXT) rands_.lo randsd_.$(OBJEXT) randsd_.lo \
+randsdui_.$(OBJEXT) randsdui_.lo tal-debug_.$(OBJEXT) tal-debug_.lo \
+tal-notreent_.$(OBJEXT) tal-notreent_.lo tal-reent_.$(OBJEXT) \
+tal-reent_.lo version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
