@@ -1,6 +1,6 @@
 /* Shared speed subroutines.
 
-Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -126,12 +126,14 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
                struct speed_params *s)
 {
 #define TOLERANCE    1.005  /* 0.5% */
+  const int max_zeros = 10;
 
   struct speed_params  s_dummy;
   int     i, j, e;
   double  t[30];
   double  t_unsorted[30];
   double  reps_d;
+  int     zeros = 0;
 
   /* Use dummy parameters if caller doesn't provide any.  Only a few special
      "fun"s will cope with this, speed_noop() is one.  */
@@ -155,6 +157,17 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           if (speed_option_verbose >= 3)
             gmp_printf("size=%ld reps=%u r=%Md attempt=%d  %.9f\n",
                        (long) s->size, s->reps, s->r, i, t[i]);
+
+          if (t[i] == 0.0)
+            {
+              zeros++;
+              if (zeros > max_zeros)
+                {
+                  fprintf (stderr, "Fatal error: too many (%d) failed measurements (0.0)\n", zeros);
+                  abort ();
+                }
+              continue;
+            }
 
           if (t[i] == -1.0)
             return -1.0;
