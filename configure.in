@@ -123,15 +123,14 @@ AC_DEFINE_UNQUOTED(HAVE_TARGET_CPU_$tmp)
 
 dnl Switch on OS and determine what compiler to use.
 dnl
-dnl  os_64bit	           Set to "yes" if OS is 64-bit capable.
-dnl                        FIXME: Rename to `check_64bit_compiler'!
+dnl  check_64bit_compiler  Set to "yes" if we are to check 64-bit tools.
 dnl  cclist		   List of compilers, best first.
 dnl  gmp_cflags_{cc}	   Flags for compiler named {cc}.
 dnl  gmp_cflags64_{cc}     Flags for compiler named {cc} for 64-bit code.
 dnl  gmp_optcflags_{cc}	   Optional compiler flags.
 dnl  gmp_xoptcflags_{cc}   Exclusive optional compiler flags.
 dnl
-os_64bit="no"
+check_64bit_compiler="no"
 cclist="gcc cc"		# FIXME: Prefer c89 to cc.
 gmp_cflags_gcc="-g -O2"
 gmp_cflags64_gcc="-g -O2"
@@ -212,7 +211,7 @@ case "$target" in
 
   # Sparc
   [ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9]])
-    os_64bit=yes
+    check_64bit_compiler=yes
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
@@ -224,7 +223,7 @@ case "$target" in
     # for any 64-bit operations in user mode.  We assume that a future release
     # will have some 64-bit support, and therefore guess the needed compiler
     # options.
-    os_64bit=yes
+    check_64bit_compiler=yes
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
@@ -288,7 +287,7 @@ case "$target" in
 
   # MIPS
   mips-sgi-irix6.*)
-    os_64bit=yes
+    check_64bit_compiler=yes
     gmp_cflags64_gcc="-g -O2 -mabi=n32 -mips3"
     gmp_cflags64_cc="$gmp_cflags64_cc -O2 -n32 -mips3"
     ;;
@@ -311,7 +310,7 @@ case "$target" in
     gmp_cflags_cc="+DD64 +O3"
     ;;
   hppa2.0*-*-*)
-    os_64bit=yes
+    check_64bit_compiler=yes
     cclist="gcc cc"
     gmp_cflags64_gcc="$gmp_cflags64_gcc -mWHAT -D_LONG_LONG_LIMB"
     # 2.0 code generation disabled: we need an assembler feature test checking
@@ -360,10 +359,10 @@ gmp_user_CFLAGS="$CFLAGS"
 
 if test -z "$CC"; then
   # Find compiler.
-  GMP_PROG_CC_FIND($cclist, $os_64bit)
+  GMP_PROG_CC_FIND($cclist, $check_64bit_compiler)
 
   # If 64-bit OS and we have a 64-bit compiler, use it.
-  if test -n "$os_64bit" && test -n "$CC64"; then
+  if test -n "$check_64bit_compiler" && test -n "$CC64"; then
     CC=$CC64
     CFLAGS=$CFLAGS64
   else
