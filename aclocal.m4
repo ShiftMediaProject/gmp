@@ -72,20 +72,17 @@ dnl  Expand to the right way to #include gmp-h.in.  This must be used
 dnl  instead of gmp.h, since that file isn't generated until the end of the
 dnl  configure.
 dnl
-dnl  GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB starts as a dummy, but gets
-dnl  redefined in GMP_C_SIZES when the right value is known.
+dnl  Dummy values for __GMP_BITS_PER_MP_LIMB and GMP_LIMB_BITS are enough
+dnl  for all current configure-time uses of gmp.h.
 
 define(GMP_INCLUDE_GMP_H,
 [[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
-#define GMP_NAIL_BITS $GMP_NAIL_BITS]
-GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB
-[$DEFN_LONG_LONG_LIMB
+#define GMP_NAIL_BITS $GMP_NAIL_BITS
+#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+#define GMP_LIMB_BITS 123
+$DEFN_LONG_LONG_LIMB
 #include "$srcdir/gmp-h.in"]
 ])
-
-define(GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB,
-[[#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
-#define GMP_LIMB_BITS 123]])
 
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
@@ -834,7 +831,7 @@ AC_DEFUN(GMP_TRY_ASSEMBLE,
 [cat >conftest.s <<EOF
 [$1]
 EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
+gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
 if AC_TRY_EVAL(gmp_assemble); then
   cat conftest.out >&AC_FD_CC
   ifelse([$2],,:,[$2])
@@ -916,7 +913,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS $CPPFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS $CPPFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
@@ -1440,7 +1437,7 @@ movq-bug)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has MMX code, but the assembler])
-  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| has the Solaris 2.6 and 2.7 bug where register to register])
   AC_MSG_WARN([| movq operands are reversed.])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
@@ -1451,7 +1448,7 @@ no)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has MMX code, but it can't be assembled by])
-  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
@@ -1512,7 +1509,7 @@ yes)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has SSE2 code, but it can't be assembled by])
-  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| Non-SSE2 replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
@@ -2045,6 +2042,8 @@ case $gmp_cv_c_double_format in
   "Cray CFP")
     AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1) ;;
   unknown*)
+    AC_MSG_WARN([Could not determine float format.])
+    AC_MSG_WARN([Conversions to and from "double" may be slow.])
     ;;
   *) 
     AC_MSG_WARN([oops, unrecognised float format: $gmp_cv_c_double_format])
@@ -2122,75 +2121,6 @@ case $gmp_cv_c_restrict in
                  or to nothing if it is not supported.]) ;;
   *)  AC_DEFINE_UNQUOTED(restrict, $gmp_cv_c_restrict) ;;
 esac
-])
-
-
-dnl  GMP_C_SIZES
-dnl  -----------
-dnl  Determine some sizes, if not alredy provided by gmp-mparam.h.
-dnl  $gmp_mparam_source is the selected gmp-mparam.h.
-dnl
-dnl  BITS_PER_MP_LIMB, BYTES_PER_MP_LIMB and BITS_PER_ULONG are needed at
-dnl  preprocessing time when building the library, for use in #if
-dnl  conditionals.
-dnl
-dnl  BITS_PER_MP_LIMB is also wanted as a plain constant for some macros in
-dnl  the generated gmp.h, and is instantiated as BITS_PER_MP_LIMB.
-dnl
-dnl  If some assembler code depends on a particular type size it's probably
-dnl  best to put explicit #defines for these in gmp-mparam.h.  That way if
-dnl  strange compiler options change the size then a mismatch will be
-dnl  detected by t-constants.c rather than only by the code crashing or
-dnl  giving wrong results.
-dnl
-dnl  None of the assembler code depends on BITS_PER_ULONG currently, so it's
-dnl  just as easy to let configure find its size as to put explicit values.
-dnl
-dnl  The tests here assume bits=8*sizeof, but that might not be universally
-dnl  true.  It'd be better to probe for how many bits seem to work, like
-dnl  t-constants does.  But all currently supported systems have limbs and
-dnl  ulongs with bits=8*sizeof, so it's academic.  Strange systems can
-dnl  always have the right values put in gmp-mparam.h explicitly.
-
-AC_DEFUN(GMP_C_SIZES,
-[BITS_PER_MP_LIMB=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
-if test -n "$BITS_PER_MP_LIMB" \
-   && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
-else
-  AC_CHECK_SIZEOF(mp_limb_t,,
-[#include <stdio.h>]
-GMP_INCLUDE_GMP_H)
-  if test "$ac_cv_sizeof_mp_limb_t" = 0; then
-    AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
-  fi
-  if test -z "$BITS_PER_MP_LIMB"; then
-    BITS_PER_MP_LIMB=`expr 8 \* $ac_cv_sizeof_mp_limb_t`
-  fi
-  if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
-  else
-    AC_DEFINE_UNQUOTED(BYTES_PER_MP_LIMB, $ac_cv_sizeof_mp_limb_t,
-                       [bytes per mp_limb_t, if not in gmp-mparam.h])
-  fi
-fi
-AC_SUBST(BITS_PER_MP_LIMB)
-define([GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB],
-[[#define __GMP_BITS_PER_MP_LIMB $BITS_PER_MP_LIMB
-#define GMP_LIMB_BITS $BITS_PER_MP_LIMB]])
-
-if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
-else
-  case $limb_chosen in
-  longlong)
-    AC_CHECK_SIZEOF(unsigned long)
-    AC_DEFINE_UNQUOTED(BITS_PER_ULONG, (8 * $ac_cv_sizeof_unsigned_long),
-                       [bits per unsigned long, if not in gmp-mparam.h])
-    ;;
-  *)
-    # Copy the limb size when a limb is a ulong
-    AC_DEFINE(BITS_PER_ULONG, BITS_PER_MP_LIMB)
-    ;;
-  esac
-fi
 ])
 
 
@@ -2513,44 +2443,6 @@ die die die
 #endif
 ],,,
   [AC_MSG_WARN([gmp.h doesnt recognise <stdio.h>, FILE prototypes will be unavailable])])
-])
-
-
-dnl  GMP_IMPL_H_IEEE_FLOATS
-dnl  ----------------------
-dnl  Check whether the #ifdef's in gmp-impl.h recognise IEEE format and
-dnl  endianness.
-
-AC_DEFUN(GMP_IMPL_H_IEEE_FLOATS,
-[case $host in
-  vax*-*-*)
-    # not IEEE (neither D nor G formats are IEEE)
-    ;;
-  none-*-*)
-    # don't worry about this when CPU "none"
-    ;;
-  *)
-    case $path in
-      *cray/cfp*)
-        # not IEEE
-        ;;
-      *)
-        AC_TRY_COMPILE(
-[#include <stdio.h>]
-GMP_INCLUDE_GMP_H
-[#include "$srcdir/gmp-impl.h"
-#ifndef _GMP_IEEE_FLOATS
-die die die
-#endif
-],,,[
-          AC_MSG_WARN([gmp-impl.h doesnt recognise "double" as IEEE.])
-          AC_MSG_WARN([If your CPU floats are in fact IEEE then you])
-	  AC_MSG_WARN([might like to augment the tests there.])
-        ])
-        ;;
-    esac
-    ;;
-esac
 ])
 
 
@@ -8172,16 +8064,30 @@ dnl IEEE-754 compatible rounding mode).
 if test -n "$GCC"; then
   AC_CACHE_CHECK([for gcc float-conversion bug], mpfr_cv_gcc_floatconv_bug, [
   AC_TRY_RUN([
+#include <float.h>
+#ifdef MPFR_HAVE_FESETROUND
+#include <fenv.h>
+#endif
 int main()
 {
   double x = 0.5;
   int i;
   for (i = 1; i <= 11; i++)
     x *= x;
-  return x == 0;
+  if (x != 0)
+    return 1;
+#ifdef MPFR_HAVE_FESETROUND
+  /* Useful test for the G4 PowerPC */
+  fesetround(FE_TOWARDZERO);
+  x = DBL_MAX;
+  x *= 2.0;
+  if (x != DBL_MAX)
+    return 1;
+#endif
+  return 0;
 }
-  ], [mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"],
-     [mpfr_cv_gcc_floatconv_bug="no"],
+  ], [mpfr_cv_gcc_floatconv_bug="no"],
+     [mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"],
      [mpfr_cv_gcc_floatconv_bug="cannot test, use -ffloat-store"])
   ])
   if test "$mpfr_cv_gcc_floatconv_bug" != "no"; then
