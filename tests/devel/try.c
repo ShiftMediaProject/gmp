@@ -2406,12 +2406,6 @@ try_one (void)
       }
 
       mprotect_region (&s[i].region, PROT_READ);
-
-      if (ref.s[i].p != s[i].p)
-        {
-          refmpn_copyi (ref.s[i].p, s[i].p, SRC_SIZE(i));
-          refmpn_copyi (fun.s[i].p, s[i].p, SRC_SIZE(i));
-        }
     }
 
   for (i = 0; i < NUM_DESTS; i++)
@@ -2437,6 +2431,18 @@ try_one (void)
         {
           refmpn_fill (ref.d[i].p, d[i].size, DEADVAL);
           refmpn_fill (fun.d[i].p, d[i].size, DEADVAL);
+        }
+    }
+
+  for (i = 0; i < NUM_SOURCES; i++)
+    {
+      if (! tr->src[i])
+        continue;
+
+      if (ref.s[i].p != s[i].p)
+        {
+          refmpn_copyi (ref.s[i].p, s[i].p, SRC_SIZE(i));
+          refmpn_copyi (fun.s[i].p, s[i].p, SRC_SIZE(i));
         }
     }
 
