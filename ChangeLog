@@ -1,3 +1,18 @@
+2000-06-06  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/p6/sqr_basecase.asm: New file.
+	* mpn/x86/mod_1.asm: Avoid one conditional jump.
+	* mpn/x86/p6/gmp-mparam.h: Update thresholds, #ifndef UMUL_TIME
+	and UDIV_TIME, add COUNT_TRAILING_ZEROS_TIME.
+
+	* mp_minv_tab.c: New file.
+	* Makefile.am (libgmp_la_SOURCES, libmp_la_SOURCES): Add it.
+	* gmp-impl.h (modlimb_invert): New macro.
+	* mpz/powm.c: Remove mpz_dmprepare, use modlimb_invert instead.
+	* mpn/generic/bdivmod.c: Use modlimb_invert instead of a loop.
+	* mpn/generic/gcd.c: Inline two small mpn_bdivmod calls, use
+	MPN_COPY_INCR not MPN_COPY in one place.
+
 2000-06-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/tests/reuse.c (dsi_funcs): Add mpf_mul_2exp and mpf_div_2exp.
