@@ -19,6 +19,25 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-16  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Debugging): Add mpatrol.
+	(Integer Comparisons, Comparing Rationals, Float Comparison): Index
+	entries for sign tests.
+	(I/O of Floats): Clarify mpf_out_str exponent is in decimal.
+	(C++ Formatted Output): mpf_t operator<< exponent now in decimal.
+	(FFT Multiplication): Use an ascii art sigma.
+	(Contributors): Add Gerardo Ballabio.
+
+	* cxx/osfuns.cc (__gmp_doprnt_params_from_ios): Always give mpf_t
+	exponent in decimal, irrespective of ios::hex or ios::oct.
+	* tests/cxx/t-ostream.cc (check_mpf): Update.
+
+	* printf/doprnt.c: Support %lln and %hhn.
+
+	* mpn/x86/pentium4/sse2/submul_1.asm: Use a psubq to negate the
+	initial carry (helps the submul_1c case), and improve the comments.
+
 2001-10-11  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4, configure.in (GMP_IMPL_H_IEEE_FLOATS): New macro.
