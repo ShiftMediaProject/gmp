@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 /* HTON_LIMB_STORE takes a normal host byte order limb and stores it as
    network byte order (ie. big endian). */
 
-#if HAVE_BIG_ENDIAN
+#if HAVE_LIMB_BIG_ENDIAN
 #define HTON_LIMB_STORE(dst, limb)  do { *(dst) = (limb); } while (0)
 #endif
 
