@@ -6,7 +6,7 @@
 This directory contains code optimized for AMD K6 CPUs, meaning K6, K6-2 and
 K6-3.
 
-The mmx subdirectory has routines using mmx instructions.  All K6s have MMX,
+The mmx subdirectory has routines using MMX instructions.  All K6s have MMX,
 the separate directory is just so that configure can omit it if the
 assembler doesn't support MMX.
 
@@ -33,13 +33,21 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_add/submul_1           7.65-8.4     (varying with data values)
 
 	mpn_mul_basecase           9.25 cycles/crossproduct (approx)
-	mpn_sqr_basecase           6.5  cycles/crossproduct (approx)
-                                   or 12 cycles/triangleproduct (approx)
+	mpn_sqr_basecase           4.7  cycles/crossproduct (approx)
+                                   or 9.2 cycles/triangleproduct (approx)
 
 	mpn_divrem_1              20.0
 	mpn_mod_1                 20.0
-
 	mpn_divexact_by3          11.0
+
+	mpn_popcount		   9.0
+	mpn_hamdist		  11.5
+
+
+Plain K6 and pre-CXT K6-2 chips get the following slowdowns, due to the use
+of certain addressing modes.  It should be possible to improve this.
+
+	mpn_l/rshift               3.5
 
 
 Prefetching of sources hasn't yet given any joy.  With the 3DNow "prefetch"
@@ -83,12 +91,6 @@ popl, so the CPU return address branch prediction stack stays synchronised
 with the actual stack in memory.  Such a call however still costs 4 to 7
 cycles.
 
-Addressing mode (%esi) causes an instruction to be vector decoded (see
-Optimization Manual end of chapter 5, page 62 of rev C).  For this reason
-(%esi) is avoided.  0(%esi) doesn't have this problem, and can be used as an
-equivalent, or easier is just to use a different register, generally %ebx
-has been used.
-
 Branch prediction, in absence of any history, will guess forward jumps are
 not taken and backward jumps are taken.  Where possible it's arranged that
 the less likely or less important case is under a taken forward jump.
@@ -115,49 +117,95 @@ CODING
 Instructions in general code are shown paired if they can decode and execute
 together, meaning two short decode instructions with the second not
 depending on the first, only the first using the shifter, no more than one
-load and no more than one store.
+load. and no more than one store.
 
 K6 does some out of order execution so this isn't essential, it just shows
-what slots are available.  When decoding is the limiting factor things can
-be scheduled that might not execute until later.
+what slots might be available.  When decoding is the limiting factor things
+can be scheduled that might not execute until later.
 
 
 
-INSTRUCTIONS
+NOTES
 
-adcl	  2 cycles of decode, maybe 2 cycles executing in the X pipe
-jecxz	  2 cycles taken, 13 not taken (optimization manual says 7 not taken)
-divl	  20 cycles back-to-back
-mull	  2 decode, 3 execute (optimization manual decoding sample)
-prefetch  2 cycles
-rcll/rcrl implicit by one bit: 2 cycles
-          immediate or %cl count: 11 + 2 per bit for dword
-                                  13 + 4 per bit for byte
-xchgl	  %eax,reg 1.5 cycles, back-to-back
-          reg,reg 2 cycles, back-to-back
-setCC	  2 cycles
+code alignment
+
+- if an opcode/modrm or 0Fh/opcode/modrm crosses a cache line boundary,
+  short decode is inhibited.  See cross.pl detects this.
+
+- loops should be aligned to 32 bytes, or ensure at least 2 instructions
+  before a 32 byte boundary.
+
+addressing modes
+
+- (%esi) degrades decoding from short to vector.  0(%esi) doesn't have this
+  problem, and can be used as an equivalent, or easier is just to use a
+  different register, like %ebx.
+
+- if more than 3 bytes are needed to determine instruction length then
+  decoding degrades from direct to long, or from long to vector.  This
+  happens with forms like "0F opcode mod/rm" with mod/rm=00-xxx-100 since
+  with mod=00 the sib determines whether theres's a displacement.
+
+  This affects all MMX and 3DNow instructions, and others with an 0F prefix.
+  The modes affected are anything with an index and no displacement, or an
+  index but no base, and this includes (%esp) which is really (,%esp,1).
+  K6-2 CXT cores and all K6-3s have this problem fixed (cpuid function 1
+  signatures 0x588 to 0x58F).
+
+  See Optimization Manual rev D page 67 and 3DNow Porting Guide rev B pages
+  13-14 and 36-37.
+
+calls
+
+- indirect jumps and calls are not branch predicted, they measure about 6
+  cycles
+
+various instructions
+
+- adcl      2 cycles of decode, maybe 2 cycles executing in the X pipe
+- bsf       12-27 cycles
+- emms      5 cycles
+- femms     3 cycles
+- jecxz     2 cycles taken, 13 not taken (optimization manual says 7 not taken)
+- divl      20 cycles back-to-back
+- imull     2 decode, 2 execute
+- mull      2 decode, 3 execute (optimization manual decoding sample)
+- prefetch  2 cycles
+- rcll/rcrl implicit by one bit: 2 cycles
+            immediate or %cl count: 11 + 2 per bit for dword
+                                    13 + 4 per bit for byte
+- xchgl	%eax,reg  1.5 cycles, back-to-back (strange)
+        reg,reg   2 cycles, back-to-back
+- setCC	    2 cycles
+
 
 
 
 REFERENCES
 
-AMD-K6 Processor Code Optimization Application Note, AMD publication number
-21924, revision C amendment 0, August 1999.  Available on-line,
+"AMD-K6 Processor Code Optimization Application Note", AMD publication
+number 21924, revision D amendment 0, January 2000.  Available on-line,
 
 	http://www.amd.com/K6/k6docs/pdf/21924.pdf
 
-3DNow Technology Manual, AMD publication number 21928F/0-August 1999.  This
-describes the femms and prefetch instructions, but nothing else from 3DNow
-has been used.  Available on-line,
+"3DNow Technology Manual", AMD publication number 21928F/0-August 1999.
+This describes the femms and prefetch instructions, but nothing else from
+3DNow has been used.  Available on-line,
 
 	http://www.amd.com/K6/k6docs/pdf/21928.pdf
 
-AMD-K6 MMX Enhanced Processor x86 Code Optimization Application Note, AMD
+"AMD-K6 MMX Enhanced Processor x86 Code Optimization Application Note", AMD
 publication number 21828, revision A amendment 0, August 1997.  This is an
-older edition of 21924 above, applying to K6 rather than K6-2 and pretty much
-the same except for no 3DNow.  Available on-line,
+older edition of 21924 above, applying to K6 rather than K6-2 and pretty
+much the same except for no 3DNow.  Available on-line,
 
 	http://www.amd.com/K6/k6docs/pdf/21828.pdf
+
+"3DNow Instruction Porting Guide", AMD publication number 22621, revision B,
+August 1999.  This has some notes on general K6 optimizations as well as
+3DNow.  Available on-line,
+
+	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22621.pdf
 
 
 
