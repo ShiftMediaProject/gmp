@@ -41,7 +41,13 @@ urandom ()
 #endif
 
 #if BITS_PER_MP_LIMB == 32 && !defined (__URANDOM)
+#if defined (__cplusplus)
+extern "C" {
+#endif
 long random ();
+#if defined (__cplusplus)
+}
+#endif
 static inline mp_limb_t
 urandom ()
 {
@@ -52,7 +58,13 @@ urandom ()
 #endif
 
 #if BITS_PER_MP_LIMB == 64 && !defined (__URANDOM)
+#if defined (__cplusplus)
+extern "C" {
+#endif
 long random ();
+#if defined (__cplusplus)
+}
+#endif
 static inline mp_limb_t
 urandom ()
 {
