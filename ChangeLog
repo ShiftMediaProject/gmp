@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/rootrem.c: In Newton loop, pad qp with leading zero.
+
 2002-12-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/rootrem.c: Allocate 1.585 (log2(3)) times more space
