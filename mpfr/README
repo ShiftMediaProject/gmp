@@ -9,7 +9,7 @@ with GMP 3, the mpfr developers felt that that code is
 obsolete.
 
 If you need to use the mpfr functions now, please see:
-<http://www.loria.fr/projets/mpfr/>.
+<http://www.mpfr.org/>.
 
 We expect that the next GMP release (4.1) or a possible
 patch release (4.0.1) will again include mpfr.
