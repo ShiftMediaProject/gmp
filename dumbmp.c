@@ -1,6 +1,6 @@
 /* dumbmp mini GMP compatible library.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -479,6 +479,7 @@ mpz_mul (mpz_t r, mpz_t a, mpz_t b)
   free (PTR (r));
   PTR (r) = scratch;
   SIZ (r) = (SIZ (a) ^ SIZ (b)) >= 0 ? rn : -rn;
+  ALLOC (r) = an + bn;
 }
 
 void
