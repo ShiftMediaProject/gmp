@@ -117,7 +117,7 @@ case "${target}" in
   i[3456]86*-*-freebsd* | pentium-*-freebsd* | pentiumpro-*-freebsd* | \
   i[3456]86*-*-netbsd* | pentium-*-netbsd* | pentiumpro-*-netbsd*)
 	target_makefile_frag=config/t-freebsd ;;
-  rs6000-*-aix[456]*)
+  rs6000-*-aix[456789]* | rs6000-*-aix3.2.[456789])
     target_makefile_frag=config/t-pwr-aix ;;
 esac
 
