@@ -275,6 +275,7 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_mul_2exp __gmpz_mul_2exp
 #define mpz_mul_ui __gmpz_mul_ui
 #define mpz_neg __gmpz_neg
+#define mpz_nextprime __gmpz_nextprime 
 #define mpz_out_binary __gmpz_out_binary
 #define mpz_out_raw __gmpz_out_raw
 #define mpz_out_str __gmpz_out_str
@@ -399,6 +400,7 @@ void mpz_mul _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_mul_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_mul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_neg _PROTO ((mpz_ptr, mpz_srcptr));
+void mpz_nextprime _PROTO ((mpz_ptr, mpz_srcptr));
 #ifdef _GMP_H_HAVE_FILE
 size_t mpz_out_binary _PROTO ((FILE *, mpz_srcptr));
 size_t mpz_out_raw _PROTO ((FILE *, mpz_srcptr));
