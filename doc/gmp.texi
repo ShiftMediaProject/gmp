@@ -7022,6 +7022,12 @@ Linbox @spaceuref{http://www.linalg.org/} @* Sparse vectors and matrices.
 NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
 @end itemize
 
+@item D
+@itemize @bullet
+@item
+gmp-d @spaceuref{http://home.comcast.net/~benhinkle/gmp-d}
+@end itemize
+
 @item Fortran
 @itemize @bullet
 @item
@@ -7119,7 +7125,7 @@ mpz module in the standard distribution, @uref{http://pike.ida.liu.se/}
 @item Prolog
 @itemize @bullet
 @item
-SWI Prolog @spaceuref{http://www.swi.psy.uva.nl/projects/SWI-Prolog/} @*
+SWI Prolog @spaceuref{http://www.swi-prolog.org/} @*
 Arbitrary precision floats.
 @end itemize
 
