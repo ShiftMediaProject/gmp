@@ -19,6 +19,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/gcdext.c (div2): Remove qh paramater.
+	(mpn_gcdext): Streamline double-limb code.
+	Move GCDEXT_THRESHOLD check to after initial division.
+
 2002-04-27  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (JACOBI_MOD_OR_MODEXACT_1_ODD): Allow for odd
@@ -29,6 +35,16 @@ MA 02111-1307, USA.
 
 	* demos/expr/exprfr.c: Add nan and inf constants.
 	* demos/expr/t-expr.c: Exercise them.
+
+2002-04-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/cmp_ui.c: Fix overflow conditions for nails.
+
+	* gmp-h.in (mpz_get_ui): Fix typo from last change.
+
+	* mpz/n_pow_ui.c: Adjust allocation for nails.
+	(GMP_NUMB_HALFMAX): Renamed from MP_LIMB_T_HALFMAX.
+	Fix umul_ppmm invocation for for nails.
 
 2002-04-24  Torbjorn Granlund  <tege@swox.com>
 
