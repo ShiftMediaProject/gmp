@@ -31,6 +31,12 @@ C  * Try to make this run at closer to 1.5 c/l.
 C  * Set up register aliases (define(`u0',`%r19')).
 C  * Explicitly align loop.
 
+dnl INPUT PARAMETERS
+define(`rp',`%r26')
+define(`up',`%r25')
+define(`vp',`%r24')
+define(`n',`%r23')
+
 ifdef(`OPERATION_addlsh1_n',`
   define(ADCSBC,	`add,dc')
   define(INITC,		`ldi	0,')
@@ -41,12 +47,6 @@ ifdef(`OPERATION_sublsh1_n',`
   define(INITC,		`ldi	1,')
   define(func, mpn_sublsh1_n)
 ')
-
-dnl INPUT PARAMETERS
-define(`rp',`%r26')
-define(`up',`%r25')
-define(`vp',`%r24')
-define(`n',`%r23')
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
 
