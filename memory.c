@@ -49,7 +49,7 @@ __gmp_default_allocate (size_t size)
       fprintf (stderr, "GNU MP: Cannot allocate memory (size=%u)\n", size);
       abort ();
     }
-  
+
 #ifdef DEBUG
   {
     mp_ptr p = ret;
