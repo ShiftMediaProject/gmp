@@ -31,7 +31,7 @@ MA 02111-1307, USA. */
 
 
 /* The following instantiated by configure, for internal use only */
-#undef _LONG_LONG_LIMB
+@DEFN_LONG_LONG_LIMB@
 
 
 #if (__STDC__-0) || defined (__cplusplus)

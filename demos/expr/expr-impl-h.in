@@ -23,7 +23,7 @@ MA 02111-1307, USA.
 
 
 /* Whether mpfr functions and headers are available. */
-#undef HAVE_MPFR
+#define HAVE_MPFR @HAVE_MPFR@
 
 
 /* for va_list */
@@ -127,7 +127,7 @@ struct mpexpr_parse_t {
   int                                   control_top;
   int                                   control_alloc;
 
-  
+
   mpexpr_fun_0ary_t                     mpX_clear;
   mpexpr_fun_i_unary_t                  mpX_ulong_p;
   mpexpr_fun_get_ui_t                   mpX_get_ui;
