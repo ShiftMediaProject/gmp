@@ -260,7 +260,10 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #endif
 
 
-/* See "(gcc)Function Attributes" for what these do. */
+/* See "(gcc)Function Attributes".  Basically "const" means a function does
+   nothing but examine its arguments and give a return value, it doesn't
+   read or write any memory (neither global nor pointed to by arguments),
+   and has no other side-effects. */
 
 #if HAVE_ATTRIBUTE_CONST
 #define ATTRIBUTE_CONST  __attribute__ ((const))
@@ -274,12 +277,12 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define ATTRIBUTE_NORETURN
 #endif
 
+
 /* In gcc 2.96 and up on i386, tail calls are optimized to jumps if the
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
    putting leading parameters in registers, avoiding extra stack.  */
 
-#if (defined (__i386__) || defined (__i486__)) \
-  && (__GNUC__-0 >= 3 || (__GNUC__-0 == 2 && __GNUC_MINOR__-0 >= 96))
+#if (defined (__i386__) || defined (__i486__)) && __GMP_GNUC_PREREQ (2,96)
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
@@ -347,7 +350,10 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_reciprocal		__MPN(reciprocal)
 
 #define mpn_gcd_finda	__MPN(gcd_finda)
-mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2]));
+mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2])) __GMP_ATTRIBUTE_PURE;
+
+#define mpn_jacobi_base __MPN(jacobi_base)
+int mpn_jacobi_base _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1)) ATTRIBUTE_CONST;
 
 #define mpz_n_pow_ui __gmpz_n_pow_ui
 void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
@@ -409,8 +415,8 @@ void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
 void mpn_toom3_sqr_n _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 
-#define mpn_fft_best_k  __MPN(fft_best_k)
-int mpn_fft_best_k _PROTO ((mp_size_t n, int sqr));
+#define mpn_fft_best_k __MPN(fft_best_k)
+int     mpn_fft_best_k _PROTO ((mp_size_t n, int sqr)) ATTRIBUTE_CONST;
 
 #define mpn_mul_fft  __MPN(mul_fft)
 void mpn_mul_fft _PROTO ((mp_ptr op, mp_size_t pl,
@@ -423,8 +429,8 @@ void mpn_mul_fft_full _PROTO ((mp_ptr op,
                                mp_srcptr n, mp_size_t nl,
                                mp_srcptr m, mp_size_t ml));
 
-#define mpn_fft_next_size  __MPN(fft_next_size)
-mp_size_t mpn_fft_next_size _PROTO ((mp_size_t pl, int k));
+#define   mpn_fft_next_size __MPN(fft_next_size)
+mp_size_t mpn_fft_next_size _PROTO ((mp_size_t pl, int k)) ATTRIBUTE_CONST;
 
 #define mpn_sb_divrem_mn  __MPN(sb_divrem_mn)
 mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t,
@@ -441,7 +447,7 @@ void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
 
 #define mpn_divisible_p __gmpn_divisible_p
 int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
-                                 mp_srcptr dp, mp_size_t dsize));
+                                 mp_srcptr dp, mp_size_t dsize)) __GMP_ATTRIBUTE_PURE;
 
 
 /* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
@@ -1085,12 +1091,12 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 
 #define mpn_modexact_1c_odd  __MPN(modexact_1c_odd)
 mp_limb_t mpn_modexact_1c_odd _PROTO ((mp_srcptr src, mp_size_t size,
-                                       mp_limb_t divisor, mp_limb_t c));
+                                       mp_limb_t divisor, mp_limb_t c)) __GMP_ATTRIBUTE_PURE;
 
 #if HAVE_NATIVE_mpn_modexact_1_odd
 #define mpn_modexact_1_odd   __MPN(modexact_1_odd)
 mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
-                                      mp_limb_t divisor));
+                                      mp_limb_t divisor)) __GMP_ATTRIBUTE_PURE;
 #else
 #define mpn_modexact_1_odd(src,size,divisor) \
   mpn_modexact_1c_odd (src, size, divisor, CNST_LIMB(0))
@@ -1331,7 +1337,7 @@ union ieee_double_extract
    We assume doubles have 53 mantissam bits.  */
 #define LIMBS_PER_DOUBLE ((53 + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB + 1)
 
-double __gmp_scale2 _PROTO ((double, int));
+double __gmp_scale2 _PROTO ((double, int)) ATTRIBUTE_CONST;
 int __gmp_extract_double _PROTO ((mp_ptr, double));
 
 extern int __gmp_junk;
