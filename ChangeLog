@@ -1,3 +1,11 @@
+2001-01-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/kronsz.c: Don't depend on right shifting a negative.
+
+	* mpn/x86/gmp-mparam.h: New file.
+
+	* mpn/x86/pentium/mmx/mul_1.asm: New file.
+
 2001-01-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/kronsz.c: Temporary workaround for Cray right shift oddities.
