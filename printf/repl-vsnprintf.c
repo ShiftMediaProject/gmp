@@ -134,6 +134,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
       fmt = strchr (fmt, '%');
       if (fmt == NULL)
         break;
+      fmt++;
 
       type = '\0';
       width = 0;
@@ -367,7 +368,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
 
   /* If total_width was somehow wrong then chances are we've already
      clobbered memory, but maybe this check will still work.  */
-  ASSERT_ALWAYS (len < buf_size);
+  ASSERT_ALWAYS (len < total_width);
 
   return len;
 }
