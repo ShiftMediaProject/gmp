@@ -5,24 +5,25 @@ Changes between MP version 3.1.1 and 3.2
   confusion.
 * New CPU support: IA-64.
 * Improved CPU support: 21264, Cray vector systems.
-* New systems supported: SCO 5.
+* New systems supported: SCO 5, Darwin.
 * New C++ wrapper.
 * New Karatsuba Square Root algorithm.
 * New algorithms chapter in the manual.
 * Updated mpfr.
 * Speed improvements for mpz_powm.
-* New integer functions: mpz_si_pow_ui, mpz_cdiv_q_2exp, mpz_cdiv_r_2exp.
+* New integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_lcm_ui.
+* New division functions: mpz_cdiv_q_2exp, mpz_cdiv_r_2exp, mpz_divexact_ui.
 * New mpz_kronecker function, and mpz_jacobi accepts non-positive denominators.
 * New divisibility tests: mpz_divisible_p, mpz_divisible_ui_p,
-  mpz_divisible_2exp_p.
-* New congruence tests: mpz_congruent_p, mpz_congruent_ui_p,
+  mpz_divisible_2exp_p, mpz_congruent_p, mpz_congruent_ui_p,
   mpz_congruent_2exp_p.
 * New rational functions: mpq_abs, mpq_div_2exp, mpq_get_str, mpq_mul_2exp,
   mpq_set_f.
-* New float conversion functions: mpf_get_si, mpf_get_ui.
-* New float test functions: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
+* New float functions: mpf_cmp_d, mpf_get_default_prec, mpf_get_si, mpf_get_ui.
+* New float tests: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
   mpf_fits_sshort_p, mpf_fits_uint_p, mpf_fits_ulong_p, mpf_fits_ushort_p.
-* New demo expression string parsing (see demos/expr).
+* New demo expression string parser (see demos/expr).
+* New preliminary perl interface (see demos/perl).
 * More tuned algorithm thresholds.
 
 Changes between MP version 3.1 and 3.1.1
