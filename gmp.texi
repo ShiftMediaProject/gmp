@@ -689,9 +689,32 @@ POWER:
 @nisamp{power},
 @nisamp{power1},
 @nisamp{power2},
-@nisamp{power2sc},
+@nisamp{power2sc}
+
+@item
+PowerPC:
 @nisamp{powerpc},
-@nisamp{powerpc64}
+@nisamp{powerpc64},
+@nisamp{powerpc401},
+@nisamp{powerpc403},
+@nisamp{powerpc405},
+@nisamp{powerpc505},
+@nisamp{powerpc601},
+@nisamp{powerpc602},
+@nisamp{powerpc603},
+@nisamp{powerpc603e},
+@nisamp{powerpc604},
+@nisamp{powerpc604e},
+@nisamp{powerpc620},
+@nisamp{powerpc630},
+@nisamp{powerpc740},
+@nisamp{powerpc7400},
+@nisamp{powerpc7450},
+@nisamp{powerpc750},
+@nisamp{powerpc801},
+@nisamp{powerpc821},
+@nisamp{powerpc823},
+@nisamp{powerpc860},
 
 @item
 SPARC:
@@ -1265,7 +1288,7 @@ is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 
 @item Power CPU Types
 
-In GMP, CPU types @samp{power} and @samp{powerpc} will each use instructions
+In GMP, CPU types @samp{power*} and @samp{powerpc*} will each use instructions
 not available on the other, so it's important to choose the right one for the
 CPU that will be used.  Currently GMP has no assembler code support for using
 just the common instruction subset.  To get executables that run on both, the
@@ -2043,6 +2066,11 @@ the standard C library @code{malloc} has some diagnostic facilities, see
 @uref{http://people.redhat.com/~otaylor/memprof}
 @uref{http://www.cbmamiga.demon.co.uk/mpatrol}
 @end display
+
+The GMP default allocation routines in @file{memory.c} also have a simple
+sentinel scheme which can be enabled with @code{#define DEBUG} in that file.
+This is mainly designed for detecting buffer overruns during GMP development,
+but might find other uses.
 
 @item Stack Backtraces
 On some systems the compiler options GMP uses by default can interfere with
