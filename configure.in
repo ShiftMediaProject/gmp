@@ -26,14 +26,10 @@ AC_PREREQ(2.49)
 AC_INIT(gmp-impl.h)
 
 if test -n "$target_alias"; then
-  cat >&2 <<EOF
-configure: error: --target is not appropriate for GMP
-
+  AC_MSG_ERROR([--target is not appropriate for GMP
 Use --build=CPU-VENDOR-OS if you need to specify your CPU and/or system
-explicitly.  Use --host if cross-compiling (but see "Installing GMP" in
-the manual for more on this).
-EOF
-  exit 1
+explicitly.  Use --host if cross-compiling (see "Installing GMP" in the
+manual for more on this).])
 fi
 
 GMP_INIT(config.m4)
