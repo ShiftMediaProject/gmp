@@ -12,6 +12,8 @@
 	* configure.in (found_asm, M4): Account for SPEED_CYCLECOUNTER_OBJ,
 	for the benefit of targets whose only .asm is a cycle counter.
 
+	* tune/tuneup.c (fft): Remove bogus usleep calls.
+
 2000-10-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/invert_limb.asm: Get return value for 0x800...00 right.
