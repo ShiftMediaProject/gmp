@@ -54,9 +54,10 @@ mpz_mod4 (mpz_srcptr z)
   unsigned long  ret;
 
   mpz_init (m);
-  mpz_fdiv_r_2exp (m, z, 4);
+  mpz_fdiv_r_2exp (m, z, 2);
   ret = mpz_get_ui (m);
   mpz_clear (m);
+  return ret;
 }
 
 
@@ -634,5 +635,5 @@ try(a,b,answer) =\n\
   check_data ();
   check_squares_zi ();
 
-  return 0;
+  exit (0);
 }
