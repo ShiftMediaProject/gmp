@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpbsd/Makefile.am (nodist_libmpbsd_la_SOURCES): Move these mpz
+	sources to libmpbsd_la_SOURCES directly, automake 1.7.2 now gets the
+	ansi2knr setups right for sources in other directories.
+
+	* mpfr/tests/Makefile.am: Add libfrtests.a in preparation for new mpfr.
+
 2002-12-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/Makefile.am (mpfr_TEXINFOS, AM_MAKEINFOFLAGS): Allow for
