@@ -1,7 +1,6 @@
 /* Reference mpn functions, designed to be simple, portable and independent
-   of the normal gmp code.  Speed isn't a consideration.  */
+   of the normal gmp code.  Speed isn't a consideration.
 
-/*
 Copyright 1996, 1997, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -19,8 +18,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* Most routines have assertions representing what the mpn routines are
@@ -107,6 +105,12 @@ refmpn_fill (mp_ptr ptr, mp_size_t size, mp_limb_t value)
   ASSERT (size >= 0);
   for (i = 0; i < size; i++)
     ptr[i] = value;
+}
+
+void
+refmpn_zero (mp_ptr ptr, mp_size_t size)
+{
+  refmpn_fill (ptr, size, CNST_LIMB(0));
 }
 
 int
@@ -1156,7 +1160,7 @@ refmpn_sb_divrem_mn (mp_ptr qp,
   ASSERT (!MPN_OVERLAP_P (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
 
   i = nsize-dsize;
-  if (mpn_cmp (np+i, dp, dsize) >= 0)
+  if (refmpn_cmp (np+i, dp, dsize) >= 0)
     {
       ASSERT_NOCARRY (refmpn_sub_n (np+i, np+i, dp, dsize));
       retval = 1;
