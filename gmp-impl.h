@@ -2855,7 +2855,25 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
   } while (0)
 #endif
 
-                                                                       
+/* gcc on m68k and x86 can hold doubles in the coprocessor, which means a
+   bigger exponent range than normal, and depending on the mode, a bigger
+   mantissa than normal.  (See "Disappointments" in the gcc manual.)  This
+   macro stores and fetches "d" through memory to force rounding and
+   overflows to occur.  */
+#if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86)
+#ifdef __GNUC__
+#define FORCE_DOUBLE(d)  do { asm ("" : "=m" (d) : "0" (d)); } while (0)
+#else
+/* FIXME: Not sure if an automatic volatile will use memory, it seems to in
+   gcc, so give it a try for other compilers.  */
+#define FORCE_DOUBLE(d) \
+  do { volatile double __force = (d); (d) = __force; } while (0)
+#endif
+#else
+#define FORCE_DOUBLE(d)  do { } while (0)
+#endif
+
+
 extern int __gmp_junk;
 extern const int __gmp_0;
 void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
