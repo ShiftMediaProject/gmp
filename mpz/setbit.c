@@ -72,9 +72,11 @@ mpz_setbit (mpz_ptr d, unsigned long int bit_index)
       if (limb_index > zero_bound)
 	{
 	  if (limb_index < dsize)
-	    dp[limb_index] &= ~((mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB));
-	  else
-	    ;
+            {
+              dp[limb_index] &= ~((mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB));
+              MPN_NORMALIZE (dp, dsize);
+              d->_mp_size = -dsize;
+            }
 	}
       else if (limb_index == zero_bound)
 	{
