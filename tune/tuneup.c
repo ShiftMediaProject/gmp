@@ -88,6 +88,7 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#include "tests.h"
 #include "speed.h"
 
 #if !HAVE_DECL_OPTARG
@@ -132,6 +133,7 @@ mp_size_t  divrem_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  divrem_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  modexact_1_odd_threshold[2] = { MP_SIZE_T_MAX };
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
@@ -153,7 +155,12 @@ struct param_t {
   mp_size_t         max_size[MAX_TABLE];
   mp_size_t         check_size;
   mp_size_t         size_extra;
-  int               data_high_lt_r;
+
+#define DATA_HIGH_LT_R  1
+#define DATA_HIGH_GE_R  2
+  int               data_high;
+
+  int               noprint;
 };
 
 
@@ -286,11 +293,16 @@ tuneup_measure (speed_function_t fun,
   mpn_random (s->xp, s->size);
   mpn_random (s->yp, s->size);
 
-  if (param->data_high_lt_r)
-    {
-      s->xp[s->size-1] %= s->r;
-      s->yp[s->size-1] %= s->r;
-    }
+  switch (param->data_high) {
+  case DATA_HIGH_LT_R:
+    s->xp[s->size-1] %= s->r;
+    s->yp[s->size-1] %= s->r;
+    break;
+  case DATA_HIGH_GE_R:
+    s->xp[s->size-1] |= s->r;
+    s->yp[s->size-1] |= s->r;
+    break;
+  }
 
   t = speed_measure (fun, s);
 
@@ -390,7 +402,8 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
       int  since_positive, since_thresh_change;
       int  thresh_idx, new_thresh_idx;
 
-      print_define_start (param->name[i]);
+      if (! param->noprint)
+        print_define_start (param->name[i]);
 
       ndat = 0;
       since_positive = 0;
@@ -530,7 +543,8 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
       if (param->min_is_always && table[i] == param->min_size)
         table[i] = 0;
 
-      print_define_end (param->name[i], table[i]);
+      if (! param->noprint)
+        print_define_end (param->name[i], table[i]);
 
       /* Look for the next threshold starting from the current one, but back
          a bit. */
@@ -868,19 +882,21 @@ all (void)
      only better at size==1 then don't bother including that code just for
      that case, instead go with preinv always and get a size saving.  */
 
-#define DIV_1_PARAMS            \
-  param.check_size = 256;       \
-  param.min_size = 2;           \
-  param.min_is_always = 1;      \
-  param.data_high_lt_r = 1;     \
-  param.size_extra = 1;         \
+#define DIV_1_PARAMS                    \
+  param.check_size = 256;               \
+  param.min_size = 2;                   \
+  param.min_is_always = 1;              \
+  param.data_high = DATA_HIGH_LT_R;     \
+  param.size_extra = 1;                 \
   param.stop_factor = 2.0;
 
   /* No support for tuning native assembler code, do that by hand and put
-     the results in the .asm file. */
+     the results in the .asm file, and there's no need for such thresholds
+     to appear in gmp-mparam.h.  */
 #if ! HAVE_NATIVE_mpn_divrem_1
   /* Tune for the integer part of divrem_1.  This will very possibly be a
-     bit out for the fractional part, but that's too bad. */
+     bit out for the fractional part, but that's too bad, the integer part
+     is more important. */
   {
     static struct param_t  param;
     param.name[0] = "DIVREM_1_NORM_THRESHOLD";
@@ -919,20 +935,21 @@ all (void)
 #endif /* ! HAVE_NATIVE_mpn_mod_1 */
 #endif /* ! UDIV_PREINV_ALWAYS */
 
+/* use the regular mpn_mod_1 if there's no tuned version */
+#ifndef SPEED_MPN_MOD_1
+#define SPEED_MPN_MOD_1  speed_mpn_mod_1
+#endif
+
 #if HAVE_NATIVE_mpn_preinv_mod_1
   /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
      faster than mpn_mod_1.  */
-  printf ("#define USE_PREINV_MOD_1           1   /* (native) */\n");
+  printf ("#define USE_PREINV_MOD_1               1   /* (native) */\n");
 #else
 #if UDIV_PREINV_ALWAYS
   /* If udiv_qrnnd_preinv is the only division method then of course
      mpn_preinv_mod_1 should be used.  */
-  printf ("#define USE_PREINV_MOD_1           1   /* (preinv always) */\n");
+  printf ("#define USE_PREINV_MOD_1               1   /* (preinv always) */\n");
 #else
-  /* the native version if not a tuned generic one from above */
-#ifndef SPEED_MPN_MOD_1
-#define SPEED_MPN_MOD_1  speed_mpn_mod_1
-#endif
   {
     static struct param_t  param;
     double   t1, t2;
@@ -957,7 +974,56 @@ all (void)
   }
 #endif /* ! UDIV_PREINV_ALWAYS */
 #endif /* ! HAVE_NATIVE_mpn_preinv_mod_1 */
+
+
+  /* The generic mpn_modexact_1_odd skips a divide step if high<divisor, the
+     same as mpn_mod_1, but this might not be true of an assembler
+     implementation.  The threshold used is an average based on data where a
+     divide can be skipped and where it can't.
+
+     If modexact turns out to be better as early as 3 limbs, then use it
+     always, so as to reduce code size and conditional jumps.  */
+  {
+    static struct param_t  param;
+    mp_size_t  thresh_lt;
+    param.name[0] = "MODEXACT_1_ODD_THRESHOLD";
+    param.check_size = 256;
+    param.min_size = 2;
+    param.stop_factor = 1.5;
+    param.function  = SPEED_MPN_MOD_1;
+    param.function2 = speed_mpn_modexact_1c_odd;
+    param.noprint = 1;
+    s.r = randlimb_half () | 1;
+
+    print_define_start (param.name[0]);
+
+    param.data_high = DATA_HIGH_LT_R;
+    one (modexact_1_odd_threshold, 1, &param);
+    if (option_trace)
+      printf ("lt thresh %ld\n", modexact_1_odd_threshold[0]);
+
+    thresh_lt = modexact_1_odd_threshold[0];
+    if (modexact_1_odd_threshold[0] != MP_SIZE_T_MAX)
+      {
+        param.data_high = DATA_HIGH_GE_R;
+        one (modexact_1_odd_threshold, 1, &param);
+        if (option_trace)
+          printf ("ge thresh %ld\n", modexact_1_odd_threshold[0]);
+
+        if (modexact_1_odd_threshold[0] != MP_SIZE_T_MAX)
+          {
+            modexact_1_odd_threshold[0]
+              = (modexact_1_odd_threshold[0] + thresh_lt) / 2;
+            if (modexact_1_odd_threshold[0] <= 3)
+              modexact_1_odd_threshold[0] = 0;
+          }
+      }
+
+    print_define_end (param.name[0], modexact_1_odd_threshold[0]);
+  }
+
   printf("\n");
+
 
   if (option_fft_max_size != 0)
     {
