@@ -48,19 +48,26 @@ MA 02111-1307, USA. */
   ((mp_size_t) ((n) * 0.6942419 / GMP_NUMB_BITS + 1))
 
 
-/* If the data put into the table by mpn/generic/fib_ui.c doesn't match the
-   size setup by gmp-impl.h then there'll be zero entries at the end.  Check
-   that this hasn't happened.  Any problem here should be blamed on the
-   program at the end of mpn/generic/fib_ui.c, which generates the data.
-
-   FIB_TABLE(0) is of course meant to be zero, so skip that. */
-
 void
 check_fib_table (void)
 {
-  int  i;
+  int        i;
+  mp_limb_t  want;
+
+  ASSERT_ALWAYS (FIB_TABLE(-1) == 1);
+  ASSERT_ALWAYS (FIB_TABLE(0) == 0);
+
   for (i = 1; i <= FIB_TABLE_LIMIT; i++)
-    ASSERT_ALWAYS (FIB_TABLE(i) != 0);
+    {
+      want = FIB_TABLE(i-1) + FIB_TABLE(i-2);
+      if (FIB_TABLE(i) != want)
+        {
+          printf ("FIB_TABLE(%d) wrong\n", i);
+          gmp_printf ("  got  %#Nx\n", &FIB_TABLE(i), 1);
+          gmp_printf ("  want %#Nx\n", &want, 1);
+          abort ();
+        }
+    }
 }
 
 
