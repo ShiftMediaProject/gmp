@@ -20,23 +20,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include "stack-alloc.h"
+#include "gmp.h"
+#include "gmp-impl.h"
 
-#define __need_size_t
-#include <stddef.h>
-#undef __need_size_t
 
-/* gmp-impl.h and stack-alloc.h conflict when not USE_STACK_ALLOC, so these
-   declarations are copied here */
-#if __STDC__
-extern void *	(*__gmp_allocate_func) (size_t);
-extern void	(*__gmp_free_func) (void *, size_t);
-#else
-extern void *	(*__gmp_allocate_func) ();
-extern void	(*__gmp_free_func) ();
-#endif
-
+struct tmp_stack
+{
+  void *end;
+  void *alloc_point;
+  struct tmp_stack *prev;
+};
 typedef struct tmp_stack tmp_stack;
+
 
 static unsigned long max_total_allocation = 0;
 static unsigned long current_total_allocation = 0;
@@ -45,7 +40,8 @@ static tmp_stack xxx = {&xxx, &xxx, 0};
 static tmp_stack *current = &xxx;
 
 /* The rounded size of the header of each allocation block.  */
-#define HSIZ ((sizeof (tmp_stack) + __TMP_ALIGN - 1) & -__TMP_ALIGN)
+#define HSIZ   ROUND_UP_MULTIPLE (sizeof (tmp_stack), __TMP_ALIGN)
+
 
 /* Allocate a block of exactly <size> bytes.  This should only be called
    through the TMP_ALLOC macro, which takes care of rounding/alignment.  */
