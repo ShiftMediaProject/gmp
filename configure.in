@@ -404,6 +404,7 @@ dnl Checks for assembly syntax.
 if test "$gmp_no_asm_syntax_testing" != "yes"; then
   GMP_CHECK_ASM_TEXT
   GMP_CHECK_ASM_DATA
+  GMP_CHECK_ASM_RODATA
   GMP_CHECK_ASM_GLOBL
   GMP_CHECK_ASM_LABEL_SUFFIX
   GMP_CHECK_ASM_TYPE
