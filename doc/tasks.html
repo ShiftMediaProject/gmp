@@ -104,7 +104,7 @@
 
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> aren't very
      fast on one or two limb moduli, due to a lot of function call
-     overheads.  These could perhaps be be handled as special cases.
+     overheads.  These could perhaps be handled as special cases.
 
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> want better
      algorithm selection, and the latter should use REDC.  Both could
@@ -294,8 +294,13 @@
        might not be very good.  Pass "-xO4 -xtarget=native" instead?)
 
   <li> Extend the "optional" compiler arguments to choose the first
-       that works from from a set, so K7 can have -mcpu=athlon,
-       -mcpu=pentiumpro, or -mcpu=i486, whichever works.
+       that works from from a set, so when gcc gets athlon support it
+       can try -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486,
+       whichever works.
+
+  <li> Detect gcc >=2.96 and enable -march=pentiumpro for relevant
+       x86s.  (A bug in gcc 2.95.2 prevents it being used
+       unconditionally.)
 
   <li> Build multiple variants of the library under certain systems.
        An example is -n32, -o32, and -64 on Irix.
@@ -303,6 +308,11 @@
   <li> Check name conflicts under DOS 8.3 filenames and DJGPP, with a
        view to avoiding at least the simplest ones.  Similarly old
        SysV 14 char names.
+
+  <li> Enable support for FORTRAN versions of mpn files (eg. for
+       mpn/cray/mulww.f).  This means AC_PROG_F77 under relevant
+       targets and an "f" suffix in the mpn_path searching.  Hopefully
+       automake will generate everything we need in the makefiles.
 
 </ul>
 
@@ -331,10 +341,27 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Maybe make mpz_pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
 <li> Make mpz_invert call mpn_gcdext directly.
+
+<li> Make a build option to enable execution profiling with gprof.  In
+     particular look at getting the right mcount call at the start of
+     each assembler subroutine (for important targets at least).
+</ul>
+
+
+<h4>Aids to Debugging</h4>
+<ul>
 <li> Make an option for stack-alloc.c to call <code>malloc</code>
      separately for each <code>TMP_ALLOC</code> block, so a redzoning
      malloc debugger could be used during development.
+
+<li> Add <code>ASSERT</code>s at the start of each user-visible
+     mpz/mpq/mpf function to check the validity of each
+     <code>mp?_t</code> parameter, in particular to check they've been
+     <code>mp?_init</code>ed.  This might catch elementary mistakes in
+     user programs.  Care would need to be taken over
+     <code>MPZ_TMP_INIT</code>ed variables used interally.
 </ul>
+
 
 <h4>Documentation</h4>
 <ul>
