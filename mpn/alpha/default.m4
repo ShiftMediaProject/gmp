@@ -99,6 +99,10 @@ define(`DATAEND',
 m4_assert_numargs(0)
 )
 
+dnl  Load a symbolic address into a register
+define(`LEA',
+m4_assert_numargs(2)
+`lda   $1,  $2')
 
 dnl  Usage: ASM_END()
 define(`ASM_END',

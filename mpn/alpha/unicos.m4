@@ -84,6 +84,14 @@ define(`cvttqc',
 m4_assert_numargs(-1)
 `cvttq/c')
 
+dnl  Load a symbolic address into a register
+define(`LEA',
+m4_assert_numargs(2)
+	`laum	$1,  $2(r31)
+	sll	$1,  32,   $1
+	lalm	$1,  $2($1)
+	lal	$1,  $2($1)')
+
 dnl  Unicos assembler seems to align using garbage, so disable aligning
 define(`ALIGN',
 m4_assert_numargs(1)
