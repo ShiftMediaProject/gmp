@@ -137,6 +137,16 @@ long __MPN(count_leading_zeros) ();
 #endif /* LONGLONG_STANDALONE */
 #endif /* __alpha */
 
+#if defined (_CRAYIEEE) && W_TYPE_SIZE == 64
+#include <intrinsics.h>
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    (ph) = _int_mult_upper (m0, m1);					\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#endif
+
 #if defined (__hppa) && W_TYPE_SIZE == 64
 /* We put the result pointer parameter last here, since it makes passing
    of the other parameters more efficient.  */
