@@ -20,6 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.  */
 
 
+#include <intrinsics.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -28,6 +29,7 @@ mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
 {
   mp_limb_t p0[n], p1[n];
   mp_limb_t cy_limb;
+  mp_size_t i;
 
 #pragma _CRI ivdep
   for (i = 0; i < n; i++)
