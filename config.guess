@@ -332,6 +332,9 @@ main ()
 	  else if (model <= 6)	modelstr = "pentium2";
 	  else			modelstr = "pentium3";
 	  break;
+	case 15:
+	  modelstr = "pentium4";
+	  break;
 	}
     }
   else if (strcmp (vendor_string, "AuthenticAMD") == 0)
