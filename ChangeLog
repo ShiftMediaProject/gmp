@@ -1,3 +1,39 @@
+2000-03-10  Linus Nordberg  <linus@swox.se>
+
+	* configure.in: Reorganize.
+	Use AC_CHECK_TOOL to find `ar'.
+	Add post-includes `regmap.m4' and `aix.m4' for AIX targets.
+	asm-syntax.h is not needed for PPC or sparc anymore.
+	(powerpc64-*-aix*): Compiler is always 64-bit. Use `-q64
+	-qtune=pwr3' to xlc and `-maix64 -mpowerpc64' to gcc.  Pass `-X
+	64' to `ar' and `nm'.
+	(pentiummmx): Use GMP_CHECK_ASM_MMX and avoid MMX assembly path if
+	assembler is not MMX capable.
+	(pentium[23]): Likewise.
+	(athlon): Likewise.
+	(k6*): Likewise.
+	* configure: Regenerate.
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): New macro.
+	(GMP_PROG_CC_FIND): Use GMP_PROG_CC_WORKS instead of
+	AC_TRY_COMPILER.  Make sure that the *first* working 32-bit
+	compiler is used if no 64-bit compiler is found.
+	(GMP_CHECK_ASM_MMX): New macro.
+	* aclocal.m4: Regenerate.
+
+	* Makefile.in: Regenerate.  (CC_TEST removed.)
+	* mpf/Makefile.in: Likewise.
+	* mpn/Makefile.in: Likewise.
+	* mpq/Makefile.in: Likewise.
+	* mpz/Makefile.in: Likewise.
+	* mpf/tests/Makefile.in: Likewise.
+	* mpq/tests/Makefile.in: Likewise.
+	* mpz/tests/Makefile.in: Likewise.
+
+	* acconfig.h (_LONG_LONG_LIMB): Add.
+
+	* gmp-impl.h: Include config.h only if HAVE_CONFIG_H is defined.
+
 2000-03-09  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/mul_basecase.S: Small speedup by avoiding an AGI.
