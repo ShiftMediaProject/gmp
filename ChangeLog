@@ -21,6 +21,7 @@ MA 02111-1307, USA.
 2002-11-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/addmul_1.asm: Adapt to Itanium 2; unroll 2x for Itanium 1.
+	* mpn/ia64/submul_1.asm: Adapt to Itanium 2.
 
 	* mpn/ia64/mul_1.asm: Fix typo in HAVE_ABI_32 code.
 
