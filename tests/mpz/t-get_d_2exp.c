@@ -30,7 +30,7 @@ static void
 check_onebit (void)
 {
   static const unsigned long data[] = {
-    1, 32, 53, 54, 64, 128, 256, 511, 512, 513
+    1, 32, 52, 53, 54, 63, 64, 65, 128, 256, 511, 512, 513
   };
   mpz_t   z;
   double  got, want;
@@ -45,11 +45,26 @@ check_onebit (void)
       mpz_mul_2exp (z, z, data[i]);
       want = 0.5;
       want_exp = data[i] + 1;
-
       got = mpz_get_d_2exp (&got_exp, z);
       if (got != want || got_exp != want_exp)
         {
-          printf    ("mpz_get_d_2exp wrong on 2**%d\n", data[i]);
+          printf    ("mpz_get_d_2exp wrong on 2**%ld\n", data[i]);
+          mpz_trace ("   z    ", z);
+          d_trace   ("   want ", want);
+          d_trace   ("   got  ", got);
+          printf    ("   want exp %ld\n", want_exp);
+          printf    ("   got exp  %ld\n", got_exp);
+          abort();
+        }
+
+      mpz_set_si (z, -1L);
+      mpz_mul_2exp (z, z, data[i]);
+      want = -0.5;
+      want_exp = data[i] + 1;
+      got = mpz_get_d_2exp (&got_exp, z);
+      if (got != want || got_exp != want_exp)
+        {
+          printf    ("mpz_get_d_2exp wrong on -2**%ld\n", data[i]);
           mpz_trace ("   z    ", z);
           d_trace   ("   want ", want);
           d_trace   ("   got  ", got);
@@ -90,6 +105,20 @@ check_round (void)
             {
               printf    ("mpz_get_d_2exp wrong on 2**%lu-1\n", data[i]);
               printf    ("result out of range, expect 0.5 <= got < 1.0\n");
+              printf    ("   rnd_mode = %d\n", rnd_mode);
+              printf    ("   data[i]  = %lu\n", data[i]);
+              mpz_trace ("   z    ", z);
+              d_trace   ("   got  ", got);
+              printf    ("   got exp  %ld\n", got_exp);
+              abort();
+            }
+
+          mpz_neg (z, z);
+          got = mpz_get_d_2exp (&got_exp, z);
+          if (got <= -1.0 || got > -0.5)
+            {
+              printf    ("mpz_get_d_2exp wrong on -2**%lu-1\n", data[i]);
+              printf    ("result out of range, expect -1.0 < got <= -0.5\n");
               printf    ("   rnd_mode = %d\n", rnd_mode);
               printf    ("   data[i]  = %lu\n", data[i]);
               mpz_trace ("   z    ", z);
