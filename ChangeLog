@@ -1,3 +1,13 @@
+2001-08-30  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/x86-defs.m4 (cmov_available_p): Add pentium4.	
+
+	* gmp-h.in: Put #define renamings with prototypes.
+	Remove commented out #defines of gmp-impl.h things.
+	(mpn_invert_limb): Remove #define, already in gmp-impl.h.
+	(mpn_lshiftc, mpn_rshiftc): Remove #defines, unused.
+	(mpn_addsub_nc): Add prototype to #define.
+
 2001-08-28  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi: Switch to GFDL.
