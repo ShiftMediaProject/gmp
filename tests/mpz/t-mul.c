@@ -142,6 +142,7 @@ ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
   size_t free_me_size;
   TMP_DECL (marker);
 
+  TMP_MARK (marker);
   sign_product = usize ^ vsize;
   usize = ABS (usize);
   vsize = ABS (vsize);
@@ -158,8 +159,6 @@ ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
       SIZ (w) = 0;
       return;
     }
-
-  TMP_MARK (marker);
 
   up = u->_mp_d;
   vp = v->_mp_d;
