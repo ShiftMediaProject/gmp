@@ -97,8 +97,8 @@ This formula means doing only three multiplies of (N/2)x(N/2) limbs, whereas
 a basecase multiply of NxN limbs is roughly equivalent to four multiplies of
 (N/2)x(N/2).
 
-The factors (b^2+b) etc in the formula look worse than they are,
-representing simply the positions where the products must be added in.
+The factors (b^2+b) etc represent the positions where the three products
+must be added in.
 
          high                              low
         +--------+--------+ +--------+--------+
@@ -114,8 +114,10 @@ representing simply the positions where the products must be added in.
                   | (x1-x0)*(y1-y0) |
                   +--------+--------+
 
-The term (x1-x0)*(y1-y0) can be negative, meaning a subtraction, but the
-final result is of course always positive.
+The term (x1-x0)*(y1-y0) can be negative, but the final result is of course
+always positive.  Notice that high(x0*y0)+low(x1*y1) occurs twice, so it's
+possible to do 5*k limb additions, rather than 6*k, however in GMP extra
+function call overheads outweigh the saving.
 
 The use of three multiplies of N/2 limbs each leads to an asymptotic speed
 O(N^1.585).  (The exponent is log(3)/log(2).)  This is a big improvement
@@ -209,11 +211,11 @@ GMP the following are used
         t=1/2  meaning (x2+2*x1+4*x0)*(y2+2*y1+4*y0)
         t=inf  meaning x2*y2, which gives w4 immediately
 
-At t=1/2 the value calculated is actually 4*X(1/2)*Y(1/2), giving a value
-for 16*W(1/2) (this is always an integer).  At t=inf the value is actually
-X(t)*Y(t)/t^2 in the limit as t approaches infinity, but it's much easier to
-think of that as simply x2*y2 giving w4 immediately (much like at t=0 x0*y0
-gives w0 immediately).
+At t=1/2 the value calculated is actually 4*X(1/2)*4*Y(1/2), giving a value
+for 16*W(1/2), and this is always an integer.  At t=inf the value is
+actually X(t)*Y(t)/t^2 in the limit as t approaches infinity, but it's much
+easier to think of it as simply x2*y2 giving w4 immediately (much like at
+t=0 x0*y0 gives w0 immediately).
 
 Now each of the points substituted into W(t)=w4*t^4+...+w0 gives a linear
 combination of the w[i] coefficients, and the value of those combinations
@@ -256,7 +258,7 @@ are as follows.
 
 
 The conversion of W(t) values to the coefficients is called interpolation.
-A polynomial of degree 5 like W(t) is uniquely determined by values known at
+A polynomial of degree 4 like W(t) is uniquely determined by values known at
 5 different points.  The points can be chosen to make the linear equations
 come out with a convenient set of steps for isolating the w[i]s.
 
@@ -309,28 +311,38 @@ numbers.  In the references below Schonhage and Strassen is the original
 paper, and Pollard gives some of the mathematics for a finite field as used
 here.
 
-The FFT does its multiplication modulo 2^N+1, but by choosing
+A Fermat FFT does its multiplication modulo 2^N+1, but by choosing
 N>=bits(A)+bits(B), a full product A*B is obtained.  The algorithm splits
 the inputs into 2^k pieces, for a chosen k, and will recursively perform 2^k
 pointwise multiplications modulo 2^M+1, where M=N/2^k.  N must be a multiple
 of 2^k.  Those multiplications are either done by recursing into a further
 FFT, or by a plain toom3 etc multiplication, whichever is optimal at the
 resultant size.  Note that in the current implementation M is always a
-multiple of the limb size.
+multiple of the limb size, and hence N is too.
 
 The steps leading to the pointwise products are like the evaluation and
 interpolation stages of the Karatsuba and Toom-Cook algorithms, but use a
-convolution, which can be efficiently calculated because 2^(2N/2^k) is a
-2^k'th root of unity.
+convolution, which can be efficiently calculated because 2^(2M) (which is
+2^(2N/2^k)) is a 2^k'th root of unity modulo 2^N+1.
 
 As operand sizes gets bigger, bigger splits are used.  Each time a bigger k
 is used some multiplying is effectively swapped for some shifts, adds and
 overheads.  A table of thresholds gives the points where a k+1 FFT is faster
 than a k FFT.  A separate threshold gives the point where a mod 2^N+1 FFT
-first becomes faster than a plain multiply of that size, and this normally
+first becomes faster than a toom3 multiply of that size, and this normally
 happens in the k=4 range.  A further threshold gives the point where an
-N/2xN/2 multiply done with an FFT mod 2^N+1 is faster than a plain multiply
-of that size, and this is normally in the k=7 or k=8 range.
+N/2xN/2 multiply done with an FFT mod 2^N+1 is faster than a toom3 of that
+size, and this is normally in the k=7 or k=8 range.
+
+
+
+FFT SQUARE
+
+FFT squaring follows the same procedure as multiplication, but there's only
+one operand which is split, and the pointwise multiplications become
+squares.  The convolutions performed are the same, both at the evaluate and
+interpolate stages, except of course there's only one operand at the
+evaluate stage.
 
 
 
