@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-10-11  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/submul_1.asm: Add TODO item.
+
 	* mpn/ia64/aors_n.asm: Rewrite function entry code (again).
 	* mpn/ia64/aorslsh1_n.asm: Likewise.
 	* mpn/ia64/logops_n.asm: Likewise.
