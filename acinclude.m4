@@ -600,6 +600,41 @@ esac
 echo ["define(<DATA>, <$gmp_cv_check_asm_data>)"] >> $gmp_tmpconfigm4
 ])dnl
 
+
+dnl  GMP_CHECK_ASM_RODATA
+dnl  --------------------
+dnl
+dnl  ELF uses `.section .rodata', possibly with a `,"a"' though in gas the
+dnl  flags default from the section name.
+dnl
+dnl  COFF looks like it might use `.section .rdata', possibly with `,"dr"'
+dnl  though again gas uses defaults based on the section name.
+dnl
+dnl  a.out has only text, data and bss.
+dnl
+dnl  FIXME: It's not quite clear how to tell the difference between ELF and
+dnl  COFF, so for the moment RODATA is a synonym for DATA on CPUs with split
+dnl  code and data caching, or TEXT elsewhere.
+dnl
+dnl  i386 and i486 don't have caching but are treated the same as newer x86s
+dnl  since i386 in particular is used to mean generic x86.
+
+AC_DEFUN(GMP_CHECK_ASM_RODATA,
+[AC_CACHE_CHECK([how to switch to read-only data section],
+                gmp_cv_check_asm_rodata,
+[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+AC_REQUIRE([GMP_CHECK_ASM_DATA])
+case "$target" in
+[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+  gmp_cv_check_asm_rodata="$gmp_cv_check_asm_data" ;;
+*)
+  gmp_cv_check_asm_rodata="$gmp_cv_check_asm_text" ;;
+esac
+])
+echo ["define(<RODATA>, <$gmp_cv_check_asm_rodata>)"] >> $gmp_tmpconfigm4
+])
+
+
 dnl  GMP_CHECK_ASM_GLOBL
 dnl  Can we say `.global'?
 AC_DEFUN(GMP_CHECK_ASM_GLOBL,
