@@ -3063,7 +3063,7 @@ AC_SUBST(HAVE_STACK_T_01)
 # AC_SUBST+AC_CONFIG_FILES is used for calc-config.h, rather than AC_DEFINE+
 # AC_CONFIG_HEADERS, since with the latter automake (1.8) will then put the
 # directory (ie. demos/calc) into $(DEFAULT_INCLUDES) for every Makefile.in,
-# which would look very strange.  Likewise expr-config.h below.
+# which would look very strange.
 #
 # -lcurses is required by libreadline.  On a typical SVR4 style system this
 # normally doesn't have to be given explicitly, since libreadline.so will
@@ -3102,14 +3102,6 @@ else
 fi
 AC_PROG_YACC
 AM_PROG_LEX
-
-# Configs for demos/expr directory
-AC_CONFIG_FILES(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
-if test $ac_cv_have_decl_optarg = yes; then
-  AC_SUBST(HAVE_DECL_OPTARG, 1)
-else
-  HAVE_DECL_OPTARG=0
-fi
 
 
 # Create config.m4.
