@@ -20,45 +20,72 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
-/* speed_time_init() - initialize timing things.  speed_starttime() calls
-   this if it hasn't been done yet, so you only need to call this explicitly
-   if you want to use the global variables before the first measurement.
-  
-   speed_starttime() - start a time measurment.
+/* Usage:
 
-   speed_endtime() - end a time measurment, return time taken (seconds or
-   cycles).
+   The code in this file implements the lowest level of time measuring,
+   simple one-time measuring of time between two points.
 
-   speed_time_string - a string describing the time method in use.
+   void speed_starttime (void)
+   double speed_endtime (void)
+       Call speed_starttime to start measuring, and then call speed_endtime
+       when done.
 
-   speed_unittime - global variable with the unit of time measurement
-   accuracy (seconds or cycles).
+       speed_endtime returns the time taken, in seconds.  Or if the timebase
+       is in CPU cycles and the CPU frequency is unknown then speed_endtime
+       returns cycles.  Applications can identify the cycles return by
+       checking for speed_cycletime (described below) equal to 1.0.
 
-   speed_precision - global variable which is the intended accuracy of time
-   measurements.  speed_measure() for instance runs target routines with
-   enough repetitions so it takes at least speed_unittime*speed_precision.
-   A program can provide an option so the user can set this, otherwise it
-   gets a default based on the measuring method chosen.
+       If some sort of temporary glitch occurs then speed_endtime returns
+       0.0.  Currently this is for various cases where a negative time has
+       occurred.  This unfortunately occurs with getrusage on some systems,
+       and with the hppa cycle counter on hpux.
 
-   speed_cycletime - the time in seconds for each CPU cycle, for example on
-   a 100 MHz CPU this would be 1.0e-8.  If the CPU frequency is unknown this
-   is 0.0 if the time base is in seconds, or 1.0 if it's in cycles.
+   double speed_cycletime
+       The time in seconds for each CPU cycle.  For example on a 100 MHz CPU
+       this would be 1.0e-8.
 
+       If the CPU frequency is unknown, then speed_cycletime is either 0.0
+       or 1.0.  It's 0.0 when speed_endtime is returning seconds, or it's
+       1.0 when speed_endtime is returning cycles.
 
-   speed_endtime() and speed_unittime are normally in seconds, but if a
-   cycle counter is being used to measure and the CPU frequency is unknown,
-   then speed_endtime() returns cycles and speed_cycletime and
-   speed_unittime are 1.0.
+       It may be noted that "speed_endtime() / speed_cycletime" gives a
+       measured time in cycles, irrespective of whether speed_endtime is
+       returning cycles or seconds.  (Assuming cycles can be had, ie. it's
+       either cycles already or the cpu frequency is known.  See also
+       speed_cycletime_need_cycles below.)
 
-   Notice that speed_unittime*speed_precision is the target duration for
-   speed_endtime(), irrespective of whether that's in seconds or cycles.
+   double speed_unittime
+       The unit of time measurement accuracy for the timing method in use.
+       This is in seconds or cycles, as per speed_endtime.
 
-   Call speed_cycletime_need_seconds() to demand that speed_endtime() is in
-   seconds and not perhaps in cycles.
+   char speed_time_string[]
+       A null-terminated string describing the time method in use.
 
-   Call speed_cycletime_need_cycles() to demand that speed_cycletime is
-   non-zero, so that speed_endtime()/speed_cycletime will work to give times
-   in cycles.
+   void speed_time_init (void)
+       Initialize time measuring.  speed_starttime() does this
+       automatically, so it's only needed if an application wants to inspect
+       the above global variables before making a measurement.
+
+   int speed_precision
+       The intended accuracy of time measurements.  speed_measure() in
+       common.c for instance runs target routines with enough repetitions so
+       it takes at least "speed_unittime * speed_precision" (this expression
+       works for both cycles or seconds from speed_endtime).
+
+       A program can provide an option so the user to set speed_precision.
+       If speed_precision is zero when speed_time_init or speed_starttime
+       first run then it gets a default based on the measuring method
+       chosen.  (More precision for higher accuracy methods.)
+
+   void speed_cycletime_need_seconds (void)
+       Call this to demand that speed_endtime will return seconds, and not
+       cycles.  If only cycles are available then an error is printed and
+       the program exits.
+
+   void speed_cycletime_need_cycles (void)
+       Call this to demand that speed_cycletime is non-zero, so that
+       "speed_endtime() / speed_cycletime" will give times in cycles.
+
 
 
    Notes:
@@ -85,9 +112,12 @@ MA 02111-1307, USA. */
    the code compares values from the two.
 
 
+   Not done:
+
    Solaris gethrtime() seems no more than a slow way to access the Sparc V9
-   cycle counter.  gethrvtime() seems to be relevant only to LWP, it doesn't
-   for instance give nanosecond virtual time.  So neither of these are used.
+   cycle counter.  gethrvtime() seems to be relevant only to light weight
+   processes, it doesn't for instance give nanosecond virtual time.  So
+   neither of these are used.
 
 
    Bugs:
@@ -95,6 +125,7 @@ MA 02111-1307, USA. */
    getrusage_microseconds_p is fundamentally flawed, getrusage and
    gettimeofday can have resolutions other than clock ticks or microseconds,
    for instance IRIX 5 has a tick of 10 ms but a getrusage of 1 ms.
+
 
    Enhancements:
 
@@ -508,8 +539,8 @@ clk_tck (void)
    value twice, for the benefit of applications using it for a timestamp.
    This is obviously very stupid given the speed of CPUs these days.
 
-   Making "reps" calls to noop_1() is designed to waste some CPU, with a
-   view to getting measurements 2 microseconds (or more) apart.  "reps" is
+   Making "reps" many calls to noop_1() is designed to waste some CPU, with
+   a view to getting measurements 2 microseconds (or more) apart.  "reps" is
    increased progressively until such a period is seen.
 
    The outer loop "attempts" are just to allow for any random nonsense or
@@ -1439,10 +1470,9 @@ speed_endtime (void)
  done:
   if (result < 0.0)
     {
-      fprintf (stderr,
-               "speed_endtime(): fatal error: negative time measured: %.9f\n",
-               result);
-      abort ();
+      if (speed_option_verbose >= 2)
+        fprintf (stderr, "speed_endtime(): warning, treating negative time as zero: %.9f\n", result);
+      result = 0.0;
     }
   return result;
 }
