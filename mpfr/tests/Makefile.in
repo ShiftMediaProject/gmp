@@ -1156,7 +1156,7 @@ uninstall-am: uninstall-info-am
 
 
 ../libmpfr.a:
-	cd $(top_srcdir)/mpfr; make libmpfr.a  
+	cd ..; make libmpfr.a  
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
