@@ -25,6 +25,16 @@ C		cycles/limb
 C POWER3/PPC630:     13
 C POWER4/PPC970:     10?
 
+
+C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C
+C mullw has the src[] limb in the second operand, since there's at least a
+C chance of it giving an early-out on ppc630, which the inverse 0xAA..AB
+C will never give.
+C
+C mulhwu has the "3" multiplier in the second operand, which is an early-out
+C for ppc630.
+
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
 
@@ -56,7 +66,7 @@ L(top):
 	C r6	carry
 	C r7	l
 
-	mulld	r8, r7, r5	C q = l * inverse
+	mulld	r8, r5, r7	C q = l * inverse
 	ldu	r7, 8(r4)	C src[i]
 
 	C
