@@ -1,6 +1,6 @@
 /* gmpxx.h -- C++ class wrapper for GMP types.  -*- C++ -*-
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,16 +27,15 @@ MA 02111-1307, USA. */
    for other compilers, I don't know */
 #ifdef __GNUC__
 #if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 91)
-#error gmp++.h requires g++ version 2.91 (egcs 1.1.2) or higher
+#error gmpxx.h requires g++ version 2.91 (egcs 1.1.2) or higher
 #endif
 #endif
 
 #ifndef __GMP_PLUSPLUS__
 #define __GMP_PLUSPLUS__
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
-#include <strstream>  // for mpf_class::get_str2
 #include <gmp.h>
 
 
@@ -2102,7 +2101,6 @@ void __gmp_set_expr(mpf_ptr, const __gmp_expr<T, U> &);
   __gmp_expr<__gmpz_value, __gmpz_value> & fun(const __gmp_expr<T, U> &);
 
 #define __GMPZN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                      \
   __gmp_expr & fun(signed char);               \
   __gmp_expr & fun(unsigned char);             \
   __gmp_expr & fun(signed int);                \
@@ -2131,7 +2129,6 @@ __GMPZN_DECLARE_COMPOUND_OPERATOR(fun)
   __gmp_expr<__gmpz_value, __gmpzref_value> & fun(const __gmp_expr<T, U> &);
 
 #define __GMPZRN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                       \
   __gmp_expr & fun(signed char);                \
   __gmp_expr & fun(unsigned char);              \
   __gmp_expr & fun(signed int);                 \
@@ -2160,7 +2157,6 @@ __GMPZRN_DECLARE_COMPOUND_OPERATOR(fun)
   __gmp_expr<__gmpq_value, __gmpq_value> & fun(const __gmp_expr<T, U> &);
 
 #define __GMPQN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                      \
   __gmp_expr & fun(signed char);               \
   __gmp_expr & fun(unsigned char);             \
   __gmp_expr & fun(signed int);                \
@@ -2189,7 +2185,6 @@ __GMPQN_DECLARE_COMPOUND_OPERATOR(fun)
   __gmp_expr<__gmpf_value, __gmpf_value> & fun(const __gmp_expr<T, U> &);
 
 #define __GMPFN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                      \
   __gmp_expr & fun(signed char);               \
   __gmp_expr & fun(unsigned char);             \
   __gmp_expr & fun(signed int);                \
@@ -2232,8 +2227,6 @@ public:
   __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpz_init(mp); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(bool b) { mpz_init_set_ui(mp, b); }
-
   __gmp_expr(signed char c) { mpz_init_set_si(mp, c); }
   __gmp_expr(unsigned char c) { mpz_init_set_ui(mp, c); }
 
@@ -2271,8 +2264,6 @@ public:
   __gmp_expr<__gmpz_value, __gmpz_value> & operator=
   (const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
-
-  __gmp_expr & operator=(bool b) { mpz_set_ui(mp, b); return *this; }
 
   __gmp_expr & operator=(signed char c) { mpz_set_si(mp, c); return *this; }
   __gmp_expr & operator=(unsigned char c) { mpz_set_ui(mp, c); return *this; }
@@ -2396,8 +2387,6 @@ public:
   (const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(ref, expr); return *this; }
 
-  __gmp_expr & operator=(bool b) { mpz_set_ui(ref, b); return *this; }
-
   __gmp_expr & operator=(signed char c) { mpz_set_si(ref, c); return *this; }
   __gmp_expr & operator=(unsigned char c)
   { mpz_set_ui(ref, c); return *this; }
@@ -2507,8 +2496,6 @@ public:
   __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpq_init(mp); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(bool b) { mpq_init(mp); mpq_set_ui(mp, b, 1); }
-
   __gmp_expr(signed char c) { mpq_init(mp); mpq_set_si(mp, c, 1); }
   __gmp_expr(unsigned char c) { mpq_init(mp); mpq_set_ui(mp, c, 1); }
 
@@ -2556,8 +2543,6 @@ public:
   __gmp_expr<__gmpq_value, __gmpq_value> & operator=
   (const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
-
-  __gmp_expr & operator=(bool b) { mpq_set_ui(mp, b, 1); return *this; }
 
   __gmp_expr & operator=(signed char c)
   { mpq_set_si(mp, c, 1); return *this; }
@@ -2679,10 +2664,6 @@ public:
   __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int prec)
   { mpf_init2(mp, prec); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(bool b) { mpf_init_set_ui(mp, b); }
-  __gmp_expr(bool b, unsigned long int prec)
-  { mpf_init2(mp, prec); mpf_set_ui(mp, b); }
-
   __gmp_expr(signed char c) { mpf_init_set_si(mp, c); }
   __gmp_expr(signed char c, unsigned long int prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, c); }
@@ -2746,8 +2727,6 @@ public:
   (const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
 
-  __gmp_expr & operator=(bool b) { mpf_set_ui(mp, b); return *this; }
-
   __gmp_expr & operator=(signed char c) { mpf_set_si(mp, c); return *this; }
   __gmp_expr & operator=(unsigned char c) { mpf_set_ui(mp, c); return *this; }
 
@@ -2782,24 +2761,6 @@ public:
   {
     __gmp_alloc_cstring temp(mpf_get_str(0, expo, base, size, mp));
     return std::string(temp.str);
-  }
-  std::string get_str2(int base = 10) const
-  {
-    std::ostrstream o;
-    mp_exp_t expo;
-    std::string temp(mpf_get_str(0, &expo, base, 0, mp));
-
-    if (temp[0] == '-')
-      o << "-0." << temp.substr(1);
-    else
-      o << "0." << temp;
-
-    if (base <= 10)
-      o << "e" << expo << '\0';
-    else
-      o << "@" << expo << '\0';
-
-    return o.str();
   }
 
   // conversion functions
@@ -3987,24 +3948,6 @@ fun(const __gmp_expr<T, U> &expr1, const __gmp_expr<V, W> &expr2)            \
                                                                              \
 template <class T, class U>                                                  \
 inline __gmp_expr                                                            \
-<T, __gmp_binary_expr<__gmp_expr<T, U>, unsigned long int, eval_fun> >       \
-fun(const __gmp_expr<T, U> &expr, bool b)                                    \
-{                                                                            \
-  return __gmp_expr<T, __gmp_binary_expr                                     \
-    <__gmp_expr<T, U>, unsigned long int, eval_fun> >(expr, b);              \
-}                                                                            \
-                                                                             \
-template <class T, class U>                                                  \
-inline __gmp_expr                                                            \
-<T, __gmp_binary_expr<unsigned long int, __gmp_expr<T, U>, eval_fun> >       \
-fun(bool b, const __gmp_expr<T, U> &expr)                                    \
-{                                                                            \
-  return __gmp_expr<T, __gmp_binary_expr                                     \
-    <unsigned long int, __gmp_expr<T, U>, eval_fun> >(b, expr);              \
-}                                                                            \
-                                                                             \
-template <class T, class U>                                                  \
-inline __gmp_expr                                                            \
 <T, __gmp_binary_expr<__gmp_expr<T, U>, signed long int, eval_fun> >         \
 fun(const __gmp_expr<T, U> &expr, signed char c)                             \
 {                                                                            \
@@ -4236,20 +4179,6 @@ inline type fun(const __gmp_expr<T, U> &expr1,                             \
 }                                                                          \
                                                                            \
 template <class T, class U>                                                \
-inline type fun(const __gmp_expr<T, U> &expr, bool b)                      \
-{                                                                          \
-  typename __gmp_resolve_expr<T, T>::temp_type temp(expr);                 \
-  return eval_fun::eval(temp.get_mp(), (unsigned long int) b);             \
-}                                                                          \
-                                                                           \
-template <class T, class U>                                                \
-inline type fun(bool b, const __gmp_expr<T, U> &expr)                      \
-{                                                                          \
-  typename __gmp_resolve_expr<T, T>::temp_type temp(expr);                 \
-  return eval_fun::eval((unsigned long int) b, temp.get_mp());             \
-}                                                                          \
-                                                                           \
-template <class T, class U>                                                \
 inline type fun(const __gmp_expr<T, U> &expr, signed char c)               \
 {                                                                          \
   typename __gmp_resolve_expr<T, T>::temp_type temp(expr);                 \
@@ -4418,12 +4347,6 @@ inline mpz_class & mpz_class::fun(const __gmp_expr<T, U> &expr) \
 
 #define __GMPZN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
                                                         \
-inline mpz_class & mpz_class::fun(bool b)               \
-{                                                       \
-  eval_fun::eval(mp, mp, (unsigned long int) b);        \
-  return *this;                                         \
-}                                                       \
-                                                        \
 inline mpz_class & mpz_class::fun(signed char c)        \
 {                                                       \
   eval_fun::eval(mp, mp, (signed long int) c);          \
@@ -4532,12 +4455,6 @@ inline mpz_classref & mpz_classref::fun(const __gmp_expr<T, U> &expr) \
 }
 
 #define __GMPZRN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)      \
-                                                              \
-inline mpz_classref & mpz_classref::fun(bool b)               \
-{                                                             \
-  eval_fun::eval(ref, ref, (unsigned long int) b);            \
-  return *this;                                               \
-}                                                             \
                                                               \
 inline mpz_classref & mpz_classref::fun(signed char c)        \
 {                                                             \
@@ -4648,12 +4565,6 @@ inline mpq_class & mpq_class::fun(const __gmp_expr<T, U> &expr) \
 
 #define __GMPQN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
                                                         \
-inline mpq_class & mpq_class::fun(bool b)               \
-{                                                       \
-  eval_fun::eval(mp, mp, (unsigned long int) b);        \
-  return *this;                                         \
-}                                                       \
-                                                        \
 inline mpq_class & mpq_class::fun(signed char c)        \
 {                                                       \
   eval_fun::eval(mp, mp, (signed long int) c);          \
@@ -4762,12 +4673,6 @@ inline mpf_class & mpf_class::fun(const __gmp_expr<T, U> &expr) \
 }
 
 #define __GMPFN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
-                                                        \
-inline mpf_class & mpf_class::fun(bool b)               \
-{                                                       \
-  eval_fun::eval(mp, mp, (unsigned long int) b);        \
-  return *this;                                         \
-}                                                       \
                                                         \
 inline mpf_class & mpf_class::fun(signed char c)        \
 {                                                       \
