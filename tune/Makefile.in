@@ -117,9 +117,10 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
-HAVE_MPFR = @HAVE_MPFR@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LEX = @LEX@
 LIBM = @LIBM@
+LIBREADLINE = @LIBREADLINE@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
@@ -137,6 +138,7 @@ TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+YACC = @YACC@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_HAVE_HOST_CPU_FAMILY_power = @__GMP_HAVE_HOST_CPU_FAMILY_power@
 __GMP_HAVE_HOST_CPU_FAMILY_powerpc = @__GMP_HAVE_HOST_CPU_FAMILY_powerpc@
@@ -164,7 +166,7 @@ libspeed_la_SOURCES = \
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
-  noop.c powm_mod.c powm_redc.c time.c					\
+  noop.c powm_mod.c powm_redc.c pre_divrem_1.c time.c			\
   sb_div.c sb_inv.c
 
 
@@ -271,7 +273,9 @@ MTS = -s 50-150 -c
 STS = -s 50-150 -c
 subdir = tune
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_HEADER = $(top_builddir)/config.h \
+	$(top_builddir)/demos/calc/calc-config.h \
+	$(top_builddir)/demos/expr/expr-config.h
 CONFIG_CLEAN_FILES =
 libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
@@ -282,7 +286,8 @@ am_libspeed_la_OBJECTS = common$U.lo divrem1div$U.lo divrem1inv$U.lo \
 	gcd_finda_gen$U.lo gcdext_single$U.lo gcdext_double$U.lo \
 	gcdextod$U.lo gcdextos$U.lo mod_1_div$U.lo mod_1_inv$U.lo \
 	modlinv$U.lo mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo \
-	powm_mod$U.lo powm_redc$U.lo time$U.lo sb_div$U.lo sb_inv$U.lo
+	powm_mod$U.lo powm_redc$U.lo pre_divrem_1$U.lo time$U.lo \
+	sb_div$U.lo sb_inv$U.lo
 libspeed_la_OBJECTS = $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS = speed$(EXEEXT) speed-dynamic$(EXEEXT) \
 	speed-ext$(EXEEXT) tuneup$(EXEEXT)
@@ -307,7 +312,7 @@ nodist_tuneup_OBJECTS = sqr_basecase$U.$(OBJEXT) dc_divrem_n$U.$(OBJEXT) \
 tuneup_OBJECTS = $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 
 DEFS = @DEFS@
-DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/demos/calc -I$(top_builddir)/demos/expr
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -441,6 +446,8 @@ powm_mod_.c: powm_mod.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_mod.c; then echo $(srcdir)/powm_mod.c; else echo powm_mod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_mod_.c || rm -f powm_mod_.c
 powm_redc_.c: powm_redc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_redc.c; then echo $(srcdir)/powm_redc.c; else echo powm_redc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_redc_.c || rm -f powm_redc_.c
+pre_divrem_1_.c: pre_divrem_1.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pre_divrem_1.c; then echo $(srcdir)/pre_divrem_1.c; else echo pre_divrem_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pre_divrem_1_.c || rm -f pre_divrem_1_.c
 sb_div_.c: sb_div.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_div.c; then echo $(srcdir)/sb_div.c; else echo sb_div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_div_.c || rm -f sb_div_.c
 sb_divrem_mn_.c: sb_divrem_mn.c $(ANSI2KNR)
@@ -473,12 +480,12 @@ mod_1_inv_.$(OBJEXT) mod_1_inv_.lo modlinv_.$(OBJEXT) modlinv_.lo \
 mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) \
 mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) \
 mul_n_open_.lo noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) \
-powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo sb_div_.$(OBJEXT) \
-sb_div_.lo sb_divrem_mn_.$(OBJEXT) sb_divrem_mn_.lo sb_inv_.$(OBJEXT) \
-sb_inv_.lo speed_.$(OBJEXT) speed_.lo speed-ext_.$(OBJEXT) \
-speed-ext_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
-tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) time_.lo \
-tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
+pre_divrem_1_.lo sb_div_.$(OBJEXT) sb_div_.lo sb_divrem_mn_.$(OBJEXT) \
+sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo speed_.$(OBJEXT) \
+speed_.lo speed-ext_.$(OBJEXT) speed-ext_.lo sqr_basecase_.$(OBJEXT) \
+sqr_basecase_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) \
+time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS

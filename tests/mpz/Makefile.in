@@ -94,9 +94,10 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
-HAVE_MPFR = @HAVE_MPFR@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LEX = @LEX@
 LIBM = @LIBM@
+LIBREADLINE = @LIBREADLINE@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
@@ -114,6 +115,7 @@ TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+YACC = @YACC@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_HAVE_HOST_CPU_FAMILY_power = @__GMP_HAVE_HOST_CPU_FAMILY_power@
 __GMP_HAVE_HOST_CPU_FAMILY_powerpc = @__GMP_HAVE_HOST_CPU_FAMILY_powerpc@
@@ -138,19 +140,22 @@ check_PROGRAMS = t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   t-root t-perfsqr t-jac t-bin t-get_si t-set_si                     \
   t-fac_ui t-fib_ui t-lucnum_ui t-scan t-fits                        \
   t-divis t-divis_2exp t-cong t-cong_2exp t-sizeinbase t-set_str     \
-  t-aorsmul t-cmp_d t-cmp_si t-hamdist t-oddeven t-popcount t-set_f
+  t-aorsmul t-cmp_d t-cmp_si t-hamdist t-oddeven t-popcount t-set_f  \
+  t-io_raw
 
 
 TESTS = $(check_PROGRAMS)
 
-# io.tmp and t-inp_str.tmp are used by io.c and t-inp_str.c respectively,
-# both removed automatically if the tests pass, but arrange to clean them
-# here if the tests fail
+# io.tmp, t-io_raw.tmp and t-inp_str.tmp are used by io.c, t-io_raw.c and
+# t-inp_str.c respectively, all removed automatically if the tests pass, but
+# arrange to clean them here if the tests fail.
 #
-CLEANFILES = io.tmp t-inp_str.tmp
+CLEANFILES = io.tmp t-io_raw.tmp t-inp_str.tmp
 subdir = tests/mpz
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_HEADER = $(top_builddir)/config.h \
+	$(top_builddir)/demos/calc/calc-config.h \
+	$(top_builddir)/demos/expr/expr-config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-cmp$(EXEEXT) t-mul$(EXEEXT) t-mul_i$(EXEEXT) \
 	t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) t-fdiv$(EXEEXT) \
@@ -166,7 +171,7 @@ check_PROGRAMS = t-cmp$(EXEEXT) t-mul$(EXEEXT) t-mul_i$(EXEEXT) \
 	t-cong$(EXEEXT) t-cong_2exp$(EXEEXT) t-sizeinbase$(EXEEXT) \
 	t-set_str$(EXEEXT) t-aorsmul$(EXEEXT) t-cmp_d$(EXEEXT) \
 	t-cmp_si$(EXEEXT) t-hamdist$(EXEEXT) t-oddeven$(EXEEXT) \
-	t-popcount$(EXEEXT) t-set_f$(EXEEXT)
+	t-popcount$(EXEEXT) t-set_f$(EXEEXT) t-io_raw$(EXEEXT)
 bit_SOURCES = bit.c
 bit_OBJECTS = bit$U.$(OBJEXT)
 bit_LDADD = $(LDADD)
@@ -323,6 +328,12 @@ t_inp_str_LDADD = $(LDADD)
 t_inp_str_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_inp_str_LDFLAGS =
+t_io_raw_SOURCES = t-io_raw.c
+t_io_raw_OBJECTS = t-io_raw$U.$(OBJEXT)
+t_io_raw_LDADD = $(LDADD)
+t_io_raw_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_io_raw_LDFLAGS =
 t_jac_SOURCES = t-jac.c
 t_jac_OBJECTS = t-jac$U.$(OBJEXT)
 t_jac_LDADD = $(LDADD)
@@ -445,7 +456,7 @@ t_tdiv_ui_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 t_tdiv_ui_LDFLAGS =
 
 DEFS = @DEFS@
-DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/demos/calc -I$(top_builddir)/demos/expr
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -462,12 +473,13 @@ DIST_SOURCES = bit.c convert.c dive.c dive_ui.c io.c logic.c reuse.c \
 	t-aorsmul.c t-bin.c t-cmp.c t-cmp_d.c t-cmp_si.c t-cong.c \
 	t-cong_2exp.c t-div_2exp.c t-divis.c t-divis_2exp.c t-fac_ui.c \
 	t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c t-get_si.c \
-	t-hamdist.c t-inp_str.c t-jac.c t-lcm.c t-lucnum_ui.c t-mul.c \
-	t-mul_i.c t-oddeven.c t-perfsqr.c t-popcount.c t-pow.c t-powm.c \
-	t-powm_ui.c t-root.c t-scan.c t-set_f.c t-set_si.c t-set_str.c \
-	t-sizeinbase.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+	t-hamdist.c t-inp_str.c t-io_raw.c t-jac.c t-lcm.c \
+	t-lucnum_ui.c t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c \
+	t-popcount.c t-pow.c t-powm.c t-powm_ui.c t-root.c t-scan.c \
+	t-set_f.c t-set_si.c t-set_str.c t-sizeinbase.c t-sqrtrem.c \
+	t-tdiv.c t-tdiv_ui.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = bit.c convert.c dive.c dive_ui.c io.c logic.c reuse.c t-aorsmul.c t-bin.c t-cmp.c t-cmp_d.c t-cmp_si.c t-cong.c t-cong_2exp.c t-div_2exp.c t-divis.c t-divis_2exp.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c t-get_si.c t-hamdist.c t-inp_str.c t-jac.c t-lcm.c t-lucnum_ui.c t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c t-popcount.c t-pow.c t-powm.c t-powm_ui.c t-root.c t-scan.c t-set_f.c t-set_si.c t-set_str.c t-sizeinbase.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+SOURCES = bit.c convert.c dive.c dive_ui.c io.c logic.c reuse.c t-aorsmul.c t-bin.c t-cmp.c t-cmp_d.c t-cmp_si.c t-cong.c t-cong_2exp.c t-div_2exp.c t-divis.c t-divis_2exp.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c t-get_si.c t-hamdist.c t-inp_str.c t-io_raw.c t-jac.c t-lcm.c t-lucnum_ui.c t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c t-popcount.c t-pow.c t-powm.c t-powm_ui.c t-root.c t-scan.c t-set_f.c t-set_si.c t-set_str.c t-sizeinbase.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 
 all: all-am
 
@@ -570,6 +582,9 @@ t-hamdist$(EXEEXT): $(t_hamdist_OBJECTS) $(t_hamdist_DEPENDENCIES)
 t-inp_str$(EXEEXT): $(t_inp_str_OBJECTS) $(t_inp_str_DEPENDENCIES) 
 	@rm -f t-inp_str$(EXEEXT)
 	$(LINK) $(t_inp_str_LDFLAGS) $(t_inp_str_OBJECTS) $(t_inp_str_LDADD) $(LIBS)
+t-io_raw$(EXEEXT): $(t_io_raw_OBJECTS) $(t_io_raw_DEPENDENCIES) 
+	@rm -f t-io_raw$(EXEEXT)
+	$(LINK) $(t_io_raw_LDFLAGS) $(t_io_raw_OBJECTS) $(t_io_raw_LDADD) $(LIBS)
 t-jac$(EXEEXT): $(t_jac_OBJECTS) $(t_jac_DEPENDENCIES) 
 	@rm -f t-jac$(EXEEXT)
 	$(LINK) $(t_jac_LDFLAGS) $(t_jac_OBJECTS) $(t_jac_LDADD) $(LIBS)
@@ -704,6 +719,8 @@ t-hamdist_.c: t-hamdist.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-hamdist.c; then echo $(srcdir)/t-hamdist.c; else echo t-hamdist.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-hamdist_.c || rm -f t-hamdist_.c
 t-inp_str_.c: t-inp_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-inp_str.c; then echo $(srcdir)/t-inp_str.c; else echo t-inp_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-inp_str_.c || rm -f t-inp_str_.c
+t-io_raw_.c: t-io_raw.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-io_raw.c; then echo $(srcdir)/t-io_raw.c; else echo t-io_raw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-io_raw_.c || rm -f t-io_raw_.c
 t-jac_.c: t-jac.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-jac.c; then echo $(srcdir)/t-jac.c; else echo t-jac.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-jac_.c || rm -f t-jac_.c
 t-lcm_.c: t-lcm.c $(ANSI2KNR)
@@ -756,17 +773,18 @@ t-divis_2exp_.lo t-fac_ui_.$(OBJEXT) t-fac_ui_.lo t-fdiv_.$(OBJEXT) \
 t-fdiv_.lo t-fdiv_ui_.$(OBJEXT) t-fdiv_ui_.lo t-fib_ui_.$(OBJEXT) \
 t-fib_ui_.lo t-fits_.$(OBJEXT) t-fits_.lo t-gcd_.$(OBJEXT) t-gcd_.lo \
 t-get_si_.$(OBJEXT) t-get_si_.lo t-hamdist_.$(OBJEXT) t-hamdist_.lo \
-t-inp_str_.$(OBJEXT) t-inp_str_.lo t-jac_.$(OBJEXT) t-jac_.lo \
-t-lcm_.$(OBJEXT) t-lcm_.lo t-lucnum_ui_.$(OBJEXT) t-lucnum_ui_.lo \
-t-mul_.$(OBJEXT) t-mul_.lo t-mul_i_.$(OBJEXT) t-mul_i_.lo \
-t-oddeven_.$(OBJEXT) t-oddeven_.lo t-perfsqr_.$(OBJEXT) t-perfsqr_.lo \
-t-popcount_.$(OBJEXT) t-popcount_.lo t-pow_.$(OBJEXT) t-pow_.lo \
-t-powm_.$(OBJEXT) t-powm_.lo t-powm_ui_.$(OBJEXT) t-powm_ui_.lo \
-t-root_.$(OBJEXT) t-root_.lo t-scan_.$(OBJEXT) t-scan_.lo \
-t-set_f_.$(OBJEXT) t-set_f_.lo t-set_si_.$(OBJEXT) t-set_si_.lo \
-t-set_str_.$(OBJEXT) t-set_str_.lo t-sizeinbase_.$(OBJEXT) \
-t-sizeinbase_.lo t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo t-tdiv_.$(OBJEXT) \
-t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : $(ANSI2KNR)
+t-inp_str_.$(OBJEXT) t-inp_str_.lo t-io_raw_.$(OBJEXT) t-io_raw_.lo \
+t-jac_.$(OBJEXT) t-jac_.lo t-lcm_.$(OBJEXT) t-lcm_.lo \
+t-lucnum_ui_.$(OBJEXT) t-lucnum_ui_.lo t-mul_.$(OBJEXT) t-mul_.lo \
+t-mul_i_.$(OBJEXT) t-mul_i_.lo t-oddeven_.$(OBJEXT) t-oddeven_.lo \
+t-perfsqr_.$(OBJEXT) t-perfsqr_.lo t-popcount_.$(OBJEXT) t-popcount_.lo \
+t-pow_.$(OBJEXT) t-pow_.lo t-powm_.$(OBJEXT) t-powm_.lo \
+t-powm_ui_.$(OBJEXT) t-powm_ui_.lo t-root_.$(OBJEXT) t-root_.lo \
+t-scan_.$(OBJEXT) t-scan_.lo t-set_f_.$(OBJEXT) t-set_f_.lo \
+t-set_si_.$(OBJEXT) t-set_si_.lo t-set_str_.$(OBJEXT) t-set_str_.lo \
+t-sizeinbase_.$(OBJEXT) t-sizeinbase_.lo t-sqrtrem_.$(OBJEXT) \
+t-sqrtrem_.lo t-tdiv_.$(OBJEXT) t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) \
+t-tdiv_ui_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
