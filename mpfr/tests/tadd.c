@@ -86,8 +86,8 @@ check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
   if (mpfr_cmp(xx, zz)) { 
     printf("x=%1.20e,%d y=%1.20e,%d pz=%d,rnd=%s\n",
 	   x,px,y,py,pz,mpfr_print_rnd_mode(rnd_mode));
-    printf("got        "); mpfr_print_binary(zz); putchar('\n');
-    printf("instead of "); mpfr_print_binary(xx); putchar('\n');
+    printf("got        "); mpfr_print_binary(zz); puts ("");
+    printf("instead of "); mpfr_print_binary(xx); puts ("");
     exit(1); 
   }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
@@ -113,9 +113,9 @@ check64 (void)
     {
       fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=29, prec(t)=58\n");
       printf ("expected "); mpfr_out_str (stdout, 2, 29, t, GMP_RNDN);
-      putchar ('\n');
+      puts ("");
       printf ("got      "); mpfr_out_str (stdout, 2, 29, u, GMP_RNDN);
-      putchar ('\n');
+      puts ("");
       exit(1);
     }
 
@@ -128,7 +128,7 @@ check64 (void)
   if (MPFR_MANT(u)[0] << 2)
     {
       fprintf (stderr, "result not normalized for prec=2\n");
-      mpfr_print_binary (u); putchar ('\n');
+      mpfr_print_binary (u); puts ("");
       exit (1);
     }
   mpfr_set_str_raw (t, "-1.0e-1");
@@ -137,7 +137,7 @@ check64 (void)
       fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=4, prec(t)=2\n");
       printf ("expected -1.0e-1\n");
       printf ("got      "); mpfr_out_str (stdout, 2, 4, u, GMP_RNDN);
-      putchar ('\n');
+      puts ("");
       exit (1);
     }
 
@@ -152,7 +152,7 @@ check64 (void)
     fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=8, prec(t)=4\n");
     printf ("expected -1.010e-1\n");
     printf ("got      "); mpfr_out_str (stdout, 2, 4, u, GMP_RNDN);
-    putchar ('\n');
+    puts ("");
     exit (1);
   }
 
@@ -472,9 +472,9 @@ check_inexact (void)
 	      if (mpfr_add (z, x, u, rnd))
 		{
 		  fprintf (stderr, "z <- x + u should be exact\n");
-		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
-		  printf ("u="); mpfr_print_binary (u); putchar ('\n');
-		  printf ("z="); mpfr_print_binary (z); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); puts ("");
+		  printf ("u="); mpfr_print_binary (u); puts ("");
+		  printf ("z="); mpfr_print_binary (z); puts ("");
 		  exit (1);
 		}
 	      for (rnd=0; rnd<4; rnd++)
@@ -488,10 +488,10 @@ check_inexact (void)
 		      fprintf (stderr, "Wrong inexact flag for rnd=%s\n",
 			   mpfr_print_rnd_mode(rnd));
 		      printf ("expected %d, got %d\n", cmp, inexact);
-		      printf ("x="); mpfr_print_binary (x); putchar ('\n');
-		      printf ("u="); mpfr_print_binary (u); putchar ('\n');
-		      printf ("y=  "); mpfr_print_binary (y); putchar ('\n');
-		      printf ("x+u="); mpfr_print_binary (z); putchar ('\n');
+		      printf ("x="); mpfr_print_binary (x); puts ("");
+		      printf ("u="); mpfr_print_binary (u); puts ("");
+		      printf ("y=  "); mpfr_print_binary (y); puts ("");
+		      printf ("x+u="); mpfr_print_binary (z); puts ("");
 		      exit (1);
 		    }
 		}
