@@ -928,6 +928,7 @@ union ieee_double_extract
  || defined (__i386__)							\
  || defined (__i860__)							\
  || defined (__i960__)							\
+ || defined (__ia64)							\
  || defined (MIPSEL) || defined (_MIPSEL)				\
  || defined (__ns32000__)						\
  || defined (__WINNT) || defined (_WIN32)
