@@ -41,7 +41,7 @@ C	.callinfo	frame=64,no_calls
 	ldo		64(%r30),%r30
 	fldws,ma	4(%r25),%fr5
 	stw		%r23,-16(%r30)		C move s2_limb ...
-	addib,=		-1,%r24,L$just_one_limb
+	addib,=		-1,%r24,L(just_one_limb)
 	 fldws		-16(%r30),%fr4		C ... into fr4
 	add		%r0,%r0,%r0		C clear carry
 	xmpyu		%fr4,%fr5,%fr6
@@ -52,11 +52,11 @@ C	.callinfo	frame=64,no_calls
 	ldw		-16(%r30),%r28
 
 	fstds		%fr8,-16(%r30)
-	addib,=		-1,%r24,L$end
+	addib,=		-1,%r24,L(end)
 	 ldw		-12(%r30),%r1
 
 C Main loop
-	.label	L$loop
+	.label	L(loop)
 	ldws		0(%r26),%r29
 	fldws,ma	4(%r25),%fr5
 	add		%r29,%r19,%r19
@@ -66,10 +66,10 @@ C Main loop
 	ldw		-16(%r30),%r28
 	fstds		%fr6,-16(%r30)
 	addc		%r0,%r28,%r28
-	addib,<>	-1,%r24,L$loop
+	addib,<>	-1,%r24,L(loop)
 	 ldw		-12(%r30),%r1
 
-	.label	L$end
+	.label	L(end)
 	ldw		0(%r26),%r29
 	add		%r29,%r19,%r19
 	stws,ma		%r19,4(%r26)
@@ -83,7 +83,7 @@ C Main loop
 	bv		0(%r2)
 	 ldo		-64(%r30),%r30
 
-	.label	L$just_one_limb
+	.label	L(just_one_limb)
 	xmpyu		%fr4,%fr5,%fr6
 	ldw		0(%r26),%r29
 	fstds		%fr6,-16(%r30)

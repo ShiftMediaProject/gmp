@@ -1,6 +1,6 @@
 dnl  HP-PA 1.1 32-bit mpn_sqr_diagonal.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -34,17 +34,17 @@ ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
 	ldo		4(rp),rp
 	fldws,ma	4(up),%fr4r
-	addib,=		-1,n,L$exit
+	addib,=		-1,n,L(exit)
 	xmpyu		%fr4r,%fr4r,%fr5
 
-	.label	L$loop
+	.label	L(loop)
 	fldws,ma	4(up),%fr4r
 	fstws		%fr5r,-4(rp)
 	fstws,ma	%fr5l,8(rp)
-	addib,<>	-1,n,L$loop
+	addib,<>	-1,n,L(loop)
 	xmpyu		%fr4r,%fr4r,%fr5
 
-	.label	L$exit
+	.label	L(exit)
 	fstws		%fr5r,-4(rp)
 	bv		0(%r2)
 	fstws		%fr5l,0(rp)

@@ -1,7 +1,7 @@
 dnl  HP-PA  __udiv_qrnnd division support, used from longlong.h.
 dnl  This version runs fast on pre-PA7000 CPUs.
 
-dnl  Copyright 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1993, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -34,7 +34,7 @@ C trouble is the FFFFFFFF code that would need some hacking.
 
 ASM_START()
 PROLOGUE(mpn_udiv_qrnnd)
-	comb,<		%r23,0,L$largedivisor
+	comb,<		%r23,0,L(largedivisor)
 	 sub		%r0,%r23,%r1		C clear cy as side-effect
 	ds		%r0,%r1,%r0
 	addc		%r24,%r24,%r24
@@ -107,9 +107,9 @@ PROLOGUE(mpn_udiv_qrnnd)
 	bv		0(%r2)
 	 addc		%r28,%r28,%r28
 
-	.label	L$largedivisor
+	.label	L(largedivisor)
 	extru		%r24,31,1,%r19		C r19 = n0 & 1
-	bb,<		%r23,31,L$odd
+	bb,<		%r23,31,L(odd)
 	 extru		%r23,30,31,%r22		C r22 = d >> 1
 	shd		%r25,%r24,1,%r24	C r24 = new n0
 	extru		%r25,30,31,%r25		C r25 = new n1
@@ -186,8 +186,8 @@ PROLOGUE(mpn_udiv_qrnnd)
 	bv		0(%r2)
 	 addc		%r24,%r24,%r28
 
-	.label	L$odd
-	addib,sv,n	1,%r22,L$FFFFFFFF	C r22 = (d / 2 + 1)
+	.label	L(odd)
+	addib,sv,n	1,%r22,L(FFFFFFFF)	C r22 = (d / 2 + 1)
 	shd		%r25,%r24,1,%r24	C r24 = new n0
 	extru		%r25,30,31,%r25		C r25 = new n1
 	sub		%r0,%r22,%r21
@@ -272,7 +272,7 @@ C We have computed (n1,,n0) / (d + 1), q' = r28, r' = r25
 
 C This is just a special case of the code above.
 C We come here when d == 0xFFFFFFFF
-	.label	L$FFFFFFFF
+	.label	L(FFFFFFFF)
 	add,uv		%r25,%r24,%r24
 	sub,<<		%r24,%r23,%r0
 	ldo		1(%r24),%r24

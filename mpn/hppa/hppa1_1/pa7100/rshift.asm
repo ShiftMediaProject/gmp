@@ -1,7 +1,7 @@
 dnl  HP-PA  mpn_rshift -- Shift a number right.
 dnl  Optimized for the PA7100, where is runs at 3.25 cycles/limb.
 
-dnl  Copyright 1992, 1994, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -32,13 +32,13 @@ ASM_START()
 PROLOGUE(mpn_rshift)
 	ldws,ma		4(0,%r25),%r22
 	mtsar		%r23
-	addib,=		-1,%r24,L$0004
+	addib,=		-1,%r24,L(0004)
 	vshd		%r22,%r0,%r28		C compute carry out limb
 	ldws,ma		4(0,%r25),%r29
-	addib,<=	-5,%r24,L$rest
+	addib,<=	-5,%r24,L(rest)
 	vshd		%r29,%r22,%r20
 
-	.label	L$loop
+	.label	L(loop)
 	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
 	vshd		%r22,%r29,%r20
@@ -50,33 +50,33 @@ PROLOGUE(mpn_rshift)
 	vshd		%r22,%r29,%r20
 	ldws,ma		4(0,%r25),%r29
 	stws,ma		%r20,4(0,%r26)
-	addib,>		-4,%r24,L$loop
+	addib,>		-4,%r24,L(loop)
 	vshd		%r29,%r22,%r20
 
-	.label	L$rest
-	addib,=		4,%r24,L$end1
+	.label	L(rest)
+	addib,=		4,%r24,L(end1)
 	nop
 
-	.label	L$eloop
+	.label	L(eloop)
 	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
-	addib,<=	-1,%r24,L$end2
+	addib,<=	-1,%r24,L(end2)
 	vshd		%r22,%r29,%r20
 	ldws,ma		4(0,%r25),%r29
 	stws,ma		%r20,4(0,%r26)
-	addib,>		-1,%r24,L$eloop
+	addib,>		-1,%r24,L(eloop)
 	vshd		%r29,%r22,%r20
 
-	.label	L$end1
+	.label	L(end1)
 	stws,ma		%r20,4(0,%r26)
 	vshd		%r0,%r29,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
 
-	.label	L$end2
+	.label	L(end2)
 	stws,ma		%r20,4(0,%r26)
 
-	.label	L$0004
+	.label	L(0004)
 	vshd		%r0,%r22,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)

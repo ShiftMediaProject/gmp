@@ -2,7 +2,7 @@ dnl  HP-PA mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 dnl  store difference in a third limb vector.  Optimized for the PA7100, where
 dnl  is runs at 4.25 cycles/limb.
 
-dnl  Copyright 1992, 1994, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1992, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -34,10 +34,10 @@ PROLOGUE(mpn_sub_n)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 
-	addib,<=	-5,%r23,L$rest
+	addib,<=	-5,%r23,L(rest)
 	 sub		%r20,%r19,%r28	C subtract first limbs ignoring cy
 
-	.label	L$loop
+	.label	L(loop)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 	stws,ma		%r28,4(0,%r26)
@@ -53,21 +53,21 @@ PROLOGUE(mpn_sub_n)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 	stws,ma		%r28,4(0,%r26)
-	addib,>		-4,%r23,L$loop
+	addib,>		-4,%r23,L(loop)
 	subb		%r20,%r19,%r28
 
-	.label	L$rest
-	addib,=		4,%r23,L$end
+	.label	L(rest)
+	addib,=		4,%r23,L(end)
 	nop
 
-	.label	L$eloop
+	.label	L(eloop)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 	stws,ma		%r28,4(0,%r26)
-	addib,>		-1,%r23,L$eloop
+	addib,>		-1,%r23,L(eloop)
 	subb		%r20,%r19,%r28
 
-	.label	L$end
+	.label	L(end)
 	stws		%r28,0(0,%r26)
 	addc		%r0,%r0,%r28
 	bv		0(%r2)
