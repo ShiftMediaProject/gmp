@@ -2,6 +2,11 @@ Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* Version 2.0.1 released.
 
+	* install.sh: New file.
+	* Makefile.in (INSTALL): Use install.sh.
+	(install-normal): New name for target `install'.
+	(install): New dummy target.
+
 	* mpz/pow_ui.c: Swap tests for (e == 0) and (bsize == 0).
 	* mpz/ui_pow_ui.c: Swap tests for (e == 0) and (blimb == 0).
 
