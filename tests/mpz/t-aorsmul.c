@@ -154,7 +154,7 @@ check_data (void)
 
   } data[] = {
 
-#define M MP_LIMB_T_MAX
+#define M GMP_NUMB_MAX
 
     /* reducing to zero */
     { { 1 }, { 1 }, { 1 } },
