@@ -25,7 +25,7 @@ There are four types of mpn source files.
 
 There are two types of .asm files.
 
-  i) ``Normal'' files containg one function, possibly with more than
+  i) ``Normal'' files containing one function, possibly with more than
      one entry point.
 
   ii) Multi-function files that generate one of a set of functions
@@ -34,7 +34,7 @@ There are two types of .asm files.
 
 When adding a new implementation of an existing function,
 
-  i) Put it in the approriate mpn subdirectory.  It'll be detected and
+  i) Put it in the appropriate mpn subdirectory.  It'll be detected and
      used.
 
   ii) If it's a .asm or .S, be sure to have a PROLOGUE(func) entry
