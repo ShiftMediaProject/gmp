@@ -1,3 +1,12 @@
+2000-02-21  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h: Rename __gmpn_mul_basecase to mpn_mul_basecase and
+	__gmpn_sqr_basecase to mpn_sqr_basecase, remove __gmpn prototypes.
+	* mpn/x86/mul_basecase.S: Ditto.
+	* mpn/x86/pentium/mul_basecase.S: Ditto.
+
+	* configure.in (gmp_m4postinc): Use x86-defs.m4 on athlon-*-* too.
+
 2000-02-20  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GSYM_PREFIX): Drop $1, change by Linus.
