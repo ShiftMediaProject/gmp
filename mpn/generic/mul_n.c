@@ -35,10 +35,12 @@ MA 02111-1307, USA. */
    0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
 #define INVERSE_3      ((MP_LIMB_T_MAX / 3) * 2 + 1)
 
+#ifndef USE_MORE_MPN
 #if !defined (__alpha) && !defined (__mips)
 /* For all other machines, we want to call mpn functions for the compund
    operations instead of open-coding them.  */
-#define USE_MORE_MPN
+#define USE_MORE_MPN 1
+#endif
 #endif
 
 /*== Function declarations =================================================*/
@@ -504,7 +506,7 @@ mpn_kara_sqr_n (p, a, n, ws)
 
 /* z[] = x[] + 2 * y[]
    Note that z and x might point to the same vectors. */
-#ifdef USE_MORE_MPN
+#if USE_MORE_MPN
 static inline mp_limb_t
 #if __STDC__
 add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
@@ -578,7 +580,7 @@ add2Times (z, x, y, n)
  *   C[] has length len2 with len-len2 = 0, 1 or 2.
  * Returns top words (overflow) at pth, pt1 and pt2 respectively.
  */
-#ifdef USE_MORE_MPN
+#if USE_MORE_MPN
 static void
 #if __STDC__
 evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
@@ -744,7 +746,7 @@ evaluate3 (ph, p1, p2, pth, pt1, pt2,
  * and returns new top words there.
  */
 
-#ifdef USE_MORE_MPN
+#if USE_MORE_MPN
 static void
 #if __STDC__
 interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
