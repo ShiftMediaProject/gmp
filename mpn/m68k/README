@@ -1,0 +1,46 @@
+
+                      M68K MPN SUBROUTINES
+
+
+This directory contains mpn functions for various m68k family chips.
+
+
+CODE ORGANIZATION
+
+	m68k             m68000, m68010
+	m68k/mc68020     m68020 and up, including CPU32
+
+
+The m5200 "coldfire", which is m68000 less a few instructions, currently has
+no assembler code support.
+
+
+ASM FILES
+
+The .asm files are put through m4 for macro processing, and with the help of
+configure give either MIT or Motorola syntax.  The generic mpn/asm-defs.m4
+is used, together with mpn/m68k/m68k-defs.m4.  See comments in those files.
+
+Not all possible syntax variations are covered.  GCC config/m68k for
+instance has things like $ for immediates on CRDS or reversed cmp order for
+AT&T SGS.  These could probably be handled if anyone really needs it.
+
+
+
+REFERENCES
+
+"Motorola M68000 Family Programmer's Reference Manual", available online,
+
+	http://e-www.motorola.com/collateral/M68000PM.pdf
+
+"System V Application Binary Interface: Motorola 68000 Processor Family
+Supplement", AT&T, 1990, ISBN 0-13-877553-6.  Has details of calling
+conventions and ELF style PIC coding.
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
