@@ -38,7 +38,6 @@ define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 `	GLOBL	$1
 	TYPE($1,`function')
-	COFF_TYPE($1)
 $1:
 ')
 
