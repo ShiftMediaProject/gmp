@@ -9239,7 +9239,11 @@ case $host in
   X86_PATTERN)
     AC_SUBST(TESTS_ASM_OBJECTS, x86.$OBJEXT)
     AC_DEFINE(MPFR_HAVE_TESTS_x86, 1,
-              [Define to 1 if mpfr x86 test routines are available.])
+              [Define to 1 if mpfr x86/amd64 test routines are available.])
+    ;;
+  amd64-*-*)
+    AC_SUBST(TESTS_ASM_OBJECTS, amd64.$OBJEXT)
+    AC_DEFINE(MPFR_HAVE_TESTS_x86, 1)
     ;;
 esac
 

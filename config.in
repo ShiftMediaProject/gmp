@@ -441,7 +441,7 @@ MA 02111-1307, USA.
    */
 #undef MPFR_HAVE_FESETROUND
 
-/* Define to 1 if mpfr x86 test routines are available. */
+/* Define to 1 if mpfr x86/amd64 test routines are available. */
 #undef MPFR_HAVE_TESTS_x86
 
 /* Name of package */

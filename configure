@@ -29272,6 +29272,14 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
     ;;
+  amd64-*-*)
+    TESTS_ASM_OBJECTS=amd64.$OBJEXT
+
+    cat >>confdefs.h <<\_ACEOF
+#define MPFR_HAVE_TESTS_x86 1
+_ACEOF
+
+    ;;
 esac
 
 
