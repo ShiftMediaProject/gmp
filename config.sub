@@ -3,7 +3,7 @@
 # GMP config.sub wrapper.
 
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -74,11 +74,15 @@ given_rest=`echo "$given_full" | sed 's/^[^-]*//'`
 
 # Aliases for GMP extras
 case "$given_cpu" in
-p5 | p54)   given_cpu=pentium ;;
-p55)        given_cpu=pentiummmx ;;
-p6)         given_cpu=pentiumpro ;;
-pentiumii)  given_cpu=pentium2 ;;
-pentiumiii) given_cpu=pentium3 ;;
+  # configfsf.sub turns p5 into i586, instead use our exact cpu type
+  p5 | p54)   given_cpu=pentium ;;
+  p55)        given_cpu=pentiummmx ;;
+
+  # configfsf.sub turns p6, pentiumii and pentiumiii into i686, instead use
+  # our exact cpu types
+  p6)         given_cpu=pentiumpro ;;
+  pentiumii)  given_cpu=pentium2 ;;
+  pentiumiii) given_cpu=pentium3 ;;
 esac
 given_full="$given_cpu$given_rest"
 
