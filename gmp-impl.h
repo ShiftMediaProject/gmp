@@ -233,21 +233,52 @@ struct tmp_debug_entry_t {
   size_t                    size;
 };
 void  __gmp_tmp_debug_mark  _PROTO ((const char *, int, struct tmp_debug_t **,
-                                     struct tmp_debug_t *));
-void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, struct tmp_debug_t **,
+                                     struct tmp_debug_t *,
+                                     const char *, const char *));
+void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, int,
+                                     struct tmp_debug_t **, const char *,
                                      size_t)) ATTRIBUTE_MALLOC;
-void  __gmp_tmp_debug_free  _PROTO ((const char *, int, struct tmp_debug_t **));
-/* don't demand NULL, just cast a zero */
-#define TMP_DECL(marker)                                        \
+void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
+                                     struct tmp_debug_t **,
+                                     const char *, const char *));
+#if HAVE_STRINGIZE
+#define TMP_DECL(marker) TMP_DECL_NAME(marker, #marker)
+#define TMP_MARK(marker) TMP_MARK_NAME(marker, #marker)
+#define TMP_FREE(marker) TMP_FREE_NAME(marker, #marker)
+#else
+#define TMP_DECL(marker) TMP_DECL_NAME(marker, "marker")
+#define TMP_MARK(marker) TMP_MARK_NAME(marker, "marker")
+#define TMP_FREE(marker) TMP_FREE_NAME(marker, "marker")
+#endif
+/* The marker variable is designed to provoke an uninitialized varialble
+   warning from the compiler if TMP_FREE is used without a TMP_MARK.
+   __tmp_marker_inscope does the same for TMP_ALLOC.  Runtime tests pick
+   these things up too.  */
+#define TMP_DECL_NAME(marker, marker_name)                      \
+  int marker;                                                   \
+  int __tmp_marker_inscope;                                     \
+  const char *__tmp_marker_name = marker_name;                  \
   struct tmp_debug_t  __tmp_marker_struct;                      \
+  /* don't demand NULL, just cast a zero */                     \
   struct tmp_debug_t  *__tmp_marker = (struct tmp_debug_t *) 0
-#define TMP_MARK(marker)                                                \
-  __gmp_tmp_debug_mark  (ASSERT_FILE, ASSERT_LINE,                      \
-                         &__tmp_marker, &__tmp_marker_struct)
+#define TMP_MARK_NAME(marker, marker_name)                      \
+  do {                                                          \
+    marker = 1;                                                 \
+    __tmp_marker_inscope = 1;                                   \
+    __gmp_tmp_debug_mark  (ASSERT_FILE, ASSERT_LINE,            \
+                           &__tmp_marker, &__tmp_marker_struct, \
+                           __tmp_marker_name, marker_name);     \
+  } while (0)
 #define TMP_ALLOC(size)                                                 \
-  __gmp_tmp_debug_alloc (ASSERT_FILE, ASSERT_LINE, &__tmp_marker, size)
-#define TMP_FREE(marker)                                                \
-  __gmp_tmp_debug_free  (ASSERT_FILE, ASSERT_LINE, &__tmp_marker)
+  __gmp_tmp_debug_alloc (ASSERT_FILE, ASSERT_LINE,                      \
+                         __tmp_marker_inscope,                          \
+                         &__tmp_marker, __tmp_marker_name, size)
+#define TMP_FREE_NAME(marker, marker_name)                      \
+  do {                                                          \
+    __gmp_tmp_debug_free  (ASSERT_FILE, ASSERT_LINE,            \
+                           marker, &__tmp_marker,               \
+                           __tmp_marker_name, marker_name);     \
+  } while (0)
 #endif
 
 

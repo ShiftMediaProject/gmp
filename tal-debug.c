@@ -49,12 +49,21 @@ MA 02111-1307, USA. */
 
 void
 __gmp_tmp_debug_mark (const char *file, int line,
-                      struct tmp_debug_t **markp, struct tmp_debug_t *mark)
+                      struct tmp_debug_t **markp, struct tmp_debug_t *mark,
+                      const char *decl_name, const char *mark_name)
 {
+  if (strcmp (mark_name, decl_name) != 0)
+    {
+      __gmp_assert_header (file, line);
+      fprintf (stderr, "GNU MP: TMP_MARK(%s) but TMP_DECL(%s) is in scope\n",
+               mark_name, decl_name);
+      abort ();
+    }
+
   if (*markp != NULL)
     {
       __gmp_assert_header (file, line);
-      fprintf (stderr, "GNU MP: Duplicate TMP_MARK\n");
+      fprintf (stderr, "GNU MP: Repeat of TMP_MARK(%s)\n", mark_name);
       if (mark->file != NULL && mark->file[0] != '\0' && mark->line != -1)
         {
           __gmp_assert_header (mark->file, mark->line);
@@ -68,10 +77,11 @@ __gmp_tmp_debug_mark (const char *file, int line,
   mark->line = line;
   mark->list = NULL;
 }
-    
+
 void *
-__gmp_tmp_debug_alloc (const char *file, int line,
-                       struct tmp_debug_t **markp, size_t size)
+__gmp_tmp_debug_alloc (const char *file, int line, int dummy,
+                       struct tmp_debug_t **markp,
+                       const char *decl_name, size_t size)
 {
   struct tmp_debug_t        *mark = *markp;
   struct tmp_debug_entry_t  *p;
@@ -81,7 +91,7 @@ __gmp_tmp_debug_alloc (const char *file, int line,
   if (mark == NULL)
     {
       __gmp_assert_header (file, line);
-      fprintf (stderr, "GNU MP: TMP_ALLOC without TMP_MARK\n");
+      fprintf (stderr, "GNU MP: TMP_ALLOC without TMP_MARK(%s)\n", decl_name);
       abort ();
     }
 
@@ -94,7 +104,9 @@ __gmp_tmp_debug_alloc (const char *file, int line,
 }
 
 void
-__gmp_tmp_debug_free (const char *file, int line, struct tmp_debug_t **markp)
+__gmp_tmp_debug_free (const char *file, int line, int dummy,
+                      struct tmp_debug_t **markp,
+                      const char *decl_name, const char *free_name)
 {
   struct tmp_debug_t        *mark = *markp;
   struct tmp_debug_entry_t  *p, *next;
@@ -102,7 +114,16 @@ __gmp_tmp_debug_free (const char *file, int line, struct tmp_debug_t **markp)
   if (mark == NULL)
     {
       __gmp_assert_header (file, line);
-      fprintf (stderr, "GNU MP: TMP_FREE without TMP_MARK\n");
+      fprintf (stderr, "GNU MP: TMP_FREE(%s) without TMP_MARK(%s)\n",
+               free_name, decl_name);
+      abort ();
+    }
+
+  if (strcmp (free_name, decl_name) != 0)
+    {
+      __gmp_assert_header (file, line);
+      fprintf (stderr, "GNU MP: TMP_FREE(%s) when TMP_DECL(%s) is in scope\n",
+               free_name, decl_name);
       abort ();
     }
 
