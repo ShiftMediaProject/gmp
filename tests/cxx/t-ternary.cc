@@ -19,10 +19,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <cstdlib>
 #include <iostream>
-#include <string>
+
 #include "gmp.h"
+#ifdef WANT_MPFR
+#  include "mpfr.h"
+#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -30,101 +32,553 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
-#define CHECK_GMP(type, message, want)                           \
-  do                                                             \
-    {                                                            \
-      type##_set_str(ref, want, 0);                              \
-      if (type##_cmp(val.get_##type##_t(), ref) != 0)            \
-        {                                                        \
-          cout << "error on " #type "_class operator/function: " \
-	       << message << "\n";                               \
-          cout << "  want:  " << ref << "\n";                    \
-          cout << "  got:   " << val.get_##type##_t() << "\n";   \
-          abort();                                               \
-        }                                                        \
-    }                                                            \
-  while (0)
-
-#define CHECK_MPZ(expr, want) CHECK_GMP(mpz, expr, want)
-#define CHECK_MPQ(expr, want) CHECK_GMP(mpq, expr, want)
-#define CHECK_MPF(expr, want) CHECK_GMP(mpf, expr, want)
-
-
-void check_mpz(void)
+void
+check_mpz (void)
 {
-  mpz_class val;
-  mpz_t ref;
-  mpz_init(ref);
+  // template<class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<mpz_class, mpz_class, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    mpz_class d;
+    d = a + b * c; ASSERT_ALWAYS(d == 7);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    mpz_class d;
+    d = a - b * c; ASSERT_ALWAYS(d == -5);
+  }
 
-  mpz_class z(1), w(2), v(3);
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<mpz_class, T, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    signed int c = 3;
+    mpz_class d;
+    d = a + b * c; ASSERT_ALWAYS(d == 7);
+  }
+  {
+    mpz_class a(1), b(2);
+    signed int c = 3;
+    mpz_class d;
+    d = a - b * c; ASSERT_ALWAYS(d == -5);
+  }
 
-  // mpz_addmul
-  val = z + w * v;   CHECK_MPZ("val = z + w * v"  , "7");
-  val = z + w * 3u;  CHECK_MPZ("val = z + w * 3u" , "7");
-  val = z + 2u * v;  CHECK_MPZ("val = z + 2u * v" , "7");
-  val = z + w * 3;   CHECK_MPZ("val = z + w * 3"  , "7");
-  val = z + 2 * v;   CHECK_MPZ("val = z + 2 * v"  , "7");
-  val = z + w * 3.0; CHECK_MPZ("val = z + w * 3.0", "7");
-  val = z + 2.0 * v; CHECK_MPZ("val = z + 2.0 * v", "7");
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<T, mpz_class, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    unsigned int c = 3;
+    mpz_class d;
+    d = a + c * b; ASSERT_ALWAYS(d == 7);
+  }
+  {
+    mpz_class a(1), b(2);
+    unsigned int c = 3;
+    mpz_class d;
+    d = a - c * b; ASSERT_ALWAYS(d == -5);
+  }
 
-  val = z * w + v;   CHECK_MPZ("val = z * w + v"  , "5");
-  val = z * 2u + v;  CHECK_MPZ("val = z * 2u + v" , "5");
-  val = 1u * w + v;  CHECK_MPZ("val = 1u * w + v" , "5");
-  val = z * 2 + v;   CHECK_MPZ("val = z * 2 + v"  , "5");
-  val = 1 * w + v;   CHECK_MPZ("val = 1 * w + v"  , "5");
-  val = z * 2.0 + v; CHECK_MPZ("val = z * 2.0 + v", "5");
-  val = 1.0 * w + v; CHECK_MPZ("val = 1.0 * w + v", "5");
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr<mpz_t, T>, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    double d = 4.0;
+    mpz_class e;
+    e = a + b * (c + d); ASSERT_ALWAYS(e == 15);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    double d = 4.0;
+    mpz_class e;
+    e = a - b * (c + d); ASSERT_ALWAYS(e == -13);
+  }
 
-  // mpz_submul
-  val = z - w * v;   CHECK_MPZ("val = z - w * v"  , "-5");
-  val = z - w * 3u;  CHECK_MPZ("val = z - w * 3u" , "-5");
-  val = z - 2u * v;  CHECK_MPZ("val = z - 2u * v" , "-5");
-  val = z - w * 3;   CHECK_MPZ("val = z - w * 3"  , "-5");
-  val = z - 2 * v;   CHECK_MPZ("val = z - 2 * v"  , "-5");
-  val = z - w * 3.0; CHECK_MPZ("val = z - w * 3.0", "-5");
-  val = z - 2.0 * v; CHECK_MPZ("val = z - 2.0 * v", "-5");
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, mpz_class, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    signed int d = 4;
+    mpz_class e;
+    e = a + (b - d) * c; ASSERT_ALWAYS(e == -5);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    signed int d = 4;
+    mpz_class e;
+    e = a - (b - d) * c; ASSERT_ALWAYS(e == 7);
+  }
 
-  val = z * w - v;   CHECK_MPZ("val = z * w - v"  , "-1");
-  val = z * 2u - v;  CHECK_MPZ("val = z * 2u - v" , "-1");
-  val = 1u * w - v;  CHECK_MPZ("val = 1u * w - v" , "-1");
-  val = z * 2 - v;   CHECK_MPZ("val = z * 2 - v"  , "-1");
-  val = 1 * w - v;   CHECK_MPZ("val = 1 * w - v"  , "-1");
-  val = z * 2.0 - v; CHECK_MPZ("val = z * 2.0 - v", "-1");
-  val = 1.0 * w - v; CHECK_MPZ("val = 1.0 * w - v", "-1");
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, U, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    unsigned int c = 3, d = 4;
+    mpz_class e;
+    e = a + (b + c) * d; ASSERT_ALWAYS(e == 21);
+  }
+  {
+    mpz_class a(1), b(2);
+    unsigned int c = 3, d = 4;
+    mpz_class e;
+    e = a - (b + c) * d; ASSERT_ALWAYS(e == -19);
+  }
 
-  mpz_clear(ref);
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<T, __gmp_expr<mpz_t, U>, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    double c = 3.0, d = 4.0;
+    mpz_class e;
+    e = a + c * (b + d); ASSERT_ALWAYS(e == 19);
+  }
+  {
+    mpz_class a(1), b(2);
+    double c = 3.0, d = 4.0;
+    mpz_class e;
+    e = a - c * (b + d); ASSERT_ALWAYS(e == -17);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, __gmp_expr<mpz_t, U>,
+  // Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    signed int d = 4, e = 5;
+    mpz_class f;
+    f = a + (b - d) * (c + e); ASSERT_ALWAYS(f == -15);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    signed int d = 4, e = 5;
+    mpz_class f;
+    f = a - (b - d) * (c + e); ASSERT_ALWAYS(f == 17);
+  }
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>,
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, mpz_class, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    unsigned int d = 4;
+    mpz_class e;
+    e = (a + d) + b * c; ASSERT_ALWAYS(e == 11);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    unsigned int d = 4;
+    mpz_class e;
+    e = (a + d) - b * c; ASSERT_ALWAYS(e == -1);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>,
+  // __gmp_expr<mpz_t, __gmp_binary_expr<mpz_class, U, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    double c = 3.0, d = 4.0;
+    mpz_class e;
+    e = (a - c) + b * d; ASSERT_ALWAYS(e == 6);
+  }
+  {
+    mpz_class a(1), b(2);
+    double c = 3.0, d = 4.0;
+    mpz_class e;
+    e = (a - c) - b * d; ASSERT_ALWAYS(e == -10);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>,
+  // __gmp_expr<mpz_t, __gmp_binary_expr<U, mpz_class, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    signed int c = 3, d = 4;
+    mpz_class e;
+    e = (a - c) + d * b; ASSERT_ALWAYS(e == 6);
+  }
+  {
+    mpz_class a(1), b(2);
+    signed int c = 3, d = 4;
+    mpz_class e;
+    e = (a - c) - d * b; ASSERT_ALWAYS(e == -10);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<mpz_class, __gmp_expr<mpz_t, U>, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    unsigned int d = 4, e = 5;
+    mpz_class f;
+    f = (a + d) + b * (c - e); ASSERT_ALWAYS(f == 1);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    unsigned int d = 4, e = 5;
+    mpz_class f;
+    f = (a + d) - b * (c - e); ASSERT_ALWAYS(f == 9);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, U>, mpz_class, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    double d = 4.0, e = 5.0;
+    mpz_class f;
+    f = (a - d) + (b + e) * c; ASSERT_ALWAYS(f == 18);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    double d = 4.0, e = 5.0;
+    mpz_class f;
+    f = (a - d) - (b + e) * c; ASSERT_ALWAYS(f == -24);
+  }
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, U>, V, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    signed int c = 3, d = 4, e = 5;
+    mpz_class f;
+    f = (a + c) + (b + d) * e; ASSERT_ALWAYS(f == 34);
+  }
+  {
+    mpz_class a(1), b(2);
+    signed int c = 3, d = 4, e = 5;
+    mpz_class f;
+    f = (a + c) - (b + d) * e; ASSERT_ALWAYS(f == -26);
+  }
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<U, __gmp_expr<mpz_t, V>, Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2);
+    unsigned int c = 3, d = 4, e = 5;
+    mpz_class f;
+    f = (a - c) + d * (b - e); ASSERT_ALWAYS(f == -14);
+  }
+  {
+    mpz_class a(1), b(2);
+    unsigned int c = 3, d = 4, e = 5;
+    mpz_class f;
+    f = (a - c) - d * (b - e); ASSERT_ALWAYS(f == 10);
+  }
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, T>, __gmp_expr
+  // <mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, U>, __gmp_expr<mpz_t, V>,
+  // Op1> >, Op2> >
+  {
+    mpz_class a(1), b(2), c(3);
+    double d = 4.0, e = 5.0, f = 6.0;
+    mpz_class g;
+    g = (a + d) + (b - e) * (c + f); ASSERT_ALWAYS(g == -22);
+  }
+  {
+    mpz_class a(1), b(2), c(3);
+    double d = 4.0, e = 5.0, f = 6.0;
+    mpz_class g;
+    g = (a + d) - (b - e) * (c + f); ASSERT_ALWAYS(g == 32);
+  }
+
+  // template <class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr
+  // <mpz_t, __gmp_binary_expr<mpz_class, mpz_class, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    mpz_class d;
+    d = a * b + c; ASSERT_ALWAYS(d == 10);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    mpz_class d;
+    d = a * b - c; ASSERT_ALWAYS(d == 2);
+  }
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr
+  // <mpz_t, __gmp_binary_expr<mpz_class, T, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3);
+    signed int c = 4;
+    mpz_class d;
+    d = a * c + b; ASSERT_ALWAYS(d == 11);
+  }
+  {
+    mpz_class a(2), b(3);
+    signed int c = 4;
+    mpz_class d;
+    d = a * c - b; ASSERT_ALWAYS(d == 5);
+  }
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr
+  // <mpz_t, __gmp_binary_expr<T, mpz_class, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3);
+    unsigned int c = 4;
+    mpz_class d;
+    d = c * a + b; ASSERT_ALWAYS(d == 11);
+  }
+  {
+    mpz_class a(2), b(3);
+    unsigned int c = 4;
+    mpz_class d;
+    d = c * a - b; ASSERT_ALWAYS(d == 5);
+  }
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<mpz_t, T>, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    double d = 5.0;
+    mpz_class e;
+    e = a * (b + d) + c; ASSERT_ALWAYS(e == 20);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    double d = 5.0;
+    mpz_class e;
+    e = a * (b + d) - c; ASSERT_ALWAYS(e == 12);
+  }
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <__gmp_expr<mpz_t, T>, mpz_class, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    signed int d = 5;
+    mpz_class e;
+    e = (a - d) * b + c; ASSERT_ALWAYS(e == -5);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    signed int d = 5;
+    mpz_class e;
+    e = (a - d) * b - c; ASSERT_ALWAYS(e == -13);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <__gmp_expr<mpz_t, T>, U, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3);
+    unsigned int c = 4, d = 5;
+    mpz_class e;
+    e = (a + c) * d + b; ASSERT_ALWAYS(e == 33);
+  }
+  {
+    mpz_class a(2), b(3);
+    unsigned int c = 4, d = 5;
+    mpz_class e;
+    e = (a + c) * d - b; ASSERT_ALWAYS(e == 27);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <T, __gmp_expr<mpz_t, U>, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3);
+    double c = 4.0, d = 5.0;
+    mpz_class e;
+    e = c * (a + d) + b; ASSERT_ALWAYS(e == 31);
+  }
+  {
+    mpz_class a(2), b(3);
+    double c = 4.0, d = 5.0;
+    mpz_class e;
+    e = c * (a + d) - b; ASSERT_ALWAYS(e == 25);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <__gmp_expr<mpz_t, T>, __gmp_expr<mpz_t, U>, Op1> >, mpz_class, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    signed int d = 5, e = 6;
+    mpz_class f;
+    f = (a - d) * (b + e) + c; ASSERT_ALWAYS(f == -23);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    signed int d = 5, e = 6;
+    mpz_class f;
+    f = (a - d) * (b + e) - c; ASSERT_ALWAYS(f == -31);
+  }
+
+  // template <class T, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <mpz_class, mpz_class, Op1> >, __gmp_expr<mpz_t, T>, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    unsigned int d = 5;
+    mpz_class e;
+    e = a * b + (c - d); ASSERT_ALWAYS(e == 5);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    unsigned int d = 5;
+    mpz_class e;
+    e = a * b - (c - d); ASSERT_ALWAYS(e == 7);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <mpz_class, T, Op1> >, __gmp_expr<mpz_t, U>, Op2> >
+  {
+    mpz_class a(2), b(3);
+    double c = 4.0, d = 5.0;
+    mpz_class e;
+    e = a * c + (b + d); ASSERT_ALWAYS(e == 16);
+  }
+  {
+    mpz_class a(2), b(3);
+    double c = 4.0, d = 5.0;
+    mpz_class e;
+    e = a * c - (b + d); ASSERT_ALWAYS(e == 0);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <T, mpz_class, Op1> >, __gmp_expr<mpz_t, U>, Op2> >
+  {
+    mpz_class a(2), b(3);
+    signed int c = 4, d = 5;
+    mpz_class e;
+    e = c * a + (b - d); ASSERT_ALWAYS(e == 6);
+  }
+  {
+    mpz_class a(2), b(3);
+    signed int c = 4, d = 5;
+    mpz_class e;
+    e = c * a - (b - d); ASSERT_ALWAYS(e == 10);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <mpz_class, __gmp_expr<mpz_t, T>, Op1> >, __gmp_expr<mpz_t, U>, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    unsigned int d = 5, e = 6;
+    mpz_class f;
+    f = a * (b - d) + (c + e); ASSERT_ALWAYS(f == 6);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    unsigned int d = 5, e = 6;
+    mpz_class f;
+    f = a * (b - d) - (c + e); ASSERT_ALWAYS(f == -14);
+  }
+
+  // template <class T, class U, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <__gmp_expr<mpz_t, T>, mpz_class, Op1> >, __gmp_expr<mpz_t, U>, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    double d = 5.0, e = 6.0;
+    mpz_class f;
+    f = (a + d) * b + (c - e); ASSERT_ALWAYS(f == 19);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    double d = 5.0, e = 6.0;
+    mpz_class f;
+    f = (a + d) * b - (c - e); ASSERT_ALWAYS(f == 23);
+  }
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <__gmp_expr<mpz_t, T>, U, Op1> >, __gmp_expr<mpz_t, V>, Op2> >
+  {
+    mpz_class a(2), b(3);
+    signed int c = 4, d = 5, e = 6;
+    mpz_class f;
+    f = (a + c) * d + (b + e); ASSERT_ALWAYS(f == 39);
+  }
+  {
+    mpz_class a(2), b(3);
+    signed int c = 4, d = 5, e = 6;
+    mpz_class f;
+    f = (a + c) * d - (b + e); ASSERT_ALWAYS(f == 21);
+  }
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <T, __gmp_expr<mpz_t, U>, Op1> >, __gmp_expr<mpz_t, V>, Op2> >
+  {
+    mpz_class a(2), b(3);
+    unsigned int c = 4, d = 5, e = 6;
+    mpz_class f;
+    f = c * (a + d) + (b - e); ASSERT_ALWAYS(f == 25);
+  }
+  {
+    mpz_class a(2), b(3);
+    unsigned int c = 4, d = 5, e = 6;
+    mpz_class f;
+    f = c * (a + d) - (b - e); ASSERT_ALWAYS(f == 31);
+  }
+
+  // template <class T, class U, class V, class Op1, class Op2>
+  // __gmp_expr<mpz_t, __gmp_binary_expr<__gmp_expr<mpz_t, __gmp_binary_expr
+  // <__gmp_expr<mpz_t, T>, __gmp_expr<mpz_t, U>, Op1> >,
+  // __gmp_expr<mpz_t, V>, Op2> >
+  {
+    mpz_class a(2), b(3), c(4);
+    double d = 5.0, e = 6.0, f = 7.0;
+    mpz_class g;
+    g = (a + d) * (b - e) + (c + f); ASSERT_ALWAYS(g == -10);
+  }
+  {
+    mpz_class a(2), b(3), c(4);
+    double d = 5.0, e = 6.0, f = 7.0;
+    mpz_class g;
+    g = (a + d) * (b - e) - (c + f); ASSERT_ALWAYS(g == -32);
+  }
 }
 
-void check_mpq(void)
+void
+check_mpq (void)
 {
-  mpq_class val;
-  mpq_t ref;
-  mpq_init(ref);
-
   // currently there's no ternary mpq operation
-
-  mpq_clear(ref);
 }
 
-void check_mpf(void)
+void
+check_mpf (void)
 {
-  mpf_class val;
-  mpf_t ref;
-  mpf_init(ref);
-
   // currently there's no ternary mpf operation
+}
 
-  mpf_clear(ref);
+void
+check_mpfr (void)
+{
+#ifdef WANT_MPFR
+
+  // currently there's no ternary mpfr operation
+
+#endif /* WANT_MPFR */
 }
 
 
-int main()
+int
+main (void)
 {
   tests_start();
 
   check_mpz();
   check_mpq();
   check_mpf();
+  check_mpfr();
 
   tests_end();
   return 0;
