@@ -1,6 +1,7 @@
 dnl  Intel Pentium-4 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -36,6 +37,8 @@ C                                mp_srcptr src, mp_size_t size,
 C                                mp_limb_t divisor, mp_limb_t inverse,
 C                                unsigned shift);
 C
+C Algorithm:
+C
 C The method and nomenclature follow part 8 of "Division by Invariant
 C Integers using Multiplication" by Granlund and Montgomery, reference in
 C gmp.texi.
@@ -44,6 +47,15 @@ C "m" is written for what is m' in the paper, and "d" for d_norm, which
 C won't cause any confusion since it's only the normalized divisor that's of
 C any use in the code.  "b" is written for 2^N, the size of a limb, N being
 C 32 here.
+C
+C The step "sdword dr = n - 2^N*d + (2^N-1-q1) * d" is instead done as
+C "n-d - q1*d".  This rearrangement gives the same two-limb answer but lets
+C us have just a psubq on the dependent chain.
+C
+C For reference, the way the k7 code uses "n-(q1+1)*d" would not suit here,
+C detecting an overflow of q1+1 when q1=0xFFFFFFFF would cost too much.
+C
+C Notes:
 C
 C mpn_divrem_1 and mpn_preinv_divrem_1 avoid one division if the src high
 C limb is less than the divisor.  mpn_divrem_1c doesn't check for a zero
