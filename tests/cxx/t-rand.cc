@@ -1,4 +1,4 @@
-/* Test mp*_class functions.
+/* Test gmp_randclass.
 
 Copyright 2002 Free Software Foundation, Inc.
 
