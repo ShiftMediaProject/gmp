@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 6 Apr 2002.  An up-to-date version is available at
+  This file current as of 23 Apr 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -713,8 +713,6 @@ MA 02111-1307, USA.
 <li> ARM: <code>umul_ppmm</code> in longlong.h always uses <code>umull</code>,
      but is that available only for M series chips or some such?  Perhaps it
      should be configured in some way.
-<li> HPPA: rename `hppa' =&gt; `pa32'.
-<li> HPPA: Combine the pa64 and pa64w directories.
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
 <li> HPPA 2.0w: gcc is rumoured to support 2.0w as of version 3, though
      perhaps just as a build-time choice.  In any case, figure out how to
@@ -850,7 +848,6 @@ MA 02111-1307, USA.
      |x|&lt;|b| and |y|&lt;|a| or something like that, but there's probably
      two solutions under just those restrictions.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
-<li> Merge mpn/pa64 and pa64w.
 <li> demos/factorize.c should use the GMP random functions when restarting
      Pollard-Rho, not <code>random</code> / <code>mrand48</code>.
 <li> demos/factorize.c: use <code>mpz_divisible_ui_p</code> rather than
