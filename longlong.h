@@ -135,7 +135,11 @@ MA 02111-1307, USA. */
 #define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
+#if HAVE_ATTRIBUTE_CONST
+long __MPN(count_leading_zeros) (UDItype) __attribute__ ((const));
+#else
 long __MPN(count_leading_zeros) ();
+#endif
 #define count_leading_zeros(count, x) \
   ((count) = __MPN(count_leading_zeros) (x))
 #endif /* LONGLONG_STANDALONE */
