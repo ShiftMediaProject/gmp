@@ -1,4 +1,9 @@
 2000-02-21  Linus Nordberg  <linus@swox.se>
+	
+	* configure.in: Link <src>/mpn/asm-defs.m4 to <build>mpn/asm.m4.
+	* configure: Regenerate.
+	
+2000-02-21  Linus Nordberg  <linus@swox.se>
 
 	* mpn/x86/k7/aorsmul_1.asm: Change OPERATION_ADDMUL -->
 	OPERATION_addmul_1.  Change OPERATION_SUBMUL -->
