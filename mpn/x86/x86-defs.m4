@@ -324,7 +324,7 @@ dnl  when testing on a machine without femms.
 define(femms,
 m4_assert_numargs(-1)
 `ifelse(femms_available_p,1,
-`.byte	15,14	# AMD 3DNow femms',
+`.byte	15,14	C AMD 3DNow femms',
 `emms`'dnl
 m4_warning(`warning, using emms in place of femms, use for testing only
 ')')')
@@ -388,8 +388,8 @@ dnl  quoted to protect commas in it.
 define(cmov_bytes,
 m4_assert_numargs(4)
 `ifelse(cmov_available_p,1,
-	`.byte	$4	# cmov$1 $2, $3',
-	`j`'x86_opposite_cond(`$1')	1f	# simulated cmov$1 $2, $3
+	`.byte	$4	C cmov$1 $2, $3',
+	`j`'x86_opposite_cond(`$1')	1f	C simulated cmov$1 $2, $3
 	mov	$2, $3
 1:`'dnl
 m4_warning(`warning, simulating cmov with jump, use for testing only
@@ -465,7 +465,7 @@ dnl         Zdisp(  movl,   0,(%esi), %eax)
 dnl
 dnl  expands to
 dnl
-dnl                 .byte   139,70,0  # movl 0(%esi), %eax
+dnl                 .byte   139,70,0  C movl 0(%esi), %eax
 dnl
 dnl  If the displacement given isn't 0, then normal assembler code is
 dnl  generated.  For example,
@@ -493,6 +493,7 @@ Zdisp_match( movl, 0,(%ebx), %eax, `139,67,0',    $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %esi, `139,115,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%esi), %eax, `139,70,0',    $@)`'dnl
 Zdisp_match( addl, %ecx, 0,(%edi), `1,79,0',      $@)`'dnl
+Zdisp_match( addl, %esi, 0,(%edi), `1,119,0',      $@)`'dnl
 Zdisp_match( subl, %ecx, 0,(%edi), `41,79,0',     $@)`'dnl
 Zdisp_match( adcl, 0,(%edx), %esi, `19,114,0',    $@)`'dnl
 Zdisp_match( sbbl, 0,(%edx), %esi, `27,114,0',    $@)`'dnl
@@ -509,7 +510,7 @@ define(Zdisp_match,
 	&& m4_stringequal_p(`$4',`$9')),1,
 `define(`Zdisp_found',1)dnl
 ifelse(eval(`$7'),0,
-`	.byte	$5  `# $1 0$3, $4'',
+`	.byte	$5  C `$1 0$3, $4'',
 `	$6	$7$8, $9')',
 
 `ifelse(eval(m4_stringequal_p(`$1',`$6')
@@ -518,7 +519,7 @@ ifelse(eval(`$7'),0,
 	&& m4_stringequal_p(`$4',`$9')),1,
 `define(`Zdisp_found',1)dnl
 ifelse(eval(`$8'),0,
-`	.byte	$5  `# $1 $2, 0$4'',
+`	.byte	$5  C `$1 $2, 0$4'',
 `	$6	$7, $8$9')')')')
 
 
