@@ -433,15 +433,10 @@ ok (bin(3,3) == 1);
   my $b = $a;
   ok ($b == 3);
   clrbit ($a, 0);
-  print "a==2\n";
   ok ($a == 2);
-  print "b==3\n";
   ok ($b == 3);
-  print "b=a\n";
   $b = $a;
-  print "b==2\n";
   ok ($b == 2);
-  print "done\n";
 }
 {
   my $a = 0;
@@ -482,6 +477,15 @@ ok (! even_p(mpz(1)));
 ok (  even_p(mpz(2)));
 ok (! even_p(mpz(3)));
 
+{ my $s = mpz_export (1, 2, 1, 0, "0x61626364");
+  ok ($s eq 'abcd'); }
+{ my $s = mpz_export (-1, 2, 1, 0, "0x61626364");
+  ok ($s eq 'cdab'); }
+{ my $s = mpz_export (1, 2, -1, 0, "0x61626364");
+  ok ($s eq 'badc'); }
+{ my $s = mpz_export (-1, 2, -1, 0, "0x61626364");
+  ok ($s eq 'dcba'); }
+
 ok (fac(0) == 1);
 ok (fac(1) == 1);
 ok (fac(2) == 2);
@@ -520,6 +524,15 @@ ok (gcd (-21,-15) == 3);
 }
 
 ok (hamdist(5,7) == 1);
+
+{ my $z = mpz_import (1, 2, 1, 0, 'abcd');
+  ok ($z == 0x61626364); }
+{ my $z = mpz_import (-1, 2, 1, 0, 'abcd');
+  ok ($z == 0x63646162); }
+{ my $z = mpz_import (1, 2, -1, 0, 'abcd');
+  ok ($z == 0x62616463); }
+{ my $z = mpz_import (-1, 2, -1, 0, 'abcd');
+  ok ($z == 0x64636261); }
 
 ok (invert(1,123) == 1);
 ok (invert(6,7) == 6);
