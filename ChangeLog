@@ -1,3 +1,24 @@
+2000-02-10  Linus Nordberg  <linus@swox.se>
+
+	* configure.in: Use Autoconf.
+	* Makefile.am: Use Automake.
+	
+	* AUTHORS: New file.
+	* COPYING: New file.
+	* acinclude.m4: New file.
+	* acconfig.h: New file.
+
+	* configure: Generate.
+	* Makefile.in: Generate.
+	* aclocal.m4: Generate.
+	* config.in: Generate.
+
+	* install.sh: Remove.
+	* install-sh: New file from Automake.
+	* missing: New file from Automake.
+	* ltconfig: New file from Libtool.
+	* ltmain.sh: New file from Libtool.
+
 2000-02-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/add_n.S: Don't use label L0 twice.
