@@ -35,6 +35,7 @@ mpz_cdiv_qr (quot, rem, dividend, divisor)
 #endif
 {
   mp_size_t divisor_size = divisor->_mp_size;
+  mp_size_t xsize;
   mpz_t temp_divisor;		/* N.B.: lives until function returns! */
   TMP_DECL (marker);
 
@@ -50,9 +51,10 @@ mpz_cdiv_qr (quot, rem, dividend, divisor)
       divisor = temp_divisor;
     }
 
+  xsize = dividend->_mp_size ^ divisor_size;;
   mpz_tdiv_qr (quot, rem, dividend, divisor);
 
-  if ((divisor_size ^ dividend->_mp_size) >= 0 && rem->_mp_size != 0)
+  if (xsize >= 0 && rem->_mp_size != 0)
     {
       mpz_add_ui (quot, quot, 1L);
       mpz_sub (rem, rem, divisor);
