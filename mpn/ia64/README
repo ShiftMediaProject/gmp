@@ -78,10 +78,10 @@ with the same basic structure:
 
   { .mfi	getf.sig
 		xma.l
-	   (p6)	cmp.leu		p6, p7 = 
+	   (p6)	cmp.leu		p6, p7 =
 } { .mfi	stf8
 		xma.hu
-	   (p7)	cmp.ltu		p6, p7 = 
+	   (p7)	cmp.ltu		p6, p7 =
 		;;
 } { .mib	getf.sig
 	   (p6)	add 1
@@ -92,10 +92,10 @@ with the same basic structure:
 		;;
   { .mfi	getf.sig
 		xma.l
-	   (p6)	cmp.leu		p6, p7 = 
+	   (p6)	cmp.leu		p6, p7 =
 } { .mfi	stf8
 		xma.hu
-	   (p7)	cmp.ltu		p6, p7 = 
+	   (p7)	cmp.ltu		p6, p7 =
 		;;
 } { .mib	getf.sig
 	   (p6)	add 1
@@ -104,7 +104,7 @@ with the same basic structure:
 	   (p7)	add
 		br.cloop
 		;;
-} 
+}
 
 2 limbs/20 instructions
 	   20 insn/max 6 insn/cycle:		3.3 cycles/2limb
@@ -174,10 +174,10 @@ pattern:
 
   { .mfi	getf.sig
 		xma.l
-	   (p6) cmp.leu		p6, p7 = 
+	   (p6) cmp.leu		p6, p7 =
 } { .mfi	stf8
 		xma.hu
-	   (p7) cmp.ltu		p6, p7 = 
+	   (p7) cmp.ltu		p6, p7 =
 		;;
 } { .mib	getf.sig
 	   (p6) add 1

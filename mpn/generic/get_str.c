@@ -210,33 +210,33 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	     to use a plain multiply.  */
 	  if (MP_BASES_NORMALIZATION_STEPS_10 == 0)
 	    {
-              umul_ppmm (digit, frac, frac, 10);
-              *s++ = digit;
-            }
+	      umul_ppmm (digit, frac, frac, 10);
+	      *s++ = digit;
+	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 1)
 	    {
-              umul_ppmm (digit, frac, frac, 10);
-              *s++ = digit;
-            }
+	      umul_ppmm (digit, frac, frac, 10);
+	      *s++ = digit;
+	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 2)
 	    {
-              umul_ppmm (digit, frac, frac, 10);
-              *s++ = digit;
-            }
+	      umul_ppmm (digit, frac, frac, 10);
+	      *s++ = digit;
+	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 3)
 	    {
-              umul_ppmm (digit, frac, frac, 10);
-              *s++ = digit;
-            }
+	      umul_ppmm (digit, frac, frac, 10);
+	      *s++ = digit;
+	    }
 	  i = MP_BASES_CHARS_PER_LIMB_10 - (4-MP_BASES_NORMALIZATION_STEPS_10);
 	  frac = (frac + 0xf) >> 4;
 	  do
-            {
+	    {
 	      frac *= 10;
 	      digit = frac >> (BITS_PER_MP_LIMB - 4);
-              *s++ = digit;
+	      *s++ = digit;
 	      frac &= (~(mp_limb_t) 0) >> 4;
-            }
+	    }
 	  while (--i);
 #endif
 	  s -= MP_BASES_CHARS_PER_LIMB_10;
@@ -399,8 +399,8 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
       count_leading_zeros (cnt, n1);
 
       /* BIT_POS should be R when input ends in least sign. nibble,
-         R + bits_per_digit * n when input ends in n:th least significant
-         nibble. */
+	 R + bits_per_digit * n when input ends in n:th least significant
+	 nibble. */
 
       {
 	unsigned long bits;

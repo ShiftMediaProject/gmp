@@ -120,15 +120,15 @@ aren't affected."
 
 (defvar gmpasm-mode-map
   (let ((map (make-sparse-keymap)))
-    
+
     ;; assembler and dnl commenting
     (define-key map "\C-c\C-c" 'comment-region)
     (define-key map "\C-c\C-d" 'gmpasm-comment-region-dnl)
-    
+
     ;; kill an M-x compile, since it's not hard to put m4 into an infinite
     ;; loop
     (define-key map "\C-c\C-k" 'kill-compilation)
-    
+
     map)
   "Keymap for `gmpasm-mode'.")
 
@@ -136,7 +136,7 @@ aren't affected."
 (defvar gmpasm-mode-syntax-table
   (let ((table (make-syntax-table)))
     ;; underscore left as a symbol char, like C mode
-    
+
     ;; m4 quotes
     (modify-syntax-entry ?`  "('"  table)
     (modify-syntax-entry ?'  ")`"  table)
@@ -260,7 +260,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
   (let ((comment-regexp
 	 (concat (regexp-quote comment-start)
 		 (if (string-match "[a-zA-Z0-9]\\'" comment-start) "\\b"))))
-    
+
     ;; Whitespace is required before a comment-start so m4 $# doesn't match
     ;; when comment-start is "#".
     (set (make-local-variable 'comment-start-skip)
@@ -288,7 +288,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	 (concat "[ \t\f]*\\(\\(" comment-regexp "\\|dnl\\)[ \t]*\\)*$"))
     (set (make-local-variable 'paragraph-start)
 	 (concat "\f\\|" paragraph-separate))
- 
+
     ;; Adaptive fill gets dnl and comment-start as comment style prefixes on
     ;; top of the standard regexp (which has # and ; already actually).
     (set (make-local-variable 'adaptive-fill-regexp)
@@ -306,7 +306,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	      filladapt-token-match-table)
 	(setq gmpasm-filladapt-token-conversion-table
 	      filladapt-token-conversion-table)
-	
+
 	;; Numbered bullet points like "2.1" get matched at the start of a
 	;; line when it's really something like "2.1 cycles/limb", so remove
 	;; this from the list.  The regexp for "1.", "2." etc is left
@@ -314,31 +314,31 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	(gmpasm-remove-from-list 'gmpasm-filladapt-token-table
 				 '("[0-9]+\\(\\.[0-9]+\\)+[ \t]"
 				   bullet))
-	  
+
 	;; "%" as a comment prefix interferes with register names on some
 	;; CPUs, like %eax on x86, so remove this.
 	(gmpasm-remove-from-list 'gmpasm-filladapt-token-table
 				 '("%+" postscript-comment))
-	
+
 	(add-to-list 'gmpasm-filladapt-token-match-table
 		     '(gmpasm-comment gmpasm-comment))
 	(add-to-list 'gmpasm-filladapt-token-conversion-table
 		     '(gmpasm-comment . exact)))
-      
+
       (set (make-local-variable 'filladapt-token-table)
 	   gmpasm-filladapt-token-table)
       (set (make-local-variable 'filladapt-token-match-table)
 	   gmpasm-filladapt-token-match-table)
       (set (make-local-variable 'filladapt-token-conversion-table)
 	   gmpasm-filladapt-token-conversion-table)
-    
+
       ;; Add dnl and comment-start as fill prefixes.
       ;; Comments in filladapt.el say filladapt-token-table must begin
       ;; with ("^" beginning-of-line), so put our addition second.
       (gmpasm-add-to-list-second 'filladapt-token-table
 				 (list (concat "dnl[ \t]\\|" comment-regexp)
 				       'gmpasm-comment))))
-  
+
   (run-hooks 'gmpasm-mode-hook))
 
 

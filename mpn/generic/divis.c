@@ -70,7 +70,7 @@ MA 02111-1307, USA.
 
 int
 mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
-                 mp_srcptr dp, mp_size_t dsize)
+		 mp_srcptr dp, mp_size_t dsize)
 {
   mp_limb_t  alow, dlow, dmask;
   mp_ptr     qp, rp;
@@ -94,10 +94,10 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
       dlow = *dp;
 
       if (dlow != 0)
-        break;
+	break;
 
       if (alow != 0)
-        return 0;  /* a has fewer low zero limbs than d, so not divisible */
+	return 0;  /* a has fewer low zero limbs than d, so not divisible */
 
       /* a!=0 and d!=0 so won't get to size==0 */
       asize--; ASSERT (asize >= 1);
@@ -114,14 +114,14 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
   if (dsize == 1)
     {
       if (BELOW_THRESHOLD (asize, MODEXACT_1_ODD_THRESHOLD))
-        return mpn_mod_1 (ap, asize, dlow) == 0;
+	return mpn_mod_1 (ap, asize, dlow) == 0;
 
       if ((dlow & 1) == 0)
-        {
-          unsigned  twos;
-          count_trailing_zeros (twos, dlow);
-          dlow >>= twos;
-        }
+	{
+	  unsigned  twos;
+	  count_trailing_zeros (twos, dlow);
+	  dlow >>= twos;
+	}
       return mpn_modexact_1_odd (ap, asize, dlow) == 0;
     }
 
@@ -129,12 +129,12 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
     {
       mp_limb_t  dsecond = dp[1];
       if (dsecond <= dmask)
-        {
-          unsigned  twos;
-          count_trailing_zeros (twos, dlow);
-          dlow = (dlow >> twos) | (dsecond << (BITS_PER_MP_LIMB-twos));
-          return MPN_MOD_OR_MODEXACT_1_ODD (ap, asize, dlow) == 0;
-        }
+	{
+	  unsigned  twos;
+	  count_trailing_zeros (twos, dlow);
+	  dlow = (dlow >> twos) | (dsecond << (BITS_PER_MP_LIMB-twos));
+	  return MPN_MOD_OR_MODEXACT_1_ODD (ap, asize, dlow) == 0;
+	}
     }
 
   TMP_MARK (marker);
@@ -146,13 +146,15 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
 
   /* test for {rp,dsize} zero or non-zero */
   i = 0;
-  do {
-    if (rp[i] != 0)
-      {
-        TMP_FREE (marker);
-        return 0;
-      }
-  } while (++i < dsize);
+  do
+    {
+      if (rp[i] != 0)
+	{
+	  TMP_FREE (marker);
+	  return 0;
+	}
+    }
+  while (++i < dsize);
 
   TMP_FREE (marker);
   return 1;

@@ -45,8 +45,8 @@ MA 02111-1307, USA. */
 
 void
 mpn_mul_basecase (mp_ptr prodp,
-                  mp_srcptr up, mp_size_t usize,
-                  mp_srcptr vp, mp_size_t vsize)
+		  mp_srcptr up, mp_size_t usize,
+		  mp_srcptr vp, mp_size_t vsize)
 {
   ASSERT (usize >= vsize);
   ASSERT (vsize >= 1);

@@ -47,6 +47,6 @@ Loop:	lu	0,-4(4)		C load next lower limb
 	bdn	Loop		C loop back until CTR is zero
 Lend:	stu	7,-4(9)		C store 2:nd least significant limb
 Lend2:	sle	7,0,6		C compute least significant limb
-	st      7,-4(9)		C store it
+	st	7,-4(9)		C store it
 	br
 EPILOGUE(mpn_lshift)

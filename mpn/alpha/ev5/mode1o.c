@@ -4,7 +4,7 @@
    EV5:    30.0
    EV6:    15.0
 */
- 
+
 /*
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
@@ -78,14 +78,14 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
   if (s <= d)
     {
       /* With high<=d the final step can be a subtract and addback.  If
-         c+h==0 then the addback will restore to l>=0.  If c+h==d then will
-         get x==d if s==0, but that's ok per the function definition.  */
+	 c+h==0 then the addback will restore to l>=0.  If c+h==d then will
+	 get x==d if s==0, but that's ok per the function definition.  */
 
       c += h;
 
       x = c - s;
       if (x > c)
-        x += d;
+	x += d;
 
       ASSERT (x < d);
       return x;

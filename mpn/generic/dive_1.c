@@ -103,22 +103,22 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
       goto even_entry;
 
       do
-        {
-          umul_ppmm (l, dummy, l, divisor);
-          c += l;
+	{
+	  umul_ppmm (l, dummy, l, divisor);
+	  c += l;
 
-        even_entry:
-          s_next = src[i+1];
-          ls = ((s >> shift) | (s_next << (BITS_PER_MP_LIMB-shift)));
-          s = s_next;
+	even_entry:
+	  s_next = src[i+1];
+	  ls = ((s >> shift) | (s_next << (BITS_PER_MP_LIMB-shift)));
+	  s = s_next;
 
-          l = ls - c;
-          c = (l > ls);
+	  l = ls - c;
+	  c = (l > ls);
 
-          l *= inverse;
-          dst[i] = l;
-          i++;
-        }
+	  l *= inverse;
+	  dst[i] = l;
+	  i++;
+	}
       while (i < size);
 
       umul_ppmm (l, dummy, l, divisor);
@@ -137,18 +137,18 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
       c = 0;
 
       do
-        {
-          umul_ppmm (l, dummy, l, divisor);
-          c += l;
+	{
+	  umul_ppmm (l, dummy, l, divisor);
+	  c += l;
 
-          s = src[i];
-          l = s - c;
-          c = (l > s);
+	  s = src[i];
+	  l = s - c;
+	  c = (l > s);
 
-          l *= inverse;
-          dst[i] = l;
-          i++;
-        }
+	  l *= inverse;
+	  dst[i] = l;
+	  i++;
+	}
       while (i < size);
     }
 }

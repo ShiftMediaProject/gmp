@@ -55,7 +55,7 @@ C	.callinfo	frame=64,no_calls
 	add		%r0,%r0,%r0		C clear carry
 	xmpyu		%fr4,%fr5,%fr6
 	fldws,ma	4(%r25),%fr7
-	fstds	 	%fr6,-16(%r30)
+	fstds		%fr6,-16(%r30)
 	xmpyu		%fr4,%fr7,%fr8
 	ldw		-12(%r30),%r19		C least significant limb in product
 	ldw		-16(%r30),%r28

@@ -36,7 +36,7 @@ C it runs at 11 cycles/limb.
 C There are some ideas described in mul_1.asm that applies to this code too.
 
 C It seems possible to make this run as fast as mpn_addmul_1, if we use
-C 	sub,>>=	%r29,%r19,%r22
+C	sub,>>=	%r29,%r19,%r22
 C	addi	1,%r28,%r28
 C but that requires reworking the hairy software pipeline...
 

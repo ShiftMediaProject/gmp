@@ -50,16 +50,16 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
   if (size > 1)
     {
       /* Must get common zeros before the mod reduction.  If ulimb==0 then
-         vlimb already gives the common zeros.  */
+	 vlimb already gives the common zeros.  */
       if (ulimb != 0)
-        {
-          count_trailing_zeros (u_low_zero_bits, ulimb);
-          zero_bits = MIN (zero_bits, u_low_zero_bits);
-        }
+	{
+	  count_trailing_zeros (u_low_zero_bits, ulimb);
+	  zero_bits = MIN (zero_bits, u_low_zero_bits);
+	}
 
       ulimb = MPN_MOD_OR_MODEXACT_1_ODD (up, size, vlimb);
       if (ulimb == 0)
-        goto done;
+	goto done;
 
       goto strip_u_maybe;
     }
@@ -79,7 +79,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
     {
       ulimb %= vlimb;
       if (ulimb == 0)
-        goto done;
+	goto done;
       goto strip_u_maybe;
     }
 
@@ -89,27 +89,27 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
       ASSERT (vlimb & 1);
 
       if (ulimb > vlimb)
-        {
-          ulimb -= vlimb;
-          do
-            {
-              ulimb >>= 1;
-              ASSERT (ulimb != 0);
-            strip_u_maybe:
-              ;
-            }
-          while ((ulimb & 1) == 0);
-        }
+	{
+	  ulimb -= vlimb;
+	  do
+	    {
+	      ulimb >>= 1;
+	      ASSERT (ulimb != 0);
+	    strip_u_maybe:
+	      ;
+	    }
+	  while ((ulimb & 1) == 0);
+	}
       else /*  vlimb > ulimb.  */
-        {
-          vlimb -= ulimb;
-          do
-            {
-              vlimb >>= 1;
-              ASSERT (vlimb != 0);
-            }
-          while ((vlimb & 1) == 0);
-        }
+	{
+	  vlimb -= ulimb;
+	  do
+	    {
+	      vlimb >>= 1;
+	      ASSERT (vlimb != 0);
+	    }
+	  while ((vlimb & 1) == 0);
+	}
     }
 
  done:

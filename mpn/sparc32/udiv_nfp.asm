@@ -22,7 +22,7 @@ dnl  MA 02111-1307, USA.
 
 
 include(`../config.m4')
- 
+
 C INPUT PARAMETERS
 C rem_ptr	o0
 C n1		o1

@@ -36,7 +36,7 @@ PROLOGUE(mpn_mul_1)
 	jnl	.Loopp
 
 .Loopn:	l	1,0(up)		# load from u
-	lr	6,1		# 
+	lr	6,1		#
 	mr	0,vlimb		# multiply signed
 	alr	0,6		# add vlimb to phi
 	sra	6,31		# make mask
@@ -56,7 +56,7 @@ PROLOGUE(mpn_mul_1)
 	br	14
 
 .Loopp:	l	1,0(up)		# load from u
-	lr	6,1		# 
+	lr	6,1		#
 	mr	0,vlimb		# multiply signed
 	sra	6,31		# make mask
 	nr	6,vlimb		# 0 or vlimb

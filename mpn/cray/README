@@ -29,7 +29,7 @@ level as the directory containing this file.)
 
 The cfp subdirectory is for systems utilizing the traditional Cray
 floating-point format, and the ieee subdirectory is for the newer
-systems that use the IEEE floating-point format.  
+systems that use the IEEE floating-point format.
 
 There are several issues that reduces speed on Cray systems.  For
 systems with cfp floating point, the main obstacle is the forming of
@@ -110,4 +110,3 @@ storing even fewer bits per limb, perhaps 56, it would be possible to
 write a mul_mul_basecase that would run at effectively 1 cycle/limb.
 (Use VM here to better handle the romb-shaped multiply area, perhaps
 rouding operand sizes up to the next power of 2.)
- 

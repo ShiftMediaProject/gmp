@@ -129,8 +129,8 @@ Gas on hppa GNU/Linux however requires a colon,
 
 Fortunately both accept a ".label" pseudo-op,
 
-	        .label  L$loop
-                ldws,mb -4(0,%r25),%r22
+		.label  L$loop
+		ldws,mb -4(0,%r25),%r22
 
 
 

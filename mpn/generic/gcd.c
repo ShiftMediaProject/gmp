@@ -232,8 +232,8 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 
       do					/* Main loop.  */
 	{
-          /* mpn_com_n can't be used here because anchor_up and up may
-             partially overlap */
+	  /* mpn_com_n can't be used here because anchor_up and up may
+	     partially overlap */
 	  if (up[usize-1] & MP_LIMB_T_HIGHBIT)  /* U < 0; take twos' compl. */
 	    {
 	      mp_size_t i;
@@ -277,13 +277,13 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	      mp_limb_t bp[2], cp[2];
 
 	      /* C <-- V/U mod 2^(2*BITS_PER_MP_LIMB).  */
-              {
-                mp_limb_t u_inv, hi, lo;
-                modlimb_invert (u_inv, up[0]);
-                cp[0] = vp[0] * u_inv;
-                umul_ppmm (hi, lo, cp[0], up[0]);
-                cp[1] = (vp[1] - hi - cp[0] * up[1]) * u_inv;
-              }
+	      {
+		mp_limb_t u_inv, hi, lo;
+		modlimb_invert (u_inv, up[0]);
+		cp[0] = vp[0] * u_inv;
+		umul_ppmm (hi, lo, cp[0], up[0]);
+		cp[1] = (vp[1] - hi - cp[0] * up[1]) * u_inv;
+	      }
 
 	      /* U <-- find_a (C)  *  U.  */
 	      up[usize] = mpn_mul_1 (up, up, usize, find_a (cp));
@@ -293,15 +293,15 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 		  bp[0] <-- U/V mod 2^BITS_PER_MP_LIMB and
 		  bp[1] <-- ( (U - bp[0] * V)/2^BITS_PER_MP_LIMB ) / V mod 2
 
-                 Like V/U above, but simplified because only the low bit of
-                 bp[1] is wanted. */
-              {
-                mp_limb_t  v_inv, hi, lo;
-                modlimb_invert (v_inv, vp[0]);
-                bp[0] = up[0] * v_inv;
-                umul_ppmm (hi, lo, bp[0], vp[0]);
-                bp[1] = (up[1] + hi + (bp[0]&vp[1])) & 1;
-              }
+		  Like V/U above, but simplified because only the low bit of
+		  bp[1] is wanted. */
+	      {
+		mp_limb_t  v_inv, hi, lo;
+		modlimb_invert (v_inv, vp[0]);
+		bp[0] = up[0] * v_inv;
+		umul_ppmm (hi, lo, bp[0], vp[0]);
+		bp[1] = (up[1] + hi + (bp[0]&vp[1])) & 1;
+	      }
 
 	      up[usize++] = 0;
 	      if (bp[1])	/* B < 0: U <-- U + (-B)  * V.  */

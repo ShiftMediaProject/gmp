@@ -10,7 +10,7 @@ dnl  messages.
 
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
 dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
@@ -1191,7 +1191,7 @@ deflit(UNROLL_BYTES,
 m4_assert_defined(`UNROLL_COUNT')
 m4_assert_defined(`BYTES_PER_MP_LIMB')
 `eval(UNROLL_COUNT * BYTES_PER_MP_LIMB)')
- 
+
 deflit(CHUNK_LOG2,
 m4_assert_defined(`CHUNK_COUNT')
 `m4_log2(CHUNK_COUNT)')

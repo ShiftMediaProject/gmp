@@ -202,77 +202,77 @@ mpn_fib2_ui (mp_ptr fp, mp_ptr f1p, unsigned long int n)
       TMP_ALLOC_LIMBS_2 (xp,alloc, yp,alloc);
 
       do
-        {
-          mp_limb_t  c;
+	{
+	  mp_limb_t  c;
 
-          /* Here fp==F[k] and f1p==F[k-1], with k being the bits of n from
-             n&mask upwards.
+	  /* Here fp==F[k] and f1p==F[k-1], with k being the bits of n from
+	     n&mask upwards.
 
-             The next bit of n is n&(mask>>1) and we'll double to the pair
-             fp==F[2k],f1p==F[2k-1] or fp==F[2k+1],f1p==F[2k], according as
-             that bit is 0 or 1 respectively.  */
+	     The next bit of n is n&(mask>>1) and we'll double to the pair
+	     fp==F[2k],f1p==F[2k-1] or fp==F[2k+1],f1p==F[2k], according as
+	     that bit is 0 or 1 respectively.  */
 
-          TRACE (printf ("k=%lu mask=0x%lX size=%ld alloc=%ld\n",
-                         n >> refmpn_count_trailing_zeros(mask),
-                         mask, size, alloc);
-                 mpn_trace ("fp ", fp, size);
-                 mpn_trace ("f1p", f1p, size));
+	  TRACE (printf ("k=%lu mask=0x%lX size=%ld alloc=%ld\n",
+			 n >> refmpn_count_trailing_zeros(mask),
+			 mask, size, alloc);
+		 mpn_trace ("fp ", fp, size);
+		 mpn_trace ("f1p", f1p, size));
 
-          /* fp normalized, f1p at most one high zero */
-          ASSERT (fp[size-1] != 0);
-          ASSERT (f1p[size-1] != 0 || f1p[size-2] != 0);
+	  /* fp normalized, f1p at most one high zero */
+	  ASSERT (fp[size-1] != 0);
+	  ASSERT (f1p[size-1] != 0 || f1p[size-2] != 0);
 
-          /* f1p[size-1] might be zero, but this occurs rarely, so it's not
-             worth bothering checking for it */
-          ASSERT (alloc >= 2*size);
-          mpn_sqr_n (xp, fp,  size);
-          mpn_sqr_n (yp, f1p, size);
-          size *= 2;
+	  /* f1p[size-1] might be zero, but this occurs rarely, so it's not
+	     worth bothering checking for it */
+	  ASSERT (alloc >= 2*size);
+	  mpn_sqr_n (xp, fp,  size);
+	  mpn_sqr_n (yp, f1p, size);
+	  size *= 2;
 
-          /* Shrink if possible.  Since fp was normalized there'll be at
-             most one high zero on xp (and if there is then there's one on
-             yp too).  */
-          ASSERT (xp[size-1] != 0 || yp[size-1] == 0);
-          size -= (xp[size-1] == 0);
-          ASSERT (xp[size-1] != 0);  /* only one xp high zero */
+	  /* Shrink if possible.  Since fp was normalized there'll be at
+	     most one high zero on xp (and if there is then there's one on
+	     yp too).  */
+	  ASSERT (xp[size-1] != 0 || yp[size-1] == 0);
+	  size -= (xp[size-1] == 0);
+	  ASSERT (xp[size-1] != 0);  /* only one xp high zero */
 
-          /* Calculate F[2k+1] = 4*F[k]^2 - F[k-1]^2 + 2*(-1)^k.
-             n&mask is the low bit of our implied k.  */
-          c = mpn_lshift (fp, xp, size, 2);
-          fp[0] |= (n & mask ? 0 : 2);   /* possible +2 */
-          c -= mpn_sub_n (fp, fp, yp, size);
-          ASSERT (n & (mask << 1) ? fp[0] != 0 && fp[0] != 1 : 1);
-          fp[0] -= (n & mask ? 2 : 0);   /* possible -2 */
-          ASSERT (alloc >= size+1);
-          xp[size] = 0;
-          yp[size] = 0;
-          fp[size] = c;
-          size += (c != 0);
+	  /* Calculate F[2k+1] = 4*F[k]^2 - F[k-1]^2 + 2*(-1)^k.
+	     n&mask is the low bit of our implied k.  */
+	  c = mpn_lshift (fp, xp, size, 2);
+	  fp[0] |= (n & mask ? 0 : 2);	 /* possible +2 */
+	  c -= mpn_sub_n (fp, fp, yp, size);
+	  ASSERT (n & (mask << 1) ? fp[0] != 0 && fp[0] != 1 : 1);
+	  fp[0] -= (n & mask ? 2 : 0);	 /* possible -2 */
+	  ASSERT (alloc >= size+1);
+	  xp[size] = 0;
+	  yp[size] = 0;
+	  fp[size] = c;
+	  size += (c != 0);
 
-          /* Calculate F[2k-1] = F[k]^2 + F[k-1]^2.
-             F[2k-1]<F[2k+1] so no carry out of "size" limbs. */
-          ASSERT_NOCARRY (mpn_add_n (f1p, xp, yp, size));
+	  /* Calculate F[2k-1] = F[k]^2 + F[k-1]^2.
+	     F[2k-1]<F[2k+1] so no carry out of "size" limbs. */
+	  ASSERT_NOCARRY (mpn_add_n (f1p, xp, yp, size));
 
-          /* now n&mask is the new bit of n being considered */
-          mask >>= 1;
+	  /* now n&mask is the new bit of n being considered */
+	  mask >>= 1;
 
-          /* Calculate F[2k] = F[2k+1] - F[2k-1], replacing the unwanted one of
-             F[2k+1] and F[2k-1].  */
-          ASSERT_NOCARRY (mpn_sub_n ((n & mask ? f1p : fp), fp, f1p, size));
+	  /* Calculate F[2k] = F[2k+1] - F[2k-1], replacing the unwanted one of
+	     F[2k+1] and F[2k-1].  */
+	  ASSERT_NOCARRY (mpn_sub_n ((n & mask ? f1p : fp), fp, f1p, size));
 
-          /* Can have a high zero after replacing F[2k+1] with F[2k].
-             f1p will have a high zero if fp does. */
-          ASSERT (fp[size-1] != 0 || f1p[size-1] == 0);
-          size -= (fp[size-1] == 0);
-        }
+	  /* Can have a high zero after replacing F[2k+1] with F[2k].
+	     f1p will have a high zero if fp does. */
+	  ASSERT (fp[size-1] != 0 || f1p[size-1] == 0);
+	  size -= (fp[size-1] == 0);
+	}
       while (mask != 1);
 
       TMP_FREE (marker);
     }
 
   TRACE (printf ("done size=%ld\n", size);
-         mpn_trace ("fp ", fp, size);
-         mpn_trace ("f1p", f1p, size));
+	 mpn_trace ("fp ", fp, size);
+	 mpn_trace ("f1p", f1p, size));
 
   return size;
 }
@@ -333,12 +333,12 @@ main (void)
       mpz_add (l, l, f[i-1]);
 
       for (t = 0; t < numberof (table); t++)
-        {
-          if (mpz_sizeinbase (f[i], 2) <= table[t].bits)
-            table[t].fib_limit = i-1;
-          if (mpz_sizeinbase (l, 2) <= table[t].bits)
-            table[t].luc_limit = i-1;
-        }
+	{
+	  if (mpz_sizeinbase (f[i], 2) <= table[t].bits)
+	    table[t].fib_limit = i-1;
+	  if (mpz_sizeinbase (l, 2) <= table[t].bits)
+	    table[t].luc_limit = i-1;
+	}
     }
   if (table[t].fib_limit == numberof (f) + 1)
     {
@@ -352,7 +352,7 @@ main (void)
       printf ("#define FIB_TABLE_LIMIT         %d\n", table[t].fib_limit);
       printf ("#define FIB_TABLE_LUCNUM_LIMIT  %d\n", table[t].luc_limit);
       if (t != 0)
-        printf ("#else\n");
+	printf ("#else\n");
     }
   for (t = 0; t < numberof (table); t++)
     printf ("#endif /* %d */\n", table[t].bits);
@@ -370,17 +370,17 @@ main (void)
       gmp_printf ("  CNST_LIMB (0x%ZX),  /* %d */\n", f[i], i-1);
 
       if (i-1 == table[t].fib_limit)
-        {
-          printf ("#endif\n");
-          do
-            {
-              t++;
-              if (t >= numberof (table))
-                goto done;
-            }
-          while (i-1 == table[t].fib_limit);
-          printf ("#if GMP_NUMB_BITS >= %d\n", table[t].bits);
-        }
+	{
+	  printf ("#endif\n");
+	  do
+	    {
+	      t++;
+	      if (t >= numberof (table))
+		goto done;
+	    }
+	  while (i-1 == table[t].fib_limit);
+	  printf ("#if GMP_NUMB_BITS >= %d\n", table[t].bits);
+	}
       i++;
     }
  done:

@@ -36,7 +36,7 @@ PROLOGUE(mpn_addmul_1)
 	jnl	.Loopp
 
 .Loopn:	l	1,0(up)		# load from u
-	lr	6,1		# 
+	lr	6,1		#
 	mr	0,vlimb		# multiply signed
 	alr	0,6		# add vlimb to phi
 	sra	6,31		# make mask
@@ -45,7 +45,7 @@ PROLOGUE(mpn_addmul_1)
 	alr	1,cylimb	# add carry limb to plo
 	brc	8+4,+8		# branch if not carry
 	ahi	0,1		# increment phi
-	l	6,0(rp)		# load
+	l	6,0(rp)		# load r limb
 	alr	6,1		# add u limb to plo
 	brc	8+4,+8		# branch if not carry
 	ahi	0,1		# increment phi
@@ -60,7 +60,7 @@ PROLOGUE(mpn_addmul_1)
 	br	14
 
 .Loopp:	l	1,0(up)		# load from u
-	lr	6,1		# 
+	lr	6,1		#
 	mr	0,vlimb		# multiply signed
 	sra	6,31		# make mask
 	nr	6,vlimb		# 0 or vlimb
@@ -68,7 +68,7 @@ PROLOGUE(mpn_addmul_1)
 	alr	1,cylimb	# add carry limb to plo
 	brc	8+4,+8		# branch if not carry
 	ahi	0,1		# increment phi
-	l	6,0(rp)		# load 
+	l	6,0(rp)		# load r limb
 	alr	6,1		# add u limb to plo
 	brc	8+4,+8		# branch if not carry
 	ahi	0,1		# increment phi

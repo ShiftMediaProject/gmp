@@ -19,10 +19,9 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-dnl 
-dnl  This is based on sophie:/gmp-stuff/dbg-inv-limb.c.
-dnl  The ideas are due to Peter L. Montgomery
-dnl 
+
+dnl  This is based on ideas of Peter L. Montgomery.
+dnl
 dnl  The table below uses 4096 bytes.  The file mentioned above has an
 dnl  alternative function that doesn't require the table, but it runs 50%
 dnl  slower than this.

@@ -1,5 +1,4 @@
 dnl  SPARC mpn_lshift -- Shift a number left.
-dnl  
 
 dnl  Copyright 1995, 1996, 2000 Free Software Foundation, Inc.
 

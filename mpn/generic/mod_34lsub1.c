@@ -90,7 +90,7 @@ mpn_mod_34lsub1 (mp_srcptr p, mp_size_t n)
     {
       ADD (c0, a0, p[0]);
       if (n != -2)
-        ADD (c1, a1, p[1]);
+	ADD (c1, a1, p[1]);
     }
 
   return

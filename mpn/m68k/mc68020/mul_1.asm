@@ -80,9 +80,9 @@ L(L1):	movel	M(s1_ptr,+), d3
 C Restore used registers from stack frame.
 	moveml	M(sp,+), d2-d4
 
-C 	movel	M(sp,+),d4
-C 	movel	M(sp,+),d3
-C 	movel	M(sp,+),d2
+C	movel	M(sp,+),d4
+C	movel	M(sp,+),d3
+C	movel	M(sp,+),d2
 
 	rts
 

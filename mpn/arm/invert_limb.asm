@@ -34,7 +34,7 @@ PROLOGUE(mpn_invert_limb)
 	ldrh	r1, [r2, r3]		C get initial approximation from table
 	mov	r2, r1, lsl #6		C start iteration 1
 	mul	ip, r2, r2
-	umull 	lr, r4, ip, d
+	umull	lr, r4, ip, d
 	mov	r2, r4, lsl #1
 	rsb	r2, r2, r1, lsl #23	C iteration 1 complete
 	umull	ip, r3, r2, r2		C start iteration 2

@@ -75,9 +75,9 @@ mpn_sqr_n (mp_ptr prodp,
   else
 #endif
     { /* Toom3 multiplication.
-         Use workspace from the heap, as stack may be limited.  Since n is
-         at least MUL_TOOM3_THRESHOLD, the multiplication will take much
-         longer than malloc()/free().  */
+	 Use workspace from the heap, as stack may be limited.  Since n is
+	 at least MUL_TOOM3_THRESHOLD, the multiplication will take much
+	 longer than malloc()/free().  */
       mp_ptr     tspace;
       mp_size_t  tsize;
       tsize = MPN_TOOM3_SQR_N_TSIZE (un);

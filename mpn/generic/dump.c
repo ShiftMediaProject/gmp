@@ -64,7 +64,7 @@ mpn_dump (mp_srcptr ptr, mp_size_t size)
 	    }
 	  else
 	    printf ("%0*lX", (int) (2 * BYTES_PER_MP_LIMB),
-                    (unsigned long) ptr[size]);
+		    (unsigned long) ptr[size]);
 	}
       printf ("\n");
     }

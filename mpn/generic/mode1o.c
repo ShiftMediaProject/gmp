@@ -117,17 +117,17 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
     {
       s = src[0];
       if (s > c)
-        {
-          l = s-c;
-          h = l % d;
-          if (h != 0)
-            h = d - h;
-        }
+	{
+	  l = s-c;
+	  h = l % d;
+	  if (h != 0)
+	    h = d - h;
+	}
       else
-        {
-          l = c-s;
-          h = l % d;
-        }
+	{
+	  l = c-s;
+	  h = l % d;
+	}
       return h;
     }
 
@@ -151,12 +151,12 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
   if (s <= d)
     {
       /* With high<=d the final step can be a subtract and addback.  If c==0
-         then the addback will restore to l>=0.  If c==d then will get l==d
-         if s==0, but that's ok per the function definition.  */
+	 then the addback will restore to l>=0.  If c==d then will get l==d
+	 if s==0, but that's ok per the function definition.  */
 
       l = c - s;
       if (l > c)
-        l += d;
+	l += d;
 
       ASSERT (l < d);
       return l;

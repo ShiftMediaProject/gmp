@@ -195,13 +195,13 @@ mpn_fft_add_modF (mp_ptr ap, mp_ptr bp, int n)
 
 
 /* input: A[0] ... A[inc*(K-1)] are residues mod 2^N+1 where
-          N=n*BITS_PER_MP_LIMB
-          2^omega is a primitive root mod 2^N+1
+	  N=n*BITS_PER_MP_LIMB
+	  2^omega is a primitive root mod 2^N+1
    output: A[inc*l[k][i]] <- \sum (2^omega)^(ij) A[inc*j] mod 2^N+1 */
 
 static void
 mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
-                 mp_size_t omega, mp_size_t n, mp_size_t inc, mp_ptr tp)
+		 mp_size_t omega, mp_size_t n, mp_size_t inc, mp_ptr tp)
 {
   if (K == 2)
     {
@@ -242,13 +242,13 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
 
 
 /* input: A[0] ... A[inc*(K-1)] are residues mod 2^N+1 where
-          N=n*BITS_PER_MP_LIMB
-         2^omega is a primitive root mod 2^N+1
+	  N=n*BITS_PER_MP_LIMB
+	 2^omega is a primitive root mod 2^N+1
    output: A[inc*l[k][i]] <- \sum (2^omega)^(ij) A[inc*j] mod 2^N+1 */
 
 static void
 mpn_fft_fft (mp_ptr *Ap, mp_ptr *Bp, mp_size_t K, int **ll,
-             mp_size_t omega, mp_size_t n, mp_size_t inc, mp_ptr tp)
+	     mp_size_t omega, mp_size_t n, mp_size_t inc, mp_ptr tp)
 {
   if (K == 2)
     {
@@ -411,12 +411,12 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
     {
 #if HAVE_NATIVE_mpn_addsub_n
       if (mpn_addsub_n (Ap[0], Ap[1], Ap[0], Ap[1], n + 1) & 1)
-        Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, CNST_LIMB(1));
+	Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, CNST_LIMB(1));
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[1], n + 1);
       if (mpn_sub_n (Ap[1], tp, Ap[1], n + 1))
-        Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, CNST_LIMB(1));
+	Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, CNST_LIMB(1));
 #endif
     }
   else
@@ -600,9 +600,9 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
 
 void
 mpn_mul_fft (mp_ptr op, mp_size_t pl,
-             mp_srcptr n, mp_size_t nl,
-             mp_srcptr m, mp_size_t ml,
-             int k)
+	     mp_srcptr n, mp_size_t nl,
+	     mp_srcptr m, mp_size_t ml,
+	     int k)
 {
   int K,maxLK,i,j;
   mp_size_t N, Nprime, nprime, M, Mp, l;
@@ -693,8 +693,8 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
 
 void
 mpn_mul_fft_full (mp_ptr op,
-                  mp_srcptr n, mp_size_t nl,
-                  mp_srcptr m, mp_size_t ml)
+		  mp_srcptr n, mp_size_t nl,
+		  mp_srcptr m, mp_size_t ml)
 {
   mp_ptr pad_op;
   mp_size_t pl;

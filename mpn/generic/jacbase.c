@@ -56,9 +56,9 @@ MA 02111-1307, USA. */
     two = JACOBI_TWO_U_BIT1 (b);        \
     do                                  \
       {                                 \
-        a >>= 1;                        \
-        result_bit1 ^= two;             \
-        ASSERT (a != 0);                \
+	a >>= 1;                        \
+	result_bit1 ^= two;             \
+	ASSERT (a != 0);                \
       }                                 \
     while ((a & 1) == 0);               \
   }
@@ -85,9 +85,9 @@ MA 02111-1307, USA. */
                                         \
     while ((a & 1) == 0)                \
       {                                 \
-        a >>= 1;                        \
-        result_bit1 ^= two;             \
-        ASSERT (a != 0);                \
+	a >>= 1;                        \
+	result_bit1 ^= two;             \
+	ASSERT (a != 0);                \
       }                                 \
   }
 #define PROCESS_TWOS_ANY                \
@@ -103,9 +103,9 @@ MA 02111-1307, USA. */
                                         \
     while ((a & 1) == 0)                \
       {                                 \
-        a >>= 1;                        \
-        result_bit1 ^= two;             \
-        ASSERT (a != 0);                \
+	a >>= 1;                        \
+	result_bit1 ^= two;             \
+	ASSERT (a != 0);                \
       }                                 \
   }
 #endif
@@ -150,15 +150,15 @@ mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
 
       do
 	{
-          /* working on (a/b), a,b odd, a>=b */
-          ASSERT (a & 1);
-          ASSERT (b & 1);
-          ASSERT (a >= b);
+	  /* working on (a/b), a,b odd, a>=b */
+	  ASSERT (a & 1);
+	  ASSERT (b & 1);
+	  ASSERT (a >= b);
 
 	  if ((a -= b) == 0)
 	    return 0;
 
-          PROCESS_TWOS_EVEN;
+	  PROCESS_TWOS_EVEN;
 	  if (a == 1)
 	    goto done;
 	}

@@ -59,16 +59,16 @@ Leven:	lu	9,4(4)		C load s1 limb and update s1_ptr
 Loop:	lu	8,4(4)		C load s1 limb and update s1_ptr
 	lu	0,4(5)		C load s2 limb and update s2_ptr
 	ae	11,10,9		C add previous limbs with cy, set cy
-	stu	7,4(3)		C 
+	stu	7,4(3)		C
 	lu	9,4(4)		C load s1 limb and update s1_ptr
 	lu	10,4(5)		C load s2 limb and update s2_ptr
 	ae	7,0,8		C add previous limbs with cy, set cy
-	stu	11,4(3)		C 
+	stu	11,4(3)		C
 	bdn	Loop		C decrement CTR and loop back
 
 Lend:	ae	11,10,9		C add limbs with cy, set cy
-	st	7,4(3)		C 
-	st	11,8(3)		C 
+	st	7,4(3)		C
+	st	11,8(3)		C
 	lil	3,0		C load cy into ...
 	aze	3,3		C ... return value register
 	br

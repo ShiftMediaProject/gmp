@@ -143,9 +143,9 @@ $ret0:	cmpult	r3,	r4,	r21	C U0 did it borrow
 	ldq	r3,	8(r17)		C L0 get next ones
 	ldq	r4,	8(r18)		C L1
 
-	subq	r6,	r7,	r8	C U1 sub two data	
+	subq	r6,	r7,	r8	C U1 sub two data
 	stq	r24,	24(r16)		C L0 store pair
-        subq	r5,	r20,	r24	C U0 borrow from last
+	subq	r5,	r20,	r24	C U0 borrow from last
 	stq	r25,	32(r16)		C L1
 
 	cmpult	r6,	r7,	r22	C U1 did it borrow

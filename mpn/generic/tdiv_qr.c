@@ -81,7 +81,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    int cnt;
 	    mp_limb_t dtmp[2];
 	    count_leading_zeros (cnt, dp[1]);
- 	    d2p = dtmp;
+	    d2p = dtmp;
 	    d2p[1] = (dp[1] << cnt) | (dp[0] >> (BITS_PER_MP_LIMB - cnt));
 	    d2p[0] = dp[0] << cnt;
 	    n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);

@@ -302,29 +302,29 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       n1 = n + 1;
 
       /* n2 is always either n3 or n3-1 so maybe the two sets of tests here
-         could be combined.  But that's not important, since the tests will
-         take a miniscule amount of time compared to the function calls.  */
+	 could be combined.  But that's not important, since the tests will
+	 take a miniscule amount of time compared to the function calls.  */
       if (BELOW_THRESHOLD (n3, SQR_BASECASE_THRESHOLD))
-        {
-          mpn_mul_basecase (ws, p, n3, p, n3);
-          mpn_mul_basecase (p,  a, n3, a, n3);
-        }
+	{
+	  mpn_mul_basecase (ws, p, n3, p, n3);
+	  mpn_mul_basecase (p,  a, n3, a, n3);
+	}
       else if (BELOW_THRESHOLD (n3, SQR_KARATSUBA_THRESHOLD))
-        {
-          mpn_sqr_basecase (ws, p, n3);
-          mpn_sqr_basecase (p,  a, n3);
-        }
+	{
+	  mpn_sqr_basecase (ws, p, n3);
+	  mpn_sqr_basecase (p,  a, n3);
+	}
       else
-        {
-          mpn_kara_sqr_n   (ws, p, n3, ws + n1);	 /* (x-y)^2 */
-          mpn_kara_sqr_n   (p,  a, n3, ws + n1);	 /* x^2	    */
-        }
+	{
+	  mpn_kara_sqr_n   (ws, p, n3, ws + n1);	 /* (x-y)^2 */
+	  mpn_kara_sqr_n   (p,  a, n3, ws + n1);	 /* x^2	    */
+	}
       if (BELOW_THRESHOLD (n2, SQR_BASECASE_THRESHOLD))
-        mpn_mul_basecase (p + n1, a + n3, n2, a + n3, n2);
+	mpn_mul_basecase (p + n1, a + n3, n2, a + n3, n2);
       else if (BELOW_THRESHOLD (n2, SQR_KARATSUBA_THRESHOLD))
-        mpn_sqr_basecase (p + n1, a + n3, n2);
+	mpn_sqr_basecase (p + n1, a + n3, n2);
       else
-        mpn_kara_sqr_n   (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
+	mpn_kara_sqr_n   (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
 
 
       /* Since x^2+y^2-(x-y)^2 = 2xy >= 0 there's no need to track the
