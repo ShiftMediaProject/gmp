@@ -114,6 +114,15 @@ MA 02111-1307, USA. */
     (pl) = __m0 * __m1;							\
   } while (0)
 #define UMUL_TIME 18
+#else /* ! __GNUC__ */
+#include <machine/builtins.h>
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    (ph) = __UMULH (m0, m1);						\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UDItype __di;							\
@@ -126,15 +135,6 @@ long __MPN(count_leading_zeros) ();
 #define count_leading_zeros(count, x) \
   ((count) = __MPN(count_leading_zeros) (x))
 #endif /* LONGLONG_STANDALONE */
-#else /* ! __GNUC__ */
-#include <machine/builtins.h>
-#define umul_ppmm(ph, pl, m0, m1) \
-  do {									\
-    UDItype __m0 = (m0), __m1 = (m1);					\
-    (ph) = __UMULH (m0, m1);						\
-    (pl) = __m0 * __m1;							\
-  } while (0)
-#endif
 #endif /* __alpha */
 
 #if defined (__hppa) && W_TYPE_SIZE == 64
