@@ -1,3 +1,8 @@
+2000-02-22  Linus Nordberg  <linus@swox.se>
+
+	* mpz/tests/Makefile.am: New test t-root.
+	* mpz/tests/Makefile.in: Regenerate.
+	
 2000-02-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/root.c: Complete rewrite.  Still primitive, but at least correct.
