@@ -18,6 +18,24 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-05-19  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c (freq_pstat_getprocessor): New function.
+	(freq_all): Use it.
+	* configure.in (AC_CHECK_HEADERS): Add sys/pstat.h.
+	(AC_CHECK_FUNCS): Add pstat_getprocessor.
+	
+2003-05-15  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mul_fft.c (mpn_mul_fft_decompose): Remove "inline",
+	since the code is a bit too big.  gcc doesn't actually inline when
+	alloca (TMP_ALLOC) is used anyway.
+
+2003-05-13  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Notes for Particular Systems): Libtool directory is .libs
+	not _libs for mingw dll.  Reported by Andreas Fabri.
+
 2003-05-07  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_PROG_CC_WORKS): Add code to generate sse2/xmm code
