@@ -123,8 +123,6 @@ PROLOGUE(M4_function)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	orl	%ecx, %ecx
-	jz	L(zero)
 
 ifdef(`PIC',`
 	movl	$0xAAAAAAAA, %eax
@@ -229,11 +227,6 @@ L(loaded):
 
 	movd	%mm2, %eax
 	emms
-	ret
-
-
-L(zero):
-	movl	$0, %eax
 	ret
 
 EPILOGUE()
