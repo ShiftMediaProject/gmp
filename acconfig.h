@@ -36,6 +36,9 @@ MA 02111-1307, USA.
 /* Define if a limb is long long. */
 #undef _LONG_LONG_LIMB
 
+/* Define if the 80x86 rdtsc instruction is available (pentium and up). */
+#undef HAVE_PENTIUM_RDTSC
+
 /* Define if we have native implementation of function. */
 #undef HAVE_NATIVE_
 #undef HAVE_NATIVE_mpn_add                 
