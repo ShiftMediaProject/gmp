@@ -69,12 +69,12 @@ mpz_root (mpz_ptr r, mpz_srcptr u, unsigned long int nth)
 
   if (r != NULL)
     {
-      rootp = MPZ_REALLOC (r, rootn + 1);
+      rootp = MPZ_REALLOC (r, rootn);
       up = PTR(u);
     }
   else
     {
-      rootp = __GMP_ALLOCATE_FUNC_LIMBS (rootn + 1);
+      rootp = __GMP_ALLOCATE_FUNC_LIMBS (rootn);
     }
 
   if (nth == 1)
@@ -90,7 +90,7 @@ mpz_root (mpz_ptr r, mpz_srcptr u, unsigned long int nth)
   if (r != NULL)
     SIZ(r) = us >= 0 ? rootn : -rootn;
   else
-    __GMP_FREE_FUNC_LIMBS (rootp, rootn + 1);
+    __GMP_FREE_FUNC_LIMBS (rootp, rootn);
 
   return exact;
 }
