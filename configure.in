@@ -1044,7 +1044,7 @@ case $host in
         case $host in
           [*-*-solaris2.[7-9]*])
             abilist="64 32"
-            extra_functions_64=udiv
+            extra_functions=
             path_64="sparc64"
             cclist_64="gcc cc"
             gcc_64_cflags="-O2 -m64 -mptr64"
