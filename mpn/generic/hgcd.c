@@ -733,7 +733,7 @@ hgcd_mul (struct hgcd_row *P, mp_size_t alloc,
 
 /* Computes R = W^k s->r + s->u A' - s->v B', which must be
    non-negative. W denotes 2^(GMP_NUMB_BITS). Temporary space needed
-   is k + uvsize.
+   is k + uvsize <= M + L = N.
 
    Must have v > 0, v >= u. */
 
@@ -1677,9 +1677,9 @@ mp_size_t
 mpn_hgcd_itch (mp_size_t asize)
 {
   /* Scratch space is needed for calling hgcd. We need space for the
-     results of all recursive calls. In addition, we need to call
-     hgcd_lehmer, hgcd_jebelean, hgcd_fix and hgcd_mul, for which
-     asize limbs should be enough. */
+     results of all recursive calls. In addition, we need space for
+     calling hgcd_fix and hgcd_mul, for which N = asize limbs should
+     be enough. */
 
   /* Limit on the recursion depth */
   unsigned k = mpn_hgcd_max_recursion (asize);
