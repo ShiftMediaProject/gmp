@@ -7,18 +7,21 @@ This directory contains mpn functions for various 80x86 chips.
 
 CODE ORGANIZATION
 
-	x86              i386, generic
-	x86/i486         i486
-	x86/pentium      Intel Pentium (P5, P54)
-	x86/pentium/mmx  Intel Pentium with MMX (P55)
-	x86/p6           Intel Pentium Pro
-	x86/p6/mmx       Intel Pentium II, III
-	x86/p6/p3mmx     Intel Pentium III
-	x86/k6           \ AMD K6
-	x86/k6/mmx       /
-	x86/k6/k62mmx    AMD K6-2
-	x86/k7           \ AMD Athlon
-	x86/k7/mmx       /
+	x86               i386, generic
+	x86/i486          i486
+	x86/pentium       Intel Pentium (P5, P54)
+	x86/pentium/mmx   Intel Pentium with MMX (P55)
+	x86/p6            Intel Pentium Pro
+	x86/p6/mmx        Intel Pentium II, III
+	x86/p6/p3mmx      Intel Pentium III
+	x86/k6            \ AMD K6
+	x86/k6/mmx        /
+	x86/k6/k62mmx     AMD K6-2
+	x86/k7            \ AMD Athlon
+	x86/k7/mmx        /
+	x86/pentium4      \
+	x86/pentium4/mmx  | Intel Pentium 4
+	x86/pentium4/sse2 /
 
 
 The top-level x86 directory contains blended style code, meant to be
@@ -400,12 +403,12 @@ addl.
 
 REFERENCES
 
-"Intel Architecture Software Developer's Manual", volumes 1 to 3, 1999,
-order numbers 243190, 243191 and 243192.  Available on-line,
+"Intel Architecture Software Developer's Manual", volumes 1 to 3, 2001,
+order numbers 245470, 245471 and 245472.  Available on-line,
 
-	ftp://download.intel.com/design/PentiumII/manuals/243190.htm
-	ftp://download.intel.com/design/PentiumII/manuals/243191.htm
-	ftp://download.intel.com/design/PentiumII/manuals/243192.htm
+	http://developer.intel.com/design/pentium4/manuals/245470.htm
+	http://developer.intel.com/design/pentium4/manuals/245471.htm
+	http://developer.intel.com/design/pentium4/manuals/245472.htm
 
 "System V Application Binary Interface", Unix System Laboratories Inc, 1992,
 published by Prentice Hall, ISBN 0-13-880410-9.  And the "Intel386 Processor
@@ -413,7 +416,7 @@ Supplement", AT&T, 1991, ISBN 0-13-877689-X.  These have details of calling
 conventions and ELF shared library PIC coding.  Versions of both available
 on-line,
 
-       http://www.sco.com/developer/devspecs
+	http://www.sco.com/developer/devspecs
 
 "Intel386 Family Binary Compatibility Specification 2", Intel Corporation,
 published by McGraw-Hill, 1991, ISBN 0-07-031219-2.  (Same as the above 386
