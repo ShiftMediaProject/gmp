@@ -59,7 +59,7 @@ MA 02111-1307, USA. */
 /* Define this macro for IEEE P854 machines with a fast sqrt instruction.  */
 #if defined __GNUC__ && ! defined __SOFT_FLOAT
 
-#if defined __sparc__
+#if defined (__sparc__) && BITS_PER_MP_LIMB == 32
 #define SQRT(a) \
   ({									\
     double __sqrt_res;							\
@@ -68,7 +68,7 @@ MA 02111-1307, USA. */
   })
 #endif
 
-#if defined __HAVE_68881__
+#if defined (__HAVE_68881__)
 #define SQRT(a) \
   ({									\
     double __sqrt_res;							\
@@ -77,7 +77,7 @@ MA 02111-1307, USA. */
   })
 #endif
 
-#if defined __hppa
+#if defined (__hppa) && BITS_PER_MP_LIMB == 32
 #define SQRT(a) \
   ({									\
     double __sqrt_res;							\
@@ -86,7 +86,7 @@ MA 02111-1307, USA. */
   })
 #endif
 
-#if defined _ARCH_PWR2
+#if defined (_ARCH_PWR2) && BITS_PER_MP_LIMB == 32
 #define SQRT(a) \
   ({									\
     double __sqrt_res;							\
@@ -302,7 +302,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 
   if ((cnt & 1) == 0)
     {
-      /* The most sign bit of t_high0 is set.  */
+      /* The most significant bit of t_high0 is set.  */
       initial_approx = t_high0 >> (BITS_PER_MP_LIMB - 8 - 1);
       initial_approx &= 0xff;
       initial_approx = even_approx_tab[initial_approx];
