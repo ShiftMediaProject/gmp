@@ -25,5 +25,5 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-cmp t-cmp_ui t-get_d
+check_PROGRAMS = t-cmp t-cmp_ui t-get_d t-set_f
 TESTS = $(check_PROGRAMS)
