@@ -1,3 +1,9 @@
+2000-11-10  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in [path switch] (alphaev6*-*-*): Add alpha/ev5 to path.
+
+	* mpn/alpha/ev6/add_n.asm: New file.
+
 2000-11-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/powm.c (redc): Make global under WANT_REDC_GLOBAL.
