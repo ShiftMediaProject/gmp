@@ -4,7 +4,7 @@ divert(-1)
 dnl  m4 macros for x86 assembler.
 
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -69,11 +69,29 @@ m4_assert_numargs(1)
 m4_assert_defined(`WANT_PROFILING')
 	`GLOBL	$1
 	TYPE($1,`function')
+	COFF_TYPE($1)
 $1:
 ifelse(WANT_PROFILING,`prof',      `	call_mcount')
 ifelse(WANT_PROFILING,`gprof',     `	call_mcount')
 ifelse(WANT_PROFILING,`instrument',`	call_instrument(enter)')
 ')
+
+
+dnl  Usage: COFF_TYPE(GSYM_PREFIX`'foo)
+dnl
+dnl  Emit COFF style ".def ... .endef" type information for a function, when
+dnl  supported.  The argument should include any GSYM_PREFIX.
+dnl
+dnl  See autoconf macro GMP_ASM_COFF_TYPE for HAVE_COFF_TYPE.
+
+define(COFF_TYPE,
+m4_assert_numargs(1)
+m4_assert_defined(`HAVE_COFF_TYPE')
+`ifelse(HAVE_COFF_TYPE,yes,
+	`.def	$1
+	.scl	2
+	.type	32
+	.endef')')
 
 
 dnl  Usage: call_mcount
