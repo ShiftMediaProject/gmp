@@ -1,3 +1,8 @@
+2000-05-11  Kevin Ryde  <kevin@king.swox.se>
+
+	* configure.in (CONFIG_TOP_SRCDIR): Fix to use $srcdir not
+	$top_srcdir (which doesn't exist).
+
 2000-05-11  Torbjorn Granlund  <tege@swox.com>
 
 	* randraw.c (lc): Major overhaul (pending rewrite).
