@@ -27,7 +27,7 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
-  abs.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
+  abs.c canonicalize.c clear.c cmp.c cmp_si.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c get_str.c init.c inv.c md_2exp.c mul.c \
   neg.c out_str.c set.c set_den.c \
   set_num.c set_si.c set_str.c set_ui.c \
