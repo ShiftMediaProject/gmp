@@ -1347,7 +1347,7 @@ int        divisor_index;
 #define ARRAY_ITERATION(var, index, limit, array, randoms, cond)        \
   for (index = 0;                                                       \
        (index < numberof (array)                                        \
-        ? (void) (var = array[index])                                   \
+        ? (var = array[index])                                          \
         : (MPN_RANDOM_ALT (index, &var, 1), (mp_limb_t) 0)),            \
        index < limit;                                                   \
        index++)
@@ -1759,13 +1759,6 @@ call (struct each_t *e, tryfun_t function)
       mpz_t  a, b;
       PTR(a) = e->s[0].p; SIZ(a) = ((carry&1)==0 ? size : -size);
       PTR(b) = e->s[1].p; SIZ(b) = ((carry&2)==0 ? size2 : -size2);
-      e->retval = CALLING_CONVENTIONS (function) (a, b);
-    }
-    break;
-    {
-      mpz_t  a, b;
-      PTR(a) = e->s[0].p; SIZ(a) = size;
-      PTR(b) = e->s[1].p; SIZ(b) = size2;
       e->retval = CALLING_CONVENTIONS (function) (a, b);
     }
     break;
