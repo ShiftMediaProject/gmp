@@ -1,3 +1,51 @@
+2000-02-15  Linus Nordberg  <linus@swox.se>
+
+	* acinclude.m4: Prefix all temporary shell variables with
+	`gmp_tmp_'.
+	(GMP_PROG_CC_FIND): Use defaults if no arguments are passed.
+	Quote use of arguments.
+	(GMP_PROG_CCAS): New macro.
+	(GMP_INIT): New macro.
+	(GMP_FINISH): New macro.
+	(GMP_INCLUDE): New macro.
+	(GMP_SINCLUDE): New macro.
+	(GMP_DEFINE): New macro.
+	(GMP_CHECK_ASM_LABEL_SUFFIX): New macro.
+	(GMP_CHECK_ASM_TEXT): New macro.
+	(GMP_CHECK_ASM_DATA): New macro.
+	(GMP_CHECK_ASM_GLOBL): New macro.
+	(GMP_CHECK_ASM_TYPE): New macro.
+	(GMP_CHECK_ASM_SIZE): New macro.
+	(GMP_CHECK_ASM_LSYM_PREFIX): New macro.
+	(GMP_CHECK_ASM_W32): New macro.
+	* aclocal.m4: Regenerate.
+
+	* configure.in: Find m4 and nm for target.
+	Use new macros to create config.m4.
+	Prefix all temporary shell variables with `tmp_'.
+	Pass `-X 64' to nm for 64-bit PPC target with 64-bit compiler.
+	* configure: Regenerate.
+
+	* Makefile.am (dist-hook): *Really* remove all CVS dirs in
+	dist.
+	* Makefile.in: Regenerate.
+
+	* mpn/Makefile.am: Add target for building .lo and .o from
+	.asm.
+	Pass -DPIC to preprocessor (CPP/m4) when building .lo.
+	Build .o a second time for target .lo, without -DPIC to 
+	preprocessor.
+	(SUFFIX): Add `.asm'.
+	(EXTRA_DIST): Add asm-defs.m4.
+	* mpn/Makefile.in: Regenerate.
+
+	* mpf/Makefile.in: Regenerate.
+	* mpf/tests/Makefile.in: Regenerate.
+	* mpq/Makefile.in: Regenerate.
+	* mpq/tests/Makefile.in: Regenerate.
+	* mpz/Makefile.in: Regenerate.
+	* mpz/tests/Makefile.in: Regenerate.
+	
 2000-02-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/add_n.asm: Rename `size' -> `n'.
