@@ -316,6 +316,7 @@ dnl  - MacOS X Darwin, its assembler fails.
 dnl  - NetBSD 1.4.1 m68k, and gas 1.92.3 there gives a warning and ignores
 dnl    the bad last line since it doesn't have a newline.
 dnl  - NetBSD 1.4.2 alpha, but its assembler doesn't seem to mind.
+dnl  - HP-UX ia64.
 dnl
 dnl  Enhancement: Maybe this could be in GMP_PROG_M4, and attempt to prefer
 dnl  an m4 with a working m4wrap, if it can be found.
@@ -537,50 +538,6 @@ fi
 ])
 
 
-dnl  GMP_GCC_VERSION_GE(CC,MAJOR[,MINOR[,SUBMINOR]])
-dnl  -----------------------------------------------
-dnl  Test whether the version of CC (which must be GNU C) is >=
-dnl  MAJOR.MINOR.SUBMINOR.  Set $gmp_compare_ge to "yes" or "no"
-dnl  accordingly, or to "error" if the version number string can't be
-dnl  parsed.
-dnl
-dnl  gcc 2.7.2, 2.95 and 3.0 just gave something like "2.7.2.3" or "2.95.3".
-dnl  egcs 2.91 gave something like "egcs-2.91".
-dnl  gcc 3.1 gives something like "gcc-3.1" on GNU/Linux, or "gcc.exe (GCC)
-dnl    3.1" on MINGW, or "gcc (GCC) 3.1" on Solaris, plus extra lines about
-dnl    the copyright.
-dnl
-dnl  "[a-zA-Z(). -]*" is used to match the prefixes.  (Solaris 8 sed doesn't
-dnl  support "?" or "*" of a group, like "\(...\)?"  or "\(...\)*".)
-dnl
-dnl  There's no caching here, so different CC's can be tested.
-
-AC_DEFUN(GMP_GCC_VERSION_GE,
-[tmp_version=`($1 --version | sed 1q) 2>&AC_FD_CC`
-echo "$1 --version '$tmp_version'" >&AC_FD_CC
-
-major=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-echo "    major '$major'" >&AC_FD_CC
-
-ifelse([$3],,,
-[minor=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-echo "    minor '$minor'" >&AC_FD_CC])
-
-ifelse([$4],,,
-[subminor=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-echo "    subminor '$subminor'" >&AC_FD_CC])
-
-if test -z "$major"; then
-  AC_MSG_WARN([unrecognised gcc version string: $tmp_version])
-  gmp_compare_ge=error
-else
-  ifelse([$3],, [GMP_COMPARE_GE($major, $2)],
-  [ifelse([$4],,[GMP_COMPARE_GE($major, $2, $minor, $3)],
-                [GMP_COMPARE_GE($major, $2, $minor, $3, $subminor, $4)])])
-fi
-])
-
-
 dnl  GMP_GCC_ARM_UMODSI(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
 dnl  ---------------------------------------------------------
 dnl  gcc 2.95.3 and earlier on arm has a bug in the libgcc __umodsi routine
@@ -593,44 +550,18 @@ dnl  size==1 case in mpn/generic/mode1o.c, and this shows up in
 dnl  tests/mpz/t-jac.c as a wrong result from mpz_kronecker_ui.
 
 AC_DEFUN(GMP_GCC_ARM_UMODSI,
-[AC_MSG_CHECKING([whether gcc unsigned division works])
-GMP_GCC_VERSION_GE([$1], 2,95,4)
-case $gmp_compare_ge in
-yes)
-  ifelse([$2],,:,[$2])
-  gmp_gcc_arm_umodsi_result=yes ;;
-*)
-  ifelse([$3],,:,[$3])
-  gmp_gcc_arm_umodsi_result="no, gcc <= 2.95.3" ;;
+[AC_MSG_CHECKING([whether ARM gcc unsigned division works])
+tmp_version=`$1 --version`
+echo "$tmp_version" >&AC_FD_CC
+case $tmp_version in
+  [2.95 | 2.95.[123]])
+    ifelse([$3],,:,[$3])
+    gmp_gcc_arm_umodsi_result="no, gcc 2.95.[0123]" ;;
+  *)
+    ifelse([$2],,:,[$2])
+    gmp_gcc_arm_umodsi_result=yes ;;
 esac
 AC_MSG_RESULT([$gmp_gcc_arm_umodsi_result])
-])
-
-
-dnl  GMP_GCC_MARCH_PENTIUMPRO(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
-dnl  ---------------------------------------------------------------
-dnl  mpz/powm.c swox cvs rev 1.4 tickled a bug in gcc 2.95.2 and 2.95.3 when
-dnl  -march=pentiumpro was used.  The bug was wrong handling of the input to
-dnl  an ABSIZ(z) expression in mpz_redc().  Fixed in 2.95.4 and pre-release
-dnl  3.0, and didn't seem to occur in unofficial 2.96, so test for 2.95.4
-dnl  and up.
-dnl
-dnl  This macro is used only once, after finalizing a choice of CC, so the
-dnl  result is cached.
-
-AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
-[AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
-                gmp_cv_gcc_march_pentiumpro,
-[GMP_GCC_VERSION_GE([$1], 2,95,4)
-case $gmp_compare_ge in
-yes|no)  gmp_cv_gcc_march_pentiumpro=$gmp_compare_ge ;;
-error|*) gmp_cv_gcc_march_pentiumpro=no ;;
-esac])
-if test $gmp_cv_gcc_march_pentiumpro = yes; then
-  ifelse([$2],,:,[$2])
-else
-  ifelse([$3],,:,[$3])
-fi
 ])
 
 
@@ -932,10 +863,14 @@ dnl  This method should be more reliable than grepping a .o file or using
 dnl  nm, since it corresponds to what a real program is going to do.  Note
 dnl  in particular that grepping doesn't work with SunOS 4 native grep since
 dnl  that grep seems to have trouble with '\0's in files.
+dnl
+dnl  In the past GLOBL_ATTR wasn't used here and it seemed to work anyway
+dnl  (on hppa*-*-hpux* which uses ",entry").
 
 AC_DEFUN(GMP_ASM_UNDERSCORE,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
                gmp_cv_asm_underscore,
@@ -948,13 +883,13 @@ EOF
 for tmp_underscore in "" "_"; do
   cat >conftes2.s <<EOF
       	$gmp_cv_asm_text
-	$gmp_cv_asm_globl ${tmp_underscore}underscore_test
+	$gmp_cv_asm_globl ${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
 ${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
   case $host in
   *-*-aix*)
     cat >>conftes2.s <<EOF
-	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
+	$gmp_cv_asm_globl .${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
 .${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
     ;;
@@ -1177,6 +1112,7 @@ if AC_TRY_EVAL(gmp_compile); then
     echo "Couldn't find label: ^${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix" >&AC_FD_CC
   fi
 fi
+rm -f conftest*
 ])
 echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 ])
@@ -1184,7 +1120,7 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
-dnl  Can we say `.global'?
+dnl  Can we say `.globl'?
 
 AC_DEFUN(GMP_ASM_GLOBL,
 [AC_CACHE_CHECK([how to export a symbol],
@@ -1200,7 +1136,7 @@ echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL_ATTR
 dnl  ------------------
-dnl  Do we need something after `.global symbol'?
+dnl  Do we need something after `GLOBL symbol'?
 
 AC_DEFUN(GMP_ASM_GLOBL_ATTR,
 [AC_CACHE_CHECK([if the export directive needs an attribute],
@@ -1391,9 +1327,9 @@ dnl  -----------------------------------------------
 dnl  Determine whether the assembler supports MMX instructions.
 dnl
 dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
-dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
-dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
-dnl  needed at all, at least for just checking instruction syntax.
+dnl  here.  ".text" is believed to be correct on all x86 systems.  Actually
+dnl  ".text" probably isn't needed at all, at least for just checking
+dnl  instruction syntax.
 dnl
 dnl  "movq %mm0, %mm1" should assemble to "0f 6f c8", but Solaris 2.6 and
 dnl  2.7 wrongly assemble it to "0f 6f c1" (that being the reverse "movq
@@ -2755,9 +2691,9 @@ else
 fi
 ])
 case $gmp_cv_check_libm_for_build in
-yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
-no)  LIBM_FOR_BUILD= ;;
-*)   LIBM_FOR_BUILD=$gmp_cv_check_libm_for_build
+  yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
+  no)  LIBM_FOR_BUILD= ;;
+  *)   LIBM_FOR_BUILD=$gmp_cv_check_libm_for_build ;;
 esac
 ])
 
