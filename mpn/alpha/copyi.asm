@@ -74,3 +74,4 @@ $Loop0:	stq	r0,0(r16)		C E0
 $Lend0:	stq	r0,0(r16)		C E0
 $Lret:	ret	r31,(r26),1		C E1
 EPILOGUE(mpn_copyi)
+ASM_END()
