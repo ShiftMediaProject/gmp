@@ -1,3 +1,36 @@
+2001-07-01  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options, Reentrancy): Updates for new
+	--enable-alloca behaviour.
+	(Debugging): Describe --enable-alloca=debug.
+	(Miscellaneous Integer Functions): Note mpz_sizeinbase ignores signs.
+	(Low-level Functions): Give a formula for mpn_gcdext cofactor.
+	(Factorial Algorithm): New section.
+	(Binomial Coefficients Algorithm): New section.
+	Misc tweaks elsewhere.
+
+	* mpf/set_prc.c: Merge the two truncation conditionals, misc cleanups,
+	no functional changes.
+
+	* mpn/*/gmp-mparam.h (DIVEXACT_1_THRESHOLD): Add tuned values.
+	* gmp-impl.h (DIVEXACT_1_THRESHOLD): Make the default 0 when
+	2*UMUL_TIME < UDIV_TIME.
+
+	* mpn/x86/p6/dive_1.asm: New file.
+
+	* mpn/x86/dive_1.asm: New file.
+	* mpn/x86/gmp-mparam.h (DIVEXACT_1_THRESHOLD): Use it always.
+
+	* tests/refmpn.c, tests.h (refmpn_zero): New function.
+	* tests/devel/try.c: Use it.
+
+	* tests/refmpn.c (refmpn_sb_divrem_mn): Use refmpn_cmp, not mpn_cmp.
+
+	* tests/mpf/t-get_d.c (main): Use || not |.
+
+	* tests/misc.c, tests/t-modlinv.c, tests/mpq/t-get_str.c,
+	tests/mpf/reuse.c: Add string.h.
+
 2001-06-29  Kevin Ryde  <kevin@swox.se>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_FIB2_UI,
@@ -10,9 +43,14 @@
 	(MPN_DIVREM_OR_DIVEXACT_1): Add an assert of no remainder.
 
 	* assert.c: Add stdlib.h for abort prototype.
+	* tests/spinner.c, trace.c, t-constants.c, t-count_zeros.c,
+	t-gmpmax.c, t-modlinv.c: Ditto.
 	* tests/mpz/t-bin.c, t-cmp.c, t-get_si.c, t-misc.c, t-popcount.c,
 	t-set_str.c, t-sizeinbase.c: Ditto.
-	* tests/mpq/t-equal.c: Ditto.
+	* tests/mpq/t-equal.c, t-get_str.c, t-set_f.c, t-set_str.c: Ditto.
+	* tests/mpf/t-fits.c, t-get_d.c, t-get_si.c, t-int_p.c, t-misc.c,
+	t-trunc.c: Ditto.
+	* tests/mpbsd/allfuns.c, t-misc.c: Ditto.
 
 	* mpn/generic/mul_n.c, mpz/cfdiv_r_2exp.c: Use MPN_INCR_U.
 
