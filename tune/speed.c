@@ -895,7 +895,7 @@ The available routines are as follows.\n\
   printf ("\n\
 Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n\
 r should be in decimal, or use 0xN for hexadecimal.\n\
-
+\n\
 Special forms for r are \"<N>bits\" for a random N bit number, \"<N>ones\" for\n\
 N one bits, or \"aas\" for 0xAA..AA.\n\
 \n\
