@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.404 .
+# From configure.in Revision: 1.405 .
 #
 #
 #
@@ -20491,7 +20491,7 @@ no)  GMP_NAIL_BITS=0 ;;
 *)   GMP_NAIL_BITS=$enable_nails ;;
 esac
 
-echo "define(<GMP_LIMB_BITS>,$__GMP_BITS_PER_MP_LIMB)" >> $gmp_tmpconfigm4
+echo "define(<GMP_LIMB_BITS>,$BITS_PER_MP_LIMB)" >> $gmp_tmpconfigm4
 
 echo "define(<GMP_NAIL_BITS>,$GMP_NAIL_BITS)" >> $gmp_tmpconfigm4
 
