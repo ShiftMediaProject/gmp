@@ -273,7 +273,12 @@ AC_ARG_VAR(ABI, [desired ABI (for processors supporting more than one ABI)])
 # abilist needs to be non-empty, "standard" is just a generic name here
 abilist="standard"
 
-# FIXME: Prefer c89 to cc.
+# FIXME: We'd like to prefer an ANSI compiler, perhaps by preferring
+# c89 over cc here.  But note that on HP-UX c89 provides a castrated
+# environment, and would want to be excluded somehow.  Maybe
+# AC_PROG_CC_STDC already does enough to stick cc into ANSI mode and
+# we don't need to worry.
+#
 cclist="gcc cc"
 
 gcc_cflags="-g -O2"
