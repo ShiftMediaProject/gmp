@@ -28,7 +28,7 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 # there then $(CXX) will be used in the libtool command, and that's not
 # always available.
 
-EXTRA_LTLIBRARIES = libxprintf.la
+EXTRA_LTLIBRARIES = libcxxprintf.la
 noinst_LTLIBRARIES = libprintf.la @LIBCXXPRINTF_LA@
 
 libprintf_la_SOURCES =							 \
@@ -38,5 +38,5 @@ libprintf_la_SOURCES =							 \
   vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c		 \
   $(OPTION_CXX)
 
-libxprintf_la_SOURCES =							 \
+libcxxprintf_la_SOURCES =					\
   doprntfx.cc doprntix.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
