@@ -1,6 +1,6 @@
 /* mpfr_isinteger -- test if a mpfr variable is integer
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -31,6 +31,7 @@ mpfr_isinteger (mpfr_srcptr x)
   mpfr_t u;
   int expo;
   mp_prec_t prec;
+  int result;
 
   expo=(int)MPFR_EXP(x);
   prec=MPFR_PREC(x);
@@ -44,6 +45,8 @@ mpfr_isinteger (mpfr_srcptr x)
   mpfr_init2(u,prec);
   mpfr_trunc(u,x);
 
-  if(mpfr_cmp(x,u)==0) return 1;
-  else return 0;
+  result = (mpfr_cmp (x,u) == 0);
+
+  mpfr_clear (u);
+  return result;
 }
