@@ -81,10 +81,12 @@ mpz_set_d (dest, val)
 	l0 = 0;
 	lexp--;
       }
+    size = lexp + 1;
+    if (dest->_mp_alloc < size)
+      _mpz_realloc (dest, size);
     MPN_ZERO (rp, lexp - 1);
     rp[lexp - 1] = l0;
     rp[lexp] = l1;
-    size = lexp + 1;
   }
 #endif
 #if BITS_PER_MP_LIMB < 64
@@ -120,11 +122,13 @@ mpz_set_d (dest, val)
       }
     else
       {
+	size = lexp + 1;
+	if (dest->_mp_alloc < size)
+	  _mpz_realloc (dest, size);
 	MPN_ZERO (rp, lexp - 2);
 	rp[lexp - 2] = l0;
 	rp[lexp - 1] = l1;
 	rp[lexp] = l2;
-	size = lexp + 1;
       }
   }
 #endif
