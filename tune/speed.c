@@ -866,41 +866,39 @@ usage (void)
   
   speed_time_init ();
 
-  printf ("\
-Usage: speed [-options] -s size <routine>...\n\
-Measure the speed of some routines.\n\
-Times are in seconds, accuracy is shown.\n\
-\n\
-   -p num     set precision as number of time units each routine must run\n\
-   -s size[-end][,size[-end]]...   sizes to measure\n\
-              single sizes or ranges, sep with comma or use multiple -s\n\
-   -t step    step through sizes by given amount\n\
-   -f factor  step through sizes by given factor (eg. 1.05)\n\
-   -r         show times as ratios of the first routine\n\
-   -d         show times as difference from the first routine\n\
-   -D         show times as difference from previous size shown\n\
-   -c         show times in CPU cycles\n\
-   -C         show times in cycles per limb\n\
-   -u         print resource usage (memory) at end\n\
-   -P name    output plot files \"name.gnuplot\" and \"name.data\"\n\
-   -a <type>  use given data: random(default), random2, zeros, aas, ffs, 2fd\n\
-   -x, -y, -w, -W <align>  specify data alignments, sources and dests\n\
-   -o addrs   print addresses of data blocks\n\
-\n\
-If both -t and -f are used, it means step by the factor or the step, whichever\n\
-is greater.\n\
-If both -C and -D are used, it means cycles per however many limbs between a\n\
-size and the previous size.\n\
-\n\
-After running with -P, plots can be viewed with Gnuplot or Quickplot.\n\
-\"gnuplot name.gnuplot\" (use \"set logscale xy; replot\" at the prompt for\n\
-a log/log plot).\n\
-\"quickplot -s name.data\" (has interactive zooming, and note -s is important\n\
-when viewing more than one routine, it means same axis scales for all data).\n\
-\n\
-The available routines are as follows.\n\
-\n\
-");
+  printf ("Usage: speed [-options] -s size <routine>...\n");
+  printf ("Measure the speed of some routines.\n");
+  printf ("Times are in seconds, accuracy is shown.\n");
+  printf ("\n");
+  printf ("   -p num     set precision as number of time units each routine must run\n");
+  printf ("   -s size[-end][,size[-end]]...   sizes to measure\n");
+  printf ("              single sizes or ranges, sep with comma or use multiple -s\n");
+  printf ("   -t step    step through sizes by given amount\n");
+  printf ("   -f factor  step through sizes by given factor (eg. 1.05)\n");
+  printf ("   -r         show times as ratios of the first routine\n");
+  printf ("   -d         show times as difference from the first routine\n");
+  printf ("   -D         show times as difference from previous size shown\n");
+  printf ("   -c         show times in CPU cycles\n");
+  printf ("   -C         show times in cycles per limb\n");
+  printf ("   -u         print resource usage (memory) at end\n");
+  printf ("   -P name    output plot files \"name.gnuplot\" and \"name.data\"\n");
+  printf ("   -a <type>  use given data: random(default), random2, zeros, aas, ffs, 2fd\n");
+  printf ("   -x, -y, -w, -W <align>  specify data alignments, sources and dests\n");
+  printf ("   -o addrs   print addresses of data blocks\n");
+  printf ("\n");
+  printf ("If both -t and -f are used, it means step by the factor or the step, whichever\n");
+  printf ("is greater.\n");
+  printf ("If both -C and -D are used, it means cycles per however many limbs between a\n");
+  printf ("size and the previous size.\n");
+  printf ("\n");
+  printf ("After running with -P, plots can be viewed with Gnuplot or Quickplot.\n");
+  printf ("\"gnuplot name.gnuplot\" (use \"set logscale xy; replot\" at the prompt for\n");
+  printf ("a log/log plot).\n");
+  printf ("\"quickplot -s name.data\" (has interactive zooming, and note -s is important\n");
+  printf ("when viewing more than one routine, it means same axis scales for all data).\n");
+  printf ("\n");
+  printf ("The available routines are as follows.\n");
+  printf ("\n");
 
   for (i = 0; i < numberof (routine); i++)
     {
@@ -911,22 +909,20 @@ The available routines are as follows.\n\
       else
         printf ("\t%s\n", routine[i].name); 
     }
-      
-  printf ("\n\
-Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n\
-r should be in decimal, or use 0xN for hexadecimal.\n\
-\n\
-Special forms for r are \"<N>bits\" for a random N bit number, \"<N>ones\" for\n\
-N one bits, or \"aas\" for 0xAA..AA.\n\
-\n\
-Times for sizes out of the range accepted by a routine are shown as 0.\n\
-The fastest routine at each size is marked with a # (free form output only).\n\
-\n\
-%s\
-\n\
-Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n\
-Quickplot home page http://www.kachinatech.com/~quickplot\n\
-", speed_time_string);
+  printf ("\n");
+  printf ("Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n");
+  printf ("r should be in decimal, or use 0xN for hexadecimal.\n");
+  printf ("\n");
+  printf ("Special forms for r are \"<N>bits\" for a random N bit number, \"<N>ones\" for\n");
+  printf ("N one bits, or \"aas\" for 0xAA..AA.\n");
+  printf ("\n");
+  printf ("Times for sizes out of the range accepted by a routine are shown as 0.\n");
+  printf ("The fastest routine at each size is marked with a # (free form output only).\n");
+  printf ("\n");
+  printf ("%s", speed_time_string);
+  printf ("\n");
+  printf ("Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n");
+  printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
 }
 
 int
