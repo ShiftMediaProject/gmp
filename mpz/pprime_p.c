@@ -153,6 +153,8 @@ mpz_millerrabin (n, reps)
   unsigned long int k;
   gmp_randstate_t rstate;
   int is_prime;
+  TMP_DECL (marker);
+  TMP_MARK (marker);
 
   MPZ_TMP_INIT (nm1, SIZ (n) + 1);
   mpz_sub_ui (nm1, n, 1L);
@@ -164,7 +166,10 @@ mpz_millerrabin (n, reps)
   mpz_set_ui (x, 210L);
   mpz_powm (y, x, nm1, n);
   if (mpz_cmp_ui (y, 1L) != 0)
-    return 0;
+    {
+      return 0;
+      TMP_FREE (marker);
+    }
 
   MPZ_TMP_INIT (q, SIZ (n));
 
@@ -186,6 +191,7 @@ mpz_millerrabin (n, reps)
 
   gmp_randclear (rstate);
 
+  TMP_FREE (marker);
   return is_prime;
 }
 
