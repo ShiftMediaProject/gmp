@@ -2398,6 +2398,9 @@ class gmp_allocated_string {
 };
 
 class ios;
+class istream;
+int __gmp_istream_set_base (istream &, char &, bool &, bool &);
+void __gmp_istream_set_digits (string &, istream &, char &, bool &, int);
 void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o);
 ostream& __gmp_doprnt_integer_ostream (ostream &o, const struct doprnt_params_t *p, char *s);
 extern const struct doprnt_funs_t  __gmp_asprintf_funs_noformat;
