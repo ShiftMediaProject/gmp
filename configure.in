@@ -259,8 +259,8 @@ case "$target" in
   # MIPS
   mips-sgi-irix6.*)
     os_64bit=yes
-    gmp_cflags64_gcc="-g -O2 -mabi=n32"
-    gmp_cflags64_cc="$gmp_cflags64_cc -O2 -n32"
+    gmp_cflags64_gcc="-g -O2 -mabi=n32 -mips3"
+    gmp_cflags64_cc="$gmp_cflags64_cc -O2 -n32 -mips3"
     ;;
 
   # Motorola 68k family
