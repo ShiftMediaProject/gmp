@@ -26,26 +26,27 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-#ifdef OPERATION_floor
+#if MPFR_FLOOR
 #define _MPFR_FLOOR_OR_CEIL
 #define FUNC_NAME mpfr_floor
+#undef MPFR_FLOOR
 #define MPFR_FLOOR 1
 #define MPFR_CEIL 0
 #endif
 
-#ifdef OPERATION_ceil
+#if MPFR_CEIL
 #define _MPFR_FLOOR_OR_CEIL
 #define FUNC_NAME mpfr_ceil
+#undef MPFR_CEIL
 #define MPFR_CEIL 1
 #define MPFR_FLOOR 0
 #endif
 
-#ifdef OPERATION_trunc
+#if MPFR_TRUNC
 #undef FUNC_NAME
 #define FUNC_NAME mpfr_trunc
 #endif
 
-#if 0
 #ifdef _MPFR_FLOOR_OR_CEIL
 static int
 mpn_zero_p (p, n)
@@ -62,7 +63,6 @@ mpn_zero_p (p, n)
 
   return 1;
 }
-#endif
 #endif
 
 void

@@ -59,5 +59,5 @@ mpfr_dump (u, rnd_mode)
     printf ("-0.%se%ld\n", str + 1, exp);
   else
     printf ("0.%se%ld\n", str, exp);
-  (*_mp_free_func) (str, strlen(str)+1);
+  (*__gmp_free_func) (str, strlen(str)+1);
 }

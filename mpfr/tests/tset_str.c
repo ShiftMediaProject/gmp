@@ -94,6 +94,15 @@ main(int argc, char **argv)
     exit(1);
   }
 
+  mpfr_set_str_raw(x, "+0000");
+  mpfr_set_str_raw(x, "+0000E0");
+  mpfr_set_str_raw(x, "0000E0");
+  if (mpfr_get_d(x) != 0.0) {
+    fprintf(stderr, "Error in mpfr_set_str_raw for s=0.0\n"); 
+    mpfr_clear(x); mpfr_clear(y); 
+    exit(1);
+  }
+
   mpfr_set_str(x, "+243495834958.53452345E1", 10, GMP_RNDN);
   mpfr_set_str(x, "9007199254740993", 10, GMP_RNDN);
   mpfr_set_str(x, "9007199254740992", 10, GMP_RNDU);

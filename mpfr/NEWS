@@ -14,7 +14,7 @@ Changes from version 1.0 to version 2001:
 - mpfr_init and mpfr_init2 now initialize the corresponding variable to 0
   (like in other initialization functions from GNU MP)
 - in case memory allocation fails, an error message is output
-- several bugs of version 0.4 were fixed
+- several bugs of version 1.0 were fixed
 
 Changes from version 0.4 to version 1.0:
 

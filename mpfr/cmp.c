@@ -185,7 +185,10 @@ mpfr_cmp2(b, c)
 	  
       /* bn < 0; if some limb of c is nonzero, return k+1, otherwise return k*/
 
-      if (cn>=0 && (cp[cn--] << (BITS_PER_MP_LIMB - d))) { return k+1; }
+      /* if d < BITS_PER_MP_LIMB, only the last d bits of cp[cn] have to be
+	 considered, otherwise all bits */
+      if (d < BITS_PER_MP_LIMB)
+	if (cn>=0 && (cp[cn--] << (BITS_PER_MP_LIMB - d))) { return k+1; }
 
       while (cn >= 0) 
 	if (cp[cn--]) return k+1; 

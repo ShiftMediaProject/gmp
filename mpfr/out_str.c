@@ -39,7 +39,9 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
      mp_rnd_t rnd_mode;
 #endif
 {
-  char *s,*s0; size_t l; mp_exp_t e;
+  char *s, *s0;
+  size_t l;
+  mp_exp_t e;
 
   if (MPFR_IS_NAN(op)) { fprintf(stream, "NaN"); return 3; }
   if (!MPFR_NOTZERO(op)) { fprintf(stream, "0"); return 1; }
@@ -49,7 +51,7 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
       else { fprintf(stream, "-Inf"); return 4; }
     }
 
-  s = mpfr_get_str(NULL, &e, base, n_digits, op, rnd_mode);
+  s = mpfr_get_str (NULL, &e, base, n_digits, op, rnd_mode);
   /*	  TODO: maintenir le code pour les infinis dans get_str ?  */
   s0 = s;
   /* for op=3.1416 we have s = "31416" and e = 1 */
@@ -61,12 +63,9 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
   fputc('.', stream);       /* decimal point */
   fputs(s, stream);         /* rest of mantissa */
   if (e) {
-    fputc((base>10) ? '@' : 'e', stream); l++;
-    sprintf(s, "%ld", e);
-    l += strlen(s);
-    fprintf(stream, "%s", s);
+    l += fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), e);
   }
 
-  (*_mp_free_func)(s0, l); 
+  (*__gmp_free_func)(s0, l); 
   return l;
 }

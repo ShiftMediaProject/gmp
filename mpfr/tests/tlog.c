@@ -28,18 +28,25 @@ MA 02111-1307, USA. */
 #include "mpfr-test.h"
 
 double drand_log _PROTO((void)); 
-int check1 _PROTO((double, mp_rnd_t, double, int)); 
+int check1 _PROTO((double, mp_rnd_t, double, int, int)); 
 void check3 _PROTO((double, unsigned long, mp_rnd_t)); 
 void check4 _PROTO((int)); 
 void slave _PROTO((int, int)); 
 void check_worst_cases _PROTO((void)); 
 void special _PROTO((void));
 
+#if (BITS_PER_LONGINT == 32)
+#define INT32 long int
+#else
+#define INT32 int
+#endif
+
+
 double drand_log ()
 {
-  double d; long int *i;
+  double d; INT32 *i;
 
-  i = (long int*) &d;
+  i = (INT32*) &d;
   do {
     i[0] = lrand48();
     i[1] = lrand48();
@@ -48,13 +55,14 @@ double drand_log ()
   return d;
 }
 
-#define check2(a,rnd,res) check1(a,rnd,res,1)
+#define check2(a,rnd,res) check1(a,rnd,res,1,0)
 #define check(a,r) check2(a,r,0.0)
 
-int check1 (double a, mp_rnd_t rnd_mode, double res1, int ck)
+int check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
 {
   mpfr_t ta, tres;
   double res2;
+  int diff=0;
   /* ck=1 iff res1 is certified correct */
 
 #ifdef TEST
@@ -69,20 +77,21 @@ int check1 (double a, mp_rnd_t rnd_mode, double res1, int ck)
   mpfr_clear(ta); mpfr_clear(tres); 
 
   if (res1!=res2 && (!isnan(res1) || !isnan(res2))) {
+      diff = ulp(res1,res2);
       if (ck) { 
 	printf("mpfr_log failed for    a=%1.20e, rnd_mode=%s\n", a,
 	       mpfr_print_rnd_mode(rnd_mode));
 	printf("correct result is        %1.20e\n mpfr_log gives          %1.20e (%d ulp)\n",res1,res2,ulp(res1,res2));
 	exit(1);
       }
-      else {
+      else if (diff>max_ulp) {
 	printf("mpfr_log differs from libm.a for a=%1.20e, rnd_mode=%s\n", a,
 	       mpfr_print_rnd_mode(rnd_mode));
 	printf(" double calculus gives %1.20e\n mpfr_log        gives %1.20e (%d ulp)\n",res1,res2,ulp(res1,res2));
       }
   }
   if (!isnan(res1) || !isnan(res2))
-    return ulp(res1,res2);
+    return diff;
   else
     return 0;
 }
@@ -101,12 +110,14 @@ void check3 (double d, unsigned long prec, mp_rnd_t rnd)
 
 void check4 (int N)
 {
-  int i, max=-1, sum=0, cur;
+  int i, max=0, sum=0, cur;
   double d;
+  mp_rnd_t rnd;
 
   for(i=0;i<N;i++) {
     d=drand_log();
-    cur=check1(d,rand() % 4,0.0,0);
+    rnd = rand() % 4;
+    cur=check1 (d, rnd, 0.0, 0, max);
     if (cur<0)
       cur = -cur;
     if (cur > max)
@@ -114,7 +125,7 @@ void check4 (int N)
     sum+=cur;
   }
   d=(double)sum / (double)N;
-  printf("max error : %i \t mean error : %f   (in ulps)\n",max,d);
+  fprintf(stderr, "max error : %i \t mean error : %f   (in ulps)\n",max,d);
 }
 
 void slave (int N, int p)
@@ -233,6 +244,14 @@ void special ()
     fprintf (stderr, "Error in mpfr_log(3) for GMP_RNDD\n");
     exit (1);
   }
+
+  /* check large precision */
+  mpfr_set_prec (x, 3322);
+  mpfr_set_prec (y, 3322);
+  mpfr_set_d (x, 3.0, GMP_RNDN);
+  mpfr_sqrt (x, x, GMP_RNDN);
+  mpfr_log (y, x, GMP_RNDN);
+
   mpfr_clear (x);
   mpfr_clear (y);
 }

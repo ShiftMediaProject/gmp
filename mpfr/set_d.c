@@ -338,9 +338,19 @@ mpfr_get_d2(src, e)
   /* Accumulate the limbs from less significant to most significant
      otherwise due to rounding we may accumulate several ulps,
      especially in rounding towards -/+infinity. */
-  for (i = n_limbs_to_use; i>=1; i--)
+  for (i = n_limbs_to_use; i>=1; i--) {
+#if (BITS_PER_MP_LIMB == 32)
     res = res / MP_BASE_AS_DOUBLE +
       ((negative) ? -(double)qp[size - i] : qp[size - i]);
+#else
+#if (BITS_PER_MP_LIMB == 64)
+    q = qp[size - i] & (mp_limb_t) 4294967295;
+    res = res / MP_BASE_AS_DOUBLE + ((negative) ? -(double)q : q);
+    q = qp[size - i] - q;
+    res = res + ((negative) ? -(double)q : q);
+#endif /* BITS_PER_MP_LIMB == 64 */
+#endif /* BITS_PER_MP_LIMB == 32 */
+  }
   res = __mpfr_scale2 (res, e - BITS_PER_MP_LIMB); 
 
   return res;

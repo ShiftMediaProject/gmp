@@ -55,30 +55,19 @@ GENERIC (y, p, r, m)
   mpz_t* qtoj;
   mpfr_t tmp;
 #endif
-  int diff,expo;
+  int diff, expo;
   int precy = MPFR_PREC(y);
   MPFR_CLEAR_FLAGS(y); 
   n = 1 << m;
-  P = (mpz_t*) (*_mp_allocate_func) ((m+1) * sizeof(mpz_t));
-  S = (mpz_t*) (*_mp_allocate_func) ((m+1) * sizeof(mpz_t));
-  ptoj = (mpz_t*) (*_mp_allocate_func) ((m+1) * sizeof(mpz_t)); /* ptoj[i] = mantissa^(2^i) */
+  P = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t));
+  S = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t));
+  ptoj = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t)); /* ptoj[i] = mantissa^(2^i) */
 #ifdef A
-  T = (mpz_t*) (*_mp_allocate_func) ((m+1) * sizeof(mpz_t));
+  T = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t));
 #endif
 #ifdef R_IS_RATIONAL
-    qtoj = (mpz_t*) (*_mp_allocate_func) ((m+1) * sizeof(mpz_t)); 
+    qtoj = (mpz_t*) (*__gmp_allocate_func) ((m+1) * sizeof(mpz_t)); 
 #endif
-  if ((P == NULL) || (S == NULL) || (ptoj == NULL)
-#ifdef A
-      || (T == NULL)
-#endif
-#ifdef R_IS_RATIONAL
-      || (qtoj == NULL)
-#endif
-      ) {
-    fprintf (stderr, "Error in mpfr_generic: no more memory available\n");
-    exit (1);
-  }
   for (i=0;i<=m;i++) { mpz_init(P[i]); mpz_init(S[i]); mpz_init(ptoj[i]);
 #ifdef R_IS_RATIONAL
   mpz_init(qtoj[i]);
@@ -191,19 +180,18 @@ GENERIC (y, p, r, m)
 	}
 
   mpz_tdiv_q(S[0], S[0], P[0]);
-  mpfr_set_z(y,S[0], GMP_RNDD);
+  mpfr_set_z(y, S[0], GMP_RNDD);
   MPFR_EXP(y) += expo; 
 
 #ifdef R_IS_RATIONAL
   /* division exacte */
   mpz_div_ui(qtoj[m], qtoj[m], r);
-  i = (MPFR_PREC(y));
-  mpfr_init2(tmp,i);
+  mpfr_init2(tmp, MPFR_PREC(y));
   mpfr_set_z(tmp, qtoj[m] , GMP_RNDD);
-  mpfr_div(y, y, tmp,GMP_RNDD);  
+  mpfr_div(y, y, tmp, GMP_RNDD);
   mpfr_clear(tmp);
 #else
-  mpfr_div_2exp(y, y, r*(i-1),GMP_RNDN); 
+  mpfr_div_2exp(y, y, r*(i-1), GMP_RNDN);
 #endif
   for (i=0;i<=m;i++) { mpz_clear(P[i]); mpz_clear(S[i]); mpz_clear(ptoj[i]); 
 #ifdef R_IS_RATIONAL
@@ -213,14 +201,14 @@ GENERIC (y, p, r, m)
   mpz_clear(T[i]);
 #endif
   }
-  (*_mp_free_func) (P, (m+1) * sizeof(mpz_t));
-  (*_mp_free_func) (S, (m+1) * sizeof(mpz_t));
-  (*_mp_free_func) (ptoj, (m+1) * sizeof(mpz_t));
+  (*__gmp_free_func) (P, (m+1) * sizeof(mpz_t));
+  (*__gmp_free_func) (S, (m+1) * sizeof(mpz_t));
+  (*__gmp_free_func) (ptoj, (m+1) * sizeof(mpz_t));
 #ifdef R_IS_RATIONAL
-  (*_mp_free_func) (qtoj, (m+1) * sizeof(mpz_t));
+  (*__gmp_free_func) (qtoj, (m+1) * sizeof(mpz_t));
 #endif
 #ifdef A
-  (*_mp_free_func) (T, (m+1) * sizeof(mpz_t));
+  (*__gmp_free_func) (T, (m+1) * sizeof(mpz_t));
 #endif
   return 0;
 }

@@ -1,6 +1,6 @@
 /* mpfr_set_str_raw -- set a floating-point number from a binary string
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -52,12 +52,7 @@ mpfr_set_str_raw (x, str)
   xp = MPFR_MANT(x);
   xsize = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
   alloc = (strlen(str)+1) * sizeof(char);
-  str0 = str2 = (char *) (*_mp_allocate_func) (alloc);
-
-  if (str0 == NULL) {
-    fprintf (stderr, "Error in mpfr_set_str_raw: no more memory available\n");
-    exit (1);
-  }
+  str0 = str2 = (char *) (*__gmp_allocate_func) (alloc);
 
   if (*str == '-') { negative = 1; str++; }
   else if (*str == '+') str++;
@@ -103,35 +98,42 @@ mpfr_set_str_raw (x, str)
   else expn=k;
 
   endstr2 = str2;
-  *str2 = (char) 0; /* end of string */
-  l = (strlen(str0) - 1) / BITS_PER_MP_LIMB + 1; str2 = str0;
-  if (l > xsize) {
-    fprintf (stderr, "Error: mantissa larger than precision of destination variable in mpfr_set_str_raw\n");
-    exit (1);
+  l = endstr2 - str0; /* length of mantissa */
+  if (l == 0) { /* input is zero */
+    MPFR_SET_ZERO(x);
   }
+  else {
+    l = (l-1) / BITS_PER_MP_LIMB + 1;
+    str2 = str0;
 
-  /* str2[0]..endstr2[-1] contains the mantissa */
-  for (k = 1; k <= l; k++)
-    {
-      j = 0; 
-      xp[xsize - k] = 0; 
-      while (str2<endstr2 && j < BITS_PER_MP_LIMB)
-	{
-	  xp[xsize - k] = (xp[xsize - k] << 1) + (*str2 - '0'); 
-	  str2++; j++; 
-	}
-      xp[xsize - k] <<= (BITS_PER_MP_LIMB - j); 
+    if (l > xsize) {
+      fprintf (stderr, "Error: mantissa larger than precision of destination variable in mpfr_set_str_raw\n");
+      exit (1);
     }
 
-  for (; k <= xsize; k++) { xp[xsize - k] = 0; }
+    /* str2[0]..endstr2[-1] contains the mantissa */
+    for (k = 1; k <= l; k++)
+      {
+	j = 0; 
+	xp[xsize - k] = 0; 
+	while (str2<endstr2 && j < BITS_PER_MP_LIMB)
+	  {
+	    xp[xsize - k] = (xp[xsize - k] << 1) + (*str2 - '0'); 
+	    str2++; j++; 
+	  }
+	xp[xsize - k] <<= (BITS_PER_MP_LIMB - j); 
+      }
 
-  count_leading_zeros(cnt, xp[xsize - 1]); 
-  if (cnt) mpn_lshift(xp, xp, xsize, cnt); 
+    for (; k <= xsize; k++) { xp[xsize - k] = 0; }
 
-  MPFR_EXP(x) = expn - cnt; 
-  MPFR_SIZE(x) = xsize; if (negative) MPFR_CHANGE_SIGN(x);
+    count_leading_zeros(cnt, xp[xsize - 1]); 
+    if (cnt) mpn_lshift(xp, xp, xsize, cnt); 
 
-  (*_mp_free_func) (str0, alloc);
+    MPFR_EXP(x) = expn - cnt; 
+    MPFR_SIZE(x) = xsize; if (negative) MPFR_CHANGE_SIGN(x);
+  }
+
+  (*__gmp_free_func) (str0, alloc);
   
   /* May change to take into account : syntax errors, overflow in exponent, 
      string truncated because of size of x */

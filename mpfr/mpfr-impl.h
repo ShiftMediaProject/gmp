@@ -19,19 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-
-/* Fudges */
-#define _mp_allocate_func      __gmp_allocate_func
-#define _mp_reallocate_func    __gmp_reallocate_func
-#define _mp_free_func          __gmp_free_func
-#define _mp_default_allocate   __gmp_default_allocate
-#define _mp_default_reallocate __gmp_default_reallocate
-#define _mp_default_free       __gmp_default_free
-
-
-
-
-
 /* Definition of constants */
 
 #define LOG2 0.69314718055994528622 /* log(2) rounded to zero on 53 bits */
@@ -72,7 +59,6 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define MPFR_NOTZERO(x) (MPFR_MANT(x)[(MPFR_PREC(x)-1)/BITS_PER_MP_LIMB])
 #define MPFR_IS_ZERO(x) ((MPFR_NOTZERO(x))==0)
 #define MPFR_SET_ZERO(x) (MPFR_MANT(x)[(MPFR_PREC(x)-1)/BITS_PER_MP_LIMB] = 0)
-#define mpfr_sgn(x) ((MPFR_NOTZERO(x)) ? MPFR_SIGN(x) : 0)
 
 /* Memory gestion */
 

@@ -55,16 +55,3 @@ mpfr_random (x)
   /* cnt is the number of non significant bits in the low limb */
   xp[0] &= ~((((mp_limb_t) 1) << cnt) - 1);
 }
-
-#if HAVE_SRANDOM
-void
-#if __STDC__
-mpfr_srandom (unsigned long int seed)
-#else
-mpfr_srandom (seed)
-     unsigned long int seed;
-#endif
-{
-  srandom (seed); 
-}
-#endif

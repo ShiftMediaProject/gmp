@@ -22,8 +22,10 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 
-void large_test (int, int);
-void check53 (double, double, double, mp_rnd_t);
+void large_test _PROTO ((int, int));
+void check53 _PROTO ((double, double, double, mp_rnd_t));
+void check53sin _PROTO ((double, double, mp_rnd_t));
+void check53cos _PROTO ((double, double, mp_rnd_t));
 
 void large_test (int prec, int N)
 {
@@ -70,6 +72,44 @@ void check53 (double x, double sin_x, double cos_x, mp_rnd_t rnd_mode)
   mpfr_clear (c);
 }
 
+void check53sin (double x, double sin_x, mp_rnd_t rnd_mode)
+{
+  mpfr_t xx, s;
+
+  mpfr_init2 (xx, 53);
+  mpfr_init2 (s, 53);
+  mpfr_set_d (xx, x, rnd_mode); /* should be exact */
+  mpfr_sin_cos (s, NULL, xx, rnd_mode);
+  if (mpfr_get_d (s) != sin_x && (!isnan(sin_x) || !isnan(mpfr_get_d(s)))) {
+    fprintf (stderr, "mpfr_sin_cos failed for x=%1.20e, rnd=%s\n", x,
+	     mpfr_print_rnd_mode (rnd_mode));
+    fprintf (stderr, "mpfr_sin_cos gives sin(x)=%1.20e, expected %1.20e\n",
+	     mpfr_get_d (s), sin_x);
+    exit(1);
+  }
+  mpfr_clear (xx);
+  mpfr_clear (s);
+}
+
+void check53cos (double x, double cos_x, mp_rnd_t rnd_mode)
+{
+  mpfr_t xx, c;
+
+  mpfr_init2 (xx, 53);
+  mpfr_init2 (c, 53);
+  mpfr_set_d (xx, x, rnd_mode); /* should be exact */
+  mpfr_sin_cos (NULL, c, xx, rnd_mode);
+  if (mpfr_get_d (c) != cos_x && (!isnan(cos_x) || !isnan(mpfr_get_d(c)))) {
+    fprintf (stderr, "mpfr_sin_cos failed for x=%1.20e, rnd=%s\n", x,
+	     mpfr_print_rnd_mode (rnd_mode));
+    fprintf (stderr, "mpfr_sin_cos gives cos(x)=%1.20e, expected %1.20e\n",
+	     mpfr_get_d (c), cos_x);
+    exit(1);
+  }
+  mpfr_clear (xx);
+  mpfr_clear (c);
+}
+
 /* tsin_cos prec [N] performs N tests with prec bits */
 int main(int argc, char *argv[])
 {
@@ -97,5 +137,10 @@ int main(int argc, char *argv[])
 	   0.537874062022526966409, GMP_RNDZ);
   check53 (1.00591265847407274059,  8.446508805292128885e-1,
 	   0.53531755997839769456,  GMP_RNDN);
+
+  /* check with one argument NULL */
+  check53sin (1.00591265847407274059,  8.446508805292128885e-1, GMP_RNDN);
+  check53cos (1.00591265847407274059, 0.53531755997839769456,  GMP_RNDN);
+
   return 0;
 }

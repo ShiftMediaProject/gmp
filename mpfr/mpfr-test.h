@@ -29,9 +29,10 @@ MA 02111-1307, USA. */
 #define random mrand48
 #endif
 
-double drand _PROTO((void)); 
-int ulp _PROTO((double, double)); 
-double dbl _PROTO((double, int)); 
+double drand _PROTO ((void)); 
+int ulp _PROTO ((double, double)); 
+double dbl _PROTO ((double, int)); 
+double Ulp _PROTO ((double));
 
 #define MINNORM 2.2250738585072013831e-308 /* 2^(-1022), smallest normalized */
 #define MAXNORM 1.7976931348623157081e308 /* 2^(1023)*(2-2^(-52)) */
@@ -57,20 +58,34 @@ double drand ()
   return d;
 }
 
+/* returns ulp(x) for x a 'normal' double-precision number */
+double Ulp (double x)
+{
+   double y, eps;
+
+   if (x < 0) x = -x;
+
+   y = x * 2.220446049250313080847263336181640625e-16 ; /* x / 2^52 */
+
+   /* as ulp(x) <= y = x/2^52 < 2*ulp(x),
+   we have x + ulp(x) <= x + y <= x + 2*ulp(x),
+   therefore o(x + y) = x + ulp(x) or x + 2*ulp(x) */
+
+   eps =  x + y;
+   eps = eps - x; /* ulp(x) or 2*ulp(x) */
+
+   return (eps > y) ? 0.5 * eps : eps;
+}
+
 /* returns the number of ulp's between a and b */
 int ulp (double a, double b)
 {
-  double eps=1.1102230246251565404e-16; /* 2^(-53) */
   if (a==0.0) {
     if (b==0.0) return 0;
     else if (b<0.0) return 2147483647;
     else return -2147483647;
   }
-  b = (a-b)/a;
-  if (b>0)
-    return (int) floor(b/eps);
-  else
-    return (int) ceil(b/eps);
+  return (a-b)/Ulp(a);
 }
 
 /* return double m*2^e */

@@ -55,11 +55,12 @@ _mpfr_ceil_exp2 (double d)
 {
   long exp;
   union ieee_double_extract x;
-  
+
   exp = (long) d;
   if (d != (double) exp) exp++;
   /* now exp = ceil(d) */
   x.d = 1.0;
+  if (exp < -1022) exp = -1022;
   x.s.exp = 1023 + exp;
   return x.d;
 }
@@ -147,12 +148,12 @@ mpfr_agm (r, op2, op1, rnd_mode)
     
     eq=0;
     
-    err=1 + (int) ((3.0/2.0*_mpfr_ceil_log2(p)+1.0)*_mpfr_ceil_exp2(-(double)p)
+    err=1 + (int) ((3.0/2.0*(double)_mpfr_ceil_log2((double)p)+1.0)*_mpfr_ceil_exp2(-(double)p)
 	     +3.0*_mpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
     if(p-err-3<=q) {
       p=q+err+4;
       err= 1 + 
-	(int) ((3.0/2.0*_mpfr_ceil_log2(p)+1.0)*_mpfr_ceil_exp2(-(double)p)
+	(int) ((3.0/2.0*_mpfr_ceil_log2((double)p)+1.0)*_mpfr_ceil_exp2(-(double)p)
 	       +3.0*_mpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
     }
 

@@ -35,11 +35,11 @@ MA 02111-1307, USA. */
 
 int
 #if __STDC__
-mpfr_set_str(mpfr_ptr x, char *str, int base, mp_rnd_t rnd_mode)
+mpfr_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd_mode)
 #else
-mpfr_set_str(x, str, base, rnd_mode)
+mpfr_set_str (x, str, base, rnd_mode)
      mpfr_ptr x;
-     char *str;
+     __gmp_const char *str;
      int base;
      mp_rnd_t rnd_mode;
 #endif
@@ -98,7 +98,7 @@ mpfr_set_str(x, str, base, rnd_mode)
   }
   else {
     expn = -k;
-    endptr = str;
+    endptr = (char*) str;
   }
 
   /* the number is mantissa*base^expn */

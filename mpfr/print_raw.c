@@ -94,15 +94,11 @@ mpfr_print_raw(x)
 	= 17 + MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB
       */
     alloc_size = 17 + MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB;
-     str = (char *) (*_mp_allocate_func) (alloc_size * sizeof(char));
-     if (str == NULL) {
-       fprintf (stderr, "Error in mpfr_print_raw: no more memory available\n");
-       exit (1);
-     }
+     str = (char *) (*__gmp_allocate_func) (alloc_size * sizeof(char));
      mpfr_get_str_raw(str, x);
 
      printf("%s", str); 
-     (*_mp_free_func) (str, alloc_size * sizeof(char));
+     (*__gmp_free_func) (str, alloc_size * sizeof(char));
   }
 }
 

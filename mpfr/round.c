@@ -113,10 +113,10 @@ mpfr_round_raw2(xp, xn, neg, rnd, prec)
 */
 int
 #if __STDC__
-mpfr_round_raw(mp_limb_t *y, mp_limb_t *xp, mp_prec_t xprec, int negative,
+mpfr_round_raw (mp_limb_t *y, mp_limb_t *xp, mp_prec_t xprec, int negative,
 	       mp_prec_t yprec, mp_rnd_t rnd_mode)
 #else
-mpfr_round_raw(y, xp, xprec, negative, yprec, rnd_mode)
+mpfr_round_raw (y, xp, xprec, negative, yprec, rnd_mode)
      mp_limb_t *y; 
      mp_limb_t *xp; 
      mp_prec_t xprec; 
@@ -142,7 +142,8 @@ mpfr_round_raw(y, xp, xprec, negative, yprec, rnd_mode)
   /* precision is larger than the size of x. No rounding is necessary. 
      Just add zeroes at the end */
   if (xsize < nw) { 
-    MPN_COPY(y + nw - xsize, xp, xsize);
+    /* if y=xp, maybe an overlap: MPN_COPY_DECR is ok when src <= dst */
+    MPN_COPY_DECR(y + nw - xsize, xp, xsize);
     MPN_ZERO(y, nw - xsize); /* PZ 27 May 99 */
     y[0] &= mask;
     return 0; 
@@ -156,8 +157,8 @@ mpfr_round_raw(y, xp, xprec, negative, yprec, rnd_mode)
       else
 	carry = mpn_add_1(y, xp + xsize - nw, nw, 1); 
     }
-
-  else MPN_COPY(y, xp + xsize - nw, nw);
+  else /* now xsize >= nw */
+    MPN_COPY_INCR(y, xp + xsize - nw, nw);
 
   y[0] &= mask;
   return carry; 
@@ -165,9 +166,9 @@ mpfr_round_raw(y, xp, xprec, negative, yprec, rnd_mode)
 
 void
 #if __STDC__
-mpfr_round(mpfr_ptr x, mp_rnd_t rnd_mode, mp_prec_t prec)
+mpfr_round (mpfr_ptr x, mp_rnd_t rnd_mode, mp_prec_t prec)
 #else
-mpfr_round(x, rnd_mode, prec)
+mpfr_round (x, rnd_mode, prec)
      mpfr_ptr x; 
      mp_rnd_t rnd_mode; 
      mp_prec_t prec; 
@@ -183,12 +184,8 @@ mpfr_round(x, rnd_mode, prec)
 
   /* check if x has enough allocated space for the mantissa */
   if (nw > MPFR_ABSSIZE(x)) {
-    MPFR_MANT(x) = (mp_ptr) (*_mp_reallocate_func) 
+    MPFR_MANT(x) = (mp_ptr) (*__gmp_reallocate_func) 
       (MPFR_MANT(x), MPFR_ABSSIZE(x)*BYTES_PER_MP_LIMB, nw * BYTES_PER_MP_LIMB);
-    if (MPFR_MANT(x) == NULL) {
-      fprintf (stderr, "Error in mpfr_round: no more memory available\n");
-      exit (1);
-    }
     MPFR_SIZE(x) = nw; /* new number of allocated limbs */
   }
 

@@ -43,11 +43,7 @@ mpfr_init2 (x, p)
   xsize = (p - 1)/BITS_PER_MP_LIMB + 1; 
 
   MPFR_PREC(x) = p;
-  MPFR_MANT(x) = (mp_ptr) (*_mp_allocate_func) (xsize * BYTES_PER_MP_LIMB);
-  if (MPFR_MANT(x) == NULL) {
-    fprintf (stderr, "Error in mpfr_init2: no more memory available\n");
-    exit (1);
-  }
+  MPFR_MANT(x) = (mp_ptr) (*__gmp_allocate_func) (xsize * BYTES_PER_MP_LIMB);
   MPFR_SIZE(x) = xsize;
   MPFR_CLEAR_FLAGS(x); 
   MPFR_SET_ZERO(x); /* initializes to zero */
@@ -62,5 +58,5 @@ mpfr_init (x)
      mpfr_ptr x;
 #endif
 {
-  mpfr_init2(x, __gmp_default_fp_bit_precision);
+  mpfr_init2(x, __mpfr_default_fp_bit_precision);
 }

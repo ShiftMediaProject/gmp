@@ -43,12 +43,8 @@ mpfr_set_prec (x, p)
   xsize = (p - 1)/BITS_PER_MP_LIMB + 1; /* new limb size */
 
   if (xsize > MPFR_ABSSIZE(x)) {
-    MPFR_MANT(x) = (mp_ptr) (*_mp_reallocate_func) (MPFR_MANT(x), 
+    MPFR_MANT(x) = (mp_ptr) (*__gmp_reallocate_func) (MPFR_MANT(x), 
 		 MPFR_ABSSIZE(x)*BYTES_PER_MP_LIMB, xsize * BYTES_PER_MP_LIMB);
-    if (MPFR_MANT(x) == NULL) {
-      fprintf (stderr, "Error in mpfr_set_prec: no more memory available\n");
-      exit (1);
-    }
     MPFR_SIZE(x) = xsize; /* new number of allocated limbs */
   }
 

@@ -37,11 +37,12 @@ MA 02111-1307, USA. */
 
   For op = 3.1416 we get str = "31416" and expptr=1.
  */
+char*
 #if __STDC__
-char *mpfr_get_str(char *str, mp_exp_t *expptr, int base, size_t n,
+mpfr_get_str (char *str, mp_exp_t *expptr, int base, size_t n,
 		  mpfr_srcptr op, mp_rnd_t rnd_mode)
 #else
-char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
+mpfr_get_str (str, expptr, base, n, op, rnd_mode)
      char *str;
      mp_exp_t *expptr;
      int base;
@@ -50,8 +51,13 @@ char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
      mp_rnd_t rnd_mode;
 #endif
 {
-  double d; long e, q, div, p, err, prec, sh; mpfr_t a, b; mpz_t bz;
-  char *str0=NULL; mp_rnd_t rnd1; int f, pow2, ok=0, neg;
+  double d;
+  long e, q, div, p, err, prec, sh;
+  mpfr_t a, b;
+  mpz_t bz;
+  char *str0=NULL;
+  mp_rnd_t rnd1;
+  int f, pow2, ok=0, neg, str_is_null=0;
 
   if (base<2 || 36<base) {
     fprintf(stderr, "Error: too small or too large base in mpfr_get_str: %d\n",
@@ -62,33 +68,23 @@ char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
   neg = (MPFR_SIGN(op)<0) ? 1 : 0;
 
   if (MPFR_IS_INF(op)) { 
-    if (str == NULL) {
-      str = (*_mp_allocate_func)(neg + 4);
-      if (str == NULL) {
-	fprintf (stderr, "Error in mpfr_get_str: no more memory available\n");
-	exit (1);
-      }
-    }
-    str0 = str; 
+    if (str == NULL)
+      str = (*__gmp_allocate_func)(neg + 4);
+    str0 = str;
     if (neg) { *str++ = '-'; }
-    *str++ = 'I'; *str++ = 'n'; *str++ = 'f'; *str='\0'; 
-    return str0; 
+    *str++ = 'I'; *str++ = 'n'; *str++ = 'f'; *str='\0';
+    return str0; /* strlen(str0) = neg + 3 */
   }
 
   if (!MPFR_NOTZERO(op)) {
-    if (str == NULL) {
-      str = (*_mp_allocate_func)(neg + n + 1);
-      if (str == NULL) {
-	fprintf (stderr, "Error in mpfr_get_str: no more memory available\n");
-	exit (1);
-      }
-    }
+    if (str == NULL)
+      str = (*__gmp_allocate_func)(neg + n + 1);
     str0 = str;
-    if (MPFR_SIGN(op)<0) *str++ = '-';
+    if (neg) *str++ = '-';
     for (f=0;f<n;f++) *str++ = '0';
     *str++ = '\0';
     *expptr = 1;
-    return str0;
+    return str0; /* strlen(str0) = neg + n */
   }
 
   count_leading_zeros(pow2, (mp_limb_t)base); 
@@ -205,11 +201,7 @@ char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
   /* computes the number of characters needed */
   q = neg + n + 2; /* n+1 may not be enough for 100000... */
   if (str == NULL) {
-    str0 = str = (*_mp_allocate_func)(q);
-    if (str == NULL) {
-      fprintf (stderr, "Error in mpfr_get_str: no more memory available\n");
-      exit (1);
-    }
+    str0 = str = (*__gmp_allocate_func) (q);
   }
   if (neg) *str++='-';
   mpz_get_str(str, base, bz); /* n digits of mantissa */
@@ -224,6 +216,12 @@ char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
   }
   *expptr = f;
   mpfr_clear(a); mpfr_clear(b); mpz_clear(bz);
+
+  /* if the given string was null, ensure we return a block which is exactly
+     strlen(str)+1 bytes long (useful for __gmp_free_func and the C++ wrapper)
+  */
+  if (str_is_null && ((strlen(str0) + 1) != q))
+    str0 = (char*) (*__gmp_reallocate_func) (str0, q, strlen(str0) + 1);
+
   return str0;
 }
-

@@ -43,15 +43,7 @@ mpz_set_fr (z, f)
   fn = 1 + (MPFR_PREC(f)-1)/BITS_PER_MP_LIMB;
 
   /* check whether allocated space for z is enough */
-  if (ALLOC(z) < fn) {
-    PTR(z) = (mp_ptr) (*_mp_reallocate_func) (PTR(z), 
-	   ABS(SIZ(z))*BYTES_PER_MP_LIMB, fn*BYTES_PER_MP_LIMB);
-    if (PTR(z) == NULL) {
-      fprintf (stderr, "Error in mpz_set_fr: no more memory available\n");
-      exit (1);
-    }
-    ALLOC(z) = fn;
-  }
+  if (ALLOC(z) < fn) MPZ_REALLOC(z,fn);
 
   sh = fn*BITS_PER_MP_LIMB - MPFR_PREC(f);
   if (sh) mpn_rshift(PTR(z), MPFR_MANT(f), fn, sh);

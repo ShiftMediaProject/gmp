@@ -148,8 +148,8 @@ mpfr_log (r, a, rnd_mode)
     /* we have 7 ulps of error from the above roundings,
        4 ulps from the 4/s^2 second order term,
        plus the cancelled bits */
-    if (mpfr_can_round(cst,p-cancel-4,GMP_RNDN,rnd_mode,q)==1) {
-      mpfr_set(r,cst,rnd_mode);
+    if (mpfr_can_round (cst, p - cancel - 4, GMP_RNDN, rnd_mode, q) == 1) {
+      mpfr_set (r, cst, rnd_mode);
 #ifdef DEBUG
       printf("result="); mpfr_print_raw(r); putchar('\n');
 #endif
@@ -157,8 +157,7 @@ mpfr_log (r, a, rnd_mode)
     }
     /* else we increase the precision */
     else {
-      p += BITS_PER_MP_LIMB+cancel;
-      TMP_FREE(marker);
+      p += BITS_PER_MP_LIMB + cancel;
     }
 
     /* We clean */

@@ -34,5 +34,5 @@ mpfr_clear (m)
 #endif
 {
   /* be careful to always free an entire number of limbs */
-  (*_mp_free_func) (MPFR_MANT(m), MPFR_ABSSIZE(m) * BYTES_PER_MP_LIMB);
+  (*__gmp_free_func) (MPFR_MANT(m), MPFR_ABSSIZE(m) * BYTES_PER_MP_LIMB);
 }

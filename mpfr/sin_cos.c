@@ -71,7 +71,7 @@ mpfr_sin_cos (sinus, cosinus, x, rnd_mode)
   mpfr_t tmp;
   mpfr_t inter;
   int ttt;
-  int twopoweri;
+  int twopoweri, expo;
   int Prec;
   int loop;
   int prec_x;
@@ -83,6 +83,7 @@ mpfr_sin_cos (sinus, cosinus, x, rnd_mode)
   int logn;
   int tmp_factor;
   int tmpi;
+  TMP_DECL (marker);
 
   if (sinus == cosinus) {
     fprintf (stderr, "Error in mpfr_sin_cos: 1st and 2nd operands must be different\n");
@@ -90,22 +91,45 @@ mpfr_sin_cos (sinus, cosinus, x, rnd_mode)
   }
 
   if (MPFR_IS_NAN(x) || MPFR_IS_INF(x)) {
-    MPFR_SET_NAN(sinus);
-    MPFR_SET_NAN(cosinus);
+    if (sinus != NULL) MPFR_SET_NAN(sinus);
+    if (cosinus != NULL) MPFR_SET_NAN(cosinus);
     return 1; /* inexact */
   }
 
   if (!MPFR_NOTZERO(x)) { 
-    mpfr_set_ui(sinus, 0, GMP_RNDN); 
-    mpfr_set_ui(cosinus, 1, GMP_RNDN); 
+    if (sinus != NULL) mpfr_set_ui (sinus, 0, GMP_RNDN); 
+    if (cosinus != NULL) mpfr_set_ui (cosinus, 1, GMP_RNDN); 
     return 0; /* exact results */
+  }
+
+  TMP_MARK (marker);
+  /* allow sinus or cosinus to be NULL */
+  if (sinus == NULL) { mp_size_t s;
+    if (cosinus == NULL) {
+      fprintf (stderr, "Error in mpfr_sin_cos: 1st and 2nd operands cannot be NULL simultaneously\n");
+      exit (1);
+    }
+    s = 1 + (MPFR_PREC(cosinus) - 1) / BITS_PER_MP_LIMB;
+    sinus = TMP_ALLOC (sizeof(mpfr_t));
+    MPFR_MANT(sinus) = (mp_ptr) TMP_ALLOC(s*BYTES_PER_MP_LIMB);
+    MPFR_PREC(sinus) = MPFR_PREC(cosinus);
+    MPFR_SIZE(sinus) = s;
+    MPFR_EXP(sinus) = 0;
+  }
+  else if (cosinus == NULL) { mp_size_t s;
+    s = 1 + (MPFR_PREC(sinus) - 1) / BITS_PER_MP_LIMB;
+    cosinus = TMP_ALLOC (sizeof(mpfr_t));
+    MPFR_MANT(cosinus) = (mp_ptr) TMP_ALLOC(s*BYTES_PER_MP_LIMB);
+    MPFR_PREC(cosinus) = MPFR_PREC(sinus);
+    MPFR_SIZE(cosinus) = s;
+    MPFR_EXP(cosinus) = 0;
   }
 
   prec_x = _mpfr_ceil_log2 ((double) MPFR_PREC(x) / BITS_PER_MP_LIMB);
   ttt = MPFR_EXP(x);
   mpfr_init2(x_copy, MPFR_PREC(x));
   mpfr_set(x_copy,x,GMP_RNDD);
-  mpz_init(square);
+  mpz_init (square);
   /* on fait le shift pour que le nombre soit inferieur a 1 */
   if (ttt > 0) 
     {
@@ -135,25 +159,31 @@ mpfr_sin_cos (sinus, cosinus, x, rnd_mode)
     mpfr_set_ui(tmp_cos,1,GMP_RNDN);
     twopoweri = BITS_PER_MP_LIMB;   
     if (k <= prec_x) iter = k; else iter= prec_x;
-    for(i = 0; i <= iter; i++){
+    for(i = 0; i <= iter; i++) {
       mpfr_extract (uk, x_copy, i);
+      expo = twopoweri - ttt;
 	if (i)
 	  {
+	    if (twopoweri > target_prec) {
+	      /* truncate the last uk, i.e. bits twopoweri/2 to twopoweri */
+	      mpz_div_2exp (uk, uk, twopoweri - target_prec);
+	      expo -= twopoweri - target_prec;
+	    }
 	    mpz_mul (square, uk, uk);
 	    mpz_neg (square, square);
-	    mpfr_sin_aux (t_sin, square, 2*(twopoweri - ttt) + 2, k - i + 1);
-	    mpfr_cos_aux (t_cos, square, 2*(twopoweri - ttt) + 2, k - i + 1);
+	    mpfr_sin_aux (t_sin, square, 2*expo + 2, k - i + 1);
+	    mpfr_cos_aux (t_cos, square, 2*expo + 2, k - i + 1);
 	    mpfr_set_z (tmp, uk, GMP_RNDD);
 	    mpfr_mul (t_sin, t_sin, tmp, GMP_RNDD);
-	    mpfr_div_2exp (t_sin, t_sin, twopoweri - ttt, GMP_RNDD);
+	    mpfr_div_2exp (t_sin, t_sin, MIN(twopoweri, target_prec) - ttt, GMP_RNDD);
 	  }
 	else
 	  {
 	    /* cas particulier : on est oblige de faire les calculs avec x/2^. 
 	       puis elever au carre (plus rapide) */    
 	    mpz_set (square, uk);
-	    mpz_mul(square, square, square);
-	    mpz_neg(square, square);
+	    mpz_mul (square, square, square);
+	    mpz_neg (square, square);
 	    /* pour l'instant, shift = 0 ... */
 	    /* ATTENTION, IL FAUT AUSSI MULTIPLIER LE DENOMINATEUR */
 	    mpfr_sin_aux(t_sin,square, 2*(shift + twopoweri - ttt) + 2, k+1);
@@ -239,8 +269,7 @@ mpfr_sin_cos (sinus, cosinus, x, rnd_mode)
   mpz_clear (uk);
   mpz_clear (square);
   mpfr_clear (x_copy);
+  TMP_FREE (marker);
+
   return 1; /* inexact result */
 } 
-
-
-

@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 
 extern void mpfr_sub1 _PROTO((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, 
 			      mp_rnd_t, int));
-void mpfr_add1 _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t, int));
+void mpfr_add1 _PROTO((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t, int));
 
 #define ONE ((mp_limb_t) 1)
 
