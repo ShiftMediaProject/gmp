@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -112,8 +112,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -199,31 +199,6 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
-	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  demos/expr/Makefile
-Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) && \
-	  CONFIG_HEADERS= CONFIG_LINKS= \
-	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-expr-impl.h: $(top_builddir)/config.status expr-impl-h.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@:demos/expr/expr-impl-h.in CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
-libexpr.a: $(libexpr_a_OBJECTS) $(libexpr_a_DEPENDENCIES)
-	-rm -f libexpr.a
-	$(libexpr_a_AR) libexpr.a $(libexpr_a_OBJECTS) $(libexpr_a_LIBADD)
-	$(RANLIB) libexpr.a
-run-expr$(EXEEXT): $(run_expr_OBJECTS) $(run_expr_DEPENDENCIES)
-	@rm -f run-expr$(EXEEXT)
-	$(LINK) $(run_expr_LDFLAGS) $(run_expr_OBJECTS) $(run_expr_LDADD) $(LIBS)
-t-expr$(EXEEXT): $(t_expr_OBJECTS) $(t_expr_DEPENDENCIES)
-	@rm -f t-expr$(EXEEXT)
-	$(LINK) $(t_expr_LDFLAGS) $(t_expr_OBJECTS) $(t_expr_LDADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -233,6 +208,31 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  demos/expr/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+expr-impl.h: $(top_builddir)/config.status expr-impl-h.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@:demos/expr/expr-impl-h.in CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
+libexpr.a: $(libexpr_a_OBJECTS) $(libexpr_a_DEPENDENCIES) 
+	-rm -f libexpr.a
+	$(libexpr_a_AR) libexpr.a $(libexpr_a_OBJECTS) $(libexpr_a_LIBADD)
+	$(RANLIB) libexpr.a
+run-expr$(EXEEXT): $(run_expr_OBJECTS) $(run_expr_DEPENDENCIES) 
+	@rm -f run-expr$(EXEEXT)
+	$(LINK) $(run_expr_LDFLAGS) $(run_expr_OBJECTS) $(run_expr_LDADD) $(LIBS)
+t-expr$(EXEEXT): $(t_expr_OBJECTS) $(t_expr_DEPENDENCIES) 
+	@rm -f t-expr$(EXEEXT)
+	$(LINK) $(t_expr_LDFLAGS) $(t_expr_OBJECTS) $(t_expr_LDADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
 
 ANSI2KNR = $(top_builddir)/ansi2knr
 $(top_builddir)/ansi2knr:
@@ -308,10 +308,10 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
@@ -402,17 +402,15 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
 
 uninstall-am: uninstall-info-am
 
-uninstall-info: uninstall-info-am
-
-.PHONY: all all-am check check-am clean clean-generic clean-libtool \
-	distclean distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am info info-am install \
-	install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
-	mostlyclean-libtool tags uninstall uninstall-am \
+.PHONY: GTAGS all all-am check check-am clean clean-generic \
+	clean-libtool distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-kr mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
 

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -112,8 +112,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -214,6 +214,15 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  tests/mpq/Makefile
@@ -224,31 +233,31 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-t-cmp$(EXEEXT): $(t_cmp_OBJECTS) $(t_cmp_DEPENDENCIES)
+t-cmp$(EXEEXT): $(t_cmp_OBJECTS) $(t_cmp_DEPENDENCIES) 
 	@rm -f t-cmp$(EXEEXT)
 	$(LINK) $(t_cmp_LDFLAGS) $(t_cmp_OBJECTS) $(t_cmp_LDADD) $(LIBS)
-t-cmp_si$(EXEEXT): $(t_cmp_si_OBJECTS) $(t_cmp_si_DEPENDENCIES)
+t-cmp_si$(EXEEXT): $(t_cmp_si_OBJECTS) $(t_cmp_si_DEPENDENCIES) 
 	@rm -f t-cmp_si$(EXEEXT)
 	$(LINK) $(t_cmp_si_LDFLAGS) $(t_cmp_si_OBJECTS) $(t_cmp_si_LDADD) $(LIBS)
-t-cmp_ui$(EXEEXT): $(t_cmp_ui_OBJECTS) $(t_cmp_ui_DEPENDENCIES)
+t-cmp_ui$(EXEEXT): $(t_cmp_ui_OBJECTS) $(t_cmp_ui_DEPENDENCIES) 
 	@rm -f t-cmp_ui$(EXEEXT)
 	$(LINK) $(t_cmp_ui_LDFLAGS) $(t_cmp_ui_OBJECTS) $(t_cmp_ui_LDADD) $(LIBS)
-t-equal$(EXEEXT): $(t_equal_OBJECTS) $(t_equal_DEPENDENCIES)
+t-equal$(EXEEXT): $(t_equal_OBJECTS) $(t_equal_DEPENDENCIES) 
 	@rm -f t-equal$(EXEEXT)
 	$(LINK) $(t_equal_LDFLAGS) $(t_equal_OBJECTS) $(t_equal_LDADD) $(LIBS)
-t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES)
+t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES) 
 	@rm -f t-get_d$(EXEEXT)
 	$(LINK) $(t_get_d_LDFLAGS) $(t_get_d_OBJECTS) $(t_get_d_LDADD) $(LIBS)
-t-get_str$(EXEEXT): $(t_get_str_OBJECTS) $(t_get_str_DEPENDENCIES)
+t-get_str$(EXEEXT): $(t_get_str_OBJECTS) $(t_get_str_DEPENDENCIES) 
 	@rm -f t-get_str$(EXEEXT)
 	$(LINK) $(t_get_str_LDFLAGS) $(t_get_str_OBJECTS) $(t_get_str_LDADD) $(LIBS)
-t-md_2exp$(EXEEXT): $(t_md_2exp_OBJECTS) $(t_md_2exp_DEPENDENCIES)
+t-md_2exp$(EXEEXT): $(t_md_2exp_OBJECTS) $(t_md_2exp_DEPENDENCIES) 
 	@rm -f t-md_2exp$(EXEEXT)
 	$(LINK) $(t_md_2exp_LDFLAGS) $(t_md_2exp_OBJECTS) $(t_md_2exp_LDADD) $(LIBS)
-t-set_f$(EXEEXT): $(t_set_f_OBJECTS) $(t_set_f_DEPENDENCIES)
+t-set_f$(EXEEXT): $(t_set_f_OBJECTS) $(t_set_f_DEPENDENCIES) 
 	@rm -f t-set_f$(EXEEXT)
 	$(LINK) $(t_set_f_LDFLAGS) $(t_set_f_OBJECTS) $(t_set_f_LDADD) $(LIBS)
-t-set_str$(EXEEXT): $(t_set_str_OBJECTS) $(t_set_str_DEPENDENCIES)
+t-set_str$(EXEEXT): $(t_set_str_OBJECTS) $(t_set_str_DEPENDENCIES) 
 	@rm -f t-set_str$(EXEEXT)
 	$(LINK) $(t_set_str_LDFLAGS) $(t_set_str_OBJECTS) $(t_set_str_LDADD) $(LIBS)
 
@@ -257,15 +266,6 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 
 ANSI2KNR = $(top_builddir)/ansi2knr
 $(top_builddir)/ansi2knr:
@@ -334,10 +334,10 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
@@ -484,18 +484,17 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
 
 uninstall-am: uninstall-info-am
 
-uninstall-info: uninstall-info-am
-
-.PHONY: all all-am check check-TESTS check-am clean clean-checkPROGRAMS \
-	clean-generic clean-libtool distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
-	uninstall uninstall-am uninstall-info-am
+.PHONY: GTAGS all all-am check check-TESTS check-am clean \
+	clean-checkPROGRAMS clean-generic clean-libtool distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool tags uninstall uninstall-am \
+	uninstall-info-am
 
 
 $(top_builddir)/tests/libtests.la:

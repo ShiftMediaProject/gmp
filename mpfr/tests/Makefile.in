@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -112,8 +112,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -360,6 +360,15 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  mpfr/tests/Makefile
@@ -370,115 +379,115 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-reuse$(EXEEXT): $(reuse_OBJECTS) $(reuse_DEPENDENCIES)
+reuse$(EXEEXT): $(reuse_OBJECTS) $(reuse_DEPENDENCIES) 
 	@rm -f reuse$(EXEEXT)
 	$(LINK) $(reuse_LDFLAGS) $(reuse_OBJECTS) $(reuse_LDADD) $(LIBS)
-tabs$(EXEEXT): $(tabs_OBJECTS) $(tabs_DEPENDENCIES)
+tabs$(EXEEXT): $(tabs_OBJECTS) $(tabs_DEPENDENCIES) 
 	@rm -f tabs$(EXEEXT)
 	$(LINK) $(tabs_LDFLAGS) $(tabs_OBJECTS) $(tabs_LDADD) $(LIBS)
-tadd$(EXEEXT): $(tadd_OBJECTS) $(tadd_DEPENDENCIES)
+tadd$(EXEEXT): $(tadd_OBJECTS) $(tadd_DEPENDENCIES) 
 	@rm -f tadd$(EXEEXT)
 	$(LINK) $(tadd_LDFLAGS) $(tadd_OBJECTS) $(tadd_LDADD) $(LIBS)
-tagm$(EXEEXT): $(tagm_OBJECTS) $(tagm_DEPENDENCIES)
+tagm$(EXEEXT): $(tagm_OBJECTS) $(tagm_DEPENDENCIES) 
 	@rm -f tagm$(EXEEXT)
 	$(LINK) $(tagm_LDFLAGS) $(tagm_OBJECTS) $(tagm_LDADD) $(LIBS)
-tcan_round$(EXEEXT): $(tcan_round_OBJECTS) $(tcan_round_DEPENDENCIES)
+tcan_round$(EXEEXT): $(tcan_round_OBJECTS) $(tcan_round_DEPENDENCIES) 
 	@rm -f tcan_round$(EXEEXT)
 	$(LINK) $(tcan_round_LDFLAGS) $(tcan_round_OBJECTS) $(tcan_round_LDADD) $(LIBS)
-tcmp$(EXEEXT): $(tcmp_OBJECTS) $(tcmp_DEPENDENCIES)
+tcmp$(EXEEXT): $(tcmp_OBJECTS) $(tcmp_DEPENDENCIES) 
 	@rm -f tcmp$(EXEEXT)
 	$(LINK) $(tcmp_LDFLAGS) $(tcmp_OBJECTS) $(tcmp_LDADD) $(LIBS)
-tcmp2$(EXEEXT): $(tcmp2_OBJECTS) $(tcmp2_DEPENDENCIES)
+tcmp2$(EXEEXT): $(tcmp2_OBJECTS) $(tcmp2_DEPENDENCIES) 
 	@rm -f tcmp2$(EXEEXT)
 	$(LINK) $(tcmp2_LDFLAGS) $(tcmp2_OBJECTS) $(tcmp2_LDADD) $(LIBS)
-tcmp_ui$(EXEEXT): $(tcmp_ui_OBJECTS) $(tcmp_ui_DEPENDENCIES)
+tcmp_ui$(EXEEXT): $(tcmp_ui_OBJECTS) $(tcmp_ui_DEPENDENCIES) 
 	@rm -f tcmp_ui$(EXEEXT)
 	$(LINK) $(tcmp_ui_LDFLAGS) $(tcmp_ui_OBJECTS) $(tcmp_ui_LDADD) $(LIBS)
-tdiv$(EXEEXT): $(tdiv_OBJECTS) $(tdiv_DEPENDENCIES)
+tdiv$(EXEEXT): $(tdiv_OBJECTS) $(tdiv_DEPENDENCIES) 
 	@rm -f tdiv$(EXEEXT)
 	$(LINK) $(tdiv_LDFLAGS) $(tdiv_OBJECTS) $(tdiv_LDADD) $(LIBS)
-tdiv_ui$(EXEEXT): $(tdiv_ui_OBJECTS) $(tdiv_ui_DEPENDENCIES)
+tdiv_ui$(EXEEXT): $(tdiv_ui_OBJECTS) $(tdiv_ui_DEPENDENCIES) 
 	@rm -f tdiv_ui$(EXEEXT)
 	$(LINK) $(tdiv_ui_LDFLAGS) $(tdiv_ui_OBJECTS) $(tdiv_ui_LDADD) $(LIBS)
-tdump$(EXEEXT): $(tdump_OBJECTS) $(tdump_DEPENDENCIES)
+tdump$(EXEEXT): $(tdump_OBJECTS) $(tdump_DEPENDENCIES) 
 	@rm -f tdump$(EXEEXT)
 	$(LINK) $(tdump_LDFLAGS) $(tdump_OBJECTS) $(tdump_LDADD) $(LIBS)
-teq$(EXEEXT): $(teq_OBJECTS) $(teq_DEPENDENCIES)
+teq$(EXEEXT): $(teq_OBJECTS) $(teq_DEPENDENCIES) 
 	@rm -f teq$(EXEEXT)
 	$(LINK) $(teq_LDFLAGS) $(teq_OBJECTS) $(teq_LDADD) $(LIBS)
-texp$(EXEEXT): $(texp_OBJECTS) $(texp_DEPENDENCIES)
+texp$(EXEEXT): $(texp_OBJECTS) $(texp_DEPENDENCIES) 
 	@rm -f texp$(EXEEXT)
 	$(LINK) $(texp_LDFLAGS) $(texp_OBJECTS) $(texp_LDADD) $(LIBS)
-tget_str$(EXEEXT): $(tget_str_OBJECTS) $(tget_str_DEPENDENCIES)
+tget_str$(EXEEXT): $(tget_str_OBJECTS) $(tget_str_DEPENDENCIES) 
 	@rm -f tget_str$(EXEEXT)
 	$(LINK) $(tget_str_LDFLAGS) $(tget_str_OBJECTS) $(tget_str_LDADD) $(LIBS)
-tlog$(EXEEXT): $(tlog_OBJECTS) $(tlog_DEPENDENCIES)
+tlog$(EXEEXT): $(tlog_OBJECTS) $(tlog_DEPENDENCIES) 
 	@rm -f tlog$(EXEEXT)
 	$(LINK) $(tlog_LDFLAGS) $(tlog_OBJECTS) $(tlog_LDADD) $(LIBS)
-tlog2$(EXEEXT): $(tlog2_OBJECTS) $(tlog2_DEPENDENCIES)
+tlog2$(EXEEXT): $(tlog2_OBJECTS) $(tlog2_DEPENDENCIES) 
 	@rm -f tlog2$(EXEEXT)
 	$(LINK) $(tlog2_LDFLAGS) $(tlog2_OBJECTS) $(tlog2_LDADD) $(LIBS)
-tmul$(EXEEXT): $(tmul_OBJECTS) $(tmul_DEPENDENCIES)
+tmul$(EXEEXT): $(tmul_OBJECTS) $(tmul_DEPENDENCIES) 
 	@rm -f tmul$(EXEEXT)
 	$(LINK) $(tmul_LDFLAGS) $(tmul_OBJECTS) $(tmul_LDADD) $(LIBS)
-tmul_2exp$(EXEEXT): $(tmul_2exp_OBJECTS) $(tmul_2exp_DEPENDENCIES)
+tmul_2exp$(EXEEXT): $(tmul_2exp_OBJECTS) $(tmul_2exp_DEPENDENCIES) 
 	@rm -f tmul_2exp$(EXEEXT)
 	$(LINK) $(tmul_2exp_LDFLAGS) $(tmul_2exp_OBJECTS) $(tmul_2exp_LDADD) $(LIBS)
-tmul_ui$(EXEEXT): $(tmul_ui_OBJECTS) $(tmul_ui_DEPENDENCIES)
+tmul_ui$(EXEEXT): $(tmul_ui_OBJECTS) $(tmul_ui_DEPENDENCIES) 
 	@rm -f tmul_ui$(EXEEXT)
 	$(LINK) $(tmul_ui_LDFLAGS) $(tmul_ui_OBJECTS) $(tmul_ui_LDADD) $(LIBS)
-tout_str$(EXEEXT): $(tout_str_OBJECTS) $(tout_str_DEPENDENCIES)
+tout_str$(EXEEXT): $(tout_str_OBJECTS) $(tout_str_DEPENDENCIES) 
 	@rm -f tout_str$(EXEEXT)
 	$(LINK) $(tout_str_LDFLAGS) $(tout_str_OBJECTS) $(tout_str_LDADD) $(LIBS)
-tpi$(EXEEXT): $(tpi_OBJECTS) $(tpi_DEPENDENCIES)
+tpi$(EXEEXT): $(tpi_OBJECTS) $(tpi_DEPENDENCIES) 
 	@rm -f tpi$(EXEEXT)
 	$(LINK) $(tpi_LDFLAGS) $(tpi_OBJECTS) $(tpi_LDADD) $(LIBS)
-tpow$(EXEEXT): $(tpow_OBJECTS) $(tpow_DEPENDENCIES)
+tpow$(EXEEXT): $(tpow_OBJECTS) $(tpow_DEPENDENCIES) 
 	@rm -f tpow$(EXEEXT)
 	$(LINK) $(tpow_LDFLAGS) $(tpow_OBJECTS) $(tpow_LDADD) $(LIBS)
-trandom$(EXEEXT): $(trandom_OBJECTS) $(trandom_DEPENDENCIES)
+trandom$(EXEEXT): $(trandom_OBJECTS) $(trandom_DEPENDENCIES) 
 	@rm -f trandom$(EXEEXT)
 	$(LINK) $(trandom_LDFLAGS) $(trandom_OBJECTS) $(trandom_LDADD) $(LIBS)
-tround$(EXEEXT): $(tround_OBJECTS) $(tround_DEPENDENCIES)
+tround$(EXEEXT): $(tround_OBJECTS) $(tround_DEPENDENCIES) 
 	@rm -f tround$(EXEEXT)
 	$(LINK) $(tround_LDFLAGS) $(tround_OBJECTS) $(tround_LDADD) $(LIBS)
-tset_d$(EXEEXT): $(tset_d_OBJECTS) $(tset_d_DEPENDENCIES)
+tset_d$(EXEEXT): $(tset_d_OBJECTS) $(tset_d_DEPENDENCIES) 
 	@rm -f tset_d$(EXEEXT)
 	$(LINK) $(tset_d_LDFLAGS) $(tset_d_OBJECTS) $(tset_d_LDADD) $(LIBS)
-tset_f$(EXEEXT): $(tset_f_OBJECTS) $(tset_f_DEPENDENCIES)
+tset_f$(EXEEXT): $(tset_f_OBJECTS) $(tset_f_DEPENDENCIES) 
 	@rm -f tset_f$(EXEEXT)
 	$(LINK) $(tset_f_LDFLAGS) $(tset_f_OBJECTS) $(tset_f_LDADD) $(LIBS)
-tset_q$(EXEEXT): $(tset_q_OBJECTS) $(tset_q_DEPENDENCIES)
+tset_q$(EXEEXT): $(tset_q_OBJECTS) $(tset_q_DEPENDENCIES) 
 	@rm -f tset_q$(EXEEXT)
 	$(LINK) $(tset_q_LDFLAGS) $(tset_q_OBJECTS) $(tset_q_LDADD) $(LIBS)
-tset_si$(EXEEXT): $(tset_si_OBJECTS) $(tset_si_DEPENDENCIES)
+tset_si$(EXEEXT): $(tset_si_OBJECTS) $(tset_si_DEPENDENCIES) 
 	@rm -f tset_si$(EXEEXT)
 	$(LINK) $(tset_si_LDFLAGS) $(tset_si_OBJECTS) $(tset_si_LDADD) $(LIBS)
-tset_str$(EXEEXT): $(tset_str_OBJECTS) $(tset_str_DEPENDENCIES)
+tset_str$(EXEEXT): $(tset_str_OBJECTS) $(tset_str_DEPENDENCIES) 
 	@rm -f tset_str$(EXEEXT)
 	$(LINK) $(tset_str_LDFLAGS) $(tset_str_OBJECTS) $(tset_str_LDADD) $(LIBS)
-tset_z$(EXEEXT): $(tset_z_OBJECTS) $(tset_z_DEPENDENCIES)
+tset_z$(EXEEXT): $(tset_z_OBJECTS) $(tset_z_DEPENDENCIES) 
 	@rm -f tset_z$(EXEEXT)
 	$(LINK) $(tset_z_LDFLAGS) $(tset_z_OBJECTS) $(tset_z_LDADD) $(LIBS)
-tsin_cos$(EXEEXT): $(tsin_cos_OBJECTS) $(tsin_cos_DEPENDENCIES)
+tsin_cos$(EXEEXT): $(tsin_cos_OBJECTS) $(tsin_cos_DEPENDENCIES) 
 	@rm -f tsin_cos$(EXEEXT)
 	$(LINK) $(tsin_cos_LDFLAGS) $(tsin_cos_OBJECTS) $(tsin_cos_LDADD) $(LIBS)
-tsqrt$(EXEEXT): $(tsqrt_OBJECTS) $(tsqrt_DEPENDENCIES)
+tsqrt$(EXEEXT): $(tsqrt_OBJECTS) $(tsqrt_DEPENDENCIES) 
 	@rm -f tsqrt$(EXEEXT)
 	$(LINK) $(tsqrt_LDFLAGS) $(tsqrt_OBJECTS) $(tsqrt_LDADD) $(LIBS)
-tsqrt_ui$(EXEEXT): $(tsqrt_ui_OBJECTS) $(tsqrt_ui_DEPENDENCIES)
+tsqrt_ui$(EXEEXT): $(tsqrt_ui_OBJECTS) $(tsqrt_ui_DEPENDENCIES) 
 	@rm -f tsqrt_ui$(EXEEXT)
 	$(LINK) $(tsqrt_ui_LDFLAGS) $(tsqrt_ui_OBJECTS) $(tsqrt_ui_LDADD) $(LIBS)
-tswap$(EXEEXT): $(tswap_OBJECTS) $(tswap_DEPENDENCIES)
+tswap$(EXEEXT): $(tswap_OBJECTS) $(tswap_DEPENDENCIES) 
 	@rm -f tswap$(EXEEXT)
 	$(LINK) $(tswap_LDFLAGS) $(tswap_OBJECTS) $(tswap_LDADD) $(LIBS)
-ttrunc$(EXEEXT): $(ttrunc_OBJECTS) $(ttrunc_DEPENDENCIES)
+ttrunc$(EXEEXT): $(ttrunc_OBJECTS) $(ttrunc_DEPENDENCIES) 
 	@rm -f ttrunc$(EXEEXT)
 	$(LINK) $(ttrunc_LDFLAGS) $(ttrunc_OBJECTS) $(ttrunc_LDADD) $(LIBS)
-tui_div$(EXEEXT): $(tui_div_OBJECTS) $(tui_div_DEPENDENCIES)
+tui_div$(EXEEXT): $(tui_div_OBJECTS) $(tui_div_DEPENDENCIES) 
 	@rm -f tui_div$(EXEEXT)
 	$(LINK) $(tui_div_LDFLAGS) $(tui_div_OBJECTS) $(tui_div_LDADD) $(LIBS)
-tui_sub$(EXEEXT): $(tui_sub_OBJECTS) $(tui_sub_DEPENDENCIES)
+tui_sub$(EXEEXT): $(tui_sub_OBJECTS) $(tui_sub_DEPENDENCIES) 
 	@rm -f tui_sub$(EXEEXT)
 	$(LINK) $(tui_sub_LDFLAGS) $(tui_sub_OBJECTS) $(tui_sub_LDADD) $(LIBS)
 
@@ -487,15 +496,6 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 
 .c.o:
 	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
@@ -534,10 +534,10 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
@@ -684,18 +684,16 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 
 uninstall-am: uninstall-info-am
 
-uninstall-info: uninstall-info-am
-
-.PHONY: all all-am check check-TESTS check-am clean clean-checkPROGRAMS \
-	clean-generic clean-libtool distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool tags uninstall \
-	uninstall-am uninstall-info-am
+.PHONY: GTAGS all all-am check check-TESTS check-am clean \
+	clean-checkPROGRAMS clean-generic clean-libtool distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	tags uninstall uninstall-am uninstall-info-am
 
 
 ../libmpfr.a:

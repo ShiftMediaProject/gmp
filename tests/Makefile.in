@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -135,8 +135,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -248,6 +248,15 @@ all: all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .s .S .asm .c .lo .o .obj
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(srcdir)/../mpn/Makeasm.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  tests/Makefile
@@ -258,23 +267,23 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkLTLIBRARIES:
 	-test -z "$(check_LTLIBRARIES)" || rm -f $(check_LTLIBRARIES)
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
 	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
-libtests.la: $(libtests_la_OBJECTS) $(libtests_la_DEPENDENCIES)
+libtests.la: $(libtests_la_OBJECTS) $(libtests_la_DEPENDENCIES) 
 	$(LINK)  $(libtests_la_LDFLAGS) $(libtests_la_OBJECTS) $(libtests_la_LIBADD) $(LIBS)
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
+t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES) 
 	@rm -f t-constants$(EXEEXT)
 	$(LINK) $(t_constants_LDFLAGS) $(t_constants_OBJECTS) $(t_constants_LDADD) $(LIBS)
-t-count_zeros$(EXEEXT): $(t_count_zeros_OBJECTS) $(t_count_zeros_DEPENDENCIES)
+t-count_zeros$(EXEEXT): $(t_count_zeros_OBJECTS) $(t_count_zeros_DEPENDENCIES) 
 	@rm -f t-count_zeros$(EXEEXT)
 	$(LINK) $(t_count_zeros_LDFLAGS) $(t_count_zeros_OBJECTS) $(t_count_zeros_LDADD) $(LIBS)
-t-gmpmax$(EXEEXT): $(t_gmpmax_OBJECTS) $(t_gmpmax_DEPENDENCIES)
+t-gmpmax$(EXEEXT): $(t_gmpmax_OBJECTS) $(t_gmpmax_DEPENDENCIES) 
 	@rm -f t-gmpmax$(EXEEXT)
 	$(LINK) $(t_gmpmax_LDFLAGS) $(t_gmpmax_OBJECTS) $(t_gmpmax_LDADD) $(LIBS)
-t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES)
+t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES) 
 	@rm -f t-modlinv$(EXEEXT)
 	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
 
@@ -283,15 +292,6 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 
 ANSI2KNR = $(top_builddir)/ansi2knr
 $(top_builddir)/ansi2knr:
@@ -427,10 +427,10 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
@@ -593,21 +593,22 @@ uninstall-am: uninstall-info-am
 
 uninstall-info: uninstall-info-recursive
 
-.PHONY: $(RECURSIVE_TARGETS) all all-am check check-TESTS check-am clean \
-	clean-checkLTLIBRARIES clean-checkPROGRAMS clean-generic \
+.PHONY: $(RECURSIVE_TARGETS) GTAGS all all-am check check-TESTS check-am \
+	clean clean-checkLTLIBRARIES clean-checkPROGRAMS clean-generic \
 	clean-libtool clean-recursive distclean distclean-compile \
 	distclean-generic distclean-libtool distclean-recursive \
 	distclean-tags distdir dvi dvi-am dvi-recursive info info-am \
 	info-recursive install install-am install-data install-data-am \
 	install-data-recursive install-exec install-exec-am \
-	install-exec-recursive install-info install-info-recursive \
-	install-man install-recursive install-strip installcheck \
-	installcheck-am installdirs installdirs-am \
-	installdirs-recursive maintainer-clean maintainer-clean-generic \
-	maintainer-clean-recursive mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-kr mostlyclean-libtool \
-	mostlyclean-recursive tags tags-recursive uninstall \
-	uninstall-am uninstall-info-recursive uninstall-recursive
+	install-exec-recursive install-info install-info-am \
+	install-info-recursive install-man install-recursive \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am installdirs-recursive maintainer-clean \
+	maintainer-clean-generic maintainer-clean-recursive mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool mostlyclean-recursive tags tags-recursive \
+	uninstall uninstall-am uninstall-info-am \
+	uninstall-info-recursive uninstall-recursive
 
 
 # *.s not preprocessed at all.

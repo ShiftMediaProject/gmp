@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -112,8 +112,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -148,8 +148,8 @@ libstat_la_LDFLAGS =
 libstat_la_DEPENDENCIES = $(top_builddir)/libgmp.la
 am_libstat_la_OBJECTS = statlib$U.lo zdiv_round$U.lo
 libstat_la_OBJECTS = $(am_libstat_la_OBJECTS)
-EXTRA_PROGRAMS = findlc$(EXEEXT) gen$(EXEEXT) gen.static spect$(EXEEXT) \
-	stat$(EXEEXT)
+EXTRA_PROGRAMS = findlc$(EXEEXT) gen$(EXEEXT) gen.static$(EXEEXT) \
+	spect$(EXEEXT) stat$(EXEEXT)
 check_PROGRAMS = t-rand$(EXEEXT)
 findlc_SOURCES = findlc.c
 findlc_OBJECTS = findlc$U.$(OBJEXT)
@@ -201,42 +201,6 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
-	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  tests/rand/Makefile
-Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) && \
-	  CONFIG_HEADERS= CONFIG_LINKS= \
-	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-libstat.la: $(libstat_la_OBJECTS) $(libstat_la_DEPENDENCIES)
-	$(LINK)  $(libstat_la_LDFLAGS) $(libstat_la_OBJECTS) $(libstat_la_LIBADD) $(LIBS)
-
-clean-checkPROGRAMS:
-	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES)
-	@rm -f findlc$(EXEEXT)
-	$(LINK) $(findlc_LDFLAGS) $(findlc_OBJECTS) $(findlc_LDADD) $(LIBS)
-gen$(EXEEXT): $(gen_OBJECTS) $(gen_DEPENDENCIES)
-	@rm -f gen$(EXEEXT)
-	$(LINK) $(gen_LDFLAGS) $(gen_OBJECTS) $(gen_LDADD) $(LIBS)
-gen.static$(EXEEXT): $(gen_static_OBJECTS) $(gen_static_DEPENDENCIES)
-	@rm -f gen.static$(EXEEXT)
-	$(LINK) $(gen_static_LDFLAGS) $(gen_static_OBJECTS) $(gen_static_LDADD) $(LIBS)
-spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES)
-	@rm -f spect$(EXEEXT)
-	$(LINK) $(spect_LDFLAGS) $(spect_OBJECTS) $(spect_LDADD) $(LIBS)
-stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES)
-	@rm -f stat$(EXEEXT)
-	$(LINK) $(stat_LDFLAGS) $(stat_OBJECTS) $(stat_LDADD) $(LIBS)
-t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES)
-	@rm -f t-rand$(EXEEXT)
-	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -246,6 +210,42 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  tests/rand/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+libstat.la: $(libstat_la_OBJECTS) $(libstat_la_DEPENDENCIES) 
+	$(LINK)  $(libstat_la_LDFLAGS) $(libstat_la_OBJECTS) $(libstat_la_LIBADD) $(LIBS)
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES) 
+	@rm -f findlc$(EXEEXT)
+	$(LINK) $(findlc_LDFLAGS) $(findlc_OBJECTS) $(findlc_LDADD) $(LIBS)
+gen$(EXEEXT): $(gen_OBJECTS) $(gen_DEPENDENCIES) 
+	@rm -f gen$(EXEEXT)
+	$(LINK) $(gen_LDFLAGS) $(gen_OBJECTS) $(gen_LDADD) $(LIBS)
+gen.static$(EXEEXT): $(gen_static_OBJECTS) $(gen_static_DEPENDENCIES) 
+	@rm -f gen.static$(EXEEXT)
+	$(LINK) $(gen_static_LDFLAGS) $(gen_static_OBJECTS) $(gen_static_LDADD) $(LIBS)
+spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES) 
+	@rm -f spect$(EXEEXT)
+	$(LINK) $(spect_LDFLAGS) $(spect_OBJECTS) $(spect_LDADD) $(LIBS)
+stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES) 
+	@rm -f stat$(EXEEXT)
+	$(LINK) $(stat_LDFLAGS) $(stat_OBJECTS) $(stat_LDADD) $(LIBS)
+t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES) 
+	@rm -f t-rand$(EXEEXT)
+	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
 
 ANSI2KNR = $(top_builddir)/ansi2knr
 $(top_builddir)/ansi2knr:
@@ -309,10 +309,10 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
@@ -460,18 +460,17 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
 
 uninstall-am: uninstall-info-am
 
-uninstall-info: uninstall-info-am
-
-.PHONY: all all-am check check-TESTS check-am clean clean-checkPROGRAMS \
-	clean-generic clean-libtool distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
-	uninstall uninstall-am uninstall-info-am
+.PHONY: GTAGS all all-am check check-TESTS check-am clean \
+	clean-checkPROGRAMS clean-generic clean-libtool distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool tags uninstall uninstall-am \
+	uninstall-info-am
 
 
 allprogs: $(EXTRA_PROGRAMS)

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -112,8 +112,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -194,34 +194,6 @@ all: all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
-	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  demos/Makefile
-Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) && \
-	  CONFIG_HEADERS= CONFIG_LINKS= \
-	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-factorize$(EXEEXT): $(factorize_OBJECTS) $(factorize_DEPENDENCIES)
-	@rm -f factorize$(EXEEXT)
-	$(LINK) $(factorize_LDFLAGS) $(factorize_OBJECTS) $(factorize_LDADD) $(LIBS)
-isprime$(EXEEXT): $(isprime_OBJECTS) $(isprime_DEPENDENCIES)
-	@rm -f isprime$(EXEEXT)
-	$(LINK) $(isprime_LDFLAGS) $(isprime_OBJECTS) $(isprime_LDADD) $(LIBS)
-pexpr$(EXEEXT): $(pexpr_OBJECTS) $(pexpr_DEPENDENCIES)
-	@rm -f pexpr$(EXEEXT)
-	$(LINK) $(pexpr_LDFLAGS) $(pexpr_OBJECTS) $(pexpr_LDADD) $(LIBS)
-primes$(EXEEXT): $(primes_OBJECTS) $(primes_DEPENDENCIES)
-	@rm -f primes$(EXEEXT)
-	$(LINK) $(primes_LDFLAGS) $(primes_OBJECTS) $(primes_LDADD) $(LIBS)
-qcn$(EXEEXT): $(qcn_OBJECTS) $(qcn_DEPENDENCIES)
-	@rm -f qcn$(EXEEXT)
-	$(LINK) $(qcn_LDFLAGS) $(qcn_OBJECTS) $(qcn_LDADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -231,6 +203,34 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  demos/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+factorize$(EXEEXT): $(factorize_OBJECTS) $(factorize_DEPENDENCIES) 
+	@rm -f factorize$(EXEEXT)
+	$(LINK) $(factorize_LDFLAGS) $(factorize_OBJECTS) $(factorize_LDADD) $(LIBS)
+isprime$(EXEEXT): $(isprime_OBJECTS) $(isprime_DEPENDENCIES) 
+	@rm -f isprime$(EXEEXT)
+	$(LINK) $(isprime_LDFLAGS) $(isprime_OBJECTS) $(isprime_LDADD) $(LIBS)
+pexpr$(EXEEXT): $(pexpr_OBJECTS) $(pexpr_DEPENDENCIES) 
+	@rm -f pexpr$(EXEEXT)
+	$(LINK) $(pexpr_LDFLAGS) $(pexpr_OBJECTS) $(pexpr_LDADD) $(LIBS)
+primes$(EXEEXT): $(primes_OBJECTS) $(primes_DEPENDENCIES) 
+	@rm -f primes$(EXEEXT)
+	$(LINK) $(primes_LDFLAGS) $(primes_OBJECTS) $(primes_LDADD) $(LIBS)
+qcn$(EXEEXT): $(qcn_OBJECTS) $(qcn_DEPENDENCIES) 
+	@rm -f qcn$(EXEEXT)
+	$(LINK) $(qcn_LDFLAGS) $(qcn_OBJECTS) $(qcn_LDADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
 
 ANSI2KNR = $(top_builddir)/ansi2knr
 $(top_builddir)/ansi2knr:
@@ -349,10 +349,10 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
@@ -458,21 +458,22 @@ uninstall-am: uninstall-info-am
 
 uninstall-info: uninstall-info-recursive
 
-.PHONY: $(RECURSIVE_TARGETS) all all-am check check-am clean \
+.PHONY: $(RECURSIVE_TARGETS) GTAGS all all-am check check-am clean \
 	clean-generic clean-libtool clean-recursive distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-recursive distclean-tags distdir dvi dvi-am \
 	dvi-recursive info info-am info-recursive install install-am \
 	install-data install-data-am install-data-recursive \
 	install-exec install-exec-am install-exec-recursive \
-	install-info install-info-recursive install-man \
+	install-info install-info-am install-info-recursive install-man \
 	install-recursive install-strip installcheck installcheck-am \
 	installdirs installdirs-am installdirs-recursive \
 	maintainer-clean maintainer-clean-generic \
 	maintainer-clean-recursive mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-kr mostlyclean-libtool \
 	mostlyclean-recursive tags tags-recursive uninstall \
-	uninstall-am uninstall-info-recursive uninstall-recursive
+	uninstall-am uninstall-info-am uninstall-info-recursive \
+	uninstall-recursive
 
 
 allprogs: $(EXTRA_PROGRAMS)

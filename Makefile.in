@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4f from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -139,8 +139,8 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
-_am_include = @_am_include@
-_am_quote = @_am_quote@
+am__include = @am__include@
+am__quote = @am__quote@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -403,6 +403,15 @@ all: config.h
 
 .SUFFIXES:
 .SUFFIXES: .c .dvi .info .lo .o .obj .ps .texi
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  Makefile
@@ -411,7 +420,7 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$@ $(SHELL) ./config.status
 
-config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
+$(top_builddir)/config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
@@ -466,11 +475,11 @@ uninstall-libLTLIBRARIES:
 
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
 	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
-libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES)
+libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES) 
 	$(LINK) -rpath $(libdir) $(libgmp_la_LDFLAGS) $(libgmp_la_OBJECTS) $(libgmp_la_LIBADD) $(LIBS)
-libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES)
+libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES) 
 	$(LINK) -rpath $(libdir) $(libmp_la_LDFLAGS) $(libmp_la_OBJECTS) $(libmp_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
@@ -478,15 +487,6 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 
 ANSI2KNR = @ANSI2KNR@
 ansi2knr: ansi2knr.$(OBJEXT)
@@ -590,16 +590,19 @@ gmp.dvi: gmp.texi $(srcdir)/version.texi
 .texi.info:
 	@cd $(srcdir) && rm -f $@ $@-[0-9] $@-[0-9][0-9]
 	cd $(srcdir) \
-	  && $(MAKEINFO) `echo $< | sed 's,.*/,,'`
+	  && $(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) \
+	       `echo $< | sed 's,.*/,,'`
 
 .texi.dvi:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
+	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+	$(TEXI2DVI) $<
 
 .texi:
 	@cd $(srcdir) && rm -f $@ $@-[0-9] $@-[0-9][0-9]
 	cd $(srcdir) \
-	  && $(MAKEINFO) `echo $< | sed 's,.*/,,'`
+	  && $(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) \
+	       `echo $< | sed 's,.*/,,'`
 
 MAKEINFO = @MAKEINFO@
 TEXI2DVI = texi2dvi
@@ -753,10 +756,10 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
@@ -834,7 +837,9 @@ distcheck: dist
 	  && $(MAKE) $(AM_MAKEFLAGS) install \
 	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
 	  && $(MAKE) $(AM_MAKEFLAGS) uninstall \
-	  && test `find $$dc_install_base -type f -print | wc -l` -le 1 \
+	  && (test `find $$dc_install_base -type f -print | wc -l` -le 1 \
+	     || (echo "Error: files left after uninstall" 1>&2; \
+	         exit 1) ) \
 	  && $(MAKE) $(AM_MAKEFLAGS) dist \
 	  && $(MAKE) $(AM_MAKEFLAGS) distclean \
 	  && rm -f $(distdir).tar.gz \
@@ -946,7 +951,7 @@ uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES \
 
 uninstall-info: uninstall-info-recursive
 
-.PHONY: $(RECURSIVE_TARGETS) all all-am check check-am clean \
+.PHONY: $(RECURSIVE_TARGETS) GTAGS all all-am check check-am clean \
 	clean-generic clean-krextra clean-libLTLIBRARIES clean-libtool \
 	clean-recursive dist dist-all dist-info distcheck distclean \
 	distclean-compile distclean-generic distclean-hdr \
@@ -954,15 +959,16 @@ uninstall-info: uninstall-info-recursive
 	dvi dvi-am dvi-recursive info info-am info-recursive install \
 	install-am install-data install-data-am install-data-recursive \
 	install-exec install-exec-am install-exec-recursive \
-	install-info install-info-recursive install-libLTLIBRARIES \
-	install-man install-nodist_includeHEADERS install-recursive \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am installdirs-recursive maintainer-clean \
-	maintainer-clean-aminfo maintainer-clean-generic \
-	maintainer-clean-recursive maintainer-clean-vti mostlyclean \
-	mostlyclean-aminfo mostlyclean-compile mostlyclean-generic \
-	mostlyclean-kr mostlyclean-libtool mostlyclean-recursive \
-	mostlyclean-vti tags tags-recursive uninstall uninstall-am \
+	install-info install-info-am install-info-recursive \
+	install-libLTLIBRARIES install-man \
+	install-nodist_includeHEADERS install-recursive install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	installdirs-recursive maintainer-clean maintainer-clean-aminfo \
+	maintainer-clean-generic maintainer-clean-recursive \
+	maintainer-clean-vti mostlyclean mostlyclean-aminfo \
+	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool mostlyclean-recursive mostlyclean-vti tags \
+	tags-recursive uninstall uninstall-am uninstall-info-am \
 	uninstall-info-recursive uninstall-libLTLIBRARIES \
 	uninstall-nodist_includeHEADERS uninstall-recursive
 
