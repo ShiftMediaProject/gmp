@@ -21,6 +21,10 @@ MA 02111-1307, USA.
 
 2002-05-21  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/set_str.c: Nailify.
+
+	* randlc2x.c (gmp_randinit_lc_2exp): Nailify.
+
 	From Jakub Jelinek:
 	* longlong.h (add_ssaaaa,sub_ddmmss) [64-bit sparc]:
 	Make it actually work.

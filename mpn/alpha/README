@@ -106,16 +106,16 @@ EV5
 EV6
 
 Here we have a really parallel pipeline, capable of issuing up to 4 integer
-instructions per cycle.  One integer multiply instruction can issue each cycle.
-To get optimal speed, we need to pretend we are vectorizing the code, i.e.,
-minimize the depth of recurrences.  In actual practice, it is never possible to
-sustain more than 3.5 insns/cycle due to renaming register constraints.
+instructions per cycle.  In actual practice, it is never possible to sustain
+more than 3.5 integer insns/cycle due to rename register shortage.  One integer
+multiply instruction can issue each cycle.  To get optimal speed, we need to
+pretend we are vectorizing the code, i.e., minimize the depth of recurrences.
 
 There are two dependencies to watch out for.  1) Address arithmetic
 dependencies, and 2) carry propagation dependencies.
 
-We can avoid serializing due to address arithmetic by unrolling the loop, so
-that addresses don't depend heavily on an index variable.  Avoiding serializing
+We can avoid serializing due to address arithmetic by unrolling loops, so that
+addresses don't depend heavily on an index variable.  Avoiding serializing
 because of carry propagation is trickier; the ultimate performance of the code
 will be determined of the number of latency cycles it takes from accepting
 carry-in to a vector point until we can generate carry-out.
@@ -126,7 +126,7 @@ pipelines.  Shifts only execute in U0 and U1, and multiply only in U1.
 CMOV instructions split into two internal instructions, CMOV1 and CMOV2.  CMOV
 split the mapping process (see pg 2-26 in cmpwrgd.pdf), suggesting the CMOV
 should always be placed as the last instruction of an aligned 4 instruction
-block (?).
+block, or perhaps simply avoided.
 
 Perhaps the most important issue is the latency between the L0/U0 and L1/U1
 clusters; a result obtained on either cluster has an extra cycle of latency for
