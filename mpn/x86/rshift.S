@@ -53,7 +53,7 @@ C_SYMBOL_NAME(__mpn_rshift:)
 	incl	%edx
 	jz	Lend
 	pushl	%eax			/* push carry limb onto stack */
-	testb	$1,%edx
+	testb	$1,%dl
 	jnz	L1			/* enter loop in the middle */
 	movl	%ebx,%eax
 
