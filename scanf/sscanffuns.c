@@ -27,11 +27,37 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if HAVE_STDARG
+#include <stdarg.h>
+#else
+#include <varargs.h>
+#endif
+
 
 static int
-scan (const char **sp, const char *fmt, void *p1, void *p2)
+#if HAVE_STDARG
+scan (const char **sp, const char *fmt, ...)
+#else
+scan (va_alist)
+     va_dcl
+#endif
 {
-  return sscanf (*sp, fmt, p1, p2);
+  va_list  ap;
+  int      ret;
+#if HAVE_STDARG
+  va_start (ap, fmt);
+#else
+  const char **sp;
+  const char *fmt;
+  va_start (ap);
+  sp = va_arg (ap, const char **);
+  fmt = va_arg (ap, const char *);
+#endif
+
+  ret = vsscanf (*sp, fmt, ap);
+
+  va_end (ap);
+  return ret;
 }
 
 static void
