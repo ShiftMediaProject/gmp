@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/add_n.asm: Rewrite.
+	* mpn/ia64/sub_n.asm: Rewrite.
+
 2001-12-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/mul_1.asm: Rewrite.
