@@ -793,7 +793,7 @@ case $host in
             path_64="sparc64"
             cclist_64="gcc cc"
             gcc_64_cflags="-g -O2 -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
-            cc_64_cflags="-fast -xarch=v9"
+            cc_64_cflags="-fast -fns=no -xarch=v9"
             ;;
         esac
       ;;
