@@ -26,7 +26,7 @@ dnl  startup time seems to be about 165 cycles.  It then copies at a rate of
 dnl  one limb per cycle.  We therefore fall back to an open-coded 2 c/l
 dnl  copying loop for smaller sizes.
 
-dnl  Ultimately, we may want to use 64-bit movd or 128-bit movdqu in some
+dnl  Ultimately, we may want to use 64-bit movq or 128-bit movdqu in some
 dnl  nifty unrolled arrangement.  Clearly, that could reach much higher
 dnl  speeds, at least for large blocks.
 
