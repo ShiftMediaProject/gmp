@@ -325,6 +325,7 @@ struct try_t {
 #define OVERLAP_LOW_TO_HIGH  2
 #define OVERLAP_HIGH_TO_LOW  3
 #define OVERLAP_NOT_SRCS     4
+#define OVERLAP_NOT_SRC2     8
   char  overlap;
 
   tryfun_t    reference;
@@ -669,6 +670,7 @@ param_init (void)
   p->src[0] = 1;
   p->src[1] = 1;
   p->size2 = SIZE_2;
+  p->overlap = OVERLAP_NOT_SRC2;
   REFERENCE (refmpn_mul_2);
 
 
@@ -1473,6 +1475,7 @@ struct overlap_t  *overlap, *overlap_limit;
 #define OVERLAP_COUNT                   \
   (tr->overlap & OVERLAP_NONE       ? 1 \
    : tr->overlap & OVERLAP_NOT_SRCS ? 3 \
+   : tr->overlap & OVERLAP_NOT_SRC2 ? 2 \
    : tr->dst[1]                     ? 9 \
    : tr->src[1]                     ? 4 \
    : tr->dst[0]                     ? 2 \
@@ -1705,7 +1708,7 @@ call (struct each_t *e, tryfun_t function)
 
   case TYPE_MUL_2:
     e->retval = CALLING_CONVENTIONS (function)
-      (e->d[0].p, e->s[0].p, size, e->s[1].p[0], e->s[1].p[1]);
+      (e->d[0].p, e->s[0].p, size, e->s[1].p);
     break;
 
   case TYPE_AND_N:

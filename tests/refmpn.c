@@ -504,13 +504,13 @@ refmpn_mul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 
 
 mp_limb_t
-refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-              mp_limb_t low, mp_limb_t high)
+refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_srcptr mult)
 {
   mp_ptr     src_copy;
   mp_limb_t  c;
 
   ASSERT (refmpn_overlap_fullonly_p (dst, src, size));
+  ASSERT (! refmpn_overlap_p (dst, size+1, mult, 2));
   ASSERT (size >= 1);
                                                                           
   /* in case dst==src */
@@ -518,8 +518,8 @@ refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size,
   refmpn_copyi (src_copy, src, size);
   src = src_copy;
 
-  dst[size] = refmpn_mul_1 (dst, src, size, low);
-  c = refmpn_addmul_1 (dst+1, src, size, high);
+  dst[size] = refmpn_mul_1 (dst, src, size, mult[0]);
+  c = refmpn_addmul_1 (dst+1, src, size, mult[1]);
   free (src_copy);
   return c;
 }

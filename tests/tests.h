@@ -214,7 +214,7 @@ mp_limb_t refmpn_mul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
 mp_limb_t refmpn_mul_1c _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  mp_limb_t multiplier, mp_limb_t carry));
 mp_limb_t refmpn_mul_2 _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
-                                mp_limb_t low, mp_limb_t high));
+                                mp_srcptr mult));
 
 void refmpn_mul_basecase _PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,
