@@ -41,6 +41,7 @@ mpz_clrbit (mpz_ptr d, unsigned long int bit_index)
 
           if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
             {
+              /* high limb became zero, must normalize */
               do {
                 dsize--;
               } while (dsize > 0 && dp[dsize-1] == 0);
