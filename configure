@@ -3684,7 +3684,7 @@ echo "$tmp_version" >&5
 case $tmp_version in
   2.95 | 2.95.[123])
     testlist_pass=no
-    gmp_gcc_arm_umodsi_result="no, gcc 2.95.0123" ;;
+    gmp_gcc_arm_umodsi_result="no, gcc 2.95.[0123]" ;;
   *)
     :
     gmp_gcc_arm_umodsi_result=yes ;;

@@ -646,7 +646,7 @@ echo "$tmp_version" >&AC_FD_CC
 case $tmp_version in
   [2.95 | 2.95.[123]])
     ifelse([$3],,:,[$3])
-    gmp_gcc_arm_umodsi_result="no, gcc 2.95.[0123]" ;;
+    gmp_gcc_arm_umodsi_result=["no, gcc 2.95.[0123]"] ;;
   *)
     ifelse([$2],,:,[$2])
     gmp_gcc_arm_umodsi_result=yes ;;
