@@ -19,6 +19,39 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-20  Kevin Ryde  <kevin@swox.se>
+
+	* tests/misc/t-printf.c, tests/misc/t-scanf.c: Check all %n types.
+
+	* mpn/x86/k7/mmx/divrem_1.asm, mpn/x86/p6/mmx/divrem_1.asm
+	(mpn_preinv_divrem_1): New entrypoint.
+	(mpn_divrem_1): Avoid a branch when testing high<divisor.
+	* mpn/asm-defs.m4: Add define_mpn(preinv_divrem_1).
+	* configure.in: Allow divrem_1.asm to provide mpn_preinv_divrem_1.
+
+	* gmp-impl.h [nails]: Add #undefs of MUL_KARATSUBA_THRESHOLD etc, to
+	override CPU gmp-mparam.h.  Remove JACOBI_BASE_METHOD override since
+	it's nails-neutral.
+
+	* tests/mpn/t-mp_bases.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add it.
+	* tests/t-constants.c: Move MP_BASES constants checks to it.
+
+	* mpn/mp_bases.c: Fix big_base_inverted values for nails.
+	* gmp-impl.h (MP_BASES_BIG_BASE_INVERTED_10,
+	MP_BASES_NORMALIZATION_STEPS_10): Fix nails values.
+	(MP_BASES_*): Remove GMP_NUMB_BITS == 30 data.
+
+	* mpn/x86/pentium/com_n.asm, mpn/x86/pentium/logops_n.asm: Add
+	NAILS_SUPPORT indicators.
+	
+	* configure.in: Grep for NAILS_SUPPORT in cpu-specific code, and look
+	in "nails" subdirectories, print path used.
+	* mpn/asm-defs.m4 (NAILS_SUPPORT): New macro.
+
+	* mpfr/mpfr-test.h: Include config.h, for the benefit of test programs
+	not using gmp-impl.h.
+
 2002-04-19  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-scan.c: Nailify.
