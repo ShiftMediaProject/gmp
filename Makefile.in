@@ -328,8 +328,8 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
-  rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
-  version.c
+  rand.c randclr.c randdef.c randlc.c randlc2s.c randlc2x.c randraw.c	\
+  rands.c randsd.c randsdui.c version.c
 
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
@@ -364,10 +364,11 @@ libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
 MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
 libmp_la_DEPENDENCIES = $(srcdir)/libmp.sym				\
   @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP)			\
-  mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
+  mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/gcdext$U.lo		\
+  mpz/init$U.lo mpz/invert$U.lo mpz/mod$U.lo				\
   mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
-  mpz/realloc$U.lo mpz/set$U.lo						\
-  mpz/set_ui$U.lo mpz/tdiv_r$U.lo mpz/sub$U.lo
+  mpz/realloc$U.lo mpz/set$U.lo	mpz/set_ui$U.lo				\
+  mpz/tdiv_q$U.lo mpz/tdiv_r$U.lo mpz/sub$U.lo
 
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
 libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
@@ -397,8 +398,9 @@ libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
 	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo rand$U.lo \
-	randclr$U.lo randlc$U.lo randlc2x$U.lo randraw$U.lo rands$U.lo \
-	randsd$U.lo randsdui$U.lo version$U.lo
+	randclr$U.lo randdef$U.lo randlc$U.lo randlc2s$U.lo \
+	randlc2x$U.lo randraw$U.lo rands$U.lo randsd$U.lo randsdui$U.lo \
+	version$U.lo
 libgmp_la_OBJECTS = $(am_libgmp_la_OBJECTS)
 am_libgmpxx_la_OBJECTS = osfuns.lo
 libgmpxx_la_OBJECTS = $(am_libgmpxx_la_OBJECTS)
@@ -587,8 +589,12 @@ rand_.c: rand.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rand.c; then echo $(srcdir)/rand.c; else echo rand.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rand_.c || rm -f rand_.c
 randclr_.c: randclr.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randclr.c; then echo $(srcdir)/randclr.c; else echo randclr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randclr_.c || rm -f randclr_.c
+randdef_.c: randdef.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randdef.c; then echo $(srcdir)/randdef.c; else echo randdef.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randdef_.c || rm -f randdef_.c
 randlc_.c: randlc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc.c; then echo $(srcdir)/randlc.c; else echo randlc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc_.c || rm -f randlc_.c
+randlc2s_.c: randlc2s.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc2s.c; then echo $(srcdir)/randlc2s.c; else echo randlc2s.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc2s_.c || rm -f randlc2s_.c
 randlc2x_.c: randlc2x.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc2x.c; then echo $(srcdir)/randlc2x.c; else echo randlc2x.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc2x_.c || rm -f randlc2x_.c
 randraw_.c: randraw.c $(ANSI2KNR)
@@ -613,7 +619,8 @@ insert-dbl_.$(OBJEXT) insert-dbl_.lo memory_.$(OBJEXT) memory_.lo \
 mp_bpl_.$(OBJEXT) mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo \
 mp_minv_tab_.$(OBJEXT) mp_minv_tab_.lo mp_set_fns_.$(OBJEXT) \
 mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
-randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
+randdef_.$(OBJEXT) randdef_.lo randlc_.$(OBJEXT) randlc_.lo \
+randlc2s_.$(OBJEXT) randlc2s_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
 randraw_.$(OBJEXT) randraw_.lo rands_.$(OBJEXT) rands_.lo \
 randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
 tal-debug_.$(OBJEXT) tal-debug_.lo tal-notreent_.$(OBJEXT) \
