@@ -70,7 +70,7 @@ FNAME (mp_srcptr up,
       p23 = p2 + p3;
       p23 = ((p23 >> 4) & MP_LIMB_T_MAX/17) + (p23 & MP_LIMB_T_MAX/17);	/* 8 0-8 */
 
-      x = p01 + p23;
+      x = p01 + p23;							/* 8 0-16 */
       x = (x >> 8) + x;
       x = (x >> 16) + x;
 #if GMP_LIMB_BITS > 32
