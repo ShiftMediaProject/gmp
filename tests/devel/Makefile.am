@@ -34,3 +34,6 @@ EXTRA_PROGRAMS = \
 allprogs: $(EXTRA_PROGRAMS)
 
 CLEANFILES = $(EXTRA_PROGRAMS)
+
+$(top_builddir)/tests/libtests.la:
+	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
