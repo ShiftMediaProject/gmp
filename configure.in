@@ -1596,13 +1596,17 @@ AC_C_BIGENDIAN
 # Enhancement: In the future AC_C_BIGENDIAN will accept these actions as
 # parameters.
 case $ac_cv_c_bigendian in
-  yes)  AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1,
-                  [Define if `mp_limb_t' is big endian]) ;;
-  no)   AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1,
-                  [Define if `mp_limb_t' is little endian]) ;;
+  yes)     AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1) ;;
+  no)      AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1) ;;
   unknown) ;;
-  *)    AC_MSG_ERROR([Oops, unrecognised ac_cv_c_bigendian]) ;;
+  *)       AC_MSG_ERROR([Oops, unrecognised ac_cv_c_bigendian]) ;;
 esac
+AH_VERBATIM([HAVE_LIMB],
+[/* Define one (just one) of the following for the endiannes of `mp_limb_t'.
+   If the endianness is not a simple big or little, or you don't know what
+   it is, then leave both of these undefined. */
+#undef HAVE_LIMB_BIG_ENDIAN
+#undef HAVE_LIMB_LITTLE_ENDIAN])
 
 GMP_C_DOUBLE_FORMAT
 
