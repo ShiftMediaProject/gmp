@@ -1,3 +1,13 @@
+2001-02-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/v9/gmp-mparam.h: Retune.
+
+	* mpn/sparc32/v9/mul_1.asm: Tune function entry.
+	* mpn/sparc32/v9/addmul_1.asm: Likewise.
+	* mpn/sparc32/v9/submul_1.asm: Likewise.
+
+	* mpn/sparc32/v9/sqr_diagonal.asm: New file.
+
 2001-02-16  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in: Fix flags selection when $CC is a compiler known to us.
@@ -19,6 +29,12 @@
 	* Makefile.am (MPF_OBJECTS): Add a couple of missing $U's.
 
 	* tune/tuneup.c: Identify compiler used (GCC and Sun C so far).
+
+2001-02-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/v9/mul_1.asm: Change `ld' to `lduw' and `st' to `stw'.
+	* mpn/sparc32/v9/addmul_1.asm: Likewise.
+	* mpn/sparc32/v9/submul_1.asm: Likewise.
 
 2001-02-14  Torbjorn Granlund  <tege@swox.com>
 
