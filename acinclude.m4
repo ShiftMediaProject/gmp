@@ -54,7 +54,8 @@ dnl  GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB starts as a dummy, but gets
 dnl  redefined in GMP_C_SIZES when the right value is known.
 
 define(GMP_INCLUDE_GMP_H,
-[[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */]
+[[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
+#define GMP_NAIL_BITS $GMP_NAIL_BITS]
 GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB
 [$DEFN_LONG_LONG_LIMB
 #include "$srcdir/gmp-h.in"]

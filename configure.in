@@ -150,6 +150,13 @@ AC_HELP_STRING([--enable-nails],[use nails on limbs [[default=no]]]),
 esac],
 [enable_nails=no])
 
+case $enable_nails in
+yes) GMP_NAIL_BITS=1 ;;
+no)  GMP_NAIL_BITS=0 ;;
+*)   GMP_NAIL_BITS=$enable_nails ;;
+esac
+AC_SUBST(GMP_NAIL_BITS)
+
 
 AC_ARG_ENABLE(profiling,
 AC_HELP_STRING([--enable-profiling],
@@ -1897,14 +1904,6 @@ fi
 
 # This must come after gmp-mparam.h has been chosen.
 GMP_C_SIZES
-
-
-case $enable_nails in
-yes) GMP_NAIL_BITS=1 ;;
-no)  GMP_NAIL_BITS=0 ;;
-*)   GMP_NAIL_BITS=$enable_nails ;;
-esac
-AC_SUBST(GMP_NAIL_BITS)
 
 GMP_DEFINE_RAW(["define(<GMP_LIMB_BITS>,$BITS_PER_MP_LIMB)"])
 GMP_DEFINE_RAW(["define(<GMP_NAIL_BITS>,$GMP_NAIL_BITS)"])
