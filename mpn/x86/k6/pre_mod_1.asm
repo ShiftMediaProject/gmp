@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_preinv_mod_1 -- mpn by 1 remainder, with pre-inverted divisor.
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -30,13 +30,6 @@ C                             mp_limb_t inverse);
 C
 C This code is only 2 c/l faster than a simple divl, but that's 10% so it's
 C considered worthwhile (just).
-C
-C Future:
-C
-C In theory this code should be made available in mod_1 and mod_1c, but it
-C would take quite a while to overcome the time to calculate an inverse.
-C The threshold would probably be around 20 limbs, or around 30 for an
-C unnormalized divisor.
 
 defframe(PARAM_INVERSE,16)
 defframe(PARAM_DIVISOR,12)
