@@ -6,9 +6,9 @@
 This directory contains code optimized for AMD K6 CPUs, meaning K6, K6-2 and
 K6-3.
 
-The mmx subdirectory has routines using MMX instructions.  All K6s have MMX,
-the separate directory is just so that configure can omit it if the
-assembler doesn't support MMX.
+The mmx and k62mmx subdirectories have routines using MMX instructions.  All
+K6s have MMX, the separate directories are just so that ./configure can omit
+them if the assembler doesn't support MMX.
 
 
 
@@ -21,17 +21,8 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 
 	mpn_add_n/sub_n            3.25 normal, 2.75 in-place
 
-	mpn_copyi/copyd            0.56 or 1.0  \
-                                                |
-	mpn_com_n                  1.0-1.2      | varying with
-	mpn_and/andn/ior/xor_n     1.2-1.5      | data alignment
-	mpn_iorn/xnor_n            1.5-2.0      |
-	mpn_nand/nior_n            1.75-2.0     /
-
-	mpn_l/rshift               1.75
-
 	mpn_mul_1                  6.25
-	mpn_add/submul_1           7.65-8.4     (varying with data values)
+	mpn_add/submul_1           7.65-8.4  (varying with data values)
 
 	mpn_mul_basecase           9.25 cycles/crossproduct (approx)
 	mpn_sqr_basecase           4.7  cycles/crossproduct (approx)
@@ -41,14 +32,32 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_mod_1                 20.0
 	mpn_divexact_by3          11.0
 
+	mpn_l/rshift               3.0
+
+	mpn_copyi/copyd            1.0
+
+	mpn_com_n                  1.5-1.85  \
+	mpn_and/andn/ior/xor_n     1.5-1.75  | varying with
+	mpn_iorn/xnor_n            2.0-2.25  | data alignment
+	mpn_nand/nior_n            2.0-2.25  /
+
+	mpn_popcount		  12.5
+	mpn_hamdist		  13.0
+
+
+K6-2 and K6-3 have dual-issue MMX and get the following improvements.
+
+	mpn_l/rshift               1.75
+
+	mpn_copyi/copyd            0.56 or 1.0  \
+                                                |
+	mpn_com_n                  1.0-1.2      | varying with
+	mpn_and/andn/ior/xor_n     1.2-1.5      | data alignment
+	mpn_iorn/xnor_n            1.5-2.0      |
+	mpn_nand/nior_n            1.75-2.0     /
+
 	mpn_popcount		   9.0
 	mpn_hamdist		  11.5
-
-
-Plain K6 and pre-CXT core K6-2 chips get the following slowdown.  This will
-hopefully be fixed or improved some time.
-
-	mpn_l/rshift               3.5
 
 
 Prefetching of sources hasn't yet given any joy.  With the 3DNow "prefetch"
@@ -63,6 +72,9 @@ prefetching in software is reduced.
 NOTES
 
 All K6 family chips have MMX, but only K6-2 and K6-3 have 3DNow.
+
+Plain K6 executes MMX instructions only in the X pipe, but K6-2 and K6-3 can
+execute them in both X and Y (and together).
 
 Branch misprediction penalty is 1 to 4 cycles (Optimization Manual
 chapter 6 table 12).
@@ -100,7 +112,7 @@ the less likely or less important case is under a taken forward jump.
 
 MMX
 
-Putting emms_or_femms as late as possible in a routine seems to be fastest.
+Putting emms or femms as late as possible in a routine seems to be fastest.
 Perhaps an emms or femms stalls until all outstanding MMX instructions have
 completed, so putting it later gives them a chance to complete on their own,
 in parallel with other operations (like register popping).
@@ -131,10 +143,10 @@ NOTES
 Code alignment
 
 - if an opcode/modrm or 0Fh/opcode/modrm crosses a cache line boundary,
-  short decode is inhibited.  The script cross.pl detects this.
+  short decode is inhibited.  The cross.pl script detects this.
 
-- loops should be aligned to 32 bytes, or ensure at least 2 instructions
-  before a 32 byte boundary.
+- loops should be aligned to 16 bytes, or ensure at least 2 instructions
+  before a 32 byte boundary.  (Don't know why.)
 
 Addressing modes
 
@@ -142,8 +154,8 @@ Addressing modes
   problem, and can be used as an equivalent, or easier is just to use a
   different register, like %ebx.
 
-- K6 and pre-CXT core K6-2 have the following problem, but it's fixed on
-  K6-2 CXT and K6-3, these being cpuid function 1 signatures 0x588 to 0x58F.
+- K6 and pre-CXT core K6-2 have the following problem.  (K6-2 CXT and K6-3
+  have it fixed, these being cpuid function 1 signatures 0x588 to 0x58F).
 
   If more than 3 bytes are needed to determine instruction length then
   decoding degrades from direct to long, or from long to vector.  This
@@ -155,13 +167,17 @@ Addressing modes
   displacement, or an index but no base, and this includes (%esp) which is
   really (,%esp,1).
 
+  The cross.pl script detects problem cases.  The workaround is to always
+  use a displacement, and to do this with Zdisp if it's zero so the
+  assembler doesn't discard it.
+
   See Optimization Manual rev D page 67 and 3DNow Porting Guide rev B pages
   13-14 and 36-37.
 
 Calls
 
 - indirect jumps and calls are not branch predicted, they measure about 6
-  cycles
+  cycles.
 
 Various
 
@@ -187,22 +203,23 @@ Various
 REFERENCES
 
 "AMD-K6 Processor Code Optimization Application Note", AMD publication
-number 21924, revision D amendment 0, January 2000.  Available on-line,
+number 21924, revision D amendment 0, January 2000.  This describes K6-2 and
+K6-3.  Available on-line,
 
 	http://www.amd.com/K6/k6docs/pdf/21924.pdf
+
+"AMD-K6 MMX Enhanced Processor x86 Code Optimization Application Note", AMD
+publication number 21828, revision A amendment 0, August 1997.  This is an
+older edition of the above document, describing plain K6.  Available
+on-line,
+
+	http://www.amd.com/K6/k6docs/pdf/21828.pdf
 
 "3DNow Technology Manual", AMD publication number 21928F/0-August 1999.
 This describes the femms and prefetch instructions, but nothing else from
 3DNow has been used.  Available on-line,
 
 	http://www.amd.com/K6/k6docs/pdf/21928.pdf
-
-"AMD-K6 MMX Enhanced Processor x86 Code Optimization Application Note", AMD
-publication number 21828, revision A amendment 0, August 1997.  This is an
-older edition of 21924 above, applying to K6 rather than K6-2 and pretty
-much the same except for no 3DNow.  Available on-line,
-
-	http://www.amd.com/K6/k6docs/pdf/21828.pdf
 
 "3DNow Instruction Porting Guide", AMD publication number 22621, revision B,
 August 1999.  This has some notes on general K6 optimizations as well as
