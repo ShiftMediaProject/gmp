@@ -133,6 +133,27 @@ MA 02111-1307, USA. */
 #endif
 #endif /* __alpha */
 
+#if defined (__hppa) && W_TYPE_SIZE == 64
+/* We put the result pointer parameter last here, since it makes passing
+   of the other parameters more efficient.  */
+#define umul_ppmm(wh, wl, u, v) \
+  do {									\
+    UDItype __p0;							\
+    (wh) = __umul_ppmm64 (u, v, &__p0);					\
+    (wl) = __p0;							\
+  } while (0)
+extern UDItype __umul_ppmm64 _PROTO ((UDItype, UDItype, UDItype *));
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UDItype __r;							\
+    (q) = __udiv_qrnnd64 (n1, n0, d, &__r);				\
+    (r) = __r;								\
+  } while (0)
+extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
+#define UMUL_TIME 8
+#define UDIV_TIME 60
+#endif /* hppa */
+
+
 #if defined (__GNUC__) && !defined (NO_ASM)
 
 /* We sometimes need to clobber "cc" with gcc2, but that would not be
@@ -337,26 +358,6 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 	sub		%0,%1,%0		; Subtract it.
 	" : "=r" (count), "=r" (__tmp) : "1" (x));			\
   } while (0)
-#endif /* hppa */
-
-#if defined (__hppa) && W_TYPE_SIZE == 64
-/* We put the result pointer parameter last here, since it makes passing
-   of the other parameters more efficient.  */
-#define umul_ppmm(wh, wl, u, v) \
-  do {									\
-    UDItype __p0;							\
-    (wh) = __umul_ppmm64 (u, v, &__p0);					\
-    (wl) = __p0;							\
-  } while (0)
-extern UDItype __umul_ppmm64 _PROTO ((UDItype, UDItype, UDItype *));
-#define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __r;							\
-    (q) = __udiv_qrnnd64 (n1, n0, d, &__r);				\
-    (r) = __r;								\
-  } while (0)
-extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
-#define UMUL_TIME 8
-#define UDIV_TIME 60
 #endif /* hppa */
 
 #if (defined (__i370__) || defined (__mvs__)) && W_TYPE_SIZE == 32
