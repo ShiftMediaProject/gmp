@@ -89,6 +89,7 @@ OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 STRIP = @STRIP@
+U = @U@
 VERSION = @VERSION@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
