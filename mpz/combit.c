@@ -1,6 +1,6 @@
 /* mpz_combit -- complement a specified bit.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,17 +48,30 @@ mpz_combit (mpz_ptr d, unsigned long int bit_index)
     }
   else
     {
-      mp_limb_t x = ~(dp[limb_index]) + 1;
+      mp_limb_t x = -dp[limb_index];
+      mp_size_t i;
+
+      /* non-zero limb below us means ones-complement */
+      for (i = limb_index-1; i >= 0; i--)
+        if (dp[i] != 0)
+          {
+            x--;  /* change twos comp to ones comp */
+            break;
+          }
 
       if (x & bit)
 	{
+          mp_limb_t  c;
+
 	  /* Clearing the bit increases the magitude. We might need a carry. */
-	  dsize++;
-	  MPZ_REALLOC(d, dsize);
+	  MPZ_REALLOC(d, dsize + 1);
 	  dp = LIMBS(d);
 
-	  mpn_add_1(dp+limb_index, dp+limb_index, dsize + limb_index, bit);
-	}
+          __GMPN_ADD_1 (c, dp+limb_index, dp+limb_index,
+                        dsize - limb_index, bit);
+          dp[dsize] = c;
+          dsize += c;
+        }
       else
 	/* Setting the bit decreases the magnitude */
 	mpn_sub_1(dp+limb_index, dp+limb_index, dsize + limb_index, bit);
