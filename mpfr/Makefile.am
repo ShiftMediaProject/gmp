@@ -38,7 +38,7 @@ endif
 # see top level Makefile.am for the workaround.
 info_TEXINFOS = mpfr.texi
 mpfr_TEXINFOS = ../doc/fdl.texi
-AM_MAKEINFOFLAGS = -I$(top_srcdir)
+AM_MAKEINFOFLAGS = -I$(top_srcdir)/doc
 TEXINFO_TEX = ../doc/texinfo.tex
 MAKEINFOFLAGS = --enable-encoding
 
