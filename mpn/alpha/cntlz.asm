@@ -33,7 +33,7 @@ dnl  Finally, converting to floating-point and extracting the exponent is much
 dnl  slower.
 
 ASM_START()
-PROLOGUE(__count_leading_zeros)
+PROLOGUE(MPN(count_leading_zeros))
 	bis	r31,63,r0		C initialize partial result count
 
 	srl	r16,32,r1		C shift down 32 steps -> r1
@@ -64,5 +64,5 @@ PROLOGUE(__count_leading_zeros)
 	subq	r0,r1,r0		C subtract it from partial result
 
 	ret	r31,(r26),1
-EPILOGUE(__count_leading_zeros)
+EPILOGUE(MPN(count_leading_zeros))
 ASM_END()
