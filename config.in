@@ -146,8 +146,8 @@ MA 02111-1307, USA.
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if the 80x86 rdtsc instruction is available (pentium and up). */
-#undef HAVE_PENTIUM_RDTSC
+/* How many limbs in a speed measuring cycle counter, if one exists */
+#undef HAVE_SPEED_CYCLECOUNTER
 
 /* Define if mpn/tests has calling conventions checking for the CPU */
 #undef HAVE_CALLING_CONVENTIONS
