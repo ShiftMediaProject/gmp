@@ -80,8 +80,6 @@ MA 02111-1307, USA.
 #endif
 
 
-#define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
-
 #define TIMEVAL_SECS(tp) \
   ((double) (tp)->tv_sec + (double) (tp)->tv_usec * 1.0e-6)
 
