@@ -71,10 +71,10 @@ dnl  GMP_COMPARE_GE(A1,B1, A2,B2, ...)
 dnl  ---------------------------------
 dnl
 dnl  Compare two version numbers A1.A2.etc and B1.B2.etc.  Set
-dnl  gmp_compare_ge to yes or no accoring to the result.  The A parts should
-dnl  be variables, the B parts fixed numbers.  As many parts as desired can
-dnl  be included.  An empty string in an A part is taken to be zero, the B
-dnl  parts should be non-empty and non-zero.
+dnl  $gmp_compare_ge to yes or no accoring to the result.  The A parts
+dnl  should be variables, the B parts fixed numbers.  As many parts as
+dnl  desired can be included.  An empty string in an A part is taken to be
+dnl  zero, the B parts should be non-empty and non-zero.
 dnl
 dnl  For example,
 dnl
@@ -204,9 +204,12 @@ fi
 ])
 
 
-dnl  GMP_PROG_CC_WORKS(CC/CFLAGS,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
+dnl  GMP_PROG_CC_WORKS(cc/cflags,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
 dnl  --------------------------------------------------------------------
 dnl  Check if CC/CFLAGS can compile and link.
+dnl
+dnl  This test is designed to be run repeatedly with different cc/cflags
+dnl  selections, so the result is not cached.
 
 AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_MSG_CHECKING([compiler $1])
@@ -231,12 +234,12 @@ fi
 ])
 
 
-dnl  GMP_HPC_HPPA_2_0(cc,cflags,[ACTION-IF-GOOD][,ACTION-IF-BAD])
+dnl  GMP_HPC_HPPA_2_0(cc,[ACTION-IF-GOOD][,ACTION-IF-BAD])
 dnl  ---------------------------------------------------------
 dnl  Find out whether a HP compiler is good enough to generate hppa 2.0.
 dnl
-dnl  This test might be used a couple of times while searching for a
-dnl  compiler, so don't cache the result.
+dnl  This test might be repeated for different compilers, so the result is
+dnl  not cached.
 
 AC_DEFUN(GMP_HPC_HPPA_2_0,
 [AC_MSG_CHECKING([whether HP compiler $1 is good for 64-bits])
@@ -273,11 +276,11 @@ dnl  mpz/powm.c swox cvs rev 1.4 tickles a bug in gcc 2.95.2 when
 dnl  -march=pentiumpro is used.  The problem appears to be fixed in 2.96, so
 dnl  that option is used only on 2.96 and up.
 dnl
-dnl  The bug is incorrect code generated for a simple ABSIZ(z) expression in
-dnl  mpz_redc(), some registers being clobbered near a cmov.  There's no
+dnl  The bug was incorrect code generated for a simple ABSIZ(z) expression
+dnl  in mpz_redc(), some registers being clobbered near a cmov.  There's no
 dnl  obvious reason for this, and there's many similar or identical
-dnl  expressions throughout the library, so it seems wisest to disable the
-dnl  option until 2.96.
+dnl  expressions throughout the library, so it seems wisest to disable
+dnl  -march=pentiumpro until 2.96.
 dnl
 dnl  This macro is used only once, after finalizing a choice of CC, so it's
 dnl  ok to cache the result.
@@ -310,6 +313,7 @@ fi
 
 dnl  GMP_INIT([M4-DEF-FILE])
 dnl  -----------------------
+dnl  Initializations for GMP config.m4 generation.
 
 AC_DEFUN(GMP_INIT,
 [ifelse([$1], , gmp_configm4=config.m4, gmp_configm4="[$1]")
@@ -377,9 +381,11 @@ echo ["define(\`__CONFIG_M4_INCLUDED__')"] >> $gmp_configm4
 
 dnl  GMP_INCLUDE_MPN(FILE)
 dnl  ---------------------
-dnl  Add an include_mpn(`FILE') to config.m4.
-dnl  FILE should be a path relative to the mpn source directory, for example
-dnl  x86/x86-defs.m4.
+dnl  Add an include_mpn(`FILE') to config.m4.  FILE should be a path
+dnl  relative to the mpn source directory, for example
+dnl
+dnl      GMP_INCLUDE_MPN(`x86/x86-defs.m4')
+dnl
 
 AC_DEFUN(GMP_INCLUDE_MPN,
 [AC_REQUIRE([GMP_INIT])
@@ -392,10 +398,10 @@ dnl  ------------------------------------------
 dnl  Define M4 macro MACRO as DEFINITION in temporary file.
 dnl
 dnl  If LOCATION is `POST', the definition will appear after any include()
-dnl  directives inserted by GMP_INCLUDE/GMP_SINCLUDE.  Mind the quoting!  No
-dnl  shell variables will get expanded.  Don't forget to invoke GMP_FINISH
-dnl  to create file config.m4.  config.m4 uses `<' and '>' as quote
-dnl  characters for all defines.
+dnl  directives inserted by GMP_INCLUDE.  Mind the quoting!  No shell
+dnl  variables will get expanded.  Don't forget to invoke GMP_FINISH to
+dnl  create file config.m4.  config.m4 uses `<' and '>' as quote characters
+dnl  for all defines.
 
 AC_DEFUN(GMP_DEFINE, 
 [AC_REQUIRE([GMP_INIT])
@@ -406,11 +412,11 @@ echo ['define(<$1>, <$2>)'] >>ifelse([$3], [POST],
 
 dnl  GMP_DEFINE_RAW(STRING, [, LOCATION])
 dnl  ------------------------------------
-dnl  Put STRING in temporary file.
+dnl  Put STRING into config.m4 file.
 dnl
 dnl  If LOCATION is `POST', the definition will appear after any include()
-dnl  directives inserted by GMP_INCLUDE/GMP_SINCLUDE.  Don't forget to
-dnl  invoke GMP_FINISH to create file config.m4.
+dnl  directives inserted by GMP_INCLUDE.  Don't forget to invoke GMP_FINISH
+dnl  to create file config.m4.
 
 AC_DEFUN(GMP_DEFINE_RAW,
 [AC_REQUIRE([GMP_INIT])
@@ -467,7 +473,7 @@ echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconf
 dnl  GMP_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl  -------------------------------------------------------------
 dnl
-dnl  Deterine whether global symbols need to be prefixed with an underscore.
+dnl  Determine whether global symbols need to be prefixed with an underscore.
 dnl  A test program is linked to an assembler module with or without an
 dnl  underscore to see which works.
 dnl
@@ -587,7 +593,7 @@ dnl
 dnl  Solaris 2.8 as
 dnl       ",0x90" does nothing, generates a warning that it's being ignored.
 dnl
-dnl  SCO OpenServer as
+dnl  SCO OpenServer 5 as
 dnl       Second parameter is max bytes to fill, not a fill pattern.
 dnl       ",0x90" is an error due to being bigger than the first parameter.
 dnl       Multi-byte nop fills are generated in text segments.
@@ -655,10 +661,10 @@ echo ["define(<DATA>, <$gmp_cv_asm_data>)"] >> $gmp_tmpconfigm4
 dnl  GMP_ASM_RODATA
 dnl  --------------
 dnl
-dnl  ELF uses `.section .rodata', possibly with a `,"a"' though in gas the
-dnl  flags default from the section name.
+dnl  ELF uses .section .rodata, possibly with a ,"a" though in gas the flags
+dnl  default from the section name.
 dnl
-dnl  COFF looks like it might use `.section .rdata', possibly with `,"dr"'
+dnl  COFF looks like it might use .section .rdata, possibly with ,"dr"
 dnl  though again gas uses defaults based on the section name.
 dnl
 dnl  a.out has only text, data and bss.
@@ -835,8 +841,8 @@ dnl  needed at all, at least for just checking instruction syntax.
 dnl
 dnl  "movq %mm0, %mm1" should assemble as "0f 6f c8", but Solaris 2.6
 dnl  wrongly assembles it as "0f 6f c1" (that being the reverse "movq %mm1,
-dnl  %mm0").  It doesn't seem worth bothering to work around this bug, so
-dnl  just detect it.
+dnl  %mm0").  It seems more trouble than it's worth to work around this in
+dnl  the code, so just detect and reject.
 
 AC_DEFUN(GMP_ASM_X86_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
