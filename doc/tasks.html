@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 29 Dec 2002.  An up-to-date version is available at
+  This file current as of 4 Jan 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -841,6 +841,11 @@ MA 02111-1307, USA.
      which is what both it and <code>mpz_get_str</code> currently do.  But
      want to be careful not to bind ourselves to something that might not suit
      another implementation.
+<li> <code>va_arg</code> doesn't do the right thing with <code>mpz_t</code>
+     etc directly, but instead needs a pointer type like <code>MP_INT*</code>.
+     It'd be good to show how to do this, but we'd either need to document
+     <code>mpz_ptr</code> and friends, or perhaps fallback on something
+     slightly nasty with <code>void*</code>.
 </ul>
 
 
