@@ -43,7 +43,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    values using just 8 bits (if gaps are too big, store bogus primes!)
    and one array with "rem" values.  The latter needs 32-bit values.
  * A new entry point, mpz_probab_prime_likely_p, would be useful.
- * Improve command line syntax and versaitlity.  "primes -f FROM -t TO",
+ * Improve command line syntax and versatility.  "primes -f FROM -t TO",
    allow either to be omitted for open interval.  (But disallow
    "primes -c -f FROM" since that would be infinity.)  Allow printing a
    limited *number* of primes using syntax like "primes -f FROM -n NUMBER".
