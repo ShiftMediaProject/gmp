@@ -24,6 +24,7 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #ifdef OPERATION_add_n
 #define func __gmpn_add_n
@@ -35,6 +36,30 @@ MA 02111-1307, USA.
 #define func __gmpn_sub_n
 #define reffunc refmpn_sub_n
 #define funcname "mpn_sub_n"
+#endif
+
+#ifdef OPERATION_addlsh1_n
+#define func __gmpn_addlsh1_n
+#define reffunc refmpn_addlsh1_n
+#define funcname "mpn_addlsh1_n"
+#endif
+
+#ifdef OPERATION_sublsh1_n
+#define func __gmpn_sublsh1_n
+#define reffunc refmpn_sublsh1_n
+#define funcname "mpn_sublsh1_n"
+#endif
+
+#ifdef OPERATION_rsh1add_n
+#define func __gmpn_rsh1add_n
+#define reffunc refmpn_rsh1add_n
+#define funcname "mpn_rsh1add_n"
+#endif
+
+#ifdef OPERATION_rsh1sub_n
+#define func __gmpn_rsh1sub_n
+#define reffunc refmpn_rsh1sub_n
+#define funcname "mpn_rsh1sub_n"
 #endif
 
 #if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
