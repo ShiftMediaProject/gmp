@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C         cycles/limb
 C Athlon:     1.0
-C Opteron:    1.0
+C Hammer:     1.0
 
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr src, mp_size_t size)

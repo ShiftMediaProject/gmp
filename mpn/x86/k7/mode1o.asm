@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C          cycles/limb
 C Athlon:     11.0
-C Opteron:     7.0
+C Hammer:      7.0
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,

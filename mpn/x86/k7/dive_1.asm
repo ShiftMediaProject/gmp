@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C          cycles/limb
 C Athlon:     11.0
-C Opteron:     9.0
+C Hammer:      9.0
 
 
 C void mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
