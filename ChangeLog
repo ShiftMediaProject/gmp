@@ -19,6 +19,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-08  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (MUL_KARATSUBA_THRESHOLD etc): Remove forced nail values.
+
+	* mpf/fits_u.h, mpf/fits_s.h, tests/mpf/t-fits.c: Ignore fraction
+	part, making the code match the documentation.
+
+	* gmpxx.h (struct __gmp_binary_minus): Use mpz_ui_sub.
+
 2002-05-07  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/powerpc32/README: New file.
