@@ -21,6 +21,13 @@ MA 02111-1307, USA.
 
 2002-05-21  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-gcd.c: Test mpz_gcd_ui.
+
+	* mpz/lcm_ui.c: Nailify.
+
+	* mpz/gcd_ui.c: Nailify.  Make it work as documented, allowing
+	NULL to be passed for result parameter.  Fix gcd(0,0) case.
+
 	* mpz/set_str.c: Nailify.
 
 	* randlc2x.c (gmp_randinit_lc_2exp): Nailify.
@@ -283,7 +290,7 @@ MA 02111-1307, USA.
 
 2002-04-27  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/generic/gcdext.c (div2): Remove qh paramater.
+	* mpn/generic/gcdext.c (div2): Remove qh parameter.
 	(mpn_gcdext): Streamline double-limb code.
 	Move GCDEXT_THRESHOLD check to after initial division.
 
