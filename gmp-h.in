@@ -374,7 +374,6 @@ extern mp_size_t __GMP_DECLSPEC __gmp_default_fp_limb_precision;
 
 /**************** Random number routines.  ****************/
 
-#define _gmp_rand __gmp_rand
 #define gmp_randinit __gmp_randinit
 #define gmp_randinit_lc __gmp_randinit_lc
 #define gmp_randinit_lc_2exp __gmp_randinit_lc_2exp
@@ -382,7 +381,6 @@ extern mp_size_t __GMP_DECLSPEC __gmp_default_fp_limb_precision;
 #define gmp_randseed_ui __gmp_randseed_ui
 #define gmp_randclear __gmp_randclear
 
-void __GMP_DECLSPEC _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
 void __GMP_DECLSPEC gmp_randinit _PROTO ((gmp_randstate_t, gmp_randalg_t, ...));
 void __GMP_DECLSPEC gmp_randinit_lc _PROTO ((gmp_randstate_t,
                               mpz_srcptr, unsigned long int, mpz_srcptr));
