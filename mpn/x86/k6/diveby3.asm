@@ -32,9 +32,6 @@ include(`../config.m4')
 # isn't exactly divisible by 3 the result in dst,size won't be very useful.
 # The return value is 0 if src,size was divisible by 3, or non-zero if not.
 #
-# Using fixed .rodata locations for the multipliers 3 and INVERSE_3 is 1
-# cycle slower than with them pushed on the stack (don't know why).
-#
 # Using %esi in the (%esi,%ecx,4) or 0(%esi,%ecx,4) addressing mode doesn't
 # lead to vector decoding, unlike plain (%esi) does.
 
