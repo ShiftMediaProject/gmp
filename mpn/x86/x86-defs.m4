@@ -419,9 +419,9 @@ dnl  Generate either a "loop" instruction or a "decl %ecx / jnz", whichever
 dnl  is better.  "loop" is better on K6 and probably on 386, on other chips
 dnl  separate decl/jnz is better.
 dnl
-dnl  This macro is just for the x86/divmod_1.asm, divrem_1.asm and mod_1.asm
-dnl  where this loop_or_decljnz variation is enough to allow the code to be
-dnl  shared by all chips.
+dnl  This macro is just for mpn/x86/divrem_1.asm and mpn/x86/mod_1.asm where
+dnl  this loop_or_decljnz variation is enough to let the code be shared by
+dnl  all chips.
 
 define(loop_or_decljnz,
 `ifelse(loop_is_better_p,1,
@@ -434,5 +434,71 @@ define(loop_is_better_p,
                   `HAVE_TARGET_CPU_k62',
                   `HAVE_TARGET_CPU_k63',
                   `HAVE_TARGET_CPU_i386')')
+
+
+dnl  Usage: Zdisp(inst,op,op,op)
+dnl
+dnl  Generate explicit .byte sequences if necessary to force a byte-sized
+dnl  zero displacement on an instruction.  For example,
+dnl
+dnl         Zdisp(  movl,   0,(%esi), %eax)
+dnl
+dnl  expands to
+dnl
+dnl                 .byte   139,70,0  # movl 0(%esi), %eax
+dnl
+dnl  If the displacement given isn't 0, then normal assembler code is
+dnl  generated.  For example,
+dnl
+dnl         Zdisp(  movl,   4,(%esi), %eax)
+dnl
+dnl  expands to
+dnl
+dnl                 movl    4(%esi), %eax
+dnl
+dnl  This means a single Zdisp() form can be used with an expression for the
+dnl  displacement, and .byte will be used only if necessary.  The
+dnl  displacement argument is eval()ed.
+dnl
+dnl  Because there aren't many places a 0(reg) form is wanted, Zdisp is
+dnl  implemented with a table of instructions and encodings.  A new entry is
+dnl  needed for any different operation or registers.
+
+define(Zdisp,
+`define(`Zdisp_found',0)dnl
+Zdisp_match( movl, %eax, 0,(%edi), `137,71,0',    $@)`'dnl
+Zdisp_match( movl, %ebx, 0,(%edi), `137,95,0',    $@)`'dnl
+Zdisp_match( movl, 0,(%ebx), %eax, `139,67,0',    $@)`'dnl
+Zdisp_match( movl, 0,(%ebx), %esi, `139,115,0',   $@)`'dnl
+Zdisp_match( movl, 0,(%esi), %eax, `139,70,0',    $@)`'dnl
+Zdisp_match( addl, %ecx, 0,(%edi), `1,79,0',      $@)`'dnl
+Zdisp_match( subl, %ecx, 0,(%edi), `41,79,0',     $@)`'dnl
+Zdisp_match( adcl, 0,(%edx), %esi, `19,114,0',    $@)`'dnl
+Zdisp_match( sbbl, 0,(%edx), %esi, `27,114,0',    $@)`'dnl
+Zdisp_match( movq, 0,(%esi), %mm0, `15,111,70,0', $@)`'dnl
+Zdisp_match( movq, %mm0, 0,(%edi), `15,127,71,0', $@)`'dnl
+ifelse(Zdisp_found,0,
+`m4_error(`unrecognised instruction in Zdisp: $1 $2 $3 $4
+')')')
+
+define(Zdisp_match,
+`ifelse(eval(m4_stringequal_p(`$1',`$6')
+	&& m4_stringequal_p(`$2',0)
+	&& m4_stringequal_p(`$3',`$8')
+	&& m4_stringequal_p(`$4',`$9')),1,
+`define(`Zdisp_found',1)dnl
+ifelse(eval(`$7'),0,
+`	.byte	$5  `# $1 0$3, $4'',
+`	$6	$7$8, $9')',
+
+`ifelse(eval(m4_stringequal_p(`$1',`$6')
+	&& m4_stringequal_p(`$2',`$7')
+	&& m4_stringequal_p(`$3',0)
+	&& m4_stringequal_p(`$4',`$9')),1,
+`define(`Zdisp_found',1)dnl
+ifelse(eval(`$8'),0,
+`	.byte	$5  `# $1 $2, 0$4'',
+`	$6	$7, $8$9')')')')
+
 
 divert`'dnl
