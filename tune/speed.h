@@ -967,7 +967,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     MPN_COPY (d, s->yp, s->size);                               \
                                                                 \
     /* normalize the data */                                    \
-    d[s->size-1] |= GMP_LIMB_HIGHBIT;                          \
+    d[s->size-1] |= GMP_NUMB_HIGHBIT;                           \
     a[2*s->size-1] = d[s->size-1] - 1;                          \
                                                                 \
     speed_operand_src (s, a, 2*s->size);                        \
@@ -1016,7 +1016,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                         \
     d = SPEED_TMP_ALLOC_LIMBS (3, s->align_yp);         \
     MPN_COPY (d, s->yp, 3);                             \
-    d[2] |= GMP_LIMB_HIGHBIT;                          \
+    d[2] |= GMP_NUMB_HIGHBIT;                           \
                                                         \
     qsize = s->size - 3;                                \
     q = SPEED_TMP_ALLOC_LIMBS (qsize, s->align_wp);     \
@@ -1699,7 +1699,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                         \
     /* divisor must be normalized */                    \
     MPN_COPY (yp, s->yp_block, 2);                      \
-    yp[1] |= GMP_LIMB_HIGHBIT;                         \
+    yp[1] |= GMP_NUMB_HIGHBIT;                          \
                                                         \
     speed_operand_src (s, xp, s->size);                 \
     speed_operand_src (s, yp, 2);                       \
