@@ -147,6 +147,13 @@ x
 @end macro
 @end ifnottex
 
+@c  @times{} made available as a "*" in info and html (already works in tex).
+@ifnottex
+@macro times
+*
+@end macro
+@end ifnottex
+
 @c  Usage: @W{text}
 @c  Like @w{} but working in math mode too.
 @tex
@@ -1573,6 +1580,25 @@ It doesn't matter if a size set with @code{@w{_mpz}_realloc} is too small,
 since all functions will do a further reallocation if necessary.  Badly
 overestimating memory required will waste space though.
 
+@item Divisibility Testing (Small Integers)
+
+@code{mpz_divisible_ui_p} is the best function for testing whether an
+@code{mpz_t} is divisible by an individual small integer.  It uses an
+algorithm which is faster than @code{mpz_tdiv_ui}, but which gives no useful
+information about the actual remainder, only whether it's zero.
+
+However when testing divisibility by several small integers, it's best to take
+a remainder modulo their product, in order to save multi-precision operations.
+For instance to test whether a number is divisible by any of 23, 29 and 31,
+take a remainder modulo @ma{23@times{}29@times{}31 = 20677} and then test
+that.
+
+The division functions like @code{mpz_tdiv_q_ui} which give a quotient as well
+as a remainder are generally a little slower than the remainder-only functions
+like @code{mpz_tdiv_ui}.  If the quotient is only rarely wanted, perhaps only
+on finding a divisor, then it's probably best to just take a remainder and
+then go back and calculate the quotient if and when it's wanted.
+
 @item Rational Arithmetic
 The @code{mpq} functions operate on @code{mpq_t} values with no common factors
 in the numerator and denominator.  Common factors are checked-for and cast out
@@ -2279,6 +2305,13 @@ when it is known in advance that @var{d} divides @var{n}.
 @code{mpz_divexact} is much faster than the other division functions, and is
 the best choice when exact division is known to occur, for example reducing a
 rational to lowest terms.
+@end deftypefun
+
+@deftypefun int mpz_divisible_p (mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx int mpz_divisible_ui_p (mpz_t @var{n}, unsigned long int @var{d})
+@deftypefunx int mpz_divisible_2exp_p (mpz_t @var{n}, unsigned long int @var{b})
+Return non-zero if @var{n} is exactly divisible by @var{d}, or in the case of
+@code{mpz_divisible_2exp_p} by @m{2^b,2^@var{b}}.
 @end deftypefun
 
 
