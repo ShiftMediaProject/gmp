@@ -1,6 +1,6 @@
 /* mpq_set_str -- string to mpq conversion.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,7 +48,7 @@ mpq_set_str (mpq_ptr q, const char *str, int base)
     }
 
   numlen = slash - str;
-  num = (*__gmp_allocate_func) (numlen+1);
+  num = __GMP_ALLOCATE_FUNC_TYPE (numlen+1, char);
   memcpy (num, str, numlen);
   num[numlen] = '\0';
   ret = mpz_set_str (mpq_numref(q), num, base);
