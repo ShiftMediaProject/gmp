@@ -1,3 +1,35 @@
+2000-10-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/pentium/gmp-mparam.h: Retune.
+	* mpn/x86/pentium/mmx/gmp-mparam.h: Retune.
+	* mpn/sparc32/v9/gmp-mparam.h: Retune.
+	* mpn/x86/k6/gmp-mparam.h: Retune.
+	* mpn/x86/p6/gmp-mparam.h: Retune.
+	* mpn/x86/k7/gmp-mparam.h: Retune.
+	* mpn/sparc64/gmp-mparam.h: Retune.
+
+	* mpn/alpha/ev5/gmp-mparam.h: New file.
+
+	* gmp-impl.h (default MPN_COPY): Remove final `;'.
+
+	* tune/time.c (speed_endtime): Rewrite.
+
+	* tune/speed.h (SPEED_ROUTINE_MPZ_POWM): Set base to a large value,
+	not 2.
+
+	* demos/pexpr.c (setup_error_handler): Fix typo.
+
+	* mpz/powm.c (redc): New function, based on old mpz_redc.  Don't
+	multiply here.
+	(mpz_redc): Remove.
+	(mpz_powm): Major changes, partially reverting to mpn calls.
+	Multiply before calling redc.
+	(mpz_powm): Use TMP_ allocation.
+	(mpz_powm): Refine calculation of k (width of exponent window).
+	(mpz_powm): Cast constants to mp_limb_t before left shifting.
+
+	* longlong.h: Use ia64 count_leading_zeros just when __GNUC__.
+
 2000-09-29  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_C_SIZES): New macro.
@@ -56,7 +88,7 @@
 	* mpn/x86/*/gmp-mparam.h (UDIV_PREINV_TIME): Add values.
 
 	* macos/Makefile.in: Add mpz/tests/t-get_si.c, mpf/tests/t-set_f.c,
-	and new multi-function mpz and mpq files.	
+	and new multi-function mpz and mpq files.
 
 2000-09-25  Kevin Ryde  <kevin@swox.se>
 
@@ -233,7 +265,7 @@
 	object code changes.
 	* mpn/generic/popcount.c: Remove file.
 	* mpn/generic/hamdist.c: Remove file.
-	
+
 2000-08-24  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (mpn_com_n): Fix typo.
