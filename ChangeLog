@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2003-11-19  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/ev5/com_n.asm: Add ASM_START/ASM_END.
+
 	* mpn/generic/mul_fft.c (mpn_fft_zero_p): Remove unused function.
 	(mpn_lshift_com): Make static, nailify properly.
 
