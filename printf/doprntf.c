@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -334,7 +334,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
   case DOPRNT_SHOWBASE_NO:
     break;
   case DOPRNT_SHOWBASE_NONZERO:
-    if (intlen == 0)
+    if (intlen == 0 && fraclen == 0)
       break;
     /*FALLTHRU*/
   case DOPRNT_SHOWBASE_YES:
