@@ -469,7 +469,8 @@ main (int argc, char **argv)
       else
 	{
 	  printf ("result is approximately %ld digits%s\n",
-		  (long) mpz_sizeinbase (r, 10), newline);
+		  (long) mpz_sizeinbase (r, base >= 0 ? base : -base),
+		  newline);
 	}
 
       free_expr (e);
