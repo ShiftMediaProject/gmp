@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 14 Mar 2004.  An up-to-date version is available at
+  This file current as of 13 Apr 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -70,9 +70,9 @@ MA 02111-1307, USA.
 <li> <code>mpf_eq</code> is not always correct, when one operand is
      1000000000... and the other operand is 0111111111..., i.e., extremely
      close.  There is a special case in <code>mpf_sub</code> for this
-     situation; put similar code in <code>mpf_eq</code>.
+     situation; put similar code in <code>mpf_eq</code>.  [In progress.]
 <li> <code>mpf_eq</code> doesn't implement what gmp.texi specifies.  It should
-     not use just whole limbs, but partial limbs.
+     not use just whole limbs, but partial limbs.  [In progress.]
 <li> <code>mpf_set_str</code> doesn't validate it's exponent, for instance
      garbage 123.456eX789X is accepted (and an exponent 0 used), and overflow
      of a <code>long</code> is not detected.
@@ -89,6 +89,12 @@ MA 02111-1307, USA.
      probably an alloc call asking for <code>SIZE_T_MAX</code>, and if that
      somehow succeeds then an <code>abort</code>.  Various size overflows of
      this kind are not handled gracefully, probably resulting in segvs.
+     <br>
+     In <code>mpz_n_pow_ui</code>, detect when the count of low zero bits
+     exceeds an <code>unsigned long</code>.  There's a (small) chance of this
+     happening but still having enough memory to represent the value.
+     Reported by Winfried Dreckmann in for instance <code>mpz_ui_pow_ui (x,
+     4UL, 1431655766UL)</code>.
 <li> <code>mpf</code>: Detect exponent overflow and raise some exception.
      It'd be nice to allow the full <code>mp_exp_t</code> range since that's
      how it's been in the past, but maybe dropping one bit would make it
