@@ -715,7 +715,7 @@ extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
     if (__builtin_constant_p (bh) && (bh) == 0)				\
       __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{aze|addze} %0,%2"		\
 	     : "=r" (sh), "=&r" (sl) : "%r" (ah), "%r" (al), "rI" (bl));\
-    else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
+    else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)		\
       __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{ame|addme} %0,%2"		\
 	     : "=r" (sh), "=&r" (sl) : "%r" (ah), "%r" (al), "rI" (bl));\
     else								\
@@ -728,13 +728,13 @@ extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
     if (__builtin_constant_p (ah) && (ah) == 0)				\
       __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfze|subfze} %0,%2"	\
 	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
-    else if (__builtin_constant_p (ah) && (ah) == ~(USItype) 0)		\
+    else if (__builtin_constant_p (ah) && (ah) == ~(UDItype) 0)		\
       __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfme|subfme} %0,%2"	\
 	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == 0)			\
       __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{ame|addme} %0,%2"		\
 	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
-    else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
+    else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)		\
       __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{aze|addze} %0,%2"		\
 	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
     else								\
