@@ -637,6 +637,7 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_divmod_1		__MPN(divmod_1)
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
+#define mpn_divrem_2		__MPN(divrem_2)
 #define mpn_divrem_newton	__MPN(divrem_newton)
 #define mpn_divrem_classic	__MPN(divrem_classic)
 #define mpn_dump		__MPN(dump)
@@ -679,6 +680,7 @@ int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_divrem _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+mp_limb_t mpn_divrem_2 _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr));
 mp_limb_t mpn_divrem_newton _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divrem_classic _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 void mpn_dump _PROTO ((mp_srcptr, mp_size_t));
@@ -870,9 +872,26 @@ mpn_divrem (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn)
      mp_size_t _gmp_dn;
 #endif
 {
+  extern int __gmp_junk;
+  extern const int __gmp_0;
+  extern mp_limb_t __gmpn_divrem_1n ();
+
   /* When the divisor is under 110 limbs, classic division is always faster.  */
   if (_gmp_dn < 110)
-    return mpn_divrem_classic (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn);
+    {
+      switch (_gmp_dn)
+	{
+	case 0:
+	  __gmp_junk = 10/__gmp_0;
+	  return 0;
+	case 1:
+	  return __gmpn_divrem_1n (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp[0]);
+	case 2:
+	  return mpn_divrem_2 (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp);
+	default:
+	  return mpn_divrem_classic (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn);
+	}
+    }
 
   /* When the divisor is over 600 limbs, or if the dividend is over 1000 limbs
      newton division is always faster.  But if the two sizes are within 20
