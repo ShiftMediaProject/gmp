@@ -1198,7 +1198,7 @@ HP-UX supports two ABIs for IA-64.  GMP performance is the same in both.
 
 @table @asis
 @item @samp{ABI=32}
-In the 32-bit ABI pointers, @code{int}s and @code{long}s are 32 bits and GMP
+In the 32-bit ABI, pointers, @code{int}s and @code{long}s are 32 bits and GMP
 uses a 64 bit @code{long long} for a limb.  Applications can be compiled
 without any special flags since this is the default in both HP C and GCC, but
 for reference the flags are
@@ -3889,16 +3889,29 @@ minus sign and one for the null-terminator).
 @cindex Special integer functions
 @cindex Integer special functions
 
-The functions in this section are for various special purposes and for most
-applications the things here can be done better or more easily by other means.
+The functions in this section are for various special purposes.  Most
+applications will not need them.
 
-@deftypefun void mpz_array_init (mpz_t @var{integer_array}[], size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
+@deftypefun void mpz_array_init (mpz_t @var{integer_array}, size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
 This is a special type of initialization.  @strong{Fixed} space of
 @var{fixed_num_bits} is allocated to each of the @var{array_size} integers in
 @var{integer_array}.  There is no way to free the storage allocated by this
 function.  Don't call @code{mpz_clear}!
 
-This function is only intended for use by programs that create a large number
+The @var{integer_array} parameter is the first @code{mpz_t} in the array.  For
+example,
+
+@example
+mpz_t  arr[20000];
+mpz_array_init (arr[0], 20000, 512);
+@end example
+
+@c  In case anyone's wondering, yes this parameter style is a bit anomalous,
+@c  it'd probably be nicer if it was "arr" instead of "arr[0]".  Obviously the
+@c  two differ only in the declaration, not the pointer value, but changing is
+@c  not possible since it'd provoke warnings or errors in existing sources.
+
+This function is only intended for programs that create a large number
 of integers and need to reduce memory usage by avoiding the overheads of
 allocating and reallocating lots of small blocks.  In normal programs this
 function is not recommended.
@@ -9757,7 +9770,6 @@ the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
 @end itemize
 
 @section Papers
-
 
 @itemize @bullet
 @item
