@@ -25,7 +25,12 @@ AC_REVISION($Revision$)
 AC_PREREQ(2.49)
 AC_INIT(gmp-impl.h)
 
-if test -n "$target_alias"; then
+# If --target is not used then $target_alias is empty, but if say
+# "./configure athlon-pc-freebsd3.5" is used, then all three of
+# $build_alias, $host_alias and $target_alias are set to
+# "athlon-pc-freebsd3.5".
+#
+if test -n "$target_alias" && test "$target_alias" != "$host_alias"; then
   AC_MSG_ERROR([--target is not appropriate for GMP
 Use --build=CPU-VENDOR-OS if you need to specify your CPU and/or system
 explicitly.  Use --host if cross-compiling (see "Installing GMP" in the
