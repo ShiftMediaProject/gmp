@@ -28,26 +28,11 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-#ifdef OPERATION_addmul_1
-#define FUNCTION   mpn_addmul_1
-#define VARIATION  prod_low = x + prod_low; cy_limb += (prod_low < x);
-#endif
-
-#ifdef OPERATION_submul_1
-#define FUNCTION   mpn_submul_1
-#define VARIATION  prod_low = x - prod_low; cy_limb += (prod_low > x);
-#endif
-
-#ifndef FUNCTION
-Error, error, need OPERATION_addmul_1 or OPERATION_submul_1
-#endif
-
-
 mp_limb_t
-FUNCTION (register mp_ptr res_ptr,
-          register mp_srcptr s1_ptr,
-          mp_size_t s1_size,
-          register mp_limb_t s2_limb)
+mpn_submul_1 (register mp_ptr res_ptr,
+	      register mp_srcptr s1_ptr,
+	      mp_size_t s1_size,
+	      register mp_limb_t s2_limb)
 {
   register mp_limb_t cy_limb;
   register mp_size_t j;
@@ -74,7 +59,8 @@ FUNCTION (register mp_ptr res_ptr,
       cy_limb = (prod_low < cy_limb) + prod_high;
 
       x = res_ptr[j];
-      VARIATION;
+      prod_low = x - prod_low;
+      cy_limb += prod_low > x;
       res_ptr[j] = prod_low;
     }
   while (++j != 0);
