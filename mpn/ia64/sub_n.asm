@@ -28,7 +28,10 @@ C up = r33
 C vp = r34
 C n = r35
 
-C This code runs at 3.0 cycles/limb on the Itanium, for large operands.
+C         cycles/limb
+C Itanium:    6
+C Itanium 2:  ?
+
 
 ASM_START()
 PROLOGUE(mpn_sub_n)
@@ -53,33 +56,67 @@ ifdef(`HAVE_ABI_32',
 		nop.b		0
 } { .mib;	ld8		r17 = [r34], 8
 		nop.i		0
-	   (p6)	br		.Lend			;;
+	   (p6)	br.dptk		.Lend			;;
 }
 		.align	32
 .Loop:
+	.pred.rel "mutex",p8,p9
   { .mii;	mov		r20 = r16
 	   (p8)	sub		r19 = r16, r17, 1
 	   (p9)	sub		r19 = r16, r17		;;
 } { .mfi;	ld8		r16 = [r33], 8
 		nop.f		0
-	   (p8)	cmp.leu		p8, p9 = r20, r19
+	   (p8)	cmp.leu		p6, p7 = r20, r19
 } { .mfi;	ld8		r17 = [r34], 8
 		nop.f		0
-	   (p9)	cmp.ltu		p8, p9 = r20, r19
+	   (p9)	cmp.ltu		p6, p7 = r20, r19
+} { .mbb;	st8		[r32] = r19, 8
+		nop.b		0
+		br.cloop.dptk	.Loopm			;;
+}
+	.pred.rel "mutex",p6,p7
+  { .mfi;  (p6)	sub		r19 = r16, r17, 1
+		nop.f		0
+	   (p7)	sub		r19 = r16, r17		;;
+} { .mii;	st8		[r32] = r19
+	   (p6)	cmp.leu		p8, p9 = r16, r19
+	   (p7)	cmp.ltu		p8, p9 = r16, r19	;;
+}
+	.pred.rel "mutex",p8,p9
+  { .mfi;  (p8)	mov		r8 = 1
+		nop.f		0
+	   (p9)	mov		r8 = 0
+}
+		mov		ar.lc = r2
+		br.ret.sptk.many b0
+.Loopm:
+	.pred.rel "mutex",p6,p7
+  { .mii;	mov		r20 = r16
+	   (p6)	sub		r19 = r16, r17, 1
+	   (p7)	sub		r19 = r16, r17		;;
+} { .mfi;	ld8		r16 = [r33], 8
+		nop.f		0
+	   (p6)	cmp.leu		p8, p9 = r20, r19
+} { .mfi;	ld8		r17 = [r34], 8
+		nop.f		0
+	   (p7)	cmp.ltu		p8, p9 = r20, r19
 } { .mbb;	st8		[r32] = r19, 8
 		nop.b		0
 		br.cloop.dptk	.Loop			;;
 }
 .Lend:
+	.pred.rel "mutex",p8,p9
   { .mfi;  (p8)	sub		r19 = r16, r17, 1
 		nop.f		0
 	   (p9)	sub		r19 = r16, r17		;;
 } { .mii;	st8		[r32] = r19
-	   (p8)	cmp.leu		p8, p9 = r16, r19
-	   (p9)	cmp.ltu		p8, p9 = r16, r19	;;
-} { .mfi;  (p8)	mov		r8 = 1
+	   (p8)	cmp.leu		p6, p7 = r16, r19
+	   (p9)	cmp.ltu		p6, p7 = r16, r19	;;
+}
+	.pred.rel "mutex",p6,p7
+  { .mfi;  (p6)	mov		r8 = 1
 		nop.f		0
-	   (p9)	mov		r8 = 0
+	   (p7)	mov		r8 = 0
 }
 		mov		ar.lc = r2
 		br.ret.sptk.many b0

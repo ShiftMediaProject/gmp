@@ -46,12 +46,12 @@ ifdef(`HAVE_ABI_32',
 		cmp.eq	p10, p11 = 2, r14
 		cmp.eq	p12, p13 = 3, r14
 		;;
-	  (p8)	br	.Lb01
-	  (p10)	br	.Lb10
-	  (p12)	br	.Lb11
+	  (p8)	br.dptk	.Lb01
+	  (p10)	br.dptk	.Lb10
+	  (p12)	br.dptk	.Lb11
 
 .Lb00:	C  n = 4, 8, 12, ...
-	  (p14)	br	.Ls00
+	  (p14)	br.dptk	.Ls00
 		;;
 		ld8	r16 = [r33], 8
 		shr	r15 = r34, 2
@@ -70,7 +70,7 @@ ifdef(`HAVE_ABI_32',
 .Lb01:	C  n = 1, 5, 9, 13, ...
 		ld8	r19 = [r33], 8
 		shr	r15 = r34, 2
-	  (p14)	br	.Ls01
+	  (p14)	br.dptk	.Ls01
 		;;
 		ld8	r16 = [r33], 8
 		mov	ar.lc = r15
@@ -87,7 +87,7 @@ ifdef(`HAVE_ABI_32',
 		;;
 		ld8	r19 = [r33], 8
 		mov	ar.lc = r15
-	  (p14)	br	.Ls10
+	  (p14)	br.dptk	.Ls10
 		;;
 		ld8	r16 = [r33], 8
 		;;
@@ -103,7 +103,7 @@ ifdef(`HAVE_ABI_32',
 		mov	ar.lc = r15
 		;;
 		ld8	r19 = [r33], 8
-	  (p14)	br	.Ls11
+	  (p14)	br.dptk	.Ls11
 		;;
 		ld8	r16 = [r33], 8
 		br.sptk	.Li11
