@@ -647,6 +647,9 @@ typedef unsigned long USItype;
 #if defined _LONGLONG || defined _LONG_LONG_LIMB
 typedef	long long int DItype;
 typedef unsigned long long int UDItype;
+#else /* Assume `long' gives us a wide enough type.  Needed for hppa2.0w.  */
+typedef long int DItype;
+typedef unsigned long int UDItype;
 #endif
 #endif
 
