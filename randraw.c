@@ -150,7 +150,7 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
       else
 	{
 	  /* M is not a power of 2.  */
-	  abort ();		/* FIXME.  */
+          ASSERT_ALWAYS (0);	/* FIXME.  */
 	}
 
       /* Save result as next seed.  */
@@ -174,13 +174,13 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
 
   /* t = a * seed */
   if (seedn >= an)
-    mpn_mul_basecase (tp, seedp, seedn, ap, an);
+    mpn_mul (tp, seedp, seedn, ap, an);
   else
-    mpn_mul_basecase (tp, ap, an, seedp, seedn);
+    mpn_mul (tp, ap, an, seedp, seedn);
   tn = an + seedn;
 
   /* t = t + c */
-  mpn_incr_u (tp, c);
+  MPN_INCR_U (tp, tn, c);
 
   /* t = t % m */
   if (m2exp != 0)
@@ -192,7 +192,7 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
     }
   else
     {
-      abort ();			/* FIXME.  */
+      ASSERT_ALWAYS (0);	/* FIXME.  */
     }
 
   /* Save result as next seed.  */
