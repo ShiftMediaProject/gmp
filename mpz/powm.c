@@ -20,6 +20,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+
+#include <stdio.h>
+
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -28,48 +32,38 @@ MA 02111-1307, USA. */
 #endif
 
 
-/* set c <- (a*b)/R^n mod m c has to have at least (2n) allocated limbs */
+/* Set c <- tp/R^n mod m.
+   tp should have space for 2*n+1 limbs; clobber its most significant limb. */
 static void
 #if __STDC__
-mpz_redc (mpz_ptr c, mpz_srcptr a, mpz_srcptr b, mpz_srcptr m, mp_limb_t Nprim)
+redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
 #else
-mpz_redc (c, a, b, m, Nprim)
-     mpz_ptr c;
-     mpz_srcptr a;
-     mpz_srcptr b;
-     mpz_srcptr m;
+redc (cp, mp, n, Nprim, tp)
+     mp_ptr cp;
+     mp_srcptr mp;
+     mp_size_t n;
      mp_limb_t Nprim;
+     mp_ptr tp;
 #endif
 {
-  mp_ptr cp, mp = PTR (m);
-  mp_limb_t cy, cout = 0;
+  mp_limb_t cy;
   mp_limb_t q;
-  size_t j, n = ABSIZ (m);
+  size_t j;
 
-  ASSERT (ALLOC (c) >= 2 * n);
+  tp[2 * n] = 0;		/* carry guard */
 
-  mpz_mul (c, a, b);
-  cp = PTR (c);
-  j = ABSIZ (c);
-  MPN_ZERO (cp + j, 2 * n - j);
   for (j = 0; j < n; j++)
     {
-      q = cp[0] * Nprim;
-      cy = mpn_addmul_1 (cp, mp, n, q);
-      cout += mpn_add_1 (cp + n, cp + n, n - j, cy);
-      cp++;
+      q = tp[0] * Nprim;
+      cy = mpn_addmul_1 (tp, mp, n, q);
+      mpn_incr_u (tp + n, cy);
+      tp++;
     }
-  cp -= n;
-  if (cout)
-    {
-      cy = cout - mpn_sub_n (cp, cp + n, mp, n);
-      while (cy)
-	cy -= mpn_sub_n (cp, cp, mp, n);
-    }
+
+  if (tp[n] != 0)
+    mpn_sub_n (cp, tp, mp, n);
   else
-    MPN_COPY (cp, cp + n, n);
-  MPN_NORMALIZE (cp, n);
-  SIZ (c) = SIZ (c) < 0 ? -n : n;
+    MPN_COPY (cp, tp, n);
 }
 
 /* average number of calls to redc for an exponent of n bits
@@ -114,18 +108,16 @@ pow (base, e, mod, res)
   mp_size_t n, i, K, j, l, k;
   int sh;
   int use_redc;
+  mp_ptr tp;
+  TMP_DECL (marker);
 
-#ifdef POWM_DEBUG
-  mpz_t exp;
-  mpz_init (exp);
-#endif
+  TMP_MARK (marker);
 
   n = ABSIZ (mod);
-
   if (n == 0)
     DIVIDE_BY_ZERO;
 
-  if (SIZ (e) == 0)
+  if (SIZ (e) <= 0)
     {
       /* Exponent is zero, result is 1 mod MOD, i.e., 1 or 0
          depending on if MOD equals 1.  */
@@ -143,12 +135,15 @@ pow (base, e, mod, res)
      2.66.  */
   /* For now, also disable REDC when MOD is even, as the inverse can't
      handle that.  */
+  /* For use_redc, we use an ugly mixture of mpn and mpz.  The variables
+     are in mpz, but we don't keep them normalized as mpz requires,
+     except in a few places.  */
 
 #ifndef POWM_THRESHOLD
 #define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
 #endif
 
-  use_redc = (n < POWM_THRESHOLD && PTR(mod)[0] % 2 != 0);
+  use_redc = n < POWM_THRESHOLD && PTR(mod)[0] % 2 != 0;
   if (use_redc)
     {
       /* invm = -1/m mod 2^BITS_PER_MP_LIMB, must have m odd */
@@ -156,8 +151,10 @@ pow (base, e, mod, res)
       invm = -invm;
     }
 
-  /* determines optimal value of k */
-  l = ABSIZ (e) * BITS_PER_MP_LIMB; /* number of bits of exponent */
+  /* Determine optimal value of k, the number of exponent bits we look at
+     at a time.  */
+  count_leading_zeros (sh, PTR(e)[SIZ(e)-1]);
+  l = SIZ (e) * BITS_PER_MP_LIMB - sh; /* number of bits of exponent */
   k = 1;
   K = 2;
   while (2 * l > K * (2 + k * (3 + k)))
@@ -166,23 +163,29 @@ pow (base, e, mod, res)
       K *= 2;
     }
 
-  g = (mpz_t *) (*_mp_allocate_func) (K / 2 * sizeof (mpz_t));
-  /* compute x*R^n where R=2^BITS_PER_MP_LIMB */
-  mpz_init (g[0]);
-  if (use_redc)
-    {
-      mpz_mul_2exp (g[0], base, n * BITS_PER_MP_LIMB);
-      mpz_mod (g[0], g[0], mod);
-    }
-  else
-    mpz_mod (g[0], base, mod);
+  tp = TMP_ALLOC_LIMBS (2 * n + 1);
 
-  /* compute xx^g for odd g < 2^k */
-  mpz_init (xx);
+  g = TMP_ALLOC_TYPE (K / 2, mpz_t);
+  /* Compute x*R^n where R=2^BITS_PER_MP_LIMB.  */
+  mpz_init (g[0]);
+  mpz_mod (g[0], base, mod);
   if (use_redc)
     {
-      _mpz_realloc (xx, 2 * n);
-      mpz_redc (xx, g[0], g[0], mod, invm); /* xx = x^2*R^n */
+      mpz_mul_2exp (g[0], g[0], n * BITS_PER_MP_LIMB);
+      mpz_mod (g[0], g[0], mod);
+      _mpz_realloc (g[0], n);
+      MPN_ZERO (PTR(g[0]) + SIZ(g[0]), n - SIZ(g[0]));
+      SIZ(g[0]) = n;
+    }
+
+  /* Compute xx^i for odd g < 2^i.  */
+  mpz_init (xx);
+  _mpz_realloc (xx, n);
+
+  if (use_redc)
+    {
+      mpn_sqr_n (tp, PTR(g[0]), n);
+      redc (PTR(xx), PTR(mod), n, invm, tp); /* xx = x^2*R^n */
     }
   else
     {
@@ -194,8 +197,10 @@ pow (base, e, mod, res)
       mpz_init (g[i]);
       if (use_redc)
 	{
-	  _mpz_realloc (g[i], 2 * n);
-	  mpz_redc (g[i], g[i - 1], xx, mod, invm); /* g[i] = x^(2i+1)*R^n */
+	  _mpz_realloc (g[i], n);
+	  mpn_mul_n (tp, PTR(g[i - 1]), PTR(xx), n);
+	  redc (PTR(g[i]), PTR(mod), n, invm, tp); /* g[i] = x^(2i+1)*R^n */
+	  SIZ(g[i]) = n;
 	}
       else
 	{
@@ -204,10 +209,10 @@ pow (base, e, mod, res)
 	}
     }
 
-  /* now starts the real stuff */
-  mask = (mp_limb_t) ((1<<k) - 1);
+  /* Start the real stuff.  */
+  mask = ((mp_limb_t) 1 << k) - 1;
   ep = PTR (e);
-  i = ABSIZ (e) - 1;			/* current index */
+  i = SIZ (e) - 1;			/* current index */
   c = ep[i];				/* current limb */
   count_leading_zeros (sh, c);
   sh = BITS_PER_MP_LIMB - sh;		/* significant bits in ep[i] */
@@ -223,33 +228,27 @@ pow (base, e, mod, res)
     }
   else
     c = c >> sh;
-#ifdef POWM_DEBUG
-  printf ("-1/m mod 2^%u = %lu\n", BITS_PER_MP_LIMB, invm);
-  mpz_set_ui (exp, c);
-#endif
-  j=0;
+
+  j = 0;
   while (c % 2 == 0)
     {
       j++;
-      c = (c >> 1);
+      c = c >> 1;
     }
   mpz_set (xx, g[c >> 1]);
-  while (j--)
+  while (--j >= 0)
     {
       if (use_redc)
-	mpz_redc (xx, xx, xx, mod, invm);
+	{
+	  mpn_sqr_n (tp, PTR(xx), n);
+	  redc (PTR(xx), PTR(mod), n, invm, tp);
+	}
       else
 	{
 	  mpz_mul (xx, xx, xx);
 	  mpz_mod (xx, xx, mod);
 	}
     }
-
-#ifdef POWM_DEBUG
-  printf ("x^"); mpz_out_str (0, 10, exp);
-  printf ("*2^%u mod m = ", n * BITS_PER_MP_LIMB); mpz_out_str (0, 10, xx);
-  putchar ('\n');
-#endif
 
   while (i > 0 || sh > 0)
     {
@@ -267,42 +266,40 @@ pow (base, e, mod, res)
 	  else
 	    {
 	      l += sh;			/* may be less bits than k here */
-	      c = c & ((1<<l) - 1);
+	      c = c & (((mp_limb_t) 1 << l) - 1);
 	    }
 	}
       else
 	c = c >> sh;
       c = c & mask;
 
-      /* this while loop implements the sliding window improvement */
-      while ((c & (1 << (k - 1))) == 0 && (i > 0 || sh > 0))
+      /* This while loop implements the sliding window improvement.  */
+      while ((c & ((mp_limb_t) 1 << (k - 1))) == 0 && (i > 0 || sh > 0))
 	{
-	  if (use_redc) mpz_redc (xx, xx, xx, mod, invm);
+	  if (use_redc)
+	    {
+	      mpn_sqr_n (tp, PTR(xx), n);
+	      redc (PTR(xx), PTR(mod), n, invm, tp);
+	    }
 	  else
 	    {
 	      mpz_mul (xx, xx, xx);
 	      mpz_mod (xx, xx, mod);
 	    }
-	  if (sh)
+	  if (sh != 0)
 	    {
 	      sh--;
-	      c = (c<<1) + ((ep[i]>>sh) & 1);
+	      c = (c << 1) + ((ep[i] >> sh) & 1);
 	    }
 	  else
 	    {
 	      i--;
 	      sh = BITS_PER_MP_LIMB - 1;
-	      c = (c<<1) + (ep[i]>>sh);
+	      c = (c << 1) + (ep[i] >> sh);
 	    }
 	}
 
-#ifdef POWM_DEBUG
-      printf ("l=%u c=%lu\n", l, c);
-      mpz_mul_2exp (exp, exp, k);
-      mpz_add_ui (exp, exp, c);
-#endif
-
-      /* now replace xx by xx^(2^k)*x^c */
+      /* Replace xx by xx^(2^k)*x^c.  */
       if (c != 0)
 	{
 	  j = 0;
@@ -313,15 +310,24 @@ pow (base, e, mod, res)
 	    }
 	  /* c0 = c * 2^j, i.e. xx^(2^k)*x^c = (A^(2^(k - j))*c)^(2^j) */
 	  l -= j;
-	  while (l--)
-	    if (use_redc) mpz_redc (xx, xx, xx, mod, invm);
-	    else
-	      {
-		mpz_mul (xx, xx, xx);
-		mpz_mod (xx, xx, mod);
-	      }
+	  while (--l >= 0)
+	    {
+	      if (use_redc)
+		{
+		  mpn_sqr_n (tp, PTR(xx), n);
+		  redc (PTR(xx), PTR(mod), n, invm, tp);
+		}
+	      else
+		{
+		  mpz_mul (xx, xx, xx);
+		  mpz_mod (xx, xx, mod);
+		}
+	    }
 	  if (use_redc)
-	    mpz_redc (xx, xx, g[c >> 1], mod, invm);
+	    {
+	      mpn_mul_n (tp, PTR(xx), PTR(g[c >> 1]), n);
+	      redc (PTR(xx), PTR(mod), n, invm, tp);
+	    }
 	  else
 	    {
 	      mpz_mul (xx, xx, g[c >> 1]);
@@ -330,28 +336,29 @@ pow (base, e, mod, res)
 	}
       else
 	j = l;				/* case c=0 */
-      while (j--)
+      while (--j >= 0)
 	{
 	  if (use_redc)
-	    mpz_redc (xx, xx, xx, mod, invm);
+	    {
+	      mpn_sqr_n (tp, PTR(xx), n);
+	      redc (PTR(xx), PTR(mod), n, invm, tp);
+	    }
 	  else
 	    {
 	      mpz_mul (xx, xx, xx);
 	      mpz_mod (xx, xx, mod);
 	    }
 	}
-#ifdef POWM_DEBUG
-      printf ("x^"); mpz_out_str (0, 10, exp);
-      printf ("*2^%u mod m = ", n * BITS_PER_MP_LIMB); mpz_out_str (0, 10, xx);
-      putchar ('\n');
-#endif
     }
 
-  /* now convert back xx to xx/R^n */
+  /* Convert back xx to xx/R^n.  */
   if (use_redc)
     {
-      mpz_set_ui (g[0], 1);
-      mpz_redc (xx, xx, g[0], mod, invm);
+      MPN_COPY (tp, PTR(xx), n);
+      MPN_ZERO (tp + n, n);
+      redc (PTR(xx), PTR(mod), n, invm, tp);
+      SIZ(xx) = n;
+      MPN_NORMALIZE (PTR(xx), SIZ(xx));
       if (mpz_cmp (xx, mod) >= 0)
 	mpz_sub (xx, xx, mod);
     }
@@ -360,5 +367,5 @@ pow (base, e, mod, res)
   mpz_clear (xx);
   for (i = 0; i < K / 2; i++)
     mpz_clear (g[i]);
-  (*_mp_free_func) (g, K / 2 * sizeof (mpz_t));
+  TMP_FREE (marker);
 }
