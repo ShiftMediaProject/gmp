@@ -74,9 +74,18 @@
   :type 'hook
   :group 'gmpasm)
 
-(defcustom gmpasm-comment-start-regexp "[#;!@*|C]"
+(defcustom gmpasm-comment-start-regexp "\\([#;!@*|C]\\|//\\)"
   "*Regexp matching possible comment styles.
-See `gmpasm-mode' docstring for how this is used."
+See `gmpasm-mode' docstring for how this is used.
+
+Commenting styles within GMP include
+  #   - i386, traditional unix
+  ;   - a29k, clipper, m68k, m88k
+  !   - sh, sparc, z8000
+  @   - arm
+  *   - cray
+  C   - GMP m4, see mpn/asm-defs.m4
+  //  - ia64"
   :type 'regexp
   :group 'gmpasm)
 
