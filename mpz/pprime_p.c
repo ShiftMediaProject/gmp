@@ -191,7 +191,7 @@ millerrabin (n, n_minus_1, x, y, q, k)
   unsigned long int nb;
 
   nb = mpz_sizeinbase (n, 2);
-  gmp_randinit (rstate, 32L, GMP_RAND_ALG_DEFAULT);
+  gmp_randinit (rstate, GMP_RAND_ALG_DEFAULT, 32L);
 
   /* find random x s.t. 1 < x < n */
   do
