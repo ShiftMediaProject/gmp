@@ -521,7 +521,7 @@ else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
-rm -f conftes1.* conftes2.* a.out
+rm -f conftes1* conftes2* a.out
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
