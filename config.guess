@@ -71,7 +71,7 @@ exact_cpu=
 #
 # When a number of probes are done, test -z "$exact_cpu" can be used instead
 # of putting each probe under an "else" of the preceeding.  That can stop
-# the code getting horribly nested and marching of the right side of the
+# the code getting horribly nested and marching off the right side of the
 # screen.
 
 
@@ -171,10 +171,11 @@ _main:
 EOF
     if ($CC_FOR_BUILD $dummy.s -o $dummy && ./$dummy) >/dev/null 2>&1; then
 
-      # sh -c is used to execute ./$dummy below, since (./$dummy) 2>/dev/null
-      # still prints the SIGILL message on some shells.
+      # $SHELL -c is used to execute ./$dummy below, since (./$dummy)
+      # 2>/dev/null still prints the SIGILL message on some shells.
       #
-        # Try: movel #0,%d0; rtd #0
+        # Try: movel #0,%d0
+        #      rtd #0
         cat >$dummy.s <<EOF
 	.text
 	.globl main
@@ -185,7 +186,7 @@ _main:
 	.byte	0x4e, 0x74, 0x00, 0x00
 EOF
         if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
-          sh -c ./$dummy >/dev/null 2>&1
+          $SHELL -c ./$dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68000    # because rtd didn't work
           fi
@@ -193,7 +194,9 @@ EOF
       #
 
       if test -z "$exact_cpu"; then
-        # Try: trapf, movel #0,%d0, rts
+        # Try: trapf
+        #      movel #0,%d0
+        #      rts
         # Another possibility for identifying 68000 and 68010 is the
         # different value stored by "movem a0,(a0)+"
         cat >$dummy.s <<EOF
@@ -207,7 +210,7 @@ _main:
 	.byte	0x4e, 0x75
 EOF
         if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
-          sh -c ./$dummy >/dev/null 2>&1
+          $SHELL -c ./$dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68010    # because trapf didn't work
           fi
@@ -215,7 +218,9 @@ EOF
       fi
 
       if test -z "$exact_cpu"; then
-        # Try: bfffo %d1{0:31},%d0; movel #0,%d0; rts
+        # Try: bfffo %d1{0:31},%d0
+        #      movel #0,%d0
+        #      rts
         cat >$dummy.s <<EOF
 	.text
 	.globl main
@@ -227,7 +232,7 @@ _main:
 	.byte	0x4e, 0x75
 EOF
         if $CC_FOR_BUILD $dummy.s -o $dummy >/dev/null 2>&1; then
-          sh -c ./$dummy >/dev/null 2>&1
+          $SHELL -c ./$dummy >/dev/null 2>&1
 	  if test $? != 0; then
             exact_cpu=m68360  # cpu32, because bfffo didn't work
           fi
