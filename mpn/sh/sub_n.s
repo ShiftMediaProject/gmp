@@ -44,4 +44,4 @@ Loop:	mov.l	@r5+,r1
 	 add	#4,r4
 
 	rts
-	movt	r0		! return carry-out from most sign. limb
+	mov	r3,r0		! return carry-out from most sign. limb
