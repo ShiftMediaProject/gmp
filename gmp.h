@@ -520,6 +520,12 @@ void mpq_get_den _PROTO ((mpz_ptr, mpq_srcptr));
 double mpq_get_d _PROTO ((mpq_srcptr));
 void mpq_set_d _PROTO ((mpq_ptr, double));
 void mpq_canonicalize _PROTO ((mpq_ptr));
+
+#ifdef _GMP_H_HAVE_FILE
+#define mpq_out_str __gmpq_out_str
+size_t mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
+#endif
+
 #if defined (__cplusplus)
 }
 #endif
