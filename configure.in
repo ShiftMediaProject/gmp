@@ -515,6 +515,7 @@ case $host in
   # preprocessor gets run if there's any problems.
   #
   powerpc*-*-*)
+    AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     cclist="gcc cc"
     cc_cflags="-g -O2"
     gcc_cflags="-g -O2 -mpowerpc"
@@ -563,6 +564,7 @@ case $host in
 
   # POWER
   [power-*-* | power[12]-*-* | power2sc-*-*])
+    AC_DEFINE(HAVE_HOST_CPU_FAMILY_power)
     cclist="gcc"
     extra_functions="udiv_w_sdiv"
     path="power"
@@ -678,6 +680,7 @@ case $host in
 
   # AMD and Intel x86 configurations
   X86_PATTERN)
+    AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86)
     # Rumour has it gcc -O2 used to give worse register allocation than just
     # -O, but lets assume that's no longer true.
     gcc_cflags="-g -O2 $fomit_frame_pointer"
