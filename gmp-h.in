@@ -138,7 +138,11 @@ MA 02111-1307, USA. */
    should have __GMP_DECLSPEC, and certainly constants or variables must
    have it or the wrong address will be resolved.  */
 
-#if defined (__GNUC__) || defined (_MSC_VER) || defined (__BORLANDC__)
+#if defined (__GNUC__)
+#define __GMP_DECLSPEC_EXPORT  __declspec(__dllexport__)
+#define __GMP_DECLSPEC_IMPORT  __declspec(__dllimport__)
+#endif
+#if defined (_MSC_VER) || defined (__BORLANDC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(dllexport)
 #define __GMP_DECLSPEC_IMPORT  __declspec(dllimport)
 #endif
@@ -314,8 +318,9 @@ typedef __mpq_struct *mpq_ptr;
 
 /* The prototypes for gmp_vprintf etc are provided only if va_list is
    available, via an application having included <stdarg.h> or <varargs.h>.
-   Usually va_list is a typedef so can't be tested directly, but va_start is
-   almost certainly a macro, so look for that.
+   Usually va_list is a typedef so can't be tested directly, but C99
+   specifies that va_start is a macro (and it was normally a macro on past
+   systems too), so look for that.
 
    <stdio.h> will define some sort of va_list for vprintf and vfprintf, but
    let's not bother trying to use that since it's not standard and since
