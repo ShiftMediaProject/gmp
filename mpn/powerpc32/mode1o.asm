@@ -132,11 +132,12 @@ ifdef(`PIC',`
 
 
 L(top):
-	C r0	src[i-1]
-	C r3	src
+	C r0
+	C r3	src, incrementing
 	C r4	inverse
 	C r5	divisor
-	C r6	carry
+	C r6
+	C r7	l
 
 	mullw	r7, r7, r4	C q = l * inverse
 	lwzu	r0, 4(r3)	C src[i]
