@@ -2618,12 +2618,12 @@ dnl  GMP_PROG_EXEEXT_FOR_BUILD
 dnl  -------------------------
 dnl  Determine EXEEXT_FOR_BUILD, the build system executable suffix.
 dnl
-dnl  If a program "conftest.exe" can be run with "./conftest" then assume
-dnl  ".exe" is the correct suffix.
-dnl
-dnl  Autoconf has some hairier tests in _AC_COMPILER_EXEEXT_DEFAULT, based
-dnl  on the default compiler output a.out, a.exe, a_out.exe or whatever.
-dnl  But are there any systems that aren't either .exe or nothing?
+dnl  The idea is to find what "-o conftest$foo" will make it possible to run
+dnl  the program with ./conftest.  On Unix-like systems this is of course
+dnl  nothing, for DOS it's ".exe", or for a strange RISC OS foreign file
+dnl  system cross compile it can be ",ff8" apparently.  Not sure if the
+dnl  latter actually applies to a build-system executable, maybe it doesn't,
+dnl  but it won't hurt to try.
 
 AC_DEFUN(GMP_PROG_EXEEXT_FOR_BUILD,
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
@@ -2636,15 +2636,17 @@ main ()
   exit (0);
 }
 EOF
-gmp_compile="$CC_FOR_BUILD conftest.c -o conftest.exe"
-if AC_TRY_EVAL(gmp_compile); then
-  if (./conftest) 2>&AC_FD_CC; then
-    gmp_cv_prog_exeext_for_build=".exe"
-  else
-    gmp_cv_prog_exeext_for_build=
+for i in .exe ,ff8 ""; do
+  gmp_compile="$CC_FOR_BUILD conftest.c -o conftest$i"
+  if AC_TRY_EVAL(gmp_compile); then
+    if (./conftest) 2>&AC_FD_CC; then
+      gmp_cv_prog_exeext_for_build=$i
+      break
+    fi
   fi
-else
-  AC_MSG_ERROR([Oops, CC_FOR_BUILD doesnt work])
+done
+if test "${gmp_cv_prog_exeext_for_build+set}" != set; then
+  AC_MSG_ERROR([Cannot determine executable suffix])
 fi
 ])
 AC_SUBST(EXEEXT_FOR_BUILD,$gmp_cv_prog_exeext_for_build)
