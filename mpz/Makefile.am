@@ -28,7 +28,7 @@ INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
-  abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
+  abs.c add_ui.c addmul_ui.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
@@ -43,14 +43,19 @@ libmpz_la_SOURCES = \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
-  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c \
+  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
   sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
 
-EXTRA_DIST = mul_siui.c
-nodist_libmpz_la_SOURCES = mul_si.c mul_ui.c
+EXTRA_DIST = aors.c mul_siui.c
+nodist_libmpz_la_SOURCES = add.c mul_si.c mul_ui.c sub.c
 CLEANFILES = $(nodist_libmpz_la_SOURCES)
+
+add.c: $(srcdir)/aors.c
+	cp $(srcdir)/aors.c add.c
+sub.c: $(srcdir)/aors.c
+	cp $(srcdir)/aors.c sub.c
 
 mul_si.c: $(srcdir)/mul_siui.c
 	cp $(srcdir)/mul_siui.c mul_si.c

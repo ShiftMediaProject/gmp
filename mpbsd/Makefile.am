@@ -41,8 +41,8 @@ endif
 CLEANFILES = $(nodist_libmpbsd_la_SOURCES)
 
 
-add.c: $(top_srcdir)/mpz/add.c
-	cp $(top_srcdir)/mpz/add.c add.c
+add.c: $(top_srcdir)/mpz/aors.c
+	cp $(top_srcdir)/mpz/aors.c add.c
 
 cmp.c: $(top_srcdir)/mpz/cmp.c
 	cp $(top_srcdir)/mpz/cmp.c cmp.c
@@ -68,8 +68,8 @@ set.c: $(top_srcdir)/mpz/set.c
 sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
 	cp $(top_srcdir)/mpz/sqrtrem.c sqrtrem.c
 
-sub.c: $(top_srcdir)/mpz/sub.c
-	cp $(top_srcdir)/mpz/sub.c sub.c
+sub.c: $(top_srcdir)/mpz/aors.c
+	cp $(top_srcdir)/mpz/aors.c sub.c
 
 tdiv_qr.c: $(top_srcdir)/mpz/tdiv_qr.c
 	cp $(top_srcdir)/mpz/tdiv_qr.c tdiv_qr.c
