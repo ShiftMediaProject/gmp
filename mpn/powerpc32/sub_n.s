@@ -27,18 +27,25 @@
 # s2_ptr	r5
 # size		r6
 
+#include "asm-syntax.h"
+
+#ifdef AIX_SYNTAX
 	.toc
-	.extern __mpn_sub_n[DS]
-	.extern .__mpn_sub_n
-.csect [PR]
-	.align 2
-	.globl __mpn_sub_n
-	.globl .__mpn_sub_n
-	.csect __mpn_sub_n[DS]
+	.csect	.text[PR]
+	.align	2
+	.globl	__mpn_sub_n
+	.globl	.__mpn_sub_n
+	.csect	__mpn_sub_n[DS]
 __mpn_sub_n:
-	.long .__mpn_sub_n, TOC[tc0], 0
-	.csect [PR]
+	.long	.__mpn_sub_n, TOC[tc0], 0
+	.csect	.text[PR]
 .__mpn_sub_n:
+#else
+	.text
+	.align 4
+	.globl __mpn_sub_n
+__mpn_sub_n:
+#endif
 	mtctr	6		# copy size into CTR
 	addic	0,6,-1		# set cy
 	lwz	8,0(4)		# load least significant s1 limb

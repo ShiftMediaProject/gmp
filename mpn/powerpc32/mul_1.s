@@ -30,16 +30,25 @@
 # This is optimized for the PPC604 but it runs decently even on PPC601.  It has
 # not been tested on a PPC603 since I don't have access to any such machines.
 
+#include "asm-syntax.h"
+
+#ifdef AIX_SYNTAX
 	.toc
-	.csect .__mpn_mul_1[PR]
-	.align 2
-	.globl __mpn_mul_1
-	.globl .__mpn_mul_1
-	.csect __mpn_mul_1[DS]
+	.csect	.text[PR]
+	.align	2
+	.globl	__mpn_mul_1
+	.globl	.__mpn_mul_1
+	.csect	__mpn_mul_1[DS]
 __mpn_mul_1:
-	.long .__mpn_mul_1[PR], TOC[tc0], 0
-	.csect .__mpn_mul_1[PR]
+	.long	.__mpn_mul_1, TOC[tc0], 0
+	.csect	.text[PR]
 .__mpn_mul_1:
+#else
+	.text
+	.align	4
+	.globl	__mpn_mul_1
+__mpn_mul_1:
+#endif
 	mtctr	5
 	addi	3,3,-4		# adjust res_ptr, it's offset before it's used
 	li	12,0		# clear upper product reg

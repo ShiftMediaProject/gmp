@@ -26,16 +26,25 @@
 # size		r5
 # cnt		r6
 
+#include "asm-syntax.h"
+
+#ifdef AIX_SYNTAX
 	.toc
-.csect	.text[PR]
+	.csect	.text[PR]
 	.align	2
 	.globl	__mpn_rshift
 	.globl	.__mpn_rshift
 	.csect	__mpn_rshift[DS]
 __mpn_rshift:
-	.long	.__mpn_rshift,	TOC[tc0],	0
+	.long	.__mpn_rshift, TOC[tc0], 0
 	.csect	.text[PR]
 .__mpn_rshift:
+#else
+	.text
+	.align 4
+	.globl __mpn_rshift
+__mpn_rshift:
+#endif
 	mtctr	5		# copy size into CTR
 	addi	7,3,-4		# move adjusted res_ptr to free return reg
 	subfic	8,6,32
