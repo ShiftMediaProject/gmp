@@ -316,6 +316,7 @@ case ${target} in
     family=sparc
     if test -n "$CC64"; then
       path="sparc64"
+      extra_functions="copyi"
     else
       path="sparc32/v9 sparc32/v8 sparc32"
     fi
