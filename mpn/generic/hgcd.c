@@ -324,12 +324,11 @@ qstack_get_1 (struct qstack *stack,
 
 /* Adds d to the element on top of the stack */
 static void
-qstack_adjust (struct qstack *stack, mp_limb_t d)
+qstack_adjust (struct qstack *stack)
 {
   mp_size_t qsize;
   mp_ptr qp;
 
-  ASSERT (d);
   ASSERT (stack->size_next);
 
   ASSERT_QSTACK (stack);
@@ -346,13 +345,13 @@ qstack_adjust (struct qstack *stack, mp_limb_t d)
 
   if (qsize == 0)
     {
-      qp[0] = d + 1;
+      qp[0] = 2;
       stack->size[stack->size_next - 1] = 1;
       stack->limb_next++;
     }
   else
     {
-      mp_limb_t cy = mpn_add_1 (qp, qp, qsize, d);
+      mp_limb_t cy = mpn_add_1 (qp, qp, qsize, 1);
       if (cy)
 	{
 	  qp[qsize] = cy;
@@ -1408,57 +1407,19 @@ static mp_size_t
 hgcd_adjust (struct hgcd_row *r, mp_size_t size,
 	     struct qstack *quotients)
 {
-  /* Compute the correct r3, we have r3' = r3 - d r2, with
-     d = 1 or 2. */
-
-  mp_limb_t d;
   mp_limb_t c0;
   mp_limb_t c1;
 
-  ASSERT_NOCARRY (mpn_sub (r[1].rp,
-			   r[1].rp, r[1].rsize,
-			   r[0].rp, r[0].rsize));
+  /* Compute the correct r3, we have r3' = r3 - r2. */
+
+  ASSERT_NOCARRY (mpn_sub (r[1].rp, r[1].rp, r[1].rsize, r[0].rp, r[0].rsize));
 
   MPN_NORMALIZE (r[1].rp, r[1].rsize);
-  if (MPN_LESS_P (r[1].rp, r[1].rsize,
-		  r[0].rp, r[0].rsize))
-    {
-      d = 1;
 
-      c0 = mpn_add_n (r[1].uvp[0],
-		      r[1].uvp[0], r[0].uvp[0],
-		      size);
-      c1 = mpn_add_n (r[1].uvp[1],
-		      r[1].uvp[1], r[0].uvp[1],
-		      size);
-    }
-  else
-    {
-      ASSERT_NOCARRY (mpn_sub (r[1].rp,
-			       r[1].rp, r[1].rsize,
-			       r[0].rp, r[0].rsize));
+  ASSERT (MPN_LESS_P (r[1].rp, r[1].rsize, r[0].rp, r[0].rsize));
 
-      MPN_NORMALIZE (r[1].rp, r[1].rsize);
-      ASSERT (MPN_LESS_P (r[1].rp, r[1].rsize,
-			  r[0].rp, r[0].rsize));
-
-      d = 2;
-      
-      /* The mpn_addlsh1_n code needs proper testing */
-#if 0 && HAVE_NATIVE_mpn_addlsh1_n
-      c0 = mpn_addlsh1_n (r[1].uvp[0], r[1].uvp[0],
-			  r[0].uvp[0], size);
-      c1 = mpn_addlsh1_n (r[1].uvp[1], r[1].uvp[1],
-			  r[0].uvp[1], size);      
-#else
-      c0 = mpn_addmul_1 (r[1].uvp[0],
-			 r[0].uvp[0],
-			 size, 2);
-      c1 = mpn_addmul_1 (r[1].uvp[1],
-			 r[0].uvp[1],
-			 size, 2);
-#endif
-    }
+  c0 = mpn_add_n (r[1].uvp[0], r[1].uvp[0], r[0].uvp[0], size);
+  c1 = mpn_add_n (r[1].uvp[1], r[1].uvp[1], r[0].uvp[1], size);
 
   /* FIXME: Can avoid branches */
   if (c1 != 0)
@@ -1473,7 +1434,7 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
     }
 
   /* Remains to adjust the quotient on stack */
-  qstack_adjust (quotients, d);
+  qstack_adjust (quotients);
 
   return size;
 }
