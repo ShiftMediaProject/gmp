@@ -1355,6 +1355,7 @@ fi
 # Don't demand an m4 unless it's actually needed.
 if test $found_asm = yes; then
   GMP_PROG_M4
+  GMP_M4_M4WRAP_SPURIOUS
 else
   M4=m4-not-needed
 fi
