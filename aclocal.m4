@@ -10,7 +10,7 @@ dnl but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 dnl even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 dnl PARTICULAR PURPOSE.
 
-dnl  autoconf macros specific to gmp
+dnl  GMP specific autoconf macros
 
 
 dnl  Copyright (C) 2000 Free Software Foundation, Inc.
@@ -46,6 +46,7 @@ esyscmd([grep "^#define $1 " $2 /dev/null 2>/dev/null]),
 [[
  	]*$],[])])
 
+
 dnl  GMP_VERSION
 dnl  -----------
 dnl  The gmp version number, extracted from the #defines in gmp.h.
@@ -57,6 +58,61 @@ define(GMP_VERSION,
 .GMP_HEADER_GETVAL(__GNU_MP_VERSION_MINOR,gmp.h)[]dnl
 ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
 [.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h)])])
+
+
+dnl  GMP_PROG_M4()
+dnl  -------------
+dnl 
+dnl  Find a working m4, either in $PATH or likely locations.  Setup $M4 and
+dnl  an AC_SUBST accordingly.  If $M4 is already set then it's from the user
+dnl  is accepted with no checks.  GMP_PROG_M4 is like AC_PATH_PROG or
+dnl  AC_CHECK_PROG, but testing for a good enough m4.
+dnl 
+dnl  SunOS /usr/bin/m4 is old and lacks features we need, like $# and
+dnl  command line -D.  SunOS has a /usr/5bin/m4 which is a SysV m4 and will
+dnl  work.  We think /usr/5bin is always present.
+
+AC_DEFUN(GMP_PROG_M4,
+[AC_CACHE_CHECK([for suitable m4],
+                gmp_cv_prog_m4,
+[if test -n "$M4"; then
+  gmp_cv_prog_m4="$M4"
+else
+  cat >conftest.m4 <<\EOF
+dnl  must protect against this being expanded during autoconf m4!
+[define(foo,``$][#'')ifelse(foo(x),1,good,bad)]
+EOF
+  # 2>/dev/null avoids an error message if there's no "m4" at all in $PATH
+  gmp_tmp_val="`(m4 conftest.m4) 2>/dev/null`"
+  if test "$gmp_tmp_val" = good; then
+    gmp_cv_prog_m4="m4"
+  else
+    IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+dnl $ac_dummy forces splitting on constant user-supplied paths.
+dnl POSIX.2 word splitting is done only on the output of word expansions,
+dnl not every word.  This closes a longstanding sh security hole.
+    ac_dummy="$PATH:/usr/5bin"
+    for ac_dir in $ac_dummy; do
+      test -z "$ac_dir" && ac_dir=.
+      if test -f "$ac_dir/m4"; then
+        gmp_tmp_val="`$ac_dir/m4 conftest.m4`"
+        if test "$gmp_tmp_val" = good; then
+	  gmp_cv_prog_m4="$ac_dir/m4"
+          break
+        fi
+      fi
+    done
+    IFS="$ac_save_ifs"
+    if test -z "$gmp_cv_prog_m4"; then
+      AC_MSG_ERROR([no usable m4 in \$PATH or /usr/5bin])
+    fi
+  fi
+  rm -f conftest.m4
+fi])
+M4="$gmp_cv_prog_m4"
+AC_SUBST(M4)
+])
+
 
 dnl  GMP_PROG_CC_FIND([CC_LIST], [REQ_64BIT_CC])
 dnl  Find first working compiler in CC_LIST.
