@@ -379,15 +379,17 @@ Other:
 CPUs not listed use generic C code.  If some of the assembly code causes
 problems, the generic C code can be selected with CPU @samp{none}.
 
-@item @option{CC}, @option{CFLAGS}
+@c As of gmp 3.0 CC and CFLAGS can't be set like this.
 
-The C compiler used is chosen from among some likely candidates, with GCC
-normally preferred if it's present.  The usual @samp{CC=whatever} can be passed
-to @command{configure} to choose something different.
+@c @item @option{CC}, @option{CFLAGS}
 
-For some configurations specific compiler flags are set based on the target CPU
-and compiler, for others @samp{CFLAGS="-whatever"} can be used to choose the
-best flags.
+@c The C compiler used is chosen from among some likely candidates, with GCC 
+@c normally preferred if it's present.  The usual @samp{CC=whatever} can be
+@c passed to @command{configure} to choose something different.
+
+@c For some configurations specific compiler flags are set based on the target
+@c CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
+@c choose the best flags.
 
 @item @option{--disable-alloca}
 
@@ -395,7 +397,7 @@ By default, MP allocates temporary workspace using @code{alloca} if that
 function is available, or @code{malloc} if not.  If you're working with large
 numbers and @code{alloca} overflows the available stack space, you can build
 with @option{--disable-alloca} to use @code{malloc} instead.  @code{malloc}
-will probably be slightly slower than @code{alloca}. 
+will probably be slightly slower than @code{alloca}.
 
 When not using @code{alloca}, it's actually the the allocation function
 selected with @code{mp_set_memory_functions} that's used, this being
