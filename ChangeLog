@@ -1,3 +1,20 @@
+2001-01-18  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in, gmp-impl.h (__gmp_allocate_func, __gmp_reallocate_func,
+	__gmp_free_func): Move prototypes from gmp-impl.h to gmp-h.in, for the
+	benefit of gmp++.h.
+
+	* gmp-impl.h, tests/misc.c, tests/tests.h: Move MPZ_SET_STR_OR_ABORT
+	and MPF_SET_STR_OR_ABORT to mpz_set_str_or_abort and
+	mpf_set_str_or_abort in libtests.
+	* tests/mpz/convert.c, tests/mpz/t-bin.c, tests/mpz/t-get_si.c,
+	tests/mpz/t-jac.c, tests/mpz/t-misc.c, tests/mpq/t-md_2exp.c,
+	tests/mpq/t-set_f.c, tests/mpf/t-conv.c, tests/mpf/t-misc.c: Update.
+
+	* mpn/generic/sqrtrem.c: Use MPN_COPY_INCR (for when rp==NULL).
+
+	* tests/mpz/reuse.c: Only run mpz_divexact_gcd on positive divisors.
+
 2001-01-18  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (main): Accept -vml option.
