@@ -316,6 +316,7 @@ MPQ_OBJECTS = mpq/abs$U.lo mpq/aors$U.lo				\
 MPN_OBJECTS = mpn/fib_table$U.lo mpn/mp_bases$U.lo
 
 PRINTF_OBJECTS = \
+  @REPL_VSNPRINTF_PRINTF_OBJ@						\
   printf/asprintf$U.lo printf/asprntffuns$U.lo				\
   printf/doprnt$U.lo printf/doprntf$U.lo printf/doprnti$U.lo		\
   printf/fprintf$U.lo							\
@@ -324,8 +325,7 @@ PRINTF_OBJECTS = \
   printf/snprintf$U.lo printf/snprntffuns$U.lo				\
   printf/sprintf$U.lo printf/sprintffuns$U.lo				\
   printf/vasprintf$U.lo printf/vfprintf$U.lo printf/vprintf$U.lo	\
-  printf/vsnprintf$U.lo printf/vsprintf$U.lo				\
-  @REPL_VSNPRINTF_PRINTF_OBJ@
+  printf/vsnprintf$U.lo printf/vsprintf$U.lo
 
 
 SCANF_OBJECTS = \
