@@ -35,6 +35,11 @@ PROLOGUE(mpn_popcount)
 	.save	ar.lc, r2
 		mov	r2 = ar.lc
 	.body
+ifdef(`HAVE_ABI_32',
+`		addp4	r32 = 0, r32
+		sxt4	r33 = r33
+		;;
+')
 		and	r22 = 3, r33
 		shr.u	r23 = r33, 2	;;
 		mov	ar.lc = r22

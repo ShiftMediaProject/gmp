@@ -55,6 +55,13 @@ ifdef(`OPERATION_rshift',`
 
 ASM_START()
 PROLOGUE(func)
+ifdef(`HAVE_ABI_32',
+`	addp4	r32 = 0, r32
+	addp4	r33 = 0, r33
+	sxt4	r34 = r34
+	zxt4	r35 = r35
+	;;
+')
 	add	r34 = -1, r34
 	sub	r31 = 64, r35
 	mov	r2 = ar.lc;;

@@ -40,6 +40,12 @@ PROLOGUE(mpn_addmul_1)
 		mov		r20 = ar.ec
 		mov		r22 = pr
 	.body
+ifdef(`HAVE_ABI_32',
+`		addp4	r32 = 0, r32
+		addp4	r33 = 0, r33
+		sxt4	r34 = r34
+		;;
+')
   { .mfi;	setf.sig	f16 = r35
 		nop.f		0
 		adds		r19 = -1, r34		C n - 1

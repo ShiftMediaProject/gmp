@@ -32,6 +32,12 @@ PROLOGUE(mpn_copyi)
 	.save ar.lc, r2
 	.body
 		mov	r2 = ar.lc
+ifdef(`HAVE_ABI_32',
+`		addp4	r32 = 0, r32
+		addp4	r33 = 0, r33
+		sxt4	r34 = r34
+		;;
+')
 		and	r14 = 3, r34
 		cmp.ge	p14, p15 = 3, r34
 		add	r34 = -4, r34
