@@ -1,6 +1,6 @@
 /* Test file for mpfr_agm.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -34,7 +34,8 @@ void check4 _PROTO((double, double, mp_rnd_t, double));
 void check_large _PROTO((void)); 
 void slave _PROTO((int, int)); 
 
-double drand_agm()
+double
+drand_agm()
 {
   double d; long int *i;
 
@@ -50,7 +51,9 @@ double drand_agm()
   return d;
 }
 
-double dagm (double a, double b) { 
+double
+dagm (double a, double b)
+{ 
   double u, v, tmpu, tmpv;
   
   if ((isnan(a))||(isnan(b)))
@@ -74,7 +77,8 @@ double dagm (double a, double b) {
 
 #define check(a,b,r) check4(a,b,r,0.0)
 
-void check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
+void
+check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
 {
   mpfr_t ta, tb, tres;
   double res2;
@@ -120,7 +124,8 @@ void check_large ()
   mpfr_clear(a); mpfr_clear(b); mpfr_clear(agm);
 }
 
-void slave (int N, int p)
+void
+slave (int N, int p)
 {
   int i;
   double a,b;

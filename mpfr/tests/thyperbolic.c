@@ -1,6 +1,6 @@
 /* Test file for hyperbolic function : mpfr_cosh, mpfr_sinh, mpfr_tanh, mpfr_acosh, mpfr_asinh, mpfr_atanh.
  
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001, 2002 Free Software Foundation, Inc.
  
 This file is part of the MPFR Library.
  
@@ -32,7 +32,9 @@ int check_INF _PROTO((void));
 
 
 
-int check_NAN(void){
+int
+check_NAN (void)
+{
 
  mpfr_t t, ch,sh,th,ach,ash,ath;
  int tester;
@@ -147,7 +149,9 @@ int check_NAN(void){
   return(0);
 
 }
-int check_zero(void){
+int
+check_zero (void)
+{
 
  mpfr_t t, ch,sh,th,ach,ash,ath;
  int tester;
@@ -271,7 +275,9 @@ int check_zero(void){
 
 }
 
-int check_INF(void){
+int
+check_INF (void)
+{
 
  mpfr_t t, ch,sh,th,ach,ash,ath;
  int tester;
@@ -497,7 +503,10 @@ int check_INF(void){
   return(0);
 
 }
-int check_O(void){
+
+int
+check_O (void)
+{
 
  mpfr_t t, ch,sh,th,ach,ash,ath;
 
@@ -584,7 +593,8 @@ int check_O(void){
 
 }
 
-int main()
+int
+main()
 {
 
 if (check_INF())printf("Error in evaluation of INF\n");

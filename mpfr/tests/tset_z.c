@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_z.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -28,7 +28,9 @@ MA 02111-1307, USA. */
 void check _PROTO((long, unsigned char)); 
 void check_large _PROTO((void)); 
 
-void check(long i, unsigned char rnd) {
+void
+check(long i, unsigned char rnd)
+{
   mpfr_t f; mpz_t z; 
 
   mpfr_init2(f, 53); mpz_init(z);
@@ -41,7 +43,8 @@ void check(long i, unsigned char rnd) {
   mpfr_clear(f); mpz_clear(z);
 }
 
-void check_large ()
+void
+check_large ()
 {
   mpz_t z; mpfr_t x,y;
 

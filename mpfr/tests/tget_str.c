@@ -1,6 +1,6 @@
 /* Test file for mpfr_get_str.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -34,7 +34,8 @@ void check _PROTO((double, mp_rnd_t));
 void check3 _PROTO((double, mp_rnd_t, char *)); 
 void check_small _PROTO((void)); 
 
-void check (double d, mp_rnd_t rnd)
+void
+check (double d, mp_rnd_t rnd)
 {
   mpfr_t x; char *str; mp_exp_t e;
 
@@ -45,7 +46,8 @@ void check (double d, mp_rnd_t rnd)
   free(str);
 }
 
-void check3 (double d, mp_rnd_t rnd, char *res)
+void
+check3 (double d, mp_rnd_t rnd, char *res)
 {
   mpfr_t x; char *str; mp_exp_t e;
 
@@ -60,7 +62,8 @@ void check3 (double d, mp_rnd_t rnd, char *res)
   free(str);
 }
 
-void check_small ()
+void
+check_small ()
 {
   mpfr_t x;
   char *s;

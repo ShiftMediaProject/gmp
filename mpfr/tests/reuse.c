@@ -1,6 +1,6 @@
 /* Test file for in-place operations.
 
-Copyright (C) 2000, 2001 Free Software Foundation.
+Copyright (C) 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -25,24 +25,26 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void (*testfunc) () = NULL;
-void test3 (char *, mp_prec_t, mp_rnd_t);
-void test4 (char *, mp_prec_t, mp_rnd_t);
-void test3a (char *, mp_prec_t, mp_rnd_t);
-void test2ui (char *, mp_prec_t, mp_rnd_t);
-void testui2 (char *, mp_prec_t, mp_rnd_t);
-void test2 (char *, mp_prec_t, mp_rnd_t);
-void test2a (char *, mp_prec_t);
-int mpfr_compare (mpfr_t, mpfr_t);
+void (*testfunc) _PROTO (()) = NULL;
+void test3 _PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test4 _PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test3a _PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test2ui _PROTO ((char *, mp_prec_t, mp_rnd_t));
+void testui2 _PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test2 _PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test2a _PROTO ((char *, mp_prec_t));
+int mpfr_compare _PROTO ((mpfr_t, mpfr_t));
 
 /* same than mpfr_cmp, but returns 0 for both NaN's */
-int mpfr_compare (mpfr_t a, mpfr_t b)
+int
+mpfr_compare (mpfr_t a, mpfr_t b)
 {
   return (MPFR_IS_NAN(a)) ? !MPFR_IS_NAN(b) : 
     (MPFR_IS_NAN(b) || mpfr_cmp(a, b));
 }
 
-void test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
+void
+test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
   mpfr_t ref1, ref2, ref3;
   mpfr_t res1;
@@ -120,7 +122,8 @@ void test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_clear (res1);
 }
 
-void test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
+void
+test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
   mpfr_t ref, op1,op2,op3,cop1,cop2,cop3, top1,top2,top3;
   mpfr_t res;
@@ -344,7 +347,8 @@ void test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 
 }
 
-void test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
+void
+test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
   mpfr_t ref1, ref2;
   unsigned int ref3;
@@ -402,7 +406,8 @@ void test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_clear (res1);
 }
 
-void testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
+void
+testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
   mpfr_t ref1, ref3;
   unsigned int ref2;
@@ -455,7 +460,8 @@ void testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 }
 
 /* foo(mpfr_ptr, mpfr_srcptr, mp_rndt) */
-void test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
+void
+test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
   mpfr_t ref1, ref2;
   mpfr_t res1;
@@ -497,7 +503,8 @@ void test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 }
 
 /* foo(mpfr_ptr, mpfr_srcptr) */
-void test2a (char *foo, mp_prec_t prec)
+void
+test2a (char *foo, mp_prec_t prec)
 {
   mpfr_t ref1, ref2;
   mpfr_t res1;
@@ -539,7 +546,8 @@ void test2a (char *foo, mp_prec_t prec)
 }
 
 /* one operand, two results */
-void test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
+void
+test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
   mpfr_t ref1, ref2, ref3;
   mpfr_t res1, res2;

@@ -1,6 +1,6 @@
 /* Test file for mpfr_sqrt_ui.
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -30,7 +30,8 @@ void check _PROTO((unsigned long, mp_rnd_t, double));
 
 int maxulp=0;
 
-void check (unsigned long a, mp_rnd_t rnd_mode, double Q)
+void
+check (unsigned long a, mp_rnd_t rnd_mode, double Q)
 {
   mpfr_t q; double Q2; int u, ck;
 

@@ -1,6 +1,6 @@
 /* Test file for mpfr_sqrt.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -78,7 +78,8 @@ check3 (double a, mp_rnd_t rnd_mode, double Q)
   mpfr_clear(q);
 }
 
-void check4 (double a, mp_rnd_t rnd_mode, char *Q)
+void
+check4 (double a, mp_rnd_t rnd_mode, char *Q)
 {
   mpfr_t q, res;
 
@@ -98,7 +99,8 @@ void check4 (double a, mp_rnd_t rnd_mode, char *Q)
   mpfr_clear(q);
 }
 
-void check24 (float a, mp_rnd_t rnd_mode, float Q)
+void
+check24 (float a, mp_rnd_t rnd_mode, float Q)
 {
   mpfr_t q; float Q2;
 
@@ -117,7 +119,8 @@ void check24 (float a, mp_rnd_t rnd_mode, float Q)
 
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 3 */
-void check_float ()
+void
+check_float ()
 {
   float b = 8388608.0; /* 2^23 */
 
@@ -166,7 +169,8 @@ void check_float ()
   check24(b*10873622.0, GMP_RNDD, 9.550631e6);
 }
 
-void special ()
+void
+special ()
 {
   mpfr_t x, z;
   int inexact;

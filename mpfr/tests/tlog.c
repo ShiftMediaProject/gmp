@@ -1,6 +1,6 @@
 /* Test file for mpfr_log.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -42,7 +42,8 @@ void special _PROTO((void));
 #endif
 
 
-double drand_log ()
+double
+drand_log ()
 {
   double d; INT32 *i;
 
@@ -58,7 +59,8 @@ double drand_log ()
 #define check2(a,rnd,res) check1(a,rnd,res,1,0)
 #define check(a,r) check2(a,r,0.0)
 
-int check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
+int
+check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
 {
   mpfr_t ta, tres;
   double res2;
@@ -96,7 +98,8 @@ int check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
     return 0;
 }
 
-void check3 (double d, unsigned long prec, mp_rnd_t rnd)
+void
+check3 (double d, unsigned long prec, mp_rnd_t rnd)
 {
   mpfr_t x, y;
   
@@ -108,7 +111,8 @@ void check3 (double d, unsigned long prec, mp_rnd_t rnd)
   mpfr_clear(x); mpfr_clear(y);
 }
 
-void check4 (int N)
+void
+check4 (int N)
 {
   int i, max=0, sum=0, cur;
   double d;
@@ -128,7 +132,8 @@ void check4 (int N)
   fprintf(stderr, "max error : %i \t mean error : %f   (in ulps)\n",max,d);
 }
 
-void slave (int N, int p)
+void
+slave (int N, int p)
 {
   int i;
   double d;
@@ -149,7 +154,8 @@ void slave (int N, int p)
    Cf http://www.ens-lyon.fr/~jmmuller/Intro-to-TMD.htm
 */
 
-void check_worst_cases ()
+void
+check_worst_cases ()
 { 
   check2(1.00089971802309629645, GMP_RNDD, 8.99313519443722736088e-04); 
   check2(1.00089971802309629645, GMP_RNDN, 8.99313519443722844508e-04);
@@ -232,7 +238,8 @@ void check_worst_cases ()
   check2(428.315247165198229595, GMP_RNDU, 6.05985948325268353187); 
 }
 
-void special ()
+void
+special ()
 {
   mpfr_t x, y;
 

@@ -1,6 +1,6 @@
 /* Test file for mpfr_div_ui.
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -31,7 +31,8 @@ void check _PROTO((double, unsigned long, mp_rnd_t, double));
 void special _PROTO((void));
 void check_inexact _PROTO((void));
 
-void check (double d, unsigned long u, mp_rnd_t rnd, double e)
+void
+check (double d, unsigned long u, mp_rnd_t rnd, double e)
 {
   mpfr_t x, y;
   double f;

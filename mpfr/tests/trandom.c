@@ -1,6 +1,6 @@
 /* Test file for the various mpfr_random fonctions.
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation.
+Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -27,11 +27,12 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void test_random (unsigned long, unsigned long, int);
-void test_random2 (unsigned long, unsigned long, int);
-void test_urandomb (unsigned long, unsigned long, int);
+void test_random _PROTO ((unsigned long, unsigned long, int));
+void test_random2 _PROTO ((unsigned long, unsigned long, int));
+void test_urandomb _PROTO ((unsigned long, unsigned long, int));
 
-void test_random (unsigned long nbtests, unsigned long prec, int verbose)
+void
+test_random (unsigned long nbtests, unsigned long prec, int verbose)
 {
   mpfr_t x; 
   int *tab, size_tab, k; 
@@ -76,7 +77,8 @@ void test_random (unsigned long nbtests, unsigned long prec, int verbose)
   return;
 }
 
-void test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
+void
+test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
 {
   mpfr_t x; 
   int *tab, size_tab, k; 
@@ -118,7 +120,8 @@ void test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
   return;
 }
 
-void test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
+void
+test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
 {
   mpfr_t x; 
   int *tab, size_tab, k; 

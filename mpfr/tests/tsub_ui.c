@@ -1,6 +1,6 @@
 /* Test file for mpfr_sub_ui
 
-Copyright (C) 2000-2001 Free Software Foundation.
+Copyright (C) 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -38,7 +38,8 @@ void check3 _PROTO ((double, unsigned long, mp_rnd_t, double));
 
 /* checks that x+y gives the same results in double
    and with mpfr with 53 bits of precision */
-void check3 (double x, unsigned long y, mp_rnd_t rnd_mode, double z1)
+void
+check3 (double x, unsigned long y, mp_rnd_t rnd_mode, double z1)
 {
   double z2;
   mpfr_t xx,zz;
@@ -111,7 +112,8 @@ check_two_sum (mp_prec_t p)
   mpfr_clear (w);
 }
 
-int main(argc,argv) int argc; char *argv[];
+int
+main (int argc, char *argv[])
 {
   mp_prec_t p;
   int k;

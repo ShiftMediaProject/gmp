@@ -1,6 +1,6 @@
 /* Test file for mpfr_add and mpfr_sub.
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -45,8 +45,9 @@ void check_inexact _PROTO((void));
 
 /* checks that x+y gives the same results in double
    and with mpfr with 53 bits of precision */
-void check (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
-unsigned int py, unsigned int pz, double z1)
+void
+check (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
+       unsigned int py, unsigned int pz, double z1)
 {
   double z2; mpfr_t xx,yy,zz; int cert=0;
 
@@ -72,8 +73,9 @@ unsigned int py, unsigned int pz, double z1)
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
-void checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
-unsigned int py, unsigned int pz)
+void
+checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
+          unsigned int py, unsigned int pz)
 {
   double z2; mpfr_t xx, yy, zz;
 
@@ -95,7 +97,8 @@ unsigned int py, unsigned int pz)
 
 #ifdef TEST
 /* idem than check for mpfr_add(x, x, y) */
-void check3 (double x, double y, mp_rnd_t rnd_mode)
+void
+check3 (double x, double y, mp_rnd_t rnd_mode)
 {
   double z1,z2; mpfr_t xx,yy; int neg;
 
@@ -120,7 +123,8 @@ void check3 (double x, double y, mp_rnd_t rnd_mode)
 }
 
 /* idem than check for mpfr_add(x, y, x) */
-void check4 (double x, double y, mp_rnd_t rnd_mode)
+void
+check4 (double x, double y, mp_rnd_t rnd_mode)
 {
   double z1, z2;
   mpfr_t xx, yy;
@@ -148,7 +152,8 @@ void check4 (double x, double y, mp_rnd_t rnd_mode)
 }
 
 /* idem than check for mpfr_add(x, x, x) */
-void check5 (double x, mp_rnd_t rnd_mode)
+void
+check5 (double x, mp_rnd_t rnd_mode)
 {
   double z1,z2; mpfr_t xx, yy; int neg;
 
@@ -172,7 +177,8 @@ void check5 (double x, mp_rnd_t rnd_mode)
   mpfr_clear(yy);
 }
 
-void check2 (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode)
+void
+check2 (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode)
 {
   mpfr_t xx, yy, zz; double z,z2; int u;
 
@@ -195,7 +201,8 @@ void check2 (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode)
 }
 #endif
 
-void check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
+void
+check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
 	      char *res)
 {
   mpfr_t xx, yy, zz;
@@ -216,7 +223,8 @@ void check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
-void check64 ()
+void
+check64 ()
 {
   mpfr_t x, t, u;
 
@@ -438,7 +446,8 @@ void check64 ()
 
 /* check case when c does not overlap with a, but both b and c count
    for rounding */
-void check_case_1b (void)
+void
+check_case_1b (void)
 {
   mpfr_t a, b, c;
   unsigned int prec_a, prec_b, prec_c, dif;
@@ -487,7 +496,8 @@ void check_case_1b (void)
 }
 
 /* check case when c overlaps with a */
-void check_case_2 (void)
+void
+check_case_2 (void)
 {
   mpfr_t a, b, c, d;
 
@@ -519,7 +529,8 @@ void check_case_2 (void)
 }
 
 /* checks when source and destination are equal */
-void check_same ()
+void
+check_same ()
 {
   mpfr_t x;
 

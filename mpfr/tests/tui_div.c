@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_div.
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -33,7 +33,8 @@ void check_inexact _PROTO((void));
 
 /* checks that y/x gives the same results in double
    and with mpfr with 53 bits of precision */
-void check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
+void
+check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
 {
   double z2; mpfr_t xx, zz;
 

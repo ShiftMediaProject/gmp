@@ -1,6 +1,6 @@
 /* Test file for mpfr_out_str.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -36,7 +36,8 @@ FILE *fout;
 void check4 _PROTO((double, mp_rnd_t, int, int)); 
 void check_large _PROTO((void)); 
 
-void check4(double d, mp_rnd_t rnd, int base, int prec)
+void
+check4(double d, mp_rnd_t rnd, int base, int prec)
 {
   mpfr_t x;
 
@@ -48,7 +49,8 @@ void check4(double d, mp_rnd_t rnd, int base, int prec)
   mpfr_clear(x);
 }
 
-void check_large ()
+void
+check_large ()
 {
   mpfr_t x; mp_exp_t e; char *s;
 

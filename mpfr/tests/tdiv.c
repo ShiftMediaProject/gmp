@@ -1,6 +1,6 @@
 /* Test file for mpfr_div.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -36,7 +36,8 @@ void check_convergence _PROTO((void));
 void check_lowr _PROTO((void));
 void check_inexact _PROTO((void));
 
-void check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
+void
+check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
 {
   mpfr_t q, n, d; double Q2;
 
@@ -59,7 +60,8 @@ void check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
   mpfr_clear(q); mpfr_clear(n); mpfr_clear(d);  
 }
 
-void check24 (float N, float D, mp_rnd_t rnd_mode, float Q)
+void
+check24 (float N, float D, mp_rnd_t rnd_mode, float Q)
 {
   mpfr_t q, n, d; float Q2;
 
@@ -79,7 +81,8 @@ void check24 (float N, float D, mp_rnd_t rnd_mode, float Q)
 
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 2 */
-void check_float()
+void
+check_float()
 {
   float b=8388608.0; /* 2^23 */
 
@@ -124,7 +127,8 @@ void check_float()
   check24(b*12582913.0, 8388610.0, GMP_RNDD, 1.258291e7);
 }
 
-void check_convergence ()
+void
+check_convergence ()
 {
   mpfr_t x, y; int i, j;
   
@@ -166,7 +170,8 @@ void check_convergence ()
   mpfr_clear(x); mpfr_clear(y);
 }
 
-void check_lowr ()
+void
+check_lowr ()
 {
   mpfr_t x, y, z, z2, z3, tmp; 
   int k, c; 

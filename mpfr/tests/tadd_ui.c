@@ -1,6 +1,6 @@
 /* Test file for mpfr_add_ui
 
-Copyright (C) 2000, 2001 Free Software Foundation.
+Copyright (C) 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -64,7 +64,8 @@ check3 (double x, unsigned long y, unsigned int rnd_mode, double z1)
   mpfr_clear(xx); mpfr_clear(zz);
 }
 
-void special (void)
+void
+special (void)
 {
   mpfr_t x, y;
 
@@ -76,7 +77,8 @@ void special (void)
   mpfr_clear (y);
 }
 
-int main(argc,argv) int argc; char *argv[];
+int
+main (int argc, char *argv[])
 {
 #ifdef TEST
   double x; unsigned long y, N; int i,rnd_mode,rnd;

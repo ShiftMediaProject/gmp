@@ -1,6 +1,6 @@
 /* Test file for mpfr_arctan.
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001, 2002 Free Software Foundation.
 Written by Paul Zimmermann, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -25,7 +25,7 @@ MA 02111-1307, USA. */
 #include <gmp.h>
 #include <mpfr.h>
 
-int mpfr_arctan_aux2 (mpfr_ptr, mpfr_srcptr, mp_rnd_t);
+int mpfr_arctan_aux2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 int
 main (int argc, char *argv[])

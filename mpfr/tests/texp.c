@@ -1,6 +1,6 @@
 /* Test file for mpfr_exp.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -40,7 +40,8 @@ int maxu=0;
 #define check(d, r) check3(d, r, 0.0)
 
 /* returns the number of ulp of error */
-int check3 (double d, mp_rnd_t rnd, double e)
+int
+check3 (double d, mp_rnd_t rnd, double e)
 {
   mpfr_t x, y; double f; int u=0, ck=0;
 
@@ -78,7 +79,8 @@ int check3 (double d, mp_rnd_t rnd, double e)
 }
 
 /* computes n bits of exp(d) */
-int check_large (double d, int n, mp_rnd_t rnd)
+int
+check_large (double d, int n, mp_rnd_t rnd)
 {
   mpfr_t x; mpfr_t y;
   
@@ -108,7 +110,8 @@ int check_large (double d, int n, mp_rnd_t rnd)
 }
 
 /* expx is the value of exp(X) rounded towards -infinity */
-int check_worst_case (double X, double expx)
+int
+check_worst_case (double X, double expx)
 {
   mpfr_t x, y;
 
@@ -130,7 +133,8 @@ int check_worst_case (double X, double expx)
 }
 
 /* worst cases communicated by Jean-Michel Muller and Vincent Lefevre */
-int check_worst_cases ()
+int
+check_worst_cases ()
 {
   mpfr_t x; mpfr_t y;
 
@@ -169,7 +173,8 @@ int check_worst_cases ()
   return 0;
 }
 
-void compare_exp2_exp3 (int n)
+void
+compare_exp2_exp3 (int n)
 {
   mpfr_t x, y, z; int prec; mp_rnd_t rnd;
 
