@@ -1,6 +1,6 @@
 /* gmpxx.h -- C++ class wrapper for GMP types.  -*- C++ -*-
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -633,7 +633,11 @@ struct __gmp_binary_divides
     if (mpz_fits_slong_p(w))
       mpz_set_si(z, l / mpz_get_si(w));
     else
-      mpz_set_si(z, 0);
+      {
+        /* if w is bigger than a long then the quotient must be zero, unless
+           l==LONG_MIN and w==-LONG_MIN in which case the quotient is -1 */
+        mpz_set_si (z, (mpz_cmpabs_ui (w, (l >= 0 ? l : -l)) == 0 ? -1 : 0));
+      }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
   {
@@ -820,17 +824,18 @@ struct __gmp_binary_modulus
   }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
   {
-    if (l >= 0)
-      mpz_mod_ui(z, w, l);
-    else
-      mpz_mod_ui(z, w, -l);
+    mpz_tdiv_r_ui (z, w, (l >= 0 ? l : -l));
   }
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   {
     if (mpz_fits_slong_p(w))
       mpz_set_si(z, l % mpz_get_si(w));
     else
-      mpz_set_si(z, l);
+      {
+        /* if w is bigger than a long then the remainder is l unchanged,
+           unless l==LONG_MIN and w==-LONG_MIN in which case it's 0 */
+        mpz_set_si (z, mpz_cmpabs_ui (w, (l >= 0 ? l : -l)) == 0 ? 0 : l);
+      }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
   {
