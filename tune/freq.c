@@ -48,6 +48,10 @@ MA 02111-1307, USA.
 # endif
 #endif
 
+#if HAVE_SYS_PROCESSOR_H
+#include <sys/processor.h>  /* for solaris processor_info_t */
+#endif
+
 /* Remove definitions from NetBSD <sys/param.h>, to avoid conflicts with
    gmp-impl.h. */
 #ifdef MIN
@@ -319,10 +323,12 @@ speed_cpu_frequency_sunos_sysinfo (void)
 
 
 /* processor_info() for Solaris.  "psrinfo" is the command-line interface to
-   this.  "prtconf -vp" gives similar information.  */
+   this.  "prtconf -vp" gives similar information.
 
-#if HAVE_PROCESSOR_INFO
-#include <sys/processor.h>  /* for processor_info_t */
+   Darwin has a processor_info, but in a different style.  It doesn't have
+   <sys/processor.h> so we can differentiate it on that basis.  */
+
+#if HAVE_PROCESSOR_INFO && HAVE_SYS_PROCESSOR_H
 int
 speed_cpu_frequency_processor_info (void)
 {
@@ -460,7 +466,7 @@ const struct {
     "sysctlbyname() machdep.tsc_freq or machdep.i586_freq" },
 #endif
 
-#if HAVE_PROCESSOR_INFO
+#if HAVE_PROCESSOR_INFO && HAVE_SYS_PROCESSOR_H
   { speed_cpu_frequency_processor_info,
     "processor_info() pi_clock" },
 #endif
