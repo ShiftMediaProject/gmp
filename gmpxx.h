@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 #define __GMP_PLUSPLUS__
 
 #include <cctype>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <gmp.h>
 
