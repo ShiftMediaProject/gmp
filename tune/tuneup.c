@@ -633,9 +633,15 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
           print_define_end (param->name[i], table[i]);
         }
 
-      /* Look for the next threshold starting from the current one, but back
-         a bit. */
+      /* Look for the next threshold starting from the current one. */
       s.size = table[i]+1;
+
+      /* Take a MAX of all to allow for second_start_min producing a 0. */
+      {
+        int  j;
+        for (j = 0; j < i; j++)
+          s.size = MAX (s.size, table[j]+1);
+      }
     }
 }
 
