@@ -858,16 +858,40 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
   } while (0)
 
 
-/* kara uses n+1 limbs of temporary space and then recurses with the
-   balance, so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ... */
+/* kara uses n+1 limbs of temporary space and then recurses with the balance,
+   so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ...  This can be solved to
+   2n + o(n).  Since n is very limited, o(n) in practice could be around 15.
+   For now, assume n is arbitrarily large.  */
 #define MPN_KARA_MUL_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
 #define MPN_KARA_SQR_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
 
-/* toom3 uses 4*(ceil(n/3)) of temporary space and then recurses with the
-   balance either into itself or kara.  The following might be
-   overestimates. */
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 4*GMP_LIMB_BITS)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 4*GMP_LIMB_BITS)
+/* toom3 uses 2n + 2n/3 + o(n) limbs of temporary space if mpn_sublsh1_n is
+   unavailable, but just 2n + o(n) if mpn_sublsh1_n is available.  It is hard
+   to pin down the value of o(n), since it is a complex function of
+   MUL_TOOM3_THRESHOLD and n.  Normally toom3 is used between kara and fft; in
+   that case o(n) will be really limited.  If toom3 is used for arbitrarily
+   large operands, o(n) will be larger.  These definitions handle operands of
+   up to 8956264246117233 limbs.  A single multiplication using toom3 on the
+   fastest hardware currently (2003) would need 100 million years, which
+   suggests that these limits are acceptable.  */
+#if WANT_FFT
+#if HAVE_NATIVE_mpn_sublsh1_n
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 63)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 63)
+#else
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 63)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 63)
+#endif
+#define MPN_TOOM3_MAX_N 285405
+#else
+#if HAVE_NATIVE_mpn_sublsh1_n
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 255)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 255)
+#else
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
+#endif
+#endif /* WANT_FFT */
 
 /* need 2 so that n2>=1 */
 #define MPN_KARA_MUL_N_MINSIZE    2
