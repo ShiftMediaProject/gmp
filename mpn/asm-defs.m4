@@ -123,7 +123,7 @@ dnl       Alpha and MacOS X systems.  An autoconf test is used to check for
 dnl       this, see the m4wrap handling below.  It might work to end the
 dnl       m4wrap string with a dnl to consume the 0xFF, but that probably
 dnl       induces the offending m4's to read from an already closed "FILE
-dnl       *", which could be very bad on a glibc style stdio.
+dnl       *", which could be bad on a glibc style stdio.
 dnl
 dnl  __file__,__line__ - GNU m4 and OpenBSD 2.7 m4 provide these, and
 dnl       they're used here to make error messages more informative.  GNU m4
@@ -137,7 +137,7 @@ dnl       printing an error or warning.
 dnl
 dnl  changecom() - BSD m4 changecom doesn't quite work like the man page
 dnl       suggests, in particular "changecom" or "changecom()" doesn't
-dnl       disable the comment feature and multi-character comment sequences
+dnl       disable the comment feature, and multi-character comment sequences
 dnl       don't seem to work.  If the default `#' and newline aren't
 dnl       suitable it's necessary to change it to something else,
 dnl       eg. changecom(;).
@@ -743,6 +743,21 @@ m4_assert_numargs(2)
 `m4_lshift_internal(m4_div2_towards_zero($1),incr($2))')')')
 
 
+dnl  Usage: m4_popcount(n)
+dnl
+dnl  Expand to the number 1 bits in n.
+
+define(m4_popcount,
+m4_assert_numargs(1)
+`m4_popcount_internal(0,eval(`$1'))')
+
+dnl  Called: m4_popcount_internal(count,rem)
+define(m4_popcount_internal,
+m4_assert_numargs(2)
+`ifelse($2,0,$1,
+`m4_popcount_internal(eval($1+($2%2)),eval($2/2))')')
+
+
 dnl  Usage: deflit(name,value)
 dnl
 dnl  Like define(), but "name" expands like a literal, rather than taking
@@ -823,16 +838,15 @@ m4_assert_defined(`CONFIG_TOP_SRCDIR')
 
 dnl  Usage: C comment ...
 dnl
-dnl  "C" works like a FORTRAN-style comment character.  This can be used for
+dnl  This works like a FORTRAN-style comment character.  It can be used for
 dnl  comments to the right of assembly instructions, where just dnl would
 dnl  remove the newline and concatenate adjacent lines.
 dnl
-dnl  "C" and/or "dnl" are useful when an assembler doesn't support comments,
-dnl  or where different assemblers for a particular CPU have different
-dnl  comment styles.  The intermediate ".s" files will end up with no
-dnl  comments, just code.
+dnl  C and/or dnl are useful when an assembler doesn't support comments, or
+dnl  where different assemblers for a particular CPU need different styles.
+dnl  The intermediate ".s" files will end up with no comments, just code.
 dnl
-dnl  Using "C" is not intended to cause offence to anyone who doesn't like
+dnl  Using C is not intended to cause offence to anyone who doesn't like
 dnl  FORTRAN; but if that happens it's an unexpected bonus.
 
 define(C, `
@@ -1230,8 +1244,8 @@ dnl  will normally need to be a power of 2.  The actual ".align" generated
 dnl  is either bytes or logarithmic according to what ./configure finds the
 dnl  assembler needs.
 dnl
-dnl  If ALIGN_FILL_0x90 is defined and equal to "yes", means ", 0x90" should
-dnl  be appended.  (This is for x86.)
+dnl  If ALIGN_FILL_0x90 is defined and equal to "yes", then ", 0x90" is
+dnl  appended.  This is for x86, see mpn/x86/README.
 
 define(ALIGN,
 m4_assert_numargs(1)
