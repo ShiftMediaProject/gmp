@@ -39,7 +39,6 @@ t_assign_SOURCES  = t-assign.cc
 t_binary_SOURCES  = t-binary.cc
 t_constr_SOURCES  = t-constr.cc
 t_headers_SOURCES = t-headers.cc
-t_istream_SOURCES = t-istream.cc
 t_locale_SOURCES  = t-locale.cc
 t_misc_SOURCES    = t-misc.cc
 t_ops_SOURCES     = t-ops.cc
