@@ -94,7 +94,8 @@ mpf_set_str (x, str, base)
   decimal_exponent_flag = base < 0;
   base = ABS (base);
 
-  if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
+  if (digit_value_in_base (c, base == 0 ? 10 : base) < 0
+      && (c != '.' || digit_value_in_base (str[1], base == 0 ? 10 : base) < 0))
     return -1;			/* error if no digits */
 
   /* If BASE is 0, try to find out the base by looking at the initial
@@ -106,9 +107,12 @@ mpf_set_str (x, str, base)
       if (c == '0')
 	{
 	  base = 8;
-	  c = *++str;
-	  if (c == 'x' || c == 'X')
-	    base = 16;
+	  if (str[1] == 'x' || str[1] == 'X')
+	    {
+	      base = 16;
+	      str += 2;
+	      c = *str;
+	    }
 	}
 #endif
     }
