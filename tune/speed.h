@@ -1639,7 +1639,16 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
         y[0] |= 1;                                              \
         if (x[s->size-1] == 0) x[s->size-1] = 1;                \
         if (y[s->size-1] == 0) y[s->size-1] = 1;                \
-        x[s->size-1] = MAX (x[s->size-1], y[s->size-1]);        \
+								\
+	if (x[s->size-1] < y[s->size-1])			\
+	  MP_LIMB_T_SWAP (x[s->size-1], y[s->size-1]);		\
+	else if (mpn_cmp (x, y, s->size) < 0)			\
+	  {							\
+	    if (y[s->size - 1] > 1)				\
+	      y[s->size - 1]--;					\
+	    else						\
+	      x[s->size - 1]++;					\
+	  }							\
       }                                                         \
                                                                 \
     speed_operand_src (s, px, psize);                           \
