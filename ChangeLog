@@ -19,6 +19,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-15  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (*-cray-unicos*): Remove -hscalar0, add -hnofastmd
+	as workaround for compiler bug.
+	(mips64*-*-*): Pass just -O1 to cc, to work around compiler bug.
+
 2002-05-14  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (*-cray-unicos*): Pass -hscalar0 to work around
