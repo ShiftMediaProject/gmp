@@ -2,8 +2,7 @@
    format and strings in base 2..255.  The fields are explained in
    gmp-impl.h.
 
-
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,6 +24,7 @@ MA 02111-1307, USA. */
 #if GENERATE_TABLE
 /* This is for the code at the end, for generating these tables.  */
 #include <stdio.h>
+#include <stdlib.h> /* for atoi */
 #include <math.h>
 #endif
 
@@ -1340,6 +1340,11 @@ const struct bases __mp_bases[256] =
 
 #if GENERATE_TABLE
 
+unsigned int idig;
+double fdig;
+mpz_t big_base, big_base_inverted, t;
+int normalization_steps;
+
 unsigned int
 ulog2 (x)
      unsigned int x;
@@ -1350,24 +1355,28 @@ ulog2 (x)
   return i;
 }
 
-main (int argc, char **argv)
+void
+generate (int bits_per_mp_limb, int i)
+{
+  fdig = 0.69314718055994530942 / log ((double) i);
+  idig = floor (bits_per_mp_limb * fdig);
+
+  mpz_ui_pow_ui (big_base,
+                 (unsigned long int) i, (unsigned long int) idig);
+  normalization_steps = bits_per_mp_limb - mpz_sizeinbase (big_base, 2);
+  mpz_set_ui (t, 1L);
+  mpz_mul_2exp (t, t, 2 * bits_per_mp_limb - normalization_steps);
+  mpz_tdiv_q (big_base_inverted, t, big_base);
+  mpz_set_ui (t, 1L);
+  mpz_mul_2exp (t, t, bits_per_mp_limb);
+  mpz_sub (big_base_inverted, big_base_inverted, t);
+}
+
+void
+one_table (int bits_per_mp_limb)
 {
   int i;
-  unsigned int idig;
-  mpz_t big_base, big_base_inverted, t;
-  double fdig;
-  int dummy;
-  int normalization_steps;
-  int bits_per_mp_limb;
   char *cnst_limb_str1, *cnst_limb_str2;
-
-  mpz_init (big_base);
-  mpz_init (big_base_inverted);
-  mpz_init (t);
-
-  bits_per_mp_limb = 8 * sizeof (long);
-  if (argc == 2)
-    bits_per_mp_limb = atoi (argv[1]);
 
   if (bits_per_mp_limb >= 64)
     {
@@ -1386,24 +1395,14 @@ main (int argc, char **argv)
   puts ("  /*  1 */ {0, 1e37, 0, 0},");
   for (i = 2; i < 256; i++)
     {
-      fdig = 0.69314718055994530942 / log ((double) i);
-      idig = floor (bits_per_mp_limb * fdig);
+      generate (bits_per_mp_limb, i);
       if ((i & (i - 1)) == 0)
 	{
-	  printf ("  /* %2u */ {%u, %.16f, 0x%lx, 0x0},\n",
+	  printf ("  /* %2u */ {%u, %.16f, 0x%x, 0x0},\n",
 		  i, idig, fdig, ulog2 (i) - 1);
 	}
       else
 	{
-	  mpz_ui_pow_ui (big_base,
-			 (unsigned long int) i, (unsigned long int) idig);
-	  normalization_steps = bits_per_mp_limb - mpz_sizeinbase (big_base, 2);
-	  mpz_set_ui (t, 1L);
-	  mpz_mul_2exp (t, t, 2 * bits_per_mp_limb - normalization_steps);
-	  mpz_tdiv_q (big_base_inverted, t, big_base);
-	  mpz_set_ui (t, 1L);
-	  mpz_mul_2exp (t, t, bits_per_mp_limb);
-	  mpz_sub (big_base_inverted, big_base_inverted, t);
 	  printf ("  /* %2u */ {%u, %.16f, %s0x", i, idig, fdig, cnst_limb_str1);
 	  mpz_out_str (0, 16, big_base); printf ("%s, %s0x", cnst_limb_str2, cnst_limb_str1);
 	  mpz_out_str (0, 16, big_base_inverted); printf ("%s},\n", cnst_limb_str2);
@@ -1412,7 +1411,77 @@ main (int argc, char **argv)
 
   puts ("};");
   printf ("#endif /* %d */\n", bits_per_mp_limb);
+}
 
-  exit (0);
+
+void
+one_header (int bits_per_mp_limb)
+{
+  char *cnst_limb_str1, *cnst_limb_str2;
+
+  if (bits_per_mp_limb >= 64)
+    {
+      cnst_limb_str1 = "CNST_LIMB(";
+      cnst_limb_str2 = ")";
+    }
+  else
+    {
+      cnst_limb_str1 = "";
+      cnst_limb_str2 = "";
+    }
+
+  generate (bits_per_mp_limb, 10);
+
+  printf ("#if BITS_PER_MP_LIMB == %d\n", bits_per_mp_limb);
+  printf ("#define MP_BASES_CHARS_PER_LIMB_10      %d\n", idig);
+  printf ("#define MP_BASES_BIG_BASE_10            CNST_LIMB(0x");
+  mpz_out_str (0, 16, big_base);
+  printf (")\n");
+
+  printf ("#define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x");
+  mpz_out_str (0, 16, big_base_inverted);
+  printf (")\n");
+
+  printf ("#define MP_BASES_NORMALIZATION_STEPS_10 %d\n", normalization_steps);
+  printf ("#endif\n");
+}
+
+int
+main (int argc, char **argv)
+{
+  static const int bits[] = { 4, 8, 16, 32, 64 };
+  int  i, n, header;
+
+  mpz_init (big_base);
+  mpz_init (big_base_inverted);
+  mpz_init (t);
+
+  for (header = 1; header >= 0; header--)
+    {
+      if (argc > 1)
+        {
+          for (i = 1; i < argc; i++)
+            {
+              n = atoi (argv[i]);
+              if (header)
+                one_header (n);
+              else
+                one_table (n);
+            }
+        }
+      else
+        {
+          for (i = 0; i < numberof (bits); i++)
+            {
+              if (header)
+                one_header (bits[i]);
+              else
+                one_table (bits[i]);
+            }
+        }
+      printf ("\n");
+    }
+
+  return 0;
 }
 #endif
