@@ -65,7 +65,7 @@ libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h sin_cos.c extract.c	\
 
 nodist_libmpfr_a_SOURCES = floor.c ceil.c
 
-EXTRA_DIST = generic.c
+EXTRA_DIST = generic.c mpfr-test.h mpf2mpfr.h
 
 CLEANFILES = $(nodist_libmpfr_a_SOURCES)
 
