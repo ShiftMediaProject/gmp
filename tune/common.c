@@ -566,6 +566,12 @@ speed_mpn_mod_1_inv (struct speed_params *s)
 }
 
 double
+speed_mpn_mod_34lsub1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_34LSUB1 (mpn_mod_34lsub1);
+}
+
+double
 speed_mpn_divrem_2 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DIVREM_2 (mpn_divrem_2);
