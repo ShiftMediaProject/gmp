@@ -33,13 +33,14 @@ main (void)
   mp_limb_t  src, want, got;
   int        i;
 
+  tests_start ();
   mp_trace_base = -16;
 
   for (i = 0; i < 1000; i++)
     {
       mpn_random (&src, (mp_size_t) 1);
 
-      want = refmpn_bswap_limb (src);
+      want = ref_bswap_limb (src);
 
       BSWAP_LIMB (got, src);
       if (got != want)
@@ -66,5 +67,7 @@ main (void)
           goto error;
         }
     }
+
+  tests_end ();
   exit (0);
 }
