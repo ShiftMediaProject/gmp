@@ -22,6 +22,8 @@ Changes between MP version 4.0.1 and 4.1
 
 * Bug fixes.
 * mpn_get_str requirements relaxed.
+* Major speed improvments for HPPA 2.0 systems.
+* Major speed improvments for IA-64 systems.
 
 Changes between MP version 4.0 and 4.0.1
 
