@@ -1,19 +1,20 @@
-dnl  AMD K7 mpn_divrem_1 -- mpn by limb division.
+dnl  AMD K7 mpn_divrem_1, mpn_divrem_1c, mpn_preinv_divrem_1 -- mpn by limb
+dnl  division.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -31,6 +32,10 @@ C                         mp_limb_t divisor);
 C mp_limb_t mpn_divrem_1c (mp_ptr dst, mp_size_t xsize,
 C                          mp_srcptr src, mp_size_t size,
 C                          mp_limb_t divisor, mp_limb_t carry);
+C mp_limb_t mpn_preinv_divrem_1 (mp_ptr dst, mp_size_t xsize,
+C                                mp_srcptr src, mp_size_t size,
+C                                mp_limb_t divisor, mp_limb_t inverse,
+C                                unsigned shift);
 C
 C The method and nomenclature follow part 8 of "Division by Invariant
 C Integers using Multiplication" by Granlund and Montgomery, reference in
@@ -41,12 +46,25 @@ C for m', and "d" for d_norm, which won't cause any confusion since it's
 C only the normalized divisor that's of any use in the code.  "b" is written
 C for 2^N, the size of a limb, N being 32 here.
 C
-C mpn_divrem_1 avoids one division if the src high limb is less than the
-C divisor.  mpn_divrem_1c doesn't check for a zero carry, since in normal
-C circumstances that will be a very rare event.
+C mpn_divrem_1 and mpn_preinv_divrem_1 avoid one division if the src high
+C limb is less than the divisor.  mpn_divrem_1c doesn't check for a zero
+C carry, since in normal circumstances that will be a very rare event.
+C
+C The test for skipping a division is branch free (once size>=1 is tested).
+C The store to the destination high limb is 0 when a divide is skipped, or
+C if it's not skipped then a copy of the src high limb is used.  The latter
+C is in case src==dst.
 C
 C There's a small bias towards expecting xsize==0, by having code for
 C xsize==0 in a straight line and xsize!=0 under forward jumps.
+C
+C Alternatives:
+C
+C If the divisor is normalized (high bit set) then a division step can
+C always be skipped, since the high destination limb is always 0 or 1 in
+C that case.  It doesn't seem worth checking for this though, since it
+C probably occurs infrequently, in particular note that big_base for a
+C decimal mpn_get_str is not normalized in a 32-bit limb.
 
 
 dnl  MUL_THRESHOLD is the value of xsize+size at which the multiply by
@@ -61,7 +79,9 @@ dnl  even more so on the fractional part.
 deflit(MUL_THRESHOLD, 3)
 
 
-defframe(PARAM_CARRY,  24)
+defframe(PARAM_PREINV_SHIFT,   28)  dnl mpn_preinv_divrem_1
+defframe(PARAM_PREINV_INVERSE, 24)  dnl mpn_preinv_divrem_1
+defframe(PARAM_CARRY,  24)          dnl mpn_divrem_1c
 defframe(PARAM_DIVISOR,20)
 defframe(PARAM_SIZE,   16)
 defframe(PARAM_SRC,    12)
@@ -84,6 +104,61 @@ deflit(STACK_SPACE, 36)
 	TEXT
 	ALIGN(32)
 
+PROLOGUE(mpn_preinv_divrem_1)
+deflit(`FRAME',0)
+	movl	PARAM_XSIZE, %ecx
+	movl	PARAM_DST, %edx
+	subl	$STACK_SPACE, %esp	FRAME_subl_esp(STACK_SPACE)
+
+	movl	%esi, SAVE_ESI
+	movl	PARAM_SRC, %esi
+
+	movl	%ebx, SAVE_EBX
+	movl	PARAM_SIZE, %ebx
+
+	leal	8(%edx,%ecx,4), %edx	C &dst[xsize+2]
+	movl	%ebp, SAVE_EBP
+	movl	PARAM_DIVISOR, %ebp
+
+	movl	%edx, VAR_DST_STOP	C &dst[xsize+2]
+	movl	%edi, SAVE_EDI
+	xorl	%edi, %edi		C carry
+
+	movl	-4(%esi,%ebx,4), %eax	C src high limb
+	xor	%ecx, %ecx
+
+	C
+
+	C
+
+	cmpl	%ebp, %eax		C high cmp divisor
+
+	cmovc(	%eax, %edi)		C high is carry if high<divisor
+	cmovnc(	%eax, %ecx)		C 0 if skip div, src high if not
+					C (the latter in case src==dst)
+
+	movl	%ecx, -12(%edx,%ebx,4)	C dst high limb
+	sbbl	$0, %ebx		C skip one division if high<divisor
+	movl	PARAM_PREINV_SHIFT, %ecx
+
+	leal	-8(%edx,%ebx,4), %edx	C &dst[xsize+size]
+	movl	$32, %eax
+
+	movl	%edx, VAR_DST		C &dst[xsize+size]
+
+	shll	%cl, %ebp		C d normalized
+	subl	%ecx, %eax
+	movl	%ecx, VAR_NORM
+
+	movd	%eax, %mm7		C rshift
+	movl	PARAM_PREINV_INVERSE, %eax
+	jmp	L(start_preinv)
+
+EPILOGUE()
+
+
+	ALIGN(16)
+
 PROLOGUE(mpn_divrem_1c)
 deflit(`FRAME',0)
 	movl	PARAM_CARRY, %edx
@@ -103,13 +178,13 @@ deflit(`FRAME',STACK_SPACE)
 	movl	%esi, SAVE_ESI
 	movl	PARAM_SRC, %esi
 
-	leal	-4(%edi,%ebx,4), %edi
+	leal	-4(%edi,%ebx,4), %edi	C &dst[xsize-1]
 	jmp	L(start_1c)
 
 EPILOGUE()
 
 
-	C offset 0x31, close enough to aligned
+	C offset 0xa1, close enough to aligned
 PROLOGUE(mpn_divrem_1)
 deflit(`FRAME',0)
 
@@ -118,34 +193,37 @@ deflit(`FRAME',0)
 	subl	$STACK_SPACE, %esp
 deflit(`FRAME',STACK_SPACE)
 
-	movl	%ebp, SAVE_EBP
-	movl	PARAM_DIVISOR, %ebp
+	movl	%esi, SAVE_ESI
+	movl	PARAM_SRC, %esi
 
 	movl	%ebx, SAVE_EBX
 	movl	PARAM_XSIZE, %ebx
 
-	movl	%esi, SAVE_ESI
-	movl	PARAM_SRC, %esi
-	orl	%ecx, %ecx
+	movl	%ebp, SAVE_EBP
+	movl	PARAM_DIVISOR, %ebp
+	orl	%ecx, %ecx		C size
 
 	movl	%edi, SAVE_EDI
 	movl	PARAM_DST, %edi
 	leal	-4(%edi,%ebx,4), %edi	C &dst[xsize-1]
 
-	jz	L(no_skip_div)
+	jz	L(no_skip_div)		C if size==0
 	movl	-4(%esi,%ecx,4), %eax	C src high limb
+	xorl	%esi, %esi
 
-	cmpl	%ebp, %eax		C one less div if high<divisor
-	jnb	L(no_skip_div)
+	cmpl	%ebp, %eax		C high cmp divisor
 
-	movl	$0, (%edi,%ecx,4)	C dst high limb
-	decl	%ecx			C size-1
-	movl	%eax, %edx		C src high limb as initial carry
+	cmovc(	%eax, %edx)		C high is carry if high<divisor
+	cmovnc(	%eax, %esi)		C 0 if skip div, src high if not
+
+	movl	%esi, (%edi,%ecx,4)	C dst high limb
+	sbbl	$0, %ecx		C size-1 if high<divisor
+	movl	PARAM_SRC, %esi		C reload
 L(no_skip_div):
 
 
 L(start_1c):
-	C eax	
+	C eax
 	C ebx	xsize
 	C ecx	size
 	C edx	carry
@@ -238,7 +316,7 @@ L(mul_by_inverse):
 
 	bsrl	%ebp, %eax		C 31-l
 
-	leal	12(%edi), %ebx
+	leal	12(%edi), %ebx		C &dst[xsize+2], loop dst stop
 	leal	4(%edi,%ecx,4), %edi	C &dst[xsize+size]
 
 	movl	%edi, VAR_DST
@@ -264,6 +342,17 @@ L(mul_by_inverse):
 	subl	%ebp, %edx		C (b-d)-1 giving edx:eax = b*(b-d)-1
 
 	divl	%ebp			C floor (b*(b-d)-1) / d
+
+L(start_preinv):
+	C eax	inverse
+	C ebx	size
+	C ecx	shift
+	C edx
+	C esi	src
+	C edi	carry
+	C ebp	divisor
+	C
+	C mm7	rshift
 
 	orl	%ebx, %ebx		C size
 	movl	%eax, VAR_INVERSE
@@ -297,11 +386,14 @@ L(start_one):
 
 
 L(start_zero):
-	shll	%cl, %edi		C n2 = carry << l
-	movl	$0, %esi		C n10 = 0
+	C Can be here with xsize==0 if mpn_preinv_divrem_1 had size==1 and
+	C skipped a division.
 
-	C we're here because xsize+size>=MUL_THRESHOLD, so with size==0 then
-	C must have xsize!=0
+	shll	%cl, %edi		C n2 = carry << l
+	movl	%edi, %eax		C return value for zero_done
+	cmpl	$0, PARAM_XSIZE
+
+	je	L(zero_done)
 	jmp	L(fraction_some)
 
 
@@ -437,7 +529,6 @@ L(integer_two_left):
 	C edi	n2
 	C ebp	divisor
 	C
-	C mm0	src limb, shifted
 	C mm7	rshift
 
 	cmpl	$0x80000000, %esi  C n1 as 0=c, 1=nc
@@ -498,7 +589,6 @@ L(integer_one_left):
 	C edi	n2
 	C ebp	divisor
 	C
-	C mm0	src limb, shifted
 	C mm7	rshift
 
 	movl	VAR_DST_STOP, %ecx
@@ -558,6 +648,7 @@ L(integer_none):
 	movl	%edi, %eax
 L(fraction_done):
 	movl	VAR_NORM, %ecx
+L(zero_done):
 	movl	SAVE_EBP, %ebp
 
 	movl	SAVE_EDI, %edi
@@ -651,11 +742,10 @@ L(fraction_some):
 	C ebp	divisor
 
 	movl	PARAM_DST, %esi
-	movl	VAR_DST_STOP, %ecx
+	movl	VAR_DST_STOP, %ecx	C &dst[xsize+2]
 	movl	%edi, %eax
 
-	subl	$8, %ecx
-
+	subl	$8, %ecx		C &dst[xsize]
 	jmp	L(fraction_entry)
 
 
