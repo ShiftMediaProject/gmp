@@ -35,6 +35,7 @@ mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
   mp_size_t nbits, size;
   int count;
   int pow2;
+  int cmp;
 
   size = ABSIZ (n);
   if (size == 0)
@@ -68,8 +69,11 @@ mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
 
   count = MAX_URANDOMM_ITER;	/* Set iteration count limit.  */
   do
-    _gmp_rand (rp, rstate, nbits);
-  while (mpn_cmp (rp, PTR (n), size) >= 0 && --count != 0);
+    {
+      _gmp_rand (rp, rstate, nbits);
+      MPN_CMP (cmp, rp, PTR (n), size);
+    }
+  while (cmp >= 0 && --count != 0);
 
   if (count == 0)
     /* Too many iterations; return result mod n == result - n */
