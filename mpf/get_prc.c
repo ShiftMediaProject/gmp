@@ -30,5 +30,5 @@ mpf_get_prec (x)
      mpf_srcptr x;
 #endif
 {
-  return (unsigned long int) x->_mp_prec * BITS_PER_MP_LIMB - 1;
+  return (unsigned long int) x->_mp_prec * BITS_PER_MP_LIMB - BITS_PER_MP_LIMB;
 }
