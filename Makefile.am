@@ -294,6 +294,23 @@ info_TEXINFOS = gmp.texi
 gmp_TEXINFOS = fdl.texi
 
 
+install-data-hook:
+	@echo ''
+	@echo '+-------------------------------------------------------------+'
+	@echo '| CAUTION:                                                    |'
+	@echo '|                                                             |'
+	@echo '| If you have not already run "make check", then we strongly  |'
+	@echo '| recommend you do so.                                        |'
+	@echo '|                                                             |'
+	@echo '| GMP has been carefully tested by its authors, but compilers |'
+	@echo '| are all too often released with serious bugs.  GMP tends to |'
+	@echo '| explore interesting corners in compilers and has hit bugs   |'
+	@echo '| on quite a few occasions.                                   |'
+	@echo '|                                                             |'
+	@echo '+-------------------------------------------------------------+'
+	@echo ''
+
+
 # The ansi2knr setups for the build programs are the same as the normal
 # automake ansi2knr rules, but using $(CC_FOR_BUILD) instead of $(CC).
 #
