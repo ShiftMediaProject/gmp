@@ -231,31 +231,66 @@ POSITION INDEPENDENT CODE
 
 Defining the symbol PIC in m4 processing selects SVR4 / ELF style position
 independent code.  This is necessary for shared libraries because they can
-be mapped into different processes at different virtual addresses.  Actually
-relocations are allowed, but presumably pages with relocations aren't
+be mapped into different processes at different virtual addresses.
+Actually, relocations are allowed but text pages with relocations aren't
 shared, defeating the purpose of a shared library.
 
+The GOT is used to access global data, and the PLT is used for functions.
 The use of the PLT adds a fixed cost to every function call, and the GOT
 adds a cost to any function accessing global variables.  These are small but
 might be noticeable when working with small operands.
 
-Calls from one library function to another don't need to go through the PLT,
-since of course the call instruction uses a displacement, not an absolute
-address, and the relative locations of object files are known when libgmp.so
-is created.  "ld -Bsymbolic" (or "gcc -Wl,-Bsymbolic") will resolve calls
-this way, so that there's no jump through the PLT, but of course leaving
-setups of the GOT address in %ebx that may be unnecessary.
+It's intended, as a matter of policy, that references within libgmp are
+resolved within libgmp.  Certainly there's no need for an application to
+replace any internals, and we also take the view that there's no value in an
+application subverting anything documented either.
 
-The %ebx setup could be avoided in assembly if a separate option controlled
-PIC for calls as opposed to computed jumps etc.  But there's only ever
-likely to be a handful of calls out of assembler, and getting the same
-optimization for C intra-library calls would be more important.  There seems
-no easy way to tell gcc that certain functions can be called non-PIC, and
-unfortunately many GMP functions use the global memory allocation variables,
-so they need the GOT anyway.  Object files with no global data references
-and only intra-library calls could go into the library as non-PIC under
--Bsymbolic.  Integrating this into libtool and automake is left as an
-exercise for the reader.
+Resolving references within libgmp in theory means calls can be made with a
+plain PC-relative call instruction, which is faster and smaller than going
+through the PLT, and data references can be similarly PC-relative, saving a
+GOT entry and fetch from there.  Unfortunately the normal linker behaviour
+doesn't allow us to do this.
+
+By default an R_386_PC32 PC-relative reference, either for a call or for
+data, is left in libgmp.so by the linker so that it can be resolved at
+runtime to a location in the application or another shared library.  This
+means a text segment relocation which we don't want.
+
+Under the "-Bsymbolic" option, the linker resolves references to symbols
+within libgmp.so, which gives us what we want for R_386_PC32.  It also
+resolves R_386_PLT32 calls directly to their target without creating a PLT
+entry (though if this is done to normal compiler-generated code it still
+leaves a setup of %ebx to _GLOBAL_OFFSET_TABLE_ which may then be
+unnecessary).
+
+Unfortunately -Bsymbolic does bad things to global variables defined in a
+shared library but accessed by non-PIC code from the mainline (or a static
+library).  This arises for us with mpfr using __gmp_allocate_func and
+friends, making -Bsymbolic unusable.
+
+The problem is that the mainline needs a fixed data address to avoid text
+segment relocations, so space is allocated in its data segment and the value
+from the variable is copied from the shared library's data segment when the
+library is loaded.  Under -Bsymbolic, however, references in the shared
+library are then resolved still to the shared library data area.  Not
+surprisingly it bombs badly to have mainline code and library code accessing
+different locations for what should be one variable.
+
+Note that this effect for the shared library is not just for R_386_PC32
+offsets which might have been cooked up in assembler, but is done also for
+the contents of GOT entries.  -Bsymbolic simply applies a general rule that
+symbols are resolved first from the local module.
+
+In any case, all this means that we have no optimizations we can usefully
+make to function or variable usages, neither for assembler nor C code.
+
+What we'd really like is a way to tell the linker it should resolve
+references as per -Bsymbolic but only on nominated functions and variables,
+namely everything in libgmp except global variables we have to make
+accessible from non-PIC code outside libgmp.  And we'd like the C compiler
+to generate simple PC-relative references to those same nominated functions
+and variables.  In both cases however all other function and variable usages
+would be done in the standard way.
 
 
 
