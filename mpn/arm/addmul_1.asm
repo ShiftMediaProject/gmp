@@ -23,8 +23,8 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C            cycles/limb
-C StrongARM:   7.5-9.5  (dependent on vl value)
-C XScale:        8-9    (dependent on vl value, estimated)
+C StrongARM:  7.75-9.75  (dependent on vl value)
+C XScale:        8-9     (dependent on vl value, estimated)
 
 define(`rp',`r0')
 define(`up',`r1')
