@@ -504,18 +504,27 @@ case $host in
     # HP cc is K&R by default, but AM_C_PROTOTYPES will add "-Ae", or "-Aa
     # -D_HPUX_SOURCE", to put it into ansi mode, if possible.
     #
+    # gcc for hppa 2.0 can be built either for 2.0n (32-bit) or 2.0w
+    # (64-bit), but not both, so there's no option to choose the desired
+    # mode, we must instead detect which of the two it is.  This is done by
+    # checking sizeof(long), either 4 or 8 bytes respectively.
+    #
     gcc_cflags="-g -O2"
     gcc_cflags_optlist="arch"
+    gcc_testlist="sizeof-long-4"
     extra_functions="udiv"
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
     cyclecounter_size=1
 
     # FIXME: For hppa2.0*, path should be "pa32/hppa2_0 pa32/hppa1_1 pa32".
+    # (Can't remember why this isn't done already, have to check what .asm
+    # files are available in each and how they run on a typical 2.0 cpu.)
     #
     case $host_cpu in
       hppa1.0*)    path="pa32" ;;
       hppa7000*)   path="pa32/hppa1_1 pa32" ;;
-      hppa2.0*)    path="pa32/hppa2_0 pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32" ;;
+      hppa2.0* | hppa64)
+                   path="pa32/hppa2_0 pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32" ;;
       *)           # default to 7100
                    path="pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32" ;;
     esac
@@ -523,16 +532,16 @@ case $host in
     # gcc 2.7.2.3 knows -mpa-risc-1-0 and -mpa-risc-1-1
     # gcc 2.95 adds -mpa-risc-2-0, plus synonyms -march=1.0, 1.1 and 2.0
     #
-    # The gcc manual notes that -mpa-risc-2-0 needs a new enough assemble.
+    # The gcc manual notes that -mpa-risc-2-0 needs a new enough assembler.
     # We believe gcc always emits a ".level 2.0" directive under this
     # option, so that should kill an unsuitable assembler, letting us fall
     # back on 1.1.
     #
     case $host_cpu in
-      hppa1.0*)    gcc_cflags_arch="-mpa-risc-1-0" ;;
-      hppa2.0*)    gcc_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1" ;;
-      *)           # default to 7100
-                   gcc_cflags_arch="-mpa-risc-1-1" ;;
+      hppa1.0*)           gcc_cflags_arch="-mpa-risc-1-0" ;;
+      hppa2.0* | hppa64)  gcc_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1" ;;
+      *)                  # default to 7100
+                          gcc_cflags_arch="-mpa-risc-1-1" ;;
     esac
 
     case $host_cpu in
@@ -542,11 +551,13 @@ case $host in
     esac
 
     case $host in
-      hppa2.0*-*-*)
+      hppa2.0*-*-* | hppa64-*-*)
         abilist="2.0n 1.0"
 
         # no gcc support for long long in 2.0n
-	cclist_20n="cc"
+	cclist_20n="gcc cc"
+	gcc_20n_cflags="-g -O2 -mpa-risc-2-0"
+        gcc_20n_testlist="sizeof-long-4"
         # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
         cc_20n_cflags="+DA2.0 +e +O3"
         cc_20n_testlist="hpc-hppa-2-0"
@@ -570,7 +581,8 @@ case $host in
           esac
 
           cclist_20w="gcc cc"
-	  gcc_20w_cflags="-mpa-risc-2-0"
+	  gcc_20w_cflags="-g -O2 -mpa-risc-2-0"
+	  gcc_20w_testlist="sizeof-long-8"
           cc_20w_cflags="+DD64 +O3"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
@@ -1383,6 +1395,7 @@ for abi in $abilist; do
         hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
         gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
         gcc-mips-o32)   GMP_GCC_MIPS_O32($cc,,testlist_pass=no) ;;
+        sizeof*)        GMP_C_TESTLIST_SIZEOF($cc $cflags,$tst,,testlist_pass=no) ;;
         esac
         if test $testlist_pass = no; then break; fi
       done
