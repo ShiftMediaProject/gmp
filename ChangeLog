@@ -1,3 +1,8 @@
+2000-08-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/get_str.c: Don't set n_digits from digits_computed_so_far
+	when the converted operand becomes zero.  Misc cleanups.
+
 2000-08-20  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/set.c [BERKELEY_MP] (move): Add conditionals to build as
@@ -63,6 +68,10 @@
 	tests/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr (now everywhere).
 	* Makefile.am (MP{Z,Q,F,FR,BSD}_OBJECTS, libmp_la_DEPENDENCIES):
 	Add $U to all .lo filenames.
+
+2000-08-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/addmul_1.asm: Correct number of cycles to 3.5/28.
 
 2000-08-02  Torbjorn Granlund  <tege@swox.com>
 
