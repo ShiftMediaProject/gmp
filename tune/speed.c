@@ -464,8 +464,8 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
 
   if (want_data)
     {
-      sp.xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);
-      sp.yp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_yp);
+      SPEED_TMP_ALLOC_LIMBS (sp.xp, s->size, s->align_xp);
+      SPEED_TMP_ALLOC_LIMBS (sp.yp, s->size, s->align_yp);
 
       data_fill (s->xp, s->size);
       data_fill (s->yp, s->size);
@@ -630,8 +630,8 @@ run_all (FILE *fp)
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  sp.xp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, sp.align_xp);
-  sp.yp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, sp.align_yp);
+  SPEED_TMP_ALLOC_LIMBS (sp.xp_block, SPEED_BLOCK_SIZE, sp.align_xp);
+  SPEED_TMP_ALLOC_LIMBS (sp.yp_block, SPEED_BLOCK_SIZE, sp.align_yp);
 
   data_fill (sp.xp_block, SPEED_BLOCK_SIZE);
   data_fill (sp.yp_block, SPEED_BLOCK_SIZE);
