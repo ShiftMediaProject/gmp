@@ -24,6 +24,11 @@ Test 1000 integers 0 <= X <= 2^34-1.
 #include "gmp.h"
 #include "gmpstat.h"
 
+#if !HAVE_DECL_OPTARG
+extern char *optarg;
+extern int optind, opterr;
+#endif
+
 #define FVECSIZ (100000L)
 
 int g_debug = 0;
