@@ -2,15 +2,17 @@ Changes between MP version 3.0 and 3.1
 
 * Bug fixes.
 * Improved `make check' running more tests.
-* Tuned algorithm cutoff points for many machines.
+* Tuned algorithm cutoff points for many machines.  This will improve speed for
+  a lot of operations, in some cases by a large amount.
 * Major speed improvments: Alpha 21264.
 * Some speed improvments: Cray vector computers, AMD K6 and Athlon, Intel P5
   and P-Pro/II/III.
 * The mpf_get_prec function now works as it did in GMP 2.
 * New utilities for auto-tuning and speed measuring.
-* Multiplication now optionally uses FFT for very large operands.
-* Support for new systems: Solaris running on x86, FreeBSD 5,
-  HP-UX 11, Cray vector computers, Rhapsody, Nextstep/Openstep.
+* Multiplication now optionally uses FFT for very large operands.  (To enable
+  it, pass --enable-fft to configure.)
+* Support for new systems: Solaris running on x86, FreeBSD 5, HP-UX 11, Cray
+  vector computers, Rhapsody, Nextstep/Openstep.
 * Support for shared libraries on 32-bit HPPA.
 * New integer functions: mpz_mul_si, mpz_odd_p, mpz_even_p
 * New Kronecker symbol functions: mpz_kronecker_si, mpz_kronecker_ui,
@@ -18,6 +20,9 @@ Changes between MP version 3.0 and 3.1
 * New rational functions: mpq_out_str, mpq_swap
 * New float functions: mpf_swap
 * New mpn functions: mpn_divexact_by3c, mpn_tdiv_qr
+* New EXPERIMENTAL function layer for accurate floating-point arithmetic, mpfr.
+  To try it, pass --enable-mpfr to configure.  See the mpfr subdirectory for
+  more information; it is not documented in the main GMP manual.
 
 Changes between MP version 3.0 and 3.0.1
 
