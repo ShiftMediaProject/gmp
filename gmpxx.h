@@ -2313,6 +2313,8 @@ public:
   { mpz_set_str(mp, s.c_str(), 0); return *this; }
 
   // string input/output functions
+  int set_str(const char *s, int base)
+  { return mpz_set_str(mp, s, base); }
   int set_str(const std::string &s, int base)
   { return mpz_set_str(mp, s.c_str(), base); }
   std::string get_str(int base = 10) const
@@ -2479,6 +2481,8 @@ public:
   { mpq_set_str(mp, s.c_str(), 0); return *this; }
 
   // string input/output functions
+  int set_str(const char *s, int base)
+  { return mpq_set_str(mp, s, base); }
   int set_str(const std::string &s, int base)
   { return mpq_set_str(mp, s.c_str(), base); }
   std::string get_str(int base = 10) const
@@ -2667,11 +2671,13 @@ public:
   { mpf_set_str(mp, s.c_str(), 0); return *this; }
 
   // string input/output functions
+  int set_str(const char *s, int base)
+  { return mpf_set_str(mp, s, base); }
   int set_str(const std::string &s, int base)
   { return mpf_set_str(mp, s.c_str(), base); }
-  std::string get_str(mp_exp_t *expo, int base, size_t size) const
+  std::string get_str(mp_exp_t& expo, int base = 10, size_t size = 0) const
   {
-    __gmp_alloc_cstring temp(mpf_get_str(0, expo, base, size, mp));
+    __gmp_alloc_cstring temp(mpf_get_str(0, &expo, base, size, mp));
     return std::string(temp.str);
   }
 
