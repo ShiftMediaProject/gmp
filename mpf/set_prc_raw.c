@@ -27,7 +27,5 @@ MA 02111-1307, USA. */
 void
 mpf_set_prec_raw (mpf_ptr x, unsigned long int prec_in_bits)
 {
-  mp_size_t prec;
-  prec = (MAX (53, prec_in_bits) + 2 * BITS_PER_MP_LIMB - 1)/BITS_PER_MP_LIMB;
-  x->_mp_prec = prec;
+  x->_mp_prec = MPF_BITS_TO_PREC (prec_in_bits);
 }
