@@ -1,3 +1,48 @@
+2000-12-18  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k6/pre_mod_1.asm: New file.
+
+	* tune/tuneup.c (USE_PREINV_MOD_1): Tune this, rearrange mpn_divrem_1
+	and mpn_mod_1 handling in support of it.
+	* tune/Makefile.am: Consequent changes to divrem_1.c and mod_1.c.
+
+	* gmp-impl.h (USE_PREINV_MOD_1, MPN_MOD_OR_PREINV_MOD_1): New macros.
+	* mpn/generic/perfsqr.c, mpz/pprime_p.c: Use MPN_MOD_OR_PREINV_MOD_1.
+
+	* configure.in: Let an asm mod_1 provide a preinv_mod_1 entrypoint.
+
+	* mpn/alpha/default.m4: Remove some newlines, add some asserts.
+	(r0 etc, f0 etc): Use defreg and deflit.
+	(PROLOGUE, PROLOGUE_GP, EPILOGUE): Use GSYM_PREFIX.
+	* mpn/alpha/unicos.m4: Remove some newlines, add some asserts.
+	* mpn/alpha/invert_limb.asm: Remove unused second DATASTART parameter.
+	* mpn/alpha/cntlz.asm: Use mpn_count_leading_zeros and __clz_tab.
+
+	* mpn/asm-defs.m4 (changecom): Comments on portability.
+	(__clz_tab, modlimb_invert_table): New macros, matching gmp-impl.h.
+	(count_{leading,trailing}_zeros): New define_mpn's.
+	(PROLOGUE etc): Comments on usage, add some asserts.
+	(OPERATION_[lr]shift): Use m4_not_for_expansion, for the benefit of
+	lorrshift multifunc.
+
+	* mpn/Makeasm.am (RM_TMP): New variable controlling temporary ".s"
+	removal, for development purposes.
+
+	* mpz/fac_ui.c: Fix for long long limb by using mpn_mul_1 not
+	mpz_mul_ui, and note some possible enhancements.
+
+	* mpz/tests/t-fac_ui.c: New test.
+	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
+	* macos/Makefile.in: Ditto, and add t-fib_ui too.
+	
+	* mpn/generic/[lr]shift.c: Remove some DEBUG code adequately covered
+	by new parameter ASSERTs.
+
+	* longlong.h (count_trailing_zeros): Assert x!=0.
+
+	* doc/configuration: Updates for new configure things, add some notes
+	on test setups.
+
 2000-12-16  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (*-*-aix): Pass -qmaxmem=20000 to xlc also for 64-bit
