@@ -679,11 +679,12 @@ getrusage_backwards_p (void)
           break;
         }
 
-      /* stop after 0.1 seconds and at least 1000 attempts */
+      /* minimum 1000 attempts, then stop after either 0.1 seconds or 50000
+         attempts, whichever comes first */
       d = 1000000 * (next.ru_utime.tv_sec - start.ru_utime.tv_sec)
         + (next.ru_utime.tv_usec - start.ru_utime.tv_usec);
       i++;
-      if (d > 100000 && i > 1000)
+      if (i > 50000 || (i > 1000 && d > 100000))
         break;
     }
 
