@@ -181,6 +181,7 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_abs __gmpzs_abs
 #define mpz_add __gmpzs_add
 #define mpz_add_ui __gmpzs_add_ui
+#define mpz_addmul_ui __gmpzs_addmul_ui
 #define mpz_and __gmpzs_and
 #define mpz_array_init __gmpzs_array_init
 #define mpz_cdiv_q __gmpzs_cdiv_q
@@ -280,6 +281,7 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_abs __gmpzl_abs
 #define mpz_add __gmpzl_add
 #define mpz_add_ui __gmpzl_add_ui
+#define mpz_addmul_ui __gmpzl_addmul_ui
 #define mpz_and __gmpzl_and
 #define mpz_array_init __gmpzl_array_init
 #define mpz_cdiv_q __gmpzl_cdiv_q
@@ -383,6 +385,7 @@ void *_mpz_realloc _PROTO ((mpz_ptr, mp_size_t));
 void mpz_abs _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_add _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_add_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+void mpz_addmul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_and _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_array_init _PROTO ((mpz_ptr, mp_size_t, mp_size_t));
 void mpz_cdiv_q _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
