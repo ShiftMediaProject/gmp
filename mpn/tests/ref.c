@@ -655,6 +655,18 @@ refmpn_mod_1 (mp_srcptr sp, mp_size_t size, mp_limb_t divisor)
   return refmpn_mod_1c (sp, size, divisor, 0);
 }
 
+mp_limb_t
+refmpn_mod_1_rshift (mp_srcptr sp, mp_size_t size,
+                     unsigned shift, mp_limb_t divisor)
+{
+  mp_limb_t  r;
+  mp_ptr     p = refmpn_malloc_limbs (size);
+  refmpn_rshift (p, sp, size, shift);
+  r = refmpn_mod_1 (p, size, divisor);
+  free (p);
+  return r;
+}
+
 
 mp_limb_t
 refmpn_divrem_1c (mp_ptr rp, mp_size_t xsize,
