@@ -1,3 +1,8 @@
+2000-02-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/root.c: Complete rewrite.  Still primitive, but at least correct.
+	* mpz/tests/t-root.c: New test.
+
 2000-02-22  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k7/mul_basecase.asm: New file.
@@ -23,6 +28,10 @@
 	mpn/generic/divrem_1.c.
 	* mpn/generic/divrem_1.c: Ditto.
 	* configure.in (gmp_mpn_functions): Ditto.
+
+2000-02-21  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp.h: Undo 1996-10-06 NeXT change, it was clearly improperly written.
 
 2000-02-21  Linus Nordberg  <linus@swox.se>
 	
