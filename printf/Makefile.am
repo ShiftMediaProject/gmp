@@ -24,10 +24,15 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
-noinst_LTLIBRARIES = libprintf.la
+noinst_LTLIBRARIES = libdummy.la libprintf.la
 
 libprintf_la_SOURCES =							 \
   asprintf.c asprntffuns.c doprnt.c doprntf.c doprnti.c			 \
   fprintf.c obprintf.c obvprintf.c obprntffuns.c			 \
   printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
   vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c
+libprintf_la_LIBADD = @REPL_VSNPRINTF_OBJ@
+libprintf_la_DEPENDENCIES = $(libprintf_la_LIBADD)
+
+# Ensure there's an ansi2knr rule for this, if it's needed.
+libdummy_la_SOURCES = repl-vsnprintf.c

@@ -191,7 +191,8 @@ PRINTF_OBJECTS =							\
   printf/snprintf$U.lo printf/snprntffuns$U.lo				\
   printf/sprintf$U.lo printf/sprintffuns$U.lo				\
   printf/vasprintf$U.lo printf/vfprintf$U.lo printf/vprintf$U.lo	\
-  printf/vsnprintf$U.lo printf/vsprintf$U.lo
+  printf/vsnprintf$U.lo printf/vsprintf$U.lo				\
+  @REPL_VSNPRINTF_PRINTF_OBJ@
 
 CXX_OBJECTS =								\
    cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
