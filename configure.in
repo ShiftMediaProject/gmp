@@ -935,6 +935,10 @@ if test $found_compiler = yes; then
   CPPFLAGS="$cppflags"
 
 
+  # Can easily have this in config.h too, if desired.
+  GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_ABI_$ABI')", POST)
+
+
   # GMP_LDFLAGS substitution, selected according to ABI.
   # These are needed on libgmp.la and libmp.la, but currently not on
   # convenience libraries like tune/libspeed.la or mpz/libmpz.la.
