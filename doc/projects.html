@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 17 Nov 2001.  An up-to-date version is available at
+  This file current as of 25 Nov 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -50,24 +50,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
     problems.)
 
 <ul>
-<li> <strong>C++ wrapper</strong>
-
-  <p> A C++ wrapper for GMP is highly desirable.
-      <a href="http://www.sissa.it/~ballabio/gmp++.html">GMP++</a> has made
-      excellent progress on this.
-      For a wrapper to be useful, one needs to pay attention to efficiency.
-
-  <ol>
-    <li> Write arithmetic functions for direct applications of most
-         elementary C++ types.  This might be necessary to avoid
-         ambiguities, but it is also desirable from an efficiency
-         standpoint.
-    <li> Avoid running constructors/destructors when not necessary.  For
-         example, implement <code>a&nbsp+=&nbsp;b</code> by directly applying
-         <code>mpz_add</code>.
-  </ol>
-
-<p> <li> <strong>Faster multiplication</strong>
+<li> <strong>Faster multiplication</strong>
 
   <p> The current multiplication code uses Karatsuba, 3-way Toom-Cook,
       or Fermat FFT.  Several new developments are desirable:
@@ -145,12 +128,18 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
   current code can mostly be reused.  It should be possible to share code
   between GCD and GCDEXT, and probably with Jacobi symbols too.
 
+  <p> Paul Zimmerman has worked on sub-quadratic GCD and GCDEXT, but it seems
+  that the most likely algorithm doesn't kick in until about 3000 limbs.
+
 <p> <li> <strong>Math functions for the mpf layer</strong>
 
   <p> Implement the functions of math.h for the GMP mpf layer!  Check the book
   "Pi and the AGM" by Borwein and Borwein for ideas how to do this.  These
   functions are desirable: acos, acosh, asin, asinh, atan, atanh, atan2, cos,
   cosh, exp, log, log10, pow, sin, sinh, tan, tanh.
+
+  <p> These are implemented in mpfr, redoing them in mpf might not be worth
+  bothering with, if the long term plan is to bring mpfr in as the new mpf.
 
 <p> <li> <strong>Faster sqrt</strong>
 
@@ -177,6 +166,54 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 
   <p> If the routine becomes fast enough, perhaps square roots could be computed
   using this function.
+
+<p> <li> <strong>Quotient-Only Division</strong>
+
+  <p> Some work can be saved when only the quotient is required in a division,
+      basically the necessary correction -0, -1 or -2 to the estimated
+      quotient can almost always be determined from only a few limbs of
+      multiply and subtract, rather than forming a complete remainder.  The
+      greatest savings are when the quotient is small compared to the dividend
+      and divisor.
+
+  <p> Some code along these lines can be found in the current
+      <code>mpn_tdiv_qr</code>, though perhaps calculating bigger chunks of
+      remainder than might be strictly necessary.  That function in its
+      current form actually then always goes on to calculate a full remainder.
+      Burnikel and Zeigler describe a similar approach for the divide and
+      conquer case.
+
+<p> <li> <strong>Sub-Quadratic REDC and Exact Division</strong>
+
+  <p> <code>mpn_bdivmod</code> and the <code>redc</code> in
+      <code>mpz_powm</code> should use some sort of divide and conquer
+      algorithm.  This would benefit <code>mpz_divexact</code>, and
+      <code>mpn_gcd</code> on large unequal size operands.  See "Exact
+      Division with Karatsuba Complexity" by Jebelean for a (brief)
+      description.
+
+  <p> Failing that, some sort of <code>DIVEXACT_THRESHOLD</code> could be
+      added to control whether <code>mpz_divexact</code> uses
+      <code>mpn_bdivmod</code> or <code>mpn_tdiv_qr</code>, since the latter
+      is faster on large divisors.
+
+  <p> For the REDC, basically all that's needed is Montgomery's algorithm done
+      in multi-limb integers.  R is multiple limbs, and the inverse and
+      operands are multi-precision.
+
+  <p> For exact division the time to calculate a multi-limb inverse is not
+      amortized across many modular operations, but instead will probably
+      create a threshold below which the current style
+      <code>mpn_bdivmod</code> is best.  There's also Krandick and Jebelean,
+      "Bidirectional Exact Integer Division" to basically use a low to high
+      exact division for the low half quotient, and a quotient-only division
+      for the high half.
+
+  <p> It will be noted that low-half and high-half multiplies, and a low-half
+      square, can be used.  These ought to each take as little as half the
+      time of a full multiply, or square, though work by Thom Mulders shows
+      the advantage is progressively lost as Karatsuba and higher algorithms
+      are applied.
 
 <p> <li> <strong>Test Suite</strong>
 
