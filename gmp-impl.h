@@ -3216,9 +3216,10 @@ struct hgcd
   /* Space allocated for the uv entries, for sanity checking */
   mp_size_t alloc;
   
-  /* Size of the largest u,v entry, usually ruw[3].uvp[1]. This
+  /* Size of the largest u,v entry, usually row[3].uvp[1]. This
      element should be normalized. Smaller elements must be zero
-     padded, and all unused limbs must be zero. */
+     padded, and all unused limbs (i.e. between size and alloc) must
+     be zero. */
   mp_size_t size;
   struct hgcd_row row[4];
 };
