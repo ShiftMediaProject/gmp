@@ -245,6 +245,20 @@ void __gmp_default_free _PROTO ((void *, size_t));
 
 #endif
 
+
+/* Note that if every use of an inline routine is in fact expanded, then
+   there'd no need for a library copy in mpn/inlines.lo.  But gcc can
+   sometimes decide not to inline, and it's easier to just have a copy in
+   inlines.lo than to figure out when that is.  */
+
+#undef _EXTERN_INLINE
+#ifdef _FORCE_INLINES
+#define _EXTERN_INLINE
+#else
+#define _EXTERN_INLINE extern inline
+#endif
+
+
 #if defined (__GNUC__) && defined (__i386__)
 #if 0
 /* Check that these actually improve things.
@@ -311,6 +325,7 @@ void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
 
 #define mpn_toom3_sqr_n  __MPN(toom3_sqr_n)
 void mpn_toom3_sqr_n _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
 
 #define mpn_fft_best_k  __MPN(fft_best_k)
 int mpn_fft_best_k _PROTO ((mp_size_t n, int sqr));
@@ -775,11 +790,9 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 /* n==0 is allowed and is considered a zero value.  */
 #define mpn_zero_p  __MPN(zero_p)
+int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
 #if HAVE_INLINE || defined (_FORCE_INLINES)
-#if HAVE_INLINE
-static inline
-#endif
-int
+_EXTERN_INLINE int
 mpn_zero_p (mp_srcptr p, mp_size_t n)
 {
   mp_size_t i;
@@ -791,8 +804,6 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 
   return 1;
 }
-#else
-int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
 #endif
 
 
@@ -1269,6 +1280,10 @@ extern mp_size_t  fib_threshold[];
 extern mp_size_t  powm_threshold[];
 extern mp_size_t  gcd_accel_threshold[];
 extern mp_size_t  gcdext_threshold[];
+extern mp_size_t  divrem_1_norm_threshold[];
+extern mp_size_t  divrem_1_unnorm_threshold[];
+extern mp_size_t  mod_1_norm_threshold[];
+extern mp_size_t  mod_1_unnorm_threshold[];
 
 #undef KARATSUBA_MUL_THRESHOLD
 #undef TOOM3_MUL_THRESHOLD
@@ -1285,22 +1300,30 @@ extern mp_size_t  gcdext_threshold[];
 #undef POWM_THRESHOLD
 #undef GCD_ACCEL_THRESHOLD
 #undef GCDEXT_THRESHOLD
+#undef DIVREM_1_NORM_THRESHOLD
+#undef DIVREM_1_UNNORM_THRESHOLD
+#undef MOD_1_NORM_THRESHOLD
+#undef MOD_1_UNNORM_THRESHOLD
 
-#define KARATSUBA_MUL_THRESHOLD  mul_threshold[0]
-#define TOOM3_MUL_THRESHOLD      mul_threshold[1]
-#define FFT_MUL_TABLE            { 0 }
-#define FFT_MUL_THRESHOLD        mul_threshold[2]
-#define FFT_MODF_MUL_THRESHOLD   fft_modf_mul_threshold
-#define KARATSUBA_SQR_THRESHOLD  sqr_threshold[0]
-#define TOOM3_SQR_THRESHOLD      sqr_threshold[1]
-#define FFT_SQR_TABLE            { 0 }
-#define FFT_SQR_THRESHOLD        sqr_threshold[2]
-#define FFT_MODF_SQR_THRESHOLD   fft_modf_sqr_threshold
-#define DC_THRESHOLD             dc_threshold[0]
-#define FIB_THRESHOLD            fib_threshold[0]
-#define POWM_THRESHOLD           powm_threshold[0]
-#define GCD_ACCEL_THRESHOLD      gcd_accel_threshold[0]
-#define GCDEXT_THRESHOLD         gcdext_threshold[0]
+#define KARATSUBA_MUL_THRESHOLD   mul_threshold[0]
+#define TOOM3_MUL_THRESHOLD       mul_threshold[1]
+#define FFT_MUL_TABLE             { 0 }
+#define FFT_MUL_THRESHOLD         mul_threshold[2]
+#define FFT_MODF_MUL_THRESHOLD    fft_modf_mul_threshold
+#define KARATSUBA_SQR_THRESHOLD   sqr_threshold[0]
+#define TOOM3_SQR_THRESHOLD       sqr_threshold[1]
+#define FFT_SQR_TABLE             { 0 }
+#define FFT_SQR_THRESHOLD         sqr_threshold[2]
+#define FFT_MODF_SQR_THRESHOLD    fft_modf_sqr_threshold
+#define DC_THRESHOLD              dc_threshold[0]
+#define FIB_THRESHOLD             fib_threshold[0]
+#define POWM_THRESHOLD            powm_threshold[0]
+#define GCD_ACCEL_THRESHOLD       gcd_accel_threshold[0]
+#define GCDEXT_THRESHOLD          gcdext_threshold[0]
+#define DIVREM_1_NORM_THRESHOLD   divrem_1_norm_threshold[0]
+#define DIVREM_1_UNNORM_THRESHOLD divrem_1_unnorm_threshold[0]
+#define MOD_1_NORM_THRESHOLD      mod_1_norm_threshold[0]
+#define MOD_1_UNNORM_THRESHOLD    mod_1_unnorm_threshold[0]
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #define KARATSUBA_SQR_MAX_GENERIC  200
