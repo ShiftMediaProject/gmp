@@ -25,9 +25,17 @@ MA 02111-1307, USA.
 	* mpn/amd64/rsh1add_n.asm: New file.
 	* mpn/amd64/rsh1sub_n.asm: New file.
 
+2003-09-24  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Remove conftest* temporary files.
+
 2003-09-23  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (MUL_TOOM3_THRESHOLD, SQR_TOOM3_THRESHOLD): Now 128.
+
+2003-09-23  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (gmp_randinit_set): Use __gmp_const rather than const.
 
 2003-09-22  Torbjorn Granlund  <tege@swox.com>
 
