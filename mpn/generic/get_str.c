@@ -161,10 +161,11 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 	    }
 	}
 
+      ASSERT (s >= str);
+
       while (s != str)
 	*--s = 0;
 
-      ASSERT (s >= str);
       return out_len;
     }
 }
