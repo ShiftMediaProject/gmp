@@ -1,3 +1,17 @@
+2001-07-11  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (__GMPN_ADD_1 etc) [x86]: Don't use this on egcs 2.91.
+
+        * mpz/fits_uint.c, fits_ulong.c, mpz/fits_ushort.c: Split up fits_u.c.
+	* mpz/fits_u.c: Remove file.
+	* mpz/Makefile.am, macos/Makefile.in: Update.
+ 
+	* tests/refmpn.c,tests.h (refmpn_copy): New function.
+	* tests/devel/try.c (TYPE_ZERO): No return value from call.
+	(TYPE_MODEXACT_1_ODD, TYPE_MODEXACT_1C_ODD): Share call with
+	TYPE_MOD_1 and TYPE_MOD_1C.
+	(MPN_COPY, __GMPN_COPY, __GMPN_COPY_INCR): Add testing.
+
 2001-07-10  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in (__GMPN_COPY): Add form to help gcc on power and powerpc.
@@ -10,8 +24,6 @@
 	* errno.c, gmp-impl.h (__gmp_exception, __gmp_divide_by_zero,
 	__gmp_sqrt_of_negative): New functions.
 	* gmp-impl.h (GMP_ERROR, DIVIDE_BY_ZERO, SQRT_OF_NEGATIVE): Use them.
-
-	* gmp-h.in (__GMPN_ADD_1) [x86]: Avoid a bug in egcs 2.91.66.
 
 	* randclr.c, randraw.c: Use ASSERT(0) for unrecognised algorithms.
 
