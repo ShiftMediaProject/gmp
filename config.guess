@@ -192,6 +192,12 @@ EOF
     NILE:*:*:dcosx)
 	echo pyramid-pyramid-svr4
 	exit 0 ;;
+    sun4m:SunOS:5.*:*)
+	echo sparc8-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+	exit 0 ;;
+    sun4u:SunOS:5.*:*)
+	echo sparc9-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+	exit 0 ;;
     sun4*:SunOS:5.*:* | tadpole*:SunOS:5.*:*)
 	echo sparc-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
 	exit 0 ;;
@@ -366,10 +372,10 @@ EOF
 	fi
 	exit 0 ;;
     *:AIX:*:4)
-	if /usr/sbin/lsattr -EHl proc0 | grep POWER >/dev/null 2>&1; then
-		IBM_ARCH=rs6000
-	else
+	if /usr/sbin/lsattr -EHl proc0 | grep PowerPC >/dev/null 2>&1; then
 		IBM_ARCH=powerpc
+	else
+		IBM_ARCH=rs6000
 	fi
 	if [ -x /usr/bin/oslevel ] ; then
 		IBM_REV=`/usr/bin/oslevel`
