@@ -2850,14 +2850,21 @@ make it an integer.
 
 @deftypefun int mpz_set_str (mpz_t @var{rop}, char *@var{str}, int @var{base})
 Set the value of @var{rop} from @var{str}, a null-terminated C string in base
-@var{base}.  White space is allowed in the string, and is simply ignored.  The
-base may vary from 2 to 36.  If @var{base} is 0, the actual base is determined
-from the leading characters: if the first two characters are ``0x'' or ``0X'',
-hexadecimal is assumed, otherwise if the first character is ``0'', octal is
-assumed, otherwise decimal is assumed.
+@var{base}.  White space is allowed in the string, and is simply ignored.
+
+The @var{base} may vary from 2 to 62, or if @var{base} is 0, then the leading
+characters are used: @code{0x} and @code{0X} for hexadecimal, @code{0b} and
+@code{0B} for binary, @code{0} for octal, or decimal otherwise.
+
+For bases up to 36, case is ignored; upper-case and lower-case letters have
+the same value.  For bases 37 to 62, upper-case letter represent the usual
+10..35 while lower-case letter represent 36..61.
 
 This function returns 0 if the entire string is a valid number in base
 @var{base}.  Otherwise it returns @minus{}1.
+
+@c Compatibility notice: GMP releases prior to 4.3 ignored white space
+@c in most places of the input.
 
 [It turns out that it is not entirely true that this function ignores
 white-space.  It does ignore it between digits, but not after a minus sign or
@@ -3578,11 +3585,15 @@ Return the number of bytes written, or if an error occurred, return 0.
 
 @deftypefun size_t mpz_inp_str (mpz_t @var{rop}, FILE *@var{stream}, int @var{base})
 Input a possibly white-space preceded string in base @var{base} from stdio
-stream @var{stream}, and put the read integer in @var{rop}.  The base may vary
-from 2 to 36.  If @var{base} is 0, the actual base is determined from the
-leading characters: if the first two characters are `0x' or `0X', hexadecimal
-is assumed, otherwise if the first character is `0', octal is assumed,
-otherwise decimal is assumed.
+stream @var{stream}, and put the read integer in @var{rop}.
+
+The @var{base} may vary from 2 to 62, or if @var{base} is 0, then the leading
+characters are used: @code{0x} and @code{0X} for hexadecimal, @code{0b} and
+@code{0B} for binary, @code{0} for octal, or decimal otherwise.
+
+For bases up to 36, case is ignored; upper-case and lower-case letters have
+the same value.  For bases 37 to 62, upper-case letter represent the usual
+10..35 while lower-case letter represent 36..61.
 
 Return the number of bytes read, or if an error occurred, return 0.
 @end deftypefun
@@ -3946,8 +3957,9 @@ not then @code{mpq_canonicalize} must be called.
 
 The numerator and optional denominator are parsed the same as in
 @code{mpz_set_str} (@pxref{Assigning Integers}).  White space is allowed in
-the string, and is simply ignored.  The @var{base} can vary from 2 to 36, or
-if @var{base} is 0 then the leading characters are used: @code{0x} for hex,
+the string, and is simply ignored.  The @var{base} can vary from 2 to 62, or
+if @var{base} is 0 then the leading characters are used: @code{0x} or @code{0X} for hex,
+@code{0b} or @code{0B} for binary,
 @code{0} for octal, or decimal otherwise.  Note that this is done separately
 for the numerator and denominator, so for instance @code{0xEF/100} is 239/100,
 whereas @code{0xEF/0x100} is 239/256.
@@ -4359,9 +4371,13 @@ in the specified base.  The exponent is either in the specified base or, if
 @var{base} is negative, in decimal.  The decimal point expected is taken from
 the current locale, on systems providing @code{localeconv}.
 
-The argument @var{base} may be in the ranges 2 to 36, or @minus{}36 to
+The argument @var{base} may be in the ranges 2 to 62, or @minus{}62 to
 @minus{}2.  Negative values are used to specify that the exponent is in
 decimal.
+
+For bases up to 36, case is ignored; upper-case and lower-case letters have
+the same value; for bases 37 to 62, upper-case letter represent the usual
+10..35 while lower-case letter represent 36..61.
 
 Unlike the corresponding @code{mpz} function, the base will not be determined
 from the leading characters of the string if @var{base} is 0.  This is so that
