@@ -1,5 +1,10 @@
 2000-03-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc32: Misc cleanups.
+	* mpn/powerpc32/aix.m4: New file (mainly by Linus).
+	* mpn/powerpc64/aix.m4: New file (mainly by Linus).
+	* mpn/powerpc64: Translate `.S' files to `.asm'.
+
 	* configure.in: Fix tyops.
 	* configure: Regenerate.
 
