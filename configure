@@ -9816,7 +9816,7 @@ EOF
 cat >>$CONFIG_STATUS <<\EOF
 # If no file are specified by the user, then we need to provide default
 # value.  By we need to know if files were specified by the user.
-ac_need_defaults=:
+ac_need_defaults=true
 while test $# != 0
 do
   case $1 in
