@@ -468,8 +468,10 @@ case $host in
   *-cray-unicos*)
     gmp_asm_syntax_testing=no
     cclist="cc"
-    # The -hscalar0 is a workaround for miscompilation of mpz/import.c.
-    cc_cflags="-O3 -hscalar0 -htask0 -Wa,-B"
+    # We used to have -hscalar0 here as a workaround for miscompilation of
+    # mpz/import.c, but let's hope Cray fixes their bugs instead, since
+    # -hscalar0 causes disastrously poor code to be generated.
+    cc_cflags="-O3 -htask0 -Wa,-B"
     path="cray"
     ;;
 
