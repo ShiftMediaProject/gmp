@@ -1820,7 +1820,7 @@ if test "$gmp_asm_syntax_testing" != no; then
       GMP_ASM_M68K_ADDRESSING
       GMP_ASM_M68K_BRANCHES
       ;;
-    power*-*-*)
+    powerpc*-*-*)
       GMP_ASM_POWERPC_R_REGISTERS
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
       case $host in
@@ -1832,7 +1832,9 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
       esac
       ;;
-
+    power*-*-aix*)
+      GMP_INCLUDE_MPN(powerpc32/aix.m4)
+      ;;
     X86_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
       GMP_ASM_X86_SHLDL_CL
