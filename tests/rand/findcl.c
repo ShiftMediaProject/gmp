@@ -37,10 +37,6 @@ sh_status (int sig)
 
 /* TODO:
 
-   . differentiate between v and merit; print a multiplier with ok
-   v's, even when merit is bad.  better than nothing since it seems
-   hard to find good merits for the big m's.
-
    . find a better algorithm than a+=8; bigger jumps perhaps?
 
 */
