@@ -209,11 +209,12 @@ mp_size_t  pagesize;
 #define TRY_TYPE_COM_N   (TRY_DST0 | TRY_SRC0)
 
 #define TRY_TYPE_MOD_1   (TRY_RETVAL | TRY_SRC0 | TRY_DIVISOR | TRY_SIZE_ZERO)
-#define TRY_TYPE_MOD_1C     (TRY_TYPE_MOD_1 | TRY_CARRYLIMB)
-#define TRY_TYPE_DIVMOD_1   (TRY_TYPE_MOD_1  | TRY_DST0)
-#define TRY_TYPE_DIVMOD_1C  (TRY_TYPE_MOD_1C | TRY_DST0)
-#define TRY_TYPE_DIVREM_1   (TRY_TYPE_DIVMOD_1  | TRY_XSIZE)
-#define TRY_TYPE_DIVREM_1C  (TRY_TYPE_DIVMOD_1C | TRY_XSIZE)
+#define TRY_TYPE_MOD_1C       (TRY_TYPE_MOD_1 | TRY_CARRYLIMB)
+#define TRY_TYPE_DIVMOD_1     (TRY_TYPE_MOD_1  | TRY_DST0)
+#define TRY_TYPE_DIVMOD_1C    (TRY_TYPE_MOD_1C | TRY_DST0)
+#define TRY_TYPE_DIVREM_1     (TRY_TYPE_DIVMOD_1  | TRY_XSIZE)
+#define TRY_TYPE_DIVREM_1C    (TRY_TYPE_DIVMOD_1C | TRY_XSIZE)
+#define TRY_TYPE_MOD_1_RSHIFT (TRY_RETVAL | TRY_SRC0 | TRY_SHIFT | TRY_DIVISOR)
 
 #define TRY_TYPE_DIVEXACT_BY3   (TRY_RETVAL | TRY_DST0 | TRY_SRC0)
 #define TRY_TYPE_DIVEXACT_BY3C  (TRY_TYPE_DIVEXACT_BY3 | TRY_CARRYTRIT)
@@ -344,16 +345,18 @@ struct try_t try_array[] = {
   { TRY(refmpn_xor_n),    TRY_FUNFUN(mpn_xor_n),  TRY_TYPE_LOGOPS_N },
   { TRY(refmpn_xnor_n),   TRY_FUNFUN(mpn_xnor_n), TRY_TYPE_LOGOPS_N },
 
-  { TRY(refmpn_divrem_1), TRY(mpn_divrem_1),   TRY_TYPE_DIVREM_1 },
-  { TRY(refmpn_mod_1),    TRY(mpn_mod_1),      TRY_TYPE_MOD_1 },
+  { TRY(refmpn_divrem_1),     TRY(mpn_divrem_1),     TRY_TYPE_DIVREM_1 },
+  { TRY(refmpn_mod_1),        TRY(mpn_mod_1),        TRY_TYPE_MOD_1 },
+  { TRY(refmpn_mod_1_rshift), TRY(mpn_mod_1_rshift), TRY_TYPE_MOD_1_RSHIFT },
 #if HAVE_NATIVE_mpn_divrem_1c
-  { TRY(refmpn_divrem_1c), TRY(mpn_divrem_1c), TRY_TYPE_DIVREM_1C },
+  { TRY(refmpn_divrem_1c),    TRY(mpn_divrem_1c),    TRY_TYPE_DIVREM_1C },
 #endif
 #if HAVE_NATIVE_mpn_mod_1c
-  { TRY(refmpn_mod_1c),   TRY(mpn_mod_1c),     TRY_TYPE_MOD_1C },
+  { TRY(refmpn_mod_1c),       TRY(mpn_mod_1c),       TRY_TYPE_MOD_1C },
 #endif
-  { TRY(refmpn_divexact_by3),TRY_FUNFUN(mpn_divexact_by3),TRY_TYPE_DIVEXACT_BY3 },
-  { TRY(refmpn_divexact_by3c),TRY(mpn_divexact_by3c), TRY_TYPE_DIVEXACT_BY3C },
+  { TRY(refmpn_divexact_by3), TRY_FUNFUN(mpn_divexact_by3),
+                                                     TRY_TYPE_DIVEXACT_BY3 },
+  { TRY(refmpn_divexact_by3c),TRY(mpn_divexact_by3c),TRY_TYPE_DIVEXACT_BY3C },
 
   { TRY(refmpn_mul_1),    TRY(mpn_mul_1),      TRY_TYPE_MUL_1 },
 #if HAVE_NATIVE_mpn_mul_1c
@@ -894,6 +897,10 @@ call (struct each_t *e, tryfun_t function)
   case TRY_TYPE_MOD_1C:
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, divisor, carry);
+    break;
+  case TRY_TYPE_MOD_1_RSHIFT:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->s[0].p, size, shift, divisor);
     break;
 
   case TRY_TYPE_GCD_1:
