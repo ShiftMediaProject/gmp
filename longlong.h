@@ -128,7 +128,7 @@ MA 02111-1307, USA. */
 #endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __di;							\
+  do { UWtype __di;							\
     __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
@@ -163,7 +163,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #if defined (_CRAYMPP)		/* I.e., T3D and T3E alpha-based machines */
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __di;							\
+  do { UWtype __di;							\
     __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
@@ -178,17 +178,17 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #ifndef LONGLONG_STANDALONE
 #define umul_ppmm(wh, wl, u, v) \
   do {									\
-    UDItype __p0;							\
+    UWtype __p0;							\
     (wh) = __MPN(umul_ppmm) (u, v, &__p0);				\
     (wl) = __p0;							\
   } while (0)
-extern UDItype __MPN(umul_ppmm) _PROTO ((UDItype, UDItype, UDItype *));
+extern UWtype __MPN(umul_ppmm) _PROTO ((UWtype, UWtype, UWtype *));
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __r;							\
+  do { UWtype __r;							\
     (q) = __MPN(udiv_qrnnd) (n1, n0, d, &__r);				\
     (r) = __r;								\
   } while (0)
-extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *));
+extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype, UWtype, UWtype, UWtype *));
 #define UMUL_TIME 8
 #define UDIV_TIME 60
 #endif /* LONGLONG_STANDALONE */
@@ -222,7 +222,7 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 #endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __di;							\
+  do { UWtype __di;							\
     __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
@@ -340,11 +340,11 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 #define UMUL_TIME 20
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { USItype __r;							\
+  do { UWtype __r;							\
     (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
+extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define UDIV_TIME 200
 #endif /* LONGLONG_STANDALONE */
 #endif
@@ -447,11 +447,11 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { USItype __r;							\
+  do { UWtype __r;							\
     (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
+extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* LONGLONG_STANDALONE */
 #define count_leading_zeros(count, x) \
   do {									\
@@ -1186,11 +1186,11 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #ifndef udiv_qrnnd
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { USItype __r;							\
+  do { UWtype __r;							\
     (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
+extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #ifndef UDIV_TIME
 #define UDIV_TIME 140
 #endif
