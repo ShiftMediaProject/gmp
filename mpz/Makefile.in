@@ -108,12 +108,13 @@ noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
   abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
-  cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c \
-  cdiv_ui.c clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmp_abs.c cmp_abs_ui.c com.c \
+  cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
+  clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmp_abs.c cmp_abs_ui.c com.c \
   divexact.c dump.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
-  fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c \
-  fdiv_ui.c fib_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c get_str.c \
-  get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
+  fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c fdiv_ui.c \
+  fib_ui.c fits_sint_p.c fits_slong_p.c fits_sshort_p.c fits_uint_p.c \
+  fits_ulong_p.c fits_ushort_p.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
+  get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
@@ -142,15 +143,17 @@ cdiv_qr_ui.lo cdiv_r.lo cdiv_r_ui.lo cdiv_ui.lo clear.lo clrbit.lo \
 cmp.lo cmp_si.lo cmp_ui.lo cmp_abs.lo cmp_abs_ui.lo com.lo divexact.lo \
 dump.lo fac_ui.lo fdiv_q.lo fdiv_q_2exp.lo fdiv_q_ui.lo fdiv_qr.lo \
 fdiv_qr_ui.lo fdiv_r.lo fdiv_r_2exp.lo fdiv_r_ui.lo fdiv_ui.lo \
-fib_ui.lo gcd.lo gcd_ui.lo gcdext.lo get_d.lo get_si.lo get_str.lo \
-get_ui.lo getlimbn.lo hamdist.lo init.lo inp_raw.lo inp_str.lo \
-invert.lo ior.lo iset.lo iset_d.lo iset_si.lo iset_str.lo iset_ui.lo \
-jacobi.lo lcm.lo legendre.lo mod.lo mul.lo mul_2exp.lo mul_ui.lo neg.lo \
-out_raw.lo out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo \
-powm.lo powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo \
-remove.lo root.lo scan0.lo scan1.lo set.lo set_d.lo set_f.lo set_q.lo \
-set_si.lo set_str.lo set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo \
-sqrtrem.lo sub.lo sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo \
+fib_ui.lo fits_sint_p.lo fits_slong_p.lo fits_sshort_p.lo \
+fits_uint_p.lo fits_ulong_p.lo fits_ushort_p.lo gcd.lo gcd_ui.lo \
+gcdext.lo get_d.lo get_si.lo get_str.lo get_ui.lo getlimbn.lo \
+hamdist.lo init.lo inp_raw.lo inp_str.lo invert.lo ior.lo iset.lo \
+iset_d.lo iset_si.lo iset_str.lo iset_ui.lo jacobi.lo lcm.lo \
+legendre.lo mod.lo mul.lo mul_2exp.lo mul_ui.lo neg.lo out_raw.lo \
+out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo powm.lo \
+powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo remove.lo \
+root.lo scan0.lo scan1.lo set.lo set_d.lo set_f.lo set_q.lo set_si.lo \
+set_str.lo set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo sqrtrem.lo \
+sub.lo sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo \
 tdiv_q_ui.lo tdiv_qr.lo tdiv_qr_ui.lo tdiv_r.lo tdiv_r_2exp.lo \
 tdiv_r_ui.lo tstbit.lo ui_pow_ui.lo urandomb.lo urandomm.lo xor.lo
 libmpz_la_OBJECTS =  $(am_libmpz_la_OBJECTS)
@@ -179,7 +182,10 @@ $(DEPDIR)/divexact.Plo $(DEPDIR)/dump.Plo $(DEPDIR)/fac_ui.Plo \
 $(DEPDIR)/fdiv_q.Plo $(DEPDIR)/fdiv_q_2exp.Plo $(DEPDIR)/fdiv_q_ui.Plo \
 $(DEPDIR)/fdiv_qr.Plo $(DEPDIR)/fdiv_qr_ui.Plo $(DEPDIR)/fdiv_r.Plo \
 $(DEPDIR)/fdiv_r_2exp.Plo $(DEPDIR)/fdiv_r_ui.Plo $(DEPDIR)/fdiv_ui.Plo \
-$(DEPDIR)/fib_ui.Plo $(DEPDIR)/gcd.Plo $(DEPDIR)/gcd_ui.Plo \
+$(DEPDIR)/fib_ui.Plo $(DEPDIR)/fits_sint_p.Plo \
+$(DEPDIR)/fits_slong_p.Plo $(DEPDIR)/fits_sshort_p.Plo \
+$(DEPDIR)/fits_uint_p.Plo $(DEPDIR)/fits_ulong_p.Plo \
+$(DEPDIR)/fits_ushort_p.Plo $(DEPDIR)/gcd.Plo $(DEPDIR)/gcd_ui.Plo \
 $(DEPDIR)/gcdext.Plo $(DEPDIR)/get_d.Plo $(DEPDIR)/get_si.Plo \
 $(DEPDIR)/get_str.Plo $(DEPDIR)/get_ui.Plo $(DEPDIR)/getlimbn.Plo \
 $(DEPDIR)/hamdist.Plo $(DEPDIR)/init.Plo $(DEPDIR)/inp_raw.Plo \
@@ -333,6 +339,12 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/fdiv_r_ui.Plo
 @AMDEP@include $(DEPDIR)/fdiv_ui.Plo
 @AMDEP@include $(DEPDIR)/fib_ui.Plo
+@AMDEP@include $(DEPDIR)/fits_sint_p.Plo
+@AMDEP@include $(DEPDIR)/fits_slong_p.Plo
+@AMDEP@include $(DEPDIR)/fits_sshort_p.Plo
+@AMDEP@include $(DEPDIR)/fits_uint_p.Plo
+@AMDEP@include $(DEPDIR)/fits_ulong_p.Plo
+@AMDEP@include $(DEPDIR)/fits_ushort_p.Plo
 @AMDEP@include $(DEPDIR)/gcd.Plo
 @AMDEP@include $(DEPDIR)/gcd_ui.Plo
 @AMDEP@include $(DEPDIR)/gcdext.Plo
