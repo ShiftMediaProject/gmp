@@ -223,23 +223,17 @@ MA 02111-1307, USA. */
 /* Define if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define if `double' is Cray CFP format */
-#undef HAVE_DOUBLE_CRAY_CFP
-
-/* Define if `double' is IEEE format, big endian */
+/* Define one (and only one) of the following for the format of a `double'.
+   If your format is not among these choices, or you don't know what it is,
+   then leave all of them undefined.
+   "IEEE_LITTLE_SWAPPED" means little endian, but with the two 4-byte halves
+   swapped, as used by ARM CPUs in little endian mode.  */
 #undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
-
-/* Define if `double' is IEEE format, little endian */
 #undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
-
-/* Define if `double' is IEEE format, little endian, with halves swapped */
 #undef HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
-
-/* Define if `double' is VAX D format */
 #undef HAVE_DOUBLE_VAX_D
-
-/* Define if `double' is VAX G format */
 #undef HAVE_DOUBLE_VAX_G
+#undef HAVE_DOUBLE_CRAY_CFP
 
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
@@ -256,10 +250,10 @@ MA 02111-1307, USA. */
 /* Define if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define if `mp_limb_t' is big endian */
+/* Define one (just one) of the following for the endiannes of `mp_limb_t'.
+   If the endianness is not a simple big or little, or you don't know what
+   it is, then leave both of these undefined. */
 #undef HAVE_LIMB_BIG_ENDIAN
-
-/* Define if `mp_limb_t' is little endian */
 #undef HAVE_LIMB_LITTLE_ENDIAN
 
 /* Define if you have the `localeconv' function. */
@@ -315,6 +309,9 @@ MA 02111-1307, USA. */
 
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
+
+/* Define if the system has the type `stack_t'. */
+#undef HAVE_STACK_T
 
 /* Define if <stdarg.h> exists and works */
 #undef HAVE_STDARG
