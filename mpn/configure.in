@@ -43,12 +43,11 @@ case "${target}" in
 	fi
 	family=sparc;;
   hppa7000*-*-*) path="hppa/hppa1_1 hppa"
-		 extra_functions="udiv_qrnnd";;
+	extra_functions="udiv_qrnnd";;
   hppa1.0*-*-*) path="hppa"
-		extra_functions="udiv_qrnnd";;
+	extra_functions="udiv_qrnnd";;
   hppa2.0*-*-*) path="pa64"
-		target_makefile_frag=config/mt-pa2hpux
-		extra_functions="umul_ppmm udiv_qrnnd";;
+	extra_functions="umul_ppmm udiv_qrnnd";;
   hppa*-*-*)					# assume pa7100
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd";;
@@ -127,6 +126,8 @@ esac
 # Determine stuff like whether globals are prefixed by `_', how the
 # align directive works, and if a makefile fragment is needed.
 case "${target}" in
+  hppa2.0*-*-*)
+    target_makefile_frag=config/mt-pa2hpux;;
   *-*-freebsd[34]*)	# hides generic *bsd* alternative
     underscore=no; asm_align=nolog;;
   i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k[5678]*-*-*bsd* | \
