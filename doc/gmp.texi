@@ -828,6 +828,7 @@ PowerPC:
 @nisamp{powerpc821},
 @nisamp{powerpc823},
 @nisamp{powerpc860},
+@nisamp{powerpc970}
 
 @item
 SPARC:
@@ -1300,23 +1301,33 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 
 @sp 1
 @need 1000
-@item PowerPC 64 (@samp{powerpc64}, @samp{powerpc620}, @samp{powerpc630})
+@item PowerPC 64 (@samp{powerpc64}, @samp{powerpc620}, @samp{powerpc630}, @samp{powerpc970})
 @cindex PowerPC
 @table @asis
 @item @samp{ABI=aix64}
 @cindex AIX
-The AIX 64 ABI uses 64-bit limbs and pointers and is available on systems
-@samp{powerpc64*-*-aix*}.  Applications must be compiled with
+The AIX 64 ABI uses 64-bit limbs and pointers and is the default on PowerPC 64
+@samp{*-*-aix*} systems.  Applications must be compiled with
 
 @example
 gcc  -maix64
 xlc  -q64
 @end example
 
+@item @samp{ABI=mode32}
+@cindex AIX
+The @samp{mode32} ABI uses a 64-bit @code{long long} limb but with the chip
+still in 32-bit mode and using 32-bit calling conventions.  This is the
+default on PowerPC 64 @samp{*-*-darwin*} systems.  No special compiler options
+are needed for applications.
+
 @item @samp{ABI=32}
-This is the basic 32-bit PowerPC ABI.  No special compiler options are needed
-for applications.
+This is the basic 32-bit PowerPC ABI, with a 32-bit limb.  No special compiler
+options are needed for applications.
 @end table
+
+GMP speed is greatest in the two 64-bit ABIs above.  In @samp{ABI=32} only the
+32-bit ISA is used and this doesn't make full use of a 64-bit chip.
 
 @sp 1
 @need 1000
