@@ -37,5 +37,9 @@ mpz_perfect_square_p (a)
   if (asize < 0)
     return 0;
 
+  /* Zero is a perfect square.  */
+  if (asize == 0)
+    return 1;
+
   return mpn_perfect_square_p (a->_mp_d, asize);
 }
