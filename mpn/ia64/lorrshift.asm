@@ -55,6 +55,7 @@ ifdef(`OPERATION_rshift',`
 
 ASM_START()
 PROLOGUE(func)
+	.prologue
 ifdef(`HAVE_ABI_32',
 `	addp4	r32 = 0, r32
 	addp4	r33 = 0, r33
@@ -64,7 +65,9 @@ ifdef(`HAVE_ABI_32',
 ')
 	add	r34 = -1, r34
 	sub	r31 = 64, r35
+	.save	ar.lc, r2
 	mov	r2 = ar.lc;;
+	.body
 	cmp.leu	p6, p7 = 8,r34
 ifdef(`OPERATION_lshift',`
 	shladd	r33 = r34, 3, r33
