@@ -539,6 +539,16 @@ dnl  --------------------------------------------------------------------------
 dnl  Various generic m4 things.
 
 
+dnl  Usage: m4_unquote(macro)
+dnl
+dnl  Allow the argument text to be re-evaluated.  This is useful for "token
+dnl  pasting" like m4_unquote(foo`'bar).
+
+define(m4_unquote,
+m4_assert_onearg()
+`$1')
+
+
 dnl  Usage: m4_ifdef_anyof_p(`symbol',...)
 dnl
 dnl  Expand to 1 if any of the symbols in the argument list are defined, or
