@@ -20,6 +20,11 @@ MA 02111-1307, USA.
 
 2002-07-13  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/powerpc32/rshift.asm: Rewrite, transformed from lshift.asm.
+
+	* tune/tuneup.c (DIVEXACT_1_THRESHOLD, MODEXACT_1_ODD_THRESHOLD):
+	Always zero for native mpn_divexact_1, mpn_modexact_1_odd.
+
 	* gmp-h.in (__GMP_EXTERN_INLINE): Don't use this during configure,
 	ie. __GMP_WITHIN_CONFIGURE, to avoid needing dependent routines.
 
