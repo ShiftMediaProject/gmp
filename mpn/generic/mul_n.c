@@ -367,6 +367,129 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
     }
 }
 
+/* put in {c, 2n} where n = 2k+r the value of {v0,2k} (already in place)
+   + B^k * [{v1, 2k+1} - {t1, 2k+1}]
+   + B^(2k) * [{t2, 2k+1} - {v0, 2k} - {vinf, 2r}]
+   + B^(3k) * [{t1, 2k+1} - {t2, 2k+1}]
+   + B^(4k) * {vinf,2r} (high 2r-1 limbs already in place)
+   where {t1, 2k+1} = (3*{v0,2k}+2*sa*{vm1,2k+1}+{v2,2k+1})/6-2*{vinf,2r}
+         {t2, 2k+1} = ({v1, 2k+1} + sa * {vm1, 2k+1})/2
+   (sa is the sign of {vm1, 2k+1}).
+*/
+static void
+toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
+             mp_ptr vinf, mp_size_t k, mp_size_t r, int sa)
+{
+  mp_limb_t cy;
+  unsigned long twok = k + k;
+  unsigned long kk1 = twok + 1;
+  unsigned long twor = r + r;
+  mp_ptr c1, c2, c3, c4, c5;
+
+  c1 = c + k;
+  c2 = c1 + k;
+  c3 = c2 + k;
+  c4 = c3 + k;
+  c5 = c4 + k;
+
+#define v0 (c)
+  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
+       v0       vm1       hi(vinf)       v1       v2+2vm1      vinf   */
+
+  cy = mpn_divexact_by3 (v2, v2, kk1);    /* v2 <- v2 / 3 */
+  ASSERT(cy == 0); /* division should be exact */
+  v2[twok] += mpn_add_n (v2, v2, v0, twok);
+  mpn_rshift (v2, v2, kk1, 1);
+
+  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
+       v0       vm1       hi(vinf)       v1    (3v0+2vm1+v2)    vinf
+						    /6                */
+
+  /* vm1 <- t2 := (v1 + sa*vm1) / 2
+     t2 = a0*b0+a0*b2+a1*b1+a2*b0+a2*b2 >= 0
+   */
+  ((sa >= 0) ? mpn_add_n : mpn_sub_n) (vm1, v1, vm1, kk1); /* no carry */
+  mpn_rshift (vm1, vm1, kk1, 1); /* exact division */
+
+  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
+       v0       t2        hi(vinf)       v1         t1          vinf */
+
+  /* subtract {t2, 2k+1} in {c+3k, 2k+1} i.e. in {t2+k, 2k+1}:
+     by chunks of k limbs from right to left to avoid overlap */
+
+#define t2 (vm1)
+  MPN_DECR_U (c5, twor - k, t2[twok]);
+  cy = mpn_sub_n (c4, c4, t2 + k, k);
+  MPN_DECR_U (c5, twor - k, cy);
+  cy = mpn_sub_n (c3, c3, t2, k);
+  MPN_DECR_U (c4, twor, cy);
+
+  /* c  c+k c+2k c+3k c+4k+1   t  t+2k+1 t+4k+2
+     v0     t2        hi(vinf) v1 t1     vinf
+		 -t2
+  */
+
+  /* don't forget to add {vinf, 1} in {c+4k, ...} */
+  MPN_INCR_U (c4, twor, vinf[0]);
+
+  /* c  c+k c+2k c+3k c+4k     t  t+2k+1 t+4k+2
+     v0     t2        vinf     v1 t1     vinf
+		 -t2
+  */
+
+  /* subtract v0 in {c+2k, ...} */
+  cy = mpn_sub_n (c2, c2, v0, twok);
+  MPN_DECR_U (c4, twor, cy); /* 2n-4k = 2r */
+
+  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
+     v0       t2          vinf      v1  t1      vinf
+	      -v0   -t2
+  */
+
+  /* subtract vinf in {c+2k, ...} */
+  cy = mpn_sub_n (c2, c2, vinf, twor);
+  MPN_DECR_U (c2 + twor, twok, cy); /* n-k-r=k */
+
+  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
+     v0       t2          vinf      v1  t1      vinf
+	      -v0   -t2
+	      -vinf                                    */
+
+  /* subtract 2*vinf to v2,
+     result is t1 := a0*b0+a0*b2+a1*b1+a1*b2+a2*b0+a2*b1+a2*b2 >= 0 */
+  cy = mpn_lshift (vinf, vinf, twor, 1);
+  cy += mpn_sub_n (v2, v2, vinf, twor);
+  MPN_DECR_U (v2 + twor, kk1 - twor, cy);
+  /* subtract t1 in {c+k, ...} */
+  cy = mpn_sub_n (c1, c1, v2, kk1);
+  MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
+
+  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
+     v0       t2          vinf      v1  t1      vinf
+	 -t1  -v0   -t2
+	      -vinf                                    */
+
+  /* add t1 in {c+3k, ...} */
+  cy = mpn_add_n (c3, c3, v2, kk1);
+  MPN_INCR_U (c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
+
+  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
+     v0       t2    t1    vinf      v1  t1      vinf
+	 -t1  -v0   -t2
+	      -vinf                                    */
+
+  /* add v1 in {c+k, ...} */
+  cy = mpn_add_n (c1, c1, v1, kk1);
+  MPN_INCR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
+
+  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
+     v0  v1   t2    t1    vinf      v1  t1      vinf
+	 -t1  -v0   -t2
+	      -vinf                                    */
+#undef v0
+#undef t2
+}
+
 #define TOOM3_MUL_REC(p, a, b, n, ws) \
   do {								\
     if (MUL_TOOM3_THRESHOLD / 3 < MUL_KARATSUBA_THRESHOLD	\
@@ -471,15 +594,12 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   c3[2] = (c1[0] = cy) + mpn_add_n (c2 + 2, c, a + k, k);
   c4[3] = (c2[1] = cc) + mpn_add_n (c3 + 3, c1 + 1, b + k, k);
 
-#define v0 c
-#define v1 t
-#define vm1 c2
 #define v2 (t+2*k+1)
 #define vinf (t+4*k+2)
 
   /* compute v1 := (a0+a1+a2)*(b0+b1+b2) in {t, 2k+1};
      since v1 < 9*B^(2k), v1 uses only 2k+1 words if GMP_NUMB_BITS >= 4 */
-  TOOM3_MUL_REC (v1, c2 + 2, c3 + 3, k1, trec);
+  TOOM3_MUL_REC (t, c2 + 2, c3 + 3, k1, trec);
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
 					v1
@@ -498,7 +618,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
 
   /* compute vm1 := (a0-a1+a2)*(b0-b1+b2) in {c+2k, 2k+1};
      since |vm1| < 4*B^(2k), vm1 uses only 2k+1 limbs */
-  TOOM3_MUL_REC (vm1, c, c4 + 2, k1, trec);
+  TOOM3_MUL_REC (c2, c, c4 + 2, k1, trec);
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
 		vm1                      v1
@@ -554,14 +674,14 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   */
 #ifdef HAVE_MPN_ADDLSH1_N
   if (sa >= 0)
-    mpn_addlsh1_n (v2, v2, vm1, kk1);
+    mpn_addlsh1_n (v2, v2, c2, kk1);
   else
     {
-      mpn_lshift (t + 4 * k + 2, vm1, kk1, 1);
+      mpn_lshift (t + 4 * k + 2, c2, kk1, 1);
       mpn_sub_n (v2, v2, t + 4 * k + 2, kk1);
     }
 #else
-  mpn_lshift (t + 4 * k + 2, vm1, kk1, 1);
+  mpn_lshift (t + 4 * k + 2, c2, kk1, 1);
   ((sa >= 0) ? mpn_add_n : mpn_sub_n) (v2, v2, t + 4 * k + 2, kk1);
 #endif
 
@@ -575,103 +695,8 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   MPN_COPY(vinf, c4, twor);
   c4[0] = saved;
 
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       vm1       hi(vinf)       v1       v2+2vm1      vinf   */
+  toom3_interpolate (c, t, v2, c2, vinf, k, r, sa);
 
-  cy = mpn_divexact_by3 (v2, v2, kk1);    /* v2 <- v2 / 3 */
-  ASSERT(cy == 0); /* division should be exact */
-  v2[twok] += mpn_add_n (v2, v2, v0, twok);
-  mpn_rshift (v2, v2, kk1, 1);
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       vm1       hi(vinf)       v1    (3v0+2vm1+v2)    vinf
-						    /6                */
-
-  /* vm1 <- t2 := (v1 + sa*vm1) / 2
-     t2 = a0*b0+a0*b2+a1*b1+a2*b0+a2*b2 >= 0
-   */
-  ((sa >= 0) ? mpn_add_n : mpn_sub_n) (vm1, v1, vm1, kk1); /* no carry */
-  mpn_rshift (vm1, vm1, kk1, 1); /* exact division */
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       t2        hi(vinf)       v1         t1          vinf */
-
-  /* subtract {t2, 2k+1} in {c+3k, 2k+1} i.e. in {t2+k, 2k+1}:
-     by chunks of k limbs from right to left to avoid overlap */
-
-#define t2 (c2)
-  MPN_DECR_U (c5, twor - k, t2[twok]);
-  cy = mpn_sub_n (c4, c4, t2 + k, k);
-  MPN_DECR_U (c5, twor - k, cy);
-  cy = mpn_sub_n (c3, c3, t2, k);
-  MPN_DECR_U (c4, twor, cy);
-
-  /* c  c+k c+2k c+3k c+4k+1   t  t+2k+1 t+4k+2
-     v0     t2        hi(vinf) v1 t1     vinf
-		 -t2
-  */
-
-  /* don't forget to add {vinf, 1} in {c+4k, ...} */
-  MPN_INCR_U (c4, twor, vinf[0]);
-
-  /* c  c+k c+2k c+3k c+4k     t  t+2k+1 t+4k+2
-     v0     t2        vinf     v1 t1     vinf
-		 -t2
-  */
-
-  /* subtract v0 in {c+2k, ...} */
-  cy = mpn_sub_n (c2, c2, v0, twok);
-  MPN_DECR_U (c4, twor, cy); /* 2n-4k = 2r */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t2          vinf      v1  t1      vinf
-	      -v0   -t2
-  */
-
-  /* subtract vinf in {c+2k, ...} */
-  cy = mpn_sub_n (c2, c2, vinf, twor);
-  MPN_DECR_U (c2 + twor, twok, cy); /* n-k-r=k */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t2          vinf      v1  t1      vinf
-	      -v0   -t2
-	      -vinf                                    */
-
-  /* subtract 2*vinf to v2,
-     result is t1 := a0*b0+a0*b2+a1*b1+a1*b2+a2*b0+a2*b1+a2*b2 >= 0 */
-  cy = mpn_lshift (vinf, vinf, twor, 1);
-  cy += mpn_sub_n (v2, v2, vinf, twor);
-  MPN_DECR_U (v2 + twor, kk1 - twor, cy);
-  /* subtract t1 in {c+k, ...} */
-  cy = mpn_sub_n (c1, c1, v2, kk1);
-  MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t2          vinf      v1  t1      vinf
-	 -t1  -v0   -t2
-	      -vinf                                    */
-
-  /* add t1 in {c+3k, ...} */
-  cy = mpn_add_n (c3, c3, v2, kk1);
-  MPN_INCR_U (c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t2    t1    vinf      v1  t1      vinf
-	 -t1  -v0   -t2
-	      -vinf                                    */
-
-  /* add v1 in {c+k, ...} */
-  cy = mpn_add_n (c1, c1, v1, kk1);
-  MPN_INCR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0  v1   t2    t1    vinf      v1  t1      vinf
-	 -t1  -v0   -t2
-	      -vinf                                    */
-
-#undef v0
-#undef v1
-#undef vm1
 #undef v2
 #undef vinf
 }
@@ -717,19 +742,16 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
     cy = mpn_add_1 (c + r, a + r, k - r, cy);
   c3[2] = (c1[0] = cy) + mpn_add_n (c2 + 2, c, a + k, k);
 
-#define v0 c
-#define v1 t
-#define vm1 c2
 #define v2 (t+2*k+1)
 #define vinf (t+4*k+2)
 
-  TOOM3_SQR_REC (v1, c2 + 2, k1, trec);
+  TOOM3_SQR_REC (t, c2 + 2, k1, trec);
 
   sa = (c[k] != 0) ? 1 : mpn_cmp (c, a + k, k);
   c[k] = (sa >= 0) ? c[k] - mpn_sub_n (c, c, a + k, k)
 		   : mpn_sub_n (c, a + k, c, k);
 
-  TOOM3_SQR_REC (vm1, c, k1, trec);
+  TOOM3_SQR_REC (c2, c, k1, trec);
 
 #ifdef HAVE_MPN_ADDLSH1_N
   c1[0] = mpn_addlsh1_n (c, a + k, a + twok, r);
@@ -750,9 +772,9 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   TOOM3_SQR_REC (c, a, k, trec);
 
 #ifdef HAVE_MPN_ADDLSH1_N
-  mpn_addlsh1_n (v2, v2, vm1, kk1);
+  mpn_addlsh1_n (v2, v2, c2, kk1);
 #else
-  mpn_lshift (t + 4 * k + 2, vm1, kk1, 1);
+  mpn_lshift (t + 4 * k + 2, c2, kk1, 1);
   mpn_add_n (v2, v2, t + 4 * k + 2, kk1);
 #endif
 
@@ -761,44 +783,8 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   MPN_COPY(vinf, c4, twor);
   c4[0] = saved;
 
-  cy = mpn_divexact_by3 (v2, v2, kk1);    /* v2 <- v2 / 3 */
-  ASSERT(cy == 0); /* division should be exact */
-  v2[twok] += mpn_add_n (v2, v2, v0, twok);
-  mpn_rshift (v2, v2, kk1, 1);
+  toom3_interpolate (c, t, v2, c2, vinf, k, r, 1);
 
-  mpn_add_n (vm1, v1, vm1, kk1); /* no carry */
-  mpn_rshift (vm1, vm1, kk1, 1); /* exact division */
-
-#define t2 (c2)
-  MPN_DECR_U (c5, twor - k, t2[twok]);
-  cy = mpn_sub_n (c4, c4, t2 + k, k);
-  MPN_DECR_U (c5, twor - k, cy);
-  cy = mpn_sub_n (c3, c3, t2, k);
-  MPN_DECR_U (c4, twor, cy);
-
-  MPN_INCR_U (c4, twor, vinf[0]);
-
-  cy = mpn_sub_n (c2, c2, v0, twok);
-  MPN_DECR_U (c4, twor, cy); /* 2n-4k = 2r */
-
-  cy = mpn_sub_n (c2, c2, vinf, twor);
-  MPN_DECR_U (c2 + twor, twok, cy); /* n-k-r=k */
-
-  cy = mpn_lshift (vinf, vinf, twor, 1);
-  cy += mpn_sub_n (v2, v2, vinf, twor);
-  MPN_DECR_U (v2 + twor, kk1 - twor, cy);
-  cy = mpn_sub_n (c1, c1, v2, kk1);
-  MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
-
-  cy = mpn_add_n (c3, c3, v2, kk1);
-  MPN_INCR_U (c5 + 1, twor - k - 1, cy); /* 2n-5k = 2r-k */
-
-  cy = mpn_add_n (c1, c1, v1, kk1);
-  MPN_INCR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
-
-#undef v0
-#undef v1
-#undef vm1
 #undef v2
 #undef vinf
 }
