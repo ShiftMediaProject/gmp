@@ -72,6 +72,22 @@ define(`DATAEND',`dnl')
 define(`ASM_END',`dnl')
 
 
+dnl  Usage: ALIGN(bytes)
+dnl
+dnl  Emit a ".align" directive.  "bytes" is eval()ed, so can be an
+dnl  expression.
+dnl
+dnl  This version overrides the definition in mpn/asm-defs.m4.  We supress
+dnl  any .align if the gas byte-swapped-nops bug was detected by configure
+dnl  GMP_ASM_IA64_ALIGN_OK.
+
+define(`ALIGN',
+m4_assert_numargs(1)
+m4_assert_defined(`IA64_ALIGN_OK')
+`ifelse(IA64_ALIGN_OK,no,,
+`.align	eval($1)')')
+
+
 dnl  Usage: ASSERT([pr] [,code])
 dnl
 dnl  Require that the given predictate register is true after executing the
