@@ -21,6 +21,12 @@ MA 02111-1307, USA.
 
 2002-04-20  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-fdiv_ui.c: Check mpz_fdiv_ui.
+	* tests/mpz/t-tdiv_ui.c: Check mpz_tdiv_ui.
+
+	* mpz/tdiv_ui.c: Rewrite nails code.
+	* mpz/fdiv_ui.c: Nailify.
+
 	* tests/mpz/t-tdiv_ui.c: Check returned remainders.
 	* tests/mpz/t-fdiv_ui.c: Merge in recent t-tdiv_ui changes.
 
