@@ -24898,6 +24898,7 @@ else
   { echo "$as_me:$LINENO: WARNING: oops, cannot compile test program" >&5
 echo "$as_me: WARNING: oops, cannot compile test program" >&2;}
 fi
+rm -f conftest*
 
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_c_double_format" >&5
