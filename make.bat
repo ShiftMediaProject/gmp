@@ -8,12 +8,14 @@ copy generic\cmp.c cmp.c
 copy generic\divmod_1.c divmod_1.c 
 copy generic\divrem.c divrem.c
 copy generic\divrem_1.c divrem_1.c
+copy generic\divrem_n.c divrem_n.c
 copy generic\dump.c dump.c
 copy x86\pentium\lshift.S lshift.S
 copy generic\mod_1.c mod_1.c
 copy generic\mul.c mul.c
 copy x86\pentium\mul_1.S mul_1.S
 copy generic\mul_n.c mul_n.c
+copy generic\random.c random.c
 copy generic\random2.c random2.c
 copy x86\pentium\rshift.S rshift.S
 copy generic\sqrtrem.c sqrtrem.c
@@ -26,12 +28,12 @@ copy generic\scan1.c scan1.c
 copy generic\popcount.c popcount.c
 copy generic\hamdist.c hamdist.c
 copy generic\gcd_1.c gcd_1.c
-copy generic\pre_mod_1.c pre_mod_1.c
+copy generic\pre_mod_.c pre_mod_.c
 copy generic\perfsqr.c perfsqr.c
 copy generic\bdivmod.c bdivmod.c
 copy generic\gcd.c gcd.c
 copy generic\gcdext.c gcdext.c
-copy x86\gmp-mpar.h gmp-mpar.h
+copy generic\gmp-mpar.h gmp-mpar.h
 cd ..
 
 cd mpbsd
@@ -58,6 +60,7 @@ gcc -c -I. -I.. -g -O cmp.c
 gcc -c -I. -I.. -g -O divmod_1.c
 gcc -c -I. -I.. -g -O divrem.c
 gcc -c -I. -I.. -g -O divrem_1.c
+gcc -c -I. -I.. -g -O divrem_n.c
 gcc -c -I. -I.. -g -O dump.c
 gcc -E -I. -I.. -g -O lshift.S | grep -v '^#' >tmp-lshift.s
 gcc -c tmp-lshift.s -o lshift.o
@@ -68,6 +71,7 @@ gcc -E -I. -I.. -g -O mul_1.S | grep -v '^#' >tmp-mul_1.s
 gcc -c tmp-mul_1.s -o mul_1.o
 del tmp-mul_1.s
 gcc -c -I. -I.. -g -O mul_n.c
+gcc -c -I. -I.. -g -O random.c
 gcc -c -I. -I.. -g -O random2.c
 gcc -E -I. -I.. -g -O rshift.S | grep -v '^#' >tmp-rshift.s
 gcc -c tmp-rshift.s -o rshift.o
@@ -86,7 +90,7 @@ gcc -c -I. -I.. -g -O scan1.c
 gcc -c -I. -I.. -g -O popcount.c
 gcc -c -I. -I.. -g -O hamdist.c
 gcc -c -I. -I.. -g -O gcd_1.c
-gcc -c -I. -I.. -g -O pre_mod_1.c
+gcc -c -I. -I.. -g -O pre_mod_.c
 gcc -c -I. -I.. -g -O perfsqr.c
 gcc -c -I. -I.. -g -O bdivmod.c
 gcc -c -I. -I.. -g -O gcd.c
@@ -145,6 +149,7 @@ gcc -c -I. -I.. -I../mpn -g -O iset_si.c
 gcc -c -I. -I.. -I../mpn -g -O iset_str.c
 gcc -c -I. -I.. -I../mpn -g -O iset_ui.c
 gcc -c -I. -I.. -I../mpn -g -O jacobi.c
+gcc -c -I. -I.. -I../mpn -g -O lcm.c
 gcc -c -I. -I.. -I../mpn -g -O legendre.c
 gcc -c -I. -I.. -I../mpn -g -O mod.c
 gcc -c -I. -I.. -I../mpn -g -O mul.c
@@ -186,7 +191,9 @@ gcc -c -I. -I.. -I../mpn -g -O tdiv_qr_ui.c
 gcc -c -I. -I.. -I../mpn -g -O tdiv_r.c
 gcc -c -I. -I.. -I../mpn -g -O tdiv_r_2exp.c
 gcc -c -I. -I.. -I../mpn -g -O tdiv_r_ui.c
+gcc -c -I. -I.. -I../mpn -g -O tstbit.c
 gcc -c -I. -I.. -I../mpn -g -O ui_pow_ui.c
+gcc -c -I. -I.. -I../mpn -g -O xor.c
 del libmpz.a
 ar rc libmpz.a *.o
 cd ..
@@ -224,7 +231,7 @@ gcc -c -I. -I.. -I../mpn -g -O random2.c
 gcc -c -I. -I.. -I../mpn -g -O reldiff.c
 gcc -c -I. -I.. -I../mpn -g -O set.c
 gcc -c -I. -I.. -I../mpn -g -O set_d.c
-gcc -c -I. -I.. -I../mpn -g -O set_dfl_prc.c
+gcc -c -I. -I.. -I../mpn -g -O set_dfl_prec.c
 gcc -c -I. -I.. -I../mpn -g -O set_prc.c
 gcc -c -I. -I.. -I../mpn -g -O set_prc_raw.c
 gcc -c -I. -I.. -I../mpn -g -O set_q.c
@@ -239,6 +246,12 @@ gcc -c -I. -I.. -I../mpn -g -O sub.c
 gcc -c -I. -I.. -I../mpn -g -O sub_ui.c
 gcc -c -I. -I.. -I../mpn -g -O ui_div.c
 gcc -c -I. -I.. -I../mpn -g -O ui_sub.c
+gcc -c -I. -I.. -I../mpn -g -O -DMPF_FLOOR integer.c
+move/y integer.o floor.o
+gcc -c -I. -I.. -I../mpn -g -O -DMPF_CEIL integer.c
+move/y integer.o ceil.o
+gcc -c -I. -I.. -I../mpn -g -O -DMPF_TRUNC integer.c
+move/y integer.o trunc.o
 del libmpf.a
 ar cr libmpf.a *.o
 cd ..
