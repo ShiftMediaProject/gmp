@@ -140,6 +140,7 @@ EXTRA_PROGRAMS = speed tuneup
 tuneup_SOURCES = tuneup.c
 tuneup_DEPENDENCIES = libspeed.la libgmptune.a
 tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
+tuneup_INCLUDES = -I$(top_srcdir) -DTUNE_PROGRAM_BUILD=1
 
 speed_SOURCES = speed.c
 
