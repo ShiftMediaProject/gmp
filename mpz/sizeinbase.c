@@ -28,5 +28,7 @@ MA 02111-1307, USA. */
 size_t
 mpz_sizeinbase (mpz_srcptr x, int base)
 {
-  return mpn_sizeinbase (PTR(x), ABSIZ(x), base);
+  size_t  result;
+  MPN_SIZEINBASE (result, PTR(x), ABSIZ(x), base);
+  return result;
 }

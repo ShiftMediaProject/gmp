@@ -27,6 +27,7 @@ MA 02111-1307, USA. */
 #include <string.h> /* for strlen */
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 char *
 mpz_get_str (char *res_str, int base, mpz_srcptr x)
@@ -57,7 +58,8 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   if (res_str == NULL)
     {
       /* digits, null terminator, possible minus sign */
-      alloc_size = mpn_sizeinbase (PTR(x), ABS(x_size), base) + 1 + (x_size<0);
+      MPN_SIZEINBASE (alloc_size, PTR(x), ABS(x_size), base);
+      alloc_size += 1 + (x_size<0);
       res_str = (char *) (*__gmp_allocate_func) (alloc_size);
     }
   return_str = res_str;

@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include "mp.h"
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 void
 mout (const MINT *x)
@@ -51,7 +52,8 @@ mout (const MINT *x)
 
   TMP_MARK (marker);
   x_ptr = x->_mp_d;
-  str_size = mpn_sizeinbase (x_ptr, x_size, 10) + 2;
+  MPN_SIZEINBASE (str_size, x_ptr, x_size, 10);
+  str_size += 2;
   str = (unsigned char *) TMP_ALLOC (str_size);
 
   /* mpn_get_str clobbers its argument */
