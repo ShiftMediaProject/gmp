@@ -30,3 +30,35 @@ This directory contains preliminary assembly code for nails-enabled
    considerably simplified with later loads.
 3. The addmul_1 and submul_1 functions run 1.25 cycles/limb slower than
    possible with better U0/U1/L0/L1 scheduling.
+
+		current		fair		best
+Routine		c/l  i/c	c/l  i/c	c/l  i/c
+mul_1		3.5		2.75		2.75 3.273
+addmul_1	4.5		3.5		3.25 3.385
+addmul_2	4.0		2.5		2.25 3.333
+addmul_3	3.0		2.25		2    3.333
+addmul_4	2.5		2		2    3.135
+
+(The "best" column doesn't account for bookkeeping instructions and
+thereby assumes infinite unrolling.)
+
+BULLSHIT:
+What mpn_addmul_N variants do we need for a Karatsuba basecase building
+block?  By providing all version of a column,, we won't ever hit the
+slower mpn_addmul_1 for any large multiplication.
+
+addmul_2	addmul_2
+addmul_3	addmul_3	addmul_3	addmul_3
+		addmul_4	addmul_4	addmul_4	addmul_4
+				addmul_5	addmul_5	addmul_5
+						addmul_6	addmul_6
+								addmul_7
+
+dnl Register usage:
+dnl callee-saves:	r9 r10 r11 r12 r13 r14 r15
+dnl scratch: r0 r1 r2 r3 r4 r5 r6 r7 r8
+dnl	     r16 r17 r18 r19 r20 r21 r22 r23 r24 r25 r27 r28
+dnl return address: 26
+dnl global pointer: 29
+dnl stack pointer: 30
+

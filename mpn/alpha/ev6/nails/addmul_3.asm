@@ -19,6 +19,12 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
+
+dnl  Runs at 3.0 cycles/limb.  With unrolling, the ulimb load and the 3
+dnl  bookkeeping increments and the `bis' that copies from r22 to r6 could be
+dnl  removed and the instruction count reduced from 26 to to 21.  We could
+dnl  thereby probably reach 2 cycles/limb, the IMUL bandwidth.
+
 include(`../config.m4')
 
 dnl  INPUT PARAMETERS
@@ -54,29 +60,6 @@ define(`NUMB_BITS',`GMP_NUMB_BITS')
 
 dnl  This declaration is munged by configure
 NAILS_SUPPORT(3-63)
-
-dnl  Runs at 3.0 cycles/limb.  With unrolling, the ulimb load and the 3
-dnl  bookkeeping increments and the `bis' that copies from r22 to r6 could be
-dnl  removed and the instruction count reduced from 26 to to 21.  We could
-dnl  thereby probably reach 2 cycles/limb, the IMUL bandwidth.
-
-dnl If this is going to be a Karatsuba basecase building block, we need some
-dnl of the combinations below.  That way, we won't ever hit the
-dnl slower mpn_addmul_1 for any huge multiplication.
-dnl  
-dnl	Alt 3		Alt 4		Alt 5		Alt 6
-dnl	addmul_2	addmul_2	addmul_3	addmul_3
-dnl	addmul_3	addmul_3	addmul_4	addmul_4
-dnl			addmul_4	addmul_5	addmul_5
-dnl							addmul_6
-
-dnl Register usage:
-dnl callee-saves:	r9 r10 r11 r12 r13 r14 r15
-dnl scratch: r0 r1 r2 r3 r4 r5 r6 r7 r8
-dnl	     r16 r17 r18 r19 r20 r21 r22 r23 r24 r25 r27 r28
-dnl return address: 26
-dnl global pointer: 29
-dnl stack pointer: 30
 
 ASM_START()
 PROLOGUE(mpn_addmul_3)
@@ -167,12 +150,12 @@ Lend:
 	stq	r28,	-8(rp)
 
 	addq	r19,	acc0,	acc0		C propagate nail
-	and     acc0,numb_mask,	r28
+	and	acc0,numb_mask,	r28
 	stq	r28,	0(rp)
 	srl	acc0,NUMB_BITS,	r19
 	addq	r19,	acc1,	acc1
 
-	and     acc1,numb_mask,	r28
+	and	acc1,numb_mask,	r28
 	stq	r28,	8(rp)
 	srl	acc1,NUMB_BITS,	r19
 	addq	r19,	acc2,	m0a

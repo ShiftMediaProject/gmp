@@ -19,6 +19,12 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
+
+dnl  Runs at 4.0 cycles/limb.  Speed limited by mulq latency.  With unrolling,
+dnl  the ulimb load and the 3 bookkeeping increments and the `bis' that copies
+dnl  from r21 to r5 could be removed and the instruction count reduced from 21
+dnl  to to 16.  We could thereby reach about 2.3 cycles/limb.
+
 include(`../config.m4')
 
 dnl  INPUT PARAMETERS
@@ -51,29 +57,6 @@ define(`NUMB_BITS',`GMP_NUMB_BITS')
 dnl  This declaration is munged by configure
 NAILS_SUPPORT(3-63)
 
-dnl  Runs at 4.0 cycles/limb.  With unrolling, the ulimb load and the 3
-dnl  bookkeeping increments and the `bis' that copies from r21 to r5 could be
-dnl  removed and the instruction count reduced from 21 to to 16.  We could
-dnl  thereby reach about 2.3 cycles/limb.
-
-dnl If this is going to be a Karatsuba basecase building block, we need some
-dnl of the combinations below.  That way, we won't ever hit the
-dnl slower mpn_addmul_1 for any huge multiplication.
-dnl  
-dnl	Alt 3		Alt 4		Alt 5		Alt 6
-dnl	addmul_2	addmul_2	addmul_3	addmul_3
-dnl	addmul_3	addmul_3	addmul_4	addmul_4
-dnl			addmul_4	addmul_5	addmul_5
-dnl							addmul_6
-
-dnl Register usage:
-dnl callee-saves:	r9 r10 r11 r12 r13 r14 r15
-dnl scratch: r0 r1 r2 r3 r4 r5 r6 r7 r8
-dnl	     r16 r17 r18 r19 r20 r21 r22 r23 r24 r25 r27 r28
-dnl return address: 26
-dnl global pointer: 29
-dnl stack pointer: 30
-
 ASM_START()
 PROLOGUE(mpn_addmul_2)
 	lda	numb_mask,-1(r31)
@@ -88,7 +71,6 @@ PROLOGUE(mpn_addmul_2)
 	sll	v1,NAIL_BITS,	v1
 	bis	r31,	r31,	r19
 
-C MAIN LOOP
 	ldq	ulimb,	0(up)
 	lda	up,	8(up)
 	mulq	v0,	ulimb,	m0a		C U1
@@ -98,46 +80,47 @@ C MAIN LOOP
 	lda	n,	-1(n)
 	beq	n,	Lend			C U0
 	ALIGN(16)
+C MAIN LOOP
 Loop:
-	bis	r31,	r31,	r31		C	nop
-	ldq	rlimb,	0(rp)
-	ldq	ulimb,	0(up)
-	addq	r19,	acc0,	acc0		C	propagate nail
+	bis	r31,	r31,	r31		C U1	nop
+	ldq	rlimb,	0(rp)			C L0
+	ldq	ulimb,	0(up)			C L1
+	addq	r19,	acc0,	acc0		C U0	propagate nail
 
-	lda	rp,	8(rp)
-	srl	m0a,NAIL_BITS,r8		C U0
-	lda	up,	8(up)
+	lda	rp,	8(rp)			C L0
+	srl	m0a,NAIL_BITS,	r8		C U0
+	lda	up,	8(up)			C L1
 	mulq	v0,	ulimb,	m0a		C U1
 
-	addq	r8,	acc0,	r19
-	addq	m0b,	acc1,	acc0
+	addq	r8,	acc0,	r19		C U0
+	addq	m0b,	acc1,	acc0		C L0
 	umulh	v0,	ulimb,	m0b		C U1
-	bis	r31,	r31,	r31		C	nop
+	bis	r31,	r31,	r31		C L1	nop
 
-	addq	rlimb,	r19,	r19
-	srl	m1a,NAIL_BITS,r8		C U0
-	bis	r31,	r31,	r31		C	nop
+	addq	rlimb,	r19,	r19		C L0	FINAL PROD-SUM
+	srl	m1a,NAIL_BITS,	r8		C U0
+	bis	r31,	r31,	r31		C L1	nop
 	mulq	v1,	ulimb,	m1a		C U1
 
-	addq	r8,	acc0,	acc0
-	bis	r31,	m1b,	acc1
+	addq	r8,	acc0,	acc0		C U0
+	bis	r31,	m1b,	acc1		C L0
 	umulh	v1,	ulimb,	m1b		C U1
-	and	r19,numb_mask,	r28		C	extract numb part
+	and	r19,numb_mask,	r28		C L1	extract numb part
 
-	lda	n,	-1(n)
-	srl	r19,NUMB_BITS,	r19		C	extract nail part
-	stq	r28,	-8(rp)
+	lda	n,	-1(n)			C L0
+	srl	r19,NUMB_BITS,	r19		C U1	extract nail part
+	stq	r28,	-8(rp)			C L1
 	bne	n,	Loop			C U0
 C END LOOP
 Lend:
 	ldq	rlimb,	0(rp)
 	addq	r19,	acc0,	acc0		C	propagate nail
 	lda	rp,	8(rp)
-	srl	m0a,NAIL_BITS,r8		C U0
+	srl	m0a,NAIL_BITS,	r8		C U0
 	addq	r8,	acc0,	r19
 	addq	m0b,	acc1,	acc0
 	addq	rlimb,	r19,	r19
-	srl	m1a,NAIL_BITS,r8		C U0
+	srl	m1a,NAIL_BITS,	r8		C U0
 	addq	r8,	acc0,	acc0
 	bis	r31,	m1b,	acc1
 	and	r19,numb_mask,	r28		C extract limb
@@ -146,7 +129,7 @@ Lend:
 	stq	r28,	-8(rp)
 
 	addq	r19,	acc0,	acc0		C propagate nail
-	and     acc0,numb_mask,	r28
+	and	acc0,numb_mask,	r28
 	stq	r28,	0(rp)
 	srl	acc0,NUMB_BITS,	r19
 	addq	r19,	acc1,	r0

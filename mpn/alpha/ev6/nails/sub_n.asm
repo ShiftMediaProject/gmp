@@ -19,6 +19,10 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
+
+dnl  Runs at 2.5 cycles/limb.  It would be possible to reach 2.0 cycles/limb
+dnl  with 8-way unrolling.
+
 include(`../config.m4')
 
 dnl  INPUT PARAMETERS
@@ -49,9 +53,6 @@ define(`CYSH',63)
 
 dnl  This declaration is munged by configure
 NAILS_SUPPORT(1-63)
-
-dnl  Runs at 2.5 cycles/limb.  It would be possible to reach 2.0 cycles/limb
-dnl  with 8-way unrolling.
 
 ASM_START()
 PROLOGUE(mpn_sub_n)

@@ -19,6 +19,11 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
+
+dnl  Runs at 4.5 cycles/limb.  Local scheduling should bring that down to 3.5
+dnl  cycles/limb.  It would be possible to reach 3.25 cycles/limb with 8-way
+dnl  unrolling.
+
 include(`../config.m4')
 
 dnl  INPUT PARAMETERS
@@ -59,18 +64,6 @@ define(`NUMB_BITS',`GMP_NUMB_BITS')
 
 dnl  This declaration is munged by configure
 NAILS_SUPPORT(2-63)
-
-dnl  Runs at 4.5 cycles/limb.  Local scheduling should bring that down to 3.5
-dnl  cycles/limb.  It would be possible to reach 3.25 cycles/limb with 8-way
-dnl  unrolling.
-
-dnl Register usage:
-dnl callee-saves:	r9 r10 r11 r12 r13 r14 r15
-dnl scratch: r0 r1 r2 r3 r4 r5 r6 r7 r8
-dnl	     r16 r17 r18 r19 r20 r21 r22 r23 r24 r25 r27 r28
-dnl return address: 26
-dnl global pointer: 29
-dnl stack pointer: 30
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
