@@ -96,6 +96,8 @@ License}.
 * Low-level Functions::        Fast functions for natural numbers.
 * Random Number Functions::    Functions for generating random numbers.
 * Formatted Output::           @code{printf} style output.
+* Formatted Input::            @code{scanf} style input.
+* C++ Class Interface::        Class wrappers around GMP types.
 * BSD Compatible Functions::   All functions found in BSD MP.
 * Custom Allocation::          How to customize the internal allocation.
 * Language Bindings::          Using GMP from other languages.
@@ -338,6 +340,19 @@ x
 @end iftex
 @ifnottex
 @macro texlinebreak
+@end macro
+@end ifnottex
+
+@c  Usage: @maybepagebreak
+@c  Allow tex to insert a page break, if it feels the urge.
+@c  Normally blocks of @deftypefun/funx are kept together, which can lead to
+@c  some poor page break positioning if it's a big block, like the sets of
+@c  division functions etc.
+@tex
+\gdef\maybepagebreak{\penalty0}
+@end tex
+@ifnottex
+@macro maybepagebreak
 @end macro
 @end ifnottex
 
@@ -1183,24 +1198,25 @@ bug in unsigned division, giving wrong results for some operands.  GMP
 
 @item Microsoft Windows
 On systems @samp{*-*-cygwin*}, @samp{*-*-mingw*} and @samp{*-*-pw32*} by
-default GMP builds only a static library, but a standard Windows DLL can be
-built instead using
+default GMP builds only a static library, but a DLL can be built instead using
 
 @example
 ./configure --disable-static --enable-shared
 @end example
 
 Static and DLL libraries can't both be built, since certain export directives
-in @file{gmp.h} must be different.  This might change in the future.
+in @file{gmp.h} must be different.  @samp{--enable-cxx} cannot be used when
+building a DLL, since libtool doesn't currently support C++ DLLs.  This might
+change in the future.
 
-GCC is recommended for compiling GMP, but the resulting DLLs can be used with
-any compiler.  On a mingw system only the standard Windows libraries will be
-needed, on a cygwin system the usual cygwin runtime will be required.
+GCC is recommended for compiling GMP, but the resulting DLL can be used with
+any compiler.  On mingw only the standard Windows libraries will be needed, on
+a cygwin the usual cygwin runtime will be required.
 
 @item Motorola 68k CPU Types
 
 @samp{m68k} is taken to mean 68000.  @samp{m68020} or higher will give a
-performance increase on applicable CPUs.  @samp{m68360} can be used for CPU32
+performance boost on applicable CPUs.  @samp{m68360} can be used for CPU32
 series chips.  @samp{m68302} can be used for ``Dragonball'' series chips,
 though this is merely a synonym for @samp{m68000}.
 
@@ -1324,6 +1340,13 @@ later).
 
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
+
+@item Sparc Solaris 2.7 with gcc 2.95.2 in ABI=32
+
+A shared library build of GMP seems to fail in this combination, it builds but
+then fails the tests, apparently due to some incorrect data relocations within
+@code{gmp_randinit}.  The exact cause is unknown, @samp{--disable-shared} is
+recommended.
 @end table
 
 
@@ -1675,7 +1698,7 @@ with other @code{mpn} functions.
 @end itemize
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
-course also apply when porting applications from GMP 1 to GMP 3.  Please
+course also apply when porting applications from GMP 1 to GMP 4.  Please
 see the GMP 2 manual for details.
 
 The Berkeley MP compatibility library (@pxref{BSD Compatible Functions}) is
@@ -2007,8 +2030,8 @@ be expected to be valid, not the @samp{gprof -q} call graph.
 @cindex Autoconf detections
 
 Autoconf based applications can easily check whether GMP is installed.  The
-only thing to be noted is that GMP 3 library symbols have prefixes like
-@code{__gmpz}.  The following therefore would be a simple test,
+only thing to be noted is that GMP library symbols from version 3 onwards have
+prefixes like @code{__gmpz}.  The following therefore would be a simple test,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init)
@@ -2020,7 +2043,7 @@ found.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-[GNU MP 3 not found, see http://www.swox.com/gmp])])
+[GNU MP not found, see http://www.swox.com/gmp])])
 @end example
 
 If functions added in some particular version of GMP are required, then one of
@@ -2037,9 +2060,9 @@ An alternative would be to test the version number in @file{gmp.h} using say
 if some particular sub-minor release is known to be necessary.
 
 An application that can use either GMP 2 or 3 will need to test for
-@code{__gmpz_init} (GMP 3) or @code{mpz_init} (GMP 2), and it's also worth
-checking for @file{libgmp2} since Debian GNU/Linux systems used that name in
-the past.  For example,
+@code{__gmpz_init} (GMP 3 and up) or @code{mpz_init} (GMP 2), and it's also
+worth checking for @file{libgmp2} since Debian GNU/Linux systems used that
+name in the past.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, ,
@@ -2071,7 +2094,7 @@ compatibility is not guaranteed.
 
 @example
 AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
-[Need MPFR either from GNU MP @value{VERSION} or separate MPFR package.
+[Need MPFR either from GNU MP 4 or separate MPFR package.
 See http://www.mpfr.org or http://www.swox.com/gmp])
 @end example
 
@@ -2484,10 +2507,12 @@ same way as for normal C @code{int} arithmetic.
 @deftypefun void mpz_cdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_cdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_cdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@maybepagebreak
 @deftypefunx {unsigned long int} mpz_cdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@maybepagebreak
 @deftypefunx void mpz_cdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @deftypefunx void mpz_cdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @end deftypefun
@@ -2495,10 +2520,12 @@ same way as for normal C @code{int} arithmetic.
 @deftypefun void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_fdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_fdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@maybepagebreak
 @deftypefunx {unsigned long int} mpz_fdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_fdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_fdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@maybepagebreak
 @deftypefunx void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @deftypefunx void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @end deftypefun
@@ -2506,10 +2533,12 @@ same way as for normal C @code{int} arithmetic.
 @deftypefun void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_tdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@maybepagebreak
 @deftypefunx {unsigned long int} mpz_tdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_tdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_tdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_tdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@maybepagebreak
 @deftypefunx void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @deftypefunx void mpz_tdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @cindex Bit shift right
@@ -2644,13 +2673,17 @@ undefined.
 @deftypefun int mpz_perfect_power_p (mpz_t @var{op})
 Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
 @m{a,@var{a}} and @m{b,@var{b}}, with @m{b>1, @var{b}>1}, such that
-@m{@var{op}=a^b, @var{op} equals @var{a} raised to @var{b}}.  Return zero
-otherwise.
+@m{@var{op}=a^b, @var{op} equals @var{a} raised to the power @var{b}}.
+
+Under this definition both 0 and 1 are considered to be perfect powers.
+Negative values of @var{op} are accepted, but of course can only be odd
+perfect powers.
 @end deftypefun
 
 @deftypefun int mpz_perfect_square_p (mpz_t @var{op})
 Return non-zero if @var{op} is a perfect square, i.e., if the square root of
-@var{op} is an integer.  Return zero otherwise.
+@var{op} is an integer.  Under this definition both 0 and 1 are considered to
+be perfect squares.
 @end deftypefun
 
 
@@ -2660,22 +2693,30 @@ Return non-zero if @var{op} is a perfect square, i.e., if the square root of
 @cindex Number theoretic functions
 
 @deftypefun int mpz_probab_prime_p (mpz_t @var{n}, int @var{reps})
+@deftypefunx int mpz_millerrabin (mpz_t @var{n}, int @var{reps})
 @cindex Prime testing functions
-If this function returns 0, @var{n} is definitely not prime.  If it
-returns 1, then @var{n} is `probably' prime.  If it returns 2, then
-@var{n} is surely prime.  Reasonable values of reps vary from 5 to 10; a
-higher value lowers the probability for a non-prime to pass as a
-`probable' prime.
+Determine whether @var{n} is a prime.  Return 2 if @var{n} is definitely
+prime, return 1 if @var{n} is probably prime (without being certain), or
+return 0 if @var{n} is definitely composite.
 
-The function uses Miller-Rabin's probabilistic test.
+@code{mpz_probab_prime_p} does some trial divisions then calls
+@code{mpz_millerrabin}.  @code{mpz_millerrabin} uses Miller-Rabin
+probabilistic primality tests.  @var{reps} controls how many such tests are
+performed, 5 to 10 is a reasonable number, more will reduce the chances of a
+composite being returned as ``probably prime''.
+
+Miller-Rabin and similar tests can be more properly called compositeness
+tests.  Numbers which fail are known to be composite but those which pass
+might be prime or might be composite.  Only a few composites pass, hence
+numbers which pass are considered probably prime.
 @end deftypefun
 
 @deftypefun void mpz_nextprime (mpz_t @var{rop}, mpz_t @var{op})
 Set @var{rop} to the next prime greater than @var{op}.
 
-This function uses a probabilistic algorithm to identify primes, but for for
-practical purposes it's adequate, since the chance of a composite passing will
-be extremely small.
+This function uses a probabilistic algorithm to identify primes.  For
+practical purposes it's adequate, the chance of a composite passing will be
+extremely small.
 @end deftypefun
 
 @c mpz_prime_p not implemented as of gmp 3.0.
@@ -4418,7 +4459,7 @@ Free all memory occupied by @var{state}.
 @end deftypefun
 
 
-@node Formatted Output, BSD Compatible Functions, Random Number Functions, Top
+@node Formatted Output, Formatted Input, Random Number Functions, Top
 @chapter Formatted Output
 @cindex Formatted output
 @cindex @code{printf} formatted output
@@ -4441,9 +4482,9 @@ Manual}).  A format specification is of the form
 @end example
 
 GMP adds types @samp{Z}, @samp{Q} and @samp{F} for @code{mpz_t}, @code{mpq_t}
-and @code{mpf_t} respectively.  @samp{Z} and @samp{Q} behave like integers,
-and @samp{Q} will include a @samp{/} if a denominator is needed.  @samp{F}
-behaves like a float.  For example,
+and @code{mpf_t} respectively.  @samp{Z} and @samp{Q} behave like integers.
+@samp{Q} will print a @samp{/} and a denominator, if needed.  @samp{F} behaves
+like a float.  For example,
 
 @example
 mpz_t z;
@@ -4462,8 +4503,10 @@ All the standard C @code{printf} types behave the same as the C library
 current implementation the standard parts of the format string are simply
 handed to @code{printf} and only the GMP extensions handled directly.
 
-The flags accepted are as follows.  GLIBC style @nisamp{'} is only for the
-standard C types (not the GMP types), and only if the C library supports it.
+The flags accepted are as follows.  GLIBC style @nisamp{'}
+(@pxref{Locales,,Locales and Internationalization,libc,The GNU C Library
+Reference Manual}) is only for the standard C types (not the GMP types), and
+only if the C library supports it.
 
 @quotation
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
@@ -4484,9 +4527,9 @@ and the C library for the output.
 @item @nicode{h}  @tab @nicode{short}
 @item @nicode{hh} @tab @nicode{char}
 @item @nicode{j}  @tab @nicode{intmax_t} or @nicode{uintmax_t}
-@item @nicode{l}  @tab @nicode{long}
+@item @nicode{l}  @tab @nicode{long} or @nicode{wchar_t}
 @item @nicode{ll} @tab same as @nicode{L}
-@item @nicode{L}  @tab @nicode{long long}, @nicode{long double}, or @nicode{wchar_t}
+@item @nicode{L}  @tab @nicode{long long} or @nicode{long double}
 @item @nicode{q}  @tab @nicode{quad_t} or @nicode{u_quad_t}
 @item @nicode{t}  @tab @nicode{ptrdiff_t}
 @item @nicode{z}  @tab @nicode{size_t}
@@ -4537,14 +4580,18 @@ instance extensions registered with GLIBC @code{register_printf_function}.
 Also currently there's no support for POSIX @samp{$} style numbered arguments
 (perhaps this will be added in the future).
 
+The precision field has it's usual meaning for integer @samp{Z} and float
+@samp{F} types, but is currently undefined for @samp{Q} and should not be used
+with that.
+
 @code{mpf_t} conversions only ever generate as many digits as can be
 accurately represented by the operand, the same as @code{mpf_get_str} does.
 Zeros will be used if necessary to pad to the requested precision.  This
-happens even for an @samp{f} conversion of an integer value, for instance
-@ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision will only generate
-about 20 digits, then pad with zeros to the decimal point.  An empty precision
-field like @samp{%.Fe} can be used to specifically request all significant
-digits.
+happens even for an @samp{f} conversion of an @code{mpf_t} which is an
+integer, for instance @ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision
+will only generate about 20 digits, then pad with zeros to the decimal point.
+An empty precision field like @samp{%.Fe} or @samp{%.Ff} can be used to
+specifically request all significant digits.
 
 The decimal point character (or string) is taken from the current locale
 settings on systems which provide @code{localeconv} (@pxref{Locales,,Locales
@@ -4567,8 +4614,8 @@ functions will be unpredictable.  GCC format string checking is not available,
 since it doesn't recognise the GMP extensions.
 
 The file based functions @code{gmp_printf} and @code{gmp_fprintf} will return
-@ma{-1} to indicate a file error.  All the functions can return @ma{-1} if the
-C library @code{printf} variant in use returns @ma{-1}, but this shouldn't
+@ma{-1} to indicate a write error.  All the functions can return @ma{-1} if
+the C library @code{printf} variant in use returns @ma{-1}, but this shouldn't
 normally occur.
 
 @deftypefun int gmp_printf (const char *@var{fmt}, ...)
@@ -4579,7 +4626,7 @@ written, or @ma{-1} if an error occurred.
 
 @deftypefun int gmp_fprintf (FILE *@var{fp}, const char *@var{fmt}, ...)
 @deftypefunx int gmp_vfprintf (FILE *@var{fp}, const char *@var{fmt}, va_list @var{ap})
-Print to the file @var{fp}.  Return the number of characters written, or
+Print to the stream @var{fp}.  Return the number of characters written, or
 @ma{-1} if an error occurred.
 @end deftypefun
 
@@ -4603,7 +4650,7 @@ string and null-terminator.
 
 The return value is the total number of characters which ought to have been
 produced, excluding the terminating null.  If @ma{@var{retval} >= @var{size}}
-then then the actual output has been truncated to the first @ma{@var{size}-1}
+then the actual output has been truncated to the first @ma{@var{size}-1}
 characters, and a null appended.
 
 No overlap is permitted between the region @{@var{buf},@var{size}@} and the
@@ -4611,9 +4658,6 @@ No overlap is permitted between the region @{@var{buf},@var{size}@} and the
 
 Notice the return value is in ISO C99 @code{snprintf} style.  This is so even
 if the C library @code{vsnprintf} is the older GLIBC 2.0.x style.
-
-These functions are available only when the C library provides
-@code{vsnprintf}.
 @end deftypefun
 
 @deftypefun int gmp_asprintf (char **@var{pp}, const char *@var{fmt}, ...)
@@ -4627,9 +4671,6 @@ null-terminator.
 Unlike the C library @code{asprintf}, @code{gmp_asprintf} doesn't return
 @ma{-1} if there's no more memory available, it lets the current allocation
 function handle that.
-
-These functions are available only when the C library provides
-@code{vsnprintf}.
 @end deftypefun
 
 @deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, ...)
@@ -4649,38 +4690,49 @@ feature, which probably means only on GNU systems, see
 
 @node C++ Formatted Output,  , Formatted Output Functions, Formatted Output
 @section C++ Formatted Output
-@cindex C++ ostream output
-@cindex ostream output
+@cindex C++ @code{ostream} output
+@cindex @code{ostream} output
 
 The following functions are provided in @file{libgmpxx}, which is built if C++
 support is enabled (@pxref{Build Options}).  Prototypes are available from
 @code{<gmp.h>}.
 
 @deftypefun ostream& operator<< (ostream& @var{stream}, mpz_t @var{op})
-@deftypefunx ostream& operator<< (ostream& @var{stream}, mpq_t @var{op})
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
-@code{ios::width()} is reset to 0 after output, the same as the standard
+@code{ios::width} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
 
-In @code{ios::hex} or @code{ios::oct}, @var{op} is printed as a signed number,
-the same way as for @code{ios::dec}.  This is unlike the standard
-@code{operator<<} routines on @code{int} etc, which instead give twos
-complement for hex or octal.
+In hex or octal, @var{op} is printed as a signed number, the same as for
+decimal.  This is unlike the standard @code{operator<<} routines on @code{int}
+etc, which instead give twos complement.
+@end deftypefun
+
+@deftypefun ostream& operator<< (ostream& @var{stream}, mpq_t @var{op})
+Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
+@code{ios::width} is reset to 0 after output, the same as the standard
+@code{ostream operator<<} routines do.
+
+Output will be a fraction like @samp{5/9}, or if the denominator is 1 then
+just a plain integer like @samp{123}.
+
+In hex or octal, @var{op} is printed as a signed value, the same as for
+decimal.  If @code{ios::showbase} is set then a base indicator is shown on
+both the numerator and denominator (if the denominator is required).
 @end deftypefun
 
 @deftypefun ostream& operator<< (ostream& @var{stream}, mpf_t @var{op})
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
-@code{ios::width()} is reset to 0 after output, the same as the standard
+@code{ios::width} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
 
-@code{ios::hex} and @code{ios::oct} are supported, unlike the standard
-@code{operator<<} routines on @code{double} etc.  The mantissa will be in hex
-or octal and the exponent is always in decimal.  For hex the exponent
-delimiter is an @samp{@@}.  This is as per @code{mpf_out_str}.
-@code{ios::showbase} is supported, and will put a base on the mantissa.
+Hex and octal are supported, unlike the standard @code{operator<<} routines on
+@code{double} etc.  The mantissa will be in hex or octal, the exponent will be
+in decimal.  For hex the exponent delimiter is an @samp{@@}.  This is as per
+@code{mpf_out_str}.  @code{ios::showbase} is supported, and will put a base on
+the mantissa.
 @end deftypefun
 
-These operators mean that GMP types can be output in the usual C++ way, for
+These operators mean that GMP types can be printed in the usual C++ way, for
 example,
 
 @example
@@ -4690,13 +4742,529 @@ int    n;
 cout << "iteration " << n << " value " << z << "\n";
 @end example
 
-But note that @code{ostream} output
-@c (and @code{istream} input, @pxref{C++ Formatted Input})
-is the only overloading available and using say @code{+} with an @code{mpz_t}
-will have unpredictable consequences.
+But note that @code{ostream} output (and @code{istream} input, @pxref{C++
+Formatted Input}) is the only overloading available and using for instance
+@code{+} with an @code{mpz_t} will have unpredictable results.
 
 
-@node BSD Compatible Functions, Custom Allocation, Formatted Output, Top
+@node Formatted Input, C++ Class Interface, Formatted Output, Top
+@chapter Formatted Input
+@cindex Formatted input
+@cindex @code{scanf} formatted input
+
+Currently only C++ formatted input is supported.  Perhaps in the future some
+sort of @code{gmp_scanf} will exist.
+
+@menu
+* C++ Formatted Input::         
+@end menu
+
+@node C++ Formatted Input,  , Formatted Input, Formatted Input
+@section C++ Formatted Input
+@cindex C++ @code{istream} input
+@cindex @code{istream} input
+
+The following functions are provided in @file{libgmpxx}, which is built only
+if C++ support is enabled (@pxref{Build Options}).  Prototypes are available
+from @code{<gmp.h>}.
+
+@deftypefun istream& operator>> (istream& @var{stream}, mpz_t @var{rop})
+Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
+@end deftypefun
+
+@deftypefun istream& operator>> (istream& @var{stream}, mpq_t @var{rop})
+Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
+
+An integer like @samp{123} will be read, or a fraction like @samp{5/9}.  If
+the fraction is not in canonical form then @code{mpq_canonicalize} must be
+called (@pxref{Rational Number Functions}).
+@end deftypefun
+
+@deftypefun istream& operator>> (istream& @var{stream}, mpf_t @var{rop})
+Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
+
+Hex or octal floats are not supported, but might be in the future.
+@end deftypefun
+
+These operators mean that GMP types can be read in the usual C++ way, for
+example,
+
+@example
+mpz_t  z;
+...
+cin >> z;
+@end example
+
+But note that @code{istream} input (and @code{ostream} output, @pxref{C++
+Formatted Output}) is the only overloading available and using for instance
+@code{+} with an @code{mpz_t} will have unpredictable results.
+
+
+@node C++ Class Interface, BSD Compatible Functions, Formatted Input, Top
+@chapter C++ Class Interface
+@cindex C++ Interface
+
+This chapter describes the C++ class based interface to GMP.
+
+All GMP C language types and functions can be used in C++ programs, since
+@file{gmp.h} has @code{extern "C"} qualifiers, but the class interface offers
+overloaded functions and operators which may be more convenient.
+
+Due to the implementation of this interface, a reasonably recent C++ compiler
+is required, one supporting ``partial specialization of templates'' and
+``member templates''.  For GCC this means version 2.8 or later.
+
+@strong{Everything described in this chapter is to be considered preliminary
+and might be subject to incompatible changes if some unforeseen difficulty
+reveals itself.}
+
+@menu
+* C++ Interface General::       
+* C++ Interface Integers::      
+* C++ Interface Rationals::     
+* C++ Interface Floats::        
+* C++ Interface MPFR::          
+* C++ Interface Random Numbers::  
+* C++ Interface Limitations::   
+@end menu
+
+
+@node C++ Interface General, C++ Interface Integers, C++ Class Interface, C++ Class Interface
+@section C++ Interface General
+
+@noindent
+All the C++ classes and functions are available with
+
+@example
+#include <gmpxx.h>
+@end example
+
+@noindent
+The classes defined are
+
+@deftp Class mpz_class
+@deftpx Class mpq_class
+@deftpx Class mpf_class
+@end deftp
+
+The standard operators and various standard functions are overloaded to allow
+arithmetic with these classes.  For example,
+
+@example
+int
+main (void)
+@{
+  mpz_class a, b, c;
+
+  a = 1234;
+  b = "-5678";
+  c = a+b;
+  cout << "sum is " << c << "\n";
+  cout << "absolute value is " << abs(c) << "\n";
+
+  return 0;
+@}
+@end example
+
+An important feature of the implementation is that an expression like
+@code{a=b+c} results in a single call to the corresponding @code{mpz_add},
+without using a temporary for the @code{b+c} part.  Expressions which by their
+nature imply intermediate values, like @code{a=b*c+d*e}, still use temporaries
+though.
+
+The classes can be freely intermixed, as can the classes and the following
+standard C++ types,
+
+@quotation
+@nicode{bool},
+@nicode{short},
+@nicode{int},
+@nicode{long},
+@nicode{unsigned short},
+@nicode{unsigned int},
+@nicode{unsigned long},
+@nicode{double}
+@end quotation
+
+Conversions will be invoked as necessary.  Any truncation or rounding follows
+the corresponding C function.  For example a conversion from @code{mpz_class}
+to @code{long} follows @code{mpz_get_si}.
+
+There are no automatic conversions from the classes to the corresponding C
+types but a reference to the underlying objects can be obtained with the
+following functions,
+
+@deftypefun mpz_t mpz_class::get_mpz_t ()
+@deftypefunx mpq_t mpq_class::get_mpq_t ()
+@deftypefunx mpf_t mpf_class::get_mpf_t ()
+@end deftypefun
+
+These can be used to call a C function which doesn't have a C++ class
+interface.  For example to set @code{a} to the GCD of @code{b} and @code{c},
+
+@example
+mpz_class a, b, c;
+...
+mpz_gcd(a.get_mpz_t(), b.get_mpz_t(), c.get_mpz_t());
+@end example
+
+In the other direction, a class can be initialized or assigned to from the
+corresponding C type.  This will make a copy of the value.  For example,
+
+@example
+mpz_t z;
+// ... assign some value to z ...
+mpz_class w(z);
+@end example
+
+There are no namespace setups in @file{gmpxx.h} or @file{gmp.h}, all types and
+functions are simply put into the global namespace.  This is what @file{gmp.h}
+has done in the past, and must continue to do for compatibility.  The extras
+provided by @file{gmpxx.h} follow GMP naming conventions and are unlikely to
+clash with anything.
+
+
+@node C++ Interface Integers, C++ Interface Rationals, C++ Interface General, C++ Class Interface
+@section C++ Interface Integers
+
+@deftypefun mpz_class operator/ (mpz_class @var{a}, mpz_class @var{d})
+@deftypefunx mpz_class operator% (mpz_class @var{a}, mpz_class @var{d})
+Divisions involving @code{mpz_class} round towards zero, as per the
+@code{mpz_tdiv_q} and @code{mpz_tdiv_r} functions.  This corresponds to the
+rounding used for plain @code{int} calculations on most machines.
+
+The @code{mpz_fdiv} or @code{mpz_cdiv} functions can always be called directly
+if desired.  For example,
+
+@example
+mpz_class q, a, d;
+...
+mpz_fdiv_q (q.get_mpz_t(), a.get_mpz_t(), d.get_mpz_t());
+@end example
+@end deftypefun
+
+@deftypefun mpz_class abs (mpz_class @var{op})
+@deftypefunx int cmp (mpz_class @var{op1}, type @var{op2})
+@deftypefunx int cmp (type @var{op1}, mpz_class @var{op2})
+@deftypefunx double get_d (mpz_class @var{op})
+@deftypefunx long get_si (mpz_class @var{op})
+@deftypefunx {unsigned long} get_ui (mpz_class @var{op})
+@maybepagebreak
+@deftypefunx int fits_sint_p (mpz_class @var{op})
+@deftypefunx int fits_slong_p (mpz_class @var{op})
+@deftypefunx int fits_sshort_p (mpz_class @var{op})
+@maybepagebreak
+@deftypefunx int fits_uint_p (mpz_class @var{op})
+@deftypefunx int fits_ulong_p (mpz_class @var{op})
+@deftypefunx int fits_ushort_p (mpz_class @var{op})
+@maybepagebreak
+@deftypefunx int sgn (mpz_class @var{op})
+@deftypefunx mpz_class sqrt (mpz_class @var{op})
+These functions provide a C++ class interface to the corresponding C routines.
+
+@code{cmp} can be used with any of the classes or the standard C++ types
+listed in the introduction (@pxref{C++ Interface General}).
+@end deftypefun
+
+@sp 1
+It should be noted that while overloaded operators for combinations of
+@code{mpz_class} and @code{double} are provided for completeness, if the given
+@code{double} is not an integer then the way any rounding is done is currently
+unspecified.  The rounding might take place at the start, in the middle, or at
+the end of the operation.  This may change in the future.
+
+Conversions between @code{mpz_class} and @code{double} however are defined to
+follow the corresponding C functions @code{mpz_get_d} and @code{mpz_set_d}.
+And comparisons are always made exactly, as per @code{mpz_cmp_d}.
+
+
+@node C++ Interface Rationals, C++ Interface Floats, C++ Interface Integers, C++ Class Interface
+@section C++ Interface Rationals
+
+@deftypefun void mpq_class::mpq_class (type @var{op})
+@deftypefunx void mpq_class::mpq_class (integer @var{num}, integer @var{den})
+Construct an @code{mpq_class}.  The initial value can be a single value of any
+type, or a pair of integers (@code{mpz_class} or standard C++ integer types)
+representing a fraction.  For example,
+
+@example
+mpq_class q (99);
+mpq_class q (1.75);
+mpq_class q (1, 3);
+@end example
+
+When a fraction is used it should be in canonical form, or if not then
+@code{mpq_class::canonicalize} called.
+@end deftypefun
+
+@deftypefun void mpq_class::canonicalize ()
+Put an @code{mpq_class} into canonical form, as per @ref{Rational Number
+Functions}.  All arithmetic operators require their operands in canonical
+form, and will return results in canonical form.
+@end deftypefun
+
+@deftypefun mpq_class abs (mpq_class @var{op})
+@deftypefunx int cmp (mpq_class @var{op1}, type @var{op2})
+@deftypefunx int cmp (type @var{op1}, mpq_class @var{op2})
+@maybepagebreak
+@deftypefunx double get_d (mpq_class @var{op})
+@deftypefunx long get_si (mpq_class @var{op})
+@deftypefunx {unsigned long} get_ui (mpq_class @var{op})
+@deftypefunx int sgn (mpq_class @var{op})
+These functions provide a C++ class interface to the corresponding C routines.
+
+@code{cmp} can be used with any of the classes or the standard C++ types
+listed in the introduction (@pxref{C++ Interface General}).
+@end deftypefun
+
+@deftypefun {mpz_class&} mpq_class::get_num ()
+@deftypefunx {mpz_class&} mpq_class::get_den ()
+Get a reference to an @code{mpz_class} which is the numerator or denominator
+of an @code{mpq_class}.  This can be used both for read and write access.  If
+the @code{mpz_class} is modified, it modifies the original @code{mpq_class}.
+
+If direct manipulation might produce a non-canonical value, then
+@code{mpq_class::canonicalize} must be called before further operations.
+@end deftypefun
+
+@deftypefun mpz_t mpq_class::get_num_mpz_t ()
+@deftypefunx mpz_t mpq_class::get_den_mpz_t ()
+Get a reference to the underlying @code{mpz_t} numerator or denominator of an
+@code{mpq_class}.  This can be passed to C functions expecting an
+@code{mpz_t}.  Any modifications made to the @code{mpz_t} will modify the
+original @code{mpq_class}.
+
+If direct manipulation might produce a non-canonical value, then
+@code{mpq_class::canonicalize} must be called before further operations.
+@end deftypefun
+
+@deftypefun istream& operator>> (istream& @var{stream}, mpq_class& @var{rop});
+Read @var{rop} from @var{stream}, using its @code{ios} formatting settings,
+the same as @code{mpq_t operator>>} (@pxref{C++ Formatted Input}).
+
+If the @var{rop} read might not be in canonical form then
+@code{mpq_class::canonicalize} must be called.
+@end deftypefun
+
+When using @code{mpq_class} with templated code reading inputs that might not
+be in canonical form, one way to insert the necessary
+@code{mpq_class::canonicalize} calls is to create a subclass.
+
+@example
+class my_mpq : public mpq_class @{
+@};
+
+istream&
+operator>> (istream& i, my_mpq& q)
+@{
+  i >> q.get_mpq_t();
+  q.canonicalize();
+  return i;
+@}
+@end example
+
+Such an arrangement may or may not be particularly convenient.  Send
+alternative ideas to @email{bug-gmp@@gnu.org}.  Pressing an @code{ios} flag
+into service is one possibility.
+
+
+@node C++ Interface Floats, C++ Interface MPFR, C++ Interface Rationals, C++ Class Interface
+@section C++ Interface Floats
+
+When an expression requires the use of temporary intermediate @code{mpf_class}
+values, like @code{f=g*h+x*y}, those temporaries will have the same precision
+as the destination @code{f}.  Explicit constructors can be used if this
+doesn't suit.
+
+@deftypefun {} mpf_class::mpf_class (type @var{op})
+@deftypefunx {} mpf_class::mpf_class (type @var{op}, unsigned long @var{prec})
+Construct an @code{mpf_class}.  If @var{prec} is given, the initial precision
+is that value, in bits.
+
+If @var{prec} is not given, then the initial precision is determined by the
+type of @var{op}.  An @code{mpz_class}, @code{mpq_class}, or C/C++ builtin
+type will use the default @code{mpf} precision (@pxref{Initializing Floats}).
+An @code{mpf_class} value or expression will use its precision.  The precision
+of a binary expression is the higher of the two operands'.
+
+@example
+mpf_class f(1.5);        // default precision
+mpf_class f(1.5, 500);   // 500 bits (at least)
+mpf_class f(x);          // precision of x
+mpf_class f(abs(x));     // precision of x
+mpf_class f(-g, 1000);   // 1000 bits (at least)
+mpf_class f(x+y);        // greater of precisions of x and y
+@end example
+@end deftypefun
+
+@deftypefun mpf_class abs (mpf_class @var{op})
+@deftypefunx mpf_class ceil (mpf_class @var{op})
+@deftypefunx int cmp (mpf_class @var{op1}, type @var{op2})
+@deftypefunx int cmp (type @var{op1}, mpf_class @var{op2})
+@maybepagebreak
+@deftypefunx mpf_class floor (mpf_class @var{op})
+@deftypefunx mpf_class hypot (mpf_class @var{op1}, mpf_class @var{op2})
+@deftypefunx double get_d (mpf_class @var{op})
+@deftypefunx long get_si (mpf_class @var{op})
+@deftypefunx {unsigned long} get_ui (mpf_class @var{op})
+@maybepagebreak
+@deftypefunx int fits_sint_p (mpf_class @var{op})
+@deftypefunx int fits_slong_p (mpf_class @var{op})
+@deftypefunx int fits_sshort_p (mpf_class @var{op})
+@maybepagebreak
+@deftypefunx int fits_uint_p (mpf_class @var{op})
+@deftypefunx int fits_ulong_p (mpf_class @var{op})
+@deftypefunx int fits_ushort_p (mpf_class @var{op})
+@maybepagebreak
+@deftypefunx int sgn (mpf_class @var{op})
+@deftypefunx mpf_class sqrt (mpf_class @var{op})
+@deftypefunx mpf_class trunc (mpf_class @var{op})
+These functions provide a C++ class interface to the corresponding C routines.
+
+@code{cmp} can be used with any of the classes or the standard C++ types
+listed in the introduction (@pxref{C++ Interface General}).
+
+The accuracy provided by @code{hypot} is not currently guaranteed.
+@end deftypefun
+
+@deftypefun {unsigned long int} mpf_class::get_prec ()
+@deftypefunx void mpf_class::set_prec (unsigned long @var{prec})
+@deftypefunx void mpf_class::set_prec_raw (unsigned long @var{prec})
+Get or set the current precision of an @code{mpf_class}.
+
+The restrictions described for @code{mpf_set_prec_raw} (@pxref{Initializing
+Floats}) apply to @code{mpf_class::set_prec_raw}.  Note in particular that the
+@code{mpf_class} must be restored to it's allocated precision before being
+destroyed.  This must be done by application code, there's no automatic
+mechanism for it.
+@end deftypefun
+
+
+@node C++ Interface MPFR, C++ Interface Random Numbers, C++ Interface Floats, C++ Class Interface
+@section C++ Interface MPFR
+
+The C++ class interface to MPFR is provided if MPFR is enabled (@pxref{Build
+Options}).  This interface must be regarded as preliminary and possibly
+subject to incompatible changes in the future, since MPFR itself is
+preliminary.  All definitions can be obtained with
+
+@example
+#include <mpfrxx.h>
+@end example
+
+@noindent
+This defines
+
+@deftp Class mpfr_class
+@end deftp
+
+@noindent
+which behaves similarly to @code{mpf_class} (@pxref{C++ Interface Floats}).
+
+
+@node C++ Interface Random Numbers, C++ Interface Limitations, C++ Interface MPFR, C++ Class Interface
+@section C++ Interface Random Numbers
+
+@deftp Class gmp_randclass
+The C++ class interface to the GMP random number functions uses
+@code{gmp_randclass} to hold an algorithm selection and current state, as per
+@code{gmp_randstate_t}.
+@end deftp
+
+@deftypefun {} gmp_randclass::gmp_randclass (gmp_randalg_t @var{alg}, ...)
+Construct a @code{gmp_randclass}.  The parameters are the same as
+@code{gmp_randinit}, see @ref{Random State Initialization}.
+@end deftypefun
+
+@deftypefun void gmp_randclass::seed (unsigned long int @var{s})
+@deftypefunx void gmp_randclass::seed (mpz_class @var{s})
+Seed a random number generator.  See @pxref{Random Number Functions}, for how
+to choose a good seed.
+@end deftypefun
+
+@deftypefun mpz_class gmp_randclass::get_z_bits (unsigned long @var{bits})
+@deftypefunx mpz_class gmp_randclass::get_z_bits (mpz_class @var{bits})
+Generate a random integer with a specified number of bits.
+@end deftypefun
+
+@deftypefun mpz_class gmp_randclass::get_z_range (mpz_class @var{n})
+Generate a random integer in the range 0 to @ma{@var{n}-1} inclusive.
+@end deftypefun
+
+@deftypefun mpf_class gmp_randclass::get_f ()
+@deftypefunx mpf_class gmp_randclass::get_f (unsigned long @var{prec})
+Generate a random float @var{f} in the range @ma{0 <= @var{f} < 1}.  @var{f}
+will be to @var{prec} bits precision, or if @var{prec} is not given then to
+the precision of the destination.  For example,
+
+@example
+gmp_randclass  r;
+...
+mpf_class  f (0, 512);   // 512 bits precision
+f = r.get_f();           // random number to that precision
+@end example
+@end deftypefun
+
+
+
+@node C++ Interface Limitations,  , C++ Interface Random Numbers, C++ Class Interface
+@section C++ Interface Limitations
+
+A subtle difficulty exists when using expressions together with
+application-defined template functions.  Consider the following, with @code{T}
+intended to be some numeric type,
+
+@example
+template <class T>
+T fun (const T &, const T &);
+@end example
+
+@noindent
+When used with, say, plain @code{mpz_class} variables, it works fine: @code{T}
+is resolved as @code{mpz_class}.
+
+@example
+mpz_class f(1), g(2);
+fun (f, g);    // Good
+@end example
+
+@noindent
+But when one of the arguments is an expression, it doesn't work.
+
+@example
+mpz_class f(1), g(2), h(3);
+fun (f, g+h);  // Bad
+@end example
+
+This is because @code{g+h} ends up being a certain expression template type
+internal to @code{gmpxx.h}, which the C++ template resolution rules are unable
+to automatically convert to @code{mpz_class}.  The workaround is simply to add
+an explicit cast.
+
+@example
+mpz_class f(1), g(2), h(3);
+fun (f, mpz_class(g+h));  // Good
+@end example
+
+Similarly, within @code{fun} it may be necessary to cast an expression to type
+@code{T} when calling a templated @code{fun2}.
+
+@example
+template <class T>
+void fun (T f, T g)
+@{
+  fun2 (f, f+g);     // Bad
+@}
+
+template <class T>
+void fun (T f, T g)
+@{
+  fun2 (f, T(f+g));  // Good
+@}
+@end example
+
+
+@node BSD Compatible Functions, Custom Allocation, C++ Class Interface, Top
 @comment  node-name,  next,  previous,  up
 @chapter Berkeley MP Compatible Functions
 @cindex Berkeley MP compatible functions
@@ -4929,8 +5497,8 @@ than C, though perhaps with varying levels of functionality and efficiency.
 @item C++
 @itemize @bullet
 @item
-GMP++ @spaceuref{http://www.sissa.it/~ballabio/gmp++.html} @* A straight
-interface to GMP, good use of expression templates to eliminate temporaries.
+GMP C++ class interface, @pxref{C++ Class Interface} @* Straightforward
+interface, expression templates to eliminate temporaries.
 @item
 ALP @spaceuref{http://www.inria.fr/saga/logiciels/ALP} @* Linear algebra and
 polynomials using templates.
@@ -6835,6 +7403,7 @@ the documented interfaces described in previous chapters.}
 * Rational Internals::          
 * Float Internals::             
 * Raw Output Internals::        
+* C++ Interface Internals::     
 @end menu
 
 @node Integer Internals, Rational Internals, Internals, Internals
@@ -7181,6 +7750,107 @@ The use of ``big endian'' for both the size and data fields is deliberate, it
 makes the data easy to read in a hex dump of a file.
 
 
+@node C++ Interface Internals,  , Internals, Internals
+@section C++ Interface Internals
+
+A system of expression templates is used to ensure something like @code{a=b+c}
+turns into a simple call to @code{mpz_add} etc.  For @code{mpf_class} and
+@code{mpfr_class} the scheme also ensures the precision of the final
+destination is used for any temporaries within a statement like
+@code{f=w*x+y*z}.  These are important features which a naive implementation
+cannot provide.
+
+A simplified description of the scheme follows.  The true scheme is
+complicated by the fact that expressions have different return types.  For
+detailed information, refer to the source code.
+
+To perform an operation, say, addition, we first define a ``function object''
+evaluating it,
+
+@example
+struct __gmp_binary_plus
+@{
+  static void eval(mpf_t f, mpf_t g, mpf_t h) @{ mpf_add(f, g, h); @}
+@};
+@end example
+
+@noindent
+And an ``additive expression'' object,
+
+@example
+__gmp_expr<__gmp_binary_expr<mpf_class, mpf_class, __gmp_binary_plus> >
+operator+(const mpf_class &f, const mpf_class &g)
+@{
+  return __gmp_expr
+    <__gmp_binary_expr<mpf_class, mpf_class, __gmp_binary_plus> >(f, g);
+@}
+@end example
+
+The seemingly redundant @code{__gmp_expr<__gmp_binary_expr<...>>} is used to
+encapsulate any possible kind of expression into a single template type.  In
+fact even @code{mpf_class} etc are @code{typedef} specializations of
+@code{__gmp_expr}.
+
+Next we define assignment of @code{__gmp_expr} to @code{mpf_class}.
+
+@example
+template <class T>
+mpf_class & mpf_class::operator=(const __gmp_expr<T> &expr)
+@{
+  expr.eval(this->get_mpf_t(), this->precision());
+  return *this;
+@}
+
+template <class Op>
+void __gmp_expr<__gmp_binary_expr<mpf_class, mpf_class, Op> >::eval
+(mpf_t f, unsigned long int precision)
+@{
+  Op::eval(f, expr.val1.get_mpf_t(), expr.val2.get_mpf_t());
+@}
+@end example
+
+where @code{expr.val1} and @code{expr.val2} are references to the expression's
+operands (here @code{expr} is the @code{__gmp_binary_expr} stored within the
+@code{__gmp_expr}).
+
+This way, the expression is actually evaluated only at the time of assignment,
+when the required precision (that of @code{f}) is known.  Furthermore the
+target @code{mpf_t} is now available, thus we can call @code{mpf_add} directly
+with @code{f} as the output argument.
+
+Compound expressions are handled by defining operators taking subexpressions
+as their arguments, like this:
+
+@example
+template <class T, class U>
+__gmp_expr
+<__gmp_binary_expr<__gmp_expr<T>, __gmp_expr<U>, __gmp_binary_plus> >
+operator+(const __gmp_expr<T> &expr1, const __gmp_expr<U> &expr2)
+@{
+  return __gmp_expr
+    <__gmp_binary_expr<__gmp_expr<T>, __gmp_expr<U>, __gmp_binary_plus> >
+    (expr1, expr2);
+@}
+@end example
+
+And the corresponding specializations of @code{__gmp_expr::eval}:
+
+@example
+template <class T, class U, class Op>
+void __gmp_expr
+<__gmp_binary_expr<__gmp_expr<T>, __gmp_expr<U>, Op> >::eval
+(mpf_t f, unsigned long int precision)
+@{
+  // declare two temporaries
+  mpf_class temp1(expr.val1, precision), temp2(expr.val2, precision);
+  Op::eval(f, temp1.get_mpf_t(), temp2.get_mpf_t());
+@}
+@end example
+
+The expression is thus recursively evaluated to any level of complexity and
+all subexpressions are evaluated to the precision of @code{f}.
+
+
 @node Contributors, References, Internals, Top
 @comment  node-name,  next,  previous,  up
 @appendix Contributors
@@ -7397,6 +8067,7 @@ volume 43, number 8, August 1994, pp. 899-908.
 
 @node GNU Free Documentation License, Concept Index, References, Top
 @appendix GNU Free Documentation License
+@cindex GNU Free Documentation License
 @include fdl.texi
 
 
