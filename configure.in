@@ -2015,6 +2015,11 @@ if test $enable_mpfr = yes; then
 else
   HAVE_MPFR_01=0
 fi
+if test $ac_cv_have_decl_optarg = yes; then
+  AC_SUBST(HAVE_DECL_OPTARG, 1)
+else
+  HAVE_DECL_OPTARG=0
+fi
 
 
 # Create config.m4.

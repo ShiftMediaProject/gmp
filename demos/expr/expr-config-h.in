@@ -1,6 +1,6 @@
 /* Templates for expr configuration.   -*- mode:c -*-
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,3 +20,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 /* Whether mpfr functions and headers are available. */
 #define HAVE_MPFR @HAVE_MPFR_01@
+
+/* Define to 1 if you have the declaration of `optarg', and to 0 if not. */
+#define HAVE_DECL_OPTARG @HAVE_DECL_OPTARG@
