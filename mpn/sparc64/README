@@ -25,35 +25,56 @@ This directory contains mpn functions for 64-bit V9 SPARC
 
 RELEVANT OPTIMIZATION ISSUES
 
-The UltraSPARC-1/2 pipeline executes up to two simple integer arithmetic
-operations per cycle.  The 64-bit integer multiply instruction mulx takes from
-5 cycles to 35 cycles, depending on the position of the most significant bit of
-the 1st source operand.  When used for 32x32->64 multiplication, it needs 20
-cycles.  Furthermore, it stalls the processor while executing.  We stay away
-from that instruction, and instead use floating-point operations.
+Notation:
+  IANY = shift/add/sub/logical/sethi
+  IADDLOG = add/sub/logical/sethi
+  MEM = ld*/st*
+  FA = fadd*/fsub*/f*to*/fmov*
+  FM = fmul*
+
+UltraSPARC-1/2 can issue four instructions per cycle, with these restrictions:
+* Two IANY instructions, but only one of these may be a shift.  If there is a
+  shift and an IANY instruction, the shift must precede the IANY instruction.
+* One FA.
+* One FM.
+* One branch.
+* One MEM.
+* IANY/IADDLOG/MEM must be insn 1, 2, or 3 in an issue bundle.  Taken branches
+  should not be in slot 4, since that makes the delay insn come from separate
+  bundle.
+
+To summarize, ignoring branches, these are the bundles that can reach the peak
+execution speed:
+
+insn1	iany	iany	mem	iany	iany	mem	iany	iany	mem
+insn2	iaddlog	mem	iany	mem	iaddlog	iany	mem	iaddlog	iany
+insn3	mem	iaddlog	iaddlog	fa	fa	fa	fm	fm	fm
+insn4	fa/fm	fa/fm	fa/fm	fm	fm	fm	fa	fa	fa
+
+The 64-bit integer multiply instruction mulx takes from 5 cycles to 35 cycles,
+depending on the position of the most significant bit of the first source
+operand.  When used for 32x32->64 multiplication, it needs 20 cycles.
+Furthermore, it stalls the processor while executing.  We stay away from that
+instruction, and instead use floating-point operations.
 
 Integer conditional move instructions cannot dual-issue with other integer
 instructions.  No conditional move can issue 1-5 cycles after a load.  (Or
 something such bizarre.)  Useless.
 
-Integer branches can issue with two integer arithmetic instructions.  Likewise
-for integer loads.  Four instructions may issue each cycle.  The only patterns
-that can reach 4 cycles/limb are: (anyint, iaddlog, ld/st/fop/branch, fop).
-
-The UltraSPARC-3 pipeline is similar, but is somewhat more rigid.  Branches
-execute slower, and there are other new stalls.  Integer multiply doesn't halt
-the CPU and also has a much lower latency.  But it's still not really useful
-to GMP.
+The UltraSPARC-3 pipeline seems similar, but is somewhat more rigid.  Branches
+execute slower, and there may be other new stalls.  Integer multiply doesn't
+halt the CPU and also has a much lower latency.  But it's still not pipelined,
+and thus useless for our needs.
 
 STATUS
 
 (Timings are for UltraSPARC-1/2.  UltraSPARC-3 is a few cycles slower.)
 
-* mpn_lshift, mpn_rshift: The current code runs at 2.0 cycles/limb.
-  The IEU0 functional unit is saturated with shifts.
+* mpn_lshift, mpn_rshift: The current code runs at 2.0 cycles/limb.  The IEU0
+  functional unit is saturated with shifts.
 
-* mpn_add_n, mpn_sub_n: The current code runs at 4 cycles/limb.  The
-  4 instruction recurrency is the speed limiter.
+* mpn_add_n, mpn_sub_n: The current code runs at 4 cycles/limb.  The 4
+  instruction recurrency is the speed limiter.
 
 * mpn_addmul_1: The current code runs at 14 cycles/limb asymptotically.  The
   code sustains 4 instructions/cycle.  It might be possible to invent a better
@@ -62,7 +83,7 @@ STATUS
 
   The load-use of the `rlimb' operand is not enough scheduled for good L2 cache
   performance.  Since UltraSPARC-1/2 L1 cache is direct mapped, we miss to L2
-  very often.  The load-use of the std/ldx pairs via the stack somewhat are
+  very often.  The load-use of the std/ldx pairs via the stack are somewhat
   over-scheduled.
 
   It would be possible to save two instructions: (1) The `mov' could be avoided
@@ -76,3 +97,6 @@ STATUS
 * mpn_submul_1: Braindead code just calling mpn_mul_1 + mpn_sub_n.  It would be
   possible to either match the mpn_addmul_1 performance, or in the worst case
   use one more instruction group.
+
+* mpn_Xmul_2: These could be made to run at 9 cycles/limb.  Straightforward
+  generalization of mpn_Xmul_1.
