@@ -137,9 +137,3 @@ MA 02111-1307, USA.
 
 /* a dummy to make autoheader happy */
 #undef HAVE_NATIVE_
-
-/* dummies to make autoheader happy, the real ones are in gmp.h */
-#if 0
-#undef _LONG_LONG_LIMB
-#undef HAVE_MPFR
-#endif
