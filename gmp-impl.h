@@ -2675,6 +2675,9 @@ union ieee_double_extract
 double __gmp_scale2 _PROTO ((double, int)) ATTRIBUTE_CONST;
 int __gmp_extract_double _PROTO ((mp_ptr, double));
 
+#define mpn_get_d __gmpn_get_d
+double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATTRIBUTE_PURE;
+
 
 /* DOUBLE_NAN_INF_ACTION executes code a_nan if x is a NaN, or executes
    a_inf if x is an infinity.  Both are considered unlikely values, for
