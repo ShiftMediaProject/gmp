@@ -57,7 +57,7 @@ mpfr_get_str (str, expptr, base, n, op, rnd_mode)
   mpz_t bz;
   char *str0=NULL;
   mp_rnd_t rnd1;
-  int f, pow2, ok=0, neg, str_is_null=0;
+  int f, pow2, ok=0, neg, str_is_null=(str==NULL);
 
   if (base<2 || 36<base) {
     fprintf(stderr, "Error: too small or too large base in mpfr_get_str: %d\n",
