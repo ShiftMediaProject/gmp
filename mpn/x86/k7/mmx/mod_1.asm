@@ -31,7 +31,7 @@ C mp_limb_t mpn_mod_1c (mp_srcptr src, mp_size_t size, mp_limb_t divisor,
 C                       mp_limb_t carry);
 C
 C The code here is the same as mpn_divrem_1, but with the quotient
-C discarded.  See mpn/x86/k7/divrem_1.c for some comments.
+C discarded.  See mpn/x86/k7/mmx/divrem_1.c for some comments.
 
 
 dnl  MUL_THRESHOLD is the size at which the multiply by inverse method is
@@ -312,7 +312,7 @@ C -----------------------------------------------------------------------------
 L(inverse_two_left):
 	C eax	scratch
 	C ebx	scratch (nadj, q1)
-	C ecx	&src[0]
+	C ecx	&src[-1]
 	C edx	scratch
 	C esi	n10
 	C edi	n2
