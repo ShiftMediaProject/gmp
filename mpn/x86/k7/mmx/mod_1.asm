@@ -338,7 +338,7 @@ L(inverse_top):
 	mull	%ebx		   C (q1+1)*d
 
 	psrlq	%mm7, %mm0
-	leal	0(%ecx), %ecx      C dummy
+	leal	(%ecx), %ecx	   C dummy
 
 	C
 
