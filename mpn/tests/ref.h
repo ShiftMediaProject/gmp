@@ -35,7 +35,11 @@ mp_limb_t refmpn_addmul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
 mp_limb_t refmpn_addmul_1c _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                     mp_limb_t multiplier, mp_limb_t carry));
 mp_limb_t refmpn_addsub_n _PROTO ((mp_ptr r1p, mp_ptr r2p,
-                                   mp_srcptr s1p, mp_srcptr s2p, mp_size_t n));
+                                   mp_srcptr s1p, mp_srcptr s2p,
+                                   mp_size_t size));
+mp_limb_t refmpn_addsub_nc _PROTO ((mp_ptr r1p, mp_ptr r2p,
+                                    mp_srcptr s1p, mp_srcptr s2p,
+                                    mp_size_t size, mp_limb_t carry));
 
 void refmpn_and_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));

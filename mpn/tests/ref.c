@@ -479,24 +479,32 @@ refmpn_submul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 
 
 mp_limb_t
-refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
-		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
+refmpn_addsub_nc (mp_ptr r1p, mp_ptr r2p,
+                  mp_srcptr s1p, mp_srcptr s2p, mp_size_t size,
+                  mp_limb_t carry)
 {
   mp_ptr p;
   mp_limb_t acy, scy;
 
-  /* Destinations can't overlap at all. */
+  /* Destinations can't overlap. */
   ASSERT (! MPN_OVERLAP_P (r1p, size, r2p, size));
   ASSERT (refmpn_overlap_fullonly_two_p (r1p, s1p, s2p, size));
   ASSERT (refmpn_overlap_fullonly_two_p (r2p, s1p, s2p, size));
   ASSERT (size >= 1);
 
   p = refmpn_malloc_limbs (size);
-  acy = mpn_add_n (p, s1p, s2p, size);
-  scy = mpn_sub_n (r2p, s1p, s2p, size);
+  acy = refmpn_add_nc (p, s1p, s2p, size, carry >> 1);
+  scy = refmpn_sub_nc (r2p, s1p, s2p, size, carry & 1);
   refmpn_copyi (r1p, p, size);
   free (p);
   return 2 * acy + scy;
+}
+
+mp_limb_t
+refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
+		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
+{
+  return refmpn_addsub_nc (r1p, r2p, s1p, s2p, size, 0);
 }
 
 
