@@ -38,13 +38,31 @@ MA 02111-1307, USA.
 #if HAVE_GETOPT_H
 #include <getopt.h>  /* for getopt_long() */
 #endif
+
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h> /* for getpid() */
-#include <sys/time.h>  /* for struct timeval for sys/resource.h */
+
+#if HAVE_UNISTD_H
+#include <unistd.h>  /* for getpid, R_OK */
+#endif
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>  /* for struct timeval */
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>  /* for getrusage() */
+#endif
+
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -958,8 +976,10 @@ main (int argc, char *argv[])
     }
 
   srand (option_seed);
-  srandom (option_seed);
   srand48 (option_seed);
+#if HAVE_SRANDOM
+  srandom (option_seed);
+#endif
 
   choice = (struct choice_t *) (*__gmp_allocate_func)
     ((argc - optind) * sizeof(choice[0]));
@@ -1007,22 +1027,32 @@ main (int argc, char *argv[])
 
   if (option_resource_usage)
     {
-#if defined(linux)
-      /* This is Linux kernel specific. */
-      char  buf[128];
-      sprintf (buf, "cat /proc/%d/status", getpid());
-      system (buf);
-
+#if HAVE_GETRUSAGE
+      {
+        /* This doesn't give data sizes on linux 2.0.x, only utime. */
+        struct rusage  r;
+        if (getrusage (RUSAGE_SELF, &r) != 0)
+          perror ("getrusage");
+        else
+          printf ("getrusage(): utime %ld.%06ld data %ld stack %ld maxresident %ld\n",
+                  r.ru_utime.tv_sec, r.ru_utime.tv_usec,
+                  r.ru_idrss, r.ru_isrss, r.ru_ixrss); 
+      }
 #else
-      /* This doesn't give data sizes on Linux 2.0.36, only utime. */
-      struct rusage  r;
-      if (getrusage (RUSAGE_SELF, &r) != 0)
-        perror ("getrusage");
-      else
-        printf ("utime %ld.%06ld data %ld stack %ld maxresident %ld\n",
-                r.ru_utime.tv_sec, r.ru_utime.tv_usec,
-                r.ru_idrss, r.ru_isrss, r.ru_ixrss); 
+      printf ("getrusage() not available\n");
 #endif
+
+      /* Linux kernel. */
+      {
+        char  buf[128];
+        sprintf (buf, "/proc/%d/status", getpid());
+        if (access (buf, R_OK) == 0)
+          {
+            sprintf (buf, "cat /proc/%d/status", getpid());
+            system (buf);
+          }
+
+      }
     }
 
   return 0;
