@@ -29,18 +29,6 @@
 #     "check:" target is overridden by automake, and a "check-local:" runs
 #     too late (due to depth-first subdirectory processing).  For now it's
 #     necessary to do "make && make check".
-#
-# MPF_OBJECTS etc
-#
-#     Libtool needs all the .lo files passed to it if it's going to build
-#     both a static and shared library.  If a convenience library like
-#     mpf/libmpf.la is passed then the resulting libgmp.a gets the PIC .lo
-#     objects rather than the non-PIC .o's.
-#
-#     Unfortunately this leads to the big lists of objects below.  Something
-#     like mpz/*.lo would probably work, but might risk missing something
-#     out or getting something extra.  The source files for each .lo are
-#     listed in the Makefile.am's in the subdirectories.
 
 
 # Libtool -version-info for libgmp.la and libmp.la.  See (libtool)Versioning
@@ -64,9 +52,9 @@
 #
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
-# ensures we're past soname libgmp.so.2, which is what has been used on
-# Debian GNU/Linux packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the
-# interface changes for gmp 3 mean 3:0:0 is right.
+# ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
+# packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the interface changes for
+# gmp 3 mean 3:0:0 is right.
 
 LIBGMP_LT_CURRENT =  4
 LIBGMP_LT_REVISION = 0
@@ -90,6 +78,16 @@ EXTRA_DIST = .gdbinit gmp-impl.h longlong.h stack-alloc.h urandom.h doc macos
 
 DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
 
+
+# Libtool needs all the .lo files passed to it if it's going to build both a
+# static and shared library.  If a convenience library like mpf/libmpf.la is
+# passed then the resulting libgmp.a gets the PIC .lo objects rather than
+# the non-PIC .o's.
+#
+# Unfortunately this leads to the big lists of objects below.  Something
+# like mpz/*.lo would probably work, but might risk missing something out or
+# getting something extra.  The source files for each .lo are listed in the
+# Makefile.am's in the subdirectories.
 
 MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/set_si$U.lo mpf/set_str$U.lo mpf/set_d$U.lo mpf/set_z$U.lo	    \
