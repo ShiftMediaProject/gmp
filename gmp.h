@@ -175,9 +175,9 @@ typedef __mpq_struct *mpq_ptr;
 #ifndef __MPN
 /* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
 #if defined (__STDC__) || defined (__cplusplus)
-#define __MPN(x) __mpn_##x
+#define __MPN(x) __gmpn_##x
 #else
-#define __MPN(x) __mpn_/**/x
+#define __MPN(x) __gmpn_/**/x
 #endif
 #endif
 
@@ -647,6 +647,7 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_rand_state));
 #define mpn_scan1		__MPN(scan1)
 #define mpn_set_str		__MPN(set_str)
 #define mpn_sqrtrem		__MPN(sqrtrem)
+#define mpn_sqr_n		__MPN(sqr_n)
 #define mpn_sqr_basecase	__MPN(sqr_basecase)
 #define mpn_sub			__MPN(sub)
 #define mpn_sub_1		__MPN(sub_1)
@@ -694,6 +695,7 @@ mp_limb_t mpn_rshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 unsigned long int mpn_scan0 _PROTO ((mp_srcptr, unsigned long int));
 unsigned long int mpn_scan1 _PROTO ((mp_srcptr, unsigned long int));
 mp_size_t mpn_set_str _PROTO ((mp_ptr, __gmp_const unsigned char *, size_t, int));
+void mpn_sqr_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 void mpn_sqr_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 mp_size_t mpn_sqrtrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sub _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
@@ -976,6 +978,7 @@ enum
   GMP_ERROR_DIVISION_BY_ZERO = 2,
   GMP_ERROR_SQRT_OF_NEGATIVE = 4,
   GMP_ERROR_INVALID_ARGUMENT = 8,
+  GMP_ERROR_ALLOCATE = 16,
   GMP_ERROR_UNUSED_ERROR
 };
 
