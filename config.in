@@ -165,9 +165,6 @@ MA 02111-1307, USA.
    */
 #undef HAVE_DECL_OPTARG
 
-/* Define if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
-
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -177,8 +174,11 @@ MA 02111-1307, USA.
 /* Define if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* whether an "inline" is available */
+/* whether an actual "inline" is available */
 #undef HAVE_INLINE
+
+/* Define if you have the `mprotect' function. */
+#undef HAVE_MPROTECT
 
 /* Define if you have the `popen' function. */
 #undef HAVE_POPEN
@@ -212,6 +212,9 @@ MA 02111-1307, USA.
 
 /* Define if you have the `sysctlbyname' function. */
 #undef HAVE_SYSCTLBYNAME
+
+/* Define if you have the <sys/mman.h> header file. */
+#undef HAVE_SYS_MMAN_H
 
 /* Define if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
