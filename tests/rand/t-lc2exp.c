@@ -117,6 +117,37 @@ check_bigc (void)
   gmp_randclear (r);
 }
 
+void
+check_bigc1 (void)
+{
+  gmp_randstate_t  r;
+  mpz_t            a;
+  unsigned long    c, m2exp;
+  int              i;
+
+  mpz_init_set_ui (a, 0L);
+  c = ULONG_MAX;
+  m2exp = 2;
+
+  gmp_randinit_lc_2exp (r, a, c, m2exp);
+  gmp_randseed_ui (r, 0L);
+
+  for (i = 0; i < 20; i++)
+    {
+      mpz_urandomb (a, r, 1L);
+      if (mpz_cmp_ui (a, 1L) != 0)
+        {
+          printf     ("check_bigc1: mpz_urandomb didn't give 1\n");
+          printf     ("   m2exp=%lu\n", m2exp);
+          gmp_printf ("   got rand=%#ZX\n", a);
+          abort ();
+        }
+    }
+
+  mpz_clear (a);
+  gmp_randclear (r);
+}
+
 /* Checks parameters which triggered an assertion failure in the past.
    Happened when limbs(a)+limbs(c) < bits_to_limbs(m2exp).  */
 void
@@ -177,6 +208,7 @@ main (void)
 
   check_nega ();
   check_bigc ();
+  check_bigc1 ();
 
   check_bigm ();
   check_bigs ();
