@@ -33,7 +33,7 @@ SFLAGS=
 #### host and target specific makefile fragments come in here.
 ###
 
-libmpn.a: Makefile.in mp_bases.o $(MPN_OBJECTS)
+libmpn.a: Makefile mp_bases.o $(MPN_OBJECTS)
 	rm -f $@
 	$(AR) $(AR_FLAGS) $@ mp_bases.o $(MPN_OBJECTS)
 
