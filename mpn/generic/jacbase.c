@@ -74,7 +74,7 @@ MA 02111-1307, USA.  */
    with a restricted range of inputs accepted, namely b>1, b odd, and a<=b.
 
    The initial result_bit1 is taken as a parameter for the convenience of
-   mpz_kronecker_zi_ui() et al.  The sign changes both here and in those
+   mpz_kronecker_ui() et al.  The sign changes both here and in those
    routines accumulate nicely in bit 1, see the JACOBI macros.
 
    The return value here is the normal +1, 0, or -1.  Note that +1 and -1
