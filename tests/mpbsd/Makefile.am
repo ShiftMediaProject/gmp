@@ -34,3 +34,6 @@ TESTS = $(check_PROGRAMS)
 
 # check linking only against libmp
 allfuns_LDADD = $(top_builddir)/libmp.la
+
+$(top_builddir)/tests/libtests.la:
+	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
