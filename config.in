@@ -137,6 +137,12 @@ MA 02111-1307, USA.
 /* a dummy to make autoheader happy */
 #undef HAVE_NATIVE_
 
+/* dummies to make autoheader happy, the real ones are in gmp.h */
+#if 0
+#undef _LONG_LONG_LIMB
+#undef HAVE_MPFR
+#endif
+
 /* bits per mp_limb_t, if not in gmp-mparam.h */
 #undef BITS_PER_MP_LIMB
 
@@ -164,6 +170,9 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
 #undef HAVE_DECL_OPTARG
+
+/* Define if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
 
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
@@ -215,6 +224,9 @@ MA 02111-1307, USA.
 
 /* Define if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
+
+/* Define if you have the <sys/processor.h> header file. */
+#undef HAVE_SYS_PROCESSOR_H
 
 /* Define if you have the <sys/resource.h> header file. */
 #undef HAVE_SYS_RESOURCE_H
