@@ -18,6 +18,45 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-06-14  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_C_BIGENDIAN): Use new style action parameters.
+
+	* randlc2x.c: Allow for a<0, allow for c>=2^m2exp.
+	* randraw.c (lc): Allow for a==0.
+
+	* mpn/sparc32/udiv.asm: Renamed from udiv_fp.asm.  Don't know if float
+	is the best way for v7, but it's what configure has chosen since gmp 3.
+	* configure.in (*sparc*-*-* ABI=32): extra_functions="udiv" for all,
+	in particular sparc32/v8/udiv.asm is faster (on ultrasparc2) than
+	udiv_fp previously used for v9 chips.
+
+	* gen-bases.c: New file, derived from mpn/mp_bases.c.
+	* dumbmp.c: New file, mostly by Torbjorn, some by me.
+	* configure.in, acinclude.m4 (GMP_PROG_CC_FOR_BUILD,
+	GMP_PROG_CPP_FOR_BUILD, GMP_PROG_EXEEXT_FOR_BUILD,
+	GMP_C_FOR_BUILD_ANSI, GMP_CHECK_LIBM_FOR_BUILD): New macros.
+	(GMP_PROG_HOST_CC): Remove, superceded by GMP_PROG_CC_FOR_BUILD.
+	* Makefile.am: Run gen-bases to create mp_bases.h and mpn/mp_bases.c.
+	* gmp-impl.h: Use mp_bases.h.
+	* mpn/mp_bases.c: Remove file.
+	* mpn/Makefile.am: mp_bases.c now in nodist_libmpn_la_SOURCES.
+
+	* tests/mpz/t-cmp_d.c (check_one_2exp): Use volatile to force to
+	double, fixes gcc 3.1 with -O4.  Reported by Michael Lee.
+	* configure.in (AC_C_VOLATILE): New macro.
+
+	* tests/misc/t-scanf.c:	(fromstring_gmp_fscanf): Add missing va_end.
+	Don't mix varargs and fixed args functions, not good on x86_64.
+	Reported by Marcus Meissner.
+
+	* Makefile.am (EXTRA_DIST): Remove mpfr/README, now in mpfr/Makefile.in
+
+	* configure, config.in, INSTALL.autoconf: Update to autoconf 2.53.
+	* */Makefile.in, install-sh, mdate-sh, missing, aclocal.m4, configure:
+	Update to automake 1.6.1.
+	* configfsf.guess, configfsf.sub: Update to 2002-05-29.
+
 2002-06-12  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_GCC_VERSION_GE): Recognise mingw gcc 3.1 version.
