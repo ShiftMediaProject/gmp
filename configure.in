@@ -546,4 +546,4 @@ dnl [AC_SUBST(LTALLOCA)]
 
 dnl  Create Makefiles
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
-  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile demos/Makefile)
+  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile)
