@@ -32,15 +32,32 @@ static void debug_mp __GMP_PROTO ((mpz_t, int));
 
 #define MIN_OPERAND_SIZE 2
 
-/* Fixed values, for regression testing of mpn_hgcd_lehmer. */
+/* Fixed values, for regression testing of mpn_hgcd. */
 struct value { int res; const char *a; const char *b; };
 static const struct value hgcd_values[] = {
+#if GMP_NUMB_BITS == 32
   { 4,
     "0x1bddff867272a9296ac493c251d7f46f09a5591fe",
     "0xb55930a2a68a916450a7de006031068c5ddb0e5c" },
+#endif
   { -1, NULL, NULL }
 };
 
+struct hgcd_ref
+{
+  /* Sign here, u and v are stored as absolute values */
+  int sign;
+  
+  mpz_t r[4];
+  mpz_t u[4];
+  mpz_t v[4];
+};
+
+static void hgcd_ref_init (struct hgcd_ref *hgcd);
+static void hgcd_ref_clear (struct hgcd_ref *hgcd);
+static int hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b);
+static int
+hgcd_ref_equal (const struct hgcd *hgcd, const struct hgcd_ref *ref);
 
 int
 main (int argc, char **argv)
@@ -99,7 +116,8 @@ main (int argc, char **argv)
       if (mpz_cmp (op1, op2) < 0)
 	mpz_swap (op1, op2);
 
-      one_test (op1, op2, i);
+      if (mpz_size(op1) > 0)
+	one_test (op1, op2, i);
 
       /* Generate a division chain backwards, allowing otherwise
 	 unlikely huge quotients.  */
@@ -144,7 +162,8 @@ main (int argc, char **argv)
       if (mpz_cmp (op1, op2) < 0)
 	mpz_swap (op1, op2);
 
-      one_test (op1, op2, i);
+      if (mpz_size(op1) > 0)
+	one_test (op1, op2, i);
     }
   
   exit (0);
@@ -159,20 +178,19 @@ debug_mp (mpz_t x, int base)
 static int
 one_test (mpz_t a, mpz_t b, int i)
 {
-  struct hgcd hgcd[2];
-  struct qstack quotients[2];
+  struct hgcd hgcd;
+  struct hgcd_ref ref;
+  struct qstack quotients;
   int res[2];
   mp_size_t asize;
   mp_size_t bsize;
 
   mp_size_t hgcd_init_scratch;
   mp_size_t qstack_scratch;
-  mp_size_t hgcd_lehmer_scratch;
   mp_size_t hgcd_scratch;
 
-  mp_ptr hgcd_init_tp[2];
-  mp_ptr qstack_tp[2];
-  mp_ptr hgcd_lehmer_tp;
+  mp_ptr hgcd_init_tp;
+  mp_ptr qstack_tp;
   mp_ptr hgcd_tp;
   int k;
   
@@ -180,20 +198,14 @@ one_test (mpz_t a, mpz_t b, int i)
   bsize = b->_mp_size;
 
   hgcd_init_scratch = mpn_hgcd_init_itch (asize);
+  hgcd_init_tp = refmpn_malloc_limbs (hgcd_init_scratch);
+  mpn_hgcd_init (&hgcd, asize, hgcd_init_tp);
+
   qstack_scratch = qstack_itch (asize);
-  hgcd_lehmer_scratch = mpn_hgcd_lehmer_itch (asize);
+  qstack_tp = refmpn_malloc_limbs (qstack_scratch);
+  qstack_init (&quotients, asize, qstack_tp, qstack_scratch);
+
   hgcd_scratch = mpn_hgcd_itch (asize);
-
-  for (k = 0; k < 2; k++)
-  {
-    hgcd_init_tp[k] = refmpn_malloc_limbs (hgcd_init_scratch);
-    mpn_hgcd_init (&hgcd[k], asize, hgcd_init_tp[k]);
-
-    qstack_tp[k] = refmpn_malloc_limbs (qstack_scratch);
-    qstack_init (&quotients[k], asize, qstack_tp[k], qstack_scratch);
-  }
-
-  hgcd_lehmer_tp = refmpn_malloc_limbs (hgcd_lehmer_scratch);
   hgcd_tp = refmpn_malloc_limbs (hgcd_scratch);
 
 #if 0  
@@ -207,48 +219,222 @@ one_test (mpz_t a, mpz_t b, int i)
 	       "  b = %Zx\n",
 	       i, a, b);  
 #endif
+  hgcd_ref_init (&ref);
   
-  res[0] = mpn_hgcd_lehmer (&hgcd[0], 
-			    a->_mp_d, asize, 
-			    b->_mp_d, bsize, 
-			    &quotients[0],
-			    hgcd_lehmer_tp, hgcd_lehmer_scratch);
-  res[1] = mpn_hgcd (&hgcd[1], 
+  res[0] = hgcd_ref (&ref, a, b);
+  res[1] = mpn_hgcd (&hgcd, 
 		     a->_mp_d, asize, 
 		     b->_mp_d, bsize, 
-		     &quotients[1],
+		     &quotients,
 		     hgcd_tp, hgcd_scratch);
 
   if (res[0] != res[1])
     {
       fprintf (stderr, "ERROR in test %d\n", i);
-      fprintf (stderr, "Different return code from hgcd and hgcd_lehmer\n");
+      fprintf (stderr, "Different return code from hgcd and hgcd_ref\n");
       fprintf (stderr, "op1=");                 debug_mp (a, -16);
       fprintf (stderr, "op2=");                 debug_mp (b, -16);
-      fprintf (stderr, "mpn_hgcd_lehmer: %d\n", res[0]);
-      fprintf (stderr, "mpn_hgcd:        %d\n", res[1]);
+      fprintf (stderr, "hgcd_ref: %d\n", res[0]);
+      fprintf (stderr, "mpn_hgcd: %d\n", res[1]);
       abort ();
     }
   if (res[0] > 0)
     {
-      ASSERT_HGCD (&hgcd[0], a->_mp_d, asize, b->_mp_d, bsize, 0, 4);
+      ASSERT_HGCD (&hgcd, a->_mp_d, asize, b->_mp_d, bsize, 0, 4);
 
-      if (!mpn_hgcd_equal (&hgcd[0], &hgcd[1]))
+      if (!hgcd_ref_equal (&hgcd, &ref))
 	{
 	  fprintf (stderr, "ERROR in test %d\n", i);
-	  fprintf (stderr, "hgcd and hgcd_lehmer returned different values\n");
+	  fprintf (stderr, "mpn_hgcd and hgcd_ref returned different values\n");
 	  fprintf (stderr, "op1=");                 debug_mp (a, -16);
 	  fprintf (stderr, "op2=");                 debug_mp (b, -16);
 	  abort ();
 	}
     }
 
-  refmpn_free_limbs (hgcd_init_tp[0]);
-  refmpn_free_limbs (hgcd_init_tp[1]);
-  refmpn_free_limbs (qstack_tp[0]);
-  refmpn_free_limbs (qstack_tp[1]);
-  refmpn_free_limbs (hgcd_lehmer_tp);
+  refmpn_free_limbs (hgcd_init_tp);
+  refmpn_free_limbs (qstack_tp);
   refmpn_free_limbs (hgcd_tp);
-
+  hgcd_ref_clear (&ref);
+  
   return res[0];
+}
+
+static void
+hgcd_ref_init (struct hgcd_ref *hgcd)
+{
+  unsigned i;
+  for (i = 0; i<4; i++)
+    {
+      mpz_init (hgcd->r[i]);
+      mpz_init (hgcd->u[i]);
+      mpz_init (hgcd->v[i]);
+    }
+}
+
+static void
+hgcd_ref_clear (struct hgcd_ref *hgcd)
+{
+  unsigned i;
+  for (i = 0; i<4; i++)
+    {
+      mpz_clear (hgcd->r[i]);
+      mpz_clear (hgcd->u[i]);
+      mpz_clear (hgcd->v[i]);
+    }
+}     
+
+static int
+hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
+{
+  mp_size_t M = (a->_mp_size + 1) / 2;
+  mpz_t t;
+  mpz_t q;
+  int res;
+  
+  if (mpz_size(b) <= M)
+    return 0;
+
+  mpz_init (q);
+  mpz_fdiv_qr(q, hgcd->r[2], a, b);
+
+  if (mpz_size (hgcd->r[2]) <= M)
+    {
+      mpz_clear (q);
+      return 0;
+    }
+
+  mpz_set (hgcd->r[0], a); mpz_set (hgcd->r[1], b);
+  
+  mpz_set_ui (hgcd->u[0], 1); mpz_set_ui (hgcd->v[0], 0);
+  mpz_set_ui (hgcd->u[1], 0); mpz_set_ui (hgcd->v[1], 1);
+  mpz_set_ui (hgcd->u[2], 1); mpz_set    (hgcd->v[2], q);
+
+  hgcd->sign = 0;
+
+  mpz_init (t);
+  
+  for (;;)
+    {
+      mpz_fdiv_qr(q, hgcd->r[3], hgcd->r[1], hgcd->r[2]);
+
+      mpz_mul (hgcd->u[3], q, hgcd->u[2]);
+      mpz_add (hgcd->u[3], hgcd->u[3], hgcd->u[1]);
+
+      mpz_mul (hgcd->v[3], q, hgcd->v[2]);
+      mpz_add (hgcd->v[3], hgcd->v[3], hgcd->v[1]);
+      
+      if (mpz_size (hgcd->r[3]) <= M)
+	{
+#if 0
+	  unsigned i;
+	  printf("hgcd_ref: sign = %d\n", hgcd->sign);
+	  for (i = 0; i < 4; i++)
+	    gmp_printf("r = %Zd, u = %Zd, v = %Zd\n",
+		       hgcd->r[i], hgcd->u[i], hgcd->v[i]);
+#endif
+	  /* Check Jebelean's criterion */
+
+	  if (hgcd->sign >= 0)
+	    {
+	      /* Check if r1 - r2 >= u2 - u1 */
+	      mpz_add (t, hgcd->u[2], hgcd->u[1]);
+	    }
+	  else
+	    {
+	      /* Check if r1 - r2 >= v2 - v1 */
+	      mpz_add (t, hgcd->v[2], hgcd->v[1]);
+	    }
+
+	  /* Check r1 >= t + r2 */
+	  mpz_add (t, t, hgcd->r[2]);	  
+	  if (mpz_cmp (hgcd->r[1], t) < 0)
+	    {
+	      res = 2; break;
+	    }
+
+	  /* Now r2 is correct */
+	  if (hgcd->sign >= 0)
+	    {
+	      /* Check r3 >= max (-u3, -v3) = u3 */
+	      if (mpz_cmp (hgcd->r[3], hgcd->u[3]) < 0)
+		{
+		  res = 3; break;
+		}
+
+	      /* Check r3 - r2 >= v3 - v2 */
+	      mpz_add (t, hgcd->v[3], hgcd->v[2]);
+	    }
+	  else
+	    {
+	      /* Check r3 >= max (-u3, -v3) = v3 */
+	      if (mpz_cmp (hgcd->r[3], hgcd->v[3]) < 0)
+		{
+		  res = 3; break;
+		}
+
+	      /* Check r3 - r2 >= u3 - u2 */
+	      mpz_add (t, hgcd->u[3], hgcd->u[2]);
+	    }
+
+	  /* Check r2 >= t + r3 */
+	  mpz_add (t, t, hgcd->r[3]);
+	  if (mpz_cmp (hgcd->r[2], t) < 0)
+	    {
+	      res = 3; break;
+	    }
+
+	  /* Now r3 is correct */
+	  res = 4; break;
+	}
+
+      /* Shift rows */
+      hgcd->sign = ~hgcd->sign;
+      mpz_swap (hgcd->r[0], hgcd->r[1]);
+      mpz_swap (hgcd->r[1], hgcd->r[2]);
+      mpz_swap (hgcd->r[2], hgcd->r[3]);
+
+      mpz_swap (hgcd->u[0], hgcd->u[1]);
+      mpz_swap (hgcd->u[1], hgcd->u[2]);
+      mpz_swap (hgcd->u[2], hgcd->u[3]);
+
+      mpz_swap (hgcd->v[0], hgcd->v[1]);
+      mpz_swap (hgcd->v[1], hgcd->v[2]);
+      mpz_swap (hgcd->v[2], hgcd->v[3]);
+    }
+  
+  mpz_clear (t);
+  mpz_clear (q);
+  
+  return res;
+}
+
+static int
+mpz_mpn_equal (const mpz_t a, mp_srcptr bp, mp_size_t bsize)
+{
+  mp_srcptr ap = a->_mp_d;
+  mp_size_t asize = a->_mp_size;
+
+  MPN_NORMALIZE (bp, bsize);
+  return asize == bsize && mpn_cmp(ap, bp, asize) == 0;
+}
+
+static int
+hgcd_ref_equal (const struct hgcd *hgcd, const struct hgcd_ref *ref)
+{
+  unsigned i;
+  
+  if (ref->sign != hgcd->sign)
+    return 0;
+
+  for (i = 0; i<4; i++)
+    {
+      if (!mpz_mpn_equal (ref->r[i], hgcd->row[i].rp, hgcd->row[i].rsize))
+	return 0;
+      if (!mpz_mpn_equal (ref->u[i], hgcd->row[i].uvp[0], hgcd->size))
+	return 0;
+      if (!mpz_mpn_equal (ref->v[i], hgcd->row[i].uvp[1], hgcd->size))
+	return 0;
+    }
+  return 1;
 }
