@@ -164,9 +164,6 @@ _mpn_mul_classic (prodp, up, usize, vp, vsize)
      mp_srcptr vp;
      mp_size_t vsize;
 {
-  mp_size_t n;
-  mp_size_t prod_size;
-  mp_limb_t cy;
   mp_size_t i, j;
   mp_limb_t prod_low, prod_high;
   mp_limb_t cy_dig;
