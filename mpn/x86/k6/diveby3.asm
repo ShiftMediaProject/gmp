@@ -86,7 +86,7 @@ Zdisp(	movl,	0,(%esi,%ecx,4), %eax)
 
 	setc	%bl
 
-	imull	$INVERSE_3, %eax
+	imull	$INVERSE_3, %eax, %eax
 
 	movl	%eax, (%edi,%ecx,4)
 	addl	$2, %ecx

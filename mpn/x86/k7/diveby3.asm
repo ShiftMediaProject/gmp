@@ -109,7 +109,7 @@ L(last):
 	C edi	&dst[size-1]
 	C ebp
 
-	imull	$INVERSE_3, %eax
+	imull	$INVERSE_3, %eax, %eax
 
 	cmpl	$ONE_THIRD_CEIL, %eax
 	movl	%eax, (%edi)
