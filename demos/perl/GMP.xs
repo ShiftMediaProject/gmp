@@ -50,12 +50,9 @@ MA 02111-1307, USA. */
 
    Argument types are checked, with a view to preserving all bits in the
    operand.  Perl is a bit looser in its arithmetic, allowing rounding or
-   truncation to an intended operand type (IV or NV).
+   truncation to an intended operand type (IV, UV or NV).
 
    Bugs:
-
-   Giving NULL to sv_setref_pv then sv_bless'ing separately would save a
-   gv_stashpv on the class name every time.
 
    The memory leak detection attempted in GMP::END() doesn't work when mpz's
    are created as constants because END() is called before they're
@@ -131,6 +128,9 @@ static classconst char mpq_class[]  = "GMP::Mpq";
 static classconst char mpf_class[]  = "GMP::Mpf";
 static classconst char rand_class[] = "GMP::Rand";
 
+static HV *mpz_class_hv;
+static HV *mpq_class_hv;
+static HV *mpf_class_hv;
 
 assert_support (static long mpz_count = 0;)
 assert_support (static long mpq_count = 0;)
@@ -270,6 +270,11 @@ static tmp_mpf_t tmp_mpf_0, tmp_mpf_1;
 #define free_mpz(z)    FREE_MPX_FREELIST (z, mpz)
 #define free_mpq(q)    FREE_MPX_FREELIST (q, mpq)
 
+
+/* Return a new mortal SV holding the given mpx_ptr pointer.
+   class_hv should be one of mpz_class_hv etc.  */
+#define MPX_NEWMORTAL(mpx_ptr, class_hv)                                \
+    sv_bless (sv_setref_pv (sv_newmortal(), NULL, mpx_ptr), class_hv)
 
 /* Aliases for use in typemaps */
 typedef char           *malloced_string;
@@ -916,6 +921,9 @@ BOOT:
     mpq_init (tmp_mpq_1);
     tmp_mpf_init (tmp_mpf_0);
     tmp_mpf_init (tmp_mpf_1);
+    mpz_class_hv = gv_stashpv (mpz_class, 1);
+    mpq_class_hv = gv_stashpv (mpq_class, 1);
+    mpf_class_hv = gv_stashpv (mpf_class, 1);
 
 
 void
@@ -1468,7 +1476,7 @@ PPCODE:
     z = new_mpz();
     if (mpz_set_str (z->m, str, 0) == 0)
       {
-        SV *sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, z); PUSHs(sv);
+        PUSHs (MPX_NEWMORTAL (z, mpz_class_hv));
       }
     else
       {
@@ -1765,15 +1773,14 @@ PREINIT:
       { mpz_tdiv_qr }, /* 2 */
     };
     mpz q, r;
-    SV  *sv;
 PPCODE:
     assert_table (ix);
     q = new_mpz();
     r = new_mpz();
     (*table[ix].op) (q->m, r->m, a, d);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, q); PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r); PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (q, mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (r, mpz_class_hv));
 
 
 void
@@ -1793,7 +1800,6 @@ PREINIT:
       { mpz_tdiv_q_2exp, mpz_tdiv_r_2exp }, /* 2 */
     };
     mpz q, r;
-    SV  *sv;
 PPCODE:
     assert_table (ix);
     q = new_mpz();
@@ -1801,8 +1807,8 @@ PPCODE:
     (*table[ix].q) (q->m, a, d);
     (*table[ix].r) (r->m, a, d);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, q); PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r); PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (q, mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (r, mpz_class_hv));
 
 
 bool
@@ -1928,15 +1934,14 @@ PREINIT:
       { mpz_lucnum2_ui }, /* 1 */
     };
     mpz  r, r2;
-    SV   *sv;
 PPCODE:
     assert_table (ix);
     r = new_mpz();
     r2 = new_mpz();
     (*table[ix].op) (r->m, r2->m, n);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r);  PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r2); PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (r,  mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (r2, mpz_class_hv));
 
 
 mpz
@@ -1990,9 +1995,9 @@ PPCODE:
     y = new_mpz();
     mpz_gcdext (g->m, x->m, y->m, a, b);
     EXTEND (SP, 3);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, g); PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, x); PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, y); PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (g, mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (x, mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (y, mpz_class_hv));
 
 
 unsigned long
@@ -2153,7 +2158,7 @@ PPCODE:
     rem = new_mpz();
     mult = mpz_remove (rem->m, z, f);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, rem); PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (rem, mpz_class_hv));
     PUSHs (sv_2mortal (newSViv (mult)));
 
 
@@ -2169,7 +2174,7 @@ PPCODE:
     root = new_mpz();
     exact = mpz_root (root->m, z, n);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, root); PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (root, mpz_class_hv));
     sv = (exact ? &PL_sv_yes : &PL_sv_no); sv_2mortal(sv); PUSHs(sv);
 
 
@@ -2186,8 +2191,8 @@ PPCODE:
     rem = new_mpz();
     mpz_rootrem (root->m, rem->m, z, n);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, root); PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, rem);  PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (root, mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (rem,  mpz_class_hv));
 
 
 unsigned long
@@ -2245,8 +2250,8 @@ CODE:
         if (coerce_ptr != z->m)
           mpz_set (z->m, coerce_ptr);
         (*table[ix].op) (z->m, bit);
-        new_sv = sv_newmortal();
-        sv_setref_pv (new_sv, mpz_class, z);
+        new_sv = sv_bless (sv_setref_pv (sv_newmortal(), NULL, z),
+                           mpz_class_hv);
         SvSetMagicSV (sv, new_sv);
       }
 
@@ -2263,8 +2268,8 @@ PPCODE:
     rem = new_mpz();
     mpz_sqrtrem (root->m, rem->m, z);
     EXTEND (SP, 2);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, root); PUSHs(sv);
-    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, rem);  PUSHs(sv);
+    PUSHs (MPX_NEWMORTAL (root, mpz_class_hv));
+    PUSHs (MPX_NEWMORTAL (rem,  mpz_class_hv));
 
 
 size_t
@@ -2344,7 +2349,7 @@ PPCODE:
     TRACE (printf ("%s constant: %s\n", mpq_class, str));
     q = new_mpq();
     if (mpq_set_str (q->m, str, 0) == 0)
-      { sv = sv_newmortal(); sv_setref_pv (sv, mpq_class, q); }
+      { sv = sv_bless (sv_setref_pv (sv_newmortal(), NULL, q), mpq_class_hv); }
     else
       { free_mpq (q); sv = pv; }
     XPUSHs(sv);
@@ -3008,7 +3013,7 @@ CODE:
         new_f = new_mpf (prec);
         my_mpf_set_sv_using (new_f, sv, use);
       setref:
-        sv_setref_pv (sv, mpf_class, new_f);
+        sv_bless (sv_setref_pv (sv, NULL, new_f), mpf_class_hv);
       }
 
 
