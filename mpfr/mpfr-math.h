@@ -59,6 +59,7 @@ MA 02111-1307, USA. */
  || defined (_IBMR2) || defined (_ARCH_PPC)				\
  || defined (__sh__)							\
  || defined (__sparc) || defined (sparc)				\
+ || defined (__sparc__)  /* gcc 3.1 */                                  \
  || defined (__we32k__)
 #define _MPFR_NAN_BYTES  { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 }
 #define _MPFR_INFP_BYTES { 0x7f, 0x80, 0, 0 }

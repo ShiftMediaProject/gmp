@@ -2528,6 +2528,7 @@ union ieee_double_extract
  || defined (_IBMR2) || defined (_ARCH_PPC)				\
  || defined (__sh__)							\
  || defined (__sparc) || defined (sparc)				\
+ || defined (__sparc__)  /* gcc 3.1 */                                  \
  || defined (__we32k__)
 #define _GMP_IEEE_FLOATS 1
 union ieee_double_extract
