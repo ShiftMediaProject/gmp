@@ -289,13 +289,13 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
    represents a carry or whatever that shouldn't occur.  For example,
    ASSERT_NOCARRY (mpn_add_n (rp, s1p, s2p, size)); */
 
-#if defined (__LINE__)
+#ifdef __LINE__
 #define ASSERT_LINE  __LINE__
 #else
 #define ASSERT_LINE  -1
 #endif
 
-#if defined (__FILE__)
+#ifdef __FILE__
 #define ASSERT_FILE  __FILE__
 #else
 #define ASSERT_FILE  ""
@@ -307,11 +307,10 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, "expr")
 #endif
 
-/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
-#if defined (__STDC__) || defined (__cplusplus)
-#define ASSERT_VOID        (void)
+#if HAVE_VOID
+#define CAST_TO_VOID        (void)
 #else
-#define ASSERT_VOID        
+#define CAST_TO_VOID        
 #endif
 
 #define ASSERT_ALWAYS(expr) ((expr) ? 0 : ASSERT_FAIL (expr))
@@ -320,7 +319,7 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT(expr)           ASSERT_ALWAYS (expr)
 #define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
 #else
-#define ASSERT(expr)           (ASSERT_VOID 0)
+#define ASSERT(expr)           (CAST_TO_VOID 0)
 #define ASSERT_NOCARRY(expr)   (expr)
 #endif
 
