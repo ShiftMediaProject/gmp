@@ -28,12 +28,6 @@ MA 02111-1307, USA. */
 
 #define PART_SIZE (L1_CACHE_SIZE / BYTES_PER_MP_LIMB / 6)
 
-/* FIXME.  These will be set by mpn/configure.in, so that we can tell which
-   low-level function is implemented in assembly for a particular target.  */
-#define HAVE_NATIVE_mpn_add_nc 0
-#define HAVE_NATIVE_mpn_add_n 1
-#define HAVE_NATIVE_mpn_sub_nc 0
-#define HAVE_NATIVE_mpn_sub_n 1
 
 /* mpn_addsub_n.
    r1[] = s1[] + s2[]
