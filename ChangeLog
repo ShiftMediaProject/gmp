@@ -7,6 +7,12 @@
 	
 2000-03-03  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/lisp/gmpasm-mode.el: Suppress filladapt postscript comment
+	prefixes.
+
+	* mpn/x86/pentium/sqr_basecase.asm: New file.
+	* mpn/x86/pentium/gmp-mparam.h (KARATSUBA_SQR_THRESHOLD): Update.
+
 	* configure.in: Add --enable-assert, enable k6 logops functions.
 
 	* mpn/x86/k6/mmx/copyi.asm: Use m4 for divide, not as.
