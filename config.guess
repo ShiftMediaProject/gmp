@@ -471,6 +471,7 @@ main (void)
       case CPU_SUBTYPE_POWERPC_750:   puts ("powerpc750");  break;
       case CPU_SUBTYPE_POWERPC_7400:  puts ("powerpc7400"); break;
       case CPU_SUBTYPE_POWERPC_7450:  puts ("powerpc7450"); break;
+      /* Darwin 6.8.5 doesn't define a constant for 970, but gives 100 */
       case 100:                       puts ("powerpc970");  break;
       }
     }
