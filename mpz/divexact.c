@@ -27,8 +27,8 @@ MA 02111-1307, USA.  */
     de Matema'tica at Universidade Federal do Rio Grande do Sul (UFRGS).
 
     References:
-        T. Jebelean, An algorithm for exact division, Journal of Symbolic
-        Computation, v. 15, 1993, pp. 169-180.  */
+	T. Jebelean, An algorithm for exact division, Journal of Symbolic
+	Computation, v. 15, 1993, pp. 169-180.	*/
 
 #include "gmp.h"
 #include "gmp-impl.h"
