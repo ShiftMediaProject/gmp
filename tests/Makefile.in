@@ -201,18 +201,14 @@ RM_TMP = rm -f
 INCLUDES = -I$(top_srcdir)
 LDADD = libtests.la $(top_builddir)/libgmp.la
 
-EXTRA_DIST = x86call.asm
-EXTRA_LTLIBRARIES = libdummy.la
 check_LTLIBRARIES = libtests.la
 
+EXTRA_libtests_la_SOURCES = x86call.asm x86check.c
 libtests_la_SOURCES = tests.h \
   memory.c misc.c refmpf.c refmpn.c refmpq.c refmpz.c spinner.c trace.c
 
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
 libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
-
-# Create ansi2knr rules for sources conditionally used
-libdummy_la_SOURCES = x86check.c
 
 check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-modlinv t-popc
 TESTS = $(check_PROGRAMS)
@@ -220,10 +216,6 @@ subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-libdummy_la_LDFLAGS =
-libdummy_la_LIBADD =
-am_libdummy_la_OBJECTS = x86check$U.lo
-libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 libtests_la_LDFLAGS =
 am_libtests_la_OBJECTS = memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
 	refmpq$U.lo refmpz$U.lo spinner$U.lo trace$U.lo
@@ -277,8 +269,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-bswap.c \
-	t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-popc.c
+DIST_SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) \
+	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c \
+	t-popc.c
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
@@ -286,7 +279,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-popc.c
+SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-popc.c
 
 all: all-recursive
 
@@ -306,8 +299,6 @@ clean-checkLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
-	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libtests.la: $(libtests_la_OBJECTS) $(libtests_la_DEPENDENCIES) 
 	$(LINK)  $(libtests_la_LDFLAGS) $(libtests_la_OBJECTS) $(libtests_la_LIBADD) $(LIBS)
 
