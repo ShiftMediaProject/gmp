@@ -1013,7 +1013,8 @@ AC_DEFUN(GMP_C_SIZES,
 [int test [2*(sizeof($tmp_type) == $tmp_try) - 1];]
 EOF
       cat conftest.c >>conftest.out
-      if ($CC $CFLAGS -c conftest.c) >>conftest.out 2>&1; then
+      echo "$CC $CFLAGS -I$srcdir -c conftest.c" >>conftest.out
+      if ($CC $CFLAGS -I$srcdir -c conftest.c) >>conftest.out 2>&1; then
         if test -n "$tmp_val"; then
           cat conftest.out 1>&AC_FD_CC
           AC_MSG_ERROR([$tmp_def $tmp_type passes both $tmp_val and $tmp_try])
