@@ -21,6 +21,7 @@ MA 02111-1307, USA.
 
 2002-04-11  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/diveby3.c: Nailify.
 	* gmp-impl.h (MODLIMB_INVERSE_3): Nailify.
 
 	* mpn/generic/mul_n.c: Nailify Toom3 code.
