@@ -26,7 +26,5 @@ dnl  good on P-III.
 
 include(`../config.m4')
 
-NAILS_SUPPORT(0-31)
-
 MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 include_mpn(`x86/k7/mmx/popham.asm')

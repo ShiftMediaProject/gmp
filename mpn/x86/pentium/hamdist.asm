@@ -25,9 +25,6 @@ include(`../config.m4')
 C P5: 14.0 cycles/limb
 
 
-NAILS_SUPPORT(0-31)
-
-
 C unsigned long mpn_hamdist (mp_srcptr src1, mp_srcptr src2, mp_size_t size);
 C
 C It might be possible to shave 1 cycle from the loop, and hence 2
