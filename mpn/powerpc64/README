@@ -62,7 +62,7 @@ Memory:		  Any two memory operations can issue, but memory subsystem
 		  prefetch; the hardware has very sophisticated prefetch logic.
 Simple integer:	  2 operations (such as add, rl*)
 Integer multiply: 1 operation every 9th cycle worst case; exact timing depends
-		  on 2nd operand most significant bit position (10 bits per
+		  on 2nd operand's most significant bit position (10 bits per
 		  cycle).  Multiply unit is not pipelined, only one multiply
 		  operation in progress is allowed.
 Integer divide:	  ?
