@@ -67,9 +67,15 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 
   if (base >= 0)
     {
+      num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
       if (base == 0)
 	base = 10;
-      num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
+      else if (base > 36)
+	{
+	  num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	  if (base > 62)
+	    return NULL;
+	}
     }
   else
     {
