@@ -1,6 +1,6 @@
 /* mpn/gcd.c: mpn_gcd for gcd of two odd integers.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000 Free Software
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -67,13 +67,7 @@ enum
 /* Use binary algorithm to compute V <-- GCD (V, U) for usize, vsize == 2.
    Both U and V must be odd.  */
 static inline mp_size_t
-#if __STDC__
 gcd_2 (mp_ptr vp, mp_srcptr up)
-#else
-gcd_2 (vp, up)
-     mp_ptr vp;
-     mp_srcptr up;
-#endif
 {
   mp_limb_t u0, u1, v0, v1;
   mp_size_t vsize;
@@ -132,12 +126,7 @@ static
 inline				/* don't inline this for the x86 */
 #endif
 mp_limb_t
-#if __STDC__
 find_a (mp_srcptr cp)
-#else
-find_a (cp)
-     mp_srcptr cp;
-#endif
 {
   unsigned long int leading_zero_bits = 0;
 
@@ -179,16 +168,7 @@ find_a (cp)
 
 
 mp_size_t
-#if __STDC__
 mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
-#else
-mpn_gcd (gp, up, usize, vp, vsize)
-     mp_ptr gp;
-     mp_ptr up;
-     mp_size_t usize;
-     mp_ptr vp;
-     mp_size_t vsize;
-#endif
 {
   mp_ptr orig_vp = vp;
   mp_size_t orig_vsize = vsize;

@@ -5,7 +5,7 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000 Free Software
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -30,14 +30,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
 mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
-#else
-mpn_sqr_basecase (prodp, up, n)
-     mp_ptr prodp;
-     mp_srcptr up;
-     mp_size_t n;
-#endif
 {
   mp_size_t i;
 

@@ -5,7 +5,7 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000 Free Software
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -35,18 +35,9 @@ MA 02111-1307, USA. */
    arrive here as this is the base case for Karatsuba's recursive algorithm. */
 
 void
-#if __STDC__
 mpn_mul_basecase (mp_ptr prodp,
 		     mp_srcptr up, mp_size_t usize,
 		     mp_srcptr vp, mp_size_t vsize)
-#else
-mpn_mul_basecase (prodp, up, usize, vp, vsize)
-     mp_ptr prodp;
-     mp_srcptr up;
-     mp_size_t usize;
-     mp_srcptr vp;
-     mp_size_t vsize;
-#endif
 {
   ASSERT (usize >= vsize);
   ASSERT (vsize >= 1);

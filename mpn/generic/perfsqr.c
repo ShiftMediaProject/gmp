@@ -1,7 +1,7 @@
 /* mpn_perfect_square_p(u,usize) -- Return non-zero if U is a perfect square,
    zero otherwise.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -42,13 +42,7 @@ static unsigned char const sq_res_0x100[0x100] =
 };
 
 int
-#if __STDC__
 mpn_perfect_square_p (mp_srcptr up, mp_size_t usize)
-#else
-mpn_perfect_square_p (up, usize)
-     mp_srcptr up;
-     mp_size_t usize;
-#endif
 {
   mp_limb_t rem;
   mp_ptr root_ptr;

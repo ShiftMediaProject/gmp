@@ -1,6 +1,6 @@
 /* mpn_random -- Generate random numbers.
 
-Copyright 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "urandom.h"
 
 void
-#if __STDC__
 mpn_random (mp_ptr res_ptr, mp_size_t size)
-#else
-mpn_random (res_ptr, size)
-     mp_ptr res_ptr;
-     mp_size_t size;
-#endif
 {
   mp_size_t i;
 

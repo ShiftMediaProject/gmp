@@ -4,7 +4,7 @@
    INCOMPATIBLE CHANGES IN A FUTURE RELEASE OF GMP. */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -89,14 +89,7 @@ MA 02111-1307, USA.  */
    relaxed.  All the places this is used currently call with a<=b though.  */
 
 int
-#if __STDC__
 mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
-#else
-mpn_jacobi_base (a, b, result_bit1)
-     mp_limb_t a;
-     mp_limb_t b;
-     int       result_bit1;
-#endif
 {
   ASSERT (b & 1);  /* b odd */
   ASSERT (b != 1);

@@ -12,7 +12,7 @@
    The time complexity of this is O(qn*qn+M(dn,qn)), where M(m,n) is the time
    complexity of multiplication.
 
-Copyright 1997, 2000 Free Software Foundation, Inc.
+Copyright 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -41,19 +41,8 @@ MA 02111-1307, USA. */
   ((h << cnt) | ((l >> 1) >> ((~cnt) & (BITS_PER_MP_LIMB - 1))))
 
 void
-#if __STDC__
 mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	     mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn)
-#else
-mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
-     mp_ptr qp;
-     mp_ptr rp;
-     mp_size_t qxn;
-     mp_srcptr np;
-     mp_size_t nn;
-     mp_srcptr dp;
-     mp_size_t dn;
-#endif
 {
   /* FIXME:
      1. qxn

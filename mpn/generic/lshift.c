@@ -1,6 +1,6 @@
 /* mpn_lshift -- Shift left low level.
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -32,17 +32,9 @@ MA 02111-1307, USA. */
 */
 
 mp_limb_t
-#if __STDC__
 mpn_lshift (register mp_ptr wp,
 	    register mp_srcptr up, mp_size_t usize,
 	    register unsigned int cnt)
-#else
-mpn_lshift (wp, up, usize, cnt)
-     register mp_ptr wp;
-     register mp_srcptr up;
-     mp_size_t usize;
-     register unsigned int cnt;
-#endif
 {
   register mp_limb_t high_limb, low_limb;
   register unsigned sh_1, sh_2;
@@ -55,19 +47,6 @@ mpn_lshift (wp, up, usize, cnt)
   ASSERT (MPN_SAME_OR_DECR_P (wp, up, usize));
 
   sh_1 = cnt;
-#if 0
-  if (sh_1 == 0)
-    {
-      if (wp != up)
-	{
-	  /* Copy from high end to low end, to allow specified input/output
-	     overlapping.  */
-	  for (i = usize - 1; i >= 0; i--)
-	    wp[i] = up[i];
-	}
-      return 0;
-    }
-#endif
 
   wp += 1;
   sh_2 = BITS_PER_MP_LIMB - sh_1;

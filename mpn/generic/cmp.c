@@ -1,6 +1,6 @@
 /* mpn_cmp -- Compare two low-level natural-number integers.
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,14 +28,7 @@ MA 02111-1307, USA. */
    Return 1 if OP1 > OP2, 0 if they are equal, and -1 if OP1 < OP2.  */
 
 int
-#if __STDC__
 mpn_cmp (mp_srcptr op1_ptr, mp_srcptr op2_ptr, mp_size_t size)
-#else
-mpn_cmp (op1_ptr, op2_ptr, size)
-     mp_srcptr op1_ptr;
-     mp_srcptr op2_ptr;
-     mp_size_t size;
-#endif
 {
   mp_size_t i;
   mp_limb_t op1_word, op2_word;

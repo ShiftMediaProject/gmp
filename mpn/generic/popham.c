@@ -1,6 +1,6 @@
 /* mpn_popcount, mpn_hamdist -- population count and hamming distance.
 
-Copyright 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -60,12 +60,7 @@ Error, need OPERATION_popcount or OPERATION_hamdist
    You have to figure out how this works, I won't tell you!  */
 
 static inline unsigned int
-#if __STDC__
 popc_limb (mp_limb_t x)
-#else
-popc_limb (x)
-     mp_limb_t x;
-#endif
 {
   /* These constants could also be expressed as:
      0xAA... = [2^(N+1) / 3] = [(2^N-1)/3*2]

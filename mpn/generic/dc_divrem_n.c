@@ -6,7 +6,7 @@
    FUTURE GNU MP RELEASE.
 
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.
@@ -71,15 +71,7 @@ unused_mpn_divrem (qp, qxn, np, nn, dp, dn)
    Requires that the most significant bit of the divisor is set.  */
 
 mp_limb_t
-#if __STDC__
 mpn_dc_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
-#else
-mpn_dc_divrem_n (qp, np, dp, n)
-     mp_ptr qp;
-     mp_ptr np;
-     mp_srcptr dp;
-     mp_size_t n;
-#endif
 {
   mp_limb_t qhl, cc;
 
@@ -112,15 +104,7 @@ mpn_dc_divrem_n (qp, np, dp, n)
    the remainder in (np, 2n) */
 
 static mp_limb_t
-#if __STDC__
 mpn_dc_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
-#else
-mpn_dc_div_3_halves_by_2 (qp, np, dp, n)
-     mp_ptr qp;
-     mp_ptr np;
-     mp_srcptr dp;
-     mp_size_t n;
-#endif
 {
   mp_size_t twon = n + n; 
   mp_limb_t qhl, cc;

@@ -1,6 +1,6 @@
 /* mpn_addsub_n -- Add and Subtract two limb vectors of equal, non-zero length.
 
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -35,14 +35,7 @@ MA 02111-1307, USA. */
    All operands have n limbs.
    In-place operations allowed.  */
 mp_limb_t
-#if __STDC__
 mpn_addsub_n (mp_ptr r1p, mp_ptr r2p, mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
-#else
-mpn_addsub_n (r1p, r2p, s1p, s2p, n)
-     mp_ptr r1p, r2p;
-     mp_srcptr s1p, s2p;
-     mp_size_t n;
-#endif
 {
   mp_limb_t acyn, acyo;		/* carry for add */
   mp_limb_t scyn, scyo;		/* carry for subtract */

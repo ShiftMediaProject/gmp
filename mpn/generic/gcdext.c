@@ -1,6 +1,6 @@
 /* mpn_gcdext -- Extended Greatest Common Divisor.
 
-Copyright 1996, 1998, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1998, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -71,16 +71,7 @@ int arr[BITS_PER_MP_LIMB];
 /* Division optimized for small quotients.  If the quotient is more than one limb,
    store 1 in *qh and return 0.  */
 static mp_limb_t
-#if __STDC__
 div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
-#else
-div2 (qh, n1, n0, d1, d0)
-     mp_limb_t *qh;
-     mp_limb_t n1;
-     mp_limb_t n0;
-     mp_limb_t d1;
-     mp_limb_t d0;
-#endif
 {
   if (d1 == 0)
     {
@@ -146,31 +137,11 @@ div2 (qh, n1, n0, d1, d0)
 
 mp_size_t
 #if EXTEND
-#if __STDC__
 mpn_gcdext (mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
 	    mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize)
 #else
-mpn_gcdext (gp, s0p, s0size, up, size, vp, vsize)
-     mp_ptr gp;
-     mp_ptr s0p;
-     mp_size_t *s0size;
-     mp_ptr up;
-     mp_size_t size;
-     mp_ptr vp;
-     mp_size_t vsize;
-#endif
-#else
-#if __STDC__
 mpn_gcd (mp_ptr gp,
 	 mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize)
-#else
-mpn_gcd (gp, up, size, vp, vsize)
-     mp_ptr gp;
-     mp_ptr up;
-     mp_size_t size;
-     mp_ptr vp;
-     mp_size_t vsize;
-#endif
 #endif
 {
   mp_limb_t A, B, C, D;

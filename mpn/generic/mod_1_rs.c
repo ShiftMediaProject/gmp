@@ -6,7 +6,7 @@
    RELEASE. */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,16 +46,8 @@ MA 02111-1307, USA.  */
    mpn_mod_1. */
 
 mp_limb_t
-#if __STDC__
 mpn_mod_1_rshift (mp_srcptr ptr, mp_size_t size, unsigned shift,
                   mp_limb_t divisor)
-#else
-mpn_mod_1_rshift (ptr, size, shift, divisor)
-     mp_srcptr ptr;
-     mp_size_t size;
-     unsigned  shift;
-     mp_limb_t divisor;
-#endif
 {
   mp_limb_t  quot, rem;
 

@@ -5,7 +5,7 @@
    - 2^BITS_PER_MP_LIMB.
    Return the single-limb remainder.
 
-Copyright 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,16 +30,8 @@ MA 02111-1307, USA. */
 
 
 mp_limb_t
-#if __STDC__
 mpn_preinv_mod_1 (mp_srcptr dividend_ptr, mp_size_t dividend_size,
 		  mp_limb_t divisor_limb, mp_limb_t divisor_limb_inverted)
-#else
-mpn_preinv_mod_1 (dividend_ptr, dividend_size, divisor_limb, divisor_limb_inverted)
-     mp_srcptr dividend_ptr;
-     mp_size_t dividend_size;
-     mp_limb_t divisor_limb;
-     mp_limb_t divisor_limb_inverted;
-#endif
 {
   mp_size_t i;
   mp_limb_t n0, r;

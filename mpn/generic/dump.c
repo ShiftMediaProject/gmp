@@ -3,7 +3,7 @@
    FUNCTION WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 
-Copyright 1996, 2000 Free Software Foundation, Inc.
+Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,13 +28,7 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpn_dump (mp_srcptr ptr, mp_size_t size)
-#else
-mpn_dump (ptr, size)
-     mp_srcptr ptr;
-     mp_size_t size;
-#endif
 {
   MPN_NORMALIZE (ptr, size);
 

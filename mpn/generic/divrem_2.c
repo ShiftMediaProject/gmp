@@ -7,7 +7,7 @@
    RELEASE.
 
 
-Copyright 1993, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
+Copyright 1993, 1994, 1995, 1996, 1999, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -48,18 +48,9 @@ MA 02111-1307, USA. */
    3. NSIZE >= 2, even if QEXTRA_LIMBS is non-zero.  */
 
 mp_limb_t
-#if __STDC__
 mpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
 	      mp_ptr np, mp_size_t nsize,
 	      mp_srcptr dp)
-#else
-mpn_divrem_2 (qp, qxn, np, nsize, dp)
-     mp_ptr qp;
-     mp_size_t qxn;
-     mp_ptr np;
-     mp_size_t nsize;
-     mp_srcptr dp;
-#endif
 {
   mp_limb_t most_significant_q_limb = 0;
   mp_size_t i;

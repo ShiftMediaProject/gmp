@@ -7,7 +7,7 @@
    FUTURE GNU MP RELEASE.
 
 
-Copyright 1993, 1994, 1995, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -52,18 +52,9 @@ MA 02111-1307, USA. */
 
 
 mp_limb_t
-#if __STDC__
 mpn_sb_divrem_mn (mp_ptr qp,
 	       mp_ptr np, mp_size_t nsize,
 	       mp_srcptr dp, mp_size_t dsize)
-#else
-mpn_sb_divrem_mn (qp, np, nsize, dp, dsize)
-     mp_ptr qp;
-     mp_ptr np;
-     mp_size_t nsize;
-     mp_srcptr dp;
-     mp_size_t dsize;
-#endif
 {
   mp_limb_t most_significant_q_limb = 0;
   mp_size_t i;
