@@ -91,7 +91,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	    {
 	      --i;
 	      w0 = a[i];
-	      w1 = a[n3+i];
+	      w1 = a[n3 + i];
 	    }
 	  while (w0 == w1 && i != 0);
 	  if (w0 < w1)
@@ -119,7 +119,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	    {
 	      --i;
 	      w0 = b[i];
-	      w1 = b[n3+i];
+	      w1 = b[n3 + i];
 	    }
 	  while (w0 == w1 && i != 0);
 	  if (w0 < w1)
@@ -167,7 +167,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
       nm1 = n - 1;
       if (mpn_add_n (ws, p + n1, ws, nm1))
 	{
-	  mp_limb_t x = ws[nm1] + 1;
+	  mp_limb_t x = (ws[nm1] + 1) & GMP_NUMB_MASK;
 	  ws[nm1] = x;
 	  if (x == 0)
 	    ++ws[n];
@@ -177,7 +177,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	  mp_limb_t x;
 	  i = n1 + n3;
 	  do {
-	    x = p[i] + 1;
+	    x = (p[i] + 1) & GMP_NUMB_MASK;
 	    p[i] = x;
 	    ++i;
 	  } while (x == 0);
@@ -191,7 +191,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	{
 	  --i;
 	  w0 = a[i];
-	  w1 = a[n2+i];
+	  w1 = a[n2 + i];
 	}
       while (w0 == w1 && i != 0);
       sign = 0;
@@ -213,7 +213,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	{
 	  --i;
 	  w0 = b[i];
-	  w1 = b[n2+i];
+	  w1 = b[n2 + i];
 	}
       while (w0 == w1 && i != 0);
       if (w0 < w1)
@@ -250,7 +250,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
-      MPN_INCR_U (p + n2 + n, 2*n - (n2 + n), w);
+      MPN_INCR_U (p + n2 + n, 2 * n - (n2 + n), w);
     }
 }
 
@@ -282,7 +282,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 	    {
 	      --i;
 	      w0 = a[i];
-	      w1 = a[n3+i];
+	      w1 = a[n3 + i];
 	    }
 	  while (w0 == w1 && i != 0);
 	  if (w0 < w1)
@@ -337,7 +337,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       nm1 = n - 1;
       if (mpn_add_n (ws, p + n1, ws, nm1))   /* x^2+y^2-(x-y)^2 = 2xy */
 	{
-	  mp_limb_t x = ws[nm1] + 1;
+	  mp_limb_t x = (ws[nm1] + 1) & GMP_NUMB_MASK;
 	  ws[nm1] = x;
 	  if (x == 0)
 	    ++ws[n];
@@ -347,7 +347,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 	  mp_limb_t x;
 	  i = n1 + n3;
 	  do {
-	    x = p[i] + 1;
+	    x = (p[i] + 1) & GMP_NUMB_MASK;
 	    p[i] = x;
 	    ++i;
 	  } while (x == 0);
@@ -361,7 +361,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 	{
 	  --i;
 	  w0 = a[i];
-	  w1 = a[n2+i];
+	  w1 = a[n2 + i];
 	}
       while (w0 == w1 && i != 0);
       if (w0 < w1)
@@ -400,7 +400,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
-      MPN_INCR_U (p + n2 + n, 2*n - (n2 + n), w);
+      MPN_INCR_U (p + n2 + n, 2 * n - (n2 + n), w);
     }
 }
 
@@ -1011,9 +1011,9 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
   /** Final stage: add up the coefficients. **/
   tB += mpn_add_n (p + l, p + l, B, l2);
   tD += mpn_add_n (p + l3, p + l3, D, l2);
-  MPN_INCR_U (p + l3, 2*n - l3, tB);
-  MPN_INCR_U (p + l4, 2*n - l4, tC);
-  MPN_INCR_U (p + l5, 2*n - l5, tD);
+  MPN_INCR_U (p + l3, 2 * n - l3, tB);
+  MPN_INCR_U (p + l4, 2 * n - l4, tC);
+  MPN_INCR_U (p + l5, 2 * n - l5, tD);
 }
 
 /*-- mpn_toom3_sqr_n --------------------------------------------------------------*/
@@ -1109,17 +1109,17 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
   /** Final stage: add up the coefficients. **/
   tB += mpn_add_n (p + l, p + l, B, l2);
   tD += mpn_add_n (p + l3, p + l3, D, l2);
-  MPN_INCR_U (p + l3, 2*n - l3, tB);
-  MPN_INCR_U (p + l4, 2*n - l4, tC);
-  MPN_INCR_U (p + l5, 2*n - l5, tD);
+  MPN_INCR_U (p + l3, 2 * n - l3, tB);
+  MPN_INCR_U (p + l4, 2 * n - l4, tC);
+  MPN_INCR_U (p + l5, 2 * n - l5, tD);
 }
 
 void
 mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
 {
   ASSERT (n >= 1);
-  ASSERT (! MPN_OVERLAP_P (p, 2*n, a, n));
-  ASSERT (! MPN_OVERLAP_P (p, 2*n, b, n));
+  ASSERT (! MPN_OVERLAP_P (p, 2 * n, a, n));
+  ASSERT (! MPN_OVERLAP_P (p, 2 * n, b, n));
 
   if (n < MUL_KARATSUBA_THRESHOLD)
     mpn_mul_basecase (p, a, n, b, n);
