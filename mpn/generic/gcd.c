@@ -245,7 +245,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 
 	  if ((up[0] & 1) == 0)			/* Result even; remove twos. */
 	    {
-	      unsigned long int r;
+	      unsigned int r;
 	      count_trailing_zeros (r, up[0]);
 	      mpn_rshift (anchor_up, up, usize, r);
 	      usize -= (anchor_up[usize-1] == 0);
@@ -346,7 +346,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 	    up += 1, usize -= 1;
 	  if ((up[0] & 1) == 0)
 	    {
-	      unsigned long int r;
+	      unsigned int r;
 	      count_trailing_zeros (r, up[0]);
 	      mpn_rshift (up, up, usize, r);
 	      usize -= (up[usize-1] == 0);
