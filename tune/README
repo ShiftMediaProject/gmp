@@ -366,7 +366,8 @@ various algorithm thresholds.
    KARATSUBA_SQR_THRESHOLD
 
       Squaring is essentially the same as multiplying, so the above applies
-      to squaring too.  Overheads will, proportionally, be slightly bigger.
+      to squaring too.  Fixed overheads will, proportionally, be bigger when
+      squaring, leading to a higher threshold usually.
 
       mpn/generic/sqr_basecase.c
 
