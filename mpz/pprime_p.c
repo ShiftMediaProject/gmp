@@ -143,7 +143,7 @@ mpz_probab_prime_p (m, reps)
   mpz_init (q);
 
   /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
-  k = mpz_scan1 (n_minus_1, 0);
+  k = mpz_scan1 (n_minus_1, 0L);
   mpz_tdiv_q_2exp (q, n_minus_1, k);
 
   is_prime = 1;
@@ -192,7 +192,7 @@ millerrabin (n, n_minus_1, x, y, q, k)
   do
     {
       mpz_random (x, mpz_size (n));
-      mpz_mmod (x, x, n);
+      mpz_mod (x, x, n);
     }
   while (mpz_cmp_ui (x, 1L) <= 0);
 
