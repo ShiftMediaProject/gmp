@@ -1,3 +1,79 @@
+2000-04-30  Kevin Ryde  <kevin@swox.se>
+
+	* tune/* (GCD_ACCEL_THRESHOLD, GCDEXT_THRESHOLD): Tune these.
+
+	* mpn/generic/gcdext.c (GCDEXT_THRESHOLD): Rename from THRESHOLD,
+	use with >=, adjust default to 17 accordingly.
+	Use new *_SWAP macros.
+
+	* mpn/generic/gcd.c (GCD_ACCEL_THRESHOLD): Rename from
+	ACCEL_THRESHOLD, use with >=, adjust default to 5 accordingly.
+	Use new *_SWAP macros.
+
+	* mpf/get_str.c, mpf/set_str.c, mpf/sub.c, mpz/add.c, mpz/ior.c,
+	mpz/and.c, mpz/sub.c, mpz/xor.c, mpz/ui_pow_ui.c,
+	mpn/generic/mul.c: Use new *_SWAP macros.
+
+	* stack-alloc.h: Add extern "C" around prototypes.
+
+	* gmp-impl.h: (MP_PTR_SWAP, etc): New macros.
+	(_mp_allocate_func, etc): Use _PROTO.
+	[TUNE_PROGRAM_BUILD]: More changes in tune program build part.
+
+2000-04-29  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h [TUNE_PROGRAM_BUILD] (TOOM3_MUL_THRESHOLD_LIMIT): New
+	define.
+	* mpn/generic/mul_n.c [TUNE_PROGRAM_BUILD] (mpn_mul_n): Use
+	TOOM3_MUL_THRESHOLD_LIMIT, not a hard coded 500.
+
+	* memory.c: Use <stdlib.h> for malloc etc, and use _PROTO.
+	* stack-alloc.c: Don't use C++ reserved word "this".
+	* urandom.h: Put extern "C" around prototypes.
+	* mpz/powm.c: Switch a couple of parameters to "const", which they
+	are, to satisfy g++.
+
+	* randraw.c, stack-alloc.c, mpbsd/mout.c, mpbsd/mtox.c: Add casts to
+	help g++.
+
+	* stack-alloc.c: Provide dual ANSI/K&R function definitions.
+	* mpz/addmul_ui.c,get_d.c,inp_str.c,perfpow.c,powm.c,pprime_p.c,
+	rrandomb.c,set_str.c,ui_pow_ui.c: Ditto.
+	* mpf/integer.c,set_str.c: Ditto.
+	* mpbsd/min.c,xtom.c: Ditto.
+	* mpn/generic/bz_divrem_n.c,dump.c,gcd_1.c,get_str.c,hamdist.c,
+	popcount.c,random.c,random2.c,set_str.c: Ditto.
+
+	* rand.c: Use <stdio.h> for NULL.
+	* mpz/gcd_ui.c,gcdext.c,mul.c,perfpow.c,powm_ui.c,root.c,sqrt.c,
+	sqrtrem.c: Ditto
+	* mpf/sqrt.c,sqrt_ui.c: Ditto.
+	* mpn/generic/perfsqr.c,sqrtrem.c: Ditto.
+
+	* gmp-impl.h (NULL, malloc, realloc, free): Don't define/declare.
+	(extern "C"): Add around function prototypes.
+	(mpn_kara_mul_n, mpn_kara_sqr_n, mpn_toom3_mul_n, mpn_toom3_sqr_n):
+	Add prototypes.
+	[TUNE_PROGRAM_BUILD] (FIB_THRESHOLD): Add necessary redefinitions for
+	use by tune program.
+	* mpn/generic/mul_n.c: Remove mpn_toom3_mul_n prototype.
+
+	* acinclude.m4 (GMP_C_ANSI2KNR): New macro.
+	(GMP_CHECK_ASM_MMX, GMP_CHECK_ASM_SHLDL_CL): Fix to use
+	$gmp_cv_check_asm_text which is what GMP_CHECK_ASM_TEXT sets.
+	* configure.in (GMP_C_ANSI2KNR): Use this instead of AM_C_PROTOTYPES,
+	for reasons described with its definition.
+
+	* demos/Makefile.am (ansi2knr): Use $(top_builddir) nor $(top_srcdir).
+
+	* mpz/fib_ui.c (FIB_THRESHOLD): Rename from FIB_THRES, for consistency.
+	(FIB_THRESHOLD): Conditionalize so gmp-mparam.h can define a value.
+	(mpz_fib_bigcase): Use >= FIB_THRESHOLD, same as main mpz_fib_ui.
+	* tune/tuneup.c,Makefile.am (FIB_THRESHOLD): Tune this.
+
+	* configure.in (*-*-aix* gmp_m4postinc): Fix setting (don't overwrite
+	a value just stored).
+
 2000-04-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/hppa/hppa1_1/udiv_qrnnd.S: New name for udiv_qrnnd.s.
