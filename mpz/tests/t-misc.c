@@ -28,11 +28,11 @@ MA 02111-1307, USA.
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
-#ifndef LONG_BIT
-#define LONG_BIT  (sizeof(long) * 8)
+#ifndef BITS_PER_LONGINT
+#define BITS_PER_LONGINT  (sizeof(long) * 8)
 #endif
 
-#define ULONG_HIGHBIT  ((unsigned long) 1 << (LONG_BIT-1))
+#define ULONG_HIGHBIT  ((unsigned long) 1 << (BITS_PER_LONGINT-1))
 #define LONG_HIGHBIT   ((long) ULONG_HIGHBIT)
 
 #ifndef LONG_MAX
