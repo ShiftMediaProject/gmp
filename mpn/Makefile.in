@@ -83,7 +83,7 @@ hamdist.o: hamdist.c $(H)
 inlines.o: inlines.c $(srcdir)/../gmp.h
 mul.o: mul.c $(H)
 mod_1.o: mod_1.c $(H) $(L)
-mul_basecase.o: mul_basecase.c $(H) $(L)
+# mul_basecase.o: mul_basecase.c $(H) $(L)
 mul_n.o: mul_n.c $(H)
 perfsqr.o: perfsqr.c $(H) $(L)
 popcount.o: popcount.c $(H)
