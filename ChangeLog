@@ -20,6 +20,15 @@ MA 02111-1307, USA.
 
 2004-09-11  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/mul_2.asm: New file.
+	* mpn/ia64/addmul_2.asm: New file.
+
+	* mpn/ia64/addmul_1.asm: Tune a cycle from prologue.
+
+	* mpn/ia64/lorrshift.asm: Insert stops after several branches.
+	* mpn/ia64/aorslsh1_n.asm: Likewise.
+	* mpn/ia64/rsh1aors_n.asm: Likewise.
+	
 	* mpn/generic/sqr_basecase.c: In variant for HAVE_NATIVE_mpn_addmul_2,
 	accumulate carry also for when HAVE_NATIVE_mpn_addlsh1_n.
 
