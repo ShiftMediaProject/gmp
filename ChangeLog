@@ -1,3 +1,17 @@
+2001-05-06  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k7/dive_1.asm: New file.
+	* mpn/x86/k7/gcd_1.asm: New file.
+	* mpn/asm-defs.m4 (m4_count_trailing_zeros): New macro.
+
+	* gmp-h.in (mpz_get_ui, mpz_getlimbn, mpz_set_q, mpz_perfect_square_p,
+	mpz_popcount, mpz_size, mpf_set_ui, mpf_set_si, mpf_size): Provide
+	these as "extern inlines".
+	Use just one big extern "C" block.
+	* mpz/getlimbn.c, mpz/get_ui.c, mpz/perfsqr.c, mpz/popcount.c
+	mpz/set_q.c, mpz/size.c, mpf/set_si.c, mpf/set_ui.c, mpf/size.c: Use
+	__GMP_FORCE to get code from gmp.h.
+	
 2001-05-03  Kevin Ryde  <kevin@swox.se>
 
 	* extract-dbl.c: Add ASSERT d>=0.
