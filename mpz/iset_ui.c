@@ -1,7 +1,8 @@
-/* mpz_init_set_ui(val) -- Make a new multiple precision number with
-   value val.
+/* mpz_init_set_ui(dest,val) -- Make a new multiple precision in DEST and
+   assign VAL to the new number.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,10 +25,24 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-mpz_init_set_ui (mpz_ptr x, unsigned long int val)
+mpz_init_set_ui (mpz_ptr dest, unsigned long int val)
 {
-  x->_mp_alloc = 1;
-  x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
-  x->_mp_d[0] = val;
-  x->_mp_size = val != 0;
+  mp_size_t size;
+
+  dest->_mp_alloc = 1;
+  dest->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+
+  dest->_mp_d[0] = val & GMP_NUMB_MASK;
+  size = val != 0;
+
+#if GMP_NAIL_BITS != 0
+  if (val > GMP_NUMB_MAX)
+    {
+      MPZ_REALLOC (dest, 2);
+      dest->_mp_d[1] = val >> GMP_NUMB_BITS;
+      size = 2;
+    }
+#endif
+
+  dest->_mp_size = size;
 }
