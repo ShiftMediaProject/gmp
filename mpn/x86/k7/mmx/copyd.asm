@@ -128,7 +128,7 @@ L(finish_not_two):
 
 L(done):
 	movl	SAVE_EBX, %ebx
-	femms
+	emms
 	ret
 
 
