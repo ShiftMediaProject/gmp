@@ -1,10 +1,10 @@
-Changes between MP version 2.1 and 3.0
+Changes between MP version 2.0 and 3.0
 
-* Source level compatibility with past releases.
-* Bug fixes.
+* Source level compatibility with past releases (except mpn_gcd).
+* Many bug fixes.
 * Switch to autoconf/automake/libtool.
 * Multiplication and squaring using 3-way Toom-Cook.
-* Division using Newton's method.
+* Division using the Burnikel-Ziegler method.
 * Binomial coefficients: mpz_bin_ui, mpz_bin_uiui.
 * Fibonacci numbers: mpz_fib_ui.
 * Random number generators: mpf_urandomb, mpz_rrandomb, mpz_urandomb,
@@ -20,20 +20,11 @@ Changes between MP version 2.1 and 3.0
 * New mpn functions: mpn_divexact_by3.
 * New CPU support: DEC Alpha 21264, AMD K6 and Athlon, HPPA 2.0 and 64,
   Intel PentiumPro and P-II, Sparc 64, PowerPC 64.
-
-Changes between MP version 2.0 and 2.1
-
-* Support for a new memory-saving mode.  Compile applications that need less
-  than 315000 decimal digits with -DGMP_SMALL.
-* Almost 10 times faster mpz_gcd, mpz_invert, and mpn_gcdext.
-
-Changes between MP version 2.0.2 and 2.0.3
-
-* Bug fixes.
-* Interface of mpn_gcd has changed.  Please see the manual.
+* Almost 10 times faster mpz_invert and mpn_gcdext.
+* The interface of mpn_gcd has changed.
 * Better support for MIPS R4x000 and R5000 under Irix 6.
 * New function: mpz_getlimbn.
-* Better support for SPARC (assembly code now really used!).
+* Improved support for SPARCv8 and SPARCv9 processors.
 
 Changes between MP version 2.0 and 2.0.2
 
