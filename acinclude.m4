@@ -45,7 +45,7 @@ define(POWERPC64_PATTERN,
 [[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-* | powerpc970-*-*]])
 
 define(X86_PATTERN,
-[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-* | x86_64-*-*]])
+[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-*]])
 
 
 dnl  GMP_FAT_SUFFIX(DSTVAR, DIRECTORY)
@@ -1670,8 +1670,10 @@ AC_CACHE_CHECK([how to switch to read-only data section],
 dnl Default to DATA on CPUs with split code/data caching, and TEXT
 dnl elsewhere.  i386 means generic x86, so use DATA on it.
 case $host in
-X86_PATTERN) gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
-*)           gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
+X86_PATTERN | x86_64-*-*)
+  gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
+*)
+  gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
 
 cat >conftest.c <<EOF
