@@ -1,6 +1,6 @@
 /* mpf_set_q (mpf_t rop, mpq_t op) -- Convert the rational op to the float rop.
 
-Copyright 1996, 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -37,6 +37,8 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
   mp_exp_t exp;
   TMP_DECL (marker);
 
+  ASSERT (SIZ(&q->_mp_den) > 0);  /* canonical q */
+
   nsize = SIZ (&q->_mp_num);
   dsize = SIZ (&q->_mp_den);
 
@@ -53,9 +55,8 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
 
   qp = PTR (r);
 
-  sign_quotient = nsize ^ dsize;
+  sign_quotient = nsize;
   nsize = ABS (nsize);
-  dsize = ABS (dsize);
   np = PTR (&q->_mp_num);
   dp = PTR (&q->_mp_den);
 
