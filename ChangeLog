@@ -1,3 +1,19 @@
+2000-06-16  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (k5*-*-*): Set to use basic i386 code.  (Until we
+	know what's good on it.)
+
+	* acinclude.m4 (GMP_CHECK_ASM_ALIGN_LOG): Generate
+	ALIGN_LOGARITHMIC setting, not a full ALIGN definition.
+	(GMP_CHECK_ASM_ALIGN_FILL_0x90): New test.
+	* configure.in [x86-*-*]: Use GMP_CHECK_ASM_ALIGN_FILL_0x90.
+	* mpn/asm-defs.m4 (ALIGN): New macro.
+	* mpn/x86/x86-defs.m4 (ALIGN): Remove supplementary definition.
+
+	* tune/*: Plain "unsigned" for speed_cyclecounter.
+	* configure.in: Use tune/sparcv9.asm for 32 and 64 bit modes.
+	* tune/sparc64.asm: Remove file.
+
 2000-06-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/k7/mmx/copyi.asm: Use `testb' instead of `test'.
