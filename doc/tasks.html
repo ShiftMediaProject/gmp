@@ -569,8 +569,11 @@ MA 02111-1307, USA.
      Bagnara.
 <li> <code>mpf_get_ld</code>, <code>mpf_set_ld</code>: Conversions between
      <code>mpf_t</code> and <code>long double</code>, suggested by Dan
-     Christensen.  Other <code>long double</code> routines would be desirable
+     Christensen.  Other <code>long double</code> routines might be desirable
      too, but <code>mpf</code> would be a start.
+     <br>
+     <code>long double</code> is an ANSI-ism, so everything involving it would
+     need to be suppressed on a K&R compiler.
      <br>
      There'd be some work to be done by <code>configure</code> to recognise
      the format in use, MPFR has a start on this.  Often <code>long
