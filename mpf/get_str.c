@@ -181,7 +181,6 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
       /* We need to multiply number by base^n to get an n_digits integer part.  */
       mp_size_t n_more_limbs_needed, ign, off;
       unsigned long e;
-      mp_size_t fracn;
 
       n_more_limbs_needed = n_limbs_needed - ue;
       e = (unsigned long) n_more_limbs_needed * (GMP_NUMB_BITS * mp_bases[base].chars_per_bit_exactly);
