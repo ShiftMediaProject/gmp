@@ -76,9 +76,9 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
       n1 = mptr[msize - 1];
       count_leading_zeros (x, n1);
 
-	/* BIT_POS should be R when input ends in least sign. nibble,
-	   R + bits_per_digit * n when input ends in n:th least significant
-	   nibble. */
+      /* BIT_POS should be R when input ends in least sign. nibble,
+         R + bits_per_digit * n when input ends in n:th least significant
+         nibble. */
 
       {
 	int bits;
@@ -117,6 +117,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
     {
       /* General case.  The base is not a power of 2.  Make conversion
 	 from least significant end.  */
+      mp_limb_t n1;
 #if USE_PREINV_DIVREM_1
       unsigned   normalization_steps;
       mp_limb_t  big_base_inverted;
@@ -129,11 +130,9 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 		 * __mp_bases[base].chars_per_bit_exactly) + 1;
       s += out_len;
 
-      for (;;)
-	{
+      while (msize > 1)
+        {
 	  int i;
-	  mp_limb_t n1;
-
           n1 = MPN_DIVREM_OR_PREINV_DIVREM_1 (mptr, (mp_size_t) 0,
                                               mptr, msize, big_base,
                                               big_base_inverted,
@@ -142,27 +141,21 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 
 	  /* Convert N1 from BIG_BASE to a string of digits in BASE
 	     using single precision operations.  */
-	  if (msize == 0)
-	    {
-	      while (n1 != 0)
-		{
-		  *--s = n1 % base;
-		  n1 /= base;
-		}
-	      break;
-	    }
-	  else
-	    {
-	      for (i = dig_per_u - 1; i >= 0; i--)
-		{
-		  *--s = n1 % base;
-		  n1 /= base;
-		}
-	    }
+          for (i = dig_per_u - 1; i >= 0; i--)
+            {
+              *--s = n1 % base;
+              n1 /= base;
+            }
 	}
 
-      ASSERT (s >= str);
+      n1 = mptr[0];
+      while (n1 != 0)
+        {
+          *--s = n1 % base;
+          n1 /= base;
+        }
 
+      ASSERT (s >= str);
       while (s != str)
 	*--s = 0;
 
