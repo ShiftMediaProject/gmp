@@ -836,6 +836,77 @@ m4_assert_numargs(1)
 ')')')
 
 
+dnl  The following m4_list functions take a list as multiple arguments.
+dnl  Arguments are evaluated multiple times, there's no attempt at strict
+dnl  quoting.  Empty list elements are not allowed, since an empty final
+dnl  argument is ignored.  These restrictions don't affect the current uses,
+dnl  and make the implementation easier.
+
+
+dnl  Usage: m4_list_quote(list,...)
+dnl
+dnl  Produce a list with quoted commas, so it can be a single argument
+dnl  string.  For instance m4_list_quote(a,b,c) gives
+dnl
+dnl         a`,'b`,'c`,'
+dnl
+dnl  This can be used to put a list in a define,
+dnl
+dnl         define(foolist, m4_list_quote(a,b,c))
+dnl
+dnl  Which can then be used for instance as
+dnl
+dnl         m4_list_find(target, foolist)
+
+define(m4_list_quote,
+`ifelse(`$1',,,
+`$1`,'m4_list_quote(shift($@))')')
+
+
+dnl  Usage: m4_list_find(key,list,...)
+dnl
+dnl  Evaluate to 1 or 0 according to whether key is in the list elements.
+
+define(m4_list_find,
+m4_assert_numargs_range(1,1000)
+`ifelse(`$2',,0,
+`ifelse(`$1',`$2',1,
+`m4_list_find(`$1',shift(shift($@)))')')')
+
+
+dnl  Usage: m4_list_remove(key,list,...)
+dnl
+dnl  Evaluate to the given list with `key' removed (if present).
+
+define(m4_list_remove,
+m4_assert_numargs_range(1,1000)
+`ifelse(`$2',,,
+`ifelse(`$1',`$2',,`$2,')dnl
+m4_list_remove(`$1',shift(shift($@)))')')
+
+
+dnl  Usage: m4_list_first(list,...)
+dnl
+dnl  Evaluate to the first element of the list (if any).
+
+define(m4_list_first,`$1')
+
+
+dnl  Usage: m4_list_count(list,...)
+dnl
+dnl  Evaluate to the number of elements in the list.  This can't just use $#
+dnl  because the last element might be empty.
+
+define(m4_list_count,
+`m4_list_count_internal(0,$@)')
+
+dnl  Called: m4_list_internal(count,list,...)
+define(m4_list_count_internal,
+m4_assert_numargs_range(1,1000)
+`ifelse(`$2',,$1,
+`m4_list_count_internal(eval($1+1),shift(shift($@)))')')
+
+
 dnl  --------------------------------------------------------------------------
 dnl  Various assembler things, not specific to any particular CPU.
 dnl
@@ -1213,27 +1284,99 @@ dnl  it's redefined by CPU specific m4 files.
 define(ASM_START)
 
 
-dnl  Usage: PROLOGUE(foo)
+dnl  Usage: PROLOGUE(foo[,param])
 dnl         EPILOGUE(foo)
 dnl
-dnl  Emit directives to start and end a function.  Notice that GSYM_PREFIX
-dnl  is added to the name given, so from C the function is simply called
-dnl  foo().
+dnl  Emit directives to start or end a function.  GSYM_PREFIX is added by
+dnl  these macros if necessary, so the given "foo" is what the function will
+dnl  be called in C.
 dnl
-dnl  The defaults here are something typical and sensible, but CPU or system
-dnl  specific m4 files redefine it as necessary.
+dnl  The second parameter to PROLOGUE is used only for some CPUs and should
+dnl  be omitted if not required.
+dnl
+dnl  Nested or overlapping PROLOGUE/EPILOGUE pairs are allowed, if that
+dnl  makes sense for the system.  The name given to EPILOGUE must be a
+dnl  currently open PROLOGUE.
+dnl
+dnl  If only one PROLOGUE is open then the name can be omitted from
+dnl  EPILOGUE.  This is encouraged, since it means the name only has to
+dnl  appear in one place, not two.
 
 define(PROLOGUE,
-m4_assert_defined(`GSYM_PREFIX')
+m4_assert_numargs_range(1,2)
+`define(`PROLOGUE_list',m4_list_quote($1,PROLOGUE_list))dnl
+ifelse(`$2',,
+`PROLOGUE_cpu(GSYM_PREFIX`$1')',
+`PROLOGUE_cpu(GSYM_PREFIX`$1',`$2')')')
+
+define(EPILOGUE,
+m4_assert_numargs_range(0,1)
+`ifelse(`$1',,
+`ifelse(m4_list_count(PROLOGUE_list),0,
+`m4_error(`no open functions for EPILOGUE
+')',
+`ifelse(m4_list_count(PROLOGUE_list),1,
+`EPILOGUE_internal(PROLOGUE_current_function)',
+`m4_error(`more than one open function for EPILOGUE
+')')')',
+`EPILOGUE_internal(`$1')')')
+
+define(EPILOGUE_internal,
+m4_assert_numargs(1)
+m4_assert_defined(`EPILOGUE_cpu')
+`ifelse(m4_list_find($1,PROLOGUE_list),0,
+`m4_error(`EPILOGUE without PROLOGUE: $1
+')')dnl
+define(`PROLOGUE_list',m4_list_quote(m4_list_remove($1,PROLOGUE_list)))dnl
+EPILOGUE_cpu(GSYM_PREFIX`'$1)')
+
+dnl  Currently open PROLOGUEs, as a comma-separated list.
+define(PROLOGUE_list)
+
+
+dnl  Called: PROLOGUE_check(list,...)
+dnl  Check there's no remaining open PROLOGUEs at the end of input.
+define(PROLOGUE_check,
+`ifelse($1,,,
+`m4_error(`no EPILOGUE for: $1
+')dnl
+PROLOGUE_check(shift($@))')')
+
+m4wrap_prepend(`PROLOGUE_check(PROLOGUE_list)')
+
+
+dnl  Usage: PROLOGUE_current_function
+dnl
+dnl  This macro expands to the current PROLOGUE/EPILOGUE function, or the
+dnl  most recent PROLOGUE if such pairs are nested or overlapped.
+
+define(PROLOGUE_current_function,
+m4_assert_numargs(-1)
+`m4_list_first(PROLOGUE_list)')
+
+
+dnl  Usage: PROLOGUE_cpu(GSYM_PREFIX`'foo[,param])
+dnl         EPILOGUE_cpu(GSYM_PREFIX`'foo)
+dnl
+dnl  These macros hold the CPU-specific parts of PROLOGUE and EPILOGUE.
+dnl  Both are called with the function name, with GSYM_PREFIX already
+dnl  prepended.
+dnl
+dnl  The definitions here are something typical and sensible, but CPU or
+dnl  system specific m4 files should redefine them as necessary.  The
+dnl  optional extra parameter to PROLOGUE_cpu is not expected and not
+dnl  accepted here.
+
+define(PROLOGUE_cpu,
+m4_assert_numargs(1)
 `	TEXT
 	ALIGN(8)
-	GLOBL	GSYM_PREFIX`$1' GLOBL_ATTR
-	TYPE(GSYM_PREFIX`$1',`function')
-GSYM_PREFIX`$1'LABEL_SUFFIX')
+	GLOBL	`$1' GLOBL_ATTR
+	TYPE(`$1',`function')
+`$1'LABEL_SUFFIX')
 
-define(`EPILOGUE',
-m4_assert_defined(`GSYM_PREFIX')
-`	SIZE(GSYM_PREFIX`$1',.-GSYM_PREFIX`$1')')
+define(EPILOGUE_cpu,
+`	SIZE(`$1',.-`$1')')
 
 
 dnl  Usage: L(name)
@@ -1244,7 +1387,9 @@ dnl
 dnl  LSYM_PREFIX might be L$, so defn() must be used to quote it or the L
 dnl  will expand again as the L macro, making an infinite recursion.
 
-define(`L',`defn(`LSYM_PREFIX')$1')
+define(`L',
+m4_assert_numargs(1)
+`defn(`LSYM_PREFIX')$1')
 
 
 dnl  Usage: INT32(label,value)
