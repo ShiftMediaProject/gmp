@@ -124,7 +124,7 @@ LDADD = $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
-  t-root t-mod2 t-jac
+  t-root t-jac
 
 
 TESTS = $(check_PROGRAMS)
@@ -136,8 +136,7 @@ check_PROGRAMS =  t-mul$(EXEEXT) t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) \
 t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-gcd$(EXEEXT) dive$(EXEEXT) \
 t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) logic$(EXEEXT) \
 bit$(EXEEXT) t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow_ui$(EXEEXT) \
-t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT) t-mod2$(EXEEXT) \
-t-jac$(EXEEXT)
+t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT) t-jac$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -199,11 +198,6 @@ t_jac_OBJECTS =  t-jac$U.$(OBJEXT)
 t_jac_LDADD = $(LDADD)
 t_jac_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_jac_LDFLAGS = 
-t_mod2_SOURCES = t-mod2.c
-t_mod2_OBJECTS =  t-mod2$U.$(OBJEXT)
-t_mod2_LDADD = $(LDADD)
-t_mod2_DEPENDENCIES =  $(top_builddir)/libgmp.la
-t_mod2_LDFLAGS = 
 t_mul_SOURCES = t-mul.c
 t_mul_OBJECTS =  t-mul$U.$(OBJEXT)
 t_mul_LDADD = $(LDADD)
@@ -250,8 +244,8 @@ CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c \
-t-fdiv.c t-fdiv_ui.c t-gcd.c t-jac.c t-mod2.c t-mul.c t-pow_ui.c \
-t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+t-fdiv.c t-fdiv_ui.c t-gcd.c t-jac.c t-mul.c t-pow_ui.c t-powm.c \
+t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -259,8 +253,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-jac.c t-mod2.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
-OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-mod2$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
+SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-jac.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -362,10 +356,6 @@ t-jac$(EXEEXT): $(t_jac_OBJECTS) $(t_jac_DEPENDENCIES)
 	@rm -f t-jac$(EXEEXT)
 	$(LINK) $(t_jac_LDFLAGS) $(t_jac_OBJECTS) $(t_jac_LDADD) $(LIBS)
 
-t-mod2$(EXEEXT): $(t_mod2_OBJECTS) $(t_mod2_DEPENDENCIES)
-	@rm -f t-mod2$(EXEEXT)
-	$(LINK) $(t_mod2_LDFLAGS) $(t_mod2_OBJECTS) $(t_mod2_LDADD) $(LIBS)
-
 t-mul$(EXEEXT): $(t_mul_OBJECTS) $(t_mul_DEPENDENCIES)
 	@rm -f t-mul$(EXEEXT)
 	$(LINK) $(t_mul_LDFLAGS) $(t_mul_OBJECTS) $(t_mul_LDADD) $(LIBS)
@@ -425,8 +415,6 @@ t-gcd_.c: t-gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gcd.c; then echo $(srcdir)/t-gcd.c; else echo t-gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gcd_.c
 t-jac_.c: t-jac.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-jac.c; then echo $(srcdir)/t-jac.c; else echo t-jac.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-jac_.c
-t-mod2_.c: t-mod2.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mod2.c; then echo $(srcdir)/t-mod2.c; else echo t-mod2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-mod2_.c
 t-mul_.c: t-mul.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mul.c; then echo $(srcdir)/t-mul.c; else echo t-mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-mul_.c
 t-pow_ui_.c: t-pow_ui.c $(ANSI2KNR)
@@ -447,12 +435,11 @@ bit_.$(OBJEXT) bit_.lo convert_.$(OBJEXT) convert_.lo dive_.$(OBJEXT) \
 dive_.lo io_.$(OBJEXT) io_.lo logic_.$(OBJEXT) logic_.lo \
 reuse_.$(OBJEXT) reuse_.lo t-2exp_.$(OBJEXT) t-2exp_.lo \
 t-fdiv_.$(OBJEXT) t-fdiv_.lo t-fdiv_ui_.$(OBJEXT) t-fdiv_ui_.lo \
-t-gcd_.$(OBJEXT) t-gcd_.lo t-jac_.$(OBJEXT) t-jac_.lo t-mod2_.$(OBJEXT) \
-t-mod2_.lo t-mul_.$(OBJEXT) t-mul_.lo t-pow_ui_.$(OBJEXT) t-pow_ui_.lo \
-t-powm_.$(OBJEXT) t-powm_.lo t-powm_ui_.$(OBJEXT) t-powm_ui_.lo \
-t-root_.$(OBJEXT) t-root_.lo t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo \
-t-tdiv_.$(OBJEXT) t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : \
-$(ANSI2KNR)
+t-gcd_.$(OBJEXT) t-gcd_.lo t-jac_.$(OBJEXT) t-jac_.lo t-mul_.$(OBJEXT) \
+t-mul_.lo t-pow_ui_.$(OBJEXT) t-pow_ui_.lo t-powm_.$(OBJEXT) t-powm_.lo \
+t-powm_ui_.$(OBJEXT) t-powm_ui_.lo t-root_.$(OBJEXT) t-root_.lo \
+t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo t-tdiv_.$(OBJEXT) t-tdiv_.lo \
+t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
