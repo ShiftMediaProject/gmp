@@ -1,5 +1,12 @@
 2000-04-12  Kevin Ryde  <kevin@swox.se>
 
+	* gmp-impl.h: Include config.h before TMP_ALLOC, so
+	--disable-alloca works.
+
+	* mpbsd/Makefile.am: Don't recompile top-level sources here.
+	* Makefile.am (libmp_la_DEPENDENCIES): Put objects here instead,
+	add errno.lo and stack-alloc.lo.
+
 	* mpn/asm-defs.m4: Add a test and message for the unsuitable SunOS m4.
 	* gmp.texi (Installing MP): Update note on SunOS m4 failure.
 
@@ -13,9 +20,6 @@
 	(Float Arithmetic): mpf_pow_ui now implemented, uncomment-out.
 	(Miscellaneous Float Functions): Add mpf_ceil, mpf_floor, mpf_trunc.
 	(Low-level Functions): Add mpn_random2, with mpn_random.
-
-	* mpbsd/Makefile.am (nodist_libmpbsd_la_SOURCES): Add errno.c.
-	* Makefile.am (MPBSD_OBJECTS): Add mpbsd/errno.lo.
 
 	* mpn/m68k/mc68020/udiv.S: Rename from udiv.s.
 	* mpn/m68k/mc68020/umul.S: Ditto.
