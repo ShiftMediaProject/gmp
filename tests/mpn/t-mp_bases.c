@@ -30,69 +30,28 @@ MA 02111-1307, USA. */
 int
 main (int argc, char *argv[])
 {
-  mp_limb_t  bb, h, l, bb_inv;
-  int        i, j;
+  mp_limb_t  want_bb, want_bb_inv;
+  int        base, want_chars_per_limb;
 
-  for (i = 2; i < numberof (mp_bases); i++)
+  want_chars_per_limb = refmpn_chars_per_limb (10);
+  if (MP_BASES_CHARS_PER_LIMB_10 != want_chars_per_limb)
     {
-      if (POW2_P (i))
-        {
-          count_trailing_zeros (j, i);
-          if (mp_bases[i].big_base != (mp_limb_t) j)
-            {
-              printf ("mp_bases[%d].big_base (trailing zeros) wrong\n", i);
-              abort ();
-            }
-        }
-      else
-        {
-          bb = 1;
-          for (j = 0; j < mp_bases[i].chars_per_limb; j++)
-            {
-              umul_ppmm (h, bb, bb, i);
-              if (h != 0 || (bb & GMP_NAIL_MASK) != 0)
-                {
-                  printf ("mp_bases[%d].chars_per_limb overflow\n", i);
-                  abort ();
-                }
-            }
-          umul_ppmm (h, l, bb, i);
-          if (h == 0 && (l & GMP_NAIL_MASK) == 0)
-            {
-              printf ("mp_bases[%d].chars_per_limb too small\n", i);
-              abort ();
-            }
-
-          if (mp_bases[i].big_base != bb)
-            {
-              printf ("mp_bases[%d].big_base wrong\n", i);
-              abort ();
-            }
-
-          invert_limb (bb_inv, bb << refmpn_count_leading_zeros (bb));
-          if (mp_bases[i].big_base_inverted != bb_inv)
-            {
-              printf ("mp_bases[%d].big_base_inverted wrong\n", i);
-              abort ();
-            }
-        }
-    }
-
-  if (MP_BASES_CHARS_PER_LIMB_10 != mp_bases[10].chars_per_limb)
-    {
-      printf ("MP_BASES_CHARS_PER_LIMB_10 not the same as mp_bases[10].chars_per_limb\n");
+      printf ("MP_BASES_CHARS_PER_LIMB_10 wrong\n");
       abort ();
     }
 
-  if (MP_BASES_BIG_BASE_10 != mp_bases[10].big_base)
+  want_bb = refmpn_big_base (10);
+  if (MP_BASES_BIG_BASE_10 != want_bb)
     {
-      printf ("MP_BASES_BIG_BASE_10 not the same as mp_bases[10].big_base\n");
+      printf ("MP_BASES_BIG_BASE_10 wrong\n");
       abort ();
     }
 
-  if (MP_BASES_BIG_BASE_INVERTED_10 != mp_bases[10].big_base_inverted)
+  want_bb_inv = refmpn_invert_limb
+    (want_bb << refmpn_count_leading_zeros (want_bb));
+  if (MP_BASES_BIG_BASE_INVERTED_10 != want_bb_inv)
     {
-      printf ("MP_BASES_BIG_BASE_INVERTED_10 not the same as mp_bases[10].big_base_inverted\n");
+      printf ("MP_BASES_BIG_BASE_INVERTED_10 wrong\n");
       abort ();
     }
 
@@ -101,6 +60,45 @@ main (int argc, char *argv[])
     {
       printf ("MP_BASES_NORMALIZATION_STEPS_10 wrong\n");
       abort ();
+    }
+
+  for (base = 2; base < numberof (mp_bases); base++)
+    {
+      if (POW2_P (base))
+        {
+          want_bb = refmpn_count_trailing_zeros (base);
+          if (mp_bases[base].big_base != want_bb)
+            {
+              printf ("mp_bases[%d].big_base (log2 of base) wrong\n", base);
+              abort ();
+            }
+        }
+      else
+        {
+          want_chars_per_limb = refmpn_chars_per_limb (base);
+          if (mp_bases[base].chars_per_limb != want_chars_per_limb)
+            {
+              printf ("mp_bases[%d].chars_per_limb wrong\n", base);
+              abort ();
+            }
+
+          want_bb = refmpn_big_base (base);
+          if (mp_bases[base].big_base != want_bb)
+            {
+              printf ("mp_bases[%d].big_base wrong\n", base);
+              abort ();
+            }
+
+#if USE_PREINV_DIVREM_1
+          want_bb_inv = refmpn_invert_limb
+            (want_bb << refmpn_count_leading_zeros (want_bb));
+          if (mp_bases[base].big_base_inverted != want_bb_inv)
+            {
+              printf ("mp_bases[%d].big_base_inverted wrong\n", base);
+              abort ();
+            }
+#endif
+        }
     }
 
   exit (0);
