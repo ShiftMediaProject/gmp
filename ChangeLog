@@ -32,6 +32,11 @@ MA 02111-1307, USA.
 	* tests/refmpn.c (refmpn_overlap_p): New function, independent of
 	MPN_OVERLAP_P.
 
+2001-10-31  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-powm.c: Print proper error message when finding
+	discrepancy.
+
 2001-10-31  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/mod_34lsub1.asm: New file.
@@ -48,7 +53,7 @@ MA 02111-1307, USA.
 	canonical inputs, where correctness depends on it.
 
 	* mpn/lisp/gmpasm-mode.el (comment-start-skip): Add "dnl".
-	
+
 2001-10-27  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c: Remove some unused variables.
