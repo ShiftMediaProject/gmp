@@ -152,3 +152,27 @@ mpf_set_str_or_abort (mpf_ptr f, const char *str, int base)
       abort();
     }
 }
+
+
+/* Exponentially distributed between 0 and 2^nbits-1, meaning the number of
+   bits in the result is uniformly distributed between 0 and nbits-1.
+
+   FIXME: This is not a proper exponential distribution, since the
+   probability function will have a stepped shape due to using a uniform
+   distribution after choosing how many bits.  */
+
+void
+mpz_erandomb (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
+{
+  mpz_urandomb (rop, rstate, 32);
+  nbits = mpz_get_ui (rop) % nbits;
+  mpz_urandomb (rop, rstate, nbits);
+}
+
+void
+mpz_erandomb_nonzero (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
+{
+  mpz_erandomb (rop, rstate, nbits);
+  if (mpz_sgn (rop) == 0)
+    mpz_set_ui (rop, 1L);
+}
