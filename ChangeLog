@@ -19,6 +19,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-04  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in: Rename _PROTO to __GMP_PROTO, and don't use #ifndef just
+	define it ourselves.
+	* gmp-impl.h: Provide _PROTO as an alias for __GMP_PROTO, to avoid big
+	edits internally, for the moment.
+
 2002-01-03  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.c (usage): Insert "\n\" into a string.
