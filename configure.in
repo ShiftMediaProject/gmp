@@ -95,7 +95,7 @@ esac],
 # wanted.
 #
 AC_ARG_ENABLE(cxx,
-AC_HELP_STRING([--enable-cxx],[enable C++ support [[default=detect]]]),
+AC_HELP_STRING([--enable-cxx],[enable C++ support [[default=no]]]),
 [case $enableval in
 yes|no|detect) ;;
 *) AC_MSG_ERROR([bad value $enableval for --enable-cxx, need yes/no/detect]) ;;
@@ -1551,7 +1551,7 @@ AC_HEADER_STDC
 AC_HEADER_TIME
 
 # Reasons for testing:
-#   sys/processor.h - solaris specific, but also present in macos
+#   sys/processor.h - solaris specific, though also present in macos
 #   sys/resource.h - not present in mingw
 #   sys/systemcfg.h - AIX specific
 #
