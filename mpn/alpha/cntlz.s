@@ -1,6 +1,6 @@
  # Alpha auxiliary for longlong.h's count_leading_zeros
 
- # Copyright (C) 1996 Free Software Foundation, Inc.
+ # Copyright (C) 1997 Free Software Foundation, Inc.
 
  # This file is part of the GNU MP Library.
 
@@ -45,8 +45,8 @@ __count_leading_zeros:
 
 	srl	$16,16,$1		# shift down 16 steps -> r1
 	subq	$0,16,$2		# generate new partial result count
-	cmovne	$1,$1,$16		# choose new r1 of non-zero
-	cmovne	$1,$2,$0		# choose new count of r1 was non-zero
+	cmovne	$1,$1,$16		# choose new r1 if non-zero
+	cmovne	$1,$2,$0		# choose new count if r1 was non-zero
 
 	srl	$16,8,$1
 	subq	$0,8,$2
