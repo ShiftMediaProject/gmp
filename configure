@@ -1350,6 +1350,7 @@ case ${target} in
 	family=x86;;
   k6*-*-*)
 	path="x86/k6/mmx x86/k6 x86/mmx x86"
+	extra_functions="com_n"
 	gmp_mulfunc_files="aors_n aorsmul_1 logops_n"
 	gmp_mf_aors_n="add_n sub_n"
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
@@ -1411,8 +1412,7 @@ esac
 
 case ${target} in
   i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
-# not yet, need to support size==0
-# extra_functions="$extra_functions copyi copyd";;
+  extra_functions="$extra_functions copyi copyd";;
 esac
 
 eval optcflags=\$gmp_optcflags_$CC
