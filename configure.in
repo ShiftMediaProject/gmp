@@ -588,11 +588,15 @@ fi
 
 
 case ${target} in
-  # rdtsc is in pentium and up, but not in i386 and i486
   [i[5-8]86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+    # rdtsc is in pentium and up, but not in i386 and i486
     AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 2,
     [How many limbs in a speed measuring cycle counter, if one exists])
     SPEED_CYCLECOUNTER_OBJS=pentium.lo
+    ;;
+  alpha*-*-*)
+    AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 1)
+    SPEED_CYCLECOUNTER_OBJS=alpha.lo
     ;;
   [sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-* | athlon-*-*])
     if test -n "$CC64"; then
