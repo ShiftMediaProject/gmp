@@ -352,7 +352,7 @@ const struct routine_t {
 
 struct choice_t {
   const struct routine_t  *p;
-  int                     r;
+  mp_limb_t               r;
   double                  scale;
   double                  time;
   int                     no_time;
