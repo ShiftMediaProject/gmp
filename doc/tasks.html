@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 16 Dec 2001.  An up-to-date version is available at
+  This file current as of 22 Dec 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -311,11 +311,26 @@ MA 02111-1307, USA.
      current-&gt;point += ROUND_UP (n),
      current-&gt;point - ROUND_UP (n))
 </pre>
+<li> <code>__mp_bases</code> has a lot of data for bases which are pretty much
+     never used.  Perhaps the table should just go up to base 16, and have
+     code to generate data above that, if and when required.  Naturally this
+     assumes the code would be smaller than the data saved.
+<li> <code>__mp_bases</code> field <code>big_base_inverted</code> is only used
+     if <code>USE_PREINV_DIVREM_1</code> is true, and could be omitted
+     otherwise, to save space.
 </ul>
 
 
 <h4>Machine Dependent Optimization</h4>
 <ul>
+<li> <code>udiv_qrnnd_preinv2norm</code>, the branch-free version of
+     <code>udiv_qrnnd_preinv</code>, might be faster on various pipelined
+     chips.  In particular the first <code>if (_xh != 0)</code> in
+     <code>udiv_qrnnd_preinv</code> might be roughly a 50/50 chance and might
+     branch predict poorly.  (The second test is probably almost always
+     false.)  Measuring with the tuneup program would be possible, but perhaps
+     a bit messy.  In any case maybe the default should be the branch-free
+     version.
 <li> Run the `tune' utility for more compiler/CPU combinations.  We would like
      to have gmp-mparam.h files in practically every implementation specific
      mpn subdirectory, and repeat each *_THRESHOLD for gcc and the system
@@ -647,6 +662,9 @@ MA 02111-1307, USA.
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
+<br> Sparc: The use of <code>-xtarget=native</code> with <code>cc</code> is
+     incorrect when cross-compiling, the target should be set according to the
+     configured <code>$host</code> CPU.
 <li> m68k: config.guess can detect 68000, 68010, CPU32 and 68020, but relies
      on system information for 030, 040 and 060.  Can they be identified by
      running some code?
