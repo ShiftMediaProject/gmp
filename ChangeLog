@@ -1,3 +1,29 @@
+2000-02-22  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k7/mul_basecase.asm: New file.
+	* mpn/x86/k7/README: Add mpn_mul_basecase speed.
+	* mpn/x86/k7/gmp-mparam.h: New file.
+
+	* mpn/x86/x86-defs.m4 (loop_or_decljnz,cmov_bytes): New macros.
+	* mpn/asm-defs.m4 (m4_ifdef_anyof_p): New macro.
+
+	* mpn/x86/k6/aorsmul_1.asm: New file.
+	* mpn/x86/k6/addmul_1.S: Removed (was a copy of pentium version).
+	* mpn/x86/k6/submul_1.S: Removed (was a copy of pentium version).
+
+	* mpn/x86/p6/aorsmul_1.asm: Use OPERATION_addmul_1 and
+	OPERATION_submul_1.
+	* mpn/x86/k6/aors_n.asm: Use OPERATION_add_n and OPERATION_sub_n.
+	* configure.in: Declare multi-function files for k6 and p6.
+
+	* configure.in: Add HAVE_TARGET_CPU_$target_cpu for config.m4.
+	* mpn/asm-defs.m4 (define_not_for_expansion): New macro.
+
+	* mpn/generic/divrem_1n.c (__gmpn_divrem_1n): New file, split from
+	mpn/generic/divrem_1.c.
+	* mpn/generic/divrem_1.c: Ditto.
+	* configure.in (gmp_mpn_functions): Ditto.
+
 2000-02-21  Linus Nordberg  <linus@swox.se>
 	
 	* configure.in: Link <src>/mpn/asm-defs.m4 to <build>mpn/asm.m4.
