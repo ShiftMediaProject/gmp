@@ -26,7 +26,7 @@ dnl  res_ptr	r16
 dnl  s1_ptr	r17
 dnl  size	r18
 
-dnl  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and ??
+dnl  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and 4
 dnl  cycles/limb on EV6.
 
 ASM_START()
@@ -37,22 +37,22 @@ PROLOGUE(mpn_sqr_diagonal)
 	umulh	r2,r2,r4	C r4 = prod_high
 	blt	r18,$Lend1	C jump if size was == 1
 	ldq	r2,8(r17)	C r2 = s1_limb
-	stq	r3,0(r16)
-	stq	r4,8(r16)
 	beq	r18,$Lend2	C jump if size was == 2
 
 	ALIGN(8)
-$Loop:	mulq	r2,r2,r3	C r3 = prod_low
+$Loop:	stq	r3,0(r16)
+	mulq	r2,r2,r3	C r3 = prod_low
 	lda	r18,-1(r18)	C size--
+	stq	r4,8(r16)
 	umulh	r2,r2,r4	C r4 = cy_limb
 	ldq	r2,16(r17)	C r2 = s1_limb
 	lda	r17,8(r17)	C s1_ptr++
-	stq	r3,16(r16)
-	stq	r4,24(r16)
 	lda	r16,16(r16)	C res_ptr++
 	bne	r18,$Loop
 
-$Lend2:	mulq	r2,r2,r3	C r3 = prod_low
+$Lend2:	stq	r3,0(r16)
+	mulq	r2,r2,r3	C r3 = prod_low
+	stq	r4,8(r16)
 	umulh	r2,r2,r4	C r4 = cy_limb
 	stq	r3,16(r16)
 	stq	r4,24(r16)
