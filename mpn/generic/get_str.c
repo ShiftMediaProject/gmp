@@ -192,7 +192,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 					 MP_BASES_BIG_BASE_INVERTED_10,
 					 MP_BASES_NORMALIZATION_STEPS_10);
 	  un -= rp[un] == 0;
-	  frac = rp[0] + 1;
+	  frac = (rp[0] + 1) << GMP_NAIL_BITS;
 	  s -= MP_BASES_CHARS_PER_LIMB_10;
 #if HAVE_HOST_CPU_FAMILY_x86
 	  /* The code below turns out to be a bit slower for x86 using gcc.
@@ -271,7 +271,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 					 big_base, big_base_inverted,
 					 normalization_steps);
 	  un -= rp[un] == 0;
-	  frac = rp[0] + 1;
+	  frac = (rp[0] + 1) << GMP_NAIL_BITS;
 	  s -= chars_per_limb;
 	  i = chars_per_limb;
 	  do
