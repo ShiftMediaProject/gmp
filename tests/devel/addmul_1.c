@@ -196,7 +196,9 @@ main (argc, argv)
       mpn_print (&xlimb, 1);
 #endif
 #ifdef PRINT
+      printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
       mpn_print (dy+1, size);
+      printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
       mpn_print (s1, size);
 #endif
 
@@ -215,6 +217,7 @@ main (argc, argv)
       if (cyx != cyy || mpn_cmp (dx, dy, size+2) != 0
 	  || dx[size+1] != 0x12345678 || dx[0] != 0x87654321)
 	{
+	  printf ("\n");
 #ifndef PRINT
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyx);
 	  mpn_print (dx+1, size);
@@ -224,11 +227,15 @@ main (argc, argv)
 	  printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "DIFF:");
 	  for (i = size; i != 0; i--)
 	    {
-	      mp_limb_t diff = dy[i] - dx[i];
+	      mp_limb_t diff = dy[i] ^ dx[i];
 	      if (diff != 0)
-		printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), diff);
+		printf ("%*lX", (int) (2 * sizeof(mp_limb_t)), diff);
 	      else
-		printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
+		printf ("%*s", (int) (2 * sizeof(mp_limb_t)), "");
+#ifdef SPACE
+	      if (i != 0)
+		printf (" ");
+#endif
 	    }
 	  printf ("\nTEST NUMBER %d\n", test);
 	  abort();
