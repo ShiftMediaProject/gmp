@@ -1,3 +1,32 @@
+1999-07-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divrem_1.c (__gmpn_divrem_1n): New function.
+
+	* mpn/generic/divrem_2.c: New file, code from divrem.c, `case 2:'.
+	* mpn/Makefile.in: Compile divrem_2.c.
+	* make.bat: Compile divrem_2.c.
+	* mpn/configure.in (functions): Add divrem_2.
+	* gmp.h: Declare mpn_divrem_2.
+	
+	* mpn/generic/divrem.c: Delete special cases, handle just divisors
+	of more than 2 limbs.
+	* gmp.h (mpn_divrem): Call mpn_divrem_1, mpn_divrem_2, as appropriate.
+
+	* mpn/generic/divrem.c: Rework variable usage for better register
+	allocation.
+
+1999-07-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev5/add_n.s: Rewrite for better ev6 speed.
+	* mpn/alpha/ev5/sub_n.s: Likewise.
+
+1999-07-21  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (alpha): Define umul_ppmm for cc.
+
+	* gmp-impl.h (DItype, UDItype): Define for non-gcc if _LONGLONG is
+	defined.
+
 1999-07-15  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (powerpc64 count_leading_zeros): Fix typo.
@@ -17,7 +46,7 @@
 	* mpn/configure.in: Suppress use of config/t-ppc-aix for now,
 	it seems compiler passes proper options.
 	* mpn/powerpc64/*.S: New files.
-	
+
 	* Makefile.in (FLAGS_TO_PASS): Pass "AR=$(AR)".
 
 1999-07-07  Torbjorn Granlund  <tege@swox.com>
@@ -39,7 +68,7 @@
 	* mpn/powerpc32/syntax.h: New file.
 	* gmp-impl.h: Don't use `__attribute__' syntax for Apple's perversion
 	of GCC.
-	
+
 1999-05-26  Linus Nordberg  <linus@swox.se>
 
 	* rand.c (gmp_rand_init): Fix typo.
@@ -107,7 +136,7 @@
 	* Makefile.in: Rename randi.c --> rand.c, randi_lc.c --> randlc.c,
 	randicom.c --> randcm.c.  Add randui.c, randcmui.c, randlcui.c.
 	* make.bat: Ditto.
-	
+
 	* gmp.h: Add prototypes for gmp_rand_init_ui() and
 	gmp_rand_init_lc_ui().
 	* gmp-impl.h: Add prototypes for __gmp_rand_init_common() and
@@ -220,7 +249,7 @@
 	* mpz/urandom.c (__gmp_rand_scheme): Add extra braces around the
 	mpz_t members.
 
-	* make.bat: Compile mpz/urandomc and mpf/urandom.c
+	* make.bat: Compile mpz/urandom.c and mpf/urandom.c
 
 1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
 
