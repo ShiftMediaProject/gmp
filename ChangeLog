@@ -1,5 +1,7 @@
 2000-12-05  Torbjorn Granlund  <tege@swox.com>
 
+	configure.in (*-*-aix): Pass -qmaxmem=20000 to xlc.
+
 	* mp-h.in: Renamed from mp.h.
 	Add #define for _LONG_LONG_LIMB.
 	Move some other fixes from gmp-h.in.
