@@ -1,3 +1,30 @@
+2001-01-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/addsub_n.S: Remove file, since it doesn't work and it upsets
+	tune/many.pl.
+
+	* mpz/jacobi.c: Rewrite, but still binary algorithm; accept zero and
+	negative denominators; merge mpz_jacobi and mpz_legendre, add
+	mpz_kronecker; use mpn directly, add special cases for size==1.
+	* gmp.texi (Number Theoretic Functions): Update.
+	* gmp-h.in (mpz_kronecker): Add prototype.
+	* gmp-impl.h (USE_LEADING_REGPARM): New macro.
+	* tests/mpz/t-jac.c: Test mpz_kronecker.
+	* mpz/legendre.c: Remove file.
+	* Makefile.am, mpz/Makefile.am: Update.
+
+	* longlong.h (alpha count_leading_zeros): Use __attribute__ ((const))
+	when possible, add parameter to prototype.
+	(ia64 udiv_qrnnd): Use for all compilers, not just gcc.
+	(pentium count_trailing_zeros): Use count_leading_zeros.
+
+	* acinclude.m4 (GMP_C_ATTRIBUTE_CONST, GMP_C_ATTRIBUTE_NORETURN): New
+	macros.
+	* configure.in: Use them.
+	* gmp-impl.h (ATTRIBUTE_CONST, ATTRIBUTE_NORETURN): New macros.
+	(mpn_invert_limb): Add ATTRIBUTE_CONST.
+	(__gmp_assert_fail): Add ATTRIBUTE_NORETURN.
+
 2001-01-18  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in, gmp-impl.h (__gmp_allocate_func, __gmp_reallocate_func,
