@@ -1,0 +1,235 @@
+
+                    X86 CPU FAMILY MPN SUBROUTINES
+
+
+This file has some notes on things common to all the x86 family code.
+
+
+
+ASM FILES
+
+The .asm files are BSD style x86 assembler code which is first put through
+m4 for macro processing.  Don't edit the resulting .s files, as changes
+there will be lost.  The generic mpn/asm-defs.m4 is used, together with
+mpn/x86/x86-defs.m4.  Detailed notes are in those files.
+
+
+
+STACK FRAME
+
+New code uses m4 macros to define the parameters passed on the stack, and
+these act like comments on what the stack frame looks like too.  For
+example, mpn_divmod_1 has the following.
+
+        defframe(PARAM_DIVISOR,16)
+        defframe(PARAM_SIZE,   12)
+        defframe(PARAM_SRC,    8)
+        defframe(PARAM_DST,    4)
+
+Here PARAM_DIVISOR gets defined as `FRAME+16(%esp)', and the others
+similarly.  The return address is at offset 0, but there's not normally any
+need to access that.
+
+FRAME is redefined as necessary through the code so it's the number of bytes
+pushed on the stack, and hence the offsets in the parameter macros stay
+correct.  At the start of a routine FRAME should be zero.
+
+        deflit(`FRAME',0)
+	...
+	deflit(`FRAME',4)
+	...
+	deflit(`FRAME',8)
+	...
+
+Helper macros FRAME_pushl(), FRAME_addl_esp() and FRAME_subl_esp() exist to
+adjust FRAME for the effect of those instructions, and can be used instead
+of explicit definitions if preferred.  defframe_pushl() is a combination
+FRAME_pushl() and defframe().
+
+There's generally some slackness in redefining FRAME.  If new values aren't
+going to get used, then the redefinitions are omitted to keep from
+cluttering up the code.  This happens for instance at the end of a routine,
+where there might be just four register pops and then a ret, so FRAME isn't
+getting used.
+
+Local variables and saved registers can be similarly defined, with negative
+offsets representing stack space below the initial stack pointer.  For
+example,
+
+	defframe(SAVE_ESI,    -4)
+	defframe(SAVE_EDI,    -8)
+	defframe(VAR_COUNTER, -12)
+
+	deflit(STACK_SPACE, 12)
+
+Here STACK_SPACE gets used in a "subl $STACK_SPACE, %esp" to allocate the
+stack space, and that instruction must be followed by a redefinition of
+FRAME (setting it equal to STACK_SPACE) to reflect the change in esp.
+
+Definitions for saved registers are only put in where they're going to be
+used.  If registers are just saved and restored with pushes and pops then
+they're omitted.
+
+
+
+
+SIMPLE LOOPS
+
+The overheads in setting up for an unrolled loop can mean that at small
+sizes a simple loop is faster.  Making small sizes go fast is important,
+even if it adds a cycle or two to bigger sizes.  To this end various
+routines choose between a simple loop and an unrolled loop according to
+operand size.  The execution path to the simple loop, or to special case
+code for small sizes, is always as fast as possible.
+
+Adding a simple loop requires a conditional jump to choose between the
+simple and unrolled code.  The size of a branch misprediction penalty
+affects whether a simple loop is worthwhile.
+
+The convention is to for an m4 definition UNROLL_THRESHOLD to set the
+crossover point, with sizes < UNROLL_THRESHOLD using the simple loop, sizes
+>= UNROLL_THRESHOLD using the unrolled loop.  If position independent code
+adds a couple of cycles to an unrolled loop setup, the threshold will vary
+with PIC or non-PIC.  Something like the following is typical.
+
+	ifdef(`PIC',`
+	deflit(UNROLL_THRESHOLD, 10)
+	',`
+	deflit(UNROLL_THRESHOLD, 8)
+	')
+
+There's no automated way to determine the threshold.  Setting it to a small
+value and then to a big value makes it possible to measure the simple and
+unrolled loops each over a range of sizes, from which the crossover point
+can be determined.  Alternately, just adjust the threshold up or down until
+there's no more speedups.
+
+
+
+UNROLLED LOOP CODING
+
+In the unrolled loops with computed jumps, addressing modes such as 0(%ebx)
+are used and the assembler must leave these as written.  If they're turned
+into (%ebx) they'll be one byte less code and this will upset the careful C
+code bytes per limb jump.
+
+The x86 addressing modes allow a byte displacement of -128 to +127, making
+it possible to access 256 bytes, which is 64 limbs, without adjusting
+pointer registers within the loop.  Word sized displacements can be used
+too, but they increase code size, and unrolling to 64 ought to be enough
+anyway.
+
+When unrolling to the full 64 limbs/loop, the limb at the top of the loop
+will have a displacement of -128, so pointers have to have a corresponding
++128 added before entering the loop.  When unrolling to 32 limbs/loop
+displacements 0 to 127 can be used with 0 at the top of the loop and no
+adjustment needed to the pointers.
+
+Where 64 limbs/loop is supported, the +128 adjustment is done only when 64
+limbs/loop is selected.  Usually the gain in speed using 64 instead of 32 or
+16 is small, so support for 64 limbs/loop is generally only for comparison.
+
+
+
+COMPUTED JUMPS
+
+When working from least significant limb to most significant limb (most
+routines) the computed jump and pointer calculations in preparation for an
+unrolled loop are as follows.
+
+	S = operand size in limbs
+	N = number of limbs per loop (ie. UNROLL_COUNT)
+	L = log2 of unrolling (ie. UNROLL_LOG2)
+	M = mask for unrolling (ie. UNROLL_MASK)
+	C = code bytes per limb in the loop
+	B = bytes per limb (ie. 4)
+	
+	computed jump            (-S & M) * C + entrypoint
+	subtract from pointers   (-S & M) * 4
+	initial loop counter     (S-1) >> L
+	displacements            0 to B*(N-1)
+
+The loop counter is decremented at the end of each loop, and the looping
+stops when the decrement takes the counter to -1.  The displacements are for
+the addressing accessing each limb, eg. a load with "movl disp(%ebx), %eax".
+
+Usually the multiply by C can be handled without an imul, using instead an
+lea, or a shift and subtract.
+
+When working from most significant to least significant limb (eg. mpn_lshift
+and mpn_copyb), the calculations change as follows.
+
+	add to pointers          (-S & M) * 4
+	displacements            0 to -B*(N-1)
+
+
+
+POSITION INDEPENDENT CODE
+
+Defining the symbol PIC for the m4 processing will select position
+independent code.  Calls from assembler code to some other function use the
+normal C procedure linkage table.  Computed jumps do their calculations in a
+self-contained fashion, without using the global offset table.
+
+PIC code is necessary for ELF shared libraries that can be mapped into
+different processes at different addresses.  Text relocations in shared
+libraries are supposed to be allowed, but that presumably means a page with
+such a relocation isn't shared.
+
+PIC adds a certain fixed cost to each routine, which is small but might be
+noticable when working with smallish size operands.  For maximum performance
+use non-PIC code and link with the plain static libgmp.a.
+
+
+
+GAS TWO FORWARD REFERENCES BUG
+
+The gas 1.92.3 that comes with FreeBSD 2.2.8 has a bug where an expression
+involving two forward references to labels comes out as zero.  For example,
+
+		addl	$bar-foo,%eax
+	foo:
+		nop
+	bar:
+
+This should lead to an "addl $1,%eax", but the bug makes it come out as
+"addl $0,%eax".  When only one forward reference is involved, it works
+correctly, as for example,
+
+	foo:
+		addl	$bar-foo,%eax
+		nop
+	bar:
+
+To support FreeBSD 2.2.8 it's necessary to work around this bug.  The only
+places it comes up is in a computed jump calculation for position
+independent code, and those calculations can normally be rearranged so they
+doesn't need two forward references.
+
+
+
+REFERENCES
+
+Intel Architecture Software Developer's Manual, volumes 1 to 3, 1999, order
+numbers 243190, 243191 and 243192.  Available on-line,
+
+	ftp://download.intel.com/design/PentiumII/manuals/243190.htm
+	ftp://download.intel.com/design/PentiumII/manuals/243191.htm
+	ftp://download.intel.com/design/PentiumII/manuals/243192.htm
+
+Intel386 Family Binary Compatibility Specification 2, Intel Corporation,
+published by McGraw-Hill, 1991, ISBN 0-07-031219-2.  (This has the x86
+calling conventions, but not much else of relevance.)
+
+System V Application Binary Interface, Unix System Laboratories Inc, 1992,
+published by Pretice Hall, ISBN 0-13-880410-9.  And the Intel386 Processor
+Supplement, AT&T, 1991, ISBN 0-13-877689-X.  (This has details of ELF shared
+library PIC coding.)
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
