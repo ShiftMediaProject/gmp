@@ -61,7 +61,7 @@ L1p1:	emul	r1,r6,$0,r10
 	adwc	$0,r11
 	movl	r10,(r9)+
 
-	jsobgtr	r7,Loop1
+	sobgtr	r7,Loop1
 	movl	r11,r0
 	ret
 
@@ -76,7 +76,7 @@ L1n1:	emul	r1,r6,$0,r10
 	adwc	r6,r11
 	movl	r10,(r9)+
 
-	jsobgtr	r7,Loop1
+	sobgtr	r7,Loop1
 	movl	r11,r0
 	ret
 
@@ -101,7 +101,7 @@ L2p1:	emul	r1,r6,$0,r10
 	adwc	r1,r11
 	movl	r10,(r9)+
 
-	jsobgtr	r7,Loop2
+	sobgtr	r7,Loop2
 	movl	r11,r0
 	ret
 
@@ -118,6 +118,6 @@ L2n1:	emul	r1,r6,$0,r10
 	adwc	r6,r11
 	movl	r10,(r9)+
 
-	jsobgtr	r7,Loop2
+	sobgtr	r7,Loop2
 	movl	r11,r0
 	ret

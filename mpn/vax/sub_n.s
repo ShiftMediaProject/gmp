@@ -42,7 +42,7 @@ Loop:
 	movl	(r2)+,r4
 	sbwc	(r1)+,r4
 	movl	r4,(r3)+
-	jsobgtr	r0,Loop
+	sobgtr	r0,Loop
 
 	adwc	r0,r0
 	ret
