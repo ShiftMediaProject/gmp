@@ -40,7 +40,7 @@ mpz_set_si (dest, val)
     }
   else if (val < 0)
     {
-      dest->_mp_d[0] = -val;
+      dest->_mp_d[0] = (unsigned long) -val;
       dest->_mp_size = -1;
     }
   else
