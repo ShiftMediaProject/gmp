@@ -44,7 +44,17 @@ tmp_host=`echo $host_cpu | sed 's/\./_/'`
 AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_$tmp_host)
 GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_HOST_CPU_$tmp_host')", POST)
 
+dnl  FIXME: AM_INIT_AUTOMAKE appends AM_DEPENDENCIES(CXX) to AC_PROG_CXX
+dnl  which has the effect of running AC_PROG_CXXCPP first in AC_PROG_CXX,
+dnl  which is both a bad thing (since it means "$CXX -E" won't work) and it
+dnl  also upsets GMP_PROG_CXX which would like to allow AC_PROG_CXX to fail
+dnl  (whereas AC_PROG_CXXCPP aborts if it fails).  For now avoid automake's
+dnl  redefine.
+dnl
+define(save_AC_PROG_CXX,defn([AC_PROG_CXX]))
 AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
+define([AC_PROG_CXX],defn([save_AC_PROG_CXX]))
+
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
