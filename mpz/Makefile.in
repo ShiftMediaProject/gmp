@@ -30,33 +30,35 @@ SHELL = /bin/sh
 #### host and target specific makefile fragments come in here.
 ###
 
-MPZ_SRCS = abs.c add.c add_ui.c addmul_ui.c and.c array_init.c cdiv_q.c \
+MPZ_SRCS = abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
+  bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c \
   cdiv_ui.c clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmp_abs.c cmp_abs_ui.c com.c \
   divexact.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c \
-  fdiv_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c get_str.c \
+  fdiv_ui.c fib_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c get_str.c \
   get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c \
-  out_raw.c out_str.c perfsqr.c popcount.c pow_ui.c powm.c \
-  powm_ui.c pprime_p.c random.c random2.c realloc.c scan0.c \
+  out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
+  powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c scan0.c \
   scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
   set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c \
   sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c xor.c
-MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o cdiv_q.o \
+MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o \
+  bin_ui.o bin_uiui.o cdiv_q.o \
   cdiv_q_ui.o cdiv_qr.o cdiv_qr_ui.o cdiv_r.o cdiv_r_ui.o \
   cdiv_ui.o clear.o clrbit.o cmp.o cmp_si.o cmp_ui.o cmp_abs.o \
   cmp_abs_ui.o com.o \
   divexact.o fac_ui.o fdiv_q.o fdiv_q_2exp.o fdiv_q_ui.o \
   fdiv_qr.o fdiv_qr_ui.o fdiv_r.o fdiv_r_2exp.o fdiv_r_ui.o \
-  fdiv_ui.o gcd.o gcd_ui.o gcdext.o get_d.o get_si.o get_str.o \
+  fdiv_ui.o fib_ui.o gcd.o gcd_ui.o gcdext.o get_d.o get_si.o get_str.o \
   get_ui.o getlimbn.o hamdist.o init.o inp_raw.o inp_str.o \
   invert.o ior.o iset.o iset_d.o iset_si.o iset_str.o iset_ui.o \
   jacobi.o lcm.o legendre.o mod.o mul.o mul_2exp.o mul_ui.o neg.o \
-  out_raw.o out_str.o perfsqr.o popcount.o pow_ui.o powm.o \
-  powm_ui.o pprime_p.o random.o random2.o realloc.o scan0.o \
+  out_raw.o out_str.o perfpow.o perfsqr.o popcount.o pow_ui.o powm.o \
+  powm_ui.o pprime_p.o random.o random2.o realloc.o remove.o root.o scan0.o \
   scan1.o set.o set_d.o set_f.o set_q.o set_si.o set_str.o \
   set_ui.o setbit.o size.o sizeinbase.o sqrt.o sqrtrem.o sub.o \
   sub_ui.o swap.o tdiv_ui.o tdiv_q.o tdiv_q_2exp.o tdiv_q_ui.o tdiv_qr.o \
@@ -89,6 +91,8 @@ add_ui.o: $(srcdir)/add_ui.c $(H)
 addmul_ui.o: $(srcdir)/addmul_ui.c $(H)
 and.o: $(srcdir)/and.c $(H)
 array_init.o: $(srcdir)/array_init.c $(H)
+bin_ui.o: $(srcdir)/bin_ui.c $(H) $(srcdir)/../longlong.h
+bin_uiui.o: $(srcdir)/bin_uiui.c $(H) $(srcdir)/../longlong.h
 cdiv_q.o: $(srcdir)/cdiv_q.c $(H)
 cdiv_q_ui.o: $(srcdir)/cdiv_q_ui.c $(H)
 cdiv_qr.o: $(srcdir)/cdiv_qr.c $(H)
@@ -115,6 +119,7 @@ fdiv_qr_ui.o: $(srcdir)/fdiv_qr_ui.c $(H)
 fdiv_r.o: $(srcdir)/fdiv_r.c $(H)
 fdiv_r_ui.o: $(srcdir)/fdiv_r_ui.c $(H)
 fdiv_ui.o: $(srcdir)/fdiv_ui.c $(H)
+fib_ui.o: $(srcdir)/fib_ui.c $(H)
 gcd.o: $(srcdir)/gcd.c $(H) $(srcdir)/../longlong.h
 gcd_ui.o: $(srcdir)/gcd_ui.c $(H)
 gcdext.o: $(srcdir)/gcdext.c $(H)
@@ -146,6 +151,7 @@ mul_ui.o: $(srcdir)/mul_ui.c $(H)
 neg.o: $(srcdir)/neg.c $(H)
 out_raw.o: $(srcdir)/out_raw.c $(H)
 out_str.o: $(srcdir)/out_str.c $(H)
+perfpow.o: $(srcdir)/perfpow.c $(H)
 perfsqr.o: $(srcdir)/perfsqr.c $(H)
 popcount.o: $(srcdir)/popcount.c $(H)
 pow_ui.o: $(srcdir)/pow_ui.c $(H) $(srcdir)/../longlong.h
@@ -155,6 +161,8 @@ pprime_p.o: $(srcdir)/pprime_p.c $(H)
 random.o: $(srcdir)/random.c $(H) $(srcdir)/../urandom.h
 random2.o: $(srcdir)/random2.c $(H)
 realloc.o: $(srcdir)/realloc.c $(H)
+remove.o: $(srcdir)/remove.c $(H)
+root.o: $(srcdir)/root.c $(H)
 scan0.o: $(srcdir)/scan0.c $(H)
 scan1.o: $(srcdir)/scan1.c $(H)
 set.o: $(srcdir)/set.c $(H)
