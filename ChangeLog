@@ -18,6 +18,35 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-04-14  Kevin Ryde  <kevin@swox.se>
+
+	* doc/gmp.texi (Reentrancy, Random State Initialization): Note
+	gmp_randinit use of gmp_errno is not thread safe.  Reported by Vincent
+	Lefèvre.
+
+	* doc/gmp.texi (Random State Initialization): Add index entries for
+	gmp_errno and constants.
+
+	* mpn/m68k/README: Update _SHORT_LIMB -> __GMP_SHORT_LIMB.
+
+	* configure.in (--enable-mpbsd): Typo Berkley -> Berkeley in help msg.
+
+2004-04-12  Kevin Ryde  <kevin@swox.se>
+
+	* demos/perl/GMP.xs (static_functable): New macro, use it for all
+	function tables, to support mingw DLL builds.
+	* demos/perl/INSTALL (NOTES FOR PARTICULAR SYSTEMS): Remove note on
+	DLLs, should be ok now.
+
+	* demos/perl/sample.pl: Print the module and library versions in use.
+
+	* demos/perl/GMP.pm, Makefile.PL (VERSION): Set to '2.00'.
+	* demos/perl/GMP.pm (COPYRIGHT): New in the doc section.
+
+	* Makefile.am: Note 4.1.3 libtool versioning info, and REVISION policy.
+
+	* tal-debug.c: Add <stdlib.h> for abort.
+
 2004-04-07  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/refmpf.c (refmpf_add_ulp): Adjust exponent when needed.
