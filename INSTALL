@@ -97,11 +97,10 @@ Now you have to compile your test program, and link it with the GMP library.
 Assuming your working directory is still the gmp source directory, and your
 source file is called example.c, enter:
 
-	gcc -g -I. example.c .libs/libgmp.a -lm
+	gcc -g -I. example.c .libs/libgmp.a
 
-The -lm is normally not needed, since only a few functions in GMP use the math
-library.  After installing, the command becomes: gcc -g example.c -lgmp -lm
-GMP is libtool based, and you can use that to link if you want.
+After installing, the command becomes: "gcc -g example.c -lgmp".  GMP is
+libtool based, and you can use that to link if you want.
 
 Now try to run the example:
 
@@ -123,7 +122,7 @@ To run a set of tests, do "make check".  This will take a while.
 To create the printable documentation from the texinfo source, type "make
 gmp.dvi" or "make gmp.ps".  This requires various "tex" commands.
 
-To install the library, do "make install" (you can then use -lgmp instead of
+To install the library, do "make install" (then you can use -lgmp instead of
 .libs/libgmp.a).
 
 If you decide to use GMP, it is a good idea you read at least the chapter "GMP
