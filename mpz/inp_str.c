@@ -1,6 +1,10 @@
 /* mpz_inp_str(dest_integer, stream, base) -- Input a number in base
    BASE from stdio stream STREAM and store the result in DEST_INTEGER.
 
+   OF THE FUNCTIONS IN THIS FILE, ONLY mpz_inp_str IS FOR EXTERNAL USE, THE
+   REST ARE INTERNALS AND ARE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE
+   CHANGES OR DISAPPEAR COMPLETELY IN FUTURE GNU MP RELEASES.
+
 Copyright 1991, 1993, 1994, 1996, 1998, 2000, 2001 Free Software Foundation,
 Inc.
 
@@ -48,11 +52,7 @@ digit_value_in_base (int c, int base)
 size_t
 mpz_inp_str (mpz_ptr x, FILE *stream, int base)
 {
-  char *str;
-  size_t alloc_size, str_size;
   int c;
-  int negative;
-  mp_size_t xsize;
   size_t nread;
 
   if (stream == 0)
@@ -67,6 +67,18 @@ mpz_inp_str (mpz_ptr x, FILE *stream, int base)
       nread++;
     }
   while (isspace (c));
+
+  return mpz_inp_str_nowhite (x, stream, base, c, nread);
+}
+
+/* shared by mpq_inp_str */
+size_t
+mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
+{
+  char *str;
+  size_t alloc_size, str_size;
+  int negative;
+  mp_size_t xsize;
 
   negative = 0;
   if (c == '-')
@@ -139,19 +151,19 @@ mpz_inp_str (mpz_ptr x, FILE *stream, int base)
   if (str_size == 0)
     {
       x->_mp_size = 0;
-      (*__gmp_free_func) (str, alloc_size);
-      return nread;
     }
+  else
+    {
+      xsize = (((mp_size_t)
+                (str_size / __mp_bases[base].chars_per_bit_exactly))
+               / BITS_PER_MP_LIMB + 2);
+      if (x->_mp_alloc < xsize)
+        _mpz_realloc (x, xsize);
 
-  xsize = (((mp_size_t) (str_size / __mp_bases[base].chars_per_bit_exactly))
-	   / BITS_PER_MP_LIMB + 2);
-  if (x->_mp_alloc < xsize)
-    _mpz_realloc (x, xsize);
-
-  /* Convert the byte array in base BASE to our bignum format.  */
-  xsize = mpn_set_str (x->_mp_d, (unsigned char *) str, str_size, base);
-  x->_mp_size = negative ? -xsize : xsize;
-
+      /* Convert the byte array in base BASE to our bignum format.  */
+      xsize = mpn_set_str (x->_mp_d, (unsigned char *) str, str_size, base);
+      x->_mp_size = negative ? -xsize : xsize;
+    }
   (*__gmp_free_func) (str, alloc_size);
   return nread;
 }
