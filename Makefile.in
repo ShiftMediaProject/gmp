@@ -95,8 +95,7 @@ DIST_COMMON = README $(am__configure_deps) $(include_HEADERS) \
 	$(srcdir)/config.in $(srcdir)/gmp-h.in $(srcdir)/mp-h.in \
 	$(top_srcdir)/configure AUTHORS COPYING COPYING.LIB ChangeLog \
 	INSTALL NEWS ansi2knr.1 ansi2knr.c config.guess config.sub \
-	configure configure.in install-sh ltmain.sh missing \
-	mkinstalldirs
+	configure configure.in install-sh ltmain.sh missing
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/mpfr/acinclude.m4 \
@@ -105,7 +104,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(mkdir_p)
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = gmp.h mp.h gmp-mparam.h
 am__installdirs = $(DESTDIR)$(libdir) $(DESTDIR)$(includedir) $(DESTDIR)$(includeexecdir)
