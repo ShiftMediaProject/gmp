@@ -1,4 +1,4 @@
-/* x86 __mpn_addmul_1 (for 386, 486, and Pentium Pro) -- Multiply a limb vector
+/* x86 __mpn_addmul_1 (for 386 and 486) -- Multiply a limb vector
    with a limb and add the result to a second limb vector.
 
 Copyright (C) 1992, 1994, 1997 Free Software Foundation, Inc.
