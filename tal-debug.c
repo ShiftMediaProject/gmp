@@ -1,6 +1,6 @@
 /* TMP_ALLOC routines for debugging.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,6 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <string.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
