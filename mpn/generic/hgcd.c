@@ -198,9 +198,13 @@ mpn_addmul2_n_1 (mp_ptr rp, mp_size_t n,
   h = mpn_mul_1 (rp, ap, n, u);
   cy = mpn_addmul_1 (rp, bp, n, v);
   h += cy;
+#if GMP_NAIL_BITS == 0
   rp[n] = h;
-
   return (h < cy);
+#else /* GMP_NAIL_BITS > 0 */
+  rp[n] = h & GMP_NUMB_MASK;
+  return h >> GMP_NUMB_BITS;
+#endif /* GMP_NAIL_BITS > 0 */
 }
 
 
@@ -1641,7 +1645,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	  /* FIXME: Bound on r3? */
 
 	  hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
-				   R.row + 2, hgcd->row, hgcd->size);
+				  R.row + 2, hgcd->row, hgcd->size);
 	  hgcd->sign ^= R.sign;
 
 	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
