@@ -149,15 +149,15 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   if (n <= ((unsigned long) 1) << (APCONST))
     {
       mpz_realloc2 (x, 4 * z);
-      ap_product_small (x, 2, 1, n - 1, 4);
+      ap_product_small (x, CNST_LIMB(2), CNST_LIMB(1), n - 1, 4L);
       return;
     }
   if (n <= ((unsigned long) 1) << (APCONST + 1))
     {				/*  use n!=odd(1,n)*(n/2)!*2^(n/2)         */
       mpz_init2 (t1, 2 * z);
       mpz_realloc2 (x, 4 * z);
-      ap_product_small (x, 2, 1, n / 2 - 1, 4);
-      ap_product_small (t1, 3, 2, (n - 1) / 2, 4);
+      ap_product_small (x, CNST_LIMB(2), CNST_LIMB(1), n / 2 - 1, 4L);
+      ap_product_small (t1, CNST_LIMB(3), CNST_LIMB(2), (n - 1) / 2, 4L);
       mpz_mul (x, x, t1);
       mpz_clear (t1);
       mpz_mul_2exp (x, x, n / 2);
@@ -179,7 +179,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
       odd_product (n / 2, n, st);
       mpz_mul (x, x, x);
       ASSERT (n / 4 <= FACMUL4 + 6);
-      ap_product_small (t1, 2, 1, n / 4 - 1, 4);
+      ap_product_small (t1, CNST_LIMB(2), CNST_LIMB(1), n / 4 - 1, 4L);
       /* must have 2^APCONST odd numbers max */
       mpz_mul (t1, t1, st[0]);
       for (i = 0; i < 4; i++)
@@ -366,7 +366,7 @@ odd_product (unsigned long low, unsigned long high, mpz_t * st)
   high = (high - low) / 2 + 1;	/* high is now count,high<=2^(BITS_PER_ULONG-1) */
   if (high <= (((unsigned long) 1) << APCONST))
     {
-      ap_product_small (st[0], low, 2, high, nm);
+      ap_product_small (st[0], (mp_limb_t) low, CNST_LIMB(2), high, nm);
       return;
     }
   count_leading_zeros (n, (mp_limb_t) high);
@@ -381,8 +381,9 @@ odd_product (unsigned long low, unsigned long high, mpz_t * st)
     {
       BITREV_ULONG (y, z);
       y >>= (BITS_PER_ULONG - n);
-      ap_product_small (st[stn], low + 2 * ((~y) & mask), a, (high + y) >> n,
-			nm);
+      ap_product_small (st[stn],
+                        (mp_limb_t) (low + 2 * ((~y) & mask)), (mp_limb_t) a,
+                        (high + y) >> n, nm);
       ASSERT (((high + y) >> n) <= (((unsigned long) 1) << APCONST));
       stn++;
       y = stc++;
