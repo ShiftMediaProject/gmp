@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-10-12  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc32/diveby3.asm: Update cycle counts with more processors.
+	* mpn/powerpc32/sqr_diagonal.asm: Likewise.
+
 	* mpn/pa64/add_n.asm: Correct PA8500 cycle counts.
 	* mpn/pa64/sub_n.asm: Likewise.
 
