@@ -93,7 +93,7 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
             }
         }
 
-      /* twos complement for non-zero limbs (ulimb is non-zero, but vlimb
+      /* twos complement first non-zero limbs (ulimb is non-zero, but vlimb
          might be zero) */
       ulimb = -ulimb;
       vlimb = -vlimb;
@@ -148,7 +148,8 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
           vp += step;
         }
 
-      /* Remaining high part of u or v, if any, ones complement. */
+      /* Remaining high part of u or v, if any, ones complement but xor
+         against all ones in the other, so plain popcount. */
       if (usize != 0)
         {
         remaining:
