@@ -14,7 +14,7 @@
 </center>
 
 <font size=-1>
-Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc. <br><br>
+Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc. <br><br>
 This file is part of the GNU MP Library. <br><br>
 The GNU MP Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published
@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 2 Jan 2004.  An up-to-date version is available at
+  This file current as of 4 Jan 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -366,6 +366,9 @@ MA 02111-1307, USA.
      should be possible to saturate the cache, which will happen at 8
      cycles/limb (7.5 for mpn_mul_1).  Write special loops for s2 &lt; 2^32;
      it should be possible to make them run at about 5 cycles/limb.
+<li> PPC601: See which of the power or powerpc32 code runs better.  Currently
+     the powerpc32 is used, but only because it's the default for
+     <code>powerpc*</code>.
 <li> PPC630: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  Use both integer and floating-point operations,
      possibly two floating-point and one integer limb per loop.  Split operands
