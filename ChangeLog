@@ -39,6 +39,12 @@ MA 02111-1307, USA.
 
 	* tune/freq.c (freq_irix_hinv): Allow "Processor 0" line from IRIX 6.5.
 
+2003-03-24  Torbjorn Granlund  <tege@swox.com>
+
+	* randlc2x.c (randget_lc): Remove write-only variable rn.
+	* mpf/eq.c: Remove write-only variable usign.
+	* gen-psqr.c (main): Remove write-only variable numb_bits.
+
 2003-03-17  Torbjorn Granlund  <tege@swox.com>
 
 	* Makefile.am (libgmp_la_SOURCES): Add mp_dv_tab.c.
