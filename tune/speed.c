@@ -792,7 +792,7 @@ r_string (const char *s)
           exit (1);
         }
       mpn_random (&l, 1);
-      return (l | (1 << (n-1))) & LIMB_ONES(n);
+      return (l | (CNST_LIMB(1) << (n-1))) & LIMB_ONES(n);
     }
   else  if (strcmp (s, "ones") == 0)
     {
