@@ -23,6 +23,10 @@ MA 02111-1307, USA. */
 #ifndef __TESTS_H__
 #define __TESTS_H__
 
+#include "config.h"
+
+#include <setjmp.h>  /* for jmp_buf */
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -53,9 +57,27 @@ double tests_infinity_d __GMP_PROTO (());
 int tests_hardware_getround __GMP_PROTO ((void));
 int tests_hardware_setround __GMP_PROTO ((int));
 int tests_isinf __GMP_PROTO ((double));
+int tests_dbl_mant_bits __GMP_PROTO ((void));
 
 void x86_fldcw __GMP_PROTO ((unsigned short));
 unsigned short x86_fstcw __GMP_PROTO ((void));
+
+
+/* tests_setjmp_sigfpe is like a setjmp, establishing a trap for SIGFPE.
+   The initial return is 0, if SIGFPE is trapped execution goes back there
+   with return value 1.
+
+   tests_sigfpe_done puts SIGFPE back to SIG_DFL, which should be used once
+   the setjmp point is out of scope, so a later SIGFPE won't try to go back
+   there.  */
+
+#define tests_setjmp_sigfpe()                   \
+  (signal (SIGFPE, tests_sigfpe_handler),       \
+   setjmp (tests_sigfpe_target))
+
+RETSIGTYPE tests_sigfpe_handler __GMP_PROTO ((int));
+void tests_sigfpe_done __GMP_PROTO ((void));
+extern jmp_buf  tests_sigfpe_target;
 
 
 #if HAVE_CALLING_CONVENTIONS

@@ -22,9 +22,14 @@ MA 02111-1307, USA. */
 #include "config.h"
 
 #include <ctype.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>     /* for getenv */
 #include <string.h>
+
+#if HAVE_FLOAT_H
+#include <float.h>      /* for DBL_MANT_DIG */
+#endif
 
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>  /* for struct timeval */
@@ -483,3 +488,70 @@ tests_hardware_getround (void)
 
   return -1;
 }
+
+
+/* tests_dbl_mant_bits() determines by experiment the number of bits in the
+   mantissa of a "double".  If it's not possible to find a value (perhaps
+   due to the compiler optimizing too aggressively), then return 0.
+
+   This code is used rather than DBL_MANT_DIG from <float.h> since ancient
+   systems like SunOS don't have that file, and since one GNU/Linux ARM
+   system was seen where the float emulation seemed to have only 32 working
+   bits, not the 53 float.h claimed.  */
+
+int
+tests_dbl_mant_bits (void)
+{
+  static int n = -1;
+  volatile double x, y, d;
+
+  if (n != -1)
+    return n;
+
+  n = 1;
+  x = 2.0;
+  for (;;)
+    {
+      /* see if 2^(n+1)+1 can be formed without rounding, if so then
+         continue, if not then "n" is the answer */
+      y = x + 1.0;
+      d = y - x;
+      if (d != 1.0)
+        {
+#if defined (DBL_MANT_DIG) && DBL_RADIX == 2
+          if (n != DBL_MANT_DIG)
+            printf ("Warning, tests_dbl_mant_bits got %d but DBL_MANT_DIG says %d\n", n, DBL_MANT_DIG);
+#endif
+          break;
+        }
+
+      x *= 2;
+      n++;
+
+      if (n > 1000)
+        {
+          printf ("Oops, tests_dbl_mant_bits can't determine mantissa size\n");
+          n = 0;
+          break;
+        }
+    }
+  return n;
+}
+
+
+/* See tests_setjmp_sigfpe in tests.h. */
+
+jmp_buf    tests_sigfpe_target;
+
+RETSIGTYPE
+tests_sigfpe_handler (int sig)
+{
+  longjmp (tests_sigfpe_target, 1);
+}
+
+void
+tests_sigfpe_done (void)
+{
+  signal (SIGFPE, SIG_DFL);
+}
+
