@@ -27,8 +27,21 @@ dnl s1_ptr	r4
 dnl size	r5
 dnl s2_limb	r6
 
-dnl This is optimized for the PPC604.  It has not been tested on PPC601, PPC603
-dnl or PPC750 since I don't have access to any such machines.
+dnl This is optimized for the PPC604.  It has not been tuned for PPC601,
+dnl PPC603, PPC750 (G3), 7400 (G4), 7450 (newer G4).
+dnl
+dnl Loop Analysis for the 604:
+dnl 12 mem insn
+dnl 8 serializing insn
+dnl 8 int multiply
+dnl 25 int reg write
+dnl 9 int ops (8 of which serialize)
+dnl
+dnl The multiply insns need 16 cycles/4limb.
+dnl The integer register writes will need 13 cycles/4limb.
+dnl All-in-all, it should be possible to get to 4 cycles/limb,
+dnl but that will require some clever FPNOPS and BNOPS for exact
+dnl issue control.
 
 include(`../config.m4')
 
