@@ -91,8 +91,8 @@ main (argc, argv)
 
   for (pass = 1; pass <= reps; pass++)
     {
-      mpz_random (in1, urandom () % SIZE - SIZE/2);
-      mpz_random (in2, urandom () % SIZE - SIZE/2);
+      mpz_random2 (in1, urandom () % SIZE - SIZE/2);
+      mpz_random2 (in2, urandom () % SIZE - SIZE/2);
 
       for (i = 0; i < sizeof (dss_funcs) / sizeof (dss_func); i++)
 	{
