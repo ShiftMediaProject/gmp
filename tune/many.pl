@@ -330,6 +330,13 @@ my @table =
      },
 
      {
+       'regexp'=> 'dive_1',
+       'funs'  => ['divexact_1'],
+       'ret'   => 'void',
+       'args'  => 'mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor',
+       'speed_flags'=> 'FLAG_R',
+     },
+     {
        'regexp'=> 'diveby3',
        'funs'  => ['divexact_by3c'],
        'ret'   => 'mp_limb_t',
@@ -594,6 +601,18 @@ my @table =
        'args'  => 'mpz_ptr r, mpz_srcptr b, unsigned long e, mpz_srcptr m',
        'try'   => 'none',
      },
+
+     # special for use during development
+     {
+       'regexp'=> 'back',
+       'funs'  => ['back_to'],
+       'ret'   => 'void',
+       'args'  => 'void',
+       'suffix'=> 'back',
+       'pic'   => 'no',
+       'try'   => 'none',
+       'speed_flags'=> 'FLAG_NODATA',
+     },
      );
 
 if (defined $ENV{table2}) {
@@ -770,22 +789,22 @@ foreach my $file_full (@files) {
   my $restriction='';
 
   my $suffix;
-  $FILE =~ ("${file_match}_*(.*)");
-  $suffix = $1;
-
-  if ($suffix eq '') {
+  if ($FILE =~ ("${file_match}_(.+)")) {
+    $suffix = $1;
+  } elsif ($path =~ /\/mp[zn]\/(.*)$/) {
     # derive the suffix from the path
-    $path =~ /\/mp[zn]\/(.*)$/
-      or die "Can't determine suffix for: $file_full (path $path)\n";
     $suffix = $1;
     $suffix =~ s/\//_/g;
-    
     # use last directory name, or if there's 3 or more then the last two
     if ($suffix =~ /([^_]*_)+([^_]+_[^_]+)$/) {
       $suffix = $2;
     } elsif ($suffix =~ /([^_]*_)*([^_]+)$/) {
       $suffix = $2;
     }
+  } elsif (defined $t->{'suffix'}) {
+    $suffix = $t->{'suffix'};
+  } else {
+    die "Can't determine suffix for: $file_full (path $path)\n";
   }
   print "suffix $suffix\n" if $opt{'t'};
   
@@ -806,6 +825,8 @@ foreach my $file_full (@files) {
     my $funs = $t->{'funs'};
     $funs = [$obj] if ! defined $funs;
     print "funs @$funs\n" if $opt{'t'};
+
+    if (defined $t->{'pic'}) { @pic_choices = ('no'); }
 
     foreach my $pic (map {$pictable{$_}} @pic_choices) {
       print "pic $pic->{'suffix'}\n" if $opt{'t'};
