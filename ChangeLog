@@ -19,6 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-22  Kevin Ryde  <kevin@swox.se>
+
+	* tune/time.c: Add SGI hardware counter measuring method, change some
+	abort()s into ASSERT_FAIL()s.
+
+	* configure.in (AC_CHECK_HEADERS): Add fcntl.h and sys/syssgi.h.
+	(AC_CHECK_FUNCS): Add syssgi.
+
+	* configure.in, mpfr/Makefile.am, mpfr/tests/Makefile.am: Use
+	-mieee-with-inexact or -ieee_with_inexact for mpfr on alpha, so
+	denorms work.
+
+	* mpfr/isinteger.c: Fix a memory leak.
+
 2002-03-21  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.c (struct choice_t): Make `r' an mp_limb_t.
