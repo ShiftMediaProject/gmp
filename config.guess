@@ -203,6 +203,7 @@ EOF
               # Now we know m68020 or up, which is how gmp interprets plain
               # m68k, so just leave that.
               # FIXME: Do some tests for 030, 040 and 060.  But how?
+	      :
             fi
           fi
         fi
