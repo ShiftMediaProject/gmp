@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-02-03  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (MPN_NORMALIZE, MPN_NORMALIZE_NOT_ZERO): Add parens
+	around macro parameters.  Reported by Jason Moxham.
+
 2003-02-01  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Low-level Functions): No overlap permitted by mpn_mul_n.
