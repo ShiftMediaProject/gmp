@@ -1819,6 +1819,7 @@ AC_HEADER_TIME
 
 # Reasons for testing:
 #   float.h - not in SunOS bundled cc
+#   langinfo.h - X/Open standard only, not in djgpp for instance
 #   sys/mman.h - not in Cray Unicos
 #   sys/param.h - not in mingw
 #   sys/processor.h - solaris specific, though also present in macos
@@ -1832,7 +1833,7 @@ AC_HEADER_TIME
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h sys/mman.h sys/param.h sys/processor.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # On SunOS, sys/resource.h needs sys/time.h (for struct timeval)
 AC_CHECK_HEADERS(sys/resource.h,,,
@@ -1927,6 +1928,7 @@ esac
 #   getrusage - not in mingw
 #   gettimeofday - not in mingw
 #   mmap - not in mingw, djgpp
+#   nl_langinfo - X/Open standard only, not in djgpp for instance
 #   obstack_vprintf - glibc specific
 #   processor_info - solaris specific
 #   read_real_time - AIX specific
@@ -1948,7 +1950,7 @@ esac
 # __gmp_replacement_vsnprintf which is not required on AIX since it has a
 # vsnprintf.
 #
-AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
 
 GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
