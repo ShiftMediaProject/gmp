@@ -219,6 +219,15 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
     _c += _x >> 1;							\
     (count) =  W_TYPE_SIZE - 1 - _c;					\
   } while (0)
+/* similar to what gcc does for __builtin_ffs, but 0 based rather than 1
+   based, and we don't need a special case for x==0 here */
+#define count_trailing_zeros(count, x)                                  \
+  do {									\
+    UWtype __ctz_x = (x);						\
+    __asm__ ("popcnt %0 = %1"                                           \
+             : "=r" (count)                                             \
+             : "r" ((__ctz_x-1) & ~__ctz_x));                           \
+  } while (0)
 #endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
