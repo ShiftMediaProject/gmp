@@ -197,6 +197,8 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h
 
+info_TEXINFOS = gmp.texi
+
 lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = \
   memory.c mp_set_fns.c mp_clz_tab.c rand.c randui.c randclr.c \
