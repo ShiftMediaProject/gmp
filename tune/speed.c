@@ -654,7 +654,7 @@ r_string (const char *s)
       {
         if (siz > 1 || siz < -1)
           printf ("Warning, r parameter %s truncated to %d bits\n",
-                  BITS_PER_MP_LIMB);
+                  s_orig, BITS_PER_MP_LIMB);
         return l;
       }
   }
