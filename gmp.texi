@@ -1,7 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename gmp.info
-@settitle GNU MP 2.0.3
+@settitle GNU MP 2.1
 @synindex tp fn
 @iftex
 @afourpaper
@@ -32,7 +32,7 @@ END-INFO-DIR-ENTRY
 @ifinfo
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
 
-Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 1996, 1998 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -62,11 +62,11 @@ by the Foundation.
 
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
-@subtitle Edition 2.0.3
-@subtitle August 1996
+@subtitle Edition 2.1 SNAPSHOT
+@subtitle November 1998
 
 @author by Torbj@"orn Granlund, TMG Datakonsult
-tege@@gnu.ai.mit.edu
+tege@@gnu.org
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -79,7 +79,7 @@ tege@@gnu.ai.mit.edu
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright @copyright{} 1991, 1993, 1994, 1995, 1996, 1998 Free Software Foundation, Inc.
 
 @sp 2
 
@@ -109,7 +109,7 @@ by the Foundation.
 @top GNU MP
 
 This manual documents how to install and use the GNU multiple precision
-arithmetic library, version 2.0.3.
+arithmetic library, version 2.1.
 
 @end ifinfo
 
@@ -197,8 +197,8 @@ This version of MP is released under a more liberal license than previous
 versions.  It is now permitted to link MP to non-free programs, as long as MP
 source code is provided when distributing the non-free program.
 
-For up-to-date information on MP, please see the GMP Home Pages at
-@samp{http://www.nada.kth.se/~tege/gmp/}.
+For up-to-date information on MP,
+@samp{http://www.matematik.su.se/~tege/gmp/}, is a good place to look.
 
 
 @section How to use this Manual
@@ -259,7 +259,7 @@ working directory.
 @samp{make check}
 
 This will make sure MP was built correctly.  If you get error messages, please
-report this to @samp{bug-gmp@@prep.ai.mit.edu}.  (@xref{Reporting Bugs}, for
+report this to @samp{bug-gmp@@gnu.org}.  (@xref{Reporting Bugs}, for
 information on what to include in useful bug reports.)
 
 @item
@@ -313,7 +313,7 @@ Delete all files copied by @samp{make install}.
 @section Known Build Problems
 
 (You might find more up-to-date information at
-@samp{http://www.nada.kth.se/~tege/gmp/}.)
+@samp{http://www.matematik.su.se/~tege/gmp/}.)
 
 GCC 2.7.2 (or 2.6.3) for the POWER and PowerPC can not be used to compile MP,
 due to a bug in GCC.  If you want to use GCC for these machines, get GCC
@@ -330,7 +330,7 @@ this in release 3.3 of their system.)
 The system C compiler under SunOS 4 has a bug that makes it miscompile
 mpq/get_d.c.  Use GCC instead if plan to use the function @code{mpq_get_d}.
 
-Please report other problems to @samp{bug-gmp@@prep.ai.mit.edu}.
+Please report other problems to @samp{bug-gmp@@gnu.org}.
 @xref{Reporting Bugs}.
 
 
@@ -362,6 +362,9 @@ Patch to apply to GCC 2.6.3 and 2.7.2:
 @comment  node-name,  next,  previous,  up
 @chapter MP Basics
 
+@menu
+* Random Number Functions::
+@end menu
 
 @cindex @file{gmp.h}
 All declarations needed to use MP are collected in the include file
@@ -472,15 +475,15 @@ A variable should only be initialized once, or at least cleared out between
 each initialization.  After a variable has been initialized, it may be
 assigned to any number of times.
 
-For efficiency reasons, avoid to initialize and clear out a variable in loops.
-Instead, initialize it before entering the loop, and clear it out after the
-loop has exited.
+For efficiency reasons, avoid to initialize and clear out a MP variables in
+loops.  Instead, initialize it before entering the loop, and clear it out after
+the loop has exited.
 
-You don't need to be concerned about allocating additional space for MP
-variables.  All functions in MP automatically allocate additional space when a
-variable does not already have enough space.  They do not, however, reduce the
-space when a smaller number is stored in the object.  Most of the time, this
-policy is best, since it avoids frequent re-allocation.
+Once you have initialized an MP variable, you don't need to worry about space
+allocation for that variable.  All functions in MP automatically allocate
+additional space when a variable does not already have enough space.  They do
+not, however, reduce the space when a smaller number is stored in the object.
+Most of the time, this policy is best, since it avoids frequent re-allocation.
 
 
 @section MP and reentrancy
@@ -495,6 +498,16 @@ a global variable.
 @item
 The function @code{mp_set_memory_functions} uses several global
 variables for storing the selected memory allocation functions.
+
+@item
+The memory allocation functions, @code{malloc} and friends, that GMP
+uses unless directed to uses custom allocation, may not be reentrant.
+
+@item
+The random number functions (@code{mpz_random}, etc) use an underlying
+random number generator from the C library, typically @code{mrand48} or
+@code{random}.  These routines are not reentrant, since they rely on
+global state.
 @end itemize
 
 If the memory allocation functions (@code{malloc} and friends, or
@@ -510,13 +523,10 @@ The number of bits per limb.
 
 @defmac __GNU_MP_VERSION
 @defmacx __GNU_MP_VERSION_MINOR
-The major and minor MP version, respectively, as integers.
-@end defmac
-
-@defmac GMP_SMALL
-Define this symbol if your computations will not require more than
-315600 decimal digits.  By defining this symbol, the space requirements
-for the various variable types will be smaller.
+@defmacx __GNU_MP_VERSION_PATCHLEVEL
+The major and minor MP version, and patch level, respectively, as integers.
+For GMP i.j, these numbers will be i, j, and 0, respectively.
+For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @end defmac
 
 
@@ -526,11 +536,20 @@ This version of MP is upward compatible with previous versions of MP, with a
 few exceptions.
 
 @enumerate
-@item Integer division functions round the result differently.  The old
+@item Integer division functions round the result differently.  The obsolete
 functions (@code{mpz_div}, @code{mpz_divmod}, @code{mpz_mdiv},
 @code{mpz_mdivmod}, etc) now all use floor rounding (i.e., they round the
-quotient to @minus{}infinity).  There are a lot of new functions for integer
-division, giving the user better control over the rounding.
+quotient towards
+@ifinfo
+@minus{}infinity).
+@end ifinfo
+@iftex
+@tex
+$-\infty$
+@end tex
+@end iftex
+There are a lot of new functions for integer division, giving the user better
+control over the rounding.
 
 @item The function @code{mpz_mod} now compute the true @strong{mod} function.
 
@@ -559,12 +578,41 @@ for 0^0.  (In version 1, they yielded 0.)
 @end enumerate
 
 
+@section Compatibility with Version 2.0.x
+
+This version of MP is upward compatible with version 2.0, 2.0.1, and 2.0.2.
+
+
 @section Getting the Latest Version of MP
 
 The latest version of the MP library is available by at
-@samp{ftp://prep.ai.mit.edu/pub/gnu}.  The file name is
-@file{gmp-M.N.tar.gz}.  Many sites around the world mirror
-@samp{prep}; please use a mirror site near you.
+@samp{ftp://ftp.gnu.org/pub/gnu}.  The file name will be @file{gmp-I.J.tar.gz}
+or @file{gmp-I.J.K.tar.gz}.  Many sites around the world mirror
+@samp{ftp.gnu.org}; please use a mirror site near you.
+
+@node Random Number Functions,,,MP Basics
+@comment  node-name,  next,  previous,  up
+@section Random Number Functions
+
+There are two groups of random number functions in GNU MP; older
+functions that call C library random number generators, rely on a global
+state, and aren't very random; and newer functions that don't have these
+problems.  The newer functions are self-contained, they accept a seed
+parameter that supplants global state, and generate good random numbers.
+
+The seed parameter is of the type @code{mpz_t}.  It must be initialized
+just like any MP variable, but also assigned a good starting seed.  The
+size of the seed determines the maximum cycle of the generated random
+numbers, and thus to some extent the "randomness" of the generated
+numbers.  If good uniform random numbers are required, the seed variable
+needs to be set to a value considerably greater than the largest
+required random number.
+
+The algorithm for assigning seed is critical if the generated random
+numbers are to be used for important applications, such as generating
+cryptographic keys.  One should also avoid generating multiple random
+numbers from the same seed for such applications, since a sequence of
+random numbers generated from the same seed are not truly independent.
 
 @node Reporting Bugs, Integer Functions, MP Basics, Top
 @comment  node-name,  next,  previous,  up
@@ -595,7 +643,7 @@ If your bug report is good, we will do our best to help you to get a corrected
 version of the library; if the bug report is poor, we won't do anything about
 it (aside of chiding you to send better bug reports).
 
-Send your bug report to: @samp{bug-gmp@@prep.ai.mit.edu}.
+Send your bug report to: @samp{bug-gmp@@gnu.org}.
 
 If you think something in this manual is unclear, or downright incorrect, or if
 the language needs to be improved, please send a note to the same address.
@@ -609,7 +657,7 @@ the language needs to be improved, please send a note to the same address.
 This chapter describes the MP functions for performing integer arithmetic.
 These functions start with the prefix @code{mpz_}.
 
-Arbitrary precision integers are stored in objects of type @code{mpz_t}.
+MP integers are stored in objects of type @code{mpz_t}.
 
 @menu
 * Initializing Integers::
@@ -712,6 +760,10 @@ This function returns 0 if the entire string up to the '\0' is a valid
 number in base @var{base}.  Otherwise it returns @minus{}1.
 @end deftypefun
 
+@deftypefun void mpz_swap (mpz_t @var{rop1}, mpz_t @var{rop2})
+Swap the values @var{rop1} and @var{rop2} efficiently.
+@end deftypefun
+
 
 @node Simultaneous Integer Init & Assign, Converting Integers, Assigning Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
@@ -765,9 +817,9 @@ an error occurs.  (I.e., you have to call @code{mpz_clear} for it.)
 @cindex Integer conversion functions
 @cindex Conversion functions
 
-This section describes functions for converting arbitrary precision integers
-to standard C types.  Functions for converting @emph{to} arbitrary precision
-integers are described in @ref{Assigning Integers} and @ref{I/O of Integers}.
+This section describes functions for converting MP integers to standard C
+types.  Functions for converting @emph{to} MP integers are described in
+@ref{Assigning Integers} and @ref{I/O of Integers}.
 
 @deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
 Return limb #@var{n} from @var{op}.  This function allows for very efficient
@@ -848,6 +900,17 @@ Set @var{rop} to $@var{op1} \times @var{op2}$.
 @end iftex
 @end deftypefun
 
+@deftypefun void mpz_addmul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Add @var{op1} times @var{op2} to @var{rop}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{rop} + @var{op1} \times @var{op2}$.
+@end tex
+@end iftex
+@end deftypefun
+
 @deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 @ifinfo
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}.  This operation can
@@ -869,33 +932,45 @@ Set @var{rop} to @minus{}@var{op}.
 Set @var{rop} to the absolute value of @var{op}.
 @end deftypefun
 
-@deftypefun void mpz_fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
-Set @var{rop} to @var{op}!, the factorial of @var{op}.
-@end deftypefun
-
 @subsection Division and mod functions
 
-Division is undefined if the divisor is zero, and passing a zero divisor to
-the divide or modulo functions, as well passing a zero mod argument to the
+Division is undefined if the divisor is zero, and passing a zero divisor to the
+divide or modulo functions, as well passing a zero mod argument to the
 @code{mpz_powm} and @code{mpz_powm_ui} functions, will make these functions
 intentionally divide by zero.  This gives the user the possibility to handle
-arithmetic exceptions in these functions in the same manner as other
-arithmetic exceptions.
+arithmetic exceptions in these functions in the same manner as other arithmetic
+exceptions.
 
 There are three main groups of division functions:
 @itemize @bullet
 @item
-Functions that truncate the quotient towards 0.  The names of these
-functions start with @code{mpz_tdiv}.  The @samp{t} in the name is short for
+Functions that truncate the quotient towards 0.  The names of these functions
+start with @code{mpz_tdiv}.  The @samp{t} in the name is short for
 @samp{truncate}.
 @item
-Functions that round the quotient towards @minus{}infinity.  The names of
-these routines start with @code{mpz_fdiv}.  The @samp{f} in the name is
-short for @samp{floor}.
+Functions that round the quotient towards
+@ifinfo
+@minus{}infinity).
+@end ifinfo
+@iftex
+@tex
+$-\infty$
+@end tex
+@end iftex
+The names of these routines start with @code{mpz_fdiv}.  The @samp{f} in the
+name is short for @samp{floor}.
 @item
-Functions that round the quotient towards +infinity.  The names of
-these routines start with @code{mpz_cdiv}.  The @samp{c} in the name is
-short for @samp{ceil}.
+Functions that round the quotient towards
+@ifinfo
++infinity.
+@end ifinfo
+@iftex
+@tex
+$+\infty$
+@end tex
+@end iftex
+The names of these routines start with @code{mpz_cdiv}.  The @samp{c} in the
+name is short for @samp{ceil}.
 @end itemize
 
 For each rounding mode, there are a couple of variants.  Here @samp{q} means
@@ -903,182 +978,238 @@ that the quotient is computed, while @samp{r} means that the remainder is
 computed.  Functions that compute both the quotient and remainder have
 @samp{qr} in the name.
 
-@deftypefun void mpz_tdiv_q (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx void mpz_tdiv_q_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to [@var{op1}/@var{op2}].  The quotient is truncated towards
-0.
+@deftypefun void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_tdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
+Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  The function
+@code{mpz_tdiv_q_ui} returns the absolute value of remainder.
+
+The function @code{mpz_tdiv_q_ui} returns the absolute value of the remainder.
 @end deftypefun
 
-@deftypefun void mpz_tdiv_r (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx void mpz_tdiv_r_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to (@var{op1} - [@var{op1}/@var{op2}] * @var{op2}).
-Unless the remainder is zero, it has the same sign as the dividend.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_qr (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx void mpz_tdiv_qr_ui (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by @var{op2} and put the quotient in @var{rop1} and the
-remainder in @var{rop2}.  The quotient is rounded towards 0.  Unless the
-remainder is zero, it has the same sign as the dividend.
-
-If @var{rop1} and @var{rop2} are the same variable, the results are
-undefined.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_q (mpz_t @var{rop1}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx void mpz_fdiv_q_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefun void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_tdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
 @ifinfo
-Set @var{rop} to @var{op1}/@var{op2}.  The quotient is rounded towards
+Set @var{r} to (@var{n} - [@var{n}/@var{d}] * @var{d}), where the quotient is
+truncated towards 0.  Unless @var{r} becomes zero, it will get the same sign as
+@var{n}.
+@end ifinfo
+@iftex
+@tex
+Set @var{r} to $(@var{n} - [@var{n}/@var{d}] \times @var{d})$, where the
+quotient is truncated towards 0.  Unless @var{r} becomes zero, it will get the
+same sign as @var{n}.
+@end tex
+@end iftex
+
+The function @code{mpz_tdiv_r_ui} returns the absolute value of the remainder.
+@end deftypefun
+
+@deftypefun void mpz_tdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_tdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  Set @var{r} to (@var{n}
+- [@var{n}/@var{d}] * @var{d}).  Unless @var{r} becomes zero, it will get the
+same sign as @var{n}.  If @var{q} and @var{r} are the same variable, the
+results are undefined.
+@end ifinfo
+@iftex
+@tex
+Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  Set @var{r} to $(@var{n}
+- [@var{n}/@var{d}] \times @var{d})$.  Unless @var{r} becomes zero, it will get the
+same sign as @var{n}.  If @var{q} and @var{r} are the same variable, the
+results are undefined.
+@end tex
+@end iftex
+
+The function @code{mpz_tdiv_qr_ui} returns the absolute value of the remainder.
+@end deftypefun
+
+@deftypefun {unsigned long int} mpz_tdiv_ui (mpz_t @var{n}, unsigned long int @var{d})
+Like @code{mpz_tdiv_r_ui}, but the remainder is not stored anywhere; its
+absolute value is just returned.
+@end deftypefun
+
+@deftypefun void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_fdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.
+@end ifinfo
+@iftex
+@tex
+Set @var{q} to $\lfloor@var{n}/@var{d}\rfloor$.
+@end tex
+@end iftex
+
+The function @code{mpz_fdiv_q_ui} returns the remainder.
+@end deftypefun
+
+@deftypefun void mpz_fdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_fdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{r} to (@var{n} - @var{n}/@var{d} * @var{d}), where the quotient is
+rounded towards @minus{}infinity.  Unless @var{r} becomes zero, it will get the
+same sign as @var{d}.
+@end ifinfo
+@iftex
+@tex
+Set @var{r} to $(@var{n} - \lfloor@var{n}/@var{d}\rfloor \times @var{d})$.
+Unless @var{r} becomes zero, it will get the same sign as @var{d}.
+@end tex
+@end iftex
+
+The function @code{mpz_fdiv_r_ui} returns the remainder.
+@end deftypefun
+
+@deftypefun void mpz_fdiv_qr (mpz_t @var{r}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.  Set @var{r}
+to (@var{n} - @var{n}/@var{d} * @var{d}).  Unless @var{r} becomes zero, it
+will get the same sign as @var{d}.  If @var{q} and @var{r} are the same
+variable, the results are undefined.
+@end ifinfo
+@iftex
+@tex
+Set @var{q} to $\lfloor@var{n}/@var{d}\rfloor$.  Set @var{r} to $(@var{n} -
+\lfloor@var{n}/@var{d}\rfloor \times @var{d})$.  Unless @var{r} becomes zero,
+it will get the same sign as @var{d}.  If @var{q} and @var{r} are the same
+variable, the results are undefined.
+@end tex
+@end iftex
+
+The function @code{mpz_fdiv_qr_ui} returns the remainder.
+@end deftypefun
+
+@deftypefun {unsigned long int} mpz_fdiv_ui (mpz_t @var{n}, unsigned long int @var{d})
+Like @code{mpz_fdiv_r_ui}, but the remainder is not stored anywhere; it is just
+returned.
+@end deftypefun
+
+@deftypefun void mpz_cdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_cdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to @var{n}/@var{d}, rounded towards +infinity.
+@end ifinfo
+@iftex
+@tex
+Set @var{q} to $\lceil@var{n}/@var{d}\rceil$.
+@end tex
+@end iftex
+
+The function @code{mpz_cdiv_q_ui} returns the negated remainder.
+@end deftypefun
+
+@deftypefun void mpz_cdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{r} to (@var{n} - @var{n}/@var{d} * @var{d}), where the quotient is
+rounded towards +infinity.  Unless @var{r} becomes zero, it will get the
+opposite sign as @var{d}.
+@end ifinfo
+@iftex
+@tex
+Set @var{r} to $(@var{n} - \lceil@var{n}/@var{d}\rceil \times @var{d})$.  Unless
+@var{r} becomes zero, it will get the opposite sign as @var{d}.
+@end tex
+@end iftex
+
+The function @code{mpz_cdiv_r_ui} returns the negated remainder.
+@end deftypefun
+
+@deftypefun void mpz_cdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to @var{n}/@var{d}, rounded towards +infinity.  Set @var{r}
+to (@var{n} - @var{n}/@var{d} * @var{d}).  Unless @var{r} becomes zero, it
+will get the opposite sign as @var{d}.  If @var{q} and @var{r} are the same
+variable, the results are undefined.
+@end ifinfo
+@iftex
+@tex
+Set @var{q} to $\lceil@var{n}/@var{d}\rceil$.  Set @var{r} to $(@var{n} -
+\lceil@var{n}/@var{d}\rceil \times @var{d})$.  Unless @var{r} becomes zero, it will
+get the opposite sign as @var{d}.  If @var{q} and @var{r} are the same
+variable, the results are undefined.
+@end tex
+@end iftex
+
+The function @code{mpz_cdiv_qr_ui} returns the negated remainder.
+@end deftypefun
+
+@deftypefun {unsigned long int} mpz_cdiv_ui (mpz_t @var{n}, unsigned long int @var{d})
+Like @code{mpz_tdiv_r_ui}, but the remainder is not stored anywhere; its
+negated value is just returned.
+@end deftypefun
+
+@deftypefun void mpz_mod (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_mod_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+Set @var{r} to @var{n} @code{mod} @var{d}.  The sign of the divisor is ignored;
+the result is always non-negative.
+
+The function @code{mpz_mod_ui} returns the remainder.
+@end deftypefun
+
+@deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
+when it is known in advance that @var{d} divides @var{n}.
+
+Since mpz_divexact is much faster than any of the other routines that produce
+the quotient (@pxref{References} Jebelean), it is the best choice for instances
+in which exact division is known to occur, such as reducing a rational to
+lowest terms.
+@end deftypefun
+
+@deftypefun void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to @var{n} divided by 2 raised to @var{d}.  The quotient is truncated
+towards 0.
+@end ifinfo
+@iftex
+@tex
+Set @var{q} to $@var{n}/2^{d}$.  The quotient is truncated towards 0.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_tdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Divide @var{n} by (2 raised to @var{d}) and put the remainder in @var{r}.
+Unless it is zero, @var{r} will have the same sign as @var{n}.
+@end ifinfo
+@iftex
+@tex
+Divide @var{n} by $2^{d}$ and put the remainder in @var{r}.  Unless it is zero,
+@var{r} will have the same sign as @var{n}.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
+@ifinfo
+Set @var{q} to @var{n} divided by 2 raised to @var{d}, rounded towards
 @minus{}infinity.
 @end ifinfo
 @iftex
 @tex
-Set @var{rop} to $\lfloor@var{op1}/@var{op2}\rfloor$.  (I.e., round
-the quotient towards $-\infty$.)
+Set @var{q} to $\lfloor@var{n}/2^{d}\rfloor$.
 @end tex
 @end iftex
 @end deftypefun
 
-@deftypefun void mpz_fdiv_r (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx {unsigned long int} mpz_fdiv_r_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by @var{op2} and put the remainder in @var{rop}.  Unless
-the remainder is zero, it has the same sign as the divisor.
-
-For @code{mpz_fdiv_r_ui} the remainder is small enough to fit in an
-@code{unsigned long int}, and is therefore returned.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_qr (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by @var{op2} and put the quotient in @var{rop1} and the
-remainder in @var{rop2}.  The quotient is rounded towards @minus{}infinity.
-Unless the remainder is zero, it has the same sign as the divisor.
-
-For @code{mpz_fdiv_qr_ui} the remainder is small enough to fit in an
-@code{unsigned long int}, and is therefore returned.
-
-If @var{rop1} and @var{rop2} are the same variable, the results are
-undefined.
-@end deftypefun
-
-@deftypefun {unsigned long int} mpz_fdiv_ui (mpz_t @var{op1}, unsigned long int @var{op2})
-This function is similar to @code{mpz_fdiv_r_ui}, but the remainder is only
-returned; it is not stored anywhere.
-@end deftypefun
-
-@deftypefun void mpz_cdiv_q (mpz_t @var{rop1}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx void mpz_cdiv_q_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefun void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
 @ifinfo
-Set @var{rop} to @var{op1}/@var{op2}.  The quotient is rounded towards
-+infinity.
+Divide @var{n} by (2 raised to @var{d}) and put the remainder in @var{r}.  The
+sign of @var{r} will always be positive.
 @end ifinfo
 @iftex
 @tex
-Set @var{rop} to $\lceil@var{op1}/@var{op2}\rceil$.  (I.e., round the
-quotient towards $+\infty$.)
-@end tex
-@end iftex
-@end deftypefun
-
-@deftypefun void mpz_cdiv_r (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by @var{op2} and put the remainder in @var{rop}.  Unless
-the remainder is zero, it has the opposite sign as the divisor.
-
-For @code{mpz_cdiv_r_ui} the negated remainder is small enough to fit in an
-@code{unsigned long int}, and it is therefore returned.
-@end deftypefun
-
-@deftypefun void mpz_cdiv_qr (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by @var{op2} and put the quotient in @var{rop1} and the
-remainder in @var{rop2}.  The quotient is rounded towards +infinity.  Unless
-the remainder is zero, it has the opposite sign as the divisor.
-
-For @code{mpz_cdiv_qr_ui} the negated remainder is small enough to fit in an
-@code{unsigned long int}, and it is therefore returned.
-
-If @var{rop1} and @var{rop2} are the same variable, the results are
-undefined.
-@end deftypefun
-
-@deftypefun {unsigned long int} mpz_cdiv_ui (mpz_t @var{op1}, unsigned long int @var{op2})
-Return the negated remainder, similar to @code{mpz_cdiv_r_ui}.  (The
-difference is that this function doesn't store the remainder anywhere.)
-@end deftypefun
-
-@deftypefun void mpz_mod (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx {unsigned long int} mpz_mod_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @var{op1} @code{mod} @var{op2}.  The sign of the divisor is
-ignored, and the result is always non-negative.
-
-For @code{mpz_mod_ui} the remainder is small enough to fit in an
-@code{unsigned long int}, and is therefore returned.
-@end deftypefun
-
-@deftypefun void mpz_divexact (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-Set @var{rop} to @var{op1}/@var{op2}.  This function produces correct
-results only when it is known in advance that @var{op2} divides
-@var{op1}.
-
-Since mpz_divexact is much faster than any of the other routines that produce
-the quotient (@pxref{References} Jebelean), it is the best choice for
-instances in which exact division is known to occur, such as reducing a
-rational to lowest terms.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_q_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
-Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.  The quotient is
-rounded towards 0.
-@end ifinfo
-@iftex
-@tex
-Set @var{rop} to $@var{op1}/2^{op2}$.  The quotient is rounded towards 0.
-@end tex
-@end iftex
-@end deftypefun
-
-@deftypefun void mpz_tdiv_r_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
-Divide @var{op1} by (2 raised to @var{op2}) and put the remainder in
-@var{rop}.  Unless it is zero, @var{rop} will have the same sign as @var{op1}.
-@end ifinfo
-@iftex
-@tex
-Divide @var{op1} by $2^{op2}$ and put the remainder in @var{rop}.  Unless it is
-zero, @var{rop} will have the same sign as @var{op1}.
-@end tex
-@end iftex
-@end deftypefun
-
-@deftypefun void mpz_fdiv_q_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
-Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.  The quotient is
-rounded towards @minus{}infinity.
-@end ifinfo
-@iftex
-@tex
-Set @var{rop} to $\lfloor@var{op1}/2^{op2}\rfloor$.  The quotient is rounded
-towards $-\infty$.
-@end tex
-@end iftex
-@end deftypefun
-
-@deftypefun void mpz_fdiv_r_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
-Divide @var{op1} by (2 raised to @var{op2}) and put the remainder in
-@var{rop}.  The sign of @var{rop} will always be positive.
-@end ifinfo
-@iftex
-@tex
-Divide @var{op1} by $2^{op2}$ and put the remainder in @var{rop}.  The sign of
-@var{rop} will always be positive.
+Divide @var{n} by $2^{d}$ and put the remainder in @var{r}.  The sign of
+@var{r} will always be positive.
 @end tex
 @end iftex
 
-This operation can also be defined as masking of the @var{op2} least
-significant bits.
+This operation can also be defined as masking of the @var{d} least significant
+bits.
 @end deftypefun
 
 @subsection Exponentiation Functions
@@ -1102,17 +1233,28 @@ The case of $0^0$ yields 1.
 @end iftex
 @end deftypefun
 
-@subsection Square Root Functions
+@subsection Root Functions
 
-@deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
+@deftypefun void mpz_root (mpz_t @var{rop}, mpz_t @var{op}, unsigned long int @var{n})
 @ifinfo
-Set @var{rop} to the truncated integer part of the square root of
-@var{op}.
+Set @var{rop} to the truncated integer part of the @var{n}th root of @var{op}.
 @end ifinfo
 @iftex
 @tex
-Set @var{rop} to $\lfloor\sqrt{@var{op}}\rfloor$, the truncated integer
-part of the square root of @var{op}.
+Set @var{rop} to $\lfloor\root n \of {op}\rfloor$, the truncated integer part
+of the @var{n}th root of @var{op}.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
+@ifinfo
+Set @var{rop} to the truncated integer part of the square root of @var{op}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $\lfloor\sqrt{@var{op}}\rfloor$, the truncated integer part of
+the square root of @var{op}.
 @end tex
 @end iftex
 @end deftypefun
@@ -1135,29 +1277,47 @@ If @var{rop1} and @var{rop2} are the same variable, the results are
 undefined.
 @end deftypefun
 
+@deftypefun int mpz_perfect_power_p (mpz_t @var{op})
+@ifinfo
+Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
+@var{a} and @var{b}, with @var{b} > 1, such that @var{op} equals a raised to
+b.  Return zero otherwise.
+@end ifinfo
+@iftex
+@tex
+Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
+$a$ and $b$, with $b>1$, such that $@var{op}=a^b$.  Return zero otherwise.
+@end tex
+@end iftex
+@end deftypefun
+
 @deftypefun int mpz_perfect_square_p (mpz_t @var{op})
 Return non-zero if @var{op} is a perfect square, i.e., if the square root of
 @var{op} is an integer.  Return zero otherwise.
 @end deftypefun
 
+
 @subsection Number Theoretic Functions
 
-@deftypefun int mpz_probab_prime_p (mpz_t @var{op}, int @var{reps})
-@ifinfo
-If this function returns 0, @var{op} is definitely not prime.  If it returns
-1, then @var{op} is `probably' prime.  The probability of a false positive is
-(1/4)**@var{reps}.
-@end ifinfo
-@iftex
-@tex
-If this function returns 0, @var{op} is definitely not prime.  If it returns
-1, then @var{op} is `probably' prime.  The probability of a false positive is
-$(1/4)^{{reps}}$.
-@end tex
-@end iftex
-A reasonable value of reps is 10.
+@deftypefun int mpz_probab_prime_p (mpz_t @var{n}, int @var{reps})
+If this function returns 0, @var{n} is definitely not prime.  If it
+returns 1, then @var{n} is `probably' prime.  If it returns 2, then
+@var{n} is surely prime.  Reasonable values of reps vary from 5 to 10; a
+higher value lowers the probability for a non-prime to pass as a
+`probable' prime.
 
-The function uses the Miller-Rabin test.
+The function uses Miller-Rabin's probabilistic test.
+@end deftypefun
+
+@deftypefun int mpz_prime_p (mpz_t @var{n})
+Return non-zero if @var{n} is prime and zero if @var{n} is a non-prime.
+This function is far slower than @code{mpz_probab_prime_p}, but then it
+never returns non-zero for composite numbers.
+
+(For practical purposes, using @code{mpz_probab_prime_p} is adequate.
+The likelyhood of a programming error or hardware malfunction is orders
+of magnitudes greater than the likelyhood for a composite to pass as a
+prime, if the @var{reps} argument is in the suggested range.)
 @end deftypefun
 
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -1178,7 +1338,7 @@ is non-zero.
 
 @deftypefun void mpz_gcdext (mpz_t @var{g}, mpz_t @var{s}, mpz_t @var{t}, mpz_t @var{a}, mpz_t @var{b})
 Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
-@var{b}@var{t} = @var{g} = @code{gcd} (@var{a}, @var{b}).  If @var{t} is
+@var{b}@var{t} = @var{g} = @code{gcd}(@var{a}, @var{b}).  If @var{t} is
 NULL, that argument is not computed.
 @end deftypefun
 
@@ -1189,7 +1349,7 @@ Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @deftypefun int mpz_invert (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 Compute the inverse of @var{op1} modulo @var{op2} and put the result in
 @var{rop}.  Return non-zero if an inverse exist, zero otherwise.  When the
-function returns zero, do not assume anything about the value in @var{rop}.
+function returns zero, @var{rop} is undefined.
 @end deftypefun
 
 @deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
@@ -1197,7 +1357,33 @@ function returns zero, do not assume anything about the value in @var{rop}.
 Compute the Jacobi and Legendre symbols, respectively.
 @end deftypefun
 
-@need 2000
+@deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})
+Remove all occurences of the factor @var{f} from @var{op} and store the
+result in @var{rop}.  Return the multiplicity of @var{f} in @var{op}.
+@end deftypefun
+
+@deftypefun void mpz_fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
+Set @var{rop} to @var{op}!, the factorial of @var{op}.
+@end deftypefun
+
+@deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
+@deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, unsigned long int @var{k})
+@ifinfo
+Compute the binomial coefficient @var{n} over @var{k} and store the result in
+@end ifinfo
+@iftex
+@tex
+Compute the binomial coefficient $\left({n}\atop{k}\right)$ and store the result in
+@end tex
+@end iftex
+@var{rop}.
+@end deftypefun
+
+@deftypefun void mpz_fib_ui (mpz_t @var{rop}, unsigned long int @var{n})
+Compute the @var{n}th Fibonacci number and store the result in @var{rop}.
+@end deftypefun
+
+
 @node Comparison Functions, Integer Logic and Bit Fiddling, Integer Arithmetic, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Comparison Functions
@@ -1235,6 +1421,23 @@ Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 These functions are actually implemented as macros.  They evaluate their
 arguments multiple times.
 @end deftypefn
+
+
+@deftypefun int mpz_cmp_abs (mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx int mpz_cmp_abs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
+value if @var{op1} > @var{op2}, zero if @var{op1} = @var{op2}, and a negative
+value if @var{op1} < @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
+value if $|@var{op1}| > |@var{op2}|$, zero if $|@var{op1}| = |@var{op2}|$, and a
+negative value if $|@var{op1}| < |@var{op2}|$.
+@end tex
+@end iftex
+@end deftypefun
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
 @ifinfo
@@ -1288,7 +1491,7 @@ between the two operands.  Otherwise, return the largest possible value
 It is possible to extend this function to return a useful value when the
 operands are both negative, but the current implementation returns
 @var{MAX_ULONG} in this case.  @strong{Do not depend on this behavior, since
-it will change in future versions of the library.}
+it will change in a future release.}
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_scan0 (mpz_t @var{op}, unsigned long int @var{starting_bit})
@@ -1302,11 +1505,15 @@ bits, until the first set bit is found.  Return the index of the found bit.
 @end deftypefun
 
 @deftypefun void mpz_setbit (mpz_t @var{rop}, unsigned long int @var{bit_index})
-Set bit @var{bit_index} in @var{op1}.
+Set bit @var{bit_index} in @var{rop}.
 @end deftypefun
 
 @deftypefun void mpz_clrbit (mpz_t @var{rop}, unsigned long int @var{bit_index})
-Clear bit @var{bit_index} in @var{op1}.
+Clear bit @var{bit_index} in @var{rop}.
+@end deftypefun
+
+@deftypefun int mpz_tstbit (mpz_t @var{op}, unsigned long int @var{bit_index})
+Check bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
 @end deftypefun
 
 @node I/O of Integers, Miscellaneous Integer Functions, Integer Logic and Bit Fiddling, Integer Functions
@@ -1375,10 +1582,19 @@ machines.
 @section Miscellaneous Functions
 @cindex Miscellaneous integer functions
 
+The random number functions of GMP come in two groups; older function
+that rely on a global state, and newer functions that accept a state
+parameter that is read and modified.  Please see the @ref{Random Number
+Functions} for more information on how to use and not to use random
+number functions.
+
 @deftypefun void mpz_random (mpz_t @var{rop}, mp_size_t @var{max_size})
 Generate a random integer of at most @var{max_size} limbs.  The generated
 random number doesn't satisfy any particular requirements of randomness.
 Negative random numbers are generated when @var{max_size} is negative.
+
+This function is obsolete.  Use @code{mpz_urandomb} or
+@code{mpz_urandomm} instead.
 @end deftypefun
 
 @deftypefun void mpz_random2 (mpz_t @var{rop}, mp_size_t @var{max_size})
@@ -1387,6 +1603,69 @@ of zeros and ones in the binary representation.  Useful for testing functions
 and algorithms, since this kind of random numbers have proven to be more
 likely to trigger corner-case bugs.  Negative random numbers are generated
 when @var{max_size} is negative.
+
+This function is obsolete.  Use @code{mpz_rrandomb} instead.
+@end deftypefun
+
+@deftypefun void mpz_urandomb (mpz_t @var{rop}, unsigned long int @var{n}, mpz_t @var{seed})
+Generate a uniform random integer in the range
+@ifinfo
+0 to 2^@var{n} @minus{} 1,
+@end ifinfo
+@iftex
+@tex
+0 to $2^n-1$,
+@end tex
+@end iftex
+inclusive.
+
+The variable @var{seed} is used as a seed for generating the random
+number.  It is updated with a new seed.
+@end deftypefun
+
+@deftypefun void mpz_urandomm (mpz_t @var{rop}, mpz_t @var{n}, mpz_t @var{seed})
+Generate a uniform random integer in the range
+@ifinfo
+0 to @var{n}
+@end ifinfo
+@iftex
+@tex
+0 to $n-1$
+@end tex
+@end iftex
+
+The variable @var{seed} is used as a seed for generating the random number.
+It is updated with a new seed.
+@end deftypefun
+
+@deftypefun void mpz_rrandomb (mpz_t @var{rop}, unsigned long int @var{n}, mpz_t @var{seed})
+Generate a random integer with long strings of zeros and ones in the
+binary representation.  Useful for testing functions and algorithms,
+since this kind of random numbers have proven to be more likely to
+trigger corner-case bugs.  The random number will be in the range
+@ifinfo
+0 to 2^@var{n} @minus{} 1,
+@end ifinfo
+@iftex
+@tex
+0 to $2^n-1$,
+@end tex
+@end iftex
+inclusive.
+
+The variable @var{seed} is used as a seed for generating the random
+number.  It is updated with a new seed.  Unlike other random number
+functions, the @var{seed} variable should probably be much smaller than
+the generated numbers, since the generated random numbers are of such
+special nature.  In fact, it should probably be kept under
+@ifinfo
+2^100.
+@end ifinfo
+@iftex
+@tex
+$2^{100}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun size_t mpz_size (mpz_t @var{op})
@@ -1750,7 +2029,8 @@ Set the precision of @var{rop} to be @strong{at least} @var{prec} bits.  This
 is a low-level function that does not change the allocation.  The @var{prec}
 argument must not be larger that the precision previously returned by
 @code{mpf_get_prec}.  It is crucial that the precision of @var{rop} is
-ultimately reset to exactly the value returned by @code{mpf_get_prec}.
+ultimately reset to exactly the value returned by @code{mpf_get_prec} before
+any calls to @code{mpf_set_prec_raw}.
 @end deftypefun
 
 
@@ -2357,7 +2637,7 @@ Puts at @var{rp} the greatest common divisor of @{@var{s1p},
 operands are destroyed by the operation.  The size in limbs of the greatest
 common divisor is returned.
 
-@{@var{s1p}, @var{s1size}@} must have at least as many bits as 
+@{@var{s1p}, @var{s1size}@} must have at least as many bits as
 @{@var{s2p}, @var{s2size}@}, and @{@var{s2p}, @var{s2size}@} must be odd.
 
 @strong{This interface is preliminary.  It might change incompatibly in
@@ -2371,9 +2651,9 @@ must be different from 0.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2size}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
-Puts at @var{r1p} the greatest common divisor of @{@var{s1p}, @var{s1size}@}
-and @{@var{s2p}, @var{s2size}@}.  The first cofactor is written at @var{r2p}.
-Both source operands are destroyed.
+Compute the greatest common divisor of @{@var{s1p}, @var{s1size}@} and
+@{@var{s2p}, @var{s2size}@}, and store it at @var{r1p}.  Write the the
+first cofactor at @var{r2p}.  Both source operands are clobbered.
 
 @{@var{s1p}, @var{s1size}@} must be greater or equal to @{@var{s2p},
 @var{s2size}@}.  Neither operand may equal 0.
@@ -2684,29 +2964,30 @@ releases.
 Joachim Hollman was involved in the design of the @code{mpf} interface, and in
 the @code{mpz} design revisions for version 2.
 
-Bennet Yee contributed the functions @code{mpz_jacobi} and
-@code{mpz_legendre}.
+Bennet Yee contributed the functions @code{mpz_jacobi} and @code{mpz_legendre}.
 
 Andreas Schwab contributed the files @file{mpn/m68k/lshift.S} and
 @file{mpn/m68k/rshift.S}.
 
-The development of floating point functions of GNU MP 2, were supported in
-part by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO
-(POlynomial System SOlving).
+The development of floating point functions of GNU MP 2, were supported in part
+by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
+System SOlving).
 
-GNU MP 2 was finished and released by TMG Datakonsult, Sodermannagatan 5,
-116 23 STOCKHOLM, SWEDEN, in cooperation with the IDA Center for Computing
-Sciences, USA.
+GNU MP 2 was finished and released in cooperation with the IDA Center for
+Computing Sciences, USA.
 
-Robert Harley of Inria, France and David Seal of ARM, England, suggested
-clever improvements for population count.
+Robert Harley of Inria, France and David Seal of ARM, England, suggested clever
+improvements for population count.
 
-Robert Harley also suggested how to greatly improve Karatsuba multiplication
-for GMP 2.1.
+Robert Harley also wrote a template Karatsuba multiplication function for GMP
+2.1 on which the current implementation is based.
+
+Torsten Ekedahl provided significant inspiration during several phases of the
+GMP development.  His mathematical expertise helped improve several algorithms.
 
 (This list is chronological, not ordered after significance.  If you have
-contributed to GMP but are not listed above, please tell tege@@nada.kth.se
-about the omission!)
+contributed to GMP but are not listed above, please tell tege@@gnu.org about
+the omission!)
 
 @node References, , Contributors, Top
 @comment  node-name,  next,  previous,  up
