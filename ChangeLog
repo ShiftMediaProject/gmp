@@ -5,6 +5,11 @@
 	* mpf/get_str.c: Don't set n_digits from digits_computed_so_far
 	when the converted operand becomes zero.  Misc cleanups.
 
+2000-08-21  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/{fdiv_r_2exp.c,lcm.c,urandomm.c}: Add missing TMP_MARK/FREE,
+	avoiding memory leak when using stack-alloc.c.
+
 2000-08-20  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/set.c [BERKELEY_MP] (move): Add conditionals to build as
