@@ -156,6 +156,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 
 		if (nn != dn)
 		  {
+		    mp_limb_t ql;
 		    n2p -= nn - dn;
 
 		    /* We have now dn < nn - dn < 2dn.  Make a recursive call,
@@ -170,9 +171,9 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		    /* FIXME: Perhaps call mpn_sb_divrem_mn here for certain
 		       operand ranges, to decrease overhead for small
 		       operands?  */
-		    mp_limb_t ql = qp[nn - dn];
+		    ql = qp[nn - dn]; /* preserve quotient limb... */
 		    mpn_tdiv_qr (qp, n2p, 0L, n2p, nn, d2p, dn);
-		    qp[nn - dn] = ql;
+		    qp[nn - dn] = ql; /* ...restore it again */
 		  }
 	      }
 
