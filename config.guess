@@ -51,6 +51,103 @@ trap 'rm -f dummy.c dummy.o dummy; exit 1' 1 2 15
 # Note: order is significant - the case branches are not exclusive.
 
 case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+    i386:*:*:*)
+        echo 'xwqilkn(){}' >dummy.c
+	${CC-cc} dummy.c -S 2>/dev/null
+        if test "$?" = 0 ; then
+	    u=`grep xwqilkn dummy.s | head -1 | sed 's;[^_]*\([_]*\)xwqilkn;\1;'`
+	    cat <<EOF >dummy1.s
+	.globl ${u}cpuid
+${u}cpuid:
+	pushl %esi
+	pushl %ebx
+	movl 16(%esp),%eax
+	.word 0xa20f
+	movl 12(%esp),%esi
+	movl %ebx,(%esi)
+	movl %edx,4(%esi)
+	movl %ecx,8(%esi)
+	popl %ebx
+	popl %esi
+	ret
+EOF
+	    cat <<EOF >dummy2.c
+main ()
+{
+  char vendor_string[13];
+  char dummy_string[12];
+  long fms;
+  int family, model;
+  char *modelstr;
+
+  cpuid (vendor_string, 0);
+  vendor_string[12] = 0;
+
+  fms = cpuid (dummy_string, 1);
+
+  family = (fms >> 8) & 15;
+  model = (fms >> 4) & 15;
+
+  modelstr = "i486";
+  if (strcmp (vendor_string, "GenuineIntel") == 0)
+    {
+      switch (family)
+	{
+	case 5:
+	  if (model <= 2)
+	    modelstr = "pentium";
+	  else if (model >= 4)
+	    modelstr = "pentiummmx";
+	  break;
+	case 6:
+	  if (model == 1)
+	    modelstr = "pentiumpro";
+	  else if (model <= 5)
+	    modelstr = "pentium2";
+	  else
+	    modelstr = "pentium3";
+	  break;
+	}
+    }
+  else if (strcmp (vendor_string, "AuthenticAMD") == 0)
+    {
+      switch (family)
+	{
+	case 5:
+	  if (model <= 3)
+	    modelstr = "k5";
+	  else if (model <= 7)
+	    modelstr = "k6";
+	  else if (model <= 8)
+	    modelstr = "k6-2";
+	  else if (model <= 9)
+	    modelstr = "k6-3";
+	  break;
+	case 6:
+	  modelstr = "athlon";
+	  break;
+	}
+    }
+  else if (strcmp (vendor_string, "CyrixInstead") == 0)
+    {
+      /* Should recognize Cyrix' processors too.  */
+    }
+
+  printf ("%s\n", modelstr);
+  return 0;
+}
+EOF
+	    ${CC-cc} dummy1.s dummy2.c -o dummy 2>/dev/null
+	    if test "$?" = 0 ; then
+		X86CPU=`./dummy`
+	    fi
+	fi
+	rm -f dummy.c dummy.s dummy1.s dummy2.c dummy
+  ;;
+esac
+
+
+case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
     alpha:OSF1:*:*)
 	if test $UNAME_RELEASE = "V4.0"; then
 		UNAME_RELEASE=`/usr/sbin/sizer -v | awk '{print $3}'`
@@ -524,11 +621,20 @@ EOF
     i?86:BSD/386:*:* | *:BSD/OS:*:*)
 	echo ${UNAME_MACHINE}-pc-bsdi${UNAME_RELEASE}
 	exit 0 ;;
+    i386:FreeBSD:*:*)
+	echo ${X86CPU}-pc-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
+	exit 0 ;;
     *:FreeBSD:*:*)
 	echo ${UNAME_MACHINE}-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
 	exit 0 ;;
+    i386:NetBSD:*:*)
+	echo ${X86CPU}-pc-netbsd`echo ${UNAME_RELEASE}|sed -e 's/[-_].*/\./'`
+	exit 0 ;;
     *:NetBSD:*:*)
 	echo ${UNAME_MACHINE}-unknown-netbsd`echo ${UNAME_RELEASE}|sed -e 's/[-_].*/\./'`
+	exit 0 ;;
+    i386:OpenBSD:*:*)
+	echo ${X86CPU}-pc-openbsd`echo ${UNAME_RELEASE}|sed -e 's/[-_].*/\./'`
 	exit 0 ;;
     *:OpenBSD:*:*)
 	echo ${UNAME_MACHINE}-unknown-openbsd`echo ${UNAME_RELEASE}|sed -e 's/[-_].*/\./'`
@@ -565,8 +671,8 @@ EOF
 				    s/ .*//
 				    p'`
         case "$ld_supported_emulations" in
-	  i?86linux)  echo "${UNAME_MACHINE}-pc-linux-gnuaout"      ; exit 0 ;;
-	  i?86coff)   echo "${UNAME_MACHINE}-pc-linux-gnucoff"      ; exit 0 ;;
+	  i?86linux)  echo "${X86CPU}-pc-linux-gnuaout"      ; exit 0 ;;
+	  i?86coff)   echo "${X86CPU}-pc-linux-gnucoff"      ; exit 0 ;;
 	  sparclinux) echo "${UNAME_MACHINE}-unknown-linux-gnuaout" ; exit 0 ;;
 	  armlinux)   echo "${UNAME_MACHINE}-unknown-linux-gnuaout" ; exit 0 ;;
 	  m68klinux)  echo "${UNAME_MACHINE}-unknown-linux-gnuaout" ; exit 0 ;;
@@ -679,6 +785,7 @@ EOF
 	  case "${UNAME_MACHINE}" in
 	  i?86)
 	    VENDOR=pc;
+	    UNAME_MACHINE=${X86CPU}
 	    ;;
 	  *)
 	    VENDOR=unknown;
