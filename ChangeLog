@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-19  Niels Möller  <nisse@harpo.hack.org>
+
+	* mpn/generic/hgcd.c (mpn_diff_smaller_p): Rewrote function. Tried
+	to explain how it works.
+	(slow_diff_smaller_p, wrap_mpn_diff_smaller_p) [WANT_ASSERT]: Use
+	CPP to wrap assertion checks around all calls to
+	mpn_diff_smaller_p.
+
 2003-12-19  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpf/t-get_d.c: Print message before aborting.
