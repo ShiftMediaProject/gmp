@@ -79,7 +79,7 @@ main (int argc, char **argv)
 
       if (mpz_cmp (op1, op2))
 	{
-	  fprintf (stderr, "ERROR, op1 and op2 different\n");
+	  fprintf (stderr, "ERROR, op1 and op2 different in test %d\n", i);
 	  fprintf (stderr, "str  = %s\n", str);
 	  fprintf (stderr, "base = %d\n", base);
 	  fprintf (stderr, "op1  = "); debug_mp (op1, -16);
