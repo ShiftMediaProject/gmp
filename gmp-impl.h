@@ -339,6 +339,27 @@ mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2]));
 #define mpz_n_pow_ui __gmpz_n_pow_ui
 void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
 
+typedef __gmp_randstate_struct *gmp_randstate_ptr;
+extern char             __gmp_rands_initialized;
+extern gmp_randstate_t  __gmp_rands;
+
+/* This is the global for the old-style random functions, and it's also used
+   in the test programs.  */
+#define RANDS                                                   \
+  ((__gmp_rands_initialized ? 0                                 \
+    : (__gmp_rands_initialized = 1,                             \
+       gmp_randinit (__gmp_rands, GMP_RAND_ALG_LC, 64))),       \
+   __gmp_rands)
+
+#define RANDS_CLEAR()                   \
+  do {                                  \
+    if (__gmp_rands_initialized)        \
+      {                                 \
+        __gmp_rands_initialized = 0;    \
+        gmp_randclear (__gmp_rands);    \
+      }                                 \
+  } while (0)
+
 
 /* kara uses n+1 limbs of temporary space and then recurses with the
    balance, so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ... */
