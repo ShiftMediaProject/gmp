@@ -1,5 +1,8 @@
 2000-10-20  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/default.m4: New file.
+	* configure.in, condig.m4 switch (ia64*-*-*): Use ia64/default.m4.
+
 	* mpn/ia64/mul_1.asm: New file.
 	* mpn/ia64/addmul_1.asm: New file.
 	* mpn/ia64/add_n.asm: New file.
