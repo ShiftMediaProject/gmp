@@ -47,6 +47,12 @@ define(`numb_mask',`r21')
 define(`NAIL_BITS',`GMP_NAIL_BITS')
 define(`CYSH',`GMP_NUMB_BITS')
 
+dnl  This declaration is munged by configure
+NAILS_SUPPORT(1-63)
+
+dnl  Runs at 2.5 cycles/limb.  It would be possible to reach 2.0 cycles/limb
+dnl  with 8-way unrolling.
+
 ASM_START()
 PROLOGUE(mpn_add_n)
 	lda	numb_mask, -1(r31)
