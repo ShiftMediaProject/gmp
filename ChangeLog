@@ -1,3 +1,8 @@
+2000-03-17  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/rshift.S: Use plain rcrl (not rcrl $1) for
+	shift-by-1 case, significant speedup.
+
 2000-03-15  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/diveby3.c: New file.
