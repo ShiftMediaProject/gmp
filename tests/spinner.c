@@ -35,6 +35,14 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 
+/* "alarm" is not available on mingw32, and the SIGALRM constant is not
+   defined.  Don't bother with a spinner in this case.  */
+#if ! HAVE_ALARM || ! defined (SIGALRM)
+#define alarm(n)          abort()
+#define signal(sig,func)  SIG_ERR
+#endif
+
+
 /* An application can update this to get a count printed with the spinner.
    If left at 0, no count is printed. */
 
@@ -51,7 +59,11 @@ spinner_signal (int signum)
 {
   spinner_tick = 1;
 
-  if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
+  if (signal (SIGALRM, spinner_signal) == SIG_ERR)
+    {
+      printf ("spinner_signal(): Oops, cannot reinstall SIGALRM\n");
+      abort ();
+    }
   alarm (1);
 }
 
@@ -76,7 +88,12 @@ spinner_init (void)
   if (!spinner_wanted)
     return;
 
-  if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
+  if (signal (SIGALRM, spinner_signal) == SIG_ERR)
+    {
+      printf ("(no spinner)\r");
+      spinner_tick = 0;
+      return;
+    }
   alarm (1);
 
   /* unbufferred output so the spinner will show up */
