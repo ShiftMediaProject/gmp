@@ -1440,6 +1440,40 @@ fi
 ])
 
 
+dnl  GMP_C_STDARG
+dnl  ------------
+dnl  Test whether to use <stdarg.h> or <varargs.h>.
+dnl
+dnl  Notice the AC_DEFINE here is HAVE_STDARG to avoid clashing with
+dnl  HAVE_STDARG_H which could arise from AC_CHECK_HEADERS.
+dnl
+dnl  This test might be slight overkill, after all there's really only going
+dnl  to be ANSI or K&R and the two can be differentiated by AC_PROG_CC_STDC
+dnl  or very likely by the setups for _PROTO in gmp.h.  On the other hand
+dnl  this test is nice and direct, being what we're going to actually use.
+
+AC_DEFUN(GMP_C_STDARG,
+[AC_CACHE_CHECK([whether <stdarg.h> exists and works],
+                gmp_cv_c_stdarg,
+[AC_TRY_COMPILE(
+[#include <stdarg.h>
+int foo (int x, ...)
+{
+  va_list  ap;
+  int      y;
+  va_start (ap, x);
+  y = va_arg (ap, int);
+  va_end (ap);
+  return y;
+}],,
+gmp_cv_c_stdarg=yes, gmp_cv_c_stdarg=no)
+])
+if test $gmp_cv_c_stdarg = yes; then
+  AC_DEFINE(HAVE_STDARG, 1, [Define if <stdarg.h> exists and works])
+fi
+])
+
+
 dnl  GMP_FUNC_ALLOCA
 dnl  ---------------
 dnl  Determine whether "alloca" is available.  This is AC_FUNC_ALLOCA from
