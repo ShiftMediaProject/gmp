@@ -1,3 +1,4 @@
+*.lo
 .libs
 Makefile
-*.lo
+libprintf.la
