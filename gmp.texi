@@ -6342,10 +6342,6 @@ this is a problem.
 The following packages and projects offer access to GMP from languages other
 than C, though perhaps with varying levels of functionality and efficiency.
 
-@c  GNUstep Base Library @uref{http://www.gnustep.org} (version 0.9.1) is
-@c  intending to use GMP for its NSDecimal class, which would be an Objective
-@c  C binding for GMP.  Has some configure stuff ready, but no code.
-
 @c  @spaceuref{U} is the same as @uref{U}, but with a couple of extra spaces
 @c  in tex, just to separate the URL from the preceding text a bit.
 @iftex
