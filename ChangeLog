@@ -35,7 +35,7 @@
 	set_d.c,sin_cos.c,sqrtrem.c,sub.c: Apply some tweaks for K&R.
 	* tests/mpz/reuse.c, tests/mpq/t-md_2exp.c, demos/pexpr.c,
 	demos/expr/t-expr.c: Ditto.
-	
+
 	* configure.in (HAVE_ABI_$abi): New define in config.m4.
 
 	* gmp-impl.h (mpn_sqr_diagonal): Add prototype and define.
@@ -63,7 +63,8 @@
 	* acconfig.h: Add #undef of mpn_sqr_diagonal.
 	Remove lots of spacing.
 
-	* configure.in (syntax testing section): Match power* instead of powerpc*.
+	* configure.in (syntax testing section): Match power* instead of
+	powerpc*.
 	* mpn/power: Convert files to `.asm'.
 	Prefix umul_ppmm and sdiv_qrnnd.
 	Update some comments.
