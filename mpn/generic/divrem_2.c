@@ -1,7 +1,7 @@
-/* mpn_divrem_classic -- Divide natural numbers, producing both remainder and
-   quotient.
+/* mpn_divrem_2 -- Divide natural numbers, producing both remainder and
+   quotient.  The divisor is two limbs.
 
-Copyright (C) 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,21 +24,21 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Divide num (NP/NSIZE) by den (DP/DSIZE) and write
-   the NSIZE-DSIZE least significant quotient limbs at QP
-   and the DSIZE long remainder at NP.  If QEXTRA_LIMBS is
+/* Divide num (NP/NSIZE) by den (DP/2) and write
+   the NSIZE-2 least significant quotient limbs at QP
+   and the 2 long remainder at NP.  If QEXTRA_LIMBS is
    non-zero, generate that many fraction bits and append them after the
    other quotient limbs.
    Return the most significant limb of the quotient, this is always 0 or 1.
 
    Preconditions:
-   0. NSIZE >= DSIZE.
+   0. NSIZE >= 2.
    1. The most significant bit of the divisor must be set.
    2. QP must either not overlap with the input operands at all, or
-      QP + DSIZE >= NP must hold true.  (This means that it's
+      QP + 2 >= NP must hold true.  (This means that it's
       possible to put the quotient in the high part of NUM, right after the
       remainder in NUM.
-   3. NSIZE >= DSIZE, even if QEXTRA_LIMBS is non-zero.  */
+   3. NSIZE >= 2, even if QEXTRA_LIMBS is non-zero.  */
 
 #if defined (__alpha)
 mp_limb_t __mpn_invert_normalized_limb ();
@@ -89,8 +89,8 @@ mpn_divrem_2 (qp, qxn, np, nsize, dp)
       most_significant_q_limb = 1;
     }
 
-  /* If multiplication is much faster than division, preinvert the
-     most significant divisor limb before entering the loop.  */
+  /* If multiplication is much faster than division, preinvert the most 
+     significant divisor limb before entering the loop.  */
   if (UDIV_TIME > 2 * UMUL_TIME + 6)
     {
       have_preinv = 0;
@@ -113,9 +113,8 @@ mpn_divrem_2 (qp, qxn, np, nsize, dp)
 
       if (n1 == d1)
 	{
-	  /* Q should be either 111..111 or 111..110.  Need special
-	     treatment of this rare case as normal division would
-	     give overflow.  */
+	  /* Q should be either 111..111 or 111..110.  Need special treatment
+	     of this rare case as normal division would give overflow.  */
 	  q = ~(mp_limb_t) 0;
 
 	  r = n0 + d1;
@@ -138,6 +137,7 @@ mpn_divrem_2 (qp, qxn, np, nsize, dp)
 	}
 
       n2 = np[0];
+
     q_test:
       if (n1 > r || (n1 == r && n0 > n2))
 	{
