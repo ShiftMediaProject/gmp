@@ -59,7 +59,6 @@ by the Foundation.
 @end ifinfo
 
 @setchapternewpage on
-@headings double
 @titlepage
 @c  use the new format for titles
 
@@ -103,6 +102,7 @@ into another language, under the above conditions for modified versions,
 except that this permission notice may be stated in a translation approved
 by the Foundation.
 @end titlepage
+@headings double
 
 @ifinfo
 @node Top, Copying, (dir), (dir)
@@ -654,6 +654,7 @@ These functions assign new values to already initialized integers
 @deftypefunx void mpz_set_ui (mpz_t @var{rop}, unsigned long int @var{op})
 @deftypefunx void mpz_set_si (mpz_t @var{rop}, signed long int @var{op})
 @deftypefunx void mpz_set_d (mpz_t @var{rop}, double @var{op})
+@deftypefunx void mpz_set_f (mpz_t @var{rop}, mpf_t @var{op})
 Set the value of @var{rop} from @var{op}.
 @end deftypefun
 
@@ -1570,6 +1571,7 @@ These functions assign new values to already initialized floats
 @deftypefunx void mpf_set_si (mpf_t @var{rop}, signed long int @var{op})
 @deftypefunx void mpf_set_d (mpf_t @var{rop}, double @var{op})
 @deftypefunx void mpf_set_q (mpf_t @var{rop}, mpq_t @var{op})
+@deftypefunx void mpf_set_z (mpf_t @var{rop}, mpz_t @var{op})
 Set the value of @var{rop} from @var{op}.
 @end deftypefun
 
