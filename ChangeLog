@@ -3,6 +3,8 @@
 	* mpf/tests/t-muldiv.c: Relax error limit.  Make precision depend
 	on SIZE.  Misc changes.
 
+	* configure: Regenerate.
+
 2000-07-20  Kent Boortz  <kent@swox.com>
 
 	* macos/Makefile.in: Removed hard coded targets, added special
