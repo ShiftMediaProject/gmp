@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-19  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (mpz_eval_expr): Optimize s^rhs for -1 <= s <= 1.
+	(cleanup_and_exit): Improve error message wording.
+
 2002-01-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/mpfr.h (_PROTO): Use __GMP_PROTO, for compatibility with
