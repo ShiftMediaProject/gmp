@@ -2,7 +2,8 @@
    negative based on if U > V, U == V, or U < V.  Vn and Vd may have
    common factors.
 
-Copyright 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001, 2002, 2003 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -74,11 +75,13 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
   tmp1_ptr = (mp_ptr) TMP_ALLOC ((num1_size + 1) * BYTES_PER_MP_LIMB);
   tmp2_ptr = (mp_ptr) TMP_ALLOC ((den1_size + 1) * BYTES_PER_MP_LIMB);
 
-  cy_limb = mpn_mul_1 (tmp1_ptr, op1->_mp_num._mp_d, num1_size, den2);
+  cy_limb = mpn_mul_1 (tmp1_ptr, op1->_mp_num._mp_d, num1_size,
+                       (mp_limb_t) den2);
   tmp1_ptr[num1_size] = cy_limb;
   tmp1_size = num1_size + (cy_limb != 0);
 
-  cy_limb = mpn_mul_1 (tmp2_ptr, op1->_mp_den._mp_d, den1_size, num2);
+  cy_limb = mpn_mul_1 (tmp2_ptr, op1->_mp_den._mp_d, den1_size,
+                       (mp_limb_t) num2);
   tmp2_ptr[den1_size] = cy_limb;
   tmp2_size = den1_size + (cy_limb != 0);
 
