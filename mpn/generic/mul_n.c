@@ -1190,28 +1190,9 @@ mpn_toom3_mul_n (p, a, b, n, ws)
     mp_limb_t i, x, y;
     tB += mpn_add_n (p + l, p + l, B, l2);
     tD += mpn_add_n (p + l3, p + l3, D, l2);
-    y = tB;
-    for (i = 0; y && i < l; ++i)
-      {
-	x = p[l3 + i] + y;
-	p[l3 + i] = x;
-	y = x < y;
-      }
-    y += tC;
-    for (i = 0; y && i < l; ++i)
-      {
-	x = p[l4 + i] + y;
-	p[l4 + i] = x;
-	y = x < y;
-      }
-    y += tD;
-    for (i = 0; y && i < 2*n-l5; ++i)
-      {
-	x = p[l5 + i] + y;
-	p[l5 + i] = x;
-	y = x < y;
-      }
-    ASSERT (!y);
+    mpn_incr_u (p + l3, tB);
+    mpn_incr_u (p + l4, tC);
+    mpn_incr_u (p + l5, tD);
   }
 }
 
@@ -1308,28 +1289,9 @@ mpn_toom3_sqr_n (p, a, n, ws)
     mp_limb_t i, x, y;
     tB += mpn_add_n (p + l, p + l, B, l2);
     tD += mpn_add_n (p + l3, p + l3, D, l2);
-    y = tB;
-    for (i = 0; y && i < l; ++i)
-      {
-	x = p[l3 + i] + y;
-	p[l3 + i] = x;
-	y = x < y;
-      }
-    y += tC;
-    for (i = 0; y && i < l; ++i)
-      {
-	x = p[l4 + i] + y;
-	p[l4 + i] = x;
-	y = x < y;
-      }
-    y += tD;
-    for (i = 0; y && i < 2*n-l5; ++i)
-      {
-	x = p[l5 + i] + y;
-	p[l5 + i] = x;
-	y = x < y;
-      }
-    ASSERT (!y);
+    mpn_incr_u (p + l3, tB);
+    mpn_incr_u (p + l4, tC);
+    mpn_incr_u (p + l5, tD);
   }
 }
 
