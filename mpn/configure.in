@@ -147,7 +147,7 @@ case "${target}" in
   ppc60[234]*-* | ppc60[234]*-*-* | \
   powerpc*-*-* | powerpc*-*-*)
     syntax=elf;;
-  sparc9-*-solaris2*)
+  sparc9-*-solaris2* | ultrasparc*-*-solaris2*)
     target_makefile_frag=config/mt-sprc9;;
 esac
 
