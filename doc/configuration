@@ -1,6 +1,6 @@
 /* doc/configuration (in Emacs -*-outline-*- format). */
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,6 +23,27 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 * Adding a new file
 
+** Adding a top-level file
+
+  i) Add it to libgmp_la_SOURCES in Makefile.am.
+
+  ii) If libmp.la needs it (usually doesn't), then add it to
+      libmp_la_SOURCES too.
+
+** Adding a subdirectory file
+
+For instance for mpz,
+
+  i) Add file.c to libmpz_la_SOURCES in mpz/Makefile.am.
+
+  ii) Add mpz/file$U.lo to MPZ_OBJECTS in the top-level Makefile.am
+
+  iii) If for some reason libmp.la needs it (usually doesn't) then add
+       mpz/file$U.lo to libmp_la_DEPENDENCIES in the top-level
+       Makefile.am too.
+
+The same applies to mpf, mpq, scanf and printf.
+
 ** Adding an mpn file
 
 The way we build libmpn (in the `mpn' subdirectory) is quite special.
@@ -35,29 +56,34 @@ the mpn/generic directory.
 There are four types of mpn source files.
 
   .asm	  Assembly code preprocessed with m4
-  .S	  Assembly code preprocessed with CPP
+  .S	  Assembly code preprocessed with cpp
   .s	  Assembly code not preprocessed at all
   .c	  C code
 
 There are two types of .asm files.
 
-  i) ``Normal'' files containing one function, possibly with more than
-     one entry point.
+  i) ``Normal'' files containing one function, though possibly with
+     more than one entry point.
 
   ii) Multi-function files that generate one of a set of functions
       according to build options.
 
-When adding a new implementation of an existing function,
+To add a new implementation of an existing function,
 
-  i) Put it in the appropriate mpn subdirectory.  It'll be detected and
-     used.
+  i) Put it in the appropriate CPU-specific mpn subdirectory, it'll be
+     detected and used.
 
-  ii) If it's a .asm or .S, be sure to have a PROLOGUE(func) entry
-      point since configure greps for that to set up the
-      HAVE_NATIVE_func defines in config.h.
+  ii) Any entrypoints tested by HAVE_NATIVE_func in other code must
+      have PROLOGUE(func) for configure to grep.  This is normal for
+      .asm or .S files, but for .c files a dummy comment like the
+      following will be needed.
 
-When adding a new implementation using a multi-function file, in
-addition do the following,
+              /*
+              PROLOGUE(func)
+              */
+
+To add a new implementation using a multi-function file, in addition
+do the following,
 
   i) Use a MULFUNC_PROLOGUE(func1 func2 ...) in the .asm, declaring
      all the functions implemented, including carry-in variants.
@@ -66,13 +92,13 @@ addition do the following,
      then MULFUNC_PROLOGUE isn't necessary (but this is usually not
      the case).
 
-When adding a new style of multi-function file, in addition do the
+To add a new style of multi-function file, in addition do the
 following,
 
   i) Add to the "case" statement in configure.in which lists each
      multi-function filename and what function files it can provide.
 
-When adding a completely new mpn function file, do the following,
+To add a completely new mpn function file, do the following,
 
   i) Ensure the filename is a valid C identifier, due to the
      -DOPERATION_$* used to support multi-function files.  This means
@@ -81,7 +107,7 @@ When adding a completely new mpn function file, do the following,
   ii) Add it to configure.in under one of the following
 
       a) `gmp_mpn_functions' if it exists for every target.  This
-         means there must be a C version in mpn/generic.  (Eg. add_n)
+         means there must be a C version in mpn/generic.  (Eg. mul_1)
 
       b) `gmp_mpn_functions_optional' if it's a standard function, but
          doesn't need to exist for every target.  Code wanting to use
@@ -90,80 +116,68 @@ When adding a completely new mpn function file, do the following,
 
       c) `extra_functions' for some targets, if it's a special
          function that only ever needs to exist for certain targets.
-         Code wanting to use it will generally test the target, but
-         HAVE_NATIVE_func can be used if desired.
+         Code wanting to use it can test either HAVE_NATIVE_func or
+         HAVE_HOST_CPU_foo, as desired.
 
-  iii) If you want `HAVE_NATIVE_func' defined in config.h, add
-       `#undef HAVE_NATIVE_func' to acconfig.h.
+  iii) Add `#undef HAVE_NATIVE_func' to acconfig.h.  This is only
+       actually necessary if that define is going to be used, but for
+       consistency it's good to do it always.
 
-  iv) If it might be implemented in C, either sometimes or always, add
-      it to nodist_libdummy_la_SOURCES in mpn/Makefile.am (to get an
-      ansi2knr rule).
+  iv) Add file.c to nodist_libdummy_la_SOURCES in mpn/Makefile.am (in
+      order to get an ansi2knr rule).  If the file is only in
+      assembler then this step is unnecessary, but do it anyway so as
+      not to forget if later a .c version is added.
 
   v) If the function can be provided by a multi-function file, then
-     follow the directions above for that too.
+     add to the "case" statement in configure.in which lists each
+     multi-function filename and what function files it can provide.
 
-** Adding a non-mpn file
-
-When adding a top-level file,
-
-  i) Add it to libgmp_la_SOURCES in Makefile.am.
-
-  ii) If libmp.la needs it, then add it to libmp_la_SOURCES too.
-
-When adding an mpz file,
-
-  i) Add file.c to libmpz_la_SOURCES in mpz/Makefile.am.
-
-  ii) Add mpz/file$U.lo to MPZ_OBJECTS in the top-level Makefile.am
-
-  iii) If for some reason libmp.la needs it then add mpz/file$U.lo to
-       libmp_la_DEPENDENCIES in the top-level Makefile.am too.
-       Usually this is not the case.
-
-The same applies to the mpq, mpf, mpbsd, printf, scanf, cxx and mpfr
-directories.
-
-The multi-function files scheme described above for mpn is not used in
-mpz, because it doesn't always work on .c files.  Some versions of
-"make" don't expand $* in explicit rules, such as those automake
-generates for ansi2knr support.  HP-UX 10 native "make" is one such,
-and the bundled "cc" is only K&R, thereby triggering the problem.
-Obviously this isn't a particularly important combination, but the
-same source sharing can be achieved with #include, and for a fixed set
-of sources that's arguably cleaner in any case.
 
 ** Adding a test program
 
-Generic test programs to be run early in the testing can be added to
-the "tests" sub-directory, generic tests for late in the testing can
-be added to "tests/misc".  "tests/rand" exists for tests on the random
-number functions in the top-level directory.
+  i) Tests to be run early in the testing can be added to the main
+     "tests" sub-directory.
 
-Tests related to mpz functions can be added to the "tests/mpz"
-directory.  Similarly for mpq, mpf, mpbsd and cxx.
+  ii) Tests for mpn, mpz, mpq and mpf can be added under the
+      corresponding tests subdirectory.
 
-In any case the name of the program should be added to check_PROGRAMS
-in the respective Makefile.am.  TESTS is equal to check_PROGRAMS so
-each of these is run.  In the cxx case a line like "t_foo_SOURCES =
-t-foo.cc" must be added, since by default automake looks for a .c
-file.
+  iii) Generic tests for late in the testing can be added to
+       "tests/misc".  printf and scanf tests currently live there too.
+
+  iv) Random number function tests can be added to "tests/rand".  That
+      directory has some development-time programs too.
+
+  v) C++ test programs can be added to "tests/cxx".  A line like the
+     following must be added for each, since by default automake looks
+     for a .c file.
+
+             t_foo_SOURCES = t-foo.cc
+
+In all cases the name of the program should be added to check_PROGRAMS
+in the Makefile.am.  TESTS is equal to check_PROGRAMS, so all those
+programs get run.
 
 "tests/devel" has a number of programs which are only for development
 purposes and are not for use in "make check".  These should be listed
 in EXTRA_PROGRAMS to get Makefile rules created, but they're never
-built or run unless an explicit "make some-program" is used.
+built or run unless an explicit "make someprog" is used.
 
 ** Macos directory
 
 The macos/configure script will automatically pick up additions to
-gmp_mpn_functions, MPZ_OBJECTS, etc, but test programs need to be
-added to Makefile.in manually.
+gmp_mpn_functions, MPZ_OBJECTS, etc, but currently test programs need
+to be added to Makefile.in manually.
 
-Take care when modifying the top-level configure.in that it doesn't
-upset the macos/configure script heuristics.
+When modifying the top-level configure.in ensure that it doesn't upset
+the macos/configure script heuristics.
+
 
 * Adding a new CPU
+
+In general it's policy to use proper names for each CPU type
+supported.  If two CPUs are quite similar and perhaps don't have any
+actual differences in GMP then they're still given separate names, for
+example alphaev67 and alphaev68.
 
 Canonical names:
 
@@ -194,12 +208,14 @@ Configure:
      a) ABI choices (if any).
      b) Compiler choices.
      c) mpn path for CPU specific code.
+     d) Good default CFLAGS for each likely compiler.
      d) Any special tests necessary on the compiler or assembler
         capabilities.
 
   ii) M4 macros to be shared by asm files in a CPU family are by
       convention in a foo-defs.m4 like mpn/x86/x86-defs.m4.  They're
       likely to use settings from config.m4 generated by configure.
+
 
 * The configure system
 
@@ -211,8 +227,8 @@ been applied, look for "Regenerate ...".
 
 The GMP build system is in places somewhat dependent on the internals
 of the build tools.  Obviously that's avoided as much as possible, but
-where it can't be then it creates a problem when upgrading or
-attempting to use different tools versions.
+where it can't it creates a problem when upgrading or attempting to
+use different tools versions.
 
 ** Updating gmp
 
@@ -220,7 +236,7 @@ The following files need to be updated when going to a new version of
 the build tools.  Unfortunately the tools generally don't identify
 when an out-of-date version is present.
 
-aclocal.m4 is updated by running "aclocal" in the usual way.
+aclocal.m4 is updated by running "aclocal -I mpfr".
 
 INSTALL.autoconf can be copied from INSTALL in autoconf.
 
@@ -298,26 +314,35 @@ errors rather than mysterious failures from a mismatch.
 
 ** General
 
---disable-shared will make builds go much faster, though testing
-shared or shared+static build should be done on occasion.
+--disable-shared will make builds go much faster, though of course
+shared or shared+static should be tested too.
 
-Combinations of --enable-mpbsd, --enable-fft and --enable-mpfr are
-worth doing.  The --enable-mpbsd in particular it a touch hairy and
-worth trying enabled and disabled (the latter being the default).
+--enable-mpbsd grabs various bits of mpz, which might need to be
+adjusted if things in those routines are changed.  Building mpbsd all
+the time doesn't cost much.
 
-gcc 2.7.2.3 for i386 has reloader bugs perhaps related to asm block
-handling, which are worked around in various places.  Checking that no
-new ones have been hit is worthwhile.
+--prefix to a dummy directory followed by "make install" will show
+what's installed.
 
-In all cases a "make install" is good to see that the right things are
-copied to the right places.  The usual --prefix should be used into a
-clean test tree to look at this.
+"make check" acts on the libgmp just built, and will ignore any other
+/usr/lib/libgmp, or at least it should do.  Libtool does various hairy
+things to ensure it hits the just-built library.
+
+** Debugging
+
+A build with maximum debugging can be made with
+
+	./configure --host=none --enable-assert --enable-alloca=debug
+
+Malloc memory leaks are always checked by the test programs.  With
+alloca=debug any TMP_ALLOC leaks will be detected too.
+--enable-alloca=malloc-reentrant also has this effect.
 
 ** Long long limb testing
 
 On systems where gcc supports long long, but a limb is normally just a
-long, the following can be used to force long long for testing.  It
-will probably run very slowly.
+long, the following can be used to force long long for testing
+purposes.  It will probably run quite slowly.
 
 	./configure --host=none ABI=longlong
 
@@ -325,30 +350,25 @@ will probably run very slowly.
 
 When using gcc, configuring with something like
 
-	./configure CFLAGS="-g -Wall -Wconversion"
+	./configure CFLAGS="-g -Wall -Wconversion -Wno-sign-compare"
 
 can show where function parameters are being converted due to having
-function prototypes available.
-
-The warnings about signed/unsigned mismatches are pointless and
-annoying, but attention should be paid to any size conversions due to
-prototypes, since these won't occur under a K&R compiler.  Doing this
-in combination with the long long limb setups above is good.
+function prototypes available, which won't happen in a K&R compiler.
+Doing this in combination with the long long limb setups above is
+good.
 
 Conversions between int and long aren't warned about by gcc when
 they're the same size, which is unfortunate because casts should be
-used in such cases, for the benefit of those (perhaps rare) systems
-where int!=long under a K&R compiler and where the difference matters
-in function calls.
+used in such cases, for the benefit of K&R compilers with int!=long
+and where the difference matters in function calls.
 
-* K&R support
+** K&R support
 
-K&R compilers are still supported, via automake ansi2knr.  Function
-definitions must be in a stylized form for this to work (see the
-ansi2knr.1 man page).
+Function definitions must be in the GNU stylized form to work.  See
+the ansi2knr.1 man page.
 
-_PROTO is used for function prototypes, other ANSI / K&R differences
-are conditionalized in various places.
+__GMP_PROTO is used for function prototypes, other ANSI / K&R
+differences are conditionalized in various places.
 
 Proper testing of the K&R support requires a compiler which gives an
 error for ANSI-isms.  Configuring with --host=none is a good idea, to
