@@ -52,12 +52,12 @@ fi
 
 
 AC_ARG_ENABLE(alloca,
-AC_HELP_STRING([--enable-alloca],[use alloca for temp space [default=yes]]),
-[case "${enableval}" in
-yes|no) ;;
-*) AC_MSG_ERROR([bad value ${enableval} for --enable-alloca, need yes or no]) ;;
+AC_HELP_STRING([--enable-alloca],[use alloca for temp space [default=detect]]),
+[case $enableval in
+yes|no|detect) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect]) ;;
 esac],
-[enable_alloca=yes])
+[enable_alloca=detect])
 
 if test "$enable_alloca" = "no"; then
   AC_DEFINE(USE_STACK_ALLOC,1,
@@ -694,7 +694,11 @@ dnl These are mainly for the benefit of supplementary programs.  The library
 dnl itself doesn't use anything weird.
 
 AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info read_real_time srandom strtoul sysconf sysctl sysctlbyname times)
+
 GMP_FUNC_ALLOCA
+if test "$enable_alloca" = yes && test "$gmp_cv_func_alloca" = no; then
+  AC_MSG_ERROR([--enable-alloca=yes specified, but alloca not available])
+fi
 
 dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
 dnl for ansi2knr, and instead use our own test.  (It's only a warning
