@@ -232,3 +232,4 @@ $Lcj1:	sll	v2, 1, sl
 
 	ret	r31,(r26),1
 EPILOGUE()
+ASM_END()
