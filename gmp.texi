@@ -208,11 +208,9 @@ DEC VAX,
 and Zilog Z8000.
 Some optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
 
-@ignore
 There is a mailing list for GMP users.  To join it, send a mail to
 gmp-request@swox.com with the word ``subscribe'' in the message *body* (not in
 the subject line).
-@end ignore
 
 For up-to-date information on GMP, please see the GMP Home Pages at
 @uref{http://www.swox.com/gmp/}.
@@ -425,7 +423,7 @@ might be able to increase the stack space available to programs.
 
 @item @option{--enable-mpbsd}
 
-The Berkley MP compatibility library (@file{libmp.a}) and header file
+The Berkeley MP compatibility library (@file{libmp.a}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
@@ -515,7 +513,7 @@ serious bugs.
 The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}
 and @file{mpf/get_d.c}, and causes two corresponding tests to fail.  (You can
 @command{cd} to the @file{mpz} directory to run @samp{make check} there to
-test the rest of the build.)  Use GCC instead if plan to use the function
+test the rest of the build.)  Use GCC instead if you plan to use the function
 @code{mpq_get_d}.
 
 @command{/usr/bin/m4} lacks features needed to process @file{.asm} files.
@@ -556,7 +554,7 @@ manual is strongly discouraged.  If you do so your application is guaranteed
 to be incompatible with future versions of GMP.}
 
 @menu
-* Nomenclature and Types::      	Which datatypes are there?
+* Nomenclature and Types::      	Which data types are there?
 * Function Classes::            	How the functions are organized.
 * GMP Variable Conventions::     	Some rules and hints about variables.
 * GMP and reentrancy::           	What about reentrancy?
@@ -687,7 +685,7 @@ Most of the time, this policy is best, since it avoids frequent re-allocation.
 @node GMP and reentrancy, Useful Macros and Constants, GMP Variable Conventions, GMP Basics
 @section GMP and reentrancy
 
-The GMP code is reentrant and thred-safe, with some exceptions:
+The GMP code is reentrant and thread-safe, with some exceptions:
 
 @itemize @bullet
 @item
@@ -779,7 +777,7 @@ the file format truly portable between machines with different word sizes.
 undocumented in previous releases.
 
 @item The functions @code{mpz_cmp_ui}, @code{mpz_cmp_si}, and @code{mpq_cmp_ui}
-are now implementated as macros, and thereby sometimes evaluate their
+are now implemented as macros, and thereby sometimes evaluate their
 arguments multiple times.
 
 @item The functions @code{mpz_pow_ui} and @code{mpz_ui_pow_ui} now yield 1
@@ -1525,8 +1523,8 @@ be extremely small.
 @c never returns non-zero for composite numbers.
 
 @c (For practical purposes, using @code{mpz_probab_prime_p} is adequate.
-@c The likelyhood of a programming error or hardware malfunction is orders
-@c of magnitudes greater than the likelyhood for a composite to pass as a
+@c The likelihood of a programming error or hardware malfunction is orders
+@c of magnitudes greater than the likelihood for a composite to pass as a
 @c prime, if the @var{reps} argument is in the suggested range.)
 @c @end deftypefun
 
@@ -1568,7 +1566,7 @@ Compute the Jacobi and Legendre symbols, respectively.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})
-Remove all occurences of the factor @var{f} from @var{op} and store the
+Remove all occurrences of the factor @var{f} from @var{op} and store the
 result in @var{rop}.  Return the multiplicity of @var{f} in @var{op}.
 @end deftypefun
 
@@ -3462,7 +3460,7 @@ v. 21 (March), 1995, pp. 111-122.
 
 @item
 Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
-Max-Planck-Institut fuer Informatik Reseach Report MPI-I-98-1-022,
+Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
 @uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
 @end itemize
 
