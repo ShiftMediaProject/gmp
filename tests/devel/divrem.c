@@ -1,5 +1,5 @@
 /*
-Copyright 1996, 1997, 1998, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
