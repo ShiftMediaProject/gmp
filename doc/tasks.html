@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 22 Jan 2004.  An up-to-date version is available at
+  This file current as of 23 Jan 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -181,6 +181,13 @@ MA 02111-1307, USA.
      result, perhaps test for r==u and do nothing in that case, rather than
      currently it looks like an <code>MPN_COPY_INCR</code> will be done to
      reduce prec+1 limbs to prec.
+<li> <code>mpf_div_ui</code>: Instead of padding with low zeros, call
+     <code>mpn_divrem_1</code> asking for fractional quotient limbs.
+<li> <code>mpf_div_ui</code>: Eliminate <code>TMP_ALLOC</code>.  When r!=u
+     there's no overlap and the division can be called on those operands.
+     When r==u and is prec+1 limbs, then it's an in-place division.  If r==u
+     and not prec+1 limbs, then move the available limbs up to prec+1 and do
+     an in-place there.
 <li> <code>mpn_divrem_2</code> could usefully accept unnormalized divisors and
      shift the dividend on-the-fly, since this should cost nothing on
      superscalar processors and avoid the need for temporary copying in
