@@ -1,4 +1,4 @@
-Copyright 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,7 +25,8 @@ Changes between MP version 4.1.2 and 4.2
 * New gmp_randinit_mt Mersenne Twister random numbers, used for
   gmp_randinit_default too.
 * New --enable-profiling=instrument build option.
-* New functions: mp_get_memory_functions.
+* New memory function: mp_get_memory_functions.
+* New random functions: gmp_randinit_set, gmp_urandomb_ui, gmp_urandomm_ui.
 * gmp_scanf and friends accept C99 hex floats.
 * Numbers input and output can now be in bases up to 62.
 
