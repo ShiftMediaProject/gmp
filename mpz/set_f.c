@@ -22,37 +22,43 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
 void
 mpz_set_f (mpz_ptr w, mpf_srcptr u)
 {
-  mp_ptr wp, up;
-  mp_size_t usize, size;
-  mp_exp_t exp;
+  mp_ptr    wp, up;
+  mp_size_t size;
+  mp_exp_t  exp;
 
-  usize = SIZ (u);
-  size = ABS (usize);
+  /* abs(u)<1 truncates to zero */
   exp = EXP (u);
-
-  if (w->_mp_alloc < exp)
-    _mpz_realloc (w, exp);
-
-  wp = w->_mp_d;
-  up = u->_mp_d;
-
   if (exp <= 0)
     {
-      SIZ (w) = 0;
+      SIZ(w) = 0;
       return;
     }
-  if (exp < size)
+
+  MPZ_REALLOC (w, exp);
+  wp = PTR(w);
+  up = PTR(u);
+
+  size = SIZ (u);
+  SIZ(w) = (size >= 0 ? exp : -exp);
+  size = ABS (size);
+
+  if (exp > size)
     {
-      MPN_COPY (wp, up + size - exp, exp);
+      /* pad with low zeros to get a total "exp" many limbs */
+      mp_size_t  zeros = exp - size;
+      MPN_ZERO (wp, zeros);
+      wp += zeros;
     }
   else
     {
-      MPN_ZERO (wp, exp - size);
-      MPN_COPY (wp + exp - size, up, size);
+      /* exp<=size, trucate to the high "exp" many limbs */
+      up += (size - exp);
+      size = exp;
     }
 
-  w->_mp_size = usize >= 0 ? exp : -exp;
+  MPN_COPY (wp, up, size);
 }
