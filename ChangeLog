@@ -18,6 +18,33 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-04-01  Kevin Ryde  <kevin@swox.se>
+
+	* configure, aclocal.m4, ltmain.sh: Update to libtool cvs snapshot
+	2003-03-31.
+	
+	* configure.in (AC_PROG_F77): Add a dummy AC_PROVIDE to stop libtool
+	running F77 probes.
+
+	* randlc2x.c (gmp_rand_lc_struct): Add comments about what exactly is
+	in each field.
+	(randseed_lc): Rename seedp to seedz to avoid confusion with seedp in
+	the lc function.  Suggested by Pedro Gimeno.
+	(gmp_randinit_lc_2exp): Use __GMP_ALLOCATE_FUNC_TYPE.  No need for
+	"+1" in mpz_init2 of _mp_seed.  Don't bother with mpz_init2 for _mp_a.
+
+2003-03-29  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (m68k-*-*): Use -O2, no longer need to fallback to -O.
+	* acinclude.m4 (GMP_GCC_M68K_OPTIMIZE): Remove macro.
+
+	* configure.in (AC_CHECK_TYPES): Add notes on why tested.
+
+	* gmp.texi (GMPrefu, GMPpxrefu, GMPreftopu, GMPpxreftopu): New macros,
+	use them for all external references to get URLs into HTML output.
+	(Random State Initialization): Add gmp_randinit_set.
+	(Random State Miscellaneous): New section.
+
 2003-03-29  Kevin Ryde  <kevin@swox.se>
 
 	* randbui.c, randmui.c: New files.
