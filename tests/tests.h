@@ -78,27 +78,37 @@ void mpz_tracen _PROTO ((const char *name, int num, mpz_srcptr z));
 
 void spinner _PROTO ((void));
 extern unsigned long  spinner_count;
+extern int  spinner_wanted;
+extern int  spinner_tick;
 
 
 void *align_pointer _PROTO ((void *p, size_t align));
 void *__gmp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
 void *__gmp_allocate_or_reallocate _PROTO ((void *ptr,
                                           size_t oldsize, size_t newsize));
+mp_limb_t urandom _PROTO ((void));
 
-void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
-void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
-mp_size_t mpn_diff_highest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n));
-mp_size_t mpn_diff_lowest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n));
-
-void mpz_set_str_or_abort _PROTO ((mpz_ptr z, const char *str, int base));
 void mpf_set_str_or_abort _PROTO ((mpf_ptr f, const char *str, int base));
+
 
 void mpz_erandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                            unsigned long nbits));
 void mpz_erandomb_nonzero _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                                    unsigned long nbits));
-mp_limb_t urandom _PROTO ((void));
+void mpz_errandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+                            unsigned long nbits));
+void mpz_errandomb_nonzero _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+                                    unsigned long nbits));
+void mpz_flipbit _PROTO ((mpz_ptr r, unsigned long bit));
+void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
+void mpz_negrandom _PROTO ((mpz_ptr rop, gmp_randstate_t rstate));
+int mpz_pow2abs_p _PROTO ((mpz_srcptr z)) __GMP_ATTRIBUTE_PURE;
+void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
+void mpz_set_str_or_abort _PROTO ((mpz_ptr z, const char *str, int base));
+
+mp_size_t mpn_diff_highest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n)) __GMP_ATTRIBUTE_PURE;
+mp_size_t mpn_diff_lowest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n)) __GMP_ATTRIBUTE_PURE;
 
 
 void refmpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
