@@ -126,7 +126,7 @@ mpz_ior (res, op1, op2)
 	      _mpz_realloc (res, res_size);
 	      res_ptr = res->_mp_d;
 	      /* Don't re-read OP1_PTR and OP2_PTR.  They point to
-		 temporary space--never to the space RES->_mp_D used
+		 temporary space--never to the space RES->_mp_d used
 		 to point to before reallocation.  */
 	    }
 
@@ -187,6 +187,7 @@ mpz_ior (res, op1, op2)
     opx = (mp_ptr) TMP_ALLOC (op2_size * BYTES_PER_MP_LIMB);
     mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
     op2_ptr = opx;
+    op2_size -= op2_ptr[op2_size - 1] == 0;
 
     if (res->_mp_alloc < res_alloc)
       {
@@ -194,7 +195,7 @@ mpz_ior (res, op1, op2)
 	op1_ptr = op1->_mp_d;
 	res_ptr = res->_mp_d;
 	/* Don't re-read OP2_PTR.  It points to temporary space--never
-	   to the space RES->_mp_D used to point to before reallocation.  */
+	   to the space RES->_mp_d used to point to before reallocation.  */
       }
 
     if (op1_size >= op2_size)
