@@ -114,55 +114,63 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+
+/* On Cray vector systems "short" and "unsigned short" might not be the same
+   number of bits, making the SHRT_MAX defaults below fail.  (This depends
+   on compiler options.)  Instead use limits.h.  */
 #if defined _CRAY
 #include <limits.h>
 #endif
 
-/* Extra casts because shorts are promoted to ints by "~" and "<<".  "-1"
-   rather than "1" in SIGNED_TYPE_MIN avoids warnings from some compilers
-   about arithmetic overflow.  */
-#define UNSIGNED_TYPE_MAX(type)      ((type) ~ (type) 0)
-#define UNSIGNED_TYPE_HIGHBIT(type)  ((type) ~ (UNSIGNED_TYPE_MAX(type) >> 1))
-#define SIGNED_TYPE_MIN(type)        (((type) -1) << (8*sizeof(type)-1))
-#define SIGNED_TYPE_MAX(type)        ((type) ~ SIGNED_TYPE_MIN(type))
-#define SIGNED_TYPE_HIGHBIT(type)    SIGNED_TYPE_MIN(type)
-
-#define MP_LIMB_T_MAX      UNSIGNED_TYPE_MAX (mp_limb_t)
-#define MP_LIMB_T_HIGHBIT  UNSIGNED_TYPE_HIGHBIT (mp_limb_t)
-
-#define MP_SIZE_T_MAX      SIGNED_TYPE_MAX (mp_size_t)
+/* The "short" defines are a bit different because shorts are promoted to
+   ints by ~ or >> etc.  */
 
 #ifndef ULONG_MAX
-#define ULONG_MAX          UNSIGNED_TYPE_MAX (unsigned long)
+#define ULONG_MAX          (~ (unsigned long) 0)
+#endif
+#ifndef UINT_MAX
+#define UINT_MAX           (~ (unsigned) 0)
+#endif
+#ifndef USHRT_MAX
+#define USHRT_MAX          ((unsigned short) ~0)
+#endif
+#define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
+
+#define ULONG_HIGHBIT      (ULONG_MAX ^ (ULONG_MAX >> 1))
+#define UINT_HIGHBIT       (UINT_MAX ^ (UINT_MAX >> 1))
+#define USHRT_HIGHBIT      ((unsigned short) (USHRT_MAX ^ (USHRT_MAX >> 1)))
+#define MP_LIMB_T_HIGHBIT  (MP_LIMB_T_MAX ^ (MP_LIMB_T_MAX >> 1))
+
+#ifndef LONG_MIN
+#define LONG_MIN           ((long) ULONG_HIGHBIT)
 #endif
 #ifndef LONG_MAX
-#define LONG_MAX           SIGNED_TYPE_MAX (long)
+#define LONG_MAX           (-(LONG_MIN+1))
 #endif
-#ifndef LONG_MIN
-#define LONG_MIN           SIGNED_TYPE_MIN (long)
-#endif
-#define ULONG_HIGHBIT      (ULONG_MAX ^ (ULONG_MAX >> 1))
-#define LONG_HIGHBIT       LONG_MIN
 
-#ifndef USHRT_MAX
-#define USHRT_MAX          UNSIGNED_TYPE_MAX (unsigned short)
+#ifndef INT_MIN
+#define INT_MIN            ((int) UINT_HIGHBIT)
+#endif
+#ifndef INT_MAX
+#define INT_MAX            (-(INT_MIN+1))
+#endif
+
+#ifndef SHRT_MIN
+#define SHRT_MIN           ((short) USHRT_HIGHBIT)
 #endif
 #ifndef SHRT_MAX
-#define SHRT_MAX           SIGNED_TYPE_MAX (short)
-#endif
-#ifndef SHRT_MIN
-#define SHRT_MIN           SIGNED_TYPE_MIN (short)
+#define SHRT_MAX           ((short) (-(SHRT_MIN+1)))
 #endif
 
+#if __GMP_MP_SIZE_T_INT
+#define MP_SIZE_T_MAX      INT_MAX
+#else
+#define MP_SIZE_T_MAX      LONG_MAX
+#endif
 
-#define MPZ_FITS_STYPE_SDT(size,data,type)                               \
-  ((size) == 0                                                           \
-   || ((size) == 1  && (data) <  UNSIGNED_TYPE_HIGHBIT (unsigned type))  \
-   || ((size) == -1 && (data) <= UNSIGNED_TYPE_HIGHBIT (unsigned type)))
-
-#define MPZ_FITS_UTYPE_SDT(size,data,type)                              \
-  ((size) == 0                                                          \
-   || ((size) == 1  && (data) <  UNSIGNED_TYPE_MAX (type)))
+#define LONG_HIGHBIT       LONG_MIN
+#define INT_HIGHBIT        INT_MIN
+#define SHRT_HIGHBIT       SHRT_MIN
 
 
 /* Swap macros. */
