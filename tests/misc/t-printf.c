@@ -766,7 +766,7 @@ check_n (void)
                                                         \
     /* should write whole of x[0] and none of x[1] */   \
     ASSERT_ALWAYS (x[0] == 3);                          \
-    ASSERT_ALWAYS (x[1] == ~ (type) 0);                 \
+    ASSERT_ALWAYS (x[1] == (type) ~ (type) 0);		\
                                                         \
   } while (0)
 
