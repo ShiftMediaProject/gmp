@@ -3866,7 +3866,8 @@ Mathematics of Computation, volume 44, number 170, April 1985.
 @item
 Torbjorn Granlund and Peter L. Montgomery, "Division by Invariant
 Integers using Multiplication", in Proceedings of the SIGPLAN
-PLDI'94 Conference, June 1994.
+PLDI'94 Conference, June 1994.  Available online, @*
+@uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz} (and .psl.gz too).
 
 @item
 Tudor Jebelean,
