@@ -167,7 +167,6 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 	     : "e" (m0), "e" (m1));					\
     (pl) = __m0 * __m1;							\
   } while (0)
-#endif
 #define count_leading_zeros(count, x) \
   do {									\
     UWtype _x = (x), _y, _a, _c;					\
@@ -182,6 +181,7 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     _c += _x >> 1;							\
     (count) =  W_TYPE_SIZE - 1 - _c;					\
   } while (0)
+#endif
 #endif
 
 
