@@ -37,7 +37,8 @@ main (argc, argv)
   mpz_t base, mod;
   mpz_t r1, r2, base2;
   mp_size_t base_size, mod_size;
-  mp_limb_t exp, exp2;
+  mp_limb_t exp;
+  unsigned long int exp2;
   int i;
   int reps = 10000;
 
