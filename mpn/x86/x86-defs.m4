@@ -367,21 +367,13 @@ m4_assert_numargs(1)
 dnl  Usage: cmov_available_p
 dnl
 dnl  Expand to 1 if cmov is available, 0 if not.
-dnl
-dnl  The list here is all the chips that don't have cmov, on the assumption
-dnl  that new chips will have it.
 
 define(cmov_available_p,
-`ifelse(m4_ifdef_anyof_p(
-	`HAVE_TARGET_CPU_i386',
-	`HAVE_TARGET_CPU_i486',
-	`HAVE_TARGET_CPU_pentium',
-	`HAVE_TARGET_CPU_pentiummmx',
-	`HAVE_TARGET_CPU_k5',
-	`HAVE_TARGET_CPU_k6',
-	`HAVE_TARGET_CPU_k62',
-	`HAVE_TARGET_CPU_k63'),1,
-0,1)')
+`m4_ifdef_anyof_p(
+	`HAVE_TARGET_CPU_pentiumpro',
+	`HAVE_TARGET_CPU_pentium2',
+	`HAVE_TARGET_CPU_pentium3',
+	`HAVE_TARGET_CPU_athlon')')
 
 
 dnl  Usage: x86_lookup(target, key,value, key,value, ...)
@@ -522,8 +514,11 @@ m4_assert_numargs(3)
 dnl  Called: cmov_bytes_tttn(name,tttn,src,dst)
 define(cmov_bytes_tttn,
 m4_assert_numargs(4)
-	`.byte	15, 64+$2, dnl
-192+8*x86_opcode_reg32(`$4')+x86_opcode_reg32(`$3')  C `$1 $3, $4'')
+`.byte	dnl
+15, dnl
+eval(64+$2), dnl
+eval(192+8*x86_opcode_reg32(`$4')+x86_opcode_reg32(`$3')) dnl
+	C `$1 $3, $4'')
 
 
 dnl  Usage: loop_or_decljnz label
