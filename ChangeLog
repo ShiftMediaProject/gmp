@@ -6,6 +6,7 @@
 	improve formatting a bit.
 	(mpn_lshift, mpn_rshift): Clarify the return values, and use {rp,n}
 	for the destination.
+	Miscellaneous minor rewordings in a few places.
 
 	* mpn/arm/arm-defs.m4: New file.
 	* configure.in (arm*-*-*): Use it.
