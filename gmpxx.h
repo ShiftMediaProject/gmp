@@ -963,75 +963,13 @@ struct __gmp_binary_equal
   static bool eval(unsigned long int l, mpfr_srcptr f)
   { return mpfr_cmp_ui(f, l) == 0; }
   static bool eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) == 0;
-	else
-	  return false;
-      }
-    else
-      {
-	if (l >= 0)
-	  return false;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) == 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) == 0; }
   static bool eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) == 0;
-	else
-	  return false;
-      }
-    else
-      {
-	if (l >= 0)
-	  return false;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) == 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) == 0; }
   static bool eval(mpfr_srcptr f, double d)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(f, temp) == 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) == 0; }
   static bool eval(double d, mpfr_srcptr f)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(temp, f) == 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) == 0; }
 #endif
 };
 
@@ -1108,75 +1046,13 @@ struct __gmp_binary_not_equal
   static bool eval(unsigned long int l, mpfr_srcptr f)
   { return mpfr_cmp_ui(f, l) != 0; }
   static bool eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) != 0;
-	else
-	  return true;
-      }
-    else
-      {
-	if (l >= 0)
-	  return true;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) != 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) != 0; }
   static bool eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) != 0;
-	else
-	  return true;
-      }
-    else
-      {
-	if (l >= 0)
-	  return true;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) != 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) != 0; }
   static bool eval(mpfr_srcptr f, double d)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(f, temp) != 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) != 0; }
   static bool eval(double d, mpfr_srcptr f)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(temp, f) != 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) != 0; }
 #endif
 };
 
@@ -1252,75 +1128,13 @@ struct __gmp_binary_less
   static bool eval(unsigned long int l, mpfr_srcptr f)
   { return mpfr_cmp_ui(f, l) > 0; }
   static bool eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) < 0;
-	else
-	  return false;
-      }
-    else
-      {
-	if (l >= 0)
-	  return true;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) > 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) < 0; }
   static bool eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) > 0;
-	else
-	  return true;
-      }
-    else
-      {
-	if (l >= 0)
-	  return false;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) < 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) > 0; }
   static bool eval(mpfr_srcptr f, double d)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(f, temp) < 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) < 0; }
   static bool eval(double d, mpfr_srcptr f)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(temp, f) < 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) > 0; }
 #endif
 };
 
@@ -1396,75 +1210,13 @@ struct __gmp_binary_less_equal
   static bool eval(unsigned long int l, mpfr_srcptr f)
   { return mpfr_cmp_ui(f, l) >= 0; }
   static bool eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) <= 0;
-	else
-	  return false;
-      }
-    else
-      {
-	if (l >= 0)
-	  return true;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) >= 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) <= 0; }
   static bool eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) >= 0;
-	else
-	  return true;
-      }
-    else
-      {
-	if (l >= 0)
-	  return false;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) <= 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) >= 0; }
   static bool eval(mpfr_srcptr f, double d)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(f, temp) <= 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) <= 0; }
   static bool eval(double d, mpfr_srcptr f)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(temp, f) <= 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) >= 0; }
 #endif
 };
 
@@ -1540,75 +1292,13 @@ struct __gmp_binary_greater
   static bool eval(unsigned long int l, mpfr_srcptr f)
   { return mpfr_cmp_ui(f, l) < 0; }
   static bool eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) > 0;
-	else
-	  return true;
-      }
-    else
-      {
-	if (l >= 0)
-	  return false;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) < 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) > 0; }
   static bool eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) < 0;
-	else
-	  return false;
-      }
-    else
-      {
-	if (l >= 0)
-	  return true;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) > 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) < 0; }
   static bool eval(mpfr_srcptr f, double d)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(f, temp) > 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) > 0; }
   static bool eval(double d, mpfr_srcptr f)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(temp, f) > 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) < 0; }
 #endif
 };
 
@@ -1684,75 +1374,13 @@ struct __gmp_binary_greater_equal
   static bool eval(unsigned long int l, mpfr_srcptr f)
   { return mpfr_cmp_ui(f, l) <= 0; }
   static bool eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) >= 0;
-	else
-	  return true;
-      }
-    else
-      {
-	if (l >= 0)
-	  return false;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) <= 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) >= 0; }
   static bool eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l) <= 0;
-	else
-	  return false;
-      }
-    else
-      {
-	if (l >= 0)
-	  return true;
-	else
-	  {
-	    bool b;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    b = (mpfr_cmp_ui(temp, -l) >= 0);
-	    mpfr_clear(temp);
-	    return b;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l) <= 0; }
   static bool eval(mpfr_srcptr f, double d)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(f, temp) >= 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) >= 0; }
   static bool eval(double d, mpfr_srcptr f)
-  {
-    bool b;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    b = (mpfr_cmp(temp, f) >= 0);
-    mpfr_clear(temp);
-    return b;
-  }
+  { return mpfr_cmp_d (f, d) <= 0; }
 #endif
 };
 
@@ -2041,75 +1669,13 @@ struct __gmp_cmp_function
   static int eval(unsigned long int l, mpfr_srcptr f)
   { return -mpfr_cmp_ui(f, l); }
   static int eval(mpfr_srcptr f, signed long int l)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return mpfr_cmp_ui(f, l);
-	else
-	  return 1;
-      }
-    else
-      {
-	if (l >= 0)
-	  return -1;
-	else
-	  {
-	    int i;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    i = -mpfr_cmp_ui(temp, -l);
-	    mpfr_clear(temp);
-	    return i;
-	  }
-      }
-  }
+  { return mpfr_cmp_si (f, l); }
   static int eval(signed long int l, mpfr_srcptr f)
-  {
-    if (mpfr_sgn(f) >= 0)
-      {
-	if (l >= 0)
-	  return -mpfr_cmp_ui(f, l);
-	else
-	  return -1;
-      }
-    else
-      {
-	if (l >= 0)
-	  return 1;
-	else
-	  {
-	    int i;
-	    mpfr_t temp;
-	    mpfr_init2(temp, mpfr_get_prec(f));
-	    mpfr_neg(temp, f, __gmpfr_default_rounding_mode);
-	    i = mpfr_cmp_ui(temp, -l);
-	    mpfr_clear(temp);
-	    return i;
-	  }
-      }
-  }
+  { return -mpfr_cmp_si (f, l); }
   static int eval(mpfr_srcptr f, double d)
-  {
-    int i;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    i = mpfr_cmp(f, temp);
-    mpfr_clear(temp);
-    return i;
-  }
+  { return mpfr_cmp_d (f, d); }
   static int eval(double d, mpfr_srcptr f)
-  {
-    int i;
-    mpfr_t temp;
-    mpfr_init2(temp, 8*sizeof(double));
-    mpfr_set_d(temp, d, __gmpfr_default_rounding_mode);
-    i = mpfr_cmp(temp, f);
-    mpfr_clear(temp);
-    return i;
-  }
+  { return -mpfr_cmp_d (f, d); }
 #endif
 };
 
