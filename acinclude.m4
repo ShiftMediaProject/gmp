@@ -681,11 +681,11 @@ dnl  i386 and i486 don't have caching but are treated the same as newer x86s
 dnl  since i386 in particular is used to mean generic x86.
 
 AC_DEFUN(GMP_ASM_RODATA,
-[AC_CACHE_CHECK([how to switch to read-only data section],
-                gmp_cv_asm_rodata,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_DATA])
-case "$target" in
+AC_CACHE_CHECK([how to switch to read-only data section],
+               gmp_cv_asm_rodata,
+[case "$target" in
 X86_PATTERN) gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
 *)           gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
