@@ -43,7 +43,7 @@ libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 LDFLAGS = -static
 LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
 
-EXTRA_PROGRAMS = speed tuneup
+EXTRA_PROGRAMS = speed speed-ext tuneup
 
 tuneup_SOURCES = tuneup.c
 tuneup_DEPENDENCIES = libspeed.la libgmptune.a
