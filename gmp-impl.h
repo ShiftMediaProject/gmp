@@ -2335,6 +2335,14 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
   } while (0)
 #endif
 
+#if defined (__GNUC__) && defined (__ia64) && GMP_LIMB_BITS == 64       \
+  && ! defined (NO_ASM)
+#define popc_limb(result, input)                                \
+  do {                                                          \
+    asm ("popcnt %0 = %1" : "=r" (result) : "r" (input));       \
+  } while (0)
+#endif
+
 /* Cool population count of an mp_limb_t.
    You have to figure out how this works, We won't tell you!
 
