@@ -22,6 +22,10 @@ MA 02111-1307, USA. */
 
 #ifndef __GMP_H__
 
+#if defined (__cplusplus)
+#include <iosfwd>   /* for istream, ostream */
+#endif
+
 
 /* Instantiated by configure. */
 #if ! __GMP_WITHIN_CONFIGURE
@@ -1967,7 +1971,6 @@ mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_
 /**************** C++ routines ****************/
 
 #ifdef __cplusplus
-#include <iosfwd>
 __GMP_DECLSPEC_XX std::ostream& operator<< (std::ostream &, mpz_srcptr);
 __GMP_DECLSPEC_XX std::ostream& operator<< (std::ostream &, mpq_srcptr);
 __GMP_DECLSPEC_XX std::ostream& operator<< (std::ostream &, mpf_srcptr);
