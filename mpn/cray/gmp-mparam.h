@@ -1,7 +1,7 @@
 /* Cray T90 CFP gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2003 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -57,7 +57,8 @@ MA 02111-1307, USA. */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always */
 
 #define GET_STR_DC_THRESHOLD             26
-#define SET_STR_THRESHOLD            200000
+#define GET_STR_PRECOMPUTE_THRESHOLD     42
+#define SET_STR_THRESHOLD            145756
 
 #define MUL_FFT_TABLE  { 368, 736, 1472, 2816, 7168, 12288, 49152, 0 }
 #define MUL_FFT_MODF_THRESHOLD          184
