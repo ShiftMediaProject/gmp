@@ -513,13 +513,17 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPN_SAME_OR_SEPARATE2_P(xp, xsize, yp, ysize)           \
   ((xp) == (yp) || ! MPN_OVERLAP_P (xp, xsize, yp, ysize))
 
-/* Return non-zero if dst,size and src,size are either identical or
+/* Return non-zero if dst,dsize and src,ssize are either identical or
    overlapping in a way suitable for an incrementing/decrementing algorithm.
    Return zero if they're partially overlapping in an unsuitable fashion. */
-#define MPN_SAME_OR_INCR_P(dst, src, size)                      \
-  ((dst) <= (src) || ! MPN_OVERLAP_P (dst, size, src, size))
-#define MPN_SAME_OR_DECR_P(dst, src, size)                      \
-  ((dst) >= (src) || ! MPN_OVERLAP_P (dst, size, src, size))
+#define MPN_SAME_OR_INCR2_P(dst, dsize, src, ssize)             \
+  ((dst) <= (src) || ! MPN_OVERLAP_P (dst, dsize, src, ssize))
+#define MPN_SAME_OR_INCR_P(dst, src, size)      \
+  MPN_SAME_OR_INCR2_P(dst, size, src, size)
+#define MPN_SAME_OR_DECR2_P(dst, dsize, src, ssize)             \
+  ((dst) >= (src) || ! MPN_OVERLAP_P (dst, dsize, src, ssize))
+#define MPN_SAME_OR_DECR_P(dst, src, size)      \
+  MPN_SAME_OR_DECR2_P(dst, size, src, size)
 
 
 #if HAVE_VOID
