@@ -857,41 +857,6 @@ default.  @xref{Custom Allocation}.
 An additional choice @samp{--enable-alloca=debug} is available, to help when
 debugging memory related problems (@pxref{Debugging}).
 
-@item C++ Support, @option{--enable-cxx=yes/no/detect}
-
-A small number of C++ functions are available (@pxref{C++ Formatted Output})
-and can be enabled with @samp{--enable-cxx}, or enabled only if a C++
-compiler can be found @samp{--enable-cxx=detect}.
-
-It's important that the C and C++ compilers match, meaning their startup and
-runtime support routines are compatible, since the C++ functions will use some
-of the C code too.  Currently @samp{./configure} doesn't attempt to match a
-pair of compilers, so for that reason the default is @samp{--disable-cxx} and
-explicit setups are required.
-
-The C++ compiler can be specified with @samp{CXX} and @samp{CXXFLAGS}, similar
-to @samp{CC} and @samp{CFLAGS}.  By default some likely candidates are tried
-for both, but a useful result can't be guaranteed if there's more than one
-compiler available on the system.  When using @command{gcc}, it should suffice
-to use the following (and let @samp{configure} choose the flags).
-
-@example
-./configure --enable-cxx CC=gcc CXX=g++
-@end example
-
-Currently libtool builds shared libraries with the C compiler or with the
-linker directly, and won't know the right C++ standard libraries to link
-against.  These should be given in @samp{CXXLIBS} if necessary.  The default
-is @samp{CXXLIBS="-lstdc++"} if such a library is available, which suits
-@command{g++}.  Any problems from a missing @samp{CXXLIBS} will probably show
-up as undefined C++ symbols when using the shared @samp{libgmp.so} with a C
-program.
-
-Incidentally, it's usually not good enough to set @samp{CXX} to the same as
-@samp{CC}.  Although @command{gcc} for instance recognises @file{foo.cc} as
-C++ code, only @command{g++} will invoke the linker the right way when
-presented with just a C++ object file @code{foo.o}.
-
 @item FFT Multiplication, @option{--enable-fft}
 
 By default multiplications are done using Karatsuba and 3-way Toom-Cook
@@ -4442,15 +4407,20 @@ Free all memory occupied by @var{state}.
 @menu
 * Formatted Output Strings::    
 * Formatted Output Functions::  
-* C++ Formatted Output::        
 @end menu
 
 @node Formatted Output Strings, Formatted Output Functions, Formatted Output, Formatted Output
 @section Format Strings
 
-GMP format strings are the same as @code{printf} (@pxref{Formatted
-Output,,,libc,The GNU C Library Reference Manual}), with the addition of
-@samp{Z}, @samp{Q} and @samp{F} as type markers for @code{mpz_t}, @code{mpq_t}
+@code{gmp_printf} and friends accept format strings similar to the standard C
+@code{printf} (@pxref{Formatted Output,,,libc,The GNU C Library Reference
+Manual}).  A format specification is of the form
+
+@example
+% [flags] [width] [.[precision]] [type] conv
+@end example
+
+GMP adds types @samp{Z}, @samp{Q} and @samp{F} for @code{mpz_t}, @code{mpq_t}
 and @code{mpf_t} respectively.  @samp{Z} and @samp{Q} behave like integers,
 and @samp{Q} will include a @samp{/} if a denominator is needed.  @samp{F}
 behaves like a float.  For example,
@@ -4458,6 +4428,9 @@ behaves like a float.  For example,
 @example
 mpz_t z;
 gmp_printf ("%s is an mpz %Zd\n", "here", z);
+
+mpq_t q;
+gmp_printf ("a hex rational: %#40Qx\n", q);
 
 mpf_t f;
 int   n;
@@ -4478,12 +4451,13 @@ standard C types (not the GMP types), and only if the C library supports it.
 @item @nicode{#} @tab show the base with @samp{0x}, @samp{0X} or @samp{0}
 @item @nicode{+} @tab always show a sign
 @item (space)    @tab show a space or a @samp{-} sign
-@item @nicode{'} @tab group digits, GLIBC
+@item @nicode{'} @tab group digits, GLIBC style (not GMP types)
 @end multitable
 @end quotation
 
-The standard types accepted are as follows.  Each depends on support from both
-the compiler and C library.
+The standard types accepted are as follows.  @samp{h} and @samp{l} are
+portable, the rest will depend on the compiler (or include files) for the type
+and the C library for the output.
 
 @quotation
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
@@ -4540,24 +4514,27 @@ for @code{mpz_t} and @code{mpq_t}.
 Other types or conversions that might be accepted by the C library
 @code{printf} cannot be used through @code{gmp_printf}, this includes for
 instance extensions registered with GLIBC @code{register_printf_function}.
-Also, currently there's no support for POSIX @samp{$} style numbered arguments
+Also currently there's no support for POSIX @samp{$} style numbered arguments
 (this might change in the future).
 
 @code{mpf_t} conversions only ever generate as many digits as can be
-accurately represented by the operand, the same as @code{mpf_get_str}.  Zeros
-will be used if necessary to pad to the requested precision.  This happens
-even for an @samp{f} conversion of an integer value, for instance
+accurately represented by the operand, the same as @code{mpf_get_str} does.
+Zeros will be used if necessary to pad to the requested precision.  This
+happens even for an @samp{f} conversion of an integer value, for instance
 @ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision will only generate
 about 20 digits, then pad with zeros to the decimal point.
 
-For @code{mpf_t}, the decimal point character (or string) is taken from the
-current locale settings on systems which provide @code{localeconv}
-(@pxref{Locales,,Locales and Internationalization,libc,The GNU C Library
-Reference Manual}).  The C library will normally do the same for standard
-float output.
+An empty precision field like @samp{%.Fe} can be used to specifically request
+all significant digits, or when using a precision argument via @samp{%.*Fe} by
+setting that parameter to -1.
+
+The decimal point character (or string) is taken from the current locale
+settings on systems which provide @code{localeconv} (@pxref{Locales,,Locales
+and Internationalization,libc,The GNU C Library Reference Manual}).  The C
+library will normally do the same for standard float output.
 
 
-@node Formatted Output Functions, C++ Formatted Output, Formatted Output Strings, Formatted Output
+@node Formatted Output Functions,  , Formatted Output Strings, Formatted Output
 @section Functions
 
 Each of the following functions is similar to the corresponding C library
@@ -4649,53 +4626,6 @@ move as it grows.
 These functions are available only when the C library provides the obstack
 feature, which probably means only on GNU systems, see
 @ref{Obstacks,,,libc,The GNU C Library Reference Manual}.
-@end deftypefun
-
-
-@node C++ Formatted Output,  , Formatted Output Functions, Formatted Output
-@section C++ Formatted Output
-
-The following functions are provided only if C++ support was enabled when GMP
-was built (@pxref{Build Options}).
-
-@deftypefun ostream& mpz_out_ostream (ostream& @var{stream}, mpz_t @var{op})
-@deftypefunx ostream& mpq_out_ostream (ostream& @var{stream}, mpq_t @var{op})
-@deftypefunx ostream& mpf_out_ostream (ostream& @var{stream}, mpf_t @var{op})
-@cindex C++ ostream output
-@cindex ostream output
-Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
-@code{ios::width()} is reset to 0 after output, the same as the standard
-@code{ostream operator<<} routines do.
-
-Conversions @code{ios::hex} or @code{ios::oct} will include a sign, and will
-respect @code{ios::showpos}, unlike the twos complement form given by the
-standard integer @code{operator<<} routines.  Also, @code{ios::hex} or
-@code{ios::oct} are accepted by @code{mpf_out_ostream}, unlike the standard
-float @code{operator<<} routines, and both mantissa and exponent will be in
-hex or octal.  For hex the exponent delimiter is an @samp{@@}, as per
-@code{mpf_out_str}.
-
-It's easy to define an @code{operator<<} form for these routines, if desired,
-
-@example
-inline ostream&
-operator<< (ostream &stream, mpz_t op)
-@{
-  return mpz_out_ostream (stream, op);
-@}
-@end example
-
-and then use, for example,
-
-@example
-mpz_t  z;
-mpz_init_set_ui (z, 123L);
-cout << z << "\n";
-@end example
-
-but care should be taken since that would be the only overloaded operator
-available for @code{mpz_t}.  GMP++ or one of the other C++ interfaces
-(@pxref{Language Bindings}) is recommended for a full set of overloads.
 @end deftypefun
 
 
