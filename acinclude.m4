@@ -138,8 +138,10 @@ AC_DEFUN(GMP_INIT,
 [ifelse([$1], , gmp_configm4=config.m4, gmp_configm4="[$1]")
 gmp_tmpconfigm4=cnfm4.tmp
 gmp_tmpconfigm4i=cnfm4i.tmp
+gmp_tmpconfigm4p=cnfm4p.tmp
 test -f $gmp_tmpconfigm4 && rm $gmp_tmpconfigm4
 test -f $gmp_tmpconfigm4i && rm $gmp_tmpconfigm4i
+test -f $gmp_tmpconfigm4p && rm $gmp_tmpconfigm4p
 ])dnl
 
 dnl  GMP_FINISH
@@ -147,7 +149,7 @@ dnl  Create
 AC_DEFUN(GMP_FINISH,
 [AC_REQUIRE([GMP_INIT])
 echo "creating $gmp_configm4"
-echo [dnl $gmp_configm4.  Generated automatically by configure.] > $gmp_configm4
+echo ["dnl $gmp_configm4.  Generated automatically by configure."] > $gmp_configm4
 if test -f $gmp_tmpconfigm4; then
   echo ["changequote(<,>)dnl"] >> $gmp_configm4
   cat $gmp_tmpconfigm4 >> $gmp_configm4
@@ -157,6 +159,10 @@ fi
 if test -f $gmp_tmpconfigm4i; then
   cat $gmp_tmpconfigm4i >> $gmp_configm4
   rm $gmp_tmpconfigm4i
+fi
+if test -f $gmp_tmpconfigm4p; then
+  cat $gmp_tmpconfigm4p >> $gmp_configm4
+  rm $gmp_tmpconfigm4p
 fi
 ])dnl
 
@@ -172,13 +178,26 @@ AC_DEFUN(GMP_SINCLUDE,
 echo ["sinclude(\`$1')"] >> $gmp_tmpconfigm4i
 ])dnl
 
-dnl  GMP_DEFINE(MACRO, DEFINITION)
-dnl  Define M4 macro MACRO to DEFINITION in temporary file.  Invoke 
-dnl  [GMP_FINISH] to create file config.m4 containing all GMP_DEFINEd
-dnl  macros.  config.m4 uses `<' and '>' as quote characters.
+dnl GMP_DEFINE(MACRO, DEFINITION [, LOCATION])
+dnl [ Define M4 macro MACRO as DEFINITION in temporary file.		]
+dnl [ If LOCATION is `POST', the definition will appear after any	]
+dnl [ include() directives inserted by GMP_INCLUDE/GMP_SINCLUDE.	]
+dnl [ Mind the quoting!  No shell variables will get expanded.		]
+dnl [ Don't forget to invoke GMP_FINISH to create file config.m4.	]
+dnl [ config.m4 uses `<' and '>' as quote characters for all defines.	]
 AC_DEFUN(GMP_DEFINE, 
 [AC_REQUIRE([GMP_INIT])
-echo ['define(<$1>, <$2>)'] >> $gmp_tmpconfigm4
+echo ['define(<$1>, <$2>)'] >> ifelse([$3], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
+])dnl
+
+dnl GMP_DEFINE_RAW(STRING, [, LOCATION])
+dnl [ Put STRING in temporary file.					]
+dnl [ If LOCATION is `POST', the definition will appear after any	]
+dnl [ include() directives inserted by GMP_INCLUDE/GMP_SINCLUDE.	]
+dnl [ Don't forget to invoke GMP_FINISH to create file config.m4.	]
+AC_DEFUN(GMP_DEFINE_RAW,
+[AC_REQUIRE([GMP_INIT])
+echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
 ])dnl
 
 dnl  GMP_CHECK_ASM_LABEL_SUFFIX
