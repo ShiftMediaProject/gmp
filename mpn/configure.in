@@ -81,7 +81,7 @@ case "${target}" in
 	path="x86/k6 x86/mmx x86"
 	family=x86;;
   athlon-*-*)
-	path="x86/k7 x86/mmxx86"
+	path="x86/k7 x86/mmx x86"
 	family=x86;;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
