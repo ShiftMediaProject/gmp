@@ -40,8 +40,8 @@ open(FD, "<m68k-defs.m4")
     or die "Cannot open m68k-defs.m4: $!\nIs this the mpn/m68k source directory?\n";
 my ($srcdir, $top_srcdir);
 while (<FD>) {
-    if (/^m68k_defbranch\((.*)\)/) { %branch->{"b".$1}=1; }
-    if (/^m68k_definsn\((.*),(.*)\)/) { %insn->{$1.$2}=1; }
+    if (/^m68k_defbranch\(\s*(.*)\)/) { %branch->{"b".$1}=1; }
+    if (/^m68k_definsn\(\s*(.*),\s*(.*)\)/) { %insn->{$1.$2}=1; }
 }
 close(FD);
 
