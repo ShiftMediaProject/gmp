@@ -2217,6 +2217,8 @@ same way as for normal C @code{int} arithmetic.
 @deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx void mpz_cdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
+@deftypefunx void mpz_cdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @end deftypefun
 
 @deftypefun void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
@@ -2283,8 +2285,6 @@ shifts.  For negative @var{n}, @code{mpz_fdiv_q_2exp} is effectively an
 arithmetic right shift treating @var{n} as twos complement the same as the
 bitwise logical functions do, whereas @code{mpz_tdiv_q_2exp} effectively
 treats @var{n} as sign and magnitude.
-
-Currently @code{mpz_cdiv_q_2exp} and @code{mpz_cdiv_r_2exp} are not available.
 @end deftypefun
 
 @deftypefun void mpz_mod (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
