@@ -41,13 +41,15 @@ mpf_add (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   /* Handle special cases that don't work in generic code below.  */
   if (usize == 0)
     {
-      mpf_set (r, v);
+    set_r_v_maybe:
+      if (r != v)
+        mpf_set (r, v);
       return;
     }
   if (vsize == 0)
     {
-      mpf_set (r, u);
-      return;
+      v = u;
+      goto set_r_v_maybe;
     }
 
   /* If signs of U and V are different, perform subtraction.  */
