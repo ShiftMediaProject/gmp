@@ -9,7 +9,7 @@
 	* mpf/ceilfloor.c: New file likewise, and use common subroutine for
 	ceil and floor.
 	* mpf/integer.c: Remove file.
-	* Makefile.am, mpf/Makefile.am: Update.
+	* Makefile.am, mpf/Makefile.am, macos/Makefile.in: Update.
 
         * acinclude.m4 (GMP_GCC_VERSION_GE): New macro.
         (GMP_GCC_MARCH_PENTIUMPRO): Use it, remove CCBASE parameter (don't
