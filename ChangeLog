@@ -28,6 +28,8 @@ MA 02111-1307, USA.
 
 	* mpn/ia64/aors_n.asm: New file, complete rewrite of mpn_add_n and
 	mpn_sub_n.
+	* mpn/ia64/add_n.asm: Replace by aors_n.asm.
+	* mpn/ia64/sub_n.asm: Replace by aors_n.asm.
 
 2003-10-01  Kevin Ryde  <kevin@swox.se>
 
