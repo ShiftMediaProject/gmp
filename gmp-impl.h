@@ -392,7 +392,7 @@ int __gmp_assert_fail _PROTO((const char *filename, int linenum,
 #if HAVE_VOID
 #define CAST_TO_VOID        (void)
 #else
-#define CAST_TO_VOID        
+#define CAST_TO_VOID
 #endif
 
 #define ASSERT_ALWAYS(expr) ((expr) ? 0 : ASSERT_FAIL (expr))

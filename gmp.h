@@ -134,7 +134,7 @@ typedef struct {
 } __gmp_randata_lc;
 
 /* Random state struct.  */
-typedef struct 
+typedef struct
 {
   mpz_t seed;			/* Current seed.  */
   gmp_randalg_t alg;		/* Algorithm used.  */
@@ -285,7 +285,7 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_mul __gmpz_mul
 #define mpz_mul_2exp __gmpz_mul_2exp
 #define mpz_neg __gmpz_neg
-#define mpz_nextprime __gmpz_nextprime 
+#define mpz_nextprime __gmpz_nextprime
 #define mpz_out_binary __gmpz_out_binary
 #define mpz_out_raw __gmpz_out_raw
 #define mpz_out_str __gmpz_out_str
