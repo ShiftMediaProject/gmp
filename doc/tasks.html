@@ -314,6 +314,10 @@ MA 02111-1307, USA.
 <li> <code>mpf_get_str</code> could just shift and mask for conversions to
      power of 2 bases, like <code>mpn_get_str</code> does.  Even something
      simple would probably be a considerable speedup.
+<li> <code>mpn_mod_1</code> could pre-calculate values of R mod N, R^2 mod N,
+     R^3 mod N, etc, with R=2^<code>BITS_PER_MP_LIMB</code>, and use them to
+     process multiple limbs at each step by multiplying.  Suggested by Peter
+     L. Montgomery.
 </ul>
 
 
