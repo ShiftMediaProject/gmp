@@ -8,7 +8,6 @@ Changes between MP version 3.0 and 3.1
   and P-Pro/II/III.
 * The mpf_get_prec function now works as it did in GMP 2.
 * New utilities for auto-tuning and speed measuring.
-* New user-visible mpn division function (mpn_tidv_qr).
 * Multiplication now uses FFT for very large operands.
 * Support for new systems: Solaris running on x86, FreeBSD 5,
   HP-UX 11, Cray vector computers, Rhapsody, Nextstep/Openstep.
@@ -18,7 +17,7 @@ Changes between MP version 3.0 and 3.1
   mpz_si_kronecker, mpz_ui_kronecker
 * New rational functions: mpq_out_str, mpq_swap
 * New float functions: mpf_swap
-* New mpn functions: mpn_divexact_by3c
+* New mpn functions: mpn_divexact_by3c, mpn_tdiv_qr
 
 Changes between MP version 3.0 and 3.0.1
 
