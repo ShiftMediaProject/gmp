@@ -40,22 +40,6 @@ MA 02111-1307, USA. */
       remainder in NUM.
    3. NSIZE >= 2, even if QEXTRA_LIMBS is non-zero.  */
 
-#if defined (__alpha)
-mp_limb_t __mpn_invert_normalized_limb ();
-#define invert_limb(invxl,xl) invxl = __mpn_invert_normalized_limb (xl)
-#endif
-
-#ifndef invert_limb
-#define invert_limb(invxl,xl) \
-  do {									\
-    mp_limb_t dummy;							\
-    if (xl << 1 == 0)							\
-      invxl = ~(mp_limb_t) 0;						\
-    else								\
-      udiv_qrnnd (invxl, dummy, -xl, 0, xl);				\
-  } while (0)
-#endif
-
 mp_limb_t
 #if __STDC__
 mpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
