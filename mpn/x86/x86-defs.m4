@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for x86 assembler.
 
 
-dnl  Copyright (C) 1999-2000 Free Software Foundation, Inc.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -19,8 +19,8 @@ dnl  Library General Public License for more details.
 dnl
 dnl  You should have received a copy of the GNU Library General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
-dnl  not, write to the Free Software Foundation, Inc., 675 Mass Ave,
-dnl  Cambridge, MA 02139, USA.
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 dnl  Notes:
