@@ -109,7 +109,7 @@ libmpz_la_SOURCES = \
   abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
-  clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmp_abs.c cmp_abs_ui.c com.c \
+  clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
   divexact.c dump.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c fdiv_ui.c \
   fib_ui.c fits_sint_p.c fits_slong_p.c fits_sshort_p.c fits_uint_p.c \
@@ -140,7 +140,7 @@ libmpz_la_LIBADD =
 am_libmpz_la_OBJECTS =  abs.lo add.lo add_ui.lo addmul_ui.lo and.lo \
 array_init.lo bin_ui.lo bin_uiui.lo cdiv_q.lo cdiv_q_ui.lo cdiv_qr.lo \
 cdiv_qr_ui.lo cdiv_r.lo cdiv_r_ui.lo cdiv_ui.lo clear.lo clrbit.lo \
-cmp.lo cmp_si.lo cmp_ui.lo cmp_abs.lo cmp_abs_ui.lo com.lo divexact.lo \
+cmp.lo cmp_si.lo cmp_ui.lo cmpabs.lo cmpabs_ui.lo com.lo divexact.lo \
 dump.lo fac_ui.lo fdiv_q.lo fdiv_q_2exp.lo fdiv_q_ui.lo fdiv_qr.lo \
 fdiv_qr_ui.lo fdiv_r.lo fdiv_r_2exp.lo fdiv_r_ui.lo fdiv_ui.lo \
 fib_ui.lo fits_sint_p.lo fits_slong_p.lo fits_sshort_p.lo \
@@ -176,8 +176,8 @@ $(DEPDIR)/array_init.Plo $(DEPDIR)/bin_ui.Plo $(DEPDIR)/bin_uiui.Plo \
 $(DEPDIR)/cdiv_q.Plo $(DEPDIR)/cdiv_q_ui.Plo $(DEPDIR)/cdiv_qr.Plo \
 $(DEPDIR)/cdiv_qr_ui.Plo $(DEPDIR)/cdiv_r.Plo $(DEPDIR)/cdiv_r_ui.Plo \
 $(DEPDIR)/cdiv_ui.Plo $(DEPDIR)/clear.Plo $(DEPDIR)/clrbit.Plo \
-$(DEPDIR)/cmp.Plo $(DEPDIR)/cmp_abs.Plo $(DEPDIR)/cmp_abs_ui.Plo \
-$(DEPDIR)/cmp_si.Plo $(DEPDIR)/cmp_ui.Plo $(DEPDIR)/com.Plo \
+$(DEPDIR)/cmp.Plo $(DEPDIR)/cmp_si.Plo $(DEPDIR)/cmp_ui.Plo \
+$(DEPDIR)/cmpabs.Plo $(DEPDIR)/cmpabs_ui.Plo $(DEPDIR)/com.Plo \
 $(DEPDIR)/divexact.Plo $(DEPDIR)/dump.Plo $(DEPDIR)/fac_ui.Plo \
 $(DEPDIR)/fdiv_q.Plo $(DEPDIR)/fdiv_q_2exp.Plo $(DEPDIR)/fdiv_q_ui.Plo \
 $(DEPDIR)/fdiv_qr.Plo $(DEPDIR)/fdiv_qr_ui.Plo $(DEPDIR)/fdiv_r.Plo \
@@ -321,10 +321,10 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/clear.Plo
 @AMDEP@include $(DEPDIR)/clrbit.Plo
 @AMDEP@include $(DEPDIR)/cmp.Plo
-@AMDEP@include $(DEPDIR)/cmp_abs.Plo
-@AMDEP@include $(DEPDIR)/cmp_abs_ui.Plo
 @AMDEP@include $(DEPDIR)/cmp_si.Plo
 @AMDEP@include $(DEPDIR)/cmp_ui.Plo
+@AMDEP@include $(DEPDIR)/cmpabs.Plo
+@AMDEP@include $(DEPDIR)/cmpabs_ui.Plo
 @AMDEP@include $(DEPDIR)/com.Plo
 @AMDEP@include $(DEPDIR)/divexact.Plo
 @AMDEP@include $(DEPDIR)/dump.Plo
