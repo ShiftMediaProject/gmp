@@ -1,3 +1,7 @@
+1999-11-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/addsub_n.c: New file.
+
 1999-09-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/divrem_2.c: Clean up comments.
