@@ -26,7 +26,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
-  t-lcm dive dive_ui t-sqrtrem convert io logic bit                  \
+  t-lcm dive dive_ui t-sqrtrem convert io t-inp_str logic bit	     \
   t-powm t-powm_ui t-pow t-div_2exp reuse                            \
   t-root t-jac t-bin t-get_si t-set_si                               \
   t-fac_ui t-fib_ui t-lucnum_ui t-scan t-fits                        \
@@ -35,8 +35,11 @@ check_PROGRAMS = t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
 
 TESTS = $(check_PROGRAMS)
 
-# io.tmp is used by io.c, removed automatically if the tests pass
-CLEANFILES = io.tmp
+# io.tmp and t-inp_str.tmp are used by io.c and t-inp_str.c respectively,
+# both removed automatically if the tests pass, but arrange to clean them
+# here if the tests fail
+#
+CLEANFILES = io.tmp t-inp_str.tmp
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
