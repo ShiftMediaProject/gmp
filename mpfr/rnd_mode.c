@@ -21,13 +21,12 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <fenv.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 
-
 #ifdef MPFR_HAVE_FESETROUND
+#include <fenv.h>
 
 /* sets the machine rounding mode to the value rnd_mode */
 void 
