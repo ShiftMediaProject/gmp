@@ -146,7 +146,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 #endif
 
       count_leading_zeros (cnt, up[usize - 1]);
-      exp_in_base = ((uexp * BITS_PER_MP_LIMB - cnt)
+      exp_in_base = (((double) uexp * BITS_PER_MP_LIMB - cnt)
 		     * __mp_bases[base].chars_per_bit_exactly);
       exp_in_base += 1;
 
@@ -249,7 +249,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 
       uexp = -uexp;
       count_leading_zeros (cnt, up[usize - 1]);
-      exp_in_base = ((uexp * BITS_PER_MP_LIMB + cnt - 1)
+      exp_in_base = (((double) uexp * BITS_PER_MP_LIMB + cnt - 1)
 		     * __mp_bases[base].chars_per_bit_exactly);
       if (exp_in_base < 0)
 	exp_in_base = 0;
