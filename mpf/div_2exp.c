@@ -60,7 +60,7 @@ mpf_div_2exp (r, u, exp)
   if (exp % BITS_PER_MP_LIMB == 0)
     {
       if (rp != up)
-	MPN_COPY (rp, up, abs_usize);
+	MPN_COPY_INCR (rp, up, abs_usize);
       r->_mp_exp = uexp - exp / BITS_PER_MP_LIMB;
     }
   else
@@ -68,9 +68,18 @@ mpf_div_2exp (r, u, exp)
       /* Use mpn_lshift since mpn_rshift operates upwards, and we therefore
 	 would clobber part of U before using that part, when R == U.  */
       mp_limb_t cy_limb;
-      cy_limb = mpn_lshift (rp, up, abs_usize, -exp % BITS_PER_MP_LIMB);
-      rp[abs_usize] = cy_limb;
-      cy_limb = cy_limb != 0;
+      if (rp < up)
+	{
+	  cy_limb = mpn_rshift (rp + 1, up, abs_usize, exp % BITS_PER_MP_LIMB);
+	  rp[0] = cy_limb;
+	  cy_limb = rp[abs_usize] != 0;
+	}
+      else
+	{
+	  cy_limb = mpn_lshift (rp, up, abs_usize, -exp % BITS_PER_MP_LIMB);
+	  rp[abs_usize] = cy_limb;
+	  cy_limb = cy_limb != 0;
+	}
 
       abs_usize += cy_limb;
       r->_mp_exp = uexp - exp / BITS_PER_MP_LIMB - 1 + cy_limb;
