@@ -1,3 +1,13 @@
+2001-09-22  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_PREREQ): Bump to 2.52.
+	(m4_pattern_forbid, m4_pattern_allow): New calls, forbid GMP_.
+	(AC_CHECK_HEADERS): Remove sys/types.h, already done by autoconf.
+	* acinclude.m4, configure.in (GMP_GCC_NO_CPP_PRECOMP): New macro.
+
+	* tests/devel/try.c (TYPE_PREINV_MOD_1): Don't run size==0.
+	(malloc_region): Need fd=-1 for mmap MAP_ANON on BSD.
+
 2001-09-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/cong.c (mpz_congruent_p): Fix typo.
