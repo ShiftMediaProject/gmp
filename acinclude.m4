@@ -25,6 +25,22 @@ define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
 
+dnl  GMP_STRIP_PATH(subdir)
+dnl  ----------------------
+dnl  Strip entries */subdir from $path.
+
+define(GMP_STRIP_PATH,
+[tmp_path=
+for i in $path; do
+  case $i in
+    */$1) ;;
+    *) tmp_path="$tmp_path $i" ;;
+  esac
+done
+path="$tmp_path"
+])
+
+
 dnl  GMP_INCLUDE_GMP_H
 dnl  -----------------
 dnl  Expand to the right way to #include gmp-h.in.  This must be used
@@ -1138,6 +1154,42 @@ if test "$gmp_cv_asm_x86_shldl_cl" = "yes"; then
 else
   GMP_DEFINE(WANT_SHLDL_CL,0)
 fi
+])
+
+
+dnl  GMP_ASM_X86_SSE2([ACTION-IF-FOUND][,ACTION-IF-NOT-FOUND])
+dnl  ---------------------------------------------------------
+dnl  Determine whether the assembler supports SSE2 instructions.
+dnl
+dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
+dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
+dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
+dnl  needed at all, at least for just checking instruction syntax.
+
+AC_DEFUN(GMP_ASM_X86_SSE2,
+[AC_CACHE_CHECK([if the assembler knows about SSE2 instructions],
+		gmp_cv_asm_x86_sse2,
+[GMP_TRY_ASSEMBLE(
+[	.text
+	paddq	%mm0, %mm1],
+  [gmp_cv_asm_x86_sse2=yes],
+  [gmp_cv_asm_x86_sse2=no])
+])
+case $gmp_cv_asm_x86_sse2 in
+yes)
+  ifelse([$1],,:,[$1])
+  ;;
+*)
+  AC_MSG_WARN([+----------------------------------------------------------])
+  AC_MSG_WARN([| WARNING WARNING WARNING])
+  AC_MSG_WARN([| Host CPU has SSE2 code, but it can't be assembled by])
+  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([| Non-SSE2 replacements will be used.])
+  AC_MSG_WARN([| This will be an inferior build.])
+  AC_MSG_WARN([+----------------------------------------------------------])
+  ifelse([$2],,:,[$2])
+  ;;
+esac
 ])
 
 
