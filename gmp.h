@@ -660,11 +660,11 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 #define mpn_gcdext		__MPN(gcdext)
 #define mpn_get_str		__MPN(get_str)
 #define mpn_hamdist		__MPN(hamdist)
-#define mpn_invert_normalized_limb __MPN(invert_normalized_limb)
+#define mpn_invert_limb 	__MPN(invert_limb)
 /* #define mpn_ior_n		__MPN(ior_n) */
 /* #define mpn_iorn_n		__MPN(iorn_n) */
-/* #define mpn_kara_mul_n		__MPN(kara_mul_n)  internal */
-/* #define mpn_kara_sqr_n		__MPN(kara_sqr_n)  internal */
+/* #define mpn_kara_mul_n	__MPN(kara_mul_n)  internal */
+/* #define mpn_kara_sqr_n	__MPN(kara_sqr_n)  internal */
 #define mpn_lshift		__MPN(lshift)
 #define mpn_lshiftc		__MPN(lshiftc)
 #define mpn_mod_1		__MPN(mod_1)
