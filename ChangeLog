@@ -1,3 +1,8 @@
+2001-07-06  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (ibm032 umul_ppmm): Fix typo.
+	* longlong.h (sparclite sdiv_qrnnd): Fix typo.
+
 2001-07-03  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/bin_ui.c (DIVIDE): Use MPN_DIVREM_OR_DIVEXACT_1.
