@@ -825,16 +825,26 @@ rm -f conftest*
 
 dnl  GMP_ASM_LABEL_SUFFIX
 dnl  --------------------
-dnl  Should a label have a colon or not?
+dnl  : - is usual.
+dnl  empty - hppa on HP-UX doesn't use a :, just the label name
 
 AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
-[AC_CACHE_CHECK([what assembly label suffix to use],
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([for assembler label suffix],
                 gmp_cv_asm_label_suffix,
-[case $host in 
-  # Empty is only for the HP-UX hppa assembler; hppa gas requires a colon.
-  *-*-hpux*) gmp_cv_asm_label_suffix=  ;;
-  *)         gmp_cv_asm_label_suffix=: ;;
-esac
+[for i in ":" ""; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+somelabel$i],
+    [gmp_cv_asm_label_suffix=$i
+     rm -f conftest*
+     break],
+    [cat conftest.out >&AC_FD_CC])
+done
+if test -z "$gmp_cv_asm_label_suffix"; then
+  AC_MSG_ERROR([Cannot determine label suffix])
+fi
 ])
 echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 ])
