@@ -275,17 +275,8 @@ libmp_la_LDFLAGS = \
 
 info_TEXINFOS = gmp.texi
 
-MACOS_GENERATED = macos/Makefile macos/Makefile.cw
-
-MACOS_DEPS = $(srcdir)/macos/configure			\
-  $(srcdir)/configure.in $(srcdir)/config.in		\
-  $(srcdir)/Makefile.am     $(srcdir)/mpz/Makefile.am	\
-  $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
-  $(srcdir)/mpn/powerpc32/*.asm
-
-
-# Keep the macos directory up-to-date during any development build.
-@MAINTAINER_MODE_TRUE@ALL_LOCAL_MACOS_GENERATED = @MAINTAINER_MODE_TRUE@$(MACOS_GENERATED)
+# This is disabled for now
+MACOS_GENERATED = 
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -820,7 +811,6 @@ distdir: $(DISTFILES)
 	fi
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/macos
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -947,13 +937,23 @@ install-strip installdirs-am installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
+#MACOS_GENERATED = macos/Makefile macos/Makefile.cw
+
+#MACOS_DEPS = $(srcdir)/macos/configure			\
+#  $(srcdir)/configure.in $(srcdir)/config.in		\
+#  $(srcdir)/Makefile.am     $(srcdir)/mpz/Makefile.am	\
+#  $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
+#  $(srcdir)/mpn/powerpc32/*.asm
+
+# Keep the macos directory up-to-date during any development build.
+#ALL_LOCAL_MACOS_GENERATED = $(MACOS_GENERATED)
 all-local: $(ALL_LOCAL_MACOS_GENERATED)
 
-$(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
-	cd $(srcdir)/macos; perl configure
+#$(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
+#	cd $(srcdir)/macos; perl configure
 
-$(srcdir)/macos/Makefile.cw: $(MACOS_MAKEFILE_DEPS)
-	cd $(srcdir)/macos; perl configure cw
+#$(srcdir)/macos/Makefile.cw: $(MACOS_MAKEFILE_DEPS)
+#	cd $(srcdir)/macos; perl configure cw
 
 # Don't ship CVS directories or emacs backups.
 dist-hook:
