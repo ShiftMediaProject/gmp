@@ -115,6 +115,17 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
 
   /* Main loop. */
 
+  /* If m is already normalized (high bit of high limb set), and b is the
+     same size, but a bigger value, and e==1, then there's no modular
+     reductions done and we can end up with a result out of range at the
+     end. */
+  if (c == 0)
+    {
+      if (xn == mn && mpn_cmp (xp, mp, mn) >= 0)
+        mpn_sub_n (xp, xp, mp, mn);
+      goto finishup;
+    }
+
   while (c != 0)
     {
       mpn_sqr_n (tp, xp, xn);
@@ -149,6 +160,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       c--;
     }
 
+ finishup:
   /* We shifted m left m_zero_cnt steps.  Adjust the result by reducing
      it with the original MOD.  */
   if (m_zero_cnt != 0)
