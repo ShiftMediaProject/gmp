@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -22,7 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
+INCLUDES = -D__GMP_WITHIN_GMPXX -I$(top_srcdir)
 
 if WANT_CXX
 noinst_LTLIBRARIES = libcxx.la
@@ -31,4 +31,4 @@ endif
 # osfuns.cc is handled from the top-level Makefile.am
 libcxx_la_SOURCES = \
   isfuns.cc ismpf.cc ismpq.cc ismpz.cc \
-  osdoprnti.cc osmpf.cc osmpq.cc osmpz.cc
+  osdoprnti.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
