@@ -1,14 +1,9 @@
 #! /bin/sh
-
-
-# Temporarily patched for GMP.
-
-
 # Attempt to guess a canonical system name.
 #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000
 #   Free Software Foundation, Inc.
 
-version='2000-11-08'
+version='2000-11-16'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -95,7 +90,7 @@ if test x"$CC_FOR_BUILD" = x; then
     if test x"$CC" != x; then
       CC_FOR_BUILD="$CC"
     else
-      echo 'dummy(){}' >$dummy.c
+      echo 'int dummy(){}' >$dummy.c
       for c in cc c89 gcc; do 
 	($c $dummy.c -c) >/dev/null 2>&1
 	if test $? = 0; then
@@ -511,10 +506,28 @@ EOF
 	echo m68k-hp-bsd4.4
 	exit 0 ;;
     9000/[34678]??:HP-UX:*:*)
+	HPUX_REV=`echo ${UNAME_RELEASE}|sed -e 's/[^.]*.[0B]*//'`
 	case "${UNAME_MACHINE}" in
 	    9000/31? )            HP_ARCH=m68000 ;;
 	    9000/[34]?? )         HP_ARCH=m68k ;;
 	    9000/[678][0-9][0-9])
+              case "${HPUX_REV}" in
+                11.[0-9][0-9])
+                  if [ -x /usr/bin/getconf ]; then
+                    sc_cpu_version=`/usr/bin/getconf SC_CPU_VERSION 2>/dev/null`
+                    sc_kernel_bits=`/usr/bin/getconf SC_KERNEL_BITS 2>/dev/null`
+                    case "${sc_cpu_version}" in
+                      523) HP_ARCH="hppa1.0" ;; # CPU_PA_RISC1_0
+                      528) HP_ARCH="hppa1.1" ;; # CPU_PA_RISC1_1
+                      532)                      # CPU_PA_RISC2_0
+                        case "${sc_kernel_bits}" in
+                          32) HP_ARCH="hppa2.0n" ;;
+                          64) HP_ARCH="hppa2.0w" ;;
+                        esac ;;
+                    esac
+                  fi ;;
+              esac
+              if [ "${HP_ARCH}" = "" ]; then
               sed 's/^              //' << EOF >$dummy.c
 
               #define _HPUX_SOURCE
@@ -551,8 +564,8 @@ EOF
 	(CCOPTS= $CC_FOR_BUILD $dummy.c -o $dummy 2>/dev/null ) && HP_ARCH=`./$dummy`
 	if test -z "$HP_ARCH"; then HP_ARCH=hppa; fi
 	rm -f $dummy.c $dummy
+	fi ;;
 	esac
-	HPUX_REV=`echo ${UNAME_RELEASE}|sed -e 's/[^.]*.[0B]*//'`
 	echo ${HP_ARCH}-hp-hpux${HPUX_REV}
 	exit 0 ;;
     3050*:HI-UX:*:*)
