@@ -42,6 +42,7 @@ MA 02111-1307, USA. */
 #endif
 
 #include <string>
+#include <stdexcept>
 #include <gmp.h>
 
 
@@ -2556,13 +2557,37 @@ public:
   // __gmp_expr(long double ld) { mpz_init_set_d(mp, ld); }
 
   explicit __gmp_expr(const char *s)
-  { mpz_init_set_str(mp, s, 0); }
+  {
+    if (mpz_init_set_str (mp, s, 0) != 0)
+      {
+        mpz_clear (mp);
+        throw std::invalid_argument ("mpz_set_str");
+      }
+  }
   __gmp_expr(const char *s, int base)
-  { mpz_init_set_str(mp, s, base); }
+  {
+    if (mpz_init_set_str (mp, s, base) != 0)
+      {
+        mpz_clear (mp);
+        throw std::invalid_argument ("mpz_set_str");
+      }
+  }
   explicit __gmp_expr(const std::string &s)
-  { mpz_init_set_str(mp, s.c_str(), 0); }
+  {
+    if (mpz_init_set_str (mp, s.c_str(), 0) != 0)
+      {
+        mpz_clear (mp);
+        throw std::invalid_argument ("mpz_set_str");
+      }
+  }
   __gmp_expr(const std::string &s, int base)
-  { mpz_init_set_str(mp, s.c_str(), base); }
+  {
+    if (mpz_init_set_str(mp, s.c_str(), base) != 0)
+      {
+        mpz_clear (mp);
+        throw std::invalid_argument ("mpz_set_str");
+      }
+  }
 
   explicit __gmp_expr(mpz_srcptr z) { mpz_init_set(mp, z); }
 
@@ -2597,9 +2622,17 @@ public:
   // { mpz_set_ld(mp, ld); return *this; }
 
   __gmp_expr & operator=(const char *s)
-  { mpz_set_str(mp, s, 0); return *this; }
+  {
+    if (mpz_set_str (mp, s, 0) != 0)
+      throw std::invalid_argument ("mpz_set_str");
+    return *this;
+  }
   __gmp_expr & operator=(const std::string &s)
-  { mpz_set_str(mp, s.c_str(), 0); return *this; }
+  {
+    if (mpz_set_str(mp, s.c_str(), 0) != 0)
+      throw std::invalid_argument ("mpz_set_str");
+    return *this;
+  }
 
   // string input/output functions
   int set_str(const char *s, int base)
@@ -2692,14 +2725,41 @@ public:
   // __gmp_expr(long double ld) { mpq_init(mp); mpq_set_ld(mp, ld); }
 
   explicit __gmp_expr(const char *s)
-  { mpq_init(mp); mpq_set_str(mp, s, 0); }
+  {
+    mpq_init (mp);
+    if (mpq_set_str (mp, s, 0) != 0)
+      {
+        mpq_clear (mp);
+        throw std::invalid_argument ("mpq_set_str");
+      }
+  }
   __gmp_expr(const char *s, int base)
-  { mpq_init(mp); mpq_set_str(mp, s, base); }
+  {
+    mpq_init (mp);
+    if (mpq_set_str(mp, s, base) != 0)
+      {
+        mpq_clear (mp);
+        throw std::invalid_argument ("mpq_set_str");
+      }
+  }
   explicit __gmp_expr(const std::string &s)
-  { mpq_init(mp); mpq_set_str(mp, s.c_str(), 0); }
+  {
+    mpq_init (mp);
+    if (mpq_set_str (mp, s.c_str(), 0) != 0)
+      {
+        mpq_clear (mp);
+        throw std::invalid_argument ("mpq_set_str");
+      }
+  }
   __gmp_expr(const std::string &s, int base)
-  { mpq_init(mp); mpq_set_str(mp, s.c_str(), base); }
-
+  {
+    mpq_init(mp);
+    if (mpq_set_str (mp, s.c_str(), base) != 0)
+      {
+        mpq_clear (mp);
+        throw std::invalid_argument ("mpq_set_str");
+      }
+  }
   explicit __gmp_expr(mpq_srcptr q) { mpq_init(mp); mpq_set(mp, q); }
 
   __gmp_expr(const mpz_class &num, const mpz_class &den)
@@ -2743,9 +2803,17 @@ public:
   // { mpq_set_ld(mp, ld); return *this; }
 
   __gmp_expr & operator=(const char *s)
-  { mpq_set_str(mp, s, 0); return *this; }
+  {
+    if (mpq_set_str (mp, s, 0) != 0)
+      throw std::invalid_argument ("mpq_set_str");
+    return *this;
+  }
   __gmp_expr & operator=(const std::string &s)
-  { mpq_set_str(mp, s.c_str(), 0); return *this; }
+  {
+    if (mpq_set_str(mp, s.c_str(), 0) != 0)
+      throw std::invalid_argument ("mpq_set_str");
+    return *this;
+  }
 
   // string input/output functions
   int set_str(const char *s, int base)
@@ -2866,13 +2934,40 @@ public:
   // __gmp_expr(long double ld, unsigned long int prec)
   // { mpf_init2(mp, prec); mpf_set_d(mp, ld); }
 
-  explicit __gmp_expr(const char *s) { mpf_init_set_str(mp, s, 0); }
+  explicit __gmp_expr(const char *s)
+  {
+    if (mpf_init_set_str (mp, s, 0) != 0)
+      {
+        mpf_clear (mp);
+        throw std::invalid_argument ("mpf_set_str");
+      }
+  }
   __gmp_expr(const char *s, unsigned long int prec, int base = 0)
-  { mpf_init2(mp, prec); mpf_set_str(mp, s, base); }
+  {
+    mpf_init2(mp, prec);
+    if (mpf_set_str(mp, s, base) != 0)
+      {
+        mpf_clear (mp);
+        throw std::invalid_argument ("mpf_set_str");
+      }
+  }
   explicit __gmp_expr(const std::string &s)
-  { mpf_init_set_str(mp, s.c_str(), 0); }
+  {
+    if (mpf_init_set_str(mp, s.c_str(), 0) != 0)
+      {
+        mpf_clear (mp);
+        throw std::invalid_argument ("mpf_set_str");
+      }
+  }
   __gmp_expr(const std::string &s, unsigned long int prec, int base = 0)
-  { mpf_init2(mp, prec); mpf_set_str(mp, s.c_str(), base); }
+  {
+    mpf_init2(mp, prec);
+    if (mpf_set_str(mp, s.c_str(), base) != 0)
+      {
+        mpf_clear (mp);
+        throw std::invalid_argument ("mpf_set_str");
+      }
+  }
 
   explicit __gmp_expr(mpf_srcptr f)
   { mpf_init2(mp, mpf_get_prec(f)); mpf_set(mp, f); }
@@ -2910,9 +3005,17 @@ public:
   // { mpf_set_ld(mp, ld); return *this; }
 
   __gmp_expr & operator=(const char *s)
-  { mpf_set_str(mp, s, 0); return *this; }
+  {
+    if (mpf_set_str (mp, s, 0) != 0)
+      throw std::invalid_argument ("mpf_set_str");
+    return *this;
+  }
   __gmp_expr & operator=(const std::string &s)
-  { mpf_set_str(mp, s.c_str(), 0); return *this; }
+  {
+    if (mpf_set_str(mp, s.c_str(), 0) != 0)
+      throw std::invalid_argument ("mpf_set_str");
+    return *this;
+  }
 
   // string input/output functions
   int set_str(const char *s, int base)
@@ -3042,19 +3145,41 @@ public:
   // { mpfr_init2(mp, prec); mpfr_set_d(mp, ld, __gmpfr_default_rounding_mode); }
 
   explicit __gmp_expr(const char *s)
-  { mpfr_init_set_str(mp, (char *) s, 10, __gmpfr_default_rounding_mode); }
+  {
+    if (mpfr_init_set_str (mp, (char *) s, 10,
+                           __gmpfr_default_rounding_mode) != 0)
+      {
+        mpfr_clear (mp);
+        throw std::invalid_argument ("mpfr_set_str");
+      }
+  }
   __gmp_expr(const char *s, unsigned long int prec, int base = 10)
   {
     mpfr_init2(mp, prec);
-    mpfr_set_str(mp, (char *) s, base, __gmpfr_default_rounding_mode);
+    if (mpfr_set_str(mp, (char *) s, base, __gmpfr_default_rounding_mode) != 0)
+      {
+        mpfr_clear (mp);
+        throw std::invalid_argument ("mpfr_set_str");
+      }
   }
   explicit __gmp_expr(const std::string &s)
-  { mpfr_init_set_str(mp, (char *) s.c_str(), 10,
-		      __gmpfr_default_rounding_mode); }
+  {
+    if (mpfr_init_set_str (mp, (char *) s.c_str(), 10,
+                           __gmpfr_default_rounding_mode) != 0)
+      {
+        mpfr_clear (mp);
+        throw std::invalid_argument ("mpfr_set_str");
+      }
+  }
   __gmp_expr(const std::string &s, unsigned long int prec, int base = 10)
   {
     mpfr_init2(mp, prec);
-    mpfr_set_str(mp, (char *) s.c_str(), base, __gmpfr_default_rounding_mode);
+    if (mpfr_set_str (mp, (char *) s.c_str(), base,
+                      __gmpfr_default_rounding_mode) != 0)
+      {
+        mpfr_clear (mp);
+        throw std::invalid_argument ("mpff_set_str");
+      }
   }
 
   explicit __gmp_expr(mpfr_srcptr f)
@@ -3103,12 +3228,15 @@ public:
 
   __gmp_expr & operator=(const char *s)
   {
-    mpfr_set_str(mp, (char *) s, 10, __gmpfr_default_rounding_mode);
+    if (mpfr_set_str (mp, (char *) s, 10, __gmpfr_default_rounding_mode) != 0)
+      throw std::invalid_argument ("mpfr_set_str");
     return *this;
   }
   __gmp_expr & operator=(const std::string &s)
   {
-    mpfr_set_str(mp, (char *) s.c_str(), 10, __gmpfr_default_rounding_mode);
+    if (mpfr_set_str (mp, (char *) s.c_str(), 10,
+                      __gmpfr_default_rounding_mode) != 0)
+      throw std::invalid_argument ("mpfr_set_str");
     return *this;
   }
 
