@@ -239,8 +239,12 @@ tuneup_measure (speed_function_t fun,
                 const struct param_t *param,
                 struct speed_params *s)
 {
+  static struct param_t  dummy;
   double   t;
   TMP_DECL (marker);
+
+  if (! param)
+    param = &dummy;
 
   s->size += param->size_extra;
 
