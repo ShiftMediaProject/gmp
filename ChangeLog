@@ -1,3 +1,14 @@
+2001-06-23  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (__GMPN_ADD_1, __GMPN_SUB_1) [i386]: Fix some asm output
+	constraints.
+
+	* gmp-impl.h (modlimb_invert): Mask after shifting, so mask constant
+	fits a signed byte.
+	
+	* tests/devel/try.c (TYPE_SB_DIVREM_MN): Fix initial fill of quotient
+	with garbage.
+
 2001-06-20  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess (rs6000-*-aix4* | powerpc-*-aix4*): Suppress error
