@@ -58,7 +58,7 @@ host_triplet = @host@
 ANSI2KNR = $(top_builddir)/ansi2knr
 EXTRA_PROGRAMS = aors_n$(EXEEXT) anymul_1$(EXEEXT) copy$(EXEEXT) \
 	divmod_1$(EXEEXT) divrem$(EXEEXT) shift$(EXEEXT) \
-	logops_n.c$(EXEEXT) tst-addsub$(EXEEXT) try$(EXEEXT)
+	logops_n$(EXEEXT) tst-addsub$(EXEEXT) try$(EXEEXT)
 subdir = tests/devel
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -94,10 +94,10 @@ divrem_OBJECTS = divrem$U.$(OBJEXT)
 divrem_LDADD = $(LDADD)
 divrem_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
-logops_n_c_SOURCES = logops_n.c
-logops_n_c_OBJECTS = logops_n$U.$(OBJEXT)
-logops_n_c_LDADD = $(LDADD)
-logops_n_c_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+logops_n_SOURCES = logops_n.c
+logops_n_OBJECTS = logops_n$U.$(OBJEXT)
+logops_n_LDADD = $(LDADD)
+logops_n_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 shift_SOURCES = shift.c
 shift_OBJECTS = shift$U.$(OBJEXT)
@@ -321,9 +321,9 @@ divmod_1$(EXEEXT): $(divmod_1_OBJECTS) $(divmod_1_DEPENDENCIES)
 divrem$(EXEEXT): $(divrem_OBJECTS) $(divrem_DEPENDENCIES) 
 	@rm -f divrem$(EXEEXT)
 	$(LINK) $(divrem_LDFLAGS) $(divrem_OBJECTS) $(divrem_LDADD) $(LIBS)
-logops_n.c$(EXEEXT): $(logops_n_c_OBJECTS) $(logops_n_c_DEPENDENCIES) 
-	@rm -f logops_n.c$(EXEEXT)
-	$(LINK) $(logops_n_c_LDFLAGS) $(logops_n_c_OBJECTS) $(logops_n_c_LDADD) $(LIBS)
+logops_n$(EXEEXT): $(logops_n_OBJECTS) $(logops_n_DEPENDENCIES) 
+	@rm -f logops_n$(EXEEXT)
+	$(LINK) $(logops_n_LDFLAGS) $(logops_n_OBJECTS) $(logops_n_LDADD) $(LIBS)
 shift$(EXEEXT): $(shift_OBJECTS) $(shift_DEPENDENCIES) 
 	@rm -f shift$(EXEEXT)
 	$(LINK) $(shift_LDFLAGS) $(shift_OBJECTS) $(shift_LDADD) $(LIBS)
