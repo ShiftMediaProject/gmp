@@ -29,8 +29,8 @@ MA 02111-1307, USA. */
 #endif
 
 
-/* Set c <- tp/R^n mod m.
-   tp should have space for 2*n+1 limbs; clobber its most significant limb. */
+/* Set cp[] <- tp[]/R^n mod mp[].  Clobber tp[].
+   mp[] is n limbs; tp[] is 2n limbs.  */
 #if ! WANT_REDC_GLOBAL
 static
 #endif
@@ -43,20 +43,15 @@ redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
 
   ASSERT_MPN (tp, 2*n);
 
-  tp[2 * n] = 0;		/* carry guard */
-
   for (j = 0; j < n; j++)
     {
       q = (tp[0] * Nprim) & GMP_NUMB_MASK;
-      cy = mpn_addmul_1 (tp, mp, n, q);
-      mpn_incr_u (tp + n, cy);
+      tp[0] = mpn_addmul_1 (tp, mp, n, q);
       tp++;
     }
-
-  if (tp[n] != 0)
-    mpn_sub_n (cp, tp, mp, n);
-  else
-    MPN_COPY (cp, tp, n);
+  cy = mpn_add_n (cp, tp, tp - n, n);
+  if (cy != 0)
+    mpn_sub_n (cp, cp, mp, n);
 }
 
 /* Compute t = a mod m, a is defined by (ap,an), m is defined by (mp,mn), and
@@ -252,7 +247,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	break;
     }
 
-  tp = TMP_ALLOC_LIMBS (2 * mn + 1);
+  tp = TMP_ALLOC_LIMBS (2 * mn);
   qp = TMP_ALLOC_LIMBS (mn + 1);
 
   gp = __GMP_ALLOCATE_FUNC_LIMBS (K / 2 * mn);
