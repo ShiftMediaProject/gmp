@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2002-11-30  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/popcount.asm: Properly restore register ar.lc.
+
 	* longlong.h (umul_ppmm) [ia64]: Form both product parts in asm.
 
 	* mpz/bin_uiui.c: Cast umul_ppmm operands.
@@ -702,7 +704,7 @@ MA 02111-1307, USA.
 	* configfsf.guess: Update to 2002-08-19.
 	* configfsf.sub: Update to 2002-08-20.
 
-	* config.guess (powerpc*-*-*): Use a { } construct to supress SIGILL
+	* config.guess (powerpc*-*-*): Use a { } construct to suppress SIGILL
 	message on AIX.
 
 2002-08-20  Kevin Ryde  <kevin@swox.se>
@@ -2412,7 +2414,7 @@ MA 02111-1307, USA.
 	* gmp.texi (Known Build Problems): Note `make' problem with long
 	libgmp.la dependencies list.
 
-	* printf/doprnt.c, scanf/doscan.c (%zn): Remove test of non-existant
+	* printf/doprnt.c, scanf/doscan.c (%zn): Remove test of non-existent
 	HAVE_SIZE_T, just use size_t unconditionally.
 	* printf/doprnt.c (%zd etc): Fix 'z' type parsing.
 	* tests/misc/t-printf.c, tests/misc/t-scanf.c: More tests.
@@ -8275,7 +8277,7 @@ MA 02111-1307, USA.
 2000-08-28  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_ALIGN_FILL_0x90): Fix Solaris 2.8
-	warning message supression, add notes about SCO.
+	warning message suppression, add notes about SCO.
 
 	* Makefile.am (MPZ_OBJECTS etc): Move some comments.
 
