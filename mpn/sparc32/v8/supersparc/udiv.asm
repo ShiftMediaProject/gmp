@@ -1,4 +1,4 @@
-dnl  SuperSPARC __udiv_qrnnd division support, used from longlong.h.
+dnl  SuperSPARC mpn_udiv_qrnnd division support, used from longlong.h.
 dnl  This is for SuperSPARC only, to compensate for its semi-functional
 dnl  udiv instruction.
 
@@ -43,7 +43,7 @@ L(getpc):
 L(C0):	.double	0r4294967296
 L(C1):	.double	0r2147483648
 
-PROLOGUE(MPN(udiv_qrnnd))
+PROLOGUE(mpn_udiv_qrnnd)
 	save	%sp,-104,%sp
 	st	%i1,[%fp-8]
 	ld	[%fp-8],%f10
@@ -119,4 +119,4 @@ L(246):
 	st	%o7,[%i5]
 	ret
 	restore
-EPILOGUE(MPN(udiv_qrnnd))
+EPILOGUE(mpn_udiv_qrnnd)
