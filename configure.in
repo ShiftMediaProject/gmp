@@ -630,7 +630,7 @@ dnl -----------------------------
 dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol)
-AC_CHECK_FUNCS(getopt_long getpagesize setitimer strtoul sysconf sysctlbyname)
+AC_CHECK_FUNCS(getopt_long getpagesize processor_info setitimer strtoul sysconf sysctlbyname)
 
 dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
 dnl for ansi2knr, and instead use our own test.  (It's only a warning
