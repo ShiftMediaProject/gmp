@@ -17,7 +17,6 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
 
-
 Changes between MP version 3.1.1 and 4.0
 
 * Bug fixes.
@@ -46,6 +45,8 @@ Changes between MP version 3.1.1 and 4.0
 * New Fibonacci function: mpz_fib2_ui.
 * New Lucas number functions: mpz_lucnum_ui, mpz_lucnum2_ui.
 * New mpz_hamdist support for negative operands.
+* mpz_perfect_power_p now properly recognizes 0, 1, and negative perfect
+  powers.
 * New rational functions: mpq_abs, mpq_cmp_si, mpq_div_2exp, mpq_mul_2exp,
   mpq_set_f.
 * New rational I/O: mpq_get_str, mpq_inp_str, mpq_out_str, mpq_set_str.
@@ -56,6 +57,8 @@ Changes between MP version 3.1.1 and 4.0
 * New demo expression string parser (see demos/expr).
 * New preliminary perl interface (see demos/perl).
 * More tuned algorithm thresholds.
+* The semi-internal _mpz_realloc now zero numbers that doesn't fit when
+  decreasing allocation.  Previously, invalid numbers were created.
 
 Changes between MP version 3.1 and 3.1.1
 
