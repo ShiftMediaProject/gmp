@@ -43,6 +43,38 @@
 #     listed in the Makefile.am's in the subdirectories.
 
 
+# Libtool -version-info for libgmp.la and libmp.la.  See (libtool)Versioning
+#
+# No interfaces changed, only implementations (good): Increment REVISION.
+#
+# Interfaces added, none removed (good): Increment CURRENT, increment AGE,
+# set REVISION to 0.
+#
+# Interfaces removed (BAD!, breaks upward compatibility): Increment CURRENT,
+# set AGE and REVISION to 0.
+#
+# Do this separately for libgmp and libmp, only do it just before a release.
+#
+#	 GMP	    -version-info
+#	release  libgmp      libmp
+#	2.0.x      -           -
+#	3.0      3:0:1       3:0:1
+#
+#
+# Starting at 3:0:1 is a slight abuse of the versioning system, but it makes
+# libtool produce libgmp.so.2.1.0 on GNU/Linux, matching unofficial shared
+# libraries built from gmp 2.0.x, with which gmp 3 is upwardly compatible.
+# Pretend gmp 2 was 2:0:0.
+
+LIBGMP_LT_CURRENT = 3
+LIBGMP_LT_REVISION = 0
+LIBGMP_LT_AGE = 1
+
+LIBMP_LT_CURRENT = 3
+LIBMP_LT_REVISION = 0
+LIBMP_LT_AGE = 1
+
+
 AUTOMAKE_OPTIONS = gnu check-news no-dependencies
 
 SUBDIRS = mpf mpz mpn mpq tests demos mpbsd
@@ -100,7 +132,7 @@ MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/set_z.lo mpq/set_d.lo
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
-MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
+MPBSD_OBJECTS = mpbsd/add.lo mpbsd/tdiv_qr.lo mpbsd/move.lo mpbsd/powm.lo \
   mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo mpbsd/realloc.lo \
   mpbsd/gcd.lo mpbsd/itom.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/mout.lo	  \
   mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
@@ -116,7 +148,7 @@ libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
 libgmp_la_DEPENDENCIES = \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) -lm
-libgmp_la_LDFLAGS = -release @VERSION@
+libgmp_la_LDFLAGS = -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
 
 # -lm wanted on libmp_la_LIBADD for the same reason as libgmp
@@ -128,7 +160,7 @@ libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
   assert.lo errno.lo memory.lo mp_bpl.lo stack-alloc.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES) -lm
 libmp_la_SOURCES =
-libmp_la_LDFLAGS = -release @VERSION@
+libmp_la_LDFLAGS = -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
 
 
 info_TEXINFOS = gmp.texi
