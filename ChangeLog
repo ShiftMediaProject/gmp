@@ -1,3 +1,7 @@
+2001-04-24  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in (mpz_inp_binary, mpz_out_binary): Remove declarations.
+
 2001-04-22  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/powerpc64/addsub_n.asm: Use config.m4 not asm-syntax.m4.
