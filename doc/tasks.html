@@ -37,8 +37,6 @@
      <code>mp_exp_t</code>, the precision of
      <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
      <code>mpf_get_str</code> aborts.  Detect and compensate.
-<li> Fix <code>mpz_get_si</code> to work properly for MIPS N32 ABI (and other
-     machines that use <code>long long</code> for storing limbs.)
 <li> Make the string reading functions allow the `0x' prefix when the base is
      explicitly 16.  They currently only allow that prefix when the base is
      unspecified.
