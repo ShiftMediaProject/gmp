@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.131
+# From configure.in Revision: 1.132
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4501,7 +4501,7 @@ for tmp_fn in ${gmp_mpn_functions} ; do
           # that multi-function files get grepped here repeatedly
           gmp_ep="`
             sed -n 's/^[ 	]*MULFUNC_PROLOGUE(\(.*\))/\1/p' $tmp_file ;
-            sed -n 's/^[ 	]*PROLOGUE(\(.*\))/\1/p' $tmp_file
+            sed -n 's/^[ 	]*PROLOGUE.*(\(.*\))/\1/p' $tmp_file
           `"
           for gmp_tmp in $gmp_ep; do
             cat >>confdefs.h <<EOF
