@@ -22,6 +22,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include "gmp.h"
+#include "gmp-impl.h"
 
 int
 #if __STDC__
@@ -34,10 +35,16 @@ mpz_invert (inverse, x, n)
 {
   mpz_t gcd;
   int rv;
+  mp_size_t xsize, nsize, size;
 
-  mpz_init (gcd);
+  xsize = SIZ (x);
+  nsize = SIZ (n);
+  xsize = ABS (xsize);
+  nsize = ABS (nsize);
+  size = MAX (xsize, nsize) + 1;
+
+  MPZ_TMP_INIT (gcd, size);
   mpz_gcdext (gcd, inverse, (mpz_ptr) 0, x, n);
   rv = gcd->_mp_size == 1 && (gcd->_mp_d)[0] == 1;
-  mpz_clear (gcd);
   return rv;
 }
