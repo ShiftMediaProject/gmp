@@ -1287,12 +1287,10 @@ extern const int __gmp_0;
    instead of conditional JUMPs. */
 
 /* (a/0), with a signed; is 1 if a=+/-1, 0 otherwise */
-#define JACOBI_S0(a) \
-  (((a) == 1) | ((a) == -1))
+#define JACOBI_S0(a)   (((a) == 1) | ((a) == -1))
 
 /* (a/0), with a unsigned; is 1 if a=+/-1, 0 otherwise */
-#define JACOBI_U0(a) \
-  ((a) == 1)
+#define JACOBI_U0(a)   ((a) == 1)
 
 /* (a/0), with a given by low and size;
    is 1 if a=+/-1, 0 otherwise */
@@ -1301,8 +1299,13 @@ extern const int __gmp_0;
 
 /* (a/0), with a an mpz_t;
    fetch of low limb always valid, even if size is zero */
-#define JACOBI_Z0(a) \
-  JACOBI_LS0 (PTR(a)[0], SIZ(a))
+#define JACOBI_Z0(a)   JACOBI_LS0 (PTR(a)[0], SIZ(a))
+
+/* (0/b), with b unsigned; is 1 if b=+/-1, 0 otherwise */
+#define JACOBI_0U(b)   ((b) == 1)
+
+/* (0/b), with b unsigned; is 1 if b=+/-1, 0 otherwise */
+#define JACOBI_0S(b)   ((b) == 1 || (b) == -1)
 
 /* (0/b), with b given by low and size; is 1 if b=+/-1, 0 otherwise */
 #define JACOBI_0LS(blow,bsize) \
@@ -1370,6 +1373,8 @@ extern const int __gmp_0;
     mp_srcptr  __a_ptr  = (a_ptr);                                         \
     mp_size_t  __a_size = (a_size);                                        \
     mp_limb_t  __b      = (b);                                             \
+                                                                           \
+    ASSERT (__a_size >= 1);                                                \
     ASSERT (__b & 1);                                                      \
                                                                            \
     if (BELOW_THRESHOLD (__a_size, MODEXACT_1_ODD_THRESHOLD))              \
