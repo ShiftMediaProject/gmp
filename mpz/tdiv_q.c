@@ -49,8 +49,6 @@ mpz_tdiv_q (quot, num, den)
 
   if (ql <= 0)
     {
-      /* This needs to follow the assignment to rem, in case the
-	 numerator and quotient are the same.  */
       SIZ (quot) = 0;
       return;
     }
@@ -67,8 +65,7 @@ mpz_tdiv_q (quot, num, den)
      Perhaps mpn_tdiv_qr should handle it, since it anyway often need to
      allocate temp space.  */
 
-  /* Copy denominator to temporary space if it overlaps with the quotient
-     or remainder.  */
+  /* Copy denominator to temporary space if it overlaps with the quotient.  */
   if (dp == qp)
     {
       mp_ptr tp;
@@ -76,8 +73,7 @@ mpz_tdiv_q (quot, num, den)
       MPN_COPY (tp, dp, dl);
       dp = tp;
     }
-  /* Copy numerator to temporary space if it overlaps with the quotient or
-     remainder.  */
+  /* Copy numerator to temporary space if it overlaps with the quotient.  */
   if (np == qp)
     {
       mp_ptr tp;
