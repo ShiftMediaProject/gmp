@@ -1,4 +1,4 @@
-/* Test mpz_add, mpz_cmp, mpz_cmp_ui, mpz_divmod, mpz_mul.
+/* Test mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr, mpz_mul.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
 
@@ -20,6 +20,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -28,10 +31,6 @@ MA 02111-1307, USA. */
 void debug_mp ();
 mp_size_t _mpn_mul_classic ();
 void mpz_refmul ();
-
-#ifndef SIZE
-#define SIZE 2 * TOOM3_MUL_THRESHOLD
-#endif
 
 main (argc, argv)
      int argc;
@@ -42,7 +41,26 @@ main (argc, argv)
   mpz_t quotient, remainder;
   mp_size_t multiplier_size, multiplicand_size;
   int i;
-  int reps = 2000;
+  int reps = 100;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -56,28 +74,43 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      multiplier_size = urandom () % 2 * SIZE - SIZE;
-      multiplicand_size = urandom () % 2 * SIZE - SIZE;
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 16 + 2;
 
-      mpz_random2 (multiplier, multiplier_size);
-      mpz_random2 (multiplicand, multiplicand_size);
+      mpz_urandomb (bs, rands, size_range);
+      multiplier_size = mpz_get_ui (bs);
+      mpz_rrandomb (multiplier, rands, multiplier_size);
+
+      mpz_urandomb (bs, rands, size_range);
+      multiplicand_size = mpz_get_ui (bs);
+      mpz_rrandomb (multiplicand, rands, multiplicand_size);
+
+      mpz_urandomb (bs, rands, 2);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (multiplier, multiplier);
+      if ((bsi & 2) != 0)
+	mpz_neg (multiplicand, multiplicand);
+
+      /* printf ("%ld %ld\n", SIZ (multiplier), SIZ (multiplicand)); */
 
       mpz_mul (product, multiplier, multiplicand);
       mpz_refmul (ref_product, multiplier, multiplicand);
-      if (mpz_cmp_ui (multiplicand, 0) != 0)
-	mpz_divmod (quotient, remainder, product, multiplicand);
 
       if (mpz_cmp (product, ref_product))
 	dump_abort ("incorrect plain product",
 		    multiplier, multiplicand, product, ref_product);
 
       if (mpz_cmp_ui (multiplicand, 0) != 0)
-      if (mpz_cmp_ui (remainder, 0) || mpz_cmp (quotient, multiplier))
 	{
-	  debug_mp (quotient, -16);
-	  debug_mp (remainder, -16);
-	  dump_abort ("incorrect quotient or remainder",
-		      multiplier, multiplicand, product, ref_product);
+	  mpz_tdiv_qr (quotient, remainder, product, multiplicand);
+	  if (mpz_cmp_ui (remainder, 0) || mpz_cmp (quotient, multiplier))
+	    {
+	      debug_mp (quotient, -16);
+	      debug_mp (remainder, -16);
+	      dump_abort ("incorrect quotient or remainder",
+			  multiplier, multiplicand, product, ref_product);
+	    }
 	}
 
       /* Test squaring.  */
@@ -199,9 +232,8 @@ _mpn_mul_classic (prodp, up, usize, vp, vsize)
     {
       umul_ppmm (prod_high, prod_low, up[j], v_limb);
       add_ssaaaa (cy_dig, prodp[j], prod_high, prod_low, 0, cy_dig);
-      j++;
     }
-  while (j < 0);
+  while (++j < 0);
 
   prodp[j] = cy_dig;
   prodp++;
@@ -221,36 +253,13 @@ _mpn_mul_classic (prodp, up, usize, vp, vsize)
       do
 	{
 	  umul_ppmm (prod_high, prod_low, up[j], v_limb);
-	  add_ssaaaa (cy_dig, prod_low, prod_high, prod_low, 0, cy_dig);
-	  c = prodp[j];
-	  prod_low += c;
+	  add_ssaaaa (prod_high, prod_low, prod_high, prod_low, 0, prodp[j]);
+	  prod_low += cy_dig;
+	  cy_dig = prod_high + (prod_low < cy_dig);
 	  prodp[j] = prod_low;
-	  if (prod_low < c)
-	    goto cy_loop;
-	ncy_loop:
-	  j++;
 	}
-      while (j < 0);
+      while (++j < 0);
 
-      prodp[j] = cy_dig;
-      prodp++;
-      continue;
-
-      do
-	{
-	  umul_ppmm (prod_high, prod_low, up[j], v_limb);
-	  add_ssaaaa (cy_dig, prod_low, prod_high, prod_low, 0, cy_dig);
-	  c = prodp[j];
-	  prod_low += c + 1;
-	  prodp[j] = prod_low;
-	  if (prod_low > c)
-	    goto ncy_loop;
-	cy_loop:
-	  j++;
-	}
-      while (j < 0);
-
-      cy_dig += 1;
       prodp[j] = cy_dig;
       prodp++;
     }
