@@ -1961,9 +1961,11 @@ GMP_OPTION_ALLOCA
 GMP_H_HAVE_FILE
 
 AC_C_BIGENDIAN(
-  [AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1)],
-  [AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1)],
-  [:])
+  [AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1)
+   GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_LIMB_BIG_ENDIAN')", POST)],
+  [AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1)
+   GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_LIMB_LITTLE_ENDIAN')", POST)
+  ], [:])
 AH_VERBATIM([HAVE_LIMB],
 [/* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
