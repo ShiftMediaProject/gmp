@@ -3105,6 +3105,7 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 #define mpn_hgcd2 __gmpn_hgcd2
 #define mpn_hgcd2_fix __gmpn_hgcd2_fix
+#define mpn_hgcd2_lehmer_step __gmpn_hgcd2_lehmer_step
 #define mpn_hgcd_max_recursion __gmpn_hgcd_max_recursion
 #define mpn_hgcd_init_itch __gmpn_hgcd_init_itch
 #define mpn_hgcd_init __gmpn_hgcd_init
@@ -3183,6 +3184,12 @@ mpn_hgcd2_fix __GMP_PROTO ((mp_ptr rp, mp_size_t ralloc,
 			    int sign,
 			    mp_limb_t u, mp_srcptr ap, mp_size_t asize,
 			    mp_limb_t v, mp_srcptr bp, mp_size_t bsize));
+
+int
+mpn_hgcd2_lehmer_step __GMP_PROTO ((struct hgcd2 *hgcd,
+				    mp_srcptr ap, mp_size_t asize,
+				    mp_srcptr bp, mp_size_t bsize,
+				    struct qstack *quotients));
 
 unsigned
 mpn_hgcd_max_recursion __GMP_PROTO ((mp_size_t n));
@@ -3265,18 +3272,18 @@ mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
 			   mp_size_t uvsize,
 			   mp_ptr tp, mp_size_t talloc));
 
-/* This should be tuned while looking at performance for large numbers */
 #ifndef HGCD_SCHOENHAGE_THRESHOLD
 # define HGCD_SCHOENHAGE_THRESHOLD 150
 #endif
 
+#if 0
 #ifndef GCD_LEHMER_THRESHOLD
 # define GCD_LEHMER_THRESHOLD 200
 #endif
+#endif
 
-/* While this is important for small and medium size numbers. */
 #ifndef GCD_SCHOENHAGE_THRESHOLD
-# define GCD_SCHOENHAGE_THRESHOLD 500
+# define GCD_SCHOENHAGE_THRESHOLD 1000
 #endif
 
 #ifndef GCDEXT_SCHOENHAGE_THRESHOLD
@@ -3680,9 +3687,11 @@ extern mp_size_t                     hgcd_schoenhage_threshold;
 #define GCD_ACCEL_THRESHOLD          gcd_accel_threshold
 extern mp_size_t                     gcd_accel_threshold;
 
+#if 0
 #undef  GCD_LEHMER_THRESHOLD
 #define GCD_LEHMER_THRESHOLD         gcd_lehmer_threshold
 extern mp_size_t                     gcd_lehmer_threshold;
+#endif
 
 #undef  GCD_SCHOENHAGE_THRESHOLD
 #define GCD_SCHOENHAGE_THRESHOLD     gcd_schoenhage_threshold
