@@ -1,5 +1,6 @@
 Changes between MP version 2.1 and 3.0
 
+* Source level compatibility with past releases.
 * Bug fixes.
 * Switch to autoconf/automake/libtool.
 * Multiplication and squaring using 3-way Toom-Cook.
@@ -16,6 +17,7 @@ Changes between MP version 2.1 and 3.0
 * New mpz functions: mpz_addmul_ui, mpz_cmpabs, mpz_cmpabs_ui, mpz_lcm,
   mpz_nextprime, mpz_perfect_power_p, mpz_remove, mpz_root, mpz_swap,
   mpz_tdiv_ui, mpz_tstbit, mpz_xor.
+* New mpn functions: mpn_divexact_by3.
 * New CPU support: DEC Alpha 21264, AMD K6 and Athlon, HPPA 2.0 and 64,
   Intel PentiumPro and P-II, Sparc 64, PowerPC 64.
 
