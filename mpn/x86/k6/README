@@ -35,14 +35,13 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_mod_1                 20.0
 	mpn_divexact_by3          11.0
 
-	mpn_copyi/copyd            1.0
+	mpn_copyi                  1.0
+	mpn_copyd                  1.0
 
 
 K6-2 and K6-3 have dual-issue MMX and get the following improvements.
 
 	mpn_l/rshift               1.75
-
-	mpn_copyi/copyd            0.56 or 1.0  (varying with data alignment)
 
 
 Prefetching of sources hasn't yet given any joy.  With the 3DNow "prefetch"
