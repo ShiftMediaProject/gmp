@@ -1,3 +1,10 @@
+2000-07-24  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp.h (error code enum): Add GMP_ERROR_BAD_STRING (currently unused).
+
+	* mpz/tests/t-mul.c: Default SIZE to a function of TOOM3_MUL_THRESHOLD.
+	Improve error messages.  Decrease reps.
+
 2000-07-22  Kevin Ryde  <kevin@swox.se>
 
 	* tune/speed.h: Decrease the amount of data used for gcd and powm
