@@ -1030,16 +1030,6 @@ int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
 mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 
-/* from gmp.h */
-#if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
-#define MPN_COPY_INCR(dst, src, size)                   \
-  do {                                                  \
-    ASSERT ((size) >= 0);                               \
-    ASSERT (MPN_SAME_OR_INCR_P (dst, src, size));       \
-    __GMPN_COPY_INCR (dst, src, size);                  \
-  } while (0)
-#endif
-
 #if defined (_CRAY)
 #define MPN_COPY_INCR(dst, src, n)					\
   do {									\
@@ -1092,24 +1082,6 @@ __GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-
-/* As per __GMPN_COPY_INCR in gmp.h. */
-#if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
-#define MPN_COPY_DECR(dst, src, size)                   \
-  do {                                                  \
-    ASSERT ((size) >= 0);                               \
-    ASSERT (MPN_SAME_OR_DECR_P (dst, src, size));       \
-    if ((size) != 0)                                    \
-      {                                                 \
-        mp_ptr     __dst = (dst) + (size);              \
-        mp_srcptr  __src = (src) + (size);              \
-        mp_size_t  __size = (size);                     \
-        do                                              \
-          *--__dst = *--__src;                          \
-        while (--__size != 0);                          \
-      }                                                 \
-  } while (0)
-#endif
 
 #if defined (_CRAY)
 #define MPN_COPY_DECR(dst, src, n)					\
