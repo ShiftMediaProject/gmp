@@ -39,7 +39,7 @@ MA 02111-1307, USA. */
 #define MPF_FLOOR 0
 #endif
 
-#ifndef XX_MPF_FLOOR_OR_CEIL
+#if MPF_TRUNC
 #undef FUNC_NAME
 #define FUNC_NAME mpf_trunc
 #endif
