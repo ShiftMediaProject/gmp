@@ -44,6 +44,13 @@ dnl     nor in macro parameters like text passed to forloop() or ifdef().
 deflit(BYTES_PER_MP_LIMB, 4)
 
 
+dnl  Libtool gives -DPIC -DDLL_EXPORT to indicate a cygwin or mingw DLL.  We
+dnl  undefine PIC since we don't need to be position independent in this
+dnl  case and definitely don't want the ELF style _GLOBAL_OFFSET_TABLE_ etc.
+
+ifdef(`DLL_EXPORT',`undefine(`PIC')')
+
+
 dnl  --------------------------------------------------------------------------
 dnl  Replacement PROLOGUE/EPILOGUE with more error checking.  Nesting and
 dnl  overlapping not allowed.
