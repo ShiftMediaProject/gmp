@@ -154,8 +154,8 @@ info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
-  rand.c randclr.c randlc.c randlc2x.c randsd.c randsdui.c version.c \
-  stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
+  rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
+  version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 
 libgmp_la_LIBADD = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
@@ -176,9 +176,9 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 am_libgmp_la_OBJECTS =  assert.lo errno.lo memory.lo mp_set_fns.lo \
-mp_clz_tab.lo rand.lo randclr.lo randlc.lo randlc2x.lo randsd.lo \
-randsdui.lo version.lo stack-alloc.lo mp_bpl.lo extract-dbl.lo \
-insert-dbl.lo
+mp_clz_tab.lo rand.lo randclr.lo randlc.lo randlc2x.lo randraw.lo \
+randsd.lo randsdui.lo version.lo stack-alloc.lo mp_bpl.lo \
+extract-dbl.lo insert-dbl.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -205,8 +205,8 @@ DEP_FILES =  @AMDEP@ $(DEPDIR)/assert.Plo $(DEPDIR)/errno.Plo \
 $(DEPDIR)/extract-dbl.Plo $(DEPDIR)/insert-dbl.Plo $(DEPDIR)/memory.Plo \
 $(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mp_clz_tab.Plo $(DEPDIR)/mp_set_fns.Plo \
 $(DEPDIR)/rand.Plo $(DEPDIR)/randclr.Plo $(DEPDIR)/randlc.Plo \
-$(DEPDIR)/randlc2x.Plo $(DEPDIR)/randsd.Plo $(DEPDIR)/randsdui.Plo \
-$(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
+$(DEPDIR)/randlc2x.Plo $(DEPDIR)/randraw.Plo $(DEPDIR)/randsd.Plo \
+$(DEPDIR)/randsdui.Plo $(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
 SOURCES = $(libgmp_la_SOURCES)
 OBJECTS = $(am_libgmp_la_OBJECTS)
 
@@ -595,6 +595,7 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/randclr.Plo
 @AMDEP@include $(DEPDIR)/randlc.Plo
 @AMDEP@include $(DEPDIR)/randlc2x.Plo
+@AMDEP@include $(DEPDIR)/randraw.Plo
 @AMDEP@include $(DEPDIR)/randsd.Plo
 @AMDEP@include $(DEPDIR)/randsdui.Plo
 @AMDEP@include $(DEPDIR)/stack-alloc.Plo
