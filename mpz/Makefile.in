@@ -127,13 +127,11 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
-  -DOPERATION_`echo $* | sed 's/_$$//'`
-
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
-  abs.c aorsmul.c aorsmul_i.c and.c array_init.c \
+  add.c add_ui.c abs.c aorsmul.c aorsmul_i.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   cfdiv_q_2exp.c cfdiv_r_2exp.c \
@@ -145,32 +143,24 @@ libmpz_la_SOURCES = \
   dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_ui.c fdiv_ui.c \
   fib_ui.c fib2_ui.c \
+  fits_sint.c fits_slong.c fits_sshort.c \
   fits_uint.c fits_ulong.c fits_ushort.c \
   gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
   lcm.c lcm_ui.c lucnum_ui.c lucnum2_ui.c \
-  mod.c mul.c mul_2exp.c n_pow_ui.c neg.c nextprime.c \
+  mod.c mul.c mul_2exp.c mul_si.c mul_ui.c n_pow_ui.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
-  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
+  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c sub_ui.c \
   swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
 
 
-EXTRA_DIST = aors.c aors_ui.c fits_s.c mul_siui.c
-
-nodist_libmpz_la_SOURCES = \
-  add.c sub.c					\
-  add_ui.c sub_ui.c 				\
-  fits_sint.c fits_slong.c fits_sshort.c	\
-  mul_si.c mul_ui.c
-
-
-CLEANFILES = $(nodist_libmpz_la_SOURCES)
+EXTRA_DIST = aors.i aors_ui.i fits_s.i mul_i.i
 subdir = mpz
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -179,38 +169,37 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libmpz_la_LDFLAGS =
 libmpz_la_LIBADD =
-am_libmpz_la_OBJECTS = abs$U.lo aorsmul$U.lo aorsmul_i$U.lo and$U.lo \
-	array_init$U.lo bin_ui$U.lo bin_uiui$U.lo cdiv_q$U.lo \
-	cdiv_q_ui$U.lo cdiv_qr$U.lo cdiv_qr_ui$U.lo cdiv_r$U.lo \
-	cdiv_r_ui$U.lo cdiv_ui$U.lo cfdiv_q_2exp$U.lo cfdiv_r_2exp$U.lo \
-	clear$U.lo clrbit$U.lo cmp$U.lo cmp_d$U.lo cmp_si$U.lo \
-	cmp_ui$U.lo cmpabs$U.lo cmpabs_d$U.lo cmpabs_ui$U.lo com$U.lo \
-	cong$U.lo cong_2exp$U.lo cong_ui$U.lo divexact$U.lo \
-	divegcd$U.lo dive_ui$U.lo divis$U.lo divis_ui$U.lo \
-	divis_2exp$U.lo dump$U.lo fac_ui$U.lo fdiv_q$U.lo \
+am_libmpz_la_OBJECTS = add$U.lo add_ui$U.lo abs$U.lo aorsmul$U.lo \
+	aorsmul_i$U.lo and$U.lo array_init$U.lo bin_ui$U.lo \
+	bin_uiui$U.lo cdiv_q$U.lo cdiv_q_ui$U.lo cdiv_qr$U.lo \
+	cdiv_qr_ui$U.lo cdiv_r$U.lo cdiv_r_ui$U.lo cdiv_ui$U.lo \
+	cfdiv_q_2exp$U.lo cfdiv_r_2exp$U.lo clear$U.lo clrbit$U.lo \
+	cmp$U.lo cmp_d$U.lo cmp_si$U.lo cmp_ui$U.lo cmpabs$U.lo \
+	cmpabs_d$U.lo cmpabs_ui$U.lo com$U.lo cong$U.lo cong_2exp$U.lo \
+	cong_ui$U.lo divexact$U.lo divegcd$U.lo dive_ui$U.lo divis$U.lo \
+	divis_ui$U.lo divis_2exp$U.lo dump$U.lo fac_ui$U.lo fdiv_q$U.lo \
 	fdiv_q_ui$U.lo fdiv_qr$U.lo fdiv_qr_ui$U.lo fdiv_r$U.lo \
 	fdiv_r_ui$U.lo fdiv_ui$U.lo fib_ui$U.lo fib2_ui$U.lo \
-	fits_uint$U.lo fits_ulong$U.lo fits_ushort$U.lo gcd$U.lo \
-	gcd_ui$U.lo gcdext$U.lo get_d$U.lo get_si$U.lo get_str$U.lo \
-	get_ui$U.lo getlimbn$U.lo hamdist$U.lo init$U.lo inp_raw$U.lo \
-	inp_str$U.lo invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo \
-	iset_si$U.lo iset_str$U.lo iset_ui$U.lo jacobi$U.lo kronsz$U.lo \
-	kronuz$U.lo kronzs$U.lo kronzu$U.lo lcm$U.lo lcm_ui$U.lo \
-	lucnum_ui$U.lo lucnum2_ui$U.lo mod$U.lo mul$U.lo mul_2exp$U.lo \
-	n_pow_ui$U.lo neg$U.lo nextprime$U.lo out_raw$U.lo out_str$U.lo \
-	perfpow$U.lo perfsqr$U.lo popcount$U.lo pow_ui$U.lo powm$U.lo \
-	powm_ui$U.lo pprime_p$U.lo random$U.lo random2$U.lo \
-	realloc$U.lo remove$U.lo root$U.lo rrandomb$U.lo scan0$U.lo \
-	scan1$U.lo set$U.lo set_d$U.lo set_f$U.lo set_q$U.lo \
+	fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
+	fits_ulong$U.lo fits_ushort$U.lo gcd$U.lo gcd_ui$U.lo \
+	gcdext$U.lo get_d$U.lo get_si$U.lo get_str$U.lo get_ui$U.lo \
+	getlimbn$U.lo hamdist$U.lo init$U.lo inp_raw$U.lo inp_str$U.lo \
+	invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo iset_si$U.lo \
+	iset_str$U.lo iset_ui$U.lo jacobi$U.lo kronsz$U.lo kronuz$U.lo \
+	kronzs$U.lo kronzu$U.lo lcm$U.lo lcm_ui$U.lo lucnum_ui$U.lo \
+	lucnum2_ui$U.lo mod$U.lo mul$U.lo mul_2exp$U.lo mul_si$U.lo \
+	mul_ui$U.lo n_pow_ui$U.lo neg$U.lo nextprime$U.lo out_raw$U.lo \
+	out_str$U.lo perfpow$U.lo perfsqr$U.lo popcount$U.lo \
+	pow_ui$U.lo powm$U.lo powm_ui$U.lo pprime_p$U.lo random$U.lo \
+	random2$U.lo realloc$U.lo remove$U.lo root$U.lo rrandomb$U.lo \
+	scan0$U.lo scan1$U.lo set$U.lo set_d$U.lo set_f$U.lo set_q$U.lo \
 	set_si$U.lo set_str$U.lo set_ui$U.lo setbit$U.lo size$U.lo \
-	sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo swap$U.lo tdiv_ui$U.lo \
-	tdiv_q$U.lo tdiv_q_2exp$U.lo tdiv_q_ui$U.lo tdiv_qr$U.lo \
-	tdiv_qr_ui$U.lo tdiv_r$U.lo tdiv_r_2exp$U.lo tdiv_r_ui$U.lo \
-	tstbit$U.lo ui_pow_ui$U.lo urandomb$U.lo urandomm$U.lo xor$U.lo
-nodist_libmpz_la_OBJECTS = add$U.lo sub$U.lo add_ui$U.lo sub_ui$U.lo \
-	fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo mul_si$U.lo \
-	mul_ui$U.lo
-libmpz_la_OBJECTS = $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
+	sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo sub$U.lo sub_ui$U.lo \
+	swap$U.lo tdiv_ui$U.lo tdiv_q$U.lo tdiv_q_2exp$U.lo \
+	tdiv_q_ui$U.lo tdiv_qr$U.lo tdiv_qr_ui$U.lo tdiv_r$U.lo \
+	tdiv_r_2exp$U.lo tdiv_r_ui$U.lo tstbit$U.lo ui_pow_ui$U.lo \
+	urandomb$U.lo urandomm$U.lo xor$U.lo
+libmpz_la_OBJECTS = $(am_libmpz_la_OBJECTS)
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -228,7 +217,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libmpz_la_SOURCES)
 DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(libmpz_la_SOURCES) $(nodist_libmpz_la_SOURCES)
+SOURCES = $(libmpz_la_SOURCES)
 
 all: all-am
 
@@ -692,7 +681,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
@@ -751,28 +739,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
-
-add.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c add.c
-sub.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c sub.c
-
-add_ui.c: $(srcdir)/aors_ui.c
-	cp $(srcdir)/aors_ui.c add_ui.c
-sub_ui.c: $(srcdir)/aors_ui.c
-	cp $(srcdir)/aors_ui.c sub_ui.c
-
-fits_sint.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sint.c
-fits_slong.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_slong.c
-fits_sshort.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sshort.c
-
-mul_si.c: $(srcdir)/mul_siui.c
-	cp $(srcdir)/mul_siui.c mul_si.c
-mul_ui.c: $(srcdir)/mul_siui.c
-	cp $(srcdir)/mul_siui.c mul_ui.c
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
