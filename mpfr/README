@@ -1,0 +1,81 @@
+
+                        THE MPFR LIBRARY
+
+     ***** EXPERIMENTAL EXPERIMENTAL EXPERIMENTAL EXPERIMENTAL *****
+     ***** EXPERIMENTAL EXPERIMENTAL EXPERIMENTAL EXPERIMENTAL *****
+     ***** EXPERIMENTAL EXPERIMENTAL EXPERIMENTAL EXPERIMENTAL *****
+
+This is a new function class, 'mpfr', for accurate floating-point arithmetic
+with rounding control. Unlike the 'mpf' function class, 'mpfr' is a smooth
+extension to the IEEE P754 arithmetic. In fact, setting the precision to 53,
+'mpfr' functions should work exactly like IEEE doubles.
+
+This code is *experimental* and it is not fully integrated into GMP. It is
+also not as well tested as the other parts of GMP. The original 'mpfr' library
+integrated into GMP was version 0.4.
+
+This code might at some point replace the 'mpf' library.
+
+
+
+                        MORE INFORMATION
+
+This code was contributed by the French FIABLE project. Please see the 'mpfr'
+project page for more info, http://www.loria.fr/projets/mpfr/
+
+
+
+                          INSTALLATION
+
+To install this package to the libgmp library you add the "--enable-mpfr" to
+configure. This has the unfortune side effect that all programs using GMP
+will also depend on 'libm'.
+
+Two test cases were disabled, 'tcmp' 'tset_d'.
+
+
+
+	                 REPORTING BUGS
+
+Report bugs to bug-gmp@gnu.org and mpfr@loria.fr.  What information is
+needed in a good bug report is described in the manual.  The same address
+can be used for suggesting modifications and enhancements.
+
+
+
+                NOTES FROM THE ORIGINAL INSTALL DOCUMENT
+
+We tested the installation with GMP 2.0.2 on the following architectures:
+
+    Pentium II and III/Linux 2.2.10
+    Alpha 21264/OSF1 V4.0
+    SGI R10000/IRIX 6.5 (both using 32- and 64-bit limbs)
+    Sun UltraSparc/Solaris 2.6
+    HP 9000/HP-UX A.09.05
+    Pentium/Windows with Cygnus compiler
+
+Known problems.
+===============
+
+1) On some architectures (for example Alpha/OSF), the default 'make' command 
+   crashes in step 3. GNU make is preferred.
+
+2) Under HP-UX and Pentium/Linux, don't use the -pedantic option, otherwise
+   gcc complains with the longlong.h file from GMP.
+
+3) On the Alpha, the test file for the square root (tsqrt) may produce
+   errors as follows:
+
+     libm.a differs from mpfr_sqrt for a=9.89438396044940260000e-134, rnd_mode=2
+     libm.a gives 3.14553397063986620000e-67, mpfr_sqrt gives 3.14553397063986680000e-67 (1 ulp)
+     libm.a differs from mpfr_sqrt for a=7.86528588050363750000e+31, rnd_mode=1
+     libm.a gives 8.86864469944739500000e+15, mpfr_sqrt gives 8.86864469944739400000e+15 (-1 ulp)
+
+   Also, Linux on Alpha is known to have problems with IEEE conformance. See
+   http://www.linux.org.uk/VERSION/relnotes.2211.html.
+
+   In most cases, as above, the error comes from the libm.a. On Alpha/Linux,
+   which is known to have a bad libm.a, you may even find errors in the
+   addition or multiplication.
+
+
