@@ -74,3 +74,11 @@ MA 02111-1307, USA.  */
 #undef ALIGN
 #define ALIGN(log) .align log,0x90
 #endif
+
+#ifdef ELF_SYNTAX
+#define PROLOG(name) .type name,@function
+#define EPILOG(name) .size name,.-name
+#else
+#define PROLOG(name)
+#define EPILOG(name)
+#endif
