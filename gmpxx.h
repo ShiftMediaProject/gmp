@@ -53,7 +53,7 @@ struct __gmp_unary_plus
   static void eval(mpq_ptr q, mpq_srcptr r) { mpq_set(q, r); }
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_set(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t mode)
   { mpfr_set(f, g, mode); }
 #endif
 };
@@ -64,7 +64,7 @@ struct __gmp_unary_minus
   static void eval(mpq_ptr q, mpq_srcptr r) { mpq_neg(q, r); }
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_neg(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t mode)
   { mpfr_neg(f, g, mode); }
 #endif
 };
@@ -199,51 +199,59 @@ struct __gmp_binary_plus
   static void eval(mpf_ptr f, mpf_srcptr g, double d)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_add(f, g, temp);
     mpf_clear(temp);
   }
   static void eval(mpf_ptr f, double d, mpf_srcptr g)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_add(f, temp, g);
     mpf_clear(temp);
   }
 
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, mp_rnd_t mode)
   { mpfr_add(f, g, h, mode); }
 
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   { mpfr_add_ui(f, g, l, mode); }
-  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   { mpfr_add_ui(f, g, l, mode); }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_add_ui(f, g, l, mode);
     else
       mpfr_sub_ui(f, g, -l, mode);
   }
-  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_add_ui(f, g, l, mode);
     else
       mpfr_sub_ui(f, g, -l, mode);
   }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_add(f, g, temp, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_add(f, temp, g, mode);
     mpfr_clear(temp);
   }
@@ -380,34 +388,40 @@ struct __gmp_binary_minus
   static void eval(mpf_ptr f, mpf_srcptr g, double d)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_sub(f, g, temp);
     mpf_clear(temp);
   }
   static void eval(mpf_ptr f, double d, mpf_srcptr g)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_sub(f, temp, g);
     mpf_clear(temp);
   }
 
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, mp_rnd_t mode)
   { mpfr_sub(f, g, h, mode); }
 
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   { mpfr_sub_ui(f, g, l, mode); }
-  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   { mpfr_ui_sub(f, l, g, mode); }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_sub_ui(f, g, l, mode);
     else
       mpfr_add_ui(f, g, -l, mode);
   }
-  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_sub_ui(f, g, l, mode);
@@ -415,17 +429,19 @@ struct __gmp_binary_minus
       mpfr_add_ui(f, g, -l, mode);
     mpfr_neg(f, f, mode);
   }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_sub(f, g, temp, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_sub(f, temp, g, mode);
     mpfr_clear(temp);
   }
@@ -558,27 +574,32 @@ struct __gmp_binary_multiplies
   static void eval(mpf_ptr f, mpf_srcptr g, double d)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_mul(f, g, temp);
     mpf_clear(temp);
   }
   static void eval(mpf_ptr f, double d, mpf_srcptr g)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_mul(f, temp, g);
     mpf_clear(temp);
   }
 
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, mp_rnd_t mode)
   { mpfr_mul(f, g, h, mode); }
 
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   { mpfr_mul_ui(f, g, l, mode); }
-  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   { mpfr_mul_ui(f, g, l, mode); }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_mul_ui(f, g, l, mode);
@@ -588,7 +609,8 @@ struct __gmp_binary_multiplies
 	mpfr_neg(f, f, mode);
       }
   }
-  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_mul_ui(f, g, l, mode);
@@ -598,17 +620,19 @@ struct __gmp_binary_multiplies
 	mpfr_neg(f, f, mode);
       }
   }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_mul(f, g, temp, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_mul(f, temp, g, mode);
     mpfr_clear(temp);
   }
@@ -757,27 +781,32 @@ struct __gmp_binary_divides
   static void eval(mpf_ptr f, mpf_srcptr g, double d)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_div(f, g, temp);
     mpf_clear(temp);
   }
   static void eval(mpf_ptr f, double d, mpf_srcptr g)
   {
     mpf_t temp;
-    mpf_init_set_d(temp, d);
+    mpf_init2(temp, 8*sizeof(double));
+    mpf_set_d(temp, d);
     mpf_div(f, temp, g);
     mpf_clear(temp);
   }
 
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, mp_rnd_t mode)
   { mpfr_div(f, g, h, mode); }
 
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   { mpfr_div_ui(f, g, l, mode); }
-  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   { mpfr_ui_div(f, l, g, mode); }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_div_ui(f, g, l, mode);
@@ -787,7 +816,8 @@ struct __gmp_binary_divides
 	mpfr_neg(f, f, mode);
       }
   }
-  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   {
     if (l >= 0)
       mpfr_ui_div(f, l, g, mode);
@@ -797,17 +827,19 @@ struct __gmp_binary_divides
 	mpfr_neg(f, f, mode);
       }
   }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_div(f, g, temp, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, mp_rnd_t mode)
   {
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, mode);
     mpfr_div(f, temp, g, mode);
     mpfr_clear(temp);
   }
@@ -896,7 +928,8 @@ struct __gmp_binary_lshift
   static void eval(mpf_ptr f, mpf_srcptr g, unsigned long int l)
   { mpf_mul_2exp(f, g, l); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   { mpfr_mul_2exp(f, g, l, mode); }
 #endif
 };
@@ -910,7 +943,8 @@ struct __gmp_binary_rshift
   static void eval(mpf_ptr f, mpf_srcptr g, unsigned long int l)
   { mpf_div_2exp(f, g, l); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   { mpfr_div_2exp(f, g, l, mode); }
 #endif
 };
@@ -1004,7 +1038,7 @@ struct __gmp_binary_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) == 0);
 	    mpfr_clear(temp);
@@ -1029,7 +1063,7 @@ struct __gmp_binary_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) == 0);
 	    mpfr_clear(temp);
@@ -1041,7 +1075,8 @@ struct __gmp_binary_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(f, temp) == 0);
     mpfr_clear(temp);
     return b;
@@ -1050,7 +1085,8 @@ struct __gmp_binary_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(temp, f) == 0);
     mpfr_clear(temp);
     return b;
@@ -1147,7 +1183,7 @@ struct __gmp_binary_not_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) != 0);
 	    mpfr_clear(temp);
@@ -1172,7 +1208,7 @@ struct __gmp_binary_not_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) != 0);
 	    mpfr_clear(temp);
@@ -1184,7 +1220,8 @@ struct __gmp_binary_not_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(f, temp) != 0);
     mpfr_clear(temp);
     return b;
@@ -1193,7 +1230,8 @@ struct __gmp_binary_not_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(temp, f) != 0);
     mpfr_clear(temp);
     return b;
@@ -1289,7 +1327,7 @@ struct __gmp_binary_less
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) > 0);
 	    mpfr_clear(temp);
@@ -1314,7 +1352,7 @@ struct __gmp_binary_less
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) < 0);
 	    mpfr_clear(temp);
@@ -1326,7 +1364,8 @@ struct __gmp_binary_less
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(f, temp) < 0);
     mpfr_clear(temp);
     return b;
@@ -1335,7 +1374,8 @@ struct __gmp_binary_less
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(temp, f) < 0);
     mpfr_clear(temp);
     return b;
@@ -1431,7 +1471,7 @@ struct __gmp_binary_less_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) >= 0);
 	    mpfr_clear(temp);
@@ -1456,7 +1496,7 @@ struct __gmp_binary_less_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) <= 0);
 	    mpfr_clear(temp);
@@ -1468,7 +1508,8 @@ struct __gmp_binary_less_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(f, temp) <= 0);
     mpfr_clear(temp);
     return b;
@@ -1477,7 +1518,8 @@ struct __gmp_binary_less_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(temp, f) <= 0);
     mpfr_clear(temp);
     return b;
@@ -1573,7 +1615,7 @@ struct __gmp_binary_greater
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) < 0);
 	    mpfr_clear(temp);
@@ -1598,7 +1640,7 @@ struct __gmp_binary_greater
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) > 0);
 	    mpfr_clear(temp);
@@ -1610,7 +1652,8 @@ struct __gmp_binary_greater
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(f, temp) > 0);
     mpfr_clear(temp);
     return b;
@@ -1619,7 +1662,8 @@ struct __gmp_binary_greater
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(temp, f) > 0);
     mpfr_clear(temp);
     return b;
@@ -1715,7 +1759,7 @@ struct __gmp_binary_greater_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) <= 0);
 	    mpfr_clear(temp);
@@ -1740,7 +1784,7 @@ struct __gmp_binary_greater_equal
 	  {
 	    bool b;
 	    mpfr_t temp;
-	    mpfr_init(temp);
+	    mpfr_init2(temp, mpfr_get_prec(f));
 	    mpfr_neg(temp, f, __gmp_default_rounding_mode);
 	    b = (mpfr_cmp_ui(temp, -l) >= 0);
 	    mpfr_clear(temp);
@@ -1752,7 +1796,8 @@ struct __gmp_binary_greater_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(f, temp) >= 0);
     mpfr_clear(temp);
     return b;
@@ -1761,7 +1806,8 @@ struct __gmp_binary_greater_equal
   {
     bool b;
     mpfr_t temp;
-    mpfr_init_set_d(temp, d, __gmp_default_rounding_mode);
+    mpfr_init2(temp, 8*sizeof(double));
+    mpfr_set_d(temp, d, __gmp_default_rounding_mode);
     b = (mpfr_cmp(temp, f) >= 0);
     mpfr_clear(temp);
     return b;
@@ -1776,7 +1822,7 @@ struct __gmp_unary_increment
   { mpz_add(mpq_numref(q), mpq_numref(r), mpq_denref(r)); }
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_add_ui(f, g, 1); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t mode)
   { mpfr_add_ui(f, g, 1, mode); }
 #endif
 };
@@ -1788,7 +1834,7 @@ struct __gmp_unary_decrement
   { mpz_sub(mpq_numref(q), mpq_numref(r), mpq_denref(r)); }
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_sub_ui(f, g, 1); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t mode)
   { mpfr_sub_ui(f, g, 1, mode); }
 #endif
 };
@@ -1799,7 +1845,7 @@ struct __gmp_abs_function
   static void eval(mpq_ptr q, mpq_srcptr r) { mpq_abs(q, r); }
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_abs(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t mode)
   { mpfr_abs(f, g, mode); }
 #endif
 };
@@ -1808,7 +1854,7 @@ struct __gmp_trunc_function
 {
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_trunc(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char) { mpfr_trunc(f, g); }
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t) { mpfr_trunc(f, g); }
 #endif
 };
 
@@ -1816,7 +1862,7 @@ struct __gmp_floor_function
 {
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_floor(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char) { mpfr_floor(f, g); }
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t) { mpfr_floor(f, g); }
 #endif
 };
 
@@ -1824,7 +1870,7 @@ struct __gmp_ceil_function
 {
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_ceil(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char) { mpfr_ceil(f, g); }
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t) { mpfr_ceil(f, g); }
 #endif
 };
 
@@ -1833,7 +1879,7 @@ struct __gmp_sqrt_function
   static void eval(mpz_ptr z, mpz_srcptr w) { mpz_sqrt(z, w); }
   static void eval(mpf_ptr f, mpf_srcptr g) { mpf_sqrt(f, g); }
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mp_rnd_t mode)
   { mpfr_sqrt(f, g, mode); }
 #endif
 };
@@ -1919,7 +1965,7 @@ struct __gmp_hypot_function
   }
 
 #ifdef __MPFR_H
-  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h, mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
@@ -1930,7 +1976,8 @@ struct __gmp_hypot_function
     mpfr_clear(temp);
   }
 
-  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l,
+		   mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
@@ -1941,7 +1988,8 @@ struct __gmp_hypot_function
     mpfr_sqrt(f, f, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
@@ -1952,7 +2000,8 @@ struct __gmp_hypot_function
     mpfr_sqrt(f, f, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l,
+		   mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
@@ -1963,7 +2012,8 @@ struct __gmp_hypot_function
     mpfr_sqrt(f, f, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g,
+		   mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
@@ -1974,7 +2024,7 @@ struct __gmp_hypot_function
     mpfr_sqrt(f, f, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, char mode)
+  static void eval(mpfr_ptr f, mpfr_srcptr g, double d, mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
@@ -1985,7 +2035,7 @@ struct __gmp_hypot_function
     mpfr_sqrt(f, f, mode);
     mpfr_clear(temp);
   }
-  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, char mode)
+  static void eval(mpfr_ptr f, double d, mpfr_srcptr g, mp_rnd_t mode)
   {
     mpfr_t temp;
     mpfr_init2(temp, mpfr_get_prec(f));
