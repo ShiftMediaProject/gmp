@@ -99,7 +99,7 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/mul_2exp$U.lo mpf/div_2exp$U.lo mpf/abs$U.lo mpf/neg$U.lo		    \
   mpf/set_q$U.lo mpf/get_d$U.lo mpf/set_dfl_prec$U.lo mpf/set_prc$U.lo	    \
   mpf/set_prc_raw$U.lo mpf/get_prc$U.lo mpf/ui_div$U.lo mpf/sqrt_ui$U.lo    \
-  mpf/floor$U.lo mpf/ceil$U.lo mpf/trunc$U.lo mpf/pow_ui$U.lo		    \
+  mpf/ceilfloor$U.lo mpf/trunc$U.lo mpf/pow_ui$U.lo			    \
   mpf/urandomb$U.lo mpf/swap$U.lo					    \
   mpf/fits_sint$U.lo mpf/fits_slong$U.lo mpf/fits_sshort$U.lo		    \
   mpf/fits_uint$U.lo mpf/fits_ulong$U.lo mpf/fits_ushort$U.lo		    \
