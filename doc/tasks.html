@@ -111,6 +111,11 @@
      modular inverse of the base.  But what to do if an inverse doesn't exist
      (base and modulus have common factors)?  Throw a divide by zero maybe, or
      return a flag like <code>mpz_invert</code> does.
+<li> <code>mpz_powm</code> REDC should do multiplications by <code>g[]</code>
+     using the division method when they're small, since the REDC form of a
+     small multiplier is normally a full size product.  Probably would need a
+     new tuned parameter to say what size multiplier is "small", as a function
+     of the size of the modulus.
 <li> <code>mpn_gcd</code> might be able to be sped up on small to
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
