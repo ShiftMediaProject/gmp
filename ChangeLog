@@ -19,6 +19,31 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-22  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c: Handle "binomial" operator.
+
+	* mpz/cmp_ui.c: Move assignments of up out of conditionals.
+
+	* mpn/generic/gcdext.c: Fix fencepost error in STAT code.
+
+	* gmp-impl.h (mpn_com_n): Nailify.
+
+	* tests/mpz/t-cdiv_ui.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-cdiv_ui.
+	* mpz/cdiv_qr_ui.c: Nailify.
+	* mpz/cdiv_q_ui.c: Nailify.
+	* mpz/cdiv_r_ui.c: Nailify.
+	* mpz/cdiv_ui.c: Nailify.
+
+	* tests/misc/t-printf.c (CHECK_N): Add cast to allow `char' to be an
+	unsigned type.
+	* tests/misc/t-scanf.c: Likewise.
+
+	* mpz/mul_i.h: Rework nails code to handle parameter overlap.
+
+	* tests/mpz/t-set_f.c: Disable for nails.
+
 2002-04-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/set_si.c: Add cast to support LONG_LONG_LIMB.
