@@ -149,11 +149,21 @@ char *ds_func_names[] =
   dump_abort (class##_func_names[indx], op1, op2, op3);			\
   failures++;								\
   } while (0)
+#define FAIL2(fname,op1,op2,op3) \
+  do {									\
+  dump_abort (#fname, op1, op2, op3);					\
+  failures++;								\
+  } while (0)
 #else
 #define FAIL(class,indx,op1,op2,op3) \
   do {									\
   class/**/_funcs[indx] = 0;						\
   dump_abort (class/**/_func_names[indx], op1, op2, op3);		\
+  failures++;								\
+  } while (0)
+#define FAIL2(fname,op1,op2,op3) \
+  do {									\
+  dump_abort ("fname", op1, op2, op3);					\
   failures++;								\
   } while (0)
 #endif
@@ -320,12 +330,12 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  mpz_sqrtrem (res1, res2, res1);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
-	    dump_abort ("mpz_sqrtrem", in1, NULL, NULL);
+	    FAIL2 (mpz_sqrtrem, in1, NULL, NULL);
 
 	  mpz_set (res2, in1);
 	  mpz_sqrtrem (res1, res2, res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0)
-	    dump_abort ("mpz_sqrtrem", in1, NULL, NULL);
+	    FAIL2 (mpz_sqrtrem, in1, NULL, NULL);
 	}
 
       if (mpz_sgn (in1) >= 0)
@@ -335,7 +345,7 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  mpz_root (res1, res1, in2i % 0x100 + 1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_root", in1, in2, NULL);
+	    FAIL2 (mpz_root, in1, in2, NULL);
 	}
 
       if (pass < reps / 2)	/* run fewer tests since gcdext lots of time */
@@ -346,61 +356,61 @@ main (argc, argv)
 	  mpz_gcdext (res1, res2, res3, res1, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res2, in1);
 	  mpz_gcdext (res1, res2, res3, res2, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res3, in1);
 	  mpz_gcdext (res1, res2, res3, res3, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
 	  mpz_gcdext (res1, res2, res3, in1, res1);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res2, in2);
 	  mpz_gcdext (res1, res2, res3, in1, res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res3, in2);
 	  mpz_gcdext (res1, res2, res3, in1, res3);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res1, in1);
 	  mpz_gcdext (res1, res2, NULL, res1, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res2, in1);
 	  mpz_gcdext (res1, res2, NULL, res2, in2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
 	  mpz_gcdext (res1, res2, NULL, in1, res1);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 
 	  mpz_set (res2, in2);
 	  mpz_gcdext (res1, res2, NULL, in1, res2);
 	  if (mpz_cmp (ref1, res1) != 0 || mpz_cmp (ref2, res2) != 0
 	      || mpz_cmp (ref3, res3) != 0)
-	    dump_abort ("mpz_gcdext", in1, in2, NULL);
+	    FAIL2 (mpz_gcdext, in1, in2, NULL);
 	}
 
       /* Don't run mpz_powm for huge exponents or when undefined.  */
@@ -411,17 +421,17 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  mpz_powm (res1, res1, in2, in3);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_powm", in1, in2, in3);
+	    FAIL2 (mpz_powm, in1, in2, in3);
 
 	  mpz_set (res1, in2);
 	  mpz_powm (res1, in1, res1, in3);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_powm", in1, in2, in3);
+	    FAIL2 (mpz_powm, in1, in2, in3);
 
 	  mpz_set (res1, in3);
 	  mpz_powm (res1, in1, in2, res1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_powm", in1, in2, in3);
+	    FAIL2 (mpz_powm, in1, in2, in3);
 	}
 
       /* Don't run mpz_powm_ui when undefined.  */
@@ -432,12 +442,12 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  mpz_powm_ui (res1, res1, in2i, in3);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_powm_ui", in1, in2, in3);
+	    FAIL2 (mpz_powm_ui, in1, in2, in3);
 
 	  mpz_set (res1, in3);
 	  mpz_powm_ui (res1, in1, in2i, res1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_powm_ui", in1, in2, in3);
+	    FAIL2 (mpz_powm_ui, in1, in2, in3);
 	}
 
       {
@@ -446,7 +456,7 @@ main (argc, argv)
 	mpz_set (res1, in1);
 	r2 = mpz_gcd_ui (res1, res1, in2i);
 	if (mpz_cmp (ref1, res1) != 0)
-	  dump_abort ("mpz_gcd_ui", in1, in2, NULL);
+	  FAIL2 (mpz_gcd_ui, in1, in2, NULL);
       }
 
       if (mpz_cmp_ui (in2, 1L) > 0 && mpz_sgn (in1) != 0)
@@ -457,12 +467,12 @@ main (argc, argv)
 	  mpz_set (res1, in1);
 	  mpz_remove (res1, res1, in2);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_remove", in1, in2, NULL);
+	    FAIL2 (mpz_remove, in1, in2, NULL);
 
 	  mpz_set (res1, in2);
 	  mpz_remove (res1, in1, res1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_remove", in1, in2, NULL);
+	    FAIL2 (mpz_remove, in1, in2, NULL);
 	}
 
       if (mpz_sgn (in2) != 0)
@@ -474,12 +484,12 @@ main (argc, argv)
 	  mpz_set (res1, t);
 	  mpz_divexact (res1, res1, in2);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_divexact", t, in2, NULL);
+	    FAIL2 (mpz_divexact, t, in2, NULL);
 
 	  mpz_set (res1, in2);
 	  mpz_divexact (res1, t, res1);
 	  if (mpz_cmp (ref1, res1) != 0)
-	    dump_abort ("mpz_divexact", t, in2, NULL);
+	    FAIL2 (mpz_divexact, t, in2, NULL);
 	}
     }
 
