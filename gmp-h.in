@@ -69,6 +69,11 @@ MA 02111-1307, USA. */
    _AIX - gnu ansidecl.h asserts that all known AIX compilers are ANSI but
        don't always define __STDC__.
 
+   __DECC - current versions of DEC C (5.9 for instance) for alpha are ANSI,
+       but don't define __STDC__ in their default mode.  Don't know if old
+       versions might have been K&R, but let's not worry about that unless
+       someone is still using one.
+
    _mips - gnu ansidecl.h says the RISC/OS MIPS compiler is ANSI in SVR4
        mode, but doesn't define __STDC__.
 
@@ -871,6 +876,8 @@ __GMP_DECLSPEC int mpz_millerrabin __GMP_PROTO ((mpz_srcptr, int)) __GMP_ATTRIBU
 
 #define mpz_mod __gmpz_mod
 __GMP_DECLSPEC void mpz_mod __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_mod_ui mpz_fdiv_r_ui /* same as fdiv_r because divisor unsigned */
 
 #define mpz_mul __gmpz_mul
 __GMP_DECLSPEC void mpz_mul __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -2081,11 +2088,11 @@ __GMP_DECLSPEC_XX std::istream& operator>> (std::istream &, mpf_ptr);
 #endif
 
 
-/* Compatibility with GMP 2 and earlier. */
+/* Source-level compatibility with GMP 2 and earlier. */
 #define mpn_divmod(qp,np,nsize,dp,dsize) \
   mpn_divrem (qp, (mp_size_t) 0, np, nsize, dp, dsize)
 
-/* Compatibility with GMP 1.  */
+/* Source-level compatibility with GMP 1.  */
 #define mpz_mdiv	mpz_fdiv_q
 #define mpz_mdivmod	mpz_fdiv_qr
 #define mpz_mmod	mpz_fdiv_r
@@ -2100,7 +2107,6 @@ __GMP_DECLSPEC_XX std::istream& operator>> (std::istream &, mpf_ptr);
 #define mpz_divmod	mpz_fdiv_qr
 #define mpz_div_ui	mpz_fdiv_q_ui
 #define mpz_divmod_ui	mpz_fdiv_qr_ui
-#define mpz_mod_ui	mpz_fdiv_r_ui
 #define mpz_div_2exp	mpz_fdiv_q_2exp
 #define mpz_mod_2exp	mpz_fdiv_r_2exp
 
