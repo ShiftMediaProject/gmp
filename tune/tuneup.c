@@ -1,6 +1,6 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -171,8 +171,6 @@ mp_size_t  divrem_2_threshold           = MP_SIZE_T_MAX;
 mp_size_t  get_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  get_str_precompute_threshold = MP_SIZE_T_MAX;
 mp_size_t  set_str_threshold            = MP_SIZE_T_MAX;
-
-mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
