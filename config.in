@@ -67,6 +67,9 @@
 /* Define if cpp supports the ANSI # stringizing operator. */
 #undef HAVE_STRINGIZE
 
+/* Define if the system has the type `void'. */
+#undef HAVE_VOID
+
 /* Name of package */
 #undef PACKAGE
 

@@ -2266,7 +2266,7 @@ fi
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
 	family=x86;;
   pentium[23]-*-*)
-	# The pentium/mmx lshift and rshift are good on p6 can be used
+	# The pentium/mmx lshift and rshift are good on p6 and can be used
         # until there's something specific for p6.
 	path=
 	
@@ -3747,6 +3747,79 @@ if test $ac_cv_header_stdc = yes; then
 EOF
 
 fi
+
+echo $ac_n "checking for void... $ac_c" 1>&6
+echo "configure:3753: checking for void" 1>&5
+if test "${ac_cv_type_void+set}" = set; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat >conftest.$ac_ext <<EOF
+#line 3758 "configure"
+#include "confdefs.h"
+$ac_includes_default
+int
+main ()
+{
+if ((void *) 0)
+  return 0;
+if (sizeof (void))
+  return 0;
+  ;
+  return 0;
+}
+EOF
+if { (eval echo configure:3772: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+  rm -rf conftest*
+  ac_cv_type_void=yes
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  ac_cv_type_void=no
+fi
+rm -f conftest*
+fi
+echo "$ac_t""$ac_cv_type_void" 1>&6
+if test $ac_cv_type_void = yes; then
+  cat >>confdefs.h <<EOF
+#define HAVE_VOID 1
+EOF
+
+fi
+
+echo $ac_n "checking for preprocessor stringizing operator... $ac_c" 1>&6
+echo "configure:3792: checking for preprocessor stringizing operator" 1>&5
+if test "${ac_cv_c_stringize+set}" = set; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat >conftest.$ac_ext <<EOF
+#line 3797 "configure"
+#include "confdefs.h"
+
+#define x(y) #y
+
+char *s = x(teststring);
+
+EOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "#teststring" >/dev/null 2>&1; then
+  rm -rf conftest*
+  ac_cv_c_stringize=no
+else
+  rm -rf conftest*
+  ac_cv_c_stringize=yes
+fi
+rm -f conftest*
+
+fi
+
+if test "${ac_cv_c_stringize}" = yes; then
+  cat >>confdefs.h <<\EOF
+#define HAVE_STRINGIZE 1
+EOF
+
+fi
+echo "$ac_t""${ac_cv_c_stringize}" 1>&6
 
 syntax=
 # For now, we use the old switch for setting syntax.  
