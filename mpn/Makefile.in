@@ -52,10 +52,10 @@ libmpn.a: Makefile mp_bases.o $(MPN_OBJECTS)
 
 clean mostlyclean:
 	rm -f *.o tmp-* libmpn.a
-	#-cd tests; $(MAKE) $@
+	#@cd tests; $(MAKE) $@
 distclean maintainer-clean: clean
 	rm -f asm-syntax.h Makefile config.status $(MPN_LINKS)
-	@cd tests; $(MAKE) $@
+	#@cd tests; $(MAKE) $@
 
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) ./config.status
