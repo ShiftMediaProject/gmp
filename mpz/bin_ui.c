@@ -24,15 +24,11 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 /*
-tege> Vilken är definitionen för negativa n?
-teke> Den rekursiva definitionen funkar där också dvs
-teke> 
-teke>   k < 0   => bin(n,k) = 0
-teke> 
-teke>   k == 0  => bin(n,k) = 1
-teke> 
-teke>   1       => bin(n,k) = bin(n-1,k-1)*n/k
-(teke=Torsten Ekedahl)
+We could make this work for negative n.  The recursive defintion,
+   k < 0   => bin(n,k) = 0
+   k == 0  => bin(n,k) = 1
+   1       => bin(n,k) = bin(n-1,k-1)*n/k
+defined that situation too.
 */
 
 /* This is a poor implementation.  Look at bin_uiui.c for improvement ideas.  */
