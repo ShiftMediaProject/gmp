@@ -2435,7 +2435,7 @@ typedef unsigned int UDItype	__attribute__ ((mode (DI)));
 typedef unsigned char UQItype;
 typedef		 long SItype;
 typedef unsigned long USItype;
-#if defined _LONGLONG || defined _LONG_LONG_LIMB
+#if HAVE_LONG_LONG
 typedef	long long int DItype;
 typedef unsigned long long int UDItype;
 #else /* Assume `long' gives us a wide enough type.  Needed for hppa2.0w.  */
