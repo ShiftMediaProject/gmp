@@ -19,6 +19,55 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-01  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (--enable-cxx): New option for C++ support.
+	Add cxx and tests/cxx subdirectories.
+	* ltmain.sh, aclocal.m4: Update to libtool 2001-09-30.
+
+	* cxx/Makefile.am, cxx/Makefile.in, cxx/osdoprnti.cc, cxx/osfuns.cc,
+	cxx/osmpf.cc, cxx/osmpq.cc, cxx/osmpz.cc: New files.
+	* Makefile.am: Add them, in new libgmpxx.
+	* gmp-h.in, gmp-impl.h: Prototypes and support.
+	* tests/cxx/Makefile.am, tests/cxx/Makefile.in,
+	tests/cxx/t-ostream.cc: New files.
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_CALL,
+	SPEED_ROUTINE_MPN_GCDEXT_ONE): mpn_gcdext needs size+1 for
+	destinations.  Found by Torbjorn.
+
+	* gmp-h.in (__GNU_MP__, __GNU_MP_VERSION): Bump to 4.0.
+	* mp-h.in (__GNU_MP__): Ditto.
+	* gmp.texi, Makefile.am, compat.c: Amend version 3.2 to 4.0.
+
+	* acinclude.m4 (GMP_PROG_CXX_WORKS): New macro.
+	(GMP_PROG_CC_WORKS): Write "conftest" test program, not a.out.
+
+	* gmp-impl.h (struct gmp_asprintf_t): Moved from printf/vasprintf.c.
+	(GMP_ASPRINTF_T_INIT): New macro.
+	(GMP_ASPRINTF_T_NEED): New macro, adapted from vasprintf.c NEED().
+	* printf/vasprintf.c: Use these.
+
+	* printf/asprntffuns.c: New file.
+	* printf/Makefile.am, Makefile.am: Add it.
+	* printf/asprntffuns.c, printf/vasprintf.c, gmp-impl.h
+	(__gmp_asprintf_memory, __gmp_asprintf_reps, __gmp_asprintf_final):
+	Move to asprntffuns.c, rename to __gmp and make global, remove
+	spurious formal parameters from __gmp_asprintf_final.
+
+	* configure.in (j90-*-*, sv1-*-*): Don't duplicate $path in $add_path.
+	(*-*-mingw*): Don't assemble with -DPIC (as per cygwin).
+
+	* printf/snprntffuns.c (gmp_snprintf_final): Remove spurious formal
+	parameters.
+
+	* tune/tuneup.c (POWM_THRESHOLD): Reduce stop_factor to 1.1 to help
+	Cray vector systems.
+
+	* tests/misc.c (tests_rand_start): Print GMP_CHECK_RANDOMIZE=NN to
+	facilitate cut and paste when re-running.
+	* tests/mpz/t-inp_str.c (check_data): Add more diagnostic prints.
+
 2001-09-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/ieee/submul_1.c: Rewrite.  Streamline multiplications;
