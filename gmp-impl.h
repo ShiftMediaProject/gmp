@@ -299,6 +299,11 @@ typedef unsigned int UHWtype;
 #define impn_sqr_n_basecase	__MPN(impn_sqr_n_basecase)
 #define impn_sqr_n		__MPN(impn_sqr_n)
 
+#if defined (__alpha) || defined (__cris) || defined (__i386__) \
+ || defined (MIPSEL) || defined (_MIPSEL) || defined (__i960)
+#define IEEE_DOUBLE_BIG_ENDIAN 0
+#endif
+
 #ifndef IEEE_DOUBLE_BIG_ENDIAN
 #define IEEE_DOUBLE_BIG_ENDIAN 1
 #endif
