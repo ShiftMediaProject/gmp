@@ -1,3 +1,8 @@
+Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* mpn/config/t-ppc-aix: New file.
+	* mpn/configure.in: Use t-ppc-aix for powerpc like t-pwr-aix for power.
+
 Wed May 29 02:07:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* gmp.h (mp_bits_per_limb): Change qualifier from `const' to
