@@ -35,24 +35,24 @@ extern "C" {
 #endif
 
 
-void tests_start _PROTO ((void));
-void tests_end _PROTO ((void));
+void tests_start __GMP_PROTO ((void));
+void tests_end __GMP_PROTO ((void));
 
-void tests_memory_start _PROTO ((void));
-void tests_memory_end _PROTO ((void));
-void *tests_allocate _PROTO ((size_t size));
-void *tests_reallocate _PROTO ((void *ptr, size_t old_size, size_t new_size));
-void tests_free _PROTO ((void *ptr, size_t size));
-void tests_free_nosize _PROTO ((void *ptr));
+void tests_memory_start __GMP_PROTO ((void));
+void tests_memory_end __GMP_PROTO ((void));
+void *tests_allocate __GMP_PROTO ((size_t size));
+void *tests_reallocate __GMP_PROTO ((void *ptr, size_t old_size, size_t new_size));
+void tests_free __GMP_PROTO ((void *ptr, size_t size));
+void tests_free_nosize __GMP_PROTO ((void *ptr));
 
-void tests_rand_start _PROTO ((void));
-void tests_rand_end _PROTO ((void));
+void tests_rand_start __GMP_PROTO ((void));
+void tests_rand_end __GMP_PROTO ((void));
 
 
 #if HAVE_CALLING_CONVENTIONS
-extern mp_limb_t (*calling_conventions_function) _PROTO ((ANYARGS));
-mp_limb_t calling_conventions _PROTO ((ANYARGS));
-int calling_conventions_check _PROTO ((void));
+extern mp_limb_t (*calling_conventions_function) __GMP_PROTO ((ANYARGS));
+mp_limb_t calling_conventions __GMP_PROTO ((ANYARGS));
+int calling_conventions_check __GMP_PROTO ((void));
 #define CALLING_CONVENTIONS(function) \
   (calling_conventions_function = (function), calling_conventions)
 #define CALLING_CONVENTIONS_CHECK()    (calling_conventions_check())
@@ -63,240 +63,240 @@ int calling_conventions_check _PROTO ((void));
 
 
 extern int mp_trace_base;
-void mpn_trace _PROTO ((const char *name, mp_srcptr ptr, mp_size_t size));
-void mpn_tracea _PROTO ((const char *name, const mp_ptr *a, int count,
+void mpn_trace __GMP_PROTO ((const char *name, mp_srcptr ptr, mp_size_t size));
+void mpn_tracea __GMP_PROTO ((const char *name, const mp_ptr *a, int count,
                  mp_size_t size));
-void mpn_tracen _PROTO ((const char *name, int num, mp_srcptr ptr,
+void mpn_tracen __GMP_PROTO ((const char *name, int num, mp_srcptr ptr,
                  mp_size_t size));
-void mpn_trace_file _PROTO ((const char *filename,
+void mpn_trace_file __GMP_PROTO ((const char *filename,
                              mp_srcptr ptr, mp_size_t size));
-void mpn_tracea_file _PROTO ((const char *filename,
+void mpn_tracea_file __GMP_PROTO ((const char *filename,
                               const mp_ptr *a, int count, mp_size_t size));
-void mpf_trace _PROTO ((const char *name, mpf_srcptr z));
-void mpq_trace _PROTO ((const char *name, mpq_srcptr q));
-void mpz_trace _PROTO ((const char *name, mpz_srcptr z));
-void mpz_tracen _PROTO ((const char *name, int num, mpz_srcptr z));
+void mpf_trace __GMP_PROTO ((const char *name, mpf_srcptr z));
+void mpq_trace __GMP_PROTO ((const char *name, mpq_srcptr q));
+void mpz_trace __GMP_PROTO ((const char *name, mpz_srcptr z));
+void mpz_tracen __GMP_PROTO ((const char *name, int num, mpz_srcptr z));
 
 
-void spinner _PROTO ((void));
+void spinner __GMP_PROTO ((void));
 extern unsigned long  spinner_count;
 extern int  spinner_wanted;
 extern int  spinner_tick;
 
 
-void *align_pointer _PROTO ((void *p, size_t align));
-void *__gmp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
-void *__gmp_allocate_or_reallocate _PROTO ((void *ptr,
+void *align_pointer __GMP_PROTO ((void *p, size_t align));
+void *__gmp_allocate_func_aligned __GMP_PROTO ((size_t bytes, size_t align));
+void *__gmp_allocate_or_reallocate __GMP_PROTO ((void *ptr,
                                           size_t oldsize, size_t newsize));
-char *__gmp_allocate_strdup _PROTO ((const char *s));
-char *strtoupper _PROTO ((char *s_orig));
-mp_limb_t urandom _PROTO ((void));
+char *__gmp_allocate_strdup __GMP_PROTO ((const char *s));
+char *strtoupper __GMP_PROTO ((char *s_orig));
+mp_limb_t urandom __GMP_PROTO ((void));
 
 
-void mpf_set_str_or_abort _PROTO ((mpf_ptr f, const char *str, int base));
+void mpf_set_str_or_abort __GMP_PROTO ((mpf_ptr f, const char *str, int base));
 
 
-void mpq_set_str_or_abort _PROTO ((mpq_ptr q, const char *str, int base));
+void mpq_set_str_or_abort __GMP_PROTO ((mpq_ptr q, const char *str, int base));
 
 
-void mpz_erandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+void mpz_erandomb __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                            unsigned long nbits));
-void mpz_erandomb_nonzero _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+void mpz_erandomb_nonzero __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                                    unsigned long nbits));
-void mpz_errandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+void mpz_errandomb __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                             unsigned long nbits));
-void mpz_errandomb_nonzero _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+void mpz_errandomb_nonzero __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                                     unsigned long nbits));
-void mpz_flipbit _PROTO ((mpz_ptr r, unsigned long bit));
-void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
-void mpz_negrandom _PROTO ((mpz_ptr rop, gmp_randstate_t rstate));
-int mpz_pow2abs_p _PROTO ((mpz_srcptr z)) __GMP_ATTRIBUTE_PURE;
-void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
-void mpz_set_str_or_abort _PROTO ((mpz_ptr z, const char *str, int base));
+void mpz_flipbit __GMP_PROTO ((mpz_ptr r, unsigned long bit));
+void mpz_init_set_n __GMP_PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
+void mpz_negrandom __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate));
+int mpz_pow2abs_p __GMP_PROTO ((mpz_srcptr z)) __GMP_ATTRIBUTE_PURE;
+void mpz_set_n __GMP_PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
+void mpz_set_str_or_abort __GMP_PROTO ((mpz_ptr z, const char *str, int base));
 
-mp_size_t mpn_diff_highest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n)) __GMP_ATTRIBUTE_PURE;
-mp_size_t mpn_diff_lowest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n)) __GMP_ATTRIBUTE_PURE;
-
-
-void refmpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
-void refmpf_sub _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+mp_size_t mpn_diff_highest __GMP_PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n)) __GMP_ATTRIBUTE_PURE;
+mp_size_t mpn_diff_lowest __GMP_PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n)) __GMP_ATTRIBUTE_PURE;
 
 
-mp_limb_t refmpn_add _PROTO ((mp_ptr rp,
+void refmpf_add __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+void refmpf_sub __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+
+
+mp_limb_t refmpn_add __GMP_PROTO ((mp_ptr rp,
                               mp_srcptr s1p, mp_size_t s1size,
                               mp_srcptr s2p, mp_size_t s2size));
-mp_limb_t refmpn_add_1 _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_add_1 __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
                                 mp_limb_t n));
-mp_limb_t refmpn_add_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+mp_limb_t refmpn_add_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
-mp_limb_t refmpn_add_nc _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+mp_limb_t refmpn_add_nc __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                  mp_size_t size, mp_limb_t carry));
-mp_limb_t refmpn_addmul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_addmul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                    mp_limb_t multiplier));
-mp_limb_t refmpn_addmul_1c _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_addmul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                     mp_limb_t multiplier, mp_limb_t carry));
-mp_limb_t refmpn_addsub_n _PROTO ((mp_ptr r1p, mp_ptr r2p,
+mp_limb_t refmpn_addsub_n __GMP_PROTO ((mp_ptr r1p, mp_ptr r2p,
                                    mp_srcptr s1p, mp_srcptr s2p,
                                    mp_size_t size));
-mp_limb_t refmpn_addsub_nc _PROTO ((mp_ptr r1p, mp_ptr r2p,
+mp_limb_t refmpn_addsub_nc __GMP_PROTO ((mp_ptr r1p, mp_ptr r2p,
                                     mp_srcptr s1p, mp_srcptr s2p,
                                     mp_size_t size, mp_limb_t carry));
 
-void refmpn_and_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_and_n  __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
-void refmpn_andn_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_andn_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
-int refmpn_cmp _PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
-int refmpn_cmp_twosizes _PROTO ((mp_srcptr xp, mp_size_t xsize,
+int refmpn_cmp __GMP_PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
+int refmpn_cmp_twosizes __GMP_PROTO ((mp_srcptr xp, mp_size_t xsize,
                                  mp_srcptr yp, mp_size_t ysize));
 
-void refmpn_com_n _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
-void refmpn_copy  _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
-void refmpn_copyi _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
-void refmpn_copyd _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
+void refmpn_com_n __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
+void refmpn_copy  __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
+void refmpn_copyi __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
+void refmpn_copyd __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 
-unsigned refmpn_count_leading_zeros _PROTO ((mp_limb_t x));
-unsigned refmpn_count_trailing_zeros _PROTO ((mp_limb_t x));
+unsigned refmpn_count_leading_zeros __GMP_PROTO ((mp_limb_t x));
+unsigned refmpn_count_trailing_zeros __GMP_PROTO ((mp_limb_t x));
 
-mp_limb_t refmpn_divexact_by3 _PROTO ((mp_ptr rp, mp_srcptr sp,
+mp_limb_t refmpn_divexact_by3 __GMP_PROTO ((mp_ptr rp, mp_srcptr sp,
                                        mp_size_t size));
-mp_limb_t refmpn_divexact_by3c _PROTO ((mp_ptr rp, mp_srcptr sp,
+mp_limb_t refmpn_divexact_by3c __GMP_PROTO ((mp_ptr rp, mp_srcptr sp,
                                        mp_size_t size, mp_limb_t carry));
 
-mp_limb_t refmpn_divmod_1 _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_divmod_1 __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
                                    mp_limb_t divisor));
-mp_limb_t refmpn_divmod_1c _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_divmod_1c __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
                                     mp_limb_t divisor, mp_limb_t carry));
-mp_limb_t refmpn_divrem_1 _PROTO ((mp_ptr rp, mp_size_t xsize,
+mp_limb_t refmpn_divrem_1 __GMP_PROTO ((mp_ptr rp, mp_size_t xsize,
                                    mp_srcptr sp, mp_size_t size,
                                    mp_limb_t divisor));
-mp_limb_t refmpn_divrem_1c _PROTO ((mp_ptr rp, mp_size_t xsize,
+mp_limb_t refmpn_divrem_1c __GMP_PROTO ((mp_ptr rp, mp_size_t xsize,
                                     mp_srcptr sp, mp_size_t size,
                                     mp_limb_t divisor, mp_limb_t carry));
 
-void refmpn_fill _PROTO ((mp_ptr p, mp_size_t s, mp_limb_t v));
+void refmpn_fill __GMP_PROTO ((mp_ptr p, mp_size_t s, mp_limb_t v));
 
-mp_limb_t refmpn_gcd_1 _PROTO ((mp_srcptr xp, mp_size_t xsize, mp_limb_t y));
-mp_limb_t refmpn_gcd _PROTO ((mp_ptr gp, mp_ptr xp, mp_size_t xsize,
+mp_limb_t refmpn_gcd_1 __GMP_PROTO ((mp_srcptr xp, mp_size_t xsize, mp_limb_t y));
+mp_limb_t refmpn_gcd __GMP_PROTO ((mp_ptr gp, mp_ptr xp, mp_size_t xsize,
                               mp_ptr yp, mp_size_t ysize));
-mp_limb_t refmpn_gcd_finda _PROTO ((const mp_limb_t c[2]));
+mp_limb_t refmpn_gcd_finda __GMP_PROTO ((const mp_limb_t c[2]));
 
-unsigned long refmpn_hamdist _PROTO ((mp_srcptr s1p, mp_srcptr s2p,
+unsigned long refmpn_hamdist __GMP_PROTO ((mp_srcptr s1p, mp_srcptr s2p,
                                       mp_size_t size));
 
-mp_limb_t refmpn_invert_limb _PROTO ((mp_limb_t d));
-void refmpn_ior_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+mp_limb_t refmpn_invert_limb __GMP_PROTO ((mp_limb_t d));
+void refmpn_ior_n  __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
-void refmpn_iorn_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_iorn_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
-mp_limb_t refmpn_lshift _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_lshift __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
-mp_limb_t refmpn_lshift_or_copy _PROTO ((mp_ptr wp,
+mp_limb_t refmpn_lshift_or_copy __GMP_PROTO ((mp_ptr wp,
                                          mp_srcptr xp, mp_size_t size,
                                          unsigned shift));
 
-mp_ptr refmpn_malloc_limbs _PROTO ((mp_size_t size));
-mp_ptr refmpn_malloc_limbs_aligned _PROTO ((size_t n, size_t m));
-mp_limb_t refmpn_msbone _PROTO ((mp_limb_t x));
-mp_limb_t refmpn_msbone_mask _PROTO ((mp_limb_t x));
-mp_ptr refmpn_memdup_limbs _PROTO ((mp_srcptr ptr, mp_size_t size));
+mp_ptr refmpn_malloc_limbs __GMP_PROTO ((mp_size_t size));
+mp_ptr refmpn_malloc_limbs_aligned __GMP_PROTO ((size_t n, size_t m));
+mp_limb_t refmpn_msbone __GMP_PROTO ((mp_limb_t x));
+mp_limb_t refmpn_msbone_mask __GMP_PROTO ((mp_limb_t x));
+mp_ptr refmpn_memdup_limbs __GMP_PROTO ((mp_srcptr ptr, mp_size_t size));
 
-mp_limb_t refmpn_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_mod_1 __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
                                 mp_limb_t divisor));
-mp_limb_t refmpn_mod_1c _PROTO ((mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_mod_1c __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
                                  mp_limb_t divisor, mp_limb_t carry));
 mp_limb_t refmpn_mod_34lsub1 (mp_srcptr p, mp_size_t n);
 
-mp_limb_t refmpn_mul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_mul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                 mp_limb_t multiplier));
-mp_limb_t refmpn_mul_1c _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_mul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  mp_limb_t multiplier, mp_limb_t carry));
-mp_limb_t refmpn_mul_2 _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
+mp_limb_t refmpn_mul_2 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
                                 mp_srcptr mult));
 
-void refmpn_mul_basecase _PROTO ((mp_ptr prodp,
+void refmpn_mul_basecase __GMP_PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,
                                   mp_srcptr vp, mp_size_t vsize));
-void refmpn_mul_any _PROTO ((mp_ptr prodp,
+void refmpn_mul_any __GMP_PROTO ((mp_ptr prodp,
                              mp_srcptr up, mp_size_t usize,
                              mp_srcptr vp, mp_size_t vsize));
-void refmpn_mul_n _PROTO ((mp_ptr prodp, mp_srcptr up, mp_srcptr vp,
+void refmpn_mul_n __GMP_PROTO ((mp_ptr prodp, mp_srcptr up, mp_srcptr vp,
                            mp_size_t size));
 
-void refmpn_nand_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_nand_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
-void refmpn_nior_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_nior_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
-mp_limb_t refmpn_neg_n _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
+mp_limb_t refmpn_neg_n __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 
-unsigned long refmpn_popcount _PROTO ((mp_srcptr sp, mp_size_t size));
-mp_limb_t refmpn_preinv_divrem_1 _PROTO ((mp_ptr rp, mp_size_t xsize,
+unsigned long refmpn_popcount __GMP_PROTO ((mp_srcptr sp, mp_size_t size));
+mp_limb_t refmpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr rp, mp_size_t xsize,
                                           mp_srcptr sp, mp_size_t size,
                                           mp_limb_t divisor,
                                           mp_limb_t inverse, unsigned shift));
-mp_limb_t refmpn_preinv_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_preinv_mod_1 __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
                                        mp_limb_t divisor,
                                        mp_limb_t divisor_inverse));
 
-mp_limb_t refmpn_rshift _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_rshift __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
-mp_limb_t refmpn_rshift_or_copy _PROTO ((mp_ptr wp,
+mp_limb_t refmpn_rshift_or_copy __GMP_PROTO ((mp_ptr wp,
                                          mp_srcptr xp, mp_size_t size,
                                          unsigned shift));
 
-mp_limb_t refmpn_sb_divrem_mn _PROTO ((mp_ptr qp,
+mp_limb_t refmpn_sb_divrem_mn __GMP_PROTO ((mp_ptr qp,
                                        mp_ptr np, mp_size_t nsize,
                                        mp_srcptr dp, mp_size_t dsize));
-void refmpn_sqr _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
+void refmpn_sqr __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 
-mp_limb_t refmpn_sub _PROTO ((mp_ptr rp,
+mp_limb_t refmpn_sub __GMP_PROTO ((mp_ptr rp,
                               mp_srcptr s1p, mp_size_t s1size,
                               mp_srcptr s2p, mp_size_t s2size));
-mp_limb_t refmpn_sub_1 _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
+mp_limb_t refmpn_sub_1 __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
                                 mp_limb_t n));
-mp_limb_t refmpn_sub_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+mp_limb_t refmpn_sub_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
-mp_limb_t refmpn_sub_nc _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+mp_limb_t refmpn_sub_nc __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                  mp_size_t size, mp_limb_t carry));
-mp_limb_t refmpn_submul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_submul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                    mp_limb_t multiplier));
-mp_limb_t refmpn_submul_1c _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
+mp_limb_t refmpn_submul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                     mp_limb_t multiplier, mp_limb_t carry));
 
-void refmpn_tdiv_qr _PROTO ((mp_ptr qp, mp_ptr rp, mp_size_t qxn,
+void refmpn_tdiv_qr __GMP_PROTO ((mp_ptr qp, mp_ptr rp, mp_size_t qxn,
                              mp_ptr np, mp_size_t nsize,
                              mp_srcptr dp, mp_size_t dsize));
-int refmpn_tstbit _PROTO ((mp_srcptr ptr, mp_size_t size));
+int refmpn_tstbit __GMP_PROTO ((mp_srcptr ptr, mp_size_t size));
 
-void refmpn_udiv_qrnnd _PROTO ((mp_limb_t *q, mp_limb_t *r,
+void refmpn_udiv_qrnnd __GMP_PROTO ((mp_limb_t *q, mp_limb_t *r,
                                 mp_limb_t h, mp_limb_t l, mp_limb_t d));
-mp_limb_t refmpn_umul_ppmm _PROTO ((mp_limb_t *lo, mp_limb_t x, mp_limb_t y));
+mp_limb_t refmpn_umul_ppmm __GMP_PROTO ((mp_limb_t *lo, mp_limb_t x, mp_limb_t y));
 
-void refmpn_xnor_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_xnor_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
-void refmpn_xor_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+void refmpn_xor_n  __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
-void refmpn_zero _PROTO ((mp_ptr p, mp_size_t s));
-int refmpn_zero_p _PROTO ((mp_srcptr ptr, mp_size_t size));
+void refmpn_zero __GMP_PROTO ((mp_ptr p, mp_size_t s));
+int refmpn_zero_p __GMP_PROTO ((mp_srcptr ptr, mp_size_t size));
 
 
-void refmpq_add _PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
-void refmpq_sub _PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
+void refmpq_add __GMP_PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
+void refmpq_sub __GMP_PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
 
 
-unsigned long refmpz_hamdist _PROTO ((mpz_srcptr x, mpz_srcptr y));
-int refmpz_kronecker _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
-int refmpz_jacobi _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
-int refmpz_legendre _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
-int refmpz_kronecker_si _PROTO ((mpz_srcptr, long));
-int refmpz_kronecker_ui _PROTO ((mpz_srcptr, unsigned long));
-int refmpz_si_kronecker _PROTO ((long, mpz_srcptr));
-int refmpz_ui_kronecker _PROTO ((unsigned long, mpz_srcptr));
+unsigned long refmpz_hamdist __GMP_PROTO ((mpz_srcptr x, mpz_srcptr y));
+int refmpz_kronecker __GMP_PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
+int refmpz_jacobi __GMP_PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
+int refmpz_legendre __GMP_PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
+int refmpz_kronecker_si __GMP_PROTO ((mpz_srcptr, long));
+int refmpz_kronecker_ui __GMP_PROTO ((mpz_srcptr, unsigned long));
+int refmpz_si_kronecker __GMP_PROTO ((long, mpz_srcptr));
+int refmpz_ui_kronecker __GMP_PROTO ((unsigned long, mpz_srcptr));
 
-void refmpz_pow_ui _PROTO ((mpz_ptr w, mpz_srcptr b, unsigned long e));
+void refmpz_pow_ui __GMP_PROTO ((mpz_ptr w, mpz_srcptr b, unsigned long e));
 
 
 #if defined (__cplusplus)
