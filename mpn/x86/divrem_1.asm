@@ -1,6 +1,6 @@
 dnl  x86 mpn_divrem_1 -- mpn by limb division extending to fractional quotient.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -27,7 +27,7 @@ C 486   approx 43 maybe
 C P5        44
 C P6        39
 C P6MMX     39
-C K6        20
+C K6        22
 C K7        42
 C P4        58
 
@@ -48,13 +48,9 @@ C carry<divisor.
 C
 C
 C Essentially the code is the same as the division based part of
-C mpn/generic/divrem_1.c, but has the following advantages.
-C
-C - If gcc isn't being used then divrem_1.c will get the generic C
-C   udiv_qrnnd() and be rather slow.
-C
-C - On K6, using the loop instruction is a 10% speedup, but gcc prior to 3.0
-C   doesn't generate that instruction.
+C mpn/generic/divrem_1.c, but has the advantage that we get the desired divl
+C instruction even when gcc is not being used (when longlong.h only has the
+C rather slow generic C udiv_qrnnd().
 C
 C A test is done to see if the high limb is less the the divisor, and if so
 C one less div is done.  A div is between 20 and 40 cycles on the various
@@ -63,26 +59,25 @@ C half that amount.  The branch misprediction penalty on each chip is less
 C than half a div.
 C  	
 C
-C K6: Back-to-back div instructions run at 20 cycles, the same as the loop
-C     here, so it seems there's nothing to gain by rearranging the loop.
-C     Pairing the mov and loop instructions was found to gain nothing.  (The
-C     same is true of the mpn/x86/mod_1.asm loop.)
+C Notes for P5:
 C
-C     With a "decl/jnz" rather than a "loop" this code runs at 22 cycles.
-C     The loop_or_decljnz macro is an easy way to get a 10% speedup.
+C It might be thought that moving the load down to pair with the store would
+C save 1 cycle, but that doesn't seem to happen in practice, and in any case
+C would be a mere 2.2% saving, so it's hardly worth bothering about.
 C
-C     The fast K6 multiply might be thought to suit a multiply-by-inverse,
-C     but that algorithm has been found to suffer from the releatively poor
-C     carry handling on K6 and too many auxiliary instructions.  The
-C     fractional part however could be done at about 13 c/l.
+C A mul-by-inverse might be a possibility for P5, as done in
+C mpn/x86/pentium/mod_1.asm.  The number of auxiliary instructions required
+C is a hinderance, but there could be a 10-15% speedup available.
 C
-C P5: Again here the auxiliary instructions hinder a multiply-by-inverse,
-C     though there might be a 10-15% speedup available
 C
-C     It might be thought that moving the load down to pair with the store
-C     would save 1 cycle, but that doesn't seem to happen in practice, and
-C     in any case would be a mere 2.2% saving, so it hardly worth bothering
-C     about.
+C Notes for K6:
+C
+C K6 has its own version of this code, using loop and paying attention to
+C cache line boundary crossings.  The target 20 c/l can be had with the
+C decl+jnz of the present code by pairing up the load and store in the
+C loops.  But it's considered easier not to introduce complexity just for
+C that, but instead let k6 have its own code.
+C
 
 defframe(PARAM_CARRY,  24)
 defframe(PARAM_DIVISOR,20)
@@ -173,7 +168,8 @@ L(integer_entry):
 	divl	%esi
 
 	movl	%eax, (%ebx,%ecx,4)
-	loop_or_decljnz	L(integer_top)
+	decl	%ecx
+	jnz	L(integer_top)
 
 
 L(fraction):
@@ -197,7 +193,8 @@ L(fraction_top):
 	divl	%esi
 
 	movl	%eax, -4(%ebx,%ecx,4)
-	loop_or_decljnz	L(fraction_top)
+	decl	%ecx
+	jnz	L(fraction_top)
 
 
 L(done):
