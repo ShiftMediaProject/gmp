@@ -1,3 +1,15 @@
+2000-04-16  Linus Nordberg  <linus@swox.se>
+
+	* configure.in: Invoke AC_PROG_LIBTOOL directly.
+
+	* acinclude.m4 (GMP_PROG_CC_FIND): Quote source variable when
+	setting CC64 and CFLAGS64.
+	(GMP_PROG_CC_SELECT): Cache result.
+	(GMP_PROG_LIBTOOL): Remove.
+
+	* aclocal.m4: Regenerate.
+	* configure: Regenerate.
+
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/asm-defs.m4: invert_normalized_limb => invert_limb.
