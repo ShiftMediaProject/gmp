@@ -211,10 +211,10 @@ forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 	deflit(`disp0', eval(i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,-128)))
 	deflit(`disp1', eval(disp0 + 4))
 
-	movl	disp0(%ebx), %esi
+Zdisp(	movl,	disp0,(%ebx), %esi)
 	movl	disp1(%ebx), %ebp
-	M4_inst	disp0(%edx), %esi
-	movl	%esi, disp0(%edi)
+Zdisp(	M4_inst,disp0,(%edx), %esi)
+Zdisp(	movl,	%esi, disp0,(%edi))
 	M4_inst	disp1(%edx), %ebp
 	movl	%ebp, disp1(%edi)
 ')

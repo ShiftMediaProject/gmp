@@ -229,8 +229,8 @@ forloop(i, 0, UNROLL_COUNT-1, `
 	mull	%ebp
 	
 	addl	%eax, %ebx
-	movl	disp_src(%esi), %eax
-	movl	%ebx, disp_dst(%edi)
+Zdisp(	movl,	disp_src,(%esi), %eax)
+Zdisp(	movl,	%ebx, disp_dst,(%edi))
 
 	movl	$0, %ebx
 	adcl	%edx, %ebx

@@ -304,12 +304,12 @@ forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 
 	mull	%ebp
 
-	M4_inst	%ecx, disp0(%edi)
+Zdisp(	M4_inst,%ecx, disp0,(%edi))
 	movl	$0, %ecx
 
 	adcl	%eax, %ebx
 
-	movl	disp0(%esi), %eax
+Zdisp(	movl,	disp0,(%esi), %eax)
 	adcl	%edx, %ecx	
 
 
