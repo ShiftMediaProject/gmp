@@ -9,7 +9,7 @@ dnl  K7:    5.0
 dnl  P4:   14.5
 
 
-dnl  Copyright 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
+dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001 Free Software Foundation,
 dnl  Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
