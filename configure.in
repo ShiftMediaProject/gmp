@@ -377,7 +377,7 @@ case $host in
       *)                      path="alpha" ;;
     esac
     extra_functions="cntlz umul"
-    gcc_cflags_optlist="cpu asm oldas"
+    gcc_cflags_optlist="asm cpu oldas" # need asm ahead of cpu, see below
     gcc_cflags_oldas="-Wa,-oldas"     # see GMP_GCC_WA_OLDAS.
 
     # gcc 2.7.2.3 doesn't know any -mcpu= for alpha, apparently.
@@ -397,14 +397,19 @@ case $host in
                     gcc_cflags_cpu="-mcpu=ev67 -mcpu=ev6" ;;
     esac
 
+    # gcc version "2.9-gnupro-99r1" on alphaev68-dec-osf5.1 has been seen
+    # accepting -mcpu=ev6, but not putting the assembler in the right mode
+    # for what it produces.  We need to do this for it, and need to do it
+    # before testing the -mcpu options.
+    #
     # On old versions of gcc, which don't know -mcpu=, we believe an
     # explicit -Wa,-mev5 etc will be necessary to put the assembler in
     # the right mode for our .asm files and longlong.h asm blocks.
     #
-    # On newer versions of gcc, when -mcpu= is known, we must give a
-    # -Wa which is at least as high as the code gcc will generate,
-    # since the options ordering seems to make our setting override
-    # that passed by gcc.
+    # On newer versions of gcc, when -mcpu= is known, we must give a -Wa
+    # which is at least as high as the code gcc will generate.  gcc
+    # establishes what it needs with a ".arch" directive, our command line
+    # option seems to override that.
     #
     # gas prior to 2.14 doesn't accept -mev67, but -mev6 seems enough for
     # ctlz and cttz (in 2.10.0 at least).
