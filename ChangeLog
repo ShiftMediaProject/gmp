@@ -1,3 +1,17 @@
+2001-04-17  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess (m68k-*-*): Look for cpu in linux kernel /proc/cpuinfo.
+
+	* acinclude.m4 (GMP_GCC_MARCH_PENTIUMPRO): The -mpentiumpro problem is
+	fixed in 2.95.4, so test for that.
+	(GMP_ASM_TYPE): Amend some comments.
+
+	* tune/freq.c (speed_cpu_frequency_sysctl): Avoid having unused
+	variables on GNU/Linux.
+
+	* mpn/asm-defs.m4 (m4_instruction_wrapper): Fix a quoting problem if
+	the name of the file is a macro.
+
 2001-04-15  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/powerpc64/*.asm: Add speeds on ppc630.
