@@ -1003,6 +1003,7 @@ tune_gcd_schoenhage (void)
   param.name = "GCD_SCHOENHAGE_THRESHOLD";
   param.function = speed_mpn_gcd;
   param.min_size = hgcd_schoenhage_threshold;
+  param.max_size = 3000;
   one (&gcd_schoenhage_threshold, &param);
 }
 
