@@ -37,7 +37,7 @@ check (double d, unsigned long u, mp_rnd_t rnd, double e)
   double f;
 
   mpfr_init2(x, 53); mpfr_init2(y, 53);
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd);
 #endif
   if (e==0.0) e = d / u;
@@ -174,7 +174,7 @@ int
 main (int argc, char **argv)
 {
   mpfr_t x;
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   int i;
   unsigned long u;
   double d;

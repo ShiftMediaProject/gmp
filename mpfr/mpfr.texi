@@ -580,6 +580,10 @@ corresponding to the rounding mode @var{rnd} or a null pointer if
 @comment  node-name,  next,  previous,  up
 @section Exceptions
 
+Note: Overflow handling is still experimental and currently implemented
+very partially. If an overflow occurs internally at the wrong place,
+anything can happen (crash, wrong results, etc).
+
 @deftypefun mp_exp_t mpfr_get_emin (void)
 @deftypefunx mp_exp_t mpfr_get_emax (void)
 Return the (current) smallest and largest exponents allowed for a 
@@ -1003,6 +1007,8 @@ the absolute value of @var{op}, and a negative value otherwise.
 @end deftypefun
 
 @deftypefun int mpfr_mul_2exp (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_mul_2ui (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_mul_2si (mpfr_t @var{rop}, mpfr_t @var{op1}, long int @var{op2}, mp_rnd_t @var{rnd})
 @ifinfo
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}
 @end ifinfo
@@ -1015,9 +1021,13 @@ rounded to the direction @var{rnd}. Just increases the exponent by @var{op2}
 when @var{rop} and @var{op1} are identical.
 Return zero when @var{rop}=@var{op1}, a positive value when @var{rop}>@var{op1},
 and a negative value when @var{rop}<@var{op1}.
+Note: The @code{mpfr_mul_2exp} function is defined for compatibility reasons;
+you should use @code{mpfr_mul_2ui} (or @code{mpfr_mul_2si}) instead.
 @end deftypefun
 
 @deftypefun int mpfr_div_2exp (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_div_2ui (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_div_2si (mpfr_t @var{rop}, mpfr_t @var{op1}, long int @var{op2}, mp_rnd_t @var{rnd})
 @ifinfo
 Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}
 @end ifinfo
@@ -1030,6 +1040,8 @@ rounded to the direction @var{rnd}. Just decreases the exponent by @var{op2}
 when @var{rop} and @var{op1} are identical.
 Return zero when @var{rop}=@var{op1}, a positive value when @var{rop}>@var{op1},
 and a negative value when @var{rop}<@var{op1}.
+Note: The @code{mpfr_div_2exp} function is defined for compatibility reasons;
+you should use @code{mpfr_div_2ui} (or @code{mpfr_div_2si}) instead.
 @end deftypefun
 
 @node Float Comparison, I/O of Floats, Float Arithmetic, Floating-point Functions

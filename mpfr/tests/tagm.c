@@ -89,7 +89,7 @@ check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
   mpfr_set_d(tb, b, rnd_mode);
 
   mpfr_agm(tres, ta, tb, rnd_mode);
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   

@@ -86,7 +86,6 @@ BITS_PER_MP_LIMB = @BITS_PER_MP_LIMB@
 CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
 CC = @CC@
 CCAS = @CCAS@
-CFLAGS_IEEE_WITH_INEXACT = @CFLAGS_IEEE_WITH_INEXACT@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
@@ -229,7 +228,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = README $(include_HEADERS) AUTHORS COPYING ChangeLog \
-	Makefile.am Makefile.in NEWS TODO
+	Makefile.am Makefile.in NEWS TODO acinclude.m4
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = $(libmpfr_a_SOURCES)
 

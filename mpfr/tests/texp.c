@@ -46,7 +46,7 @@ check3 (double d, mp_rnd_t rnd, double e)
   mpfr_t x, y; double f; int u=0, ck=0;
 
   mpfr_init2(x, 53); mpfr_init2(y, 53);
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd);
 #endif
   if (e==0.0) e = exp(d); else ck=1; /* really check */
@@ -216,7 +216,7 @@ compare_exp2_exp3 (int n)
 int
 main (int argc, char *argv[])
 {
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   int i, N, s=0, e, maxe=0;
   double lo, hi;
 #endif
@@ -272,7 +272,7 @@ main (int argc, char *argv[])
   check3(5.30015757134837031117e+02, GMP_RNDD, 1.5237672861171573939e230);
   check3(5.16239362447650933063e+02, GMP_RNDZ, 1.5845518406744492105e224);
   check3(6.00812634798592370977e-01, GMP_RNDN, 1.823600119339019443);
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   SEED_RAND (time(NULL));
   N = (argc==1) ? 0 : atoi(argv[1]);
   lo = (argc>=3) ? atof(argv[2]) : -7.083964185e2;

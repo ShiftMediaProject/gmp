@@ -1,4 +1,37 @@
+2002-04-09  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* INSTALL: Possible tconst_log2 crash under Solaris.
+
+	* configure.in:
+	Under OSF, use option -ffloat-store only when the compiler is gcc.
+
+	* Makefile.am:
+	include_HEADERS should contain only mpfr.h and mpf2mpfr.h.
+
+	* configure.in: Added code to support fesetround under Solaris.
+
+	* INSTALL: "In case of problem" update.
+
+	* INSTALL: Old URL removed.
+
+	* INSTALL:
+	Renaming: DIR -> GMPINSTALL, GMPDIR -> GMPBUILD. Bug on IRIX updated.
+
+	* INSTALL: Removed note about stack-alloc.h.
+
+	* tests/tui_div.c, tests/tui_sub.c, tests/tadd.c, tests/tadd_ui.c, tests/tagm.c, tests/tdiv.c, tests/tdiv_ui.c, tests/texp.c, tests/tget_d.c, tests/tget_str.c, tests/tlog.c, tests/tmul.c, tests/tset_q.c, tests/tsqrt.c, tests/tsqrt_ui.c, tests/tsub_ui.c, configure.in, rnd_mode.c:
+	Check for fenv.h -> check for fesetround.
+
+	* README.dev: Added note concerning patch submission.
+
+2002-04-08  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* mpfr.texi:
+	Note about overflows. Functions mpfr_{div,mul}_{si,ui} described.
+
 2002-04-07  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* ChangeLog: Update for the next (and last?) pre-release.
 
 	* configure.in: Stricter test for HAVE_INFS.
 

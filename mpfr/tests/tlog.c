@@ -67,7 +67,7 @@ check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
   int diff=0;
   /* ck=1 iff res1 is certified correct */
 
-#ifdef HAVE_FENV_H
+#ifdef HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (ck==0 && res1==0.0) res1=log(a); 
