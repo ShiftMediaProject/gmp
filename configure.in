@@ -991,11 +991,14 @@ fi
 
 
 # Instantiate gmp.h and mp.h, setting _LONG_LONG_LIMB if necessary.
+# This is done directly here since gmp.h is wanted by GMP_FUNC_ALLOCA below,
+# and that's earlier than AC_OUTPUT runs.
 #
-# This could probably be done with AC_CONFIG_HEADERS and config.status, but
-# we want a working gmp.h for GMP_FUNC_ALLOCA, which is earlier than
-# AC_CONFIG_HEADERS normally creates its output files.
-#
+# FIXME: These don't get recreated by config.status.  Maybe AC_CONFIG_FILES
+# should be used on top of creating them here, or maybe the commands should
+# be put into AC_CONFIG_COMMANDS.  Alternately GMP_FUNC_ALLOCA could use
+# gmp-h.in and an appropriate _LONG_LONG_LIMB instead of gmp.h.
+
                   eval tmp=\"\$limb$abi1\"
 test -n "$tmp" || eval tmp=\"\$limb$abi2\"
 case $tmp in
@@ -1470,6 +1473,16 @@ esac
 AC_SUBST(TUNE_SQR_OBJ)
 
 
+# Configs for demos/expr directory
+if test $enable_mpfr = yes; then
+  WANT_MPFR_VAL=1
+else
+  WANT_MPFR_VAL=0
+fi
+AC_SUBST(WANT_MPFR_VAL)
+AC_CONFIG_FILES(demos/expr/expr-impl.h:demos/expr/expr-impl-h.in)
+
+
 # Create config.m4.
 GMP_FINISH
 
@@ -1485,4 +1498,4 @@ AC_OUTPUT(Makefile							\
   tests/mpf/Makefile tests/mpq/Makefile tests/mpz/Makefile		\
   tests/rand/Makefile							\
   tune/Makefile								\
-  demos/Makefile demos/calc/Makefile)
+  demos/Makefile demos/calc/Makefile demos/expr/Makefile)
