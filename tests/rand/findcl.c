@@ -37,12 +37,18 @@ sh_status (int sig)
 
 /* TODO:
 
+   . differentiate between v and merit; print a multiplier with ok
+   v's, even when merit is bad.  better than nothing since it seems
+   hard to find good merits for the big m's.
+
+   . find a better algorithm than a+=8; bigger jumps perhaps?
+
 */
 
 int
 main (int argc, char *argv[])
 {
-  const char usage[] = "usage: findcl [-a start_a] m [low_merit [high_merit]]";
+  const char usage[] = "usage: findcl [-a start_a] [-d] m [low_merit [high_merit]]\n";
   int f;
   int lose, best;
   int c;
@@ -67,12 +73,16 @@ main (int argc, char *argv[])
   mpf_init_set_d (low_merit, .1);
   mpf_init_set_d (high_merit, .1);
 
-  while ((c = getopt (argc, argv, "a:h")) != -1)
+  while ((c = getopt (argc, argv, "a:dh")) != -1)
     switch (c)
       {
       case 'a':			/* start_a */
 	mpz_set_str (a, optarg, 0);
 	have_start_a = 1;
+	break;
+
+      case 'd':			/* debug */
+	g_debug++;
 	break;
 
       case 'h':
@@ -103,6 +113,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
+  printf ("findcl: version: %s\n", rcsid[1]);
   mpz_set_str (m, argv[0], 0);
   printf ("m = 0x");
   mpz_out_str (stdout, 16, m);
@@ -127,9 +138,9 @@ main (int argc, char *argv[])
       fputs ("\n", stderr);
 
       fprintf (stderr, "low_merit = ");
-      mpf_out_str (stderr, 10, 0, low_merit);
+      mpf_out_str (stderr, 10, 2, low_merit);
       fprintf (stderr, "; high_merit = ");
-      mpf_out_str (stderr, 10, 0, high_merit);
+      mpf_out_str (stderr, 10, 2, high_merit);
       fputs ("\n", stderr);
     }
 
@@ -148,7 +159,7 @@ main (int argc, char *argv[])
 	{
 	  merit (f_merit, f + 2, v[f], m);
 
-	  if (mpf_cmp_ui (v[f], 1 << (30 / (f + 2) + 1)) < 0
+	  if (mpf_cmp_ui (v[f], 1 << (30 / (f + 2) + (f == 2))) < 0
 	      || mpf_cmp (f_merit, low_merit) < 0)
 	    lose++;
 
