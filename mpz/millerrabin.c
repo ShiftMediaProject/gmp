@@ -50,7 +50,7 @@ mpz_millerrabin (mpz_srcptr n, int reps)
   MPZ_TMP_INIT (nm1, SIZ (n) + 1);
   mpz_sub_ui (nm1, n, 1L);
 
-  MPZ_TMP_INIT (x, SIZ (n));
+  MPZ_TMP_INIT (x, SIZ (n) + 1);
   MPZ_TMP_INIT (y, 2 * SIZ (n)); /* mpz_powm_ui needs excessive memory!!! */
 
   /* Perform a Fermat test.  */
