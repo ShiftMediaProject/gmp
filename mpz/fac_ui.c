@@ -49,8 +49,8 @@ MA 02111-1307, USA. */
   do {                          \
     mpz_ptr  __z = (z);         \
     ASSERT ((n) != 0);          \
-    PTR(z)[0] = (n);            \
-    SIZ(z) = 1;                 \
+    PTR(__z)[0] = (n);          \
+    SIZ(__z) = 1;               \
   } while (0)
 
 /* for single non-zero limb */
