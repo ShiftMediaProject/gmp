@@ -42,14 +42,14 @@ PROLOGUE(mpn_addmul_1)
 	mov	r11, #0
 	mov	ip, #0
 	movs	n, n, lsr #1
-	bcc	skip1
+	bcc	.Lskip1
 	ldr	lr, [up], #4
 	ldr	r9, [rp]
 	umlal	r9, ip, v, lr
 	str	r9, [rp], #4
-skip1:
+.Lskip1:
 	movs	n, n, lsr #1
-	bcc	skip2
+	bcc	.Lskip2
 	ldmia	rp, { r9, r10 }
 	adds	r8, ip, r9
 	adc	r9, r11, #0
@@ -59,11 +59,11 @@ skip1:
 	adc	ip, r11, #0
 	umlal	r9, ip, v, lr
 	stmia	rp!, { r8, r9 }
-skip2:
+.Lskip2:
 	teq	n, #0
-	beq	return
+	beq	.Lreturn
 	stmfd	sp!, { r4-r7 }
-addmul_loop:
+.Laddmul_loop:
 	ldmia	rp, { r5, r6, r7, r8 }
 	adds	r4, ip, r5
 	adc	r5, r11, #0
@@ -80,9 +80,9 @@ addmul_loop:
 	umlal	r7, ip, v, lr
 	subs	n, n, #1
 	stmia	rp!, { r4, r5, r6, r7 }
-	bne	addmul_loop
+	bne	.Laddmul_loop
 	ldmfd	sp!, { r4-r7 }
-return:
+.Lreturn:
 	mov	r0, ip
 	ldmfd	sp!, { r8-r11, pc }
 EPILOGUE(mpn_addmul_1)

@@ -43,7 +43,7 @@ PROLOGUE(mpn_submul_1)
 	stmfd	sp!, { r4-r10, lr }
 	mov	r4, #0
 	movs	n, n, lsr #1
-	bcc	skip1
+	bcc	.Lskip1
 	ldr	lr, [up], #4
 	umull	r4, r12, v, lr
 	ldr	r6, [rp]
@@ -51,9 +51,9 @@ PROLOGUE(mpn_submul_1)
 	sbc	r4, r0, r0
 	sub	r4, r12, r4
 	str	r6, [rp], #4
-skip1:
+.Lskip1:
 	movs	n, n, lsr #1
-	bcc	skip2
+	bcc	.Lskip2
 	ldmia	up!, { r9, r10 }
 	mov	r5, #0
 	umlal	r4, r5, v, r9
@@ -65,11 +65,11 @@ skip1:
 	sbc	r4, r0, r0
 	sub	r4, r9, r4
 	stmia	rp!, { r6, r7 }
-skip2:
+.Lskip2:
 	teq	n, #0
-	beq	return
+	beq	.Lreturn
 
-submul_loop:
+.Lsubmul_loop:
 	ldmia	up!, { r9, r10, r12, lr }
 	mov	r5, #0
 	umlal	r4, r5, v, r9
@@ -88,8 +88,8 @@ submul_loop:
 	sub	r4, r12, r4
 	subs	n, n, #1
 	stmia	rp!, { r6, r7, r8, lr }
-	bne	submul_loop
-return:
+	bne	.Lsubmul_loop
+.Lreturn:
 	mov	r0, r4
 	ldmfd	sp!, { r4-r10, pc }
 EPILOGUE(mpn_submul_1)

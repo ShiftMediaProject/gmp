@@ -41,24 +41,24 @@ PROLOGUE(mpn_sub_n)
 	stmfd	sp!, { r8, r9, lr }
 	subs	r12, r12, r12
 	tst	n, #1
-	beq	skip1
+	beq	.Lskip1
 	ldr	r12, [up], #4
 	ldr	lr, [vp], #4
 	subs	r12, r12, lr
 	str	r12, [rp], #4
-skip1:
+.Lskip1:
 	tst	n, #2
-	beq	skip2
+	beq	.Lskip2
 	ldmia	up!, { r8, r9 }
 	ldmia	vp!, { r12, lr }
 	sbcs	r8, r8, r12
 	sbcs	r9, r9, lr
 	stmia	rp!, { r8, r9 }
-skip2:
+.Lskip2:
 	bics	n, n, #3
-	beq	return
+	beq	.Lreturn
 	stmfd	sp!, { r4, r5, r6, r7 }
-sub_n_loop:
+.Lsub_n_loop:
 	ldmia	up!, { r4, r5, r6, r7 }
 	ldmia	vp!, { r8, r9, r12, lr }
 	sbcs	r4, r4, r8
@@ -69,9 +69,9 @@ sub_n_loop:
 	stmia	rp!, { r4, r5, r6, r7 }
 	sub	n, n, #4
 	teq	n, #0
-	bne	sub_n_loop
+	bne	.Lsub_n_loop
 	ldmfd	sp!, { r4, r5, r6, r7 }
-return:
+.Lreturn:
 	sbc	r0, r0, r0
 	and	r0, r0, #1
 	ldmfd	sp!, { r8, r9, pc }

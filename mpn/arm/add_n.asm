@@ -40,24 +40,24 @@ ASM_START()
 PROLOGUE(mpn_add_n)
 	stmfd	sp!, { r8, r9, lr }
 	movs	n, n, lsr #1
-	bcc	skip1
+	bcc	.Lskip1
 	ldr	r12, [up], #4
 	ldr	lr, [vp], #4
 	adds	r12, r12, lr
 	str	r12, [rp], #4
-skip1:
+.Lskip1:
 	tst	n, #1
-	beq	skip2
+	beq	.Lskip2
 	ldmia	up!, { r8, r9 }
 	ldmia	vp!, { r12, lr }
 	adcs	r8, r8, r12
 	adcs	r9, r9, lr
 	stmia	rp!, { r8, r9 }
-skip2:
+.Lskip2:
 	bics	n, n, #1
-	beq	return
+	beq	.Lreturn
 	stmfd	sp!, { r4, r5, r6, r7 }
-add_n_loop:
+.Ladd_n_loop:
 	ldmia	up!, { r4, r5, r6, r7 }
 	ldmia	vp!, { r8, r9, r12, lr }
 	adcs	r4, r4, r8
@@ -68,9 +68,9 @@ add_n_loop:
 	stmia	rp!, { r4, r5, r6, r7 }
 	sub	n, n, #2
 	teq	n, #0
-	bne	add_n_loop
+	bne	.Ladd_n_loop
 	ldmfd	sp!, { r4, r5, r6, r7 }
-return:
+.Lreturn:
 	adc	r0, n, #0
 	ldmfd	sp!, { r8, r9, pc }
 EPILOGUE(mpn_add_n)

@@ -40,13 +40,13 @@ ASM_START()
 PROLOGUE(mpn_mul_1)
 	stmfd	sp!, { r8, r9, lr }
 	ands	ip, n, #1
-	beq	skip1
+	beq	.Lskip1
 	ldr	lr, [up], #4
 	umull	r9, ip, v, lr
 	str	r9, [rp], #4
-skip1:
+.Lskip1:
 	tst	n, #2
-	beq	skip2
+	beq	.Lskip2
 	mov	r8, ip
 	ldmia	up!, { ip, lr }
 	mov	r9, #0
@@ -54,11 +54,11 @@ skip1:
 	mov	ip, #0
 	umlal	r9, ip, v, lr
 	stmia	rp!, { r8, r9 }
-skip2:
+.Lskip2:
 	bics	n, n, #3
-	beq	return
+	beq	.Lreturn
 	stmfd	sp!, { r6, r7 }
-mul_1_loop:
+.Lmul_1_loop:
 	mov	r6, ip
 	ldmia	up!, { r8, r9, ip, lr }
 	ldr	r7, [rp, #12]			C cache allocate
@@ -72,9 +72,9 @@ mul_1_loop:
 	umlal	r9, ip, v, lr
 	subs	n, n, #4
 	stmia	rp!, { r6, r7, r8, r9 }
-	bne	mul_1_loop
+	bne	.Lmul_1_loop
 	ldmfd	sp!, { r6, r7 }
-return:
+.Lreturn:
 	mov	r0, ip
 	ldmfd	sp!, { r8, r9, pc }
 EPILOGUE(mpn_mul_1)
