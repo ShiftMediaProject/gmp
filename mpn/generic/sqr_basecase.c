@@ -1,4 +1,4 @@
-/* __gmpn_sqr_basecase -- Internal routine to square two natural numbers
+/* mpn_sqr_basecase -- Internal routine to square two natural numbers
    of length m and n.
 
 Copyright (C) 1991, 1992, 1993, 1994, 1996 Free Software Foundation, Inc.
@@ -26,9 +26,9 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-__gmpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
+mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 #else
-__gmpn_sqr_basecase (prodp, up, n)
+mpn_sqr_basecase (prodp, up, n)
      mp_ptr prodp;
      mp_srcptr up;
      mp_size_t n;
