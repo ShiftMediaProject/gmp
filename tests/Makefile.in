@@ -174,7 +174,7 @@ EXTRA_LTLIBRARIES = libdummy.la
 check_LTLIBRARIES = libtests.la
 
 libtests_la_SOURCES = tests.h \
-  memory.c misc.c refmpf.c refmpn.c refmpz.c spinner.c trace.c
+  memory.c misc.c refmpf.c refmpn.c refmpq.c refmpz.c spinner.c trace.c
 
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
 libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
@@ -194,7 +194,7 @@ am_libdummy_la_OBJECTS = x86check$U.lo
 libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 libtests_la_LDFLAGS =
 am_libtests_la_OBJECTS = memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
-	refmpz$U.lo spinner$U.lo trace$U.lo
+	refmpq$U.lo refmpz$U.lo spinner$U.lo trace$U.lo
 libtests_la_OBJECTS = $(am_libtests_la_OBJECTS)
 check_PROGRAMS = t-constants$(EXEEXT) t-count_zeros$(EXEEXT) \
 	t-gmpmax$(EXEEXT) t-modlinv$(EXEEXT)
@@ -316,6 +316,8 @@ refmpf_.c: refmpf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpf.c; then echo $(srcdir)/refmpf.c; else echo refmpf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpf_.c || rm -f refmpf_.c
 refmpn_.c: refmpn.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpn.c; then echo $(srcdir)/refmpn.c; else echo refmpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpn_.c || rm -f refmpn_.c
+refmpq_.c: refmpq.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpq.c; then echo $(srcdir)/refmpq.c; else echo refmpq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpq_.c || rm -f refmpq_.c
 refmpz_.c: refmpz.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpz.c; then echo $(srcdir)/refmpz.c; else echo refmpz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpz_.c || rm -f refmpz_.c
 spinner_.c: spinner.c $(ANSI2KNR)
@@ -333,11 +335,12 @@ trace_.c: trace.c $(ANSI2KNR)
 x86check_.c: x86check.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/x86check.c; then echo $(srcdir)/x86check.c; else echo x86check.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > x86check_.c || rm -f x86check_.c
 memory_.$(OBJEXT) memory_.lo misc_.$(OBJEXT) misc_.lo refmpf_.$(OBJEXT) \
-refmpf_.lo refmpn_.$(OBJEXT) refmpn_.lo refmpz_.$(OBJEXT) refmpz_.lo \
-spinner_.$(OBJEXT) spinner_.lo t-constants_.$(OBJEXT) t-constants_.lo \
-t-count_zeros_.$(OBJEXT) t-count_zeros_.lo t-gmpmax_.$(OBJEXT) \
-t-gmpmax_.lo t-modlinv_.$(OBJEXT) t-modlinv_.lo trace_.$(OBJEXT) \
-trace_.lo x86check_.$(OBJEXT) x86check_.lo : $(ANSI2KNR)
+refmpf_.lo refmpn_.$(OBJEXT) refmpn_.lo refmpq_.$(OBJEXT) refmpq_.lo \
+refmpz_.$(OBJEXT) refmpz_.lo spinner_.$(OBJEXT) spinner_.lo \
+t-constants_.$(OBJEXT) t-constants_.lo t-count_zeros_.$(OBJEXT) \
+t-count_zeros_.lo t-gmpmax_.$(OBJEXT) t-gmpmax_.lo t-modlinv_.$(OBJEXT) \
+t-modlinv_.lo trace_.$(OBJEXT) trace_.lo x86check_.$(OBJEXT) \
+x86check_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
