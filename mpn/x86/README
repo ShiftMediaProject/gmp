@@ -1,6 +1,6 @@
 This directory contains mpn functions for various x86 chips.
 
-RELEVANT OPTIMIZATION ISSUES
+CODE ORGANIZATION
 
 The code in the top-level works best with i386, i486, members of the P6
 family (i.e., Pentium Pro, II, III), and the Amd Athlon/K7.
@@ -20,3 +20,17 @@ For implementations with slow double shift instructions (SHLD and SHRD), it
 might be better to mimic their operation with SHL+SHR+OR.  (K6 and M2 are
 likely to benefit from that, but not Pentium due to its slow plain SHL and
 SHR.)
+
+RELEVANT OPTIMIZATION ISSUES
+
+We should use MMX instructions for copying and perhaps shifts.  For shifts,
+we can get a very significant performance boost on the K6 and K7, but we
+need to make sure operands are aligned for full speed, but that can easily
+be achieved by using the full range of shift counts, 1 to 63.
+
+           current shift speed     mmx shift speed
+    P55             5.4                 4.0
+    P6              2.5                 2.0
+    K6              3.3                 2.0
+    K7              4.5                 1.35
+

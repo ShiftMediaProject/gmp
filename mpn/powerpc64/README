@@ -1,6 +1,6 @@
 PPC630 (aka Power3) pipeline information:
 
-Issue is 8-way superscalar with some out-of-order capability.
+Decoding is 4-way and issue is 8-way with some out-of-order capability.
 LS1  - ld/st unit 1
 LS2  - ld/st unit 2
 FXU1 - integer unit 1, handles any simple integer instructions
