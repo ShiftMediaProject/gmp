@@ -30,8 +30,8 @@ operations within a bundle too.
 
 The Itanium 1 and Itanium 2 implementations can under ideal conditions
 execute two bundles per cycle.  The Itanium 2 allows 4 of these
-instructions to do integer operations, while the Itanium 2 allows all
-6 to be integer operations.
+instructions to do integer operations, while the Itanium 2 allows all 6
+to be integer operations.
 
 Taken cloop branches seem to insert a bubble into the pipeline most of
 the time on Itanium 1.
@@ -82,9 +82,9 @@ Caller-saves but rotating: r32- f32-
 ================================================================
 mpn_add_n, mpn_sub_n:
 
-The current code runs at 3 cycles/limb.  Unrolling could clearly bring
-down the time to 2 cycles/limb.  But a better method is this, in
-particular for Itanium 2, with a 1 cycle recurrency is this:
+The current code runs at 3 cycles/limb on Itanium 1 and 2 cycles/limb
+on Itanium 2.  A better method is this, in particular for Itanium 2,
+with a 1 cycle recurrency is this:
 
         ld8             r20 = [r33], 8
         ld8             r21 = [r34], 8          ;;
@@ -99,16 +99,12 @@ This could reach 1.75 c/l for Itanium 1 and 1.17 c/l for Itanium 2.
 ================================================================
 mpn_addmul_1:
 
-The current code runs at 4 cycles/limb on Itanium 1 and 7 cycles/limb on
-Itanium 2, and that is reached only for large operands.  It uses the
-mod-scheduled software pipelining feature.  Performance for small
-operands is poor.  The reason for the poor speed for small operands is
-that mod-scheduled loops have significant start-up overhead.
+The current code runs at 3 cycles/limb on Itanium 1 and 2 cycles/limb
+on Itanium 2.
 
-For optimal speed, we need to load two 64-bit limbs with the ldfp8
-instruction, and stay away from mod-scheduled loops.  Since rp and up
-might be mutually aligned in two ways, we will need two loop variants,
-with the same basic structure:
+It would be possible to reach 2 cycles/limb for Itanium 1, using the
+ldpf8 instruction.  Since rp and up might be mutually aligned in two
+ways, we will need two loop variants, with the same basic structure:
 
   { .mfi	getf.sig
 		xma.l
@@ -140,21 +136,16 @@ with the same basic structure:
 		;;
 }
 
-2 limbs/20 instructions
-	   20 insn/max 6 insn/cycle:		3.3 cycles/2limb
-	   8 memops/max 2 memops/cycle:		4.0 cycles/2limb
-	   8 intops/max 2 intops/cycle:		4.0 cycles/2limb
-	   4 fpops/max 2 fpops/cycle:		2.0 cycles/2limb
-
-We could do even better on Itanium 2 using the carry propagation
-scheme of mpn_add_n above, 1.67 c/l.
+We could do even better on Itanium 2 using the carry propagation scheme
+of mpn_add_n above, 1.67 c/l.
 
 ================================================================
 mpn_submul_1:
 
-The current code runs at 4 cycles/limb.  Getting to 3 cycles/limb
-would not be hard.  Getting to 2 cycles/limb might be harder, but
-at any rate, something close to 2 cycles/limb should be possible.
+The current code runs at 4 cycles/limb on Itanium 1 and 3.5 cycles/limb
+on Itanium 2.  Getting to 3 cycles/limb would not be hard.  Getting to
+2 cycles/limb might be harder, but at any rate, something close to 2
+cycles/limb should be possible.
 
 ================================================================
 mpn_mul_1:
@@ -171,10 +162,10 @@ For the Itanium 1, we need to take about 8 limbs at a time for full
 speed.  For the Itanium 2, something like mpn_addmul_4 should be
 enough.
 
-The add+cmp+cmp+add we use on the other codes is optimal for
-shortening recurrencies (1 cycle) but the sequence takes up 4
-execution slots.  When recurrency depth is not critical, a more
-standard 3-cycle add+cmp+add is better.
+The add+cmp+cmp+add we use on the other codes is optimal for shortening
+recurrencies (1 cycle) but the sequence takes up 4 execution slots.
+When recurrency depth is not critical, a more standard 3-cycle
+add+cmp+add is better.
 
 /* First load the 8 values from v */
 	ldfp8		v0, v1 = [r35], 16;;
@@ -230,14 +221,14 @@ Loop:	ldf8		u0 = [r33], 8
 mpn_lshift, mpn_rshift
 
 The current code runs at 2 cycles/limb on Itanium 1 and 1.5 cycles/limb
-on Itanium 2.  The code suffers badly from Itanium's 4 cycle latency
+on Itanium 2.  The code suffers from the 4 cycle latency of Itanium 1
 for variable shift instructions.
 
-Using 63 separate loops, we could use the double-word shrp
-instruction.  That instruction has a plain single-cycle latency.  We
-need 63 loops since this instruction only accept immediate count.
-That would lead to a somewhat silly code size, but the speed would
-double on Itanium 1 to 1 c/l and tripple on Itanium 2 to 0.5 c/l.
+Using 63 separate loops, we could use the double-word shrp instruction.
+That instruction has a plain single-cycle latency.  We need 63 loops
+since this instruction only accept immediate count.  That would lead to
+a somewhat silly code size, but the speed would double on Itanium 1 to
+1 c/l and tripple on Itanium 2 to 0.5 c/l.
 
 ================================================================
 mpn_copyi, mpn_copyd
