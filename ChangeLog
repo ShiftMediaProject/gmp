@@ -1,3 +1,8 @@
+2001-09-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/vax/lshift.s: Change `jsob*' to `sob*'.
+	* mpn/vax/rshift.s: Likewise.
+
 2001-09-23  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium4/sse2/mul_basecase.asm: Some simple but real code.
