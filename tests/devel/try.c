@@ -3,7 +3,7 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -53,6 +53,14 @@ MA 02111-1307, USA. */
    param_init(), and add it to the call() function.  Extra parameter fields
    can be added if necessary, or further interpretations given to existing
    fields.
+
+
+   Portability:
+
+   This program is not designed for use on Cray vector systems under Unicos,
+   it will fail to compile due to missing _SC_PAGE_SIZE.  Those systems
+   don't really have pages or mprotect.  We could arrange to run the tests
+   without the redzones, but we haven't bothered currently.
 
 
    Enhancements:
