@@ -1260,7 +1260,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	   : "%g1" __AND_CLOBBER_CC)
 #define UDIV_TIME 37
 #define count_leading_zeros(count, x) \
-  __asm__ ("scan %1,1,%0" : "=r" (x) : "r" (count))
+  __asm__ ("scan %1,1,%0" : "=r" (count) : "r" (x))
 /* Early sparclites return 63 for an argument of 0, but they warn that future
    implementations might change this.  Therefore, leave COUNT_LEADING_ZEROS_0
    undefined.  */
