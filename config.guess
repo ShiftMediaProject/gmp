@@ -319,6 +319,13 @@ EOF
 
 
 rs6000-*-* | powerpc*-*-*)
+  # Enhancement: On MacOS the "machine" command prints for instance
+  # "ppc750".  Interestingly on powerpc970-apple-darwin6.8.5 it prints
+  # "ppc970" where there's no actual #define for 970 from NXGetLocalArchInfo
+  # (as noted below).  But the man page says the command is still "under
+  # development", so it doesn't seem wise to use it just yet, not while
+  # there's an alternative.
+
   # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS
   # and AIX don't allow it in user mode, but the Linux kernel does.
   #
