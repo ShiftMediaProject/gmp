@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-21  Kevin Ryde  <kevin@swox.se>
+
+	* doc/gmp.texi (Integer Logic and Bit Fiddling): Say "bitwise" in
+	mpz_and, mpz_ior and mpz_xor, to avoid any confusion with what C means
+	by "logical".  Reported by Rüdiger Schütz.
+
+	* gmp-h.in (_GMP_H_HAVE_FILE): Note why defined(EOF) is not good.
+
 2003-12-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/hgcd.c (mpn_diff_smaller_p): Use mpn_cmp instead of
