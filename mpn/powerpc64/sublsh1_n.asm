@@ -22,7 +22,7 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     2.25	(1.5 c/l should be possible)
+C POWER3/PPC630:     2		(1.5 c/l should be possible)
 C POWER4/PPC970:     ?		(2.0 c/l should be possible)
 
 C INPUT PARAMETERS
@@ -31,44 +31,55 @@ C up	r4
 C vp	r5
 C n	r6
 
+define(`rp',`r3')
+define(`up',`r4')
+define(`vp',`r5')
+
+define(`s0',`r6')
+define(`s1',`r7')
+define(`u0',`r8')
+define(`v0',`r10')
+define(`v1',`r11')
+
 ASM_START()
 PROLOGUE(mpn_sublsh1_n)
-	mtctr	r6		C copy size into CTR
-	subc	r10,r0,r0	C clear r10, set cy
-	ld	r8,0(r4)	C load least significant u limb
-	ld	r0,0(r5)	C load least significant v limb
-	addi	r3,r3,-8	C offset res_ptr, it's updated before it's used
-	bdz	.Lend		C If done, skip loop
-.Loop:
-	srdi	r12, r10, 63
-	ld	r9,8(r4)	C load u limb
-	rldimi	r12, r0, 1, 0
-	ld	r10,8(r5)	C load v limb
-	subfe	r7,r12,r8	C add limbs with cy, set cy
-	std	r7,8(r3)	C store result limb
-	bdz	.Lexit		C decrement CTR and exit if done
-	srdi	r11, r0, 63
-	ldu	r8,16(r4)	C load u limb and update up
-	rldimi	r11, r10, 1, 0
-	ldu	r0,16(r5)	C load v limb and update vp
-	subfe	r7,r11,r9	C add limbs with cy, set cy
-	stdu	r7,16(r3)	C store result limb and update rp
-	bdnz	.Loop		C decrement CTR and loop back
+	mtctr	r6		C put n in ctr
 
-.Lend:	srdi	r12, r10, 63
-	rldimi	r12, r0, 1, 0
-	subfe	r7,r12,r8
-	std	r7,8(r3)	C store ultimate result limb
-	srdi	r3, r0, 63
-	subfze	r3,r3		C ... return value register
+	ld	v0, 0(vp)	C load v limb
+	ld	u0, 0(up)	C load u limb
+	addic	up, up, -8	C update up; set cy
+	addi	rp, rp, -8	C update rp
+	sldi	s1, v0, 1
+	bdz	.Lend		C If done, skip loop
+
+.Loop:	ld	v1, 8(vp)	C load v limb
+	subfe	s1, s1, u0	C add limbs with cy, set cy
+	std	s1, 8(rp)	C store result limb
+	srdi	s0, v0, 63	C shift down previous v limb
+	ldu	u0, 16(up)	C load u limb and update up
+	rldimi	s0, v1, 1, 0	C lest shift v limb and merge with prev v limb
+
+	bdz	.Lexit		C decrement ctr and exit if done
+
+	ldu	v0, 16(vp)	C load v limb and update vp
+	subfe	s0, s0, u0	C add limbs with cy, set cy
+	stdu	s0, 16(rp)	C store result limb and update rp
+	srdi	s1, v1, 63	C shift down previous v limb
+	ld	u0, 8(up)	C load u limb
+	rldimi	s1, v0, 1, 0	C lest shift v limb and merge with prev v limb
+
+	bdnz	.Loop		C decrement ctr and loop back
+
+.Lend:	subfe	r7, s1, u0
+	std	r7, 8(rp)	C store last result limb
+	srdi	r3, v0, 63
+	subfze	r3, r3
 	neg	r3, r3
 	blr
-.Lexit:	srdi	r11, r0, 63
-	rldimi	r11, r10, 1, 0
-	subfe	r7,r11,r9
-	std	r7,16(r3)
-	srdi	r3, r10, 63
-	subfze	r3,r3		C ... return value register
+.Lexit:	subfe	r7, s0, u0
+	std	r7, 16(rp)	C store last result limb
+	srdi	r3, v1, 63
+	subfze	r3, r3
 	neg	r3, r3
 	blr
 EPILOGUE()
