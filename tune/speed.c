@@ -1022,7 +1022,9 @@ main (int argc, char *argv[])
     }
 
   srand (option_seed);
+#if HAVE_SRAND48
   srand48 (option_seed);
+#endif
 #if HAVE_SRANDOM
   srandom (option_seed);
 #endif
