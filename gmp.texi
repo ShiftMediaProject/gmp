@@ -3692,11 +3692,6 @@ Divide @{@var{s1p}, @var{s1n}@} by @var{s2limb}, and return the remainder.
 @var{s1n} can be zero.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_preinv_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
-@strong{This interface is obsolete.  It will disappear from future releases.
-Use @code{mpn_mod_1} in its stead.}
-@end deftypefun
-
 @deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n}, unsigned long int @var{d})
 The function puts the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of @var{q} =
 @{@var{s1p}, @var{s1n}@}/@{@var{s2p}, @var{s2n}@} mod 2^@var{d} at @var{rp},
