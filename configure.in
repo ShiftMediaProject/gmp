@@ -387,7 +387,8 @@ case ${target} in
       # since GAS has not been ported to understand the 2.0 instructions.
       CCAS="$CC64 -c"
     else
-      path="hppa"
+      # FIXME: path should be "hppa/hppa2_0 hppa/hppa1_1 hppa"
+      path="hppa/hppa1_1 hppa"
       extra_functions="udiv_qrnnd"
     fi
     ;;
