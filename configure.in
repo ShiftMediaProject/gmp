@@ -1422,6 +1422,18 @@ GMP_OPTION_ALLOCA
 GMP_H_HAVE_FILE
 GMP_IMPL_H_IEEE_FLOATS
 
+# Enhancement: In the future AC_C_BIGENDIAN will accept these actions as
+# parameters.
+AC_C_BIGENDIAN
+case $ac_cv_c_bigendian in
+  yes)  AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1,
+                  [Define if `mp_limb_t' is big endian]) ;;
+  no)   AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1,
+                  [Define if `mp_limb_t' is little endian]) ;;
+  unknown) ;;
+  *)    AC_MSG_ERROR([Oops, unrecognised ac_cv_c_bigendian]) ;;
+esac
+
 
 # On m68k NetBSD 1.4.1 getrusage() is doubtful.  ru_utime looks microsecond
 # accurate but has been seen remaining unchanged after many microseconds
