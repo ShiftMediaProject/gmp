@@ -122,7 +122,7 @@ $Lb00:	C n = 4, 8, 12, ...
 	ldq	u1, 16(up)
 	lda	vp, 32(vp)
 	lda	rp, 8(rp)
-	br	r31, $LL00-4
+	br	r31, $LL00x
 	ALIGN(16)
 C 0
 $Loop:	sll	v0, 1, sl	C left shift vlimb
@@ -177,9 +177,9 @@ C 16
 	CARRY(	rr, ps, cy)
 C 17
 	addq	cy, cy0, cy0
-	lda	up, 32(up)	C bookkeeping
+$LL00x:	lda	up, 32(up)	C bookkeeping
 C 18
-$LL00:	sll	v3, 1, sl
+	sll	v3, 1, sl
 	ldq	v2, -8(vp)
 C 19
 	ADDSUB	u3, sl, ps
