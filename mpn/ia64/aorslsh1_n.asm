@@ -70,6 +70,8 @@ ifdef(`HAVE_ABI_32',`
 	addp4		rp = 0, rp
 	addp4		up = 0, up
 	addp4		vp = 0, vp
+	zxt4		n = n
+	;;
 ')
 	and		r14 = 3, n
 	adds		n = -1, n
