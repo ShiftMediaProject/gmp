@@ -2021,15 +2021,15 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #endif
 
 
-#define SPEED_ROUTINE_MPN_BACK_TO(function)     \
-  {                                             \
-    unsigned  i;                                \
-    speed_starttime ();                         \
-    i = s->reps;                                \
-    do                                          \
-      function ();                              \
-    while (--i != 0);                           \
-    return speed_endtime ();                    \
+#define SPEED_ROUTINE_MPN_BACK_TO_BACK(function)        \
+  {                                                     \
+    unsigned  i;                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      function ();                                      \
+    while (--i != 0);                                   \
+    return speed_endtime ();                            \
   }
 
 
