@@ -50,21 +50,21 @@ H = $(srcdir)/../../gmp.h $(srcdir)/../../gmp-impl.h \
  $(srcdir)/../../urandom.h ../../mpn/gmp-mparam.h
 
 t-add: t-add.o ref.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o ref.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o ref.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-sub: t-sub.o ref.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o ref.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o ref.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-conv: t-conv.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-sqrt: t-sqrt.o  $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-muldiv: t-muldiv.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-dm2exp: t-dm2exp.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 reuse: reuse.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-get_d: t-get_d.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 
 t-add.o: $(srcdir)/t-add.c
 t-sub.o: $(srcdir)/t-sub.c

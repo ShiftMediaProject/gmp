@@ -29,11 +29,11 @@ st-get_d: t-get_d
 	touch $@
 
 t-cmp: t-cmp.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-cmp_ui: t-cmp_ui.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 t-get_d: t-get_d.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
 
 t-cmp.o: $(srcdir)/t-cmp.c
 t-cmp_ui.o: $(srcdir)/t-cmp_ui.c
