@@ -570,6 +570,27 @@ sparc-*-* | sparc64-*-*)
     rm -f conftest.dat
   fi  
 
+  # Grep the output from sysctl hw.model on sparc64 *BSD.
+  # Use an explicit /sbin, since that directory might not be in a normal
+  # user's path.  Example outputs,
+  #
+  #     hw.model: Sun Microsystems UltraSparc-IIi
+  #
+  if test -z "$exact_cpu"; then
+    if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >conftest.dat; then
+      if grep 'UltraSparc-III' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc3
+      elif grep 'UltraSparc-IIi' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc2i
+      elif grep 'UltraSparc-II' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc2
+      elif grep 'UltraSparc' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc
+      fi
+    fi
+    rm -f conftest.dat
+  fi  
+
   # sun4m and sun4d are v8s of some sort, sun4u is a v9 of some sort
   #
   if test -z "$exact_cpu"; then
