@@ -155,7 +155,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
       count_leading_zeros (cnt, exp_in_base);
       for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
 	{
-	  mpn_mul_n (tp, rp, rp, rsize);
+	  mpn_sqr_n (tp, rp, rsize);
 	  rsize = 2 * rsize;
 	  rsize -= tp[rsize - 1] == 0;
 
@@ -261,7 +261,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	  count_leading_zeros (cnt, exp_in_base);
 	  for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
 	    {
-	      mpn_mul_n (tp, rp, rp, rsize);
+	      mpn_sqr_n (tp, rp, rsize);
 	      rsize = 2 * rsize;
 	      rsize -= tp[rsize - 1] == 0;
 	      if (rsize > prec)

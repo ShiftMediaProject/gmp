@@ -1,6 +1,6 @@
 /* mpz_pow_ui(res, base, exp) -- Set RES to BASE**EXP.
 
-Copyright 1991, 1993, 1994, 1996, 1997 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -106,7 +106,7 @@ rpow (b, e, r)
 
   for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
     {
-      mpn_mul_n (tp, rp, rp, rsize);
+      mpn_sqr_n (tp, rp, rsize);
       rsize = 2 * rsize;
       rsize -= tp[rsize - 1] == 0;
       xp = tp; tp = rp; rp = xp;

@@ -168,7 +168,7 @@ mpz_powm_ui (res, base, exp, mod)
 	mp_ptr tp;
 	mp_size_t xsize;
 
-	mpn_mul_n (xp, rp, rp, rsize);
+	mpn_sqr_n (xp, rp, rsize);
 	xsize = 2 * rsize;
 	xsize -= xp[xsize - 1] == 0;
 	if (xsize > msize)

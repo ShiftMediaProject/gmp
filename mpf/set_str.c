@@ -227,7 +227,7 @@ mpf_set_str (x, str, base)
     count_leading_zeros (cnt, exp_in_base);
     for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
       {
-	mpn_mul_n (tp, rp, rp, rsize);
+	mpn_sqr_n (tp, rp, rsize);
 	rsize = 2 * rsize;
 	rsize -= tp[rsize - 1] == 0;
 	radj <<= 1;
