@@ -926,8 +926,9 @@ case $host in
             # 64-bit registers in a context switch.
 	    abilist="mode32 $abilist"
 	    cclist_mode32="gcc"
-	    gcc_mode32_cflags="-O3 -mpowerpc64"
-	    gcc_mode32_cflags_optlist="cpu"
+	    gcc_mode32_cflags="-O3"
+	    gcc_mode32_cflags_optlist="powerpc64 cpu"
+	    gcc_cflags_powerpc64="-mpowerpc64"
 	    path_mode32="powerpc64/mode32 powerpc64"
 	    limb_mode32=longlong
 	    ;;
@@ -1592,6 +1593,10 @@ if test $found_compiler = yes; then
             GMP_GCC_PENTIUM4_SSE2($cc $cflags $cppflags,
               [GMP_OS_X86_XMM($cc $cflags $cppflags,, [continue])],
               [continue])
+            ;;
+          -mpowerpc64)
+            # exclude this flag on bad version of gcc
+            GMP_GCC_POWERPC64($cc $cflags $cppflags,, [continue])
             ;;
           -no-cpp-precomp)
             # special check, avoiding a warning
