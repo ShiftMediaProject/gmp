@@ -120,7 +120,9 @@ char *newline = "";
 
 #define HAVE_sigaltstack
 
-#if (defined (__linux__) && !defined (SA_ONSTACK)) || (_UNICOS)
+#if (defined (__linux__) && !defined (SA_ONSTACK)) \
+    || defined (_UNICOS)	\
+    || defined (__hpux)
 /* Older Linux have limited signal handling */
 #undef HAVE_sigaltstack
 #endif
