@@ -224,13 +224,14 @@ case "$target" in
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
   sparc64-*-linux*)
-    # Need to think more about the options passed here.  This isn't good for
-    # some sparc64 linux distros, since we end up not optimizing when all the
-    # options below fail.
+    # "sparc64" is a real misnomer for this target, since there is no support
+    # for any 64-bit operations in user mode.  We assume that a future release
+    # will have some 64-bit support, and therefore guess the needed compiler
+    # options.
     os_64bit=yes
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
-    gmp_xoptflags_gcc="-mcpu=ultrasparc"
+    gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
