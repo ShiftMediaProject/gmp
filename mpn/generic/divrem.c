@@ -38,7 +38,8 @@ MA 02111-1307, USA. */
       QP + DSIZE >= NP must hold true.  (This means that it's
       possible to put the quotient in the high part of NUM, right after the
       remainder in NUM.
-   3. NSIZE >= DSIZE, even if QEXTRA_LIMBS is non-zero.  */
+   3. NSIZE >= DSIZE, even if QEXTRA_LIMBS is non-zero.
+   4. DSIZE >= 2.  */
 
 #if defined (__alpha)
 mp_limb_t __mpn_invert_normalized_limb ();
