@@ -309,6 +309,7 @@ double speed_cyclecounter_diff _PROTO ((const unsigned end[2],
 int gettimeofday_microseconds_p _PROTO ((void));
 int getrusage_microseconds_p _PROTO ((void));
 int cycles_works_p _PROTO ((void));
+long clk_tck _PROTO ((void));
 
 int double_cmp_ptr _PROTO ((const double *p, const double *q));
 void pentium_wbinvd _PROTO ((void));
