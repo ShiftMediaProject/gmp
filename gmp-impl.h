@@ -3569,6 +3569,7 @@ class gmp_allocated_string {
   }
 };
 
+std::istream &__gmpz_operator_in_nowhite (std::istream &, mpz_ptr, char);
 int __gmp_istream_set_base (std::istream &, char &, bool &, bool &);
 void __gmp_istream_set_digits (std::string &, std::istream &, char &, bool &, int);
 void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, std::ios &o);
