@@ -30,8 +30,12 @@ MA 02111-1307, USA. */
 #ifndef __GNU_MP__
 #define __GNU_MP__ 4
 
-#define __need_size_t
-#include <stddef.h>
+#define __need_size_t  /* tell gcc stddef.h we only want size_t */
+#if defined (__cplusplus)
+#include <cstddef>     /* for size_t */
+#else
+#include <stddef.h>    /* for size_t */
+#endif
 #undef __need_size_t
 
 /* The following instantiated by configure, for internal use only */
