@@ -148,6 +148,10 @@
      targets with native versions of those routines.  Need to be careful not to
      pass size==0.  Is some code sharing possible between the <code>mpz</code>
      routines?
+<li> <code>mpz_divexact</code> should use a divide and conquer like the normal
+     division.  See "Exact Division with Karatsuba Complexity" by Jebelean for
+     a (brief) description.  Might be possible to share code with a divide and
+     conquer REDC.
 </ul>
 
 
