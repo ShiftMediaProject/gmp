@@ -820,13 +820,7 @@ extern const mp_limb_t __gmp_fib_table[];
 /* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
    ASSERT() does the check only if WANT_ASSERT is selected, ASSERT_ALWAYS()
    does it always.  Generally assertions are meant for development, but
-   might help when looking for a problem later too.
-
-   ASSERT_NOCARRY() uses ASSERT() to check the expression is zero, but if
-   assertion checking is disabled, the expression is still evaluated.  This
-   is meant for use with routines like mpn_add_n() where the return value
-   represents a carry or whatever that shouldn't occur.  For example,
-   ASSERT_NOCARRY (mpn_add_n (rp, s1p, s2p, size)); */
+   might help when looking for a problem later too.  */
 
 #ifdef __LINE__
 #define ASSERT_LINE  __LINE__
@@ -856,12 +850,50 @@ void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
   } while (0)
 
 #if WANT_ASSERT
-#define ASSERT(expr)           ASSERT_ALWAYS (expr)
-#define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
-
+#define ASSERT(expr)   ASSERT_ALWAYS (expr)
 #else
-#define ASSERT(expr)           do {} while (0)
+#define ASSERT(expr)   do {} while (0)
+#endif
+
+
+/* ASSERT_NOCARRY() uses ASSERT() to check the expression is zero, but if
+   assertion checking is disabled, the expression is still evaluated.  This
+   is meant for use with routines like mpn_add_n() where the return value
+   represents a carry or whatever that shouldn't occur.  For example,
+   ASSERT_NOCARRY (mpn_add_n (rp, s1p, s2p, size)); */
+#if WANT_ASSERT
+#define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
+#else
 #define ASSERT_NOCARRY(expr)   (expr)
+#endif
+
+
+/* Assert that an mpn region {ptr,size} is zero, or non-zero.
+   size==0 is allowed, and in that case {ptr,size} considered to be zero.  */
+#if WANT_ASSERT
+#define ASSERT_MPN_ZERO_P(ptr,size)     \
+  do {                                  \
+    mp_size_t  __i;                     \
+    ASSERT ((size) >= 0);               \
+    for (__i = 0; __i < (size); __i++)  \
+      ASSERT ((ptr)[__i] == 0);         \
+  } while (0)
+#define ASSERT_MPN_NONZERO_P(ptr,size)  \
+  do {                                  \
+    mp_size_t  __i;                     \
+    int        __nonzero = 0;           \
+    ASSERT ((size) >= 0);               \
+    for (__i = 0; __i < (size); __i++)  \
+      if ((ptr)[__i] != 0)              \
+        {                               \
+          __nonzero = 1;                \
+          break;                        \
+        }                               \
+    ASSERT (__nonzero);                 \
+  } while (0)
+#else
+#define ASSERT_MPN_ZERO_P(ptr,size)     do {} while (0)
+#define ASSERT_MPN_NONZERO_P(ptr,size)  do {} while (0)
 #endif
 
 
