@@ -30,35 +30,30 @@ define(`up',`r1')
 define(`vp',`r2')
 define(`n',`r3')
 
-define(`sp',`r13')
-define(`lr',`r14')
-define(`pc',`r15')
-
-changecom(@)	C need this since # is used for constants
 
 ASM_START()
 PROLOGUE(mpn_sub_n)
 	stmfd	sp!, { r8, r9, lr }
 	subs	r12, r12, r12
 	tst	n, #1
-	beq	.Lskip1
+	beq	L(skip1)
 	ldr	r12, [up], #4
 	ldr	lr, [vp], #4
 	subs	r12, r12, lr
 	str	r12, [rp], #4
-.Lskip1:
+L(skip1):
 	tst	n, #2
-	beq	.Lskip2
+	beq	L(skip2)
 	ldmia	up!, { r8, r9 }
 	ldmia	vp!, { r12, lr }
 	sbcs	r8, r8, r12
 	sbcs	r9, r9, lr
 	stmia	rp!, { r8, r9 }
-.Lskip2:
+L(skip2):
 	bics	n, n, #3
-	beq	.Lreturn
+	beq	L(return)
 	stmfd	sp!, { r4, r5, r6, r7 }
-.Lsub_n_loop:
+L(sub_n_loop):
 	ldmia	up!, { r4, r5, r6, r7 }
 	ldmia	vp!, { r8, r9, r12, lr }
 	sbcs	r4, r4, r8
@@ -69,9 +64,9 @@ PROLOGUE(mpn_sub_n)
 	stmia	rp!, { r4, r5, r6, r7 }
 	sub	n, n, #4
 	teq	n, #0
-	bne	.Lsub_n_loop
+	bne	L(sub_n_loop)
 	ldmfd	sp!, { r4, r5, r6, r7 }
-.Lreturn:
+L(return):
 	sbc	r0, r0, r0
 	and	r0, r0, #1
 	ldmfd	sp!, { r8, r9, pc }

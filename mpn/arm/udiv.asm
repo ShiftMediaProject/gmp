@@ -28,8 +28,6 @@ define(`n1',`r1')
 define(`n0',`r2')
 define(`d',`r3')
 
-changecom(@)	C need this since # is used for constants
-
 C divstep -- develop one quotient bit.  Dividend in $1$2, divisor in $3.
 C Quotient bit is shifted into $2.
 define(`divstep',
@@ -42,21 +40,21 @@ ASM_START()
 PROLOGUE(mpn_udiv_qrnnd)
 	mov	r12, #8			C loop counter for both loops below
 	cmp	d, #0x80000000		C check divisor msb and clear carry
-	bcs	.L_large_divisor
+	bcs	L(_large_divisor)
 
-.Loop:	divstep(n1,n0,d)
+L(oop):	divstep(n1,n0,d)
 	divstep(n1,n0,d)
 	divstep(n1,n0,d)
 	divstep(n1,n0,d)
 	sub	r12, r12, #1
 	teq	r12, #0
-	bne	.Loop
+	bne	L(oop)
 
 	str	n1, [ rem_ptr ]		C store remainder
 	adc	r0, n0, n0		C quotient: add last carry from divstep
 	mov	pc, lr
 
-.L_large_divisor:
+L(_large_divisor):
 	stmfd	sp!, { r8, lr }
 
 	and	r8, n0, #1		C save lsb of dividend
@@ -68,18 +66,19 @@ PROLOGUE(mpn_udiv_qrnnd)
 	movs	d, d, lsr #1		C d = floor(orig_d / 2)
 	adc	d, d, #0		C d = ceil(orig_d / 2)
 
-.Loop2:	divstep(n1,n0,d)
+L(oop2):
+	divstep(n1,n0,d)
 	divstep(n1,n0,d)
 	divstep(n1,n0,d)
 	divstep(n1,n0,d)
 	sub	r12, r12, #1
 	teq	r12, #0
-	bne	.Loop2
+	bne	L(oop2)
 
 	adc	n0, n0, n0		C shift and add last carry from divstep
 	add	n1, r8, n1, lsl #1	C shift in omitted dividend lsb
 	tst	lr, lr			C test saved divisor lsb
-	beq	.L_even_divisor
+	beq	L(_even_divisor)
 
 	rsb	d, lr, d, lsl #1	C restore orig d value
 	adds	n1, n1, n0		C fix remainder for omitted divisor lsb
@@ -89,7 +88,7 @@ PROLOGUE(mpn_udiv_qrnnd)
 	subcs	n1, n1, d		C adjust remainder
 	addcs	n0, n0, #1		C adjust quotient
 
-.L_even_divisor:
+L(_even_divisor):
 	str	n1, [ rem_ptr ]		C store remainder
 	mov	r0, n0			C quotient
 	ldmfd	sp!, { r8, pc }

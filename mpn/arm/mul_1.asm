@@ -30,23 +30,18 @@ define(`up',`r1')
 define(`n',`r2')
 define(`v',`r3')
 
-define(`sp',`r13')
-define(`lr',`r14')
-define(`pc',`r15')
-
-changecom(@)	C need this since # is used for constants
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
 	stmfd	sp!, { r8, r9, lr }
 	ands	ip, n, #1
-	beq	.Lskip1
+	beq	L(skip1)
 	ldr	lr, [up], #4
 	umull	r9, ip, v, lr
 	str	r9, [rp], #4
-.Lskip1:
+L(skip1):
 	tst	n, #2
-	beq	.Lskip2
+	beq	L(skip2)
 	mov	r8, ip
 	ldmia	up!, { ip, lr }
 	mov	r9, #0
@@ -54,11 +49,11 @@ PROLOGUE(mpn_mul_1)
 	mov	ip, #0
 	umlal	r9, ip, v, lr
 	stmia	rp!, { r8, r9 }
-.Lskip2:
+L(skip2):
 	bics	n, n, #3
-	beq	.Lreturn
+	beq	L(return)
 	stmfd	sp!, { r6, r7 }
-.Lmul_1_loop:
+L(mul_1_loop):
 	mov	r6, ip
 	ldmia	up!, { r8, r9, ip, lr }
 	ldr	r7, [rp, #12]			C cache allocate
@@ -72,9 +67,9 @@ PROLOGUE(mpn_mul_1)
 	umlal	r9, ip, v, lr
 	subs	n, n, #4
 	stmia	rp!, { r6, r7, r8, r9 }
-	bne	.Lmul_1_loop
+	bne	L(mul_1_loop)
 	ldmfd	sp!, { r6, r7 }
-.Lreturn:
+L(return):
 	mov	r0, ip
 	ldmfd	sp!, { r8, r9, pc }
 EPILOGUE(mpn_mul_1)
