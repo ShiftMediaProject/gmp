@@ -1702,6 +1702,19 @@ esac
 AC_SUBST(TUNE_SQR_OBJ)
 
 
+# Configs for demos/calc directory
+AM_CONFIG_HEADER(demos/calc/calc-config.h:demos/calc/calc-config-h.in)
+use_readline=$with_readline
+if test $with_readline = detect; then
+  AC_CHECK_LIB(readline, readline, use_readline=yes)
+fi
+if test $use_readline = yes; then
+  AC_DEFINE(WITH_READLINE, 1, [See demos/calc/calc-config.h])
+  AC_SUBST(LIBREADLINE, -lreadline)
+fi
+AC_PROG_YACC
+AM_PROG_LEX
+
 # Configs for demos/expr directory
 AM_CONFIG_HEADER(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
 if test $enable_mpfr = yes; then
