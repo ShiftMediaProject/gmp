@@ -22,13 +22,13 @@ Changes between MP version 4.1.2 and 4.2
 
 * Bug fixes.
 * New systems supported: HP-UX IA-64.
-* New gmp_randinit_mt Mersenne Twister random numbers, used for
-  gmp_randinit_default too.
-* New --enable-profiling=instrument build option.
+* New build option: --enable-profiling=instrument.
+* New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
+  gmp_randinit_default.
 * New memory function: mp_get_memory_functions.
 * New random functions: gmp_randinit_set, gmp_urandomb_ui, gmp_urandomm_ui.
 * gmp_scanf and friends accept C99 hex floats.
-* Numbers input and output can now be in bases up to 62.
+* Numeric input and output can now be in bases up to 62.
 
 Changes between MP version 4.1.1 and 4.1.2
 
