@@ -148,8 +148,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 	 from least significant end.  */
       mp_limb_t n1, c;
 
-      out_len = ((size_t) msize * BITS_PER_MP_LIMB
-                 * __mp_bases[base].chars_per_bit_exactly) + 1;
+      MPN_GET_STR_SIZE (out_len, base, msize);
       s += out_len;
 
       if (base == 10)
