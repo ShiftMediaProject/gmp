@@ -1090,6 +1090,39 @@ for CPU @samp{hppa2.0n} only 2.0n or 1.0 are allowed.
 
 @sp 1
 @need 1000
+@item IA-64 under HP-UX (@samp{ia64*-*-hpux*})
+
+HP-UX supports two ABIs for IA-64.  GMP performance is the same in both.
+
+@table @asis
+@item @samp{ABI=32}
+
+In the 32-bit ABI pointers, @code{int}s and @code{long}s are all 32 bits and
+GMP uses a @code{long long} (which is 64 bits) for a limb.  No special options
+are required for since this is the default for both HP C and GCC, but for
+reference the flags are
+
+@example
+gcc  -milp32
+cc   +DD32
+@end example
+
+@item @samp{ABI=64}
+
+In the 64-bit ABI, @code{long}s and pointers are 64 bits and GMP uses an
+@code{unsigned long} for a limb.  Applications must be compiled with
+
+@example
+gcc  -mlp64
+cc   +DD64
+@end example
+@end table
+
+On other IA-64 systems, GNU/Linux for instance, @samp{ABI=64} is the only
+choice, both for GMP and GCC.
+
+@sp 1
+@need 1000
 @item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]})
 
 IRIX 6 supports the n32 and 64 ABIs and always has a 64-bit MIPS 3 or better
@@ -1129,7 +1162,7 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 @item @samp{ABI=aix64}
 
 The AIX 64 ABI uses 64-bit limbs and pointers and is available on systems
-@samp{powerpc64*-*-aix*}.  Applications must be compiled (and linked) with
+@samp{powerpc64*-*-aix*}.  Applications must be compiled with
 
 @example
 gcc  -maix64
@@ -4852,7 +4885,7 @@ concatenated.
 Initialize @var{state} for a linear congruential algorithm as per
 @code{gmp_randinit_lc_2exp}.  @var{a}, @var{c} and @var{m2exp} are selected
 from a table, chosen so that @var{size} bits (or more) of each @math{X} will
-be used, ie. @math{@var{m2exp} @ge{} @var{size}/2}.
+be used, ie. @math{@var{m2exp}/2 @ge{} @var{size}}.
 
 If successful the return value is non-zero.  If @var{size} is bigger than the
 table data provides then the return value is zero.  The maximum @var{size}
@@ -5142,12 +5175,11 @@ function handle that.
 
 @deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, ...)
 @deftypefunx int gmp_obstack_vprintf (struct obstack *@var{ob}, const char *@var{fmt}, va_list @var{ap})
-Append to the current obstack object, in the same style as
-@code{obstack_printf}.  Return the number of characters written.  A
-null-terminator is not written.
+Append to the current object in @var{ob}.  The return value is the number of
+characters written.  A null-terminator is not written.
 
-@var{fmt} cannot be within the current obstack object, since the object might
-move as it grows.
+@var{fmt} cannot be within the current object in @var{ob}, since that object
+might move as it grows.
 
 These functions are available only when the C library provides the obstack
 feature, which probably means only on GNU systems, see
@@ -5277,7 +5309,7 @@ support from the C library, and @samp{'} cannot be used with GMP types.
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item @nicode{*} @tab read but don't store
 @item @nicode{a} @tab allocate a buffer (string conversions)
-@item @nicode{'} @tab group digits, GLIBC style (not GMP types)
+@item @nicode{'} @tab grouped digits, GLIBC style (not GMP types)
 @end multitable
 @end quotation
 
@@ -5320,7 +5352,7 @@ support from the C library, the rest are standard.
 @item @nicode{e} @nicode{E} @nicode{f} @nicode{g} @nicode{G}
                             @tab float
 @item @nicode{i}            @tab integer with base indicator
-@item @nicode{n}            @tab characters written so far
+@item @nicode{n}            @tab characters read so far
 @item @nicode{o}            @tab octal integer
 @item @nicode{p}            @tab pointer
 @item @nicode{s}            @tab string of non-whitespace characters
@@ -5341,7 +5373,7 @@ hexadecimal.
 values.  For the standard C types these are described as ``unsigned''
 conversions, but that merely affects certain overflow handling, negatives are
 still allowed (see @code{strtoul}, @ref{Parsing of Integers,,,libc,The GNU C
-Library Reference Manual}).  For GMP types there are no overflows, and
+Library Reference Manual}).  For GMP types there are no overflows, so
 @samp{d} and @samp{u} are identical.
 
 @samp{Q} type reads the numerator and (optional) denominator as given.  If the
@@ -5354,7 +5386,7 @@ denominator.  For example @samp{0x10/11} would be 16/11, whereas
 @samp{0x10/0x11} would be 16/17.
 
 @samp{n} can be used with any of the types above, even the GMP types.
-@samp{*} to suppress assignment is allowed, though the field would then do
+@samp{*} to suppress assignment is allowed, though in that case it would do
 nothing at all.
 
 Other conversions or types that might be accepted by the C library
@@ -5409,11 +5441,11 @@ towards the return value.
 
 If end of file or file error, or end of string, is reached when a match is
 required, and when no previous non-suppressed fields have matched, then the
-return value is EOF instead of 0.  A match is required for a literal character
-in the format string or a field other than @samp{%n}.  Whitespace in the
-format string is only an optional match and won't induce an EOF in this
-fashion.  Leading whitespace read and discarded for a field doesn't count as a
-match.
+return value is EOF instead of 0.  A match is considered to be required by a
+literal character in the format string or by a field other than @samp{%n}.
+Whitespace in the format string is only an optional match and won't induce an
+EOF in this fashion.  Leading whitespace read and discarded for a field
+doesn't count as a match.
 
 
 @node C++ Formatted Input,  , Formatted Input Functions, Formatted Input
