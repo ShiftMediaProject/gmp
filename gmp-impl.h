@@ -118,6 +118,12 @@ MA 02111-1307, USA. */
 #include <string>   /* for std::string */
 #endif
 
+
+#ifndef WANT_TMP_DEBUG  /* for TMP_ALLOC_LIMBS_2 and others */
+#define WANT_TMP_DEBUG 0
+#endif
+
+
 /* Might search and replace _PROTO to __GMP_PROTO internally one day, to
    avoid two names for one thing, but no hurry for that.  */
 #define _PROTO(x)  __GMP_PROTO(x)
@@ -419,19 +425,19 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
    involves copying a chunk of stack (various RISCs), or a call to a stack
    bounds check (mingw).  In any case, when debugging keep separate blocks
    so a redzoning malloc debugger can protect each individually.  */
-#if WANT_TMP_DEBUG
-#define TMP_ALLOC_LIMBS_2(xp,xsize, yp,ysize)   \
-  do {                                          \
-    (xp) = TMP_ALLOC_LIMBS (xsize);             \
-    (yp) = TMP_ALLOC_LIMBS (ysize);             \
+#define TMP_ALLOC_LIMBS_2(xp,xsize, yp,ysize)           \
+  do {                                                  \
+    if (WANT_TMP_DEBUG)                                 \
+      {                                                 \
+        (xp) = TMP_ALLOC_LIMBS (xsize);                 \
+        (yp) = TMP_ALLOC_LIMBS (ysize);                 \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        (xp) = TMP_ALLOC_LIMBS ((xsize) + (ysize));     \
+        (yp) = (xp) + (xsize);                          \
+      }                                                 \
   } while (0)
-#else
-#define TMP_ALLOC_LIMBS_2(xp,xsize, yp,ysize)   \
-  do {                                          \
-    (xp) = TMP_ALLOC_LIMBS ((xsize) + (ysize)); \
-    (yp) = (xp) + (xsize);                      \
-  } while (0)
-#endif
 
 
 /* From gmp.h, nicer names for internal use. */
