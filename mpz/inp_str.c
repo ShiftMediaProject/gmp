@@ -26,9 +26,13 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 static int
+#if __STDC__
+digit_value_in_base (int c, int base)
+#else
 digit_value_in_base (c, base)
      int c;
      int base;
+#endif
 {
   int digit;
 
