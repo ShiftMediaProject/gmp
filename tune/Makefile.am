@@ -117,8 +117,8 @@ DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 # recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
-TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c mul_n.c mul_fft.c mul.c \
-  sb_divrem_mn.c tdiv_qr.c
+TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c get_str.c \
+  mul_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c
 
 $(TUNE_MPN_SRCS_BASIC):
 	for i in $(TUNE_MPN_SRCS_BASIC); do \

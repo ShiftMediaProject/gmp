@@ -2653,6 +2653,8 @@ extern mp_size_t  divrem_1_unnorm_threshold[];
 extern mp_size_t  divrem_2_threshold[];
 extern mp_size_t  mod_1_norm_threshold[];
 extern mp_size_t  mod_1_unnorm_threshold[];
+extern mp_size_t  get_str_basecase_threshold[];
+extern mp_size_t  get_str_precompute_threshold[];
 
 #undef KARATSUBA_MUL_THRESHOLD
 #undef TOOM3_MUL_THRESHOLD
@@ -2673,6 +2675,8 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 #undef DIVREM_1_UNNORM_THRESHOLD
 #undef MOD_1_NORM_THRESHOLD
 #undef MOD_1_UNNORM_THRESHOLD
+#undef GET_STR_BASECASE_THRESHOLD
+#undef GET_STR_PRECOMPUTE_THRESHOLD
 
 #define KARATSUBA_MUL_THRESHOLD   mul_threshold[0]
 #define TOOM3_MUL_THRESHOLD       mul_threshold[1]
@@ -2693,6 +2697,8 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 #define DIVREM_1_UNNORM_THRESHOLD divrem_1_unnorm_threshold[0]
 #define MOD_1_NORM_THRESHOLD      mod_1_norm_threshold[0]
 #define MOD_1_UNNORM_THRESHOLD    mod_1_unnorm_threshold[0]
+#define GET_STR_BASECASE_THRESHOLD   get_str_basecase_threshold[0]
+#define GET_STR_PRECOMPUTE_THRESHOLD get_str_precompute_threshold[0]
 
 #if ! UDIV_PREINV_ALWAYS
 #undef SB_PREINV_THRESHOLD
@@ -2704,6 +2710,7 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #define KARATSUBA_SQR_MAX_GENERIC  200
 #define TOOM3_MUL_THRESHOLD_LIMIT  700
+#define GET_STR_THRESHOLD_LIMIT    500
 
 #undef  FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS
