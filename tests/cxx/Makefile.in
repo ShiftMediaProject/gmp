@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -154,22 +154,30 @@ LDADD = $(top_builddir)/tests/libtests.la \
   $(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
 
 
-@WANT_CXX_TRUE@check_PROGRAMS = t-headers t-ostream t-locale t-constr t-expr t-allfuns
+@WANT_CXX_TRUE@check_PROGRAMS = t-allfuns t-assign t-binary t-constr t-expr t-headers \
+@WANT_CXX_TRUE@  t-locale t-ostream t-ternary t-unary
+
 @WANT_CXX_TRUE@TESTS = $(check_PROGRAMS)
 
 t_allfuns_SOURCES = t-allfuns.cc
+t_assign_SOURCES = t-assign.cc
+t_binary_SOURCES = t-binary.cc
 t_constr_SOURCES = t-constr.cc
 t_expr_SOURCES = t-expr.cc
 t_headers_SOURCES = t-headers.cc
 t_locale_SOURCES = t-locale.cc
 t_ostream_SOURCES = t-ostream.cc
+t_ternary_SOURCES = t-ternary.cc
+t_unary_SOURCES = t-unary.cc
 subdir = tests/cxx
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@WANT_CXX_TRUE@check_PROGRAMS = t-headers$(EXEEXT) t-ostream$(EXEEXT) \
-@WANT_CXX_TRUE@	t-locale$(EXEEXT) t-constr$(EXEEXT) \
-@WANT_CXX_TRUE@	t-expr$(EXEEXT) t-allfuns$(EXEEXT)
+@WANT_CXX_TRUE@check_PROGRAMS = t-allfuns$(EXEEXT) t-assign$(EXEEXT) \
+@WANT_CXX_TRUE@	t-binary$(EXEEXT) t-constr$(EXEEXT) \
+@WANT_CXX_TRUE@	t-expr$(EXEEXT) t-headers$(EXEEXT) \
+@WANT_CXX_TRUE@	t-locale$(EXEEXT) t-ostream$(EXEEXT) \
+@WANT_CXX_TRUE@	t-ternary$(EXEEXT) t-unary$(EXEEXT)
 @WANT_CXX_FALSE@check_PROGRAMS =
 am_t_allfuns_OBJECTS = t-allfuns.$(OBJEXT)
 t_allfuns_OBJECTS = $(am_t_allfuns_OBJECTS)
@@ -177,6 +185,18 @@ t_allfuns_LDADD = $(LDADD)
 t_allfuns_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
 t_allfuns_LDFLAGS =
+am_t_assign_OBJECTS = t-assign.$(OBJEXT)
+t_assign_OBJECTS = $(am_t_assign_OBJECTS)
+t_assign_LDADD = $(LDADD)
+t_assign_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_assign_LDFLAGS =
+am_t_binary_OBJECTS = t-binary.$(OBJEXT)
+t_binary_OBJECTS = $(am_t_binary_OBJECTS)
+t_binary_LDADD = $(LDADD)
+t_binary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_binary_LDFLAGS =
 am_t_constr_OBJECTS = t-constr.$(OBJEXT)
 t_constr_OBJECTS = $(am_t_constr_OBJECTS)
 t_constr_LDADD = $(LDADD)
@@ -207,6 +227,18 @@ t_ostream_LDADD = $(LDADD)
 t_ostream_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
 t_ostream_LDFLAGS =
+am_t_ternary_OBJECTS = t-ternary.$(OBJEXT)
+t_ternary_OBJECTS = $(am_t_ternary_OBJECTS)
+t_ternary_LDADD = $(LDADD)
+t_ternary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_ternary_LDFLAGS =
+am_t_unary_OBJECTS = t-unary.$(OBJEXT)
+t_unary_OBJECTS = $(am_t_unary_OBJECTS)
+t_unary_LDADD = $(LDADD)
+t_unary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_unary_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -224,11 +256,12 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(t_allfuns_SOURCES) $(t_constr_SOURCES) \
-	$(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) \
-	$(t_ostream_SOURCES)
+DIST_SOURCES = $(t_allfuns_SOURCES) $(t_assign_SOURCES) \
+	$(t_binary_SOURCES) $(t_constr_SOURCES) $(t_expr_SOURCES) \
+	$(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES) \
+	$(t_ternary_SOURCES) $(t_unary_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(t_allfuns_SOURCES) $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES)
+SOURCES = $(t_allfuns_SOURCES) $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
 
 all: all-am
 
@@ -245,6 +278,12 @@ clean-checkPROGRAMS:
 t-allfuns$(EXEEXT): $(t_allfuns_OBJECTS) $(t_allfuns_DEPENDENCIES) 
 	@rm -f t-allfuns$(EXEEXT)
 	$(CXXLINK) $(t_allfuns_LDFLAGS) $(t_allfuns_OBJECTS) $(t_allfuns_LDADD) $(LIBS)
+t-assign$(EXEEXT): $(t_assign_OBJECTS) $(t_assign_DEPENDENCIES) 
+	@rm -f t-assign$(EXEEXT)
+	$(CXXLINK) $(t_assign_LDFLAGS) $(t_assign_OBJECTS) $(t_assign_LDADD) $(LIBS)
+t-binary$(EXEEXT): $(t_binary_OBJECTS) $(t_binary_DEPENDENCIES) 
+	@rm -f t-binary$(EXEEXT)
+	$(CXXLINK) $(t_binary_LDFLAGS) $(t_binary_OBJECTS) $(t_binary_LDADD) $(LIBS)
 t-constr$(EXEEXT): $(t_constr_OBJECTS) $(t_constr_DEPENDENCIES) 
 	@rm -f t-constr$(EXEEXT)
 	$(CXXLINK) $(t_constr_LDFLAGS) $(t_constr_OBJECTS) $(t_constr_LDADD) $(LIBS)
@@ -260,6 +299,12 @@ t-locale$(EXEEXT): $(t_locale_OBJECTS) $(t_locale_DEPENDENCIES)
 t-ostream$(EXEEXT): $(t_ostream_OBJECTS) $(t_ostream_DEPENDENCIES) 
 	@rm -f t-ostream$(EXEEXT)
 	$(CXXLINK) $(t_ostream_LDFLAGS) $(t_ostream_OBJECTS) $(t_ostream_LDADD) $(LIBS)
+t-ternary$(EXEEXT): $(t_ternary_OBJECTS) $(t_ternary_DEPENDENCIES) 
+	@rm -f t-ternary$(EXEEXT)
+	$(CXXLINK) $(t_ternary_LDFLAGS) $(t_ternary_OBJECTS) $(t_ternary_LDADD) $(LIBS)
+t-unary$(EXEEXT): $(t_unary_OBJECTS) $(t_unary_DEPENDENCIES) 
+	@rm -f t-unary$(EXEEXT)
+	$(CXXLINK) $(t_unary_LDFLAGS) $(t_unary_OBJECTS) $(t_unary_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
