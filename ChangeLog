@@ -1,5 +1,7 @@
 2000-10-20  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/cntlz.asm: Override `.set noat' from ASM_START.
+
 	* configure.in (HAVE_TARGET_CPU_*): Support hppa1.0, hppa1.1, hppa2.0
 	by sed'ing the period into `_'.
 
