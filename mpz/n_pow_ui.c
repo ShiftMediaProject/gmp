@@ -196,7 +196,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 {
   mp_ptr         rp;
   mp_size_t      rtwos_limbs, ralloc, rsize;
-  int            rneg, i, cnt, btwos;
+  int            rneg, i, cnt, btwos, r_bp_overlap;
   mp_limb_t      blimb, rl;
   unsigned long  rtwos_bits;
 #if HAVE_NATIVE_mpn_mul_2
@@ -206,10 +206,12 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 #endif
   TMP_DECL (marker);
 
-  TRACE (printf ("mpz_n_pow_ui e=%lu (0x%lX), bsize=%ld  ", e, e, bsize);
+  TRACE (printf ("mpz_n_pow_ui rp=0x%lX bp=0x%lX bsize=%ld e=%lu (0x%lX)\n",
+                 PTR(r), bp, bsize, e, e);
          mpn_trace ("b", bp, bsize));
 
   ASSERT (bsize == 0 || bp[ABS(bsize)-1] != 0);
+  ASSERT (MPN_SAME_OR_SEPARATE2_P (PTR(r), ABSIZ(r), bp, bsize));
 
   /* b^0 == 1, including 0^0 == 1 */
   if (e == 0)
@@ -230,6 +232,8 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
   rneg = (bsize < 0 && (e & 1) != 0);
   bsize = ABS (bsize);
   TRACE (printf ("rneg %d\n", rneg));
+
+  r_bp_overlap = (PTR(r) == bp);
 
   /* Strip low zero limbs from b. */
   rtwos_limbs = 0;
@@ -359,11 +363,12 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
     }
   else
     {
-      if (PTR(r) == bp || btwos != 0)
+      if (r_bp_overlap || btwos != 0)
         {
           mp_ptr tp = TMP_ALLOC_LIMBS (bsize);
           MPN_RSHIFT_OR_COPY (tp, bp, bsize, btwos);
           bp = tp;
+          TRACE (printf ("rshift or copy bp,bsize, new bsize=%ld\n", bsize));
         }
 #if HAVE_NATIVE_mpn_mul_2
       /* in case 3 limbs rshift to 2 and hence use the mul_2 loop below */
