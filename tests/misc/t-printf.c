@@ -779,7 +779,11 @@ check_misc (void)
   mpf_init2 (f, 128L);
 
   check_one ("!", "%c", '!');
+
   check_one ("hello world", "hello %s", "world");
+  check_one ("hello:", "%s:", "hello");
+  mpz_set_ui (z, 0L);
+  check_one ("hello0", "%s%Zd", "hello", z, z);
 
   {
     static char  xs[801];
