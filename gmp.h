@@ -192,20 +192,13 @@ void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 				      void (*) (void *, size_t)));
 extern __gmp_const int mp_bits_per_limb;
 
-void gmp_rand_init _PROTO ((gmp_rand_state s,
-			    unsigned long int size,
-			    gmp_rand_algorithm alg));
-void gmp_rand_init_lc _PROTO ((gmp_rand_state s,
-			       mpz_t a,
-			       unsigned long int c,
-			       mpz_t m));
-void gmp_rand_init_lc_2exp _PROTO ((gmp_rand_state s,
-				    mpz_t a,
-				    unsigned long int c,
-				    unsigned long int m2exp));
-void gmp_rand_seed _PROTO ((gmp_rand_state s, mpz_t seed));
-void gmp_rand_seed_ui _PROTO ((gmp_rand_state s, unsigned long int seed));
-void gmp_rand_clear _PROTO ((gmp_rand_state s));
+void gmp_rand_getraw _PROTO ((mp_ptr, gmp_rand_state, unsigned long int));
+void gmp_rand_init _PROTO ((gmp_rand_state, unsigned long int, gmp_rand_algorithm));
+void gmp_rand_init_lc _PROTO ((gmp_rand_state, mpz_t, unsigned long int, mpz_t));
+void gmp_rand_init_lc_2exp _PROTO ((gmp_rand_state, mpz_t, unsigned long int, unsigned long int));
+void gmp_rand_seed _PROTO ((gmp_rand_state, mpz_t));
+void gmp_rand_seed_ui _PROTO ((gmp_rand_state, unsigned long int));
+void gmp_rand_clear _PROTO ((gmp_rand_state));
 
 /**************** Integer (i.e. Z) routines.  ****************/
 
@@ -609,9 +602,8 @@ void mpf_sub_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_trunc _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_ui_div _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
-void mpf_urandomb _PROTO ((mpf_t rop,
-			   gmp_rand_state s,
-			   unsigned long int nbits));
+void mpf_urandomb _PROTO ((mpf_t, gmp_rand_state, unsigned long int));
+
 #if defined (__cplusplus)
 }
 #endif
@@ -650,7 +642,6 @@ void mpf_urandomb _PROTO ((mpf_t rop,
 #define mpn_preinv_mod_1	__MPN(preinv_mod_1)
 #define mpn_random2		__MPN(random2)
 #define mpn_random		__MPN(random)
-#define mpn_rawrandom		__MPN(rawrandom)
 #define mpn_rshift		__MPN(rshift)
 #define mpn_scan0		__MPN(scan0)
 #define mpn_scan1		__MPN(scan1)
@@ -699,7 +690,6 @@ unsigned long int mpn_popcount _PROTO ((mp_srcptr, mp_size_t));
 mp_limb_t mpn_preinv_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 void mpn_random _PROTO ((mp_ptr, mp_size_t));
 void mpn_random2 _PROTO ((mp_ptr, mp_size_t));
-void mpn_rawrandom _PROTO ((mp_ptr, gmp_rand_state, unsigned long int));
 mp_limb_t mpn_rshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 unsigned long int mpn_scan0 _PROTO ((mp_srcptr, unsigned long int));
 unsigned long int mpn_scan1 _PROTO ((mp_srcptr, unsigned long int));
