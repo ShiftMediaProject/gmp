@@ -159,14 +159,14 @@ mpf_set_str (x, str, base)
   xsize = str_size / __mp_bases[base].chars_per_limb + 2;
   {
     long exp_in_base;
-    mp_size_t rsize, msize;
+    mp_size_t ralloc, rsize, msize;
     int cnt, i;
     mp_ptr mp, xp, tp, rp;
     mp_limb_t cy;
     mp_exp_t exp_in_limbs;
     mp_size_t prec = x->_mp_prec;
     int divflag;
-    mp_size_t xxx = 0;
+    mp_size_t madj, radj;
 
     mp = (mp_ptr) TMP_ALLOC (xsize * BYTES_PER_MP_LIMB);
     msize = mpn_set_str (mp, (unsigned char *) begs, str_size, base);
@@ -178,6 +178,15 @@ mpf_set_str (x, str, base)
 	TMP_FREE (marker);
 	return 0;
       }
+
+    madj = 0;
+    /* Ignore excess limbs in MP,MSIZE.  */
+    if (msize > prec + 1)
+      {
+	madj = msize - (prec + 1);
+	mp += msize - (prec + 1);
+	msize = prec + 1;
+      }      
 
     if (expflag != 0)
       exp_in_base = strtol (str + 1, (char **) 0,
@@ -198,15 +207,10 @@ mpf_set_str (x, str, base)
 	return 0;
       }
 
-#if 1
-    rsize = (((mp_size_t) (exp_in_base / __mp_bases[base].chars_per_bit_exactly))
+    ralloc = (((mp_size_t) (exp_in_base / __mp_bases[base].chars_per_bit_exactly))
 	     / BITS_PER_MP_LIMB + 3);
-#else
-    count_leading_zeros (cnt, (mp_limb_t) base);
-    rsize = exp_in_base - cnt * exp_in_base / BITS_PER_MP_LIMB + 1;
-#endif
-    rp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
-    tp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
+    rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
+    tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
     rp[0] = base;
     rsize = 1;
@@ -228,33 +232,27 @@ mpf_set_str (x, str, base)
 	  }
       }
 
-    if (rsize > prec)
+    radj = 0;
+    if (rsize > prec + 1)
       {
-	xxx += rsize - prec;
-	rp += rsize - prec;
-	rsize = prec;
+	radj += rsize - (prec + 1);
+	rp += rsize - (prec + 1);
+	rsize = prec + 1;
       }
-#if 0
-    if (msize > prec)
-      {
-	xxx -= msize - prec;
-	mp += msize - prec;
-	msize = prec;
-      }
-#endif
+
     if (divflag)
       {
 	mp_ptr qp;
 	mp_limb_t qflag;
 	mp_size_t xtra;
-	if (msize <= rsize)
+	if (msize < rsize)
 	  {
-	    /* Allocate extra limb for current divrem sematics. */
+	    /* Pad out MP,MSIZE for current divrem semantics.  */
 	    mp_ptr tmp = (mp_ptr) TMP_ALLOC ((rsize + 1) * BYTES_PER_MP_LIMB);
 	    MPN_ZERO (tmp, rsize - msize);
 	    MPN_COPY (tmp + rsize - msize, mp, msize);
 	    mp = tmp;
-	    xxx += rsize - msize;
+	    madj -= rsize - msize;
 	    msize = rsize;
 	  }
 	count_leading_zeros (cnt, rp[rsize - 1]);
@@ -271,7 +269,7 @@ mpf_set_str (x, str, base)
 	qp[prec] = qflag;
 	tp = qp;
 	rsize = prec + qflag;
-	exp_in_limbs = rsize - xtra - xxx;
+	exp_in_limbs = rsize - xtra + (madj - radj);
       }
     else
       {
@@ -282,11 +280,10 @@ mpf_set_str (x, str, base)
 	  mpn_mul (tp, mp, msize, rp, rsize);
 	rsize += msize;
 	rsize -= tp[rsize - 1] == 0;
-	exp_in_limbs = rsize + xxx;
+	exp_in_limbs = rsize + madj + radj;
 
 	if (rsize > prec)
 	  {
-	    xxx = rsize - prec;
 	    tp += rsize - prec;
 	    rsize = prec;
 	    exp_in_limbs += 0;
