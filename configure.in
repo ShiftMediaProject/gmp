@@ -51,10 +51,6 @@ fi
 GMP_INIT(config.m4)
 
 AC_CANONICAL_HOST
-tmp_host=`echo $host_cpu | sed 's/\./_/'`
-AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_$tmp_host)
-GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_HOST_CPU_$tmp_host')", POST)
-
 AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
@@ -194,6 +190,48 @@ yes|no|detect) ;;
 esac],
 [with_readline=detect])
 
+
+
+tmp_host=`echo $host_cpu | sed 's/\./_/'`
+AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_$tmp_host)
+GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_HOST_CPU_$tmp_host')", POST)
+
+dnl  The HAVE_HOST_CPU_ list here only needs to have entries for those which
+dnl  are going to be tested, not everything that can possibly be selected.
+dnl
+dnl  The HAVE_HOST_CPU_FAMILY_ list similarly, and note that the AC_DEFINEs
+dnl  for these are under the cpu specific setups below.
+
+AH_VERBATIM([HAVE_HOST_CPU_1],
+[/* Define one of these to 1 for the host CPU family.
+   If your CPU is not in any of these families, leave all undefined. */
+#undef HAVE_HOST_CPU_FAMILY_m68k
+#undef HAVE_HOST_CPU_FAMILY_power
+#undef HAVE_HOST_CPU_FAMILY_powerpc
+#undef HAVE_HOST_CPU_FAMILY_x86
+
+/* Define one of the following to 1 for the host CPU, as per the output of
+   ./config.guess.  If your CPU is not listed here, leave all undefined.  */
+#undef HAVE_HOST_CPU_alphaev67
+#undef HAVE_HOST_CPU_alphaev68
+#undef HAVE_HOST_CPU_m68020
+#undef HAVE_HOST_CPU_m68030
+#undef HAVE_HOST_CPU_m68040
+#undef HAVE_HOST_CPU_m68060
+#undef HAVE_HOST_CPU_m68360
+#undef HAVE_HOST_CPU_powerpc604
+#undef HAVE_HOST_CPU_powerpc604e
+#undef HAVE_HOST_CPU_powerpc750
+#undef HAVE_HOST_CPU_powerpc7400
+#undef HAVE_HOST_CPU_supersparc
+#undef HAVE_HOST_CPU_i386
+#undef HAVE_HOST_CPU_i586
+#undef HAVE_HOST_CPU_i686
+#undef HAVE_HOST_CPU_pentium
+#undef HAVE_HOST_CPU_pentiummmx
+#undef HAVE_HOST_CPU_pentiumpro
+#undef HAVE_HOST_CPU_pentium2
+#undef HAVE_HOST_CPU_pentium3])
 
 
 # Table of compilers, options, and mpn paths.  This code has various related
@@ -713,7 +751,9 @@ case $host in
     # gcc 2.95 adds 401, 505, 602, 603e, ec603e, 604e, 620, 740, 750,
     #   801, 821, 823, 860.
     # gcc 3.0 adds 630, rs64a.
-    # gcc 3.1 pre-releases add 405, 7400, 7450.
+    # gcc 3.1 adds 405, 7400, 7450.
+    # gcc 3.2 or 3.3 is adding power3, power4, 8540.  power3 seems to
+    #   be just a synonym for 630.
     #
     # FIXME: The way 603e falls back to 603 for gcc 2.7.2 should be
     # done for all the others too.  But what would be the correct
@@ -1737,6 +1777,7 @@ esac
 #   alarm - not in mingw
 #   clock_gettime - not in glibc 2.2.4, only very recent systems
 #   cputime - not in glibc
+#   getrusage - not in mingw
 #   gettimeofday - not in mingw
 #   mmap - not in mingw, djgpp
 #   obstack_vprintf - glibc specific
@@ -1956,6 +1997,58 @@ done
 if test -n "$SPEED_CYCLECOUNTER_OBJ"; then
   found_asm=yes
 fi
+
+dnl  The following list only needs to have templates for those defines which
+dnl  are going to be tested by the code, there's no need to have every
+dnl  possible mpn routine.
+
+AH_VERBATIM([HAVE_NATIVE],
+[/* Define to 1 each of the following for which a native (ie. CPU specific)
+    implementation of the corresponding routine exists.  */
+#undef HAVE_NATIVE_mpn_add_n
+#undef HAVE_NATIVE_mpn_add_nc
+#undef HAVE_NATIVE_mpn_addmul_1c
+#undef HAVE_NATIVE_mpn_addmul_2
+#undef HAVE_NATIVE_mpn_addmul_3
+#undef HAVE_NATIVE_mpn_addmul_4
+#undef HAVE_NATIVE_mpn_addsub_n
+#undef HAVE_NATIVE_mpn_and_n
+#undef HAVE_NATIVE_mpn_andn_n
+#undef HAVE_NATIVE_mpn_com_n
+#undef HAVE_NATIVE_mpn_copyd
+#undef HAVE_NATIVE_mpn_copyi
+#undef HAVE_NATIVE_mpn_divexact_1
+#undef HAVE_NATIVE_mpn_divrem_1
+#undef HAVE_NATIVE_mpn_divrem_1c
+#undef HAVE_NATIVE_mpn_divrem_2
+#undef HAVE_NATIVE_mpn_gcd_1
+#undef HAVE_NATIVE_mpn_gcd_finda
+#undef HAVE_NATIVE_mpn_invert_limb
+#undef HAVE_NATIVE_mpn_ior_n
+#undef HAVE_NATIVE_mpn_iorn_n
+#undef HAVE_NATIVE_mpn_mod_1
+#undef HAVE_NATIVE_mpn_mod_1c
+#undef HAVE_NATIVE_mpn_modexact_1_odd
+#undef HAVE_NATIVE_mpn_modexact_1c_odd
+#undef HAVE_NATIVE_mpn_mul_1c
+#undef HAVE_NATIVE_mpn_mul_2
+#undef HAVE_NATIVE_mpn_mul_3
+#undef HAVE_NATIVE_mpn_mul_4
+#undef HAVE_NATIVE_mpn_nand_n
+#undef HAVE_NATIVE_mpn_nior_n
+#undef HAVE_NATIVE_mpn_preinv_divrem_1
+#undef HAVE_NATIVE_mpn_preinv_mod_1
+#undef HAVE_NATIVE_mpn_sqr_basecase
+#undef HAVE_NATIVE_mpn_sqr_diagonal
+#undef HAVE_NATIVE_mpn_sub_n
+#undef HAVE_NATIVE_mpn_sub_nc
+#undef HAVE_NATIVE_mpn_submul_1c
+#undef HAVE_NATIVE_mpn_umul_ppmm
+#undef HAVE_NATIVE_mpn_umul_ppmm_r
+#undef HAVE_NATIVE_mpn_udiv_qrnnd
+#undef HAVE_NATIVE_mpn_udiv_qrnnd_r
+#undef HAVE_NATIVE_mpn_xor_n
+#undef HAVE_NATIVE_mpn_xnor_n])
 
 
 # Don't demand an m4 unless it's actually needed.
