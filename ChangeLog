@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-23  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (__GMP_ATTRIBUTE_PURE): Suppress this when
+	__GMP_NO_ATTRIBUTE_CONST_PURE is defined.
+	* gmp-impl.h (ATTRIBUTE_CONST): Ditto.
+	* tune/common.c: Use __GMP_NO_ATTRIBUTE_CONST_PURE.
+
+	* tune/speed.h, tune/many.pl: Remove ATTRIBUTEs from prototypes.
+	* tune/speed.h: Remove various "dummy" variables attempting to keep
+	"pure" calls live, no longer necessary.  They weren't sufficient for
+	recent MacOS cc anyway.
+
 2002-10-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/ieee/addmul_1.c: Handle overlap as in mul_1.c.
