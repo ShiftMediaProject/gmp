@@ -1,3 +1,7 @@
+2000-06-19  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/primes.c: Properly handle arguments `m +n'.
+
 2000-06-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/set_si.c [_LONG_LONG_LIMB]: Fix to zero extend 0x80...00.
