@@ -1,3 +1,16 @@
+2000-03-21  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp.h (error number enum): New anonymous enum.
+	(gmp_errno): New.
+
+	* gmp.h (__GNU_MP_VERSION, __GNU_MP_VERSION_MINOR): Bump for GMP 3.0.
+
+2000-03-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/unicos.m4 (FLOAT64): New define.
+	* mpn/alpha/default.m4 (FLOAT64): New define.
+	* mpn/alpha/invert_limb.asm (C36): Use FLOAT64.
+
 2000-03-21  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/diveby3.asm: Tiny speedup.
@@ -39,12 +52,12 @@
  	* mkinstalldirs: Update (Automake 2000-03-17).
 	* ltconfig: Update (Libtool 2000-03-17).
 	* ltmain.sh: Ditto.
-	
+
 	* configure: Regenerate with new autoconf/-make/libtool suite.
 	* aclocal.m4: Ditto.
 	* config.in: Ditto.
 	* all Makefile.in's: Ditto.
-	
+
 2000-03-20  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (main): Don't allow `-N' for base, require `-bN'.
