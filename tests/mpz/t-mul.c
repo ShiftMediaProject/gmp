@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 #include "tests.h"
 
-void debug_mp _PROTO ((mpz_t, int));
+void debug_mp _PROTO ((mpz_t));
 static void ref_mpn_mul _PROTO ((mp_ptr,mp_srcptr,mp_size_t,mp_srcptr,mp_size_t));
 static void ref_mpz_mul _PROTO ((mpz_t, const mpz_t, const mpz_t));
 void dump_abort _PROTO ((int, char *, mpz_t, mpz_t, mpz_t, mpz_t));
@@ -199,16 +199,16 @@ ref_mpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
   if (vn < FFT_THRESHOLD)
     {
       /* In the mpn_toom3_mul_n range, use mpn_kara_mul_n.  */
-      tn = 2 * vn + MPN_KARA_SQR_N_TSIZE (vn);
+      tn = 2 * vn + MPN_KARA_MUL_N_TSIZE (vn);
       tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_kara_mul_n (tp + 2 * vn, up, vp, vn, tp);
+      mpn_kara_mul_n (tp, up, vp, vn, tp + 2 * vn);
     }
   else
     {
       /* Finally, for the largest operands, use mpn_toom3_mul_n.  */
-      tn = 2 * vn + MPN_TOOM3_SQR_N_TSIZE (vn);
+      tn = 2 * vn + MPN_TOOM3_MUL_N_TSIZE (vn);
       tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_toom3_mul_n (tp + 2 * vn, up, vp, vn, tp);
+      mpn_toom3_mul_n (tp, up, vp, vn, tp + 2 * vn);
     }
 
   if (un != vn)
@@ -218,13 +218,13 @@ ref_mpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
       else
 	ref_mpn_mul (wp + vn, up + vn, un - vn, vp, vn);
 
-      MPN_COPY (wp, tp + 2 * vn, vn);
-      cy = mpn_add_n (wp + vn, wp + vn, tp + 3 * vn, vn);
+      MPN_COPY (wp, tp, vn);
+      cy = mpn_add_n (wp + vn, wp + vn, tp + vn, vn);
       mpn_incr_u (wp + 2 * vn, cy);
     }
   else
     {
-      MPN_COPY (wp, tp + 2 * vn, 2 * vn);
+      MPN_COPY (wp, tp, 2 * vn);
     }
 
   __GMP_FREE_FUNC_LIMBS (tp, tn);
