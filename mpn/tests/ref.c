@@ -572,8 +572,6 @@ refmpn_lshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
 }
 
 
-#define MP_LIMB_T_HIGHBIT   ((mp_limb_t) 1 << (BITS_PER_MP_LIMB-1))
-
 /* Divide h,l by d, producing a quotient *q and remainder *r.
    Must have h < d.
    __udiv_qrnnd_c isn't simple, and it's a bit slow, but it works. */
