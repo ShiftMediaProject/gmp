@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-02-22  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (USE_LEADING_REGPARM): Disable under prof or gprof, for
+	the benefit of freebsd where .mcount clobbers registers.
+	* configure.in (WANT_PROFILING_PROF, WANT_PROFILING_GPROF): New
+	AC_DEFINEs.
+
+2004-02-21  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (sparc64-*-*bsd*): Amend -m32 setup for ABI=32, so it's
+	not used in ABI=64 on the BSD systems.
+
 2004-02-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (gcdext_valid_p): New function.
