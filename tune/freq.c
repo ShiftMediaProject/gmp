@@ -343,6 +343,52 @@ speed_cpu_frequency_sco_etchw (void)
 #endif
 
 
+/* FreeBSD on i386 gives a line like the following at bootup, and which can
+   be read back from /var/run/dmesg.boot.
+
+       CPU: AMD Athlon(tm) Processor (755.29-MHz 686-class CPU)
+       CPU: Pentium 4 (1707.56-MHz 686-class CPU)
+
+   This is useful on FreeBSD 4.x, where there's no sysctl machdep.tsc_freq
+   or machdep.i586_freq.
+
+   It's better to use /var/run/dmesg.boot than to run /sbin/dmesg, since the
+   latter prints the current system message buffer, which is a limited size
+   and can wrap around if the system is up for a long time.  */
+
+int
+speed_cpu_frequency_bsd_dmesg (void)
+{
+  FILE    *fp;
+  char    buf[256], *p;
+  double  val;
+  int     ret = 0;
+
+  if ((fp = fopen ("/var/run/dmesg.boot", "r")) != NULL)
+    {
+      while (fgets (buf, sizeof (buf), fp) != NULL)
+        {
+          if (memcmp (buf, "CPU:", 4) == 0)
+            {
+              for (p = buf; *p != '\0'; p++)
+                {
+                  if (sscanf (p, "(%lf-MHz", &val) == 1)
+                    {
+                      speed_cycletime = 1e-6 / val;
+                      if (speed_option_verbose)
+                        printf ("Using /var/run/dmesg.boot CPU: %.2f MHz for cycle time %.3g\n", val, speed_cycletime);
+                      ret = 1;
+                      break;
+                    }
+                }
+            }
+        }
+      fclose (fp);
+    }
+  return ret;
+}
+
+
 /* processor_info() for Solaris.  "psrinfo" is the command-line interface to
    this.  "prtconf -vp" gives similar information.
 
@@ -503,6 +549,9 @@ const struct {
 
   { speed_cpu_frequency_proc_cpuinfo,
     "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
+
+  { speed_cpu_frequency_bsd_dmesg,
+    "BSD /var/run/dmesg.boot file" },
 
 #if HAVE_SPEED_CPU_FREQUENCY_SUNOS_SYSINFO
   { speed_cpu_frequency_sunos_sysinfo,
