@@ -1,3 +1,25 @@
+The IA-64 ISA is strange and the Itanium pipeline is a bizarre!  How
+come everybody else is moving from static to dynamic OOO pipelines,
+and Intel moves in the opposite direction?  I think compiler writers
+failed badly to generate reasonable code for the static RISC pipelines
+of the late 1990'ies, and they sure won't do any better with the IA-64
+ISA and its Itanium implementation!
+
+The IA-64 ISA keeps instructions three and three in 128 bit bundles.
+Programmers/compilers need to put explicit breaks `;;' between WAW or
+RAW dependencies.  Such breaks can be anywhere in a bundle, or between
+bundles.
+
+The Itanium implementation can in under ideal conditions execute two
+bundles per cycle.  But to reach that rate for integer code, one needs
+to sprinkle the code with `nop.f' instructions, one per bundle.  With
+good scheduling, one can thus reach a peak execution rate of 4
+instructions/cycle.
+
+Taken branches seem to insert a bubble into the pipeline where no
+instructions can be issued.
+
+
 ================================================================
 mpn_addmul_1
 	ldfp8
