@@ -1997,9 +1997,9 @@ if test "$gmp_asm_syntax_testing" != no; then
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
       case $host in
         powerpc*-*-aix*)
-          case $host in
-            POWERPC64_PATTERN) GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
-            *)                 GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
+	  case $ABI in
+	    64) GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
+            *)  GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
           esac
           ;;
       esac
