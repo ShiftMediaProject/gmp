@@ -144,7 +144,9 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
+  -DOPERATION_`echo $* | sed 's/_$$//'`
+
 
 OFILES = @mpn_objects@
 
@@ -157,7 +159,8 @@ EXTRA_LTLIBRARIES = libdummy.la
 nodist_libdummy_la_SOURCES = \
   add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c com_n.c copyd.c copyi.c	    \
   dc_divrem_n.c cmp.c                                                       \
-  diveby3.c divis.c divrem.c divrem_1.c divrem_2.c dump.c gcd.c             \
+  dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
+  dump.c fib_ui.c gcd.c							    \
   gcd_finda.c gcd_1.c gcdext.c get_str.c hamdist.c inlines.c invert_limb.c  \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mode1o.c mul.c mul_1.c	    \
   mul_fft.c mul_n.c mul_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c   \
@@ -207,18 +210,18 @@ libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
 nodist_libdummy_la_OBJECTS = add_n$U.lo addmul_1$U.lo and_n$U.lo \
 	andn_n$U.lo bdivmod$U.lo com_n$U.lo copyd$U.lo copyi$U.lo \
-	dc_divrem_n$U.lo cmp$U.lo diveby3$U.lo divis$U.lo divrem$U.lo \
-	divrem_1$U.lo divrem_2$U.lo dump$U.lo gcd$U.lo gcd_finda$U.lo \
-	gcd_1$U.lo gcdext$U.lo get_str$U.lo hamdist$U.lo inlines$U.lo \
-	invert_limb$U.lo ior_n$U.lo iorn_n$U.lo jacbase$U.lo \
-	lshift$U.lo mod_1$U.lo mode1o$U.lo mul$U.lo mul_1$U.lo \
-	mul_fft$U.lo mul_n$U.lo mul_basecase$U.lo nand_n$U.lo \
-	nior_n$U.lo perfsqr$U.lo popcount$U.lo pre_mod_1$U.lo \
-	random$U.lo random2$U.lo rshift$U.lo sb_divrem_mn$U.lo \
-	scan0$U.lo scan1$U.lo set_str$U.lo sqr_basecase$U.lo \
-	sqr_diagonal$U.lo sqrtrem$U.lo sub_n$U.lo submul_1$U.lo \
-	tdiv_qr$U.lo udiv_qrnnd$U.lo udiv_w_sdiv$U.lo xor_n$U.lo \
-	xnor_n$U.lo
+	dc_divrem_n$U.lo cmp$U.lo dive_1$U.lo diveby3$U.lo divis$U.lo \
+	divrem$U.lo divrem_1$U.lo divrem_2$U.lo dump$U.lo fib_ui$U.lo \
+	gcd$U.lo gcd_finda$U.lo gcd_1$U.lo gcdext$U.lo get_str$U.lo \
+	hamdist$U.lo inlines$U.lo invert_limb$U.lo ior_n$U.lo \
+	iorn_n$U.lo jacbase$U.lo lshift$U.lo mod_1$U.lo mode1o$U.lo \
+	mul$U.lo mul_1$U.lo mul_fft$U.lo mul_n$U.lo mul_basecase$U.lo \
+	nand_n$U.lo nior_n$U.lo perfsqr$U.lo popcount$U.lo \
+	pre_mod_1$U.lo random$U.lo random2$U.lo rshift$U.lo \
+	sb_divrem_mn$U.lo scan0$U.lo scan1$U.lo set_str$U.lo \
+	sqr_basecase$U.lo sqr_diagonal$U.lo sqrtrem$U.lo sub_n$U.lo \
+	submul_1$U.lo tdiv_qr$U.lo udiv_qrnnd$U.lo udiv_w_sdiv$U.lo \
+	xor_n$U.lo xnor_n$U.lo
 libdummy_la_OBJECTS = $(nodist_libdummy_la_OBJECTS)
 libmpn_la_LDFLAGS =
 am_libmpn_la_OBJECTS = mp_bases$U.lo
@@ -311,6 +314,8 @@ copyi_.c: copyi.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/copyi.c; then echo $(srcdir)/copyi.c; else echo copyi.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > copyi_.c || rm -f copyi_.c
 dc_divrem_n_.c: dc_divrem_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dc_divrem_n.c; then echo $(srcdir)/dc_divrem_n.c; else echo dc_divrem_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dc_divrem_n_.c || rm -f dc_divrem_n_.c
+dive_1_.c: dive_1.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dive_1.c; then echo $(srcdir)/dive_1.c; else echo dive_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dive_1_.c || rm -f dive_1_.c
 diveby3_.c: diveby3.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/diveby3.c; then echo $(srcdir)/diveby3.c; else echo diveby3.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > diveby3_.c || rm -f diveby3_.c
 divis_.c: divis.c $(ANSI2KNR)
@@ -323,6 +328,8 @@ divrem_2_.c: divrem_2.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_2.c; then echo $(srcdir)/divrem_2.c; else echo divrem_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_2_.c || rm -f divrem_2_.c
 dump_.c: dump.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c || rm -f dump_.c
+fib_ui_.c: fib_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c || rm -f fib_ui_.c
 gcd_.c: gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c || rm -f gcd_.c
 gcd_1_.c: gcd_1.c $(ANSI2KNR)
@@ -411,10 +418,11 @@ add_n_.$(OBJEXT) add_n_.lo addmul_1_.$(OBJEXT) addmul_1_.lo \
 and_n_.$(OBJEXT) and_n_.lo andn_n_.$(OBJEXT) andn_n_.lo \
 bdivmod_.$(OBJEXT) bdivmod_.lo cmp_.$(OBJEXT) cmp_.lo com_n_.$(OBJEXT) \
 com_n_.lo copyd_.$(OBJEXT) copyd_.lo copyi_.$(OBJEXT) copyi_.lo \
-dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo diveby3_.$(OBJEXT) diveby3_.lo \
-divis_.$(OBJEXT) divis_.lo divrem_.$(OBJEXT) divrem_.lo \
-divrem_1_.$(OBJEXT) divrem_1_.lo divrem_2_.$(OBJEXT) divrem_2_.lo \
-dump_.$(OBJEXT) dump_.lo gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) \
+dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo dive_1_.$(OBJEXT) dive_1_.lo \
+diveby3_.$(OBJEXT) diveby3_.lo divis_.$(OBJEXT) divis_.lo \
+divrem_.$(OBJEXT) divrem_.lo divrem_1_.$(OBJEXT) divrem_1_.lo \
+divrem_2_.$(OBJEXT) divrem_2_.lo dump_.$(OBJEXT) dump_.lo \
+fib_ui_.$(OBJEXT) fib_ui_.lo gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) \
 gcd_1_.lo gcd_finda_.$(OBJEXT) gcd_finda_.lo gcdext_.$(OBJEXT) \
 gcdext_.lo get_str_.$(OBJEXT) get_str_.lo hamdist_.$(OBJEXT) \
 hamdist_.lo inlines_.$(OBJEXT) inlines_.lo invert_limb_.$(OBJEXT) \
