@@ -1,6 +1,6 @@
 /* mpf_init_set_ui() -- Initialize a float and assign it from an unsigned int.
 
-Copyright 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,9 +26,21 @@ void
 mpf_init_set_ui (mpf_ptr r, unsigned long int val)
 {
   mp_size_t prec = __gmp_default_fp_limb_precision;
+  mp_size_t size;
+
   r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
   r->_mp_prec = prec;
-  r->_mp_d[0] = val;
-  r->_mp_size = val != 0;
-  r->_mp_exp = val != 0;
+  r->_mp_d[0] = val & GMP_NUMB_MASK;
+  size = (val != 0);
+
+#if GMP_NAIL_BITS != 0
+  if (val > GMP_NUMB_MAX)
+    {
+      r->_mp_d[1] = val >> GMP_NUMB_BITS;
+      size = 2;
+    }
+#endif
+
+  r->_mp_size = size;
+  r->_mp_exp = size;
 }
