@@ -33,7 +33,6 @@ C This code runs at 3.0 cycles/limb on the Itanium, for large operands.
 ASM_START()
 PROLOGUE(mpn_sub_n)
 	.prologue
-	.save	ar.lc, r2
 ifdef(`HAVE_ABI_32',
 `		addp4	r32 = 0, r32
 		addp4	r33 = 0, r33
@@ -45,7 +44,9 @@ ifdef(`HAVE_ABI_32',
 		add		r35 = -2, r35
 		nop.b		0
 } { .mib;	cmp.ne		p8, p9 = r0, r0
+	.save	ar.lc, r2
 		mov		r2 = ar.lc
+	.body
 		nop.b		0			;;
 } { .mib;	ld8		r16 = [r33], 8
 		mov		ar.lc = r35
