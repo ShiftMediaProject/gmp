@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-27  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpz/t-mul.c (mul_kara, mul_basecase): Use __GMP_PROTO.
+
+	* mpn/generic/gcd.c (NHGCD_SWAP4_2, NHGCD_SWAP3_LEFT),
+	mpn/generic/hgcd.c (HGCD_SWAP4_LEFT, HGCD_SWAP4_RIGHT, HGCD_SWAP4_2,
+	HGCD_SWAP3_LEFT): Aggregate initializers for automatics is an
+	ANSI-ism, avoid.
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Restore this, giving no directory on
+	ansi2knr to avoid a circular build rule.
+	* configure.in (AM_INIT_AUTOMAKE): Note options also in Makefile.am.
+
+	* configure.in (cflags_maybe): Don't loop adding cflags_maybe if the
+	user has set CFLAGS.
+
 2003-12-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/gcd.c (gcd_schoenhage_itch): Avoid unary "+".
