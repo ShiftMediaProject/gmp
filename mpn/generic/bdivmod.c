@@ -65,16 +65,13 @@ mpn_bdivmod (qp, up, usize, vp, vsize, d)
      unsigned long int d;
 #endif
 {
-  /* Cache for v_inv is used to make mpn_accelgcd faster.  */
-  static mp_limb_t previous_low_vlimb = 0;
-  static mp_limb_t v_inv;		/* 1/V mod 2^BITS_PER_MP_LIMB.  */
+  mp_limb_t v_inv = 0;		/* 1/V mod 2^BITS_PER_MP_LIMB.  */
 
-  if (vp[0] != previous_low_vlimb)	/* Cache miss; compute v_inv.  */
+  /* Compute v_inv.  */
     {
-      mp_limb_t v = previous_low_vlimb = vp[0];
+      mp_limb_t v = vp[0];
       mp_limb_t make_zero = 1;
       mp_limb_t two_i = 1;
-      v_inv = 0;
       do
 	{
 	  while ((two_i & make_zero) == 0)
