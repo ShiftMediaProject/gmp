@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include "config.h"
 
 #include <stdio.h> /* for NULL */
+
 #if HAVE_STDARG
 #include <stdarg.h>
 #else
@@ -30,44 +31,6 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-
-/* Array of CL-schemes, ordered in increasing order of the first
-   member (the 'm2exp' value).  The end of the array is indicated with
-   an entry containing all zeros.  */
-
-/* All multipliers are in the range 0.01*m and 0.99*m, and are
-congruent to 5 (mod 8).
-They all pass the spectral test with Vt >= 2^(30/t) and merit >= 1.
-(Up to and including 196 bits, merit is >= 3.)  */
-
-struct __gmp_rand_lc_scheme_struct
-{
-  unsigned long int m2exp;	/* Modulus is 2 ^ m2exp. */
-  const char *astr;		/* Multiplier in string form. */
-  unsigned long int c;		/* Addend. */
-};
-
-const struct __gmp_rand_lc_scheme_struct __gmp_rand_lc_scheme[] =
-{
-  {32, "29CF535", 	     1},
-  {33, "51F666D", 	     1},
-  {34, "A3D73AD", 	     1},
-  {35, "147E5B85", 	     1},
-  {36, "28F725C5", 	     1},
-  {37, "51EE3105", 	     1},
-  {38, "A3DD5CDD", 	     1},
-  {39, "147AF833D", 	     1},
-  {40, "28F5DA175", 	     1},
-  {56, "AA7D735234C0DD",  1},
-  {64, "BAECD515DAF0B49D", 1},
-  {100, "292787EBD3329AD7E7575E2FD", 1},	
-  {128, "48A74F367FA7B5C8ACBB36901308FA85", 1},
-  {156, "78A7FDDDC43611B527C3F1D760F36E5D7FC7C45", 1},
-  {196, "41BA2E104EE34C66B3520CE706A56498DE6D44721E5E24F5", 1},
-  {200, "4E5A24C38B981EAFE84CD9D0BEC48E83911362C114F30072C5", 1},
-  {256, "AF66BA932AAF58A071FD8F0742A99A0C76982D648509973DB802303128A14CB5", 1},
-  {0, NULL, 0}			/* End of array. */
-};
 
 void
 #if HAVE_STDARG
@@ -80,46 +43,29 @@ gmp_randinit (va_alist)
 #endif
 {
   va_list ap;
-
 #if HAVE_STDARG
   va_start (ap, alg);
-
 #else
   __gmp_randstate_struct *rstate;
   gmp_randalg_t alg;
-
   va_start (ap);
   rstate = va_arg (ap, __gmp_randstate_struct *);
   alg = va_arg (ap, gmp_randalg_t);
 #endif
 
-  switch (alg)
-    {
-    case GMP_RAND_ALG_LC:	/* Linear congruential.  */
-      {
-	unsigned long int size;
-	const struct __gmp_rand_lc_scheme_struct *sp;
-	mpz_t a;
+  switch (alg) {
+  case GMP_RAND_ALG_LC:
+    if (! gmp_randinit_lc_2exp_size (rstate, va_arg (ap, unsigned long)))
+      gmp_errno |= GMP_ERROR_INVALID_ARGUMENT;
+    break;
+  default:
+    gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
+    break;
+  }
+  va_end (ap);
+}
 
-	size = va_arg (ap, unsigned long int);
 
-	/* Pick a scheme.  */
-	for (sp = __gmp_rand_lc_scheme; sp->m2exp != 0; sp++)
-	  if (sp->m2exp / 2 >= size)
-	    break;
-
-	if (sp->m2exp == 0)	/* Nothing big enough found.  */
-	  {
-	    gmp_errno |= GMP_ERROR_INVALID_ARGUMENT;
-	    return;
-	  }
-
-	/* Install scheme.  */
-	mpz_init_set_str (a, sp->astr, 16);
-	gmp_randinit_lc_2exp (rstate, a, sp->c, sp->m2exp);
-	mpz_clear (a);
-	break;
-      }
 
 #if 0
     case GMP_RAND_ALG_BBS:	/* Blum, Blum, and Shub. */
@@ -162,10 +108,3 @@ gmp_randinit (va_alist)
 	break;
       }
 #endif /* 0 */
-
-    default:			/* Bad choice. */
-      gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
-    }
-
-  va_end (ap);
-}
