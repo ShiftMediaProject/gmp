@@ -14,7 +14,7 @@
 dnl  GMP specific autoconf macros
 
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -1945,8 +1945,10 @@ dnl  GMP_FUNC_VSNPRINTF
 dnl  ------------------
 dnl  Check whether vsnprintf exists, and works properly.
 dnl
-dnl  Sparc Solaris 2.7 in 64-bit mode doesn't truncate, so vsnprintf is just
-dnl  like vsprintf, which is completely useless.
+dnl  Sparc Solaris 2.7 in 64-bit mode doesn't always truncate, making
+dnl  vsnprintf like vsprintf, and hence completely useless.  The %n in the
+dnl  test case seems to be necessary to tickle the problem, on one system
+dnl  tested at least.
 dnl
 dnl  glibc 2.0.x returns either -1 or bufsize-1 for an overflow (both seen,
 dnl  not sure which 2.0.x does which), but still puts the correct null
@@ -2007,7 +2009,8 @@ check (va_alist)
 int
 main ()
 {
-  check ("hello world");
+  int n;
+  check ("%nhello world", &n);
   exit (0);
 }
 ],
