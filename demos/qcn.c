@@ -1,4 +1,4 @@
-/* Use mpz_kronecker_zi_ui() to calculate an estimate for the quadratic
+/* Use mpz_kronecker_ui() to calculate an estimate for the quadratic
    class number h(d), for a given negative fundamental discriminant, using
    Dirichlet's analytic formula. */
 
@@ -89,14 +89,14 @@ qcn_estimate (mpz_t d)
 
   /* p=2 */
   h = sqrt (-mpz_get_d (d)) / M_PI
-    * 2.0 / (2.0 - mpz_kronecker_zi_ui (d, 2));
+    * 2.0 / (2.0 - mpz_kronecker_ui (d, 2));
 
   if (mpz_cmp_si (d, -3) == 0)       h *= 3;
   else if (mpz_cmp_si (d, -4) == 0)  h *= 2;
 
   for (p = 3; p < P_LIMIT; p += 2)
     if (prime_p (p))
-      h *= (double) p / (double) (p - mpz_kronecker_zi_ui (d, p));
+      h *= (double) p / (double) (p - mpz_kronecker_ui (d, p));
 
   return h;
 }

@@ -1539,10 +1539,10 @@ Compute the Jacobi and Legendre symbols, respectively.  @var{op2} should be
 odd and must be positive.
 @end deftypefun
 
-@deftypefun int mpz_kronecker_si_zi (long @var{a}, mpz_t @var{b});
-@deftypefunx int mpz_kronecker_ui_zi (unsigned long @var{a}, mpz_t @var{b});
-@deftypefunx int mpz_kronecker_zi_si (mpz_t @var{a}, long @var{b});
-@deftypefunx int mpz_kronecker_zi_ui (mpz_t @var{a}, unsigned long @var{b});
+@deftypefun int mpz_si_kronecker (long @var{a}, mpz_t @var{b});
+@deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b});
+@deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b});
+@deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b});
 @tex
 Calculate the value of the Kronecker/Jacobi symbol $\left(a \over b\right)$,
 with the Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$
@@ -1554,7 +1554,7 @@ Kronecker extension (a/2)=(2/a) when a odd, or (a/2)=0 when a even.
 @end ifnottex
 All values of @var{a} and @var{b} give a well-defined result.  See Henri
 Cohen, section 1.4.2, for more information (@pxref{References}).  See also the
-example program @file{demos/qcn.c} which uses @code{mpz_kronecker_zi_ui}.
+example program @file{demos/qcn.c} which uses @code{mpz_kronecker_ui}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})

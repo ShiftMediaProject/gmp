@@ -405,17 +405,17 @@ int mpz_invert _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_ior _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_jacobi _PROTO ((mpz_srcptr, mpz_srcptr));
 
-#define mpz_kronecker_zi_si __gmpz_kronecker_zi_si
-int mpz_kronecker_zi_si _PROTO ((mpz_srcptr, long));
+#define mpz_kronecker_si __gmpz_kronecker_si
+int mpz_kronecker_si _PROTO ((mpz_srcptr, long));
 
-#define mpz_kronecker_zi_ui __gmpz_kronecker_zi_ui
-int mpz_kronecker_zi_ui _PROTO ((mpz_srcptr, unsigned long));
+#define mpz_kronecker_ui __gmpz_kronecker_ui
+int mpz_kronecker_ui _PROTO ((mpz_srcptr, unsigned long));
 
-#define mpz_kronecker_si_zi __gmpz_kronecker_si_zi
-int mpz_kronecker_si_zi _PROTO ((long, mpz_srcptr));
+#define mpz_si_kronecker __gmpz_si_kronecker
+int mpz_si_kronecker _PROTO ((long, mpz_srcptr));
 
-#define mpz_kronecker_ui_zi __gmpz_kronecker_ui_zi
-int mpz_kronecker_ui_zi _PROTO ((unsigned long, mpz_srcptr));
+#define mpz_ui_kronecker __gmpz_ui_kronecker
+int mpz_ui_kronecker _PROTO ((unsigned long, mpz_srcptr));
 
 void mpz_lcm _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_legendre _PROTO ((mpz_srcptr, mpz_srcptr));

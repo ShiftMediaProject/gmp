@@ -97,7 +97,7 @@
 	* configure.in (pentium3-*-*): Add p3mmx to $path.
 
 	* gmp.texi (Integer Arithmetic): Clarify mpz_jacobi op2; add
-	mpz_kronecker_*.
+	mpz_*_kronecker_*.
 	(Miscellaneous Integer Functions): Add mpz_odd_p and mpz_even_p.
 	(Low-level Functions): Put mpn_divmod_1 with mpn_divrem_1 and note
 	it's now a macro.
@@ -142,7 +142,7 @@
 	* mpz/Makefile.am (libmpz_la_SOURCES): Add them.
 	* Makefile.am (MPZ_OBJECTS): Add them.
 	* gmp-impl.h (JACOBI_*, MPN_STRIP_LOW_ZEROS_NOT_ZERO): New macros.
-	* gmp.h (mpz_kronecker_*): New defines and prototypes.
+	* gmp.h (mpz_*_kronecker_*): New defines and prototypes.
 
 	* mpn/generic/jacbase.c: New file.
 	* mpn/generic/mod_1_rs.c: New file.

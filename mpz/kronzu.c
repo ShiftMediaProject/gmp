@@ -1,4 +1,4 @@
-/* mpz_kronecker_zi_ui -- Kronecker/Jacobi symbol. */
+/* mpz_kronecker_ui -- Kronecker/Jacobi symbol. */
 
 /*
 Copyright (C) 1999, 2000 Free Software Foundation, Inc.
@@ -31,9 +31,9 @@ MA 02111-1307, USA.
 
 int
 #if __STDC__
-mpz_kronecker_zi_ui (mpz_srcptr a, unsigned long b)
+mpz_kronecker_ui (mpz_srcptr a, unsigned long b)
 #else
-mpz_kronecker_zi_ui (a, b)
+mpz_kronecker_ui (a, b)
      mpz_srcptr    a;
      unsigned long b;
 #endif
