@@ -67,7 +67,7 @@ my %cfg_apple =
   (
    'cc'          =>  'MrC',
    'coptions'    => ['-ansi on -i : -i :: -i ::mpn:powerpc32 -i ::mpz',
-		     '-opt speed -inline on -d random=rand -d srandom=srand'],
+		     '-opt speed -inline on'],
    'link'        => 'PPCLink',
    'linkoptions' => '-sym on -xm library',
    'tooloptions' => "-t 'MPST' -c 'MPS'",
@@ -88,7 +88,7 @@ my %cfg_cw =
    'coptions'    => [
 		     '-opt all -w nounusedvar,noextended',
 		     '-i :: -i ::mpn:powerpc32 -i ::mpz',
-		     '-sym full -d random=rand -d srandom=srand',
+		     '-sym full',
 		    ],
    'link'        => 'MWLinkPPC',
    'linkoptions' => '-sym fullpath -library',
