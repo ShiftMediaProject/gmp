@@ -1298,10 +1298,14 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define MUL_TOOM3_THRESHOLD 256
 #endif
 
-/* MUL_TOOM3_THRESHOLD_LIMIT is the maximum value for MUL_TOOM3_THRESHOLD.
-   In a normal build MUL_TOOM3_THRESHOLD is a constant and we use that.  In
-   a fat binary or tune program build MUL_TOOM3_THRESHOLD is a variable and
-   a separate hard limit will have been defined.  */
+/* MUL_KARATSUBA_THRESHOLD_LIMIT is the maximum for MUL_KARATSUBA_THRESHOLD.
+   In a normal build MUL_KARATSUBA_THRESHOLD is a constant and we use that.
+   In a fat binary or tune program build MUL_KARATSUBA_THRESHOLD is a
+   variable and a separate hard limit will have been defined.  Similarly for
+   TOOM3.  */
+#ifndef MUL_KARATSUBA_THRESHOLD_LIMIT
+#define MUL_KARATSUBA_THRESHOLD_LIMIT  MUL_KARATSUBA_THRESHOLD
+#endif
 #ifndef MUL_TOOM3_THRESHOLD_LIMIT
 #define MUL_TOOM3_THRESHOLD_LIMIT  MUL_TOOM3_THRESHOLD
 #endif
@@ -3427,9 +3431,12 @@ extern mp_size_t                     SET_STR_THRESHOLD;
 extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
-#define SQR_KARATSUBA_MAX_GENERIC  200
-#define MUL_TOOM3_THRESHOLD_LIMIT  700
-#define GET_STR_THRESHOLD_LIMIT    500
+#undef MUL_KARATSUBA_THRESHOLD_LIMIT
+#undef MUL_TOOM3_THRESHOLD_LIMIT
+#define SQR_KARATSUBA_MAX_GENERIC      200
+#define MUL_KARATSUBA_THRESHOLD_LIMIT  700
+#define MUL_TOOM3_THRESHOLD_LIMIT      700
+#define GET_STR_THRESHOLD_LIMIT        500
 
 #if TUNE_PROGRAM_BUILD
 /* "thresh" will normally be a variable when tuning, so use the cached
