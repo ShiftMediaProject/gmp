@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 10 Mar 2002.  An up-to-date version is available at
+  This file current as of 24 Mar 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -87,6 +87,8 @@ MA 02111-1307, USA.
      when those routines are coming from a DLL (because they're effectively
      function pointer global variables themselves).  Need to rearrange perhaps
      to a set of calls to a test function rather than iterating over an array.
+<li> demos/pexpr.c: The local variables in <code>main</code> might be
+     clobbered by the <code>longjmp</code>.
 </ul>
 
 
@@ -693,6 +695,8 @@ MA 02111-1307, USA.
      </ul>
      Plain use of <code>long long</code> is probably the lesser evil, if only
      because it makes best use of gcc.
+<li> <code>mpz_strtoz</code> parsing the same as <code>strtol</code>.
+     Suggested by Alexander Kruppa.
 </ul>
 
 
