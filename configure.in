@@ -1865,7 +1865,6 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
   esac
 fi
 
-GMP_LDFLAGS_SYMBOLIC
 AM_CONDITIONAL(ENABLE_STATIC, test "$enable_static" = yes)
 
 
