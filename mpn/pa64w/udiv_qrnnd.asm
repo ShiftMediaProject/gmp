@@ -21,7 +21,13 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C This runs at about 430 cycles, meaning each bits takes 6 cycles to develop.
+C This runs at about 290 cycles, meaning each bits takes 4.5 cycles to develop.
+C It would probably be possible to optimize it to run at close to 3 cycles.
+C The current code sufffers from its 4 instruction recurrence.  Try merging
+C     add n1,%r22,n1
+C into
+C     shrpd n1,n0,63,n1
+C to see if that helps.
 
 C INPUT PARAMETERS
 define(`n1',`%r26')
@@ -29,11 +35,23 @@ define(`n0',`%r25')
 define(`d',`%r24')
 define(`remptr',`%r23')
 
-define(`divstep',
+define(`q',`%r28')
+define(`dn',`%r29')
+
+define(`old_divstep',
        `add,dc		$2,$2,$2
 	add,dc		$1,$1,$1
-	sub,*<<		$1,$3,%r28
-	copy		%r28,$1')
+	sub,*<<		$1,$3,%r22
+	copy		%r22,$1')
+
+define(`divstep',
+       `shrpd		n1,n0,63,n1
+	add,l		n0,n0,n0
+	cmpclr,*<<	n1,d,%r22
+	copy		dn,%r22
+	add		n1,%r22,n1
+	add,dc		q,q,q
+')
 
 	.level	2.0W
 PROLOGUE(mpn_udiv_qrnnd)
@@ -41,23 +59,17 @@ PROLOGUE(mpn_udiv_qrnnd)
 	.entry
 	.callinfo	frame=0,no_calls,save_rp,entry_gr=7
 
+	ldi		0,q
 	cmpib,*>=	0,d,large_divisor
-	addi		8,%r0,%r31	C setup loop counter and clear carry
+	ldi		8,%r31		C setup loop counter
 
-Loop	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
+	sub		%r0,d,dn
+Loop	divstep divstep divstep divstep divstep divstep divstep divstep
 	addib,<>	-1,%r31,Loop
 	nop
 
-	std		n1,0(remptr)	C store remainder
 	bve		(%r2)
-	add,dc		n0,n0,%r28	C quotient: add last carry from divstep
+	std		n1,0(remptr)	C store remainder
 
 large_divisor
 	extrd,u		n0,63,1,%r19	C save lsb of dividend
@@ -67,37 +79,29 @@ large_divisor
 	shrpd		%r0,d,1,d	C d = floor(orig_d / 2)
 	add,l		%r20,d,d	C d = ceil(orig_d / 2)
 
-Loop2	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
-	divstep(n1,n0,d)
+	sub		%r0,d,dn
+Loop2	divstep divstep divstep divstep divstep divstep divstep divstep
 	addib,<>	-1,%r31,Loop2
 	nop
 
-	add,dc		n0,n0,n0	C shift and add last carry from divstep
 	cmpib,*=	0,%r20,even_divisor
 	shladd		n1,1,%r19,n1	C shift in omitted dividend lsb
 
 	add		d,d,d		C restore orig...
 	sub		d,%r20,d	C ...d value
-	sub		%r0,d,%r21	C r21 = -d
+	sub		%r0,d,dn	C r21 = -d
 
-	add,*nuv	n1,n0,n1	C fix remainder for omitted divisor lsb
-	add,l		n1,%r21,n1	C adjust quotient if rem. fix carried
-	add,dc		%r0,n0,n0	C adjust remainder accordingly
+	add,*nuv	n1,q,n1		C fix remainder for omitted divisor lsb
+	add,l		n1,dn,n1	C adjust remainder if rem. fix carried
+	add,dc		%r0,q,q		C adjust quotient accordingly
 
 	sub,*<<		n1,d,%r0	C remainder >= divisor?
-	add,l		n1,%r21,n1	C adjust remainder
-	add,dc		%r0,n0,n0	C adjust quotient
+	add,l		n1,dn,n1	C adjust remainder
+	add,dc		%r0,q,q		C adjust quotient
 
 even_divisor
-	std		n1,0(remptr)	C store remainder
 	bve		(%r2)
-	copy		n0,%r28		C quotient
+	std		n1,0(remptr)	C store remainder
 
 	.procend
 EPILOGUE(mpn_udiv_qrnnd)
