@@ -45,7 +45,8 @@ MPZ_SRCS = abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
   scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
   set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c \
   sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
-  tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c xor.c
+  tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
+  urandom.c xor.c
 MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o \
   bin_ui.o bin_uiui.o cdiv_q.o \
   cdiv_q_ui.o cdiv_qr.o cdiv_qr_ui.o cdiv_r.o cdiv_r_ui.o \
@@ -62,7 +63,8 @@ MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o \
   scan1.o set.o set_d.o set_f.o set_q.o set_si.o set_str.o \
   set_ui.o setbit.o size.o sizeinbase.o sqrt.o sqrtrem.o sub.o \
   sub_ui.o swap.o tdiv_ui.o tdiv_q.o tdiv_q_2exp.o tdiv_q_ui.o tdiv_qr.o \
-  tdiv_qr_ui.o tdiv_r.o tdiv_r_2exp.o tdiv_r_ui.o tstbit.o ui_pow_ui.o xor.o
+  tdiv_qr_ui.o tdiv_r.o tdiv_r_2exp.o tdiv_r_ui.o tstbit.o ui_pow_ui.o \
+  urandom.o xor.o
 
 INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/.. -I$(srcdir)
 
@@ -190,4 +192,5 @@ tdiv_r.o: $(srcdir)/tdiv_r.c $(H) $(srcdir)/../longlong.h $(srcdir)/dmincl.c $(H
 tdiv_r_ui.o: $(srcdir)/tdiv_r_ui.c $(H)
 tstbit.o: $(srcdir)/tstbit.c $(H)
 ui_pow_ui.o: $(srcdir)/ui_pow_ui.c $(H) $(srcdir)/../longlong.h
+urandom.o: $(srcdir)/urandom.c $(H)
 xor.o: $(srcdir)/xor.c $(H)

@@ -1,0 +1,5 @@
+1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* gen.c, stat.c, statlib.c, statlib.h: New files.
+	* Makefile, ChangeLog: New files.
+

@@ -1,3 +1,22 @@
+1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* mpz/urandom.c	(gmp_rand_init): New function.
+	(gmp_rand_clear): New function.
+	(mpz_urandomb): New function.
+
+	* mpz/Makefile.in: Compile urandom.c
+
+	* mpf/urandom.c (mpf_urandomb): New function.
+	
+	* mpf/Makefile.in: Compile urandom.c.
+
+	* gmp.h (__gmp_rand_state_struct, __gmp_rand_scheme_struct): New
+	structs for randomization functions.
+	(gmp_rand_dist, gmp_rand_alogrithm): New enums for randomization
+	functions.
+	(mpz_urandomb, mpf_urandomb): Add prototype.
+	(gmp_rand_init, gmp_rand_clear): Add prototype.
+
 1999-03-15  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* .gdbinit: New file.

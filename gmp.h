@@ -117,6 +117,45 @@ typedef struct
 /* typedef __mpf_struct MP_FLOAT; */
 typedef __mpf_struct mpf_t[1];
 
+/* Algorithm used by random functions. */
+typedef enum
+{
+  GMP_RAND_ALG_DEFAULT = 0,
+  GMP_RAND_ALG_LC = GMP_RAND_ALG_DEFAULT, /* Linear congruental. */
+  GMP_RAND_ALG_BBS,		/* Blum, Blum, and Shub. */
+} gmp_rand_algorithm;
+
+/* Distribution types for random functions. */
+/* FIXME: Or should we do the distribution distinction by using
+   separate functions? */
+typedef enum
+{
+  GMP_RAND_DIST_DEFAULT = 0,
+  GMP_RAND_DIST_UNIVERSAL = GMP_RAND_DIST_DEFAULT,
+} __gmp_rand_dist;
+
+typedef struct 
+{
+  unsigned int bits;		/* Generate 0 <= Z <= 2^bits - 1 */
+  char *astr;			/* Multiplier in string form. */
+  mpz_t a;			/* Multiplier. */
+  unsigned long int c;		/* Adder. */
+  char *mstr;			/* Modulus in string form. */
+  mpz_t m;			/* Modulus. */
+} __gmp_rand_scheme_struct;
+
+typedef struct 
+{
+  gmp_rand_algorithm alg;	/* Algorithm used. */
+  mpz_t seed;			/* Current seed. */
+  unsigned int size;		/* Requested size of result in bits. */
+  mpz_t maxval;			/* Largest generated number (plus one). */
+  mpz_t n;			/* Number of generated numbers left
+                                   before changing scheme. */
+  __gmp_rand_scheme_struct *scheme; /* Current scheme. */
+} __gmp_rand_state_struct;
+
+typedef __gmp_rand_state_struct gmp_rand_state;	/* FIXME: typedef as [1]? */
 
 /* Types for function declarations in gmp files.  */
 /* ??? Should not pollute user name space with these ??? */
@@ -153,6 +192,12 @@ void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 				      void *(*) (void *, size_t, size_t),
 				      void (*) (void *, size_t)));
 extern __gmp_const int mp_bits_per_limb;
+
+int gmp_rand_init _PROTO ((gmp_rand_state *s,
+			   gmp_rand_algorithm alg,
+			   unsigned long int size,
+			   mpz_t seed));
+void gmp_rand_clear _PROTO ((gmp_rand_state *s));
 
 /**************** Integer (i.e. Z) routines.  ****************/
 
@@ -264,6 +309,7 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_tdiv_r_ui __gmpz_tdiv_r_ui
 #define mpz_tstbit __gmpz_tstbit
 #define mpz_ui_pow_ui __gmpz_ui_pow_ui
+#define mpz_urandomb __gmpz_urandomb
 #define mpz_xor __gmpz_xor
 #define mpz_eor __gmpz_xor
 
@@ -382,6 +428,7 @@ void mpz_tdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_tdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 int mpz_tstbit _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_ui_pow_ui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
+void mpz_urandomb _PROTO ((mpz_t rop, gmp_rand_state *s));
 void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #if defined (__cplusplus)
 }
@@ -492,6 +539,7 @@ void mpq_canonicalize _PROTO ((mpq_ptr));
 #define mpf_trunc __gmpf_trunc
 #define mpf_ui_div __gmpf_ui_div
 #define mpf_ui_sub __gmpf_ui_sub
+#define mpf_urandomb __gmpf_urandomb
 
 #if defined (__cplusplus)
 extern "C" {
@@ -551,6 +599,7 @@ void mpf_sub_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_trunc _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_ui_div _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
+void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state *s));
 #if defined (__cplusplus)
 }
 #endif
