@@ -127,9 +127,7 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
-  -DOPERATION_`echo $* | sed 's/_$$//'`
-
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpf.la
 libmpf_la_SOURCES = \
@@ -141,16 +139,12 @@ libmpf_la_SOURCES = \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_dfl_prec.c get_prc.c \
   ui_div.c sqrt_ui.c \
   pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c \
-  ceilfloor.c trunc.c
-
-
-nodist_libmpf_la_SOURCES = \
+  ceilfloor.c trunc.c \
   fits_sint.c fits_slong.c fits_sshort.c \
   fits_uint.c fits_ulong.c fits_ushort.c
 
 
-EXTRA_DIST = fits_s.c fits_u.c
-CLEANFILES = $(nodist_libmpf_la_SOURCES)
+EXTRA_DIST = fits_s.i fits_u.i
 subdir = mpf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -170,11 +164,10 @@ am_libmpf_la_OBJECTS = init$U.lo init2$U.lo set$U.lo set_ui$U.lo \
 	neg$U.lo get_d$U.lo set_dfl_prec$U.lo set_prc$U.lo \
 	set_prc_raw$U.lo get_dfl_prec$U.lo get_prc$U.lo ui_div$U.lo \
 	sqrt_ui$U.lo pow_ui$U.lo urandomb$U.lo swap$U.lo get_si$U.lo \
-	get_ui$U.lo int_p$U.lo ceilfloor$U.lo trunc$U.lo
-nodist_libmpf_la_OBJECTS = fits_sint$U.lo fits_slong$U.lo \
-	fits_sshort$U.lo fits_uint$U.lo fits_ulong$U.lo \
+	get_ui$U.lo int_p$U.lo ceilfloor$U.lo trunc$U.lo fits_sint$U.lo \
+	fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo fits_ulong$U.lo \
 	fits_ushort$U.lo
-libmpf_la_OBJECTS = $(am_libmpf_la_OBJECTS) $(nodist_libmpf_la_OBJECTS)
+libmpf_la_OBJECTS = $(am_libmpf_la_OBJECTS)
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -192,7 +185,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libmpf_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libmpf_la_SOURCES) $(nodist_libmpf_la_SOURCES)
+SOURCES = $(libmpf_la_SOURCES)
 
 all: all-am
 
@@ -474,7 +467,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
@@ -533,20 +525,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
-
-fits_sint.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sint.c
-fits_slong.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_slong.c
-fits_sshort.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sshort.c
-
-fits_uint.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_uint.c
-fits_ulong.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_ulong.c
-fits_ushort.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_ushort.c
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
