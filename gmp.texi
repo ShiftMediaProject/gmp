@@ -4571,7 +4571,7 @@ used for the evaluation and interpolation do only shifts, adds and negations.
 The pointwise multiplications are done modulo @m{2^{N'}+1, 2^N'+1} and either
 recurse into a further FFT or use a plain multiplication (Toom-3, Karatsuba or
 basecase), whichever is optimal at the size @ma{N'}.  The interpolation is an
-inverse fast fourier transform.  The resulting set sums of @m{x_iy_j,
+inverse fast fourier transform.  The resulting set of sums of @m{x_iy_j,
 x[i]*y[j]} are added at appropriate offsets to give the final result.
 
 Squaring is the same, but @ma{x} is the only input so it's one transform at
@@ -4595,7 +4595,7 @@ practice this is what's found, with @code{FFT_MODF_MUL_THRESHOLD} and
 the CPU.  So far it's been found that only very large FFTs recurse into
 pointwise multiplies above these sizes.
 
-When an FFT is to get a full product, the change of @ma{N} to @ma{2N} doesn't
+When an FFT is to give a full product, the change of @ma{N} to @ma{2N} doesn't
 alter the theoretical complexity for a given @ma{k}, but for the purposes of
 deciding where an FFT might be first used it can be assumed that the FFT is
 recursing into a normal multiply and that on that basis it's doing @ma{2^k}
@@ -4661,10 +4661,9 @@ thought of as using @ma{-1} as a square root of unity.  If a 4th root of unity
 was available then a further split and speedup would be possible, but no such
 root exists for plain integers.  Going to complex integers with
 @m{i=\sqrt{-1}, i=sqrt(-1)} doesn't help, essentially because in cartesian
-form it takes three real multiplications to do a complex multiply.  The
-existence of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets
-the fast fourier transform keep splitting and get to @m{O(N \log r),
-O(N*log(r))}.
+form it takes three real multiplies to do a complex multiply.  The existence
+of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets the fast
+fourier transform keep splitting and get to @m{O(N \log r), O(N*log(r))}.
 
 
 @node Division Algorithms, Greatest Common Divisor Algorithms, Multiplication Algorithms, Algorithms
@@ -4687,9 +4686,10 @@ N@cross{}1 division is implemented using repeated 2@cross{}1 divisions from
 high to low, either with a hardware divide instruction or a multiplication by
 inverse, whichever is best on a given CPU.
 
-The multiply by inverse used follows Granlund and Montgomery section 8
+The multiply by inverse used follows section 8 of ``Division by Invariant
+Integers using Multiplication'' by Granlund and Montgomery
 (@pxref{References}) and is implemented as @code{udiv_qrnnd_preinv} in
-@file{gmp-impl.h}.  The idea is to have a fixed point approximation to
+@file{gmp-impl.h}.  The idea is to have a fixed-point approximation to
 @ma{1/d} (see @code{invert_limb}) and then multiply by the high limb (plus one
 bit) of the dividend to get a quotient @ma{q}.  With @ma{d} normalized (high
 bit set), @ma{q} is no more than 1 too small.  Subtracting @m{qd,q*d} from the
@@ -4761,7 +4761,7 @@ call overheads and with some subtractions separated from the multiplies.
 These overheads mean that it's only when N/2 is above
 @code{KARATSUBA_MUL_THRESHOLD} that divide and conquer is of use.
 
-Since @code{DC_THRESHOLD} is based on the divisor size N, it will be somewhere
+@code{DC_THRESHOLD} is based on the divisor size N, so it will be somewhere
 above twice @code{KARATSUBA_MUL_THRESHOLD}, but how much above depends on the
 CPU.  An optimized @code{mpn_mul_basecase} can lower @code{DC_THRESHOLD} a
 little by offering a ready-made advantage over repeated @code{mpn_submul_1}
@@ -4836,10 +4836,9 @@ crossproducts needed in a 2N@cross{}N division.
 A special case exact division by 3 exists in @code{mpn_divexact_by3},
 supporting Toom-3 multiplication and currently not otherwise available from
 high level functions.  It forms quotient digits with a multiply by the modular
-inverse of 3 (which is @code{0xAA...AAB}) and a couple of comparisons, taking
-advantage of the fact that 3 is a divisor of
-@m{2\GMPraise{@code{mp\_bits\_per\_limb}}-1, 2^mp_bits_per_limb-1} whenever
-@code{mp_bits_per_limb} is even.
+inverse of 3 (which is @code{0xAA...AAB}) but instead of multiplying back by 3
+to subtract it can just do two comparisons to determine the borrow required in
+the next limb.
 
 
 @node Small Quotient Division,  , Exact Division, Division Algorithms
@@ -4961,8 +4960,9 @@ Currently the single limb calculation doesn't optimize for the small quotients
 that often occur, and this can lead to unusually low values of
 @code{GCDEXT_THRESHOLD}, depending on the CPU.
 
-An analysis of double-limb calculations can be found in Jebelean
-(@pxref{References}).  The code in GMP was developed independently.
+An analysis of double-limb calculations can be found in ``A Double-Digit
+Lehmer-Euclid Algorithm'' by Jebelean (@pxref{References}).  The code in GMP
+was developed independently.
 
 
 @node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
