@@ -24,21 +24,13 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* This implementation depends on BITS_PER_MP_LIMB being even, so that
-   (a/2)^BITS_PER_MP_LIMB = 1 and so there's no need to pay attention to how
-   many low zero limbs are stripped.  */
-#if BITS_PER_MP_LIMB % 2 != 0
-Error, error, unsupported BITS_PER_MP_LIMB
-#endif
-
-
 /* After the absolute value of b is established it's treated as an unsigned
    long, because 0x80..00 doesn't fit in a signed long. */
 
 int
 mpz_kronecker_si (mpz_srcptr a, long b)
 {
-  mp_srcptr  a_ptr = PTR(a);
+  mp_srcptr  a_ptr;
   mp_size_t  a_size;
   mp_limb_t  a_rem, b_limb;
   int        result_bit1;
@@ -61,6 +53,7 @@ mpz_kronecker_si (mpz_srcptr a, long b)
 
   result_bit1 = JACOBI_BSGN_SS_BIT1 (a_size, b);
   b_limb = (unsigned long) ABS (b);
+  a_ptr = PTR(a);
 
   if ((b_limb & 1) == 0)
     {

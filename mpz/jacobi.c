@@ -80,14 +80,6 @@ MA 02111-1307, USA. */
    introduces can be accounted for (or maybe they can be ignored).  */
 
 
-/* This implementation depends on BITS_PER_MP_LIMB being even, so that
-   (a/2)^BITS_PER_MP_LIMB = 1 and so there's no need to pay attention to how
-   many low zero limbs are stripped.  */
-#if BITS_PER_MP_LIMB % 2 != 0
-Error, error, need BITS_PER_MP_LIMB even
-#endif
-
-
 int
 mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
@@ -126,7 +118,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   bsize = ABS (bsize);
 
   /* low zero limbs on b can be discarded */
-  MPN_STRIP_LOW_ZEROS_NOT_ZERO (bsrcp, bsize, blow);
+  JACOBI_STRIP_LOW_ZEROS (result_bit1, alow, bsrcp, bsize, blow);
 
   count_trailing_zeros (btwos, blow);
   TRACE (printf ("b twos %u\n", btwos));
@@ -162,7 +154,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
   /* Discard low zero limbs of a.  Usually there won't be anything to
      strip, hence not bothering with it for the bsize==1 case.  */
-  MPN_STRIP_LOW_ZEROS_NOT_ZERO (asrcp, asize, alow);
+  JACOBI_STRIP_LOW_ZEROS (result_bit1, blow, asrcp, asize, alow);
 
   count_trailing_zeros (atwos, alow);
   TRACE (printf ("a twos %u\n", atwos));
@@ -288,7 +280,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
     strip_a:
       /* low zero limbs on a can be discarded */
-      MPN_STRIP_LOW_ZEROS_NOT_ZERO (ap, asize, alow);
+      JACOBI_STRIP_LOW_ZEROS (result_bit1, blow, ap, asize, alow);
 
       if ((alow & 1) == 0)
         {

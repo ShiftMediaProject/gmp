@@ -24,25 +24,18 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* This implementation depends on BITS_PER_MP_LIMB being even, so that
-   (a/2)^BITS_PER_MP_LIMB = 1 and so there's no need to pay attention to how
-   many low zero limbs are stripped.  */
-#if BITS_PER_MP_LIMB % 2 != 0
-Error, error, unsupported BITS_PER_MP_LIMB
-#endif
-
-
 int
 mpz_ui_kronecker (unsigned long a, mpz_srcptr b)
 {
-  mp_srcptr  b_ptr = PTR(b);
-  mp_limb_t  b_low = b_ptr[0];
-  mp_size_t  b_abs_size = ABSIZ (b);
+  mp_srcptr  b_ptr;
+  mp_limb_t  b_low;
+  int        b_abs_size;
   mp_limb_t  b_rem;
   int        twos;
-  int        result_bit1 = 0;
+  int        result_bit1;
 
   /* (a/-1)=1 when a>=0, so the sign of b is ignored */
+  b_abs_size = ABSIZ (b);
 
   if (b_abs_size == 0)
     return JACOBI_U0 (a);  /* (a/0) */
@@ -57,22 +50,41 @@ mpz_ui_kronecker (unsigned long a, mpz_srcptr b)
       return mpz_kronecker (az, b);
     }
 
+  b_ptr = PTR(b);
+  b_low = b_ptr[0];
+  result_bit1 = 0;
+
   if (! (b_low & 1))
     {
-      /* (0/b)=0 for b!=+/-1; (even/even)=0 */
+      /* (0/b)=0 for b!=+/-1; and (even/even)=0 */
       if (! (a & 1))
         return 0;
 
-      /* a odd, b even */
+      /* a odd, b even
 
-      /* establish shifted b_low for use with reciprocity below */
-      MPN_STRIP_LOW_ZEROS_NOT_ZERO (b_ptr, b_abs_size, b_low);
+         Establish shifted b_low with valid bit1 for the RECIP below.  Zero
+         limbs stripped are accounted for, but zero bits on b_low are not
+         because they remain in {b_ptr,b_abs_size} for
+         JACOBI_MOD_OR_MODEXACT_1_ODD. */
+
+      JACOBI_STRIP_LOW_ZEROS (result_bit1, a, b_ptr, b_abs_size, b_low);
       if (! (b_low & 1))
         {
-          if (b_low == GMP_NUMB_HIGHBIT)
+          if (UNLIKELY (b_low == GMP_NUMB_HIGHBIT))
             {
-              if (b_abs_size == 1)   /* (a/0x80000000) == (a/2)^(BPML-1) */
-                return JACOBI_TWOS_U (GMP_NUMB_BITS-1, a);
+              /* need b_ptr[1] to get bit1 in b_low */
+              if (b_abs_size == 1)
+                {
+                  /* (a/0x80...00) == (a/2)^(NUMB-1) */
+                  if ((GMP_NUMB_BITS % 2) == 0)
+                    {
+                      /* JACOBI_STRIP_LOW_ZEROS does nothing to result_bit1
+                         when GMP_NUMB_BITS is even, so it's still 0. */
+                      ASSERT (result_bit1 == 0);
+                      result_bit1 = JACOBI_TWO_U_BIT1 (a);
+                    }
+                  return JACOBI_BIT1_TO_PN (result_bit1);
+                }
 
               /* b_abs_size > 1 */
               b_low = b_ptr[1] << 1;

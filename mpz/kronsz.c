@@ -24,21 +24,13 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* This implementation depends on BITS_PER_MP_LIMB being even, so that
-   (a/2)^BITS_PER_MP_LIMB = 1 and so there's no need to pay attention to how
-   many low zero limbs are stripped.  */
-#if BITS_PER_MP_LIMB % 2 != 0
-Error, error, unsupported BITS_PER_MP_LIMB
-#endif
-
-
 int
 mpz_si_kronecker (long a, mpz_srcptr b)
 {
-  mp_srcptr  b_ptr = PTR(b);
-  mp_limb_t  b_low = b_ptr[0];
-  mp_size_t  b_size = SIZ (b);
-  mp_size_t  b_abs_size = ABS (b_size);
+  mp_srcptr  b_ptr;
+  mp_limb_t  b_low;
+  mp_size_t  b_size;
+  mp_size_t  b_abs_size;
   mp_limb_t  a_limb, b_rem;
   unsigned   twos;
   int        result_bit1;
@@ -55,11 +47,16 @@ mpz_si_kronecker (long a, mpz_srcptr b)
     }
 #endif
 
-  if (b_abs_size == 0)
+  b_size = SIZ (b);
+  if (b_size == 0)
     return JACOBI_S0 (a);  /* (a/0) */
 
   /* account for the effect of the sign of b, then ignore it */
   result_bit1 = JACOBI_BSGN_SS_BIT1 (a, b_size);
+
+  b_ptr = PTR(b);
+  b_low = b_ptr[0];
+  b_abs_size = ABS (b_size);
 
   if ((b_low & 1) != 0)
     {
@@ -87,18 +84,24 @@ mpz_si_kronecker (long a, mpz_srcptr b)
       if ((a & 1) == 0)
         return 0;
 
-      /* a odd, b even */
+      /* a odd, b even
 
-      /* establish shifted b_low with valid bit1 for use with ASGN and RECIP */
-      MPN_STRIP_LOW_ZEROS_NOT_ZERO (b_ptr, b_abs_size, b_low);
+         Establish shifted b_low with valid bit1 for ASGN and RECIP below.
+         Zero limbs stripped are acounted for, but zero bits on b_low are
+         not because they remain in {b_ptr,b_abs_size} for the
+         JACOBI_MOD_OR_MODEXACT_1_ODD. */
+
+      JACOBI_STRIP_LOW_ZEROS (result_bit1, a, b_ptr, b_abs_size, b_low);
       if ((b_low & 1) == 0)
         {
-          if (b_low == GMP_NUMB_HIGHBIT)
+          if (UNLIKELY (b_low == GMP_NUMB_HIGHBIT))
             {
+              /* need b_ptr[1] to get bit1 in b_low */
               if (b_abs_size == 1)
                 {
                   /* (a/0x80000000) = (a/2)^(BPML-1) */
-                  result_bit1 ^= JACOBI_TWOS_U_BIT1 (GMP_NUMB_BITS - 1, a);
+                  if ((GMP_NUMB_BITS % 2) == 0)
+                    result_bit1 ^= JACOBI_TWO_U_BIT1 (a);
                   return JACOBI_BIT1_TO_PN (result_bit1);
                 }
 
