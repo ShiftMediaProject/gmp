@@ -1,3 +1,15 @@
+2000-02-18  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (gmp_m4postinc): Enable x86-defs.m4.
+	* mpn/x86/k7/mul_1.asm: Fix include.
+	* mpn/x86/k6/mul_basecase.S: Removed (copy of the pentium version).
+	* mpn/x86/k6/mul_basecase.asm: New file.
+	* mpn/x86/k6/sqr_basecase.asm: New file.
+	* mpn/x86/k6/com_n.asm: New file.
+	* mpn/x86/k6/copyi.asm: New file.
+	* mpn/generic/com_n.c: New file.
+	* mpn/generic/logops_n.c: New file.
+
 2000-02-17  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/v9/mul_1.asm: Use `rd' to get current PC; get rid of
