@@ -424,9 +424,9 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPZ_EQUAL_1_P(z)  (SIZ(z)==1 && PTR(z)[0] == 1)
 
 
+#define mpn_zero_p  __MPN(zero_p)
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 /* n==0 is allowed and is considered a zero value.  */
-#define mpn_zero_p  __MPN(zero_p)
 int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
 _EXTERN_INLINE int
 mpn_zero_p (mp_srcptr p, mp_size_t n)
