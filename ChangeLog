@@ -1,5 +1,12 @@
 2000-12-15  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h (_EXTERN_INLINE): #define different for GCC and other
+	compilers.
+
+	* gmp-h.in (__gmp_inline): Remove.
+	* mp-h.in: Likewise.
+	* mpn/generic/gcd.c: Use `inline' instead of `__gmp_inline'.
+
 	* configure.in (mips*-*-irix[6789]*): Define *_ldflags.
 
 2000-12-14  Torbjorn Granlund  <tege@swox.com>
