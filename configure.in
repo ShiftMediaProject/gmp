@@ -1008,6 +1008,18 @@ case $host in
 
 esac
 
+# mingw can be built by the cygwin gcc if -mno-cygwin is added.  For
+# convenience add this automatically if it works.  Actual mingw gcc accepts
+# -mno-cygwin too, but of course is the default.  mingw only runs on the
+# x86s, but allow any CPU here so as to catch "none" too.
+#
+case $host in
+  *-*-mingw*)
+    gcc_cflags_optlist="$gcc_cflags_optlist nocygwin"
+    gcc_cflags_nocygwin="-mno-cygwin"
+    ;;
+esac
+
 
 CFLAGS_or_unset=${CFLAGS-'(unset)'}
 CPPFLAGS_or_unset=${CPPFLAGS-'(unset)'}
