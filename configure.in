@@ -448,7 +448,7 @@ case $host in
     gcc_cflags_optlist="arch"
     gcc_cflags_arch="-mpa-risc-1-1"
     cc_cflags="+DA1.1 +O2"
-    path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
+    path="pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32"
     extra_functions="udiv_qrnnd"
 
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
@@ -459,10 +459,10 @@ case $host in
         # override back to plain 1.0
         gcc_cflags_optlist=
         cc_cflags="+O2"
-        path="hppa"
+        path="pa32"
         ;;
       hppa7000*-*-*)
-        path="hppa/hppa1_1 hppa"
+        path="pa32/hppa1_1 pa32"
         ;;
 
       hppa2.0*-*-*)
@@ -477,8 +477,8 @@ case $host in
         #
         # gmp_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1"
 
-        # FIXME: path should be "hppa/hppa2_0 hppa/hppa1_1 hppa"
-        path="hppa/hppa2_0 hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
+        # FIXME: path should be "pa32/hppa2_0 pa32/hppa1_1 pa32"
+        path="pa32/hppa2_0 pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32"
 
         # no gcc support for long long in 2.0n
 	cclist_20n="cc"
