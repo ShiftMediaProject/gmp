@@ -454,6 +454,8 @@ main (int argc, char *argv[])
 {
   mpfr_t x, y, z; 
 
+  tests_start_mpfr ();
+
   check_inexact(); 
 
   mpfr_init2 (x, 64);
@@ -501,5 +503,6 @@ main (int argc, char *argv[])
   mpfr_clear (y);
   mpfr_clear (z);
 
+  tests_end_mpfr ();
   return 0;
 }

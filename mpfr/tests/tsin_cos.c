@@ -22,16 +22,13 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void large_test _PROTO ((int, int));
-void check53 _PROTO ((double, double, double, mp_rnd_t));
-void check53sin _PROTO ((double, double, mp_rnd_t));
-void check53cos _PROTO ((double, double, mp_rnd_t));
-
-void large_test (int prec, int N)
+static void
+large_test (int prec, int N)
 {
   int i;
   mpfr_t x, s, c;
@@ -48,7 +45,8 @@ void large_test (int prec, int N)
   mpfr_clear (c);
 }
 
-void check53 (double x, double sin_x, double cos_x, mp_rnd_t rnd_mode)
+static void
+check53 (double x, double sin_x, double cos_x, mp_rnd_t rnd_mode)
 {
   mpfr_t xx, s, c;
 
@@ -78,7 +76,8 @@ void check53 (double x, double sin_x, double cos_x, mp_rnd_t rnd_mode)
   mpfr_clear (c);
 }
 
-void check53sin (double x, double sin_x, mp_rnd_t rnd_mode)
+static void
+check53sin (double x, double sin_x, mp_rnd_t rnd_mode)
 {
   mpfr_t xx, s, c;
 
@@ -100,7 +99,8 @@ void check53sin (double x, double sin_x, mp_rnd_t rnd_mode)
   mpfr_clear (c);
 }
 
-void check53cos (double x, double cos_x, mp_rnd_t rnd_mode)
+static void
+check53cos (double x, double cos_x, mp_rnd_t rnd_mode)
 {
   mpfr_t xx, c, s;
 
@@ -122,20 +122,51 @@ void check53cos (double x, double cos_x, mp_rnd_t rnd_mode)
   mpfr_clear (s);
 }
 
+static void
+check_nans (void)
+{
+  mpfr_t  x, s, c;
+
+  mpfr_init2 (x, 123L);
+  mpfr_init2 (s, 123L);
+  mpfr_init2 (c, 123L);
+
+  /* sin(NaN)==NaN, cos(NaN)==NaN */
+  mpfr_set_nan (x);
+  mpfr_sin_cos (s, c, x, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (s));
+  ASSERT_ALWAYS (mpfr_nan_p (c));
+
+  /* sin(+Inf)==NaN, cos(+Inf)==NaN */
+  mpfr_set_inf (x, 1);
+  mpfr_sin_cos (s, c, x, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (s));
+  ASSERT_ALWAYS (mpfr_nan_p (c));
+
+  /* sin(-Inf)==NaN, cos(-Inf)==NaN */
+  mpfr_set_inf (x, -1);
+  mpfr_sin_cos (s, c, x, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (s));
+  ASSERT_ALWAYS (mpfr_nan_p (c));
+
+  mpfr_clear (x);
+  mpfr_clear (s);
+  mpfr_clear (c);
+}
+
 /* tsin_cos prec [N] performs N tests with prec bits */
 int
 main(int argc, char *argv[])
 {
+  tests_start_mpfr ();
+
+  check_nans ();
+
   if (argc > 1)
     {
       large_test (atoi (argv[1]), (argc > 2) ? atoi (argv[2]) : 1);
     }
 
-#ifdef HAVE_INFS
-  check53 (DBL_NAN, DBL_NAN, DBL_NAN, GMP_RNDN);
-  check53 (DBL_POS_INF, DBL_NAN, DBL_NAN, GMP_RNDN);
-  check53 (DBL_NEG_INF, DBL_NAN, DBL_NAN, GMP_RNDN);
-#endif
   /* worst case from PhD thesis of Vincent Lefe`vre: x=8980155785351021/2^54 */
   check53 (4.984987858808754279e-1, 4.781075595393330379e-1, 
 	   8.783012931285841817e-1, GMP_RNDN);
@@ -158,5 +189,6 @@ main(int argc, char *argv[])
   check53sin (1.00591265847407274059,  8.446508805292128885e-1, GMP_RNDN);
   check53cos (1.00591265847407274059, 0.53531755997839769456,  GMP_RNDN);
 
+  tests_end_mpfr ();
   return 0;
 }

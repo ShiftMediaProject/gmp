@@ -1,6 +1,6 @@
 /* Test file for mpfr_get_d
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -35,15 +35,21 @@ check_denorms ()
 {
   mp_rnd_t rnd_mode;
   mpfr_t x;
-  double d, d2, dd, f;
+  double d, d2, dd, f, dbl_min;
   int fail = 0, k, n;
+
+  /* workaround for gcc bug on m68040-unknown-netbsd1.4.1,
+     where DBL_MIN gives (1-2^(-52))/2^1022 */
+  dbl_min = 1.0;
+  for (d = DBL_MIN; d < 0.9; d *= 2.0)
+    dbl_min /= 2.0;
 
   mpfr_init2 (x, BITS_PER_MP_LIMB);
 
       rnd_mode = GMP_RNDN;
       for (k = -17; k <= 17; k += 2)
         {
-          d = k * DBL_MIN; /* k * 2^(-1022) */
+          d = (double) k * dbl_min; /* k * 2^(-1022) */
           f = 1.0;
           mpfr_set_si (x, k, GMP_RNDN);
           mpfr_div_2exp (x, x, 1022, GMP_RNDN); /* k * 2^(-1022) */
@@ -71,11 +77,12 @@ check_denorms ()
 int
 main (void)
 {
-
+  tests_start_mpfr ();
   mpfr_test_init ();
 
   if (check_denorms ())
     exit (1);
 
+  tests_end_mpfr ();
   return 0;
 }

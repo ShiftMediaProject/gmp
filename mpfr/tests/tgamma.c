@@ -1,6 +1,6 @@
 /* mpfr_tgamma -- test file for gamma function
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library, and was contributed by Mathieu Dutour.
 
@@ -34,6 +34,8 @@ main (void)
   mp_rnd_t rnd;
   mpfr_t x, y, z;
   double xd, yd;
+
+  tests_start_mpfr ();
 
   mpfr_init (x);
   mpfr_init (y);
@@ -99,5 +101,6 @@ main (void)
   mpfr_clear (y);
   mpfr_clear (z);
 
+  tests_end_mpfr ();
   return 0;
 }

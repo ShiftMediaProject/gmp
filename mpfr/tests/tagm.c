@@ -23,16 +23,12 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-double drand_agm _PROTO((void)); 
-void check4 _PROTO((double, double, mp_rnd_t, double)); 
-void check_large _PROTO((void)); 
-void slave _PROTO((int, int)); 
-
-double
+static double
 drand_agm (void)
 {
   double d; long int *i;
@@ -49,7 +45,7 @@ drand_agm (void)
 
 #define check(a,b,r) check4(a,b,r,0.0)
 
-void
+static void
 check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
 {
   mpfr_t ta, tb, tres;
@@ -78,7 +74,7 @@ check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
   mpfr_clear (tres);
 }
 
-void
+static void
 check_large (void)
 {
   mpfr_t a, b, agm;
@@ -94,7 +90,7 @@ check_large (void)
   mpfr_clear(a); mpfr_clear(b); mpfr_clear(agm);
 }
 
-void
+static void
 slave (int N, int p)
 {
   int i;
@@ -115,6 +111,45 @@ slave (int N, int p)
     printf("fin\n");
 }
 
+static void
+check_nans (void)
+{
+  mpfr_t  x, y, m;
+
+  mpfr_init2 (x, 123L);
+  mpfr_init2 (y, 123L);
+  mpfr_init2 (m, 123L);
+
+  /* agm(1,nan) == nan */
+  mpfr_set_ui (x, 1L, GMP_RNDN);
+  mpfr_set_nan (y);
+  mpfr_agm (m, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (m));
+
+  /* agm(1,+inf) == +inf */
+  mpfr_set_ui (x, 1L, GMP_RNDN);
+  mpfr_set_inf (y, 1);
+  mpfr_agm (m, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (m));
+  ASSERT_ALWAYS (mpfr_sgn (m) > 0);
+
+  /* agm(+inf,+inf) == +inf */
+  mpfr_set_inf (x, 1);
+  mpfr_set_inf (y, 1);
+  mpfr_agm (m, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (m));
+  ASSERT_ALWAYS (mpfr_sgn (m) > 0);
+
+  /* agm(-inf,+inf) == nan */
+  mpfr_set_inf (x, -1);
+  mpfr_set_inf (y, 1);
+  mpfr_agm (m, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (m));
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (m);
+}
 
 int
 main (int argc, char* argv[])
@@ -124,6 +159,8 @@ main (int argc, char* argv[])
    SEED_RAND (time(NULL));
 
    tests_start_mpfr ();
+
+   check_nans ();
 
    if (argc == 3) /* tagm N p : N calculus with precision p*/
      {   
@@ -160,13 +197,6 @@ main (int argc, char* argv[])
        check4 (1.0, 44.0, GMP_RNDU, 1.33658354512981247808e1);
        check4 (1.0, 3.7252902984619140625e-9, GMP_RNDU, 7.55393356971199025907e-02);
      }
-
-#ifdef HAVE_INFS
-   check4 (1.0, DBL_NAN, GMP_RNDN, DBL_NAN);
-   check4 (1.0, DBL_POS_INF, GMP_RNDN, DBL_POS_INF);
-   check4 (DBL_POS_INF, DBL_POS_INF, GMP_RNDN, DBL_POS_INF);
-   check4 (DBL_NEG_INF, DBL_POS_INF, GMP_RNDN, DBL_NAN);
-#endif
 
    tests_end_mpfr ();
 

@@ -24,15 +24,12 @@ MA 02111-1307, USA. */
 #include <float.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void special _PROTO ((void));
-void check _PROTO ((unsigned long, double, mp_rnd_t, double));
-void check_two_sum _PROTO ((mp_prec_t));
-
-void
+static void
 special (void)
 {
   mpfr_t x, y, res;
@@ -131,7 +128,7 @@ special (void)
 
 /* checks that y/x gives the same results in double
    and with mpfr with 53 bits of precision */
-void
+static void
 check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
 {
   double z2;
@@ -154,7 +151,7 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
 }
 
 /* if u = o(x-y), v = o(u-x), w = o(v+y), then x-y = u-w */
-void
+static void
 check_two_sum (mp_prec_t p)
 {
   unsigned int x;
@@ -198,6 +195,35 @@ check_two_sum (mp_prec_t p)
   mpfr_clear (w);
 }
 
+static void
+check_nans (void)
+{
+  mpfr_t  x, y;
+
+  mpfr_init2 (x, 123L);
+  mpfr_init2 (y, 123L);
+
+  /* 1 - nan == nan */
+  mpfr_set_nan (x);
+  mpfr_ui_sub (y, 1L, x, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (y));
+
+  /* 1 - +inf == -inf */
+  mpfr_set_inf (x, 1);
+  mpfr_ui_sub (y, 1L, x, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (y));
+  ASSERT_ALWAYS (mpfr_sgn (y) < 0);
+
+  /* 1 - -inf == +inf */
+  mpfr_set_inf (x, -1);
+  mpfr_ui_sub (y, 1L, x, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (y));
+  ASSERT_ALWAYS (mpfr_sgn (y) > 0);
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -206,15 +232,13 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
+  check_nans ();
+
   special ();
   for (p=2; p<100; p++)
     for (k=0; k<100; k++)
       check_two_sum (p);
-#ifdef HAVE_INFS
-  check (1, DBL_POS_INF, GMP_RNDN, DBL_NEG_INF);
-  check (1, DBL_NEG_INF, GMP_RNDN, DBL_POS_INF);
-  check (1, DBL_NAN, GMP_RNDN, DBL_NAN);
-#endif
+
   check(1196426492, 1.4218093058435347e-3, GMP_RNDN, 1.1964264919985781e9);
   check(1092583421, -1.0880649218158844e9, GMP_RNDN, 2.1806483428158845901e9);
   check(948002822, 1.22191250737771397120e+20, GMP_RNDN,

@@ -149,6 +149,8 @@ check_nan (void)
 int
 main (int argc, char *argv[])
 {
+  tests_start_mpfr ();
+
   check_inexact ();
   check(948002822, 1.22191250737771397120e+20, GMP_RNDN,
 	7.758352715731357946e-12);
@@ -161,5 +163,6 @@ main (int argc, char *argv[])
   check(1476599377, -2.14191393656148625995e+305, GMP_RNDD,
 	-6.8938315017943889615e-297);
 
+  tests_end_mpfr ();
   return 0;
 }

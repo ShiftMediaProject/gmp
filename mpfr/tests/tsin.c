@@ -90,6 +90,42 @@ test_sign (void)
   mpfr_clear (y);
 }
 
+static void
+check_nans (void)
+{
+  mpfr_t  x, y;
+
+  mpfr_init2 (x, 123L);
+  mpfr_init2 (y, 123L);
+
+  mpfr_set_nan (x);
+  mpfr_sin (y, x, GMP_RNDN);
+  if (! mpfr_nan_p (y))
+    {
+      fprintf (stderr, "Error: sin(NaN) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_set_inf (x, 1);
+  mpfr_sin (y, x, GMP_RNDN);
+  if (! mpfr_nan_p (y))
+    {
+      fprintf (stderr, "Error: sin(Inf) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_set_inf (x, -1);
+  mpfr_sin (y, x, GMP_RNDN);
+  if (! mpfr_nan_p (y))
+    {
+      fprintf (stderr, "Error: sin(-Inf) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 #define TEST_FUNCTION mpfr_sin
 #include "tgeneric.c"
 
@@ -100,11 +136,8 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-#ifdef HAVE_INFS
-  check53 (DBL_NAN, DBL_NAN, GMP_RNDN);
-  check53 (DBL_POS_INF, DBL_NAN, GMP_RNDN);
-  check53 (DBL_NEG_INF, DBL_NAN, GMP_RNDN);
-#endif
+  check_nans ();
+
   /* worst case from PhD thesis of Vincent Lefe`vre: x=8980155785351021/2^54 */
   check53 (4.984987858808754279e-1, 4.781075595393330379e-1, GMP_RNDN);
   check53 (4.984987858808754279e-1, 4.781075595393329824e-1, GMP_RNDD);

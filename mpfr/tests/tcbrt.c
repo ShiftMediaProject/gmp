@@ -1,6 +1,6 @@
 /* Test file for mpfr_cbrt.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 int
 main (void)
@@ -30,6 +31,8 @@ main (void)
   mpfr_t x;
   mp_rnd_t r;
   mp_prec_t p;
+
+  tests_start_mpfr ();
 
   mpfr_init (x);
 
@@ -92,5 +95,6 @@ main (void)
 
   mpfr_clear (x);
 
+  tests_end_mpfr ();
   return 0;
 }

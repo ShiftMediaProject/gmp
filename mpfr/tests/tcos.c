@@ -26,9 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check53 _PROTO ((double, double, mp_rnd_t));
-
-void
+static void
 check53 (double x, double cos_x, mp_rnd_t rnd_mode)
 {
   mpfr_t xx, c;
@@ -52,12 +50,50 @@ check53 (double x, double cos_x, mp_rnd_t rnd_mode)
 #define TEST_FUNCTION mpfr_cos
 #include "tgeneric.c"
 
+static void
+check_nans (void)
+{
+  mpfr_t  x, y;
+
+  mpfr_init2 (x, 123L);
+  mpfr_init2 (y, 123L);
+
+  mpfr_set_nan (x);
+  mpfr_cos (y, x, GMP_RNDN);
+  if (! mpfr_nan_p (y))
+    {
+      fprintf (stderr, "Error: cos(NaN) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_set_inf (x, 1);
+  mpfr_cos (y, x, GMP_RNDN);
+  if (! mpfr_nan_p (y))
+    {
+      fprintf (stderr, "Error: cos(Inf) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_set_inf (x, -1);
+  mpfr_cos (y, x, GMP_RNDN);
+  if (! mpfr_nan_p (y))
+    {
+      fprintf (stderr, "Error: cos(-Inf) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int
 main (int argc, char *argv[])
 {
   mpfr_t x, y;
 
   tests_start_mpfr ();
+
+  check_nans ();
 
   mpfr_init (x);
   mpfr_init (y);
@@ -104,12 +140,6 @@ main (int argc, char *argv[])
       printf ("expected 1.1100e-1, got "); mpfr_print_binary (y); putchar ('\n');
       exit (1);
     }
-
-#ifdef HAVE_INFS
-  check53 (DBL_NAN, DBL_NAN, GMP_RNDN);
-  check53 (DBL_POS_INF, DBL_NAN, GMP_RNDN);
-  check53 (DBL_NEG_INF, DBL_NAN, GMP_RNDN);
-#endif
 
   /* worst case from PhD thesis of Vincent Lefe`vre: x=8980155785351021/2^54 */
   check53 (4.984987858808754279e-1, 8.783012931285841817e-1, GMP_RNDN);

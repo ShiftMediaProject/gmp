@@ -26,22 +26,10 @@ MA 02111-1307, USA. */
 #include <float.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
-
-void checknan _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int)); 
-void check3 _PROTO((double, double, mp_rnd_t));
-void check4 _PROTO((double, double, mp_rnd_t));
-void check5 _PROTO((double, mp_rnd_t));
-void check2 _PROTO((double, int, double, int, int, int)); 
-void check2a _PROTO((double, int, double, int, int, int, char *)); 
-void check64 _PROTO((void)); 
-void check_same _PROTO((void)); 
-void check_case_1b _PROTO((void)); 
-void check_case_2 _PROTO((void));
-void check_inexact _PROTO((void));
-
 
 /* Parameter "z1" of check() used to be last in the argument list, but that
    tickled a bug in 32-bit sparc gcc 2.95.2.  A "double" in that position is
@@ -56,7 +44,7 @@ void check_inexact _PROTO((void));
 /* checks that x+y gives the same results in double
    and with mpfr with 53 bits of precision */
 static void
-_check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px, 
+_check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px,
         unsigned int py, unsigned int pz)
 {
   double z2; mpfr_t xx,yy,zz; int cert=0;
@@ -83,39 +71,9 @@ _check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_clear (zz);
 }
 
-void
-checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
-          unsigned int py, unsigned int pz)
-{
-  double z2;
-  mpfr_t xx, yy, zz;
-
-  mpfr_init2 (xx, px);
-  mpfr_init2 (yy, py);
-  mpfr_init2 (zz, pz);
-  mpfr_set_d (xx, x, rnd_mode);
-  mpfr_set_d (yy, y, rnd_mode);
-  mpfr_add (zz, xx, yy, rnd_mode);
-  if (MPFR_IS_NAN(zz) == 0)
-    {
-      printf ("Error, not an MPFR_NAN for xx = %1.20e, y = %1.20e\n", x, y);
-      exit (1);
-    }
-  z2 = mpfr_get_d1 (zz);
-  if (!Isnan(z2))
-    {
-      printf ("Error, not a NaN after conversion, xx = %1.20e yy = %1.20e, got %1.20e\n", x, y, z2);
-      exit (1);
-    }
-
-  mpfr_clear (xx);
-  mpfr_clear (yy);
-  mpfr_clear (zz);
-}
-
-void
+static void
 check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
-	      char *res)
+         char *res)
 {
   mpfr_t xx, yy, zz;
 
@@ -135,7 +93,7 @@ check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
-void
+static void
 check64 (void)
 {
   mpfr_t x, t, u;
@@ -358,7 +316,7 @@ check64 (void)
 
 /* check case when c does not overlap with a, but both b and c count
    for rounding */
-void
+static void
 check_case_1b (void)
 {
   mpfr_t a, b, c;
@@ -408,7 +366,7 @@ check_case_1b (void)
 }
 
 /* check case when c overlaps with a */
-void
+static void
 check_case_2 (void)
 {
   mpfr_t a, b, c, d;
@@ -441,7 +399,7 @@ check_case_2 (void)
 }
 
 /* checks when source and destination are equal */
-void
+static void
 check_same (void)
 {
   mpfr_t x;
@@ -455,11 +413,10 @@ check_same (void)
 }
 
 #define check53(x, y, r, z) check(x, y, r, 53, 53, 53, z)
-#define check53nan(x, y, r) checknan(x, y, r, 53, 53, 53); 
 
 #define MAX_PREC 100
 
-void
+static void
 check_inexact (void)
 {
   mpfr_t x, y, z, u;
@@ -548,6 +505,54 @@ check_inexact (void)
   mpfr_clear (u);
 }
 
+static void
+check_nans (void)
+{
+  mpfr_t  s, x, y;
+
+  mpfr_init2 (x, 8L);
+  mpfr_init2 (y, 8L);
+  mpfr_init2 (s, 8L);
+
+  /* +inf + -inf == nan */
+  mpfr_set_inf (x, 1);
+  mpfr_set_inf (y, -1);
+  mpfr_add (s, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_nan_p (s));
+
+  /* +inf + 1 == +inf */
+  mpfr_set_inf (x, 1);
+  mpfr_set_ui (y, 1L, GMP_RNDN);
+  mpfr_add (s, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (s));
+  ASSERT_ALWAYS (mpfr_sgn (s) > 0);
+
+  /* -inf + 1 == -inf */
+  mpfr_set_inf (x, -1);
+  mpfr_set_ui (y, 1L, GMP_RNDN);
+  mpfr_add (s, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (s));
+  ASSERT_ALWAYS (mpfr_sgn (s) < 0);
+
+  /* 1 + +inf == +inf */
+  mpfr_set_ui (x, 1L, GMP_RNDN);
+  mpfr_set_inf (y, 1);
+  mpfr_add (s, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (s));
+  ASSERT_ALWAYS (mpfr_sgn (s) > 0);
+
+  /* 1 + -inf == -inf */
+  mpfr_set_ui (x, 1L, GMP_RNDN);
+  mpfr_set_inf (y, -1);
+  mpfr_add (s, x, y, GMP_RNDN);
+  ASSERT_ALWAYS (mpfr_inf_p (s));
+  ASSERT_ALWAYS (mpfr_sgn (s) < 0);
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (s);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -557,6 +562,7 @@ main (int argc, char *argv[])
   tests_start_mpfr ();
 
   mpfr_test_init ();
+  check_nans ();
   check_inexact ();
   check_case_1b ();
   check_case_2 ();
@@ -724,16 +730,6 @@ main (int argc, char *argv[])
   x = 70360154255223.0; for (i=0; i<1073; i++) x = x / 2.0;
   check53(8.06294740693074521573e-310, x, GMP_RNDU,
           1.5015454417650041761e-309);
-#endif
-#ifdef HAVE_INFS
-  /* the following check double overflow */
-  check53(6.27557402141211962228e+307, 1.32141396570101687757e+308,
-     GMP_RNDZ, DBL_POS_INF);
-  check53(DBL_POS_INF, 6.95250701071929654575e-310, GMP_RNDU, DBL_POS_INF);
-  check53(DBL_NEG_INF, 6.95250701071929654575e-310, GMP_RNDU, DBL_NEG_INF);
-  check53(6.95250701071929654575e-310, DBL_POS_INF, GMP_RNDU, DBL_POS_INF);
-  check53(6.95250701071929654575e-310, DBL_NEG_INF, GMP_RNDU, DBL_NEG_INF);
-  check53nan (DBL_POS_INF, DBL_NEG_INF, GMP_RNDN);
 #endif
   check53(1.44791789689198883921e-140, -1.90982880222349071284e-121,
 	  GMP_RNDN, -1.90982880222349071e-121);
