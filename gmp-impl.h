@@ -300,11 +300,12 @@ mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 #if HAVE_NATIVE_mpn_copyi
 #define MPN_COPY_INCR(DST, SRC, NLIMBS)   mpn_copyi (DST, SRC, NLIMBS)
 #else
-#define MPN_COPY_INCR(DST, SRC, NLIMBS) \
-  do {									\
-    mp_size_t __i;							\
-    for (__i = 0; __i < (NLIMBS); __i++)				\
-      (DST)[__i] = (SRC)[__i];						\
+#define MPN_COPY_INCR(DST, SRC, NLIMBS)                 \
+  do {                                                  \
+    mp_size_t __i;                                      \
+    ASSERT (MPN_SAME_OR_INCR_P (DST, SRC, NLIMBS));     \
+    for (__i = 0; __i < (NLIMBS); __i++)                \
+      (DST)[__i] = (SRC)[__i];                          \
   } while (0)
 #endif
 #endif
@@ -319,11 +320,12 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #if HAVE_NATIVE_mpn_copyd
 #define MPN_COPY_DECR(DST, SRC, NLIMBS)   mpn_copyd (DST, SRC, NLIMBS)
 #else
-#define MPN_COPY_DECR(DST, SRC, NLIMBS) \
-  do {									\
-    mp_size_t __i;							\
-    for (__i = (NLIMBS) - 1; __i >= 0; __i--)				\
-      (DST)[__i] = (SRC)[__i];						\
+#define MPN_COPY_DECR(DST, SRC, NLIMBS)                 \
+  do {                                                  \
+    mp_size_t __i;                                      \
+    ASSERT (MPN_SAME_OR_DECR_P (DST, SRC, NLIMBS));     \
+    for (__i = (NLIMBS) - 1; __i >= 0; __i--)           \
+      (DST)[__i] = (SRC)[__i];                          \
   } while (0)
 #endif
 #endif
@@ -344,16 +346,21 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #endif
 
 #ifndef MPN_COPY
-#define MPN_COPY MPN_COPY_INCR
+#define MPN_COPY(d,s,n)                         \
+  do {                                          \
+    ASSERT (! MPN_OVERLAP_P (d, n, s, n));      \
+    MPN_COPY_INCR (d, s, n);                    \
+  } while (0);
 #endif
 
 /* Zero NLIMBS *limbs* AT DST.  */
 #ifndef MPN_ZERO
-#define MPN_ZERO(DST, NLIMBS) \
-  do {									\
-    mp_size_t __i;							\
-    for (__i = 0; __i < (NLIMBS); __i++)				\
-      (DST)[__i] = 0;							\
+#define MPN_ZERO(DST, NLIMBS)                   \
+  do {                                          \
+    mp_size_t __i;                              \
+    ASSERT ((NLIMBS) >= 0);                     \
+    for (__i = 0; __i < (NLIMBS); __i++)        \
+      (DST)[__i] = 0;                           \
   } while (0)
 #endif
 
@@ -369,14 +376,15 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   } while (0)
 #endif
 #ifndef MPN_NORMALIZE_NOT_ZERO
-#define MPN_NORMALIZE_NOT_ZERO(DST, NLIMBS) \
-  do {									\
-    while (1)								\
-      {									\
-	if ((DST)[(NLIMBS) - 1] != 0)					\
-	  break;							\
-	NLIMBS--;							\
-      }									\
+#define MPN_NORMALIZE_NOT_ZERO(DST, NLIMBS)     \
+  do {                                          \
+    ASSERT ((NLIMBS) >= 1);                     \
+    while (1)                                   \
+      {                                         \
+	if ((DST)[(NLIMBS) - 1] != 0)           \
+	  break;                                \
+	NLIMBS--;                               \
+      }                                         \
   } while (0)
 #endif
 
@@ -384,27 +392,26 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
    decrementing size.  The number in ptr,size must be non-zero, ie. size!=0
    and somewhere a non-zero limb.  */
 #define MPN_STRIP_LOW_ZEROS_NOT_ZERO(ptr, size) \
-  do                                            \
-    {                                           \
-      ASSERT ((size) != 0);                     \
-      while ((ptr)[0] == 0)                     \
-        {                                       \
-          (ptr)++;                              \
-          (size)--;                             \
-          ASSERT (size >= 0);                   \
-	}                                       \
-    }                                           \
-  while (0)
+  do {                                          \
+    ASSERT ((size) >= 1);                       \
+    while ((ptr)[0] == 0)                       \
+      {                                         \
+        (ptr)++;                                \
+        (size)--;                               \
+        ASSERT (size >= 0);                     \
+      }                                         \
+  } while (0)
 
 /* Initialize X of type mpz_t with space for NLIMBS limbs.  X should be a
    temporary variable; it will be automatically cleared out at function
    return.  We use __x here to make it possible to accept both mpz_ptr and
    mpz_t arguments.  */
-#define MPZ_TMP_INIT(X, NLIMBS) \
-  do {									\
-    mpz_ptr __x = (X);							\
-    __x->_mp_alloc = (NLIMBS);						\
-    __x->_mp_d = (mp_ptr) TMP_ALLOC ((NLIMBS) * BYTES_PER_MP_LIMB);	\
+#define MPZ_TMP_INIT(X, NLIMBS)                                         \
+  do {                                                                  \
+    mpz_ptr __x = (X);                                                  \
+    ASSERT ((NLIMBS) >= 1);                                             \
+    __x->_mp_alloc = (NLIMBS);                                          \
+    __x->_mp_d = (mp_ptr) TMP_ALLOC ((NLIMBS) * BYTES_PER_MP_LIMB);     \
   } while (0)
 
 /* Realloc for an mpz_t WHAT if it has less thann NEEDED limbs.  */
@@ -496,6 +503,19 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPN_OVERLAP_P(xp, xsize, yp, ysize) \
   ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
 
+/* Return non-zero if xp,size and yp,size are either identical or not
+   overlapping.  Return zero if they're partially overlapping. */
+#define MPN_SAME_OR_SEPARATE_P(xp, yp, size)                    \
+  ((xp) == (yp) || ! MPN_OVERLAP_P (xp, size, yp, size))
+
+/* Return non-zero if dst,size and src,size are either identical or
+   overlapping in a way suitable for an incrementing/decrementing algorithm.
+   Return zero if they're partially overlapping in an unsuitable fashion. */
+#define MPN_SAME_OR_INCR_P(dst, src, size)                      \
+  ((dst) <= (src) || ! MPN_OVERLAP_P (dst, size, src, size))
+#define MPN_SAME_OR_DECR_P(dst, src, size)                      \
+  ((dst) >= (src) || ! MPN_OVERLAP_P (dst, size, src, size))
+
 
 #if HAVE_VOID
 #define CAST_TO_VOID        (void)
@@ -556,31 +576,32 @@ int __gmp_assert_fail _PROTO((const char *filename, int linenum,
 #define mpn_com_n __MPN(com_n)
 void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_com_n(d,s,n)				\
-  do							\
-    {							\
-      mp_ptr     __d = (d);				\
-      mp_srcptr  __s = (s);				\
-      mp_size_t  __n = (n);				\
-      do						\
-	*__d++ = ~ *__s++;				\
-      while (--__n);					\
-    }							\
-  while (0)
+#define mpn_com_n(d,s,n)                                \
+  do {                                                  \
+    mp_ptr     __d = (d);                               \
+    mp_srcptr  __s = (s);                               \
+    mp_size_t  __n = (n);                               \
+    ASSERT (__n >= 1);                                  \
+    ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s, __n));    \
+    do                                                  \
+      *__d++ = ~ *__s++;                                \
+    while (--__n);                                      \
+  } while (0)
 #endif
 
-#define MPN_LOGOPS_N_INLINE(d,s1,s2,n,dop,op,s2op)	\
-  do							\
-    {							\
-      mp_ptr	 __d = (d);				\
-      mp_srcptr	 __s1 = (s1);				\
-      mp_srcptr	 __s2 = (s2);				\
-      mp_size_t	 __n = (n);				\
-      do						\
-	*__d++ = dop (*__s1++ op s2op *__s2++);		\
-      while (--__n);					\
-    }							\
-  while (0)
+#define MPN_LOGOPS_N_INLINE(d,s1,s2,n,dop,op,s2op)      \
+  do {                                                  \
+    mp_ptr	 __d = (d);                             \
+    mp_srcptr	 __s1 = (s1);                           \
+    mp_srcptr	 __s2 = (s2);                           \
+    mp_size_t	 __n = (n);                             \
+    ASSERT (__n >= 1);                                  \
+    ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s1, __n));   \
+    ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s2, __n));   \
+    do                                                  \
+      *__d++ = dop (*__s1++ op s2op *__s2++);           \
+    while (--__n);                                      \
+  } while (0)
 
 #if HAVE_NATIVE_mpn_and_n
 #define mpn_and_n __MPN(and_n)
@@ -662,7 +683,7 @@ struct bases
 };
 
 #define __mp_bases __MPN(mp_bases)
-extern const struct bases __mp_bases[];
+extern const struct bases __mp_bases[256];
 extern mp_size_t __gmp_default_fp_limb_precision;
 
 #if defined (__i386__)
@@ -679,13 +700,14 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
 #endif
 
 #ifndef invert_limb
-#define invert_limb(invxl,xl) \
-  do {									\
-    mp_limb_t dummy;							\
-    if (xl << 1 == 0)							\
-      invxl = ~(mp_limb_t) 0;						\
-    else								\
-      udiv_qrnnd (invxl, dummy, -xl, 0, xl);				\
+#define invert_limb(invxl,xl)                   \
+  do {                                          \
+    mp_limb_t dummy;                            \
+    ASSERT ((xl) != 0);                         \
+    if (xl << 1 == 0)                           \
+      invxl = ~(mp_limb_t) 0;                   \
+    else                                        \
+      udiv_qrnnd (invxl, dummy, -xl, 0, xl);    \
   } while (0)
 #endif
 
@@ -694,31 +716,32 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
    If this would yield overflow, DI should be the largest possible number
    (i.e., only ones).  For correct operation, the most significant bit of D
    has to be set.  Put the quotient in Q and the remainder in R.  */
-#define udiv_qrnnd_preinv(q, r, nh, nl, d, di) \
-  do {									\
-    mp_limb_t _q, _ql, _r;						\
-    mp_limb_t _xh, _xl;							\
-    umul_ppmm (_q, _ql, (nh), (di));					\
-    _q += (nh);			/* DI is 2**BITS_PER_MP_LIMB too small */\
-    umul_ppmm (_xh, _xl, _q, (d));					\
-    sub_ddmmss (_xh, _r, (nh), (nl), _xh, _xl);				\
-    if (_xh != 0)							\
-      {									\
-	sub_ddmmss (_xh, _r, _xh, _r, 0, (d));				\
-	_q += 1;							\
-	if (_xh != 0)							\
-	  {								\
-	    sub_ddmmss (_xh, _r, _xh, _r, 0, (d));			\
-	    _q += 1;							\
-	  }								\
-      }									\
-    if (_r >= (d))							\
-      {									\
-	_r -= (d);							\
-	_q += 1;							\
-      }									\
-    (r) = _r;								\
-    (q) = _q;								\
+#define udiv_qrnnd_preinv(q, r, nh, nl, d, di)                            \
+  do {                                                                    \
+    mp_limb_t _q, _ql, _r;                                                \
+    mp_limb_t _xh, _xl;                                                   \
+    ASSERT ((d) != 0);                                                    \
+    umul_ppmm (_q, _ql, (nh), (di));                                      \
+    _q += (nh);                 /* DI is 2**BITS_PER_MP_LIMB too small */ \
+    umul_ppmm (_xh, _xl, _q, (d));                                        \
+    sub_ddmmss (_xh, _r, (nh), (nl), _xh, _xl);                           \
+    if (_xh != 0)                                                         \
+      {                                                                   \
+	sub_ddmmss (_xh, _r, _xh, _r, 0, (d));                            \
+	_q += 1;                                                          \
+	if (_xh != 0)                                                     \
+	  {                                                               \
+	    sub_ddmmss (_xh, _r, _xh, _r, 0, (d));                        \
+	    _q += 1;                                                      \
+	  }                                                               \
+      }                                                                   \
+    if (_r >= (d))                                                        \
+      {                                                                   \
+	_r -= (d);                                                        \
+	_q += 1;                                                          \
+      }                                                                   \
+    (r) = _r;                                                             \
+    (q) = _q;                                                             \
   } while (0)
 /* Like udiv_qrnnd_preinv, but for for any value D.  DNORM is D shifted left
    so that its most significant bit is set.  LGUP is ceil(log2(D)).  */
