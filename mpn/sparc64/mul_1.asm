@@ -1,81 +1,92 @@
-! SPARC v9 __mpn_mul_1 -- Multiply a limb vector with a single limb and
-! store the product in a second limb vector.
+dnl  SPARC 64-bit mpn_mul_1 -- Multiply a limb vector with a limb and
+dnl  store the result to a second limb vector.
 
-! Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+dnl  Copyright (C) 1998, 2000 Free Software Foundation, Inc.
 
-! This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-! The GNU MP Library is free software; you can redistribute it and/or modify
-! it under the terms of the GNU Library General Public License as published by
-! the Free Software Foundation; either version 2 of the License, or (at your
-! option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Library General Public License as published
+dnl  by the Free Software Foundation; either version 2 of the License, or (at
+dnl  your option) any later version.
 
-! The GNU MP Library is distributed in the hope that it will be useful, but
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-! or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-! License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+dnl  License for more details.
 
-! You should have received a copy of the GNU Library General Public License
-! along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-! the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-! MA 02111-1307, USA.
-
-
-! INPUT PARAMETERS
-! res_ptr	o0
-! s1_ptr	o1
-! size		o2
-! s2_limb	o3
+dnl  You should have received a copy of the GNU Library General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C INPUT PARAMETERS
+C res_ptr	i0
+C s1_ptr	i1
+C size		i2
+C s2_limb	i3
+
 ASM_START()
+	.register	%g2,#scratch
+	.register	%g3,#scratch
+
 PROLOGUE(mpn_mul_1)
-	save	%sp,-160,%sp
-	sub	%g0,%i2,%o7
-	sllx	%o7,3,%g5
-	sub	%i1,%g5,%o3
-	sub	%i0,%g5,%o4
-	mov	0,%o0			! zero cy_limb
+	save	%sp,-256,%sp
 
-	srl	%i3,0,%o1		! extract low 32 bits of s2_limb
-	srlx	%i3,32,%i3		! extract high 32 bits of s2_limb
-	mov	1,%o2
-	sllx	%o2,32,%o2		! o2 = 0x100000000
+C We store 0.0 in f10 and keep it invariant accross thw two
+C function calls below.  Note that this is not ABI conformant,
+C but since the functions are local, that's acceptable.
+ifdef(`PIC',
+`L(pc):	rd	%pc,%o7
+	ld	[%o7+L(noll)-L(pc)],%f10',
+`	sethi	%hh(L(noll)),%g2
+	sethi	%lm(L(noll)),%g1
+	or	%g2,%hm(L(noll)),%g2
+	or	%g1,%lo(L(noll)),%g1
+	sllx	%g2,32,%g2
+	ld	[%g1+%g2],%f10')
 
-	!   hi   !
-             !  mid-1 !
-             !  mid-2 !
-		 !   lo   !
-L(loop):
-	sllx	%o7,3,%g1
-	ldx	[%o3+%g1],%g5
-	srl	%g5,0,%i0		! zero hi bits
-	srlx	%g5,32,%g5
-	mulx	%o1,%i0,%i4		! lo product
-	mulx	%i3,%i0,%i1		! mid-1 product
-	mulx	%o1,%g5,%l2		! mid-2 product
-	mulx	%i3,%g5,%i5		! hi product
-	srlx	%i4,32,%i0		! extract high 32 bits of lo product...
-	add	%i1,%i0,%i1		! ...and add it to the mid-1 product
-	addcc	%i1,%l2,%i1		! add mid products
-	mov	0,%l0			! we need the carry from that add...
-	movcs	%xcc,%o2,%l0		! ...compute it and...
-	add	%i5,%l0,%i5		! ...add to bit 32 of the hi product
-	sllx	%i1,32,%i0		! align low bits of mid product
-	srl	%i4,0,%g5		! zero high 32 bits of lo product
-	add	%i0,%g5,%i0		! combine into low 64 bits of result
-	srlx	%i1,32,%i1		! extract high bits of mid product...
-	add	%i5,%i1,%i1		! ...and add them to the high result
-	addcc	%i0,%o0,%i0		! add cy_limb to low 64 bits of result
-	mov	0,%g5
-	movcs	%xcc,1,%g5
-	add	%o7,1,%o7
-	stx	%i0,[%o4+%g1]
-	brnz	%o7,L(loop)
-	add	%i1,%g5,%o0		! compute new cy_limb
+C First multiply-add with low 32 bits of s2_limb
+	mov	%i0,%o0
+	mov	%i1,%o1
+	add	%i2,%i2,%o2
+	call	mull
+	srl	%i3,0,%o3
 
-	mov	%o0,%i0
+	mov	%o0,%l0			C keep carry-out from accmull
+
+C Now multiply-add with high 32 bits of s2_limb, unless it is zero.
+	srlx	%i3,32,%o3
+	brz,a,pn	%o3,L(small)
+	 mov	%o0,%i0
+	mov	%i1,%o1
+	add	%i2,%i2,%o2
+	call	addmulu
+	add	%i0,4,%o0
+
+	add	%l0,%o0,%i0
+L(small):
 	ret
-	restore
+	restore	%g0,%g0,%g0
 EPILOGUE(mpn_mul_1)
+
+	TEXT
+	ALIGN(4)
+L(noll):
+	.word	0
+
+define(`LO',`(+4)')
+define(`HI',`(-4)')
+
+define(`DLO',`(+4)')
+define(`DHI',`(-4)')
+define(`E',`L($1)')
+include(`mul_1h.asm')
+
+define(`DLO',`(-4)')
+define(`DHI',`(+4)')
+undefine(`LOWPART')
+define(`E',`L(u.$1)')
+include(`addmul_1h.asm')
