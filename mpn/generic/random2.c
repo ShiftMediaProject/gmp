@@ -1,7 +1,7 @@
 /* mpn_random2 -- Generate random numbers with relatively long strings
    of ones and zeroes.  Suitable for border testing.
 
-Copyright (C) 1992, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1992, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -41,9 +41,13 @@ long random ();
    made the most significant bit set.  */
 
 void
+#if __STDC__
+mpn_random2 (mp_ptr res_ptr, mp_size_t size)
+#else
 mpn_random2 (res_ptr, size)
      mp_ptr res_ptr;
      mp_size_t size;
+#endif
 {
   int n_bits;
   int bit_pos;

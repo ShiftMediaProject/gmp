@@ -1,6 +1,6 @@
 /* popcount.c
 
-Copyright (C) 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,8 +39,12 @@ MA 02111-1307, USA. */
    You have to figure out how this works, I won't tell you!  */
 
 static inline unsigned int
+#if __STDC__
+popc_limb (mp_limb_t x)
+#else
 popc_limb (x)
      mp_limb_t x;
+#endif
 {
 #if BITS_PER_MP_LIMB == 64
   /* We have to go into some trouble to define these constants.

@@ -1,6 +1,6 @@
 /* mpn_gcd_1 --
 
-Copyright (C) 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,10 +27,14 @@ MA 02111-1307, USA. */
    V == 0 since gcd(x,0) = x, and U does not generally fit in an mp_limb_t.  */
 
 mp_limb_t
+#if __STDC__
+mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
+#else
 mpn_gcd_1 (up, size, vlimb)
      mp_srcptr up;
      mp_size_t size;
      mp_limb_t vlimb;
+#endif
 {
   mp_limb_t ulimb;
   unsigned long int u_low_zero_bits, v_low_zero_bits;
