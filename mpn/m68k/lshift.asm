@@ -1,6 +1,7 @@
 dnl  mc68020 mpn_lshift -- mpn left shift.
 
-dnl  Copyright 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1996, 1999, 2000, 2001, 2002, 2003 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -27,6 +28,16 @@ C        shift==1  shift>1
 C 68040:    5         12
 
 
+C mp_limb_t mpn_lshift (mp_ptr res_ptr, mp_srcptr s_ptr, mp_size_t s_size,
+C                       unsigned cnt);
+C
+C The "cnt" parameter is either 16 bits or 32 bits depending on
+C SIZEOF_UNSIGNED (see ABI notes in mpn/m68k/README).  The value is of
+C course only 1 to 31.  When loaded as 16 bits there's garbage in the upper
+C half, hence the use of cmpw.  The shift instructions take the their count
+C modulo 64, so the upper part doesn't matter to them either.
+C
+
 C INPUT PARAMETERS
 C res_ptr	(sp + 4)
 C s_ptr		(sp + 8)
@@ -38,6 +49,10 @@ define(s_ptr,   `a0')
 define(s_size,  `d6')
 define(cnt,     `d4')
 
+ifdef(`SIZEOF_UNSIGNED',,
+`m4_error(`SIZEOF_UNSIGNED not defined, should be in config.m4
+')')
+
 PROLOGUE(mpn_lshift)
 C Save used registers on the stack.
 	moveml	d2-d6/a2, M(-,sp)
@@ -46,10 +61,12 @@ C Copy the arguments to registers.
 	movel	M(sp,28), res_ptr
 	movel	M(sp,32), s_ptr
 	movel	M(sp,36), s_size
-	movel	M(sp,40), cnt
+ifelse(SIZEOF_UNSIGNED,2,
+`	movew	M(sp,40), cnt',
+`	movel	M(sp,40), cnt')
 
 	moveql	#1, d5
-	cmpl	d5, cnt
+	cmpw	d5, cnt
 	bne	L(Lnormal)
 	cmpl	s_ptr, res_ptr
 	bls	L(Lspecial)		C jump if s_ptr >= res_ptr
