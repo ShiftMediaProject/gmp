@@ -471,7 +471,7 @@ refmpn_mul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 
 mp_limb_t
 refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-              mp_limb_t high, mp_limb_t low)
+              mp_limb_t low, mp_limb_t high)
 {
   mp_ptr     src_copy;
   mp_limb_t  c;
