@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-01-24  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpf/t-sqrt.c (check_rand1): Further diagnostic printouts.
+
+	* mpn/generic/sqrtrem.c (mpn_sqrtrem): Add ASSERT_MPN.
+	(mpn_dc_sqrtrem): Add casts for K&R.
+
+	* mpf/sqrt_ui.c: Nailify.
+
+	* mpf/set_z.c: Do MPN_COPY last, for possible tail call.
+
+	* doc/gmp.texi (Miscellaneous Float Functions): Note exponent is in
+	limbs.
+ 
+	* mpn/ia64/README: Add remark about concentrating on itanium-2.
+
 2004-01-22  Kevin Ryde  <kevin@swox.se>
 
 	* mpf/sqrt.c: Change tsize calculation to get prec limbs result
