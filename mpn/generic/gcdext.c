@@ -1054,6 +1054,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
     tp += nlimbs;
     talloc -= nlimbs;
+    scratch += nlimbs;
   }
 
   while (ABOVE_THRESHOLD (r[0].rsize, GCDEXT_SCHOENHAGE_THRESHOLD)
