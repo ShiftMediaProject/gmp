@@ -1059,8 +1059,6 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
 	  ASSERT (asize == bsize + 1);
 	  bh = bp[asize - 2] >> (GMP_LIMB_BITS - shift);
 	}
-      if (!bh)
-	return 0;
 
       bl = MPN_EXTRACT_LIMB (shift, bp[asize - 2], bp[asize - 3]);
 
