@@ -1485,6 +1485,27 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #endif
 
 
+/* SUBC_LIMB sets w=x-y and cout to 0 or 1 for a borrow from that
+   subtract.  */
+#if GMP_NAIL_BITS == 0
+#define SUBC_LIMB(cout, w, x, y)        \
+  do {                                  \
+    mp_limb_t  __x = (x);               \
+    mp_limb_t  __y = (y);               \
+    mp_limb_t  __w = __x - __y;         \
+    (w) = __w;                          \
+    (cout) = __w > __x;                 \
+  } while (0)
+#else
+#define SUBC_LIMB(cout, w, x, y)        \
+  do {                                  \
+    mp_limb_t  __w = (x) - (y);         \
+    (w) = __w & GMP_NUMB_MASK;          \
+    (cout) = __w >> (GMP_LIMB_BITS-1);  \
+  } while (0)
+#endif
+
+
 /* MPN_INCR_U does {ptr,size} += n, MPN_DECR_U does {ptr,size} -= n, both
    expecting no carry (or borrow) from that.
 
