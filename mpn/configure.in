@@ -61,7 +61,7 @@ case "${target}" in
   am29000*-*-*) path="am29000";;
   a29k*-*-*) path="am29000";;
 
-# Intel x86 configurations
+# Amd and Intel x86 configurations
   i[34]86*-*-*)
 	path="x86"
 	family=x86;;
@@ -70,6 +70,9 @@ case "${target}" in
 	family=x86;;
   i686*-*-* | pentiumpro-*-*)
 	path="x86/p6 x86"
+	family=x86;;
+  k6*-*-*)
+	path="x86/k6 x86"
 	family=x86;;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
@@ -117,10 +120,10 @@ esac
 case "${target}" in
   *-*-freebsd[34]*)	# hides generic *bsd* alternative
     underscore=no; asm_align=nolog;;
-  i[3456]86*-*-*bsd* | pentium*-*-*bsd* | \
-  i[3456]86*-*-linuxaout* | pentium*-*-linuxaout* | \
-  i[3456]86*-*-linuxoldld* | pentium*-*-linuxoldld* | \
-  i[3456]86*-*-nextstep* | i[3456]86*-*-nextstep*)
+  i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k6*-*-*bsd* | \
+  i[3456]86*-*-linuxaout* | pentium*-*-linuxaout* | k6*-*-linuxaout* | \
+  i[3456]86*-*-linuxoldld* | pentium*-*-linuxoldld* | k6*-*-linuxoldld* | \
+  i[3456]86*-*-nextstep* | i[3456]86*-*-nextstep* | k6*-*-nextstep*)
     target_makefile_frag=config/t-oldgas
     underscore=yes; asm_align=log;;
   m680[234]0*-*-linuxaout* | m68k*-*-linuxaout* | \
