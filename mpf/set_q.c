@@ -132,8 +132,7 @@ mpf_set_q (r, q)
 	}
       else
 	{
-	  nlimb = mpn_lshift (rp, np + (nsize - rsize),
-			      rsize, normalization_steps);
+	  nlimb = mpn_lshift (rp, np, nsize, normalization_steps);
 	}
       if (nlimb != 0)
 	{
@@ -151,7 +150,7 @@ mpf_set_q (r, q)
 	}
       else
 	{
-	  MPN_COPY (rp, np + (nsize - rsize), rsize);
+	  MPN_COPY (rp, np, rsize);
 	}
     }
 
