@@ -42,16 +42,16 @@ C initial gp setup and the LEA.
 C
 C Enhancement:
 C
-C Adding !lituse_jsr! to the modexact call would allow the linker to relax
-C it to a bsr in a static binary.  We'd need to check the assembler supports
-C that directive.
+C On the jsr, !lituse_jsr! (when available) would allow the linker to relax
+C it to a bsr, but probably only in a static binary.  Plain "jsr foo" gives
+C the right object code for relaxation, and ought to be available
+C everywhere, but we prefer to schedule the GOT ldq (LEA) back earlier, for
+C the usual case of running in a shared library.
 C
-C Plain "jsr foo" form gives the right object code for relaxation, and ought
-C to be available everywhere, but we prefer to schedule the LEA GOT load
-C back earlier, for the usual case of running in a shared library.
-C
-C Putting gcd_1 and modexact the same file would let us use bsr always, and
-C the load for r27 would instead be just an offset from our own r27 addr.
+C bsr could perhaps be used explicitly anyway.  We should be able to assume
+C modexact is in the same module as us (ie. shared library or mainline).
+C Would there be any worries about the size of the displacement?  Could
+C always put modexact and gcd_1 in the same .o to be certain.
 
 ASM_START()
 PROLOGUE(mpn_gcd_1, gp)
@@ -73,6 +73,8 @@ PROLOGUE(mpn_gcd_1, gp)
 
 	stq	r9, 8(r30)		C L   save r9
 	clr	r19			C u   zero c for modexact
+	unop
+	unop
 
 	cttz	r0, r6			C U0  x twos
 	stq	r26, 0(r30)		C L   save ra
@@ -81,26 +83,27 @@ PROLOGUE(mpn_gcd_1, gp)
 
 	mov	r18, r9			C l   hold y across call
 
-	cmpult	r6, r10, r2		C l   test x_twos < y_twos 
+	cmpult	r6, r10, r2		C u   test x_twos < y_twos 
 
-	cmovne	r2, r6, r10		C u   common_twos = min(x_twos,y_twos)
+	cmovne	r2, r6, r10		C l   common_twos = min(x_twos,y_twos)
 	bne	r5, L(one)		C U   no modexact if size==1
 	jsr	r26, (r27), mpn_modexact_1c_odd   C L0
 
+	LDGP(	r29, 0(r26))		C u,l ldah,lda
 	cttz	r0, r6			C U0  new x twos
 	ldq	r26, 0(r30)		C L   restore ra
+
 L(one):
 	mov	r9, r1			C u   y
 	ldq	r9, 8(r30)		C L   restore r9
-
 	mov	r10, r2			C u   common twos
 	ldq	r10, 16(r30)		C L   restore r10
+
 	lda	r30, 32(r30)		C l   free stack
 	beq	r0, L(done)		C U   return y if x%y==0
 
 	srl	r0, r6, r0		C U   x odd
-
-	unop				C     align 16
+	unop
 
 	ALIGN(16)
 L(top):
