@@ -176,6 +176,8 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   if (mn == 0)
     DIVIDE_BY_ZERO;
 
+  TMP_MARK (marker);
+
   es = SIZ (e);
   if (es <= 0)
     {
@@ -185,6 +187,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	     m equals 1.  */
 	  SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
 	  PTR(r)[0] = 1;
+	  TMP_FREE (marker);	/* we haven't really allocated anything here */
 	  return;
 	}
 #if HANDLE_NEGATIVE_EXPONENT
@@ -209,8 +212,6 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
       e = new_e;
     }
 #endif
-
-  TMP_MARK (marker);
 
   use_redc = mn < POWM_THRESHOLD && mp[0] % 2 != 0;
   if (use_redc)
