@@ -1861,33 +1861,32 @@ BEGIN {
       got[23] = $f;
 
       # match the special begin and end sequences
-      if (! (got[0] == "001" &&
-             got[1] == "043" &&
-             got[2] == "105" &&
-             got[3] == "147" &&
-             got[4] == "211" &&
-             got[5] == "253" &&
-             got[6] == "315" &&
-             got[7] == "357" &&
-             got[16] == "376" &&
-             got[17] == "334" &&
-             got[18] == "272" &&
-             got[19] == "230" &&
-             got[20] == "166" &&
-             got[21] == "124" &&
-             got[22] == "062" &&
-             got[23] == "020"))
-        continue
+      if (got[0] != "001") continue
+      if (got[1] != "043") continue
+      if (got[2] != "105") continue
+      if (got[3] != "147") continue
+      if (got[4] != "211") continue
+      if (got[5] != "253") continue
+      if (got[6] != "315") continue
+      if (got[7] != "357") continue
+      if (got[16] != "376") continue
+      if (got[17] != "334") continue
+      if (got[18] != "272") continue
+      if (got[19] != "230") continue
+      if (got[20] != "166") continue
+      if (got[21] != "124") continue
+      if (got[22] != "062") continue
+      if (got[23] != "020") continue
 
       saw = " (" got[8] " " got[9] " " got[10] " " got[11] " " got[12] " " got[13] " " got[14] " " got[15] ")"
 
-      if (got[8]  == "000" &&
-          got[9]  == "000" &&
-          got[10] == "000" &&
-          got[11] == "124" &&
-          got[12] == "064" &&
-          got[13] == "157" &&
-          got[14] == "235" &&
+      if (got[8]  == "000" &&  \
+          got[9]  == "000" &&  \
+          got[10] == "000" &&  \
+          got[11] == "124" &&  \
+          got[12] == "064" &&  \
+          got[13] == "157" &&  \
+          got[14] == "235" &&  \
           got[15] == "301")
         {
           print "IEEE little endian"
@@ -1895,13 +1894,13 @@ BEGIN {
           exit
         }
 
-      if (got[15] == "000" &&
-          got[14] == "000" &&
-          got[13] == "000" &&
-          got[12] == "124" &&
-          got[11] == "064" &&
-          got[10] == "157" &&
-          got[9]  == "235" &&
+      if (got[15] == "000" &&  \
+          got[14] == "000" &&  \
+          got[13] == "000" &&  \
+          got[12] == "124" &&  \
+          got[11] == "064" &&  \
+          got[10] == "157" &&  \
+          got[9]  == "235" &&  \
           got[8]  == "301")
         {
           print "IEEE big endian"
@@ -1909,13 +1908,13 @@ BEGIN {
           exit
         }
 
-      if (got[8]  == "353" &&
-          got[9]  == "315" &&
-          got[10] == "242" &&
-          got[11] == "171" &&
-          got[12] == "000" &&
-          got[13] == "240" &&
-          got[14] == "000" &&
+      if (got[8]  == "353" &&  \
+          got[9]  == "315" &&  \
+          got[10] == "242" &&  \
+          got[11] == "171" &&  \
+          got[12] == "000" &&  \
+          got[13] == "240" &&  \
+          got[14] == "000" &&  \
           got[15] == "000")
         {
           print "VAX D"
@@ -1923,16 +1922,30 @@ BEGIN {
           exit
         }
 
-      if (got[8]  == "275" &&
-          got[9]  == "301" &&
-          got[10] == "064" &&
-          got[11] == "157" &&
-          got[12] == "000" &&
-          got[13] == "124" &&
-          got[14] == "000" &&
+      if (got[8]  == "275" &&  \
+          got[9]  == "301" &&  \
+          got[10] == "064" &&  \
+          got[11] == "157" &&  \
+          got[12] == "000" &&  \
+          got[13] == "124" &&  \
+          got[14] == "000" &&  \
           got[15] == "000")
         {
           print "VAX G"
+          found = 1
+          exit
+        }
+
+      if (got[8]  == "300" &&  \
+          got[9]  == "033" &&  \
+          got[10] == "353" &&  \
+          got[11] == "171" &&  \
+          got[12] == "242" &&  \
+          got[13] == "240" &&  \
+          got[14] == "000" &&  \
+          got[15] == "000")
+        {
+          print "Cray CFP"
           found = 1
           exit
         }
@@ -1971,6 +1984,9 @@ case $gmp_cv_c_double_format in
     ;;
   "VAX G")
     AC_DEFINE(HAVE_DOUBLE_VAX_G, 1, [Define if `double' is VAX G format])
+    ;;
+  "Cray CFP")
+    AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1, [Define if `double' is Cray CFP format])
     ;;
   unknown*)
     ;;
