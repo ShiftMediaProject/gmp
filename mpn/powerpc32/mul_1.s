@@ -1,7 +1,7 @@
 # PowerPC-32 __mpn_mul_1 -- Multiply a limb vector with a limb and store
 # the result in a second limb vector.
 
-# Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+# Copyright (C) 1995, 1997 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 
@@ -27,11 +27,8 @@
 # size		r5
 # s2_limb	r6
 
-# This is a fairly straightforward implementation.  The timing of the PC601
-# is hard to understand, so I will wait to optimize this until I have some
-# hardware to play with.
-
-# The code trivially generalizes to 64 bit limbs for the PC620.
+# This is optimized for the PPC604 but it runs decently even on PPC601.  It has
+# not been tested on a PPC603 since I don't have access to any such machines.
 
 	.toc
 	.csect .__mpn_mul_1[PR]
@@ -44,21 +41,50 @@ __mpn_mul_1:
 	.csect .__mpn_mul_1[PR]
 .__mpn_mul_1:
 	mtctr	5
-
-	lwz	0,0(4)
-	mullw	7,0,6
-	mulhwu	10,0,6
-	addi	3,3,-4		# adjust res_ptr
-	addic	5,5,0		# clear cy with dummy insn
-	bdz	Lend
-
-Loop:	lwzu	0,4(4)
-	stwu	7,4(3)
-	mullw	8,0,6
-	adde	7,8,10
-	mulhwu	10,0,6
+	addi	3,3,-4		# adjust res_ptr, it's offset before it's used
+	li	12,0		# clear upper product reg
+	addic	0,0,0		# clear cy
+# Start software pipeline
+	lwz	8,0(4)
+	bdz	Lend3
+	stmw	30,-8(1)	# save registers we are supposed to preserve
+	lwzu	9,4(4)
+	mullw	11,8,6
+	mulhwu	0,8,6
+	bdz	Lend1
+# Software pipelined main loop
+Loop:	lwz	8,4(4)
+	mullw	10,9,6
+	adde	30,11,12
+	mulhwu	12,9,6
+	stw	30,4(3)
+	bdz	Lend2
+	lwzu	9,8(4)
+	mullw	11,8,6
+	adde	31,10,0
+	mulhwu	0,8,6
+	stwu	31,8(3)
 	bdnz	Loop
-
-Lend:	stw	7,4(3)
-	addze	3,10
+# Finish software pipeline
+Lend1:	mullw	10,9,6
+	adde	30,11,12
+	mulhwu	12,9,6
+	stw	30,4(3)
+	adde	31,10,0
+	stwu	31,8(3)
+	addze	3,12
+	lmw	30,-8(1)	# restore registers from stack
+	blr
+Lend2:	mullw	11,8,6
+	adde	31,10,0
+	mulhwu	0,8,6
+	stwu	31,8(3)
+	adde	30,11,12
+	stw	30,4(3)
+	addze	3,0
+	lmw	30,-8(1)	# restore registers from stack
+	blr
+Lend3:	mullw	11,8,6
+	stw	11,4(3)
+	mulhwu	3,8,6
 	blr
