@@ -600,7 +600,7 @@ gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
   ASSERT (bsize > 0);
 
 #if 0
-  if (asize <= MPN_GCD_LEHMER_THRESHOLD)
+  if (BELOW_THRESHOLD (asize, MPN_GCD_LEHMER_THRESHOLD))
     {
       ASSERT (asize + bsize + 2 <= talloc);
 
@@ -631,7 +631,7 @@ gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
   r[3].uvp[0] = r[3].uvp[1] = NULL;
 #endif
   
-  while (r[0].rsize > GCD_LEHMER_THRESHOLD && r[1].rsize > 0)
+  while (ABOVE_THRESHOLD (r[0].rsize, GCD_LEHMER_THRESHOLD) && r[1].rsize > 0)
     {
       struct hgcd2 hgcd;
       int res = mpn_hgcd2_lehmer_step (&hgcd,
@@ -761,7 +761,8 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
     talloc -= nlimbs;
   }
 
-  while (r[0].rsize > GCD_SCHOENHAGE_THRESHOLD && r[1].rsize > 0)
+  while (ABOVE_THRESHOLD (r[0].rsize, GCD_SCHOENHAGE_THRESHOLD)
+         && r[1].rsize > 0)
     {
       mp_size_t k = r[0].rsize / 2;
       int res;
@@ -866,7 +867,7 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
       return r[0].rsize;
     }
 #if 0
-  else if (r[0].rsize > GCD_LEHMER_THRESHOLD)
+  else if (ABOVE_THRESHOLD (r[0].rsize, GCD_LEHMER_THRESHOLD))
     return gcd_lehmer (gp,
 		       r[0].rp, r[0].rsize,
 		       r[1].rp, r[1].rsize,
@@ -884,7 +885,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 {
   TMP_DECL (marker);
 
-  if (usize <= GCD_SCHOENHAGE_THRESHOLD)
+  if (BELOW_THRESHOLD (usize, GCD_SCHOENHAGE_THRESHOLD))
     return gcd_binary_odd (gp, up, usize, vp, vsize);
 
   /* The algorithms below require normalized input, and up >= vp */
@@ -896,7 +897,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
     MP_PTR_SWAP (up, vp);
 
 #if 0
-  if (usize <= GCD_SCHOENHAGE_THRESHOLD)
+  if (BELOW_THRESHOLD (usize, GCD_SCHOENHAGE_THRESHOLD))
     {
       mp_size_t scratch;
       mp_ptr tp;
