@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-01-16  Niels Möller  <nisse@harpo.hack.org>
+
+	* mpn/generic/hgcd.c (mpn_diff_smaller_p): Use MPN_DECR_U.
+	(hgcd_adjust): Use mpn_addlsh1_n when available.
+
 2004-01-16  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (powerpc64-*-linux*): Try gcc64.  Try -m64 with
