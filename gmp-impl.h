@@ -274,6 +274,16 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define ATTRIBUTE_NORETURN
 #endif
 
+/* In gcc 2.96 and up on i386, tail calls are optimized to jumps if the
+   stack usage is compatible.  __attribute__ ((regparm (N))) helps by
+   putting leading parameters in registers, avoiding extra stack.  */
+
+#if defined (__GNUC__) && defined (i386) \
+  && (__GNUC_MAJOR >= 3 || (__GNUC_MAJOR == 2 && __GNUC_MINOR >= 96))
+#define USE_LEADING_REGPARM 1
+#else
+#define USE_LEADING_REGPARM 0
+#endif
 
 /* Note that if every use of an inline routine is in fact expanded, then
    there'd no need for a library copy in mpn/inlines.lo.  But gcc can
