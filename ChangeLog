@@ -29,6 +29,8 @@
 	* mpf/get_ui.c: New file.
 	* mpf/int_p.c: New file.
 	* Makefile.am, mpf/Makefile.am: Add them.
+	* gmp-h.in (mpf_fits_*_p, mpf_get_si, mpf_get_ui, mpf_integer_p): Add
+	prototypes.
 
 	* tests/memory.c (tests_allocate, tests_reallocate): Guard against
 	size==0.
