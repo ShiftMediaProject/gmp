@@ -22,75 +22,42 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 This directory contains mpn functions for 64-bit PA-RISC 2.0.
 
-RELEVANT OPTIMIZATION ISSUES
+PIPELINE SUMMARY
 
-The PA8x00 processors have a 4-way OOO pipeline.  No register RAW
-latency scheduling is necessary.  Memory RAW scheduling is still
-necessary.  Completion unit scheduling is necessary.
+The PA8x00 processors have an orthogonal 4-way out-of-order pipeline.  Each
+cycle two ALU operations and two MEM operations can issue, but just one of the
+MEM operations may be a store.  The two ALU operations can be almost any
+combination of non-memory operations.  Unlike every other processor, integer
+and fp operations are completely equal here; they both count as just ALU
+operations.
 
-According to HP's published publication, two memory operations can be
-completed per cycle, but at most one of these may be a store.  Two ALU
-operations may be completed per cycle; integer and fp operations are
-equal here.
+Unfortunately, some operations cause hickups in the pipeline.  Combining
+carry-consuming operations like ADD,DC with operations that does not set carry
+like ADD,L cause long delays.  Skip operations also seem to cause hickups.  If
+several ADD,DC are issued consecutively, or if plain carry-generating ADD feed
+ADD,DC, stalling does not occur.  We can effectively issue two ADD,DC
+operations/cycle.
 
-Since the completion unit can only handle 4 instructions per cycle,
-and since completion is made in strict program order, we need to
-schedule 4-group instructions that can complete together, e.g., two
-loads and two ALU operations.
+Latency scheduling is not as important as making sure to have a mix of ALU and
+MEM operations, but for full pipeline utilization, it is still a good idea to
+do some amount of latency scheduling.
 
-Instructions that read the carry flag seem to cause hickup in the
-pipeline.
-
-Warning for the "nop" mnemonic; it stalls the pipeline.
+Like for all other processors, RAW memory scheduling is critically important.
+Since integer multiplication takes place in the floating-point unit, the GMP
+code needs to handle this problem frequently.
 
 STATUS
 
-* mpn_lshift and mpn_rshift run at 1.5 cycles/limb.  That cannot be
-  improved.
+* mpn_lshift and mpn_rshift run at 1.5 cycles/limb on PA8000 and at 1.0
+  cycles/limb on PA8500.  With latency scheduling, the numbers could be
+  improved to 1.0 cycles/limb for all PA8x00 chips.
 
-* mpn_add_n and mpn_sub_n run at 2.0 cycles/limb.  That cannot be
-  improved.
+* mpn_add_n and mpn_sub_n run at 2.0 cycles/limb on PA8000 and at about 1.9
+  cycles/limb on PA8500.  With latency scheduling, this could be improved to
+  1.5 cycles/limb.
 
-* The multiplication functions run at 11 cycles/limb.  The memory unit
-  bandwidth allows 5.0 cycles/limb for mul_1 and 5.5 cycles/limb for
-  addmul_1/submul_1.  With proper scheduling, the performance will be
-  limited by ALU bandwidth.
+* The mpn_addmul_1 run at 6.25 cycles/limb.  The current code uses ADD,DC for
+  adjacent limbs, and relies heavily on reordering.
 
-* xaddmul_1.S contains a quicker method for forming the 128 bit product.  It
-  uses some fewer operations, and keep the carry flag live across the loop
-  boundary.  But it seems hard to make it run more than 1/4 cycle faster
-  than the old code.  Perhaps we really ought to unroll this loop be 2x?  2x
-  should suffice since register latency schedling is never needed, but the
-  unrolling would hide the RAW memory latency.  Here is a sketch:
-
-	1. A multiply and store 64-bit products
-	2. B sum 64-bit products 128-bit product
-	3. B load  64-bit products to integer registers
-	4. B multiply and store 64-bit products
-	5. A sum 64-bit products 128-bit product
-	6. A load  64-bit products to integer registers
-	7. goto 1
-
-  In practice, adjacent groups (1 and 2, 2 and 3, etc) will be interleaved
-  for better instruction mix.
-
- 1                 
- 2                 6                 0
- 8                 4
-
-sp[i] * x
-  ________ ________
- |________|________|			phi
-	   ________ ________
-	  |________|________|		pm1
-	   ________ ________
-	  |________|________|		pm0
-		    ________ ________
-		   |________|________|	plo
-		    ________ ________
-		   |________|________|	rpi
-		    ________ ________
-		   |________|________|	cyl
-
-
-(rpi >> B/2) + (plo >> B/2) + pm0 + pm1
+* Both mpn_mul_1 and mpn_submul_1 run at around 11 cycles/limb.  There is
+  obviously room for improving these along the lines of mpn_addmul_1.
