@@ -28,7 +28,7 @@ dnl
 dnl  Registers names, either left as "r0" etc or mapped to plain 0 etc,
 dnl  according to the result of GMP_ASM_POWERPC_REGISTERS.
 
-ifelse(WANT_REGISTERS_R,no,`
+ifelse(WANT_R_REGISTERS,no,`
 forloop(i,0,31,`deflit(`r'i,i)')
 forloop(i,0,7, `deflit(`cr'i,i)')
 ')
