@@ -131,12 +131,11 @@ mpz_t  variable[26];
     }
 
 
-#define CHECK_UI(name,z)                                                   \
-  if (! mpz_fits_ulong_p (z))                                              \
-    {                                                                      \
-      fprintf (stderr,                                                     \
-               "Operand must fit in an \"unsigned long\" for %s\n", name); \
-      YYERROR;                                                             \
+#define CHECK_UI(name,z)                        \
+  if (! mpz_fits_ulong_p (z))                   \
+    {                                           \
+      fprintf (stderr, "%s too big\n", name);   \
+      YYERROR;                                  \
     }
 
 %}
@@ -202,13 +201,13 @@ e:
     | e '*' e     ={ sp--; mpz_mul    (sp, sp, sp+1); }
     | e '/' e     ={ sp--; mpz_fdiv_q (sp, sp, sp+1); }
     | e '%' e     ={ sp--; mpz_fdiv_r (sp, sp, sp+1); }
-    | e '^' e     ={ CHECK_UI ("exponentiation", sp);
+    | e '^' e     ={ CHECK_UI ("Exponent", sp);
                      sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); }
-    | e LSHIFT e  ={ CHECK_UI ("lshift", sp);
+    | e LSHIFT e  ={ CHECK_UI ("Shift count", sp);
                      sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); }
-    | e RSHIFT e  ={ CHECK_UI ("rshift", sp);
+    | e RSHIFT e  ={ CHECK_UI ("Shift count", sp);
                      sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); }
-    | e '!'       ={ CHECK_UI ("factorial", sp);
+    | e '!'       ={ CHECK_UI ("Factorial", sp);
                      mpz_fac_ui (sp, mpz_get_ui (sp)); }
     | '-' e %prec UMINUS   ={ mpz_neg (sp, sp); }
 
@@ -223,19 +222,19 @@ e:
     | e LOR e     ={ sp--; mpz_set_ui (sp, mpz_sgn (sp) || mpz_sgn (sp+1)); }
 
     | ABS '(' e ')'              ={ mpz_abs (sp, sp); }
-    | BIN '(' e ',' e ')'        ={ sp--; CHECK_UI ("binomial", sp+1);
+    | BIN '(' e ',' e ')'        ={ sp--; CHECK_UI ("Binomial base", sp+1);
                                     mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); }
-    | FIB '(' e ')'              ={ CHECK_UI ("fibonacci", sp);
+    | FIB '(' e ')'              ={ CHECK_UI ("Fibonacci", sp);
                                     mpz_fib_ui (sp, mpz_get_ui (sp)); }
     | GCD '(' gcdlist ')'        /* value on stack */
     | KRON '(' e ',' e ')'       ={ sp--; mpz_set_si (sp,
                                           mpz_kronecker (sp, sp+1)); }
     | LCM '(' lcmlist ')'        /* value on stack */
-    | LUCNUM '(' e ')'           ={ CHECK_UI ("lucnum", sp);
+    | LUCNUM '(' e ')'           ={ CHECK_UI ("Lucas number", sp);
                                     mpz_lucnum_ui (sp, mpz_get_ui (sp)); }
     | NEXTPRIME '(' e ')'        ={ mpz_nextprime (sp, sp); }
     | POWM '(' e ',' e ',' e ')' ={ sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); }
-    | ROOT '(' e ',' e ')'       ={ sp--; CHECK_UI ("nth-root", sp+1);
+    | ROOT '(' e ',' e ')'       ={ sp--; CHECK_UI ("Nth-root", sp+1);
                                     mpz_root (sp, sp, mpz_get_ui (sp+1)); }
     | SQRT '(' e ')'             ={ mpz_sqrt (sp, sp); }
 
