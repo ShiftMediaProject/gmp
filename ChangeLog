@@ -1,5 +1,12 @@
 2000-12-27  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/cray/ieee/mul_1.c: New file.
+	* mpn/cray/ieee/addmul_1.c: New file.
+	* mpn/cray/ieee/submul_1.c: New file.
+	* mpn/cray/ieee/gmp-mparam.h: New file.
+
+	* mpn/cray/gmp-mparam.h: Disable UMUL_TIME and UDIV_TIME.
+
 	* mpn/cray/hamdist.c: New file.
 	* mpn/cray/popcount.c: New file.
 	* mpn/cray/rshift.c: New file.
