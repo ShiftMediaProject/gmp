@@ -56,10 +56,10 @@ L(start_1c):
 	movl	PARAM_SIZE, %ecx
 
 L(top):
-	C eax	src end
+	C eax	src, incrementing
 	C ebx
-	C ecx	counter, limbs, negative
-	C edx	dst end
+	C ecx	counter, size iterations
+	C edx	dst, incrementing
 	C
 	C mm0	carry limb
 	C mm7	multiplier
