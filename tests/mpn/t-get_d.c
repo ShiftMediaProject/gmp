@@ -1,6 +1,6 @@
 /* Test mpn_get_d.
 
-Copyright 2002, 2003 Free Software Foundation, Inc.
+Copyright 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -427,15 +427,18 @@ check_rand (void)
   exp_min = -100 - mant_bits;
   exp_max =  100 - mant_bits;
 
+  /* space for mant_bits */
   nalloc = BITS_TO_LIMBS (mant_bits);
   np = refmpn_malloc_limbs (nalloc);
   nhigh_mask = MP_LIMB_T_MAX
-    >> (GMP_NAIL_BITS + nsize * GMP_NUMB_BITS - mant_bits);
+    >> (GMP_NAIL_BITS + nalloc * GMP_NUMB_BITS - mant_bits);
 
-  for (rep = 0; rep < 500; rep++)
+  for (rep = 0; rep < 200; rep++)
     {
+      /* random exp_min to exp_max, inclusive */
       exp = exp_min + (long) gmp_urandomm_ui (rands, exp_max - exp_min + 1);
 
+      /* mant_bits worth of random at np */
       if (rep & 1)
         mpn_random (np, nalloc);
       else
