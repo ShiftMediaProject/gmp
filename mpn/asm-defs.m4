@@ -273,35 +273,32 @@ define(m4_doublequote,
 
 define(m4_assert_numargs,
 `m4_assert_numargs_internal(`$0',1,$#,len(`$1'))dnl
-`m4_assert_numargs_internal'(m4_doublequote($`'0),$1,$`#',`len'(m4_doublequote($`'1)))`dnl'')
+`m4_assert_numargs_internal'(m4_doublequote($`'0),$1,$`#',`len'(m4_doublequote($`'1)))`dnl '')
 
 dnl  Called: m4_assert_numargs_internal(`macroname',wantargs,$#,len(`$1'))
 define(m4_assert_numargs_internal,
 `m4_assert_numargs_internal_check(`$1',`$2',
-m4_assert_numargs_internal_count(`$2',`$3',`$4'))')
-
-dnl  Called: m4_assert_numargs_internal_count(wantargs,$#,len(`$1'))
-dnl  If $#==0 it's -1 args, if $#==1 but len(`$1')==0 it's 0 args, otherwise
-dnl  it's $# args.  This is then subject to the fudge below.
-define(m4_assert_numargs_internal_count,
-`m4_assert_numargs_internal_fudge(`$1',
-ifelse($2,0, -1,
-`ifelse(eval($2==1 && $3-0==0),1, 0,
-$2)'))')
-
-dnl  Called: m4_assert_numargs_internal_fudge(wantargs,gotargs)
-dnl  If -1 args and 0 args can't be differentiated (BSD m4), and if -1 is
-dnl  asserted and 0 is gotten, then pretend it's really -1 that was gotten.
-define(m4_assert_numargs_internal_fudge,
-ifelse(m4_dollarhash_1_if_noparen_p,1,
-``ifelse(eval($1==-1 && $2==0),1, $1, $2)'',
-``$2''))
+m4_numargs_count(`$2',`$3',`$4'))')
 
 dnl  Called: m4_assert_numargs_internal_check(`macroname',wantargs,gotargs)
+dnl
+dnl  If m4_dollarhash_1_if_noparen_p (BSD m4) then gotargs can be 0 when it
+dnl  should be -1.  If wantargs is -1 but gotargs is 0 and the two can't be
+dnl  distinguished then it's allowed to pass.
+dnl
 define(m4_assert_numargs_internal_check,
-`ifelse($2,$3,,
+`ifelse(eval($2 == $3
+             || ($2==-1 && $3==0 && m4_dollarhash_1_if_noparen_p)),0,
 `m4_error(`$1 expected 'm4_Narguments(`$2')`, got 'm4_Narguments(`$3')
 )')')
+
+dnl  Called: m4_numargs_count($#,len(`$1'))
+dnl  If $#==0 then -1 args, if $#==1 but len(`$1')==0 then 0 args, otherwise
+dnl  $# args.
+define(m4_numargs_count,
+`ifelse($2,0, -1,
+`ifelse(eval($2==1 && $3-0==0),1, 0,
+$2)')')
 
 dnl  Usage: m4_Narguments(N)
 dnl  "$1 argument" or "$1 arguments" with the plural according to $1.
@@ -669,6 +666,19 @@ define(deflit_emptyargcheck,
 dnl  --------------------------------------------------------------------------
 dnl  Various assembler things, not specific to any particular CPU.
 dnl
+
+
+dnl  Usage: include_mpn(`filename')
+dnl
+dnl  Like include(), but adds a path to the mpn source directory.  For
+dnl  example,
+dnl
+dnl         include_mpn(`sparc64/addmul_1h.asm')
+
+define(include_mpn,
+m4_assert_numargs(1)
+m4_assert_defined(`CONFIG_TOP_SRCDIR')
+`include(CONFIG_TOP_SRCDIR`/mpn/$1')')
 
 
 dnl  Usage: C comment ...
