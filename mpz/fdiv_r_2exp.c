@@ -65,7 +65,8 @@ mpz_fdiv_r_2exp (res, in, cnt)
   else
     {
       /* The input operand is smaller than 2**CNT.  We perform a no-op,
-	 apart from that we might need to copy IN to RES.  */
+	 apart from that we might need to copy IN to RES, and may need
+	 to round the result.  */
       res_size = in_size;
       if (res->_mp_alloc < res_size)
 	_mpz_realloc (res, res_size);
@@ -75,8 +76,9 @@ mpz_fdiv_r_2exp (res, in, cnt)
 
   if (res != in)
     MPN_COPY (res->_mp_d, in->_mp_d, limb_cnt);
+  in_size = in->_mp_size;
   res->_mp_size = res_size;
-  if (in->_mp_size < 0 && res_size != 0)
+  if (in_size < 0 && res_size != 0)
     {
       /* Result should be 2^CNT - RES */
       mpz_t tmp;
@@ -90,9 +92,6 @@ mpz_fdiv_r_2exp (res, in, cnt)
 /* This is an alternative ending of the above function using just low-level
    functions.  Tested, but perhaps excessive?  */
 #if 0
-  if (res != in)
-    MPN_COPY (res->_mp_d, in->_mp_d, limb_cnt);
-
   if (in->_mp_size < 0 && res_size != 0)
     {
       /* Result should be 2^CNT - RES */
