@@ -1,6 +1,6 @@
 /* __gmp_extract_double -- convert from double to array of mp_limb_t.
 
-Copyright 1996, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,20 +30,22 @@ MA 02111-1307, USA. */
 #define _GMP_IEEE_FLOATS 0
 #endif
 
+#define BITS_IN_MANTISSA 53
+
 /* Extract a non-negative double in d.  */
 
 int
-#if __STDC__
 __gmp_extract_double (mp_ptr rp, double d)
-#else
-__gmp_extract_double (rp, d)
-     mp_ptr rp;
-     double d;
-#endif
 {
   long exp;
   unsigned sc;
-  mp_limb_t manh, manl;
+#ifdef _LONG_LONG_LIMB
+#define BITS_PER_PART 64	/* somewhat bogus */
+  unsigned long long int manh, manl;
+#else
+#define BITS_PER_PART BITS_PER_LONGINT
+  unsigned long int manh, manl;
+#endif
 
   /* BUGS
 
@@ -55,11 +57,7 @@ __gmp_extract_double (rp, d)
 
   if (d == 0.0)
     {
-      rp[0] = 0;
-      rp[1] = 0;
-#if BITS_PER_MP_LIMB == 32
-      rp[2] = 0;
-#endif
+      MPN_ZERO (rp, LIMBS_PER_DOUBLE);
       return 0;
     }
 
@@ -72,7 +70,7 @@ __gmp_extract_double (rp, d)
     union ieee_double_extract x;
     x.d = d;
     exp = x.s.exp;
-#if BITS_PER_MP_LIMB == 64
+#if BITS_PER_PART == 64		/* generalize this to BITS_PER_PART > BITS_IN_MANTISSA */
     manl = (((mp_limb_t) 1 << 63)
 	    | ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
     if (exp == 0)
@@ -87,7 +85,8 @@ __gmp_extract_double (rp, d)
 	  }
 	while ((mp_limb_signed_t) manl >= 0);
       }
-#else
+#endif
+#if BITS_PER_PART == 32
     manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
     manl = x.s.manl << 11;
     if (exp == 0)
@@ -103,6 +102,9 @@ __gmp_extract_double (rp, d)
 	  }
 	while ((mp_limb_signed_t) manh >= 0);
       }
+#endif
+#if BITS_PER_PART != 32 && BITS_PER_PART != 64
+  You need to generalize the code above to handle this.
 #endif
     exp -= 1022;		/* Remove IEEE bias.  */
   }
@@ -140,22 +142,26 @@ __gmp_extract_double (rp, d)
 	  }
       }
 
-    d *= MP_BASE_AS_DOUBLE;
-#if BITS_PER_MP_LIMB == 64
+    d *= (4.0 * ((unsigned long int) 1 << (BITS_PER_PART - 2)));
+#if BITS_PER_PART == 64
     manl = d;
 #else
     manh = d;
-    manl = (d - manh) * MP_BASE_AS_DOUBLE;
+    manl = (d - manh) * (4.0 * ((unsigned long int) 1 << (BITS_PER_PART - 2)));
 #endif
   }
-#endif
+#endif /* IEEE */
+
+  /* Up until here, we have ignored the actual limb size.  Remains
+     to split manh,,manl into an array of LIMBS_PER_DOUBLE limbs.
+  */
 
   sc = (unsigned) exp % BITS_PER_MP_LIMB;
 
   /* We add something here to get rounding right.  */
   exp = (exp + 2048) / BITS_PER_MP_LIMB - 2048 / BITS_PER_MP_LIMB + 1;
 
-#if BITS_PER_MP_LIMB == 64
+#if LIMBS_PER_DOUBLE == 2
   if (sc != 0)
     {
       rp[1] = manl >> (BITS_PER_MP_LIMB - sc);
@@ -167,7 +173,8 @@ __gmp_extract_double (rp, d)
       rp[0] = 0;
       exp--;
     }
-#else
+#endif
+#if LIMBS_PER_DOUBLE == 3
   if (sc != 0)
     {
       rp[2] = manh >> (BITS_PER_MP_LIMB - sc);
@@ -181,6 +188,28 @@ __gmp_extract_double (rp, d)
       rp[0] = 0;
       exp--;
     }
+#endif
+#if LIMBS_PER_DOUBLE > 3
+  /* Insert code for splitting manh,,manl into LIMBS_PER_DOUBLE
+     mp_limb_t's at rp.  */
+  if (sc != 0)
+    {
+      /* This is not perfect, and would fail for BITS_PER_MP_LIMB == 16.
+	 The ASSERT_ALWAYS should catch the problematic cases.  */
+      ASSERT_ALWAYS ((manl << sc) == 0);
+      manl = (manh << sc) | (manl >> (BITS_PER_MP_LIMB - sc));
+      manh = manh >> (BITS_PER_MP_LIMB - sc);
+    }
+  {
+    int i;
+    for (i = LIMBS_PER_DOUBLE - 1; i >= 0; i--)
+      {
+	rp[i] = manh >> (BITS_PER_LONGINT - BITS_PER_MP_LIMB);
+	manh = ((manh << BITS_PER_MP_LIMB)
+		| (manl >> (BITS_PER_LONGINT - BITS_PER_MP_LIMB)));
+	manl = manl << BITS_PER_MP_LIMB;
+      }
+  }
 #endif
 
   return exp;
