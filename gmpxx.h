@@ -5366,6 +5366,10 @@ public:
   }
 };
 
+extern "C" typedef void __gmp_randinit_default_t (gmp_randstate_t);
+extern "C" typedef void __gmp_randinit_lc_2exp_t (gmp_randstate_t, mpz_srcptr, unsigned long int, unsigned long int);
+extern "C" typedef void __gmp_randinit_lc_2exp_size_t (gmp_randstate_t, unsigned long int);
+
 class gmp_randclass
 {
 private:
@@ -5388,16 +5392,15 @@ public:
   }
 
   // gmp_randinit_default
-  gmp_randclass(void (*f)(gmp_randstate_t)) { f(state); }
+  gmp_randclass(__gmp_randinit_default_t* f) { f(state); }
 
   // gmp_randinit_lc_2exp
-  gmp_randclass(void (*f)(gmp_randstate_t, mpz_srcptr,
-			  unsigned long int, unsigned long int),
+  gmp_randclass(__gmp_randinit_lc_2exp_t* f,
 		mpz_class z, unsigned long int l1, unsigned long int l2)
   { f(state, z.get_mpz_t(), l1, l2); }
 
   // gmp_randinit_lc_2exp_size
-  gmp_randclass(int (*f)(gmp_randstate_t, unsigned long int),
+  gmp_randclass(__gmp_randinit_lc_2exp_size_t* f,
 		unsigned long int size)
   { f(state, size); }
 
