@@ -35,16 +35,47 @@ C transformation of the wind-down code could reduce the code size considerably.
 C
 C A VIS variant of this code would make the pipeline less deep, since the
 C masking now done in the integer unit could take place in the floating-point
-C unit using FAND instructions.  It would be possible to save several cycles
+C unit using the FAND instruction.  It would be possible to save several cycles
 C too.
 C
-C The code runs at 11 cycles/limb from the Dcache and not much slower from the
-C Ecache.  It would perhaps be possible to shave off one cycle, but not easily.
-C A VIS variant could run three cycles faster than the corresponding non-VIS
-C code.
+C On UltraSPARC 1 and 2, this code runs at 11 cycles/limb from the Dcache and
+C not much slower from the Ecache.  It would perhaps be possible to shave off
+C one cycle, but not easily.  We cannot do better than 10 cycles/limb with the
+C used instructions, since we have 10 memory operations per limb.  But a VIS
+C variant could run three cycles faster than the corresponding non-VIS code.
 
+C This is non-pipelined code showing the algorithm:
+C
+C L(loop):
+C	lduw	[up+0],%g4		C 00000000hhhhllll
+C	sllx	%g4,16,%g3		C 0000hhhhllll0000
+C	or	%g3,%g4,%g2		C 0000hhhhXXXXllll
+C	andn	%g2,%g5,%g2		C 0000hhhh0000llll
+C	stx	%g2,[%fp+80]
+C	ldd	[%fp+80],%f0
+C	fitod	%f0,%f4			C hi16
+C	fitod	%f1,%f6			C lo16
+C	ld	[up+0],%f9
+C	fxtod	%f8,%f2
+C	fmuld	%f2,%f4,%f4
+C	fmuld	%f2,%f6,%f6
+C	fdtox	%f4,%f4
+C	fdtox	%f6,%f6
+C	std	%f4,[%fp-24]
+C	std	%f6,[%fp-16]
+C	ldx	[%fp-24],%g2
+C	ldx	[%fp-16],%g1
+C	sllx	%g2,16,%g2
+C	add	%g2,%g1,%g1
+C	stw	%g1,[rp+0]
+C	srlx	%g1,32,%l0
+C	stw	%l0,[rp+4]
+C	add	up,4,up
+C	subcc	n,1,n
+C	bne,pt	%icc,L(loop)
+C	add	rp,8,rp
 
-define(`FA',`faddd %f30,%f30,%f34')
+define(`fanop',`fitod %f12,%f10')	dnl  A quasi nop running in the FA pipe
 
 ASM_START()
 
@@ -150,7 +181,7 @@ C ---
 	nop
 	nop
 	ldx	[%fp-24],%g2		C p16
-	FA
+	fanop
 C ---
 	nop
 	nop
@@ -165,7 +196,7 @@ C ---
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i1,4,%i1		C s1_ptr++
 	ldd	[%fp+72],%f0
-	FA
+	fanop
 C ---
 	srlx	%g1,32,%l0
 	nop
@@ -185,7 +216,7 @@ C ---
 	std	%f6,[%fp-16]
 	andn	%g2,%g5,%g2		C 0000hhhh0000llll
 	be,pn	%icc,L(loope)
-	FA
+	fanop
 C ---  LOOP MIDDLE
 	nop
 	nop
@@ -200,7 +231,7 @@ C ---
 	nop
 	nop
 	ldx	[%fp-40],%g2		C p16
-	FA
+	fanop
 C ---
 	nop
 	nop
@@ -215,7 +246,7 @@ C ---
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i1,4,%i1		C s1_ptr++
 	ldd	[%fp+80],%f0
-	FA
+	fanop
 C ---
 	srlx	%g1,32,%l0
 	nop
@@ -235,7 +266,7 @@ C ---
 	std	%f6,[%fp-32]
 	andn	%g2,%g5,%g2		C 0000hhhh0000llll
 	bne,pt	%icc,L(loop)
-	FA
+	fanop
 C --- LOOP END
 
 L(end5):
