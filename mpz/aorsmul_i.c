@@ -194,9 +194,8 @@ mpz_aorsmul_1 (mpz_ptr w, mpz_srcptr x, mp_limb_t y, mp_size_t sub)
 void
 mpz_addmul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
 {
-  mpz_aorsmul_1 (w, x, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) 0);
-#if GMP_NAIL_BITS != 0
-  if (y > GMP_NUMB_MAX && SIZ(x) != 0)
+#if BITS_PER_ULONG > GMP_NUMB_BITS
+  if (UNLIKELY (y > GMP_NUMB_MAX && SIZ(x) != 0))
     {
       mpz_t t;
       mp_ptr tp;
@@ -210,16 +209,20 @@ mpz_addmul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
       MPN_COPY (tp + 1, PTR(x), ABS (xn));
       SIZ(t) = xn >= 0 ? xn + 1 : xn - 1;
       mpz_aorsmul_1 (w, t, (mp_limb_t) y >> GMP_NUMB_BITS, (mp_size_t) 0);
+      PTR(t) = tp + 1;
+      SIZ(t) = xn;
+      mpz_aorsmul_1 (w, t, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) 0);
       TMP_FREE (mark);
+      return;
     }
 #endif
+  mpz_aorsmul_1 (w, x, (mp_limb_t) y, (mp_size_t) 0);
 }
 
 void
 mpz_submul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
 {
-  mpz_aorsmul_1 (w, x, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) -1);
-#if GMP_NAIL_BITS != 0
+#if BITS_PER_ULONG > GMP_NUMB_BITS
   if (y > GMP_NUMB_MAX && SIZ(x) != 0)
     {
       mpz_t t;
@@ -234,7 +237,12 @@ mpz_submul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
       MPN_COPY (tp + 1, PTR(x), ABS (xn));
       SIZ(t) = xn >= 0 ? xn + 1 : xn - 1;
       mpz_aorsmul_1 (w, t, (mp_limb_t) y >> GMP_NUMB_BITS, (mp_size_t) -1);
+      PTR(t) = tp + 1;
+      SIZ(t) = xn;
+      mpz_aorsmul_1 (w, t, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) -1);
       TMP_FREE (mark);
+      return;
     }
 #endif
+  mpz_aorsmul_1 (w, x, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) -1);
 }
