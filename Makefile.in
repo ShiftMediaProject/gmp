@@ -93,7 +93,6 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
-WANT_MPFR_VAL = @WANT_MPFR_VAL@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -174,7 +173,7 @@ nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
 EXTRA_DIST = doc macos \
-  configfsf.guess configfsf.sub .gdbinit gmp-h.in gmp-impl.h mp-h.in \
+  configfsf.guess configfsf.sub .gdbinit gmp-impl.h \
   INSTALL.autoconf longlong.h stack-alloc.h
 
 
@@ -315,12 +314,12 @@ info_TEXINFOS = gmp.texi
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = config.h
+CONFIG_HEADER = config.h gmp.h mp.h ./demos/expr/expr-impl.h
 CONFIG_CLEAN_FILES = 
 LTLIBRARIES =  $(lib_LTLIBRARIES)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I.
+DEFS = @DEFS@ -I. -I$(srcdir) -I. -I. -I. -I./demos/expr
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -347,11 +346,12 @@ TEXINFOS = gmp.texi
 HEADERS =  $(nodist_include_HEADERS)
 
 depcomp = 
-DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING COPYING.LIB ChangeLog \
-INSTALL Makefile.am Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 \
-ansi2knr.1 ansi2knr.c config.guess config.in config.sub configure \
-configure.in install-sh ltconfig ltmain.sh mdate-sh missing \
-mkinstalldirs stamp-vti texinfo.tex version.texi
+DIST_COMMON =  README ./stamp-h1.in ./stamp-h2.in ./stamp-h3.in AUTHORS \
+COPYING COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS \
+acconfig.h acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c config.guess \
+config.in config.sub configure configure.in gmp-h.in install-sh \
+ltconfig ltmain.sh mdate-sh missing mkinstalldirs mp-h.in stamp-vti \
+texinfo.tex version.texi
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -378,35 +378,81 @@ config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
-config.h: stamp-h
+config.h: stamp-h1
 	@if test ! -f $@; then \
-		rm -f stamp-h; \
-		$(MAKE) stamp-h; \
+		rm -f stamp-h1; \
+		$(MAKE) stamp-h1; \
 	else :; fi
-stamp-h: $(srcdir)/config.in $(top_builddir)/config.status
-	@rm -f stamp-h stamp-hT
-	@echo timestamp > stamp-hT 2> /dev/null
+stamp-h1: $(srcdir)/config.in $(top_builddir)/config.status
+	@rm -f stamp-h1 stamp-h1T
+	@echo timestamp > stamp-h1T 2> /dev/null
 	cd $(top_builddir) \
 	  && CONFIG_FILES= CONFIG_HEADERS=config.h:config.in \
 	     $(SHELL) ./config.status
-	@mv stamp-hT stamp-h
-$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h.in
+	@mv stamp-h1T stamp-h1
+$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h1.in
 	@if test ! -f $@; then \
-		rm -f $(srcdir)/./stamp-h.in; \
-		$(MAKE) $(srcdir)/./stamp-h.in; \
+		rm -f $(srcdir)/./stamp-h1.in; \
+		$(MAKE) $(srcdir)/./stamp-h1.in; \
 	else :; fi
-$(srcdir)/./stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
-	@rm -f $(srcdir)/./stamp-h.in $(srcdir)/./stamp-h.inT
-	@echo timestamp > $(srcdir)/./stamp-h.inT 2> /dev/null
+$(srcdir)/./stamp-h1.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+	@rm -f $(srcdir)/./stamp-h1.in $(srcdir)/./stamp-h1.inT
+	@echo timestamp > $(srcdir)/./stamp-h1.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)
-	@mv $(srcdir)/./stamp-h.inT $(srcdir)/./stamp-h.in
+	@mv $(srcdir)/./stamp-h1.inT $(srcdir)/./stamp-h1.in
+
+gmp.h: stamp-h2
+	@if test ! -f $@; then \
+		rm -f stamp-h2; \
+		$(MAKE) stamp-h2; \
+	else :; fi
+stamp-h2: $(srcdir)/gmp-h.in $(top_builddir)/config.status
+	@rm -f stamp-h2 stamp-h2T
+	@echo timestamp > stamp-h2T 2> /dev/null
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=gmp.h:gmp-h.in \
+	     $(SHELL) ./config.status
+	@mv stamp-h2T stamp-h2
+$(srcdir)/gmp-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h2.in
+	@if test ! -f $@; then \
+		rm -f $(srcdir)/./stamp-h2.in; \
+		$(MAKE) $(srcdir)/./stamp-h2.in; \
+	else :; fi
+$(srcdir)/./stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+	@rm -f $(srcdir)/./stamp-h2.in $(srcdir)/./stamp-h2.inT
+	@echo timestamp > $(srcdir)/./stamp-h2.inT 2> /dev/null
+	cd $(top_srcdir) && $(AUTOHEADER)
+	@mv $(srcdir)/./stamp-h2.inT $(srcdir)/./stamp-h2.in
+
+mp.h: stamp-h3
+	@if test ! -f $@; then \
+		rm -f stamp-h3; \
+		$(MAKE) stamp-h3; \
+	else :; fi
+stamp-h3: $(srcdir)/mp-h.in $(top_builddir)/config.status
+	@rm -f stamp-h3 stamp-h3T
+	@echo timestamp > stamp-h3T 2> /dev/null
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=mp.h:mp-h.in \
+	     $(SHELL) ./config.status
+	@mv stamp-h3T stamp-h3
+$(srcdir)/mp-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h3.in
+	@if test ! -f $@; then \
+		rm -f $(srcdir)/./stamp-h3.in; \
+		$(MAKE) $(srcdir)/./stamp-h3.in; \
+	else :; fi
+$(srcdir)/./stamp-h3.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+	@rm -f $(srcdir)/./stamp-h3.in $(srcdir)/./stamp-h3.inT
+	@echo timestamp > $(srcdir)/./stamp-h3.inT 2> /dev/null
+	cd $(top_srcdir) && $(AUTOHEADER)
+	@mv $(srcdir)/./stamp-h3.inT $(srcdir)/./stamp-h3.in
 
 mostlyclean-hdr:
 
 clean-hdr:
 
 distclean-hdr:
-	-rm -f config.h
+	-rm -f config.h gmp.h mp.h
 
 maintainer-clean-hdr:
 
@@ -767,7 +813,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in gmp-h.in mp-h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -782,8 +828,8 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in $(TAGS_DEPENDENCIES) \
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)config.in$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags config.in $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)config.in gmp-h.in mp-h.in$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags config.in gmp-h.in mp-h.in $$unique $(LISP)
 
 mostlyclean-tags:
 
@@ -881,7 +927,7 @@ check-am: all-am
 check: check-recursive
 installcheck-am:
 installcheck: installcheck-recursive
-all-recursive-am: config.h
+all-recursive-am: config.h gmp.h mp.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 install-exec-am: install-libLTLIBRARIES
@@ -897,7 +943,7 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-info \
 		uninstall-nodist_includeHEADERS
 uninstall: uninstall-recursive
 all-am: Makefile $(INFO_DEPS) $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) \
-		config.h
+		config.h gmp.h mp.h
 all-redirect: all-recursive-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
