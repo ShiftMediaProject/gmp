@@ -32,8 +32,8 @@
 ; trouble is the FFFFFFFF code that would need some hacking.
 
 	.code
-	.export		__udiv_qrnnd
-__udiv_qrnnd
+	.export		__gmpn_udiv_qrnnd
+__gmpn_udiv_qrnnd
 	.proc
 	.callinfo	frame=0,no_calls
 	.entry

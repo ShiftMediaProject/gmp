@@ -30,8 +30,8 @@
 	.code
 L$0000	.word		0x43f00000
 	.word		0x0
-	.export		__udiv_qrnnd
-__udiv_qrnnd
+	.export		__gmpn_udiv_qrnnd
+__gmpn_udiv_qrnnd
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry

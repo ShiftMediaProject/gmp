@@ -24,9 +24,9 @@
 	.set noat
 .text
 	.align	3
-	.globl	__udiv_qrnnd
-	.ent	__udiv_qrnnd
-__udiv_qrnnd:
+	.globl	__gmpn_udiv_qrnnd
+	.ent	__gmpn_udiv_qrnnd
+__gmpn_udiv_qrnnd:
 	.frame $30,0,$26,0
 	.prologue 0
 #define cnt	$2
@@ -148,4 +148,4 @@ __udiv_qrnnd:
 	bis	$31,n0,$0
 	ret	$31,($26),1
 
-	.end	__udiv_qrnnd
+	.end	__gmpn_udiv_qrnnd
