@@ -38,9 +38,13 @@ int
 mpz_kronecker_ui (mpz_srcptr a, unsigned long b)
 {
   mp_srcptr  a_ptr = PTR(a);
-  int        a_size = SIZ(a);
+  int        a_size;
   mp_limb_t  a_rem;
   int        result_bit1;
+
+  a_size = SIZ(a);
+  if (a_size == 0)
+    return JACOBI_0U (b);
 
   if (b & 1)
     {
