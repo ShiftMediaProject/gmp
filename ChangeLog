@@ -1,3 +1,8 @@
+2000-03-31  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_ASM_MMX): Give a warning when mmx code
+	will be omitted.
+
 2000-03-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/lisp/gmpasm-mode.el: Fix some comment detection, use custom,
