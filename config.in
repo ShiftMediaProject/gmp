@@ -113,6 +113,9 @@ MA 02111-1307, USA.
 /* Define if the system has the type `void'. */
 #undef HAVE_VOID
 
+/* Define if you have the `popen' function. */
+#undef HAVE_POPEN
+
 /* ./configure --disable-alloca option, to use stack-alloc.c, not alloca */
 #undef USE_STACK_ALLOC
 
