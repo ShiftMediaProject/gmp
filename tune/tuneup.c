@@ -982,6 +982,7 @@ tune_hgcd (void)
   param.function = speed_mpn_hgcd;
   /* We seem to get strange results for small sizes */
   param.min_size = 50;
+  param.step_factor = 0.05;
   one (&hgcd_schoenhage_threshold, &param);
 #endif
 }
@@ -1004,6 +1005,7 @@ tune_gcd_schoenhage (void)
   param.function = speed_mpn_gcd;
   param.min_size = hgcd_schoenhage_threshold;
   param.max_size = 3000;
+  param.step_factor = 0.2;
   one (&gcd_schoenhage_threshold, &param);
 }
 
