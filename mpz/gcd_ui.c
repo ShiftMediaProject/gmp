@@ -1,6 +1,6 @@
 /* mpz_gcd_ui -- Calculate the greatest common divisior of two integers.
 
-Copyright 1994, 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1994, 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,33 +26,47 @@ MA 02111-1307, USA. */
 unsigned long int
 mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 {
-  mp_size_t size;
+  mp_size_t un;
   mp_limb_t res;
+  mp_ptr up;
 
-  size = ABS (u->_mp_size);
+#if GMP_NAIL_BITS != 0
+  if (v > GMP_NUMB_MAX)
+    {
+      mpz_t vz;
+      mp_limb_t vlimbs[2];
+      vlimbs[0] = v & GMP_NUMB_MASK;
+      vlimbs[1] = v >> GMP_NUMB_BITS;
+      PTR(vz) = vlimbs;
+      SIZ(vz) = 2;
+      mpz_gcd (w, u, vz);
+      return;
+    }
+#endif
 
-  if (size == 0)
+  un = ABSIZ(u);
+  up = PTR(u);
+
+  if (un == 0)
     res = v;
   else if (v == 0)
     {
       if (w != NULL && u != w)
 	{
-	  if (w->_mp_alloc < size)
-	    _mpz_realloc (w, size);
-
-	  MPN_COPY (w->_mp_d, u->_mp_d, size);
+	  MPZ_REALLOC (w, un);
+	  MPN_COPY (PTR(w), up, un);
+	  SIZ(w) = un;
 	}
-      w->_mp_size = size;
       /* We can't return any useful result for gcd(big,0).  */
-      return size > 1 ? 0 : w->_mp_d[0];
+      return un > 1 ? 0 : up[0];
     }
   else
-    res = mpn_gcd_1 (u->_mp_d, size, (mp_limb_t) v);
+    res = mpn_gcd_1 (up, un, (mp_limb_t) v);
 
   if (w != NULL)
     {
-      w->_mp_d[0] = res;
-      w->_mp_size = 1;
+      PTR(w)[0] = res;
+      SIZ(w) = res != 0;
     }
   return res;
 }
