@@ -481,6 +481,11 @@ speed_mpn_mul_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_UNARY_1 (mpn_mul_1);
 }
+double
+speed_mpn_mul_1_inplace (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1_INPLACE (mpn_mul_1);
+}
 
 #if HAVE_NATIVE_mpn_mul_2
 double
