@@ -1,4 +1,4 @@
-dnl  Alpha ev6 nails mpn_addmul_1.
+dnl  Alpha ev6 nails mpn_submul_1.
 
 dnl  Copyright 2002 Free Software Foundation, Inc.
 dnl 
@@ -73,7 +73,7 @@ dnl global pointer: 29
 dnl stack pointer: 30
 
 ASM_START()
-PROLOGUE(mpn_addmul_1)
+PROLOGUE(mpn_submul_1)
 	lda	r30,	-240(r30)
 	stq	r9,	8(r30)
 C	stq	r10,	16(r30)
@@ -98,10 +98,10 @@ Loop0:
 	mulq	vl0,	ul0,	m0a		C U1
 	srl	m0a,NAIL_BITS,	r8
 	addq	r8,	m3b,	acc0
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	addq	r15,	acc0,	acc0
 	umulh	vl0,	ul0,	m3b		C U1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	and	acc0,numb_mask,	r28
 	stq	r28,	0(rp)
 	lda	rp,	8(rp)
@@ -113,7 +113,7 @@ L4:
 	lda	n,	-4(n)
 	bge	n,	L_4_or_more
 L_0_to_3:
-	addq	m3b,	r15,	r0
+	subq	m3b,	r15,	r0
 	br	r31,	Lret
 
 L_4_or_more:
@@ -139,36 +139,36 @@ L_4_to_8:
 	mulq	vl0,	ul3,	m3a		C U1
 	addq	r8,	m3b,	acc0
 	umulh	vl0,	ul3,	m3b		C U1
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	srl	m1a,NAIL_BITS,	r8
 	addq	r15,	acc0,	acc0
 
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
-	addq	rl1,	acc1,	acc1
+	sra	acc0,NUMB_BITS,	r15
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m2a,NAIL_BITS,	r8
 	addq	r15,	acc1,	acc1
 	bis	r31,	r31,	r31		C	nop
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	0(rp)
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m3a,NAIL_BITS,	r8
 	addq	r15,	acc0,	acc0
 	bis	r31,	r31,	r31		C	nop
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	8(rp)
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	addq	r15,	acc1,	acc1
 	bis	r31,	r31,	r31		C	nop
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	16(rp)
 	and	acc1,numb_mask,	r28
-	addq	m3b,	r15,	acc0
+	subq	m3b,	r15,	acc0
 	stq	r28,	24(rp)
 	and	acc0,numb_mask,	r0
 
@@ -192,7 +192,7 @@ L_8_or_more:
 	addq	r8,	m3b,	acc0
 	umulh	vl0,	ul3,	m3b		C U1
 	ldq	ul3,	24(up)
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	srl	m1a,NAIL_BITS,	r8
 	ldq	rl0,	32(rp)
 	addq	r15,	acc0,	acc0
@@ -203,9 +203,9 @@ L_8_or_more:
 L_8_to_11:
 	mulq	vl0,	ul0,	m0a		C U1
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	umulh	vl0,	ul0,	m0b		C U1
-	addq	rl1,	acc1,	acc1
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m2a,NAIL_BITS,	r8
 	ldq	rl1,	8(rp)
@@ -213,10 +213,10 @@ L_8_to_11:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul1,	m1a		C U1
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-32(rp)
 	umulh	vl0,	ul1,	m1b		C U1
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m3a,NAIL_BITS,	r8
 	ldq	rl2,	16(rp)
@@ -224,10 +224,10 @@ L_8_to_11:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul2,	m2a		C U1
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-24(rp)
 	umulh	vl0,	ul2,	m2b		C U1
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m0a,NAIL_BITS,	r8
 	ldq	rl3,	24(rp)
@@ -235,41 +235,41 @@ L_8_to_11:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul3,	m3a		C U1
 	addq	r8,	m3b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-16(rp)
 	umulh	vl0,	ul3,	m3b		C U1
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m1a,NAIL_BITS,	r8
 	addq	r15,	acc0,	acc0
 
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-8(rp)
-	addq	rl1,	acc1,	acc1
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m2a,NAIL_BITS,	r8
 	addq	r15,	acc1,	acc1
 	bis	r31,	r31,	r31		C	nop
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	0(rp)
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m3a,NAIL_BITS,	r8
 	addq	r15,	acc0,	acc0
 	bis	r31,	r31,	r31		C	nop
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	8(rp)
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	addq	r15,	acc1,	acc1
 	bis	r31,	r31,	r31		C	nop
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	16(rp)
 	and	acc1,numb_mask,	r28
-	addq	m3b,	r15,	acc0
+	subq	m3b,	r15,	acc0
 	stq	r28,	24(rp)
 	and	acc0,numb_mask,	r0
 
@@ -278,10 +278,10 @@ L_8_to_11:
 L_12_or_more:
 	mulq	vl0,	ul0,	m0a		C U1
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	umulh	vl0,	ul0,	m0b		C U1
 	ldq	ul0,	0(up)
-	addq	rl1,	acc1,	acc1
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m2a,NAIL_BITS,	r8
 	ldq	rl1,	8(rp)
@@ -289,11 +289,11 @@ L_12_or_more:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul1,	m1a		C U1
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-32(rp)
 	umulh	vl0,	ul1,	m1b		C U1
 	ldq	ul1,	8(up)
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m3a,NAIL_BITS,	r8
 	ldq	rl2,	16(rp)
@@ -301,11 +301,11 @@ L_12_or_more:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul2,	m2a		C U1
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-24(rp)
 	umulh	vl0,	ul2,	m2b		C U1
 	ldq	ul2,	16(up)
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m0a,NAIL_BITS,	r8
 	ldq	rl3,	24(rp)
@@ -313,11 +313,11 @@ L_12_or_more:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul3,	m3a		C U1
 	addq	r8,	m3b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-16(rp)
 	umulh	vl0,	ul3,	m3b		C U1
 	ldq	ul3,	24(up)
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m1a,NAIL_BITS,	r8
 	ldq	rl0,	32(rp)
@@ -336,12 +336,12 @@ Loop:
 C
 	mulq	vl0,	ul0,	m0a		C U1
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-40(rp)
 C
 	umulh	vl0,	ul0,	m0b		C U1
 	ldq	ul0,	0(up)
-	addq	rl1,	acc1,	acc1
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 C
 	srl	m2a,NAIL_BITS,	r8
@@ -351,12 +351,12 @@ C
 C
 	mulq	vl0,	ul1,	m1a		C U1
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-32(rp)
 C
 	umulh	vl0,	ul1,	m1b		C U1
 	ldq	ul1,	8(up)
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 C
 	srl	m3a,NAIL_BITS,	r8
@@ -366,12 +366,12 @@ C
 C
 	mulq	vl0,	ul2,	m2a		C U1
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-24(rp)
 C
 	umulh	vl0,	ul2,	m2b		C U1
 	ldq	ul2,	16(up)
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 C
 	srl	m0a,NAIL_BITS,	r8
@@ -381,12 +381,12 @@ C
 C
 	mulq	vl0,	ul3,	m3a		C U1
 	addq	r8,	m3b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-16(rp)
 C
 	umulh	vl0,	ul3,	m3b		C U1
 	ldq	ul3,	24(up)
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 C
 	srl	m1a,NAIL_BITS,	r8
@@ -407,10 +407,10 @@ C
 L_end:
 	mulq	vl0,	ul0,	m0a		C U1
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-40(rp)
 	umulh	vl0,	ul0,	m0b		C U1
-	addq	rl1,	acc1,	acc1
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m2a,NAIL_BITS,	r8
 	ldq	rl1,	8(rp)
@@ -418,10 +418,10 @@ L_end:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul1,	m1a		C U1
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-32(rp)
 	umulh	vl0,	ul1,	m1b		C U1
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m3a,NAIL_BITS,	r8
 	ldq	rl2,	16(rp)
@@ -429,10 +429,10 @@ L_end:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul2,	m2a		C U1
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-24(rp)
 	umulh	vl0,	ul2,	m2b		C U1
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m0a,NAIL_BITS,	r8
 	ldq	rl3,	24(rp)
@@ -440,10 +440,10 @@ L_end:
 	bis	r31,	r31,	r31		C	nop
 	mulq	vl0,	ul3,	m3a		C U1
 	addq	r8,	m3b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-16(rp)
 	umulh	vl0,	ul3,	m3b		C U1
-	addq	rl0,	acc0,	acc0
+	subq	rl0,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m1a,NAIL_BITS,	r8
 	addq	r15,	acc0,	acc0
@@ -455,32 +455,32 @@ L_end:
 	lda	rp,	32(rp)
 
 	addq	r8,	m0b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-40(rp)
-	addq	rl1,	acc1,	acc1
+	subq	rl1,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	srl	m2a,NAIL_BITS,	r8
 	addq	r15,	acc1,	acc1
 	bis	r31,	r31,	r31		C	nop
 	addq	r8,	m1b,	acc0
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-32(rp)
-	addq	rl2,	acc0,	acc0
+	subq	rl2,	acc0,	acc0
 	and	acc1,numb_mask,	r28
 	srl	m3a,NAIL_BITS,	r8
 	addq	r15,	acc0,	acc0
 	bis	r31,	r31,	r31		C	nop
 	addq	r8,	m2b,	acc1
-	srl	acc0,NUMB_BITS,	r15
+	sra	acc0,NUMB_BITS,	r15
 	stq	r28,	-24(rp)
-	addq	rl3,	acc1,	acc1
+	subq	rl3,	acc1,	acc1
 	and	acc0,numb_mask,	r28
 	addq	r15,	acc1,	acc1
 	bis	r31,	r31,	r31		C	nop
-	srl	acc1,NUMB_BITS,	r15
+	sra	acc1,NUMB_BITS,	r15
 	stq	r28,	-16(rp)
 	and	acc1,numb_mask,	r28
-	addq	m3b,	r15,	acc0
+	subq	m3b,	r15,	acc0
 	stq	r28,	-8(rp)
 	and	acc0,numb_mask,	r0
 Lret:
@@ -493,5 +493,5 @@ C	ldq	r11,	24(r30)
 	ldq	r15,	56(r30)
 	lda	r30,	240(r30)
 	ret	r31,	(r26),	1
-EPILOGUE(mpn_addmul_1)
+EPILOGUE(mpn_submul_1)
 ASM_END()
