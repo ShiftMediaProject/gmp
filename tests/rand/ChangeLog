@@ -1,3 +1,19 @@
+2000-04-12  Linus Nordberg  <linus@swox.se>
+
+	* gen.c (main): Include gmp.h.  Remove macros MIN, MAX.  Add
+	option '-q'.  Don't demand argument N.  Change parameters in call
+	to mpf_urandomb.
+
+	* t-rand.c: New file for testing random number generation.
+	
+	* Makefile.am: Run t-rand for 'make check'.
+	(test, bigtest): Rename to manual-test, manual-bigtest.
+	* Makefile.in: Regenerate.
+
+2000-04-11  Linus Nordberg  <linus@swox.se>
+
+	* stat.c (main): Initialize `l1runs' at declaration.
+
 2000-04-10  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.am (test, bigtest): Quote argument to grep.
