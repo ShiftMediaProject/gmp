@@ -54,7 +54,9 @@ mpz_import (mpz_ptr z, size_t count, int order,
   if (endian == 0)
     endian = HOST_ENDIAN;
 
-  if (nail == GMP_NAIL_BITS)
+  /* Can't use these special cases with nails currently, since they don't
+     mask out the nail bits in the input data.  */
+  if (nail == 0 && GMP_NAIL_BITS == 0)
     {
       unsigned  align = (unsigned) data % sizeof (mp_limb_t);
 
@@ -64,7 +66,7 @@ mpz_import (mpz_ptr z, size_t count, int order,
           && align == 0)
         {
           MPN_COPY (zp, (mp_srcptr) data, (mp_size_t) count);
-          return;
+          goto done;
         }
 
       if (order == -1
@@ -73,7 +75,7 @@ mpz_import (mpz_ptr z, size_t count, int order,
           && align == 0)
         {
           MPN_BSWAP (zp, (mp_srcptr) data, (mp_size_t) count);
-          return;
+          goto done;
         }
 
       if (order == 1
@@ -82,7 +84,7 @@ mpz_import (mpz_ptr z, size_t count, int order,
           && align == 0)
         {
           MPN_REVERSE (zp, (mp_srcptr) data, (mp_size_t) count);
-          return;
+          goto done;
         }
     }
 
@@ -111,17 +113,20 @@ mpz_import (mpz_ptr z, size_t count, int order,
     dp = (unsigned char *) data
       + (order >= 0 ? (count-1)*size : 0) + (endian >= 0 ? size-1 : 0);
 
-#define ACCUMULATE(N)                           \
-    do {                                        \
-      limb |= (mp_limb_t) byte << lbits;        \
-      lbits += (N);                             \
-      if (lbits >= GMP_NUMB_BITS)               \
-        {                                       \
-          *zp++ = limb & GMP_NUMB_MASK;         \
-          lbits -= GMP_NUMB_BITS;               \
-          ASSERT (lbits < 8);                   \
-          limb = byte >> (8 - lbits);           \
-        }                                       \
+#define ACCUMULATE(N)                                   \
+    do {                                                \
+      ASSERT (lbits < GMP_NUMB_BITS);                   \
+      ASSERT (limb <= (CNST_LIMB(1) << lbits) - 1);     \
+                                                        \
+      limb |= (mp_limb_t) byte << lbits;                \
+      lbits += (N);                                     \
+      if (lbits >= GMP_NUMB_BITS)                       \
+        {                                               \
+          *zp++ = limb & GMP_NUMB_MASK;                 \
+          lbits -= GMP_NUMB_BITS;                       \
+          ASSERT (lbits < (N));                         \
+          limb = byte >> ((N) - lbits);                 \
+        }                                               \
     } while (0)
 
     limb = 0;
@@ -157,8 +162,10 @@ mpz_import (mpz_ptr z, size_t count, int order,
             + (order < 0 ? count*size : - (mp_size_t) size)
             + (endian >= 0 ? (mp_size_t) size - 1 : 0));
 
-    zp = PTR(z);
-    MPN_NORMALIZE (zp, zsize);
-    SIZ(z) = zsize;
   }
+
+ done:
+  zp = PTR(z);
+  MPN_NORMALIZE (zp, zsize);
+  SIZ(z) = zsize;
 }
