@@ -320,6 +320,25 @@ refmpn_copyd (mp_ptr rp, mp_srcptr sp, mp_size_t size)
     rp[i] = sp[i];
 }
 
+/* Copy {xp,xsize} to {wp,wsize}.  If x is shorter, then pad w with low
+   zeros to wsize.  If x is longer, then copy just the high wsize limbs.  */
+void
+refmpn_copy_extend (mp_ptr wp, mp_size_t wsize, mp_srcptr xp, mp_size_t xsize)
+{
+  ASSERT (wsize >= 0);
+  ASSERT (xsize >= 0);
+
+  /* high part of x if x bigger than w */
+  if (xsize > wsize)
+    {
+      xp += xsize - wsize;
+      xsize = wsize;
+    }
+
+  refmpn_copy (wp + wsize-xsize, xp, xsize);
+  refmpn_zero (wp, wsize-xsize);
+}
+
 void
 refmpn_com_n (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 {
@@ -997,6 +1016,7 @@ refmpn_lshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
 }
 
 
+/* accepting shift==0 and doing a plain copyi or copyd in that case */
 mp_limb_t
 refmpn_rshift_or_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
 {
@@ -1010,7 +1030,6 @@ refmpn_rshift_or_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
       return refmpn_rshift (rp, sp, size, shift);
     }
 }
-
 mp_limb_t
 refmpn_lshift_or_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
 {
@@ -1025,6 +1044,19 @@ refmpn_lshift_or_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
     }
 }
 
+/* accepting size==0 too */
+mp_limb_t
+refmpn_rshift_or_copy_any (mp_ptr rp, mp_srcptr sp, mp_size_t size,
+                           unsigned shift)
+{
+  return (size == 0 ? 0 : refmpn_rshift_or_copy (rp, sp, size, shift));
+}
+mp_limb_t
+refmpn_lshift_or_copy_any (mp_ptr rp, mp_srcptr sp, mp_size_t size,
+                           unsigned shift)
+{
+  return (size == 0 ? 0 : refmpn_lshift_or_copy (rp, sp, size, shift));
+}
 
 /* Divide h,l by d, return quotient, store remainder to *rp.
    Operates on full limbs, not nails.
