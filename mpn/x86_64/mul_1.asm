@@ -74,6 +74,7 @@ PROLOGUE(mpn_mul_1)
 	movq	%r12, %r8		C				      3
 	addq	%rax, %r11		C				      3
 	adcq	%rdx, %r8		C				      3
+
 	movq	%r10, 16(%rdi)		C				      4
 	movq	%r11, 24(%rdi)		C				      4
 
