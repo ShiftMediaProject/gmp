@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-09-13  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/invert_limb.asm: Rewrite.
+
 	* mpn/ia64/logops_n.asm: Insert some more stops.
 
 2004-09-12  Torbjorn Granlund  <tege@swox.com>
