@@ -18,6 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mode1o.c: Fix ASSERTs on return value.
+
+	* gmp.texi (Build Options): Add viac3 and viac32 cpu types.
+	(ABI and ISA): Note on sparcv9 ABI=32 vs ABI=64 speed.  More indexing.
+
+	* configfsf.guess, configfsf.sub: Update to 2003-06-06.
+	* config.guess: Remove $RANDOM hack supporting netbsd 1.4, not needed
+	by new configfsf.guess.
+
 2003-06-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/submul_1.asm: Add branch over .align block.
