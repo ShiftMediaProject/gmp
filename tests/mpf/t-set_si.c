@@ -1,6 +1,6 @@
 /* Test mpf_set_si and mpf_init_set_si.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -35,8 +35,8 @@ check_data (void)
   } data[] = {
 
     {  0L,  0 },
-    {  1L,  1, 1 },
-    { -1L, -1, 1 },
+    {  1L,  1, { 1 } },
+    { -1L, -1, { 1 } },
 
 #if GMP_NUMB_BITS >= BITS_PER_ULONG
     { LONG_MAX,  1, { LONG_MAX, 0 } },

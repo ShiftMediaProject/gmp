@@ -35,7 +35,7 @@ check_data (void)
   } data[] = {
 
     {  0L,  0 },
-    {  1L,  1, 1 },
+    {  1L,  1, { 1 } },
 
 #if GMP_NUMB_BITS >= BITS_PER_ULONG
     { ULONG_MAX,     1, { ULONG_MAX, 0 } },
