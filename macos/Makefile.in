@@ -163,16 +163,6 @@ all	@dep@ {Lib}
 	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ushort
 
 
-{MpfObjDir}floor.o @dep@ ::mpf:integer.c Makefile
-	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_floor
-
-{MpfObjDir}ceil.o @dep@ ::mpf:integer.c Makefile
-	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_ceil
-
-{MpfObjDir}trunc.o @dep@ ::mpf:integer.c Makefile
-	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_trunc
-
-
 ###########################################################################
 # Default rules/ directory rules
 
