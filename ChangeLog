@@ -1,3 +1,8 @@
+2001-09-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/cray/ieee/submul_1.c: Rewrite.  Streamline multiplications;
+	use `majority' logic.
+
 2001-09-27  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-h.in (__GMPN_AORS_1): Rewrite to work around Cray compiler bug.
