@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 #endif
 
 #if STAT
-int arr[BITS_PER_MP_LIMB];
+int arr[BITS_PER_MP_LIMB + 1];
 #endif
 
 
@@ -582,7 +582,7 @@ mpn_gcd (mp_ptr gp,
 #endif
 
 #if STAT
- {int i; for (i = 0; i < BITS_PER_MP_LIMB; i++) printf ("%d:%d\n", i, arr[i]);}
+ {int i; for (i = 0; i <= BITS_PER_MP_LIMB; i++) printf ("%d:%d\n", i, arr[i]);}
 #endif
 
   if (vsize == 0)
