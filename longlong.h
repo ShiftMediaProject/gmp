@@ -151,15 +151,15 @@ MA 02111-1307, USA. */
 	     : "%rJ" (m0), "rI" (m1));					\
     (pl) = __m0 * __m1;							\
   } while (0)
-#define UMUL_TIME 30		/* compromise value */
+#define UMUL_TIME 18
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __r;							\
-    (q) = __udiv_qrnnd (&__r, n1, n0, d);				\
-    (r) = __r;								\
+  do { UDItype __di;							\
+    __di = __mpn_invert_normalized_limb (d);				\
+    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
-extern UDItype __udiv_qrnnd _PROTO ((UDItype *, UDItype, UDItype, UDItype));
-#define UDIV_TIME 350
+#define UDIV_NEEDS_NORMALIZATION 1
+#define UDIV_TIME 220
 #define count_leading_zeros(count, x) \
   ((count) = __count_leading_zeros (x))
 #endif /* LONGLONG_STANDALONE */
@@ -174,7 +174,7 @@ extern UDItype __udiv_qrnnd _PROTO ((UDItype *, UDItype, UDItype, UDItype));
   __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	   : "=r" (sh),	"=&r" (sl)					\
 	   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl))
-#if defined (__arm_m__)		/* `M' series has widening multiply support */
+#if 1 || defined (__arm_m__)		/* `M' series has widening multiply support */
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("umull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
 #define smul_ppmm(xh, xl, a, b) \
@@ -329,6 +329,26 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
   } while (0)
 #endif /* hppa */
 
+#if defined (__hppa) && W_TYPE_SIZE == 64
+/* We put the result pointer parameter last here, since it makes passing
+   of the other parameters more efficient.  */
+#define umul_ppmm(wh, wl, u, v) \
+  do {									\
+    UDItype __p0;							\
+    (wh) = __umul_ppmm64 (u, v, &__p0);					\
+    (wl) = __p0;							\
+  } while (0)
+extern UDItype __umul_ppmm64 _PROTO ((UDItype, UDItype, UDItype *));
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UDItype __r;							\
+    (q) = __udiv_qrnnd64 (n1, n0, d, &__r);				\
+    (r) = __r;								\
+  } while (0)
+extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
+#define UMUL_TIME 8
+#define UDIV_TIME 60
+#endif /* hppa */
+
 #if (defined (__i370__) || defined (__mvs__)) && W_TYPE_SIZE == 32
 #define smul_ppmm(xh, xl, m0, m1) \
   do {									\
@@ -444,7 +464,8 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 #endif /* i960 */
 
 #if (defined (__mc68000__) || defined (__mc68020__) || defined(mc68020) \
-     || defined (__m68k__)) && W_TYPE_SIZE == 32
+     || defined (__m68k__) || defined (__mc5200__) || defined (__mc5206e__) \
+     || defined (__mc5307__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add%.l %5,%1\n\taddx%.l %3,%0"				\
 	   : "=d" ((USItype)(sh)), "=&d" ((USItype)(sl))		\
@@ -475,9 +496,7 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
   __asm__ ("divs%.l %4,%1:%0"						\
 	   : "=d" ((USItype)(q)), "=d" ((USItype)(r))			\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "dmi" ((USItype)(d)))
-#define COUNT_LEADING_ZEROS_0 32
-#else /* not mc68020 */
-#if !defined (__mc5200__)
+#else /* for other 68k family members use 16x16->32 multiplication */
 #define umul_ppmm(xh, xl, a, b) \
   do { USItype __umul_tmp1, __umul_tmp2;				\
 	__asm__ ("| Inlined umul_ppmm
@@ -486,11 +505,11 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 	move%.w	%3,%1
 	swap	%3
 	swap	%0
-	mulu	%2,%1
-	mulu	%3,%0
-	mulu	%2,%3
+	mulu%.w	%2,%1
+	mulu%.w	%3,%0
+	mulu%.w	%2,%3
 	swap	%2
-	mulu	%5,%2
+	mulu%.w	%5,%2
 	add%.l	%3,%2
 	jcc	1f
 	add%.l	%#0x10000,%0
@@ -508,7 +527,6 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
   } while (0)
 #define UMUL_TIME 100
 #define UDIV_TIME 400
-#endif /* not mcf5200 */
 #endif /* not mc68020 */
 /* The '020, '030, '040 and '060 have bitfield insns.  */
 #if defined (__mc68020__) || defined (mc68020) \
@@ -520,6 +538,7 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
   __asm__ ("bfffo %1{%b2:%b2},%0"					\
 	   : "=d" ((USItype) (count))					\
 	   : "od" ((USItype) (x)), "n" (0))
+#define COUNT_LEADING_ZEROS_0 32
 #endif
 #endif /* mc68000 */
 
@@ -623,7 +642,9 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
   } while (0)
 #endif /* __ns32000__ */
 
-#if (defined (_ARCH_PPC) || defined (_ARCH_PWR)) && W_TYPE_SIZE == 32
+/* We should test _IBMR2 here when we add assembly support for the system
+   vendor compilers.  */
+#if (defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
@@ -659,7 +680,7 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 #define count_leading_zeros(count, x) \
   __asm__ ("{cntlz|cntlzw} %0,%1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
-#if defined (_ARCH_PPC)
+#if defined (_ARCH_PPC) || defined (__powerpc__)
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     USItype __m0 = (m0), __m1 = (m1);					\
@@ -1153,6 +1174,7 @@ unsigned char __clz_tab[];
   } while (0)
 /* This version gives a well-defined value for zero. */
 #define COUNT_LEADING_ZEROS_0 W_TYPE_SIZE
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #endif
 
 #if !defined (count_trailing_zeros)
