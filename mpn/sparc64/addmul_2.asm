@@ -85,31 +85,40 @@ ASM_START()
 	REGISTER(%g2,#scratch)
 	REGISTER(%g3,#scratch)
 
-define(`p000', `%f8') define(`p016',`%f10')
-define(`p032',`%f12') define(`p048',`%f14')
-define(`p064',`%f16') define(`p080',`%f18')
+C Combine registers:
+C u00_hi= u32_hi
+C u00_lo= u32_lo
+C a000  = out000
+C a016  = out016
+C Free: f52 f54
+
+
+define(`p000', `%f8')  define(`p016',`%f10')
+define(`p032',`%f12')  define(`p048',`%f14')
+define(`p064',`%f16')  define(`p080',`%f18')
 define(`p096a',`%f20') define(`p112a',`%f22')
 define(`p096b',`%f56') define(`p112b',`%f58')
 
 define(`out000',`%f0') define(`out016',`%f6')
 
-define(`v000',`%f24') define(`v016',`%f26')
-define(`v032',`%f28') define(`v048',`%f30')
-define(`v064',`%f44') define(`v080',`%f46')
-define(`v096',`%f48') define(`v112',`%f50')
+define(`v000',`%f24')  define(`v016',`%f26')
+define(`v032',`%f28')  define(`v048',`%f30')
+define(`v064',`%f44')  define(`v080',`%f46')
+define(`v096',`%f48')  define(`v112',`%f50')
 
-define(`u00',`%f32') define(`u32', `%f34')
+define(`u00',`%f32')   define(`u32', `%f34')
 
-define(`a000',`%f36') define(`a016',`%f38')
-define(`a032',`%f40') define(`a048',`%f42')
-define(`a064',`%f60') define(`a080',`%f62')
+define(`a000',`%f36')  define(`a016',`%f38')
+define(`a032',`%f40')  define(`a048',`%f42')
+define(`a064',`%f60')  define(`a080',`%f62')
 
 define(`u00_hi',`%f2') define(`u32_hi',`%f4')
 define(`u00_lo',`%f3') define(`u32_lo',`%f5')
 
 define(`cy',`%g1')
 define(`rlimb',`%g3')
-define(`i00',`%l0') define(`i16',`%l1') define(`r00',`%l2') define(`r32',`%l3')
+define(`i00',`%l0')    define(`i16',`%l1')
+define(`r00',`%l2')    define(`r32',`%l3')
 define(`xffffffff',`%l7')
 define(`xffff',`%o0')
 
