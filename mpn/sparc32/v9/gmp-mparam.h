@@ -1,4 +1,4 @@
-/* gmp-mparam.h -- Compiler/machine parameter header file.
+/* SPARC v9 32-bit gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright 1991, 1993, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
 
