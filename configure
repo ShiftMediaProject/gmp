@@ -990,7 +990,7 @@ fi
 
 PACKAGE=gmp
 
-VERSION=2.99
+VERSION=3.0
 
 if test "`CDPATH=: && cd $srcdir && pwd`" != "`pwd`" &&
    test -f $srcdir/config.status; then
