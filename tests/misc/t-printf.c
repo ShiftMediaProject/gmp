@@ -414,8 +414,10 @@ check_z (void)
     { "%.3Zd", "0", "000" },
   };
 
-  int    i;
-  mpz_t  z;
+  int        i, j, zeros;
+  mpz_t      z;
+  char       *nfmt;
+  mp_size_t  nsize;
 
   mpz_init (z);
   
@@ -432,6 +434,21 @@ check_z (void)
         }
           
       check_one (data[i].want, data[i].fmt, z);
+
+      /* Same again, with %N and possibly some high zero limbs */
+      nfmt = __gmp_allocate_strdup (data[i].fmt);
+      for (j = 0; nfmt[j] != '\0'; j++)
+        if (nfmt[j] == 'Z')
+          nfmt[j] = 'N';
+      for (zeros = 0; zeros <= 3; zeros++)
+        {
+          nsize = ABSIZ(z)+zeros;
+          MPZ_REALLOC (z, nsize);
+          nsize = (SIZ(z) >= 0 ? nsize : -nsize);
+          refmpn_zero (PTR(z)+ABSIZ(z), zeros);
+          check_one (data[i].want, nfmt, PTR(z), nsize);
+        }
+      __gmp_free_func (nfmt, strlen(nfmt)+1);
     }
       
   mpz_clear (z);
