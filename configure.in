@@ -865,8 +865,14 @@ for tmp_fn in ${gmp_mpn_functions} ; do
         if test -f $tmp_file; then
           found=yes
 
-          mpn_objects="$mpn_objects ${tmp_fn}.lo"
-          mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}.lo"
+          if test $tmp_ext = c; then
+            tmp_u='$U'
+          else
+            tmp_u=
+          fi
+
+          mpn_objects="$mpn_objects ${tmp_fn}${tmp_u}.lo"
+          mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}${tmp_u}.lo"
           gmp_links="$gmp_links mpn/$tmp_fn.$tmp_ext:mpn/$tmp_dir/$tmp_base.$tmp_ext"
 
           # duplicate AC_DEFINEs are harmless, so it doesn't matter
