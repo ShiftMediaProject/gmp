@@ -40,5 +40,5 @@ libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
 # Create ansi2knr rules for sources conditionally used
 libdummy_la_SOURCES = x86check.c
 
-check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-modlinv
+check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-modlinv t-popc
 TESTS = $(check_PROGRAMS)
