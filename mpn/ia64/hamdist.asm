@@ -76,6 +76,9 @@ ifdef(`HAVE_ABI_32',
 `.mmi;		addp4	xp_param = 0, xp_param	C M
 		addp4	yp_param = 0, yp_param	C M
 		sxt4	siz = siz		C I
+		nop.b	0			C alignment bundle
+		nop.b	0
+		nop.b	0
 		;;
 ')
 
@@ -124,7 +127,6 @@ ifdef(`HAVE_ABI_32',
 		C
 		C total 18 regs
 
-		.align	32
 .Ltop:
 .mmi;	(p16)	ld8	r32 = [xp], 8		C M0
 	(p16)	ld8	r44 = [yp], 8		C M1
