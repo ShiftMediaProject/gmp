@@ -33,6 +33,7 @@ C floating-point add, then convert the four 49-bit product-sums and transfer
 C them to the integer unit.
 
 C Possible optimizations:
+C   0. Rewrite to use algorithm of mpn_addmul_2.
 C   1. Align the stack area where we transfer the four 49-bit product-sums
 C      to a 32-byte boundary.  That would minimize the cache collision.
 C      (UltraSPARC-1/2 use a direct-mapped cache.)  (Perhaps even better would
