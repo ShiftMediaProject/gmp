@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_add_n/mpn_sub_n -- mpn add or subtract.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -65,10 +65,9 @@ C The _nc version accepts 1 or 0 for an initial carry into the low limb of
 C the calculation.  Note values other than 1 or 0 here will lead to garbage
 C results.
 C
-C This code runs at 1.64 cycles/limb, which is probably the best possible
-C with plain integer operations.  Each limb is 2 loads and 1 store, and in
-C one cycle the K7 can do two loads, or a load and a store, leading to 1.5
-C c/l.
+C This code runs at 1.64 cycles/limb, which might be the best possible with
+C plain integer operations.  Each limb is 2 loads and 1 store, any 2 of
+C which can be done each cycle, leading to 1.5 c/l.
 
 dnl  Must have UNROLL_THRESHOLD >= 2, since the unrolled loop can't handle 1.
 ifdef(`PIC',`
