@@ -69,6 +69,11 @@ m4_assert_numargs(1)
 `	.end	GSYM_PREFIX`'$1')
 
 
+dnl  Usage: EXTERN(variable_name)
+define(`EXTERN',
+m4_assert_numargs(1)
+)
+
 dnl  Usage: r0 ... r31
 dnl         f0 ... f31
 dnl
