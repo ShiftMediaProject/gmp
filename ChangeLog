@@ -1,3 +1,8 @@
+2001-01-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/kronsz.c: Temporary workaround for Cray right shift oddities.
+	Explicitly compare against zero in tests.
+	
 2001-01-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/kronzs.c: Don't depend on right shifting a negative.
