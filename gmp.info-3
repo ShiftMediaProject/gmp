@@ -8,9 +8,6 @@ END-INFO-DIR-ENTRY
    This file documents GNU MP, a library for arbitrary-precision
 arithmetic.
 
-   This is a draft edition of the documentation, last updated April
-1996.
-
    Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation,
 Inc.
 
@@ -66,6 +63,7 @@ Function and Type Index
 * mpf_div_2exp:                         Float Arithmetic.
 * mpf_div_ui:                           Float Arithmetic.
 * mpf_eq:                               Float Comparison.
+* mpf_get_d:                            Converting Floats.
 * mpf_get_prec:                         Initializing Floats.
 * mpf_get_str:                          Converting Floats.
 * mpf_init:                             Initializing Floats.
@@ -81,7 +79,6 @@ Function and Type Index
 * mpf_mul_ui:                           Float Arithmetic.
 * mpf_neg:                              Float Arithmetic.
 * mpf_out_str:                          I/O of Floats.
-* mpf_pow_ui:                           Float Arithmetic.
 * mpf_random2:                          Miscellaneous Float Functions.
 * mpf_reldiff:                          Float Comparison.
 * mpf_set:                              Assigning Floats.
@@ -89,9 +86,11 @@ Function and Type Index
 * mpf_set_default_prec:                 Initializing Floats.
 * mpf_set_prec:                         Initializing Floats.
 * mpf_set_prec_raw:                     Initializing Floats.
+* mpf_set_q:                            Assigning Floats.
 * mpf_set_si:                           Assigning Floats.
 * mpf_set_str:                          Assigning Floats.
 * mpf_set_ui:                           Assigning Floats.
+* mpf_set_z:                            Assigning Floats.
 * mpf_sgn:                              Float Comparison.
 * mpf_sqrt:                             Float Arithmetic.
 * mpf_sqrt_ui:                          Float Arithmetic.
@@ -121,7 +120,7 @@ Function and Type Index
 * mpn_mul_n:                            Low-level Functions.
 * mpn_perfect_square_p:                 Low-level Functions.
 * mpn_popcount:                         Low-level Functions.
-* mpn_pre_mod_1:                        Low-level Functions.
+* mpn_preinv_mod_1:                     Low-level Functions.
 * mpn_random2:                          Low-level Functions.
 * mpn_rshift:                           Low-level Functions.
 * mpn_scan0:                            Low-level Functions.
@@ -140,6 +139,7 @@ Function and Type Index
 * mpq_denref:                           Applying Integer Functions.
 * mpq_div:                              Assigning Rationals.
 * mpq_equal:                            Comparing Rationals.
+* mpq_get_d:                            Miscellaneous Rational Functions.
 * mpq_get_den:                          Miscellaneous Rational Functions.
 * mpq_get_num:                          Miscellaneous Rational Functions.
 * mpq_init:                             Initializing Rationals.
@@ -152,6 +152,7 @@ Function and Type Index
 * mpq_set_num:                          Miscellaneous Rational Functions.
 * mpq_set_si:                           Initializing Rationals.
 * mpq_set_ui:                           Initializing Rationals.
+* mpq_set_z:                            Initializing Rationals.
 * mpq_sgn:                              Comparing Rationals.
 * mpq_sub:                              Assigning Rationals.
 * mpz_abs:                              Integer Arithmetic.
@@ -186,6 +187,7 @@ Function and Type Index
 * mpz_gcd:                              Integer Arithmetic.
 * mpz_gcd_ui:                           Integer Arithmetic.
 * mpz_gcdext:                           Integer Arithmetic.
+* mpz_get_d:                            Converting Integers.
 * mpz_get_si:                           Converting Integers.
 * mpz_get_str:                          Converting Integers.
 * mpz_get_ui:                           Converting Integers.
@@ -200,6 +202,8 @@ Function and Type Index
 * mpz_inp_str:                          I/O of Integers.
 * mpz_invert:                           Integer Arithmetic.
 * mpz_ior:                              Integer Logic and Bit Fiddling.
+* mpz_jacobi:                           Integer Arithmetic.
+* mpz_legendre:                         Integer Arithmetic.
 * mpz_mod:                              Integer Arithmetic.
 * mpz_mod_ui:                           Integer Arithmetic.
 * mpz_mul:                              Integer Arithmetic.
@@ -220,6 +224,8 @@ Function and Type Index
 * mpz_scan1:                            Integer Logic and Bit Fiddling.
 * mpz_set:                              Assigning Integers.
 * mpz_set_d:                            Assigning Integers.
+* mpz_set_f:                            Assigning Integers.
+* mpz_set_q:                            Assigning Integers.
 * mpz_set_si:                           Assigning Integers.
 * mpz_set_str:                          Assigning Integers.
 * mpz_set_ui:                           Assigning Integers.

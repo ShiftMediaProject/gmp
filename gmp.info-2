@@ -8,9 +8,6 @@ END-INFO-DIR-ENTRY
    This file documents GNU MP, a library for arbitrary-precision
 arithmetic.
 
-   This is a draft edition of the documentation, last updated April
-1996.
-
    Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation,
 Inc.
 
@@ -151,6 +148,8 @@ Assignment Functions
  - Function: void mpf_set_ui (mpf_t ROP, unsigned long int OP)
  - Function: void mpf_set_si (mpf_t ROP, signed long int OP)
  - Function: void mpf_set_d (mpf_t ROP, double OP)
+ - Function: void mpf_set_z (mpf_t ROP, mpz_t OP)
+ - Function: void mpf_set_q (mpf_t ROP, mpq_t OP)
      Set the value of ROP from OP.
 
  - Function: int mpf_set_str (mpf_t ROP, char *STR, int BASE)
@@ -212,6 +211,9 @@ File: gmp.info,  Node: Converting Floats,  Next: Float Arithmetic,  Prev: Simult
 
 Conversion Functions
 ====================
+
+ - Function: double mpf_get_d (mpf_t OP)
+     Convert OP to a double.
 
  - Function: char * mpf_get_str (char *STR, mp_exp_t *EXPPTR, int BASE,
           size_t N_DIGITS, mpf_t OP)
@@ -276,15 +278,11 @@ arithmetic exceptions.
           OP2)
  - Function: void mpf_div_ui (mpf_t ROP, mpf_t OP1, unsigned long int
           OP2)
-     Set ROP to OP1 / OP2.  rounded towards 0.
+     Set ROP to OP1/OP2.
 
  - Function: void mpf_sqrt (mpf_t ROP, mpf_t OP)
  - Function: void mpf_sqrt_ui (mpf_t ROP, unsigned long int OP)
      Set ROP to the square root of OP.
-
- - Function: void mpf_pow_ui (mpf_t ROP, mpf_t OP1, unsigned long int
-          OP2)
-     Set ROP to OP1 raised to OP2.
 
  - Function: void mpf_neg (mpf_t ROP, mpf_t OP)
      Set ROP to -OP.
@@ -320,8 +318,11 @@ Comparison Functions
      Compute the relative difference between OP1 and OP2 and store the
      result in ROP.
 
- - Function: int mpf_sgn (mpf_t OP)
+ - Macro: int mpf_sgn (mpf_t OP)
      Return +1 if OP > 0, 0 if OP = 0, and -1 if OP < 0.
+
+     This function is actually implemented as a macro.  It evaluates its
+     arguments multiple times.
 
 
 File: gmp.info,  Node: I/O of Floats,  Next: Miscellaneous Float Functions,  Prev: Float Comparison,  Up: Floating-point Functions
@@ -346,7 +347,9 @@ prototypes for these functions.
      digits accurately representable by OP.
 
      In addition to the significant digits, a leading `0.' and a
-     trailing exponent, in the form `@NNN', are printed.
+     trailing exponent, in the form `eNNN', are printed.  If BASE is
+     greater than 10, `@' will be used instead of `e' as exponent
+     delimiter.
 
      Return the number of bytes written, or if an error occurred,
      return 0.
@@ -587,7 +590,7 @@ For example, {s1_ptr, s1_size}.
           mp_limb_t S2LIMB)
      Divide {S1P, S1SIZE} by S2LIMB, and return the remainder.
 
- - Function: mp_limb_t mpn_pre_mod_1 (mp_limb_t * S1P, mp_size_t
+ - Function: mp_limb_t mpn_preinv_mod_1 (mp_limb_t * S1P, mp_size_t
           S1SIZE, mp_limb_t S2LIMB, mp_limb_t S3LIMB)
      *This interface is obsolete.  It will disappear from future
      releases.  Use `mpn_mod_1' in its stead.*
@@ -595,12 +598,12 @@ For example, {s1_ptr, s1_size}.
  - Function: mp_limb_t mpn_bdivmod (mp_limb_t * DEST_PTR, mp_limb_t *
           S1P, mp_size_t S1SIZE, const mp_limb_t * S2P, mp_size_t
           S2SIZE, unsigned long int D)
-     The function puts the low [D / BITS_PER_MP_LIMB] limbs of Q =
-     {S1P, S1SIZE} / {S2P, S2SIZE} mod 2^D at DEST_PTR, and returns the
-     high D mod BITS_PER_MP_LIMB bits of Q.
+     The function puts the low [D/BITS_PER_MP_LIMB] limbs of Q = {S1P,
+     S1SIZE}/{S2P, S2SIZE} mod 2^D at DEST_PTR, and returns the high D
+     mod BITS_PER_MP_LIMB bits of Q.
 
      {S1P, S1SIZE} - Q * {S2P, S2SIZE} mod 2^(S1SIZE*BITS_PER_MP_LIMB)
-     is placed at S1P.  Since the low [D / BITS_PER_MP_LIMB] limbs of
+     is placed at S1P.  Since the low [D/BITS_PER_MP_LIMB] limbs of
      this difference are zero, it is possible to overwrite the low
      limbs at S1P with this difference, provided DEST_PTR <= S1P.
 
@@ -685,8 +688,8 @@ For example, {s1_ptr, s1_size}.
      SP have to be identical or completely separate, not partially
      overlapping.
 
-     The area at R1P needs to be SIZE / 2 limbs large.  The area at R2P
-     needs to be SIZE limbs large.
+     The area at R1P needs to have space for ceil(SIZE/2) limbs.  The
+     area at R2P needs to be SIZE limbs large.
 
      *This interface is preliminary.  It might change incompatibly in
      future revisions.*
@@ -805,7 +808,7 @@ to the compiler, where <dir> is the directory where you have GNU `mp.h'.
           MINT *REMAINDER)
  - Function: void sdiv (MINT *DIVIDEND, signed short int DIVISOR, MINT
           *QUOTIENT, signed short int *REMAINDER)
-     Set QUOTIENT to DIVIDEND / DIVISOR, and REMAINDER to DIVIDEND mod
+     Set QUOTIENT to DIVIDEND/DIVISOR, and REMAINDER to DIVIDEND mod
      DIVISOR.  The quotient is rounded towards zero; the remainder has
      the same sign as the dividend unless it is zero.
 
@@ -922,6 +925,9 @@ and Doug Lea for their testing of early versions of the library.
    John Amanatides of York University in Canada contributed the function
 `mpz_probab_prime_p'.
 
+   Paul Zimmermann of Inria sparked the development of GMP 2, with his
+comparisons between bignum packages.
+
    Ken Weber (Kent State University, Universidade Federal do Rio Grande
 do Sul) contributed `mpz_gcd', `mpz_divexact', `mpn_gcd', and
 `mpn_bdivmod', partially supported by CNPq (Brazil) grant 301314194-2.
@@ -935,8 +941,8 @@ and in the `mpz' design revisions for version 2.
 
    Bennet Yee contributed the functions `mpz_jacobi' and `mpz_legendre'.
 
-   Andreas Schwab contributed the files `m68k/lshift.S' and
-`m68k/rshift.S'.
+   Andreas Schwab contributed the files `mpn/m68k/lshift.S' and
+`mpn/m68k/rshift.S'.
 
    The development of floating point functions of GNU MP 2, were
 supported in part by the ESPRIT-BRA (Basic Research Activities) 6846

@@ -1,5 +1,24 @@
 Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* extract-double.c: Test _GMP_IEEE_FLOATS with #if, not plain if.
+
+	* insert-double.c: Don't #include stdlib.h.
+
+	* gmp-impl.h (union ieee_double_extract): Test sparc and __sparc.
+	Do not test __sparc__.
+
+	* mpf/reldiff.c: Change declaration to work around irix5 compiler bug.
+	* mpq/equal.c: Likewise.
+
+	* mpn/generic/gcd.c: Delete spurious comma at end of enumeration.
+
+	* mpn/generic/gcdext.c: Add K&R declaration syntax.
+	* stack-alloc.h: Likewise.
+	* insert-double.c: Likewise.
+	* extract-double.c: Likewise.
+	* mpf/tests/reuse.c: Likewise.
+	* mpz/tests/reuse.c: Likewise.
+
 	* mpn/config/t-oldgas: Renamed from t-freebsd.
 	* mpn/configure.in: Use t-oldgas for freebsd, netbsd, and some linux
 	configurations.

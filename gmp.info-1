@@ -8,9 +8,6 @@ END-INFO-DIR-ENTRY
    This file documents GNU MP, a library for arbitrary-precision
 arithmetic.
 
-   This is a draft edition of the documentation, last updated April
-1996.
-
    Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation,
 Inc.
 
@@ -34,8 +31,8 @@ File: gmp.info,  Node: Top,  Next: Copying,  Prev: (dir),  Up: (dir)
 GNU MP
 ******
 
-   This manual documents how to install and use the GNU Multiple
-Precision Arithmetic Library, version 2.0.
+   This manual documents how to install and use the GNU multiple
+precision arithmetic library, version 2.0.1.
 
 * Menu:
 
@@ -134,7 +131,7 @@ How to use this Manual
 library yourself, you need to read *Note Installing MP::, too.
 
    The rest of the manual can be used for later reference, although it
-is probably a good idea too glance through it.
+is probably a good idea to glance through it.
 
 
 File: gmp.info,  Node: Installing MP,  Next: MP Basics,  Prev: Introduction to MP,  Up: Top
@@ -147,7 +144,7 @@ operating system.  You need a C compiler, preferably GCC, but any
 reasonable compiler should work.  And you need a standard Unix `make'
 program, plus some other standard Unix utility programs.
 
-   (If you're on a MS-DOS machine, your can build MP using `make.bat'.
+   (If you're on an MS-DOS machine, your can build MP using `make.bat'.
 It requires that djgpp is installed.  It does not require
 configuration, nor is `make' needed; `make.bat' both configures and
 builds the library.)
@@ -240,6 +237,9 @@ the system's assembler, since the latter has serious bugs.
 compiler calls itself `cc'.  This compiler cannot be used to build MP.
 You need to get a real gcc, and install that before you compile MP.
 (NeXT might have fixed this in newer releases of their system.)
+
+   The system C compiler under SunOS 4 has a bug that makes it
+miscompile mpq/get_d.c.  This will make `make check' fail.
 
    Please report other problems to `bug-gmp@prep.ai.mit.edu'.  *Note
 Reporting Bugs::.
@@ -346,8 +346,8 @@ rule, having the output argument(s) last.)
 
    MP allows you to use the same variable for both input and output in
 the same expression.  For example, the main function for integer
-multiplication, `mpz_mul', can be used like this: `mpz_mul (x, x, x);'.
-This computes the square of X and put the result back in X.
+multiplication, `mpz_mul', can be used like this: `mpz_mul (x, x, x)'.
+This computes the square of X and puts the result back in X.
 
    Before you can assign to an MP variable, you need to initialize it
 by calling one of the special initialization functions.  When you're
@@ -411,6 +411,10 @@ MP, with a few exceptions.
 
   6. Several `mpn' functions have changed.  But they were intentionally
      undocumented in previous releases.
+
+  7. The functions `mpz_cmp_ui', `mpz_cmp_si', and `mpq_cmp_ui' are now
+     implementated as macros, and thereby sometimes evaluate their
+     arguments multiple times.
 
 
 Getting the Latest Version of MP
@@ -550,6 +554,8 @@ Assignment Functions
  - Function: void mpz_set_ui (mpz_t ROP, unsigned long int OP)
  - Function: void mpz_set_si (mpz_t ROP, signed long int OP)
  - Function: void mpz_set_d (mpz_t ROP, double OP)
+ - Function: void mpz_set_q (mpz_t ROP, mpq_t OP)
+ - Function: void mpz_set_f (mpz_t ROP, mpf_t OP)
      Set the value of ROP from OP.
 
  - Function: int mpz_set_str (mpz_t ROP, char *STR, int BASE)
@@ -598,13 +604,8 @@ on a variable already initialized!
      from OP.
 
  - Function: int mpz_init_set_str (mpz_t ROP, char *STR, int BASE)
-     Initialize ROP and set its value from STR, a '\0'-terminated C
-     string in base BASE.  White space is allowed in the string, and is
-     simply ignored.  The base may vary from 2 to 36.  If BASE is 0,
-     the actual base is determined from the leading characters: if the
-     first two characters are `0x' or `0X', hexadecimal is assumed,
-     otherwise if the first character is `0', octal is assumed,
-     otherwise decimal is assumed.
+     Initialize ROP and set its value like `mpz_set_str' (see its
+     documentation above for details).
 
      If the string is a correct base BASE number, the function returns
      0; if an error occurs it returns -1.  ROP is initialized even if
@@ -625,7 +626,7 @@ precision integers are described in *Note Assigning Integers:: and
      Return the least significant part from OP.  This function combined
      with
      `mpz_tdiv_q_2exp(..., OP, CHAR_BIT*sizeof(unsigned long int))' can
-     be used to extract the limbs of an integer efficiently.
+     be used to extract the limbs of an integer.
 
  - Function: signed long int mpz_get_si (mpz_t OP)
      If OP fits into a `signed long int' return the value of OP.
@@ -634,6 +635,9 @@ precision integers are described in *Note Assigning Integers:: and
 
      If OP is too large to fit in a `signed long int', the returned
      result is probably not very useful.
+
+ - Function: double mpz_get_d (mpz_t OP)
+     Convert OP to a double.
 
  - Function: char * mpz_get_str (char *STR, int BASE, mpz_t OP)
      Convert OP to a string of digits in base BASE.  The base may vary
@@ -670,6 +674,23 @@ Arithmetic Functions
           OP2)
      Set ROP to OP1 times OP2.
 
+ - Function: void mpz_mul_2exp (mpz_t ROP, mpz_t OP1, unsigned long int
+          OP2)
+     Set ROP to OP1 times 2 raised to OP2.  This operation can also be
+     defined as a left shift, OP2 steps.
+
+ - Function: void mpz_neg (mpz_t ROP, mpz_t OP)
+     Set ROP to -OP.
+
+ - Function: void mpz_abs (mpz_t ROP, mpz_t OP)
+     Set ROP to the absolute value of OP.
+
+ - Function: void mpz_fac_ui (mpz_t ROP, unsigned long int OP)
+     Set ROP to OP!, the factorial of OP.
+
+Division functions
+------------------
+
    Division is undefined if the divisor is zero, and passing a zero
 divisor to the divide or modulo functions, as well passing a zero mod
 argument to the `mpz_powm' and `mpz_powm_ui' functions, will make these
@@ -698,13 +719,13 @@ have `qr' in the name.
  - Function: void mpz_tdiv_q (mpz_t ROP, mpz_t OP1, mpz_t OP2)
  - Function: void mpz_tdiv_q_ui (mpz_t ROP, mpz_t OP1, unsigned long
           int OP2)
-     Set ROP to [OP1 / OP2].  The quotient is truncated towards 0.
+     Set ROP to [OP1/OP2].  The quotient is truncated towards 0.
 
  - Function: void mpz_tdiv_r (mpz_t ROP, mpz_t OP1, mpz_t OP2)
  - Function: void mpz_tdiv_r_ui (mpz_t ROP, mpz_t OP1, unsigned long
           int OP2)
-     Set ROP to (OP1 - [OP1 / OP2] * OP2).  Unless the remainder is
-     zero, it has the same sign as the dividend.
+     Set ROP to (OP1 - [OP1/OP2] * OP2).  Unless the remainder is zero,
+     it has the same sign as the dividend.
 
  - Function: void mpz_tdiv_qr (mpz_t ROP1, mpz_t ROP2, mpz_t OP1, mpz_t
           OP2)
@@ -719,7 +740,7 @@ have `qr' in the name.
  - Function: void mpz_fdiv_q (mpz_t ROP1, mpz_t OP1, mpz_t OP2)
  - Function: void mpz_fdiv_q_ui (mpz_t ROP, mpz_t OP1, unsigned long
           int OP2)
-     Set ROP to OP1 / OP2.  The quotient is rounded towards -infinity.
+     Set ROP to OP1/OP2.  The quotient is rounded towards -infinity.
 
  - Function: void mpz_fdiv_r (mpz_t ROP, mpz_t OP1, mpz_t OP2)
  - Function: unsigned long int mpz_fdiv_r_ui (mpz_t ROP, mpz_t OP1,
@@ -751,7 +772,7 @@ have `qr' in the name.
  - Function: void mpz_cdiv_q (mpz_t ROP1, mpz_t OP1, mpz_t OP2)
  - Function: void mpz_cdiv_q_ui (mpz_t ROP, mpz_t OP1, unsigned long
           int OP2)
-     Set ROP to OP1 / OP2.  The quotient is rounded towards +infinity.
+     Set ROP to OP1/OP2.  The quotient is rounded towards +infinity.
 
  - Function: void mpz_cdiv_r (mpz_t ROP, mpz_t OP1, mpz_t OP2)
  - Function: unsigned long int mpz_cdiv_r_ui (mpz_t ROP, mpz_t OP1,
@@ -791,13 +812,54 @@ have `qr' in the name.
      `unsigned long int', and is therefore returned.
 
  - Function: void mpz_divexact (mpz_t ROP, mpz_t OP1, mpz_t OP2)
-     Set ROP to OP1 / OP2.  This function produces correct results only
+     Set ROP to OP1/OP2.  This function produces correct results only
      when it is known in advance that OP2 divides OP1.
 
      Since mpz_divexact is much faster than any of the other routines
      that produce the quotient (*note References::. Jebelean), it is
      the best choice for instances in which exact division is known to
      occur, such as reducing a rational to lowest terms.
+
+ - Function: void mpz_tdiv_q_2exp (mpz_t ROP, mpz_t OP1, unsigned long
+          int OP2)
+     Set ROP to OP1 divided by 2 raised to OP2.  The quotient is
+     rounded towards 0.
+
+ - Function: void mpz_tdiv_r_2exp (mpz_t ROP, mpz_t OP1, unsigned long
+          int OP2)
+     Divide OP1 by (2 raised to OP2) and put the remainder in ROP.
+     Unless it is zero, ROP will have the same sign as OP1.
+
+ - Function: void mpz_fdiv_q_2exp (mpz_t ROP, mpz_t OP1, unsigned long
+          int OP2)
+     Set ROP to OP1 divided by 2 raised to OP2.  The quotient is
+     rounded towards -infinity.
+
+ - Function: void mpz_fdiv_r_2exp (mpz_t ROP, mpz_t OP1, unsigned long
+          int OP2)
+     Divide OP1 by (2 raised to OP2) and put the remainder in ROP.  The
+     sign of ROP will always be positive.
+
+     This operation can also be defined as masking of the OP2 least
+     significant bits.
+
+Exponentialization Functions
+----------------------------
+
+ - Function: void mpz_powm (mpz_t ROP, mpz_t BASE, mpz_t EXP, mpz_t MOD)
+ - Function: void mpz_powm_ui (mpz_t ROP, mpz_t BASE, unsigned long int
+          EXP, mpz_t MOD)
+     Set ROP to (BASE raised to EXP) `mod' MOD.  If EXP is negative,
+     the result is undefined.
+
+ - Function: void mpz_pow_ui (mpz_t ROP, mpz_t BASE, unsigned long int
+          EXP)
+ - Function: void mpz_ui_pow_ui (mpz_t ROP, unsigned long int BASE,
+          unsigned long int EXP)
+     Set ROP to BASE raised to EXP.
+
+Square Root Functions
+---------------------
 
  - Function: void mpz_sqrt (mpz_t ROP, mpz_t OP)
      Set ROP to the truncated integer part of the square root of OP.
@@ -813,6 +875,9 @@ have `qr' in the name.
      Return non-zero if OP is a perfect square, i.e., if the square
      root of OP is an integer.  Return zero otherwise.
 
+Number Theoretic Functions
+--------------------------
+
  - Function: int mpz_probab_prime_p (mpz_t OP, int REPS)
      If this function returns 0, OP is definitely not prime.  If it
      returns 1, then OP is `probably' prime.  The probability of a
@@ -820,21 +885,6 @@ have `qr' in the name.
 
      An implementation of the probabilistic primality test found in
      Seminumerical Algorithms (*note References::. Knuth).
-
- - Function: void mpz_powm (mpz_t ROP, mpz_t BASE, mpz_t EXP, mpz_t MOD)
- - Function: void mpz_powm_ui (mpz_t ROP, mpz_t BASE, unsigned long int
-          EXP, mpz_t MOD)
-     Set ROP to (BASE raised to EXP) `mod' MOD.  If EXP is negative,
-     the result is undefined.
-
- - Function: void mpz_pow_ui (mpz_t ROP, mpz_t BASE, unsigned long int
-          EXP)
- - Function: void mpz_ui_pow_ui (mpz_t ROP, unsigned long int BASE,
-          unsigned long int EXP)
-     Set ROP to BASE raised to EXP.
-
- - Function: void mpz_fac_ui (mpz_t ROP, unsigned long int OP)
-     Set ROP to OP!, the factorial of OP.
 
  - Function: void mpz_gcd (mpz_t ROP, mpz_t OP1, mpz_t OP2)
      Set ROP to the greatest common divisor of OP1 and OP2.
@@ -860,39 +910,9 @@ have `qr' in the name.
      function returns zero, do not assume anything about the value in
      ROP.
 
- - Function: void mpz_neg (mpz_t ROP, mpz_t OP)
-     Set ROP to -OP.
-
- - Function: void mpz_abs (mpz_t ROP, mpz_t OP)
-     Set ROP to the absolute value of OP.
-
- - Function: void mpz_mul_2exp (mpz_t ROP, mpz_t OP1, unsigned long int
-          OP2)
-     Set ROP to OP1 times 2 raised to OP2.  This operation can also be
-     defined as a left shift, OP2 steps.
-
- - Function: void mpz_tdiv_q_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to OP1 divided by 2 raised to OP2.  The quotient is
-     rounded towards 0.
-
- - Function: void mpz_fdiv_q_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to OP1 divided by 2 raised to OP2.  The quotient is
-     rounded towards -infinity.
-
- - Function: void mpz_tdiv_r_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Divide OP1 by (2 raised to OP2) and put the remainder in ROP.  The
-     sign of ROP will have the same sign as OP1, unless is becomes zero.
-
- - Function: void mpz_fdiv_r_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Divide OP1 by (2 raised to OP2) and put the remainder in ROP.  The
-     sign of ROP will always be positive.
-
-     This operation can also be defined as masking of the OP2 least
-     significant bits.
+ - Function: int mpz_jacobi (mpz_t OP1, mpz_t OP2)
+ - Function: int mpz_legendre (mpz_t OP1, mpz_t OP2)
+     Compute the Jacobi and Legendre symbols, respectively.
 
 
 File: gmp.info,  Node: Comparison Functions,  Next: Integer Logic and Bit Fiddling,  Prev: Integer Arithmetic,  Up: Integer Functions
@@ -901,13 +921,22 @@ Comparison Functions
 ====================
 
  - Function: int mpz_cmp (mpz_t OP1, mpz_t OP2)
- - Function: int mpz_cmp_ui (mpz_t OP1, unsigned long int OP2)
- - Function: int mpz_cmp_si (mpz_t OP1, signed long int OP2)
      Compare OP1 and OP2.  Return a positive value if OP1 > OP2, zero
      if OP1 = OP2, and a negative value if OP1 < OP2.
 
- - Function: int mpz_sgn (mpz_t OP)
+ - Macro: int mpz_cmp_ui (mpz_t OP1, unsigned long int OP2)
+ - Macro: int mpz_cmp_si (mpz_t OP1, signed long int OP2)
+     Compare OP1 and OP2.  Return a positive value if OP1 > OP2, zero
+     if OP1 = OP2, and a negative value if OP1 < OP2.
+
+     These functions are actually implemented as macros.  They evaluate
+     their arguments multiple times.
+
+ - Macro: int mpz_sgn (mpz_t OP)
      Return +1 if OP > 0, 0 if OP = 0, and -1 if OP < 0.
+
+     This function is actually implemented as a macro.  It evaluates its
+     arguments multiple times.
 
 
 File: gmp.info,  Node: Integer Logic and Bit Fiddling,  Next: I/O of Integers,  Prev: Comparison Functions,  Up: Integer Functions
@@ -1107,6 +1136,7 @@ Initialization and Assignment Functions
      function for all `mpq_t' variables when you are done with them.
 
  - Function: void mpq_set (mpq_t ROP, mpq_t OP)
+ - Function: void mpq_set_z (mpq_t ROP, mpz_t OP)
      Assign ROP from OP.
 
  - Function: void mpq_set_ui (mpq_t ROP, unsigned long int OP1,
@@ -1132,18 +1162,18 @@ Arithmetic Functions
 
  - Function: void mpq_mul (mpq_t PRODUCT, mpq_t MULTIPLIER, mpq_t
           MULTIPLICAND)
-     Set PRODUCT to MULTIPLIER times MULTIPLICAND
+     Set PRODUCT to MULTIPLIER times MULTIPLICAND.
 
  - Function: void mpq_div (mpq_t QUOTIENT, mpq_t DIVIDEND, mpq_t
           DIVISOR)
-     Set QUOTIENT to DIVIDEND / DIVISOR.
+     Set QUOTIENT to DIVIDEND/DIVISOR.
 
  - Function: void mpq_neg (mpq_t NEGATED_OPERAND, mpq_t OPERAND)
      Set NEGATED_OPERAND to -OPERAND.
 
  - Function: void mpq_inv (mpq_t INVERTED_NUMBER, mpq_t NUMBER)
-     Set INVERTED_NUMBER to 1 / NUMBER.  If the new denominator is
-     zero, this routine will divide by zero.
+     Set INVERTED_NUMBER to 1/NUMBER.  If the new denominator is zero,
+     this routine will divide by zero.
 
 
 File: gmp.info,  Node: Comparing Rationals,  Next: Applying Integer Functions,  Prev: Assigning Rationals,  Up: Rational Number Functions
@@ -1155,19 +1185,25 @@ Comparison Functions
      Compare OP1 and OP2.  Return a positive value if OP1 > OP2, zero
      if OP1 = OP2, and a negative value if OP1 < OP2.
 
-     To determine if two rationals are equal, `mpq_equal' is faster
-     than this `mpq_cmp'.
+     To determine if two rationals are equal, `mpq_equal' is faster than
+     `mpq_cmp'.
 
- - Function: int mpq_cmp_ui (mpq_t OP1, unsigned long int NUM2,
-          unsigned long int DEN2)
+ - Macro: int mpq_cmp_ui (mpq_t OP1, unsigned long int NUM2, unsigned
+          long int DEN2)
      Compare OP1 and NUM2/DEN2.  Return a positive value if OP1 >
      NUM2/DEN2, zero if OP1 = NUM2/DEN2, and a negative value if OP1 <
      NUM2/DEN2.
 
      This routine allows that NUM2 and DEN2 have common factors.
 
- - Function: int mpq_sgn (mpq_t OP)
+     This function is actually implemented as a macro.  It evaluates its
+     arguments multiple times.
+
+ - Macro: int mpq_sgn (mpq_t OP)
      Return +1 if OP > 0, 0 if OP = 0, and -1 if OP < 0.
+
+     This function is actually implemented as a macro.  It evaluates its
+     arguments multiple times.
 
  - Function: int mpq_equal (mpq_t OP1, mpq_t OP2)
      Return non-zero if OP1 and OP2 are equal, zero if they are
@@ -1197,6 +1233,9 @@ File: gmp.info,  Node: Miscellaneous Rational Functions,  Prev: Applying Integer
 
 Miscellaneous Functions
 =======================
+
+ - Function: double mpq_get_d (mpq_t OP)
+     Convert OP to a double.
 
    These functions assign between either the numerator or denominator
 of a rational, and an integer.  Instead of using these functions, it is
