@@ -289,29 +289,14 @@ dnl  3DNow.
 
 define(femms_available_p,
 m4_assert_numargs(-1)
-`ifdef(`CONFIG_CPU_k62',1,
-`ifdef(`CONFIG_CPU_k63',1,
-`ifdef(`CONFIG_CPU_k7', 1,
-0)')')')
+`m4_ifdef_anyof_p(
+	`HAVE_TARGET_CPU_k62',
+	`HAVE_TARGET_CPU_k63',
+	`HAVE_TARGET_CPU_athlon')')
 
 define(emms_or_femms,
 m4_assert_numargs(-1)
 `ifelse(femms_available_p,1,`femms',`emms')')
-
-
-dnl  Usage: cmovnz_ecx_ebx
-dnl         cmovnz_edx_ecx
-dnl
-dnl  The gas 2.91 that comes with FreeBSD 3.4 doesn't support cmov, so the
-dnl  following are replacements using .byte, just for the forms needed.
-
-define(cmovnz_ecx_ebx,
-m4_assert_numargs(-1)
-`.byte	15,69,217	# cmovnz %ecx, %ebx')
-
-define(cmovnz_edx_ecx,
-m4_assert_numargs(-1)
-`.byte	15,69,202	# cmovnz %edx, %ecx')
 
 
 dnl  Usage: jadcl0(op)
@@ -342,5 +327,98 @@ m4_assert_numargs(1)
 	incl	$1
 1:dnl')')
 
+
+dnl  Usage: cmov_available_p
+dnl
+dnl  Expand to 1 if cmov is available, 0 if not.
+dnl
+dnl  The list here is all the chips that don't have cmov, on the assumption
+dnl  that new chips will have it.
+
+define(cmov_available_p,
+`ifelse(m4_ifdef_anyof_p(
+	`HAVE_TARGET_CPU_i386',
+	`HAVE_TARGET_CPU_i486',
+	`HAVE_TARGET_CPU_pentium',
+	`HAVE_TARGET_CPU_pentiummmx',
+	`HAVE_TARGET_CPU_k5',
+	`HAVE_TARGET_CPU_k6',
+	`HAVE_TARGET_CPU_k62',
+	`HAVE_TARGET_CPU_k63'),1,
+0,1)')
+
+
+dnl  Usage: cmov_bytes(cond,src,dst,bytes)
+dnl
+dnl  Generate a cmov from a list of bytes, or simulated with a mov and
+dnl  conditional jump if cmov isn't available.  The bytes argument should be
+dnl  quoted to protect commas in it.
+
+define(cmov_bytes,
+m4_assert_numargs(4)
+`ifelse(cmov_available_p,1,
+	`.byte	$4	# cmov$1 $2, $3',
+	`j`'cmov_bytes_oppcond(`$1')	1f	# simulated cmov$1 $2, $3
+	mov	$2, $3
+1:`'dnl
+m4_warning(`warning, simulating cmov with jump, use for testing only
+')')')
+
+dnl  Expand to an opposite condition, eg. cmov_bytes_oppcond(z) -> nz,
+dnl  or cmov_bytes_oppcond(ns) -> s.
+dnl
+define(cmov_bytes_oppcond,
+m4_assert_numargs(1)
+`ifelse(substr(`$1',0,1),n,
+`substr(`$1',1)',
+`n$1')')
+
+
+dnl  Usage: cmovnz_ecx_ebx
+dnl         ...
+dnl
+dnl  The gas 2.91 that comes with FreeBSD 3.4 doesn't support cmov, so the
+dnl  following are replacements using .byte.  The byte values are best found
+dnl  from an assembler that does know about cmov, eg. gas 2.95.  Setting
+dnl  these up is tedious, so only what's needed is here.
+
+define(`cmovnz_ecx_ebx',
+m4_assert_numargs(-1)
+`cmov_bytes(nz,%ecx,%ebx,`15,69,217')')
+
+define(`cmovnz_edx_ecx',
+m4_assert_numargs(-1)
+`cmov_bytes(nz,%edx,%ecx,`15,69,202')')
+
+define(`cmovz_eax_ecx',
+m4_assert_numargs(-1)
+`cmov_bytes(z,%eax,%ecx,`15,68,200')')
+
+define(`cmovnz_eax_ebx',
+m4_assert_numargs(-1)
+`cmov_bytes(nz,%eax,%ebx,`15,69,216')')
+
+
+dnl  Usage: loop_or_decljnz label
+dnl
+dnl  Generate either a "loop" instruction or a "decl %ecx / jnz", whichever
+dnl  is better.  "loop" is better on K6 and probably on 386, on other chips
+dnl  separate decl/jnz is better.
+dnl
+dnl  This macro is just for the x86/divmod_1.asm, divrem_1.asm and mod_1.asm
+dnl  where this loop_or_decljnz variation is enough to allow the code to be
+dnl  shared by all chips.
+
+define(loop_or_decljnz,
+`ifelse(loop_is_better_p,1,
+	`loop',
+	`decl	%ecx
+	jnz')')
+
+define(loop_is_better_p,
+`m4_ifdef_anyof_p(`HAVE_TARGET_CPU_k6',
+                  `HAVE_TARGET_CPU_k62',
+                  `HAVE_TARGET_CPU_k63',
+                  `HAVE_TARGET_CPU_i386')')
 
 divert`'dnl
