@@ -1,0 +1,4 @@
+.libs
+Makefile
+libtests.la
+*.lo

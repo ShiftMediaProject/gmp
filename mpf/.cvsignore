@@ -1,0 +1,4 @@
+*.lo
+.libs
+Makefile
+libmpf.la
