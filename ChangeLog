@@ -1567,6 +1567,7 @@ MA 02111-1307, USA.
 	* mpn/m68k/README: Add notes on this.
 	* configure.in (SIZEOF_UNSIGNED): New define in config.m4.
 	* mpn/m68k/m68k-defs.m4 (m68k_definsn): Add cmpw, movew.
+	Reported by Patrick Pelissier.
 
 	* mpn/m68k/t-m68k-defs.pl: Don't use -> with hashes, to avoid
 	deprecation warnings from perl 5.8.
