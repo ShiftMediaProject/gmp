@@ -30,7 +30,7 @@ mp_size_t _mpn_mul_classic ();
 void mpz_refmul ();
 
 #ifndef SIZE
-#define SIZE 128
+#define SIZE 2 * TOOM3_MUL_THRESHOLD
 #endif
 
 main (argc, argv)
@@ -42,7 +42,7 @@ main (argc, argv)
   mpz_t quotient, remainder;
   mp_size_t multiplier_size, multiplicand_size;
   int i;
-  int reps = 10000;
+  int reps = 2000;
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -56,8 +56,8 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      multiplier_size = urandom () % SIZE - SIZE/2;
-      multiplicand_size = urandom () % SIZE - SIZE/2;
+      multiplier_size = urandom () % 2 * SIZE - SIZE;
+      multiplicand_size = urandom () % 2 * SIZE - SIZE;
 
       mpz_random2 (multiplier, multiplier_size);
       mpz_random2 (multiplicand, multiplicand_size);
@@ -68,18 +68,25 @@ main (argc, argv)
 	mpz_divmod (quotient, remainder, product, multiplicand);
 
       if (mpz_cmp (product, ref_product))
-	dump_abort (multiplier, multiplicand);
+	dump_abort ("incorrect plain product",
+		    multiplier, multiplicand, product, ref_product);
 
       if (mpz_cmp_ui (multiplicand, 0) != 0)
       if (mpz_cmp_ui (remainder, 0) || mpz_cmp (quotient, multiplier))
-	dump_abort (multiplier, multiplicand);
+	{
+	  debug_mp (quotient, -16);
+	  debug_mp (remainder, -16);
+	  dump_abort ("incorrect quotient or remainder",
+		      multiplier, multiplicand, product, ref_product);
+	}
 
       /* Test squaring.  */
       mpz_mul (product, multiplier, multiplier);
       mpz_refmul (ref_product, multiplier, multiplier);
 
       if (mpz_cmp (product, ref_product))
-	dump_abort (multiplier, multiplier);
+	dump_abort ("incorrect square product",
+		    multiplier, multiplier, product, ref_product);
     }
 
   exit (0);
@@ -251,12 +258,15 @@ _mpn_mul_classic (prodp, up, usize, vp, vsize)
   return usize + vsize - (cy_dig == 0);
 }
 
-dump_abort (multiplier, multiplicand)
-     mpz_t multiplier, multiplicand;
+dump_abort (s, multiplier, multiplicand, product, ref_product)
+     char *s;
+     mpz_t multiplier, multiplicand, product, ref_product;
 {
-  fprintf (stderr, "ERROR\n");
+  fprintf (stderr, "ERROR: %s\n", s);
   fprintf (stderr, "multiplier = "); debug_mp (multiplier, -16);
   fprintf (stderr, "multiplicand  = "); debug_mp (multiplicand, -16);
+  fprintf (stderr, "product  = "); debug_mp (product, -16);
+  fprintf (stderr, "ref_product  = "); debug_mp (ref_product, -16);
   abort();
 }
 
