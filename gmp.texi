@@ -561,11 +561,12 @@ gcc  -D_LONG_LONG_LIMB
 @need 1000
 @item Sparc V9
 
-CPU targets @samp{ultrasparc} and @samp{sparcv9} use either the v8plus 32-bit
-ABI or v9 64-bit ABI.  The v9 ABI is available on Solaris 7 and up, meaning OS
-targets @samp{solaris2.[7-9]}.  Earlier versions of Solaris don't properly
-save all registers and the v8plus ABI must be used (but GMP still uses as much
-of the v9 ISA as it can under the circumstances).
+On a sparc v9 CPU, either the v8plus 32-bit ABI or v9 64-bit ABI is used.
+Targets @samp{ultrasparc*-*-solaris2.[7-9]}, @samp{sparcv9-*-solaris2.[7-9]}
+and @samp{sparc64-*-linux*} use the v9 ABI, if the compiler supports it.
+Other targets use the v8plus ABI (but with as much of the v9 ISA as possible
+in the circumstances).  Note that Solaris prior to 2.7 doesn't save all
+registers properly, and hence uses the v8plus ABI.
 
 For the v8plus ABI, applications can be compiled with either
 
