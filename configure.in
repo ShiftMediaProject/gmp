@@ -542,6 +542,7 @@ case $host in
   # Motorola 68k
   #
   m68*-*-*)
+    AC_DEFINE(HAVE_HOST_CPU_FAMILY_m68k)
     GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
     gcc_cflags="-g $fomit_frame_pointer"
     gcc_cflags_optlist="optimize arch"
