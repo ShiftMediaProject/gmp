@@ -848,20 +848,23 @@ all (void)
   }
   printf ("\n");
 
+  /* Start karatsuba from 4, since the Cray t90 ieee code is much faster at
+     2, giving wrong results.  */
   {
     static struct param_t  param;
     param.name[0] = "KARATSUBA_MUL_THRESHOLD";
     param.name[1] = "TOOM3_MUL_THRESHOLD";
     param.function = speed_mpn_mul_n;
-    param.min_size[0] = MPN_KARA_MUL_N_MINSIZE;
+    param.min_size[0] = MAX (4, MPN_KARA_MUL_N_MINSIZE);
     param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT;
     one (mul_threshold, 2, &param);
   }
   printf("\n");
 
-  /* Start from size==3, since 1 is a special case, and if mul_basecase is
-     faster only at size==2 then we don't want to bother with extra code
-     just for that.  */
+  /* Start the basecase from 3, since 1 is a special case, and if
+     mul_basecase is faster only at size==2 then we don't want to bother
+     with extra code just for that.  Start karatsuba from 4 same as MUL
+     above.  */
   {
     static struct param_t  param;
     param.name[0] = "BASECASE_SQR_THRESHOLD";
@@ -871,7 +874,7 @@ all (void)
     param.min_is_always = 1;
     param.second_start_min = 1;
     param.min_size[0] = 3;
-    param.min_size[1] = MAX (3, MPN_KARA_SQR_N_MINSIZE);
+    param.min_size[1] = MAX (4, MPN_KARA_SQR_N_MINSIZE);
     param.min_size[2] = MPN_TOOM3_SQR_N_MINSIZE;
     param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
     param.max_size[1] = TUNE_KARATSUBA_SQR_MAX;
