@@ -2,7 +2,7 @@
 
 	* mpn/hppa/gmp-mparam.h: Fill in values from `make tune' run.
 	* mpn/alpha/gmp-mparam.h: Likewise.
-	* mpn/powerpc64/gmp-mparam.h: Likewise.
+	* mpn/powerpc32/gmp-mparam.h: Likewise.
 
 	* tune/hppa.asm: New file.
 	* tune/hppa2.asm: New file.
