@@ -98,20 +98,6 @@ MA 02111-1307, USA. */
 #endif
 
 
-/* FIXME: When gmp.h is used within the gmp build, it'd be good to take the
-   definition of inline from config.h.  That would let mpn_add etc below get
-   inlined on non-gcc compilers.  Of course in user programs gmp.h can only
-   rely on preprocessor defines to detect support for inline.  */
-
-#ifndef _EXTERN_INLINE
-#ifdef __GNUC__
-#define _EXTERN_INLINE extern __inline__
-#else
-#define _EXTERN_INLINE static
-#endif
-#endif
-
-
 /* __GMP_DECLSPEC marks a function or variable for import or export for a
    windows DLL, or is empty on other systems.
 
@@ -317,6 +303,10 @@ typedef __mpq_struct *mpq_ptr;
 
 #ifdef __GNUC__
 #define __GMP_EXTERN_INLINE  extern __inline__
+#endif
+
+#if defined (__cplusplus) && ! defined (__GMP_EXTERN_INLINE)
+#define __GMP_EXTERN_INLINE  inline
 #endif
 
 
@@ -1807,8 +1797,11 @@ mpn_sub_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
 #endif
 
 
-#if defined (__GNUC__) || defined (_FORCE_INLINES)
-_EXTERN_INLINE mp_limb_t
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_add
+#if ! __GMP_FORCE_mpn_add
+__GMP_EXTERN_INLINE
+#endif
+mp_limb_t
 mpn_add (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
 	 register mp_size_t s1_size,
@@ -1828,8 +1821,13 @@ mpn_add (register mp_ptr res_ptr,
                   cy_limb);
   return cy_limb;
 }
+#endif
 
-_EXTERN_INLINE mp_limb_t
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_sub
+#if ! __GMP_FORCE_mpn_sub
+__GMP_EXTERN_INLINE
+#endif
+mp_limb_t
 mpn_sub (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
 	 register mp_size_t s1_size,
@@ -1849,7 +1847,7 @@ mpn_sub (register mp_ptr res_ptr,
                   cy_limb);
   return cy_limb;
 }
-#endif /* __GNUC__ */
+#endif
 
 
 #if defined (__cplusplus)
