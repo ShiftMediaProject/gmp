@@ -129,10 +129,16 @@
 <li> UltraSPARC: Rewrite <code>mpn_lshift</code> and <code>mpn_rshift</code>.
      Should give 2 cycles/limb.  (Torbjörn has code that just needs to be
      finished.)
+
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
      saturate the cache, which will happen at 7.5 cycles/limb.
+
+<li> Sparc & SparcV8: Enable umul.asm for native cc.  The generic
+     longlong.h umul_ppmm is suspected to be causing sqr_basecase to
+     be slower than mul_basecase.
+
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
      <code>mpn_sqr_basecase</code>.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
