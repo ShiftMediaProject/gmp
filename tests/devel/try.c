@@ -1292,7 +1292,8 @@ malloc_region (struct region_t *r, mp_size_t n)
 #endif
 
 #if HAVE_MMAP && defined (MAP_ANON)
-  p = mmap (NULL, nbytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, 0, 0);
+  /* note must pass fd=-1 for MAP_ANON on BSD */
+  p = mmap (NULL, nbytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, -1, 0);
   if (p == (void *) -1)
     {
       fprintf (stderr, "Cannot mmap %#x anon bytes: %s\n",
