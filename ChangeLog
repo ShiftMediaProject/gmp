@@ -1,5 +1,7 @@
 2000-04-08  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp.h (mpq_set_d): Declare correctly.
+
 	* mpn/asm-defs.m4 (MPN_PREFIX): Revert previous change.
 	* gmp.h (__MPN): Revert previous change.
 
