@@ -743,6 +743,7 @@ YY_RULE_SETUP
           { "fib",       FIB },
           { "hex",       HEX },
           { "gcd",       GCD },
+          { "kron",      KRON },
           { "lcm",       LCM },
           { "nextprime", NEXTPRIME },
           { "powm",      POWM },
@@ -767,15 +768,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 92 "calclex.l"
+#line 93 "calclex.l"
 { return BAD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 94 "calclex.l"
+#line 95 "calclex.l"
 ECHO;
 	YY_BREAK
-#line 779 "calclex.c"
+#line 780 "calclex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1661,7 +1662,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 94 "calclex.l"
+#line 95 "calclex.l"
 
 
 int
