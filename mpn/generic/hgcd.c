@@ -1124,12 +1124,12 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
       unsigned i;
       for (i = 0; i<4; i++)
 	trace (" r%d = %Nd; u%d = %Nd; v%d = %Nd\n",
-	       i, hgcd->row[i].rp, hgcd->row[i].rsize, 
-	       i, hgcd->row[i].uvp[0], hgcd->size, 
+	       i, hgcd->row[i].rp, hgcd->row[i].rsize,
+	       i, hgcd->row[i].uvp[0], hgcd->size,
 	       i, hgcd->row[i].uvp[1], hgcd->size);
     }
 #endif
-  
+
   tsize = L;
 
   if (hgcd->sign >= 0)
@@ -1645,7 +1645,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	  hgcd->sign ^= R.sign;
 
 	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
-	  
+
 	  if (hgcd->row[3].rsize <= M)
 	    {
 	      /* Backup two steps */
