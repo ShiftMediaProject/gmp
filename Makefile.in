@@ -13,8 +13,8 @@
 
 @SET_MAKE@
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001 Free Software
-# Foundation, Inc.
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002 Free
+# Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -308,8 +308,9 @@ SCANF_OBJECTS = \
 
 
 CXX_OBJECTS = \
-   cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
-   cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
+  cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo	\
+  cxx/osdoprnti$U.lo cxx/osfuns$U.lo				\
+  cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
 
 
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
@@ -352,7 +353,7 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 # use $(CXXLINK) rather than the plain C $(LINK).  cxx/osfuns.cc is an
 # arbitrary choice for that.
 @WANT_CXX_TRUE@GMPXX_LTLIBRARIES_OPTION = libgmpxx.la
-libgmpxx_la_SOURCES = cxx/osfuns.cc
+libgmpxx_la_SOURCES = dummy.cc
 libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS)
 libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES) libgmp.la
 libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
@@ -407,7 +408,7 @@ am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	randlc2x$U.lo randraw$U.lo rands$U.lo randsd$U.lo randsdui$U.lo \
 	version$U.lo
 libgmp_la_OBJECTS = $(am_libgmp_la_OBJECTS)
-am_libgmpxx_la_OBJECTS = osfuns.lo
+am_libgmpxx_la_OBJECTS = dummy.lo
 libgmpxx_la_OBJECTS = $(am_libgmpxx_la_OBJECTS)
 am_libmp_la_OBJECTS = assert$U.lo errno$U.lo memory$U.lo mp_bpl$U.lo \
 	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo
@@ -539,7 +540,6 @@ libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
 	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES) 
 	$(LINK) -rpath $(libdir) $(libgmp_la_LDFLAGS) $(libgmp_la_OBJECTS) $(libgmp_la_LIBADD) $(LIBS)
-osfuns.lo: cxx/osfuns.cc
 libgmpxx.la: $(libgmpxx_la_OBJECTS) $(libgmpxx_la_DEPENDENCIES) 
 	$(CXXLINK) -rpath $(libdir) $(libgmpxx_la_LDFLAGS) $(libgmpxx_la_OBJECTS) $(libgmpxx_la_LIBADD) $(LIBS)
 libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES) 
@@ -640,15 +640,6 @@ version_.lo : $(ANSI2KNR)
 
 .cc.lo:
 	$(LTCXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-osfuns.o: cxx/osfuns.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o osfuns.o `test -f cxx/osfuns.cc || echo '$(srcdir)/'`cxx/osfuns.cc
-
-osfuns.obj: cxx/osfuns.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o osfuns.obj `cygpath -w cxx/osfuns.cc`
-
-osfuns.lo: cxx/osfuns.cc
-	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o osfuns.lo `test -f cxx/osfuns.cc || echo '$(srcdir)/'`cxx/osfuns.cc
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-vti
 	@:
