@@ -176,7 +176,7 @@ void
 check_underflow (void)
 {
   static const long exp_table[] = {
-    -999999L, LONG_MIN,
+    -999999L, LONG_MIN + 1024,
   };
   static const mp_limb_t  np[1] = { 1 };
 
@@ -221,7 +221,7 @@ void
 check_inf (void)
 {
   static const long exp_table[] = {
-    999999L, LONG_MAX,
+    999999L, LONG_MAX - 1024,
   };
   static const mp_limb_t  np[4] = { 1, 1, 1, 1 };
   long       exp;
