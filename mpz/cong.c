@@ -105,7 +105,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
           if (BELOW_THRESHOLD (asize, MODEXACT_1_ODD_THRESHOLD))
             {
               r = mpn_mod_1 (ap, asize, dlow);
-              if (c < d)
+              if (clow < dlow)
                 return r == clow;
               else
                 return r == (clow % dlow);
