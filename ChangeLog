@@ -20,7 +20,7 @@ MA 02111-1307, USA.
 
 2003-12-29  Torbjorn Granlund  <tege@swox.com>
 
-	* tests/mpz/t-gcd.c: Rewrite.
+	* tests/mpz/t-gcd.c: Rewrite, based on suggestions by Kevin.
 
 	* mpn/ia64/mul_1.asm: Amend TODO list.
 
