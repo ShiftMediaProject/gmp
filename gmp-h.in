@@ -525,14 +525,14 @@ void __GMP_DECLSPEC mpz_clear _PROTO ((mpz_ptr));
 void __GMP_DECLSPEC mpz_clrbit _PROTO ((mpz_ptr, unsigned long int));
 int __GMP_DECLSPEC mpz_cmp _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
-#define mpz_cmp_d __gmp_mpz_cmp_d
+#define mpz_cmp_d __gmpz_cmp_d
 int __GMP_DECLSPEC mpz_cmp_d _PROTO ((mpz_srcptr, double)) __GMP_ATTRIBUTE_PURE;
 
 int __GMP_DECLSPEC _mpz_cmp_si _PROTO ((mpz_srcptr, signed long int)) __GMP_ATTRIBUTE_PURE;
 int __GMP_DECLSPEC _mpz_cmp_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 int __GMP_DECLSPEC mpz_cmpabs _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
-#define mpz_cmpabs_d __gmp_mpz_cmpabs_d
+#define mpz_cmpabs_d __gmpz_cmpabs_d
 int __GMP_DECLSPEC mpz_cmpabs_d _PROTO ((mpz_srcptr, double)) __GMP_ATTRIBUTE_PURE;
 
 int __GMP_DECLSPEC mpz_cmpabs_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
@@ -782,8 +782,8 @@ int __GMP_DECLSPEC mpq_set_str _PROTO ((mpq_ptr q, const char *str, int base));
 #define mpq_swap __gmpq_swap
 void __GMP_DECLSPEC mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
 
-#ifdef _GMP_H_HAVE_FILE
 #define mpq_out_str __gmpq_out_str
+#ifdef _GMP_H_HAVE_FILE
 size_t __GMP_DECLSPEC mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
 #endif
 
