@@ -352,6 +352,8 @@ pow (base, e, mod, res)
     {
       mpz_set_ui (g[0], 1);
       mpz_redc (xx, xx, g[0], mod, invm);
+      if (mpz_cmp (xx, mod) >= 0)
+	mpz_sub (xx, xx, mod);
     }
   mpz_set (res, xx);
 
