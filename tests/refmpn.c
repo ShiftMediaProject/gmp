@@ -157,6 +157,13 @@ refmpn_tstbit (mp_srcptr ptr, mp_size_t size)
 
 
 void
+refmpn_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));
+  refmpn_copyi (rp, sp, size);
+}
+
+void
 refmpn_copyi (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 {
   mp_size_t i;
