@@ -53,6 +53,9 @@ mp_ptr
 refmpn_malloc_limbs (mp_size_t size)
 {
   mp_ptr  p;
+  assert (size >= 0);
+  if (size == 0)
+    size = 1;
   p = malloc (size * BYTES_PER_MP_LIMB);
   assert (p != NULL);
   return p;
@@ -63,7 +66,8 @@ refmpn_memdup_limbs (mp_srcptr ptr, mp_size_t size)
 {
   mp_ptr  p;
   p = refmpn_malloc_limbs (size);
-  refmpn_copyi (p, ptr, size);
+  if (size != 0)
+    refmpn_copyi (p, ptr, size);
   return p;
 }
 
@@ -71,7 +75,7 @@ void
 refmpn_fill (mp_ptr ptr, mp_size_t size, mp_limb_t value)
 {
   mp_size_t  i;
-  assert (size >= 1);
+  assert (size >= 0);
   for (i = 0; i < size; i++)
     ptr[i] = value;
 }
@@ -441,15 +445,21 @@ mp_limb_t
 refmpn_divmod_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
                  mp_limb_t carry)
 {
-  mp_ptr     sp_orig = refmpn_memdup_limbs (sp, size);
-  mp_ptr     prod = refmpn_malloc_limbs (size);
-  mp_limb_t  carry_orig = carry;
-
+  mp_ptr     sp_orig;
+  mp_ptr     prod;
+  mp_limb_t  carry_orig;
   mp_size_t  i;
 
   assert (refmpn_overlap_fullonly_p (rp, sp, size));
-  assert (size >= 1);
+  assert (size >= 0);
   assert (carry < divisor);
+
+  if (size == 0)
+    return carry;
+
+  sp_orig = refmpn_memdup_limbs (sp, size);
+  prod = refmpn_malloc_limbs (size);
+  carry_orig = carry;
 
   for (i = size-1; i >= 0; i--)
     div (&rp[i], &carry, carry, sp[i], divisor);
@@ -502,14 +512,13 @@ refmpn_divrem_1c (mp_ptr rp, mp_size_t xsize,
 {
   mp_ptr  z;
 
+  z = refmpn_malloc_limbs (xsize);
+  refmpn_fill (z, xsize, 0);
+  
   carry = refmpn_divmod_1c (rp+xsize, sp, size, divisor, carry);
-  if (xsize != 0)
-    {
-      z = refmpn_malloc_limbs (xsize);
-      refmpn_fill (z, xsize, 0);
-      carry = refmpn_divmod_1c (rp, z, xsize, divisor, carry);
-      free (z);
-    }
+  carry = refmpn_divmod_1c (rp, z, xsize, divisor, carry);
+  
+  free (z);
   return carry;
 }  
 
