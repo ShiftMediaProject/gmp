@@ -86,10 +86,8 @@ mpz_divexact (quot, num, den)
   while (dp[0] == 0)
     np += 1, nsize -= 1, dp += 1, dsize -= 1;
   tsize = MIN (qsize, dsize);
-  if (dp[0] & 1)
+  if ((dp[0] & 1) != 0)
     {
-      if (qp != dp)
-	MPN_COPY (qp, np, qsize);
       if (qp == dp)		/*  QUOT and DEN overlap.  */
 	{
 	  tp = (mp_ptr) TMP_ALLOC (sizeof (mp_limb_t) * tsize);
@@ -97,18 +95,20 @@ mpz_divexact (quot, num, den)
 	}
       else
 	tp = (mp_ptr) dp;
+      if (qp != np)
+	MPN_COPY (qp, np, qsize);
     }
   else
     {
-      unsigned long int r;
+      unsigned int r;
       tp = (mp_ptr) TMP_ALLOC (sizeof (mp_limb_t) * tsize);
       count_trailing_zeros (r, dp[0]);
       mpn_rshift (tp, dp, tsize, r);
       if (dsize > tsize)
-	tp[tsize-1] |= dp[tsize] << (BITS_PER_MP_LIMB - r);
+	tp[tsize - 1] |= dp[tsize] << (BITS_PER_MP_LIMB - r);
       mpn_rshift (qp, np, qsize, r);
       if (nsize > qsize)
-	qp[qsize-1] |= np[qsize] << (BITS_PER_MP_LIMB - r);
+	qp[qsize - 1] |= np[qsize] << (BITS_PER_MP_LIMB - r);
     }
 
   /*  Now QUOT <-- QUOT/T.  */
