@@ -499,7 +499,7 @@ There is carefully optimized assembly code for these CPUs:
 ARM,
 DEC Alpha 21064, 21164, and 21264,
 AMD 29000,
-AMD K6, K6-2 and Athlon,
+AMD K6, K6-2, Athlon, and AMD64,
 Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
 Intel Pentium, Pentium Pro/II/III, Pentium 4, generic x86,
@@ -754,6 +754,7 @@ Alpha:
 @nisamp{alphaev6},
 @nisamp{alphaev67},
 @nisamp{alphaev68}
+@nisamp{alphaev7}
 
 @item
 Cray:
@@ -858,6 +859,7 @@ SPARC:
 @nisamp{k62},
 @nisamp{k63},
 @nisamp{athlon},
+@nisamp{amd64},
 @nisamp{viac3},
 @nisamp{viac32}
 
@@ -911,7 +913,7 @@ with @command{gcc} normally preferred if it's present.  The usual
 @samp{CC=whatever} can be passed to @samp{./configure} to choose something
 different.
 
-For some systems, default compiler flags are set based on the CPU and
+For various systems, default compiler flags are set based on the CPU and
 compiler.  The usual @samp{CFLAGS="-whatever"} can be passed to
 @samp{./configure} to use something different or to set good flags for systems
 GMP doesn't otherwise know.
@@ -999,7 +1001,7 @@ compiler mismatch.  Perhaps this will change in the future.
 Incidentally, it's normally not good enough to set @samp{CXX} to the same as
 @samp{CC}.  Although @command{gcc} for instance recognises @file{foo.cc} as
 C++ code, only @command{g++} will invoke the linker the right way when
-building an executable or shared library from object files.
+building an executable or shared library from C++ object files.
 
 @item Temporary Memory, @option{--enable-alloca=<choice>}
 @cindex Temporary memory
@@ -1118,8 +1120,8 @@ automake targets are available to make PostScript @file{gmp.ps}, DVI
 Texinfo tools).
 
 @cindex HTML
-HTML can be produced with @samp{makeinfo --html}, see @GMPrefu{makeinfo html,,
-Generating HTML, texinfo, Texinfo,
+HTML can be produced with @samp{makeinfo --html}, see @GMPrefu{Generating
+HTML,,, texinfo, Texinfo,
 http://www.gnu.org/manual/texinfo/html_node/Generating-HTML.html}.  Or
 alternately with @samp{texi2html}, see @GMPreftopu{texi2html, Texinfo To HTML,
 http://www.mathematik.uni-kl.de/~obachman/Texi2html}.
