@@ -28,17 +28,13 @@ include ../mpn/Makeasm.am
 INCLUDES = -I$(top_srcdir)
 LDADD = libtests.la $(top_builddir)/libgmp.la
 
-EXTRA_DIST = x86call.asm
-EXTRA_LTLIBRARIES = libdummy.la
 check_LTLIBRARIES = libtests.la
 
+EXTRA_libtests_la_SOURCES = x86call.asm x86check.c
 libtests_la_SOURCES = tests.h \
   memory.c misc.c refmpf.c refmpn.c refmpq.c refmpz.c spinner.c trace.c
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
 libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
-
-# Create ansi2knr rules for sources conditionally used
-libdummy_la_SOURCES = x86check.c
 
 check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-modlinv t-popc
 TESTS = $(check_PROGRAMS)
