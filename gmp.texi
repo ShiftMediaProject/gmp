@@ -4700,16 +4700,17 @@ arithmetic operations.  On CPUs with low latency multipliers this can be much
 faster than a hardware divide, though the cost of calculating the inverse at
 the start may mean it's only better on inputs bigger than say 4 or 5 limbs.
 
-When a normalized divisor is required, either for the multiply by inverse or a
-hardware divide instruction that needs it that way, the division performed is
-@m{a2^k,a*2^k} by @m{d2^k,d*2^k} where @ma{a} is the dividend and @ma{k} is
-the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The shift for
-the dividend is usually accomplished ``on the fly'' meaning by extracting the
-appropriate bits at each step.  Done this way the quotient limbs come out
-aligned ready to store.  When only the remainder is wanted, an alternative is
-to take the dividend limbs unshifted and calculate @m{r = a \bmod d2^k, r = a
-mod d*2^k} followed by an extra final step @m{r2^k \bmod d2^k, r*2^k mod
-d*2^k}.  This can help on CPUs with poor bit shifts or few registers.
+When a divisor must be normalized, either for the generic C
+@code{__udiv_qrnnd_c} or the multiply by inverse, the division performed is
+actually @m{a2^k,a*2^k} by @m{d2^k,d*2^k} where @ma{a} is the dividend and
+@ma{k} is the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The
+bit shifts for the dividend are usually accomplished ``on the fly'' meaning by
+extracting the appropriate bits at each step.  Done this way the quotient
+limbs come out aligned ready to store.  When only the remainder is wanted, an
+alternative is to take the dividend limbs unshifted and calculate @m{r = a
+\bmod d2^k, r = a mod d*2^k} followed by an extra final step @m{r2^k \bmod
+d2^k, r*2^k mod d*2^k}.  This can help on CPUs with poor bit shifts or few
+registers.
 
 N@cross{}1 division is used for small divisors (which are fairly common), and
 for radix conversion.  It's not used to construct N@cross{}M divisions, though
