@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 /* __gmp_insert_double -- convert from array of mp_limb_t to double.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
@@ -33,7 +31,13 @@ MA 02111-1307, USA. */
 #endif
 
 double
+#if __STDC__
 __gmp_scale2 (double d, int exp)
+#else
+__gmp_scale2 (d, exp)
+     double d;
+     int exp;
+#endif
 {
 #if _GMP_IEEE_FLOATS
   {
