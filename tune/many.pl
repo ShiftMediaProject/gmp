@@ -224,6 +224,8 @@
 # Maybe the C files should be compiled pic and non-pic too.  Wait until
 # there's a difference that might be of interest.
 #
+# Warn if a file provides no functions.
+#
 #
 # LIMITATIONS
 #
@@ -487,6 +489,12 @@ my @table =
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size, mp_limb_t mult',
        'speed' => 'SPEED_ROUTINE_MPN_UNARY_1',
        'speed_flags'=> 'FLAG_R',
+     },
+     {
+       'regexp'=> 'mul_2',
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size, mp_limb_t low, mp_limb_t high',
+       'speed' => 'SPEED_ROUTINE_MPN_UNARY_2',
      },
      
      {
@@ -1064,12 +1072,18 @@ if (defined $ENV{tryinc}) {
   $tryinc = $ENV{tryinc};
   print TRY "#include \"$tryinc\"\n";
 }
+print "tryinc $tryinc\n" if $opt{'t'};
 print TRY
     "#include \"try.c\"\n" .
     "\n";
 
 my $extra_libraries = "";
 if (defined $ENV{extra_libraries}) { $extra_libraries = $ENV{extra_libraries};}
+
+my $trydeps = "";
+if (defined $ENV{trydeps}) { $trydeps = $ENV{trydeps}; }
+$trydeps .= " $tryinc";
+print "trydeps $trydeps\n" if $opt{'t'};
 
 print MAKEFILE <<EOF;
 
@@ -1083,7 +1097,7 @@ speed-many: \$(MANY_OBJS) speed-many\$U.o libspeed.la $extra_libraries
 try-many: \$(MANY_OBJS) try-many\$U.o libspeed.la $extra_libraries
 	\$(LINK) \$(LDFLAGS) try-many\$U.o \$(MANY_OBJS)  \$(LDADD) \$(LIBS) $extra_libraries
 
-try-many.o: try-many.c \$(top_srcdir)/tests/devel/try.c $tryinc
+try-many.o: try-many.c \$(top_srcdir)/tests/devel/try.c $trydeps
 	\$(COMPILE) -I\$(top_srcdir)/tests/devel -c try-many.c
 
 EOF
