@@ -980,6 +980,18 @@ generator from the C library, usually @code{mrand48} or @code{random}.  These
 routines are not reentrant, since they rely on global state.
 (However the newer random number functions that accept a
 @code{gmp_randstate_t} parameter are reentrant.)
+
+@item
+If @code{alloca} is not available, or GMP is configured with
+@samp{--disable-alloca}, the library is not reentrant, due to the current
+implementation of @file{stack-alloc.c}.  In the generated @file{config.h}
+@code{USE_STACK_ALLOC} set to 1 will mean not reentrant.
+
+@item
+On SCO systems the default @code{<ctype.h>} macros use per-file static
+variables and may not be reentrant, depending whether the compiler optimizes
+away fetches from them.  The functions affected are @code{mpz_set_str},
+@code{mpz_inp_str}, @code{mpf_set_str} and @code{mpf_inp_str}.
 @end itemize
 
 
