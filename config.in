@@ -154,6 +154,9 @@ MA 02111-1307, USA.
 /* Define if the compiler accepts gcc style __attribute__ ((const)) */
 #undef HAVE_ATTRIBUTE_CONST
 
+/* Define if the compiler accepts gcc style __attribute__ ((mode (XX))) */
+#undef HAVE_ATTRIBUTE_MODE
+
 /* Define if the compiler accepts gcc style __attribute__ ((noreturn)) */
 #undef HAVE_ATTRIBUTE_NORETURN
 
