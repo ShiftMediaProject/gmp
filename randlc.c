@@ -31,7 +31,7 @@ gmp_randinit_lc (gmp_randstate_t rstate,
 		 mpz_srcptr m)
 {
   /* FIXME: Not finished.  We don't handle this in _gmp_rand() yet. */
-  abort ();			
+  abort ();
 
   mpz_init_set_ui (rstate->_mp_seed, 1);
   _mpz_realloc (rstate->_mp_seed, ABSIZ (m));

@@ -117,7 +117,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
           ASSERT (c != MP_LIMB_T_MAX); /* because it's the high of a mul */
           c += mpn_add_1 (fp, fp, size-1, CNST_LIMB(2));
           fp[size-1] = c;
-        }          
+        }
 #endif
     }
   else

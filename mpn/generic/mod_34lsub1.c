@@ -60,7 +60,7 @@ MA 02111-1307, USA. */
     a += l;             \
     c += (a < l);       \
   } while (0)
- 
+
 mp_limb_t
 mpn_mod_34lsub1 (mp_srcptr p, mp_size_t n)
 {

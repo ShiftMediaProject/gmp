@@ -65,7 +65,7 @@ mpz_ui_kronecker (unsigned long a, mpz_srcptr b)
             {
               if (b_abs_size == 1)   /* (a/0x80000000) == (a/2)^(BPML-1) */
                 return JACOBI_TWOS_U (BITS_PER_MP_LIMB-1, a);
-      
+
               /* b_abs_size > 1 */
               b_low = b_ptr[1] << 1;
             }

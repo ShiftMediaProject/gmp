@@ -106,7 +106,7 @@ mpn_dc_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
 static mp_limb_t
 mpn_dc_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
 {
-  mp_size_t twon = n + n; 
+  mp_size_t twon = n + n;
   mp_limb_t qhl, cc;
   mp_ptr tmp;
   TMP_DECL (marker);

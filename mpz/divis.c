@@ -30,7 +30,7 @@ mpz_divisible_p (mpz_srcptr a, mpz_srcptr d)
   int  dsize;
 
   dsize = SIZ(d);
-  if (dsize == 0) 
+  if (dsize == 0)
     DIVIDE_BY_ZERO;
 
   return mpn_divisible_p (PTR(a), (mp_size_t) ABSIZ(a),

@@ -87,7 +87,7 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
 
           den_size--;
           count_trailing_zeros (shift, flow);
- 
+
           mpn_rshift (num_ptr, fptr, abs_fsize, shift);
           abs_fsize -= (num_ptr[abs_fsize-1] == 0);
 

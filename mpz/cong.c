@@ -142,9 +142,9 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
                  is unnecessary, but the rest of that code is wanted. */
               goto cong_1;
             }
-        }          
+        }
     }
-  
+
   TMP_MARK (marker);
   xp = TMP_ALLOC_LIMBS (asize+1);
 

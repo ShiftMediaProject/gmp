@@ -64,7 +64,7 @@ mpz_kronecker_si (mpz_srcptr a, long b)
         return 0;  /* (even/even)=0 */
 
       /* (a/2)=(2/a) for a odd */
-      count_trailing_zeros (twos, b_limb);  
+      count_trailing_zeros (twos, b_limb);
       b_limb >>= twos;
       result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, a_low);
     }

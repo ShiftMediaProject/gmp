@@ -70,12 +70,12 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, unsigned long d)
       /* if d covers all of a and c, then must be exactly equal */
       if (asize <= dlimbs)
         return asize == csize;
-      
+
       /* whole limbs zero */
       for (i = csize; i < dlimbs; i++)
         if (ap[i] != 0)
           return 0;
-      
+
       /* partial limb zero */
       return (ap[dlimbs] & dmask) == 0;
     }

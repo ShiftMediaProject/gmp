@@ -62,6 +62,6 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
 
   if (str_alloc != 0)
     __GMP_REALLOCATE_FUNC_MAYBE (str, str_alloc, len+1);
-    
+
   return str;
 }

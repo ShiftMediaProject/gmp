@@ -66,7 +66,7 @@ mord_2exp (mpz_ptr ldst, mpz_ptr rdst, mpz_srcptr lsrc, mpz_srcptr rsrc,
       if (plow == 0)
         shift = n;
       else
-        {        
+        {
           count_trailing_zeros (shift, plow);
           shift = MIN (shift, n);
         }
@@ -89,7 +89,7 @@ mpq_mul_2exp (mpq_ptr dst, mpq_srcptr src, unsigned long n)
   mord_2exp (mpq_numref (dst), mpq_denref (dst),
              mpq_numref (src), mpq_denref (src), n);
 }
-  
+
 void
 mpq_div_2exp (mpq_ptr dst, mpq_srcptr src, unsigned long n)
 {

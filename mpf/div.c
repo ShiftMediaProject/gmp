@@ -88,7 +88,7 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       mp_ptr tmp;
       mp_limb_t nlimb;
       unsigned normalization_steps;
-      
+
       count_leading_zeros (normalization_steps, vp[vsize - 1]);
 
       /* Shift up the divisor setting the most significant bit of

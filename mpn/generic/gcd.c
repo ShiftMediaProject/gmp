@@ -189,7 +189,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       count_leading_zeros (vzeros, vp[vsize-1]);
       ASSERT (uzeros <= vzeros);
     }
-#endif    
+#endif
   ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
   ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, vsize, up, usize));
   ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, vsize, vp, vsize));

@@ -48,7 +48,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
   mpz_t      nacc;
   mp_limb_t  kacc;
   mp_size_t  negate;
-  
+
   if (mpz_sgn (n) < 0)
     {
       /* bin(n,k) = (-1)^k * bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */

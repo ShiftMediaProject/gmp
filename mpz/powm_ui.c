@@ -155,7 +155,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       mp_limb_t cy;
       cy = mpn_lshift (tp, xp, xn, m_zero_cnt);
       tp[xn] = cy; xn += cy != 0;
-	
+
       if (xn < mn)
 	{
 	  MPN_COPY (xp, tp, xn);

@@ -45,7 +45,7 @@ mpz_divisible_2exp_p (mpz_srcptr a, unsigned long d)
   for (i = 0; i < dlimbs; i++)
     if (ap[i] != 0)
       return 0;
-  
+
   /* left over bits must be zero */
   dbits = d % BITS_PER_MP_LIMB;
   dmask = (CNST_LIMB(1) << dbits) - 1;

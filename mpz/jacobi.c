@@ -143,7 +143,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   /* account for effect of sign of a, then ignore it */
   result_bit1 ^= JACOBI_ASGN_SU_BIT1 (asize, blow);
   asize = ABS (asize);
-          
+
   if (bsize == 1 || (bsize == 2 && (bsecond >> btwos) == 0))
     {
       /* special case one limb b, use modexact and no copying */
@@ -153,7 +153,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
       if (blow == 1)   /* (a/1)=1 always */
         return JACOBI_BIT1_TO_PN (result_bit1);
-      
+
       JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, alow, asrcp, asize, blow);
       TRACE (printf ("base (%lu/%lu) with %d\n",
                      alow, blow, JACOBI_BIT1_TO_PN (result_bit1)));
@@ -176,7 +176,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       if (atwos != 0)
         alow |= asecond << (BITS_PER_MP_LIMB-atwos);
     }
-  
+
   /* (a/2)=(2/a) with a odd */
   result_bit1 ^= JACOBI_TWOS_U_BIT1 (btwos, alow);
 
@@ -189,7 +189,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
       /* b still has its twos, so cancel out their effect */
       result_bit1 ^= JACOBI_TWOS_U_BIT1 (btwos, alow);
-      
+
       result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);  /* now (b/a) */
       JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
       TRACE (printf ("base (%lu/%lu) with %d\n",

@@ -111,7 +111,7 @@ mpz_scan1 (mpz_srcptr u, unsigned long starting_bit)
 
       /* Adjust so ~limb implied by searching for 0 bit becomes -limb.  */
       limb--;
-          
+
     inverted:
       /* Now seeking a 0 bit. */
 

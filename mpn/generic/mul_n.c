@@ -115,10 +115,10 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
       else
 	{
 	  i = n2;
-	  do 
+	  do
 	    {
 	      --i;
-	      w0 = b[i]; 
+	      w0 = b[i];
 	      w1 = b[n3+i];
 	    }
 	  while (w0 == w1 && i != 0);
@@ -209,7 +209,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
       mpn_sub_n (p, x, y, n2);
 
       i = n2;
-      do 
+      do
 	{
 	  --i;
 	  w0 = b[i];
@@ -357,7 +357,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
     {
       /* Even length. */
       i = n2;
-      do 
+      do
 	{
 	  --i;
 	  w0 = a[i];
@@ -473,7 +473,7 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t len,mp_size_t len2)
 {
   mp_limb_t c, d, e;
-  
+
   ASSERT (len - len2 <= 2);
 
   e = mpn_lshift (p1, B, len, 1);
@@ -660,12 +660,12 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 #ifdef HAVE_MPN_ADD_SUB_N
   /* #error TO DO ... */
 #else
-  t = tb + td + mpn_add_n (ws, B, D, len);  
+  t = tb + td + mpn_add_n (ws, B, D, len);
   td = tb - td - mpn_sub_n (D, B, D, len);
   tb = t;
   MPN_COPY (B, ws, len);
 #endif
-  
+
   /* b := b-8*c */
   t = 8 * tc + mpn_lshift (ws, C, len, 3);
   tb -= t + mpn_sub_n (B, B, ws, len);
@@ -681,7 +681,7 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 #ifdef HAVE_MPN_ADD_SUB_N
   /* #error TO DO ... */
 #else
-  t = tb + td + mpn_add_n (ws, B, D, len);  
+  t = tb + td + mpn_add_n (ws, B, D, len);
   td = tb - td - mpn_sub_n (D, B, D, len);
   tb = t;
   MPN_COPY (B, ws, len);
@@ -1151,7 +1151,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
 #if WANT_FFT || TUNE_PROGRAM_BUILD
   else
     {
-      mpn_mul_fft_full (p, a, n, b, n);	     
+      mpn_mul_fft_full (p, a, n, b, n);
     }
 #endif
 }

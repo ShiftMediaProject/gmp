@@ -25,7 +25,7 @@ MA 02111-1307, USA. */
 
 
 /* change this to "#define TRACE(x) x" for diagnostics */
-#define TRACE(x) 
+#define TRACE(x)
 
 
 /* Notes:

@@ -39,7 +39,7 @@ mpz_congruent_ui_p (mpz_srcptr a, unsigned long cu, unsigned long du)
   mp_size_t  asize;
   mp_limb_t  c, d, r;
 
-  if (du == 0) 
+  if (du == 0)
     DIVIDE_BY_ZERO;
 
   asize = SIZ(a);

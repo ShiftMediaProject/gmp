@@ -69,7 +69,7 @@ gmp_randinit (va_alist)
 
 #if 0
     case GMP_RAND_ALG_BBS:	/* Blum, Blum, and Shub. */
-      {				
+      {
 	mpz_t p, q;
 	mpz_t ztmp;
 
@@ -80,7 +80,7 @@ gmp_randinit (va_alist)
 	/* These are around 128 bits. */
 	mpz_init_set_str (p, "148028650191182616877187862194899201391", 10); 
 	mpz_init_set_str (q, "315270837425234199477225845240496832591", 10);
-	
+
 	/* Allocate algorithm specific data. */
 	rstate->data.bbs = (__gmp_rand_data_bbs *)
 	  (*__gmp_allocate_func) (sizeof (__gmp_rand_data_bbs));

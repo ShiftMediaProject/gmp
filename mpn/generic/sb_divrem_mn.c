@@ -199,7 +199,7 @@ mpn_sb_divrem_mn (mp_ptr qp,
 	    ______ ______
 	 - |__p1__|__p0__|		partial product to subtract
 	    ______ ______
-	 - |______|cylimb|		
+	 - |______|cylimb|
 
      rx is -1, 0 or 1.  If rx=1, then q is correct (it should match
      carry out).  If rx=-1 then q is too large.  If rx=0, then q might

@@ -135,7 +135,7 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
           popc_limb (twoscount, vlimb);
           count += twoscount;
         }
-      
+
       /* Overlapping part of u and v, if any.  Ones complement both, so just
          plain hamdist. */
       step = MIN (usize, vsize);

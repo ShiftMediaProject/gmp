@@ -77,7 +77,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
       usize += (cy_limb != 0);
       SIZ(w) = (sign_product >= 0 ? usize : -usize);
       return;
-    }      
+    }
 #else
   if (vsize == 1)
     {
@@ -88,7 +88,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
       usize += (cy_limb != 0);
       SIZ(w) = (sign_product >= 0 ? usize : -usize);
       return;
-    }      
+    }
 #endif
 
   TMP_MARK (marker);

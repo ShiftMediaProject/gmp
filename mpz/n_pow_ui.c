@@ -398,7 +398,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
          the bit below the highest 1 (which will mean i==-1 if e==1).  */
       count_leading_zeros (cnt, e);
       i = BITS_PER_MP_LIMB - cnt - 2;
-      
+
 #if HAVE_NATIVE_mpn_mul_2
       if (bsize <= 2)
         {
@@ -418,7 +418,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
           mult[0] = blimb_low;
           mult[1] = blimb;
-          
+
           for ( ; i >= 0; i--)
             {
               TRACE (printf ("mul_2 loop i=%d e=0x%lX, rsize=%ld ralloc=%ld talloc=%ld\n",
@@ -462,7 +462,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
               if ((e & (1L << i)) != 0)
                 MPN_MUL_1 (rp, rsize, ralloc, blimb);
             }
-          
+
           TRACE (mpn_trace ("mul_1 before rl, r", rp, rsize));
           if (rl != 1)
             MPN_MUL_1 (rp, rsize, ralloc, rl);
@@ -471,7 +471,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
       else
         {
           int  parity;
-          
+
           /* Arrange the final result ends up in r, not in the temp space */
           ULONG_PARITY (parity, e);
           if (((parity ^ i) & 1) != 0)
@@ -479,7 +479,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
           MPN_COPY (rp, bp, bsize);
           rsize = bsize;
-          
+
           for ( ; i >= 0; i--)
             {
               TRACE (printf ("mul loop i=%d e=0x%lX, rsize=%ld ralloc=%ld talloc=%ld\n",
@@ -494,14 +494,13 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
                   SWAP_RP_TP;
                 }
             }
-          
-        }          
+        }
     }
 
   ASSERT (rp == PTR(r) + rtwos_limbs);
   TRACE (mpn_trace ("end loop r", rp, rsize));
   TMP_FREE (marker);
-      
+
   /* Apply any partial limb factors of 2. */
   if (rtwos_bits != 0)
     {

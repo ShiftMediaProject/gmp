@@ -63,7 +63,7 @@ for (each observation Xj)
 			rm = max (rm, a[k] - j/n)
 			j += c[k]
 			rp = max (rp, j/n - b[k])
-			
+
 Kp = sqr (n) * rp
 Km = sqr (n) * rm 
 
@@ -539,7 +539,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
   mpz_set_ui (p, 1);
   mpz_set_ui (pp, 0);
   mpz_set (r, a);
-  mpz_pow_ui (s, a, 2);		
+  mpz_pow_ui (s, a, 2);
   mpz_add_ui (s, s, 1);		/* s = 1 + a^2 */
 
   /* S2 [Euclidean step.] */
@@ -735,7 +735,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 
       /* From Knuth p. 104: "The exhaustive search in steps S8-S10
 	 reduces the value of s only rarely." */
-#ifdef DO_SEARCH	
+#ifdef DO_SEARCH
       /* S7 [Prepare for search.] */
       /* Find minimum in (x[1], ..., x[t]) satisfying condition
 	 x[k]^2 <= f(y[1], ...,y[t]) * dot(V[k],V[k]) */
@@ -802,7 +802,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 #endif /* DO_SEARCH */
       mpf_set_z (f_tmp1, s);
       mpf_sqrt (rop[ui_t - 1], f_tmp1);
-#ifdef DO_SEARCH	
+#ifdef DO_SEARCH
       if (g_debug > DEBUG_2)
 	printf ("done.\n");
 #endif /* DO_SEARCH */

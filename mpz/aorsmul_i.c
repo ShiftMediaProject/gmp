@@ -126,7 +126,7 @@ mpz_aorsmul_1 (mpz_ptr w, mpz_srcptr x, mp_limb_t y, mp_size_t sub)
           cy = cy2 + mpn_add_1 (wp, wp, dsize, cy);
         }
 #endif
- 
+
       wp[dsize] = cy;
       new_wsize += (cy != 0);
     }

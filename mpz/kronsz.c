@@ -91,7 +91,7 @@ mpz_si_kronecker (long a, mpz_srcptr b)
                   result_bit1 ^= JACOBI_TWOS_U_BIT1 (BITS_PER_MP_LIMB-1, a);
                   return JACOBI_BIT1_TO_PN (result_bit1);
                 }
-      
+
               /* b_abs_size > 1 */
               b_low = b_ptr[1] << 1;
             }
