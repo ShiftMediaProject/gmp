@@ -1,7 +1,7 @@
 /* mpz_root(root, u, nth) --  Set ROOT to floor(U^(1/nth)).
    Return an indication if the result is exact.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
