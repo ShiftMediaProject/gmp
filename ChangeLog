@@ -2,6 +2,7 @@
 
 	* mpn/x86/pentium/rshift.S: Use plain rcrl (not rcrl $1) for
 	shift-by-1 case, significant speedup.
+	* mpn/x86/pentium/README: Add shift-by-1 speed.
 
 2000-03-15  Kevin Ryde  <kevin@swox.se>
 
