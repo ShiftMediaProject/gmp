@@ -53,8 +53,12 @@ void __gmp_tmp_free ();
 }
 #endif
 
+#if defined (_CRAY) && !defined (_CRAYMPP)
+#define __TMP_ALIGN 1L
+#endif
+
 #ifndef __TMP_ALIGN
-#define __TMP_ALIGN 8
+#define __TMP_ALIGN 8L
 #endif
 
 #define TMP_DECL(marker) tmp_marker marker
