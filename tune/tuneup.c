@@ -64,6 +64,12 @@ MA 02111-1307, USA.
    Most of the nonsense for this can be found in tune/Makefile.am and under
    TUNE_PROGRAM_BUILD in gmp-impl.h.
 
+   The dirty hack which the "second_start_min" feature could perhaps be done
+   more generally, so if say karatsuba is never better than toom3 then it
+   can be detected and omitted.  Currently we're hoping very hard that this
+   doesn't arise in practice, and if it does then it indicates something
+   badly sub-optimal in the karatsuba implementation.
+
    Limitations:
    
    The FFTs aren't subject to the same badness rule as the other thresholds,
@@ -98,8 +104,7 @@ extern int optind, opterr;
 
 
 #define MAX_SIZE        1000  /* limbs */
-#define MAX_TABLE       2     /* threshold entries */
-
+#define MAX_TABLE       5
 
 #if WANT_FFT
 mp_size_t  option_fft_max_size = 50000;  /* limbs */
@@ -152,8 +157,9 @@ struct param_t {
   double            function_fudge; /* multiplier for "function" speeds */
   int               stop_since_change;
   double            stop_factor;
-  mp_size_t         min_size;
+  mp_size_t         min_size[MAX_TABLE];
   int               min_is_always;
+  int               second_start_min;
   mp_size_t         max_size[MAX_TABLE];
   mp_size_t         check_size;
   mp_size_t         size_extra;
@@ -350,7 +356,12 @@ print_define (const char *name, mp_size_t value)
 void
 one (mp_size_t table[], size_t max_table, struct param_t *param)
 {
+  mp_size_t  table_save0 = 0;
+  int  since_positive, since_thresh_change;
+  int  thresh_idx, new_thresh_idx;
   int  i;
+
+  ASSERT_ALWAYS (max_table <= MAX_TABLE);
 
 #define DEFAULT(x,n)  if (! (param->x))  param->x = (n);
 
@@ -359,8 +370,9 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
   DEFAULT (step_factor, 0.01);  /* small steps by default */
   DEFAULT (stop_since_change, 80);
   DEFAULT (stop_factor, 1.2);
-  DEFAULT (min_size, 10);
-  for (i = 0; i < numberof (param->max_size); i++)
+  for (i = 0; i < max_table; i++)
+    DEFAULT (min_size[i], 10);
+  for (i = 0; i < max_table; i++)
     DEFAULT (max_size[i], MAX_SIZE);
 
   if (param->check_size != 0)
@@ -398,14 +410,15 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
                 s.size, t1, t2);
     }
 
-  s.size = param->min_size;
-
-  for (i = 0; i < max_table && s.size < MAX_SIZE; i++)
+  for (i = 0, s.size = 1; i < max_table && s.size < MAX_SIZE; i++)
     {
-      int  since_positive, since_thresh_change;
-      int  thresh_idx, new_thresh_idx;
+      if (i == 1 && param->second_start_min)
+        s.size = 1;
 
-      if (! param->noprint)
+      if (s.size < param->min_size[i])
+        s.size = param->min_size[i];
+
+      if (! (param->noprint || (i == 1 && param->second_start_min)))
         print_define_start (param->name[i]);
 
       ndat = 0;
@@ -440,6 +453,10 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
             FIXME: check minimum size requirements are met, possibly by just
             checking for the -1 returns from the speed functions.
           */
+
+          /* under this hack, don't let method 0 get used at s.size */
+          if (i == 1 && param->second_start_min)
+            table[0] = MIN (s.size-1, table_save0);
 
           /* using method i at this size */
           table[i] = s.size+1;
@@ -543,11 +560,43 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
 
       table[i] = dat[analyze_dat (i, 1)].size;
 
-      if (param->min_is_always && table[i] == param->min_size)
+      /* fudge here, let min_is_always apply only to i==0, that's what the
+         sqr_n thresholds want */
+      if (i == 0 && param->min_is_always && table[i] == param->min_size[i])
         table[i] = 0;
 
-      if (! param->noprint)
-        print_define_end (param->name[i], table[i]);
+      /* under the second_start_min fudge, if the second threshold turns out
+         to be lower than the first, then the second method is unwanted, we
+         should go straight from algorithm 1 to algorithm 3.  */
+      if (param->second_start_min)
+        {
+          if (i == 0)
+            {
+              table_save0 = table[0];
+              table[0] = 0;
+            }
+          else if (i == 1)
+            {
+              table[0] = table_save0;
+              if (table[1] <= table[0])
+                {
+                  table[0] = table[1];
+                  table[1] = 0;
+                }
+            }
+          s.size = MAX (table[0], table[1]) + 1;
+        }
+      
+      if (! (param->noprint || (i == 0 && param->second_start_min)))
+        {
+          if (i == 1 && param->second_start_min)
+            {
+              print_define_end (param->name[0], table[0]);
+              print_define_start (param->name[1]);
+            }
+
+          print_define_end (param->name[i], table[i]);
+        }
 
       /* Look for the next threshold starting from the current one, but back
          a bit. */
@@ -779,20 +828,29 @@ all (void)
     param.name[0] = "KARATSUBA_MUL_THRESHOLD";
     param.name[1] = "TOOM3_MUL_THRESHOLD";
     param.function = speed_mpn_mul_n;
-    param.min_size = MPN_KARA_MUL_N_MINSIZE;
+    param.min_size[0] = MPN_KARA_MUL_N_MINSIZE;
     param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT;
-    one (mul_threshold, numberof(mul_threshold)-1, &param);
+    one (mul_threshold, 2, &param);
   }
   printf("\n");
 
+  /* Start from size==3, since 1 is a special case, and if mul_basecase is
+     faster only at size==2 then we don't want to bother with extra code
+     just for that.  */
   {
     static struct param_t  param;
-    param.name[0] = "KARATSUBA_SQR_THRESHOLD";
-    param.name[1] = "TOOM3_SQR_THRESHOLD";
+    param.name[0] = "BASECASE_SQR_THRESHOLD";
+    param.name[1] = "KARATSUBA_SQR_THRESHOLD";
+    param.name[2] = "TOOM3_SQR_THRESHOLD";
     param.function = speed_mpn_sqr_n;
-    param.min_size = MPN_KARA_SQR_N_MINSIZE;
+    param.min_is_always = 1;
+    param.second_start_min = 1;
+    param.min_size[0] = 3;
+    param.min_size[1] = MAX (3, MPN_KARA_SQR_N_MINSIZE);
+    param.min_size[2] = MPN_TOOM3_SQR_N_MINSIZE;
     param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
-    one (sqr_threshold, numberof(sqr_threshold)-1, &param);
+    param.max_size[1] = TUNE_KARATSUBA_SQR_MAX;
+    one (sqr_threshold, 3, &param);
   }
   printf("\n");
 
@@ -802,7 +860,7 @@ all (void)
   {
     static struct param_t  param;
     param.check_size = 256;
-    param.min_size = 3;
+    param.min_size[0] = 3;
     param.min_is_always = 1;
     param.size_extra = 3;
     param.stop_factor = 2.0;
@@ -845,8 +903,8 @@ all (void)
 
     /* start the search from a point after the table data */
     switch (BITS_PER_MP_LIMB) {
-    case 32: param.min_size = 93; break;
-    case 64: param.min_size = 186; break;
+    case 32: param.min_size[0] = 93; break;
+    case 64: param.min_size[0] = 186; break;
     default:
       printf ("Don't know FIB_THRESHOLD starting point for BITS_PER_MP_LIMB == %d\n",
               BITS_PER_MP_LIMB);
@@ -861,7 +919,7 @@ all (void)
     static struct param_t  param;
     param.name[0] = "GCD_ACCEL_THRESHOLD";
     param.function = speed_mpn_gcd;
-    param.min_size = 1;
+    param.min_size[0] = 1;
     one (gcd_accel_threshold, 1, &param);
   }
 
@@ -882,7 +940,7 @@ all (void)
               BITS_PER_MP_LIMB);
       abort ();
     }
-    param.min_size = 5;
+    param.min_size[0] = 5;
     param.min_is_always = 1;
     param.max_size[0] = 300;
     param.check_size = 300;
@@ -908,7 +966,7 @@ all (void)
 
 #define DIV_1_PARAMS                    \
   param.check_size = 256;               \
-  param.min_size = 2;                   \
+  param.min_size[0] = 2;                   \
   param.min_is_always = 1;              \
   param.data_high = DATA_HIGH_LT_R;     \
   param.size_extra = 1;                 \
@@ -1020,7 +1078,7 @@ all (void)
     static struct param_t  param;
     param.name[0] = "DIVREM_2_THRESHOLD";
     param.check_size = 256;
-    param.min_size = 4;
+    param.min_size[0] = 4;
     param.min_is_always = 1;
     param.size_extra = 2;      /* does qsize==nsize-2 divisions */
     param.stop_factor = 2.0;
@@ -1045,7 +1103,7 @@ all (void)
     mp_size_t  thresh_lt;
     param.name[0] = "MODEXACT_1_ODD_THRESHOLD";
     param.check_size = 256;
-    param.min_size = 2;
+    param.min_size[0] = 2;
     param.stop_factor = 1.5;
     param.function  = SPEED_MPN_MOD_1;
     param.function2 = speed_mpn_modexact_1c_odd;
