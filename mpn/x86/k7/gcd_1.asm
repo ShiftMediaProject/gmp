@@ -331,15 +331,15 @@ L(modexact):
 	call	GSYM_PREFIX`'mpn_modexact_1_odd
 
 	C eax	x
-	C ebx	[non-PIC] y
+	C ebx	y
 	C ecx
 	C edx
 	C esi	common twos
 	C edi	[PIC] L(table)
-	C ebp	[PIC] y
+	C ebp
 
 	orl	%eax, %eax
-	movl	ifdef(`PIC',`%ebp',`%ebx'), %edx
+	movl	%ebx, %edx
 	movl	SAVE_EBP, %ebp
 
 	movl	%eax, %ecx
