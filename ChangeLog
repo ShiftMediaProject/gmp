@@ -1,5 +1,7 @@
 2000-03-03  Torbjorn Granlund  <tege@swox.com>
 
+	* longlong.h: Add IA-64 support.
+
 	* mpn/powerpc32: Misc cleanups.
 	* mpn/powerpc32/aix.m4: New file (mainly by Linus).
 	* mpn/powerpc64/aix.m4: New file (mainly by Linus).
