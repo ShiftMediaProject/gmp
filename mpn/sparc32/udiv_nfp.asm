@@ -30,7 +30,7 @@ C n0		o2
 C d		o3
 
 ASM_START()
-PROLOGUE(MPN(udiv_qrnnd))
+PROLOGUE(mpn_udiv_qrnnd)
 	tst	%o3
 	bneg	L(largedivisor)
 	mov	8,%g1
@@ -190,4 +190,4 @@ L(Ln6):	subcc	%o4,%o3,%g0
 L(Ln7):	st	%o4,[%o0]
 	retl
 	mov	%o2,%o0
-EPILOGUE(MPN(udiv_qrnnd))
+EPILOGUE(mpn_udiv_qrnnd)
