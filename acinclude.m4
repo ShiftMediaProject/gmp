@@ -428,9 +428,9 @@ dnl  ----------------------------------------------------------
 dnl  Attempt to assemble the given code.
 dnl  Do "action-success" if this succeeds, "action-fail" if not.
 dnl
-dnl  conftest.o is available for inspection in "action-success".  If either
-dnl  action does a "break" out of a loop then an explicit "rm -f conftest*"
-dnl  will be necessary.
+dnl  conftest.o and conftest.out are available for inspection in
+dnl  "action-success".  If either action does a "break" out of a loop then
+dnl  an explicit "rm -f conftest*" will be necessary.
 dnl
 dnl  This is not unlike AC_TRY_COMPILE, but there's no default includes or
 dnl  anything in "asm-code", everything wanted must be given explicitly.
@@ -439,10 +439,14 @@ AC_DEFUN(GMP_TRY_ASSEMBLE,
 [cat >conftest.s <<EOF
 [$1]
 EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
 if AC_TRY_EVAL(gmp_assemble); then
+  cat conftest.out >&AC_FD_CC
   ifelse([$2],,:,[$2])
 else
+  cat conftest.out >&AC_FD_CC
+  echo "configure: failed program was:" >&AC_FD_CC
+  cat conftest.s >&AC_FD_CC
   ifelse([$3],,:,[$3])
 fi
 rm -f conftest*
@@ -604,29 +608,20 @@ AC_DEFUN(GMP_ASM_ALIGN_FILL_0x90,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
                gmp_cv_asm_align_fill_0x90,
-[cat > conftest.s <<EOF
-      	$gmp_cv_asm_text
+[GMP_TRY_ASSEMBLE(
+[      	$gmp_cv_asm_text
       	.align  4, 0x90
 	.byte   0
-      	.align  4, 0x90
-EOF
-if $CCAS $CFLAGS conftest.s >conftest.out 2>&1; then
-  cat conftest.out 1>&AC_FD_CC
-  if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
-    echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
-    gmp_cv_asm_align_fill_0x90=no
-  else
-    gmp_cv_asm_align_fill_0x90=yes
-  fi
-else
-  cat conftest.out 1>&AC_FD_CC
-  echo "Non-zero exit code" 1>&AC_FD_CC
+      	.align  4, 0x90],
+[if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
+  echo "Supressing this warning by omitting 0x90" >&AC_FD_CC
   gmp_cv_asm_align_fill_0x90=no
-fi
-rm -f conftest*
-])
-GMP_DEFINE_RAW(
-["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
+else
+  gmp_cv_asm_align_fill_0x90=yes
+fi],
+[gmp_cv_asm_align_fill_0x90=no])])
+
+GMP_DEFINE_RAW(["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
 ])
 
 
