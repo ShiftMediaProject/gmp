@@ -181,11 +181,11 @@ S2:
       c++;
       if (c == 20)
 	{
+	  c = 0;
 	  mpz_gcd (g, P, n);
 	  if (mpz_cmp_ui (g, 1) != 0)
 	    goto S4;
 	  mpz_set (y, x);
-	  c = 0;
 	}
 S3:
       k--;
