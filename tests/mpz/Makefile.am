@@ -27,7 +27,8 @@ LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow t-2exp reuse \
-  t-root t-jac t-bin t-misc t-get_si t-fac_ui t-fib_ui t-scan t-fits
+  t-root t-jac t-bin t-misc t-get_si t-fac_ui t-fib_ui t-scan t-fits \
+  t-divis t-divis_2exp
 
 TESTS = $(check_PROGRAMS)
 
