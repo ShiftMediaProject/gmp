@@ -47,15 +47,12 @@ LATER_OBJS = inp_raw.o out_raw.o random.o pow_ui.o fac_ui.o
 
 INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/..
 
-libmpf.a: Makefile.in $(MPF_OBJS)
+libmpf.a: Makefile $(MPF_OBJS)
 	rm -f $@
 	$(AR) $(AR_FLAGS) $@ $(MPF_OBJS)
 
 .c.o:
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
-
-test: libmpf.a
-	cd tests; $(MAKE) srcdir=$(srcdir) CC=$(CC) SHELL=$(SHELL)
 
 clean mostlyclean:
 	rm -f *.o libmpf.a
