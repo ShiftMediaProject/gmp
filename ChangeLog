@@ -1,5 +1,8 @@
 2000-11-13  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tests/t-mul.c: Don't #include urandom.h.
+	* mpz/tests/t-tdiv.c: Likewise.
+
 	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]:
 	Declare hppa.asm as just 32 bits (cyclecounter_size=1).
 
