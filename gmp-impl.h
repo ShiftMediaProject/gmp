@@ -53,7 +53,10 @@ MA 02111-1307, USA. */
 #include <limits.h>
 #endif
 
-/* For fat.h and other fat binary stuff. */
+/* For fat.h and other fat binary stuff.
+   No need for __GMP_ATTRIBUTE_PURE or __GMP_NOTHROW, since functions
+   declared this way are only used to set function pointers in __gmp_cpuvec,
+   they're not called directly.  */
 #define DECL_add_n(name) \
   mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t))
 #define DECL_addmul_1(name) \
