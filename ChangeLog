@@ -1,3 +1,7 @@
+2000-12-22  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (implied alpha*-cray-unicos*): Remove -g from cc_cflags.
+
 2000-12-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/invert_limb.asm: Simplify a bit.
