@@ -1,5 +1,9 @@
 /* Mersenne Twister pseudo-random number generator functions.
 
+   THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
+   CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
+   FUTURE GNU MP RELEASES.
+
 Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -19,34 +23,30 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.  */
 
+#include <stdio.h>   /* for NULL */
+
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "randmt.h"
+
 
 /* This code implements the Mersenne Twister pseudorandom number generator
    by Takuji Nishimura and Makoto Matsumoto.  The buffer initialization
-   function is different in order to permit seeds greater than 2^32-1.  */
+   function is different in order to permit seeds greater than 2^32-1.
 
-/* Number of extractions used to warm the buffer up.  */
-#define WARM_UP 2000
+   This file contains a special __gmp_randinit_mt_noseed which excludes the
+   seeding function from the gmp_randfnptr_t routines.  This is for use by
+   mpn_random and mpn_random2 on the global random generator.  MT seeding
+   uses mpz functions, and we don't want mpn routines dragging mpz functions
+   into the link.  */
+
 
 /* Default seed to use when the generator is not initialized.  */
 #define DEFAULT_SEED 5489 /* was 4357 */
 
-/* Period parameters.  */
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908B0DF   /* Constant vector a.  */
-
 /* Tempering masks.  */
 #define MASK_1 0x9D2C5680
 #define MASK_2 0xEFC60000
-
-/* State structure for MT.  */
-typedef struct
-{
-  gmp_uint_least32_t mt[N];    /* State array.  */
-  int mti;                     /* Index of current value.  */
-} gmp_rand_mt_struct;
 
 /* Initial state of buffer when initialized with default seed.  */
 static const gmp_uint_least32_t default_state[N] =
@@ -157,8 +157,8 @@ static const gmp_uint_least32_t default_state[N] =
   0x6BCA810E,0x85AB8058,0xAE4B2B2F,0x9D120712,0xBEE8EACB,0x776A1112
 };
 
-static void
-recalc_buffer (gmp_uint_least32_t mt[])
+void
+__gmp_mt_recalc_buffer (gmp_uint_least32_t mt[])
 {
   gmp_uint_least32_t y;
   int kk;
@@ -182,8 +182,8 @@ recalc_buffer (gmp_uint_least32_t mt[])
 /* Get nbits bits of output from the generator into dest.
    Note that Mersenne Twister is designed to produce outputs in
    32-bit words.  */
-static void
-randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
+void
+__gmp_randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 {
   gmp_uint_least32_t y;
   int rbits;
@@ -203,7 +203,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
     {					\
       if (*pmti >= N)			\
 	{				\
-	  recalc_buffer (mt);		\
+	  __gmp_mt_recalc_buffer (mt);  \
 	  *pmti = 0;			\
 	}				\
       y = mt[(*pmti)++];		\
@@ -345,144 +345,24 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 #endif /* GMP_NUMB_BITS != 32 */
 }
 
-
-/* Calculate (b^e) mod (2^n-k) for e=1074888996, n=19937 and k=20023,
-   needed by the seeding function below.  */
-static void
-mangle_seed (mpz_ptr r, mpz_srcptr b_orig)
-{
-  mpz_t          t, b;
-  unsigned long  e = 0x40118124;
-  unsigned long  bit = 0x20000000;
-
-  mpz_init (t);
-  mpz_init_set (b, b_orig);  /* in case r==b_orig */
-
-  mpz_set (r, b);
-  do
-    {
-      mpz_mul (r, r, r);
-
-    reduce:
-      for (;;)
-        {
-          mpz_tdiv_q_2exp (t, r, 19937L);
-          if (mpz_sgn (t) == 0)
-            break;
-          mpz_tdiv_r_2exp (r, r, 19937L);
-          mpz_addmul_ui (r, t, 20023L);
-        }
-
-      if ((e & bit) != 0)
-        {
-          e &= ~bit;
-          mpz_mul (r, r, b);
-          goto reduce;
-        }
-
-      bit >>= 1;
-    }
-  while (bit != 0);
-
-  mpz_clear (t);
-  mpz_clear (b);
-}
-
-
-/* Seeding function.  Uses powering modulo a non-Mersenne prime to obtain
-   a permutation of the input seed space.  The modulus is 2^19937-20023,
-   which is probably prime.  The power is 1074888996.  In order to avoid
-   seeds 0 and 1 generating invalid or strange output, the input seed is
-   first manipulated as follows:
-
-     seed1 = seed mod (2^19937-20027) + 2
-
-   so that seed1 lies between 2 and 2^19937-20026 inclusive. Then the
-   powering is performed as follows:
-
-     seed2 = (seed1^1074888996) mod (2^19937-20023)
-
-   and then seed2 is used to bootstrap the buffer.
-
-   This method aims to give guarantees that:
-     a) seed2 will never be zero,
-     b) seed2 will very seldom have a very low population of ones in its
-	binary representation, and
-     c) every seed between 0 and 2^19937-20028 (inclusive) will yield a
-	different sequence.
-
-   CAVEATS:
-
-   The period of the seeding function is 2^19937-20027.  This means that
-   with seeds 2^19937-20027, 2^19937-20026, ... the exact same sequences
-   are obtained as with seeds 0, 1, etc.; it also means that seed -1
-   produces the same sequence as seed 2^19937-20028, etc.
- */
-
-static void
-randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
-{
-  int i;
-  size_t cnt;
-
-  gmp_rand_mt_struct *p;
-  mpz_t mod;    /* Modulus.  */
-  mpz_t seed1;  /* Intermediate result.  */
-
-  p = (gmp_rand_mt_struct *) RNG_STATE (rstate);
-
-  mpz_init (mod);
-  mpz_init (seed1);
-
-  mpz_set_ui (mod, 0L);
-  mpz_setbit (mod, 19937L);
-  mpz_sub_ui (mod, mod, 20027L);
-  mpz_mod (seed1, seed, mod);	/* Reduce `seed' modulo `mod'.  */
-  mpz_add_ui (seed1, seed1, 2L);	/* seed1 is now ready.  */
-  mangle_seed (seed1, seed1);	/* Perform the mangling by powering.  */
-
-  /* Copy the last bit into bit 31 of mt[0] and clear it.  */
-  p->mt[0] = (mpz_tstbit (seed1, 19936L) != 0) ? 0x80000000 : 0;
-  mpz_clrbit (seed1, 19936L);
-
-  /* Split seed1 into N-1 32-bit chunks.  */
-  mpz_export (&p->mt[1], &cnt, -1, sizeof (p->mt[1]), 0,
-              8 * sizeof (p->mt[1]) - 32, seed1);
-  cnt++;
-  ASSERT (cnt <= N);
-  while (cnt < N)
-    p->mt[cnt++] = 0;
-
-  mpz_clear (mod);
-  mpz_clear (seed1);
-
-  /* Warm the generator up if necessary.  */
-  if (WARM_UP != 0)
-    for (i = 0; i < WARM_UP / N; i++)
-      recalc_buffer (p->mt);
-
-  p->mti = WARM_UP % N;
-}
-
-
-static void
-randclear_mt (gmp_randstate_t rstate)
+void
+__gmp_randclear_mt (gmp_randstate_t rstate)
 {
   (*__gmp_free_func) ((void *) RNG_STATE (rstate),
 		      sizeof (gmp_rand_mt_struct));
 }
 
-static void randiset_mt __GMP_PROTO ((gmp_randstate_ptr dst, gmp_randstate_srcptr src));
+void __gmp_randiset_mt __GMP_PROTO ((gmp_randstate_ptr dst, gmp_randstate_srcptr src));
 
-static const gmp_randfnptr_t Mersenne_Twister_Generator = {
-  randseed_mt,
-  randget_mt,
-  randclear_mt,
-  randiset_mt
+static const gmp_randfnptr_t Mersenne_Twister_Generator_Noseed = {
+  NULL,
+  __gmp_randget_mt,
+  __gmp_randclear_mt,
+  __gmp_randiset_mt
 };
 
-static void
-randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
+void
+__gmp_randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
 {
   gmp_rand_mt_struct *dstp, *srcp;
   int  i;
@@ -491,7 +371,7 @@ randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
   dstp = (*__gmp_allocate_func) (sizeof (gmp_rand_mt_struct));
 
   RNG_STATE (dst) = (void *) dstp;
-  RNG_FNPTR (dst) = (void *) &Mersenne_Twister_Generator;
+  RNG_FNPTR (dst) = (void *) &Mersenne_Twister_Generator_Noseed;
 
   for (i = 0; i < N; i++)
     dstp->mt[i] = srcp->mt[i];
@@ -502,13 +382,13 @@ randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
 
 /* Initialize MT-specific data.  */
 void
-gmp_randinit_mt (gmp_randstate_t rstate)
+__gmp_randinit_mt_noseed (gmp_randstate_t rstate)
 {
   int i;
   gmp_rand_mt_struct *p;
 
   /* Set the generator functions.  */
-  RNG_FNPTR (rstate) = (void *) &Mersenne_Twister_Generator;
+  RNG_FNPTR (rstate) = (void *) &Mersenne_Twister_Generator_Noseed;
 
   /* Allocate the MT-specific state.  */
   p = (gmp_rand_mt_struct *)
