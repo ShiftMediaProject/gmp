@@ -2783,6 +2783,7 @@ if AC_TRY_EVAL(gmp_compile); then
 else
   gmp_cv_c_for_build_ansi=no
 fi
+rm -f conftest* a.out b.out a.exe a_out.exe
 ])
 if test "$gmp_cv_c_for_build_ansi" = yes; then
   U_FOR_BUILD=
