@@ -42,6 +42,20 @@ SUFFIXES = .s .S .asm
 # can be overridden during development, eg. "make RM_TMP=: mul_1.lo"
 RM_TMP = rm -f
 
+
+# Notice .S.lo and .asm.lo both have the creation of the .lo file last, so a
+# re-make won't find a .lo unless all the commands succeeded.
+#
+# $(LIBTOOL) used to be used rather than $(CC) $(CFLAGS_PIC), but that fails
+# on FreeBSD 2.2.8 where gas 1.92.3 requires -k to process PIC constructs
+# like "@GOT".  With libtool the PIC .s was assembled (via gcc) once with -k
+# and an unnecessary second time without, the latter failing.
+#
+# FIXME: .S.lo and .asm.lo create both a PIC .lo and a non-PIC .o, even if
+# only one of the two is required.  Hopefully this won't cause any problems,
+# it can't be too bad because it's been so in GMP since version 3.0.  It'd
+# be nice if libtool could support assembler code directly.
+
 # *.S preprocessed with cpp.
 .S.o:
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
@@ -52,17 +66,13 @@ RM_TMP = rm -f
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 
-# We have to rebuild the static object file without passing -DPIC to
-# preprocessor.  The overhead cost is one extra assemblation.
-# FIXME: Teach libtool how to assemble with a preprocessor pass (cpp or m4).
-
 .S.lo:
-	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(CPP) $(COMPILE_FLAGS) $(ASMFLAGS_PIC) $< | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o tmp-$*.o
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	$(RM_TMP) tmp-$*.s
-
+	mv tmp-$*.o $*.lo
 
 # *.asm preprocessed with m4.
 .asm.o:
@@ -74,8 +84,9 @@ RM_TMP = rm -f
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(RM_TMP) tmp-$*.s
 .asm.lo:
-	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(M4) $(ASMFLAGS_PIC) -DOPERATION_$* $< >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) $(CFLAGS_PIC) tmp-$*.s -o tmp-$*.o
 	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	$(RM_TMP) tmp-$*.s
+	mv tmp-$*.o $*.lo

@@ -1114,6 +1114,26 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
 fi
 
 
+# temporary fudge until swox libtool update
+if test -n "$ac_cv_prog_cc_pic"; then lt_cv_prog_cc_pic=$ac_cv_prog_cc_pic; fi
+
+# libtool $pic_flag for use by mpn/Makeasm.am.
+#
+CFLAGS_PIC=$lt_cv_prog_cc_pic
+AC_SUBST(CFLAGS_PIC)
+
+# i386 cygwin - shared libraries are DLLs, and it seems they should be
+#     non-PIC, certainly libtool only uses -DDLL_EXPORT, and the assembler
+#     rejects ELF style _GLOBAL_OFFSET_TABLE_ expressions.  FIXME: A
+#     reference for assembler level DLL conventions would help here.
+#
+case $host in
+  *-*-cygwin*) ASMFLAGS_PIC= ;;
+  *)           ASMFLAGS_PIC=-DPIC ;;
+esac
+AC_SUBST(ASMFLAGS_PIC)
+
+
 # How to assemble, used with CFLAGS etc, see mpn/Makeasm.am.
 # Using the compiler is a lot easier than figuring out how to invoke the
 # assembler directly.
