@@ -532,18 +532,6 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
   return gsize + zero_words;
 }
 
-#if 1
-mp_size_t
-mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
-{
-  return gcd_binary_odd (gp, up, usize, vp, vsize);
-}
-
-/* The rest of this file is disabled since the schoenhage code does not work
-   yet.  */
-
-#else
-
 #define MPN_LEQ_P(ap, asize, bp, bsize)				\
 ((asize) < (bsize) || ((asize) == (bsize)			\
 		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
@@ -799,7 +787,7 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 	  /* s[0] and s[1] are correct */
 	  r[2].rsize
 	    = mpn_hgcd_fix (k, r[2].rp, ralloc,
-			    sign, hgcd.size, s, 
+			    sign, hgcd.size, s,
 			    r[0].rp, r[1].rp,
 			    tp, talloc);
 
@@ -881,4 +869,3 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       return gsize;
     }
 }
-#endif
