@@ -235,6 +235,9 @@ MA 02111-1307, USA. */
 #undef HAVE_DOUBLE_VAX_G
 #undef HAVE_DOUBLE_CRAY_CFP
 
+/* Define if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -349,6 +352,9 @@ MA 02111-1307, USA. */
 /* Define if you have the `sysctlbyname' function. */
 #undef HAVE_SYSCTLBYNAME
 
+/* Define if you have the `syssgi' function. */
+#undef HAVE_SYSSGI
+
 /* Define if you have the <sys/mman.h> header file. */
 #undef HAVE_SYS_MMAN_H
 
@@ -366,6 +372,9 @@ MA 02111-1307, USA. */
 
 /* Define if you have the <sys/sysctl.h> header file. */
 #undef HAVE_SYS_SYSCTL_H
+
+/* Define if you have the <sys/syssgi.h> header file. */
+#undef HAVE_SYS_SYSSGI_H
 
 /* Define if you have the <sys/systemcfg.h> header file. */
 #undef HAVE_SYS_SYSTEMCFG_H
