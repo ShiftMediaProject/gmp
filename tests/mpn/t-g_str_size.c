@@ -65,7 +65,7 @@ check_exact (void)
       for (limbs = 1; limbs < 20; limbs++)
         {
           want = str_size_exact (limbs, base);
-          MPN_GET_STR_SIZE (got, limbs, base);
+          MPN_GET_STR_SIZE (got, base, limbs);
           if (got < want)
             {
               printf ("MPN_GET_STR_SIZE too small\n");
