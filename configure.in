@@ -1013,13 +1013,13 @@ CFLAGS_or_unset=${CFLAGS-'(unset)'}
 CPPFLAGS_or_unset=${CPPFLAGS-'(unset)'}
 
 cat >&AC_FD_CC <<EOF
-configure:__line__: User:
+User:
 ABI=$ABI
 CC=$CC
 CFLAGS=$CFLAGS_or_unset
 CPPFLAGS=$CPPFLAGS_or_unset
 MPN_PATH=$MPN_PATH
-configure:__line__: GMP:
+GMP:
 abilist=$abilist
 cclist=$cclist
 EOF
@@ -1444,7 +1444,7 @@ esac
 
 
 cat >&AC_FD_CC <<EOF
-configure:__line__: Decided:
+Decided:
 ABI=$ABI
 CC=$CC
 CFLAGS=$CFLAGS
