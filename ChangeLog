@@ -1,3 +1,9 @@
+2000-11-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/mips3/gmp-mparam.h: Retune.
+
+	* configure.in (os_64bit): Rename to check_64bit_compiler.
+
 2000-11-09  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]: Choose hppa/hppa2 code
