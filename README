@@ -29,7 +29,7 @@ instructions in the file INSTALL or in gmp.texi.
 Once you have compiled the library, you should write some small example, and
 make sure you can compile them.  A typical compilation command is this:
 
-	gcc -g your-file.c -I<gmp-source-dir> <gmp-bin-dir>libgmp.a -lm
+	gcc -g your-file.c -I<gmp-source-dir> <gmp-bin-dir>/libgmp.a -lm
 
 If you have installed the library, you can simply do:
 
