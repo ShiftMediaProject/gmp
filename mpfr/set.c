@@ -28,7 +28,7 @@ void
 #if __STDC__
 mpfr_set4(mpfr_ptr a, mpfr_srcptr b, unsigned char rnd_mode, int signb)
 #else
-mpfr_set4(a, b, rnd_mode) 
+mpfr_set4(a, b, rnd_mode, signb) 
      mpfr_ptr a; 
      mpfr_srcptr b; 
      unsigned char rnd_mode;
