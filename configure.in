@@ -1272,17 +1272,27 @@ AC_SUBST(gmp_srclinks)
 # A recompiled sqr_basecase for use in the tune program, if necessary.
 TUNE_SQR_OBJ=
 case $sqr_basecase_source in
-*.asm)
-  sqr_max=[`sed -n 's/^def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' $sqr_basecase_source`]
-  if test -n "$sqr_max"; then
-    TUNE_SQR_OBJ=sqr_asm.lo
-    AC_DEFINE_UNQUOTED(TUNE_KARATSUBA_SQR_MAX,$sqr_max,
-    [Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD])
-  fi ;;
-*.c)
-  TUNE_SQR_OBJ=sqr_basecase$U.lo
-  AC_DEFINE(TUNE_KARATSUBA_SQR_MAX,KARATSUBA_SQR_MAX_GENERIC)
-  ;;
+  *.asm)
+    sqr_max=[`sed -n 's/^def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' $sqr_basecase_source`]
+    if test -n "$sqr_max"; then
+      TUNE_SQR_OBJ=
+      AC_DEFINE_UNQUOTED(TUNE_KARATSUBA_SQR_MAX,$sqr_max,
+      [Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD])
+    fi
+    cat >tune/sqr_basecase.c <<EOF
+/* not sure that an empty file can compile, so put in a dummy */
+int sqr_basecase_dummy;
+EOF
+    ;;
+  *.c)
+    TUNE_SQR_OBJ=
+    AC_DEFINE(TUNE_KARATSUBA_SQR_MAX,KARATSUBA_SQR_MAX_GENERIC)
+    cat >tune/sqr_basecase.c <<EOF
+#define TUNE_PROGRAM_BUILD 1
+#define TUNE_PROGRAM_BUILD_SQR 1
+#include "mpn/sqr_basecase.c"
+EOF
+    ;;
 esac
 AC_SUBST(TUNE_SQR_OBJ)
 
