@@ -579,6 +579,7 @@ AC_DEFUN(GMP_PROG_CXX_WORKS,
 [AC_MSG_CHECKING([C++ compiler $1])
 cat >conftest.cc <<EOF
 #include <iostream>
+using namespace std;
 int
 main (void)
 {
