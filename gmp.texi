@@ -805,7 +805,7 @@ preprocessors won't accept all the flags the compiler does.  Preprocessing is
 done separately in some configure tests, and in the @samp{ansi2knr} support
 for K&R compilers.
 
-@item @option{--enable-alloca=<choice>}
+@item Temporary Memory, @option{--enable-alloca=<choice>}
 @cindex Stack overflow segfaults
 @cindex @code{alloca}
 
@@ -822,7 +822,7 @@ which can be selected with for instance
 @samp{malloc-notreentrant} - the heap, with global variables.
 @end itemize
 
-The following selections are also available, for convenience.
+The following choices are also available, for convenience.
 @samp{--disable-alloca} is the same as @samp{--enable-alloca=no}.
 
 @itemize @bullet
@@ -857,30 +857,55 @@ default.  @xref{Custom Allocation}.
 An additional choice @samp{--enable-alloca=debug} is available, to help when
 debugging memory related problems (@pxref{Debugging}).
 
-@item @option{--enable-cxx=yes/no/detect}
+@item C++ Support, @option{--enable-cxx=yes/no/detect}
 
-The default @samp{--enable-cxx=detect} will use a C++ compiler if available.
-@samp{--enable-cxx=yes} will insist on having one, or @samp{--enable-cxx=no}
-(equivalent to @samp{--disable-cxx}) won't look for one at all.
+A small number of C++ functions are available (@pxref{C++ Formatted Output})
+and can be enabled with @samp{--enable-cxx}, or enabled only if a C++
+compiler can be found @samp{--enable-cxx=detect}.
 
-Currently a C++ compiler is only used for some @code{ostream} formatted output
-functions (@pxref{Formatted Output Functions}).  These are optional, and
-nothing else in the library depends on them.
+It's important that the C and C++ compilers match, meaning their startup and
+runtime support routines are compatible, since the C++ functions will use some
+of the C code too.  Currently @samp{./configure} doesn't attempt to match a
+pair of compilers, so for that reason the default is @samp{--disable-cxx} and
+explicit setups are required.
 
-@item @option{--enable-fft}
+The C++ compiler can be specified with @samp{CXX} and @samp{CXXFLAGS}, similar
+to @samp{CC} and @samp{CFLAGS}.  By default some likely candidates are tried
+for both, but a useful result can't be guaranteed if there's more than one
+compiler available on the system.  When using @command{gcc}, it should suffice
+to use the following (and let @samp{configure} choose the flags).
+
+@example
+./configure --enable-cxx CC=gcc CXX=g++
+@end example
+
+Currently libtool builds shared libraries with the C compiler or with the
+linker directly, and won't know the right C++ standard libraries to link
+against.  These should be given in @samp{CXXLIBS} if necessary.  The default
+is @samp{CXXLIBS="-lstdc++"} if such a library is available, which suits
+@command{g++}.  Any problems from a missing @samp{CXXLIBS} will probably show
+up as undefined C++ symbols when using the shared @samp{libgmp.so} with a C
+program.
+
+Incidentally, it's usually not good enough to set @samp{CXX} to the same as
+@samp{CC}.  Although @command{gcc} for instance recognises @file{foo.cc} as
+C++ code, only @command{g++} will invoke the linker the right way when
+presented with just a C++ object file @code{foo.o}.
+
+@item FFT Multiplication, @option{--enable-fft}
 
 By default multiplications are done using Karatsuba and 3-way Toom-Cook
 algorithms, but a Fermat FFT can be enabled, for use on large to very large
 operands.  Currently the FFT is recommended only for knowledgeable users who
 check the algorithm thresholds for their system.
 
-@item @option{--enable-mpbsd}
+@item Berkeley MP, @option{--enable-mpbsd}
 
 The Berkeley MP compatibility library (@file{libmp}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
-@item @option{--enable-mpfr}
+@item MPFR, @option{--enable-mpfr}
 @cindex MPFR
 
 The optional MPFR functions are built and installed only if
@@ -888,12 +913,12 @@ The optional MPFR functions are built and installed only if
 @file{libmpfr.a} and are documented separately too (@pxref{Introduction to
 MPFR,, Introduction to MPFR, mpfr, MPFR}).
 
-@item @option{--enable-assert}
+@item Assertion Checking, @option{--enable-assert}
 
 This option enables some consistency checking within the library.  This can be
 of use while debugging, @pxref{Debugging}.
 
-@item @option{--enable-profiling=prof/gprof}
+@item Execution Profiling, @option{--enable-profiling=prof/gprof}
 
 Profiling support can be enabled either for @command{prof} or @command{gprof}.
 This adds @samp{-p} or @samp{-pg} respectively to @samp{CFLAGS}, and for some
@@ -4610,8 +4635,8 @@ Unlike the C library @code{asprintf}, @code{gmp_asprintf} doesn't return
 @ma{-1} if there's no more memory available, it lets the current allocation
 function handle that.
 
-These functions are available only when the C library provides either
-@code{vasprintf} or @code{vsnprintf}.
+These functions are available only when the C library provides
+@code{vsnprintf}.
 @end deftypefun
 
 @deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, ...)
@@ -4620,8 +4645,8 @@ Append to the current obstack object, in the same style as
 @code{obstack_printf}.  Return the number of characters written.  A
 null-terminator is not written.
 
-@var{fmt} cannot be within the current obstack object, since it might move as
-it grows.
+@var{fmt} cannot be within the current obstack object, since the object might
+move as it grows.
 
 These functions are available only when the C library provides the obstack
 feature, which probably means only on GNU systems, see
@@ -4632,8 +4657,8 @@ feature, which probably means only on GNU systems, see
 @node C++ Formatted Output,  , Formatted Output Functions, Formatted Output
 @section C++ Formatted Output
 
-The following functions are provided only if a C++ compiler was available when
-GMP was built (@pxref{Build Options}).
+The following functions are provided only if C++ support was enabled when GMP
+was built (@pxref{Build Options}).
 
 @deftypefun ostream& mpz_out_ostream (ostream& @var{stream}, mpz_t @var{op})
 @deftypefunx ostream& mpq_out_ostream (ostream& @var{stream}, mpq_t @var{op})
@@ -4645,11 +4670,11 @@ Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ostream operator<<} routines do.
 
 Conversions @code{ios::hex} or @code{ios::oct} will include a sign, and will
-respect @code{ios::showpos}, unlike the twos complement given by the standard
-integer @code{operator<<} routines.  Also, @code{ios::hex} or @code{ios::oct}
-are accepted by @code{mpf_out_ostream}, unlike the standard float
-@code{operator<<} routines, and both mantissa and exponent will be in hex or
-octal.  For hex the exponent delimiter is an @samp{@@}, as per
+respect @code{ios::showpos}, unlike the twos complement form given by the
+standard integer @code{operator<<} routines.  Also, @code{ios::hex} or
+@code{ios::oct} are accepted by @code{mpf_out_ostream}, unlike the standard
+float @code{operator<<} routines, and both mantissa and exponent will be in
+hex or octal.  For hex the exponent delimiter is an @samp{@@}, as per
 @code{mpf_out_str}.
 
 It's easy to define an @code{operator<<} form for these routines, if desired,
@@ -6461,7 +6486,7 @@ until all bits of @ma{n} are incorporated.  Notice these formulas require just
 two squares per bit of @ma{n}.
 
 It'd be possible to handle the first few @ma{n} above the single limb table
-with simple additions, using the defining Fibonacci recurrance @m{F_{k+1} =
+with simple additions, using the defining Fibonacci recurrence @m{F_{k+1} =
 F_k + F_{k-1}, F[k+1]=F[k]+F[k-1]}, but this is not done since it usually
 turns out to be faster for only about 10 or 20 values of @ma{n}, and including
 a block of code for just those doesn't seem worthwhile.  If they really
