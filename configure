@@ -21397,7 +21397,7 @@ echo $ECHO_N "checking for assembler label suffix... $ECHO_C" >&6
 if test "${gmp_cv_asm_label_suffix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  for i in ":" ""; do
+  for i in "" ":"; do
   echo "trying $i" >&5
   cat >conftest.s <<EOF
 	$gmp_cv_asm_text
@@ -21494,77 +21494,72 @@ echo "${ECHO_T}$gmp_cv_asm_globl_attr" >&6
 echo "define(<GLOBL_ATTR>, <$gmp_cv_asm_globl_attr>)" >> $gmp_tmpconfigm4
 
 
-
-
-
 echo "$as_me:$LINENO: checking if globals are prefixed by underscore" >&5
 echo $ECHO_N "checking if globals are prefixed by underscore... $ECHO_C" >&6
 if test "${gmp_cv_asm_underscore+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  cat >conftes1.c <<EOF
-#ifdef __cplusplus
-extern "C" { void underscore_test(); }
-#endif
-main () { underscore_test(); }
+  gmp_cv_asm_underscore="unknown"
+cat >conftest.c <<EOF
+int gurkmacka;
 EOF
-for tmp_underscore in "" "_"; do
-  cat >conftes2.s <<EOF
-      	$gmp_cv_asm_text
-	$gmp_cv_asm_globl ${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
-${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
-EOF
-  case $host in
-  *-*-aix*)
-    cat >>conftes2.s <<EOF
-	$gmp_cv_asm_globl .${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
-.${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
-EOF
-    ;;
-  esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&5 && $CCAS $CFLAGS $CPPFLAGS conftes2.s >&5 && $CC $CFLAGS $CPPFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&5"
-  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&5"
+if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; then
-    eval tmp_result$tmp_underscore=yes
-  else
-    eval tmp_result$tmp_underscore=no
-  fi
-done
-
-if test $tmp_result_ = yes; then
-  if test $tmp_result = yes; then
-    { { echo "$as_me:$LINENO: error: Test program unexpectedly links both with and without underscore." >&5
-echo "$as_me: error: Test program unexpectedly links both with and without underscore." >&2;}
-   { (exit 1); exit 1; }; }
-  else
+  $NM conftest.$OBJEXT >conftest.out
+  if grep _gurkmacka conftest.out >/dev/null; then
     gmp_cv_asm_underscore=yes
-  fi
-else
-  if test $tmp_result = yes; then
+  elif grep gurkmacka conftest.out >/dev/null; then
     gmp_cv_asm_underscore=no
   else
-    { { echo "$as_me:$LINENO: error: Test program links neither with nor without underscore." >&5
-echo "$as_me: error: Test program links neither with nor without underscore." >&2;}
-   { (exit 1); exit 1; }; }
+    echo "configure: $NM doesn't have gurkmacka:" >&5
+    cat conftest.out >&5
   fi
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.c >&5
 fi
-rm -f conftes1* conftes2* a.out b.out a.exe a_out.exe
+rm -f conftest*
 
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_asm_underscore" >&5
 echo "${ECHO_T}$gmp_cv_asm_underscore" >&6
-if test "$gmp_cv_asm_underscore" = "yes"; then
+case $gmp_cv_asm_underscore in
+  yes)
 
 echo 'define(<GSYM_PREFIX>, <_>)' >>$gmp_tmpconfigm4
+ ;;
+  no)
 
-else
+echo 'define(<GSYM_PREFIX>, <>)' >>$gmp_tmpconfigm4
+ ;;
+  *)
+    { echo "$as_me:$LINENO: WARNING: +----------------------------------------------------------" >&5
+echo "$as_me: WARNING: +----------------------------------------------------------" >&2;}
+    { echo "$as_me:$LINENO: WARNING: | Cannot determine global symbol prefix." >&5
+echo "$as_me: WARNING: | Cannot determine global symbol prefix." >&2;}
+    { echo "$as_me:$LINENO: WARNING: | $NM output doesn't contain a global data symbol." >&5
+echo "$as_me: WARNING: | $NM output doesn't contain a global data symbol." >&2;}
+    { echo "$as_me:$LINENO: WARNING: | Will proceed with no underscore." >&5
+echo "$as_me: WARNING: | Will proceed with no underscore." >&2;}
+    { echo "$as_me:$LINENO: WARNING: | If this is wrong then you'll get link errors referring" >&5
+echo "$as_me: WARNING: | If this is wrong then you'll get link errors referring" >&2;}
+    { echo "$as_me:$LINENO: WARNING: | to ___gmpn_add_n (note three underscores)." >&5
+echo "$as_me: WARNING: | to ___gmpn_add_n (note three underscores)." >&2;}
+    { echo "$as_me:$LINENO: WARNING: | In this case do a fresh build with an override," >&5
+echo "$as_me: WARNING: | In this case do a fresh build with an override," >&2;}
+    { echo "$as_me:$LINENO: WARNING: |     ./configure gmp_cv_asm_underscore=yes" >&5
+echo "$as_me: WARNING: |     ./configure gmp_cv_asm_underscore=yes" >&2;}
+    { echo "$as_me:$LINENO: WARNING: +----------------------------------------------------------" >&5
+echo "$as_me: WARNING: +----------------------------------------------------------" >&2;}
 
 echo 'define(<GSYM_PREFIX>, <>)' >>$gmp_tmpconfigm4
 
-fi
+    ;;
+esac
 
 
 

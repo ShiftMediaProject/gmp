@@ -925,12 +925,16 @@ dnl  GMP_ASM_LABEL_SUFFIX
 dnl  --------------------
 dnl  : - is usual.
 dnl  empty - hppa on HP-UX doesn't use a :, just the label name
+dnl
+dnl  Note that it's necessary to test the empty case first, since HP "as"
+dnl  will accept "somelabel:", and take it to mean a label with a name that
+dnl  happens to end in a colon.
 
 AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([for assembler label suffix],
                 gmp_cv_asm_label_suffix,
-[for i in ":" ""; do
+[for i in "" ":"; do
   echo "trying $i" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
@@ -951,72 +955,64 @@ echo ["define(<LABEL_SUFFIX>, <$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 dnl  GMP_ASM_UNDERSCORE
 dnl  ------------------
 dnl  Determine whether global symbols need to be prefixed with an underscore.
-dnl  A test program is linked to an assembler module with or without an
-dnl  underscore to see which works.
+dnl  The output from "nm" is grepped to see what a typical symbol looks like.
 dnl
-dnl  This method should be more reliable than grepping a .o file or using
-dnl  nm, since it corresponds to what a real program is going to do.  Note
-dnl  in particular that grepping doesn't work with SunOS 4 native grep since
-dnl  that grep seems to have trouble with '\0's in files.
+dnl  This test used to grep the .o file directly, but that failed with greps
+dnl  that don't like binary files (eg. SunOS 4).
 dnl
-dnl  In the past GLOBL_ATTR wasn't used here and it seemed to work anyway
-dnl  (on hppa*-*-hpux* which uses ",entry").
+dnl  This test also used to construct an assembler file with and without an
+dnl  underscore and try to link that to a C file, to see which worked.
+dnl  Although that's what will happen in the real build we don't really want
+dnl  to depend on creating asm files within configure for every possible CPU
+dnl  (or at least we don't want to do that more than we have to).
+dnl
+dnl  The fallback on no underscore is based on the assumption that the world
+dnl  is moving towards non-underscore systems.  There should actually be no
+dnl  good reason for nm to fail though.
 
 AC_DEFUN(GMP_ASM_UNDERSCORE,
-[AC_REQUIRE([GMP_ASM_TEXT])
-AC_REQUIRE([GMP_ASM_GLOBL])
-AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
-AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+[AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
                gmp_cv_asm_underscore,
-[cat >conftes1.c <<EOF
-#ifdef __cplusplus
-extern "C" { void underscore_test(); }
-#endif
-main () { underscore_test(); }
+[gmp_cv_asm_underscore="unknown"
+cat >conftest.c <<EOF
+int gurkmacka;
 EOF
-for tmp_underscore in "" "_"; do
-  cat >conftes2.s <<EOF
-      	$gmp_cv_asm_text
-	$gmp_cv_asm_globl ${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
-${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
-EOF
-  case $host in
-  *-*-aix*)
-    cat >>conftes2.s <<EOF
-	$gmp_cv_asm_globl .${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
-.${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
-EOF
-    ;;
-  esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS $CPPFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS $CPPFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
-  if AC_TRY_EVAL(gmp_compile); then
-    eval tmp_result$tmp_underscore=yes
-  else
-    eval tmp_result$tmp_underscore=no
-  fi
-done
-
-if test $tmp_result_ = yes; then
-  if test $tmp_result = yes; then
-    AC_MSG_ERROR([Test program unexpectedly links both with and without underscore.])
-  else
+gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  $NM conftest.$OBJEXT >conftest.out
+  if grep _gurkmacka conftest.out >/dev/null; then
     gmp_cv_asm_underscore=yes
-  fi
-else
-  if test $tmp_result = yes; then
+  elif grep gurkmacka conftest.out >/dev/null; then
     gmp_cv_asm_underscore=no
   else
-    AC_MSG_ERROR([Test program links neither with nor without underscore.])
+    echo "configure: $NM doesn't have gurkmacka:" >&AC_FD_CC
+    cat conftest.out >&AC_FD_CC
   fi
-fi
-rm -f conftes1* conftes2* a.out b.out a.exe a_out.exe
-])
-if test "$gmp_cv_asm_underscore" = "yes"; then
-  GMP_DEFINE(GSYM_PREFIX, [_])
 else
-  GMP_DEFINE(GSYM_PREFIX, [])
-fi    
+  echo "configure: failed program was:" >&AC_FD_CC
+  cat conftest.c >&AC_FD_CC
+fi
+rm -f conftest*
+])
+case $gmp_cv_asm_underscore in
+  yes)
+    GMP_DEFINE(GSYM_PREFIX, [_]) ;;
+  no)
+    GMP_DEFINE(GSYM_PREFIX, []) ;;
+  *)
+    AC_MSG_WARN([+----------------------------------------------------------])
+    AC_MSG_WARN([| Cannot determine global symbol prefix.])
+    AC_MSG_WARN([| $NM output doesn't contain a global data symbol.])
+    AC_MSG_WARN([| Will proceed with no underscore.])
+    AC_MSG_WARN([| If this is wrong then you'll get link errors referring])
+    AC_MSG_WARN([| to ___gmpn_add_n (note three underscores).])
+    AC_MSG_WARN([| In this case do a fresh build with an override,])
+    AC_MSG_WARN([|     ./configure gmp_cv_asm_underscore=yes])
+    AC_MSG_WARN([+----------------------------------------------------------])
+    GMP_DEFINE(GSYM_PREFIX, [])
+    ;;
+esac
 ])
 
 
