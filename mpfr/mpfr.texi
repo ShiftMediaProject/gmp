@@ -172,15 +172,17 @@ It aims to extend the class of floating-point numbers provided by the
 GNU MP library by @dfn{reliable} floating-point numbers. It may replace
 the GNU MP floating-point numbers in a future release. The main differences
 with the @code{mpf} class are: 
+
 @itemize @bullet
 @item the @code{mpfr} code is portable, i.e. the result of any operation
 does not depend (or should not) on the machine word size 
 @code{mp_bits_per_limb} (32 or 64 on most machines);
 @item the precision in bits can be set exactly to any positive value 
-	for each variable (including one bit of precision);
+for each variable (including one bit of precision);
 @item @code{mpfr} provides the four rounding modes from the IEEE 754
-	standard.
+standard.
 @end itemize
+
 In particular, with a precision of 53 bits, @code{mpfr} should be able
 to exactly reproduce all computations with double-precision machine 
 floating-point
@@ -189,8 +191,9 @@ numbers (@code{double} type in C), except the range of values is much wider
 
 This version of MPFR is released under the GNU Library General Public
 License.
-It is permitted to link MPFR to non-free programs, as long as MPFR
-source code is provided when distributing the non-free program.
+It is permitted to link MPFR to non-free programs, as long as when
+distributing them the MPFR source code and a means to re-link with a
+modified MPFR is provided.
 
 
 @section How to use this Manual
