@@ -1,5 +1,8 @@
 2000-12-01  Torbjorn Granlund  <tege@swox.com>
 
+	* mpf/tests/t-get_d.c (LOW_BOUND,HIGH_BOUND): #define for non-IEEE
+	Cray systems.
+
 	* gmp-impl.h (union ieee_double_extract): Test for _CRAYIEEE.
 
 2000-11-30  Torbjorn Granlund  <tege@swox.com>
