@@ -1031,6 +1031,30 @@ extern const int __gmp_0;
     ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z));			\
   } while (0)
 
+#define MPQ_CHECK_FORMAT(q)                             \
+  do {                                                  \
+    MPZ_CHECK_FORMAT (mpq_numref (q));                  \
+    MPZ_CHECK_FORMAT (mpq_denref (q));                  \
+    ASSERT_ALWAYS (SIZ(mpq_denref(q)) >= 1);            \
+                                                        \
+    if (SIZ(mpq_numref(q)) == 0)                        \
+      {                                                 \
+        /* should have zero as 0/1 */                   \
+        ASSERT_ALWAYS (SIZ(mpq_denref(q)) == 1          \
+                       && PTR(mpq_denref(q))[0] == 1);  \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        /* should have no common factors */             \
+        mpz_t  g;                                       \
+        mpz_init (g);                                   \
+        mpz_gcd (g, mpq_numref(q), mpq_denref(q));      \
+        ASSERT_ALWAYS (mpz_cmp_ui (g, 1) == 0);         \
+        mpz_clear (g);                                  \
+      }                                                 \
+  } while (0)
+
+
 #define MPZ_PROVOKE_REALLOC(z)					\
   do { ALLOC(z) = ABSIZ(z); } while (0)
 
