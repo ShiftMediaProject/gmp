@@ -266,6 +266,9 @@
      "<code>&lt;=</code>" rather than "<code>&lt;</code>", so a threshold can
      be set to <code>MP_SIZE_T_MAX</code> to get only the simpler code (the
      compiler will know <code>size &lt;= MP_SIZE_T_MAX</code> is always true).
+     Alternately it looks like the <code>ABOVE_THRESHOLD</code> and
+     <code>BELOW_THRESHOLD</code> macros can do this adequately, and pick up
+     cases where a threshold of zero should mean only the second algorithm.
 <li> <code>mpz_cdiv_q_2exp</code> and <code>mpz_cdiv_r_2exp</code>
      could be implemented to match the corresponding tdiv and fdiv.
      Maybe some code sharing is possible.
