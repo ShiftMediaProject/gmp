@@ -40,11 +40,9 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    use up extensive resources (cpu, memory).  Useful for the GMP demo on the
    GMP web site, since we cannot load the server too much.  */
 
-#ifdef LIMIT_RESOURCE_USAGE
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#endif
 
 #include <string.h>
 #include <stdio.h>
@@ -76,7 +74,7 @@ jmp_buf errjmpbuf;
 
 enum op_t {NOP, LIT, NEG, NOT, PLUS, MINUS, MULT, DIV, MOD, REM, INVMOD, POW,
 	   AND, IOR, XOR, SLL, SRA, POPCNT, HAMDIST, GCD, LCM, SQRT, ROOT, FAC,
-	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI};
+	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM};
 
 /* Type for the expression tree.  */
 struct expr
@@ -113,6 +111,7 @@ int print_timing = 0;
 int flag_html = 0;
 int flag_splitup_output = 0;
 char *newline = "";
+gmp_randstate_t rstate;
 
 #ifdef _AIX
 #define sigaltstack sigstack
@@ -198,6 +197,13 @@ main (int argc, char **argv)
 #if !defined(_WIN32) && !defined(__DJGPP__)
   setup_error_handler ();
 #endif
+
+  gmp_randinit (rstate, GMP_RAND_ALG_LC, 128);
+  {
+    struct timeval tv;
+    gettimeofday (&tv, NULL);
+    gmp_randseed_ui (rstate, tv.tv_sec + tv.tv_usec);
+  }
 
   mpz_init (r);
 
@@ -622,6 +628,7 @@ struct functions fns[] =
   {"M", MERSENNE, 1},
   {"fib", FIBONACCI, 1},
   {"Fib", FIBONACCI, 1},
+  {"random", RANDOM, 1},
   {"", NOP, 0}
 };
 
@@ -1116,6 +1123,22 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	  }
 	mpz_clear (t);
 #endif
+      }
+      return;
+    case RANDOM:
+      {
+	unsigned long int n, i;
+	mpz_init (lhs);
+	mpz_eval_expr (lhs, e->operands.ops.lhs);
+	if (mpz_sgn (lhs) <= 0 || mpz_cmp_si (lhs, 1000000000) > 0)
+	  {
+	    error = "random number size out of range";
+	    mpz_clear (lhs);
+	    longjmp (errjmpbuf, 1);
+	  }
+	n = mpz_get_ui (lhs);
+	mpz_clear (lhs);
+	mpz_urandomb (r, rstate, n);
       }
       return;
     default:
