@@ -518,13 +518,12 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     xp = s->xp;                                         \
     yp = s->yp;                                         \
                                                         \
-    switch (s->r) {                                     \
-    case 0:                   break;                    \
-    case 1: xp = wp;          break;                    \
-    case 2:          yp = wp; break;                    \
-    case 3: xp = wp; yp = wp; break;                    \
-    case 4:     yp = xp;      break;                    \
-    default:                                            \
+    if (s->r == 0)      ;                               \
+    else if (s->r == 1) { xp = wp;          }           \
+    else if (s->r == 2) {          yp = wp; }           \
+    else if (s->r == 3) { xp = wp; yp = wp; }           \
+    else if (s->r == 4) {     yp = xp;      }           \
+    else                {                               \
       TMP_FREE (marker);                                \
       return -1.0;                                      \
     }                                                   \
