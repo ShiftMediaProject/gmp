@@ -150,7 +150,7 @@ INCLUDES = -I$(top_srcdir)
 info_TEXINFOS = mpfr.texi
 TEXINFO_TEX = ../texinfo.tex
 
-libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h exceptions.c save_expo.c extract.c i_ceil_exp2.c i_ceil_log2.c i_floor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round_prec.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c mpz_set_fr.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c
+libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h exceptions.c save_expo.c extract.c i_ceil_exp2.c i_ceil_log2.c i_floor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round_prec.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c mpz_set_fr.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c sin_cos.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c
 
 EXTRA_DIST = generic.c mpfr-test.h mpf2mpfr.h
 subdir = mpfr
@@ -192,12 +192,12 @@ am_libmpfr_a_OBJECTS = exceptions$U.$(OBJEXT) save_expo$U.$(OBJEXT) \
 	tanh$U.$(OBJEXT) acosh$U.$(OBJEXT) asinh$U.$(OBJEXT) \
 	atanh$U.$(OBJEXT) atan$U.$(OBJEXT) cmp2$U.$(OBJEXT) \
 	exp_2$U.$(OBJEXT) asin$U.$(OBJEXT) const_euler$U.$(OBJEXT) \
-	cos$U.$(OBJEXT) sin$U.$(OBJEXT) tan$U.$(OBJEXT) fma$U.$(OBJEXT) \
-	hypot$U.$(OBJEXT) log1p$U.$(OBJEXT) expm1$U.$(OBJEXT) \
-	log2$U.$(OBJEXT) log10$U.$(OBJEXT) ui_pow$U.$(OBJEXT) \
-	ui_pow_ui$U.$(OBJEXT) minmax$U.$(OBJEXT) dim$U.$(OBJEXT) \
-	copysign$U.$(OBJEXT) gmp_op$U.$(OBJEXT) init2$U.$(OBJEXT) \
-	acos$U.$(OBJEXT)
+	cos$U.$(OBJEXT) sin$U.$(OBJEXT) sin_cos$U.$(OBJEXT) \
+	tan$U.$(OBJEXT) fma$U.$(OBJEXT) hypot$U.$(OBJEXT) \
+	log1p$U.$(OBJEXT) expm1$U.$(OBJEXT) log2$U.$(OBJEXT) \
+	log10$U.$(OBJEXT) ui_pow$U.$(OBJEXT) ui_pow_ui$U.$(OBJEXT) \
+	minmax$U.$(OBJEXT) dim$U.$(OBJEXT) copysign$U.$(OBJEXT) \
+	gmp_op$U.$(OBJEXT) init2$U.$(OBJEXT) acos$U.$(OBJEXT)
 libmpfr_a_OBJECTS = $(am_libmpfr_a_OBJECTS)
 
 DEFS = @DEFS@
@@ -484,6 +484,8 @@ set_z_.c: set_z.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_z.c; then echo $(srcdir)/set_z.c; else echo set_z.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_z_.c || rm -f set_z_.c
 sin_.c: sin.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sin.c; then echo $(srcdir)/sin.c; else echo sin.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sin_.c || rm -f sin_.c
+sin_cos_.c: sin_cos.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sin_cos.c; then echo $(srcdir)/sin_cos.c; else echo sin_cos.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sin_cos_.c || rm -f sin_cos_.c
 sinh_.c: sinh.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sinh.c; then echo $(srcdir)/sinh.c; else echo sinh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sinh_.c || rm -f sinh_.c
 sqrt_.c: sqrt.c $(ANSI2KNR)
@@ -555,13 +557,14 @@ set_prec_.$(OBJEXT) set_prec_.lo set_q_.$(OBJEXT) set_q_.lo \
 set_rnd_.$(OBJEXT) set_rnd_.lo set_si_.$(OBJEXT) set_si_.lo \
 set_str_.$(OBJEXT) set_str_.lo set_str_raw_.$(OBJEXT) set_str_raw_.lo \
 set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo sin_.$(OBJEXT) \
-sin_.lo sinh_.$(OBJEXT) sinh_.lo sqrt_.$(OBJEXT) sqrt_.lo \
-sqrt_ui_.$(OBJEXT) sqrt_ui_.lo sub_.$(OBJEXT) sub_.lo sub1_.$(OBJEXT) \
-sub1_.lo sub_one_ulp_.$(OBJEXT) sub_one_ulp_.lo sub_ui_.$(OBJEXT) \
-sub_ui_.lo swap_.$(OBJEXT) swap_.lo tan_.$(OBJEXT) tan_.lo \
-tanh_.$(OBJEXT) tanh_.lo ui_div_.$(OBJEXT) ui_div_.lo ui_pow_.$(OBJEXT) \
-ui_pow_.lo ui_pow_ui_.$(OBJEXT) ui_pow_ui_.lo ui_sub_.$(OBJEXT) \
-ui_sub_.lo urandomb_.$(OBJEXT) urandomb_.lo : $(ANSI2KNR)
+sin_.lo sin_cos_.$(OBJEXT) sin_cos_.lo sinh_.$(OBJEXT) sinh_.lo \
+sqrt_.$(OBJEXT) sqrt_.lo sqrt_ui_.$(OBJEXT) sqrt_ui_.lo sub_.$(OBJEXT) \
+sub_.lo sub1_.$(OBJEXT) sub1_.lo sub_one_ulp_.$(OBJEXT) sub_one_ulp_.lo \
+sub_ui_.$(OBJEXT) sub_ui_.lo swap_.$(OBJEXT) swap_.lo tan_.$(OBJEXT) \
+tan_.lo tanh_.$(OBJEXT) tanh_.lo ui_div_.$(OBJEXT) ui_div_.lo \
+ui_pow_.$(OBJEXT) ui_pow_.lo ui_pow_ui_.$(OBJEXT) ui_pow_ui_.lo \
+ui_sub_.$(OBJEXT) ui_sub_.lo urandomb_.$(OBJEXT) urandomb_.lo : \
+$(ANSI2KNR)
 
 mpfr.info: mpfr.texi
 mpfr.dvi: mpfr.texi
