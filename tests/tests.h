@@ -44,6 +44,7 @@ void *tests_allocate __GMP_PROTO ((size_t size));
 void *tests_reallocate __GMP_PROTO ((void *ptr, size_t old_size, size_t new_size));
 void tests_free __GMP_PROTO ((void *ptr, size_t size));
 void tests_free_nosize __GMP_PROTO ((void *ptr));
+int tests_memory_valid __GMP_PROTO ((void *ptr));
 
 void tests_rand_start __GMP_PROTO ((void));
 void tests_rand_end __GMP_PROTO ((void));
