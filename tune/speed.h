@@ -178,7 +178,7 @@ double speed_mpn_mul_n_sqr _PROTO ((struct speed_params *s));
 double speed_mpn_nand_n _PROTO ((struct speed_params *s));
 double speed_mpn_nior_n _PROTO ((struct speed_params *s));
 double speed_mpn_popcount _PROTO ((struct speed_params *s));
-double speed_mpn_redc _PROTO ((struct speed_params *s));
+double speed_redc _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
 double speed_mpn_set_str _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
@@ -266,9 +266,9 @@ extern int  speed_option_addrs;
 extern int  speed_option_verbose;
 void speed_option_set _PROTO((const char *s));
 
-mp_size_t mpn_gcd _PROTO ((mp_ptr gp,
-                           mp_ptr up, mp_size_t usize,
-                           mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcd_binary _PROTO ((mp_ptr gp,
+                                  mp_ptr up, mp_size_t usize,
+                                  mp_ptr vp, mp_size_t vsize));
 void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                    mp_ptr));
 void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -280,6 +280,8 @@ void mpz_powm_mod _PROTO ((mpz_ptr res, mpz_srcptr base, mpz_srcptr e,
                            mpz_srcptr mod));
 void mpz_powm_redc _PROTO ((mpz_ptr res, mpz_srcptr base, mpz_srcptr e,
                             mpz_srcptr mod));
+void redc _PROTO ((mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim,
+                   mp_ptr tp));
 
 void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                               mp_ptr xp, int leading,
@@ -716,7 +718,7 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   }  
 
 
-#define SPEED_ROUTINE_MPN_REDC(function)                        \
+#define SPEED_ROUTINE_REDC(function)                            \
   {                                                             \
     unsigned   i;                                               \
     mp_ptr     cp, mp, tp, ap;                                  \
