@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-14  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (__GMP_DECLSPEC_EXPORT, __GMP_DECLSPEC_IMPORT) [__GNUC__]:
+	Use __dllexport__ and __dllimport__ to keep out of application
+	namespace.
+
+2002-11-14  Gerardo Ballabio <gerardo.ballabio@unimib.it>
+
+	* gmpxx.h (__gmp_randinit_default_t, __gmp_randinit_lc_2exp_t,
+	__gmp_randinit_lc_2exp_size_t): Use extern "C" { typedef ... }, for
+	the benefit of g++ prior to 3.2.
+
+2002-11-12  Kevin Ryde  <kevin@swox.se>
+
+	* gmpxx.h (gmp_randclass constructors): Patch from Roberto Bagnara to
+	use extern "C" on C function pointer arguments.
+
 2002-11-09  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, Makefile.am, printf/Makefile.am,
