@@ -221,14 +221,14 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPN_MUL_N_RECURSE(prodp, up, vp, size, tspace) \
   do {									\
     if ((size) < KARATSUBA_MUL_THRESHOLD)				\
-      __gmpn_mul_basecase (prodp, up, size, vp, size);			\
+      mpn_mul_basecase (prodp, up, size, vp, size);			\
     else								\
       __gmpn_mul_n (prodp, up, vp, size, tspace);			\
   } while (0);
 #define MPN_SQR_RECURSE(prodp, up, size, tspace) \
   do {									\
     if ((size) < KARATSUBA_SQR_THRESHOLD)				\
-      __gmpn_sqr_basecase (prodp, up, size);				\
+      mpn_sqr_basecase (prodp, up, size);				\
     else								\
       __gmpn_sqr (prodp, up, size, tspace);				\
   } while (0);
@@ -492,8 +492,6 @@ union ieee_double_extract
 double __gmp_scale2 _PROTO ((double, int));
 int __gmp_extract_double _PROTO ((mp_ptr, double));
 
-void __gmpn_mul_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
-void __gmpn_sqr_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 void __gmpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 void __gmpn_sqr _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
