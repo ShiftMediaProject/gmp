@@ -85,6 +85,8 @@ C up	r4
 C vp	r5
 C n	r6
 
+MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n mpn_xor_n mpn_xnor_n)
+
 ASM_START()
 PROLOGUE(func)
 	ld	r8, 0(r4)	C read lowest u limb
