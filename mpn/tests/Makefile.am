@@ -20,16 +20,41 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu $(top_builddir)/ansi2knr no-dependencies
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
 EXTRA_PROGRAMS = \
   add_n addmul_1 addsub_n addsub_n_2 copy divmod_1 divrem lshift mul_1 rshift \
-  sub_n submul_1 tst-addsub
+  sub_n submul_1 tst-addsub try
 
-EXTRA_HEADERS = ref.h 
-EXTRA_DIST = ref.c
+EXTRA_HEADERS = ref.h try.h
+EXTRA_DIST = x86call.asm x86check.c
+
+try_SOURCES = try.c ref.c trace.c spinner.c
+try_LDADD = @CALLING_CONVENTIONS_OBJS@ $(top_builddir)/libgmp.la
+try_DEPENDENCIES = $(try_LDADD)
 
 allprogs: $(EXTRA_PROGRAMS)
+
+CLEANFILES = $(EXTRA_PROGRAMS)
+
+
+SUFFIXES = .asm
+
+# m4 processing fudged for use in a second-level subdirectory
+.asm.o:
+	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.asm.obj:
+	cd ..; $(M4) -DOPERATION_$* `cygpath -w tests/$<` >tests/tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.asm.lo:
+	cd ..; $(M4) -DPIC -DOPERATION_$* tests/$< >tests/tmp-$*.s
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
+	rm -f tmp-$*.s
