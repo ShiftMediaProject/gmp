@@ -1907,14 +1907,29 @@ BEGIN {
           exit
         }
 
-      if (got[15] == "000" &&  \
-          got[14] == "000" &&  \
+      # ARM style little endian but with the two 4-byte halves swapped
+      if (got[8]  == "064" &&  \
+          got[9]  == "157" &&  \
+          got[10] == "235" &&  \
+          got[11] == "301" &&  \
+          got[12] == "000" &&  \
           got[13] == "000" &&  \
-          got[12] == "124" &&  \
-          got[11] == "064" &&  \
-          got[10] == "157" &&  \
+          got[14] == "000" &&  \
+          got[15] == "124")
+        {
+          print "IEEE little endian, swapped halves"
+          found = 1
+          exit
+        }
+
+      if (got[8]  == "301" &&  \
           got[9]  == "235" &&  \
-          got[8]  == "301")
+          got[10] == "157" &&  \
+          got[11] == "064" &&  \
+          got[12] == "124" &&  \
+          got[13] == "000" &&  \
+          got[14] == "000" &&  \
+	  got[15] == "000")
         {
           print "IEEE big endian"
           found = 1
@@ -1986,11 +2001,15 @@ fi
 case $gmp_cv_c_double_format in
   "IEEE big endian")
     AC_DEFINE(HAVE_DOUBLE_IEEE_BIG_ENDIAN, 1,
-              [Define if `double' is IEEE format, big endian])
+    [Define if `double' is IEEE format, big endian])
     ;;
   "IEEE little endian")
     AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN, 1,
-              [Define if `double' is IEEE format, little endian])
+    [Define if `double' is IEEE format, little endian])
+    ;;
+  "IEEE little endian, swapped halves")
+    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_SWAPPED, 1,
+    [Define if `double' is IEEE format, little endian, with halves swapped])
     ;;
   "VAX D")
     AC_DEFINE(HAVE_DOUBLE_VAX_D, 1, [Define if `double' is VAX D format])

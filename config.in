@@ -232,6 +232,9 @@ MA 02111-1307, USA. */
 /* Define if `double' is IEEE format, little endian */
 #undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
 
+/* Define if `double' is IEEE format, little endian, with halves swapped */
+#undef HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
+
 /* Define if `double' is VAX D format */
 #undef HAVE_DOUBLE_VAX_D
 
