@@ -1,5 +1,13 @@
 2001-08-26  Kevin Ryde  <kevin@swox.se>
 
+	* tests/devel/try.c (ARRAY_ITERATION): Make types match on "?:" legs.
+	(TYPE_MPZ_JACOBI, TYPE_MPZ_KRONECKER): Remove some superceded code.
+
+	* tests/printf/t-printf.c (check_plain): Don't compare "all digits"
+	precision against plain printf.
+
+	* tune/Makefile.am: Eliminate empty TUNE_MPZ_SRCS.
+
 	* configure, config.in, INSTALL.autoconf: Update to autoconf 2.52.
 	* */Makefile.in, aclocal.m4, configure: Update to automake 1.5.
 	* configfsf.guess, configfsf.sub: Update to 2001-08-23.
