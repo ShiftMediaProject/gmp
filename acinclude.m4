@@ -1197,6 +1197,47 @@ rm -f conftest.*
 ])
 
 
+dnl  GMP_FUNC_ALLOCA
+dnl  ---------------
+dnl
+dnl  Determine whether "alloca" is available.  This is AC_FUNC_ALLOCA from
+dnl  autoconf, but changed so it doesn't use alloca.c if alloca() isn't
+dnl  available, and also to use gmp-impl.h for the conditionals detecting
+dnl  compiler builtin alloca's.
+
+AC_DEFUN(GMP_FUNC_ALLOCA,
+[AC_REQUIRE([GMP_HEADER_ALLOCA])
+AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
+               gmp_cv_func_alloca,
+[AC_TRY_LINK(
+[#define GMP_FUNC_ALLOCA_TEST 1
+#include "$srcdir/gmp.h"
+#include "$srcdir/gmp-impl.h"],
+  [char *p = (char *) alloca (1);],
+  gmp_cv_func_alloca=yes,
+  gmp_cv_func_alloca=no)])
+if test $gmp_cv_func_alloca = yes; then
+  AC_DEFINE(HAVE_ALLOCA, 1,
+    [Define if alloca() works (via gmp-impl.h).])
+fi
+])
+
+AC_DEFUN(GMP_HEADER_ALLOCA,
+[# The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
+# for constant arguments.  Useless!
+AC_CACHE_CHECK([for working alloca.h],
+               gmp_cv_header_alloca,
+[AC_TRY_LINK([#include <alloca.h>],
+  [char *p = (char *) alloca (2 * sizeof (int));],
+  gmp_cv_header_alloca=yes,
+  gmp_cv_header_alloca=no)])
+if test $gmp_cv_header_alloca = yes; then
+  AC_DEFINE(HAVE_ALLOCA_H, 1,
+    [Define if you have <alloca.h> and it should be used (not on Ultrix).])
+fi
+])
+
+
 dnl  Deal with bad synchronization of Autoconf with Libtool.
 AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
 AC_DEFUN(AC_CHECK_TOOL_PREFIX, [_AC_CHECK_TOOL_PREFIX])
