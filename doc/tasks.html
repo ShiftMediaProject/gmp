@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 23 Apr 2003.  An up-to-date version is available at
+  This file current as of 28 Apr 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -230,8 +230,7 @@ MA 02111-1307, USA.
 <li> <code>__mp_bases</code> field <code>big_base_inverted</code> is only used
      if <code>USE_PREINV_DIVREM_1</code> is true, and could be omitted
      otherwise, to save space.
-<li> Make <code>mpf_get_str</code> and <code>mpf_set_str</code> call the
-     corresponding, much faster, mpn functions.
+<li> Make <code>mpf_get_str</code> call <code>mpn_get_str</code>.
 <li> <code>mpz_get_str</code>, <code>mtox</code>: For power-of-2 bases, which
      are of course fast, it seems a little silly to make a second pass over
      the <code>mpn_get_str</code> output to convert to ASCII.  Perhaps combine
