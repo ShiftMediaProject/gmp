@@ -3,7 +3,7 @@
 
 
 This directory contains programs designed to exercise various mpn
-subroutines.  Nothing here is built, installed or even run in a "make
+subroutines.  Nothing here is built or installed, nor even run in a "make
 check", but there's Makefile rules to build each program, or "allprogs" to
 build everything.
 
