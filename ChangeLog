@@ -1,5 +1,8 @@
 2000-04-08  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/asm-defs.m4 (MPN_PREFIX): Revert previous change.
+	* gmp.h (__MPN): Revert previous change.
+
 	* mpz/perfpow.c: De-ANSI-fy.  Add copyright notice.
 
 	* mpz/set_d.c: Misc cleanups.
