@@ -964,6 +964,11 @@ case $host in
     extra_functions="udiv_w_sdiv"
     path="power"
 
+    # gcc 2.7.2 knows rios1, rios2, rsc
+    #
+    # -mcpu=rios2 can tickle an AIX assembler bug (see GMP_PROG_CC_WORKS) so
+    # there needs to be a fallback to just -mpower.
+    #
     gcc_cflags_optlist="cpu"
     case $host in
       power-*-*)    gcc_cflags_cpu="-mcpu=power -mpower" ;;
