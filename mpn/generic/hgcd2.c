@@ -263,8 +263,11 @@ qstack_push_1 (struct qstack *stack, mp_limb_t q)
    remainders that are larger than one limb, while HGCD->row[3]
    correspond to a remainder that fit in a single limb.
 
-   Returns 0 on failure (if B or A mod B fits in a single limb),
-   otherwise returns 2, 3 or 4 depending on how many of the r:s that
+   Return 0 on failure (if B or A mod B fits in a single limb). Return
+   1 if r0 and r1 are correct, but we still make no progress because
+   r0 = A, r1 = B.
+   
+   Otherwise return 2, 3 or 4 depending on how many of the r:s that
    satisfy Jebelean's criterion. */
 /* FIXME: There are two more micro optimizations that could be done to
    this code:
@@ -450,7 +453,7 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
     sub_ddmmss (th, tl, rh1, rl1, rh2, rl2);
 
     if (th < sh || (th == sh && tl < sl))
-      return 2;
+      return 2 - (hgcd->row[0].v == 0);
 
     /* Check r3 */
 
@@ -508,7 +511,7 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
 
     if (th < (CNST_LIMB(1) << GMP_NAIL_BITS)
        && ((th << GMP_NUMB_BITS) | (tl & GMP_NUMB_MASK)) < sl)
-      return 2;
+      return 2 - (hgcd->row[0].v == 0);
 
     /* Check r3 */
 

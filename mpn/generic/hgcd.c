@@ -1421,10 +1421,11 @@ euclid_step (struct hgcd *hgcd, mp_size_t M,
     }
 }
 
-/* Called when values have been computed in rows 2 and 3, and the latter
-   value is too large, and we know that it's not much too large. */
-static void
-hgcd_adjust (struct hgcd *hgcd,
+/* Called when values have been computed in r[0] and r[1], and the
+   latter value is too large, and we know that it's not much too
+   large. Returns the updated size for the uv matrix. */
+static mp_size_t
+hgcd_adjust (struct hgcd_row *r, mp_size_t size,
 	     struct qstack *quotients)
 {
   /* Compute the correct r3, we have r3' = r3 - d r2, with
@@ -1434,47 +1435,48 @@ hgcd_adjust (struct hgcd *hgcd,
   mp_limb_t c0;
   mp_limb_t c1;
 
-  ASSERT_NOCARRY (mpn_sub (hgcd->row[3].rp,
-			   hgcd->row[3].rp, hgcd->row[3].rsize,
-			   hgcd->row[2].rp, hgcd->row[2].rsize));
+  ASSERT_NOCARRY (mpn_sub (r[1].rp,
+			   r[1].rp, r[1].rsize,
+			   r[0].rp, r[0].rsize));
 
-  MPN_NORMALIZE (hgcd->row[3].rp, hgcd->row[3].rsize);
-  if (MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
-		  hgcd->row[2].rp, hgcd->row[2].rsize))
+  MPN_NORMALIZE (r[1].rp, r[1].rsize);
+  if (MPN_LESS_P (r[1].rp, r[1].rsize,
+		  r[0].rp, r[0].rsize))
     {
       d = 1;
 
-      c0 = mpn_add_n (hgcd->row[3].uvp[0],
-		      hgcd->row[3].uvp[0], hgcd->row[2].uvp[0],
-		      hgcd->size);
-      c1 = mpn_add_n (hgcd->row[3].uvp[1],
-		      hgcd->row[3].uvp[1], hgcd->row[2].uvp[1],
-		      hgcd->size);
+      c0 = mpn_add_n (r[1].uvp[0],
+		      r[1].uvp[0], r[0].uvp[0],
+		      size);
+      c1 = mpn_add_n (r[1].uvp[1],
+		      r[1].uvp[1], r[0].uvp[1],
+		      size);
     }
   else
     {
-      ASSERT_NOCARRY (mpn_sub (hgcd->row[3].rp,
-			       hgcd->row[3].rp, hgcd->row[3].rsize,
-			       hgcd->row[2].rp, hgcd->row[2].rsize));
+      ASSERT_NOCARRY (mpn_sub (r[1].rp,
+			       r[1].rp, r[1].rsize,
+			       r[0].rp, r[0].rsize));
 
-      MPN_NORMALIZE (hgcd->row[3].rp, hgcd->row[3].rsize);
-      ASSERT (MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
-			  hgcd->row[2].rp, hgcd->row[2].rsize));
+      MPN_NORMALIZE (r[1].rp, r[1].rsize);
+      ASSERT (MPN_LESS_P (r[1].rp, r[1].rsize,
+			  r[0].rp, r[0].rsize));
 
       d = 2;
-      c0 = mpn_addmul_1 (hgcd->row[3].uvp[0],
-			 hgcd->row[2].uvp[0],
-			 hgcd->size, 2);
-      c1 = mpn_addmul_1 (hgcd->row[3].uvp[1],
-			 hgcd->row[2].uvp[1],
-			 hgcd->size, 2);
+      c0 = mpn_addmul_1 (r[1].uvp[0],
+			 r[0].uvp[0],
+			 size, 2);
+      c1 = mpn_addmul_1 (r[1].uvp[1],
+			 r[0].uvp[1],
+			 size, 2);
     }
+
+  /* FIXME: Can avoid branches */
   if (c1 != 0)
     {
-      hgcd->row[3].uvp[0][hgcd->size] = c0;
-      hgcd->row[3].uvp[1][hgcd->size] = c1;
-      hgcd->size++;
-      ASSERT (hgcd->size < hgcd->alloc);
+      r[3].uvp[0][size] = c0;
+      r[3].uvp[1][size] = c1;
+      size++;
     }
   else
     {
@@ -1483,6 +1485,8 @@ hgcd_adjust (struct hgcd *hgcd,
 
   /* Remains to adjust the quotient on stack */
   qstack_adjust (quotients, d);
+
+  return size;
 }
 
 /* Reduce using Lehmer steps. Called by mpn_hgcd when r1 has been
@@ -1522,22 +1526,48 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
       
       if (res == 0)
 	{
-	euclid_1:
 	  /* We must divide to make progress */
 	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
 	  if (res >= 0)
 	    return res;
+	}
+      else if (res == 1)
+	{
+	  mp_size_t qsize;
+	  
+	  /* The quotient that has been computed for r2 is at most 2
+	     off. So adjust that, and avoid a full division. */
+	  qstack_drop (quotients);
 
-	  continue;
+	  /* Top two rows of R must be the identity matrix, followed
+	     by a row (1, q). */
+	  ASSERT (R.row[0].u == 1 & R.row[0].v == 0);
+	  ASSERT (R.row[1].u == 0 & R.row[1].v == 1);
+	  ASSERT (R.row[2].u == 1);
+	  
+	  qsize = (R.row[2].v != 0);
+
+	  hgcd_update_r (hgcd->row, &R.row[2].v, qsize);	  
+	  hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size,
+				       &R.row[2].v, qsize);	  
+	  ASSERT (hgcd->size < hgcd->alloc);
+
+	  if (MPN_LEQ_P (hgcd->row[1].rp, hgcd->row[1].rsize,
+			 hgcd->row[2].rp, hgcd->row[2].rsize))
+	    hgcd->size = hgcd_adjust (hgcd->row + 1, hgcd->size, quotients);
+
+	  ASSERT (hgcd->size < hgcd->alloc);
+	  
+	  hgcd->sign = ~hgcd->sign;
+	  HGCD_SWAP4_LEFT (hgcd->row);
 	}
       else if (res == 2)
 	{
 	  qstack_drop (quotients);
 	  qstack_drop (quotients);
 
-	  if (R.row[0].v == 0)
-	    goto euclid_1;
+	  ASSERT (R.row[0].v > 0);
 
 	  hgcd->row[2].rsize
 	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
@@ -1646,7 +1676,6 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 				   quotients);
       if (res == 0)
 	{
-	euclid_2:
 	  /* We must divide to make progress */
 	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
@@ -1656,17 +1685,42 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	  continue;
 	}
 
+      if (res == 1)
+	{
+	  mp_size_t qsize;
+	  
+	  /* The quotient that has been computed for r2 is at most 2
+	     off. So adjust that, and avoid a full division. */
+	  qstack_drop (quotients);
+
+	  /* Top two rows of R must be the identity matrix, followed
+	     by a row (1, q). */
+	  ASSERT (R.row[0].u == 1 & R.row[0].v == 0);
+	  ASSERT (R.row[1].u == 0 & R.row[1].v == 1);
+	  ASSERT (R.row[2].u == 1);
+	  
+	  qsize = (R.row[2].v != 0);
+
+	  hgcd_update_r (hgcd->row, &R.row[2].v, qsize);	  
+	  hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size,
+				       &R.row[2].v, qsize);	  
+	  ASSERT (hgcd->size < hgcd->alloc);
+
+	  if (MPN_LEQ_P (hgcd->row[1].rp, hgcd->row[1].rsize,
+			 hgcd->row[2].rp, hgcd->row[2].rsize))
+	    hgcd->size = hgcd_adjust (hgcd->row + 1, hgcd->size, quotients);
+
+	  ASSERT (hgcd->size < hgcd->alloc);
+	  
+	  hgcd->sign = ~hgcd->sign;
+	  HGCD_SWAP4_LEFT (hgcd->row);
+
+	  continue;
+	} 
+
       /* Now r0 and r1 are always correct. */
       /* Store new values in rows 2 and 3, to avoid overlap */
 
-      if (res == 2 && R.row[0].v == 0)
-	{
-	  qstack_drop (quotients);
-	  qstack_drop (quotients);
-	  
-	  goto euclid_2;
-	}
-	  
       hgcd->row[2].rsize
 	= mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
 			 R.sign,
