@@ -72,192 +72,279 @@ trace (const char *format, ...)
   ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
    ((xl) >> (GMP_LIMB_BITS - (count))))
 
-/* Checks if a - b < c.  Prerequisite a >= b.  Overwrites c.
 
-   Let W = 2^GMP_NUMB_BITS, k = csize.
-
-   Write a = A W^k + a', b = B W^k + b', so that a - b < c is
-   equivalent to
-
-     (A - B) W^k < c + b' - a'     (*)
-
-   For the right hand side, we have - W^k < c + b' - a' < 2 W^k. We
-   can divide into cases based on either side of (*).
-
-   L1. A = B: a - b < c iff a' < c + b'.
-
-   L2. A - B = 1: a - b < c iff W^k < c + b' - a', or W^k <= c
-      + b' - 1 - a'
-
-   L3. A - B > 1: a - b > c.
-
-   R1. a' >= c + b': a - b >= c.
-
-   R2. 0 < c + b' - a' <= W^k: a - b < c iff A == B.
-
-   R3. W^k < c + b' - a': a - b < c iff A - B < 2
-*/
-
-static int
-mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
-		    mp_srcptr bp, mp_size_t bsize,
-		    mp_ptr cp, mp_size_t csize)
+/* Return -1 if a < x + y + z,
+           0 if a = x + y + z,
+	   1 if a > x + y + z. */
+int
+mpn_cmp_sum3 (mp_srcptr ap, mp_size_t an,
+	      mp_srcptr xp, mp_size_t xn,
+	      mp_srcptr yp, mp_size_t yn,
+	      mp_srcptr zp, mp_size_t zn)
 {
-  mp_limb_t ch;
+  mp_limb_t cy;
 
-  ASSERT (MPN_LEQ_P (bp, bsize, ap, asize));
+  /* Check that all limbs beyond an are zero. This should be slightly
+     cheaper than fully normalizing all the input numbers. */
 
-  if (csize == 0)
-    return 0;
+  while (xn > an)
+    if (xp[--xn] > 0) return -1;
+  while (yn > an)
+    if (yp[--yn] > 0) return -1;
+  while (zn > an)
+    if (zp[--zn] > 0) return -1;
 
-  if (asize < csize)
-    return 1;
+  /* Start by sorting so that xn >= yn >= zn. Six permutations, so we
+     can't get away with less than three comparisons, at least not for
+     the worst case. */
 
-  if (asize == csize)
+  if (xn < yn)
+    MPN_SRCPTR_SWAP (xp, xn, yp, yn);
+  if (yn < zn)
+    MPN_SRCPTR_SWAP (yp, yn, zp, zn);
+  if (xn < yn)
+    MPN_SRCPTR_SWAP (xp, xn, yp, yn);
+
+  ASSERT (an >= xn && xn >= yn && yn >= zn);
+
+  /* Assume that a = x + y + z, and write the addition limb by limb.
+
+       (c[1], a[0]) = x[0]   + y[0]   + z[0]   + c[0]
+       (c[2], a[1]) = x[1]   + y[1]   + z[1]   + c[1]
+     (c[k+1], a[k]) = x[k]   + y[k]   + z[k]   + c[2]
+                   ...
+     (c[n], a[n-1]) = x[n-1] + y[n-1] + z[n-1] + c[n-1]
+
+     where the start and stop conditions are that c[0] = c[n] = 0.
+     Then we can start at the high end, iterating
+
+        c[k] = (c[k+1], a[k]) - x[k] - y[k] - z[k]
+
+     If equality holds, then 0 <= c[k] <= 2 for all k (since for
+     example 0xf + 0xf + 0xf + 2 = 0x2f). If we find c[k] < 0, then we
+     know that a < x + y + z, and if we find c[k] > 2, then we know a
+     > x + y + z. */
+
+  cy = 0;
+
+  while (an > xn)
     {
-      ASSERT (bsize <= csize);
+      /* c[k] = (c[k+1], a[k]) */
+      if (cy > 0)
+	return 1;
 
-      if (bsize != 0)
+      cy = ap[--an];
+    }
+
+#if GMP_NAIL_BITS >= 2
+  while (an > yn)
+    {
+      if (cy > 1)
+	return 1;
+
+      cy = (cy << GMP_NUMB_BITS) + ap[--an];
+      if (cy < xp[an])
+	return -1;
+      cy -= xp[an];
+    }
+  while (an > zn)
+    {
+      mp_limb_t s;
+
+      if (cy > 2)
+	return 1;
+
+      cy = (cy << GMP_NUMB_BITS ) + ap[--an];
+      s = xp[an] + yp[an];
+      if (cy < s)
+	return -1;
+      cy -= s;
+    }
+  while (an > 0)
+    {
+      mp_limb_t s;
+
+      if (cy > 2)
+	return 1;
+
+      cy = (cy << GMP_NUMB_BITS ) + ap[--an];
+      s = xp[an] + yp[an] + zp[an];
+      if (cy < s)
+	return -1;
+      cy -= s;
+    }
+#else /* GMP_NAIL_BITS < 2 */
+#if GMP_NAIL_BITS == 1
+loselose
+#endif
+  while (an > yn)
+    {
+      /* c[k] = (c[k+1], a[k]) - x[k] */
+      if (cy > 1)
+	return 1;
+
+      --an;
+
+      if (cy == 1)
 	{
-	  /* A - B == 0, check a' < c + b' */
-	  ch = mpn_add (cp, cp, csize, bp, bsize);
-	  if (ch)
+	  if (ap[an] >= xp[an])
 	    return 1;
+	  cy = (ap[an] - xp[an]) & GMP_NUMB_MASK;
 	}
-
-      return mpn_cmp (ap, cp, csize) < 0;
+      else
+	{
+	  /* cy == 0 */
+	  if (ap[an] < xp[an])
+	    return -1;
+	  else
+	    cy = ap[an] - xp[an];
+	}
     }
 
-  if (bsize <= csize)
+  while (an > zn)
     {
-      /* B == 0, so A - B = A */
-      if (asize > csize + 1 || ap[csize] > 1)
-	return 0;
+      mp_limb_t sh, sl;
 
-      if (bsize == 0)
-	return 0;
+      /* c[k] = (c[k+1], a[k]) - x[k] - y[k] */
+      if (cy > 2)
+	return 1;
 
-      /* A - B == 1, so check W^k <= c + b' - 1 - a' */
-      MPN_DECR_U (cp, csize, 1);
-      ch = mpn_add (cp, cp, csize, bp, bsize);
+      --an;
 
-      return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
+      sl = xp[an] + yp[an];
+      sh = (sl < xp[an]);
+
+      if (cy < sh || (cy == sh && ap[an] < sl))
+	return -1;
+      
+      sl = ap[an] - sl; /* Monkey business */
+      sh = cy - sh - (sl > ap[an]);
+      if (sh > 0)
+	return 1;
+      cy = sl;
     }
-
-  /* Compute A - B, and abort as soon as we know the difference is larger than 1 */
-
-  if (asize > bsize)
+  while (an > 0)
     {
-      /* The only way we can have A - B = 1 is if A = (1, 0, ..., 0),
-	 B = (0, MAX, ..., MAX) */
-      mp_size_t i;
+      mp_limb_t sh, sl;
+      if (cy > 2)
+	return 1;
 
-      if (asize > bsize + 1 || ap[bsize] > 1)
-	return 0;
+      --an;
 
-      for (i = csize; i < bsize; i++)
-	if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
-	  return 0;
+      sl = xp[an] + yp[an];
+      sh = (sl < xp[an]);
 
-      /* A - B == 1, so check W^k <= c + b' - 1 - a' */
-      MPN_DECR_U (cp, csize, 1);
-      ch = mpn_add_n (cp, cp, bp, csize);
+      sl += zp[an];
+      sh += sl < zp[an];
 
-      return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
+      if (cy < sh || (cy == sh && ap[an] < sl))
+	return -1;
+      sl = ap[an] - sl; /* Monkey business */
+      sh = cy - sh - (sl > ap[an]);
+      if (sh > 0)
+	return 1;
+      cy = sl;
     }
+#endif /* GMP_NAIL_BITS < 2 */
+  return cy > 0;
+}
 
-  /* Equal high limbs cancel out, so ignore them */
-  while (asize >= csize && ap[asize - 1] == bp[asize - 1])
-    asize--;
+/* Only the first row has v = 0, a = 1 * a + 0 * b */
+static inline int
+hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
+{
+  mp_size_t i;
+  mp_srcptr vp = r->uvp[1];
 
-  if (asize < csize)
-    return 1;
-
-  /* Now asize = bsize >= csize */
-  if (asize == csize)
-    {
-      /* A - B == 0, check a' < c + b' */
-      ch = mpn_add_n (cp, cp, bp, csize);
-
-      return ch || mpn_cmp (ap, cp, csize) < 0;
-    }
-
-  /* asize == bsize > csize. */
-  {
-    mp_size_t i;
-
-    /* We know that A - B >= 1. Do we have A - B > 1? */
-    /* The only way we can have A - B = 1 is if A = (X, 0, ..., 0), B =
-       (X-1, MAX, ..., MAX). */
-
-    if (ap[asize - 1] - bp[asize - 1] > 1)
-      /* A - B > 1 */
+  for (i = 0; i < n; i++)
+    if (vp[i] != 0)
       return 0;
 
-    for (i = csize; i < asize - 1; i++)
-      if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
-	return 0;
-
-    /* A - B == 1, so check W^k <= c + b' - 1 - a' */
-    MPN_DECR_U (cp, csize, 1);
-    ch = mpn_add_n (cp, cp, bp, csize);
-
-    return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
-  }
+  return 1;
 }
 
-#if WANT_ASSERT
+/* Called when r[0, 1, 2] >= W^M, r[3] < W^M. Returns the number of
+   remainders that satisfy Jebelean's criterion, i.e. find the largest k
+   such that
+
+     r[k+1] >= max (-u[k+1], - v[k+1])
+
+     r[k] - r[k-1] >= max (u[k+1] - u[k], v[k+1] - v[k])
+
+   Return 0 on failure, i.e. if B or A mod B < W^M. Return 1 in case
+   r0 and r1 are correct, but we still make no progress because r0 =
+   A, r1 = B.
+   
+   Otherwise return 2, 3 or 4, the number of r:s that are correct.
+ */
 static int
-slow_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
-		     mp_srcptr bp, mp_size_t bsize,
-		     mp_ptr cp, mp_size_t csize)
+hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M)
 {
-  if (csize == 0)
-    return 0;
-  else if (bsize == 0)
-    return MPN_LESS_P (ap, asize, cp, csize);
+  mp_size_t L;
+  unsigned bit;
+  
+  ASSERT (hgcd->row[0].rsize > M);
+  ASSERT (hgcd->row[1].rsize > M);
+  ASSERT (hgcd->row[2].rsize > M);
+  ASSERT (hgcd->row[3].rsize <= M);
+
+  ASSERT (MPN_LESS_P (hgcd->row[1].rp, hgcd->row[1].rsize,
+		      hgcd->row[0].rp, hgcd->row[0].rsize));
+  ASSERT (MPN_LESS_P (hgcd->row[2].rp, hgcd->row[2].rsize,
+		      hgcd->row[1].rp, hgcd->row[1].rsize));
+  ASSERT (MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
+		      hgcd->row[2].rp, hgcd->row[2].rsize));
+
+  ASSERT (mpn_cmp (hgcd->row[0].uvp[1], hgcd->row[1].uvp[1], hgcd->size) <= 0);
+  ASSERT (mpn_cmp (hgcd->row[1].uvp[1], hgcd->row[2].uvp[1], hgcd->size) <= 0);
+  ASSERT (mpn_cmp (hgcd->row[2].uvp[1], hgcd->row[3].uvp[1], hgcd->size) <= 0);
+
+  /* The bound is really floor (N/2), which is <= M = ceil (N/2) */
+  L = hgcd->size;
+  ASSERT (L <= M);
+
+  ASSERT (L > 0);
+  ASSERT (hgcd->row[3].uvp[1][L - 1] != 0);
+
+  bit = hgcd->sign < 0;
+
+  /* Check r1 - r2 >= max (u2 - u1, v2 - v1) = {|u1| + |u2|, |v1| + |v2|}[bit] */
+
+  if (mpn_cmp_sum3 (hgcd->row[1].rp, hgcd->row[1].rsize,
+		    hgcd->row[2].rp, hgcd->row[2].rsize,
+		    hgcd->row[1].uvp[bit], L,
+		    hgcd->row[2].uvp[bit], L) < 0)
+    return 2 - (hgcd_start_row_p (hgcd->row, hgcd->size));
+
+  /* Ok, r2 is correct */
+
+  /* Check r3 >= max (-u3, -v3) = (|u3|, |v3|)[bit] */
+  if (hgcd->row[3].rsize > L)
+    /* Condition satisfied */
+    ;
   else
     {
-      int res;
-      mp_ptr tp;
-      mp_size_t tsize;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
-
-      tp = TMP_ALLOC_LIMBS (asize);
-      mpn_sub (tp, ap, asize, bp, bsize);
-      tsize = asize;
-      MPN_NORMALIZE (tp, tsize);
-
-      res = MPN_LESS_P (tp, tsize, cp, csize);
-      TMP_FREE (marker);
-
-      return res;
+      mp_size_t size;
+      for (size = L; size > hgcd->row[3].rsize; size--)
+	{
+	  if (hgcd->row[3].uvp[bit][size-1] != 0)
+	    return 3;
+	}
+      if (mpn_cmp (hgcd->row[3].rp, hgcd->row[3].uvp[bit], size) < 0)
+	return 3;
     }
+
+  /* Check r3 - r2 >= max(u3-u2, v3-v2) = {|u2| + |u3|, |v2| +|v3|}[1-bit] */
+
+  if (mpn_cmp_sum3 (hgcd->row[2].rp, hgcd->row[2].rsize,
+		    hgcd->row[3].rp, hgcd->row[3].rsize,
+		    hgcd->row[2].uvp[bit ^ 1], L,
+		    hgcd->row[3].uvp[bit ^ 1], L) < 0)
+    return 3;
+
+  /* Ok, r3 is correct */
+  return 4;
 }
-
-static int
-wrap_mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
-			 mp_srcptr bp, mp_size_t bsize,
-			 mp_ptr cp, mp_size_t csize)
-{
-  int r1;
-  int r2;
-
-#if 0 && WANT_TRACE
-  trace ("wrap_mpn_diff_smaller_p:\n"
-	 "  a = %Nd;\n"
-	 "  b = %Nd;\n"
-	 "  c = %Nd;\n", ap, asize, bp, bsize, cp, csize);
-#endif
-
-  r1 = slow_diff_smaller_p (ap, asize, bp, bsize, cp, csize);
-  r2 = mpn_diff_smaller_p (ap, asize, bp, bsize, cp, csize);
-  ASSERT (r1 == r2);
-  return r1;
-}
-#define mpn_diff_smaller_p wrap_mpn_diff_smaller_p
-#endif /* WANT_ASSERT */
 
 
 /* Compute au + bv. u and v are single limbs, a and b are n limbs each.
@@ -1074,173 +1161,11 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
   return mpn_hgcd2 (hgcd, ah, al, bh, bl, quotients);
 }
 
-/* Only the first row has v = 0, a = 1 * a + 0 * b */
-static inline int
-hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
-{
-  mp_size_t i;
-  mp_srcptr vp = r->uvp[1];
-
-  for (i = 0; i < n; i++)
-    if (vp[i] != 0)
-      return 0;
-
-  return 1;
-}
-
-/* Scratch space needed to compute |u2| + |u1| or |v2| + |v1|, where
-   all terms are at most floor (asize/2) limbs. */
-#define HGCD_JEBELEAN_ITCH(asize) ((asize)/2 + 1)
-
-/* Called when r[0, 1, 2] >= W^M, r[3] < W^M. Returns the number of
-   the remainders that satisfy Jebelean's criterion, i.e. find the
-   largest k such that
-
-     r[k+1] >= max (-u[k+1], - v[k+1])
-
-     r[k] - r[k-1] >= max (u[k+1] - u[k], v[k+1] - v[k])
-
-   Return 0 on failure, i.e. if B or A mod B < W^M. Return 1 in case
-   r0 and r1 are correct, but we still make no progress because r0 =
-   A, r1 = B.
-
-   Otherwise return 2, 3 or 4, the number of r:s that are correct.
- */
-static int
-hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
-	       mp_ptr tp, mp_size_t talloc)
-{
-  mp_size_t L;
-  mp_size_t tsize;
-  mp_limb_t cy;
-
-  ASSERT (hgcd->row[0].rsize > M);
-  ASSERT (hgcd->row[1].rsize > M);
-  ASSERT (hgcd->row[2].rsize > M);
-  ASSERT (hgcd->row[3].rsize <= M);
-
-  ASSERT (MPN_LESS_P (hgcd->row[1].rp, hgcd->row[1].rsize,
-		      hgcd->row[0].rp, hgcd->row[0].rsize));
-  ASSERT (MPN_LESS_P (hgcd->row[2].rp, hgcd->row[2].rsize,
-		      hgcd->row[1].rp, hgcd->row[1].rsize));
-  ASSERT (MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
-		      hgcd->row[2].rp, hgcd->row[2].rsize));
-
-  ASSERT (mpn_cmp (hgcd->row[0].uvp[1], hgcd->row[1].uvp[1], hgcd->size) <= 0);
-  ASSERT (mpn_cmp (hgcd->row[1].uvp[1], hgcd->row[2].uvp[1], hgcd->size) <= 0);
-  ASSERT (mpn_cmp (hgcd->row[2].uvp[1], hgcd->row[3].uvp[1], hgcd->size) <= 0);
-
-  /* The bound is really floor (N/2), which is <= M = ceil (N/2) */
-  L = hgcd->size;
-  ASSERT (L <= M);
-
-  ASSERT (L > 0);
-  ASSERT (hgcd->row[3].uvp[1][L - 1] != 0);
-
-  ASSERT (L < talloc);
-
-#if WANT_TRACE
-  trace ("hgcd_jebelean: sign = %d\n", hgcd->sign);
-
-  if (L < 50)
-    {
-      unsigned i;
-      for (i = 0; i<4; i++)
-	trace (" r%d = %Nd; u%d = %Nd; v%d = %Nd;\n",
-	       i, hgcd->row[i].rp, hgcd->row[i].rsize,
-	       i, hgcd->row[i].uvp[0], hgcd->size,
-	       i, hgcd->row[i].uvp[1], hgcd->size);
-    }
-#endif
-
-  tsize = L;
-
-  if (hgcd->sign >= 0)
-    {
-      /* Check if r1 - r2 >= u2 - u1 */
-      cy = mpn_add_n (tp, hgcd->row[2].uvp[0], hgcd->row[1].uvp[0], L);
-    }
-  else
-    {
-      /* Check if r1 - r2 >= v2 - v1 */
-      cy = mpn_add_n (tp, hgcd->row[2].uvp[1], hgcd->row[1].uvp[1], L);
-    }
-  if (cy)
-    tp[tsize++] = cy;
-  else
-    MPN_NORMALIZE (tp, tsize);
-
-  if (mpn_diff_smaller_p (hgcd->row[1].rp, hgcd->row[1].rsize,
-			  hgcd->row[2].rp, hgcd->row[2].rsize, tp, tsize))
-    return 2 - (hgcd_start_row_p (hgcd->row, hgcd->size));
-
-  /* Ok, r2 is correct */
-
-  tsize = L;
-
-  if (hgcd->sign >= 0)
-    {
-      /* Check r3 >= max (-u3, -v3) = u3 */
-      if (hgcd->row[3].rsize > L)
-	/* Condition satisfied */
-	;
-      else
-	{
-	  mp_size_t size;
-	  for (size = L; size > hgcd->row[3].rsize; size--)
-	    {
-	      if (hgcd->row[3].uvp[0][size-1] != 0)
-		return 3;
-	    }
-	  if (mpn_cmp (hgcd->row[3].rp, hgcd->row[3].uvp[0], size) < 0)
-	    return 3;
-	}
-
-      /* Check r3 - r2 >= v3 - v2 */
-      cy = mpn_add_n (tp, hgcd->row[3].uvp[1], hgcd->row[2].uvp[1], L);
-    }
-  else
-    {
-      /* Check r3 >= max (-u3, -v3) = v3 */
-      if (hgcd->row[3].rsize > L)
-	/* Condition satisfied */
-	;
-      else
-	{
-	  mp_size_t size;
-	  for (size = L; size > hgcd->row[3].rsize; size--)
-	    {
-	      if (hgcd->row[3].uvp[1][size-1] != 0)
-		return 3;
-	    }
-	  if (mpn_cmp (hgcd->row[3].rp, hgcd->row[3].uvp[1], size) < 0)
-	    return 3;
-	}
-
-      /* Check r3 - r2 >= u3 - u2 */
-
-      cy = mpn_add_n (tp, hgcd->row[3].uvp[0], hgcd->row[2].uvp[0], L);
-    }
-
-  if (cy)
-    tp[tsize++] = cy;
-  else
-    MPN_NORMALIZE (tp, tsize);
-
-  if (mpn_diff_smaller_p (hgcd->row[2].rp, hgcd->row[2].rsize,
-			  hgcd->row[3].rp, hgcd->row[3].rsize, tp, tsize))
-    return 3;
-
-  /* Ok, r3 is correct */
-  return 4;
-}
-
 /* Called when r2 has been computed, and it is too small. Top element
    on the stack is r0/r1. One backup step is needed. */
 static int
 hgcd_small_1 (struct hgcd *hgcd, mp_size_t M,
-	      struct qstack *quotients,
-	      mp_ptr tp, mp_size_t talloc)
+	      struct qstack *quotients)
 {
   mp_srcptr qp;
   mp_size_t qsize;
@@ -1263,15 +1188,14 @@ hgcd_small_1 (struct hgcd *hgcd, mp_size_t M,
   qstack_rotate (quotients, 0);
 #endif
 
-  return hgcd_jebelean (hgcd, M, tp, talloc);
+  return hgcd_jebelean (hgcd, M);
 }
 
 /* Called when r3 has been computed, and is small enough. Two backup
    steps are needed. */
 static int
 hgcd_small_2 (struct hgcd *hgcd, mp_size_t M,
-	      const struct qstack *quotients,
-	      mp_ptr tp, mp_size_t talloc)
+	      const struct qstack *quotients)
 {
   mp_srcptr qp;
   mp_size_t qsize;
@@ -1288,7 +1212,7 @@ hgcd_small_2 (struct hgcd *hgcd, mp_size_t M,
   qsize = qstack_get_1 (quotients, &qp);
   hgcd_backup (hgcd->row, hgcd->size, qp, qsize);
 
-  return hgcd_jebelean (hgcd, M, tp, talloc);
+  return hgcd_jebelean (hgcd, M);
 }
 
 static void
@@ -1335,8 +1259,7 @@ hgcd_start (struct hgcd *hgcd,
    terminated, -1 if we should go on */
 static int
 euclid_step (struct hgcd *hgcd, mp_size_t M,
-	     struct qstack *quotients,
-	     mp_ptr tp, mp_size_t talloc)
+	     struct qstack *quotients)
 {
   mp_size_t asize;
 
@@ -1389,7 +1312,7 @@ euclid_step (struct hgcd *hgcd, mp_size_t M,
   ASSERT (hgcd->size < hgcd->alloc);
 
   if (hgcd->row[2].rsize <= M)
-    return hgcd_small_1 (hgcd, M, quotients, tp, talloc);
+    return hgcd_small_1 (hgcd, M, quotients);
   else
     {
       /* Keep this remainder */
@@ -1444,8 +1367,7 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
    mpn_hgcd_lehmer. */
 static int
 hgcd_final (struct hgcd *hgcd, mp_size_t M,
-	    struct qstack *quotients,
-	    mp_ptr tp, mp_size_t talloc)
+	    struct qstack *quotients)
 {
   ASSERT (hgcd->row[0].rsize > M);
   ASSERT (hgcd->row[1].rsize > M);
@@ -1473,7 +1395,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
       if (res == 0)
 	{
 	  /* We must divide to make progress */
-	  res = euclid_step (hgcd, M, quotients, tp, talloc);
+	  res = euclid_step (hgcd, M, quotients);
 
 	  if (res >= 0)
 	    return res;
@@ -1576,7 +1498,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	      /* Backup two steps */
 	      ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
 
-	      return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+	      return hgcd_small_2 (hgcd, M, quotients);
 	    }
 
 	  HGCD_SWAP4_2 (hgcd->row);
@@ -1605,7 +1527,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
       if (res == 0)
 	{
 	  /* We must divide to make progress */
-	  res = euclid_step (hgcd, M, quotients, tp, talloc);
+	  res = euclid_step (hgcd, M, quotients);
 
 	  if (res >= 0)
 	    return res;
@@ -1683,7 +1605,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	  qstack_drop (quotients);
 	  qstack_drop (quotients);
 
-	  return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+	  return hgcd_small_2 (hgcd, M, quotients);
 	}
 
       HGCD_SWAP4_2 (hgcd->row);
@@ -1713,8 +1635,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	{
 	  /* Discard r3 */
 	  qstack_drop (quotients);
-	  return hgcd_small_1 (hgcd, M, quotients,
-			       tp, talloc);
+	  return hgcd_small_1 (hgcd, M, quotients);
 	}
       if (res == 3)
 	{
@@ -1746,7 +1667,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
       /* ASSERT (hgcd->row[3].rsize <= M || hgcd->row[3].rp[M] == 1); */
 
       if (hgcd->row[3].rsize <= M)
-	return hgcd_jebelean (hgcd, M, tp, talloc);
+	return hgcd_jebelean (hgcd, M);
 
       HGCD_SWAP4_2 (hgcd->row);
     }
@@ -1807,7 +1728,7 @@ mpn_hgcd (struct hgcd *hgcd,
   hgcd_start (hgcd, ap, asize, bp, bsize);
 
   if (BELOW_THRESHOLD (N, HGCD_SCHOENHAGE_THRESHOLD))
-    return hgcd_final (hgcd, M, quotients, tp, talloc);
+    return hgcd_final (hgcd, M, quotients);
 
   /* Reduce the size to M + m + 1. Usually, only one hgcd call is
      needed, but we may need multiple calls. When finished, the values
@@ -1836,7 +1757,7 @@ mpn_hgcd (struct hgcd *hgcd,
       if (res == 0)
 	{
 	  /* We must divide to make progress */
-	  res = euclid_step (hgcd, M, quotients, tp, talloc);
+	  res = euclid_step (hgcd, M, quotients);
 
 	  if (res > 0)
 	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
@@ -1909,7 +1830,7 @@ mpn_hgcd (struct hgcd *hgcd,
 		  /* Backup two steps */
 		  ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
 
-		  return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+		  return hgcd_small_2 (hgcd, M, quotients);
 		}
 
 	      HGCD_SWAP4_2 (hgcd->row);
@@ -1993,7 +1914,7 @@ mpn_hgcd (struct hgcd *hgcd,
 		 trivial to ASSERT that here. */
 	      ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
 
-	      return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+	      return hgcd_small_2 (hgcd, M, quotients);
 	    }
 	  HGCD_SWAP4_2 (hgcd->row);
 
@@ -2009,7 +1930,7 @@ mpn_hgcd (struct hgcd *hgcd,
   if (hgcd->row[0].rsize > M + m + 1)
     {
       /* One euclid step to reduce size. */
-      int res = euclid_step (hgcd, M, quotients, tp, talloc);
+      int res = euclid_step (hgcd, M, quotients);
 
       if (res > 0)
 	ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
@@ -2048,7 +1969,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	{
 	  /* The first remainder was small. Then there's a good chance
 	     that the remainder A % B is also small. */
-	  res = euclid_step (hgcd, M, quotients, tp, talloc);
+	  res = euclid_step (hgcd, M, quotients);
 
 	  if (res > 0)
 	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
@@ -2088,7 +2009,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	      /* Backup one steps */
 	      ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
 
-	      return hgcd_small_1 (hgcd, M, quotients, tp, talloc);
+	      return hgcd_small_1 (hgcd, M, quotients);
 	    }
 
 	  HGCD_SWAP4_LEFT (hgcd->row);
@@ -2135,7 +2056,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	      qstack_drop (quotients);
 	      qstack_drop (quotients);
 
-	      return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
+	      return hgcd_small_2 (hgcd, M, quotients);
 	    }
 
 	  HGCD_SWAP4_2 (hgcd->row);
@@ -2165,8 +2086,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	{
 	  /* Discard r3 */
 	  qstack_drop (quotients);
-	  return hgcd_small_1 (hgcd, M, quotients,
-			       tp, talloc);
+	  return hgcd_small_1 (hgcd, M, quotients);
 	}
       if (res == 3)
 	{
@@ -2197,7 +2117,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  qstack_rotate (quotients, 0);
 #endif
 	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
-	  return hgcd_jebelean (hgcd, M, tp, talloc);
+	  return hgcd_jebelean (hgcd, M);
 	}
 
       HGCD_SWAP4_2 (hgcd->row);
@@ -2205,5 +2125,5 @@ mpn_hgcd (struct hgcd *hgcd,
 
   ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 
-  return hgcd_final (hgcd, M, quotients, tp, talloc);
+  return hgcd_final (hgcd, M, quotients);
 }
