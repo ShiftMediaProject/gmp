@@ -1,3 +1,21 @@
+2000-09-26  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/zerop.c: New file, extracted from mpf/integer.c.
+	* configure.in (gmp_mpn_functions): Add it.
+	* mpf/integer.c, mpz/get_d.c, mpn/generic/mul_fft.c: Use it.
+	* gmp-impl.h (mpn_zero_p): Add prototype.
+
+	* gmp-impl.h, longlong.h, mpn/generic/*.c: Add ASSERTs for various
+	parameter restrictions.
+
+	* gmp-impl.h (UDIV_PREINV_TIME): New macro.
+	* mpn/generic/sb_divrem_mn.c: Use it.
+	* mpn/generic/perfsqr.c: Ditto.
+	* mpn/x86/*/gmp-mparam.h (UDIV_PREINV_TIME): Add values.
+
+	* macos/Makefile.in: Add mpz/tests/t-get_si.c, mpf/tests/t-set_f.c,
+	and new multi-function mpz and mpq files.	
+
 2000-09-25  Kevin Ryde  <kevin@swox.se>
 
 	* randlc.c, randlc2x.c, randsd.c, mpz/urandomb.c, mpz/urandomm.c:
