@@ -29,40 +29,40 @@ include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
-	ld	$8,0($5)
-	daddiu	$6,$6,-2
-	dmultu	$8,$8
-	bltz	$6,$Lend1
+	ld	r8,0(r5)
+	daddiu	r6,r6,-2
+	dmultu	r8,r8
+	bltz	r6,$Lend1
 	nop
-	ld	$8,8($5)
-	beq	$6,$0,$Lend2
+	ld	r8,8(r5)
+	beq	r6,r0,$Lend2
 	nop
 
-$Loop:	mflo	$10
-	mfhi	$9
-	daddiu	$6,$6,-1
-	sd	$10,0($4)
-	sd	$9,8($4)
-	dmultu	$8,$8
-	ld	$8,16($5)
-	daddiu	$5,$5,8
-	bne	$6,$0,$Loop
-	daddiu	$4,$4,16
+$Loop:	mflo	r10
+	mfhi	r9
+	daddiu	r6,r6,-1
+	sd	r10,0(r4)
+	sd	r9,8(r4)
+	dmultu	r8,r8
+	ld	r8,16(r5)
+	daddiu	r5,r5,8
+	bne	r6,r0,$Loop
+	daddiu	r4,r4,16
 
-$Lend2: mflo	$10
-	mfhi	$9
-	sd	$10,0($4)
-	sd	$9,8($4)
-	dmultu	$8,$8
-	mflo	$10
-	mfhi	$9
-	sd	$10,16($4)
-	j	$31
-	sd	$9,24($4)
+$Lend2: mflo	r10
+	mfhi	r9
+	sd	r10,0(r4)
+	sd	r9,8(r4)
+	dmultu	r8,r8
+	mflo	r10
+	mfhi	r9
+	sd	r10,16(r4)
+	j	r31
+	sd	r9,24(r4)
 
-$Lend1: mflo	$10
-	mfhi	$9
-	sd	$10,0($4)
-	j	$31
-	sd	$9,8($4)
+$Lend1: mflo	r10
+	mfhi	r9
+	sd	r10,0(r4)
+	j	r31
+	sd	r9,8(r4)
 EPILOGUE(mpn_sqr_diagonal)
