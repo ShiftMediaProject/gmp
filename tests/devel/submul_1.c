@@ -243,9 +243,9 @@ main (argc, argv)
 #endif
 	    }
 	  printf ("\n");
-	  if (dx[0] != 0x87654321)
+	  if (dy[0] != 0x87654321)
 	    printf ("clobbered at low end\n");
-	  if (dx[size+1] != 0x12345678)
+	  if (dy[size+1] != 0x12345678)
 	    printf ("clobbered at high end\n");
 	  printf ("TEST NUMBER %u\n", test);
 	  abort();

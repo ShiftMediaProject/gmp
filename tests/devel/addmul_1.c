@@ -165,7 +165,11 @@ main (argc, argv)
       dy[size+1] = 0x12345678;
       dy[0] = 0x87654321;
 
+#ifdef FIXED_XLIMB
+      xlimb = ~((~(mp_limb_t)0) / 3);
+#else
       mpn_random2 (&xlimb, 1);
+#endif
 
 #if TIMES != 1
       mpn_random (s1, size);
@@ -243,9 +247,9 @@ main (argc, argv)
 #endif
 	    }
 	  printf ("\n");
-	  if (dx[0] != 0x87654321)
+	  if (dy[0] != 0x87654321)
 	    printf ("clobbered at low end\n");
-	  if (dx[size+1] != 0x12345678)
+	  if (dy[size+1] != 0x12345678)
 	    printf ("clobbered at high end\n");
 	  printf ("TEST NUMBER %u\n", test);
 	  abort();
