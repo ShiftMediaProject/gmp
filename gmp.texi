@@ -1,7 +1,8 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename gmp.info
-@settitle GNU MP 2.90
+@include version.texi
+@settitle GNU MP @value{VERSION}
 @synindex tp fn
 @iftex
 @afourpaper
@@ -32,7 +33,7 @@ END-INFO-DIR-ENTRY
 @ifinfo
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
 
-Copyright (C) 1991, 1993-1999 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993-2000 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -62,11 +63,11 @@ by the Foundation.
 
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
-@subtitle Edition 2.90 SNAPSHOT
-@subtitle October 1999
+@subtitle Edition @value{EDITION}
+@subtitle @value{UPDATED}
 
 @author by Torbj@"orn Granlund, Swox AB
-tege@@swox.com
+@email{tege@@swox.com}
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -79,7 +80,7 @@ tege@@swox.com
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1991, 1993-1999 Free Software Foundation, Inc.
+Copyright @copyright{} 1991, 1993-2000 Free Software Foundation, Inc.
 
 @sp 2
 
@@ -109,7 +110,7 @@ by the Foundation.
 @top GNU MP
 
 This manual documents how to install and use the GNU multiple precision
-arithmetic library, version 2.90.
+arithmetic library, version @value{VERSION}.
 
 @end ifinfo
 
@@ -187,14 +188,15 @@ code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
 There is carefully optimized assembly code for these CPUs: ARM, DEC Alpha
-21064, 21164, and 21264, Amd 29000, HPPA 1.0 and 1.1, Intel Pentium, Pentium
-Pro/Pentium II, generic x86, Intel i960, Motorola MC68000, MC68020, MC88100,
-and MC88110, Motorola/IBM PowerPC, National NS32000, IBM POWER, MIPS R3000,
-R4000, SPARCv7, SuperSPARC, generic SPARCv8, UltraSPARC, and DEC VAX.  Some
-optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
+21064, 21164, and 21264, AMD 29000, K6, and Athalon, HPPA 1.0 and 1.1, Intel
+Pentium, Pentium Pro/Pentium II, generic x86, Intel i960, Motorola MC68000,
+MC68020, MC88100, and MC88110, Motorola/IBM PowerPC 32 and 64, National
+NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7, SuperSPARC, generic SPARCv8,
+UltraSPARC, and DEC VAX.  Some optimizations also for Clipper, IBM ROMP (RT),
+and Pyramid AP/XP.
 
 For up-to-date information on MP, please see the GMP Home Pages at
-@samp{http://www.swox.com/gmp/}.
+@uref{http://www.swox.com/gmp/}.
 
 
 @section How to use this Manual
@@ -211,126 +213,267 @@ probably a good idea to glance through it.
 @chapter Installing MP
 @cindex Installation
 
-To build MP, you first have to configure it for your CPU and operating system.
-You need a C compiler, preferably GCC, but any reasonable compiler should
-work.  And you need a standard Unix @samp{make} program, plus some other
-standard Unix utility programs.
+MP has an autoconf/automake/libtool based configuration system.  On a
+Unix-like system a basic build can be done with
 
-(If you're on an MS-DOS machine, you can build MP using @file{make.bat}.  It
-requires that djgpp is installed.  It does not require configuration, nor is
-@samp{make} needed; @file{make.bat} both configures and builds the library.)
+@example
+./configure
+make
+@end example
 
-Here are the steps needed to install the library on Unix systems:
+Some self-tests can be run with
 
-@enumerate
-@item
-In most cases, @samp{./configure --target=cpu-vendor-os}, should work both for
-native and cross-compilation.  If you get error messages, your machine might
-not be supported.
+@example
+make check
+@end example
 
-If you want to compile in a separate object directory, cd to that directory,
-and prefix the configure command with the path to the MP source directory.  Not
-all @samp{make} programs have the necessary features (VPATH) to support this.
-In particular, SunOS and Slowaris @samp{make} have bugs that makes them unable
-to build from a separate object directory.  Use GNU @samp{make} instead.
+And you can install (under @samp{/usr/local} by default) with
 
-In addition to the standard cpu-vendor-os tuples, MP recognizes sparc8 and
-supersparc as valid CPU names.  Specifying these CPU names for relevant
-systems will improve performance significantly.
+@example
+make install
+@end example
+
+If you experience problems, please report them to @email{bug-gmp@@gnu.org}.
+(@xref{Reporting Bugs}, for information on what to include in useful bug
+reports.)
+
+@section Build Options
+
+All the usual autoconf configure options are available, run @samp{./configure
+--help} for a summary.
+
+@table @asis
+@item Non-Unix Systems
+
+@samp{configure} needs various Unix-like tools installed.  On an MS-DOS system
+cygwin or djgpp should work.  It might be possible to build without the help of
+@samp{configure}, certainly all the C code is there, but you'll be on your own.
+
+@item Object Directory
+
+To compile in a separate object directory, @samp{cd} to that directory, and
+prefix the configure command with the path to the MP source directory.  Not all
+@samp{make} programs have the necessary features (VPATH) to support this.  In
+particular, SunOS and Slowaris @samp{make} have bugs that makes them unable to
+build from a separate object directory.  Use GNU @samp{make} instead.
+
+@item @option{--disable-shared}, @option{--disable-static}
+
+By default both shared and static libraries are built (where possible), but one
+or other can be disabled.  Shared libraries are very slightly slower, having a
+small cost on each function call, so the static library is best if you're not
+in fact sharing code.
+
+@item @option{--target=CPU-VENDOR-OS}
+
+The build target can be specified in the usual way, for either native or cross
+compilation.  @samp{configure} looks at the host system if @samp{--target}
+isn't given, though you'll want to check the CPU it decides.
 
 In general, if you want a library that runs as fast as possible, you should
-make sure you configure MP for the exact CPU type your system uses.
+configure MP for the exact CPU type your system uses.  However, this may mean
+the code won't run on older members of the family, and might run slower on
+other members, older or newer.  The best idea is always to build MP for the
+exact machine type you intend to run it on.
 
-If you have @code{gcc} in your @code{PATH}, it will be used by default.  To
-override this, pass @samp{-with-gcc=no} to @file{configure}.
+If you need to create binaries that will run on several processors in a family,
+MP should be configured for the lowest common denominator among them, something
+with which all the desired processors are upwardly compatible.
 
-@item
-@samp{make}
-
-This will compile MP, and create a library archive file @file{libgmp.a} in the
-working directory.
-
-@item
-@samp{make check}
-
-This will make sure MP was built correctly.  If you get error messages, please
-report this to @samp{bug-gmp@@gnu.org}.  (@xref{Reporting Bugs}, for
-information on what to include in useful bug reports.)
-
-@item
-@samp{make install}
-
-This will copy the file @file{gmp.h} and @file{libgmp.a}, as well as the info
-files, to @file{/usr/local} (or if you passed the @samp{--prefix} option to
-@file{configure}, to the directory given as argument to @samp{--prefix}).
-@end enumerate
-
-@noindent
-If you wish to build and install the BSD MP compatible functions, use
-@samp{make libmp.a} and @samp{make install-bsdmp}.
-
-There are some other useful make targets:
+The following CPUs have specific assembly code support.  Some of the names are
+aliases provided for convenience.  See @file{configure.in} for which @file{mpn}
+subdirectories get used by each.
 
 @itemize @bullet
 @item
-@samp{doc}
-
-Create a DVI version of the manual, in @file{gmp.dvi} and a set of info files,
-in @file{gmp.info}, @file{gmp.info-1}, @file{gmp.info-2}, etc.
-
-@item
-@samp{ps}
-
-Create a Postscript version of the manual, in @file{gmp.ps}.
+Alpha:
+@samp{alpha},
+@samp{alphaev5}
 
 @item
-@samp{html}
-
-Create a HTML version of the manual, in @file{gmp.html}.
-
-@item
-@samp{clean}
-
-Delete all object files and archive files, but not the configuration files.
-
-@item
-@samp{distclean}
-
-Delete all files not included in the distribution.
+Cray:
+@samp{cray2},
+@samp{xmp},
+@samp{ymp},
+@samp{c90},
+@samp{j90},
+@samp{t90}
 
 @item
-@samp{uninstall}
+Fujitsu:
+@samp{f300},
+@samp{f301}
 
-Delete all files copied by @samp{make install}.
+@item
+HPPA:
+@samp{hppa1.0},
+@samp{hppa1.1},
+@samp{hppa7000},
+@samp{hppa7100},
+@samp{hppa2.0}
+
+@item
+MIPS:
+@samp{mips},
+@samp{mips3},
+@samp{mips4}
+
+@item
+Motorola:
+@samp{m68k},
+@samp{68000},
+@samp{68020},
+@samp{68030},
+@samp{68040},
+@samp{m88k},
+@samp{m88110},
+
+@item
+POWER: 
+@samp{power},
+@samp{power2},
+@samp{rs6000},
+@samp{powerpc},
+@samp{ppc601},
+@samp{powerpc64}
+
+@item
+Sparc:
+@samp{sparc},
+@samp{sparcv8},
+@samp{microsparc},
+@samp{supersparc},
+@samp{sparcv9},
+@samp{ultrasparc}
+
+@item
+x86 family:
+@samp{i386},
+@samp{i486},
+@samp{i586},
+@samp{pentium},
+@samp{pentiummmx},
+@samp{i686},
+@samp{pentiumpro},
+@samp{pentium2},
+@samp{pentium3},
+@samp{k6},
+@samp{k62},
+@samp{k63},
+@samp{athlon}
+
+@item
+Zilog:
+@samp{z8000},
+@samp{z8000x}
+
+@item
+Other:
+@samp{a29k}
+@samp{am29000},
+@samp{arm},
+@samp{clipper},
+@samp{i960},
+@samp{n32k},
+@samp{pyramid},
+@samp{sh},
+@samp{sh2},
+@samp{vax}
 @end itemize
+
+CPUs not listed use generic C code.  If you have trouble with the assembly code
+for some target, the generic C code can be selected with CPU @samp{unknown}.
+
+@item @option{CC}, @option{CFLAGS}
+
+The C compiler used is chosen from among some likely candidates, with GCC
+normally preferred if it's present.  The usual @samp{CC=whatever} can be passed
+to @samp{./configure} to choose something different.
+
+For some configurations specific compiler flags are set based on the target CPU
+and compiler, for others there may be an advantage to using
+@samp{CFLAGS="-whatever"} to choose the best flags for your compiler.
+
+@item @option{--disable-alloca}
+
+By default, MP allocates temporary workspace using @code{alloca} if that
+function is available, or @code{malloc} if not.  If you're working with large
+numbers and @code{alloca} overflows the available stack space you can build
+with @option{--disable-alloca} to use @code{malloc}.  Using @code{malloc} will
+probably be slightly slower.
+
+Depending on your system, the only indication of stack overflow might be a
+segmentation violation.  @code{setrlimit}, @command{ulimit} or @command{limit}
+might be able to increase the stack space available to programs.
+
+@item Documentation
+
+The document you're now reading is @file{gmp.texi}.  The usual automake targets
+are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
+@end table
+
+
+@section Notes for Particular Systems
+@table @asis
+
+@item AIX with PowerPC 64
+
+Currently only a 64-bit version of the MP library is built, and when linking
+your application you need to pass @option{-maix64} to @code{gcc} or
+@option{-q64} to @code{xlc}.  We hope this will change in a future version of
+MP.
+
+@item Sparc
+
+Using @samp{sparcv8} or @samp{supersparc} for the target CPU will give a
+significant performance increase on relevant systems.
+
+@item x86 Pentium and PentiumPro
+
+The Intel Pentium P5 code is good for its intended P5, but quite slow when run
+on Intel P6 class chips (PPro, P-II, P-III).  @samp{i386} is a better choice if
+you're making binaries that must run on both.
+
+@item x86 MMX and old GAS
+Old versions of GAS don't support MMX instructions, in particular version
+1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately there's no
+newer assembler available for FreeBSD 2.2.8).
+
+If the target CPU has MMX code but the assembler doesn't support it, a warning
+is given and non-MMX code is used instead.  This will be an inferior build,
+since the MMX code that's present is there because it's faster than the
+corresponding plain integer code.
+@end table
 
 
 @section Known Build Problems
+You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
-(You might find more up-to-date information at
-@samp{http://www.swox.com/gmp/}.)
+@table @asis
+@item NeXT prior to 3.3
+The system compiler on old versions of NeXT was a massacred and old GCC, even
+if the compiler called itself @file{cc}.  This compiler cannot be used to build
+MP, you need to get a real GCC, and install that before you compile MP.  (NeXT
+may have fixed this in release 3.3 of their system.)
 
-GCC 2.7.2 (or 2.6.3) for the POWER and PowerPC can not be used to compile MP,
-due to a bug in GCC.  If you want to use GCC for these machines, get GCC
-2.7.2.1 (or later).
+@item POWER and PowerPC
+Bugs in GCC 2.7.2 (and 2.6.3) mean it can't be used to compile MP on POWER or
+PowerPC.  If you want to use GCC for these machines, get GCC 2.7.2.1 (or
+later).
 
-If you are on a Sequent Symmetry, use the GNU assembler instead of the system
-assembler, since the latter has serious bugs.
+@item Sequent Symmetry
+Use the GNU assembler instead of the system assembler, since the latter has
+serious bugs.
 
-If you are on a VAX running Ultrix, you need to build and install the GNU
-assembler before you compile MP.  The VAX assembly in MP uses an instruction
-(@samp{jsobgtr}) that cannot be assembled by the Ultrix assembler.
+@item SunOS 4
+The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}.
+Use GCC instead if plan to use the function @code{mpq_get_d}.
 
-The system compiler on NeXT is a massacred and old GCC, even if the compiler
-calls itself @file{cc}.  This compiler cannot be used to build MP.  You need to
-get a real GCC, and install that before you compile MP.  (NeXT have fixed this
-in release 3.3 of their system.)
-
-The system C compiler under SunOS 4 has a bug that makes it miscompile
-mpq/get_d.c.  Use GCC instead if plan to use the function @code{mpq_get_d}.
-
-Please report other problems to @samp{bug-gmp@@gnu.org}.
-@xref{Reporting Bugs}.
+@item VAX running Ultrix
+You need to build and install the GNU assembler before you compile MP.  The VAX
+assembly in MP uses an instruction (@samp{jsobgtr}) that cannot be assembled by
+the Ultrix assembler.
+@end table
 
 @node MP Basics, Reporting Bugs, Installing MP, Top
 @comment  node-name,  next,  previous,  up
@@ -474,7 +617,7 @@ The function @code{mp_set_memory_functions} uses several global
 variables for storing the selected memory allocation functions.
 
 @item
-The memory allocation functions, @code{malloc} and friends, that GMP
+The memory allocation functions, @code{malloc} and friends, that MP
 uses unless directed to uses custom allocation, may not be reentrant.
 
 @item
@@ -709,7 +852,7 @@ If you think you have found a bug in the MP library, please investigate it and
 report it.  We have made this library available to you, and it is not too much
 to ask you to report the bugs that you find.
 
-But before you report a bug, please check @samp{http://www.swox.com/gmp/} for
+But before you report a bug, please check @uref{http://www.swox.com/gmp/} for
 patches for this release.
 
 There are a few things you should think about when you put your bug report
@@ -730,9 +873,9 @@ if you're using gcc, @samp{gcc -v}.  Also, include the output from @samp{uname
 
 If your bug report is good, we will do our best to help you to get a corrected
 version of the library; if the bug report is poor, we won't do anything about
-it (aside of chiding you to send better bug reports).
+it (apart from chiding you to send better bug reports).
 
-Send your bug report to: @samp{bug-gmp@@gnu.org}.
+Send your bug report to: @email{bug-gmp@@gnu.org}.
 
 If you think something in this manual is unclear, or downright incorrect, or if
 the language needs to be improved, please send a note to the same address.
@@ -2669,9 +2812,10 @@ The area at @var{r1p} needs to be @var{rs2size} @minus{} @var{s3size} +
 Divide @{@var{s2p}, @var{s2size}@} by @var{s3limb}, and write the quotient
 at @var{r1p}.  Return the remainder.
 
-In addition to an integer quotient, @var{xsize} fraction limbs are developed,
-and stored after the integral limbs.  Either or both @var{s1size} and
-@var{xsize} can be zero.  For most usages, @var{xsize} will be zero.
+The integer quotient is written to @{@var{r1p}+@var{xsize}, @var{s2size}@} and
+in addition @var{xsize} fraction limbs are developed and written to
+@{@var{r1p}, @var{xsize}@}.  Either or both @var{s2size} and @var{xsize} can be
+zero.  For most usages, @var{xsize} will be zero.
 
 The areas at @var{r1p} and @var{s2p} have to be identical or completely
 separate, not partially overlapping.
@@ -2685,6 +2829,16 @@ Use @code{mpn_divrem} in its stead.}
 @deftypefun mp_limb_t mpn_divmod_1 (mp_limb_t *@var{r1p}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_divrem_1} in its stead.}
+@end deftypefun
+
+@deftypefun mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, mp_size_t @var{size})
+Divide @{@var{sp}, @var{size}@} by 3, expecting it to divide exactly, and
+writing the quotient to @{@var{rp}, @var{size}@}.  If 3 divides exactly, the
+return value is zero and the quotient is correct.  If not, the return value is
+non-zero and the quotient won't be anything useful.
+
+This routine uses a multiply-by-inverse and will be faster than
+@code{mpn_divrem_1} on CPUs with fast multiplication but slow division.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
@@ -3117,8 +3271,8 @@ significant inspiration during several phases of the GMP development.  His
 mathematical expertise helped improve several algorithms.
 
 (This list is chronological, not ordered after significance.  If you have
-contributed to GMP but are not listed above, please tell tege@@swox.com about
-the omission!)
+contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
+about the omission!)
 
 @node References, , Contributors, Top
 @comment  node-name,  next,  previous,  up
@@ -3172,3 +3326,7 @@ v. 21 (March), 1995, pp. 111-122.
 
 @contents
 @bye
+
+@c Local variables:
+@c fill-column: 79
+@c End:
