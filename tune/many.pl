@@ -1154,7 +1154,7 @@ EOF
           print "fun_carry $fun_carry\n" if $opt{'t'};
 		    
 	  if ($lang =~ /\.(asm|S)/
-	      && ! grep(m"PROLOGUE\((.* )?$mpX$fun_carry[ )]",@file_contents)) {
+	      && ! grep(m"PROLOGUE\((.* )?$mpX$fun_carry[ ,)]",@file_contents)) {
 	    print "no PROLOGUE $mpX$fun_carry\n" if $opt{'t'};
 	    next;
 	  }
