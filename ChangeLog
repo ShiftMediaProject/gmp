@@ -19,6 +19,30 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/*.asm: Add some measured speeds on various x86s.
+
+	* tests/mpz/reuse.c, tests/mpf/reuse.c: Disable tests when using a
+	windows DLL, because certain global variable usages won't compile.
+
+	* configure.in (AC_CHECK_FUNCS): Add alarm.
+	* tests/spinner.c: Conditionalize alarm and SIGALRM availability, for
+	the benefit of mingw32.
+
+	* acinclude.m4 (GMP_ASM_TYPE, GMP_ASM_SIZE): Suppress .type and .size
+	on COFF.
+
+	* acinclude.m4 (GMP_PROG_HOST_CC): New macro.
+	* configure.in: Use it for windows DLL cross-compiles.
+	* aclocal.m4, configure: Regenerate with libtool patch to hold HOST_CC
+	in the generated libtool script.
+
+	* aclocal.m4, configure: Regenerate with libtool patch to suppress
+	warnings when probing command line limit on FreeBSD.
+
+	* demos/qcn.c (M_PI): Define if not already provided, helps mingw32.
+
 2001-10-17  Kevin Ryde  <kevin@swox.se>
 
 	* printf/doprnt.c: Use <stdint.h> for intmax_t.
