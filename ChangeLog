@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-02-17  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/sparc64/copyi.asm: Add some header comments.
+	* mpn/sparc64/copyd.asm: Likewise.
+
 	* mpn/arm/mul_1.asm: Put vl operand last for umull/umlal.
 	Add some header comments.
 	* mpn/arm/addmul_1.asm: Rewrite.
