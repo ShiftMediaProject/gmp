@@ -564,26 +564,29 @@ dnl  MAJOR.MINOR.SUBMINOR.  Set $gmp_compare_ge to "yes" or "no"
 dnl  accordingly, or to "error" if the version number string can't be
 dnl  parsed.
 dnl
-dnl  gcc --version is normally just "2.7.2.3" or "2.95.3" or whatever, but
-dnl  egcs gives something like "egcs-2.91".  "[a-z-]*" is used to match that
-dnl  (Solaris 8 sed doesn't support "?" or "*" of a group, like "\(...\)?"
-dnl  or "\(...\)*".)
+dnl  gcc 2.7.2, 2.95 and 3.0 just gave something like "2.7.2.3" or "2.95.3".
+dnl  egcs 2.91 gave something like "egcs-2.91".
+dnl  gcc 3.1 gives something like "gcc-3.1" on GNU/Linux, or something like
+dnl    "gcc.exe (GCC) 3.1" on MINGW.
 dnl
-dnl  There's no caching here, so that different CC's can be tested.
+dnl  "[a-zA-Z(). -]*" is used to match the prefixes.  (Solaris 8 sed doesn't
+dnl  support "?" or "*" of a group, like "\(...\)?"  or "\(...\)*".)
+dnl
+dnl  There's no caching here, so different CC's can be tested.
 
 AC_DEFUN(GMP_GCC_VERSION_GE,
 [tmp_version=`($1 --version) 2>&AC_FD_CC`
 echo "$1 --version '$tmp_version'" >&AC_FD_CC
 
-major=`(echo "$tmp_version" | sed -n ['s/^[a-z-]*\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+major=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
 echo "    major '$major'" >&AC_FD_CC
 
 ifelse([$3],,,
-[minor=`(echo "$tmp_version" | sed -n ['s/^[a-z-]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+[minor=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
 echo "    minor '$minor'" >&AC_FD_CC])
 
 ifelse([$4],,,
-[subminor=`(echo "$tmp_version" | sed -n ['s/^[a-z-]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+[subminor=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
 echo "    subminor '$subminor'" >&AC_FD_CC])
 
 if test -z "$major"; then
