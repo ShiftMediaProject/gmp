@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-01-29  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (mpn_mul_fft): Now returns int.
+
 2003-01-29  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
 
 	* mpn/generic/mul_fft.c: Major rewrite.
