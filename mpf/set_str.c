@@ -142,8 +142,10 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 
   exp_base = base;
   if (base < 0)
-    exp_base = 10;
-  base = ABS (base);
+    {
+      exp_base = 10;
+      base = -base;
+    }
 
   digit_value = digit_value_tab;
   if (base > 36)
