@@ -1,7 +1,7 @@
 /* Classify numbers as probable primes, primes or composites.
    With -q return true if the folowing argument is a (probable) prime.
 
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,15 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 char *progname;
 
+void
+print_usage_and_exit ()
+{
+  fprintf (stderr, "usage: %s -q nnn\n", progname);
+  fprintf (stderr, "usage: %s nnn ...\n", progname);
+  exit (-1);
+}
+
+int
 main (int argc, char **argv)
 {
   mpz_t n;
@@ -55,11 +64,4 @@ main (int argc, char **argv)
 	puts (" is a prime");
     }
   exit (0);
-}
-
-print_usage_and_exit ()
-{
-  fprintf (stderr, "usage: %s -q nnn\n", progname);
-  fprintf (stderr, "usage: %s nnn ...\n", progname);
-  exit (-1);
 }
