@@ -1484,8 +1484,9 @@ check_misc (void)
 #endif
 
   /* %zd etc won't be accepted by sscanf on old systems, and running
-     something to see if they work might be bad, so try it on glibc only */
-#ifdef __GLIBC__
+     something to see if they work might be bad, so only try it on glibc,
+     and only on a new enough version (glibc 2.0 doesn't have %zd) */
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 0)
   {
     mpz_t   z;
     size_t  s = -1;

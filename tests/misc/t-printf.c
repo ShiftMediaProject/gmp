@@ -907,8 +907,9 @@ check_misc (void)
              /**/ z,   z,   z,    z,    z,    z,       z);
 
   /* %zd for size_t won't be available on old systems, and running something
-     to see if it works might be bad, so try it on glibc only */
-#ifdef __GLIBC__
+     to see if it works might be bad, so only try it on glibc, and only on a
+     new enough version (glibc 2.0 doesn't have %zd) */
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 0)
   mpz_set_ui (z, 789L);
   check_one ("456 789 blah", "%zd %Zd blah", (size_t) 456, z);
 #endif
