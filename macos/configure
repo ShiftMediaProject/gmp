@@ -209,8 +209,7 @@ foreach $file (@asm_files) {
   while (<ASM>) {
     chomp;			# Remove whatever ending it was
 
-    s/\bdnl\b/;/;		# Use ; comments
-    s/\bC\b/;/;
+    s/\bdnl\b/;/ or s/\bC\b/;/;	# Use ; comments
 
     s/include\s*\(.*?\)//;	# Don't use include macro
 
