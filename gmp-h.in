@@ -722,6 +722,9 @@ unsigned long int __GMP_DECLSPEC mpz_hamdist _PROTO ((mpz_srcptr, mpz_srcptr)) _
 #define mpz_init __gmpz_init
 void __GMP_DECLSPEC mpz_init _PROTO ((mpz_ptr));
 
+#define mpz_init2 __gmpz_init2
+void __GMP_DECLSPEC mpz_init2 _PROTO ((mpz_ptr, unsigned long));
+
 #define mpz_init_set __gmpz_init_set
 void __GMP_DECLSPEC mpz_init_set _PROTO ((mpz_ptr, mpz_srcptr));
 
@@ -850,6 +853,9 @@ void __GMP_DECLSPEC mpz_random _PROTO ((mpz_ptr, mp_size_t));
 
 #define mpz_random2 __gmpz_random2
 void __GMP_DECLSPEC mpz_random2 _PROTO ((mpz_ptr, mp_size_t));
+
+#define mpz_realloc2 __gmpz_realloc2
+void __GMP_DECLSPEC mpz_realloc2 _PROTO ((mpz_ptr, unsigned long));
 
 #define mpz_remove __gmpz_remove
 unsigned long int __GMP_DECLSPEC mpz_remove _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
