@@ -21,7 +21,7 @@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-SUBDIRS = . devel mpz mpq mpf rand mpbsd
+SUBDIRS = . devel mpn mpz mpq mpf rand mpbsd
 
 include ../mpn/Makeasm.am
 
