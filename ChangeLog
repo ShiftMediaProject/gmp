@@ -1,3 +1,14 @@
+2000-10-24  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/freq.c: Explicitly #include config.h before other include files.
+
+	* mpz/tests/reuse.c (FAIL2): New #define.
+	(main): Use FAIL2.  Now this test properly returns non-zero exit
+	status when it fails.
+
+	* mpn/powerpc32/gmp-mparam.h: Retune.
+	* mpn/powerpc64/gmp-mparam.h: Retune.
+
 2000-10-24  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/cross.pl: Support 8 and 16 byte code alignment.
@@ -12,7 +23,7 @@
 
 2000-10-23  Torbjorn Granlund  <tege@swox.com>
 
-	* configure.in, SPEED_CYCLECOUNTER_OBJS switch: Add ia64 case.
+	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]: Add ia64 case.
 
 	* mpn/ia64/gmp-mparam.h: Fill in some parameters.
 
@@ -79,7 +90,7 @@
 2000-10-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/default.m4: New file.
-	* configure.in, config.m4 switch (ia64*-*-*): Use ia64/default.m4.
+	* configure.in [config.m4 switch] (ia64*-*-*): Use ia64/default.m4.
 
 	* mpn/ia64/mul_1.asm: New file.
 	* mpn/ia64/addmul_1.asm: New file.
@@ -98,10 +109,10 @@
 
 	* mpz/tstbit.c: Rewrite (partly to work around GCC 2.95.2 HPPA bug).
 
-	* configure.in, path switch:
+	* configure.in [path switch]:
 	(hppa2.0*-*-*): For non-CC64 case, update path.
 
-	* configure.in, compiler switch:
+	* configure.in [compiler switch]:
 	(hppa2.0w-*-*): Match with same regexp in both places.
 	(hppa*-*-*): New case.
 	(all hppa alternatives): Don't inherit default gmp_cflags_{cc,c89}.
