@@ -780,7 +780,7 @@ EOF
 	echo m68k-unknown-openbsd${UNAME_RELEASE}
 	exit 0 ;;
     i?86:BSD/386:*:* | i?86:BSD/OS:*:* | *:Ascend\ Embedded/OS:*:*)
-	echo ${UNAME_MACHINE}-pc-bsdi${UNAME_RELEASE}
+	echo ${X86CPU}-pc-bsdi${UNAME_RELEASE}
 	exit 0 ;;
     sparc*:BSD/OS:*:*)
 	echo sparc-unknown-bsdi${UNAME_RELEASE}
@@ -1045,29 +1045,29 @@ EOF
         # I am not positive that other SVR4 systems won't match this,
 	# I just have to hope.  -- rms.
         # Use sysv4.2uw... so that sysv4* matches it.
-	echo ${UNAME_MACHINE}-pc-sysv4.2uw${UNAME_VERSION}
+	echo ${X86CPU}-pc-sysv4.2uw${UNAME_VERSION}
 	exit 0 ;;
     i?86:*:4.*:* | i?86:SYSTEM_V:4.*:*)
 	UNAME_REL=`echo ${UNAME_RELEASE} | sed 's/\/MP$//'`
 	if grep Novell /usr/include/link.h >/dev/null 2>/dev/null; then
-		echo ${UNAME_MACHINE}-univel-sysv${UNAME_REL}
+		echo ${X86CPU}-univel-sysv${UNAME_REL}
 	else
-		echo ${UNAME_MACHINE}-pc-sysv${UNAME_REL}
+		echo ${X86CPU}-pc-sysv${UNAME_REL}
 	fi
 	exit 0 ;;
     i?86:*:5:7*)
         # Fixed at (any) Pentium or better
         UNAME_MACHINE=i586
         if [ ${UNAME_SYSTEM} = "UnixWare" ] ; then
-	    echo ${UNAME_MACHINE}-sco-sysv${UNAME_RELEASE}uw${UNAME_VERSION}
+	    echo ${X86CPU}-sco-sysv${UNAME_RELEASE}uw${UNAME_VERSION}
 	else
-	    echo ${UNAME_MACHINE}-pc-sysv${UNAME_RELEASE}
+	    echo ${X86CPU}-pc-sysv${UNAME_RELEASE}
 	fi
 	exit 0 ;;
     i?86:*:3.2:*)
 	if test -f /usr/options/cb.name; then
 		UNAME_REL=`sed -n 's/.*Version //p' </usr/options/cb.name`
-		echo ${UNAME_MACHINE}-pc-isc$UNAME_REL
+		echo ${X86CPU}-pc-isc$UNAME_REL
 	elif /bin/uname -X 2>/dev/null >/dev/null ; then
 		UNAME_REL=`(/bin/uname -X|egrep Release|sed -e 's/.*= //')`
 		(/bin/uname -X|egrep i80486 >/dev/null) && UNAME_MACHINE=i486
@@ -1077,13 +1077,13 @@ EOF
 			&& UNAME_MACHINE=i686
 		(/bin/uname -X|egrep '^Machine.*Pentium Pro' >/dev/null) \
 			&& UNAME_MACHINE=i686
-		echo ${UNAME_MACHINE}-pc-sco$UNAME_REL
+		echo ${X86CPU}-pc-sco$UNAME_REL
 	else
-		echo ${UNAME_MACHINE}-pc-sysv32
+		echo ${X86CPU}-pc-sysv32
 	fi
 	exit 0 ;;
     i?86:*DOS:*:*)
-	echo ${UNAME_MACHINE}-pc-msdosdjgpp
+	echo ${X86CPU}-pc-msdosdjgpp
 	exit 0 ;;
     pc:*:*:*)
 	# Left here for compatibility:
