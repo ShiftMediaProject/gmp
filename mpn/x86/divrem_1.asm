@@ -82,13 +82,13 @@ C     but that algorithm has been found to suffer from the releatively poor
 C     carry handling on K6 and too many auxiliary instructions.  The
 C     fractional part however could be done at about 13 c/l.
 C
-C P5: Moving the load down to pair with the store might save 1 cycle, but
-C     that doesn't seem worth bothering with, since it'd be only a 2.2%
-C     saving.
-C
-C     Again here the auxiliary instructions hinder a multiply-by-inverse,
+C P5: Again here the auxiliary instructions hinder a multiply-by-inverse,
 C     though there might be a 10-15% speedup available
-
+C
+C     It might be thought that moving the load down to pair with the store
+C     would save 1 cycle, but that doesn't seem to happen in practice, and
+C     in any case would be a mere 2.2% saving, so it hardly worth bothering
+C     about.
 
 defframe(PARAM_CARRY,  24)
 defframe(PARAM_DIVISOR,20)
