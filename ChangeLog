@@ -1,3 +1,8 @@
+2000-04-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/aors_n.asm: Remove parentheses around an immediate that
+	Solaris "as" doesn't like, change by Torbjorn.
+
 2000-04-24  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (AC_CHECK_FUNCS): Add strtoul.
