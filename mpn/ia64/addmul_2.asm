@@ -101,6 +101,7 @@ PROLOGUE(mpn_addmul_2)
 ifdef(`HAVE_ABI_32',
 `	addp4		rp = 0, rp		C M I
 	addp4		up = 0, up		C M I
+	addp4		vp = 0, vp		C M I
 	zxt4		n = n			C I
 	;;')
 
