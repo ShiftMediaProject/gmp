@@ -1785,6 +1785,8 @@ to be incompatible with future versions of GMP.}
 @cindex Headers
 
 @cindex @code{gmp.h}
+@cindex Include files
+@cindex @code{#include}
 All declarations needed to use GMP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
 
@@ -1792,6 +1794,7 @@ All declarations needed to use GMP are collected in the include file
 #include <gmp.h>
 @end example
 
+@cindex @code{stdio.h}
 Note however that prototypes for GMP functions with @code{FILE *} parameters
 are only provided if @code{<stdio.h>} is included too.
 
@@ -1800,6 +1803,7 @@ are only provided if @code{<stdio.h>} is included too.
 #include <gmp.h>
 @end example
 
+@cindex @code{stdarg.h}
 Likewise @code{<stdarg.h>} (or @code{<varargs.h>}) is required for prototypes
 with @code{va_list} parameters, such as @code{gmp_vprintf}.  And
 @code{<obstack.h>} for prototypes with @code{struct obstack} parameters, such
@@ -1807,6 +1811,7 @@ as @code{gmp_obstack_printf}, when available.
 
 @cindex Libraries
 @cindex Linking
+@cindex @code{libgmp}
 All programs using GMP must link against the @file{libgmp} library.  On a
 typical Unix-like system this can be done with @samp{-lgmp}, for example
 
@@ -1814,6 +1819,7 @@ typical Unix-like system this can be done with @samp{-lgmp}, for example
 gcc myprogram.c -lgmp
 @end example
 
+@cindex @code{libgmpxx}
 GMP C++ functions are in a separate @file{libgmpxx} library.  This is built
 and installed if C++ support has been enabled (@pxref{Build Options}).  For
 example,
@@ -1822,6 +1828,7 @@ example,
 g++ mycxxprog.cc -lgmpxx -lgmp
 @end example
 
+@cindex Libtool
 GMP is built using Libtool and an application can use that to link if desired,
 @GMPpxreftopu{libtool, GNU Libtool,
 http://www.gnu.org/manual/libtool/html_node/libtool_toc.html}
