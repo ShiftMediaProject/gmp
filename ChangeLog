@@ -13,6 +13,7 @@
 	
 	* compat.c: New file, entry points for upward binary compatibility.
 	(mpn_divexact_by3): Compatibility function.
+	* Makefile.am (libgmp_la_SOURCES): Add compat.c.
 
 	* mpn/tests/ref.c: Rearrange macros for ansi2knr.
 	(div1): Renamed from div to avoid library function.
