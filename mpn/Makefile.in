@@ -44,11 +44,11 @@ libmpn.a: Makefile mp_bases.o $(MPN_OBJECTS)
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
 .s.o:
-	$(CCAS) -c $(SFLAGS) $(CFLAGS) $<
+	$(CCAS) -c $(SFLAGS) $(CFLAGS) $(XCFLAGS) $<
 
 .S.o:
-	$(CPP) $(SFLAGS) $(INCLUDES) $(CFLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) -c $(SFLAGS) $(CFLAGS) tmp-$*.s -o $@
+	$(CPP) $(SFLAGS) $(INCLUDES) $(CFLAGS) $(XCFLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(CCAS) -c $(SFLAGS) $(CFLAGS) $(XCFLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 
 clean mostlyclean:
