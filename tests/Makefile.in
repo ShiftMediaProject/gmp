@@ -181,7 +181,7 @@ libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
 # Create ansi2knr rules for sources conditionally used
 libdummy_la_SOURCES = x86check.c
 
-check_PROGRAMS = t-constants t-count_zeros t-modlinv
+check_PROGRAMS = t-constants t-count_zeros t-gmpmax t-modlinv
 TESTS = $(check_PROGRAMS)
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -196,7 +196,7 @@ am_libtests_la_OBJECTS = memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
 	refmpz$U.lo spinner$U.lo trace$U.lo
 libtests_la_OBJECTS = $(am_libtests_la_OBJECTS)
 check_PROGRAMS = t-constants$(EXEEXT) t-count_zeros$(EXEEXT) \
-	t-modlinv$(EXEEXT)
+	t-gmpmax$(EXEEXT) t-modlinv$(EXEEXT)
 t_constants_SOURCES = t-constants.c
 t_constants_OBJECTS = t-constants$U.$(OBJEXT)
 t_constants_LDADD = $(LDADD)
@@ -207,6 +207,11 @@ t_count_zeros_OBJECTS = t-count_zeros$U.$(OBJEXT)
 t_count_zeros_LDADD = $(LDADD)
 t_count_zeros_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
 t_count_zeros_LDFLAGS =
+t_gmpmax_SOURCES = t-gmpmax.c
+t_gmpmax_OBJECTS = t-gmpmax$U.$(OBJEXT)
+t_gmpmax_LDADD = $(LDADD)
+t_gmpmax_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
+t_gmpmax_LDFLAGS =
 t_modlinv_SOURCES = t-modlinv.c
 t_modlinv_OBJECTS = t-modlinv$U.$(OBJEXT)
 t_modlinv_LDADD = $(LDADD)
@@ -228,7 +233,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) \
-	t-constants.c t-count_zeros.c t-modlinv.c
+	t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
@@ -236,7 +241,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-constants.c t-count_zeros.c t-modlinv.c
+SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c
 
 all: all-recursive
 
@@ -265,6 +270,9 @@ t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
 t-count_zeros$(EXEEXT): $(t_count_zeros_OBJECTS) $(t_count_zeros_DEPENDENCIES)
 	@rm -f t-count_zeros$(EXEEXT)
 	$(LINK) $(t_count_zeros_LDFLAGS) $(t_count_zeros_OBJECTS) $(t_count_zeros_LDADD) $(LIBS)
+t-gmpmax$(EXEEXT): $(t_gmpmax_OBJECTS) $(t_gmpmax_DEPENDENCIES)
+	@rm -f t-gmpmax$(EXEEXT)
+	$(LINK) $(t_gmpmax_LDFLAGS) $(t_gmpmax_OBJECTS) $(t_gmpmax_LDADD) $(LIBS)
 t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES)
 	@rm -f t-modlinv$(EXEEXT)
 	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
@@ -315,6 +323,8 @@ t-constants_.c: t-constants.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-constants.c; then echo $(srcdir)/t-constants.c; else echo t-constants.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-constants_.c || rm -f t-constants_.c
 t-count_zeros_.c: t-count_zeros.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-count_zeros.c; then echo $(srcdir)/t-count_zeros.c; else echo t-count_zeros.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-count_zeros_.c || rm -f t-count_zeros_.c
+t-gmpmax_.c: t-gmpmax.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gmpmax.c; then echo $(srcdir)/t-gmpmax.c; else echo t-gmpmax.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gmpmax_.c || rm -f t-gmpmax_.c
 t-modlinv_.c: t-modlinv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-modlinv_.c || rm -f t-modlinv_.c
 trace_.c: trace.c $(ANSI2KNR)
@@ -324,9 +334,9 @@ x86check_.c: x86check.c $(ANSI2KNR)
 memory_.$(OBJEXT) memory_.lo misc_.$(OBJEXT) misc_.lo refmpf_.$(OBJEXT) \
 refmpf_.lo refmpn_.$(OBJEXT) refmpn_.lo refmpz_.$(OBJEXT) refmpz_.lo \
 spinner_.$(OBJEXT) spinner_.lo t-constants_.$(OBJEXT) t-constants_.lo \
-t-count_zeros_.$(OBJEXT) t-count_zeros_.lo t-modlinv_.$(OBJEXT) \
-t-modlinv_.lo trace_.$(OBJEXT) trace_.lo x86check_.$(OBJEXT) \
-x86check_.lo : $(ANSI2KNR)
+t-count_zeros_.$(OBJEXT) t-count_zeros_.lo t-gmpmax_.$(OBJEXT) \
+t-gmpmax_.lo t-modlinv_.$(OBJEXT) t-modlinv_.lo trace_.$(OBJEXT) \
+trace_.lo x86check_.$(OBJEXT) x86check_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
