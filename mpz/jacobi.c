@@ -1,48 +1,340 @@
-/* mpz_jacobi (op1, op2).
-   Contributed by Bennet Yee (bsy) at Carnegie-Mellon University
+/* mpz_jacobi, mpz_legendre, mpz_kronecker -- mpz/mpz Jacobi symbols.
 
-Copyright 1991, 1996, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
 The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at your
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
 option) any later version.
 
 The GNU MP Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
 License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU Library General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h>
 #include "gmp.h"
+#include "gmp-impl.h"
+#include "longlong.h"
 
-/* Precondition:  both p and q are positive */
+
+/* Change this to "#define TRACE(x) x" for some traces. */
+#define TRACE(x)
+
+
+#define MPN_RSHIFT_OR_COPY(dst,src,size,shift)                  \
+  do {                                                          \
+    if ((shift) != 0)                                           \
+      {                                                         \
+        ASSERT_NOCARRY (mpn_rshift (dst, src, size, shift));    \
+        (size) -= ((dst)[(size)-1] == 0);                       \
+      }                                                         \
+    else                                                        \
+      MPN_COPY (dst, src, size);                                \
+  } while (0)
+
+
+/* After some setups this is just a simple binary GCD with the jacobi symbol
+   result tracked during the reduction.
+
+   The special cases for a or b fitting in one limb let mod_1 or modexact_1
+   get used without any copying, and end up just as efficient as the mixed
+   precision mpz_kronecker_ui etc.
+
+   When tdiv_qr is called it's not necessary to make "a" odd or make a
+   working copy of it, but tdiv_qr is going to be pretty slow so it's not
+   worth bothering trying to save anything for that case.
+
+   Enhancements:
+
+   mpn_bdivmod could be used instead of mpn_tdiv_qr, like in mpn_gcd.
+   Currently tdiv_qr is preferred since it's sub-quadratic on big sizes,
+   although bdivmod might be a touch quicker on small sizes.  This can be
+   revised when bdivmod becomes sub-quadratic too.
+
+   Some sort of multi-step algorithm should be used.  The current subtract
+   and shift for every bit is very inefficient.  Lehmer (per current gcdext)
+   would need some low bits included in its calculation to apply the sign
+   change for reciprocity.  Binary Lehmer keeps low bits to strip twos
+   anyway, so might be better suited.  Maybe the accelerated GCD style k-ary
+   reduction would work, if sign changes due to the extra factors it
+   introduces can be accounted for (or maybe they can be ignored).  */
+
+
+/* This implementation depends on BITS_PER_MP_LIMB being even, so that
+   (a/2)^BITS_PER_MP_LIMB = 1 and so there's no need to pay attention to how
+   many low zero limbs are stripped.  */
+#if BITS_PER_MP_LIMB % 2 != 0
+Error, error, need BITS_PER_MP_LIMB even
+#endif
+
+#if USE_LEADING_REGPARM
+#define JAC_OR_KRON(a,b,e)  jac_or_kron(e,a,b)
+#define PARAMS              int kronecker, mpz_srcptr a, mpz_srcptr b
+static int jac_or_kron (PARAMS) __attribute__ ((regparm (1)));
+#else
+#define JAC_OR_KRON(a,b,e)  jac_or_kron(a,b,e)
+#define PARAMS              mpz_srcptr a, mpz_srcptr b, int kronecker
+#endif
+
+static int
+jac_or_kron (PARAMS)
+{
+  mp_srcptr  asrcp, bsrcp;
+  mp_size_t  asize, bsize;
+  mp_ptr     ap, bp;
+  mp_limb_t  alow, blow, ahigh, bhigh, asecond, bsecond;
+  unsigned   atwos, btwos;
+  int        result_bit1;
+  TMP_DECL (marker);
+
+  TRACE (printf ("start asize=%d bsize=%d\n", SIZ(a), SIZ(b));
+         mpz_trace (" a", a);
+         mpz_trace (" b", b));
+
+  asize = SIZ(a);
+  asrcp = PTR(a);
+  alow = asrcp[0];
+
+  bsize = SIZ(b);
+  if (bsize == 0)
+    return JACOBI_LS0 (alow, asize);  /* (a/0) */
+
+  bsrcp = PTR(b);
+  blow = bsrcp[0];
+
+  if (asize == 0)
+    return JACOBI_0LS (blow, bsize);  /* (0/b) */
+
+  /* for mpz_kronecker, (even/even)=0 */
+  if (kronecker && ((alow | blow) & 1) == 0)
+    return 0;
+
+  /* account for effect of sign of b, then ignore it */
+  result_bit1 = JACOBI_BSGN_SS_BIT1 (asize, bsize);
+  bsize = ABS (bsize);
+
+  /* low zero limbs on b can be discarded */
+  MPN_STRIP_LOW_ZEROS_NOT_ZERO (bsrcp, bsize, blow);
+
+  count_trailing_zeros (btwos, blow);
+  TRACE (printf ("b twos %u\n", btwos));
+
+  /* establish shifted blow */
+  blow >>= btwos;
+  if (bsize > 1)
+    {
+      bsecond = bsrcp[1];
+      if (btwos != 0)
+        blow |= bsecond << (BITS_PER_MP_LIMB-btwos);
+    }
+
+  /* account for effect of sign of a, then ignore it */
+  result_bit1 ^= JACOBI_ASGN_SU_BIT1 (asize, blow);
+  asize = ABS (asize);
+          
+  if (bsize == 1 || (bsize == 2 && (bsecond >> btwos) == 0))
+    {
+      /* special case handled with modexact and no copying */
+
+      /* for mpz_kronecker, (a/2)=(2/a) with a odd, and if b is even then a
+         is odd here */
+      result_bit1 ^= kronecker & JACOBI_TWOS_U_BIT1 (btwos, alow);
+
+      if (blow == 1)   /* (a/1)=1 always */
+        return JACOBI_BIT1_TO_PN (result_bit1);
+      
+      JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, alow, asrcp, asize, blow);
+      TRACE (printf ("base (%lu/%lu) with %d\n",
+                     alow, blow, JACOBI_BIT1_TO_PN (result_bit1)));
+      return mpn_jacobi_base (alow, blow, result_bit1);
+    }
+
+  /* Low zero limbs on a can be discarded.  No need to do this for bsize==1,
+     as it's expected to strip anything only very rarely.  */
+  MPN_STRIP_LOW_ZEROS_NOT_ZERO (asrcp, asize, alow);
+
+  count_trailing_zeros (atwos, alow);
+  TRACE (printf ("a twos %u\n", atwos));
+  result_bit1 ^= JACOBI_TWOS_U_BIT1 (atwos, blow);
+
+  /* establish shifted alow */
+  alow >>= atwos;
+  if (asize > 1)
+    {
+      asecond = asrcp[1];
+      if (atwos != 0)
+        alow |= asecond << (BITS_PER_MP_LIMB-atwos);
+    }
+  
+  /* for mpz_kronecker, (a/2)=(2/a) with a odd
+     for mpz_jacobi, ignore btwos */
+  result_bit1 ^= kronecker & JACOBI_TWOS_U_BIT1 (btwos, alow);
+
+  if (asize == 1 || (asize == 2 && (asecond >> atwos) == 0))
+    {
+      /* another special case with modexact and no copying */
+
+      if (alow == 1)  /* (1/b)=1 always */
+        return JACOBI_BIT1_TO_PN (result_bit1);
+
+      /* b still has its twos, so cancel out their effect */
+      result_bit1 ^= JACOBI_TWOS_U_BIT1 (btwos, alow);
+      
+      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);  /* now (b/a) */
+      JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, blow, bsrcp, bsize, alow);
+      TRACE (printf ("base (%lu/%lu) with %d\n",
+                     blow, alow, JACOBI_BIT1_TO_PN (result_bit1)));
+      return mpn_jacobi_base (blow, alow, result_bit1);
+    }
+
+
+  TMP_MARK (marker);
+  ap = TMP_ALLOC_LIMBS (asize + bsize);
+  bp = ap + asize;
+
+  MPN_RSHIFT_OR_COPY (ap, asrcp, asize, atwos);
+  ASSERT (alow == ap[0]);
+  TRACE (mpn_trace ("stripped a", ap, asize));
+
+  MPN_RSHIFT_OR_COPY (bp, bsrcp, bsize, btwos);
+  ASSERT (blow == bp[0]);
+  TRACE (mpn_trace ("stripped b", bp, bsize));
+
+  /* swap if necessary to make a longer than b */
+  if (asize < bsize)
+    {
+      TRACE (printf ("swap\n"));
+      MPN_PTR_SWAP (ap,asize, bp,bsize);
+      MP_LIMB_T_SWAP (alow, blow);
+      result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
+    }
+
+  /* If a is bigger than b then reduce to a mod b.
+     Division is much faster than chipping away at "a" bit-by-bit. */
+  if (asize > bsize)
+    {
+      mp_ptr  rp = TMP_ALLOC_LIMBS (asize+1);
+      mp_ptr  qp = rp + bsize;
+
+      TRACE (printf ("tdiv_qr asize=%ld bsize=%ld\n", asize, bsize));
+
+      mpn_tdiv_qr (qp, rp, 0, ap, asize, bp, bsize);
+      ap = rp;
+      asize = bsize;
+      MPN_NORMALIZE (ap, asize);
+
+      TRACE (printf ("tdiv_qr asize=%ld bsize=%ld\n", asize, bsize);
+             mpn_trace (" a", ap, asize);
+             mpn_trace (" b", bp, bsize));
+
+      if (asize == 0)  /* (0/b)=0 for b!=1 */
+        goto zero;
+
+      alow = ap[0];
+      goto strip_a;
+    }
+
+  for (;;)
+    {
+      ASSERT (asize >= 1);         /* a,b non-empty */
+      ASSERT (bsize >= 1);
+      ASSERT (ap[asize-1] != 0);   /* a,b normalized (and hence non-zero) */
+      ASSERT (bp[bsize-1] != 0);
+      ASSERT (alow == ap[0]);      /* low limb copies should be correct */
+      ASSERT (blow == bp[0]);
+      ASSERT (alow & 1);           /* a,b odd */
+      ASSERT (blow & 1);
+
+      TRACE (printf ("top asize=%ld bsize=%ld\n", asize, bsize);
+             mpn_trace (" a", ap, asize);
+             mpn_trace (" b", bp, bsize));
+
+      /* swap if necessary to make a>=b, applying reciprocity
+         high limbs are almost always enough to tell which is bigger */
+      if (asize < bsize
+          || (asize == bsize
+              && ((ahigh=ap[asize-1]) < (bhigh=bp[asize-1])
+                  || (ahigh == bhigh
+                      && mpn_cmp (ap, bp, asize-1) < 0))))
+        {
+          TRACE (printf ("swap\n"));
+          MPN_PTR_SWAP (ap,asize, bp,bsize);
+          MP_LIMB_T_SWAP (alow, blow);
+          result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
+        }
+
+      if (asize == 1)
+        break;
+
+      /* a = a-b */
+      ASSERT (asize >= bsize);
+      ASSERT_NOCARRY (mpn_sub (ap, ap, asize, bp, bsize));
+      MPN_NORMALIZE (ap, asize);
+      alow = ap[0];
+
+      /* (0/b)=0 for b!=1.  b!=1 when a==0 because otherwise would have had
+         a==1 which is asize==1 and would have exited above.  */
+      if (asize == 0)
+        goto zero;
+
+    strip_a:
+      /* low zero limbs on a can be discarded */
+      MPN_STRIP_LOW_ZEROS_NOT_ZERO (ap, asize, alow);
+
+      if ((alow & 1) == 0)
+        {
+          /* factors of 2 from a */
+          unsigned  twos;
+          count_trailing_zeros (twos, alow);
+          TRACE (printf ("twos %u\n", twos));
+          result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, blow);
+          ASSERT_NOCARRY (mpn_rshift (ap, ap, asize, twos));
+          asize -= (ap[asize-1] == 0);
+          alow = ap[0];
+        }
+    }
+
+  ASSERT (asize == 1 && bsize == 1);  /* just alow and blow left */
+  TMP_FREE (marker);
+
+  /* (1/b)=1 always (in this case have b==1 because a>=b) */
+  if (alow == 1)
+    return JACOBI_BIT1_TO_PN (result_bit1);
+
+  /* swap with reciprocity and do (b/a) */
+  result_bit1 ^= JACOBI_RECIP_UU_BIT1 (alow, blow);
+  TRACE (printf ("base (%lu/%lu) with %d\n",
+                 blow, alow, JACOBI_BIT1_TO_PN (result_bit1)));
+  return mpn_jacobi_base (blow, alow, result_bit1);
+
+ zero:
+  TMP_FREE (marker);
+  return 0;
+}
+
 
 int
-mpz_jacobi (mpz_srcptr pi, mpz_srcptr qi)
+mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
-#if GCDCHECK
-  int retval;
-  mpz_t gcdval;
+  return JAC_OR_KRON (a, b, 0);
+}
 
-  mpz_init (gcdval);
-  mpz_gcd (gcdval, pi, qi);
-  if (!mpz_cmp_ui (gcdval, 1L))
-    {
-      /* J(ab,cb) = J(ab,c)J(ab,b) = J(ab,c)J(0,b) = J(ab,c)*0 */
-      retval = 0;
-    }
-  else
-    retval = mpz_legendre (pi, qi);
-  mpz_clear (gcdval);
-  return retval;
-#else
-  return mpz_legendre (pi, qi);
-#endif
+int
+mpz_legendre (mpz_srcptr a, mpz_srcptr b)
+{
+  return JAC_OR_KRON (a, b, 0);
+}
+
+int
+mpz_kronecker (mpz_srcptr a, mpz_srcptr b)
+{
+  return JAC_OR_KRON (a, b, -1);
 }
