@@ -41,3 +41,6 @@ m4_assert_numargs(1)
 	COFF_TYPE($1)
 $1:
 ')
+
+
+divert`'dnl
