@@ -739,6 +739,8 @@ extern mp_size_t  fib_threshold[];
 #define BZ_THRESHOLD             bz_threshold[0]
 #define FIB_THRESHOLD            fib_threshold[0]
 
+#define TOOM3_MUL_THRESHOLD_LIMIT  700
+
 #endif
 
 #if defined (__cplusplus)
