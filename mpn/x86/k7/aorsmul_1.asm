@@ -256,8 +256,8 @@ L(here):
 	leal	ifelse(UNROLL_BYTES,256,128)   (%edi,%ebx,4), %edi
 
 	movl	%edx, %ebx	C high carry
-	cmovnz_ecx_ebx		C high,low carry other way around
-	cmovnz_edx_ecx
+	cmovnz(	%ecx, %ebx)	C high,low carry other way around
+	cmovnz(	%edx, %ecx)
 
 	jmp	*VAR_JUMP
 
