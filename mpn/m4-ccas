@@ -39,6 +39,7 @@ M4=
 CC=
 DEFS=
 ASM=
+SEEN_O=no
 
 for i in "$@"; do
   case $i in
@@ -58,6 +59,10 @@ for i in "$@"; do
       ASM=$i
       CC="$CC $TMP"
       ;;
+    -o)
+      SEEN_O=yes
+      CC="$CC $i"
+      ;;
     *)
       CC="$CC $i"
       ;;
@@ -72,6 +77,14 @@ fi
 if test -z "$ASM"; then
   echo "No .asm specified"
   exit 1
+fi
+
+# Libtool adds it's own -o when sending output to .libs/foo.o, but not
+# when just wanting foo.o in the current directory.  We need an
+# explicit -o in both cases since we're assembling tmp-foo.s.
+#
+if test $SEEN_O = no; then
+  CC="$CC -o `echo "$ASM" | sed 's/\.asm$//'`.o"
 fi
 
 echo "$M4 $DEFS $ASM >$TMP"
