@@ -31,7 +31,7 @@ mpf_set_prec (mpf_ptr x, unsigned long int prec_in_bits)
   /* Do nothing if we're already the right precision.  This can arise if an
      application is gradually increasing or decreasing its requested minimum
      precision.  */
-  prec = MPF_BITS_TO_PREC (prec_in_bits);
+  prec = __GMPF_BITS_TO_PREC (prec_in_bits);
   if (prec == PREC(x))
     return;
 
