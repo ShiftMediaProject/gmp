@@ -132,17 +132,22 @@ main (argc, argv)
   mp_limb_t cyx, cyy;
   int i;
   long t0, t;
-  int test;
+  unsigned int test;
   mp_limb_t xlimb;
   mp_size_t size;
   double cyc;
+  unsigned int ntests;
 
-  for (test = 0; ; test++)
+  ntests = ~(unsigned) 0;
+  if (argc == 2)
+    ntests = strtol (argv[1], 0, 0);
+
+  for (test = 1; test <= ntests; test++)
     {
 #if TIMES == 1 && ! defined (PRINT)
       if (test % (SIZE > 10000 ? 1 : 10000 / SIZE) == 0)
 	{
-	  printf ("\r%d", test);
+	  printf ("\r%u", test);
 	  fflush (stdout);
 	}
 #endif
@@ -231,7 +236,12 @@ main (argc, argv)
 		printf (" ");
 #endif
 	    }
-	  printf ("\nTEST NUMBER %d\n", test);
+	  printf ("\n");
+	  if (dx[0] != 0x87654321)
+	    printf ("clobbered at low end\n");
+	  if (dx[size+1] != 0x12345678)
+	    printf ("clobbered at high end\n");
+	  printf ("TEST NUMBER %u\n", test);
 	  abort();
 	}
 #endif
