@@ -1,7 +1,6 @@
-/* test mpz_congruent_p and mpz_congruent_ui_p */
+/* test mpz_congruent_p and mpz_congruent_ui_p
 
-/*
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -175,7 +173,7 @@ check_random (int argc, char *argv[])
 
       if (! mpz_pow2abs_p (d))
         {
-          mpz_flipbit (a, urandom() % (8*BITS_PER_MP_LIMB));
+          refmpz_combit (a, urandom() % (8*BITS_PER_MP_LIMB));
           check_one (a, c, d, 0);
         }
     }
