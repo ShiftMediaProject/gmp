@@ -1,6 +1,7 @@
 /* mp.h -- Definitions for Berkeley compatible multiple precision functions.
 
-Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 1996, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -80,48 +81,42 @@ typedef struct
 /* User-visible types.  */
 typedef __mpz_struct MINT;
 
-#ifdef __STDC__
-void mp_set_memory_functions (void *(*) (size_t),
-			      void *(*) (void *, size_t, size_t),
-			      void (*) (void *, size_t));
-MINT *itom (signed short int);
-MINT *xtom (const char *);
-void move (const MINT *, MINT *);
-void madd (const MINT *, const MINT *, MINT *);
-void msub (const MINT *, const MINT *, MINT *);
-void mult (const MINT *, const MINT *, MINT *);
-void mdiv (const MINT *, const MINT *, MINT *, MINT *);
-void sdiv (const MINT *, signed short int, MINT *, signed short int *);
-void msqrt (const MINT *, MINT *, MINT *);
-void pow (const MINT *, const MINT *, const MINT *, MINT *);
-void rpow (const MINT *, signed short int, MINT *);
-void gcd (const MINT *, const MINT *, MINT *);
-int mcmp (const MINT *, const MINT *);
-void min (MINT *);
-void mout (const MINT *);
-char *mtox (const MINT *);
-void mfree (MINT *);
 
+#ifndef _PROTO
+#if (__STDC__-0) || defined (__cplusplus)
+#define _PROTO(x) x
 #else
+#define _PROTO(x) ()
+#endif
+#endif
 
-void mp_set_memory_functions ();
-MINT *itom ();
-MINT *xtom ();
-void move ();
-void madd ();
-void msub ();
-void mult ();
-void mdiv ();
-void sdiv ();
-void msqrt ();
-void pow ();
-void rpow ();
-void gcd ();
-int mcmp ();
-void min ();
-void mout ();
-char *mtox ();
-void mfree ();
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
+void mp_set_memory_functions _PROTO ((void *(*) (size_t),
+                                      void *(*) (void *, size_t, size_t),
+                                      void (*) (void *, size_t)));
+MINT *itom _PROTO ((signed short int));
+MINT *xtom _PROTO ((const char *));
+void move _PROTO ((const MINT *, MINT *));
+void madd _PROTO ((const MINT *, const MINT *, MINT *));
+void msub _PROTO ((const MINT *, const MINT *, MINT *));
+void mult _PROTO ((const MINT *, const MINT *, MINT *));
+void mdiv _PROTO ((const MINT *, const MINT *, MINT *, MINT *));
+void sdiv _PROTO ((const MINT *, signed short int, MINT *, signed short int *));
+void msqrt _PROTO ((const MINT *, MINT *, MINT *));
+void pow _PROTO ((const MINT *, const MINT *, const MINT *, MINT *));
+void rpow _PROTO ((const MINT *, signed short int, MINT *));
+void gcd _PROTO ((const MINT *, const MINT *, MINT *));
+int mcmp _PROTO ((const MINT *, const MINT *));
+void min _PROTO ((MINT *));
+void mout _PROTO ((const MINT *));
+char *mtox _PROTO ((const MINT *));
+void mfree _PROTO ((MINT *));
+
+#if defined (__cplusplus)
+}
 #endif
 
 #define __MP_H__
