@@ -769,7 +769,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   mp_limb_t cy, saved, vinf0, cinf0;
   mp_ptr trec;
   int sa;
-  mp_ptr c1, c2, c3, c4, c5;
+  mp_ptr c1, c2, c3, c4;
 
   ASSERT(GMP_NUMB_BITS >= 6);
   ASSERT(n >= 17); /* so that r <> 0 and 5k+3 <= 2n */
@@ -787,7 +787,6 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   c2 = c1 + k;
   c3 = c2 + k;
   c4 = c3 + k;
-  c5 = c4 + k;
 
   trec = t + 4 * k + 3; /* trec = v2 + (2k+2) */
 
