@@ -80,6 +80,13 @@ endif
 #
 SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd $(MPFR_DIR) demos tune
 
+if WANT_CXX
+GMPXX_HEADERS_OPTION = gmpxx.h
+if WANT_MPFR
+MPFRXX_HEADERS_OPTION = mpfrxx.h
+endif
+endif
+include_HEADERS = $(GMPXX_HEADERS_OPTION) $(MPFRXX_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
@@ -186,6 +193,7 @@ PRINTF_OBJECTS =							\
   printf/vsnprintf$U.lo printf/vsprintf$U.lo
 
 CXX_OBJECTS =								\
+   cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
    cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
 
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
