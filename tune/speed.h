@@ -268,11 +268,11 @@ void speed_option_set _PROTO((const char *s));
 mp_limb_t mpn_divrem_1_div _PROTO ((mp_ptr qp, mp_size_t xsize,
                                     mp_srcptr ap, mp_size_t size,
                                     mp_limb_t d));
-mp_limb_t mpn_divrem_1_mul _PROTO ((mp_ptr qp, mp_size_t xsize,
+mp_limb_t mpn_divrem_1_inv _PROTO ((mp_ptr qp, mp_size_t xsize,
                                     mp_srcptr ap, mp_size_t size,
                                     mp_limb_t d));
 mp_limb_t mpn_mod_1_div _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
-mp_limb_t mpn_mod_1_mul _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
+mp_limb_t mpn_mod_1_inv _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
 
 mp_size_t mpn_gcd_binary
   _PROTO ((mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize));
