@@ -1,3 +1,84 @@
+2001-02-02  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in: Don't remove gmp-mparam.h and mpn source links under
+	--no-create since in that case they're not re-created.
+
+	* demos/expr: New directory.
+	* Makefile.am (SUBDIRS, allprogs): Add it.
+	* demos/expr/README, Makefile.am, expr.c, exprv.c, exprz.c, exprza.c,
+	exprq.c, exprqa.c, exprfa.c, exprf.c, exprfr.c, exprfra.c, expr.h,
+	expr-impl-h.in, run.c, t-expr.c: New files.
+	* configure.in: Generate demos/expr/Makefile & demos/expr/expr-impl.h.
+
+	* Makefile.am: Remove mpfr from main libgmp.
+	* mpfr/Makefile.am: Build and install separate libmpfr.a.
+	* mpfr/*: Update to mpfr 2001.
+
+	* gmp-h.in (__GNU_MP_VERSION_MINOR): Bump to 2.
+	* Makefile.am (libtool -version-info): Bump appropriately.
+	* NEWS: Updates.
+
+	* tune/divrem1div.c, tune/divrem1inv.c, tune/divrem2div.c,
+	tune/divrem2inv.c: Renamed from divrem_{1,2}_{div,inv}.c, to be unique
+	in DOS 8.3 filenames.
+	* tune/Makefile.am (libspeed_la_SOURCES): Update.
+
+	* mpn/x86/*/README, mpn/x86/README.family: Misc updates.
+	* tune/README: Misc updates.
+	* doc/configuration: Misc updates.
+
+	* mpn/x86/pentium/mmx/gmp-mparam.h: Change UDIV_PREINV_TIME to
+	UDIV_NORM_PREINV_TIME.
+
+	* mpz/pprime_p.c: Use ASSERT_ALWAYS instead of abort.
+
+	* rand.c (__gmp_rand_lc_scheme): Add "const".
+	(struct __gmp_rand_lc_scheme_struct): Make astr "const char *".
+
+	* demos/calc/calc.y, demos/calc/calclex.l: Add kron function.
+
+	* tests/devel/try.c: Partial rewrite, new scheme of function types,
+	allow result validation functions, add sqrtrem and jacobi testing.
+	* tune/many.pl: Corresponding updates.
+	* tests/devel/Makefile.am: Add a convenience rule for libtests.la.
+
+	* tests/refmpz.c: New file.
+	* tests/Makefile.am: Add it.
+	* tests/misc.c (mpz_erandomb, mpz_erandomb_nonzero): New functions.
+	* tests/tests.h: Add prototypes.
+
+	* mpn/x86/k6/cross.pl: Add a couple more exceptions.
+
+	* gmp.texi: Don't use @nicode{'\0'}, it doesn't come out right in tex.
+	(Introduction to GMP): Mention Cray vector systems.
+	(Build Options): Describe --enable-mpfr, refer to its manual.  Add
+	Crays under supported CPUs.
+	(Debugging): Add notes on source file paths.
+	(Autoconf): New section.
+	(Assigning Integers): Note truncation by mpz_set_d, mpz_set_q and
+	mpz_set_f.
+	(Converting Integers): Note the size mpz_get_str allocates.
+	(Floating-point Functions): Rewrite introduction, clarifying some
+	points about precision handling.
+	(Converting Floats): Note the size mpf_get_str allocates, and that it
+	gives an empty string for zero.  Add mpf_get_si and mpf_get_ui.
+	(Float Comparison): Give the formula mpf_reldiff calculates.
+	(Miscellaneous Float Functions): Add mpf_integer_p and mpf_fits_*_p.
+	(Random Number Functions): Misc rewordings for clarity.
+	(Random State Initialization): Ditto.
+	(Custom Allocation): Remove note on deallocate_function called with 0,
+	misc rewording and clarifications.
+	(Exact Remainder): New section.
+	(Binary GCD): A few words on initial reduction using division.
+	(Accelerated GCD): Refer to exact remainder section.
+	(Extended GCD): Extra remarks on single versus double selection.
+	(Jacobi Symbol): Update for mpz/jacobi.c rewrite and modexact_1_odd.
+	(Modular Powering Algorithm): Refer to exact remainder section.
+	(Assembler SIMD Instructions): Update remarks on MMX.
+	(Contributors): Amend to "Divide and Conquer" division.
+	(References): Tweak some formatting.  Add "Proof of GMP Fast Division
+	and Square Root Implementations" by Paul Zimmermann.
+
 2001-01-31  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Don't ever pass -mips3; let ABI flags imply ISA.
