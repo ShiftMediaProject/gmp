@@ -232,10 +232,6 @@ MA 02111-1307, USA. */
 extern "C" {
 #endif
 
-extern void * (*__gmp_allocate_func) _PROTO ((size_t));
-extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
-extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
-
 void *__gmp_default_allocate _PROTO ((size_t));
 void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
 void __gmp_default_free _PROTO ((void *, size_t));
@@ -1422,28 +1418,6 @@ extern const int __gmp_0;
 
 #define MPZ_PROVOKE_REALLOC(z)					\
   do { ALLOC(z) = ABSIZ(z); } while (0)
-
-#define MPZ_SET_STR_OR_ABORT(_r,_s,_b)                  \
-  do {                                                  \
-    if (mpz_set_str (_r, _s, _b) != 0)                  \
-      {                                                 \
-        fprintf (stderr, "ERROR mpz_set_str\n");        \
-        fprintf (stderr, "   str  = \"%s\"\n", _s);     \
-        fprintf (stderr, "   base = %d\n", _b);         \
-        abort();                                        \
-      }                                                 \
-  } while (0)
-
-#define MPF_SET_STR_OR_ABORT(_r,_s,_b)                  \
-  do {                                                  \
-    if (mpf_set_str (_r, _s, _b) != 0)                  \
-      {                                                 \
-        fprintf (stderr, "ERROR mpf_set_str\n");        \
-        fprintf (stderr, "   str  = \"%s\"\n", _s);     \
-        fprintf (stderr, "   base = %d\n", _b);         \
-        abort();                                        \
-      }                                                 \
-  } while (0)
 
 
 #if TUNE_PROGRAM_BUILD

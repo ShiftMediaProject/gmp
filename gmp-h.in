@@ -190,6 +190,11 @@ void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 #define mp_bits_per_limb __gmp_bits_per_limb
 extern __gmp_const int mp_bits_per_limb;
 
+/* the following for internal use only */
+extern void * (*__gmp_allocate_func) _PROTO ((size_t));
+extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
+extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
+
 #if defined (__cplusplus)
 }
 #endif
