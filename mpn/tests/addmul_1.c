@@ -122,6 +122,14 @@ main (argc, argv)
 
   for (test = 0; ; test++)
     {
+#if TIMES == 1 && ! defined (PRINT)
+      if (test % (SIZE > 10000 ? 1 : 10000 / SIZE) == 0)
+	{
+	  printf ("\r%d", test);
+	  fflush (stdout);
+	}
+#endif
+
 #ifdef RANDOM
       size = (random () % SIZE + 1);
 #else
@@ -137,6 +145,7 @@ main (argc, argv)
       mpn_random (s1, size);
       mpn_random (dy+1, size);
 
+#ifndef NOCHECK
       MPN_COPY (dx, dy, size+2);
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
@@ -146,6 +155,7 @@ main (argc, argv)
       printf ("refmpn_addmul_1: %5ldms (%.2f cycles/limb) [%.2f Gb/s]\n",
 	      t, cyc,
 	      CLOCK/cyc*BITS_PER_MP_LIMB*BITS_PER_MP_LIMB/1e9);
+#endif
 
       MPN_COPY (dx, dy, size+2);
       t0 = cputime();
