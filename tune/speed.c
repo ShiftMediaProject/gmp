@@ -271,7 +271,10 @@ const struct routine_t {
   { "mpn_toom3_sqr_n_open",  speed_mpn_toom3_sqr_n_open  },
 
   { "mpn_get_str",       speed_mpn_get_str,  FLAG_R_OPTIONAL },
-  { "mpn_set_str",       speed_mpn_set_str,  FLAG_R_OPTIONAL },
+
+  { "mpn_set_str",          speed_mpn_set_str,          FLAG_R_OPTIONAL },
+  { "mpn_set_str_basecase", speed_mpn_set_str_basecase, FLAG_R_OPTIONAL },
+  { "mpn_set_str_subquad",  speed_mpn_set_str_subquad,  FLAG_R_OPTIONAL },
 
   { "mpn_sqrtrem",       speed_mpn_sqrtrem          },
 

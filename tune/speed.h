@@ -1,6 +1,6 @@
 /* Header for speed and threshold things.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -211,6 +211,8 @@ double speed_mpn_sb_divrem_m3 _PROTO ((struct speed_params *s));
 double speed_mpn_sb_divrem_m3_div _PROTO ((struct speed_params *s));
 double speed_mpn_sb_divrem_m3_inv _PROTO ((struct speed_params *s));
 double speed_mpn_set_str _PROTO ((struct speed_params *s));
+double speed_mpn_set_str_basecase _PROTO ((struct speed_params *s));
+double speed_mpn_set_str_subquad _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_diagonal _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
@@ -371,6 +373,10 @@ mp_limb_t mpn_sb_divrem_mn_div _PROTO ((mp_ptr qp,
 mp_limb_t mpn_sb_divrem_mn_inv _PROTO ((mp_ptr qp,
                                         mp_ptr np,    mp_size_t nsize,
                                         mp_srcptr dp, mp_size_t dsize));
+
+mp_size_t mpn_set_str_basecase _PROTO ((mp_ptr, const unsigned char *, size_t, int));
+mp_size_t mpn_set_str_subquad _PROTO ((mp_ptr, const unsigned char *, size_t, int));
+
 void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                    mp_ptr));
 void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));

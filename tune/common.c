@@ -1790,6 +1790,16 @@ speed_mpn_set_str (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_SET_STR (mpn_set_str);
 }  
+double
+speed_mpn_set_str_basecase (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SET_STR (mpn_set_str_basecase);
+}
+double
+speed_mpn_set_str_subquad (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SET_STR (mpn_set_str_subquad);
+}
 
 
 double
