@@ -1,3 +1,8 @@
+2001-02-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/arm: Convert files to `.asm'.  Misc cleanups.
+	* mpn/arm/submul_1.asm: New file.
+
 2001-02-21  Kevin Ryde  <kevin@swox.se>
 
 	* tune/tuneup.c (all): Only one compiler print should match, no need
