@@ -990,8 +990,8 @@ case $host in
     # GNU/Linux sparc64 means a v9 cpu, but currently seems to have no
     # support for 64-bit operations in user mode.
     #
-    # FreeBSD/NetBSD/OpenBSD sparc64 ports are 64-bit-only systems and need
-    # no special compiler flags.  Any v9 CPU will be running this, since the
+    # NetBSD and OpenBSD sparc64 ports are 64-bit-only systems and need no
+    # special compiler flags.  Any v9 CPU will be running this, since the
     # plain 32-bit sparc ports don't run on a v9.
     #
     # FIXME: gcc -Wa,-xarch=v9 is thought to be necessary in some cases on
