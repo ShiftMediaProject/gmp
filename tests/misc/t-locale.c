@@ -139,7 +139,10 @@ check_input (void)
 int
 main (void)
 {
-  tests_start ();
+  /* The localeconv replacement breaks printf "%lu" on SunOS 4, so we can't
+     print the seed in tests_rand_start().  Nothing random is used in this
+     program though, so just use the memory tests alone.  */
+  tests_memory_start ();
 
   {
     mpf_t  f;
@@ -159,7 +162,7 @@ main (void)
   check_input ();
 
  done:
-  tests_end ();
+  tests_memory_end ();
   exit (0);
 }
 
