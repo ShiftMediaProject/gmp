@@ -1,8 +1,7 @@
 dnl  ARM mpn_submul_1 -- Multiply a limb vector with a limb and subtract the
 dnl  result from a second limb vector.
-dnl  Based on mpn_addmul_1, which was contributed by Robert Harley.
 
-dnl  Copyright 1998, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,69 +22,88 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C This runs at 9.75 cycles/limb in the StrongARM.
-
-C Could use some register cleanup.  Some fewer registers might be needed, or
-C r11 could be utilized for better speed.  Could avoid saving all registers for
-C small (n <= 3) operands.
+C            cycles/limb
+C StrongARM:   7.5-9.5  (dependent on vl value)
+C XScale:        8-9    (dependent on vl value, estimated)
 
 define(`rp',`r0')
 define(`up',`r1')
 define(`n',`r2')
-define(`v',`r3')
+define(`vl',`r3')
+define(`rl',`r12')
+define(`ul',`r6')
+define(`r',`lr')
+
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
-	stmfd	sp!, { r4-r10, lr }
-	mov	r4, #0
-	movs	n, n, lsr #1
-	bcc	L(skip1)
-	ldr	lr, [up], #4
-	umull	r4, r12, v, lr
-	ldr	r6, [rp]
-	subs	r6, r6, r4
-	sbc	r4, r0, r0
-	sub	r4, r12, r4
-	str	r6, [rp], #4
+	stmfd	sp!, { r4-r6, lr }
+	subs	r4, r0, r0		C clear r4, set cy
+	tst	n, #1
+	beq	L(skip1)
+	ldr	ul, [up], #4
+	ldr	rl, [rp, #0]
+	umull	r5, r4, ul, vl
+	subs	r, rl, r5
+	str	r, [rp], #4
 L(skip1):
-	movs	n, n, lsr #1
-	bcc	L(skip2)
-	ldmia	up!, { r9, r10 }
+	tst	n, #2
+	beq	L(skip2)
+	ldr	ul, [up], #4
+	ldr	rl, [rp, #0]
 	mov	r5, #0
-	umlal	r4, r5, v, r9
-	mov	r9, #0
-	umlal	r5, r9, v, r10
-	ldmia	rp, { r6, r7 }
-	subs	r6, r6, r4
-	sbcs	r7, r7, r5
-	sbc	r4, r0, r0
-	sub	r4, r9, r4
-	stmia	rp!, { r6, r7 }
+	umlal	r4, r5, ul, vl
+	ldr	ul, [up], #4
+	sbcs	r, rl, r4
+	ldr	rl, [rp, #4]
+	mov	r4, #0
+	umlal	r5, r4, ul, vl
+	str	r, [rp], #4
+	sbcs	r, rl, r5
+	str	r, [rp], #4
 L(skip2):
-	teq	n, #0
+	bics	r, n, #3
 	beq	L(return)
 
-L(submul_loop):
-	ldmia	up!, { r9, r10, r12, lr }
+	ldr	ul, [up], #4
+	ldr	rl, [rp, #0]
 	mov	r5, #0
-	umlal	r4, r5, v, r9
-	mov	r9, #0
-	umlal	r5, r9, v, r10
-	mov	r10, #0
-	umlal	r9, r10, v, r12
-	mov	r12, #0
-	umlal	r10, r12, v, lr
-	ldmia	rp, { r6, r7, r8, lr }
-	subs	r6, r6, r4
-	sbcs	r7, r7, r5
-	sbcs	r8, r8, r9
-	sbcs	lr, lr, r10
-	sbc	r4, r0, r0
-	sub	r4, r12, r4
-	subs	n, n, #1
-	stmia	rp!, { r6, r7, r8, lr }
-	bne	L(submul_loop)
+	umlal	r4, r5, ul, vl
+	b	L(in)
+
+L(loop):
+	ldr	ul, [up], #4
+	sbcs	r, rl, r5
+	ldr	rl, [rp, #4]
+	mov	r5, #0
+	umlal	r4, r5, ul, vl
+	str	r, [rp], #4
+L(in):	ldr	ul, [up], #4
+	sbcs	r, rl, r4
+	ldr	rl, [rp, #4]
+	mov	r4, #0
+	umlal	r5, r4, ul, vl
+	str	r, [rp], #4
+	ldr	ul, [up], #4
+	sbcs	r, rl, r5
+	ldr	rl, [rp, #4]
+	mov	r5, #0
+	umlal	r4, r5, ul, vl
+	str	r, [rp], #4
+	ldr	ul, [up], #4
+	sbcs	r, rl, r4
+	ldr	rl, [rp, #4]
+	mov	r4, #0
+	umlal	r5, r4, ul, vl
+	str	r, [rp], #4
+	sub	n, n, #4
+	bics	r, n, #3
+	bne	L(loop)
+
+	sbcs	r, rl, r5
+	str	r, [rp], #4
 L(return):
-	mov	r0, r4
-	ldmfd	sp!, { r4-r10, pc }
+	sbc	r0, r0, r0
+	sub	r0, r4, r0
+	ldmfd	sp!, { r4-r6, pc }
 EPILOGUE(mpn_submul_1)

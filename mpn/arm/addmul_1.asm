@@ -1,8 +1,7 @@
 dnl  ARM mpn_addmul_1 -- Multiply a limb vector with a limb and add the result
 dnl  to a second limb vector.
-dnl  Contributed by Robert Harley.
 
-dnl  Copyright 1998, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,63 +22,88 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C This runs at 10 cycles/limb in the StrongARM.  Should make this look more
-C like the submul code, since that uses fewer registers and runs slightly
-C faster.
+C            cycles/limb
+C StrongARM:   7.5-9.5  (dependent on vl value)
+C XScale:        8-9    (dependent on vl value, estimated)
 
 define(`rp',`r0')
 define(`up',`r1')
 define(`n',`r2')
-define(`v',`r3')
+define(`vl',`r3')
+define(`rl',`r12')
+define(`ul',`r6')
+define(`r',`lr')
 
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
-	stmfd	sp!, { r8-r11, lr }
-	mov	r11, #0
-	mov	ip, #0
-	movs	n, n, lsr #1
-	bcc	L(skip1)
-	ldr	lr, [up], #4
-	ldr	r9, [rp]
-	umlal	r9, ip, v, lr
-	str	r9, [rp], #4
+	stmfd	sp!, { r4-r6, lr }
+	mov	r4, #0			C clear r4
+	adds	r0, r0, #0		C clear cy
+	tst	n, #1
+	beq	L(skip1)
+	ldr	ul, [up], #4
+	ldr	rl, [rp, #0]
+	umull	r5, r4, ul, vl
+	adds	r, rl, r5
+	str	r, [rp], #4
 L(skip1):
-	movs	n, n, lsr #1
-	bcc	L(skip2)
-	ldmia	rp, { r9, r10 }
-	adds	r8, ip, r9
-	adc	r9, r11, #0
-	ldmia	up!, { ip, lr }
-	umlal	r8, r9, v, ip
-	adds	r9, r9, r10
-	adc	ip, r11, #0
-	umlal	r9, ip, v, lr
-	stmia	rp!, { r8, r9 }
+	tst	n, #2
+	beq	L(skip2)
+	ldr	ul, [up], #4
+	ldr	rl, [rp, #0]
+	mov	r5, #0
+	umlal	r4, r5, ul, vl
+	ldr	ul, [up], #4
+	adcs	r, rl, r4
+	ldr	rl, [rp, #4]
+	mov	r4, #0
+	umlal	r5, r4, ul, vl
+	str	r, [rp], #4
+	adcs	r, rl, r5
+	str	r, [rp], #4
 L(skip2):
-	teq	n, #0
+	bics	r, n, #3
 	beq	L(return)
-	stmfd	sp!, { r4-r7 }
-L(addmul_loop):
-	ldmia	rp, { r5, r6, r7, r8 }
-	adds	r4, ip, r5
-	adc	r5, r11, #0
-	ldmia	up!, { r9, r10, ip, lr }
-	umlal	r4, r5, v, r9
-	adds	r5, r5, r6
-	adc	r6, r11, #0
-	umlal	r5, r6, v, r10
-	adds	r6, r6, r7
-	adc	r7, r11, #0
-	umlal	r6, r7, v, ip
-	adds	r7, r7, r8
-	adc	ip, r11, #0
-	umlal	r7, ip, v, lr
-	subs	n, n, #1
-	stmia	rp!, { r4, r5, r6, r7 }
-	bne	L(addmul_loop)
-	ldmfd	sp!, { r4-r7 }
+
+	ldr	ul, [up], #4
+	ldr	rl, [rp, #0]
+	mov	r5, #0
+	umlal	r4, r5, ul, vl
+	b	L(in)
+
+L(loop):
+	ldr	ul, [up], #4
+	adcs	r, rl, r5
+	ldr	rl, [rp, #4]
+	mov	r5, #0
+	umlal	r4, r5, ul, vl
+	str	r, [rp], #4
+L(in):	ldr	ul, [up], #4
+	adcs	r, rl, r4
+	ldr	rl, [rp, #4]
+	mov	r4, #0
+	umlal	r5, r4, ul, vl
+	str	r, [rp], #4
+	ldr	ul, [up], #4
+	adcs	r, rl, r5
+	ldr	rl, [rp, #4]
+	mov	r5, #0
+	umlal	r4, r5, ul, vl
+	str	r, [rp], #4
+	ldr	ul, [up], #4
+	adcs	r, rl, r4
+	ldr	rl, [rp, #4]
+	mov	r4, #0
+	umlal	r5, r4, ul, vl
+	str	r, [rp], #4
+	sub	n, n, #4
+	bics	r, n, #3
+	bne	L(loop)
+
+	adcs	r, rl, r5
+	str	r, [rp], #4
 L(return):
-	mov	r0, ip
-	ldmfd	sp!, { r8-r11, pc }
+	adc	r0, r4, #0
+	ldmfd	sp!, { r4-r6, pc }
 EPILOGUE(mpn_addmul_1)
