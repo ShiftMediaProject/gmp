@@ -1,6 +1,14 @@
 2000-04-05  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp.h, mpn/asm-defs.m4: List the same functions for __MPN, but
+	leave some commented out.
+
+	* gmp-impl.h (MPN_LOGOPS_N_INLINE): Optimize.
+	(mpn_com_n): Optimize.
+
 	* gmp.h (__MPN): Make it use __gmpn instead of __mpn for consistency.
+	* mpn/asm-defs.m4 (MPN_PREFIX): Likewise.
+
 	* gmp.h (GMP_ERROR_ALLOCATE): New errcode.
 
 	* gmp-impl.h (MPN_MUL_N_RECURSE): Delete.
@@ -17,7 +25,8 @@
 	* gmp-impl.h (__gmpn_mul_n): Remove declaration.
 	(__gmpn_sqr): Likewise.
 	* gmp.h (mpn_sqr_n): Declare/remap.
-	
+	* mpn/generic/mul.c (mpn_sqr_n): New name for mpn_sqr.
+
 	* gmp.h (mpn_udiv_w_sdiv): Move __MPN remap from here...
 	* gmp-impl.h: ...to here.
 
