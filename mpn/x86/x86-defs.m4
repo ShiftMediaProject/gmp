@@ -44,23 +44,6 @@ dnl     nor in macro parameters like text passed to forloop() or ifdef().
 deflit(BYTES_PER_MP_LIMB, 4)
 
 
-dnl  Usage: ALIGN(bytes)
-dnl
-dnl  Generate a .align to pad to a multiple of the given boundary (in bytes
-dnl  and which should be a power of 2).
-dnl
-dnl  This definition supplements the plain/logarithmic definition that
-dnl  config.m4 provides by adding `,0x90'.  In old gas (eg. 1.92.3) zeros
-dnl  are generated unless otherwise specified, and the 0x90 makes sure it's
-dnl  nops that are generated.  On newer gas the 0x90 is harmless and the
-dnl  nice multi-byte nops are still automatically generated in .text
-dnl  segments.
-
-define(`ALIGN',
-m4_assert_numargs(1)
-defn(`ALIGN')`,0x90')
-
-
 dnl  --------------------------------------------------------------------------
 dnl  Replacement PROLOGUE/EPILOGUE with more sophisticated error checking.
 dnl  Nesting and overlapping not allowed.
