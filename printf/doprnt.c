@@ -143,7 +143,11 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 
   TRACE (printf ("gmp_doprnt \"%s\"\n", orig_fmt));
 
-  /* don't modify orig_ap, if va_list is actually an array */
+  /* Don't modify orig_ap, if va_list is actually an array and hence call by
+     reference.  It could be argued that it'd be more efficient to leave the
+     caller to make a copy if it cared, but doing so here is going to be a
+     very small part of the total work, and we may as well keep applications
+     out of trouble.  */
   va_copy (ap, orig_ap);
 
   /* The format string is chopped up into pieces to be passed to
@@ -436,13 +440,21 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             {
               int n = va_arg (ap, int);
 
-              /* negative width means left justify */
-              if (value == &param.width && n < 0)
+              if (value == &param.width)
                 {
-                  param.justify = DOPRNT_JUSTIFY_LEFT;
-                  n = -n;
+                  /* negative width means left justify */
+                  if (n < 0)
+                    {
+                      param.justify = DOPRNT_JUSTIFY_LEFT;
+                      n = -n;
+                    }
+                  param.width = n;
                 }
-              *value = n;
+              else
+                {
+                  /* don't allow negative precision */
+                  param.prec = MAX (0, n);
+                }
             }                
             break;
 

@@ -750,11 +750,6 @@ check_misc (void)
   check_one ("12345 and 678", "%Zd and %d", z, 678);
   check_one ("12345,1,12345,2,12345", "%Zd,%d,%Zd,%d,%Zd", z, 1, z, 2, z);
 
-  mpf_set_str_or_abort (f, "0.99609375", 10);
-  check_one ("0.99609375",    "%.*Ff", -1, f);
-  check_one ("9.9609375e-01", "%.*Fe", -1, f);
-  check_one ("0.99609375",    "%.*Fg", -1, f);
-
   mpz_clear (z);
   mpf_clear (f);
 }
