@@ -831,6 +831,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_ROUTINE_MPN_MODEXACT_1C_ODD(function) \
   SPEED_ROUTINE_MPN_MOD_CALL (function (s->xp, s->size, s->r, CNST_LIMB(0)));
 
+#define SPEED_ROUTINE_MPN_MOD_34LSUB1(function)  \
+   SPEED_ROUTINE_MPN_MOD_CALL ((*function) (s->xp, s->size))
 
 #define SPEED_ROUTINE_MPN_PREINV_MOD_1(function)        \
   {                                                     \

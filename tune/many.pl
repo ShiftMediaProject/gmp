@@ -519,6 +519,11 @@ my @table =
        'speed_flags'=> 'FLAG_R',
      },
      {
+       'regexp'=> 'mod_34lsub1',
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_srcptr src, mp_size_t len',
+     },
+     {
        'regexp'=> 'invert_limb',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_limb_t divisor',
