@@ -43,7 +43,7 @@ main (int argc, char **argv)
   mp_size_t size;
   int i;
   int reps = 10000;
-  FILE *fsin, *fsout;
+  FILE *fp;
   int base;
 
   if (argc == 2)
@@ -52,17 +52,10 @@ main (int argc, char **argv)
   mpz_init (op1);
   mpz_init (op2);
 
-  fsout = fopen (FILENAME, "w"); 
-  fsin = fopen (FILENAME, "r");
-
-  /* unbuffered, so old buffered data isn't read after the rewind */
-  setbuf (fsin, NULL); 
+  fp = fopen (FILENAME, "w+"); 
 
   for (i = 0; i < reps; i++)
     {
-      rewind (fsin);  
-      rewind (fsout); 
-
       size = urandom () % SIZE - SIZE/2;
 
       mpz_random2 (op1, size);
@@ -70,15 +63,17 @@ main (int argc, char **argv)
       if (base == 1)
 	base = 0;
 
-      if (mpz_out_str (fsout, base, op1) == 0)
+      rewind (fp);  
+      if (mpz_out_str (fp, base, op1) == 0
+          || putc (' ', fp) == EOF
+          || fflush (fp) != 0)
         {
           fprintf (stderr, "mpz_out_str write error\n");
           abort ();
         }
-      putc (' ', fsout);
-      fflush (fsout);
 
-      if (mpz_inp_str (op2, fsin, base) == 0)
+      rewind (fp);  
+      if (mpz_inp_str (op2, fp, base) == 0)
         {
 	  fprintf (stderr, "mpz_inp_str read error\n");
 	  abort ();
@@ -94,8 +89,7 @@ main (int argc, char **argv)
 	}
     }
 
-  fclose (fsout);
-  fclose (fsin);
+  fclose (fp);
 
   unlink (FILENAME);
 
