@@ -35,11 +35,15 @@ MA 02111-1307, USA. */
 #endif
 
 #include <ctype.h>     /* for isdigit */
-#include <float.h>     /* for DBL_MAX_10_EXP etc */
+
 #include <stddef.h>    /* for ptrdiff_t */
 #include <string.h>
 #include <stdio.h>     /* for NULL */
 #include <stdlib.h>
+
+#if HAVE_FLOAT_H
+#include <float.h>     /* for DBL_MAX_10_EXP etc */
+#endif
 
 #if HAVE_INTTYPES_H
 # include <inttypes.h> /* for intmax_t */
