@@ -112,10 +112,8 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   if (seedn == 0)
     {
       /* Seed is 0.  Result is C % M.  Assume table is sensibly stored,
-       with C smaller than M*/
+	 with C smaller than M.  */
       *rp = c;
-
-      ASSERT_ALWAYS (((mp_limb_t) 1 << m2exp) > c);
 
       *seedp = c;
       SIZ (rstate->_mp_seed) = 1;
