@@ -507,9 +507,10 @@ case $host in
 
 
   amd64-*-* | x86_64-*-*)
-    # "x86_64" is apparently the canonical name for config.sub, but current
-    # versions also allow "amd64" through.  We probably prefer "amd64"
-    # actually, being what AMD likes to call the arch these days.
+    # "x86_64" is the canonical name from config.sub, and "amd64" is changed
+    # to that.  We probably prefer "amd64" since it's what AMD likes to call
+    # the arch these days, and perhaps might let that through our config.sub
+    # in the future.
     #
     SPEED_CYCLECOUNTER_OBJ=amd64.lo
     path="amd64"
