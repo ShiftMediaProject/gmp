@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 1 Feb 2002.  An up-to-date version is available at
+  This file current as of 9 Feb 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -178,13 +178,12 @@ MA 02111-1307, USA.
      16-bit limb it looks like <code>PP</code> could take an extra factor of
      3.
 <li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
-     <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
-     quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).  A
-     remainder mod 2^24-1 can be taken at adder throughput speed.  This could
-     either replace the <code>PP</code> division currently done, or allow
-     <code>PP</code> to do larger primes, depending how many residue tests
-     seem worthwhile before launching into full root extractions or
-     Miller-Rabin etc.
+     <code>mpz_perfect_power_p</code> could use <code>mpn_mod_34lsub1</code>
+     to take a remainder mod 2^24-1 or 2^48-1 and quickly get remainders mod
+     3, 5, 7, 13 and 17 (factors of 2^24-1).  This could either replace the
+     <code>PP</code> division currently done, or allow <code>PP</code> to do
+     larger primes, depending how many residue tests seem worthwhile before
+     launching into full root extractions or Miller-Rabin etc.
 <li> <code>mpz_probab_prime_p</code> (and maybe others) could code the
      divisibility tests like <code>n%7 == 0</code> in the form
 <pre>
@@ -314,6 +313,11 @@ MA 02111-1307, USA.
      are of course fast, it seems a little silly to make a second pass over
      the <code>mpn_get_str</code> output to convert to ASCII.  Perhaps combine
      that with the bit extractions.
+<li> <code>mpz_gcdext</code>: If the caller requests only the S cofactor (of
+     A), and A<B, then the code ends up generating the cofactor T (of B) and
+     deriving S from that.  Perhaps it'd be possible to arrange to get S in
+     the first place by calling <code>mpn_gcdext</code> with A+B,B.  This
+     might only be an advantage if A and B are about the same size.
 </ul>
 
 
@@ -363,6 +367,8 @@ MA 02111-1307, USA.
 <li> Alpha 21264 ev67: Use <code>ctlz</code> and <code>cttz</code> for
      <code>count_leading_zeros</code> and<code>count_trailing_zeros</code>.
      Use inline for gcc, probably want asm files for elsewhere.
+<li> ARM: On v5 cpus see if the <code>clz</code> instruction can be used for
+     <code>count_leading_zeros</code>.
 <li> Itanium: <code>mpn_divexact_by3</code> isn't particularly important, but
      the generic C runs at about 27 c/l, whereas with the multiplies off the
      dependent chain about 3 c/l ought to be possible.
@@ -550,19 +556,6 @@ MA 02111-1307, USA.
 <li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
      format is portable between 32-bit and 64-bit machines, and between
      little-endian and big-endian machines.
-<li> Handle numeric exceptions: Call an error handler, and/or set
-     <code>gmp_errno</code>.  It should be possible to detect errors at the
-     start of documented entrypoints and invoke an exception handler with a
-     nice clean state, giving it the chance to recover with
-     <code>longjmp</code> or a C++ throw or whatever.
-<li> Handle out-of-memory exceptions: It'd be good to offer the custom
-     allocation functions a way to <code>longjmp</code> or throw a C++
-     exception on being out of memory (or out of the memory they care to offer
-     GMP).  This would need GMP to ensure all variables are in a sensible
-     state whenever attempting an alloc or realloc, and would need some way to
-     record other temporary memory or temporary variables in use which should
-     be freed.  The latter might be difficult, perhaps the C++ destructor
-     mechanism would be necessary.
 <li> <code>mpn_and_n</code> ... <code>mpn_copyd</code>: Perhaps make the mpn
      logops and copys available in gmp.h, either as library functions or
      inlines, with the availability of library functions instantiated in the
@@ -598,7 +591,9 @@ MA 02111-1307, USA.
 <li> <code>PRIdMP_LIMB</code> and similar defines following C99
      &lt;inttypes.h&gt; might be of use to applications printing limbs.
      Perhaps they should be defined only if specifically requested, the way
-     &lt;inttypes.h&gt; does.
+     &lt;inttypes.h&gt; does.  But if <code>GMP_LONG_LONG_LIMB</code> or
+     whatever is added then perhaps this can easily enough be left to
+     applications.
 <li> <code>mpf_get_ld</code> and <code>mpf_set_ld</code> converting
      <code>mpf_t</code> to and from <code>long double</code>.  Other
      <code>long double</code> routines would be desirable too, but these would
@@ -643,10 +638,6 @@ MA 02111-1307, USA.
 <li> Alpha ev67 and ev68: Recognise these in config.guess, the same as recent
      configfsf.guess does.  (Not that we've got anything specific for them
      right now.)
-<li> Alpha: On OSF the nm format is not recognised by
-     <code>GMP_ASM_LSYM_PREFIX</code>.  We end up falling back on
-     <code>L</code> which is probably right, but it might be desirable to
-     recognise the format, or try to jam it into BSD mode or whatever.
 <li> ARM: <code>umul_ppmm</code> in longlong.h always uses <code>umull</code>,
      but is that available only for M series chips or some such?  Perhaps it
      should be configured in some way.
@@ -693,13 +684,6 @@ MA 02111-1307, USA.
 <li> m68k: config.guess can detect 68000, 68010, CPU32 and 68020, but relies
      on system information for 030, 040 and 060.  Can they be identified by
      running some code?
-<li> demos/pexpr.c: is becoming the usual *nix mess of nested ifdefs.  Instead
-     use the results of configure tests.  Depending on config.h doesn't seem
-     like a good idea, since it might encourage applications to use that file.
-     A stand-alone pexpr.c could be generated from a pexpr.in template using
-     <code>AC_SUBST</code>s setup from configure.  That would junk up the
-     Makefiles a bit, but using an extra <code>AM_CONFIG_HEADER</code> type
-     file didn't work very well last time it was tried.
 <li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
      used.  Check all such for bit rot and then put umul and udiv in
      <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
@@ -789,6 +773,9 @@ MA 02111-1307, USA.
 <li> Merge mpn/pa64 and pa64w.
 <li> demos/factorize.c should use the GMP random functions when restarting
      Pollard-Rho, not <code>random</code> / <code>mrand48</code>.
+<li> demos/factorize.c: use <code>mpz_divisible_ui_p</code> rather than
+     <code>mpz_tdiv_qr_ui</code>.  (Of course dividing multiple primes at a
+     time would be better still.)
 <li> The various test programs use quite a bit of the main
      <code>libgmp</code>.  This establishes good cross-checks, but it might be
      better to use simple reference routines where possible.  Where it's not
@@ -825,7 +812,10 @@ MA 02111-1307, USA.
      over <code>MPZ_TMP_INIT</code>ed variables used internally.  If nothing
      else then consistency checks like size&lt;=alloc, ptr not
      <code>NULL</code> and ptr+size not wrapping around the address space,
-     would be possible.
+     would be possible.  A more sophisticated scheme could track
+     <code>_mp_d</code> pointers and ensure only a valid one is used.  Such a
+     scheme probably wouldn't be reentrant, not without some help from the
+     system.
 <li> tune/time.c could try to determine at runtime whether
      <code>getrusage</code> and <code>gettimeofday</code> are reliable.
      Currently we pretend in configure that the dodgy m68k netbsd 1.4.1
@@ -920,13 +910,6 @@ near future, but are at least worth thinking about.
      <code>mpz_set_ui</code> etc since the current code assumes limb&gt;=long,
      but 2-limb operand forms would find a use for <code>long long</code> on
      other processors too.
-<li> <code>throw()</code> could be added to the C function prototypes to
-     declare that they don't throw exceptions.  This might let the C++
-     compiler avoid generating frame info in application code (when it knows
-     no called function throws an exception).  But this would prevent any
-     future scheme for allowing out-of-memory or divide-by-zero exceptions.
-     Though such things may or may not be feasible, it seems wisest not to
-     close the door on them yet.
 <li> Nx1 remainders can be taken at multiplier throughput speed by
      pre-calculating an array "p[i] = 2^(i*<code>BITS_PER_MP_LIMB</code>) mod
      m", then for the input limbs x calculating an inner product "sum
