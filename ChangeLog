@@ -1,3 +1,14 @@
+2001-03-28  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Converting Integers): Document mpz_getlimbn using absolute
+	value and giving zero for N out of range, move to end of section.
+
+	* tests/refmpn.c (refmpn_tdiv_qr): Use refmpn_divmod_1 rather than
+	refmpn_divrem_1.
+	* tests/tests.h: Add some prototypes that were missing.
+
+	* mpz/tdiv_q_ui.c: Remove a comment that belonged to mpz_tdiv_r_ui.
+
 2001-03-26  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/gcdext.c: Handle carry overflow after m*n multiply code
