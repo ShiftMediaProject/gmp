@@ -326,11 +326,16 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_EXTERN_INLINE  extern __inline__
 #endif
 
-/* SCO OpenUNIX 8 cc supports extern inline, except in -Xc strict ANSI mode
-   (__STDC__ is 1 in that mode).  */
+/* SCO OpenUNIX 8 cc supports "static inline foo()" but not in -Xc strict
+   ANSI mode (__STDC__ is 1 in that mode).  Inlining only actually takes
+   place under -O.  Without -O "foo" seems to be emitted whether it's used
+   or not, which is wasteful.  "extern inline foo()" isn't useful, the
+   "extern" is apparently ignored, so foo is inlined if possible but also
+   emitted as a global, which causes multiple definition errors when
+   building a shared libgmp.  */
 #if __SCO_VERSION__ > 400000000 && __STDC__ != 1 \
   && ! defined (__GMP_EXTERN_INLINE)
-#define __GMP_EXTERN_INLINE  extern inline
+#define __GMP_EXTERN_INLINE  static inline
 #endif
 
 /* C++ always has "inline" and since it's a normal feature the linker should
