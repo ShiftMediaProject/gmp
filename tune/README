@@ -114,7 +114,7 @@ generally an idle machine will be necessary to be certain of consistent
 results.
 
 The CPU frequency is needed if times in cycles are to be displayed, and it's
-always needed when using a cycle counter time base.  time.c knows how to get
+always needed when using a cycle counter time base.  freq.c knows how to get
 the frequency on some systems, but when that fails, or needs to be
 overridden, an environment variable GMP_CPU_FREQUENCY can be used (in
 Hertz).  For example in "bash" on a 650 MHz machine,
@@ -279,16 +279,16 @@ mpz_add.  Don't be surprised if the mallocing is quite slow.
 
         ./speed -s 10 -c mpz_init_realloc_clear mpz_add
 
-The normal libtool compilation of the speed program does a static link to
-libgmp.la and libspeed.la, but will end up dynamic linked to libc.
-Depending on the system, a dynamic linked malloc may be noticeably slower
-than a static one, and there may be value in re-running the libtool link
-command to static link libc for comparison.  The example below does a 10
-limb malloc/free or malloc/realloc/free to test the C library.  Of course a
-real world program has big problems if it's doing so many mallocs and frees
-that it gets slowed down by a dynamic linked malloc.
+On some systems malloc and free are much slower when dynamic linked.  The
+speed-dynamic program can be used to see this.  For example the following
+measures malloc/free, first static then dynamic.
 
-        ./speed -s 10 -c malloc_free malloc_realloc_free
+        ./speed -s 10 -c malloc_free
+        ./speed-dynamic -s 10 -c malloc_free
+
+Of course a real world program has big problems if it's doing so many
+mallocs and frees that it gets slowed down by a dynamic linked malloc.
+
 
 
 
