@@ -194,7 +194,7 @@ case $basic_machine in
 	# We use `pc' rather than `unknown'
 	# because (1) that's what they normally are, and
 	# (2) the word "unknown" tends to confuse beginning users.
-	i[34567]86 | pentium[23] | k5 | k6 | k6[23] | athlon)
+	i[34567]86 | pentium[23] | k[56] | k6[23] | athlon)
 	  basic_machine=$basic_machine-pc
 	  ;;
 	# Object if more than one company name word.
@@ -221,7 +221,7 @@ case $basic_machine in
 	      | mipstx39-* | mipstx39el-* | mcore-* \
 	      | f301-* | armv*-* | s390-* | sv1-* | t3e-* \
 	      | m88110-* | m680[01234]0-* | m683?2-* | m68360-* | z8k-* | d10v-* \
-	      | k6-* | k6[23]-* | athlon-* | powerpc64-* \
+	      | k[56]-* | k6[23]-* | athlon-* | powerpc64-* \
 	      | sparcv8-* | supersparc-* | microsparc-* | ultrasparc-* \
 	      | thumb-* | v850-* | d30v-* | tic30-* | c30-* | fr30-* )
 		;;
