@@ -2944,7 +2944,10 @@ struct gmp_snprintf_t {
 
 __GMP_DECLSPEC int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *, void *, const char *, va_list));
 __GMP_DECLSPEC int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *));
-__GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, mpf_srcptr));
+
+#define __gmp_doprnt_mpf __gmp_doprnt_mpf2
+__GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *, mpf_srcptr));
+
 int __gmp_replacement_vsnprintf _PROTO ((char *, size_t, const char *, va_list));
 #endif /* _GMP_H_HAVE_VA_LIST */
 
