@@ -19,6 +19,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/import.c: Corrections to size store, special case tests, and
+	general case ACCUMULATE.
+	* tests/mpz/t-import.c, tests/mpz/t-export.c: More test data.
+
 2002-05-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/rootrem.c: Use temp space for root, copy value in place
