@@ -29,11 +29,11 @@ MA 02111-1307, USA. */
 /* gmp-impl.h and stack-alloc.h conflict when not USE_STACK_ALLOC, so these
    declarations are copied here */
 #if __STDC__
-extern void *	(*_mp_allocate_func) (size_t);
-extern void	(*_mp_free_func) (void *, size_t);
+extern void *	(*__gmp_allocate_func) (size_t);
+extern void	(*__gmp_free_func) (void *, size_t);
 #else
-extern void *	(*_mp_allocate_func) ();
-extern void	(*_mp_free_func) ();
+extern void *	(*__gmp_allocate_func) ();
+extern void	(*__gmp_free_func) ();
 #endif
 
 typedef struct tmp_stack tmp_stack;
@@ -82,7 +82,7 @@ __gmp_tmp_alloc (size)
 	  current_total_allocation = max_total_allocation;
 	}
 
-      chunk = (*_mp_allocate_func) (chunk_size);
+      chunk = (*__gmp_allocate_func) (chunk_size);
       header = chunk;
       header->end = (char *) chunk + chunk_size;
       header->alloc_point = (char *) chunk + HSIZ;
@@ -118,7 +118,7 @@ __gmp_tmp_free (mark)
       tmp = current;
       current = tmp->prev;
       current_total_allocation -= (((char *) (tmp->end) - (char *) tmp) - HSIZ);
-      (*_mp_free_func) (tmp, (char *) tmp->end - (char *) tmp);
+      (*__gmp_free_func) (tmp, (char *) tmp->end - (char *) tmp);
     }
   current->alloc_point = mark->alloc_point;
 }
