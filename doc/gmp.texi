@@ -1539,13 +1539,13 @@ Static and DLL libraries can't both be built, since certain export directives
 in @file{gmp.h} must be different.
 
 A MINGW DLL build of GMP can be used with Microsoft C.  Libtool doesn't
-install a @file{libgmp-3.lib} file, but it can be created with the following
-commands, and copied to the install directory.
+install a @file{.lib} format import library, but it can be created with MS
+@command{lib} as follows and copied to the install directory.  Similarly for
+@file{libmp} and @file{libgmpxx}.
 
 @example
 cd .libs
-impdef libgmp-3.def libgmp-3.dll
-lib /def:libgmp-3.def
+lib /def:libgmp-3.dll.def /out:libgmp-3.lib
 @end example
 
 MINGW uses the C runtime library @samp{msvcrt.dll} for I/O, so applications
@@ -3851,7 +3851,7 @@ feature can account for this, by passing for instance
 @code{8*sizeof(int)-INT_BIT}.
 @end deftypefun
 
-@deftypefun {void *} mpz_export (void *@var{rop}, size_t *@var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
+@deftypefun {void *} mpz_export (void *@var{rop}, size_t *@var{countp}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
 @cindex Integer export
 @cindex Export
 Fill @var{rop} with word data from @var{op}.
@@ -3863,11 +3863,12 @@ most significant byte first, -1 for least significant first, or 0 for the
 native endianness of the host CPU.  The most significant @var{nails} bits of
 each word are unused and set to zero, this can be 0 to produce full words.
 
-The number of words produced is written to @code{*@var{count}}.  @var{rop}
-must have enough space for the data, or if @var{rop} is @code{NULL} then a
-result array of the necessary size is allocated using the current GMP
-allocation function (@pxref{Custom Allocation}).  In either case the return
-value is the destination used, either @var{rop} or the allocated block.
+The number of words produced is written to @code{*@var{countp}}, or
+@var{countp} can be @code{NULL} to discard the count.  @var{rop} must have
+enough space for the data, or if @var{rop} is @code{NULL} then a result array
+of the necessary size is allocated using the current GMP allocation function
+(@pxref{Custom Allocation}).  In either case the return value is the
+destination used, either @var{rop} or the allocated block.
 
 If @var{op} is non-zero then the most significant word produced will be
 non-zero.  If @var{op} is zero then the count returned will be zero and
@@ -3876,6 +3877,7 @@ block is allocated, just @code{NULL} is returned.
 
 The sign of @var{op} is ignored, just the absolute value is exported.  An
 application can use @code{mpz_sgn} to get the sign and handle it as desired.
+(@pxref{Integer Comparisons})
 
 There are no data alignment restrictions on @var{rop}, any address is allowed.
 
@@ -3883,7 +3885,7 @@ When an application is allocating space itself the required size can be
 determined with a calculation like the following.  Since @code{mpz_sizeinbase}
 always returns at least 1, @code{count} here will be at least one, which
 avoids any portability problems with @code{malloc(0)}, though if @code{z} is
-zero no space at all is actually needed.
+zero no space at all is actually needed (or written).
 
 @example
 numb = 8*size - nail;
