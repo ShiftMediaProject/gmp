@@ -2393,8 +2393,8 @@ extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 class gmp_allocated_string {
  public:
   char *str;
-  inline gmp_allocated_string(char *arg) { str = arg; }
-  inline ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
+  gmp_allocated_string(char *arg) { str = arg; }
+  ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
 };
 
 #include <iostream>
