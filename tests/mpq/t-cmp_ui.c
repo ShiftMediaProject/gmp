@@ -1,6 +1,6 @@
 /* Test mpq_cmp_ui.
 
-Copyright 1996, 1997, 2001 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -81,11 +81,11 @@ main (int argc, char **argv)
 	}
       while (mpz_cmp_ui (DEN (a), 0) == 0);
 
-      mpz_random2 (NUM (b), 1);
+      mpz_random2 (NUM (b), (mp_size_t) 1);
       mpz_mod_ui (NUM (b), NUM (b), ~(unsigned long int) 0);
       mpz_add_ui (NUM (b), NUM (b), 1);
 
-      mpz_random2 (DEN (b), 1);
+      mpz_random2 (DEN (b), (mp_size_t) 1);
       mpz_mod_ui (DEN (b), DEN (b), ~(unsigned long int) 0);
       mpz_add_ui (DEN (b), DEN (b), 1);
 
