@@ -326,7 +326,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	      up[usize++] = 0;
 	      if (bp[1] != 0)	/* B < 0: U <-- U + (-B)  * V.  */
 		{
-		   mp_limb_t c = mpn_addmul_1 (up, vp, vsize, -bp[0]);
+		   mp_limb_t c = mpn_addmul_1 (up, vp, vsize, -bp[0] & GMP_NUMB_MASK);
 		   mpn_add_1 (up + vsize, up + vsize, usize - vsize, c);
 		}
 	      else		/* B >= 0:  U <-- U - B * V.  */
