@@ -176,26 +176,27 @@ libmp_la_LDFLAGS = \
 
 info_TEXINFOS = gmp.texi
 
+# This is disabled for now
+MACOS_GENERATED = 
+#MACOS_GENERATED = macos/Makefile macos/Makefile.cw
 
-MACOS_GENERATED = macos/Makefile macos/Makefile.cw
-
-MACOS_DEPS = $(srcdir)/macos/configure			\
-  $(srcdir)/configure.in $(srcdir)/config.in		\
-  $(srcdir)/Makefile.am     $(srcdir)/mpz/Makefile.am	\
-  $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
-  $(srcdir)/mpn/powerpc32/*.asm
+#MACOS_DEPS = $(srcdir)/macos/configure			\
+#  $(srcdir)/configure.in $(srcdir)/config.in		\
+#  $(srcdir)/Makefile.am     $(srcdir)/mpz/Makefile.am	\
+#  $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
+#  $(srcdir)/mpn/powerpc32/*.asm
 
 # Keep the macos directory up-to-date during any development build.
 if MAINTAINER_MODE
-ALL_LOCAL_MACOS_GENERATED = $(MACOS_GENERATED)
+#ALL_LOCAL_MACOS_GENERATED = $(MACOS_GENERATED)
 endif
 all-local: $(ALL_LOCAL_MACOS_GENERATED)
 
-$(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
-	cd $(srcdir)/macos; perl configure
+#$(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
+#	cd $(srcdir)/macos; perl configure
 
-$(srcdir)/macos/Makefile.cw: $(MACOS_MAKEFILE_DEPS)
-	cd $(srcdir)/macos; perl configure cw
+#$(srcdir)/macos/Makefile.cw: $(MACOS_MAKEFILE_DEPS)
+#	cd $(srcdir)/macos; perl configure cw
 
 
 # Don't ship CVS directories or emacs backups.
