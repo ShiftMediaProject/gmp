@@ -9871,7 +9871,9 @@ the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
 @itemize @bullet
 @item
 Yves Bertot, Nicolas Magaud and Paul Zimmermann, ``A Proof of GMP Square
-Root'', Journal of Automated Reasoning, volume 29, 2002, pp.@: 225-252,
+Root'', Journal of Automated Reasoning, volume 29, 2002, pp.@: 225-252.  Also
+available online as INRIA Research Report 4475, June 2001,
+@uref{http://www.inria.fr/rrrt/rr-4475.html}
 
 @item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
@@ -9955,10 +9957,6 @@ November 1999, @uref{http://www.inria.fr/RRRT/RR-3805.html}
 Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
 Implementations'', @texlinebreak{}
 @uref{http://www.loria.fr/~zimmerma/papers/proof-div-sqrt.ps.gz}
-
-@item
-Paul Zimmermann, ``A Proof of GMP Square Root Using the Coq Assistant'', INRIA
-Research Report 4475, June 2001, @uref{http://www.inria.fr/rrrt/rr-4475.html}
 
 @item
 Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
