@@ -35,19 +35,18 @@ MA 02111-1307, USA. */
 #ifdef AIX_SYNTAX
 	.machine	"ppc64"
 	.toc
-	.csect	.text[PR]
-	.align	2
 	.globl	__mpn_addsub_n
 	.globl	.__mpn_addsub_n
 	.csect	__mpn_addsub_n[DS],3
 __mpn_addsub_n:
 	.llong	.__mpn_addsub_n, TOC[tc0], 0
 	.csect	.text[PR]
+	.align	2
 .__mpn_addsub_n:
 #else
 	.text
-	.align 4
-	.globl C_SYMBOL_NAME(__mpn_addsub_n)
+	.align	4
+	.globl	C_SYMBOL_NAME(__mpn_addsub_n)
 C_SYMBOL_NAME(__mpn_addsub_n):
 #endif
 
