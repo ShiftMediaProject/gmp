@@ -28,6 +28,18 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
+/* SunOS 4 stdio.h doesn't provide prototypes for these */
+#if ! HAVE_DECL_FGETC
+int fgetc _PROTO ((FILE *fp));
+#endif
+#if ! HAVE_DECL_FSCANF
+int fscanf _PROTO ((FILE *fp, const char *fmt, ...));
+#endif
+#if ! HAVE_DECL_UNGETC
+int ungetc _PROTO ((int c, FILE *fp));
+#endif
+
+
 static void
 step (FILE *fp, int n)
 {
