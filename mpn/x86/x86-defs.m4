@@ -177,7 +177,7 @@ forloop(`i',1,$2,`	nop
 
 dnl  Usage: defframe(name,offset)
 dnl
-dnl  Made a definition like the following with which to access a parameter
+dnl  Make a definition like the following with which to access a parameter
 dnl  or variable on the stack.
 dnl
 dnl         define(name,`FRAME+offset(%esp)')
@@ -323,10 +323,10 @@ dnl
 dnl  Issue a jnc/incl as a substitute for adcl $0,op.  This isn't an exact
 dnl  replacement, since it doesn't set the flags like adcl does.
 dnl
-dnl  This finds a use in K6 mpn_addmul_1, mpn_submul_1 and mpn_mul_basecase,
-dnl  because on K6 an adcl is slow, the branch misprediction penalty is
-dnl  small, and the multiply algorithm used leads to a carry bit on average
-dnl  only 1/4 of the time.
+dnl  This finds a use in K6 mpn_addmul_1, mpn_submul_1, mpn_mul_basecase and
+dnl  mpn_sqr_basecase because on K6 an adcl is slow, the branch
+dnl  misprediction penalty is small, and the multiply algorithm used leads
+dnl  to a carry bit on average only 1/4 of the time.
 dnl
 dnl  jadcl0_disabled can be set to 1 to instead issue an ordinary adcl for
 dnl  comparison.  For example,
@@ -631,9 +631,8 @@ dnl         shrdl   $2, %esi, %edi
 dnl
 dnl
 dnl  If you forget to use the macro form "shldl( ...)" and instead write
-dnl  just a plain "shldl ...", an error about missing macro arguments will
-dnl  result.  This ensures the necessary variant treatment of %cl isn't
-dnl  accidentally bypassed.
+dnl  just a plain "shldl ...", an error results.  This ensures the necessary
+dnl  variant treatment of %cl isn't accidentally bypassed.
 
 define(define_shd_instruction,
 `define($1,
