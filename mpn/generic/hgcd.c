@@ -138,7 +138,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
 	return 0;
 
       /* A - B == 1, so check W^k <= c + b' - 1 - a' */
-      ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
+      MPN_DECR_U (cp, csize, 1);
       ch = mpn_add (cp, cp, csize, bp, bsize);
 
       return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
@@ -160,7 +160,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
 	  return 0;
 
       /* A - B == 1, so check W^k <= c + b' - 1 - a' */
-      ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
+      MPN_DECR_U (cp, csize, 1);
       ch = mpn_add_n (cp, cp, bp, csize);
 
       return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
@@ -199,7 +199,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
 	return 0;
 
     /* A - B == 1, so check W^k <= c + b' - 1 - a' */
-    ASSERT_NOCARRY (mpn_sub_1(cp, cp, csize, 1));
+    MPN_DECR_U (cp, csize, 1);
     ch = mpn_add_n (cp, cp, bp, csize);
 
     return ch == 1 && mpn_cmp (cp, ap, csize) >= 0;
@@ -1471,12 +1471,21 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
 			  r[0].rp, r[0].rsize));
 
       d = 2;
+#if HAVE_NATIVE_mpn_sublsh1_n
+      c0 = mpn_addlsh1_n (r[1].uvp[0],
+			  r[0].uvp[0],
+			  size, 1);
+      c1 = mpn_addlsh1_n (r[1].uvp[1],
+			  r[0].uvp[1],
+			  size, 1);      
+#else
       c0 = mpn_addmul_1 (r[1].uvp[0],
 			 r[0].uvp[0],
 			 size, 2);
       c1 = mpn_addmul_1 (r[1].uvp[1],
 			 r[0].uvp[1],
 			 size, 2);
+#endif
     }
 
   /* FIXME: Can avoid branches */
