@@ -125,7 +125,7 @@ Generic test programs, or tests for things in the top-level directory
 can be added in the "tests" sub-directory.  A "tests/rand" exists for
 tests on the random number functions in the top-level directory.
 
-Tests related to mpz functions can be added to the "mpz/tests"
+Tests related to mpz functions can be added to the "tests/mpz"
 directory.  Similarly for mpn, mpq, mpf, mpbsd and mpfr.
 
 In any case the name of the program should be added to check_PROGRAMS
@@ -272,27 +272,6 @@ At build time:
     gmp-h.in     |                | config.m4
     mp-h.in      /                | gmp.h
                                   \ mp.h
-
-** Making a release
-
-  i) Update __GNU_MP_VERSION in gmp-h.in, and ensure autoconf is
-     re-run to pick that up.
-
-  ii) Update the NEWS file (Makefile.am has "check-new"s so this is
-      mandatory).
-
-  iii) Update libtool library version numbers in the top-level
-       Makefile.am.
-
-  iv) In a build tree configured with --enable-maintainer-mode, run
-      "make dist" to get everything (like gmp.info etc) up-to-date and
-      make a .tar.gz.
-
-"make distcheck" makes a .tar.gz and does a test build and clean of
-the prospective .tar.gz.  A common cause of it failing is not having
-the "clean" rules setup correctly.  On a GNU/Linux system, ignore
-warnings from ldconfig when distcheck tests "make install", the test
-directory "=inst" upsets command line parsing a bit.
 
 * Development setups
 
