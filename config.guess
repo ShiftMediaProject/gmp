@@ -345,16 +345,27 @@ int
 main ()
 {
   switch (_system_configuration.implementation) {
-  /* The following known to AIX 4.3. */
+  /* Old versions of AIX don't have all these constants,
+     use ifdef for safety. */
+#ifdef POWER_601
   case POWER_601:    puts ("power");      break;
+#endif
+#ifdef POWER_603
   case POWER_603:    puts ("powerpc603"); break;
+#endif
+#ifdef POWER_604
   case POWER_604:    puts ("powerpc604"); break;
+#endif
+#ifdef POWER_620
   case POWER_620:    puts ("powerpc620"); break;
+#endif
+#ifdef POWER_630
   case POWER_630:    puts ("powerpc630"); break;
+#endif
   /* Dunno what this is, leave it out for now. 
   case POWER_A35:    puts ("powerpca35"); break;
   */
-  /* This is waiting on a bit more info.
+  /* This is waiting for a bit more info.
   case POWER_RS64II: puts ("powerpcrs64ii"); break;
   */
   default:
