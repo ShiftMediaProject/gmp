@@ -23,6 +23,36 @@ MA 02111-1307, USA.
 
 	* tune/speed.c (struct choice_t): Make `r' an mp_limb_t.
 
+2002-03-21  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (HAVE_LIMB_BIG_ENDIAN, HAVE_LIMB_LITTLE_ENDIAN): Use an
+	AH_VERBATIM and better explanation.
+	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Similarly for the HAVE_DOUBLE
+	constants.
+
+	* gmp.texi (Number Theoretic Functions): Clarify sign of GCD returned
+	by mpz_gcdext.
+
+	* demos/pexpr.c, demos/pexpr-config-h.in, configure.in: Use an
+	autoconf test for stack_t.
+
+	* configure.in, gmp-h.in, mp-h.in, macos/configure: Use
+	__GMP_LIBGMP_DLL to enable windows declspec, don't require _WIN32
+	(etc), remove __GMP_LIBGMP_SHARED and __GMP_LIBGMP_STATIC.
+
+	* gmp-impl.h (mp_bases): Add __GMP_DECLSPEC, for the benefit of
+	tests/t-constants.c.
+
+	* tune/many.pl, tune/speed.h: Remove suffix hack for back.asm.
+
+2002-03-21  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr/sin_cos.c (mpfr_sin_cos): New file.
+	* mpfr/mpfr.h, mpfr/mpfr.texi, mpfr/Makefile.am: Add it.
+	* mpfr/tan.c: Fix sign in 2nd and 4th quadrants.
+
+	* mpfr/log10.c: Fix hangs on certain inputs.
+
 2002-03-20  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (setup_error_handler): Declare `s', the first
