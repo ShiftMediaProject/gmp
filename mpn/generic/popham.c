@@ -67,6 +67,13 @@ popc_limb (x)
      mp_limb_t x;
 #endif
 {
+  /* These constants could also be expressed as:
+     0xAA... = [2^(N+1) / 3] = [(2^N-1)/3*2]
+     0x33... = [2^N / 5]     = [(2^N-1)/5]
+     0x0f... = [2^N / 17]    = [(2^N-1)/17]
+     (N is BITS_PER_MP_LIMB, [] denotes truncation.)
+  */
+     
 #if BITS_PER_MP_LIMB == 64
   mp_limb_t cnst;
   cnst = CNST_LIMB(0xaaaaaaaaaaaaaaaa);
