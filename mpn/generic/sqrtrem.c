@@ -123,7 +123,7 @@ MA 02111-1307, USA. */
    square root of numbers with the same initial digits and an even
    difference in the total number of digits.  Consider the square root
    of 1, 10, 100, 1000, ...)  */
-static unsigned char even_approx_tab[256] =
+static const unsigned char even_approx_tab[256] =
 {
   0x6a, 0x6a, 0x6b, 0x6c, 0x6c, 0x6d, 0x6e, 0x6e,
   0x6f, 0x70, 0x71, 0x71, 0x72, 0x73, 0x73, 0x74,
@@ -161,7 +161,7 @@ static unsigned char even_approx_tab[256] =
 
 /* Table to be used for operands with an odd total number of bits.
    (Further comments before previous table.)  */
-static unsigned char odd_approx_tab[256] =
+static const unsigned char odd_approx_tab[256] =
 {
   0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x03,
   0x03, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
