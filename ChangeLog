@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-24  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/gcdext.c: Simplify by using mpn_tdiv_qr instead of
+	mpn_divmod.
+
 2002-04-24  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (*-*-cygwin*): Give a sensible default command line
@@ -28,7 +33,6 @@ MA 02111-1307, USA.
 	* mpfr/mpfr-math.h (__mpfr_nan): Use a "double" for the bytes, to
 	avoid a mis-conversion on alpha gcc 3.0.2.
 	(_MPFR_INFP_BYTES, _MPFR_INFM_BYTES): Should be a zero mantissa.
-	
 
 2002-04-23  Torbjorn Granlund  <tege@swox.com>
 
@@ -145,7 +149,7 @@ MA 02111-1307, USA.
 
 	* mpn/x86/pentium/com_n.asm, mpn/x86/pentium/logops_n.asm: Add
 	NAILS_SUPPORT indicators.
-	
+
 	* configure.in: Grep for NAILS_SUPPORT in cpu-specific code, and look
 	in "nails" subdirectories, print path used.
 	* mpn/asm-defs.m4 (NAILS_SUPPORT): New macro.
@@ -186,7 +190,7 @@ MA 02111-1307, USA.
 	* tests/mpz/bit.c (check_tstbit): Nailify.
 
 	From Paul Zimmermann:
-	* mpn/generic/sqrtrem.c: Nailify 
+	* mpn/generic/sqrtrem.c: Nailify.
 
 	* mpz/n_pow_ui.c: Nailify.
 
@@ -745,7 +749,6 @@ MA 02111-1307, USA.
 
 	* config.guess (powerpc*-*-*): Use #ifdef on constants POWER_630 etc
 	in the AIX test, since old versions don't have them all.
-
 
 2002-03-11  Kevin Ryde  <kevin@swox.se>
 
