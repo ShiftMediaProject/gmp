@@ -28,6 +28,7 @@ Changes between MP version 4.0.1 and 4.1
 * Major speed improvments for IA-64 systems (but still sub-optimal code).
 * Various exact PowerPC cpu types.
 * mpfr is back, with many bug fixes and portability improvements.
+* New function: mpz_ui_sub.
 * Generalized low-level number format, reserving a `nails' part of each
   limb.  (Please note that this is really experimental.  Several functions
   are likely to compute garbage when nails are enabled.)
