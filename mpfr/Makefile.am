@@ -34,24 +34,10 @@ lib_LIBRARIES = libmpfr.a
 include_HEADERS = mpfr.h
 endif
 
-TEXINFO_TEX = ../texinfo.tex
+# FIXME: As of automake 1.4f info_TEXINFOS can't be conditionalized, see top
+# level Makefile.am for the workaround.
 info_TEXINFOS = mpfr.texi
-
-# FIXME: As of Jan 2001, automake doesn't like conditionally defined
-# info_TEXINFOS.  The fudge here ensures we distribute mpfr.info
-# unconditionally, but only install it if the user wants mpfr.  This is
-# highly dependent on automake internals.
-#
-if MAINTAINER_MODE
-INFO_DEPS = mpfr.info
-else
-if WANT_MPFR
-INFO_DEPS = mpfr.info
-else
-INFO_DEPS =
-endif
-endif
-
+TEXINFO_TEX = ../texinfo.tex
 
 libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h sin_cos.c extract.c	     \
   add.c add_ui.c add_ulp.c agm.c clear.c cmp.c cmp_ui.c div_2exp.c	     \
