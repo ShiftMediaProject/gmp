@@ -82,9 +82,7 @@ char *dis_func_names[] =
   "mpf_ui_div", "mpf_ui_sub",
 };
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   int i;
   int pass, reps = 10000;
@@ -176,9 +174,7 @@ main (argc, argv)
   exit (0);
 }
 
-dump_abort (name, res1, res2)
-     char *name;
-     mpf_t res1, res2;
+dump_abort (char *name, mpf_t res1, mpf_t res2)
 {
   printf ("failure in %s:\n", name);
   oo (res1);
@@ -186,8 +182,7 @@ dump_abort (name, res1, res2)
   abort ();
 }
 
-oo (x)
-     mpf_t x;
+oo (mpf_t x)
 {
   mp_size_t i;
   printf (" exp = %ld\n", x->_mp_exp);

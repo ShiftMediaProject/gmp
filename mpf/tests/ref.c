@@ -31,14 +31,7 @@ void ref_mpf_sub ();
 #endif
 
 void
-#if __STDC__
 ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
-#else
-ref_mpf_add (w, u, v)
-     mpf_t w;
-     const mpf_t u;
-     const mpf_t v;
-#endif
 {
   mp_size_t hi, lo, size;
   mp_ptr ut, vt, wt;
@@ -112,14 +105,7 @@ done:
 }
 
 void
-#if __STDC__
 ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
-#else
-ref_mpf_sub (w, u, v)
-     mpf_t w;
-     const mpf_t u;
-     const mpf_t v;
-#endif
 {
   mp_size_t hi, lo, size;
   mp_ptr ut, vt, wt;

@@ -40,13 +40,7 @@
 #endif
 
 int
-#if __STDC__
 main (int argc, char **argv)
-#else
-main (argc, argv)
-     int  argc;
-     char **argv;
-#endif
 {
   double d, e, r;
   mpf_t u, v;

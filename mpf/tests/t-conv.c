@@ -32,9 +32,7 @@ MA 02111-1307, USA. */
 #define EXPO 20
 #endif
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpf_t x, y;
   int reps = 20000;
@@ -107,8 +105,7 @@ main (argc, argv)
   exit (0);
 }
 
-oo (x)
-     mpf_t x;
+oo (mpf_t x)
 {
   int i;
   printf (" exp = %ld\n", x->_mp_exp);
