@@ -1,3 +1,15 @@
+2000-03-13  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/p6/README: New file.
+
+	* mpn/x86/k6/mul_1.asm: Rewrite, smaller and slightly faster.
+
+	* mpn/lisp/gmpasm-mode.el: Rewrite assembler comment detection and
+	handling.
+
+	* configure.in: Separate mmx directories for each x86 flavour.
+	* configure: Regenerate.
+
 2000-03-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/x86-defs.m4 (ALIGN): Supplement definition from
@@ -6,6 +18,7 @@
 	* mpn/x86/k7/mmx/copyd.asm: Use plain emms (femms is just an alias
 	for emms now).
 	* mpn/x86/k7/mmx/copyi.asm: Ditto.
+	* mpn/x86/k7/mmx/rshift.asm: Ditto.
 	* mpn/x86/x86-defs.m4: Amend comments.
 
 	* mpn/x86/mod_1.asm: Add comments on speeds.
