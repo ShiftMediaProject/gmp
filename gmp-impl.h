@@ -769,7 +769,9 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 
-/* For power and powerpc we want an inline stu/bdnz loop for zeroing.  On
+/* Zero n limbs at dst.
+
+   For power and powerpc we want an inline stu/bdnz loop for zeroing.  On
    ppc630 for instance this is optimal since it can sustain only 1 store per
    cycle.
 
@@ -787,28 +789,32 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
    would be good when on a GNU system.  */
 
 #if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
-#define MPN_ZERO(dst, size)             \
-  do {                                  \
-    ASSERT ((size) >= 0);               \
-    if ((size) != 0)                    \
-      {                                 \
-        mp_ptr     __dst  = (dst) - 1;  \
-        mp_size_t  __size = (size);     \
-        do                              \
-          *++__dst = 0;                 \
-        while (--__size);               \
-      }                                 \
+#define MPN_ZERO(dst, n)			\
+  do {						\
+    ASSERT ((n) >= 0);				\
+    if ((n) != 0)				\
+      {						\
+	mp_ptr __dst = (dst) - 1;		\
+	mp_size_t __n = (n);			\
+	do					\
+	  *++__dst = 0;				\
+	while (--__n);				\
+      }						\
   } while (0)
 #endif
 
-/* Zero NLIMBS *limbs* AT DST.  */
 #ifndef MPN_ZERO
-#define MPN_ZERO(DST, NLIMBS)                   \
-  do {                                          \
-    mp_size_t __i;                              \
-    ASSERT ((NLIMBS) >= 0);                     \
-    for (__i = 0; __i < (NLIMBS); __i++)        \
-      (DST)[__i] = 0;                           \
+#define MPN_ZERO(dst, n)			\
+  do {						\
+    ASSERT ((n) >= 0);				\
+    if ((n) != 0)				\
+      {						\
+	mp_ptr __dst = (dst);			\
+	mp_size_t __n = (n);			\
+	do					\
+	  *__dst++ = 0;				\
+	while (--__n);				\
+      }						\
   } while (0)
 #endif
 
