@@ -524,6 +524,12 @@ my @table =
        'speed' => 'SPEED_ROUTINE_MPN_SQR',
        'try'   => 'TYPE_SQR',
      },
+     {
+       'regexp'=> 'sqr_diagonal',
+       'ret'   => 'void',
+       'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size',
+       'try'   => 'none',
+     },
 
      {
        'regexp'=> 'sqrtrem',

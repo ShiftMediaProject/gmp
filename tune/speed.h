@@ -199,6 +199,7 @@ double speed_mpn_sb_divrem_m3_div _PROTO ((struct speed_params *s));
 double speed_mpn_sb_divrem_m3_inv _PROTO ((struct speed_params *s));
 double speed_mpn_set_str _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
+double speed_mpn_sqr_diagonal _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
 double speed_mpn_sqrtrem _PROTO ((struct speed_params *s));
 double speed_mpn_sub_n _PROTO ((struct speed_params *s));
@@ -607,6 +608,9 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_SQR(function) \
   SPEED_ROUTINE_MPN_SQR_CALL (function (wp, s->xp, s->size))
+
+#define SPEED_ROUTINE_MPN_SQR_DIAGONAL(function) \
+  SPEED_ROUTINE_MPN_SQR (function)
 
 
 #define SPEED_ROUTINE_MPN_SQR_TSPACE(call, tsize, minsize)      \

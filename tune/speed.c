@@ -228,6 +228,9 @@ const struct routine_t {
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
+#if HAVE_NATIVE_mpn_sqr_diagonal
+  { "mpn_sqr_diagonal",  speed_mpn_sqr_diagonal     },
+#endif
 
   { "mpn_mul_n",         speed_mpn_mul_n            },
   { "mpn_sqr_n",         speed_mpn_sqr_n            },

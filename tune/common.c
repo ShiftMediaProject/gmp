@@ -743,6 +743,14 @@ speed_mpn_sqr_basecase (struct speed_params *s)
   SPEED_ROUTINE_MPN_SQR (mpn_sqr_basecase);
 }
 
+#if HAVE_NATIVE_mpn_sqr_diagonal
+double
+speed_mpn_sqr_diagonal (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQR (mpn_sqr_diagonal);
+}
+#endif
+
 double
 speed_mpn_kara_mul_n (struct speed_params *s)
 {
