@@ -7852,7 +7852,7 @@ throughput.
 
 A similar approach in reverse can be taken to process just half a limb at a
 time if the divisor is only a half limb.  In this case the 1@cross{}1 multiply
-for the inverse effectively becomes two @m{1\over2@cross{}1, (1/2)x1} for each
+for the inverse effectively becomes two @m{{1\over2}\times1, (1/2)x1} for each
 limb, which can be a saving on CPUs with a fast half limb multiply, or in fact
 if the only multiply is a half limb, and especially if it's not pipelined.
 
@@ -7892,7 +7892,7 @@ can be done with the basecase division algorithm (@pxref{Basecase Division}),
 but using N/2 limbs as a base, not just a single limb.  This way the
 multiplications that arise are (N/2)@cross{}(N/2) and can take advantage of
 Karatsuba and higher multiplication algorithms (@pxref{Multiplication
-Algorithms}).  The ``digits'' of the quotient are formed by recursive
+Algorithms}).  The two ``digits'' of the quotient are formed by recursive
 N@cross{}(N/2) divisions.
 
 If the (N/2)@cross{}(N/2) multiplies are done with a basecase multiplication
@@ -7978,8 +7978,8 @@ supporting Toom-3 multiplication and @code{mpq} canonicalizations.  It forms
 quotient digits with a multiply by the modular inverse of 3 (which is
 @code{0xAA..AAB}) and uses two comparisons to determine a borrow for the next
 limb.  The multiplications don't need to be on the dependent chain, as long as
-the effect of the borrows is applied.  Only a few optimized assembler
-implementations currently exist.
+the effect of the borrows is applied, which can help chips with pipelined
+multipliers.
 
 
 @node Exact Remainder, Small Quotient Division, Exact Division, Division Algorithms
@@ -7989,8 +7989,8 @@ If the exact division algorithm is done with a full subtraction at each stage
 and the dividend isn't a multiple of the divisor, then low zero limbs are
 produced but with a remainder in the high limbs.  For dividend @math{a},
 divisor @math{d}, quotient @math{q}, and @m{b = 2
-\GMPraise{@code{mp\_bits\_per\_limb}}, b = 2^mp_bits_per_limb}, then this
-remainder @math{r} is of the form
+\GMPraise{@code{mp\_bits\_per\_limb}}, b = 2^mp_bits_per_limb}, this remainder
+@math{r} is of the form
 @tex
 $$ a = qd + r b^n $$
 @end tex
@@ -8092,7 +8092,7 @@ in many textbooks, for example Knuth section 4.5.2 algorithm B.  It simply
 consists of successively reducing odd operands @math{a} and @math{b} using
 
 @quotation
-@math{a,b = @abs{}(a-b), @min{}(a,b)} @*
+@math{a,b = @abs{}(a-b),@min{}(a,b)} @*
 strip factors of 2 from @math{a}
 @end quotation
 
@@ -8139,7 +8139,7 @@ iterations per bit, which may be a worthwhile tradeoff.
 Generally with the above approaches a speed of perhaps 6 cycles per bit can be
 achieved, which is still not terribly fast with for instance a 64-bit GCD
 taking nearly 400 cycles.  It's this sort of time which means it's not usually
-advantageous to to a set of divisibility tests using a GCD.
+advantageous to combine a set of divisibility tests into a GCD.
 
 
 @node Accelerated GCD, Extended GCD, Binary GCD, Greatest Common Divisor Algorithms
@@ -8307,7 +8307,6 @@ s1,r1 = sqrtrem (a3*b + a2)
 @end example
 
 @end ifnottex
-@noindent
 This is an approximation to the desired root and is extended by a division to
 give @math{s},@math{r},
 @tex
@@ -8426,7 +8425,7 @@ to save operations, so long as the lookup tables don't become too big.
 
 A square root must still be taken for any value that passes these tests, to
 verify it's really a square and not one of the small fraction of non-squares
-that get through (@pxref{Square Root Algorithm}).
+that get through (ie.@: a pseudo-square to all the tested bases).
 
 Clearly more residue tests could be done, @code{mpz_perfect_square_p} only
 uses a compact and efficient set.  Big inputs would probably benefit from more
