@@ -42,10 +42,10 @@ ifdef(`OPERATION_addmul_1', `
 C mp_limb_t M4_function_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                          mp_limb_t mult);
 
-define(PARAM_MULTIPLIER, `FRAME+16(%esp)')
-define(PARAM_SIZE,       `FRAME+12(%esp)')
-define(PARAM_SRC,        `FRAME+8(%esp)')
-define(PARAM_DST,        `FRAME+4(%esp)')
+defframe(PARAM_MULTIPLIER,16)
+defframe(PARAM_SIZE,      12)
+defframe(PARAM_SRC,       8)
+defframe(PARAM_DST,       4)
 
 	.text
 	ALIGN(8)
