@@ -1,3 +1,19 @@
+2000-12-10  Kevin Ryde  <kevin@swox.se>
+
+	* tune/Makefile.am ({speed,speed_ext,tune}_LDFLAGS): Don't use
+	-all-static, as gcc 2.95.2 on solaris 8 doesn't like it.
+
+	* configure.in (mips3,mips64): Add ABI=64, name the others ABI=n32 and
+	ABI=o32.
+	* mpn/mips3/gmp-mparam.h (BITS_PER_LONGINT): Remove #define and let
+	configure determine it, since it varies with ABI=64 or ABI=n32.
+	* gmp.texi (ABI and ISA): Update.
+	(mpz_mod_ui): Remark that it's identical to mpz_fdiv_r_ui.
+	(mpn_divexact_by3): Qualify a statement needing mp_bits_per_limb even.
+
+	* mul_fft.c (mpn_fft_mul_modF_K etc): Patch by Paul Zimmermann to fix
+	results in certain cases of recursing into a further FFT.
+
 2000-12-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/cmpabs.c: Remove unused variable.
