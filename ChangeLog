@@ -19,6 +19,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-20  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k7/mmx/com_n.asm: New file.
+
+	* mpz/n_pow_ui.c (SWAP_RP_TP): Use ASSERT_CODE on ralloc and talloc,
+	to ensure they needn't live past the initial allocs in a normal build.
+
+	* mpn/generic/mod_34lsub1.c: Note this is for internal use.
+
 2002-02-19  Torbjorn Granlund  <tege@swox.com>
 
 	* Clean up *_THRESHOLD names.  Many files affected.
