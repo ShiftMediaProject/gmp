@@ -1,5 +1,11 @@
 2000-10-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/cntlz.asm: Rewrite.
+
+	* mp_clz_tab.c (__clz_tab): Half table size to 128 entires.
+	* longlong.h (count_leading_zeros): Demand just 128 entries from
+	__clz_tab.
+
 	* configure.in (mips-sgi-irix6.*): Pass -mips3 in addition to options
 	for n32 ABI.
 
