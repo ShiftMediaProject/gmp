@@ -6,7 +6,7 @@ dnl  K6-2  1.0   1.18  1.18  1.18  cycles/limb
 dnl  K6    1.5   1.85  1.75  1.85
 
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -55,11 +55,13 @@ deflit(`FRAME',0)
 
 
 L(two_or_more):
-	pushl	%ebx
-FRAME_pushl()
-	movl	%ecx, %ebx
+	pushl	%ebx	FRAME_pushl()
+	pcmpeqd	%mm7, %mm7		C all ones
 
-	pcmpeqd	%mm7, %mm7	C all ones
+	movl	%ecx, %ebx
+ifelse(GMP_NAIL_BITS,0,,
+`	psrld	$GMP_NAIL_BITS, %mm7')	C numb part, if nails
+
 
 
 	ALIGN(8)
@@ -68,9 +70,9 @@ L(top):
 	C ebx	floor(size/2)
 	C ecx	counter
 	C edx	dst
-	C esi
-	C edi
-	C ebp
+	C
+	C mm0	scratch
+	C mm7	mask
 
 	movq	-8(%eax,%ecx,8), %mm0
 	pxor	%mm7, %mm0
@@ -80,7 +82,7 @@ L(top):
 
 	jnc	L(no_extra)
 	movl	(%eax,%ebx,8), %eax
-	notl	%eax
+	notl_or_xorl_GMP_NUMB_MASK(%eax)
 	movl	%eax, (%edx,%ebx,8)
 L(no_extra):
 
