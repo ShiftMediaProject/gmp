@@ -36,6 +36,10 @@
 
 2000-03-22  Torbjorn Granlund  <tege@swox.com>
 
+	* demos/pexpr.c (op_t): Add ROOT.
+	(fns): Add ROOT.
+	(mpz_eval_expr): Add ROOT.
+
 	* mpz/root.c: Handle roots of negative numbers.
 	Fix other border cases.
 	Fix rare memory leakage.
