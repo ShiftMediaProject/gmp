@@ -1607,7 +1607,8 @@ workstations) is accepted by @file{config.sub}, but is currently equivalent to
 @item Sparc CPU Types
 @cindex Sparc
 @samp{sparcv8} or @samp{supersparc} on relevant systems will give a
-significant performance increase over the V7 code.
+significant performance increase over the V7 code selected by plain
+@samp{sparc}.
 
 @item Sparc App Regs
 @cindex Sparc
@@ -6302,8 +6303,7 @@ exception is thrown.  The same applies to @code{operator=}.
 @deftypefunx mpz_class operator% (mpz_class @var{a}, mpz_class @var{d})
 Divisions involving @code{mpz_class} round towards zero, as per the
 @code{mpz_tdiv_q} and @code{mpz_tdiv_r} functions (@pxref{Integer Division}).
-This corresponds to the rounding used for plain @code{int} calculations on
-most machines.
+This is the same as the C99 @code{/} and @code{%} operators.
 
 The @code{mpz_fdiv@dots{}} or @code{mpz_cdiv@dots{}} functions can always be called
 directly if desired.  For example,
@@ -8013,6 +8013,7 @@ multipliers.
 
 @node Exact Remainder, Small Quotient Division, Exact Division, Division Algorithms
 @subsection Exact Remainder
+@cindex Exact remainder
 
 If the exact division algorithm is done with a full subtraction at each stage
 and the dividend isn't a multiple of the divisor, then low zero limbs are
@@ -8045,6 +8046,8 @@ providing good speedups on a number of processors.
 @math{r}, leading to some negations in the above formula, but all are
 essentially the same.
 
+@cindex Divisibility algorithm
+@cindex Congruence algorithm
 Clearly @math{r} is zero when @math{a} is a multiple of @math{d}, and this
 leads to divisibility or congruence tests which are potentially more efficient
 than a normal division.
