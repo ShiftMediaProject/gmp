@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-08-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/pprime_p.c: Fake up a local mpz_t to take abs(n), rather than
+	using mpz_init etc.
+
+	* mpz/millerrabin.c: Use mpz_urandomm for uniform selection of x,
+	reported by Jason Moxham.  Exclude x==n-1, ie. -1 mod n.  Use
+	gmp_randinit_default.
+
+	* mpn/alpha/umul.asm: Use "r" registers, for the benefit of Unicos.
+
+	* tests/devel/try.c: Add mpn_copyi and mpn_copyd.
+
 2002-08-09  Kevin Ryde  <kevin@swox.se>
 
 	* Makefile.am: Remove configure.lineno from DISTCLEANFILES and gmp.tmp
