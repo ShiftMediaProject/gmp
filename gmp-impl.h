@@ -1876,7 +1876,8 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
    Alternative: As noted in Granlund and Montgomery "Division by Invariant
    Integers using Multiplication" (reference in gmp.texi), n itself gives a
    3-bit inverse immediately, and could be used instead of a table lookup.
-   Some bit twiddling could very likely give a 4-bit inverse to start too.  */
+   A 4-bit inverse can be obtained effectively from xoring bits 1 and 2 into
+   bit 3, for instance with (((n + 2) & 4) << 1) ^ n.  */
 
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
@@ -2063,10 +2064,10 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 /* Apparently lwbrx might be slow on some PowerPC chips, so restrict it to
    those we know are fast.  */
-#if defined (__GNUC__) && ! defined (NO_ASM)    \
-  && (HAVE_HOST_CPU_powerpc604                  \
-      || HAVE_HOST_CPU_powerpc604e              \
-      || HAVE_HOST_CPU_powerpc750               \
+#if defined (__GNUC__) && ! defined (NO_ASM) && BITS_PER_MP_LIMB == 32  \
+  && (HAVE_HOST_CPU_powerpc604                                          \
+      || HAVE_HOST_CPU_powerpc604e                                      \
+      || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
 #define BSWAP_LIMB_FETCH(limb, src)     \
   do {                                  \
@@ -2083,10 +2084,10 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 /* On the same basis that lwbrx might be slow, restrict stwbrx to those we
    know are fast.  FIXME: Is this necessary?  */
-#if defined (__GNUC__) && ! defined (NO_ASM)    \
-  && (HAVE_HOST_CPU_powerpc604                  \
-      || HAVE_HOST_CPU_powerpc604e              \
-      || HAVE_HOST_CPU_powerpc750               \
+#if defined (__GNUC__) && ! defined (NO_ASM) && BITS_PER_MP_LIMB == 32  \
+  && (HAVE_HOST_CPU_powerpc604                                          \
+      || HAVE_HOST_CPU_powerpc604e                                      \
+      || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
 #define BSWAP_LIMB_STORE(dst, limb)     \
   do {                                  \
