@@ -828,9 +828,23 @@ all (void)
     /* gcc sub-minor version doesn't seem to come through as a define */
     printf ("gcc %d.%d */\n", __GNUC__, __GNUC_MINOR__);
 #else
-#ifdef __SUNPRO_C
+#undef PRINTED_COMPILER
+#if ! defined (PRINTED_COMPILER) && defined (__SUNPRO_C)
     printf ("Sun C %d.%d */\n", __SUNPRO_C / 0x100, __SUNPRO_C % 0x100);
-#else
+#define PRINTED_COMPILER
+#endif
+#if ! defined (PRINTED_COMPILER) && defined (__sgi) && defined (_COMPILER_VERSION)
+    printf ("MIPSpro C %d.%d.%d */\n",
+	    _COMPILER_VERSION / 100,
+	    _COMPILER_VERSION / 10 % 10,
+	    _COMPILER_VERSION % 10);
+#define PRINTED_COMPILER
+#endif
+#if ! defined (PRINTED_COMPILER) && defined (__DECC) && defined (__DECC_VER)
+    printf ("DEC C %d */\n", __DECC_VER);
+#define PRINTED_COMPILER
+#endif
+#if ! defined (PRINTED_COMPILER)
     printf ("system compiler */\n");
 #endif
 #endif
