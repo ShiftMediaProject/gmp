@@ -1,3 +1,20 @@
+2001-09-04  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c: Define a HAVE for each speed_cpu_frequency routine to
+	avoid duplicating conditionals.
+	(speed_cpu_frequency_sco_etchw): New function.
+	(speed_cpu_frequency_table): Use it.
+	* tune/README: Mention SCO openunix 8 /etc/hw.
+
+	* mpz/fib_ui.c: Use ?: to avoid a gcc 3 bug on powerpc64.
+	Store back a carry for limb<long.
+
+	* mpn/x86/k7/mmx/divrem_1.asm, mpn/x86/k7/mmx/mod_1.asm,
+	mpn/x86/p6/mmx/divrem_1.asm: Fix a couple of comments.
+
+	* config.guess: Give m68020 for 68020 or better, not m68k.
+	* configfsf.guess: Update to 2001-09-04.
+
 2001-09-02  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (m68k-*-*): Let m68k mean 68000, not 68020.
