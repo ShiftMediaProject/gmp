@@ -1,3 +1,74 @@
+2001-06-08  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (ULONG_HIGHBIT, UINT_HIGHBIT, USHRT_HIGHBIT): Cast
+	ULONG_MAX etc to unsigned long etc before attempting to right shift.
+
+	* gmp-impl.h (mpn_incr_u, mpn_decr_u, MPN_INCR_U, MPN_DECR_U): Add
+	i386 optimized versions.
+
+	* mpn/hppa/*.s,S,asm: Use .label so the code works with gas on hppa
+	GNU/Linux too, reported by LaMont Jones <lamont@smallone.fc.hp.com>.
+	* mpn/hppa/README: Add some notes on this.
+
+	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add dive_1.c,
+	fib2_ui.c.
+
+	* tests/mpn/t-iord_u.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add it.
+
+	* configure.in (mips*-*-irix[6789]*): Make ABI=n32 the default, same
+	as in gmp 3.1.
+	* gmp.texi (ABI and ISA): Update.
+
+	* gmp.texi (Build Options): Misc tweaks.
+	(Notes for Particular Systems): Describe windows DLL handling.
+	(Known Build Problems): DJGPP needs bash 2.04.
+	(Number Theoretic Functions): mpz_invert returns 0<=r<modulus; add
+	mpz_fib2_ui, mpz_lucnum_ui, mpz_lucnum2_ui.
+	(Fibonacci Numbers Algorithm): Update for new formulas used.
+	(Lucas Numbers Algorithm): New section.
+
+	* tune/speed.c,speed.h,common.c,many.pl: Add mpn_fib2_ui, mpz_fib2_ui,
+	mpz_lucnum_ui, mpz_lucnum2_ui.
+	* demos/expr/exprz.c,README: Add lucnum.
+	* demos/perl/GMP.pm,GMP.xs,GMP/Mpz.pm,test.pl: Add fib2, lucnum,
+	lucnum2.
+
+	* tests/mpz/t-lucnum_ui.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+	* tests/mpz/t-fib_ui.c: Check mpz_fib2_ui too, updates for new style
+	MPN_FIB2_SIZE.
+
+	* tune/tuneup.c, tune/Makefile.am, gmp-impl.h, mpn/*/gmp-mparam.h:
+	Remove FIB_THRESHOLD, no longer required.
+
+	* mpz/fib2_ui.c, mpz/lucnum_ui.c mpz/lucnum2_ui.c: New files.
+	* Makefile.am, mpz/Makefile.am: Add them.
+	* gmp-h.in (mpz_fib2_ui, mpz_lucnum_ui, mpz_lucnum2_ui): Add
+   	prototypes.
+
+	* mpn/generic/fib2_ui.c: New file.
+	* configure.in (gmp_mpn_functions): Add it.
+	* gmp-impl.h (mpn_fib2_ui, FIB_TABLE, etc): Add these.
+	* mpz/fib_ui.c: Rewrite.
+
+	* acinclude.m4 (GMP_C_SIZES): Fix _LONG_LONG_LIMB define for mp_limb_t
+	size test.
+	(GMP_FUNC_ALLOCA): Add dummy __GMP_BITS_PER_MP_LIMB for gmp-h.in work.
+
+	* configure.in (CPPFLAGS): Remove -D__GMP_WITHIN_GMP, don't want it
+	everywhere.
+	* Makefile.am, mpn/Makefile.am, mpz/Makefile.am, mpq/Makefile.am,
+	mpf/Makefile.am, mpbsd/Makefile.am (INCLUDES): Set -D__GMP_WITHIN_GMP.
+
+	* configure.in (*-*-msdosdjgpp*): Forcibly disable shared libraries,
+	to make libtests.la work.
+	
+	* acconfig.h (_LONG_LONG_LIMB, HAVE_MPFR): Remove dummy defines, no
+	longer needed.
+
+	* mpz/set_ui.c: Store to _mp_d[0] unconditionally.
+
 2001-05-27  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, gmp-h.in, mp-h.in: Add support for windows DLLs.
