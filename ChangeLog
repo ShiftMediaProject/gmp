@@ -1,3 +1,7 @@
+2000-03-22  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp_errno.c: New file.
+
 2000-03-21  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp.h (error number enum): New anonymous enum.
