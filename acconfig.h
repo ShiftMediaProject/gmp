@@ -24,6 +24,14 @@ MA 02111-1307, USA.
 /* Define if a limb is long long. */
 #undef _LONG_LONG_LIMB
 
+/* Define sizes here if they're not in gmp-mparam.h. */
+#undef BYTES_PER_MP_LIMB
+#undef BITS_PER_MP_LIMB
+#undef BITS_PER_LONGINT
+#undef BITS_PER_INT
+#undef BITS_PER_SHORTINT
+#undef BITS_PER_CHAR
+
 /* Define if we have native implementation of function. */
 #undef HAVE_NATIVE_
 #undef HAVE_NATIVE_mpn_add                 
