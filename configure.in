@@ -1053,13 +1053,17 @@ case $host in
     # be done through the optlist since the plain cflags would be run first
     # and we don't want to require the default mode (whatever it is) works.
     #
+    # Note it's gcc_32_cflags_maybe and not gcc_cflags_maybe because the
+    # latter would be used in the 64-bit ABI on systems like "*bsd" where
+    # abilist="64" only.
+    #
     case $host_cpu in
       sparc64 | sparcv9* | ultrasparc*)
         gcc_cflags="-O2 -Wa,-xarch=v8plus" ;;
       *)
         gcc_cflags="-O2" ;;
     esac
-    gcc_cflags_maybe="-m32"
+    gcc_32_cflags_maybe="-m32"
     gcc_cflags_optlist="cpu"
 
     # gcc 2.7.2 knows -mcypress, -msupersparc, -mv8, -msparclite.
