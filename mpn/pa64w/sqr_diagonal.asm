@@ -38,7 +38,7 @@ define(`t1',`%r20')
 define(`PROLOGUE')
 PROLOGUE(mpn_sqr_diagonal)	C make configure happy...
 
-	.level		`2.0n'
+	.level		`2.0w'
 	.code
 	.export mpn_sqr_diagonal,entry
 mpn_sqr_diagonal
