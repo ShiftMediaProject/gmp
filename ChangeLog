@@ -1,3 +1,7 @@
+2001-01-08  Torbjorn Granlund  <tege@swox.com>
+
+	* urandom.h: Amend 2000-11-21 change to also handle cygwin.
+
 2001-01-08  Kevin Ryde  <kevin@swox.se>
 
 	* tune/many.pl: Updates for move to tests/devel, add modexact_1_odd,
