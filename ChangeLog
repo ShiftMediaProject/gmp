@@ -1,3 +1,7 @@
+2001-08-24  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/primes.c: Complete rewrite.
+
 2001-08-24  Kevin Ryde  <kevin@swox.se>
 
 	* longlong.h: Test __ppc__ for apple darwin cc, reported by Jon
