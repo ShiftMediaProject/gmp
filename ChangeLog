@@ -1,3 +1,25 @@
+2001-06-29  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_FIB2_UI,
+	SPEED_ROUTINE_COUNT_ZEROS_C): Corrections to TMP block handling.
+
+	* gmp-impl.h (MPN_TOOM3_MUL_N_MINSIZE, MPN_TOOM3_SQR_N_MINSIZE):
+	Corrections to these to account for adding tD into E.
+	(MPN_INCR_U, MPN_DECR_U) [WANT_ASSERT]: Add size
+	assertions, since mpn_add_1 and mpn_sub_1 from gmp.h don't get them.
+	(MPN_DIVREM_OR_DIVEXACT_1): Add an assert of no remainder.
+
+	* assert.c: Add stdlib.h for abort prototype.
+	* tests/mpz/t-bin.c, t-cmp.c, t-get_si.c, t-misc.c, t-popcount.c,
+	t-set_str.c, t-sizeinbase.c: Ditto.
+	* tests/mpq/t-equal.c: Ditto.
+
+	* mpn/generic/mul_n.c, mpz/cfdiv_r_2exp.c: Use MPN_INCR_U.
+
+	* tests/devel/try.c (TYPE_SB_DIVREM_MN): More fixes for calling method.
+
+	* mpn/x86/k6/cross.pl: More insn exceptions.
+
 2001-06-23  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in (__GMPN_ADD_1, __GMPN_SUB_1) [i386]: Fix some asm output
