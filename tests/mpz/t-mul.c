@@ -288,22 +288,33 @@ mul_basecase (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 
 void
 dump_abort (int i, char *s,
-	    mpz_t op1, mpz_t op2, mpz_t product, mpz_t ref_product)
+            mpz_t op1, mpz_t op2, mpz_t product, mpz_t ref_product)
 {
-  mpz_t diff;
   fprintf (stderr, "ERROR: %s in test %d\n", s, i);
-  fprintf (stderr, "op1   = "); debug_mp (op1, -16);
-  fprintf (stderr, "op2 = "); debug_mp (op2, -16);
-  fprintf (stderr, "    product  = "); debug_mp (product, -16);
-  fprintf (stderr, "ref_product  = "); debug_mp (ref_product, -16);
-  mpz_init (diff);
-  mpz_sub (diff, ref_product, product);
-  fprintf (stderr, "diff:         "); debug_mp (diff, -16);
+  fprintf (stderr, "op1          = "); debug_mp (op1);
+  fprintf (stderr, "op2          = "); debug_mp (op2);
+  fprintf (stderr, "    product  = "); debug_mp (product);
+  fprintf (stderr, "ref_product  = "); debug_mp (ref_product);
   abort();
 }
 
 void
-debug_mp (mpz_t x, int base)
+debug_mp (mpz_t x)
 {
-  mpz_out_str (stderr, base, x); fputc ('\n', stderr);
+  size_t siz = mpz_sizeinbase (x, 16);
+
+  if (siz > 65)
+    {
+      mpz_t q;
+      mpz_init (q);
+      mpz_tdiv_q_2exp (q, x, 4 * (mpz_sizeinbase (x, 16) - 25));
+      gmp_fprintf (stderr, "%ZX...", q);
+      mpz_tdiv_r_2exp (q, x, 4 * 25);
+      gmp_fprintf (stderr, "%025ZX [%d]\n", q, (int) siz);
+      mpz_clear (q);
+    }
+  else
+    {
+      gmp_fprintf (stderr, "%ZX\n", x);
+    }
 }
