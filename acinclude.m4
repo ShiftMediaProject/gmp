@@ -27,8 +27,9 @@ define(X86_PATTERN,
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
 dnl  ----------------------------
-dnl  Expand to the value of a "#define NAME" from the given FILE.
-dnl  The regexps here aren't very rugged, but are enough for gmp.
+dnl
+dnl  Expand at autoconf time to the value of a "#define NAME" from the given
+dnl  FILE.  The regexps here aren't very rugged, but are enough for gmp.
 dnl  /dev/null as a parameter prevents a hang if $2 is accidentally omitted.
 
 define(GMP_HEADER_GETVAL,
@@ -41,9 +42,10 @@ esyscmd([grep "^#define $1 " $2 /dev/null 2>/dev/null]),
 
 dnl  GMP_VERSION
 dnl  -----------
-dnl  The gmp version number, extracted from the #defines in gmp.h.
-dnl  Two digits like 3.0 if patchlevel <= 0, or three digits like 3.0.1 if
-dnl  patchlevel > 0.
+dnl
+dnl  The gmp version number, extracted from the #defines in gmp.h at
+dnl  autoconf time.  Two digits like 3.0 if patchlevel <= 0, or three digits
+dnl  like 3.0.1 if patchlevel > 0.
 
 define(GMP_VERSION,
 [GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp.h)[]dnl
@@ -54,6 +56,7 @@ ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
 
 dnl  GMP_PROG_M4
 dnl  -----------
+dnl
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
 dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
 dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
@@ -314,8 +317,10 @@ EOF
   AC_MSG_RESULT($gmp_cv_cc_64bit)
 ])dnl
 
+
 dnl  GMP_INIT([M4-DEF-FILE])
-dnl  
+dnl  -----------------------
+
 AC_DEFUN(GMP_INIT,
 [ifelse([$1], , gmp_configm4=config.m4, gmp_configm4="[$1]")
 gmp_tmpconfigm4=cnfm4.tmp
@@ -324,7 +329,8 @@ gmp_tmpconfigm4p=cnfm4p.tmp
 test -f $gmp_tmpconfigm4 && rm $gmp_tmpconfigm4
 test -f $gmp_tmpconfigm4i && rm $gmp_tmpconfigm4i
 test -f $gmp_tmpconfigm4p && rm $gmp_tmpconfigm4p
-])dnl
+])
+
 
 dnl  GMP_FINISH
 dnl  ----------
@@ -366,54 +372,71 @@ if test -f $gmp_tmpconfigm4p; then
 fi
 echo ["')"] >> $gmp_configm4
 echo ["define(\`__CONFIG_M4_INCLUDED__')"] >> $gmp_configm4
-])dnl
+])
+
 
 dnl  GMP_INCLUDE(FILE)
+dnl  -----------------
+
 AC_DEFUN(GMP_INCLUDE,
 [AC_REQUIRE([GMP_INIT])
 echo ["include(\`$1')"] >> $gmp_tmpconfigm4i
-])dnl
+])
+
 
 dnl  GMP_SINCLUDE(FILE)
+dnl  ------------------
+
 AC_DEFUN(GMP_SINCLUDE,
 [AC_REQUIRE([GMP_INIT])
 echo ["sinclude(\`$1')"] >> $gmp_tmpconfigm4i
-])dnl
+])
 
-dnl GMP_DEFINE(MACRO, DEFINITION [, LOCATION])
-dnl [ Define M4 macro MACRO as DEFINITION in temporary file.		]
-dnl [ If LOCATION is `POST', the definition will appear after any	]
-dnl [ include() directives inserted by GMP_INCLUDE/GMP_SINCLUDE.	]
-dnl [ Mind the quoting!  No shell variables will get expanded.		]
-dnl [ Don't forget to invoke GMP_FINISH to create file config.m4.	]
-dnl [ config.m4 uses `<' and '>' as quote characters for all defines.	]
+
+dnl  GMP_DEFINE(MACRO, DEFINITION [, LOCATION])
+dnl  ------------------------------------------
+dnl  Define M4 macro MACRO as DEFINITION in temporary file.
+dnl
+dnl  If LOCATION is `POST', the definition will appear after any include()
+dnl  directives inserted by GMP_INCLUDE/GMP_SINCLUDE.  Mind the quoting!  No
+dnl  shell variables will get expanded.  Don't forget to invoke GMP_FINISH
+dnl  to create file config.m4.  config.m4 uses `<' and '>' as quote
+dnl  characters for all defines.
+
 AC_DEFUN(GMP_DEFINE, 
 [AC_REQUIRE([GMP_INIT])
 echo ['define(<$1>, <$2>)'] >> ifelse([$3], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
-])dnl
+])
 
-dnl GMP_DEFINE_RAW(STRING, [, LOCATION])
-dnl [ Put STRING in temporary file.					]
-dnl [ If LOCATION is `POST', the definition will appear after any	]
-dnl [ include() directives inserted by GMP_INCLUDE/GMP_SINCLUDE.	]
-dnl [ Don't forget to invoke GMP_FINISH to create file config.m4.	]
+
+dnl  GMP_DEFINE_RAW(STRING, [, LOCATION])
+dnl  ------------------------------------
+dnl  Put STRING in temporary file.
+dnl
+dnl  If LOCATION is `POST', the definition will appear after any include()
+dnl  directives inserted by GMP_INCLUDE/GMP_SINCLUDE.  Don't forget to
+dnl  invoke GMP_FINISH to create file config.m4.
+
 AC_DEFUN(GMP_DEFINE_RAW,
 [AC_REQUIRE([GMP_INIT])
 echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
-])dnl
+])
+
 
 dnl  GMP_ASM_LABEL_SUFFIX
+dnl  --------------------
 dnl  Should a label have a colon or not?
+
 AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([what assembly label suffix to use],
-               gmp_cv_asm_label_suffix,
+                gmp_cv_asm_label_suffix,
 [case "$target" in 
   *-*-hpux*) gmp_cv_asm_label_suffix=[""] ;;
   *) gmp_cv_asm_label_suffix=[":"] ;;
 esac
 ])
 echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
-])dnl
+])
 
 
 dnl  GMP_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
@@ -433,7 +456,7 @@ AC_DEFUN(GMP_ASM_UNDERSCORE,
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
-	        gmp_cv_asm_underscore,
+               gmp_cv_asm_underscore,
 [cat > conftes1.c <<EOF
 main () { underscore_test(); }
 EOF
@@ -485,15 +508,16 @@ fi
 
 
 dnl  GMP_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl  ------------------------------------------------------------
 dnl  Is parameter to `.align' logarithmic?
-dnl  Requires NM to be set to nm for target.
+
 AC_DEFUN(GMP_ASM_ALIGN_LOG,
 [AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([if .align assembly directive is logarithmic],
-		gmp_cv_asm_align_log,
+               gmp_cv_asm_align_log,
 [cat > conftest.s <<EOF
       	$gmp_cv_asm_data
       	.align  4
@@ -526,7 +550,7 @@ if test "$gmp_cv_asm_align_log" = "yes"; then
 else
   ifelse([$2], , :, [$2])
 fi  
-])dnl
+])
 
 
 dnl  GMP_ASM_ALIGN_FILL_0x90
@@ -590,8 +614,11 @@ GMP_DEFINE_RAW(
 
 
 dnl  GMP_ASM_TEXT
+dnl  ------------
+
 AC_DEFUN(GMP_ASM_TEXT,
-[AC_CACHE_CHECK([how to switch to text section], gmp_cv_asm_text,
+[AC_CACHE_CHECK([how to switch to text section],
+                gmp_cv_asm_text,
 [case "$target" in
   *-*-aix*)
     changequote({, })
@@ -603,12 +630,16 @@ AC_DEFUN(GMP_ASM_TEXT,
 esac
 ])
 echo ["define(<TEXT>, <$gmp_cv_asm_text>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_DATA
+dnl  ------------
 dnl  Can we say `.data'?
+
 AC_DEFUN(GMP_ASM_DATA,
-[AC_CACHE_CHECK([how to switch to data section], gmp_cv_asm_data,
+[AC_CACHE_CHECK([how to switch to data section],
+                gmp_cv_asm_data,
 [case "$target" in
   *-*-aix*)
     changequote({, })
@@ -619,7 +650,7 @@ AC_DEFUN(GMP_ASM_DATA,
 esac
 ])
 echo ["define(<DATA>, <$gmp_cv_asm_data>)"] >> $gmp_tmpconfigm4
-])dnl
+])
 
 
 dnl  GMP_ASM_RODATA
@@ -657,22 +688,28 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 
 dnl  GMP_ASM_GLOBL
+dnl  -------------
 dnl  Can we say `.global'?
+
 AC_DEFUN(GMP_ASM_GLOBL,
-[AC_CACHE_CHECK([how to export a symbol], gmp_cv_asm_globl,
+[AC_CACHE_CHECK([how to export a symbol],
+                gmp_cv_asm_globl,
 [case "$target" in
   *-*-hpux*) gmp_cv_asm_globl=[".export"] ;;
   *) gmp_cv_asm_globl=[".globl"] ;;
 esac
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_TYPE
+dnl  ------------
 dnl  Can we say `.type'?
+
 AC_DEFUN(GMP_ASM_TYPE,
 [AC_CACHE_CHECK([how the .type assembly directive should be used],
-gmp_cv_asm_type,
+                gmp_cv_asm_type,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 for gmp_tmp_prefix in @ \# %; do
   echo "	.type	sym,${gmp_tmp_prefix}function" > conftest.s
@@ -686,12 +723,16 @@ if test -z "$gmp_cv_asm_type"; then
 fi
 ])
 echo ["define(<TYPE>, <$gmp_cv_asm_type>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_SIZE
+dnl  ------------
 dnl  Can we say `.size'?
+
 AC_DEFUN(GMP_ASM_SIZE,
-[AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_asm_size,
+[AC_CACHE_CHECK([if the .size assembly directive works],
+                 gmp_cv_asm_size,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 echo '	.size	sym,1' > conftest.s
 if AC_TRY_EVAL(ac_assemble); then
@@ -701,16 +742,18 @@ else
 fi
 ])
 echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_LSYM_PREFIX
+dnl  -------------------
 dnl  What is the prefix for a local label?
 
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([what prefix to use for a local label], 
-gmp_cv_asm_lsym_prefix,
+               gmp_cv_asm_lsym_prefix,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 gmp_cv_asm_lsym_prefix="L"
 for gmp_tmp_pre in L .L $ L$; do
@@ -741,8 +784,10 @@ rm -f conftest*
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
 
+
 dnl  GMP_ASM_W32
-dnl  How to [define] a 32-bit word.
+dnl  -----------
+dnl  How to define a 32-bit word.
 
 AC_DEFUN(GMP_ASM_W32,
 [AC_REQUIRE([GMP_ASM_DATA])
@@ -831,15 +876,16 @@ else
   AC_MSG_WARN([+----------------------------------------------------------])
   ifelse([$2], , :, [$2])
 fi
-])dnl
+])
 
 
 dnl  GMP_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
 dnl  ----------------------------------------------------------
+
 AC_DEFUN(GMP_ASM_SHLDL_CL,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
-		gmp_cv_asm_shldl_cl,
+               gmp_cv_asm_shldl_cl,
 [cat > conftest.s <<EOF
 	$gmp_cv_asm_text
 	shldl	%cl, %eax, %ebx
@@ -857,7 +903,7 @@ if test "$gmp_cv_asm_shldl_cl" = "yes"; then
 else
   ifelse([$2], , :, [$2])
 fi
-])dnl
+])
 
 
 dnl  GMP_GCC_MARCH_PENTIUMPRO([ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
@@ -875,10 +921,9 @@ dnl  option until 2.96.
 
 AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
 [AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
-  gmp_cv_gcc_march_pentiumpro,
-[
-tmp_major="`(gcc --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
-tmp_minor="`(gcc --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
+                gmp_cv_gcc_march_pentiumpro,
+[tmp_major="`(gcc --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
+ tmp_minor="`(gcc --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
 echo "gcc major '$tmp_major', minor '$tmp_minor'" 1>&AC_FD_CC
 
 gmp_cv_gcc_march_pentiumpro=no
@@ -1052,7 +1097,7 @@ else
 fi
 
 AC_MSG_RESULT($tmp_works)
-])dnl
+])
 
 
 dnl  GMP_C_ANSI2KNR
