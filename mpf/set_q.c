@@ -157,8 +157,8 @@ mpf_set_q (r, q)
 	}
     }
 
-  qlimb = mpn_divrem (qp, prec - (rsize - dsize), rp, rsize, dp, dsize);
-  qsize = prec;
+  qlimb = mpn_divrem (qp, prec - 1 - (rsize - dsize), rp, rsize, dp, dsize);
+  qsize = prec - 1;
   if (qlimb)
     {
       qp[qsize] = qlimb;

@@ -1,3 +1,7 @@
+Sat May 11 19:26:25 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* mpf/set_q.c: Compute prec-1 limbs in mpn_divrem call.
+
 Fri May 10 17:37:38 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/set_q.c: New file.
