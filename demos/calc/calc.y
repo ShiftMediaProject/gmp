@@ -1,7 +1,7 @@
 %{
 /* A simple integer desk calculator using yacc and gmp.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -166,12 +166,12 @@ mpz_t  variable[26];
 
 top:
   statement
-  | statements statement
+  | statements statement;
 
 statements:
   statement EOS
   | statements statement EOS
-  | error EOS ={ sp = stack[0]; yyerrok; }
+  | error EOS ={ sp = stack[0]; yyerrok; };
 
 statement:
   /* empty */
@@ -189,7 +189,7 @@ statement:
   | HELP    ={ calc_help (); }
   | HEX     ={ ibase = 16; obase = -16; }
   | DECIMAL ={ ibase = 0;  obase = 10; }
-  | QUIT    ={ exit (0); }
+  | QUIT    ={ exit (0); };
 
 /* "e" leaves it's value on the top of the mpz stack.  A rule like "e '+' e"
    will have done a reduction for the first "e" first and the second "e"
@@ -252,15 +252,15 @@ e:
             fprintf (stderr, "Invalid number: %s\n", $1);
             YYERROR;
           }
-      }
+      };
 
 gcdlist:
     e                /* value on stack */
-    | gcdlist ',' e  ={ sp--; mpz_gcd (sp, sp, sp+1); }
+    | gcdlist ',' e  ={ sp--; mpz_gcd (sp, sp, sp+1); };
 
 lcmlist:
     e                /* value on stack */
-    | lcmlist ',' e  ={ sp--; mpz_lcm (sp, sp, sp+1); }
+    | lcmlist ',' e  ={ sp--; mpz_lcm (sp, sp, sp+1); };
 
 %%
 
