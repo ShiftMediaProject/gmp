@@ -199,6 +199,10 @@ ifelse(WANT_PROFILING,`gprof',
 ')')
 
 dnl  Called: movl_GOT_ebx
+dnl  Label H is "here", the %eip obtained from the call.  C is the called
+dnl  subroutine.  J is the jump across that subroutine.  A fetch and "ret"
+dnl  is always done so calls and returns are balanced for the benefit of the
+dnl  various x86s that have return stack branch prediction.
 define(movl_GOT_ebx,
 m4_assert_numargs(-1)
 `	call	L(movl_GOT_ebx_C`'movl_GOT_ebx_counter)
