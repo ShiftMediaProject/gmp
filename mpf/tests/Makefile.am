@@ -1,40 +1,32 @@
 ## Process this file with automake to generate Makefile.in
 
+# Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+
+
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir) -I../..
-LDADD = ../../libgmp.la
+INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+LDADD = $(top_builddir)/libgmp.la
 
-noinst_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d
+check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d
+TESTS = $(check_PROGRAMS)
 
 t_add_SOURCES = t-add.c ref.c
 t_sub_SOURCES = t-sub.c ref.c
-
-check: Makefile st-add st-sub st-conv st-sqrt st-muldiv st-dm2exp st-reuse \
-  st-get_d
-	@echo "The tests passed."
-
-st-add: t-add@EXEEXT@
-	./t-add
-	touch $@
-st-sub: t-sub@EXEEXT@
-	./t-sub
-	touch $@
-st-conv: t-conv@EXEEXT@
-	./t-conv
-	touch $@
-st-sqrt: t-sqrt@EXEEXT@
-	./t-sqrt
-	touch $@
-st-muldiv: t-muldiv@EXEEXT@
-	./t-muldiv
-	touch $@
-st-dm2exp: t-dm2exp@EXEEXT@
-	./t-dm2exp
-	touch $@
-st-reuse: reuse@EXEEXT@
-	./reuse
-	touch $@
-st-get_d: t-get_d@EXEEXT@
-	./t-get_d
-	touch $@
