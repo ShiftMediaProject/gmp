@@ -68,10 +68,14 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
   cap_chunksize = nbits / (ranm % 4 + 1);
   cap_chunksize += cap_chunksize == 0; /* make it at least 1 */
 
-  bi = nbits - 1;
+  bi = nbits;
 
   for (;;)
     {
+      _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
+      chunksize = 1 + ranm % cap_chunksize;
+      bi = (bi < chunksize) ? 0 : bi - chunksize;
+
       if (bi == 0)
 	break;			/* low chunk is ...1 */
 
@@ -85,9 +89,5 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
 
       if (bi == 0)
 	break;			/* low chunk is ...0 */
-
-      _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
-      chunksize = 1 + ranm % cap_chunksize;
-      bi = (bi < chunksize) ? 0 : bi - chunksize;
     }
 }
