@@ -98,23 +98,16 @@ When adding an mpz file,
 
   ii) Add file.c to libmpz_la_SOURCES in mpz/Makefile.am.
 
-  iii) In the top-level Makefile.am, add mpz/file$U.lo to MPZ_OBJECTS.
-       If libmp.la needs it, then add the same to libmp_la_DEPENDENCIES.
-
 If a multi-function mpz file is being added,
 
   i) In mpz/Makefile.am,
 
      a) Add the file to EXTRA_DIST.
-     b) Add rules copying the file at build time to duplicates with
-        appropriate names.
+     b) Add rules copying the file at build time to appropriate names.
      c) Add each such func.c to nodist_libmpz_la_SOURCES.
 
-  ii) Add each c) above also as mpz/func$U.lo in MPZ_OBJECTS in the
-      top-level Makefile.am.
-
-  iii) In the multi-function file, expect a preprocessor symbol
-       OPERATION_func to indicate what form is being compiled.
+  ii) In the multi-function file, expect a preprocessor symbol
+      OPERATION_func to indicate what form is being compiled.
 
 The same applies to mpq, mpf, mpbsd and mpfr.  See mpz/mul_siui.c or
 mpf/integer.c for example multi-function files.
@@ -125,14 +118,14 @@ Generic test programs, or tests for things in the top-level directory
 can be added in the "tests" sub-directory.  A "tests/rand" exists for
 tests on the random number functions in the top-level directory.
 
-Tests related to mpz functions can be added to the "tests/mpz"
-directory.  Similarly for mpn, mpq, mpf, mpbsd and mpfr.
+Tests related to mpz functions can be added to the tests/mpz
+directory.  Similarly for mpq, mpf and mpbsd.
 
 In any case the name of the program should be added to check_PROGRAMS
-in the respective Makefile.am.  TESTS is set equal to check_PROGRAMS
-to get each of those run.
+in the respective Makefile.am.  TESTS is equal to check_PROGRAMS so
+each of these is run.
 
-"mpn/tests" has a number of programs which are only for development
+tests/devel has a number of programs which are only for development
 purposes and are not for use in "make check".  These should be listed
 in EXTRA_PROGRAMS to get Makefile rules created, but they're never
 built or run unless an explicit "make some-program" is used.
@@ -251,16 +244,16 @@ During development:
     
                      automake
     Makefile.am  \ -------------> Makefile.in
-    configure.in / 
-    
+    configure.in /
+
                      autoheader
     configure.in \ -------------> config.in
+    aclocal.m4   |
     acconfig.h   /
 
 When configured with --enable-maintainer-mode the necessary tools are
 re-run on changing the input files.  This can end up running a lot
 more things than are really necessary, but that's too bad.
-
 
 At build time:
 
@@ -286,7 +279,7 @@ worth trying enabled and disabled (the latter being the default).
 
 gcc 2.7.2.3 for i386 has reloader bugs perhaps related to asm block
 handling, which are worked around in various places.  Checking that no
-new ones have been introduced is worthwhile.
+new ones have been hit is worthwhile.
 
 In all cases a "make install" is good to see that the right things are
 copied to the right places.  The usual --prefix should be used into a
@@ -318,7 +311,7 @@ long, the following can be used to force long long for testing,
 	./configure CPPFLAGS="-D_LONG_LONG_LIMB -U__GNUC__" --host=none
 
 -DNO_ASM should work in place of -U__GNUC__ too, so that gcc specifics
-will be used, but no assembler code.  Naturally no assmelber code can
+will be used, but no assembler code.  Naturally no assembler code can
 be used in such a setup since it'll be using the wrong limb size.
 
 ** Function argument conversions
@@ -331,12 +324,13 @@ can show where function parameters are being converted due to having
 function prototypes available.
 
 The warnings about signed/unsigned mismatches are pointless and
-annoying, but attention should be paid to any size conversions.  Doing
-this in combination with the long long limb setups above is good.
+annoying, but attention should be paid to any size conversions due to
+prototypes, since these won't occur under a K&R compiler.  Doing this
+in combination with the long long limb setups above is good.
 
-Conversions between int and long aren't warned about when they're the
-same size, which is unfortunate because casts should be used in such
-cases, for the benefit of those (probably rare) systems where
-int!=long.
+Conversions between int and long aren't warned about by gcc when
+they're the same size, which is unfortunate because casts should be
+used in such cases, for the benefit of those (perhaps rare) systems
+where int!=long and the difference matters in function calls.
 
 /* eof doc/configuration */
