@@ -1,6 +1,5 @@
-/* CPU frequency determination. */
+/* CPU frequency determination.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "config.h"
 
@@ -107,6 +105,7 @@ speed_cpu_frequency_environment (void)
        frequency as such, not in kernel 2.2 at least.  */
 
 #if HAVE_SYSCTLBYNAME
+#define HAVE_SPEED_CPU_FREQUENCY_SYSCTLBYNAME 1
 int
 speed_cpu_frequency_sysctlbyname (void)
 {
@@ -140,7 +139,7 @@ speed_cpu_frequency_sysctlbyname (void)
 #endif
 
 #if HAVE_SYSCTL
-#define HAVE_CPU_FREQUENCY_SYSCTL 1
+#define HAVE_SPEED_CPU_FREQUENCY_SYSCTL 1
 int
 speed_cpu_frequency_sysctl (void)
 {
@@ -276,6 +275,7 @@ speed_cpu_frequency_proc_cpuinfo (void)
    It prints a line like: cpu0 is a "75 MHz TI,TMS390Z55" CPU */
 
 #if HAVE_POPEN
+#define HAVE_SPEED_CPU_FREQUENCY_SUNOS_SYSINFO 1
 int
 speed_cpu_frequency_sunos_sysinfo (void)
 {
@@ -306,6 +306,43 @@ speed_cpu_frequency_sunos_sysinfo (void)
 #endif
 
 
+/* "/etc/hw -r cpu" for SCO OpenUnix 8, printing a line like
+	The speed of the CPU is approximately 450Mhz
+*/
+
+#if HAVE_POPEN
+#define HAVE_SPEED_CPU_FREQUENCY_SCO_ETCHW 1
+int
+speed_cpu_frequency_sco_etchw (void)
+{
+  FILE    *fp;
+  char    buf[128];
+  double  val;
+  int     ret = 0;
+
+  /* Error messages are sent to /dev/null in case /etc/hw doesn't exist.
+     The brackets are necessary for some shells. */
+  if ((fp = popen ("(/etc/hw -r cpu) 2>/dev/null", "r")) != NULL)
+    {
+      while (fgets (buf, sizeof (buf), fp) != NULL)
+        {
+          if (sscanf (buf, " The speed of the CPU is approximately %lfMhz", &val) == 1)
+            {
+              speed_cycletime = 1e-6 / val;
+              if (speed_option_verbose)
+                printf ("Using /etc/hw %.2f MHz, for cycle time %.3g\n",
+                        val, speed_cycletime);
+              ret = 1;
+              break;
+            }
+        }
+      pclose (fp);
+    }
+  return ret;
+}
+#endif
+
+
 /* processor_info() for Solaris.  "psrinfo" is the command-line interface to
    this.  "prtconf -vp" gives similar information.
 
@@ -313,6 +350,7 @@ speed_cpu_frequency_sunos_sysinfo (void)
    <sys/processor.h> so we can differentiate it on that basis.  */
 
 #if HAVE_PROCESSOR_INFO && HAVE_SYS_PROCESSOR_H
+#define HAVE_SPEED_CPU_FREQUENCY_PROCESSOR_INFO 1
 int
 speed_cpu_frequency_processor_info (void)
 {
@@ -349,10 +387,11 @@ speed_cpu_frequency_processor_info (void)
 
 
 #if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
-#define HAVE_CPU_FREQUENCY_MEASURE 1
 
 /* The cycle counter is sampled on the same side of gettimeofday for greater
    accuracy.  The return value is a cycle time period in seconds.  */
+
+#define HAVE_SPEED_CPU_FREQUENCY_MEASURE 1
 double
 speed_cpu_frequency_measure_one (void)
 {
@@ -440,17 +479,24 @@ const struct {
   { speed_cpu_frequency_environment,
     "environment variable GMP_CPU_FREQUENCY (in Hertz)" },
 
-#if HAVE_CPU_FREQUENCY_SYSCTL
+#if HAVE_SPEED_CPU_FREQUENCY_SYSCTL
   { speed_cpu_frequency_sysctl,
     "sysctl() hw.model" },
 #endif
 
-#if HAVE_SYSCTLBYNAME
+#if HAVE_SPEED_CPU_FREQUENCY_SYSCTLBYNAME
   { speed_cpu_frequency_sysctlbyname,
     "sysctlbyname() machdep.tsc_freq or machdep.i586_freq" },
 #endif
 
-#if HAVE_PROCESSOR_INFO && HAVE_SYS_PROCESSOR_H
+  /* SCO openunix 8 puts a dummy pi_clock==16 in processor_info, so be sure
+     to check /etc/hw before that function. */
+#if HAVE_SPEED_CPU_FREQUENCY_SCO_ETCHW
+  { speed_cpu_frequency_sco_etchw,
+    "SCO /etc/hw program output" },
+#endif
+
+#if HAVE_SPEED_CPU_FREQUENCY_PROCESSOR_INFO
   { speed_cpu_frequency_processor_info,
     "processor_info() pi_clock" },
 #endif
@@ -458,12 +504,12 @@ const struct {
   { speed_cpu_frequency_proc_cpuinfo,
     "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
 
-#if HAVE_POPEN
+#if HAVE_SPEED_CPU_FREQUENCY_SUNOS_SYSINFO
   { speed_cpu_frequency_sunos_sysinfo,
-    "SunOS /bin/sysinfo program cpu0 output" },
+    "SunOS /bin/sysinfo program output, cpu0" },
 #endif
 
-#if HAVE_CPU_FREQUENCY_MEASURE
+#if HAVE_SPEED_CPU_FREQUENCY_MEASURE
   { speed_cpu_frequency_measure,
     "cycle counter measured with microsecond gettimeofday()" },
 #endif
@@ -495,7 +541,7 @@ speed_cycletime_fail (const char *str)
   int  i;
   fprintf (stderr, "Measuring with: %s\n", speed_time_string);
   fprintf (stderr, "%s,\n", str);
-  fprintf (stderr, "but none of the following available,\n");
+  fprintf (stderr, "but none of the following are available,\n");
   for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
     fprintf (stderr, "    - %s\n", speed_cpu_frequency_table[i].description);
   abort ();
