@@ -125,7 +125,7 @@ LDADD = $(top_builddir)/libmp.la
 
 check_PROGRAMS = $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)
-subdir = mpbsd/tests
+subdir = tests/mpbsd
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
@@ -167,7 +167,7 @@ all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu mpbsd/tests/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/mpbsd/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \

@@ -116,12 +116,55 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
+# Copyright 1996, 1998, 1999, 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
-SUBDIRS = rand
+# COMPILE minus CC.
+# FIXME: Really pass *_CFLAGS to CPP?
+
+
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
+SUBDIRS = . devel mpz mpq mpf rand mpbsd
+
+COMPILE_FLAGS = \
+	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
+
+SUFFIXES = .s .S .asm
+
+# can be overridden during development, eg. "make RM_TMP=: mul_1.lo"
+RM_TMP = rm -f
 
 INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/libgmp.la
+LDADD = libtests.la $(top_builddir)/libgmp.la
+
+EXTRA_DIST = x86call.asm
+EXTRA_HEADERS = tests.h
+EXTRA_LTLIBRARIES = libdummy.la
+check_LTLIBRARIES = libtests.la
+
+libtests_la_SOURCES = memory.c misc.c refmpf.c refmpn.c spinner.c trace.c
+libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
+libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
+
+# Create ansi2knr rules for sources conditionally used
+libdummy_la_SOURCES = x86check.c
 
 check_PROGRAMS = t-constants t-modlinv
 TESTS = $(check_PROGRAMS)
@@ -129,43 +172,52 @@ subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
-check_PROGRAMS =  t-constants$(EXEEXT) t-modlinv$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
+libdummy_la_LDFLAGS = 
+libdummy_la_LIBADD = 
+am_libdummy_la_OBJECTS =  x86check$U.lo
+libdummy_la_OBJECTS =  $(am_libdummy_la_OBJECTS)
+libtests_la_LDFLAGS = 
+am_libtests_la_OBJECTS =  memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
+spinner$U.lo trace$U.lo
+libtests_la_OBJECTS =  $(am_libtests_la_OBJECTS)
+check_PROGRAMS =  t-constants$(EXEEXT) t-modlinv$(EXEEXT)
 t_constants_SOURCES = t-constants.c
 t_constants_OBJECTS =  t-constants$U.$(OBJEXT)
 t_constants_LDADD = $(LDADD)
-t_constants_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_constants_DEPENDENCIES =  libtests.la $(top_builddir)/libgmp.la
 t_constants_LDFLAGS = 
 t_modlinv_SOURCES = t-modlinv.c
 t_modlinv_OBJECTS =  t-modlinv$U.$(OBJEXT)
 t_modlinv_LDADD = $(LDADD)
-t_modlinv_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_modlinv_DEPENDENCIES =  libtests.la $(top_builddir)/libgmp.la
 t_modlinv_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  t-constants.c t-modlinv.c
+DIST_SOURCES =  $(libdummy_la_SOURCES) $(libtests_la_SOURCES) \
+t-constants.c t-modlinv.c
 depcomp = 
-DIST_COMMON =  Makefile.am Makefile.in
+DIST_COMMON =  $(EXTRA_HEADERS) Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = t-constants.c t-modlinv.c
-OBJECTS = t-constants$U.$(OBJEXT) t-modlinv$U.$(OBJEXT)
+SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-constants.c t-modlinv.c
+OBJECTS = $(am_libdummy_la_OBJECTS) $(am_libtests_la_OBJECTS) t-constants$U.$(OBJEXT) t-modlinv$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+.SUFFIXES: .s .S .asm .c .lo .o .obj
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) $(srcdir)/../mpn/Makeasm.am
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
@@ -173,14 +225,14 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 
-mostlyclean-checkPROGRAMS:
+mostlyclean-checkLTLIBRARIES:
 
-clean-checkPROGRAMS:
-	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+clean-checkLTLIBRARIES:
+	-test -z "$(check_LTLIBRARIES)" || rm -f $(check_LTLIBRARIES)
 
-distclean-checkPROGRAMS:
+distclean-checkLTLIBRARIES:
 
-maintainer-clean-checkPROGRAMS:
+maintainer-clean-checkLTLIBRARIES:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -218,6 +270,21 @@ distclean-kr:
 
 maintainer-clean-kr:
 
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
+	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
+
+libtests.la: $(libtests_la_OBJECTS) $(libtests_la_DEPENDENCIES)
+	$(LINK)  $(libtests_la_LDFLAGS) $(libtests_la_OBJECTS) $(libtests_la_LIBADD) $(LIBS)
+
+mostlyclean-checkPROGRAMS:
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+
+distclean-checkPROGRAMS:
+
+maintainer-clean-checkPROGRAMS:
+
 t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
 	@rm -f t-constants$(EXEEXT)
 	$(LINK) $(t_constants_LDFLAGS) $(t_constants_OBJECTS) $(t_constants_LDADD) $(LIBS)
@@ -231,12 +298,29 @@ t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
+memory_.c: memory.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memory.c; then echo $(srcdir)/memory.c; else echo memory.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memory_.c
+misc_.c: misc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/misc.c; then echo $(srcdir)/misc.c; else echo misc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > misc_.c
+refmpf_.c: refmpf.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpf.c; then echo $(srcdir)/refmpf.c; else echo refmpf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpf_.c
+refmpn_.c: refmpn.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/refmpn.c; then echo $(srcdir)/refmpn.c; else echo refmpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > refmpn_.c
+spinner_.c: spinner.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/spinner.c; then echo $(srcdir)/spinner.c; else echo spinner.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > spinner_.c
 t-constants_.c: t-constants.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-constants.c; then echo $(srcdir)/t-constants.c; else echo t-constants.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-constants_.c
 t-modlinv_.c: t-modlinv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-modlinv_.c
+trace_.c: trace.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trace.c; then echo $(srcdir)/trace.c; else echo trace.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trace_.c
+x86check_.c: x86check.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/x86check.c; then echo $(srcdir)/x86check.c; else echo x86check.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > x86check_.c
+memory_.$(OBJEXT) memory_.lo misc_.$(OBJEXT) misc_.lo refmpf_.$(OBJEXT) \
+refmpf_.lo refmpn_.$(OBJEXT) refmpn_.lo spinner_.$(OBJEXT) spinner_.lo \
 t-constants_.$(OBJEXT) t-constants_.lo t-modlinv_.$(OBJEXT) \
-t-modlinv_.lo : $(ANSI2KNR)
+t-modlinv_.lo trace_.$(OBJEXT) trace_.lo x86check_.$(OBJEXT) \
+x86check_.lo : $(ANSI2KNR)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -412,7 +496,7 @@ info: info-recursive
 dvi-am:
 dvi: dvi-recursive
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_LTLIBRARIES) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
 installcheck-am:
@@ -446,39 +530,44 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-checkPROGRAMS mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
+mostlyclean-am:  mostlyclean-checkLTLIBRARIES mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-kr \
+		mostlyclean-checkPROGRAMS mostlyclean-tags \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
-clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-kr \
-		clean-tags clean-generic mostlyclean-am
+clean-am:  clean-checkLTLIBRARIES clean-compile clean-libtool clean-kr \
+		clean-checkPROGRAMS clean-tags clean-generic \
+		mostlyclean-am
 
 clean: clean-recursive
 
-distclean-am:  distclean-checkPROGRAMS distclean-compile \
-		distclean-libtool distclean-kr distclean-tags \
-		distclean-generic clean-am
+distclean-am:  distclean-checkLTLIBRARIES distclean-compile \
+		distclean-libtool distclean-kr distclean-checkPROGRAMS \
+		distclean-tags distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-recursive
 
-maintainer-clean-am:  maintainer-clean-checkPROGRAMS \
+maintainer-clean-am:  maintainer-clean-checkLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-kr maintainer-clean-tags \
-		maintainer-clean-generic distclean-am
+		maintainer-clean-kr maintainer-clean-checkPROGRAMS \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
 maintainer-clean: maintainer-clean-recursive
 
-.PHONY: mostlyclean-checkPROGRAMS distclean-checkPROGRAMS \
-clean-checkPROGRAMS maintainer-clean-checkPROGRAMS mostlyclean-compile \
-distclean-compile clean-compile maintainer-clean-compile \
-mostlyclean-libtool distclean-libtool clean-libtool \
-maintainer-clean-libtool mostlyclean-kr distclean-kr clean-kr \
-maintainer-clean-kr install-recursive uninstall-recursive \
+.PHONY: mostlyclean-checkLTLIBRARIES distclean-checkLTLIBRARIES \
+clean-checkLTLIBRARIES maintainer-clean-checkLTLIBRARIES \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-libtool distclean-libtool \
+clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
+clean-kr maintainer-clean-kr mostlyclean-checkPROGRAMS \
+distclean-checkPROGRAMS clean-checkPROGRAMS \
+maintainer-clean-checkPROGRAMS install-recursive uninstall-recursive \
 install-data-recursive uninstall-data-recursive install-exec-recursive \
 uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
 all-recursive check-recursive installcheck-recursive info-recursive \
@@ -492,6 +581,51 @@ installdirs-am installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 
+
+# *.s not preprocessed at all.
+.s.o:
+	$(CCAS) $(COMPILE_FLAGS) $<
+.s.obj:
+	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
+.s.lo:
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) $<
+
+# *.S preprocessed with cpp.
+.S.o:
+	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(RM_TMP) tmp-$*.s
+.S.obj:
+	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(RM_TMP) tmp-$*.s
+
+# We have to rebuild the static object file without passing -DPIC to
+# preprocessor.  The overhead cost is one extra assemblation.
+# FIXME: Teach libtool how to assemble with a preprocessor pass (cpp or m4).
+
+.S.lo:
+	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
+	$(RM_TMP) tmp-$*.s
+
+# *.asm preprocessed with m4.
+.asm.o:
+	$(M4) -DOPERATION_$* $< >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(RM_TMP) tmp-$*.s
+.asm.obj:
+	$(M4) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(RM_TMP) tmp-$*.s
+.asm.lo:
+	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(M4) -DOPERATION_$* $< >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
+	$(RM_TMP) tmp-$*.s
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
