@@ -1,19 +1,19 @@
 dnl  AMD K7 mpn_mul_basecase -- multiply two mpn numbers.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -28,7 +28,7 @@ C     limbs/loop unrolling).
 
 
 dnl  K7 UNROLL_COUNT cycles/product (at around 20x20)
-dnl           8           4.67    
+dnl           8           4.67
 dnl          16           4.59
 dnl          32           4.42
 dnl  Maximum possible with the current code is 32.
@@ -101,13 +101,13 @@ deflit(`FRAME',0)
 	pushl	%esi		defframe_pushl(`SAVE_ESI')
 	movl	%edx, %esi	C xp
 
-	movl	(%edx), %eax	C xp low limb	
+	movl	(%edx), %eax	C xp low limb
 	jnz	L(two_by_two)
 
 
 	C two limbs by one limb
 
-	mull	%ecx	
+	mull	%ecx
 
 	movl	%eax, (%ebx)
 	movl	4(%esi), %eax
@@ -127,7 +127,7 @@ deflit(`FRAME',0)
 	addl	$FRAME, %esp
 
 	ret
-	
+
 
 
 C -----------------------------------------------------------------------------
@@ -190,7 +190,7 @@ dnl  FRAME carries on from previous
 
 	ret
 
-	
+
 C -----------------------------------------------------------------------------
 	ALIGN(16)
 L(xsize_more_than_two):
@@ -311,7 +311,7 @@ C -----------------------------------------------------------------------------
 
 
 	C this is offset 0x121 so close enough to aligned
-L(simple_outer_top):	
+L(simple_outer_top):
 	C ebp	ysize counter, negative
 
 	movl	PARAM_YP, %edx
@@ -539,7 +539,7 @@ Zdisp(	addl,	%ecx, disp0,(%edi))
 
 
 	movl	disp1(%esi), %eax
-	adcl	%edx, %ecx	
+	adcl	%edx, %ecx
 
 	mull	%ebp
 

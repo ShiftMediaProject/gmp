@@ -85,7 +85,7 @@ L(noll):
 	.word	0
 
 PROLOGUE(mpn_sqr_diagonal)
-	save %sp,-256,%sp
+	save	%sp,-256,%sp
 
 ifdef(`PIC',
 `L(pc):	rd	%pc,%o7
@@ -167,7 +167,7 @@ ifdef(`PIC',
 
 	b,a	L(loop)
 
-	.align 16
+	.align	16
 C --- LOOP BEGIN
 L(loop):
 	nop
@@ -350,7 +350,7 @@ L(end5):
 	stw	%l0,[%i0-4]
 
 	ret
-	restore %g0,%g0,%o0
+	restore	%g0,%g0,%o0
 
 L(loope):
 	stx	%g2,[%fp+72]
@@ -431,7 +431,7 @@ L(loope):
 	stw	%l0,[%i0-4]
 
 	ret
-	restore %g0,%g0,%o0
+	restore	%g0,%g0,%o0
 
 L(end1):
 	add	%i1,4,%i1		C s1_ptr++
@@ -456,7 +456,7 @@ L(end1):
 	stw	%g1,[%i0-8]
 	stw	%l0,[%i0-4]
 	ret
-	restore %g0,%g0,%o0
+	restore	%g0,%g0,%o0
 
 L(end2):
 	stx	%g2,[%fp+72]
@@ -500,7 +500,7 @@ L(end2):
 	stw	%g1,[%i0-8]
 	stw	%l0,[%i0-4]
 	ret
-	restore %g0,%g0,%o0
+	restore	%g0,%g0,%o0
 
 L(end3):
 	stx	%g2,[%fp+80]
@@ -560,7 +560,7 @@ L(end3):
 	stw	%g1,[%i0-8]
 	stw	%l0,[%i0-4]
 	ret
-	restore %g0,%g0,%o0
+	restore	%g0,%g0,%o0
 
 L(end4):
 	stx	%g2,[%fp+72]
@@ -628,5 +628,5 @@ L(end4):
 	stw	%g1,[%i0-8]
 	stw	%l0,[%i0-4]
 	ret
-	restore %g0,%g0,%o0
+	restore	%g0,%g0,%o0
 EPILOGUE(mpn_sqr_diagonal)

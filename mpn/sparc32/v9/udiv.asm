@@ -34,7 +34,7 @@ PROLOGUE(mpn_udiv_qrnnd)
 	srl	%o2, 0, %g2		C zero extend lower dividend limb
 	srl	%o3, 0, %g3		C zero extend divisor
 	or	%g2, %g1, %g1		C assemble 64-bit dividend
-	udivx 	%g1, %g3, %g1
+	udivx	%g1, %g3, %g1
 	mulx	%g1, %g3, %g4
 	sub	%g2, %g4, %g2
 	st	%g2, [%o0]		C store remainder

@@ -1,19 +1,19 @@
 dnl  AMD K6 mpn_mul_basecase -- multiply two mpn numbers.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -89,7 +89,7 @@ deflit(`FRAME',0)
 
 	movl	(%edx), %edx	C xp low limb
 	movl	PARAM_WP, %ecx
-	
+
 	mull	%edx
 
 	movl	%eax, (%ecx)
@@ -108,7 +108,7 @@ deflit(`FRAME',4)
 deflit(`FRAME',8)
 
 	movl	%eax, %ecx	C yp low limb
-	movl	(%edx), %eax	C xp low limb	
+	movl	(%edx), %eax	C xp low limb
 
 	movl	%edx, %esi	C xp
 	jnz	L(two_by_two)
@@ -116,7 +116,7 @@ deflit(`FRAME',8)
 
 	C two limbs by one limb
 
-	mull	%ecx	
+	mull	%ecx
 
 	movl	%eax, (%ebx)
 	movl	4(%esi), %eax
@@ -135,7 +135,7 @@ deflit(`FRAME',8)
 
 	popl	%ebx
 	ret
-	
+
 
 
 C -----------------------------------------------------------------------------
@@ -196,7 +196,7 @@ deflit(`FRAME',12)
 	popl	%ebx
 	ret
 
-	
+
 C -----------------------------------------------------------------------------
 	ALIGN(16)
 L(xsize_more_than_two_limbs):
@@ -311,7 +311,7 @@ C cycles, the same as the simple loop in aorsmul_1.asm.
 
 	C aligning here saves a couple of cycles
 	ALIGN(16)
-L(simple_outer_top):	
+L(simple_outer_top):
 	C edx	ysize counter, negative
 
 	movl	PARAM_YP, %eax		C yp end

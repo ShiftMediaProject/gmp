@@ -1,19 +1,19 @@
 dnl  Intel P5 mpn_mod_1 -- mpn by limb remainder.
 
 dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -112,7 +112,7 @@ deflit(`FRAME',0)
 	sbbl	%ecx, %ecx		C -1 if underflow
 	movl	%edi, %eax		C src-divisor
 
-	andl	%ebp, %ecx	 	C d if underflow
+	andl	%ebp, %ecx		C d if underflow
 	popl	%edi
 
 	addl	%ecx, %eax		C remainder, with possible addback
@@ -187,7 +187,7 @@ deflit(`FRAME',0)
 	addl	%edx, %ecx		C size-1 if high<divisor
 	jz	L(done_eax)
 
-	cmpl	%ebp, %ecx	
+	cmpl	%ebp, %ecx
 	movl	PARAM_DIVISOR, %ebp
 
 	movl	PARAM_SRC, %esi
@@ -345,13 +345,13 @@ L(inverse_top):
 
 	addl	%edi, %ecx	   C remainder -> n2, and possible addback
 	ASSERT(b,`cmpl %ebp, %ecx')
- 	andl	%eax, %ebx	   C -n1 & d
+	andl	%eax, %ebx	   C -n1 & d
 
- 	movl	(%esi), %edi	   C n10
+	movl	(%esi), %edi	   C n10
 	andl	$1, %eax	   C n1
 
- 	addl	%ecx, %eax         C n2+n1
- 	addl	%edi, %ebx         C nadj = n10 + (-n1 & d), ignoring overflow
+	addl	%ecx, %eax         C n2+n1
+	addl	%edi, %ebx         C nadj = n10 + (-n1 & d), ignoring overflow
 
 	mull	VAR_INVERSE        C m*(n2+n1)
 

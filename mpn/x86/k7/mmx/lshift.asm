@@ -1,19 +1,19 @@
 dnl  AMD K7 mpn_lshift -- mpn left shift.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -83,7 +83,7 @@ deflit(`FRAME',SAVE_SIZE)
 
 	shldl(	%cl, %edx, %eax)	C eax was decremented to zero
 
- 	shll	%cl, %edx
+	shll	%cl, %edx
 
 	movl	%edx, (%edi)
 	movl	SAVE_EDI, %edi
@@ -132,14 +132,14 @@ L(simple_top):
 	movq	-4(%edx,%eax,4), %mm0
 	decl	%eax
 
- 	psrlq	%mm7, %mm0
+	psrlq	%mm7, %mm0
 
 	movd	%mm0, 4(%edi,%eax,4)
 	jnz	L(simple_top)
 
 
 	psllq	%mm6, %mm5
- 	psllq	%mm6, %mm4
+	psllq	%mm6, %mm4
 
 	psrlq	$32, %mm5
 	movd	%mm4, (%edi)		C dst low limb
@@ -190,7 +190,7 @@ L(unroll):
 	C  dest      -4(edi,%eax,4)
 	C                  |
 	C  +-------+-------+--
-	C  |  xxx  |       |  
+	C  |  xxx  |       |
 	C  +-------+-------+--
 
 	psllq	%mm6, %mm1
@@ -205,7 +205,7 @@ L(unroll):
 L(start_src_aligned):
 
 
-        leal    -4(%edi,%eax,4), %edi   C &dst[size-2]
+	leal	-4(%edi,%eax,4), %edi   C &dst[size-2]
 	psllq	%mm6, %mm5
 
 	testl	$4, %edi
@@ -220,13 +220,13 @@ L(start_src_aligned):
 	C
 	C  source       %edx
 	C  +-------+-------+--
-	C  |      mm1      |  
+	C  |      mm1      |
 	C  +-------+-------+--
 	C                0mod8   4mod8
 	C
 	C  dest         %edi
 	C  +-------+-------+-------+--
-	C  |  xxx  |          
+	C  |  xxx  |
 	C  +-------+-------+-------+--
 	C        0mod8   4mod8   0mod8
 
@@ -306,7 +306,7 @@ L(top):
 	C
 	C The two chunks differ in whether mm1 or mm2 hold the carry.
 	C The computed jump puts the initial carry in both mm1 and mm2.
-	
+
 L(entry):
 deflit(CHUNK_COUNT, 4)
 forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
@@ -314,22 +314,22 @@ forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 	deflit(`disp1', eval(disp0 - 8))
 
 Zdisp(	movq,	disp0,(%edx), %mm0)
- 	psllq	%mm6, %mm2
+	psllq	%mm6, %mm2
 
- 	movq	%mm0, %mm1
- 	psrlq	%mm7, %mm0
+	movq	%mm0, %mm1
+	psrlq	%mm7, %mm0
 
- 	por	%mm2, %mm0
+	por	%mm2, %mm0
 Zdisp(	movq,	%mm0, disp0,(%edi))
 
 
 Zdisp(	movq,	disp1,(%edx), %mm0)
- 	psllq	%mm6, %mm1
+	psllq	%mm6, %mm1
 
- 	movq	%mm0, %mm2
- 	psrlq	%mm7, %mm0
+	movq	%mm0, %mm2
+	psrlq	%mm7, %mm0
 
- 	por	%mm1, %mm0
+	por	%mm1, %mm0
 Zdisp(	movq,	%mm0, disp1,(%edi))
 ')
 

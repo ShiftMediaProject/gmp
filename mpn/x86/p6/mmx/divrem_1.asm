@@ -1,19 +1,19 @@
 dnl  Intel Pentium-II mpn_divrem_1 -- mpn by limb division.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -205,7 +205,7 @@ L(no_skip_div):
 
 
 L(start_1c):
-	C eax	
+	C eax
 	C ebx	xsize
 	C ecx	size
 	C edx	carry
@@ -361,7 +361,7 @@ L(start_zero):
 
 	shll	%cl, %edi		C n2 = carry << l
 	movl	%edi, %eax		C return value for zero_done
-	cmpl    $0, PARAM_XSIZE
+	cmpl	$0, PARAM_XSIZE
 
 	je	L(zero_done)
 	jmp	L(fraction_some)
@@ -492,17 +492,17 @@ L(integer_two_left):
 	C mm7	rshift
 
 
- 	movl	%esi, %eax
- 	movl	%ebp, %ebx
+	movl	%esi, %eax
+	movl	%ebp, %ebx
 
- 	sarl	$31, %eax          C -n1
- 	movl	PARAM_SRC, %ecx
+	sarl	$31, %eax          C -n1
+	movl	PARAM_SRC, %ecx
 
- 	andl	%eax, %ebx         C -n1 & d
- 	negl	%eax               C n1
+	andl	%eax, %ebx         C -n1 & d
+	negl	%eax               C n1
 
- 	addl	%esi, %ebx         C nadj = n10 + (-n1 & d), ignoring overflow
- 	addl	%edi, %eax         C n2+n1
+	addl	%esi, %ebx         C nadj = n10 + (-n1 & d), ignoring overflow
+	addl	%edi, %eax         C n2+n1
 
 	mull	VAR_INVERSE        C m*(n2+n1)
 
@@ -559,17 +559,17 @@ L(integer_one_left):
 	C mm7	rshift
 
 
- 	movl	%esi, %eax
- 	movl	%ebp, %ebx
+	movl	%esi, %eax
+	movl	%ebp, %ebx
 
- 	sarl	$31, %eax          C -n1
- 	movl	VAR_DST_STOP, %ecx
+	sarl	$31, %eax          C -n1
+	movl	VAR_DST_STOP, %ecx
 
- 	andl	%eax, %ebx         C -n1 & d
- 	negl	%eax               C n1
+	andl	%eax, %ebx         C -n1 & d
+	negl	%eax               C n1
 
- 	addl	%esi, %ebx         C nadj = n10 + (-n1 & d), ignoring overflow
- 	addl	%edi, %eax         C n2+n1
+	addl	%esi, %ebx         C nadj = n10 + (-n1 & d), ignoring overflow
+	addl	%edi, %eax         C n2+n1
 
 	mull	VAR_INVERSE        C m*(n2+n1)
 
@@ -740,14 +740,14 @@ L(fraction_top):
 
 	negl	%eax		C low of n - (q1+1)*d
 
- 	sbbl	%edx, %edi	C high of n - (q1+1)*d, caring only about carry
-	leal    (%ebp,%eax), %edx
+	sbbl	%edx, %edi	C high of n - (q1+1)*d, caring only about carry
+	leal	(%ebp,%eax), %edx
 
- 	cmovc(	%edx, %eax)	C n - q1*d if underflow from using q1+1
+	cmovc(	%edx, %eax)	C n - q1*d if underflow from using q1+1
 
- 	sbbl	$0, %ebx	C q
+	sbbl	$0, %ebx	C q
 	movl	%eax, %edi	C remainder->n2
- 	cmpl	%esi, %ecx
+	cmpl	%esi, %ecx
 
 	movl	%ebx, (%ecx)	C previous q
 	jne	L(fraction_top)

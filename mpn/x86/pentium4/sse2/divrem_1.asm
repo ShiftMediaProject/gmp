@@ -145,7 +145,7 @@ deflit(`FRAME',0)
 	leal	(%edi,%ecx,4), %edi	C &dst[xsize+size-1]
 	leal	-4(%esi,%ecx,4), %esi	C &src[size-1]
 
-	movd	%eax, %mm6		C 32-l 
+	movd	%eax, %mm6		C 32-l
 	jmp	L(start_preinv)
 
 EPILOGUE()

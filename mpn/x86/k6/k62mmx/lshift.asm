@@ -1,19 +1,19 @@
 dnl  AMD K6-2 mpn_lshift -- mpn left shift.
 
 dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -65,7 +65,7 @@ deflit(`FRAME',0)
 
 	shldl(	%cl, %edx, %eax)	C return value
 
- 	shll	%cl, %edx
+	shll	%cl, %edx
 
 	movl	%edx, (%ebx)		C dst limb
 	popl	%ebx
@@ -111,7 +111,7 @@ L(simple):
 
 	movq	-4(%ebx,%ecx,4), %mm0
 
- 	psrlq	%mm7, %mm0
+	psrlq	%mm7, %mm0
 
 Zdisp(	movd,	%mm0, 0,(%eax,%ecx,4))
 	loop	L(simple)
@@ -120,7 +120,7 @@ Zdisp(	movd,	%mm0, 0,(%eax,%ecx,4))
 	movd	(%ebx), %mm0
 	popl	%ebx
 
- 	psllq	%mm6, %mm0
+	psllq	%mm6, %mm0
 
 	movd	%mm0, (%eax)
 	movl	%edx, %eax

@@ -24,8 +24,8 @@ include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_umul_ppmm)
-	umul %o1,%o2,%g2
-	st %g2,[%o0]
+	umul	%o1,%o2,%g2
+	st	%g2,[%o0]
 	retl
-	rd %y,%o0
+	rd	%y,%o0
 EPILOGUE(mpn_umul_ppmm)

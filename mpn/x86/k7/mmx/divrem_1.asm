@@ -791,12 +791,12 @@ L(fraction_entry):
 
 	C
 
- 	sbbl	%edx, %edi	C high of n - (q1+1)*d, caring only about carry
- 	leal	(%ebp,%eax), %edx
+	sbbl	%edx, %edi	C high of n - (q1+1)*d, caring only about carry
+	leal	(%ebp,%eax), %edx
 
- 	cmovc(	%edx, %eax)	C n - q1*d if underflow from using q1+1
- 	sbbl	$0, %ebx	C q
- 	cmpl	%esi, %ecx
+	cmovc(	%edx, %eax)	C n - q1*d if underflow from using q1+1
+	sbbl	$0, %ebx	C q
+	cmpl	%esi, %ecx
 
 	jne	L(fraction_top)
 

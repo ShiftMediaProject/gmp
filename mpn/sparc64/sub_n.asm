@@ -22,7 +22,7 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C      		   cycles/limb
+C		   cycles/limb
 C UltraSPARC 1&2:     4
 C UltraSPARC 3:	      4.5
 

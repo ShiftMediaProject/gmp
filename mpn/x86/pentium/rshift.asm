@@ -54,7 +54,7 @@ deflit(`FRAME',16)
 	movl	PARAM_SIZE,%ebp
 	movl	PARAM_SHIFT,%ecx
 
-C We can use faster code for shift-by-1 under certain conditions. 
+C We can use faster code for shift-by-1 under certain conditions.
 	cmp	$1,%ecx
 	jne	L(normal)
 	leal	4(%edi),%eax

@@ -342,13 +342,13 @@ ifdef(`HAVE_ABI_32',
    (p7)	sub		r15 = r15, r36
    (p7)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
 	;;
-	st8 [r32] = r18, -8
-	mov r38 = r15
+	st8		[r32] = r18, -8
+	mov		r38 = r15
 .L435:
-	adds r35 = -1, r33
+	adds		r35 = -1, r33
 	;;
-	cmp.le p6, p7 = r0, r35
-	(p7)	br.cond.dpnt .L530
+	cmp.le		p6, p7 = r0, r35
+   (p7)	br.cond.dpnt	.L530
 	setf.sig	f7 = r38
 	setf.sig	f10 = r36
 	mov		ar.lc = r35

@@ -1,19 +1,19 @@
 dnl  Intel P5 mpn_rshift -- mpn right shift.
 
 dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -75,7 +75,7 @@ deflit(`FRAME',8)
 
 	shrdl(	%cl, %edi, %eax)	C eax was decremented to zero
 
- 	shrl	%cl, %edi
+	shrl	%cl, %edi
 
 	movl	%edi, (%edx)		C dst low limb
 	popl	%edi			C risk of data cache bank clash
@@ -100,7 +100,7 @@ deflit(`FRAME',8)
 	movd	(%ebx), %mm5		C src[0]
 	leal	(%ebx,%eax,4), %ebx	C &src[size-1]
 
- 	movd	%ecx, %mm6		C rshift
+	movd	%ecx, %mm6		C rshift
 	leal	-4(%edx,%eax,4), %edx	C &dst[size-2]
 
 	psllq	$32, %mm5
@@ -125,7 +125,7 @@ L(simple_top):
 	movq	(%ebx,%eax,4), %mm0
 	incl	%eax
 
- 	psrlq	%mm6, %mm0
+	psrlq	%mm6, %mm0
 
 	movd	%mm0, (%edx,%eax,4)
 	jnz	L(simple_top)
@@ -134,7 +134,7 @@ L(simple_top):
 	movd	(%ebx), %mm0
 	psrlq	%mm6, %mm5		C return value
 
- 	psrlq	%mm6, %mm0
+	psrlq	%mm6, %mm0
 	popl	%edi
 
 	movd	%mm5, %eax
@@ -162,7 +162,7 @@ deflit(`FRAME',8)
 	movd	(%ebx), %mm5		C src[0]
 	movl	$4, %edi
 
- 	movd	%ecx, %mm6		C rshift
+	movd	%ecx, %mm6		C rshift
 	testl	%edi, %ebx
 
 	psllq	$32, %mm5
@@ -180,7 +180,7 @@ deflit(`FRAME',8)
 	C
 	C         dest            edx
 	C         --+-------+-------+
-	C           |       |  xxx  |  
+	C           |       |  xxx  |
 	C         --+-------+-------+
 
 	movq	(%ebx), %mm0		C unaligned load
@@ -213,7 +213,7 @@ L(start_src_aligned):
 	C
 	C  dest                    edx
 	C  --+-------+-------+-------+
-	C                    |  xxx  |        
+	C                    |  xxx  |
 	C  --+-------+-------+-------+
 	C          4mod8   0mod8   4mod8
 
@@ -232,19 +232,19 @@ L(start_dst_aligned):
 	movq	8(%ebx), %mm3
 	negl	%ecx
 
- 	movq	%mm3, %mm2		C mm2 src qword
-        addl    $64, %ecx
+	movq	%mm3, %mm2		C mm2 src qword
+	addl	$64, %ecx
 
-        movd    %ecx, %mm7
- 	psrlq	%mm6, %mm1
+	movd	%ecx, %mm7
+	psrlq	%mm6, %mm1
 
 	leal	-12(%ebx,%eax,4), %ebx
 	leal	-20(%edx,%eax,4), %edx
 
- 	psllq	%mm7, %mm3
+	psllq	%mm7, %mm3
 	subl	$7, %eax		C size-7
 
- 	por	%mm1, %mm3		C mm3 ready to store
+	por	%mm1, %mm3		C mm3 ready to store
 	negl	%eax			C -(size-7)
 
 	jns	L(finish)
@@ -281,25 +281,25 @@ L(unroll_loop):
 	C mm6	rshift
 	C mm7	lshift
 
- 	movq	(%ebx,%eax,4), %mm0
- 	psrlq	%mm6, %mm2
+	movq	(%ebx,%eax,4), %mm0
+	psrlq	%mm6, %mm2
 
- 	movq	%mm0, %mm1
- 	psllq	%mm7, %mm0
+	movq	%mm0, %mm1
+	psllq	%mm7, %mm0
 
- 	movq	%mm3, -8(%edx,%eax,4)	C prev
- 	por	%mm2, %mm0
+	movq	%mm3, -8(%edx,%eax,4)	C prev
+	por	%mm2, %mm0
 
- 	movq	8(%ebx,%eax,4), %mm3	C
- 	psrlq	%mm6, %mm1		C
+	movq	8(%ebx,%eax,4), %mm3	C
+	psrlq	%mm6, %mm1		C
 
- 	movq	%mm0, (%edx,%eax,4)
- 	movq	%mm3, %mm2		C
+	movq	%mm0, (%edx,%eax,4)
+	movq	%mm3, %mm2		C
 
- 	psllq	%mm7, %mm3		C
+	psllq	%mm7, %mm3		C
 	addl	$4, %eax
 
- 	por	%mm1, %mm3		C
+	por	%mm1, %mm3		C
 	js	L(unroll_loop)
 
 
@@ -310,14 +310,14 @@ L(finish):
 
 	jnz	L(finish_no_two)
 
- 	movq	(%ebx,%eax,4), %mm0
- 	psrlq	%mm6, %mm2
+	movq	(%ebx,%eax,4), %mm0
+	psrlq	%mm6, %mm2
 
- 	movq	%mm0, %mm1
- 	psllq	%mm7, %mm0
+	movq	%mm0, %mm1
+	psllq	%mm7, %mm0
 
- 	movq	%mm3, -8(%edx,%eax,4)	C prev
- 	por	%mm2, %mm0
+	movq	%mm3, -8(%edx,%eax,4)	C prev
+	por	%mm2, %mm0
 
 	movq	%mm1, %mm2
 	movq	%mm0, %mm3
@@ -375,30 +375,30 @@ L(finish_no_two):
 	C there's a further extra limb of dst to be formed.
 
 
-        movd    8(%ebx), %mm0
- 	psrlq	%mm6, %mm2
+	movd	8(%ebx), %mm0
+	psrlq	%mm6, %mm2
 
-        movq    %mm0, %mm1
-        psllq   %mm7, %mm0
+	movq	%mm0, %mm1
+	psllq	%mm7, %mm0
 
 	movq	%mm3, (%edx)
-        por     %mm2, %mm0
+	por	%mm2, %mm0
 
-        psrlq   %mm6, %mm1
-        andl	$32, %ecx
+	psrlq	%mm6, %mm1
+	andl	$32, %ecx
 
 	popl	%ebx
 	jz	L(finish_one_unaligned)
 
-        C dst was aligned, must store one extra limb
+	C dst was aligned, must store one extra limb
 	movd	%mm1, 16(%edx)
 L(finish_one_unaligned):
 
-	movq    %mm0, 8(%edx)
+	movq	%mm0, 8(%edx)
 
 	emms
 
-        ret
+	ret
 
 
 L(finish_zero):
@@ -440,16 +440,16 @@ L(finish_zero):
 	C or two limbs should be written.
 
 
- 	movq	%mm3, 4(%edx)
- 	psrlq	%mm6, %mm2
+	movq	%mm3, 4(%edx)
+	psrlq	%mm6, %mm2
 
- 	movd	%mm2, 12(%edx)
+	movd	%mm2, 12(%edx)
 	andl	$32, %ecx
 
 	popl	%ebx
 	jz	L(finish_zero_unaligned)
 
- 	movq	%mm2, 12(%edx)
+	movq	%mm2, 12(%edx)
 L(finish_zero_unaligned):
 
 	emms

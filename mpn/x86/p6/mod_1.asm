@@ -1,19 +1,19 @@
 dnl  Intel P6 mpn_mod_1 -- mpn by limb remainder.
 
 dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -366,7 +366,7 @@ L(inverse_loop_done):
 	C ebx
 	C ecx
 	C edx
-	C esi	
+	C esi
 	C edi	remainder
 	C ebp	divisor (normalized)
 
@@ -382,7 +382,7 @@ L(inverse_loop_done):
 	C The q1=0xFFFFFFFF case is handled with an sbbl to adjust q1+1
 	C back, rather than q1_ff special case code.  This is simpler and
 	C costs only 2 uops.
-	
+
 	shldl(	%cl, %edi, %esi)
 
 	shll	%cl, %edi

@@ -1,19 +1,19 @@
 dnl  AMD K6 mpn_add/sub_n -- mpn addition or subtraction.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -113,7 +113,7 @@ L(simple):
 
 	movl	(%ebx), %eax
 	leal	4(%ebx), %ebx
-	
+
 	M4_inst	(%edx), %eax
 
 	movl	%eax, (%edi)
@@ -122,7 +122,7 @@ L(simple):
 	leal	4(%edx), %edx
 	loop	L(simple)
 
-	
+
 	movl	$0, %eax
 	popl	%edi
 
@@ -175,22 +175,22 @@ L(normal_top):
 	C edi	dst
 	C ebp
 
- 	movl	(%ebx,%ecx,4), %eax
+	movl	(%ebx,%ecx,4), %eax
 	leal	5(%ecx), %ecx
- 	M4_inst	-20(%edx,%ecx,4), %eax
- 	movl	%eax, -20(%edi,%ecx,4)
+	M4_inst	-20(%edx,%ecx,4), %eax
+	movl	%eax, -20(%edi,%ecx,4)
 
- 	movl	4-20(%ebx,%ecx,4), %eax
- 	M4_inst	4-20(%edx,%ecx,4), %eax
- 	movl	%eax, 4-20(%edi,%ecx,4)
+	movl	4-20(%ebx,%ecx,4), %eax
+	M4_inst	4-20(%edx,%ecx,4), %eax
+	movl	%eax, 4-20(%edi,%ecx,4)
 
- 	movl	8-20(%ebx,%ecx,4), %eax
- 	M4_inst	8-20(%edx,%ecx,4), %eax
- 	movl	%eax, 8-20(%edi,%ecx,4)
+	movl	8-20(%ebx,%ecx,4), %eax
+	M4_inst	8-20(%edx,%ecx,4), %eax
+	movl	%eax, 8-20(%edi,%ecx,4)
 
- 	movl	12-20(%ebx,%ecx,4), %eax
- 	M4_inst	12-20(%edx,%ecx,4), %eax
- 	movl	%eax, 12-20(%edi,%ecx,4)
+	movl	12-20(%ebx,%ecx,4), %eax
+	M4_inst	12-20(%edx,%ecx,4), %eax
+	movl	%eax, 12-20(%edi,%ecx,4)
 
 	loop	L(normal_top)
 
@@ -201,24 +201,24 @@ L(normal_top):
 
 	C two or three more limbs
 
- 	movl	(%ebx), %eax
- 	M4_inst	(%edx), %eax
- 	movl	%eax, (%edi)
+	movl	(%ebx), %eax
+	M4_inst	(%edx), %eax
+	movl	%eax, (%edi)
 
- 	movl	4(%ebx), %eax
- 	M4_inst	4(%edx), %eax
+	movl	4(%ebx), %eax
+	M4_inst	4(%edx), %eax
 	decl	%esi
- 	movl	%eax, 4(%edi)
+	movl	%eax, 4(%edi)
 
 	jz	L(normal_done)
 	movl	$2, %ecx
 
 L(normal_finish_one):
- 	movl	(%ebx,%ecx,4), %eax
- 	M4_inst	(%edx,%ecx,4), %eax
- 	movl	%eax, (%edi,%ecx,4)
+	movl	(%ebx,%ecx,4), %eax
+	M4_inst	(%edx,%ecx,4), %eax
+	movl	%eax, (%edi,%ecx,4)
 
-L(normal_done):	
+L(normal_done):
 	popl	%esi
 	popl	%edi
 
@@ -254,7 +254,7 @@ L(inplace):
 	andl	$-4, %ecx
 	andl	$3, %esi
 
- 	movl	(%edx), %ebx		C src low limb
+	movl	(%edx), %ebx		C src low limb
 	leal	(%edx,%ecx,4), %edx
 
 	leal	(%edi,%ecx,4), %edi
@@ -273,26 +273,26 @@ L(inplace_top):
 	C edi	dst
 	C ebp
 
- 	M4_inst	%ebx, (%edi,%ecx,4)
+	M4_inst	%ebx, (%edi,%ecx,4)
 
- 	movl	4(%edx,%ecx,4), %eax
+	movl	4(%edx,%ecx,4), %eax
 	leal	5(%ecx), %ecx
 
- 	M4_inst	%eax, 4-20(%edi,%ecx,4)
+	M4_inst	%eax, 4-20(%edi,%ecx,4)
 
- 	movl	8-20(%edx,%ecx,4), %eax
- 	movl	12-20(%edx,%ecx,4), %ebx
+	movl	8-20(%edx,%ecx,4), %eax
+	movl	12-20(%edx,%ecx,4), %ebx
 
- 	M4_inst	%eax, 8-20(%edi,%ecx,4)
- 	M4_inst	%ebx, 12-20(%edi,%ecx,4)
+	M4_inst	%eax, 8-20(%edi,%ecx,4)
+	M4_inst	%ebx, 12-20(%edi,%ecx,4)
 
- 	movl	16-20(%edx,%ecx,4), %ebx
+	movl	16-20(%edx,%ecx,4), %ebx
 	loop	L(inplace_top)
 
 
 	C now %esi is 0 to 3 representing respectively 1 to 4 limbs more
 
- 	M4_inst	%ebx, (%edi)
+	M4_inst	%ebx, (%edi)
 
 	decl	%esi
 	jz	L(inplace_finish_one)
@@ -300,10 +300,10 @@ L(inplace_top):
 
 	C two or three more limbs
 
- 	movl	4(%edx), %eax
- 	movl	8(%edx), %ebx
- 	M4_inst	%eax, 4(%edi)
- 	M4_inst	%ebx, 8(%edi)
+	movl	4(%edx), %eax
+	movl	8(%edx), %ebx
+	M4_inst	%eax, 4(%edi)
+	M4_inst	%ebx, 8(%edi)
 
 	decl	%esi
 	movl	$2, %ecx
@@ -311,10 +311,10 @@ L(inplace_top):
 	jz	L(normal_done)
 
 L(inplace_finish_one):
- 	movl	4(%edx,%ecx,4), %eax
- 	M4_inst	%eax, 4(%edi,%ecx,4)
+	movl	4(%edx,%ecx,4), %eax
+	M4_inst	%eax, 4(%edi,%ecx,4)
 
-L(inplace_done):	
+L(inplace_done):
 	popl	%esi
 	popl	%edi
 

@@ -1,19 +1,19 @@
 dnl  Intel P6 mpn_mul_basecase -- multiply two mpn numbers.
 
 dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -129,7 +129,7 @@ define(SAVE_ESI, `PARAM_YSIZE')
 	movl	SAVE_EBX, %ebx
 
 	ret
-	
+
 
 
 C -----------------------------------------------------------------------------
@@ -193,7 +193,7 @@ define(SAVE_EDI, `PARAM_WP')
 
 	ret
 
-	
+
 C -----------------------------------------------------------------------------
 	ALIGN(16)
 L(xsize_more_than_two):
@@ -305,7 +305,7 @@ C -----------------------------------------------------------------------------
 	jmp	L(simple_outer_entry)
 
 
-L(simple_outer_top):	
+L(simple_outer_top):
 	C ebp	ysize counter, negative
 
 	movl	PARAM_YP, %edx
@@ -452,7 +452,7 @@ ifdef(`PIC',`
 	call	L(pic_calc)
 L(unroll_here):
 ',`
-        leal    L(unroll_inner_entry) (%ecx,%edx,1), %ecx
+	leal	L(unroll_inner_entry) (%ecx,%edx,1), %ecx
 ')
 
 	movl	%ecx, VAR_JMP

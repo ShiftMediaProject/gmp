@@ -1,19 +1,19 @@
 dnl  AMD Athlon mpn_com_n -- mpn bitwise one's complement.
 
 dnl  Copyright 2002 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
@@ -31,7 +31,7 @@ C The loop form below is necessary for the claimed speed.  It needs to be
 C aligned to a 16 byte boundary and only 16 bytes long.  Maybe that's so it
 C fits in a BTB entry.  The adjustments to %eax and %edx avoid offsets on
 C the movq's and achieve the necessary size.
-C 
+C
 C If both src and dst are 4mod8, the loop runs at 1.5 c/l.  So long as one
 C of the two is 0mod8, it runs at 1.0 c/l.  On that basis dst is checked
 C (offset by the size, as per the loop addressing) and one high limb
