@@ -138,6 +138,8 @@ static __gmp_const struct mpexpr_operator_t  _mpz_expr_standard_table[] = {
   { "clrbit",    (mpexpr_fun_t) e_mpz_clrbit,      MPEXPR_TYPE_BINARY_UI     },
   { "cmp",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_I_BINARY      },
   { "cmpabs",    (mpexpr_fun_t) mpz_cmpabs,        MPEXPR_TYPE_I_BINARY      },
+  { "congruent_p",(mpexpr_fun_t)mpz_congruent_p,   MPEXPR_TYPE_I_TERNARY     },
+  { "divisible_p",(mpexpr_fun_t)mpz_divisible_p,   MPEXPR_TYPE_I_BINARY      },
   { "even_p",    (mpexpr_fun_t) e_mpz_even_p,      MPEXPR_TYPE_I_UNARY       },
   { "fib",       (mpexpr_fun_t) mpz_fib_ui,        MPEXPR_TYPE_UNARY_UI      },
   { "fac",       (mpexpr_fun_t) mpz_fac_ui,        MPEXPR_TYPE_UNARY_UI      },
