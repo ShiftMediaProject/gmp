@@ -89,9 +89,9 @@ MA 02111-1307, USA.
    borrow, thereby giving only r<=d, as per the function definition above.
 
    As a design decision it's left to the caller to check for r=d if it might
-   be passing c>=d.  For several applications c<d initially and the extra
-   test is unnecessary, for example the GCDs or a plain divisibility d|a
-   test will pass c=0.
+   be passing c>=d.  Several applications have c<d initially so the extra
+   test is often unnecessary, for example the GCDs or a plain divisibility
+   d|a test will pass c=0.
 
 
    The special case for size==1 is so that it can be assumed c<=d in the
