@@ -482,32 +482,38 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
             if (param.ignore || gmptype)
               {
                 new_fields = (*funs->scan) (data, alloc_fmt, &new_chars);
+                TRACE (printf ("  new_chars %d\n", new_chars));
+                TRACE (printf ("  new_fields %d\n", new_fields));
                 ASSERT (-1 <= new_fields && new_fields <= 0);
               }
             else
               {
                 new_fields = (*funs->scan) (data, alloc_fmt,
                                             va_arg (ap, void *), &new_chars);
+                TRACE (printf ("  new_chars %d\n", new_chars));
+                TRACE (printf ("  new_fields %d\n", new_fields));
                 ASSERT (-1 <= new_fields && new_fields <= 1);
+
                 if (new_fields == 0)
-                  goto done;
+                  goto done;   /* matched something, but was bad */
               }
-            TRACE (printf ("  new_chars %d\n", new_chars));
-            TRACE (printf ("  new_fields %d\n", new_fields));
 
             if (new_fields == -1)
               {
-              no_chars_matched:
+                /* EOF before matching all the fixed text, or before
+                   matching anything for the field.  Return -1 if no
+                   previous non-suppressed fields have matched.  */
+              match_eof:
                 if (fields == 0)
                   fields = -1;
                 goto done;
               }
 
-            /* Under param.ignore we don't know if new_fields==0 means a
-               match (suppressed), or no match.  new_chars will only be
-               written for a successful match.  */
+            /* If the fixed text for a gmptype only partly matched then we
+               can have new_fields==0 but new_chars==-1.  */
             if (new_chars == -1)
               goto done;
+
             chars += new_chars;
             (*funs->step) (data, new_chars);
 
@@ -516,7 +522,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
                 new_chars = gmpscan (funs, data, &param,
                                      param.ignore ? NULL : va_arg (ap, void*));
                 if (new_chars == -2)
-                  goto no_chars_matched;
+                  goto match_eof;
                 if (new_chars == -1)
                   goto done;
                 ASSERT (new_chars >= 0);
