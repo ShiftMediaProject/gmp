@@ -106,7 +106,9 @@ PROLOGUE(mpn_copyi)
 	movl	PARAM_DST, %edi
 
 	jae	L(rep_movs_maybe)
+	orl	%ecx, %ecx
 
+	jz	L(simple_done)
 
 	# eax	saved esi
 	# ebx
@@ -119,6 +121,7 @@ L(simple):
 	movsl
 	loop	L(simple)
 
+L(simple_done):
 	movl	%eax, %esi
 	movl	%edx, %edi
 	ret
