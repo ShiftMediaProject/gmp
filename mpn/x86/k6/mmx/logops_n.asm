@@ -136,8 +136,6 @@ L(two_or_more):
 			C esi
 			C edi
 			C ebp
-			C
-			C carry bit is low of size
 
 			pushl	%esi
 		FRAME_pushl()
