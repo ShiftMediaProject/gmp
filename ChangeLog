@@ -2,6 +2,9 @@
 
 	* mpn/sparc32/v9/gmp-mparam.h: Retune.
 
+	* mpn/sparc32/v9/add_n.asm: New file.
+	* mpn/sparc32/v9/sub_n.asm: New file.
+
 	* mpn/sparc32/v9/mul_1.asm: Tune function entry.
 	* mpn/sparc32/v9/addmul_1.asm: Likewise.
 	* mpn/sparc32/v9/submul_1.asm: Likewise.
