@@ -25,7 +25,7 @@ MA 02111-1307, USA. */
 
 void
 gmp_randseed_ui (gmp_randstate_t rstate,
-		  unsigned long int seed)
+                 unsigned long int seed)
 {
   mpz_set_ui (rstate->seed, seed);
 }
