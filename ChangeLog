@@ -1,3 +1,25 @@
+2001-02-16  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in: Fix flags selection when $CC is a compiler known to us.
+
+	* demos/expr/exprfr.c (e_mpfr_cos, e_mpfr_sin): mpfr_sin_cos now
+	allows NULL for one parameter.
+
+	* mpfr/*: Update to 20010215.
+	* mpfr/trunc.c: Use -DOPERATION scheme, and gmp mpn_zero_p.
+	* mpfr/sqrt.c: Use plain mpn_sqrtrem, not mpn_sqrtrem_new.
+	* mpfr/sqrtrem.c: Remove file.
+	* mpfr/Makefile.am (libmpfr_a_SOURCES): Add set_ui.c, remove sqrtrem.c
+	and srandom.h.
+
+	* configfsf.guess: Update to 2001-02-13.
+	* configfsf.sub: Update to 2001-02-16.
+	* config.sub (j90, t90): Remove special handing, configfsf.sub now ok.
+
+	* Makefile.am (MPF_OBJECTS): Add a couple of missing $U's.
+
+	* tune/tuneup.c: Identify compiler used (GCC and Sun C so far).
+
 2001-02-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips3/mips.m4: New file.
