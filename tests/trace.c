@@ -1,7 +1,7 @@
-/* trace.c -- Support for diagnostic traces. */
+/* Support for diagnostic traces. */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,10 +21,17 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+/* Future: Would like commas printed between limbs in hex or binary, but
+   perhaps not always since it might upset cutting and pasting into bc or
+   whatever.  */
+
+
 #include <stdio.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "try.h"
+
+#include "tests.h"
 
 
 /* Number base for the various trace printing routines.
@@ -35,9 +42,8 @@ MA 02111-1307, USA.
 int  mp_trace_base = 10;
 
 
-/* Print "name=value\n" to stdout for an mpq_t value.  */
 void
-mpq_trace (const char *name, mpq_srcptr q)
+mp_trace_start (const char *name)
 {
   if (name != NULL && name[0] != '\0')
     printf ("%s=", name);
@@ -48,7 +54,13 @@ mpq_trace (const char *name, mpq_srcptr q)
   case 16: printf ("0x");                           break;
   default: printf ("base%d:", ABS (mp_trace_base)); break;
   }
+}
 
+/* Print "name=value\n" to stdout for an mpq_t value.  */
+void
+mpq_trace (const char *name, mpq_srcptr q)
+{
+  mp_trace_start (name);
   mpq_out_str (stdout, mp_trace_base, q);
 
   /* It's not very interesting to know when numbers are unnormalized.
@@ -76,6 +88,16 @@ mpz_trace (const char *name, mpz_srcptr z)
   q->_mp_den = *one;
 
   mpq_trace(name, q);
+}
+
+
+/* Print "name=value\n" to stdout for an mpf_t value. */
+void
+mpf_trace (const char *name, mpf_srcptr f)
+{
+  mp_trace_start (name);
+  mpf_out_str (stdout, mp_trace_base, 0, f);
+  printf ("\n");
 }
 
 
@@ -187,7 +209,7 @@ mpn_trace_file (const char *filename, mp_srcptr ptr, mp_size_t size)
 
 void
 mpn_tracea_file (const char *filename,
-  const mp_ptr *a, int count, mp_size_t size)
+                 const mp_ptr *a, int count, mp_size_t size)
 {
   char  *s;
   int   i;
