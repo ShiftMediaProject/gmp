@@ -30,6 +30,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if ! GENERATE_TABLE
+
 #if BITS_PER_MP_LIMB == 4
 const struct bases mp_bases[257] =
 {
@@ -1341,6 +1343,7 @@ const struct bases mp_bases[257] =
 };
 #endif /* 64 */
 
+#endif
 
 #if GENERATE_TABLE
 
@@ -1366,7 +1369,7 @@ generate (int bits_per_mp_limb, int i)
   idig = floor (bits_per_mp_limb * fdig);
 
   mpz_ui_pow_ui (big_base,
-                 (unsigned long int) i, (unsigned long int) idig);
+		 (unsigned long int) i, (unsigned long int) idig);
   normalization_steps = bits_per_mp_limb - mpz_sizeinbase (big_base, 2);
   mpz_set_ui (t, 1L);
   mpz_mul_2exp (t, t, 2 * bits_per_mp_limb - normalization_steps);
@@ -1463,26 +1466,26 @@ main (int argc, char **argv)
   for (header = 1; header >= 0; header--)
     {
       if (argc > 1)
-        {
-          for (i = 1; i < argc; i++)
-            {
-              n = atoi (argv[i]);
-              if (header)
-                one_header (n);
-              else
-                one_table (n);
-            }
-        }
+	{
+	  for (i = 1; i < argc; i++)
+	    {
+	      n = atoi (argv[i]);
+	      if (header)
+		one_header (n);
+	      else
+		one_table (n);
+	    }
+	}
       else
-        {
-          for (i = 0; i < numberof (bits); i++)
-            {
-              if (header)
-                one_header (bits[i]);
-              else
-                one_table (bits[i]);
-            }
-        }
+	{
+	  for (i = 0; i < numberof (bits); i++)
+	    {
+	      if (header)
+		one_header (bits[i]);
+	      else
+		one_table (bits[i]);
+	    }
+	}
       printf ("\n");
     }
 
