@@ -1926,6 +1926,22 @@ if test $enable_mpfr = yes; then
     AC_DEFINE(LIBC211,1,
     [Define if you don't have `__setfpucw' (eg. glibc 2.1 and up)])
   fi
+
+  # Denorm support is necessary for mpfr_set_d and mpfr_get_d, and for the
+  # various test programs.  On alpha denorms cause SIGFPE by default.
+  # -mieee-with-inexact is for gcc, -ieee_with_inexact is for DEC C.
+  #
+  CFLAGS_IEEE_WITH_INEXACT=
+  case $host in
+    alpha*-*-*)
+      for i in -mieee-with-inexact -ieee_with_inexact; do
+        GMP_PROG_CC_WORKS($CC $CFLAGS $i,
+          [CFLAGS_IEEE_WITH_INEXACT=$i
+          break])
+      done
+      ;;
+  esac
+  AC_SUBST(CFLAGS_IEEE_WITH_INEXACT)  
 fi
 
 
