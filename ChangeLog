@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-29  Kevin Ryde  <kevin@swox.se>
+
+	* demos/perl/GMP/Mpf.pm (overload_string): Use $OFMT to avoid warnings
+	about $#.
+
+	* demos/perl/GMP.xs (fits_slong_p): Use LONG_MAX+1 to avoid possible
+	rounding of 0x7F..FF in a double on 64-bit systems.
+
+	* configure.in (ppc601-*-*): Remove this case, it never matched
+	anything, the name adopted is powerpc601.
+	(powerpc601-*-*): Use gcc -mcpu=601, xlc -qarch=601.
+
+	* configure.in: Introduce ${cc}_cflags_maybe, used if they work.
+	(*sparc*-*-*) [ABI=32]: Add gcc_cflags_maybe=-m32 to force that mode.
+
+	* doc/gmp.texi (Introduction to GMP): Add AMD64 to optimizations list.
+	(Build Options): Add cpu types alphaev7 and amd64.  Update texinfo
+	html cross reference.
+
 2003-11-28  Niels Möller  <nisse@harpo.hack.org>
 
 	* tune/tuneup.c (tune_hgcd): Disable if GMP_NAIL_BITS > 0.
