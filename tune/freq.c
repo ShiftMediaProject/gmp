@@ -91,27 +91,23 @@ speed_cpu_frequency_environment (void)
 /* sysctl() and sysctlbyname() for BSD flavours.  The "sysctl -a" command
    prints everything available.
 
-   FreeBSD 2.2.8 i386 - machdep.i586_freq is frequency in hertz
+   FreeBSD 2.2.8 i386 - machdep.i586_freq is in Hertz.
 
-   FreeBSD 3.3 i368 - machdep.tsc_freq is frequency in hertz
+   FreeBSD 3.3 i368 - machdep.tsc_freq is in Hertz.  There's no obvious
+       define for tsc_freq in sysctl.h, but sysctlbyname works fine.
 
-   FreeBSD 4.1 and NetBSD 1.4 alpha - hw.model string "Digital AlphaPC 164LX
-   599 MHz"
+   FreeBSD 4.1 and NetBSD 1.4 alpha - hw.model string gives "Digital AlphaPC
+       164LX 599 MHz".  NetBSD 1.4 doesn't have sysctlbyname, so sysctl() is
+       used.
 
-   On FreeBSD 3.3 the headers have #defines like CPU_WALLCLOCK under
-   CTL_MACHDEP but don't seem to have anything for machdep.tsc_freq or
-   machdep.i586_freq.  Using the string forms with sysctlbyname() works
-   though, and lets libc worry about the defines and headers.
-
-   NetBSD 1.4 doesn't have sysctlbyname, so sysctl() is used instead.
-*/
+   Darwin 1.3 powerpc - hw.cpufrequency is in hertz, but for some reason
+       only seems to be available from sysctl(), not sysctlbyname().  */
 
 #if HAVE_SYSCTLBYNAME
 int
 speed_cpu_frequency_sysctlbyname (void)
 {
   unsigned  val;
-  char      str[128];
   size_t    size;
 
   size = sizeof(val);
@@ -119,9 +115,10 @@ speed_cpu_frequency_sysctlbyname (void)
       && size == sizeof(val))
     {
       if (speed_option_verbose)
-        printf ("Using sysctlbyname() machdep.tsc_freq");
+        printf ("Using sysctlbyname() machdep.tsc_freq %u for cycle time %.3g\n",
+                val, speed_cycletime);
       speed_cycletime = 1.0 / (double) val;
-      goto success;
+      return 1;
     }
 
   size = sizeof(val);
@@ -129,61 +126,41 @@ speed_cpu_frequency_sysctlbyname (void)
       && size == sizeof(val))
     {
       if (speed_option_verbose)
-        printf ("Using sysctlbyname() machdep.i586_freq");
+        printf ("Using sysctlbyname() machdep.i586_freq %u for cycle time %.3g\n",
+                val, speed_cycletime);
       speed_cycletime = 1.0 / (double) val;
-      goto success;
+      return 1;
     }
-
-  size = sizeof(str);
-  if (sysctlbyname ("hw.model", str, &size, NULL, 0) == 0)
-    {
-      char  *p = &str[size-1];
-      int   i;
-
-      /* find the second last space */
-      for (i = 0; i < 2; i++)
-        {
-          for (;;)
-            {
-              if (p <= str)
-                goto hw_model_fail;
-              p--;
-              if (*p == ' ')
-                break;
-            }
-        }
-
-      if (sscanf (p, "%u MHz", &val) != 1)
-        goto hw_model_fail;
-
-      if (speed_option_verbose)
-        printf ("Using sysctlbyname() hw.model");
-      speed_cycletime = 1e-6 / (double) val;
-      goto success;
-    }
- hw_model_fail:
 
   return 0;
-
- success:
-  if (speed_option_verbose)
-    printf (" %u for cycle time %.3g\n", val, speed_cycletime);
-
-  return 1;
 }
 #endif
 
-#if HAVE_SYSCTL && defined (CTL_HW) && defined (HW_MODEL)
+#if HAVE_SYSCTL
 #define HAVE_CPU_FREQUENCY_SYSCTL 1
-
 int
 speed_cpu_frequency_sysctl (void)
 {
   int       mib[2];
-  unsigned  val;
   char      str[128];
+  unsigned  val;
   size_t    size;
 
+#if defined (CTL_HW) && defined (HW_CPU_FREQ)
+  mib[0] = CTL_HW;
+  mib[1] = HW_CPU_FREQ;
+  size = sizeof(val);
+  if (sysctl (mib, 2, &val, &size, NULL, 0) == 0)
+    {
+      if (speed_option_verbose)
+        printf ("Using sysctl() hw.cpufrequency %u for cycle time %.3g\n",
+                val, speed_cycletime);
+      speed_cycletime = 1.0 / (double) val;
+      return 1;
+    }
+#endif
+
+#if defined (CTL_HW) && defined (HW_MODEL)
   mib[0] = CTL_HW;
   mib[1] = HW_MODEL;
   size = sizeof(str);
@@ -209,19 +186,15 @@ speed_cpu_frequency_sysctl (void)
         goto hw_model_fail;
 
       if (speed_option_verbose)
-        printf ("Using sysctlbyname() hw.model");
+        printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
+                val, speed_cycletime);
       speed_cycletime = 1e-6 / (double) val;
-      goto success;
+      return 1;
     }
  hw_model_fail:
+#endif
 
   return 0;
-
- success:
-  if (speed_option_verbose)
-    printf (" %u for cycle time %.3g\n", val, speed_cycletime);
-
-  return 1;
 }
 #endif
 
