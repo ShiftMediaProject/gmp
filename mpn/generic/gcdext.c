@@ -192,18 +192,8 @@ mpn_gcd (mp_ptr gp,
 
   if (size > vsize)
     {
-      /* Normalize V (and shift up U the same amount).  */
-      count_leading_zeros (cnt, vp[vsize - 1]);
-      if (cnt != 0)
-	{
-	  mp_limb_t cy;
-	  mpn_lshift (vp, vp, vsize, cnt);
-	  cy = mpn_lshift (up, up, size, cnt);
-	  up[size] = cy;
-	  size += cy != 0;
-	}
+      mpn_tdiv_qr (tp, up, (mp_size_t) 0, up, size, vp, vsize);
 
-      mpn_divmod (up + vsize, up, size, vp, vsize);
 #if EXTEND
       /* This is really what it boils down to in this case... */
       s0p[0] = 0;
@@ -211,11 +201,6 @@ mpn_gcd (mp_ptr gp,
       sign = -sign;
 #endif
       size = vsize;
-      if (cnt != 0)
-	{
-	  mpn_rshift (up, up, size, cnt);
-	  mpn_rshift (vp, vp, size, cnt);
-	}
       MP_PTR_SWAP (up, vp);
     }
 
@@ -408,60 +393,26 @@ mpn_gcd (mp_ptr gp,
 
       if (B == 0)
 	{
-	  mp_limb_t qh;
-	  mp_size_t i;
 	  /* This is quite rare.  I.e., optimize something else!  */
 
-	  /* Normalize V (and shift up U the same amount).  */
-	  count_leading_zeros (cnt, vp[vsize - 1]);
-	  if (cnt != 0)
-	    {
-	      mp_limb_t cy;
-	      mpn_lshift (vp, vp, vsize, cnt);
-	      cy = mpn_lshift (up, up, size, cnt);
-	      up[size] = cy;
-	      size += cy != 0;
-	    }
+	  mpn_tdiv_qr (wp, up, (mp_size_t) 0, up, size, vp, vsize);
 
-	  qh = mpn_divmod (up + vsize, up, size, vp, vsize);
 #if EXTEND
 	  MPN_COPY (tp, s0p, ssize);
 	  {
 	    mp_size_t qsize;
+	    mp_size_t i;
 
-	    qsize = size - vsize; /* size of stored quotient from division */
-	    if (ssize < qsize)
-	      {
-		MPN_ZERO (tp + ssize, qsize - ssize);
-		MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
-		for (i = 0; i < ssize; i++)
-		  {
-		    mp_limb_t cy;
-		    cy = mpn_addmul_1 (tp + i, up + vsize, qsize, s1p[i]);
-		    tp[qsize + i] = cy;
-		  }
-	      }
-	    else
-	      {
-		MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
-		for (i = 0; i < qsize; i++)
-		  {
-		    mp_limb_t cy;
-		    cy = mpn_addmul_1 (tp + i, s1p, ssize, up[vsize + i]);
-		    tp[ssize + i] = cy;
-		  }
-	      }
-	    if (qh != 0)
+	    qsize = size - vsize + 1; /* size of stored quotient from division */
+	    MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
+
+	    for (i = 0; i < qsize; i++)
 	      {
 		mp_limb_t cy;
-		cy = mpn_add_n (tp + qsize, tp + qsize, s1p, ssize);
-		if (cy != 0)
-		  {
-		    tp[qsize + ssize] = cy;
-		    s1p[qsize + ssize] = 0;
-		    ssize++;
-		  }
+		cy = mpn_addmul_1 (tp + i, s1p, ssize, wp[i]);
+		tp[ssize + i] = cy;
 	      }
+
 	    ssize += qsize;
 	    ssize -= tp[ssize - 1] == 0;
 	  }
@@ -471,11 +422,6 @@ mpn_gcd (mp_ptr gp,
 	  MP_PTR_SWAP (s1p, tp);
 #endif
 	  size = vsize;
-	  if (cnt != 0)
-	    {
-	      mpn_rshift (up, up, size, cnt);
-	      mpn_rshift (vp, vp, size, cnt);
-	    }
 	  MP_PTR_SWAP (up, vp);
 	}
       else
