@@ -51,7 +51,7 @@ m4_assert_numargs_range(1,2)
 `ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter
 ')')')')dnl
 	.text
-ifelse(`$2',noalign,,`ALIGN(8)')
+ifelse(`$2',noalign,,`	ALIGN(8)')
 	.globl	$1
 	.ent	$1
 $1:
