@@ -18,6 +18,29 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-01  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/fac_ui.c (BSWAP_ULONG) [limb==2*long]: Remove this case, it
+	provokes code gen problems on HP cc.
+	(BSWAP_ULONG) [generic]: Rename __dst variable to avoid conflicts with
+	BITREV_ULONG.
+	Fix by Jason Moxham.	
+
+	* mpn/powerpc32/mode1o.asm: Use 16-bit i*i for early out, no need to
+	truncate divisor.  Amend stated 750/7400 speeds, and note operands
+	that give the extremes.
+
+	* mpz/set_d.c: Don't use a special case for d < MP_BASE_AS_DOUBLE, gcc
+	3.3 -mpowerpc64 on darwin gets ulonglong->double casts wrong.
+
+	* mpn/generic/diveby3.c: Show a better style carry handling in the
+	alternative pipelined sample code.
+
+	Revert this, the longlong.h macros need -mpowerpc64:
+	* acinclude.m4 (GMP_GCC_POWERPC64): New macro.
+	* configure.in (powerpc64-*-darwin*): Use it to exclude -mpowerpc64
+	when bad.
+
 2003-10-31  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/mode64/submul_1.asm: Move an instruction to save a
@@ -29,6 +52,32 @@ MA 02111-1307, USA.
 	* mpn/powerpc64/mode64/*.asm: Add cycle counts for POWER4.
 
 	* mpn/powerpc64/sqr_diagonal.asm: Rewrite to save a cycle on POWER4.
+
+2003-10-31  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr-2-0-2-branch 2003-10-31.
+
+	* mpn/powerpc64/README: Add subdirectory organisation notes.
+
+	* tests/mpn/t-get_d.c: Don't use limits.h, LONG_MIN is wrong on gcc
+	2.95 with -mcpu=ultrasparc.
+
+	* acinclude.m4 (GMP_GCC_POWERPC64): New macro.
+	* configure.in (powerpc64-*-darwin*): Use it to exclude -mpowerpc64
+	when bad.
+
+	* configure.in (powerpc64-*-darwin*) [ABI=mode32]: Use gcc -mcpu flags.
+
+	* mpn/ia64/divrem_1.asm, mpn/ia64/gcd_1.asm: Use "C" for comments.
+	* mpn/ia64/README, mpn/ia64/ia64-defs.m4: Note this.
+
+	* mpn/ia64/ia64-defs.m4: Renamed from default.m4, per other defs files.
+	* configure.in (IA64_PATTERN): Update GMP_INCLUDE_MPN.
+
+	* doc/gmp.texi (Notes for Particular Systems): Remove m68k ABI notes
+	for -mshort and PalmOS, now works.
+	(References): Correction, GMP Square Root proof already there, just
+	wanting URL from RRRR 4475.
 
 2003-10-29  Kevin Ryde  <kevin@swox.se>
 
