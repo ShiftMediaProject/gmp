@@ -69,27 +69,24 @@ static void ap_product_small _PROTO ((mpz_t ret, mp_limb_t start, mp_limb_t step
 #define BSWAP_ULONG(x,y)	BSWAP_LIMB(x,y)
 #endif
 
-#if BITS_PER_ULONG*2==BITS_PER_MP_LIMB
-#define BSWAP_ULONG(x,y)				\
-do{mp_limb_t __src=(y);					\
-   BSWAP_LIMB(__src,__src);				\
-   __src>>=BITS_PER_ULONG;				\
-   (x)=__src;						\
-  }while(0)
-#endif
+/* We used to have a case here for limb==2*long, doing a BSWAP_LIMB followed
+   by a shift down to get the high part.  But it provoked incorrect code
+   from "HP aC++/ANSI C B3910B A.05.52 [Sep 05 2003]" in ILP32 mode.  This
+   case would have been nice for gcc ia64 where BSWAP_LIMB is a mux1, but we
+   can get that directly muxing a 4-byte ulong if it matters enough.  */
 
 #if ! defined (BSWAP_ULONG)
-#define BSWAP_ULONG(dst, src)                           \
-  do {                                                  \
-    unsigned long  __bswapl_src = (src);                \
-    unsigned long  __dst = 0;                           \
-    int        __i;                                     \
-    for (__i = 0; __i < sizeof(unsigned long); __i++)   \
-      {                                                 \
-        __dst = (__dst << 8) | (__bswapl_src & 0xFF);   \
-        __bswapl_src >>= 8;                             \
-      }                                                 \
-    (dst) = __dst;                                      \
+#define BSWAP_ULONG(dst, src)                                           \
+  do {                                                                  \
+    unsigned long  __bswapl_src = (src);                                \
+    unsigned long  __bswapl_dst = 0;                                    \
+    int        __i;                                                     \
+    for (__i = 0; __i < sizeof(unsigned long); __i++)                   \
+      {                                                                 \
+        __bswapl_dst = (__bswapl_dst << 8) | (__bswapl_src & 0xFF);     \
+        __bswapl_src >>= 8;                                             \
+      }                                                                 \
+    (dst) = __bswapl_dst;                                               \
   } while (0)
 #endif
 
