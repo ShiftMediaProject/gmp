@@ -93,7 +93,6 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
-WANT_MPFR_VAL = @WANT_MPFR_VAL@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -141,10 +140,10 @@ t_expr_LDADD = $(top_builddir)/tests/libtests.la $(LDADD)
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES)
 subdir = demos/expr
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h
-CONFIG_CLEAN_FILES =  expr-impl.h
+CONFIG_HEADER = ../../config.h ../../gmp.h ../../mp.h expr-impl.h
+CONFIG_CLEAN_FILES = 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I.
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -188,7 +187,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libexpr_a_SOURCES) run-expr.c t-expr.c
 depcomp = 
-DIST_COMMON =  README Makefile.am Makefile.in expr-impl-h.in
+DIST_COMMON =  README ./stamp-h4.in Makefile.am Makefile.in \
+expr-impl-h.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -207,8 +207,38 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
-expr-impl.h: $(top_builddir)/config.status expr-impl-h.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@:demos/expr/expr-impl-h.in CONFIG_HEADERS= $(SHELL) ./config.status
+
+expr-impl.h: stamp-h4
+	@if test ! -f $@; then \
+		rm -f stamp-h4; \
+		$(MAKE) stamp-h4; \
+	else :; fi
+stamp-h4: $(srcdir)/expr-impl-h.in $(top_builddir)/config.status
+	@rm -f stamp-h4 stamp-h4T
+	@echo timestamp > stamp-h4T 2> /dev/null
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=demos/expr/expr-impl.h:demos/expr/expr-impl-h.in \
+	     $(SHELL) ./config.status
+	@mv stamp-h4T stamp-h4
+$(srcdir)/expr-impl-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h4.in
+	@if test ! -f $@; then \
+		rm -f $(srcdir)/./stamp-h4.in; \
+		$(MAKE) $(srcdir)/./stamp-h4.in; \
+	else :; fi
+$(srcdir)/./stamp-h4.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/acconfig.h
+	@rm -f $(srcdir)/./stamp-h4.in $(srcdir)/./stamp-h4.inT
+	@echo timestamp > $(srcdir)/./stamp-h4.inT 2> /dev/null
+	cd $(top_srcdir) && $(AUTOHEADER)
+	@mv $(srcdir)/./stamp-h4.inT $(srcdir)/./stamp-h4.in
+
+mostlyclean-hdr:
+
+clean-hdr:
+
+distclean-hdr:
+	-rm -f expr-impl.h
+
+maintainer-clean-hdr:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -306,7 +336,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) expr-impl-h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -316,8 +346,8 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)expr-impl-h.in$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags expr-impl-h.in $$unique $(LISP)
 
 mostlyclean-tags:
 
@@ -350,6 +380,9 @@ check-am: all-am
 check: check-am
 installcheck-am:
 installcheck: installcheck-am
+all-recursive-am: expr-impl.h
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+
 install-exec-am:
 install-exec: install-exec-am
 
@@ -361,7 +394,7 @@ install-am: all-am
 install: install-am
 uninstall-am:
 uninstall: uninstall-am
-all-am: Makefile
+all-am: Makefile expr-impl.h
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -379,40 +412,42 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-compile mostlyclean-libtool mostlyclean-kr \
-		mostlyclean-tags mostlyclean-generic
+mostlyclean-am:  mostlyclean-hdr mostlyclean-compile mostlyclean-libtool \
+		mostlyclean-kr mostlyclean-tags mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-compile clean-libtool clean-kr clean-tags clean-generic \
-		mostlyclean-am
+clean-am:  clean-hdr clean-compile clean-libtool clean-kr clean-tags \
+		clean-generic mostlyclean-am
 
 clean: clean-am
 
-distclean-am:  distclean-compile distclean-libtool distclean-kr \
-		distclean-tags distclean-generic clean-am
+distclean-am:  distclean-hdr distclean-compile distclean-libtool \
+		distclean-kr distclean-tags distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-kr maintainer-clean-tags \
-		maintainer-clean-generic distclean-am
+maintainer-clean-am:  maintainer-clean-hdr maintainer-clean-compile \
+		maintainer-clean-libtool maintainer-clean-kr \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-compile distclean-compile clean-compile \
+.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
+mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
 clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
 clean-kr maintainer-clean-kr tags mostlyclean-tags distclean-tags \
 clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-check-am installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+check-am installcheck-am installcheck all-recursive-am install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 allprogs: $(EXTRA_PROGRAMS)

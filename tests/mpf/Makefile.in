@@ -93,7 +93,6 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
-WANT_MPFR_VAL = @WANT_MPFR_VAL@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -131,14 +130,14 @@ check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d \
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h
+CONFIG_HEADER = ../../config.h ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h
 CONFIG_CLEAN_FILES = 
 check_PROGRAMS =  t-add$(EXEEXT) t-sub$(EXEEXT) t-conv$(EXEEXT) \
 t-sqrt$(EXEEXT) t-muldiv$(EXEEXT) t-dm2exp$(EXEEXT) reuse$(EXEEXT) \
 t-get_d$(EXEEXT) t-misc$(EXEEXT) t-fits$(EXEEXT) t-get_si$(EXEEXT) \
 t-int_p$(EXEEXT)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I../../demos/expr
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@

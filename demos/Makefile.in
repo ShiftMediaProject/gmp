@@ -93,7 +93,6 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
-WANT_MPFR_VAL = @WANT_MPFR_VAL@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -136,12 +135,12 @@ EXTRA_PROGRAMS = factorize isprime pexpr primes qcn
 CLEANFILES = $(EXTRA_PROGRAMS)
 subdir = demos
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h
+CONFIG_HEADER = ../config.h ../gmp.h ../mp.h ../demos/expr/expr-impl.h
 CONFIG_CLEAN_FILES = 
 EXTRA_PROGRAMS =  factorize$(EXEEXT) isprime$(EXEEXT) pexpr$(EXEEXT) \
 primes$(EXEEXT) qcn$(EXEEXT)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
+DEFS = @DEFS@ -I. -I$(srcdir) -I.. -I.. -I.. -I../demos/expr
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
