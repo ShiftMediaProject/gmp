@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 8 May 2002.  An up-to-date version is available at
+  This file current as of 20 May 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -66,11 +66,6 @@ MA 02111-1307, USA.
      situation; put similar code in <code>mpf_eq</code>.
 <li> <code>mpf_eq</code> doesn't implement what gmp.texi specifies.  It should
      not use just whole limbs, but partial limbs.
-<li> <code>_mpz_realloc</code> will reallocate to less than the current size
-     of an mpz.  This is ok internally when a destination size is yet to be
-     updated, but from user code it should probably refuse to go below the
-     size of the current value.  Could switch internal uses across to a new
-     function, and tighten up <code>_mpz_realloc</code>.
 <li> <code>mpf_set_str</code> doesn't validate it's exponent, for instance
      garbage 123.456eX789X is accepted (and an exponent 0 used), and overflow
      of a <code>long</code> is not detected.
@@ -322,7 +317,7 @@ MA 02111-1307, USA.
      might only be an advantage if A and B are about the same size.
 <li> <code>mpn_toom3_mul_n</code>, <code>mpn_toom3_sqr_n</code>: Temporaries
      <code>B</code> and <code>D</code> are adjacent in memory and at the final
-     coefficient addition look like they could use a single
+     coefficient additions look like they could use a single
      <code>mpn_add_n</code> of <code>l4</code> limbs rather than two of
      <code>l2</code> limbs.
 </ul>
@@ -457,9 +452,6 @@ MA 02111-1307, USA.
 <li> Pentium P54: <code>mpn_lshift</code> and <code>mpn_rshift</code> can come
      down from 6.0 c/l to 5.5 or 5.375 by paying attention to pairing after
      <code>shrdl</code> and <code>shldl</code>, see mpn/x86/pentium/README.
-<li> Pentium P55 MMX: <code>mpn_divexact_1</code> and
-     <code>mpn_modexact_1_odd</code> on 16-bit divisors could use MMX
-     multiplies and run at around 16 cycles (down from 23).
 <li> Pentium P55 MMX: <code>mpn_lshift</code> and <code>mpn_rshift</code>
      might benefit from some destination prefetching.
 <li> PentiumPro: <code>mpn_divrem_1</code> might be able to use a
@@ -511,9 +503,9 @@ MA 02111-1307, USA.
      generic C versions of <code>mpn_popcount</code> and
      <code>mpn_hamdist</code> suffice for Cray (if it vectorizes, or can be
      given a hint to do so).
-<li> 68000: <code>mpn_mul_1</code> could check for a 16-bit multiplier and use
-     two multiplies per limb, not four.  Ditto <code>mpn_addmul_1</code> and
-     <code>mpn_submul_1</code>.
+<li> 68000: <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
+     <code>mpn_submul_1</code>: Check for a 16-bit multiplier and use two
+     multiplies per limb, not four.
 <li> 68000: <code>mpn_lshift</code> and <code>mpn_rshift</code> could use a
      <code>roll</code> and mask instead of <code>lsrl</code> and
      <code>lsll</code>.  This promises to be a speedup, effectively trading a
@@ -530,8 +522,7 @@ MA 02111-1307, USA.
 <li> VAX D and G format <code>double</code> floats are straightforward and
      could perhaps be handled directly in <code>__gmp_extract_double</code>
      and maybe in <code>mpz_get_d</code>, rather than falling back on the
-     generic code.  GCC defines <code>__GFLOAT</code> when -mg has selected G
-     format (which would be possible via a user <code>CFLAGS</code>).
+     generic code.  (Both formats are detected by <code>configure</code>.)
 <li> <code>mpn_get_str</code> final divisions by the base with
      <code>udiv_qrnd_unnorm</code> could use some sort of multiply-by-inverse
      on suitable machines.  This ends up happening for decimal by presenting
@@ -627,13 +618,16 @@ MA 02111-1307, USA.
      recognise the Intel 80-bit format on i386, and IEEE 128-bit quad on
      sparc, hppa and power.  Might like an ABI sub-option or something when
      it's a compiler option for 64-bit or 128-bit <code>long double</code>.
-<li> <code>gmp_printf</code> could usefully accept an arbitrary base, for both
-     integer and float conversions.  Either a number in the format string or a
-     <code>*</code> to take a parameter should be allowed.  Maybe
+<li> <code>gmp_printf</code> could accept <code>%b</code> for binary output.
+     It'd be nice if it worked for plain <code>int</code> etc too, not just
+     <code>mpz_t</code> etc.
+<li> <code>gmp_printf</code> in fact could usefully accept an arbitrary base,
+     for both integer and float conversions.  A base either in the format
+     string or as a parameter with <code>*</code> should be allowed.  Maybe
      <code>&amp;13b</code> (b for base) or something like that.
 <li> <code>gmp_printf</code> could perhaps have a type code for an
      <code>mp_limb_t</code>.  That would save an application from having to
-     worry whether it's a long or a long long.
+     worry whether it's a <code>long</code> or a <code>long long</code>.
 <li> <code>gmp_printf</code> could perhaps accept <code>mpq_t</code> for float
      conversions, eg. <code>"%.4Qf"</code>.  This would be merely for
      convenience, but still might be useful.  Rounding would be the same as
@@ -647,9 +641,9 @@ MA 02111-1307, USA.
      supported in the future, or perhaps for <code>mpq_t</code>.  Something
      like <code>&amp;*r</code> (r for rounding, and mpfr style
      <code>GMP_RND</code> parameter).
-<li> <code>mpz_togglebit</code> or <code>mpz_chgbit</code> or some such might
-     be a good companion to <code>mpz_setbit</code> and
-     <code>mpz_clrbit</code>.  Suggested by Niels Möller.
+<li> <code>mpz_combit</code> to toggle a bit would be a good companion for
+     <code>mpz_setbit</code> and <code>mpz_clrbit</code>.  Suggested by Niels
+     Möller (and has done some work towards it).
 <li> <code>mpz_scan0_reverse</code> or <code>mpz_scan0low</code> or some such
      searching towards the low end of an integer might match
      <code>mpz_scan0</code> nicely.  Likewise for <code>scan1</code>.
@@ -715,11 +709,9 @@ MA 02111-1307, USA.
 <h4>Configuration</h4>
 
 <ul>
-<li> Floating-point format: Determine this with a feature test.  Get rid of
-     the <code>#ifdef</code> mess in gmp-impl.h.  This is simple when doing a
-     native compile, but needs a reliable way to examine object files when
-     cross-compiling.  Falling back on a run-time test would be reasonable, if
-     build time tests fail.
+<li> Floating-point format: <code>GMP_C_DOUBLE_FORMAT</code> seems to work
+     well.  Get rid of the <code>#ifdef</code> mess in gmp-impl.h and use the
+     results of the test instead.
 <li> a29k: umul.s and udiv.s exist but don't get used.
 <li> ARM: <code>umul_ppmm</code> in longlong.h always uses <code>umull</code>,
      but is that available only for M series chips or some such?  Perhaps it
@@ -733,28 +725,19 @@ MA 02111-1307, USA.
      <code>ia64-*-hpux*</code>.  Does GMP need to know anything about that?
 <li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
      "hinv -c processor" gives lots of information on Irix.  Standard
-     config.guess appends "el" to indicate endianness.  GMP currently only
-     cares about that for a small <code>mpz_inp_raw</code> and
-     <code>mpz_out_raw</code> optimization.  It's hoped
-     <code>AC_C_BIGENDIAN</code> can be relied on to interrogate the compiler.
-<li> PowerPC-32: gmp-mparam.h comes out quite different for a 750 than a 604e,
-     it'd be good to select the right one, probably by having CPU types
-     powerpc604, powerpc750 etc.
-<li> PowerPC: The crazy explicit TOC setups for AIX are currently driven by
+     config.guess appends "el" to indicate endianness, but
+     <code>AC_C_BIGENDIAN</code> seems the best way to handle that for GMP.
+<li> PowerPC: The function descriptor nonsense for AIX is currently driven by
      <code>*-*-aix*</code>.  It might be more reliable to do some sort of
-     feature test or to examine the compiler output.  It might also be nice to
-     merge the aix.m4 files into powerpc-defs.m4.
-<li> Sparc: config.guess should say supersparc, microsparc, ultrasparc1,
-     ultrasparc2, etc.  "prtconf -vp" gives lots of information about a
-     Solaris system.
-<li> Sparc: recognise sparclite and sparclet (which configfsf.sub accepts).
-     These have <code>umul</code> but not <code>udiv</code>, or something like
-     that.  Check the mpn/sparc32/v8 code is suitable, and add -mcpu= options
-     for gcc.
+     feature test, examining the compiler output perhaps.  It might also be
+     nice to merge the aix.m4 files into powerpc-defs.m4.
+<li> Sparc: <code>config.guess</code> recognises various exact sparcs, make
+     use of that information in <code>configure</code> (work on this is in
+     progress).
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
-<br> Sparc: The use of <code>-xtarget=native</code> with <code>cc</code> is
+<li> Sparc: The use of <code>-xtarget=native</code> with <code>cc</code> is
      incorrect when cross-compiling, the target should be set according to the
      configured <code>$host</code> CPU.
 <li> m68k: config.guess can detect 68000, 68010, CPU32 and 68020, but relies
@@ -803,7 +786,7 @@ MA 02111-1307, USA.
      someone with a dual cygwin/mingw setup to test.
 <li> Automake: Latest automake has a <code>CCAS</code>, <code>CCASFLAGS</code>
      scheme.  Though we probably wouldn't be using its assembler support we
-     could do use those variables in compatible ways.
+     could try to use those variables in compatible ways.
 </ul>
 
 
@@ -823,13 +806,14 @@ MA 02111-1307, USA.
      <li> Perhaps the <code>2exp</code> and general LC cases should be split,
           for clarity (if the general case is retained).
      </ul>
-<li> <code>gmp_randinit_mm</code> (named after Mitchell and Moore) for the
-     55-element delayed Fibonacci generator from Knuth vol 2.  Being additive
-     it should be fast, and might be random enough for GMP test program
-     purposes, if nothing else.  Niels Möller has started on this.
+<li> <code>gmp_randinit_mers</code> for a Mersenne Twister generator.  It's
+     likely to be more random and about the same speed as Knuth's 55-element
+     Fibonacci generator, and can probably become the default.  Pedro Gimeno
+     has started on this.
 <li> <code>gmp_randinit_lc</code>: Finish or remove.  Doing a division for
      every every step won't be very fast, so check whether the usefulness of
-     this algorithm can be justified.
+     this algorithm can be justified.  (Consensus is that it's not useful and
+     can be removed.)
 <li> Blum-Blum-Shub: Finish or remove.  A separate
      <code>gmp_randinit_bbs</code> would be wanted, not the currently
      commented out case in <code>gmp_randinit</code>.
@@ -862,8 +846,6 @@ MA 02111-1307, USA.
      |x|&lt;|b| and |y|&lt;|a| or something like that, but there's probably
      two solutions under just those restrictions.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
-<li> demos/factorize.c should use the GMP random functions when restarting
-     Pollard-Rho, not <code>random</code> / <code>mrand48</code>.
 <li> demos/factorize.c: use <code>mpz_divisible_ui_p</code> rather than
      <code>mpz_tdiv_qr_ui</code>.  (Of course dividing multiple primes at a
      time would be better still.)
@@ -882,8 +864,9 @@ MA 02111-1307, USA.
      wouldn't need to watch out for overlaps).
 <li> PowerPC: The cpu time base registers (per <code>mftb</code> and
      <code>mftbu</code>) could be used for the speed and tune programs.  Would
-     need to know its frequency though, for instance it seemed to be 25 MHz on
-     a couple of Apples (compared to the CPU speed of 350 or 450 MHz).
+     need to know its frequency of course.  Usually it's 1/4 of bus speed
+     (eg. 25 MHz) but some chips drive it from an external input.  Probably
+     have to measure to be sure.
 <li> <code>MUL_FFT_THRESHOLD</code> etc: the FFT thresholds should allow a
      return to a previous k at certain sizes.  This arises basically due to
      the step effect caused by size multiples effectively used for each k.
