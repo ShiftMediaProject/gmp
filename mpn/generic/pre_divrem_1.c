@@ -1,6 +1,6 @@
 /* mpn_preinv_divrem_1 -- mpn by limb division with pre-inverted divisor.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -50,13 +50,13 @@ mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t xsize,
                      mp_srcptr ap, mp_size_t size, mp_limb_t d_unnorm,
                      mp_limb_t dinv, int shift)
 {
-  mp_limb_t  high, r;
+  mp_limb_t  ahigh, qhigh, r;
   mp_size_t  i;
   mp_limb_t  n1, n0;
-  mp_limb_t  d = d_unnorm << shift;
+  mp_limb_t  d;
 
   ASSERT (xsize >= 0);
-  ASSERT (size >= 0);
+  ASSERT (size >= 1);
   ASSERT (d != 0);
 #if WANT_ASSERT
   {
@@ -71,56 +71,53 @@ mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t xsize,
   /* FIXME: What's the correct overlap rule when xsize!=0? */
   ASSERT (MPN_SAME_OR_SEPARATE_P (qp+xsize, ap, size));
 
+  ahigh = ap[size-1];
+  d = d_unnorm << shift;
   qp += (size + xsize - 1);   /* dest high limb */
-  r = 0;
 
-  if (size != 0)
+  if (shift == 0)
     {
-      if (shift == 0)
-        {
-          /* High quotient limb is 0 or 1, and skip a divide step. */
-          mp_limb_t  qhigh;
-          r = ap[size-1];
-          qhigh = (r >= d);
-          r = (qhigh ? r-d : r);
-          *qp-- = qhigh;
-          size--;
+      /* High quotient limb is 0 or 1, and skip a divide step. */
+      r = ahigh;
+      qhigh = (r >= d);
+      r = (qhigh ? r-d : r);
+      *qp-- = qhigh;
+      size--;
 
-          for (i = size-1; i >= 0; i--)
-            {
-              n0 = ap[i];
-              udiv_qrnnd_preinv (*qp, r, r, n0, d, dinv);
-              qp--;
-            }
-        }
-      else
+      for (i = size-1; i >= 0; i--)
         {
-          high = ap[size-1];
-          if (high < d_unnorm)
-            {
-              r = high << shift;
-              *qp-- = 0;
-              size--;
-              if (size == 0)
-                goto done_integer;
-            }
+          n0 = ap[i];
+          udiv_qrnnd_preinv (*qp, r, r, n0, d, dinv);
+          qp--;
+        }
+    }
+  else
+    {
+      r = 0;
+      if (ahigh < d_unnorm)
+        {
+          r = ahigh << shift;
+          *qp-- = 0;
+          size--;
+          if (size == 0)
+            goto done_integer;
+        }
 
 #define EXTRACT   ((n1 << shift) | (n0 >> (BITS_PER_MP_LIMB - shift)))
 
-          n1 = ap[size-1];
-          r |= n1 >> (BITS_PER_MP_LIMB - shift);
+      n1 = ap[size-1];
+      r |= n1 >> (BITS_PER_MP_LIMB - shift);
 
-          for (i = size-2; i >= 0; i--)
-            {
-              ASSERT (r < d);
-              n0 = ap[i];
-              udiv_qrnnd_preinv (*qp, r, r, EXTRACT, d, dinv);
-              qp--;
-              n1 = n0;
-            }
-          udiv_qrnnd_preinv (*qp, r, r, n1 << shift, d, dinv);
+      for (i = size-2; i >= 0; i--)
+        {
+          ASSERT (r < d);
+          n0 = ap[i];
+          udiv_qrnnd_preinv (*qp, r, r, EXTRACT, d, dinv);
           qp--;
+          n1 = n0;
         }
+      udiv_qrnnd_preinv (*qp, r, r, n1 << shift, d, dinv);
+      qp--;
     }
 
  done_integer:
