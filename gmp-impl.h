@@ -1171,12 +1171,12 @@ extern mp_size_t  gcdext_threshold[];
 
 #define KARATSUBA_MUL_THRESHOLD  mul_threshold[0]
 #define TOOM3_MUL_THRESHOLD      mul_threshold[1]
-#define FFT_MUL_TABLE            0
+#define FFT_MUL_TABLE            { 0 }
 #define FFT_MUL_THRESHOLD        mul_threshold[2]
 #define FFT_MODF_MUL_THRESHOLD   fft_modf_mul_threshold
 #define KARATSUBA_SQR_THRESHOLD  sqr_threshold[0]
 #define TOOM3_SQR_THRESHOLD      sqr_threshold[1]
-#define FFT_SQR_TABLE            0
+#define FFT_SQR_TABLE            { 0 }
 #define FFT_SQR_THRESHOLD        sqr_threshold[2]
 #define FFT_MODF_SQR_THRESHOLD   fft_modf_sqr_threshold
 #define BZ_THRESHOLD             bz_threshold[0]
