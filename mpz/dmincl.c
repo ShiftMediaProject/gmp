@@ -50,6 +50,9 @@ MA 02111-1307, USA. */
   nsize = ABS (nsize);
   dsize = ABS (dsize);
 
+  if (dsize == 0)
+    DIVIDE_BY_ZERO;
+
   /* Ensure space is enough for quotient and remainder. */
 
   /* We need space for an extra limb in the remainder, because it's

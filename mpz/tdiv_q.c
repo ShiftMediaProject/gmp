@@ -46,6 +46,9 @@ mpz_tdiv_q (quot, num, den)
   nsize = ABS (nsize);
   dsize = ABS (dsize);
 
+  if (dsize == 0)
+    DIVIDE_BY_ZERO;
+
   /* Ensure space is enough for quotient. */
 
   qsize = nsize - dsize + 1;	/* qsize cannot be bigger than this.  */

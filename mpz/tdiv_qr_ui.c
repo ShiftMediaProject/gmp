@@ -40,15 +40,11 @@ mpz_tdiv_qr_ui (quot, rem, dividend, divisor)
   mp_ptr quot_ptr;
   mp_limb_t remainder_limb;
 
+  if (divisor == 0)
+    DIVIDE_BY_ZERO;
+
   dividend_size = dividend->_mp_size;
   size = ABS (dividend_size);
-
-  if (size == 0)
-    {
-      quot->_mp_size = 0;
-      rem->_mp_size = 0;
-      return;
-    }
 
   /* No need for temporary allocation and copying if QUOT == DIVIDEND as
      the divisor is just one limb, and thus no intermediate remainders
@@ -60,7 +56,7 @@ mpz_tdiv_qr_ui (quot, rem, dividend, divisor)
   quot_ptr = quot->_mp_d;
 
   remainder_limb = mpn_divmod_1 (quot_ptr, dividend->_mp_d, size,
-				   (mp_limb_t) divisor);
+				 (mp_limb_t) divisor);
 
   if (remainder_limb == 0)
     rem->_mp_size = 0;
@@ -73,6 +69,6 @@ mpz_tdiv_qr_ui (quot, rem, dividend, divisor)
     }
 
   /* The quotient is SIZE limbs, but the most significant might be zero. */
-  size -= quot_ptr[size - 1] == 0;
+  size -= size != 0 && quot_ptr[size - 1] == 0;
   quot->_mp_size = dividend_size >= 0 ? size : -size;
 }

@@ -38,6 +38,9 @@ mpz_fdiv_q_ui (quot, dividend, divisor)
   mp_ptr quot_ptr;
   mp_limb_t remainder_limb;
 
+  if (divisor == 0)
+    DIVIDE_BY_ZERO;
+
   dividend_size = dividend->_mp_size;
   size = ABS (dividend_size);
 

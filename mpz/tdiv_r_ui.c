@@ -37,14 +37,11 @@ mpz_tdiv_r_ui (rem, dividend, divisor)
   mp_size_t size;
   mp_limb_t remainder_limb;
 
+  if (divisor == 0)
+    DIVIDE_BY_ZERO;
+
   dividend_size = dividend->_mp_size;
   size = ABS (dividend_size);
-
-  if (size == 0)
-    {
-      rem->_mp_size = 0;
-      return;
-    }
 
   /* No need for temporary allocation and copying if QUOT == DIVIDEND as
      the divisor is just one limb, and thus no intermediate remainders
