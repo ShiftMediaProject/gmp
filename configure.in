@@ -467,7 +467,7 @@ case $host in
 
   powerpc*-*-*)
     cclist="gcc"
-    gcc_cflags="-g -O2 -mpowerpc"
+    gcc_cflags="-g -O2 -mpowerpc -Wa,-mppc"
     path="powerpc32"
     case $host in
       *-*-aix*) cclist="gcc xlc"
