@@ -350,4 +350,32 @@ void refmpz_pow_ui __GMP_PROTO ((mpz_ptr w, mpz_srcptr b, unsigned long e));
 }
 #endif
 
+
+/* Establish ostringstream and istringstream.  Do this here so as to hide
+   the conditionals, rather than putting stuff in each test program.
+
+   Oldish versions of g++, like 2.95.2, don't have <sstream>, only
+   <strstream>.  Fake up ostringstream and istringstream classes, but not a
+   full implementation, just enough for our purposes.  */
+
+#ifdef __cplusplus
+#if HAVE_SSTREAM
+#include <sstream>
+#else /* ! HAVE_SSTREAM */
+#include <string>
+#include <strstream>
+class
+ostringstream : public std::ostrstream {
+ public:
+  string str() { return string (ostrstream::str ()); }
+};
+class
+istringstream : public std::istrstream {
+ public:
+  istringstream (const char *s) : istrstream (s) { };
+};
+#endif /* ! HAVE_SSTREAM */
+#endif /* __cplusplus */
+
+
 #endif /* __TESTS_H__ */
