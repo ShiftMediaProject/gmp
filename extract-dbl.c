@@ -55,6 +55,8 @@ __gmp_extract_double (mp_ptr rp, double d)
      4. This lits is incomplete and misspelled.
    */
 
+  ASSERT (d >= 0.0);
+
   if (d == 0.0)
     {
       MPN_ZERO (rp, LIMBS_PER_DOUBLE);
