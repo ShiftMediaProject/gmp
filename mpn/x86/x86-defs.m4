@@ -199,10 +199,10 @@ dnl  or variable on the stack.
 dnl
 dnl         define(name,`FRAME+offset(%esp)')
 dnl
-dnl  Actually m4_empty_if_zero(eval(FRAME+offset)) is used, which will save
-dnl  one byte if FRAME+offset is zero, by putting (%esp) rather than
-dnl  0(%esp).  Do define(`defframe_empty_if_zero_disabled',1) if for some
-dnl  reason the zero offset is wanted.
+dnl  Actually m4_empty_if_zero(FRAME+offset) is used, which will save one
+dnl  byte if FRAME+offset is zero, by putting (%esp) rather than 0(%esp).
+dnl  Use define(`defframe_empty_if_zero_disabled',1) if for some reason the
+dnl  zero offset is wanted.
 dnl
 dnl  The new macro also gets a check that when it's used FRAME is actually
 dnl  defined, and that the final %esp offset isn't negative, which would
@@ -216,20 +216,25 @@ dnl
 dnl  See README.family for more on the suggested way to access the stack
 dnl  frame.
 
-define(defframe_empty_if_zero,
-`ifelse(defframe_empty_if_zero_disabled,1,`$1',`m4_empty_if_zero(`$1')')')
-
-define(defframe_check_notbelow,
-`ifelse(eval(($3)+($2)<0),1,
-`m4_error(`$1 at frame offset $2 used when FRAME is only $3 bytes
-')')')
-
 define(defframe,
 m4_assert_numargs(2)
 `deflit(`$1',
 m4_assert_defined(`FRAME')
-`defframe_check_notbelow(`$1',`$2',FRAME)dnl
-defframe_empty_if_zero(eval(FRAME+($2)))(%esp)')')
+`defframe_check_notbelow(`$1',$2,FRAME)dnl
+defframe_empty_if_zero(FRAME+($2))(%esp)')')
+
+dnl  Called: defframe_empty_if_zero(expression)
+define(defframe_empty_if_zero,
+`ifelse(defframe_empty_if_zero_disabled,1,
+`eval($1)',
+`m4_empty_if_zero($1)')')
+
+dnl  Called: defframe_check_notbelow(`name',offset,FRAME)
+define(defframe_check_notbelow,
+m4_assert_numargs(3)
+`ifelse(eval(($3)+($2)<0),1,
+`m4_error(`$1 at frame offset $2 used when FRAME is only $3 bytes
+')')')
 
 
 dnl  Usage: FRAME_pushl()
@@ -379,58 +384,146 @@ define(cmov_available_p,
 0,1)')
 
 
-dnl  Usage: cmov_bytes(cond,src,dst,bytes)
+dnl  Usage: x86_lookup(target, key,value, key,value, ...)
+dnl         x86_lookup_p(target, key,value, key,value, ...)
 dnl
-dnl  Generate a cmov from a list of bytes, or simulated with a mov and
-dnl  conditional jump if cmov isn't available.  The bytes argument should be
-dnl  quoted to protect commas in it.
-
-define(cmov_bytes,
-m4_assert_numargs(4)
-`ifelse(cmov_available_p,1,
-	`.byte	$4	C cmov$1 $2, $3',
-	`j`'x86_opposite_cond(`$1')	1f	C simulated cmov$1 $2, $3
-	mov	$2, $3
-1:`'dnl
-m4_warning(`warning, simulating cmov with jump, use for testing only
-')')')
-
-dnl  Expand to an opposite condition, eg. x86_opposite_cond(z) -> nz,
-dnl  or x86_opposite_cond(ns) -> s.
+dnl  Look for `target' among the `key' parameters.
 dnl
-define(x86_opposite_cond,
+dnl  x86_lookup expands to the corresponding `value', or generates an error
+dnl  if `target' isn't found.
+dnl
+dnl  x86_lookup_p expands to 1 if `target' is found, or 0 if not.
+
+define(x86_lookup,
+`ifelse(eval($#<3),1,
+`m4_error(`unrecognised part of x86 instruction: $1
+')',
+`ifelse(`$1',`$2', `$3',
+`x86_lookup(`$1',shift(shift(shift($@))))')')')
+
+define(x86_lookup_p,
+`ifelse(eval($#<3),1, `0',
+`ifelse(`$1',`$2',    `1',
+`x86_lookup_p(`$1',shift(shift(shift($@))))')')')
+
+
+dnl  Usage: x86_opcode_reg32(reg)
+dnl         x86_opcode_reg32_p(reg)
+dnl
+dnl  x86_opcode_reg32 expands to the standard 3 bit encoding for the given
+dnl  32-bit register, eg. `%ebp' turns into 5.
+dnl
+dnl  x86_opcode_reg32_p expands to 1 if reg is a valid 32-bit register, or 0
+dnl  if not.
+
+define(x86_opcode_reg32,
 m4_assert_numargs(1)
-`ifelse(substr(`$1',0,1),n,
-`substr(`$1',1)',
-`n$1')')
+`x86_lookup(`$1',x86_opcode_reg32_list)')
+
+define(x86_opcode_reg32_p,
+m4_assert_onearg()
+`x86_lookup_p(`$1',x86_opcode_reg32_list)')
+
+define(x86_opcode_reg32_list,
+``%eax',0,
+`%ecx',1,
+`%edx',2,
+`%ebx',3,
+`%esp',4,
+`%ebp',5,
+`%esi',6,
+`%edi',7')
 
 
-dnl  Usage: cmovnz_eax_ebx
-dnl         ...
+dnl  Usage: x86_opcode_tttn(cond)
 dnl
-dnl  Only recent versions of gas know cmov, so the following are
-dnl  replacements using ".byte".
+dnl  Expand to the 4-bit "tttn" field value for the given x86 branch
+dnl  condition (like `c', `ae', etc).
 
-define(`cmovnz_eax_ebx',
-m4_assert_numargs(-1)
-`cmov_bytes(nz,%eax,%ebx,`15,69,216')')
+define(x86_opcode_tttn,
+m4_assert_numargs(1)
+`x86_lookup(`$1',x86_opcode_ttn_list)')
 
-define(`cmovnz_ebx_ecx',
-m4_assert_numargs(-1)
-`cmov_bytes(nz,%ebx,%ecx,`15,69,203')')
+define(x86_opcode_tttn_list,
+``o',  0,
+`no',  1,
+`b',   2, `c',  2, `nae',2,
+`nb',  3, `nc', 3, `ae', 3,
+`e',   4, `z',  4,
+`ne',  5, `nz', 5,
+`be',  6, `na', 6,
+`nbe', 7, `a',  7,
+`s',   8,
+`ns',  9,
+`p',  10, `pe', 10, `npo',10,
+`np', 11, `npe',11, `po', 11,
+`l',  12, `nge',12,
+`nl', 13, `ge', 13,
+`le', 14, `ng', 14,
+`nle',15, `g',  15')
 
-define(`cmovnz_ecx_ebx',
-m4_assert_numargs(-1)
-`cmov_bytes(nz,%ecx,%ebx,`15,69,217')')
 
-define(`cmovnz_edx_ecx',
-m4_assert_numargs(-1)
-`cmov_bytes(nz,%edx,%ecx,`15,69,202')')
+dnl  Usage: cmovCC(srcreg,dstreg)
+dnl
+dnl  Generate a cmov instruction if the target supports cmov, or simulate it
+dnl  with a conditional jump if not (the latter being meant only for
+dnl  testing).  For example,
+dnl
+dnl         cmovz(  %eax, %ebx)
+dnl
+dnl  cmov instructions are generated using .byte sequences, since only
+dnl  recent versions of gas know cmov.
+dnl
+dnl  The source operand can only be a plain register.  (m4 code implementing
+dnl  full memory addressing modes exists, believe it or not, but isn't
+dnl  currently needed and isn't included.)
+dnl
+dnl  All the standard conditions are defined.  Attempting to use one without
+dnl  the macro parentheses, such as just "cmovbe %eax, %ebx", will provoke
+dnl  an error.  This ensures the necessary .byte sequences aren't
+dnl  accidentally missed.
 
-define(`cmovz_eax_ecx',
-m4_assert_numargs(-1)
-`cmov_bytes(z,%eax,%ecx,`15,68,200')')
+dnl  Called: define_cmov_many(cond,tttn,cond,tttn,...)
+define(define_cmov_many,
+`ifelse(m4_length(`$1'),0,,
+`define_cmov(`$1',`$2')define_cmov_many(shift(shift($@)))')')
 
+dnl  Called: define_cmov(cond,tttn)
+define(define_cmov,
+m4_assert_numargs(2)
+`define(`cmov$1',
+m4_instruction_wrapper()
+m4_assert_numargs(2)
+`cmov_internal'(m4_doublequote($`'0),``$1',`$2'',dnl
+m4_doublequote($`'1),m4_doublequote($`'2)))')
+
+define_cmov_many(x86_opcode_tttn_list)
+
+
+dnl  Called: cmov_internal(name,cond,tttn,src,dst)
+define(cmov_internal,
+m4_assert_numargs(5)
+`ifelse(cmov_available_p,1,
+`cmov_bytes_tttn(`$1',`$3',`$4',`$5')',
+`m4_warning(`warning, simulating cmov with jump, use for testing only
+')cmov_simulate(`$2',`$4',`$5')')')
+
+dnl  Called: cmov_simulate(cond,src,dst)
+dnl  If this is going to be used with memory operands for the source it will
+dnl  need to be changed to do a fetch even if the condition is false, so as
+dnl  to trigger exceptions the same way a real cmov does.
+define(cmov_simulate,
+m4_assert_numargs(3)
+	`j$1	1f	C cmov$1 $2, $3
+	jmp	2f
+1:	movl	$2, $3
+2:')
+
+dnl  Called: cmov_bytes_tttn(name,tttn,src,dst)
+define(cmov_bytes_tttn,
+m4_assert_numargs(4)
+	`.byte	15, 64+$2, dnl
+192+8*x86_opcode_reg32(`$4')+x86_opcode_reg32(`$3')  C `$1 $3, $4'')
 
 
 dnl  Usage: loop_or_decljnz label
@@ -492,13 +585,22 @@ Zdisp_match( movl, %esi, 0,(%edi), `137,119,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %eax, `139,67,0',    $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %esi, `139,115,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%esi), %eax, `139,70,0',    $@)`'dnl
+Zdisp_match( addl, %ebx, 0,(%edi), `1,95,0',      $@)`'dnl
 Zdisp_match( addl, %ecx, 0,(%edi), `1,79,0',      $@)`'dnl
-Zdisp_match( addl, %esi, 0,(%edi), `1,119,0',      $@)`'dnl
+Zdisp_match( addl, %esi, 0,(%edi), `1,119,0',     $@)`'dnl
 Zdisp_match( subl, %ecx, 0,(%edi), `41,79,0',     $@)`'dnl
 Zdisp_match( adcl, 0,(%edx), %esi, `19,114,0',    $@)`'dnl
 Zdisp_match( sbbl, 0,(%edx), %esi, `27,114,0',    $@)`'dnl
-Zdisp_match( movq, 0,(%esi), %mm0, `15,111,70,0', $@)`'dnl
-Zdisp_match( movq, %mm0, 0,(%edi), `15,127,71,0', $@)`'dnl
+Zdisp_match( movq, 0,(%eax,%ecx,8), %mm0, `0x0f,0x6f,0x44,0xc8,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%ebx,%eax,4), %mm0, `0x0f,0x6f,0x44,0x83,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%ebx,%eax,4), %mm2, `0x0f,0x6f,0x54,0x83,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%esi),        %mm0, `15,111,70,0',     $@)`'dnl
+Zdisp_match( movq, %mm0,        0,(%edi), `15,127,71,0',     $@)`'dnl
+Zdisp_match( movq, %mm2, 0,(%ecx,%eax,4), `0x0f,0x7f,0x54,0x81,0x00', $@)`'dnl
+Zdisp_match( movq, %mm2, 0,(%edx,%eax,4), `0x0f,0x7f,0x54,0x82,0x00', $@)`'dnl
+Zdisp_match( movq, %mm0, 0,(%edx,%ecx,8), `0x0f,0x7f,0x44,0xca,0x00', $@)`'dnl
+Zdisp_match( movd, %mm0, 0,(%eax,%ecx,4), `0x0f,0x7e,0x44,0x88,0x00', $@)`'dnl
+Zdisp_match( movd, %mm0, 0,(%ecx,%eax,4), `0x0f,0x7e,0x44,0x81,0x00', $@)`'dnl
 ifelse(Zdisp_found,0,
 `m4_error(`unrecognised instruction in Zdisp: $1 $2 $3 $4
 ')')')
@@ -554,6 +656,7 @@ dnl  accidentally bypassed.
 
 define(define_shd_instruction,
 `define($1,
+m4_instruction_wrapper()
 m4_assert_numargs(3)
 `shd_instruction'(m4_doublequote($`'0),m4_doublequote($`'1),dnl
 m4_doublequote($`'2),m4_doublequote($`'3)))')
@@ -571,6 +674,59 @@ m4_assert_defined(`WANT_SHLDL_CL')
 `ifelse(eval(m4_stringequal_p(`$2',`%cl') && !WANT_SHLDL_CL),1,
 ``$1'	`$3', `$4'',
 ``$1'	`$2', `$3', `$4'')')
+
+
+dnl  Usage: ASSERT(cond, instructions)
+dnl
+dnl  If WANT_ASSERT is 1, output the given instructions and expect the given
+dnl  flags condition to then be satisfied.  For example,
+dnl
+dnl         ASSERT(ne, `cmpl %eax, %ebx')
+dnl
+dnl  The instructions can be omitted to just assert a flags condition with
+dnl  no extra calculation.  For example,
+dnl
+dnl         ASSERT(nc)
+dnl
+dnl  When `instructions' is not empty, a pushf/popf is added to preserve the
+dnl  flags, but the instructions themselves must preserve any registers that
+dnl  matter.  FRAME is adjusted for the push and pop, so the instructions
+dnl  given can use defframe() stack variables.
+
+define(ASSERT,
+m4_assert_numargs_range(1,2)
+`ifelse(WANT_ASSERT,1,
+	`C ASSERT
+ifelse(`$2',,,`	pushf	ifdef(`FRAME',`FRAME_pushl()')')
+	$2
+	j`$1'	1f
+	ud2	C assertion failed
+1:
+ifelse(`$2',,,`	popf	ifdef(`FRAME',`FRAME_popl()')')
+')')
+
+
+dnl  Usage: movl_text_address(label,register)
+dnl
+dnl  Get the address of a text segment label, using either a plain movl or a
+dnl  position-independent calculation, as necessary.  For example,
+dnl
+dnl         movl_code_address(L(foo),%eax)
+dnl
+dnl  This macro is only meant for use in ASSERT()s or when testing, since
+dnl  the PIC sequence it generates will want to be done with a ret balancing
+dnl  the call on CPUs with return address branch predition.
+dnl
+dnl  The addl generated here has a backward reference to 1b, and so won't
+dnl  suffer from the two forwards references bug in old gas (described in
+dnl  mpn/x86/README.family).
+
+define(movl_text_address,
+`ifdef(`PIC',
+	`call	1f
+1:	popl	$2	C %eip
+	addl	`$'$1-1b, $2',
+	`movl	`$'$1, $2')')
 
 
 divert`'dnl
