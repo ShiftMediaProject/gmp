@@ -660,6 +660,8 @@ dnl            [ACTION-GOOD],[ACTION-BAD][ACTION-NORUN])
 dnl
 AC_DEFUN([GMP_PROG_CC_WORKS_PART_TEST],
 [if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 [$3]
 EOF
@@ -1103,6 +1105,8 @@ AC_DEFUN([GMP_OS_X86_XMM],
 [AC_CACHE_CHECK([whether the operating system supports XMM registers],
 		gmp_cv_os_x86_xmm,
 [if test "$build" = "$host"; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.s <<EOF
 	.text
 main:
@@ -1273,6 +1277,8 @@ dnl  Called: GMP_PROG_CXX_WORKS_PART(CXX+CXXFLAGS, FAIL-MESSAGE [,CODE])
 dnl
 AC_DEFUN([GMP_PROG_CXX_WORKS_PART],
 [if test "$gmp_prog_cxx_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.cc <<EOF
 [$3]
 int main (void) { return 0; }
@@ -3400,6 +3406,7 @@ dnl  figuring out the .exe or whatever at this stage.
 
 AC_DEFUN([GMP_PROG_CC_FOR_BUILD_WORKS],
 [AC_MSG_CHECKING([build system compiler $1])
+# remove anything that might look like compiler output to our "||" expression
 rm -f conftest* a.out b.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
