@@ -727,10 +727,13 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
      function (px[j-1], py[j-1], 0))
 
 
-/* SPEED_DATA_SIZE/s->size many GCDs of s->size limbs each. 
-   FIXME: Reduce the number of GCDs as s->size increases.  */
+/* SPEED_DATA_SIZE/s->size many GCDs of s->size limbs each.
 
-#define SPEED_ROUTINE_MPN_GCD_CALL(call)                        \
+   FIXME: It might be worth reducing the number of GCDs as s->size increases,
+   after all GCD is an O(n^2) algorithm, even if the accelerated algorithm
+   flattens this out a bit at smallish sizes.  */
+
+#define SPEED_ROUTINE_MPN_GCD_CALL(datadivisor, call)           \
   {                                                             \
     unsigned  i;                                                \
     mp_size_t j, pieces, psize;                                 \
@@ -746,7 +749,7 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
     wp = SPEED_TMP_ALLOC (s->size, s->align_wp);                \
     wp2 = SPEED_TMP_ALLOC (s->size, s->align_wp2);              \
                                                                 \
-    pieces = SPEED_DATA_SIZE / s->size;                         \
+    pieces = SPEED_DATA_SIZE / s->size / datadivisor;           \
     if (pieces == 0)                                            \
       pieces = 1;                                               \
                                                                 \
@@ -797,11 +800,13 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
   }  
 
 #define SPEED_ROUTINE_MPN_GCD(function) \
-  SPEED_ROUTINE_MPN_GCD_CALL (function (wp, xtmp, s->size, ytmp, s->size))
+  SPEED_ROUTINE_MPN_GCD_CALL (1, function (wp, xtmp, s->size, ytmp, s->size))
 
+/* mpn_gcdext takes a lot longer than mpn_gcd, so run it only on 1/4 as many
+   data values */
 #define SPEED_ROUTINE_MPN_GCDEXT(function)                              \
   SPEED_ROUTINE_MPN_GCD_CALL                                            \
-    ({ mp_size_t  wp2size;                                              \
-       function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); })
+    (4, { mp_size_t  wp2size;                                           \
+          function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); })
 
 #endif
