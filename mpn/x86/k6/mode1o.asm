@@ -33,8 +33,9 @@ C A special case for high<divisor at the end measured only about 4 cycles
 C faster, and so isn't used.
 C
 C A special case for size==1 using a divl rather than the inverse measured
-C only about 5 cycles faster, and so isn't used.  When high<divisor it can
-C skip a division and be 24 cycles faster, but that's not an important case.
+C only about 5 cycles faster, and so isn't used.  When size==1 and
+C high<divisor it can skip a division and be a full 24 cycles faster, but
+C this isn't an important case.
 
 defframe(PARAM_CARRY,  16)
 defframe(PARAM_DIVISOR,12)
