@@ -1,5 +1,8 @@
 2001-02-14  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/mips3/mips.m4: New file.
+	* configure.in (mips*-*-irix[6789]*): Use mips3/mips.m4.
+
 	* mpn/powerpc64/sqr_diagonal.asm: New file.
 
 	* mpn/mips3/sqr_diagonal.asm: New file.
