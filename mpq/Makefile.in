@@ -129,7 +129,7 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
-  abs.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
+  abs.c canonicalize.c clear.c cmp.c cmp_si.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c get_str.c init.c inv.c md_2exp.c mul.c \
   neg.c out_str.c set.c set_den.c \
   set_num.c set_si.c set_str.c set_ui.c \
@@ -150,11 +150,11 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libmpq_la_LDFLAGS =
 libmpq_la_LIBADD =
 am_libmpq_la_OBJECTS = abs$U.lo canonicalize$U.lo clear$U.lo cmp$U.lo \
-	cmp_ui$U.lo div$U.lo get_d$U.lo get_den$U.lo get_num$U.lo \
-	get_str$U.lo init$U.lo inv$U.lo md_2exp$U.lo mul$U.lo neg$U.lo \
-	out_str$U.lo set$U.lo set_den$U.lo set_num$U.lo set_si$U.lo \
-	set_str$U.lo set_ui$U.lo equal$U.lo set_z$U.lo set_d$U.lo \
-	set_f$U.lo swap$U.lo
+	cmp_si$U.lo cmp_ui$U.lo div$U.lo get_d$U.lo get_den$U.lo \
+	get_num$U.lo get_str$U.lo init$U.lo inv$U.lo md_2exp$U.lo \
+	mul$U.lo neg$U.lo out_str$U.lo set$U.lo set_den$U.lo \
+	set_num$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo equal$U.lo \
+	set_z$U.lo set_d$U.lo set_f$U.lo swap$U.lo
 nodist_libmpq_la_OBJECTS = add$U.lo sub$U.lo
 libmpq_la_OBJECTS = $(am_libmpq_la_OBJECTS) $(nodist_libmpq_la_OBJECTS)
 
@@ -233,6 +233,8 @@ clear_.c: clear.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c || rm -f clear_.c
 cmp_.c: cmp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c || rm -f cmp_.c
+cmp_si_.c: cmp_si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_si.c; then echo $(srcdir)/cmp_si.c; else echo cmp_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_si_.c || rm -f cmp_si_.c
 cmp_ui_.c: cmp_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c || rm -f cmp_ui_.c
 div_.c: div.c $(ANSI2KNR)
@@ -283,17 +285,17 @@ swap_.c: swap.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c || rm -f swap_.c
 abs_.$(OBJEXT) abs_.lo add_.$(OBJEXT) add_.lo canonicalize_.$(OBJEXT) \
 canonicalize_.lo clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) cmp_.lo \
-cmp_ui_.$(OBJEXT) cmp_ui_.lo div_.$(OBJEXT) div_.lo equal_.$(OBJEXT) \
-equal_.lo get_d_.$(OBJEXT) get_d_.lo get_den_.$(OBJEXT) get_den_.lo \
-get_num_.$(OBJEXT) get_num_.lo get_str_.$(OBJEXT) get_str_.lo \
-init_.$(OBJEXT) init_.lo inv_.$(OBJEXT) inv_.lo md_2exp_.$(OBJEXT) \
-md_2exp_.lo mul_.$(OBJEXT) mul_.lo neg_.$(OBJEXT) neg_.lo \
-out_str_.$(OBJEXT) out_str_.lo set_.$(OBJEXT) set_.lo set_d_.$(OBJEXT) \
-set_d_.lo set_den_.$(OBJEXT) set_den_.lo set_f_.$(OBJEXT) set_f_.lo \
-set_num_.$(OBJEXT) set_num_.lo set_si_.$(OBJEXT) set_si_.lo \
-set_str_.$(OBJEXT) set_str_.lo set_ui_.$(OBJEXT) set_ui_.lo \
-set_z_.$(OBJEXT) set_z_.lo sub_.$(OBJEXT) sub_.lo swap_.$(OBJEXT) \
-swap_.lo : $(ANSI2KNR)
+cmp_si_.$(OBJEXT) cmp_si_.lo cmp_ui_.$(OBJEXT) cmp_ui_.lo \
+div_.$(OBJEXT) div_.lo equal_.$(OBJEXT) equal_.lo get_d_.$(OBJEXT) \
+get_d_.lo get_den_.$(OBJEXT) get_den_.lo get_num_.$(OBJEXT) get_num_.lo \
+get_str_.$(OBJEXT) get_str_.lo init_.$(OBJEXT) init_.lo inv_.$(OBJEXT) \
+inv_.lo md_2exp_.$(OBJEXT) md_2exp_.lo mul_.$(OBJEXT) mul_.lo \
+neg_.$(OBJEXT) neg_.lo out_str_.$(OBJEXT) out_str_.lo set_.$(OBJEXT) \
+set_.lo set_d_.$(OBJEXT) set_d_.lo set_den_.$(OBJEXT) set_den_.lo \
+set_f_.$(OBJEXT) set_f_.lo set_num_.$(OBJEXT) set_num_.lo \
+set_si_.$(OBJEXT) set_si_.lo set_str_.$(OBJEXT) set_str_.lo \
+set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo sub_.$(OBJEXT) \
+sub_.lo swap_.$(OBJEXT) swap_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
