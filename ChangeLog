@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-29  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (powerpc*-*-aix*): Correction to xlc -qarch selection,
+	for 32-bit mode.
+
 2002-03-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn: Fix spacing in many files.
