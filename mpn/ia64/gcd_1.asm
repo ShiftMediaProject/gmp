@@ -1,6 +1,6 @@
 dnl  Itanium-2 mpn_gcd_1 -- mpn by 1 gcd.
 
-dnl  Copyright 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003, 2004 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -99,7 +99,11 @@ C Lack of branch hints might introduce a couple of bubbles too.
 C
 
 ASM_START()
-	.explicit
+	.explicit				C What does this mean?
+
+C HP's assembler requires these declarations for importing mpn_modexact_1c_odd
+	.global	mpn_modexact_1c_odd
+	.type	mpn_modexact_1c_odd,@function
 
 PROLOGUE(mpn_gcd_1)
 
