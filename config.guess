@@ -75,6 +75,9 @@ exact_cpu=
 # the code getting horribly nested and marching off the right side of the
 # screen.
 
+# Note that when a compile-and-link is done in one step we need to remove .o
+# files, since lame C compilers generate these even when not asked.
+#
 
 dummy=dummy-$$
 trap 'rm -f $dummy.c $dummy.o $dummy.core $dummy ${dummy}1.s ${dummy}2.c ; exit 1' 1 2 15
@@ -145,7 +148,7 @@ EOF
     2-1307)	exact_cpu=alphaev68  ;;
     esac
   fi
-  rm -f $dummy.s $dummy
+  rm -f $dummy.s $dummy.o $dummy
   ;;
 
 ia64*-*-*)
@@ -194,7 +197,7 @@ EOF
   if $CC_FOR_BUILD ${dummy}a.s ${dummy}b.c -o $dummy >/dev/null 2>&1; then
     exact_cpu=`./$dummy`
   fi
-  rm -f ${dummy}a.s ${dummy}b.c $dummy $dummy.core core
+  rm -f ${dummy}a.s ${dummy}a.o ${dummy}b.c ${dummy}b.o $dummy $dummy.core core
   ;;
 
 mips-*-irix[6789]*)
@@ -301,7 +304,7 @@ EOF
         exact_cpu=m68020
       fi
     fi
-    rm -f $dummy.s $dummy $dummy.core core
+    rm -f $dummy.s $dummy.o $dummy $dummy.core core
   fi
   if test -z "$exact_cpu"; then
     case "$guess_full" in
@@ -370,7 +373,7 @@ EOF
       exact_cpu=$x
     fi
   fi
-  rm -f $dummy.c $dummy $dummy.core
+  rm -f $dummy.c $dummy.o $dummy $dummy.core
 
   # Grep the linux kernel /proc/cpuinfo pseudo-file.
   # Anything unrecognised is ignored, since of course we mustn't spit out
@@ -437,7 +440,7 @@ EOF
         exact_cpu=$x
       fi
     fi
-    rm -f $dummy.c $dummy
+    rm -f $dummy.c $dummy.o $dummy
   fi
 
   if test -z "$exact_cpu"; then
@@ -476,7 +479,7 @@ EOF
         exact_cpu=$x
       fi
     fi
-    rm -f $dummy.c $dummy
+    rm -f $dummy.c $dummy.o $dummy
   fi
   ;;
 
@@ -714,8 +717,6 @@ EOF
     fi
   fi
 
-  # We need to remove some .o files here since lame C compilers
-  # generate these even when not asked.
   rm -f ${dummy}1.s ${dummy}1.o ${dummy}2.c ${dummy}2.o $dummy
   ;;
 
