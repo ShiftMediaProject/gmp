@@ -1,4 +1,4 @@
-/* Text mpz_urandomm.
+/* Test mpz_urandomm.
 
 Copyright 2002 Free Software Foundation, Inc.
 
