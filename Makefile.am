@@ -50,18 +50,19 @@
 #        3.0.1    3:1:0   3:0:0
 #        3.1      4:0:1   4:0:1
 #        3.1.1    4:1:1   4:1:1
+#        3.2      5:0:2   4:2:1
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
 # packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the interface changes for
 # gmp 3 mean 3:0:0 is right.
 
-LIBGMP_LT_CURRENT =  4
+LIBGMP_LT_CURRENT =  5
 LIBGMP_LT_REVISION = 0
-LIBGMP_LT_AGE =      1
+LIBGMP_LT_AGE =      2
 
 LIBMP_LT_CURRENT =  4
-LIBMP_LT_REVISION = 0
+LIBMP_LT_REVISION = 2
 LIBMP_LT_AGE =      1
 
 
