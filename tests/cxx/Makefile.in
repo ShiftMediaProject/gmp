@@ -152,93 +152,184 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la \
-  $(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+  $(top_builddir)/libgmpxx.la $(LIBMPFR) $(top_builddir)/libgmp.la
 
+@WANT_MPFR_TRUE@LIBMPFR = $(top_builddir)/mpfr/libmpfr.a
 
-@WANT_CXX_TRUE@check_PROGRAMS = t-allfuns t-assign t-binary t-constr t-expr t-headers \
-@WANT_CXX_TRUE@  t-locale t-ostream t-ternary t-unary
+@WANT_CXX_TRUE@check_PROGRAMS = t-assign t-binary t-constr t-headers t-locale t-misc t-ops \
+@WANT_CXX_TRUE@  t-ostream t-prec t-rand t-ternary t-unary
 
 @WANT_CXX_TRUE@TESTS = $(check_PROGRAMS)
 
-t_allfuns_SOURCES = t-allfuns.cc
 t_assign_SOURCES = t-assign.cc
 t_binary_SOURCES = t-binary.cc
 t_constr_SOURCES = t-constr.cc
-t_expr_SOURCES = t-expr.cc
 t_headers_SOURCES = t-headers.cc
-t_locale_SOURCES = t-locale.cc
+t_locale_SOURCES = t-locale.cc localeconv.c
+t_misc_SOURCES = t-misc.cc
+t_ops_SOURCES = t-ops.cc
 t_ostream_SOURCES = t-ostream.cc
+t_prec_SOURCES = t-prec.cc
+t_rand_SOURCES = t-rand.cc
 t_ternary_SOURCES = t-ternary.cc
 t_unary_SOURCES = t-unary.cc
 subdir = tests/cxx
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@WANT_CXX_TRUE@check_PROGRAMS = t-allfuns$(EXEEXT) t-assign$(EXEEXT) \
-@WANT_CXX_TRUE@	t-binary$(EXEEXT) t-constr$(EXEEXT) \
-@WANT_CXX_TRUE@	t-expr$(EXEEXT) t-headers$(EXEEXT) \
-@WANT_CXX_TRUE@	t-locale$(EXEEXT) t-ostream$(EXEEXT) \
-@WANT_CXX_TRUE@	t-ternary$(EXEEXT) t-unary$(EXEEXT)
+@WANT_CXX_TRUE@check_PROGRAMS = t-assign$(EXEEXT) t-binary$(EXEEXT) \
+@WANT_CXX_TRUE@	t-constr$(EXEEXT) t-headers$(EXEEXT) \
+@WANT_CXX_TRUE@	t-locale$(EXEEXT) t-misc$(EXEEXT) t-ops$(EXEEXT) \
+@WANT_CXX_TRUE@	t-ostream$(EXEEXT) t-prec$(EXEEXT) \
+@WANT_CXX_TRUE@	t-rand$(EXEEXT) t-ternary$(EXEEXT) \
+@WANT_CXX_TRUE@	t-unary$(EXEEXT)
 @WANT_CXX_FALSE@check_PROGRAMS =
-am_t_allfuns_OBJECTS = t-allfuns.$(OBJEXT)
-t_allfuns_OBJECTS = $(am_t_allfuns_OBJECTS)
-t_allfuns_LDADD = $(LDADD)
-t_allfuns_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
-t_allfuns_LDFLAGS =
 am_t_assign_OBJECTS = t-assign.$(OBJEXT)
 t_assign_OBJECTS = $(am_t_assign_OBJECTS)
 t_assign_LDADD = $(LDADD)
-t_assign_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_assign_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_assign_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_assign_LDFLAGS =
 am_t_binary_OBJECTS = t-binary.$(OBJEXT)
 t_binary_OBJECTS = $(am_t_binary_OBJECTS)
 t_binary_LDADD = $(LDADD)
-t_binary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_binary_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_binary_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_binary_LDFLAGS =
 am_t_constr_OBJECTS = t-constr.$(OBJEXT)
 t_constr_OBJECTS = $(am_t_constr_OBJECTS)
 t_constr_LDADD = $(LDADD)
-t_constr_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_constr_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_constr_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_constr_LDFLAGS =
-am_t_expr_OBJECTS = t-expr.$(OBJEXT)
-t_expr_OBJECTS = $(am_t_expr_OBJECTS)
-t_expr_LDADD = $(LDADD)
-t_expr_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
-t_expr_LDFLAGS =
 am_t_headers_OBJECTS = t-headers.$(OBJEXT)
 t_headers_OBJECTS = $(am_t_headers_OBJECTS)
 t_headers_LDADD = $(LDADD)
-t_headers_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_headers_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_headers_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_headers_LDFLAGS =
-am_t_locale_OBJECTS = t-locale.$(OBJEXT)
+am_t_locale_OBJECTS = t-locale.$(OBJEXT) localeconv$U.$(OBJEXT)
 t_locale_OBJECTS = $(am_t_locale_OBJECTS)
 t_locale_LDADD = $(LDADD)
-t_locale_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_locale_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_locale_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_locale_LDFLAGS =
+am_t_misc_OBJECTS = t-misc.$(OBJEXT)
+t_misc_OBJECTS = $(am_t_misc_OBJECTS)
+t_misc_LDADD = $(LDADD)
+@WANT_MPFR_TRUE@t_misc_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_misc_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
+t_misc_LDFLAGS =
+am_t_ops_OBJECTS = t-ops.$(OBJEXT)
+t_ops_OBJECTS = $(am_t_ops_OBJECTS)
+t_ops_LDADD = $(LDADD)
+@WANT_MPFR_TRUE@t_ops_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_ops_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
+t_ops_LDFLAGS =
 am_t_ostream_OBJECTS = t-ostream.$(OBJEXT)
 t_ostream_OBJECTS = $(am_t_ostream_OBJECTS)
 t_ostream_LDADD = $(LDADD)
-t_ostream_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_ostream_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_ostream_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_ostream_LDFLAGS =
+am_t_prec_OBJECTS = t-prec.$(OBJEXT)
+t_prec_OBJECTS = $(am_t_prec_OBJECTS)
+t_prec_LDADD = $(LDADD)
+@WANT_MPFR_TRUE@t_prec_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_prec_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
+t_prec_LDFLAGS =
+am_t_rand_OBJECTS = t-rand.$(OBJEXT)
+t_rand_OBJECTS = $(am_t_rand_OBJECTS)
+t_rand_LDADD = $(LDADD)
+@WANT_MPFR_TRUE@t_rand_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_rand_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
+t_rand_LDFLAGS =
 am_t_ternary_OBJECTS = t-ternary.$(OBJEXT)
 t_ternary_OBJECTS = $(am_t_ternary_OBJECTS)
 t_ternary_LDADD = $(LDADD)
-t_ternary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_ternary_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_ternary_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_ternary_LDFLAGS =
 am_t_unary_OBJECTS = t-unary.$(OBJEXT)
 t_unary_OBJECTS = $(am_t_unary_OBJECTS)
 t_unary_LDADD = $(LDADD)
-t_unary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@t_unary_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_unary_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_unary_LDFLAGS =
 
 DEFS = @DEFS@
@@ -248,6 +339,14 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp =
 am__depfiles_maybe =
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -257,17 +356,18 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(t_allfuns_SOURCES) $(t_assign_SOURCES) \
-	$(t_binary_SOURCES) $(t_constr_SOURCES) $(t_expr_SOURCES) \
-	$(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES) \
-	$(t_ternary_SOURCES) $(t_unary_SOURCES)
+DIST_SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) \
+	$(t_constr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) \
+	$(t_misc_SOURCES) $(t_ops_SOURCES) $(t_ostream_SOURCES) \
+	$(t_prec_SOURCES) $(t_rand_SOURCES) $(t_ternary_SOURCES) \
+	$(t_unary_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(t_allfuns_SOURCES) $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
+SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_constr_SOURCES) $(t_headers_SOURCES) $(t_locale_SOURCES) $(t_misc_SOURCES) $(t_ops_SOURCES) $(t_ostream_SOURCES) $(t_prec_SOURCES) $(t_rand_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .lo .o .obj
+.SUFFIXES: .c .cc .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  tests/cxx/Makefile
@@ -280,9 +380,6 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-t-allfuns$(EXEEXT): $(t_allfuns_OBJECTS) $(t_allfuns_DEPENDENCIES) 
-	@rm -f t-allfuns$(EXEEXT)
-	$(CXXLINK) $(t_allfuns_LDFLAGS) $(t_allfuns_OBJECTS) $(t_allfuns_LDADD) $(LIBS)
 t-assign$(EXEEXT): $(t_assign_OBJECTS) $(t_assign_DEPENDENCIES) 
 	@rm -f t-assign$(EXEEXT)
 	$(CXXLINK) $(t_assign_LDFLAGS) $(t_assign_OBJECTS) $(t_assign_LDADD) $(LIBS)
@@ -292,18 +389,27 @@ t-binary$(EXEEXT): $(t_binary_OBJECTS) $(t_binary_DEPENDENCIES)
 t-constr$(EXEEXT): $(t_constr_OBJECTS) $(t_constr_DEPENDENCIES) 
 	@rm -f t-constr$(EXEEXT)
 	$(CXXLINK) $(t_constr_LDFLAGS) $(t_constr_OBJECTS) $(t_constr_LDADD) $(LIBS)
-t-expr$(EXEEXT): $(t_expr_OBJECTS) $(t_expr_DEPENDENCIES) 
-	@rm -f t-expr$(EXEEXT)
-	$(CXXLINK) $(t_expr_LDFLAGS) $(t_expr_OBJECTS) $(t_expr_LDADD) $(LIBS)
 t-headers$(EXEEXT): $(t_headers_OBJECTS) $(t_headers_DEPENDENCIES) 
 	@rm -f t-headers$(EXEEXT)
 	$(CXXLINK) $(t_headers_LDFLAGS) $(t_headers_OBJECTS) $(t_headers_LDADD) $(LIBS)
 t-locale$(EXEEXT): $(t_locale_OBJECTS) $(t_locale_DEPENDENCIES) 
 	@rm -f t-locale$(EXEEXT)
 	$(CXXLINK) $(t_locale_LDFLAGS) $(t_locale_OBJECTS) $(t_locale_LDADD) $(LIBS)
+t-misc$(EXEEXT): $(t_misc_OBJECTS) $(t_misc_DEPENDENCIES) 
+	@rm -f t-misc$(EXEEXT)
+	$(CXXLINK) $(t_misc_LDFLAGS) $(t_misc_OBJECTS) $(t_misc_LDADD) $(LIBS)
+t-ops$(EXEEXT): $(t_ops_OBJECTS) $(t_ops_DEPENDENCIES) 
+	@rm -f t-ops$(EXEEXT)
+	$(CXXLINK) $(t_ops_LDFLAGS) $(t_ops_OBJECTS) $(t_ops_LDADD) $(LIBS)
 t-ostream$(EXEEXT): $(t_ostream_OBJECTS) $(t_ostream_DEPENDENCIES) 
 	@rm -f t-ostream$(EXEEXT)
 	$(CXXLINK) $(t_ostream_LDFLAGS) $(t_ostream_OBJECTS) $(t_ostream_LDADD) $(LIBS)
+t-prec$(EXEEXT): $(t_prec_OBJECTS) $(t_prec_DEPENDENCIES) 
+	@rm -f t-prec$(EXEEXT)
+	$(CXXLINK) $(t_prec_LDFLAGS) $(t_prec_OBJECTS) $(t_prec_LDADD) $(LIBS)
+t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES) 
+	@rm -f t-rand$(EXEEXT)
+	$(CXXLINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
 t-ternary$(EXEEXT): $(t_ternary_OBJECTS) $(t_ternary_DEPENDENCIES) 
 	@rm -f t-ternary$(EXEEXT)
 	$(CXXLINK) $(t_ternary_LDFLAGS) $(t_ternary_OBJECTS) $(t_ternary_LDADD) $(LIBS)
@@ -323,6 +429,18 @@ $(top_builddir)/ansi2knr:
 
 mostlyclean-kr:
 	-test "$U" = "" || rm -f *_.c
+
+.c.o:
+	$(COMPILE) -c `test -f '$<' || echo '$(srcdir)/'`$<
+
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
+.c.lo:
+	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+localeconv_.c: localeconv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/localeconv.c; then echo $(srcdir)/localeconv.c; else echo localeconv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > localeconv_.c || rm -f localeconv_.c
+localeconv_.$(OBJEXT) localeconv_.lo : $(ANSI2KNR)
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
