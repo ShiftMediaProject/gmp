@@ -26,6 +26,9 @@ include(`../config.m4')
 C         cycles/limb
 C Hammer:     3.25
 
+C TODO
+C  * Perhaps make this use the algorithm of mul_1.asm.
+
 
 C INPUT PARAMETERS
 C rp	rdi
@@ -35,17 +38,17 @@ C vl	rcx
 
 	TEXT
 	ALIGN(16)
-	.byte	0x66, 0x90		C This aligns the loop
+	.byte	0,0			C this aligns the loop
 ASM_START()
 PROLOGUE(mpn_addmul_1)
 	movq	%rdx, %r11
 	leaq	(%rsi,%rdx,8), %rsi
 	leaq	(%rdi,%rdx,8), %rdi
 	negq	%r11
-	xorl	%r8d, %r8d
-	xorl	%r10d, %r10d
+	xorl	%r8d, %r8d		C clear carry limb
+	xorl	%r10d, %r10d		C keep r10 zero
 	addq	$3, %r11
-	jb	.Lle3			C jump for n = 1, 2, 3
+	jb	.Ltail			C jump for n = 1, 2, 3
 
 .Loop:	movq	-24(%rsi,%r11,8), %rax
 	mulq	%rcx
@@ -89,7 +92,7 @@ PROLOGUE(mpn_addmul_1)
 	cmpl	$3, %r11d
 	je	.Lret
 
-.Lle3:	movq	-24(%rsi,%r11,8), %rax
+.Ltail:	movq	-24(%rsi,%r11,8), %rax
 	mulq	%rcx
 	addq	-24(%rdi,%r11,8), %rax
 	adcq	%r10, %rdx
@@ -120,18 +123,6 @@ PROLOGUE(mpn_addmul_1)
 	addq	%r8, %rax
 	movq	%r10, %r8
 	movq	%rax, -8(%rdi,%r11,8)
-	adcq	%rdx, %r8
-
-	cmpl	$0, %r11d
-	je	.Lret
-
-	movq	(%rsi,%r11,8), %rax
-	mulq	%rcx
-	addq	(%rdi,%r11,8), %rax
-	adcq	%r10, %rdx
-	addq	%r8, %rax
-	movq	%r10, %r8
-	movq	%rax, (%rdi,%r11,8)
 	adcq	%rdx, %r8
 
 .Lret:	movq	%r8, %rax
