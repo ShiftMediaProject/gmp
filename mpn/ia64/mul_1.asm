@@ -86,43 +86,43 @@ C f42...f46 xma.hu results
 C r32...r35 getf.sig low product results
 C r36...r40 getf.sig high product results
 
-							C			insn	fed by
-		.align	32				C			name	insn
+							C insn	fed by
+		.align	32				C name	insn
 .Loop:
 		.pred.rel "mutex",p6,p7
-  { .mfi; (p25)	getf.sig	r36 = f46		C			i0	i4	hi
-	  (p21)	xma.l		f38 = f37, f6, f0	C 11 15 19 23 27	i1	i18
-	   (p6)	cmp.leu		p8, p9 = r23, r40	C			i2
-} { .mfi; (p28)	st8		[r14] =	r23, 8		C			i3
-	  (p21)	xma.hu		f42 = f37, f6, f0	C 11 15 19 23 27	i4	i18
-	   (p7)	cmp.ltu		p8, p9 = r23, r40	C			i5
+  { .mfi; (p25)	getf.sig	r36 = f46		C i0	i4	hi
+	  (p21)	xma.l		f38 = f37, f6, f0	C i1	i18
+	   (p6)	cmp.leu		p8, p9 = r23, r40	C i2	i17,i0
+} { .mfi; (p28)	st8		[r14] =	r23, 8		C i3	i17/i19
+	  (p21)	xma.hu		f42 = f37, f6, f0	C i4	i18
+	   (p7)	cmp.ltu		p8, p9 = r23, r40	C i5	i17,i0
 		;;
 }
 		.pred.rel "mutex",p8,p9
-  { .mib; (p24)	getf.sig	r32 = f41		C			i6	i11	lo
-	   (p8)	add		r23 = r35, r39, 1	C			i7
+  { .mib; (p24)	getf.sig	r32 = f41		C i6	i11	lo
+	   (p8)	add		r23 = r35, r39, 1	C i7	i16,i10
 		nop.b		0			C
-} { .mib; (p16)	ldf8		f32 = [r15], 8		C  0  4  8 12 16 20	i8	-
-	   (p9)	add		r23 = r35, r39		C			i9
+} { .mib; (p16)	ldf8		f32 = [r15], 8		C i8	-
+	   (p9)	add		r23 = r35, r39		C i9	i16,i10
 		br.cexit.dpnt.few	.Lend_odd
 		;;
 }
 .Loopm:
 		.pred.rel "mutex",p8,p9
-  { .mfi; (p25)	getf.sig	r36 = f46		C			i10	i14	hi
-	  (p21)	xma.l		f38 = f37, f6, f0	C  9 13 17 21 24	i11	i8
-	   (p8)	cmp.leu		p6, p7 = r23, r40	C			i12
-} { .mfi; (p28)	st8		[r14] = r23, 8		C			i13
-	  (p21)	xma.hu		f42 = f37, f6, f0	C  9 13 17 21 24	i14	i8
-	   (p9)	cmp.ltu		p6, p7 = r23, r40	C			i15
+  { .mfi; (p25)	getf.sig	r36 = f46		C i10	i14	hi
+	  (p21)	xma.l		f38 = f37, f6, f0	C i11	i8
+	   (p8)	cmp.leu		p6, p7 = r23, r40	C i12	i7,i10
+} { .mfi; (p28)	st8		[r14] = r23, 8		C i13	i7/i9
+	  (p21)	xma.hu		f42 = f37, f6, f0	C i14	i8
+	   (p9)	cmp.ltu		p6, p7 = r23, r40	C i15	i7,i10
 		;;
 }
 		.pred.rel "mutex",p6,p7
-  { .mib; (p24)	getf.sig	r32 = f41		C			i16	i1	lo
-	   (p6)	add		r23 = r35, r39, 1	C			i17
+  { .mib; (p24)	getf.sig	r32 = f41		C i16	i1	lo
+	   (p6)	add		r23 = r35, r39, 1	C i17	i6,i0
 		nop.b		0			C
-} { .mib; (p16)	ldf8		f32 = [r15], 8		C  2  6 10 14 18	i18	-
-	   (p7)	add		r23 = r35, r39		C			i19
+} { .mib; (p16)	ldf8		f32 = [r15], 8		C i18	-
+	   (p7)	add		r23 = r35, r39		C i19	i6,i0
 		br.ctop.dptk.few	.Loop
 		;;
 }
