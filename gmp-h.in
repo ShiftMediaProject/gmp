@@ -422,6 +422,9 @@ int mpz_invert _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_ior _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_jacobi _PROTO ((mpz_srcptr, mpz_srcptr));
 
+#define mpz_kronecker __gmpz_kronecker
+int mpz_kronecker _PROTO ((mpz_srcptr a, mpz_srcptr b));
+
 #define mpz_kronecker_si __gmpz_kronecker_si
 int mpz_kronecker_si _PROTO ((mpz_srcptr, long));
 
