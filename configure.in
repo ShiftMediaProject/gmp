@@ -227,6 +227,7 @@ dnl  for these are under the cpu specific setups below.
 AH_VERBATIM([HAVE_HOST_CPU_1],
 [/* Define one of these to 1 for the host CPU family.
    If your CPU is not in any of these families, leave all undefined. */
+#undef HAVE_HOST_CPU_FAMILY_alpha
 #undef HAVE_HOST_CPU_FAMILY_m68k
 #undef HAVE_HOST_CPU_FAMILY_power
 #undef HAVE_HOST_CPU_FAMILY_powerpc
@@ -383,6 +384,7 @@ case $host in
 
 
   alpha*-*-*)
+    AC_DEFINE(HAVE_HOST_CPU_FAMILY_alpha)
     case $host_cpu in
       alphaev5* | alphapca5*) path="alpha/ev5 alpha" ;;
       alphaev6* | alphaev7*)  path="alpha/ev6 alpha/ev5 alpha" ;;
