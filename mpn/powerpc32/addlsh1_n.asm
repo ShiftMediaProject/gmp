@@ -1,4 +1,4 @@
-dnl  PowerPC-32 mpn_sublsh1_n -- rp[] = up[] - (vp[] << 1)
+dnl  PowerPC-32 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 
 dnl  Copyright 2003 Free Software Foundation, Inc.
 
