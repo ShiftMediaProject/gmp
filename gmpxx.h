@@ -3070,13 +3070,18 @@ public:
   explicit __gmp_expr(const char *s)
   { mpfr_init_set_str(mp, (char *) s, 10, __gmp_default_rounding_mode); }
   __gmp_expr(const char *s, unsigned long int prec, int base = 10)
-  { mpfr_init_set_str(mp, (char *) s, base, __gmp_default_rounding_mode); }
+  {
+    mpfr_init2(mp, prec);
+    mpfr_set_str(mp, (char *) s, base, __gmp_default_rounding_mode);
+  }
   explicit __gmp_expr(const std::string &s)
   { mpfr_init_set_str(mp, (char *) s.c_str(), 10,
 		      __gmp_default_rounding_mode); }
   __gmp_expr(const std::string &s, unsigned long int prec, int base = 10)
-  { mpfr_init_set_str(mp, (char *) s.c_str(), base,
-		      __gmp_default_rounding_mode); }
+  {
+    mpfr_init2(mp, prec);
+    mpfr_set_str(mp, (char *) s.c_str(), base, __gmp_default_rounding_mode);
+  }
 
   explicit __gmp_expr(mpfr_srcptr f)
   {
