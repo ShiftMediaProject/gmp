@@ -1,3 +1,13 @@
+2000-05-30  Linus Nordberg  <linus@swox.se>
+
+	* configure.in (NM): Use AC_PROG_NM rather than AC_CHECK_TOOL to
+	find `nm'.  (AC_PROG_NM comes with Libtool and is needed to get
+	the `-B' option (BSD compatible output) included in $NM.)
+	(AR): Use AC_CHECK_PROG rather than AC_CHECK_TOOL to find `ar'.
+	(Now that NM isn't a cross compilation tool, don't give the
+	impression that we know how to cross compile.)
+	(CCAS): Remove spurious comment.
+
 2000-05-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/power/mul_1.s: Remove [PR] from first word in function descriptor.
