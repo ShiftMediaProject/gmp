@@ -760,6 +760,9 @@ case "$target" in
   alpha*-*-*)
     gmp_m4postinc="alpha/default.m4"
     ;;
+  ia64*-*-*)
+    gmp_m4postinc="ia64/default.m4"
+    ;;
   power*-*-*)
     case "$target" in
       *-*-mach* | *-*-rhapsody* | *-*-nextstep*)
