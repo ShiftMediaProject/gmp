@@ -582,6 +582,78 @@ eval(192+8*x86_opcode_reg32(`$4')+x86_opcode_reg32(`$3')) dnl
 	C `$1 $3, $4'')
 
 
+dnl  Usage: x86_opcode_regmmx(reg)
+dnl
+dnl  Validate the given mmx register, and return its number, 0 to 7.
+
+define(x86_opcode_regmmx,
+m4_assert_numargs(1)
+`x86_lookup(`$1',x86_opcode_regmmx_list)')
+
+define(x86_opcode_regmmx_list,
+``%mm0',0,
+`%mm1',1,
+`%mm2',2,
+`%mm3',3,
+`%mm4',4,
+`%mm5',5,
+`%mm6',6,
+`%mm7',7')
+
+
+dnl  Usage: psadbw(src,dst)
+dnl
+dnl  Only recent versions of gas know psadbw, in particular gas 2.9.1 on
+dnl  FreeBSD 3.3 and 3.4 doesn't recognise it, so instead emit .byte
+dnl  sequences.
+dnl
+dnl  Only register->register forms are supported here, which suffices for
+dnl  the current code.
+
+define(psadbw,
+m4_instruction_wrapper()
+m4_assert_numargs(2)
+`ifelse(psadbw_available_p,1,
+`psadbw_bytes(`$1',`$2')',
+`psadbw_simulate(`$1',`$2')')')
+
+define(psadbw_available_p,
+m4_assert_numargs(-1)
+`m4_ifdef_anyof_p(`HAVE_HOST_CPU_pentium3',
+                  `HAVE_HOST_CPU_pentium4',
+                  `HAVE_HOST_CPU_athlon')')
+
+dnl  Called: psadbw_bytes(src,dst)
+define(psadbw_bytes,
+m4_assert_numargs(2)
+`.byte 0x0f,0xf6,dnl
+eval(192+x86_opcode_regmmx(`$2')*8+x86_opcode_regmmx(`$1')) dnl
+	C `psadbw $1, $2'')
+
+dnl  Called: psadbw_simulate(src,dst)
+define(psadbw_simulate,
+m4_assert_numargs(2)
+`m4_warning(`warning, using simulated and only partly functional psadbw, use testing only
+')	C This works enough for the sum of bytes done in some of the popcounts,
+	C but is otherwise a long way short of correct.
+	pushl	%eax
+	pushl	%edx
+	pushf
+	subl	$`'8, %esp
+	movq	$2, (%esp)
+	movzbl	(%esp), %eax
+forloop(i,1,7,
+`	movzbl	i`'(%esp), %edx
+	addl	%edx, %eax
+')
+	movd	%eax, $2
+	addl	$`'8, %esp
+	popf
+	popl	%edx
+	popl	%eax
+')
+
+
 dnl  Usage: loop_or_decljnz label
 dnl
 dnl  Generate either a "loop" instruction or a "decl %ecx / jnz", whichever
