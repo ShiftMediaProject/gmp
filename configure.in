@@ -1393,6 +1393,7 @@ GMP_FUNC_ALLOCA
 GMP_OPTION_ALLOCA
 
 GMP_H_HAVE_FILE
+GMP_IMPL_H_IEEE_FLOATS
 
 
 # On m68k NetBSD 1.4.1 getrusage() is doubtful.  ru_utime looks microsecond
