@@ -56,11 +56,11 @@ extern const unsigned char __gmp_digit_value_tab[];
    Put the count of omitted low limbs in *ign.
    Return the actual size (which might be less than prec).  */
 static mp_size_t
-mpn_pow_1_highpart (mp_ptr rp, mp_size_t *ign,
+mpn_pow_1_highpart (mp_ptr rp, mp_size_t *ignp,
 		    mp_limb_t base, mp_exp_t exp,
 		    mp_size_t prec, mp_ptr tp)
 {
-  mp_size_t radj = 0;		/* counts number of ignored low limbs in r */
+  mp_size_t ign;		/* counts number of ignored low limbs in r */
   mp_size_t off;		/* keeps track of offset where value starts */
   mp_ptr passed_rp = rp;
   mp_size_t rn;
@@ -70,18 +70,19 @@ mpn_pow_1_highpart (mp_ptr rp, mp_size_t *ign,
   rp[0] = base;
   rn = 1;
   off = 0;
+  ign = 0;
   count_leading_zeros (cnt, exp);
   for (i = GMP_LIMB_BITS - cnt - 2; i >= 0; i--)
     {
       mpn_sqr_n (tp, rp + off, rn);
       rn = 2 * rn;
       rn -= tp[rn - 1] == 0;
-      radj <<= 1;
+      ign <<= 1;
 
       off = 0;
       if (rn > prec)
 	{
-	  radj += rn - prec;
+	  ign += rn - prec;
 	  off = rn - prec;
 	  rn = prec;
 	}
@@ -99,13 +100,13 @@ mpn_pow_1_highpart (mp_ptr rp, mp_size_t *ign,
 
   if (rn > prec)
     {
-      radj += rn - prec;
+      ign += rn - prec;
       rp += rn - prec;
       rn = prec;
     }
 
   MPN_COPY_INCR (passed_rp, rp + off, rn);
-  *ign = radj;
+  *ignp = ign;
   return rn;
 }
 
