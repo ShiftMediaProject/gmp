@@ -166,6 +166,9 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the <langinfo.h> header file. */
+#undef HAVE_LANGINFO_H
+
 /* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
    it is, then leave both undefined. */
@@ -250,6 +253,9 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_xor_n
 #undef HAVE_NATIVE_mpn_xnor_n
 
+/* Define to 1 if you have the `nl_langinfo' function. */
+#undef HAVE_NL_LANGINFO
+
 /* Define to 1 if you have the `obstack_vprintf' function. */
 #undef HAVE_OBSTACK_VPRINTF
 
@@ -291,6 +297,9 @@ MA 02111-1307, USA.
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
+
+/* Define to 1 if the system has the type `std::locale'. */
+#undef HAVE_STD__LOCALE
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
