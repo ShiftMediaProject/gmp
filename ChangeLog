@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-04-24  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/aorsmul.c, mpz/aorsmul_i.c, mpz/cfdiv_q_2exp.c,
+	mpz/cfdiv_r_2exp.c, mpq/aors.c, mpf/ceilfloor.c: Give REGPARM_ATTR()
+	on function definition too, as demanded by by gcc 3.4.
+
 2004-04-22  Kevin Ryde  <kevin@swox.se>
 
 	* tests/rand/t-lc2exp.c (check_bigc1): New test.
