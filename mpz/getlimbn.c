@@ -1,6 +1,6 @@
 /* mpz_getlimbn(integer,n) -- Return the N:th limb from INTEGER.
 
-Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,7 +31,7 @@ mpz_getlimbn (integer, n)
      mp_size_t n;
 #endif
 {
-  if (integer->_mp_size <= n || n < 0)
+  if (ABS (integer->_mp_size) <= n || n < 0)
     return 0;
   else
     return integer->_mp_d[n];
