@@ -50,6 +50,9 @@ MA 02111-1307, USA.
 /* Define to 1 if the compiler accepts gcc style __attribute__ ((noreturn)) */
 #undef HAVE_ATTRIBUTE_NORETURN
 
+/* Define to 1 if you have the `attr_get' function. */
+#undef HAVE_ATTR_GET
+
 /* Define to 1 if tests/libtests has calling conventions checking for the CPU
    */
 #undef HAVE_CALLING_CONVENTIONS
