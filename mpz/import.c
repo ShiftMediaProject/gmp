@@ -36,12 +36,6 @@ static const mp_limb_t  endian_test = (CNST_LIMB(1) << (GMP_LIMB_BITS-7)) - 1;
 #endif
 
 
-#if defined (_CRAY) && ! defined (_CRAYMPP)
-/* This is miscompiled on T90 IEEE and CFP systems using compiler version
-   6.4.0.2.3.  Could do this better.  */
-_Pragma("_CRI noopt");
-#endif
-
 void
 mpz_import (mpz_ptr z, size_t count, int order,
             size_t size, int endian, size_t nail, const void *data)
