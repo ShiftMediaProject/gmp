@@ -8,14 +8,13 @@ This file has some notes on things common to all the x86 family code.
 
 ASM FILES
 
-The .asm files are BSD style x86 assembler code which is first put through
-m4 for macro processing.  The generic mpn/asm-defs.m4 is used, together with
+The .asm files are BSD style x86 assembler code, first put through m4 for
+macro processing.  The generic mpn/asm-defs.m4 is used, together with
 mpn/x86/x86-defs.m4.  Detailed notes are in those files.
 
-The .S files are first put through cpp for macro processing, using some
-macros in mpn/x86/syntax.h.  The INSN macros for generating either Intel or
-BSD style assembler are being phased out.  There's no facilties to select
-Intel style.
+The code is meant for use with GNU "gas" or the system "as".  There's no
+support for assemblers that demand Intel style, and with gas freely
+available and easy to use that shouldn't be a problem.
 
 
 
@@ -90,6 +89,14 @@ because it's read as just "addl $32".
 Binutils gas/config/tc-i386.c has an alternative behaviour where "/" is a
 comment only at the start of a line.  FreeBSD patches binutils 2.9.1 to
 select this, and as of binutils 2.9.5 it's the default for GNU/Linux too.
+
+
+
+ASSEMBLER COMMENTS
+
+Solaris "as" doesn't support "#" commenting, unfortunately.  For that reason
+"C" commenting is used (from asm-defs.m4) and the intermediate ".s" files
+have no comments.
 
 
 
