@@ -70,7 +70,7 @@ MA 02111-1307, USA. */
    badly sub-optimal in the karatsuba implementation.
 
    Limitations:
-   
+
    The FFTs aren't subject to the same badness rule as the other thresholds,
    so each k is probably being brought on a touch early.  This isn't likely
    to make a difference, and the simpler probing means fewer tests.
@@ -255,7 +255,7 @@ analyze_dat (int i, int final)
           min_j = j;
         }
     }
-   
+
   return min_j;
 }
 
@@ -317,7 +317,7 @@ tuneup_measure (speed_function_t fun,
 
   TMP_FREE (marker);
   return t;
-}  
+}
 
 
 void
@@ -432,7 +432,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         }
 
       for (;
-           s.size < MAX_SIZE; 
+           s.size < MAX_SIZE;
            s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), 1))
         {
           double   ti, tiplus1, d;
@@ -494,7 +494,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
              certain number of measurements ago.  */
 #define STOP_SINCE_POSITIVE  200
           if (d >= 0)
-            since_positive = 0;            
+            since_positive = 0;
           else
             if (++since_positive > STOP_SINCE_POSITIVE)
               {
@@ -585,7 +585,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
             }
           s.size = MAX (table[0], table[1]) + 1;
         }
-      
+
       if (! (param->noprint || (i == 0 && param->second_start_min)))
         {
           if (i == 1 && param->second_start_min)
@@ -600,7 +600,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
       /* Look for the next threshold starting from the current one, but back
          a bit. */
       s.size = table[i]+1;
-    }      
+    }
 }
 
 
@@ -726,7 +726,7 @@ fft (struct fft_param_t *p)
 
 
   size = p->first_size;
-  
+
   /* Declare an FFT faster than a plain toom3 etc multiplication found as
      soon as one faster measurement obtained.  A multiplication in the
      middle of the FFT step is tested.  */
@@ -784,6 +784,540 @@ fft (struct fft_param_t *p)
         }
     }
 
+}
+
+
+
+/* Start karatsuba from 4, since the Cray t90 ieee code is much faster at 2,
+   giving wrong results.  */
+void
+tune_mul (void)
+{
+  static struct param_t  param;
+  param.name[0] = "KARATSUBA_MUL_THRESHOLD";
+  param.name[1] = "TOOM3_MUL_THRESHOLD";
+  param.function = speed_mpn_mul_n;
+  param.min_size[0] = MAX (4, MPN_KARA_MUL_N_MINSIZE);
+  param.max_size[0] = TOOM3_MUL_THRESHOLD_LIMIT-1;
+  param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT-1;
+  one (mul_threshold, 2, &param);
+}
+
+
+/* Start the basecase from 3, since 1 is a special case, and if mul_basecase
+   is faster only at size==2 then we don't want to bother with extra code
+   just for that.  Start karatsuba from 4 same as MUL above.  */
+void
+tune_sqr (void)
+{
+  static struct param_t  param;
+  param.name[0] = "BASECASE_SQR_THRESHOLD";
+  param.name[1] = "KARATSUBA_SQR_THRESHOLD";
+  param.name[2] = "TOOM3_SQR_THRESHOLD";
+  param.function = speed_mpn_sqr_n;
+  param.min_is_always = 1;
+  param.second_start_min = 1;
+  param.min_size[0] = 3;
+  param.min_size[1] = MAX (4, MPN_KARA_SQR_N_MINSIZE);
+  param.min_size[2] = MPN_TOOM3_SQR_N_MINSIZE;
+  param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
+  param.max_size[1] = TUNE_KARATSUBA_SQR_MAX;
+  one (sqr_threshold, 3, &param);
+}
+
+
+void
+tune_sb_preinv (void)
+{
+  static struct param_t  param;
+
+#if UDIV_PREINV_ALWAYS
+  printf ("#define SB_PREINV_THRESHOLD            0  /* (preinv always) */\n");
+  return;
+#endif
+
+  param.check_size = 256;
+  param.min_size[0] = 3;
+  param.min_is_always = 1;
+  param.size_extra = 3;
+  param.stop_factor = 2.0;
+  param.name[0] = "SB_PREINV_THRESHOLD";
+  param.function = speed_mpn_sb_divrem_m3;
+  one (sb_preinv_threshold, 1, &param);
+}
+
+
+void
+tune_dc (void)
+{
+  static struct param_t  param;
+  param.name[0] = "DC_THRESHOLD";
+  param.function = speed_mpn_dc_tdiv_qr;
+  one (dc_threshold, 1, &param);
+}
+
+
+/* This is an indirect determination, based on a comparison between redc and
+   mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
+   additional overheads it gets in mpz_powm.
+
+   stop_factor is 1.1 to hopefully help cray vector systems, where otherwise
+   currently it hits the 1000 limb limit with only a factor of about 1.18
+   (threshold should be around 650).  */
+
+void
+tune_powm (void)
+{
+  static struct param_t  param;
+  param.name[0] = "POWM_THRESHOLD";
+  param.function = speed_redc;
+  param.function2 = speed_mpz_mod;
+  param.step_factor = 0.03;
+  param.stop_factor = 1.1;
+  param.function_fudge = 1.04;
+  one (powm_threshold, 1, &param);
+}
+
+
+void
+tune_gcd_accel (void)
+{
+  static struct param_t  param;
+  param.name[0] = "GCD_ACCEL_THRESHOLD";
+  param.function = speed_mpn_gcd;
+  param.min_size[0] = 1;
+  one (gcd_accel_threshold, 1, &param);
+}
+
+
+
+/* A comparison between the speed of a single limb step and a double limb
+   step is made.  On a 32-bit limb the ratio is about 2.2 single steps to
+   equal a double step, or on a 64-bit limb about 2.09.  (These were found
+   from counting the steps on a 10000 limb gcdext.  */
+void
+tune_gcdext (void)
+{
+  static struct param_t  param;
+  param.name[0] = "GCDEXT_THRESHOLD";
+  param.function = speed_mpn_gcdext_one_single;
+  param.function2 = speed_mpn_gcdext_one_double;
+  switch (BITS_PER_MP_LIMB) {
+  case 32: param.function_fudge = 2.2; break;
+  case 64: param.function_fudge = 2.09; break;
+  default:
+    printf ("Don't know GCDEXT_THERSHOLD factor for BITS_PER_MP_LIMB == %d\n",
+            BITS_PER_MP_LIMB);
+    abort ();
+  }
+  param.min_size[0] = 5;
+  param.min_is_always = 1;
+  param.max_size[0] = 300;
+  param.check_size = 300;
+  one (gcdext_threshold, 1, &param);
+}
+
+
+/* size_extra==1 reflects the fact that with high<divisor one division is
+   always skipped.  Forcing high<divisor while testing ensures consistency
+   while stepping through sizes, ie. that size-1 divides will be done each
+   time.
+
+   min_size==2 and min_is_always are used so that if plain division is only
+   better at size==1 then don't bother including that code just for that
+   case, instead go with preinv always and get a size saving.  */
+
+#define DIV_1_PARAMS                    \
+  param.check_size = 256;               \
+  param.min_size[0] = 2;                   \
+  param.min_is_always = 1;              \
+  param.data_high = DATA_HIGH_LT_R;     \
+  param.size_extra = 1;                 \
+  param.stop_factor = 2.0;
+
+
+double (*tuned_speed_mpn_divrem_1) _PROTO ((struct speed_params *s));
+
+void
+tune_divrem_1 (void)
+{
+  /* plain version by default */
+  tuned_speed_mpn_divrem_1 = speed_mpn_divrem_1;
+
+#if HAVE_NATIVE_mpn_divrem_1
+  /* No support for tuning native assembler code, do that by hand and put
+     the results in the .asm file, there's no need for such thresholds to
+     appear in gmp-mparam.h.  */
+  return;
+#endif
+
+#if UDIV_PREINV_ALWAYS
+  printf ("#define DIVREM_1_NORM_THRESHOLD        0  /* (preinv always) */\n");
+  printf ("#define DIVREM_1_UNNORM_THRESHOLD      0\n");
+  return;
+#endif
+
+  tuned_speed_mpn_divrem_1 = speed_mpn_divrem_1_tune;
+
+  /* Tune for the integer part of mpn_divrem_1.  This will very possibly be
+     a bit out for the fractional part, but that's too bad, the integer part
+     is more important. */
+  {
+    static struct param_t  param;
+    param.name[0] = "DIVREM_1_NORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_divrem_1_tune;
+    one (divrem_1_norm_threshold, 1, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name[0] = "DIVREM_1_UNNORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_half ();
+    param.function = speed_mpn_divrem_1_tune;
+    one (divrem_1_unnorm_threshold, 1, &param);
+  }
+}
+
+
+double (*tuned_speed_mpn_mod_1) _PROTO ((struct speed_params *s));
+
+void
+tune_mod_1 (void)
+{
+  /* plain version by default */
+  tuned_speed_mpn_mod_1 = speed_mpn_mod_1;
+
+#if HAVE_NATIVE_mpn_mod_1
+  /* No support for tuning native assembler code, do that by hand and put
+     the results in the .asm file, there's no need for such thresholds to
+     appear in gmp-mparam.h.  */
+  return;
+#endif
+
+#if UDIV_PREINV_ALWAYS
+  printf ("#define MOD_1_NORM_THRESHOLD           0\n");
+  printf ("#define MOD_1_UNNORM_THRESHOLD         0\n");
+  return;
+#endif
+
+  tuned_speed_mpn_mod_1 = speed_mpn_mod_1_tune;
+
+  {
+    static struct param_t  param;
+    param.name[0] = "MOD_1_NORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_mod_1_tune;
+    one (mod_1_norm_threshold, 1, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name[0] = "MOD_1_UNNORM_THRESHOLD";
+    DIV_1_PARAMS;
+    s.r = randlimb_half ();
+    param.function = speed_mpn_mod_1_tune;
+    one (mod_1_unnorm_threshold, 1, &param);
+  }
+}
+
+
+/* A non-zero DIVREM_1_UNNORM_THRESHOLD (or DIVREM_1_NORM_THRESHOLD) would
+   imply that udiv_qrnnd_preinv is worth using, but it seems most
+   straightforward to compare mpn_preinv_divrem_1 and mpn_divrem_1_div
+   directly.  */
+
+void
+tune_preinv_divrem_1 (void)
+{
+  static struct param_t  param;
+  double   t1, t2;
+
+#if HAVE_NATIVE_mpn_preinv_divrem_1
+  /* Any native version of mpn_preinv_divrem_1 is assumed to exist because
+     it's faster than mpn_divrem_1.  */
+  printf ("#define USE_PREINV_DIVREM_1            1  /* (native) */\n");
+  return;
+#endif
+
+#if UDIV_PREINV_ALWAYS
+  /* If udiv_qrnnd_preinv is the only division method then of course
+     mpn_preinv_divrem_1 should be used.  */
+  printf ("#define USE_PREINV_DIVREM_1            1  /* (preinv always) */\n");
+  return;
+#endif
+
+  param.data_high = DATA_HIGH_LT_R; /* allow skip one division */
+  s.size = 200;                     /* generous but not too big */
+  /* Divisor, nonzero.  Unnormalized so as to exercise the shift!=0 case,
+     since in general that's probably most common, though in fact for a
+     64-bit limb mp_bases[10].big_base is normalized.  */
+  s.r = urandom() & (MP_LIMB_T_MAX >> 4);
+  if (s.r == 0) s.r = 123;
+
+  t1 = tuneup_measure (speed_mpn_preinv_divrem_1, &param, &s);
+  t2 = tuneup_measure (speed_mpn_divrem_1_div, &param, &s);
+  if (t1 == -1.0 || t2 == -1.0)
+    {
+      printf ("Oops, can't measure mpn_preinv_divrem_1 and mpn_divrem_1 at %ld\n",
+              s.size);
+      abort ();
+    }
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_preinv_divrem_1 %.9f, mpn_divrem_1 %.9f\n",
+            s.size, t1, t2);
+
+  printf ("#define USE_PREINV_DIVREM_1            %d\n", t1 < t2);
+}
+
+
+/* A non-zero MOD_1_UNNORM_THRESHOLD (or MOD_1_NORM_THRESHOLD) would imply
+   that udiv_qrnnd_preinv is worth using, but it seems most straightforward
+   to compare mpn_preinv_mod_1 and mpn_mod_1_div directly.  */
+
+void
+tune_preinv_mod_1 (void)
+{
+  static struct param_t  param;
+  double   t1, t2;
+
+#if HAVE_NATIVE_mpn_preinv_mod_1
+  /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
+     faster than mpn_mod_1.  */
+  printf ("#define USE_PREINV_MOD_1               1  /* (native) */\n");
+  return;
+#endif
+
+#if UDIV_PREINV_ALWAYS
+  /* If udiv_qrnnd_preinv is the only division method then of course
+     mpn_preinv_mod_1 should be used.  */
+  printf ("#define USE_PREINV_MOD_1               1  /* (preinv always) */\n");
+  return;
+#endif
+
+  param.data_high = DATA_HIGH_LT_R; /* let mpn_mod_1 skip one division */
+  s.size = 200;                     /* generous but not too big */
+  s.r = randlimb_norm();            /* divisor */
+
+  t1 = tuneup_measure (speed_mpn_preinv_mod_1, &param, &s);
+  t2 = tuneup_measure (speed_mpn_mod_1_div, &param, &s);
+  if (t1 == -1.0 || t2 == -1.0)
+    {
+      printf ("Oops, can't measure mpn_preinv_mod_1 and mpn_mod_1_div at %ld\n",
+              s.size);
+      abort ();
+    }
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1_div %.9f\n",
+            s.size, t1, t2);
+
+  printf ("#define USE_PREINV_MOD_1               %d\n", t1 < t2);
+}
+
+
+void
+tune_divrem_2 (void)
+{
+  static struct param_t  param;
+
+#if HAVE_NATIVE_mpn_divrem_2
+  /* No support for tuning native assembler code, do that by hand and put
+     the results in the .asm file, and there's no need for such thresholds
+     to appear in gmp-mparam.h.  */
+  return;
+#endif
+
+#if UDIV_PREINV_ALWAYS
+  printf ("#define DIVREM_2_THRESHOLD             0  /* (preinv always) */\n");
+  return;
+#endif
+
+  /* Tune for the integer part of mpn_divrem_2.  This will very possibly be
+     a bit out for the fractional part, but that's too bad, the integer part
+     is more important.
+
+     min_size must be >=2 since nsize>=2 is required, but is set to 4 to save
+     code space if plain division is better only at size==2 or size==3. */
+  param.name[0] = "DIVREM_2_THRESHOLD";
+  param.check_size = 256;
+  param.min_size[0] = 4;
+  param.min_is_always = 1;
+  param.size_extra = 2;      /* does qsize==nsize-2 divisions */
+  param.stop_factor = 2.0;
+
+  s.r = randlimb_norm ();
+  param.function = speed_mpn_divrem_2;
+  one (divrem_2_threshold, 1, &param);
+}
+
+
+/* mpn_divexact_1 is vaguely expected to be used on smallish divisors, so
+   tune for that.  Its speed can differ on odd or even divisor, so take an
+   average threshold for the two.
+
+   mpn_divrem_1 can vary with high<divisor or not, whereas mpn_divexact_1
+   might not vary that way, but don't test this since high<divisor isn't
+   expected to occur often with small divisors.  */
+
+void
+tune_divexact_1 (void)
+{
+  static struct param_t  param;
+  mp_size_t  thresh[2], average;
+  int        low, i;
+
+  ASSERT_ALWAYS (tuned_speed_mpn_divrem_1 != NULL);
+
+  param.name[0] = "DIVEXACT_1_THRESHOLD";
+  param.data_high = DATA_HIGH_GE_R;
+  param.check_size = 256;
+  param.min_size[0] = 2;
+  param.stop_factor = 1.5;
+  param.function  = tuned_speed_mpn_divrem_1;
+  param.function2 = speed_mpn_divexact_1;
+  param.noprint = 1;
+
+  print_define_start (param.name[0]);
+
+  for (low = 0; low <= 1; low++)
+    {
+      s.r = randlimb_half();
+      if (low == 0)
+        s.r |= 1;
+      else
+        s.r &= ~CNST_LIMB(7);
+
+      one (divexact_1_threshold, 1, &param);
+      if (option_trace)
+        printf ("low=%d thresh %ld\n", low, divexact_1_threshold[0]);
+
+      if (divexact_1_threshold[0] == MP_SIZE_T_MAX)
+        {
+          average = MP_SIZE_T_MAX;
+          goto divexact_1_done;
+        }
+
+      thresh[low] = divexact_1_threshold[0];
+    }
+
+  if (option_trace)
+    {
+      printf ("average of:");
+      for (i = 0; i < numberof(thresh); i++)
+        printf (" %ld", thresh[i]);
+      printf ("\n");
+    }
+
+  average = 0;
+  for (i = 0; i < numberof(thresh); i++)
+    average += thresh[i];
+  average /= numberof(thresh);
+
+  /* If divexact turns out to be better as early as 3 limbs, then use it
+     always, so as to reduce code size and conditional jumps.  */
+  if (average <= 3)
+    average = 0;
+
+ divexact_1_done:
+  print_define_end (param.name[0], average);
+}
+
+
+/* The generic mpn_modexact_1_odd skips a divide step if high<divisor, the
+   same as mpn_mod_1, but this might not be true of an assembler
+   implementation.  The threshold used is an average based on data where a
+   divide can be skipped and where it can't.
+
+   If modexact turns out to be better as early as 3 limbs, then use it
+   always, so as to reduce code size and conditional jumps.  */
+
+void
+tune_modexact_1_odd (void)
+{
+  static struct param_t  param;
+  mp_size_t  thresh_lt;
+
+  ASSERT_ALWAYS (tuned_speed_mpn_mod_1 != NULL);
+
+  param.name[0] = "MODEXACT_1_ODD_THRESHOLD";
+  param.check_size = 256;
+  param.min_size[0] = 2;
+  param.stop_factor = 1.5;
+  param.function  = tuned_speed_mpn_mod_1;
+  param.function2 = speed_mpn_modexact_1c_odd;
+  param.noprint = 1;
+  s.r = randlimb_half () | 1;
+
+  print_define_start (param.name[0]);
+
+  param.data_high = DATA_HIGH_LT_R;
+  one (modexact_1_odd_threshold, 1, &param);
+  if (option_trace)
+    printf ("lt thresh %ld\n", modexact_1_odd_threshold[0]);
+
+  thresh_lt = modexact_1_odd_threshold[0];
+  if (modexact_1_odd_threshold[0] != MP_SIZE_T_MAX)
+    {
+      param.data_high = DATA_HIGH_GE_R;
+      one (modexact_1_odd_threshold, 1, &param);
+      if (option_trace)
+        printf ("ge thresh %ld\n", modexact_1_odd_threshold[0]);
+
+      if (modexact_1_odd_threshold[0] != MP_SIZE_T_MAX)
+        {
+          modexact_1_odd_threshold[0]
+            = (modexact_1_odd_threshold[0] + thresh_lt) / 2;
+          if (modexact_1_odd_threshold[0] <= 3)
+            modexact_1_odd_threshold[0] = 0;
+        }
+    }
+
+  print_define_end (param.name[0], modexact_1_odd_threshold[0]);
+}
+
+
+void
+tune_fft_mul (void)
+{
+  static struct fft_param_t  param;
+
+  if (option_fft_max_size == 0)
+    return;
+
+  param.table_name          = "FFT_MUL_TABLE";
+  param.threshold_name      = "FFT_MUL_THRESHOLD";
+  param.p_threshold         = &FFT_MUL_THRESHOLD;
+  param.modf_threshold_name = "FFT_MODF_MUL_THRESHOLD";
+  param.p_modf_threshold    = &FFT_MODF_MUL_THRESHOLD;
+  param.first_size          = TOOM3_MUL_THRESHOLD / 2;
+  param.max_size            = option_fft_max_size;
+  param.function            = speed_mpn_mul_fft;
+  param.mul_function        = speed_mpn_mul_n;
+  param.sqr = 0;
+  fft (&param);
+}
+
+
+void
+tune_fft_sqr (void)
+{
+  static struct fft_param_t  param;
+
+  if (option_fft_max_size == 0)
+    return;
+
+  param.table_name          = "FFT_SQR_TABLE";
+  param.threshold_name      = "FFT_SQR_THRESHOLD";
+  param.p_threshold         = &FFT_SQR_THRESHOLD;
+  param.modf_threshold_name = "FFT_MODF_SQR_THRESHOLD";
+  param.p_modf_threshold    = &FFT_MODF_SQR_THRESHOLD;
+  param.first_size          = TOOM3_SQR_THRESHOLD / 2;
+  param.max_size            = option_fft_max_size;
+  param.function            = speed_mpn_mul_fft_sqr;
+  param.mul_function        = speed_mpn_sqr_n;
+  param.sqr = 0;
+  fft (&param);
 }
 
 
@@ -852,454 +1386,35 @@ all (void)
   }
   printf ("\n");
 
-  /* Start karatsuba from 4, since the Cray t90 ieee code is much faster at
-     2, giving wrong results.  */
-  {
-    static struct param_t  param;
-    param.name[0] = "KARATSUBA_MUL_THRESHOLD";
-    param.name[1] = "TOOM3_MUL_THRESHOLD";
-    param.function = speed_mpn_mul_n;
-    param.min_size[0] = MAX (4, MPN_KARA_MUL_N_MINSIZE);
-    param.max_size[0] = TOOM3_MUL_THRESHOLD_LIMIT-1;
-    param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT-1;
-    one (mul_threshold, 2, &param);
-  }
+  tune_mul ();
   printf("\n");
 
-  /* Start the basecase from 3, since 1 is a special case, and if
-     mul_basecase is faster only at size==2 then we don't want to bother
-     with extra code just for that.  Start karatsuba from 4 same as MUL
-     above.  */
-  {
-    static struct param_t  param;
-    param.name[0] = "BASECASE_SQR_THRESHOLD";
-    param.name[1] = "KARATSUBA_SQR_THRESHOLD";
-    param.name[2] = "TOOM3_SQR_THRESHOLD";
-    param.function = speed_mpn_sqr_n;
-    param.min_is_always = 1;
-    param.second_start_min = 1;
-    param.min_size[0] = 3;
-    param.min_size[1] = MAX (4, MPN_KARA_SQR_N_MINSIZE);
-    param.min_size[2] = MPN_TOOM3_SQR_N_MINSIZE;
-    param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
-    param.max_size[1] = TUNE_KARATSUBA_SQR_MAX;
-    one (sqr_threshold, 3, &param);
-  }
+  tune_sqr ();
   printf("\n");
 
-#if UDIV_PREINV_ALWAYS
-  printf ("#define SB_PREINV_THRESHOLD            0  /* (preinv always) */\n");
-#else
-  {
-    static struct param_t  param;
-    param.check_size = 256;
-    param.min_size[0] = 3;
-    param.min_is_always = 1;
-    param.size_extra = 3;
-    param.stop_factor = 2.0;
-    param.name[0] = "SB_PREINV_THRESHOLD";
-    param.function = speed_mpn_sb_divrem_m3;
-    one (sb_preinv_threshold, 1, &param);
-  }
-#endif
-
-  {
-    static struct param_t  param;
-    param.name[0] = "DC_THRESHOLD";
-    param.function = speed_mpn_dc_tdiv_qr;
-    one (dc_threshold, 1, &param);
-  }
-
-  /* This is an indirect determination, based on a comparison between redc
-     and mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
-     additional overheads it gets in mpz_powm.
-
-     stop_factor is 1.1 to hopefully help cray vector systems, where
-     otherwise currently it hits the 1000 limb limit with only a factor of
-     about 1.18 (threshold should be around 650).  */
-  {
-    static struct param_t  param;
-    param.name[0] = "POWM_THRESHOLD";
-    param.function = speed_redc;
-    param.function2 = speed_mpz_mod;
-    param.step_factor = 0.03;
-    param.stop_factor = 1.1;
-    param.function_fudge = 1.04;
-    one (powm_threshold, 1, &param);
-  }
+  tune_sb_preinv ();
+  tune_dc ();
+  tune_powm ();
   printf("\n");
 
-  {
-    static struct param_t  param;
-    param.name[0] = "GCD_ACCEL_THRESHOLD";
-    param.function = speed_mpn_gcd;
-    param.min_size[0] = 1;
-    one (gcd_accel_threshold, 1, &param);
-  }
-
-  /* A comparison between the speed of a single limb step and a double limb
-     step is made.  On a 32-bit limb the ratio is about 2.2 single steps to
-     equal a double step, or on a 64-bit limb about 2.09.  (These were found
-     from counting the steps on a 10000 limb gcdext.  */
-  {
-    static struct param_t  param;
-    param.name[0] = "GCDEXT_THRESHOLD";
-    param.function = speed_mpn_gcdext_one_single;
-    param.function2 = speed_mpn_gcdext_one_double;
-    switch (BITS_PER_MP_LIMB) {
-    case 32: param.function_fudge = 2.2; break;
-    case 64: param.function_fudge = 2.09; break;
-    default: 
-      printf ("Don't know GCDEXT_THERSHOLD factor for BITS_PER_MP_LIMB == %d\n",
-              BITS_PER_MP_LIMB);
-      abort ();
-    }
-    param.min_size[0] = 5;
-    param.min_is_always = 1;
-    param.max_size[0] = 300;
-    param.check_size = 300;
-    one (gcdext_threshold, 1, &param);
-  }
+  tune_gcd_accel ();
+  tune_gcdext ();
   printf("\n");
 
-#if UDIV_PREINV_ALWAYS
-  printf ("#define DIVREM_1_NORM_THRESHOLD        0  /* (preinv always) */\n");
-  printf ("#define DIVREM_1_UNNORM_THRESHOLD      0\n");
-  printf ("#define MOD_1_NORM_THRESHOLD           0\n");
-  printf ("#define MOD_1_UNNORM_THRESHOLD         0\n");
-
-#else
-  /* size_extra==1 reflects the fact that with high<divisor one division is
-     always skipped.  Forcing high<divisor while testing ensures consistency
-     while stepping through sizes, ie. that size-1 divides will be done each
-     time.
-
-     min_size==2 and min_is_always are used so that if plain division is
-     only better at size==1 then don't bother including that code just for
-     that case, instead go with preinv always and get a size saving.  */
-
-#define DIV_1_PARAMS                    \
-  param.check_size = 256;               \
-  param.min_size[0] = 2;                   \
-  param.min_is_always = 1;              \
-  param.data_high = DATA_HIGH_LT_R;     \
-  param.size_extra = 1;                 \
-  param.stop_factor = 2.0;
-
-  /* No support for tuning native assembler code, do that by hand and put
-     the results in the .asm file, and there's no need for such thresholds
-     to appear in gmp-mparam.h.  */
-#if ! HAVE_NATIVE_mpn_divrem_1
-#define SPEED_MPN_DIVREM_1  speed_mpn_divrem_1_tune
-
-  /* Tune for the integer part of mpn_divrem_1.  This will very possibly be
-     a bit out for the fractional part, but that's too bad, the integer part
-     is more important. */
-  {
-    static struct param_t  param;
-    param.name[0] = "DIVREM_1_NORM_THRESHOLD";
-    DIV_1_PARAMS;
-    s.r = randlimb_norm ();
-    param.function = speed_mpn_divrem_1_tune;
-    one (divrem_1_norm_threshold, 1, &param);
-  }
-  {
-    static struct param_t  param;
-    param.name[0] = "DIVREM_1_UNNORM_THRESHOLD";
-    DIV_1_PARAMS;
-    s.r = randlimb_half ();
-    param.function = speed_mpn_divrem_1_tune;
-    one (divrem_1_unnorm_threshold, 1, &param);
-  }
-#endif /* ! HAVE_NATIVE_mpn_divrem_1 */
-
-#if ! HAVE_NATIVE_mpn_mod_1
-#define SPEED_MPN_MOD_1  speed_mpn_mod_1_tune
-  {
-    static struct param_t  param;
-    param.name[0] = "MOD_1_NORM_THRESHOLD";
-    DIV_1_PARAMS;
-    s.r = randlimb_norm ();
-    param.function = speed_mpn_mod_1_tune;
-    one (mod_1_norm_threshold, 1, &param);
-  }
-  {
-    static struct param_t  param;
-    param.name[0] = "MOD_1_UNNORM_THRESHOLD";
-    DIV_1_PARAMS;
-    s.r = randlimb_half ();
-    param.function = speed_mpn_mod_1_tune;
-    one (mod_1_unnorm_threshold, 1, &param);
-  }
-#endif /* ! HAVE_NATIVE_mpn_mod_1 */
-#endif /* ! UDIV_PREINV_ALWAYS */
-
-  /* use the regular versions if there's no tuned version */
-#ifndef SPEED_MPN_DIVREM_1
-#define SPEED_MPN_DIVREM_1  speed_mpn_divrem_1
-#endif
-#ifndef SPEED_MPN_MOD_1
-#define SPEED_MPN_MOD_1  speed_mpn_mod_1
-#endif
-
-
-#if HAVE_NATIVE_mpn_preinv_divrem_1
-  /* Any native version of mpn_preinv_divrem_1 is assumed to exist because
-     it's faster than mpn_divrem_1.  */
-  printf ("#define USE_PREINV_DIVREM_1            1  /* (native) */\n");
-#else
-#if UDIV_PREINV_ALWAYS
-  /* If udiv_qrnnd_preinv is the only division method then of course
-     mpn_preinv_divrem_1 should be used.  */
-  printf ("#define USE_PREINV_DIVREM_1            1  /* (preinv always) */\n");
-#else
-  {
-    static struct param_t  param;
-    double   t1, t2;
-
-    param.data_high = DATA_HIGH_LT_R; /* allow skip one division */
-    s.size = 200;                     /* generous but not too big */
-    /* Divisor, nonzero.  Unnormalized so as to exercise the shift!=0 case,
-       since in general that's probably most common, though in fact for a
-       64-bit limb mp_bases[10].big_base is normalized.  */
-    s.r = urandom() & (MP_LIMB_T_MAX >> 4);
-    if (s.r == 0) s.r = 123;
-
-    t1 = tuneup_measure (speed_mpn_preinv_divrem_1, &param, &s);
-    t2 = tuneup_measure (SPEED_MPN_DIVREM_1, &param, &s);
-    if (t1 == -1.0 || t2 == -1.0)
-      {
-        printf ("Oops, can't measure mpn_preinv_divrem_1 and mpn_divrem_1 at %ld\n",
-                s.size);
-        abort ();
-      }
-    if (option_trace >= 1)
-      printf ("size=%ld, mpn_preinv_divrem_1 %.9f, mpn_divrem_1 %.9f\n",
-              s.size, t1, t2);
-
-    printf ("#define USE_PREINV_DIVREM_1            %d\n", t1 < t2);
-  }
-#endif /* ! UDIV_PREINV_ALWAYS */
-#endif /* ! HAVE_NATIVE_mpn_preinv_divrem_1 */
-
-
-#if HAVE_NATIVE_mpn_preinv_mod_1
-  /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
-     faster than mpn_mod_1.  */
-  printf ("#define USE_PREINV_MOD_1               1  /* (native) */\n");
-#else
-#if UDIV_PREINV_ALWAYS
-  /* If udiv_qrnnd_preinv is the only division method then of course
-     mpn_preinv_mod_1 should be used.  */
-  printf ("#define USE_PREINV_MOD_1               1  /* (preinv always) */\n");
-#else
-  {
-    static struct param_t  param;
-    double   t1, t2;
-
-    param.data_high = DATA_HIGH_LT_R; /* let mpn_mod_1 skip one division */
-    s.size = 200;                     /* generous but not too big */
-    s.r = randlimb_norm();            /* divisor */
-
-    t1 = tuneup_measure (speed_mpn_preinv_mod_1, &param, &s);
-    t2 = tuneup_measure (SPEED_MPN_MOD_1, &param, &s);
-    if (t1 == -1.0 || t2 == -1.0)
-      {
-        printf ("Oops, can't measure mpn_preinv_mod_1 and mpn_mod_1 at %ld\n",
-                s.size);
-        abort ();
-      }
-    if (option_trace >= 1)
-      printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1 %.9f\n",
-              s.size, t1, t2);
-
-    printf ("#define USE_PREINV_MOD_1               %d\n", t1 < t2);
-  }
-#endif /* ! UDIV_PREINV_ALWAYS */
-#endif /* ! HAVE_NATIVE_mpn_preinv_mod_1 */
-
-
-#if UDIV_PREINV_ALWAYS
-  printf ("#define DIVREM_2_THRESHOLD             0  /* (preinv always) */\n");
-#else
-
-  /* No support for tuning native assembler code, do that by hand and put
-     the results in the .asm file, and there's no need for such thresholds
-     to appear in gmp-mparam.h.  */
-#if ! HAVE_NATIVE_mpn_divrem_2
-
-  /* Tune for the integer part of mpn_divrem_2.  This will very possibly be
-     a bit out for the fractional part, but that's too bad, the integer part
-     is more important.
-
-     min_size must be >=2 since nsize>=2 is required, but is set to 4 to save
-     code space if plain division is better only at size==2 or size==3. */
-  {
-    static struct param_t  param;
-    param.name[0] = "DIVREM_2_THRESHOLD";
-    param.check_size = 256;
-    param.min_size[0] = 4;
-    param.min_is_always = 1;
-    param.size_extra = 2;      /* does qsize==nsize-2 divisions */
-    param.stop_factor = 2.0;
-
-    s.r = randlimb_norm ();
-    param.function = speed_mpn_divrem_2;
-    one (divrem_2_threshold, 1, &param);
-  }
-#endif
-#endif
-
-
-  /* mpn_divexact_1 is vaguely expected to be used on smallish divisors, so
-     tune for that.  Its speed can differ on odd or even divisor, so take an
-     average threshold for the two.
-
-     mpn_divrem_1 can vary with high<divisor or not, whereas mpn_divexact_1
-     might not vary that way, but don't test this since high<divisor isn't
-     expected to occur often with small divisors.  */
-  {
-    static struct param_t  param;
-    mp_size_t  thresh[2], average;
-    int        low, i;
-
-    param.name[0] = "DIVEXACT_1_THRESHOLD";
-    param.data_high = DATA_HIGH_GE_R;
-    param.check_size = 256;
-    param.min_size[0] = 2;
-    param.stop_factor = 1.5;
-    param.function  = SPEED_MPN_DIVREM_1;
-    param.function2 = speed_mpn_divexact_1;
-    param.noprint = 1;
-
-    print_define_start (param.name[0]);
-
-    for (low = 0; low <= 1; low++)
-      {
-        s.r = randlimb_half();
-        if (low == 0)
-          s.r |= 1;
-        else
-          s.r &= ~CNST_LIMB(7);
-
-        one (divexact_1_threshold, 1, &param);
-        if (option_trace)
-          printf ("low=%d thresh %ld\n", low, divexact_1_threshold[0]);
-
-        if (divexact_1_threshold[0] == MP_SIZE_T_MAX)
-          {
-            average = MP_SIZE_T_MAX;
-            goto divexact_1_done;
-          }
-
-        thresh[low] = divexact_1_threshold[0];
-      }
-
-    if (option_trace)
-      {
-        printf ("average of:");
-        for (i = 0; i < numberof(thresh); i++)
-          printf (" %ld", thresh[i]);
-        printf ("\n");
-      }
-
-    average = 0;
-    for (i = 0; i < numberof(thresh); i++)
-      average += thresh[i];
-    average /= numberof(thresh);
-
-    /* If divexact turns out to be better as early as 3 limbs, then use it
-       always, so as to reduce code size and conditional jumps.  */
-    if (average <= 3)
-      average = 0;
-
-  divexact_1_done:
-    print_define_end (param.name[0], average);
-  }
-
-
-  /* The generic mpn_modexact_1_odd skips a divide step if high<divisor, the
-     same as mpn_mod_1, but this might not be true of an assembler
-     implementation.  The threshold used is an average based on data where a
-     divide can be skipped and where it can't.
-
-     If modexact turns out to be better as early as 3 limbs, then use it
-     always, so as to reduce code size and conditional jumps.  */
-  {
-    static struct param_t  param;
-    mp_size_t  thresh_lt;
-    param.name[0] = "MODEXACT_1_ODD_THRESHOLD";
-    param.check_size = 256;
-    param.min_size[0] = 2;
-    param.stop_factor = 1.5;
-    param.function  = SPEED_MPN_MOD_1;
-    param.function2 = speed_mpn_modexact_1c_odd;
-    param.noprint = 1;
-    s.r = randlimb_half () | 1;
-
-    print_define_start (param.name[0]);
-
-    param.data_high = DATA_HIGH_LT_R;
-    one (modexact_1_odd_threshold, 1, &param);
-    if (option_trace)
-      printf ("lt thresh %ld\n", modexact_1_odd_threshold[0]);
-
-    thresh_lt = modexact_1_odd_threshold[0];
-    if (modexact_1_odd_threshold[0] != MP_SIZE_T_MAX)
-      {
-        param.data_high = DATA_HIGH_GE_R;
-        one (modexact_1_odd_threshold, 1, &param);
-        if (option_trace)
-          printf ("ge thresh %ld\n", modexact_1_odd_threshold[0]);
-
-        if (modexact_1_odd_threshold[0] != MP_SIZE_T_MAX)
-          {
-            modexact_1_odd_threshold[0]
-              = (modexact_1_odd_threshold[0] + thresh_lt) / 2;
-            if (modexact_1_odd_threshold[0] <= 3)
-              modexact_1_odd_threshold[0] = 0;
-          }
-      }
-
-    print_define_end (param.name[0], modexact_1_odd_threshold[0]);
-  }
-
+  tune_divrem_1 ();
+  tune_mod_1 ();
+  tune_preinv_divrem_1 ();
+  tune_preinv_mod_1 ();
+  tune_divrem_2 ();
+  tune_divexact_1 ();
+  tune_modexact_1_odd ();
   printf("\n");
 
+  tune_fft_mul ();
+  printf("\n");
 
-  if (option_fft_max_size != 0)
-    {
-      {
-        static struct fft_param_t  param;
-        param.table_name          = "FFT_MUL_TABLE";
-        param.threshold_name      = "FFT_MUL_THRESHOLD";
-        param.p_threshold         = &FFT_MUL_THRESHOLD;
-        param.modf_threshold_name = "FFT_MODF_MUL_THRESHOLD";
-        param.p_modf_threshold    = &FFT_MODF_MUL_THRESHOLD;
-        param.first_size          = TOOM3_MUL_THRESHOLD / 2;
-        param.max_size            = option_fft_max_size;
-        param.function            = speed_mpn_mul_fft;
-        param.mul_function        = speed_mpn_mul_n;
-        param.sqr = 0;
-        fft (&param);
-      }
-      printf("\n");
-      {
-        static struct fft_param_t  param;
-        param.table_name          = "FFT_SQR_TABLE";
-        param.threshold_name      = "FFT_SQR_THRESHOLD";
-        param.p_threshold         = &FFT_SQR_THRESHOLD;
-        param.modf_threshold_name = "FFT_MODF_SQR_THRESHOLD";
-        param.p_modf_threshold    = &FFT_MODF_SQR_THRESHOLD;
-        param.first_size          = TOOM3_SQR_THRESHOLD / 2;
-        param.max_size            = option_fft_max_size;
-        param.function            = speed_mpn_mul_fft_sqr;
-        param.mul_function        = speed_mpn_sqr_n;
-        param.sqr = 0;
-        fft (&param);
-      }
-      printf ("\n");
-    }
+  tune_fft_sqr ();
+  printf ("\n");
 
   time (&end_time);
   printf ("/* Tuneup completed successfully, took %ld seconds */\n",
@@ -1341,7 +1456,7 @@ main (int argc, char *argv[])
         exit(1);
       }
     }
-		
+
   all ();
   exit (0);
 }
