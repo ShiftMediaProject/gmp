@@ -638,11 +638,17 @@ case $host in
     gcc_cflags_optlist="asm precomp cpu"
     gcc_cflags_asm="-Wa,-mppc"
     gcc_cflags_precomp="-no-cpp-precomp"
-    path="powerpc32"
     extra_functions="umul"
     case $host in
       *-*-aix*) cclist="gcc xlc cc"
                 xlc_cflags="-g -O2 -qarch=ppc -qmaxmem=20000" ;;
+    esac
+
+    case $host_cpu in
+      powerpc740 | powerpc750 | powerpc7400)
+        path="powerpc32/750 powerpc32" ;;
+      *)
+        path="powerpc32" ;;
     esac
 
     # gcc 2.7.2 knows -mcpu=403, 603, 604.
