@@ -289,6 +289,9 @@ MA 02111-1307, USA.
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
+/* Define to 1 if you have the <sstream> header file. */
+#undef HAVE_SSTREAM
+
 /* Define to 1 if the system has the type `stack_t'. */
 #undef HAVE_STACK_T
 
