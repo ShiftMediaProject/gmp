@@ -6,4 +6,9 @@ forloop(i,0,31,
 `define(`r'i,i)'
 )
 
+dnl Likewise for cr0, cr1, etc.
+forloop(i,0,7,
+`define(`cr'i,i)'
+)
+
 divert
