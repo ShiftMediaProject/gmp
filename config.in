@@ -209,6 +209,9 @@ MA 02111-1307, USA.
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
+/* Define if <stdarg.h> exists and works */
+#undef HAVE_STDARG
+
 /* Define if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
