@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 19 Jan 2002.  An up-to-date version is available at
+  This file current as of 23 Jan 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -318,6 +318,10 @@ MA 02111-1307, USA.
      R^3 mod N, etc, with R=2^<code>BITS_PER_MP_LIMB</code>, and use them to
      process multiple limbs at each step by multiplying.  Suggested by Peter
      L. Montgomery.
+<li> <code>mpz_get_str</code>, <code>mtox</code>: For power-of-2 bases, which
+     are of course fast, it seems a little silly to make a second pass over
+     the <code>mpn_get_str</code> output to convert to ASCII.  Perhaps combine
+     that with the bit extractions.
 </ul>
 
 
@@ -485,6 +489,10 @@ MA 02111-1307, USA.
      duplicating code under each conditional.  Don't really want to turn
      everything into a dog's dinner just because Cray don't offer an
      <code>alloca</code>.
+<li> Cray: <code>mpn_get_str</code> on power-of-2 bases ought to vectorize.
+     Does it?  <code>bits_per_digit</code> and the inner loop over bits in a
+     limb might prevent it.  Perhaps special cases for binary, octal and hex
+     would be worthwhile (very possibly for all processors too).
 <li> 68000: <code>mpn_mul_1</code> could check for a 16-bit multiplier and use
      two multiplies per limb, not four.  Ditto <code>mpn_addmul_1</code> and
      <code>mpn_submul_1</code>.
@@ -626,6 +634,9 @@ MA 02111-1307, USA.
      indicating whether it's a proper or non-proper subset would be good and
      wouldn't cost anything in the implementation.  Suggested by Roberto
      Bagnara.
+<li> <code>gmp_randinit_r</code> and maybe <code>gmp_randstate_set</code> to
+     init-and-copy or to just copy a <code>gmp_randstate_t</code>.  Suggested
+     by Pedro Gimeno.
 </ul>
 
 
