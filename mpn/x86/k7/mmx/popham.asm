@@ -138,7 +138,7 @@ HAM(`	movl	PARAM_SRC2, %edx')
 
 	movd	(%eax,%ecx,8), %mm1
 
-HAM(`	movd	0(%edx,%ecx,8), %mm0
+HAM(`	movd	(%edx,%ecx,8), %mm0
 	pxor	%mm0, %mm1
 ')
 	orl	%ecx, %ecx
