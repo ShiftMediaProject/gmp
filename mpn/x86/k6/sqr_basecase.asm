@@ -1,8 +1,8 @@
 # AMD K6 mpn_sqr_basecase -- square an mpn number.
 #
-# K6: 12-13 cycles per triangular product.
+# K6: approx 6.5 cycles per crossproduct, or 12 cycles per triangular product.
 #
-# Future: Unrolling to help sizes 10 to 20 is in progress.
+# Future: Some unrolling will be needed to help sizes 10 to 20.
 
 
 # Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -45,13 +45,14 @@ PROLOGUE(mpn_sqr_basecase)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
+
 	movl	PARAM_SRC, %eax
 
-	movl	PARAM_DST, %edx
 	cmpl	$2, %ecx
+	movl	PARAM_DST, %edx
 
 	je	L(two_limbs)
-	ja	L(two_or_more)
+	ja	L(three_or_more)
 
 
 #------------------------------------------------------------------------------
@@ -113,7 +114,7 @@ L(two_limbs):
 
 
 #------------------------------------------------------------------------------
-L(two_or_more):
+L(three_or_more):
 	cmpl	$4, %ecx
 	jae	L(four_or_more)
 
@@ -133,35 +134,35 @@ L(two_or_more):
 	mull	%eax		# src[0] ^ 2
 
 	movl	%eax, (%ecx)
+	movl	4(%ebx), %eax
+
 	movl	%edx, 4(%ecx)
 
-	movl	4(%ebx), %eax
 	pushl	%esi
 
 	mull	%eax		# src[1] ^ 2
 
 	movl	%eax, 8(%ecx)
+	movl	8(%ebx), %eax
+
 	movl	%edx, 12(%ecx)
 
-	movl	8(%ebx), %eax
 	pushl	%edi
 
 	mull	%eax		# src[2] ^ 2
 
 	movl	%eax, 16(%ecx)
-	movl	%edx, 20(%ecx)
-
-
 	movl	(%ebx), %eax
+
+	movl	%edx, 20(%ecx)
 	movl	4(%ebx), %edx
 
 	mull	%edx		# src[0] * src[1]
 
 	movl	%eax, %esi
-	movl	%edx, %edi
-
-
 	movl	(%ebx), %eax
+
+	movl	%edx, %edi
 	movl	8(%ebx), %edx
 
 	pushl	%ebp
@@ -170,16 +171,17 @@ L(two_or_more):
 	mull	%edx		# src[0] * src[2]
 
 	addl	%eax, %edi
-	adcl	$0, %edx
-	movl	%edx, %ebp
-
-
 	movl	4(%ebx), %eax
+
+	adcl	$0, %edx
+
+	movl	%edx, %ebp
 	movl	8(%ebx), %edx
 
 	mull	%edx		# src[1] * src[2]
 
 	addl	%eax, %ebp
+
 	adcl	$0, %edx
 
 
