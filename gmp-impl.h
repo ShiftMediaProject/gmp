@@ -1823,6 +1823,66 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 
+/* bswap is available on i486 and up and is fast.  A combination rorw $8 /
+   roll $16 / rorw $8 is used in glibc for plain i386 (and in the linux
+   kernel with xchgb instead of rorw), but this is not done here, because
+   i386 means generic x86 and mixing word and dword operations will cause
+   partial register stalls on P6 chips.  */
+#if defined (__GNUC__) && ! defined (NO_ASM)            \
+  && HAVE_HOST_CPU_FAMILY_x86 && ! HAVE_HOST_CPU_i386   \
+  && BITS_PER_MP_LIMB == 32
+#define BSWAP_LIMB(dst, src)                    \
+  do {                                          \
+    asm ("bswap %0" : "=r" (dst) : "0" (src));  \
+  } while (0)
+#endif /* x86 */
+
+#if defined (__GNUC__) && ! defined (NO_ASM)    \
+  && defined (__ia64) && BITS_PER_MP_LIMB == 64
+#define BSWAP_LIMB(dst, src)                                    \
+  do {                                                          \
+    asm ("mux1 %0 = %1, @rev" : "=r" (dst) :  "r" (src));       \
+  } while (0)
+#endif
+
+#if ! defined (BSWAP_LIMB)
+#if BITS_PER_MP_LIMB == 8
+#define BSWAP_LIMB(dst, src)            \
+  do { (dst) = (src); } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 16
+#define BSWAP_LIMB(dst, src)                    \
+  do {                                          \
+    (dst) = ((src) << 8) + ((src) >> 8);        \
+  } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 32
+#define BSWAP_LIMB(dst, src)    \
+  do {                          \
+    (dst) =                     \
+      ((src) << 24)             \
+      + (((src) & 0xFF00) << 8) \
+      + (((src) >> 8) & 0xFF00) \
+      + ((src) >> 24);          \
+  } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 64
+#define BSWAP_LIMB(dst, src)            \
+  do {                                  \
+    (dst) =                             \
+      ((src) << 56)                     \
+      + (((src) & 0xFF00) << 40)        \
+      + (((src) & 0xFF0000) << 24)      \
+      + (((src) & 0xFF000000) << 8)     \
+      + (((src) >> 8) & 0xFF000000)     \
+      + (((src) >> 24) & 0xFF0000)      \
+      + (((src) >> 40) & 0xFF00)        \
+      + ((src) >> 56);                  \
+  } while (0)
+#endif
+#endif
+
+
 /* No processor claiming to be SPARC v9 compliant seems to
    implement the POPC instruction.  Disable pattern for now.  */
 #if 0
