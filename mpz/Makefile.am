@@ -2,11 +2,13 @@
 
 AUTOMAKE_OPTIONS = gnu
 
-# $top_srcdir is needed for `#include "gmp-impl.h"'.
-# .. is needed for config.h and gmp-mparam.h.
-INCLUDES = -I$(top_srcdir) -I..
+SUBDIRS = tests
 
-EXTRA_DIST = tests dmincl.c
+# $(top_srcdir)    for gmp.h etc
+# $(top_builddir)  for config.h etc
+INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+
+EXTRA_DIST = dmincl.c
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
