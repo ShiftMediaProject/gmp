@@ -1,5 +1,10 @@
 1999-12-10  Torbjorn Granlund  <tege@swox.com>
 
+	* config.sub: Clean up handling of x86 CPUs: Properly recognize
+	Amd CPUs as unique entities.  Use manufacturer's names of
+	processors ("pentium", etc); still match ambiguous names like
+	"i586", "i686", "p6" but be conservative in interpreting them.
+
 	* configure.in: Recognize x86 CPU types known by config.guess.
 	* mpn/configure.in: Likewise.  Add x86/mmx path component as
 	appropriate.
