@@ -1178,7 +1178,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   } while (0)
 #else
 #if defined (__sparc_v8__)   /* gcc normal */				\
-  || defined (__sparcv8)     /* gcc solaris */
+  || defined (__sparcv8)     /* gcc solaris */				\
+  || HAVE_HOST_CPU_supersparc
 /* Don't match immediate range because, 1) it is not often useful,
    2) the 'I' flag thinks of the range as a 13 bit signed interval,
    while we want to match a 13 bit interval, sign extended to 32 bits,
@@ -1583,7 +1584,7 @@ extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
 									\
     __q1 = (n1) / __d1;							\
     __r1 = (n1) - __q1 * __d1;						\
-    __m = (UWtype) __q1 * __d0;						\
+    __m = __q1 * __d0;							\
     __r1 = __r1 * __ll_B | __ll_highpart (n0);				\
     if (__r1 < __m)							\
       {									\
@@ -1596,7 +1597,7 @@ extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
 									\
     __q0 = __r1 / __d1;							\
     __r0 = __r1  - __q0 * __d1;						\
-    __m = (UWtype) __q0 * __d0;						\
+    __m = __q0 * __d0;							\
     __r0 = __r0 * __ll_B | __ll_lowpart (n0);				\
     if (__r0 < __m)							\
       {									\
@@ -1607,7 +1608,7 @@ extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
       }									\
     __r0 -= __m;							\
 									\
-    (q) = (UWtype) __q1 * __ll_B | __q0;				\
+    (q) = __q1 * __ll_B | __q0;						\
     (r) = __r0;								\
   } while (0)
 
