@@ -3,6 +3,7 @@
 
 /* Scanner skeleton version:
  * $Header$
+ * $FreeBSD: src/usr.bin/lex/flex.skl,v 1.4 1999/10/27 07:56:44 obrien Exp $
  */
 
 #define FLEX_SCANNER
@@ -437,7 +438,7 @@ const struct calc_keywords_t  calc_keywords[] = {
   { "sqrt",      SQRT },
   { NULL }
 };
-#line 441 "calclex.c"
+#line 442 "calclex.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -591,7 +592,7 @@ YY_DECL
 #line 57 "calclex.l"
 
 
-#line 595 "calclex.c"
+#line 596 "calclex.c"
 
 	if ( yy_init )
 		{
@@ -790,7 +791,7 @@ YY_RULE_SETUP
 #line 107 "calclex.l"
 ECHO;
 	YY_BREAK
-#line 794 "calclex.c"
+#line 795 "calclex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
