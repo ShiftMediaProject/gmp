@@ -20,15 +20,16 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include "gmp.h"
 
 /* Sieve table size */
-#define ST_SIZE 30000
+#define ST_SIZE 50000
 /* Largest prime to sieve with */
-#define MAX_S_PRIME 1000
+#define MAX_S_PRIME 32000
 
 main (int argc, char **argv)
 {
   char *progname = argv[0];
   mpz_t r0, r1;			/* range */
   mpz_t cur;
+  mpz_t max_s_prime_squared;
   unsigned char *st;
   unsigned long i, ii;
   unsigned long nprimes = 0;
@@ -62,6 +63,8 @@ main (int argc, char **argv)
   mpz_init (r0);
   mpz_init (r1);
   mpz_init (cur);
+  mpz_init_set_ui (max_s_prime_squared, MAX_S_PRIME);
+  mpz_mul_ui (max_s_prime_squared, max_s_prime_squared, MAX_S_PRIME);
 
   if (argc == 2)
     {
@@ -125,7 +128,10 @@ main (int argc, char **argv)
 	      last = ii;
 	      if (mpz_cmp (cur, r1) > 0)
 		goto done;
-	      if (mpz_probab_prime_p (cur, 3))
+	      /* Perform probabilistic prime test, but only if we're in a range
+		 were the sieving hasn't already proved this number prime.  */
+	      if (mpz_cmp (cur, max_s_prime_squared) < 0
+		  || mpz_probab_prime_p (cur, 3))
 		{
 		  nprimes++;
 		  if (flag_print)
