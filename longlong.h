@@ -702,10 +702,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   __asm__ ("divq %4"		     /* stringification in K&R C */	\
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((UDItype)(n0)), "1" ((UDItype)(n1)), "rm" ((UDItype)(dx)))
-/* The destination for bsrq and bsfq must be a 64-bit register, hence
-   UDItype for __cbtmp.  And for count_trailing_zeros, the final "count"
-   variable might be only a 32-bit "int", hence the use of the temporary
-   there.  */
+/* bsrq destination must be a 64-bit register, hence UDItype for __cbtmp. */
 #define count_leading_zeros(count, x)					\
   do {									\
     UDItype __cbtmp;							\
@@ -713,6 +710,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("bsrq %1,%0" : "=r" (__cbtmp) : "rm" ((UDItype)(x)));	\
     (count) = __cbtmp ^ 63;						\
   } while (0)
+/* bsfq destination must be a 64-bit register, "%q0" forces this in case
+   count is only an int. */
 #define count_trailing_zeros(count, x)					\
   do {									\
     ASSERT ((x) != 0);							\
