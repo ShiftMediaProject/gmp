@@ -146,7 +146,7 @@ check_data (void)
             }
           if (error)
             {
-              printf ("    at data[%d]\n", i);
+              printf ("    at data[%d]  align=%d\n", i, (int) align);
               printf ("    src \"%s\"\n", data[i].src);
               mpz_trace ("    src", src);
               printf ("    order=%d  size=%u endian=%d nail=%u\n",
