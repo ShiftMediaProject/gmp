@@ -120,7 +120,7 @@ mpz_scan1 (mpz_srcptr u, unsigned long starting_bit)
 
       /* Search for a limb which is not all ones.  If the end is reached
          then the zero immediately past the end is the result.  */
-      while (limb == MP_LIMB_T_MAX)
+      while (limb == GMP_NUMB_MAX)
         {
           p++;
           if (p == u_end)
@@ -138,5 +138,5 @@ mpz_scan1 (mpz_srcptr u, unsigned long starting_bit)
   limb &= -limb;
 
   count_leading_zeros (cnt, limb);
-  return (p - u_ptr) * GMP_NUMB_BITS + GMP_NUMB_BITS-1 - cnt;
+  return (p - u_ptr) * GMP_NUMB_BITS + GMP_LIMB_BITS - 1 - cnt;
 }
