@@ -829,7 +829,7 @@ tune_mul (void)
   one (&mul_karatsuba_threshold, &param);
 
   param.name = "MUL_TOOM3_THRESHOLD";
-  param.min_size = MAX (MPN_KARA_MUL_N_MINSIZE, MUL_KARATSUBA_THRESHOLD);
+  param.min_size = MAX (mul_karatsuba_threshold, MPN_TOOM3_MUL_N_MINSIZE);
   param.max_size = MUL_TOOM3_THRESHOLD_LIMIT-1;
   one (&mul_toom3_threshold, &param);
 
