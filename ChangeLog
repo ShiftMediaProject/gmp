@@ -1,3 +1,9 @@
+2000-01-19  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (sigaltstack): #define to sigstack for AIX.
+	(setup_error_handler): Don't write to ss_size and ss_flags
+	on AIX.
+	
 2000-01-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/configure.in (hppa2.0*-*-*): Move assignment of
