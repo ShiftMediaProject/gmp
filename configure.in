@@ -218,16 +218,14 @@ case "$target" in
     gmp_cflags_cc="-O2"		# FIXME: Flag for v8?
     ;;
   supersparc*-*-solaris2.*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -DSUPERSPARC"
     gmp_xoptcflags_gcc="-mcpu=v8 -mv8"
-    gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4 -DSUPERSPARC"
+    gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
   supersparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
-    gmp_cflags_gcc="$gmp_cflags_gcc -DSUPERSPARC"
     gmp_xoptcflags_gcc="-mcpu=v8 -mv8"
-    gmp_cflags_acc="-g -O2 -cg92 -DSUPERSPARC"
-    gmp_cflags_cc="-O2 -DSUPERSPARC"	# FIXME: Flag for v8?
+    gmp_cflags_acc="-g -O2 -cg92"
+    gmp_cflags_cc="-O2"	# FIXME: Flag for v8?
     ;;
   *sparc*-*-*)
     cclist="gcc acc cc"
