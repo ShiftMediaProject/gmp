@@ -67,10 +67,12 @@ mpn_reciprocal (ip, vp, vn)
   mp_ptr xp, tp, x2p;
   mp_size_t xn, x2n;
   mp_size_t prec;
+  TMP_DECL (marker);
 
-  xp = alloca (2 * vn * BYTES_PER_MP_LIMB);
-  tp = alloca (2 * vn * BYTES_PER_MP_LIMB);
-  x2p = alloca (2 * vn * BYTES_PER_MP_LIMB);
+  TMP_MARK (marker);
+  xp = (mp_ptr) TMP_ALLOC (2 * vn * BYTES_PER_MP_LIMB);
+  tp = (mp_ptr) TMP_ALLOC (2 * vn * BYTES_PER_MP_LIMB);
+  x2p = (mp_ptr) TMP_ALLOC (2 * vn * BYTES_PER_MP_LIMB);
 
   /* If V starts with 0b100000..., we've got to handle that specially for
      correct operation of the Newton code.  */
@@ -82,6 +84,7 @@ mpn_reciprocal (ip, vp, vn)
       /* If we come here, all bits were 0 (but the most significant).  */
       for (i = 0; i < vn; i++)
 	ip[i] = ~ (mp_limb_t) 0;
+      TMP_FREE (marker);
       return vn;
 
     found_nz:
@@ -148,6 +151,7 @@ mpn_reciprocal (ip, vp, vn)
     }
 
   MPN_COPY (ip, xp, vn);
+  TMP_FREE (marker);
   return prec;
 }
 
@@ -172,14 +176,16 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
   int np_realloc_flag;
   mp_ptr np_new, np_orig;
   mp_size_t nn_new, nn_orig;
+  TMP_DECL (marker);
 
+  TMP_MARK (marker);
   np_realloc_flag = 0;
   if (qxn != 0)
     {
       /* This works, but wastes both memory and cycles.  But it is quite tricky
 	 to generalize the code below to handle a non-zero qxn...  */
       nn_new = nn + qxn;
-      np_new = (mp_ptr) alloca (nn_new * BYTES_PER_MP_LIMB);
+      np_new = (mp_ptr) TMP_ALLOC (nn_new * BYTES_PER_MP_LIMB);
       MPN_ZERO (np_new, qxn);
       MPN_COPY (np_new + qxn, np, nn);
       nn_orig = nn;
@@ -199,14 +205,17 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
     }
 
   if (nn == dn)
-    return most_significant_q_limb;
+    {
+      TMP_FREE (marker);
+      return most_significant_q_limb;
+    }
 
-  tp = (mp_ptr) alloca (2 * dn * BYTES_PER_MP_LIMB);
-  wp = (mp_ptr) alloca (dn * BYTES_PER_MP_LIMB);
+  tp = (mp_ptr) TMP_ALLOC (2 * dn * BYTES_PER_MP_LIMB);
+  wp = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 
   /* Choose precision of reciprocal.  */
   in = (nn < 2 * dn) ? nn - dn : dn;
-  ip = (mp_ptr) alloca (in * BYTES_PER_MP_LIMB);
+  ip = (mp_ptr) TMP_ALLOC (in * BYTES_PER_MP_LIMB);
 
   /* Compute reciprocal of divisor to chosen precision.  */
   MPN_COPY (tp, dp + dn - in, in);
@@ -299,5 +308,6 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
   if (np_realloc_flag)
     MPN_COPY (np_orig, np_new, nn_orig);
 
+  TMP_FREE (marker);
   return most_significant_q_limb;
 }
