@@ -1234,8 +1234,8 @@ HP-UX supports two ABIs for IA-64.  GMP performance is the same in both.
 @item @samp{ABI=32}
 In the 32-bit ABI, pointers, @code{int}s and @code{long}s are 32 bits and GMP
 uses a 64 bit @code{long long} for a limb.  Applications can be compiled
-without any special flags since this is the default in both HP C and GCC, but
-for reference the flags are
+without any special flags since this ABI is the default in both HP C and GCC,
+but for reference the flags are
 
 @example
 gcc  -milp32
@@ -1539,6 +1539,22 @@ wanting to use the GMP I/O routines must be compiled with @samp{cl /MD} to do
 the same.  If one of the other C runtime library choices provided by MS C is
 desired then the suggestion is to use the GMP string functions and confine I/O
 to the application.
+
+@item Motorola 68k ABI
+@cindex 68000
+@cindex PalmOS
+The GMP assembler code has been written for the SVR4 standard ABI.  GCC option
+@samp{-mshort} changes the calling conventions and is not supported.  We
+believe the PalmOS calling conventions are similarly different and are
+likewise not currently supported.
+@c
+@c  For reference, -mshort doesn't just change the size of an int but also
+@c  changes the stack alignment to only 16-bits, where in svr4 it's 32-bits.
+@c  This affects mpn_lshift and mpn_rshift in the gmp code, but perhaps
+@c  nowhere else.  Having those routines understand the variant stack frame
+@c  wouldn't be hard, if anyone was keen.  (PalmOS had problems building due
+@c  to lack of stdio.h last time it was tried, so it's not yet really a
+@c  target.)
 
 @item Motorola 68k CPU Types
 @cindex 68000
@@ -9931,6 +9947,10 @@ November 1999, @uref{http://www.inria.fr/RRRT/RR-3805.html}
 Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
 Implementations'', @texlinebreak{}
 @uref{http://www.loria.fr/~zimmerma/papers/proof-div-sqrt.ps.gz}
+
+@item
+Paul Zimmermann, ``A Proof of GMP Square Root Using the Coq Assistant'', INRIA
+Research Report 4475, June 2001, @uref{http://www.inria.fr/rrrt/rr-4475.html}
 
 @item
 Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
