@@ -40,6 +40,10 @@ void tests_end _PROTO ((void));
 
 void tests_memory_start _PROTO ((void));
 void tests_memory_end _PROTO ((void));
+void *tests_allocate _PROTO ((size_t size));
+void *tests_reallocate _PROTO ((void *ptr, size_t old_size, size_t new_size));
+void tests_free _PROTO ((void *ptr, size_t size));
+void tests_free_nosize _PROTO ((void *ptr));
 
 void tests_rand_start _PROTO ((void));
 void tests_rand_end _PROTO ((void));
