@@ -33,7 +33,8 @@ MA 02111-1307, USA.
 
 	* doc/gmp.texi (BSD Compatible Functions): Note "pow" name clash under
 	the pow function description too.
-	(Language Bindings): Add XEmacs (betas at this stage).
+	(Language Bindings): Add XEmacs (betas at this stage).  Reported by
+	Jerry James.
 
 	* tests/refmpn.c (refmpn_mod2): Correction to ASSERTs, r==a is allowed.
 
@@ -301,7 +302,8 @@ MA 02111-1307, USA.
 	mis-compiled by certain IA-64 HP cc at +O3.
 
 	* gmp-impl.h (USE_LEADING_REGPARM): Disable under prof or gprof, for
-	the benefit of freebsd where .mcount clobbers registers.
+	the benefit of freebsd where .mcount clobbers registers.  Spotted by
+	Torbjorn.
 	* configure.in (WANT_PROFILING_PROF, WANT_PROFILING_GPROF): New
 	AC_DEFINEs.
 
