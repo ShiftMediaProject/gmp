@@ -126,6 +126,8 @@ routines, and producing tables of data or gnuplot graphs.  Compile it with
 
 	make speed
 
+(Or on DOS systems "make speed.exe".)
+
 Here are some examples of how to use it.  Check the code for all the
 options.
 
