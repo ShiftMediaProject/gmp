@@ -3845,6 +3845,8 @@ Kent Boortz made the Macintosh port.
 Kevin Ryde wrote a lot of very high quality x86 code, optimized for most CPU
 variants.  He also made countless other valuable contributions.
 
+Steve Root helped write the optimized alpha 21264 assembly code.
+
 GNU MP 3.1 was finished and released by Torbjorn Granlund and Kevin Ryde.
 Torbjorn's work was partially funded by the IDA Center for Computing Sciences,
 USA.
