@@ -1,5 +1,7 @@
 2000-06-30  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/x86/pentium/aorsmul_1.asm: Add MULFUNC_PROLOGUE.
+
 	* mpz/tests/t-jac.c: Test limbs on mpn_jacobi_base, not just ulongs.
 
 	* gmp-impl.h, mpn/tests/try.c, mpn/tests/spinner.c, tune/speed.c:
