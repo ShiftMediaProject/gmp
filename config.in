@@ -132,6 +132,7 @@ MA 02111-1307, USA.
 
 /* Define one of these to 1 for the host CPU family.
    If your CPU is not in any of these families, leave all undefined. */
+#undef HAVE_HOST_CPU_FAMILY_alpha
 #undef HAVE_HOST_CPU_FAMILY_m68k
 #undef HAVE_HOST_CPU_FAMILY_power
 #undef HAVE_HOST_CPU_FAMILY_powerpc
