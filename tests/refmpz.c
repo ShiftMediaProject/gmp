@@ -1,6 +1,6 @@
 /* Reference mpz functions.
 
-Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1997, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -32,6 +32,17 @@ MA 02111-1307, USA. */
 
 /* Change this to "#define TRACE(x) x" for some traces. */
 #define TRACE(x) 
+
+
+/* FIXME: Shouldn't use plain mpz functions in a reference routine. */
+void
+refmpz_combit (mpz_ptr r, unsigned long bit)
+{
+  if (mpz_tstbit (r, bit))
+    mpz_clrbit (r, bit);
+  else
+    mpz_setbit (r, bit);
+}
 
 
 unsigned long

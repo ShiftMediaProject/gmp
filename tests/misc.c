@@ -302,15 +302,6 @@ mpz_pow2abs_p (mpz_srcptr z)
   return POW2_P (ptr[i]);  /* high limb power of 2 */
 }
 
-void
-mpz_flipbit (mpz_ptr r, unsigned long bit)
-{
-  if (mpz_tstbit (r, bit))
-    mpz_clrbit (r, bit);
-  else
-    mpz_setbit (r, bit);
-}
-
 
 /* Exponentially distributed between 0 and 2^nbits-1, meaning the number of
    bits in the result is uniformly distributed between 0 and nbits-1.

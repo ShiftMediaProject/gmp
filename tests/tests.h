@@ -110,7 +110,6 @@ void mpz_errandomb __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                             unsigned long nbits));
 void mpz_errandomb_nonzero __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                                     unsigned long nbits));
-void mpz_flipbit __GMP_PROTO ((mpz_ptr r, unsigned long bit));
 void mpz_init_set_n __GMP_PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 void mpz_negrandom __GMP_PROTO ((mpz_ptr rop, gmp_randstate_t rstate));
 int mpz_pow2abs_p __GMP_PROTO ((mpz_srcptr z)) __GMP_ATTRIBUTE_PURE;
@@ -308,6 +307,7 @@ void refmpq_add __GMP_PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
 void refmpq_sub __GMP_PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
 
 
+void refmpz_combit __GMP_PROTO ((mpz_ptr r, unsigned long bit));
 unsigned long refmpz_hamdist __GMP_PROTO ((mpz_srcptr x, mpz_srcptr y));
 int refmpz_kronecker __GMP_PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
 int refmpz_jacobi __GMP_PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
