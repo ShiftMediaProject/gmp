@@ -30,15 +30,15 @@ gmp_randclear (rstate)
      gmp_randstate_t rstate;
 #endif
 {
-  mpz_clear (rstate->seed);
+  mpz_clear (rstate->_mp_seed);
 
-  switch (rstate->alg)
+  switch (rstate->_mp_alg)
     {
     case GMP_RAND_ALG_LC:
-      mpz_clear (rstate->algdata.lc->a);
-      if (rstate->algdata.lc->m2exp == 0)
-	mpz_clear (rstate->algdata.lc->m);
-      (*__gmp_free_func) (rstate->algdata.lc, sizeof (*rstate->algdata.lc));
+      mpz_clear (rstate->_mp_algdata._mp_lc->_mp_a);
+      if (rstate->_mp_algdata._mp_lc->_mp_m2exp == 0)
+	mpz_clear (rstate->_mp_algdata._mp_lc->_mp_m);
+      (*__gmp_free_func) (rstate->_mp_algdata._mp_lc, sizeof (*rstate->_mp_algdata._mp_lc));
       break;
 
 #if 0

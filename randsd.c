@@ -27,5 +27,5 @@ void
 gmp_randseed (gmp_randstate_t rstate,
 	      mpz_srcptr seed)
 {
-  mpz_set (rstate->seed, seed);
+  mpz_set (rstate->_mp_seed, seed);
 }

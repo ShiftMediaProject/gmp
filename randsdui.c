@@ -27,5 +27,5 @@ void
 gmp_randseed_ui (gmp_randstate_t rstate,
                  unsigned long int seed)
 {
-  mpz_set_ui (rstate->seed, seed);
+  mpz_set_ui (rstate->_mp_seed, seed);
 }
