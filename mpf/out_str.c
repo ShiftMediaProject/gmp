@@ -2,7 +2,7 @@
    the float OP to STREAM in base BASE.  Return the number of characters
    written, or 0 if an error occurred.
 
-Copyright 1996, 1997, 2001 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,8 +46,7 @@ mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
   if (base == 0)
     base = 10;
   if (n_digits == 0)
-    n_digits = (((op->_mp_prec - 1) * BITS_PER_MP_LIMB)
-		* __mp_bases[base].chars_per_bit_exactly);
+    MPF_SIGNIFICANT_DIGITS (n_digits, base, op->_mp_prec);
 
   if (stream == 0)
     stream = stdout;
