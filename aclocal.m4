@@ -367,10 +367,27 @@ dnl  to get the "checking" message printed though.
 
 AC_DEFUN(GMP_PROG_NM,
 [dnl  Make sure we're the first to call AC_PROG_NM, so our extra flags are
- dnl  used by everyone.
+dnl   used by everyone.
 AC_BEFORE([$0],[AC_PROG_NM])
 gmp_user_NM=$NM
 AC_PROG_NM
+
+# FIXME: When cross compiling (ie. $ac_tool_prefix not empty), libtool
+# defaults to plain "nm" if a "${ac_tool_prefix}nm" is not found.  In this
+# case run it again to try the native "nm", firstly so that likely locations
+# are searched, secondly so that -B or -p are added if necessary for BSD
+# format.  This is necessary for instance on OSF with "./configure
+# --build=alphaev5-dec-osf --host=alphaev6-dec-osf".
+#
+if test -z "$gmp_user_NM" && test -n "$ac_tool_prefix" && test "$NM" = nm; then
+  $as_unset lt_cv_path_NM
+  gmp_save_ac_tool_prefix=$ac_tool_prefix
+  ac_tool_prefix=
+  NM=
+  AC_PROG_NM
+  ac_tool_prefix=$gmp_save_ac_tool_prefix
+fi
+
 if test -z "$gmp_user_NM"; then
                         eval nmflags=\"\$nm${abi1}_flags\"
   test -n "$nmflags" || eval nmflags=\"\$nm${abi2}_flags\"
@@ -1214,36 +1231,63 @@ dnl  GMP_ASM_LSYM_PREFIX
 dnl  -------------------
 dnl  What is the prefix for a local label?
 dnl
-dnl  FIXME: Consider validating $NM by first requiring that gurkmacka shows
-dnl  up when unprefixed.
+dnl  The prefixes tested are,
+dnl
+dnl      L  - usual for underscore systems
+dnl      .L - usual for non-underscore systems
+dnl      $  - alpha (gas and OSF system assembler)
+dnl      L$ - hppa (gas and HP-UX system assembler)
+dnl
+dnl  The default is "L" if the tests fail for any reason.  There's a good
+dnl  chance this will be adequate, since on most systems labels are local
+dnl  anyway unless given a ".globl", and an "L" will avoid clashes with
+dnl  other identifers.
+dnl
+dnl  For gas, ".L" is normally purely local to the assembler, it doesn't get
+dnl  put into the object file at all.  This style is preferred, to keep the
+dnl  object files nice and clean.
+dnl
+dnl  BSD format nm produces a line like the following.  The lower case "t"
+dnl  indicates a local text segment label.  On OSF with "nm -B", an "N" is
+dnl  printed instead.
+dnl
+dnl      00000000 t Lgurkmacka
+dnl
+dnl  HP-UX nm prints an error message (though seems to give a 0 exit) if
+dnl  there's no symbols at all in an object file, hence the use of "dummy".
 
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([what prefix to use for a local label], 
                gmp_cv_asm_lsym_prefix,
-[gmp_cv_asm_lsym_prefix="L"
-gmp_found=no
-for gmp_tmp_pre in L .L $ L$; do
+[for gmp_tmp_pre in L .L $ L$; do
   echo "Trying $gmp_tmp_pre" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [dummy${gmp_cv_asm_label_suffix}
-${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
-	.byte 0],
-  [$NM conftest.$ac_objext >&AC_FD_CC 2>&AC_FD_CC
-  if test $? != 0; then
-    AC_MSG_WARN([NM failure, using default local label $gmp_cv_asm_lsym_prefix])
-    gmp_found=yes
+${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
+  [if $NM conftest.$ac_objext >conftest.nm 2>&AC_FD_CC; then : ; else
+    cat conftest.nm >&AC_FD_CC
+    AC_MSG_WARN(["$NM" failure])
     break
   fi
-  if $NM conftest.$ac_objext | grep gurkmacka >/dev/null; then : ; else
+  cat conftest.nm >&AC_FD_CC
+  if grep gurkmacka conftest.nm >/dev/null; then : ; else
+    # no mention of the symbol, this is good
     gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
-    gmp_found=yes
     break
-  fi])
+  fi
+  if grep [' [Nt] .*gurkmacka'] conftest.nm >/dev/null; then
+    # symbol mentioned as a local, use this if nothing better
+    if test -z "$gmp_cv_asm_lsym_prefix"; then
+      gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
+    fi
+  fi
+  ])
 done
 rm -f conftest*
-if test $gmp_found = no; then
+if test -z "$gmp_cv_asm_lsym_prefix"; then
+  gmp_cv_asm_lsym_prefix=L
   AC_MSG_WARN([cannot determine local label, using default $gmp_cv_asm_lsym_prefix])
 fi
 ])
