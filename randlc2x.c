@@ -1,5 +1,5 @@
 /* gmp_rand_init_lc_2exp (state, a, c, m2exp) -- Initialize random
-   state STATE for a linear congruental generator with multiplier A,
+   state STATE for a linear congruential generator with multiplier A,
    adder C, and modulus 2 ^ M2EXP.
 
 Copyright (C) 2000  Free Software Foundation, Inc.

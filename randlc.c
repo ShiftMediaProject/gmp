@@ -1,5 +1,5 @@
 /* gmp_rand_init_lc (state, a, c, m) -- Initialize a random state for
-   a linear congruental generator with multiplier A, adder C, and
+   a linear congruential generator with multiplier A, adder C, and
    modulus M.
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.

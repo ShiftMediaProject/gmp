@@ -77,7 +77,7 @@ gmp_rand_init (s, size, alg)
 {
   switch (alg)
     {
-    case GMP_RAND_ALG_LC:	/* Linear congruental.  */
+    case GMP_RAND_ALG_LC:	/* Linear congruential.  */
       {
 	__gmp_rand_lc_scheme_struct *sp;
 	mpz_t a;

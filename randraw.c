@@ -25,7 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* For linear congruental (LC), we use one of algorithms (1) or (2).
+/* For linear congruential (LC), we use one of algorithms (1) or (2).
    (gmp-3.0 uses algorithm (1) with 'm' as a power of 2.)
 
 LC algorithm (1).
