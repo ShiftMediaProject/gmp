@@ -280,6 +280,8 @@
      compiler builtins.  One thing current tests don't cover: HPUX 10 C
      compiler supports <code>alloca</code>, but cannot find any symbol to test
      for HPUX 10.  Damn.
+<li> Determine floating-point format with a feature test.  Get rid of large
+     #ifdef mess for FP format in gmp-impl.h.
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
 <li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
      "hinv -c processor" gives lots of information on Irix.

@@ -1,3 +1,20 @@
+2000-10-23  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in, SPEED_CYCLECOUNTER_OBJS switch: Add ia64 case.
+
+	* mpn/ia64/gmp-mparam.h: Fill in some parameters.
+
+	* mpn/ia64/submul_1.c: New file.
+
+	* tune/ia64.asm: New file.
+
+	* gmp-impl.h (union ieee_double_extract): Handle ia64.
+
+	* mpn/mp_bases.c: Decrease chars_per_bit_exactly for entry 1 to
+	work around buggy ia64-linux.
+
+	* longlong.h (ia64 umul_ppmm): Update register flags to match new GCC.
+
 2000-10-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/ev6/gmp-mparam.h (DC_THRESHOLD): Update.
