@@ -31,9 +31,9 @@ MA 02111-1307, USA. */
  || defined (MIPSEL) || defined (_MIPSEL)				\
  || defined (__ns32000__)						\
  || defined (__WINNT) || defined (_WIN32)
-#define _MPFR_NAN_BYTES  { 0, 0, 0xc0, 0x7f }
-#define _MPFR_INFP_BYTES { 0, 0, 0xf0, 0x7f }
-#define _MPFR_INFM_BYTES { 0, 0, 0xf0, 0xff }
+#define _MPFR_NAN_BYTES  { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f }
+#define _MPFR_INFP_BYTES { 0, 0, 0x80, 0x7f }
+#define _MPFR_INFM_BYTES { 0, 0, 0x80, 0xff }
 #else
 #if defined (_BIG_ENDIAN) || defined (__BIG_ENDIAN__)			\
  || defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
@@ -52,9 +52,9 @@ MA 02111-1307, USA. */
  || defined (__sh__)							\
  || defined (__sparc) || defined (sparc)				\
  || defined (__we32k__)
-#define _MPFR_NAN_BYTES  { 0x7f, 0xc0, 0, 0 }
-#define _MPFR_INFP_BYTES { 0x7f, 0xf0, 0, 0 }
-#define _MPFR_INFM_BYTES { 0xff, 0xf0, 0, 0 }
+#define _MPFR_NAN_BYTES  { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 }
+#define _MPFR_INFP_BYTES { 0x7f, 0x80, 0, 0 }
+#define _MPFR_INFM_BYTES { 0xff, 0x80, 0, 0 }
 #endif
 #endif
 
@@ -62,7 +62,7 @@ MA 02111-1307, USA. */
 #define MPFR_DBL_NAN ((double) NAN)
 #else
 #ifdef _MPFR_NAN_BYTES
-static union { unsigned char c[4]; float d; } __mpfr_nan
+static union { unsigned char c[8]; double d; } __mpfr_nan
 = { _MPFR_NAN_BYTES };
 #define MPFR_DBL_NAN ((double) __mpfr_nan.d)
 #else
