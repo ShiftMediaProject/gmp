@@ -56,8 +56,8 @@
     <li> Consider N-way Toom-Cook.  See Knuth's Seminumerical
 	 Algorithms for details on the method.  Code implementing it
 	 exists.  This is asyptotically inferior to FFTs, but is finer
-	 grained.  A Toom-4 might fit in between toom-3 and the FFTs,
-	 or it might not.
+	 grained.  A toom-4 might fit in between toom-3 and the FFTs
+	 (or it might not).
 
     <li> It's possible CPU dependent effects like cache locality will
          have a greater impact on speed than algorithmic improvements.
@@ -67,10 +67,9 @@
 
 <p> <li> <strong>Assembly routines</strong>
 
-  <p> Write new and tune existing assembly routines.  The functions in
-  mpn/tests are useful for testing and timing the routines you write.  See the
-  README file in that directory for instructions on how to use the various test
-  files.
+  <p> Write new and tune existing assembly routines.  The programs in mpn/tests
+  and the tune/speed.c program are useful for testing and timing the routines
+  you write.  See the README files in those directories for more information.
 
   <p> Please make sure your new routines are fast for these three situations:
   <ol>
@@ -91,9 +90,9 @@
   <p> Using floating-point operations is interesting but somewhat tricky.
   Since IEEE double has 53 bit of mantissa, one has to split the operands in
   small prices, so that no result is greater than 2^53.  For 32-bit computers,
-  splitting one operand in 16-bit pieces works.  For 64-bit machines, one
-  operand can be split in 21-bit pieces and the other in 32-bit pieces.  (A
-  64-bit operand can be split in just three 21-bit pieces if one allows the
+  splitting one operand into 16-bit pieces works.  For 64-bit machines, one
+  operand can be split into 21-bit pieces and the other into 32-bit pieces.  (A
+  64-bit operand can be split into just three 21-bit pieces if one allows the
   split operands to be negative!)
 
 
@@ -109,10 +108,10 @@
 
 <p> <li> <strong>Math functions for the mpf layer</strong>
 
-  <p> Implement the functions of math.h for the GMP mpf layer!  Check the paper
-  "Pi and the AGM" for ideas how to do this.  These functions are desirable:
-  acos, acosh, asin, asinh, atan, atanh, atan2, cos, cosh, exp, log, log10,
-  pow, sin, sinh, tan, tanh.
+  <p> Implement the functions of math.h for the GMP mpf layer!  Check the book
+  "Pi and the AGM" by Borwein and Borwein for ideas how to do this.  These
+  functions are desirable: acos, acosh, asin, asinh, atan, atanh, atan2, cos,
+  cosh, exp, log, log10, pow, sin, sinh, tan, tanh.
 
 <p> <li> <strong>Faster sqrt</strong>
 
