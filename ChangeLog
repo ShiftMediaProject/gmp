@@ -28,6 +28,8 @@
 
 2000-04-15  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tdiv_q.c: Remove debug code.
+
 	* mpn/generic/divrem.c: Remove C++ style `//' commented-out code.
 	* mpn/generic/sb_divrem_mn.c: Likewise.
 
