@@ -155,21 +155,21 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   SIZ (rstate->_mp_seed) = tn;
 
   {
-    /* Discard the lower half of the result.  */
-    unsigned long int discardb = m2exp / 2;
-    mp_size_t discardl = discardb / GMP_NUMB_BITS;
+    /* Discard the lower m2exp/2 bits of result.  */
+    unsigned long int bits = m2exp / 2;
+    mp_size_t xn = bits / GMP_NUMB_BITS;
 
-    tn -= discardl;
+    tn -= xn;
     if (tn > 0)
       {
-	unsigned int cnt = discardb % GMP_NUMB_BITS;
+	unsigned int cnt = bits % GMP_NUMB_BITS;
 	if (cnt != 0)
-	  {
-	    mp_size_t rn = (discardb + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
-	    mpn_rshift (rp, tp + discardl, tn, cnt);
+	  { 
+	    mpn_rshift (tp, tp + xn, tn, cnt);
+	    MPN_COPY_INCR (rp, tp, xn + 1); 
 	  }
 	else			/* Even limb boundary.  */
-	  MPN_COPY_INCR (rp, tp + discardl, tn);
+	  MPN_COPY_INCR (rp, tp + xn, tn);
       }
   }
 
