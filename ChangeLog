@@ -5,6 +5,8 @@
 
 2001-03-24  Kevin Ryde  <kevin@swox.se>
 
+	* longlong.h: Add comments to P5 count_leading_zeros.
+
 	* demos/expr/exprz.c,t-expr.c,README: Add congruent_p and divisible_p.
 
 2001-03-23  Kevin Ryde  <kevin@swox.se>
