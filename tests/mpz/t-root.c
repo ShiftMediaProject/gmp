@@ -66,23 +66,29 @@ main (int argc, char **argv)
       x2_size = mpz_get_ui (bs) + 10;
       mpz_rrandomb (x2, rands, x2_size);
 
-      mpz_urandomb (bs, rands, 5L);
-      nth = mpz_getlimbn (bs, (mp_size_t) 0) % mpz_sizeinbase (x2, 2) + 1;
+      mpz_urandomb (bs, rands, 15);
+      nth = mpz_getlimbn (bs, 0) % mpz_sizeinbase (x2, 2) + 2;
 
-      mpz_urandomb (bs, rands, 2);
+      mpz_root (root1, x2, nth);
+
+      mpz_urandomb (bs, rands, 4);
       bsi = mpz_get_ui (bs);
       if ((bsi & 1) != 0)
 	{
-	  /* With 50% probability, set x2 just below a perfect power.  */
-	  mpz_root (root1, x2, nth);
+	  /* With 50% probability, set x2 near a perfect power.  */
 	  mpz_pow_ui (x2, root1, nth);
-	  if (mpz_sgn (x2) != 0)
-	    mpz_sub_ui (x2, x2, 1L);
+	  if ((bsi & 2) != 0)
+	    {
+	      mpz_sub_ui (x2, x2, bsi >> 2);
+	      mpz_abs (x2, x2);
+	    }
+	  else
+	    mpz_add_ui (x2, x2, bsi >> 2);
+	  mpz_root (root1, x2, nth);
 	}
 
       /* printf ("%ld %lu\n", SIZ (x2), nth); */
 
-      mpz_root (root1, x2, nth);
       mpz_rootrem (root2, rem2, x2, nth);
       mpz_pow_ui (temp, root1, nth);
       mpz_add (temp2, temp, rem2);
