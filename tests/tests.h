@@ -148,6 +148,9 @@ void refmpn_com_n _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyi _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyd _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 
+unsigned refmpn_count_leading_zeros _PROTO ((mp_limb_t x));
+unsigned refmpn_count_trailing_zeros _PROTO ((mp_limb_t x));
+
 mp_limb_t refmpn_divexact_by3 _PROTO ((mp_ptr rp, mp_srcptr sp,
                                        mp_size_t size));
 mp_limb_t refmpn_divexact_by3c _PROTO ((mp_ptr rp, mp_srcptr sp,
@@ -182,6 +185,9 @@ void refmpn_iorn_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 
 mp_limb_t refmpn_lshift _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
+mp_limb_t refmpn_lshift_or_copy _PROTO ((mp_ptr wp,
+                                         mp_srcptr xp, mp_size_t size,
+                                         unsigned shift));
 
 mp_ptr refmpn_malloc_limbs _PROTO ((mp_size_t size));
 mp_ptr refmpn_malloc_limbs_aligned _PROTO ((size_t n, size_t m));
@@ -220,6 +226,9 @@ mp_limb_t refmpn_preinv_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
 
 mp_limb_t refmpn_rshift _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
+mp_limb_t refmpn_rshift_or_copy _PROTO ((mp_ptr wp,
+                                         mp_srcptr xp, mp_size_t size,
+                                         unsigned shift));
 
 mp_limb_t refmpn_sb_divrem_mn _PROTO ((mp_ptr qp,
                                        mp_ptr np, mp_size_t nsize,
