@@ -353,7 +353,9 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define UNLIKELY(cond)                 __GMP_UNLIKELY(cond)
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
+#undef MIN
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
+#undef MAX
 #define MAX(h,i) ((h) > (i) ? (h) : (i))
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
