@@ -29,5 +29,5 @@ INCLUDES = -I$(top_srcdir)
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
   add.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
-  get_den.c get_num.c init.c inv.c mul.c neg.c set.c set_den.c \
+  get_den.c get_num.c init.c inv.c mul.c neg.c out_str.c set.c set_den.c \
   set_num.c set_si.c set_ui.c sub.c equal.c set_z.c set_d.c swap.c
