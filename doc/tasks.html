@@ -112,6 +112,10 @@
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> want better
      algorithm selection, and the latter should use REDC.  Both could
      change to use an <code>mpn_powm</code> and <code>mpn_redc</code>.
+<li> <code>mpz_powm</code> could handle negative exponents by powering the
+     modular inverse of the base.  But what to do if an inverse doesn't exist
+     (base and modulus have common factors)?  Throw a divide by zero maybe, or
+     return a flag like <code>mpz_invert</code> does.
 <li> <code>mpn_gcd</code> might be able to be sped up on small to
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
@@ -177,9 +181,6 @@
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
      saturate the cache, which will happen at 7.5 cycles/limb.
-<li> Sparc & SparcV8: Enable umul.asm for native cc.  The generic
-     longlong.h umul_ppmm is suspected to be causing sqr_basecase to
-     be slower than mul_basecase.
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
      <code>mpn_sqr_basecase</code>.  Using four "<code>mulx</code>"s either
      with an asm block or via the generic C code is about 90 cycles.
@@ -287,12 +288,25 @@
      example is -n32 and -64 on Irix.
 <li> There are a few filenames that don't fit in 14 chars, if this matters.
 <li> Enable support for FORTRAN versions of mpn files (eg. for
-     mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
-     <code>AC_PROG_F77</code> if such a file is found.  Automake will
-     generate some of what's needed in the makefiles, but libtool doesn't
-     know fortran and so rules like the current ".asm.lo" will be needed.
+     mpn/cray/mulww.f).  Add "f" to MPN_SUFFIXES, run <code>AC_PROG_F77</code>
+     if such a file is found.  Automake will generate some of what's needed in
+     the makefiles, but libtool doesn't know fortran and so rules like the
+     current ".asm.lo" will be needed.
 <li> Configure in demos directory.  Now pexpr.c is becoming the usual *nix
      mess of nested ifdefs.
+<li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
+     used.  Check all such for bit rot and then put umul and udiv in
+     <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
+     <br> In particular Sparc and SparcV8 on non-gcc should benefit from
+     umul.asm enabled; the generic umul is suspected to be making sqr_basecase
+     slower than mul_basecase.
+<li> HPPA <code>mpn_umul_ppmm</code> and <code>mpn_udiv_qrnnd</code> have a
+     different parameter order than those functions on other CPUs.  It might
+     avoid confusion to have them under different names, maybe
+     <code>mpn_umul_ppmm_plast</code> or some such.  Prototypes then wouldn't
+     be conditionalized, and the appropriate form could be selected with the
+     <code>HAVE_NATIVE</code> scheme if/when the code switches to use a
+     <code>PROLOGUE</code> style.
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
