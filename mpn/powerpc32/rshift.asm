@@ -1,6 +1,7 @@
 dnl  PowerPC-32 mpn_rshift -- Shift a number right.
 
-dnl  Copyright 1995, 1998, 2000, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1995, 1998, 2000, 2002, 2003, 2004 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -26,7 +27,8 @@ C 603e:            ?
 C 604e:            3.0
 C 75x (G3):        3,0
 C 7400,7410 (G4):  3.0
-C 744x,745x (G4+): 2.5
+C 7445,7455 (G4+): 2.75
+C 7447,7457 (G4+): 2.375
 C power4/ppc970:   2.5
 
 C INPUT PARAMETERS
