@@ -195,7 +195,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 		{
 		  n0 = up[i] << GMP_NAIL_BITS;
 		  udiv_qrnnd (*qp, r, r,
-			      ((n1 << norm) | (n0 >> (GMP_NUMB_BITS - norm))),
+			      (n1 << norm) | (n0 >> (GMP_NUMB_BITS - norm)),
 			      d);
 		  r >>= GMP_NAIL_BITS;
 		  qp--;
