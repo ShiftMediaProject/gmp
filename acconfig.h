@@ -48,6 +48,10 @@ MA 02111-1307, USA.
 #undef HAVE_TARGET_CPU_ultrasparc1
 #undef HAVE_TARGET_CPU_ultrasparc2
 #undef HAVE_TARGET_CPU_sparc64
+#undef HAVE_TARGET_CPU_hppa1_0
+#undef HAVE_TARGET_CPU_hppa1_1
+#undef HAVE_TARGET_CPU_hppa2_0n
+#undef HAVE_TARGET_CPU_hppa2_0w
 
 /* a dummy to make autoheader happy */
 #undef HAVE_TARGET_CPU_
