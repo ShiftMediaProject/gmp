@@ -1,9 +1,8 @@
 divert(-1)
 
-dnl  m4 macros for PowerPC assembler (32 and 64).
+dnl  m4 macros for PowerPC assembler (32 and 64 bit).
 
-
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,10 +22,30 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
+dnl
+dnl  This is the same as the default in mpn/asm-defs.m4, but with ALIGN(4)
+dnl  not 8.
+dnl
+dnl  4-byte alignment is normally enough, certainly it's what gcc gives.  We
+dnl  don't want bigger alignment within PROLOGUE since it can introduce
+dnl  padding into multiple-entrypoint routines, and with gas such padding is
+dnl  zero words, which are not valid instructions.
+
+define(`PROLOGUE_cpu',
+m4_assert_numargs(1)
+`	TEXT
+	ALIGN(4)
+	GLOBL	`$1' GLOBL_ATTR
+	TYPE(`$1',`function')
+`$1'LABEL_SUFFIX')
+
+
 dnl  Usage: r0 ... r31, cr0 ... cr7
 dnl
 dnl  Registers names, either left as "r0" etc or mapped to plain 0 etc,
-dnl  according to the result of GMP_ASM_POWERPC_REGISTERS.
+dnl  according to the result of the GMP_ASM_POWERPC_REGISTERS configure
+dnl  test.
 
 ifelse(WANT_R_REGISTERS,no,`
 forloop(i,0,31,`deflit(`r'i,i)')
