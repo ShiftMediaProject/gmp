@@ -37,6 +37,8 @@
 
 2000-04-23  Torbjorn Granlund  <tege@swox.com>
 
+	* config.sub: Merge with FSF version of April 23.
+
 	* mpn/powerpc32: Use dnl/C instead of `#' for comments.
 
 	* config.guess: Get "model" limit between pentium 2 and pentium3 right.
@@ -131,7 +133,7 @@
 
 	* rand.c: Call mpz_clear for otherwise leaking mpz_t.
 
-	* mpz/pprime_p2.c (mpz_probab_prime_p): Merge handling of negative
+	* mpz/pprime_p.c (mpz_probab_prime_p): Merge handling of negative
 	n into code for handling small positive n.  Merge variables m and n.
 	After dividing, simply call mpz_millerrabin.
 	(isprime): Local variables now use attribute `long'.
