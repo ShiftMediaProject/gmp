@@ -233,6 +233,11 @@ void refmpn_xor_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 int refmpn_zero_p _PROTO ((mp_srcptr ptr, mp_size_t size));
 
 
+
+void refmpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+void refmpf_sub _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+
+
 #if defined (__cplusplus)
 }
 #endif
