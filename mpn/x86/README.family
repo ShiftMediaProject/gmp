@@ -10,7 +10,7 @@ ASM FILES
 
 The x86 .asm files are BSD style x86 assembler code, first put through m4
 for macro processing.  The generic mpn/asm-defs.m4 is used, together with
-mpn/x86/x86-defs.m4.  Detailed notes are in those files.
+mpn/x86/x86-defs.m4.  See comments in those files.
 
 The code is meant for use with GNU "gas" or a system "as".  There's no
 support for assemblers that demand Intel style, and with gas freely
@@ -96,9 +96,23 @@ the latter, and as of 2.9.5 it's the default for GNU/Linux too.
 
 ASSEMBLER COMMENTS
 
-Solaris "as" doesn't support "#" commenting, using /* */ instead,
-unfortunately.  For that reason "C" commenting is used (see asm-defs.m4) and
-the intermediate ".s" files have no comments.
+Solaris "as" doesn't support "#" commenting, using /* */ instead.  For that
+reason "C" commenting is used (see asm-defs.m4) and the intermediate ".s"
+files have no comments.
+
+
+
+TEMPORARY LABELS
+
+Temporary numbered labels like "1:" used with "1f" or "1b" are available in
+"gas" and Solaris "as", but not in SCO "as".  Normal L() labels should be
+used instead, possibly with a counter to make them unique, see jadcl0() for
+instance.  A separate counter for each macro makes it possible to nest them,
+for instance movl_text_address() can be used within an ASSERT().
+
+"1:" etc must be avoided in gcc __asm__ blocks too, but of course code there
+doesn't go through m4 processing, so other arrangements are needed to make
+labels unique.  This doesn't arise currently.
 
 
 
@@ -121,12 +135,12 @@ SHLD/SHRD INSTRUCTIONS
 
 The %cl count forms of double shift instructions like "shldl %cl,%eax,%ebx"
 must be written "shldl %eax,%ebx" for some assemblers.  gas takes either,
-Solaris "as" doesn't allow %cl, gcc generates %cl for gas and NeXT (which is
-gas), and omits %cl elsewhere.
+Solaris "as" doesn't allow %cl, gcc generates %cl for gas and NeXT (which
+has gas), and omits %cl elsewhere.
 
 For GMP an autoconf test is used to determine whether %cl should be used and
-the macros shldl, shrdl, shldw and shrdw in mpn/x86/x86-defs.m4 then pass
-through or omit %cl as necessary.  See comments with those macros for usage.
+the macros shldl, shrdl, shldw and shrdw in mpn/x86/x86-defs.m4 pass through
+or omit %cl as necessary.  See comments with those macros for usage.
 
 
 
@@ -134,10 +148,9 @@ DIRECTION FLAG
 
 The x86 calling conventions say that the direction flag should be clear at
 function entry and exit.  (See iBCS2 and SVR4 ABI books, references below.)
-
 Although this has been so since the year dot, it's not absolutely clear
 whether it's universally respected.  Since it's better to be safe than
-sorry, gmp follows glibc and does a "cld" if it depends on the direction
+sorry, GMP follows glibc and does a "cld" if it depends on the direction
 flag being clear.  This happens only in a few places.
 
 
@@ -169,7 +182,7 @@ PIC for calls as opposed to computed jumps etc.  But there's only ever
 likely to be a handful of calls out of assembler, and getting the same
 optimization for C intra-library calls would be more important.  There seems
 no easy way to tell gcc that certain functions can be called non-PIC, and
-unfortunately many gmp functions use the global memory allocation variables,
+unfortunately many GMP functions use the global memory allocation variables,
 so they need the GOT anyway.  Object files with no global data references
 and only intra-library calls could go into the library as non-PIC under
 -Bsymbolic.  Integrating this into libtool and automake is left as an
@@ -265,7 +278,7 @@ and mpn_copyd), the calculations change as follows.
 OLD GAS 1.92.3
 
 This version comes with FreeBSD 2.2.8 and has a couple of gremlins that
-affect gmp code.
+affect GMP code.
 
 Firstly, an expression involving two forward references to labels comes out
 as zero.  For example,
