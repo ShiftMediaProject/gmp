@@ -406,8 +406,8 @@ SCANF_OBJECTS = \
 
 # no $U for C++ files
 CXX_OBJECTS = \
-  cxx/isfuns.lo cxx/ismpf.lo cxx/ismpq.lo cxx/ismpz.lo		\
-  cxx/osdoprnti.lo cxx/osfuns.lo				\
+  cxx/isfuns.lo cxx/ismpf.lo cxx/ismpq.lo cxx/ismpz.lo cxx/ismpznw.lo	\
+  cxx/osdoprnti.lo cxx/osfuns.lo					\
   cxx/osmpf.lo cxx/osmpq.lo cxx/osmpz.lo
 
 
