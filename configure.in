@@ -170,6 +170,12 @@ case "$target" in
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
+  sparc64-*-linux*)
+   os_64bit=yes
+    gmp_cflags64_gcc="$gmp_cflags_gcc -m64"
+    gmp_cflags_gcc="$gmp_cflags_gcc -m32"
+    gmp_xoptflags_gcc="-mcpu=ultrasparc -mvis"
+    ;;
   ultrasparc*-*-* | sparcv9-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
@@ -410,6 +416,9 @@ case ${target} in
     else
       path="sparc32/v9 sparc32/v8 sparc32"
     fi
+    ;;
+  sparc64-*-linux*)
+    path="sparc64"
     ;;
   sparcv8*-*-* | microsparc*-*-*)
 	path="sparc32/v8 sparc32"
