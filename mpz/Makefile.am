@@ -28,7 +28,7 @@ INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
-  abs.c add_ui.c addmul_ui.c and.c array_init.c \
+  abs.c addmul_ui.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
@@ -43,14 +43,15 @@ libmpz_la_SOURCES = \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
   set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
-  sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
+  swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
 
-EXTRA_DIST = aors.c fits.c mul_siui.c
+EXTRA_DIST = aors.c aors_ui.c fits.c mul_siui.c
 
 nodist_libmpz_la_SOURCES =			\
   add.c sub.c					\
+  add_ui.c sub_ui.c 				\
   fits_sint.c fits_slong.c fits_sshort.c	\
   fits_uint.c fits_ulong.c fits_ushort.c	\
   mul_si.c mul_ui.c
@@ -61,6 +62,11 @@ add.c: $(srcdir)/aors.c
 	cp $(srcdir)/aors.c add.c
 sub.c: $(srcdir)/aors.c
 	cp $(srcdir)/aors.c sub.c
+
+add_ui.c: $(srcdir)/aors_ui.c
+	cp $(srcdir)/aors_ui.c add_ui.c
+sub_ui.c: $(srcdir)/aors_ui.c
+	cp $(srcdir)/aors_ui.c sub_ui.c
 
 fits_sint.c: $(srcdir)/fits.c
 	cp $(srcdir)/fits.c fits_sint.c
