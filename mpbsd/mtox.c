@@ -1,7 +1,7 @@
 /* mtox -- Convert OPERAND to hexadecimal and return a malloc'ed string
    with the result of the conversion.
 
-Copyright 1991, 1994, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,13 +27,11 @@ MA 02111-1307, USA. */
 char *
 mtox (const MINT *x)
 {
-  mp_ptr xp;
   mp_size_t xsize = x->_mp_size;
   mp_size_t xsign;
   unsigned char *str, *s;
-  size_t str_size, i;
+  size_t str_size, alloc_size, i;
   int zeros;
-  TMP_DECL (marker);
 
   if (xsize == 0)
     {
@@ -46,21 +44,15 @@ mtox (const MINT *x)
   if (xsize < 0)
     xsize = -xsize;
 
-  TMP_MARK (marker);
-  str_size = ((size_t) (xsize * BITS_PER_MP_LIMB
-			* __mp_bases[16].chars_per_bit_exactly)) + 3;
-  str = (unsigned char *) (*__gmp_allocate_func) (str_size);
+  MPN_GET_STR_SIZE (alloc_size, 16, xsize);
+  alloc_size += 2; /* '\0' and possible '-' */
+  str = (unsigned char *) (*__gmp_allocate_func) (alloc_size);
   s = str;
 
   if (xsign < 0)
     *s++ = '-';
 
-  /* Move the number to convert into temporary space, since mpn_get_str
-     clobbers its argument + needs one extra high limb....  */
-  xp = (mp_ptr) TMP_ALLOC ((xsize + 1) * BYTES_PER_MP_LIMB);
-  MPN_COPY (xp, x->_mp_d, xsize);
-
-  str_size = mpn_get_str (s, 16, xp, xsize);
+  str_size = mpn_get_str (s, 16, PTR(x), xsize);
 
   /* mpn_get_str might make some leading zeros.  Skip them.  */
   for (zeros = 0; s[zeros] == 0; zeros++)
@@ -71,5 +63,8 @@ mtox (const MINT *x)
     s[i] = "0123456789abcdef"[s[zeros + i]];
   s[str_size] = 0;
 
+  str_size += 1 + (s - str);
+  ASSERT (str_size == strlen (str) + 1);
+  __GMP_REALLOCATE_FUNC_MAYBE (str, alloc_size, str_size);
   return (char *) str;
 }
