@@ -1089,7 +1089,9 @@ void
 tune_preinv_divrem_1 (void)
 {
   static struct param_t  param;
-  double   t1, t2;
+  speed_function_t  divrem_1;
+  const char        *divrem_1_name;
+  double            t1, t2;
 
 #ifndef HAVE_NATIVE_mpn_preinv_divrem_1
 #define HAVE_NATIVE_mpn_preinv_divrem_1 0
@@ -1111,6 +1113,19 @@ tune_preinv_divrem_1 (void)
       return;
     }
 
+  /* If we've got an assembler version of mpn_divrem_1, then compare against
+     that, not the mpn_divrem_1_div generic C.  */
+  if (HAVE_NATIVE_mpn_divrem_1)
+    {
+      divrem_1 = speed_mpn_divrem_1;
+      divrem_1_name = "mpn_divrem_1";
+    }
+  else
+    {
+      divrem_1 = speed_mpn_divrem_1_div;
+      divrem_1_name = "mpn_divrem_1_div";
+    }
+
   param.data_high = DATA_HIGH_LT_R; /* allow skip one division */
   s.size = 200;                     /* generous but not too big */
   /* Divisor, nonzero.  Unnormalized so as to exercise the shift!=0 case,
@@ -1120,16 +1135,16 @@ tune_preinv_divrem_1 (void)
   if (s.r == 0) s.r = 123;
 
   t1 = tuneup_measure (speed_mpn_preinv_divrem_1, &param, &s);
-  t2 = tuneup_measure (speed_mpn_divrem_1_div, &param, &s);
+  t2 = tuneup_measure (divrem_1, &param, &s);
   if (t1 == -1.0 || t2 == -1.0)
     {
-      printf ("Oops, can't measure mpn_preinv_divrem_1 and mpn_divrem_1 at %ld\n",
-              s.size);
+      printf ("Oops, can't measure mpn_preinv_divrem_1 and %s at %ld\n",
+              divrem_1_name, s.size);
       abort ();
     }
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_preinv_divrem_1 %.9f, mpn_divrem_1 %.9f\n",
-            s.size, t1, t2);
+    printf ("size=%ld, mpn_preinv_divrem_1 %.9f, %s %.9f\n",
+            s.size, t1, divrem_1_name, t2);
 
   print_define_remark ("USE_PREINV_DIVREM_1", (mp_size_t) (t1 < t2), NULL);
 }
@@ -1143,7 +1158,9 @@ void
 tune_preinv_mod_1 (void)
 {
   static struct param_t  param;
-  double   t1, t2;
+  speed_function_t  mod_1;
+  const char        *mod_1_name;
+  double            t1, t2;
 
 #ifndef HAVE_NATIVE_mpn_preinv_mod_1
 #define HAVE_NATIVE_mpn_preinv_mod_1 0
@@ -1164,22 +1181,35 @@ tune_preinv_mod_1 (void)
       print_define_remark ("USE_PREINV_MOD_1", 1, "preinv always");
       return;
     }
-  
+
+  /* If we've got an assembler version of mpn_mod_1, then compare against
+     that, not the mpn_mod_1_div generic C.  */
+  if (HAVE_NATIVE_mpn_mod_1)
+    {
+      mod_1 = speed_mpn_mod_1;
+      mod_1_name = "mpn_mod_1";
+    }
+  else
+    {
+      mod_1 = speed_mpn_mod_1_div;
+      mod_1_name = "mpn_mod_1_div";
+    }
+
   param.data_high = DATA_HIGH_LT_R; /* let mpn_mod_1 skip one division */
   s.size = 200;                     /* generous but not too big */
   s.r = randlimb_norm();            /* divisor */
 
   t1 = tuneup_measure (speed_mpn_preinv_mod_1, &param, &s);
-  t2 = tuneup_measure (speed_mpn_mod_1_div, &param, &s);
+  t2 = tuneup_measure (mod_1, &param, &s);
   if (t1 == -1.0 || t2 == -1.0)
     {
-      printf ("Oops, can't measure mpn_preinv_mod_1 and mpn_mod_1_div at %ld\n",
-              s.size);
+      printf ("Oops, can't measure mpn_preinv_mod_1 and %s at %ld\n",
+              mod_1_name, s.size);
       abort ();
     }
   if (option_trace >= 1)
-    printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1_div %.9f\n",
-            s.size, t1, t2);
+    printf ("size=%ld, mpn_preinv_mod_1 %.9f, %s %.9f\n",
+            s.size, t1, mod_1_name, t2);
 
   print_define_remark ("USE_PREINV_MOD_1", (mp_size_t) (t1 < t2), NULL);
 }
