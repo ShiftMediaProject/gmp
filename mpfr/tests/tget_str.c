@@ -1,6 +1,6 @@
 /* Test file for mpfr_get_str.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,45 +23,89 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "gmp.h"
 #include "mpfr.h"
-#include "mpfr-impl.h"
-#include <time.h>
+#ifdef TEST
+#include "mpfr-test.h"
+#endif
 
-void check(d, rnd) double d; unsigned char rnd;
+void check _PROTO((double, mp_rnd_t)); 
+void check3 _PROTO((double, mp_rnd_t, char *)); 
+void check_small _PROTO((void)); 
+
+void check (double d, mp_rnd_t rnd)
 {
-  mpfr_t x; char *str, str2[30]; mp_exp_t e;
+  mpfr_t x; char *str; mp_exp_t e;
 
   mpfr_init2(x, 53);
   mpfr_set_d(x, d, rnd);
   str = mpfr_get_str(NULL, &e, 10, 5, x, rnd);
-  mpfr_set_machine_rnd_mode(rnd);
-  sprintf(str2, "%1.4e", d);
   mpfr_clear(x);
   free(str);
+}
+
+void check3 (double d, mp_rnd_t rnd, char *res)
+{
+  mpfr_t x; char *str; mp_exp_t e;
+
+  mpfr_init2(x, 53);
+  mpfr_set_d(x, d, rnd);
+  str = mpfr_get_str(NULL, &e, 10, 5, x, rnd);
+  if (strcmp(str, res)) {
+    fprintf(stderr, "Error in mpfr_get_str for x=%1.20e\n", d);
+    fprintf(stderr, "got %s instead of %s\n", str, res);
+  }
+  mpfr_clear(x);
+  free(str);
+}
+
+void check_small ()
+{
+  mpfr_t x; char *s, *t; mp_exp_t e;
+  
+  mpfr_init(x);
+
+  /* problem found by Fabrice Rouillier */
+  mpfr_set_prec(x, 63);
+  mpfr_set_d(x, 5e14, GMP_RNDN);
+  s = mpfr_get_str(NULL, &e, 10, 18, x, GMP_RNDU);
+  free(s);
+
+  /* bug found by Johan Vervloet */
+  mpfr_set_prec(x, 6);
+  mpfr_set_d(x, 688.0, GMP_RNDN);
+  t = mpfr_get_str(NULL, &e, 2, 4, x, GMP_RNDU);
+  if (strcmp(t, "1011") || (e!=10)) {
+    fprintf(stderr, "Error in mpfr_get_str: 688 printed up to 4 bits should give 1.011e9\ninstead of ");
+    mpfr_out_str(stderr, 2, 4, x, GMP_RNDU); putchar('\n');
+    exit(1);
+  }
+  free(t);
+
+  mpfr_clear(x);
 }
 
 int
 main(int argc, char **argv)
 {
+#ifdef TEST
   int i; double d;
 
   srand(getpid());
-  /* printf seems to round towards nearest in all cases, at least with gcc */
-  check(4.059650008e-83, 0);
-  check(-6.606499965302424244461355e233, 0);
-  check(-7.4, 0);
-  check(0.997, 0);
-  check(-4.53063926135729747564e-308, 0);
-  check(2.14478198760196000000e+16, 0);
-  check(7.02293374921793516813e-84, 0);
-  check(-6.7274500420134077e-87,0); 
   for (i=0;i<100000;i++) {
     do { d = drand(); } while (isnan(d));
-    check(d, 0);
+    check(d, GMP_RNDN);
   }
-  exit (0);
+#endif
+  check_small();
+  check3(4.059650008e-83, GMP_RNDN, "40597");
+  check3(-6.606499965302424244461355e233, GMP_RNDN, "-66065");
+  check3(-7.4, GMP_RNDN, "-74000");
+  check3(0.997, GMP_RNDN, "99700");
+  check3(-4.53063926135729747564e-308, GMP_RNDN, "-45306");
+  check3(2.14478198760196000000e+16, GMP_RNDN, "21448");
+  check3(7.02293374921793516813e-84, GMP_RNDN, "70229");
+  check3(-6.7274500420134077e-87, GMP_RNDN, "-67275"); 
+  return 0;
 }
-
-
-

@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_str.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -21,32 +21,30 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include <time.h>
-
-#if defined (hpux)
-#define srandom srand48
-#define random mrand48
-#endif
 
 int
 main(int argc, char **argv)
 {
-  mpfr_t x; unsigned long k, bd, nc; char *str, *str2; 
+  mpfr_t x, y; unsigned long k, bd, nc, i; char *str, *str2; mp_exp_t e;
+  int base, logbase, prec, baseprec;
 
   if (argc==2) { /* tset_str <string> */
     mpfr_init2(x, 53);
     mpfr_set_str_raw(x, argv[1]);
     printf("%1.20e\n", mpfr_get_d(x));
     mpfr_clear(x);
-    exit (0);
+    return 0;
   }
 
   srandom(time(NULL)); 
   
   if (argc > 1) { nc = atoi(argv[1]); } else { nc = 53; }
-  if (nc < 24) { nc = 24; }
+  if (nc < 100) { nc = 100; }
 
   bd = random()&8;
   
@@ -67,21 +65,71 @@ main(int argc, char **argv)
     }
 
   *(str2++) = 'e'; 
-  sprintf(str2, "%d", random() - (1 << 30)); 
+  sprintf(str2, "%d", (int) random() - (1 << 30)); 
 
-  /* printf("%s\n", str); */
   mpfr_init2(x, nc + 10); 
-  mpfr_set_str_raw(x, str); 
-  /* mpfr_print_raw(x); printf("\n");  */
+  mpfr_set_str_raw(x, str);
+
+  mpfr_set_prec(x, 54);
+  mpfr_set_str_raw(x, "0.100100100110110101001010010101111000001011100100101010E-529");
+  mpfr_init2(y, 54);
+  mpfr_set_str(y, "4.936a52bc17254@-133", 16, GMP_RNDN);
+  if (mpfr_cmp(x, y)) {
+    fprintf(stderr, "Error in mpfr_set_str\n");
+    mpfr_print_raw(x); putchar('\n');
+    mpfr_print_raw(y); putchar('\n');
+    mpfr_clear(x); mpfr_clear(y); 
+    exit(1);
+  }
+
+  free(str); 
 
   mpfr_set_prec(x, 53);
   mpfr_set_str_raw(x, "+110101100.01010000101101000000100111001000101011101110E00");
 
   mpfr_set_str_raw(x, "1.0");
   if (mpfr_get_d(x) != 1.0) {
-    fprintf(stderr, "Error in mpfr_set_str_raw for s=1.0\n"); exit(1);
+    fprintf(stderr, "Error in mpfr_set_str_raw for s=1.0\n"); 
+    mpfr_clear(x); mpfr_clear(y); 
+    exit(1);
   }
 
-  mpfr_clear(x); free(str); 
-  exit (0); 
+  mpfr_set_str(x, "+243495834958.53452345E1", 10, GMP_RNDN);
+  mpfr_set_str(x, "9007199254740993", 10, GMP_RNDN);
+  mpfr_set_str(x, "9007199254740992", 10, GMP_RNDU);
+  mpfr_set_str(x, "9007199254740992", 10, GMP_RNDD);
+  mpfr_set_str(x, "9007199254740992", 10, GMP_RNDZ);
+
+  /* check a random number printed and read is not modified */
+  prec = 53;
+  mpfr_set_prec(x, prec);
+  mpfr_set_prec(y, prec);
+  for (i=0;i<100000;i++) {
+    mpfr_random(x);
+    k = rand() % 4;
+    logbase = (rand() % 5) + 1;
+    base = 1 << logbase;
+    /* Warning: the number of bits needed to print exactly a number of 
+       'prec' bits in base 2^logbase may be greater than ceil(prec/logbase),
+       for example 0.11E-1 in base 2 cannot be written exactly with only
+       one digit in base 4 */
+    if (base==2) baseprec=prec;
+    else baseprec=1+(prec-2+logbase)/logbase;
+    str = mpfr_get_str(NULL, &e, base, baseprec, x, k);
+    mpfr_set_str(y, str, base, k);
+    MPFR_EXP(y) += logbase*(e-strlen(str));
+    if (mpfr_cmp(x, y)) {
+      fprintf(stderr, "mpfr_set_str o mpfr_get_str <> id for rnd_mode=%s\n",
+	      mpfr_print_rnd_mode(k));
+      printf("x="); mpfr_print_raw(x); putchar('\n');
+      printf("s=%s, exp=%d, base=%d\n", str, (int) e, base);
+      printf("y="); mpfr_print_raw(y); putchar('\n');
+      mpfr_clear(x); mpfr_clear(y); 
+      exit(1);
+    }
+    free(str); 
+  }
+
+  mpfr_clear(x); mpfr_clear(y);
+  return 0; 
 }

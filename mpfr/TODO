@@ -1,0 +1,18 @@
+New functions to implement:
+
+- mpfr_mul_mpz, mpfr_div_mpz
+
+Miscellaneous:
+
+- implement a C++ wrapper [see with Torbjo"rn and/or Fabrice]
+
+- in all functions that do rounding, return an int indicating if the result
+  is exact (i.e. no bit was lost) or not (like in mpfr_div_ui)
+
+- detect overflow/underflow in exponent (from Ben Hinkle <bhinkle4@juno.com>)
+
+- specify exponent size (suggestion from Ben Hinkle <bhinkle4@juno.com>)
+
+- add mpfr_get_ld for 'long double' [asked by J-C Fauge`re] ?
+  (exists since K&R, but has not necessarily a greater precision than double)
+  cf http://anubis.dkuug.dk/jtc1/sc22/wg14/www/docs/n869/

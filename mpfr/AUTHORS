@@ -1,0 +1,17 @@
+The MPFR library was developed by the PolKA project at INRIA Lorraine and
+LORIA. Authors and contributors are:
+
+Sylvie Boldo <sboldo@ens-lyon.fr> wrote the agm and log routines
+Guillaume Hanrot <hanrot@loria.fr> wrote part of the library
+Emmanuel Jeandel <E_Jeandel@mail.dotcom.fr> wrote the hypergeometric code
+Vincent Lefe`vre <lefevre@loria.fr> contributed many test cases for elementary
+	functions
+Thom Mulders <mulders@inf.ethz.ch> contributed the short multiplication code
+Fabrice Rouillier <rouillie@loria.fr> helped a lot for testing and porting
+Jean-Luc Re'my <remy@loria.fr> wrote a prototype of the Zeta function
+Paul Zimmermann <zimmerma@loria.fr> wrote part of the library
+
+All the authors are included in the MPFR mailing-list <mpfr@loria.fr>.
+This is the preferred way to contact us. For further information, please
+look at the MPFR web page <http://www.loria.fr/projets/mpfr/>.
+

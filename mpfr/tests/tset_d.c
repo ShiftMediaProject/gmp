@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_d and mpfr_get_d.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -22,24 +22,17 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#ifdef IRIX64
-#include <sys/fpu.h>
-#endif
 #include "gmp.h"
 #include "mpfr.h"
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 extern int isnan();
 
 int
-main(int argc, char **argv)
+main (int argc, char **argv)
 {
-  fprintf(stderr, "Test case tset_d disabled\n"); 
-  exit(0);			/* THIS TEST CASE IS NOT WORKING */
-
-#if 0
   mpfr_t x,y,z; unsigned long k,n; double d, dd;
-#ifdef IRIX64
+#ifdef __mips
     /* to get denormalized numbers on IRIX64 */
     union fpc_csr exp;
     exp.fc_word = get_fpc_csr();
@@ -47,13 +40,15 @@ main(int argc, char **argv)
     set_fpc_csr(exp.fc_word);
 #endif
 
+  mpfr_init(x);
+
   mpfr_init2(z, 32);
   mpfr_set_d(z, 1.0, 0);
   if (mpfr_get_d(z) != 1.0) {
     mpfr_print_raw(z); putchar('\n');
     printf("Error: 1.0 != 1.0\n"); exit(1);
   }
-  mpfr_init2(x, 53); mpfr_init2(y, 53);
+  mpfr_set_prec(x, 53); mpfr_init2(y, 53);
   mpfr_set_d(x, d=-1.08007920352320089721e+150, 0);
   if (mpfr_get_d(x) != d) {
     mpfr_print_raw(x); putchar('\n');
@@ -80,11 +75,11 @@ main(int argc, char **argv)
 	  fprintf(stderr, 
 		  "Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d(x)); 
 	  mpfr_print_raw(x); putchar('\n');
+	  exit(1);
 	} 
     }
 
   mpfr_clear(x); mpfr_clear(y); mpfr_clear(z);
-  exit (0); 
-#endif /* 0 */
+  return 0; 
 }
 

@@ -1,6 +1,6 @@
-/* Test file for mpfr_can_round.
+/* Test file for mpfr_swap.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 2000 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,30 +19,24 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
 
 int main()
 {
-   mpfr_t x;
+  mpfr_t u, v;
 
-   /* checks that rounds to nearest sets the last
-     bit to zero in case of equal distance */
-   mpfr_init2(x, 59);
-   mpfr_set_str_raw(x, "-0.10010001010111000011110010111010111110000000111101100111111E663"); 
-   if (mpfr_can_round(x, 54, GMP_RNDZ, GMP_RNDZ, 53) != 0) {
-     fprintf(stderr, "Error in mpfr_can_round\n"); exit(1);
-   }
-
-   mpfr_set_str_raw(x, "-Inf"); 
-   if (mpfr_can_round(x, 2000, GMP_RNDZ, GMP_RNDZ, 2000) != 0) { 
-     fprintf(stderr, "Error in mpfr_can_round\n"); exit(1); 
-   }
-   mpfr_clear(x);
-   return 0;
+  mpfr_init2 (u, 24);
+  mpfr_init2 (v, 53);
+  mpfr_set_ui (u, 16777215, GMP_RNDN); /* 2^24 - 1 */
+  mpfr_set_d (v, 9007199254740991.0, GMP_RNDN); /* 2^53 - 1 */
+  mpfr_swap (u, v);
+  mpfr_swap (u, v);
+  if (mpfr_cmp_ui (u, 16777215) || (mpfr_get_d (v) != 9007199254740991.0)) {
+    fprintf (stderr, "Error in mpfr_swap\n");
+    exit (1);
+  }
+  mpfr_clear (u);
+  mpfr_clear (v);
+  return 0;
 }
-
-
-

@@ -1,6 +1,6 @@
 /* Test file for mpfr_out_str.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,36 +24,90 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include "gmp.h"
 #include "mpfr.h"
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 FILE *fout;
 
 #define check(d,r,b) check4(d,r,b,53)
 
-void check4(d, rnd, base, prec) double d; unsigned char rnd; int base, prec;
+void check4 _PROTO((double, mp_rnd_t, int, int)); 
+void check_large _PROTO((void)); 
+
+void check4(double d, mp_rnd_t rnd, int base, int prec)
 {
   mpfr_t x;
 
   mpfr_init2(x, prec);
   mpfr_set_d(x, d, rnd);
-  mpfr_set_machine_rnd_mode(rnd);
   fprintf(fout, "%1.19e base %d rnd %d:\n ", d, base, rnd);
   mpfr_out_str(fout, base, (base==2) ? prec : 0, x, rnd);
   fputc('\n', fout);
   mpfr_clear(x);
 }
 
+void check_large ()
+{
+  mpfr_t x; mp_exp_t e; char *s;
+
+  mpfr_init(x);
+
+  mpfr_set_prec(x, 7);
+  mpfr_set_str_raw(x, "0.1010101E10");
+  s = mpfr_get_str(NULL, &e, 10, 2, x, GMP_RNDU);
+  free(s); 
+
+  /* checks rounding of negative numbers */
+  mpfr_set_d(x, -1.5, GMP_RNDN);
+  s = mpfr_get_str(NULL, &e, 10, 1, x, GMP_RNDD);
+  if (strcmp(s, "-2")) {
+    fprintf(stderr, "Error in mpfr_get_str for x=-1.5 and rnd=GMP_RNDD\n");
+    free(s); mpfr_clear(x); 
+    exit(1);
+  }
+  free(s); 
+
+  s = mpfr_get_str(NULL, &e, 10, 1, x, GMP_RNDU);
+  if (strcmp(s, "-1")) {
+    fprintf(stderr, "Error in mpfr_get_str for x=-1.5 and rnd=GMP_RNDU\n");
+    free(s); 
+    mpfr_clear(x); 
+    exit(1);
+  }
+
+  free(s); 
+
+  /* bug found by Jean-Pierre Merlet, produced error in mpfr_get_str */
+  mpfr_set_prec(x, 128);
+  mpfr_set_str_raw(x, "0.10111001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011010E3");
+  s = mpfr_get_str(NULL, &e, 10, 0, x, GMP_RNDU);
+  free(s); 
+
+  mpfr_set_prec(x, 381);
+  mpfr_set_str_raw(x, "0.111111111111111111111111111111111111111111111111111111111111111111101110110000100110011101101101001010111000101111000100100011110101010110101110100000010100001000110100000100011111001000010010000010001010111001011110000001110010111101100001111000101101100000010110000101100100000101010110010110001010100111001111100011100101100000100100111001100010010011110011011010110000001000010");
+  s = mpfr_get_str (NULL, &e, 10, 0, x, GMP_RNDD);
+  if (e != 0) {
+    fprintf(stderr, "Error in mpfr_get_str for x=0.999999..., exponent is %d instead of 0\n", (int) e);
+    exit(1);
+  }
+  free(s);
+
+  mpfr_clear(x);
+}
+
 int
 main(int argc, char **argv)
 {
-  int i,N=100,r,p; double d;
+  int i,N=10000,r,p; double d;
 
+  check_large();
   /* with no argument: prints to /dev/null,
      tout_str N: prints N tests to stdout */
   if (argc==1) fout=fopen("/dev/null", "w");
   else { fout=stdout; N=atoi(argv[1]); }
+  check(-1.37247529013405550000e+15, GMP_RNDN, 7);
   check(-1.5674376729569697500e+15, GMP_RNDN, 19);
   check(-5.71262771772792640000e-79, GMP_RNDU, 16);
   check(-0.0, GMP_RNDU, 7);
@@ -78,8 +132,5 @@ main(int argc, char **argv)
     p = 2 + rand()%35;
     check(d, r, p);
   }
-  exit (0);
+  return 0;
 }
-
-
-

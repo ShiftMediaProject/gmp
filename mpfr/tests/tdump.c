@@ -1,6 +1,6 @@
-/* mpfr_set_default_rounding_mode -- set the default rounding mode
+/* Test file for mpfr_dump.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 2000 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -19,19 +19,20 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdlib.h>
+#include <unistd.h>
 #include "gmp.h"
-#include "gmp-impl.h"
+#include "mpfr.h"
 
-char __gmp_default_rounding_mode = 0;
-
-void
-#if __STDC__
-mpfr_set_default_rounding_mode (char rnd_mode)
-#else
-mpfr_set_default_rounding_mode (rnd_mode)
-     char rnd_mode;
-#endif
+int main()
 {
-  __gmp_default_rounding_mode = rnd_mode;
+  mpfr_t z;
+
+  mpfr_init2(z, 100);
+  mpfr_set_ui(z, 0, GMP_RNDN);
+  mpfr_dump(z, GMP_RNDD);
+  printf("   ^--- 0.e1 printed above is ok\n");
+  mpfr_clear(z);
+  return 0;
 }
 

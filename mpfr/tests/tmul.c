@@ -1,6 +1,6 @@
 /* Test file for mpfr_mul.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -21,18 +21,24 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "gmp.h"
 #include "mpfr.h"
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 
-#define MINNORM 2.2250738585072013831e-308 /* 2^(-1022), smallest normalized */
+void check _PROTO((double, double, mp_rnd_t, unsigned int, 
+		   unsigned int, unsigned int, double)); 
+void check53 _PROTO((double, double, mp_rnd_t, double)); 
+void check24 _PROTO((float, float, mp_rnd_t, float)); 
+void check_float _PROTO((void)); 
+void check_sign _PROTO((void)); 
 
 /* checks that x*y gives the same results in double
    and with mpfr with 53 bits of precision */
-void check(double x, double y, unsigned int rnd_mode, unsigned int px, 
-unsigned int py, unsigned int pz, double res)
+void check (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
+	   unsigned int py, unsigned int pz, double res)
 {
-  double z1,z2; mpfr_t xx,yy,zz;
+  double z1, z2; mpfr_t xx, yy, zz;
 
   mpfr_init2(xx, px);
   mpfr_init2(yy, py);
@@ -40,15 +46,37 @@ unsigned int py, unsigned int pz, double res)
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_mul(zz, xx, yy, rnd_mode);
+#ifdef TEST
   mpfr_set_machine_rnd_mode(rnd_mode);
+#endif
   z1 = (res==0.0) ? x*y : res;
   z2 = mpfr_get_d(zz);
   if (z1!=z2 && (z1>=MINNORM || z1<=-MINNORM)) {
     printf("mpfr_mul ");
     if (res==0.0) printf("differs from libm.a"); else printf("failed");
-    printf(" for x=%1.20e y=%1.20e with rnd_mode=%u\n",x,y,rnd_mode);
-    mpfr_print_raw(zz); putchar('\n');
-    printf("libm.a gives %1.20e, mpfr_mul gives %1.20e\n",z1,z2);
+      printf(" for x=%1.20e y=%1.20e with rnd_mode=%s\n", x, y,
+	     mpfr_print_rnd_mode(rnd_mode));
+    printf("libm.a gives %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
+    if (res!=0.0) exit(1);
+  }
+  mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
+}
+
+void check53 (double x, double y, mp_rnd_t rnd_mode, double z1)
+{
+  double z2; mpfr_t xx, yy, zz;
+
+  mpfr_init2(xx, 53);
+  mpfr_init2(yy, 53);
+  mpfr_init2(zz, 53);
+  mpfr_set_d(xx, x, rnd_mode);
+  mpfr_set_d(yy, y, rnd_mode);
+  mpfr_mul(zz, xx, yy, rnd_mode);
+  z2 = mpfr_get_d(zz);
+  if (z1!=z2 && (!isnan(z1) || !isnan(z2))) {
+    printf("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
+	   x, y, mpfr_print_rnd_mode(rnd_mode));
+    printf("libm.a gives %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
     exit(1);
   }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
@@ -56,9 +84,9 @@ unsigned int py, unsigned int pz, double res)
 
 /* checks that x*y gives the same results in double
    and with mpfr with 24 bits of precision */
-void check24(float x, float y, unsigned int rnd_mode, float res)
+void check24 (float x, float y, mp_rnd_t rnd_mode, float z1)
 {
-  float z1,z2; mpfr_t xx,yy,zz;
+  float z2; mpfr_t xx, yy, zz;
 
   mpfr_init2(xx, 24);
   mpfr_init2(yy, 24);
@@ -66,38 +94,39 @@ void check24(float x, float y, unsigned int rnd_mode, float res)
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_mul(zz, xx, yy, rnd_mode);
-  mpfr_set_machine_rnd_mode(rnd_mode);
-  z1 = (res==0.0) ? x*y : res;
   z2 = (float) mpfr_get_d(zz);
   if (z1!=z2) {
-    printf("mpfr_mul ");
-    if (res==0.0) printf("differs from libm.a"); else printf("failed");
-    printf(" for x=%1.10e y=%1.10e with prec=24 and rnd_mode=%u\n",x,y,rnd_mode);
-    printf("libm.a gives %1.10e, mpfr_mul gives %1.10e\n",z1,z2);
-    if (res!=0.0) exit(1);
+    printf("mpfr_mul failed for x=%1.0f y=%1.0f with prec=24 and rnd_mode=%s\n", x, y, mpfr_print_rnd_mode(rnd_mode));
+    printf("libm.a gives %1.0f, mpfr_mul gives %1.0f\n", z1, z2);
+    exit(1);
   }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 1 */
-void check_float()
+void check_float ()
 {
-  int i;
-  for (i=0;i<4;i++) {
-    if (i!=2) {
-    check24(8388609.0, 8388609.0, i, 0.0);
-    check24(16777213.0, 8388609.0, i, 0.0);
-    check24(8388611.0, 8388609.0, i, 0.0);
-    check24(12582911.0, 8388610.0, i, 0.0);
-    check24(12582914.0, 8388610.0, i, 0.0);
-    check24(13981013.0, 8388611.0, i, 0.0);
-    check24(11184811.0, 8388611.0, i, 0.0);
-    check24(11184810.0, 8388611.0, i, 0.0);
-    check24(13981014.0, 8388611.0, i, 0.0);
-    }
-  }
-  i=GMP_RNDU;
+  check24(8388609.0,  8388609.0, GMP_RNDN, 70368760954880.0);
+  check24(16777213.0, 8388609.0, GMP_RNDN, 140737479966720.0);
+  check24(8388611.0,  8388609.0, GMP_RNDN, 70368777732096.0);
+  check24(12582911.0, 8388610.0, GMP_RNDN, 105553133043712.0);
+  check24(12582914.0, 8388610.0, GMP_RNDN, 105553158209536.0);
+  check24(13981013.0, 8388611.0, GMP_RNDN, 117281279442944.0);
+  check24(11184811.0, 8388611.0, GMP_RNDN, 93825028587520.0);
+  check24(11184810.0, 8388611.0, GMP_RNDN, 93825020198912.0);
+  check24(13981014.0, 8388611.0, GMP_RNDN, 117281287831552.0);
+
+  check24(8388609.0,  8388609.0, GMP_RNDZ, 70368760954880.0);
+  check24(16777213.0, 8388609.0, GMP_RNDZ, 140737471578112.0);
+  check24(8388611.0,  8388609.0, GMP_RNDZ, 70368777732096.0);
+  check24(12582911.0, 8388610.0, GMP_RNDZ, 105553124655104.0);
+  check24(12582914.0, 8388610.0, GMP_RNDZ, 105553158209536.0);
+  check24(13981013.0, 8388611.0, GMP_RNDZ, 117281271054336.0);
+  check24(11184811.0, 8388611.0, GMP_RNDZ, 93825028587520.0);
+  check24(11184810.0, 8388611.0, GMP_RNDZ, 93825011810304.0);
+  check24(13981014.0, 8388611.0, GMP_RNDZ, 117281287831552.0);
+
   check24(8388609.0,  8388609.0, GMP_RNDU, 70368769343488.0);
   check24(16777213.0, 8388609.0, GMP_RNDU, 140737479966720.0);
   check24(8388611.0,  8388609.0, GMP_RNDU, 70368786120704.0);
@@ -107,10 +136,20 @@ void check_float()
   check24(11184811.0, 8388611.0, GMP_RNDU, 93825036976128.0);
   check24(11184810.0, 8388611.0, GMP_RNDU, 93825020198912.0);
   check24(13981014.0, 8388611.0, GMP_RNDU, 117281296220160.0);
+
+  check24(8388609.0,  8388609.0, GMP_RNDD, 70368760954880.0);
+  check24(16777213.0, 8388609.0, GMP_RNDD, 140737471578112.0);
+  check24(8388611.0,  8388609.0, GMP_RNDD, 70368777732096.0);
+  check24(12582911.0, 8388610.0, GMP_RNDD, 105553124655104.0);
+  check24(12582914.0, 8388610.0, GMP_RNDD, 105553158209536.0);
+  check24(13981013.0, 8388611.0, GMP_RNDD, 117281271054336.0);
+  check24(11184811.0, 8388611.0, GMP_RNDD, 93825028587520.0);
+  check24(11184810.0, 8388611.0, GMP_RNDD, 93825011810304.0);
+  check24(13981014.0, 8388611.0, GMP_RNDD, 117281287831552.0);
 }
 
 /* check sign of result */
-void check_sign()
+void check_sign ()
 {
   mpfr_t a, b;
 
@@ -124,42 +163,44 @@ void check_sign()
   mpfr_clear(a); mpfr_clear(b);
 }
 
-int main(argc,argv) int argc; char *argv[];
+int main (int argc, char *argv[])
 {
-  double x,y,z; int i,prec,rnd_mode;
+#ifdef TEST
+  double x, y, z; int i, prec, rnd_mode;
+#endif
 
   check_float();
-  check(6.9314718055994530941514e-1, 0.0, GMP_RNDZ, 53, 53, 53, 0.0);
-  check(0.0, 6.9314718055994530941514e-1, GMP_RNDZ, 53, 53, 53, 0.0);
+  check53(0.0, 1.0/0.0, GMP_RNDN, 0.0/0.0); 
+  check53(1.0, 1.0/0.0, GMP_RNDN, 1.0/0.0); 
+  check53(-1.0, 1.0/0.0, GMP_RNDN, -1.0/0.0); 
+  check53(0.0/0.0, 0.0, GMP_RNDN, 0.0/0.0); 
+  check53(1.0, 0.0/0.0, GMP_RNDN, 0.0/0.0); 
+  check53(6.9314718055994530941514e-1, 0.0, GMP_RNDZ, 0.0);
+  check53(0.0, 6.9314718055994530941514e-1, GMP_RNDZ, 0.0);
+  check_sign();
+  check53(-4.165000000e4, -0.00004801920768307322868063274915, GMP_RNDN, 2.0); 
+  check53(2.71331408349172961467e-08, -6.72658901114033715233e-165, GMP_RNDZ,
+	  -1.8251348697787782844e-172);
+  check53(0.31869277231188065, 0.88642843322303122, GMP_RNDZ,
+	  2.8249833483992453642e-1);
+  check(8.47622108205396074254e-01, 3.24039313247872939883e-01, GMP_RNDU,
+	28, 45, 1, 0.5);
+  check(2.63978122803639081440e-01, 6.8378615379333496093e-1, GMP_RNDN,
+	34, 23, 31, 0.180504585267044603);
+  check(1.0, 0.11835170935876249132, GMP_RNDU, 6, 41, 36, 0.1183517093595583);
+  check53(67108865.0, 134217729.0, GMP_RNDN, 9.007199456067584e15);
+  check(1.37399642157394197284e-01, 2.28877275604219221350e-01, GMP_RNDN,
+	49, 15, 32, 0.0314472340833162888);
+  check(4.03160720978664954828e-01, 5.85483042917246621073e-01, GMP_RNDZ,
+	51, 22, 32, 0.2360436821472831);
+  check(3.90798504668055102229e-14, 9.85394674650308388664e-04, GMP_RNDN,
+	46, 22, 12, 0.385027296503914762e-16);
+  check(4.58687081072827851358e-01, 2.20543551472118792844e-01, GMP_RNDN,
+	49, 3, 1, 0.125);
+#ifdef TEST
+  srand48(getpid());
   prec = (argc<2) ? 53 : atoi(argv[1]);
   rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
-  check_sign();
-  check(-4.165000000e4, -0.00004801920768307322868063274915, GMP_RNDN, 
-	53, 53, 53, 2.0); 
-  check(2.71331408349172961467e-08, -6.72658901114033715233e-165,
-	GMP_RNDZ, 53, 53, 53, 0.0);
-  x=0.31869277231188065; y=0.88642843322303122;
-  check(x, y, GMP_RNDZ, 53, 53, 53, 0.0);
-  x=8.47622108205396074254e-01; y=3.24039313247872939883e-01;
-  check(x, y, GMP_RNDU, 28, 45, 1, 0.5);
-  x=2.63978122803639081440e-01; 
-  y=5736014.0/8388608.0; /* 6.83786096444222835089e-01; */
-  check(x, y, GMP_RNDN, 34, 23, 31, 0.180504585267044603);
-  x=9.84891017624509146344e-01; /* rounded to 1.0 with prec=6 */
-  x=1.0;
-  y=1.18351709358762491320e-01;
-  check(x, y, GMP_RNDU, 6, 41, 36, 0.1183517093595583);
-  /* the following checks that rounding to nearest sets the last
-     bit to zero in case of equal distance */
-  check(67108865.0, 134217729.0, GMP_RNDN, 53, 53, 53, 0.0);
-  x=1.37399642157394197284e-01; y=2.28877275604219221350e-01;
-  check(x, y, GMP_RNDN, 49, 15, 32, 0.0314472340833162888);
-  x=4.03160720978664954828e-01; y=5.85483042917246621073e-01;
-  check(x, y, GMP_RNDZ, 51, 22, 32, 0.2360436821472831);
-  x=3.90798504668055102229e-14; y=9.85394674650308388664e-04;
-  check(x, y, GMP_RNDN, 46, 22, 12, 0.385027296503914762e-16);
-  x=4.58687081072827851358e-01; y=2.20543551472118792844e-01;
-  check(x, y, GMP_RNDN, 49, 3, 1, 0.125);
   for (i=0;i<1000000;) {
     x = drand();
     y = drand();
@@ -170,6 +211,7 @@ int main(argc,argv) int argc; char *argv[];
 	    prec, prec, prec, 0.0);
       }
   } 
-  exit (0);
+#endif
+  return 0;
 }
 

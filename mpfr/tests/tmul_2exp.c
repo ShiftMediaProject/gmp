@@ -1,6 +1,6 @@
 /* Test file for mpfr_mul_2exp.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 /* checks that x*y gives the same results in double
    and with mpfr with 53 bits of precision */
@@ -31,19 +32,42 @@ MA 02111-1307, USA. */
 int
 main(argc,argv) int argc; char *argv[];
 {
-  double x, z; mpfr_t w;
+  double x, z; mpfr_t w; unsigned long k; 
 
   mpfr_init2(w, 53); 
 
-  srand48(time(NULL)); 
-  x = drand48(); 
-  mpfr_set_d(w, x, 0);
+  mpfr_set_d(w, 1.0/0.0, 0); 
   mpfr_mul_2exp(w, w, 10, GMP_RNDZ); 
-  if (x != (z = mpfr_get_d(w)/1024))
-    {
-      fprintf(stderr, "%f != %f\n", x, z); 
-      exit (1); 
-    }
-  exit (0); 
+  if (!MPFR_IS_INF(w)) { fprintf(stderr, "Inf != Inf"); exit(-1); }
+  
+  mpfr_set_d(w, 0.0/0.0, 0); 
+  mpfr_mul_2exp(w, w, 10, GMP_RNDZ); 
+  if (!MPFR_IS_NAN(w)) { fprintf(stderr, "NaN != NaN"); exit(-1); }
+
+  for (k = 0; k < 100000; k++) {
+    srand48(time(NULL)); 
+    x = drand48(); 
+    mpfr_set_d(w, x, 0);
+    mpfr_mul_2exp(w, w, 10, GMP_RNDZ); 
+    if (x != (z = mpfr_get_d(w)/1024))
+      {
+	fprintf(stderr, "%f != %f\n", x, z); 
+	return (-1); 
+      }
+    
+    mpfr_set_d(w, x, 0);
+    mpfr_div_2exp(w, w, 10, GMP_RNDZ); 
+    if (x != (z = mpfr_get_d(w)*1024))
+      {
+	fprintf(stderr, "%f != %f\n", x, z); 
+	mpfr_clear(w); 
+	return (-1); 
+      }
+  }
+
+  
+
+  mpfr_clear(w); 
+  return (0); 
 }
 

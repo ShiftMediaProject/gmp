@@ -1,6 +1,6 @@
 /* Test file for mpfr_log.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -21,13 +21,21 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h> 
-#include <unistd.h>
 #include <math.h>
+#include <unistd.h>
 #include "gmp.h"
 #include "mpfr.h"
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 
-double drand_log()
+double drand_log _PROTO((void)); 
+int check1 _PROTO((double, mp_rnd_t, double, int)); 
+void check3 _PROTO((double, unsigned long, mp_rnd_t)); 
+void check4 _PROTO((int)); 
+void slave _PROTO((int, int)); 
+void check_worst_cases _PROTO((void)); 
+void special _PROTO((void));
+
+double drand_log ()
 {
   double d; long int *i;
 
@@ -35,23 +43,24 @@ double drand_log()
   do {
     i[0] = lrand48();
     i[1] = lrand48();
-   } while ((d<1e-153)||(d>1e153));    /* to avoid underflow or overflow
+   } while ((d<1e-153) || (d>1e153));    /* to avoid underflow or overflow
 					 in double calculus in sqrt(u*v) */
   return d;
 }
 
+#define check2(a,rnd,res) check1(a,rnd,res,1)
 #define check(a,r) check2(a,r,0.0)
 
-
-int check1(double a, unsigned char rnd_mode, double res1, int ck)
+int check1 (double a, mp_rnd_t rnd_mode, double res1, int ck)
 {
   mpfr_t ta, tres;
   double res2;
   /* ck=1 iff res1 is certified correct */
 
-  mpfr_set_machine_rnd_mode(rnd_mode);  
+#ifdef TEST
+  mpfr_set_machine_rnd_mode(rnd_mode);
+#endif
   if (ck==0 && res1==0.0) res1=log(a); 
-  /* printf("mpfr_log working on a=%1.20e, rnd_mode=%d\n",a,rnd_mode);*/
   mpfr_init2(ta, 53);
   mpfr_init2(tres, 53);
   mpfr_set_d(ta, a, GMP_RNDN);
@@ -61,12 +70,14 @@ int check1(double a, unsigned char rnd_mode, double res1, int ck)
 
   if (res1!=res2 && (!isnan(res1) || !isnan(res2))) {
       if (ck) { 
-	printf("mpfr_log failed for    a=%1.20e, rnd_mode=%d\n",a,rnd_mode);
+	printf("mpfr_log failed for    a=%1.20e, rnd_mode=%s\n", a,
+	       mpfr_print_rnd_mode(rnd_mode));
 	printf("correct result is        %1.20e\n mpfr_log gives          %1.20e (%d ulp)\n",res1,res2,ulp(res1,res2));
 	exit(1);
       }
       else {
-	printf("mpfr_log differs from libm.a for a=%1.20e, rnd_mode=%d\n",a,rnd_mode);
+	printf("mpfr_log differs from libm.a for a=%1.20e, rnd_mode=%s\n", a,
+	       mpfr_print_rnd_mode(rnd_mode));
 	printf(" double calculus gives %1.20e\n mpfr_log        gives %1.20e (%d ulp)\n",res1,res2,ulp(res1,res2));
       }
   }
@@ -76,13 +87,7 @@ int check1(double a, unsigned char rnd_mode, double res1, int ck)
     return 0;
 }
 
-
-void check2(double a, unsigned char rnd_mode, double res1) {
-  check1(a,rnd_mode, res1,1);
-  return;
-}
-
-void check3(double d, unsigned long prec, unsigned char rnd)
+void check3 (double d, unsigned long prec, mp_rnd_t rnd)
 {
   mpfr_t x, y;
   
@@ -94,7 +99,8 @@ void check3(double d, unsigned long prec, unsigned char rnd)
   mpfr_clear(x); mpfr_clear(y);
 }
 
-void check4(int N) {
+void check4 (int N)
+{
   int i, max=-1, sum=0, cur;
   double d;
 
@@ -111,7 +117,8 @@ void check4(int N) {
   printf("max error : %i \t mean error : %f   (in ulps)\n",max,d);
 }
 
-void slave(int N, int p) {
+void slave (int N, int p)
+{
   int i;
   double d;
   mpfr_t ta, tres;
@@ -127,13 +134,11 @@ void slave(int N, int p) {
   printf("fin\n");
 }
 
-
-
 /* examples from Jean-Michel Muller and Vincent Lefevre 
    Cf http://www.ens-lyon.fr/~jmmuller/Intro-to-TMD.htm
 */
 
-void check_worst_cases()
+void check_worst_cases ()
 { 
   check2(1.00089971802309629645, GMP_RNDD, 8.99313519443722736088e-04); 
   check2(1.00089971802309629645, GMP_RNDN, 8.99313519443722844508e-04);
@@ -216,28 +221,44 @@ void check_worst_cases()
   check2(428.315247165198229595, GMP_RNDU, 6.05985948325268353187); 
 }
 
+void special ()
+{
+  mpfr_t x, y;
+
+  mpfr_init2 (x, 53);
+  mpfr_init2 (y, 53);
+  mpfr_set_ui (x, 3, GMP_RNDD);
+  mpfr_log (y, x, GMP_RNDD);
+  if (mpfr_get_d (y) != 1.09861228866810956) {
+    fprintf (stderr, "Error in mpfr_log(3) for GMP_RNDD\n");
+    exit (1);
+  }
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int main(int argc, char *argv[]) {
   int N=0;
 
   srand48(getpid());
   if (argc==4) {   /* tlog x prec rnd */
     check3(atof(argv[1]), atoi(argv[2]), atoi(argv[3]));
-    exit (0);
+    return 0;
   }
 
   if (argc==3) {   /* tlog N p : N calculus with precision p*/
   printf("Doing %d random tests in %d precision\n",atoi(argv[1]),atoi(argv[2]));
     slave(atoi(argv[1]),atoi(argv[2]));
-     exit (0);
+     return 0;
   }
 
   if (argc==2) { /* tlog N: N tests with random double's */
     N=atoi(argv[1]);
     printf("Doing %d random tests in double precision\n", N);
-    /*printf("GMP_RNDN : %i, GMP_RNDZ : %i,GMP_RNDU : %i,GMP_RNDD : %i\n",GMP_RNDN, GMP_RNDZ,GMP_RNDU, GMP_RNDD); */
     check4(N);
   }
   else {
+    special ();
     check_worst_cases();
 
   check2(1.01979300812244555452, GMP_RNDN, 1.95996734891603664741e-02);
@@ -299,5 +320,5 @@ int main(int argc, char *argv[]) {
   check2(7.34302197248998461006e+43,GMP_RNDZ,1.01004909469513179942e+02);
   check2(6.09969788341579732815e+00,GMP_RNDD,1.80823924264386204363e+00);
   }
-  exit (0);
+  return 0;
 }

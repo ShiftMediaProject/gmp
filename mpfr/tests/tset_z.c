@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_z.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -24,7 +24,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 
-/* tset_z z rnd prec */
+void check _PROTO((long, unsigned char)); 
+void check_large _PROTO((void)); 
 
 void check(long i, unsigned char rnd) {
   mpfr_t f; mpz_t z; 
@@ -39,7 +40,7 @@ void check(long i, unsigned char rnd) {
   mpfr_clear(f); mpz_clear(z);
 }
 
-void check_large()
+void check_large ()
 {
   mpz_t z; mpfr_t x,y;
 
@@ -53,14 +54,17 @@ void check_large()
   mpz_clear(z); mpfr_clear(x); mpfr_clear(y);
 }
 
-int main(argc,argv) int argc; char *argv[];
+/* tset_z z rnd prec */
+
+int main(int argc, char *argv[])
 {
   long j; 
 
   check_large();
   srand(getpid());
+  check(0, 0);
   for (j=0; j<1000000; j++)
     check(lrand48(), rand()%4);
-  exit (0);
+  return 0;
 }
 

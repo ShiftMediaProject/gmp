@@ -1,0 +1,36 @@
+Changes from version 1.0 to version 2001:
+- the default installation does not provide any more access to machine 
+  rounding mode, and as a consequence does not compare MPFR results with 
+  precision=53 to machine results. Add option -DTEST if you want to have
+  access to machine rounding mode, and to check MPFR results against.
+- the MPFR files do not need <math.h> any more
+- the header file <mpfr.h> was split into <mpfr.h> for exported functions
+  and <mpfr-impl.h> for internal functions. The user should not use functions
+  or macros from <mpfr-impl.h>, since those may change in further releases.
+- <mpfr.h> was modified in order to make easy a C++ interface
+- MPFR now deals with infinities (+infinity and -infinity) and NaN
+- the missing function mpfr_swap is now available
+- mpfr_zeta was removed (was incomplete)
+- mpfr_init and mpfr_init2 now initialize the corresponding variable to 0
+  (like in other initialization functions from GNU MP)
+- in case memory allocation fails, an error message is output
+- several bugs of version 0.4 were fixed
+
+Changes from version 0.4 to version 1.0:
+
+- Version 1.0 now uses a standard configure/make installation. 
+- Version 1.0 implements all functions that are available in the MPF class 
+  from GMP 3.1 (except mpf_swap) and a header file mpf2mpfr.h is included in 
+  the distribution for easy change from MPF to MPFR. 
+- Version 1.0 implements new elementary functions: mpfr_sincos 
+- Some functions and macros have been renamed: mpfr_log2 is now 
+  mpfr_const_log2, mpfr_pi is now mpfr_const_pi, SIGN is now MPFR_SIGN. 
+- Version 1.0 uses faster algorithms for mpfr_exp, mpfr_const_pi, 
+  mpfr_const_log2. Compare the timings from version 1.0 and version 0.4. 
+- Version 1.0 corrects some bugs of version 0.4. 
+- The precision of MPFR variables is now named mpfr_prec, which makes it 
+  easier to change it, to say unsigned long long. Same for the rounding mode 
+  which is called mp_rnd_t. 
+
+You'll find other news concerning the MPFR library on the web
+page <http://www.loria.fr/projets/mpfr/>.

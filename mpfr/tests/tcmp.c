@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,17 +23,19 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <math.h>
 #include "gmp.h"
-#include "longlong.h"
 #include "mpfr.h"
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 
-int
-main()
+#define Infp 1/0.
+#define Infm -1/0.
+
+extern int isnan();
+
+int main()
 {
-  double x,y; mpfr_t xx,yy; int i,c;
-
-  fprintf(stderr, "Test case 'tcmp' disabled\n"); 
-  exit(0);			/* THIS TEST CASE IS NOT WORKING */
+  double x, y;
+  mpfr_t xx, yy;
+  int i, c;
 
   mpfr_init2(xx, 65); mpfr_init2(yy, 65);
   mpfr_set_str_raw(xx, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
@@ -41,8 +43,17 @@ main()
   if (mpfr_cmp2(xx,yy)!=64) { printf("Error (1) in mpfr_cmp\n"); exit(1); }
   mpfr_set_str_raw(xx, "0.10100010001110110111000010001000010011111101000100011101000011100");
   mpfr_set_str_raw(yy, "0.10100010001110110111000010001000010011111101000100011101000011011");
-  if (mpfr_cmp2(xx,yy)!=64) { printf("Error (1) in mpfr_cmp\n"); exit(1); }
-  mpfr_set_prec(xx,53); mpfr_set_prec(yy,200);
+  if (mpfr_cmp2(xx,yy)!=64) { printf("Error (2) in mpfr_cmp\n"); exit(1); }
+
+  mpfr_set_prec (xx, 160); mpfr_set_prec (yy, 160);
+  mpfr_set_str_raw (xx, "0.1E1");
+  mpfr_set_str_raw (yy, "0.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000110001110100");
+  if (mpfr_cmp2 (xx, yy) != 144) {
+    printf("Error (3) in mpfr_cmp\n");
+    exit(1);
+  }
+
+  mpfr_set_prec(xx, 53); mpfr_set_prec(yy, 200);
   mpfr_set_d(xx, 1.0, 0);
   mpfr_set_d(yy, 1.0, 0);
   if (mpfr_cmp(xx,yy)!=0) {
@@ -55,8 +66,76 @@ main()
     printf("Error in mpfr_cmp: not 1.0000000002 > 1.0\n"); exit(1);
   }
   mpfr_set_prec(yy, 53);
-  for (i=0;i<1000000;) {    
-    x=drand(); y=drand();
+
+  /* bug found by Gerardo Ballabio */
+  mpfr_set_d(xx, 0.0, GMP_RNDN);
+  mpfr_set_d(yy, 0.1, GMP_RNDN);
+  if (mpfr_cmp(xx, yy) >= 0) {
+    fprintf(stderr,
+	    "Error in mpfr_cmp(0.0, 0.1), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d(xx, Infp, GMP_RNDN); 
+  mpfr_set_d(yy, -23489745.0329, GMP_RNDN); 
+  if (mpfr_cmp(xx, yy) <= 0) { 
+    fprintf(stderr,
+	    "Error in mpfr_cmp(Infp, 23489745.0329), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d(xx, Infp, GMP_RNDN); 
+  mpfr_set_d(yy, Infm, GMP_RNDN); 
+  if (mpfr_cmp(xx, yy) <= 0) { 
+    fprintf(stderr,
+	    "Error in mpfr_cmp(Infp, Infm), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d(xx, Infm, GMP_RNDN); 
+  mpfr_set_d(yy, Infp, GMP_RNDN); 
+  if (mpfr_cmp(xx, yy) >= 0) { 
+    fprintf(stderr,
+	    "Error in mpfr_cmp(Infm, Infp), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d(xx, Infp, GMP_RNDN); 
+  mpfr_set_d(yy, Infp, GMP_RNDN); 
+  if (mpfr_cmp(xx, yy) != 0) { 
+    fprintf(stderr,
+	    "Error in mpfr_cmp(Infp, Infp), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d(xx, Infm, GMP_RNDN); 
+  mpfr_set_d(yy, Infm, GMP_RNDN); 
+  if (mpfr_cmp(xx, yy) != 0) { 
+    fprintf(stderr,
+	    "Error in mpfr_cmp(Infm, Infm), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d(xx, Infm, GMP_RNDN); 
+  mpfr_set_d(yy, 2346.09234, GMP_RNDN); 
+  if (mpfr_cmp(xx, yy) >= 0) { 
+    fprintf(stderr,
+	    "Error in mpfr_cmp(Infm, 2346.09234), gives %d\n", mpfr_cmp(xx, yy));
+    exit(1);
+  }
+
+  mpfr_set_d (xx, 0.0, GMP_RNDN);
+  mpfr_set_d (yy, 1.0, GMP_RNDN);
+  if ((i = mpfr_cmp3 (xx, yy, 1)) >= 0) {
+    fprintf (stderr, "Error: mpfr_cmp3 (0, 1, 1) gives %d instead of a negative value\n", i);
+    exit (1);
+  }
+  if ((i = mpfr_cmp3 (xx, yy, -1)) <= 0) {
+    fprintf (stderr, "Error: mpfr_cmp3 (0, 1, -1) gives %d instead of a positive value\n", i);
+    exit (1);
+  }
+
+  for (i=0;i<1000000;) {    x=drand(); y=drand();
     if (!isnan(x) && !isnan(y)) {
       i++;
       mpfr_set_d(xx, x, 0);
@@ -68,6 +147,7 @@ main()
       }
     }
   }
+
   mpfr_clear(xx); mpfr_clear(yy);
-  exit (0);
+  return 0;
 }

@@ -1,6 +1,6 @@
-/* Test file for mpfr_log2.
+/* Test file for mpfr_const_log2.
 
-Copyright (C) 1999 PolKA project, Inria Lorraine and Loria
+Copyright (C) 1999 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -32,13 +32,13 @@ int main(argc, argv) int argc; char *argv[];
   p = (argc>1) ? atoi(argv[1]) : 53;
   rnd = (argc>2) ? atoi(argv[2]) : GMP_RNDZ;
   mpfr_init2(x, p);
-  mpfr_log2(x, rnd);
+  mpfr_const_log2(x, rnd);
   if (argc>=2) {
     printf("log(2)="); mpfr_out_str(stdout, 10, 0, x, rnd); putchar('\n');
   }
   else if (mpfr_get_d(x) != 6.9314718055994530941e-1)  {
-    fprintf(stderr, "mpfr_log2 failed for prec=53\n"); exit(1);
+    fprintf(stderr, "mpfr_const_log2 failed for prec=53\n"); exit(1);
   }
   mpfr_clear(x);
-  exit (0);
+  return 0;
 }
