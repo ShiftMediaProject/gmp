@@ -1,3 +1,7 @@
+2000-03-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/regmap.m4: Map cr0 => `0', etc.
+
 2000-03-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/tests/ref.c (refmpn_divexact_by3): New function.
