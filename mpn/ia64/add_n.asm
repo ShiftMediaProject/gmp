@@ -34,42 +34,42 @@ ASM_START()
 PROLOGUE(mpn_add_n)
 	.prologue
 	.save	ar.lc, r2
-  { .mib	cmp.eq		p6, p7 = 1, r35
+  { .mib;	cmp.eq		p6, p7 = 1, r35
 		add		r35 = -2, r35
 		nop.b		0
-} { .mib	cmp.ne		p8, p9 = r0, r0
+} { .mib;	cmp.ne		p8, p9 = r0, r0
 		mov		r2 = ar.lc
 		nop.b		0			;;
-} { .mib	ld8		r16 = [r33], 8
+} { .mib;	ld8		r16 = [r33], 8
 		mov		ar.lc = r35
 		nop.b		0
-} { .mib	ld8		r17 = [r34], 8
+} { .mib;	ld8		r17 = [r34], 8
 		nop.i		0
 	   (p6)	br		.Lend			;;
 }
 		.align	32
 .Loop:
-  { .mii	mov		r20 = r16
+  { .mii;	mov		r20 = r16
 	   (p8)	add		r19 = r16, r17, 1
 	   (p9)	add		r19 = r16, r17		;;
-} { .mfi	ld8		r16 = [r33], 8
+} { .mfi;	ld8		r16 = [r33], 8
 		nop.f		0
 	   (p8)	cmp.leu		p8, p9 = r19, r20
-} { .mfi	ld8		r17 = [r34], 8
+} { .mfi;	ld8		r17 = [r34], 8
 		nop.f		0
 	   (p9)	cmp.ltu		p8, p9 = r19, r20
-} { .mbb	st8		[r32] = r19, 8
+} { .mbb;	st8		[r32] = r19, 8
 		nop.b		0
 		br.cloop.dptk	.Loop			;;
 }
 .Lend:
-  { .mfi   (p8)	add		r19 = r16, r17, 1
+  { .mfi;  (p8)	add		r19 = r16, r17, 1
 		nop.f		0
 	   (p9)	add		r19 = r16, r17		;;
-} { .mii	st8		[r32] = r19
+} { .mii;	st8		[r32] = r19
 	   (p8)	cmp.leu		p8, p9 = r19, r16
 	   (p9)	cmp.ltu		p8, p9 = r19, r16	;;
-} { .mfi   (p8)	mov		r8 = 1
+} { .mfi;  (p8)	mov		r8 = 1
 		nop.f		0
 	   (p9)	mov		r8 = 0
 }

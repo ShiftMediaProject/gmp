@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_popcount.
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -40,7 +40,7 @@ PROLOGUE(mpn_popcount)
 		mov	ar.lc = r22
 		mov	r8 = 0		;;
 		br.cloop.dpnt	.Loop0	;;
-		br	.L0
+		br.sptk	.L0
 .Loop0:		ld8	r16 = [r32], 8	;;
 		popcnt	r20 = r16	;;
 		add	r8 = r8, r20
@@ -54,7 +54,7 @@ PROLOGUE(mpn_popcount)
 		ld8	r18 = [r32], 8	;;
 		ld8	r19 = [r32], 8	;;
 		br.cloop.dptk	.L2    ;;
-		br		.Ldone1	;;
+		br.sptk		.Ldone1	;;
 .L2:
 		popcnt	r20 = r16
 		ld8	r16 = [r32], 8	;;
@@ -65,7 +65,7 @@ PROLOGUE(mpn_popcount)
 		popcnt	r23 = r19
 		ld8	r19 = [r32], 8	;;
 		br.cloop.dptk	.Loop  ;;
-		br		.Ldone0
+		br.sptk		.Ldone0
 
 .Loop:		add	r8 = r8, r20
 		popcnt	r20 = r16

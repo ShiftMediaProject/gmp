@@ -58,7 +58,7 @@ PROLOGUE(mpn_copyi)
 		ld8	r19 = [r33], 8
 		br.cloop.dptk .Loop
 		;;
-		br	.Lend
+		br.sptk	.Lend
 		;;
 
 .Lb01:	C  n = 1, 5, 9, 13, ...
@@ -72,7 +72,7 @@ PROLOGUE(mpn_copyi)
 		ld8	r17 = [r33], 8
 		;;
 		ld8	r18 = [r33], 8
-		br	.Li01
+		br.sptk	.Li01
 		;;
 
 .Lb10:	C  n = 2,6, 10, 14, ...
@@ -86,7 +86,7 @@ PROLOGUE(mpn_copyi)
 		ld8	r16 = [r33], 8
 		;;
 		ld8	r17 = [r33], 8
-		br	.Li10
+		br.sptk	.Li10
 		;;
 
 .Lb11:	C  n = 3, 7, 11, 15, ...
@@ -100,27 +100,27 @@ PROLOGUE(mpn_copyi)
 	  (p14)	br	.Ls11
 		;;
 		ld8	r16 = [r33], 8
-		br	.Li11
+		br.sptk	.Li11
 		;;
 
 .Loop:
 .Li00:
-  { .mmb	st8	[r32] = r16, 8
+  { .mmb;	st8	[r32] = r16, 8
 		ld8	r16 = [r33], 8
 		;;
 }
 .Li11:
-  { .mmb	st8	[r32] = r17, 8
+  { .mmb;	st8	[r32] = r17, 8
 		ld8	r17 = [r33], 8
 		;;
 }
 .Li10:
-  { .mmb	st8	[r32] = r18, 8
+  { .mmb;	st8	[r32] = r18, 8
 		ld8	r18 = [r33], 8
 		;;
 }
 .Li01:
-  { .mmb	st8	[r32] = r19, 8
+  { .mmb;	st8	[r32] = r19, 8
 		ld8	r19 = [r33], 8
 		br.cloop.dptk .Loop
 		;;

@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_Xshift.
 
-dnl  Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -145,7 +145,7 @@ C
 	FSH	r24 = r18, r35
 	br.cloop.dptk .Loop
 }
-	br	.Lend2
+	br.sptk	.Lend2
 .Loop:
   { .mmi
 	st8	[r32] = r27, UPD
