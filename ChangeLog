@@ -1,3 +1,8 @@
+2001-01-15  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c (speed_cpu_frequency_measure): Check cycles_works_p
+	before running speed_cyclecounter.
+
 2001-01-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/kronsz.c: Don't depend on right shifting a negative.
