@@ -26,11 +26,11 @@ C mp_limb_t mpn_udiv_qrnnd (mp_limb_t *rp,
 C                           mp_limb_t nh, mp_limb_t nl, mp_limb_t d);
 C
 
-PROLOGUE(__udiv_qrnnd)
+PROLOGUE(mpn_udiv_qrnnd)
 	movel	M(sp,4), a0	C rp
 	movel	M(sp,8), d1	C nh
 	movel	M(sp,12), d0	C nl
 	divul	M(sp,16), d1:d0
 	movel	d1, M(a0)	C r
 	rts
-EPILOGUE(__udiv_qrnnd)
+EPILOGUE(mpn_udiv_qrnnd)
