@@ -1,7 +1,7 @@
 /* Test mpz_gcd, mpz_gcdext, and mpz_gcd_ui.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -84,6 +84,12 @@ check_data (void)
    to reinitialize them for each test.  */
 mpz_t gcd1, gcd2, s, t, temp1, temp2;
 
+#if GCD_SCHOENHAGE_THRESHOLD > GCDEXT_SCHOENHAGE_THRESHOLD
+#define MAX_SCHOENHAGE_THRESHOLD GCD_SCHOENHAGE_THRESHOLD
+#else
+#define MAX_SCHOENHAGE_THRESHOLD GCDEXT_SCHOENHAGE_THRESHOLD
+#endif
+
 /* Define this to make all operands be large enough for Schoenhage gcd
    to be used.  */
 #ifndef WHACK_SCHOENHAGE
@@ -91,7 +97,7 @@ mpz_t gcd1, gcd2, s, t, temp1, temp2;
 #endif
 
 #if WHACK_SCHOENHAGE
-#define MIN_OPERAND_BITSIZE (GCD_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
+#define MIN_OPERAND_BITSIZE (MAX_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
 #else
 #define MIN_OPERAND_BITSIZE 1
 #endif
@@ -160,7 +166,7 @@ main (int argc, char **argv)
       chain_len = 1000000;
 #else
       mpz_urandomb (bs, rands, 32);
-      chain_len = mpz_get_ui (bs) % (GMP_NUMB_BITS * GCD_SCHOENHAGE_THRESHOLD / 256);
+      chain_len = mpz_get_ui (bs) % (GMP_NUMB_BITS * MAX_SCHOENHAGE_THRESHOLD / 256);
 #endif
 
       for (j = 0; j < chain_len; j++)
@@ -173,7 +179,7 @@ main (int argc, char **argv)
 	  mpz_add (op1, op1, temp1);
 
 	  /* Don't generate overly huge operands.  */
-	  if (SIZ (op1) > 3 * GCD_SCHOENHAGE_THRESHOLD)
+	  if (SIZ (op1) > 3 * MAX_SCHOENHAGE_THRESHOLD)
 	    break;
 
 	  mpz_urandomb (bs, rands, 32);
@@ -184,7 +190,7 @@ main (int argc, char **argv)
 	  mpz_add (op2, op2, temp1);
 
 	  /* Don't generate overly huge operands.  */
-	  if (SIZ (op2) > 3 * GCD_SCHOENHAGE_THRESHOLD)
+	  if (SIZ (op2) > 3 * MAX_SCHOENHAGE_THRESHOLD)
 	    break;
 	}
       one_test (op1, op2, ref, i);
