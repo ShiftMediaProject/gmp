@@ -1,3 +1,19 @@
+2000-12-13  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (FIB_THRESHOLD): Defaults for 4,8,16 bits per limb, and
+	an arbitrary fallback default.
+	(modlimb_invert): Add efficient code for 8,16 (or 4) bits per limb.
+
+	* configure.in (mips3, mips64): Don't bother with o32 (mips2 32-bit
+	limb) on IRIX 6.
+
+	* Makefile.am (SUBDIRS): Put "tests" first so tests/t-constants.c is
+	run first, to pick up any limb size mismatch.
+
+	* tune/tuneup.c (DIVREM_1, MOD_1): Fix result values, were off by 1.
+
+	* mpz/fib_ui.c (table1, table2): Add data for 2,4,8,16 bits per limb.
+
 2000-12-12  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (LIMBS_PER_DOUBLE): Define for any limb bitsize.
