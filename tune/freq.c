@@ -656,7 +656,7 @@ freq_all (int help)
     || freq_sunos_sysinfo (help)
     || freq_measure_getrusage (help)
     || freq_measure_gettimeofday (help);
-};
+}
 
 
 void
