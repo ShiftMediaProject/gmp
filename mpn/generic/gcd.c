@@ -692,20 +692,6 @@ gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 }
 #endif
 
-/* FIXME: Some duplication, this function is also in hgcd.c. Perhaps
- * we can use some simpler test here? */
-/* Only the first row has v = 0, a = 1 * a + 0 * b */
-static int
-hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
-{
-  mp_size_t i;
-  for (i = 0; i < n; i++)
-    if (r->uvp[1][i] != 0)
-      return 0;
-
-  return 1;
-}
-
 static mp_size_t
 gcd_schoenhage_itch (mp_size_t asize)
 {
@@ -810,37 +796,6 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 	  if (res == 3)
 	    sign = ~sign;
 
-#if WANT_ASSERT
-	  {
-	    struct hgcd hgcd_lehmer;
-	    int res_lehmer;
-
-	    mp_size_t init_scratch = mpn_hgcd_init_itch (r[0].rsize - k);
-	    mp_size_t lehmer_scratch = mpn_hgcd_lehmer_itch (r[0].rsize - k);
-	    mp_ptr space;
-	    TMP_DECL (marker);
-
-	    TMP_MARK (marker);
-	    space = TMP_ALLOC (sizeof (mp_limb_t *)
-			       * (init_scratch + lehmer_scratch));
-
-	    qstack_reset (&quotients, r[0].rsize - k);
-	    mpn_hgcd_init (&hgcd_lehmer,
-			   r[0].rsize - k,
-			   space);
-
-	    res_lehmer = mpn_hgcd_lehmer (&hgcd_lehmer,
-					  r[0].rp + k, r[0].rsize - k,
-					  r[1].rp + k, r[1].rsize - k,
-					  &quotients,
-					  space+ init_scratch, lehmer_scratch);
-
-	    ASSERT (res == res_lehmer);
-	    ASSERT (res == 0 || mpn_hgcd_equal (&hgcd, &hgcd_lehmer));
-
-	    TMP_FREE (marker);
-	  }
-#endif
 	  /* s[0] and s[1] are correct */
 	  r[2].rsize
 	    = mpn_hgcd_fix (k, r[2].rp, ralloc,
