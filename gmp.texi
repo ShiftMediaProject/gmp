@@ -34,6 +34,144 @@
 @c  beginner looking for "GCD" or something is only going to be confused by
 @c  pointers to low level routines.
 
+
+@c  @m{T,N} is $T$ in tex or @math{N} otherwise.  This is an easy way to give
+@c  different forms for math in tex and info.  Commas in N or T don't work,
+@c  but @C{} can be used instead.  \, works in info but not in tex.
+@iftex
+@macro m {T,N}
+@tex$\T\$@end tex
+@end macro
+@end iftex
+@ifnottex
+@macro m {T,N}
+@math{\N\}
+@end macro
+@end ifnottex
+
+@macro C {}
+,
+@end macro
+
+@c  @ma{E} is $E$ for tex or @math{E} otherwise.  This suits expressions which
+@c  want $$ rather than @math{} in tex, for example @ma{N^2}.
+@iftex
+@macro ma {E}
+@tex$\E\$@end tex
+@end macro
+@end iftex
+@ifnottex
+@macro ma {E}
+@math{\E\}
+@end macro
+@end ifnottex
+
+@c  @ms{V,N} is $V_N$ in tex or just vn otherwise.  This suits simple
+@c  subscripts like @ms{x,0}.
+@iftex
+@macro ms {V,N}
+@tex$\V\_{\N\}$@end tex
+@end macro
+@end iftex
+@ifnottex
+@macro ms {V,N}
+\V\\N\
+@end macro
+@end ifnottex
+
+@c  nicode{S} is plain S in info, or @code{S} elsewhere.  This can be used
+@c  when the quotes that @code{} gives in info aren't wanted, but the
+@c  fontification in tex or html is wanted.
+@ifinfo
+@macro nicode {S}
+\S\
+@end macro
+@end ifinfo
+@ifnotinfo
+@macro nicode {S}
+@code{\S\}
+@end macro
+@end ifnotinfo
+
+@c  Usage: GMPtimes{}
+@c  Give either \times or the word "times".
+@tex
+\gdef\GMPtimes{\times}
+@end tex
+@ifnottex
+@macro GMPtimes
+times
+@end macro
+@end ifnottex
+
+@c  Math operators already available in tex, made available in info too.
+@c  For example @bmod{} can be used in both tex and info.
+@ifnottex
+@macro bmod
+mod
+@end macro
+@macro gcd
+gcd
+@end macro
+@macro log
+log
+@end macro
+@macro min
+min
+@end macro
+@macro rightarrow
+->
+@end macro
+@end ifnottex
+
+@c  New math operators.
+@c  @abs{} can be used in both tex and info, or just \abs in tex.
+@tex
+\gdef\abs{\mathop{\rm abs}}
+@end tex
+@ifnottex
+@macro abs
+abs
+@end macro
+@end ifnottex
+
+@c  @cross{} is a \times symbol in tex, or an "x" in info.  In tex it works
+@c  inside or outside $ $.
+@tex
+\gdef\cross{\ifmmode\times\else$\times$\fi}
+@end tex
+@ifnottex
+@macro cross
+x
+@end macro
+@end ifnottex
+
+@c  Usage: \GMPdisplay{text}
+@c  Put the given text in an @display style indent, but without turning off
+@c  paragraph reflow etc.
+@tex
+\gdef\GMPdisplay#1{%
+\noindent
+\advance\leftskip by \lispnarrowing
+#1\par}
+@end tex
+
+@c  Usage: \GMPhat
+@c  A new \hat that will work in math mode, unlike the texinfo redefined
+@c  version.
+@tex
+\gdef\GMPhat{\mathaccent"705E}
+@end tex
+
+@c  Usage: \GMPraise{text}
+@c  For use in a $ $ math expression as an alternative to "^".  This is good
+@c  for @code{} in an exponent, since there seems to be no superscript font
+@c  for that.
+@tex
+\gdef\GMPraise#1{\mskip0.5\thinmuskip\hbox{\raise0.8ex\hbox{#1}}}
+@end tex
+
+
 @ifnottex
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
 
@@ -1236,6 +1374,24 @@ It doesn't matter if a size set with @code{@w{_mpz}_realloc} is too small,
 since all functions will do a further reallocation if necessary.  Badly
 overestimating memory required will waste space though.
 
+@item Rational Arithmetic
+The @code{mpq} functions operate on @code{mpq_t} values with no common factors
+in the numerator and denominator.  Common factors are checked-for and cast out
+as necessary.  In general, cancelling factors every time is the best approach
+since it minimizes the sizes for subsequent operations.
+
+However, applications that know something about the factorization of the
+values they're working with might be able to avoid some of the GCDs used for
+canonicalization, or swap them for divisions.  For example when multiplying by
+a prime it's enough to check for factors of it in the denominator rather than
+do a full GCD.  Or when forming a big product it might be known that very
+little cancellation will be possible, and so canonicalization can be left to
+the end.
+
+The @code{mpq_numref} and @code{mpq_denref} macros give access to the
+numerator and denominator to do things outside the scope of the @code{mpq}
+functions.  @xref{Applying Integer Functions}.
+
 @item @code{2exp} functions
 It's up to an application to call functions like @code{mpz_mul_2exp} when
 appropriate.  General purpose functions like @code{mpz_mul} make no attempt to
@@ -1546,23 +1702,22 @@ Set the value of @var{rop} from @var{op}.
 @end deftypefun
 
 @deftypefun int mpz_set_str (mpz_t @var{rop}, char *@var{str}, int @var{base})
-Set the value of @var{rop} from @var{str}, a '\0'-terminated C string in base
-@var{base}.  White space is allowed in the string, and is simply ignored.  The
-base may vary from 2 to 36.  If @var{base} is 0, the actual base is determined
-from the leading characters: if the first two characters are `0x' or `0X',
-hexadecimal is assumed, otherwise if the first character is `0', octal is
-assumed, otherwise decimal is assumed.
+Set the value of @var{rop} from @var{str}, a @nicode{'\0'}-terminated C string
+in base @var{base}.  White space is allowed in the string, and is simply
+ignored.  The base may vary from 2 to 36.  If @var{base} is 0, the actual base
+is determined from the leading characters: if the first two characters are
+``0x'' or ``0X'', hexadecimal is assumed, otherwise if the first character is
+``0'', octal is assumed, otherwise decimal is assumed.
 
-This function returns 0 if the entire string up to the '\0' is a valid
-number in base @var{base}.  Otherwise it returns @minus{}1.
+This function returns 0 if the entire string up to the @nicode{'\0'} is a
+valid number in base @var{base}.  Otherwise it returns @minus{}1.
 
 [It turns out that it is not entirely true that this function ignores
-white-space.  It does ignore it between digits, but not after a minus sign
-or within or after "0x".  We are considering changing the definition of
-this function, making it fail when there is any white-space in the input,
-since that makes a lot of sense.  Please tell us your opinion about this
-change.  Do you really want it to accept "3 14" as meaning 314 as it does
-now?]
+white-space.  It does ignore it between digits, but not after a minus sign or
+within or after ``0x''.  We are considering changing the definition of this
+function, making it fail when there is any white-space in the input, since
+that makes a lot of sense.  Please tell us your opinion about this change.  Do
+you really want it to accept @nicode{"3 14"} as meaning 314 as it does now?]
 @end deftypefun
 
 @deftypefun void mpz_swap (mpz_t @var{rop1}, mpz_t @var{rop2})
@@ -1682,12 +1837,7 @@ equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
 
 @deftypefun void mpz_add (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_add_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} + @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} + @var{op2}$.
-@end tex
+Set @var{rop} to @ma{@var{op1} + @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_sub (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -1698,33 +1848,18 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 @deftypefun void mpz_mul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_mul_si (mpz_t @var{rop}, mpz_t @var{op1}, long int @var{op2})
 @deftypefunx void mpz_mul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} times @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} \times @var{op2}$.
-@end tex
+Set @var{rop} to @ma{@var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_addmul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Add @var{op1} times @var{op2} to @var{rop}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{rop} + @var{op1} \times @var{op2}$.
-@end tex
+Set @var{rop} to @ma{@var{rop} + @var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 @cindex Bit shift left
-@ifnottex
-Set @var{rop} to @var{op1} times 2 raised to @var{op2}.  This operation can
-also be defined as a left shift, @var{op2} steps.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} \times 2^{op2}$.  This operation can also be
-defined as a left shift, @var{op2} steps.
-@end tex
+Set @var{rop} to @m{@var{op1} \times 2^{op2}, @var{op1} times 2 raised to
+@var{op2}}.  This operation can also be defined as a left shift by @var{op2}
+bits.
 @end deftypefun
 
 @deftypefun void mpz_neg (mpz_t @var{rop}, mpz_t @var{op})
@@ -1742,198 +1877,91 @@ Set @var{rop} to the absolute value of @var{op}.
 @cindex Integer division functions
 @cindex Division functions
 
-Division is undefined if the divisor is zero, and passing a zero divisor to the
-divide or modulo functions, as well passing a zero mod argument to the
-@code{mpz_powm} and @code{mpz_powm_ui} functions, will make these functions
-intentionally divide by zero.  This lets the user handle arithmetic exceptions
-in these functions in the same manner as other arithmetic exceptions.
-
-There are three main groups of division functions:
-@itemize @bullet
-@item
-Functions that truncate the quotient towards 0.  The names of these functions
-start with @code{mpz_tdiv}.  The @samp{t} in the name is short for
-@samp{truncate}.
-@item
-Functions that round the quotient towards
-@ifnottex
-@minus{}infinity).
-@end ifnottex
-@tex
-$-\infty$
-@end tex
-The names of these routines start with @code{mpz_fdiv}.  The @samp{f} in the
-name is short for @samp{floor}.
-@item
-Functions that round the quotient towards
-@ifnottex
-+infinity.
-@end ifnottex
-@tex
-$+\infty$
-@end tex
-The names of these routines start with @code{mpz_cdiv}.  The @samp{c} in the
-name is short for @samp{ceil}.
-@end itemize
-
-For each rounding mode, there are a couple of variants.  Here @samp{q} means
-that the quotient is computed, while @samp{r} means that the remainder is
-computed.  Functions that compute both the quotient and remainder have
-@samp{qr} in the name.
-
-@deftypefun void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_tdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-Set @var{q} to [@var{n}/@var{d}], truncated towards 0.
-
-The function @code{mpz_tdiv_q_ui} returns the absolute value of the true
-remainder.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_tdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{r} to (@var{n} - [@var{n}/@var{d}] * @var{d}), where the quotient is
-truncated towards 0.  Unless @var{r} becomes zero, it will get the same sign as
-@var{n}.
-@end ifnottex
-@tex
-Set @var{r} to $(@var{n} - [@var{n}/@var{d}] \times @var{d})$, where the
-quotient is truncated towards 0.  Unless @var{r} becomes zero, it will get the
-same sign as @var{n}.
-@end tex
-
-The function @code{mpz_tdiv_r_ui} returns the absolute value of the remainder.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_tdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  Set @var{r} to (@var{n}
-- [@var{n}/@var{d}] * @var{d}).  Unless @var{r} becomes zero, it will get the
-same sign as @var{n}.  If @var{q} and @var{r} are the same variable, the
-results are undefined.
-@end ifnottex
-@tex
-Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  Set @var{r} to $(@var{n}
-- [@var{n}/@var{d}] \times @var{d})$.  Unless @var{r} becomes zero, it will get the
-same sign as @var{n}.  If @var{q} and @var{r} are the same variable, the
-results are undefined.
-@end tex
-
-The function @code{mpz_tdiv_qr_ui} returns the absolute value of the remainder.
-@end deftypefun
-
-@deftypefun {unsigned long int} mpz_tdiv_ui (mpz_t @var{n}, unsigned long int @var{d})
-Like @code{mpz_tdiv_r_ui}, but the remainder is not stored anywhere; its
-absolute value is just returned.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_fdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.
-@end ifnottex
-@tex
-Set @var{q} to $\lfloor@var{n}/@var{d}\rfloor$.
-@end tex
-
-The function @code{mpz_fdiv_q_ui} returns the remainder.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_fdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{r} to (@var{n} - @var{n}/@var{d} * @var{d}), where the quotient is
-rounded towards @minus{}infinity.  Unless @var{r} becomes zero, it will get the
-same sign as @var{d}.
-@end ifnottex
-@tex
-Set @var{r} to $(@var{n} - \lfloor@var{n}/@var{d}\rfloor \times @var{d})$.
-Unless @var{r} becomes zero, it will get the same sign as @var{d}.
-@end tex
-
-The function @code{mpz_fdiv_r_ui} returns the remainder.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.  Set @var{r}
-to (@var{n} - @var{n}/@var{d} * @var{d}).  Unless @var{r} becomes zero, it
-will get the same sign as @var{d}.  If @var{q} and @var{r} are the same
-variable, the results are undefined.
-@end ifnottex
-@tex
-Set @var{q} to $\lfloor@var{n}/@var{d}\rfloor$.  Set @var{r} to $(@var{n} -
-\lfloor@var{n}/@var{d}\rfloor \times @var{d})$.  Unless @var{r} becomes zero,
-it will get the same sign as @var{d}.  If @var{q} and @var{r} are the same
-variable, the results are undefined.
-@end tex
-
-The function @code{mpz_fdiv_qr_ui} returns the remainder.
-@end deftypefun
-
-@deftypefun {unsigned long int} mpz_fdiv_ui (mpz_t @var{n}, unsigned long int @var{d})
-Like @code{mpz_fdiv_r_ui}, but the remainder is not stored anywhere; it is just
-returned.
-@end deftypefun
+Division is undefined if the divisor is zero.  Passing a zero divisor to the
+division or modulo functions (including the modular powering functions
+@code{mpz_powm} and @code{mpz_powm_ui}), will cause an intentional division by
+zero.  This lets a program handle arithmetic exceptions in these functions the
+same way as for normal C @code{int} arithmetic.
 
 @deftypefun void mpz_cdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_cdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{q} to @var{n}/@var{d}, rounded towards +infinity.
-@end ifnottex
-@tex
-Set @var{q} to $\lceil@var{n}/@var{d}\rceil$.
-@end tex
+@deftypefunx void mpz_cdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx void mpz_cdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_cdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_cdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
 
-The function @code{mpz_cdiv_q_ui} returns the negated remainder.
-@end deftypefun
+@deftypefunx void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx void mpz_fdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx void mpz_fdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_fdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_fdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_fdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
+@deftypefunx void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 
-@deftypefun void mpz_cdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{r} to (@var{n} - @var{n}/@var{d} * @var{d}), where the quotient is
-rounded towards +infinity.  Unless @var{r} becomes zero, it will get the
-opposite sign as @var{d}.
-@end ifnottex
-@tex
-Set @var{r} to $(@var{n} - \lceil@var{n}/@var{d}\rceil \times @var{d})$.  Unless
-@var{r} becomes zero, it will get the opposite sign as @var{d}.
-@end tex
+@deftypefunx void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx void mpz_tdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx {unsigned long int} mpz_tdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_tdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_tdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
+@deftypefunx {unsigned long int} mpz_tdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@deftypefunx void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
+@deftypefunx void mpz_tdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
+@cindex Bit shift right
 
-The function @code{mpz_cdiv_r_ui} returns the negated remainder.
-@end deftypefun
+@sp 1
+Divide @var{n} by @var{d}, forming a quotient @var{q} and/or remainder
+@var{r}.  For the @code{2exp} functions the divisor is @m{2^b, 2^@var{b}}.
+The rounding is in three styles, each suiting different applications.
 
-@deftypefun void mpz_cdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{q} to @var{n}/@var{d}, rounded towards +infinity.  Set @var{r}
-to (@var{n} - @var{n}/@var{d} * @var{d}).  Unless @var{r} becomes zero, it
-will get the opposite sign as @var{d}.  If @var{q} and @var{r} are the same
-variable, the results are undefined.
-@end ifnottex
-@tex
-Set @var{q} to $\lceil@var{n}/@var{d}\rceil$.  Set @var{r} to $(@var{n} -
-\lceil@var{n}/@var{d}\rceil \times @var{d})$.  Unless @var{r} becomes zero, it will
-get the opposite sign as @var{d}.  If @var{q} and @var{r} are the same
-variable, the results are undefined.
-@end tex
+@itemize @bullet
+@item
+@code{cdiv} rounds @var{q} up towards @m{+\infty, +infinity}, and @var{r} will
+have the opposite sign to @var{d}.  The @code{c} stands for ``ceil''.
 
-The function @code{mpz_cdiv_qr_ui} returns the negated remainder.
-@end deftypefun
+@item
+@code{fdiv} rounds @var{q} down towards @m{-\infty, @minus{}infinity}, and
+@var{r} will have the same sign as @var{d}.  The @code{f} stands for
+``floor''.
 
-@deftypefun {unsigned long int} mpz_cdiv_ui (mpz_t @var{n}, unsigned long int @var{d})
-Like @code{mpz_tdiv_r_ui}, but the remainder is not stored anywhere; its
-negated value is just returned.
+@item
+@code{tdiv} rounds @var{q} towards zero, and @var{r} will have the same sign
+as @var{n}.  The @code{t} stands for ``truncate''.
+@end itemize
+
+In all cases @var{q} and @var{r} will satisfy
+@m{@var{n}=@var{q}@var{d}+@var{r}, @var{n}=@var{q}*@var{d}+@var{r}}, and
+@var{r} will satisfy @m{0\leq|@var{r}|<|@var{d}|,
+0<=abs(@var{r})<abs(@var{d})}.
+
+The @code{q} functions calculate only the quotient, the @code{r} functions
+only the remainder, and the @code{qr} functions calculate both.  Note that for
+@code{qr} the same variable cannot be passed for both @var{q} and @var{r}, or
+results will be unpredictable.
+
+The @code{ui} variants also provide the remainder as the return value, and in
+fact returning the remainder is all the plain @code{div_ui} functions do.  For
+@code{tdiv} and @code{cdiv} the remainder can be negative, so for those the
+return value is the absolute value of the remainder.
+
+The @code{2exp} functions do a right shift of @var{n} by @var{b} bits to form
+@var{q}, and a mask leaving the low @var{b} bits for @var{r}, although the
+effect of rounding is then applied.  The @code{fdiv} @code{2exp} forms will be
+simple shifts and masks on positive @var{n}, or for negative @var{n} will be
+effectively twos complement arithmetic shifts and masks (although the
+implementation is actually signed magnitude).
+
+Currently @code{cdiv} @code{2exp} forms are not available.
 @end deftypefun
 
 @deftypefun void mpz_mod (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
-@deftypefunx {unsigned long int} mpz_mod_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-Set @var{r} to @var{n} @code{mod} @var{d}.  The sign of the divisor is ignored;
-the result is always non-negative.
-
-The function @code{mpz_mod_ui} returns the remainder.
+@deftypefunx {unsigned long int} mpz_mod_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
+Set @var{r} to @var{n} @code{mod} @var{d}.  The sign of the divisor is
+ignored; the result is always non-negative.  @code{mpz_mod_ui} also returns
+the remainder.
 @end deftypefun
 
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
@@ -1941,58 +1969,9 @@ The function @code{mpz_mod_ui} returns the remainder.
 Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
 when it is known in advance that @var{d} divides @var{n}.
 
-Since @code{mpz_divexact} is much faster than any of the other routines that
-produce the quotient (@pxref{References} Jebelean), it is the best choice for
-instances in which exact division is known to occur, such as reducing a
+@code{mpz_divexact} is much faster than the other division functions, and is
+the best choice when exact division is known to occur, for example reducing a
 rational to lowest terms.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@cindex Bit shift right
-@ifnottex
-Set @var{q} to @var{n} divided by 2 raised to @var{d}.  The quotient is truncated
-towards 0.
-@end ifnottex
-@tex
-Set @var{q} to $[{n}/2^{d}]$, truncated towards 0.
-@end tex
-@end deftypefun
-
-@deftypefun void mpz_tdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Divide @var{n} by (2 raised to @var{d}), rounding the quotient towards 0, and
-put the remainder in @var{r}.
-@end ifnottex
-@tex
-Set @var{r} to $n - [n / 2^{d}] \times 2^{d}$, where [ ] indicates rounding towards
-0.
-@end tex
-Unless it is zero, @var{r} will have the same sign as @var{n}.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Set @var{q} to @var{n} divided by 2 raised to @var{d}, rounded towards
-@minus{}infinity.
-@end ifnottex
-@tex
-Set @var{q} to $\lfloor{n}/2^{d}\rfloor$.
-@end tex
-This operation can also be defined as arithmetic right shift @var{d} bit
-positions.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifnottex
-Divide @var{n} by (2 raised to @var{d}), rounding the quotient towards
-@minus{}infinity, and put the remainder in @var{r}.
-@end ifnottex
-@tex
-Set @var{r} to $n - \lfloor{n}/2^{d}\rfloor \times 2^{d}$.
-@end tex
-The sign of @var{r} will always be positive.
-This operation can also be defined as masking of the @var{d} least significant
-bits.
 @end deftypefun
 
 
@@ -2004,25 +1983,14 @@ bits.
 
 @deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
 @deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
-@ifnottex
-Set @var{rop} to (@var{base} raised to @var{exp}) @code{mod} @var{mod}.  If
-@var{exp} is negative, the result is undefined.
-@end ifnottex
-@tex
-Set @var{rop} to $base^{exp} \bmod mod$.  If
-@var{exp} is negative, the result is undefined.
-@end tex
-
+Set @var{rop} to @m{base^{exp} \bmod mod, (@var{base} raised to @var{exp})
+modulo @var{mod}}.  If @var{exp} is negative, the result is undefined.
 @end deftypefun
 
 @deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
 @deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
-@ifnottex
-Set @var{rop} to @var{base} raised to @var{exp}.  The case of 0^0 yields 1.
-@end ifnottex
-@tex
-Set @var{rop} to $base^{exp}$.  The case of $0^0$ yields 1.
-@end tex
+Set @var{rop} to @m{base^{exp}, @var{base} raised to @var{exp}}.  The case
+@ma{0^0} yields 1.
 @end deftypefun
 
 
@@ -2033,53 +2001,32 @@ Set @var{rop} to $base^{exp}$.  The case of $0^0$ yields 1.
 @cindex Root extraction functions
 
 @deftypefun int mpz_root (mpz_t @var{rop}, mpz_t @var{op}, unsigned long int @var{n})
-@ifnottex
-Set @var{rop} to the truncated integer part of the @var{n}th root of @var{op}.
-@end ifnottex
-@tex
-Set @var{rop} to $\lfloor\root n \of {op}\rfloor$, the truncated integer
-part of the @var{n}th root of @var{op}.
-@end tex
-Return non-zero if the computation was exact, i.e., if @var{op} is
-@var{rop} to the @var{n}th power.
+Set @var{rop} to @m{\lfloor\root n \of {op}\rfloor@C{},} the truncated integer
+part of the @var{n}th root of @var{op}.  Return non-zero if the computation
+was exact, i.e., if @var{op} is @var{rop} to the @var{n}th power.
 @end deftypefun
 
 @deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
-@ifnottex
-Set @var{rop} to the truncated integer part of the square root of @var{op}.
-@end ifnottex
-@tex
-Set @var{rop} to $\lfloor\sqrt{@var{op}}\rfloor$, the truncated integer part of
-the square root of @var{op}.
-@end tex
+Set @var{rop} to @m{\lfloor\sqrt{@var{op}}\rfloor@C{},} the truncated
+integer part of the square root of @var{op}.
 @end deftypefun
 
 @deftypefun void mpz_sqrtrem (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op})
-@ifnottex
-Set @var{rop1} to the truncated integer part of the square root of @var{op},
-like @code{mpz_sqrt}.  Set @var{rop2} to
-@var{op}@minus{}@var{rop1}*@var{rop1},
-@end ifnottex
-@tex
-Set @var{rop1} to $\lfloor\sqrt{@var{op}}\rfloor$, like @code{mpz_sqrt}.
-Set @var{rop2} to $(@var{op} - @var{rop1}^2)$,
-@end tex
-(i.e., zero if @var{op} is a perfect square).
+Set @var{rop1} to @m{\lfloor\sqrt{@var{op}}\rfloor, the truncated integer part
+of the square root of @var{op}}, like @code{mpz_sqrt}.  Set @var{rop2} to the
+remainder @m{(@var{op} - @var{rop1}^2),
+@var{op}@minus{}@var{rop1}*@var{rop1}}, which will be zero if @var{op} is a
+perfect square.
 
 If @var{rop1} and @var{rop2} are the same variable, the results are
 undefined.
 @end deftypefun
 
 @deftypefun int mpz_perfect_power_p (mpz_t @var{op})
-@ifnottex
 Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
-@var{a} and @var{b}, with @var{b} > 1, such that @var{op} equals a raised to
-b.  Return zero otherwise.
-@end ifnottex
-@tex
-Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
-$a$ and $b$, with $b>1$, such that $@var{op}=a^b$.  Return zero otherwise.
-@end tex
+@m{a,@var{a}} and @m{b,@var{b}}, with @m{b>1, @var{b}>1}, such that
+@m{@var{op}=a^b, @var{op} equals @var{a} raised to @var{b}}.  Return zero
+otherwise.
 @end deftypefun
 
 @deftypefun int mpz_perfect_square_p (mpz_t @var{op})
@@ -2173,15 +2120,11 @@ odd and must be positive.
 @deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b});
 @deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b});
 @cindex Kronecker symbol functions
-@tex
-Calculate the value of the Jacobi symbol $\left(a \over b\right)$, with the
-Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$ when $a$
-odd, or $\left(a \over 2\right) = 0$ when $a$ even.
-@end tex
-@ifnottex
-Calculate the value of the Jacobi symbol (@var{a}/@var{b}), with the Kronecker
-extension (a/2)=(2/a) when a odd, or (a/2)=0 when a even.
-@end ifnottex
+Calculate the value of the Jacobi symbol @m{\left(a \over b\right),
+(@var{a}/@var{b})}, with the Kronecker extension @m{\left(a \over 2\right) =
+\left(2 \over a\right), (a/2)=(2/a)} when @ma{a} odd, or @m{\left(a \over
+2\right) = 0, (a/2)=0} when @ma{a} even.
+
 All values of @var{a} and @var{b} give a well-defined result.  See Henri
 Cohen, section 1.4.2, for more information (@pxref{References}).  See also the
 example program @file{demos/qcn.c} which uses @code{mpz_kronecker_ui}.
@@ -2200,22 +2143,12 @@ Set @var{rop} to @var{op}!, the factorial of @var{op}.
 @deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
 @deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, @w{unsigned long int @var{k}})
 @cindex Binomial coefficient functions
-Compute the binomial coefficient
-@ifnottex
-@var{n} over @var{k}
-@end ifnottex
-@tex
-$\left({n}\atop{k}\right)$
-@end tex
-and store the result in @var{rop}.  Negative values of @var{n} are supported
-by @code{mpz_bin_ui}, using the identity
-@ifnottex
-bin(-n,k) = (-1)^k * bin(n+k-1,k),
-@end ifnottex
-@tex
-$\left({-n}\atop{k}\right) = (-1)^k \left({n+k-1}\atop{k}\right)$,
-@end tex
-see Knuth volume 1 section 1.2.6 part G.
+Compute the binomial coefficient @m{\left({n}\atop{k}\right), @var{n} over
+@var{k}} and store the result in @var{rop}.  Negative values of @var{n} are
+supported by @code{mpz_bin_ui}, using the identity
+@m{\left({-n}\atop{k}\right) = (-1)^k \left({n+k-1}\atop{k}\right),
+bin(-n@C{}k) = (-1)^k * bin(n+k-1@C{}k)}, see Knuth volume 1 section 1.2.6
+part G.
 @end deftypefun
 
 @deftypefun void mpz_fib_ui (mpz_t @var{rop}, unsigned long int @var{n})
@@ -2231,30 +2164,16 @@ Compute the @var{n}th Fibonacci number and store the result in @var{rop}.
 @cindex Comparison functions
 
 @deftypefun int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
-@ifnottex
-Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
-@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
-@var{op2}.
-@end ifnottex
-@tex
-Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
-@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
-< @var{op2}$.
-@end tex
+Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
+@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
+@ma{@var{op1} < @var{op2}}.
 @end deftypefun
 
 @deftypefn Macro int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 @deftypefnx Macro int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
-@ifnottex
-Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
-@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
-@var{op2}.
-@end ifnottex
-@tex
-Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
-@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
-< @var{op2}$.
-@end tex
+Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
+@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
+@ma{@var{op1} < @var{op2}}.
 
 These functions are actually implemented as macros.  They evaluate their
 arguments multiple times.
@@ -2263,28 +2182,18 @@ arguments multiple times.
 
 @deftypefun int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
-value if @var{op1} > @var{op2}, zero if @var{op1} = @var{op2}, and a negative
-value if @var{op1} < @var{op2}.
-@end ifnottex
-@tex
-Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
-value if $|@var{op1}| > |@var{op2}|$, zero if $|@var{op1}| = |@var{op2}|$, and a
-negative value if $|@var{op1}| < |@var{op2}|$.
-@end tex
+value if @m{|@var{op1}| > |@var{op2}|, @var{op1} > @var{op2}}, zero if
+@m{|@var{op1}| = |@var{op2}|, @var{op1} = @var{op2}}, and a negative value if
+@m{|@var{op1}| < |@var{op2}|, @var{op1} < @var{op2}}.
 @end deftypefun
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
-@ifnottex
-Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
-@end ifnottex
-@tex
-Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
-@end tex
+Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
+@ma{@var{op} < 0}.
 
-This function is actually implemented as a macro.  It evaluates its
-arguments multiple times.
+This function is actually implemented as a macro.  It evaluates its argument
+multiple times.
 @end deftypefn
 
 @node Integer Logic and Bit Fiddling, I/O of Integers, Integer Comparisons, Integer Functions
@@ -2426,29 +2335,16 @@ Functions} for more information on how to use and not to use random
 number functions.
 
 @deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{n})
-Generate a uniformly distributed random integer in the range
-@ifnottex
-0 to 2^@var{n} @minus{} 1,
-@end ifnottex
-@tex
-0 to $2^n-1$,
-@end tex
-inclusive.
+Generate a uniformly distributed random integer in the range 0 to @m{2^n-1,
+2^@var{n}@minus{}1}, inclusive.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization}) before
 invoking this function.
 @end deftypefun
 
-@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state},
-mpz_t @var{n})
-Generate a uniform random integer in the range 0 to
-@ifnottex
-@var{n} @minus{} 1, inclusive.
-@end ifnottex
-@tex
-$n-1$, inclusive.
-@end tex
+@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state}, mpz_t @var{n})
+Generate a uniform random integer in the range 0 to @ma{@var{n}-1}, inclusive.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization})
@@ -2460,13 +2356,7 @@ Generate a random integer with long strings of zeros and ones in the
 binary representation.  Useful for testing functions and algorithms,
 since this kind of random numbers have proven to be more likely to
 trigger corner-case bugs.  The random number will be in the range
-@ifnottex
-0 to 2^@var{n} @minus{} 1,
-@end ifnottex
-@tex
-0 to $2^n-1$,
-@end tex
-inclusive.
+0 to @m{2^n-1, 2^@var{n}@minus{}1}, inclusive.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization})
@@ -2531,7 +2421,7 @@ big.  If @var{base} is a power of 2, the returned value will always be exact.
 This function is useful in order to allocate the right amount of space before
 converting @var{op} to a string.  The right amount of allocation is normally
 two more than the value returned by @code{mpz_sizeinbase} (one extra for a
-minus sign and one for the terminating '\0').
+minus sign and one for the terminating @nicode{'\0'}).
 @end deftypefun
 
 
@@ -2617,21 +2507,12 @@ Set @var{difference} to @var{minuend} @minus{} @var{subtrahend}.
 @end deftypefun
 
 @deftypefun void mpq_mul (mpq_t @var{product}, mpq_t @var{multiplier}, mpq_t @var{multiplicand})
-@ifnottex
-Set @var{product} to @var{multiplier} times @var{multiplicand}.
-@end ifnottex
-@tex
-Set @var{product} to $@var{multiplier} \times @var{multiplicand}$.
-@end tex
+Set @var{product} to @ma{@var{multiplier} @GMPtimes{} @var{multiplicand}}.
 @end deftypefun
 
 @deftypefun void mpq_mul_2exp (mpq_t @var{rop}, mpq_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} times 2 raised to @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} \times 2^{op2}$.
-@end tex
+Set @var{rop} to @m{@var{op1} \times 2^{op2}, @var{op1} times 2 raised to
+@var{op2}}.
 @end deftypefun
 
 @deftypefun void mpq_div (mpq_t @var{quotient}, mpq_t @var{dividend}, mpq_t @var{divisor})
@@ -2640,12 +2521,8 @@ Set @var{quotient} to @var{dividend}/@var{divisor}.
 @end deftypefun
 
 @deftypefun void mpq_div_2exp (mpq_t @var{rop}, mpq_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1}/2^{op2}$.
-@end tex
+Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised to
+@var{op2}}.
 @end deftypefun
 
 @deftypefun void mpq_neg (mpq_t @var{negated_operand}, mpq_t @var{operand})
@@ -2668,33 +2545,19 @@ zero, this routine will divide by zero.
 @cindex Comparison functions
 
 @deftypefun int mpq_cmp (mpq_t @var{op1}, mpq_t @var{op2})
-@ifnottex
-Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
-@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
-@var{op2}.
-@end ifnottex
-@tex
-Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
-@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
-< @var{op2}$.
-@end tex
+Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
+@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
+@ma{@var{op1} < @var{op2}}.
 
 To determine if two rationals are equal, @code{mpq_equal} is faster than
 @code{mpq_cmp}.
 @end deftypefun
 
 @deftypefn Macro int mpq_cmp_ui (mpq_t @var{op1}, unsigned long int @var{num2}, unsigned long int @var{den2})
-@ifnottex
 Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
-@var{op1} > @var{num2}/@var{den2}, zero if @var{op1} = @var{num2}/@var{den2},
-and a negative value if @var{op1} < @var{num2}/@var{den2}.
-@end ifnottex
-@tex
-Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
-$@var{op1} > @var{num2}/@var{den2}$, zero if $@var{op1} =
-@var{num2}/@var{den2}$, and a negative value if $@var{op1} <
-@var{num2}/@var{den2}$.
-@end tex
+@ma{@var{op1} > @var{num2}/@var{den2}}, zero if @ma{@var{op1} =
+@var{num2}/@var{den2}}, and a negative value if @ma{@var{op1} <
+@var{num2}/@var{den2}}.
 
 This routine allows that @var{num2} and @var{den2} have common factors.
 
@@ -2703,12 +2566,8 @@ arguments multiple times.
 @end deftypefn
 
 @deftypefn Macro int mpq_sgn (mpq_t @var{op})
-@ifnottex
-Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
-@end ifnottex
-@tex
-Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
-@end tex
+Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
+@ma{@var{op} < 0}.
 
 This function is actually implemented as a macro.  It evaluates its
 arguments multiple times.
@@ -2963,10 +2822,10 @@ the mantissa, but not in other places, such as after a minus sign or in the
 exponent.  We are considering changing the definition of this function, making
 it fail when there is any white-space in the input, since that makes a lot of
 sense.  Please tell us your opinion about this change.  Do you really want it
-to accept "3 14" as meaning 314 as it does now?]
+to accept @nicode{"3 14"} as meaning 314 as it does now?]
 
-This function returns 0 if the entire string up to the '\0' is a valid number
-in base @var{base}.  Otherwise it returns @minus{}1.
+This function returns 0 if the entire string up to the @nicode{'\0'} is a
+valid number in base @var{base}.  Otherwise it returns @minus{}1.
 @end deftypefun
 
 @deftypefun void mpf_swap (mpf_t @var{rop1}, mpf_t @var{rop2})
@@ -3044,7 +2903,7 @@ whenever @var{n_digits} is 0.
 
 The generated string is a fraction, with an implicit radix point immediately
 to the left of the first digit.  For example, the number 3.1416 would be
-returned as "31416" in the string and 1 written at @var{expptr}.
+returned as @nicode{"31416"} in the string and 1 written at @var{expptr}.
 
 A pointer to the result string is returned.  This pointer will will either
 equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
@@ -3059,12 +2918,7 @@ equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
 
 @deftypefun void mpf_add (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_add_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} + @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} + @var{op2}$.
-@end tex
+Set @var{rop} to @ma{@var{op1} + @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpf_sub (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
@@ -3075,12 +2929,7 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 
 @deftypefun void mpf_mul (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_mul_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} times @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} \times @var{op2}$.
-@end tex
+Set @var{rop} to @ma{@var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 Division is undefined if the divisor is zero, and passing a zero divisor to the
@@ -3098,22 +2947,12 @@ Set @var{rop} to @var{op1}/@var{op2}.
 @deftypefun void mpf_sqrt (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_sqrt_ui (mpf_t @var{rop}, unsigned long int @var{op})
 @cindex Root extraction functions
-@ifnottex
-Set @var{rop} to the square root of @var{op}.
-@end ifnottex
-@tex
-Set @var{rop} to $\sqrt{@var{op}}$.
-@end tex
+Set @var{rop} to @m{\sqrt{@var{op}}, the square root of @var{op}}.
 @end deftypefun
 
 @deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
 @cindex Exponentiation functions
-@ifnottex
-Set @var{rop} to @var{op1} raised to the power @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1}^{op2}$.
-@end tex
+Set @var{rop} to @m{@var{op1}^{op2}, @var{op1} raised to the power @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpf_neg (mpf_t @var{rop}, mpf_t @var{op})
@@ -3125,21 +2964,13 @@ Set @var{rop} to the absolute value of @var{op}.
 @end deftypefun
 
 @deftypefun void mpf_mul_2exp (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} times 2 raised to @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1} \times 2^{op2}$.
-@end tex
+Set @var{rop} to @m{@var{op1} \times 2^{op2}, @var{op1} times 2 raised to
+@var{op2}}.
 @end deftypefun
 
 @deftypefun void mpf_div_2exp (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifnottex
-Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.
-@end ifnottex
-@tex
-Set @var{rop} to $@var{op1}/2^{op2}$.
-@end tex
+Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised to
+@var{op2}}.
 @end deftypefun
 
 @node Float Comparison, I/O of Floats, Float Arithmetic, Floating-point Functions
@@ -3151,16 +2982,9 @@ Set @var{rop} to $@var{op1}/2^{op2}$.
 @deftypefun int mpf_cmp (mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx int mpf_cmp_ui (mpf_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpf_cmp_si (mpf_t @var{op1}, signed long int @var{op2})
-@ifnottex
-Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
-@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
-@var{op2}.
-@end ifnottex
-@tex
-Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
-@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
-< @var{op2}$.
-@end tex
+Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
+@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
+@ma{@var{op1} < @var{op2}}.
 @end deftypefun
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
@@ -3175,12 +2999,8 @@ result in @var{rop}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
-@ifnottex
-Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
-@end ifnottex
-@tex
-Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
-@end tex
+Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
+@ma{@var{op} < 0}.
 
 This function is actually implemented as a macro.  It evaluates its arguments
 multiple times.
@@ -3511,38 +3331,13 @@ piece from low to high.  @code{mpn_divexact_by3} is simply a macro calling
 These routines use a multiply-by-inverse and will be faster than
 @code{mpn_divrem_1} on CPUs with fast multiplication but slow division.
 
-The source @math{a}, result @math{q}, size @math{n}, initial carry @math{i},
-and return value @math{c} satisfy
-@tex
-$c b^n + a - i = 3q$,
-@end tex
-@ifnottex
-@math{c*b^n + a-i = 3*q},
-@end ifnottex
-where @math{b} is the size of a limb
-@tex
-($2^{32}$ or $2^{64}$).
-@end tex
-@ifnottex
-(@math{2^32} or @math{2^64}).
-@end ifnottex
-@math{c} is always 0, 1 or 2, and the initial carry must also be 0, 1 or 2
-(these are both borrows really).  When @math{c=0}, clearly @math{q=(a-i)/3}.
-When
-@tex
-$c \neq 0$,
-the remainder $(a-i) \, mod \, 3$
-@end tex
-@ifnottex
-@math{c!=0}, the remainder @math{(a-i) mod 3}
-@end ifnottex
-is given by @math{3-c}, because
-@tex
-$b \equiv 1 \, mod \, 3$.
-@end tex
-@ifnottex
-@math{b @equiv{} 1 mod 3}.
-@end ifnottex
+The source @ma{a}, result @ma{q}, size @ma{n}, initial carry @ma{i}, and
+return value @ma{c} satisfy @m{cb^n+a-i=3q, c*b^n + a-i = 3*q}, where
+@m{b=2\GMPraise{@code{mp\_bits\_per\_limb}}, b=2^mp_bits_per_limb}.  The
+return @ma{c} is always 0, 1 or 2, and the initial carry @ma{i} must also be
+0, 1 or 2 (these are both borrows really).  When @ma{c=0} clearly
+@ma{q=(a-i)/3}.  When @m{c \neq 0, c!=0}, the remainder @ma{(a-i) @bmod{} 3} is
+given by @ma{3-c}, because @ma{b @equiv{} 1 @bmod{} 3}.
 @end deftypefn
 
 @deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
@@ -3575,8 +3370,8 @@ revisions.}
 
 @deftypefun mp_limb_t mpn_lshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
 Shift @{@var{sp}, @var{n}@} @var{count} bits to the left, and write the @var{n}
-least significant limbs of the result to @var{rp}.  @var{count} might be in the
-range 1 to n @minus{} 1, on an n-bit machine. The bits shifted out to the left
+least significant limbs of the result to @var{rp}.  @var{count} must be in the
+range 1 to @code{mp_bits_per_limb}@minus{}1. The bits shifted out to the left
 are returned.
 
 Overlapping of the destination space and the source space is allowed in this
@@ -3587,8 +3382,8 @@ This function is written in assembly for most targets.
 
 @deftypefun mp_limp_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
 Shift @{@var{sp}, @var{n}@} @var{count} bits to the right, and write the
-@var{n} most significant limbs of the result to @var{rp}.  @var{count} might be
-in the range 1 to n @minus{} 1, on an n-bit machine.  The bits shifted out to
+@var{n} most significant limbs of the result to @var{rp}.  @var{count} must be
+in the range 1 to @code{mp_bits_per_limb}@minus{}1.  The bits shifted out to
 the right are returned.
 
 Overlapping of the destination space and the source space is allowed in this
@@ -3634,18 +3429,9 @@ destroyed, plus one limb past the end of each.
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
 Compute the square root of @{@var{sp}, @var{n}@} and put the result at
-@{@var{r1p},
-@tex
-$\lceil@var{n}/2\rceil$%
-@end tex
-@iftex
-@}
-@end iftex
-@ifnottex
-ceil(@var{n}/2)@}
-@end ifnottex
-and the remainder at @{@var{r2p}, @var{retval}@}.  @var{r2p} needs space for
-@var{n} limbs, but the return value indicates how many are produced.
+@{@var{r1p}, @m{\lceil@var{n}/2\rceil, ceil(@var{n}/2)}@} and the remainder at
+@{@var{r2p}, @var{retval}@}.  @var{r2p} needs space for @var{n} limbs, but the
+return value indicates how many are produced.
 
 The most significant limb of @var{sp} must be non-zero.  The areas at
 @var{r1p} and @var{sp} must be distinct.  The areas at @var{r2p} and @var{sp}
@@ -3779,18 +3565,17 @@ current system time is quite easy to guess, so a system depending on any
 unpredictability of the random number sequence should absolutely not use that
 as its only source for a seed value.
 
-On some systems there is a special device, often called @code{/dev/random},
+On some systems there is a special device, often called @file{/dev/random},
 which provides a randomness source more usable seed.
 
-The functions actually generating random functions are documented under
-``Miscellaneous Functions'' in their respective function class:
-@ref{Miscellaneous Integer Functions}, @ref{Miscellaneous Float Functions}.
+The functions actually generating random functions are documented in
+@ref{Miscellaneous Integer Functions} and @ref{Miscellaneous Float Functions}.
 
 @menu
 * Random State Initialization::  How to initialize a random state.
 @end menu
 
-@node  Random State Initialization,  , Random Number Functions, Random Number Functions
+@node Random State Initialization,  , Random Number Functions, Random Number Functions
 @section Random State Initialization
 @cindex Random number state
 
@@ -3803,48 +3588,46 @@ Initialize random state variable @var{state}.
 @var{alg} denotes what algorithm to use for random number generation.
 Currently only one algorithm is supported:
 @itemize @minus
-@item GMP_RAND_ALG_LC --- Linear congruential.
+@item @code{GMP_RAND_ALG_LC} --- Linear congruential.
 
-A fast generator defined by @math{X = (aX + c) mod m}.
+A fast generator defined by @ma{X = (aX + c) @bmod{} m}.
 
-A third argument @var{size} of type unsigned long int is required.  @var{size}
-is the size of the largest good quality random number to be generated,
-expressed in number of bits.  If the random generation functions are asked for
-a bigger random number than indicated by this parameter, two or more numbers of
-@var{size} bits will be generated and concatenated, resulting in a ``bad''
-random number.  This can be used to generate big random numbers relatively
-cheap if the quality of randomness isn't of great importance.
+A third argument @var{size} of type @code{unsigned long int} is required.
+@var{size} is the size of the largest good quality random number to be
+generated, expressed in number of bits.  If the random generation functions
+are asked for a bigger random number than indicated by this parameter, two or
+more numbers of @var{size} bits will be generated and concatenated, resulting
+in a ``bad'' random number.  This can be used to generate big random numbers
+relatively cheap if the quality of randomness isn't of great importance.
 
-a, c, and m are picked from a table where the modulus (m) is a power of 2 and
-the multiplier is congruent to 5 (mod 8).  The choice is based on the
-@var{size} parameter.  The maximum @var{size} supported by this algorithm is
-128.  If you need bigger random numbers, use your own scheme and call one of
-the other @code{gmp_randinit} functions.
+@ma{a}, @ma{c}, and @ma{m} are picked from a table where the modulus @ma{m} is
+a power of 2 and the multiplier is congruent to 5 (mod 8).  The choice is
+based on the @var{size} parameter.  The maximum @var{size} supported by this
+algorithm is 128.  If you need bigger random numbers, use your own scheme and
+call one of the other @code{gmp_randinit} functions.
 
 @ignore
-@item GMP_RAND_ALG_BBS --- Blum, Blum, and Shub.
+@item @code{GMP_RAND_ALG_BBS} --- Blum, Blum, and Shub.
 @end ignore
 @end itemize
 
-If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is used.  The
-default algorithm is the linear congruential and requires a third @var{size}
-argument (see GMP_RAND_ALG_LC).
+If @var{alg} is 0 or @code{GMP_RAND_ALG_DEFAULT}, the default algorithm is
+used.  The default algorithm is the linear congruential and requires a third
+@var{size} argument (see @code{GMP_RAND_ALG_LC}).
 
 When you're done with a @var{state} variable, call @code{gmp_randclear} to
 deallocate any memory allocated by this function.
 
-@code{gmp_randinit} may set the following bits in @var{gmp_errno}:
-@c FIXME: gmp_errno is printed in uppercase.  That's wrong.
+@code{gmp_randinit} may set the following bits in @code{gmp_errno}:
 @itemize
-@item GMP_ERROR_UNSUPPORTED_ARGUMENT --- @var{alg} is unsupported
-@item GMP_ERROR_INVALID_ARGUMENT --- @var{size} is too big
+@item @code{GMP_ERROR_UNSUPPORTED_ARGUMENT} --- @var{alg} is unsupported
+@item @code{GMP_ERROR_INVALID_ARGUMENT} --- @var{size} is too big
 @end itemize
 @end deftypefun
 
 
 @ignore
-@deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a},
-unsigned long int @var{c}, mpz_t @var{m})
+@deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
 
 Initialize random state variable @var{state} with given linear congruential
 scheme.
@@ -3857,27 +3640,21 @@ deallocate any memory allocated by this function.
 @end deftypefun
 @end ignore
 
-@deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a},
-unsigned long int @var{c}, unsigned long int @var{m2exp})
+@deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a}, @w{unsigned long int @var{c}}, @w{unsigned long int @var{m2exp}})
 
 Initialize random state variable @var{state} with given linear congruential
 scheme.
 
 Parameters @var{a}, @var{c}, and @var{m2exp} are the multiplier, adder, and
 modulus for the linear congruential scheme to use, respectively.  The modulus
-is expressed as a power of 2, so that
-@ifnottex
-@var{m} = 2^@var{m2exp}.
-@end ifnottex
-@tex
-$m = 2^{m2exp}$.
-@end tex
+is expressed as a power of 2, so that @m{m = 2^{m2exp}, @var{m} =
+2^@var{m2exp}}.
 
 The least significant bits of a random number generated by the linear
 congruential algorithm where the modulus is a power of two are not very random.
 Therefore, the lower half of a random number generated by an LC scheme
 initialized with this function is discarded.  Thus, the size of a random number
-is @var{m2exp} / 2 (rounded upwards) bits when this function has been used for
+is @var{m2exp}/2 (rounded upwards) bits when this function has been used for
 initializing the random state.
 
 When you're done with a @var{state} variable, call @code{gmp_randclear} to
@@ -3885,19 +3662,19 @@ deallocate any memory allocated by this function.
 @end deftypefun
 
 @deftypefun void gmp_randseed (gmp_randstate_t @var{state}, mpz_t @var{seed})
-@deftypefunx void gmp_randseed_ui (gmp_randstate_t @var{state}, unsigned long int @var{seed})
-
+@deftypefunx void gmp_randseed_ui (gmp_randstate_t @var{state}, @w{unsigned long int @var{seed}})
 Set the initial seed value.
 
 Parameter @var{seed} is the initial random seed.  The function
 @code{gmp_randseed_ui} takes the @var{seed} as an unsigned long int rather than
-as an mpz_t.
+as an @code{mpz_t}.
 @end deftypefun
 
 @deftypefun void gmp_randclear (gmp_randstate_t @var{state})
 Free all memory occupied by @var{state}.  Make sure to call this function for
 all @code{gmp_randstate_t} variables when you are done with them.
 @end deftypefun
+
 
 @node BSD Compatible Functions, Custom Allocation, Random Number Functions, Top
 @comment  node-name,  next,  previous,  up
@@ -3935,8 +3712,8 @@ Initialize the integer to @var{initial_value}.  Return a pointer to the
 
 @deftypefun {MINT *} xtom (char *@var{initial_value})
 Allocate an integer consisting of a @code{MINT} object and dynamic limb space.
-Initialize the integer from @var{initial_value}, a hexadecimal, '\0'-terminate
-C string.  Return a pointer to the @code{MINT} object.
+Initialize the integer from @var{initial_value}, a hexadecimal,
+@nicode{'\0'}-terminate C string.  Return a pointer to the @code{MINT} object.
 @end deftypefun
 
 @deftypefun void move (MINT *@var{src}, MINT *@var{dest})
@@ -3968,15 +3745,10 @@ negative arguments.
 @end deftypefun
 
 @deftypefun void msqrt (MINT *@var{op}, MINT *@var{root}, MINT *@var{remainder})
-@ifnottex
-Set @var{root} to the truncated integer part of the square root of @var{op}.
-Set @var{remainder} to @var{op}@minus{}@var{root}*@var{root},
-@end ifnottex
-@tex
-Set @var{root} to $\lfloor\sqrt{@var{op}}\rfloor$, like @code{mpz_sqrt}.  Set
-@var{remainder} to $(op - root^2)$,
-@end tex
-(i.e., zero if @var{op} is a perfect square).
+Set @var{root} to @m{\lfloor\sqrt{@var{op}}\rfloor, the truncated integer part
+of the square root of @var{op}}, like @code{mpz_sqrt}.  Set @var{remainder} to
+@m{(@var{op} - @var{root}^2), @var{op}@minus{}@var{root}*@var{root}}, i.e.
+zero if @var{op} is a perfect square.
 
 If @var{root} and @var{remainder} are the same variable, the results are
 undefined.
@@ -4172,52 +3944,52 @@ about the omission!)
 @itemize @bullet
 
 @item
-Donald E. Knuth, "The Art of Computer Programming", vol 2,
-"Seminumerical Algorithms", 3rd edition, Addison-Wesley, 1988.
+Donald E. Knuth, ``The Art of Computer Programming'', volume 2,
+``Seminumerical Algorithms'', 3rd edition, Addison-Wesley, 1988.
 
 @item
-John D. Lipson, "Elements of Algebra and Algebraic Computing",
+John D. Lipson, ``Elements of Algebra and Algebraic Computing'',
 The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
-Richard M. Stallman, "Using and Porting GCC", Free Software Foundation, 1999,
+Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
 available online @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
-the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}.
+the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}
 
 @item
-Peter L. Montgomery, "Modular Multiplication Without Trial Division", in
+Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
 Mathematics of Computation, volume 44, number 170, April 1985.
 
 @item
-Torbjorn Granlund and Peter L. Montgomery, "Division by Invariant
-Integers using Multiplication", in Proceedings of the SIGPLAN
+Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant
+Integers using Multiplication'', in Proceedings of the SIGPLAN
 PLDI'94 Conference, June 1994.  Available online, @*
 @uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz} (and .psl.gz too).
 
 @item
 Tudor Jebelean,
-"An algorithm for exact division",
+``An algorithm for exact division'',
 Journal of Symbolic Computation,
 v. 15, 1993, pp. 169-180.
 Research report version available online @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-35.ps.gz}
 
 @item
-Kenneth Weber, "The accelerated integer GCD algorithm",
+Kenneth Weber, ``The accelerated integer GCD algorithm'',
 ACM Transactions on Mathematical Software,
 v. 21 (March), 1995, pp. 111-122.
 
 @item
-Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
+Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
 Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @*
-@uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
+@uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}
 
 @item
-Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, "Handbook of
-Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
+Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, ``Handbook of
+Applied Cryptography'', @* @uref{http://cacr.math.uwaterloo.ca/hac/}
 
 @item
-Henri Cohen, "A Course in Computational Algebraic Number Theory", Graduate
+Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.  Errata available
 online @* @uref{http://www.math.u-bordeaux.fr/~cohen}
 @end itemize
