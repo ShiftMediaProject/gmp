@@ -58,6 +58,12 @@ tests_memory_find (void *ptr)
   return NULL;
 }
 
+int
+tests_memory_valid (void *ptr)
+{
+  return (tests_memory_find (ptr) != NULL);
+}
+
 void *
 tests_allocate (size_t size)
 {
