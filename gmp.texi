@@ -779,7 +779,7 @@ If some of the assembly code causes problems, or if otherwise desired, the
 generic C code can be selected with CPU @samp{none}.  For example,
 
 @example
-./configure --build=none-unknown-freebsd3.5
+./configure --host=none-unknown-freebsd3.5
 @end example
 
 Note that this will run quite slowly, but it should be portable and should at
@@ -792,7 +792,7 @@ meaning data type sizes and calling conventions.  By default GMP chooses the
 best ABI available, but a particular ABI can be selected.  For example
 
 @example
-./configure --build=mips64-sgi-irix6 ABI=n32
+./configure --host=mips64-sgi-irix6 ABI=n32
 @end example
 
 See @ref{ABI and ISA}, for the available choices on relevant CPUs, and what
@@ -1223,6 +1223,10 @@ from the same GMP version, since this is not done by the libtool versioning,
 nor otherwise.  A mismatch will result in unresolved symbols from the linker,
 or perhaps the loader.
 
+Using @samp{DESTDIR} or a @samp{prefix} override with @samp{make install} and
+a shared @file{libgmpxx} may run into a libtool relinking problem, see
+@ref{Known Build Problems}.
+
 When building a package for a CPU family, care should be taken to use
 @samp{--host} (or @samp{--build}) to choose the least common denominator among
 the CPUs which might use the package.  For example this might necessitate
@@ -1388,6 +1392,27 @@ script, it exits silently, having died writing a preamble to
 separate @samp{make libgmp.la} helped, perhaps recursing into the various
 subdirectories uses up memory.
 
+@item @samp{DESTDIR} and shared @file{libgmpxx}
+@cindex @samp{DESTDIR}
+
+@samp{make install DESTDIR=/my/staging/area} or the same with a @samp{prefix}
+override to install to a temporary directory may fail when building a shared
+version of @file{libgmpxx}.
+
+If @file{libgmp} is already installed in its final location then there's no
+problem, but if not then unfortunately libtool doesn't know to look in the
+temporary directory for @file{libgmp} when relinking @file{libgmpxx}.
+
+A workaround, at least for SVR4 style systems such as GNU/Linux, is to insert
+a suitable @code{-L} in the @code{relink_command} of @file{libgmpxx.la} after
+building but before installing.  This can be automated with something like
+
+@example
+sed '/^relink_command/s:libgmp.la:-L /my/staging/area libgmp.la:' \
+    <libgmpxx.la >libgmpxx.new
+mv libgmpxx.new libgmpxx.la
+@end example
+
 @item GNU binutils @command{strip}
 @cindex Stripped libraries
 
@@ -1443,8 +1468,8 @@ serious bugs.
 @item Solaris 2.6
 
 The system @command{sed} prints an error ``Output line too long'' when libtool
-builds @file{libgmp.la}.  This doesn't seem cause any obvious ill effects, but
-GNU @command{sed} is recommended, to avoid any doubt.
+builds @file{libgmp.la}.  This doesn't seem to cause any obvious ill effects,
+but GNU @command{sed} is recommended, to avoid any doubt.
 
 @item Sparc Solaris 2.7 with gcc 2.95.2 in ABI=32
 
@@ -1718,9 +1743,9 @@ main (void)
 @}
 @end example
 
-@code{foo} works even if the mainline passes the same variable as both
+@code{foo} works even if the mainline passes the same variable for
 @code{param} and @code{result}, just like the library functions.  But
-sometimes this is tricky to arrange, and an application might not want to
+sometimes it's tricky to make that work, and an application might not want to
 bother supporting that sort of thing.
 
 For interest, the GMP types @code{mpz_t} etc are implemented as one-element
@@ -1775,13 +1800,13 @@ then naturally GMP is not reentrant.
 selected precision.  @code{mpf_init2} can be used instead.
 
 @item
-@code{mp_set_memory_functions} uses global variables to store the selected
-memory allocation functions.
-
-@item
 @code{mpz_random} and the other old random number functions use a global
 random state and are hence not reentrant.  The newer random number functions
 that accept a @code{gmp_randstate_t} parameter can be used instead.
+
+@item
+@code{mp_set_memory_functions} uses global variables to store the selected
+memory allocation functions.
 
 @item
 If the memory allocation functions set by a call to
@@ -1841,9 +1866,9 @@ The GMP version number, as a null-terminated string, in the form ``i.j'' or
 @cindex Compatibility with older versions
 @cindex Upward compatibility
 
-This version of GMP is upwardly binary compatible with all 3.x versions, and
-upwardly compatible at the source level with all 2.x versions, with the
-following exceptions.
+This version of GMP is upwardly binary compatible with all 4.x and 3.x
+versions, and upwardly compatible at the source level with all 2.x versions,
+with the following exceptions.
 
 @itemize @bullet
 @item
@@ -2399,6 +2424,7 @@ GMP integers are stored in objects of type @code{mpz_t}.
 * Integer Logic and Bit Fiddling::  
 * I/O of Integers::             
 * Integer Random Numbers::      
+* Integer Import and Export::   
 * Miscellaneous Integer Functions::  
 @end menu
 
@@ -2611,9 +2637,11 @@ types.  Functions for converting @emph{to} GMP integers are described in
 @ref{Assigning Integers} and @ref{I/O of Integers}.
 
 @deftypefun {unsigned long int} mpz_get_ui (mpz_t @var{op})
-Return the least significant part from @var{op}.  This function combined with
-@* @code{mpz_tdiv_q_2exp(@dots{}, @var{op}, CHAR_BIT*sizeof(unsigned long
-int))} can be used to decompose an integer into unsigned longs.
+Return the value of @var{op} as an @code{unsigned long}.
+
+If @var{op} is too big to fit an @code{unsigned long} then just the least
+significant bits that do fit are returned.  The sign of @var{op} is ignored,
+only the absolute value is used.
 @end deftypefun
 
 @deftypefun {signed long int} mpz_get_si (mpz_t @var{op})
@@ -2621,7 +2649,7 @@ If @var{op} fits into a @code{signed long int} return the value of @var{op}.
 Otherwise return the least significant part of @var{op}, with the same sign
 as @var{op}.
 
-If @var{op} is too large to fit in a @code{signed long int}, the returned
+If @var{op} is too big to fit in a @code{signed long int}, the returned
 result is probably not very useful.  To find out if the value will fit, use
 the function @code{mpz_fits_slong_p}.
 @end deftypefun
@@ -3259,7 +3287,7 @@ machines.
 
 
 @need 2000
-@node Integer Random Numbers, Miscellaneous Integer Functions, I/O of Integers, Integer Functions
+@node Integer Random Numbers, Integer Import and Export, I/O of Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Random Number Functions
 @cindex Integer random number functions
@@ -3321,8 +3349,78 @@ This function is obsolete.  Use @code{mpz_rrandomb} instead.
 @end deftypefun
 
 
+@node Integer Import and Export, Miscellaneous Integer Functions, Integer Random Numbers, Integer Functions
+@section Integer Import and Export
+
+@code{mpz_t} variables can be converted to and from arbitrary words of binary
+data with the following functions.
+
+@deftypefun void mpz_import (mpz_t @var{rop}, size_t @var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, const void *@var{op})
+@cindex Integer import
+@cindex Import
+Set @var{rop} from an array of word data at @var{op}.
+
+The parameters specify the format of the data.  @var{count} many words are
+read, each @var{size} bytes.  @var{order} can be 1 for most significant word
+first or -1 for least significant first.  Within each word @var{endian} can be
+1 for most significant byte first, -1 for least significant first, or 0 for
+the native endianness of the host CPU.  The most significant @var{nails} bits
+of each word are skipped, this can be 0 to use the full words.
+
+There are no data alignment restrictions on @var{op}, any address is allowed.
+
+Here's an example converting an array of @code{unsigned short} data, most
+significant element first and host byte order within each value.
+
+@example
+unsigned short  a[20];
+mpz_t           z;
+mpz_import (z, 20, 1, sizeof(a[0]), 0, 0, a);
+@end example
+@end deftypefun
+
+@deftypefun void *mpz_export (void *@var{rop}, size_t *@var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
+@cindex Integer export
+@cindex Export
+Fill @var{rop} with word data from @var{op}.
+
+The parameters specify the format of the data produced.  Each word will be
+@var{size} bytes and @var{order} can be 1 for most significant word first or
+-1 for least significant first.  Within each word @var{endian} can be 1 for
+most significant byte first, -1 for least significant first, or 0 for the
+native endianness of the host CPU.  The most significant @var{nails} bits of
+each word are unused and set to zero, this can be 0 to produce full words.
+
+The number of words produced is written to @code{*@var{count}}.  @var{rop}
+must have enough space for the data, or if @var{rop} is @code{NULL} then a
+result array of the necessary size is allocated using the current GMP
+allocation function (@pxref{Custom Allocation}).  In either case the return
+value is the destination used, @var{rop} or the allocated block.
+
+If @var{op} is non-zero then the most significant word produced will be
+non-zero.  If @var{op} is zero then the count returned will be zero and
+nothing written to @var{rop}.  If @var{rop} is @code{NULL} in this case, no
+block is allocated, just @code{NULL} is returned.
+
+There are no data alignment restrictions on @var{rop}, any address is allowed.
+The sign of @var{op} is ignored, just the absolute value is used.
+
+When an application is allocating space itself the required size can be
+determined with a calculation like the following.  Since @code{mpz_sizeinbase}
+always returns at least 1, @code{count} here will be at least one, which
+avoids any portability problems with @code{malloc(0)}, though if @code{z} is
+zero no space at all is actually needed.
+
+@example
+numb = 8*size - nail;
+count = (mpz_sizeinbase (z, 2) + numb-1) / numb;
+p = malloc (count * size);
+@end example
+@end deftypefun
+
+
 @need 2000
-@node Miscellaneous Integer Functions,  , Integer Random Numbers, Integer Functions
+@node Miscellaneous Integer Functions,  , Integer Import and Export, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous integer functions
@@ -3354,8 +3452,9 @@ the returned value will be zero.
 @deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
 Return the size of @var{op} measured in number of digits in base @var{base}.
 The base may vary from 2 to 36.  The sign of @var{op} is ignored, just the
-absolute value is used.  The returned value will be exact or 1 too big.  If
-@var{base} is a power of 2, the returned value will always be exact.
+absolute value is used.  The result will be exact or 1 too big.  If @var{base}
+is a power of 2, the result will always be exact.  If @var{op} is zero the
+return value is always 1.
 
 This function is useful in order to allocate the right amount of space before
 converting @var{op} to a string.  The right amount of allocation is normally
@@ -4654,6 +4753,12 @@ when nails are not in use.
 @code{GMP_NAIL_MASK} is not often needed, since the nail part can be obtained
 with @code{x >> GMP_NUMB_BITS}, and that means one less large constant, which
 can help various RISC chips.
+@end defmac
+
+@defmac GMP_NUMB_MAX
+The maximum value that can be stored in the number part of a limb.  This is
+the same as @code{GMP_NUMB_MASK}, but can be used for clarity when doing
+comparisons rather than bit-wise operations.
 @end defmac
 
 The term ``nails'' comes from finger or toe nails, which are at the ends of a
@@ -6155,6 +6260,12 @@ MLton compiler @spaceuref{http://www.sourcelight.com/MLton}
 @itemize @bullet
 @item
 Mozart @spaceuref{http://www.mozart-oz.org}
+@end itemize
+
+@item Pascal
+@itemize @bullet
+@item
+GNU Pascal Compiler @spaceuref{http://www.gnu-pascal.de} @* GMP unit.
 @end itemize
 
 @item Perl
