@@ -1,3 +1,8 @@
+2000-12-16  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (*-*-aix): Pass -qmaxmem=20000 to xlc also for 64-bit
+	compiles.
+
 2000-12-15  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (powerpc*-*-*): Pass -Wa,-mppc when using gcc.
