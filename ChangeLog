@@ -1,3 +1,7 @@
+2000-07-16  Kevin Ryde  <kevin@swox.se>
+
+	* tune/*: Add measuring for umul_ppmm and udiv_qrnnd.
+
 2000-07-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/k62mmx: New directory.
