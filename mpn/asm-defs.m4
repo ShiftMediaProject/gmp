@@ -1130,7 +1130,7 @@ define(`EPILOGUE',
 	SIZE(GSYM_PREFIX`$1',.-GSYM_PREFIX`$1')')
 
 dnl  LSYM_PREFIX might be L$, so defn() must be used to quote it or the L
-dnl  will expand as the L macro here, an infinite recursion.
+dnl  will expand as the L macro, an infinite recursion.
 define(`L',`defn(`LSYM_PREFIX')$1')
 
 define(`INT32',
@@ -1147,6 +1147,22 @@ $1:
 	W32	$2
 	W32	$3
 	')
+
+
+dnl  Usage: ALIGN(bytes)
+dnl
+dnl  Emit a ".align" directive.  The alignment is specified in bytes, and
+dnl  will normally need to be a power of 2.  The actual ".align" generated
+dnl  is either bytes or logarithmic according to what ./configure detects.
+dnl
+dnl  ALIGN_FILL_0x90, if defined and equal to "yes", means a ", 0x90" should
+dnl  be appended (this is for x86).
+
+define(ALIGN,
+m4_assert_numargs(1)
+m4_assert_defined(`ALIGN_LOGARITHMIC')
+`.align	ifelse(ALIGN_LOGARITHMIC,yes,`m4_log2($1)',`eval($1)')dnl
+ifelse(ALIGN_FILL_0x90,yes,`, 0x90')')
 
 
 dnl  Usage: MULFUNC_PROLOGUE(function function...)
