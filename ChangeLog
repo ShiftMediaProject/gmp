@@ -1,3 +1,8 @@
+2001-08-26  Kevin Ryde  <kevin@swox.se>
+
+	* configure, config.in, INSTALL.autoconf: Update to autoconf 2.52.
+	* */Makefile.in, aclocal.m4, configure: Update to automake 1.5.
+
 2001-08-24  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/primes.c: Complete rewrite.
