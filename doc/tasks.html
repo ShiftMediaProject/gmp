@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 20 May 2001.  An up-to-date version is available at
+  This file current as of 7 Jun 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -316,6 +316,11 @@
 <li> 68000: <code>mpn_mul_1</code> could check for a 16-bit multiplier and use
      two multiplies per limb, not four.  Ditto <code>mpn_addmul_1</code> and
      <code>mpn_submul_1</code>.
+<li> 68000: <code>mpn_lshift</code> and <code>mpn_rshift</code> could use a
+     <code>roll</code> and mask instead of <code>lsrl</code> and
+     <code>lsll</code>.  This promises to be a speedup, effectively trading a
+     6+2*n shift for one or two 4 cycle masks.  Suggested by Jean-Charles
+     Meyrignac.
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
