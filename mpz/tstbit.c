@@ -1,6 +1,6 @@
 /* mpz_tstbit -- test a specified bit.  Simulate 2's complement representation.
 
-Copyright 1997 Free Software Foundation, Inc.
+Copyright 1997, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,40 +31,43 @@ mpz_tstbit (d, bit_index)
      unsigned long int bit_index;
 #endif
 {
-  mp_size_t dsize = d->_mp_size;
-  mp_ptr dp = d->_mp_d;
+  mp_size_t dn;
+  mp_ptr dp;
   mp_size_t limb_index;
+  mp_limb_t limb;
+
+  dn = SIZ(d);
+  dp = PTR(d);
 
   limb_index = bit_index / BITS_PER_MP_LIMB;
-  if (dsize >= 0)
+  if (dn >= 0)
     {
-      if (limb_index < dsize)
-	return (dp[limb_index] >> (bit_index % BITS_PER_MP_LIMB)) & 1;
-      else
-	/* Testing a bit outside of a positive number.  */
-	return 0;
+      limb = 0;  /* Default if testing a bit outside of a positive number.  */
+      if (limb_index < dn)
+        limb = dp[limb_index];
     }
   else
     {
       mp_size_t zero_bound;
 
-      dsize = -dsize;
+      dn = -dn;
 
       /* Locate the least significant non-zero limb.  */
       for (zero_bound = 0; dp[zero_bound] == 0; zero_bound++)
-	;
+        ;
 
       if (limb_index > zero_bound)
-	{
-	  if (limb_index < dsize)
-	    return (~dp[limb_index] >> (bit_index % BITS_PER_MP_LIMB)) & 1;
-	  else
-	    /* Testing a bit outside of a negative number.  */
-	    return 1;
-	}
-      else if (limb_index == zero_bound)
-	return (-dp[limb_index] >> (bit_index % BITS_PER_MP_LIMB)) & 1;
+        {
+          limb = ~(mp_limb_t) 0; /* Default if testing a bit outside of a negative number.  */
+          if (limb_index < dn)
+            limb = ~dp[limb_index];
+        }
       else
-	return 0;
+        {
+          limb = 0;
+          if (limb_index == zero_bound)
+            limb = -dp[limb_index];
+        }
     }
+  return (limb >> (bit_index % BITS_PER_MP_LIMB)) & 1;
 }
