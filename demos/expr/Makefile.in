@@ -140,11 +140,10 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I$(top_srcdir)/mpfr
 EXTRA_DIST = exprfr.c exprfra.c
 
 EXTRA_LIBRARIES = libexpr.a
-libexpr_a_SOURCES = expr.h \
+libexpr_a_SOURCES = expr.h expr-impl.h \
   expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
   $(MPFR_SOURCES_OPTION)
 
-nodist_libexpr_a_SOURCES = expr-impl.h
 
 EXTRA_PROGRAMS = run-expr t-expr
 LDADD = libexpr.a $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la
@@ -169,8 +168,7 @@ libexpr_a_LIBADD =
 @WANT_MPFR_FALSE@	exprza$U.$(OBJEXT) exprq$U.$(OBJEXT) \
 @WANT_MPFR_FALSE@	exprqa$U.$(OBJEXT) exprf$U.$(OBJEXT) \
 @WANT_MPFR_FALSE@	exprfa$U.$(OBJEXT)
-nodist_libexpr_a_OBJECTS =
-libexpr_a_OBJECTS = $(am_libexpr_a_OBJECTS) $(nodist_libexpr_a_OBJECTS)
+libexpr_a_OBJECTS = $(am_libexpr_a_OBJECTS)
 EXTRA_PROGRAMS = run-expr$(EXEEXT) t-expr$(EXEEXT)
 run_expr_SOURCES = run-expr.c
 run_expr_OBJECTS = run-expr$U.$(OBJEXT)
@@ -207,7 +205,7 @@ CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libexpr_a_SOURCES) run-expr.c t-expr.c
 DIST_COMMON = README ./stamp-h3.in Makefile.am Makefile.in \
 	expr-config-h.in
-SOURCES = $(libexpr_a_SOURCES) $(nodist_libexpr_a_SOURCES) run-expr.c t-expr.c
+SOURCES = $(libexpr_a_SOURCES) run-expr.c t-expr.c
 
 all: expr-config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
