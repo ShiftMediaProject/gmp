@@ -113,8 +113,6 @@ MA 02111-1307, USA. */
 #undef HAVE_NATIVE_mpn_divrem_1
 #undef HAVE_NATIVE_mpn_divrem_1c
 #undef HAVE_NATIVE_mpn_divrem_2
-#undef HAVE_NATIVE_mpn_divrem_newton
-#undef HAVE_NATIVE_mpn_divrem_classic
 #undef HAVE_NATIVE_mpn_dump
 #undef HAVE_NATIVE_mpn_gcd
 #undef HAVE_NATIVE_mpn_gcd_1
