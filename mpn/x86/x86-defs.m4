@@ -204,13 +204,13 @@ dnl  one byte if FRAME+offset is zero, by putting (%esp) rather than
 dnl  0(%esp).  Do define(`defframe_empty_if_zero_disabled',1) if for some
 dnl  reason the zero offset is wanted.
 dnl
-dnl  The new definition gets a check that FRAME is actually defined when the
-dnl  new macro is used, and that the final %esp offset isn't negative, which
-dnl  would mean an attempt to access something below the current %esp.
+dnl  The new macro also gets a check that when it's used FRAME is actually
+dnl  defined, and that the final %esp offset isn't negative, which would
+dnl  mean an attempt to access something below the current %esp.
 dnl
-dnl  Also, deflit() is used rather than a plain define(), so the new macro
-dnl  won't delete any following parenthesized expression.  name(%edi) will
-dnl  come out say as 16(%esp)(%edi).  This isn't valid assembler and should
+dnl  deflit() is used rather than a plain define(), so the new macro won't
+dnl  delete any following parenthesized expression.  name(%edi) will come
+dnl  out say as 16(%esp)(%edi).  This isn't valid assembler and should
 dnl  provoke an error, which is better than silently giving just 16(%esp).
 dnl
 dnl  See README.family for more on the suggested way to access the stack
@@ -273,7 +273,7 @@ dnl  location just pushed.  This should come after a pushl instruction.
 dnl  Putting it on the same line works and avoids lengthening the code.  For
 dnl  example,
 dnl
-dnl         pushl   %eax    defframe_pushl(VAR_COUNTER)
+dnl         pushl   %eax     defframe_pushl(VAR_COUNTER)
 dnl
 dnl  Notice the defframe() is done with an unquoted -FRAME thus giving its
 dnl  current value without tracking future changes.
@@ -318,7 +318,7 @@ dnl
 dnl  The gas 2.9.1 that comes with FreeBSD 3.4 doesn't support femms, so the
 dnl  following is a replacement using .byte.
 dnl
-dnl  If femms isn't available an emms is generated instead, for convenience
+dnl  If femms isn't available, an emms is generated instead, for convenience
 dnl  when testing on a machine without femms.
 
 define(femms,
@@ -520,6 +520,56 @@ ifelse(eval(`$7'),0,
 ifelse(eval(`$8'),0,
 `	.byte	$5  `# $1 $2, 0$4'',
 `	$6	$7, $8$9')')')')
+
+
+dnl  Usage: shldl(count,src,dst)
+dnl         shrdl(count,src,dst)
+dnl         shldw(count,src,dst)
+dnl         shrdw(count,src,dst)
+dnl
+dnl  Generate a double-shift instruction, possibly omitting a %cl count
+dnl  parameter if that's what the assembler requires, as indicated by
+dnl  WANT_SHLDL_CL in config.m4.  For example,
+dnl
+dnl         shldl(  %cl, %eax, %ebx)
+dnl
+dnl  turns into either
+dnl
+dnl         shldl   %cl, %eax, %ebx
+dnl  or
+dnl         shldl   %eax, %ebx
+dnl
+dnl  Immediate counts are always passed through unchanged.  For example,
+dnl
+dnl         shrdl(  $2, %esi, %edi)
+dnl  becomes
+dnl         shrdl   $2, %esi, %edi
+dnl
+dnl
+dnl  If you forget to use the macro form "shldl( ...)" and instead write
+dnl  just a plain "shldl ...", an error about missing macro arguments will
+dnl  result.  This ensures the necessary variant treatment of %cl isn't
+dnl  accidentally bypassed.
+
+define(define_shd_instruction,
+`define($1,
+m4_assert_numargs(3)
+`shd_instruction'(m4_doublequote($`'0),m4_doublequote($`'1),dnl
+m4_doublequote($`'2),m4_doublequote($`'3)))')
+
+dnl  Effectively: define(shldl,`shd_instruction(`$0',`$1',`$2',`$3')') etc
+define_shd_instruction(shldl)
+define_shd_instruction(shrdl)
+define_shd_instruction(shldw)
+define_shd_instruction(shrdw)
+
+dnl  Called: shd_instruction(op,count,src,dst)
+define(shd_instruction,
+m4_assert_numargs(4)
+m4_assert_defined(`WANT_SHLDL_CL')
+`ifelse(eval(m4_stringequal_p(`$2',`%cl') && !WANT_SHLDL_CL),1,
+``$1'	`$3', `$4'',
+``$1'	`$2', `$3', `$4'')')
 
 
 divert`'dnl
