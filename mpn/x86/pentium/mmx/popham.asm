@@ -25,4 +25,6 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
+
+MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 include_mpn(`x86/k6/mmx/popham.asm')

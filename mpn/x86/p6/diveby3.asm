@@ -32,4 +32,6 @@ dnl  removing it is a 2 cycle slowdown (approx), so it must be inducing
 dnl  something good in the out of order execution.
 
 include(`../config.m4')
+
+MULFUNC_PROLOGUE(mpn_divexact_by3c)
 include_mpn(`x86/pentium/diveby3.asm')

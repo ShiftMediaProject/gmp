@@ -25,4 +25,6 @@ dnl  Haven't actually measured it, but the K7 code with the psadbw should be
 dnl  good on P-III.
 
 include(`../config.m4')
+
+MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 include_mpn(`x86/k7/mmx/popham.asm')
