@@ -57,9 +57,9 @@ Place - Suite 330, Boston, MA 02111-1307, USA.
         return NUMBER; }
 
 [a-zA-Z][a-zA-Z0-9]* {
-        static const struct {
-          const char *name;
-          int        value;
+        static struct {
+          char  *name;
+          int   value;
         } table[] = {
           { "abs",       ABS },
           { "bin",       BIN },
