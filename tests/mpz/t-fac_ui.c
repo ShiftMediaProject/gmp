@@ -1,6 +1,6 @@
 /* Exercise mpz_fac_ui.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,7 +61,7 @@ main (int argc, char *argv[])
 
       if (mpz_cmp (f, r) != 0)
         {
-          printf ("mpz_fib_ui(%lu) wrong\n", n);
+          printf ("mpz_fac_ui(%lu) wrong\n", n);
           printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
           printf ("  want "); mpz_out_str (stdout, 10, f); printf("\n");
           abort ();
