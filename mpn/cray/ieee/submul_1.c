@@ -58,8 +58,8 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
       c1 = ((s1 & s0) | ((s1 | s0) & ~r)) >> 63;
       cy[i] = c0 + c1;
     }
-  /* Carry add loop.  Add the carry vector cy[] to the raw sum rp[] and
-     store the new sum back to rp[0].  */
+  /* Carry subtract loop.  Subtract the carry vector cy[] from the raw result
+     rp[] and store the new result back to rp[].  */
   more_carries = 0;
 #pragma _CRI ivdep
   for (i = 1; i < n; i++)
@@ -75,12 +75,13 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
   if (more_carries)
     {
       mp_limb_t cyrec = 0;
-      /* Look for places where rp[k] is zero and cy[k-1] is non-zero.
+      /* Look for places where rp[k] == ~0 and cy[k-1] == 1 or
+	 rp[k] == ~1 and cy[k-1] == 2.
 	 These are where we got a recurrency carry.  */
       for (i = 1; i < n; i++)
 	{
 	  r = rp[i];
-	  c0 = (~r == 0 && cy[i - 1] != 0);
+	  c0 = ~r < cy[i - 1];
 	  s0 = r - cyrec;
 	  rp[i] = s0;
 	  c1 = (s0 & ~r) >> 63;
