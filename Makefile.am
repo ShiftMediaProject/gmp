@@ -241,6 +241,7 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c		\
   rand.c randclr.c randdef.c randlc2s.c randlc2x.c randmt.c		\
   rands.c randsd.c randsdui.c version.c
+EXTRA_libgmp_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPQ_OBJECTS)	\
   $(MPN_OBJECTS) @mpn_objs_in_libgmp@		\
@@ -285,13 +286,6 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE) \
   -export-symbols $(srcdir)/libmp.sym
 EXTRA_DIST += libmp.sym
-
-
-# Optional objects, listed in a dummy library to generate ansi2knr rules and
-# get them in "make dist".
-#
-EXTRA_LTLIBRARIES = libdummy.la
-libdummy_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 
 
 info_TEXINFOS = gmp.texi
