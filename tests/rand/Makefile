@@ -1,7 +1,6 @@
 CC 		= gcc
 GMPDIR 		= ../..
-#GMPLIBDIR	= $(GMPDIR)
-GMPLIBDIR	= /tmp/linus/gmp
+GMPLIBDIR	= $(GMPDIR)
 GMPLIB		= $(GMPLIBDIR)/libgmp.a
 GMPINC		= $(GMPDIR)/gmp.h
 
