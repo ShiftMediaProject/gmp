@@ -1,3 +1,19 @@
+2000-04-04  Linus Nordberg  <linus@swox.se>
+
+	* gmp.h (GMP_ERROR enum): Remove comma after last enumeration
+	since the AIX compiler (xlc) doesn't like that.
+
+	* randlc.c (gmp_rand_init_lc): Allocate enough space for seed to
+	hold any upcoming seed.
+	* randlc2x.c (gmp_rand_init_lc_2exp): Likewise.
+
+	* mpn/generic/rawrandom.c: Remove debugging code.
+	(mpn_lc): Don't reallocate seed.
+
+	* mpz/urandomm.c (mpz_urandomm): Implement function.
+
+	* mpz/urandomb.c (mpz_urandomb): Fix typo in function definition.
+
 2000-04-04  Kevin Ryde  <kevin@swox.se>
 
 	* make.bat: Removed (no longer works, no longer supported).
