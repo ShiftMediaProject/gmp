@@ -23,6 +23,7 @@ MA 02111-1307, USA.
 
 #include "config.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>     /* for getenv */
 
@@ -136,6 +137,28 @@ __gmp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize)
     return (*__gmp_allocate_func) (newsize);
   else
     return (*__gmp_reallocate_func) (ptr, oldsize, newsize);
+}
+
+char *
+__gmp_allocate_strdup (const char *s)
+{
+  size_t  len;
+  char    *t;
+  len = strlen (s);
+  t = (*__gmp_allocate_func) (len+1);
+  memcpy (t, s, len+1);
+  return t;
+}
+
+
+char *
+strtoupper (char *s_orig)
+{
+  char  *s;
+  for (s = s_orig; *s != '\0'; s++)
+    if (isascii (*s))
+      *s = toupper (*s);
+  return s_orig;
 }
 
 

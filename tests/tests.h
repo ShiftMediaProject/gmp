@@ -86,6 +86,8 @@ void *align_pointer _PROTO ((void *p, size_t align));
 void *__gmp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
 void *__gmp_allocate_or_reallocate _PROTO ((void *ptr,
                                           size_t oldsize, size_t newsize));
+char *__gmp_allocate_strdup _PROTO ((const char *s));
+char *strtoupper _PROTO ((char *s_orig));
 mp_limb_t urandom _PROTO ((void));
 
 
