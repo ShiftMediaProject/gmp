@@ -49,11 +49,28 @@ check_random (void)
           printf ("  want \"%s\"\n", want);
           abort ();
         }
-      (*__gmp_free_func) (got, strlen (got) + 1);
       (*__gmp_free_func) (want, strlen (want) + 1);
+      (*__gmp_free_func) (got, strlen (got) + 1);
     }
 
   mpz_clear (z);
+}
+
+void
+check_mem (void)
+{
+  MINT  *m;
+  char  *s;
+
+  m = itom (0);
+  s = mtox (m);
+  if (! tests_memory_valid (s))
+    {
+      printf ("Skipping t-mtox, cannot test libgmp and libmp memory together\n");
+      exit (0);
+    }
+  mfree (m);
+  (*__gmp_free_func) (s, strlen (s) + 1);
 }
 
 
@@ -62,6 +79,7 @@ main (void)
 {
   tests_start ();
 
+  check_mem ();
   check_random ();
 
   tests_end ();
