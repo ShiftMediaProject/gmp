@@ -663,6 +663,17 @@ all (void)
   {
     static struct param_t  param;
     param.name[0] = "FIB_THRESHOLD";
+
+    /* start the search from a point after the table data */
+    switch (BITS_PER_MP_LIMB) {
+    case 32: param.min_size = 93; break;
+    case 64: param.min_size = 186; break;
+    default:
+      printf ("Don't know FIB_THRESHOLD starting point for BITS_PER_MP_LIMB == %d\n",
+              BITS_PER_MP_LIMB);
+      abort ();
+    }
+
     one (speed_mpz_fib_ui, fib_threshold, 1, &param);
   }
   printf("\n");
