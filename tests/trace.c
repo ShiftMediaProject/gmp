@@ -1,6 +1,5 @@
-/* Support for diagnostic traces. */
+/* Support for diagnostic traces.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
+
 
 /* Future: Would like commas printed between limbs in hex or binary, but
    perhaps not always since it might upset cutting and pasting into bc or
@@ -79,15 +78,16 @@ void
 mpz_trace (const char *name, mpz_srcptr z)
 {
   mpq_t      q;
-  mpz_t      one;
-  mp_limb_t  one_limb;
+  mp_limb_t  one;
 
-  PTR(one) = &one_limb;
-  SIZ(one) = 1;
-  one_limb = 1;
+  q->_mp_num._mp_alloc = ALLOC(z);
+  q->_mp_num._mp_size = SIZ(z);
+  q->_mp_num._mp_d = PTR(z);
 
-  q->_mp_num = *z;
-  q->_mp_den = *one;
+  one = 1;
+  q->_mp_den._mp_alloc = 1;
+  q->_mp_den._mp_size = 1;
+  q->_mp_den._mp_d = &one;
 
   mpq_trace(name, q);
 }
@@ -124,7 +124,8 @@ mpn_trace (const char *name, mp_srcptr ptr, mp_size_t size)
   mpz_t  z;
   MPN_NORMALIZE (ptr, size);
   PTR(z) = (mp_ptr) ptr;
-  SIZ(z) = (int) size;
+  SIZ(z) = size;
+  ALLOC(z) = size;
   mpz_trace (name, z);
 }
 
