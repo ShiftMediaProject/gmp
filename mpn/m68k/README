@@ -1,4 +1,4 @@
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,8 +29,8 @@ This directory contains mpn functions for various m68k family chips.
 
 CODE ORGANIZATION
 
-	m68k             m68000, m68010
-	m68k/mc68020     m68020 and up, including CPU32
+	m68k             m68000, m68010, m68060
+	m68k/mc68020     m68020, m68030, m68040, and CPU32
 
 
 The m5200 "coldfire", which is m68000 less a few instructions, currently has
