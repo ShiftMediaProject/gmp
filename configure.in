@@ -1241,13 +1241,12 @@ AC_SUBST(__GMP_LIBGMP_STATIC)
 CFLAGS_PIC=$lt_cv_prog_cc_pic
 AC_SUBST(CFLAGS_PIC)
 
-# i386 cygwin shared libraries are DLLs, and it seems they should be
-#     non-PIC, certainly libtool only uses -DDLL_EXPORT, and the assembler
-#     rejects ELF style _GLOBAL_OFFSET_TABLE_ expressions.
+# i386 cygwin and mingw shared libraries are DLLs, but don't use ELF style
+# _GLOBAL_OFFSET_TABLE_ things.
 #
 case $host in
-  *-*-cygwin*) ASMFLAGS_PIC= ;;
-  *)           ASMFLAGS_PIC=-DPIC ;;
+  *-*-cygwin* | *-*-mingw*) ASMFLAGS_PIC= ;;
+  *)                        ASMFLAGS_PIC=-DPIC ;;
 esac
 AC_SUBST(ASMFLAGS_PIC)
 
