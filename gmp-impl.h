@@ -246,6 +246,14 @@ typedef unsigned long       gmp_uint_least32_t;
 #endif
 
 
+/* HAVE_HOST_CPU_alpha_CIX is 1 on an alpha with the CIX instructions
+   (ie. ctlz, ctpop, cttz).  */
+#if HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68  \
+  || HAVE_HOST_CPU_alphaev7
+#define HAVE_HOST_CPU_alpha_CIX 1
+#endif
+
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -2371,8 +2379,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    to 0 if there's an even number.  "n" should be an unsigned long and "p"
    an int.  */
 
-#if defined (__GNUC__) && ! defined (NO_ASM)                    \
-  && (HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68)
+#if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_alpha_CIX
 #define ULONG_PARITY(p, n)                              \
   do {                                                  \
     int __p;                                            \
@@ -2637,8 +2644,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 #endif
 
-#if defined (__GNUC__) && ! defined (NO_ASM)                    \
-  && (HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68)
+#if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_alpha_CIX
 #define popc_limb(result, input)                                \
   do {                                                          \
     __asm__ ("ctpop %1, %0" : "=r" (result) : "r" (input));     \
