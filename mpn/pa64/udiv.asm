@@ -65,13 +65,13 @@ ifdef(`HAVE_ABI_2_0n',
 	ldw		-60(%r30),%r23
 ')
 	ldi		0,q
-	cmpib,*>=	0,d,large_divisor
+	cmpib,*>=	0,d,L(large_divisor)
 	ldi		8,%r31		C setup loop counter
 
 	sub		%r0,d,dn
 LDEF(Loop)
 	divstep divstep divstep divstep divstep divstep divstep divstep
-	addib,<>	-1,%r31,Loop
+	addib,<>	-1,%r31,L(Loop)
 	nop
 
 ifdef(`HAVE_ABI_2_0n',
@@ -92,10 +92,10 @@ LDEF(large_divisor)
 	sub		%r0,d,dn
 LDEF(Loop2)
 	divstep divstep divstep divstep divstep divstep divstep divstep
-	addib,<>	-1,%r31,Loop2
+	addib,<>	-1,%r31,L(Loop2)
 	nop
 
-	cmpib,*=	0,%r20,even_divisor
+	cmpib,*=	0,%r20,L(even_divisor)
 	shladd		n1,1,%r19,n1	C shift in omitted dividend lsb
 
 	add		d,d,d		C restore orig...
