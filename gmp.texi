@@ -46,6 +46,10 @@ License}.
 @c  particular notes concerning them, but not just for everything GMP
 @c  supports.
 @c
+@c  Index entries for files use @code rather than @file, since the latter
+@c  comes out with quotes in TeX, which are nice in text but don't look so
+@c  good in index columns.
+@c
 @c  By default HTML output gets external URLs to relevant web sites.  These
 @c  have to be kept up-to-date manually.  GLIBC for instance unfortunately
 @c  includes its version number.
@@ -1712,7 +1716,7 @@ to be incompatible with future versions of GMP.}
 @section Headers and Libraries
 @cindex Headers
 
-@cindex @file{gmp.h}
+@cindex @code{gmp.h}
 All declarations needed to use GMP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
 
@@ -6055,7 +6059,7 @@ reveals itself.}
 @noindent
 All the C++ classes and functions are available with
 
-@cindex gmpxx.h
+@cindex @code{gmpxx.h}
 @example
 #include <gmpxx.h>
 @end example
@@ -6599,7 +6603,7 @@ Apart from the incomplete set of functions, the interface for initializing
 @code{MINT} objects is more error prone, and the @code{pow} function collides
 with @code{pow} in @file{libm.a}.
 
-@cindex @file{mp.h}
+@cindex @code{mp.h}
 @tindex MINT
 Include the header @file{mp.h} to get the definition of the necessary types and
 functions.  If you are on a BSD derived system, make sure to include GNU
