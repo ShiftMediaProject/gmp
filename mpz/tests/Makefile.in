@@ -125,7 +125,7 @@ LDADD = $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
-  t-root t-jac t-bin t-misc t-get_si
+  t-root t-jac t-bin t-misc t-get_si t-fib_ui
 
 
 TESTS = $(check_PROGRAMS)
@@ -141,7 +141,7 @@ t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-gcd$(EXEEXT) dive$(EXEEXT) \
 t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) logic$(EXEEXT) \
 bit$(EXEEXT) t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow_ui$(EXEEXT) \
 t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT) t-jac$(EXEEXT) \
-t-bin$(EXEEXT) t-misc$(EXEEXT) t-get_si$(EXEEXT)
+t-bin$(EXEEXT) t-misc$(EXEEXT) t-get_si$(EXEEXT) t-fib_ui$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -198,6 +198,11 @@ t_fdiv_ui_OBJECTS =  t-fdiv_ui$U.$(OBJEXT)
 t_fdiv_ui_LDADD = $(LDADD)
 t_fdiv_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_fdiv_ui_LDFLAGS = 
+t_fib_ui_SOURCES = t-fib_ui.c
+t_fib_ui_OBJECTS =  t-fib_ui$U.$(OBJEXT)
+t_fib_ui_LDADD = $(LDADD)
+t_fib_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_fib_ui_LDFLAGS = 
 t_gcd_SOURCES = t-gcd.c
 t_gcd_OBJECTS =  t-gcd$U.$(OBJEXT)
 t_gcd_LDADD = $(LDADD)
@@ -264,9 +269,9 @@ CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c \
-t-bin.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-get_si.c t-jac.c t-misc.c \
-t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c \
-t-tdiv_ui.c
+t-bin.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-gcd.c t-get_si.c t-jac.c \
+t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c \
+t-tdiv.c t-tdiv_ui.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -274,8 +279,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-bin.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-get_si.c t-jac.c t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
-OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-bin$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-get_si$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-misc$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
+SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-bin.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-gcd.c t-get_si.c t-jac.c t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-bin$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-fib_ui$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-get_si$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-misc$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -373,6 +378,10 @@ t-fdiv_ui$(EXEEXT): $(t_fdiv_ui_OBJECTS) $(t_fdiv_ui_DEPENDENCIES)
 	@rm -f t-fdiv_ui$(EXEEXT)
 	$(LINK) $(t_fdiv_ui_LDFLAGS) $(t_fdiv_ui_OBJECTS) $(t_fdiv_ui_LDADD) $(LIBS)
 
+t-fib_ui$(EXEEXT): $(t_fib_ui_OBJECTS) $(t_fib_ui_DEPENDENCIES)
+	@rm -f t-fib_ui$(EXEEXT)
+	$(LINK) $(t_fib_ui_LDFLAGS) $(t_fib_ui_OBJECTS) $(t_fib_ui_LDADD) $(LIBS)
+
 t-gcd$(EXEEXT): $(t_gcd_OBJECTS) $(t_gcd_DEPENDENCIES)
 	@rm -f t-gcd$(EXEEXT)
 	$(LINK) $(t_gcd_LDFLAGS) $(t_gcd_OBJECTS) $(t_gcd_LDADD) $(LIBS)
@@ -446,6 +455,8 @@ t-fdiv_.c: t-fdiv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fdiv.c; then echo $(srcdir)/t-fdiv.c; else echo t-fdiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fdiv_.c
 t-fdiv_ui_.c: t-fdiv_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fdiv_ui.c; then echo $(srcdir)/t-fdiv_ui.c; else echo t-fdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fdiv_ui_.c
+t-fib_ui_.c: t-fib_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fib_ui.c; then echo $(srcdir)/t-fib_ui.c; else echo t-fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fib_ui_.c
 t-gcd_.c: t-gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gcd.c; then echo $(srcdir)/t-gcd.c; else echo t-gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gcd_.c
 t-get_si_.c: t-get_si.c $(ANSI2KNR)
@@ -474,13 +485,14 @@ bit_.$(OBJEXT) bit_.lo convert_.$(OBJEXT) convert_.lo dive_.$(OBJEXT) \
 dive_.lo io_.$(OBJEXT) io_.lo logic_.$(OBJEXT) logic_.lo \
 reuse_.$(OBJEXT) reuse_.lo t-2exp_.$(OBJEXT) t-2exp_.lo \
 t-bin_.$(OBJEXT) t-bin_.lo t-fdiv_.$(OBJEXT) t-fdiv_.lo \
-t-fdiv_ui_.$(OBJEXT) t-fdiv_ui_.lo t-gcd_.$(OBJEXT) t-gcd_.lo \
-t-get_si_.$(OBJEXT) t-get_si_.lo t-jac_.$(OBJEXT) t-jac_.lo \
-t-misc_.$(OBJEXT) t-misc_.lo t-mul_.$(OBJEXT) t-mul_.lo \
-t-pow_ui_.$(OBJEXT) t-pow_ui_.lo t-powm_.$(OBJEXT) t-powm_.lo \
-t-powm_ui_.$(OBJEXT) t-powm_ui_.lo t-root_.$(OBJEXT) t-root_.lo \
-t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo t-tdiv_.$(OBJEXT) t-tdiv_.lo \
-t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : $(ANSI2KNR)
+t-fdiv_ui_.$(OBJEXT) t-fdiv_ui_.lo t-fib_ui_.$(OBJEXT) t-fib_ui_.lo \
+t-gcd_.$(OBJEXT) t-gcd_.lo t-get_si_.$(OBJEXT) t-get_si_.lo \
+t-jac_.$(OBJEXT) t-jac_.lo t-misc_.$(OBJEXT) t-misc_.lo \
+t-mul_.$(OBJEXT) t-mul_.lo t-pow_ui_.$(OBJEXT) t-pow_ui_.lo \
+t-powm_.$(OBJEXT) t-powm_.lo t-powm_ui_.$(OBJEXT) t-powm_ui_.lo \
+t-root_.$(OBJEXT) t-root_.lo t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo \
+t-tdiv_.$(OBJEXT) t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : \
+$(ANSI2KNR)
 
 tags: TAGS
 
