@@ -237,6 +237,11 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_ABS(x)  ((x) >= 0 ? (x) : -(x))
 
 
+/* Allow direct user access to numerator and denominator of a mpq_t object.  */
+#define mpq_numref(Q) (&((Q)->_mp_num))
+#define mpq_denref(Q) (&((Q)->_mp_den))
+
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -254,10 +259,6 @@ extern void * (*__gmp_allocate_func) _PROTO ((size_t));
 extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
 extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
 
-#if defined (__cplusplus)
-}
-#endif
-
 
 /**************** Random number routines.  ****************/
 
@@ -268,10 +269,6 @@ extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
 #define gmp_randseed __gmp_randseed
 #define gmp_randseed_ui __gmp_randseed_ui
 #define gmp_randclear __gmp_randclear
-
-#if defined (__cplusplus)
-extern "C" {
-#endif
 
 void _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
 void gmp_randinit _PROTO ((gmp_randstate_t, gmp_randalg_t, ...));
@@ -284,9 +281,6 @@ void gmp_randseed _PROTO ((gmp_randstate_t, mpz_srcptr));
 void gmp_randseed_ui _PROTO ((gmp_randstate_t, unsigned long int));
 void gmp_randclear _PROTO ((gmp_randstate_t));
 
-#if defined (__cplusplus)
-}
-#endif
 
 /**************** Integer (i.e. Z) routines.  ****************/
 
@@ -406,9 +400,6 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_xor __gmpz_xor
 #define mpz_eor __gmpz_xor
 
-#if defined (__cplusplus)
-extern "C" {
-#endif
 void *_mpz_realloc _PROTO ((mpz_ptr, mp_size_t));
 
 #define mpz_abs __gmpz_abs
@@ -617,29 +608,6 @@ void mpz_urandomb _PROTO ((mpz_ptr, gmp_randstate_t, unsigned long int));
 void mpz_urandomm _PROTO ((mpz_ptr, gmp_randstate_t, mpz_srcptr));
 void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
-__GMP_EXTERN_INLINE void
-mpz_abs (mpz_ptr w, mpz_srcptr u)
-{
-  if (w != u)
-    mpz_set (w, u);
-  w->_mp_size = __GMP_ABS (w->_mp_size);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_neg
-__GMP_EXTERN_INLINE void
-mpz_neg (mpz_ptr w, mpz_srcptr u)
-{
-  if (w != u)
-    mpz_set (w, u);
-  w->_mp_size = - w->_mp_size;
-}
-#endif
-
-#if defined (__cplusplus)
-}
-#endif
 
 /**************** Rational (i.e. Q) routines.  ****************/
 
@@ -664,10 +632,6 @@ mpz_neg (mpz_ptr w, mpz_srcptr u)
 #define mpq_get_d __gmpq_get_d
 #define mpq_set_d __gmpq_set_d
 #define mpq_canonicalize __gmpq_canonicalize
-
-#if defined (__cplusplus)
-extern "C" {
-#endif
 
 #define mpq_abs __gmpq_abs
 void    mpq_abs _PROTO ((mpq_ptr, mpq_srcptr));
@@ -723,29 +687,6 @@ void mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
 size_t mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
 #endif
 
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_abs
-__GMP_EXTERN_INLINE void
-mpq_abs (mpq_ptr w, mpq_srcptr u)
-{
-  if (w != u)
-    mpq_set (w, u);
-  w->_mp_num._mp_size = __GMP_ABS (w->_mp_num._mp_size);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_neg
-__GMP_EXTERN_INLINE void
-mpq_neg (mpq_ptr w, mpq_srcptr u)
-{
-  if (w != u)
-    mpq_set (w, u);
-  w->_mp_num._mp_size = - w->_mp_num._mp_size;
-}
-#endif
-
-#if defined (__cplusplus)
-}
-#endif
 
 /**************** Float (i.e. F) routines.  ****************/
 
@@ -799,10 +740,6 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
 #define mpf_ui_div __gmpf_ui_div
 #define mpf_ui_sub __gmpf_ui_sub
 #define mpf_urandomb __gmpf_urandomb
-
-#if defined (__cplusplus)
-extern "C" {
-#endif
 
 #define mpf_abs __gmpf_abs
 void    mpf_abs _PROTO ((mpf_ptr, mpf_srcptr));
@@ -909,29 +846,7 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 #define mpf_swap __gmpf_swap
 void mpf_swap _PROTO ((mpf_ptr, mpf_ptr));
 
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_abs
-__GMP_EXTERN_INLINE void
-mpf_abs (mpf_ptr w, mpf_srcptr u)
-{
-  if (w != u)
-    mpf_set (w, u);
-  w->_mp_size = __GMP_ABS (w->_mp_size);
-}
-#endif
 
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_neg
-__GMP_EXTERN_INLINE void
-mpf_neg (mpf_ptr w, mpf_srcptr u)
-{
-  if (w != u)
-    mpf_set (w, u);
-  w->_mp_size = - w->_mp_size;
-}
-#endif
-
-#if defined (__cplusplus)
-}
-#endif
 /************ Low level positive-integer (i.e. N) routines.  ************/
 
 /* This is ugly, but we need to make user calls reach the prefixed function. */
@@ -995,9 +910,6 @@ mpf_neg (mpf_ptr w, mpf_srcptr u)
 /* #define mpn_xnor_n		__MPN(xnor_n) */
 /* #define mpn_xor_n		__MPN(xor_n) */
 
-#if defined (__cplusplus)
-extern "C" {
-#endif
 mp_limb_t mpn_add _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
 mp_limb_t mpn_add_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_add_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
@@ -1079,6 +991,192 @@ void mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_sr
 #if defined (__cplusplus)
 }
 #endif
+
+
+/**************** mpz inlines ****************/
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
+__GMP_EXTERN_INLINE void
+mpz_abs (mpz_ptr w, mpz_srcptr u)
+{
+  if (w != u)
+    mpz_set (w, u);
+  w->_mp_size = __GMP_ABS (w->_mp_size);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_get_ui
+#if ! __GMP_FORCE_mpz_get_ui
+__GMP_EXTERN_INLINE
+#endif
+unsigned long
+mpz_get_ui (mpz_srcptr z)
+{
+  mp_limb_t l = z->_mp_d[0];
+  return z->_mp_size ? l : 0;
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_getlimbn
+#if ! __GMP_FORCE_mpz_getlimbn
+__GMP_EXTERN_INLINE
+#endif
+mp_limb_t
+mpz_getlimbn (mpz_srcptr z, mp_size_t n)
+{
+  if (__GMP_ABS (z->_mp_size) <= n || n < 0)
+    return 0;
+  else
+    return z->_mp_d[n];
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_neg
+__GMP_EXTERN_INLINE void
+mpz_neg (mpz_ptr w, mpz_srcptr u)
+{
+  if (w != u)
+    mpz_set (w, u);
+  w->_mp_size = - w->_mp_size;
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_perfect_square_p
+#if ! __GMP_FORCE_mpz_perfect_square_p
+__GMP_EXTERN_INLINE
+#endif
+int
+mpz_perfect_square_p (mpz_srcptr a)
+{
+  mp_size_t asize = a->_mp_size;
+  if (asize <= 0)
+    return (asize == 0);  /* zero is a square, negatives are not */
+  else
+    return mpn_perfect_square_p (a->_mp_d, asize);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_popcount
+#if ! __GMP_FORCE_mpz_popcount
+__GMP_EXTERN_INLINE
+#endif
+unsigned long
+mpz_popcount (mpz_srcptr u)
+{
+  mp_size_t usize = u->_mp_size;
+
+  if (usize <= 0)
+    return (usize < 0 ? ~ (unsigned long) 0 : 0);
+  else
+    return mpn_popcount (u->_mp_d, usize);
+}
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_set_q
+#if ! __GMP_FORCE_mpz_set_q
+__GMP_EXTERN_INLINE
+#endif
+void
+mpz_set_q (mpz_ptr w, mpq_srcptr u)
+{
+  mpz_tdiv_q (w, mpq_numref (u), mpq_denref (u));
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_size
+#if ! __GMP_FORCE_mpz_size
+__GMP_EXTERN_INLINE
+#endif
+size_t
+mpz_size (mpz_srcptr z)
+{
+  return __GMP_ABS (z->_mp_size);
+}
+#endif
+
+
+/**************** mpq inlines ****************/
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_abs
+__GMP_EXTERN_INLINE void
+mpq_abs (mpq_ptr w, mpq_srcptr u)
+{
+  if (w != u)
+    mpq_set (w, u);
+  w->_mp_num._mp_size = __GMP_ABS (w->_mp_num._mp_size);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_neg
+__GMP_EXTERN_INLINE void
+mpq_neg (mpq_ptr w, mpq_srcptr u)
+{
+  if (w != u)
+    mpq_set (w, u);
+  w->_mp_num._mp_size = - w->_mp_num._mp_size;
+}
+#endif
+
+
+/**************** mpf inlines ****************/
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_abs
+__GMP_EXTERN_INLINE void
+mpf_abs (mpf_ptr w, mpf_srcptr u)
+{
+  if (w != u)
+    mpf_set (w, u);
+  w->_mp_size = __GMP_ABS (w->_mp_size);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_neg
+__GMP_EXTERN_INLINE void
+mpf_neg (mpf_ptr w, mpf_srcptr u)
+{
+  if (w != u)
+    mpf_set (w, u);
+  w->_mp_size = - w->_mp_size;
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_si
+#if ! __GMP_FORCE_mpf_set_si
+__GMP_EXTERN_INLINE
+#endif
+void
+mpf_set_si (mpf_ptr f, long n)
+{
+  f->_mp_d[0] = (unsigned long) (n >= 0 ? n : -n);
+  f->_mp_exp = (n != 0);
+  f->_mp_size = (n < 0 ? -1 : n != 0);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_ui
+#if ! __GMP_FORCE_mpf_set_ui
+__GMP_EXTERN_INLINE
+#endif
+void
+mpf_set_ui (mpf_ptr f, unsigned long n)
+{
+  f->_mp_d[0] = n;
+  f->_mp_exp = f->_mp_size = (n != 0);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_size
+#if ! __GMP_FORCE_mpf_size
+__GMP_EXTERN_INLINE
+#endif
+size_t
+mpf_size (mpf_srcptr f)
+{
+  return __GMP_ABS (f->_mp_size);
+}
+#endif
+
+
+/**************** mpn inlines ****************/
 
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 _EXTERN_INLINE mp_limb_t
@@ -1220,11 +1318,6 @@ mpn_sub (register mp_ptr res_ptr,
    allowed.  */
 #define mpz_odd_p(z)   ((int) ((z)->_mp_size != 0) & (int) (z)->_mp_d[0])
 #define mpz_even_p(z)  (! mpz_odd_p (z))
-
-
-/* Allow direct user access to numerator and denominator of a mpq_t object.  */
-#define mpq_numref(Q) (&((Q)->_mp_num))
-#define mpq_denref(Q) (&((Q)->_mp_den))
 
 
 /* Compatibility with GMP 2 and earlier. */
