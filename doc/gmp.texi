@@ -5812,8 +5812,9 @@ cout << "iteration " << n << " value " << z << "\n";
 @end example
 
 But note that @code{ostream} output (and @code{istream} input, @pxref{C++
-Formatted Input}) is the only overloading available and using for instance
-@code{+} with an @code{mpz_t} will have unpredictable results.
+Formatted Input}) is the only overloading available for the GMP types and that
+for instance using @code{+} with an @code{mpz_t} will have unpredictable
+results.  For classes with overloading, see @ref{C++ Class Interface}.
 
 
 @node Formatted Input, C++ Class Interface, Formatted Output, Top
@@ -6067,9 +6068,14 @@ called (@pxref{Rational Number Functions}).
 @deftypefun istream& operator>> (istream& @var{stream}, mpf_t @var{rop})
 Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
 
-Hex or octal floats are not supported, but might be in the future.
+Hex or octal floats are not supported, but might be in the future, or perhaps
+it's best to accept only what the standard float @code{operator>>} does.
 @end deftypefun
 
+Note that digit grouping specified by the @code{istream} locale is currently
+not accepted.  Perhaps this will change in the future.
+
+@sp 1
 These operators mean that GMP types can be read in the usual C++ way, for
 example,
 
@@ -6080,8 +6086,10 @@ cin >> z;
 @end example
 
 But note that @code{istream} input (and @code{ostream} output, @pxref{C++
-Formatted Output}) is the only overloading available and using for instance
-@code{+} with an @code{mpz_t} will have unpredictable results.
+Formatted Output}) is the only overloading available for the GMP types and
+that for instance using @code{+} with an @code{mpz_t} will have unpredictable
+results.  For classes with overloading, see @ref{C++ Class Interface}.
+
 
 
 @node C++ Class Interface, BSD Compatible Functions, Formatted Input, Top
