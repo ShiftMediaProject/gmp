@@ -442,7 +442,6 @@ void __GMP_DECLSPEC gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_ior __gmpz_ior
 #define mpz_jacobi __gmpz_jacobi
 #define mpz_lcm __gmpz_lcm
-#define mpz_legendre __gmpz_legendre
 #define mpz_mod __gmpz_mod
 #define mpz_mul __gmpz_mul
 #define mpz_mul_2exp __gmpz_mul_2exp
@@ -614,8 +613,7 @@ int  __GMP_DECLSPEC mpz_invert _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void __GMP_DECLSPEC mpz_ior _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int  __GMP_DECLSPEC mpz_jacobi _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
-#define mpz_kronecker __gmpz_kronecker
-int __GMP_DECLSPEC mpz_kronecker _PROTO ((mpz_srcptr a, mpz_srcptr b)) __GMP_ATTRIBUTE_PURE;
+#define mpz_kronecker mpz_jacobi  /* alias */
 
 #define mpz_kronecker_si __gmpz_kronecker_si
 int __GMP_DECLSPEC mpz_kronecker_si _PROTO ((mpz_srcptr, long)) __GMP_ATTRIBUTE_PURE;
@@ -634,7 +632,7 @@ void __GMP_DECLSPEC mpz_lcm _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #define mpz_lcm_ui __gmpz_lcm_ui
 void __GMP_DECLSPEC mpz_lcm_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
 
-int __GMP_DECLSPEC mpz_legendre _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#define mpz_legendre mpz_jacobi  /* alias */
 
 #define mpz_lucnum_ui __gmpz_lucnum_ui
 void __GMP_DECLSPEC mpz_lucnum_ui _PROTO ((mpz_ptr, unsigned long int));
@@ -1097,6 +1095,14 @@ void __GMP_DECLSPEC mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, m
 
 
 /**************** mpz inlines ****************/
+
+/* The inlining here is for the benefit of applications.  Library
+   entrypoints are retained so function pointers work, but inline versions
+   offered as well.
+
+   Within gmp itself this inlining isn't relied on, since it doesn't get
+   done for all compilers, whereas if it's worth inlining something then
+   it's worth arranging that it happens everywhere.  */
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
 __GMP_EXTERN_INLINE void
