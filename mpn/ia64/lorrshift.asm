@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_lshift/mpn_rshift.
 
-dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,19 +21,15 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C         cycles/limb	1   2   3   4   5   6   7   8   9  10  11  12  13  14
-C Itanium:    2.0?
-C Itanium 2:  1.0     12.3 9.5 6.7 5.3 4.6 4.2 3.9 3.6 3.1 3.0 2.8 3.0 2.8 2.4
+C           cycles/limb
+C Itanium 2:    1.0
 
 C This code is scheduled deeply since the plain shift instructions shr and shl
 C have a latency of 4 (on Itanium) or 3 (on Itanium 2).  Poor scheduling of
 C these instructions cause a 10 cycle replay trap on Itanium.
 
 C TODO
-C  * Rearrange the loop trivially for better (1.5 c/l) performance on Itanium.
-C  * Optimize function entry code
-C  * The feed-in code might cause replay traps on Itanium.  Explicit bundling
-C    might help, without hurting Itanium 2.
+C  * Optimize function entry and feed-in code.
 
 C INPUT PARAMETERS
 define(`rp',`r32')
@@ -70,38 +66,47 @@ ifdef(`HAVE_ABI_32',
 	zxt4	cnt = cnt
 	;;
 ')
+{.mmi
+	nop		0
 	and		r14 = 3, n
-	add		r15 = -1, n
-	add		n = -1, n
-	sub		tnc = 64, cnt
 	mov		r2 = ar.lc
+}
+{.mmi
+	add		r15 = -1, n
+	sub		tnc = 64, cnt
 	;;
-	shr.u		r15 = r15, 2
+}
+{.mmi
 	cmp.eq		p6, p0 = 1, r14
 	cmp.eq		p7, p0 = 2, r14
+	shr.u		n = r15, 2
+}
+{.mmi
 	cmp.eq		p8, p0 = 3, r14
-ifdef(`OPERATION_lshift',`
-	shladd		up = n, 3, up
-	shladd		rp = n, 3, rp
-')
+ifdef(`OPERATION_lshift',
+`	shladd		up = r15, 3, up
+	shladd		rp = r15, 3, rp')
 	;;
-	mov.i		ar.lc = r15
+}
+{.mmi
+	ld8		r10 = [up], UPD
+	nop		0
+	mov.i		ar.lc = n
+}
    (p6)	br.dptk		.Lb01
    (p7)	br.dptk		.Lb10
    (p8)	br.dptk		.Lb11
-
-
-.Lb00:	ld8		r18 = [up], UPD
 	;;
-	ld8		r19 = [up], UPD
+
+.Lb00:	ld8		r19 = [up], UPD
 	;;
 	ld8		r16 = [up], UPD
 	;;
-	BSH		r8 = r18, tnc		C function return value
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_4
+	BSH		r8 = r10, tnc		C function return value
+	br.cloop.dpnt	.grt4
 
-	FSH		r24 = r18, cnt
+	FSH		r24 = r10, cnt
 	BSH		r25 = r19, tnc
 	;;
 	FSH		r26 = r19, cnt
@@ -112,174 +117,161 @@ ifdef(`OPERATION_lshift',`
 	;;
 	or		r14 = r25, r24
 	FSH		r22 = r17, cnt
-	BSH		r23 = r18, tnc
+	BSH		r23 = r10, tnc
 	br		.Lr4
 
-.L_grt_4:
-	FSH		r24 = r18, cnt
+.grt4:	FSH		r24 = r10, cnt
 	BSH		r25 = r19, tnc
-	ld8		r18 = [up], UPD
 	;;
+	ld8		r18 = [up], UPD
 	FSH		r26 = r19, cnt
 	BSH		r27 = r16, tnc
-	ld8		r19 = [up], UPD
 	;;
+	ld8		r19 = [up], UPD
 	FSH		r20 = r16, cnt
 	BSH		r21 = r17, tnc
+	;;
 	ld8		r16 = [up], UPD
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
 	;;
 	or		r14 = r25, r24
-	FSH		r22 = r17, cnt
-	BSH		r23 = r18, tnc
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.Ltop
+	br.cloop.dpnt	.Ltop
 	br		.Lbot
 
-.Lb01:	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_1
+.Lb01:	br.cloop.dpnt	.grt1
 	;;
 
-	BSH		r8 = r17, tnc		C function return value
-	FSH		r22 = r17, cnt
+	BSH		r8 = r10, tnc		C function return value
+	FSH		r22 = r10, cnt
 	br		.Lr1			C return
 
-.L_grt_1:
-	ld8		r18 = [up], UPD
+.grt1:	ld8		r18 = [up], UPD
 	;;
 	ld8		r19 = [up], UPD
+	BSH		r8 = r10, tnc		C function return value
 	;;
-	BSH		r8 = r17, tnc		C function return value
 	ld8		r16 = [up], UPD
-	;;
-	FSH		r22 = r17, cnt
+	FSH		r22 = r10, cnt
 	BSH		r23 = r18, tnc
+	;;
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_5
+	br.cloop.dpnt	.grt5
 	;;
 
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
-	ld8		r18 = [up], UPD
-	;;
-	FSH		r26 = r19, cnt
-	BSH		r27 = r16, tnc
-	ld8		r19 = [up], UPD
 	;;
 	or		r15 = r23, r22
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	;;
 	FSH		r20 = r16, cnt
 	BSH		r21 = r17, tnc
 	br		.Lr5
 
-.L_grt_5:
-	FSH		r24 = r18, cnt
+.grt5:	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
-	ld8		r18 = [up], UPD
 	;;
+	ld8		r18 = [up], UPD
 	FSH		r26 = r19, cnt
 	BSH		r27 = r16, tnc
-	ld8		r19 = [up], UPD
 	;;
-	or		r15 = r23, r22
+	ld8		r19 = [up], UPD
 	FSH		r20 = r16, cnt
 	BSH		r21 = r17, tnc
+	;;
+	or		r15 = r23, r22
 	ld8		r16 = [up], UPD
 	br		.LL01
 
 
-.Lb10:	ld8		r16 = [up], UPD
-	;;
-	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_2
+.Lb10:	ld8		r17 = [up], UPD
+	br.cloop.dpnt	.grt2
 
-	BSH		r8 = r16, tnc		C function return value
+	BSH		r8 = r10, tnc		C function return value
 	;;
-	FSH		r20 = r16, cnt
+	FSH		r20 = r10, cnt
 	BSH		r21 = r17, tnc
 	;;
 	or		r14 = r21, r20
 	FSH		r22 = r17, cnt
 	br		.Lr2			C return
 
-.L_grt_2:
-	ld8		r18 = [up], UPD
+.grt2:	ld8		r18 = [up], UPD
+	BSH		r8 = r10, tnc		C function return value
 	;;
-	BSH		r8 = r16, tnc		C function return value
 	ld8		r19 = [up], UPD
-	;;
-	FSH		r20 = r16, cnt
+	FSH		r20 = r10, cnt
 	BSH		r21 = r17, tnc
-	ld8		r16 = [up], UPD
 	;;
+	ld8		r16 = [up], UPD
 	FSH		r22 = r17, cnt
 	BSH		r23 = r18, tnc
+	;;
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_6
+	br.cloop.dpnt	.grt6
 	;;
 
+	or		r14 = r21, r20
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
-	ld8		r18 = [up], UPD
 	;;
-	or		r14 = r21, r20
 	FSH		r26 = r19, cnt
 	BSH		r27 = r16, tnc
 	br		.Lr6
 
-.L_grt_6:
+.grt6:	or		r14 = r21, r20
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
-	ld8		r18 = [up], UPD
 	;;
-	or		r14 = r21, r20
+	ld8		r18 = [up], UPD
 	FSH		r26 = r19, cnt
 	BSH		r27 = r16, tnc
+	;;
 	ld8		r19 = [up], UPD
 	br		.LL10
 
 
-.Lb11:	ld8		r19 = [up], UPD
-	;;
-	ld8		r16 = [up], UPD
+.Lb11:	ld8		r16 = [up], UPD
 	;;
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_3
-
-	BSH		r8 = r19, tnc		C function return value
+	BSH		r8 = r10, tnc		C function return value
+	br.cloop.dpnt	.grt3
 	;;
-	FSH		r26 = r19, cnt
+
+	FSH		r26 = r10, cnt
 	BSH		r27 = r16, tnc
 	;;
 	FSH		r20 = r16, cnt
 	BSH		r21 = r17, tnc
 	;;
-	FSH		r22 = r17, cnt
 	or		r15 = r27, r26
+	FSH		r22 = r17, cnt
 	br		.Lr3			C return
 
-.L_grt_3:
-	BSH		r8 = r19, tnc		C function return value
-	ld8		r18 = [up], UPD
-	;;
-	FSH		r26 = r19, cnt
+.grt3:	ld8		r18 = [up], UPD
+	FSH		r26 = r10, cnt
 	BSH		r27 = r16, tnc
-	ld8		r19 = [up], UPD
 	;;
+	ld8		r19 = [up], UPD
 	FSH		r20 = r16, cnt
 	BSH		r21 = r17, tnc
-	ld8		r16 = [up], UPD
 	;;
+	ld8		r16 = [up], UPD
 	FSH		r22 = r17, cnt
 	BSH		r23 = r18, tnc
+	;;
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.L_grt_7
+	br.cloop.dpnt	.grt7
 
 	or		r15 = r27, r26
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
 	br		.Lr7
 
-.L_grt_7:
-	or		r15 = r27, r26
+.grt7:	or		r15 = r27, r26
 	FSH		r24 = r18, cnt
 	BSH		r25 = r19, tnc
 	ld8		r18 = [up], UPD
@@ -313,7 +305,7 @@ C *** MAIN LOOP START ***
 	BSH		r23 = r18, tnc
 	st8		[rp] = r15, UPD
 	ld8		r17 = [up], UPD
-	br.cloop.sptk	.Ltop
+	br.cloop.dptk	.Ltop
 	;;
 C *** MAIN LOOP END ***
 
