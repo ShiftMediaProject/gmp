@@ -451,7 +451,7 @@ L(unroll_outer_top):
 	C touch slower than just a conditional jump, despite the jump
 	C switching between taken and not taken on every loop.
 
-ifelse(eval(UNROLL_COUNT&1),0,
+ifelse(eval(UNROLL_COUNT%2),0,
 	jz,jnz)	L(unroll_noswap)
 	movl	%esi, %eax	C high,low carry other way around
 
@@ -492,7 +492,7 @@ forloop(`i', UNROLL_COUNT, 1, `
 	m4_assert(`disp_src>=-128 && disp_src<128')
 	m4_assert(`disp_dst>=-128 && disp_dst<128')
 
-ifelse(eval(i&1),0,`
+ifelse(eval(i%2),0,`
 Zdisp(	movl,	disp_src,(%ebx), %eax)
 	mull	%ebp
 Zdisp(	addl,	%esi, disp_dst,(%edi))
