@@ -1471,7 +1471,7 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
 			  r[0].rp, r[0].rsize));
 
       d = 2;
-#if HAVE_NATIVE_mpn_sublsh1_n
+#if HAVE_NATIVE_mpn_addlsh1_n
       c0 = mpn_addlsh1_n (r[1].uvp[0], r[1].uvp[0],
 			  r[0].uvp[0], size);
       c1 = mpn_addlsh1_n (r[1].uvp[1], r[1].uvp[1],
