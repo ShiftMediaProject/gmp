@@ -1,3 +1,13 @@
+2000-12-19  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (*-cray-unicos*): Add `-Wa,-B' to cc_cflags.
+
+	* demos/pexpr.c (rstate): New variable.
+	(main): Initialize rstate.
+	(enum op_t): Add RANDOM.
+	(fns): Add field for RANDOM.
+	(mpz_eval_expr): Handle RANDOM.
+
 2000-12-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/sqrtrem.c: Rewrite by Paul Zimmermann, based on his
@@ -17,6 +27,11 @@
 	* mpn/x86/p6/mod_1.asm: New file.
 
 	* mpn/x86/pentium/mod_1.asm: New file.
+
+2000-12-18  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (mips*-*-irix[6789]*): Pass options to compiler using
+	`-Wc'.
 
 2000-12-18  Kevin Ryde  <kevin@swox.se>
 
@@ -54,7 +69,7 @@
 	* mpz/tests/t-fac_ui.c: New test.
 	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
 	* macos/Makefile.in: Ditto, and add t-fib_ui too.
-	
+
 	* mpn/generic/[lr]shift.c: Remove some DEBUG code adequately covered
 	by new parameter ASSERTs.
 
