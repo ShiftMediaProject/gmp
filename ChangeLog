@@ -58,7 +58,7 @@
 	* Makefile.am (SUBDIRS, allprogs): Add it.
 	* demos/expr/README, Makefile.am, expr.c, exprv.c, exprz.c, exprza.c,
 	exprq.c, exprqa.c, exprfa.c, exprf.c, exprfr.c, exprfra.c, expr.h,
-	expr-impl-h.in, run.c, t-expr.c: New files.
+	expr-impl-h.in, run-expr.c, t-expr.c: New files.
 	* configure.in: Generate demos/expr/Makefile & demos/expr/expr-impl.h.
 
 	* Makefile.am: Remove mpfr from main libgmp.
