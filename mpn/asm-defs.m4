@@ -37,7 +37,7 @@ GSYM_PREFIX($1):')
 define(`EPILOGUE',
 	`
 	SIZE(GSYM_PREFIX($1),.-GSYM_PREFIX($1))')
-define(`L',LSYM_PREFIX($1))
+define(`L',LSYM_PREFIX`$1')
 define(`INT32',
 	`
 	ALIGN(4)
