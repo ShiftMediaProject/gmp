@@ -1,3 +1,32 @@
+2001-03-08  Kevin Ryde  <kevin@swox.se>
+
+	* tests/devel/try.c (param_init): Fix reference functions for and_n
+	and nand_n.
+
+	* tune/speed.c, tests/devel/try.c: Seed RANDS, not srandom etc.
+	* configure.in (AC_CHECK_FUNCS): Remove srand48 and srandom.
+	* macos/configure (coptions): Remove random/srandom, now unnecessary.
+
+	* configure.in (gmp.h, mp.h, demos/expr/expr-impl.h): Generate using
+	AM_CONFIG_HEADER.
+	(_LONG_LONG_LIMB, HAVE_MPFR): Change to AC_DEFINEs.
+	* gmp-h.in, mp-h.in, demos/expr/expr-impl-h.in: Change to #undef's.
+	* acinclude.m4 (GMP_FUNC_ALLOCA, GMP_C_SIZES): Use gmp-h.in, not gmp.h.
+	* Makefile.am (EXTRA_DIST): Remove gmp-h.in and mp-h.in, now done
+	automatically.
+	* acinclude.m4 (GMP_FUNC_ALLOCA), gmp-impl.h: Set and use
+	__GMP_WITHIN_CONFIGURE rather than GMP_FUNC_ALLOCA_TEST.
+
+	* mpf/random2.c: Use _gmp_rand and RANDS instead of random() for the
+	exponent, ensures full range of values too.
+
+	* tests/mpz/t-div_2exp.c (check_various): Start with d based on i, but
+	don't let it go negative.
+
+	* tune/tuneup.c (KARATSUBA_MUL_THRESHOLD): Limit probing to
+	TOOM3_MUL_THRESHOLD_LIMIT, the size of the workspace in mul_n.c.
+	Use a -1 with this too, so size<LIMIT not <=.
+
 2001-03-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/cfp/mul_1.c: Don't call mpn_add_n with size 0.
