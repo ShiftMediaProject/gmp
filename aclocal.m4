@@ -895,10 +895,10 @@ dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
 dnl
-dnl  "movq %mm0, %mm1" should assemble as "0f 6f c8", but Solaris 2.6
-dnl  wrongly assembles it as "0f 6f c1" (that being the reverse "movq %mm1,
-dnl  %mm0").  It seems more trouble than it's worth to work around this in
-dnl  the code, so just detect and reject.
+dnl  "movq %mm0, %mm1" should assemble as "0f 6f c8", but Solaris 2.6 and
+dnl  2.7 wrongly assemble it as "0f 6f c1" (that being the reverse "movq
+dnl  %mm1, %mm0").  It seems more trouble than it's worth to work around
+dnl  this in the code, so just detect and reject.
 
 AC_DEFUN(GMP_ASM_X86_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
@@ -925,7 +925,8 @@ movq-bug)
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has MMX code, but the assembler])
   AC_MSG_WARN([|     $CCAS $CFLAGS])
-  AC_MSG_WARN([| has the Solaris 2.6 bug where reg->reg movqs are reversed.])
+  AC_MSG_WARN([| has the Solaris 2.6 and 2.7 bug where register to register])
+  AC_MSG_WARN([| movq operands are reversed.])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
