@@ -2,8 +2,10 @@
 
 	* gmp.h (mp_set_memory_functions,mp_bits_per_limb,gmp_errno): Add
 	#defines so the library symbols are __gmp_*.
-	* gmp-impl.h (_mp_allocate_func,etc): Ditto.
-	(__clz_tab): Add #define to __MPN(clz_tab).
+	* errno.c: Include gmp.h.
+	* gmp-impl.h (_mp_allocate_func,etc): Add #defines to __gmp_*.
+	(__clz_tab): New #define to __MPN(clz_tab).
+	* stack-alloc.c (__gmp_allocate_func,etc): Change from _mp_*.
 
 	* Makefile.am (libmp_la_DEPENDENCIES): Add some mpz files needed
 	for new mpz_powm (pow in libmp).
