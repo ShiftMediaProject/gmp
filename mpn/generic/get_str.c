@@ -138,7 +138,7 @@ typedef struct powers powers_t;
    the string in STR.  Generate LEN characters, possibly padding with zeros to
    the left.  If LEN is zero, generate as many characters as required.
    Return a pointer immediately after the last digit of the result string.
-   Complexity is O(UN^2) and is intended for small conversions.  */
+   Complexity is O(UN^2); intended for small conversions.  */
 static unsigned char *
 mpn_sb_get_str (unsigned char *str, size_t len,
 		mp_ptr up, mp_size_t un,
@@ -148,91 +148,99 @@ mpn_sb_get_str (unsigned char *str, size_t len,
   unsigned char *s;
   int base;
   size_t l;
+  /* Allocate memory for largest possible string, given that we only get here
+     for operands with un < GET_STR_PRECOMPUTE_THRESHOLD and that the smallest
+     base is 3.  7/11 is an approximation to 1/log2(3).  */
 #if TUNE_PROGRAM_BUILD
-#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * BITS_PER_MP_LIMB)
+#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * BITS_PER_MP_LIMB * 7 / 11)
 #else
-#define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB)
+#define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB * 7 / 11)
 #endif
   unsigned char buf[BUF_ALLOC];
 
-#if TUNE_PROGRAM_BUILD
-#define USE_MULTILIMB  1
-#else
-#define USE_MULTILIMB  (GET_STR_BASECASE_THRESHOLD > 2)
-#endif
-
-#if USE_MULTILIMB
   base = powtab->base;
   if (base == 10)
     {
-      /* Special case code for base==10 so that the compiler has a
-	 chance to optimize divisions by 10 in udiv_qrnd_unnorm.  */
+      /* Special case code for base==10 so that the compiler has a chance to
+	 optimize things.  */
+      mp_limb_t rp[GET_STR_PRECOMPUTE_THRESHOLD];
+
+      MPN_COPY (rp + 1, up, un);
 
       s = buf + BUF_ALLOC;
       while (un > 1)
 	{
 	  int i;
-	  ul = MPN_DIVREM_OR_PREINV_DIVREM_1
-	    (up, (mp_size_t) 0, up, un, MP_BASES_BIG_BASE_10,
-	     MP_BASES_BIG_BASE_INVERTED_10,
-	     MP_BASES_NORMALIZATION_STEPS_10);
-	  un -= up[un - 1] == 0;
-
-	  /* Convert ul from big_base to a string of digits in base using
-	     single precision operations.  */
+	  mp_limb_t frac;
+	  MPN_DIVREM_OR_PREINV_DIVREM_1 (rp, (mp_size_t) 1, rp + 1, un,
+					 MP_BASES_BIG_BASE_10,
+					 MP_BASES_BIG_BASE_INVERTED_10,
+					 MP_BASES_NORMALIZATION_STEPS_10);
+	  un -= rp[un] == 0;
+	  frac = rp[0] + 1;
+	  s -= MP_BASES_CHARS_PER_LIMB_10;
 	  i = MP_BASES_CHARS_PER_LIMB_10;
 	  do
 	    {
-	      udiv_qrnd_unnorm (ul, rl, ul, 10);
-	      *--s = rl;
+	      mp_limb_t digit;
+	      umul_ppmm (digit, frac, frac, 10);
+	      *s++ = digit;
 	    }
-	  while (--i != 0);
+	  while (--i);
+	  s -= MP_BASES_CHARS_PER_LIMB_10;
 	}
 
-      ul = up[0];
+      ul = rp[1];
       while (ul != 0)
 	{
 	  udiv_qrnd_unnorm (ul, rl, ul, 10);
 	  *--s = rl;
 	}
     }
-  else
+  else /* not base 10 */
     {
-      unsigned chars_per_limb = __mp_bases[base].chars_per_limb;
-      mp_limb_t big_base = __mp_bases[base].big_base;
-#if USE_PREINV_DIVREM_1
+      unsigned chars_per_limb;
+      mp_limb_t big_base, big_base_inverted;
+      mp_limb_t rp[GET_STR_PRECOMPUTE_THRESHOLD];
       unsigned normalization_steps;
-      mp_limb_t big_base_inverted = __mp_bases[base].big_base_inverted;
+
+      chars_per_limb = __mp_bases[base].chars_per_limb;
+      big_base = __mp_bases[base].big_base;
+      big_base_inverted = __mp_bases[base].big_base_inverted;
       count_leading_zeros (normalization_steps, big_base);
-#endif
+
+      MPN_COPY (rp + 1, up, un);
 
       s = buf + BUF_ALLOC;
       while (un > 1)
 	{
 	  int i;
-	  ul = MPN_DIVREM_OR_PREINV_DIVREM_1
-	    (up, (mp_size_t) 0, up, un, big_base,
-	     big_base_inverted, normalization_steps);
-	  un -= up[un - 1] == 0;
-
-	  /* Convert ul from big_base to a string of digits in base using
-	     single precision operations.  */
+	  mp_limb_t frac;
+	  MPN_DIVREM_OR_PREINV_DIVREM_1 (rp, (mp_size_t) 1, rp + 1, un,
+					 big_base, big_base_inverted,
+					 normalization_steps);
+	  un -= rp[un] == 0;
+	  frac = rp[0] + 1;
+	  s -= chars_per_limb;
 	  i = chars_per_limb;
 	  do
 	    {
-	      udiv_qrnd_unnorm (ul, rl, ul, base);
-	      *--s = rl;
+	      mp_limb_t digit;
+	      umul_ppmm (digit, frac, frac, base);
+	      *s++ = digit;
 	    }
-	  while (--i != 0);
+	  while (--i);
+	  s -= chars_per_limb;
 	}
 
-      ul = up[0];
+      ul = rp[1];
       while (ul != 0)
 	{
 	  udiv_qrnd_unnorm (ul, rl, ul, base);
 	  *--s = rl;
 	}
     }
+
   l = buf + BUF_ALLOC - s;
   while (l < len)
     {
@@ -245,50 +253,6 @@ mpn_sb_get_str (unsigned char *str, size_t len,
       l--;
     }
   return str;
-#else
-  ASSERT_ALWAYS (un == 1);
-
-  base = powtab->base;
-  ul = up[0];
-  if (len == 0)
-    {
-      /* We're about to output the leftmost little block of the entire number.
-	 Executed once per converted number.  Optimize something else!  */
-      unsigned char buf[BITS_PER_MP_LIMB];
-      s = buf + BITS_PER_MP_LIMB;
-      while (ul >= base)
-	{
-	  udiv_qrnd_unnorm (ul, rl, ul, base);
-	  *--s = rl;
-	}
-      *--s = ul;
-      while (s != buf + BITS_PER_MP_LIMB)
-	*str++ = *s++;
-      return str;
-    }
-  else
-    {
-      int i;
-      s = str + len;
-      if (base == 10)
-	{
-	  for (i = len; i > 0; i--)
-	    {
-	      udiv_qrnd_unnorm (ul, rl, ul, 10);
-	      *--s = rl;
-	    }
-	}
-      else
-	{
-	  for (i = len; i > 0; i--)
-	    {
-	      udiv_qrnd_unnorm (ul, rl, ul, base);
-	      *--s = rl;
-	    }
-	}
-      return str + len;
-    }
-#endif
 }
 
 
@@ -351,7 +315,8 @@ mpn_dc_get_str (unsigned char *str, size_t len,
    currently a documented feature.  */
 
 size_t
-mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
+xmpn_get_str
+(unsigned char *str, int base, mp_ptr up, mp_size_t un)
 {
   mp_ptr powtab_mem, powtab_mem_ptr;
   mp_limb_t big_base;
