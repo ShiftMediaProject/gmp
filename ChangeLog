@@ -1,5 +1,9 @@
 2000-12-07  Kevin Ryde  <kevin@swox.se>
 
+	* configure.in (hppa*-*-*): Remove -Aa -D_HPUX_SOURCE from
+	cc_cflags/cppflags, and instead let AM_C_PROTOTYPES add it, or -Ae,
+	whichever works.
+
 	* configure.in ([*-*-aix[34]*]): Disable shared by default, but let
 	the user override that, if desired.
 	* gmp.texi (Notes for Particular Systems): Update.
