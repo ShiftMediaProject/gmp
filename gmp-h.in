@@ -1722,7 +1722,7 @@ mpf_size (mpf_srcptr f)
    instructions to save and any gain is all too easily lost by register
    juggling setting up for the asm.  */
 
-#define __GMPN_AORS_1(cout, dst, src, size, n, TEST)            \
+#define __GMPN_AORS_1(cout, dst, src, size, n, OP, CB)          \
   do {                                                          \
     mp_size_t  __i;                                             \
     mp_limb_t  __n, __x;                                        \
@@ -1730,16 +1730,17 @@ mpf_size (mpf_srcptr f)
     /* ASSERT ((size) >= 1); */                                 \
     /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */     \
                                                                 \
-    (cout) = 0;                                                 \
     __i = 0;                                                    \
     __n = (n);                                                  \
     for (;;)                                                    \
       {                                                         \
         __x = (src)[__i];                                       \
-        if (TEST)                                               \
+	(dst)[__i] = __x OP __n;				\
+        if (!CB)                                                \
           {                                                     \
             if ((src) != (dst))                                 \
               __GMPN_COPY_REST (dst, src, size, __i+1);         \
+	    (cout) = 0;                                         \
             break;                                              \
           }                                                     \
         __n = 1;                                                \
@@ -1753,11 +1754,9 @@ mpf_size (mpf_srcptr f)
   } while (0)
 
 #define __GMPN_ADD_1(cout, dst, src, size, n)           \
-  __GMPN_AORS_1(cout, dst, src, size, n,                \
-                ((dst)[__i] = __x + __n) >= __n)
+  __GMPN_AORS_1(cout, dst, src, size, n, +, (__x + __n < __x)) 
 #define __GMPN_SUB_1(cout, dst, src, size, n)           \
-  __GMPN_AORS_1(cout, dst, src, size, n,                \
-                ((dst)[__i] = __x - __n) <= __x)
+  __GMPN_AORS_1(cout, dst, src, size, n, -, (__x < __n))
 
 
 /* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
