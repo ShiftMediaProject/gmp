@@ -22,7 +22,7 @@
 # MA 02111-1307, USA.
 
 
-# Usage: m4-cc --m4=M4 CC ... file.asm ...
+# Usage: m4-ccas --m4=M4 CC ... file.asm ...
 #
 # Process file.asm with the given M4 plus any -D arguments, then
 # assemble with the given CC plus all arguments.
