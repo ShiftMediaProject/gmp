@@ -1,6 +1,6 @@
 /* Miscellaneous test program support routines.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -208,6 +208,36 @@ mpn_diff_highest (mp_srcptr p1, mp_srcptr p2, mp_size_t size)
 
   for (i = size-1; i >= 0; i--)
     if (p1[i] != p2[i])
+      return i;
+
+  /* no differences */
+  return -1;
+}
+
+
+/* Find least significant byte position where p1,size and p2,size differ.  */
+mp_size_t
+byte_diff_lowest (const void *p1, const void *p2, mp_size_t size)
+{
+  mp_size_t  i;
+
+  for (i = 0; i < size; i++)
+    if (((const char *) p1)[i] != ((const char *) p2)[i])
+      return i;
+
+  /* no differences */
+  return -1;
+}
+
+
+/* Find most significant limb position where p1,size and p2,size differ.  */
+mp_size_t
+byte_diff_highest (const void *p1, const void *p2, mp_size_t size)
+{
+  mp_size_t  i;
+
+  for (i = size-1; i >= 0; i--)
+    if (((const char *) p1)[i] != ((const char *) p2)[i])
       return i;
 
   /* no differences */
