@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for MIPS assembly code.
 
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -34,19 +34,20 @@ define(`X',
 m4_assert_numargs(1)
 `0x$1')
 
-dnl  Usage: PROLOGUE(name)
-define(`PROLOGUE',
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
+dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
+
+define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 `	.text
 	.align	4
-	.globl	GSYM_PREFIX`'$1
-	.ent	GSYM_PREFIX`'$1
-GSYM_PREFIX`'$1:')
+	.globl	$1
+	.ent	$1
+$1:')
 
-dnl  Usage: EPILOGUE(name)
-define(`EPILOGUE',
+define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
-`	.end	GSYM_PREFIX`'$1')
+`	.end	$1')
 
 
 dnl  Usage: r0 ... r31

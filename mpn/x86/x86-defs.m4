@@ -51,83 +51,18 @@ dnl  case and definitely don't want the ELF style _GLOBAL_OFFSET_TABLE_ etc.
 ifdef(`DLL_EXPORT',`undefine(`PIC')')
 
 
-dnl  --------------------------------------------------------------------------
-dnl  Replacement PROLOGUE/EPILOGUE with more error checking.  Nesting and
-dnl  overlapping not allowed.
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
+dnl  In the x86 code we use explicit TEXT and ALIGN() calls in the code,
+dnl  since different alignments are wanted in various circumstances.
 
-
-dnl  Usage: PROLOGUE(functionname)
-dnl
-dnl  Generate a function prologue.  functionname gets GSYM_PREFIX added.
-dnl  Examples,
-dnl
-dnl         PROLOGUE(mpn_add_n)
-dnl         PROLOGUE(somefun)
-
-define(`PROLOGUE',
-m4_assert_numargs(1)
-m4_assert_defined(`PROLOGUE_cpu')
-`ifdef(`PROLOGUE_current_function',
-`m4_error(`PROLOGUE'(`PROLOGUE_current_function') needs an `EPILOGUE'() before `PROLOGUE'($1)
-)')dnl
-m4_file_seen()dnl
-define(`PROLOGUE_current_function',`$1')dnl
-PROLOGUE_cpu(GSYM_PREFIX`'$1)')
-
-
-dnl  Usage: EPILOGUE()
-dnl
-dnl  Notice the function name is passed to EPILOGUE_cpu(), letting it use $1
-dnl  instead of the long PROLOGUE_current_function symbol.
-
-define(`EPILOGUE',
-m4_assert_numargs(0)
-m4_assert_defined(`EPILOGUE_cpu')
-`ifdef(`PROLOGUE_current_function',,
-`m4_error(`EPILOGUE'() with no `PROLOGUE'()
-)')dnl
-EPILOGUE_cpu(GSYM_PREFIX`'PROLOGUE_current_function)`'dnl
-undefine(`PROLOGUE_current_function')')
-
-m4wrap_prepend(
-`ifdef(`PROLOGUE_current_function',
-`m4_error(`EPILOGUE() for PROLOGUE('PROLOGUE_current_function`) never seen
-')')')
-
-
-dnl  Usage: PROLOGUE_assert_inside()
-dnl
-dnl  Use this unquoted on a line on its own at the start of a macro
-dnl  definition to add some code to check the macro is only used inside a
-dnl  PROLOGUE/EPILOGUE pair, and that hence PROLOGUE_current_function is
-dnl  defined.
-
-define(PROLOGUE_assert_inside,
-m4_assert_numargs(0)
-``PROLOGUE_assert_inside_internal'(m4_doublequote($`'0))`dnl '')
-
-define(PROLOGUE_assert_inside_internal,
-m4_assert_numargs(1)
-`ifdef(`PROLOGUE_current_function',,
-`m4_error(`$1 used outside a PROLOGUE / EPILOGUE pair
-')')')
-
-
-dnl  Called: PROLOGUE_cpu(gsym)
-dnl          EPILOGUE_cpu(gsym)
-
-define(PROLOGUE_cpu,
+define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 	`GLOBL	$1
 	TYPE($1,`function')
 $1:
 ifelse(WANT_PROFILING,`no',,`call_mcount
-')')')
-
-define(EPILOGUE_cpu,
-m4_assert_numargs(1)
-`	SIZE($1,.-$1)')
+')')
 
 
 dnl  Usage: call_mcount
@@ -141,6 +76,7 @@ dnl  For `prof' style profiling gcc generates mcount calls without setting
 dnl  up %ebp, and the same is done here.
 
 define(`call_mcount',
+m4_assert_numargs(-1)
 m4_assert_defined(`WANT_PROFILING')
 m4_assert_defined(`MCOUNT_PIC_REG')
 m4_assert_defined(`MCOUNT_NONPIC_REG')

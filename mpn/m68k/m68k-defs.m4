@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for 68k assembler.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -30,17 +30,17 @@ dnl  mpn/asm-defs.m4), so use `;' which should be harmless.
 changecom(;)
 
 
-dnl  Usage: PROLOGUE
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
 dnl  Same as the standard PROLOGUE, but align to 2 bytes not 4.
 
-define(`PROLOGUE',
-m4_assert_defined(`GSYM_PREFIX')
+define(`PROLOGUE_cpu',
+m4_assert_numargs(1)
 `	TEXT
 	ALIGN(2)
-	GLOBL	GSYM_PREFIX`$1' GLOBL_ATTR
-	TYPE(GSYM_PREFIX`$1',`function')
-GSYM_PREFIX`$1'LABEL_SUFFIX')
+	GLOBL	`$1' GLOBL_ATTR
+	TYPE(`$1',`function')
+`$1'LABEL_SUFFIX')
 
 
 dnl  Usage: d0, etc

@@ -1,7 +1,7 @@
 divert(-1)
 
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,7 +23,11 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 define(`ASM_START',`dnl')
 
-define(`PROLOGUE',
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
+dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
+
+define(`PROLOGUE_cpu',
+m4_assert_numargs(1)
 	`
 	.text
 	.align	16
@@ -31,7 +35,8 @@ define(`PROLOGUE',
 	.proc	$1#
 $1:')
 
-define(`EPILOGUE',
+define(`EPILOGUE_cpu',
+m4_assert_numargs(1)
 	`
 	.endp	$1#')
 
