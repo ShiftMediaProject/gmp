@@ -21,9 +21,12 @@ the terms of the GNU Free Documentation License, Version 1.2 or any later
 version published by the Free Software Foundation; with no Invariant Sections,
 with the Front-Cover Texts being ``A GNU Manual'', and with the Back-Cover
 Texts being ``You have freedom to copy and modify this GNU Manual, like GNU
-software''.  A copy of the license is included in @ref{GNU Free Documentation
-License}.
+software''.  A copy of the license is included in
+@ref{GNU Free Documentation License}.
 @end copying
+@c  Note the @ref above must be on one line, a line break in an @ref within
+@c  @copying will bomb in recent texinfo.tex (eg. 2004-04-07.08 which comes
+@c  with texinfo 4.7), with messages about missing @endcsname.
 
 
 @c  Texinfo version 4.2 or up will be needed to process this file.
