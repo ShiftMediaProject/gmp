@@ -702,15 +702,31 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-/* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
-#ifndef MPN_COPY_INCR
-#define MPN_COPY_INCR(DST, SRC, NLIMBS)                 \
+/* Copy N limbs from SRC to DST incrementing, N==0 allowed.  */
+#if ! defined (MPN_COPY_INCR)
+#define MPN_COPY_INCR(dst, src, n)                      \
   do {                                                  \
     mp_size_t __i;                                      \
-    ASSERT ((NLIMBS) >= 0);                             \
-    ASSERT (MPN_SAME_OR_INCR_P (DST, SRC, NLIMBS));     \
-    for (__i = 0; __i < (NLIMBS); __i++)                \
-      (DST)[__i] = (SRC)[__i];                          \
+    ASSERT ((n) >= 0);                                  \
+    ASSERT (MPN_SAME_OR_INCR_P (dst, src, n));          \
+    if ((n) != 0)                                       \
+      {                                                 \
+	mp_size_t __n = (n) - 1;                        \
+	mp_ptr __dst = (dst);                           \
+	mp_srcptr __src = (src);                        \
+	mp_limb_t __x;                                  \
+	__x = *__src++;                                 \
+	if (__n != 0)                                   \
+	  {                                             \
+	    do                                          \
+	      {                                         \
+		*__dst++ = __x;                         \
+		__x = *__src++;                         \
+	      }                                         \
+	    while (--__n);                              \
+	  }                                             \
+	*__dst++ = __x;                                 \
+      }                                                 \
   } while (0)
 #endif
 
@@ -755,15 +771,31 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-/* NLIMBS==0 allowed */
+/* Copy N limbs from SRC to DST decrementing, N==0 allowed.  */
 #if ! defined (MPN_COPY_DECR)
-#define MPN_COPY_DECR(DST, SRC, NLIMBS)                 \
+#define MPN_COPY_DECR(dst, src, n)                      \
   do {                                                  \
     mp_size_t __i;                                      \
-    ASSERT ((NLIMBS) >= 0);                             \
-    ASSERT (MPN_SAME_OR_DECR_P (DST, SRC, NLIMBS));     \
-    for (__i = (NLIMBS) - 1; __i >= 0; __i--)           \
-      (DST)[__i] = (SRC)[__i];                          \
+    ASSERT ((n) >= 0);                                  \
+    ASSERT (MPN_SAME_OR_DECR_P (dst, src, n));          \
+    if ((n) != 0)                                       \
+      {                                                 \
+	mp_size_t __n = (n) - 1;                        \
+	mp_ptr __dst = (dst) + __n;                     \
+	mp_srcptr __src = (src) + __n;                  \
+	mp_limb_t __x;                                  \
+	__x = *__src--;                                 \
+	if (__n != 0)                                   \
+	  {                                             \
+	    do                                          \
+	      {                                         \
+		*__dst-- = __x;                         \
+		__x = *__src--;                         \
+	      }                                         \
+	    while (--__n);                              \
+	  }                                             \
+	*__dst-- = __x;                                 \
+      }                                                 \
   } while (0)
 #endif
 
