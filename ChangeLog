@@ -1,3 +1,15 @@
+2000-06-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/gcdext.c: Rework code after mpn_gcdext call to handle
+	argument overlap.
+
+	* mpz/fdiv_qr.c: Read dividend->_mp_size before calling mpz_tdiv_qr
+	in order to handle argument overlap.
+	* mpz/cdiv_qr.c: Likewise.
+
+	* mpf/tests/reuse.c: Fix typo that effectively disabled `dis_funcs'
+	tests.  Clean up test for mpf_ui_div.
+
 2000-06-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/p6/sqr_basecase.asm: New file.
