@@ -122,13 +122,14 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-cmp t-cmp_ui t-get_d
+check_PROGRAMS = t-cmp t-cmp_ui t-get_d t-set_f
 TESTS = $(check_PROGRAMS)
 subdir = mpq/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-check_PROGRAMS =  t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-get_d$(EXEEXT)
+check_PROGRAMS =  t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-get_d$(EXEEXT) \
+t-set_f$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -150,12 +151,17 @@ t_get_d_OBJECTS =  t-get_d$U.$(OBJEXT)
 t_get_d_LDADD = $(LDADD)
 t_get_d_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_get_d_LDFLAGS = 
+t_set_f_SOURCES = t-set_f.c
+t_set_f_OBJECTS =  t-set_f$U.$(OBJEXT)
+t_set_f_LDADD = $(LDADD)
+t_set_f_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_set_f_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  t-cmp.c t-cmp_ui.c t-get_d.c
+DIST_SOURCES =  t-cmp.c t-cmp_ui.c t-get_d.c t-set_f.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -163,8 +169,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = t-cmp.c t-cmp_ui.c t-get_d.c
-OBJECTS = t-cmp$U.$(OBJEXT) t-cmp_ui$U.$(OBJEXT) t-get_d$U.$(OBJEXT)
+SOURCES = t-cmp.c t-cmp_ui.c t-get_d.c t-set_f.c
+OBJECTS = t-cmp$U.$(OBJEXT) t-cmp_ui$U.$(OBJEXT) t-get_d$U.$(OBJEXT) t-set_f$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -233,6 +239,10 @@ t-cmp_ui$(EXEEXT): $(t_cmp_ui_OBJECTS) $(t_cmp_ui_DEPENDENCIES)
 t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES)
 	@rm -f t-get_d$(EXEEXT)
 	$(LINK) $(t_get_d_LDFLAGS) $(t_get_d_OBJECTS) $(t_get_d_LDADD) $(LIBS)
+
+t-set_f$(EXEEXT): $(t_set_f_OBJECTS) $(t_set_f_DEPENDENCIES)
+	@rm -f t-set_f$(EXEEXT)
+	$(LINK) $(t_set_f_LDFLAGS) $(t_set_f_OBJECTS) $(t_set_f_LDADD) $(LIBS)
 .c.o:
 	$(COMPILE) -c $<
 .c.obj:
@@ -245,8 +255,11 @@ t-cmp_ui_.c: t-cmp_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-cmp_ui.c; then echo $(srcdir)/t-cmp_ui.c; else echo t-cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-cmp_ui_.c
 t-get_d_.c: t-get_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_d.c; then echo $(srcdir)/t-get_d.c; else echo t-get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-get_d_.c
+t-set_f_.c: t-set_f.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-set_f.c; then echo $(srcdir)/t-set_f.c; else echo t-set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-set_f_.c
 t-cmp_.$(OBJEXT) t-cmp_.lo t-cmp_ui_.$(OBJEXT) t-cmp_ui_.lo \
-t-get_d_.$(OBJEXT) t-get_d_.lo : $(ANSI2KNR)
+t-get_d_.$(OBJEXT) t-get_d_.lo t-set_f_.$(OBJEXT) t-set_f_.lo : \
+$(ANSI2KNR)
 
 tags: TAGS
 
