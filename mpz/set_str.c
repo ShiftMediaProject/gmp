@@ -4,8 +4,8 @@
    the base in the C standard way, i.e.  0xhh...h means base 16,
    0oo...o means base 8, otherwise assume base 10.
 
-Copyright (C) 1991, 1993, 1994, 1996, 1997, 1998 Free Software Foundation,
-Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 1997, 1998, 2000 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,9 +31,13 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 static int
+#if __STDC__
+digit_value_in_base (int c, int base)
+#else
 digit_value_in_base (c, base)
      int c;
      int base;
+#endif
 {
   int digit;
 

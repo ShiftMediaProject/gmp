@@ -1,4 +1,4 @@
-/* mpz_brandom -- Generate a positive random mpz_t of specified bit size, with
+/* mpz_rrandomb -- Generate a positive random mpz_t of specified bit size, with
    long runs of consecutive ones and zeros in the binary representation.
    Meant for testing of other MP routines.
 
@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static void gmp_rrandomb ();
+static void gmp_rrandomb _PROTO ((mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits));
 
 void
 #if __STDC__
@@ -56,10 +56,14 @@ mpz_rrandomb (x, rstate, nbits)
 #define BITS_PER_CHUNK 4
 
 static void
+#if __STDC__
+gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
+#else
 gmp_rrandomb (rp, rstate, nbits)
      mp_ptr rp;
      gmp_randstate_t rstate;
      unsigned long int nbits;
+#endif
 {
   int nb;
   int bit_pos;
