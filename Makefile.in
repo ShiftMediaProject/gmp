@@ -347,9 +347,9 @@ depcomp =
 DIST_COMMON =  README $(EXTRA_HEADERS) $(include_HEADERS) ./stamp-h.in \
 AUTHORS COPYING COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in \
 NEWS acconfig.h acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c \
-config.guess config.in config.sub configure configure.in depcomp \
-install-sh ltconfig ltmain.sh mdate-sh missing mkinstalldirs stamp-vti \
-texinfo.tex version.texi
+config.guess config.in config.sub configure configure.in install-sh \
+ltconfig ltmain.sh mdate-sh missing mkinstalldirs stamp-vti texinfo.tex \
+version.texi
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
