@@ -282,6 +282,9 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
 #define mpn_reciprocal		__MPN(reciprocal)
 
+#define mpn_gcd_finda	__MPN(gcd_finda)
+mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2]));
+
 #define mpn_kara_mul_n	__MPN(kara_mul_n)
 void mpn_kara_mul_n _PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
