@@ -7,6 +7,8 @@
 
 /* Global debug flag.  FIXME: Remove. */
 extern int g_debug;
+#define DEBUG_1 0
+#define DEBUG_2 1
 
 /* Max number of dimensions in spectral test.  FIXME: Makw dynamic. */
 #define GMP_SPECT_MAXT 10

@@ -95,7 +95,7 @@ ks (mpf_t Kp,
       mpf_sub (Kt, f_jnq, f_x);
       if (mpf_cmp (Kt, Kp) > 0)
 	mpf_set (Kp, Kt);
-      if (g_debug > 2)
+      if (g_debug > DEBUG_2)
 	{
 	  printf ("j=%lu ", j);
 	  printf ("P()="); mpf_out_str (stdout, 10, 2, f_x); printf ("\t");
@@ -110,7 +110,7 @@ ks (mpf_t Kp,
       if (mpf_cmp (Kt, Km) > 0)
 	mpf_set (Km, Kt);
 
-      if (g_debug > 2)
+      if (g_debug > DEBUG_2)
 	{
 	  printf ("jnq="); mpf_out_str (stdout, 10, 2, f_jnq); printf (" ");
 	  printf ("diff="); mpf_out_str (stdout, 10, 2, Kt); printf (" ");
@@ -241,23 +241,23 @@ x2 (mpf_t V,			/* result */
   mpf_set_ui (V, 0);
   for (f = 0; f < k; f++)
     {
-      if (g_debug > 1)
+      if (g_debug > DEBUG_2)
 	fprintf (stderr, "%u: P()=", f);
       mpf_set_ui (f_t, X[f]);
       mpf_mul (f_t, f_t, f_t);	/* f_t = X[f]^2 */
       P (f_t2, f, x);		/* f_t2 = Pr(f) */
-      if (g_debug > 1)
+      if (g_debug > DEBUG_2)
 	mpf_out_str (stderr, 10, 2, f_t2);
       mpf_div (f_t, f_t, f_t2);
       mpf_add (V, V, f_t);
-      if (g_debug > 1)
+      if (g_debug > DEBUG_2)
 	{
 	  fprintf (stderr, "\tV=");
 	  mpf_out_str (stderr, 10, 2, V);
 	  fprintf (stderr, "\t");
 	}
     }
-  if (g_debug > 1)
+  if (g_debug > DEBUG_2)
     fprintf (stderr, "\n");
   mpf_div_ui (V, V, n);
   mpf_sub_ui (V, V, n);
@@ -327,7 +327,7 @@ mpz_freqt (mpf_t V,
       v[uitemp]++;
     }
 
-  if (g_debug > 1)
+  if (g_debug > DEBUG_2)
     {
       fprintf (stderr, "counts:\n");
       for (f = 0; f <= imax; f++)
@@ -518,19 +518,52 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
   mpz_set_ui (p, 1);
   mpz_set_ui (pp, 0);
   mpz_set (r, a);
-  mpz_pow_ui (s, a, 2);		/* s = 1 + a^2 */
-  mpz_add_ui (s, s, 1);
+  mpz_pow_ui (s, a, 2);		
+  mpz_add_ui (s, s, 1);		/* s = 1 + a^2 */
 
   /* S2 [Euclidean step.] */
   while (1)
     {
-      mpz_tdiv_q (q, hp, h);
+      if (g_debug > DEBUG_1)
+	{
+	  mpz_mul (tmp1, h, pp);
+	  mpz_mul (tmp2, hp, p);
+	  mpz_sub (tmp1, tmp1, tmp2);
+	  if (mpz_cmp_abs (m, tmp1))
+	    {
+	      printf ("***BUG***: h*pp - hp*p = ");
+	      mpz_out_str (stdout, 10, tmp1);
+	      printf ("\n");
+	    }
+	}
+      if (g_debug > DEBUG_2)
+	{
+	  printf ("hp = ");
+	  mpz_out_str (stdout, 10, hp);
+	  printf ("\nh = ");
+	  mpz_out_str (stdout, 10, h);
+	  printf ("\n");
+	  fflush (stdout);
+	}
+
+      if (mpz_sgn (h))
+	mpz_tdiv_q (q, hp, h);	/* q = floor(hp/h) */
+      else
+	mpz_set_ui (q, 1);
+
+      if (g_debug > DEBUG_2)
+	{
+	  printf ("q = ");
+	  mpz_out_str (stdout, 10, q);
+	  printf ("\n");
+	  fflush (stdout);
+	}
 
       mpz_mul (tmp1, q, h);
-      mpz_sub (u, hp, tmp1);
+      mpz_sub (u, hp, tmp1);	/* u = hp - q*h */
 
       mpz_mul (tmp1, q, p);
-      mpz_sub (v, pp, tmp1);
+      mpz_sub (v, pp, tmp1);	/* v = pp - q*p */
   
       mpz_pow_ui (tmp1, u, 2);
       mpz_pow_ui (tmp2, v, 2);
@@ -538,10 +571,10 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
       if (mpz_cmp (tmp1, s) < 0)
 	{
 	  mpz_set (s, tmp1);	/* s = u^2 + v^2 */
-	  mpz_set (hp, h);
-	  mpz_set (h, u);
-	  mpz_set (pp, p);
-	  mpz_set (p, v);
+	  mpz_set (hp, h);	/* hp = h */
+	  mpz_set (h, u);	/* h = u */
+	  mpz_set (pp, p);	/* pp = p */
+	  mpz_set (p, v);	/* p = v */
 	}
       else
 	break;
@@ -623,11 +656,11 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
       ui_j = 0;			/* WARNING: ui_j no longer a temp. */
 
       /* S5 [Transform.] */
-      if (g_debug)
+      if (g_debug > DEBUG_2)
 	printf ("(t, k, j, q1, q2, ...)\n");
       do 
 	{
-	  if (g_debug)
+	  if (g_debug > DEBUG_2)
 	    printf ("(%u, %u, %u", ui_t + 1, ui_k + 1, ui_j + 1);
 
 	  for (ui_i = 0; ui_i <= ui_t; ui_i++)
@@ -642,7 +675,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 		  if (mpz_cmp (tmp2, tmp3) > 0)
 		    {
 		      zdiv_round (q, tmp1, tmp3); /* q=round(Vi.Vj/Vj.Vj) */
-		      if (g_debug)
+		      if (g_debug > DEBUG_2)
 			{
 			  printf (", ");
 			  mpz_out_str (stdout, 10, q);
@@ -661,14 +694,14 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 			mpz_set (s, tmp1);
 		      ui_k = ui_j;
 		    }
-		  else if (g_debug)
+		  else if (g_debug > DEBUG_2)
 		    printf (", #"); /* 2|Vi.Vj| <= Vj.Vj */
 		}
-	      else if (g_debug)
+	      else if (g_debug > DEBUG_2)
 		printf (", *");	/* i == j */
 	    }
 
-	  if (g_debug)
+	  if (g_debug > DEBUG_2)
 	    printf (")\n");
 
 	  /* S6 [Advance j.] */
@@ -687,7 +720,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 	 x[k]^2 <= f(y[1], ...,y[t]) * dot(V[k],V[k]) */
 
       ui_k = ui_t;
-      if (g_debug)
+      if (g_debug > DEBUG_2)
 	{
 	  printf ("searching...");
 	  /*for (f = 0; f < ui_t*/
@@ -712,7 +745,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
       /* S8 [Advance X[k].] */
       do 
 	{
-	  if (g_debug)
+	  if (g_debug > DEBUG_2)
 	    {
 	      printf ("X[%u] = ", ui_k);
 	      mpz_out_str (stdout, 10, X[ui_k]);
@@ -749,7 +782,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
       mpf_set_z (f_tmp1, s);
       mpf_sqrt (rop[ui_t - 1], f_tmp1);
 #ifdef DO_SEARCH	
-      if (g_debug)
+      if (g_debug > DEBUG_2)
 	printf ("done.\n");
 #endif /* DO_SEARCH */
     } /* S4 loop */

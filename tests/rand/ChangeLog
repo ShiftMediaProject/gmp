@@ -1,5 +1,9 @@
 1999-04-28  Linus Nordberg  <linus@swox.se>
 
+	* statlib.c: Change debugging stuff.
+
+	* gmpstat.h: Add debug values definitions.
+
 	* findcl.c (main): Print low and high merit on startup.  Print
 	version string on startup.  Catch SEGV and HUP.  Add option -d for
 	debug.  Fix bug making test for v too hard.
