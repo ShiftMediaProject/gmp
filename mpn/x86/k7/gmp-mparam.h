@@ -65,6 +65,7 @@ MA 02111-1307, USA. */
 
 #define USE_PREINV_MOD_1               1  /* (native) */
 #define DIVREM_2_THRESHOLD             0
+#define DIVEXACT_1_THRESHOLD           0
 #define MODEXACT_1_ODD_THRESHOLD       0
 
 #define FFT_MUL_TABLE  { 816, 1824, 3456, 7680, 18432, 57344, 0 }
