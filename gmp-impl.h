@@ -547,6 +547,9 @@ mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2])) __GMP_ATTRIBUTE_PURE;
 #define mpn_jacobi_base __MPN(jacobi_base)
 int mpn_jacobi_base _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1)) ATTRIBUTE_CONST;
 
+#define mpn_mul_2 __MPN(mul_2)
+mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
 #define mpz_n_pow_ui __gmpz_n_pow_ui
 void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
 
