@@ -171,7 +171,7 @@ MPQ_OBJECTS = mpq/abs$U.lo mpq/aors$U.lo				\
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 PRINTF_OBJECTS =							\
-  printf/asprintf$U.lo							\
+  printf/asprintf$U.lo printf/asprntffuns$U.lo				\
   printf/doprnt$U.lo printf/doprntf$U.lo printf/doprnti$U.lo		\
   printf/fprintf$U.lo							\
   printf/obprintf$U.lo printf/obvprintf$U.lo printf/obprntffuns$U.lo	\
