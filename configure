@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.400 .
+# From configure.in Revision: 1.401 .
 #
 #
 #
@@ -2146,7 +2146,7 @@ echo "include_mpn(\`arm/arm-defs.m4')" >> $gmp_tmpconfigm4i
           cclist_20w="cc"
           cc_20w_cflags="+DD64 +O3"
           cc_20w_testlist="hpc-hppa-2-0"
-          path_20w="pa64w pa64"
+          path_20w="pa64"
           extra_functions_20w="umul_ppmm udiv_qrnnd"
           SPEED_CYCLECOUNTER_OBJ_20w=hppa2w.lo
           cyclecounter_size_20w=2
