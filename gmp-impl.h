@@ -249,6 +249,31 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define KARATSUBA_SQR_THRESHOLD (2*KARATSUBA_MUL_THRESHOLD)
 #endif
 
+/* Return non-zero if xp,xsize and yp,ysize overlap.
+   If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
+   overlap.  If both these are false, there's an overlap. */
+#define MPN_OVERLAP_P(xp, xsize, yp, ysize) \
+  ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
+
+/* assert_nocarry() uses assert() to check the given expression is zero.
+   If assertion checking is disabled, the expression is still evaluated.
+
+   The name of this macro is based on its typical use with routines like
+   mpn_add_n() where the return value represents a carry.  Unless a carry is
+   expected and handled, a non-zero return would indicate an overflow and
+   should be guarded against.  For example,
+
+         assert_nocarry (mpn_add_n (rp, s1p, s2p, size));
+
+   Obviously other routines can be checked in a similar way, eg. for a
+   borrow from mpn_sub_n(), remainder from mpn_divrem_1(), etc. */
+
+#ifdef NDEBUG
+#define assert_nocarry(expr)   (expr)
+#else
+#define assert_nocarry(expr)   assert ((expr) == 0)
+#endif
+
 /* Structure for conversion between internal binary format and
    strings in base 2..36.  */
 struct bases
