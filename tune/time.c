@@ -225,7 +225,7 @@ typedef unsigned long  stck_t;   /* dummy */
 #endif
 #define STCK_PERIOD      (1.0 / 4096e6)   /* 2^-12 microseconds */
 
-/* Cray vector systems have syssgi(), but not mmap(). */
+/* Unicos 10.X has syssgi(), but not mmap(). */
 #if HAVE_SYSSGI && HAVE_MMAP
 static const int  have_sgi = 1;
 #else
