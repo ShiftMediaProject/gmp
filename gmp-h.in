@@ -1070,6 +1070,7 @@ mpz_popcount (mpz_srcptr u)
   else
     return mpn_popcount (u->_mp_d, usize);
 }
+#endif
 
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_set_q
 #if ! __GMP_FORCE_mpz_set_q
