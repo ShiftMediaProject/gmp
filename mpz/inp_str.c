@@ -66,9 +66,6 @@ mpz_inp_str (x, stream, base)
   if (stream == 0)
     stream = stdin;
 
-  alloc_size = 100;
-  str = (char *) (*_mp_allocate_func) (alloc_size);
-  str_size = 0;
   nread = 0;
 
   /* Skip whitespace.  */
@@ -122,6 +119,10 @@ mpz_inp_str (x, stream, base)
       nread++;
     }
 
+  alloc_size = 100;
+  str = (char *) (*_mp_allocate_func) (alloc_size);
+  str_size = 0;
+
   for (;;)
     {
       int dig;
@@ -144,6 +145,7 @@ mpz_inp_str (x, stream, base)
   if (str_size == 0)
     {
       x->_mp_size = 0;
+      (*_mp_free_func) (str, alloc_size);
       return nread;
     }
 
