@@ -38,11 +38,15 @@ MA 02111-1307, USA.
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
 
 int option_pari = 0;
+gmp_randstate_t rands;
 
 
 unsigned long
@@ -602,6 +606,10 @@ check_squares_zi (void)
 {
   mpz_t  a, b, g;
   int    i, answer;
+  mp_size_t size_range, an, bn;
+  mpz_t bs;
+
+  mpz_init (bs);
 
   mpz_init (a);
   mpz_init (b);
@@ -609,8 +617,17 @@ check_squares_zi (void)
 
   for (i = 0; i < 200; i++)
     {
-      mpz_random2 (a, rand() % 50);
-      mpz_random2 (b, rand() % 50);
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 10 + 2;
+
+      mpz_urandomb (bs, rands, size_range);
+      an = mpz_get_ui (bs);
+      mpz_rrandomb (a, rands, an);
+
+      mpz_urandomb (bs, rands, size_range);
+      bn = mpz_get_ui (bs);
+      mpz_rrandomb (b, rands, bn);
+
       mpz_mul (a, a, b);
 
       mpz_gcd (g, a, b);
@@ -631,6 +648,21 @@ check_squares_zi (void)
 int
 main (int argc, char *argv[])
 {
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
   if (argc >= 2 && strcmp (argv[1], "-p") == 0)
     {
       option_pari = 1;
