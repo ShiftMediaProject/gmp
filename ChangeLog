@@ -12,6 +12,9 @@
 
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/tdiv_qr.c: Work around gcc 2.7.2.3 i386 register handling
+	bug.
+
 	* mpn/generic/tdiv_qr.c: Use udiv_qrnnd instead of mpn_divrem_1
 	when computing appropriate quotient; mpn_divrem_1 writes too
 	many quotient limbs.
