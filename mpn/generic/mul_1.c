@@ -25,6 +25,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+/* For reference, "incr" style overlaps are wanted in mpf_mul_ui, where an
+   mpf_mul_ui(x,x,y) if SIZ(x)>PREC(x) (either SIZ(x)==PREC(x)+1 as occurs
+   normally, or due to an mpf_set_prec_raw).  */
+
 mp_limb_t
 mpn_mul_1 (mp_ptr res_ptr,
 	   mp_srcptr s1_ptr,
@@ -35,10 +40,8 @@ mpn_mul_1 (mp_ptr res_ptr,
   register mp_size_t j;
   register mp_limb_t prod_high, prod_low;
 
-  /* mpf/mul_ui.c uses res_ptr==s1_ptr-1 */
   ASSERT (s1_size >= 1);
-  ASSERT (res_ptr==s1_ptr-1
-          || MPN_SAME_OR_SEPARATE_P (res_ptr, s1_ptr, s1_size));
+  ASSERT (MPN_SAME_OR_INCR_P (res_ptr, s1_ptr, s1_size));
 
   /* The loop counter and index J goes from -S1_SIZE to -1.  This way
      the loop becomes faster.  */
