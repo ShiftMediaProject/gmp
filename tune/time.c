@@ -678,27 +678,25 @@ speed_cyclecounter_diff (const unsigned end[2], const unsigned start[2])
 
 
 /* Calculate the difference between "start" and "end" using fields "sec" and
-   "psec", where each "psec" is a "punit" of a second.  Care is taken to
-   preserve accuracy.
+   "psec", where each "psec" is a "punit" of a second.
 
-   - High parts are allowed to cancel in unsigneds in case a simple
-     "sec+psec*punit" exceeds the precision of a double.
+   The high parts are allowed to cancel before being combined with the low
+   parts, in case a simple "sec+psec*punit" exceeds the precision of a
+   double.
 
-   - Total time in units of "psec"s are only calculated in a "double" since
-     an integer might overflow.  2^32 microseconds is only a bit over an
-     hour, or 2^32 nanoseconds only about 4 seconds.
+   Total time in units of "psec"s are only calculated in a "double" since an
+   integer might overflow.  2^32 microseconds is only a bit over an hour, or
+   2^32 nanoseconds only about 4 seconds.
 
-   - No assumptions are made about negative "end->psec - start->psec", a
-     test for which of start or end is greater is done.  */
+   The casts to "long" are for the beneifit of timebasestruct_t, where the
+   fields are only "unsigned", but we want a signed difference.  */
 
-#define DIFF_SECS_ROUTINE(type, sec, psec, punit)                       \
-  {                                                                     \
-    type  delta_sec = end->sec - start->sec;                            \
-    if (end->psec >= start->psec)                                       \
-      return (double) delta_sec + punit * (end->psec - start->psec);    \
-    else                                                                \
-      return (double) delta_sec - punit * (start->psec - end->psec);    \
-  }                                                                     \
+#define DIFF_SECS_ROUTINE(type, sec, psec, punit)               \
+  {                                                             \
+    long  delta_sec = (long) end->sec - (long) start->sec;      \
+    return (double) delta_sec                                   \
+      + punit * ((long) end->psec - (long) start->psec);        \
+  }                                                             \
 
 double
 timebasestruct_diff_secs (const timebasestruct_t *end,
