@@ -2102,7 +2102,7 @@ dnl  preprocessing time when building the library, for use in #if
 dnl  conditionals.
 dnl
 dnl  BITS_PER_MP_LIMB is also wanted as a plain constant for some macros in
-dnl  the generated gmp.h, and is instantiated as __GMP_BITS_PER_MP_LIMB.
+dnl  the generated gmp.h, and is instantiated as BITS_PER_MP_LIMB.
 dnl
 dnl  If some assembler code depends on a particular type size it's probably
 dnl  best to put explicit #defines for these in gmp-mparam.h.  That way if
@@ -2120,8 +2120,8 @@ dnl  ulongs with bits=8*sizeof, so it's academic.  Strange systems can
 dnl  always have the right values put in gmp-mparam.h explicitly.
 
 AC_DEFUN(GMP_C_SIZES,
-[__GMP_BITS_PER_MP_LIMB=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
-if test -n "$__GMP_BITS_PER_MP_LIMB" \
+[BITS_PER_MP_LIMB=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
+if test -n "$BITS_PER_MP_LIMB" \
    && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
 else
   AC_CHECK_SIZEOF(mp_limb_t,,
@@ -2130,8 +2130,8 @@ GMP_INCLUDE_GMP_H)
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
     AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
   fi
-  if test -z "$__GMP_BITS_PER_MP_LIMB"; then
-    __GMP_BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
+  if test -z "$BITS_PER_MP_LIMB"; then
+    BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
   fi
   if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
   else
@@ -2139,9 +2139,9 @@ GMP_INCLUDE_GMP_H)
                        [bytes per mp_limb_t, if not in gmp-mparam.h])
   fi
 fi
-AC_SUBST(__GMP_BITS_PER_MP_LIMB)
+AC_SUBST(BITS_PER_MP_LIMB)
 define([GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB],
-[[#define __GMP_BITS_PER_MP_LIMB $__GMP_BITS_PER_MP_LIMB]])
+[[#define __GMP_BITS_PER_MP_LIMB $BITS_PER_MP_LIMB]])
 
 if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
 else

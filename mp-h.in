@@ -41,7 +41,7 @@ MA 02111-1307, USA. */
 /* The following instantiated by configure, for internal use only */
 #if ! __GMP_WITHIN_CONFIGURE
 @DEFN_LONG_LONG_LIMB@
-#define __GMP_LIBGMP_DLL  @__GMP_LIBGMP_DLL@
+#define __GMP_LIBGMP_DLL  @LIBGMP_DLL@
 #endif
 
 #if  defined (__STDC__)                                 \

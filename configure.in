@@ -293,8 +293,8 @@ cc_64_cflags="-O"
 SPEED_CYCLECOUNTER_OBJ=
 cyclecounter_size=2
 
-AC_SUBST(__GMP_HAVE_HOST_CPU_FAMILY_power,  0)
-AC_SUBST(__GMP_HAVE_HOST_CPU_FAMILY_powerpc,0)
+AC_SUBST(HAVE_HOST_CPU_FAMILY_power,  0)
+AC_SUBST(HAVE_HOST_CPU_FAMILY_powerpc,0)
 
 case $host in
 
@@ -644,7 +644,7 @@ case $host in
   #
   powerpc*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
-    __GMP_HAVE_HOST_CPU_FAMILY_powerpc=1
+    HAVE_HOST_CPU_FAMILY_powerpc=1
     cclist="gcc cc"
     cc_cflags="-g -O2"
     gcc_cflags="-g -O2 -mpowerpc"
@@ -748,7 +748,7 @@ case $host in
   # POWER
   [power-*-* | power[12]-*-* | power2sc-*-*])
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_power)
-    __GMP_HAVE_HOST_CPU_FAMILY_power=1
+    HAVE_HOST_CPU_FAMILY_power=1
     cclist="gcc"
     extra_functions="udiv_w_sdiv"
     path="power"
@@ -1455,7 +1455,7 @@ esac
 
 AC_LIBTOOL_WIN32_DLL
 
-__GMP_LIBGMP_DLL=0
+AC_SUBST(LIBGMP_DLL,0)
 case $host in
   *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
     # By default, build only static.
@@ -1470,7 +1470,7 @@ Use "--disable-static --enable-shared" to build just a DLL.])
     if test "$enable_shared" = yes; then
       # libtool requires "-no-undefined", see AC_LIBTOOL_WIN32_DLL doco.
       GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
-      AC_SUBST(__GMP_LIBGMP_DLL,1)
+      LIBGMP_DLL=1
     fi
     ;;
 esac
