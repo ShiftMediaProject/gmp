@@ -1353,7 +1353,7 @@ check_misc (void)
   }
 
   /* %[...], glibc only */
-#if 1 /*def __GLIBC__*/
+#ifdef __GLIBC__
   {
     char  buf[128];
     int   n = -1;
