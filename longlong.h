@@ -42,6 +42,14 @@ MA 02111-1307, USA. */
 #define __MPN(x) __##x
 #endif
 
+#ifndef _PROTO
+#if defined (__STDC__) || defined (__cplusplus)
+#define _PROTO(x) x
+#else
+#define _PROTO(x) ()
+#endif
+#endif
+
 /* Define auxiliary asm macros.
 
    1) umul_ppmm(high_prod, low_prod, multipler, multiplicand) multiplies two
@@ -159,15 +167,15 @@ MA 02111-1307, USA. */
 	       "rI" (__m1));						\
     (pl) = __m0 * __m1;							\
   } while (0)
-#define UMUL_TIME 46
+#define UMUL_TIME 30		/* compromise value */
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UDItype __r;							\
     (q) = __udiv_qrnnd (&__r, (n1), (n0), (d));				\
     (r) = __r;								\
   } while (0)
-extern UDItype __udiv_qrnnd ();
-#define UDIV_TIME 220
+extern UDItype __udiv_qrnnd _PROTO ((UDItype *, UDItype, UDItype, UDItype));
+#define UDIV_TIME 350
 #endif /* LONGLONG_STANDALONE */
 #endif /* __alpha */
 
@@ -324,7 +332,7 @@ extern UDItype __udiv_qrnnd ();
     (q) = __udiv_qrnnd (&__r, (n1), (n0), (d));				\
     (r) = __r;								\
   } while (0)
-extern USItype __udiv_qrnnd ();
+extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 #endif /* LONGLONG_STANDALONE */
 #define count_leading_zeros(count, x) \
   do {									\
@@ -432,7 +440,7 @@ extern USItype __udiv_qrnnd ();
 #define count_trailing_zeros(count, x) \
   __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)))
 #ifndef UMUL_TIME
-#define UMUL_TIME 40
+#define UMUL_TIME 10
 #endif
 #ifndef UDIV_TIME
 #define UDIV_TIME 40
@@ -512,7 +520,8 @@ extern USItype __udiv_qrnnd ();
 #endif /* i960mx */
 #endif /* i960 */
 
-#if (defined (__mc68000__) || defined (__mc68020__) || defined (__NeXT__) || defined(mc68020)) && W_TYPE_SIZE == 32
+#if (defined (__mc68000__) || defined (__mc68020__) || defined(mc68020) \
+     || defined (__NeXT__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add%.l %5,%1
 	addx%.l %3,%0"							\
@@ -531,7 +540,12 @@ extern USItype __udiv_qrnnd ();
 	     "d" ((USItype)(bh)),					\
 	     "1" ((USItype)(al)),					\
 	     "g" ((USItype)(bl)))
-#if (defined (__mc68020__) || defined (__NeXT__) || defined(mc68020))
+/* The '020, '030, '040 and CPU32 have 32x32->64 and 64/32->32q-32r.  */
+#if defined (__mc68020__) || defined(mc68020) \
+     || defined (__mc68030__) || defined (mc68030) \
+     || defined (__mc68040__) || defined (mc68040) \
+     || defined (__mc68332__) || defined (mc68332) \
+     || defined (__NeXT__)
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("mulu%.l %3,%1:%0"						\
 	   : "=d" ((USItype)(w0)),					\
@@ -554,12 +568,9 @@ extern USItype __udiv_qrnnd ();
 	   : "0" ((USItype)(n0)),					\
 	     "1" ((USItype)(n1)),					\
 	     "dmi" ((USItype)(d)))
-#define count_leading_zeros(count, x) \
-  __asm__ ("bfffo %1{%b2:%b2},%0"					\
-	   : "=d" ((USItype)(count))					\
-	   : "od" ((USItype)(x)), "n" (0))
 #define COUNT_LEADING_ZEROS_0 32
 #else /* not mc68020 */
+#if !defined (__mc5200__)
 #define umul_ppmm(xh, xl, a, b) \
   do { USItype __umul_tmp1, __umul_tmp2;				\
 	__asm__ ("| Inlined umul_ppmm
@@ -590,7 +601,19 @@ extern USItype __udiv_qrnnd ();
   } while (0)
 #define UMUL_TIME 100
 #define UDIV_TIME 400
+#endif /* not mcf5200 */
 #endif /* not mc68020 */
+/* The '020, '030, '040 and '060 have bitfield insns.  */
+#if defined (__mc68020__) || defined (mc68020) \
+     || defined (__mc68030__) || defined (mc68030) \
+     || defined (__mc68040__) || defined (mc68040) \
+     || defined (__mc68060__) || defined (mc68060) \
+     || defined (__NeXT__)
+#define count_leading_zeros(count, x) \
+  __asm__ ("bfffo %1{%b2:%b2},%0"					\
+	   : "=d" ((USItype) (count))					\
+	   : "od" ((USItype) (x)), "n" (0))
+#endif
 #endif /* mc68000 */
 
 #if defined (__m88000__) && W_TYPE_SIZE == 32
@@ -653,7 +676,7 @@ extern USItype __udiv_qrnnd ();
 #endif /* __m88110__ */
 #endif /* __m88000__ */
 
-#if defined (__mips__) && W_TYPE_SIZE == 32
+#if defined (__mips) && W_TYPE_SIZE == 32
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 7
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("multu %2,%3"						\
@@ -673,7 +696,7 @@ extern USItype __udiv_qrnnd ();
 #endif
 #define UMUL_TIME 10
 #define UDIV_TIME 100
-#endif /* __mips__ */
+#endif /* __mips */
 
 #if (defined (__mips) && __mips >= 3) && W_TYPE_SIZE == 64
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 7
@@ -695,7 +718,7 @@ extern USItype __udiv_qrnnd ();
 #endif
 #define UMUL_TIME 20
 #define UDIV_TIME 140
-#endif /* __mips__ */
+#endif /* __mips */
 
 #if defined (__ns32000__) && W_TYPE_SIZE == 32
 #define umul_ppmm(w1, w0, u, v) \
@@ -1014,6 +1037,8 @@ extern USItype __udiv_qrnnd ();
     (q) = __q;								\
   } while (0)
 #define UDIV_TIME 25
+#else
+#define UDIV_TIME 60		/* SuperSPARC timing */
 #endif /* SUPERSPARC */
 #else /* ! __sparc_v8__ */
 #if defined (__sparclite__)
@@ -1139,8 +1164,10 @@ extern USItype __udiv_qrnnd ();
     (q) = __udiv_qrnnd (&__r, (n1), (n0), (d));				\
     (r) = __r;								\
   } while (0)
-extern USItype __udiv_qrnnd ();
+extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
+#ifndef UDIV_TIME
 #define UDIV_TIME 140
+#endif
 #endif /* LONGLONG_STANDALONE */
 #endif /* udiv_qrnnd */
 #endif /* __sparc__ */
@@ -1186,7 +1213,7 @@ extern USItype __udiv_qrnnd ();
     __xx.__i.__h = n1; __xx.__i.__l = n0;				\
     __asm__ ("ediv %3,%2,%0,%1"						\
 	     : "=g" (q), "=g" (r)					\
-	     : "g" (__xx.ll), "g" (d));					\
+	     : "g" (__xx.__ll), "g" (d));				\
   } while (0)
 #endif /* __vax__ */
 
