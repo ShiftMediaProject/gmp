@@ -1,3 +1,11 @@
+2000-05-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/convert.c: Call free via _mp_free_func.
+	* mpf/tests/t-conv.c: Likewise.
+
+	* memory.c: Add code enabled for DEBUG that adds special patterns
+	around allocated blocks.
+
 2000-05-05  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi: Use @dircategory and @direntry.
@@ -10,7 +18,7 @@
 	the calculation actually gives.
 	(Low-level Functions): Note extra space needed by mpn_gcdext,
 	clarify the details a bit.
-	
+
 	* compat.c: New file, entry points for upward binary compatibility.
 	(mpn_divexact_by3): Compatibility function.
 	* Makefile.am (libgmp_la_SOURCES): Add compat.c.
@@ -62,7 +70,7 @@
 	(m4_empty_if_zero): Eval the argument.
 	(m4_assert, m4_assert_numargs_range, m4_config_gmp_mparam,
 	m4_instruction_wrapper): New macros.
-	
+
 2000-05-04  Linus Nordberg  <linus@swox.se>
 
 	* gmp.texi (Reporting Bugs): Be explicit about output from running
