@@ -1,7 +1,7 @@
 divert(-1)
 
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -36,12 +36,23 @@ m4_assert_numargs(0)
 
 dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
+dnl
+dnl  32-byte alignment is used for the benefit of itanium-2, where the code
+dnl  fetcher will only take 2 bundles from a 32-byte aligned target.  At
+dnl  16mod32 it only reads 1 in the first cycle.  This might not make any
+dnl  difference if the rotate buffers are full or there's other work holding
+dnl  up execution, but we use 32-bytes to give the best chance of peak
+dnl  throughput.
+dnl
+dnl  We can use .align here despite the gas bug noted in mpn/ia64/README,
+dnl  since we're not expecting to execute across a PROLOGUE(), at least not
+dnl  currently.
 
 define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 	`
 	.text
-	.align	16
+	.align	32
 	.global	$1#
 	.proc	$1#
 $1:')
