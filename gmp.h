@@ -69,8 +69,14 @@ typedef long int		mp_limb_signed_t;
 
 typedef mp_limb_t *		mp_ptr;
 typedef __gmp_const mp_limb_t *	mp_srcptr;
+#if defined (_CRAY) && ! defined (_CRAYMPP)
+/* plain `int' is much faster (48 bits) */
+typedef int			mp_size_t;
+typedef int			mp_exp_t;
+#else
 typedef long int		mp_size_t;
 typedef long int		mp_exp_t;
+#endif
 
 typedef struct
 {
@@ -158,7 +164,7 @@ typedef __mpq_struct *mpq_ptr;
 
 #if defined (FILE) || defined (H_STDIO) || defined (_H_STDIO) \
  || defined (_STDIO_H) || defined (_STDIO_H_) || defined (__STDIO_H__) \
- || defined (_STDIO_INCLUDED)
+ || defined (_STDIO_INCLUDED) || defined (__dj_include_stdio_h_)
 #define _GMP_H_HAVE_FILE 1
 #endif
 
@@ -222,6 +228,7 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_invert __gmpzs_invert
 #define mpz_ior __gmpzs_ior
 #define mpz_jacobi __gmpzs_jacobi
+#define mpz_lcm __gmpzs_lcm
 #define mpz_legendre __gmpzs_legendre
 #define mpz_mod __gmpzs_mod
 #define mpz_mul __gmpzs_mul
@@ -263,7 +270,10 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_tdiv_r __gmpzs_tdiv_r
 #define mpz_tdiv_r_2exp __gmpzs_tdiv_r_2exp
 #define mpz_tdiv_r_ui __gmpzs_tdiv_r_ui
+#define mpz_tstbit __gmpzs_tstbit
 #define mpz_ui_pow_ui __gmpzs_ui_pow_ui
+#define mpz_xor __gmpzs_xor
+#define mpz_eor __gmpzs_xor
 #else /* ! GMP_SMALL */
 #define _mpz_realloc __gmpzl_realloc
 #define mpz_realloc __gmpzl_realloc
@@ -317,6 +327,7 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_invert __gmpzl_invert
 #define mpz_ior __gmpzl_ior
 #define mpz_jacobi __gmpzl_jacobi
+#define mpz_lcm __gmpzl_lcm
 #define mpz_legendre __gmpzl_legendre
 #define mpz_mod __gmpzl_mod
 #define mpz_mul __gmpzl_mul
@@ -358,7 +369,10 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_tdiv_r __gmpzl_tdiv_r
 #define mpz_tdiv_r_2exp __gmpzl_tdiv_r_2exp
 #define mpz_tdiv_r_ui __gmpzl_tdiv_r_ui
+#define mpz_tstbit __gmpzl_tstbit
 #define mpz_ui_pow_ui __gmpzl_ui_pow_ui
+#define mpz_xor __gmpzl_xor
+#define mpz_eor __gmpzl_xor
 #endif /* GMP_SMALL */
 
 #if defined (__cplusplus)
@@ -418,6 +432,7 @@ void mpz_init_set_ui _PROTO ((mpz_ptr, unsigned long int));
 int mpz_invert _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_ior _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_jacobi _PROTO ((mpz_srcptr, mpz_srcptr));
+void mpz_lcm _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_legendre _PROTO ((mpz_srcptr, mpz_srcptr));
 void mpz_mod _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_mul _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -461,7 +476,9 @@ void mpz_tdiv_qr_ui _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_tdiv_r _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_tdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_tdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+int mpz_tstbit _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_ui_pow_ui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
+void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #if defined (__cplusplus)
 }
 #endif
@@ -711,6 +728,8 @@ void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 #define mpn_divmod_1		__MPN(divmod_1)
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
+#define mpn_divrem_newton	__MPN(divrem_newton)
+#define mpn_divrem_classic	__MPN(divrem_classic)
 #define mpn_dump		__MPN(dump)
 #define mpn_gcd			__MPN(gcd)
 #define mpn_gcd_1		__MPN(gcd_1)
@@ -726,6 +745,7 @@ void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 #define mpn_popcount		__MPN(popcount)
 #define mpn_preinv_mod_1	__MPN(preinv_mod_1)
 #define mpn_random2		__MPN(random2)
+#define mpn_random		__MPN(random)
 #define mpn_rshift		__MPN(rshift)
 #define mpn_scan0		__MPN(scan0)
 #define mpn_scan1		__MPN(scan1)
@@ -749,6 +769,8 @@ int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_divrem _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+mp_limb_t mpn_divrem_newton _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+mp_limb_t mpn_divrem_classic _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 void mpn_dump _PROTO ((mp_srcptr, mp_size_t));
 mp_size_t mpn_gcd _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 mp_limb_t mpn_gcd_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
@@ -763,6 +785,7 @@ void mpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 int mpn_perfect_square_p _PROTO ((mp_srcptr, mp_size_t));
 unsigned long int mpn_popcount _PROTO ((mp_srcptr, mp_size_t));
 mp_limb_t mpn_preinv_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+void mpn_random _PROTO ((mp_ptr, mp_size_t));
 void mpn_random2 _PROTO ((mp_ptr, mp_size_t));
 mp_limb_t mpn_rshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 unsigned long int mpn_scan0 _PROTO ((mp_srcptr, unsigned long int));
@@ -921,19 +944,48 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 }
 #endif /* __GNUC__ */
 
+_EXTERN_INLINE mp_limb_t
+#if defined (__STDC__) || defined (__cplusplus)
+mpn_divrem (mp_ptr _gmp_qp, mp_size_t _gmp_qn,
+	    mp_ptr _gmp_np, mp_size_t _gmp_nn,
+	    mp_srcptr _gmp_dp, mp_size_t _gmp_dn)
+#else
+mpn_divrem (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn)
+     mp_ptr _gmp_qp;
+     mp_size_t _gmp_qn;
+     mp_ptr _gmp_np;
+     mp_size_t _gmp_nn;
+     mp_srcptr _gmp_dp;
+     mp_size_t _gmp_dn;
+#endif
+{
+  /* When the divisor is under 110 limbs, classic division is always faster.  */
+  if (_gmp_dn < 110)
+    return mpn_divrem_classic (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn);
+
+  /* When the divisor is over 600 limbs, or if the dividend is over 1000 limbs
+     newton division is always faster.  But if the two sizes are within 20
+     limbs, don't use newton division.  */
+  if ((_gmp_dn > 600 || _gmp_nn > 1000) && _gmp_nn - _gmp_dn > 20)
+    return mpn_divrem_newton (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn);
+
+  /* In the remaining cases, use classic division.  */
+  return mpn_divrem_classic (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn);
+}
+
 /* Allow faster testing for negative, zero, and positive.  */
 #define mpz_sgn(Z) ((Z)->_mp_size < 0 ? -1 : (Z)->_mp_size > 0)
 #define mpf_sgn(F) ((F)->_mp_size < 0 ? -1 : (F)->_mp_size > 0)
 #define mpq_sgn(Q) ((Q)->_mp_num._mp_size < 0 ? -1 : (Q)->_mp_num._mp_size > 0)
 
 /* When using GCC, optimize certain common comparisons.  */
-#if defined (__GNUC__)
+#if defined (__GNUC__) && (defined (__GNU__) && defined (__NeXT__))
 #define mpz_cmp_ui(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0				\
    ? mpz_sgn (Z) : _mpz_cmp_ui (Z,UI))
 #define mpz_cmp_si(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0 ? mpz_sgn (Z)			\
-   : __builtin_constant_p (UI) && (UI) > 0 ? _mpz_cmp_ui (Z,UI)	\
+   : __builtin_constant_p (UI) && (UI) > 0 ? _mpz_cmp_ui (Z,UI)		\
    : _mpz_cmp_si (Z,UI))
 #define mpq_cmp_ui(Q,NUI,DUI) \
   (__builtin_constant_p (NUI) && (NUI) == 0				\
