@@ -44,6 +44,16 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
   mp_size_t nsize, dsize;
   TMP_DECL (marker);
 
+#if WANT_ASSERT
+  {
+    mpz_t  rem;
+    mpz_init (rem);
+    mpz_tdiv_r (rem, num, den);
+    ASSERT (SIZ(rem) == 0);
+    mpz_clear (rem);
+  }
+#endif
+
   nsize = ABS (num->_mp_size);
   dsize = ABS (den->_mp_size);
 
