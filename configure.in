@@ -152,7 +152,7 @@ esac],
 [enable_nails=no])
 
 case $enable_nails in
-yes) GMP_NAIL_BITS=1 ;;
+yes) GMP_NAIL_BITS=2 ;;
 no)  GMP_NAIL_BITS=0 ;;
 *)   GMP_NAIL_BITS=$enable_nails ;;
 esac
@@ -1473,6 +1473,19 @@ case $host in
   # to work on this.  Just disable for now.
   *-*-ultrix*)
     enable_shared=no ;;
+esac
+
+# FIXME: AC_LIBTOOL_SYS_MAX_CMD_LEN has been reported to blow up in some
+# fashion on windows 9x (but not 2k), taking a very long time and
+# temporarily locking the whole PC.  Clearly this is a libtool problem, but
+# for now force a sensible value to avoid the test.
+#
+case $build in
+  *-*-cygwin*)
+    if test -z "$lt_cv_sys_max_cmd_len"; then
+      lt_cv_sys_max_cmd_len=20000
+    fi
+    ;;
 esac
 
 
