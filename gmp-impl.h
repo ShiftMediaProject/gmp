@@ -907,8 +907,9 @@ mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
   } while (0)
 #endif
 
+/* used by mpfr and test programs, hence __GMP_DECLSPEC */
 #define mpn_copyi __MPN(copyi)
-void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+__GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 #if ! defined (MPN_COPY_INCR) && HAVE_NATIVE_mpn_copyi
 #define MPN_COPY_INCR(dst, src, size)                   \
@@ -975,8 +976,9 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
+/* used by mpfr and test programs, hence __GMP_DECLSPEC */
 #define mpn_copyd __MPN(copyd)
-void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+__GMP_DECLSPEC void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 #if ! defined (MPN_COPY_DECR) && HAVE_NATIVE_mpn_copyd
 #define MPN_COPY_DECR(dst, src, size)                   \
