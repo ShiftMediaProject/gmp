@@ -18,6 +18,15 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-01  Kevin Ryde  <kevin@swox.se>
+
+	* doc/gmp.texi (References): Update gcc online docs url to
+	gcc.gnu.org.
+
+	* configure.in (mips*-*-irix[6789]*): Correction to m4 quoting of this
+	pattern.  (Believe the mips64*-*-* part also used picks up all current
+	irix6 tuples anyway.)  Reported by Rainer Orth.
+
 2004-04-30  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_PROG_CC_X86_GOT_EAX_EMITTED,
