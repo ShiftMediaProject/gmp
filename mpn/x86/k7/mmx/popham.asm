@@ -27,32 +27,6 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-dnl  Only recent versions of gas know psadbw, in particular gas 2.9.1 on
-dnl  FreeBSD 3.3 and 3.4 doesn't recognise it.
-
-define(psadbw_mm4_mm0,
-`ifelse(m4_ifdef_anyof_p(`HAVE_HOST_CPU_athlon',
-                         `HAVE_HOST_CPU_pentium3'),1,
-	`.byte 0x0f,0xf6,0xc4	C psadbw %mm4, %mm0',
-
-`m4_warning(`warning, using simulated and only partly functional psadbw, use for testing only
-')	C this works enough for the sum of bytes done below, making it
-	C possible to test on an older cpu
-	leal	-8(%esp), %esp
-	movq	%mm4, (%esp)
-	movq	%mm0, %mm4
-forloop(i,1,7,
-`	psrlq	$ 8, %mm4
-	paddb	%mm4, %mm0
-')
-	pushl	$ 0
-	pushl	$ 0xFF
-	pand	(%esp), %mm0
-	movq	8(%esp), %mm4
-	leal	16(%esp), %esp
-')')
-
-
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C unsigned long mpn_hamdist (mp_srcptr src, mp_srcptr src2, mp_size_t size);
 C
@@ -219,7 +193,7 @@ L(loaded):
 	paddd	%mm1, %mm0	C bytes
 
 
-	psadbw_mm4_mm0
+	psadbw(	%mm4, %mm0)
 
 	paddd	%mm0, %mm2	C add to total
 	jnz	L(top)
