@@ -420,6 +420,14 @@ void *f() { return g(); }
 int n;
 int cmov () { return (n >= 0 ? n : 0); }
 
+/* The following provokes a linker problem with gcc 3.0.3 on AIX 4.3
+   under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630 option causes
+   gcc to incorrectly invoke the linker with the 32-bit version of
+   libgcc.a, not the 64-bit one, meaning it misses out on __fixunsdfdi
+   helper (double to unsigned 64bit conversion).  */
+double d;
+unsigned long gcc303 () { return (unsigned long) d; }
+
 int main () { return 0; }
 EOF
 gmp_prog_cc_works=no
