@@ -4539,9 +4539,10 @@ form for the algorithm, so padding to get a full product is unavoidable.
 The algorithm follows a split, evaluate, pointwise multiply, interpolate and
 combine similar to that described above for Karatsuba and Toom-3.  A @ma{k}
 parameter controls the split, with an FFT-@ma{k} splitting into @ma{2^k}
-pieces of @ma{M=N/2^k} bits each.  @ma{N} must be a multiple of @ma{2^k} and
-@ma{M} must be a multiple of @code{mp_bits_per_limb}, the latter condition
-avoiding shifts in the split and combine.
+pieces of @ma{M=N/2^k} bits each.  @ma{N} must be a multiple of
+@m{2^k\times@code{mp\_bits\_per\_limb}, 2^k*@nicode{mp_bits_per_limb}} so the
+split falls on limb boundaries, avoiding bit shifts in the split and combine
+stages.
 
 The evaluations, pointwise multiplications, and interpolation, are all done
 modulo @m{2^{N'}+1, 2^N'+1} where @ma{N'} is @ma{2M+k+3} rounded up to a
@@ -4549,16 +4550,15 @@ multiple of @ma{2^k} and of @code{mp_bits_per_limb}.  The results of
 interpolation will be the following negacyclic convolution of the input
 pieces, and the choice of @ma{N'} ensures these sums aren't truncated.
 @tex
-$$w_n = \sum_{i+j \equiv n \bmod 2^k} (-1)^t x_i y_j
-  \hskip3em
-  t = \left\lbrace \matrix{0 & i+j<2^k \cr 1 & i+j\ge2^k} \right.$$
+$$ w_n = \sum_{{i+j = b2^k+n}\atop{b=0,1}} (-1)^b x_i y_j $$
 @end tex
 @ifnottex
 
 @example
-                          t
-w[n] =      sum       (-1) * x[i] * y[j]     t=0 if i+j<2^k
-       i+j==n mod 2^k                        t=1 if i+j>=2^k
+                         b
+w[n] =     sum       (-1) * x[i] * y[j]
+       i+j==b*2^k+n
+          b=0,1
 @end example
 
 @end ifnottex
@@ -4706,12 +4706,10 @@ hardware divide instruction that needs it that way, the division performed is
 the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The shift for
 the dividend is usually accomplished ``on the fly'' meaning by extracting the
 appropriate bits at each step.  Done this way the quotient limbs come out
-aligned ready to store.
-
-For an N@cross{}1 remainder with a normalized divisor, an alternative is to
-take the dividend limbs unshifted and calculate @m{r = a \bmod d2^k, r = a mod
-d*2^k} followed by an extra final step @m{r2^k \bmod d2^k, r*2^k mod d*2^k}.
-This can help on CPUs with poor bit shifts or few registers.
+aligned ready to store.  When only the remainder is wanted, an alternative is
+to take the dividend limbs unshifted and calculate @m{r = a \bmod d2^k, r = a
+mod d*2^k} followed by an extra final step @m{r2^k \bmod d2^k, r*2^k mod
+d*2^k}.  This can help on CPUs with poor bit shifts or few registers.
 
 N@cross{}1 division is used for small divisors (which are fairly common), and
 for radix conversion.  It's not used to construct N@cross{}M divisions, though
@@ -5163,10 +5161,10 @@ sub-optimal on sizes above the Karatsuba multiply threshold.
 @section Other Algorithms
 
 @menu
-* Fibonacci Number Algorithm::  
+* Fibonacci Numbers Algorithm::  
 @end menu
 
-@node Fibonacci Number Algorithm,  , Other Algorithms, Other Algorithms
+@node Fibonacci Numbers Algorithm,  , Other Algorithms, Other Algorithms
 @subsection Fibonacci Numbers
 
 The Fibonacci number function @code{mpz_fib_ui} is designed for calculating an
@@ -5184,31 +5182,35 @@ $$ F_n = F_{n-1} + F_{n-2} $$
 @end tex
 @ifnottex
 
-@display
+@example
 F[n] = F[n-1] + F[n-2]
-@end display
+@end example
 
 @end ifnottex
 For @ma{n} above @code{FIB_THRESHOLD}, a binary powering algorithm is used,
 calculating @m{F_n,F[n]} and @m{F_{n-1},F[n-1]}.  The ``doubling'' formulas
 are
 @tex
-$$ F_{2n}   = F_n     (2F_{n-1} + F_{n})  $$
-$$ F_{2n-2} = F_{n-1} (2F_n     - F_{n-1})$$
+$$\eqalign{
+  F_{2n}   &= F_n     (2F_{n-1} + F_{n})   \cr
+  F_{2n-2} &= F_{n-1} (2F_n     - F_{n-1}) \cr
+}$$
 @end tex
 @ifnottex
 
-@display
+@example
 F[2n]   = F[n]*(2F[n-1]+F[n])
 F[2n-2] = F[n-1]*(2F[n]-F[n-1])
-@end display
+@end example
 
 @end ifnottex
 And from these a new pair @m{F_{2n},F[2n]},@m{F_{2n-1},F[2n-1]} or
 @m{F_{2n+1},F[2n+1]},@m{F_{2n},F[2n]} is obtained with one of
 @tex
-$$ F_{2n+1} = 2F_{2n} - F_{2n-2} $$
-$$ F_{2n-1} = F_{2n} - F_{2n-2}  $$
+$$\eqalign{
+  F_{2n+1} &= 2F_{2n} - F_{2n-2} \cr
+  F_{2n-1} &= F_{2n} - F_{2n-2}  \cr
+}$$
 @end tex
 @ifnottex
 
@@ -5436,6 +5438,12 @@ wanted that it isn't too much slower than the unrolled part.
 A set of binary tests, for example after an 8-limb unrolling, test for 4 more
 limbs to process, then a further 2 more or not, and finally 1 more or not.
 This will probably take more code space than a simple loop.
+
+@item
+A @code{switch} statement, providing separate code for each possible excess,
+for example an 8-limb unrolling would have separate code for 0 remaining, 1
+remaining, etc, up to 7 remaining.  This might take a lot of code, but may be
+the best way to optimize all cases in combination with a deep pipelined loop.
 
 @item
 A computed jump into the middle of the loop, thus making the first iteration
