@@ -556,15 +556,11 @@ fft (struct fft_param_t *p)
       if (size >= p->max_size)
         break;
 
-      usleep(10000);
-
       s.size = size + fft_step_size (k) / 2;
       s.r = k;
       tk = tuneup_measure (p->function, &s);
       if (tk == -1.0)
         abort ();
-
-      usleep(10000);
 
       if (!modf)  s.size /= 2;
       tm = tuneup_measure (p->mul_function, &s);
