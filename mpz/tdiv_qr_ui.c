@@ -2,7 +2,7 @@
    Set QUOT to DIVIDEND / SHORT_DIVISOR
    and REM to DIVIDEND mod SHORT_DIVISOR.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 1998 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
