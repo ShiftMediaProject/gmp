@@ -26,7 +26,7 @@ INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
-  abs.c addmul_ui.c and.c array_init.c \
+  abs.c aorsmul.c aorsmul_i.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   cfdiv_q_2exp.c cfdiv_r_2exp.c \
