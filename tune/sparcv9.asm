@@ -22,7 +22,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C void speed_cyclecounter_2 (unsigned p[2]);
+C void speed_cyclecounter_2 (mp_limb_t p[2]);
 C
 C Get the sparc v9 tick counter, storing the least significant word in
 C p[0] and the most significant in p[1].  We cannot return 64 bits
