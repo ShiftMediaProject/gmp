@@ -33,11 +33,12 @@ MA 02111-1307, USA. */
 
 
 /* Enhancement: use mpn_divexact_1 when it exists */
-#define DIVIDE()                                        \
-  ASSERT (SIZ(r) > 0);                                  \
-  ASSERT_NOCARRY (mpn_divrem_1 (PTR(r), (mp_size_t) 0,  \
-                                PTR(r), SIZ(r), kacc)); \
-  SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);
+#define DIVIDE()                                                \
+  do {                                                          \
+    ASSERT (SIZ(r) > 0);                                        \
+    MPN_DIVREM_OR_DIVEXACT_1 (PTR(r), PTR(r), SIZ(r), kacc);    \
+    SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);                          \
+  } while (0)
 
 void
 mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
