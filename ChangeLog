@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-11  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium4/sse2/diveby3.asm: Remove non-PIC RODATA memory
+	access for 0xAAAAAAAB constant.
+
+	* gmp-impl.h (popc_limb, ULONG_PARITY) [ev67, ev68]: Add gcc asm
+	versions using ctpop.
+
+	* mpn/x86/k6/aorsmul_1.asm: Tweak some comments, remove M4_description
+	and M4_desc_retval used only in comments.
+
+	* mpn/x86/k6/mul_basecase.asm: Add comment on using mpn_mul_1.
+
 2003-10-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/addlsh1_n.asm: Tweak for 0.25 c/l better loop speed.
