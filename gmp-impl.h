@@ -278,11 +278,24 @@ void __gmp_default_free _PROTO ((void *, size_t));
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
    putting leading parameters in registers, avoiding extra stack.  */
 
-#if defined (i386) && (__GNUC__-0 >= 3 || (__GNUC__-0 == 2 && __GNUC_MINOR__-0 >= 96))
+#if (defined (__i386__) || defined (__i486__)) \
+  && (__GNUC__-0 >= 3 || (__GNUC__-0 == 2 && __GNUC_MINOR__-0 >= 96))
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
 #endif
+
+/* Macros for altering parameter order according to regparm usage. */
+#if USE_LEADING_REGPARM
+#define REGPARM_2_1(a,b,x)    x,a,b
+#define REGPARM_3_1(a,b,c,x)  x,a,b,c
+#define REGPARM_ATTR(n) __attribute__ ((regparm (n)))
+#else
+#define REGPARM_2_1(a,b,x)    a,b,x
+#define REGPARM_3_1(a,b,c,x)  a,b,c,x
+#define REGPARM_ATTR(n)
+#endif
+
 
 /* Note that if every use of an inline routine is in fact expanded, then
    there'd no need for a library copy in mpn/inlines.lo.  But gcc can
