@@ -209,11 +209,8 @@ Loop:	ldf8		u0 = [r33], 8
 ================================================================
 mpn_lshift, mpn_rshift
 
-The current code runs at 2 cycles/limb on Itanium 1 and 1.5 cycles/limb
-on Itanium 2.  The code suffers from the 4 cycle latency of Itanium 1
-for variable shift instructions.  It is not clear why Itanium 2 needs
-1.5 cycles/limb, and not 1.0 cycles/limb.  Rescheduling it with better
-load-use delays might help.
+The current code runs at 2 cycles/limb on Itanium 1 and 1 cycle/limb on
+Itanium 2.
 
 Using 63 separate loops, we could use the double-word shrp instruction.
 That instruction has a plain single-cycle latency.  We need 63 loops
