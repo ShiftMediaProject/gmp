@@ -1,6 +1,6 @@
 /* Test file for mpfr_const_log2.
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 
 /* tlog2 [prec] [rnd] [0 = no print] */
 
-extern mp_prec_t __mpfr_const_log2_prec;
+extern int __mpfr_const_log2_prec;
 void check _PROTO ((mp_prec_t, mp_prec_t));
 
 void
