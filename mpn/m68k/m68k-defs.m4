@@ -208,9 +208,12 @@ dnl  not.  M(a0,d0,l,4), meaning a0+d0*4, is not available in 68000 or
 dnl  68010, but is in CPU32 and in 68020 and up.
 
 define(scale_available_p,
-`eval(0 == m4_ifdef_anyof_p(
-`HAVE_HOST_CPU_m68000',
-`HAVE_HOST_CPU_m68010'))')
+`m4_ifdef_anyof_p(
+`HAVE_HOST_CPU_m68360'
+`HAVE_HOST_CPU_m68020'
+`HAVE_HOST_CPU_m68030'
+`HAVE_HOST_CPU_m68040'
+`HAVE_HOST_CPU_m68060')')
 
 
 divert
