@@ -253,6 +253,8 @@ case ${target} in
   athlon-*-*)
 	path="x86/k7 x86/mmx x86"
 	gmp_mulfunc_files="aors_n aorsmul_1"
+	gmp_mf_aors_n="add_n sub_n"
+	gmp_mf_aorsmul_1="addmul_1 submul_1"
 	family=x86;;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
@@ -484,6 +486,13 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#define C_SYMBOL_NAME(name) name' >asm-syntax.h;;
 esac
 
+dnl  `files' and `links' are not used.  FIXME: Remove.
+files=
+links=
+gmp_links=
+
+# Include assembly definition files and link them to mpn/.
+gmp_links="$gmp_links mpn/asm-defs.m4:mpn/asm-defs.m4"
 GMP_INCLUDE(asm-defs.m4)
 
 dnl  config.m4 post-includes
@@ -497,56 +506,64 @@ case "$target" in
 esac
 changequote([,])dnl
 
-dnl  `files' and `links' are not used.  FIXME: Remove.
-files=
-links=
-gmp_links=
-
 # Include post-include files and link them to mpn/.
 for tmp_f in $gmp_m4postinc; do
-  tmp_canon_f=`echo $tmp_f | sed 's;.*/;;'`
+  tmp_basename_f=`echo $tmp_f | sed 's;.*/;;'`
   rm -f mpn/$tmp_f
-  files="$files $tmp_f"
-  links="$links mpn/$tmp_canon_f"
-  gmp_links="$gmp_links mpn/${tmp_canon_f}:${tmp_f}"
-  GMP_INCLUDE($tmp_canon_f)
+  gmp_links="$gmp_links mpn/${tmp_basename_f}:${tmp_f}"
+  GMP_INCLUDE($tmp_basename_f)
 done
 
 # Pick the correct source files in `path' and link them to mpn/.
 # `gmp_mpn_functions' lists all functions that we need.  
 
 # The general rule is to suffix the function name with .asm, .S, .s,
-# or .c to find a file containing the implementation.  
-
-# `gmp_mpn_mulfunc_files' lists files containing more than one
-# function implementation.  The normal rules still apply since we
-# have stub files including the multifunction file.  We just link
-# the multifunction file up to mpn and let the generic mechanism
-# find the stub files needed.
+# or .c to find a file containing the implementation.  Before looking
+# for these, we have to search for files containing more than one
+# function.  These are listed in `gmp_mulfunc_files'.  There is one
+# `gmp_mf_<file>' for each multifunc file, listing which functions the
+# file contains.  The multifunc files are symlinked to <funcname>.asm
+# and preprocessed with -DOPERATION_<funcname>.
 
 path="$path generic"
 mpn_objects=
-mpn_objs_in_libgmp="mpn/mp_bases.lo"
 gmp_mpn_functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1 \
   submul_1 lshift rshift divmod_1 divrem divrem_1 divrem_2 divrem_newt \
   mod_1 pre_mod_1 dump mul mul_n mul_basecase sqr_basecase random random2 \
   rawrandom sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp \
   perfsqr bdivmod gcd_1 gcd gcdext"
+mpn_objs_in_libgmp="mpn/mp_bases.lo"
+
+# Before possibly destroying `gmp_mpn_functions', set `mpn_objects'
+# and `mpn_objs_in_libgmp' to the list of all object files, used by
+# mpn/Makefile.in and top Makefile.in, respectively.
+
+for tmp_fn in ${gmp_mpn_functions} ; do
+  mpn_objects="$mpn_objects ${tmp_fn}.lo"
+  mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}.lo"
+done
 
 # Look for multi-function files.
 for m in $gmp_mulfunc_files; do
   rm -f mpn/$m.asm
   for d in $path; do
     if test -f $srcdir/mpn/$d/$m.asm; then
-      gmp_links="$gmp_links mpn/$m.asm:mpn/$d/$m.asm"
+      eval mf=\$gmp_mf_$m
+      for f in $mf; do
+        gmp_links="$gmp_links mpn/$f.asm:mpn/$d/$m.asm"
+        # remove this function from `gmp_mpn_functions'
+        tmp_funcs=
+        for g in $gmp_mpn_functions; do
+          test "$g" != "$f" && tmp_funcs="$tmp_funcs $g"
+        done
+        gmp_mpn_functions="$tmp_funcs"
+      done	
       break
     fi
   done
 done
 
 for tmp_fn in ${gmp_mpn_functions} ; do
-  mpn_objects="$mpn_objects ${tmp_fn}.lo"
-  mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}.lo"
   rm -f mpn/${tmp_fn}.[Ssc] mpn/${tmp_fn}.asm
   for tmp_dir in $path ; do
     if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
