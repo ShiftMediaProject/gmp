@@ -76,6 +76,5 @@ mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
     mpn_sub_n (rp, rp, PTR (n), size);
 
   MPN_NORMALIZE (rp, size);
-  /* Set rop's size and sign.  */
-  SIZ (rop) = (SIZ (n) >= 0) ? size : -size;
+  SIZ (rop) = size;
 }
