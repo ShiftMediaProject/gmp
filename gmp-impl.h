@@ -3115,7 +3115,9 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #if TUNE_PROGRAM_BUILD
 /* "thresh" will normally be a variable when tuning, so use the cached
    result.  This helps mpn_sb_divrem_mn for instance.  */
+#undef  CACHED_ABOVE_THRESHOLD
 #define CACHED_ABOVE_THRESHOLD(cache, thresh)  (cache)
+#undef  CACHED_BELOW_THRESHOLD
 #define CACHED_BELOW_THRESHOLD(cache, thresh)  (cache)
 #endif
 
