@@ -20,9 +20,9 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
-C This code runs at 7.25 cycles/limb on PA8000 and 7.75 cycles/limb on PA8500.
-C The cache would saturate at 5 cycles/limb, so there is some room for
-C optimization.
+dnl  This code runs at 7.25 cycles/limb on PA8000 and 7.75 cycles/limb on
+dnl  PA8500.  The cache would saturate at 5 cycles/limb, so there is some room
+dnl  for optimization.
 
 include(`../config.m4')
 
