@@ -391,7 +391,6 @@ case ${target} in
     path="arm"
     ;;
   [sparcv9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*])
-    family=sparc
     if test -n "$CC64"; then
       path="sparc64"
       extra_functions="copyi"
@@ -405,21 +404,21 @@ case ${target} in
 	  then extra_functions="udiv_nfp"
 	  else extra_functions="udiv_fp"
 	fi
-	family=sparc;;
+	;;
   sparcv9*-*-* | ultrasparc*-*-*)
 	path="sparc32/v9 sparc32/v8 sparc32"
 	extra_functions="udiv_fp"
-	family=sparc;;
+	;;
   supersparc*-*-*)
 	path="sparc32/v8/supersparc sparc32/v8 sparc32"
 	extra_functions="udiv"
-	family=sparc;;
+	;;
   sparc*-*-*) path="sparc32"
 	if test x${floating_point} = xno
 	  then extra_functions="udiv_nfp"
 	  else extra_functions="udiv_fp"
 	fi
-	family=sparc;;
+	;;
   hppa7000*-*-*)
     path="hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd"
@@ -454,58 +453,79 @@ case ${target} in
   am29000*-*-*) path="a29k";;
   a29k*-*-*) path="a29k";;
 
-# Amd and Intel x86 configurations
-  [i[34]86*-*-*])
-	path="x86"
-	family=x86;;
-  i586*-*-* | pentium-*-*)
+  # AMD and Intel x86 configurations
+
+  [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+    gmp_m4postinc="x86/x86-defs.m4"
+    extra_functions="copyi copyd"
+
+    gmp_mulfunc_files="aors_n aorsmul_1"
+    gmp_mf_aors_n="add_n sub_n"
+    gmp_mf_aorsmul_1="addmul_1 submul_1"
+
+    GMP_CHECK_ASM_SHLDL_CL(
+      [GMP_DEFINE(WANT_SHLDL_CL,1)],
+      [GMP_DEFINE(WANT_SHLDL_CL,0)])
+
+    # rdtsc is in pentium and up, but not in i386 and i486
+    case ${target} in
+      [i[34]86*-*-*])
+         ;;
+      *) AC_DEFINE(HAVE_PENTIUM_RDTSC)
+         gmp_have_pentium_rdtsc=yes
+         ;;
+    esac
+
+    # all the CPUs below wanting to know about mmx
+    case ${target} in
+      [pentiummmx-*-* | pentium[23]-*-* | k6*-*-* | athlon-*-*])
+	GMP_CHECK_ASM_MMX(tmp_mmx=yes, tmp_mmx=no)
+        ;;
+    esac
+
+    case ${target} in
+      [i[34]86*-*-*])
+        path="x86"
+        ;;
+      i586*-*-* | pentium-*-*)
 	path="x86/pentium x86"
-	family=x86;;
-  pentiummmx-*-*)
-	path=
-	GMP_CHECK_ASM_MMX(path="$path x86/pentium/mmx")
-	path="$path x86/pentium x86"
-	family=x86;;
-  i686*-*-* | pentiumpro-*-*)
+        ;;
+      pentiummmx-*-*)
+	path="x86/pentium x86"
+	if test "$tmp_mmx" = yes; then
+          path="x86/pentium/mmx $path"
+        fi
+        ;;
+      i686*-*-* | pentiumpro-*-*)
 	path="x86/p6 x86"
-	gmp_mulfunc_files="aorsmul_1"
-	gmp_mf_aorsmul_1="addmul_1 submul_1"
-	family=x86;;
-  [pentium[23]-*-*])
+        ;;
+      [pentium[23]-*-*])
+	path="x86/p6 x86"
 	# The pentium/mmx lshift and rshift are good on p6 and can be used
         # until there's something specific for p6.
-	path=
-	GMP_CHECK_ASM_MMX(path="$path x86/p6/mmx x86/pentium/mmx")
-	path="$path x86/p6 x86"
-	gmp_mulfunc_files="aorsmul_1"
-	gmp_mf_aorsmul_1="addmul_1 submul_1"
-	family=x86;;
-  k6*-*-*)
-	GMP_CHECK_ASM_MMX(tmp_mmx=yes, tmp_mmx=no)
-
-	path=
-	test "$tmp_mmx" = "yes" && path="$path x86/k6/mmx"
-	path="$path x86/k6 x86"
-
-	gmp_mulfunc_files="aors_n aorsmul_1"
-	gmp_mf_aors_n="add_n sub_n"
-	gmp_mf_aorsmul_1="addmul_1 submul_1"
-
-	if test "$tmp_mmx" = "yes"; then
-	  extra_functions="com_n and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n"
+	if test "$tmp_mmx" = yes; then
+          path="x86/p6/mmx x86/pentium/mmx $path"
+        fi
+        ;;
+      k6*-*-*)
+	path="x86/k6 x86"
+	if test "$tmp_mmx" = yes; then
+          path="x86/k6/mmx $path"
+	  extra_functions="$extra_functions com_n and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n"
 	  gmp_mulfunc_files="$gmp_mulfunc_files logops_n"
           gmp_mf_logops_n="and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n"
-	fi
+        fi
+        ;;
+      athlon-*-*)
+	path="x86/k7 x86"
+	if test "$tmp_mmx" = yes; then
+          path="x86/k7/mmx $path"
+        fi
+        ;;
+    esac
+    ;;
 
-	family=x86;;
-  athlon-*-*)
-	path=
-	GMP_CHECK_ASM_MMX(path="$path x86/k7/mmx")
-	path="$path x86/k7 x86"
-	gmp_mulfunc_files="aors_n aorsmul_1"
-	gmp_mf_aors_n="add_n sub_n"
-	gmp_mf_aorsmul_1="addmul_1 submul_1"
-	family=x86;;
+
   i960*-*-*) path="i960";;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
@@ -548,14 +568,7 @@ case ${target} in
   clipper*-*-*) path="clipper";;
 esac
 
-case ${target} in
-  [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
-    extra_functions="$extra_functions copyi copyd"
-    GMP_CHECK_ASM_SHLDL_CL(
-      [GMP_DEFINE(WANT_SHLDL_CL,1)],
-      [GMP_DEFINE(WANT_SHLDL_CL,0)])
-    ;;
-esac
+AM_CONDITIONAL(HAVE_PENTIUM_RDTSC, test "$gmp_have_pentium_rdtsc" = yes)
 
 
 dnl Extensions for executable and object files.
@@ -581,15 +594,21 @@ AC_CHECK_DECLS((optarg))
 dnl Checks for header files.
 dnl ------------------------
 AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h sys/sysctl.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
+dnl --------------------------------------------------------------
 AC_CHECK_TYPES((void))
 AC_C_STRINGIZE
+AM_C_PROTOTYPES
 
 dnl Checks for library functions.
+dnl -----------------------------
 dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol strtoul)
+AC_CHECK_FUNCS(sysconf sysctlbyname)
+
 
 dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
 syntax=
@@ -608,9 +627,6 @@ case "${target}" in
   m680[234]0*-*-* | m68k*-*-*)
     syntax=mit
     ;;
-  *-*-cygwin*)		# x86-cygwin kludge
-    syntax=cygwin
-    ;;
 esac
 changequote([,])dnl
 
@@ -619,30 +635,6 @@ dnl  ----------------------------------------
 # assembly files.
 # FIXME: Remove when conversion to .asm is completed.
 case "${family}-${underscore}-${asm_align}-${syntax}" in
-  x86-yes-log-*)
-    echo '#define BSD_SYNTAX' >asm-syntax.h
-    cat $srcdir/mpn/underscore.h >>asm-syntax.h
-    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h;;
-  x86-no-nolog-*)
-    echo '#define ELF_SYNTAX' >asm-syntax.h
-    echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
-    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h;;
-  x86-yes-nolog-cygwin)		# x86-cygwin kludge.
-    # Select BSD_SYNTAX to avoid .type/.size in PROLOGUE.
-    echo '#define BSD_SYNTAX' 			 >asm-syntax.h
-    cat $srcdir/mpn/underscore.h 		 >>asm-syntax.h
-    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h
-    # KLUDGE: Override ALIGN definition.
-    echo '#ifdef ALIGN' 			 >>asm-syntax.h
-    echo '#undef ALIGN' 			 >>asm-syntax.h
-    echo '#endif'        			 >>asm-syntax.h
-    echo '#define ALIGN(log) .align 1<<(log)' 	 >>asm-syntax.h
-    ;;
-  x86-yes-nolog-*)	# FIXME: Anyone using this?
-    echo '#define ELF_SYNTAX' >asm-syntax.h
-    cat $srcdir/mpn/underscore.h >>asm-syntax.h
-    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h
-    ;;
   m68k-yes-log-mit)
     echo '#define MIT_SYNTAX' >asm-syntax.h
     cat $srcdir/mpn/underscore.h >>asm-syntax.h
@@ -653,70 +645,61 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
 esac
 
-# Set up `gmp_links'.  It's a list of link:file pairs that configure will
-# process to create link -> file.
-gmp_links=
 
-# Include assembly definition files and link them to mpn/.
-# <src>/mpn/asm-defs.m4 gets linked to <build>mpn/asm.m4.  The change
-# of name is necessary if we build in source directory, or the ln will
-# fail.
-gmp_links="$gmp_links mpn/asm.m4:mpn/asm-defs.m4"
-GMP_INCLUDE(asm.m4)
+# The regexp here tests for an absolute path the same way as
+# _AC_OUTPUT_FILES in autoconf acgeneral.m4.
+GMP_DEFINE_RAW(["dnl  CONFIG_TOP_SRCDIR is a path from the mpn builddir to the top srcdir"])
+case "$top_srcdir" in
+[[\\/]]* | ?:[[\\/]]* )
+     GMP_DEFINE_RAW(["define(<CONFIG_TOP_SRCDIR>,<\`$srcdir'>)"])    ;;
+*)   GMP_DEFINE_RAW(["define(<CONFIG_TOP_SRCDIR>,<\`../$srcdir'>)"]) ;;
+esac
+ 
+GMP_DEFINE_RAW(["include(CONFIG_TOP_SRCDIR\`/mpn/asm-defs.m4')"], POST)
+
+# Must be after including asm-defs.m4.
+GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')", POST)
+
 
 dnl  config.m4 post-includes
 dnl  -----------------------
 changequote(,)dnl
-gmp_m4postinc=
 case "$target" in
   alpha*-cray-unicos*)
-    gmp_m4postinc="$gmp_m4postinc mpn/alpha/unicos.m4"
+    gmp_m4postinc="alpha/unicos.m4"
     ;;
   alpha*-*-*)
-    gmp_m4postinc="$gmp_m4postinc mpn/alpha/default.m4"
-    ;;
-  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
-    gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
+    gmp_m4postinc="alpha/default.m4"
     ;;
   power*-*-*)
     case "$target" in
       *-*-mach* | *-*-rhapsody* | *-*-nextstep*)
         ;;	# these use non-conventional assembly syntax.
       powerpc64-*-aix*)
-	gmp_m4postinc="$gmp_m4postinc mpn/powerpc32/regmap.m4"
-	gmp_m4postinc="$gmp_m4postinc mpn/powerpc64/aix.m4"
+	gmp_m4postinc="powerpc32/regmap.m4"
+	gmp_m4postinc="powerpc64/aix.m4"
         ;;
       *-*-aix*)
-	gmp_m4postinc="$gmp_m4postinc mpn/powerpc32/regmap.m4"
-	gmp_m4postinc="$gmp_m4postinc mpn/powerpc32/aix.m4"
+	gmp_m4postinc="powerpc32/regmap.m4"
+	gmp_m4postinc="powerpc32/aix.m4"
         ;;
       *)
-	gmp_m4postinc="$gmp_m4postinc mpn/powerpc32/regmap.m4"
+	gmp_m4postinc="powerpc32/regmap.m4"
 	;;
     esac
     ;;
 esac
 changequote([, ])dnl
 
-# Include post-include files and link them to mpn/.
 for tmp_f in $gmp_m4postinc; do
-  tmp_basename_f=`echo $tmp_f | sed 's;.*/;;'`
-  rm -f mpn/$tmp_f
-  gmp_links="$gmp_links mpn/${tmp_basename_f}:${tmp_f}"
-  GMP_INCLUDE($tmp_basename_f)
+  GMP_DEFINE_RAW(["include_mpn(\`$tmp_f')"], POST)
 done
 
-# Path from mpn build subdirectory to top source directory.
-# The regexp testing for an absolute path is the same as in
-# _AC_OUTPUT_FILES of autoconf acgeneral.m4.
-case "$srcdir" in
-[[\\/]]* | ?:[[\\/]]* )
-     GMP_DEFINE_RAW(["define(<CONFIG_SRCDIR>,<\`$srcdir'>)"])    ;;
-*)   GMP_DEFINE_RAW(["define(<CONFIG_SRCDIR>,<\`../$srcdir'>)"]) ;;
-esac
- 
-# After including asm.m4.
-GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')", POST)
+
+# Set up `gmp_links'.  It's a list of link:file pairs that configure will
+# process to create link -> file.
+gmp_links=
+
 
 # Pick the correct source files in `path' and link them to mpn/.
 # `gmp_mpn_functions' lists all functions that we need.  
@@ -760,10 +743,7 @@ for m in $gmp_mulfunc_files; do
   for d in $path; do
     if test -f $srcdir/mpn/$d/$m.asm; then
       # find entry points
-changequote(<<, >>)
-      gmp_ep=`grep "^[ 	]*MULFUNC_PROLOGUE" $srcdir/mpn/$d/$m.asm \
-             | sed 's/.*:[ 	]*MULFUNC_PROLOGUE(_*\(.*\))/\1/'`
-changequote([, ])
+      gmp_ep=[`sed -n 's/^[ 	]*MULFUNC_PROLOGUE(\(.*\))/\1/p' $srcdir/mpn/$d/$m.asm`]
       for gmp_tmp in $gmp_ep; do
         AC_DEFINE_UNQUOTED(HAVE_NATIVE_${gmp_tmp})
       done
@@ -790,17 +770,11 @@ for tmp_fn in ${gmp_mpn_functions} ; do
   for tmp_dir in $path ; do
     if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.asm:mpn/${tmp_dir}/${tmp_fn}.asm"
-changequote(<<, >>)
-      gmp_ep=`grep "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm \
-             | sed 's/.*:[ 	]*PROLOGUE(_*\(.*\))/\1/'`
-changequote([, ])
+      gmp_ep=[`sed -n 's/^[ 	]*PROLOGUE(\(.*\))/\1/p' $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm`]
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.S ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.S:mpn/${tmp_dir}/${tmp_fn}.S"
-changequote(<<, >>)
-      gmp_ep=`grep "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.S \
-             | sed 's/.*:[ 	]*PROLOGUE(C_SYMBOL_NAME(_*\(.*\)))/\1/'`
-changequote([, ])
+      gmp_ep=[`sed -n 's/^[ 	]*PROLOGUE(C_SYMBOL_NAME(_*\(.*\)))/\1/p' $srcdir/mpn/${tmp_dir}/${tmp_fn}.S`]
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.s ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.s:mpn/${tmp_dir}/${tmp_fn}.s"
@@ -820,6 +794,14 @@ for tmp_dir in $path ; do
   rm -f gmp-mparam.h
   if test -f $srcdir/mpn/${tmp_dir}/gmp-mparam.h ; then
     gmp_links="$gmp_links gmp-mparam.h:mpn/${tmp_dir}/gmp-mparam.h"
+
+    # Copy any KARATSUBA_SQR_THRESHOLD in gmp-mparam.h to config.m4.
+    # Some versions of sqr_basecase.asm use this.
+    tmp_gmp_karatsuba_sqr_threshold="`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9]*\)/\1/p' $srcdir/mpn/${tmp_dir}/gmp-mparam.h`"
+    if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
+      GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
+    fi
+
     break
   fi
 done
@@ -844,6 +826,6 @@ GMP_FINISH
 dnl  Create Makefiles
 dnl  FIXME: Upcoming version of autoconf/automake may not like broken lines.
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
-  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile \
-  tests/Makefile tests/rand/Makefile demos/Makefile \
+  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile mpn/tests/Makefile \
+  tests/Makefile tests/rand/Makefile demos/Makefile tune/Makefile \
   mpbsd/Makefile mpbsd/tests/Makefile)
