@@ -2856,19 +2856,19 @@ Set @var{rop} to the one's complement of @var{op}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_popcount (mpz_t @var{op})
-For non-negative numbers, return the population count of @var{op}.  For
-negative numbers, return the largest possible value (@var{MAX_ULONG}).
+If @ma{@var{op}@ge{}0}, return the population count of @var{op}, which is the
+number of 1 bits in the binary representation.  If @ma{@var{op}<0}, the number
+of 1s is infinite, and the return value is @var{MAX_ULONG}, the largest
+possible @code{unsigned long}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_hamdist (mpz_t @var{op1}, mpz_t @var{op2})
-If @var{op1} and @var{op2} are both non-negative, return the hamming distance
-between the two operands.  Otherwise, return the largest possible value
-(@var{MAX_ULONG}).
-
-It is possible to extend this function to return a useful value when the
-operands are both negative, but the current implementation returns
-@var{MAX_ULONG} in this case.  @strong{Do not depend on this behaviour, since
-it will change in a future release.}
+If @var{op1} and @var{op2} are both @ma{@ge{}0} or both @ma{<0}, return the
+hamming distance between the two operands, which is the number of bit
+positions where @var{op1} and @var{op2} have different bit values.  If one
+operand is @ma{@ge{}0} and the other @ma{<0} then the number of bits different
+is infinite, and the return value is @var{MAX_ULONG}, the largest possible
+@code{unsigned long}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_scan0 (mpz_t @var{op}, unsigned long int @var{starting_bit})
@@ -4873,6 +4873,14 @@ Arbitrary precision floats.
 Glasgow Haskell Compiler @spaceuref{http://www.haskell.org/ghc}
 @end itemize
 
+@item Java
+@itemize @bullet
+@item
+Kaffe @spaceuref{http://www.kaffe.org}
+@item
+Kissme @spaceuref{http://kissme.sourceforge.net}
+@end itemize
+
 @item Lisp
 @itemize @bullet
 @item
@@ -4882,19 +4890,17 @@ process of switching to GMP for bignums.
 Librep @spaceuref{http://librep.sourceforge.net}
 @end itemize
 
-@item Java
-@itemize @bullet
-@item
-Kaffe @spaceuref{http://www.kaffe.org}
-@item
-Kissme @spaceuref{http://kissme.sourceforge.net}
-@end itemize
-
 @item M4
 @itemize @bullet
 @item
 GNU m4 betas @spaceuref{http://www.seindal.dk/rene/gnu} @* Optionally provides
 an arbitrary precision @code{mpeval}.
+@end itemize
+
+@item ML
+@itemize @bullet
+@item
+MLton compiler @spaceuref{http://www.sourcelight.com/MLton}
 @end itemize
 
 @item Oz
@@ -5782,9 +5788,22 @@ alternative is to take the dividend limbs unshifted and calculate @m{r = a
 d2^k, r*2^k mod d*2^k}.  This can help on CPUs with poor bit shifts or few
 registers.
 
-N@cross{}1 division is used for small divisors (which are fairly common), and
-for radix conversion.  It's not used to construct N@cross{}M divisions, though
-the same 2@cross{}1 divisions find a use.
+The multiply by inverse can be done two limbs at a time.  The calculation is
+basically the same, but the inverse is two limbs and the divisor treated as if
+padded with a low zero limb.  This means more work, since the inverse will
+need a 2@cross{}2 multiply, but the four 1@cross{}1s to do that are
+independent and can therefore be done partly or wholely in parallel.  Likewise
+for a 2@cross{}1 calculating @m{qd,q*d}.  The net effect is to process two
+limbs with roughly the same two multiplies worth of latency that one limb at a
+time gives.  This extends to 3 or 4 limbs at a time, though the extra work to
+apply the inverse will almost certainly soon reach the limits of multiplier
+throughput.
+
+A similar approach in reverse can be taken to process just half a limb at a
+time if the divisor is only a half limb.  In this case the 1@cross{}1 multiply
+for the inverse effectively becomes two @m{1\over2@cross{}1, (1/2)x1} for each
+limb, which can be a saving on CPUs with a fast half limb multiply, or in fact
+if the only multiply is a half limb, and especially if it's not pipelined.
 
 
 @node Basecase Division, Divide and Conquer Division, Single Limb Division, Division Algorithms
