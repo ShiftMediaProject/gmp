@@ -1,6 +1,5 @@
-/* mpfr expression evaluation */
+/* mpfr expression evaluation.
 
-/*
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include "gmp.h"
@@ -42,19 +40,19 @@ MA 02111-1307, USA.
 static void
 e_mpfr_abs (mpfr_ptr dst, mpfr_srcptr src)
 {
-  return mpfr_abs (dst, src, ROUND);
+  mpfr_abs (dst, src, ROUND);
 }
 
 static void
 e_mpfr_agm (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 {
-  return mpfr_agm (dst, src1, src2, ROUND);
+  mpfr_agm (dst, src1, src2, ROUND);
 }
 
 static void
 e_mpfr_add (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 {
-  return mpfr_add (dst, src1, src2, ROUND);
+  mpfr_add (dst, src1, src2, ROUND);
 }
 
 static int
@@ -73,12 +71,6 @@ static void
 e_mpfr_const_pi (mpfr_ptr dst)
 {
   mpfr_const_pi (dst, ROUND);
-}
-
-static void
-e_mpfr_cos (mpfr_ptr c, mpfr_srcptr a)
-{
-  mpfr_sin_cos (NULL, c, a, ROUND);
 }
 
 static void
@@ -114,31 +106,25 @@ e_mpfr_mul (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 static void
 e_mpfr_mul_2exp (mpfr_ptr dst, mpfr_srcptr src, unsigned long n)
 {
-  return mpfr_mul_2exp (dst, src, n, ROUND);
+  mpfr_mul_2exp (dst, src, n, ROUND);
 }
 
 static void
 e_mpfr_neg (mpfr_ptr dst, mpfr_srcptr src)
 {
-  return mpfr_neg (dst, src, ROUND);
+  mpfr_neg (dst, src, ROUND);
 }
 
 static void
 e_mpfr_reldiff (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 {
-  return mpfr_reldiff (dst, src1, src2, ROUND);
+  mpfr_reldiff (dst, src1, src2, ROUND);
 }
 
 static int
 e_mpfr_sgn (mpfr_srcptr x)
 {
   return mpfr_sgn (x);
-}
-
-static void
-e_mpfr_sin (mpfr_ptr s, mpfr_srcptr a)
-{
-  mpfr_sin_cos (s, NULL, a, ROUND);
 }
 
 static void
@@ -150,7 +136,7 @@ e_mpfr_sqrt (mpfr_ptr dst, mpfr_srcptr src)
 static void
 e_mpfr_sub (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 {
-  return mpfr_sub (dst, src1, src2, ROUND);
+  mpfr_sub (dst, src1, src2, ROUND);
 }
 
 static void
@@ -202,7 +188,7 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "agm",     (mpexpr_fun_t) e_mpfr_agm,     MPEXPR_TYPE_UNARY        },
   { "ceil",    (mpexpr_fun_t) mpfr_ceil,      MPEXPR_TYPE_UNARY        },
   { "cmp",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_I_BINARY     },
-  { "cos",     (mpexpr_fun_t) e_mpfr_cos,     MPEXPR_TYPE_UNARY        },
+  { "cos",     (mpexpr_fun_t) mpfr_cos,       MPEXPR_TYPE_UNARY        },
   { "eq",      (mpexpr_fun_t) mpfr_eq,        MPEXPR_TYPE_I_TERNARY_UI },
   { "exp",     (mpexpr_fun_t) e_mpfr_exp,     MPEXPR_TYPE_UNARY        },
   { "floor",   (mpexpr_fun_t) mpfr_floor,     MPEXPR_TYPE_UNARY        },
@@ -216,7 +202,7 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "number_p",(mpexpr_fun_t) mpfr_number_p,  MPEXPR_TYPE_I_UNARY      },
   { "reldiff", (mpexpr_fun_t) e_mpfr_reldiff, MPEXPR_TYPE_BINARY       },
   { "sgn",     (mpexpr_fun_t) e_mpfr_sgn,     MPEXPR_TYPE_I_UNARY      },
-  { "sin",     (mpexpr_fun_t) e_mpfr_sin,     MPEXPR_TYPE_UNARY        },
+  { "sin",     (mpexpr_fun_t) mpfr_sin,       MPEXPR_TYPE_UNARY        },
   { "sqrt",    (mpexpr_fun_t) e_mpfr_sqrt,    MPEXPR_TYPE_UNARY        },
   { "trunc",   (mpexpr_fun_t) mpfr_trunc,     MPEXPR_TYPE_UNARY        },
 
