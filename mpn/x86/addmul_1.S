@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
    INPUT PARAMETERS
    res_ptr	(sp + 4)
    s1_ptr	(sp + 8)
-   size		(sp + 12)
+   opsize	(sp + 12)
    s2_limb	(sp + 16)
 */
 
@@ -32,11 +32,12 @@ MA 02111-1307, USA. */
 
 #define res_ptr edi
 #define s1_ptr esi
-#define size ecx
+#define opsize ecx
 #define s2_limb ebp
 
 	TEXT
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__mpn_addmul_1))
 	GLOBL	C_SYMBOL_NAME(__mpn_addmul_1)
 C_SYMBOL_NAME(__mpn_addmul_1:)
 
@@ -113,3 +114,5 @@ Lend:	movl	%ebx,%eax
 	INSN1(pop,l	,R(esi))
 	INSN1(pop,l	,R(edi))
 	ret
+
+EPILOGUE(C_SYMBOL_NAME(__mpn_addmul_1))
