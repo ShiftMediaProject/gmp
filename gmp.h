@@ -1000,20 +1000,6 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 /* Using "&" rather than "&&" means these can come out branch-free.  Every
    mpz_t has at least one limb allocated, so fetching the low limb is always
    allowed.  */
-
-#define mpz_mod2(z) \
-  ((unsigned long) ((z)->_mp_size != 0) & (unsigned long) (z)->_mp_d[0])
-
-#define __gmpz_lowulong_twoscomplement(z)                                  \
-  ((unsigned long)((z)->_mp_size<0)                                        \
-   + ((-(unsigned long)((z)->_mp_size<0)) ^ (unsigned long)(z)->_mp_d[0]))
-#define __gmpz_lowmodmask(z, m)         \
-  ((-(unsigned long)((z)->_mp_size!=0)) \
-   & __gmpz_lowulong_twoscomplement(z)  \
-   & (unsigned long)(m))
-#define mpz_mod4(z)  __gmpz_lowmodmask (z, 0x3)
-#define mpz_mod8(z)  __gmpz_lowmodmask (z, 0x7)
-
 #define mpz_odd_p(z)   ((int) ((z)->_mp_size != 0) & (int) (z)->_mp_d[0])
 #define mpz_even_p(z)  (! mpz_odd_p (z))
 
