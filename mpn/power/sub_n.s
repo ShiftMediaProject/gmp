@@ -27,16 +27,13 @@
 # size		r6
 
 	.toc
-	.extern __mpn_sub_n[DS]
-	.extern .__mpn_sub_n
-.csect [PR]
-	.align 2
-	.globl __mpn_sub_n
-	.globl .__mpn_sub_n
-	.csect __mpn_sub_n[DS]
+	.globl	__mpn_sub_n
+	.globl	.__mpn_sub_n
+	.csect	__mpn_sub_n[DS]
 __mpn_sub_n:
-	.long .__mpn_sub_n, TOC[tc0], 0
-	.csect [PR]
+	.long	.__mpn_sub_n, TOC[tc0], 0
+	.csect	.text[PR]
+	.align	2
 .__mpn_sub_n:
 	andil.	10,6,1		# odd or even number of limbs?
 	l	8,0(4)		# load least significant s1 limb

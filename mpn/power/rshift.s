@@ -27,16 +27,13 @@
 # cnt		r6
 
 	.toc
-	.extern __mpn_rshift[DS]
-	.extern .__mpn_rshift
-.csect [PR]
-	.align 2
-	.globl __mpn_rshift
-	.globl .__mpn_rshift
-	.csect __mpn_rshift[DS]
+	.globl	__mpn_rshift
+	.globl	.__mpn_rshift
+	.csect	__mpn_rshift[DS]
 __mpn_rshift:
-	.long .__mpn_rshift, TOC[tc0], 0
-	.csect [PR]
+	.long	.__mpn_rshift, TOC[tc0], 0
+	.csect	.text[PR]
+	.align	2
 .__mpn_rshift:
 	sfi	8,6,32
 	mtctr	5		# put limb count in CTR loop register

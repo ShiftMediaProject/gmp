@@ -38,14 +38,13 @@
 # we can branch in zero cycles, so that's how we perform the additions.
 
 	.toc
-	.csect .__mpn_addmul_1[PR]
-	.align 2
-	.globl __mpn_addmul_1
-	.globl .__mpn_addmul_1
-	.csect __mpn_addmul_1[DS]
+	.globl	__mpn_addmul_1
+	.globl	.__mpn_addmul_1
+	.csect	__mpn_addmul_1[DS]
 __mpn_addmul_1:
-	.long .__mpn_addmul_1[PR], TOC[tc0], 0
-	.csect .__mpn_addmul_1[PR]
+	.long	.__mpn_addmul_1[PR], TOC[tc0], 0
+	.csect	.text[PR]
+	.align	2
 .__mpn_addmul_1:
 
 	cal	3,-4(3)

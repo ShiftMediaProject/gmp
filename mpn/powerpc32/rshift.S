@@ -30,19 +30,18 @@ MA 02111-1307, USA. */
 
 #ifdef AIX_SYNTAX
 	.toc
-	.csect	.text[PR]
-	.align	2
 	.globl	__mpn_rshift
 	.globl	.__mpn_rshift
 	.csect	__mpn_rshift[DS]
 __mpn_rshift:
 	.long	.__mpn_rshift, TOC[tc0], 0
 	.csect	.text[PR]
+	.align	2
 .__mpn_rshift:
 #else
 	.text
-	.align 4
-	.globl C_SYMBOL_NAME(__mpn_rshift)
+	.align	4
+	.globl	C_SYMBOL_NAME(__mpn_rshift)
 C_SYMBOL_NAME(__mpn_rshift):
 #endif
 	mtctr	r5		/* copy size into CTR */

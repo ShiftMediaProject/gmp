@@ -34,14 +34,13 @@ MA 02111-1307, USA. */
 
 #ifdef AIX_SYNTAX
 	.toc
-	.csect	.text[PR]
-	.align	2
 	.globl	__mpn_addmul_1
 	.globl	.__mpn_addmul_1
 	.csect	__mpn_addmul_1[DS]
 __mpn_addmul_1:
 	.long	.__mpn_addmul_1, TOC[tc0], 0
 	.csect	.text[PR]
+	.align	2
 .__mpn_addmul_1:
 #else
 	.text

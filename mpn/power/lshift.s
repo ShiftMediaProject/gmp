@@ -27,16 +27,13 @@
 # cnt		r6
 
 	.toc
-	.extern __mpn_lshift[DS]
-	.extern .__mpn_lshift
-.csect [PR]
-	.align 2
-	.globl __mpn_lshift
-	.globl .__mpn_lshift
-	.csect __mpn_lshift[DS]
+	.globl	__mpn_lshift
+	.globl	.__mpn_lshift
+	.csect	__mpn_lshift[DS]
 __mpn_lshift:
-	.long .__mpn_lshift, TOC[tc0], 0
-	.csect [PR]
+	.long	.__mpn_lshift, TOC[tc0], 0
+	.csect	.text[PR]
+	.align	2
 .__mpn_lshift:
 	sli	0,5,2
 	cax	9,3,0

@@ -27,21 +27,21 @@ MA 02111-1307, USA. */
    size		r5
    s2_limb	r6 */
 
-/* This is optimized for the PPC604 but it runs decently even on PPC601.  It has
-   not been tested on a PPC603 since I don't have access to any such machines.  */
+/* This is optimized for the PPC604 but it runs decently even on PPC601.  It
+   has not been tested on a PPC603 since I don't have access to any such 
+   machines.  */
 
 #include "asm-syntax.h"
 
 #ifdef AIX_SYNTAX
 	.toc
-	.csect	.text[PR]
-	.align	2
 	.globl	__mpn_mul_1
 	.globl	.__mpn_mul_1
 	.csect	__mpn_mul_1[DS]
 __mpn_mul_1:
 	.long	.__mpn_mul_1, TOC[tc0], 0
 	.csect	.text[PR]
+	.align	2
 .__mpn_mul_1:
 #else
 	.text
