@@ -970,9 +970,10 @@ speed_mpz_bin_uiui (struct speed_params *s)
    Don't blindly use this to set UMUL_TIME in gmp-mparam.h, check the code
    generated first, especially on CPUs with low latency multipliers.
 
-   CPUs with data-dependent multipliers may want more attention paid to the
-   randomness of the data used.  Probably the measurement wanted is over
-   uniformly distributed numbers, but what's here might not be giving that.  */
+   The default umul_ppmm doing h*l will be getting increasing numbers of
+   high zero bits in the calculation.  CPUs with data-dependent multipliers
+   will want to use umul_ppmm.1 to get some randomization into the
+   calculation.  The extra xors and fetches will be a slowdown of course.  */
 
 #define SPEED_MACRO_UMUL_PPMM(call)                                     \
   {                                                                     \
@@ -985,15 +986,47 @@ speed_mpz_bin_uiui (struct speed_params *s)
     h = s->xp[0];                                                       \
     l = s->yp[0];                                                       \
                                                                         \
-    speed_starttime ();                                                 \
-    i = s->reps;                                                        \
-    do                                                                  \
-      {                                                                 \
-        call; call; call; call; call;                                   \
-        call; call; call; call; call;                                   \
-      }                                                                 \
-    while (--i != 0);                                                   \
-    t = speed_endtime ();                                               \
+    switch (s->r) {                                                     \
+    case 1:                                                             \
+      speed_starttime ();                                               \
+      i = s->reps;                                                      \
+      do                                                                \
+        {                                                               \
+          call;  h ^= s->xp_block[0]; l ^= s->yp_block[0];              \
+           call; h ^= s->xp_block[1]; l ^= s->yp_block[1];              \
+           call; h ^= s->xp_block[2]; l ^= s->yp_block[2];              \
+          call;  h ^= s->xp_block[3]; l ^= s->yp_block[3];              \
+           call; h ^= s->xp_block[4]; l ^= s->yp_block[4];              \
+           call; h ^= s->xp_block[5]; l ^= s->yp_block[5];              \
+          call;  h ^= s->xp_block[6]; l ^= s->yp_block[6];              \
+           call; h ^= s->xp_block[7]; l ^= s->yp_block[7];              \
+           call; h ^= s->xp_block[8]; l ^= s->yp_block[8];              \
+          call;  h ^= s->xp_block[9]; l ^= s->yp_block[9];              \
+        }                                                               \
+      while (--i != 0);                                                 \
+      t = speed_endtime ();                                             \
+      break;                                                            \
+                                                                        \
+    default:                                                            \
+      speed_starttime ();                                               \
+      i = s->reps;                                                      \
+      do                                                                \
+        {                                                               \
+          call;                                                         \
+           call;                                                        \
+           call;                                                        \
+          call;                                                         \
+           call;                                                        \
+           call;                                                        \
+          call;                                                         \
+           call;                                                        \
+           call;                                                        \
+          call;                                                         \
+        }                                                               \
+      while (--i != 0);                                                 \
+      t = speed_endtime ();                                             \
+      break;                                                            \
+    }                                                                   \
                                                                         \
     /* stop the compiler optimizing away the whole calculation! */      \
     noop_1 (h);                                                         \
