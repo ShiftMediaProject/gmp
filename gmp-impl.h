@@ -316,8 +316,8 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT_NOCARRY(expr)   (expr)
 #endif
 
-void __gmp_assert_fail _PROTO((const char *filename, int linenum,
-                               const char *expr));
+int __gmp_assert_fail _PROTO((const char *filename, int linenum,
+                              const char *expr));
 
 
 #if HAVE_NATIVE_mpn_com_n
