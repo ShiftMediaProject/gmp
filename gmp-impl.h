@@ -123,13 +123,13 @@ MA 02111-1307, USA. */
    ints by ~ or >> etc.  */
 
 #ifndef ULONG_MAX
-#define ULONG_MAX          (~ (unsigned long) 0)
+#define ULONG_MAX   __GMP_ULONG_MAX
 #endif
 #ifndef UINT_MAX
-#define UINT_MAX           (~ (unsigned) 0)
+#define UINT_MAX    __GMP_UINT_MAX
 #endif
 #ifndef USHRT_MAX
-#define USHRT_MAX          ((unsigned short) ~0)
+#define USHRT_MAX   __GMP_USHRT_MAX
 #endif
 #define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
 
