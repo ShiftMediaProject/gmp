@@ -19,6 +19,27 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-22  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-perfsqr.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+
+	* demos/factorize.c (factor): Check for number to factor == 0.
+	(main): When invoked without arguments, read from stdin.
+
+	* mpz/perfpow.c: Add code to handle negative perfect powers ((-b)^odd).
+	Treat 0 and 1 as perfect powers.
+
+	* mpn/sparc32/v9/sqr_diagonal.asm: Jump pass .align.
+
+2001-10-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/perfsqr.c	(sq_res_0x100): Remove bogus final `,'.
+	(mpn_perfect_square_p): Suppress superfluous `&1' in sq_res_0x100 test.
+	(mpn_perfect_square_p, O(n) test): Improve comments.  Combine remainder
+	tests for some small primes.  Don't share code for different limb
+	sizes.  Use single `if' with many `||' for better code density.
+
 2001-10-22  Kevin Ryde  <kevin@swox.se>
 
 	* demos/perl/GMP.xs (mutate_mpz, tmp_mpf_grow): Make these "static".
@@ -89,7 +110,7 @@ MA 02111-1307, USA.
 	* Makefile.am, acinclude.m4, gmp-impl.h: Update.
 
 	* gmp-h.in: Don't give both prototypes and inlines, except on gcc.
-	
+
 	* gmp-h.in, gmp-impl.h: Use #includes to get necessary standard
 	classes, add std:: to prototypes.
 	* cxx/*.cc, tests/cxx/t-ostream.cc: Add "use namespace std".
@@ -130,7 +151,7 @@ MA 02111-1307, USA.
 
 	* printf/doprnt.c, tests/printf/t-printf.c: Remove support for %.*Fe
 	prec -1 meaning all digits.
-	
+
 	* acinclude.m4 (GMP_PROG_AR): Override libtool, use AR_FLAGS="cq".
 	(GMP_HPC_HPPA_2_0): Print version string to config.log.
 
@@ -139,7 +160,7 @@ MA 02111-1307, USA.
 	(dist-hook): Don't distribute numbered or unnumbered emacs backups.
 
 	* Makefile.am, cxx/Makefile.am: Updates for Gerardo's stuff.
-	
+
 2001-10-09  Gerardo Ballabio  <ballabio@sissa.it>
 
 	* cxx/isfuns.cc: New file.
@@ -4887,7 +4908,7 @@ MA 02111-1307, USA.
 	(factor_using_pollard_rho): Use it, not mrand48.
 
 	* mpn/cray/README: New file.
-	
+
 2000-06-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/aorsmul_1.asm: Add MULFUNC_PROLOGUE.
@@ -5213,7 +5234,7 @@ MA 02111-1307, USA.
 	if available.  Don't include longlong.h.
 
 	* doc/isa_abi_headache: New file.
-	
+
 2000-05-30  Linus Nordberg  <linus@swox.se>
 
 	* configure.in (NM): Use AC_PROG_NM rather than AC_CHECK_TOOL to
