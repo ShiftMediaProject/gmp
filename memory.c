@@ -1,6 +1,6 @@
 /* Memory allocation routines.
 
-Copyright 1991, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,10 +25,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#ifdef __NeXT__
-#define static
-#endif
-
 
 void *	(*__gmp_allocate_func) _PROTO ((size_t)) = __gmp_default_allocate;
 void *	(*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t))
@@ -50,7 +46,7 @@ __gmp_default_allocate (size_t size)
   ret = malloc (size);
   if (ret == 0)
     {
-      perror ("cannot allocate in gmp");
+      fprintf (stderr, "GNU MP: Cannot allocate memory (size=%u)\n", size);
       abort ();
     }
   
@@ -98,7 +94,7 @@ __gmp_default_reallocate (void *oldptr, size_t old_size, size_t new_size)
   ret = realloc (oldptr, new_size);
   if (ret == 0)
     {
-      perror ("cannot allocate in gmp");
+      fprintf (stderr, "GNU MP: Cannot reallocate memory (old_size=%u new_size=%u)\n", old_size, new_size);
       abort ();
     }
 
