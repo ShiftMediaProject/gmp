@@ -21,7 +21,12 @@ got      0.10110101000001001111001100110011111110011101111001100[00000000000]E58
 
 Potential bugs:
 
-* Possible integer overflows on some machines.
+* Possible integer overflows on some machines. Some types are used
+  inconsistently.
+
+* Possible infinite loop in some functions for particular cases: when
+  the exact result is an exactly representable number or the middle of
+  consecutive two such numbers.
 
 * mpfr_set_d may give wrong results on some architectures.
 

@@ -1,6 +1,6 @@
 /* mpfr_exp2 -- power of 2 function 2^y 
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -19,21 +19,22 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <limits.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
- /* The computation of y=pow(2,z) is done by
+ /* The computation of y = 2^z is done by
 
-    y=exp(z*log(2))=2^z
+    y = exp(z*log(2)). The result is exact iff z is an integer.
  */
 
 int
 mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode) 
 {    
 
-    int inexact =0;
+    int inexact;
 
     if (MPFR_IS_NAN(x))
       {
@@ -64,8 +65,30 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
     /* since the smallest representable non-zero float is 1/2*2^__gmpfr_emin,
        if x < __gmpfr_emin - 1, the result is either 1/2*2^__gmpfr_emin or 0 */
+    MPFR_ASSERTN(MPFR_EMIN_MIN - 2 >= LONG_MIN);
     if (mpfr_cmp_si_2exp (x, __gmpfr_emin - 1, 0) < 0)
-      return mpfr_set_underflow (y, rnd_mode, 1);
+      {
+        mp_rnd_t rnd2 = rnd_mode;
+        /* in round to nearest mode, round to zero when x <= __gmpfr_emin-2 */
+        if (rnd_mode == GMP_RNDN &&
+            mpfr_cmp_si_2exp (x, __gmpfr_emin - 2, 0) <= 0)
+          rnd2 = GMP_RNDZ;
+        return mpfr_set_underflow (y, rnd2, 1);
+      }
+
+    if (mpfr_isinteger (x)) /* we know that x >= 2^(emin-1) */
+      {
+        double xd;
+
+        MPFR_ASSERTN(MPFR_EMAX_MAX <= LONG_MAX);
+        if (mpfr_cmp_si_2exp (x, __gmpfr_emax, 0) > 0)
+          return mpfr_set_overflow (y, rnd_mode, 1);
+
+        xd = mpfr_get_d1 (x);
+        
+        mpfr_set_ui (y, 1, GMP_RNDZ);
+        return mpfr_mul_2si (y, y, (long) xd, rnd_mode);
+      }
 
     /* General case */
     {
@@ -114,6 +137,6 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_clear (t);
       mpfr_clear (te);
     }
-    return inexact;
 
+    return inexact;
 }

@@ -1,6 +1,6 @@
 /* auxiliary functions for MPFR tests.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -23,32 +23,10 @@ MA 02111-1307, USA. */
 #include <limits.h>
 #include <float.h>
 #include <math.h>
-#ifdef __mips
-#include <sys/fpu.h>
-#define HAVE_DENORMS
-#endif
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
-
-/* set precision control to double on x86 */
-#if (defined (__i386__) || defined (__i486__))
-#ifdef __CYGWIN32__ /* no fpu_control.h under Cygnus */
-#define _FPU_EXTENDED 0x300
-#define _FPU_DOUBLE   0x200
-#define _FPU_DEFAULT  0x137f
-#define HAVE_SETFPUCW
-#else
-#ifdef HAVE_FPU_CONTROL_H
-#include <fpu_control.h>
-#define HAVE_SETFPUCW
-#endif
-#endif /* ifdef __CYGWIN32__ */
-#ifndef __setfpucw
-#define __setfpucw(cw) __asm__ ("fldcw %0" : : "m" (cw))
-#endif /* ifndef __setfpucw */
-#endif /* __i386__ */
 
 /* Because of the SunOS 4 compiler */
 #ifndef RAND_MAX
@@ -91,6 +69,12 @@ void tests_memory_end _PROTO ((void));
 
 void tests_start_mpfr _PROTO ((void));
 void tests_end_mpfr _PROTO ((void));
+
+void tests_machine_prec_double _PROTO ((void));
+void tests_machine_prec_long_double _PROTO ((void));
+
+unsigned short x86_fstcw _PROTO ((void));
+void x86_fldcw _PROTO ((unsigned short cw));
 
 int mpfr_set_machine_rnd_mode _PROTO ((mp_rnd_t));
 void mpfr_test_init _PROTO ((void));

@@ -1,7 +1,7 @@
 /* mpfr_get_ld -- convert a multiple precision floating-point number
                   to a machine long double
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -20,6 +20,7 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h>
 #include <float.h>
 
 #include "gmp.h"
@@ -64,10 +65,10 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_set (y, x, rnd_mode);
       negative = MPFR_SIGN(y) < 0;
       e = MPFR_EXP(y);
-      if (e > 1024)
+      if (e > 1023)
         {
-          sh = e - 1024;
-          MPFR_EXP(y) = 1024;
+          sh = e - 1023;
+          MPFR_EXP(y) = 1023;
         }
       else if (e < -1021)
         {
@@ -78,7 +79,7 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
         {
           sh = 0;
         }
-      /* now -1021 <= e - sh = EXP(y) <= 1024 */
+      /* now -1021 <= e - sh = EXP(y) <= 1023 */
       r = 0.0;
       mpfr_init2 (z, DBL_MANT_DIG);
 
@@ -102,11 +103,13 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
               sh = -sh;
             }
           e = 1; /* invariant: m = 2^e */
-          while (sh)
+          for (;;)
             {
               if (sh % 2)
                 r = r * m;
               sh >>= 1;
+              if (sh == 0)
+                break;
               m = m * m;
               e = e + e;
             }

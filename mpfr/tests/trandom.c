@@ -1,6 +1,6 @@
 /* Test file for the various mpfr_random fonctions.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -202,8 +202,15 @@ main (int argc, char *argv[])
   tests_start_mpfr ();
 
   if (argc > 1) verbose = 1;
- 
-  if (argc == 1) { nbtests = 10000; } else nbtests = atoi(argv[1]);
+
+  nbtests = 10000;
+  if (argc > 1)
+    {
+      int a = atoi(argv[1]);
+      if (a != 0)
+        nbtests = a;
+    }
+
   if (argc <= 2) { prec = 1000; } else prec = atoi(argv[2]); 
 
   test_random (nbtests, prec, verbose);

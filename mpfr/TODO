@@ -56,8 +56,6 @@ Changes in existing functions:
 
      The decimal point character, or string, expected is taken from the
      current locale on systems providing `localeconv'. [end of suggestion]
-- remove mpfr_set_machine_rnd_mode from the documentation,
-	and move it to the test directory
 - in mpfr_set_str, make string comparisons case insensitive and use @Inf@
   and @NaN@ instead of the possibly ambiguous Inf and NaN in bases > 10.
   Modify the other functions to make them consistent with this choice.
@@ -114,11 +112,6 @@ Efficiency:
 Miscellaneous:
 
 - rename mpf2mpfr.h to gmp-mpf2mpfr.h?
-
-- add mpfr_get_ld for 'long double' [asked by J-C Fauge`re] ?
-  (exists since K&R, but has not necessarily a greater precision than double)
-  cf http://anubis.dkuug.dk/jtc1/sc22/wg14/www/docs/n869/
-	[cf above]
 
 - from Kevin Ryde <user42@zip.com.au>:
    Also for pi.c, a pre-calculated compiled-in pi to a few thousand

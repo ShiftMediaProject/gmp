@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_ld and mpfr_get_ld.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -66,6 +66,7 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
   mpfr_test_init ();
+  tests_machine_prec_long_double ();
 
   mpfr_init2 (x, 113);
 
@@ -97,14 +98,12 @@ main (int argc, char *argv[])
   check_set_get (d, x);
 
   /* checks the largest power of two */
-  d = 1.0; while ((e = d + d) != d) d = e;
+  d = 1.0; while (d < LDBL_MAX / 2.0) d += d;
   check_set_get (d, x);
   check_set_get (-d, x);
 
   /* checks largest long double */
-  d = 0.0; while ((e = 1.0 + d / 2.0) != (long double) 2.0) d = e;
-  /* now d is the machine number just before 2.0 */
-  while ((e = d + d) != d) d = e;
+  d = LDBL_MAX;
   check_set_get (d, x);
   check_set_get (-d, x);
 

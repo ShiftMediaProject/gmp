@@ -1,6 +1,6 @@
 /* Utilities for MPFR developers, not exported.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -101,6 +101,8 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define DOUBLE_ISNAN(x) (DOUBLE_ISNANorINF(x) && \
 			 ((((Ieee_double_extract *)&(x))->s.manl != 0) || \
                          (((Ieee_double_extract *)&(x))->s.manh != 0)))
+
+#define LONGDOUBLE_ISNAN(x) ((x) != (x))
 
 #define DBL_POS_INF (1.0/0.0)
 #define DBL_NEG_INF (-1.0/0.0)

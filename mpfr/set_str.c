@@ -32,7 +32,9 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* from mpf/set_str.c */
+/* Compatible with any locale, but one still assumes that 'a', 'b', 'c',
+   ..., 'z', and 'A', 'B', 'C', ..., 'Z' are consecutive values (like
+   in any ASCII-based character set). */
 static int
 digit_value_in_base (int c, int base)
 {
@@ -40,9 +42,9 @@ digit_value_in_base (int c, int base)
 
   if (isdigit (c))
     digit = c - '0';
-  else if (islower (c))
+  else if (c >= 'a' && c <= 'z')
     digit = c - 'a' + 10;
-  else if (isupper (c))
+  else if (c >= 'A' && c <= 'Z')
     digit = c - 'A' + 10;
   else
     return -1;
@@ -84,7 +86,8 @@ mpfr_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd_mode)
 
   /* be careful that 'inf' is a valid number in base >= 24,
      since i=18, n=23, f=15 */
-  if (((base < 24) ? strncasecmp : strncmp) (str, "Inf", 3) == 0)
+  if (((base < 24) ? strncasecmp (str, "Inf", 3) : strncmp (str, "Inf", 3))
+      == 0)
     {
       MPFR_CLEAR_NAN(x);
       MPFR_SET_INF(x);
@@ -117,19 +120,18 @@ mpfr_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd_mode)
     {
       str++;
       while (c = *str,
-             (isdigit(c) && c < '0' + base) ||
-             (islower(c) && c < 'a'-10 + base))
-	{
+             (value = digit_value_in_base (c, base)) >= 0)
+        {
           if (k == LONG_MAX)
             {
               mpz_clear (mantissa);
               return -1;
             }
-	  k++;
-	  str++;
+          k++;
+          str++;
           mpz_mul_ui (mantissa, mantissa, base);
-          mpz_add_ui (mantissa, mantissa, isdigit(c) ? c - '0' : c - ('a' - 10));
-	}
+          mpz_add_ui (mantissa, mantissa, value);
+        }
     }
 
   if ((base <= 10 && (*str == 'e' || *str == 'E')) || *str == '@')

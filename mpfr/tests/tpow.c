@@ -1,6 +1,6 @@
 /* Test file for mpfr_pow and mpfr_pow_ui.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -142,8 +142,25 @@ special ()
   mpfr_init2 (y, 53);
   mpfr_init2 (z, 53);
   mpfr_init2 (t, 2);
-  mpfr_set_d (t, -0.5, GMP_RNDN);
 
+  mpfr_set_prec (x, 64);
+  mpfr_set_prec (y, 64);
+  mpfr_set_prec (z, 64);
+  mpfr_set_prec (t, 64);
+  mpfr_set_str_raw (x, "0.111011000111100000111010000101010100110011010000011");
+  mpfr_set_str_raw (y, "0.111110010100110000011101100011010111000010000100101");
+  mpfr_set_str_raw (t, "0.1110110011110110001000110100100001001111010011111000010000011001");
+    ;
+  mpfr_pow (z, x, y, GMP_RNDN);
+  if (mpfr_cmp (z, t))
+    {
+      fprintf (stderr, "Error in mpfr_pow for prec=64, rnd=GMP_RNDN\n");
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 53);
+  mpfr_set_prec (y, 53);
+  mpfr_set_prec (z, 53);
   mpfr_set_d (x, 5.68824667828621954868e-01, GMP_RNDN);
   mpfr_set_d (y, 9.03327850535952658895e-01, GMP_RNDN);
   mpfr_pow (z, x, y, GMP_RNDZ);
@@ -153,10 +170,12 @@ special ()
       exit (1);
     }
 
+  mpfr_set_prec (t, 2);
   mpfr_set_prec (x, 30);
   mpfr_set_prec (y, 30);
   mpfr_set_prec (z, 30);
   mpfr_set_str (x, "1.00000000001010111110001111011e1", 2, GMP_RNDN);
+  mpfr_set_d (t, -0.5, GMP_RNDN);
   mpfr_pow (z, x, t, GMP_RNDN);
   mpfr_set_str (y, "1.01101001111010101110000101111e-1", 2, GMP_RNDN);
   if (mpfr_cmp (z, y))

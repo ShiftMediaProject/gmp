@@ -1,6 +1,6 @@
 /* Test file for mpfr_const_pi.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -34,8 +34,16 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-  p = (argc>1) ? atoi(argv[1]) : 53;
+  p = 53;
+  if (argc > 1)
+    {
+      int  a = atoi (argv[1]);
+      if (a != 0)
+        p = a;
+    }
+
   rnd = (argc>2) ? atoi(argv[2]) : GMP_RNDZ;
+
   mpfr_init2(x, p);
   mpfr_const_pi(x, rnd);
   if (argc>=2) {

@@ -20,12 +20,17 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <float.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
+
+#if HAVE_SYS_FPU_H
+#include <sys/fpu.h>  /* for mips fpc_csr */
+#endif
 
 
 void
@@ -63,7 +68,6 @@ void
 mpfr_test_init ()
 {
   double c, d;
-  int j;
 #ifdef __mips
   /* to get denormalized numbers on IRIX64 */
   union fpc_csr exp;
@@ -81,21 +85,43 @@ mpfr_test_init ()
     }
 #endif
 
-#ifdef HAVE_SETFPUCW
-  /* sets the precision to double */
-  __setfpucw((_FPU_DEFAULT & (~_FPU_EXTENDED)) | _FPU_DOUBLE);
-#endif
-  c = 1.46484375e-3;
-  d = 1.0;
-  for (j=0; j<54; j++) d *= 0.5;
-  d = 0.75 + d;
-  d /= 1 << 9;
+  tests_machine_prec_double ();
+
+  c = 1.0 + DBL_EPSILON;
+  d = DBL_EPSILON * (1.0 - DBL_EPSILON) / 2.0;
+  d += c;
   if (c != d)
     {
       fprintf (stderr, "Warning: extended precision not disabled\n");
       exit (1);
     }
 }
+
+
+/* Set the machine floating point precision, to double or long double.
+
+   On i386 this controls the mantissa precision on the x87 stack, but the
+   exponent range is only enforced when storing to memory.
+
+   For reference, on most i386 systems the default is 64-bit "long double"
+   precision, but on FreeBSD 3.x it's 53-bit "double".  */
+
+void
+tests_machine_prec_double (void)
+{
+#if MPFR_HAVE_TESTS_x86
+  x86_fldcw ((x86_fstcw () & ~0x300) | 0x200);
+#endif
+}
+
+void
+tests_machine_prec_long_double (void)
+{
+#if MPFR_HAVE_TESTS_x86
+  x86_fldcw (x86_fstcw () | 0x300);
+#endif
+}
+
 
 /* generate a random double using the whole range of possible values,
    including denormalized numbers, NaN, infinities, ... */
