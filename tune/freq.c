@@ -61,45 +61,82 @@ speed_cpu_frequency_environment (void)
 }
 
 
-/* sysctlbyname() for BSD flavours.
+/* sysctlbyname() for BSD flavours.  The "sysctl -a" command prints
+   everything available.
 
    On FreeBSD 3.3 the headers have #defines like CPU_WALLCLOCK under
    CTL_MACHDEP but don't seem to have anything for machdep.tsc_freq or
    machdep.i586_freq.  Using the string forms with sysctlbyname() works
    though, and lets libc worry about the defines and headers.
 
-   FreeBSD 3.3 has tsc_freq, FreeBSD 2.2.8 has i586_freq instead.
-   The "sysctl -a" command prints everything available. */
+   FreeBSD 2.2.8 i386 - machdep.i586_freq is frequency in hertz
+
+   FreeBSD 3.3 i368 - machdep.tsc_freq is frequency in hertz
+
+   FreeBSD 4.1 alpha - hw.model string "Digital AlphaPC 164LX 599 MHz"
+
+*/
 
 #if HAVE_SYSCTLBYNAME
 int
 speed_cpu_frequency_sysctlbyname (void)
 {
   unsigned  val;
-  size_t    valsize;
+  char      str[128];
+  size_t    size;
 
-  valsize = sizeof(val);
-  if (sysctlbyname ("machdep.tsc_freq", &val, &valsize, NULL, 0) == 0
-      && valsize == sizeof(val))
+  size = sizeof(val);
+  if (sysctlbyname ("machdep.tsc_freq", &val, &size, NULL, 0) == 0
+      && size == sizeof(val))
     {
       if (speed_option_verbose)
         printf ("Using sysctlbyname() machdep.tsc_freq");
+      speed_cycletime = 1.0 / (double) val;
       goto success;
     }
 
-  valsize = sizeof(val);
-  if (sysctlbyname ("machdep.i586_freq", &val, &valsize, NULL, 0) == 0
-      && valsize == sizeof(val))
+  size = sizeof(val);
+  if (sysctlbyname ("machdep.i586_freq", &val, &size, NULL, 0) == 0
+      && size == sizeof(val))
     {
       if (speed_option_verbose)
         printf ("Using sysctlbyname() machdep.i586_freq");
+      speed_cycletime = 1.0 / (double) val;
       goto success;
     }
+
+  size = sizeof(str);
+  if (sysctlbyname ("hw.model", str, &size, NULL, 0) == 0)
+    {
+      char  *p = &str[size-1];
+      int   i;
+
+      /* find the second last space */
+      for (i = 0; i < 2; i++)
+        {
+          for (;;)
+            {
+              if (p <= str)
+                goto hw_model_fail;
+              p--;
+              if (*p == ' ')
+                break;
+            }
+        }
+
+      if (sscanf (p, "%u MHz", &val) != 1)
+        goto hw_model_fail;
+
+      if (speed_option_verbose)
+        printf ("Using sysctlbyname() hw.model");
+      speed_cycletime = 1e-6 / (double) val;
+      goto success;
+    }
+ hw_model_fail:
+
   return 0;
 
  success:
-  speed_cycletime = 1.0 / (double) val;
-
   if (speed_option_verbose)
     printf (" %u for cycle time %.3g\n", val, speed_cycletime);
 
