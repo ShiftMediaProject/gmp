@@ -25,7 +25,9 @@ MA 02111-1307, USA. */
 
 /* Instantiated by configure, for internal use only. */
 #if ! __GMP_WITHIN_CONFIGURE
-#define __GMP_BITS_PER_MP_LIMB  @__GMP_BITS_PER_MP_LIMB@
+#define __GMP_BITS_PER_MP_LIMB             @__GMP_BITS_PER_MP_LIMB@
+#define __GMP_HAVE_HOST_CPU_FAMILY_power   @__GMP_HAVE_HOST_CPU_FAMILY_power@
+#define __GMP_HAVE_HOST_CPU_FAMILY_powerpc @__GMP_HAVE_HOST_CPU_FAMILY_powerpc@
 #endif
 
 
@@ -1800,7 +1802,7 @@ mpf_size (mpf_srcptr f)
    xlc 3.1 already generates ldu/stu/bdnz from the generic C, and does so
    from this loop too.  */
 
-#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#if __GMP_HAVE_HOST_CPU_FAMILY_power || __GMP_HAVE_HOST_CPU_FAMILY_powerpc
 #define __GMPN_COPY_INCR(dst, src, size)                \
   do {                                                  \
     /* ASSERT ((size) >= 0); */                         \
