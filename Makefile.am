@@ -236,7 +236,7 @@ libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPN_OBJECTS) @mpn_objs_in_libgmp@		\
   $(PRINTF_OBJECTS)  $(SCANF_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
-libgmp_la_LDFLAGS = $(LDFLAGS_CC_SYMBOLIC) $(GMP_LDFLAGS) \
+libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
 
@@ -250,7 +250,7 @@ endif
 libgmpxx_la_SOURCES = dummy.cc
 libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS) libgmp.la
 libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES)
-libgmpxx_la_LDFLAGS = $(LDFLAGS_CXX_SYMBOLIC) $(GMP_LDFLAGS) \
+libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)
 
 
@@ -271,7 +271,7 @@ libmp_la_DEPENDENCIES = $(srcdir)/libmp.sym				\
   mpz/n_pow_ui$U.lo mpz/realloc$U.lo mpz/set$U.lo mpz/sub$U.lo		\
   mpz/tdiv_q$U.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
-libmp_la_LDFLAGS = $(LDFLAGS_CC_SYMBOLIC) $(GMP_LDFLAGS) \
+libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE) \
   -export-symbols $(srcdir)/libmp.sym
 EXTRA_DIST += libmp.sym
