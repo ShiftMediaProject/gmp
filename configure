@@ -2273,13 +2273,13 @@ EOF
         gcc_cflags_cpu="-mcpu=v8 -mv8"
         acc_cflags="-O2 -cg92"
         path="sparc32/v8 sparc32"
+        extra_functions="udiv"
 
         case $host in
           *-*-solaris2.*)  cc_cflags="-xtarget=native -xarch=v8 -xO4" ;;
         esac
         case $host in
-          supersparc*-*-*) path="sparc32/v8/supersparc sparc32/v8 sparc32"
-                           extra_functions="udiv" ;;
+          supersparc*-*-*) path="sparc32/v8/supersparc sparc32/v8 sparc32" ;;
         esac
         ;;
 
