@@ -2482,8 +2482,9 @@ Return the number of bytes written, or if an error occurred, return 0.
 Convert @var{op} to a double.
 @end deftypefun
 
-@deftypefun double mpq_set_d (mpq_t @var{rop}, double @var{d})
-Set @var{rop} to the value of d, without rounding.
+@deftypefun double mpq_set_d (mpq_t @var{rop}, double @var{op})
+@deftypefun double mpq_set_f (mpq_t @var{rop}, double @var{op})
+Set @var{rop} to the value of @var{op}, without rounding.
 @end deftypefun
 
 These functions assign between either the numerator or denominator of a
