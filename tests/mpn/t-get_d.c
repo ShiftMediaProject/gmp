@@ -19,9 +19,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+/* Note that we don't use <limits.h> for LONG_MIN, but instead our own
+   definition in gmp-impl.h.  In gcc 2.95.4 (debian 3.0) under
+   -mcpu=ultrasparc, limits.h sees __sparc_v9__ defined and assumes that
+   means long is 64-bit long, but it's only 32-bits, causing fatal compile
+   errors.  */
+
 #include "config.h"
 
-#include <limits.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <stdio.h>
