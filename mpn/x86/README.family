@@ -142,8 +142,8 @@ must be written "shldl %eax,%ebx" for some assemblers.  gas takes either,
 Solaris "as" doesn't allow %cl, gcc generates %cl for gas and NeXT (which is
 gas), and omits %cl elsewhere.
 
-For GMP an autoconf test GMP_ASM_SHLDL_CL is used to determine whether %cl
-should be used, and the macros shldl, shrdl, shldw and shrdw in
+For GMP an autoconf test GMP_ASM_X86_SHLDL_CL is used to determine whether
+%cl should be used, and the macros shldl, shrdl, shldw and shrdw in
 mpn/x86/x86-defs.m4 pass through or omit %cl as necessary.  See comments
 with those macros for usage.
 
@@ -178,18 +178,15 @@ flag being clear.  This happens only in a few places.
 
 POSITION INDEPENDENT CODE
 
-Defining the symbol PIC in m4 processing selects position independent code.
-This mainly affects computed jumps, and these are implemented in a
-self-contained fashion (without using the global offset table).  The few
-calls from assembly code to global functions use the normal procedure
-linkage table.
+Defining the symbol PIC in m4 processing selects SVR4 / ELF style position
+independent code.  This is necessary for shared libraries because they can
+be mapped into different processes at different virtual addresses.  Actually
+relocations are allowed, but presumably pages with relocations aren't
+shared, defeating the purpose of a shared library.
 
-PIC is necessary for ELF shared libraries because they can be mapped into
-different processes at different virtual addresses.  Text relocations in
-shared libraries are allowed, but that presumably means a page with such a
-relocation isn't shared.  The use of the PLT for PIC adds a fixed cost to
-every function call, which is small but might be noticeable when working with
-small operands.
+The use of the PLT adds a fixed cost to every function call, and the GOT
+adds a cost to any global variables accessed.  These are small but might be
+noticeable when working with small operands.
 
 Calls from one library function to another don't need to go through the PLT,
 since of course the call instruction uses a displacement, not an absolute
@@ -225,9 +222,9 @@ asked to assemble the following,
         L1:
             addl  $_GLOBAL_OFFSET_TABLE_+[.-L1], %ebx
 
-The problem might be using the label in the same instruction it refers to,
-since a nop in between fixes it.  But the simplest workaround is to follow
-gcc and omit the +[.-L1] since it's zero in this case.
+It seems that using the label in the same instruction it refers to is the
+problem, since a nop in between works.  But the simplest workaround is to
+follow gcc and omit the +[.-L1] since it does nothing,
 
             addl  $_GLOBAL_OFFSET_TABLE_, %ebx
 
@@ -236,10 +233,10 @@ construction (or with +[.-L1]),
 
             addl  $_GLOBAL_OFFSET_TABLE_, %eax
 
-A 2 displacement in the R_386_GOTPC is generated rather than a 1 as would be
-appropriate for the 1 byte opcode for addl $n,%eax.  The best workaround is
-just to use any other register, since then it'll then be a two byte
-opcode+mod/rm.  GCC for example always uses %ebx.
+The R_386_GOTPC gets a displacement of 2 rather than the 1 appropriate for
+the 1 byte opcode of "addl $n,%eax".  The best workaround is just to use any
+other register, since then it's a two byte opcode+mod/rm.  GCC for example
+always uses %ebx.
 
 
 
@@ -262,11 +259,7 @@ UNROLL_THRESHOLD using the unrolled loop.  If position independent code adds
 a couple of cycles to an unrolled loop setup, the threshold will vary with
 PIC or non-PIC.  Something like the following is typical.
 
-	ifdef(`PIC',`
-	deflit(UNROLL_THRESHOLD, 10)
-	',`
-	deflit(UNROLL_THRESHOLD, 8)
-	')
+	deflit(UNROLL_THRESHOLD, ifdef(`PIC',10,8))
 
 There's no automated way to determine the threshold.  Setting it to a small
 value and then to a big value makes it possible to measure the simple and
