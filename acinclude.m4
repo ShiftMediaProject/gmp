@@ -1176,6 +1176,104 @@ AC_MSG_RESULT([determined])
 ])
 
 
+dnl  GMP_ASM_M68K_INSTRUCTION
+dnl  ------------------------
+dnl  Not sure if ".l" and "%" are independent settings, but it doesn't hurt
+dnl  to try all four possibilities.  Note that the % ones must be first, so
+dnl  "d0" won't be interpreted as a label.
+dnl
+dnl  gas 1.92.3 on NetBSD 1.4 needs to be tested with a two operand
+dnl  instruction.  It takes registers without "%", but a single operand
+dnl  "clrl %d0" only gives a warning, not an error.
+
+AC_DEFUN(GMP_ASM_M68K_INSTRUCTION,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([assembler instruction and register style],
+		gmp_cv_asm_m68k_instruction,
+[gmp_cv_asm_m68k_instruction=unknown
+for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
+  GMP_TRY_ASSEMBLE(
+    [	$gmp_cv_asm_text
+	$i],
+    [gmp_cv_asm_m68k_instruction=$i
+    rm -f conftest*
+    break])
+done
+])
+case $gmp_cv_asm_m68k_instruction in
+"addl d0,d1")    want_dot_size=no;  want_register_percent=no  ;;
+"addl %d0,%d1")  want_dot_size=no;  want_register_percent=yes ;;
+"add.l d0,d1")   want_dot_size=yes; want_register_percent=no  ;;
+"add.l %d0,%d1") want_dot_size=yes; want_register_percent=yes ;;
+*) AC_MSG_ERROR([cannot determine assembler instruction and register style]) ;;
+esac
+GMP_DEFINE_RAW(["define(<WANT_REGISTER_PERCENT>, <\`$want_register_percent'>)"])
+GMP_DEFINE_RAW(["define(<WANT_DOT_SIZE>, <\`$want_dot_size'>)"])
+])
+
+
+dnl  GMP_ASM_M68K_ADDRESSING
+dnl  -----------------------
+
+AC_DEFUN(GMP_ASM_M68K_ADDRESSING,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_M68K_INSTRUCTION])
+AC_CACHE_CHECK([assembler addressing style],
+		gmp_cv_asm_m68k_addressing,
+[case $gmp_cv_asm_m68k_instruction in
+addl*)  movel=movel ;;
+add.l*) movel=move.l ;;
+*) AC_MSG_ERROR([oops, unrecognised gmp_cv_asm_m68k_instruction]) ;;
+esac
+case $gmp_cv_asm_m68k_instruction in
+*"%d0,%d1") dreg=%d0; areg=%a0 ;;
+*"d0,d1")   dreg=d0;  areg=a0  ;;
+*) AC_MSG_ERROR([oops, unrecognised gmp_cv_asm_m68k_instruction]) ;;
+esac
+GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	$movel	$dreg, $areg@-],
+  [gmp_cv_asm_m68k_addressing=mit],
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	$movel	$dreg, -($areg)],
+  [gmp_cv_asm_m68k_addressing=motorola],
+  [AC_MSG_ERROR([cannot determine assembler addressing style])])])
+])
+GMP_DEFINE_RAW(["define(<WANT_ADDRESSING>, <\`$gmp_cv_asm_m68k_addressing'>)"])
+])
+
+
+dnl  GMP_ASM_M68K_BRANCHES
+dnl  ---------------------
+dnl  "bra" is the standard branch instruction.  "jra" or "jbra" are
+dnl  preferred where available, since on gas for instance they give a
+dnl  displacement only as bit as it needs to be, whereas "bra" is always
+dnl  16-bits.  This applies to the conditional branches "bcc" etc too.
+dnl  However "dbcc" etc on gas are already only as big as they need to be.
+
+AC_DEFUN(GMP_ASM_M68K_BRANCHES,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([assembler shortest branches],
+		gmp_cv_asm_m68k_branches,
+[gmp_cv_asm_m68k_branches=unknown
+for i in jra jbra bra; do
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+foo$gmp_cv_asm_label_suffix
+	$i	foo],
+  [gmp_cv_asm_m68k_branches=$i
+  rm -f conftest*
+  break])
+done
+])
+if test "$gmp_cv_asm_m68k_branches" = unknown; then
+  AC_MSG_ERROR([cannot determine assembler branching style])
+fi
+GMP_DEFINE_RAW(["define(<WANT_BRANCHES>, <\`$gmp_cv_asm_m68k_branches'>)"])
+])
+
+
 dnl  GMP_ASM_POWERPC_R_REGISTERS
 dnl  ---------------------------
 dnl
