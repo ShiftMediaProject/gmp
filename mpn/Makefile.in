@@ -237,11 +237,12 @@ nodist_EXTRA_libmpn_la_SOURCES = \
   cmp.c com_n.c copyd.c copyi.c						    \
   dc_divrem_n.c dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c   \
   dump.c fib2_ui.c gcd.c						    \
-  gcd_finda.c gcd_1.c gcdext.c get_d.c get_str.c hamdist.c invert_limb.c    \
+  gcd_finda.c gcd_1.c gcdext.c get_d.c get_str.c			    \
+  hamdist.c hgcd2.c hgcd.c invert_limb.c				    \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mod_34lsub1.c mode1o.c	    \
   mul.c mul_1.c mul_2.c mul_fft.c mul_n.c mul_basecase.c		    \
   nand_n.c nior_n.c perfsqr.c popcount.c				    \
-  pre_divrem_1.c pre_mod_1.c pow_1.c random.c random2.c rshift.c	    \
+  pre_divrem_1.c pre_mod_1.c pow_1.c qstack.c random.c random2.c rshift.c   \
   rootrem.c sb_divrem_mn.c scan0.c scan1.c set_str.c			    \
   sqr_basecase.c sqr_diagonal.c						    \
   sqrtrem.c sub.c sub_1.c sub_n.c submul_1.c				    \
@@ -424,6 +425,10 @@ get_str_.c: get_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 hamdist_.c: hamdist.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/hamdist.c; then echo $(srcdir)/hamdist.c; else echo hamdist.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+hgcd_.c: hgcd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/hgcd.c; then echo $(srcdir)/hgcd.c; else echo hgcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+hgcd2_.c: hgcd2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/hgcd2.c; then echo $(srcdir)/hgcd2.c; else echo hgcd2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 invert_limb_.c: invert_limb.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/invert_limb.c; then echo $(srcdir)/invert_limb.c; else echo invert_limb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 ior_n_.c: ior_n.c $(ANSI2KNR)
@@ -468,6 +473,8 @@ pre_divrem_1_.c: pre_divrem_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pre_divrem_1.c; then echo $(srcdir)/pre_divrem_1.c; else echo pre_divrem_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 pre_mod_1_.c: pre_mod_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pre_mod_1.c; then echo $(srcdir)/pre_mod_1.c; else echo pre_mod_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+qstack_.c: qstack.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/qstack.c; then echo $(srcdir)/qstack.c; else echo qstack.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 random_.c: random.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/random.c; then echo $(srcdir)/random.c; else echo random.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 random2_.c: random2.c $(ANSI2KNR)
@@ -524,6 +531,7 @@ fib2_ui_.$(OBJEXT) fib2_ui_.lo fib_table_.$(OBJEXT) fib_table_.lo \
 gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) gcd_1_.lo gcd_finda_.$(OBJEXT) \
 gcd_finda_.lo gcdext_.$(OBJEXT) gcdext_.lo get_d_.$(OBJEXT) get_d_.lo \
 get_str_.$(OBJEXT) get_str_.lo hamdist_.$(OBJEXT) hamdist_.lo \
+hgcd_.$(OBJEXT) hgcd_.lo hgcd2_.$(OBJEXT) hgcd2_.lo \
 invert_limb_.$(OBJEXT) invert_limb_.lo ior_n_.$(OBJEXT) ior_n_.lo \
 iorn_n_.$(OBJEXT) iorn_n_.lo jacbase_.$(OBJEXT) jacbase_.lo \
 lshift_.$(OBJEXT) lshift_.lo mod_1_.$(OBJEXT) mod_1_.lo \
@@ -535,15 +543,15 @@ mul_n_.$(OBJEXT) mul_n_.lo nand_n_.$(OBJEXT) nand_n_.lo \
 nior_n_.$(OBJEXT) nior_n_.lo perfsqr_.$(OBJEXT) perfsqr_.lo \
 popcount_.$(OBJEXT) popcount_.lo pow_1_.$(OBJEXT) pow_1_.lo \
 pre_divrem_1_.$(OBJEXT) pre_divrem_1_.lo pre_mod_1_.$(OBJEXT) \
-pre_mod_1_.lo random_.$(OBJEXT) random_.lo random2_.$(OBJEXT) \
-random2_.lo rootrem_.$(OBJEXT) rootrem_.lo rshift_.$(OBJEXT) rshift_.lo \
-sb_divrem_mn_.$(OBJEXT) sb_divrem_mn_.lo scan0_.$(OBJEXT) scan0_.lo \
-scan1_.$(OBJEXT) scan1_.lo set_str_.$(OBJEXT) set_str_.lo \
-sqr_basecase_.$(OBJEXT) sqr_basecase_.lo sqr_diagonal_.$(OBJEXT) \
-sqr_diagonal_.lo sqrtrem_.$(OBJEXT) sqrtrem_.lo sub_.$(OBJEXT) sub_.lo \
-sub_1_.$(OBJEXT) sub_1_.lo sub_n_.$(OBJEXT) sub_n_.lo \
-submul_1_.$(OBJEXT) submul_1_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo \
-udiv_qrnnd_.$(OBJEXT) udiv_qrnnd_.lo udiv_w_sdiv_.$(OBJEXT) \
+pre_mod_1_.lo qstack_.$(OBJEXT) qstack_.lo random_.$(OBJEXT) random_.lo \
+random2_.$(OBJEXT) random2_.lo rootrem_.$(OBJEXT) rootrem_.lo \
+rshift_.$(OBJEXT) rshift_.lo sb_divrem_mn_.$(OBJEXT) sb_divrem_mn_.lo \
+scan0_.$(OBJEXT) scan0_.lo scan1_.$(OBJEXT) scan1_.lo \
+set_str_.$(OBJEXT) set_str_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
+sqr_diagonal_.$(OBJEXT) sqr_diagonal_.lo sqrtrem_.$(OBJEXT) sqrtrem_.lo \
+sub_.$(OBJEXT) sub_.lo sub_1_.$(OBJEXT) sub_1_.lo sub_n_.$(OBJEXT) \
+sub_n_.lo submul_1_.$(OBJEXT) submul_1_.lo tdiv_qr_.$(OBJEXT) \
+tdiv_qr_.lo udiv_qrnnd_.$(OBJEXT) udiv_qrnnd_.lo udiv_w_sdiv_.$(OBJEXT) \
 udiv_w_sdiv_.lo xnor_n_.$(OBJEXT) xnor_n_.lo xor_n_.$(OBJEXT) xor_n_.lo \
 : $(ANSI2KNR)
 
