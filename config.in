@@ -223,6 +223,18 @@ MA 02111-1307, USA. */
 /* Define if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* Define if `double' is IEEE format, big endian */
+#undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
+
+/* Define if `double' is IEEE format, little endian */
+#undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
+
+/* Define if `double' is VAX D format */
+#undef HAVE_DOUBLE_VAX_D
+
+/* Define if `double' is VAX G format */
+#undef HAVE_DOUBLE_VAX_G
+
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
