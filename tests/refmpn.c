@@ -183,20 +183,29 @@ refmpn_msbone_mask (mp_limb_t x)
   return (refmpn_msbone (x) << 1) - 1;
 }
 
-/* The biggest n for which base**n fits in GMP_NUMB_BITS. */
+/* How many digits in the given base will fit in a limb.
+   Notice that the product b is allowed to be equal to the limit
+   2^GMP_NUMB_BITS, this ensures the result for base==2 will be
+   GMP_NUMB_BITS (and similarly other powers of 2).  */
 int
 refmpn_chars_per_limb (int base)
 {
-  mp_limb_t  bb, hi;
+  mp_limb_t  limit[2], b[2];
   int        chars_per_limb;
 
   ASSERT (base >= 2);
-  bb = 1;
+
+  limit[0] = 0;  /* limit = 2^GMP_NUMB_BITS */
+  limit[1] = 1;
+  b[0] = 1;      /* b = 1 */
+  b[1] = 0;
+
   chars_per_limb = 0;
   for (;;)
     {
-      hi = refmpn_umul_ppmm (&bb, bb, (mp_limb_t) base);
-      if (hi != 0 || (bb & GMP_NAIL_MASK) != 0)
+      if (refmpn_mul_1 (b, b, (mp_size_t) 2, (mp_limb_t) base))
+        break;
+      if (refmpn_cmp (b, limit, (mp_size_t) 2) > 0)
         break;
       chars_per_limb++;
     }
