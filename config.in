@@ -21,57 +21,48 @@ MA 02111-1307, USA.
 */
 
 
-/* Define if a limb is long long. */
-#undef _LONG_LONG_LIMB
 
-/* Define sizes here if they're not in gmp-mparam.h. */
-#undef BYTES_PER_MP_LIMB
-#undef BITS_PER_MP_LIMB
-#undef BITS_PER_LONGINT
-#undef BITS_PER_INT
-#undef BITS_PER_SHORTINT
-#undef BITS_PER_CHAR
-
-/* Define one (and only one) of these for the CPU target.
-   Only targets that are going to be tested for need to be in this list,
+/* Define one (and only one) of these for the CPU host.
+   Only hosts that are going to be tested for need to be in this list,
    not everything that can possibly be selected.
  */
-#undef HAVE_TARGET_CPU_alpha
-#undef HAVE_TARGET_CPU_alphaev5
-#undef HAVE_TARGET_CPU_alphaev6
-#undef HAVE_TARGET_CPU_alphaev67
+#undef HAVE_HOST_CPU_alpha
+#undef HAVE_HOST_CPU_alphaev5
+#undef HAVE_HOST_CPU_alphaev6
+#undef HAVE_HOST_CPU_alphaev67
 
-#undef HAVE_TARGET_CPU_sparc
-#undef HAVE_TARGET_CPU_sparcv8
-#undef HAVE_TARGET_CPU_supersparc
-#undef HAVE_TARGET_CPU_sparclite
-#undef HAVE_TARGET_CPU_microsparc
-#undef HAVE_TARGET_CPU_ultrasparc1
-#undef HAVE_TARGET_CPU_ultrasparc2
-#undef HAVE_TARGET_CPU_sparc64
+#undef HAVE_HOST_CPU_sparc
+#undef HAVE_HOST_CPU_sparcv8
+#undef HAVE_HOST_CPU_supersparc
+#undef HAVE_HOST_CPU_sparclite
+#undef HAVE_HOST_CPU_microsparc
+#undef HAVE_HOST_CPU_ultrasparc1
+#undef HAVE_HOST_CPU_ultrasparc2
+#undef HAVE_HOST_CPU_sparc64
 
-#undef HAVE_TARGET_CPU_hppa1_0
-#undef HAVE_TARGET_CPU_hppa1_1
-#undef HAVE_TARGET_CPU_hppa2_0n
-#undef HAVE_TARGET_CPU_hppa2_0w
+#undef HAVE_HOST_CPU_hppa1_0
+#undef HAVE_HOST_CPU_hppa1_1
+#undef HAVE_HOST_CPU_hppa2_0n
+#undef HAVE_HOST_CPU_hppa2_0w
 
-#undef HAVE_TARGET_CPU_i386
-#undef HAVE_TARGET_CPU_i486
-#undef HAVE_TARGET_CPU_i586
-#undef HAVE_TARGET_CPU_i686
-#undef HAVE_TARGET_CPU_pentium
-#undef HAVE_TARGET_CPU_pentiummmx
-#undef HAVE_TARGET_CPU_pentiumpro
-#undef HAVE_TARGET_CPU_pentium2
-#undef HAVE_TARGET_CPU_pentium3
-#undef HAVE_TARGET_CPU_k5
-#undef HAVE_TARGET_CPU_k6
-#undef HAVE_TARGET_CPU_k62
-#undef HAVE_TARGET_CPU_k63
-#undef HAVE_TARGET_CPU_athlon
+#undef HAVE_HOST_CPU_i386
+#undef HAVE_HOST_CPU_i486
+#undef HAVE_HOST_CPU_i586
+#undef HAVE_HOST_CPU_i686
+#undef HAVE_HOST_CPU_pentium
+#undef HAVE_HOST_CPU_pentiummmx
+#undef HAVE_HOST_CPU_pentiumpro
+#undef HAVE_HOST_CPU_pentium2
+#undef HAVE_HOST_CPU_pentium3
+#undef HAVE_HOST_CPU_k5
+#undef HAVE_HOST_CPU_k6
+#undef HAVE_HOST_CPU_k62
+#undef HAVE_HOST_CPU_k63
+#undef HAVE_HOST_CPU_athlon
 
 /* a dummy to make autoheader happy */
-#undef HAVE_TARGET_CPU_
+#undef HAVE_HOST_CPU_
+
 
 /* Define if we have native implementation of function. */
 #undef HAVE_NATIVE_mpn_add                 
@@ -143,123 +134,147 @@ MA 02111-1307, USA.
 /* a dummy to make autoheader happy */
 #undef HAVE_NATIVE_
 
-/* Define if you have the `read_real_time' function. */
-#undef HAVE_READ_REAL_TIME
+/* bits per char, if not in gmp-mparam.h */
+#undef BITS_PER_CHAR
 
-/* Define if you have the `getrusage' function. */
-#undef HAVE_GETRUSAGE
+/* bits per int, if not in gmp-mparam.h */
+#undef BITS_PER_INT
+
+/* bits per long, if not in gmp-mparam.h */
+#undef BITS_PER_LONGINT
+
+/* bits per mp_limb_t, if not in gmp-mparam.h */
+#undef BITS_PER_MP_LIMB
+
+/* bits per short, if not in gmp-mparam.h */
+#undef BITS_PER_SHORTINT
+
+/* bytes per mp_limb_t, if not in gmp-mparam.h */
+#undef BYTES_PER_MP_LIMB
+
+/* Define if alloca() works (via gmp-impl.h). */
+#undef HAVE_ALLOCA
+
+/* Define if you have <alloca.h> and it should be used (not on Ultrix). */
+#undef HAVE_ALLOCA_H
+
+/* Define if mpn/tests has calling conventions checking for the CPU */
+#undef HAVE_CALLING_CONVENTIONS
 
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
 #undef HAVE_DECL_OPTARG
 
-/* Define if you have the `m' library (-lm). */
-#undef HAVE_LIBM
-
-/* ./configure --enable-assert option, to enable some ASSERT()s */
-#undef WANT_ASSERT
-
-/* Define if you can safely include both <sys/time.h> and <time.h>. */
-#undef TIME_WITH_SYS_TIME
-
-/* Define if you have the <sys/sysctl.h> header file. */
-#undef HAVE_SYS_SYSCTL_H
-
-/* Define if you have the `srandom' function. */
-#undef HAVE_SRANDOM
-
-/* Define if you have the `strtoul' function. */
-#undef HAVE_STRTOUL
-
-/* Name of package */
-#undef PACKAGE
-
-/* Define if you have the `mw' library (-lmw). */
-#undef HAVE_LIBMW
-
-/* Define if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
-
-/* Define if you have the `sysctlbyname' function. */
-#undef HAVE_SYSCTLBYNAME
-
-/* Define if the system has the type `void'. */
-#undef HAVE_VOID
-
-/* Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD */
-#undef TUNE_KARATSUBA_SQR_MAX
-
-/* Define if you have the `times' function. */
-#undef HAVE_TIMES
-
-/* Define if you have the `popen' function. */
-#undef HAVE_POPEN
-
-/* ./configure --disable-alloca option, to use stack-alloc.c, not alloca */
-#undef USE_STACK_ALLOC
-
-/* Define if alloca() works (via gmp-impl.h). */
-#undef HAVE_ALLOCA
-
-/* Define if you have the `gettimeofday' function. */
-#undef HAVE_GETTIMEOFDAY
-
-/* Define if cpp supports the ANSI # stringizing operator. */
-#undef HAVE_STRINGIZE
-
-/* Define if you have the <sys/time.h> header file. */
-#undef HAVE_SYS_TIME_H
-
-/* Define if you have the <sys/systemcfg.h> header file. */
-#undef HAVE_SYS_SYSTEMCFG_H
-
-/* Define if you have the <sys/resource.h> header file. */
-#undef HAVE_SYS_RESOURCE_H
-
-/* Define if you have the `sysconf' function. */
-#undef HAVE_SYSCONF
-
-/* Define if you have the `getpagesize' function. */
-#undef HAVE_GETPAGESIZE
-
-/* Define if you have the <sys/times.h> header file. */
-#undef HAVE_SYS_TIMES_H
-
-/* Define if you have the `processor_info' function. */
-#undef HAVE_PROCESSOR_INFO
-
-/* Define as the return type of signal handlers (`int' or `void'). */
-#undef RETSIGTYPE
-
-/* Version number of package */
-#undef VERSION
+/* Define if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
 
 /* Define if you have the `getopt_long' function. */
 #undef HAVE_GETOPT_LONG
 
-/* Define if you have <alloca.h> and it should be used (not on Ultrix). */
-#undef HAVE_ALLOCA_H
+/* Define if you have the `getpagesize' function. */
+#undef HAVE_GETPAGESIZE
 
-/* Define if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
+/* Define if you have the `getrusage' function. */
+#undef HAVE_GETRUSAGE
+
+/* Define if you have the `gettimeofday' function. */
+#undef HAVE_GETTIMEOFDAY
+
+/* Define if you have the `popen' function. */
+#undef HAVE_POPEN
+
+/* Define if you have the `processor_info' function. */
+#undef HAVE_PROCESSOR_INFO
+
+/* Define if you have the `read_real_time' function. */
+#undef HAVE_READ_REAL_TIME
 
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
-/* Define if you have the ANSI C header files. */
-#undef STDC_HEADERS
+/* Define if you have the `srandom' function. */
+#undef HAVE_SRANDOM
 
-/* Define if mpn/tests has calling conventions checking for the CPU */
-#undef HAVE_CALLING_CONVENTIONS
-
-/* ./configure --enable-fft option, to enable FFTs for multiplication */
-#undef WANT_FFT
+/* Define if cpp supports the ANSI # stringizing operator. */
+#undef HAVE_STRINGIZE
 
 /* Define if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define if you have the `strtoul' function. */
+#undef HAVE_STRTOUL
+
+/* Define if you have the `sysconf' function. */
+#undef HAVE_SYSCONF
+
 /* Define if you have the `sysctl' function. */
 #undef HAVE_SYSCTL
 
+/* Define if you have the `sysctlbyname' function. */
+#undef HAVE_SYSCTLBYNAME
+
+/* Define if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
+
+/* Define if you have the <sys/resource.h> header file. */
+#undef HAVE_SYS_RESOURCE_H
+
+/* Define if you have the <sys/sysctl.h> header file. */
+#undef HAVE_SYS_SYSCTL_H
+
+/* Define if you have the <sys/systemcfg.h> header file. */
+#undef HAVE_SYS_SYSTEMCFG_H
+
+/* Define if you have the <sys/times.h> header file. */
+#undef HAVE_SYS_TIMES_H
+
+/* Define if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define if you have the `times' function. */
+#undef HAVE_TIMES
+
 /* Define if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define if the system has the type `void'. */
+#undef HAVE_VOID
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define as the return type of signal handlers (`int' or `void'). */
+#undef RETSIGTYPE
+
+/* The size of a `int', as computed by sizeof. */
+#undef SIZEOF_INT
+
+/* The size of a `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* The size of a `mp_limb_t', as computed by sizeof. */
+#undef SIZEOF_MP_LIMB_T
+
+/* The size of a `short', as computed by sizeof. */
+#undef SIZEOF_SHORT
+
+/* Define if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define if you can safely include both <sys/time.h> and <time.h>. */
+#undef TIME_WITH_SYS_TIME
+
+/* Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD */
+#undef TUNE_KARATSUBA_SQR_MAX
+
+/* ./configure --disable-alloca option, to use stack-alloc.c, not alloca */
+#undef USE_STACK_ALLOC
+
+/* Version number of package */
+#undef VERSION
+
+/* ./configure --enable-assert option, to enable some ASSERT()s */
+#undef WANT_ASSERT
+
+/* ./configure --enable-fft option, to enable FFTs for multiplication */
+#undef WANT_FFT
