@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_modexact_1_odd -- exact division style remainder.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -150,7 +150,6 @@ L(top):
 
 	movl	(%ebx,%ebp,4), %eax
 	addl	%ecx, %edx		C apply carry bit to carry limb
-	ASSERT(a, `cmpl %edx, %esi')
 
 L(entry):
 	xorl	%ecx, %ecx
