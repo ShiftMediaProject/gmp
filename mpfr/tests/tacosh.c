@@ -32,17 +32,39 @@ MA 02111-1307, USA. */
 #define RAND_FUNCTION(x) (mpfr_random (x), mpfr_ui_div (x, 1, x, GMP_RNDN))
 #include "tgeneric.c"
 
+static
+void check_inf(void)
+{
+  mpfr_t x,y;
+  mpfr_init(x);
+  mpfr_init(y);
+  MPFR_SET_INF(x);
+  mpfr_set_ui(y, 1, GMP_RNDN);
+  mpfr_acosh(x, y, GMP_RNDN);
+  if (MPFR_IS_INF(x) || MPFR_IS_NAN(x) )
+    {
+      printf("Inf flag not clears in acosh!\n");
+      exit(1);
+    }
+  MPFR_SET_NAN(x);
+  mpfr_acosh(x, y, GMP_RNDN);
+  if (MPFR_IS_NAN(x) || MPFR_IS_INF(x) )
+    {
+      printf("NAN flag not clears in acosh!\n");
+      exit(1);
+    }
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int
 main (int argc, char *argv[])
 {
   tests_start_mpfr ();
 
   test_generic (2, 100, 25);
+  check_inf ();
 
   tests_end_mpfr ();
   return 0;
 }
-
-
-
-
