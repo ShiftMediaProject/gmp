@@ -21,7 +21,18 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
-define(`ASM_START',`dnl')
+dnl  ia64 assembler comments are C++ style "//" to the end of line.  gas
+dnl  also accepts "#" as a comment, if it's the first non-blank on a line.
+dnl
+dnl  BSD m4 can't handle a multi-character comment like "//" (see notes in
+dnl  mpn/asm-defs.m4).  For now the default "#" is left, but with care taken
+dnl  not to put any macros after "foo#" (since of course they won't expand).
+
+
+define(`ASM_START',
+m4_assert_numargs(0)
+`')
+
 
 dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
@@ -38,7 +49,8 @@ $1:')
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 	`
-	.endp	$1#')
+	.endp	$1#
+')
 
 define(`DATASTART',
 	`dnl
