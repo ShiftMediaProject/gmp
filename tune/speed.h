@@ -71,7 +71,7 @@ MA 02111-1307, USA. */
 extern double  speed_unittime;
 extern double  speed_cycletime;
 extern int     speed_precision;
-extern const char *speed_time_string;
+extern char    speed_time_string[];
 void speed_time_init _PROTO ((void));
 void speed_cycletime_fail _PROTO ((const char *str));
 void speed_cycletime_init _PROTO ((void));
