@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 void
 check_one (mpf_ptr got, mpq_srcptr q)
 {
-  mpf_t      want, n, d;
+  mpf_t  n, d;
 
   mpf_set_q (got, q);
 
@@ -98,15 +98,15 @@ check_various (void)
   mpf_init (got);
   mpq_init (q);
 
-  /* 99/4 == 24 */
-  mpf_set_prec (got, 20);
-  mpq_set_ui (q, 99L, 4L);
+  /* 1/1 == 1 */
+  mpf_set_prec (got, 20L);
+  mpq_set_ui (q, 1L, 1L);
   mpf_set_q (got, q);
   MPF_CHECK_FORMAT (got);
-  ASSERT_ALWAYS (mpf_cmp_ui (got, 24L));
+  ASSERT_ALWAYS (mpf_cmp_ui (got, 1L) == 0);
 
   /* 1/(2^n+1), a case where truncating the divisor would be wrong */
-  mpf_set_prec (got, 500);
+  mpf_set_prec (got, 500L);
   mpq_set_ui (q, 1L, 1L);
   mpz_mul_2exp (mpq_denref(q), mpq_denref(q), 800L);
   mpz_add_ui (mpq_denref(q), mpq_denref(q), 1L);
@@ -121,8 +121,8 @@ main (void)
 {
   tests_start ();
 
-  check_rand ();
   check_various ();
+  check_rand ();
 
   tests_end ();
   exit (0);
