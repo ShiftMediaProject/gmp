@@ -29,7 +29,7 @@ MA 02111-1307, USA.
 
 
 void
-oddeven (void)
+check_oddeven (void)
 {
   static const struct {
     const char  *n;
@@ -63,7 +63,7 @@ oddeven (void)
   mpz_init (n);
   for (i = 0; i < numberof (data); i++)
     {
-      mpz_set_str (n, data[i].n, 0);
+      MPZ_SET_STR_OR_ABORT (n, data[i].n, 0);
 
       if ((mpz_odd_p (n) != 0) != data[i].odd)
         {
@@ -104,7 +104,6 @@ check_mpz_set_si (void)
   mpz_t  n;
   int    i;
 
-  mpz_init (n);
   for (i = 0; i < numberof (data); i++)
     {
       mpz_init (n);
@@ -170,8 +169,8 @@ check_mpz_cmp_si (void)
   mpz_init (bz);
   for (i = 0; i < numberof (data); i++)
     {
-      mpz_set_str (a, data[i].a, 0);
-      mpz_set_str (bz, data[i].b, 0);
+      MPZ_SET_STR_OR_ABORT (a, data[i].a, 0);
+      MPZ_SET_STR_OR_ABORT (bz, data[i].b, 0);
 
       if (mpz_fits_slong_p (bz))
         {
@@ -197,7 +196,7 @@ check_mpz_cmp_si (void)
 int
 main (void)
 {
-  oddeven ();
+  check_oddeven ();
   check_mpz_set_si ();
   check_mpz_cmp_si ();
 
