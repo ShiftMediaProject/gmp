@@ -666,12 +666,10 @@ case "$target" in
       *-*-mach* | *-*-rhapsody* | *-*-nextstep*)
         ;;	# these use non-conventional assembly syntax.
       powerpc64-*-aix*)
-	gmp_m4postinc="powerpc32/regmap.m4"
-	gmp_m4postinc="powerpc64/aix.m4"
+	gmp_m4postinc="powerpc32/regmap.m4 powerpc64/aix.m4"
         ;;
       *-*-aix*)
-	gmp_m4postinc="powerpc32/regmap.m4"
-	gmp_m4postinc="powerpc32/aix.m4"
+	gmp_m4postinc="powerpc32/regmap.m4 powerpc32/aix.m4"
         ;;
       *)
 	gmp_m4postinc="powerpc32/regmap.m4"
