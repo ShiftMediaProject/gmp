@@ -1132,6 +1132,10 @@ else
 [#include <stdio.h>
 #include "gmp.h"
 ])
+  if "$ac_cv_sizeof_mp_limb_t" = 0; then
+    AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
+  fi
+
   if grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null; then : ;
   else
     AC_DEFINE_UNQUOTED(BITS_PER_MP_LIMB,  (8 * $ac_cv_sizeof_mp_limb_t),
