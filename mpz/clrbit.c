@@ -34,9 +34,18 @@ mpz_clrbit (mpz_ptr d, unsigned long int bit_index)
     {
       if (limb_index < dsize)
 	{
-	  dp[limb_index] &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
-	  MPN_NORMALIZE (dp, dsize);
-	  d->_mp_size = dsize;
+          mp_limb_t  dlimb;
+          dlimb = dp[limb_index];
+          dlimb &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
+          dp[limb_index] = dlimb;
+
+          if (UNLIKELY (dlimb == 0 && limb_index == dsize-1))
+            {
+              do {
+                dsize--;
+              } while (dsize > 0 && dp[dsize-1] == 0);
+              d->_mp_size = dsize;
+            }
 	}
       else
 	;
@@ -66,11 +75,9 @@ mpz_clrbit (mpz_ptr d, unsigned long int bit_index)
 	    {
 	      /* Ugh.  The bit should be cleared outside of the end of the
 		 number.  We have to increase the size of the number.  */
-	      if (d->_mp_alloc < limb_index + 1)
-		{
-		  _mpz_realloc (d, limb_index + 1);
-		  dp = d->_mp_d;
-		}
+	      if (UNLIKELY (d->_mp_alloc < limb_index + 1))
+                dp = _mpz_realloc (d, limb_index + 1);
+
 	      MPN_ZERO (dp + dsize, limb_index - dsize);
 	      dp[limb_index] = (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
 	      d->_mp_size = -(limb_index + 1);
@@ -93,11 +100,9 @@ mpz_clrbit (mpz_ptr d, unsigned long int bit_index)
 	      /* We got carry all way out beyond the end of D.  Increase
 		 its size (and allocation if necessary).  */
 	      dsize++;
-	      if (d->_mp_alloc < dsize)
-		{
-		  _mpz_realloc (d, dsize);
-		  dp = d->_mp_d;
-		}
+	      if (UNLIKELY (d->_mp_alloc < dsize))
+                dp = _mpz_realloc (d, dsize);
+
 	      dp[i] = 1;
 	      d->_mp_size = -dsize;
 	    fin:;
