@@ -67,7 +67,7 @@ defframe(SAVE_ESI, -8)
 defframe(SAVE_EBX, -12)
 deflit(SAVE_SIZE, 12)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(mpn_rshift)

@@ -85,7 +85,7 @@ defframe(SAVE_EDI, -12)
 defframe(SAVE_EBP, -16)
 deflit(SAVE_SIZE, 16)
 
-	.text
+	TEXT
 	ALIGN(32)
 PROLOGUE(M4_function_1)
 	movl	PARAM_SIZE, %edx

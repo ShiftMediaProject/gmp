@@ -51,7 +51,7 @@ defframe(PARAM_DIVISOR,12)
 defframe(PARAM_SIZE,   8)
 defframe(PARAM_SRC,    4)
 
-	.text
+	TEXT
 	ALIGN(16)
 
 PROLOGUE(mpn_mod_1c)

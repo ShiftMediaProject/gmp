@@ -38,7 +38,7 @@ defframe(PARAM_WP,    4)
 
 defframe(VAR_COUNTER, -4)
 
-	.text
+	TEXT
 	ALIGN(8)
 PROLOGUE(mpn_mul_basecase)
 

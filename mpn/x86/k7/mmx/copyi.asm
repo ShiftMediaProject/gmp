@@ -53,7 +53,7 @@ define(SAVE_EBX,`PARAM_SIZE')
 dnl  minimum 5 since the unrolled code can't handle less than 5
 deflit(UNROLL_THRESHOLD, 5)
 
-	.text
+	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_copyi)
 deflit(`FRAME',0)

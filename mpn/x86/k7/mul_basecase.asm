@@ -64,7 +64,7 @@ defframe(PARAM_XSIZE,12)
 defframe(PARAM_XP,   8)
 defframe(PARAM_WP,   4)
 
-	.text
+	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mul_basecase)
 deflit(`FRAME',0)

@@ -72,7 +72,7 @@ defframe(VAR_DST_STOP,-36)
 
 deflit(STACK_SPACE, 36)
 
-	.text
+	TEXT
 	ALIGN(16)
 
 PROLOGUE(mpn_divrem_1c)

@@ -53,7 +53,7 @@ defframe(VAR_MULTIPLIER, -4)
 defframe(VAR_COUNTER,    -8)
 deflit(VAR_STACK_SPACE,  8)
 
-	.text
+	TEXT
 	ALIGN(8)
 
 PROLOGUE(mpn_mul_basecase)

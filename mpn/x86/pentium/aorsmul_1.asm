@@ -49,7 +49,7 @@ defframe(PARAM_SIZE,      12)
 defframe(PARAM_SRC,       8)
 defframe(PARAM_DST,       4)
 
-	.text
+	TEXT
 	ALIGN(8)
 
 PROLOGUE(M4_function_1)

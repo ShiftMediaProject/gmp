@@ -40,7 +40,7 @@ dnl  Minimum 9, because the unrolled loop can't handle less.
 dnl
 deflit(UNROLL_THRESHOLD, 9)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(mpn_rshift)

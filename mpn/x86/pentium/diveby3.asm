@@ -42,7 +42,7 @@ deflit(ONE_THIRD_CEIL,   0x55555556)
 deflit(TWO_THIRDS_CEIL,  0xAAAAAAAB)
 deflit(TWO_THIRDS_FLOOR, 0xAAAAAAAA)
 
-	.text
+	TEXT
 	ALIGN(8)
 
 PROLOGUE(mpn_divexact_by3c)

@@ -40,7 +40,7 @@ defframe(PARAM_DST,   4)
 dnl  multiplicative inverse of 3, modulo 2^32
 deflit(INVERSE_3, 0xAAAAAAAB)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(mpn_divexact_by3c)

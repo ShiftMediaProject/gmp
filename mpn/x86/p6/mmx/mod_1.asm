@@ -59,7 +59,7 @@ defframe(VAR_SRC_STOP,-28)
 
 deflit(STACK_SPACE, 28)
 
-	.text
+	TEXT
 	ALIGN(16)
 
 PROLOGUE(mpn_mod_1c)

@@ -69,7 +69,7 @@ deflit(`FRAME',0)
 dnl  minimum 5 because the unrolled code can't handle less
 deflit(UNROLL_THRESHOLD, 5)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(M4_function_nc)

@@ -46,7 +46,7 @@ defframe(PARAM_DST,       4)
 dnl  minimum 5 because the unrolled code can't handle less
 deflit(UNROLL_THRESHOLD, 5)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(mpn_mul_1c)

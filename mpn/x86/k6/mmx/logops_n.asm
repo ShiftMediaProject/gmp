@@ -105,7 +105,7 @@ defframe(PARAM_SRC1,8)
 defframe(PARAM_DST, 4)
 deflit(`FRAME',0)
 
-	.text
+	TEXT
 	ALIGN(32)
 PROLOGUE(M4_function)
 			movl	PARAM_SIZE, %ecx

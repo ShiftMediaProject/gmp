@@ -96,7 +96,7 @@ defframe(PARAM_SRC,    12)
 defframe(PARAM_XSIZE,  8)
 defframe(PARAM_DST,    4)
 
-	.text
+	TEXT
 	ALIGN(16)
 
 PROLOGUE(mpn_divrem_1c)

@@ -89,7 +89,7 @@ defframe(SAVE_EBX, -12)
 defframe(SAVE_EDI, -16)
 deflit(STACK_SPACE, 16)
 
-	.text
+	TEXT
 	ALIGN(32)
 deflit(`FRAME',0)
 

@@ -41,7 +41,7 @@ dnl  ceil(b/3) and floor(b*2/3) where b=2^32
 deflit(ONE_THIRD_CEIL,   0x55555556)
 deflit(TWO_THIRDS_FLOOR, 0xAAAAAAAA)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(mpn_divexact_by3c)

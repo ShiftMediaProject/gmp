@@ -44,7 +44,7 @@ define(SAVE_ESI,`PARAM_SRC')
 dnl  minimum 5 since the unrolled code can't handle less than 5
 deflit(UNROLL_THRESHOLD, 5)
 
-	.text
+	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_copyd)
 

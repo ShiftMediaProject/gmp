@@ -44,7 +44,7 @@ deflit(`FRAME',0)
 dnl  minimum 5, because the unrolled loop can't handle less
 deflit(UNROLL_THRESHOLD, 5)
 
-	.text
+	TEXT
 	ALIGN(8)
 
 PROLOGUE(mpn_lshift)

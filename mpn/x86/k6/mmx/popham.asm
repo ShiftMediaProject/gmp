@@ -91,7 +91,7 @@ LS(rodata_000000FF000000FF):
 	.long	0x000000FF
 ')
 
-	.text
+	TEXT
 	ALIGN(32)
 
 POP(`ifdef(`PIC', `

@@ -76,7 +76,7 @@ deflit(UNROLL_THRESHOLD, 7)
 deflit(UNROLL_THRESHOLD, 5)
 ')
 
-	.text
+	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mul_1c)
 deflit(`FRAME',0)

@@ -50,7 +50,7 @@ dnl  ceil(b/3) and ceil(b*2/3) where b=2^32
 deflit(ONE_THIRD_CEIL,  0x55555556)
 deflit(TWO_THIRDS_CEIL, 0xAAAAAAAB)
 
-	.text
+	TEXT
 	ALIGN(8)
 
 PROLOGUE(mpn_divexact_by3c)

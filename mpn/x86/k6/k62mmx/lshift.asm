@@ -42,7 +42,7 @@ define(VAR_RETVAL,`PARAM_SRC')
 dnl  minimum 9, because unrolled loop can't handle less
 deflit(UNROLL_THRESHOLD, 9)
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(mpn_lshift)

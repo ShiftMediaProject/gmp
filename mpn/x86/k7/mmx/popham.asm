@@ -116,7 +116,7 @@ LS(rodata_0F0F0F0F0F0F0F0F):
 	.long	0x0F0F0F0F
 ')
 
-	.text
+	TEXT
 	ALIGN(32)
 
 PROLOGUE(M4_function)
