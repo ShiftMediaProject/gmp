@@ -169,7 +169,7 @@ void _mp_default_free ();
     if ((size) < KARATSUBA_THRESHOLD)					\
       impn_mul_n_basecase (prodp, up, vp, size);			\
     else								\
-      impn_mul_n (prodp, up, vp, size, tspace);			\
+      impn_mul_n (prodp, up, vp, size, tspace);				\
   } while (0);
 #define MPN_SQR_N_RECURSE(prodp, up, size, tspace) \
   do {									\
@@ -364,3 +364,7 @@ union ieee_double_extract
 
 double __gmp_scale2 _PROTO ((double, int));
 int __gmp_extract_double _PROTO((mp_ptr, double));
+
+extern int __gmp_junk;
+extern int __gmp_0;
+#define DIVIDE_BY_ZERO (__gmp_junk = 10/__gmp_0)
