@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 5 Oct 2002.  An up-to-date version is available at
+  This file current as of 18 Oct 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -159,9 +159,10 @@ MA 02111-1307, USA.
 
 <p> <li> <strong>Nth root</strong>
 
-  <p> Implement, at the mpn level, a routine for computing the nth root of a
-  number.  The routine should use Newton's method, preferably without using
-  division.
+  <p> Improve mpn_rootrem.  The current code is really naive, using full
+  precision from the first iteration.  Also, calling mpn_pow_1 isn't very
+  clever, as only 1/n of the result bits will be used; truncation after each
+  multiplication would be better.  Avoiding division might also be possible.
 
   <p> If the routine becomes fast enough, perhaps square roots could be computed
   using this function.
