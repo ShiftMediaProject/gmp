@@ -50,14 +50,14 @@ check_params (void)
       /* Test the consistency between urandomm and urandomb. */
       gmp_randinit_default (r1);
       gmp_randinit_default (r2);
-      gmp_randseed_ui (r1, 85);
-      gmp_randseed_ui (r2, 85);
-      mpz_set_ui (m, 0);
-      mpz_setbit (m, 80);
+      gmp_randseed_ui (r1, 85L);
+      gmp_randseed_ui (r2, 85L);
+      mpz_set_ui (m, 0L);
+      mpz_setbit (m, 80L);
       for (i = 0; i < 100; i++)
 	{
 	  mpz_urandomm (a, r1, m);
-	  mpz_urandomb (b, r2, 80);
+	  mpz_urandomb (b, r2, 80L);
 	  if (mpz_cmp (a, b) != 0)
 	    {
 	      result = FALSE;
@@ -73,14 +73,14 @@ check_params (void)
     {
       /* Test that mpz_urandomm returns the correct result with a
 	 broken LC.  */
-      mpz_set_ui (a, 0);
-      gmp_randinit_lc_2exp (r1, a, 0xFF, 8);
-      mpz_set_ui (m, 5);
+      mpz_set_ui (a, 0L);
+      gmp_randinit_lc_2exp (r1, a, 0xffL, 8L);
+      mpz_set_ui (m, 5L);
       /* Warning: This code hangs in gmp 4.1 and below */
       for (i = 0; i < 100; i++)
 	{
 	  mpz_urandomm (a, r1, m);
-	  if (mpz_cmp_ui (a, 2) != 0)
+	  if (mpz_cmp_ui (a, 2L) != 0)
 	    {
 	      result = FALSE;
 	      gmp_printf ("mpz_urandomm returns %Zd instead of 2\n", a);
@@ -95,23 +95,23 @@ check_params (void)
       /* Test that the results are always in range for either
          positive or negative values of m.  */
       gmp_randinit_default (r1);
-      mpz_set_ui (m, 5);
-      mpz_set_si (b, -5);
+      mpz_set_ui (m, 5L);
+      mpz_set_si (b, -5L);
       for (i = 0; i < 100; i++)
 	{
 	  mpz_urandomm (a, r1, m);
-	  if (mpz_cmp_ui (a, 5) >= 0 || mpz_sgn (a) < 0)
+	  if (mpz_cmp_ui (a, 5L) >= 0 || mpz_sgn (a) < 0)
 	    {
 	      result = FALSE;
 	      gmp_printf ("Out-of-range or non-positive value: %Zd\n", a);
 	      break;
 	    }
 	  mpz_urandomm (a, r1, b);
-	  if (mpz_cmp_ui (a, 5) >= 0 || mpz_sgn (a) < 0)
+	  if (mpz_cmp_ui (a, 5L) >= 0 || mpz_sgn (a) < 0)
 	    {
 	      result = FALSE;
 	      gmp_printf ("Out-of-range or non-positive value (from negative modulus): %Zd\n", a);
-              break;
+	      break;
 	    }
 	}
       gmp_randclear (r1);
@@ -121,7 +121,7 @@ check_params (void)
     {
       /* Test that m=1 forces always result=0.  */
       gmp_randinit_default (r1);
-      mpz_set_ui (m, 1);
+      mpz_set_ui (m, 1L);
       for (i = 0; i < 100; i++)
 	{
 	  mpz_urandomm (a, r1, m);
@@ -129,7 +129,7 @@ check_params (void)
 	    {
 	      result = FALSE;
 	      gmp_printf ("mpz_urandomm fails with m=1 (result=%Zd)\n", a);
-              break;
+	      break;
 	    }
 	}
       gmp_randclear (r1);
