@@ -287,7 +287,7 @@ freq_sysctl_hw_model (int help)
   unsigned  val;
   size_t    size;
   char      *p;
-  int       i, end;
+  int       end;
 
   HELP ("sysctl() hw.model");
 
