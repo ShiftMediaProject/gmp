@@ -43,9 +43,6 @@ MA 02111-1307, USA. */
 
    Future:
 
-   K==2 isn't needed in the current uses of this code and the bits specific
-   for that could be dropped.
-
    It might be possible to avoid a small number of MPN_COPYs by using a
    rotating temporary or two.
 
@@ -106,7 +103,8 @@ mpn_fft_best_k (n, sqr)
 
 
 /* Returns smallest possible number of limbs >= pl for a fft of size 2^k.
-   FIXME: Is this simply pl rounded up to the next multiple of 2^k ?  */
+   FIXME: Is this simply pl rounded up to the next multiple of 2^k*max(2^k,
+   BITS_PER_MP_LIMB) bits? */
 
 mp_size_t
 #if __STDC__
