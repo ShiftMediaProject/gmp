@@ -961,6 +961,28 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
 #endif
 
 
+/* USE_PREINV_MOD_1 is whether to use mpn_preinv_mod_1, or to just use plain
+   mpn_mod_1.  If there's a native mpn_preinv_mod_1 then it's assumed to be
+   fast.  If preinv is the only division method, then mpn_preinv_mod_1 will
+   naturally want to be used.  Otherwise see which of udiv_qrnnd or
+   udiv_qrnnd_preinv is faster.  */
+#ifndef USE_PREINV_MOD_1
+#if HAVE_NATIVE_mpn_preinv_mod_1 || UDIV_PREINV_ALWAYS
+#define USE_PREINV_MOD_1   1
+#else
+#define USE_PREINV_MOD_1   (UDIV_TIME > UDIV_NORM_PREINV_TIME)
+#endif
+#endif
+
+#if USE_PREINV_MOD_1
+#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       \
+  mpn_preinv_mod_1 (src, size, divisor, inverse)
+#else
+#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       \
+  mpn_mod_1 (src, size, divisor)
+#endif
+
+
 /* modlimb_invert() sets "inv" to the multiplicative inverse of "n" modulo
    2^BITS_PER_MP_LIMB, ie. so that inv*n == 1 mod 2^BITS_PER_MP_LIMB.
    "n" must be odd (otherwise such an inverse doesn't exist).
