@@ -1,7 +1,7 @@
 dnl  Intel Pentium-4 mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,7 +23,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C P4: 4 cycles/limb
+C P4: 4 cycles/limb src!=dst, 6 cycles/limb src==dst
 
 
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
@@ -32,6 +32,8 @@ C mp_limb_t mpn_mul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                       mp_limb_t multiplier, mp_limb_t carry);
 C
 C Only the carry limb propagation is on the dependent chain, hence 4 c/l.
+C Unfortunately when src==dst the write-combining described in
+C mpn/x86/pentium4/README takes us up to 6 c/l.
 
 defframe(PARAM_CARRY,     20)
 defframe(PARAM_MULTIPLIER,16)
