@@ -1,4 +1,4 @@
-@ ARM/Thumb __gmpn_sub -- Subtract two limb vectors of the same length > 0 and
+@ ARM/Thumb mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 @ store difference in a third limb vector.
 
 @ Copyright 1997, 2000 Free Software Foundation, Inc.
