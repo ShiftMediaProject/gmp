@@ -1,6 +1,11 @@
 2000-03-14  Linus Nordberg  <linus@swox.se>
 
+	* configure.in (gmp_srclinks): Set to list of links created by
+	configure.
+	* configure: Regenerate.
+
 	* Makefile.am (libgmp_la_LDFLAGS): Set version info.
+	(DISTCLEANFILES): Include @gmp_srclinks@.
 	* Makefile.in: Regenerate.
 
 2000-03-13  Linus Nordberg  <linus@swox.se>
