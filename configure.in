@@ -81,7 +81,11 @@ esac],
 if test "$enable_assert" = "yes"; then
   AC_DEFINE(WANT_ASSERT,1,
   [Define to 1 to enable ASSERT checking, per --enable-assert])
+  want_assert_01=1
+else
+  want_assert_01=0
 fi
+GMP_DEFINE_RAW(["define(<WANT_ASSERT>,$want_assert_01)"])
 
 
 AC_ARG_ENABLE(alloca,
