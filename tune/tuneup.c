@@ -85,7 +85,11 @@ extern int optind, opterr;
 #define MAX_TABLE       2     /* threshold entries */
 
 
+#if WANT_FFT
 mp_size_t  option_fft_max_size = 50000;  /* limbs */
+#else
+mp_size_t  option_fft_max_size = 0;
+#endif
 int        option_trace = 0;
 int        option_fft_trace = 0;
 struct speed_params  s;
@@ -666,36 +670,39 @@ all (void)
   }
   printf("\n");
 
-  {
-    static struct fft_param_t  param;
-    param.table_name          = "FFT_MUL_TABLE";
-    param.threshold_name      = "FFT_MUL_THRESHOLD";
-    param.p_threshold         = &FFT_MUL_THRESHOLD;
-    param.modf_threshold_name = "FFT_MODF_MUL_THRESHOLD";
-    param.p_modf_threshold    = &FFT_MODF_MUL_THRESHOLD;
-    param.first_size          = TOOM3_MUL_THRESHOLD / 2;
-    param.max_size            = option_fft_max_size;
-    param.function            = speed_mpn_mul_fft;
-    param.mul_function        = speed_mpn_mul_n;
-    param.sqr = 0;
-    fft (&param);
-  }
-  printf("\n");
-  {
-    static struct fft_param_t  param;
-    param.table_name          = "FFT_SQR_TABLE";
-    param.threshold_name      = "FFT_SQR_THRESHOLD";
-    param.p_threshold         = &FFT_SQR_THRESHOLD;
-    param.modf_threshold_name = "FFT_MODF_SQR_THRESHOLD";
-    param.p_modf_threshold    = &FFT_MODF_SQR_THRESHOLD;
-    param.first_size          = TOOM3_SQR_THRESHOLD / 2;
-    param.max_size            = option_fft_max_size;
-    param.function            = speed_mpn_mul_fft_sqr;
-    param.mul_function        = speed_mpn_sqr_n;
-    param.sqr = 0;
-    fft (&param);
-  }
-  printf ("\n");
+  if (option_fft_max_size != 0)
+    {
+      {
+        static struct fft_param_t  param;
+        param.table_name          = "FFT_MUL_TABLE";
+        param.threshold_name      = "FFT_MUL_THRESHOLD";
+        param.p_threshold         = &FFT_MUL_THRESHOLD;
+        param.modf_threshold_name = "FFT_MODF_MUL_THRESHOLD";
+        param.p_modf_threshold    = &FFT_MODF_MUL_THRESHOLD;
+        param.first_size          = TOOM3_MUL_THRESHOLD / 2;
+        param.max_size            = option_fft_max_size;
+        param.function            = speed_mpn_mul_fft;
+        param.mul_function        = speed_mpn_mul_n;
+        param.sqr = 0;
+        fft (&param);
+      }
+      printf("\n");
+      {
+        static struct fft_param_t  param;
+        param.table_name          = "FFT_SQR_TABLE";
+        param.threshold_name      = "FFT_SQR_THRESHOLD";
+        param.p_threshold         = &FFT_SQR_THRESHOLD;
+        param.modf_threshold_name = "FFT_MODF_SQR_THRESHOLD";
+        param.p_modf_threshold    = &FFT_MODF_SQR_THRESHOLD;
+        param.first_size          = TOOM3_SQR_THRESHOLD / 2;
+        param.max_size            = option_fft_max_size;
+        param.function            = speed_mpn_mul_fft_sqr;
+        param.mul_function        = speed_mpn_sqr_n;
+        param.sqr = 0;
+        fft (&param);
+      }
+      printf ("\n");
+    }
 
   TMP_FREE (marker);
 }
