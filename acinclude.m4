@@ -435,6 +435,13 @@ unsigned long gcc303 () { return (unsigned long) d; }
 double fneg_data;
 unsigned long fneg () { return -fneg_data; }
 
+/* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
+   (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
+   those.  Not sure how much of the gmp code will come out wanting sse2, but
+   it's easiest to reject an option we know is bad.  */
+double ftod_data;
+float ftod () { return (float) ftod_data; }
+
 int main () { return 0; }
 EOF
 gmp_prog_cc_works=no
@@ -712,6 +719,30 @@ fi
 ])
 
 
+dnl  GMP_GCC_PENTIUM4_SSE2(CC+CFLAGS,[ACTION-IF-YES][,ACTION-IF-NO])
+dnl  ---------------------------------------------------------------
+dnl  Determine whether gcc CC+CFLAGS is a good enough version for
+dnl  -march=pentium4 with sse2.
+dnl
+dnl  Gcc 3.2.1 was seen generating incorrect code for raw double -> int
+dnl  conversions through a union.  We believe the problem is in all 3.1 and
+dnl  3.2 versions, but that it's fixed in 3.3.
+
+AC_DEFUN(GMP_GCC_PENTIUM4_SSE2,
+[AC_MSG_CHECKING([whether gcc is good for sse2])
+case `$1 -dumpversion` in
+  [3.[012] | 3.[012].*]) result=no ;;
+  *)                     result=yes ;;
+esac
+AC_MSG_RESULT($result)
+if test "$result" = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
 dnl  GMP_GCC_WA_MCPU(CC+CFLAGS, NEWFLAG [,ACTION-YES [,ACTION-NO]])
 dnl  --------------------------------------------------------------
 dnl  Check whether gcc (or gas rather) accepts a flag like "-Wa,-mev67".
@@ -797,6 +828,95 @@ if test "$result" = yes; then
 else
   ifelse([$3],,:,[$3])
 fi
+])
+
+
+dnl  GMP_OS_X86_XMM(CC+CFLAGS,[ACTION-IF-YES][,ACTION-IF-NO])
+dnl  --------------------------------------------------------
+dnl  Determine whether the operating system supports XMM registers.
+dnl
+dnl  If build==host then a test program is run, executing an SSE2
+dnl  instruction using an XMM register.  This will give a SIGILL if the
+dnl  system hasn't set the OSFXSR bit in CR4 to say it knows it must use
+dnl  fxsave/fxrestor in a context switch (to save xmm registers).
+dnl
+dnl  If build!=host, we can fallback on:
+dnl
+dnl      - FreeBSD version 4 is the first supporting xmm.
+dnl
+dnl      - Linux kernel 2.4 might be the first stable series supporting xmm
+dnl        (not sure).  But there's no version number in the GNU/Linux
+dnl        config tuple to test anyway.
+dnl
+dnl  The default is to allow xmm.  This might seem rash, but it's likely
+dnl  most systems know xmm by now, so this will normally be what's wanted.
+dnl  And cross compiling is a bit hairy anyway, so hopefully anyone doing it
+dnl  will be smart enough to know what to do.
+dnl
+dnl  In the test program, .text and .globl are hard coded because this macro
+dnl  is wanted before GMP_ASM_TEXT and GMP_ASM_GLOBL are run.  A .byte
+dnl  sequence is used (for xorps %xmm0, %xmm0) to make us independent of
+dnl  tests for whether the assembler supports sse2/xmm.  Obviously we need
+dnl  both assembler and OS support, but no need for force the order in which
+dnl  we test.
+dnl
+dnl  FIXME: Maybe we should use $CCAS to assemble, if it's set.  (Would
+dnl  still want $CC/$CFLAGS for the link.)  But this test is used before
+dnl  AC_PROG_CC sets $OBJEXT, so we'd need to check for various object file
+dnl  suffixes ourselves.
+
+AC_DEFUN(GMP_OS_X86_XMM,
+[AC_CACHE_CHECK([whether the operating system supports XMM registers],
+		gmp_cv_os_x86_xmm,
+[if test "$build" = "$host"; then
+  cat >conftest.s <<EOF
+	.text
+main:
+_main:
+	.globl	main
+	.globl	_main
+	.byte	0x0f, 0x57, 0xc0
+	xorl	%eax, %eax
+	ret
+EOF
+  gmp_compile="$1 conftest.s -o conftest >&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_compile); then
+    if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then
+      gmp_cv_os_x86_xmm=yes
+    else
+      gmp_cv_os_x86_xmm=no
+    fi
+  else
+    AC_MSG_WARN([Oops, cannot compile test program])
+  fi
+  rm -f conftest*
+fi
+
+if test -z "$gmp_cv_os_x86_xmm"; then
+  case $host_os in
+    [freebsd[123] | freebsd[123].*])
+      gmp_cv_os_x86_xmm=no ;;
+    freebsd*)
+      gmp_cv_os_x86_xmm=yes ;;
+    *)
+      gmp_cv_os_x86_xmm=probably ;;
+  esac
+fi
+])
+
+if test "$gmp_cv_os_x86_xmm" = probably; then
+  AC_MSG_WARN([Not certain of OS support for xmm when cross compiling.])
+  AC_MSG_WARN([Will assume it's ok, expect a SIGILL if this is wrong.])
+fi
+
+case $gmp_cv_os_x86_xmm in
+no)
+  $3
+  ;;
+*)
+  $2
+  ;;
+esac
 ])
 
 
