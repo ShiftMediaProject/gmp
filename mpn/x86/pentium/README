@@ -15,8 +15,9 @@ STATUS
 
 	mpn_divrem_1              44.0
 	mpn_mod_1                 44.0
+	mpn_divexact_by3          15.0
 
-	mpn_l/rshift               5.375-6.0 normal
+	mpn_l/rshift               5.375 normal (6.0 on P54)
 				   1.875 special shift by 1 bit
 
 	mpn_mul_1                 13.0
