@@ -36,6 +36,7 @@ MA 02111-1307, USA. */
 #define GMP_NAIL_BITS                      @GMP_NAIL_BITS@
 #endif
 #define GMP_NUMB_BITS  (GMP_LIMB_BITS - GMP_NAIL_BITS)
+#define GMP_NUMB_MASK     ((~(mp_limb_t) 0) >> GMP_NAIL_BITS)
 
 
 /* The following (everything under ifndef __GNU_MP__) must be identical in
@@ -1724,6 +1725,7 @@ mpq_neg (mpq_ptr __gmp_w, mpq_srcptr __gmp_u)
    instructions to save and any gain is all too easily lost by register
    juggling setting up for the asm.  */
 
+#if GMP_NAIL_BITS == 0
 #define __GMPN_AORS_1(cout, dst, src, n, v, OP, CB)		\
   do {								\
     mp_size_t  __gmp_i;						\
@@ -1760,6 +1762,46 @@ mpq_neg (mpq_ptr __gmp_w, mpq_srcptr __gmp_u)
 	(cout) = 0;						\
       }								\
   } while (0)
+#endif
+
+#if GMP_NAIL_BITS >= 1
+#define __GMPN_AORS_1(cout, dst, src, n, v, OP, CB)		\
+  do {								\
+    mp_size_t  __gmp_i;						\
+    mp_limb_t  __gmp_x, __gmp_r;				\
+								\
+    /* ASSERT ((n) >= 1); */					\
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, n)); */	\
+								\
+    __gmp_x = (src)[0];						\
+    __gmp_r = __gmp_x OP (v);					\
+    (dst)[0] = __gmp_r & GMP_NUMB_MASK;				\
+    if (__gmp_r >> GMP_NUMB_BITS != 0)				\
+      {								\
+	(cout) = 1;						\
+	for (__gmp_i = 1; __gmp_i < (n);)			\
+	  {							\
+	    __gmp_x = (src)[__gmp_i];				\
+	    __gmp_r = __gmp_x OP 1;				\
+	    (dst)[__gmp_i] = __gmp_r & GMP_NUMB_MASK;		\
+	    ++__gmp_i;						\
+	    if (__gmp_r >> GMP_NUMB_BITS == 0)			\
+	      {							\
+		if ((src) != (dst))				\
+		  __GMPN_COPY_REST (dst, src, n, __gmp_i);	\
+		(cout) = 0;					\
+		break;						\
+	      }							\
+	  }							\
+      }								\
+    else							\
+      {								\
+	if ((src) != (dst))					\
+	  __GMPN_COPY_REST (dst, src, n, 1);			\
+	(cout) = 0;						\
+      }								\
+  } while (0)
+#endif
 
 #define __GMPN_ADDCB(r,x,y) ((r) < (y))
 #define __GMPN_SUBCB(r,x,y) ((x) < (y))
