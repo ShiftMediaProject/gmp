@@ -6,30 +6,32 @@
 
 #define	EOS	257
 #define	BAD	258
-#define	HEX	259
-#define	DECIMAL	260
-#define	QUIT	261
-#define	ABS	262
-#define	BIN	263
-#define	FIB	264
-#define	GCD	265
-#define	KRON	266
-#define	LCM	267
-#define	NEXTPRIME	268
-#define	POWM	269
-#define	ROOT	270
-#define	SQRT	271
-#define	NUMBER	272
-#define	VARIABLE	273
-#define	LOR	274
-#define	LAND	275
-#define	EQ	276
-#define	NE	277
-#define	LE	278
-#define	GE	279
-#define	LSHIFT	280
-#define	RSHIFT	281
-#define	UMINUS	282
+#define	HELP	259
+#define	HEX	260
+#define	DECIMAL	261
+#define	QUIT	262
+#define	ABS	263
+#define	BIN	264
+#define	FIB	265
+#define	GCD	266
+#define	KRON	267
+#define	LCM	268
+#define	LUCNUM	269
+#define	NEXTPRIME	270
+#define	POWM	271
+#define	ROOT	272
+#define	SQRT	273
+#define	NUMBER	274
+#define	VARIABLE	275
+#define	LOR	276
+#define	LAND	277
+#define	EQ	278
+#define	NE	279
+#define	LE	280
+#define	GE	281
+#define	LSHIFT	282
+#define	RSHIFT	283
+#define	UMINUS	284
 
 #line 1 "calc.y"
 
@@ -55,45 +57,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 /* This is a simple program, meant only to show one way to use GMP for this
    sort of thing.  There's few features, and error checking is minimal.
-   Standard input is read, there's no command line options.
-
-   Examples:
-       2+3*4        expressions are evaluated
-       x=5^6        variables a to z can be set and used
-
-   Operators:
-       + - *        arithmetic
-       / %          division and remainder (rounding towards negative infinity)
-       ^            exponentiation
-       !            factorial
-       << >>        left and right shifts
-       <= >= >      \ comparisons, giving 1 if true, 0 if false
-       == != <      /
-       && ||        logical and/or, giving 1 if true, 0 if false
-
-   Functions:
-       abs(n)       absolute value
-       bin(n,m)     binomial coefficient
-       fib(n)       fibonacci number
-       gcd(a,b,..)  greatest common divisor
-       kron(a,b)    kronecker symbol
-       lcm(a,b,..)  least common multiple
-       nextprime(n) next prime after n
-       powm(b,e,m)  modulo powering, b^e%m
-       root(n,r)    r-th root
-       sqrt(n)      square root
-
-   Other:
-       hex          \ set hex or decimal for input and output
-       decimal      /   ("0x" can be used for hex too)
-       quit         exit program (EOF works too)
-       ;            statements are separated with a ; or newline
-       \            continue expressions with \ before newline
-       # xxx        comments are # though to newline
-
-   Hex numbers must be entered in upper case, to distinguish them from the
-   variables a to f (like in bc).
-
+   Standard input is read, calc_help() below shows the inputs accepted.
 
    Expressions are evaluated as they're read.  If user defined functions
    were wanted it'd be necessary to build a parse tree like pexpr.c does, or
@@ -118,10 +82,52 @@ Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include "gmp.h"
+#define NO_CALC_H /* because it conflicts with normal calc.c stuff */
+#include "calc-common.h"
+
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
+
+
+void
+calc_help (void)
+{
+  printf ("Examples:\n");
+  printf ("    2+3*4        expressions are evaluated\n");
+  printf ("    x=5^6        variables a to z can be set and used\n");
+  printf ("Operators:\n");
+  printf ("    + - *        arithmetic\n");
+  printf ("    / %%          division and remainder (rounding towards negative infinity)\n");
+  printf ("    ^            exponentiation\n");
+  printf ("    !            factorial\n");
+  printf ("    << >>        left and right shifts\n");
+  printf ("    <= >= >      \\ comparisons, giving 1 if true, 0 if false\n");
+  printf ("    == != <      /\n");
+  printf ("    && ||        logical and/or, giving 1 if true, 0 if false\n");
+  printf ("Functions:\n");
+  printf ("    abs(n)       absolute value\n");
+  printf ("    bin(n,m)     binomial coefficient\n");
+  printf ("    fib(n)       fibonacci number\n");
+  printf ("    gcd(a,b,..)  greatest common divisor\n");
+  printf ("    kron(a,b)    kronecker symbol\n");
+  printf ("    lcm(a,b,..)  least common multiple\n");
+  printf ("    lucnum(n)    lucas number\n");
+  printf ("    nextprime(n) next prime after n\n");
+  printf ("    powm(b,e,m)  modulo powering, b^e%%m\n");
+  printf ("    root(n,r)    r-th root\n");
+  printf ("    sqrt(n)      square root\n");
+  printf ("Other:\n");
+  printf ("    hex          \\ set hex or decimal for input and output\n");
+  printf ("    decimal      /   (\"0x\" can be used for hex too)\n");
+  printf ("    quit         exit program (EOF works too)\n");
+  printf ("    ;            statements are separated with a ; or newline\n");
+  printf ("    \\            continue expressions with \\ before newline\n");
+  printf ("    # xxx        comments are # though to newline\n");
+  printf ("Hex numbers must be entered in upper case, to distinguish them from the\n");
+  printf ("variables a to f (like in bc).\n");
+}
 
 
 int  ibase = 0;
@@ -170,7 +176,7 @@ mpz_t  variable[26];
     }
 
 
-#line 140 "calc.y"
+#line 144 "calc.y"
 typedef union {
   char  *str;
   int   var;
@@ -185,23 +191,23 @@ typedef union {
 
 
 
-#define	YYFINAL		113
+#define	YYFINAL		118
 #define	YYFLAG		-32768
-#define	YYNTBASE	42
+#define	YYNTBASE	44
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 282 ? yytranslate[x] : 48)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 284 ? yytranslate[x] : 50)
 
 static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,    37,     2,     2,     2,    34,     2,     2,    39,
-    40,    32,    30,    41,    31,     2,    33,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    22,
-    38,    23,     2,     2,     2,     2,     2,     2,     2,     2,
+     2,     2,    39,     2,     2,     2,    36,     2,     2,    41,
+    42,    34,    32,    43,    33,     2,    35,     2,     2,     2,
+     2,     2,     2,     2,     2,     2,     2,     2,     2,    24,
+    40,    25,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,    36,     2,     2,     2,     2,     2,     2,
+     2,     2,     2,    38,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -219,49 +225,50 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     1,     3,     4,     5,     6,
      7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
-    17,    18,    19,    20,    21,    24,    25,    26,    27,    28,
-    29,    35
+    17,    18,    19,    20,    21,    22,    23,    26,    27,    28,
+    29,    30,    31,    37
 };
 
 #if YYDEBUG != 0
 static const short yyprhs[] = {     0,
      0,     2,     5,     8,    12,    15,    16,    18,    22,    24,
-    26,    28,    32,    36,    40,    44,    48,    52,    56,    60,
-    64,    67,    70,    74,    78,    82,    86,    90,    94,    98,
-   102,   107,   114,   119,   124,   131,   136,   141,   150,   157,
-   162,   164,   166,   168,   172,   174
+    26,    28,    30,    34,    38,    42,    46,    50,    54,    58,
+    62,    66,    69,    72,    76,    80,    84,    88,    92,    96,
+   100,   104,   109,   116,   121,   126,   133,   138,   143,   148,
+   157,   164,   169,   171,   173,   175,   179,   181
 };
 
-static const short yyrhs[] = {    44,
-     0,    43,    44,     0,    44,     3,     0,    43,    44,     3,
-     0,     1,     3,     0,     0,    45,     0,    19,    38,    45,
-     0,     5,     0,     6,     0,     7,     0,    39,    45,    40,
-     0,    45,    30,    45,     0,    45,    31,    45,     0,    45,
-    32,    45,     0,    45,    33,    45,     0,    45,    34,    45,
-     0,    45,    36,    45,     0,    45,    28,    45,     0,    45,
-    29,    45,     0,    45,    37,     0,    31,    45,     0,    45,
-    22,    45,     0,    45,    26,    45,     0,    45,    24,    45,
-     0,    45,    25,    45,     0,    45,    27,    45,     0,    45,
-    23,    45,     0,    45,    21,    45,     0,    45,    20,    45,
-     0,     8,    39,    45,    40,     0,     9,    39,    45,    41,
-    45,    40,     0,    10,    39,    45,    40,     0,    11,    39,
-    46,    40,     0,    12,    39,    45,    41,    45,    40,     0,
-    13,    39,    47,    40,     0,    14,    39,    45,    40,     0,
-    15,    39,    45,    41,    45,    41,    45,    40,     0,    16,
-    39,    45,    41,    45,    40,     0,    17,    39,    45,    40,
-     0,    19,     0,    18,     0,    45,     0,    46,    41,    45,
-     0,    45,     0,    47,    41,    45,     0
+static const short yyrhs[] = {    46,
+     0,    45,    46,     0,    46,     3,     0,    45,    46,     3,
+     0,     1,     3,     0,     0,    47,     0,    21,    40,    47,
+     0,     5,     0,     6,     0,     7,     0,     8,     0,    41,
+    47,    42,     0,    47,    32,    47,     0,    47,    33,    47,
+     0,    47,    34,    47,     0,    47,    35,    47,     0,    47,
+    36,    47,     0,    47,    38,    47,     0,    47,    30,    47,
+     0,    47,    31,    47,     0,    47,    39,     0,    33,    47,
+     0,    47,    24,    47,     0,    47,    28,    47,     0,    47,
+    26,    47,     0,    47,    27,    47,     0,    47,    29,    47,
+     0,    47,    25,    47,     0,    47,    23,    47,     0,    47,
+    22,    47,     0,     9,    41,    47,    42,     0,    10,    41,
+    47,    43,    47,    42,     0,    11,    41,    47,    42,     0,
+    12,    41,    48,    42,     0,    13,    41,    47,    43,    47,
+    42,     0,    14,    41,    49,    42,     0,    15,    41,    47,
+    42,     0,    16,    41,    47,    42,     0,    17,    41,    47,
+    43,    47,    43,    47,    42,     0,    18,    41,    47,    43,
+    47,    42,     0,    19,    41,    47,    42,     0,    21,     0,
+    20,     0,    47,     0,    48,    43,    47,     0,    47,     0,
+    49,    43,    47,     0
 };
 
 #endif
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   164,   166,   168,   170,   171,   173,   175,   180,   186,   187,
-   188,   193,   195,   196,   197,   198,   199,   200,   202,   204,
-   206,   208,   210,   211,   212,   213,   214,   215,   217,   218,
-   220,   221,   223,   225,   226,   228,   229,   230,   231,   233,
-   235,   241,   251,   253,   255,   257
+   168,   170,   172,   174,   175,   177,   179,   184,   190,   191,
+   192,   193,   198,   200,   201,   202,   203,   204,   205,   207,
+   209,   211,   213,   215,   216,   217,   218,   219,   220,   222,
+   223,   225,   226,   228,   230,   231,   233,   234,   236,   237,
+   238,   240,   242,   248,   258,   260,   262,   264
 };
 #endif
 
@@ -269,184 +276,189 @@ static const short yyrline[] = { 0,
 #if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
 
 static const char * const yytname[] = {   "$","error","$undefined.","EOS","BAD",
-"HEX","DECIMAL","QUIT","ABS","BIN","FIB","GCD","KRON","LCM","NEXTPRIME","POWM",
-"ROOT","SQRT","NUMBER","VARIABLE","LOR","LAND","'<'","'>'","EQ","NE","LE","GE",
-"LSHIFT","RSHIFT","'+'","'-'","'*'","'/'","'%'","UMINUS","'^'","'!'","'='","'('",
-"')'","','","top","statements","statement","e","gcdlist","lcmlist", NULL
+"HELP","HEX","DECIMAL","QUIT","ABS","BIN","FIB","GCD","KRON","LCM","LUCNUM",
+"NEXTPRIME","POWM","ROOT","SQRT","NUMBER","VARIABLE","LOR","LAND","'<'","'>'",
+"EQ","NE","LE","GE","LSHIFT","RSHIFT","'+'","'-'","'*'","'/'","'%'","UMINUS",
+"'^'","'!'","'='","'('","')'","','","top","statements","statement","e","gcdlist",
+"lcmlist", NULL
 };
 #endif
 
 static const short yyr1[] = {     0,
-    42,    42,    43,    43,    43,    44,    44,    44,    44,    44,
-    44,    45,    45,    45,    45,    45,    45,    45,    45,    45,
-    45,    45,    45,    45,    45,    45,    45,    45,    45,    45,
-    45,    45,    45,    45,    45,    45,    45,    45,    45,    45,
-    45,    45,    46,    46,    47,    47
+    44,    44,    45,    45,    45,    46,    46,    46,    46,    46,
+    46,    46,    47,    47,    47,    47,    47,    47,    47,    47,
+    47,    47,    47,    47,    47,    47,    47,    47,    47,    47,
+    47,    47,    47,    47,    47,    47,    47,    47,    47,    47,
+    47,    47,    47,    47,    48,    48,    49,    49
 };
 
 static const short yyr2[] = {     0,
      1,     2,     2,     3,     2,     0,     1,     3,     1,     1,
-     1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-     2,     2,     3,     3,     3,     3,     3,     3,     3,     3,
-     4,     6,     4,     4,     6,     4,     4,     8,     6,     4,
-     1,     1,     1,     3,     1,     3
+     1,     1,     3,     3,     3,     3,     3,     3,     3,     3,
+     3,     2,     2,     3,     3,     3,     3,     3,     3,     3,
+     3,     4,     6,     4,     4,     6,     4,     4,     4,     8,
+     6,     4,     1,     1,     1,     3,     1,     3
 };
 
 static const short yydefact[] = {     0,
-     0,     9,    10,    11,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,    42,    41,     0,     0,     6,     1,
-     7,     5,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,    41,    22,     0,     2,     3,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,    21,     0,     0,     0,    43,     0,
-     0,    45,     0,     0,     0,     0,     0,     8,    12,     4,
-    30,    29,    23,    28,    25,    26,    24,    27,    19,    20,
-    13,    14,    15,    16,    17,    18,    31,     0,    33,    34,
-     0,     0,    36,     0,    37,     0,     0,    40,     0,    44,
-     0,    46,     0,     0,    32,    35,     0,    39,     0,    38,
-     0,     0,     0
+     0,     9,    10,    11,    12,     0,     0,     0,     0,     0,
+     0,     0,     0,     0,     0,     0,    44,    43,     0,     0,
+     6,     1,     7,     5,     0,     0,     0,     0,     0,     0,
+     0,     0,     0,     0,     0,     0,    43,    23,     0,     2,
+     3,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+     0,     0,     0,     0,     0,     0,     0,    22,     0,     0,
+     0,    45,     0,     0,    47,     0,     0,     0,     0,     0,
+     0,     8,    13,     4,    31,    30,    24,    29,    26,    27,
+    25,    28,    20,    21,    14,    15,    16,    17,    18,    19,
+    32,     0,    34,    35,     0,     0,    37,     0,    38,    39,
+     0,     0,    42,     0,    46,     0,    48,     0,     0,    33,
+    36,     0,    41,     0,    40,     0,     0,     0
 };
 
-static const short yydefgoto[] = {   111,
-    19,    20,    21,    60,    63
+static const short yydefgoto[] = {   116,
+    21,    22,    23,    63,    66
 };
 
 static const short yypact[] = {    39,
-    16,-32768,-32768,-32768,   -19,   -18,    -1,     2,     4,    25,
-    28,    30,    33,    34,-32768,    38,   118,   118,    86,    65,
-   437,-32768,   118,   118,   118,   118,   118,   118,   118,   118,
-   118,   118,   118,-32768,   -34,   248,    81,-32768,   118,   118,
-   118,   118,   118,   118,   118,   118,   118,   118,   118,   118,
-   118,   118,   118,   118,-32768,   269,   138,   290,   437,   -36,
-   160,   437,   -23,   311,   182,   204,   332,   437,-32768,-32768,
-   454,   470,   486,   486,   486,   486,   486,   486,    29,    29,
-    49,    49,   -34,   -34,   -34,   -34,-32768,   118,-32768,-32768,
-   118,   118,-32768,   118,-32768,   118,   118,-32768,   353,   437,
-   374,   437,   226,   395,-32768,-32768,   118,-32768,   416,-32768,
-    87,    88,-32768
+    17,-32768,-32768,-32768,-32768,   -20,     0,     2,    25,    28,
+    30,    33,    34,    37,    40,    46,-32768,   -18,   122,   122,
+    89,    67,   462,-32768,   122,   122,   122,   122,   122,   122,
+   122,   122,   122,   122,   122,   122,-32768,   -36,   252,    87,
+-32768,   122,   122,   122,   122,   122,   122,   122,   122,   122,
+   122,   122,   122,   122,   122,   122,   122,-32768,   273,   142,
+   294,   462,   -38,   164,   462,   -24,   315,   336,   186,   208,
+   357,   462,-32768,-32768,   479,   495,   511,   511,   511,   511,
+   511,   511,    29,    29,    50,    50,   -36,   -36,   -36,   -36,
+-32768,   122,-32768,-32768,   122,   122,-32768,   122,-32768,-32768,
+   122,   122,-32768,   378,   462,   399,   462,   230,   420,-32768,
+-32768,   122,-32768,   441,-32768,    91,    92,-32768
 };
 
 static const short yypgoto[] = {-32768,
--32768,    70,   -17,-32768,-32768
+-32768,    90,   -19,-32768,-32768
 };
 
 
-#define	YYLAST		523
+#define	YYLAST		550
 
 
-static const short yytable[] = {    35,
-    36,    54,    55,    90,    91,    56,    57,    58,    59,    61,
-    62,    64,    65,    66,    67,    68,    93,    94,    22,    23,
-    24,    71,    72,    73,    74,    75,    76,    77,    78,    79,
-    80,    81,    82,    83,    84,    85,    86,    25,    -6,     1,
+static const short yytable[] = {    38,
+    39,    57,    58,    94,    95,    59,    60,    61,    62,    64,
+    65,    67,    68,    69,    70,    71,    72,    97,    98,    24,
+    25,    36,    75,    76,    77,    78,    79,    80,    81,    82,
+    83,    84,    85,    86,    87,    88,    89,    90,    -6,     1,
     26,    -6,    27,     2,     3,     4,     5,     6,     7,     8,
-     9,    10,    11,    12,    13,    14,    15,    16,    49,    50,
-    51,    52,    53,    28,    54,    55,    29,    38,    30,    17,
-    99,    31,    32,   100,   101,    33,   102,    18,   103,   104,
-    51,    52,    53,    70,    54,    55,   112,   113,    37,   109,
-     2,     3,     4,     5,     6,     7,     8,     9,    10,    11,
-    12,    13,    14,    15,    16,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,    17,     0,     0,     0,
-     0,     0,     0,     0,    18,     5,     6,     7,     8,     9,
-    10,    11,    12,    13,    14,    15,    34,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,    17,     0,
-     0,     0,     0,     0,     0,     0,    18,    39,    40,    41,
-    42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
-    52,    53,     0,    54,    55,     0,     0,     0,    88,    39,
-    40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-    50,    51,    52,    53,     0,    54,    55,     0,     0,     0,
-    92,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-    48,    49,    50,    51,    52,    53,     0,    54,    55,     0,
-     0,     0,    96,    39,    40,    41,    42,    43,    44,    45,
-    46,    47,    48,    49,    50,    51,    52,    53,     0,    54,
-    55,     0,     0,     0,    97,    39,    40,    41,    42,    43,
-    44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-     0,    54,    55,     0,     0,     0,   107,    39,    40,    41,
-    42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
-    52,    53,     0,    54,    55,     0,     0,    69,    39,    40,
-    41,    42,    43,    44,    45,    46,    47,    48,    49,    50,
-    51,    52,    53,     0,    54,    55,     0,     0,    87,    39,
-    40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-    50,    51,    52,    53,     0,    54,    55,     0,     0,    89,
-    39,    40,    41,    42,    43,    44,    45,    46,    47,    48,
-    49,    50,    51,    52,    53,     0,    54,    55,     0,     0,
-    95,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-    48,    49,    50,    51,    52,    53,     0,    54,    55,     0,
-     0,    98,    39,    40,    41,    42,    43,    44,    45,    46,
-    47,    48,    49,    50,    51,    52,    53,     0,    54,    55,
-     0,     0,   105,    39,    40,    41,    42,    43,    44,    45,
-    46,    47,    48,    49,    50,    51,    52,    53,     0,    54,
-    55,     0,     0,   106,    39,    40,    41,    42,    43,    44,
-    45,    46,    47,    48,    49,    50,    51,    52,    53,     0,
-    54,    55,     0,     0,   108,    39,    40,    41,    42,    43,
-    44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-     0,    54,    55,     0,     0,   110,    39,    40,    41,    42,
+     9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
+    52,    53,    54,    55,    56,    28,    57,    58,    29,    41,
+    30,    19,   104,    31,    32,   105,   106,    33,   107,    20,
+    34,   108,   109,    54,    55,    56,    35,    57,    58,    74,
+   117,   118,   114,     2,     3,     4,     5,     6,     7,     8,
+     9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
+    40,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+     0,    19,     0,     0,     0,     0,     0,     0,     0,    20,
+     6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
+    16,    17,    37,     0,     0,     0,     0,     0,     0,     0,
+     0,     0,     0,     0,    19,     0,     0,     0,     0,     0,
+     0,     0,    20,    42,    43,    44,    45,    46,    47,    48,
+    49,    50,    51,    52,    53,    54,    55,    56,     0,    57,
+    58,     0,     0,     0,    92,    42,    43,    44,    45,    46,
+    47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
+     0,    57,    58,     0,     0,     0,    96,    42,    43,    44,
+    45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
+    55,    56,     0,    57,    58,     0,     0,     0,   101,    42,
     43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-    53,     0,    54,    55,    40,    41,    42,    43,    44,    45,
-    46,    47,    48,    49,    50,    51,    52,    53,     0,    54,
-    55,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-    50,    51,    52,    53,     0,    54,    55,-32768,-32768,-32768,
--32768,-32768,-32768,    47,    48,    49,    50,    51,    52,    53,
-     0,    54,    55
+    53,    54,    55,    56,     0,    57,    58,     0,     0,     0,
+   102,    42,    43,    44,    45,    46,    47,    48,    49,    50,
+    51,    52,    53,    54,    55,    56,     0,    57,    58,     0,
+     0,     0,   112,    42,    43,    44,    45,    46,    47,    48,
+    49,    50,    51,    52,    53,    54,    55,    56,     0,    57,
+    58,     0,     0,    73,    42,    43,    44,    45,    46,    47,
+    48,    49,    50,    51,    52,    53,    54,    55,    56,     0,
+    57,    58,     0,     0,    91,    42,    43,    44,    45,    46,
+    47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
+     0,    57,    58,     0,     0,    93,    42,    43,    44,    45,
+    46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
+    56,     0,    57,    58,     0,     0,    99,    42,    43,    44,
+    45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
+    55,    56,     0,    57,    58,     0,     0,   100,    42,    43,
+    44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
+    54,    55,    56,     0,    57,    58,     0,     0,   103,    42,
+    43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
+    53,    54,    55,    56,     0,    57,    58,     0,     0,   110,
+    42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
+    52,    53,    54,    55,    56,     0,    57,    58,     0,     0,
+   111,    42,    43,    44,    45,    46,    47,    48,    49,    50,
+    51,    52,    53,    54,    55,    56,     0,    57,    58,     0,
+     0,   113,    42,    43,    44,    45,    46,    47,    48,    49,
+    50,    51,    52,    53,    54,    55,    56,     0,    57,    58,
+     0,     0,   115,    42,    43,    44,    45,    46,    47,    48,
+    49,    50,    51,    52,    53,    54,    55,    56,     0,    57,
+    58,    43,    44,    45,    46,    47,    48,    49,    50,    51,
+    52,    53,    54,    55,    56,     0,    57,    58,    44,    45,
+    46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
+    56,     0,    57,    58,-32768,-32768,-32768,-32768,-32768,-32768,
+    50,    51,    52,    53,    54,    55,    56,     0,    57,    58
 };
 
-static const short yycheck[] = {    17,
-    18,    36,    37,    40,    41,    23,    24,    25,    26,    27,
-    28,    29,    30,    31,    32,    33,    40,    41,     3,    39,
-    39,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-    48,    49,    50,    51,    52,    53,    54,    39,     0,     1,
-    39,     3,    39,     5,     6,     7,     8,     9,    10,    11,
-    12,    13,    14,    15,    16,    17,    18,    19,    30,    31,
-    32,    33,    34,    39,    36,    37,    39,     3,    39,    31,
-    88,    39,    39,    91,    92,    38,    94,    39,    96,    97,
-    32,    33,    34,     3,    36,    37,     0,     0,    19,   107,
-     5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-    15,    16,    17,    18,    19,    -1,    -1,    -1,    -1,    -1,
-    -1,    -1,    -1,    -1,    -1,    -1,    31,    -1,    -1,    -1,
-    -1,    -1,    -1,    -1,    39,     8,     9,    10,    11,    12,
-    13,    14,    15,    16,    17,    18,    19,    -1,    -1,    -1,
-    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    31,    -1,
-    -1,    -1,    -1,    -1,    -1,    -1,    39,    20,    21,    22,
-    23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
-    33,    34,    -1,    36,    37,    -1,    -1,    -1,    41,    20,
-    21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-    31,    32,    33,    34,    -1,    36,    37,    -1,    -1,    -1,
-    41,    20,    21,    22,    23,    24,    25,    26,    27,    28,
-    29,    30,    31,    32,    33,    34,    -1,    36,    37,    -1,
-    -1,    -1,    41,    20,    21,    22,    23,    24,    25,    26,
-    27,    28,    29,    30,    31,    32,    33,    34,    -1,    36,
-    37,    -1,    -1,    -1,    41,    20,    21,    22,    23,    24,
+static const short yycheck[] = {    19,
+    20,    38,    39,    42,    43,    25,    26,    27,    28,    29,
+    30,    31,    32,    33,    34,    35,    36,    42,    43,     3,
+    41,    40,    42,    43,    44,    45,    46,    47,    48,    49,
+    50,    51,    52,    53,    54,    55,    56,    57,     0,     1,
+    41,     3,    41,     5,     6,     7,     8,     9,    10,    11,
+    12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+    32,    33,    34,    35,    36,    41,    38,    39,    41,     3,
+    41,    33,    92,    41,    41,    95,    96,    41,    98,    41,
+    41,   101,   102,    34,    35,    36,    41,    38,    39,     3,
+     0,     0,   112,     5,     6,     7,     8,     9,    10,    11,
+    12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+    21,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+    -1,    33,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    41,
+     9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
+    19,    20,    21,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+    -1,    -1,    -1,    -1,    33,    -1,    -1,    -1,    -1,    -1,
+    -1,    -1,    41,    22,    23,    24,    25,    26,    27,    28,
+    29,    30,    31,    32,    33,    34,    35,    36,    -1,    38,
+    39,    -1,    -1,    -1,    43,    22,    23,    24,    25,    26,
+    27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
+    -1,    38,    39,    -1,    -1,    -1,    43,    22,    23,    24,
     25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-    -1,    36,    37,    -1,    -1,    -1,    41,    20,    21,    22,
+    35,    36,    -1,    38,    39,    -1,    -1,    -1,    43,    22,
     23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
-    33,    34,    -1,    36,    37,    -1,    -1,    40,    20,    21,
-    22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
-    32,    33,    34,    -1,    36,    37,    -1,    -1,    40,    20,
-    21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-    31,    32,    33,    34,    -1,    36,    37,    -1,    -1,    40,
-    20,    21,    22,    23,    24,    25,    26,    27,    28,    29,
-    30,    31,    32,    33,    34,    -1,    36,    37,    -1,    -1,
-    40,    20,    21,    22,    23,    24,    25,    26,    27,    28,
-    29,    30,    31,    32,    33,    34,    -1,    36,    37,    -1,
-    -1,    40,    20,    21,    22,    23,    24,    25,    26,    27,
-    28,    29,    30,    31,    32,    33,    34,    -1,    36,    37,
-    -1,    -1,    40,    20,    21,    22,    23,    24,    25,    26,
-    27,    28,    29,    30,    31,    32,    33,    34,    -1,    36,
-    37,    -1,    -1,    40,    20,    21,    22,    23,    24,    25,
-    26,    27,    28,    29,    30,    31,    32,    33,    34,    -1,
-    36,    37,    -1,    -1,    40,    20,    21,    22,    23,    24,
+    33,    34,    35,    36,    -1,    38,    39,    -1,    -1,    -1,
+    43,    22,    23,    24,    25,    26,    27,    28,    29,    30,
+    31,    32,    33,    34,    35,    36,    -1,    38,    39,    -1,
+    -1,    -1,    43,    22,    23,    24,    25,    26,    27,    28,
+    29,    30,    31,    32,    33,    34,    35,    36,    -1,    38,
+    39,    -1,    -1,    42,    22,    23,    24,    25,    26,    27,
+    28,    29,    30,    31,    32,    33,    34,    35,    36,    -1,
+    38,    39,    -1,    -1,    42,    22,    23,    24,    25,    26,
+    27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
+    -1,    38,    39,    -1,    -1,    42,    22,    23,    24,    25,
+    26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
+    36,    -1,    38,    39,    -1,    -1,    42,    22,    23,    24,
     25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-    -1,    36,    37,    -1,    -1,    40,    20,    21,    22,    23,
+    35,    36,    -1,    38,    39,    -1,    -1,    42,    22,    23,
     24,    25,    26,    27,    28,    29,    30,    31,    32,    33,
-    34,    -1,    36,    37,    21,    22,    23,    24,    25,    26,
-    27,    28,    29,    30,    31,    32,    33,    34,    -1,    36,
-    37,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-    31,    32,    33,    34,    -1,    36,    37,    22,    23,    24,
-    25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-    -1,    36,    37
+    34,    35,    36,    -1,    38,    39,    -1,    -1,    42,    22,
+    23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
+    33,    34,    35,    36,    -1,    38,    39,    -1,    -1,    42,
+    22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
+    32,    33,    34,    35,    36,    -1,    38,    39,    -1,    -1,
+    42,    22,    23,    24,    25,    26,    27,    28,    29,    30,
+    31,    32,    33,    34,    35,    36,    -1,    38,    39,    -1,
+    -1,    42,    22,    23,    24,    25,    26,    27,    28,    29,
+    30,    31,    32,    33,    34,    35,    36,    -1,    38,    39,
+    -1,    -1,    42,    22,    23,    24,    25,    26,    27,    28,
+    29,    30,    31,    32,    33,    34,    35,    36,    -1,    38,
+    39,    23,    24,    25,    26,    27,    28,    29,    30,    31,
+    32,    33,    34,    35,    36,    -1,    38,    39,    24,    25,
+    26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
+    36,    -1,    38,    39,    24,    25,    26,    27,    28,    29,
+    30,    31,    32,    33,    34,    35,    36,    -1,    38,    39
 };
 /* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/share/misc/bison.simple"
+#line 3 "/usr/share/bison/bison.simple"
 /* This file comes from bison-1.28.  */
 
 /* Skeleton output parser for bison,
@@ -660,7 +672,7 @@ __yy_memcpy (char *to, char *from, unsigned int count)
 #endif
 #endif
 
-#line 217 "/usr/share/misc/bison.simple"
+#line 217 "/usr/share/bison/bison.simple"
 
 /* The user can define YYPARSE_PARAM as the name of an argument to be passed
    into yyparse.  The argument should have type void *.
@@ -989,11 +1001,11 @@ yyreduce:
   switch (yyn) {
 
 case 5:
-#line 171 "calc.y"
+#line 175 "calc.y"
 { sp = stack[0]; yyerrok; ;
     break;}
 case 7:
-#line 175 "calc.y"
+#line 179 "calc.y"
 {
       mpz_out_str (stdout, obase, sp); putchar ('\n');
       sp--;
@@ -1001,7 +1013,7 @@ case 7:
     ;
     break;}
 case 8:
-#line 180 "calc.y"
+#line 184 "calc.y"
 {
       CHECK_VARIABLE (yyvsp[-2].var);
       mpz_swap (variable[yyvsp[-2].var], sp);
@@ -1010,131 +1022,140 @@ case 8:
     ;
     break;}
 case 9:
-#line 186 "calc.y"
-{ ibase = 16; obase = -16; ;
+#line 190 "calc.y"
+{ calc_help (); ;
     break;}
 case 10:
-#line 187 "calc.y"
-{ ibase = 0;  obase = 10; ;
+#line 191 "calc.y"
+{ ibase = 16; obase = -16; ;
     break;}
 case 11:
-#line 188 "calc.y"
+#line 192 "calc.y"
+{ ibase = 0;  obase = 10; ;
+    break;}
+case 12:
+#line 193 "calc.y"
 { exit (0); ;
     break;}
-case 13:
-#line 195 "calc.y"
+case 14:
+#line 200 "calc.y"
 { sp--; mpz_add    (sp, sp, sp+1); ;
     break;}
-case 14:
-#line 196 "calc.y"
+case 15:
+#line 201 "calc.y"
 { sp--; mpz_sub    (sp, sp, sp+1); ;
     break;}
-case 15:
-#line 197 "calc.y"
+case 16:
+#line 202 "calc.y"
 { sp--; mpz_mul    (sp, sp, sp+1); ;
     break;}
-case 16:
-#line 198 "calc.y"
+case 17:
+#line 203 "calc.y"
 { sp--; mpz_fdiv_q (sp, sp, sp+1); ;
     break;}
-case 17:
-#line 199 "calc.y"
+case 18:
+#line 204 "calc.y"
 { sp--; mpz_fdiv_r (sp, sp, sp+1); ;
     break;}
-case 18:
-#line 200 "calc.y"
+case 19:
+#line 205 "calc.y"
 { CHECK_UI ("exponentiation", sp);
                      sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
-case 19:
-#line 202 "calc.y"
+case 20:
+#line 207 "calc.y"
 { CHECK_UI ("lshift", sp);
                      sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
-case 20:
-#line 204 "calc.y"
+case 21:
+#line 209 "calc.y"
 { CHECK_UI ("rshift", sp);
                      sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
-case 21:
-#line 206 "calc.y"
+case 22:
+#line 211 "calc.y"
 { CHECK_UI ("factorial", sp);
                      mpz_fac_ui (sp, mpz_get_ui (sp)); ;
     break;}
-case 22:
-#line 208 "calc.y"
+case 23:
+#line 213 "calc.y"
 { mpz_neg (sp, sp); ;
     break;}
-case 23:
-#line 210 "calc.y"
+case 24:
+#line 215 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <  0); ;
     break;}
-case 24:
-#line 211 "calc.y"
+case 25:
+#line 216 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <= 0); ;
     break;}
-case 25:
-#line 212 "calc.y"
+case 26:
+#line 217 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) == 0); ;
     break;}
-case 26:
-#line 213 "calc.y"
+case 27:
+#line 218 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) != 0); ;
     break;}
-case 27:
-#line 214 "calc.y"
+case 28:
+#line 219 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >= 0); ;
     break;}
-case 28:
-#line 215 "calc.y"
+case 29:
+#line 220 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >  0); ;
     break;}
-case 29:
-#line 217 "calc.y"
+case 30:
+#line 222 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_sgn (sp) && mpz_sgn (sp+1)); ;
     break;}
-case 30:
-#line 218 "calc.y"
+case 31:
+#line 223 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_sgn (sp) || mpz_sgn (sp+1)); ;
     break;}
-case 31:
-#line 220 "calc.y"
+case 32:
+#line 225 "calc.y"
 { mpz_abs (sp, sp); ;
     break;}
-case 32:
-#line 221 "calc.y"
+case 33:
+#line 226 "calc.y"
 { sp--; CHECK_UI ("binomial", sp+1);
                                     mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
-case 33:
-#line 223 "calc.y"
+case 34:
+#line 228 "calc.y"
 { CHECK_UI ("fibonacci", sp);
                                     mpz_fib_ui (sp, mpz_get_ui (sp)); ;
     break;}
-case 35:
-#line 226 "calc.y"
+case 36:
+#line 231 "calc.y"
 { sp--; mpz_set_si (sp,
                                           mpz_kronecker (sp, sp+1)); ;
     break;}
-case 37:
-#line 229 "calc.y"
-{ mpz_nextprime (sp, sp); ;
-    break;}
 case 38:
-#line 230 "calc.y"
-{ sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); ;
+#line 234 "calc.y"
+{ CHECK_UI ("lucnum", sp);
+                                    mpz_lucnum_ui (sp, mpz_get_ui (sp)); ;
     break;}
 case 39:
-#line 231 "calc.y"
+#line 236 "calc.y"
+{ mpz_nextprime (sp, sp); ;
+    break;}
+case 40:
+#line 237 "calc.y"
+{ sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); ;
+    break;}
+case 41:
+#line 238 "calc.y"
 { sp--; CHECK_UI ("nth-root", sp+1);
                                     mpz_root (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
-case 40:
-#line 233 "calc.y"
+case 42:
+#line 240 "calc.y"
 { mpz_sqrt (sp, sp); ;
     break;}
-case 41:
-#line 235 "calc.y"
+case 43:
+#line 242 "calc.y"
 {
         sp++;
         CHECK_OVERFLOW ();
@@ -1142,8 +1163,8 @@ case 41:
         mpz_set (sp, variable[yyvsp[0].var]);
       ;
     break;}
-case 42:
-#line 241 "calc.y"
+case 44:
+#line 248 "calc.y"
 {
         sp++;
         CHECK_OVERFLOW ();
@@ -1154,17 +1175,17 @@ case 42:
           }
       ;
     break;}
-case 44:
-#line 253 "calc.y"
+case 46:
+#line 260 "calc.y"
 { sp--; mpz_gcd (sp, sp, sp+1); ;
     break;}
-case 46:
-#line 257 "calc.y"
+case 48:
+#line 264 "calc.y"
 { sp--; mpz_lcm (sp, sp, sp+1); ;
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
-#line 543 "/usr/share/misc/bison.simple"
+#line 543 "/usr/share/bison/bison.simple"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1384,7 +1405,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 259 "calc.y"
+#line 266 "calc.y"
 
 
 yyerror (char *s)
@@ -1392,10 +1413,45 @@ yyerror (char *s)
   fprintf (stderr, "%s\n", s);
 }
 
+int calc_option_readline = -1;
+
 int
-main (void)
+main (int argc, char *argv[])
 {
   int  i;
+
+  for (i = 1; i < argc; i++)
+    {
+      if (strcmp (argv[i], "--readline") == 0)
+        calc_option_readline = 1;
+      else if (strcmp (argv[i], "--noreadline") == 0)
+        calc_option_readline = 0;
+      else if (strcmp (argv[i], "--help") == 0)
+        {
+          printf ("Usage: calc [--option]...\n");
+          printf ("  --readline    use readline\n");
+          printf ("  --noreadline  don't use readline\n");
+          printf ("  --help        this message\n");
+          printf ("Readline is only available when compiled in,\n");
+          printf ("and in that case it's the default on a tty.\n");
+          exit (0);
+        }
+      else
+        {
+          fprintf (stderr, "Unrecognised option: %s\n", argv[i]);
+          exit (1);
+        }
+    }
+
+#if WITH_READLINE
+  calc_init_readline ();
+#else
+  if (calc_option_readline == 1)
+    {
+      fprintf (stderr, "Readline support not available\n");
+      exit (1);
+    }
+#endif
 
   for (i = 0; i < numberof (variable); i++)
     mpz_init (variable[i]);
