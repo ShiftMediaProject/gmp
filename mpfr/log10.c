@@ -1,4 +1,4 @@
-/* mpfr_log10 -- log in base 10
+/* mpfr_log10 -- logarithm in base 10.
 
 Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
@@ -56,7 +56,7 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
         {
           MPFR_SET_INF(r);
           MPFR_SET_POS(r);
-          MPFR_RET(0);
+          MPFR_RET(0); /* exact */
         }
     }
 
@@ -67,7 +67,7 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     {
       MPFR_SET_INF(r);
       MPFR_SET_POS(r);
-      MPFR_RET(0); /* log10(0) is an exact infinity */
+      MPFR_RET(0); /* log10(0) is an exact +infinity */
     }
 
   /* If a is negative, the result is NaN */
@@ -78,60 +78,70 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     }
 
   /* If a is 1, the result is 0 */
-  if (mpfr_cmp_ui(a, 1) == 0)
+  if (mpfr_cmp_ui (a, 1) == 0)
     {
       MPFR_SET_ZERO(r);
       MPFR_SET_POS(r);
-      MPFR_RET(0); /* only "normal" case where the result is exact */
+      MPFR_RET(0); /* result is exact */
     }
 
   /* General case */
   {
     /* Declaration of the intermediary variable */
     mpfr_t t, tt;
+    int ok;
 
     /* Declaration of the size variable */
     mp_prec_t Nx = MPFR_PREC(a);   /* Precision of input variable */
-    mp_prec_t Ny = MPFR_PREC(r);   /* Precision of input variable */
+    mp_prec_t Ny = MPFR_PREC(r);   /* Precision of output variable */
     
     mp_prec_t Nt;   /* Precision of the intermediary variable */
     long int err;  /* Precision of error */
                 
     /* compute the precision of intermediary variable */
-    Nt=MAX(Nx,Ny);
+    Nt = MAX(Nx, Ny);
     /* the optimal number of bits : see algorithms.ps */
-    Nt=Nt+4+_mpfr_ceil_log2(Nt);
+    Nt = Nt + 4+ _mpfr_ceil_log2 (Nt);
 
-    /* initialise of intermediary	variable */
-    mpfr_init(t);             
-    mpfr_init(tt);             
+    /* initialise of intermediary variables */
+    mpfr_init (t);
+    mpfr_init (tt);
 
     
     /* First computation of log10 */
     do {
 
       /* reactualisation of the precision */
-      mpfr_set_prec(t,Nt);             
-      mpfr_set_prec(tt,Nt);             
+      mpfr_set_prec (t, Nt);
+      mpfr_set_prec (tt, Nt);             
       
       /* compute log10 */
-      mpfr_set_ui(t,10,GMP_RNDN);  /* 10 */
-      mpfr_log(t,t,GMP_RNDD);       /* log(10) */
-      mpfr_log(tt,a,GMP_RNDN);      /* log(a) */
-      mpfr_div(t,tt,t,GMP_RNDN);    /* log(a)/log(10) */
-
+      mpfr_set_ui (t, 10, GMP_RNDN);   /* 10 */
+      mpfr_log (t, t, GMP_RNDD);       /* log(10) */
+      mpfr_log (tt, a, GMP_RNDN);      /* log(a) */
+      mpfr_div (t, tt, t, GMP_RNDN);   /* log(a)/log(10) */
 
       /* estimation of the error */
-      err=Nt-4;
+      err = Nt - 4;
+
+      ok = mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny);
+
+      /* log10(10^n) is exact */
+      if ((MPFR_SIGN(t) > 0) && mpfr_isinteger(t))
+        if (mpfr_ui_pow_ui (tt, 10, (unsigned long int) mpfr_get_d (t) + 0.5,
+                            GMP_RNDN) == 0)
+          if (mpfr_cmp (a, tt) == 0)
+            ok = 1;
 
       /* actualisation of the precision */
       Nt += 10;
-    } while ((err<0) || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+    } while ((err < 0) || !ok);
  
-      inexact = mpfr_set(r,t,rnd_mode);
+    inexact = mpfr_set (r, t, rnd_mode);
 
-      mpfr_clear(t);
-      mpfr_clear(tt);
+    mpfr_clear (t);
+    mpfr_clear (tt);
   }
+
   return inexact;
 }
