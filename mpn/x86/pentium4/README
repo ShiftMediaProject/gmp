@@ -63,9 +63,13 @@ Perhaps future chip steppings will be better.
 
 NOTES
 
-incl and decl are to be avoided, and instead add $1 and sub $1 used, since
-the carry flag is apparently not separately renamed, making incl and decl
-dependent on the last (or perhaps all) previous flags-setting instructions.
+adcl and sbbl are quite slow at 8 cycles for reg->reg.  paddq of 32-bits
+within a 64-bit mmx register seems better, though the combination
+paddq/psrlq when propagating a carry is still a 4 cycle latency.
+
+incl and decl should be avoided, instead use add $1 and sub $1.  Apparently
+the carry flag is not separately renamed, so incl and decl depend on all
+previous flags-setting instructions.
 
 movq mmx -> mmx does have 6 cycle latency, as noted in the documentation.
 pxor/por or similar combination at 2 cycles latency can be used instead.
@@ -83,6 +87,10 @@ fxsave/fxrestor will be needed if they're used.
 
 
 REFERENCES
+
+Intel Pentium-4 processor manuals,
+
+	http://developer.intel.com/design/pentium4/manuals
 
 "Intel Pentium 4 Processor Optimization Reference Manual", Intel, 2001,
 order number 248966.  Available on-line:
