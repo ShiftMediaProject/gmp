@@ -1,7 +1,7 @@
 /* mpn_sqr_basecase -- Internal routine to square two natural numbers
    of length m and n.
 
-Copyright (C) 1991, 1992, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1992, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -51,6 +51,9 @@ mpn_sqr_basecase (prodp, up, n)
       mp_ptr tp = tarr;
       mp_limb_t cy;
 
+      /* must fit 2*n limbs in tarr */
+      ASSERT (n <= KARATSUBA_SQR_THRESHOLD);
+
       cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]);
       tp[n - 1] = cy;
       for (i = 2; i < n; i++)
@@ -59,10 +62,6 @@ mpn_sqr_basecase (prodp, up, n)
 	  cy = mpn_addmul_1 (tp + 2 * i - 2, up + i, n - i, up[i - 1]);
 	  tp[n + i - 2] = cy;
 	}
-#if 0
-      if (n > KARATSUBA_SQR_THRESHOLD)
-	abort ();
-#endif
       for (i = 1; i < n; i++)
 	{
 	  mp_limb_t x;
