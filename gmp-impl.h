@@ -469,8 +469,8 @@ extern mp_size_t __gmp_default_fp_limb_precision;
 #endif
 
 #if defined (__alpha)
-mp_limb_t __mpn_invert_normalized_limb ();
-#define invert_limb(invxl,xl) invxl = __mpn_invert_normalized_limb (xl)
+mp_limb_t __MPN(invert_limb) ();
+#define invert_limb(invxl,xl) invxl = __MPN(invert_limb) (xl)
 #endif
 
 #ifndef invert_limb

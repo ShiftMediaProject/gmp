@@ -115,7 +115,7 @@ MA 02111-1307, USA. */
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UDItype __di;							\
-    __di = __mpn_invert_normalized_limb (d);				\
+    __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
 #define UDIV_NEEDS_NORMALIZATION 1
