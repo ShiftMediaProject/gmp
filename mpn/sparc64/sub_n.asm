@@ -55,11 +55,11 @@ ASM_START()
 PROLOGUE(mpn_sub_n)
 	save	%sp,-160,%sp
 
-	fitod %f0,%f0		C make sure f0 contains small, quiet number
+	fitod	%f0,%f0		C make sure f0 contains small, quiet number
+	subcc	n,4,%g0
+	bl,pn	%icc,.Loop0
 	mov	0,cy
-	subcc	n,4,n
-	bl,pn	%icc,.Lend123
-	fanop
+
 	ldx	[up+0],u0
 	ldx	[vp+0],v0
 	add	up,32,up
@@ -70,7 +70,7 @@ PROLOGUE(mpn_sub_n)
 	ldx	[vp-16],v2
 	ldx	[up-8],u3
 	ldx	[vp-8],v3
-	subcc	n,4,n
+	subcc	n,8,n
 	sub	u0,v0,%g1	C main sub
 	sub	%g1,cy,%g4	C carry sub
 	orn	u0,v0,%g2
@@ -192,7 +192,6 @@ C END MAIN LOOP
 	srlx	%g2,63,cy
 	stx	%g4,[rp-8]
 
-.Lend123:
 	addcc	n,4,n
 	bz,pn	%icc,.Lret
 	fanop
