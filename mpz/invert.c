@@ -33,7 +33,7 @@ mpz_invert (inverse, x, n)
      mpz_srcptr x, n;
 #endif
 {
-  mpz_t gcd;
+  mpz_t gcd, tmp;
   mp_size_t xsize, nsize, size;
 
   xsize = SIZ (x);
@@ -48,19 +48,23 @@ mpz_invert (inverse, x, n)
     return 0;
 
   MPZ_TMP_INIT (gcd, size);
-  mpz_gcdext (gcd, inverse, (mpz_ptr) 0, x, n);
+  MPZ_TMP_INIT (tmp, size);
+  mpz_gcdext (gcd, tmp, (mpz_ptr) 0, x, n);
 
   /* If no inverse existed, return with an indication of that.  */
   if (gcd->_mp_size != 1 || (gcd->_mp_d)[0] != 1)
     return 0;
 
   /* Make sure we return a positive inverse.  */
-  if (SIZ (inverse) < 0)
+  if (SIZ (tmp) < 0)
     {
       if (SIZ (n) < 0)
-	mpz_sub (inverse, inverse, n);
+	mpz_sub (inverse, tmp, n);
       else
-	mpz_add (inverse, inverse, n);
+	mpz_add (inverse, tmp, n);
     }
+  else
+    mpz_set (inverse, tmp);
+
   return 1;
 }
