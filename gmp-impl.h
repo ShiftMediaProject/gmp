@@ -641,10 +641,10 @@ int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
 #if defined (_CRAY)
 #define MPN_COPY_INCR(dst, src, n)					\
   do {									\
-    int i;		/* Faster on some Crays with plain int */	\
+    int __i;		/* Faster on some Crays with plain int */	\
     _Pragma ("_CRI ivdep");						\
-    for (i = 0; i < (n); i++)						\
-      (dst)[i] = (src)[i];						\
+    for (__i = 0; __i < (n); __i++)					\
+      (dst)[__i] = (src)[__i];						\
   } while (0)
 #endif
 
@@ -694,10 +694,10 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #if defined (_CRAY)
 #define MPN_COPY_DECR(dst, src, n)					\
   do {									\
-    int i;		/* Faster on some Crays with plain int */	\
+    int __i;		/* Faster on some Crays with plain int */	\
     _Pragma ("_CRI ivdep");						\
-    for (i = (n) - 1; i >= 0; i--)					\
-      (dst)[i] = (src)[i];						\
+    for (__i = (n) - 1; __i >= 0; __i--)				\
+      (dst)[__i] = (src)[__i];						\
   } while (0)
 #endif
 
