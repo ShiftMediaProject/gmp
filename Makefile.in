@@ -34,37 +34,6 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 
-# Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the
-# libtool manual.
-#
-# 1. No interfaces changed, only implementations (good): Increment REVISION.
-#
-# 2. Interfaces added, none removed (good): Increment CURRENT, increment
-#    AGE, set REVISION to 0.
-#
-# 3. Interfaces removed (BAD, breaks upward compatibility): Increment
-#    CURRENT, set AGE and REVISION to 0.
-#
-# Do this separately for libgmp, libgmpxx and libmp, and only for releases.
-#
-#	  GMP	   -version-info
-#       release   libgmp  libgmpxx libmp
-#        2.0.x      -        -       -
-#        3.0      3:0:0      -     3:0:0
-#        3.0.1    3:1:0      -     3:0:0
-#        3.1      4:0:1      -     4:0:1
-#        3.1.1    4:1:1      -     4:1:1
-#        4.0      5:0:2    3:0:0   4:2:1
-#        4.0.1    5:1:2    3:1:0   4:3:1
-#        4.1      6:0:3    3:2:0   4:4:1
-#        4.1.1    6:1:3    3:3:0   4:5:1
-#        4.1.2    6:2:3    3:4:0   4:6:1
-#
-# Starting at 3:0:0 is a slight abuse of the versioning system, but it
-# ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
-# packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the interface changes for
-# gmp 3 mean 3:0:0 is right.
-
 
 SOURCES = $(libgmp_la_SOURCES) $(EXTRA_libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
 
@@ -89,7 +58,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
-ANSI2KNR = $(top_builddir)/ansi2knr
+ANSI2KNR = @ANSI2KNR@
 DIST_COMMON = README $(am__configure_deps) $(include_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.in $(srcdir)/gmp-h.in $(srcdir)/mp-h.in \
@@ -420,6 +389,44 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+
+# The following options are the same as AM_INIT_AUTOMAKE in configure.in,
+# except no $(top_builddir) on ansi2knr.  That directory is wanted for the
+# Makefiles in subdirectories, but here we must omit it so automake gives
+# the actual ansi2knr build rule, not "cd $(top_builddir) && make ansi2knr".
+#
+AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
+
+# Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the
+# libtool manual.
+#
+# 1. No interfaces changed, only implementations (good): Increment REVISION.
+#
+# 2. Interfaces added, none removed (good): Increment CURRENT, increment
+#    AGE, set REVISION to 0.
+#
+# 3. Interfaces removed (BAD, breaks upward compatibility): Increment
+#    CURRENT, set AGE and REVISION to 0.
+#
+# Do this separately for libgmp, libgmpxx and libmp, and only for releases.
+#
+#	  GMP	   -version-info
+#       release   libgmp  libgmpxx libmp
+#        2.0.x      -        -       -
+#        3.0      3:0:0      -     3:0:0
+#        3.0.1    3:1:0      -     3:0:0
+#        3.1      4:0:1      -     4:0:1
+#        3.1.1    4:1:1      -     4:1:1
+#        4.0      5:0:2    3:0:0   4:2:1
+#        4.0.1    5:1:2    3:1:0   4:3:1
+#        4.1      6:0:3    3:2:0   4:4:1
+#        4.1.1    6:1:3    3:3:0   4:5:1
+#        4.1.2    6:2:3    3:4:0   4:6:1
+#
+# Starting at 3:0:0 is a slight abuse of the versioning system, but it
+# ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
+# packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the interface changes for
+# gmp 3 mean 3:0:0 is right.
 LIBGMP_LT_CURRENT = 6
 LIBGMP_LT_REVISION = 0
 LIBGMP_LT_AGE = 3
@@ -753,8 +760,12 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
-$(top_builddir)/ansi2knr:
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+ansi2knr: ansi2knr.$(OBJEXT)
+	$(LINK) ansi2knr.$(OBJEXT) $(LIBS)
+ansi2knr.$(OBJEXT): $(CONFIG_HEADER)
+
+clean-krextra:
+	-rm -f ansi2knr
 
 mostlyclean-kr:
 	-test "$U" = "" || rm -f *_.c
@@ -1168,7 +1179,7 @@ distcleancheck: distclean
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(LTLIBRARIES) $(HEADERS) config.h
+all-am: Makefile $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
 	$(mkdir_p) $(DESTDIR)$(libdir) $(DESTDIR)$(includedir) $(DESTDIR)$(includeexecdir)
@@ -1201,8 +1212,8 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
-	mostlyclean-am
+clean-am: clean-generic clean-krextra clean-libLTLIBRARIES \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1258,16 +1269,16 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 uninstall-info: uninstall-info-recursive
 
 .PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am am--refresh check \
-	check-am clean clean-generic clean-libLTLIBRARIES \
-	clean-libtool clean-recursive ctags ctags-recursive dist \
-	dist-all dist-bzip2 dist-gzip dist-shar dist-tarZ dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-recursive \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-exec install-exec-am \
-	install-includeHEADERS install-info install-info-am \
-	install-libLTLIBRARIES install-man \
+	check-am clean clean-generic clean-krextra \
+	clean-libLTLIBRARIES clean-libtool clean-recursive ctags \
+	ctags-recursive dist dist-all dist-bzip2 dist-gzip dist-shar \
+	dist-tarZ dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-libtool \
+	distclean-recursive distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-exec \
+	install-exec-am install-includeHEADERS install-info \
+	install-info-am install-libLTLIBRARIES install-man \
 	install-nodist_includeexecHEADERS install-strip installcheck \
 	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic maintainer-clean-recursive \
