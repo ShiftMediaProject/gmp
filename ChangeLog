@@ -1,3 +1,50 @@
+2001-04-03  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpz/reuse.c: Add mpz_cdiv_q_2exp and mpz_cdiv_r_2exp.
+
+	* tests/mpz/t-pow.c: Drag in refmpn.o when testing mpz_pow_ui etc with
+	refmpn_mul_2.
+
+	* tune/speed.c,speed.h,common.c,many.pl: Add measuring of mpn_com_n
+	and mpn_mul_2.
+	* tests/devel/try.c: Add testing of mpn_mul_2, and a
+	DATA_MULTIPLE_DIVISOR attribute.
+
+	* gmp.texi (Build Options): List more m68k's.
+	(Build Options): Add cross reference to tex2html.
+	(Notes for Particular Systems): Add m68k means 68020 or up.
+	(Rational Conversions): New section, with mpq_get_d, mpq_set_d and
+	mpq_set_f from Miscellaneous, and new mpq_set_str.
+	(Applying Integer Functions): Move mpq_{get,set}_{num,den} from Misc.
+	(Miscellaneous Rational Functions): Remove section.
+	(Custom Allocation): Partial rewrite for various clarifications.
+	(References): Improve line breaks near URLs.
+
+	* acinclude.m4 (GMP_GCC_M68K_OPTIMIZE): New macro.
+	* configure.in (m68*-*-*): Use it to run gcc 2.95.x at -O not -O2.
+	(m680?0-*-*, m683??-*-*): Add optional gcc -m options.
+	(m5200-*-*): Recognise, use m68000 code.
+
+	* tests/mpz/t-cmp.c: New file.
+	* tests/mpz/t-sizeinbase.c: New file.
+	* tests/mpz/Makefile.am: Add them.
+
+	* gmp-impl.h (MPN_CMP): New macro.
+	* mpz/cmp.c,cmpabs.c: Use it, and minor cleanups too.
+
+	* tests/mpq/t-equal.c: New file.
+	* tests/mpq/t-get_str.c: New file.
+	* tests/mpq/Makefile.am: Add them.
+
+	* mpq/get_str.c: New file.
+	* Makefile.am, mpq/Makefile.am: Add it.
+	* gmp-h.in (mpq_get_str): Add prototype.
+
+	* mpq/equal.c: Rewrite using inline compare loops.
+
+	* tests/refmpn.c,tests.h (refmpn_mul_2): Fix parameter order.
+	* mpz/n_pow_ui.c: Fix mpn_mul_2 calls parameter order.
+
 2001-03-29  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpf/t-trunc.c: New file.
