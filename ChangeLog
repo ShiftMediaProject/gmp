@@ -65,8 +65,8 @@
 	* acinclude.m4 (GMP_INIT): Do CONFIG_TOP_SRCDIR and asm-defs.m4 here.
 	* configure.in (asm-defs.m4): Consequent changes.
 
-	* acinclude.m4 (GMP_INCLUDE_MPN): Replacing GMP_INCLUDE, using
-	include_mpn.
+	* acinclude.m4 (GMP_INCLUDE_MPN): Using include_mpn(), replacing
+	GMP_INCLUDE and GMP_SINCLUDE.
 	* configure.in (gmp_m4postinc): Remove this scheme, use
 	GMP_INCLUDE_MPN instead.
 
