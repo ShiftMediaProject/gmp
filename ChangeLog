@@ -1,3 +1,14 @@
+2000-06-11  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/tests/reuse.c (FAIL): Add a K&R version.
+	Use _PROTO on some typedefs.
+	* mpz/tests/t-misc.c: Add gmp-impl.h for "const".
+
+	* configure.in: Rework mpn multi-function and optional files.
+	Names standardized, no need for explicit declarations, all picked
+	up in one $path traversal.
+	* doc/configuration: Updates.
+
 2000-06-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/{pentium/mmx,p6/mmx,p6/p3mmx}/popham.asm,
