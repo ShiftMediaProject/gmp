@@ -110,9 +110,6 @@ MA 02111-1307, USA.
 /* Define if you have the `sysctlbyname' function. */
 #undef HAVE_SYSCTLBYNAME
 
-/* Define if compiler has function prototypes */
-#undef PROTOTYPES
-
 /* Define if the system has the type `void'. */
 #undef HAVE_VOID
 
