@@ -173,6 +173,12 @@ MA 02111-1307, USA. */
 #include "speed.h"
 
 
+/* strerror is only used for some stuff on newish systems, no need to have a
+   proper replacement */
+#if ! HAVE_STRERROR
+#define strerror(n)  "<strerror not available>"
+#endif
+
 
 char    speed_time_string[256];
 int     speed_precision = 0;
