@@ -1123,7 +1123,7 @@ enum
 
 /* Mjor version number is the value of __GNU_MP_ too, above and in mp.h. */
 #define __GNU_MP_VERSION 3
-#define __GNU_MP_VERSION_MINOR 1
+#define __GNU_MP_VERSION_MINOR 2
 #define __GNU_MP_VERSION_PATCHLEVEL 0
 
 #define gmp_version __gmp_version
