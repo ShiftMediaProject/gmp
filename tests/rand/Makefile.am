@@ -36,10 +36,8 @@ spect_LDADD = libstat.la
 stat_LDADD = libstat.la
 
 EXTRA_LTLIBRARIES = libstat.la
-libstat_la_SOURCES = statlib.c zdiv_round.c
+libstat_la_SOURCES = gmpstat.h statlib.c zdiv_round.c
 libstat_la_LIBADD = $(top_builddir)/libgmp.la $(LIBM)
-
-EXTRA_DIST = gmpstat.h
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
 
