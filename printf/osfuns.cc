@@ -73,16 +73,29 @@ __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o)
 
   switch (flags & ios::basefield) {
   case ios::hex:
-    p->base   = (flags & ios::uppercase ? -16 : 16);
-    p->expfmt = (flags & ios::uppercase ? "@%c%02X" : "@%c%02x");
+    p->base = (flags & ios::uppercase ? -16 : 16);
+    switch (flags & (ios::uppercase | ios::showbase)) {
+    default:                              p->expfmt = "@%c%02x"; break;
+    case ios::uppercase:                  p->expfmt = "@%c%02X"; break;
+    case ios::showbase:                   p->expfmt = "@%c%#04x"; break;
+    case ios::showbase | ios::uppercase:  p->expfmt = "@%c%#04X"; break;
+    }
     break;
   case ios::oct:
     p->base = 8;
-    p->expfmt = (flags & ios::uppercase ? "E%c%02o" : "e%c%02o");
+    switch (flags & (ios::uppercase | ios::showbase)) {
+    default:                              p->expfmt = "e%c%02o"; break;
+    case ios::uppercase:                  p->expfmt = "E%c%02o"; break;
+    case ios::showbase:                   p->expfmt = "e%c%#02o"; break;
+    case ios::showbase | ios::uppercase:  p->expfmt = "E%c%#02o"; break;
+    }
     break;
   default:
     p->base = 10;
-    p->expfmt = (flags & ios::uppercase ? "E%c%02d" : "e%c%02d");
+    switch (flags & ios::uppercase) {
+    default:             p->expfmt = "e%c%02d"; break;
+    case ios::uppercase: p->expfmt = "E%c%02d"; break;
+    }
     break;
   }
 
