@@ -380,6 +380,16 @@ int mpz_cmpabs _PROTO ((mpz_srcptr, mpz_srcptr));
 int mpz_cmpabs_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_divisible_p __gmpz_divisible_p
+int     mpz_divisible_p _PROTO ((mpz_srcptr, mpz_srcptr));
+
+#define mpz_divisible_ui_p __gmpz_divisible_ui_p
+int     mpz_divisible_ui_p _PROTO ((mpz_srcptr, unsigned long));
+
+#define mpz_divisible_2exp_p __gmpz_divisible_2exp_p
+int     mpz_divisible_2exp_p _PROTO ((mpz_srcptr, unsigned long));
+
 void mpz_dump _PROTO ((mpz_srcptr));
 void mpz_fac_ui _PROTO ((mpz_ptr, unsigned long int));
 void mpz_fdiv_q _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
