@@ -26,6 +26,11 @@ MA 02111-1307, USA.
 extern "C" {
 #endif
 
+mp_limb_t refmpn_add _PROTO ((mp_ptr rp,
+                              mp_srcptr s1p, mp_size_t s1size,
+                              mp_srcptr s2p, mp_size_t s2size));
+mp_limb_t refmpn_add_1 _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
+                                mp_limb_t n));
 mp_limb_t refmpn_add_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
 mp_limb_t refmpn_add_nc _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
@@ -73,10 +78,12 @@ void refmpn_fill _PROTO ((mp_ptr p, mp_size_t s, mp_limb_t v));
 mp_limb_t refmpn_gcd_1 _PROTO ((mp_srcptr xp, mp_size_t xsize, mp_limb_t y));
 mp_limb_t refmpn_gcd _PROTO ((mp_ptr gp, mp_ptr xp, mp_size_t xsize,
                               mp_ptr yp, mp_size_t ysize));
+mp_limb_t refmpn_gcd_finda _PROTO ((const mp_limb_t c[2]));
 
 unsigned long refmpn_hamdist _PROTO ((mp_srcptr s1p, mp_srcptr s2p,
                                       mp_size_t size));
 
+mp_limb_t refmpn_invert_limb _PROTO ((mp_limb_t d));
 void refmpn_ior_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 void refmpn_iorn_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
@@ -114,12 +121,23 @@ void refmpn_nior_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
 unsigned long refmpn_popcount _PROTO ((mp_srcptr sp, mp_size_t size));
+mp_limb_t refmpn_preinv_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
+                                       mp_limb_t divisor,
+                                       mp_limb_t divisor_inverse));
 
 mp_limb_t refmpn_rshift _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
 
+mp_limb_t refmpn_sb_divrem_mn _PROTO ((mp_ptr qp,
+                                       mp_ptr np, mp_size_t nsize,
+                                       mp_srcptr dp, mp_size_t dsize));
 void refmpn_sqr _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 
+mp_limb_t refmpn_sub _PROTO ((mp_ptr rp,
+                              mp_srcptr s1p, mp_size_t s1size,
+                              mp_srcptr s2p, mp_size_t s2size));
+mp_limb_t refmpn_sub_1 _PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size,
+                                mp_limb_t n));
 mp_limb_t refmpn_sub_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
 mp_limb_t refmpn_sub_nc _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
@@ -128,6 +146,15 @@ mp_limb_t refmpn_submul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                    mp_limb_t multiplier));
 mp_limb_t refmpn_submul_1c _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                     mp_limb_t multiplier, mp_limb_t carry));
+
+void refmpn_tdiv_qr _PROTO ((mp_ptr qp, mp_ptr rp, mp_size_t qxn,
+                             mp_ptr np, mp_size_t nsize,
+                             mp_srcptr dp, mp_size_t dsize));
+
+void refmpn_udiv_qrnnd _PROTO ((mp_limb_t *q, mp_limb_t *r,
+                                mp_limb_t h, mp_limb_t l, mp_limb_t d));
+void refmpn_umul_ppmm _PROTO ((mp_limb_t *hi, mp_limb_t *lo,
+                               mp_limb_t x, mp_limb_t y));
 
 void refmpn_xnor_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));

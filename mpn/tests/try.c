@@ -155,31 +155,37 @@ mp_size_t  pagesize;
 #endif
 
 
-#define TRY_RETVAL           (1<<0)
-#define TRY_SIZE2            (1<<1)
-#define TRY_SHIFT            (1<<2)
-#define TRY_CARRYBIT         (1<<3)
-#define TRY_CARRY3           (1<<4)
-#define TRY_CARRY4           (1<<4)
-#define TRY_CARRYLIMB        (1<<5)
-#define TRY_MULTIPLIER       (1<<6)
-#define TRY_DIVISOR          (1<<7)
-#define TRY_DOUBLE_DST       (1<<8)
-#define TRY_DST0_INIT        (1<<9)
-#define TRY_XSIZE            (1<<10)
-#define TRY_SIZE_ZERO        (1<<11)
-#define TRY_DST_SIZE_RETVAL  (1<<12)
-#define TRY_SRC1_GCDDATA     (1<<13)
+#define TRY_RETVAL               (1<<0)
+#define TRY_SIZE2                (1<<1)
+#define TRY_SHIFT                (1<<2)
+#define TRY_CARRYBIT             (1<<3)
+#define TRY_CARRY3               (1<<4)
+#define TRY_CARRY4               (1<<5)
+#define TRY_CARRYLIMB            (1<<6)
+#define TRY_MULTIPLIER           (1<<7)
+#define TRY_DIVISOR              (1<<8)
+#define TRY_DIVISOR_NORM         (1<<9)
+#define TRY_SIZE_ZERO            (1<<10)
+#define TRY_XSIZE                (1<<11)
+#define TRY_SRC_GCDDATA          (1<<12)
+#define TRY_SRC1_ODD             (1<<13)
+#define TRY_SRC1_HIGHBIT         (1<<14)
+#define TRY_DST0_INIT            (1<<15)
+#define TRY_DST_SIZE_3           (1<<16)
+#define TRY_DST_SIZE_MUL         (1<<17)
+#define TRY_DST_SIZE_SB_DIVREM   (1<<18)
+#define TRY_DST_SIZE_RETVAL      (1<<19)
 
-#define TRY_OVERLAP_LOW_TO_HIGH  (1<<15) /* Default is allow full overlap. */
-#define TRY_OVERLAP_HIGH_TO_LOW  (1<<16)
-#define TRY_OVERLAP_NONE         (1<<17)
-#define TRY_OVERLAP_NOTSRCS      (1<<18)
+/* Default is allow full overlap. */
+#define TRY_OVERLAP_NONE         (1<<20)
+#define TRY_OVERLAP_LOW_TO_HIGH  (1<<21)
+#define TRY_OVERLAP_HIGH_TO_LOW  (1<<22)
+#define TRY_OVERLAP_NOTSRCS      (1<<23)
 
-#define TRY_SRC0        (1<<20)
+#define TRY_SRC0        (1<<28)
 #define TRY_SRC1        (TRY_SRC0 << 1)
 
-#define TRY_DST0        (1<<24)
+#define TRY_DST0        (1<<30)
 #define TRY_DST1        (TRY_DST0 << 1)
 
 
@@ -192,8 +198,10 @@ mp_size_t  pagesize;
 #define TRY_TYPE_AORS_N      (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_SRC1)
 #define TRY_TYPE_AORS_NC     (TRY_TYPE_AORS_N | TRY_CARRYBIT)
 
-#define TRY_TYPE_AORSMUL_1   (TRY_TYPE_MUL_1  | TRY_DST0_INIT)
-#define TRY_TYPE_AORSMUL_1C  (TRY_TYPE_MUL_1C | TRY_DST0_INIT)
+#define TRY_TYPE_AORSMUL_1 \
+  (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_MULTIPLIER | TRY_DST0_INIT)
+#define TRY_TYPE_AORSMUL_1C \
+  (TRY_TYPE_AORSMUL_1 | TRY_CARRYLIMB)
 
 #define TRY_TYPE_LOGOPS_N    (TRY_DST0 | TRY_SRC0 | TRY_SRC1)
 
@@ -215,6 +223,8 @@ mp_size_t  pagesize;
 #define TRY_TYPE_DIVREM_1     (TRY_TYPE_DIVMOD_1  | TRY_XSIZE)
 #define TRY_TYPE_DIVREM_1C    (TRY_TYPE_DIVMOD_1C | TRY_XSIZE)
 #define TRY_TYPE_MOD_1_RSHIFT (TRY_RETVAL | TRY_SRC0 | TRY_SHIFT | TRY_DIVISOR)
+#define TRY_TYPE_PREINV_MOD_1 \
+  (TRY_RETVAL | TRY_SRC0 | TRY_DIVISOR | TRY_DIVISOR_NORM)
 
 #define TRY_TYPE_DIVEXACT_BY3   (TRY_RETVAL | TRY_DST0 | TRY_SRC0)
 #define TRY_TYPE_DIVEXACT_BY3C  (TRY_TYPE_DIVEXACT_BY3 | TRY_CARRY3)
@@ -222,17 +232,19 @@ mp_size_t  pagesize;
 #define TRY_TYPE_GCD_1   (TRY_RETVAL | TRY_SRC0 | TRY_DIVISOR)
 #define TRY_TYPE_GCD                                            \
   (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_SRC1 | TRY_SIZE2      \
-   | TRY_DST_SIZE_RETVAL | TRY_OVERLAP_NOTSRCS | TRY_SRC1_GCDDATA)
+   | TRY_DST_SIZE_RETVAL | TRY_OVERLAP_NOTSRCS | TRY_SRC_GCDDATA)
 
-#define TRY_TYPE_MUL_1   (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_MULTIPLIER)
-#define TRY_TYPE_MUL_1C  (TRY_TYPE_MUL_1 | TRY_CARRYLIMB)
+#define TRY_TYPE_MUL_1 \
+  (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_MULTIPLIER /*| TRY_OVERLAP_LOW_TO_HIGH*/)
+#define TRY_TYPE_MUL_1C \
+  (TRY_TYPE_MUL_1 | TRY_CARRYLIMB)
 
 #define TRY_TYPE_MUL_BASECASE \
   (TRY_DST0 | TRY_SRC0 | TRY_SRC1 | TRY_SIZE2 | TRY_OVERLAP_NONE)
 #define TRY_TYPE_MUL_N \
-  (TRY_DST0 | TRY_SRC0 | TRY_SRC1 | TRY_DOUBLE_DST | TRY_OVERLAP_NONE)
+  (TRY_DST0 | TRY_SRC0 | TRY_SRC1 | TRY_DST_SIZE_MUL | TRY_OVERLAP_NONE)
 #define TRY_TYPE_SQR \
-  (TRY_DST0 | TRY_SRC0 | TRY_DOUBLE_DST | TRY_OVERLAP_NONE)
+  (TRY_DST0 | TRY_SRC0 | TRY_DST_SIZE_MUL | TRY_OVERLAP_NONE)
 
 #define TRY_TYPE_RSHIFT \
   (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_SHIFT | TRY_OVERLAP_LOW_TO_HIGH)
@@ -241,6 +253,15 @@ mp_size_t  pagesize;
 
 #define TRY_TYPE_POPCOUNT   (TRY_RETVAL | TRY_SRC0 | TRY_SIZE_ZERO)
 #define TRY_TYPE_HAMDIST    (TRY_TYPE_POPCOUNT | TRY_SRC1)
+
+#define TRY_TYPE_GCD_FINDA  (TRY_SRC0 | TRY_RETVAL)
+
+#define TRY_TYPE_SB_DIVREM_MN                                           \
+  (TRY_RETVAL | TRY_DST0 | TRY_DST1 | TRY_SRC0 | TRY_SRC1 | TRY_SIZE2   \
+   | TRY_DST_SIZE_SB_DIVREM | TRY_SRC1_HIGHBIT | TRY_OVERLAP_NONE)
+
+#define TRY_TYPE_TDIV_QR                                                \
+  (TRY_DST0 | TRY_DST1 | TRY_SRC0 | TRY_SRC1 | TRY_SIZE2 | TRY_OVERLAP_NONE)
 
 
 /* The following are macros if there's no native versions, so wrap them in
@@ -294,6 +315,45 @@ void
 mpn_divexact_by3_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 { mpn_divexact_by3 (rp, sp, size); }
 
+void
+mpn_kara_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
+{
+  mp_ptr  tspace;
+  TMP_DECL (marker);
+  TMP_MARK (marker);
+  tspace = TMP_ALLOC_LIMBS (MPN_KARA_MUL_N_TSIZE (size));
+  mpn_kara_mul_n (dst, src1, src2, size, tspace);
+}
+void
+mpn_kara_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
+{
+  mp_ptr tspace;
+  TMP_DECL (marker);
+  TMP_MARK (marker);
+  tspace = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (size));
+  mpn_kara_sqr_n (dst, src, size, tspace);
+  TMP_FREE (marker);
+}
+void
+mpn_toom3_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
+{
+  mp_ptr  tspace;
+  TMP_DECL (marker);
+  TMP_MARK (marker);
+  tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (size));
+  mpn_toom3_mul_n (dst, src1, src2, size, tspace);
+}
+void
+mpn_toom3_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
+{
+  mp_ptr tspace;
+  TMP_DECL (marker);
+  TMP_MARK (marker);
+  tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (size));
+  mpn_toom3_sqr_n (dst, src, size, tspace);
+  TMP_FREE (marker);
+}
+
 
 struct try_t {
   struct try_one_t {
@@ -310,6 +370,13 @@ struct try_t {
 #else
 #define TRY(fun)        { (tryfun_t) fun,         "fun" }
 #define TRY_FUNFUN(fun) { (tryfun_t) fun/**/_fun, "fun" }
+#endif
+
+#ifdef TRY_EXTRA_PROTOS
+TRY_EXTRA_PROTOS
+#endif
+#ifdef TRY_EXTRA_PROTOS2
+TRY_EXTRA_PROTOS2
 #endif
 
 struct try_t try_array[] = {
@@ -348,6 +415,7 @@ struct try_t try_array[] = {
   { TRY(refmpn_divrem_1),     TRY(mpn_divrem_1),     TRY_TYPE_DIVREM_1 },
   { TRY(refmpn_mod_1),        TRY(mpn_mod_1),        TRY_TYPE_MOD_1 },
   { TRY(refmpn_mod_1_rshift), TRY(mpn_mod_1_rshift), TRY_TYPE_MOD_1_RSHIFT },
+  { TRY(refmpn_preinv_mod_1), TRY(mpn_preinv_mod_1), TRY_TYPE_PREINV_MOD_1 },
 #if HAVE_NATIVE_mpn_divrem_1c
   { TRY(refmpn_divrem_1c),    TRY(mpn_divrem_1c),    TRY_TYPE_DIVREM_1C },
 #endif
@@ -357,6 +425,9 @@ struct try_t try_array[] = {
   { TRY(refmpn_divexact_by3), TRY_FUNFUN(mpn_divexact_by3),
                                                      TRY_TYPE_DIVEXACT_BY3 },
   { TRY(refmpn_divexact_by3c),TRY(mpn_divexact_by3c),TRY_TYPE_DIVEXACT_BY3C },
+
+  { TRY(refmpn_sb_divrem_mn), TRY(mpn_sb_divrem_mn), TRY_TYPE_SB_DIVREM_MN, 3},
+  { TRY(refmpn_tdiv_qr),      TRY(mpn_tdiv_qr),      TRY_TYPE_TDIV_QR },
 
   { TRY(refmpn_mul_1),    TRY(mpn_mul_1),      TRY_TYPE_MUL_1 },
 #if HAVE_NATIVE_mpn_mul_1c
@@ -374,22 +445,23 @@ struct try_t try_array[] = {
   { TRY(refmpn_mul_n),        TRY(mpn_mul_n),  TRY_TYPE_MUL_N },
   { TRY(refmpn_sqr),          TRY(mpn_sqr_n),  TRY_TYPE_SQR },
 
+  { TRY(refmpn_mul_n), TRY_FUNFUN(mpn_kara_mul_n),  TRY_TYPE_MUL_N,
+                                                    MPN_KARA_MUL_N_MINSIZE },
+  { TRY(refmpn_sqr),   TRY_FUNFUN(mpn_kara_sqr_n),  TRY_TYPE_SQR,
+                                                    MPN_KARA_SQR_N_MINSIZE },
+  { TRY(refmpn_mul_n), TRY_FUNFUN(mpn_toom3_mul_n), TRY_TYPE_MUL_N,
+                                                    MPN_TOOM3_MUL_N_MINSIZE },
+  { TRY(refmpn_sqr),   TRY_FUNFUN(mpn_toom3_sqr_n), TRY_TYPE_SQR,
+                                                    MPN_TOOM3_SQR_N_MINSIZE },
+
   { TRY(refmpn_gcd_1),    TRY(mpn_gcd_1),      TRY_TYPE_GCD_1 },
   { TRY(refmpn_gcd),      TRY(mpn_gcd),        TRY_TYPE_GCD   },
 
   { TRY(refmpn_popcount), TRY(mpn_popcount),   TRY_TYPE_POPCOUNT },
   { TRY(refmpn_hamdist),  TRY(mpn_hamdist),    TRY_TYPE_HAMDIST },
 
-#if 0
-  /* need wrapper functions since they take workspace arguments */
-  { TRY(refmpn_mul_n), TRY_FUNFUN(mpn_kara_mul_n),  TRY_TYPE_MUL_N,
-                                                      MPN_KARA_MINSIZE},
-  { TRY(refmpn_sqr),   TRY_FUNFUN(mpn_kara_sqr_n),  TRY_TYPE_SQR,
-                                                      MPN_KARA_MINSIZE},
-  { TRY(refmpn_mul_n), TRY_FUNFUN(mpn_toom3_mul_n), TRY_TYPE_MUL_N,
-                                                      MPN_TOOM3_MINSIZE},
-  { TRY(refmpn_sqr),   TRY_FUNFUN(mpn_toom3_sqr_n), TRY_TYPE_SQR,
-                                                      MPN_TOOM3_MINSIZE },
+#ifdef TRY_EXTRA_ROUTINES
+  TRY_EXTRA_ROUTINES
 #endif
 
 #if HAVE_SPA_EXTRAS
@@ -524,6 +596,7 @@ struct source_t  s[NUM_SOURCES];
 struct dest_t {
   int        high;
   mp_size_t  align;
+  mp_size_t  size;
 };
 
 struct dest_t  d[NUM_SOURCES];
@@ -539,7 +612,6 @@ struct dest_each_t {
 
 mp_size_t  size;
 mp_size_t  size2;
-mp_size_t  dsize;
 unsigned long   shift;
 
 struct each_t {
@@ -602,11 +674,12 @@ int        multiplier_index;
 
 mp_limb_t  divisor_array[] = {
   1, 2, 3,
-  (mp_limb_t) 1 << 8,
-  (mp_limb_t) 1 << 16,
-  (mp_limb_t) -3,
-  (mp_limb_t) -2,
-  (mp_limb_t) -1,
+  CNST_LIMB(1) << 8,
+  CNST_LIMB(1) << 16,
+  CNST_LIMB(1) << (BITS_PER_MP_LIMB-1),
+  CNST_LIMB(-3),
+  CNST_LIMB(-2),
+  CNST_LIMB(-1),
 };
 
 mp_limb_t  divisor;
@@ -737,7 +810,7 @@ print_each (const struct each_t *e)
     { 
       if (tr->flag & TRY_DST(i))
         {
-          mpn_tracen ("   d[%d]", i, e->d[i].p, dsize);
+          mpn_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
           printf ("        located %p\n", e->d[i].p);
         }
     }
@@ -756,8 +829,10 @@ print_all (void)
   printf ("size  %ld\n", size);
   if (tr->flag & (TRY_SIZE2|TRY_XSIZE))
     printf ("size2 %ld\n", size2);
-  if (dsize != size)
-    printf ("dsize %ld\n", dsize);
+  if (d[0].size != size)
+    printf ("d[0].size %ld\n", d[0].size);
+  if (d[1].size != size)
+    printf ("d[1].size %ld\n", d[1].size);
   if (tr->flag & TRY_MULTIPLIER)
     printf ("   multiplier 0x%lX\n", multiplier);
   if (tr->flag & TRY_DIVISOR)
@@ -818,19 +893,27 @@ compare (void)
     error = 1;
 
   if (tr->flag & TRY_DST_SIZE_RETVAL)
-    dsize = ref.retval;
+
+    d[0].size = ref.retval;
+
+  if (tr->flag & TRY_DST_SIZE_SB_DIVREM)
+    {
+      d[0].size = size - size2;  /* quotient */
+      d[1].size = size2;         /* remainder */
+    }
 
   for (i = 0; i < numberof (ref.d); i++)
     {
       if (!(tr->flag & TRY_DST(i)))
         continue;
 
-      if (dsize != 0 && refmpn_cmp (ref.d[i].p, fun.d[i].p, dsize) != 0)
+      if (d[i].size != 0
+          && refmpn_cmp (ref.d[i].p, fun.d[i].p, d[i].size) != 0)
         {
           printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
                   i,
-                  mpn_diff_lowest (ref.d[i].p, fun.d[i].p, dsize),
-                  mpn_diff_highest (ref.d[i].p, fun.d[i].p, dsize));
+                  mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+                  mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
           error = 1;
         }
     }
@@ -910,6 +993,22 @@ call (struct each_t *e, tryfun_t function)
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, shift, divisor);
     break;
+  case TRY_TYPE_PREINV_MOD_1:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->s[0].p, size, divisor, refmpn_invert_limb (divisor));
+    break;
+
+  case TRY_TYPE_SB_DIVREM_MN:
+    refmpn_copyi (e->d[1].p, e->s[0].p, size);
+    refmpn_fill (e->d[0].p, size, 0x98765432);
+    e->retval = CALLING_CONVENTIONS (function) (e->d[0].p,
+                                                e->d[1].p, size,
+                                                e->s[1].p, size2);
+    break;
+  case TRY_TYPE_TDIV_QR:
+    CALLING_CONVENTIONS (function) (e->d[0].p, e->d[1].p, 0,
+                                    e->s[0].p, size, e->s[1].p, size2);
+    break;
 
   case TRY_TYPE_GCD_1:
     /* Must have a non-zero src, but this probably isn't the best way to do
@@ -975,13 +1074,29 @@ call (struct each_t *e, tryfun_t function)
        be enough if some actual calling conventions checking is implemented
        on such a system.  */
   case TRY_TYPE_POPCOUNT:
-    e->retval =  (* (unsigned long (*)(ANYARGS))
+    e->retval = (* (unsigned long (*)(ANYARGS))
                   CALLING_CONVENTIONS (function)) (e->s[0].p, size);
     break;
   case TRY_TYPE_HAMDIST:
     e->retval = (* (unsigned long (*)(ANYARGS))
                  CALLING_CONVENTIONS (function)) (e->s[0].p, e->s[1].p, size);
     break;
+
+  case TRY_TYPE_GCD_FINDA:
+    {
+      /* FIXME: do this with a flag */
+      mp_limb_t  c[2];
+      c[0] = e->s[0].p[0];
+      c[0] += (c[0] == 0);
+      c[1] = e->s[0].p[0];
+      c[1] += (c[1] == 0);
+      e->retval = CALLING_CONVENTIONS (function) (c);
+    }
+    break;
+
+#ifdef TRY_EXTRA_CALL
+    TRY_EXTRA_CALL
+#endif
 
   default:
     printf ("Unknown routine type 0x%X\n", tr->flag);
@@ -996,12 +1111,21 @@ pointer_setup (struct each_t *e)
 {
   int  i, j;
 
-  if (tr->flag & TRY_DOUBLE_DST)
-    dsize = 2*size;
+  if (tr->flag & TRY_DST_SIZE_MUL)
+    {
+      if (tr->flag & TRY_SIZE2)
+        d[0].size = size + size2;
+      else
+        d[0].size = 2*size;
+    }
+  else if (tr->flag & TRY_DST_SIZE_3)
+    d[0].size = 3;
   else if (tr->flag & (TRY_SIZE2|TRY_XSIZE))
-    dsize = size+size2;
+    d[0].size = size+size2;
   else
-    dsize = size;
+    d[0].size = size;
+
+  d[1].size = size;
 
   /* establish e->d[].p destinations */
   for (i = 0; i < numberof (e->d); i++)
@@ -1016,7 +1140,7 @@ pointer_setup (struct each_t *e)
       if (d[i].high)
         {
           e->d[i].p = e->d[i].region.ptr + e->d[i].region.size
-            - dsize - d[i].align;
+            - d[i].size - d[i].align;
           if (tr->flag & TRY_OVERLAP_LOW_TO_HIGH)
             e->d[i].p -= offset;
         }
@@ -1068,6 +1192,9 @@ try_one (void)
 
   trap_location = TRAP_SETUPS;
 
+  if (tr->flag & TRY_DIVISOR_NORM)
+    divisor |= MP_LIMB_T_HIGHBIT;
+
   for (i = 0; i < numberof (s); i++)
     {
       if (s[i].high)
@@ -1081,22 +1208,22 @@ try_one (void)
 
   if (tr->flag & TRY_DST0_INIT)
     {
-      t_random (s[1].region.ptr, dsize);
-      MPN_COPY (fun.d[0].p, s[1].region.ptr, dsize);
-      MPN_COPY (ref.d[0].p, s[1].region.ptr, dsize);
+      t_random (s[1].region.ptr, d[0].size);
+      MPN_COPY (fun.d[0].p, s[1].region.ptr, d[0].size);
+      MPN_COPY (ref.d[0].p, s[1].region.ptr, d[0].size);
     }
   else if (tr->flag & TRY_DST0)
     {
-      refmpn_fill (ref.d[0].p, dsize, DEADVAL);
-      refmpn_fill (fun.d[0].p, dsize, DEADVAL);
+      refmpn_fill (ref.d[0].p, d[0].size, DEADVAL);
+      refmpn_fill (fun.d[0].p, d[0].size, DEADVAL);
     }
   for (i = 1; i < numberof (d); i++)
     {
       if (!(tr->flag & TRY_DST(i)))
         continue;
 
-      refmpn_fill (ref.d[i].p, dsize, DEADVAL);
-      refmpn_fill (fun.d[i].p, dsize, DEADVAL);
+      refmpn_fill (ref.d[i].p, d[i].size, DEADVAL);
+      refmpn_fill (fun.d[i].p, d[i].size, DEADVAL);
     }
 
   ref.retval = 0x04152637;
@@ -1110,7 +1237,7 @@ try_one (void)
       mprotect_region (&s[i].region, PROT_READ|PROT_WRITE);
       t_random (s[i].p, SRC_SIZE(i));
 
-      if (tr->flag & TRY_SRC1_GCDDATA)
+      if (tr->flag & TRY_SRC_GCDDATA)
         {
           /* s[1] no more bits than s[0] */
           if (i == 1 && size2 == size)
@@ -1121,6 +1248,17 @@ try_one (void)
 
           /* odd */
           s[i].p[0] |= 1;
+        }
+
+      if ((tr->flag & TRY_SRC1_ODD) && i == 1)
+        s[i].p[0] |= 1;
+
+      if ((tr->flag & TRY_SRC1_HIGHBIT) && i == 1)
+        {
+          if (tr->flag & TRY_SIZE2)
+            s[i].p[size2-1] |= MP_LIMB_T_HIGHBIT;
+          else
+            s[i].p[size-1] |= MP_LIMB_T_HIGHBIT;
         }
 
       mprotect_region (&s[i].region, PROT_READ);
@@ -1158,10 +1296,10 @@ try_one (void)
        size <= option_lastsize;                                 \
        size++)
 
-#define SIZE2_FIRST                             \
-  (option_firstsize2 != 0 ? option_firstsize2   \
-   : tr->flag & TRY_SIZE2 ? 1                   \
-   : tr->flag & TRY_XSIZE ? 0                   \
+#define SIZE2_FIRST                                                     \
+  (tr->flag & TRY_SIZE2 ?                                               \
+   MAX (tr->minsize, (option_firstsize2 != 0 ? option_firstsize2 : 1))  \
+   : tr->flag & TRY_XSIZE ? 0                                           \
    : 0)
 #define SIZE2_LAST                              \
   (tr->flag & TRY_SIZE2 ? size                  \
@@ -1407,8 +1545,8 @@ usage (const char *prog)
     -p        print each case tried (try this if seg faulting)\n\
     -R        seed random numbers from time()\n\
     -r reps   set repetitions (default %d)\n\
-    -S seed   randomize from given seed\n\
     -s size   starting size to test\n\
+    -S size2  starting size2 to test\n\
     -s s1-s2  range of sizes to test\n\
     -W        don't show the spinner (use this in gdb)\n\
     -z        disable mprotect() redzones\n\
@@ -1449,7 +1587,7 @@ main (int argc, char *argv[])
     unsigned  seed = 123;
     int   opt;
 
-    while ((opt = getopt(argc, argv, "19a:pRr:S:s:Wz")) != EOF)
+    while ((opt = getopt(argc, argv, "19a:HpRr:S:s:Wz")) != EOF)
       {
         switch (opt) {
         case '1':
