@@ -53,7 +53,7 @@ check_onebit (void)
       got = mpf_get_d_2exp (&got_exp, f);
       if (got != want || got_exp != want_exp)
         {
-          printf    ("mpf_get_d_2exp wrong on 2**%d\n", data[i]);
+          printf    ("mpf_get_d_2exp wrong on 2**%ld\n", data[i]);
           mpf_trace ("   f    ", f);
           d_trace   ("   want ", want);
           d_trace   ("   got  ", got);
