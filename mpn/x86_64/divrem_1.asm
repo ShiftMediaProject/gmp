@@ -38,22 +38,56 @@ C  * Perhaps compute the inverse without relying on the 71 cycle divq?  Could
 C    either use Newton's method and mulq, or perhaps the faster fdiv.
 C  * Perhaps handle nn+fn < 3 using divq directly (if divq is ever to be used).
 
+C mp_limb_t
+C mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
+C		mp_srcptr np, mp_size_t nn, mp_limb_t d)
+
+C mp_limb_t
+C mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t fn,
+C		       mp_srcptr np, mp_size_t nn, mp_limb_t d,
+C		       mp_limb_t dinv, int shift)
+
 C INPUT PARAMETERS
 define(`qp',`%rdi')
 define(`fn',`%rsi')
 define(`np_param',`%rdx')
 define(`nn_param',`%rcx')
 define(`d',`%r8')
-
-define(`dinv',`%r10')
+define(`dinv',`%r9')
+C shift %r10 FIXME
 define(`np',`%r11')
-define(`nn',`%r9')
-define(`rem',`%rbp')
+define(`nn',`%rbp')
+define(`rem',`%r10')
 
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
+PROLOGUE(mpn_preinv_divrem_1)
+C	pushq	%r15
+	pushq	%r14
+C	pushq	%r13
+	pushq	%r12
+	pushq	%rbp
+	pushq	%rbx
+
+	movq	np_param, np
+	movq	nn_param, nn
+	addq	fn, nn_param
+	je	L(ret0)			C we're done if both nn and fn are zero
+
+	leaq	(qp,fn,8), qp		C point qp at least sign. integral limb
+
+	movq	40(%rsp), %rcx
+	salq	%cl, d			C d = normalized divisor
+
+	jmp	L(comm)
+L(ret0):
+	xorl	%eax, %eax
+	jmp	L(ret)
+EPILOGUE()
+
+	ALIGN(16)
 PROLOGUE(mpn_divrem_1)
 
 C	pushq	%r15
@@ -66,7 +100,7 @@ C	pushq	%r13
 	movq	np_param, np
 	movq	nn_param, nn
 	addq	fn, nn_param
-	je	L(ret)			C we're done if both nn and fn are zero
+	je	L(ret0)			C we're done if both nn and fn are zero
 
 	leaq	(qp,fn,8), qp		C point qp at least sign. integral limb
 
@@ -76,11 +110,11 @@ C	pushq	%r13
 	movq	$-1, %rdx
 	salq	%cl, d			C d = normalized divisor
 
-	movq	$-1, %rax
+	movq	%rdx, %rax
 	subq	d, %rdx
 	divq	d
 	movq	%rax, dinv		C dinv = invert_limb (d)
-
+L(comm):
 	xorl	%ebx, %ebx
 	xorl	%eax, %eax
 
