@@ -254,9 +254,6 @@ tuneup_measure (speed_function_t fun,
       s->yp[s->size-1] %= s->r;
     }
 
-  MPN_ZERO (s->xp, s->size);
-  MPN_ZERO (s->yp, s->size);
-
   t = speed_measure (fun, s);
 
   TMP_FREE (marker);
