@@ -72,25 +72,38 @@ PROLOGUE(func)
 	.save	ar.lc, r2
 	.body
 ifdef(`HAVE_ABI_32',
-`	addp4	rp = 0, rp
-	addp4	up = 0, up
-	addp4	vp = 0, vp
-	zxt4	n = n
+`	addp4	rp = 0, rp			C M I
+	addp4	up = 0, up			C M I
+	addp4	vp = 0, vp			C M I
+	zxt4	n = n				C I
 	;;
 ')
-	and		r14 = 3, n
-	adds		n = -1, n
-	mov		r2 = ar.lc
+.mmi
+C	ld8		r24 = [up], 8		C M
+C	ld8		r25 = [vp], 8		C M
+	nop		0			C M I
+.mmi
+	and		r14 = 3, n		C M I
+	adds		n = -1, n		C M I
+	mov		r2 = ar.lc		C I0
 	;;
-	shr.u		r15 = n, 2
-	cmp.eq		p6, p0 = 0, r14
-	cmp.eq		p7, p0 = 1, r14
-	cmp.eq		p8, p0 = 3, r14
+.mmi
+	cmp.eq		p6, p0 = 0, r14		C M I
+	cmp.eq		p7, p9 = 1, r14		C M I
+	shr.u		r15 = n, 2		C I
+.mmi
+	cmp.eq		p8, p0 = 3, r14		C M I
+	nop		0			C M I
+	nop		0			C M I
 	;;
-	mov.i		ar.lc = r15
-   (p6)	br.dptk		.Lb00
-   (p7)	br.dptk		.Lb01
-   (p8)	br.dptk		.Lb11
+.mmi
+	nop		0			C M I
+	nop		0			C M I
+	mov.i		ar.lc = r15		C I0
+.bbb
+   (p6)	br.dptk		.Lb00			C B
+   (p7)	br.dptk		.Lb01			C B
+   (p8)	br.dptk		.Lb11			C B
 
 .Lb10:	ld8		r18 = [up], 8
 	ld8		r22 = [vp], 8
