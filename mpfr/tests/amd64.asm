@@ -29,7 +29,9 @@
         .globl  _x86_fldcw
 x86_fldcw:
 _x86_fldcw:
-        fldcw   4(%rsp)
+	pushq	%rdi
+	fldcw	(%rsp)
+	popq	%rdi
         ret
 
 
@@ -39,7 +41,7 @@ _x86_fldcw:
         .globl  _x86_fstcw
 x86_fstcw:
 _x86_fstcw:
-        xorq    %rax, %rax
+	xorl	%eax, %eax
         pushq   %rax
         fstcw   (%rsp)
         popq    %rax
