@@ -373,26 +373,6 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
  *                                                                            *
  *****************************************************************************/
 
-/* The toom3 code uses 4 new mpn functions:
-   - mpn_addlsh1_n (c, a, b, n) puts in {c, n} the value of {a, n} + 2*{b, n},
-     and returns the carry out
-   - mpn_sublsh1_n (c, a, b, n) puts in {c, n} the value of {a, n} - 2*{b, n},
-     and returns the borrow out
-   - mpn_rsh1add_n (c, a, b, n) puts in {c, n} the value of {a, n} + {b, n}
-     divided by two, and returns the rshift carry (this carry is not used in
-     toom3, where the division by 2 is exact):
-       cy = mpn_add_n (c, a, b, n);
-       cy2 = mpn_rshift (c, c, n, 1);
-       c[n - 1] += cy << (GMP_NUMB_BITS - 1);
-       return cy2;
-   - mpn_rsh1sub_n (c, a, b, n) puts in {c, n} the value of {a, n} - {b, n}
-     divided by two, and returns a two-bit carry (this carry is not used in
-     toom3, since a >= b, and the division by 2 is exact):
-       cy = mpn_sub_n (c, a, b, n);
-       cy2 = mpn_rshift (c, c, n, 1);
-       return (cy2 >> (GMP_NUMB_BITS - 1)) + (cy << 1);
-*/
-
 /* put in {c, 2n} where n = 2k+r the value of {v0,2k} (already in place)
    + B^k * [{v1, 2k+1} - {t1, 2k+1}]
    + B^(2k) * [{t2, 2k+1} - {v0+vinf, 2k}]
