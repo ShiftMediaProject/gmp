@@ -55,13 +55,10 @@ MA 02111-1307, USA. */
    fields.
 
 
-   Bugs:
+   Enhancements:
 
    umul_ppmm support is not very good, lots of source data is generated
    whereas only two limbs are needed.
-
-
-   Future:
 
    Make a little scheme for interpreting the "SIZE" selections uniformly.
 
@@ -78,8 +75,6 @@ MA 02111-1307, USA. */
    When alignment means a dst isn't hard against the redzone, check the
    space in between remains unchanged.
 
-   See if the 80x86 debug registers can do redzones on byte boundaries.
-
    When a source overlaps a destination, don't run both s[i].high 0 and 1,
    as s[i].high has no effect.  Maybe encode s[i].high into overlap->s[i].
 
@@ -89,9 +84,16 @@ MA 02111-1307, USA. */
    Try to make the looping code a bit less horrible.  Right now it's pretty
    hard to see what iterations are actually done.
 
+   Perhaps specific setups and loops for each style of function under test
+   would be clearer than a parameterized general loop.  There's lots of
+   stuff common to all functions, but the exceptions get messy.
+
    When there's no overlap, run with both src>dst and src<dst.  A subtle
    calling-conventions violation occured in a P6 copy which depended on the
    relative location of src and dst.
+
+   multiplier_N is more or less a third source region for the addmul_N
+   routines, and could be done with the redzoned region scheme.
 
 */
 
@@ -121,13 +123,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "tests.h"
-
-
-#if WANT_ASSERT
-#define ASSERT_CARRY(expr)   ASSERT_ALWAYS ((expr) != 0)
-#else
-#define ASSERT_CARRY(expr)   (expr)
-#endif
 
 
 #if !HAVE_DECL_OPTARG
@@ -266,6 +261,7 @@ unsigned long   shift;
 mp_limb_t       carry;
 mp_limb_t       divisor;
 mp_limb_t       multiplier;
+mp_limb_t       multiplier_N[8];
 
 struct each_t {
   const char  *name;
@@ -309,9 +305,13 @@ struct try_t {
 #define SIZE_RETVAL      12
 #define SIZE_CEIL_HALF   13
 #define SIZE_GET_STR     14
+#define SIZE_PLUS_MSIZE_SUB_1 15  /* size+msize-1 */
   char  size;
   char  size2;
   char  dst_size[2];
+
+  /* multiplier_N size in limbs */
+  mp_size_t  msize;
 
   char  dst_bytes[2];
 
@@ -551,16 +551,24 @@ validate_sqrtrem (void)
 #define TYPE_SUBMUL_1         12
 #define TYPE_SUBMUL_1C        13
 
-#define TYPE_ADDSUB_N         14
-#define TYPE_ADDSUB_NC        15
+#define TYPE_ADDMUL_2         14
+#define TYPE_ADDMUL_3         15
+#define TYPE_ADDMUL_4         16
+#define TYPE_ADDMUL_5         17
+#define TYPE_ADDMUL_6         18
+#define TYPE_ADDMUL_7         19
+#define TYPE_ADDMUL_8         20
 
-#define TYPE_RSHIFT           16
-#define TYPE_LSHIFT           17
+#define TYPE_ADDSUB_N         21
+#define TYPE_ADDSUB_NC        22
 
-#define TYPE_COPY             20
-#define TYPE_COPYI            21
-#define TYPE_COPYD            22
-#define TYPE_COM_N            23
+#define TYPE_RSHIFT           23
+#define TYPE_LSHIFT           24
+
+#define TYPE_COPY             25
+#define TYPE_COPYI            26
+#define TYPE_COPYD            27
+#define TYPE_COM_N            28
 
 #define TYPE_MOD_1            30
 #define TYPE_MOD_1C           31
@@ -719,6 +727,48 @@ param_init (void)
   p = &param[TYPE_SUBMUL_1C];
   COPY (TYPE_ADDMUL_1C);
   REFERENCE (refmpn_submul_1c);
+
+
+  p = &param[TYPE_ADDMUL_2];
+  p->retval = 1;
+  p->dst[0] = 1;
+  p->dst_size[0] = SIZE_PLUS_MSIZE_SUB_1;
+  p->src[0] = 1;
+  p->src[1] = 1;
+  p->msize = 2;
+  p->dst0_from_src1 = 1;
+  p->overlap = OVERLAP_NOT_SRC2;
+  REFERENCE (refmpn_addmul_2);
+
+  p = &param[TYPE_ADDMUL_3];
+  COPY (TYPE_ADDMUL_2);
+  p->msize = 3;
+  REFERENCE (refmpn_addmul_3);
+
+  p = &param[TYPE_ADDMUL_4];
+  COPY (TYPE_ADDMUL_2);
+  p->msize = 4;
+  REFERENCE (refmpn_addmul_4);
+
+  p = &param[TYPE_ADDMUL_5];
+  COPY (TYPE_ADDMUL_2);
+  p->msize = 5;
+  REFERENCE (refmpn_addmul_5);
+
+  p = &param[TYPE_ADDMUL_6];
+  COPY (TYPE_ADDMUL_2);
+  p->msize = 6;
+  REFERENCE (refmpn_addmul_6);
+
+  p = &param[TYPE_ADDMUL_7];
+  COPY (TYPE_ADDMUL_2);
+  p->msize = 7;
+  REFERENCE (refmpn_addmul_7);
+
+  p = &param[TYPE_ADDMUL_8];
+  COPY (TYPE_ADDMUL_2);
+  p->msize = 8;
+  REFERENCE (refmpn_addmul_8);
 
 
   p = &param[TYPE_AND_N];
@@ -1231,6 +1281,28 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_submul_1c), TYPE_SUBMUL_1C },
 #endif
 
+#if HAVE_NATIVE_mpn_addmul_2
+  { TRY(mpn_addmul_2), TYPE_ADDMUL_2, 2 },
+#endif
+#if HAVE_NATIVE_mpn_addmul_3
+  { TRY(mpn_addmul_3), TYPE_ADDMUL_3, 3 },
+#endif
+#if HAVE_NATIVE_mpn_addmul_4
+  { TRY(mpn_addmul_4), TYPE_ADDMUL_4, 4 },
+#endif
+#if HAVE_NATIVE_mpn_addmul_5
+  { TRY(mpn_addmul_5), TYPE_ADDMUL_5, 5 },
+#endif
+#if HAVE_NATIVE_mpn_addmul_6
+  { TRY(mpn_addmul_6), TYPE_ADDMUL_6, 6 },
+#endif
+#if HAVE_NATIVE_mpn_addmul_7
+  { TRY(mpn_addmul_7), TYPE_ADDMUL_7, 7 },
+#endif
+#if HAVE_NATIVE_mpn_addmul_8
+  { TRY(mpn_addmul_8), TYPE_ADDMUL_8, 8 },
+#endif
+
   { TRY_FUNFUN(mpn_com_n),  TYPE_COM_N },
 
   { TRY_FUNFUN(MPN_COPY),      TYPE_COPY },
@@ -1668,6 +1740,8 @@ print_all (void)
     printf ("   shift %lu\n", shift);
   if (tr->carry)
     mpn_trace ("   carry", &carry, 1);
+  if (tr->msize)
+    mpn_trace ("   multiplier_N", multiplier_N, tr->msize);
 
   for (i = 0; i < NUM_DESTS; i++)
     if (tr->dst[i])
@@ -1809,6 +1883,17 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_MUL_2:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, e->s[1].p);
+    break;
+
+  case TYPE_ADDMUL_2:
+  case TYPE_ADDMUL_3:
+  case TYPE_ADDMUL_4:
+  case TYPE_ADDMUL_5:
+  case TYPE_ADDMUL_6:
+  case TYPE_ADDMUL_7:
+  case TYPE_ADDMUL_8:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, size, multiplier_N);
     break;
 
   case TYPE_AND_N:
@@ -2109,6 +2194,9 @@ pointer_setup (struct each_t *e)
       case SIZE_PLUS_1:
         d[i].size = size+1;
         break;
+      case SIZE_PLUS_MSIZE_SUB_1:
+        d[i].size = size + tr->msize - 1;
+        break;
 
       case SIZE_SUM:
         if (tr->size2)
@@ -2258,31 +2346,10 @@ try_one (void)
   pointer_setup (&ref);
   pointer_setup (&fun);
 
-  for (i = 0; i < NUM_DESTS; i++)
-    {
-      if (! tr->dst[i])
-        continue;
-
-      if (tr->dst0_from_src1 && i==0)
-        {
-          t_random (s[1].region.ptr, d[0].size);
-          MPN_COPY (fun.d[0].p, s[1].region.ptr, d[0].size);
-          MPN_COPY (ref.d[0].p, s[1].region.ptr, d[0].size);
-        }
-      else if (tr->dst_bytes[i])
-        {
-          memset (ref.d[i].p, 0xBA, d[i].size);
-          memset (fun.d[i].p, 0xBA, d[i].size);
-        }
-      else
-        {
-          refmpn_fill (ref.d[i].p, d[i].size, DEADVAL);
-          refmpn_fill (fun.d[i].p, d[i].size, DEADVAL);
-        }
-    }
-
   ref.retval = 0x04152637;
   fun.retval = 0x8C9DAEBF;
+
+  t_random (multiplier_N, tr->msize);
 
   for (i = 0; i < NUM_SOURCES; i++)
     {
@@ -2343,6 +2410,32 @@ try_one (void)
         {
           refmpn_copyi (ref.s[i].p, s[i].p, SRC_SIZE(i));
           refmpn_copyi (fun.s[i].p, s[i].p, SRC_SIZE(i));
+        }
+    }
+
+  for (i = 0; i < NUM_DESTS; i++)
+    {
+      if (! tr->dst[i])
+        continue;
+
+      if (tr->dst0_from_src1 && i==0)
+        {
+          mp_size_t  copy = MIN (d[0].size, SRC_SIZE(1));
+          mp_size_t  fill = MAX (0, d[0].size - copy);
+          MPN_COPY (fun.d[0].p, s[1].region.ptr, copy);
+          MPN_COPY (ref.d[0].p, s[1].region.ptr, copy);
+          refmpn_fill (fun.d[0].p + copy, fill, DEADVAL);
+          refmpn_fill (ref.d[0].p + copy, fill, DEADVAL);
+        }
+      else if (tr->dst_bytes[i])
+        {
+          memset (ref.d[i].p, 0xBA, d[i].size);
+          memset (fun.d[i].p, 0xBA, d[i].size);
+        }
+      else
+        {
+          refmpn_fill (ref.d[i].p, d[i].size, DEADVAL);
+          refmpn_fill (fun.d[i].p, d[i].size, DEADVAL);
         }
     }
 
