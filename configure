@@ -3521,7 +3521,7 @@ done
 path="$path generic"
 mpn_objects=
 gmp_mpn_functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1 \
-  submul_1 lshift rshift divmod_1 divrem divrem_1 divrem_2 divrem_newt \
+  submul_1 lshift rshift divmod_1 divrem divrem_1 divrem_1n divrem_2 divrem_newt \
   mod_1 pre_mod_1 dump mul mul_n mul_basecase sqr_basecase random random2 \
   rawrandom sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp \
   perfsqr bdivmod gcd_1 gcd gcdext"
