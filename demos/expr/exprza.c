@@ -1,6 +1,6 @@
 /* mpz expression evaluation
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -63,6 +63,12 @@ mpexpr_mpz_number (mpz_ptr res, __gmp_const char *e, size_t elen, int base)
   return ret;
 }
 
+/* ignoring prec */
+static void
+e_mpz_init (mpz_ptr z, unsigned long prec)
+{
+  mpz_init (z);
+}
 
 int
 mpz_expr_a (__gmp_const struct mpexpr_operator_t *table,
@@ -82,7 +88,7 @@ mpz_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_clear       = (mpexpr_fun_one_t)      mpz_clear;
   p.mpX_ulong_p     = (mpexpr_fun_i_unary_t)  mpz_fits_ulong_p;
   p.mpX_get_ui      = (mpexpr_fun_get_ui_t)   mpz_get_ui;
-  p.mpX_init        = (mpexpr_fun_unary_ui_t) mpz_init;
+  p.mpX_init        = (mpexpr_fun_unary_ui_t) e_mpz_init;
   p.mpX_number      = (mpexpr_fun_number_t)   mpexpr_mpz_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    mpz_set;
   p.mpX_set_or_swap = (mpexpr_fun_unary_t)    mpz_swap;

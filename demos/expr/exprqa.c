@@ -1,7 +1,6 @@
-/* mpq expression evaluation */
+/* mpq expression evaluation
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 #include <stdio.h>
@@ -57,6 +55,13 @@ e_mpq_number (mpq_ptr res, __gmp_const char *e, size_t elen, int base)
 }
 
 
+/* ignoring prec */
+static void
+e_mpq_init (mpq_ptr q, unsigned long prec)
+{
+  mpq_init (q);
+}
+
 int
 mpq_expr_a (__gmp_const struct mpexpr_operator_t *table,
             mpq_ptr res, int base,
@@ -75,7 +80,7 @@ mpq_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_clear       = (mpexpr_fun_one_t)      mpq_clear;
   p.mpX_ulong_p     = (mpexpr_fun_i_unary_t)  e_mpq_ulong_p;
   p.mpX_get_ui      = (mpexpr_fun_get_ui_t)   e_mpq_get_ui_fits;
-  p.mpX_init        = (mpexpr_fun_unary_ui_t) mpq_init;
+  p.mpX_init        = (mpexpr_fun_unary_ui_t) e_mpq_init;
   p.mpX_number      = (mpexpr_fun_number_t)   e_mpq_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    mpq_set;
   p.mpX_set_or_swap = (mpexpr_fun_unary_t)    mpq_swap;
