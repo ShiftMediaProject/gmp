@@ -1955,9 +1955,13 @@ AC_SUBST(TUNE_SQR_OBJ)
 
 
 # Configs for demos/pexpr.c.
+#
 AC_CONFIG_FILES(demos/pexpr-config.h:demos/pexpr-config-h.in)
 GMP_SUBST_CHECK_FUNCS(clock, cputime, getrusage, gettimeofday, sigaction, sigaltstack, sigstack)
 GMP_SUBST_CHECK_HEADERS(sys/resource.h)
+AC_CHECK_TYPES([stack_t], HAVE_STACK_T_01=1, HAVE_STACK_T_01=0,
+               [#include <signal.h>])
+AC_SUBST(HAVE_STACK_T_01)
 
 # Configs for demos/calc directory
 #
