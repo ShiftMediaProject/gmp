@@ -133,8 +133,11 @@ setup_error_handler ()
   sigstk.ss_size = SIGSTKSZ;
   sigstk.ss_flags = 0;
 #endif /* ! _AIX */
+
+#ifndef _UNICOS
   if (sigaltstack (&sigstk, 0) < 0)
     perror("sigaltstack");
+#endif
 
   /* Initialize structure for sigaction (called below).  */
   act.sa_handler = cleanup_and_exit;
