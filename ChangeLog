@@ -18,6 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-05  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr-2-0-2-branch 2003-11-05.
+
+	* mpn/alpha/ev5/dive_1.c: New file.
+
+	* configure.in (x86_64-*-*): Accept together with amd64-*-*.
+
+	* tune/speed.c: Check range of -x,-y,-w,-W alignment specifiers.
+	* tune/speed.h (CACHE_LINE_SIZE): Amend comments.
+
 2003-11-04  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.c: Fix typo in testing HAVE_NATIVE_mpn_modexact_1_odd.
