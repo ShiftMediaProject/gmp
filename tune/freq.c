@@ -161,14 +161,14 @@ freq_getsysinfo (int help)
 
 
 /* In HPUX 10 and up, pstat_getprocessor() psp_iticksperclktick is the
-   number of CPU cycles (ie. the CR16 register) per CLK_TCK.  HPUX 9 has
-   similar pstat functions (see /usr/include/sys/pstat.h), but doesn't have
-   pstat_getprocessor or any apparent equivalent.  */
+   number of CPU cycles (ie. the CR16 register) per CLK_TCK.  HPUX 9 doesn't
+   have that field in pst_processor though, and has no apparent
+   equivalent.  */
 
 static int
 freq_pstat_getprocessor (int help)
 {
-#if HAVE_PSTAT_GETPROCESSOR
+#if HAVE_PSTAT_GETPROCESSOR && HAVE_PSP_ITICKSPERCLKTICK
   struct pst_processor  p;
 
   HELP ("pstat_getprocessor() psp_iticksperclktick");
