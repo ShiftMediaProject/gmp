@@ -24,10 +24,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 The IA-64 ISA is strange and the Itanium pipeline is bizarre!  How
 come everybody else is moving from static to dynamic OOO pipelines,
-and Intel moves in the opposite direction?  I think compiler writers
-failed badly to generate reasonable code for the static RISC pipelines
-of the late 1990'ies, and they sure won't do any better with the IA-64
-ISA and its Itanium implementation!
+and Intel moves in the opposite direction?  Compiler writers failed to
+generate reasonable code for the static RISC pipelines of the mid
+1990'ies, and they sure won't do any better with the IA-64 ISA and its
+Itanium implementation!
 
 The IA-64 ISA keeps instructions three and three in 128 bit bundles.
 Programmers/compilers need to put explicit breaks `;;' between WAW or
@@ -44,41 +44,65 @@ Taken cloop branches seem to insert a bubble into the pipeline most of
 the time.
 
 Loads to the fp registers bypass the L1 cache and thus get extremely
-long latencies, 9 cycles.  It is faster to load stuff via the integer
-registers and then use setf.sig to move it to a fp register.
+long latencies, 9 cycles.
 
+The software pipeline stuff using br.ctop instruction causes delays,
+since many issue slots are taken up by instructions with zero
+predicates, and since about 15 extra instructions are needed to set
+things up.  These features are designed for code density, not maximum
+speed.
+
+Misc pipeline limitations:
+* The getf.sig instruction can only execute in M0.
+* At most four integer instructions/cycle.
+* Nops take up resources like any plain instructions.
+
+================================================================
+mpn_add_n, mpn_sub_n:
+
+The current code runs at 3 cycles/limb.  Unrolling could clearly bring
+down the time to 2 cycles/limb.
 
 ================================================================
 mpn_addmul_1:
 
-.Loop:
-  { .mfi	getf.sig	r16 = f48
-		xma.l		f48 = f32, f97, f40
-	   (p6)	cmp.leu
-} { .mfi	getf.sig	r24 = f56
-		xma.hu		f56 = f32, f97, f40
-	   (p7)	cmp.ltu
+The current code runs at 3.7 cycles/limb, but that somewhat odd timing
+is reached only for huge operands.  It uses the mod-scheduled software
+pipelining feature.  The reason for the poor speed for small operands
+is that mod-scheduled loops have a very long start-up overhead.
+
+For optimal speed, we need to load two 64-bit limbs with the ldfp8
+instruction, and stay away from mod-scheduled loops.  Since rp and up
+might be mutually aligned in two ways, we will need two loop variants,
+with the same basic structure:
+
+  { .mfi	getf.sig
+		xma.l
+	   (p6)	cmp.leu		p6, p7 = 
+} { .mfi	stf8
+		xma.hu
+	   (p7)	cmp.ltu		p6, p7 = 
 		;;
-} { .mib	ldfp8		f32, f33 = [r33], 8
+} { .mib	getf.sig
 	   (p6)	add 1
 		nop.b
-} { .mib	stf8
+} { .mib	ldfp8		 = [up], 16
 	   (p7)	add
 		nop.b
 		;;
-} { .mfi	getf.sig	r17 = f49
-		xma.l		f49 = f33, f97, f41
-	   (p6)	cmp.leu
-} { .mfi	getf.sig	r25 = f57
-		xma.hu		f57 = f33, f97, f41
-	   (p7)	cmp.ltu
+  { .mfi	getf.sig
+		xma.l
+	   (p6)	cmp.leu		p6, p7 = 
+} { .mfi	stf8
+		xma.hu
+	   (p7)	cmp.ltu		p6, p7 = 
 		;;
-} { .mib	ldfp8		f40, f41 = [r32], 8
+} { .mib	getf.sig
 	   (p6)	add 1
 		nop.b
-} { .mib	stf8
+} { .mib	ldfp8		 = [rp], 16
 	   (p7)	add
-		br.cloop	.Loop
+		br.cloop
 		;;
 } 
 
@@ -91,37 +115,92 @@ mpn_addmul_1:
 ================================================================
 mpn_submul_1:
 
-Like mpn_addmul_1, but complement s2limb.  When s2limb is
-complemented, the low product limb becomes complement of true product.
-This should allow us to use the accumulation of xma.
+The current code just calls mpn_mul_1 and mpn_sub_n and thus needs
+about 7 cycles/limb.
+
+We could implement this much like mpn_addmul_1, if we first complement
+v.  When v is complemented, the low product limb becomes complement of
+true product.  This should allow us to use the accumulation of xma.
+Here is how it works:
+
+
+  #define umul_ppmma(ph, pl, m0, m1, a) \
+    do {								\
+      UDItype __m0 = (m0), __m1 = (m1), __a = (a);			\
+      __asm__ ("xma.hu %0 = %1, %2, %3"					\
+	       : "=f" (ph)						\
+	       : "f" (m0), "f" (m1), "f" (__a));			\
+      (pl) = __m0 * __m1 + __a;						\
+    } while (0)
+
+  mp_limb_t
+  mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
+  {
+    mp_limb_t cl, cy;
+    mp_size_t i;
+    mp_limb_t phi, plo;
+    mp_limb_t x;
+    mp_limb_t ul, vln;
+
+    vln = -vl;
+
+    cl = 0;
+    for (i = n; i != 0; i--)
+      {
+	ul = *up++;		/* will need this in both fregs and gregs */
+	x = *rp;
+	umul_ppmma (phi, plo, ul, vln, x);
+
+	cy = plo < cl;
+	plo -= cl;
+
+	cl = ul - phi;
+	cl += cy;
+
+	*rp++ = plo;
+      }
+
+    return cl;
+  }
 
 ================================================================
 mpn_mul_1:
 
-  { .mfi	getf.sig	r14 = f34
-		xma.l		f34 = f32, f97, f0
-	   (p6) cmp.leu
-} { .mfi	getf.sig	r15 = f35
-		xma.hu		f35 = f32, f97, f0
-	   (p7) cmp.ltu
-		;;
-} { .mfi	ldf8		f32 = [r33], 8
-		nop.f
-	   (p6) add 1
+The current code runs at 3.7 cycles/limb.  The code is very similar to
+the mpn_addmul_1 code.  See comments above.
+
+Faster code wouldn't be too hard to write.  This is one possible
+pattern:
+
+  { .mfi	getf.sig
+		xma.l
+	   (p6) cmp.leu		p6, p7 = 
 } { .mfi	stf8
-		nop.f
+		xma.hu
+	   (p7) cmp.ltu		p6, p7 = 
+		;;
+} { .mib	getf.sig
+	   (p6) add 1
+		nop.b
+} { .mib	ldf8		 = [up], 8
 	   (p7) add
+		br.cloop
 		;;
 }
 
-1 limb/10 instructions
-	   10 insn/max 6 insn/cycle:		1.67 cycles/limb
+1 limb/12 instructions
+	   12 insn/max 6 insn/cycle:		2.0 cycles/limb
 	   4 memops/max 2 memops/cycle:		2.0 cycles/limb
 	   4 intops/max 2 intops/cycle:		2.0 cycles/limb
 	   2 fpops/max 2 fpops/cycle:		1.0 cycles/limb
 
 ================================================================
 mpn_mul_8
+
+The add+add+cmp+cmp we use on the other codes is optimal for
+shortening recurrencies (2 cycles) but the sequence takes up 4
+execution slots.  When recurrency depth is not critical, a more
+standard 3-cycle add+cmp+add is better.
 
 /* First load the 8 values from v */
 	ldfp8		v0, v1 = [r35], 16;;
@@ -156,19 +235,31 @@ Loop:	ldf8		u0 = [r33], 8
 	getf.sig	l5 = lp5
 	getf.sig	l6 = lp6
 	getf.sig	l7 = lp7
-	add+add+cmp+cmp	l0, l0, h0
-	add+add+cmp+cmp	l1, l1, h1
-	add+add+cmp+cmp	l2, l2, h2
-	add+add+cmp+cmp	l3, l3, h3
-	add+add+cmp+cmp	l4, l4, h4
-	add+add+cmp+cmp	l5, l5, h5
-	add+add+cmp+cmp	l6, l6, h6
-	add+add+cmp+cmp	l7, l7, h7
+	add+cmp+add	l0, l0, h0
+	add+cmp+add	l1, l1, h1
+	add+cmp+add	l2, l2, h2
+	add+cmp+add	l3, l3, h3
+	add+cmp+add	l4, l4, h4
+	add+cmp+add	l5, l5, h5
+	add+cmp+add	l6, l6, h6
+	add+cmp+add	l7, l7, h7
 	st8		[r32] = xx, 8
 	br.cloop Loop
-================================================================
 
-mpn_lshift
-mpn_rshift
-	shrp	r1=r2,r3,imm			// only immediate count
-						// will need 63 loops.  Cute.
+	50 insn at max 6 insn/cycle:		8.33 cycles/limb8
+	10 memops at max 2 memops/cycle:	5 cycles/limb8
+	16 fpops at max 2 fpops/cycle:		8 cycles/limb8
+	24 intops at max 4 intops/cycle:	6 cycles/limb8
+	10+24 memops+intops at max 4/cycle	8.5 cycles/limb8
+						1.0625 cycles/limb
+
+================================================================
+mpn_lshift, mpn_rshift
+
+The current code runs at 2 cycles/limb, but has a too deep software
+pipeline.  The code suffers badly from the 4 cycle latency of the
+variable shift instructions.
+
+Using 63 separate loops, we could use the double-word SHRP
+instruction.  That instruction has a plain single-cycle latency.  We
+need 63 loops since this instruction only accept immediate count.
