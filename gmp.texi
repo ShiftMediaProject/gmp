@@ -785,7 +785,9 @@ for 0^0.  (In version 1, they yielded 0.)
 @node  Compatibility with Version 2.0.x,  , Compatibility with Version 1.x, Compatibility with older versions
 @subsection Compatibility with Version 2.0.x
 
-This version of MP is upward compatible with version 2.0, 2.0.1, and 2.0.2.
+This version of MP is upward compatible with version 2.0, 2.0.1, and 2.0.2 at
+the source level.  Programs will need to be recompiled with the new
+@file{gmp.h}.
 
 
 @node  Getting the Latest Version of MP,  , Compatibility with older versions, MP Basics
