@@ -534,6 +534,14 @@ case "$target" in
   i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
     gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
     ;;
+  powerpc*-*-*)
+    case "$target" in
+      *-*-mach* | *-*-rhapsody* | *-*-nextstep*)
+        ;;	# these use non-concentional assembly syntax.
+      *)
+	gmp_m4postinc="$gmp_m4postinc mpn/powerpc32/regmap.m4"
+	;;
+    esac
 esac
 changequote([,])dnl
 
