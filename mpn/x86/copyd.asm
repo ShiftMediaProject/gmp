@@ -5,7 +5,7 @@ dnl  P5:     1.0         40
 dnl  P6      2.4         70
 dnl  K6      1.0         55
 dnl  K7:     1.3         75
-dnl  P4:     3          175
+dnl  P4:     2.6        175
 dnl
 dnl  (Startup time includes some function call overheads.)
 
