@@ -1,6 +1,6 @@
 /* double mpz_get_d (mpz_t src) -- Return the double approximation to SRC.
 
-Copyright 1996, 1997, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,111 +24,14 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* FIXME: Would prefer to inline this on all compilers, not just those with
-   "inline".  */
-static inline int
-mpn_zero_p (mp_srcptr p, mp_size_t n)
-{
-  mp_size_t i;
-
-  for (i = 0; i < n; i++)
-    if (p[i] != 0)
-      return 0;
-
-  return 1;
-}
-
-/* HPPA 8000, 8200, 8500, and 8600 traps FCNV,UDW,DBL for values >= 2^63.  This
-   makes it slow.  Worse, the Linux kernel apparently uses untested code in its
-   trap handling routines, and gets the sign wrong.  Their compiler port
-   doesn't define __hppa as it should.  Here is a workaround:  */
-#if (defined (__hppa) || defined (__hppa__)) && GMP_LIMB_BITS == 64
-#define limb2dbl(limb) \
-    ((limb) >> (GMP_LIMB_BITS - 1) != 0  				\
-     ? 2.0 * (double) (mp_limb_signed_t) (((limb) >> 1) | ((limb) & 1))	\
-     : (double) (mp_limb_signed_t) (limb))
-#else
-#define limb2dbl(limb) \
-    (double) (limb)
-#endif
-
 double
-mpz_get_d (mpz_srcptr src)
+mpz_get_d (mpz_srcptr z)
 {
-  double res;
   mp_size_t size;
-  int negative;
-  mp_ptr qp;
-  mp_limb_t hz, lz;
-  int cnt;
 
-  size = SIZ(src);
-  if (size == 0)
+  size = SIZ (z);
+  if (UNLIKELY (size == 0))
     return 0.0;
 
-  negative = size < 0;
-  size = ABS (size);
-  qp = PTR(src);
-
-  if (size == 1)
-    {
-      res = limb2dbl (qp[size - 1]);
-    }
-  else if (size == 2)
-    {
-      res = (MP_BASE_AS_DOUBLE * limb2dbl (qp[size - 1])
-	     + limb2dbl (qp[size - 2]));
-    }
-  else
-    {
-      count_leading_zeros (cnt, qp[size - 1]);
-      cnt -= GMP_NAIL_BITS;
-
-#if BITS_PER_MP_LIMB == 32
-      if (cnt == 0)
-	{
-	  hz = qp[size - 1];
-	  lz = qp[size - 2];
-	}
-      else
-	{
-	  hz = ((qp[size - 1] << cnt) | (qp[size - 2] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
-	  lz = ((qp[size - 2] << cnt) | (qp[size - 3] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
-	}
-#if _GMP_IEEE_FLOATS
-      /* Take bits from less significant limbs, but only if they may affect
-	 the result.  */
-      if ((lz & 0x7ff) == 0x400)
-	{
-	  if (cnt != 0)
-	    lz += (((qp[size - 3] << cnt) & GMP_NUMB_MASK) != 0
-		   || ! mpn_zero_p (qp, size - 3));
-	  else
-	    lz += (! mpn_zero_p (qp, size - 2));
-	}
-#endif
-      res = MP_BASE_AS_DOUBLE * limb2dbl (hz) + limb2dbl (lz);
-      res = __gmp_scale2 (res, (size - 2) * GMP_NUMB_BITS - cnt);
-#endif
-#if BITS_PER_MP_LIMB == 64
-      if (cnt == 0)
-	hz = qp[size - 1];
-      else
-	hz = ((qp[size - 1] << cnt) | (qp[size - 2] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
-#if _GMP_IEEE_FLOATS
-      if ((hz & 0x7ff) == 0x400)
-	{
-	  if (cnt != 0)
-	    hz += (((qp[size - 2] << cnt) & GMP_NUMB_MASK) != 0
-		   || ! mpn_zero_p (qp, size - 2));
-	  else
-	    hz += (! mpn_zero_p (qp, size - 1));
-	}
-#endif
-      res = limb2dbl (hz);
-      res = __gmp_scale2 (res, (size - 1) * GMP_NUMB_BITS - cnt);
-#endif
-    }
-
-  return negative ? -res : res;
+  return mpn_get_d (PTR (z), ABS (size), size, 0L);
 }

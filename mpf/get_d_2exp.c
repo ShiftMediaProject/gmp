@@ -23,35 +23,32 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
 double
 mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
 {
   double res;
-  mp_size_t size, i, n_limbs_to_use;
-  int negative;
-  mp_ptr qp;
+  mp_size_t size, abs_size;
+  mp_srcptr ptr;
   int cnt;
   long exp;
 
   size = SIZ(src);
-  if (size == 0)
+  if (UNLIKELY (size == 0))
     {
       *exp2 = 0;
       return 0.0;
     }
 
-  negative = size < 0;
-  size = ABS (size);
-  qp = PTR(src);
+  ptr = PTR(src);
+  abs_size = ABS (size);
+  count_leading_zeros (cnt, ptr[abs_size - 1]);
+  cnt -= GMP_NAIL_BITS;
 
-  n_limbs_to_use = MIN (LIMBS_PER_DOUBLE, size);
-  qp += size - n_limbs_to_use;
-  res = qp[0] / MP_BASE_AS_DOUBLE;
-  for (i = 1; i < n_limbs_to_use; i++)
-    res = (res + qp[i]) / MP_BASE_AS_DOUBLE;
-  count_leading_zeros (cnt, qp[n_limbs_to_use - 1]);
-  exp = EXP(src) * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
-  res = res * ((mp_limb_t) 1 << cnt);
+  res = mpn_get_d (ptr, abs_size, (mp_size_t) 0,
+                   (long) - (abs_size * GMP_NUMB_BITS - cnt));
+
+  exp = EXP(src) * GMP_NUMB_BITS - cnt;
 
   /* gcc on m68k and x86 holds floats in the coprocessor, which may mean
      "res" has extra precision.  Force it through memory to ensure any
@@ -61,7 +58,7 @@ mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
   asm ("" : "=m" (res) : "0" (res));
 #endif
 
-  /* if hardware floats are in round upwards mode then res may be 1.0 */
+  /* if hardware floats are in round upwards mode then res might be 1.0 */
   if (UNLIKELY (res >= 1.0))
     {
       res *= 0.5;
@@ -72,5 +69,5 @@ mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
   ASSERT (res < 1.0);
 
   *exp2 = exp;
-  return negative ? -res : res;
+  return (size >= 0 ? res : -res);
 }
