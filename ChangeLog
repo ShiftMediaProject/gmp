@@ -1,8 +1,9 @@
 2000-02-17  Kevin Ryde  <kevin@swox.se>
 
-	* gmp.h: Add defines for mpn_and_n, mpn_andn_n, mpn_com_n,
-	mpn_copyd, mpn_copyi, mpn_ior_n, mpn_iorn_n, mpn_mul_basecase,
-	mpn_nand_n, mpn_nior_n, mpn_sqr_basecase, mpn_xor_n, mpn_xorn_n.
+	* gmp.h: Add prototypes and defines for mpn_and_n, mpn_andn_n,
+	mpn_com_n, mpn_copyd, mpn_copyi, mpn_ior_n, mpn_iorn_n,
+	mpn_mul_basecase, mpn_nand_n, mpn_nior_n, mpn_sqr_basecase,
+	mpn_xor_n, mpn_xorn_n.
 
 	* mpn/asm-defs.m4: Many additions making up initial version.
 	* mpn/asm-defs.m4 (L): Use defn(`LSYM_PREFIX').
