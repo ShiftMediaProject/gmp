@@ -1933,7 +1933,6 @@ AC_SUBST(gmp_srclinks)
 # Configs for mpfr.
 #
 if test $enable_mpfr = yes; then
-
   # Denorm support is necessary for mpfr_set_d and mpfr_get_d, and for the
   # various test programs.  On alpha denorms cause SIGFPE by default.
   # -mieee-with-inexact is for gcc, -ieee_with_inexact is for DEC C.
@@ -1950,7 +1949,18 @@ if test $enable_mpfr = yes; then
   esac
   AC_SUBST(CFLAGS_IEEE_WITH_INEXACT)  
 
-AC_CHECK_HEADERS(fenv.h fpu_control.h)
+AC_CHECK_HEADERS(fpu_control.h)
+
+dnl Check for fesetround
+AC_MSG_CHECKING(for fesetround)
+saved_LIBS="$LIBS"
+LIBS="$LIBS $LM9X"
+AC_TRY_LINK([#include <fenv.h>], [fesetround(FE_TONEAREST);],
+  [AC_MSG_RESULT(yes)
+   AC_DEFINE(HAVE_FESETROUND,1,[Define if `fesetround' and <fenv.h> exist.])],
+  [AC_MSG_RESULT(no)
+   LIBS="$saved_LIBS"]
+)
 
 dnl Check random functions
 AC_CHECK_FUNCS(lrand48)
@@ -1988,6 +1998,7 @@ int main()
   AC_MSG_RESULT(no),
   AC_MSG_RESULT(no)
 )
+
 fi
 
 
