@@ -1,8 +1,9 @@
-/* urandomb(rop, state) -- Generate a uniform pseudorandom real number
-between zero and one, using `state' as the random state previously
-initialized by a call to gmp_rand_init().
+/* urandomb (rop, state, size) -- Generate a uniform pseudorandom real
+   number between 0 (inclusive) and 1 (exclusive) with SIZE number of
+   bits, using STATE as the random state previously initialized by a
+   call to gmp_rand_init().  If SIZE is 0, fill ROP.
 
-Copyright (C) 1999 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,25 +25,31 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+/* FIXME: Rename file to urandomb.c. */
+
 /* mpf_urandomb() -- Generate a universally distributed real random
-number 0 <= X < 1.  See file mpz/urandom.c for algorithms used. */
+   number 0 <= X < 1.  See file mpn/generic/rawrandom.c for algorithms
+   used. */
 
 void
 #if __STDC__
-mpf_urandomb (mpf_t rop, gmp_rand_state s)
+mpf_urandomb (mpf_t rop, gmp_rand_state s, unsigned long int nbits)
 #else
-mpf_urandomb (rop, s)
+mpf_urandomb (rop, s, nbits)
      mpf_t rop;
      gmp_rand_state s;
+     unsigned long int nbits;
 #endif
 {
   mp_ptr rp;
   mp_size_t prec;
 
+  /* FIXME: Use NBITS.  NBITS == 0 means fill ROP.  */
+
   rp = PTR (rop);
   prec = PREC (rop);
 
-  mpn_rawrandom (rp, prec * BITS_PER_MP_LIMB, s);
+  mpn_rawrandom (rp, s, prec * BITS_PER_MP_LIMB);
   MPN_NORMALIZE (rp, prec);
   SIZ (rop) = prec;
   EXP (rop) = 0;
