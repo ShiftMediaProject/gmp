@@ -1,3 +1,19 @@
+2001-06-17  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, Makefile.am, gmp-impl.h: Add a debugging TMP_ALLOC,
+	selected with --enable-alloca=debug.
+	* tal-debug.c: New file.
+	* configure.in, Makefile.am: Compile stack-alloc.c only for
+	--disable-alloca.
+	* assert.c (__gmp_assert_header): New function, split from
+	__gmp_assert_fail.
+
+	* mpz/lcm.c: Don't TMP_MARK and then just return. Remove unnecssary
+	_mpz_realloc prototype.
+
+	* mpn/generic/mul.c (mpn_sqr_n): Use __gmp_allocate_func for toom3
+	temporary workspace.
+
 2001-06-15  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/t-set_f.c: New file.
