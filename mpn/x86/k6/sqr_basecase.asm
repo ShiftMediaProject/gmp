@@ -403,7 +403,7 @@ ifdef(`PIC',`
 	call	L(pic_calc)
 L(here):
 ',`
-	leal	L(unroll_inner_end)-2*CODE_BYTES_PER_LIMB(%ecx,%edx), %ecx
+	leal	L(unroll_inner_end)-eval(2*CODE_BYTES_PER_LIMB)(%ecx,%edx), %ecx
 ')
 	negl	%edx
 
@@ -663,7 +663,7 @@ ifdef(`PIC',`
 L(pic_calc):
         C See README.family about old gas bugs
 	addl	(%esp), %ecx
-	addl	$L(unroll_inner_end)-L(here)-2*CODE_BYTES_PER_LIMB, %ecx
+	addl	$L(unroll_inner_end)-L(here)-eval(2*CODE_BYTES_PER_LIMB), %ecx
 	addl	%edx, %ecx
 	ret
 ')
