@@ -1,7 +1,6 @@
-/* Test expression evaluation (print nothing and exit 0 if successful). */
+/* Test expression evaluation (print nothing and exit 0 if successful).
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -165,7 +163,6 @@ const struct data_t  data_z[] = {
   { 0, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1", "1" },
 
   { 0, "fib(10)", "55" },
-  { 0, "fac(10)", "3628800" },
 
   { 0, "setbit(0,5)", "32" },
   { 0, "clrbit(32,5)", "0" },
@@ -178,6 +175,14 @@ const struct data_t  data_z[] = {
 const struct data_t  data_zq[] = {
   /* expecting failure */
   { 0, "1.2", NULL },
+};
+
+const struct data_t  data_zr[] = {
+  { 0, "fac(0)",  "1" },
+  { 0, "fac(1)",  "1" },
+  { 0, "fac(2)",  "2" },
+  { 0, "fac(3)",  "6" },
+  { 0, "fac(10)", "3628800" },
 };
 
 const struct data_t  data_q[] = {
@@ -206,9 +211,31 @@ const struct data_t  data_fr[] = {
 
   { 16, "1@9",  "68719476736" },
 
+  { 0, "ceil(0)",           "0" },
+  { 0, "ceil(0.25)",        "1" },
+  { 0, "ceil(0.5)",         "1" },
+  { 0, "ceil(1.5)",         "2" },
+  { 0, "ceil(-0.5)",        "0" },
+  { 0, "ceil(-1.5)",        "-1" },
+
   /* only simple cases because mpf_eq currently only works on whole limbs */
   { 0, "eq(0xFFFFFFFFFFFFFFFF1111111111111111,0xFFFFFFFFFFFFFFFF2222222222222222,64)", "1" },
   { 0, "eq(0xFFFFFFFFFFFFFFFF1111111111111111,0xFFFFFFFFFFFFFFFF2222222222222222,128)", "0" },
+
+  { 0, "floor(0)",           "0" },
+  { 0, "floor(0.25)",        "0" },
+  { 0, "floor(0.5)",         "0" },
+  { 0, "floor(1.5)",         "1" },
+  { 0, "floor(-0.5)",        "-1" },
+  { 0, "floor(-1.5)",        "-2" },
+
+  { 0, "trunc(0)",           "0" },
+  { 0, "trunc(0.25)",        "0" },
+  { 0, "trunc(0.5)",         "0" },
+  { 0, "trunc(1.5)",         "1" },
+  { 0, "trunc(-0.5)",        "0" },
+  { 0, "trunc(-1.5)",        "-1" },
+
 };
 
 const struct data_t  data_f[] = {
@@ -222,44 +249,115 @@ const struct data_t  data_f[] = {
 const struct data_t  data_r[] = {
   { 16, "1@10", "1099511627776" },
 
-  { 0, "pi", "" },
-  { 0, "2*pi", "" },
-  { 0, "log2", "" },
-  { 0, "log2+1", "" },
+  { 0, "euler",         "" },
+  { 0, "euler+1",       "" },
 
-  { 0, "pi()", NULL },
-  { 0, "2 + pi() * 4", NULL },
+  { 0, "loge2",         "" },
+  { 0, "loge2+1",       "" },
 
-  { 0, "sin(0)",     "~0" },
-  { 0, "sin(pi/2)",  "~1" },
-  { 0, "sin(pi)",    "~0" },
-  { 0, "sin(3*pi/2)","~-1" },
-  { 0, "sin(2*pi)",  "~0" },
+  { 0, "pi",            "" },
+  { 0, "2*pi",          "" },
+  { 0, "pi()",          NULL },
+  { 0, "2 + pi() * 4",  NULL },
 
-  { 0, "cos(0)",     "~1" },
-  { 0, "cos(pi/2)",  "~0" },
-  { 0, "cos(pi)",    "~-1" },
-  { 0, "cos(3*pi/2)","~0" },
-  { 0, "cos(2*pi)",  "~1" },
+  { 0, "acos(0)-pi/2",  "~0" },
+  { 0, "acos(1)",       "0" },
 
-  { 0, "inf_p(1/0)",    "1" },
-  { 0, "nan_p(1/0)",    "0" },
-  { 0, "number_p(1/0)", "0" },
+  { 0, "agm(0,0)",      "0" },
+  { 0, "agm(1,1)",      "1" },
 
-  { 0, "inf_p(sqrt(-1))",    "0" },
-  { 0, "nan_p(sqrt(-1))",    "1" },
-  { 0, "number_p(sqrt(-1))", "0" },
+  { 0, "asin(0)",       "0" },
+  { 0, "asin(1)-pi/2",  "~0" },
 
-  { 0, "inf_p(1)",    "0" },
-  { 0, "nan_p(1)",    "0" },
-  { 0, "number_p(1)", "1" },
+  { 0, "atan(0)",       "0" },
+  { 0, "atan(1)-pi/4",  "~0" },
+  { 0, "atan(-1)+pi/4", "~0" },
 
-  { 0, "inf_p(-1)",    "0" },
-  { 0, "nan_p(-1)",    "0" },
-  { 0, "number_p(-1)", "1" },
+  { 0, "cos(0)",        "1" },
+  { 0, "cos(pi/2)",     "~0" },
+  { 0, "cos(pi)",       "~-1" },
+  { 0, "cos(3*pi/2)",   "~0" },
+  { 0, "cos(2*pi)",     "~1" },
+
+  { 0, "cosh(0)",       "1" },
+
+  { 0, "dim(0,0)",      "0" },
+  { 0, "dim(2,0)",      "2" },
+  { 0, "dim(3,1)",      "2" },
+  { 0, "dim(1,3)",      "0" },
+  { 0, "dim(-2,0)",     "0" },
+  { 0, "dim(-3,-1)",    "0" },
+  { 0, "dim(-1,-3)",    "2" },
 
   { 0, "eq(0xFF,0xF0,4)", "1" },
   { 0, "eq(0xFF,0xF0,5)", "0" },
+
+  { 0, "exp(0)",          "1" },
+  { 0, "expm1(0)",        "0" },
+
+  { 0, "fma(2,3,4)",      "10" },
+  { 0, "fma(-2,3,4)",     "-2" },
+  { 0, "fma(2,-3,4)",     "-2" },
+  { 0, "fma(2,-3,-4)",    "-10" },
+
+  { 0, "hypot(3,4)",      "5" },
+
+  { 0, "inf_p(1)",        "0" },
+  { 0, "inf_p(-1)",       "0" },
+  { 0, "inf_p(1/0)",      "1" },
+  { 0, "inf_p(sqrt(-1))", "0" },
+  { 0, "inf_p(1)",        "0" },
+
+  { 0, "inf_p(log(0))",   "1" },
+  { 0, "log(1)",          "~0" },
+
+  { 0, "inf_p(log2(0))",  "1" },
+  { 0, "log2(1)",         "0" },
+  { 0, "log2(2)",         "1" },
+  { 0, "log2(4)",         "2" },
+  { 0, "log2(8)",         "3" },
+
+  { 0, "inf_p(log10(0))",  "1" },
+  { 0, "log10(1)",         "0" },
+/*   { 0, "log10(10)",        "1" }, */
+/*   { 0, "log10(100)",       "2" }, */
+/*   { 0, "log10(1000)",      "3" }, */
+
+  { 0, "log1p(0)",         "0" },
+
+  { 0, "nan_p(-1)",        "0" },
+  { 0, "nan_p(1/0)",       "0" },
+  { 0, "nan_p(sqrt(-1))",  "1" },
+  { 0, "nan_p(1)",         "0" },
+
+  { 0, "number_p(-1)",       "1" },
+  { 0, "number_p(1/0)",      "0" },
+  { 0, "number_p(sqrt(-1))", "0" },
+  { 0, "number_p(1)",        "1" },
+
+  { 0, "round(0)",           "0" },
+  { 0, "round(0.25)",        "0" },
+  { 0, "round(0.5)",         "1" },
+  { 0, "round(1.5)",         "2" },
+  { 0, "round(-0.5)",        "-1" },
+  { 0, "round(-1.5)",        "-2" },
+
+  { 0, "sin(0)",        "0" },
+  { 0, "sin(pi/2)",     "~1" },
+  { 0, "sin(pi)",       "~0" },
+  { 0, "sin(3*pi/2)",   "~-1" },
+  { 0, "sin(2*pi)",     "~0" },
+
+  { 0, "sinh(0)",       "0" },
+
+  { 0, "tan(0)",        "0" },
+  { 0, "tan(pi/4)",     "~1" },
+/*   { 0, "tan(3*pi/4)",   "~-1" }, */
+  { 0, "tan(pi)",       "~0" },
+  { 0, "tan(5*pi/4)",   "~1" },
+/*   { 0, "tan(7*pi/4)",   "~-1" }, */
+
+  { 0, "tan(0)",        "0" },
 };
 
 struct datalist_t {
@@ -274,6 +372,7 @@ struct datalist_t  list_z[] = {
   DATALIST (data_zq),
   DATALIST (data_zfr),
   DATALIST (data_zqfr),
+  DATALIST (data_zr),
 };
 
 struct datalist_t  list_q[] = {
@@ -292,6 +391,7 @@ struct datalist_t  list_f[] = {
 struct datalist_t  list_r[] = {
   DATALIST (data_zfr),
   DATALIST (data_zqfr),
+  DATALIST (data_zr),
   DATALIST (data_fr),
   DATALIST (data_r),
 };
