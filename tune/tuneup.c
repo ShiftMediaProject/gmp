@@ -121,10 +121,13 @@ mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
 #endif
 
 struct param_t {
-  const char  *name[MAX_TABLE];
-  int         stop_since_change;
-  mp_size_t   min_size;
-  mp_size_t   max_size[MAX_TABLE];
+  const char        *name[MAX_TABLE];
+  speed_function_t  function;
+  speed_function_t  function2;
+  double            function_fudge;
+  int               stop_since_change;
+  mp_size_t         min_size;
+  mp_size_t         max_size[MAX_TABLE];
 };
 
 
@@ -245,16 +248,14 @@ print_define (const char *name, mp_size_t value)
    workspace for mpn_kara_mul_n. */
 
 void
-one (speed_function_t function, mp_size_t table[], size_t max_table,
-     struct param_t *param)
+one (mp_size_t table[], size_t max_table, struct param_t *param)
 {
-  static struct param_t  dummy;
   int  i;
 
-  if (param == NULL)  param = &dummy;
+#define DEFAULT(x,n)  if (! (param->x))  param->x = (n);
 
-#define DEFAULT(x,n)  if (param->x == 0)  param->x = (n);
-
+  DEFAULT (function_fudge, 1.0);
+  DEFAULT (function2, param->function);
   DEFAULT (stop_since_change, 80);
   DEFAULT (min_size, 10);
   for (i = 0; i < numberof (param->max_size); i++)
@@ -306,14 +307,15 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
           /* using method i at this size */
           table[i] = s.size+1;
           table[i+1] = MAX_SIZE;
-          ti = tuneup_measure (function, &s);
+          ti = tuneup_measure (param->function, &s);
           if (ti == -1.0)
             abort ();
+          ti *= param->function_fudge;
 
           /* using method i+1 at this size */
           table[i] = s.size;
           table[i+1] = s.size+1;
-          tiplus1 = tuneup_measure (function, &s);
+          tiplus1 = tuneup_measure (param->function2, &s);
           if (tiplus1 == -1.0)
             abort ();
 
@@ -631,8 +633,9 @@ all (void)
     static struct param_t  param;
     param.name[0] = "KARATSUBA_MUL_THRESHOLD";
     param.name[1] = "TOOM3_MUL_THRESHOLD";
+    param.function = speed_mpn_mul_n;
     param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT;
-    one (speed_mpn_mul_n, mul_threshold, numberof(mul_threshold)-1, &param);
+    one (mul_threshold, numberof(mul_threshold)-1, &param);
   }
   printf("\n");
 
@@ -640,21 +643,24 @@ all (void)
     static struct param_t  param;
     param.name[0] = "KARATSUBA_SQR_THRESHOLD";
     param.name[1] = "TOOM3_SQR_THRESHOLD";
+    param.function = speed_mpn_sqr_n;
     param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
-    one (speed_mpn_sqr_n, sqr_threshold, numberof(sqr_threshold)-1, &param);
+    one (sqr_threshold, numberof(sqr_threshold)-1, &param);
   }
   printf("\n");
 
   {
     static struct param_t  param;
     param.name[0] = "DC_THRESHOLD";
-    one (speed_mpn_dc_tdiv_qr, dc_threshold, 1, &param);
+    param.function = speed_mpn_dc_tdiv_qr;
+    one (dc_threshold, 1, &param);
   }
   printf("\n");
 
   {
     static struct param_t  param;
     param.name[0] = "FIB_THRESHOLD";
+    param.function = speed_mpz_fib_ui;
 
     /* start the search from a point after the table data */
     switch (BITS_PER_MP_LIMB) {
@@ -666,32 +672,37 @@ all (void)
       abort ();
     }
 
-    one (speed_mpz_fib_ui, fib_threshold, 1, &param);
+    one (fib_threshold, 1, &param);
   }
   printf("\n");
 
-  /* mpz_powm becomes slow before long, so stop soon after the determined
-     threshold stops changing. */
+  /* This is an indirect determination, based on a comparison between
+     mpn_redc and mpz_mod.  A fudge factor of 1.05 is applied to mpn_redc,
+     to represent additional overheads that REDC will get in mpz_powm.  */
   {
     static struct param_t  param;
     param.name[0] = "POWM_THRESHOLD";
-    param.stop_since_change = 15;
-    one (speed_mpz_powm, powm_threshold, 1, &param);
+    param.function = speed_mpn_redc;
+    param.function2 = speed_mpz_mod;
+    param.function_fudge = 1.05;
+    one (powm_threshold, 1, &param);
   }
   printf("\n");
 
   {
     static struct param_t  param;
     param.name[0] = "GCD_ACCEL_THRESHOLD";
+    param.function = speed_mpn_gcd;
     param.min_size = 1;
-    one (speed_mpn_gcd, gcd_accel_threshold, 1, &param);
+    one (gcd_accel_threshold, 1, &param);
   }
   {
     static struct param_t  param;
     param.name[0] = "GCDEXT_THRESHOLD";
+    param.function = speed_mpn_gcdext;
     param.min_size = 1;
     param.max_size[0] = 200;
-    one (speed_mpn_gcdext, gcdext_threshold, 1, &param);
+    one (gcdext_threshold, 1, &param);
   }
   printf("\n");
 
