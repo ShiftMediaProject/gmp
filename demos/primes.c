@@ -2,7 +2,7 @@
    Written by tege while on holiday in Rodupp, August 2001.
    Between 10 and 500 times faster than previous program.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -56,15 +56,15 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 struct primes
 {
   unsigned int prime;
-  signed int rem;
+  int rem;
 };
 
 struct primes *primes;
 unsigned long n_primes;
 
-void find_primes (unsigned char *, mpz_t, unsigned long, mpz_t);
-void sieve_region (unsigned char *, mpz_t, unsigned long);
-void make_primelist (unsigned long);
+void find_primes __GMP_PROTO ((unsigned char *, mpz_t, unsigned long, mpz_t));
+void sieve_region __GMP_PROTO ((unsigned char *, mpz_t, unsigned long));
+void make_primelist __GMP_PROTO ((unsigned long));
 
 int flag_print = 1;
 int flag_count = 0;
@@ -254,7 +254,7 @@ sieve_region (unsigned char *s, mpz_t fr, unsigned long rsize)
     ((long *) s) [ii] = ~0L;
 #else
   {
-    signed long k;
+    long k;
     long *se = (long *) (s + ((ssize + sizeof (long) - 1) & -sizeof (long)));
     for (k = -((ssize + sizeof (long) - 1) / sizeof (long)); k < 0; k++)
       se[k] = ~0L;
@@ -295,7 +295,7 @@ sieve_region (unsigned char *s, mpz_t fr, unsigned long rsize)
       primes[i].rem = ii - ssize;
 #else
       {
-	signed long k;
+	long k;
 	unsigned char *se = s + ssize; /* point just beyond sieving range */
 	for (k = start2 - ssize; k < 0; k += prime)
 	  se[k] = 0;
