@@ -1109,6 +1109,33 @@ void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
 #endif
 
 
+/* Test that an mpq_t is in fully canonical form.  This can be used as
+   protection on routines like mpq_equal which give wrong results on
+   non-canonical inputs.  */
+#if WANT_ASSERT
+#define ASSERT_MPQ_CANONICAL(q)                         \
+  do {                                                  \
+    ASSERT (q->_mp_den._mp_size > 0);                   \
+    if (q->_mp_num._mp_size == 0)                       \
+      {                                                 \
+        /* zero should be 0/1 */                        \
+        ASSERT (mpz_cmp_ui (mpq_denref(q), 1L) == 0);   \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        /* no common factors */                         \
+        mpz_t  __g;                                     \
+        mpz_init (__g);                                 \
+        mpz_gcd (__g, mpq_numref(q), mpq_denref(q));    \
+        ASSERT (mpz_cmp_ui (__g, 1) == 0);              \
+        mpz_clear (__g);                                \
+      }                                                 \
+  } while (0)
+#else
+#define ASSERT_MPQ_CANONICAL(q)  do {} while (0)
+#endif
+
+
 /* Assert that an mpn region {ptr,size} is zero, or non-zero.
    size==0 is allowed, and in that case {ptr,size} considered to be zero.  */
 #if WANT_ASSERT
