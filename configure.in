@@ -900,6 +900,12 @@ for abi in $abilist; do
         GMP_PROG_CC_IS_GNU($cc,ccbase=gcc)
       fi
 
+      # Similarly if the compiler is xlc but invoked as cc or whatever then
+      # change $ccbase and make the default xlc flags available.
+      if test $ccbase != xlc; then
+        GMP_PROG_CC_IS_XLC($cc,ccbase=xlc)
+      fi
+
       # Any user CFLAGS, even an empty string, takes precendence
                            eval cflags=\"\$${ccbase}${abi1}_cflags\"
       test -n "$cflags" || eval cflags=\"\$${ccbase}${abi2}_cflags\"
