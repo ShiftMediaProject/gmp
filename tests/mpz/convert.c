@@ -76,7 +76,6 @@ main (int argc, char **argv)
 
       str = mpz_get_str ((char *) 0, base, op1);
       mpz_set_str_or_abort (op2, str, base);
-      (*__gmp_free_func) (str, strlen (str) + 1);
 
       if (mpz_cmp (op1, op2))
 	{
@@ -87,6 +86,8 @@ main (int argc, char **argv)
 	  fprintf (stderr, "op2  = "); debug_mp (op2, -16);
 	  abort ();
 	}
+
+      (*__gmp_free_func) (str, strlen (str) + 1);
 
 #if 0
       /* 2. Generate random string and convert to mpz_t and back to a string
