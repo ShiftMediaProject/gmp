@@ -1,6 +1,10 @@
 dnl PowerPC-32 mpn_rshift -- Shift a number right.
+dnl
+dnl      cycles/limb
+dnl 604e:    3.3
+dnl 750:     4.0
 
-dnl Copyright 1995, 2000 Free Software Foundation, Inc.
+dnl Copyright 1995, 2000, 2002 Free Software Foundation, Inc.
 
 dnl This file is part of the GNU MP Library.
 
@@ -35,26 +39,28 @@ PROLOGUE(mpn_rshift)
 	subfic	r8,r6,32
 	lwz	r11,0(r4)	C load first s1 limb
 	slw	r3,r11,r8	C compute function return value
-	bdz	.Lend1
+	bdz	L(end1)
 
-.Loop:	lwzu	r10,4(r4)
+L(oop):	lwzu	r10,4(r4)
 	srw	r9,r11,r6
 	slw	r12,r10,r8
 	or	r9,r9,r12
 	stwu	r9,4(r7)
-	bdz	.Lend2
+	bdz	L(end2)
 	lwzu	r11,4(r4)
 	srw	r9,r10,r6
 	slw	r12,r11,r8
 	or	r9,r9,r12
 	stwu	r9,4(r7)
-	bdnz	.Loop
+	bdnz	L(oop)
 
-.Lend1:	srw	r0,r11,r6
+L(end1):
+	srw	r0,r11,r6
 	stw	r0,4(r7)
 	blr
 
-.Lend2:	srw	r0,r10,r6
+L(end2):
+	srw	r0,r10,r6
 	stw	r0,4(r7)
 	blr
 EPILOGUE(mpn_rshift)

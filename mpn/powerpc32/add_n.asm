@@ -1,7 +1,11 @@
 dnl PowerPC-32 mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl store sum in a third limb vector.
+dnl
+dnl      cycles/limb
+dnl 604e:   2.67
+dnl 750:    4.5
 
-dnl Copyright 1995, 1997, 2000 Free Software Foundation, Inc.
+dnl Copyright 1995, 1997, 2000, 2002 Free Software Foundation, Inc.
 
 dnl This file is part of the GNU MP Library.
 
@@ -36,24 +40,26 @@ PROLOGUE(mpn_add_n)
 	lwz	r8,0(r4)	C load least significant s1 limb
 	lwz	r0,0(r5)	C load least significant s2 limb
 	addi	r3,r3,-4	C offset res_ptr, it's updated before it's used
-	bdz	.Lend		C If done, skip loop
-.Loop:	lwz	r9,4(r4)	C load s1 limb
+	bdz	L(end)		C If done, skip loop
+
+L(oop):	lwz	r9,4(r4)	C load s1 limb
 	lwz	r10,4(r5)	C load s2 limb
 	adde	r7,r0,r8	C add limbs with cy, set cy
 	stw	r7,4(r3)	C store result limb
-	bdz	.Lexit		C decrement CTR and exit if done
+	bdz	L(exit)		C decrement CTR and exit if done
 	lwzu	r8,8(r4)	C load s1 limb and update s1_ptr
 	lwzu	r0,8(r5)	C load s2 limb and update s2_ptr
 	adde	r7,r10,r9	C add limbs with cy, set cy
 	stwu	r7,8(r3)	C store result limb and update res_ptr
-	bdnz	.Loop		C decrement CTR and loop back
+	bdnz	L(oop)		C decrement CTR and loop back
 
-.Lend:	adde	r7,r0,r8
+L(end):	adde	r7,r0,r8
 	stw	r7,4(r3)	C store ultimate result limb
 	li	r3,0		C load cy into ...
 	addze	r3,r3		C ... return value register
 	blr
-.Lexit:	adde	r7,r10,r9
+L(exit):
+	adde	r7,r10,r9
 	stw	r7,8(r3)
 	li	r3,0		C load cy into ...
 	addze	r3,r3		C ... return value register
