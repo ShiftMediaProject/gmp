@@ -4328,37 +4328,36 @@ Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @chapter Random Number Functions
 @cindex Random number functions
 
-There are two groups of random number functions in GMP; older functions that
-call C library random number generators, rely on global state, and aren't very
-random; and newer functions that don't have these problems.  The newer
-functions are self-contained, they accept a state parameter, and generate good
-random numbers.
-
-The random state parameter is of type @code{gmp_randstate_t}.  It must be
-initialized by a call to one of the @code{gmp_randinit} functions (@ref{Random
-State Initialization}).  The initial seed is set using one of the
+Sequences of pseudo-random numbers in GMP are generated using a
+@code{gmp_randstate_t} variable, which holds an algorithm to use and a current
+state.  Such a variable must be initialized by a call to one of the
+@code{gmp_randinit} functions, and can be seeded with one of the
 @code{gmp_randseed} functions (@ref{Random State Initialization}).
 
-The size of the seed determines the number of different sequences of random
-numbers that it's possible to generate.  The ``quality'' of the seed is the
-randomness of a given seed compared to the previous seed used and this affects
-the randomness of separate number sequences.
+The functions actually generating random numbers are described in
+@ref{Miscellaneous Integer Functions}, and @ref{Miscellaneous Float
+Functions}.
 
-The method for choosing a seed is critical if the generated numbers are to be
-used for important applications, such as generating cryptographic keys.
+The older style random number functions don't accept a @code{gmp_randstate_t}
+parameter but instead share a private variable of that type, using a default
+algorithm, and currently not seeded (perhaps this will change in the future).
+The new functions accepting a @code{gmp_randstate_t} are recommended for
+applications that care about randomness.
 
-The traditional method is to use the current system time for seeding, but some
-care needs to be taken.  If an application seeds the random functions very
-often and the resolution of the system clock is low, then the same sequence of
-numbers might be generated until the clock ticks over.  Furthermore, the
-current system time is quite easy to guess, so if unpredictability is required
-then the time should definitely not be the only source for seed values.
+The size of a seed determines how many different sequences of random numbers
+that it's possible to generate.  The ``quality'' of the seed is the randomness
+of a given seed compared to the previous seed used, and this affects the
+randomness of separate number sequences.  The method for choosing a seed is
+critical if the generated numbers are to be used for important applications,
+such as generating cryptographic keys.
 
-On some systems there's a special device @file{/dev/random} which provides
-random data better suited for use as a seed.
-
-The functions actually generating random functions are documented in
-@ref{Miscellaneous Integer Functions} and @ref{Miscellaneous Float Functions}.
+Traditionally the system time is used to seed, but care needs to be taken.  If
+an application seeds very often and the resolution of the system clock is low,
+then the same sequence of numbers might be repeated, until the clock ticks
+over.  Furthermore, the current system time is quite easy to guess, so if
+unpredictability is required then the time should definitely not be the only
+source for seed values.  On some systems there's a special device
+@file{/dev/random} which provides random data better suited for use as a seed.
 
 @menu
 * Random State Initialization::  How to initialize a random state.
@@ -4421,8 +4420,8 @@ Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
 @var{c}) @bmod 2^{m2exp}, X = (@var{a}*X + @var{c}) mod 2^@var{m2exp}}.
 
 The low bits of random numbers from this scheme are not very random, so the
-low half of each number generated is discarded.  This should be taken into
-account when choosing @var{m2exp}.
+only the high half of each number generated is used.  This should be taken
+into account when choosing @var{m2exp}.
 @end deftypefun
 
 @deftypefun void gmp_randseed (gmp_randstate_t @var{state}, mpz_t @var{seed})
@@ -4431,8 +4430,7 @@ Set an initial seed value into @var{state}.
 @end deftypefun
 
 @deftypefun void gmp_randclear (gmp_randstate_t @var{state})
-Free all memory occupied by @var{state}.  Make sure to call this function for
-all @code{gmp_randstate_t} variables when you are done with them.
+Free all memory occupied by @var{state}.
 @end deftypefun
 
 
