@@ -1,6 +1,6 @@
 /* Test mpz_mul, mpz_divexact.
 
-Copyright 1996, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,9 +26,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort _PROTO ((mpz_t, mpz_t));
-void debug_mp _PROTO ((mpz_t, int));
-
 int
 main (int argc, char **argv)
 {
@@ -43,6 +40,8 @@ main (int argc, char **argv)
 
   tests_start ();
   rands = RANDS;
+
+  mp_trace_base = -16;
 
   mpz_init (bs);
 
@@ -81,8 +80,17 @@ main (int argc, char **argv)
       mpz_mul (prod, op1, op2);
 
       mpz_divexact (quot, prod, op2);
+      MPZ_CHECK_FORMAT (quot);
+
       if (mpz_cmp (quot, op1) != 0)
-	dump_abort (quot, op1);
+        {
+          printf ("Wrong results:\n");
+          mpz_trace ("  got     ", quot);
+          mpz_trace ("  want    ", op1);
+          mpz_trace ("  dividend", prod);
+          mpz_trace ("  divisor ", op2);
+          abort ();
+        }
     }
 
   mpz_clear (bs);
@@ -93,19 +101,4 @@ main (int argc, char **argv)
 
   tests_end ();
   exit (0);
-}
-
-void
-dump_abort (mpz_t op1, mpz_t op2)
-{
-  fprintf (stderr, "ERROR\n");
-  fprintf (stderr, "ref = "); debug_mp (op1, -16);
-  fprintf (stderr, "wrong = "); debug_mp (op2, -16);
-  abort();
-}
-
-void
-debug_mp (mpz_t x, int base)
-{
-  mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }
