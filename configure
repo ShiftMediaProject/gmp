@@ -3332,32 +3332,31 @@ EOF
 if { (eval echo configure:3333: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   if grep _underscore_test conftest* >/dev/null; then
     gmp_cv_check_asm_underscore=yes
-    
-echo 'define(<GSYM_PREFIX>, <_$1>)' >> $gmp_tmpconfigm4
-
-  underscore=yes
   else
     gmp_cv_check_asm_underscore=no
-    
-echo 'define(<GSYM_PREFIX>, <$1>)' >> $gmp_tmpconfigm4
-
-  underscore=no
   fi
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
-  
-echo 'define(<GSYM_PREFIX>, <$1>)' >> $gmp_tmpconfigm4
-
-  underscore=no
 fi
 rm -f conftest*
 
 fi
 echo "$ac_t""$gmp_cv_check_asm_underscore" 1>&6
+if test "$gmp_cv_check_asm_underscore" = "yes"; then
+  
+echo 'define(<GSYM_PREFIX>, <_$1>)' >> $gmp_tmpconfigm4
+
+  underscore=yes
+else
+  
+echo 'define(<GSYM_PREFIX>, <$1>)' >> $gmp_tmpconfigm4
+
+  underscore=no
+fi    
 
 echo $ac_n "checking if .align assembly directive is logarithmic... $ac_c" 1>&6
-echo "configure:3361: checking if .align assembly directive is logarithmic" 1>&5
+echo "configure:3360: checking if .align assembly directive is logarithmic" 1>&5
 if test "${gmp_cv_check_asm_align_log+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3375,35 +3374,34 @@ foo$gmp_cv_check_asm_label_suffix
 	.byte	2
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
-if { (eval echo configure:3379: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+if { (eval echo configure:3378: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
   
   gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
        -e 's;[^1-9]*\([0-9]*\).*;\1;'`
     if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_check_asm_align_log=yes
-    
-echo 'define(<ALIGN>, <.align m4_log2($1)>)' >> $gmp_tmpconfigm4
-
-  asm_align=log
   else
     gmp_cv_check_asm_align_log=no
-    
-echo 'define(<ALIGN>, <.align $1>)' >> $gmp_tmpconfigm4
-
-  asm_align=nolog
   fi
 else 
   echo "configure: failed program was:" >&5
   cat conftest.s >&5
-  
-echo 'define(<ALIGN>, <.align $1>)' >> $gmp_tmpconfigm4
-
-  asm_align=nolog
 fi
 rm -f conftest*
 
 fi
 echo "$ac_t""$gmp_cv_check_asm_align_log" 1>&6
+if test "$gmp_cv_check_asm_align_log" = "yes"; then
+  
+echo 'define(<ALIGN>, <.align m4_log2($1)>)' >> $gmp_tmpconfigm4
+
+  asm_align=log
+else
+  
+echo 'define(<ALIGN>, <.align $1>)' >> $gmp_tmpconfigm4
+
+  asm_align=nolog
+fi  
 
 syntax=
 # For now, we use the old switch for setting syntax.  FIXME.

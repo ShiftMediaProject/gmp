@@ -209,18 +209,22 @@ EOF
 if AC_TRY_EVAL(ac_compile); then
   if grep _underscore_test conftest* >/dev/null; then
     gmp_cv_check_asm_underscore=yes
-    ifelse([$1], , :, [$1])
   else
     gmp_cv_check_asm_underscore=no
-    ifelse([$2], , :, [$2])
   fi
 else
   echo "configure: failed program was:" >&AC_FD_CC
   cat conftest.$ac_ext >&AC_FD_CC
-  ifelse([$2], , :, [$2])
 fi
 rm -f conftest*
-])dnl
+])
+if test "$gmp_cv_check_asm_underscore" = "yes"; then
+  GMP_DEFINE(GSYM_PREFIX, [_$][1])
+  ifelse([$1], , :, [$1])
+else
+  GMP_DEFINE(GSYM_PREFIX, [$][1])
+  ifelse([$2], , :, [$2])
+fi    
 ])dnl
 
 dnl  GMP_CHECK_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
@@ -254,18 +258,22 @@ if AC_TRY_EVAL(ac_assemble); then
   changequote([, ])dnl
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_check_asm_align_log=yes
-    ifelse([$1], , :, [$1])
   else
     gmp_cv_check_asm_align_log=no
-    ifelse([$2], , :, [$2])
   fi
 else 
   echo "configure: failed program was:" >&AC_FD_CC
   cat conftest.s >&AC_FD_CC
-  ifelse([$2], , :, [$2])
 fi
 rm -f conftest*
 ])
+if test "$gmp_cv_check_asm_align_log" = "yes"; then
+  GMP_DEFINE(ALIGN, [.align m4_log2($][1)])
+  ifelse([$1], , :, [$1])
+else
+  GMP_DEFINE(ALIGN, [.align $][1])
+  ifelse([$2], , :, [$2])
+fi  
 ])dnl
 
 dnl  GMP_CHECK_ASM_TEXT
