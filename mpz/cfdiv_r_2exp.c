@@ -67,6 +67,7 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
         {
           i = MIN (abs_usize, limb_cnt+1);
           MPZ_REALLOC (w, i);
+	  up = PTR(u);
           wp = PTR(w);
           MPN_COPY (wp, up, i);
 
@@ -103,6 +104,7 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
       /* twos complement negation to get 2**cnt-u */
 
       MPZ_REALLOC (w, limb_cnt+1);
+      up = PTR(u);
       wp = PTR(w);
 
       /* Ones complement */
