@@ -655,8 +655,9 @@ my @table =
 #else
 #define COUNT_LEADING_ZEROS_0_ALLOWED   0
 #endif
-  SPEED_ROUTINE_COUNT_LEADING_ZEROS_C ($fun (c, n),
-    COUNT_LEADING_ZEROS_0_ALLOWED)',
+  SPEED_ROUTINE_COUNT_ZEROS_A (1, COUNT_LEADING_ZEROS_0_ALLOWED);
+  $fun (c, n);
+  SPEED_ROUTINE_COUNT_ZEROS_B ()',
        'speed_flags'=> 'FLAG_R_OPTIONAL',
        'try'   => 'none',
      },
@@ -666,7 +667,10 @@ my @table =
        'ret'   => 'unsigned',
        'args'  => 'mp_limb_t',
        'attrib'=> 'ATTRIBUTE_CONST',
-       'macro-speed' => 'SPEED_ROUTINE_COUNT_TRAILING_ZEROS_C ($fun(c,n), 0)',
+       'macro-speed' => '
+  SPEED_ROUTINE_COUNT_ZEROS_A (0, 0);
+  $fun (c, n);
+  SPEED_ROUTINE_COUNT_ZEROS_B ()',
        'speed_flags' => 'FLAG_R_OPTIONAL',
        'try'   => 'none',
      },
