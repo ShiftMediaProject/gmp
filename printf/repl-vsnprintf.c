@@ -122,8 +122,10 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
      bit exponents, so the default is a maximum 4932 decimal digits.  */
   long_double_digits = 4932;
   /* but if double == long double, then go with that size */
+#if HAVE_LONG_DOUBLE
   if (sizeof (double) == sizeof (long double))
     long_double_digits = double_digits;
+#endif
 #ifdef LDBL_MAX_10_EXP
   /* but in any case prefer a value the compiler says */
   long_double_digits = LDBL_MAX_10_EXP;
