@@ -4,6 +4,12 @@
 
 	* gmp.h (__GNU_MP_VERSION_PATCHLEVEL): Now 0.
 
+2000-04-16  Kevin Ryde  <kevin@swox.se>
+
+	* README: Updates, and don't duplicate the example in INSTALL.
+	* INSTALL: Minor updates.
+	* gmp.texi (Installing MP): Minor edits, restore CC/CFLAGS description.
+
 2000-04-16  Linus Nordberg  <linus@swox.se>
 
 	* configure.in (*-*-cygwin*): Select BSD_SYNTAX to avoid
