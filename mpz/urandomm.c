@@ -1,6 +1,6 @@
-/* urandomm (rop, state, n) -- Generate a uniform pseudorandom integer
-   in the range 0 to N-1, using STATE as the random state previously
-   initialized by a call to gmp_rand_init().
+/* mpz_urandomm (rop, state, n) -- Generate a uniform pseudorandom
+   integer in the range 0 to N-1, using STATE as the random state
+   previously initialized by a call to gmp_randinit().
 
 Copyright (C) 2000  Free Software Foundation, Inc.
 
@@ -27,11 +27,11 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpz_urandomm (mpz_t rop, gmp_rand_state s, mpz_t n)
+mpz_urandomm (mpz_t rop, gmp_randstate_t rstate, mpz_t n)
 #else
-mpz_urandomm (rop, s, n)
+mpz_urandomm (rop, rstate, n)
      mpz_t rop;
-     gmp_rand_state s;
+     gmp_rand_state rstate;
      mpz_t n;
 #endif
 {
@@ -63,7 +63,7 @@ mpz_urandomm (rop, s, n)
   tp = PTR (t);
   do
     {
-      gmp_rand_getraw (tp, s, nbits);
+      _gmp_rand (tp, rstate, nbits);
       MPN_NORMALIZE (tp, size);	/* FIXME: Really necessary?  */
       SIZ (t) = size;
     }

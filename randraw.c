@@ -1,5 +1,5 @@
-/* gmp_rand_getraw (rp, state, nbits) -- Generate a random bitstream
-   of length NBITS in RP.  RP must have enough space allocated to hold
+/* _gmp_rand (rp, state, nbits) -- Generate a random bitstream of
+   length NBITS in RP.  RP must have enough space allocated to hold
    NBITS.
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
@@ -116,11 +116,11 @@ the most-significant bits. */
 
 static mp_size_t
 #if __STDC__
-lc (mp_ptr rp, gmp_rand_state s)
+lc (mp_ptr rp, gmp_randstate_t rstate)
 #else
-lc (rp, s)
+lc (rp, rstate)
      mp_ptr rp;
-     gmp_rand_state s;
+     gmp_randstate_t rstate;
 #endif
 {
   mp_ptr t1p, t2p, seedp, ap;
@@ -130,17 +130,17 @@ lc (rp, s)
   unsigned long int m2exp;
   TMP_DECL (mark);
 
-  seedp = PTR (s->seed);
-  seedn = SIZ (s->seed);
+  seedp = PTR (rstate->seed);
+  seedn = SIZ (rstate->seed);
   /* An mpz with value 0 is represented with SIZ() == 0, which
      confuses the code below.  Say that SIZ() = 1 instead.  */
   if (seedn == 0)
     seedn = 1;
 
-  ap = PTR (s->data.lc->a);
-  an = SIZ (s->data.lc->a);
+  ap = PTR (rstate->algdata.lc->a);
+  an = SIZ (rstate->algdata.lc->a);
 
-  m2exp = s->data.lc->m2exp;
+  m2exp = rstate->algdata.lc->m2exp;
 
   /* Allocate temporary storage.  t1 = a * seed, t2 = t1 + c % m.  */
   
@@ -167,7 +167,7 @@ lc (rp, s)
 
   /* t2 = t1 + c */
   t2n = t1n;
-  if (mpn_add_1 (t2p, t1p, t1n, (mp_limb_t) s->data.lc->c))
+  if (mpn_add_1 (t2p, t1p, t1n, (mp_limb_t) rstate->algdata.lc->c))
     {
       t2p[t2n] = 1;	/* Add carry. */
       t2n++;
@@ -200,8 +200,8 @@ lc (rp, s)
 
       /* Store normalized copy of 'm' in 'mcopy'.  */
       /* FIXME: Assumption: m != 0  */
-      mp = PTR (s->data.lc->m);
-      mn = SIZ (s->data.lc->m);
+      mp = PTR (rstate->algdata.lc->m);
+      mn = SIZ (rstate->algdata.lc->m);
       count_leading_zeros (shiftcount, mp[mn - 1]); 
       if (shiftcount != 0)
 	{
@@ -235,8 +235,8 @@ lc (rp, s)
     }
 
   /* Save result as next seed.  */
-  MPN_COPY (PTR (s->seed), t2p, t2n);
-  SIZ (s->seed) = t2n;
+  MPN_COPY (PTR (rstate->seed), t2p, t2n);
+  SIZ (rstate->seed) = t2n;
 
   if (m2exp != 0)
     {
@@ -257,17 +257,17 @@ lc (rp, s)
   if (m2exp != 0)
     retval = m2exp / 2 + m2exp % 2;
   else
-    retval = SIZ (s->data.lc->m) * BITS_PER_MP_LIMB - shiftcount;
+    retval = SIZ (rstate->algdata.lc->m) * BITS_PER_MP_LIMB - shiftcount;
   return retval;
 }
 
 void
 #if __STDC__
-gmp_rand_getraw (mp_ptr rp, gmp_rand_state s, unsigned long int nbits)
+_gmp_rand (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
 #else
-gmp_rand_getraw (rp, s, nbits)
+_gmp_rand_getraw (rp, rstate, nbits)
      mp_ptr rp;
-     gmp_rand_state s;
+     gmp_randstate_t rstate;
      unsigned long int nbits;
 #endif
 {
@@ -278,7 +278,7 @@ gmp_rand_getraw (rp, s, nbits)
   rn = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
   MPN_ZERO (rp, rn);		/* Clear destination. */
 
-  switch (s->alg)
+  switch (rstate->alg)
     {
     case GMP_RAND_ALG_LC:
       {
@@ -316,7 +316,7 @@ gmp_rand_getraw (rp, s, nbits)
 	nbits_stored = 0;
 	while (nbits_stored < nbits)
 	  {
-	    nrandbits = lc (tp, s);
+	    nrandbits = lc (tp, rstate);
 	    tn = nrandbits / BITS_PER_MP_LIMB
 	      + (nrandbits % BITS_PER_MP_LIMB != 0);
 

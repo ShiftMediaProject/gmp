@@ -1,4 +1,4 @@
-/* gmp_rand_clear (state) -- Clear and deallocate random state STATE.
+/* gmp_randclear (state) -- Clear and deallocate random state STATE.
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
@@ -24,27 +24,27 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-gmp_rand_clear (gmp_rand_state s)
+gmp_randclear (gmp_randstate_t rstate)
 #else
-gmp_rand_clear (s)
-     gmp_rand_state s;
+gmp_randclear (rstate)
+     gmp_randstate_t rstate;
 #endif
 {
-  mpz_clear (s->seed);
+  mpz_clear (rstate->seed);
 
-  switch (s->alg)
+  switch (rstate->alg)
     {
     case GMP_RAND_ALG_LC:
-      mpz_clear (s->data.lc->a);
-      if (s->data.lc->m2exp == 0)
-	mpz_clear (s->data.lc->m);
-      (*_mp_free_func) (s->data.lc, sizeof (*s->data.lc));
+      mpz_clear (rstate->algdata.lc->a);
+      if (rstate->algdata.lc->m2exp == 0)
+	mpz_clear (rstate->algdata.lc->m);
+      (*_mp_free_func) (rstate->algdata.lc, sizeof (*rstate->algdata.lc));
       break;
 
 #if 0
     case GMP_RAND_ALG_BBS:
-      mpz_clear (s->data.bbs->bi);
-      (*_mp_free_func) (s->data.bbs, sizeof (*s->data.bbs));
+      mpz_clear (rstate->algdata.bbs->bi);
+      (*_mp_free_func) (rstate->algdata.bbs, sizeof (*rstate->algdata.bbs));
       break;
 #endif /* 0 */
 

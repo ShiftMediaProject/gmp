@@ -1757,7 +1757,7 @@ when @var{max_size} is negative.
 This function is obsolete.  Use @code{mpz_rrandomb} instead.
 @end deftypefun
 
-@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_rand_state @var{state}, 
+@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state}, 
 unsigned long int @var{n})
 Generate a uniform random integer in the range
 @ifinfo
@@ -1771,12 +1771,12 @@ Generate a uniform random integer in the range
 inclusive.
 
 The variable @var{state} must be initialized by calling one of the
-@code{gmp_rand_init} functions (@ref{Random State Initialization})
-before invoking this function.
+@code{gmp_randinit} functions (@ref{Random State Initialization}) before
+invoking this function.
 @end deftypefun
 
 
-@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_rand_state @var{state}, 
+@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state}, 
 mpz_t @var{n})
 Generate a uniform random integer in the range 0 to
 @ifinfo
@@ -1789,7 +1789,7 @@ $n-1$, inclusive.
 @end iftex
 
 The variable @var{state} must be initialized by calling one of the
-@code{gmp_rand_init} functions (@ref{Random State Initialization})
+@code{gmp_randinit} functions (@ref{Random State Initialization})
 before invoking this function.
 @end deftypefun
 
@@ -2525,12 +2525,12 @@ proven to be more likely to trigger corner-case bugs.  Negative random numbers
 are generated when @var{max_size} is negative.
 @end deftypefun
 
-@deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_rand_state @var{state})
+@deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state})
 Generate a universally distributed random float in the interval 
 0 <= X < 1.
 
 The variable @var{state} must be initialized by calling one of the
-@code{gmp_rand_init} functions (@ref{Random State Initialization})
+@code{gmp_randinit} functions (@ref{Random State Initialization})
 before invoking this function.
 @end deftypefun
 
@@ -2952,10 +2952,10 @@ problems.  The newer functions are self-contained, they accept a random
 state parameter that supplants global state, and generate good random
 numbers.
 
-The random state parameter is of the type @code{gmp_rand_state}.  It must be
-initialized by a call to one of the @code{gmp_rand_init} functions (@ref{Random
+The random state parameter is of the type @code{gmp_randstate_t}.  It must be
+initialized by a call to one of the @code{gmp_randinit} functions (@ref{Random
 State Initialization}).  The initial seed is set using one of the
-@code{gmp_rand_seed} functions (@ref{Random State Initialization}).
+@code{gmp_randseed} functions (@ref{Random State Initialization}).
 
 The size of the seed determines the number of different sequences of
 random numbers that is possible to generate.  The ``quality'' of the
@@ -2992,8 +2992,8 @@ The functions actually generating random functions are documented under
 See @ref{Random Number Functions} for a discussion on how to choose the
 initial seed value passed to these functions.
 
-@deftypefun int gmp_rand_init (gmp_rand_state @var{state}, unsigned long int 
-@var{size}, gmp_rand_algorithm @var{alg}) 
+@deftypefun int gmp_randinit (gmp_randstate_t @var{state}, unsigned long int 
+@var{size}, gmp_randalg_t @var{alg}) 
 Initialize random state variable @var{state}.
 
 @var{alg} denotes what algorithm to use for random number generation.
@@ -3009,7 +3009,7 @@ the spectral test, as defined by [D. Knuth, "The Art of Computer Programming:
 Volume 2, Seminumerical Algorithms", Third Edition, Addison Wesley, 1998,
 p.93.].  The choice is based on the @var{size} parameter.  The maximum
 @var{size} supported by this algorithm is 128.  If you need bigger random
-numbers, use your own scheme and call one of the other @code{gmp_rand_init}
+numbers, use your own scheme and call one of the other @code{gmp_randinit}
 functions.
 
 @ignore
@@ -3029,10 +3029,10 @@ concatenated, resulting in a ``bad'' random number.  This can be used to
 generate big random numbers relatively cheap if the quality of
 randomness isn't of great importance.
 
-When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+When you're done with a @var{state} variable, call @code{gmp_randclear}
 to deallocate any memory allocated by this function.
 
-@code{gmp_rand_init} may set the following bits in @var{gmp_errno}:
+@code{gmp_randinit} may set the following bits in @var{gmp_errno}:
 @c FIXME: gmp_errno is printed in uppercase.  That's wrong.
 @itemize
 @item GMP_ERROR_UNSUPPORTED_ARGUMENT --- @var{alg} is unsupported
@@ -3041,7 +3041,7 @@ to deallocate any memory allocated by this function.
 @end deftypefun
 
 
-@deftypefun void gmp_rand_init_lc (gmp_rand_state @var{state}, mpz_t @var{a}, 
+@deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a}, 
 unsigned long int @var{c}, mpz_t @var{m})
 
 Initialize random state variable @var{state} with given linear congruential
@@ -3050,11 +3050,11 @@ scheme.
 Parameters @var{a}, @var{c}, and @var{m} are the multiplier, adder, and modulus
 for the linear congruential scheme to use, respectively.
 
-When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+When you're done with a @var{state} variable, call @code{gmp_randclear}
 to deallocate any memory allocated by this function.
 @end deftypefun
 
-@deftypefun void gmp_rand_init_lc_2exp (gmp_rand_state @var{state}, mpz_t @var{a}, 
+@deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a},
 unsigned long int @var{c}, unsigned long int @var{m2exp})
 
 Initialize random state variable @var{state} with given linear congruential
@@ -3079,23 +3079,23 @@ initialized with this function is discarded.  Thus, the size of a random number
 is @var{m2exp} / 2 (rounded upwards) bits when this function has been used for
 initializing the random state.
 
-When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+When you're done with a @var{state} variable, call @code{gmp_randclear}
 to deallocate any memory allocated by this function.
 @end deftypefun
 
-@deftypefun void gmp_rand_seed (gmp_rand_state @var{state}, mpz_t @var{seed})
-@deftypefunx void gmp_rand_seed_ui (gmp_rand_state @var{state}, unsigned long int @var{seed})
+@deftypefun void gmp_randseed (gmp_randstate_t @var{state}, mpz_t @var{seed})
+@deftypefunx void gmp_randseed_ui (gmp_randstate_t @var{state}, unsigned long int @var{seed})
 
 Set the initial seed value.
 
 Parameter @var{seed} is the initial random seed.  The function
-@code{gmp_rand_seed_ui} takes the @var{seed} as an unsigned long int rather
+@code{gmp_randseed_ui} takes the @var{seed} as an unsigned long int rather
 than as an mpz_t.
 @end deftypefun
 
-@deftypefun void gmp_rand_clear (gmp_rand_state @var{state})
+@deftypefun void gmp_randclear (gmp_randstate_t @var{state})
 Free all memory occupied by @var{state}.  Make sure to call this
-function for all @code{gmp_rand_state} variables when you are done with
+function for all @code{gmp_randstate_t} variables when you are done with
 them.
 @end deftypefun
 

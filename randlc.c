@@ -1,5 +1,5 @@
-/* gmp_rand_init_lc (state, a, c, m) -- Initialize a random state for
-   a linear congruential generator with multiplier A, adder C, and
+/* gmp_randinit_lc (state, a, c, m) -- Initialize a random state for a
+   linear congruential generator with multiplier A, adder C, and
    modulus M.
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
@@ -26,28 +26,28 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-gmp_rand_init_lc (gmp_rand_state s,
-		  mpz_t a,
-		  unsigned long int c,
-		  mpz_t m)
+gmp_randinit_lc (gmp_randstate_t rstate,
+		 mpz_t a,
+		 unsigned long int c,
+		 mpz_t m)
 #else
-gmp_rand_init_lc (s, a, c, m)
-     gmp_rand_state s;
+gmp_randinit_lc (rstate, a, c, m)
+     gmp_randstate-t rstate;
      mpz_t a;
      unsigned long int c;
      mpz_t m;
 #endif
 {
-  mpz_init_set_ui (s->seed, 1);
-  _mpz_realloc (s->seed, ABSIZ (m));
+  mpz_init_set_ui (rstate->seed, 1);
+  _mpz_realloc (rstate->seed, ABSIZ (m));
 
   /* Allocate algorithm specific data. */
-  s->data.lc = (__gmp_rand_data_lc *)
-    (*_mp_allocate_func) (sizeof (__gmp_rand_data_lc));
+  rstate->algdata.lc = (__gmp_randata_lc *)
+    (*_mp_allocate_func) (sizeof (__gmp_randata_lc));
 
-  mpz_init_set (s->data.lc->a, a);
-  s->data.lc->c = c;
-  mpz_init_set (s->data.lc->m, m);
+  mpz_init_set (rstate->algdata.lc->a, a);
+  rstate->algdata.lc->c = c;
+  mpz_init_set (rstate->algdata.lc->m, m);
 
-  s->alg = GMP_RAND_ALG_LC;
+  rstate->alg = GMP_RAND_ALG_LC;
 }

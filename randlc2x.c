@@ -1,4 +1,4 @@
-/* gmp_rand_init_lc_2exp (state, a, c, m2exp) -- Initialize random
+/* gmp_randinit_lc_2exp (state, a, c, m2exp) -- Initialize random
    state STATE for a linear congruential generator with multiplier A,
    adder C, and modulus 2 ^ M2EXP.
 
@@ -26,34 +26,34 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-gmp_rand_init_lc_2exp (gmp_rand_state s,
-		       mpz_t a,
-		       unsigned long int c,
-		       unsigned long int m2exp)
+gmp_randinit_lc_2exp (gmp_randstate_t rstate,
+		      mpz_t a,
+		      unsigned long int c,
+		      unsigned long int m2exp)
 #else
-gmp_rand_init_lc_2exp (s, a, c, m2exp)
-     gmp_rand_state s;
+gmp_randinit_lc_2exp (rstate, a, c, m2exp)
+     gmp_randstate_t rstate;
      mpz_t a;
      unsigned long int c;
      unsigned long int m2exp;
 #endif
 {
-  mpz_init_set_ui (s->seed, 1);
-  _mpz_realloc (s->seed, m2exp / BITS_PER_MP_LIMB
+  mpz_init_set_ui (rstate->seed, 1);
+  _mpz_realloc (rstate->seed, m2exp / BITS_PER_MP_LIMB
 		+ (m2exp % BITS_PER_MP_LIMB != 0));
 
   /* Allocate algorithm specific data. */
-  s->data.lc = (__gmp_rand_data_lc *)
-    (*_mp_allocate_func) (sizeof (__gmp_rand_data_lc));
+  rstate->algdata.lc = (__gmp_randata_lc *)
+    (*_mp_allocate_func) (sizeof (__gmp_randata_lc));
 
-  mpz_init_set (s->data.lc->a, a);
-  s->data.lc->c = c;
+  mpz_init_set (rstate->algdata.lc->a, a);
+  rstate->algdata.lc->c = c;
 
   /* Cover weird case where m2exp is 0, which means that m is used
      instead of m2exp.  */
   if (m2exp == 0)
-    mpz_init_set_ui (s->data.lc->m, 0);
-  s->data.lc->m2exp = m2exp;
+    mpz_init_set_ui (rstate->algdata.lc->m, 0);
+  rstate->algdata.lc->m2exp = m2exp;
 
-  s->alg = GMP_RAND_ALG_LC;
+  rstate->alg = GMP_RAND_ALG_LC;
 }

@@ -1,6 +1,6 @@
 /* mpf_urandomb (rop, state) -- Generate a uniform pseudorandom real
    number between 0 (inclusive) and 1 (exclusive), using STATE as the
-   random state previously initialized by a call to gmp_rand_init().
+   random state previously initialized by a call to gmp_randinit().
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
@@ -28,11 +28,11 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpf_urandomb (mpf_t rop, gmp_rand_state rstate)
+mpf_urandomb (mpf_t rop, gmp_randstate_t rstate)
 #else
 mpf_urandomb (rop, rstate)
      mpf_t rop;
-     gmp_rand_state rstate;
+     gmp_randstate_t rstate;
 #endif
 {
   mp_ptr rp;
@@ -42,7 +42,7 @@ mpf_urandomb (rop, rstate)
   rp = PTR (rop);
   nlimbs = PREC (rop);
 
-  gmp_rand_getraw (rp, rstate, nlimbs * BITS_PER_MP_LIMB);
+  _gmp_rand (rp, rstate, nlimbs * BITS_PER_MP_LIMB);
 
   exp = 0;
   while (nlimbs != 0 && rp[nlimbs - 1] == 0)

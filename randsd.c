@@ -1,5 +1,5 @@
-/* gmp_rand_seed (state, seed) -- Set initial seed SEED in random
-   state STATE.
+/* gmp_randseed (state, seed) -- Set initial seed SEED in random state
+   STATE.
 
 Copyright (C) 2000  Free Software Foundation, Inc.
 
@@ -25,13 +25,13 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-gmp_rand_seed (gmp_rand_state s,
-	       mpz_t seed)
+gmp_randseed (gmp_randstate_t rstate,
+	      mpz_t seed)
 #else
-gmp_rand_seed (s, seed)
-     gmp_rand_state s;
+gmp_randseed (rstate, seed)
+     gmp_randstate_t rstate;
      mpz_t seed;
 #endif
 {
-  mpz_set (s->seed, seed);
+  mpz_set (rstate->seed, seed);
 }
