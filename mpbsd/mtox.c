@@ -1,7 +1,7 @@
 /* mtox -- Convert OPERAND to hexadecimal and return a malloc'ed string
    with the result of the conversion.
 
-Copyright (C) 1991, 1994 Free Software Foundation, Inc.
+Copyright (C) 1991, 1994, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,7 +46,7 @@ mtox (x)
       str = (unsigned char *) (*_mp_allocate_func) (2);
       str[0] = '0';
       str[1] = 0;
-      return str;
+      return (char *) str;
     }
   xsign = xsize;
   if (xsize < 0)
@@ -77,5 +77,5 @@ mtox (x)
     s[i] = "0123456789abcdef"[s[zeros + i]];
   s[str_size] = 0;
 
-  return str;
+  return (char *) str;
 }
