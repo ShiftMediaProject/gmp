@@ -37,7 +37,7 @@ SHELL = /bin/sh
 
 MPZ_SRCS = init.c set.c set_ui.c set_si.c set_str.c set_d.c set_f.c \
   iset.c iset_ui.c iset_si.c iset_str.c iset_d.c clear.c \
-  get_ui.c get_si.c get_str.c size.c sizeinbase.c \
+  get_ui.c get_si.c get_str.c get_d.c size.c sizeinbase.c \
   add.c add_ui.c sub.c sub_ui.c mul.c mul_ui.c \
   gcd.c gcd_ui.c gcdext.c sqrt.c sqrtrem.c powm.c powm_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c fdiv_q_2exp.c fdiv_r_2exp.c \
@@ -52,7 +52,7 @@ MPZ_SRCS = init.c set.c set_ui.c set_si.c set_str.c set_d.c set_f.c \
   jacobi.c legendre.c invert.c
 MPZ_OBJS = init.o set.o set_ui.o set_si.o set_str.o set_d.o set_f.o \
   iset.o iset_ui.o iset_si.o iset_str.o iset_d.o clear.o \
-  get_ui.o get_si.o get_str.o size.o sizeinbase.o \
+  get_ui.o get_si.o get_str.o get_d.o size.o sizeinbase.o \
   add.o add_ui.o sub.o sub_ui.o mul.o mul_ui.o \
   gcd.o gcd_ui.o gcdext.o sqrt.o sqrtrem.o powm.o powm_ui.o \
   cmp.o cmp_ui.o cmp_si.o mul_2exp.o fdiv_q_2exp.o fdiv_r_2exp.o \
@@ -119,6 +119,7 @@ fdiv_ui.o: $(srcdir)/fdiv_ui.c $(H)
 gcd.o: $(srcdir)/gcd.c $(H) $(srcdir)/../longlong.h
 gcd_ui.o: $(srcdir)/gcd_ui.c $(H)
 gcdext.o: $(srcdir)/gcdext.c $(H)
+get_d.o: $(srcdir)/get_d.c $(H)
 get_si.o: $(srcdir)/get_si.c $(H)
 get_str.o: $(srcdir)/get_str.c $(H)
 get_ui.o: $(srcdir)/get_ui.c $(H)
