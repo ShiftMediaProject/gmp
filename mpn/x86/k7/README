@@ -22,6 +22,7 @@ Times for the loops, with all code and data in L1 cache.
 
 	mpn_divrem_1             17.0 integer part, 15.0 fractional part
 	mpn_mod_1                17.0
+	mpn_divexact_by3          8.0
 
 	mpn_l/rshift              1.2
 
