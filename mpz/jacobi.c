@@ -219,7 +219,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
       TRACE (printf ("tdiv_qr asize=%ld bsize=%ld\n", asize, bsize));
 
       TMP_ALLOC_LIMBS_2 (rp, bsize, qp, asize-bsize+1);
-      mpn_tdiv_qr (qp, rp, 0, ap, asize, bp, bsize);
+      mpn_tdiv_qr (qp, rp, (mp_size_t) 0, ap, asize, bp, bsize);
       ap = rp;
       asize = bsize;
       MPN_NORMALIZE (ap, asize);
