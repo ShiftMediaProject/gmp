@@ -223,14 +223,6 @@ double speed_umul_ppmm _PROTO ((struct speed_params *s));
 
 /* Prototypes for other routines */
 
-/* struct timeval *end, *start */
-#define TIMEVAL_DIFF_USEC(end, start)                           \
-  ((end)->tv_usec - (start)->tv_usec                            \
-   + 1000000L * ((end)->tv_sec - (start)->tv_sec                \
-                 - ((end)->tv_usec < (start)->tv_usec)))
-#define TIMEVAL_DIFF_SEC(end, start)            \
-  (TIMEVAL_DIFF_USEC (end, start) * 1e-6)
-
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter _PROTO ((unsigned p[2]));
 double speed_cyclecounter_diff _PROTO ((const unsigned end[2],
