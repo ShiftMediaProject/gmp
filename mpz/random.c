@@ -1,6 +1,6 @@
 /* mpz_random -- Generate a random mpz_t of specified size in limbs.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,7 +25,7 @@ MA 02111-1307, USA. */
 void
 mpz_random (mpz_ptr x, mp_size_t size)
 {
-  mpz_urandomb (x, RANDS, ABS (size) * BITS_PER_MP_LIMB);
+  mpz_urandomb (x, RANDS, (unsigned long) (ABS (size) * GMP_NUMB_BITS));
   if (size < 0)
     SIZ(x) = -SIZ(x);
 }
