@@ -1,3 +1,10 @@
+2001-02-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/sqr_basecase.c: Use mpn_sqr_diagonal when appropriate.
+
+	* config.in: Add #undef of mpn_sqr_diagonal.
+	Remove lots of spacing.
+	
 2001-02-07  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Low-level Functions): mpn_preinv_mod_1 now undocumented.
@@ -5,6 +12,10 @@
 	* mpn/generic/random2.c (myrandom): Use rand() on mingw.
 
 	* mpn/alpha/gmp-mparam.h: Update tuned parameters.
+
+2001-02-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/gmp-mparam.h: Retune.
 
 2001-02-05  Kevin Ryde  <kevin@swox.se>
 
