@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -52,7 +52,7 @@
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
-SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-parity.c t-popc.c
+SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-parity.c t-popc.c t-sub.c
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -80,7 +80,7 @@ DIST_COMMON = $(srcdir)/../mpn/Makeasm.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 check_PROGRAMS = t-bswap$(EXEEXT) t-constants$(EXEEXT) \
 	t-count_zeros$(EXEEXT) t-gmpmax$(EXEEXT) t-modlinv$(EXEEXT) \
-	t-popc$(EXEEXT) t-parity$(EXEEXT)
+	t-popc$(EXEEXT) t-parity$(EXEEXT) t-sub$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/mpfr/acinclude.m4 \
@@ -122,6 +122,10 @@ t_popc_SOURCES = t-popc.c
 t_popc_OBJECTS = t-popc$U.$(OBJEXT)
 t_popc_LDADD = $(LDADD)
 t_popc_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
+t_sub_SOURCES = t-sub.c
+t_sub_OBJECTS = t-sub$U.$(OBJEXT)
+t_sub_LDADD = $(LDADD)
+t_sub_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -135,10 +139,10 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) \
 	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c \
-	t-parity.c t-popc.c
+	t-parity.c t-popc.c t-sub.c
 DIST_SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) \
 	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c \
-	t-parity.c t-popc.c
+	t-parity.c t-popc.c t-sub.c
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-exec-recursive install-info-recursive \
@@ -206,6 +210,7 @@ LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+LIBCURSES = @LIBCURSES@
 LIBGMPXX_LDFLAGS = @LIBGMPXX_LDFLAGS@
 LIBGMP_DLL = @LIBGMP_DLL@
 LIBGMP_LDFLAGS = @LIBGMP_LDFLAGS@
@@ -406,6 +411,9 @@ t-parity$(EXEEXT): $(t_parity_OBJECTS) $(t_parity_DEPENDENCIES)
 t-popc$(EXEEXT): $(t_popc_OBJECTS) $(t_popc_DEPENDENCIES) 
 	@rm -f t-popc$(EXEEXT)
 	$(LINK) $(t_popc_LDFLAGS) $(t_popc_OBJECTS) $(t_popc_LDADD) $(LIBS)
+t-sub$(EXEEXT): $(t_sub_OBJECTS) $(t_sub_DEPENDENCIES) 
+	@rm -f t-sub$(EXEEXT)
+	$(LINK) $(t_sub_LDFLAGS) $(t_sub_OBJECTS) $(t_sub_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -454,6 +462,8 @@ t-parity_.c: t-parity.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-parity.c; then echo $(srcdir)/t-parity.c; else echo t-parity.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-popc_.c: t-popc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-popc.c; then echo $(srcdir)/t-popc.c; else echo t-popc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-sub_.c: t-sub.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sub.c; then echo $(srcdir)/t-sub.c; else echo t-sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 trace_.c: trace.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trace.c; then echo $(srcdir)/trace.c; else echo trace.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 x86check_.c: x86check.c $(ANSI2KNR)
@@ -465,8 +475,9 @@ spinner_.$(OBJEXT) spinner_.lo t-bswap_.$(OBJEXT) t-bswap_.lo \
 t-constants_.$(OBJEXT) t-constants_.lo t-count_zeros_.$(OBJEXT) \
 t-count_zeros_.lo t-gmpmax_.$(OBJEXT) t-gmpmax_.lo \
 t-modlinv_.$(OBJEXT) t-modlinv_.lo t-parity_.$(OBJEXT) t-parity_.lo \
-t-popc_.$(OBJEXT) t-popc_.lo trace_.$(OBJEXT) trace_.lo \
-x86check_.$(OBJEXT) x86check_.lo : $(ANSI2KNR)
+t-popc_.$(OBJEXT) t-popc_.lo t-sub_.$(OBJEXT) t-sub_.lo \
+trace_.$(OBJEXT) trace_.lo x86check_.$(OBJEXT) x86check_.lo : \
+$(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
