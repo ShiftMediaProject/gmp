@@ -20,6 +20,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
@@ -32,11 +35,9 @@ MA 02111-1307, USA. */
 #define EXPO 32
 #endif
 
-#if __STDC__
-typedef void (*dss_func) (mpf_ptr, mpf_srcptr, mpf_srcptr);
-#else
-typedef void (*dss_func) ();
-#endif
+void dump_abort _PROTO ((char *name, mpf_t res1, mpf_t res2));
+
+typedef void (*dss_func) _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 
 dss_func dss_funcs[] =
 {
@@ -48,11 +49,7 @@ char *dss_func_names[] =
   "mpf_div", "mpf_add", "mpf_mul", "mpf_sub",
 };
 
-#if __STDC__
-typedef void (*dsi_func) (mpf_ptr, mpf_srcptr, unsigned long int);
-#else
-typedef void (*dsi_func) ();
-#endif
+typedef void (*dsi_func) _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 
 dsi_func dsi_funcs[] =
 {
@@ -66,11 +63,7 @@ char *dsi_func_names[] =
   "mpf_mul_2exp", "mpf_div_2exp"
 };
 
-#if __STDC__
-typedef void (*dis_func) (mpf_ptr, unsigned long int, mpf_srcptr);
-#else
-typedef void (*dis_func) ();
-#endif
+typedef void (*dis_func) _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 
 dis_func dis_funcs[] =
 {
@@ -174,23 +167,13 @@ main (int argc, char **argv)
   exit (0);
 }
 
+void
 dump_abort (char *name, mpf_t res1, mpf_t res2)
 {
   printf ("failure in %s:\n", name);
-  oo (res1);
-  oo (res2);
+  mpf_dump (res1);
+  mpf_dump (res2);
   abort ();
-}
-
-oo (mpf_t x)
-{
-  mp_size_t i;
-  printf (" exp = %ld\n", x->_mp_exp);
-  printf ("size = %d\n", x->_mp_size);
-  for (i = ABS (x->_mp_size) - 1; i >= 0; i--)
-    printf ("%08lX ", x->_mp_d[i]);
-  printf ("\n");
-  mpf_dump (x);
 }
 
 #if 0
