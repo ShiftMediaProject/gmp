@@ -375,7 +375,7 @@ case $host in
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64w"
           extra_functions_20w="umul_ppmm udiv_qrnnd"
-          SPEED_CYCLECOUNTER_OBJ_20w=hppa2.lo
+          SPEED_CYCLECOUNTER_OBJ_20w=hppa2w.lo
           cyclecounter_size_20w=2
 	  ;;
         esac
