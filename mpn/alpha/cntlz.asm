@@ -21,6 +21,8 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+EXTERN(__clz_tab)
+
 ASM_START()
 PROLOGUE_GP(mpn_count_leading_zeros)
 	cmpbge	r31,  r16, r1
@@ -35,7 +37,8 @@ PROLOGUE_GP(mpn_count_leading_zeros)
 	s8subl	r0,   8,    r0
 	srl	r16,  r0,   r16
 	addq	r16,  r3,   r16
-	ldbu	r1,   0(r16)
+	ldq_u	r1,   0(r16)
+	extbl	r1,   r16,  r1
 	subq	r2,   r1,   r2
 	subq	r2,   r0,   r0
 	ret	r31,  (r26),1
