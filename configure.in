@@ -408,9 +408,6 @@ case $host in
 
   # Motorola 68k
   #
-  # "m68k" is taken to mean 68020 or better, since that's what most systems
-  # are.  Nexts in particular are certainly at least 68020.
-  #
   m68*-*-*)
     GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
     gcc_cflags="-g $fomit_frame_pointer"
@@ -422,22 +419,21 @@ case $host in
     # FIXME: Maybe "-m68020 -mnobitfield" would suit cpu32 on 2.7.2.
     #
     case $host in
-    [m680[01]0-*-* | m683?2-*-*])  gcc_cflags_arch="-m68000" ;;
-    m68360-*-*)                    gcc_cflags_arch="-mcpu32 -m68000" ;;
-    m68020-*-* | m68k-*-*)         gcc_cflags_arch="-m68020" ;;
-    m68030-*-*)                    gcc_cflags_arch="-m68030" ;;
-    m68040-*-*)                    gcc_cflags_arch="-m68040" ;;
-    m68060-*-*)                    gcc_cflags_arch="-m68060 -m68040" ;;
-    *)                             gcc_cflags_arch="" ;;
+    m68020-*-*)  gcc_cflags_arch="-m68020" ;;
+    m68030-*-*)  gcc_cflags_arch="-m68030" ;;
+    m68040-*-*)  gcc_cflags_arch="-m68040" ;;
+    m68060-*-*)  gcc_cflags_arch="-m68060 -m68040" ;;
+    m68360-*-*)  gcc_cflags_arch="-mcpu32 -m68000" ;;
+    *)           gcc_cflags_arch="-m68000" ;;
     esac
 
     # FIXME: m68k/mc68020 looks like it's ok for cpu32, but this wants to be
     # tested.  Will need to introduce an m68k/cpu32 if m68/mc62020 ever uses
     # the bitfield instructions.
     case $host in
-    [m680[01]0-*-* | m683?2-*-*]) path="m68k" ;; 
-    *)                            path="m68k/mc68020 m68k"
-                                  extra_functions="udiv umul" ;;
+    [m680[2346]0-*-* | m68360-*-*])  path="m68k/mc68020 m68k"
+                                     extra_functions="udiv umul" ;;
+    *)                               path="m68k" ;; 
     esac
     ;;
 
