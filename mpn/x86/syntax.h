@@ -76,9 +76,9 @@ MA 02111-1307, USA.  */
 #endif
 
 #ifdef ELF_SYNTAX
-#define PROLOG(name) .type name,@function
-#define EPILOG(name) .size name,.-name
+#define PROLOGUE(name) .type name,@function
+#define EPILOGUE(name) .size name,.-name
 #else
-#define PROLOG(name)
-#define EPILOG(name)
+#define PROLOGUE(name)
+#define EPILOGUE(name)
 #endif
