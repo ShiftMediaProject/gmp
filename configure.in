@@ -1013,9 +1013,9 @@ fi
 # be put into AC_CONFIG_COMMANDS.  Alternately GMP_FUNC_ALLOCA could use
 # gmp-h.in and an appropriate _LONG_LONG_LIMB instead of gmp.h.
 
-                  eval tmp=\"\$limb$abi1\"
-test -n "$tmp" || eval tmp=\"\$limb$abi2\"
-case $tmp in
+                          eval limb_chosen=\"\$limb$abi1\"
+test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
+case $limb_chosen in
 longlong) tmp="#define _LONG_LONG_LIMB" ;;
 *)        tmp="/* #undef _LONG_LONG_LIMB */" ;;
 esac
