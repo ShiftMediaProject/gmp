@@ -18,6 +18,32 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-05  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_CHECK_HEADERS): Test float.h, not in SunOS cc.
+	* printf/repl-vsnprintf.c: Use this.
+
+	* configure.in (*sparc*-*-*): Collect up various options for clarity,
+	use gcc -mcpu=supersparc and ultrasparc3, use cc -xchip, don't use
+	-xtarget=native, use cc configs with acc, merge SunOS bundled cc and
+	SunPRO cc configs.
+
+	* gmp-impl.h (gmp_randfnptr_t): Use __GMP_PROTO.
+	(MPZ_REALLOC): Cast _mpz_realloc return value to mp_ptr, for the
+	benefit of SunOS cc which requires pointers of the same type on the
+	two legs of a ?:.
+
+	* dumbmp.c (mpz_realloc): Add a cast to avoid a warning from SunOS cc.
+
+	* acinclude.m4: Allow for i960 b.out default cc output.
+
+	* gmp.texi (Random State Initialization): Add gmp_randinit_mt.
+	(Perfect Square Algorithm): Describe new mpn_mod_34lsub1 use.
+	(Factorial Algorithm): Describe Jason's new code.
+	(Binomial Coefficients Algorithm): Ideas about improvements
+	moved to doc/projects.html.
+	(Contributors): Add Jason Moxham and Pedro Gimeno.
+
 2002-10-03  Kevin Ryde  <kevin@swox.se>
 
 	* gen-psqr.c: New file.
