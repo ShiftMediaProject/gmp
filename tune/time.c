@@ -654,9 +654,9 @@ sgi_works_p (void)
     }
   sgi_unittime = period_picoseconds * 1e-12;
 
-  /* IRIX 5 doesn't have SGI_CYCLECNTR_SIZE, assume 4 bytes in that case.
-     Challenge/ONYX hardware has an 8 byte counter, but there's no obvious
-     way to identify that without SGI_CYCLECNTR_SIZE.  */
+  /* IRIX 5 doesn't have SGI_CYCLECNTR_SIZE, assume 32 bits in that case.
+     Challenge/ONYX hardware has a 64 bit byte counter, but there seems no
+     obvious way to identify that without SGI_CYCLECNTR_SIZE.  */
 #ifdef SGI_CYCLECNTR_SIZE
   size = syssgi (SGI_CYCLECNTR_SIZE);
   if (size == -1)
@@ -666,15 +666,15 @@ sgi_works_p (void)
           printf ("syssgi SGI_CYCLECNTR_SIZE error: %s\n", strerror (errno));
           printf ("    will assume size==4\n");
         }
-      size = 4;
+      size = 32;
     }
 #else
-  size = 4;
+  size = 32;
 #endif
 
-  if (size < 4)
+  if (size < 32)
     {
-      printf ("syssgi SGI_CYCLECNTR_SIZE gives %d, expected 4 or 8\n", size);
+      printf ("syssgi SGI_CYCLECNTR_SIZE gives %d, expected 32 or 64\n", size);
       result = 0;
       return result;
     }
@@ -684,7 +684,7 @@ sgi_works_p (void)
   physpage = phys - offset;
 
   /* shouldn't cross over a page boundary */
-  ASSERT_ALWAYS (offset + size <= pagesize);
+  ASSERT_ALWAYS (offset + size/8 <= pagesize);
 
   fd = open("/dev/mmem", O_RDONLY);
   if (fd == -1)
@@ -704,7 +704,9 @@ sgi_works_p (void)
       return result;
     }
 
-  sgi_addr = (unsigned *) ((char *) virtpage + offset);
+  /* address of least significant 4 bytes, knowing mips is big endian */
+  sgi_addr = (unsigned *) ((char *) virtpage + offset
+                           + size/8 - sizeof(unsigned));
   result = 1;
   return result;
 
