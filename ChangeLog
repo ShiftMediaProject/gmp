@@ -1,8 +1,13 @@
+1999-03-30  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* urandom.c (__gmp_rand_scheme): Change NULL->0.
+	Include "gmp.h" instead of <gmp.h>.
+
 1999-03-29  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* gmp.h (__gmp_rand_data_lc): Now holds a, c, m instead of scheme
 	struct.
-	(__gmp_rand_lc_scheme_struct): Remove mpz_t's a and m.
+	(__gmp_rand_lc_scheme_struct): Remove mpz_t's `a' and `m'.
 
 1999-03-23  Linus Nordberg  <linus.nordberg@canit.se>
 

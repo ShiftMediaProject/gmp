@@ -26,7 +26,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdlib.h>		/* FIXME: For malloc(). */
-#include <gmp.h>
+#include "gmp.h"
 
 /* Array of CL-schemes, ordered in increasing order for the first
    member (the 'bits' value).  The 'm' entry is converted by
@@ -89,7 +89,7 @@ static __gmp_rand_lc_scheme_struct __gmp_rand_scheme[] =
     1, "0x10000000000000000000000000000000000000000000000000000000000000000"},
 
   /*  {, "", 	 1, "0x"}, */
-  {0, NULL,  0, NULL}	/* End of array. */
+  {0, 0,  0, 0}	/* End of array. */
 };
 
 
