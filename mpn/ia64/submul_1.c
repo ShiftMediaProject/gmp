@@ -20,10 +20,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
-This code runs at 10 cycles/limb on the Itanium.  That's pretty poor, and
+This code runs at 14 cycles/limb on the Itanium.  That's pretty poor, and
 very far from the peak execution speed of the Itanium pipeline.  With
-n-way unrolling we should be able to get close to 2 cycles/limb.  See
-README.  */
+well-tuned assembly code we should be able to get to around 3 cycles/limb.
+See README.  */
 
 
 #include "gmp.h"
