@@ -217,11 +217,12 @@ defframe_empty_if_zero(eval(FRAME+($2)))(%esp)')')
 
 
 dnl  Usage: FRAME_pushl()
+dnl         FRAME_popl()
 dnl         FRAME_addl_esp(n)
 dnl         FRAME_subl_esp(n)
 dnl
-dnl  Adjust FRAME appropriately for a pushl, or for an addl or subl %esp of
-dnl  n bytes.
+dnl  Adjust FRAME appropriately for a pushl or popl, or for an addl or subl
+dnl  %esp of n bytes.
 dnl
 dnl  Using these macros is completely optional.  Sometimes it makes more
 dnl  sense to put explicit deflit(`FRAME',N) forms, especially when there's
@@ -232,6 +233,11 @@ define(FRAME_pushl,
 m4_assert_numargs(0)
 m4_assert_defined(`FRAME')
 `deflit(`FRAME',eval(FRAME+4))')
+
+define(FRAME_popl,
+m4_assert_numargs(0)
+m4_assert_defined(`FRAME')
+`deflit(`FRAME',eval(FRAME-4))')
 
 define(FRAME_addl_esp,
 m4_assert_numargs(1)
@@ -265,16 +271,6 @@ dnl  Assembler instruction macros.
 dnl
 
 
-dnl  Usage: femms
-dnl
-dnl  The gas 2.91 that comes with FreeBSD 3.4 doesn't support femms, so the
-dnl  following is a replacement using .byte.
-
-define(femms,
-m4_assert_numargs(-1)
-`.byte	15,14	# AMD 3DNow femms')
-
-
 dnl  Usage: emms_or_femms
 dnl         femms_available_p
 dnl
@@ -297,6 +293,24 @@ m4_assert_numargs(-1)
 define(emms_or_femms,
 m4_assert_numargs(-1)
 `ifelse(femms_available_p,1,`femms',`emms')')
+
+
+dnl  Usage: femms
+dnl
+dnl  The gas 2.91 that comes with FreeBSD 3.4 doesn't support femms, so the
+dnl  following is a replacement using .byte.
+dnl
+dnl  If femms isn't available an emms is generated instead.  This is
+dnl  convenient when testing on a machine without femms, but of course emms
+dnl  is a couple of cycles slower than femms.
+
+define(femms,
+m4_assert_numargs(-1)
+`ifelse(femms_available_p,1,
+`.byte	15,14	# AMD 3DNow femms',
+`emms`'dnl
+m4_warning(`warning, using emms in place of femms, use for testing only
+')')')
 
 
 dnl  Usage: jadcl0(op)
