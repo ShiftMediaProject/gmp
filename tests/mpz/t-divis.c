@@ -158,7 +158,6 @@ main (int argc, char *argv[])
   int  reps = 1000;
 
   tests_start ();
-  mp_trace_base = -16;
 
   if (argc == 2)
     reps = atoi (argv[1]);
