@@ -908,13 +908,18 @@ all (void)
 
   /* This is an indirect determination, based on a comparison between redc
      and mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
-     additional overheads it gets in mpz_powm.  */
+     additional overheads it gets in mpz_powm.
+
+     stop_factor is 1.1 to hopefully help cray vector systems, where
+     otherwise currently it hits the 1000 limb limit with only a factor of
+     about 1.18 (threshold should be around 650).  */
   {
     static struct param_t  param;
     param.name[0] = "POWM_THRESHOLD";
     param.function = speed_redc;
     param.function2 = speed_mpz_mod;
     param.step_factor = 0.03;
+    param.stop_factor = 1.1;
     param.function_fudge = 1.04;
     one (powm_threshold, 1, &param);
   }
