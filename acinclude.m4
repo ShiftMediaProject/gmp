@@ -31,11 +31,14 @@ dnl    a_out.exe - OpenVMS DEC C called via GNV wrapper (gnv.sourceforge.net)
 dnl    conftest.exe - various DOS compilers
 
 
-define(X86_PATTERN,
-[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
+define(IA64_PATTERN,
+[[ia64*-*-* | itanium-*-* | itanium2-*-*]])
 
 define(POWERPC64_PATTERN,
 [[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
+
+define(X86_PATTERN,
+[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
 
 dnl  AC_LANG_FUNC_LINK_TRY(C)(FUNCTION)
@@ -1231,29 +1234,25 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
-dnl  .globl - is usual.
-dnl  .global - required by ia64 (on hpux at least).
-dnl  .export - required by hppa on hpux.
+dnl  ia64 - .global is standard, according to the Intel documentation.
+dnl  hppa - ".export foo,entry" is demanded by HP "as".
+dnl  other - .globl is usual
+dnl
+dnl  "gas" tends to accept .globl everywhere, in addition to .export or
+dnl  .global or whatever the system assembler demands.  
+dnl
+dnl  HP "as" accepts .global, but it doesn't seem to mean what one would
+dnl  expect.  Only .export creates a global symbol.
 
 AC_DEFUN(GMP_ASM_GLOBL,
 [AC_REQUIRE([GMP_ASM_TEXT])
-AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([for assembler global directive],
                 gmp_cv_asm_globl,
-[for i in .globl .global .export; do
-  echo "trying $i" >&AC_FD_CC
-  GMP_TRY_ASSEMBLE(
-[	$gmp_cv_asm_text
-	$i	foo
-foo$gmp_cv_asm_label_suffix],
-    [gmp_cv_asm_globl=$i
-     rm -f conftest*
-     break],
-    [cat conftest.out >&AC_FD_CC])
-done
-if test -z "$gmp_cv_asm_globl"; then
-  AC_MSG_ERROR([Cannot determine how to maks a symbol global])
-fi
+[case $host in
+  hppa*-*-*)     gmp_cv_asm_globl=.export ;;
+  IA64_PATTERN)  gmp_cv_asm_globl=.global ;;
+  *)             gmp_cv_asm_globl=.globl  ;;
+esac
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 ])
