@@ -29,6 +29,20 @@
 	* mpz/tests/io.c: Use one fp opened "w+", since separately opened
 	input and output doesn't work on MS-DOS 6.21.
 
+2000-07-13  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/t-root.c: Also test mpz_perfect_power_p.
+	Generate nth so that there will be fewer trivial values.
+
+	* mpz/root.c: Reverse return value in tests for detecting root of +1
+	and -1.
+
+	* mpz/perfpow.c: Use TMP_ALLOC interface.
+
+2000-07-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/perfpow.c (primes): Make it const.
+
 2000-07-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/cross.pl: New file.
