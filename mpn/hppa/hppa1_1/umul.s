@@ -1,4 +1,4 @@
-; Copyright 1999 Free Software Foundation, Inc.
+; Copyright 1999, 2001 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 
@@ -20,7 +20,7 @@
 	.code
 	.export		__umul_ppmm
 	.align 4
-__umul_ppmm
+	.label		__umul_ppmm
 	.proc
 	.callinfo frame=64,no_calls
 	.entry
