@@ -3175,19 +3175,6 @@ fi
 ])
 
 
-dnl  GMP_PROG_HOST_CC
-dnl  ----------------
-dnl  Establish a value for $HOST_CC.
-
-AC_DEFUN(GMP_PROG_HOST_CC,
-[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
-AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
-if test -z "$HOST_CC"; then
-  HOST_CC=$CC_FOR_BUILD
-fi
-])
-
-
 dnl  GMP_PROG_CPP_FOR_BUILD
 dnl  ---------------------
 dnl  Establish CPP_FOR_BUILD, the build system C preprocessor.
