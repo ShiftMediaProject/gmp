@@ -144,7 +144,7 @@ libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h sin_cos.c extract.c	     \
   rnd_mode.c round.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c	     \
   set_prc_raw.c set_prec.c set_q.c set_si.c set_ui.c set_str.c set_str_raw.c \
   set_z.c sqrt.c sqrt_ui.c sub.c sub_ui.c trunc.c ui_div.c ui_sub.c	     \
-  urandomb.c sqrtrem.c mpz_set_fr.c swap.c srandom.h
+  urandomb.c mpz_set_fr.c swap.c srandom.h
 
 
 nodist_libmpfr_a_SOURCES = floor.c ceil.c
@@ -184,8 +184,7 @@ set_si$U.$(OBJEXT) set_ui$U.$(OBJEXT) set_str$U.$(OBJEXT) \
 set_str_raw$U.$(OBJEXT) set_z$U.$(OBJEXT) sqrt$U.$(OBJEXT) \
 sqrt_ui$U.$(OBJEXT) sub$U.$(OBJEXT) sub_ui$U.$(OBJEXT) \
 trunc$U.$(OBJEXT) ui_div$U.$(OBJEXT) ui_sub$U.$(OBJEXT) \
-urandomb$U.$(OBJEXT) sqrtrem$U.$(OBJEXT) mpz_set_fr$U.$(OBJEXT) \
-swap$U.$(OBJEXT)
+urandomb$U.$(OBJEXT) mpz_set_fr$U.$(OBJEXT) swap$U.$(OBJEXT)
 nodist_libmpfr_a_OBJECTS =  floor$U.$(OBJEXT) ceil$U.$(OBJEXT)
 libmpfr_a_OBJECTS =  $(am_libmpfr_a_OBJECTS) $(nodist_libmpfr_a_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -408,8 +407,6 @@ sqrt_.c: sqrt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrt.c; then echo $(srcdir)/sqrt.c; else echo sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrt_.c
 sqrt_ui_.c: sqrt_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrt_ui.c; then echo $(srcdir)/sqrt_ui.c; else echo sqrt_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrt_ui_.c
-sqrtrem_.c: sqrtrem.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrtrem.c; then echo $(srcdir)/sqrtrem.c; else echo sqrtrem.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrtrem_.c
 sub_.c: sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c
 sub_ui_.c: sub_ui.c $(ANSI2KNR)
@@ -447,11 +444,11 @@ set_q_.$(OBJEXT) set_q_.lo set_rnd_.$(OBJEXT) set_rnd_.lo \
 set_si_.$(OBJEXT) set_si_.lo set_str_.$(OBJEXT) set_str_.lo \
 set_str_raw_.$(OBJEXT) set_str_raw_.lo set_ui_.$(OBJEXT) set_ui_.lo \
 set_z_.$(OBJEXT) set_z_.lo sin_cos_.$(OBJEXT) sin_cos_.lo \
-sqrt_.$(OBJEXT) sqrt_.lo sqrt_ui_.$(OBJEXT) sqrt_ui_.lo \
-sqrtrem_.$(OBJEXT) sqrtrem_.lo sub_.$(OBJEXT) sub_.lo sub_ui_.$(OBJEXT) \
-sub_ui_.lo swap_.$(OBJEXT) swap_.lo trunc_.$(OBJEXT) trunc_.lo \
-ui_div_.$(OBJEXT) ui_div_.lo ui_sub_.$(OBJEXT) ui_sub_.lo \
-urandomb_.$(OBJEXT) urandomb_.lo : $(ANSI2KNR)
+sqrt_.$(OBJEXT) sqrt_.lo sqrt_ui_.$(OBJEXT) sqrt_ui_.lo sub_.$(OBJEXT) \
+sub_.lo sub_ui_.$(OBJEXT) sub_ui_.lo swap_.$(OBJEXT) swap_.lo \
+trunc_.$(OBJEXT) trunc_.lo ui_div_.$(OBJEXT) ui_div_.lo \
+ui_sub_.$(OBJEXT) ui_sub_.lo urandomb_.$(OBJEXT) urandomb_.lo : \
+$(ANSI2KNR)
 
 mpfr.info: mpfr.texi
 mpfr.dvi: mpfr.texi
