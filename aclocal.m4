@@ -1137,9 +1137,9 @@ fi
 dnl  GMP_C_SIZES
 dnl  -----------
 dnl
-dnl  Determine a couple of sizes, if not alredy provided by gmp-mparam.h.
-dnl  These sizes are needed by GMP at preprocessing time, for use in #if
-dnl  conditionals.  $gmp_mparam_source is the selected gmp-mparam.h.
+dnl  Determine some sizes, if not alredy provided by gmp-mparam.h.  These
+dnl  are needed by GMP at preprocessing time, for use in #if conditionals.
+dnl  $gmp_mparam_source is the selected gmp-mparam.h.
 dnl
 dnl  If some assembler code depends on a particular limb size it's probably
 dnl  best to put explicit #defines for these in gmp-mparam.h.  That way if
@@ -1152,9 +1152,14 @@ dnl  just as easy to let configure find it's size as put in explicit values.
 dnl
 dnl  The tests here assume bits=8*sizeof, but that might not be universally
 dnl  true.  It'd be better to probe for how many bits seem to work, like
-dnl  t-constants does.  But all currently supported systems have limbs with
-dnl  bits=8*sizeof, so it's academic.  Strange systems can always have the
-dnl  right values put in gmp-mparam.h explicitly.
+dnl  t-constants does.  But all currently supported systems have limbs and
+dnl  ulongs with bits=8*sizeof, so it's academic.  Strange systems can
+dnl  always have the right values put in gmp-mparam.h explicitly.
+dnl
+dnl  Notice the use of gmp-h.in, since gmp.h isn't instantiated yet.
+dnl  AC_CHECK_SIZEOF includes confdefs.h, which gives the right
+dnl  _LONG_LONG_LIMB setting.  __GMP_WITHIN_CONFIGURE ensures the #undef
+dnl  template in gmp-h.in doesn't undo it.
 
 AC_DEFUN(GMP_C_SIZES,
 [if   grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null \
@@ -1162,7 +1167,8 @@ AC_DEFUN(GMP_C_SIZES,
 else
   AC_CHECK_SIZEOF(mp_limb_t,,
 [#include <stdio.h>
-#include "gmp.h"
+#define __GMP_DISABLE_CONFIG_DEFS 1
+#include "$srcdir/gmp-h.in"
 ])
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
     AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
@@ -1210,8 +1216,8 @@ AC_DEFUN(GMP_FUNC_ALLOCA,
 AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
                gmp_cv_func_alloca,
 [AC_TRY_LINK(
-[#define GMP_FUNC_ALLOCA_TEST 1
-#include "gmp.h"
+[#define __GMP_WITHIN_CONFIGURE 1
+#include "$srcdir/gmp-h.in"
 #include "$srcdir/gmp-impl.h"],
   [char *p = (char *) alloca (1);],
   gmp_cv_func_alloca=yes,
