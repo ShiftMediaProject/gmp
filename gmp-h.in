@@ -163,8 +163,9 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 #endif
 
+/* Sun workshop C 5.0 requires "##" for token pasting, but defines __STDC__
+   to 0, hence the use of defined(__STDC__) rather than __STDC__-0.  */
 #ifndef __MPN
-/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
 #if defined (__STDC__) || defined (__cplusplus)
 #define __MPN(x) __gmpn_##x
 #else
