@@ -13,7 +13,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -136,21 +136,23 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libmp.la
 
-@WANT_MPBSD_TRUE@MPBSD_check_OPTION = allfuns t-itom
+@WANT_MPBSD_TRUE@MPBSD_check_OPTION = allfuns t-itom t-mtox
 
 check_PROGRAMS = $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)
+
+# check linking only against libmp
+allfuns_LDADD = $(top_builddir)/libmp.la
 subdir = tests/mpbsd
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@WANT_MPBSD_TRUE@check_PROGRAMS = allfuns$(EXEEXT) t-itom$(EXEEXT)
+@WANT_MPBSD_TRUE@check_PROGRAMS = allfuns$(EXEEXT) t-itom$(EXEEXT) \
+@WANT_MPBSD_TRUE@	t-mtox$(EXEEXT)
 @WANT_MPBSD_FALSE@check_PROGRAMS =
 allfuns_SOURCES = allfuns.c
 allfuns_OBJECTS = allfuns$U.$(OBJEXT)
-allfuns_LDADD = $(LDADD)
-allfuns_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libmp.la
+allfuns_DEPENDENCIES = $(top_builddir)/libmp.la
 allfuns_LDFLAGS =
 t_itom_SOURCES = t-itom.c
 t_itom_OBJECTS = t-itom$U.$(OBJEXT)
@@ -158,6 +160,12 @@ t_itom_LDADD = $(LDADD)
 t_itom_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libmp.la
 t_itom_LDFLAGS =
+t_mtox_SOURCES = t-mtox.c
+t_mtox_OBJECTS = t-mtox$U.$(OBJEXT)
+t_mtox_LDADD = $(LDADD)
+t_mtox_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libmp.la
+t_mtox_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -173,9 +181,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = allfuns.c t-itom.c
+DIST_SOURCES = allfuns.c t-itom.c t-mtox.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = allfuns.c t-itom.c
+SOURCES = allfuns.c t-itom.c t-mtox.c
 
 all: all-am
 
@@ -206,6 +214,9 @@ allfuns$(EXEEXT): $(allfuns_OBJECTS) $(allfuns_DEPENDENCIES)
 t-itom$(EXEEXT): $(t_itom_OBJECTS) $(t_itom_DEPENDENCIES) 
 	@rm -f t-itom$(EXEEXT)
 	$(LINK) $(t_itom_LDFLAGS) $(t_itom_OBJECTS) $(t_itom_LDADD) $(LIBS)
+t-mtox$(EXEEXT): $(t_mtox_OBJECTS) $(t_mtox_DEPENDENCIES) 
+	@rm -f t-mtox$(EXEEXT)
+	$(LINK) $(t_mtox_LDFLAGS) $(t_mtox_OBJECTS) $(t_mtox_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -232,8 +243,10 @@ allfuns_.c: allfuns.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/allfuns.c; then echo $(srcdir)/allfuns.c; else echo allfuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > allfuns_.c || rm -f allfuns_.c
 t-itom_.c: t-itom.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-itom.c; then echo $(srcdir)/t-itom.c; else echo t-itom.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-itom_.c || rm -f t-itom_.c
-allfuns_.$(OBJEXT) allfuns_.lo t-itom_.$(OBJEXT) t-itom_.lo : \
-$(ANSI2KNR)
+t-mtox_.c: t-mtox.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mtox.c; then echo $(srcdir)/t-mtox.c; else echo t-mtox.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-mtox_.c || rm -f t-mtox_.c
+allfuns_.$(OBJEXT) allfuns_.lo t-itom_.$(OBJEXT) t-itom_.lo \
+t-mtox_.$(OBJEXT) t-mtox_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
