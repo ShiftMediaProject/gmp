@@ -23,14 +23,13 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 dnl        cycles/limb
 dnl  K6        20
-dnl  P5        44
-dnl  P6        39
 dnl  486   approx 42 maybe
 dnl
 dnl  The following have their own optimized mod_1 implementations, but for
 dnl  reference the code here runs as follows.
 dnl
-dnl  P6MMX     39
+dnl  P5        44
+dnl  P6        39
 dnl  K7        41
 
 
