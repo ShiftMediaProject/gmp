@@ -317,12 +317,13 @@ case $host in
       alphaev6*)              path="alpha/ev6 alpha/ev5 alpha" ;;
       *)                      path="alpha" ;;
     esac
-    extra_functions="cntlz"
+    extra_functions="cntlz umul"
     gcc_cflags_optlist="cpu asm"
 
     # gcc 2.7.2.3 doesn't know any -mcpu= for alpha, apparently.
-    # gcc 2.95 and 3.0 know ev4, ev5, ev56, pca56, ev6.
-    # gcc 3.1 pre-releases add ev67.
+    # gcc 2.95 knows -mcpu= ev4, ev5, ev56, pca56, ev6.
+    # gcc 3.0 adds nothing.
+    # gcc 3.1 adds ev45, ev67 (but ev45 is the same as ev4).
     #
     case $host_cpu in
       alpha)        gcc_cflags_cpu="-mcpu=ev4" ;;
