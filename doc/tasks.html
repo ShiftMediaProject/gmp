@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 10 Jul 2001.  An up-to-date version is available at
+  This file current as of 15 Jul 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -192,6 +192,16 @@
      and compare.  The benefits of karatsuba and higher multiplication
      algorithms are lost, but if it's assumed only a few high limbs will be
      needed to determine an order then that's fine.
+<li> <code>mpn_add_1</code>, <code>mpn_sub_1</code>, <code>mpn_add</code>,
+     <code>mpn_sub</code>: Internally use <code>__GMPN_ADD_1</code> etc
+     instead of the functions, so they get inlined on all compilers, not just
+     gcc and others with <code>inline</code> recognised in gmp.h.
+     <code>__GMPN_ADD_1</code> etc are meant mostly to support application
+     inline <code>mpn_add_1</code> etc and if they don't come out good for
+     internal uses then special forms can be introduced, for instance many
+     internal uses are in-place.  Sometimes a block of code is executed based
+     on the carry-out, rather than using it arithmetically, and those places
+     might want to do their own loops entirely.
 </ul>
 
 
