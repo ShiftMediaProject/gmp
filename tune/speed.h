@@ -1856,7 +1856,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     */                                                                       \
                                                                              \
     speed_operand_src (s, (mp_ptr) xp, s->size/BYTES_PER_MP_LIMB);           \
-    speed_operand_dst (s, wp, s->size);                                      \
+    speed_operand_dst (s, wp, wsize);                                        \
     speed_cache_fill (s);                                                    \
                                                                              \
     speed_starttime ();                                                      \
