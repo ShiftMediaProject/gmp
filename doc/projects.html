@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 25 Jun 2001.  An up-to-date version is available at
+  This file current as of 28 Jul 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
 </comment>
 
@@ -133,18 +133,20 @@
 
 <p> <li> <strong>Faster sqrt</strong>
 
-  <p> The current code for computing square roots use a Newton iteration that
-  rely on division.  It is possible to avoid using division by computing
-  1/sqrt(A) using this formula:
+  <p> The current code uses divisions, which are reasonably fast, but it'd be
+  possible to use only multiplications by computing 1/sqrt(A) using this
+  formula:
   <pre>
                                     2
                    x   = x  (3 - A x )/2.
                     i+1   i         i  </pre>
-  The final result is then computed without division using,
+  And the final result
   <pre>
                      sqrt(A) = A x .
                                   n  </pre>
-  The resulting code should be substantially faster than the current code.
+  That final multiply might be the full size of the input (though it might
+  only need the high half of that), so there may or may not be any speedup
+  overall.
 
 <p> <li> <strong>Nth root</strong>
 
