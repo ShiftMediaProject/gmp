@@ -27,8 +27,10 @@ Changes between MP version 4.1.2 and 4.2
   gmp_randinit_default.
 * New memory function: mp_get_memory_functions.
 * New random functions: gmp_randinit_set, gmp_urandomb_ui, gmp_urandomm_ui.
+* gmp_printf etc type M for mp_limb_t.
 * gmp_scanf and friends accept C99 hex floats.
 * Numeric input and output can now be in bases up to 62.
+* Comparisons mpz_cmp_d, mpz_cmpabs_d, mpf_cmp_d recognise infinities.
 
 Changes between MP version 4.1.1 and 4.1.2
 
