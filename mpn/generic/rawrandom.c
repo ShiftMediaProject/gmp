@@ -236,11 +236,7 @@ mpn_lc (rp, s)
 	}
     }
 
-  /* Save result as next seed.  Make sure there's room for it.  */
-  if (t2n > SIZ (s->seed))
-    {
-      _mpz_realloc (s->seed, t2n);
-    }
+  /* Save result as next seed.  */
   MPN_COPY (PTR (s->seed), t2p, t2n);
   SIZ (s->seed) = t2n;
 
@@ -267,31 +263,6 @@ mpn_lc (rp, s)
   return retval;
 }
 
-#ifdef RAWRANDEBUG
-/* Set even bits to EVENBITS and odd bits to ! EVENBITS in RP.
-   Number of bits is m2exp in state.  */
-/* FIXME: Remove.  */
-mp_size_t
-mpn_lc_test (mp_ptr rp, gmp_rand_state s, const int evenbits)
-{
-  mp_size_t rn, nbits;
-  int f;
-
-  nbits = s->data.lc->m2exp / 2;
-  rn = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
-  MPN_ZERO (rp, rn);
-
-  for (f = 0; f < nbits; f++)
-    {
-      mpn_lshift (rp, rp, rn, 1);
-      if (f % 2 == ! evenbits)
-	rp[0] += 1;
-    }
-
-  return nbits;
-}
-#endif /* RAWRANDEBUG */
-
 void
 #if __STDC__
 mpn_rawrandom (mp_ptr rp, gmp_rand_state s, unsigned long int nbits)
@@ -305,11 +276,6 @@ mpn_rawrandom (rp, s, nbits)
   mp_size_t rn;			/* Size of R.  */
   mp_size_t nbits_stored;	/* Bits stored in R so far.  */
   mp_size_t ri;			/* Index for current limb in R.  */
-#ifdef RAWRANDEBUG
-  static int evenbit = 0;
-
-  evenbit = ! evenbit;
-#endif
 
   rn = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
   MPN_ZERO (rp, rn);		/* Clear destination. */
@@ -333,11 +299,7 @@ mpn_rawrandom (rp, s, nbits)
 	nbits_stored = 0;
 	while (nbits_stored < nbits)
 	  {
-#ifndef RAWRANDEBUG
 	    nrandbits = mpn_lc (tp, s);
-#else
-	    nrandbits = mpn_lc_test (tp, s, evenbit);
-#endif
 	    tn = nrandbits / BITS_PER_MP_LIMB
 	      + (nrandbits % BITS_PER_MP_LIMB != 0);
 
