@@ -54,7 +54,7 @@ PROLOGUE(mpn_mul_1)
 ifdef(`HAVE_ABI_32',
 `		addp4		r14 = 0, r32
 		addp4		r15 = 0, r33
-		addp4		r34 = -1, r34
+		addp4		r19 = -1, r34
 ',
 `		mov		r14 = r32
 		mov		r15 = r33
@@ -107,7 +107,6 @@ C r36...r40 getf.sig high product results
 		br.cexit.dpnt.few	.Lend_odd
 		;;
 }
-.Loopm:
 		.pred.rel "mutex",p8,p9
   { .mfi; (p25)	getf.sig	r36 = f46		C i10	i14	hi
 	  (p21)	xma.l		f38 = f37, f6, f0	C i11	i8
