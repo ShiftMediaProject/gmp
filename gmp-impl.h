@@ -29,9 +29,9 @@ MA 02111-1307, USA. */
    start of the test program.  */
 #if ! GMP_FUNC_ALLOCA_TEST
 #include "config.h"
+#include "gmp-mparam.h"
 #endif
 
-#include "gmp-mparam.h"
 /* #include "longlong.h" */
 
 
