@@ -1,5 +1,9 @@
 2000-11-21  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/hppa2.asm: Change level directive to "2.0n".
+	* tune/hppa2w.asm: New file.
+	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]: Separate out hppa2.0w.
+	
 	* mpn/pa64/gmp-mparam.h (BITS_PER_LONGINT): 64 => 32.
 
 2000-11-21  Kevin Ryde  <kevin@swox.se>
