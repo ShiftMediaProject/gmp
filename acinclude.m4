@@ -431,6 +431,23 @@ fi
 ])
 
 
+dnl  GMP_GCC_M68K_OPTIMIZE(CCBASE,CC,FLAG-VARIABLE)
+dnl  ----------------------------------------------
+dnl  m68k gcc 2.95.x gets an internal compiler error when compiling the
+dnl  current mpn/generic/gcdext.c (swox cvs rev 1.20) under -O2 or higher,
+dnl  so just use -O for the offending gcc versions.  Naturally if gcdext.c
+dnl  gets rearranged or rewritten so the ICE doesn't happen then this can be
+dnl  removed.
+
+AC_DEFUN(GMP_GCC_M68K_OPTIMIZE,
+[if test $1 = gcc; then
+  case `$2 --version` in
+    2.95*) $3=-O ;;
+  esac
+fi
+])
+
+
 dnl  GMP_INIT([M4-DEF-FILE])
 dnl  -----------------------
 dnl  Initializations for GMP config.m4 generation.
