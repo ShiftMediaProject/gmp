@@ -53,6 +53,13 @@ __mpn_addsub_n:
 	.globl C_SYMBOL_NAME(__mpn_addsub_n)
 C_SYMBOL_NAME(__mpn_addsub_n):
 #endif
+	std	r14,-64(1)
+	std	r15,-56(1)
+	std	r16,-48(1)
+	std	r17,-40(1)
+	std	r18,-32(1)
+	std	r19,-24(1)
+
 	srdi	r6,r6,2
 	mtctr	r6		/* copy size into CTR */
 	addic	r0,r0,0		/* clear cy */
@@ -93,4 +100,10 @@ Loop:
 	ldu	r17,32(r6)	// s2 L 4
 	bdnz	Loop
 
+	ld	r14,-64(1)
+	ld	r15,-56(1)
+	ld	r16,-48(1)
+	ld	r17,-40(1)
+	ld	r18,-32(1)
+	ld	r19,-24(1)
 	blr
