@@ -1,3 +1,14 @@
+2001-01-02  Torbjorn Granlund  <tege@swox.com>
+
+	* Remove K&R function headers.
+
+	* mpn/generic/mul.c: Clean up spacing and indentation.
+
+	* mpn/generic/mul_fft.c (mpn_fft_add_modF): Use mpn_decr_u.
+	Clean up spacing and indentation.
+
+	* extract-dbl.c: Generalize to handle smaller limb sizes.
+
 2001-01-01  Torbjorn Granlund  <tege@swox.com>
 
 	* mpbsd/mout.c: Output newline after "0".
