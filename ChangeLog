@@ -1,3 +1,12 @@
+1999-03-15  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* .gdbinit: New file.
+
+	* mpz/dump.c: New file.
+	* mpz/Makefile.in: Compile dump.c.
+	* make.bat: Likewise.
+	* gmp.h (mpz_dump): Declare.
+
 1999-03-14  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/tests/reuse.c: Also test mpz_invert and mpz_divexact.
