@@ -29,12 +29,6 @@
 #define TMP_ALLOC_LIMBS_ALIGNED(limbs, align)                           \
   ((mp_ptr) TMP_ALLOC_ALIGNED ((limbs)*sizeof(mp_limb_t), align))
 
-/* Note that memory allocated with this macro can never be freed, because
-   the start address of the block allocated is discarded. */
-#define _mp_allocate_func_aligned(bytes, align)                         \
-  ((void *) (((unsigned) ((*_mp_allocate_func) ((bytes) + (align)-1)    \
-                          + (align)-1)) & ~((align)-1)))
-
 /* 32 is right for pentium family, need to configure this for other CPUs */
 #define CACHE_LINE_SIZE    64 /* bytes */
 
@@ -49,9 +43,9 @@ extern double  speed_unittime;
 extern double  speed_cycletime;
 extern int     speed_precision;
 extern const char *speed_time_string;
-void speed_time_init (void);
-void speed_starttime (void);
-double speed_endtime (void);
+void speed_time_init _PROTO ((void));
+void speed_starttime _PROTO ((void));
+double speed_endtime _PROTO ((void));
 
 struct speed_params {
   unsigned   reps;  /* how many times to run the routine */
@@ -72,75 +66,77 @@ struct speed_params {
   } src[2], dst[2];
 };
 
-typedef double (*speed_function_t) (struct speed_params *s);
+typedef double (*speed_function_t) _PROTO ((struct speed_params *s));
 
-double speed_measure (double (*fun)(struct speed_params *s),
-                      struct speed_params *s);
-double speed_memcpy (struct speed_params *s);
-double speed_mpn_add_n (struct speed_params *s);
-double speed_mpn_add_n_self (struct speed_params *s);
-double speed_mpn_add_n_inplace (struct speed_params *s);
-double speed_mpn_and_n (struct speed_params *s);
-double speed_mpn_andn_n (struct speed_params *s);
-double speed_mpn_addmul_1 (struct speed_params *s);
-double speed_mpn_bz_divrem_n (struct speed_params *s);
-double speed_mpn_bz_divrem_sb (struct speed_params *s);
-double speed_mpn_bz_tdiv_qr (struct speed_params *s);
-double speed_MPN_COPY (struct speed_params *s);
-double speed_MPN_COPY_DECR (struct speed_params *s);
-double speed_MPN_COPY_INCR (struct speed_params *s);
-double speed_mpn_divexact_by3 (struct speed_params *s);
-double speed_mpn_divmod_1 (struct speed_params *s);
-double speed_mpn_divrem_1 (struct speed_params *s);
-double speed_mpn_lshift (struct speed_params *s);
-double speed_mpn_ior_n (struct speed_params *s);
-double speed_mpn_iorn_n (struct speed_params *s);
-double speed_mpn_kara_mul_n (struct speed_params *s);
-double speed_mpn_kara_sqr_n (struct speed_params *s);
-double speed_mpn_mod_1 (struct speed_params *s);
-double speed_mpn_mul_1 (struct speed_params *s);
-double speed_mpn_mul_basecase (struct speed_params *s);
-double speed_mpn_mul_n (struct speed_params *s);
-double speed_mpn_mul_n_recurse (struct speed_params *s);
-double speed_mpn_mul_n_sqr (struct speed_params *s);
-double speed_mpn_mul_n_toom (struct speed_params *s);
-double speed_mpn_mul_n_toom3 (struct speed_params *s);
-double speed_mpn_nand_n (struct speed_params *s);
-double speed_mpn_nior_n (struct speed_params *s);
-double speed_mpn_popcount (struct speed_params *s);
-double speed_mpn_rshift (struct speed_params *s);
-double speed_mpn_sqr_basecase (struct speed_params *s);
-double speed_mpn_sqr_n (struct speed_params *s);
-double speed_mpn_sqr_recurse (struct speed_params *s);
-double speed_mpn_sqr_toom (struct speed_params *s);
-double speed_mpn_sqr_toom3 (struct speed_params *s);
-double speed_mpn_sub_n (struct speed_params *s);
-double speed_mpn_submul_1 (struct speed_params *s);
-double speed_mpn_toom3_mul_n (struct speed_params *s);
-double speed_mpn_toom3_sqr_n (struct speed_params *s);
-double speed_mpn_xnor_n (struct speed_params *s);
-double speed_mpn_xor_n (struct speed_params *s);
+double speed_measure _PROTO ((double (*fun)_PROTO ((struct speed_params *s)),
+                              struct speed_params *s));
+double speed_memcpy _PROTO ((struct speed_params *s));
+double speed_mpn_add_n _PROTO ((struct speed_params *s));
+double speed_mpn_add_n_self _PROTO ((struct speed_params *s));
+double speed_mpn_add_n_inplace _PROTO ((struct speed_params *s));
+double speed_mpn_and_n _PROTO ((struct speed_params *s));
+double speed_mpn_andn_n _PROTO ((struct speed_params *s));
+double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
+double speed_mpn_bz_divrem_n _PROTO ((struct speed_params *s));
+double speed_mpn_bz_divrem_sb _PROTO ((struct speed_params *s));
+double speed_mpn_bz_tdiv_qr _PROTO ((struct speed_params *s));
+double speed_MPN_COPY _PROTO ((struct speed_params *s));
+double speed_MPN_COPY_DECR _PROTO ((struct speed_params *s));
+double speed_MPN_COPY_INCR _PROTO ((struct speed_params *s));
+double speed_mpn_divexact_by3 _PROTO ((struct speed_params *s));
+double speed_mpn_divmod_1 _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_1 _PROTO ((struct speed_params *s));
+double speed_mpn_lshift _PROTO ((struct speed_params *s));
+double speed_mpn_ior_n _PROTO ((struct speed_params *s));
+double speed_mpn_iorn_n _PROTO ((struct speed_params *s));
+double speed_mpn_kara_mul_n _PROTO ((struct speed_params *s));
+double speed_mpn_kara_sqr_n _PROTO ((struct speed_params *s));
+double speed_mpn_mod_1 _PROTO ((struct speed_params *s));
+double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
+double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
+double speed_mpn_mul_n _PROTO ((struct speed_params *s));
+double speed_mpn_mul_n_recurse _PROTO ((struct speed_params *s));
+double speed_mpn_mul_n_sqr _PROTO ((struct speed_params *s));
+double speed_mpn_mul_n_toom _PROTO ((struct speed_params *s));
+double speed_mpn_mul_n_toom3 _PROTO ((struct speed_params *s));
+double speed_mpn_nand_n _PROTO ((struct speed_params *s));
+double speed_mpn_nior_n _PROTO ((struct speed_params *s));
+double speed_mpn_popcount _PROTO ((struct speed_params *s));
+double speed_mpn_rshift _PROTO ((struct speed_params *s));
+double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
+double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
+double speed_mpn_sqr_recurse _PROTO ((struct speed_params *s));
+double speed_mpn_sqr_toom _PROTO ((struct speed_params *s));
+double speed_mpn_sqr_toom3 _PROTO ((struct speed_params *s));
+double speed_mpn_sub_n _PROTO ((struct speed_params *s));
+double speed_mpn_submul_1 _PROTO ((struct speed_params *s));
+double speed_mpn_toom3_mul_n _PROTO ((struct speed_params *s));
+double speed_mpn_toom3_sqr_n _PROTO ((struct speed_params *s));
+double speed_mpn_xnor_n _PROTO ((struct speed_params *s));
+double speed_mpn_xor_n _PROTO ((struct speed_params *s));
 
-double speed_mpz_fac_ui (struct speed_params *s);
-double speed_mpz_fib_ui (struct speed_params *s);
+double speed_mpz_fac_ui _PROTO ((struct speed_params *s));
+double speed_mpz_fib_ui _PROTO ((struct speed_params *s));
 
-double speed_mpn_jacobi_base (struct speed_params *s);
-double speed_mpn_jacobi_base_division (struct speed_params *s);
-double speed_noop (struct speed_params *s);
-double speed_noop_wxs (struct speed_params *s);
-double speed_noop_wxys (struct speed_params *s);
+double speed_mpn_jacobi_base _PROTO ((struct speed_params *s));
+double speed_mpn_jacobi_base_division _PROTO ((struct speed_params *s));
+double speed_noop _PROTO ((struct speed_params *s));
+double speed_noop_wxs _PROTO ((struct speed_params *s));
+double speed_noop_wxys _PROTO ((struct speed_params *s));
 
-void pentium_wbinvd(void);
+void pentium_wbinvd _PROTO ((void));
 
-void noop (void);
-void noop_wxs (mp_ptr wp, mp_srcptr xp, mp_size_t size);
-void noop_wxys (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size);
-void mpn_cache_fill (mp_srcptr ptr, mp_size_t size);
-void mpn_cache_fill_dummy (mp_limb_t n);
-mp_ptr speed_tmp_alloc_adjust (void *ptr, mp_size_t align);
-void *_mp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize);
-void mpn_memcpy (mp_ptr dst, mp_ptr src, mp_size_t size);
-void speed_cache_fill (struct speed_params *s);
+void noop _PROTO ((void));
+void noop_wxs _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size));
+void noop_wxys _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+                        mp_size_t size));
+void mpn_cache_fill _PROTO ((mp_srcptr ptr, mp_size_t size));
+void mpn_cache_fill_dummy _PROTO ((mp_limb_t n));
+mp_ptr speed_tmp_alloc_adjust _PROTO ((void *ptr, mp_size_t align));
+void *_mp_allocate_or_reallocate _PROTO ((void *ptr,
+                                          size_t oldsize, size_t newsize));
+void *_mp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
+void speed_cache_fill _PROTO ((struct speed_params *s));
 
 
 #if defined(__GNUC__)
@@ -148,14 +144,14 @@ void speed_cache_fill (struct speed_params *s);
   __asm__ ("cpuid; rdtsc" : "=a" ((_p)[0]), "=d" ((_p)[1])      \
     : : "ebx", "ecx" )
 #else
-void pentium_rdtsc (unsigned p[2]);
+void pentium_rdtsc _PROTO ((unsigned p[2]));
 #endif
 
-void x86_cpuid (unsigned eax, unsigned p[4]);
-int x86_cpuid_available (void);
-int x86_mmx_available (void);
-int x86_cmov_available (void);
-int x86_3dnow_available (void);
+void x86_cpuid _PROTO ((unsigned eax, unsigned p[4]));
+int x86_cpuid_available _PROTO ((void));
+int x86_mmx_available _PROTO ((void));
+int x86_cmov_available _PROTO ((void));
+int x86_3dnow_available _PROTO ((void));
 
 
 #define SPEED_OPERAND_SRC(s,p,sz)       \
@@ -176,9 +172,7 @@ int x86_3dnow_available (void);
 #define SPEED_RESTRICT_COND(cond)   if (!(cond)) return -1.0;
 
 /* For mpn_copy or similar. */
-#define SPEED_ROUTINE_MPN_COPY_CALL(speed_function, restriction, call)  \
-  double                                                                \
-  speed_function (struct speed_params *s)                               \
+#define SPEED_ROUTINE_MPN_COPY_CALL(restriction, call)  \
   {                                                                     \
     mp_ptr    wp;                                                       \
     unsigned  i;                                                        \
@@ -206,14 +200,12 @@ int x86_3dnow_available (void);
     return t;                                                           \
   }  
 
-#define SPEED_ROUTINE_MPN_COPY(speed_function, function, restriction)   \
-  SPEED_ROUTINE_MPN_COPY_CALL(speed_function, restriction,              \
+#define SPEED_ROUTINE_MPN_COPY(function, restriction)   \
+  SPEED_ROUTINE_MPN_COPY_CALL(restriction,              \
     function (wp, s->xp, s->size))
 
 /* For mpn_add_n, mpn_sub_n, or similar. */
-#define SPEED_ROUTINE_MPN_BINARY_N_CALL(speed_function, restriction, call) \
-  double                                                                 \
-  speed_function (struct speed_params *s)                                \
+#define SPEED_ROUTINE_MPN_BINARY_N_CALL(restriction, call) \
   {                                                                      \
     mp_ptr    wp;                                                        \
     unsigned  i;                                                         \
@@ -242,29 +234,25 @@ int x86_3dnow_available (void);
     return t;                                                            \
   }  
 
-#define SPEED_ROUTINE_MPN_BINARY_N(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_function, restriction,            \
+#define SPEED_ROUTINE_MPN_BINARY_N(function, restriction) \
+   SPEED_ROUTINE_MPN_BINARY_N_CALL (restriction,          \
      (*function) (wp, s->xp, s->yp, s->size))
 
-#define SPEED_ROUTINE_MPN_BINARY_NC(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_function, restriction,             \
+#define SPEED_ROUTINE_MPN_BINARY_NC(function, restriction) \
+   SPEED_ROUTINE_MPN_BINARY_N_CALL (restriction,           \
      (*function) (wp, s->xp, s->yp, s->size, 0))
 
-#define SPEED_ROUTINE_MPN_BINARY_N_SELF(speed_function, function,       \
-                                        restriction)                    \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_function, restriction,          \
+#define SPEED_ROUTINE_MPN_BINARY_N_SELF(function, restriction)\
+   SPEED_ROUTINE_MPN_BINARY_N_CALL (restriction,          \
      (*function) (wp, s->xp, s->xp, s->size))
 
-#define SPEED_ROUTINE_MPN_BINARY_N_INPLACE(speed_function, function,    \
-                                        restriction)                    \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_function, restriction,          \
+#define SPEED_ROUTINE_MPN_BINARY_N_INPLACE(function, restriction) \
+   SPEED_ROUTINE_MPN_BINARY_N_CALL (restriction,        \
      (*function) (wp, wp, s->xp, s->size))
 
 
 /* For mpn_lshift, mpn_rshift, mpn_mul_1, with r, or similar. */
-#define SPEED_ROUTINE_MPN_UNARY_1_CALL(speed_function, restriction, call) \
-  double                                                                \
-  speed_function (struct speed_params *s)                               \
+#define SPEED_ROUTINE_MPN_UNARY_1_CALL(restriction, call) \
   {                                                                     \
     mp_ptr    wp;                                                       \
     unsigned  i;                                                        \
@@ -292,35 +280,33 @@ int x86_3dnow_available (void);
     return t;                                                           \
   }  
 
-#define SPEED_ROUTINE_MPN_UNARY_1(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_UNARY_1_CALL (speed_function, restriction,          \
+#define SPEED_ROUTINE_MPN_UNARY_1(function, restriction) \
+   SPEED_ROUTINE_MPN_UNARY_1_CALL (restriction,          \
      (*function) (wp, s->xp, s->size, s->r))
 
-#define SPEED_ROUTINE_MPN_UNARY_1C(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_UNARY_1_CALL (speed_function, restriction,           \
+#define SPEED_ROUTINE_MPN_UNARY_1C(function, restriction) \
+   SPEED_ROUTINE_MPN_UNARY_1_CALL (restriction,           \
      (*function) (wp, s->xp, s->size, s->r, 0))
 
-#define SPEED_ROUTINE_MPN_DIVREM_1(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_UNARY_1_CALL (speed_function, restriction,           \
+#define SPEED_ROUTINE_MPN_DIVREM_1(function, restriction) \
+   SPEED_ROUTINE_MPN_UNARY_1_CALL (restriction,           \
      (*function) (wp, 0, s->xp, s->size, s->r))
 
-#define SPEED_ROUTINE_MPN_DIVREM_1C(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_UNARY_1_CALL (speed_function, restriction,            \
+#define SPEED_ROUTINE_MPN_DIVREM_1C(function, restriction) \
+   SPEED_ROUTINE_MPN_UNARY_1_CALL (restriction,            \
      (*function) (wp, 0, s->xp, s->size, s->r, 0))
 
-#define SPEED_ROUTINE_MPN_DIVREM_1F(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_UNARY_1_CALL (speed_function, restriction,           \
+#define SPEED_ROUTINE_MPN_DIVREM_1F(function, restriction) \
+   SPEED_ROUTINE_MPN_UNARY_1_CALL (restriction,           \
      (*function) (wp, s->size, s->xp, 0, s->r))
 
-#define SPEED_ROUTINE_MPN_DIVREM_1CF(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_UNARY_1_CALL (speed_function, restriction,            \
+#define SPEED_ROUTINE_MPN_DIVREM_1CF(function, restriction) \
+   SPEED_ROUTINE_MPN_UNARY_1_CALL (restriction,            \
      (*function) (wp, s->size, s->xp, 0, s->r, 0))
 
 
 /* For mpn_mul_basecase, xsize==r ysize==s->size. */
-#define SPEED_ROUTINE_MPN_MUL_BASECASE(speed_function, function, restriction) \
-  double                                                                      \
-  speed_function (struct speed_params *s)                                     \
+#define SPEED_ROUTINE_MPN_MUL_BASECASE(function, restriction) \
   {                                                                           \
     mp_ptr    wp;                                                             \
     mp_size_t  size1;                                                         \
@@ -354,9 +340,7 @@ int x86_3dnow_available (void);
   }  
 
 
-#define SPEED_ROUTINE_MPN_MUL_N_CALL(speed_function, restriction, call, tsize) \
-  double                                                \
-  speed_function (struct speed_params *s)               \
+#define SPEED_ROUTINE_MPN_MUL_N_CALL(restriction, call, tsize) \
   {                                                     \
     mp_ptr    wp, tspace;                               \
     unsigned  i;                                        \
@@ -387,19 +371,17 @@ int x86_3dnow_available (void);
     return t;                                           \
   }  
 
-#define SPEED_ROUTINE_MPN_MUL_N(speed_function, function, restriction)   \
-  SPEED_ROUTINE_MPN_MUL_N_CALL (speed_function, restriction,             \
+#define SPEED_ROUTINE_MPN_MUL_N(function, restriction)   \
+  SPEED_ROUTINE_MPN_MUL_N_CALL (restriction,             \
                                 function (wp, s->xp, s->yp, s->size), 1)
 
-#define SPEED_ROUTINE_GMPN_TOOM3_MUL_N(speed_function, function, restriction) \
-  SPEED_ROUTINE_MPN_MUL_N_CALL (speed_function, restriction,                  \
+#define SPEED_ROUTINE_GMPN_TOOM3_MUL_N(function, restriction) \
+  SPEED_ROUTINE_MPN_MUL_N_CALL (restriction,                  \
                                 function (wp, s->xp, s->yp, s->size, tspace), \
                                 __GMPN_TOOM3_MUL_N_TSIZE (s->size))
 
 
-#define SPEED_ROUTINE_MPN_SQR_CALL(speed_function, restriction, call, tsize) \
-  double                                                \
-  speed_function (struct speed_params *s)               \
+#define SPEED_ROUTINE_MPN_SQR_CALL(restriction, call, tsize) \
   {                                                     \
     mp_ptr    wp, tspace;                               \
     unsigned  i;                                        \
@@ -429,19 +411,17 @@ int x86_3dnow_available (void);
     return t;                                           \
   }  
 
-#define SPEED_ROUTINE_MPN_SQR(speed_function, function, restriction)    \
-  SPEED_ROUTINE_MPN_SQR_CALL (speed_function, restriction,              \
+#define SPEED_ROUTINE_MPN_SQR(function, restriction)    \
+  SPEED_ROUTINE_MPN_SQR_CALL (restriction,              \
                               function (wp, s->xp, s->size), 1)
 
-#define SPEED_ROUTINE_GMPN_TOOM3_SQR_N(speed_function, function, restriction) \
-  SPEED_ROUTINE_MPN_SQR_CALL (speed_function, restriction,                    \
+#define SPEED_ROUTINE_GMPN_TOOM3_SQR_N(function, restriction) \
+  SPEED_ROUTINE_MPN_SQR_CALL (restriction,                    \
                               function (wp, s->xp, s->size, tspace),          \
                               __GMPN_TOOM3_SQR_N_TSIZE (s->size))
 
 
-#define SPEED_ROUTINE_MPN_MOD_CALL(speed_function, restriction, call)   \
-  double                                                                \
-  speed_function (struct speed_params *s)                               \
+#define SPEED_ROUTINE_MPN_MOD_CALL(restriction, call)   \
   {                                                                     \
     unsigned  i;                                                        \
                                                                         \
@@ -459,18 +439,16 @@ int x86_3dnow_available (void);
     return speed_endtime ();                                            \
   }  
 
-#define SPEED_ROUTINE_MPN_MOD_1(speed_function, function, restriction)  \
-   SPEED_ROUTINE_MPN_MOD_CALL (speed_function, restriction,             \
+#define SPEED_ROUTINE_MPN_MOD_1(function, restriction)  \
+   SPEED_ROUTINE_MPN_MOD_CALL (restriction,             \
      (*function) (s->xp, s->size, s->r))
 
-#define SPEED_ROUTINE_MPN_MOD_1C(speed_function, function, restriction) \
-   SPEED_ROUTINE_MPN_MOD_CALL (speed_function, restriction,             \
+#define SPEED_ROUTINE_MPN_MOD_1C(function, restriction) \
+   SPEED_ROUTINE_MPN_MOD_CALL (restriction,             \
      (*function) (s->xp, s->size, s->r, 0))
 
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(speed_function, restriction, call) \
-  double                                                                    \
-  speed_function (struct speed_params *s)                                   \
+#define SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(restriction, call) \
   {                                                                         \
     unsigned   i;                                                           \
     mp_ptr     a, q, r;                                                     \
@@ -504,22 +482,20 @@ int x86_3dnow_available (void);
     return speed_endtime ();                                                \
   }  
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_N(speed_function, function, restriction) \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(speed_function, restriction,              \
+#define SPEED_ROUTINE_MPN_BZ_DIVREM_N(function, restriction) \
+  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(restriction,              \
                     (*function) (q, a, s->yp, s->size))
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_SB(speed_function, function, restriction) \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(speed_function, restriction,               \
+#define SPEED_ROUTINE_MPN_BZ_DIVREM_SB(function, restriction) \
+  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(restriction,               \
                     (*function) (q, a, 2*s->size, s->yp, s->size))
 
-#define SPEED_ROUTINE_MPN_BZ_TDIV_QR(speed_function, function, restriction)  \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(speed_function, restriction,              \
+#define SPEED_ROUTINE_MPN_BZ_TDIV_QR(function, restriction)  \
+  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(restriction,              \
                     (*function) (q, r, 0, a, 2*s->size, s->yp, s->size))
 
 
-#define SPEED_ROUTINE_MPN_POPCOUNT(speed_function, function, restriction) \
-  double                                                                  \
-  speed_function (struct speed_params *s)                                 \
+#define SPEED_ROUTINE_MPN_POPCOUNT(function, restriction) \
   {                                                                       \
     unsigned  i;                                                          \
                                                                           \
@@ -537,9 +513,7 @@ int x86_3dnow_available (void);
     return speed_endtime ();                                              \
   }  
 
-#define SPEED_ROUTINE_MPZ_UI(speed_function, function)  \
-  double                                                \
-  speed_function (struct speed_params *s)               \
+#define SPEED_ROUTINE_MPZ_UI(function)  \
   {                                                     \
     mpz_t     z;                                        \
     unsigned  i;                                        \
@@ -561,9 +535,7 @@ int x86_3dnow_available (void);
   }  
 
 /* Currently testing full overlap case only */
-#define SPEED_ROUTINE_MPN_ADDSUB_N(speed_function, function, restriction) \
-  double                                                                  \
-  speed_function (struct speed_params *s)                                 \
+#define SPEED_ROUTINE_MPN_ADDSUB_N(function, restriction) \
   {                                                                       \
     mp_ptr    wp1, wp2;                                                   \
     unsigned  i;                                                          \
