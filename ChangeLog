@@ -1,4 +1,1124 @@
-Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+1999-02-22  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* configure.in (hppa2.0*-*-*): Force use of GCC.
+
+	* extract-dbl.c: Handle IEEE denormalized numbrs.  Clean up.
+
+1998-12-02  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/Makefile.in (CCAS): New macro.
+	(.s.o): Use CCAS.
+	(.S.o): Likewise.
+
+	* mpn/Makefile.in (mul_basecase.o): Add dependency.
+	(sqr_basecase.o): Likewise.
+	(mod_1.o): Likewise.
+	
+	* demos/pexpr.c (cputime): Test also __hpux.
+	(cleanup_and_exit): Check SIGXCPU only #ifdef LIMIT_RESOURCE_USAGE.
+
+	* mpz/tests/t-2exp.c: Use urandom, not random.
+
+	* mpn/configure.in (arm*-*-*): New alternative.
+
+1998-11-30  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* gmp-impl.h (union ieee_double_extract): Special case for
+	little-endian arm.
+	(LIMBS): Alias for PTR.
+
+1998-11-26  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* longlong.h (m68000 umul_ppmm): Use `muluw', not `mulu'.
+	(m68k stuff): Clean up; add coldfire support.
+
+1998-11-23  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/mips3/gmp-mparam.h (KARATSUBA_MUL_THRESHOLD): #define.
+	(KARATSUBA_SQR_THRESHOLD): #define.
+
+1998-11-20  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/sparc32/v9/gmp-mparam.h: New file.
+
+	* mpn/powerpc32/gmp-mparam.h: New file.
+
+	* mpn/alpha/gmp-mparam.h (KARATSUBA_MUL_THRESHOLD): #define.
+	(KARATSUBA_SQR_THRESHOLD): #define.
+
+	* mpn/x86/p6/gmp-mparam.h: New file.
+	* mpn/configure.in: Point to x86/p6 when appropriate.
+
+1998-11-17  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/x86/mul_basecase.S: New file for non-pentiums.
+	* mpn/x86/mul_basecase.S: Move to mpn/x86/pentium.
+
+1998-11-16  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* make.bat: Compile mul_basecase.c and sqr_basecase.c.
+
+1998-11-10  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/invert.c: Defer writing to parameter `invert' until
+	end.
+
+1998-11-03  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/pa64/udiv_qrnnd.c: Handle more border cases.
+
+1998-10-29  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* insert-dbl.c: Special case biased exponents < 1; Get boundary for
+	Inf right.
+
+	* longlong.h (COUNT_LEADING_ZEROS_NEED_CLZ_TAB): New #define.
+
+1998-10-28  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/powerpc32/submul_1.s: Rewrite.
+	* mpn/powerpc32/addmul_1.s: Rewrite.
+	* mpn/powerpc32/lshift.s: Rewrite.
+
+1998-10-23  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* config/mt-sprc9-gcc (XCFLAGS): Add -Wa,-xarch=v8plus.
+
+	* mpn/sparc32/v9/submul_1.s: New file.
+
+1998-10-21  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/config/mt-pa2hpux: New file.
+	* mpn/configure.in (hppa2.0*-*-*): Use new 64-bit code.
+
+	* config.sub: Recognize hppa2.0 as CPU type. 
+
+	* longlong.h (64-bit hppa): Add umul_ppmm and udiv_qrnnd.
+	* mpn/pa64/mul_1.S: New file.
+	* mpn/pa64/addmul_1.S: New file.
+	* mpn/pa64/submul_1.S: New file.
+	* mpn/pa64/umul_ppmm.S: New file.
+	* mpn/pa64/udiv_qrnnd.c: New file.
+
+1998-10-20  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/pprime_p.c: Pass 1L, not 1, to mpz_cmp_ui.
+
+	* mpz/fdiv_q_2exp.c: Cast `long' argument to `mp_limb_t' for mpn calls.
+	* mpz/gcd_ui.c: Likewise.
+	* mpz/add_ui.c: Likewise.
+	* mpz/sub_ui.c: Likewise.
+
+1998-10-19  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/generic/bdivmod.c: Avoid using switch statement with mp_limb_t index.
+
+1998-10-17  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/sparc32/v9/mul_1.s: Misc cleanups.
+	* mpn/sparc32/v9/addmul_1.s: Misc cleanups.
+
+1998-10-16  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/tests/{add,sub,}mul_1.c: Print xlimb using mpn_print.
+
+1998-10-15  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/generic/divrem_newt.c: Use TMP_ALLOC interface.
+
+	* mpn/generic/sqrtrem.c: Check BITS_PER_MP_LIMB before defining
+	assembly variants of SQRT.
+
+1998-10-14  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/tests: Clean up timing routines.  Don't include longlong.h
+	where it is not needed.
+	(mpn_print): Handle printing when _LONG_LONG_LIMB.
+	* mpn/tests/{add,sub,}mul_1.c: Generate xlimb with mpn_random2
+	and do it whether TIMES != 1 or not.
+	
+	* mpn/generic/mul_n.c: Delay assignment of `sign' for lower
+	register pressure.
+
+	* mpn/sparc32/v9/mul_1.s: New file.
+
+	* config/mt-sprc9-gcc: New file.
+	* configure.in: Use it.
+
+	* mpn/configure.in: Use sparc64 for Solaris 2.7 and later with a
+	sparc v9 CPU.
+	* mpn/configure.in: Use sparc32/v9 for Solaris 2.6 or earlier with
+	a sparc v9 CPU.
+
+	* mpf/sub.c: In initial code for ediff == 0, limit precision
+	before jumping to `normalize'.
+
+1998-10-13  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/hppa/hppa2_0/add_n.s: New file.
+	* mpn/hppa/hppa2_0/sub_n.s: New file.
+	* mpn/configure.in: Handle hppa2.0 (32-bit code for now).
+
+	* config.guess: Update from egcs 1.1.
+	(9000/[3478]??:HP-UX:*:*): Properly return 2.0 for all known 2.0
+	machines.
+
+1998-10-07  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/root.c (mpz_root): New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_root): Declare.
+
+	* mpz/perfpow.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_perfect_power_p): Declare.
+
+	* mpz/remove.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_remove): Declare.
+
+	* mpz/bin_ui.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_bin_ui): Declare.
+
+	* mpz/bin_uiui.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_bin_uiui): Declare.
+
+1998-09-16  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* longlong.h: Test for __powerpc__ in addition to _ARCH_PPC.
+
+Sat Sep  5 17:22:28 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpf/cmp_si.c: Compare most significant mantissa limb before
+	trying to deduce anything from the limb count.
+	* mpf/cmp_ui.c: Likewise.
+
+Tue Aug 18 10:24:39 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/pprime_p.c (mpz_probab_prime_p): Add new code block
+	for doing more dividing.
+
+Sat Aug 15 18:43:17 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/generic/divrem_newt.c: New name for divrem_newton.c.
+	* mpn/Makefile.in: Corresponding changes.
+	* mpn/configure.in: Likewise.
+
+Wed Aug 12 23:07:09 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* config.guess: Handle powerpc for NetBSD.
+
+Tue Jul 28 23:10:55 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/fib_ui.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_fib_ui): Declare.
+
+Wed Jun 17 22:52:58 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* make.bat: Fix typo, `asm-synt.h' => `asm-syntax.h'.
+
+Wed Jun  3 11:27:32 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* config/mt-pwr: New file.
+	* config/mt-ppc: New file.
+	* configure.in: Use the new files.
+
+Tue Jun  2 13:04:17 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/sparc32/v9/addmul_1.s: New file.
+	* mpn/config/mt-sprc9: New file.
+	* mpn/configure.in: Use mt-sprc9.
+
+Tue May 26 11:24:18 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* demos/factorize.c (factor_using_pollard_rho): Pass correct
+	parameters in recursive calls; join the two recursion arms.
+
+	* mpf/set_q.c: [ Insert log from tunnis here ]
+
+Tue May 19 17:28:14 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* demos/factorize.c (factor_using_division): Call fflush
+	also for the factor 2.
+
+Mon May 18 15:51:01 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* make.bat: Pass -fomit-frame-pointer.  Do not pass -g.
+
+Tue May  5 01:42:50 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/Makefile.in (LOCAL_CC): Remove definition.
+
+	* gmp.h: Get rid of GMP_SMALL stuff.
+	* mpz/Makefile.in: Likewise.
+	* mpq/Makefile.in: Likewise.
+	* mpf/Makefile.in: Likewise.
+
+	* mpz/invert.c: Fix typo in comment.
+
+Mon May  4 23:05:32 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/generic/sqrtrem.c: Check that __arch64__ is not defined
+	before defining sparc SQRT.
+
+Mon Apr 20 19:16:17 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/generic/gcdext.c: Allow gp to be NULL.
+
+1998-04-03  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/configure.in: Recognize `alphaev5*', not `alphaev5'.
+
+	* config.guess: Handle CPU variants for NetBSD.
+
+Mon Mar 16 13:07:54 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/pprime_p.c: Use mpn_mod_1/mpn_preinv_mod_1 for computing mod PP,
+	not mpz_tdiv_r_ui (which expects an `unsigned long').
+	(mpz_probab_prime_p): Change type of `r' to mp_limb_t.
+
+Thu Mar 12 17:19:04 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* gmp.h (mpf_ceil, mpf_floor, mpf_trunc): Add declarations.
+
+	* config.guess: Update from FSF version.
+	* config.sub: Likewise.
+
+	* config.guess: Add special handling of alpha-*-NetBSD.
+
+Wed Mar 11 00:55:34 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/inp_str.c: Update from set_str.c.
+	Properly increment `nread' when skipping minus sign.
+
+	* mpz/set_str.c: Check for empty string after having skipped
+	leading zeros.
+
+Mon Mar  9 19:28:00 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/set_str.c: Skip leading zeros.
+
+Wed Mar  4 19:29:16 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* gmp.h (mpz_cmp_si): Cast argument before calling mpz_cmp_ui.
+
+	* demos/factorize.c: Rewrite.
+
+1998-02-04  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* configure.in (i[3456]86* etc): Check if using gcc before
+	choosing mt-x86.
+
+	* configure.in (m68*-*-*): New alterantive.
+	* config/mt-m68k: New file.
+
+	* mpn/alpha/invert-limb.s: Put tables in text segment,
+	since not all systems support "rdata".
+
+Wed Feb  4 02:20:57 1998  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* gmp.h (__GNU_MP_VERSION_SNAP): New #define.
+	(__GNU_MP_VERSION_MINOR): Now 1.
+
+Wed Jan 28 22:29:36 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* longlong.h (alpha udiv_qrnnd): #define UDIV_NEEDS_NORMALIZATION.
+
+Wed Jan 28 20:28:19 1998  Torbjorn Granlund  <tege@sophie.matematik.su.se>
+
+	* mpz/pprime_p.c (mpz_probab_prime_p): Delete 59 from tried divisors.
+
+Mon Jan 26 01:39:02 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* mpz/pprime_p.c (mpz_probab_prime_p): Major overhaul: Check small
+	numers specifically; check small factors, then perform a fermat test.
+
+Tue Jan 13 14:58:28 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* longlong.h (alpha udiv_qrnnd): Call __mpn_invert_normalized_limb
+	and udiv_qrnnd_preinv.
+
+Wed Jan  7 01:52:54 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* mpn/configure.in (alpha*, extra_functions): Add invert-limb and
+	remove udiv_qrnnd.
+
+	* mpn/tests/divrem.c: Get allocations right.
+
+	* mpn/generic/divrem.c: Conditionally pre-invert most significant
+	divisor limb.
+
+Tue Jan  6 23:08:54 1998  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* mpn/generic/divrem_1.c: Rename variables to comply to conventions.
+	Make `i' have type `mp_size_t'.
+
+Tue Dec 30 22:21:42 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/tdiv_qr_ui.c: Return the remainder.
+	* mpz/tdiv_r_ui.c: Likewise.
+	* mpz/tdiv_q_ui.c: Likewise.
+	* gmp.h: Change return type of mpz_tdiv_qr_ui, mpz_tdiv_r_ui,
+	mpz_tdiv_q_ui.
+
+	* mpz/tdiv_ui.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_tdiv_ui): Declare.
+
+Fri Nov  7 04:21:15 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpf/integer.c (FUNC_NAME): Fix bogus test for mpf_trunc.
+
+Sat Nov  1 19:32:25 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/cmp_abs.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_cmp_abs): Declare.
+
+	* mpz/cmp_abs_ui.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_cmp_abs_ui): Declare.
+
+Sat Sep 27 04:49:52 1997  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* mpz/fdiv_r_2exp.c: Get allocation for `tmp' right.
+
+	* mpz/fdiv_q_2exp.c: In final result adjustment code, handle
+	that intermediate result is zero.
+
+Fri Sep 26 16:29:21 1997  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* mpz/divexact.c: Fix typo in test for whether to copy numerator to
+	quotient and move that statement to after handling quotient and
+	denominator overlap.  Misc cleanups.
+
+	* mpn/generic/gcd.c: Change count argument of mpn_lshift/mpn_rshift
+	calls to `unsigned int'.
+	* mpz/divexact.c: Likewise.
+
+Mon Sep 22 02:19:52 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpz/tests/t-powm.c: Decrease `reps' to 2500.
+
+	* mpz/tests/t-pow_ui.c: New file.
+	* mpz/tests/Makefile.in: Handle t-pow_ui.c.
+
+	* mpz/ui_pow_ui.c: Get special cases for exponent and base right.
+
+	* mpz/pow_ui.c: Increase temp space allocation by 1 limb.
+	Split `rsize' into two variables; compute space allocation into
+	`ralloc'.
+
+Sun Sep  7 04:15:12 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpn/pa64/lshift.s: New file.
+	* mpn/pa64/rshift.s: New file.
+	* mpn/pa64/sub_n.s: New file.
+
+Sat Sep  6 19:14:13 1997  Torbjorn Granlund  <tege@gmp.tmg.se>
+
+	* mpn/pa64/add_n.s: New file.
+	* mpn/pa64: New directory.
+
+Tue Aug 19 16:17:09 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpz/swap.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_swap): Declare.
+
+	* mpn/generic/mul_n.c: Push assignment of x and y pointers into the
+	if/else clauses in several places.  (Decreases register pressure.)
+
+Mon Aug 18 03:29:50 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpn/thumb/add_n.s: New file.
+	* mpn/thumb/sub_n.s: New file.
+	* mpn/arm/add_n.s: New file.
+	* mpn/arm/sub_n.s: New file.
+
+	* mpz/powm.c: After mpn_mul_n and mpn_mul calls, adjust product size
+	if most significant limb is zero.
+	* mpz/powm_ui.c: Likewise.
+
+Fri Aug 15 02:13:57 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpn/arm/m/mul_1.s: New file.
+	* mpn/arm/m/addmul_1.s: New file.
+
+	* mpn/powerpc32/mul_1.s: Rewrite.
+
+	* mpn/alpha/mul_1.s: Prefix labels with `.'.
+
+Mon Aug 11 02:37:16 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpn/powerpc32/add_n.s: Rewrite.
+	* mpn/powerpc32/sub_n.s: Rewrite.
+
+Sun Aug 10 17:07:15 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpn/powerpc32/addmul_1.s: Delete obsolete comments.
+	* mpn/powerpc32/submul_1.s: Likewise.
+
+Fri Jul 25 20:07:54 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpz/addmul_ui.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_addmul_ui): Declare.
+
+	* mpz/setbit.c: Add missing code after final `else'.
+
+Tue Jul 22 17:45:01 1997  Torbjorn Granlund  <tege@tunnis.tmg.se>
+
+	* mpn/sh/add_n.s: Fix typo.
+	* mpn/sh/sub_n.s: Likewise.
+
+	* longlong.h (ns32k count_trailing_zeros): Fix typo.
+
+	* insert-dbl.c: Check for exponent overflow and return Inf.
+
+	* mpz/get_d.c: Rewrite to avoid rounding errors.
+
+Thu May 29 11:51:07 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpq/add.c: Swap some usages of tmp1 and tmp2 to make sure
+	their allocation suffices.
+	* mpq/sub.c: Likewise.
+
+Wed Apr 16 02:24:25 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpn/generic/mul_n.c: Misc optimizations from Robert Harley.
+
+	* gmp-impl.h (MPZ_PROVOKE_REALLOC): New #define.
+
+Sat Apr 12 17:54:04 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* mpz/tstbit.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_tstbit): Declare.
+
+	* mpz/tests/logic.c: Use MPZ_CHECK_FORMAT.
+	* mpz/tests/bit.c: New test.
+	* mpz/tests/Makefile.in: Handle bit.c.
+
+	* mpz/ior.c: In -OP2,+OP1 case, normalize OP2 after call to mpn_sub_1.
+
+	* gmp-impl.h (MPZ_CHECK_FORMAT): New #define.
+
+Thu Apr 10 00:30:14 1997  Torbjorn Granlund  <tege@tmg.se>
+
+	* longlong.h (POWER/PowerPC): Test _ARCH_PWR instead of _IBMR2.
+
+Wed Apr  9 18:23:31 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* gmp-impl.h: Move defaulting of UMUL_TIME and UDIV_TIME from here...
+	* longlong.h: ...to here.
+
+Sun Mar 30 12:16:23 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/generic/next_prime.c: New file.
+
+	* mpn/generic/perfsqr.c: Remove definitions of PP and PP_INVERTED.
+	* gmp-impl.h: Put them here.
+
+Fri Mar 28 08:18:05 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* gmp-impl.h (MPN_COPY_INCR, MPN_COPY_DECR): Define as inline asm for
+	for x86, but leave disabled for now.
+
+Fri Feb 28 02:39:47 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/Makefile.in (.S.o): Pass SFLAGS and CFLAGS also to compiler
+	for assembly phase.
+	(.s.o): Pass SFLAGS.
+
+Wed Feb 26 06:46:08 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/configure.in: For Pentium Pro, use default code, not Pentium
+	optimized code.
+
+	* mpn/x86/addmul_1.S: Unroll and optimize for Pentium Pro.
+	* mpn/x86/submul_1.S: Likewise.
+
+Thu Feb 13 08:26:09 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpf/Makefile.in: Compile floor.o, ceil.o and trunc.o (from
+	integer.c).
+	* make.bat: Likewise.
+
+Wed Feb  5 05:58:44 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/configure.in (alpha*): Add cntlz to extra_functions.
+
+Wed Feb  4 03:30:45 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpf/integer.c: New file (supporting mpf_floor, mpf_ceil, mpf_trunc).
+
+Mon Feb  3 14:21:36 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* make.bat: Fix typo, set_dfl_prc => set_dfl_prec.
+
+Sun Feb  2 02:34:33 1997  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpf/out_str.c: After outputting `-', decrement n_digits.
+
+Wed Jan  8 02:50:20 1997  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/generic/divrem.c: qextra_limbs => qxn.
+
+Wed Dec 18 07:50:46 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/tests/t-tdiv.c (SIZE): Increase to 200.
+
+Tue Dec 17 19:32:48 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/generic/divrem.c (mpn_divrem_classic): New name for mpn_divrem.
+	* gmp.h (mpn_divrem): New function.
+	* mpn/generic/divrem_newton.c: New file.
+	* mpn/configure.in (functions): Add divrem_newton.
+	* make.bat: Likewise.
+
+Thu Dec 12 17:55:13 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* gmp.h (_GMP_H_HAVE_FILE): Test also __dj_include_stdio_h_.
+
+Sat Dec  7 09:40:06 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/alpha/invert-limb.s: New file.
+
+Thu Dec  5 01:25:31 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/ui_pow_ui.c (mpz_pow2): New (static) function.
+	(mpz_ui_pow_ui): Rewrite.
+
+	* make.bat: `pre_mod_1.c' => `pre_mod_.c'.  Fix typo in path to
+	gmp-mpar.h.
+
+Fri Nov 15 00:49:55 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/ui_pow_ui.c: Rewrite for better speed.
+
+Fri Nov  1 16:36:56 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* Makefile.in (recursive make rules): Use `&&' instead of `;' as
+	delimiter.
+
+Fri Oct 25 17:12:36 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* gmp-impl.h (Cray/uxp MPN_COPY): Really declare as inline.
+
+Thu Oct 24 15:08:19 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/fujitsu/rshift.c: Fix typo in loop boundaries.
+
+Fri Oct 18 03:13:54 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/configure.in: Recognize `nextstep' for m68k variants; likewise
+	for x86 variants.
+
+	* mpn/x86/syntax.h (INSND): New macro.
+	* mpn/x86/[lr]shift.S: Use INSND.
+	* mpn/x86/pentium/[lr]shift.S: Likewise.
+	* mpn/config/t-oldgas (SFLAGS): Pass -DOLD_GAS.
+
+	* gmp-impl.h: In code for determining endianess, test also __BIG_ENDIAN__
+	and __hppa__.  Remove test of __NeXT__.
+
+Wed Oct 16 03:50:34 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpf/set_str.c: Let `prec' determine precision used in exponentialization
+	code; decrease allocation accordingly.
+
+	* mpn/vax: Change `jsob*' to `sob*' in all files.
+
+Tue Oct 15 03:54:06 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* longlong.h (m88110 udiv_qrnnd): Change type of intermediate quotient
+	to DImode (divu.d generates a 64-bit quotient).
+
+	* configure.in (m88110*): Fix typo.
+
+	* mpf/get_str.c: Compute exp_in_base using `double' to avoid overflow.
+
+	* gmp-impl.h (struct bases): Change type of chars_per_bit_exactly from
+	float to double.
+	* mpn/mp_bases.c (__mp_bases): Give 17 digits for chars_per_bit_exactly
+	field.
+
+	* mpf/get_str.c: Let `prec' determine precision used in exponentialization
+	code; decrease allocation accordingly.
+
+Sun Oct 13 03:31:53 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* longlong.h: Major cleanup.
+	(__udiv_qrnnd_c): Compute remainders using multiply and subtract,
+	not explicit `%' operator.
+	(C umul_ppmm): Get rid of a redundant __ll_lowpart.
+
+	* mpz/invert.c: Properly detect all operands that would yield an
+	undefined inverse; make sure the inverse is always positive.
+
+	* mpz/xor.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_xor): Declare.
+
+	* mpz/tests/logic.c: Also test mpz_xor.
+
+	* mpz/lcm.c: Special case for when either operand equals 0.
+
+Sat Oct 12 01:57:09 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/generic/gcd.c (find_a): Don't inline on x86.
+
+	* Makefile.in (CFLAGS): Default to just `-g'.
+
+	* configure.in: Recognize 386 and 486 wherever other x86 cpus are
+	recognized.
+	* configure.in: Use mt-x86 for all x86 cpus.
+	* config/mt-x86: New file.
+
+	* mpn/alpha/cntlz.s: New file.
+
+Tue Oct  8 00:16:18 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* longlong.h: Define smul_ppmm for Fujitsu vpp/uxp.
+	Rewrite umul_ppmm to actually work on the hardware.
+
+	* mpn/x86/sub_n.S: Avoid parens around displacement of `leal'.
+	* mpn/x86/add_n.S: Likewise.
+
+	* mpn/x86/syntax.h (R): Define differently depending on __STDC__.
+
+Mon Oct  7 16:48:08 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* longlong.h: Don't test for __NeXT__ in outer 68k conditional;
+	add test for __m68k__.
+
+Sun Oct  6 00:59:09 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* gmp.h: Declare mpn_random.
+	* make.bat: Compile mpn/generic/random.c.
+
+	* longlong.h: Define umul_ppmm for Fujitsu vpp/uxp.
+
+	* gmp-impl.h: Protect definitions using `__attribute__ ((mode (...)))'
+	with test also for __GNUC_MINOR__.
+
+	* gmp.h: Don't define macros using __builtin_constant_p when using
+	NeXT's compiler.
+
+Fri Oct  4 16:53:50 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/lcm.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h (mpz_lcm): Declare.
+
+Wed Sep 25 00:06:21 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpq/tests/t-cmp_ui.c: Make sure numerator and denominator of `b' is
+	within limits of an `unsigned long int'.
+
+	* mpz/tests/t-powm_ui.c: Change type of exp2 to `unsigned long int'.
+
+Tue Sep 24 18:58:20 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/powm_ui.c: Make result always positive.
+
+	* urandom.h (urandom): Make it return mp_limb_t.
+
+	* gmp-impl.h (CNST_LIMB): New macro.
+	* mpn/mp_bases.c: Use CNST_LIMB.
+	* mpn/generic/hamdist.c (popc_limb): Likewise.
+	* mpn/generic/popcount.c (popc_limb): Likewise.
+	* mpn/generic/perfsqr.c: Likewise.
+
+Fri Sep 20 03:08:10 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/pprime_p.c: When n <= 3, don't clear out n before using it.
+
+Wed Sep 18 11:22:45 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/fujitsu/mul_1.c: New file.
+	* mpn/fujitsu/addmul_1.c: New file.
+	* mpn/fujitsu/sub_n.c: New file.
+	* mpn/fujitsu/add_n.c: Mew file.
+
+Sun Sep 15 03:13:02 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/cray/mul_1.c: New file.
+	* mpn/cray/addmul_1.c: New file.
+	* mpn/cray/submul_1.c: New file.
+	* mpn/cray/add_n.c: Rewrite.
+	* mpn/cray/sub_n.c: Rewrite.
+
+	* mpn/generic/random.c: New file.
+	* mpn/configure.in (functions): Add `random'.
+
+	* gmp-impl.h (MPN_COPY): Define as annotated inline function for
+	Crays and Fujitsu VPPs.
+
+	* gmp.h (mp_size_t): Define as `int' for non-MPP Cray.
+	(mp_exp_t): Likewise.
+
+	* configure.in: Add support for Fujitsu VPP machines.
+	* mpn/configure.in: Likewise.
+	* config.guess: Likewise.
+	* config.sub: Likewise.
+
+	* mpn/fujitsu/rshift.c: New file.
+	* mpn/fujitsu/lshift.c: New file.
+	* mpn/fujitsu: New directory, for Fujitsu VPP machines.
+
+Wed Sep 11 11:34:38 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/generic/mul_n.c (__gmpn_mul_n): New name for impn_mul_n.
+	Call __gmpn_mul_basecase, not impn_mul_n_basecase; update parameter
+	list to work with __gmpn_mul_basecase.
+	(__gmpn_sqr): New name for impn_sqr_n.
+	Call __gmpn_sqr_basecase, not impn_sqr_n_basecase; update parameter
+	list to work with __gmpn_sqr_basecase.
+	(mpn_mul_n): Update calls to match new names and parameter conventions.
+	* gmp-impl.h (MPN_MUL_N_RECURSE): Likewise.
+	(MPN_SQR_RECURSE): New name for MPN_SQR_N_RECURSE.
+	Update calls to match new names and parameter conventions.
+	* mpn/generic/mul.c: Never perform multiply explicitly here, call
+	__gmpn_mul_basecase instead.
+	Update calls to match new names and parameter conventions.
+
+	* mpn/x86/mul_basecase.S: New file.
+	* mpn/generic/mul_basecase.c: New file.
+	* mpn/generic/sqr_basecase.c: New file.
+
+Tue Sep 10 00:07:54 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/cray/lshift.c: New file.
+	* mpn/cray/rshift.c: New file.
+	* mpn/cray/add_n.c: New file.
+	* mpn/cray/sub_n.c: New file.
+
+Wed Sep  4 02:59:21 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/set_str.c: Let `0b' and `0B' mean base 2.
+
+Fri Aug 30 00:44:00 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* longlong.h (x86 umul_ppmm): Work around GCC bug that was
+	triggered by Aug 28 change.
+
+	* mpbsd/min.c (digit_value_in_base): New function.
+
+	* mpz/set_str.c: Refine allocation size computation, use
+	chars_per_bit_exactly instead of chars_per_limb.
+
+	* mpbsd/Makefile.in (.c.o): Add -D_mpz_realloc=_mp_realloc.
+
+Wed Aug 28 02:52:14 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* longlong.h (x86 umul_ppmm): Don't cast result operands.
+	(x86 udiv_qrnnd): Likewise.
+	(default smul_ppmm): Fix typo, umul_ppmm => smul_ppmm.
+	(default umul_ppmm): New #define using smul_ppmm.
+	(vax smul_ppmm): New #define.
+	(vax umul_ppmm): Delete.
+	(POWER umul_ppmm): Delete.
+	(IBM 370 smul_ppmm): New #define.
+	(IBM 370 umul_ppmm): Delete.
+	(IBM RT/ROMP smul_ppmm): New #define.
+	(IBM RT/ROMP umul_ppmm): Delete.
+
+Tue Aug 27 01:03:25 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* gmp-impl.h (__gmp_0): Make it `const'.
+
+	* mpn/Makefile.in (clean mostlyclean): Comment out recursive clean
+	of `tests'.
+
+	* mpn/generic/mul.c: Identify when we do squaring, and call
+	impn_sqr_n_basecase/impn_sqr_n as appropriate.  Use
+	KARATSUBA_MUL_THRESHOLD and KARATSUBA_SQR_THRESHOLD.
+	Don't #define KARATSUBA_THRESHOLD.
+
+	* mpn/generic/mul_n.c: Don't #define KARATSUBA_THRESHOLD.
+	(impn_mul_n, impn_sqr_n): Rewrite, based on code contributed by
+	Robert Harley.
+	(impn_sqr_n_basecase): Rewrite.
+
+	* gmp-impl.h (KARATSUBA_MUL_THRESHOLD): New #define.
+	(KARATSUBA_SQR_THRESHOLD): Likewise.
+	(MPN_SQR_N_RECURSE): Use KARATSUBA_SQR_THRESHOLD.
+	(MPN_MUL_N_RECURSE): Use KARATSUBA_MUL_THRESHOLD.
+
+	* configure.in: Fix typo in last change.
+
+Mon Aug 26 22:25:18 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpn/generic/random2.c: Fix typo, `alpha__' => `__alpha'.
+	* mpf/random2.c: Likewise.
+
+Sun Aug 25 00:07:09 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
+
+	* mpz/tests/t-mul.c: Also test squaring.
+
+Fri Aug 16 05:12:08 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mp_clz_tab.c (__clz_tab): Declare as `const'.
+	* version.c (gmp_version): Likewise.
+	* mpn/generic/sqrtrem.c (even_approx_tab, odd_approx_tab): Likewise.
+
+Thu Aug 15 02:34:47 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* gmp.h: Fix typo, `mips__' => `__mips'.
+
+	* mpf/set_str.c: Allow a number to start with a period, if next
+	position contains a digit.
+
+Tue Aug 13 18:41:25 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpz/gcdext.c: Get cofactor sign right for negative input operands.
+	Clean up code for computing tt.
+
+	* mpz/invert.c: Get rid of variable `rv'.
+
+	* mpz/divexact.c: Test for zero divisor in special case for zero
+	dividend.
+
+Mon Aug 12 18:04:07 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpz/?div_*_ui.c: Special case for division by 0.
+	* mpz/tdiv_q.c: Likewise.
+
+Sat Aug 10 14:45:26 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpz/dmincl.c: Special case for division by 0.
+
+	* mpz/tdiv_*_ui.c: Delete special case for dividend being 0; handle
+	it when computing size after mpn_divmod_1 call.
+
+	* mp_bpl.c: (__gmp_junk): New variable.
+	(__gmp_0): New constant.
+
+	* gmp-impl.h (DIVIDE_BY_ZERO): New #define.
+
+Fri Aug  9 20:03:27 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpz/divexact.c: Test for dividend being zero before testing
+	for small divisors.
+
+Thu Aug  8 13:20:23 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* configure.in: Require operating system specification for cpus
+	where assembly syntax differs between system.
+
+	* Makefile.in (many targets): Change `-' action prefix to `@'.
+
+	* mpn/Makefile.in: (distclean): Fix typo.
+
+	* mpq/cmp_ui.c: Rename function to _mpq_cmp_ui.
+	(mpq_cmp_ui): #undef deleted.
+	* mpz/cmp_si.c: Rename function to _mpz_cmp_si.
+	(mpz_cmp_si): #undef deleted.
+	* mpz/cmp_ui.c: Rename function to _mpz_cmp_ui.
+	(mpz_cmp_ui): #undef deleted.
+	* Makefile.in: Corresponding changes.
+
+	* mpf/get_prc.c: Return the *highest* precision achievable.
+
+	* mpf/get_str.c: Complete rewrite.
+
+	* mpf/set_str.c (swapptr): New #define.
+	(assert): New #define.
+	* mpf/set_str.c: Set prec to one more than the saved _mp_prec.
+	Misc cleanups.
+
+	* mpz/set_str.c: #include string.h.
+	* mpf/out_str.c: #include string.h.
+	* mpbsd/xtom.c: #include string.h and ctype.h.
+	* mpbsd/mout.c: #include string.h.
+
+Wed Aug  7 11:46:04 EDT 1996  Ken Weber <kweber@mcs.kent.edu>
+
+	* mpn/generic/gcd.c: Reorder mpn_gcd argument list.
+	* mpz/gcd.c: Change call to mpn_gcd.
+	* gmp.texi: Update manual entry on mpn_gcd.
+	* mpn/generic/bdivmod.c: Delete limb cache to make mpn_bdivmod
+	reentrant.
+
+Wed Aug  7 02:15:38 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpf/get_str.c: Rewrite code for converting integral part of a
+	number with both an integral and fractional part.
+
+	* mpf/set_str.c: Get rid of variable xxx.  New variables madj and radj.
+	In exp_in_base==0 case, add madj to msize for EXP field.
+
+	* mpz/tests/t-gcd.c: Test deleted.  Rename t-gcd2.c to t-gcd.c.
+	Increase reps to 2000.
+	* mpz/tests/t-gcd2.c: Get rid of mpz_refgcd.
+
+	* mpf/set_str.c: Ignore excess limbs in MP,MSIZE.
+
+Thu Jul 25 04:39:10 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/configure.in: Fix typo in setting path, "sparc" => "sparc32".
+
+Wed Jul 24 02:27:02 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/gcdext.c: Reorganize and clean up.  Get rid of all
+	signed limb arithmetic.
+
+Mon Jul 22 02:39:56 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/gcdext.c (mpn_gcdext): For large enough operands,
+	work with most significant *two* limbs.
+	(div2): New function (two variants).
+	(THRESHOLD): New #define.
+
+	* mpz/gcdext.c: Fix typo in MPZ_TMP_INIT call.
+
+	* longlong.h (alpha UMUL_TIME): Now 30.
+	(alpha UDIV_TIME): Now 350.
+	(x86 UMUL_TIME): Now 10 (let Pentium decide).
+	(SuperSPARC UDIV_TIME): Override default.
+
+	* extract-dbl.c (MP_BASE_AS_DOUBLE): Don't redefine here.
+
+	* extract-dbl.c: New name for extract-double.c.
+	* insert-dbl.c: New name for insert-double.c.
+	* Makefile.in: Corresponding changes.
+	* make.bat: Likewise.
+
+	* mpz/Makefile.in (.c.o): Don't pass non-portable `-f' to cp.
+	* mpq/Makefile.in: Likewise.
+	* mpf/Makefile.in: Likewise.
+
+Sat Jul 20 01:35:18 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpz/getlimbn.c: Take ABS of integer->_mp_size.
+
+	* mpz/divexact.c: Use mpn_divmod_1 if divisor is a single limb.
+
+Thu Jul 18 00:31:15 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/popcount.c (popc_limb): Use different masking trick
+	for first step (due to David Seal).
+	* mpn/generic/hamdist.c (popc_limb): Likewise.
+
+Wed Jul 17 23:21:48 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/divrem.c: In MPN_COPY_DECR call, copy dsize - 1 limbs.
+
+Sun Jul 14 17:47:46 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* configure.in: Handle sparc9, sparc64, and ultrasparc like sparc8.
+
+Thu Jul 11 14:05:54 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* longlong.h (mc680x0): Define umul_ppmm, udiv_qrnnd, sdiv_qrnnd
+	for the '020, '030, '040, and '332.  Define count_leading_zeros
+	for the '020, '030, '040, and '060.
+
+Sun Jul 14 15:24:53 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	From Joe Keane:
+	* mpq/equal.c: Take ABS of num1_size before passing it to mpn_cmp.
+
+Fri Jul 12 17:11:17 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/sqrtrem.c (SQRT): New asm for x86, but leave it
+	disabled for now.
+
+	* mpn/generic/sqrtrem.c: Use MP_BASE_AS_DOUBLE.
+
+Wed Jul 10 03:17:45 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* cre-mparam.c: Delete obsolete file.
+
+	* gmp.h: #define _LONG_LONG_LIMB if __mips && _ABIN32.
+	* longlong.h: Test __mips instead of __mips__.
+
+Sun Jul  7 23:19:13 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* longlong.h (_PROTO): Define, unless already defined.
+	(alpha __udiv_qrnnd): Declare using _PROTO.
+	(hppa __udiv_qrnnd): Likewise.
+	(sparc __udiv_qrnnd): Likewise.
+
+Mon Jul  1 01:44:30 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* config.guess: Update from master version; add Cray x90 handling.
+
+Wed Jun 26 05:35:02 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/power/add_n.s (__mpn_add_n): Work around GAS bug.
+	* mpn/power/sub_n.s (__mpn_sub_n): Likewise.
+
+	* insert-double.c: Rework loop to avoid potential overflow.
+
+	* mpq/get_d.c: For vax, if qsize > N_QLIMBS, ignore excess limbs.
+
+	* mpq/tests/t-get_d.c (SIZE): Special case for vax.
+
+	* gmp.h (mpX_cmp_ui): #define also when ! __GNUC__.
+
+Mon Jun 24 17:13:21 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* longlong.h (vax sdiv_qrnnd): Fix typo.
+
+Sat Jun 15 01:33:33 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* gmp.h: Support `small' and `large' type and function variants,
+	controlled by GMP_SMALL.
+
+	* mpz/Makefile.in (.c.o): Compile each function twice, for small and
+	large variant.
+	(MPZS_OBJS): New variable.
+	(libmpz.a): Include MPZS_OBJS in archive.
+	* mpf/Makefile.in: Analogous changes.
+	* mpq/Makefile.in: Analogous changes.
+
+	* gmp.h: Prefix all functions with __gmp, to allow namespace-clean
+	internal calls.
+
+	* mp.h: Rip out __MP_SMALL__ stuff.
+	(__mpz_struct): mp_size_t => int.
+
+	* mpz/invert.c: #include "gmp-impl.h".
+	Use MPZ_TMP_INIT, not mpz_init.
+
+	* mpz/gcdext.c: Rewrite to call mpn_gcdext.
+
+Fri Jun 14 18:05:29 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/gcdext.c (s0size): New parameter.
+	* gmp.h (mpn_gcdext): Update prototype.
+
+	* mpn/generic/gcdext.c: Major rewrite.
+
+Mon Jun 10 00:14:27 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* mpn/generic/dump.c: Add missing `else'.
+
+Fri Jun  7 03:35:12 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
+
+	* Makefile.in (gmp_toc.html): Pass -expandinfo to texi2html.
+
+Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Version 2.0.2 released.
 
@@ -13,7 +1133,7 @@ Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* config/mt-linux (AR_FLAGS): New file.
 	* configure.in: Use config/mt-linux for all linux systems.
 
-Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Version 2.0.1 released.
 
@@ -53,7 +1173,7 @@ Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpn/config/t-ppc-aix: New file.
 	* mpn/configure.in: Use t-ppc-aix for powerpc like t-pwr-aix for power.
 
-Wed May 29 02:07:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed May 29 02:07:31 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp.h (mp_bits_per_limb): Change qualifier from `const' to
 	__gmp_const.
@@ -61,7 +1181,7 @@ Wed May 29 02:07:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* gmp.h (mpf_init_set_str): Add `const' qualifier for 2nd parameter.
 	* mpf/iset_str.c: Likewise.
 
-Mon May 27 00:15:58 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon May 27 00:15:58 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp-impl.h: Declare __gmp_extract_double.
 
@@ -71,7 +1191,7 @@ Mon May 27 00:15:58 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/eq.c: mpf_cmp2 -> mpf_eq.
 
-Fri May 24 03:20:44 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri May 24 03:20:44 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/iset_d.c: Don't include <math.h>.
 
@@ -115,7 +1235,7 @@ Fri May 24 03:20:44 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpn/configure.in: Use t-pwr-aix also for aix 3.2.4 and up.
 
-Wed May 22 02:48:35 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed May 22 02:48:35 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp-impl.h: Rework code for defining ieee_double_extract.
 	(IEEE_DOUBLE_BIG_ENDIAN): Macro removed.
@@ -125,7 +1245,7 @@ Wed May 22 02:48:35 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpn/config/t-pwr-aix: New file.
 	* mpn/configure.in: Use t-pwr-aix for aix 4 and later.
 
-Mon May 20 16:30:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon May 20 16:30:31 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp.h: In code for setting _GMP_H_HAVE_FILE, test more symbols.
 
@@ -138,7 +1258,7 @@ Mon May 20 16:30:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpn/{pyr,i960,clipper}/*.s: Add missing copyright headers.
 
-Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/set_d.c: Call _mpz_realloc.
 
@@ -158,7 +1278,7 @@ Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/set_d.c: Make it work for 64-bit machines.
 
-Thu May 16 20:53:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu May 16 20:53:57 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp-impl.h: Set IEEE_DOUBLE_BIG_ENDIAN to 0 for little-endian
 	machines.
@@ -171,7 +1291,7 @@ Thu May 16 20:53:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpn/generic/random2.c: Likewise.
 	* mpf/random2.c: Likewise.
 
-Tue May 14 13:42:39 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
+Tue May 14 13:42:39 1996  Torbjorn Granlund  (tege@tiny.matematik.su.se)
 
 	* mpz/set_f.c: New file.
 	* mpz/Makefile.in: Compile it.
@@ -179,30 +1299,30 @@ Tue May 14 13:42:39 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
 
 	* mpf/set_q.c: Simplify expression in rsize == nsize if-then-else arms.
 
-Tue May 14 13:03:07 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
+Tue May 14 13:03:07 1996  Torbjorn Granlund  (tege@tiny.matematik.su.se)
 
 	* make.bat: Add all new files.
 
-Sun May 12 22:24:36 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sun May 12 22:24:36 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/set_z.c: New file.
 	* mpf/Makefile.in: Compile it.
 	* gmp.h: Declare mpf_set_z.
 
-Sat May 11 19:26:25 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sat May 11 19:26:25 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp.h: Declare mpf_set_q.
 
 	* mpf/set_q.c: Compute prec-1 limbs in mpn_divrem call.
 
-Fri May 10 17:37:38 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri May 10 17:37:38 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/set_q.c: New file.
 	* mpf/Makefile.in: Compile it.
 
 	* config.sub: Recognize sparc8.
 
-Wed May  8 09:19:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed May  8 09:19:11 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/tests/t-dm2exp.c: New file.
 
@@ -243,7 +1363,7 @@ Wed May  8 09:19:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/add_ui.c: New special case for when U is completely cancelled.
 
-Wed Apr 24 05:33:28 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Apr 24 05:33:28 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Version 2.0 released.
 
@@ -254,22 +1374,22 @@ Wed Apr 24 05:33:28 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/tests/t-conv.c: Pass -base to mpf_set_str.
 
-Sat Apr 20 03:54:06 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sat Apr 20 03:54:06 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Makefile.in (ps): New target, depend on gmp.ps.
 
-Fri Apr 19 14:03:15 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Apr 19 14:03:15 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/out_str.c: Print `@' before exponent, not `e'.
 
 	* make.bat: Update from Makefiles.
 
-Thu Apr 18 01:22:05 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu Apr 18 01:22:05 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/set_str.c: If parameter `base' is negative, expect exponent
 	to be decimal, otherwise in the same base as the mantissa.
 
-Wed Apr 17 17:28:36 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Apr 17 17:28:36 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/set_dfl_prec.c: Don't return anything.
 	* gmp.h: Corresponding changes.
@@ -302,11 +1422,11 @@ Wed Apr 17 17:28:36 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpz/Makefile.in: Compile it.
 	* gmp.h: Declare mpz_init_set_d.
 
-Tue Apr 16 16:28:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Apr 16 16:28:31 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Makefile.in (gmp.html): Pass -acc to texi2html.
 
-Mon Apr 15 16:20:24 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Apr 15 16:20:24 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/set_str.c: Switch off code for defaulting the base from the
 	leading characters.
@@ -314,18 +1434,18 @@ Mon Apr 15 16:20:24 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* gmp.h (mp?_sign): Delete.
 	(mp?_sgn): New macros.
 
-Fri Apr 12 17:23:33 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Apr 12 17:23:33 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Makefile.in (gmp.dvi): Delete tmp.* at end of rule.
 
-Wed Apr 10 22:52:02 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
+Wed Apr 10 22:52:02 1996  Torbjorn Granlund  (tege@tiny.matematik.su.se)
 
 	* mpf/random2.c: Change of `exp' param, mp_size_t => mp_exp_t.
 	* gmp.h: Corresponding change.
 
 	* gmp.h (mp_bits_per_limb): Make it const.
 
-Sat Mar 30 01:20:23 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sat Mar 30 01:20:23 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* configure.in: Re-enable recognition of with_gcc.
 
@@ -349,7 +1469,7 @@ Sat Mar 30 01:20:23 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* configure: Don't default CC to "gcc -O2" is -with-gcc=no was
 	specified.
 
-Mon Mar 25 01:07:54 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Mar 25 01:07:54 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* urandom.h: Test for __SVR4 in addition to __svr4__.
 
@@ -365,29 +1485,29 @@ Mon Mar 25 01:07:54 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* gmp.h (__MPN): Make it work also for non-ANSI compilers.
 
-Thu Mar 21 01:07:54 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu Mar 21 01:07:54 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/sub.c: New special case for ediff <= 1 before generic code.
 	Simplify generic code for ediff == 0.
 	Rename uexp => exp.
 
-Mon Mar 11 18:24:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Mar 11 18:24:57 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/tests/*.c: Use ref_mpf_sub for error calculation.
 	* mpf/tests/Makefile.in: Link ref.o to all executables.
 
 	* mpf/tests/t-sub.c: Make u = v + 1 with 50% probability.
 
-Sun Mar 10 21:03:17 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
+Sun Mar 10 21:03:17 1996  Torbjorn Granlund  (tege@tiny.matematik.su.se)
 
 	* mpf/get_str.c: In digit development loop for fractions, change
 	loop condition from `<' to `<='.
 
-Thu Mar  7 04:58:11 1996  Torbjorn Granlund  <tege@tiny.tmg.se>
+Thu Mar  7 04:58:11 1996  Torbjorn Granlund  <tege@tiny.matematik.su.se>
 
 	* mpn/mp_bases.c (__mp_bases): 1e100 => 1e39 to avoid overflow warning.
 
-Wed Mar  6 01:10:42 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Mar  6 01:10:42 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpf/tests/t-sqrt.c: New file.
 	* mpf/tests/Makefile.in: Corresponding changes.
@@ -401,7 +1521,7 @@ Wed Mar  6 01:10:42 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpz/gcd.c: Likewise.  Rewrite final fixup code, to decrease
 	allocation.  Misc cleanups.
 
-Tue Mar  5 22:24:56 1996  Torbjorn Granlund  <tege@tmg.se>
+Tue Mar  5 22:24:56 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/configure.in: Recognize linuxoldld as a synonym for linuxaout.
 
@@ -409,7 +1529,7 @@ Tue Mar  5 22:24:56 1996  Torbjorn Granlund  <tege@tmg.se>
 
 	* mpn/configure.in: Use t-freebsd also for netbsd.
 
-Mon Mar  4 15:13:28 1996  Torbjorn Granlund  <tege@tmg.se>
+Mon Mar  4 15:13:28 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpq/Makefile.in (cmp.o): Depend on longlong.h.
 
@@ -423,7 +1543,7 @@ Mon Mar  4 15:13:28 1996  Torbjorn Granlund  <tege@tmg.se>
 
 	* gmp-impl.h (SIZ, ABSIZ, PTR, EXP, PREC, ALLOC): New #defines.
 
-Sun Mar  3 07:45:46 1996  Torbjorn Granlund  <tege@tmg.se>
+Sun Mar  3 07:45:46 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpf/set_str.c: In exponentialization code, allocate 3 extra
 	limbs, not just 2.
@@ -438,7 +1558,7 @@ Sun Mar  3 07:45:46 1996  Torbjorn Granlund  <tege@tmg.se>
 	* gmp.h: Declare it.
 	* Makefile.in: Corresponding changes.
 
-Sat Mar  2 06:27:56 1996  Torbjorn Granlund  <tege@tmg.se>
+Sat Mar  2 06:27:56 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpf/set_prc_raw.c: New file.
 	* mpf/set_prc.c: Renamed from set_prec.c.
@@ -448,7 +1568,7 @@ Sat Mar  2 06:27:56 1996  Torbjorn Granlund  <tege@tmg.se>
 
 	* mpn/generic/gcdext.c: Add copyright header.
 
-Fri Mar  1 01:22:24 1996  Torbjorn Granlund  <tege@tmg.se>
+Fri Mar  1 01:22:24 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/configure.in: For ppc601, search "power" before "powerpc32".
 
@@ -470,7 +1590,7 @@ Fri Mar  1 01:22:24 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpn/generic/gcd.c: Split increment from use of USIZE to avoid
 	undefined behaviour.
 
-Thu Feb 29 04:11:24 1996  Torbjorn Granlund  <tege@tmg.se>
+Thu Feb 29 04:11:24 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* Makefile.in (install-info-files): Update for new install-info
 	behaviour.
@@ -478,7 +1598,7 @@ Thu Feb 29 04:11:24 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpn/power/add_n.s: Rewrite.
 	* mpn/power/sub_n.s: Rewrite.
 
-Wed Feb 28 01:34:30 1996  Torbjorn Granlund  <tege@tmg.se>
+Wed Feb 28 01:34:30 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/pow_ui.c: Compute allocation more aggressively for small bases.
 	* mpz/ui_pow_ui.c: Likewise.
@@ -489,14 +1609,14 @@ Wed Feb 28 01:34:30 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpn/generic/gcd.c: Likewise.
 	(SIGN_BIT): Compute differently.
 
-Mon Feb 26 00:07:36 1996  Torbjorn Granlund  <tege@tmg.se>
+Mon Feb 26 00:07:36 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* All files: mp_limb => mp_limb_t, mp_limb_signed => mp_limb_signed_t.
 
 	* Makefile.in (install, install-bsdmp, install-info-files): Depend
 	on installdirs.  chmod all installed files.
 
-Sun Feb 25 01:47:41 1996  Torbjorn Granlund  <tege@tmg.se>
+Sun Feb 25 01:47:41 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpbsd/configure.in: Delete debugging code.
 
@@ -548,7 +1668,7 @@ Sun Feb 25 01:47:41 1996  Torbjorn Granlund  <tege@tmg.se>
 	* Makefile.in (gmp.dvi): Set TEXINPUTS also for 2nd tex invocation
 	(install targets): Install gmp.info-N.
 
-Sat Feb 24 03:36:52 1996  Torbjorn Granlund  <tege@tmg.se>
+Sat Feb 24 03:36:52 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpf/get_str.c: Fix typo.
 
@@ -584,7 +1704,7 @@ Sat Feb 24 03:36:52 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpf/sub.c: Increase prec by 1.
 	* mpf/ui_sub.c: Likewise.
 
-Fri Feb 23 00:59:54 1996  Torbjorn Granlund  <tege@tmg.se>
+Fri Feb 23 00:59:54 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpf/ui_sub.c: Fix typos.
 
@@ -618,7 +1738,7 @@ Fri Feb 23 00:59:54 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpf/add.c: Fix typos.
 	* mpf/sub.c: Fix typos.
 
-Thu Feb 22 00:24:48 1996  Torbjorn Granlund  <tege@tmg.se>
+Thu Feb 22 00:24:48 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/Makefile.in (stamp-stddefh): Delete target.
 	(test): Delete target.
@@ -635,7 +1755,7 @@ Thu Feb 22 00:24:48 1996  Torbjorn Granlund  <tege@tmg.se>
 
 	* mpz/get_si.c: Handle -0x80000000 correctly.
 
-	* mpz/inp_str.c: Now retutns size_t.
+	* mpz/inp_str.c: Now returns size_t.
 	Make it return number of bytes read or error indication.
 	* mpf/inp_str.c: Likewise.
 
@@ -671,7 +1791,7 @@ Thu Feb 22 00:24:48 1996  Torbjorn Granlund  <tege@tmg.se>
 
 	* stack-alloc.c (__tmp_alloc): Cast void ptrs to char * in comparison.
 
-Wed Feb 21 04:35:02 1996  Torbjorn Granlund  <tege@tmg.se>
+Wed Feb 21 04:35:02 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* gmp.h: Sort mpn declarations.
 	(mpn_gcdext): Add declaration.
@@ -702,7 +1822,7 @@ Wed Feb 21 04:35:02 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpn/configure.in: Make m68060 be the same as m68000.  Clean up
 	m68k configs.
 
-Tue Feb 20 01:35:11 1996  Torbjorn Granlund  <tege@tmg.se>
+Tue Feb 20 01:35:11 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/generic/sqrtrem.c: Renamed from sqrt.
 	* mpn/configure.in (functions): Corresponding change.
@@ -732,7 +1852,7 @@ Tue Feb 20 01:35:11 1996  Torbjorn Granlund  <tege@tmg.se>
 	a loop.
 	(FLAGS_TO_PASS): New variable.  Use it for most recursive makes.
 
-Mon Feb 19 01:02:20 1996  Torbjorn Granlund  <tege@tmg.se>
+Mon Feb 19 01:02:20 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/Makefile.in (.S.o): Pipe cpp output to grep in order to delete
 	lines starting with #.
@@ -781,7 +1901,7 @@ Mon Feb 19 01:02:20 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpq/set_z.c: File deleted.
 	* mpq/Makefile.in: Corresponding changes.
 
-Sun Feb 18 01:34:47 1996  Torbjorn Granlund  <tege@tmg.se>
+Sun Feb 18 01:34:47 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpbsd/sdiv.c: Use _mp_realloc, not _mpz_realloc.
 
@@ -810,7 +1930,7 @@ Sun Feb 18 01:34:47 1996  Torbjorn Granlund  <tege@tmg.se>
 	* mpq/cmp.c: Add check using number of significant bits, to avoid
 	general multiplication.
 
-Sat Feb 17 11:58:30 1996  Torbjorn Granlund  <tege@tmg.se>
+Sat Feb 17 11:58:30 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpq/cmp_ui.c: Store cy_limb after the mpn_mul_1 calls.
 
@@ -830,7 +1950,7 @@ Fri Feb 16 18:18:39 1996  Andreas Schwab  <schwab@informatik.uni-dortmund.de>
 	* mpn/m68k/*: Rewrite code not to use the INSN macros.
 	(L): New macro to properly prefix local labels for ELF.
 
-Fri Feb 16 00:20:56 1996  Torbjorn Granlund  <tege@tmg.se>
+Fri Feb 16 00:20:56 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* gmp-impl.h (ieee_double_extract): Use plain `unsigned int' for
 	fields.
@@ -867,7 +1987,7 @@ Fri Feb 16 00:20:56 1996  Torbjorn Granlund  <tege@tmg.se>
 	directory.
 	* mp?/Makefile.in: Don't use or set RANLIB.
 
-Thu Feb 15 16:38:41 1996  Torbjorn Granlund  <tege@tmg.se>
+Thu Feb 15 16:38:41 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/add_ui.c: MP_INT => mpz_t.
 	* mpz/cmp_ui.c: Likewise.
@@ -904,14 +2024,14 @@ Thu Feb 15 16:38:41 1996  Torbjorn Granlund  <tege@tmg.se>
 	* gmp.h (mpz_cmp_ui): New #define.
 	(mpz_cmp_si): New #define.
 
-Wed Feb 14 22:11:24 1996  Torbjorn Granlund  <tege@tmg.se>
+Wed Feb 14 22:11:24 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* gmp.h: Test __cplusplus in addition to __STDC__.
 	* gmp-impl.h: Likewise.
 
 	* gmp.h: Surround declarations with extern "C" { ... }.
 
-Tue Feb 13 15:20:45 1996  Torbjorn Granlund  <tege@tmg.se>
+Tue Feb 13 15:20:45 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/fdiv_r_2exp.c: Use MPN_NORMALIZE.
 	* mpz/tdiv_r_2exp.c: Likewise.
@@ -934,13 +2054,13 @@ Tue Feb 13 15:20:45 1996  Torbjorn Granlund  <tege@tmg.se>
 
 	* mpn/configure.in: Fix configuration for plain 68000.
 
-Mon Feb 12 01:06:06 1996  Torbjorn Granlund  <tege@tmg.se>
+Mon Feb 12 01:06:06 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/tests/t-powm.c: Generate negative BASE operand.
 
 	* mpz/powm.c: Make result always positive.
 
-Sun Feb 11 01:44:56 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sun Feb 11 01:44:56 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/tests/*.c: Add t- prefix.
 	* mpz/tests/Makefile.in: Corresponding changes.
@@ -967,7 +2087,7 @@ Mon Feb  7 23:58:43 1996  Andreas Schwab  <schwab@informatik.uni-dortmund.de>
 	.size directive.
 	* mpn/configure.in: New target m68k-*-linux*.
 
-Wed Feb  7 07:41:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Feb  7 07:41:31 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* Makefile.in (cre-conv-tab): Workaround for SunOS make.
 
@@ -978,14 +2098,14 @@ Tue Feb  6 11:56:24 UTC 1996 Ken Weber <kweber@mat.ufrgs.br>
 
 	* mpz/gcd.c: Fix g->size when one op is 0 and g == other op.
 
-Tue Feb  6 01:36:39 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Feb  6 01:36:39 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp.h (mpz_divexact): Delete parameter names.
 	(mpz_lcm): Delete spurious declaration.
 
 	* mpz/dmincl.c: Fix typo.
 
-Mon Feb  5 01:11:56 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Feb  5 01:11:56 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/generic/gcd.c (gcd_2): Declare consistently.
 
@@ -999,14 +2119,14 @@ Mon Feb  5 01:11:56 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpn/tests/{add_n,sub_n,lshift,rshift}.c: Put garbage in the
 	destination arrays.
 
-Fri Feb  2 02:21:27 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Feb  2 02:21:27 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/{jacobi.c,legendre.c,ntsup.c,invert.c}: New files.
 	* mpz/Makefile.in: Compile them.
 
 	* mpn/Makefile.in (INCLUDES): Don't search in `generic'.
 
-Thu Feb  1 02:15:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu Feb  1 02:15:11 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	Change from Ken Weber:
 	* mpz/divexact.c: Make it work when quot is identical to either input.
@@ -1024,7 +2144,7 @@ Thu Feb  1 02:15:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpq/{add,sub,mul,div}.c: Use mpz_divexact. MP_INT -> mpz_t.
 	* mpq/canonicalize.c: Likewise.
 
-Wed Jan 31 01:45:00 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Jan 31 01:45:00 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/generic/gcd.c: Misc changes from Ken.
 
@@ -1040,7 +2160,7 @@ Wed Jan 31 01:45:00 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpz/cdiv_*_ui.c): Make them work right.
 	* gmp.h: Declare cdiv*.
 
-Tue Jan 30 02:22:56 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Jan 30 02:22:56 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/{cdiv_q.c,cdiv_q_ui.c,cdiv_qr.c,cdiv_qr_ui.c,cdiv_r.c,
 	cdiv_r_ui.c,cdiv_ui.c}: New files.
@@ -1061,7 +2181,7 @@ Tue Jan 30 02:22:56 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpz/tests/dive.c: New file.
 	* mpz/tests/Makefile.in: Handle dive.c.
 
-Mon Jan 29 03:53:24 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Jan 29 03:53:24 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/random.c: Handle negative SIZE parameter.
 
@@ -1075,7 +2195,7 @@ Mon Jan 29 03:53:24 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpn/generic/divmod.c: Update from divrem.
 	* mpn/generic/divrem.c: Misc cleanups.
 
-Sun Jan 28 03:25:08 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sun Jan 28 03:25:08 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* All files: Use new TMP_ALLOC interface.
 
@@ -1097,14 +2217,14 @@ Sun Jan 28 03:25:08 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* Makefile.in (cre-conv-tab): Greatly simplify.
 
-Sat Jan 27 13:38:15 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sat Jan 27 13:38:15 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* stack-alloc.c: New file.
 	* stack-alloc.h: New file.
 
 	* gmp.h (__gmp_inline): Define using __inline__.
 
-Thu Jan 25 00:28:37 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu Jan 25 00:28:37 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/generic/scan0.c: New file.
 	* mpn/generic/scan1.c: Renamed from next_bit.c.
@@ -1134,14 +2254,14 @@ Thu Jan 25 00:28:37 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpn/generic/sqrt.c: Change call to mpn_mul to mpn_mul_n.
 
-Wed Jan 24 13:28:19 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Jan 24 13:28:19 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/sparc32/udiv_fp.S: New name for udiv_qrnnd.S.
 	* mpn/sparc32/udiv_nfp.S: New name for v8/udiv_qrnnd.S.
 	* mpn/sparc32/v8/supersparc: New directory.
 	* mpn/sparc32/v8/supersparc/udiv.S: New file.
 
-Tue Jan 23 01:10:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Jan 23 01:10:11 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	This major contribution is from Ken Weber:
 	* mpn/generic/accelgcd.c: New file.
@@ -1157,7 +2277,7 @@ Tue Jan 23 01:10:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	(MPN_LESS_BITS_LIMB, MPN_LESS_BITS, MPN_MORE_BITS): Delete.
 	(MPN_COMPL_INCR, MPN_COMPL): Delete.
 
-Mon Jan 22 02:04:59 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Jan 22 02:04:59 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp.h (mpn_name): New #define.
 
@@ -1169,56 +2289,56 @@ Mon Jan 22 02:04:59 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpn/sparc32/{add_n.S,sub_n.S,lshift.S,rshift.S): `beq' => `be'.
 
-Sun Jan 21 00:04:35 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sun Jan 21 00:04:35 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/sparc64/addmul_1.s: New file.
 	* mpn/sparc64/submul_1.s: New file.
 	* mpn/sparc64/rshift.s: New file.
 
-Sat Jan 20 00:32:54 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sat Jan 20 00:32:54 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpz/iset.c: Fix typo introduced Dec 25.
 
-Wed Jan 17 13:16:44 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Jan 17 13:16:44 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* config/mt-sprc8-gcc: New name for mt-sparc8-gcc.
 	* config/mt-sparcv8-gcc: Delete.
 	* configure.in: Corresponding changes.
 
-Tue Jan 16 16:31:01 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Jan 16 16:31:01 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp-impl.h: #include alloca.h when necessary.
 
 	* longlong.h: Test __alpha instead of __alpha__, since the former
 	is the standard symbol.
 
-Mon Jan 15 18:06:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Jan 15 18:06:57 1996  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/sparc64/mul_1.s: Swap operands of mulx instructions.
 	* mpn/sparc64/lshift.s: New file.
 
-Fri Dec 29 17:34:03 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Dec 29 17:34:03 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/x86/pentium/add_n.S: Get rid of #defines for register names.
 	* mpn/x86/pentium/sub_n.S: Likewise.
 
-Thu Dec 28 03:16:57 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu Dec 28 03:16:57 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/x86/pentium/mul_1.S: Rework loop to avoid AGI between update
 	of loop induction variable and load insn at beginning of loop.
 	* mpn/x86/pentium/addmul_1.S: Likewise.
 	* mpn/x86/pentium/submul_1.S: Likewise.
 
-Mon Dec 25 23:22:55 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Dec 25 23:22:55 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* All files: Prefix user-visible structure fields with _mp_.
 
-Fri Dec 22 20:42:17 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Dec 22 20:42:17 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/configure.in (m68k configs): Terminate path variable with
 	plain "m68k".
 
-Fri Dec 22 03:29:33 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Dec 22 03:29:33 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/sparc32/add_n.S: Update from sub_n.S to fix bugs, and to
 	clean things up.
@@ -1226,12 +2346,12 @@ Fri Dec 22 03:29:33 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* mpn/configure.in (m68k configs): Update #include path for new
 	mpn directory organization.
 
-Tue Dec 12 02:53:02 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Dec 12 02:53:02 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* gmp.h: Prefix all structure field with _mp_.
 	* gmp-impl.h: Define access macros for these fields.
 
-Sun Dec 10 00:47:17 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sun Dec 10 00:47:17 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/alpha/addmul_1.s: Prefix labels with `.'.
 	* mpn/alpha/submul_1.s: Likewise.
@@ -1241,55 +2361,55 @@ Sun Dec 10 00:47:17 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpn/alpha/ev5/lshift.s: Fix typos.
 
-Fri Dec  1 14:28:20 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Fri Dec  1 14:28:20 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/Makefile.in (.SUFFIXES): Define.
 
-Wed Nov 29 23:11:57 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Wed Nov 29 23:11:57 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/sparc64/{add_n.s, sub_n.s}: New files.
 
-Tue Nov 28 06:03:13 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Tue Nov 28 06:03:13 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/x86/syntax.h: Handle ELF_SYNTAX.
 	Rename GAS_SYNTAX => BSD_SYNTAX.
 
 	* mpn/configure.in: Handle linuxelf and SysV for x86 variants.
 
-Mon Nov 27 01:32:12 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Mon Nov 27 01:32:12 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/hppa/hppa1_1/pa7100/submul_1.S: New file.
 
-Sun Nov 26 04:30:47 1995  Torbjorn Granlund  <tege@noisy.tmg.se>
+Sun Nov 26 04:30:47 1995  Torbjorn Granlund  <tege@noisy.matematik.su.se>
 
 	* mpn/hppa/hppa1_1/pa7100/addmul_1.S: New file.
 
 	* mpn/sparc32/add_n.S: Rewrite to use 64 bit loads/stores.
 	* mpn/sparc32/sub_n.S: Likewise.
 
-Fri Nov 17 00:18:46 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Fri Nov 17 00:18:46 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/configure.in: Handle m68k on NextStep.
 
-Thu Nov 16 02:30:26 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Nov 16 02:30:26 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn: Reorganize machine-specific directories.
 	* mpn/configure.in: Corresponding changes.
 	(sh, sh2): Handle these.
 	(m68k targets): Create asm-syntax.h.
 
-Thu Nov  9 02:20:50 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Nov  9 02:20:50 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/generic/mul_n.c (____mpn_sqr_n): Delete code that calls abort.
 	(____mpn_mul_n): Likewise.
 
-Tue Nov  7 03:25:12 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Nov  7 03:25:12 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/get_str.c: In exponentiation code (two places), don't swap
 	input and output areas when calling mpn_mul_1.
 	* mpf/set_str.c: Likewise.
 
-Fri Nov  3 02:35:58 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Fri Nov  3 02:35:58 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/Makefile.in: Make sure all objects are listed in dependency list;
 	delete spurious entries.
@@ -1303,18 +2423,18 @@ Fri Nov  3 02:35:58 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpf/get_str.c: In (uexp > usize) case, set n_limbs as a function of
 	the user-requested number of digits, n_digits.
 
-Thu Nov  2 16:25:07 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Nov  2 16:25:07 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/generic/divrem.c (case 2): Don't move np vector back, it is
 	never read.
 	(default case): Put most significant limb from np in new variable n2;
 	decrease size argument for MPN_COPY_DECR; use n2 instead of np[dsize].
 
-Wed Nov  1 02:59:53 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Nov  1 02:59:53 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/sparc/[lr]shift.S: New files.
 
-Tue Oct 31 00:08:12 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Oct 31 00:08:12 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpz/gcd_ui.c: Set w->size unconditionally when v is zero.
 
@@ -1327,12 +2447,12 @@ Tue Oct 31 00:08:12 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpf/abs.c: Likewise.
 	* mpf/{set,neg,abs}.c: Make structure and variable names similar.
 
-Mon Oct 30 12:45:26 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Mon Oct 30 12:45:26 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/random2.c (random): Test __SVR4 in addition to __svr4__.
 	* mpn/generic/random2.c (random): Likewise.
 
-Sun Oct 29 01:54:28 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sun Oct 29 01:54:28 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/div.c: Special handle U or V being 0.
 
@@ -1345,18 +2465,18 @@ Sun Oct 29 01:54:28 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	(i960 sub_ddmmss): Define.
 	(i960 rshift_rhlc): Define.
 
-Sat Oct 28 19:09:15 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Oct 28 19:09:15 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/pentium/rshift.S: Fix and generalize condition for when to use
 	special code for shift by 1.
 	* mpn/pentium/lshift.S: Likewise.
 
-Thu Oct 26 00:02:56 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Oct 26 00:02:56 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* gmp.h: #undef __need_size_t.
 	* mp.h: Update from gmp.h.
 
-Wed Oct 25 00:17:27 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Oct 25 00:17:27 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/Makefile.in: Compile set_prec.c.
 	* mpf/realloc.c: Delete this file.
@@ -1376,7 +2496,7 @@ Wed Oct 25 00:17:27 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 
 	* mpf/set_prec.c: New file.
 
-Tue Oct 24 00:56:41 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Oct 24 00:56:41 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/generic/divrem.c: New file.  Will replace mpn/generic/divmod.c
 	when rest of source is converted.
@@ -1393,30 +2513,30 @@ Tue Oct 24 00:56:41 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpf/Makefile.in: Compile dump.c.
 	* mpf/init2.c: Set prec field correctly.
 
-Sun Oct 22 03:02:09 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sun Oct 22 03:02:09 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* cre-conv-tab.c: #include math.h; don't declare log and floor.
 
-Sat Oct 21 23:04:10 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Oct 21 23:04:10 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/mul_ui.c: Handle U being 0.
 
-Wed Oct 18 19:39:27 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Oct 18 19:39:27 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/generic/set_str.c: Correctly handle input like "000000000000".
 	Misc cleanups.
 
-Tue Oct 17 15:14:13 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Oct 17 15:14:13 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* longlong.h: Define COUNT_LEADING_ZEROS_0 for machines where
 	appropriate.
 
-Mon Oct 16 19:14:43 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Mon Oct 16 19:14:43 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/add.c: Rewrite.
 	* mpf/set_str.c: New file.  Needs more work.
 
-Sat Oct 14 00:14:04 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Oct 14 00:14:04 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpf/div_2exp.c: Vastly simplify.
 	* mpf/mul_2exp.c: Likewise.
@@ -1429,11 +2549,11 @@ Sat Oct 14 00:14:04 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 
 	* gmp-impl.h (assert): Define.
 
-Wed Oct 11 13:31:00 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Oct 11 13:31:00 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/pentium/rshift.S: Install new code to optimize shift-by-1.
 
-Tue Oct 10 00:37:21 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Oct 10 00:37:21 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/pentium/lshift.S: Install new code to optimize shift-by-1.
 
@@ -1441,18 +2561,18 @@ Tue Oct 10 00:37:21 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 
 	* configure.in: Fix typo.
 
-Sat Oct  7 08:17:09 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Oct  7 08:17:09 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* longlong.h (smul_ppmm): Correct type of __m0 and __m1.
 
-Wed Oct  4 16:31:28 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Oct  4 16:31:28 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/configure.in: Handle alphaev5.
 	* mpn/ev4: New name for alpha subdir.
 	* mpn/ev5: New subdir.
 	* mpn/ev5/lshift.s: New file.
 
-Tue Oct  3 15:06:45 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Oct  3 15:06:45 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/alpha/mul_1.s: Avoid static increments of pointers; use
 	corresponding offsets in ldq and stq instructions instead.
@@ -1461,13 +2581,13 @@ Tue Oct  3 15:06:45 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpn/tests/{add_n.s,sub_n.s,lshift.s,rshift.s,mul_1.s,addmul_1.s,
 	submul_1.s}: Don't check results if NOCHECK is defined.
 
-Mon Oct  2 11:40:18 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Mon Oct  2 11:40:18 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* longlong.h (mips umul_ppmm [32 and 64 bit versions]):
 	Make new variants, based on GCC version number, that use `l' and `h'
 	constraints instead of explicit mflo and mfhi instructions
 
-Sun Oct  1 00:17:47 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sun Oct  1 00:17:47 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/mc88100/add_n.s: Decrease unrolling factor from 16 to 8.
 	* mpn/mc88100/sub_n.s: Likewise.
@@ -1477,7 +2597,7 @@ Sun Oct  1 00:17:47 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 
 	* mpn/mc88110/mul_1.s: Fix thinko.
 
-Sat Sep 30 21:28:19 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Sep 30 21:28:19 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpz/set_d.c: Declare `size' at function start.
 
@@ -1499,7 +2619,7 @@ Sat Sep 30 21:28:19 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpn/alpha/submul_1.s: Ditto.
 	* mpn/alpha/mul_1.s: Ditto.
 
-Thu Sep 28 02:48:59 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Sep 28 02:48:59 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* gmp.h (mp_limb, mp_limb_signed): Define as `long long' if
 	_LONG_LONG_LIMB is defined.
@@ -1508,13 +2628,13 @@ Thu Sep 28 02:48:59 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 
 	* mpn/mc88110/mul_1.s: Rewrite.
 
-Tue Sep 26 23:29:05 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Sep 26 23:29:05 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* config.sub: Update from current Cygnus version.
 
 	* mpn/configure.in: Recognize canonical m88*, not mc88*.
 
-Fri Sep 22 14:58:05 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Fri Sep 22 14:58:05 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpz/set_d.c: New file.
 	* mpz/Makefile.in: Build new files.
@@ -1525,28 +2645,28 @@ Fri Sep 22 14:58:05 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* gmp-impl.h (ieee_double_extract): Define here.
 	* mpf/set_d.c (ieee_double_extract): Not here.
 
-Thu Sep 21 00:56:36 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Sep 21 00:56:36 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* longlong.h (C umul_ppmm): Use UWtype, not USItype for temps.
 	(udiv_qrnnd): For cases implemented with call to __udiv_qrnnd,
 	protect with new symbol LONGLONG_STANDALONE.
 	(68000 umul_ppmm): Use %# prefix for immediate constants.
 
-Wed Sep 20 15:36:23 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Sep 20 15:36:23 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/generic/divmod_1.c: Handle
 	divisor_limb == 1 << (BITS_PER_MP_LIMB - 1)
 	specifically also when normalization_steps != 0.
 
-Mon Sep 18 15:42:30 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Mon Sep 18 15:42:30 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpq/get_d.c: New file.
 
-Sun Sep 17 02:04:36 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sun Sep 17 02:04:36 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* longlong.h (pyr): Botch up for now.
 
-Sat Sep 16 00:11:50 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Sep 16 00:11:50 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/clipper/mul_1.s: New file.
 	* mpn/clipper/add_n.s: New file.
@@ -1555,7 +2675,7 @@ Sat Sep 16 00:11:50 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 
 	* mpn/configure.in: Recognize rs6000-*-*.
 
-Fri Sep 15 00:41:34 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Fri Sep 15 00:41:34 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/alpha/add_n.s: New file.
 	* mpn/alpha/sub_n.s: New file.
@@ -1567,7 +2687,7 @@ Fri Sep 15 00:41:34 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpn/generic/perfsqr.c (primes): Delete.
 	(residue_map): Delete.
 
-Thu Sep 14 00:07:58 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Thu Sep 14 00:07:58 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/r3000/sub_n.s: Fix typo.
 
@@ -1582,24 +2702,24 @@ Thu Sep 14 00:07:58 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpn/z8000/mul_1.s: Replace `test r' with `and r,r'.  Replace
 	`ldk r,#0' with `xor r,r'.
 
-Wed Sep  6 00:58:38 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Sep  6 00:58:38 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpz/inp_binary.c: New file.
 	* mpz/out_binary.c: New file.
 	* mpz/Makefile.in: Build new files.
 
-Tue Sep  5 22:53:51 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Tue Sep  5 22:53:51 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* gmp.h (__mpz_struct): Change `long int' => `mp_size_t' for alloc
 	and size fields.
 
-Sat Sep  2 17:47:59 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sat Sep  2 17:47:59 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/r4000/{add_n.s,sub_n.s}: Optimize away some pointer arithmetic.
 	* mpn/r3000/{add_n.s,sub_n.s,lshift.s,rshift.s}: New files,
 	derived from r4000 code.
 
-Fri Sep  1 05:35:52 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Fri Sep  1 05:35:52 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/r3000/mul_1.s: Fix typo.
 
@@ -1608,27 +2728,27 @@ Fri Sep  1 05:35:52 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
 	* mpn/powerpc32/{add_n.s,sub_n.s}: New files.
 	* mpn/r4000/{add_n.s,sub_n.s,lshift.s,rshift.s}: New files.
 
-Wed Aug 30 10:43:47 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Wed Aug 30 10:43:47 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/r3000/mul_1.s ($LC1): Use addiu for immediate add.
 	* mpn/r4000/{mul_1.s,addmul_1.s,submul_1.s}: New files.
 
 	* config.guess: Update to latest FSF revision.
 
-Mon Aug 28 02:18:13 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Mon Aug 28 02:18:13 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpz/out_str.c: Cast str to char * in fputs call.
 
 	* gmp-impl.h: Define UQItype, SItype, and USItype also
 	when not __GNUC__.
 
-Fri Aug 25 01:45:04 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Fri Aug 25 01:45:04 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/i386/syntax.h: Renamed from asm-syntax.h.
 	* mpn/mc68020/syntax.h: Renamed from asm-syntax.h.
 	* mpn/configure.in: Corresponding changes.
 
-Sun Aug 13 19:20:04 1995  Torbjorn Granlund  <tege@bozo.tmg.se>
+Sun Aug 13 19:20:04 1995  Torbjorn Granlund  <tege@bozo.matematik.su.se>
 
 	* mpn/generic/random2.c: Test __hpux, not hpux.
 
