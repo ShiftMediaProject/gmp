@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_add_n -- Add two limb vectors of the same length > 0 and store
 dnl  sum in a third limb vector.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,7 +24,7 @@ include(`../config.m4')
 
 
 C         cycles/limb
-C Hammer:     1.75
+C Hammer:     1.7
 
 
 C INPUT PARAMETERS
