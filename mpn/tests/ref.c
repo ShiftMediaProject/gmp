@@ -347,12 +347,12 @@ refmpn_sub_nc (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size,
 mp_limb_t
 refmpn_add_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
-  return refmpn_add_nc (rp, s1p, s2p, size, 0);
+  return refmpn_add_nc (rp, s1p, s2p, size, CNST_LIMB(0));
 }
 mp_limb_t
 refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
-  return refmpn_sub_nc (rp, s1p, s2p, size, 0);
+  return refmpn_sub_nc (rp, s1p, s2p, size, CNST_LIMB(0));
 }
 
 
@@ -393,7 +393,7 @@ refmpn_sub (mp_ptr rp,
 
 /* set *hi,*lo to x*y */
 void
-mul (mp_limb_t *hi, mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
+refmpn_umul_ppmm (mp_limb_t *hi, mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
 {
   mp_limb_t s;
   
@@ -421,7 +421,7 @@ refmpn_mul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier,
                                                                           
   for (i = 0; i < size; i++)
     {
-      mul (&hi, &lo, sp[i], multiplier);
+      refmpn_umul_ppmm (&hi, &lo, sp[i], multiplier);
       ASSERT_NOCARRY (add (&hi, hi, add (&lo, lo, carry)));
       rp[i] = lo;
       carry = hi;
@@ -433,7 +433,7 @@ refmpn_mul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier,
 mp_limb_t
 refmpn_mul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 {
-  return refmpn_mul_1c (rp, sp, size, multiplier, 0);
+  return refmpn_mul_1c (rp, sp, size, multiplier, CNST_LIMB(0));
 }
 
 
@@ -469,12 +469,12 @@ refmpn_submul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size,
 mp_limb_t
 refmpn_addmul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 {
-  return refmpn_addmul_1c (rp, sp, size, multiplier, 0);
+  return refmpn_addmul_1c (rp, sp, size, multiplier, CNST_LIMB(0));
 }
 mp_limb_t
 refmpn_submul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 {
-  return refmpn_submul_1c (rp, sp, size, multiplier, 0);
+  return refmpn_submul_1c (rp, sp, size, multiplier, CNST_LIMB(0));
 }
 
 
@@ -504,7 +504,7 @@ mp_limb_t
 refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
 		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
-  return refmpn_addsub_nc (r1p, r2p, s1p, s2p, size, 0);
+  return refmpn_addsub_nc (r1p, r2p, s1p, s2p, size, CNST_LIMB(0));
 }
 
 
@@ -543,12 +543,12 @@ refmpn_rshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
   ASSERT (size >= 1);
   ASSERT (shift >= 1 && shift < BITS_PER_MP_LIMB);
 
-  ret = rshift_make (sp[0], 0, shift);
+  ret = rshift_make (sp[0], CNST_LIMB(0), shift);
 
   for (i = 0; i < size-1; i++)
     rp[i] = rshift_make (sp[i+1], sp[i], shift);
 
-  rp[i] = rshift_make (0, sp[i], shift);
+  rp[i] = rshift_make (CNST_LIMB(0), sp[i], shift);
   return ret;
 }
 
@@ -562,13 +562,42 @@ refmpn_lshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
   ASSERT (size >= 1);
   ASSERT (shift >= 1 && shift < BITS_PER_MP_LIMB);
 
-  ret = lshift_make (0, sp[size-1], shift);
+  ret = lshift_make (CNST_LIMB(0), sp[size-1], shift);
 
   for (i = size-2; i >= 0; i--)
     rp[i+1] = lshift_make (sp[i+1], sp[i], shift);
 
-  rp[i+1] = lshift_make (sp[i+1], 0, shift);
+  rp[i+1] = lshift_make (sp[i+1], CNST_LIMB(0), shift);
   return ret;
+}
+
+
+mp_limb_t
+refmpn_rshift_or_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
+{
+  if (shift == 0)
+    {
+      refmpn_copyi (rp, sp, size);
+      return 0;
+    }
+  else
+    {
+      return refmpn_rshift (rp, sp, size, shift);
+    }
+}
+
+mp_limb_t
+refmpn_lshift_or_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
+{
+  if (shift == 0)
+    {
+      refmpn_copyd (rp, sp, size);
+      return 0;
+    }
+  else
+    {
+      return refmpn_lshift (rp, sp, size, shift);
+    }
 }
 
 
@@ -576,7 +605,8 @@ refmpn_lshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
    Must have h < d.
    __udiv_qrnnd_c isn't simple, and it's a bit slow, but it works. */
 void
-div1 (mp_limb_t *q, mp_limb_t *r, mp_limb_t h, mp_limb_t l, mp_limb_t d)
+refmpn_udiv_qrnnd (mp_limb_t *q, mp_limb_t *r,
+                   mp_limb_t h, mp_limb_t l, mp_limb_t d)
 {
   int  n;
 
@@ -619,7 +649,7 @@ refmpn_divmod_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
   carry_orig = carry;
 
   for (i = size-1; i >= 0; i--)
-    div1 (&rp[i], &carry, carry, sp[i], divisor);
+    refmpn_udiv_qrnnd (&rp[i], &carry, carry, sp[i], divisor);
 
   /* check by multiplying back */
 #if 0
@@ -641,7 +671,7 @@ refmpn_divmod_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
 mp_limb_t
 refmpn_divmod_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t divisor)
 {
-  return refmpn_divmod_1c (rp, sp, size, divisor, 0);
+  return refmpn_divmod_1c (rp, sp, size, divisor, CNST_LIMB(0));
 }
 
 
@@ -658,7 +688,7 @@ refmpn_mod_1c (mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
 mp_limb_t
 refmpn_mod_1 (mp_srcptr sp, mp_size_t size, mp_limb_t divisor)
 {
-  return refmpn_mod_1c (sp, size, divisor, 0);
+  return refmpn_mod_1c (sp, size, divisor, CNST_LIMB(0));
 }
 
 mp_limb_t
@@ -673,6 +703,13 @@ refmpn_mod_1_rshift (mp_srcptr sp, mp_size_t size,
   return r;
 }
 
+mp_limb_t
+refmpn_preinv_mod_1 (mp_srcptr sp, mp_size_t size, mp_limb_t divisor,
+                     mp_limb_t divisor_inverse)
+{
+  return refmpn_mod_1 (sp, size, divisor);
+}
+
 
 mp_limb_t
 refmpn_divrem_1c (mp_ptr rp, mp_size_t xsize,
@@ -682,7 +719,7 @@ refmpn_divrem_1c (mp_ptr rp, mp_size_t xsize,
   mp_ptr  z;
 
   z = refmpn_malloc_limbs (xsize);
-  refmpn_fill (z, xsize, 0);
+  refmpn_fill (z, xsize, CNST_LIMB(0));
   
   carry = refmpn_divmod_1c (rp+xsize, sp, size, divisor, carry);
   carry = refmpn_divmod_1c (rp, z, xsize, divisor, carry);
@@ -695,7 +732,22 @@ mp_limb_t
 refmpn_divrem_1 (mp_ptr rp, mp_size_t xsize,
                  mp_srcptr sp, mp_size_t size, mp_limb_t divisor)
 {
-  return refmpn_divrem_1c (rp, xsize, sp, size, divisor, 0);
+  return refmpn_divrem_1c (rp, xsize, sp, size, divisor, CNST_LIMB(0));
+}
+
+
+/* Inverse is floor((b*(b-d)-1) / d), per division by invariant integers
+   paper, figure 8.1 m', where b=2^BITS_PER_MP_LIMB.  Note that -d-1 < d
+   since d has the high bit set. */
+
+mp_limb_t
+refmpn_invert_limb (mp_limb_t d)
+{
+  mp_limb_t  q, r;
+
+  ASSERT (d & MP_LIMB_T_HIGHBIT);
+  refmpn_udiv_qrnnd (&q, &r, -d-1, -1, d);
+  return q;
 }
 
 
@@ -755,7 +807,7 @@ refmpn_divexact_by3c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t carry)
 mp_limb_t
 refmpn_divexact_by3 (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 {
-  return refmpn_divexact_by3c (rp, sp, size, 0);
+  return refmpn_divexact_by3c (rp, sp, size, CNST_LIMB(0));
 }
 
 
@@ -789,6 +841,30 @@ refmpn_sqr (mp_ptr dst, mp_srcptr src, mp_size_t size)
   refmpn_mul_basecase (dst, src, size, src, size);
 }
 
+/* Allowing usize<vsize, usize==0 or vsize==0. */
+void
+refmpn_mul_any (mp_ptr prodp,
+                     mp_srcptr up, mp_size_t usize,
+                     mp_srcptr vp, mp_size_t vsize)
+{
+  if (usize == 0)
+    {
+      refmpn_fill (prodp, vsize, CNST_LIMB(0));
+      return;
+    }
+
+  if (vsize == 0)
+    {
+      refmpn_fill (prodp, usize, CNST_LIMB(0));
+      return;
+    }
+
+  if (usize >= vsize)
+    refmpn_mul_basecase (prodp, up, usize, vp, vsize);
+  else
+    refmpn_mul_basecase (prodp, vp, vsize, up, usize);
+}
+
 
 mp_limb_t
 refmpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y)
@@ -799,7 +875,7 @@ refmpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y)
   ASSERT (y != 0);
   ASSERT (! refmpn_zero_p (xp, xsize));
 
-  x = mpn_mod_1 (xp, xsize, y);
+  x = refmpn_mod_1 (xp, xsize, y);
   if (x == 0)
     return y;
 
@@ -827,6 +903,20 @@ refmpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y)
   return y << twos;
 }
 
+
+unsigned
+refmpn_count_leading_zeros (mp_limb_t x)
+{
+  unsigned  n = 0;
+
+  ASSERT (x != 0);
+  while ((x & MP_LIMB_T_HIGHBIT) == 0)
+    {
+      x <<= 1;
+      n++;
+    }
+  return n;
+}
 
 unsigned
 refmpn_count_trailing_zeros (mp_limb_t x)
@@ -873,7 +963,7 @@ refmpn_gcd (mp_ptr gp, mp_ptr xp, mp_size_t xsize, mp_ptr yp, mp_size_t ysize)
   ASSERT (xsize >= ysize);
   ASSERT ((xp[0] & 1) != 0);
   ASSERT ((yp[0] & 1) != 0);
-  ASSERT (xp[xsize-1] != 0);
+  /* ASSERT (xp[xsize-1] != 0); */  /* don't think x needs to be odd */
   ASSERT (yp[ysize-1] != 0);
   ASSERT (refmpn_overlap_fullonly_p (gp, xp, xsize));
   ASSERT (refmpn_overlap_fullonly_p (gp, yp, ysize));
@@ -939,4 +1029,138 @@ refmpn_hamdist (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
   count = refmpn_popcount (d, size);
   free (d);
   return count;
+}
+
+
+/* Find n where 0<n<2^BITS_PER_MP_LIMB and n==c mod m */
+mp_limb_t
+refmpn_gcd_finda (const mp_limb_t c[2])
+{
+  mp_limb_t  n1[2], n2[2];
+
+  ASSERT (c[0] != 0);
+  ASSERT (c[1] != 0);
+
+  n1[0] = c[0];
+  n1[1] = c[1];
+
+  n2[0] = -n1[0];
+  n2[1] = ~n1[1];
+ 
+  while (n2[1] != 0)
+    {
+      //      printf ("R %lX %lX   %lX %lX\n", n1[1], n1[0], n2[1], n2[0]);
+      refmpn_mod2 (n1, n1, n2);
+
+      MP_LIMB_T_SWAP (n1[0], n2[0]);
+      MP_LIMB_T_SWAP (n1[1], n2[1]);
+    }
+
+  return n2[0];
+}
+
+
+/* Similar to mpn/generic/sb_divrem_mn.c, but somewhat simplified, in
+   particular the trial quotient is allowed to be 2 too big. */
+mp_limb_t
+refmpn_sb_divrem_mn (mp_ptr qp,
+                     mp_ptr np, mp_size_t nsize,
+                     mp_srcptr dp, mp_size_t dsize)
+{
+  mp_limb_t  retval = 0;
+  mp_size_t  i;
+  mp_limb_t  d1 = dp[dsize-1];
+  mp_ptr     np_orig = refmpn_memdup_limbs (np, nsize);
+
+  ASSERT (nsize >= dsize);
+  /* ASSERT (dsize > 2); */
+  ASSERT (dsize >= 2);
+  ASSERT (dp[dsize-1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (!MPN_OVERLAP_P (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
+
+  i = nsize-dsize;
+  if (mpn_cmp (np+i, dp, dsize) >= 0)
+    {
+      ASSERT_NOCARRY (refmpn_sub_n (np+i, np+i, dp, dsize));
+      retval = 1;
+    }
+
+  for (i--; i >= 0; i--)
+    {
+      mp_limb_t  n0 = np[i+dsize];
+      mp_limb_t  n1 = np[i+dsize-1];
+      mp_limb_t  q, dummy_r;
+
+      ASSERT (n0 <= d1);
+      if (n0 == d1)
+        q = MP_LIMB_T_MAX;
+      else
+        refmpn_udiv_qrnnd (&q, &dummy_r, n0, n1, d1);
+
+      n0 -= refmpn_submul_1 (np+i, dp, dsize, q);
+      ASSERT (n0 == 0 || n0 == MP_LIMB_T_MAX);
+      if (n0)
+        {
+          q--;
+          if (! refmpn_add_n (np+i, np+i, dp, dsize))
+            {
+              q--;
+              ASSERT (refmpn_add_n (np+i, np+i, dp, dsize) != 0);
+            }
+        }
+      np[i+dsize] = 0;
+
+      qp[i] = q;
+    }
+
+  /* remainder < divisor */
+  ASSERT (refmpn_cmp (np, dp, dsize) < 0);
+
+  /* multiply back to original */
+  {
+    mp_ptr  mp = refmpn_malloc_limbs (nsize);
+    
+    refmpn_mul_any (mp, qp, nsize-dsize, dp, dsize);
+    if (retval)
+      ASSERT_NOCARRY (refmpn_add_n (mp+nsize-dsize,mp+nsize-dsize, dp, dsize));
+    ASSERT_NOCARRY (refmpn_add (mp, mp, nsize, np, dsize));
+    ASSERT (refmpn_cmp (mp, np_orig, nsize) == 0);
+
+    free (mp);
+  }
+
+  free (np_orig);
+  return retval;
+}
+
+/* Similar to mpn/generic/sb_divrem_mn.c, but somewhat simplified, in
+   particular the trial quotient is allowed to be 2 too big. */
+void
+refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
+                mp_ptr np, mp_size_t nsize,
+                mp_srcptr dp, mp_size_t dsize)
+{
+  ASSERT (qxn == 0);
+
+  if (dsize == 1)
+    {
+      rp[0] = refmpn_divrem_1 (qp, 0, np, nsize, dp[0]);
+      return;
+    }
+  else
+    {
+      mp_ptr  n2p = refmpn_malloc_limbs (nsize+1);
+      mp_ptr  d2p = refmpn_malloc_limbs (dsize);
+      int     norm = refmpn_count_leading_zeros (dp[dsize-1]);
+
+      n2p[nsize] = refmpn_lshift_or_copy (n2p, np, nsize, norm);
+      ASSERT_NOCARRY (refmpn_lshift_or_copy (d2p, dp, dsize, norm));
+
+      refmpn_sb_divrem_mn (qp, n2p, nsize+1, d2p, dsize);
+      refmpn_rshift_or_copy (rp, n2p, dsize, norm);
+
+      // ASSERT (refmpn_zero_p (tp+dsize, nsize-dsize));
+      free (n2p);
+      free (d2p);
+    }
 }
