@@ -324,22 +324,35 @@ L(modexact):
 	C edi	[PIC] L(table)
 	C ebp	src
 
+ifdef(`PIC',`
+	movl	%ebp, CALL_SRC
+	movl	%ebx, %ebp		C y
+	movl	%edi, %ebx		C L(table)
+
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(table)], %ebx
+	movl	%ebp, CALL_DIVISOR
+	movl	%ecx, CALL_SIZE
+
+        call	GSYM_PREFIX`'mpn_modexact_1_odd@PLT
+',`
+dnl non-PIC
 	movl	%ebx, CALL_DIVISOR
 	movl	%ebp, CALL_SRC
 	movl	%ecx, CALL_SIZE
 
 	call	GSYM_PREFIX`'mpn_modexact_1_odd
+')
 
 	C eax	x
-	C ebx	y
+	C ebx	[non-PIC] y
 	C ecx
 	C edx
 	C esi	common twos
 	C edi	[PIC] L(table)
-	C ebp
+	C ebp	[PIC] y
 
 	orl	%eax, %eax
-	movl	%ebx, %edx
+	movl	ifdef(`PIC',`%ebp',`%ebx'), %edx
 	movl	SAVE_EBP, %ebp
 
 	movl	%eax, %ecx
