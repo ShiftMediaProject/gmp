@@ -382,7 +382,7 @@ for gmp_tmp_pre in .L $ L$; do
   fi
 done
 ])
-echo ["define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}\$][1>)"] >> $gmp_tmpconfigm4
+echo ["define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
 
 dnl  GMP_CHECK_ASM_W32

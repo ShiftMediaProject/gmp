@@ -3268,7 +3268,7 @@ done
 
 fi
 echo "$ac_t""$gmp_cv_check_asm_lsym_prefix" 1>&6
-echo "define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}\$1>)" >> $gmp_tmpconfigm4
+echo "define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}>)" >> $gmp_tmpconfigm4
 
 echo $ac_n "checking how to define a 32-bit word... $ac_c" 1>&6
 echo "configure:3275: checking how to [define] a 32-bit word" 1>&5
