@@ -254,8 +254,8 @@ libgmp_la_LDFLAGS = \
 
 @WANT_MPBSD_TRUE@MPBSD_HEADERS_OPTION = @WANT_MPBSD_TRUE@mp.h
 @WANT_MPBSD_TRUE@MPBSD_LTLIBRARIES_OPTION = @WANT_MPBSD_TRUE@libmp.la
-libmp_la_SOURCES = \
-  assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c mp_minv_tab.c stack-alloc.c
+libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
+  mp_minv_tab.c mp_set_fns.c stack-alloc.c
 
 libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			    \
   mpz/add.lo mpz/clear.lo mpz/init.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo \
@@ -287,7 +287,7 @@ version$U.lo stack-alloc$U.lo mp_bpl$U.lo extract-dbl$U.lo \
 insert-dbl$U.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
 am_libmp_la_OBJECTS =  assert$U.lo errno$U.lo memory$U.lo mp_bpl$U.lo \
-mp_clz_tab$U.lo mp_minv_tab$U.lo stack-alloc$U.lo
+mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo stack-alloc$U.lo
 libmp_la_OBJECTS =  $(am_libmp_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
