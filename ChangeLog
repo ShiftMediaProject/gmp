@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-23  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/ia64/README: Add some references.
+
+	* gmp.texi (Build Options): Add itanium and itanium2, mention DocBook
+	and XML from makeinfo, add texinfo top level cross reference.
+	(Integer Division): Try to clarify 2exp functions a bit.
+	(C++ Interface Floats): Giving bad string to constructor is undefined.
+	(C++ Interface Integers, C++ Interface Rationals): Ditto, and show
+	default base in prototype, not the description.
+
+	* config.sub, config.guess, configure.in (itanium, itanium2): New cpu
+	types.
+
+	* tests/misc/t-printf.c, tests/misc/t-scanf.c (check_misc): Suppress
+	%zd test on glibc prior to 2.1, it's not supported.
+
 2002-11-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/copyi.asm: Optimize for Itanium 2.
