@@ -35,8 +35,8 @@ LIBMPFR = $(top_builddir)/mpfr/libmpfr.a
 endif
 
 if WANT_CXX
-check_PROGRAMS = t-assign t-binary t-cast t-constr t-headers t-locale t-misc \
-  t-ops t-ostream t-prec t-rand t-ternary t-unary
+check_PROGRAMS = t-assign t-binary t-cast t-constr t-headers t-headfr \
+  t-locale t-misc t-ops t-ostream t-prec t-rand t-ternary t-unary
 TESTS = $(check_PROGRAMS)
 endif
 
@@ -45,6 +45,7 @@ t_binary_SOURCES  = t-binary.cc
 t_cast_SOURCES    = t-cast.cc
 t_constr_SOURCES  = t-constr.cc
 t_headers_SOURCES = t-headers.cc
+t_headfr_SOURCES  = t-headfr.cc
 t_locale_SOURCES  = t-locale.cc clocale.c
 t_misc_SOURCES    = t-misc.cc
 t_ops_SOURCES     = t-ops.cc
