@@ -30,7 +30,7 @@ dnl  could be saved there per call.
 dnl  DESCRIPTION:
 dnl  The main loop "BIG" is 4-way unrolled, mainly to allow
 dnl  effective use of ADD,DC.  Delays in moving data via the cache from the FP
-dnl  registers to the IU registers, have demaned a deep software pipeline, and
+dnl  registers to the IU registers, have demanded a deep software pipeline, and
 dnl  a lot of stack slots for partial products in flight.
 dnl
 dnl  CODE STRUCTURE:
