@@ -1,1 +1,3 @@
-static char *gmp_version = "2.1-990217";
+#include "gmp.h"
+#include "gmp-impl.h"
+static char *gmp_version = VERSION;
