@@ -2017,9 +2017,13 @@ AH_VERBATIM([HAVE_DOUBLE],
 
 case $gmp_cv_c_double_format in
   "IEEE big endian")
-    AC_DEFINE(HAVE_DOUBLE_IEEE_BIG_ENDIAN, 1) ;;
+    AC_DEFINE(HAVE_DOUBLE_IEEE_BIG_ENDIAN, 1)
+    GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_DOUBLE_IEEE_BIG_ENDIAN')", POST)
+    ;;
   "IEEE little endian")
-    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN, 1) ;;
+    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN, 1)
+    GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_DOUBLE_IEEE_LITTLE_ENDIAN')", POST)
+    ;;
   "IEEE little endian, swapped halves")
     AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_SWAPPED, 1) ;;
   "VAX D")
