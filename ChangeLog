@@ -19,6 +19,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-22  Kevin Ryde  <kevin@swox.se>
+
+	* demos/perl/GMP.xs (mutate_mpz, tmp_mpf_grow): Make these "static".
+
+	* mpn/x86/pentium/popcount.asm, mpn/x86/pentium/hamdist.asm
+	(mpn_popcount_table): Use GSYM_PREFIX.
+
 2001-10-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/*.asm: Add some measured speeds on various x86s.
