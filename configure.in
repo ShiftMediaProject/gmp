@@ -16,6 +16,21 @@ AM_MAINTAINER_MODE
 dnl  GMP specific
 GMP_INIT(config.m4)
 
+
+AC_ARG_ENABLE(assert,
+AC_HELP_STRING([--enable-assert],[enable ASSERT checking [default=no]]),
+[case "${enableval}" in
+yes|no) ;;
+*) AC_MSG_ERROR(bad value ${enableval} for --enable-assert) ;;
+esac],
+[enable_assert=no])
+
+if test "$enable_assert" = "yes"
+then
+  AC_DEFINE(WANT_ASSERT)
+fi
+
+
 dnl Switch on OS and determine what compiler to use.
 dnl
 dnl  os_64bit	           Set to "yes" if OS is 64-bit capable.
@@ -161,19 +176,6 @@ if test -n "$os_64bit" && test -n "$CC64"; then
   CFLAGS=$CFLAGS64
 else
   eval CFLAGS=\$gmp_cflags_$CC  
-fi
-
-AC_ARG_ENABLE(assert,
-AC_HELP_STRING([--enable-assert],[enable assert() checking [default=no]]),
-[case "${enableval}" in
-yes|no) ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-assert) ;;
-esac],
-[enable_assert=no])
-
-if test $enable_assert = no
-then
-  CFLAGS="$CFLAGS -DNDEBUG"
 fi
 
 
