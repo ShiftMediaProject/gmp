@@ -985,6 +985,13 @@ speed_time_init (void)
       DEFAULT (speed_precision, (cgt_unittime <= 0.1e-6 ? 10000 : 1000));
       strcpy (speed_time_string, "microsecond accurate getrusage()");
     }
+  else if (have_times && clk_tck() > 1000000)
+    {
+      /* Cray vector systems have times() which is clock cycle resolution
+         (eg. 450 MHz).  */
+      DEFAULT (speed_precision, 10000);
+      goto choose_times;
+    }
   else if (have_grus && getrusage_microseconds_p())
     {
       use_grus = 1;
@@ -1006,10 +1013,11 @@ speed_time_init (void)
     }
   else if (have_times)
     {
-      use_times = 1;
       use_tick_boundary = 1;
-      speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
       DEFAULT (speed_precision, 200);
+    choose_times:
+      use_times = 1;
+      speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
       sprintf (speed_time_string, "%s clock tick times()",
                unittime_string (speed_unittime));
     }
