@@ -46,7 +46,7 @@ mpz_kronecker_ui (mpz_srcptr a, unsigned long b)
   if (a_size == 0)
     return JACOBI_0U (b);
 
-  if (b & 1)
+  if ((b & 1) != 0)
     {
       result_bit1 = JACOBI_ASGN_SU_BIT1 (a_size, b);
     }
