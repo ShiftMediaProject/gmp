@@ -197,7 +197,6 @@ L(pic_ret):
 	jmp	*%esi
 
 
-
 #------------------------------------------------------------------------------
 # This is within range of a short jump for the above tests.
 
