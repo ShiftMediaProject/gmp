@@ -49,6 +49,28 @@ mpn_divrem_1 (qp, qxn, np, nn, d)
   /* Develop integer part of quotient.  */
   rlimb = mpn_divmod_1 (qp + qxn, np, nn, d);
 
+  /* Develop fraction part of quotient.  This is not as fast as it should;
+     the preinvert stuff from mpn_divmod_1 ought to be used here too.  */
+  if (UDIV_NEEDS_NORMALIZATION)
+    {
+      int normalization_steps;
+
+      count_leading_zeros (normalization_steps, d);
+      if (normalization_steps != 0)
+	{
+	  d <<= normalization_steps;
+	  rlimb <<= normalization_steps;
+
+	  for (i = qxn - 1; i >= 0; i--)
+	    udiv_qrnnd (qp[i], rlimb, rlimb, 0, d);
+
+	  return rlimb >> normalization_steps;
+	}
+      else
+	/* fall out */
+	;
+    }
+
   for (i = qxn - 1; i >= 0; i--)
     udiv_qrnnd (qp[i], rlimb, rlimb, 0, d);
 
