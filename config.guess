@@ -467,11 +467,27 @@ EOF
 	fi
 	exit 0 ;;
     *:AIX:*:4)
-	if /usr/sbin/lsattr -EHl proc0 | grep PowerPC >/dev/null 2>&1; then
-		IBM_ARCH=powerpc
-	else
-		IBM_ARCH=rs6000
-	fi
+	sed 's/^	//' << EOF >dummy.c
+	#include <stdio.h>
+	#include <sys/systemcfg.h>
+	main ()
+	{
+	  if (_system_configuration.architecture == POWER_RS
+	      || _system_configuration.implementation == POWER_601)
+	    puts ("power");
+	  else
+	    {
+	      if (_system_configuration.width == 64)
+		puts ("powerpc64");
+	      else
+		puts ("powerpc");
+	    }
+	  exit (0);
+	}
+EOF
+	${CC-cc} dummy.c -o dummy
+	IBM_ARCH=`./dummy`
+	rm -f dummy.c dummy
 	if [ -x /usr/bin/oslevel ] ; then
 		IBM_REV=`/usr/bin/oslevel`
 	else
