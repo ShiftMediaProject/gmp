@@ -1650,7 +1650,7 @@ call (struct each_t *e, tryfun_t function)
     refmpn_fill (e->d[0].p, size-size2, 0x98765432);  /* quotient */
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->d[1].p, size, e->s[1].p, size2);
-    refmpn_zero (e->d[1].p+size2, size-size2);        /* excess remainder */
+    refmpn_fill (e->d[1].p+size2, size-size2, CNST_LIMB(0)); /* remainder */
     break;
   case TYPE_TDIV_QR:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->d[1].p, 0,
