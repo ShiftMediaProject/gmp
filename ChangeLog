@@ -1,3 +1,40 @@
+2001-09-08  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Integer Logic and Bit Fiddling): Update mpz_hamdist
+	behaviour, clarify mpz_popcount a touch.
+	(Language Bindings): Add mlton, fix alphabetical order.
+	(Single Limb Division): Describe 2 or 1/2 limbs at a time style.
+
+	* configure.in (AC_CHECK_FUNCS): Add mmap.
+	* tests/devel/try.c (malloc_region): Use mmap if available.
+
+	* tests/refmpz.c, tests/tests.h (refmpz_hamdist): New function.
+	* tests/mpz/t-hamdist.c: New file.
+	* tests/mpz/Makefile.am: Add it.
+
+	* mpz/hamdist.c: Support neg/neg operands.
+
+	* macos/Makefile.in: Remove dual compile of mpq/aors.c and
+	mpn/generic/popham.c.
+
+	* gmp-impl.h (popc_limb): New macro, adapted from mpn/generic/popham.c.
+	For 64-bits reuse 0x33...33 constant.
+	* mpn/generic/popcount.c, mpn/generic/hamdist.c: Split from popham.c,
+	use popc_limb macro, remove unused "i", don't bother with "register"
+	qualifiers.
+	* mpn/generic/popham.c: Remove file.
+
+	* ltmain.sh, configure, aclocal.m4: Update to libtool 1.4.1, with one
+	ltdll.c generation patch.
+	* doc/configuration: Misc updates, note libtool patch used.
+
+	* mpn/x86/pentium4/sse2/mul_1.asm: Use pointer increments not indexed
+	addressing, to get 4.0 c/l flat.
+
+	* tests/mpq/t-cmp_si.c (check_data): Use ULONG_MAX for denominators.
+
+	* tests/misc.c (mpz_negrandom): Use given rstate, not RANDS.
+
 2001-09-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/sse2/addmul_1.asm: New file.
