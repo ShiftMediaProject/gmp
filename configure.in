@@ -1832,18 +1832,20 @@ AC_HEADER_TIME
 
 # Reasons for testing:
 #   float.h - not in SunOS bundled cc
+#   sys/mman.h - not in Cray Unicos
 #   sys/param.h - not in mingw
 #   sys/processor.h - solaris specific, though also present in macos
 #   sys/resource.h - not in mingw
 #   sys/sysctl.h - not in mingw
 #   sys/syssgi.h - IRIX specific
 #   sys/systemcfg.h - AIX specific
+#   sys/time.h - autoconf suggests testing, don't know anywhere without it
 #   sys/times.h - not in mingw
 #
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # On SunOS, sys/resource.h needs sys/time.h (for struct timeval)
 AC_CHECK_HEADERS(sys/resource.h,,,
@@ -1856,6 +1858,12 @@ AC_CHECK_HEADERS(sys/resource.h,,,
 # else
 #  include <time.h>
 # endif
+#endif])
+
+# On NetBSD and OpenBSD, sys/sysctl.h needs sys/param.h for various constants
+AC_CHECK_HEADERS(sys/sysctl.h,,,
+[#if HAVE_SYS_PARAM_H
+# include <sys/param.h>
 #endif])
 
 # Reasons for testing:
