@@ -3,7 +3,7 @@ dnl
 dnl  P5: 3.0 c/l  and, ior, xor
 dnl      3.5 c/l  andn, iorn, nand, nior, xnor
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -94,11 +94,11 @@ deflit(`FRAME',0)
 	movl	(%ebx,%ecx,8), %eax	C risk of data cache bank clash here
 	movl	(%esi,%ecx,8), %edx
 
-M4pre(`	notl	%edx')
+M4pre(`	notl_or_xorl_GMP_NUMB_MASK(%edx)')
 
 	M4op	%edx, %eax
 
-M4post(`xorl	$-1, %eax')
+M4post(`xorl	$GMP_NUMB_MASK, %eax')
 	orl	%ecx, %ecx
 
 	movl	%eax, (%edi,%ecx,8)
@@ -119,8 +119,8 @@ L(top):
 	M4op	%ebp, %edx
 	nop
 
-M4post(`xorl	$-1, %eax')
-M4post(`xorl	$-1, %edx')
+M4post(`xorl	$GMP_NUMB_MASK, %eax')
+M4post(`xorl	$GMP_NUMB_MASK, %edx')
 
 	movl	%eax, 4(%edi,%ecx,8)
 	movl	%edx, (%edi,%ecx,8)
@@ -132,8 +132,8 @@ L(entry):
 	movl	-4(%esi,%ecx,8), %eax
 	movl	-8(%esi,%ecx,8), %edx
 
-M4pre(`	xorl	$-1, %eax')
-M4pre(`	xorl	$-1, %edx')
+M4pre(`	xorl	$GMP_NUMB_MASK, %eax')
+M4pre(`	xorl	$GMP_NUMB_MASK, %edx')
 
 	M4op	%ebp, %eax
 	movl	-8(%ebx,%ecx,8), %ebp
@@ -145,8 +145,8 @@ M4pre(`	xorl	$-1, %edx')
 	M4op	%ebp, %edx
 	nop
 
-M4post(`xorl	$-1, %eax')
-M4post(`xorl	$-1, %edx')
+M4post(`xorl	$GMP_NUMB_MASK, %eax')
+M4post(`xorl	$GMP_NUMB_MASK, %edx')
 
 	movl	%eax, 4(%edi,%ecx,8)
 	movl	%edx, (%edi,%ecx,8)
