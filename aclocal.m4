@@ -39,8 +39,9 @@ define(X86_PATTERN,
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
 dnl  ----------------------------
-dnl  Expand to the value of a "#define NAME" from the given FILE.
-dnl  The regexps here aren't very rugged, but are enough for gmp.
+dnl
+dnl  Expand at autoconf time to the value of a "#define NAME" from the given
+dnl  FILE.  The regexps here aren't very rugged, but are enough for gmp.
 dnl  /dev/null as a parameter prevents a hang if $2 is accidentally omitted.
 
 define(GMP_HEADER_GETVAL,
@@ -53,9 +54,10 @@ esyscmd([grep "^#define $1 " $2 /dev/null 2>/dev/null]),
 
 dnl  GMP_VERSION
 dnl  -----------
-dnl  The gmp version number, extracted from the #defines in gmp.h.
-dnl  Two digits like 3.0 if patchlevel <= 0, or three digits like 3.0.1 if
-dnl  patchlevel > 0.
+dnl
+dnl  The gmp version number, extracted from the #defines in gmp.h at
+dnl  autoconf time.  Two digits like 3.0 if patchlevel <= 0, or three digits
+dnl  like 3.0.1 if patchlevel > 0.
 
 define(GMP_VERSION,
 [GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp.h)[]dnl
@@ -66,11 +68,12 @@ ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
 
 dnl  GMP_PROG_M4
 dnl  -----------
+dnl
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
 dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
 dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
-dnl  AC_PATH_PROG or AC_CHECK_PROG, but it tests each m4 found to see if
-dnl  it's good enough.
+dnl  AC_PATH_PROG or AC_CHECK_PROG, but tests each m4 found to see if it's
+dnl  good enough.
 dnl 
 dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
@@ -122,6 +125,26 @@ dnl not every word.  This closes a longstanding sh security hole.
 fi])
 M4="$gmp_cv_prog_m4"
 AC_SUBST(M4)
+])
+
+
+dnl  GMP_PROG_NM
+dnl  -----------
+dnl  A small addition to libtool AC_PROG_NM.
+dnl
+dnl  FIXME: Is this -X specific to what GMP does with powerpc64, or
+dnl  should it be folded into libtool somehow?
+dnl
+dnl  Note that if AC_PROG_NM can't find a working nm it still leaves
+dnl  $NM set to "nm", so $NM can't be assumed to actually work.
+
+AC_DEFUN(GMP_PROG_NM,
+[AC_REQUIRE([AC_PROG_NM])
+case "$target" in
+  powerpc64*-*-aix*)
+    # nm on 64-bit AIX needs to know the object file format
+    NM="$NM -X 64" ;;
+esac
 ])
 
 
@@ -306,8 +329,10 @@ EOF
   AC_MSG_RESULT($gmp_cv_cc_64bit)
 ])dnl
 
+
 dnl  GMP_INIT([M4-DEF-FILE])
-dnl  
+dnl  -----------------------
+
 AC_DEFUN(GMP_INIT,
 [ifelse([$1], , gmp_configm4=config.m4, gmp_configm4="[$1]")
 gmp_tmpconfigm4=cnfm4.tmp
@@ -316,7 +341,8 @@ gmp_tmpconfigm4p=cnfm4p.tmp
 test -f $gmp_tmpconfigm4 && rm $gmp_tmpconfigm4
 test -f $gmp_tmpconfigm4i && rm $gmp_tmpconfigm4i
 test -f $gmp_tmpconfigm4p && rm $gmp_tmpconfigm4p
-])dnl
+])
+
 
 dnl  GMP_FINISH
 dnl  ----------
@@ -358,54 +384,97 @@ if test -f $gmp_tmpconfigm4p; then
 fi
 echo ["')"] >> $gmp_configm4
 echo ["define(\`__CONFIG_M4_INCLUDED__')"] >> $gmp_configm4
-])dnl
+])
+
 
 dnl  GMP_INCLUDE(FILE)
+dnl  -----------------
+
 AC_DEFUN(GMP_INCLUDE,
 [AC_REQUIRE([GMP_INIT])
 echo ["include(\`$1')"] >> $gmp_tmpconfigm4i
-])dnl
+])
+
 
 dnl  GMP_SINCLUDE(FILE)
+dnl  ------------------
+
 AC_DEFUN(GMP_SINCLUDE,
 [AC_REQUIRE([GMP_INIT])
 echo ["sinclude(\`$1')"] >> $gmp_tmpconfigm4i
-])dnl
+])
 
-dnl GMP_DEFINE(MACRO, DEFINITION [, LOCATION])
-dnl [ Define M4 macro MACRO as DEFINITION in temporary file.		]
-dnl [ If LOCATION is `POST', the definition will appear after any	]
-dnl [ include() directives inserted by GMP_INCLUDE/GMP_SINCLUDE.	]
-dnl [ Mind the quoting!  No shell variables will get expanded.		]
-dnl [ Don't forget to invoke GMP_FINISH to create file config.m4.	]
-dnl [ config.m4 uses `<' and '>' as quote characters for all defines.	]
+
+dnl  GMP_DEFINE(MACRO, DEFINITION [, LOCATION])
+dnl  ------------------------------------------
+dnl  Define M4 macro MACRO as DEFINITION in temporary file.
+dnl
+dnl  If LOCATION is `POST', the definition will appear after any include()
+dnl  directives inserted by GMP_INCLUDE/GMP_SINCLUDE.  Mind the quoting!  No
+dnl  shell variables will get expanded.  Don't forget to invoke GMP_FINISH
+dnl  to create file config.m4.  config.m4 uses `<' and '>' as quote
+dnl  characters for all defines.
+
 AC_DEFUN(GMP_DEFINE, 
 [AC_REQUIRE([GMP_INIT])
 echo ['define(<$1>, <$2>)'] >> ifelse([$3], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
-])dnl
+])
 
-dnl GMP_DEFINE_RAW(STRING, [, LOCATION])
-dnl [ Put STRING in temporary file.					]
-dnl [ If LOCATION is `POST', the definition will appear after any	]
-dnl [ include() directives inserted by GMP_INCLUDE/GMP_SINCLUDE.	]
-dnl [ Don't forget to invoke GMP_FINISH to create file config.m4.	]
+
+dnl  GMP_DEFINE_RAW(STRING, [, LOCATION])
+dnl  ------------------------------------
+dnl  Put STRING in temporary file.
+dnl
+dnl  If LOCATION is `POST', the definition will appear after any include()
+dnl  directives inserted by GMP_INCLUDE/GMP_SINCLUDE.  Don't forget to
+dnl  invoke GMP_FINISH to create file config.m4.
+
 AC_DEFUN(GMP_DEFINE_RAW,
 [AC_REQUIRE([GMP_INIT])
 echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
-])dnl
+])
+
+
+dnl  GMP_TRY_ASSEMBLE(asm-code,[action-success][,action-fail])
+dnl  ----------------------------------------------------------
+dnl  Attempt to assemble the given code.
+dnl  Do "action-success" if this succeeds, "action-fail" if not.
+dnl
+dnl  conftest.o is available for inspection in "action-success".  If either
+dnl  action does a "break" out of a loop then an explicit "rm -f conftest*"
+dnl  will be necessary.
+dnl
+dnl  This is not unlike AC_TRY_COMPILE, but there's no default includes or
+dnl  anything in "asm-code", everything wanted must be given explicitly.
+
+AC_DEFUN(GMP_TRY_ASSEMBLE,
+[cat >conftest.s <<EOF
+[$1]
+EOF
+gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+if AC_TRY_EVAL(gmp_assemble); then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+rm -f conftest*
+])
+
 
 dnl  GMP_ASM_LABEL_SUFFIX
+dnl  --------------------
 dnl  Should a label have a colon or not?
+
 AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([what assembly label suffix to use],
-               gmp_cv_asm_label_suffix,
+                gmp_cv_asm_label_suffix,
 [case "$target" in 
-  *-*-hpux*) gmp_cv_asm_label_suffix=[""] ;;
-  *) gmp_cv_asm_label_suffix=[":"] ;;
+  *-*-hpux*) gmp_cv_asm_label_suffix=  ;;
+  *)         gmp_cv_asm_label_suffix=: ;;
 esac
 ])
 echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
-])dnl
+])
 
 
 dnl  GMP_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
@@ -421,30 +490,30 @@ dnl  in particular that grepping doesn't work with SunOS 4 native grep since
 dnl  that grep seems to have trouble with '\0's in files.
 
 AC_DEFUN(GMP_ASM_UNDERSCORE,
-[AC_CACHE_CHECK([if globals are prefixed by underscore], 
-	        gmp_cv_asm_underscore,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
-cat > conftes1.c <<EOF
+AC_CACHE_CHECK([if globals are prefixed by underscore], 
+               gmp_cv_asm_underscore,
+[cat >conftes1.c <<EOF
 main () { underscore_test(); }
 EOF
 for tmp_underscore in "" "_"; do
-  cat > conftes2.s <<EOF
+  cat >conftes2.s <<EOF
       	$gmp_cv_asm_text
 	$gmp_cv_asm_globl ${tmp_underscore}underscore_test
 ${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
   case "$target" in
   *-*-aix*)
-    cat >> conftes2.s <<EOF
+    cat >>conftes2.s <<EOF
 	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
 .${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
     ;;
   esac
-  tmp_compile="${CC-cc} conftes1.c conftes2.s 1>&AC_FD_CC"
-  if AC_TRY_EVAL(tmp_compile); then
+  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
     eval tmp_result$tmp_underscore=no
@@ -464,7 +533,7 @@ else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
-rm -f conftes* a.out
+rm -f conftes1* conftes2* a.out
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
@@ -477,43 +546,32 @@ fi
 
 
 dnl  GMP_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl  ------------------------------------------------------------
 dnl  Is parameter to `.align' logarithmic?
-dnl  Requires NM to be set to nm for target.
+
 AC_DEFUN(GMP_ASM_ALIGN_LOG,
 [AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([if .align assembly directive is logarithmic],
-		gmp_cv_asm_align_log,
-[if test -z "$NM"; then
-  echo; echo ["configure: $0: fatal: need nm"]
-  exit 1
-fi
-cat > conftest.s <<EOF
-      	$gmp_cv_asm_data
+               gmp_cv_asm_align_log,
+[GMP_TRY_ASSEMBLE(
+[      	$gmp_cv_asm_data
       	.align  4
 	$gmp_cv_asm_globl	foo
 	.byte	1
 	.align	4
 foo$gmp_cv_asm_label_suffix
-	.byte	2
-EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  changequote(<,>)
-  gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-       -e 's;[^1-9]*\([0-9]*\).*;\1;'`
-  changequote([, ])dnl
+	.byte	2],
+  [gmp_tmp_val=[`$NM conftest.o | grep foo | \
+     sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_asm_align_log=yes
   else
     gmp_cv_asm_align_log=no
-  fi
-else 
-  echo "configure: failed program was:" >&AC_FD_CC
-  cat conftest.s >&AC_FD_CC
-fi
-rm -f conftest*
+  fi],
+  [AC_MSG_ERROR([cannot assemble alignment test])])
 ])
 GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)"])
 if test "$gmp_cv_asm_align_log" = "yes"; then
@@ -521,7 +579,7 @@ if test "$gmp_cv_asm_align_log" = "yes"; then
 else
   ifelse([$2], , :, [$2])
 fi  
-])dnl
+])
 
 
 dnl  GMP_ASM_ALIGN_FILL_0x90
@@ -555,10 +613,10 @@ dnl  The warning from solaris 2.8 is supressed to stop anyone worrying that
 dnl  something might be wrong.
 
 AC_DEFUN(GMP_ASM_ALIGN_FILL_0x90,
-[AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
-                gmp_cv_asm_align_fill_0x90,
 [AC_REQUIRE([GMP_ASM_TEXT])
-cat > conftest.s <<EOF
+AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
+               gmp_cv_asm_align_fill_0x90,
+[cat > conftest.s <<EOF
       	$gmp_cv_asm_text
       	.align  4, 0x90
 	.byte   0
@@ -585,36 +643,35 @@ GMP_DEFINE_RAW(
 
 
 dnl  GMP_ASM_TEXT
+dnl  ------------
+
 AC_DEFUN(GMP_ASM_TEXT,
-[AC_CACHE_CHECK([how to switch to text section], gmp_cv_asm_text,
+[AC_CACHE_CHECK([how to switch to text section],
+                gmp_cv_asm_text,
 [case "$target" in
-  *-*-aix*)
-    changequote({, })
-    gmp_cv_asm_text={".csect .text[PR]"}
-    changequote([, ])
-    ;;
-  *-*-hpux*) gmp_cv_asm_text=[".code"] ;;
-  *) gmp_cv_asm_text=[".text"] ;;
+  *-*-aix*)  gmp_cv_asm_text=[".csect .text[PR]"] ;;
+  *-*-hpux*) gmp_cv_asm_text=".code" ;;
+  *)         gmp_cv_asm_text=".text" ;;
 esac
 ])
 echo ["define(<TEXT>, <$gmp_cv_asm_text>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_DATA
+dnl  ------------
 dnl  Can we say `.data'?
+
 AC_DEFUN(GMP_ASM_DATA,
-[AC_CACHE_CHECK([how to switch to data section], gmp_cv_asm_data,
+[AC_CACHE_CHECK([how to switch to data section],
+                gmp_cv_asm_data,
 [case "$target" in
-  *-*-aix*)
-    changequote({, })
-    gmp_cv_asm_data={".csect .data[RW]"}
-    changequote([, ])
-    ;;
-  *) gmp_cv_asm_data=[".data"] ;;
+  *-*-aix*) gmp_cv_asm_data=[".csect .data[RW]"] ;;
+  *)        gmp_cv_asm_data=".data" ;;
 esac
 ])
 echo ["define(<DATA>, <$gmp_cv_asm_data>)"] >> $gmp_tmpconfigm4
-])dnl
+])
 
 
 dnl  GMP_ASM_RODATA
@@ -636,15 +693,13 @@ dnl  i386 and i486 don't have caching but are treated the same as newer x86s
 dnl  since i386 in particular is used to mean generic x86.
 
 AC_DEFUN(GMP_ASM_RODATA,
-[AC_CACHE_CHECK([how to switch to read-only data section],
-                gmp_cv_asm_rodata,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_DATA])
-case "$target" in
-X86_PATTERN)
-  gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
-*)
-  gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
+AC_CACHE_CHECK([how to switch to read-only data section],
+               gmp_cv_asm_rodata,
+[case "$target" in
+X86_PATTERN) gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
+*)           gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
 ])
 echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
@@ -652,146 +707,139 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 
 dnl  GMP_ASM_GLOBL
+dnl  -------------
 dnl  Can we say `.global'?
+
 AC_DEFUN(GMP_ASM_GLOBL,
-[AC_CACHE_CHECK([how to export a symbol], gmp_cv_asm_globl,
+[AC_CACHE_CHECK([how to export a symbol],
+                gmp_cv_asm_globl,
 [case "$target" in
-  *-*-hpux*) gmp_cv_asm_globl=[".export"] ;;
-  *) gmp_cv_asm_globl=[".globl"] ;;
+  *-*-hpux*) gmp_cv_asm_globl=".export" ;;
+  *)         gmp_cv_asm_globl=".globl" ;;
 esac
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_TYPE
+dnl  ------------
 dnl  Can we say `.type'?
+
 AC_DEFUN(GMP_ASM_TYPE,
 [AC_CACHE_CHECK([how the .type assembly directive should be used],
-gmp_cv_asm_type,
-[ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-for gmp_tmp_prefix in @ \# %; do
-  echo "	.type	sym,${gmp_tmp_prefix}function" > conftest.s
-  if AC_TRY_EVAL(ac_assemble); then
-    gmp_cv_asm_type="[.type	\$][1,${gmp_tmp_prefix}\$][2]"
-    break
-  fi
+                gmp_cv_asm_type,
+[for gmp_tmp_prefix in @ \# %; do
+  GMP_TRY_ASSEMBLE([	.type	sym,${gmp_tmp_prefix}function],
+    [gmp_cv_asm_type=".type	\$][1,${gmp_tmp_prefix}\$][2"
+    break])
 done
+rm -f conftest*
 if test -z "$gmp_cv_asm_type"; then
   gmp_cv_asm_type="[dnl]"
 fi
 ])
 echo ["define(<TYPE>, <$gmp_cv_asm_type>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_SIZE
+dnl  ------------
 dnl  Can we say `.size'?
+
 AC_DEFUN(GMP_ASM_SIZE,
-[AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_asm_size,
-[ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-echo '	.size	sym,1' > conftest.s
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_asm_size="[.size	\$][1,\$][2]"
-else
-  gmp_cv_asm_size="[dnl]"
-fi
+[AC_CACHE_CHECK([if the .size assembly directive works],
+                gmp_cv_asm_size,
+[GMP_TRY_ASSEMBLE([	.size	sym,1],
+  [gmp_cv_asm_size=".size	\$][1,\$][2"],
+  [gmp_cv_asm_size="[dnl]"])
 ])
 echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
-])dnl
+])
+
 
 dnl  GMP_ASM_LSYM_PREFIX
+dnl  -------------------
 dnl  What is the prefix for a local label?
-dnl  Requires NM to be set to nm for target.
+dnl
+dnl  FIXME: Consider validating $NM by first requiring that gurkmacka shows
+dnl  up when unprefixed.
+
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([what prefix to use for a local label], 
-gmp_cv_asm_lsym_prefix,
-[if test -z "$NM"; then
-  echo; echo ["$0: fatal: need nm"]
-  exit 1
-fi
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-gmp_cv_asm_lsym_prefix="L"
+               gmp_cv_asm_lsym_prefix,
+[gmp_cv_asm_lsym_prefix="L"
+gmp_found=no
 for gmp_tmp_pre in L .L $ L$; do
-  cat > conftest.s <<EOF
-dummy${gmp_cv_asm_label_suffix}
+  GMP_TRY_ASSEMBLE(
+[dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
-	.byte 0
-EOF
-  if AC_TRY_EVAL(ac_assemble); then
-    $NM conftest.o >/dev/null 2>&1
-    gmp_rc=$?
-    if test "$gmp_rc" != "0"; then
-      echo "configure: $NM failure, using default"
-      break
-    fi
-    if $NM conftest.o | grep gurkmacka >/dev/null; then true; else
-      gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
-      break
-    fi
-  else
-    echo "configure: failed program was:" >&AC_FD_CC
-    cat conftest.s >&AC_FD_CC
-    # Use default.
+	.byte 0],
+  [$NM conftest.o >/dev/null 2>&1
+  if test $? != 0; then
+    AC_MSG_WARN([NM failure, using default local label $gmp_cv_asm_lsym_prefix])
+    gmp_found=yes
+    break
   fi
+  if $NM conftest.o | grep gurkmacka >/dev/null; then : ; else
+    gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
+    gmp_found=yes
+    break
+  fi])
 done
 rm -f conftest*
+if test $gmp_found = no; then
+  AC_MSG_WARN([cannot determine local label, using default $gmp_cv_asm_lsym_prefix])
+fi
 ])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
 
+
 dnl  GMP_ASM_W32
-dnl  How to [define] a 32-bit word.
-dnl  Requires NM to be set to nm for target.
+dnl  -----------
+dnl  How to define a 32-bit word.
+
 AC_DEFUN(GMP_ASM_W32,
 [AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
-AC_CACHE_CHECK([how to [define] a 32-bit word],
+AC_REQUIRE([GMP_PROG_NM])
+AC_CACHE_CHECK([how to define a 32-bit word],
 	       gmp_cv_asm_w32,
-[if test -z "$NM"; then
-  echo; echo ["configure: $0: fatal: need nm"]
-  exit 1
-fi
-
-# FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
-# that it's at 0x0.  We'll have to declare another symbol before the
-# .long/.word and look at the distance between the two symbols.  The
-# only problem is that the sed expression(s) barfs (on Solaris, for
-# example) for the symbol with value 0.  For now, HPUX uses .word.
-
-case "$target" in 
+[case "$target" in 
   *-*-hpux*)
+    # FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
+    # that it's at 0x0.  We'll have to declare another symbol before the
+    # .long/.word and look at the distance between the two symbols.  The
+    # only problem is that the sed expression(s) barfs (on Solaris, for
+    # example) for the symbol with value 0.  For now, HPUX uses .word.
     gmp_cv_asm_w32=".word"
     ;;
   *-*-*)
-    ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+    gmp_tmp_val=
     for gmp_tmp_op in .long .word; do
-      cat > conftest.s <<EOF
-	$gmp_cv_asm_data
+      GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_data
 	$gmp_cv_asm_globl	foo
 	$gmp_tmp_op	0
-foo${gmp_cv_asm_label_suffix}
-	.byte	0
-EOF
-      if AC_TRY_EVAL(ac_assemble); then
-        changequote(<,>)
-        gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-             -e 's;[^1-9]*\([0-9]*\).*;\1;'`
-        changequote([, ])dnl
-        if test "$gmp_tmp_val" = "4"; then
+foo$gmp_cv_asm_label_suffix
+	.byte	0],
+        [gmp_tmp_val=[`$NM conftest.o | grep foo | \
+          sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
+        if test "$gmp_tmp_val" = 4; then
           gmp_cv_asm_w32="$gmp_tmp_op"
           break
-        fi
-      fi
+        fi])
     done
+    rm -f conftest*
     ;;
 esac
-
 if test -z "$gmp_cv_asm_w32"; then
-  echo; echo ["configure: $0: fatal: do not know how to define a 32-bit word"]
-  exit 1
+  AC_MSG_ERROR([cannot determine how to define a 32-bit word])
 fi
-rm -f conftest*
 ])
 echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
@@ -809,17 +857,11 @@ dnl  needed at all, at least for just checking instruction syntax.
 AC_DEFUN(GMP_ASM_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_asm_mmx,
-[cat > conftest.s <<EOF
-	.text
-	por	%mm0, %mm0
-EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_asm_mmx=yes
-else 
-  gmp_cv_asm_mmx=no
-fi
-rm -f conftest*
+[GMP_TRY_ASSEMBLE(
+[	.text
+	por	%mm0, %mm0],
+  gmp_cv_asm_mmx=yes,
+  gmp_cv_asm_mmx=no)
 ])
 if test "$gmp_cv_asm_mmx" = "yes"; then
   ifelse([$1], , :, [$1])
@@ -833,33 +875,28 @@ else
   AC_MSG_WARN([+----------------------------------------------------------])
   ifelse([$2], , :, [$2])
 fi
-])dnl
+])
 
 
 dnl  GMP_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
 dnl  ----------------------------------------------------------
+
 AC_DEFUN(GMP_ASM_SHLDL_CL,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
 		gmp_cv_asm_shldl_cl,
-[cat > conftest.s <<EOF
-	$gmp_cv_asm_text
-	shldl	%cl, %eax, %ebx
-EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_asm_shldl_cl=yes
-else 
-  gmp_cv_asm_shldl_cl=no
-fi
-rm -f conftest*
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	shldl	%cl, %eax, %ebx],
+  gmp_cv_asm_shldl_cl=yes,
+  gmp_cv_asm_shldl_cl=no)
 ])
 if test "$gmp_cv_asm_shldl_cl" = "yes"; then
   ifelse([$1], , :, [$1])
 else
   ifelse([$2], , :, [$2])
 fi
-])dnl
+])
 
 
 dnl  GMP_GCC_MARCH_PENTIUMPRO([ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
@@ -877,10 +914,9 @@ dnl  option until 2.96.
 
 AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
 [AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
-  gmp_cv_gcc_march_pentiumpro,
-[
-tmp_major="`(gcc --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
-tmp_minor="`(gcc --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
+                gmp_cv_gcc_march_pentiumpro,
+[tmp_major="`(gcc --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
+ tmp_minor="`(gcc --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
 echo "gcc major '$tmp_major', minor '$tmp_minor'" 1>&AC_FD_CC
 
 gmp_cv_gcc_march_pentiumpro=no
@@ -951,7 +987,7 @@ foo(){bar();}
 EOF
 
 if test "$enable_static" = yes; then
-  gmp_asmout_compile="$CC $CFLAGS -S conftest.c 1>&AC_FD_CC"
+  gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_nonpic_reg="`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
@@ -968,7 +1004,7 @@ if test "$enable_static" = yes; then
 fi
 
 if test "$enable_shared" = yes; then
-  gmp_asmout_compile="$CC $CFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
+  gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_pic_reg="`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
@@ -994,8 +1030,8 @@ AC_MSG_RESULT([determined])
 ])
 
 
-dnl  GMP_ASM_POWERPC_REGISTERS
-dnl  -------------------------
+dnl  GMP_ASM_POWERPC_R_REGISTERS
+dnl  ---------------------------
 dnl
 dnl  Determine whether the assembler takes powerpc registers with an "r" as
 dnl  in "r6", or as plain "6".  The latter is standard, but NeXT, Rhapsody,
@@ -1004,23 +1040,21 @@ dnl
 dnl  See also mpn/powerpc32/powerpc-defs.m4 which uses the result of this
 dnl  test.
 
-AC_DEFUN(GMP_ASM_POWERPC_REGISTERS,
+AC_DEFUN(GMP_ASM_POWERPC_R_REGISTERS,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler needs r on registers],
-               gmp_cv_asm_powerpc_registers,
-[cat >conftest.s <<EOF
-      	$gmp_cv_asm_text
-	mtctr	6
-EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(gmp_assemble); then
-  gmp_cv_asm_powerpc_registers=no
-else 
-  gmp_cv_asm_powerpc_registers=yes
-fi
-rm -f conftest*
-])
-GMP_DEFINE_RAW(["define(<WANT_REGISTERS_R>,<$gmp_cv_asm_powerpc_registers>)"])
+               gmp_cv_asm_powerpc_r_registers,
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	mtctr	6],
+[gmp_cv_asm_powerpc_r_registers=no],
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	mtctr	r6],
+[gmp_cv_asm_powerpc_r_registers=yes],
+[AC_MSG_ERROR([neither \"mtctr 6\" nor \"mtctr r6\" works])])])])
+
+GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
 ])
 
 
@@ -1054,7 +1088,7 @@ else
 fi
 
 AC_MSG_RESULT($tmp_works)
-])dnl
+])
 
 
 dnl  GMP_C_ANSI2KNR
@@ -1121,6 +1155,10 @@ dnl  put explicit #defines in gmp-mparam.h.  That way if strange compiler
 dnl  options change the size of some type then the mismatch will be detected
 dnl  by t-constants.c rather than only by the code crashing or giving wrong
 dnl  results.
+dnl
+dnl  The lastest AC_CHECK_SIZEOF does something similar to this, with a
+dnl  binary search to probe the size.  Unfortunately it doesn't give a way
+dnl  to include gmp.h to test mp_limb_t.
 
 AC_DEFUN(GMP_C_SIZES,
 [for tmp_pair in BITS_PER_MP_LIMB:mp_limb_t \
@@ -1140,12 +1178,12 @@ AC_DEFUN(GMP_C_SIZES,
     for tmp_try in 1 2 4 8 16 32; do
       echo "Trying $tmp_try:" >>conftest.out
       cat >conftest.c <<EOF
-#include "gmp.h"
+#include "$srcdir/gmp.h"
 [int test [2*(sizeof($tmp_type) == $tmp_try) - 1];]
 EOF
       cat conftest.c >>conftest.out
-      echo "$CC $CFLAGS -I$srcdir -c conftest.c" >>conftest.out
-      if ($CC $CFLAGS -I$srcdir -c conftest.c) >>conftest.out 2>&1; then
+      echo "$CC $CFLAGS $CPPFLAGS -c conftest.c" >>conftest.out
+      if ($CC $CFLAGS $CPPFLAGS -c conftest.c) >>conftest.out 2>&1; then
         if test -n "$tmp_val"; then
           cat conftest.out 1>&AC_FD_CC
           AC_MSG_ERROR([$tmp_def $tmp_type passes both $tmp_val and $tmp_try])
@@ -1166,6 +1204,47 @@ EOF
   fi
 done
 rm -f conftest.*
+])
+
+
+dnl  GMP_FUNC_ALLOCA
+dnl  ---------------
+dnl
+dnl  Determine whether "alloca" is available.  This is AC_FUNC_ALLOCA from
+dnl  autoconf, but changed so it doesn't use alloca.c if alloca() isn't
+dnl  available, and also to use gmp-impl.h for the conditionals detecting
+dnl  compiler builtin alloca's.
+
+AC_DEFUN(GMP_FUNC_ALLOCA,
+[AC_REQUIRE([GMP_HEADER_ALLOCA])
+AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
+               gmp_cv_func_alloca,
+[AC_TRY_LINK(
+[#define GMP_FUNC_ALLOCA_TEST 1
+#include "$srcdir/gmp.h"
+#include "$srcdir/gmp-impl.h"],
+  [char *p = (char *) alloca (1);],
+  gmp_cv_func_alloca=yes,
+  gmp_cv_func_alloca=no)])
+if test $gmp_cv_func_alloca = yes; then
+  AC_DEFINE(HAVE_ALLOCA, 1,
+    [Define if alloca() works (via gmp-impl.h).])
+fi
+])
+
+AC_DEFUN(GMP_HEADER_ALLOCA,
+[# The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
+# for constant arguments.  Useless!
+AC_CACHE_CHECK([for working alloca.h],
+               gmp_cv_header_alloca,
+[AC_TRY_LINK([#include <alloca.h>],
+  [char *p = (char *) alloca (2 * sizeof (int));],
+  gmp_cv_header_alloca=yes,
+  gmp_cv_header_alloca=no)])
+if test $gmp_cv_header_alloca = yes; then
+  AC_DEFINE(HAVE_ALLOCA_H, 1,
+    [Define if you have <alloca.h> and it should be used (not on Ultrix).])
+fi
 ])
 
 
