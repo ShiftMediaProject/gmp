@@ -70,6 +70,7 @@ ifdef(`HAVE_ABI_32',
 	   (p6)	br.spnt		.Ldone			C multiplier == 0
 		;;
 }
+		br.sptk		.Loop
 		.align	32
 .Loop:
   { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
