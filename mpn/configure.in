@@ -13,11 +13,11 @@ srcname="GNU Multi-Precision library/mpn"
 case "${target}" in
   sparc9*-*-* | sparc64*-*-* | ultrasparc*-*-*)
 	#path="sparc64" ;;	Don't use this until compilers are ready
-	path="sparc32/v8 sparc" ;;
+	path="sparc32/v8 sparc32" ;;
   sparc8*-*-* | microsparc*-*-*)
-	path="sparc32/v8 sparc" ;;
+	path="sparc32/v8 sparc32" ;;
   supersparc*-*-*)
-	path="sparc32/v8/supersparc sparc32/v8 sparc"
+	path="sparc32/v8/supersparc sparc32/v8 sparc32"
 	extra_functions="udiv" ;;
   sparc*-*-*) path="sparc32"
 	if [ x$floating_point = xno ]
@@ -108,6 +108,8 @@ case "${target}" in
 esac
 
 case "${target}" in
+# NB! If you add cases here, remember to add the cpu/vendor to the error
+# message in ../configure.in!
   *-*-linuxaout* | *-*-linuxoldld*) config=bsd.h ;;
   *-sysv* | *-solaris* | *-*-linux*) config="sysv.h" ;;
   *) config="bsd.h" ;;
