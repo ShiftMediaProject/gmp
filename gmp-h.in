@@ -184,7 +184,7 @@ MA 02111-1307, USA. */
 #endif
 
 
-#ifdef _SHORT_LIMB
+#ifdef __GMP_SHORT_LIMB
 typedef unsigned int		mp_limb_t;
 typedef int			mp_limb_signed_t;
 #else
