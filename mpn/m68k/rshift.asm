@@ -1,10 +1,6 @@
 dnl  mc68020 mpn_rshift -- mpn right shift.
-dnl
-dnl            cycles/limb
-dnl         shift==1  shift>1
-dnl  68040:    7.0      9.5
 
-dnl  Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -24,6 +20,11 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C           cycles/limb
+C        shift==1  shift>1
+C 68040:    7.0      9.5
 
 
 C INPUT PARAMETERS
