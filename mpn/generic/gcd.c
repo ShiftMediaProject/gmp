@@ -805,10 +805,10 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 	    struct hgcd hgcd_lehmer;
 	    int res_lehmer;
 
-	    TMP_DECL (marker);
 	    mp_size_t init_scratch = mpn_hgcd_init_itch (r[0].rsize - k);
 	    mp_size_t lehmer_scratch = mpn_hgcd_lehmer_itch (r[0].rsize - k);
 	    mp_ptr space;
+	    TMP_DECL (marker);
 
 	    TMP_MARK (marker);
 	    space = TMP_ALLOC (sizeof (mp_limb_t *)
