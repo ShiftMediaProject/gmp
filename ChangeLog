@@ -2,6 +2,8 @@
 
 	* gmp-h.in (mpf_set_si, mpf_set_ui): Don't bother setting _mp_exp to 0
 	when n==0 (use 1 unconditionally).
+	* tests/mpf/t-misc.c (check_mpf_set_si): Don't demand anything of
+	_mp_exp when _mp_size is zero.
 
 	* mpn/x86/README: Note gas _GLOBAL_OFFSET_TABLE_ with leal problem.
 
