@@ -301,12 +301,16 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT_FILE  ""
 #endif
 
-/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
-#if defined (__STDC__) || defined (__cplusplus)
+#if HAVE_STRINGIZE
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
-#define ASSERT_VOID        (void)
 #else
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, "expr")
+#endif
+
+/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
+#if defined (__STDC__) || defined (__cplusplus)
+#define ASSERT_VOID        (void)
+#else
 #define ASSERT_VOID        
 #endif
 
