@@ -399,7 +399,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_RESTRICT_COND(cond)   if (!(cond)) return -1.0;
 
 /* For mpn_copy or similar. */
-#define SPEED_ROUTINE_MPN_COPY_CALL(call)               \
+#define SPEED_ROUTINE_MPN_COPY(function)		\
   {                                                     \
     mp_ptr    wp;                                       \
     unsigned  i;                                        \
@@ -418,7 +418,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
-      call;                                             \
+      function (wp, s->xp, s->size);			\
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
                                                         \
@@ -426,10 +426,61 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     return t;                                           \
   }  
 
-#define SPEED_ROUTINE_MPN_COPY(function) \
-  SPEED_ROUTINE_MPN_COPY_CALL(function (wp, s->xp, s->size))
-#define SPEED_ROUTINE_MPN_COPYC(function) \
-  SPEED_ROUTINE_MPN_COPY_CALL(function (wp, s->xp, s->size, 0))
+#define SPEED_ROUTINE_MPN_COPYC(function)		\
+  {                                                     \
+    mp_ptr    wp;                                       \
+    unsigned  i;                                        \
+    double    t;                                        \
+    TMP_DECL (marker);                                  \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 0);                 \
+                                                        \
+    TMP_MARK (marker);                                  \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+                                                        \
+    speed_operand_src (s, s->xp, s->size);              \
+    speed_operand_dst (s, wp, s->size);                 \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      function (wp, s->xp, s->size, 0);			\
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
+  }  
+
+/* s->size is still in limbs, and it's limbs which are copied, but
+   "function" takes a size in bytes not limbs.  */
+#define SPEED_ROUTINE_MPN_COPY_BYTES(function)			\
+  {								\
+    mp_ptr    wp;						\
+    unsigned  i;						\
+    double    t;						\
+    TMP_DECL (marker);						\
+								\
+    SPEED_RESTRICT_COND (s->size >= 0);				\
+								\
+    TMP_MARK (marker);						\
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);		\
+								\
+    speed_operand_src (s, s->xp, s->size);			\
+    speed_operand_dst (s, wp, s->size);				\
+    speed_cache_fill (s);					\
+								\
+    speed_starttime ();						\
+    i = s->reps;						\
+    do								\
+      function (wp, s->xp, s->size * BYTES_PER_MP_LIMB);	\
+    while (--i != 0);						\
+    t = speed_endtime ();					\
+								\
+    TMP_FREE (marker);						\
+    return t;							\
+  }  
 
 
 /* For mpn_add_n, mpn_sub_n, or similar. */
