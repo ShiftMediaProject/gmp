@@ -25,6 +25,14 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#ifdef __MINGW32__
+/* msvcrt.dll lacks random() */
+static inline long
+myrandom ()
+{
+  return rand();
+}
+#else
 #if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
 /* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
 static inline long
@@ -38,6 +46,7 @@ myrandom ()
 {
   return random ();
 }
+#endif
 #endif
 
 /* It's a bit tricky to get this right, so please test the code well
