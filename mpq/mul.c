@@ -29,6 +29,14 @@ mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
   mpz_t gcd1, gcd2;
   mpz_t tmp1, tmp2;
 
+  if (op1 == op2)
+    {
+      /* No need for any GCDs when squaring. */
+      mpz_mul (mpq_numref (prod), mpq_numref (op1), mpq_numref (op1));
+      mpz_mul (mpq_denref (prod), mpq_denref (op1), mpq_denref (op1));
+      return;
+    }
+
   mpz_init (gcd1);
   mpz_init (gcd2);
   mpz_init (tmp1);
