@@ -1029,7 +1029,7 @@ union ieee_double_extract
  || defined (__a29k__) || defined (_AM29K)				\
  || defined (__arm__)							\
  || (defined (__convex__) && defined (_IEEE_FLOAT_))			\
- || defined (_CRAYMPP)							\
+ || defined (_CRAYMPP) || defined (_CRAYIEEE)				\
  || defined (__i370__) || defined (__mvs__)				\
  || defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
     || defined(mc68020)							\
