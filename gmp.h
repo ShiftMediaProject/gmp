@@ -413,8 +413,8 @@ void mpz_powm_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int, mpz_srcptr));
 int mpz_probab_prime_p _PROTO ((mpz_srcptr, int));
 void mpz_random _PROTO ((mpz_ptr, mp_size_t));
 void mpz_random2 _PROTO ((mpz_ptr, mp_size_t));
-unsigned long int mpz_remove (mpz_ptr, mpz_srcptr, mpz_srcptr);
-int mpz_root (mpz_ptr, mpz_srcptr, unsigned long int);
+unsigned long int mpz_remove _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+int mpz_root _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_scan0 _PROTO ((mpz_srcptr, unsigned long int));
 unsigned long int mpz_scan1 _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_set _PROTO ((mpz_ptr, mpz_srcptr));
@@ -596,7 +596,7 @@ void mpf_neg _PROTO ((mpf_ptr, mpf_srcptr));
 #ifdef _GMP_H_HAVE_FILE
 size_t mpf_out_str _PROTO ((FILE *, int, size_t, mpf_srcptr));
 #endif
-void mpf_pow_ui (mpf_ptr, mpf_srcptr, unsigned long int);
+void mpf_pow_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_random2 _PROTO ((mpf_ptr, mp_size_t, mp_exp_t));
 void mpf_reldiff _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_set _PROTO ((mpf_ptr, mpf_srcptr));
