@@ -88,7 +88,7 @@ dnl
 os_64bit="no"
 cclist="gcc cc"		# FIXME: Prefer c89 to cc.
 gmp_cflags_gcc="-g -O2"
-gmp_cflags64_gcc="-mWHAT -g -O2"
+gmp_cflags64_gcc="-g -O2"
 gmp_cflags_cc="-g"
 gmp_cflags64_cc="-g"
 
@@ -155,7 +155,7 @@ case "$target" in
     os_64bit=yes
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
-    gmp_cflags64_gcc="$gmp_cflags_gcc -Wa,-xarch=v9 -mcpu=v9"
+    gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
@@ -539,6 +539,8 @@ case ${target} in
 
 
   i960*-*-*) path="i960";;
+
+  ia64*-*-*) path="ia64";;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
   [m680[234]0*-*-* | m68k*-*-* | \
