@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-02-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/t-gcd.c (gcdext_valid_p): New function.
+	(ref_mpz_gcd): Deleted function.
+	(one_test): Rearranged to call mpz_gcdext first, so that the
+	returned value can be validated.
+	(main): Don't use ref_mpz_gcd.
+
 2004-02-18  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (MPN_TOOM3_MAX_N): Move to !WANT_FFT section.
