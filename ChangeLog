@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-03  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/README: Add 7 c/l mmx mul_1, tweak wordings.
+
+	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Use octal char constants in test
+	program, hex is not supported by K&R.
+	
 2003-06-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips64/divrem_1.asm: New file.
@@ -26,6 +33,11 @@ MA 02111-1307, USA.
 
 	* mpn/powerpc32/lshift.asm: Reformat code.
 	* mpn/powerpc32/rshift.asm: Reformat code.
+
+2003-05-30  Kevin Ryde  <kevin@swox.se>
+
+	* tests/misc.c (tests_start): Set stdout and stderr to unbuffered, to
+	avoid any chance of losing output on segv etc.
 
 2003-05-28  Torbjorn Granlund  <tege@swox.com>
 
