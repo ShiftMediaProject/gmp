@@ -46,9 +46,9 @@ License}.
 @c  particular notes concerning them, but not just for everything GMP
 @c  supports.
 @c
-@c  Index entries for files use @code rather than @file, since the latter
-@c  comes out with quotes in TeX, which are nice in text but don't look so
-@c  good in index columns.
+@c  Index entries for files use @code rather than @file, @samp or @option,
+@c  since the latter come out with quotes in TeX, which are nice in text but
+@c  don't look so good in index columns.
 @c
 @c  By default HTML output gets external URLs to relevant web sites.  These
 @c  have to be kept up-to-date manually.  GLIBC for instance unfortunately
@@ -627,6 +627,7 @@ It might be possible to build without the help of @samp{configure}, certainly
 all the code is there, but unfortunately you'll be on your own.
 
 @item Build Directory
+@cindex Build directory
 To compile in a separate build directory, @command{cd} to that directory, and
 prefix the configure command with the path to the GMP source directory.  For
 example
@@ -645,6 +646,8 @@ instead.
 @cindex Prefix
 @cindex Exec prefix
 @cindex Install prefix
+@cindex @code{--prefix}
+@cindex @code{--exec-prefix}
 The @option{--prefix} option can be used in the normal way to direct GMP to
 install under a particular tree.  The default is @samp{/usr/local}.
 
@@ -657,12 +660,17 @@ it will be necessary to ensure both @file{$prefix/include} and
 @file{$exec_prefix/include} are available to the compiler.
 
 @item @option{--disable-shared}, @option{--disable-static}
+@cindex @code{--disable-shared}
+@cindex @code{--disable-static}
 By default both shared and static libraries are built (where possible), but
 one or other can be disabled.  Shared libraries result in smaller executables
 and permit code sharing between separate running processes, but on some CPUs
 are slightly slower, having a small cost on each function call.
 
 @item Native Compilation, @option{--build=CPU-VENDOR-OS}
+@cindex Native compilation
+@cindex Build system
+@cindex @code{--build}
 For normal native compilation, the system can be specified with
 @samp{--build}.  By default @samp{./configure} uses the output from running
 @samp{./config.guess}.  On some systems @samp{./config.guess} can determine
@@ -679,6 +687,8 @@ to see what it should be, if you don't know already.
 
 @item Cross Compilation, @option{--host=CPU-VENDOR-OS}
 @cindex Cross compiling
+@cindex Host system
+@cindex @code{--host}
 When cross-compiling, the system used for compiling is given by @samp{--build}
 and the system where the library will run is given by @samp{--host}.  For
 example when using a FreeBSD Athlon system to build GNU/Linux m68k binaries,
@@ -891,6 +901,8 @@ See @ref{ABI and ISA}, for the available choices on relevant CPUs, and what
 applications need to do.
 
 @item @option{CC}, @option{CFLAGS}
+@cindex C compiler
+@cindex @code{CC}
 @cindex @code{CFLAGS}
 By default the C compiler used is chosen from among some likely candidates,
 with @command{gcc} normally preferred if it's present.  The usual
@@ -926,6 +938,7 @@ done separately in some configure tests, and in the @samp{ansi2knr} support
 for K&R compilers.
 
 @item @option{CC_FOR_BUILD}
+@cindex @code{CC_FOR_BUILD}
 Some build-time programs are compiled and run to generate host-specific data
 tables.  @samp{CC_FOR_BUILD} is the compiler used for this.  It doesn't need
 to be in any particular ABI or mode, it merely needs to generate executables
@@ -938,6 +951,7 @@ they can be included as for instance @samp{CC_FOR_BUILD="cc -whatever"}.
 
 @item C++ Support, @option{--enable-cxx}
 @cindex C++ support
+@cindex @code{--enable-cxx}
 C++ support in GMP can be enabled with @samp{--enable-cxx}, in which case a
 C++ compiler will be required.  As a convenience @samp{--enable-cxx=detect}
 can be used to enable C++ support only if a compiler can be found.  The C++
@@ -960,6 +974,8 @@ built it, since name mangling and runtime support are usually incompatible
 between different compilers.
 
 @item @option{CXX}, @option{CXXFLAGS}
+@cindex C++ compiler
+@cindex @code{CXX}
 @cindex @code{CXXFLAGS}
 When C++ support is enabled, the C++ compiler and its flags can be set with
 variables @samp{CXX} and @samp{CXXFLAGS} in the usual way.  The default for
@@ -984,8 +1000,10 @@ C++ code, only @command{g++} will invoke the linker the right way when
 building an executable or shared library from object files.
 
 @item Temporary Memory, @option{--enable-alloca=<choice>}
+@cindex Temporary memory
 @cindex Stack overflow
 @cindex @code{alloca}
+@cindex @code{--enable-alloca}
 GMP allocates temporary workspace using one of the following three methods,
 which can be selected with for instance
 @samp{--enable-alloca=malloc-reentrant}.
@@ -1036,6 +1054,7 @@ debugging memory related problems (@pxref{Debugging}).
 
 @item FFT Multiplication, @option{--disable-fft}
 @cindex FFT multiplication
+@cindex @code{--disable-fft}
 By default multiplications are done using Karatsuba, 3-way Toom, and
 Fermat FFT.  The FFT is only used on large to very large operands and can be
 disabled to save code size if desired.
@@ -1043,12 +1062,14 @@ disabled to save code size if desired.
 @item Berkeley MP, @option{--enable-mpbsd}
 @cindex Berkeley MP compatible functions
 @cindex BSD MP compatible functions
+@cindex @code{--enable-mpbsd}
 The Berkeley MP compatibility library (@file{libmp}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item MPFR, @option{--enable-mpfr}
 @cindex MPFR
+@cindex @code{--enable-mpfr}
 The optional MPFR functions are built and installed only if
 @option{--enable-mpfr} is used.  These are in a separate library
 @file{libmpfr.a} and are documented separately too (@pxref{Introduction to
@@ -1056,13 +1077,17 @@ MPFR,, Introduction to MPFR, mpfr, MPFR}).
 
 @item Assertion Checking, @option{--enable-assert}
 @cindex Assertion checking
+@cindex @code{--enable-assert}
 This option enables some consistency checking within the library.  This can be
 of use while debugging, @pxref{Debugging}.
 
 @item Execution Profiling, @option{--enable-profiling=prof/gprof/instrument}
+@cindex Execution profiling
+@cindex @code{--enable-profiling}
 Enable profiling support, in one of various styles, @pxref{Profiling}.
 
 @item @option{MPN_PATH}
+@cindex @code{MPN_PATH}
 Various assembler versions of each mpn subroutines are provided.  For a given
 CPU, a search is made though a path to choose a version of each.  For example
 @samp{sparcv8} has
@@ -1077,24 +1102,31 @@ can specify a different path.  Normally this is completely unnecessary.
 
 @item Documentation
 @cindex Documentation formats
+@cindex Texinfo
 The source for the document you're now reading is @file{gmp.texi}, in Texinfo
 format, see @GMPreftopu{texinfo, Texinfo, http://www.gnu.org/manual/texinfo}.
 
+@cindex Postscript
+@cindex DVI
 Info format @samp{gmp.info} is included in the distribution.  The usual
 automake targets are available to make PostScript @file{gmp.ps} and DVI
 @file{gmp.dvi} (these will require various @TeX{} and Texinfo tools).
 
+@cindex HTML
 HTML can be produced with @samp{makeinfo --html}, see @GMPrefu{makeinfo html,,
 Generating HTML, texinfo, Texinfo,
 http://www.gnu.org/manual/texinfo/html_node/Generating-HTML.html}.  Or
 alternately with @samp{texi2html}, see @GMPreftopu{texi2html, Texinfo To HTML,
 http://www.mathematik.uni-kl.de/~obachman/Texi2html}.
 
+@cindex PDF
 PDF can be produced with @samp{texi2dvi --pdf} (@GMPpxrefu{PDF Output, PDF,,
 texinfo, Texinfo,
 http://www.gnu.org/manual/texinfo/html_node/PDF-Output.html}) or just with
 @samp{pdftex}.
 
+@cindex DocBook
+@cindex XML
 DocBook and XML can be generated by @command{makeinfo} too, see
 @GMPrefu{makeinfo options,, Options for @command{makeinfo}, texinfo, Texinfo,
 http://www.gnu.org/manual/texinfo/html_node/makeinfo-options.html}.
@@ -1376,15 +1408,18 @@ or perhaps the loader.
 
 When building a package for a CPU family, care should be taken to use
 @samp{--host} (or @samp{--build}) to choose the least common denominator among
-the CPUs which might use the package.  For example this might necessitate
-@samp{i386} for x86s, or plain @samp{sparc} (meaning V7) for SPARCs.
+the CPUs which might use the package.  For example this might mean plain
+@samp{sparc} (meaning V7) for SPARCs.  On x86s, @samp{i386} is a fat binary
+containing optimized low level routines for all CPUs and this is a good choice
+for packaging to run on all x86 chips (@pxref{Notes for Particular Systems}).
 
 Users who care about speed will want GMP built for their exact CPU type, to
-make use of the available optimizations.  Providing a way to suitably rebuild
-a package may be useful.  This could be as simple as making it possible for a
-user to omit @samp{--build} (and @samp{--host}) so @samp{./config.guess} will
-detect the CPU.  But a way to manually specify a @samp{--build} will be wanted
-for systems where @samp{./config.guess} is inexact.
+make best use of the available optimizations.  Providing a way to suitably
+rebuild a package may be useful.  This could be as simple as making it
+possible for a user to omit @samp{--build} (and @samp{--host}) so
+@samp{./config.guess} will detect the CPU.  But a way to manually specify a
+@samp{--build} will be wanted for systems where @samp{./config.guess} is
+inexact.
 
 Note that @file{gmp.h} is a generated file, and will be architecture and ABI
 dependent.
@@ -1445,8 +1480,8 @@ On some systems, the hardware floating point has a control mode which can set
 all operations to be done in a particular precision, for instance single,
 double or extended on x86 systems (x87 floating point).  The GMP functions
 involving a @code{double} cannot be expected to operate to their full
-precision when the hardware is in single precision mode.  Of course this sort
-of thing affects all code, including application code, not just GMP.
+precision when the hardware is in single precision mode.  Of course this
+affects all code, including application code, not just GMP.
 
 @item MacOS 9
 @cindex MacOS 9
@@ -1461,7 +1496,6 @@ the normal Unix-style @samp{./configure}.
 @cindex Cygwin
 @cindex DJGPP
 @cindex MINGW
-@cindex Interix
 On an MS-DOS system DJGPP can be used to build GMP, and on an MS Windows
 system Cygwin, DJGPP and MINGW can be used.  All three are excellent ports of
 GCC and the various GNU tools.
@@ -1472,6 +1506,8 @@ GCC and the various GNU tools.
 @uref{http://www.mingw.org/}
 @end display
 
+@cindex Interix
+@cindex Services for Unix
 Microsoft also publishes an Interix ``Services for Unix'' which can be used to
 build GMP on Windows (with a normal @samp{./configure}), but it's not free
 software.
@@ -1488,19 +1524,16 @@ default GMP builds only a static library, but a DLL can be built instead using
 @end example
 
 Static and DLL libraries can't both be built, since certain export directives
-in @file{gmp.h} must be different.  @samp{--enable-cxx} cannot be used when
-building a DLL, since libtool doesn't currently support C++ DLLs.  This might
-change in the future.
+in @file{gmp.h} must be different.
 
 A MINGW DLL build of GMP can be used with Microsoft C.  Libtool doesn't
-install @file{.lib} and @file{.exp} files, but they can be created with the
-following commands, where @file{/my/inst/dir} is the install directory (with a
-@file{lib} subdirectory).
+install a @file{libgmp-3.lib} file, but it can be created with the following
+commands, and copied to the install directory.
 
 @example
-lib /machine:IX86 /def:.libs/libgmp-3.dll-def
-cp libgmp-3.lib /my/inst/dir/lib
-cp .libs/libgmp-3.dll-exp /my/inst/dir/lib/libgmp-3.exp
+cd .libs
+impdef libgmp-3.def libgmp-3.dll
+lib /def:libgmp-3.def
 @end example
 
 MINGW uses the C runtime library @samp{msvcrt.dll} for I/O, so applications
@@ -1565,21 +1598,19 @@ GNU m4).
 @cindex x86
 @cindex 80x86
 @cindex i386
-@samp{i386} selects generic code which will run reasonably well on all x86
-chips.
+@cindex Fat binary
+@samp{i386} selects a ``fat binary'' build, where optimized low level
+subroutines are chosen at runtime according to the CPU detected.  This means
+more code, but gives good performance on all x86 chips.
 
-@samp{i586}, @samp{pentium} or @samp{pentiummmx} code is good for the intended
+@samp{i586}, @samp{pentium} or @samp{pentiummmx} code is good for its intended
 P5 Pentium chips, but quite slow when run on Intel P6 class chips (PPro, P-II,
 P-III)@.  @samp{i386} is a better choice when making binaries that must run on
 both.
 
-@samp{pentium4} and an SSE2 capable assembler are important for best results
-on Pentium 4.  The specific code is for instance roughly a 2@cross{} to
-3@cross{} speedup over the generic @samp{i386} code.
-
 @item x86 MMX and SSE2 Code
 @cindex MMX
-@cindex SSE
+@cindex SSE2
 If the CPU selected has MMX code but the assembler doesn't support it, a
 warning is given and non-MMX code is used instead.  This will be an inferior
 build, since the MMX code that's present is there because it's faster than the
@@ -2414,6 +2445,8 @@ they're a slowdown, adding overhead to each function call and each stack
 allocation.
 
 @item Heap Problems
+@cindex Heap problems
+@cindex Malloc problems
 The most likely cause of application problems with GMP is heap corruption.
 Failing to @code{init} GMP variables will have unpredictable effects, and
 corruption arising elsewhere in a program may well affect GMP.  Initializing
@@ -2520,6 +2553,7 @@ with checker can use a normal GMP build.
 A build of GMP with checking within GMP itself can be made.  This will run
 very very slowly.  On GNU/Linux for example,
 
+@cindex @command{checkergcc}
 @example
 ./configure --host=none-pc-linux-gnu CC=checkergcc
 @end example
@@ -2537,7 +2571,7 @@ accesses through bad pointers, and memory leaks.
 
 Recent versions of Valgrind are getting support for MMX and SSE/SSE2
 instructions, for past versions GMP will need to be configured not to use
-those, ie.@: for an x86 without them (for instance plain @samp{i386}).
+those, ie.@: for an x86 without them (for instance plain @samp{i486}).
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -2548,6 +2582,8 @@ application problem, see @ref{Reporting Bugs}.
 @node Profiling, Autoconf, Debugging, GMP Basics
 @section Profiling
 @cindex Profiling
+@cindex Execution profiling
+@cindex @code{--enable-profiling}
 
 Running a program under a profiler is a good way to find where it's spending
 most time and where improvements can be best sought.  The profiling choices
@@ -2655,6 +2691,7 @@ Autoconf based applications can easily check whether GMP is installed.  The
 only thing to be noted is that GMP library symbols from version 3 onwards have
 prefixes like @code{__gmpz}.  The following therefore would be a simple test,
 
+@cindex @code{AC_CHECK_LIB}
 @example
 AC_CHECK_LIB(gmp, __gmpz_init)
 @end example
@@ -2682,20 +2719,9 @@ An alternative would be to test the version number in @file{gmp.h} using say
 @code{AC_EGREP_CPP}.  That would make it possible to test the exact version,
 if some particular sub-minor release is known to be necessary.
 
-An application that can use either GMP 2 or 3 will need to test for
-@code{__gmpz_init} (GMP 3 and up) or @code{mpz_init} (GMP 2), and it's also
-worth checking for @file{libgmp2} since Debian GNU/Linux systems used that
-name in the past.  For example,
-
-@example
-AC_CHECK_LIB(gmp, __gmpz_init, ,
-  [AC_CHECK_LIB(gmp, mpz_init, ,
-    [AC_CHECK_LIB(gmp2, mpz_init)])])
-@end example
-
-In general it's suggested that applications should simply demand a new enough
-GMP rather than trying to provide supplements for features not available in
-past versions.
+In general it's recommended that applications should simply demand a new
+enough GMP rather than trying to provide supplements for features not
+available in past versions.
 
 Occasionally an application will need or want to know the size of a type at
 configuration or preprocessing time, not just with @code{sizeof} in the code.
@@ -7294,20 +7320,23 @@ above.
 
 Karatsuba multiplication is asymptotically an @math{O(N^@W{1.585})} algorithm,
 the exponent being @m{\log3/\log2,log(3)/log(2)}, representing 3 multiplies
-each 1/2 the size of the inputs.  This is a big improvement over the basecase
-multiply at @math{O(N^2)} and the advantage soon overcomes the extra additions
-Karatsuba performs.
+each @math{1/2} the size of the inputs.  This is a big improvement over the
+basecase multiply at @math{O(N^2)} and the advantage soon overcomes the extra
+additions Karatsuba performs.  @code{MUL_KARATSUBA_THRESHOLD} can be as little
+as 10 limbs.  The @code{SQR} threshold is usually about twice the @code{MUL}.
 
-@code{MUL_KARATSUBA_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
-threshold is usually about twice the @code{MUL}.  The basecase algorithm will
-take a time of the form @m{M(N) = aN^2 + bN + c, M(N) = a*N^2 + b*N + c} and
-the Karatsuba algorithm @m{K(N) = 3M(N/2) + dN + e, K(N) = 3*M(N/2) + d*N +
-e}.  Clearly per-crossproduct speedups in the basecase code reduce @math{a}
-and decrease the threshold, but linear style speedups reducing @math{b} will
-actually increase the threshold.  The latter can be seen for instance when
-adding an optimized @code{mpn_sqr_diagonal} to @code{mpn_sqr_basecase}.  Of
-course all speedups reduce total time, and in that sense the algorithm
-thresholds are merely of academic interest.
+The basecase algorithm will take a time of the form @m{M(N) = aN^2 + bN + c,
+M(N) = a*N^2 + b*N + c} and the Karatsuba algorithm @m{K(N) = 3M(N/2) + dN +
+e, K(N) = 3*M(N/2) + d*N + e}, which expands to @m{K(N) = {3\over4} aN^2 +
+{3\over2} bN + 3c + dN + e, K(N) = 3/4*a*N^2 + 3/2*b*N + 3*c + d*N + e}.  The
+factor @m{3\over4, 3/4} for @math{a} means per-crossproduct speedups in the
+basecase code will increase the threshold since they benefit @math{M(N)} more
+than @math{K(N)}.  And conversely the @m{3\over2, 3/2} for @math{b} means
+linear style speedups of @math{b} will increase the threshold since they
+benefit @math{K(N)} more than @math{M(N)}.  The latter can be seen for
+instance when adding an optimized @code{mpn_sqr_diagonal} to
+@code{mpn_sqr_basecase}.  Of course all speedups reduce total time, and in
+that sense the algorithm thresholds are merely of academic interest.
 
 
 @node Toom 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
@@ -8488,7 +8517,7 @@ section 4.5.4 algorithm P (@pxref{References}).
 
 For an odd input @math{n}, and with @math{n = q@GMPmultiply{}2^k+1} where
 @math{q} is odd, this algorithm selects a random base @math{x} and tests
-whether @math{x^q @bmod{} n} is 1 or @math{-1} or an @m{x^{q2^j} \bmod n,
+whether @math{x^q @bmod{} n} is 1 or @math{-1}, or an @m{x^{q2^j} \bmod n,
 x^(q*2^j) mod n} is @math{1}, for @math{1@le{}j@le{}k}.  If so then @math{n}
 is probably prime, if not then @math{n} is definitely composite.
 
@@ -8498,7 +8527,7 @@ a strong pseudoprime to more than @math{1/4} of all bases (see Knuth exercise
 22), hence with @math{x} chosen at random there's no more than a @math{1/4}
 chance a ``probable prime'' will in fact be composite.
 
-Actually strong pseudoprimes are quite rare, making the test much more
+In fact strong pseudoprimes are quite rare, making the test much more
 powerful than this analysis would suggest, but @math{1/4} is all that's proven
 for an arbitrary @math{n}.
 
@@ -9169,6 +9198,7 @@ the unrolling can then be handled as desired.
 
 @node Internals, Contributors, Algorithms, Top
 @chapter Internals
+@cindex Internals
 
 @strong{This chapter is provided only for informational purposes and the
 various internals described here may change in future GMP releases.
@@ -9883,6 +9913,7 @@ volume 43, number 8, August 1994, pp.@: 899-908.
 @appendix GNU Free Documentation License
 @cindex GNU Free Documentation License
 @cindex Free Documentation License
+@cindex Documentation license
 @include fdl.texi
 
 
