@@ -1,3 +1,8 @@
+2000-08-01  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/popcount.c: Disable SPARC v9 popc_limb pattern.
+	* mpn/generic/hamdist.c: Likewise.
+
 2000-08-01  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/tests/try.c (try_init): Account for ALIGNMENTS when sizing
