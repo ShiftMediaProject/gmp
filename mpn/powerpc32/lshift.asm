@@ -1,7 +1,7 @@
 dnl  PowerPC-32 mpn_lshift -- Shift a number left.
 dnl
 dnl      cycles/limb
-dnl 604e:    2.0
+dnl 604e:    3.0
 dnl 750:     3.0
 
 dnl Copyright 1995, 1998, 2000, 2002 Free Software Foundation, Inc.

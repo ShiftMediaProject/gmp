@@ -1,7 +1,7 @@
 dnl  PowerPC 750 mpn_sub_n -- subtract limb vectors.
 dnl
 dnl        cycles/limb
-dnl  604e:     2.67
+dnl  604e:     4.0
 dnl  750:      4.0
 
 dnl  Copyright 2002 Free Software Foundation, Inc.

@@ -1,7 +1,7 @@
 dnl PowerPC-32 mpn_rshift -- Shift a number right.
 dnl
 dnl      cycles/limb
-dnl 604e:    3.3
+dnl 604e:    5.0
 dnl 750:     4.0
 
 dnl Copyright 1995, 2000, 2002 Free Software Foundation, Inc.
