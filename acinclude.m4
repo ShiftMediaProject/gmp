@@ -652,6 +652,40 @@ fi
 ])
 
 
+dnl  GMP_GCC_WA_MCPU(CC+CFLAGS, NEWFLAG [,ACTION-YES [,ACTION-NO]])
+dnl  --------------------------------------------------------------
+dnl  Check whether gcc (or gas rather) accepts a flag like "-Wa,-mev67".
+dnl
+dnl  Gas doesn't give an error for an unknown cpu, it only prints a warning
+dnl  like "Warning: Unknown CPU identifier `ev78'".
+dnl
+dnl  This is intended for use on alpha, since only recent versions of gas
+dnl  accept -mev67, but there's nothing here that's alpha specific.
+
+AC_DEFUN(GMP_GCC_WA_MCPU,
+[AC_MSG_CHECKING([assembler $1 $2])
+result=no
+cat >conftest.c <<EOF
+int main () {}
+EOF
+gmp_compile="$1 $2 -c conftest.c >conftest.out 2>&1"
+if AC_TRY_EVAL(gmp_compile); then
+  if grep "Unknown CPU identifier" conftest.out >/dev/null; then : ;
+  else
+    result=yes
+  fi    
+fi
+cat conftest.out >&AC_FD_CC
+rm -f conftest*
+AC_MSG_RESULT($result)
+if test "$result" = yes; then
+  ifelse([$3],,:,[$3])
+else
+  ifelse([$4],,:,[$4])
+fi
+])
+
+
 dnl  GMP_PROG_CXX_WORKS(cxx/cxxflags [, ACTION-YES [,ACTION-NO]])
 dnl  ------------------------------------------------------------
 dnl  Check whether cxx/cxxflags can compile and link.
