@@ -712,7 +712,7 @@ rm -f conftest.*
 if test $gmp_cv_c_ansi2knr = no; then
   U= ANSI2KNR=
 else
-  U=  ANSI2KNR=./ansi2knr
+  U=_ ANSI2KNR=./ansi2knr
   # Ensure some checks needed by ansi2knr itself.
   AC_HEADER_STDC
   AC_CHECK_HEADERS(string.h)
