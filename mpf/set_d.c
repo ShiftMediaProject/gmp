@@ -22,12 +22,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#if BITS_PER_MP_LIMB == 64
-#define NLIMBS 2
-#else
-#define NLIMBS 3
-#endif
-
 void
 #if __STDC__
 mpf_set_d (mpf_ptr r, double d)
@@ -39,9 +33,15 @@ mpf_set_d (r, d)
 {
   int negative;
 
+  if (d == 0)
+    {
+      SIZ(r) = 0;
+      EXP(r) = 0;
+      return;
+    }
   negative = d < 0;
   d = ABS (d);
 
   EXP(r) = __gmp_extract_double (PTR(r), d);
-  SIZ(r) = negative ? -NLIMBS : NLIMBS;
+  SIZ(r) = negative ? -LIMBS_PER_DOUBLE : LIMBS_PER_DOUBLE;
 }
