@@ -27,14 +27,14 @@ MA 02111-1307, USA. */
 #define UDIV_TIME	2360
 #endif
 
-#define KARATSUBA_MUL_THRESHOLD       87
-#define TOOM3_MUL_THRESHOLD          159
+#define KARATSUBA_MUL_THRESHOLD     4000
+#define TOOM3_MUL_THRESHOLD         5000
 
-#define KARATSUBA_SQR_THRESHOLD      199
-#define TOOM3_SQR_THRESHOLD          399
+#define KARATSUBA_SQR_THRESHOLD     3000
+#define TOOM3_SQR_THRESHOLD         4000
 
 #define SB_PREINV_THRESHOLD            0  /* (preinv always) */
-#define DC_THRESHOLD                 874
+#define DC_THRESHOLD               10000
 #define POWM_THRESHOLD               257
 
 #define FIB_THRESHOLD                200
@@ -49,13 +49,3 @@ MA 02111-1307, USA. */
 #define USE_PREINV_MOD_1               1  /* (preinv always) */
 #define DIVREM_2_THRESHOLD             0  /* (preinv always) */
 #define MODEXACT_1_ODD_THRESHOLD       0
-
-#define FFT_MUL_TABLE  { 336, 672, 1344, 2816, 5120, 12288, 49152, 0 }
-#define FFT_MODF_MUL_THRESHOLD       216
-#define FFT_MUL_THRESHOLD            736
-
-#define FFT_SQR_TABLE  { 1104, 2336, 5184, 9984, 21504, 45056, 0 }
-#define FFT_MODF_SQR_THRESHOLD       600
-#define FFT_SQR_THRESHOLD           3488
-
-/* Tuneup completed successfully, took 302 seconds */
