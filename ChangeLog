@@ -1,3 +1,8 @@
+2000-07-22  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.h: Decrease the amount of data used for gcd and powm
+	measuring, to make the tune go a bit faster.
+
 2000-07-21  Kent Boortz  <kent@erix.ericsson.se>
 
 	* macos/Asm*, macos/CmnObj, macos/Mp*: Directories no longer created
