@@ -2126,7 +2126,7 @@ AC_CACHE_CHECK([how to define a 32-bit word],
     ;;
   *-*-*)
     gmp_tmp_val=
-    for gmp_tmp_op in .long .word; do
+    for gmp_tmp_op in .long .word data4; do
       GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_data
 	$gmp_cv_asm_globl	foo
