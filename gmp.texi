@@ -2211,9 +2211,9 @@ allocation function (@pxref{Custom Allocation}).  The block will be
 @code{strlen(str)+1} bytes, that being exactly enough for the string and
 null-terminator.
 
-If @var{str} is not @code{NULL}, it should point to a block of storage enough
-large for the result, that being @code{mpz_sizeinbase (@var{op}, @var{base}) +
-2}.  The two extra bytes are for a possible minus sign, and the
+If @var{str} is not @code{NULL}, it should point to a block of storage large
+enough for the result, that being @code{mpz_sizeinbase (@var{op}, @var{base})
++ 2}.  The two extra bytes are for a possible minus sign, and the
 null-terminator.
 
 A pointer to the result string is returned, being either the allocated block,
