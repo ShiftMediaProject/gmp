@@ -1,3 +1,52 @@
+2001-03-01  Kevin Ryde  <kevin@swox.se>
+
+	* mpbsd/rpow.c: New file.
+	* mpbsd/Makefile.am (libmpbsd_la_SOURCES): Add it
+	(nodist_libmpbsd_la_SOURCES): Remove pow_ui.c.
+	* Makefile.am (MPBSD_OBJECTS): Add rpow.lo, remove pow_ui.lo.
+	(libmp_la_DEPENDENCIES): Add mpz/n_pow_ui.lo.
+
+	* mpz/ui_pow_ui.c: Rewrite using mpz_n_pow_ui.
+	* mpz/pow_ui.c: Ditto, and no longer provide rpow for mpbsd.
+
+	* mpz/n_pow_ui.c: New file, rewrite of pow_ui.c and ui_pow_ui.c.  Use
+	less temporary memory, strip factors of 2 from the base, use mpn_mul_2
+	if available.
+	* mpz/si_pow_ui.c: New file.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Add them.
+	* Makefile.am (MPZ_OBJECTS): Ditto.
+	* gmp-impl.h (mpz_n_pow_ui): Add prototype.
+	* gmp-h.in (mpz_si_pow_ui): Add prototype.
+	* gmp.texi (Integer Exponentiation): Add mpz_si_pow_ui.
+
+	* acinclude.m4 (GMP_C_SIZES): Add BITS_PER_ULONG.
+	Correction to mp_limb_t working check.
+	* configure.in (limb_chosen): New variable.
+	* tests/t-constants.c (BITS_PER_ULONG): Check this value.
+	Add some reminders about tests that fail on Cray.
+
+	* tests/refmpn.c (refmpn_mul_2): New function.
+	* tests/refmpz.c (refmpz_pow_ui): Copied from tests/mpz/t-pow_ui.c
+	* tests/tests.h: Add prototypes.
+
+	* configure.in (none-*-*): Add ABI=longlong.
+	* doc/configuration (Long long limb testing): Describe it.
+
+	* gmp.texi (Low-level Functions): Move some commented out remarks ...
+	* mpn/generic/mul_basecase.c: ... to here.
+
+	* mpn/x86/README: Note "%=" as an alternative to "1:" in __asm__.
+	
+	* tests/trace.c (mp_trace_start): Print "bin" for binary.
+
+	* mpn/generic/dump.c: Add a couple of casts to keep gcc quiet.
+
+	* gmp-h.in (mpn_incr_u, mpn_decr_u): Add parens around arguments.
+
+	* mpbsd/mout.c, mpbsd/mtox.c (num_to_text): Remove unused variable.
+
+	* mpfr/set_d.c (mpfr_get_d2): Declare "q" for 64-bit limbs.
+
 2001-02-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/pa64w/udiv_qrnnd.asm: Tune.
