@@ -595,7 +595,8 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
 /* Sets (a, b, c, d)  <--  (b, c, d, a) */
 #define HGCD_SWAP4_LEFT(row)				\
 do {							\
-  struct hgcd_row __hgcd_swap4_left_tmp = row[0];	\
+  struct hgcd_row __hgcd_swap4_left_tmp;                \
+  __hgcd_swap4_left_tmp = row[0];                       \
   row[0] = row[1];					\
   row[1] = row[2];					\
   row[2] = row[3];					\
@@ -605,7 +606,8 @@ do {							\
 /* Sets (a, b, c, d)  <--  (d, a, b, c) */
 #define HGCD_SWAP4_RIGHT(row)				\
 do {							\
-  struct hgcd_row __hgcd_swap4_right_tmp = row[3];	\
+  struct hgcd_row __hgcd_swap4_right_tmp;               \
+  __hgcd_swap4_right_tmp = row[3];                      \
   row[3] = row[2];					\
   row[2] = row[1];					\
   row[1] = row[0];					\
@@ -615,7 +617,8 @@ do {							\
 /* Sets (a, b, c, d)  <--  (c, d, a, b) */
 #define HGCD_SWAP4_2(row)				\
 do {							\
-  struct hgcd_row __hgcd_swap4_2_tmp = row[0];	\
+  struct hgcd_row __hgcd_swap4_2_tmp;                   \
+  __hgcd_swap4_2_tmp = row[0];                          \
   row[0] = row[2];					\
   row[2] = __hgcd_swap4_2_tmp;				\
   __hgcd_swap4_2_tmp = row[1];				\
@@ -626,7 +629,8 @@ do {							\
 /* Sets (a, b, c)  <--	(b, c, a) */
 #define HGCD_SWAP3_LEFT(row)				\
 do {							\
-  struct hgcd_row __hgcd_swap4_left_tmp = row[0];	\
+  struct hgcd_row __hgcd_swap4_left_tmp;                \
+  __hgcd_swap4_left_tmp = row[0];                       \
   row[0] = row[1];					\
   row[1] = row[2];					\
   row[2] = __hgcd_swap4_left_tmp;			\
