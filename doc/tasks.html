@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 17 Sep 2003.  An up-to-date version is available at
+  This file current as of 12 Oct 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -303,11 +303,15 @@ MA 02111-1307, USA.
 <li> Alpha 21264 ev67: Use <code>ctlz</code> and <code>cttz</code> for
      <code>count_leading_zeros</code> and<code>count_trailing_zeros</code>.
      Use inline for gcc, probably want asm files for elsewhere.
-<li> Alpha ev68: GCC 3.4 introduces <code>__builtin_ctz</code> and
-     <code>__builtin_clz</code> using the <code>cttz</code> and
-     <code>ctlz</code> instructions.  These builtins might give GCC more
-     information about sheduling etc than the <code>asm</code> blocks
-     currently used.
+<li> Alpha ev67/ev68: GCC 3.4 introduces <code>__builtin_ctzl</code>,
+     <code>__builtin_clzl</code> and <code>__builtin_popcountl</code> using
+     the corresponding CIX <code>ct</code> instructions.  These builtins might
+     give GCC more information about sheduling etc than the <code>asm</code>
+     blocks currently used.
+<li> Alpha ev67/ev68: <code>mpn_popcount</code> and <code>mpn_hamdist</code>
+     should use <code>ctpop</code>.  For instance the GMP 4.1.2 C code with
+     gcc asm <code>ctpop</code> runs faster than the current 4-limb
+     accumulation C code.
 <li> Alpha Unicos: Apparently there's no <code>alloca</code> on this system,
      making <code>configure</code> choose the slower
      <code>malloc-reentrant</code> allocation method.  Is there a better way?
@@ -324,7 +328,7 @@ MA 02111-1307, USA.
      current <code>mpn_popcount</code>.
 <li> Itanium: GCC 3.4 introduces <code>__builtin_popcount</code> which can be
      used instead of an <code>asm</code> block.  The builtin should give gcc
-     more information about sheduling and bundling.
+     more information about scheduling, bundling and predication.
      <code>__builtin_ctz</code> similarly (it just uses popcount as per
      current longlong.h).
 <li> UltraSPARC/64: Optimize <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
