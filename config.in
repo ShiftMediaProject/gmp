@@ -521,8 +521,14 @@ MA 02111-1307, USA.
 /* Define to 1 if --enable-mpfr */
 #undef WANT_MPFR
 
+/* Define to 1 if --enable-profiling=gprof */
+#undef WANT_PROFILING_GPROF
+
 /* Define to 1 if --enable-profiling=instrument */
 #undef WANT_PROFILING_INSTRUMENT
+
+/* Define to 1 if --enable-profiling=prof */
+#undef WANT_PROFILING_PROF
 
 /* Define one of these to 1 for the desired temporary memory allocation
    method, per --enable-alloca. */
