@@ -33,20 +33,6 @@ MA 02111-1307, USA. */
 #define SIZE 4
 #endif
 
-void
-MPQ_CHECK_FORMAT (q)
-     mpq_t q;
-{
-  mp_size_t n;
-
-  n = ABSIZ (mpq_numref (q));
-  if (n != 0)
-    ASSERT_ALWAYS (PTR(mpq_numref(q))[n - 1] != 0);
-
-  n = ABSIZ (mpq_denref (q));
-  if (n != 0)
-    ASSERT_ALWAYS (PTR(mpq_denref(q))[n - 1] != 0);
-}
 
 main (argc, argv)
      int argc;
