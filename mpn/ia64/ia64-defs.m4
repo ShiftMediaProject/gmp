@@ -81,11 +81,11 @@ m4_assert_numargs_range(1,2)
 m4_assert_defined(`WANT_ASSERT')
 `ifelse(WANT_ASSERT,1,
 `	;;
-ifelse($2,,,
+ifelse(`$2',,,
 `$2
 	;;
 ')
-ifelse($1,,,
+ifelse(`$1',,,
 `($1)	br	.LASSERTok`'ASSERT_label_counter ;;
 	cmp.ne	p6,p6 = r0, r0	C illegal instruction
 	;;
