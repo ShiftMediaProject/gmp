@@ -10,6 +10,10 @@
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Rewrite.
 	(mpn_lc): New static function.
 
+	* mpf/urandom.c (mpf_urandomb): Add third parameter, nbits.  (Not
+	used yet!)  
+	Change parameter order to mpn_rawrandom().
+
 2000-04-01  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_DATA): Plain .data for hpux.
