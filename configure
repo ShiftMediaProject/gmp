@@ -10977,30 +10977,33 @@ check (va_alist)
 #endif
 
   ret = vsnprintf (buf, 4, fmt, ap);
-  if (ret == -1)
+
+  if (strcmp (buf, "hel") != 0)
     exit (1);
-  if (strlen (buf) > 3)
+
+  /* allowed return values */
+  if (ret != -1 && ret != 3 && ret != 11)
     exit (2);
 }
 
 int
 main ()
 {
-  check ("hello world\n");
+  check ("hello world");
   exit (0);
 }
 
 _ACEOF
 rm -f conftest$ac_exeext
-if { (eval echo "$as_me:10995: \"$ac_link\"") >&5
+if { (eval echo "$as_me:10998: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:10998: \$? = $ac_status" >&5
+  echo "$as_me:11001: \$? = $ac_status" >&5
   (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:11000: \"$ac_try\"") >&5
+  { (eval echo "$as_me:11003: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:11003: \$? = $ac_status" >&5
+  echo "$as_me:11006: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   gmp_cv_func_vsnprintf=yes
 else
@@ -11013,10 +11016,10 @@ rm -f core core.* *.core conftest$ac_exeext conftest.$ac_ext
 fi
 
 fi
-echo "$as_me:11016: result: $gmp_cv_func_vsnprintf" >&5
+echo "$as_me:11019: result: $gmp_cv_func_vsnprintf" >&5
 echo "${ECHO_T}$gmp_cv_func_vsnprintf" >&6
   if test "$gmp_cv_func_vsnprintf" = probably; then
-    { echo "$as_me:11019: WARNING: cannot check for properly working vsnprintf when cross compiling, will assume it's ok" >&5
+    { echo "$as_me:11022: WARNING: cannot check for properly working vsnprintf when cross compiling, will assume it's ok" >&5
 echo "$as_me: WARNING: cannot check for properly working vsnprintf when cross compiling, will assume it's ok" >&2;}
   fi
   if test "$gmp_cv_func_vsnprintf" != no; then
@@ -11153,7 +11156,7 @@ EOF
       fi
     done
     if test $found = no; then
-      { { echo "$as_me:11156: error: no version of $tmp_fn found in path: $path" >&5
+      { { echo "$as_me:11159: error: no version of $tmp_fn found in path: $path" >&5
 echo "$as_me: error: no version of $tmp_fn found in path: $path" >&2;}
    { (exit 1); exit 1; }; }
     fi
@@ -11168,7 +11171,7 @@ fi
 # Don't demand an m4 unless it's actually needed.
 if test $found_asm = yes; then
 
-echo "$as_me:11171: checking for suitable m4" >&5
+echo "$as_me:11174: checking for suitable m4" >&5
 echo $ECHO_N "checking for suitable m4... $ECHO_C" >&6
 if test "${gmp_cv_prog_m4+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11204,7 +11207,7 @@ EOF
     done
     IFS="$ac_save_ifs"
     if test -z "$gmp_cv_prog_m4"; then
-      { { echo "$as_me:11207: error: No usable m4 in \$PATH or /usr/5bin (see config.log for reasons)." >&5
+      { { echo "$as_me:11210: error: No usable m4 in \$PATH or /usr/5bin (see config.log for reasons)." >&5
 echo "$as_me: error: No usable m4 in \$PATH or /usr/5bin (see config.log for reasons)." >&2;}
    { (exit 1); exit 1; }; }
     fi
@@ -11212,11 +11215,11 @@ echo "$as_me: error: No usable m4 in \$PATH or /usr/5bin (see config.log for rea
   rm -f conftest.m4
 fi
 fi
-echo "$as_me:11215: result: $gmp_cv_prog_m4" >&5
+echo "$as_me:11218: result: $gmp_cv_prog_m4" >&5
 echo "${ECHO_T}$gmp_cv_prog_m4" >&6
 M4="$gmp_cv_prog_m4"
 
-echo "$as_me:11219: checking if m4wrap produces spurious output" >&5
+echo "$as_me:11222: checking if m4wrap produces spurious output" >&5
 echo $ECHO_N "checking if m4wrap produces spurious output... $ECHO_C" >&6
 if test "${gmp_cv_m4_m4wrap_spurious+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11238,7 +11241,7 @@ else
 fi
 
 fi
-echo "$as_me:11241: result: $gmp_cv_m4_m4wrap_spurious" >&5
+echo "$as_me:11244: result: $gmp_cv_m4_m4wrap_spurious" >&5
 echo "${ECHO_T}$gmp_cv_m4_m4wrap_spurious" >&6
 
 echo "define(<M4WRAP_SPURIOUS>,<$gmp_cv_m4_m4wrap_spurious>)" >> $gmp_tmpconfigm4
@@ -11253,7 +11256,7 @@ if test $found_asm = no && test $found_S = no; then
 fi
 
 if test "$gmp_asm_syntax_testing" != no; then
-  echo "$as_me:11256: checking how to switch to text section" >&5
+  echo "$as_me:11259: checking how to switch to text section" >&5
 echo $ECHO_N "checking how to switch to text section... $ECHO_C" >&6
 if test "${gmp_cv_asm_text+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11265,11 +11268,11 @@ else
 esac
 
 fi
-echo "$as_me:11268: result: $gmp_cv_asm_text" >&5
+echo "$as_me:11271: result: $gmp_cv_asm_text" >&5
 echo "${ECHO_T}$gmp_cv_asm_text" >&6
 echo "define(<TEXT>, <$gmp_cv_asm_text>)" >> $gmp_tmpconfigm4
 
-  echo "$as_me:11272: checking how to switch to data section" >&5
+  echo "$as_me:11275: checking how to switch to data section" >&5
 echo $ECHO_N "checking how to switch to data section... $ECHO_C" >&6
 if test "${gmp_cv_asm_data+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11280,11 +11283,11 @@ else
 esac
 
 fi
-echo "$as_me:11283: result: $gmp_cv_asm_data" >&5
+echo "$as_me:11286: result: $gmp_cv_asm_data" >&5
 echo "${ECHO_T}$gmp_cv_asm_data" >&6
 echo "define(<DATA>, <$gmp_cv_asm_data>)" >> $gmp_tmpconfigm4
 
-  echo "$as_me:11287: checking what assembly label suffix to use" >&5
+  echo "$as_me:11290: checking what assembly label suffix to use" >&5
 echo $ECHO_N "checking what assembly label suffix to use... $ECHO_C" >&6
 if test "${gmp_cv_asm_label_suffix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11296,11 +11299,11 @@ else
 esac
 
 fi
-echo "$as_me:11299: result: $gmp_cv_asm_label_suffix" >&5
+echo "$as_me:11302: result: $gmp_cv_asm_label_suffix" >&5
 echo "${ECHO_T}$gmp_cv_asm_label_suffix" >&6
 echo "define(<LABEL_SUFFIX>, <\$1$gmp_cv_asm_label_suffix>)" >> $gmp_tmpconfigm4
 
-  echo "$as_me:11303: checking how to export a symbol" >&5
+  echo "$as_me:11306: checking how to export a symbol" >&5
 echo $ECHO_N "checking how to export a symbol... $ECHO_C" >&6
 if test "${gmp_cv_asm_globl+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11311,11 +11314,11 @@ else
 esac
 
 fi
-echo "$as_me:11314: result: $gmp_cv_asm_globl" >&5
+echo "$as_me:11317: result: $gmp_cv_asm_globl" >&5
 echo "${ECHO_T}$gmp_cv_asm_globl" >&6
 echo "define(<GLOBL>, <$gmp_cv_asm_globl>)" >> $gmp_tmpconfigm4
 
-echo "$as_me:11318: checking if globals are prefixed by underscore" >&5
+echo "$as_me:11321: checking if globals are prefixed by underscore" >&5
 echo $ECHO_N "checking if globals are prefixed by underscore... $ECHO_C" >&6
 if test "${gmp_cv_asm_underscore+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11341,10 +11344,10 @@ EOF
     ;;
   esac
   gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&5"
-  if { (eval echo "$as_me:11344: \"$gmp_compile\"") >&5
+  if { (eval echo "$as_me:11347: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?
-  echo "$as_me:11347: \$? = $ac_status" >&5
+  echo "$as_me:11350: \$? = $ac_status" >&5
   (exit $ac_status); }; then
     eval tmp_result$tmp_underscore=yes
   else
@@ -11354,7 +11357,7 @@ done
 
 if test $tmp_result_ = yes; then
   if test $tmp_result = yes; then
-    { { echo "$as_me:11357: error: Test program unexpectedly links both with and without underscore." >&5
+    { { echo "$as_me:11360: error: Test program unexpectedly links both with and without underscore." >&5
 echo "$as_me: error: Test program unexpectedly links both with and without underscore." >&2;}
    { (exit 1); exit 1; }; }
   else
@@ -11364,7 +11367,7 @@ else
   if test $tmp_result = yes; then
     gmp_cv_asm_underscore=no
   else
-    { { echo "$as_me:11367: error: Test program links neither with nor without underscore." >&5
+    { { echo "$as_me:11370: error: Test program links neither with nor without underscore." >&5
 echo "$as_me: error: Test program links neither with nor without underscore." >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -11372,7 +11375,7 @@ fi
 rm -f conftes1* conftes2* a.out
 
 fi
-echo "$as_me:11375: result: $gmp_cv_asm_underscore" >&5
+echo "$as_me:11378: result: $gmp_cv_asm_underscore" >&5
 echo "${ECHO_T}$gmp_cv_asm_underscore" >&6
 if test "$gmp_cv_asm_underscore" = "yes"; then
 
@@ -11384,7 +11387,7 @@ echo 'define(<GSYM_PREFIX>, <>)' >>$gmp_tmpconfigm4
 
 fi
 
-echo "$as_me:11387: checking how to switch to read-only data section" >&5
+echo "$as_me:11390: checking how to switch to read-only data section" >&5
 echo $ECHO_N "checking how to switch to read-only data section... $ECHO_C" >&6
 if test "${gmp_cv_asm_rodata+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11401,10 +11404,10 @@ EOF
 echo "Test program:" >&5
 cat conftest.c >&5
 gmp_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c >&5"
-if { (eval echo "$as_me:11404: \"$gmp_compile\"") >&5
+if { (eval echo "$as_me:11407: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?
-  echo "$as_me:11407: \$? = $ac_status" >&5
+  echo "$as_me:11410: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   echo "Compiler output:" >&5
   cat conftest.s >&5
@@ -11434,11 +11437,11 @@ if { (eval echo "$as_me:11404: \"$gmp_compile\"") >&5
 fi
 
 fi
-echo "$as_me:11437: result: $gmp_cv_asm_rodata" >&5
+echo "$as_me:11440: result: $gmp_cv_asm_rodata" >&5
 echo "${ECHO_T}$gmp_cv_asm_rodata" >&6
 echo "define(<RODATA>, <$gmp_cv_asm_rodata>)" >> $gmp_tmpconfigm4
 
-  echo "$as_me:11441: checking if the export directive needs an attribute" >&5
+  echo "$as_me:11444: checking if the export directive needs an attribute" >&5
 echo $ECHO_N "checking if the export directive needs an attribute... $ECHO_C" >&6
 if test "${gmp_cv_asm_globl_attr+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11449,11 +11452,11 @@ else
 esac
 
 fi
-echo "$as_me:11452: result: $gmp_cv_asm_globl_attr" >&5
+echo "$as_me:11455: result: $gmp_cv_asm_globl_attr" >&5
 echo "${ECHO_T}$gmp_cv_asm_globl_attr" >&6
 echo "define(<GLOBL_ATTR>, <$gmp_cv_asm_globl_attr>)" >> $gmp_tmpconfigm4
 
-  echo "$as_me:11456: checking how the .type assembly directive should be used" >&5
+  echo "$as_me:11459: checking how the .type assembly directive should be used" >&5
 echo $ECHO_N "checking how the .type assembly directive should be used... $ECHO_C" >&6
 if test "${gmp_cv_asm_type+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11463,10 +11466,10 @@ else
 	.type	sym,${gmp_tmp_prefix}function
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11466: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11469: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11469: \$? = $ac_status" >&5
+  echo "$as_me:11472: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_type=".type	\$1,${gmp_tmp_prefix}\$2"
@@ -11486,11 +11489,11 @@ if test -z "$gmp_cv_asm_type"; then
 fi
 
 fi
-echo "$as_me:11489: result: $gmp_cv_asm_type" >&5
+echo "$as_me:11492: result: $gmp_cv_asm_type" >&5
 echo "${ECHO_T}$gmp_cv_asm_type" >&6
 echo "define(<TYPE>, <$gmp_cv_asm_type>)" >> $gmp_tmpconfigm4
 
-  echo "$as_me:11493: checking if the .size assembly directive works" >&5
+  echo "$as_me:11496: checking if the .size assembly directive works" >&5
 echo $ECHO_N "checking if the .size assembly directive works... $ECHO_C" >&6
 if test "${gmp_cv_asm_size+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11499,10 +11502,10 @@ else
 	.size	sym,1
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11502: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11505: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11505: \$? = $ac_status" >&5
+  echo "$as_me:11508: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_size=".size	\$1,\$2"
@@ -11515,11 +11518,11 @@ fi
 rm -f conftest*
 
 fi
-echo "$as_me:11518: result: $gmp_cv_asm_size" >&5
+echo "$as_me:11521: result: $gmp_cv_asm_size" >&5
 echo "${ECHO_T}$gmp_cv_asm_size" >&6
 echo "define(<SIZE>, <$gmp_cv_asm_size>)" >> $gmp_tmpconfigm4
 
-echo "$as_me:11522: checking what prefix to use for a local label" >&5
+echo "$as_me:11525: checking what prefix to use for a local label" >&5
 echo $ECHO_N "checking what prefix to use for a local label... $ECHO_C" >&6
 if test "${gmp_cv_asm_lsym_prefix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11534,15 +11537,15 @@ ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
 	.byte 0
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11537: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11540: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11540: \$? = $ac_status" >&5
+  echo "$as_me:11543: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   $NM conftest.o >&5 2>&5
   if test $? != 0; then
-    { echo "$as_me:11545: WARNING: NM failure, using default local label $gmp_cv_asm_lsym_prefix" >&5
+    { echo "$as_me:11548: WARNING: NM failure, using default local label $gmp_cv_asm_lsym_prefix" >&5
 echo "$as_me: WARNING: NM failure, using default local label $gmp_cv_asm_lsym_prefix" >&2;}
     gmp_found=yes
     break
@@ -11563,12 +11566,12 @@ rm -f conftest*
 done
 rm -f conftest*
 if test $gmp_found = no; then
-  { echo "$as_me:11566: WARNING: cannot determine local label, using default $gmp_cv_asm_lsym_prefix" >&5
+  { echo "$as_me:11569: WARNING: cannot determine local label, using default $gmp_cv_asm_lsym_prefix" >&5
 echo "$as_me: WARNING: cannot determine local label, using default $gmp_cv_asm_lsym_prefix" >&2;}
 fi
 
 fi
-echo "$as_me:11571: result: $gmp_cv_asm_lsym_prefix" >&5
+echo "$as_me:11574: result: $gmp_cv_asm_lsym_prefix" >&5
 echo "${ECHO_T}$gmp_cv_asm_lsym_prefix" >&6
 echo "define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)" >> $gmp_tmpconfigm4
 
@@ -11576,7 +11579,7 @@ cat >>confdefs.h <<EOF
 #define LSYM_PREFIX "$gmp_cv_asm_lsym_prefix"
 EOF
 
-echo "$as_me:11579: checking how to define a 32-bit word" >&5
+echo "$as_me:11582: checking how to define a 32-bit word" >&5
 echo $ECHO_N "checking how to define a 32-bit word... $ECHO_C" >&6
 if test "${gmp_cv_asm_w32+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11601,10 +11604,10 @@ foo$gmp_cv_asm_label_suffix
 	.byte	0
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11604: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11607: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11607: \$? = $ac_status" >&5
+  echo "$as_me:11610: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_tmp_val=`$NM conftest.o | grep foo | \
@@ -11626,17 +11629,17 @@ rm -f conftest*
     ;;
 esac
 if test -z "$gmp_cv_asm_w32"; then
-  { { echo "$as_me:11629: error: cannot determine how to define a 32-bit word" >&5
+  { { echo "$as_me:11632: error: cannot determine how to define a 32-bit word" >&5
 echo "$as_me: error: cannot determine how to define a 32-bit word" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
 fi
-echo "$as_me:11635: result: $gmp_cv_asm_w32" >&5
+echo "$as_me:11638: result: $gmp_cv_asm_w32" >&5
 echo "${ECHO_T}$gmp_cv_asm_w32" >&6
 echo "define(<W32>, <$gmp_cv_asm_w32>)" >> $gmp_tmpconfigm4
 
-echo "$as_me:11639: checking if .align assembly directive is logarithmic" >&5
+echo "$as_me:11642: checking if .align assembly directive is logarithmic" >&5
 echo $ECHO_N "checking if .align assembly directive is logarithmic... $ECHO_C" >&6
 if test "${gmp_cv_asm_align_log+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11651,10 +11654,10 @@ foo$gmp_cv_asm_label_suffix
 	.byte	2
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11654: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11657: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11657: \$? = $ac_status" >&5
+  echo "$as_me:11660: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_tmp_val=`$NM conftest.o | grep foo | \
@@ -11668,14 +11671,14 @@ else
   cat conftest.out >&5
   echo "configure: failed program was:" >&5
   cat conftest.s >&5
-  { { echo "$as_me:11671: error: cannot assemble alignment test" >&5
+  { { echo "$as_me:11674: error: cannot assemble alignment test" >&5
 echo "$as_me: error: cannot assemble alignment test" >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f conftest*
 
 fi
-echo "$as_me:11678: result: $gmp_cv_asm_align_log" >&5
+echo "$as_me:11681: result: $gmp_cv_asm_align_log" >&5
 echo "${ECHO_T}$gmp_cv_asm_align_log" >&6
 
 echo "define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)" >> $gmp_tmpconfigm4
@@ -11683,7 +11686,7 @@ echo "define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)" >> $gmp_tmpconfigm4
   case $host in
     m68*-*-*)
 
-echo "$as_me:11686: checking assembler instruction and register style" >&5
+echo "$as_me:11689: checking assembler instruction and register style" >&5
 echo $ECHO_N "checking assembler instruction and register style... $ECHO_C" >&6
 if test "${gmp_cv_asm_m68k_instruction+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11695,10 +11698,10 @@ for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
 	$i
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11698: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11701: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11701: \$? = $ac_status" >&5
+  echo "$as_me:11704: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_m68k_instruction=$i
@@ -11715,14 +11718,14 @@ rm -f conftest*
 done
 
 fi
-echo "$as_me:11718: result: $gmp_cv_asm_m68k_instruction" >&5
+echo "$as_me:11721: result: $gmp_cv_asm_m68k_instruction" >&5
 echo "${ECHO_T}$gmp_cv_asm_m68k_instruction" >&6
 case $gmp_cv_asm_m68k_instruction in
 "addl d0,d1")    want_dot_size=no;  want_register_percent=no  ;;
 "addl %d0,%d1")  want_dot_size=no;  want_register_percent=yes ;;
 "add.l d0,d1")   want_dot_size=yes; want_register_percent=no  ;;
 "add.l %d0,%d1") want_dot_size=yes; want_register_percent=yes ;;
-*) { { echo "$as_me:11725: error: cannot determine assembler instruction and register style" >&5
+*) { { echo "$as_me:11728: error: cannot determine assembler instruction and register style" >&5
 echo "$as_me: error: cannot determine assembler instruction and register style" >&2;}
    { (exit 1); exit 1; }; } ;;
 esac
@@ -11731,7 +11734,7 @@ echo "define(<WANT_REGISTER_PERCENT>, <\`$want_register_percent'>)" >> $gmp_tmpc
 
 echo "define(<WANT_DOT_SIZE>, <\`$want_dot_size'>)" >> $gmp_tmpconfigm4
 
-echo "$as_me:11734: checking assembler addressing style" >&5
+echo "$as_me:11737: checking assembler addressing style" >&5
 echo $ECHO_N "checking assembler addressing style... $ECHO_C" >&6
 if test "${gmp_cv_asm_m68k_addressing+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11739,14 +11742,14 @@ else
   case $gmp_cv_asm_m68k_instruction in
 addl*)  movel=movel ;;
 add.l*) movel=move.l ;;
-*) { { echo "$as_me:11742: error: oops, unrecognised gmp_cv_asm_m68k_instruction" >&5
+*) { { echo "$as_me:11745: error: oops, unrecognised gmp_cv_asm_m68k_instruction" >&5
 echo "$as_me: error: oops, unrecognised gmp_cv_asm_m68k_instruction" >&2;}
    { (exit 1); exit 1; }; } ;;
 esac
 case $gmp_cv_asm_m68k_instruction in
 *"%d0,%d1") dreg=%d0; areg=%a0 ;;
 *"d0,d1")   dreg=d0;  areg=a0  ;;
-*) { { echo "$as_me:11749: error: oops, unrecognised gmp_cv_asm_m68k_instruction" >&5
+*) { { echo "$as_me:11752: error: oops, unrecognised gmp_cv_asm_m68k_instruction" >&5
 echo "$as_me: error: oops, unrecognised gmp_cv_asm_m68k_instruction" >&2;}
    { (exit 1); exit 1; }; } ;;
 esac
@@ -11755,10 +11758,10 @@ cat >conftest.s <<EOF
 	$movel	$dreg, $areg@-
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11758: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11761: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11761: \$? = $ac_status" >&5
+  echo "$as_me:11764: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_m68k_addressing=mit
@@ -11771,10 +11774,10 @@ else
 	$movel	$dreg, -($areg)
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11774: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11777: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11777: \$? = $ac_status" >&5
+  echo "$as_me:11780: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_m68k_addressing=motorola
@@ -11782,7 +11785,7 @@ else
   cat conftest.out >&5
   echo "configure: failed program was:" >&5
   cat conftest.s >&5
-  { { echo "$as_me:11785: error: cannot determine assembler addressing style" >&5
+  { { echo "$as_me:11788: error: cannot determine assembler addressing style" >&5
 echo "$as_me: error: cannot determine assembler addressing style" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -11792,12 +11795,12 @@ fi
 rm -f conftest*
 
 fi
-echo "$as_me:11795: result: $gmp_cv_asm_m68k_addressing" >&5
+echo "$as_me:11798: result: $gmp_cv_asm_m68k_addressing" >&5
 echo "${ECHO_T}$gmp_cv_asm_m68k_addressing" >&6
 
 echo "define(<WANT_ADDRESSING>, <\`$gmp_cv_asm_m68k_addressing'>)" >> $gmp_tmpconfigm4
 
-echo "$as_me:11800: checking assembler shortest branches" >&5
+echo "$as_me:11803: checking assembler shortest branches" >&5
 echo $ECHO_N "checking assembler shortest branches... $ECHO_C" >&6
 if test "${gmp_cv_asm_m68k_branches+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11810,10 +11813,10 @@ foo$gmp_cv_asm_label_suffix
 	$i	foo
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11813: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11816: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11816: \$? = $ac_status" >&5
+  echo "$as_me:11819: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_m68k_branches=$i
@@ -11830,10 +11833,10 @@ rm -f conftest*
 done
 
 fi
-echo "$as_me:11833: result: $gmp_cv_asm_m68k_branches" >&5
+echo "$as_me:11836: result: $gmp_cv_asm_m68k_branches" >&5
 echo "${ECHO_T}$gmp_cv_asm_m68k_branches" >&6
 if test "$gmp_cv_asm_m68k_branches" = unknown; then
-  { { echo "$as_me:11836: error: cannot determine assembler branching style" >&5
+  { { echo "$as_me:11839: error: cannot determine assembler branching style" >&5
 echo "$as_me: error: cannot determine assembler branching style" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -11843,7 +11846,7 @@ echo "define(<WANT_BRANCHES>, <\`$gmp_cv_asm_m68k_branches'>)" >> $gmp_tmpconfig
       ;;
     power*-*-*)
 
-echo "$as_me:11846: checking if the assembler needs r on registers" >&5
+echo "$as_me:11849: checking if the assembler needs r on registers" >&5
 echo $ECHO_N "checking if the assembler needs r on registers... $ECHO_C" >&6
 if test "${gmp_cv_asm_powerpc_r_registers+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11853,10 +11856,10 @@ else
 	mtctr	6
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11856: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11859: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11859: \$? = $ac_status" >&5
+  echo "$as_me:11862: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_powerpc_r_registers=no
@@ -11869,10 +11872,10 @@ else
 	mtctr	r6
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11872: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11875: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11875: \$? = $ac_status" >&5
+  echo "$as_me:11878: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_powerpc_r_registers=yes
@@ -11880,7 +11883,7 @@ else
   cat conftest.out >&5
   echo "configure: failed program was:" >&5
   cat conftest.s >&5
-  { { echo "$as_me:11883: error: neither \"mtctr 6\" nor \"mtctr r6\" works" >&5
+  { { echo "$as_me:11886: error: neither \"mtctr 6\" nor \"mtctr r6\" works" >&5
 echo "$as_me: error: neither \"mtctr 6\" nor \"mtctr r6\" works" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -11890,7 +11893,7 @@ fi
 rm -f conftest*
 
 fi
-echo "$as_me:11893: result: $gmp_cv_asm_powerpc_r_registers" >&5
+echo "$as_me:11896: result: $gmp_cv_asm_powerpc_r_registers" >&5
 echo "${ECHO_T}$gmp_cv_asm_powerpc_r_registers" >&6
 
 echo "define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)" >> $gmp_tmpconfigm4
@@ -11909,7 +11912,7 @@ echo "include_mpn(\`powerpc32/aix.m4')" >> $gmp_tmpconfigm4i
 
     i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
 
-echo "$as_me:11912: checking if the .align directive accepts an 0x90 fill in .text" >&5
+echo "$as_me:11915: checking if the .align directive accepts an 0x90 fill in .text" >&5
 echo $ECHO_N "checking if the .align directive accepts an 0x90 fill in .text... $ECHO_C" >&6
 if test "${gmp_cv_asm_align_fill_0x90+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11921,10 +11924,10 @@ else
       	.align  4, 0x90
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11924: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11927: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11927: \$? = $ac_status" >&5
+  echo "$as_me:11930: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
@@ -11942,12 +11945,12 @@ fi
 rm -f conftest*
 
 fi
-echo "$as_me:11945: result: $gmp_cv_asm_align_fill_0x90" >&5
+echo "$as_me:11948: result: $gmp_cv_asm_align_fill_0x90" >&5
 echo "${ECHO_T}$gmp_cv_asm_align_fill_0x90" >&6
 
 echo "define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)" >> $gmp_tmpconfigm4
 
-echo "$as_me:11950: checking if the assembler takes cl with shldl" >&5
+echo "$as_me:11953: checking if the assembler takes cl with shldl" >&5
 echo $ECHO_N "checking if the assembler takes cl with shldl... $ECHO_C" >&6
 if test "${gmp_cv_asm_x86_shldl_cl+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11957,10 +11960,10 @@ else
 	shldl	%cl, %eax, %ebx
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:11960: \"$gmp_assemble\"") >&5
+if { (eval echo "$as_me:11963: \"$gmp_assemble\"") >&5
   (eval $gmp_assemble) 2>&5
   ac_status=$?
-  echo "$as_me:11963: \$? = $ac_status" >&5
+  echo "$as_me:11966: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   cat conftest.out >&5
   gmp_cv_asm_x86_shldl_cl=yes
@@ -11973,7 +11976,7 @@ fi
 rm -f conftest*
 
 fi
-echo "$as_me:11976: result: $gmp_cv_asm_x86_shldl_cl" >&5
+echo "$as_me:11979: result: $gmp_cv_asm_x86_shldl_cl" >&5
 echo "${ECHO_T}$gmp_cv_asm_x86_shldl_cl" >&6
 if test "$gmp_cv_asm_x86_shldl_cl" = "yes"; then
 
@@ -11987,7 +11990,7 @@ fi
 
       if test "$enable_profiling" != no; then
 
-echo "$as_me:11990: checking how to call x86 mcount" >&5
+echo "$as_me:11993: checking how to call x86 mcount" >&5
 echo $ECHO_N "checking how to call x86 mcount... $ECHO_C" >&6
 cat >conftest.c <<EOF
 foo(){bar();}
@@ -11995,10 +11998,10 @@ EOF
 
 if test "$enable_static" = yes; then
   gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c 1>&5"
-  if { (eval echo "$as_me:11998: \"$gmp_asmout_compile\"") >&5
+  if { (eval echo "$as_me:12001: \"$gmp_asmout_compile\"") >&5
   (eval $gmp_asmout_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12001: \$? = $ac_status" >&5
+  echo "$as_me:12004: \$? = $ac_status" >&5
   (exit $ac_status); }; then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_nonpic_reg=`sed -n '/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p' conftest.s`
@@ -12007,12 +12010,12 @@ if test "$enable_static" = yes; then
     fi
     mcount_nonpic_call=`grep 'call.*mcount' conftest.s`
     if test -z "$mcount_nonpic_call"; then
-      { { echo "$as_me:12010: error: Cannot find mcount call for non-PIC" >&5
+      { { echo "$as_me:12013: error: Cannot find mcount call for non-PIC" >&5
 echo "$as_me: error: Cannot find mcount call for non-PIC" >&2;}
    { (exit 1); exit 1; }; }
     fi
   else
-    { { echo "$as_me:12015: error: Cannot compile test program for non-PIC" >&5
+    { { echo "$as_me:12018: error: Cannot compile test program for non-PIC" >&5
 echo "$as_me: error: Cannot compile test program for non-PIC" >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -12020,10 +12023,10 @@ fi
 
 if test "$enable_shared" = yes; then
   gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&5"
-  if { (eval echo "$as_me:12023: \"$gmp_asmout_compile\"") >&5
+  if { (eval echo "$as_me:12026: \"$gmp_asmout_compile\"") >&5
   (eval $gmp_asmout_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12026: \$? = $ac_status" >&5
+  echo "$as_me:12029: \$? = $ac_status" >&5
   (exit $ac_status); }; then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_pic_reg=`sed -n 's/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p' conftest.s`
@@ -12032,12 +12035,12 @@ if test "$enable_shared" = yes; then
     fi
     mcount_pic_call=`grep 'call.*mcount' conftest.s`
     if test -z "$mcount_pic_call"; then
-      { { echo "$as_me:12035: error: Cannot find mcount call for PIC" >&5
+      { { echo "$as_me:12038: error: Cannot find mcount call for PIC" >&5
 echo "$as_me: error: Cannot find mcount call for PIC" >&2;}
    { (exit 1); exit 1; }; }
     fi
   else
-    { { echo "$as_me:12040: error: Cannot compile test program for PIC" >&5
+    { { echo "$as_me:12043: error: Cannot compile test program for PIC" >&5
 echo "$as_me: error: Cannot compile test program for PIC" >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -12052,7 +12055,7 @@ echo "define(<MCOUNT_PIC_REG>,    <\`$mcount_pic_reg'>)" >> $gmp_tmpconfigm4
 echo "define(<MCOUNT_PIC_CALL>,   <\`$mcount_pic_call'>)" >> $gmp_tmpconfigm4
 
 rm -f conftest.*
-echo "$as_me:12055: result: determined" >&5
+echo "$as_me:12058: result: determined" >&5
 echo "${ECHO_T}determined" >&6
 
       fi
@@ -12074,7 +12077,7 @@ for tmp_dir in $path; do
   fi
 done
 if test -z "$gmp_mparam_source"; then
-  { { echo "$as_me:12077: error: no version of gmp-mparam.h found in path: $path" >&5
+  { { echo "$as_me:12080: error: no version of gmp-mparam.h found in path: $path" >&5
 echo "$as_me: error: no version of gmp-mparam.h found in path: $path" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -12093,13 +12096,13 @@ __GMP_BITS_PER_MP_LIMB=`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*
 if test -n "$__GMP_BITS_PER_MP_LIMB" \
    && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
 else
-  echo "$as_me:12096: checking for mp_limb_t" >&5
+  echo "$as_me:12099: checking for mp_limb_t" >&5
 echo $ECHO_N "checking for mp_limb_t... $ECHO_C" >&6
 if test "${ac_cv_type_mp_limb_t+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 12102 "configure"
+#line 12105 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
@@ -12119,16 +12122,16 @@ if (sizeof (mp_limb_t))
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12122: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12125: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12125: \$? = $ac_status" >&5
+  echo "$as_me:12128: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12128: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12131: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12131: \$? = $ac_status" >&5
+  echo "$as_me:12134: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_type_mp_limb_t=yes
 else
@@ -12138,10 +12141,10 @@ ac_cv_type_mp_limb_t=no
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "$as_me:12141: result: $ac_cv_type_mp_limb_t" >&5
+echo "$as_me:12144: result: $ac_cv_type_mp_limb_t" >&5
 echo "${ECHO_T}$ac_cv_type_mp_limb_t" >&6
 
-echo "$as_me:12144: checking size of mp_limb_t" >&5
+echo "$as_me:12147: checking size of mp_limb_t" >&5
 echo $ECHO_N "checking size of mp_limb_t... $ECHO_C" >&6
 if test "${ac_cv_sizeof_mp_limb_t+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -12150,7 +12153,7 @@ else
   if test "$cross_compiling" = yes; then
   # Depending upon the size, compute the lo and hi bounds.
 cat >conftest.$ac_ext <<_ACEOF
-#line 12153 "configure"
+#line 12156 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
@@ -12167,21 +12170,21 @@ int _array_ [1 - 2 * !((sizeof (mp_limb_t)) >= 0)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12170: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12173: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12173: \$? = $ac_status" >&5
+  echo "$as_me:12176: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12176: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12179: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12179: \$? = $ac_status" >&5
+  echo "$as_me:12182: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_lo=0 ac_mid=0
   while :; do
     cat >conftest.$ac_ext <<_ACEOF
-#line 12184 "configure"
+#line 12187 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
@@ -12198,16 +12201,16 @@ int _array_ [1 - 2 * !((sizeof (mp_limb_t)) <= $ac_mid)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12201: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12204: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12204: \$? = $ac_status" >&5
+  echo "$as_me:12207: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12207: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12210: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12210: \$? = $ac_status" >&5
+  echo "$as_me:12213: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_hi=$ac_mid; break
 else
@@ -12223,7 +12226,7 @@ cat conftest.$ac_ext >&5
 ac_hi=-1 ac_mid=-1
   while :; do
     cat >conftest.$ac_ext <<_ACEOF
-#line 12226 "configure"
+#line 12229 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
@@ -12240,16 +12243,16 @@ int _array_ [1 - 2 * !((sizeof (mp_limb_t)) >= $ac_mid)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12243: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12246: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12246: \$? = $ac_status" >&5
+  echo "$as_me:12249: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12249: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12252: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12252: \$? = $ac_status" >&5
+  echo "$as_me:12255: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_lo=$ac_mid; break
 else
@@ -12265,7 +12268,7 @@ rm -f conftest.$ac_objext conftest.$ac_ext
 while test "x$ac_lo" != "x$ac_hi"; do
   ac_mid=`expr '(' $ac_hi - $ac_lo ')' / 2 + $ac_lo`
   cat >conftest.$ac_ext <<_ACEOF
-#line 12268 "configure"
+#line 12271 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
@@ -12282,16 +12285,16 @@ int _array_ [1 - 2 * !((sizeof (mp_limb_t)) <= $ac_mid)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12285: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12288: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12288: \$? = $ac_status" >&5
+  echo "$as_me:12291: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12291: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12294: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12294: \$? = $ac_status" >&5
+  echo "$as_me:12297: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_hi=$ac_mid
 else
@@ -12304,12 +12307,12 @@ done
 ac_cv_sizeof_mp_limb_t=$ac_lo
 else
   if test "$cross_compiling" = yes; then
-  { { echo "$as_me:12307: error: cannot run test program while cross compiling" >&5
+  { { echo "$as_me:12310: error: cannot run test program while cross compiling" >&5
 echo "$as_me: error: cannot run test program while cross compiling" >&2;}
    { (exit 1); exit 1; }; }
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 12312 "configure"
+#line 12315 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
@@ -12330,15 +12333,15 @@ fclose (f);
 }
 _ACEOF
 rm -f conftest$ac_exeext
-if { (eval echo "$as_me:12333: \"$ac_link\"") >&5
+if { (eval echo "$as_me:12336: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:12336: \$? = $ac_status" >&5
+  echo "$as_me:12339: \$? = $ac_status" >&5
   (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:12338: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12341: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12341: \$? = $ac_status" >&5
+  echo "$as_me:12344: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_sizeof_mp_limb_t=`cat conftest.val`
 else
@@ -12354,14 +12357,14 @@ else
   ac_cv_sizeof_mp_limb_t=0
 fi
 fi
-echo "$as_me:12357: result: $ac_cv_sizeof_mp_limb_t" >&5
+echo "$as_me:12360: result: $ac_cv_sizeof_mp_limb_t" >&5
 echo "${ECHO_T}$ac_cv_sizeof_mp_limb_t" >&6
 cat >>confdefs.h <<EOF
 #define SIZEOF_MP_LIMB_T $ac_cv_sizeof_mp_limb_t
 EOF
 
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
-    { { echo "$as_me:12364: error: some sort of compiler problem, mp_limb_t doesn't seem to work" >&5
+    { { echo "$as_me:12367: error: some sort of compiler problem, mp_limb_t doesn't seem to work" >&5
 echo "$as_me: error: some sort of compiler problem, mp_limb_t doesn't seem to work" >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -12382,13 +12385,13 @@ if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
 else
   case $limb_chosen in
   longlong)
-    echo "$as_me:12385: checking for unsigned long" >&5
+    echo "$as_me:12388: checking for unsigned long" >&5
 echo $ECHO_N "checking for unsigned long... $ECHO_C" >&6
 if test "${ac_cv_type_unsigned_long+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 12391 "configure"
+#line 12394 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -12403,16 +12406,16 @@ if (sizeof (unsigned long))
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12406: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12409: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12409: \$? = $ac_status" >&5
+  echo "$as_me:12412: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12412: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12415: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12415: \$? = $ac_status" >&5
+  echo "$as_me:12418: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_type_unsigned_long=yes
 else
@@ -12422,10 +12425,10 @@ ac_cv_type_unsigned_long=no
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "$as_me:12425: result: $ac_cv_type_unsigned_long" >&5
+echo "$as_me:12428: result: $ac_cv_type_unsigned_long" >&5
 echo "${ECHO_T}$ac_cv_type_unsigned_long" >&6
 
-echo "$as_me:12428: checking size of unsigned long" >&5
+echo "$as_me:12431: checking size of unsigned long" >&5
 echo $ECHO_N "checking size of unsigned long... $ECHO_C" >&6
 if test "${ac_cv_sizeof_unsigned_long+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -12434,7 +12437,7 @@ else
   if test "$cross_compiling" = yes; then
   # Depending upon the size, compute the lo and hi bounds.
 cat >conftest.$ac_ext <<_ACEOF
-#line 12437 "configure"
+#line 12440 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -12446,21 +12449,21 @@ int _array_ [1 - 2 * !((sizeof (unsigned long)) >= 0)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12449: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12452: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12452: \$? = $ac_status" >&5
+  echo "$as_me:12455: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12455: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12458: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12458: \$? = $ac_status" >&5
+  echo "$as_me:12461: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_lo=0 ac_mid=0
   while :; do
     cat >conftest.$ac_ext <<_ACEOF
-#line 12463 "configure"
+#line 12466 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -12472,16 +12475,16 @@ int _array_ [1 - 2 * !((sizeof (unsigned long)) <= $ac_mid)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12475: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12478: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12478: \$? = $ac_status" >&5
+  echo "$as_me:12481: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12481: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12484: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12484: \$? = $ac_status" >&5
+  echo "$as_me:12487: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_hi=$ac_mid; break
 else
@@ -12497,7 +12500,7 @@ cat conftest.$ac_ext >&5
 ac_hi=-1 ac_mid=-1
   while :; do
     cat >conftest.$ac_ext <<_ACEOF
-#line 12500 "configure"
+#line 12503 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -12509,16 +12512,16 @@ int _array_ [1 - 2 * !((sizeof (unsigned long)) >= $ac_mid)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12512: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12515: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12515: \$? = $ac_status" >&5
+  echo "$as_me:12518: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12518: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12521: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12521: \$? = $ac_status" >&5
+  echo "$as_me:12524: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_lo=$ac_mid; break
 else
@@ -12534,7 +12537,7 @@ rm -f conftest.$ac_objext conftest.$ac_ext
 while test "x$ac_lo" != "x$ac_hi"; do
   ac_mid=`expr '(' $ac_hi - $ac_lo ')' / 2 + $ac_lo`
   cat >conftest.$ac_ext <<_ACEOF
-#line 12537 "configure"
+#line 12540 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -12546,16 +12549,16 @@ int _array_ [1 - 2 * !((sizeof (unsigned long)) <= $ac_mid)]
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:12549: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:12552: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:12552: \$? = $ac_status" >&5
+  echo "$as_me:12555: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:12555: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12558: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12558: \$? = $ac_status" >&5
+  echo "$as_me:12561: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_hi=$ac_mid
 else
@@ -12568,12 +12571,12 @@ done
 ac_cv_sizeof_unsigned_long=$ac_lo
 else
   if test "$cross_compiling" = yes; then
-  { { echo "$as_me:12571: error: cannot run test program while cross compiling" >&5
+  { { echo "$as_me:12574: error: cannot run test program while cross compiling" >&5
 echo "$as_me: error: cannot run test program while cross compiling" >&2;}
    { (exit 1); exit 1; }; }
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 12576 "configure"
+#line 12579 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -12589,15 +12592,15 @@ fclose (f);
 }
 _ACEOF
 rm -f conftest$ac_exeext
-if { (eval echo "$as_me:12592: \"$ac_link\"") >&5
+if { (eval echo "$as_me:12595: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:12595: \$? = $ac_status" >&5
+  echo "$as_me:12598: \$? = $ac_status" >&5
   (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:12597: \"$ac_try\"") >&5
+  { (eval echo "$as_me:12600: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:12600: \$? = $ac_status" >&5
+  echo "$as_me:12603: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_sizeof_unsigned_long=`cat conftest.val`
 else
@@ -12613,7 +12616,7 @@ else
   ac_cv_sizeof_unsigned_long=0
 fi
 fi
-echo "$as_me:12616: result: $ac_cv_sizeof_unsigned_long" >&5
+echo "$as_me:12619: result: $ac_cv_sizeof_unsigned_long" >&5
 echo "${ECHO_T}$ac_cv_sizeof_unsigned_long" >&6
 cat >>confdefs.h <<EOF
 #define SIZEOF_UNSIGNED_LONG $ac_cv_sizeof_unsigned_long
@@ -12795,7 +12798,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:12798: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:12801: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -12974,7 +12977,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:12977: error: ambiguous option: $1
+    { { echo "$as_me:12980: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -13025,12 +13028,12 @@ Try \`$0 --help' for more information." >&2;}
   'config.h' ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config.in" ;;
 
   # This is an error.
-  -*) { { echo "$as_me:13028: error: unrecognized option: $1
+  -*) { { echo "$as_me:13031: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
    { (exit 1); exit 1; }; } ;;
-  *) { { echo "$as_me:13033: error: invalid argument: $1" >&5
+  *) { { echo "$as_me:13036: error: invalid argument: $1" >&5
 echo "$as_me: error: invalid argument: $1" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -13349,7 +13352,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:13352: creating $ac_file" >&5
+    { echo "$as_me:13355: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -13367,7 +13370,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:13370: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:13373: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -13380,7 +13383,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:13383: error: cannot find input file: $f" >&5
+           { { echo "$as_me:13386: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -13441,7 +13444,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:13444: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:13447: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -13452,7 +13455,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:13455: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:13458: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -13465,7 +13468,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:13468: error: cannot find input file: $f" >&5
+           { { echo "$as_me:13471: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -13582,7 +13585,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:13585: $ac_file is unchanged" >&5
+      { echo "$as_me:13588: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -13633,11 +13636,11 @@ for ac_file in : $CONFIG_LINKS; do test "x$ac_file" = x: && continue
   ac_dest=`echo "$ac_file" | sed 's,:.*,,'`
   ac_source=`echo "$ac_file" | sed 's,[^:]*:,,'`
 
-  { echo "$as_me:13636: linking $srcdir/$ac_source to $ac_dest" >&5
+  { echo "$as_me:13639: linking $srcdir/$ac_source to $ac_dest" >&5
 echo "$as_me: linking $srcdir/$ac_source to $ac_dest" >&6;}
 
   if test ! -r $srcdir/$ac_source; then
-    { { echo "$as_me:13640: error: $srcdir/$ac_source: File not found" >&5
+    { { echo "$as_me:13643: error: $srcdir/$ac_source: File not found" >&5
 echo "$as_me: error: $srcdir/$ac_source: File not found" >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -13687,7 +13690,7 @@ done; }
   # Make a symlink if possible; otherwise try a hard link.
   ln -s $ac_rel_source $ac_dest 2>/dev/null ||
     ln $srcdir/$ac_source $ac_dest ||
-    { { echo "$as_me:13690: error: cannot link $ac_dest to $srcdir/$ac_source" >&5
+    { { echo "$as_me:13693: error: cannot link $ac_dest to $srcdir/$ac_source" >&5
 echo "$as_me: error: cannot link $ac_dest to $srcdir/$ac_source" >&2;}
    { (exit 1); exit 1; }; }
 done

@@ -1652,12 +1652,9 @@ dnl
 dnl  SunOS 4 (or some versions at least) have vsnprintf as an alias for
 dnl  vsprintf, which is completely useless.
 dnl
-dnl  FIXME: Some glibc 2.0.x versions of snprintf return -1 for buffer
-dnl  overflow (and put a null-terminated string), eg. on redhat 5.2.  It
-dnl  doesn't seem wise to allow -1 in general, in case that indicates a
-dnl  fatal error and only garbage has been produced, sending us into an
-dnl  infinite loop in gmp_snprintf.  But if we were sure that wouldn't
-dnl  happen then we could allow -1 here (and in the printf/*.c code).
+dnl  glibc 2.0.x returns either -1 or bufsize-1 for an overflow (both seen,
+dnl  not sure which 2.0.x does which), but still puts the correct null
+dnl  terminated result into the buffer.
 
 AC_DEFUN(GMP_FUNC_VSNPRINTF,
 [AC_REQUIRE([GMP_C_STDARG])
@@ -1694,16 +1691,19 @@ check (va_alist)
 #endif
 
   ret = vsnprintf (buf, 4, fmt, ap);
-  if (ret == -1)
+
+  if (strcmp (buf, "hel") != 0)
     exit (1);
-  if (strlen (buf) > 3)
+
+  /* allowed return values */
+  if (ret != -1 && ret != 3 && ret != 11)
     exit (2);
 }
 
 int
 main ()
 {
-  check ("hello world\n");
+  check ("hello world");
   exit (0);
 }
 ],
