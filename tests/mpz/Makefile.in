@@ -125,7 +125,7 @@ LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
-  t-root t-jac t-bin t-misc t-get_si t-fac_ui t-fib_ui t-scan
+  t-root t-jac t-bin t-misc t-get_si t-fac_ui t-fib_ui t-scan t-fits
 
 
 TESTS = $(check_PROGRAMS)
@@ -142,7 +142,7 @@ t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) logic$(EXEEXT) \
 bit$(EXEEXT) t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow_ui$(EXEEXT) \
 t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT) t-jac$(EXEEXT) \
 t-bin$(EXEEXT) t-misc$(EXEEXT) t-get_si$(EXEEXT) t-fac_ui$(EXEEXT) \
-t-fib_ui$(EXEEXT) t-scan$(EXEEXT)
+t-fib_ui$(EXEEXT) t-scan$(EXEEXT) t-fits$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -221,6 +221,12 @@ t_fib_ui_LDADD = $(LDADD)
 t_fib_ui_DEPENDENCIES =  $(top_builddir)/tests/libtests.la \
 $(top_builddir)/libgmp.la
 t_fib_ui_LDFLAGS = 
+t_fits_SOURCES = t-fits.c
+t_fits_OBJECTS =  t-fits$U.$(OBJEXT)
+t_fits_LDADD = $(LDADD)
+t_fits_DEPENDENCIES =  $(top_builddir)/tests/libtests.la \
+$(top_builddir)/libgmp.la
+t_fits_LDFLAGS = 
 t_gcd_SOURCES = t-gcd.c
 t_gcd_OBJECTS =  t-gcd$U.$(OBJEXT)
 t_gcd_LDADD = $(LDADD)
@@ -305,9 +311,9 @@ CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c \
-t-bin.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-gcd.c t-get_si.c \
-t-jac.c t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c \
-t-scan.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+t-bin.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c \
+t-get_si.c t-jac.c t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c \
+t-root.c t-scan.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 depcomp = 
 DIST_COMMON =  Makefile.am Makefile.in
 
@@ -315,8 +321,8 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-bin.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-gcd.c t-get_si.c t-jac.c t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-scan.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
-OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-bin$U.$(OBJEXT) t-fac_ui$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-fib_ui$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-get_si$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-misc$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-scan$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
+SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-bin.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c t-get_si.c t-jac.c t-misc.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-scan.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-bin$U.$(OBJEXT) t-fac_ui$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-fib_ui$U.$(OBJEXT) t-fits$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-get_si$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-misc$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-scan$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -422,6 +428,10 @@ t-fib_ui$(EXEEXT): $(t_fib_ui_OBJECTS) $(t_fib_ui_DEPENDENCIES)
 	@rm -f t-fib_ui$(EXEEXT)
 	$(LINK) $(t_fib_ui_LDFLAGS) $(t_fib_ui_OBJECTS) $(t_fib_ui_LDADD) $(LIBS)
 
+t-fits$(EXEEXT): $(t_fits_OBJECTS) $(t_fits_DEPENDENCIES)
+	@rm -f t-fits$(EXEEXT)
+	$(LINK) $(t_fits_LDFLAGS) $(t_fits_OBJECTS) $(t_fits_LDADD) $(LIBS)
+
 t-gcd$(EXEEXT): $(t_gcd_OBJECTS) $(t_gcd_DEPENDENCIES)
 	@rm -f t-gcd$(EXEEXT)
 	$(LINK) $(t_gcd_LDFLAGS) $(t_gcd_OBJECTS) $(t_gcd_LDADD) $(LIBS)
@@ -503,6 +513,8 @@ t-fdiv_ui_.c: t-fdiv_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fdiv_ui.c; then echo $(srcdir)/t-fdiv_ui.c; else echo t-fdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fdiv_ui_.c
 t-fib_ui_.c: t-fib_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fib_ui.c; then echo $(srcdir)/t-fib_ui.c; else echo t-fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fib_ui_.c
+t-fits_.c: t-fits.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fits.c; then echo $(srcdir)/t-fits.c; else echo t-fits.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fits_.c
 t-gcd_.c: t-gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gcd.c; then echo $(srcdir)/t-gcd.c; else echo t-gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gcd_.c
 t-get_si_.c: t-get_si.c $(ANSI2KNR)
@@ -534,14 +546,14 @@ dive_.lo io_.$(OBJEXT) io_.lo logic_.$(OBJEXT) logic_.lo \
 reuse_.$(OBJEXT) reuse_.lo t-2exp_.$(OBJEXT) t-2exp_.lo \
 t-bin_.$(OBJEXT) t-bin_.lo t-fac_ui_.$(OBJEXT) t-fac_ui_.lo \
 t-fdiv_.$(OBJEXT) t-fdiv_.lo t-fdiv_ui_.$(OBJEXT) t-fdiv_ui_.lo \
-t-fib_ui_.$(OBJEXT) t-fib_ui_.lo t-gcd_.$(OBJEXT) t-gcd_.lo \
-t-get_si_.$(OBJEXT) t-get_si_.lo t-jac_.$(OBJEXT) t-jac_.lo \
-t-misc_.$(OBJEXT) t-misc_.lo t-mul_.$(OBJEXT) t-mul_.lo \
-t-pow_ui_.$(OBJEXT) t-pow_ui_.lo t-powm_.$(OBJEXT) t-powm_.lo \
-t-powm_ui_.$(OBJEXT) t-powm_ui_.lo t-root_.$(OBJEXT) t-root_.lo \
-t-scan_.$(OBJEXT) t-scan_.lo t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo \
-t-tdiv_.$(OBJEXT) t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : \
-$(ANSI2KNR)
+t-fib_ui_.$(OBJEXT) t-fib_ui_.lo t-fits_.$(OBJEXT) t-fits_.lo \
+t-gcd_.$(OBJEXT) t-gcd_.lo t-get_si_.$(OBJEXT) t-get_si_.lo \
+t-jac_.$(OBJEXT) t-jac_.lo t-misc_.$(OBJEXT) t-misc_.lo \
+t-mul_.$(OBJEXT) t-mul_.lo t-pow_ui_.$(OBJEXT) t-pow_ui_.lo \
+t-powm_.$(OBJEXT) t-powm_.lo t-powm_ui_.$(OBJEXT) t-powm_ui_.lo \
+t-root_.$(OBJEXT) t-root_.lo t-scan_.$(OBJEXT) t-scan_.lo \
+t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo t-tdiv_.$(OBJEXT) t-tdiv_.lo \
+t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
