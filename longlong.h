@@ -1,7 +1,7 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 1999, 2000, 2001 Free Software
-Foundation, Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002 Free
+Software Foundation, Inc.
 
 This file is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -1646,9 +1646,4 @@ extern const unsigned char __GMP_DECLSPEC __clz_tab[128];
 
 #ifndef UDIV_TIME
 #define UDIV_TIME UMUL_TIME
-#endif
-
-/* count_trailing_zeros is often on the slow side, so make that the default */
-#ifndef COUNT_TRAILING_ZEROS_TIME
-#define COUNT_TRAILING_ZEROS_TIME  15  /* cycles */
 #endif
