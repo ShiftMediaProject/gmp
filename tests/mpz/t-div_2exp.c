@@ -161,7 +161,8 @@ check_various (void)
   /* a==2^i, and various d */
   for (i = 0; i < 5*BITS_PER_MP_LIMB; i++)
     {
-      for (d = 0; d < i+BITS_PER_MP_LIMB+3; d++)
+      d = (i < BITS_PER_MP_LIMB+3 ? 0 : i-(BITS_PER_MP_LIMB+3));
+      for ( ; d < i+BITS_PER_MP_LIMB+3; d++)
         {
           mpz_set_ui (a, 1L);
           mpz_mul_2exp (a, a, i);
