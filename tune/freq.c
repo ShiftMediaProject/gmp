@@ -233,7 +233,11 @@ speed_cpu_frequency_sysctl (void)
                  is the frequency.
 
    alpha 2.2.5 - "cycle frequency [Hz]" seems to be right, "BogoMIPS" is
-                 very slightly different.  */
+                 very slightly different.
+
+   alpha 2.2.18pre21 - "cycle frequency [Hz]" is 0 on at least one system,
+                 "BogoMIPS" seems near enough.
+  */
 
 int
 speed_cpu_frequency_proc_cpuinfo (void)
@@ -247,7 +251,8 @@ speed_cpu_frequency_proc_cpuinfo (void)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
-          if (sscanf (buf, "cycle frequency [Hz]    : %lf est.\n", &val) == 1)
+          if (sscanf (buf, "cycle frequency [Hz]    : %lf", &val) == 1
+              && val != 0.0)
             {
               speed_cycletime = 1.0 / val;
               if (speed_option_verbose)
@@ -263,7 +268,8 @@ speed_cpu_frequency_proc_cpuinfo (void)
               ret = 1;
               break;
             }
-          if (sscanf (buf, "bogomips : %lf\n", &val) == 1)
+          if (sscanf (buf, "bogomips : %lf\n", &val) == 1
+              || sscanf (buf, "BogoMIPS : %lf\n", &val) == 1)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
