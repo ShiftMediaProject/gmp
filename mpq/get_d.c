@@ -1,6 +1,6 @@
 /* double mpq_get_d (mpq_t src) -- mpq to double, rounding towards zero.
 
-Copyright 1995, 1996, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,43 +19,98 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h>  /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
 
-/* All that's required is to get the high 53 bits of the quotient num/den,
+/* All that's needed is to get the high 53 bits of the quotient num/den,
    rounded towards zero.  More than 53 bits is fine, any excess is ignored
    by mpn_get_d.
 
+   N_QLIMBS is how many quotient limbs we need to satisfy the mantissa of a
+   double, assuming the highest of those limbs is non-zero.  The target
+   qsize for mpn_tdiv_qr is then 1 more than this, since that function may
+   give a zero in the high limb (and non-zero in the second highest).
+
+   The use of 8*sizeof(double) in N_QLIMBS is an overestimate of the
+   mantissa bits, but it gets the same result as the true value (53 or 48 or
+   whatever) when rounded up to a multiple of GMP_NUMB_BITS, for non-nails.
+
    Enhancements:
 
-   With some shifts all we need is 1 or 2 limbs of quotient, ie. 1 or 2
-   steps of mpn_sb_divrem_mn, could call that directly instead of going via
-   mpn_divmod.
+   Use the true mantissa size in the N_QLIMBS formala, to save a divide step
+   in nails.
 
-   Use a quotient-only division, when it exists.  Since only 1 or 2 limbs of
-   quotient are needed, they could be estimated from the high limbs of num
-   and den, followed by a mul+cmp to see if 1 too big, without using any
-   temporary memory.  */
+   Examine the high limbs of num and den to see if the highest 1 bit of the
+   quotient will fall high enough that just N_QLIMBS-1 limbs is enough to
+   get the necessary bits, thereby saving a division step.
+
+   Bit shift either num or den to arrange for the above condition on the
+   high 1 bit of the quotient, to save a division step always.  A shift to
+   save a division step is definitely worthwhile with mpn_tdiv_qr, though we
+   may want to reassess this on big num/den when a quotient-only division
+   exists.
+
+   Maybe we could estimate the final exponent using nsize-dsize (and
+   possibly the high limbs of num and den), so as to detect overflow and
+   return infinity or zero quickly.  Overflow is never very helpful to an
+   application, and can therefore probably be regarded as abnormal, but we
+   may still like to optimize it if the conditions are easy.  (This would
+   only be for float formats we know, unknown formats are not important and
+   can be left to mpn_get_d.)
+
+   Future:
+
+   If/when mpn_tdiv_qr supports its qxn parameter we can use that instead of
+   padding n with zeros in temporary space.
+
+   If/when a quotient-only division exists it can be used here immediately.
+   remp is only to satisfy mpn_tdiv_qr, the remainder is not used.
+
+   Alternatives:
+
+   An alternative algorithm, that may be faster:
+   0. Let n be somewhat larger than the number of significant bits in a double.
+   1. Extract the most significant n bits of the denominator, and an equal
+      number of bits from the numerator.
+   2. Interpret the extracted numbers as integers, call them a and b
+      respectively, and develop n bits of the fractions ((a + 1) / b) and
+      (a / (b + 1)) using mpn_divrem.
+   3. If the computed values are identical UP TO THE POSITION WE CARE ABOUT,
+      we are done.  If they are different, repeat the algorithm from step 1,
+      but first let n = n * 2.
+   4. If we end up using all bits from the numerator and denominator, fall
+      back to a plain division.
+   5. Just to make life harder, The computation of a + 1 and b + 1 above
+      might give carry-out...  Needs special handling.  It might work to
+      subtract 1 in both cases instead.
+
+   Not certain if this approach would be faster than a quotient-only
+   division.  Presumably such optimizations are the sort of thing we would
+   like to have helping everywhere that uses a quotient-only division. */
 
 double
 mpq_get_d (const MP_RAT *src)
 {
   double res;
-  mp_ptr np, dp;
-  mp_ptr rp;
+  mp_srcptr np, dp;
+  mp_ptr remp, tp;
   mp_size_t nsize = src->_mp_num._mp_size;
   mp_size_t dsize = src->_mp_den._mp_size;
-  mp_size_t qsize, rsize;
-  mp_size_t sign_quotient = nsize ^ dsize;
-  mp_limb_t qlimb;
+  mp_size_t qsize, prospective_qsize, zeros, chop, tsize;
+  mp_size_t sign_quotient = nsize;
+  long exp;
 #define N_QLIMBS (1 + (sizeof (double) + BYTES_PER_MP_LIMB-1) / BYTES_PER_MP_LIMB)
   mp_limb_t qarr[N_QLIMBS + 1];
   mp_ptr qp = qarr;
   TMP_DECL (marker);
 
-  if (nsize == 0)
+  ASSERT (dsize > 0);    /* canonical src */
+
+  /* mpn_get_d below requires a non-zero operand */
+  if (UNLIKELY (nsize == 0))
     return 0.0;
 
   TMP_MARK (marker);
@@ -64,69 +119,48 @@ mpq_get_d (const MP_RAT *src)
   np = src->_mp_num._mp_d;
   dp = src->_mp_den._mp_d;
 
-  rsize = dsize + N_QLIMBS;
-  rp = (mp_ptr) TMP_ALLOC ((rsize + 1) * BYTES_PER_MP_LIMB);
+  prospective_qsize = nsize - dsize + 1;   /* from using given n,d */
+  qsize = N_QLIMBS + 1;                    /* desired qsize */
 
-  /* Normalize the denominator, i.e. make its most significant bit set by
-     shifting it NORMALIZATION_STEPS bits to the left.  Also shift the
-     numerator the same number of steps (to keep the quotient the same!).  */
-  if ((dp[dsize - 1] & GMP_NUMB_HIGHBIT) == 0)
+  zeros = qsize - prospective_qsize;       /* padding n to get qsize */
+  exp = (long) -zeros * GMP_NUMB_BITS;     /* relative to low of qp */
+
+  chop = MAX (-zeros, 0);                  /* negative zeros means shorten n */
+  np += chop;
+  nsize -= chop;
+  zeros += chop;                           /* now zeros >= 0 */
+
+  tsize = nsize + zeros;                   /* size for possible copy of n */
+
+  if (WANT_TMP_DEBUG)
     {
-      mp_ptr tp;
-      mp_limb_t nlimb;
-      unsigned normalization_steps;
-
-      count_leading_zeros (normalization_steps, dp[dsize - 1]);
-      normalization_steps -= GMP_NAIL_BITS;
-
-      /* Shift up the denominator setting the most significant bit of
-	 the most significant limb.  Use temporary storage not to clobber
-	 the original contents of the denominator.  */
-      tp = (mp_ptr) TMP_ALLOC (dsize * BYTES_PER_MP_LIMB);
-      mpn_lshift (tp, dp, dsize, normalization_steps);
-      dp = tp;
-
-      if (rsize > nsize)
-	{
-	  MPN_ZERO (rp, rsize - nsize);
-	  nlimb = mpn_lshift (rp + (rsize - nsize),
-			      np, nsize, normalization_steps);
-	}
-      else
-	{
-	  nlimb = mpn_lshift (rp, np + (nsize - rsize),
-			      rsize, normalization_steps);
-	}
-      if (nlimb != 0)
-	{
-	  rp[rsize] = nlimb;
-	  rsize++;
-	}
+      /* separate blocks, for malloc debugging */
+      remp = TMP_ALLOC_LIMBS (dsize);
+      tp = (zeros > 0 ? TMP_ALLOC_LIMBS (tsize) : NULL);
     }
   else
     {
-      if (rsize > nsize)
-	{
-	  MPN_ZERO (rp, rsize - nsize);
-	  MPN_COPY (rp + (rsize - nsize), np, nsize);
-	}
-      else
-	{
-	  MPN_COPY (rp, np + (nsize - rsize), rsize);
-	}
+      /* one block with conditionalized size, for efficiency */
+      remp = TMP_ALLOC_LIMBS (dsize + (zeros > 0 ? tsize : 0));
+      tp = remp + dsize;
     }
 
-  qlimb = mpn_divmod (qp, rp, rsize, dp, dsize);
-  qsize = rsize - dsize;
-  if (qlimb)
+  /* zero extend n into temporary space, if necessary */
+  if (zeros > 0)
     {
-      qp[qsize] = qlimb;
-      qsize++;
+      MPN_ZERO (tp, zeros);
+      MPN_COPY (tp+zeros, np, nsize);
+      np = tp;
+      nsize = tsize;
     }
 
-  MPN_NORMALIZE (qp, qsize);
-  res = mpn_get_d (qp, qsize, sign_quotient,
-                   (long) (nsize - dsize - N_QLIMBS) * GMP_NUMB_BITS);
+  ASSERT (qsize == nsize - dsize + 1);
+  mpn_tdiv_qr (qp, remp, (mp_size_t) 0, np, nsize, dp, dsize);
+
+  /* strip possible zero high limb */
+  qsize -= (qp[qsize-1] == 0);
+
+  res = mpn_get_d (qp, qsize, sign_quotient, exp);
   TMP_FREE (marker);
   return res;
 }
