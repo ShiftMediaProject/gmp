@@ -304,8 +304,9 @@ EOF
     x=`sed -n 's/^cpu[ 	]*:[ 	]*\([a-z0-9]*\).*/\1/p' /proc/cpuinfo`
     case $x in
       601)     exact_cpu="power" ;;
+      603ev)   exact_cpu="powerpc603e" ;;
       604ev5)  exact_cpu="powerpc604e" ;;
-      603 | 603e | 603ev | 604 | 604e | 750 | 821 | 860)
+      603 | 603e | 604 | 604e | 750 | 821 | 860)
         exact_cpu="powerpc$x" ;;
     esac
   fi
