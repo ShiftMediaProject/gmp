@@ -1,4 +1,4 @@
-dnl  IA-64 mpn_add_n -- Add two limb vectors of the same length > 0 and store
+*dnl  IA-64 mpn_add_n -- Add two limb vectors of the same length > 0 and store
 dnl  sum in a third limb vector.
 
 dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
@@ -29,7 +29,7 @@ C vp = r34
 C n = r35
 
 C         cycles/limb
-C Itanium:    6
+C Itanium:    3
 C Itanium 2:  ?
 
 

@@ -29,7 +29,7 @@ C vp = r34
 C n = r35
 
 C         cycles/limb
-C Itanium:    6
+C Itanium:    3
 C Itanium 2:  ?
 
 

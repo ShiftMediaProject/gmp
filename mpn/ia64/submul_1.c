@@ -20,7 +20,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
-This code runs at about 9 cycles/limb on the Itanium.  That's far from the peak
+This code runs at about 7 cycles/limb on the Itanium.  That's far from the peak
 execution speed of the Itanium pipeline.  With well-tuned assembly code we
 should be able to get to around 3 cycles/limb.  See README.  */
 
