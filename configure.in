@@ -598,7 +598,7 @@ case $host in
 
 
   # IBM s/370 and similar
-  s3[6-9]0*-*-*)
+  [s3[6-9]0*-*-*])
     gcc_cflags="-g -O2 $fomit_frame_pointer"
     path="s370"
     extra_functions="udiv_w_sdiv"
