@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 16 Nov 2001.  An up-to-date version is available at
+  This file current as of 20 Nov 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -172,7 +172,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      be tested by grouping into a limb like <code>PP</code>.
 <li> <code>mpz_perfect_power_p</code> might like to use <code>mpn_gcd_1</code>
      instead of a private GCD routine.  The use it's put to isn't
-     time-critcal, and it might help be ensure correctness to use the main GCD
+     time-critical, and it might help be ensure correctness to use the main GCD
      routine.
 <li> <code>mpz_perfect_power_p</code> could use
      <code>mpz_divisible_ui_p</code> instead of <code>mpz_tdiv_ui</code> for
@@ -556,10 +556,6 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      Alternately it looks like the <code>ABOVE_THRESHOLD</code> and
      <code>BELOW_THRESHOLD</code> macros can do this adequately, and also pick
      up cases where a threshold of zero should mean only the second algorithm.
-<li> <code>mpz_powm</code> could handle negative exponents by powering the
-     modular inverse of the base.  But what to do if an inverse doesn't exist
-     (base and modulus have common factors)?  Throw a divide by zero maybe, or
-     return a flag like <code>mpz_invert</code> does.
 <li> <code>mpz_nthprime</code>.
 <li> Perhaps <code>mpz_init2</code>, initializing and making initial room for
      N bits.  The actual size would be rounded up to a limb, and perhaps an
@@ -677,22 +673,61 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 </ul>
 
 
+<h4>Random Numbers</h4>
+<ul>
+<li> <code>_gmp_rand</code> is not particularly fast on the linear
+     congruential algorithm and could stand various improvements.
+     <ul>
+     <li> Make a second seed area within <code>gmp_randstate_t</code> (or
+          <code>_mp_algdata</code> rather) to save some copying.
+     <li> Make a special case for a single limb <code>2exp</code> modulus, to
+          avoid <code>mpn_mul</code> calls.  Perhaps the same for two limbs.
+     <li> Inline the <code>lc</code> code, to avoid a function call and
+          <code>TMP_ALLOC</code> for every chunk.
+     <li> The special case for <code>seedn==0</code> will be very rarely used,
+          and on that basis seems unnecessary.
+     <li> Perhaps the <code>2exp</code> and general LC cases should be split,
+          for clarity (if the general case is retained).
+     </ul>
+<li> <code>gmp_randinit_mm</code> (named after Mitchell and Moore) for the
+     55-element delayed Fibonacci generator from Knuth vol 2.  Being additive
+     it should be fast, and might be random enough for GMP test program
+     purposes, if nothing else.  Niels Möller has started on this.
+<li> <code>gmp_randinit_lc</code>: Finish or remove.  Doing a division for
+     every every step won't be very fast, so check whether the usefulness of
+     this algorithm can be justified.
+<li> Blum-Blum-Shub: Finish or remove.  A separate
+     <code>gmp_randinit_bbs</code> would be wanted, not the currently
+     commented out case in <code>gmp_randinit</code>.
+<li> <code>_gmp_rand</code> could be done as a function pointer within
+     <code>gmp_randstate_t</code> (or rather in the <code>_mp_algdata</code>
+     part), instead of switching on a <code>gmp_randalg_t</code>.  Likewise
+     <code>gmp_randclear</code>, and perhaps <code>gmp_randseed</code> if it
+     became algorithm-specific.  This would be more modular, and would ensure
+     only code for the desired algorithms is dragged into the link.
+<li> <code>mpz_urandomm</code> should do something for n&lt;=0 (but what?),
+     and the use of <code>mpz_mod</code> looks doubtful (does it suffice to
+     generate numbers of <code>nbits</code> until getting one &lt;n?)
+<li> <code>gmp_randstate_t</code> used for parameters perhaps should become
+     <code>gmp_randstate_ptr</code> the same as other types.
+<li> Some of the empirical randomness tests could be included in a "make
+     check".  They ought to work everywhere, for a given seed at least.
+</ul>
+
+
 <h4>Miscellaneous</h4>
 <ul>
 <li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
 <li> <code>mpz_gcdext</code> and <code>mpn_gcdext</code> ought to document
-     what range of values the generated cofactors can take, and preferrably
+     what range of values the generated cofactors can take, and preferably
      ensure the definition uniquely specifies the cofactors for given inputs.
      A basic extended Euclidean algorithm or multi-step variant leads to
      |x|&lt;|b| and |y|&lt;|a| or something like that, but there's probably
      two solutions under just those restrictions.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> Merge mpn/pa64 and pa64w.
-<li> <code>mpz_urandomm</code> should do something for n&lt;=0 (but what?),
-     and the use of <code>mpz_mod</code> looks doubtful (does it suffice to
-     generate numbers of <code>nbits</code> until getting one &lt;n?)
 <li> demos/factorize.c should use the GMP random functions when restarting
      Pollard-Rho, not <code>random</code> / <code>mrand48</code>.
 <li> The various test programs use quite a bit of the main
