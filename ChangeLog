@@ -1,3 +1,18 @@
+2001-01-31  Kevin Ryde  <kevin@swox.se>
+
+	* tune/time.c: Remove unnecessary longlong.h.
+	(speed_endtime): Add some extra diagnostics.
+
+	* tests/mpz/t-fdiv_ui.c, tests/mpz/t-tdiv_ui.c: Use unsigned long for
+	the divisor, not mp_limb_t.
+	* tests/mpz/t-jac.c (try_base): Use %llu for long long limb.
+	* tests/trace.c: Add <string.h> for strlen.
+
+	* tune/freq.c (speed_cpu_frequency_proc_cpuinfo): Ignore "cycle
+	frequency" of 0, allow "BogoMIPS" as well as "bogomips".
+
+	* macos/Makefile.in: Add mpf/fits_s.c and mpf/fits_u.c objects.
+
 2001-01-30  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h: Add add_ssaaaa and sub_ddmmss for 64-bit sparc.
