@@ -1,5 +1,8 @@
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/mul_n.c (mpn_kara_sqr_n): Remove unused variable `t'.
+	(mpn_kara_mul_n): Likewise.
+
 	* mpz/fac_ui.c (MPZ_SET_1_NZ): Actually use `__z'.
 
 	* mpz/tests/t-jac.c
