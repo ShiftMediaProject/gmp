@@ -1464,6 +1464,16 @@ Install a recent @command{gas} if MMX code is wanted on these systems.
 You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
+@item Compiler link options
+The version of libtool currently in use rather aggressively strips compiler
+options when linking a shared library.  This will hopefully be relaxed in the
+future, but for now if this is a problem the suggestion is to create a little
+script to hide them, and for instance configure with
+
+@example
+./configure CC=gcc-with-my-options
+@end example
+
 @item DJGPP
 @cindex DJGPP
 The DJGPP port of @command{bash} 2.03 is unable to run the @samp{configure}
