@@ -128,12 +128,6 @@ MA 02111-1307, USA. */
 #define ATTRIBUTE_MALLOC
 #endif
 
-#ifdef _CRAY
-#define CRAY_Pragma(str)  _Pragma (str)
-#else
-#define CRAY_Pragma(str)
-#endif
-
 
 #if ! HAVE_STRCHR
 #define strchr(s,c)  index(s,c)
@@ -328,6 +322,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 
 
 /* From gmp.h, nicer names for internal use. */
+#define CRAY_Pragma(str)               __GMP_CRAY_Pragma(str)
 #define MPN_CMP(result, xp, yp, size)  __GMPN_CMP(result, xp, yp, size)
 #define LIKELY(cond)                   __GMP_LIKELY(cond)
 #define UNLIKELY(cond)                 __GMP_UNLIKELY(cond)
