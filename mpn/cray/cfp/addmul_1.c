@@ -32,7 +32,8 @@ mpn_addmul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
   GMPN_MULWW (p1, p0, up, &n, &limb);
   cy_limb = mpn_add_n (tp, rp, p0, n);
   rp[0] = tp[0];
-  cy_limb += mpn_add_n (rp + 1, tp + 1, p1, n - 1);
+  if (n != 1)
+    cy_limb += mpn_add_n (rp + 1, tp + 1, p1, n - 1);
   cy_limb += p1[n - 1];
 
   return cy_limb;
