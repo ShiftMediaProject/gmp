@@ -1,11 +1,24 @@
+2000-12-12  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (LIMBS_PER_DOUBLE): Define for any limb bitsize.
+
 2000-12-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/mp_bases.c: Add tables for 8-bit and 16-bit limbs.
+	Round existing `double' values properly.
+
+	* gmp-h.in (__gmp_randstate_struct): Prefix field names with _mp_
+	to keep out of user name space.
+	(__gmp_randata_lc): Likewise.
+	* randclr.c, randlc.c, randlc2x.c, randraw.c, randsd.c, randsdui.c:
+	Corresponding changes.
 
 	* gmp-impl.h (PP): #define for machines with BITS_PER_MP_LIMB
 	of 2, 4, 8, and 16.
 	(PP_FIRST_OMITTED): New, define for various BITS_PER_MP_LIMB.
 	(PP_MASK): Remove.
 	(PP_MAXPRIME): Remove.
-	
+
 	* mpn/generic/perfsqr.c: Generalize PP handling for machines with
 	limbs of < 32 bits.  Allow PP_INVERTED to be undefined.
 	* mpz/pprime_p.c: Likewise.
@@ -70,7 +83,7 @@
 	TOOM3_SQR_THRESHOLD not TOOM3_MUL_THRESHOLD, add a few that might
 	be more realistic size checks.
 	* tune/speed.h (SPEED_ROUTINE_MPN_{MUL,SQR}_N_TSPACE etc): Use minsize.
-	
+
 	* mpn/generic/divrem_1.c: Partial rewrite, merge fractional part
 	calculation, skip a divide step in more cases, introduce
 	DIVREM_1_{NORM,UNNORM}_THRESHOLD.
