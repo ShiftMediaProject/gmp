@@ -30,6 +30,8 @@
 	for processor families.
 	* gmp-impl.h: Use them, rather than cpp defines.
 
+	* demos/Makefile.am (primes_LDADD): Use $(LIBM), for log().
+
 	* tune/many.pl, tune/Makefile.am: Fix some from clean and distclean.
 
 2001-08-26  Kevin Ryde  <kevin@swox.se>
