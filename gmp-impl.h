@@ -142,7 +142,7 @@ void _mp_default_free ();
 void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
-/* Copy NLIMBS *limbs* from SRC to DST.  */
+/* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
 #ifndef MPN_COPY_INCR
 #if HAVE_NATIVE_mpn_copyi
 #define MPN_COPY_INCR(DST, SRC, NLIMBS)   mpn_copyi (DST, SRC, NLIMBS)
@@ -161,6 +161,7 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
+/* NLIMBS==0 allowed */
 #ifndef MPN_COPY_DECR
 #if HAVE_NATIVE_mpn_copyd
 #define MPN_COPY_DECR(DST, SRC, NLIMBS)   mpn_copyd (DST, SRC, NLIMBS)
@@ -297,7 +298,7 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define mpn_com_n __MPN(com_n)
 void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_com_n(d,s1,s2,n)    \
+#define mpn_com_n(d,s,n)        \
   {                             \
     mp_ptr     __d = (d);       \
     mp_srcptr  __s = (s);       \
