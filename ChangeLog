@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-11-01  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/amd64/mul_basecase,asm: New file.
+
+	* mpn/amd64/redc_1.asm: New file.
+
 2004-10-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/mode64/addlsh1_n.asm: Correct cycle counts.
@@ -40,7 +46,7 @@ MA 02111-1307, USA.
 
 	* configure.in: Support icc under x86.
 	(ia64-*-linux*): Pass -no-gcc to icc.
-	
+
 2004-10-15  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (ia64 umul_ppmm): Add version for icc.
