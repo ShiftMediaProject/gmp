@@ -202,7 +202,6 @@ MA 02111-1307, USA.
 
 2001-12-20  Torbjorn Granlund  <tege@swox.com>
 
-
 	* mpn/sparc64/mul_1.asm: Trim an instruction.
 	* mpn/sparc64/addmul_1.asm: Likewise.
 
@@ -317,7 +316,6 @@ MA 02111-1307, USA.
 	* gmpxx.h: Add <strstream>, needed by mpf_class::get_str2.
 
 	* gmp-h.in (mpq_inp_str, mpn_hamdist): Add __GMP_DECLSPEC.
-
 
 2001-12-01  Torbjorn Granlund  <tege@swox.com>
 
@@ -664,7 +662,6 @@ MA 02111-1307, USA.
 
 	* gmp.texi (Known Build Problems): Add note on test programs with
 	Windows DLLs.
-
 
 2001-10-26  Kevin Ryde  <kevin@swox.se>
 
