@@ -656,8 +656,9 @@ run_gnuplot (int argc, char *argv[])
 
 
 /* Return a long with n many one bits (starting from the least significant) */
-#define LONG_ONES(n) \
-  ((n) == BITS_PER_LONGINT ? -1L : (n) == 0 ? 0L : (1L << (n)) - 1)
+
+#define LIMB_ONES(n) \
+  ((n) == BITS_PER_MP_LIMB ? -1L : (n) == 0 ? 0L : (1L << (n)) - 1)
 
 mp_limb_t
 r_string (const char *s)
@@ -692,24 +693,24 @@ r_string (const char *s)
   if (strcmp (s, "bits") == 0)
     {
       mp_limb_t  l;
-      if (n > BITS_PER_LONGINT)
+      if (n > BITS_PER_MP_LIMB)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
-                   n, BITS_PER_LONGINT);
+                   n, BITS_PER_MP_LIMB);
           exit (1);
         }
       mpn_random (&l, 1);
-      return (l | (1 << (n-1))) & LONG_ONES(n);
+      return (l | (1 << (n-1))) & LIMB_ONES(n);
     }
   else  if (strcmp (s, "ones") == 0)
     {
-      if (n > BITS_PER_LONGINT)
+      if (n > BITS_PER_MP_LIMB)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
-                   n, BITS_PER_LONGINT);
+                   n, BITS_PER_MP_LIMB);
           exit (1);
         }
-      return LONG_ONES (n);
+      return LIMB_ONES (n);
     }
   else if (*s != '\0')
     {
