@@ -1,5 +1,8 @@
 Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpn/configure.in: Treat ultrasparc just like sparc v8,
+	until 64-bit compilers are ready.
+
 	* mpf/set_d.c: Make it work for 64-bit machines.
 
 Thu May 16 20:53:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
