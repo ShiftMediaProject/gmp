@@ -53,10 +53,6 @@ ifdef(`HAVE_ABI_2_0w',
 ',`	.level	2.0
 ')
 PROLOGUE(mpn_udiv_qrnnd_r)
-	.proc
-	.entry
-	.callinfo	frame=0,no_calls,save_rp,entry_gr=7
-
 ifdef(`HAVE_ABI_2_0n',
 `	depd		%r25,31,32,%r26
 	depd		%r23,31,32,%r24
@@ -117,6 +113,4 @@ ifdef(`HAVE_ABI_2_0n',
 ')
 	bve		(%r2)
 	std		n1,0(remptr)	C store remainder
-
-	.procend
 EPILOGUE(mpn_udiv_qrnnd_r)

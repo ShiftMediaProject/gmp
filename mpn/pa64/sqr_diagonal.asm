@@ -42,8 +42,6 @@ ifdef(`HAVE_ABI_2_0w',
 ',`	.level	2.0
 ')
 PROLOGUE(mpn_sqr_diagonal)
-	.proc
-	.entry
 	ldo		128(%r30),%r30
 
 	fldds,ma	8(up),%fr8
@@ -181,5 +179,4 @@ LDEF(end1)
 	std		p64,-8(rp)
 	bve		(%r2)
 	ldo		-128(%r30),%r30
-	.procend
 EPILOGUE(mpn_sqr_diagonal)
