@@ -919,7 +919,7 @@ GMP integers are stored in objects of type @code{mpz_t}.
 * Integer Comparisons::         
 * Integer Logic and Bit Fiddling::  
 * I/O of Integers::             
-* Integer Random Functions::    
+* Integer Random Numbers::      
 * Miscellaneous Integer Functions::  
 @end menu
 
