@@ -95,6 +95,25 @@ MA 02111-1307, USA. */
 #define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
 #define MP_LIMB_T_HIGHBIT  (~ (MP_LIMB_T_MAX >> 1))
 
+#ifndef ULONG_MAX
+#define ULONG_MAX       (~ (unsigned long) 0)
+#endif
+#define ULONG_HIGHBIT   (~ (ULONG_MAX >> 1))
+#define LONG_HIGHBIT    ((long) ULONG_HIGHBIT)
+#ifndef LONG_MAX
+#define LONG_MAX        ((long) (ULONG_HIGHBIT-1))
+#endif
+
+/* extra casts because shorts are promoted to ints by ~ */
+#ifndef USHORT_MAX
+#define USHORT_MAX      ((unsigned short) (~ 0))
+#endif
+#define USHORT_HIGHBIT  ((unsigned short) (~ (USHORT_MAX >> 1)))
+#define SHORT_HIGHBIT   ((short) USHORT_HIGHBIT)
+#ifndef SHORT_MAX
+#define SHORT_MAX       ((short) (USHORT_HIGHBIT-1))
+#endif
+
 
 /* Swap macros. */
 
