@@ -65,8 +65,6 @@ sub mf {
   return $path;
 }
 
-my ($re,$de,$up) = $^O eq 'MacOS' ? (':',':','::') : ('','/','../');
-
 
 ###########################################################################
 #
@@ -152,18 +150,10 @@ my $asm_start    = "\ttoc";	# No dot, like ".dot"?
 
 $cfg = \%cfg_apple;		# Default
 
-$cfg = \%cfg_cw
-  if @ARGV and $ARGV[0] =~ /^cw|co/i;
-
-my ($files,$optional,$package,$version) = parse_top_configure($configure);
-
-if (@ARGV and $ARGV[0] eq 'parse_test') {
-  print join("\n", @$files), "\n";
-  exit 0;
+if (@ARGV and $ARGV[0] =~ /^cw|co/) {
+  $cfg = \%cfg_cw;
+  $make .= '.cw';
 }
-
-my %mpn_objects = map {$_ => 1} (@$files,@$optional);
-my %mpn_optional = map {$_ => 1} @$optional;
 
 ###########################################################################
 #
@@ -175,6 +165,16 @@ foreach (@dirs) {
   -d $_ or mkdir $_, 0775
     or die "Can't create directory \"$_\"\n";
 }
+
+###########################################################################
+#
+#  Parse top configure file for mpn files
+#
+###########################################################################
+
+my ($files,$optional,$package,$version) = parse_top_configure($configure);
+my %mpn_objects = map {$_ => 1} (@$files,@$optional);
+my %mpn_optional = map {$_ => 1} @$optional;
 
 ###########################################################################
 #

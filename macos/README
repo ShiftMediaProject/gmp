@@ -23,8 +23,6 @@ Not all tests pass
 	If using Apple's compilers I never run the mpz t-mul, mpf t-add
 	and mpf t-sub because they don't compile with MrC 4.1
 
-	The 'mpf/t-muldiv' test fails, see PROBLEMS section below
-
 
 
 REQUIREMENTS
@@ -34,19 +32,6 @@ To compile into the library you need
 
         Apple MPW (free) or CodeWarrior MPW
 	(GMP build was tested with CodeWarrior Pro 5)
-
-        MacPerl 5 for MPW
-
-MacPerl is free, download and install the MPW tool version from
-
-        http://www.macperl.com
-
-You need the "Appl" and "Tool" archive, for example
-
-    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_appl.bin
-    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_tool.bin
-
-See the file "Install.MPW_Perl" for MPW Perl installation instructions.
 
 For compiling with the free Apple MPW development system you need a
 68K Macintosh with a 68020 or higher microprocessor, or any Power
@@ -132,26 +117,23 @@ BUILD PROCESS
 =============
 
 The "macos" folder/directory should be inside the top directory in the
-GMP source tree and should contain three files
+GMP source tree and should contain six files
 
         README          This file
         configure       Create files and directories needed
         unix2mac        Used to convert "configure" end-of-line chars
         Makefile.in     Source for the final "Makefile"
+	Makefile	MPW make file that uses the Apple environment.
+	Makefile.cw	MPW make file that uses the Metrowerk
+			CodeWarrior environment.
 
 Double click on the "MPW Shell" icon and set the directory using the
 "Directory" menu to the "$GMP_SOURCE_DIR:macos:" folder/directory.
 
-Run "configure" in a two step process
-
-        % perl unix2mac configure > configure.mac
-        % perl configure.mac
-  or    % perl configure.mac cw
-
-If you use CodeWarrior MPW you need to add the argument "cw" to the
-configure script. Then run "Make"
+Then run "Make"
 
         % make
+     or % make -f Makefile.cw
 
 This will not execute the commands. It is like "make -n" on Unix, and
 will display the commands to execute. You select the commands and
@@ -173,6 +155,33 @@ Note that this will remove the resulting library as well.
 
 
 
+GMP DEVELOPERS
+==============
+
+If you are a GMP developer, i.e. change any GMP files, you may need to
+recreate the make file. Then you need MacPerl 5 for MPW.  MacPerl is
+free, download and install the MPW tool version from
+
+        http://www.macperl.com
+
+You need the "Appl" and "Tool" archive, for example
+
+    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_appl.bin
+    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_tool.bin
+
+See the file "Install.MPW_Perl" for MPW Perl installation instructions.
+
+You run "configure" in a two step process
+
+        % perl unix2mac configure > configure.mac
+        % perl configure.mac
+  or    % perl configure.mac cw
+
+If you use CodeWarrior MPW you need to add the argument "cw" to the
+configure script. 
+
+
+
 PROBLEMS
 ========
 
@@ -188,34 +197,19 @@ is likely to break this MacOS port.
 The library uses stream I/O operations for some of the GMP functions
 and maybe for some error messages. This means that to link this
 library to form a normal Mac application you may get link problems,
-i.e.  a Mac normally has no console/shell to write to. I "think" there
-is some sort of glue library or something to link with but
-unfortunately I don't really know at the moment.
+i.e. a Mac normally has no console/shell to write to.
 
-The "return" key and the "enter" key mean different things to MPW.
-The first just add a line break, the second send the line your
-pointer is at or the selection you have to the MPW command
-interpreter.
+If you are unfamiliar with MPW note that the "return" key and the
+"enter" key mean different things to MPW.  The first just add a line
+break, the second send the line your pointer is at or the selection
+you have to the MPW command interpreter.
 
-If you mount the GMP source from a Unix netatalk server don't edit or
-remote files from the Unix side. MPW and MacOS gets very confused
-about what file and directories that are there or not.
+If you mount the GMP source from a Unix netatalk server don't move or
+remove files from the Unix side. MPW cache information about what
+the file system looks like and MacOS gets very confused or crash.
 
 If you really need a MacOS m68k version of GMP let me know and I may
 take the time to do the port.
-
-The 'mpf/t-muldiv' test fails if compiled with MWPPC
-
-    ERROR in mpf_mul or mpf_div after 97366 tests
-       u = 0.5048709791063773838898876874312608802911e-28
-       v = 0.9313190219018526546832738459330147632116e-9
-       x = 0.50487097910637738388988768743126088029113124439203043966433e-28
-       w = 0.54210315394973578595915199220823233621433472905573800979413e-19
-
-The values 'u' and 'x' should be "close" but are not close enough for
-the test case. This may or may not indicate a bug in the MWPCC
-compiler. There is no complaint using the MrC compiler but I'm not sure
-the same semi-random sequence is used.
 
 
 Kent Boortz <kent@swox.se>
