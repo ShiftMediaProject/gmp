@@ -1,7 +1,7 @@
 dnl Alpha ev6 mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl the result to a second limb vector.
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -292,7 +292,7 @@ $Loop:
 	ldq	r3,	24(r17)		C L1
 
 	umulh	r19,	r0,	r10	C U1
-	addq	r6,	r13,	r6	C L0 lo + acc
+	addq	r6,	r13,	r6	C U0 lo + acc
 	stq	r22,	-32(r16)	C L0
 	stq	r23,	-24(r16)	C L1
 
@@ -362,7 +362,7 @@ $Loop:
 	ldq	r3,	-8(r17)		C L1
 
 	umulh	r19,	r0,	r10	C U1
-	addq	r6,	r13,	r6	C L0 lo + acc
+	addq	r6,	r13,	r6	C U0 lo + acc
 	stq	r22,	0(r16)		C L0
 	stq	r23,	8(r16)		C L1
 
@@ -397,7 +397,7 @@ $Loop:
 	ldq	r1,	8(r17)		C L1
 
 	umulh	r19,	r2,	r14	C U1
-	addq	r4,	r9,	r4	C L0 lo + acc
+	addq	r4,	r9,	r4	C U0 lo + acc
 	stq	r22,	-48(r16)	C L0
 	stq	r23,	-40(r16)	C L1
 
