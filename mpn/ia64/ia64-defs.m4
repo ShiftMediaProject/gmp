@@ -60,4 +60,40 @@ define(`DATAEND',`dnl')
 
 define(`ASM_END',`dnl')
 
+
+dnl  Usage: ASSERT([pr] [,code])
+dnl
+dnl  Require that the given predictate register is true after executing the
+dnl  test code.  For example,
+dnl
+dnl         ASSERT(p6,
+dnl         `       cmp.eq  p6,p0 = r3, r4')
+dnl
+dnl  If the predicate register argument is empty then nothing is tested, the
+dnl  code is just executed.  This can be used for setups required by later
+dnl  ASSERTs.  The code argument can be omitted to just test a predicate
+dnl  with no special setup code.
+dnl
+dnl  For convenience, stops are inserted before and after the code emitted.
+
+define(ASSERT,
+m4_assert_numargs_range(1,2)
+m4_assert_defined(`WANT_ASSERT')
+`ifelse(WANT_ASSERT,1,
+`	;;
+ifelse($2,,,
+`$2
+	;;
+')
+ifelse($1,,,
+`($1)	br	.LASSERTok`'ASSERT_label_counter ;;
+	cmp.ne	p6,p6 = r0, r0	C illegal instruction
+	;;
+.LASSERTok`'ASSERT_label_counter:
+define(`ASSERT_label_counter',eval(ASSERT_label_counter+1))
+')
+')')
+define(`ASSERT_label_counter',1)
+
+
 divert
