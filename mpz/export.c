@@ -1,6 +1,6 @@
 /* mpz_export -- create word data from mpz.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -55,7 +55,7 @@ mpz_export (void *data, size_t *countp, int order,
 {
   mp_size_t      zsize;
   mp_srcptr      zp;
-  size_t         count;
+  size_t         count, dummy;
   unsigned long  numb;
   unsigned       align;
 
@@ -63,6 +63,9 @@ mpz_export (void *data, size_t *countp, int order,
   ASSERT (endian == 1 || endian == 0 || endian == -1);
   ASSERT (nail <= 8*size);
   ASSERT (8*size-nail > 0);
+
+  if (countp == NULL)
+    countp = &dummy;
 
   zsize = SIZ(z);
   if (zsize == 0)
