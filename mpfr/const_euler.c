@@ -1,6 +1,6 @@
 /* mpfr_const_euler -- Euler's constant
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -74,7 +74,7 @@ mpfr_const_euler (mpfr_t x, mp_rnd_t rnd)
    with an error of at most ulp(x).
    [S(n) >= 2 for n >= 5]
  */
-void
+static void
 mpfr_const_euler_S (mpfr_t x, unsigned long n)
 {
   unsigned long N, k, m;
@@ -117,7 +117,7 @@ mpfr_const_euler_S (mpfr_t x, unsigned long n)
    with error at most 4*ulp(x). Assumes n>=2.
    Since x <= exp(-n)/n <= 1/8, then 4*ulp(x) <= ulp(1).
 */
-void
+static void
 mpfr_const_euler_R (mpfr_t x, unsigned long n)
 {
   unsigned long k, m;
