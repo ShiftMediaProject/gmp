@@ -53,6 +53,18 @@ MA 02111-1307, USA. */
 #define TRACE(x) 
 
 
+#if ! defined (va_copy) && defined (__va_copy)
+#define va_copy(dst,src)  __va_copy(dst,src)
+#endif
+#if ! defined (va_copy)
+#define va_copy(dst,src)  do { (dst) = (src); } while (0)
+#endif
+
+/* Should be portable, but in any case this is only used under some ASSERTs. */
+#define va_equal(x, y)                           \
+  (memcmp (&(x), &(y), sizeof(va_list)) == 0)
+
+
 /* printf is convenient because it allows various types to be printed in one
    fairly compact call, so having gmp_printf support the standard types as
    well as the gmp ones is important.  This ends up meaning all the standard
@@ -99,22 +111,25 @@ MA 02111-1307, USA. */
 
 /* If a gmp format is the very first thing or there are two gmp formats with
    nothing in between then we'll reach here with this_fmt == last_fmt and we
-   can do nothing in that case.  */
+   can do nothing in that case.
 
-#define FLUSH()                                                         \
-  do {                                                                  \
-    if (this_fmt == last_fmt)                                           \
-      {                                                                 \
-        TRACE (printf ("nothing to flush\n"));                          \
-        ASSERT (this_ap == last_ap);                                    \
-      }                                                                 \
-    else                                                                \
-      {                                                                 \
-        ASSERT (*this_fmt == '%');                                      \
-        *this_fmt = '\0';                                               \
-        TRACE (printf ("flush %p \"%s\"\n", last_ap, last_fmt));        \
-        DOPRNT_FORMAT (last_fmt, last_ap);                              \
-      }                                                                 \
+   last_ap is always replaced after a FLUSH, so it doesn't matter if va_list
+   is a call-by-reference and the funs->format routine modifies it.  */
+
+#define FLUSH()                                         \
+  do {                                                  \
+    if (this_fmt == last_fmt)                           \
+      {                                                 \
+        TRACE (printf ("nothing to flush\n"));          \
+        ASSERT (va_equal (this_ap, last_ap));           \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        ASSERT (*this_fmt == '%');                      \
+        *this_fmt = '\0';                               \
+        TRACE (printf ("flush \"%s\"\n", last_fmt));    \
+        DOPRNT_FORMAT (last_fmt, last_ap);              \
+      }                                                 \
   } while (0)
 
 
@@ -124,16 +139,19 @@ MA 02111-1307, USA. */
 
 int
 __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
-              const char *orig_fmt, va_list ap)
+              const char *orig_fmt, va_list orig_ap)
 {
-  va_list  this_ap, last_ap;
+  va_list  ap, this_ap, last_ap;
   size_t   alloc_fmt_size;
   char     *fmt, *alloc_fmt, *last_fmt, *this_fmt;
   int      retval = 0;
   int      type, fchar, *value, seen_precision;
   struct doprnt_params_t param;
 
-  TRACE (printf ("gmp_doprnt %p \"%s\"\n", ap, orig_fmt));
+  TRACE (printf ("gmp_doprnt \"%s\"\n", orig_fmt));
+
+  /* don't modify orig_ap, if va_list is actually an array */
+  va_copy (ap, orig_ap);
 
   /* The format string is chopped up into pieces to be passed to
      funs->format.  Unfortunately that means it has to be copied so each
@@ -146,11 +164,11 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
   /* last_fmt and last_ap are just after the last output, and hence where
      the next output will begin, when that's done */
   last_fmt = fmt;
-  last_ap = ap;
+  va_copy (last_ap, ap);
 
   for (;;)
     {
-      TRACE (printf ("next: %p \"%s\"\n", ap, fmt));
+      TRACE (printf ("next: \"%s\"\n", fmt));
 
       fmt = strchr (fmt, '%');
       if (fmt == NULL)
@@ -158,12 +176,12 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 
       /* this_fmt and this_ap are the current '%' sequence being considered */
       this_fmt = fmt;
-      this_ap = ap;
+      va_copy (this_ap, ap);
       fmt++; /* skip the '%' */
 
       TRACE (printf ("considering\n");
-             printf ("  last: %p \"%s\"\n", last_ap, last_fmt);
-             printf ("  this: %p \"%s\"\n", this_ap, this_fmt));
+             printf ("  last: \"%s\"\n", last_fmt);
+             printf ("  this: \"%s\"\n", this_fmt));
 
       type = '\0';
       value = &param.width;
@@ -262,7 +280,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
                 (*__gmp_free_func) (s, strlen(s)+1);
                 DOPRNT_ACCUMULATE (ret);
                 last_fmt = fmt;
-                last_ap = ap;
+                va_copy (last_ap, ap);
               }
               break;
             case 't':
@@ -284,7 +302,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
                 ret = __gmp_doprnt_integer (funs, data, &param, s);
                 (*__gmp_free_func) (s, strlen(s)+1);
                 DOPRNT_ACCUMULATE (ret);
-                last_ap = ap;
+                va_copy (last_ap, ap);
                 last_fmt = fmt;
               }
               break;
@@ -315,7 +333,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               FLUSH ();
               DOPRNT_ACCUMULATE (__gmp_doprnt_mpf (funs, data, &param,
                                                    va_arg (ap, mpf_srcptr)));
-              last_ap = ap;
+              va_copy (last_ap, ap);
               last_fmt = fmt;
               break;
             case 'L':
@@ -373,7 +391,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             case 'l': { long  *p = va_arg (ap, long *);  *p = retval; } break;
             default:  { int   *p = va_arg (ap, int *);   *p = retval; } break;
             }
-            last_ap = ap;
+            va_copy (last_ap, ap);
             last_fmt = fmt;
             goto next;
 
@@ -478,7 +496,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
       ;
     }
 
-  TRACE (printf ("remainder: %p \"%s\"\n", last_ap, last_fmt));
+  TRACE (printf ("remainder: \"%s\"\n", last_fmt));
   if (*last_fmt != '\0')
     DOPRNT_FORMAT (last_fmt, last_ap);
 
