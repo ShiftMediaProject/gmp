@@ -64,9 +64,6 @@ MA 02111-1307, USA.
 
    Future:
 
-   When a validate function detects a problem and there's also a reference
-   routine available, run the latter to show what the result should be.
-
    Make a little scheme for interpreting the "SIZE" selections uniformly.
 
    Make tr->size==SIZE_2 work, for the benefit of find_a which wants just 2
@@ -249,6 +246,7 @@ mp_size_t       size2;
 unsigned long   shift;
 mp_limb_t       carry;
 mp_limb_t       divisor;
+mp_limb_t       multiplier;
 
 struct each_t {
   const char  *name;
@@ -546,7 +544,6 @@ validate_sqrtrem (void)
 #define TYPE_POPCOUNT         58
 #define TYPE_HAMDIST          59
 
-
 #define TYPE_MUL_BASECASE     60
 #define TYPE_MUL_N            61
 #define TYPE_SQR              62
@@ -556,6 +553,7 @@ validate_sqrtrem (void)
 #define TYPE_TDIV_QR          71
 
 #define TYPE_SQRTREM          80
+#define TYPE_ZERO             81
 
 #define TYPE_EXTRA            90
 
@@ -939,6 +937,11 @@ param_init (void)
   p->overlap = OVERLAP_NONE;
   VALIDATE (validate_sqrtrem);
 
+  p = &param[TYPE_ZERO];
+  p->dst[0] = 1;
+  p->size = SIZE_ALLOW_ZERO;
+  REFERENCE (refmpn_zero);
+
 #ifdef EXTRA_PARAM_INIT
   EXTRA_PARAM_INIT
 #endif
@@ -1054,6 +1057,10 @@ mpn_umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
   return high;
 }
 
+void
+MPN_ZERO_fun (mp_ptr ptr, mp_size_t size)
+{ MPN_ZERO (ptr, size); }
+
 
 struct choice_t {
   const char  *name;
@@ -1165,6 +1172,8 @@ const struct choice_t choice_array[] = {
 
   { TRY(mpn_sqrtrem),    TYPE_SQRTREM },
 
+  { TRY_FUNFUN(MPN_ZERO), TYPE_ZERO },
+
 #ifdef EXTRA_ROUTINES
   EXTRA_ROUTINES
 #endif
@@ -1275,7 +1284,6 @@ mp_limb_t  multiplier_array[] = {
   MP_LIMB_T_MAX - 1,
   MP_LIMB_T_MAX
 };
-mp_limb_t  multiplier;
 int        multiplier_index;
 
 mp_limb_t  divisor_array[] = {
@@ -1779,6 +1787,10 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_SQRTREM:
     e->retval = (* (long (*)(ANYARGS)) CALLING_CONVENTIONS (function))
       (e->d[0].p, e->d[1].p, e->s[0].p, size);
+    break;
+
+  case TYPE_ZERO:
+    e->retval = CALLING_CONVENTIONS (function) (e->d[0].p, size);
     break;
 
 #ifdef EXTRA_CALL
