@@ -28,8 +28,8 @@ MA 02111-1307, USA. */
    In fact consider calling mpz_bin_uiui() when the arguments fit, leaving
    the code here only for big n.
 
-   For the identity bin(n,k) = bin(-n+k-1,k) see Knuth vol 1 section 1.2.6
-   part G. */
+   For the identity bin(n,k) = (-1)^k * bin(-n+k-1,k) see Knuth vol 1
+   section 1.2.6 part G. */
 
 void
 #if __STDC__
@@ -48,7 +48,7 @@ mpz_bin_ui (r, n, k)
   
   if (mpz_sgn (n) < 0)
     {
-      /* bin(n,k) = bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
+      /* bin(n,k) = (-1)^k * bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
       mpz_init (ni);
       mpz_neg (ni, n);
       mpz_sub_ui (ni, ni, 1L);
