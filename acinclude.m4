@@ -213,48 +213,6 @@ fi
 ])
 
 
-dnl  GMP_PROG_HOST_CC
-dnl  ----------------
-dnl  Establish a value for $HOST_CC.
-dnl
-dnl  Any HOST_CC already set is used without testing.  Likewise any
-dnl  CC_FOR_BUILD is used without testing.  CC_FOR_BUILD is the new name for
-dnl  a build system compiler, see configfsf.guess.
-
-AC_DEFUN(GMP_PROG_HOST_CC,
-[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
-AC_REQUIRE([AC_PROG_CC])
-AC_CACHE_CHECK([for HOST_CC build system compiler],
-               gmp_cv_prog_host_cc,
-[if test -n "$HOST_CC"; then
-  gmp_cv_prog_host_cc=$HOST_CC
-else
-  if test -n "$CC_FOR_BUILD"; then
-    gmp_cv_prog_host_cc=$CC_FOR_BUILD
-  else
-    cat >conftest.c <<EOF
-int main () { exit(0); }
-EOF
-    for c in "$CC" cc gcc c89; do
-      echo "trying $c" >&AC_FD_CC        
-      if ($c conftest.c -o conftest) >&AC_FD_CC 2>&1; then
-        if (./conftest) >&AC_FD_CC 2>&1; then
-          gmp_cv_prog_host_cc=$c
-          break
-        fi
-      fi
-    done
-    rm -f conftest*
-    if test -z "$gmp_cv_prog_host_cc"; then
-      AC_MSG_ERROR([cannot find a build system compiler])
-    fi
-  fi
-fi
-])
-HOST_CC=$gmp_cv_prog_host_cc
-])
-
-
 dnl  GMP_PROG_LEX
 dnl  ------------
 dnl  AC_PROG_LEX bombs if $LEX is set to ${am_missing_run}flex by
@@ -575,8 +533,8 @@ dnl  parsed.
 dnl
 dnl  gcc 2.7.2, 2.95 and 3.0 just gave something like "2.7.2.3" or "2.95.3".
 dnl  egcs 2.91 gave something like "egcs-2.91".
-dnl  gcc 3.1 gives something like "gcc-3.1" on GNU/Linux, or something like
-dnl    "gcc.exe (GCC) 3.1" on MINGW.
+dnl  gcc 3.1 gives something like "gcc-3.1" on GNU/Linux, or "gcc.exe (GCC)
+dnl    3.1" on MINGW, or "gcc (GCC) 3.1" on Solaris.
 dnl
 dnl  "[a-zA-Z(). -]*" is used to match the prefixes.  (Solaris 8 sed doesn't
 dnl  support "?" or "*" of a group, like "\(...\)?"  or "\(...\)*".)
@@ -2545,5 +2503,211 @@ die die die
         ;;
     esac
     ;;
+esac
+])
+
+
+dnl  GMP_PROG_CC_FOR_BUILD
+dnl  ---------------------
+dnl  Find CC_FOR_BUILD, a C compiler for the build system.
+dnl
+dnl  If CC_FOR_BUILD is set, it's used without testing, likewise $HOST_CC,
+dnl  otherwise some likely candidates are tried, as per configfsf.guess.
+dnl
+dnl  HOST_CC is the old name for what's now normally CC_FOR_BUILD.  HOST_CC
+dnl  is tested in case the user has set that name.  HOST_CC is established
+dnl  in the output for use by libtool in some configurations when generating
+dnl  Windows DLLs (the impgen.c program).
+dnl
+dnl  The default compiler output 
+
+AC_DEFUN(GMP_PROG_CC_FOR_BUILD,
+[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
+AC_REQUIRE([AC_PROG_CC])
+cat >conftest.c <<EOF
+int
+main ()
+{
+  exit(0);
+}
+EOF
+found=no
+for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89; do
+  if test -z "$i"; then
+    continue
+  fi
+  AC_MSG_CHECKING([build system compiler $i])
+  gmp_compile="$i conftest.c"
+  if AC_TRY_EVAL(gmp_compile); then
+    if (./a.out || ./a.exe || ./a_out.exe) >&AC_FD_CC 2>&1; then
+      AC_MSG_RESULT([yes])
+      found=yes
+      break
+    fi
+  fi
+  AC_MSG_RESULT([no])
+
+  # no more probing if a user specified compiler didnt work
+  if test -n "$CC_FOR_BUILD" || test -n "$HOST_CC"; then
+    break
+  fi
+done
+rm -f conftest* a.out a.exe a_out.exe
+
+if test $found = no; then
+  AC_MSG_ERROR([Cannot find a build system compiler])
+fi
+
+AC_ARG_VAR(CC_FOR_BUILD,[build system C compiler])
+if test -z "$CC_FOR_BUILD"; then
+  AC_SUBST(CC_FOR_BUILD,$i)
+fi
+if test -z "$HOST_CC"; then
+  AC_SUBST(HOST_CC,$i)
+fi
+])
+
+
+dnl  GMP_PROG_CPP_FOR_BUILD
+dnl  ---------------------
+dnl  Establish CPP_FOR_BUILD, the build system C preprocessor.
+dnl  The choices tried here are the same as AC_PROG_CPP, but with
+dnl  CC_FOR_BUILD.
+
+AC_DEFUN(GMP_PROG_CPP_FOR_BUILD,
+[AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
+AC_CACHE_CHECK([for build system preprocessor],
+               gmp_cv_prog_cpp_for_build,
+[gmp_cv_prog_cpp_for_build="no"
+if test -n "$CPP_FOR_BUILD"; then
+  gmp_cv_prog_cpp_for_build=$CPP_FOR_BUILD
+else
+  cat >conftest.c <<EOF
+#define FOO BAR
+EOF
+  for i in "$CC_FOR_BUILD -E" "$CC_FOR_BUILD -E -traditional-cpp" "/lib/cpp"; do
+    gmp_compile="$i conftest.c"
+    if AC_TRY_EVAL(gmp_compile) >&AC_FD_CC 2>&1; then
+      gmp_cv_prog_cpp_for_build=$i
+      break
+    fi
+  done
+  rm -f conftest* a.out a.exe a_out.exe
+fi
+])
+if test "$gmp_cv_prog_cpp_for_build" = "no"; then
+  AC_MSG_ERROR([Cannot find build system C preprocessor.])
+fi
+AC_ARG_VAR(CPP_FOR_BUILD,[build system C preprocessor])
+if test -z "$CPP_FOR_BUILD"; then
+  AC_SUBST(CPP_FOR_BUILD,$gmp_cv_prog_cpp_for_build)
+fi
+])
+
+
+
+dnl  GMP_PROG_EXEEXT_FOR_BUILD
+dnl  -------------------------
+dnl  Determine EXEEXT_FOR_BUILD, the build system executable suffix.
+dnl
+dnl  If a program "conftest.exe" can be run with "./conftest" then assume
+dnl  ".exe" is the correct suffix.
+dnl
+dnl  Autoconf has some hairier tests in _AC_COMPILER_EXEEXT_DEFAULT, based
+dnl  on the default compiler output a.out, a.exe, a_out.exe or whatever.
+dnl  But are there any systems that aren't either .exe or nothing?
+
+AC_DEFUN(GMP_PROG_EXEEXT_FOR_BUILD,
+[AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
+AC_CACHE_CHECK([for build system executable suffix],
+               gmp_cv_prog_exeext_for_build,
+[cat >conftest.c <<EOF
+int
+main ()
+{
+  exit (0);
+}
+EOF
+gmp_compile="$CC_FOR_BUILD conftest.c -o conftest.exe"
+if AC_TRY_EVAL(gmp_compile); then
+  if (./conftest) 2>&AC_FD_CC; then
+    gmp_cv_prog_exeext_for_build=".exe"
+  else
+    gmp_cv_prog_exeext_for_build=
+  fi
+else
+  AC_MSG_ERROR([Oops, CC_FOR_BUILD doesnt work])
+fi
+])
+AC_SUBST(EXEEXT_FOR_BUILD,$gmp_cv_prog_exeext_for_build)
+])
+
+
+dnl  GMP_C_FOR_BUILD_ANSI
+dnl  --------------------
+dnl  Determine whether CC_FOR_BUILD is ANSI, and establish U_FOR_BUILD
+dnl  accordingly.
+
+AC_DEFUN(GMP_C_FOR_BUILD_ANSI,
+[AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
+AC_CACHE_CHECK([whether build system compiler is ANSI],
+               gmp_cv_c_for_build_ansi,
+[cat >conftest.c <<EOF
+int
+main (int argc, char *argv[])
+{
+  exit(0);
+}
+EOF
+gmp_compile="$CC_FOR_BUILD conftest.c"
+if AC_TRY_EVAL(gmp_compile); then
+  gmp_cv_c_for_build_ansi=yes
+else
+  gmp_cv_c_for_build_ansi=no
+fi
+])
+if test "$gmp_cv_c_for_build_ansi" = yes; then
+  U_FOR_BUILD=
+else
+  AC_SUBST(U_FOR_BUILD,_)
+fi
+])
+
+
+dnl  GMP_CHECK_LIBM_FOR_BUILD
+dnl  ------------------------
+dnl  Establish LIBM_FOR_BUILD as -lm, if that seems to work.
+dnl
+dnl  Libtool AC_CHECK_LIBM also uses -lmw on *-ncr-sysv4.3*, if it works.
+dnl  Don't know what that does, lets assume it's not needed just for log().
+
+AC_DEFUN(GMP_CHECK_LIBM_FOR_BUILD,
+[AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
+AC_CACHE_CHECK([for build system compiler math library],
+               gmp_cv_check_libm_for_build,
+[cat >conftest.c <<EOF
+int
+main ()
+{
+  exit(0);
+}
+double d;
+double
+foo ()
+{
+  return log (d);
+}
+EOF
+gmp_compile="$CC_FOR_BUILD conftest.c -lm"
+if AC_TRY_EVAL(gmp_compile); then
+  gmp_cv_check_libm_for_build=-lm
+else
+  gmp_cv_check_libm_for_build=no
+fi
+])
+case $gmp_cv_check_libm_for_build in
+yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
+no)  LIBM_FOR_BUILD= ;;
+*)   LIBM_FOR_BUILD=$gmp_cv_check_libm_for_build
 esac
 ])
