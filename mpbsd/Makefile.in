@@ -126,11 +126,11 @@ INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 
 
 nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c \
+	add.c cmp.c gcd.c mul.c powm.c realloc.c \
 	set.c sqrtrem.c sub.c tdiv_qr.c
 
 libmpbsd_la_SOURCES = \
-	itom.c mfree.c min.c mout.c mtox.c sdiv.c xtom.c
+	itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c
 
 
 @WANT_MPBSD_TRUE@noinst_LTLIBRARIES = @WANT_MPBSD_TRUE@libmpbsd.la
@@ -151,10 +151,9 @@ ANSI2KNR = $(top_builddir)/ansi2knr
 libmpbsd_la_LDFLAGS = 
 libmpbsd_la_LIBADD = 
 am_libmpbsd_la_OBJECTS =  itom$U.lo mfree$U.lo min$U.lo mout$U.lo \
-mtox$U.lo sdiv$U.lo xtom$U.lo
+mtox$U.lo rpow$U.lo sdiv$U.lo xtom$U.lo
 nodist_libmpbsd_la_OBJECTS =  add$U.lo cmp$U.lo gcd$U.lo mul$U.lo \
-pow_ui$U.lo powm$U.lo realloc$U.lo set$U.lo sqrtrem$U.lo sub$U.lo \
-tdiv_qr$U.lo
+powm$U.lo realloc$U.lo set$U.lo sqrtrem$U.lo sub$U.lo tdiv_qr$U.lo
 libmpbsd_la_OBJECTS =  $(am_libmpbsd_la_OBJECTS) \
 $(nodist_libmpbsd_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -255,12 +254,12 @@ mtox_.c: mtox.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mtox.c; then echo $(srcdir)/mtox.c; else echo mtox.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mtox_.c
 mul_.c: mul.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c
-pow_ui_.c: pow_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pow_ui.c; then echo $(srcdir)/pow_ui.c; else echo pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pow_ui_.c
 powm_.c: powm.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm.c; then echo $(srcdir)/powm.c; else echo powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_.c
 realloc_.c: realloc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/realloc.c; then echo $(srcdir)/realloc.c; else echo realloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > realloc_.c
+rpow_.c: rpow.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rpow.c; then echo $(srcdir)/rpow.c; else echo rpow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rpow_.c
 sdiv_.c: sdiv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sdiv.c; then echo $(srcdir)/sdiv.c; else echo sdiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sdiv_.c
 set_.c: set.c $(ANSI2KNR)
@@ -276,8 +275,8 @@ xtom_.c: xtom.c $(ANSI2KNR)
 add_.$(OBJEXT) add_.lo cmp_.$(OBJEXT) cmp_.lo gcd_.$(OBJEXT) gcd_.lo \
 itom_.$(OBJEXT) itom_.lo mfree_.$(OBJEXT) mfree_.lo min_.$(OBJEXT) \
 min_.lo mout_.$(OBJEXT) mout_.lo mtox_.$(OBJEXT) mtox_.lo \
-mul_.$(OBJEXT) mul_.lo pow_ui_.$(OBJEXT) pow_ui_.lo powm_.$(OBJEXT) \
-powm_.lo realloc_.$(OBJEXT) realloc_.lo sdiv_.$(OBJEXT) sdiv_.lo \
+mul_.$(OBJEXT) mul_.lo powm_.$(OBJEXT) powm_.lo realloc_.$(OBJEXT) \
+realloc_.lo rpow_.$(OBJEXT) rpow_.lo sdiv_.$(OBJEXT) sdiv_.lo \
 set_.$(OBJEXT) set_.lo sqrtrem_.$(OBJEXT) sqrtrem_.lo sub_.$(OBJEXT) \
 sub_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo xtom_.$(OBJEXT) xtom_.lo : \
 $(ANSI2KNR)
@@ -418,9 +417,6 @@ gcd.c: $(top_srcdir)/mpz/gcd.c
 
 mul.c: $(top_srcdir)/mpz/mul.c
 	cp $(top_srcdir)/mpz/mul.c mul.c
-
-pow_ui.c: $(top_srcdir)/mpz/pow_ui.c
-	cp $(top_srcdir)/mpz/pow_ui.c pow_ui.c
 
 powm.c: $(top_srcdir)/mpz/powm.c
 	cp $(top_srcdir)/mpz/powm.c powm.c

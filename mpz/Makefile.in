@@ -135,11 +135,11 @@ libmpz_la_SOURCES = \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
-  lcm.c mod.c mul.c mul_2exp.c neg.c nextprime.c \
+  lcm.c mod.c mul.c mul_2exp.c n_pow_ui.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
-  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
+  set_ui.c setbit.c si_pow_ui.c size.c sizeinbase.c sqrt.c sqrtrem.c \
   swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
@@ -182,15 +182,16 @@ get_ui$U.lo getlimbn$U.lo hamdist$U.lo init$U.lo inp_raw$U.lo \
 inp_str$U.lo invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo iset_si$U.lo \
 iset_str$U.lo iset_ui$U.lo jacobi$U.lo kronsz$U.lo kronuz$U.lo \
 kronzs$U.lo kronzu$U.lo lcm$U.lo mod$U.lo mul$U.lo mul_2exp$U.lo \
-neg$U.lo nextprime$U.lo out_raw$U.lo out_str$U.lo perfpow$U.lo \
-perfsqr$U.lo popcount$U.lo pow_ui$U.lo powm$U.lo powm_ui$U.lo \
-pprime_p$U.lo random$U.lo random2$U.lo realloc$U.lo remove$U.lo \
-root$U.lo rrandomb$U.lo scan0$U.lo scan1$U.lo set$U.lo set_d$U.lo \
-set_f$U.lo set_q$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo setbit$U.lo \
-size$U.lo sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo swap$U.lo tdiv_ui$U.lo \
-tdiv_q$U.lo tdiv_q_2exp$U.lo tdiv_q_ui$U.lo tdiv_qr$U.lo \
-tdiv_qr_ui$U.lo tdiv_r$U.lo tdiv_r_2exp$U.lo tdiv_r_ui$U.lo tstbit$U.lo \
-ui_pow_ui$U.lo urandomb$U.lo urandomm$U.lo xor$U.lo
+n_pow_ui$U.lo neg$U.lo nextprime$U.lo out_raw$U.lo out_str$U.lo \
+perfpow$U.lo perfsqr$U.lo popcount$U.lo pow_ui$U.lo powm$U.lo \
+powm_ui$U.lo pprime_p$U.lo random$U.lo random2$U.lo realloc$U.lo \
+remove$U.lo root$U.lo rrandomb$U.lo scan0$U.lo scan1$U.lo set$U.lo \
+set_d$U.lo set_f$U.lo set_q$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo \
+setbit$U.lo si_pow_ui$U.lo size$U.lo sizeinbase$U.lo sqrt$U.lo \
+sqrtrem$U.lo swap$U.lo tdiv_ui$U.lo tdiv_q$U.lo tdiv_q_2exp$U.lo \
+tdiv_q_ui$U.lo tdiv_qr$U.lo tdiv_qr_ui$U.lo tdiv_r$U.lo \
+tdiv_r_2exp$U.lo tdiv_r_ui$U.lo tstbit$U.lo ui_pow_ui$U.lo \
+urandomb$U.lo urandomm$U.lo xor$U.lo
 nodist_libmpz_la_OBJECTS =  add$U.lo sub$U.lo add_ui$U.lo sub_ui$U.lo \
 fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
 fits_ulong$U.lo fits_ushort$U.lo mul_si$U.lo mul_ui$U.lo
@@ -421,6 +422,8 @@ mul_si_.c: mul_si.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_si.c; then echo $(srcdir)/mul_si.c; else echo mul_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_si_.c
 mul_ui_.c: mul_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_ui.c; then echo $(srcdir)/mul_ui.c; else echo mul_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_ui_.c
+n_pow_ui_.c: n_pow_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/n_pow_ui.c; then echo $(srcdir)/n_pow_ui.c; else echo n_pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > n_pow_ui_.c
 neg_.c: neg.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/neg.c; then echo $(srcdir)/neg.c; else echo neg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > neg_.c
 nextprime_.c: nextprime.c $(ANSI2KNR)
@@ -475,6 +478,8 @@ set_ui_.c: set_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_ui.c; then echo $(srcdir)/set_ui.c; else echo set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_ui_.c
 setbit_.c: setbit.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/setbit.c; then echo $(srcdir)/setbit.c; else echo setbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > setbit_.c
+si_pow_ui_.c: si_pow_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/si_pow_ui.c; then echo $(srcdir)/si_pow_ui.c; else echo si_pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > si_pow_ui_.c
 size_.c: size.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/size.c; then echo $(srcdir)/size.c; else echo size.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > size_.c
 sizeinbase_.c: sizeinbase.c $(ANSI2KNR)
@@ -552,20 +557,21 @@ jacobi_.lo kronsz_.$(OBJEXT) kronsz_.lo kronuz_.$(OBJEXT) kronuz_.lo \
 kronzs_.$(OBJEXT) kronzs_.lo kronzu_.$(OBJEXT) kronzu_.lo \
 lcm_.$(OBJEXT) lcm_.lo mod_.$(OBJEXT) mod_.lo mul_.$(OBJEXT) mul_.lo \
 mul_2exp_.$(OBJEXT) mul_2exp_.lo mul_si_.$(OBJEXT) mul_si_.lo \
-mul_ui_.$(OBJEXT) mul_ui_.lo neg_.$(OBJEXT) neg_.lo \
-nextprime_.$(OBJEXT) nextprime_.lo out_raw_.$(OBJEXT) out_raw_.lo \
-out_str_.$(OBJEXT) out_str_.lo perfpow_.$(OBJEXT) perfpow_.lo \
-perfsqr_.$(OBJEXT) perfsqr_.lo popcount_.$(OBJEXT) popcount_.lo \
-pow_ui_.$(OBJEXT) pow_ui_.lo powm_.$(OBJEXT) powm_.lo \
-powm_ui_.$(OBJEXT) powm_ui_.lo pprime_p_.$(OBJEXT) pprime_p_.lo \
-random_.$(OBJEXT) random_.lo random2_.$(OBJEXT) random2_.lo \
-realloc_.$(OBJEXT) realloc_.lo remove_.$(OBJEXT) remove_.lo \
-root_.$(OBJEXT) root_.lo rrandomb_.$(OBJEXT) rrandomb_.lo \
-scan0_.$(OBJEXT) scan0_.lo scan1_.$(OBJEXT) scan1_.lo set_.$(OBJEXT) \
-set_.lo set_d_.$(OBJEXT) set_d_.lo set_f_.$(OBJEXT) set_f_.lo \
-set_q_.$(OBJEXT) set_q_.lo set_si_.$(OBJEXT) set_si_.lo \
-set_str_.$(OBJEXT) set_str_.lo set_ui_.$(OBJEXT) set_ui_.lo \
-setbit_.$(OBJEXT) setbit_.lo size_.$(OBJEXT) size_.lo \
+mul_ui_.$(OBJEXT) mul_ui_.lo n_pow_ui_.$(OBJEXT) n_pow_ui_.lo \
+neg_.$(OBJEXT) neg_.lo nextprime_.$(OBJEXT) nextprime_.lo \
+out_raw_.$(OBJEXT) out_raw_.lo out_str_.$(OBJEXT) out_str_.lo \
+perfpow_.$(OBJEXT) perfpow_.lo perfsqr_.$(OBJEXT) perfsqr_.lo \
+popcount_.$(OBJEXT) popcount_.lo pow_ui_.$(OBJEXT) pow_ui_.lo \
+powm_.$(OBJEXT) powm_.lo powm_ui_.$(OBJEXT) powm_ui_.lo \
+pprime_p_.$(OBJEXT) pprime_p_.lo random_.$(OBJEXT) random_.lo \
+random2_.$(OBJEXT) random2_.lo realloc_.$(OBJEXT) realloc_.lo \
+remove_.$(OBJEXT) remove_.lo root_.$(OBJEXT) root_.lo \
+rrandomb_.$(OBJEXT) rrandomb_.lo scan0_.$(OBJEXT) scan0_.lo \
+scan1_.$(OBJEXT) scan1_.lo set_.$(OBJEXT) set_.lo set_d_.$(OBJEXT) \
+set_d_.lo set_f_.$(OBJEXT) set_f_.lo set_q_.$(OBJEXT) set_q_.lo \
+set_si_.$(OBJEXT) set_si_.lo set_str_.$(OBJEXT) set_str_.lo \
+set_ui_.$(OBJEXT) set_ui_.lo setbit_.$(OBJEXT) setbit_.lo \
+si_pow_ui_.$(OBJEXT) si_pow_ui_.lo size_.$(OBJEXT) size_.lo \
 sizeinbase_.$(OBJEXT) sizeinbase_.lo sqrt_.$(OBJEXT) sqrt_.lo \
 sqrtrem_.$(OBJEXT) sqrtrem_.lo sub_.$(OBJEXT) sub_.lo sub_ui_.$(OBJEXT) \
 sub_ui_.lo swap_.$(OBJEXT) swap_.lo tdiv_q_.$(OBJEXT) tdiv_q_.lo \
