@@ -1,3 +1,24 @@
+2001-04-11  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_ASM_M68K_INSTRUCTION, GMP_ASM_M68K_ADDRESSING,
+	GMP_ASM_M68K_BRANCHES): New macros.
+	* configure.in: Use them, remove old 68k configs, use mc68020 udiv and
+	umul.
+
+	* mpn/m68k/m68k-defs.m4: New file.
+	* mpn/m68k/t-m68k-defs.pl: New file.
+	* mpn/m68k/*.asm: New files, converted from .S.  Merge add_n and sub_n
+	to aors_n, ditto mc68020 addmul_1 and submul_1 to aorsmul_1.  No
+	object code changes (except .type and .size now used on NetBSD 1.4).
+	* mpn/m68k/README: New file.
+	* mpn/m68k/*.S, */*.S, syntax.h: Remove files.
+
+	* configure.in (m68*-*-netbsd1.4*): Pretend getrusage doesn't exist.
+	* tune/README: Update.
+	
+	* configure.in (powerpc*-*-*): For the benefit of Darwin 1.3, add cc
+	to cclist, make gcc_cflags -Wa,-mppc optional.
+
 2001-04-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/lisp/gmpasm-mode.el (gmpasm-comment-start-regexp): Add | for 68k.
