@@ -147,6 +147,52 @@ EOF
   rm -f $dummy.s $dummy
   ;;
 
+ia64*-*-*)
+  # CPUID[3] bits 24 to 31 ais the processor family.  itanium2 is documented
+  # as 0x1f, plain itanium has been seen returning 0x07 on two systems, but
+  # haven't found any documentation on it as such.
+  #
+  # Defining both getcpuid and _getcpuid lets us ignore whether the system
+  # expects underscores or not.
+  #
+  cat >${dummy}a.s <<EOF
+	.text
+	.global	_getcpuid
+	.proc	_getcpuid
+_getcpuid:
+	mov	r8 = 3 ;;
+	mov	r8 = CPUID[r8] ;;
+	br.ret.sptk.many	rp
+	;;
+	.endp	_getcpuid
+	.global	getcpuid
+	.proc	getcpuid
+getcpuid:
+	mov	r8 = 3 ;;
+	mov	r8 = CPUID[r8] ;;
+	br.ret.sptk.many	rp
+	;;
+	.endp	getcpuid
+EOF
+  cat >${dummy}b.c <<EOF
+#include <stdio.h>
+unsigned long getcpuid ();
+int
+main ()
+{
+  switch ((getcpuid() >> 24) & 0xFF) {
+  case 0x07: puts ("itanium");  break;
+  case 0x1F: puts ("itanium2"); break;
+  }
+  return 0;
+}
+EOF
+  if $CC_FOR_BUILD ${dummy}a.s ${dummy}b.c -o $dummy >/dev/null 2>&1; then
+    exact_cpu=`./$dummy`
+  fi
+  rm -f ${dummy}a.s ${dummy}b.c $dummy $dummy.core core
+  ;;
+
 mips-*-irix[6789]*)
   # IRIX 6 and up always has a 64-bit mips cpu
   exact_cpu=mips64
