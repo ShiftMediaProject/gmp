@@ -298,12 +298,12 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("adds\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "%r" (ah), "rI" (bh), "%r" (al), "rI" (bl))
+	   : "%r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	   : "=r" (sh),	"=&r" (sl)					\
-	   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl))
-#if 1 || defined (__arm_m__)		/* `M' series has widening multiply support */
+	   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC)
+#if 1 || defined (__arm_m__)	/* `M' series has widening multiply support */
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("umull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
 #define smul_ppmm(xh, xl, a, b) \
@@ -497,7 +497,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
   __asm__ ("mull %3"							\
 	   : "=a" (w0), "=d" (w1)					\
 	   : "%0" ((USItype)(u)), "rm" ((USItype)(v)))
-#define udiv_qrnnd(q, r, n1, n0, dx) /* d renamed to dx avoiding */	\
+#define udiv_qrnnd(q, r, n1, n0, dx) /* d renamed to dx avoiding "=d" */\
   __asm__ ("divl %4"		     /* stringification in K&R C */	\
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "rm" ((USItype)(dx)))
