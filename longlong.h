@@ -590,6 +590,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __u.d = (UWtype) (n);                       \
     (c) = 0x3FF + 31 - (__u.a[1] >> 20);        \
   } while (0)
+#define COUNT_LEADING_ZEROS_0   (0x3FF + 31)
 
 #else /* ! pentium */
 #if HAVE_HOST_CPU_pentiummmx
