@@ -1262,7 +1262,7 @@ gmp_mpn_functions_optional="copyi copyd com_n		\
   gcd_finda invert_limb sqr_diagonal"
 
 gmp_mpn_functions="$extra_functions inlines add_n sub_n mul_1 addmul_1   \
-  submul_1 lshift rshift diveby3 divis divrem divrem_1 divrem_2            \
+  submul_1 lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2     \
   mod_1 mode1o pre_mod_1 dump                                              \
   mul mul_fft mul_n mul_basecase sqr_basecase random                       \
   random2 sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
