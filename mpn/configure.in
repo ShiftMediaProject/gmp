@@ -11,12 +11,19 @@ srcname="GNU Multi-Precision library/mpn"
 # per-target:
 
 case "${target}" in
+  arm*-*-*)
+	path="arm" ;;
   sparc9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
 	path="sparc64" ;;
   sparc8*-*-* | microsparc*-*-*)
-	path="sparc32/v8 sparc32" ;;
+	path="sparc32/v8 sparc32"
+        if [ x$floating_point = xno ]
+	  then extra_functions="udiv_nfp"
+	  else extra_functions="udiv_fp"
+	fi ;;
   sparc9*-*-* | ultrasparc*-*-*)
-	path="sparc32/v9 sparc32/v8 sparc32" ;;
+	path="sparc32/v9 sparc32/v8 sparc32"
+        extra_functions="udiv_fp";;
   supersparc*-*-*)
 	path="sparc32/v8/supersparc sparc32/v8 sparc32"
 	extra_functions="udiv" ;;
@@ -24,14 +31,14 @@ case "${target}" in
 	if [ x$floating_point = xno ]
 	  then extra_functions="udiv_nfp"
 	  else extra_functions="udiv_fp"
-	fi
-	;;
+	fi ;;
   hppa7000*-*-*) path="hppa/hppa1_1 hppa"
 		 extra_functions="udiv_qrnnd" ;;
   hppa1.0*-*-*) path="hppa"
 		extra_functions="udiv_qrnnd" ;;
-  hppa2.0*-*-*) path="hppa/hppa2_0 hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
-		extra_functions="udiv_qrnnd" ;;
+  hppa2.0*-*-*) path="pa64"
+		target_makefile_frag=config/mt-pa2hpux
+		extra_functions="umul_ppmm udiv_qrnnd" ;;
   hppa*-*-*)					# assume pa7100
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd" ;;
@@ -45,21 +52,28 @@ case "${target}" in
   a29k*-*-*) path="am29000" ;;
 
 # Intel x86 configurations
-  i[346]86*-*-linuxaout* | pentiumpro-*-linuxaout* | \
-  i[346]86*-*-linuxoldld* | pentiumpro-*-linuxoldld* | \
-  i[346]86*-*-*bsd* | pentiumpro-*-*bsd* | \
-  i[346]86*-*-nextstep* | pentiumpro-*-nextstep*) # BSD, NEXTSTEP, Linux/a.out
+  i[34]86*-*-linuxaout* | \
+  i[34]86*-*-linuxoldld* | \
+  i[34]86*-*-*bsd* | \
+  i[34]86*-*-nextstep*)				# BSD, NEXTSTEP, Linux/a.out
 	echo '#define BSD_SYNTAX' >asm-syntax.h
 	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
 	path="x86" ;;
   i586*-*-linuxaout* | pentium-*-linuxaout* | \
   i586*-*-linuxoldld* | pentium-*-linuxoldld* | \
   i586*-*-*bsd* | pentium-*-*bsd* | \
-  i586*-*-nextstep* | pentium-*-nextstep*)
+  i586*-*-nextstep* | pentium-*-nextstep*)	# BSD, NEXTSTEP, Linux/a.out
 	echo '#define BSD_SYNTAX' >asm-syntax.h
 	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
 	path="x86/pentium x86" ;;
-  i[346]86*-*-* | pentiumpro-*-*)		# x86 with ELF/SysV format
+  i686*-*-linuxaout* | pentiumpro-*-linuxaout* | \
+  i686*-*-linuxoldld* | pentiumpro-*-linuxoldld* | \
+  i686*-*-*bsd* | pentiumpro-*-*bsd* | \
+  i686*-*-nextstep* | pentiumpro-*-nextstep*)	# BSD, NEXTSTEP, Linux/a.out
+	echo '#define BSD_SYNTAX' >asm-syntax.h
+	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
+	path="x86/p6 x86" ;;
+  i[34]86*-*-*)					# x86 with ELF/SysV format
 	echo '#define ELF_SYNTAX' >asm-syntax.h
 	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
 	path="x86" ;;
@@ -67,6 +81,10 @@ case "${target}" in
 	echo '#define ELF_SYNTAX' >asm-syntax.h
 	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
 	path="x86/pentium x86" ;;
+  i686*-*-* | pentiumpro-*-*)			# x86 with ELF/SysV format
+	echo '#define ELF_SYNTAX' >asm-syntax.h
+	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
+	path="x86/p6 x86" ;;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
 # mc68000 or mc68060 configurations need to be specified explicitly
