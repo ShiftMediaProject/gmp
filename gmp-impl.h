@@ -2444,7 +2444,46 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
      0x0f... = [2^N / 17]    = [(2^N-1)/17]
      (N is GMP_LIMB_BITS, [] denotes truncation.) */
 
-#if ! defined (popc_limb)
+#if ! defined (popc_limb) && GMP_LIMB_BITS == 8
+#define popc_limb(result, input)					\
+  do {									\
+    mp_limb_t  __x = (input);						\
+    __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
+    __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
+    __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
+    (result) = __x & 0xff;						\
+  } while (0)
+#endif
+
+#if ! defined (popc_limb) && GMP_LIMB_BITS == 16
+#define popc_limb(result, input)					\
+  do {									\
+    mp_limb_t  __x = (input);						\
+    __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
+    __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
+    __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
+    if (GMP_LIMB_BITS > 8)						\
+      __x = ((__x >> 8) + __x);						\
+    (result) = __x & 0xff;						\
+  } while (0)
+#endif
+
+#if ! defined (popc_limb) && GMP_LIMB_BITS == 32
+#define popc_limb(result, input)					\
+  do {									\
+    mp_limb_t  __x = (input);						\
+    __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
+    __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
+    __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
+    if (GMP_LIMB_BITS > 8)						\
+      __x = ((__x >> 8) + __x);						\
+    if (GMP_LIMB_BITS > 16)						\
+      __x = ((__x >> 16) + __x);					\
+    (result) = __x & 0xff;						\
+  } while (0)
+#endif
+
+#if ! defined (popc_limb) && GMP_LIMB_BITS == 64
 #define popc_limb(result, input)					\
   do {									\
     mp_limb_t  __x = (input);						\
