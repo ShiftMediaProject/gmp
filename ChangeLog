@@ -1,3 +1,13 @@
+2000-03-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/lisp/gmpasm-mode.el: Fix some comment detection, use custom,
+	fontify more keywords, turn into a standalone mode.
+
+	* stamp-vti: New file, generated together with version.texi.
+
+	* acinclude.m4 (GMP_VERSION,GMP_HEADER_GETVAL): New macros.
+	* configure.in (AM_INIT_AUTOMAKE): Use GMP_VERSION.
+
 2000-03-24  Kevin Ryde  <kevin@swox.se>
 
 	* INSTALL: Updates for new configure system.
