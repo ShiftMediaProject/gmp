@@ -1,6 +1,7 @@
 dnl  AMD64 mpn_modexact_1_odd -- exact division style remainder.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -22,7 +23,9 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C Hammer: 10.0 cycles/limb
+C		    cycles/limb
+C Hammer:		10
+C Prescott/Nocona:	34
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,
@@ -125,9 +128,9 @@ ifdef(`PIC',`
 	movq	%r10, %rdx		C initial climb
 
 	ASSERT(e,`	C d*inv == 1 mod 2^64
-	movq	%r8, %rdx
-	imulq	%r9, %rdx
-	cmpq	$1, %rdx')
+	movq	%r8, %r10
+	imulq	%r9, %r10
+	cmpq	$1, %r10')
 
 	incq	%rsi
 	jz	L(one)
