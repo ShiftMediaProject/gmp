@@ -481,10 +481,16 @@ dnl  This is only meant for use on x86, where 0x90 is a "nop".
 dnl
 dnl  Old gas, eg. 1.92.3 - needs ",0x90" or else the fill is an invalid 0x00.
 dnl  New gas, eg. 2.91 - generates the good multibyte nop fills even when
-dnl      ",0x90" is given.
-dnl  Solaris 2.6 as - doesn't allow ",0x90".
-dnl  Solaris 2.8 as - gives a warning for ",0x90", but we are just ignoring
-dnl      that for the moment.
+dnl                      ",0x90" is given.
+dnl  Solaris 2.6 as - doesn't allow ",0x90", gives a fatal error.
+dnl  Solaris 2.8 as - gives a warning for ",0x90", no ill effect.
+dnl
+dnl  Note that both solaris "as"s only care about ",0x90" if they actually
+dnl  have to use it to fill something, hence the .byte in the sample.  It's
+dnl  only the second .align that provokes an error or warning.
+dnl
+dnl  We prefer to suppress the warning from solaris 2.8 to stop anyone
+dnl  worrying something might be wrong.
 
 AC_DEFUN(GMP_CHECK_ASM_ALIGN_FILL_0x90,
 [AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
@@ -493,11 +499,21 @@ AC_DEFUN(GMP_CHECK_ASM_ALIGN_FILL_0x90,
 cat > conftest.s <<EOF
       	$gmp_cv_check_asm_text
       	.align  4, 0x90
+	.byte   0
+      	.align  4, 0x90
 EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_check_asm_align_fill_0x90=yes
-else 
+gmp_tmp_val="`$CCAS $CFLAGS conftest.s 2>&1`"
+if test $? = 0; then
+  echo "$gmp_tmp_val" 1>&AC_FD_CC
+  if echo "$gmp_tmp_val" | grep "Warning: Fill parameter ignored for executable section"; then
+    echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
+    gmp_cv_check_asm_align_fill_0x90=no
+  else
+    gmp_cv_check_asm_align_fill_0x90=yes
+  fi
+else
+  echo "Non-zero exit code" 1>&AC_FD_CC
+  echo "$gmp_tmp_val" 1>&AC_FD_CC
   gmp_cv_check_asm_align_fill_0x90=no
 fi
 rm -f conftest*
