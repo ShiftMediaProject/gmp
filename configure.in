@@ -313,7 +313,9 @@ case $host in
 
   hppa*-*-*)
     # default to pa7100
-    gcc_cflags="-g -O2 -mpa-risc-1-1"
+    gcc_cflags="-g -O2"
+    gcc_cflags_optlist="arch"
+    gcc_cflags_arch="-mpa-risc-1-1"
     cc_cflags="+DA1.1 +O2 -Aa"
     cc_cppflags="-D_HPUX_SOURCE"
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
@@ -324,23 +326,23 @@ case $host in
 
     case $host in
       hppa1.0*-*-*)
-        path="hppa"
-        gcc_cflags="-g -O2"
+        # override back to plain 1.0
+        gcc_cflags_optlist=
         cc_cflags="+O2 -Aa"
-        cc_cppflags="-D_HPUX_SOURCE"
+        path="hppa"
         ;;
       hppa7000*-*-*)
         path="hppa/hppa1_1 hppa"
         ;;
 
       hppa2.0*-*-*)
-        # FIXME: 2.0 code generation disabled: we need an assembler feature
-        # test checking if 2.0 operations work
-        #   gmp_cflags_cpu="-mpa-risc-2-0 -mpa-risc-1-1"
-        gcc_10_cflags_optlist="cpu"
-        gcc_10_cflags_cpu="-mpa-risc-1-1"
+        abilist="2.0n 1.0"
+
+        # FIXME: 2.0 code generation disabled, we need an assembler feature
+        # test checking if 2.0 operations work.
+        # gmp_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1"
         # FIXME: path should be "hppa/hppa2_0 hppa/hppa1_1 hppa"
-        path_10="hppa/hppa2_0 hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
+        path="hppa/hppa2_0 hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
 
         # no gcc support for long long in 2.0n
 	cclist_20n="cc"
@@ -354,19 +356,28 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_20n=hppa2.lo
         cyclecounter_size_20n=2
 
-        # gcc support for this is in progress
-        cclist_20w="cc"
-        cc_20w_cflags="+DD64 +O3 -Aa"
-        cc_20w_cppflags="-D_HPUX_SOURCE"
-        cc_20w_testlist="hpc-hppa-2-0"
-        path_20w="pa64w"
-        extra_functions_20w="umul_ppmm udiv_qrnnd"
-        SPEED_CYCLECOUNTER_OBJ_20w=hppa2.lo
-        cyclecounter_size_20w=2
+	# ABI=2.0w is available for hppa2.0w and hppa2.0, but not for hppa2.0n.
+	case $host in
+        hppa2.0n-*-*) ;;
+        *)
+          # HPUX 11 or up is required to run 2.0w.  Not sure about other
+          # systems (GNU/Linux for instance), but lets assume they're ok.
+          case $host in
+          [*-*-hpux1[1-9]*]) abilist="2.0w $abilist" ;;
+	  *-*-hpux*)                                 ;;
+          *)                 abilist="2.0w $abilist" ;;
+          esac
 
-        case $host in
-          hppa2.0n-*-*) abilist="2.0n 1.0" ;;
-          *)            abilist="2.0w 2.0n 1.0"
+          # gcc support for 2.0w is in progress
+          cclist_20w="cc"
+          cc_20w_cflags="+DD64 +O3 -Aa"
+          cc_20w_cppflags="-D_HPUX_SOURCE"
+          cc_20w_testlist="hpc-hppa-2-0"
+          path_20w="pa64w"
+          extra_functions_20w="umul_ppmm udiv_qrnnd"
+          SPEED_CYCLECOUNTER_OBJ_20w=hppa2.lo
+          cyclecounter_size_20w=2
+	  ;;
         esac
         ;;
     esac
@@ -767,15 +778,15 @@ for abi in $abilist; do
 
       GMP_PROG_CC_WORKS($cc $cflags $cppflags,,continue)
 
-      tstlist_pass=yes
-      for tst in $tstlist; do
+      testlist_pass=yes
+      for tst in $testlist; do
         case $tst in
-        hpc-hppa-2-0) GMP_HPC_HPPA_2_0($cc,,tstlist_pass=no) ;;
+        hpc-hppa-2-0) GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
         esac
-        if test $tstlist_pass = no; then break; fi
+        if test $testlist_pass = no; then break; fi
       done
 
-      if test $tstlist_pass = yes; then
+      if test $testlist_pass = yes; then
         found_compiler=yes
         break
       fi
@@ -915,6 +926,7 @@ CPPFLAGS=$CPPFLAGS
 GMP_LDFLAGS=$GMP_LDFLAGS
 path=$path
 EOF
+echo configure: using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 
 
 AC_PROG_CC
