@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-10  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/sparc64/mode1o.c: New file.
+
 2003-06-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32/lshift.asm: Add more cycle counts.
@@ -38,6 +42,10 @@ MA 02111-1307, USA.
 	* longlong.h: Tabify.
 
 2003-06-09  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (ABI and ISA): FreeBSD has sparc64 too, just say "BSD" to
+	cover all flavours.
+	* configure.in: Ditto in some comments.
 
 	* mpfr/*: Update to mpfr cvs 2003-06-09.
 	
