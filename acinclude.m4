@@ -392,30 +392,55 @@ esac
 echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_check_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 ])dnl
 
+
 dnl  GMP_CHECK_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl  Shamelessly borrowed from glibc.
+dnl  -------------------------------------------------------------------
+dnl
+dnl  Deterine whether global symbols need to be prefixed with an underscore.
+dnl  A test program is linked to an assembler module with or without an
+dnl  underscore to see which works.
+dnl
+dnl  This method should be more reliable than grepping a .o file or using
+dnl  nm, since it corresponds to what a real program is going to do.  Note
+dnl  in particular that grepping doesn't work with SunOS 4 native grep since
+dnl  that grep seems to have trouble with '\0's in files.
+
 AC_DEFUN(GMP_CHECK_ASM_UNDERSCORE,
-[AC_CACHE_CHECK([if symbols are prefixed by underscore], 
+[AC_CACHE_CHECK([if globals are prefixed by underscore], 
 	        gmp_cv_check_asm_underscore,
-[cat > conftest.$ac_ext <<EOF
-dnl This sometimes fails to find confdefs.h, for some reason.
-dnl [#]line __oline__ "[$]0"
-[#]line __oline__ "configure"
-#include "confdefs.h"
-int underscore_test() {
-return; }
+[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
+cat > conftes1.c <<EOF
+main () { underscore_test(); }
 EOF
-if AC_TRY_EVAL(ac_compile); then
-  if grep _underscore_test conftest* >/dev/null; then
-    gmp_cv_check_asm_underscore=yes
+for tmp_underscore in "" "_"; do
+  cat > conftes2.s <<EOF
+      	$gmp_cv_check_asm_text
+	$gmp_cv_check_asm_globl ${tmp_underscore}underscore_test
+${tmp_underscore}underscore_test:
+EOF
+  tmp_compile="${CC-cc} conftes1.c conftes2.s 1>&AC_FD_CC"
+  if AC_TRY_EVAL(tmp_compile); then
+    eval tmp_result$tmp_underscore=yes
   else
-    gmp_cv_check_asm_underscore=no
+    eval tmp_result$tmp_underscore=no
+  fi
+done
+
+if test $tmp_result_ = yes; then
+  if test $tmp_result = yes; then
+    AC_MSG_ERROR([Test program unexpectedly links both with and without underscore.])
+  else
+    gmp_cv_check_asm_underscore=yes
   fi
 else
-  echo "configure: failed program was:" >&AC_FD_CC
-  cat conftest.$ac_ext >&AC_FD_CC
+  if test $tmp_result = yes; then
+    gmp_cv_check_asm_underscore=no
+  else
+    AC_MSG_ERROR([Test program links neither with nor without underscore.])
+  fi
 fi
-rm -f conftest*
+rm -f conftes* a.out
 ])
 if test "$gmp_cv_check_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
@@ -424,7 +449,8 @@ else
   GMP_DEFINE(GSYM_PREFIX, [])
   ifelse([$2], , :, [$2])
 fi    
-])dnl
+])
+
 
 dnl  GMP_CHECK_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl  Is parameter to `.align' logarithmic?
