@@ -196,7 +196,7 @@ mpz_addmul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
 {
   mpz_aorsmul_1 (w, x, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) 0);
 #if GMP_NAIL_BITS != 0
-  if (y > GMP_NUMB_MAX)
+  if (y > GMP_NUMB_MAX && SIZ(x) != 0)
     {
       mpz_t t;
       mp_ptr tp;
@@ -218,9 +218,9 @@ mpz_addmul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
 void
 mpz_submul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
 {
-  mpz_aorsmul_1 (w, x, (mp_limb_t) y, (mp_size_t) -1);
+  mpz_aorsmul_1 (w, x, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) -1);
 #if GMP_NAIL_BITS != 0
-  if (y > GMP_NUMB_MAX)
+  if (y > GMP_NUMB_MAX && SIZ(x) != 0)
     {
       mpz_t t;
       mp_ptr tp;
