@@ -173,6 +173,19 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <li> Change <code>PP</code>/<code>PP_INVERTED</code> into an array of such
      pairs, listing several hundred primes.  Perhaps actually make the
      products larger than one limb each.
+<li> <code>PP</code> can have factors of 2 introduced in order to get the high
+     bit set and therefore a <code>PP_INVERTED</code> existing.  The factors
+     of 2 don't affect the way the remainder r = a % ((x*y*z)*2^n) is used,
+     further remainders r%x, r%y, etc, are the same since x, y, etc are odd.
+     The advantage of this is that <code>mpn_preinv_mod_1</code> can then be
+     used if it's faster than plain <code>mpn_mod_1</code>.  This would be a
+     change only for 16-bit limbs, all the rest already have <code>PP</code>
+     in the right form.
+<li> <code>PP</code> could have factors of 3 or 5 or whatever introduced if
+     they fit, and final remainders mod 9 or 25 or whatever used, thereby
+     making more efficient use of the <code>mpn_mod_1</code> done.  On a
+     16-bit limb it looks like <code>PP</code> could take an extra factor of
+     3.
 <li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
      <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
      quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).  A
@@ -374,6 +387,8 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      <code>mpn_rshift</code> already provided.
 <li> Cray T3E: Experiment with optimization options.  In particular,
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
+<li> Cray: <code>mpn_com_n</code> and <code>mpn_and_n</code> etc very probably
+     wants a pragma like <code>MPN_COPY_INCR</code>.
 <li> Cray: Variable length arrays seem to be faster than the stack-alloc.c
      scheme.  Not sure why, maybe they merely give the compiler more
      information about aliasing (or the lack thereof).  Would like to modify
@@ -421,9 +436,9 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      is the first allocated, rather than allocating a small size and then
      reallocing it.  Update functions that rely on a single limb like
      <code>mpz_set_ui</code>, <code>mpz_{t,f,c}div_{qr,r}_ui</code>, and
-     others.  Would need the initial <code>z->_mp_d</code> to point to a dummy
-     initial location, so it can be fetched from by <code>mpz_odd_p</code> and
-     similar macros.
+     others.  Would need the initial <code>z-&gt;_mp_d</code> to point to a
+     dummy initial location, so it can be fetched from by
+     <code>mpz_odd_p</code> and similar macros.
 <li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
      format is portable between 32-bit and 64-bit machines, and between
      little-endian and big-endian machines.
@@ -497,6 +512,10 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      configfsf.guess does.  (Not that we've got anything specific for them
      right now.)
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
+<li> HPPA 2.0w: gcc is rumoured to support 2.0w as of version 3, though
+     perhaps just as a build-time choice.  In any case, figure out how to
+     identify a suitable gcc or put it in the right mode, for the GMP compiler
+     choices.
 <li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
      "hinv -c processor" gives lots of information on Irix.  Standard
      config.guess etc append "el" to indicate endianness, but GMP probably
@@ -549,8 +568,8 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      what range of values the generated cofactors can take, and preferrably
      ensure the definition uniquely specifies the cofactors for given inputs.
      A basic extended Euclidean algorithm or multi-step variant leads to
-     |x|<|b| and |y|<|a| or something like that, but there's probably two
-     solutions under just those restrictions.
+     |x|&lt;|b| and |y|&lt;|a| or something like that, but there's probably
+     two solutions under just those restrictions.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> Merge mpn/pa64 and pa64w.
 <li> <code>mpz_urandomm</code> should do something for n&lt;=0 (but what?),
@@ -665,7 +684,7 @@ near future, but are at least worth thinking about.
      native multiply is only 16x16.  Could have this as an <code>ABI</code>
      option, selecting <code>_SHORT_LIMB</code> in gmp.h.  Naturally a new set
      of asm subroutines would be necessary.  Would need new
-     <code>mpz_set_ui</code> etc since the current code assumes limb>=long,
+     <code>mpz_set_ui</code> etc since the current code assumes limb&gt;=long,
      but 2-limb operand forms would find a use for <code>long long</code> on
      other processors too.
 </ul>
