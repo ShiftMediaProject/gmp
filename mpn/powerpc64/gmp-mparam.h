@@ -38,8 +38,6 @@ MA 02111-1307, USA. */
 #define DC_THRESHOLD                  29
 #define POWM_THRESHOLD                40
 
-#define FIB_THRESHOLD                202
-
 #define GCD_ACCEL_THRESHOLD            3
 #define GCDEXT_THRESHOLD             157
 
