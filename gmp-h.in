@@ -225,6 +225,18 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 
 
+/* PORTME: What other compilers have a useful "extern inline"?  "static
+   inline" would be an acceptable substitute if the compiler (or linker)
+   discards unused statics.  */
+
+#ifdef __GNUC__
+#define __GMP_EXTERN_INLINE  extern __inline__
+#endif
+
+
+#define __GMP_ABS(x)  ((x) >= 0 ? (x) : -(x))
+
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -346,7 +358,6 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_mod __gmpz_mod
 #define mpz_mul __gmpz_mul
 #define mpz_mul_2exp __gmpz_mul_2exp
-#define mpz_neg __gmpz_neg
 #define mpz_nextprime __gmpz_nextprime
 #define mpz_out_raw __gmpz_out_raw
 #define mpz_out_str __gmpz_out_str
@@ -400,7 +411,9 @@ extern "C" {
 #endif
 void *_mpz_realloc _PROTO ((mpz_ptr, mp_size_t));
 
-void mpz_abs _PROTO ((mpz_ptr, mpz_srcptr));
+#define mpz_abs __gmpz_abs
+void    mpz_abs _PROTO ((mpz_ptr, mpz_srcptr));
+
 void mpz_add _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_add_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 
@@ -541,7 +554,9 @@ void mpz_mul_si _PROTO ((mpz_ptr, mpz_srcptr, long int));
 #define mpz_mul_ui __gmpz_mul_ui
 void mpz_mul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 
-void mpz_neg _PROTO ((mpz_ptr, mpz_srcptr));
+#define mpz_neg __gmpz_neg
+void    mpz_neg _PROTO ((mpz_ptr, mpz_srcptr));
+
 void mpz_nextprime _PROTO ((mpz_ptr, mpz_srcptr));
 #ifdef _GMP_H_HAVE_FILE
 size_t mpz_out_raw _PROTO ((FILE *, mpz_srcptr));
@@ -601,6 +616,27 @@ void mpz_ui_pow_ui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
 void mpz_urandomb _PROTO ((mpz_ptr, gmp_randstate_t, unsigned long int));
 void mpz_urandomm _PROTO ((mpz_ptr, gmp_randstate_t, mpz_srcptr));
 void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
+__GMP_EXTERN_INLINE void
+mpz_abs (mpz_ptr w, mpz_srcptr u)
+{
+  if (w != u)
+    mpz_set (w, u);
+  w->_mp_size = __GMP_ABS (w->_mp_size);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_neg
+__GMP_EXTERN_INLINE void
+mpz_neg (mpz_ptr w, mpz_srcptr u)
+{
+  if (w != u)
+    mpz_set (w, u);
+  w->_mp_size = - w->_mp_size;
+}
+#endif
+
 #if defined (__cplusplus)
 }
 #endif
@@ -617,7 +653,6 @@ void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #define mpq_sub __gmpq_sub
 #define mpq_mul __gmpq_mul
 #define mpq_div __gmpq_div
-#define mpq_neg __gmpq_neg
 #define mpq_cmp __gmpq_cmp
 #define _mpq_cmp_ui __gmpq_cmp_ui
 #define mpq_equal __gmpq_equal
@@ -635,7 +670,7 @@ extern "C" {
 #endif
 
 #define mpq_abs __gmpq_abs
-void mpq_abs _PROTO ((mpq_ptr, mpq_srcptr));
+void    mpq_abs _PROTO ((mpq_ptr, mpq_srcptr));
 
 void mpq_init _PROTO ((mpq_ptr));
 void mpq_clear _PROTO ((mpq_ptr));
@@ -655,7 +690,9 @@ void mpq_div _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 #define mpq_div_2exp __gmpq_div_2exp
 void mpq_div_2exp _PROTO ((mpq_ptr, mpq_srcptr, unsigned long));
 
-void mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
+#define mpq_neg __gmpq_neg
+void    mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
+
 int mpq_cmp _PROTO ((mpq_srcptr, mpq_srcptr)) __GMP_ATTRIBUTE_PURE;
 int _mpq_cmp_ui _PROTO ((mpq_srcptr, unsigned long int, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 int mpq_equal _PROTO ((mpq_srcptr, mpq_srcptr)) __GMP_ATTRIBUTE_PURE;
@@ -686,13 +723,32 @@ void mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
 size_t mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
 #endif
 
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_abs
+__GMP_EXTERN_INLINE void
+mpq_abs (mpq_ptr w, mpq_srcptr u)
+{
+  if (w != u)
+    mpq_set (w, u);
+  w->_mp_num._mp_size = __GMP_ABS (w->_mp_num._mp_size);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_neg
+__GMP_EXTERN_INLINE void
+mpq_neg (mpq_ptr w, mpq_srcptr u)
+{
+  if (w != u)
+    mpq_set (w, u);
+  w->_mp_num._mp_size = - w->_mp_num._mp_size;
+}
+#endif
+
 #if defined (__cplusplus)
 }
 #endif
 
 /**************** Float (i.e. F) routines.  ****************/
 
-#define mpf_abs __gmpf_abs
 #define mpf_add __gmpf_add
 #define mpf_add_ui __gmpf_add_ui
 #define mpf_ceil __gmpf_ceil
@@ -720,7 +776,6 @@ size_t mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
 #define mpf_mul __gmpf_mul
 #define mpf_mul_2exp __gmpf_mul_2exp
 #define mpf_mul_ui __gmpf_mul_ui
-#define mpf_neg __gmpf_neg
 #define mpf_out_str __gmpf_out_str
 #define mpf_pow_ui __gmpf_pow_ui
 #define mpf_random2 __gmpf_random2
@@ -748,7 +803,10 @@ size_t mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
 #if defined (__cplusplus)
 extern "C" {
 #endif
-void mpf_abs _PROTO ((mpf_ptr, mpf_srcptr));
+
+#define mpf_abs __gmpf_abs
+void    mpf_abs _PROTO ((mpf_ptr, mpf_srcptr));
+
 void mpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_add_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_ceil _PROTO ((mpf_ptr, mpf_srcptr));
@@ -818,7 +876,10 @@ int mpf_integer_p _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
 void mpf_mul _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_mul_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_mul_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
-void mpf_neg _PROTO ((mpf_ptr, mpf_srcptr));
+
+#define mpf_neg __gmpf_neg
+void    mpf_neg _PROTO ((mpf_ptr, mpf_srcptr));
+
 #ifdef _GMP_H_HAVE_FILE
 size_t mpf_out_str _PROTO ((FILE *, int, size_t, mpf_srcptr));
 #endif
@@ -847,6 +908,26 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 
 #define mpf_swap __gmpf_swap
 void mpf_swap _PROTO ((mpf_ptr, mpf_ptr));
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_abs
+__GMP_EXTERN_INLINE void
+mpf_abs (mpf_ptr w, mpf_srcptr u)
+{
+  if (w != u)
+    mpf_set (w, u);
+  w->_mp_size = __GMP_ABS (w->_mp_size);
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_neg
+__GMP_EXTERN_INLINE void
+mpf_neg (mpf_ptr w, mpf_srcptr u)
+{
+  if (w != u)
+    mpf_set (w, u);
+  w->_mp_size = - w->_mp_size;
+}
+#endif
 
 #if defined (__cplusplus)
 }
