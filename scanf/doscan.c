@@ -114,6 +114,13 @@ MA 02111-1307, USA. */
    future.  */
 
 
+struct gmp_doscan_params_t {
+  int   base;
+  int   ignore;
+  char  type;
+  int   width;
+};
+
 
 #define GET(c)                  \
   do {                          \

@@ -2341,13 +2341,6 @@ int __gmp_replacement_vsnprintf _PROTO ((char *buf, size_t buf_size,
 #endif /* _GMP_H_HAVE_VA_LIST */
 
 
-struct gmp_doscan_params_t {
-  int   base;
-  int   ignore;
-  char  type;
-  int   width;
-};
-
 typedef int (*gmp_doscan_scan_t)  _PROTO ((void *data, const char *fmt, ...));
 typedef void *(*gmp_doscan_step_t) _PROTO ((void *data, int new_chars));
 typedef int (*gmp_doscan_get_t)   _PROTO ((void *data));
