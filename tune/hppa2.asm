@@ -26,7 +26,7 @@ dnl void speed_cyclecounter (unsigned p[2]);
 dnl
 dnl Get the HPPA interval timer.
 
-	.level 2.0
+	.level 2.0w
 	.code
 	.export speed_cyclecounter,entry
 speed_cyclecounter
