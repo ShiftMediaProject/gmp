@@ -1,5 +1,8 @@
 2000-12-23  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in (*-cray-unicos*): Pass -O3.
+	(vax*-*-*): Fix typo.
+
 	* mpn/cray/mul_1.c: Use dynamic arrays, get rid of TMP_*.
 	* mpn/cray/addmul_1.c: Likewise.
 	* mpn/cray/submul_1.c: Likewise.
