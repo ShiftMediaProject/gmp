@@ -1,7 +1,7 @@
 /* mpn/gcd.c: mpn_gcd for gcd of two odd integers.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2003 Free
-Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2003,
+2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -44,13 +44,12 @@ MA 02111-1307, USA. */
 	K. Weber, The accelerated integer GCD algorithm, ACM Transactions on
 	Mathematical Software, v. 21 (March), 1995, pp. 111-122.  */
 
+#include <stdio.h>  /* for NULL */
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef NULL
-# define NULL ((void *) 0)
-#endif
 
 /* If MIN (usize, vsize) >= GCD_ACCEL_THRESHOLD, then the accelerated
    algorithm is used, otherwise the binary algorithm is used.  This may be
