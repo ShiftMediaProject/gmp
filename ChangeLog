@@ -1,3 +1,26 @@
+2000-03-06  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/tests/ref.c (refmpn_divexact_by3): New function.
+	* mpn/tests/ref.h: Prototype.
+
+	* acconfig.h (WANT_ASSERT): New define.
+	* configure.in (--enable-assert): Turn on WANT_ASSERT.
+	* assert.c: New file.
+	* Makefile.am: Add to build.
+	* gmp-impl.h (ASSERT): New macro.
+	(ASSERT_NOCARRY) Renamed from assert_nocarry.
+	(MPZ_CHECK_FORMAT): Use ASSERT_ALWAYS.
+	* mpn/tests/ref.c: Use ASSERT.
+	* mpf/get_str.c: Use ASSERT_ALWAYS.
+	* mpf/set_str.c: Remove old assert macro.
+
+	* mpn/x86/x86-defs.m4 (cmovnz_ebx_ecx): New macro.
+	* mpn/x86/p6/aorsmul_1.asm: Use cmov.
+
+	* mpn/x86/lshift.S: Use %dl not %edx with testb (no code change,
+	testb was still getting generated).
+	* mpn/x86/rshift.S: Ditto.
+
 2000-03-03  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h: Add IA-64 support.
