@@ -1,3 +1,8 @@
+2000-04-25  Linus Nordberg  <linus@swox.se>
+
+	* gmp.texi (Random State Initialization): Correct arguments to
+	`gmp_randinit'.
+
 2000-04-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/aors_n.asm: Remove parentheses around an immediate that
