@@ -115,12 +115,12 @@ the most-significant bits. */
 
 void
 #if __STDC__
-mpz_urandomb (mpz_t rop, unsigned long int nbits, gmp_rand_state *s)
+mpz_urandomb (mpz_t rop, unsigned long int nbits, gmp_rand_state s)
 #else
 mpz_urandomb (rop, nbits, s)
      mpz_t rop;
      unsigned long int nbits;
-     gmp_rand_state *s;
+     gmp_rand_state s;
 #endif
 {
   mp_ptr rp;
@@ -141,12 +141,12 @@ mpz_urandomb (rop, nbits, s)
 /* Generate a random mpz_t.  The number will be in the range [0,n).  */
 void
 #if __STDC__
-mpz_urandomn (mpz_t rop, mpz_t n, gmp_rand_state *s)
+mpz_urandomn (mpz_t rop, mpz_t n, gmp_rand_state s)
 #else
 mpz_urandomn (rop, n, s)
      mpz_t rop;
      mpz_t n;
-     gmp_rand_state *s;
+     gmp_rand_state s;
 #endif
 {
   mp_ptr rp;

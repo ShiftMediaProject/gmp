@@ -25,13 +25,13 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-__gmp_rand_init_common (gmp_rand_state *s,
+__gmp_rand_init_common (gmp_rand_state s,
 			gmp_rand_algorithm alg,
 			unsigned long int size,
 			mpz_t seed)
 #else
 __gmp_rand_init_common (s, alg, size, seed)
-     gmp_rand_state *s;
+     gmp_rand_state s;
      gmp_rand_algorithm alg;
      unsigned long int size;
      mpz_t seed;

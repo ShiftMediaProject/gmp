@@ -1,3 +1,20 @@
+1999-05-21  Linus Nordberg  <linus@swox.se>
+
+	* gmp.h: Typedef `gmp_rand_state' as an array with one element.
+	Change prototypes accordingly.
+	* gmp-impl.h: Change prototypes using `gmp_rand_state'.
+	* rand.c (gmp_rand_init): Take `gmp_rand_state' as argument
+	instead of a pointer to a `gmp_rand_state'.
+	* mpf/urandom.c (mpf_urandomb): Ditto.
+	* mpz/urandom.c (mpz_urandomb): Ditto.
+	* mpn/generic/rawrandom.c (mpn_rawrandom): Ditto.
+	* randcmui.c (__gmp_rand_init_common_ui): Ditto.
+	* randlc.c (gmp_rand_init_lc): Ditto.
+	* randlcui.c (gmp_rand_init_lc_ui): Ditto.
+	* randui.c (gmp_rand_init_ui): Ditto.
+	* randcm.c (__gmp_rand_init_common): Ditto.
+	* randclr.c (gmp_rand_clear): Ditto.
+
 1999-05-20  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.in: Rename randi.c --> rand.c, randi_lc.c --> randlc.c,

@@ -448,11 +448,11 @@ void __gmpn_sqr_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 void __gmpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 void __gmpn_sqr _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
-void __gmp_rand_init_common _PROTO ((gmp_rand_state *s,
+void __gmp_rand_init_common _PROTO ((gmp_rand_state s,
 				     gmp_rand_algorithm alg,
 				     unsigned long int size,
 				     mpz_t seed));
-void __gmp_rand_init_common_ui _PROTO ((gmp_rand_state *s,
+void __gmp_rand_init_common_ui _PROTO ((gmp_rand_state s,
 					gmp_rand_algorithm alg,
 					unsigned long int size,
 					unsigned long int seed));

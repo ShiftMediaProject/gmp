@@ -85,18 +85,18 @@ static __gmp_rand_lc_scheme_struct __gmp_rand_scheme[] =
   {0, NULL,  0, NULL}	/* End of array. */
 };
 
-/* gmp_rand_init() -- Initialize a gmp_rand_state struct.  Return 0 on
+/* gmp_rand_init() -- Initialize a gmp_rand_state.  Return 0 on
    success and 1 on failure. */
 
 int
 #if __STDC__
-gmp_rand_init (gmp_rand_state *s,
+gmp_rand_init (gmp_rand_state s,
 	       gmp_rand_algorithm alg,
 	       unsigned long int size,
 	       mpz_t seed)
 #else
 gmp_rand_init (s, alg, size, seed)
-     gmp_rand_state *s;
+     gmp_rand_state s;
      gmp_rand_algorithm alg;
      unsigned long int size;
      mpz_t seed;

@@ -217,14 +217,14 @@ int main (argc, argv)
     case RFUNC_mpf_urandomb:
       if (!lc_scheme_from_user)
 	{
-	  if (gmp_rand_init (&s, ralg, size, z_seed))
+	  if (gmp_rand_init (s, ralg, size, z_seed))
 	    {
 	      fprintf (stderr, "gen: invalid algorithm\n");
 	      exit (1);
 	    }
 	}
       else
-	gmp_rand_init_lc (&s, size, z_seed, z_a, ul_adder, z_m);
+	gmp_rand_init_lc (s, size, z_seed, z_a, ul_adder, z_m);
       break;
 
     case RFUNC_rand:
@@ -271,7 +271,7 @@ int main (argc, argv)
       switch (rfunc)
 	{
 	case RFUNC_mpz_urandomb:
-	  mpz_urandomb (z1, size, &s);
+	  mpz_urandomb (z1, size, s);
 	  if (binout)
 	    {
 	      /*fwrite ((unsigned int *) z1->_mp_d, 4, 1, stdout);*/
@@ -287,7 +287,7 @@ int main (argc, argv)
 	  break;
 
 	case RFUNC_mpf_urandomb:
-	  mpf_urandomb (f1, &s);
+	  mpf_urandomb (f1, s);
 	  if (do_exclude)
 	    if (mpf_cmp (f1, f_xf) >= 0 && mpf_cmp (f1, f_xt) <= 0)
 		break;
@@ -347,7 +347,7 @@ int main (argc, argv)
     {
     case RFUNC_mpz_urandomb:
     case RFUNC_mpf_urandomb:
-      gmp_rand_clear (&s);
+      gmp_rand_clear (s);
       break;
     default:
       break;

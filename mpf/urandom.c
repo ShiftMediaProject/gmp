@@ -29,11 +29,11 @@ number 0 <= X < 1.  See file mpz/urandom.c for algorithms used. */
 
 void
 #if __STDC__
-mpf_urandomb (mpf_t rop, gmp_rand_state *s)
+mpf_urandomb (mpf_t rop, gmp_rand_state s)
 #else
 mpf_urandomb (rop, s)
      mpf_t rop;
-     gmp_rand_state *s;
+     gmp_rand_state s;
 #endif
 {
   mp_ptr rp;

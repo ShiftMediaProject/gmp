@@ -27,7 +27,7 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-gmp_rand_init_lc_ui (gmp_rand_state *s,
+gmp_rand_init_lc_ui (gmp_rand_state s,
 		     unsigned long int size,
 		     unsigned long int seed,
 		     unsigned long int a,
@@ -35,7 +35,7 @@ gmp_rand_init_lc_ui (gmp_rand_state *s,
 		     unsigned long int m)
 #else
 gmp_rand_init_lc_ui (s, size, seed, a, c, m)
-     gmp_rand_state *s;
+     gmp_rand_state s;
      unsigned long int size;
      unsigned long int seed;
      unsigned long int a;

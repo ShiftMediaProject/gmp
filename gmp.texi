@@ -363,7 +363,7 @@ Patch to apply to GCC 2.6.3 and 2.7.2:
 @chapter MP Basics
 
 @menu
-* Random Number Functions::
+* Random Number Functions::	How to use the random number functions.
 @end menu
 
 @cindex @file{gmp.h}
@@ -590,38 +590,136 @@ The latest version of the MP library is available by at
 or @file{gmp-I.J.K.tar.gz}.  Many sites around the world mirror
 @samp{ftp.gnu.org}; please use a mirror site near you.
 
-@node Random Number Functions,,,MP Basics
+
+@node Random Number Functions,,, MP Basics
 @comment  node-name,  next,  previous,  up
+@cindex Random Number Functions
 @section Random Number Functions
 
 There are two groups of random number functions in GNU MP; older
 functions that call C library random number generators, rely on a global
 state, and aren't very random; and newer functions that don't have these
-problems.  The newer functions are self-contained, they accept a seed
-parameter that supplants global state, and generate good random numbers.
+problems.  The newer functions are self-contained, they accept a random
+state parameter that supplants global state, and generate good random
+numbers.
 
-The seed parameter is of the type @code{mpz_t}.  It must be initialized
-just like any MP variable, but also assigned a good starting seed.  The
-size of the seed determines the maximum cycle of the generated random
-numbers, and thus to some extent the "randomness" of the generated
-numbers.  If good uniform random numbers are required, the seed variable
-needs to be set to a value considerably greater than the largest
-required random number.
+The random state parameter is of the type
+@code{__gmp_rand_state_struct}.  It must be initialized by a call to one
+of the @code{gmp_rand_init} functions (@ref{Random State
+Initialization}).  Each of the @code{gmp_rand_init} functions takes a
+seed parameter, which quality and size to some extent determines the
+``randomness'' of the generated numbers.
+
+The size of the seed determines the number of different sequences of
+random numbers that is possible to generate.  The ``quality'' of the
+seed is the randomness of a given seed compared to the previous seed
+used and affects the randomness of separate number sequences.
+
+On some systems there is a special device, often called
+@code{/dev/random}, which provides a source of somewhat random numbers.
+The traditional method is to use the current system time to produce a
+seed.  One has to be careful when using the current time though.  If the
+application for instance seeds the random functions very often, say
+several times per second, and the resolution of the system clock is
+comparatively low, say one second, we end up with the same sequence of
+numbers until the system clock ticks.
+
+(FIXME: The following is true when speaking of the randomness
+``between'' two sequences, but not true regarding the randomness of
+numbers in @emph{one} sequence.  Remove or rewrite.)
+
+@quotation
+If good uniform random numbers are required, the seed variable needs to
+be set to a value considerably greater than the largest required random
+number.
+@end quotation
 
 The algorithm for assigning seed is critical if the generated random
 numbers are to be used for important applications, such as generating
-cryptographic keys.  One should also avoid generating multiple random
-numbers from the same seed for such applications, since a sequence of
-random numbers generated from the same seed are not truly independent.
+cryptographic keys.  
+
+(FIXME: The more often you seed, the more dependant you are of the
+source of the seed.  Only when the seed source is better than the
+algorithm used by the GMP function is the following wise to say.)
+
+@quotation
+One should also avoid generating multiple random numbers from the same
+seed for such applications, since a sequence of random numbers generated
+from the same seed are not truly independent.
+@end quotation
+
+
+@menu
+* Random State Initialization::
+@end menu
+
+@node Random State Initialization,,,Random Number Functions
+@section Random State Initialization
+
+See @ref{Random Number Functions} for a discussion on how to choose the
+initial seed value passed to these functions.
+
+@deftypefun int gmp_rand_init (gmp_rand_state @var{state}, gmp_rand_algorithm @var{alg}, unsigned long int @var{size}, mpz_t @var{seed})
+@deftypefunx int gmp_rand_init_ui (gmp_rand_state @var{state}, gmp_rand_algorithm @var{alg}, unsigned long int @var{size}, unsigned long int @var{seed})
+
+Initialize random state variable @var{state}.  
+
+@var{alg} denotes what algorithm to use for random number generation.
+Use one of
+@itemize @minus
+@item GMP_RAND_ALG_LC -- Linear congruental.
+@item GMP_RAND_ALG_BBS -- Blum, Blum, and Shub.
+@end itemize
+
+If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is
+used.
+
+@var{size} is the size of the largest good quality random number to be
+generated, expressed in number of bits.  If the random generation
+functions are asked for a bigger random number than indicated by this
+parameter, two or more numbers of @var{size} bits will be generated and
+concatinated, resulting in a ``bad'' random number.  This can be used to
+generate big random numbers relatively cheap if the quality of
+randomness isn't of great importance.
+
+@var{seed} is the initial random seed.  The function
+@code{gmp_rand_init_ui} takes the @var{seed} as an unsigned long int
+rather than as an mpz_t.
+
+Returns 0 on success and 1 on failure (i.e. when the algorithm chosen is
+not supported).
+
+When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+to deallocate any memory allocated by this function.
+@end deftypefun
+
+@deftypefun void gmp_rand_init_lc (gmp_rand_state @var{state}, unsigned long int @var{size}, mpz_t @var{seed}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
+@deftypefunx void gmp_rand_init_lc_ui (gmp_rand_state @var{state}, unsigned long int @var{size}, unsigned long int @var{seed}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
+
+Initialize random state variable @var{state} with given linear
+congruental scheme.
+
+Parameters @var{size} and @var{seed} are the same as for function
+@code{gmp_rand_init}.  The function @code{gmp_rand_init_lc_ui} takes the
+@var{seed} as an unsigned long int rather than as an mpz_t.
+
+Parameters @var{a}, @var{c}, and @var{m} are the multiplier, adder, and
+modulus for the linear congruential scheme used, respectively.
+
+When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+to deallocate any memory allocated by this function.
+@end deftypefun
+
 
 @node Reporting Bugs, Integer Functions, MP Basics, Top
 @comment  node-name,  next,  previous,  up
 @chapter Reporting Bugs
 @cindex Reporting bugs
 
-If you think you have found a bug in the MP library, please investigate it and
-report it.  We have made this library available to you, and it is not to ask
-too much from you, to ask you to report the bugs that you find.
+If you think you have found a bug in the MP library, please investigate
+it and report it.  We have made this library available to you, and it is
+not to ask too much from you, to ask you to report the bugs that you
+find.
 
 There are a few things you should think about when you put your bug report
 together.
@@ -1610,7 +1708,7 @@ when @var{max_size} is negative.
 This function is obsolete.  Use @code{mpz_rrandomb} instead.
 @end deftypefun
 
-@deftypefun void mpz_urandomb (mpz_t @var{rop}, unsigned long int @var{n}, mpz_t @var{seed})
+@deftypefun void mpz_urandomb (mpz_t @var{rop}, unsigned long int @var{n}, gmp_rand_state @var{state})
 Generate a uniform random integer in the range
 @ifinfo
 0 to 2^@var{n} @minus{} 1,
@@ -1622,9 +1720,18 @@ Generate a uniform random integer in the range
 @end iftex
 inclusive.
 
-The variable @var{seed} is used as a seed for generating the random
-number.  It is updated with a new seed.
+The variable @var{state} must be initialized by calling one of the
+@code{gmp_rand_init} functions (@ref{Random State Initialization})
+before invoking this function.
 @end deftypefun
+
+
+@ignore
+
+FIXME: Should GMP have this function?  The problem lies in implementing
+the function efficient.  If n != modulus of chosen LC scheme, it'll cost
+a real division and multiplication for each generated number.  Maybe the
+best solution is to document this and let the user decide?
 
 @deftypefun void mpz_urandomm (mpz_t @var{rop}, mpz_t @var{n}, mpz_t @var{seed})
 Generate a uniform random integer in the range
@@ -1640,6 +1747,7 @@ Generate a uniform random integer in the range
 The variable @var{seed} is used as a seed for generating the random number.
 It is updated with a new seed.
 @end deftypefun
+@end ignore
 
 @deftypefun void mpz_rrandomb (mpz_t @var{rop}, unsigned long int @var{n}, mpz_t @var{seed})
 Generate a random integer with long strings of zeros and ones in the

@@ -1,3 +1,7 @@
+1999-05-21  Linus Nordberg  <linus@swox.se>
+
+	* gen.c (main): Pass `s' to rand-funcs instead of address of `s'.
+
 1999-04-29  Linus Nordberg  <linus@swox.se>
 
 	* findcl.c (main): Add option '-i' for interval factor.  Separate

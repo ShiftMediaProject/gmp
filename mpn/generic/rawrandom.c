@@ -19,12 +19,12 @@
 
 void
 #if __STDC__
-mpn_rawrandom (mp_ptr rp, unsigned long int nbits, gmp_rand_state *s)
+mpn_rawrandom (mp_ptr rp, unsigned long int nbits, gmp_rand_state s)
 #else
 mpn_rawrandom (rp, nbits, s)
      mp_ptr rp;
      unsigned long int nbits;
-     gmp_rand_state *s;
+     gmp_rand_state s;
 #endif
 {
   mp_ptr tp, seedp, ap, mp, mcopyp, sump, dstp;

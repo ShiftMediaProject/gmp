@@ -23,18 +23,18 @@ MA 02111-1307, USA. */
 #include <stdlib.h>		/* FIXME: For malloc(). */
 #include "gmp.h"
 
-/* gmp_rand_init_ui() -- Initialize a gmp_rand_state struct.  Return 0 on
+/* gmp_rand_init_ui() -- Initialize a gmp_rand_state.  Return 0 on
    success and 1 on failure. */
 
 int
 #if __STDC__
-gmp_rand_init_ui (gmp_rand_state *s,
+gmp_rand_init_ui (gmp_rand_state s,
 		  gmp_rand_algorithm alg,
 		  unsigned long int size,
 		  unsigned long int seed)
 #else
 gmp_rand_init_ui (s, alg, size, seed)
-     gmp_rand_state *s;
+     gmp_rand_state s;
      gmp_rand_algorithm alg;
      unsigned long int size;
      unsigned long int seed;

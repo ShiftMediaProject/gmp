@@ -24,10 +24,10 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-gmp_rand_clear (gmp_rand_state *s)
+gmp_rand_clear (gmp_rand_state s)
 #else
 gmp_rand_clear (s)
-     gmp_rand_state *s;
+     gmp_rand_state s;
 #endif
 {
 
