@@ -31,11 +31,9 @@ ASM_START()
 	.register	%g2,#scratch
 	.register	%g3,#scratch
 PROLOGUE(mpn_copyi)
-	addcc	%o2,-8,%g0
-	bl,pn	%icc,L(loop2)
+	addcc	%o2,-8,%o2
+	bl,pt	%icc,L(end01234567)
 	nop
-	add	%o2,-8,%o2
-
 L(loop1):
 	ldx	[%o1+0],%g1
 	ldx	[%o1+8],%g2
@@ -57,11 +55,10 @@ L(loop1):
 	addcc	%o2,-8,%o2
 	bge,pt	%icc,L(loop1)
 	add	%o0,64,%o0
-
+L(end01234567):
 	addcc	%o2,8,%o2
 	bz,pn	%icc,L(end)
 	nop
-
 L(loop2):
 	ldx	[%o1+0],%g1
 	add	%o1,8,%o1
@@ -69,7 +66,6 @@ L(loop2):
 	stx	%g1,[%o0+0]
 	bg,pt	%icc,L(loop2)
 	add	%o0,8,%o0
-
 L(end):	retl
 	nop
 EPILOGUE(mpn_copyi)
