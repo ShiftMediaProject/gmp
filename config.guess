@@ -453,11 +453,21 @@ sparc-*-* | sparc64-*-*)
   fi  
 
   # Grep the output from prtconf on Solaris.
-  # Use an explicit /usr/sbin path on prntconf, since that directory might
-  # not be in a normal user's path.
-  #	SUNW,UltraSPARC-II (driver not attached)
-  #	SUNW,UltraSPARC-IIi (driver not attached)
-  #	SUNW,UltraSPARC-III+ (driver not attached)
+  # Use an explicit /usr/sbin, since that directory might not be in a normal
+  # user's path.
+  #
+  #     SUNW,UltraSPARC (driver not attached)
+  #     SUNW,UltraSPARC-II (driver not attached)
+  #     SUNW,UltraSPARC-IIi (driver not attached)
+  #     SUNW,UltraSPARC-III+ (driver not attached)
+  #     Ross,RT625 (driver not attached)
+  #     TI,TMS390Z50 (driver not attached)
+  #
+  # TMS390Z50 and TMS390Z55 are supersparcs.  RT620, RT625, RT626 are
+  # hypersparcs (v8).
+  #
+  # /usr/sbin/sysdef prints similar information, but includes all loadable
+  # cpu modules, not just the real cpu.
   #
   if test -z "$exact_cpu"; then
     if $SHELL -c /usr/sbin/prtconf 2>/dev/null >conftest.dat; then
@@ -469,6 +479,10 @@ sparc-*-* | sparc64-*-*)
         exact_cpu=ultrasparc2
       elif grep 'SUNW,UltraSPARC' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc
+      elif grep 'Ross,RT62.' conftest.dat >/dev/null; then
+        exact_cpu=sparcv8
+      elif grep 'TI,TMS390Z5.' conftest.dat >/dev/null; then
+        exact_cpu=supersparc
       fi
     fi
     rm -f conftest.dat
