@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 
-EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm
+EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm ia64.asm
 noinst_HEADERS = speed.h
 
 
