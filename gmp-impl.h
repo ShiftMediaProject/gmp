@@ -1036,8 +1036,8 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
           (   aors  "   %2, (%0)\n"                             \
            "  jnc   "   ASM_L(done) "\n"                        \
            ASM_L(top) ":\n"                                     \
-           "  addl      $4, %0\n"                               \
-              iord  "   (%0)\n"                                 \
+              iord  "   4(%0)\n"                                \
+           "  leal      4(%0), %0\n"                            \
               jiord " " ASM_L(top) "\n"                         \
            ASM_L(done) ":\n"                                    \
            : "=r" (__dummy) : "0" (ptr), "ri" (n) : "memory");  \
