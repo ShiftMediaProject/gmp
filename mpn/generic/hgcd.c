@@ -1507,7 +1507,6 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
   for (;;)
     {
       mp_size_t L = hgcd->row[0].rsize;
-      mp_size_t ralloc;
       
       struct hgcd2 R;
       int res;
@@ -1516,9 +1515,6 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	  && (L < M + 2 || (hgcd->row[0].rp[M+1] & GMP_NUMB_HIGHBIT) == 0))
 	break;
       
-      /* Max size after reduction, plus one */
-      ralloc = hgcd->row[1].rsize + 1;
-
       res = mpn_hgcd2_lehmer_step (&R,
 				   hgcd->row[0].rp, hgcd->row[0].rsize,
 				   hgcd->row[1].rp, hgcd->row[1].rsize,
@@ -1562,92 +1558,75 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	  hgcd->sign = ~hgcd->sign;
 	  HGCD_SWAP4_LEFT (hgcd->row);
 	}
-      else if (res == 2)
-	{
-	  qstack_drop (quotients);
-	  qstack_drop (quotients);
-
-	  ASSERT (R.row[0].v > 0);
-
-	  hgcd->row[2].rsize
-	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
-			     R.sign,
-			     R.row[0].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			     R.row[0].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  
-	  hgcd->row[3].rsize
-	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
-			     ~R.sign,
-			     R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			     R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  ASSERT (hgcd->row[2].rsize >= L - 1);
-	  ASSERT (hgcd->row[3].rsize >= L - 2);
-	  
-	  ASSERT (hgcd->row[2].rsize > M + 1);
-	  ASSERT (hgcd->row[3].rsize > M);
-
-	  hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
-				  R.row, hgcd->row, hgcd->size);
-	  hgcd->sign ^= R.sign;
-
-	  HGCD_SWAP4_2 (hgcd->row);
-	}
-      else if (res == 3)
-	{
-	  hgcd->row[2].rsize
-	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
-			     ~R.sign,
-			     R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			     R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  
-	  hgcd->row[3].rsize
-	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
-			     R.sign,
-			     R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			     R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  ASSERT (hgcd->row[2].rsize >= L - 2);
-	  ASSERT (hgcd->row[3].rsize >= L - 2);
-	  
-	  ASSERT (hgcd->row[2].rsize > M);
-	  ASSERT (hgcd->row[3].rsize > M);
-
-	  hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
-				  R.row + 1, hgcd->row, hgcd->size);
-	  hgcd->sign ^= ~R.sign;
-
-	  HGCD_SWAP4_2 (hgcd->row);
-
-	  qstack_drop (quotients);
-	}
       else
 	{
-	  ASSERT (res == 4);
+	  const struct hgcd2_row *s = R.row + (res - 2);
+	  int sign = R.sign;
+	  /* Max size after reduction, plus one */
+	  mp_size_t ralloc = hgcd->row[1].rsize + 1;
+
+	  if (res == 2)
+	    {
+	      qstack_drop (quotients);
+	      qstack_drop (quotients);
+	    }
+	  else if (res == 3)
+	    {
+	      sign = ~sign;
+	      qstack_drop (quotients);
+	    }
+	  
+	  /* s[0] and s[1] correct. */
 	  hgcd->row[2].rsize
 	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
-			     R.sign,
-			     R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			     R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  
+			     sign,
+			     s[0].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     s[0].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+
 	  hgcd->row[3].rsize
 	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
-			     ~R.sign,
-			     R.row[3].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			     R.row[3].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  ASSERT (hgcd->row[2].rsize >= L - 2);
-	  ASSERT (hgcd->row[2].rsize > M);
-	  ASSERT (hgcd->row[3].rsize < L || hgcd->row[3].rp[L-1] == 1);
-	  
-	  hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
-				  R.row + 2, hgcd->row, hgcd->size);
-	  hgcd->sign ^= R.sign;
+			     ~sign,
+			     s[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     s[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
 
-	  if (hgcd->row[3].rsize <= M)
+	  hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
+				  s, hgcd->row, hgcd->size);
+	  hgcd->sign ^= sign;
+
+	  ASSERT (hgcd->row[2].rsize > M);
+
+#if WANT_ASSERT
+	  switch (res)
 	    {
+	    default: abort();
+	    case 2:
+	      ASSERT (hgcd->row[2].rsize >= L - 1);
+	      ASSERT (hgcd->row[3].rsize >= L - 2);
+	      ASSERT (hgcd->row[2].rsize > M + 1);
+	      ASSERT (hgcd->row[3].rsize > M);
+	      break;
+	    case 3:
+	      ASSERT (hgcd->row[2].rsize >= L - 2);
+	      ASSERT (hgcd->row[3].rsize >= L - 2);
+	      ASSERT (hgcd->row[3].rsize > M);
+	      break;
+	    case 4:
+	      ASSERT (hgcd->row[2].rsize >= L - 2);
+	      ASSERT (hgcd->row[3].rsize < L || hgcd->row[3].rp[L-1] == 1);
+	      break;
+	    }
+#endif
+	  if (hgcd->row[3].rsize <= M)
+ 	    {
+	      /* Can happen only in the res == 4 case */
+	      ASSERT (res == 4);
+	      
 	      /* Backup two steps */
 	      ASSERT (!hgcd_start_row_p (hgcd->row + 2, hgcd->size));
 
 	      return hgcd_small_2 (hgcd, M, quotients, tp, talloc);
 	    }
+  
 	  HGCD_SWAP4_2 (hgcd->row);
 	}
     }
