@@ -6,6 +6,11 @@
 This directory contains code optimized for AMD K6 CPUs, meaning K6, K6-2 and
 K6-3.
 
+The mmx subdirectory has routines using mmx instructions.  All K6s have MMX,
+the separate directory is just so that configure can omit it if the
+assembler doesn't support MMX.
+
+
 
 
 STATUS
@@ -15,17 +20,21 @@ Times for the loops, with all code and data in L1 cache, are as follows.
                                  cycles/limb
 	mpn_add/sub_n              2.9 or 3.2   (2.9 when in-place)
 
-	mpn_copyi                  0.56 or 1.0  \ varying with
-	mpn_com_n                  1.0-1.2      / data alignment
+	mpn_copyi                  0.56 or 1.0  \
+                                                |
+	mpn_com_n                  1.0-1.2      | varying with
+	mpn_and/andn/ior/xor_n     1.2-1.5      | data alignment
+	mpn_iorn/xnor_n            1.5-2.0      |
+	mpn_nand/nior_n            1.75-2.0     /
 
-	mpn_divmod/divrem/mod_1   20.0
+	mpn_divrem_1              20.0
+	mpn_mod_1                 20.0
 
 	mpn_l/rshift               1.8
 
 	mpn_mul_1                  6.4
 	mpn_add/submul_1           7.65-8.4     (varying with data values)
 
-	                       
 	mpn_mul_basecase           9.25 cycles/crossproduct (approx)
 	mpn_sqr_basecase           6.5  cycles/crossproduct (approx)
                                    or 12 cycles/triangleproduct (approx)
@@ -34,8 +43,8 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 Prefetching of sources hasn't yet given any joy.  With the 3DNow "prefetch"
 instruction, code seems to run slower, and with just "mov" loads it doesn't
 seem faster.  Results so far are inconsistent.  The K6 does a hardware
-prefetch of the second cache line in a sector, so the penalty for not doing
-it in software is reduced.
+prefetch of the second cache line in a sector, so the penalty for not
+prefetching in software is reduced.
 
 
 
