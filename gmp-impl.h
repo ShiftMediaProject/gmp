@@ -503,10 +503,12 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPN_OVERLAP_P(xp, xsize, yp, ysize) \
   ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
 
-/* Return non-zero if xp,size and yp,size are either identical or not
+/* Return non-zero if xp,xsize and yp,ysize are either identical or not
    overlapping.  Return zero if they're partially overlapping. */
-#define MPN_SAME_OR_SEPARATE_P(xp, yp, size)                    \
-  ((xp) == (yp) || ! MPN_OVERLAP_P (xp, size, yp, size))
+#define MPN_SAME_OR_SEPARATE_P(xp, yp, size)    \
+  MPN_SAME_OR_SEPARATE2_P(xp, size, yp, size)
+#define MPN_SAME_OR_SEPARATE2_P(xp, xsize, yp, ysize)           \
+  ((xp) == (yp) || ! MPN_OVERLAP_P (xp, xsize, yp, ysize))
 
 /* Return non-zero if dst,size and src,size are either identical or
    overlapping in a way suitable for an incrementing/decrementing algorithm.

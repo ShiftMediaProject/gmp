@@ -189,6 +189,24 @@ mpn_gcd (gp, up, usize, vp, vsize)
   int binary_gcd_ctr;		/* Number of times binary gcd will execute.  */
   TMP_DECL (marker);
 
+  ASSERT (usize >= 1);
+  ASSERT (vsize >= 1);
+  ASSERT (usize >= vsize);
+  ASSERT (vp[0] & 1);
+  ASSERT (up[usize-1] != 0);
+  ASSERT (vp[vsize-1] != 0);
+#if WANT_ASSERT
+  {
+    int  ulead, vlead;
+    count_leading_zeros (ulead, up[usize-1]);
+    count_leading_zeros (vlead, vp[vsize-1]);
+    ASSERT (ulead <= vlead);
+  }
+#endif    
+  ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
+  ASSERT (MPN_SAME_OR_SEPARATE_P (gp, up, usize));
+  ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, usize, vp, vsize));
+
   TMP_MARK (marker);
 
   /* Use accelerated algorithm if vsize is over GCD_ACCEL_THRESHOLD.
