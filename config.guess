@@ -135,12 +135,6 @@ EOF
   rm -f $dummy.s $dummy
   ;;
 
-m68k-*-nextstep* | m68k-*-openstep*)
-  # nextstep, known as openstep from version 4 onwards, only runs on m68020
-  # or better.
-  exact_cpu=m68020
-  ;;
-
 mips-*-irix[6789]*)
   # IRIX 6 and up always has a 64-bit mips cpu
   exact_cpu=mips64
