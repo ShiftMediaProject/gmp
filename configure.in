@@ -491,7 +491,7 @@ dnl  -----------------------
 changequote(,)dnl
 gmp_m4postinc=
 case "$target" in
-  i?86*-*-* | k[5-8]*-*-* | pentium*-*-*)
+  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
     gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
     ;;
 esac
