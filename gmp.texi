@@ -1331,6 +1331,14 @@ the result is always non-negative.
 The function @code{mpz_mod_ui} returns the remainder.
 @end deftypefun
 
+@deftypefn Macro {unsigned long int} mpz_mod2 (mpz_t @var{n})
+@deftypefnx Macro {unsigned long int} mpz_mod4 (mpz_t @var{n})
+@deftypefnx Macro {unsigned long int} mpz_mod8 (mpz_t @var{n})
+Return @var{n} mod 2, 4 or 8, respectively.  The return value is in the range
+0 to 1, 0 to 3, or 0 to 7, respectively.  These macros evaluate their argument
+more than once.
+@end deftypefn
+
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
 when it is known in advance that @var{d} divides @var{n}.
@@ -1530,7 +1538,26 @@ function returns zero, @var{rop} is undefined.
 
 @deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_legendre (mpz_t @var{op1}, mpz_t @var{op2})
-Compute the Jacobi and Legendre symbols, respectively.
+Compute the Jacobi and Legendre symbols, respectively.  @var{op2} must be odd
+and positive.
+@end deftypefun
+
+@deftypefun int mpz_kronecker_si_zi (long @var{a}, mpz_t @var{b});
+@deftypefunx int mpz_kronecker_ui_zi (unsigned long @var{a}, mpz_t @var{b});
+@deftypefunx int mpz_kronecker_zi_si (mpz_t @var{a}, long @var{b});
+@deftypefunx int mpz_kronecker_zi_ui (mpz_t @var{a}, unsigned long @var{b});
+@tex
+Calculate the value of the Kronecker/Jacobi symbol $\left(a \over b\right)$,
+with the Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$
+when $a$ odd, or $\left(a \over 2\right) = 0$ when $a$ even.
+@end tex
+@ifnottex
+Calculate the value of the Jacobi symbol (@var{a}/@var{b}), with the
+Kronecker extension (a/2)=(2/a) when a odd, or (a/2)=0 when a even.
+@end ifnottex
+See Henri Cohen, section 1.4.2, for more information (@pxref{References}).
+See also the example program @file{demos/qcn.c} which uses
+@code{mpz_kronecker_zi_ui}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})
@@ -1758,6 +1785,12 @@ Return non-zero iff the value of @var{op} fits in an @code{unsigned long int},
 @code{signed long int}, @code{unsigned int}, @code{signed int}, @code{unsigned
 short int}, or @code{signed short int}, respectively.  Otherwise, return zero.
 @end deftypefun
+
+@deftypefn Macro int mpz_odd_p (mpz_t @var{op})
+@deftypefnx Macro int mpz_even_p (mpz_t @var{op})
+Determine whether @var{op} is odd or even, respectively.  Return non-zero if
+yes, zero if no.  These macros evaluate their arguments more than once.
+@end deftypefn
 
 
 The random number functions of GMP come in two groups; older function
@@ -2765,27 +2798,26 @@ The area at @var{r1p} needs to be @var{rs2size} @minus{} @var{s3size} +
 @var{xsize} limbs large.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_divrem_1 (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
+@deftypefn Function mp_limb_t mpn_divrem_1 (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, @w{mp_limb_t *@var{s2p}}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
+@deftypefnx Macro mp_limb_t mpn_divmod_1 (mp_limb_t *@var{r1p}, mp_limb_t *@var{s2p}, @w{mp_size_t @var{s2size}}, @w{mp_limb_t @var{s3limb}})
 Divide @{@var{s2p}, @var{s2size}@} by @var{s3limb}, and write the quotient
 at @var{r1p}.  Return the remainder.
 
 The integer quotient is written to @{@var{r1p}+@var{xsize}, @var{s2size}@} and
 in addition @var{xsize} fraction limbs are developed and written to
-@{@var{r1p}, @var{xsize}@}.  Either or both @var{s2size} and @var{xsize} can be
-zero.  For most usages, @var{xsize} will be zero.
+@{@var{r1p}, @var{xsize}@}.  Either or both @var{s2size} and @var{xsize} can
+be zero.  For most usages, @var{xsize} will be zero.
+
+@code{mpn_divmod_1} exists for upward source compatibility and is simply a
+macro calling @code{mpn_divrem_1} with an @var{xsize} of 0.
 
 The areas at @var{r1p} and @var{s2p} have to be identical or completely
 separate, not partially overlapping.
-@end deftypefun
+@end deftypefn
 
 @deftypefun mp_limb_t mpn_divmod (mp_limb_t *@var{r1p}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3size})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_divrem} in its stead.}
-@end deftypefun
-
-@deftypefun mp_limb_t mpn_divmod_1 (mp_limb_t *@var{r1p}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
-@strong{This interface is obsolete.  It will disappear from future releases.
-Use @code{mpn_divrem_1} in its stead.}
 @end deftypefun
 
 @deftypefn Macro mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{size}})
@@ -3459,12 +3491,17 @@ v. 21 (March), 1995, pp. 111-122.
 
 @item
 Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
-Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
+Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @*
 @uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
 
 @item
 Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, "Handbook of
 Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
+
+@item
+Henri Cohen, "A Course in Computational Algebraic Number Theory", Graduate
+Texts in Mathematics number 138, Springer-Verlag, 1993.  For errata see @*
+@uref{ftp://megrez.ceremab.u-bordeaux.fr/pub/cohenbook}
 @end itemize
 
 @node Concept Index, Function Index, References, Top
