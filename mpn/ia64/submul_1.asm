@@ -23,80 +23,588 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C         cycles/limb
-C Itanium:    4.0?
-C Itanium 2:  3.0
+C Itanium:    ?
+C Itanium 2:  2.25 (alignment dependent, sometimes it seems to need 3.5 c/l)
+
+C TODO
+C  * Optimize feed-in and wind-down code, both for speed and code size.
+C  * Load first limbs in prologue (like in mul_1.asm and addmul_1.asm).
+C  * Handle low limb input and results specially, using a common stf8 in the
+C    epilogue.
+C  * Address timing variations by swapping instructions around.
 
 C INPUT PARAMETERS
-C rp = r32
-C up = r33
-C n = r34
-C v = r35
+define(`rp',`r32')
+define(`up',`r33')
+define(`n',`r34')
+define(`vl',`r35')
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
 	.prologue
-	.save	ar.pfs, r21
-		alloc		r21 = ar.pfs, 4, 4, 0, 8
 	.save	ar.lc, r2
-		mov		r2 = ar.lc
-		mov		r20 = ar.ec
-	.save	pr, r22
-		mov		r22 = pr
 	.body
+
 ifdef(`HAVE_ABI_32',
-`		addp4	r32 = 0, r32
-		addp4	r33 = 0, r33
-		zxt4	r34 = r34
+`	addp4		rp = 0, rp		C M I
+	addp4		up = 0, up		C M I
+	zxt4		n = n			C I
+	;;
 ')
-		sub r35 = r0, r35			C negate v
-		;;
-  { .mib;	setf.sig	f6 = r35
-		adds		r19 = -1, r34		C n - 1
-		nop.b		0
-} { .mib;	cmp.eq		p6, p7 = 0, r35
-		mov		r18 = r32
-		nop.b		0		;;
-} { .mib;	mov		r16 = r32
-		mov		ar.lc = r19
-		nop.b		0
-} { .mib;	mov		r17 = r33
-		mov		ar.ec = 8
-		nop.b		0
-} { .mib;	mov		r19 = r33
-		mov		pr.rot = 1<<16
-		nop.b		0
-} { .mib;	mov		r23 = 0			C clear "carry in"
-		mov		r24 = 0			C clear "carry in"
-	   (p6)	br.spnt		.Ldone			C multiplier == 0
-		;;
+{.mmi
+	cmp.eq		p6, p0 = 0, vl		C M I
+	sub		vl = r0, vl		C M I	negate vl
+	mov		r2 = ar.lc		C I0
 }
-		br.sptk		.Loop
-		.align	32
+{.mmb
+	add		r19 = -1, n		C M I	n - 1
+	and		r14 = 3, n		C M I
+   (p6)	br.spnt		.Ldone			C B	vl == 0
+	;;
+}
+{.mmi
+	setf.sig	f6 = vl			C M2 M3
+	mov		r9 = up			C M I
+	shr.u		r19 = r19, 2		C I
+}
+{.mmi
+	mov		r10 = rp		C M I
+	mov		r8 = 0			C M I	zero cylimb
+	cmp.eq		p10, p0 = 0, r14	C M I
+	;;
+}
+{.mmi
+	cmp.eq		p11, p0 = 2, r14	C M I
+	cmp.eq		p12, p0 = 3, r14	C M I
+	mov		ar.lc = r19		C I0
+}
+{.bbb
+  (p10)	br.dptk		.Lb00			C B
+  (p11)	br.dptk		.Lb10			C B
+  (p12)	br.dptk		.Lb11			C B
+	;;
+}
+
+.Lb01:	ldf8		f47 = [rp], 8
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt1
+	;;
+
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	getf.sig	r27 = f39			C lo
+	getf.sig	r31 = f43			C hi
+	ld8		r20 = [r9], 8
+	br		.Lcj1
+
+.grt1:	ldf8		f44 = [rp], 8
+	ldf8		f32 = [up], 8
+	;;
+	ldf8		f45 = [rp], 8
+	ldf8		f33 = [up], 8
+	;;
+	ldf8		f46 = [rp], 8
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	ldf8		f47 = [rp], 8
+	ldf8		f35 = [up], 8
+	xma.l		f36 = f32, f6, f44
+	xma.hu		f40 = f32, f6, f44
+	br.cloop.dptk	.grt5
+
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	getf.sig	r31 = f43			C hi
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	getf.sig	r28 = f40			C hi
+	;;
+	getf.sig	r25 = f37			C lo
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	getf.sig	r29 = f41			C hi
+	;;
+	getf.sig	r26 = f38			C lo
+	ld8		r20 = [r9], 8
+	br		.Lcj5
+
+.grt5:	ldf8		f44 = [rp], 8
+	ldf8		f32 = [up], 8
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	ldf8		f45 = [rp], 8
+	getf.sig	r31 = f43			C hi
+	ldf8		f33 = [up], 8
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	ldf8		f46 = [rp], 8
+	getf.sig	r28 = f40			C hi
+	ldf8		f34 = [up], 8
+	;;
+	getf.sig	r25 = f37			C lo
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	ldf8		f47 = [rp], 8
+	getf.sig	r29 = f41			C hi
+	ldf8		f35 = [up], 8
+	;;
+	getf.sig	r26 = f38			C lo
+	xma.l		f36 = f32, f6, f44
+	ld8		r20 = [r9], 8
+	xma.hu		f40 = f32, f6, f44
+	br.cloop.dptk	.Loop
+	br		.Lend
+
+
+.Lb10:	ldf8		f46 = [rp], 8
+	ldf8		f34 = [up], 8
+	;;
+	ldf8		f47 = [rp], 8
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt2
+
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	getf.sig	r26 = f38			C lo
+	getf.sig	r30 = f42			C hi
+	getf.sig	r27 = f39			C lo
+	getf.sig	r31 = f43			C hi
+	ld8		r23 = [r9], 8
+	br		.Lcj2
+
+.grt2:	ldf8		f44 = [rp], 8
+	ldf8		f32 = [up], 8
+	;;
+	ldf8		f45 = [rp], 8
+	ldf8		f33 = [up], 8
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	ldf8		f46 = [rp], 8
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	ldf8		f47 = [rp], 8
+	ldf8		f35 = [up], 8
+	;;
+	getf.sig	r26 = f38			C lo
+	xma.l		f36 = f32, f6, f44
+	xma.hu		f40 = f32, f6, f44
+	br.cloop.dptk	.grt6
+
+	getf.sig	r30 = f42			C hi
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	getf.sig	r31 = f43			C hi
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	getf.sig	r28 = f40			C hi
+	;;
+	getf.sig	r25 = f37			C lo
+	xma.l		f39 = f35, f6, f47
+	ld8		r23 = [r9], 8
+	xma.hu		f43 = f35, f6, f47
+	br		.Lcj6
+
+.grt6:	ldf8		f44 = [rp], 8
+	getf.sig	r30 = f42			C hi
+	ldf8		f32 = [up], 8
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	ldf8		f45 = [rp], 8
+	getf.sig	r31 = f43			C hi
+	ldf8		f33 = [up], 8
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	ldf8		f46 = [rp], 8
+	getf.sig	r28 = f40			C hi
+	ldf8		f34 = [up], 8
+	;;
+	getf.sig	r25 = f37			C lo
+	xma.l		f39 = f35, f6, f47
+	ld8		r23 = [r9], 8
+	xma.hu		f43 = f35, f6, f47
+	br		.LL10
+
+
+.Lb11:	ldf8		f45 = [rp], 8
+	ldf8		f33 = [up], 8
+	;;
+	ldf8		f46 = [rp], 8
+	ldf8		f34 = [up], 8
+	;;
+	ldf8		f47 = [rp], 8
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt3
+
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	getf.sig	r25 = f37			C lo
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	getf.sig	r29 = f41			C hi
+	getf.sig	r26 = f38			C lo
+	getf.sig	r30 = f42			C hi
+	getf.sig	r27 = f39			C lo
+	getf.sig	r31 = f43			C hi
+	ld8		r22 = [r9], 8
+	br		.Lcj3
+
+.grt3:	ldf8		f44 = [rp], 8
+	ldf8		f32 = [up], 8
+	;;
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	ldf8		f45 = [rp], 8
+	ldf8		f33 = [up], 8
+	;;
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	ldf8		f46 = [rp], 8
+	ldf8		f34 = [up], 8
+	;;
+	getf.sig	r25 = f37			C lo
+	xma.l		f39 = f35, f6, f47
+	xma.hu		f43 = f35, f6, f47
+	;;
+	ldf8		f47 = [rp], 8
+	getf.sig	r29 = f41			C hi
+	ldf8		f35 = [up], 8
+	;;
+	getf.sig	r26 = f38			C lo
+	xma.l		f36 = f32, f6, f44
+	xma.hu		f40 = f32, f6, f44
+	br.cloop.dptk	.grt7
+
+	getf.sig	r30 = f42			C hi
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	getf.sig	r31 = f43			C hi
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	ld8		r22 = [r9], 8
+	xma.hu		f42 = f34, f6, f46
+	br		.Lcj7
+
+.grt7:	ldf8		f44 = [rp], 8
+	getf.sig	r30 = f42			C hi
+	ldf8		f32 = [up], 8
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	ldf8		f45 = [rp], 8
+	getf.sig	r31 = f43			C hi
+	ldf8		f33 = [up], 8
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	ld8		r22 = [r9], 8
+	xma.hu		f42 = f34, f6, f46
+	br		.LL11
+
+
+.Lb00:	ldf8		f44 = [rp], 8
+	ldf8		f32 = [up], 8
+	;;
+	ldf8		f45 = [rp], 8
+	ldf8		f33 = [up], 8
+	;;
+	ldf8		f46 = [rp], 8
+	ldf8		f34 = [up], 8
+	;;
+	ldf8		f47 = [rp], 8
+	ldf8		f35 = [up], 8
+	xma.l		f36 = f32, f6, f44
+	xma.hu		f40 = f32, f6, f44
+	br.cloop.dptk	.grt4
+
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	getf.sig	r28 = f40			C hi
+	xma.l		f39 = f35, f6, f47
+	getf.sig	r25 = f37			C lo
+	xma.hu		f43 = f35, f6, f47
+	;;
+	getf.sig	r29 = f41			C hi
+	getf.sig	r26 = f38			C lo
+	getf.sig	r30 = f42			C hi
+	getf.sig	r27 = f39			C lo
+	ld8		r21 = [r9], 8
+	br		.Lcj4
+
+.grt4:	ldf8		f44 = [rp], 8
+	ldf8		f32 = [up], 8
+	xma.l		f37 = f33, f6, f45
+	xma.hu		f41 = f33, f6, f45
+	;;
+	ldf8		f45 = [rp], 8
+	ldf8		f33 = [up], 8
+	getf.sig	r24 = f36			C lo
+	xma.l		f38 = f34, f6, f46
+	xma.hu		f42 = f34, f6, f46
+	;;
+	ldf8		f46 = [rp], 8
+	getf.sig	r28 = f40			C hi
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f47
+	getf.sig	r25 = f37			C lo
+	xma.hu		f43 = f35, f6, f47
+	;;
+	ldf8		f47 = [rp], 8
+	getf.sig	r29 = f41			C hi
+	ldf8		f35 = [up], 8
+	;;
+	getf.sig	r26 = f38			C lo
+	xma.l		f36 = f32, f6, f44
+	xma.hu		f40 = f32, f6, f44
+	br.cloop.dptk	.grt8
+
+	getf.sig	r30 = f42			C hi
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	ld8		r21 = [r9], 8
+	xma.hu		f41 = f33, f6, f45
+	br		.Lcj8
+
+.grt8:	ldf8		f44 = [rp], 8
+	getf.sig	r30 = f42			C hi
+	ldf8		f32 = [up], 8
+	;;
+	getf.sig	r27 = f39			C lo
+	xma.l		f37 = f33, f6, f45
+	ld8		r21 = [r9], 8
+	xma.hu		f41 = f33, f6, f45
+	br		.LL00
+
+	ALIGN(32)
 .Loop:
-  { .mfi; (p21)	getf.sig	r32 = f42		C  0  3  6  9 12>15 18
-	  (p19)	xma.l		f40 = f35, f6, f39	C  0  3  6 >9 12 15 18
-	  (p23)	cmp.ltu		p6, p7 = r34, r23	C  0  3  6  9 12 15>18
-} { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
-	  (p19)	xma.hu		f44 = f35, f6, f39	C  0  3  6 >9 12 15 18
-	  (p23)	sub		r14 = r34, r23	;;	C  0  3  6  9 12 15>18
-} { .mib; (p21)	getf.sig	r36 = f46		C  1  4  7 10 13>16 19
-	  (p23)	sub		r23 = r24, r38		C  1  4  7 10 13 16>19
-		nop.b		0			C  1  4  7 10 13 16 19
-} { .mib; (p22)	ld8		r24 = [r19], 8		C  1  4  7 10 13>16 19
-		nop.i		0			C  1  4  7 10 13 16>19
-		nop.b		0		;;	C  1  4  7 10 13 16 19
-} { .mib; (p16)	ldf8		f36 = [r16], 8		C >2  5  8 11 14 17 20
-	   (p6)	add		r23 = 1, r23		C  2  5  8 11 14 17 20
-		nop.b		0			C  2  5  8 11 14 17 20
-} { .mib; (p23)	st8		[r18] = r14, 8		C  2  5  8 11 14 17>20
-		nop.i		0			C  2  5  8 11 14 17 20
-		br.ctop.sptk.few .Loop		;;	C  2  5  8 11 14 17 20
-}
-.Ldone:		mov		r8 = r23
-		mov		pr = r22, 0x1fffe
-		mov		ar.lc = r2
-		mov		ar.ec = r20
-		mov		ar.pfs = r21;;
-		br.ret.sptk.many b0
-EPILOGUE(mpn_submul_1)
+.mmi
+	ldf8		f44 = [rp], 8
+	cmp.ltu		p6, p0 = r27, r8	C lo cmp
+	sub		r14 = r27, r8		C lo sub
+.mmi
+	getf.sig	r30 = f42			C hi
+	ldf8		f32 = [up], 8
+	sub		r8 = r20, r31		C hi sub
+	;;				C 01
+.mmf
+	getf.sig	r27 = f39			C lo
+	st8		[r10] = r14, 8
+	xma.l		f37 = f33, f6, f45
+.mfi
+	ld8		r21 = [r9], 8
+	xma.hu		f41 = f33, f6, f45
+   (p6)	add		r8 = 1, r8
+	;;				C 02
+.LL00:
+.mmi
+	ldf8		f45 = [rp], 8
+	cmp.ltu		p6, p0 = r24, r8
+	sub		r14 = r24, r8
+.mmi
+	getf.sig	r31 = f43			C hi
+	ldf8		f33 = [up], 8
+	sub		r8 = r21, r28
+	;;				C 03
+.mmf
+	getf.sig	r24 = f36			C lo
+	st8		[r10] = r14, 8
+	xma.l		f38 = f34, f6, f46
+.mfi
+	ld8		r22 = [r9], 8
+	xma.hu		f42 = f34, f6, f46
+   (p6)	add		r8 = 1, r8
+	;;				C 04
+.LL11:
+.mmi
+	ldf8		f46 = [rp], 8
+	cmp.ltu		p6, p0 = r25, r8
+	sub		r14 = r25, r8
+.mmi
+	getf.sig	r28 = f40			C hi
+	ldf8		f34 = [up], 8
+	sub		r8 = r22, r29
+	;;				C 05
+.mmf
+	getf.sig	r25 = f37			C lo
+	st8		[r10] = r14, 8
+	xma.l		f39 = f35, f6, f47
+.mfi
+	ld8		r23 = [r9], 8
+	xma.hu		f43 = f35, f6, f47
+   (p6)	add		r8 = 1, r8
+	;;				C 06
+.LL10:
+.mmi
+	ldf8		f47 = [rp], 8
+	cmp.ltu		p6, p0 = r26, r8
+	sub		r14 = r26, r8
+.mmi
+	getf.sig	r29 = f41			C hi
+	ldf8		f35 = [up], 8
+	sub		r8 = r23, r30
+	;;				C 07
+.mmf
+	getf.sig	r26 = f38			C lo
+	st8		[r10] = r14, 8
+	xma.l		f36 = f32, f6, f44
+.mfi
+	ld8		r20 = [r9], 8
+	xma.hu		f40 = f32, f6, f44
+   (p6)	add		r8 = 1, r8
+	br.cloop.dptk	.Loop
+	;;
+.Lend:
+	cmp.ltu		p6, p0 = r27, r8
+	sub		r14 = r27, r8
+	getf.sig	r30 = f42
+	sub		r8 = r20, r31
+	;;
+	getf.sig	r27 = f39
+	st8		[r10] = r14, 8
+	xma.l		f37 = f33, f6, f45
+	ld8		r21 = [r9], 8
+	xma.hu		f41 = f33, f6, f45
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj8:
+	cmp.ltu		p6, p0 = r24, r8
+	sub		r14 = r24, r8
+	getf.sig	r31 = f43
+	sub		r8 = r21, r28
+	;;
+	getf.sig	r24 = f36
+	st8		[r10] = r14, 8
+	xma.l		f38 = f34, f6, f46
+	ld8		r22 = [r9], 8
+	xma.hu		f42 = f34, f6, f46
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj7:
+	cmp.ltu		p6, p0 = r25, r8
+	sub		r14 = r25, r8
+	getf.sig	r28 = f40
+	sub		r8 = r22, r29
+	;;
+	getf.sig	r25 = f37
+	st8		[r10] = r14, 8
+	xma.l		f39 = f35, f6, f47
+	ld8		r23 = [r9], 8
+	xma.hu		f43 = f35, f6, f47
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj6:
+	cmp.ltu		p6, p0 = r26, r8
+	sub		r14 = r26, r8
+	getf.sig	r29 = f41
+	sub		r8 = r23, r30
+	;;
+	getf.sig	r26 = f38
+	st8		[r10] = r14, 8
+	ld8		r20 = [r9], 8
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj5:
+	cmp.ltu		p6, p0 = r27, r8
+	sub		r14 = r27, r8
+	getf.sig	r30 = f42
+	sub		r8 = r20, r31
+	;;
+	getf.sig	r27 = f39
+	st8		[r10] = r14, 8
+	ld8		r21 = [r9], 8
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj4:
+	cmp.ltu		p6, p0 = r24, r8
+	sub		r14 = r24, r8
+	getf.sig	r31 = f43
+	sub		r8 = r21, r28
+	;;
+	st8		[r10] = r14, 8
+	ld8		r22 = [r9], 8
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj3:
+	cmp.ltu		p6, p0 = r25, r8
+	sub		r14 = r25, r8
+	sub		r8 = r22, r29
+	;;
+	st8		[r10] = r14, 8
+	ld8		r23 = [r9], 8
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj2:
+	cmp.ltu		p6, p0 = r26, r8
+	sub		r14 = r26, r8
+	sub		r8 = r23, r30
+	;;
+	st8		[r10] = r14, 8
+	ld8		r20 = [r9], 8
+   (p6)	add		r8 = 1, r8
+	;;
+.Lcj1:
+	cmp.ltu		p6, p0 = r27, r8
+	sub		r14 = r27, r8
+	sub		r8 = r20, r31
+	;;
+	st8		[r10] = r14, 8
+	mov		ar.lc = r2
+   (p6)	add		r8 = 1, r8
+	br.ret.sptk.many b0
+.Ldone:	mov		ar.lc = r2
+	br.ret.sptk.many b0
+EPILOGUE()
 ASM_END()
