@@ -177,6 +177,11 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
      use __gmp_allocate_func rather than TMP_ALLOC, to avoid overflowing the
      stack if a long output string is given.  */
   alloc_fmt_size = strlen (orig_fmt) + 1;
+#if _LONG_LONG_LIMB
+  /* for a long long limb we change %Mx to %llx, so could need an extra 1
+     char for every 3 existing */
+  alloc_fmt_size += alloc_fmt_size / 3;
+#endif
   alloc_fmt = __GMP_ALLOCATE_FUNC_TYPE (alloc_fmt_size, char);
   fmt = alloc_fmt;
   strcpy (fmt, orig_fmt);
@@ -424,13 +429,17 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             goto next;
             
           case 'M': /* mp_limb_t */
-            /* mung format string to l or L and let plain printf handle this */
+            /* mung format string to l or ll and let plain printf handle it */
 #if _LONG_LONG_LIMB
+            memmove (fmt+1, fmt, strlen (fmt)+1);
+            fmt[-1] = 'l';
+            fmt[0] = 'l';
+            fmt++;
             type = 'L';
 #else
+            fmt[-1] = 'l';
             type = 'l';
 #endif
-            fmt[-1] = type;
             break;
 
           case 'n':
