@@ -1,3 +1,7 @@
+2001-02-03  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-mul.c (base_mul): Remove an unused variable.
+
 2001-02-02  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (TIME): New macro.
