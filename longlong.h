@@ -1109,10 +1109,10 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 #define umul_ppmm(w1, w0, u, v)						\
   do {									\
     UWtype __w1;							\
-    UWtype __m0 = (u), __m1 = (v);					\
-    smul_ppmm (__w1, w0, __m0, __m1);					\
-    (w1) = __w1 + (-(__m0 >> (W_TYPE_SIZE - 1)) & __m1)			\
-		+ (-(__m1 >> (W_TYPE_SIZE - 1)) & __m0);		\
+    UWtype __xm0 = (u), __xm1 = (v);					\
+    smul_ppmm (__w1, w0, __xm0, __xm1);					\
+    (w1) = __w1 + (-(__xm0 >> (W_TYPE_SIZE - 1)) & __xm1)		\
+		+ (-(__xm1 >> (W_TYPE_SIZE - 1)) & __xm0);		\
   } while (0)
 #endif
 
@@ -1150,10 +1150,10 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 #define smul_ppmm(w1, w0, u, v)						\
   do {									\
     UWtype __w1;							\
-    UWtype __m0 = (u), __m1 = (v);					\
-    umul_ppmm (__w1, w0, __m0, __m1);					\
-    (w1) = __w1 - (-(__m0 >> (W_TYPE_SIZE - 1)) & __m1)			\
-		- (-(__m1 >> (W_TYPE_SIZE - 1)) & __m0);		\
+    UWtype __xm0 = (u), __xm1 = (v);					\
+    umul_ppmm (__w1, w0, __xm0, __xm1);					\
+    (w1) = __w1 - (-(__xm0 >> (W_TYPE_SIZE - 1)) & __xm1)		\
+		- (-(__xm1 >> (W_TYPE_SIZE - 1)) & __xm0);		\
   } while (0)
 #endif
 
