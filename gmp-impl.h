@@ -111,29 +111,75 @@ void *_mp_default_reallocate ();
 void _mp_default_free ();
 #endif
 
+#if defined (__GNUC__) && defined (__i386__)
+#if 0			/* check that these actually improve things */
+#define MPN_COPY_INCR(DST, SRC, N)					\
+  __asm__ ("cld\n\trep\n\tmovsl" : :					\
+	   "D" (DST), "S" (SRC), "c" (N) :				\
+	   "cx", "di", "si", "memory")
+#define MPN_COPY_DECR(DST, SRC, N)					\
+  __asm__ ("std\n\trep\n\tmovsl" : :					\
+	   "D" ((DST) + (N) - 1), "S" ((SRC) + (N) - 1), "c" (N) :	\
+	   "cx", "di", "si", "memory")
+#define MPN_NORMALIZE_NOT_ZERO(P, N)					\
+  do {									\
+    __asm__ ("std\n\trepe\n\tscasl" : "=c" (N) :			\
+	     "a" (0), "D" ((P) + (N) - 1), "0" (N) :			\
+	     "cx", "di");						\
+    (N)++;								\
+  } while (0)
+#endif
+#endif
+
 /* Copy NLIMBS *limbs* from SRC to DST.  */
+#ifndef MPN_COPY_INCR
 #define MPN_COPY_INCR(DST, SRC, NLIMBS) \
   do {									\
     mp_size_t __i;							\
     for (__i = 0; __i < (NLIMBS); __i++)				\
       (DST)[__i] = (SRC)[__i];						\
   } while (0)
+#endif
+
+#ifndef MPN_COPY_DECR
 #define MPN_COPY_DECR(DST, SRC, NLIMBS) \
   do {									\
     mp_size_t __i;							\
     for (__i = (NLIMBS) - 1; __i >= 0; __i--)				\
       (DST)[__i] = (SRC)[__i];						\
   } while (0)
+#endif
+
+/* Define MPN_COPY for vector computers.  Since #pragma cannot be in a macro,
+   rely on function inlining. */
+#if defined (_CRAY) || defined (__uxp__)
+static inline void
+_MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
+{
+  int i;				/* Faster for Cray with plain int */
+#pragma _CRI ivdep			/* Cray PVP systems */
+#pragma loop noalias d,s		/* Fujitsu VPP systems */
+  for (i = 0; i < n; i++)
+    d[i] = s[i];
+}
+#define MPN_COPY _MPN_COPY
+#endif
+
+#ifndef MPN_COPY
 #define MPN_COPY MPN_COPY_INCR
+#endif
 
 /* Zero NLIMBS *limbs* AT DST.  */
+#ifndef MPN_ZERO
 #define MPN_ZERO(DST, NLIMBS) \
   do {									\
     mp_size_t __i;							\
     for (__i = 0; __i < (NLIMBS); __i++)				\
       (DST)[__i] = 0;							\
   } while (0)
+#endif
 
+#ifndef MPN_NORMALIZE
 #define MPN_NORMALIZE(DST, NLIMBS) \
   do {									\
     while (NLIMBS > 0)							\
@@ -143,6 +189,8 @@ void _mp_default_free ();
 	NLIMBS--;							\
       }									\
   } while (0)
+#endif
+#ifndef MPN_NORMALIZE_NOT_ZERO
 #define MPN_NORMALIZE_NOT_ZERO(DST, NLIMBS) \
   do {									\
     while (1)								\
@@ -152,6 +200,7 @@ void _mp_default_free ();
 	NLIMBS--;							\
       }									\
   } while (0)
+#endif
 
 /* Initialize X of type mpz_t with space for NLIMBS limbs.  X should be a
    temporary variable; it will be automatically cleared out at function
@@ -166,18 +215,34 @@ void _mp_default_free ();
 
 #define MPN_MUL_N_RECURSE(prodp, up, vp, size, tspace) \
   do {									\
-    if ((size) < KARATSUBA_THRESHOLD)					\
-      impn_mul_n_basecase (prodp, up, vp, size);			\
+    if ((size) < KARATSUBA_MUL_THRESHOLD)				\
+      __gmpn_mul_basecase (prodp, up, size, vp, size);			\
     else								\
-      impn_mul_n (prodp, up, vp, size, tspace);				\
+      __gmpn_mul_n (prodp, up, vp, size, tspace);			\
   } while (0);
-#define MPN_SQR_N_RECURSE(prodp, up, size, tspace) \
+#define MPN_SQR_RECURSE(prodp, up, size, tspace) \
   do {									\
-    if ((size) < KARATSUBA_THRESHOLD)					\
-      impn_sqr_n_basecase (prodp, up, size);				\
+    if ((size) < KARATSUBA_SQR_THRESHOLD)				\
+      __gmpn_sqr_basecase (prodp, up, size);				\
     else								\
-      impn_sqr_n (prodp, up, size, tspace);				\
+      __gmpn_sqr (prodp, up, size, tspace);				\
   } while (0);
+
+/* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
+   value which is good on most machines.  */
+#ifndef KARATSUBA_MUL_THRESHOLD
+#define KARATSUBA_MUL_THRESHOLD 12
+#endif
+
+/* We can't handle KARATSUBA_MUL_THRESHOLD smaller than 2.  */
+#if KARATSUBA_MUL_THRESHOLD < 2
+#undef KARATSUBA_MUL_THRESHOLD
+#define KARATSUBA_MUL_THRESHOLD 2
+#endif
+
+#ifndef KARATSUBA_SQR_THRESHOLD
+#define KARATSUBA_SQR_THRESHOLD (2*KARATSUBA_MUL_THRESHOLD)
+#endif
 
 /* Structure for conversion between internal binary format and
    strings in base 2..36.  */
@@ -189,7 +254,7 @@ struct bases
   int chars_per_limb;
 
   /* log(2)/log(conversion_base) */
-  float chars_per_bit_exactly;
+  double chars_per_bit_exactly;
 
   /* base**chars_per_limb, i.e. the biggest number that fits a word, built by
      factors of base.  Exception: For 2, 4, 8, etc, big_base is log2(base),
@@ -275,28 +340,25 @@ extern mp_size_t __gmp_default_fp_limb_precision;
     (q) = _xh - q1;							\
   } while (0)
 
-#if defined (__GNUC__)
+/* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
+   between GCC 2 releases from 2.5, since __GNUC_MINOR__ wasn't introduced
+   until then.  */
+#if __GNUC__ - 0 > 2 || defined (__GNUC_MINOR__)
 /* Define stuff for longlong.h.  */
 typedef unsigned int UQItype	__attribute__ ((mode (QI)));
-typedef 	 int SItype	__attribute__ ((mode (SI)));
+typedef		 int SItype	__attribute__ ((mode (SI)));
 typedef unsigned int USItype	__attribute__ ((mode (SI)));
 typedef		 int DItype	__attribute__ ((mode (DI)));
 typedef unsigned int UDItype	__attribute__ ((mode (DI)));
 #else
 typedef unsigned char UQItype;
-typedef 	 long SItype;
+typedef		 long SItype;
 typedef unsigned long USItype;
 #endif
 
 typedef mp_limb_t UWtype;
 typedef unsigned int UHWtype;
 #define W_TYPE_SIZE BITS_PER_MP_LIMB
-
-/* Internal mpn calls */
-#define impn_mul_n_basecase	__MPN(impn_mul_n_basecase)
-#define impn_mul_n		__MPN(impn_mul_n)
-#define impn_sqr_n_basecase	__MPN(impn_sqr_n_basecase)
-#define impn_sqr_n		__MPN(impn_sqr_n)
 
 /* Define ieee_double_extract and _GMP_IEEE_FLOATS.  */
 
@@ -324,16 +386,16 @@ union ieee_double_extract
   double d;
 };
 #else /* Need this as an #else since the tests aren't made exclusive.  */
-#if defined (_BIG_ENDIAN)						\
+#if defined (_BIG_ENDIAN) || defined (__BIG_ENDIAN__)			\
  || defined (__a29k__) || defined (_AM29K)				\
  || defined (__arm__)							\
  || (defined (__convex__) && defined (_IEEE_FLOAT_))			\
  || defined (__i370__) || defined (__mvs__)				\
- || defined (__mc68000__) || defined (__mc68020__) || defined (__NeXT__)\
+ || defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
     || defined(mc68020)							\
  || defined (__m88000__)						\
  || defined (MIPSEB) || defined (_MIPSEB)				\
- || defined (__hppa)							\
+ || defined (__hppa) || defined (__hppa__)				\
  || defined (__pyr__)							\
  || defined (__ibm032__)						\
  || defined (_IBMR2) || defined (_ARCH_PPC)				\
@@ -363,8 +425,49 @@ union ieee_double_extract
 #endif
 
 double __gmp_scale2 _PROTO ((double, int));
-int __gmp_extract_double _PROTO((mp_ptr, double));
+int __gmp_extract_double _PROTO ((mp_ptr, double));
+
+void __gmpn_mul_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+void __gmpn_sqr_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+void __gmpn_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+void __gmpn_sqr _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 extern int __gmp_junk;
-extern int __gmp_0;
+extern const int __gmp_0;
 #define DIVIDE_BY_ZERO (__gmp_junk = 10/__gmp_0)
+
+#if defined _LONG_LONG_LIMB
+#if defined (__STDC__)
+#define CNST_LIMB(C) C##LL
+#else
+#define CNST_LIMB(C) C/**/LL
+#endif
+#else /* not _LONG_LONG_LIMB */
+#if defined (__STDC__)
+#define CNST_LIMB(C) C##L
+#else
+#define CNST_LIMB(C) C/**/L
+#endif
+#endif /* _LONG_LONG_LIMB */
+
+/*** Stuff used by mpn/generic/prefsqr.c and mpn/generic/next_prime.c ***/
+#if BITS_PER_MP_LIMB == 32
+#define PP 0xC0CFD797L		/* 3 x 5 x 7 x 11 x 13 x ... x 29 */
+#define PP_INVERTED 0x53E5645CL
+#define PP_MAXPRIME 29
+#define PP_MASK 0x208A28A8L
+#endif
+
+#if BITS_PER_MP_LIMB == 64
+#define PP CNST_LIMB(0xE221F97C30E94E1D)	/* 3 x 5 x 7 x 11 x 13 x ... x 53 */
+#define PP_INVERTED CNST_LIMB(0x21CFE6CFC938B36B)
+#define PP_MAXPRIME 53
+#define PP_MASK CNST_LIMB(0x208A20A08A28A8)
+#endif
+
+/* For testing and debugging.  */
+#define MPZ_CHECK_FORMAT(z)						\
+  do { if (SIZ(z) != 0 && PTR(z)[ABSIZ(z) - 1] == 0) abort ();		\
+       if (ALLOC(z) < ABSIZ(z)) abort (); } while (0)
+#define MPZ_PROVOKE_REALLOC(z)						\
+  do { ALLOC(z) = ABSIZ(z); } while (0)
