@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 29 Jun 2001.  An up-to-date version is available at
+  This file current as of 6 Jul 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -198,6 +198,9 @@
      original paper and is used in the x86 code, the advantage is that the
      current special case for 0x80..00 could be dropped.  The two should be
      equivalent, but a little check of that would be wanted.
+<li> <code>mpq_cmp_ui</code> could form the num1*den2 and num2*den1 products
+     limb-by-limb from high to low and look at each step for values differing
+     by more than the possible carry bit from the uncalculated portion.
 </ul>
 
 
