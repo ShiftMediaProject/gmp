@@ -32,5 +32,5 @@ endif
 EXTRA_DIST= tgeneric.c
 
 ../libmpfr.a:
-	cd $(top_srcdir)/mpfr; make libmpfr.a  
+	cd ..; make libmpfr.a  
 
