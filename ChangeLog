@@ -32,7 +32,7 @@ MA 02111-1307, USA.
 	unnecessary -march=i486 fallbacks.
 
 	* gmp.texi (Notes for Particular Systems): Note cl /MD is required for
-	Microsoft C and MINGW to cooperate on I/O.
+	Microsoft C and MINGW to cooperate on I/O.  Explained by David Librik.
 	(Language Bindings): Add linbox.
 	* gmp.texi (Language Bindings): 
 
