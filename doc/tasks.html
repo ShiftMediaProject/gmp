@@ -199,11 +199,6 @@ MA 02111-1307, USA.
      bitfield for the mantissa extraction, not two, when endianness permits.
      Might depend on the compiler allowing <code>long long</code> bit fields
      when that's the only actual 64-bit type.
-<li> <code>usqr_ppm</code> or some such could do a widening square in the
-     style of <code>umul_ppmm</code>.  This would help 68000, and be a small
-     improvement for the generic C (which is used on UltraSPARC/64 for
-     instance).  GCC recognises the generic C ul*vh and vl*uh are identical,
-     but does two separate additions to the rest of the result.
 <li> tal-notreent.c could keep a block of memory permanently allocated.
      Currently the last nested <code>TMP_FREE</code> releases all memory, so
      there's an allocate and free every time a top-level function using
