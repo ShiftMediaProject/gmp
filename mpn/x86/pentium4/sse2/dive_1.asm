@@ -213,7 +213,7 @@ L(done):
 ifdef(`PIC',`
 L(movl_eip_ecx):
 	movl	(%esp), %ecx
-	ret
+	ret_internal
 ')
 
 EPILOGUE()

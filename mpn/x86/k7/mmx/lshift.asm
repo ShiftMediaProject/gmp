@@ -281,7 +281,7 @@ L(pic_calc):
 	addl	$L(entry)-L(here), %esi
 	addl	(%esp), %esi
 
-	ret
+	ret_internal
 ')
 
 

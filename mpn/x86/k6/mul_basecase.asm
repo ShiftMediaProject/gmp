@@ -486,7 +486,7 @@ L(pic_calc):
 	leal	(%ecx,%esi,1), %ecx
 	addl	$L(unroll_entry)-L(unroll_here), %ecx
 	addl	(%esp), %ecx
-	ret
+	ret_internal
 ')
 
 

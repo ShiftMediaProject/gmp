@@ -633,7 +633,7 @@ L(pic_calc):
 	addl	(%esp), %ecx
 	addl	$L(unroll_inner_end)-L(here)-eval(2*CODE_BYTES_PER_LIMB), %ecx
 	addl	%edx, %ecx
-	ret
+	ret_internal
 ')
 
 

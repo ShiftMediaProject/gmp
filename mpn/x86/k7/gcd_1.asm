@@ -365,7 +365,7 @@ dnl non-PIC
 ifdef(`PIC', `
 L(movl_eip_to_edi):
 	movl	(%esp), %edi
-	ret
+	ret_internal
 ')
 
 EPILOGUE()

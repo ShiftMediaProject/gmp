@@ -186,7 +186,7 @@ L(odd_entry):
 ifdef(`PIC',`
 L(movl_eip_ebp):
 	movl	(%esp), %ebp
-	ret
+	ret_internal
 
 	ALIGN(8)
 	nop	C code alignment, necessary for claimed speed

@@ -58,7 +58,7 @@ deflit(`FRAME',0)
 ifdef(`PIC',`
 L(movl_eip_edi):
 	movl	(%esp), %edi
-	ret
+	ret_internal
 ')
 
 EPILOGUE()

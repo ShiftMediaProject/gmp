@@ -134,7 +134,7 @@ dnl non-PIC
 ifdef(`PIC',`
 L(movl_eip_edx):
 	movl	(%esp), %edx
-	ret
+	ret_internal
 ')
 
 	ALIGN(8)

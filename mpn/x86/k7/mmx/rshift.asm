@@ -282,7 +282,7 @@ L(pic_calc):
 	addl	(%esp), %esi
 	negl	%eax
 
-	ret
+	ret_internal
 ')
 
 

@@ -189,7 +189,7 @@ L(pic_calc):
 	leal	(%edi,%edi,8), %esi
 	addl	$L(entry)-L(here), %esi
 	addl	(%esp), %esi
-	ret
+	ret_internal
 ')
 
 

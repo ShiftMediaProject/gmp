@@ -205,7 +205,7 @@ L(add_eip_to_edx):
 	leal	(%edx,%ebp), %edx
 	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
-	ret
+	ret_internal
 ')
 
 

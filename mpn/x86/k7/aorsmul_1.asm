@@ -268,7 +268,7 @@ L(pic_calc):
 	leal	(%edx,%ebx,1), %edx
 	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
-	ret
+	ret_internal
 ')
 
 
