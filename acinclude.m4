@@ -2288,6 +2288,123 @@ AC_MSG_RESULT([determined])
 ])
 
 
+dnl  GMP_ASM_IA64_ALIGN_OK
+dnl  ---------------------
+dnl  Determine whether .align correctly pads with nop instructions in a text
+dnl  segment.
+dnl
+dnl  gas 2.14 and earlier byte swaps its padding bundle on big endian
+dnl  systems, which is incorrect (endianness only changes data).  What
+dnl  should be "nop.m / nop.f / nop.i" comes out as "break" instructions.
+dnl
+dnl  The test here detects the bad case, and assumes anything else is ok
+dnl  (there are many sensible nop bundles, so it'd be impractical to try to
+dnl  match everything good).
+
+AC_DEFUN(GMP_ASM_IA64_ALIGN_OK,
+[AC_CACHE_CHECK([whether assembler .align padding is good],
+		gmp_cv_asm_ia64_align_ok,
+[cat >conftest.awk <<\EOF
+[BEGIN {
+  want[0]  = "011"
+  want[1]  = "160"
+  want[2]  = "074"
+  want[3]  = "040"
+  want[4]  = "000"
+  want[5]  = "040"
+  want[6]  = "020"
+  want[7]  = "221"
+  want[8]  = "114"
+  want[9]  = "000"
+  want[10] = "100"
+  want[11] = "200"
+  want[12] = "122"
+  want[13] = "261"
+  want[14] = "000"
+  want[15] = "200"
+
+  want[16] = "000"
+  want[17] = "004"
+  want[18] = "000"
+  want[19] = "000"
+  want[20] = "000"
+  want[21] = "000"
+  want[22] = "002"
+  want[23] = "000"
+  want[24] = "000"
+  want[25] = "000"
+  want[26] = "000"
+  want[27] = "001"
+  want[28] = "000"
+  want[29] = "000"
+  want[30] = "000"
+  want[31] = "014"
+
+  want[32] = "011"
+  want[33] = "270"
+  want[34] = "140"
+  want[35] = "062"
+  want[36] = "000"
+  want[37] = "040"
+  want[38] = "240"
+  want[39] = "331"
+  want[40] = "160"
+  want[41] = "000"
+  want[42] = "100"
+  want[43] = "240"
+  want[44] = "343"
+  want[45] = "371"
+  want[46] = "000"
+  want[47] = "200"
+
+  result = "yes"
+}
+{
+  for (f = 2; f <= NF; f++)
+    {
+      for (i = 0; i < 47; i++)
+        got[i] = got[i+1];
+      got[47] = $f;
+
+      found = 1
+      for (i = 0; i < 48; i++)
+        if (got[i] != want[i])
+          {
+            found = 0
+            break
+          }
+      if (found)
+        {
+          result = "no"
+          exit
+        }
+    }
+}
+END {
+  print result
+}
+]EOF
+GMP_TRY_ASSEMBLE(
+[	.text
+	.align	32
+{ .mmi;	add	r14 = r15, r16
+	add	r17 = r18, r19
+	add	r20 = r21, r22 ;; }
+	.align	32
+{ .mmi;	add	r23 = r24, r25
+	add	r26 = r27, r28
+	add	r29 = r30, r31 ;; }
+],
+  [gmp_cv_asm_ia64_align_ok=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`],
+  [AC_MSG_WARN([oops, cannot compile test program])
+   gmp_cv_asm_ia64_align_ok=yes])
+])
+GMP_DEFINE_RAW(["define(<IA64_ALIGN_OK>, <\`$gmp_cv_asm_ia64_align_ok'>)"])
+])
+
+
+
+
 dnl  GMP_ASM_M68K_INSTRUCTION
 dnl  ------------------------
 dnl  Not sure if ".l" and "%" are independent settings, but it doesn't hurt
