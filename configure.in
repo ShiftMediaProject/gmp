@@ -1549,14 +1549,18 @@ AC_HEADER_STDC
 AC_HEADER_TIME
 
 # Reasons for testing:
+#   sys/param.h - not in mingw
 #   sys/processor.h - solaris specific, though also present in macos
-#   sys/resource.h - not present in mingw
+#   sys/resource.h - not in mingw
+#   sys/sysctl.h - not in mingw
+#   sys/syssgi.h - IRIX specific
 #   sys/systemcfg.h - AIX specific
+#   sys/times.h - not in mingw
 #
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # optarg should be in unistd.h, which is already in the default includes
 AC_CHECK_DECLS([fgetc, fscanf, optarg, ungetc, vfprintf])
@@ -1636,13 +1640,14 @@ esac
 #   sigaltstack - not in mingw, old AIX (reputedly)
 #   sigstack - not in mingw
 #   strnlen - glibc extension
+#   syssgi - IRIX specific
 #   times - not in mingw
 #
 # clock_gettime is in librt on *-*-osf5.1.  We could look for it
 # there, but that's not worth bothering with unless it has a decent
 # resolution (in a quick test clock_getres said only 1 millisecond).
 #
-AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack strchr strnlen strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack syssgi strchr strnlen strtoul sysconf sysctl sysctlbyname times)
 
 # FIXME: Would have done this with an AM_CONDITIONAL, but automake 1.5
 # doesn't like that under libgmp_la_DEPENDENCIES.
