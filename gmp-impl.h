@@ -473,18 +473,22 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   } while (0)
 #endif
 
-/* Strip least significant zero limbs from ptr,size by incrementing ptr and
-   decrementing size.  The number in ptr,size must be non-zero, ie. size!=0
-   and somewhere a non-zero limb.  */
-#define MPN_STRIP_LOW_ZEROS_NOT_ZERO(ptr, size) \
-  do {                                          \
-    ASSERT ((size) >= 1);                       \
-    while ((ptr)[0] == 0)                       \
-      {                                         \
-        (ptr)++;                                \
-        (size)--;                               \
-        ASSERT (size >= 0);                     \
-      }                                         \
+/* Strip least significant zero limbs from {ptr,size} by incrementing ptr
+   and decrementing size.  low should be ptr[0], and will be the new ptr[0]
+   on returning.  The number in {ptr,size} must be non-zero, ie. size!=0 and
+   somewhere a non-zero limb.  */
+#define MPN_STRIP_LOW_ZEROS_NOT_ZERO(ptr, size, low)    \
+  do {                                                  \
+    ASSERT ((size) >= 1);                               \
+    ASSERT ((low) == (ptr)[0]);                         \
+                                                        \
+    while ((low) == 0)                                  \
+      {                                                 \
+        (size)--;                                       \
+        ASSERT ((size) >= 1);                           \
+        (ptr)++;                                        \
+        (low) = *(ptr);                                 \
+      }                                                 \
   } while (0)
 
 /* Initialize X of type mpz_t with space for NLIMBS limbs.  X should be a
@@ -1001,9 +1005,40 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
 #endif
 
 
-/* modlimb_invert() sets "inv" to the multiplicative inverse of "n" modulo
-   2^BITS_PER_MP_LIMB, ie. so that inv*n == 1 mod 2^BITS_PER_MP_LIMB.
-   "n" must be odd (otherwise such an inverse doesn't exist).
+#define mpn_modexact_1c_odd  __MPN(modexact_1c_odd)
+mp_limb_t mpn_modexact_1c_odd _PROTO ((mp_srcptr src, mp_size_t size,
+                                       mp_limb_t divisor, mp_limb_t c));
+
+#if HAVE_NATIVE_mpn_modexact_1_odd
+#define mpn_modexact_1_odd   __MPN(modexact_1_odd)
+mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
+                                      mp_limb_t divisor));
+#else
+#define mpn_modexact_1_odd(src,size,divisor) \
+  mpn_modexact_1c_odd (src, size, divisor, CNST_LIMB(0))
+#endif
+
+/* mpn_modexact_1_odd takes roughly 2 multiplies, so don't bother unless
+   that's faster than a division.  When modexact is worth doing it has to
+   calculate a modular inverse, so it's probably only above a certain size
+   it'll be best, choose 5 as an guess for that.  */
+#ifndef MODEXACT_1_ODD_THRESHOLD
+#if 2*UMUL_TIME < UDIV_TIME
+#define MODEXACT_1_ODD_THRESHOLD  5
+#else
+#define MODEXACT_1_ODD_THRESHOLD  MP_SIZE_T_MAX
+#endif
+#endif
+
+#define MPN_MOD_OR_MODEXACT_1_ODD(src,size,divisor)     \
+  (ABOVE_THRESHOLD (size, MODEXACT_1_ODD_THRESHOLD)     \
+   ? mpn_modexact_1_odd (src, size, divisor)            \
+   : mpn_mod_1 (src, size, divisor))
+
+
+/* modlimb_invert() sets inv to the multiplicative inverse of n modulo
+   2^BITS_PER_MP_LIMB, ie. satisfying inv*n == 1 mod 2^BITS_PER_MP_LIMB.
+   n must be odd (otherwise such an inverse doesn't exist).
 
    This is not to be confused with invert_limb(), which is completely
    different.
@@ -1242,7 +1277,9 @@ extern const int __gmp_0;
 
 /* BIT1 means a result value in bit 1 (second least significant bit), with a
    zero bit representing +1 and a one bit representing -1.  Bits other than
-   bit 1 are garbage.
+   bit 1 are garbage.  These are meant to be kept in "int"s, and casts are
+   used to ensure the expressions are "int"s even if a and/or b might be
+   other types.
 
    JACOBI_TWOS_U_BIT1 and JACOBI_RECIP_UU_BIT1 are used in mpn_jacobi_base
    and their speed is important.  Expressions are used rather than
@@ -1257,51 +1294,94 @@ extern const int __gmp_0;
 #define JACOBI_U0(a) \
   ((a) == 1)
 
-/* (a/0), with a an mpz_t; is 1 if a=+/-1, 0 otherwise
-   An mpz_t always has at least one limb of allocated space, so the fetch of
-   the low limb is valid. */
+/* (a/0), with a given by low and size;
+   is 1 if a=+/-1, 0 otherwise */
+#define JACOBI_LS0(alow,asize) \
+  (((alow) == 1) && ((asize) == 1 || (asize) == -1))
+
+/* (a/0), with a an mpz_t;
+   fetch of low limb always valid, even if size is zero */
 #define JACOBI_Z0(a) \
-  (((SIZ(a) == 1) | (SIZ(a) == -1)) & (PTR(a)[0] == 1))
+  JACOBI_LS0 (PTR(a)[0], SIZ(a))
+
+/* (0/b), with b given by low and size; is 1 if b=+/-1, 0 otherwise */
+#define JACOBI_0LS(blow,bsize) \
+  ((blow == 1) && (bsize == 1 || bsize == -1))
 
 /* Convert a bit1 to +1 or -1. */
 #define JACOBI_BIT1_TO_PN(result_bit1) \
-  (1 - ((result_bit1) & 2))
+  (1 - ((int) (result_bit1) & 2))
 
 /* (2/b), with b unsigned and odd;
    is (-1)^((b^2-1)/8) which is 1 if b==1,7mod8 or -1 if b==3,5mod8 and
    hence obtained from (b>>1)^b */
 #define JACOBI_TWO_U_BIT1(b) \
-  (((b) >> 1) ^ (b))
+  ((int) (((b) >> 1) ^ (b)))
 
 /* (2/b)^twos, with b unsigned and odd */
 #define JACOBI_TWOS_U_BIT1(twos, b) \
-  (((twos) << 1) & JACOBI_TWO_U_BIT1 (b))
+  ((int) ((twos) << 1) & JACOBI_TWO_U_BIT1 (b))
 
 /* (2/b)^twos, with b unsigned and odd */
 #define JACOBI_TWOS_U(twos, b) \
   (JACOBI_BIT1_TO_PN (JACOBI_TWOS_U_BIT1 (twos, b)))
 
+/* (-1/b), with b odd (signed or unsigned);
+   is (-1)^((b-1)/2) */
+#define JACOBI_N1B_BIT1(b) \
+  ((int) (b))
+
 /* (a/b) effect due to sign of a: signed/unsigned, b odd;
-   is (-1)^((b-1)/2) if a<0, or +1 if a>=0 */
+   is (-1/b) if a<0, or +1 if a>=0 */
 #define JACOBI_ASGN_SU_BIT1(a, b) \
-  ((((a) < 0) << 1) & (b))
+  ((((a) < 0) << 1) & JACOBI_N1B_BIT1(b))
+
+/* (a/b) effect due to sign of b: signed/signed;
+   is -1 if a and b both negative, +1 otherwise */
+#define JACOBI_BSGN_SS_BIT1(a, b) \
+  ((((a)<0) & ((b)<0)) << 1)
 
 /* (a/b) effect due to sign of b: signed/mpz;
    is -1 if a and b both negative, +1 otherwise */
 #define JACOBI_BSGN_SZ_BIT1(a, b) \
-  ((((a) < 0) & (SIZ(b) < 0)) << 1)
+  JACOBI_BSGN_SS_BIT1 (a, SIZ(b))
 
-/* (a/b) effect due to sign of b: mpz/signed */
+/* (a/b) effect due to sign of b: mpz/signed;
+   is -1 if a and b both negative, +1 otherwise */
 #define JACOBI_BSGN_ZS_BIT1(a, b) \
-  JACOBI_BSGN_SZ_BIT1(b, a)
+  JACOBI_BSGN_SZ_BIT1 (b, a)
 
-/* (a/b) reciprocity to switch to (b/a), a,b both unsigned and odd.
-   Is (-1)^((a-1)*(b-1)/4), which means +1 if either a,b==1mod4, or -1 if
+/* (a/b) reciprocity to switch to (b/a), a,b both unsigned and odd;
+   is (-1)^((a-1)*(b-1)/4), which means +1 if either a,b==1mod4, or -1 if
    both a,b==3mod4, achieved in bit 1 by a&b.  No ASSERT()s about a,b odd
    because this is used in a couple of places with only bit 1 of a or b
    valid. */
 #define JACOBI_RECIP_UU_BIT1(a, b) \
-  ((a) & (b))
+  ((int) ((a) & (b)))
+
+
+/* Set a_rem to {a_ptr,a_size} reduced modulo b, either using mod_1 or
+   modexact_1_odd, but in either case leaving a_rem<b.  b must be odd and
+   unsigned.  modexact_1_odd effectively calculates -a mod b, and
+   result_bit1 is adjusted for the factor of -1.  */
+
+#define JACOBI_MOD_OR_MODEXACT_1_ODD(result_bit1, a_rem, a_ptr, a_size, b) \
+  do {                                                                     \
+    mp_srcptr  __a_ptr  = (a_ptr);                                         \
+    mp_size_t  __a_size = (a_size);                                        \
+    mp_limb_t  __b      = (b);                                             \
+    ASSERT (__b & 1);                                                      \
+                                                                           \
+    if (BELOW_THRESHOLD (__a_size, MODEXACT_1_ODD_THRESHOLD))              \
+      {                                                                    \
+        (a_rem) = mpn_mod_1 (__a_ptr, __a_size, __b);                      \
+      }                                                                    \
+    else                                                                   \
+      {                                                                    \
+        (result_bit1) ^= JACOBI_N1B_BIT1 (__b);                            \
+        (a_rem) = mpn_modexact_1_odd (__a_ptr, __a_size, __b);             \
+      }                                                                    \
+  } while (0)
 
 
 /* For testing and debugging.  */
