@@ -1,6 +1,6 @@
 /* operator>> -- C++-style input of mpz_t.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,6 +28,9 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
+// For g++ libstdc++ parsing see num_get<chartype,initer>::_M_extract_int in
+// include/bits/locale_facets.tcc.
+
 istream &
 operator>> (istream &i, mpz_ptr z)
 {
@@ -39,8 +42,17 @@ operator>> (istream &i, mpz_ptr z)
   i.get(c); // start reading
 
   if (i.flags() & ios::skipws) // skip initial whitespace
-    while (isspace(c) && i.get(c))
-      ;
+    {
+#if HAVE_STD__LOCALE
+      const ctype<char>& ct = use_facet< ctype<char> >(i.getloc());
+#define cxx_isspace(c)  (ct.is(ctype_base::space,(c)))
+#else
+#define cxx_isspace(c)  isspace(c)
+#endif
+
+      while (cxx_isspace(c) && i.get(c))
+        ;
+    }
 
   if (c == '-' || c == '+') // sign
     {
@@ -48,9 +60,6 @@ operator>> (istream &i, mpz_ptr z)
 	s = "-";
       i.get(c);
     }
-
-  while (isspace(c) && i.get(c)) // skip whitespace
-    ;
 
   base = __gmp_istream_set_base(i, c, zero, showbase); // select the base
   __gmp_istream_set_digits(s, i, c, ok, base);         // read the number
@@ -61,7 +70,7 @@ operator>> (istream &i, mpz_ptr z)
     i.clear();
 
   if (ok)
-    mpz_set_str(z, s.c_str(), base); // extract the number
+    ASSERT_NOCARRY (mpz_set_str (z, s.c_str(), base)); // extract the number
   else if (zero)
     mpz_set_ui(z, 0);
   else
