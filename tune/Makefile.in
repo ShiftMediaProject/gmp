@@ -149,24 +149,13 @@ INCLUDES = -I$(top_srcdir)
 EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm hppa2w.asm ia64.asm
 noinst_HEADERS = speed.h
 
-# The library code is faster static than shared on some systems, so do all
-# tuning and measuring with static, since users who care about maximizing
-# speed will be using that.
-#
-# Libtool doesn't seem to pass -static through to gcc, it only uses it to
-# choose the static versions of libtool libraries.  Rerun the link with
-# -static to get a static link of libc and libm.  This is probably only of
-# interest when measuring libc routines like malloc/free.
-
-LDFLAGS = -static
-DEPENDENCIES = libspeed.la
-LDADD = $(DEPENDENCIES)
-
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES = \
-  common.c freq.c gcd_bin.c gcd_finda_gen.c modlinv.c \
-  mul_n_mpn.c mul_n_open.c noop.c powm_mod.c powm_redc.c time.c
+  common.c freq.c gcd_bin.c gcd_finda_gen.c				  \
+  gcdext_single.c gcdextod.c gcdextos.c					  \
+  modlinv.c mul_n_mpn.c mul_n_open.c noop.c powm_mod.c powm_redc.c time.c
+
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la $(LIBM)
@@ -174,15 +163,28 @@ libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la $(LIB
 # create an ansi2knr rule for sqr_basecase.c in case it's recompiled
 nodist_libdummy_la_SOURCES = sqr_basecase.c
 
-EXTRA_PROGRAMS = speed speed-ext tuneup
+# The library code is faster static than shared on some systems, so do
+# tuning and measuring with static, since users who care about maximizing
+# speed will be using that.  speed-dynamic exists to show the difference.
+
+EXTRA_PROGRAMS = speed speed-dynamic speed-ext tuneup
+
+DEPENDENCIES = libspeed.la
+LDADD = $(DEPENDENCIES)
 
 speed_SOURCES = speed.c
+speed_LDFLAGS = -all-static
+
+speed_dynamic_SOURCES = speed.c
+
 speed_ext_SOURCES = speed.c
+speed_ext_LDFLAGS = -all-static
 
 tuneup_SOURCES = tuneup.c
 nodist_tuneup_SOURCES = $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES)
+tuneup_LDFLAGS = -all-static
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 	$(nodist_tuneup_SOURCES) sqr_basecase.c sqr_asm.asm \
@@ -198,7 +200,7 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 # FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
 # so the recompiled object will be rebuilt if that file changes.
 
-TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c gcdext.c
+TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c
 TUNE_MPZ_SRCS = fib_ui.c
 
 COMPILE_FLAGS = \
@@ -217,6 +219,7 @@ CONFIG_CLEAN_FILES =
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
 libdummy_la_LDFLAGS = 
@@ -225,33 +228,37 @@ nodist_libdummy_la_OBJECTS =  sqr_basecase$U.lo
 libdummy_la_OBJECTS =  $(nodist_libdummy_la_OBJECTS)
 libspeed_la_LDFLAGS = 
 am_libspeed_la_OBJECTS =  common$U.lo freq$U.lo gcd_bin$U.lo \
-gcd_finda_gen$U.lo modlinv$U.lo mul_n_mpn$U.lo mul_n_open$U.lo \
-noop$U.lo powm_mod$U.lo powm_redc$U.lo time$U.lo
+gcd_finda_gen$U.lo gcdext_single$U.lo gcdextod$U.lo gcdextos$U.lo \
+modlinv$U.lo mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo powm_mod$U.lo \
+powm_redc$U.lo time$U.lo
 libspeed_la_OBJECTS =  $(am_libspeed_la_OBJECTS)
-EXTRA_PROGRAMS =  speed$(EXEEXT) speed-ext$(EXEEXT) tuneup$(EXEEXT)
+EXTRA_PROGRAMS =  speed$(EXEEXT) speed-dynamic$(EXEEXT) \
+speed-ext$(EXEEXT) tuneup$(EXEEXT)
 am_speed_OBJECTS =  speed$U.$(OBJEXT)
 speed_OBJECTS =  $(am_speed_OBJECTS)
 speed_LDADD = $(LDADD)
 speed_DEPENDENCIES =  libspeed.la
-speed_LDFLAGS = 
+am_speed_dynamic_OBJECTS =  speed$U.$(OBJEXT)
+speed_dynamic_OBJECTS =  $(am_speed_dynamic_OBJECTS)
+speed_dynamic_LDADD = $(LDADD)
+speed_dynamic_DEPENDENCIES =  libspeed.la
+speed_dynamic_LDFLAGS = 
 am_speed_ext_OBJECTS =  speed$U.$(OBJEXT)
 speed_ext_OBJECTS =  $(am_speed_ext_OBJECTS)
 speed_ext_LDADD = $(LDADD)
 speed_ext_DEPENDENCIES =  libspeed.la
-speed_ext_LDFLAGS = 
 am_tuneup_OBJECTS =  tuneup$U.$(OBJEXT)
 nodist_tuneup_OBJECTS =  mul_n$U.$(OBJEXT) mul_fft$U.$(OBJEXT) \
 mul$U.$(OBJEXT) dc_divrem_n$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
-gcd$U.$(OBJEXT) gcdext$U.$(OBJEXT) fib_ui$U.$(OBJEXT)
+gcd$U.$(OBJEXT) fib_ui$U.$(OBJEXT)
 tuneup_OBJECTS =  $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
-tuneup_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libspeed_la_SOURCES) $(speed_SOURCES) \
-$(speed_ext_SOURCES) $(tuneup_SOURCES)
+$(speed_dynamic_SOURCES) $(speed_ext_SOURCES) $(tuneup_SOURCES)
 HEADERS =  $(noinst_HEADERS)
 
 DIST_COMMON =  README $(noinst_HEADERS) Makefile.am Makefile.in
@@ -261,8 +268,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = $(nodist_libdummy_la_SOURCES) $(libspeed_la_SOURCES) $(speed_SOURCES) $(speed_ext_SOURCES) $(tuneup_SOURCES) $(nodist_tuneup_SOURCES)
-OBJECTS = $(nodist_libdummy_la_OBJECTS) $(am_libspeed_la_OBJECTS) $(am_speed_OBJECTS) $(am_speed_ext_OBJECTS) $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
+SOURCES = $(nodist_libdummy_la_SOURCES) $(libspeed_la_SOURCES) $(speed_SOURCES) $(speed_dynamic_SOURCES) $(speed_ext_SOURCES) $(tuneup_SOURCES) $(nodist_tuneup_SOURCES)
+OBJECTS = $(nodist_libdummy_la_OBJECTS) $(am_libspeed_la_OBJECTS) $(am_speed_OBJECTS) $(am_speed_dynamic_OBJECTS) $(am_speed_ext_OBJECTS) $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -321,6 +328,10 @@ speed$(EXEEXT): $(speed_OBJECTS) $(speed_DEPENDENCIES)
 	@rm -f speed$(EXEEXT)
 	$(LINK) $(speed_LDFLAGS) $(speed_OBJECTS) $(speed_LDADD) $(LIBS)
 
+speed-dynamic$(EXEEXT): $(speed_dynamic_OBJECTS) $(speed_dynamic_DEPENDENCIES)
+	@rm -f speed-dynamic$(EXEEXT)
+	$(LINK) $(speed_dynamic_LDFLAGS) $(speed_dynamic_OBJECTS) $(speed_dynamic_LDADD) $(LIBS)
+
 speed-ext$(EXEEXT): $(speed_ext_OBJECTS) $(speed_ext_DEPENDENCIES)
 	@rm -f speed-ext$(EXEEXT)
 	$(LINK) $(speed_ext_LDFLAGS) $(speed_ext_OBJECTS) $(speed_ext_LDADD) $(LIBS)
@@ -348,8 +359,12 @@ gcd_bin_.c: gcd_bin.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd_bin.c; then echo $(srcdir)/gcd_bin.c; else echo gcd_bin.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_bin_.c
 gcd_finda_gen_.c: gcd_finda_gen.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd_finda_gen.c; then echo $(srcdir)/gcd_finda_gen.c; else echo gcd_finda_gen.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_finda_gen_.c
-gcdext_.c: gcdext.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdext.c; then echo $(srcdir)/gcdext.c; else echo gcdext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdext_.c
+gcdext_single_.c: gcdext_single.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdext_single.c; then echo $(srcdir)/gcdext_single.c; else echo gcdext_single.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdext_single_.c
+gcdextod_.c: gcdextod.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdextod.c; then echo $(srcdir)/gcdextod.c; else echo gcdextod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdextod_.c
+gcdextos_.c: gcdextos.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdextos.c; then echo $(srcdir)/gcdextos.c; else echo gcdextos.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdextos_.c
 modlinv_.c: modlinv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/modlinv.c; then echo $(srcdir)/modlinv.c; else echo modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > modlinv_.c
 mul_.c: mul.c $(ANSI2KNR)
@@ -381,14 +396,15 @@ tuneup_.c: tuneup.c $(ANSI2KNR)
 common_.$(OBJEXT) common_.lo dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo \
 fib_ui_.$(OBJEXT) fib_ui_.lo freq_.$(OBJEXT) freq_.lo gcd_.$(OBJEXT) \
 gcd_.lo gcd_bin_.$(OBJEXT) gcd_bin_.lo gcd_finda_gen_.$(OBJEXT) \
-gcd_finda_gen_.lo gcdext_.$(OBJEXT) gcdext_.lo modlinv_.$(OBJEXT) \
-modlinv_.lo mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo \
-mul_n_.$(OBJEXT) mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo \
-mul_n_open_.$(OBJEXT) mul_n_open_.lo noop_.$(OBJEXT) noop_.lo \
-powm_mod_.$(OBJEXT) powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo \
-speed_.$(OBJEXT) speed_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
-tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) time_.lo \
-tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+gcd_finda_gen_.lo gcdext_single_.$(OBJEXT) gcdext_single_.lo \
+gcdextod_.$(OBJEXT) gcdextod_.lo gcdextos_.$(OBJEXT) gcdextos_.lo \
+modlinv_.$(OBJEXT) modlinv_.lo mul_.$(OBJEXT) mul_.lo \
+mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo \
+mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
+noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) powm_mod_.lo \
+powm_redc_.$(OBJEXT) powm_redc_.lo speed_.$(OBJEXT) speed_.lo \
+sqr_basecase_.$(OBJEXT) sqr_basecase_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo \
+time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
@@ -608,6 +624,9 @@ fibg:
 
 gcd:
 	./speed -s 1-20 -c mpn_gcd
+
+udiv:
+	./speed -s 1 -c udiv_qrnnd udiv_qrnnd_preinv udiv_qrnnd_preinv2norm invert_limb udiv_qrnnd_c
 
 graph:
 	./speed -s 1-5000 -f 1.02 -P graph mpn_mul_n mpn_sqr
