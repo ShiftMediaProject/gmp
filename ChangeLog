@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-27  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c: Remove some unused variables.
+	(main): Allocate more buffer space to accommodate minus sign.
+
 2001-10-27  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h, mpn/asm-defs.m4, configure.in, tune/speed.h,
@@ -39,7 +44,7 @@ MA 02111-1307, USA.
 
 2001-10-26  Kevin Ryde  <kevin@swox.se>
 
-	* tests/mpq/t-get_d.c: Limit the size of "eps" for vax.	
+	* tests/mpq/t-get_d.c: Limit the size of "eps" for vax.
 
 	* gmp.texi (maybepagebreak): New macro, use it in a few places.
 	(Notes for Particular Systems): C++ Windows DLLs are not supported.
@@ -64,7 +69,7 @@ MA 02111-1307, USA.
 	if libc vsnprintf missing or bad.
 	* configure.in (AC_CHECK_FUNCS): Add strnlen.
 
-	* printf/snprntffuns.c, printf/vasprintf.c: Use 
+	* printf/snprntffuns.c, printf/vasprintf.c: Use
 	__gmp_replacement_vsnprintf if libc vsnprintf not available.
 	* printf/asprintf.c, printf/snprintf.c, printf/vasprintf.c,
 	printf/vsnprintf.c: Provide these functions unconditionally.
