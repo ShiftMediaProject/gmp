@@ -19,6 +19,26 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-25  Kevin Ryde  <kevin@swox.se>
+
+	* tests/misc/t-locale.c: Avoid printf in the normal case, since the
+	replacement localeconv breaks it on SunOS 4.
+
+	* gmp.texi (Build Options, Notes for Package Builds): Note libgmpxx
+	depends on libgmp from same GMP version.
+
+	* acinclude.m4, configure.in (GMP_FUNC_SSCANF_WRITABLE_INPUT): New
+	test.
+	* scanf/sscanf.c, scanf/vsscanf.c: Use it to ensure sscanf input is
+	writable, if necessary.
+
+	* tests/misc/t-scanf.c: Ensure sscanf arguments are writable, always.
+	* configure.in (AC_CHECK_DECLS): Remove sscanf, no longer required.
+
+	* configure.in (none-*-*): Fix default CFLAGS setups.
+
+	* doc/configuration: Misc updates.
+
 2001-11-23  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/init2.c, mpz/realloc2.c: New files.
