@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -27,9 +27,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 /* #define DEBUG */
-
-extern int mpfr_exp_2 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-extern int mpfr_exp3 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
 
 /* use Brent's formula exp(x) = (1+r+r^2/2!+r^3/3!+...)^(2^K)*2^n
    where x = n*log(2)+(2^K)*r

@@ -1,6 +1,6 @@
 /* mpfr_exp -- exponential of a floating-point number
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -26,7 +26,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 static int mpfr_exp_rational _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
-int mpfr_exp3 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 static int
 mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
@@ -198,9 +197,3 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_clear(x_copy);
   return inexact;
 } 
-
-
-
-
-
-

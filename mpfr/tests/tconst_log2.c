@@ -15,18 +15,19 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 /* tlog2 [prec] [rnd] [0 = no print] */
 
-extern mp_prec_t __mpfr_const_log2_prec;
 void check _PROTO ((mp_prec_t, mp_prec_t));
 
 void

@@ -1,0 +1,15 @@
+Probably many bugs.
+
+Known bugs:
+
+* The overflows/underflows are not yet implemented in all functions.
+
+* Possible integer overflows on some machines.
+
+* mpfr_set_d may give wrong results on some architectures.
+
+Potential bugs:
+
+* get_str.c: condition len != n + 1 is always satisfied at the end.
+  This means that there are too many reallocations (possibly useless
+  ones) and a possible bug.

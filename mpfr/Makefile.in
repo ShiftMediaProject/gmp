@@ -113,6 +113,7 @@ LN_S = @LN_S@
 M4 = @M4@
 MAINT = @MAINT@
 MPFR_CFLAGS = @MPFR_CFLAGS@
+MPFR_LIBS = @MPFR_LIBS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -144,6 +145,7 @@ SUBDIRS = tests
 
 INCLUDES = -I$(top_srcdir)
 CFLAGS = @MPFR_CFLAGS@
+LIBS = @MPFR_LIBS@
 
 @WANT_MPFR_TRUE@lib_LIBRARIES = libmpfr.a
 @WANT_MPFR_TRUE@include_HEADERS = mpfr.h mpf2mpfr.h
@@ -153,7 +155,9 @@ CFLAGS = @MPFR_CFLAGS@
 info_TEXINFOS = mpfr.texi
 TEXINFO_TEX = ../texinfo.tex
 
-libmpfr_a_SOURCES = cputime.h mpfr.h mpf2mpfr.h mpfi.h mpfr-impl.h mpfr-math.h mpfr-test.h exceptions.c save_expo.c extract.c uceil_exp2.c uceil_log2.c ufloor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_d.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round_prec.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c get_z_exp.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c sin_cos.c set_nan.c set_inf.c
+libmpfr_a_SOURCES = mpfr.h mpf2mpfr.h mpfr-impl.h mpfr-math.h mpfr-test.h exceptions.c save_expo.c extract.c uceil_exp2.c uceil_log2.c ufloor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_d.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round_prec.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c get_z_exp.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c sin_cos.c set_nan.c set_inf.c
+
+libmpfr_a_LIBADD = @LIBOBJS@
 
 EXTRA_DIST = generic.c
 subdir = mpfr
@@ -163,7 +167,7 @@ CONFIG_CLEAN_FILES =
 LIBRARIES = $(lib_LIBRARIES)
 
 libmpfr_a_AR = $(AR) cru
-libmpfr_a_LIBADD =
+libmpfr_a_DEPENDENCIES = @LIBOBJS@
 am_libmpfr_a_OBJECTS = exceptions$U.$(OBJEXT) save_expo$U.$(OBJEXT) \
 	extract$U.$(OBJEXT) uceil_exp2$U.$(OBJEXT) \
 	uceil_log2$U.$(OBJEXT) ufloor_log2$U.$(OBJEXT) add$U.$(OBJEXT) \
@@ -208,7 +212,6 @@ DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
 depcomp =
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -228,8 +231,9 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
-DIST_COMMON = README $(include_HEADERS) AUTHORS COPYING ChangeLog \
-	Makefile.am Makefile.in NEWS TODO acinclude.m4
+DIST_COMMON = README $(include_HEADERS) AUTHORS COPYING COPYING.LIB \
+	ChangeLog Makefile.am Makefile.in NEWS TODO acinclude.m4 \
+	strcasecmp.c
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = $(libmpfr_a_SOURCES)
 
@@ -495,6 +499,8 @@ sqrt_.c: sqrt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrt.c; then echo $(srcdir)/sqrt.c; else echo sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrt_.c || rm -f sqrt_.c
 sqrt_ui_.c: sqrt_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrt_ui.c; then echo $(srcdir)/sqrt_ui.c; else echo sqrt_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrt_ui_.c || rm -f sqrt_ui_.c
+strcasecmp_.c: strcasecmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strcasecmp.c; then echo $(srcdir)/strcasecmp.c; else echo strcasecmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strcasecmp_.c || rm -f strcasecmp_.c
 sub_.c: sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c || rm -f sub_.c
 sub1_.c: sub1.c $(ANSI2KNR)
@@ -566,8 +572,9 @@ set_rnd_.$(OBJEXT) set_rnd_.lo set_si_.$(OBJEXT) set_si_.lo \
 set_str_.$(OBJEXT) set_str_.lo set_str_raw_.$(OBJEXT) set_str_raw_.lo \
 set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo sin_.$(OBJEXT) \
 sin_.lo sin_cos_.$(OBJEXT) sin_cos_.lo sinh_.$(OBJEXT) sinh_.lo \
-sqrt_.$(OBJEXT) sqrt_.lo sqrt_ui_.$(OBJEXT) sqrt_ui_.lo sub_.$(OBJEXT) \
-sub_.lo sub1_.$(OBJEXT) sub1_.lo sub_one_ulp_.$(OBJEXT) sub_one_ulp_.lo \
+sqrt_.$(OBJEXT) sqrt_.lo sqrt_ui_.$(OBJEXT) sqrt_ui_.lo \
+strcasecmp_.$(OBJEXT) strcasecmp_.lo sub_.$(OBJEXT) sub_.lo \
+sub1_.$(OBJEXT) sub1_.lo sub_one_ulp_.$(OBJEXT) sub_one_ulp_.lo \
 sub_ui_.$(OBJEXT) sub_ui_.lo swap_.$(OBJEXT) swap_.lo tan_.$(OBJEXT) \
 tan_.lo tanh_.$(OBJEXT) tanh_.lo uceil_exp2_.$(OBJEXT) uceil_exp2_.lo \
 uceil_log2_.$(OBJEXT) uceil_log2_.lo ufloor_log2_.$(OBJEXT) \

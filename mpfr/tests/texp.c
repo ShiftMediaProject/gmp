@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -24,7 +24,9 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 int check3 _PROTO((double, mp_rnd_t, double)); 
@@ -32,8 +34,6 @@ int check_large _PROTO((double, int, mp_rnd_t));
 int check_worst_case _PROTO((double, double)); 
 int check_worst_cases _PROTO((void)); 
 void compare_exp2_exp3 _PROTO((int)); 
-extern int mpfr_exp_2 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
-extern int mpfr_exp3 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 int maxu=0;
 

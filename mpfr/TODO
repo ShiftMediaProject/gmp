@@ -34,28 +34,16 @@ Miscellaneous:
    1250 bytes would still be small compared to the code size!
    Store pi in round to zero mode (to recover other modes).
 
-- rewrite mpfr_get_d2 to avoid rounding problems, for example on the IA64:
-x=8.94446216651049664713e+94,74 y=-8.69096029476006043478e+78,113 pz=102,rnd=GMP_RNDU
-got 8.94446216651049812927e+94
-result should be 8.94446216651049516499e+94 (diff=-2 ulp)
-i.e.0.101010111000010100110011011001011100111011100100010110000000000000000000000000000000000000000000000000[00000000000000000000000000]E316
-
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
-
-- use another scheme that sqrt(-1.0) in tests/tdiv.c and tests/tsqrt.c
-	to generate a NaN (for example under freebsd by default,
-	invalid, zerodivide and overflow generate exceptions)
 
 - rewrite mpfr_get_str and mpfr_set_str to use mpn_get_str and mpn_set_str.
 	(Torbjorn Granlund <tege@swox.com>, 30 Jan 2002)
 
 - mpfr_pow isn't completely specified (concerning signed zeros).
 
-- use AC_CHECK_FUNCS for __setfpucw rather than grepping a header file.
-	(Kevin Ryde, 05 Mar 2002)
-
 - rename mpfr_isinteger to mpfr_integer_p.
 	(Kevin Ryde, 05 Mar 2002)
 
-- update mpfr_get_d3 to support the denormalized numbers.
+- some comparison functions aren't completely specified (concerning NaN).
+  Add new comparison functions (eq, ne, lt, gt, le, ge)?

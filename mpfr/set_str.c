@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -24,6 +24,13 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <limits.h>
 #include <errno.h>
+
+#ifdef HAVE_STRCASECMP
+#include <string.h>
+#else
+int strcasecmp (const char *, const char *);
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -44,12 +51,31 @@ mpfr_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd_mode)
   if (base < 2 || base > 36)
     return 1;
 
-  mpz_init(mantissa);
-  mpz_set_ui(mantissa, 0);
+  if (strcasecmp(str, "NaN") == 0)
+    {
+      MPFR_SET_NAN(x);
+      /* MPFR_RET_NAN not used as the return value isn't a ternary value */
+      __mpfr_flags |= MPFR_FLAGS_NAN;
+      return 0;
+    }
 
   negative = *str == '-';
   if (negative || *str == '+')
     str++;
+
+  if (strcasecmp(str, "Inf") == 0)
+    {
+      MPFR_CLEAR_NAN(x);
+      MPFR_SET_INF(x);
+      if (negative)
+        MPFR_SET_NEG(x);
+      else
+        MPFR_SET_POS(x);
+      return 0;
+    }
+
+  mpz_init(mantissa);
+  mpz_set_ui(mantissa, 0);
 
   while (*str == '0')
     str++; /* skip initial zeros */

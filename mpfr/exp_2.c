@@ -1,7 +1,7 @@
 /* mpfr_exp_2 -- exponential of a floating-point number 
                 using Brent's algorithms in O(n^(1/2)*M(n)) and O(n^(1/3)*M(n))
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -30,7 +30,6 @@ static int mpfr_exp2_aux      _PROTO ((mpz_t, mpfr_srcptr, int, int*));
 static int mpfr_exp2_aux2     _PROTO ((mpz_t, mpfr_srcptr, int, int*));
 static mp_exp_t mpz_normalize _PROTO ((mpz_t, mpz_t, int));
 static int mpz_normalize2     _PROTO ((mpz_t, mpz_t, int, int));
-int mpfr_exp_2                _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 /* returns floor(sqrt(n)) */
 unsigned long

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.  If not, write to
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -172,6 +172,7 @@ typedef union ieee_double_extract Ieee_double_extract;
 extern "C" {
 #endif  
 
+extern mp_prec_t __mpfr_const_log2_prec;
 int mpfr_set_underflow _PROTO ((mpfr_ptr, mp_rnd_t, int));
 int mpfr_set_overflow _PROTO ((mpfr_ptr, mp_rnd_t, int));
 void mpfr_save_emin_emax _PROTO ((void));
@@ -192,6 +193,8 @@ long _mpfr_floor_log2 _PROTO ((double));
 double _mpfr_ceil_exp2 _PROTO ((double));
 unsigned long _mpfr_isqrt _PROTO ((unsigned long));
 unsigned long _mpfr_cuberoot _PROTO ((unsigned long));
+int mpfr_exp_2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_exp3 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 #define mpfr_round_raw(yp, xp, xprec, neg, yprec, r, inexp) \
   mpfr_round_raw_generic((yp), (xp), (xprec), (neg), (yprec), (r), (inexp), 0)

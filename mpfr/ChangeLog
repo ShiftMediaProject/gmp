@@ -1,4 +1,60 @@
+2002-04-15  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* VERSION, mpfr.texi, README.dev:
+	Back to version 2.0.1, updated documentation.
+
+	* README.dev, VERSION: Post-release commit.
+
+	* ChangeLog: Update for mpfr 2.0.1.
+
+	* cmp_ui.c:
+	mpfr_cmp_ui_2exp and mpfr_cmp_si_2exp can no longer be called with a NaN.
+	Misc bugs fixed.
+
+2002-04-15  Paul Zimmermann  <zimmerma@greux.loria.fr>
+
+	* NEWS: added main changes in version 2.0.1
+
+2002-04-15  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* Makefile.am, README: Update for "make dist".
+
+	* tests/tset_q.c, tests/tset_si.c, tests/tset_str.c, tests/tset_z.c, tests/tsin.c, tests/tsin_cos.c, tests/tsinh.c, tests/tsqrt.c, tests/tsqrt_ui.c, tests/tsub.c, tests/tsub_ui.c, tests/tswap.c, tests/ttan.c, tests/ttanh.c, tests/ttrunc.c, tests/tui_div.c, tests/tui_pow.c, tests/tui_sub.c, tests/tzeta.c, tests/tget_d.c, tests/tget_str.c, tests/thyperbolic.c, tests/thypot.c, tests/tisnan.c, tests/tlog.c, tests/tlog10.c, tests/tlog1p.c, tests/tlog2.c, tests/tmul.c, tests/tmul_2exp.c, tests/tmul_ui.c, tests/tout_str.c, tests/tpow.c, tests/tpow3.c, tests/trandom.c, tests/trint.c, tests/tround_prec.c, tests/tset.c, tests/tset_d.c, tests/tset_f.c, tests/tcan_round.c, tests/tcmp.c, tests/tcmp2.c, tests/tcmp_ui.c, tests/tconst_euler.c, tests/tconst_log2.c, tests/tconst_pi.c, tests/tcos.c, tests/tcosh.c, tests/tdiv.c, tests/tdiv_ui.c, tests/tdump.c, tests/teq.c, tests/texceptions.c, tests/texp.c, tests/texp2.c, tests/texpm1.c, tests/tfactorial.c, tests/tfma.c, tests/tgamma.c, tests/tgeneric.c, tests/tabs.c, tests/tacos.c, tests/tacosh.c, tests/tadd.c, tests/tadd_ui.c, tests/tagm.c, tests/tasin.c, tests/tasinh.c, tests/tatan.c, tests/tatanh.c, tests/reuse.c, ui_sub.c, urandomb.c, zeta.c, sub.c, sub1.c, sub_one_ulp.c, sub_ui.c, swap.c, tan.c, tanh.c, uceil_exp2.c, uceil_log2.c, ufloor_log2.c, ui_div.c, ui_pow.c, ui_pow_ui.c, set_f.c, set_inf.c, set_nan.c, set_prc_raw.c, set_prec.c, set_q.c, set_rnd.c, set_si.c, set_str.c, set_str_raw.c, set_ui.c, set_z.c, sin.c, sin_cos.c, sinh.c, sqrt.c, sqrt_ui.c, mul_2si.c, mul_2ui.c, mul_ui.c, neg.c, out_str.c, pow.c, pow_si.c, pow_ui.c, print_raw.c, print_rnd_mode.c, random.c, random2.c, reldiff.c, rint.c, rnd_mode.c, round_prec.c, save_expo.c, set.c, set_d.c, set_dfl_prec.c, gmp_op.c, hypot.c, init.c, init2.c, inp_str.c, isinf.c, isinteger.c, isnan.c, isnum.c, log.c, log10.c, log1p.c, log2.c, minmax.c, mpf2mpfr.h, mpfi.c, mpfi.h, mpfr-impl.h, mpfr-math.h, mpfr-test.h, mpfr.h, mpfr.texi, mul.c, mul_2exp.c, div.c, div_2exp.c, div_2si.c, div_2ui.c, div_ui.c, dump.c, eq.c, exceptions.c, exp.c, exp2.c, exp3.c, exp_2.c, expm1.c, extract.c, factorial.c, fma.c, gamma.c, gammaPiAGMformula.c, generic.c, get_d.c, get_str.c, get_z_exp.c, add1.c, add_one_ulp.c, add_ui.c, agm.c, asin.c, asinh.c, atan.c, atanh.c, cbrt.c, clear.c, cmp.c, cmp2.c, cmp_abs.c, cmp_ui.c, const_euler.c, const_log2.c, const_pi.c, copysign.c, cos.c, cosh.c, dim.c, COPYING, COPYING.LIB, README, acos.c, acosh.c, add.c:
+	COPYING -> COPYING.LIB and GPL re-added.
+
+	* BUGS: Update.
+
+	* configure.in: Removed switches -g -O2 as already done by configure.
+
+2002-04-14  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* INSTALL: Update.
+
+	* mpfr.texi: Removed useless @iftex...
+
+	* TODO: Update.
+
+	* set_q.c: When q = 0, +0 is returned.
+
+2002-04-13  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* ChangeLog: Update for the next pre-release.
+
+	* tests/tset_str.c, Makefile.am, acinclude.m4, set_str.c, strcasecmp.c:
+	Support for NaN and Inf (case insensitive) in mpfr_set_str. Tests.
+
+	* acinclude.m4: Bug fixed.
+
+	* ChangeLog: Update for the next pre-release.
+
+	* acinclude.m4, configure.in: Misc changes. Use of AC_CACHE_CHECK.
+
 2002-04-12  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* tests/tconst_log2.c, tests/texp.c, exp3.c, exp_2.c, mpfr-impl.h, exp.c:
+	Code clean-up.
+
+	* ChangeLog: Update for the next pre-release.
 
 	* tests/tget_d.c: New tests.
 

@@ -1,7 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename mpfr.info
-@settitle MPFR 2002
+@settitle MPFR 2.0.1
 @synindex tp fn
 @iftex
 @afourpaper
@@ -32,7 +32,7 @@ END-INFO-DIR-ENTRY
 @ifinfo
 This file documents MPFR, a library for reliable multiple precision floating-point arithmetic
 
-Copyright (C) 1999-2001, Free Software Foundation.
+Copyright (C) 1999-2002, Free Software Foundation.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -62,10 +62,10 @@ by the Foundation.
 
 @title MPFR
 @subtitle The Multiple Precision Floating-Point Reliable Library
-@subtitle Edition 2002
-@subtitle November 2001
+@subtitle Edition 2.0.1
+@subtitle April 2002
 
-@author the MPFR team, LORIA/INRIA Lorraine
+@author The MPFR team, LORIA/INRIA Lorraine
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -78,7 +78,7 @@ by the Foundation.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1999-2001 Free Software Foundation
+Copyright @copyright{} 1999-2002 Free Software Foundation
 
 @sp 2
 
@@ -108,7 +108,7 @@ by the Foundation.
 @top MPFR
 
 This manual documents how to install and use the Multiple Precision
-Floating-Point Reliable Library, version 2002
+Floating-Point Reliable Library, version 2.0.1
 
 @end ifinfo
 
@@ -158,8 +158,8 @@ have is not what we distributed, so that any problems introduced by others
 will not reflect on our reputation.@refill
 
 The precise conditions of the license for the MPFR library are found in the
-Library General Public License that accompany the source code.
-See the file COPYING.@refill
+Lesser General Public License that accompanies the source code.
+See the file COPYING.LIB.@refill
 
 @node Introduction to MPFR, Installing MPFR, Copying, Top
 @comment  node-name,  next,  previous,  up
@@ -186,8 +186,8 @@ standard.
 In particular, with a precision of 53 bits, @code{mpfr} should be able
 to exactly reproduce all computations with double-precision machine 
 floating-point
-numbers (@code{double} type in C), except the range of values is much wider
-(the exponent has at least 32 bits instead of 11).
+numbers (@code{double} type in C), except the default exponent range
+is much wider and subnormal numbers are not implemented.
 
 This version of MPFR is released under the GNU Lesser General Public
 License.
@@ -209,12 +209,13 @@ probably a good idea to glance through it.
 @cindex Installation
 
 To build MPFR, you first have to install GNU MP 
-(version 3.0 or higher) on your computer.
+(version 4.0.1 or higher) on your computer.
 You need a C compiler, preferably GCC, but any reasonable compiler should
 work.  And you need a standard Unix @samp{make} program, plus some other
 standard Unix utility programs.
 
-Here are the steps needed to install the library on Unix systems:
+Here are the steps needed to install the library on Unix systems
+(more details are provided in the @file{INSTALL} file):
 
 @enumerate
 @item
@@ -227,19 +228,8 @@ When you install GNU MP, you have to copy the files
 @samp{longlong.h} from the GNU MP source directory 
 to @samp{/usr/local/gmp/include};
 these additional files are needed by MPFR.
-An alternative way is 
-@samp{./configure --with-gmp-include=dir1 --with-gmp-lib=dir2}, where
-@samp{dir1} contains the GNU MP header files, and
-@samp{dir2} the GNU MP library files.
-If you get error messages, your machine might not be supported.
-
-If you want to compile in a separate object directory, cd to that directory,
-and prefix the configure command with the path to the MPFR source directory.
-Not all @samp{make} programs have the necessary features to support this.  In
-particular, SunOS and Solaris @samp{make} have bugs that make them unable to
-build from a separate object directory.  Use GNU @samp{make} instead.
-Also, the generated makefiles use some pattern matching rules that are not
-supported by all @samp{make} programs. Again, use GNU @samp{make} instead.
+If you get error messages, you might check that you use the same compiler
+and compile options as for GNU MP (see the @file{INSTALL} file).
 
 @item
 @samp{make}
@@ -263,6 +253,7 @@ and @file{libmpfr.a},
 to the directories @file{/usr/local/include} and @file{/usr/local/lib}
 respectively (or if you passed the @samp{--prefix} option to
 @file{configure}, to the directory given as argument to @samp{--prefix}).
+This will also install @file{mpfr.info} in @file{/usr/local/info}.
 @end enumerate
 
 There are some other useful make targets:
@@ -305,7 +296,8 @@ MPFR suffers from all bugs from the GNU MP library, plus many many more.
 
 Please report other problems to @samp{mpfr@@loria.fr}.
 @xref{Reporting Bugs}.
-Some bug fixes are available on the MPFR web page @samp{http://www.mpfr.org}.
+Some bug fixes are available on the MPFR web page
+@samp{http://www.loria.fr/projets/mpfr/} or @samp{http://www.mpfr.org/}.
 
 
 @node Reporting Bugs, MPFR Basics, Installing MPFR, Top
@@ -314,7 +306,8 @@ Some bug fixes are available on the MPFR web page @samp{http://www.mpfr.org}.
 @cindex Reporting bugs
 
 If you think you have found a bug in the MPFR library, first have a look on the
-MPFR web page @samp{http://www.mpfr.org/}: perhaps this bug is already known,
+MPFR web page @samp{http://www.loria.fr/projets/mpfr/} or
+@samp{http://www.mpfr.org/}: perhaps this bug is already known,
 in which case you will find a workaround for it.
 Otherwise, please investigate
 and report it. We have made this library available to you, and it is not to ask
@@ -330,7 +323,8 @@ You also have to explain what is wrong; if you get a crash, or if the results
 printed are incorrect and in that case, in what way.
 
 Please include compiler version information
-in your bug report.  This can be extracted using @samp{what `which cc`}, or,
+in your bug report.  This can be extracted using @samp{cc -V} on some
+machines, or,
 if you're using gcc, @samp{gcc -v}.  Also, include the output from @samp{uname
 -a}.
 
@@ -459,7 +453,7 @@ The default rounding mode (to nearest initially).
 @section Getting the Latest Version of MPFR
 
 The latest version of MPFR is available from
-@file{http://www.mpfr.org/}.
+@samp{http://www.loria.fr/projets/mpfr/} or @samp{http://www.mpfr.org/}.
 
 @node Floating-point Functions, Contributors, MPFR Basics, Top
 @comment  node-name,  next,  previous,  up
@@ -891,17 +885,10 @@ case a null pointer is returned.
 @deftypefunx int mpfr_add_ui (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_add_z (mpfr_t @var{rop}, mpfr_t @var{op1}, mpz_t @var{op2}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_add_q (mpfr_t @var{rop}, mpfr_t @var{op1}, mpq_t @var{op2}, mp_rnd_t @var{rnd})
-@ifinfo
-Set @var{rop} to @var{op1} + @var{op2} rounded in the direction @var{rnd}.
-@end ifinfo
-@iftex
-@tex
-Set @var{rop} to $@var{op1} + @var{op2}$ rounded in the direction @var{rnd}.
-@end tex
-@end iftex
-The return value is zero if @var{rop} is exactly @var{op1} + @var{op2},
-positive if @var{rop} is larger than @var{op1} + @var{op2},
-and negative if @var{rop} is smaller than @var{op1} + @var{op2}.
+Set @var{rop} to @var{op1} @math{+} @var{op2} rounded in the direction @var{rnd}.
+The return value is zero if @var{rop} is exactly @var{op1} @math{+} @var{op2},
+positive if @var{rop} is larger than @var{op1} @math{+} @var{op2},
+and negative if @var{rop} is smaller than @var{op1} @math{+} @var{op2}.
 @end deftypefun
 
 @deftypefun int mpfr_sub (mpfr_t @var{rop}, mpfr_t @var{op1}, mpfr_t @var{op2}, mp_rnd_t @var{rnd})
@@ -921,20 +908,15 @@ and negative if @var{rop} is smaller than @var{op1} @minus{} @var{op2}.
 @deftypefunx int mpfr_mul_q (mpfr_t @var{rop}, mpfr_t @var{op1}, mpq_t @var{op2}, mp_rnd_t @var{rnd})
 @ifinfo
 Set @var{rop} to @var{op1} times @var{op2} rounded in the direction @var{rnd}.
-@end ifinfo
-@iftex
-@tex
-Set @var{rop} to $@var{op1} \times @var{op2}$ rounded in the direction @var{rnd}.
-@end tex
-@end iftex
 Return 0 if the result is exact, a positive value if 
 @var{rop}>@var{op1}*@var{op2}, a negative value otherwise.
+@end ifinfo
+@tex
+Set @var{rop} to $@var{op1} \times @var{op2}$ rounded in the direction @var{rnd}.
+Return 0 if the result is exact, a positive value if 
+$@var{rop} > @var{op1} \times @var{op2}$, a negative value otherwise.
+@end tex
 @end deftypefun
-
-Division is undefined if the divisor is zero, and passing a zero divisor to
-the divide functions will make these functions intentionally divide by zero.
-This gives the user the possibility to handle arithmetic exceptions in these
-functions in the same manner as other arithmetic exceptions.
 
 @deftypefun int mpfr_div (mpfr_t @var{rop}, mpfr_t @var{op1}, mpfr_t @var{op2}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_ui_div (mpfr_t @var{rop}, unsigned long int @var{op1}, mpfr_t @var{op2}, mp_rnd_t @var{rnd})
@@ -952,11 +934,9 @@ and a negative value otherwise.
 @ifinfo
 Set @var{rop} to the square root of @var{op} rounded in the direction @var{rnd}.
 @end ifinfo
-@iftex
 @tex
 Set @var{rop} to $\sqrt{@var{op}}$ rounded in the direction @var{rnd}.
 @end tex
-@end iftex
 Set @var{rop} to NaN if @var{op} is negative.
 Return 0 if the operation is exact, a non-zero value otherwise.
 @end deftypefun
@@ -1011,11 +991,9 @@ the absolute value of @var{op}, and a negative value otherwise.
 @ifinfo
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}
 @end ifinfo
-@iftex
 @tex
 Set @var{rop} to $@var{op1} \times 2^{op2}$
 @end tex
-@end iftex
 rounded to the direction @var{rnd}. Just increases the exponent by @var{op2}
 when @var{rop} and @var{op1} are identical.
 Return zero when @var{rop}=@var{op1}, a positive value when @var{rop}>@var{op1},
@@ -1030,11 +1008,9 @@ you should use @code{mpfr_mul_2ui} (or @code{mpfr_mul_2si}) instead.
 @ifinfo
 Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}
 @end ifinfo
-@iftex
 @tex
 Set @var{rop} to $@var{op1}/2^{op2}$
 @end tex
-@end iftex
 rounded to the direction @var{rnd}. Just decreases the exponent by @var{op2}
 when @var{rop} and @var{op1} are identical.
 Return zero when @var{rop}=@var{op1}, a positive value when @var{rop}>@var{op1},
@@ -1057,13 +1033,11 @@ Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
 @end ifinfo
-@iftex
 @tex
 Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 @var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
 < @var{op2}$.
 @end tex
-@end iftex
 Both @var{op1} and @var{op2} are considered to their full own precision,
 which may differ. In case @var{op1} and @var{op2} are of same sign but 
 different, the absolute value returned is
@@ -1437,6 +1411,9 @@ E(b)-@var{err} where E(b) is the exponent of
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 
+The main developers consist of Guillaume Hanrot, Vincent Lefèvre and
+Paul Zimmermann.
+
 We would like to thank Jean-Michel Muller and Joris van der Hoeven for very
 fruitful discussions at the beginning of that project, Torbjorn Granlund
 and Kevin Ryde
@@ -1454,7 +1431,9 @@ and improved versions of
 @code{mpfr_const_log2} and @code{mpfr_const_pi}.
 Mathieu Dutour contributed the functions @code{mpfr_atan} and @code{mpfr_asin},
 David Daney contributed the hyperbolic and inverse hyperbolic functions,
-the base-2 exponential, and the factorial function.
+the base-2 exponential, and the factorial function. Fabrice Rouillier
+contributed the original version of @file{mul_ui.c}, the @file{gmp_op.c}
+file, and helped to the Windows porting.
 
 @node References, Concept Index, Contributors, Top
 @comment  node-name,  next,  previous,  up
@@ -1464,7 +1443,7 @@ the base-2 exponential, and the factorial function.
 
 @item
 Torbjorn Granlund, "GNU MP: The GNU Multiple Precision Arithmetic Library", 
-  version 3.1, 2000.
+  version 4.0.1, 2001.
 
 @item
 IEEE standard for binary floating-point arithmetic, Technical Report 

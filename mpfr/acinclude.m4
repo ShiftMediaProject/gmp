@@ -29,40 +29,71 @@ fi
 
 AC_DEFUN(AC_CHECK_OS, 
 [
-	AC_MSG_CHECKING(OS type)
-	OS_TYPE=`uname -a | awk '{print $ 1}' `
-	AC_MSG_RESULT($OS_TYPE)
+AC_CACHE_CHECK([OS type], mpfr_cv_os_type, [
+  mpfr_cv_os_type=`uname -s`
+])
+OS_TYPE=$mpfr_cv_os_type
 ])
 
 AC_DEFUN(AC_CHECK_MACHTYPE,
 [
-	AC_MSG_CHECKING(Mach type)
-	MACHTYPE=`uname -m`
-	AC_MSG_RESULT($MACHTYPE)
+AC_CACHE_CHECK([Mach type], mpfr_cv_mach_type, [
+  mpfr_cv_mach_type=`uname -m`
+])
+MACHTYPE=$mpfr_cv_mach_type
 ])
 
 dnl ------------------------------------------------------------
 
 AC_DEFUN(MPFR_CONFIGS,
 [
+case $OS_TYPE in
+	SunOS*)
+		LM9X="-lm9x"
+		;;
+esac
+
+AC_REPLACE_FUNCS(strcasecmp)
+
+dnl Check for IEEE-754 switches on Alpha
+if test "$MACHTYPE" = "alpha"; then
+  saved_CFLAGS="$CFLAGS"
+  AC_CACHE_CHECK([for IEEE-754 switches], mpfr_cv_ieee_switches, [
+  if test -n "$GCC"; then
+    mpfr_cv_ieee_switches="-mfp-rounding-mode=d -mieee-with-inexact"
+  else
+    mpfr_cv_ieee_switches="-fprm d -ieee_with_inexact"
+  fi
+  CFLAGS="$CFLAGS $mpfr_cv_ieee_switches"
+  AC_TRY_COMPILE(,,, mpfr_cv_ieee_switches="none")
+  ])
+  if test "$mpfr_cv_ieee_switches" = "none"; then
+    CFLAGS="$saved_CFLAGS"
+  else
+    CFLAGS="$saved_CFLAGS $mpfr_cv_ieee_switches"
+  fi
+fi
+
 AC_CHECK_HEADERS(fpu_control.h)
 
 dnl Check for fesetround
-AC_MSG_CHECKING(for fesetround)
+AC_CACHE_CHECK([for fesetround], mpfr_cv_have_fesetround, [
 saved_LIBS="$LIBS"
 LIBS="$LIBS $LM9X"
 AC_TRY_LINK([#include <fenv.h>], [fesetround(FE_TONEAREST);],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(MPFR_HAVE_FESETROUND,1,[Define if you have the `fesetround' function via the <fenv.h> header file.])],
-  [AC_MSG_RESULT(no)
-   LIBS="$saved_LIBS"]
-)
+  mpfr_cv_have_fesetround=yes, mpfr_cv_have_fesetround=no)
+LIBS="$saved_LIBS"
+])
+if test "$mpfr_cv_have_fesetround" = "yes"; then
+  LIBS="$LIBS $LM9X"
+  AC_DEFINE(MPFR_HAVE_FESETROUND,1,[Define if you have the `fesetround' function via the <fenv.h> header file.])
+fi
 
 dnl Check random functions
 AC_CHECK_FUNCS(lrand48)
 
 dnl Check whether 0/0, 1/0, -1/0, sqrt(-1) are valid expressions
-AC_MSG_CHECKING(for valid NaN)
+AC_CACHE_CHECK([for valid NaN], mpfr_cv_valid_nan, [
 AC_TRY_RUN([
 #include <math.h>
 int main()
@@ -70,12 +101,11 @@ int main()
   double x = (0.0/0.0) + sqrt(-1.0);
   return x == 1.0/0.0;
 }
-],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_INFS,1,[Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate NaN/infinities.])],
-  AC_MSG_RESULT(no),
-  AC_MSG_RESULT(no)
-)
+], mpfr_cv_valid_nan=yes, mpfr_cv_valid_nan=no, mpfr_cv_valid_nan=no)
+])
+if test "$mpfr_cv_valid_nan" = "yes"; then
+   AC_DEFINE(HAVE_INFS,1,[Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate NaN/infinities.])
+fi
 
 dnl Check for gcc float-conversion bug; if need be, -ffloat-store is used to
 dnl force the conversion to the destination type when a value is stored to
@@ -84,7 +114,7 @@ dnl is important concerning the exponent range. Note that this doesn't solve
 dnl the double-rounding problem (x86 processors still have to be set to the
 dnl IEEE-754 compatible rounding mode).
 if test -n "$GCC"; then
-  AC_MSG_CHECKING(for gcc float-conversion bug)
+  AC_CACHE_CHECK([for gcc float-conversion bug], mpfr_cv_gcc_floatconv_bug, [
   AC_TRY_RUN([
 int main()
 {
@@ -94,17 +124,17 @@ int main()
     x *= x;
   return x == 0;
 }
-  ],
-    [AC_MSG_RESULT([yes, use -ffloat-store])
-     CFLAGS="$CFLAGS -ffloat-store"],
-    AC_MSG_RESULT(no),
-    [AC_MSG_RESULT([can't test, use -ffloat-store])
-     CFLAGS="$CFLAGS -ffloat-store"]
-  )
+  ], [mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"],
+     [mpfr_cv_gcc_floatconv_bug="no"],
+     [mpfr_cv_gcc_floatconv_bug="cannot test, use -ffloat-store"])
+  ])
+  if test "$mpfr_cv_gcc_floatconv_bug" != "no"; then
+    CFLAGS="$CFLAGS -ffloat-store"
+  fi
 fi
 
 dnl Check if denormalized numbers are supported
-AC_MSG_CHECKING(for denormalized numbers)
+AC_CACHE_CHECK([for denormalized numbers], mpfr_cv_have_denorms, [
 AC_TRY_RUN([
 #include <math.h>
 #include <stdio.h>
@@ -114,11 +144,10 @@ int main()
   fprintf (stderr, "%e\n", x / 2.0);
   return 2.0 * (x / 2.0) != x;
 }
-],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_DENORMS,1,[Define if denormalized floats work.])],
-  AC_MSG_RESULT(no),
-  AC_MSG_RESULT(no)
-)
+], mpfr_cv_have_denorms=yes, mpfr_cv_have_denorms=no, mpfr_cv_have_denorms=no)
+])
+if test "$mpfr_cv_have_denorms" = "yes"; then
+  AC_DEFINE(HAVE_DENORMS,1,[Define if denormalized floats work.])
+fi
 
 ])

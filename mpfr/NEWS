@@ -1,3 +1,22 @@
+Changes from version 2001 to version 2.0.1:
+- new mathematical functions: acos, acosh, asin, asinh, atan, atanh, cosh,
+  base-2 exponential and logarithm, base-10 logarithm, expm1, factorial,
+  pow, pow_si, pow_ui, sinh, tan, tanh, ui_pow, ui_pow_ui
+- other new functions: mpfr_const_euler, mpfr_dim, mpfr_fma, mpfr_hypot,
+  mpfr_min, mpfr_max, mpfr_rint, mpfr_set_inf, mpfr_set_nan
+- new operations with mpz or mpz: mpfr_{add,sub,mul,div}_[zq]
+- new predicates: mpfr_inf_p, mpfr_nan_p, mpfr_number_p, mpfr_isinteger,
+- add mechanism to set/check exponent range (overflow, underflow), partially
+  implemented in the mpfr functions.
+- efficiency: mpfr_div is now faster when the divisor has a few limbs
+- rounding: now mpfr_pow implements exact rouding, and most functions return a
+  ternary value indicating the position of the returned value wrt the exact one
+  (thus the return value is now 'int' instead of 'void')
+- complete rewrite of the configuration files
+- mpfr_get_d, mpfr_{add,sub}_one_ulp now get a rounding mode as 2nd argument
+- some function names did change: mpz_set_fr is now mpfr_get_z_exp,
+  mpfr_print_raw is now mpfr_print_binary.
+
 Changes from version 1.0 to version 2001:
 - the default installation does not provide any more access to machine 
   rounding mode, and as a consequence does not compare MPFR results with 

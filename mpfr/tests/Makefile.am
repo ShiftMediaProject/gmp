@@ -23,6 +23,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
 CFLAGS = @MPFR_CFLAGS@
+LIBS = @MPFR_LIBS@
+
 LDADD = ../libmpfr.a $(top_builddir)/libgmp.la $(LIBM)
 
 if WANT_MPFR
