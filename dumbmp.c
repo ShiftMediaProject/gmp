@@ -743,7 +743,7 @@ mpz_get_str (char *buf, int base, mpz_t a)
     abort ();
 
   if (buf == 0)
-    buf = xmalloc (ABSIZ (a) * 4 + 3);
+    buf = xmalloc (ABSIZ (a) * (GMP_LIMB_BITS / 4) + 3);
 
   an = ABSIZ (a);
   if (an == 0)
