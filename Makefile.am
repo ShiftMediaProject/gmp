@@ -150,7 +150,7 @@ MPQ_OBJECTS = mpq/add$U.lo mpq/canonicalize$U.lo mpq/clear$U.lo		\
 
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
-MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/move$U.lo	\
+MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/powm$U.lo mpbsd/sub$U.lo mpbsd/cmp$U.lo mpbsd/mfree$U.lo	\
   mpbsd/mtox$U.lo mpbsd/realloc$U.lo mpbsd/gcd$U.lo mpbsd/itom$U.lo	\
   mpbsd/min$U.lo mpbsd/mul$U.lo mpbsd/mout$U.lo mpbsd/pow_ui$U.lo	\
