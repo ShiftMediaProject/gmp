@@ -2,7 +2,7 @@ dnl  ARM mpn_mul_1 -- Multiply a limb vector with a limb and store the result
 dnl  in a second limb vector.
 dnl  Contributed by Robert Harley.
 
-dnl  Copyright 1998, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,53 +23,58 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C This runs at 7.75 cycles/limb in the StrongARM.
+C            cycles/limb
+C StrongARM:     6-8  (dependent on vl value)
+C XScale:        ?-?
+
+C We should rewrite this along the lines of addmul_1.asm.  That should save a
+C cycle on StrongARM, and several cycles on XScale.
 
 define(`rp',`r0')
 define(`up',`r1')
 define(`n',`r2')
-define(`v',`r3')
+define(`vl',`r3')
 
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
 	stmfd	sp!, { r8, r9, lr }
-	ands	ip, n, #1
+	ands	r12, n, #1
 	beq	L(skip1)
 	ldr	lr, [up], #4
-	umull	r9, ip, v, lr
+	umull	r9, r12, lr, v
 	str	r9, [rp], #4
 L(skip1):
 	tst	n, #2
 	beq	L(skip2)
-	mov	r8, ip
-	ldmia	up!, { ip, lr }
+	mov	r8, r12
+	ldmia	up!, { r12, lr }
 	mov	r9, #0
-	umlal	r8, r9, v, ip
-	mov	ip, #0
-	umlal	r9, ip, v, lr
+	umlal	r8, r9, r12, v
+	mov	r12, #0
+	umlal	r9, r12, lr, v
 	stmia	rp!, { r8, r9 }
 L(skip2):
 	bics	n, n, #3
 	beq	L(return)
 	stmfd	sp!, { r6, r7 }
-L(mul_1_loop):
-	mov	r6, ip
-	ldmia	up!, { r8, r9, ip, lr }
+L(loop):
+	mov	r6, r12
+	ldmia	up!, { r8, r9, r12, lr }
 	ldr	r7, [rp, #12]			C cache allocate
 	mov	r7, #0
-	umlal	r6, r7, v, r8
+	umlal	r6, r7, r8, v
 	mov	r8, #0
-	umlal	r7, r8, v, r9
+	umlal	r7, r8, r9, v
 	mov	r9, #0
-	umlal	r8, r9, v, ip
-	mov	ip, #0
-	umlal	r9, ip, v, lr
+	umlal	r8, r9, r12, v
+	mov	r12, #0
+	umlal	r9, r12, lr, v
 	subs	n, n, #4
 	stmia	rp!, { r6, r7, r8, r9 }
-	bne	L(mul_1_loop)
+	bne	L(loop)
 	ldmfd	sp!, { r6, r7 }
 L(return):
-	mov	r0, ip
+	mov	r0, r12
 	ldmfd	sp!, { r8, r9, pc }
 EPILOGUE(mpn_mul_1)
