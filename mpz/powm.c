@@ -41,11 +41,13 @@ redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
   mp_limb_t q;
   mp_size_t j;
 
+  ASSERT_MPN (tp, 2*n);
+
   tp[2 * n] = 0;		/* carry guard */
 
   for (j = 0; j < n; j++)
     {
-      q = tp[0] * Nprim;
+      q = (tp[0] * Nprim) & GMP_NUMB_MASK;
       cy = mpn_addmul_1 (tp, mp, n, q);
       mpn_incr_u (tp + n, cy);
       tp++;
