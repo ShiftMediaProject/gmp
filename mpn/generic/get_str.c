@@ -73,7 +73,7 @@ size_t
 mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 {
   mp_limb_t big_base;
-  mp_size_t out_len;
+  size_t out_len;
   unsigned char *s;
 
   ASSERT (msize >= 0);
