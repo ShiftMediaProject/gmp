@@ -938,7 +938,7 @@ case $host in
   *sparc*-*-*)
     abilist="32"
     cclist="gcc acc cc"
-    extra_functions="udiv"
+    extra_functions="udiv umul"
     GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
 
     case $host_cpu in
