@@ -31,14 +31,11 @@ PROLOGUE(mftb_function)
 	C r3	a
 
 L(again):
-	mftbu	r4
 	mftb	r5
-	mftbu	r6
-	cmpd	cr0, r4, r6
-	bne	L(again)
 
-	std	r5, 0(r3)
-	std	r4, 8(r3)
+	srdi	r4, r5, 32
+	stw	r5, 0(r3)
+	stw	r4, 4(r3)
 	blr
 
 EPILOGUE()
