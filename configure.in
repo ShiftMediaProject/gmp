@@ -103,6 +103,24 @@ esac],
 AM_CONDITIONAL(WANT_MPFR, test "$enable_mpfr" = "yes")
 
 
+AC_ARG_ENABLE(profiling,
+AC_HELP_STRING([--enable-profiling],[build with profiler support [default=no]]),
+[case "${enableval}" in
+no|prof|gprof) ;;
+*) AC_MSG_ERROR([bad value ${enableval} for --enable-profiling, need no/prof/gprof]) ;;
+esac],
+[enable_profiling=no])
+
+GMP_DEFINE_RAW(["define(<WANT_PROFILING>,<\`$enable_profiling'>)"])
+
+# -fomit-frame-pointer is incompatible with -pg, on x86s at least
+if test "$enable_profiling" = gprof; then
+  fomit_frame_pointer=
+else
+  fomit_frame_pointer="-fomit-frame-pointer"
+fi
+
+
 AC_DEFINE_UNQUOTED(HAVE_TARGET_CPU_$target_cpu)
 
 
@@ -169,7 +187,7 @@ case "$target" in
   # AMD and Intel x86 configurations
   X86_PATTERN)
     # Rumour has it -O2 used to give worse register allocation than just -O.
-    gmp_cflags_gcc="-g -O -fomit-frame-pointer"
+    gmp_cflags_gcc="-g -O $fomit_frame_pointer"
 
     case "${target}" in
       i386*-*-*)    gmp_optcflags_gcc="-mcpu=i386 -march=i386";;
@@ -276,7 +294,7 @@ case "$target" in
     gmp_cflags_gcc="-g -O -m88110"	dnl  FIXME: Use `-O2'?
     ;;
   m68*-*-*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -fomit-frame-pointer"
+    gmp_cflags_gcc="$gmp_cflags_gcc $fomit_frame_pointer"
     ;;
 
   # HP
@@ -303,7 +321,9 @@ case "$target" in
 
   # VAX
   vax*-*-*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -fomit-frame-pointer"
+    # FIXME: Is -fomit-frame-pointer accepted by vax gcc?
+    # config/vax/vax.h has FRAME_POINTER_REQUIRED=1 always.
+    gmp_cflags_gcc="$gmp_cflags_gcc $fomit_frame_pointer"
     ;;
 
   # Fujitsu
@@ -312,6 +332,13 @@ case "$target" in
     gmp_cflags_vcc="-g"		# FIXME: flags for vcc?
     ;;
 esac
+
+for tmp_cc in $cclist; do
+  case "$enable_profiling" in
+  prof)  eval gmp_cflags_$tmp_cc=\"\$gmp_cflags_$tmp_cc -p\" ;;
+  gprof) eval gmp_cflags_$tmp_cc=\"\$gmp_cflags_$tmp_cc -pg\" ;;
+  esac
+done
 
 dnl  Check for programs needed by macros for finding compiler.
 dnl  More programs are checked for below, when a compiler is found.
@@ -892,6 +919,9 @@ if test "$gmp_no_asm_syntax_testing" != yes; then
       GMP_ASM_SHLDL_CL(
         [GMP_DEFINE(WANT_SHLDL_CL,1)],[GMP_DEFINE(WANT_SHLDL_CL,0)])
       GMP_ASM_ALIGN_FILL_0x90
+      if test "$enable_profiling" != no; then
+        GMP_ASM_X86_MCOUNT
+      fi
       ;;
   esac
 
