@@ -394,8 +394,12 @@ best flags.
 By default, MP allocates temporary workspace using @code{alloca} if that
 function is available, or @code{malloc} if not.  If you're working with large
 numbers and @code{alloca} overflows the available stack space, you can build
-with @option{--disable-alloca} to use @code{malloc}.  Using @code{malloc} will
-probably be slightly slower.
+with @option{--disable-alloca} to use @code{malloc} instead.  @code{malloc}
+will probably be slightly slower than @code{alloca}. 
+
+When not using @code{alloca}, it's actually the the allocation function
+selected with @code{mp_set_memory_functions} that's used, this being
+@code{malloc} by default.  @xref{Custom Allocation}.
 
 Depending on your system, the only indication of stack overflow might be a
 segmentation violation.  @code{setrlimit}, @command{ulimit} or @command{limit}
