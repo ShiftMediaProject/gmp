@@ -125,8 +125,7 @@ INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 
 
 nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
-	assert.c errno.c memory.c mp_bpl.c
+	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c
 
 libmpbsd_la_SOURCES = \
 	itom.c mdiv.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
@@ -151,8 +150,7 @@ libmpbsd_la_LIBADD =
 am_libmpbsd_la_OBJECTS =  itom.lo mdiv.lo mfree.lo min.lo mout.lo \
 move.lo mtox.lo sdiv.lo xtom.lo
 nodist_libmpbsd_la_OBJECTS =  add.lo cmp.lo gcd.lo mul.lo pow_ui.lo \
-powm.lo realloc.lo sqrtrem.lo sub.lo assert.lo errno.lo memory.lo \
-mp_bpl.lo
+powm.lo realloc.lo sqrtrem.lo sub.lo
 libmpbsd_la_OBJECTS =  $(am_libmpbsd_la_OBJECTS) \
 $(nodist_libmpbsd_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -168,14 +166,13 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/add.Plo $(DEPDIR)/assert.Plo \
-$(DEPDIR)/cmp.Plo $(DEPDIR)/errno.Plo $(DEPDIR)/gcd.Plo \
-$(DEPDIR)/itom.Plo $(DEPDIR)/mdiv.Plo $(DEPDIR)/memory.Plo \
+DEP_FILES =  @AMDEP@ $(DEPDIR)/add.Plo $(DEPDIR)/cmp.Plo \
+$(DEPDIR)/gcd.Plo $(DEPDIR)/itom.Plo $(DEPDIR)/mdiv.Plo \
 $(DEPDIR)/mfree.Plo $(DEPDIR)/min.Plo $(DEPDIR)/mout.Plo \
-$(DEPDIR)/move.Plo $(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mtox.Plo \
-$(DEPDIR)/mul.Plo $(DEPDIR)/pow_ui.Plo $(DEPDIR)/powm.Plo \
-$(DEPDIR)/realloc.Plo $(DEPDIR)/sdiv.Plo $(DEPDIR)/sqrtrem.Plo \
-$(DEPDIR)/sub.Plo $(DEPDIR)/xtom.Plo
+$(DEPDIR)/move.Plo $(DEPDIR)/mtox.Plo $(DEPDIR)/mul.Plo \
+$(DEPDIR)/pow_ui.Plo $(DEPDIR)/powm.Plo $(DEPDIR)/realloc.Plo \
+$(DEPDIR)/sdiv.Plo $(DEPDIR)/sqrtrem.Plo $(DEPDIR)/sub.Plo \
+$(DEPDIR)/xtom.Plo
 SOURCES = $(libmpbsd_la_SOURCES) $(nodist_libmpbsd_la_SOURCES)
 OBJECTS = $(am_libmpbsd_la_OBJECTS) $(nodist_libmpbsd_la_OBJECTS)
 
@@ -337,18 +334,14 @@ distdir: $(DISTFILES)
 	done
 
 @AMDEP@include $(DEPDIR)/add.Plo
-@AMDEP@include $(DEPDIR)/assert.Plo
 @AMDEP@include $(DEPDIR)/cmp.Plo
-@AMDEP@include $(DEPDIR)/errno.Plo
 @AMDEP@include $(DEPDIR)/gcd.Plo
 @AMDEP@include $(DEPDIR)/itom.Plo
 @AMDEP@include $(DEPDIR)/mdiv.Plo
-@AMDEP@include $(DEPDIR)/memory.Plo
 @AMDEP@include $(DEPDIR)/mfree.Plo
 @AMDEP@include $(DEPDIR)/min.Plo
 @AMDEP@include $(DEPDIR)/mout.Plo
 @AMDEP@include $(DEPDIR)/move.Plo
-@AMDEP@include $(DEPDIR)/mp_bpl.Plo
 @AMDEP@include $(DEPDIR)/mtox.Plo
 @AMDEP@include $(DEPDIR)/mul.Plo
 @AMDEP@include $(DEPDIR)/pow_ui.Plo
@@ -500,18 +493,6 @@ sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
 
 sub.c: $(top_srcdir)/mpz/sub.c
 	cp $(top_srcdir)/mpz/sub.c sub.c
-
-assert.c: $(top_srcdir)/assert.c
-	cp $(top_srcdir)/assert.c assert.c
-
-errno.c: $(top_srcdir)/errno.c
-	cp $(top_srcdir)/errno.c errno.c
-
-memory.c: $(top_srcdir)/memory.c
-	cp $(top_srcdir)/memory.c memory.c
-
-mp_bpl.c: $(top_srcdir)/mp_bpl.c
-	cp $(top_srcdir)/mp_bpl.c mp_bpl.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
