@@ -42,8 +42,14 @@ msqrt (mpz_srcptr op, mpz_ptr root, mpz_ptr rem)
 
   TMP_MARK (marker);
   op_size = op->_mp_size;
-  if (op_size < 0)
-    SQRT_OF_NEGATIVE;
+  if (op_size <= 0)
+    {
+      if (op_size < 0)
+        SQRT_OF_NEGATIVE;
+      SIZ(root) = 0;
+      SIZ(rem) = 0;
+      return;
+    }
 
   if (rem->_mp_alloc < op_size)
     _mpz_realloc (rem, op_size);
