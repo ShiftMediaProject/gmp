@@ -2339,7 +2339,7 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 /* (a/0), with a given by low and size;
    is 1 if a=+/-1, 0 otherwise */
 #define JACOBI_LS0(alow,asize) \
-  (((alow) == 1) && ((asize) == 1 || (asize) == -1))
+  (((asize) == 1 || (asize) == -1) && (alow) == 1)
 
 /* (a/0), with a an mpz_t;
    fetch of low limb always valid, even if size is zero */
@@ -2353,7 +2353,7 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 /* (0/b), with b given by low and size; is 1 if b=+/-1, 0 otherwise */
 #define JACOBI_0LS(blow,bsize) \
-  ((blow == 1) && (bsize == 1 || bsize == -1))
+  (((bsize) == 1 || (bsize) == -1) && (blow) == 1)
 
 /* Convert a bit1 to +1 or -1. */
 #define JACOBI_BIT1_TO_PN(result_bit1) \
