@@ -1339,8 +1339,7 @@ __GMP_DECLSPEC mp_limb_t mpn_divrem _PROTO((mp_ptr, mp_size_t, mp_ptr, mp_size_t
 __GMP_DECLSPEC mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
 
 #define mpn_divrem_1c __MPN(divrem_1c)
-__GMP_DECLSPEC mp_limb_t mpn_divrem_1c _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t,
-                                 mp_limb_t, mp_limb_t));
+__GMP_DECLSPEC mp_limb_t mpn_divrem_1c _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
 #define mpn_divrem_2 __MPN(divrem_2)
 __GMP_DECLSPEC mp_limb_t mpn_divrem_2 _PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr));
