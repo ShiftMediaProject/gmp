@@ -71,7 +71,7 @@ assembler implementations take essentially this same approach.
 
 KARATSUBA MULTIPLY
 
-The Karatsuba multiplication algothithm is described in Knuth volume 2
+The Karatsuba multiplication algorithm is described in Knuth volume 2
 section 4.3.3 part A, and in other texts like Geddes et al. section 4.3
 (reference below).  A brief description is given here.
 
@@ -115,7 +115,7 @@ representing simply the positions where the products must be added in.
                   +--------+--------+
 
 The term (x1-x0)*(y1-y0) can be negative, meaning a subtraction, but the
-final result is of course always postive.
+final result is of course always positive.
 
 The use of three multiplies of N/2 limbs each leads to an asymptotic speed
 O(N^1.585).  (The exponent is log(3)/log(2).)  This is a big improvement
@@ -141,7 +141,7 @@ positive.
 
 TOOM-COOK 3-WAY MULTIPLY
 
-The Karatsuba formula is part of a general approach to spliting inputs
+The Karatsuba formula is part of a general approach to splitting inputs
 leading to both Toom-Cook and FFT algorithms.  A description of Toom-Cook
 can be found in Knuth volume 2 section 4.3.3, with an example 3-way
 calculation after Theorem A.
@@ -311,7 +311,7 @@ here.
 
 The FFT does its multiplication modulo 2^N+1, but by choosing
 N>=bits(A)+bits(B), a full product A*B is obtained.  The algorithm splits
-the inputs into 2^k pieces, for a chosen k, and will recusively perform 2^k
+the inputs into 2^k pieces, for a chosen k, and will recursively perform 2^k
 pointwise multiplications modulo 2^M+1, where M=N/2^k.  N must be a multiple
 of 2^k.  Those multiplications are either done by recursing into a further
 FFT, or by a plain toom3 etc multiplication, whichever is optimal at the
@@ -346,7 +346,7 @@ In general a split into r+1 pieces will be made, and evaluations and
 pointwise multiplications done at 2*r+1 points.  So a 4-way split does 7
 pointwise multiplies, 5-way does 9, etc.
 
-Asympotically an r+1-way algorithm is O(n^(log(2*r+1)/log(r+1)).  Only the
+Asymptotically an r+1-way algorithm is O(n^(log(2*r+1)/log(r+1)).  Only the
 pointwise multiplications count towards big O() complexity, but the time
 spent in the evaluate and interpolate stages grows with r and has a
 significant practical impact, with the asymptotic advantage of each r
