@@ -154,7 +154,7 @@ case $basic_machine in
 		| tron | a29k | 580 | i960 | h8300 | hppa | hppa1.0 | hppa1.1 \
 		| hppa2.0 \
 		| alpha | alphaev5 | alphaev56 | ev6 | we32k | ns16k | clipper \
-		| i370 | sh | powerpc | powerpcle | 1750a | dsp16xx | pdp11 \
+		| i370 | sh | powerpc | powerpcle | powerpc64 | 1750a | dsp16xx | pdp11 \
 		| mips64 | mipsel | mips64el | mips64orion | mips64orionel \
 		| mipstx39 | mipstx39el \
 		| sparc | sparclet | sparclite | sparc64 | v850)
@@ -182,7 +182,7 @@ case $basic_machine in
 	      | xmp-* | ymp-* | hppa-* | hppa1.0-* | hppa1.1-* | hppa2.0-* \
 	      | alpha-* | alphaev5-* | alphaev56-* | alphaev6-* | we32k-* | cydra-* \
 	      | ns16k-* | pn-* | np1-* | xps100-* | clipper-* | orion-* \
-	      | sparclite-* | pdp11-* | sh-* | powerpc-* | powerpcle-* \
+	      | sparclite-* | pdp11-* | sh-* | powerpc-* | powerpcle-* | powerpc64-* \
 	      | sparc64-* | mips64-* | mipsel-* \
 	      | mips64el-* | mips64orion-* | mips64orionel-*  \
 	      | mipstx39-* | mipstx39el-* \
@@ -506,6 +506,11 @@ case $basic_machine in
 	ppc)	basic_machine=powerpc-unknown
 	        ;;
 	ppc-*)	basic_machine=powerpc-`echo $basic_machine | sed 's/^[^-]*-//'`
+		;;
+	ppc64)	basic_machine=powerpc64-unknown
+	        ;;
+	ppc64-*)
+		basic_machine=powerpc64-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
 	ppcle | powerpclittle | ppc-le | powerpc-little)
 		basic_machine=powerpcle-unknown
