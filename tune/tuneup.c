@@ -140,7 +140,7 @@ struct param_t {
   int               min_is_always;
   mp_size_t         max_size[MAX_TABLE];
   mp_size_t         check_size;
-  mp_size_t         threshold_offset;
+  mp_size_t         size_extra;
   int               data_high_lt_r;
 };
 
@@ -242,6 +242,8 @@ tuneup_measure (speed_function_t fun,
   double   t;
   TMP_DECL (marker);
 
+  s->size += param->size_extra;
+
   TMP_MARK (marker);
   s->xp = SPEED_TMP_ALLOC_LIMBS (s->size, 0);
   s->yp = SPEED_TMP_ALLOC_LIMBS (s->size, 0);
@@ -256,6 +258,8 @@ tuneup_measure (speed_function_t fun,
     }
 
   t = speed_measure (fun, s);
+
+  s->size -= param->size_extra;
 
   TMP_FREE (marker);
   return t;
@@ -319,7 +323,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
       table[1] = MAX_SIZE;
       t1 = tuneup_measure (param->function, param, &s);
 
-      table[0] = s.size + param->threshold_offset;
+      table[0] = s.size;
       table[1] = s.size+1;
       t2 = tuneup_measure (param->function2, param, &s);
       if (t1 == -1.0 || t2 == -1.0)
@@ -395,7 +399,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
           ti *= param->function_fudge;
 
           /* using method i+1 at this size */
-          table[i] = s.size + param->threshold_offset;
+          table[i] = s.size;
           table[i+1] = s.size+1;
           tiplus1 = tuneup_measure (param->function2, param, &s);
           if (tiplus1 == -1.0)
@@ -820,16 +824,21 @@ all (void)
   printf ("#define MOD_1_UNNORM_THRESHOLD     0\n");
 
 #else
-  /* threshold_offset reflects the fact that with high<divisor one division
-     is always skipped.  Forcing high<divisor while testing ensures
-     consistency while stepping through sizes, ie. that size-1 divides will
-     be done each time.  */
+  /* size_extra==1 reflects the fact that with high<divisor one division is
+     always skipped.  Forcing high<divisor while testing ensures consistency
+     while stepping through sizes, ie. that size-1 divides will be done each
+     time.
+
+     min_size==2 and min_is_always are used so that if plain division is
+     only better at size==1 then don't bother including that code just for
+     that case, instead go with preinv always and get a size saving.  */
+
 #define DIV_1_PARAMS            \
   param.check_size = 256;       \
   param.min_size = 2;           \
   param.min_is_always = 1;      \
   param.data_high_lt_r = 1;     \
-  param.threshold_offset = -1;  \
+  param.size_extra = 1;         \
   param.stop_factor = 2.0;
 
   /* No support for tuning native assembler code, do that by hand and put
