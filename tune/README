@@ -7,13 +7,26 @@ measurements of the speed of GMP routines on their machine, and perhaps
 tweak some settings or identify things that can be improved.
 
 The programs here are tools, not ready to run solutions.  Nothing is built
-in a normal "make all", but Makefile targets described below exist.
+in a normal "make all", but various Makefile targets described below exist.
 
 Relatively few systems and CPUs have been tested, so be sure to verify that
 you're getting sensible results before relying on them.
 
-Don't configure GMP with --enable-assert when using the things here, since
-the extra code added by assertion checking may influence measurements.
+
+
+
+MISCELLANEOUS NOTES
+
+Don't configure with --enable-assert when using the things here, since the
+extra code added by assertion checking may influence measurements.
+
+Some effort has been made to accomodate CPUs with direct mapped caches, but
+it will depend on TMP_ALLOC using a proper alloca, and even then it may or
+may not be enough.
+
+The sparc32/v9 addmul_1 code runs at noticably different speeds on
+successive sizes, and this has a bad effect on the tune program's
+determinations of the multiply and square thresholds.
 
 
 
@@ -36,10 +49,10 @@ similar.  You can submit new values if it looks like the current ones are
 out of date or wildly wrong.  But check you're on the right CPU target and
 there aren't any machine-specific effects causing a difference.
 
-It's hoped the compiler used wont have too much effect on thresholds, since
-for most CPUs they ultimately come down to comparisons between assembler
-subroutines.  A particularly poor compiler, or not using gcc and therefore
-missing out on the longlong.h macros, might have an effect.
+It's hoped the compiler and options used won't have too much effect on
+thresholds, since for most CPUs they ultimately come down to comparisons
+between assembler subroutines.  Missing out on the longlong.h macros by not
+using gcc will probably have an effect.
 
 Some thresholds produced by the tune program are merely single values chosen
 from what's actually a range of sizes where two algorithms are pretty much
@@ -53,7 +66,7 @@ thresholds for instance.
 SPEED PROGRAM
 
 The "speed" program can be used for measuring and comparing all sorts of
-routines and producing tables of data or gnuplot graphs.  Compile it with,
+routines and producing tables of data or gnuplot graphs.  Compile it with
 
 	make speed
 
@@ -71,9 +84,9 @@ under mpn_lshift the difference between it and mpn_add_n.
 
 	./speed -s 1-40 -c -d mpn_add_n mpn_lshift.1
 
-Using option -c for times in cycles is interesting but normally necessary
-only when looking carefully at assembler subroutines.  You might think it
-would always give an integer value, but this doesn't happen in practice,
+Using option -c for times in cycles is interesting but normally only
+necessary when looking carefully at assembler subroutines.  You might think
+it would always give an integer value, but this doesn't happen in practice,
 probably due to overheads in the time measurements.
 
 In the free-form output the "#" symbol against a measurement means the
@@ -92,15 +105,15 @@ TIME BASE
 
 The time measuring method is determined in time.c, based on what the
 configured target has available.  A microsecond accurate gettimeofday() will
-work well, but there's code to use better methods, such as rdtsc on pentium
-(and up), or %tick on sparc v9.
+work well, but there's code to use better methods, such as the cycle
+counters on various CPUs.
 
-Currently, all the time measuring methods depend on the machine being
-otherwise idle or rather on other jobs not stealing CPU time from the
-measuring programs.  Short routines (that complete within a timeslice)
-should work even on a busy machine.  Some trouble is taken by
+Currently, all methods (except possibly the alpha cycle counter) depend on
+the machine being otherwise idle, or rather on other jobs not stealing CPU
+time from the measuring program.  Short routines (that complete within a
+timeslice) should work even on a busy machine.  Some trouble is taken by
 speed_measure() in common.c to avoid the ill effects of sporadic interrupts,
-or other intermittent things like cron waking up every minute.  But
+or other intermittent things (like cron waking up every minute).  But
 generally you'll want an idle machine to be sure of consistent results.
 
 The CPU frequency is needed if times in cycles are to be displayed, and it's
@@ -134,9 +147,9 @@ the times printed or anything.
 If you want to know how many cycles per limb a routine is taking, look at
 the time increase when the size increments, using option -D.  This avoids
 fixed overhead in the measuring.  Also, remember many of the assembler
-routines have loops unrolled, so it might be necessary to compare times at,
-say, 16, 32, 48, 64 etc limbs to see what the unrolled part is taking, as
-opposed to any finishing off.
+routines have unrolled loops, so it might be necessary to compare times at,
+say, 16, 32, 48, 64 etc to see what the unrolled part is taking, as opposed
+to any finishing off.
 
         ./speed -s 16-64 -t 16 -C -D mpn_add_n
 
@@ -148,11 +161,11 @@ affect results at large sizes.
         ./speed -s 500000 -C mpn_add_n
 
 Once a calculation stops fitting in the CPU data cache, it's going to start
-taking longer.  Exactly where you'll see this happen depends on the cache
-priming in speed_measure(), or in the routine being measured, and on what
-sort of "least recently used" the cache does.  Here's an example for a CPU
-with a 16kbyte L1 data cache and 32-bit limb, showing a suddenly steeper
-curve for mpn_add_n at about 2000 limbs.
+taking longer.  Exactly where this happens depends on the cache priming in
+speed_measure(), or in the routine being measured, and on what sort of
+"least recently used" the caching does.  Here's an example for a CPU with a
+16kbyte L1 data cache and 32-bit limb, showing a suddenly steeper curve for
+mpn_add_n at about 2000 limbs.
 
         ./speed -s 1-4000 -t 5 -f 1.02 -P foo mpn_add_n
 	gnuplot foo.gnuplot
@@ -181,7 +194,7 @@ if the lshift isn't faster there's an obvious improvement that's possible.
 On some CPUs an "in-place" mpn_add_n where the destination is one of the
 sources is faster than a separate destination.  (K6 for example.)  Here's an
 example to see this.  (mpn_add_n_inplace is a special measuring routine, not
-available for many other operations.)
+available for other operations.)
 
         ./speed -s 1-200 -c mpn_add_n mpn_add_n_inplace
 
@@ -189,7 +202,7 @@ The gmp manual recommends divisions by a powers of two should be done using
 a right shift because it'll be significantly faster.  Here's how you can see
 by what factor mpn_rshift is faster, using division by 32 as an example.
 
-        ./speed -s 1-200 -r mpn_rshift.5 mpn_divrem_1.32
+        ./speed -s 10-20 -r mpn_rshift.5 mpn_divrem_1.32
 
 mul_basecase takes an "r" parameter that's the first (larger) size
 parameter.  For example to show speeds for 20x1 up to 20x15 in cycles,
@@ -229,12 +242,23 @@ is the triangular products sqr_basecase does.  For example,
 Both -E and -F are preliminary and might change.  A consistent approach to
 using them when claiming certain per crossproduct or per triangularproduct
 speeds hasn't really been established, but the increment between speeds in
-the range karatsuba will call seems sensible, that being k to k/2.  For
+the range Karatsuba will call seems sensible, that being k to k/2.  For
 instance, if the karatasuba threshold was 20 for the multiply and 30 for the
 square,
 
         ./speed -s 10-20 -t 10 -CDE mpn_mul_basecase
         ./speed -s 15-30 -t 15 -CDF mpn_sqr_basecase
+
+The gmp manual recommends application programs avoid excessive initializing
+and clearing of mpz_t variables (and mpq_t and mpf_t too).  At the moment
+every new variable will at a minimum go through an init, a realloc for its
+first store, and finally a clear.  Quite how long that takes depends on the
+C library, and possibly whether the program is static or dynamic linked.
+The following compares an mpz_init/realloc/clear to a 10 limb mpz_add.
+There's measuring routines available for other init/clears, and for just
+malloc/free too.
+
+        ./speed -s 10 -c mpz_init_realloc_clear mpz_add
 
 
 
@@ -260,7 +284,7 @@ KARATSUBA_MUL_THRESHOLD.
 
 When doing the above comparison between mul_basecase and kara_mul_n what's
 probably of interest is mul_basecase versus a kara_mul_n that does one level
-of karatsuba then calls to mul_basecase, but this only happens on sizes less
+of Karatsuba then calls to mul_basecase, but this only happens on sizes less
 than twice the compiled KARATSUBA_MUL_THRESHOLD.  A larger value for that
 setting can be compiled-in to avoid the problem if necessary.  The same
 applies to toom3 and BZ, though in a trickier fashion.
@@ -291,7 +315,7 @@ various algorithm thresholds.
          if the CPU has a slow multiply the karatsuba method trading some
          multiplies for adds will become worthwhile sooner.
 
-	 Remember it's "addmul" performance which is of interest here.  This
+	 Remember it's "addmul" performance that's of interest here.  This
 	 may differ from a simple "mul" instruction in the CPU.  For example
 	 K6 has a 3 cycle mul but takes nearly 8 cycles/limb for an addmul,
 	 and K7 has a 6 cycle mul latency but has a 4 cycle/limb addmul due
@@ -308,7 +332,7 @@ various algorithm thresholds.
 
       Karatsuba overheads - increases threshold
 
-         Fairly obviously, anything gained or lost in the karatsuba extra
+         Fairly obviously anything gained or lost in the karatsuba extra
          calculations will translate directly to the threshold.  But
          remember the extra calculations are likely to always be a
          relatively small fraction of the total multiply time and in that
@@ -324,8 +348,8 @@ various algorithm thresholds.
 
          This relies on a reasonable umul_ppmm, and if the generic C code is
          being used it may badly affect the speed.  Don't bother paying
-         attention to the square thresholds until either a good umul_ppmm or
-         an assembler sqr_basecase is available.
+         attention to the square thresholds until you have either a good
+         umul_ppmm or an assembler sqr_basecase.
 
    TOOM3_MUL_THRESHOLD
 
@@ -338,9 +362,9 @@ various algorithm thresholds.
 
       In practice the curves for time versus size on toom3 and karatsuba
       have similar slopes near their crossover, leading to a range of sizes
-      where there's really no difference between the two.  Choosing a single
-      value from the range is a bit arbitrary and will lead to slightly
-      different values on successive runs of the tune program.
+      where there's very little difference between the two.  Choosing a
+      single value from the range is a bit arbitrary and will lead to
+      slightly different values on successive runs of the tune program.
 
       divexact_by3 - used by toom3
 
@@ -356,8 +380,8 @@ various algorithm thresholds.
          At the fairly small sizes where the thresholds occur it's worth
          remembering that the asymptotic behaviour expected for karatsuba
          and toom3 can't be expected to make accurate predictions, due of
-         course to the big influence of all sorts of overheads and to the
-         fact that only a few recursions of each are being performed.
+         course to the big influence of all sorts of overheads, and the fact
+         that only a few recursions of each are being performed.
 
 	 Even at large sizes there's a good chance machine dependent effects
 	 like cache architecture will mean actual performance deviates from
@@ -387,7 +411,7 @@ various algorithm thresholds.
 
 FUTURE
 
-Add versions of toom3 using either the mpn calls or the one-pass style, so
+Add versions of toom3 using either the mpn calls or the open-coded style, so
 the two can be compared.
 
 Add versions of mpn_divrem_1() using straight division versus a multiply by
@@ -399,8 +423,8 @@ is actually an mpn_udiv_qrnnd subroutine.
 
 Make an option in struct speed_parameters to specify the overlap, perhaps 0
 for none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1 dst2=src2, 4 for
-dst1=src2 dst2=src1.  This would be better than lots of _inplace versions of
-measuring functions.
+dst1=src2 dst2=src1.  This is done for addsub_n (which is actually yet to be
+enabled), and could be done for add_n, xor_n, etc too.
 
 When speed_measure() divides the total time measured by repetitions
 performed, it divides the fixed overheads imposed by speed_starttime() and
