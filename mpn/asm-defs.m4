@@ -997,6 +997,13 @@ define(C, `
 dnl')
 
 
+dnl  Normally PIC is defined (or not) by libtool, but it doesn't set it on
+dnl  systems which are always PIC.  PIC_ALWAYS established in config.m4
+dnl  identifies these for us.
+
+ifdef(`PIC_ALWAYS',`define(`PIC')')
+
+
 dnl  Various possible defines passed from the Makefile that are to be tested
 dnl  with ifdef() rather than be expanded.
 
