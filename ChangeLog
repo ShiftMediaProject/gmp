@@ -31,7 +31,8 @@ MA 02111-1307, USA.
 
 	* demos/perl/GMP.pm: Add a remark about get_str to the bugs section.
 
-	* mpn/generic/sqrtrem.c, mpz/fac_ui.c: Add casts for K&R.
+	* mpn/generic/sqrtrem.c, mpz/fac_ui.c, tests/mpf/reuse.c: Add casts
+	for K&R.
 	* tests/mpf/t-muldiv.c: Make ulimb, vlimb into ulongs, which is how
 	they're used, for the benefit of K&R calling.
 
