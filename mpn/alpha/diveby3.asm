@@ -86,20 +86,20 @@ $Lb11:	ldq	u3, 8(up)
 	lda	up, -24(up)
 	lda	rp, -24(rp)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q0
-	br	$L11
+	br	r31, $L11
 
 $Lb00:	ldq	u2, 8(up)
 	lda	up, -16(up)
 	lda	rp, -16(rp)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q1
-	br	$L00
+	br	r31, $L00
 
 $Lb01:	lda	rp, -8(rp)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q0
 	blt	n, $Lcj1
 	ldq	u1, 8(up)
 	lda	up, -8(up)
-	br	$L01
+	br	r31, $L01
 
 $Lb10:	ldq	u0, 8(up)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q1
