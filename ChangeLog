@@ -18,6 +18,30 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-04  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c (freq_sysctl_hw_model, freq_sunos_sysinfo,
+	freq_sco_etchw, freq_bsd_dmesg, freq_irix_hinv): Demand matching of
+	MHz etc at end of sscanf format string.  In particular need this for
+	freq_bsd_dmesg on i486-pc-freebsd4.7 to avoid the 486 cpu being used
+	for the frequency.
+
+	* tests/misc.c, tests/tests.h (tests_setjmp_sigfpe,
+	tests_sigfpe_handler, tests_sigfpe_done, tests_sigfpe_target,
+	tests_dbl_mant_bits): New.
+
+	* configure.in (viac3*-*-*): Add gcc VIA c3 options.
+
+	* mpfr/*: Update to mpfr cvs 2003-10-04.
+
+	* tests/refmpn.c (refmpn_addlsh1_n, refmpn_sublsh1_n,
+	refmpn_rsh1add_n, refmpn_rsh1sub_n): Add ASSERTs for operand overlaps.
+	* tests/tests.h (refmpn_addlsh1_n, refmpn_sublsh1_n, refmpn_rsh1add_n,
+	refmpn_rsh1sub_n): Add prototypes.
+ 
+	* tests/devel/try.c, tune/many.pl: Add mpn_addlsh1_n, mpn_sublsh1_n,
+	mpn_rsh1add_n, mpn_rsh1sub_n.
+
 2003-10-03  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/refmpn.c (refmpn_addlsh1_n, refmpn_sublsh1_n, refmpn_rsh1add_n,
