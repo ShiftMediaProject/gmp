@@ -21,8 +21,6 @@ MA 02111-1307, USA.
 
 2002-05-23  Torbjorn Granlund  <tege@swox.com>
 
-	* Version 4.1 released.
-
 	* mpn/alpha/ev6/nails/gmp-mparam.h: New file.
 
 	* tests/devel/add_n.c (refmpn_add_n): Nailify.
