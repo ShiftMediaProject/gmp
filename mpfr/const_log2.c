@@ -27,7 +27,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 mpfr_t __mpfr_const_log2; /* stored value of log(2) */
-int __mpfr_const_log2_prec=0; /* precision of stored value */
+mp_prec_t __mpfr_const_log2_prec=0; /* precision of stored value */
 mp_rnd_t __mpfr_const_log2_rnd; /* rounding mode of stored value */
 
 static int mpfr_aux_log2 _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
@@ -56,13 +56,13 @@ static int mpfr_const_aux_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
 static int
 mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
 {
-  int prec;
+  mp_prec_t prec;
   mpfr_t tmp1, tmp2, result,tmp3; 
   mpz_t cst;
   int good = 0;
   int logn;
-  int prec_i_want = MPFR_PREC(mylog);
-  int prec_x;
+  mp_prec_t prec_i_want = MPFR_PREC(mylog);
+  mp_prec_t prec_x;
 
   mpz_init(cst);
   logn =  _mpfr_ceil_log2 ((double) MPFR_PREC(mylog));
@@ -127,7 +127,8 @@ mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
 void 
 mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
 {
-  int N, k, precx; mpz_t s, t, u;
+  mp_prec_t N, k, precx;
+  mpz_t s, t, u;
 
   precx = MPFR_PREC(x);
   MPFR_CLEAR_FLAGS(x); 

@@ -52,7 +52,7 @@ check (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_mul(zz, xx, yy, rnd_mode);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   z1 = (res==0.0) ? x*y : res;
@@ -349,7 +349,7 @@ check_min(void)
 int
 main (int argc, char *argv[])
 {
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   double x, y, z;
   int i, prec, rnd_mode;
 
@@ -389,7 +389,7 @@ main (int argc, char *argv[])
 	49, 3, 2, 0.09375);
   check_max();
   check_min();
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   SEED_RAND (time(NULL));
   prec = (argc<2) ? 53 : atoi(argv[1]);
   rnd_mode = (argc<3) ? -1 : atoi(argv[2]);

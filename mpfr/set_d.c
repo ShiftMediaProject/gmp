@@ -179,14 +179,12 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
 	  || ((x.s.sig == 0) && (MPFR_SIGN(r) < 0)))
 	MPFR_CHANGE_SIGN(r);
       return 0; /* 0 is exact */
-  }
-
+    }
   else if (DOUBLE_ISNAN(d))
     {
       MPFR_SET_NAN(r);
-      return 1; /* a NaN is always inexact */
+      MPFR_RET_NAN;
     }
-
   else if (DOUBLE_ISINF(d))
     {
       MPFR_SET_INF(r);

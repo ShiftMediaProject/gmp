@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
 #include "mpfr-test.h"
 #endif
 
@@ -105,7 +105,7 @@ check_small (void)
 int
 main (int argc, char *argv[])
 {
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   int i;
   double d;
 

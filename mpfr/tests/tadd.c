@@ -56,7 +56,7 @@ check (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
   if (px==53 && py==53 && pz==53) cert=1;
 #endif
@@ -84,7 +84,7 @@ checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (MPFR_IS_NAN(zz) == 0) { printf("Error, not an MPFR_NAN for xx = %1.20e, y = %1.20e\n", x, y); exit(1); }
@@ -94,7 +94,7 @@ checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
 /* idem than check for mpfr_add(x, x, y) */
 void
 check3 (double x, double y, mp_rnd_t rnd_mode)
@@ -640,7 +640,7 @@ check_inexact (void)
 int
 main (int argc, char *argv[])
 {
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   int prec, rnd_mode;
   int rnd;
   double y;
@@ -835,7 +835,7 @@ main (int argc, char *argv[])
   check53(9007199254740994.0, -1.0, GMP_RNDN, 9007199254740992.0);
   check53(9007199254740996.0, -1.0, GMP_RNDN, 9007199254740996.0);
   
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   prec = (argc<2) ? 53 : atoi(argv[1]);
   rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
   /* Comparing to double precision using machine arithmetic */

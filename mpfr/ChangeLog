@@ -1,4 +1,55 @@
+2002-04-12  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* tests/tget_d.c: New tests.
+
+	* BUGS, get_d.c: mpfr_get_d* fixed.
+
+	* INSTALL, const_log2.c:
+	Types fixed in const_log2.c (this fixes the tconst_log2 crash).
+
+	* README.dev: Added a note about the native SunOS 4 C compiler.
+
+2002-04-11  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* tests/tconst_log2.c: Type fixed.
+
+	* set_d.c, BUGS: mpfr_set_d bug fixed, but other bugs still remain...
+
+	* print_rnd_mode.c:
+	NULL was undeclared on some architectures (reported by Torbjorn Granlund).
+
+	* configure.in: LDFLAGS changed on HP-UX.
+
+	* ChangeLog: Update for the next pre-release.
+
+	* tests/tget_d.c: Subnormal test in different rounding modes + fix.
+
+	* acinclude.m4, configure.in: Function MPFR_CONFIGS.
+
+	* tests/tget_d.c: Tests added.
+
+	* BUGS, get_d.c: get_d.c partly rewritten (Paul Zimmermann).
+
+	* configure.in: Check for gcc float-conversion bug.
+
+2002-04-10  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* round_prec.c:
+	Added comment for mpfr_round_raw_generic (about using 1-bit precision).
+
+	* mpfr.texi: Update (thanks to Nathalie Revol).
+
+	* ChangeLog: Update for the next pre-release.
+
+	* tests/tsqrt.c, tests/tsqrt_ui.c, tests/tsub_ui.c, tests/tui_div.c, tests/tui_sub.c, tests/tadd.c, tests/tadd_ui.c, tests/tagm.c, tests/tdiv.c, tests/tdiv_ui.c, tests/texp.c, tests/tget_d.c, tests/tget_str.c, tests/tlog.c, tests/tmul.c, tests/tset_q.c, rnd_mode.c, configure.in:
+	HAVE_FESETROUND renamed to MPFR_HAVE_FESETROUND to avoid possible
+	name conflict.
+
+	* Makefile.am, srandom.h: Added missing headers in libmpfr_a_SOURCES.
+
 2002-04-09  Vincent Lefevre  <lefevre@greux.loria.fr>
+
+	* ChangeLog: Update for the next pre-release.
 
 	* INSTALL: Possible tconst_log2 crash under Solaris.
 

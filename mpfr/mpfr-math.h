@@ -19,10 +19,6 @@ along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#ifndef NO_MATH_DEFS
-#include <math.h>
-#endif
-
 #if defined (_LITTLE_ENDIAN) || defined (__LITTLE_ENDIAN__)		\
  || defined (__alpha)							\
  || (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))\

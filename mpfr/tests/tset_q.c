@@ -40,7 +40,7 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
   mpfr_init2 (t, mpfr_get_prec (x) + mp_bits_per_limb);
   mpq_init (q);
   mpq_set_si (q, n, d);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode (rnd);
   y = (double) n / d;
 #endif
@@ -80,7 +80,7 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
 int
 main (void)
 {
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   long int i, n;
   unsigned long int d;
   double y;

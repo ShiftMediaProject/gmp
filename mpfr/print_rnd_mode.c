@@ -19,9 +19,7 @@ along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h> /* for NULL */
 #include "gmp.h"
-#include "gmp-impl.h"
 #include "mpfr.h"
 
 char *
@@ -30,14 +28,14 @@ mpfr_print_rnd_mode (mp_rnd_t rnd_mode)
   switch (rnd_mode)
     {
     case GMP_RNDD:
-      return ("GMP_RNDD"); 
+      return "GMP_RNDD";
     case GMP_RNDU:
-      return ("GMP_RNDU"); 
+      return "GMP_RNDU";
     case GMP_RNDN:
-      return ("GMP_RNDN"); 
+      return "GMP_RNDN";
     case GMP_RNDZ:
-      return ("GMP_RNDZ"); 
+      return "GMP_RNDZ";
     }
 
-  return NULL;
+  return (char *) 0;
 }

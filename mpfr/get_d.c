@@ -21,6 +21,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <float.h>
+#ifndef NO_MATH_DEFS
+#include <math.h>
+#endif
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -28,36 +31,36 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-math.h"
 
-static double __mpfr_scale2 _PROTO ((double, int));
+static double mpfr_scale2 _PROTO ((double, int));
 
 #define IEEE_DBL_MANT_DIG 53
 
+/* multiplies 1/2 <= d <= 1 by 2^exp */
 static double
-__mpfr_scale2 (double d, int exp)
+mpfr_scale2 (double d, int exp)
 {
 #if _GMP_IEEE_FLOATS
   {
     union ieee_double_extract x;
 
-    if (exp < -2099)
-      return 0.0 * d; /* 0 with the correct sign */
+    if (d == 1.0)
+      {
+        d = 0.5;
+        exp ++;
+      }
+
+    /* now 1/2 <= d < 1 */
+
+    /* infinities and zeroes have already been checked */
+    MPFR_ASSERTN(-1073 <= exp && exp <= 1025);
 
     x.d = d;
-    if (exp >= 2047 || exp + x.s.exp >= 2047)
+    if (exp < -1021) /* subnormal case */
       {
-        /* Return +-infinity */
-        x.s.exp = 2047;
-        x.s.manl = x.s.manh = 0;
+        x.s.exp += exp + 52;
+        x.d *= DBL_EPSILON;
       }
-    else if (exp + x.s.exp < 1)
-      {
-        exp += x.s.exp;
-        if (exp <= -52)
-          return 0.0 * d; /* 0 with the correct sign */
-        x.s.exp = 1; /* smallest exponent (biased) */
-        x.d *= __mpfr_scale2(1.0, exp - 1);
-      }
-    else
+    else /* normalized case */
       {
         x.s.exp += exp;
       }
@@ -83,7 +86,7 @@ __mpfr_scale2 (double d, int exp)
         exp >>= 1;
         factor *= factor;
       }
-    return r;
+    return d;
   }
 #endif
 }
@@ -109,12 +112,19 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
   if (MPFR_IS_ZERO(src))
     return negative ? -0.0 : 0.0;
 
-  if (e < -1077)
+  /* the smallest normalized number is 2^(-1022)=0.1e-1021, and the smallest
+     subnormal is 2^(-1074)=0.1e-1073 */
+  if (e < -1073)
     {
       d = negative ?
-        (rnd_mode == GMP_RNDD ? -DBL_MIN * DBL_EPSILON : -0.0) :
-        (rnd_mode == GMP_RNDU ? DBL_MIN * DBL_EPSILON : 0.0);
+        (rnd_mode == GMP_RNDD ||
+         (rnd_mode == GMP_RNDN && mpfr_cmp_si_2exp(src, -1, -1075) < 0)
+         ? -DBL_MIN * DBL_EPSILON : -0.0) :
+        (rnd_mode == GMP_RNDU ||
+         (rnd_mode == GMP_RNDN && mpfr_cmp_si_2exp(src, 1, -1075) > 0)
+         ? DBL_MIN * DBL_EPSILON : 0.0);
     }
+  /* the largest normalized number is 2^1024*(1-2^(-53))=0.111...111e1024 */
   else if (e > 1024)
     {
       d = negative ?
@@ -125,14 +135,22 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
     }
   else
     {
+      int nbits;
       mp_size_t np, i;
       mp_ptr tp;
       int carry;
 
-      np = (IEEE_DBL_MANT_DIG - 1) / BITS_PER_MP_LIMB;
+      nbits = IEEE_DBL_MANT_DIG; /* 53 */
+      if (e < -1021) /* in the subnormal case, compute the exact number of
+                        significant bits */
+        {
+          nbits += (1021 + e);
+          MPFR_ASSERTN(nbits >= 1);
+        }
+      np = (nbits - 1) / BITS_PER_MP_LIMB;
       tp = (mp_ptr) (*__gmp_allocate_func) ((np + 1) * BYTES_PER_MP_LIMB);
-      carry = mpfr_round_raw(tp, MPFR_MANT(src), MPFR_PREC(src), negative,
-                             IEEE_DBL_MANT_DIG, rnd_mode, (int *) 0);
+      carry = mpfr_round_raw (tp, MPFR_MANT(src), MPFR_PREC(src), negative,
+                             nbits, rnd_mode, (int *) 0);
       if (carry)
         d = 1.0;
       else
@@ -146,7 +164,7 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
           /* d is the mantissa (between 1/2 and 1) of the argument rounded
              to 53 bits */
         }
-      d = __mpfr_scale2(d, e);
+      d = mpfr_scale2 (d, e);
       if (negative)
         d = -d;
 

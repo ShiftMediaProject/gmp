@@ -44,7 +44,7 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
   mpfr_init2(zz, 53);
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_ui_div(zz, y, xx, rnd_mode);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (z1==0.0) z1 = y/x;
@@ -152,7 +152,7 @@ check_nan (void)
 int
 main (int argc, char *argv[])
 {
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   double x;
   unsigned long y, N;
   int i, rnd_mode, rnd;

@@ -37,7 +37,7 @@ check (unsigned long a, mp_rnd_t rnd_mode, double Q)
   mpfr_t q; double Q2; int u, ck;
 
   mpfr_init2(q, 53);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   mpfr_sqrt_ui(q, a, rnd_mode);
@@ -59,7 +59,7 @@ check (unsigned long a, mp_rnd_t rnd_mode, double Q)
 int
 main (void)
 {
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   int i;
   unsigned long a;
 

@@ -49,7 +49,7 @@ check3 (double a, mp_rnd_t rnd_mode, double Q)
   ck = (Q!=-1.0); /* if ck=1, then Q is certified correct */
   mpfr_init2(q, 53);
   mpfr_set_d(q, a, rnd_mode);
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   mpfr_sqrt(q, q, rnd_mode);
@@ -326,7 +326,7 @@ main (void)
   double a;
   mp_prec_t p;
   int k;
-#ifdef HAVE_FESETROUND
+#ifdef MPFR_HAVE_FESETROUND
   int i;
 
   mpfr_test_init ();
