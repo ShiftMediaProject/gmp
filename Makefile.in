@@ -200,8 +200,8 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/urandomb$U.lo mpf/swap$U.lo					    \
   mpf/fits_sint$U.lo mpf/fits_slong$U.lo mpf/fits_sshort$U.lo		    \
   mpf/fits_uint$U.lo mpf/fits_ulong$U.lo mpf/fits_ushort$U.lo		    \
-  mpf/get_si.lo mpf/get_ui.lo						    \
-  mpf/int_p.lo
+  mpf/get_si$U.lo mpf/get_ui$U.lo					    \
+  mpf/int_p$U.lo
 
 
 MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
