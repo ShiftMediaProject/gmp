@@ -1,7 +1,7 @@
 /* IA-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
    the result from a second limb vector.
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,9 +33,12 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr s1p, mp_size_t n, mp_limb_t s2d)
 {
   mp_ptr tp;
   mp_limb_t cy;
+  TMP_DECL (marker);
 
+  TMP_MARK (marker);
   tp = TMP_ALLOC_LIMBS (n);
   cy = mpn_mul_1 (tp, s1p, n, s2d);
   cy += mpn_sub_n (rp, rp, tp, n);
+  TMP_FREE (marker);
   return cy;
 }
