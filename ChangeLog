@@ -1,5 +1,14 @@
 2001-02-24  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/lshift.c: Rewrite.
+	* mpn/generic/rshift.c: Rewrite.
+
+	* longlong.h: Use UWtype for external interfaces that expect mp_limb_t.
+
+	* longlong.h (arm): #define invert_limb.
+
+	* mpn/arm: Make labels have local scope.
+
 	* configure.in (arm*-*-*): Set extra_functions.
 	* longlong.h (arm): #define udiv_qrnnd.
 	* mpn/arm/udiv.asm: New file.
