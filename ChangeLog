@@ -1,3 +1,7 @@
+2000-01-20  Linus Nordberg  <linus@swox.se>
+
+	* demos/pexpr.c: Don't use setup_error_handler() in windoze.
+
 2000-01-19  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (sigaltstack): #define to sigstack for AIX.
