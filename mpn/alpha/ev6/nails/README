@@ -1,0 +1,9 @@
+This directory contains preliminary assembly code for nails-enabled
+21264.  The code is not very well optimized.
+
+1. The *mul_* functions use too many registers.  Several temps could be
+   combined.
+2. The *mul_1 functions load from up and rp very early.  The code could be
+   considerably simlified with later loads.
+3. The addmul_1 and submul_1 functions run 1.25 cycles/limb slower than
+   possible with better U0/U1/L0/L1 scheduling.

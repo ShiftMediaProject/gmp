@@ -21,6 +21,10 @@ MA 02111-1307, USA.
 
 2002-05-23  Torbjorn Granlund  <tege@swox.com>
 
+	* Version 4.1 released.
+
+	* mpn/alpha/ev6/nails/gmp-mparam.h: New file.
+
 	* tests/devel/add_n.c (refmpn_add_n): Nailify.
 	* tests/devel/sub_n.c (refmpn_sub_n): Nailify.
 	* tests/devel/addmul_1.c (refmpn_addmul_1): Nailify.
@@ -28,6 +32,7 @@ MA 02111-1307, USA.
 
 	* mpn/alpha/ev6/nails/add_n.asm: New file.
 	* mpn/alpha/ev6/nails/sub_n.asm: New file.
+	* mpn/alpha/ev6/nails/mul_1.asm: New file.
 	* mpn/alpha/ev6/nails/submul_1.asm: New file.
 
 2002-05-22  Torbjorn Granlund  <tege@swox.com>
