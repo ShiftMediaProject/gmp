@@ -1,3 +1,9 @@
+2000-12-07  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in ([*-*-aix[34]*]): Disable shared by default, but let
+	the user override that, if desired.
+	* gmp.texi (Notes for Particular Systems): Update.
+
 2000-12-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpq/cmp_ui.c: Streamline.
