@@ -1,3 +1,16 @@
+2000-11-09  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (power1,2,2sc): Support these as synonyms for plain
+	power.
+
+	* acinclude.m4 (GMP_ASM_X86_SHLDL_CL): GMP_DEFINE WANT_SHLDL_CL here.
+	(GMP_ASM_X86_MMX, GMP_ASM_X86_SHLDL_CL): Add X86 into the names.
+	* configure.in: Consequent changes.
+
+	* gmp.texi (Notes for Particular Systems): Remarks about power/powerpc.
+	(Reentrancy): Remarks about simultaneous writing.
+	(Reporting Bugs): Ask for configfsf.guess.
+
 2000-11-08  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_FUNC_ALLOCA): New macro.
