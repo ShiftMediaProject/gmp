@@ -577,6 +577,7 @@ struct fft_param_t {
   mp_size_t         sqr;
 };
 
+
 /* mpn_mul_fft requires pl a multiple of 2^k limbs, but with
    N=pl*BIT_PER_MP_LIMB it internally also pads out so N/2^k is a multiple
    of 2^(k-1) bits. */
@@ -584,12 +585,18 @@ struct fft_param_t {
 mp_size_t
 fft_step_size (int k)
 {
-  if (2*k-1 > BITS_PER_INT)
+  mp_size_t  step;
+
+  step = MAX ((mp_size_t) 1 << (k-1), BITS_PER_MP_LIMB) / BITS_PER_MP_LIMB;
+  step *= (mp_size_t) 1 << k;
+
+  if (step == 0 || step < 0)
     {
       printf ("Can't handle k=%d\n", k);
       abort ();
     }
-  return (1<<k) * (MAX (1<<(k-1), BITS_PER_MP_LIMB)) / BITS_PER_MP_LIMB;
+
+  return step;
 }
 
 mp_size_t
