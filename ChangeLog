@@ -464,7 +464,7 @@ MA 02111-1307, USA.
 
 	* mpf/set_z.c: Do MPN_COPY last, for possible tail call.
 
-	* doc/gmp.texi (Miscellaneous Float Functions): For mpn_random2, note
+	* doc/gmp.texi (Miscellaneous Float Functions): For mpf_random2, note
 	exponent is in limbs.
 
 	* mpn/ia64/README: Add remark about concentrating on itanium-2.
