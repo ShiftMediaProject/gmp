@@ -781,8 +781,8 @@ for abi in $abilist; do
   if test $abi = $abi_last; then abi2=; else abi2="$abi1"; fi
 
   # Compiler choices under this ABI
-                           eval cclist_abi=\"\$cclist$abi1\"
-  test -n "$cclist_abi" || eval cclist_abi=\"\$cclist$abi2\"
+                              eval cclist_chosen=\"\$cclist$abi1\"
+  test -n "$cclist_chosen" || eval cclist_chosen=\"\$cclist$abi2\"
 
   # If there's a user specified $CC then don't use a list for
   # $cclist_chosen, just a single value for $ccbase.
@@ -795,7 +795,7 @@ for abi in $abilist; do
     for ccbase in $CC; do break; done
     ccbase=`echo $ccbase | sed 's:.*/::'`
 
-    # If this $ccbase is in $cclist_abi then it's a compiler we know and
+    # If this $ccbase is in $cclist_chosen then it's a compiler we know and
     # we can do flags defaulting with it.  If not, then $cclist_chosen is
     # set to "unrecognised" so no default flags are used.
     #
@@ -805,13 +805,14 @@ for abi in $abilist; do
     # cflags="+cc_cflags" rather than the intended empty string for an
     # unknown compiler.
     #
-    cclist_chosen=unrecognised
-    for i in $cclist_abi; do
+    found=unrecognised
+    for i in $cclist_chosen; do
       if test "$ccbase" = $i; then
-        cclist_chosen=$ccbase
+        found=$ccbase
         break
       fi
     done
+    cclist_chosen=$found
   fi  
 
   for ccbase in $cclist_chosen; do
