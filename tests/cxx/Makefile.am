@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -49,3 +49,17 @@ t_unary_SOURCES   = t-unary.cc
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
+
+
+# Libtool (1.5) somehow botches its uninstalled shared library setups on
+# OpenBSD 3.2, making the C++ test programs here fail.  libgmpxx.so ends up
+# with a NEEDED record asking for ./.libs/libgmp.so.N, but the loader can't
+# find that unless it exists in the current directory.
+#
+# FIXME: Clearly libtool ought to handle this itself, in which case the hack
+# here can be removed.
+#
+# Note this fix applies only when running "make check".  The cp here should
+# be done manually if just one program is to be built and run.
+#
+TESTS_ENVIRONMENT = cp $(top_builddir)/.libs/libgmp.so.* .libs;
