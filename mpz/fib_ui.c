@@ -29,6 +29,23 @@ MA 02111-1307, USA. */
      1. Avoid using 4 intermediate variables in mpz_fib_bigcase.
      2. Call mpn functions directly.  Straightforward for these functions.
      3. Merge the three functions into one.
+
+Said by Kevin Ryde:
+   Consider using the Lucas numbers L[n] as an auxiliary sequence, making
+   it possible to do the "doubling" operation in mpz_fib_bigcase with two
+   squares rather than two multiplies.  The formulas are a little more
+   complicated, something like the following (untested).
+
+       F[2n] = ((F[n]+L[n])^2 - 6*F[n]^2 - 4*(-1)^n) / 2
+       L[2n] = 5*F[n]^2 + 2*(-1)^n
+
+       F[2n+1] = (F[2n] + L[2n]) / 2
+       L[2n+1] = (5*F[2n] + L[2n]) / 2
+
+   The Lucas number that comes for free here could even be returned.
+
+   Maybe there's formulas with two squares using just F[n], but I don't
+   know of any.
 */
 
 /* Determine the needed storage for Fib(n).  */
