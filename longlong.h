@@ -907,9 +907,16 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   } while (0)
 #endif /* __ns32000__ */
 
-/* We should test _IBMR2 here when we add assembly support for the system
-   vendor compilers.  */
-#if (defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)) && W_TYPE_SIZE == 32
+/* FIXME: We should test _IBMR2 here when we add assembly support for the
+   system vendor compilers.  */
+#if (defined (_ARCH_PPC)       /* AIX */                \
+     || defined (_ARCH_PWR)    /* AIX */                \
+     || defined (__powerpc__)  /* gcc */                \
+     || defined (__POWERPC__)  /* BEOS */               \
+     || defined (__ppc__)      /* Darwin */             \
+     || defined (PPC)          /* GNU/Linux, SysV */    \
+     || defined (__vxworks__)  /* VxWorks */            \
+     ) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
@@ -945,7 +952,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define count_leading_zeros(count, x) \
   __asm__ ("{cntlz|cntlzw} %0,%1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
-#if defined (_ARCH_PPC) || defined (__powerpc__)
+#if defined (_ARCH_PPC) || defined (__powerpc__) || defined (__POWERPC__) \
+  || defined (__ppc__) || defined (PPC) || defined (__vxworks__)
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     USItype __m0 = (m0), __m1 = (m1);					\
