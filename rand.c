@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdlib.h>		/* FIXME: For malloc(). */
 #include "gmp.h"
+#include "gmp-impl.h"
 
 /* Array of CL-schemes, ordered in increasing order for the first
    member (the 'bits' value).  The 'm' entry is converted by

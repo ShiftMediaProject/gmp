@@ -6,15 +6,14 @@
 	
 	* gmp.h: Add prototypes for gmp_rand_init_ui() and
 	gmp_rand_init_lc_ui().
-
 	* gmp-impl.h: Add prototypes for __gmp_rand_init_common() and
 	__gmp_rand_init_common_ui().
 
 	* randlc.c, randcm.c, randclr.c, rand.c: Change #include of
 	<gmp.h> to "gmp.h".
-
 	* randclr.c: Include stdlib.h for free().
-	
+	* rand.c: Include gmp-impl.h.
+
 1999-05-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/configure.in: Put generic m68k alternative last.
