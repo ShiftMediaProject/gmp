@@ -2511,7 +2511,7 @@ or if the denominator might be negative, you have to pass @var{rational} to
 copying the sign to the numerator.  That is no longer done.}
 
 This function is equivalent to
-@code{mpz_set (mpq_denref (@var{rational}), @var{denominators})}.
+@code{mpz_set (mpq_denref (@var{rational}), @var{denominator})}.
 @end deftypefun
 
 @deftypefun void mpq_get_num (mpz_t @var{numerator}, mpq_t @var{rational})
