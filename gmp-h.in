@@ -700,6 +700,9 @@ void __GMP_DECLSPEC mpz_gcdext _PROTO ((mpz_ptr, mpz_ptr, mpz_ptr, mpz_srcptr, m
 #define mpz_get_d __gmpz_get_d
 double __GMP_DECLSPEC mpz_get_d _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
+#define mpz_get_d_2exp __gmpz_get_d_2exp
+double __GMP_DECLSPEC mpz_get_d_2exp _PROTO ((signed long int *, mpz_srcptr));
+
 #define mpz_get_si __gmpz_get_si
 /* signed */ long int __GMP_DECLSPEC mpz_get_si _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
@@ -1144,6 +1147,9 @@ void __GMP_DECLSPEC mpf_floor _PROTO ((mpf_ptr, mpf_srcptr));
 
 #define mpf_get_d __gmpf_get_d
 double __GMP_DECLSPEC mpf_get_d _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define mpf_get_d_2exp __gmpf_get_d_2exp
+double __GMP_DECLSPEC mpf_get_d_2exp _PROTO ((signed long int *, mpf_srcptr));
 
 #define mpf_get_default_prec __gmpf_get_default_prec
 unsigned long int __GMP_DECLSPEC mpf_get_default_prec _PROTO ((void)) __GMP_ATTRIBUTE_PURE;
