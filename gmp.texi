@@ -501,8 +501,9 @@ For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
 @item Documentation
 
 The document you're now reading is @file{gmp.texi}.  The usual automake
-targets are available to make @file{gmp.ps} and/or @file{gmp.dvi}.  Some
-supplementary notes can be found in the @file{doc} subdirectory.
+targets are available to make @file{gmp.ps} and/or @file{gmp.dvi}.  HTML can
+be made with @samp{makeinfo --html} or @samp{texi2html}.  Some supplementary
+notes can be found in the @file{doc} subdirectory.
 @end table
 
 
