@@ -358,7 +358,11 @@ check_inexact (void)
   for (px=2; px<MAX_PREC; px++)
     {
       mpfr_set_prec (x, px);
-      mpfr_random (x);
+      do
+        {
+          mpfr_random (x);
+        }
+      while (mpfr_cmp_ui (x, 0) == 0);
       for (pu=2; pu<MAX_PREC; pu++)
 	{
 	  mpfr_set_prec (u, pu);
@@ -370,8 +374,9 @@ check_inexact (void)
 	  for (py=2; py<MAX_PREC; py++)
 	    {
 	      mpfr_set_prec (y, py);
-	      pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x)-MPFR_EXP(u)
-		: MPFR_EXP(u)-MPFR_EXP(x);
+              /* warning: MPFR_EXP is undefined for 0 */
+	      pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x) - MPFR_EXP(u)
+		: MPFR_EXP(u) - MPFR_EXP(x);
 	      pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u));
 	      mpfr_set_prec (z, pz);
 	      rnd = randlimb () % 4;

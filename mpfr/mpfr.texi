@@ -1465,6 +1465,7 @@ which case @var{rop} is set to NaN and 1 is returned.
 
 @deftypefun void mpfr_random (mpfr_t @var{rop})
 Generate a uniformly distributed random float in the interval 0 <= X < 1.
+This function is deprecated and replaced by @code{mpfr_urandomb}.
 @end deftypefun
 
 @deftypefun void mpfr_random2 (mpfr_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})

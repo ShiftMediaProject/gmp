@@ -54,6 +54,10 @@ void tests_rand_end   _PROTO ((void));
 void
 tests_start_mpfr (void)
 {
+  /* don't buffer, so output is not lost if a test causes a segv etc */
+  setbuf (stdout, NULL);
+  setbuf (stderr, NULL);
+
   tests_memory_start ();
   tests_rand_start ();
 }

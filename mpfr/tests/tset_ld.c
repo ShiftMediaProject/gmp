@@ -125,7 +125,8 @@ main (int argc, char *argv[])
   /* checks 2^1024 */
   f = 1.3407807929942597100e155; /* 2^512 */
   d = (long double) f;
-  d = d * d; /* 2^1024 */
+  if (sizeof(long double) > sizeof(double))
+    d = d * d; /* 2^1024 */
   check_set_get (d, x);
 
   /* checks that 2^i, 2^i+1 and 2^i-1 are correctly converted */

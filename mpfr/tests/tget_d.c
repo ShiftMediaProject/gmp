@@ -72,6 +72,34 @@ check_denorms ()
   return fail;
 }
 
+static void
+check_inf_nan ()
+{
+  /* only if nans and infs are available */
+#if _GMP_IEEE_FLOATS
+  mpfr_t  x;
+  double  d;
+
+  mpfr_init2 (x, 123);
+
+  mpfr_set_inf (x, 1);
+  d = mpfr_get_d (x, GMP_RNDZ);
+  ASSERT_ALWAYS (d > 0);
+  ASSERT_ALWAYS (DOUBLE_ISINF (d));
+
+  mpfr_set_inf (x, -1);
+  d = mpfr_get_d (x, GMP_RNDZ);
+  ASSERT_ALWAYS (d < 0);
+  ASSERT_ALWAYS (DOUBLE_ISINF (d));
+
+  mpfr_set_nan (x);
+  d = mpfr_get_d (x, GMP_RNDZ);
+  ASSERT_ALWAYS (DOUBLE_ISNAN (d));
+
+  mpfr_clear (x);
+#endif
+}
+
 int
 main (void)
 {
@@ -80,6 +108,8 @@ main (void)
 
   if (check_denorms ())
     exit (1);
+
+  check_inf_nan ();
 
   tests_end_mpfr ();
   return 0;

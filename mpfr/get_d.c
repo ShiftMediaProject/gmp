@@ -20,26 +20,58 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stddef.h>  /* needed before math.h by gcc 3.2 on hppa2.0w hpux11 */
-
 #include <float.h>
-
-/* For developers: Compile with -DNO_MATH_DEFS to test the alternate
-   macros NAN... defined in mpfr-math.h */
-#ifndef NO_MATH_DEFS
-#include <math.h>
-#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
-#include "mpfr-math.h"
+
 
 static double mpfr_scale2 _PROTO ((double, int));
 
 #define IEEE_DBL_MANT_DIG 53
+
+
+/* "double" NaN and infinities are written as explicit bytes to be sure of
+   getting what we want, and to be sure of not depending on libm.
+
+   Could use 4-byte "float" values and let the code convert them, but it
+   seems more direct to give exactly what we want.  Certainly for gcc 3.0.2
+   on alphaev56-unknown-freebsd4.3 the NaN must be 8-bytes, since that
+   compiler+system was seen incorrectly converting from a "float" NaN.  */
+
+#if _GMP_IEEE_FLOATS
+/* The "d" field guarantees alignment to a suitable boundary for a double.
+   Could use a union instead, if we checked the compiler supports union
+   initializers.  */
+struct dbl_bytes {
+  unsigned char b[8];
+  double d;
+};
+
+#define MPFR_DBL_INFP  (* (double *) dbl_infp.b)
+#define MPFR_DBL_INFM  (* (double *) dbl_infm.b)
+#define MPFR_DBL_NAN   (* (double *) dbl_nan.b)
+
+#if HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
+static struct dbl_bytes dbl_infp = { { 0, 0, 0, 0, 0, 0, 0xF0, 0x7F } };
+static struct dbl_bytes dbl_infm = { { 0, 0, 0, 0, 0, 0, 0xF0, 0xFF } };
+static struct dbl_bytes dbl_nan  = { { 0, 0, 0, 0, 0, 0, 0xF8, 0x7F } };
+#endif
+#if HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
+static struct dbl_bytes dbl_infp = { { 0, 0, 0xF0, 0x7F, 0, 0, 0, 0 } };
+static struct dbl_bytes dbl_infm = { { 0, 0, 0xF0, 0xFF, 0, 0, 0, 0 } };
+static struct dbl_bytes dbl_nan  = { { 0, 0, 0xF8, 0x7F, 0, 0, 0, 0 } };
+#endif
+#if HAVE_DOUBLE_IEEE_BIG_ENDIAN
+static struct dbl_bytes dbl_infp = { { 0x7F, 0xF0, 0, 0, 0, 0, 0, 0 } };
+static struct dbl_bytes dbl_infm = { { 0xFF, 0xF0, 0, 0, 0, 0, 0, 0 } };
+static struct dbl_bytes dbl_nan  = { { 0x7F, 0xF8, 0, 0, 0, 0, 0, 0 } };
+#endif
+#endif
+
 
 /* multiplies 1/2 <= d <= 1 by 2^exp */
 static double
@@ -108,12 +140,24 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
   int negative;
 
   if (MPFR_IS_NAN(src))
-    return MPFR_DBL_NAN;
+    {
+#ifdef MPFR_DBL_NAN
+      return MPFR_DBL_NAN;
+#else
+      DIVIDE_BY_ZERO;
+#endif
+    }
 
   negative = MPFR_SIGN(src) < 0;
 
   if (MPFR_IS_INF(src))
-    return negative ? MPFR_DBL_INFM : MPFR_DBL_INFP;
+    {
+#ifdef MPFR_DBL_INFP
+      return negative ? MPFR_DBL_INFM : MPFR_DBL_INFP;
+#else
+      DIVIDE_BY_ZERO;
+#endif
+    }
 
   if (MPFR_IS_ZERO(src))
     return negative ? -0.0 : 0.0;

@@ -144,21 +144,6 @@ Miscellaneous:
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
 
-- use AC_CHECK_FUNCS for __setfpucw rather than grepping a header file.
-
-- rename (and rewrite) mpfr_isinteger to mpfr_integer_p.
-	(Kevin Ryde, 05 Mar 2002)
-
-- use GMP rand/srand functions instead for SEED_RAND (time(NULL)). Kevin:
-  GMP tests/misc.c has a scheme to print the seed chosen and allow for a
-  re-run with a given seed.  If you moved towards _gmp_rand and friends
-  at some stage you could probably use that scheme almost unchanged.
-  An advantage of _gmp_rand of course is that it's the same on all
-  systems, apart from limb size, so you're not at the mercy of random or
-  lrand48, etc.
-
-- randomized tests: do like GMP (see misc.c), but using MPFR_CHECK_RANDOMIZE
-
 - add tests for nextabove/nextbelow/nexttoward.
 
 - documentation and tests for:
@@ -183,10 +168,6 @@ Reentrancy / Thread-Safety:
 
 Portability:
 
-- MINGW has neither random() nor rand48(), making the setups in
-  mpfr-test.h fail.  It does have rand(), returning just 15 bits.
-  Switching to gmp_randstate_t etc would be better.
-
 - _mpfr_ceil_log2 is IEEE specific.  Many callers only seem to want
   this operation on an integer, which could be done with
   count_leading_zeros from longlong.h.
@@ -197,10 +178,10 @@ Possible future MPF / MPFR integration:
   probably just with GMP_RNDZ hard coded, since that's what mpf has
   always done.
 
-- Want to preserve the mpf_t size, for binary compatibility.  Breaking
-  compatibility would cause lots of pain and potential subtle breakage
-  for users.  If the fields in mpf_t are not enough then extra space
-  under _mp_d can be used.
+- Want to preserve the mpf_t structure size, for binary compatibility.
+  Breaking compatibility would cause lots of pain and potential subtle
+  breakage for users.  If the fields in mpf_t are not enough then
+  extra space under _mp_d can be used.
 
 - mpf_sgn has been a macro directly accessing the _mp_size field, so a
   compatible representation would be required.  At worst that field
