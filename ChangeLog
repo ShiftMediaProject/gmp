@@ -1,3 +1,45 @@
+2001-08-17  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, acinclude.m4, Makefile.am, printf/Makefile.am,
+	tests/printf/Makefile.am, gmp-h.in, gmp-impl.h, gmp.texi: Remove C++
+	support, for the time being.
+	* printf/doprntfx.cc, doprntix.cc, osfuns.cc, osmpf.cc, osmpq.cc,
+	osmpz.cc, tests/printf/t-ostream.cc: Remove files.
+	
+	* printf/doprnt.c, printf/doprntf.c, gmp-impl.h: Use a single
+	__gmp_doprnt_mpf, rather than a separate ndigits calculation.
+	* printf/doprnt.c, printf/doprntf.c, gmp-impl.h, gmp.texi,
+	tests/printf/t-printf.c: Let empty or -1 prec mean all digits for mpf.
+	* printf/doprnt.c, tests/printf/t-printf.c: Accept h or l in %n; let
+	negative "*" style width mean left justify.
+
+	* gmp-impl.h, mpf/get_str.c (MPF_SIGNIFICANT_DIGITS): New macro,
+	extracted from mpf/get_str.c.
+
+	* libmp.sym: New file.
+	* Makefile.am (libmp_la_LDFLAGS): Use it.
+	(DISTCLEANFILES): Remove asm-syntax.h, no longer generated.
+	Remove some comments about "make check".
+
+	* demos/perl/GMP.pm, GMP.xs, GMP/Mpf.pm: Add printf and sprintf,
+	change get_str to string/exponent for floats, remove separate
+	mpf_get_str.
+	* demos/perl/GMP/Mpf.pm (overload_string): Use $# (default "%.g").
+	* demos/perl/typemap: Fix some duplicate string entries.
+	* demos/perl/test.pl: Update tests, split overloaded constants into ...
+	* demos/perl/test2.pl: ... this new file.
+	* demos/perl/Makefile.PL (clean): Add test.tmp.
+	
+2001-08-16  Kevin Ryde  <kevin@swox.se>
+
+	* printf/snprntffuns.c (gmp_snprintf_format): Correction to bufsize-1
+	return value handling.
+
+	* demos/calc/calc.y: Reposition "%{" so copyright notice gets into
+	generated files.
+
+	* INSTALL: Use gmp_printf.
+
 2001-08-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/inp_str.c: Fix return value (was 1 too big).
