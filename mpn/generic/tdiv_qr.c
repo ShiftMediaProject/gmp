@@ -293,7 +293,12 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 
 	    /* Get an approximate quotient using the extracted operands.  */
 	    if (qn == 1)
-	      n2p[0] = mpn_divmod_1 (qp, n2p, 2L, d2p[0]);
+	      {
+		mp_limb_t q0, r0;
+		udiv_qrnnd (q0, r0, n2p[1], n2p[0], d2p[0]);
+		n2p[0] = r0;
+		qp[0] = q0;
+	      }
 	    else if (qn == 2)
 	      mpn_divrem_2 (qp, 0L, n2p, 4L, d2p);
 	    else if (qn < BZ_THRESHOLD)
