@@ -65,7 +65,16 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  pp = TMP_ALLOC_LIMBS (un + 2);
+  
+  /*
+     As the approximate root can be larger than the actual root by at most
+     a factor of 2 , we need to allow space for another "nth" bits when 
+     powering it using mpn_pow_1 , this is a large overestimate that only
+     applies in rare cases i.e. when k is large and the root is small
+     FIXME : change this awful allocation before gmp 4.2
+  */
+  
+  pp = TMP_ALLOC_LIMBS (un + 2 + (nth - 1) / GMP_NUMB_BITS + 1);
 
   count_leading_zeros (cnt, up[un - 1]);
   unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
