@@ -1,3 +1,50 @@
+2000-04-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4: Add a test and message for the unsuitable SunOS m4.
+	* gmp.texi (Installing MP): Update note on SunOS m4 failure.
+
+	* acconfig.h: Add copyright notice using @TOP@.
+
+	* stack-alloc.c: Use _mp_allocate_func, not malloc.
+	* gmp.texi (Installing MP): Note this under --disable-alloca.
+
+	* gmp.texi (Comparison Functions): mpz_cmp_abs => mpz_cmpabs.
+	(Integer Arithmetic): mpz_prime_p not yet implemented, comment out.
+	(Float Arithmetic): mpf_pow_ui now implemented, uncomment-out.
+	(Miscellaneous Float Functions): Add mpf_ceil, mpf_floor, mpf_trunc.
+	(Low-level Functions): Add mpn_random2, with mpn_random.
+
+	* mpbsd/Makefile.am (nodist_libmpbsd_la_SOURCES): Add errno.c.
+	* Makefile.am (MPBSD_OBJECTS): Add mpbsd/errno.lo.
+
+	* mpn/m68k/mc68020/udiv.S: Rename from udiv.s.
+	* mpn/m68k/mc68020/umul.S: Ditto.
+
+	* mpn/alpha/umul.asm: Rename from umul.s, remove .file and
+	compiler identifiers.
+
+	* mpn/powerpc32/syntax.h: Removed, no longer used.
+
+	* mpn/a29k/udiv.s: Remove .file and compiler identifiers.
+	* mpn/a29k/umul.s: Ditto.
+
+	* mpn/tests/ref.c: Use WANT_ASSERT.
+	* mpn/tests/ref.h: Use _PROTO.
+
+	* mpbsd/configure.in: Removed, no longer required.
+
+	* mpf/div.c: Use DIVIDE_BY_ZERO.
+	* mpf/div_ui.c: Ditto.
+	* mpf/ui_div.c: Ditto.
+	* mpq/inv.c: Ditto.
+	* mpf/sqrt.c: Use SQRT_OF_NEGATIVE.
+	* mpz/sqrt.c: Ditto.
+	* mpz/sqrtrem.c: Ditto.
+
+	* gmp-impl.h (GMP_ERROR,SQRT_OF_NEGATIVE): New macros.
+	(DIVIDE_BY_ZERO): Use GMP_ERROR.
+	(__mp_bases): #define to __MPN(mp_bases).
+
 2000-04-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/fib_ui.c: Add alternate non-ANSI function definitions.
