@@ -355,8 +355,8 @@ tuneup_measure (speed_function_t fun,
   s->size += param->size_extra;
 
   TMP_MARK (marker);
-  s->xp = SPEED_TMP_ALLOC_LIMBS (s->size, 0);
-  s->yp = SPEED_TMP_ALLOC_LIMBS (s->size, 0);
+  SPEED_TMP_ALLOC_LIMBS (s->xp, s->size, 0);
+  SPEED_TMP_ALLOC_LIMBS (s->yp, s->size, 0);
 
   mpn_random (s->xp, s->size);
   mpn_random (s->yp, s->size);
@@ -1608,8 +1608,8 @@ all (void)
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  s.xp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, 0);
-  s.yp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, 0);
+  SPEED_TMP_ALLOC_LIMBS (s.xp_block, SPEED_BLOCK_SIZE, 0);
+  SPEED_TMP_ALLOC_LIMBS (s.yp_block, SPEED_BLOCK_SIZE, 0);
 
   mpn_random (s.xp_block, SPEED_BLOCK_SIZE);
   mpn_random (s.yp_block, SPEED_BLOCK_SIZE);

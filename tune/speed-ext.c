@@ -1,6 +1,6 @@
 /* An example of extending the speed program to measure routines not in GMP.
 
-Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -187,7 +187,7 @@ mean_open2 (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size)
     SPEED_RESTRICT_COND (s->size >= 1);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
     speed_operand_src (s, s->yp, s->size);              \
