@@ -1,4 +1,5 @@
-/* Return true if the command line argument is a (probable) prime.
+/* Classify numbers as probable primes, primes or composites.
+   With -q return true if the folowing argument is a (probable) prime.
 
 Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 
@@ -18,11 +19,47 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include <stdio.h>
 #include "gmp.h"
 
+char *progname;
+
 main (int argc, char **argv)
 {
   mpz_t n;
+  int i;
+
+  progname = argv[0];
+
+  if (argc < 2)
+    print_usage_and_exit ();
 
   mpz_init (n);
-  mpz_set_str (n, argv[1], 0);
-  return ! mpz_probab_prime_p (n, 10);
+
+  if (argc == 3 && strcmp (argv[1], "-q") == 0)
+    {
+      if (mpz_set_str (n, argv[2], 0) != 0)
+	print_usage_and_exit ();
+      exit (mpz_probab_prime_p (n, 5) == 0);
+    }
+
+  for (i = 1; i < argc; i++)
+    {
+      int class;
+      if (mpz_set_str (n, argv[i], 0) != 0)
+	print_usage_and_exit ();
+      class = mpz_probab_prime_p (n, 5);
+      mpz_out_str (stdout, 10, n);
+      if (class == 0)
+	puts (" is composite");
+      else if (class == 1)
+	puts (" is a probable prime");
+      else /* class == 2 */
+	puts (" is a prime");
+    }
+  exit (0);
+}
+
+print_usage_and_exit ()
+{
+  fprintf (stderr, "usage: %s -q nnn\n", progname);
+  fprintf (stderr, "usage: %s nnn ...\n", progname);
+  exit (-1);
 }
