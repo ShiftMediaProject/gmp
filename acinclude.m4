@@ -2256,7 +2256,9 @@ dnl  GMP_FUNC_SSCANF_WRITABLE_INPUT
 dnl  ------------------------------
 dnl  Determine whether sscanf requires a writable input string.
 dnl
-dnl  FIXME: Run a program to try this, when doing a native build.
+dnl  It might be nicer to run a program to determine this when doing a
+dnl  native build, but the systems afflicted are few and far between these
+dnl  days, so it seems good enough just to list them.
 
 AC_DEFUN(GMP_FUNC_SSCANF_WRITABLE_INPUT,
 [AC_CACHE_CHECK([whether sscanf needs writable input],
