@@ -154,7 +154,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	std	a16, [%sp+2223+8]
 	std	a32, [%sp+2223+16]
 	std	a48, [%sp+2223+24]
-	addcc	%i2, 8, %i2
+	add	%i2, 8, %i2
 
 	fdtox	r64, a00
 	fdtox	r80, a16
@@ -164,7 +164,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	ldx	[%sp+2223+24], i48
 	std	a00, [%sp+2223+0]
 	std	a16, [%sp+2223+8]
-	addcc	%i2, 8, %i2
+	add	%i2, 8, %i2
 
 	mov	i00, %g5		C i00+ now in g5
 	ldx	[%sp+2223+0], i00
@@ -185,8 +185,8 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	add	%l6, %o2, %o2		C mi64- in %o2
 	sub	%o2, %o3, %o2		C mi64 in %o2   1st ASSIGNMENT
 	add	cy, %g5, %o4		C x = prev(i00) + cy
-	addcc	%i2, 8, %i2
-	b,a	.L_out_1
+	b	.L_out_1
+	add	%i2, 8, %i2
 
 .L_two_or_more:
 	ld	[%i5+%i2], %f3		C read low 32 bits of up[i]
@@ -233,7 +233,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	std	a16, [%sp+2223+8]
 	std	a32, [%sp+2223+16]
 	std	a48, [%sp+2223+24]
-	addcc	%i2, 8, %i2
+	add	%i2, 8, %i2
 
 	fdtox	r64, a00
 	mov	i00, %g5		C i00+ now in g5
@@ -258,8 +258,8 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	add	%l6, %o2, %o2		C mi64- in %o2
 	sub	%o2, %o3, %o2		C mi64 in %o2   1st ASSIGNMENT
 	add	cy, %g5, %o4		C x = prev(i00) + cy
-	addcc	%i2, 8, %i2
-	b,a	.L_out_2
+	b	.L_out_2
+	add	%i2, 8, %i2
 
 .L_three_or_more:
 	ld	[%i5+%i2], %f3		C read low 32 bits of up[i]
@@ -325,8 +325,8 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	std	a48, [%sp+2223+24]
 	sub	%o2, %o3, %o2		C mi64 in %o2   1st ASSIGNMENT
 	add	cy, %g5, %o4		C x = prev(i00) + cy
-	addcc	%i2, 8, %i2
-	b,a	.L_out_3
+	b	.L_out_3
+	add	%i2, 8, %i2
 
 .L_four_or_more:
 	ld	[%i5+%i2], %f3		C read low 32 bits of up[i]
