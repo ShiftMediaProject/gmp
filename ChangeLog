@@ -1,3 +1,9 @@
+2000-05-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/bz_divrem_n.c (mpn_bz_divrem_n): Handle non-zero return
+	from first mpn_bz_div_3_halves_by_2 call.
+	(mpn_bz_divrem_aux): Likewise.
+
 2000-04-30  Kevin Ryde  <kevin@swox.se>
 
 	* tune/* (GCD_ACCEL_THRESHOLD, GCDEXT_THRESHOLD): Tune these.
@@ -19,6 +25,14 @@
 	* gmp-impl.h: (MP_PTR_SWAP, etc): New macros.
 	(_mp_allocate_func, etc): Use _PROTO.
 	[TUNE_PROGRAM_BUILD]: More changes in tune program build part.
+
+2000-04-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64/add_n.s: Add `,entry' to export directive.
+	* mpn/pa64/{addmul_1.S,lshift.s,mul_1.S,rshift.s,sub_n.s,submul_1.S,
+	umul_ppmm.S}: Likewise.
+	* mpn/hppa/hppa1_1/udiv_qrnnd.S: New name for udiv_qrnnd.s.
+	Add PIC support.
 
 2000-04-29  Kevin Ryde  <kevin@swox.se>
 
@@ -73,11 +87,6 @@
 
 	* configure.in (*-*-aix* gmp_m4postinc): Fix setting (don't overwrite
 	a value just stored).
-
-2000-04-28  Torbjorn Granlund  <tege@swox.com>
-
-	* mpn/hppa/hppa1_1/udiv_qrnnd.S: New name for udiv_qrnnd.s.
-	Add PIC support.
 
 2000-04-26  Kevin Ryde  <kevin@swox.se>
 
