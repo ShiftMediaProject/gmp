@@ -1,3 +1,26 @@
+2000-04-16  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.h (mp_set_memory_functions,mp_bits_per_limb,gmp_errno): Add
+	#defines so the library symbols are __gmp_*.
+	* gmp-impl.h (_mp_allocate_func,etc): Ditto.
+	(__clz_tab): Add #define to __MPN(clz_tab).
+
+	* Makefile.am (libmp_la_DEPENDENCIES): Add some mpz files needed
+	for new mpz_powm (pow in libmp).
+	(EXTRA_DIST): Add projects directory.
+
+	* mpn/*: Change __mpn to __gmpn.
+	* gmp.h (__MPN): Ditto.
+	* stack_alloc.c,stack-alloc.h: Change __tmp to __gmp_tmp.
+	
+	* mpn/generic/sb_divrem_mn.c (mpn_sb_divrem_mn): Avoid gcc 2.7.2.3
+	i386 register handling bug (same as previously in mpn_divrem_classic).
+
+	* mpn/generic/divrem.c: Now contains mpn_divrem, which is not an
+	internal function, so remove warning comment.
+
+	* gmp.texi (Compatibility with Version 2.0.x): Source level only.
+
 2000-04-16  Linus Nordberg  <linus@swox.se>
 
 	* configure.in (hppa1.0*): Prefer c89 to cc.
@@ -1091,7 +1114,7 @@
 2000-02-27  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/divrem.c (mpn_divrem_classic): Patch to avoid gcc
-	2.7.2.3 register handling bug.
+	2.7.2.3 i386 register handling bug.
 
 	* mpn/x86/k6/aors_n.asm: Rewrite.
 	* mpn/x86/k6/mmx/lshift.asm: Rewrite.
