@@ -18,6 +18,27 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-06  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/alpha/mode1o.c: Remove, in favour of ...
+	* mpn/alpha/mode1o.asm: New file.
+
+	* tune/amd64.asm: Save rbx in r10 rather than on the stack.
+
+	* configure.in (x86_64-*-*): Try also "-march=k8 -mno-sse2", in case
+	we're in ABI=32 on an old OS not supporting xmm regs.
+	(GMP_GCC_PENTIUM4_SSE2, GMP_OS_X86_XMM): Run these tests under
+	-march=k8 too, and not under ABI=64.
+	
+	* doc/gmp.texi (Converting Integers): For mpz_get_d, note truncation
+	and overflows.  For mpz_get_d_2exp note truncation, note result if
+	OP==0, and cross reference libc frexp.
+	(Rational Conversions): For mpq_get_d, note truncation and overflows.
+	(Converting Floats): For mpf_get_d, note truncation and overflows.
+	For mpf_get_d_2exp, note truncation, note result if OP==0.
+	(Assembler Code Organisation): Note nails subdirectories.
+	Clarification of get_d_2exp OP==0 reported by Sylvain Pion.
+	
 2004-05-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mullow_n.c, mpn/generic/mullow_basecase.c: New files
