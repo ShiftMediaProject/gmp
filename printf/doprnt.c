@@ -467,7 +467,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             /* "void *" will be good enough for "char *" or "wchar_t *", no
                need for separate code.  */
             (void) va_arg (ap, const void *);
-            break;
+            goto next;
             
           case 'x':
             param.base = 16;
