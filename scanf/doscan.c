@@ -66,62 +66,119 @@ MA 02111-1307, USA. */
 #define TRACE(x)
 
 
-/* It's necessary to parse up the string to recognise the GMP extra types F,
-   Q and Z.  Other types and conversions are passed across to the standard
-   sscanf or fscanf via funs->scan, for ease of implemenation.  This is
-   essential in the case of something like glibc %p where the pointer format
-   isn't actually documented.
+/* General:
 
-   Because funs->scan doesn't get the whole input it can't put the right
-   values in for %n, so that's handled in __gmp_doscan.  Neither sscanf nor
-   fscanf directly indicate how many characters were read, so an extra %n is
-   appended to each run for that.  For fscanf this merely supports our %n
-   output, but for sscanf it lets funs->step move us along the input string.
+       It's necessary to parse up the format string to recognise the GMP
+       extra types F, Q and Z.  Other types and conversions are passed
+       across to the standard sscanf or fscanf via funs->scan, for ease of
+       implemenation.  This is essential in the case of something like glibc
+       %p where the pointer format isn't actually documented.
 
-   Whitespace and literal matches in the format string, including %%, are
-   handled directly within __gmp_doscan.  This is reasonably efficient, and
-   avoids some suspicious behaviour observed in various system libc's.
-   GLIBC 2.2.4 for instance returns 0 on sscanf(" "," x") or on sscanf(" ",
-   " x%d",&n), whereas we think they should return EOF, since end-of-string
-   is reached when a match of "x" is required.
+       Because funs->scan doesn't get the whole input it can't put the right
+       values in for %n, so that's handled in __gmp_doscan.  Neither sscanf
+       nor fscanf directly indicate how many characters were read, so an
+       extra %n is appended to each run for that.  For fscanf this merely
+       supports our %n output, but for sscanf it lets funs->step move us
+       along the input string.
 
-   For standard % conversions, funs->scan is called once for each
-   conversion.  If we had vfscanf and vsscanf and could rely on their fixed
-   text matching behaviour then we could call them with multiple consecutive
-   standard conversions.  But plain fscanf and sscanf work fine, and parsing
-   one field at a time shouldn't be too much of a slowdown.
+       Whitespace and literal matches in the format string, including %%,
+       are handled directly within __gmp_doscan.  This is reasonably
+       efficient, and avoids some suspicious behaviour observed in various
+       system libc's.  GLIBC 2.2.4 for instance returns 0 on
 
-   gmpscan reads a gmp type.  It's only used from one place, but is a
-   separate subroutine to avoid a big chunk of complicated code in the
-   middle of __gmp_doscan.  Within gmpscan a couple of loopbacks make it
-   possible to share code for parsing integers, rationals and floats.
+           sscanf(" ", " x")
+       or
+           sscanf(" ", " x%d",&n)
 
-   In gmpscan normally one char of lookahead is maintained, but when width
-   is reached that stops, on the principle that an fgetc/ungetc of a char
-   past where we're told to stop would be undesirable.  "chars" is how many
-   characters have been read so far, including the current c.  When
-   chars==width and another character is desired then a jump is done to the
-   "convert" stage.  c is invalid and mustn't be unget'ed in this case;
-   chars is set to width+1 to indicate that.
+       whereas we think they should return EOF, since end-of-string is
+       reached when a match of "x" is required.
 
-   gmpscan normally returns the number of characters read.  -1 means an
-   invalid field, like a "-" or "+" alone.  -2 means EOF reached before any
-   matching characters were read.
+       For standard % conversions, funs->scan is called once for each
+       conversion.  If we had vfscanf and vsscanf and could rely on their
+       fixed text matching behaviour then we could call them with multiple
+       consecutive standard conversions.  But plain fscanf and sscanf work
+       fine, and parsing one field at a time shouldn't be too much of a
+       slowdown.
 
-   Consideration was given to using a separate code for gmp_fscanf and
-   gmp_sscanf.  The sscanf case could zip across a string making literal
-   matches or recognising digits in gmpscan, rather than making a function
-   call fun->get per character.  The fscanf could use getc rather than fgetc
-   too, which might help those systems where getc is a macro or otherwise
-   inlined.  But none of this scanning and converting will be particularly
-   fast, so the two are done together to keep it a bit simpler for now.
+   gmpscan:
 
-   Enhancements:
+       gmpscan reads a gmp type.  It's only used from one place, but is a
+       separate subroutine to avoid a big chunk of complicated code in the
+       middle of __gmp_doscan.  Within gmpscan a couple of loopbacks make it
+       possible to share code for parsing integers, rationals and floats.
 
-   A way to read the GLIBC printf %a format that we support in gmp_printf
-   would be good.  That would probably be good for plain GLIBC scanf too, so
-   perhaps we can simply follow its lead if it gets such a feature in the
-   future.  */
+       In gmpscan normally one char of lookahead is maintained, but when width
+       is reached that stops, on the principle that an fgetc/ungetc of a char
+       past where we're told to stop would be undesirable.  "chars" is how many
+       characters have been read so far, including the current c.  When
+       chars==width and another character is desired then a jump is done to the
+       "convert" stage.  c is invalid and mustn't be unget'ed in this case;
+       chars is set to width+1 to indicate that.
+
+       gmpscan normally returns the number of characters read.  -1 means an
+       invalid field, -2 means EOF reached before any matching characters
+       were read.
+
+       For hex floats, the mantissa part is passed to mpf_set_str, then the
+       exponent is applied with mpf_mul_exp or mpf_div_2exp.  This is easier
+       than teaching mpf_set_str about an exponent factor (ie. 2) differing
+       from the mantissa radix point factor (ie. 16).  mpf_mul_exp and
+       mpf_div_2exp will preserve the application requested precision, so
+       nothing in that respect is lost by making this a two-step process.
+
+   Matching and errors:
+
+       C99 7.19.6.2 paras 9 and 10 say an input item is read as the longest
+       string which is a match for the appropriate type, or a prefix of a
+       match.  With that done, if it's only a prefix then the result is a
+       matching failure, ie. invalid input.
+
+       This rule seems fairly clear, but doesn't seem to be universally
+       applied in system C libraries.  Even GLIBC doesn't seem to get it
+       right, insofar as it seems to accept some apparently invalid forms.
+       Eg. glibc 2.3.1 accepts "0x" for a "%i", where a reading of the
+       standard would suggest a non-empty sequence of digits should be
+       required after an "0x".
+
+       A footnote to 7.19.6.2 para 17 notes how this input item reading can
+       mean inputs acceptable to strtol are not acceptable to fscanf.  We
+       think this confirms our reading of "0x" as invalid.
+
+       Clearly gmp_sscanf could backtrack to a longest input which was a
+       valid match for a given item, but this is not done, since C99 says
+       sscanf is identical to fscanf, so we make gmp_sscanf identical to
+       gmp_fscanf.
+
+   Types:
+
+       C99 says "ll" is for long long, and "L" is for long double floats.
+       Unfortunately in GMP 4.1.1 we documented the two as equivalent.  This
+       doesn't affect us directly, since both are passed through to plain
+       scanf.  It seems wisest not to try to enforce the C99 rule.  This is
+       consistent with what we said before, though whether it actually
+       worked was always up to the C library.
+
+   Alternatives:
+
+       Consideration was given to using separate code for gmp_fscanf and
+       gmp_sscanf.  The sscanf case could zip across a string doing literal
+       matches or recognising digits in gmpscan, rather than making a
+       function call fun->get per character.  The fscanf could use getc
+       rather than fgetc too, which might help those systems where getc is a
+       macro or otherwise inlined.  But none of this scanning and converting
+       will be particularly fast, so the two are done together to keep it a
+       little simpler for now.
+
+       Various multibyte string issues are not addressed, for a start C99
+       scanf says the format string is multibyte.  Since we pass %c, %s and
+       %[ to the system scanf, they might do multibyte reads already, but
+       it's another matter whether or not that can be used, since our digit
+       and whitespace parsing is only unibyte.  The plan is to quietly
+       ignore multibyte locales for now.  This is not as bad as it sounds,
+       since GMP is presumably used mostly on numbers, which can be
+       perfectly adequately treated in plain ASCII.
+
+*/
 
 
 struct gmp_doscan_params_t {
@@ -160,8 +217,8 @@ static int
 gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
          const struct gmp_doscan_params_t *p, void *dst)
 {
-  int     chars, c, base, first, width, seen_point, seen_digit;
-  size_t  s_upto, s_alloc;
+  int     chars, c, base, first, width, seen_point, seen_digit, hexfloat;
+  size_t  s_upto, s_alloc, hexexp;
   char    *s;
   int     invalid = 0;
 
@@ -176,14 +233,16 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
   chars = 1;
   first = 1;
   seen_point = 0;
-  seen_digit = 0;
   width = (p->width == 0 ? INT_MAX-1 : p->width);
   base = p->base;
   s_alloc = S_ALLOC_STEP;
   s = __GMP_ALLOCATE_FUNC_TYPE (s_alloc, char);
   s_upto = 0;
+  hexfloat = 0;
+  hexexp = 0;
 
  another:
+  seen_digit = 0;
   if (c == '-')
     {
       STORE (c);
@@ -198,17 +257,22 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
 
   if (base == 0)
     {
-      base = 10;
+      base = 10;                  /* decimal if no base indicator */
       if (c == '0')
         {
-          seen_digit = 1;
-          base = 8;
+          seen_digit = 1;         /* 0 alone is a valid number */
+          if (p->type != 'F')
+            base = 8;             /* leading 0 is octal, for non-floats */
           STORE (c);
           GET (c);
           if (c == 'x' || c == 'X')
             {
               base = 16;
-              STORE (c);
+              seen_digit = 0;     /* must have digits after an 0x */
+              if (p->type == 'F') /* don't pass 'x' to mpf_set_str_point */
+                hexfloat = 1;
+              else
+                STORE (c);
               GET (c);
             }
         }
@@ -255,7 +319,7 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
                   if (pc == '\0')
                     break;
                   if (c != pc)
-                    goto invalid;
+                    goto set_invalid;
                 }
               seen_point = 1;
               goto digits;
@@ -263,18 +327,28 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
         }
 
       /* exponent */
-      if (p->type == 'F' && (c == 'e' || c == 'E'))
+      if (p->type == 'F')
         {
-          /* must have at least one digit in the mantissa, just an exponent
-             is not good enough */
-          if (! seen_digit)
-            goto invalid;
+          if (hexfloat && (c == 'p' || c == 'P'))
+            {
+              hexexp = s_upto; /* exponent location */
+              base = 10;       /* exponent in decimal */
+              goto exponent;
+            }
+          else if (! hexfloat && (c == 'e' || c == 'E'))
+            {
+            exponent:
+              /* must have at least one digit in the mantissa, just an exponent
+                 is not good enough */
+              if (! seen_digit)
+                goto set_invalid;
 
-        exponent:
-          first = 0;
-          STORE (c);
-          GET (c);
-          goto another;
+            do_second:
+              first = 0;
+              STORE (c);
+              GET (c);
+              goto another;
+            }
         }
 
       /* denominator */
@@ -282,21 +356,21 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
         {
           /* must have at least one digit in the numerator */
           if (! seen_digit)
-            goto invalid;
+            goto set_invalid;
 
           /* now look for at least one digit in the denominator */
           seen_digit = 0;
 
           /* allow the base to be redetermined for "%i" */
           base = p->base;
-          goto exponent;
+          goto do_second;
         }
     }
 
  convert:
   if (! seen_digit)
     {
-    invalid:
+    set_invalid:
       invalid = 1;
       goto done;
     }
@@ -310,8 +384,22 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
          mpz_set_str etc with an ASSERT.  */
       switch (p->type) {
       case 'F':
-        ASSERT (p->base == 10);
-        ASSERT_NOCARRY (mpf_set_str ((mpf_ptr) dst, s, 10));
+        {
+          mpf_ptr  f = (mpf_ptr) dst;
+          if (hexexp != 0)
+            s[hexexp] = '\0';
+          ASSERT_NOCARRY (mpf_set_str (f, s, hexfloat ? 16 : 10));
+          if (hexexp != 0)
+            {
+              char *dummy;
+              long  exp;
+              exp = strtol (s + hexexp + 1, &dummy, 10);
+              if (exp >= 0)
+                mpf_mul_2exp (f, f, (unsigned long) exp);
+              else
+                mpf_div_2exp (f, f, - (unsigned long) exp);
+            }
+        }
         break;
       case 'Q':
         ASSERT_NOCARRY (mpq_set_str ((mpq_ptr) dst, s, p->base));
@@ -444,7 +532,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
         }
 
       param.type = '\0';
-      param.base = 10;
+      param.base = 0;    /* for e,f,g,i */
       param.ignore = 0;
       param.width = 0;
 
@@ -539,12 +627,16 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
             goto next;
 
           case 'd':   /* decimal */
+          case 'u':   /* decimal */
+            param.base = 10;
+            goto numeric;
+
           case 'e':   /* float */
           case 'E':   /* float */
           case 'f':   /* float */
           case 'g':   /* float */
           case 'G':   /* float */
-          case 'u':   /* decimal */
+          case 'i':   /* integer with base marker */
           numeric:
             if (param.type != 'F' && param.type != 'Q' && param.type != 'Z')
               goto libc_type;
@@ -584,8 +676,6 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
             param.type = 'H';   /* internal code for "hh" */
             break;
 
-          case 'i':
-            param.base = 0;
             goto numeric;
 
           case 'l':   /* long, long long, double or long double */
