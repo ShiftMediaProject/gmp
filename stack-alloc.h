@@ -35,6 +35,10 @@ struct tmp_marker
 
 typedef struct tmp_marker tmp_marker;
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 #if __STDC__
 void *__gmp_tmp_alloc (unsigned long);
 void __gmp_tmp_mark (tmp_marker *);
@@ -43,6 +47,10 @@ void __gmp_tmp_free (tmp_marker *);
 void *__gmp_tmp_alloc ();
 void __gmp_tmp_mark ();
 void __gmp_tmp_free ();
+#endif
+
+#if defined (__cplusplus)
+}
 #endif
 
 #ifndef __TMP_ALIGN
