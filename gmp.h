@@ -280,6 +280,7 @@ void mpq_clear _PROTO ((mpq_ptr));
 void mpq_set _PROTO ((mpq_ptr, mpq_srcptr));
 void mpq_set_ui _PROTO ((mpq_ptr, unsigned long int, unsigned long int));
 void mpq_set_si _PROTO ((mpq_ptr, signed long int, unsigned long int));
+void mpq_set_z _PROTO ((mpq_ptr, mpz_srcptr));
 void mpq_add _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_sub _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_mul _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
