@@ -28,6 +28,6 @@ MA 02111-1307, USA.
 #undef MOD_1_UNNORM_THRESHOLD
 #define MOD_1_NORM_THRESHOLD    0
 #define MOD_1_UNNORM_THRESHOLD  0
-#define __gmpn_mod_1  mpn_mod_1_mul
+#define __gmpn_mod_1  mpn_mod_1_inv
 
 #include "mpn/generic/mod_1.c"
