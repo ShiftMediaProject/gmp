@@ -2376,6 +2376,16 @@ temporary memory is allocated in blocks which GMP divides up for its own use,
 or may be allocated with a compiler builtin @code{alloca} which will go
 nowhere near any malloc debugger hooks.
 
+@item Maximum Debuggability
+To summarize the above, a GMP build for maximum debuggability would be
+
+@example
+./configure --disable-shared --enable-assert \
+  --enable-alloca=debug --host=none CFLAGS=-g
+@end example
+
+For C++, add @samp{--enable-cxx CXXFLAGS=-g}.
+
 @item Checker
 @cindex Checker
 @cindex GCC Checker
