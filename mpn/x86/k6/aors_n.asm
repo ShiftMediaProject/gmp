@@ -37,19 +37,19 @@ dnl  Maximum possible with the current code is 64.
 deflit(UNROLL_COUNT, 16)
 
 
-ifdef(`OPERATION_ADD', `
+ifdef(`OPERATION_add_n', `
 	define(M4_inst,        adcl)
 	define(M4_function_n,  mpn_add_n)
 	define(M4_function_nc, mpn_add_nc)
 	define(M4_description, add)
 	define(M4_bitdesc,     carry)
-',`ifdef(`OPERATION_SUB', `
+',`ifdef(`OPERATION_sub_n', `
 	define(M4_inst,        sbbl)
 	define(M4_function_n,  mpn_sub_n)
 	define(M4_function_nc, mpn_sub_nc)
 	define(M4_description, subtract)
 	define(M4_bitdesc,     borrow)
-',`m4_error(`Need OPERATION_ADD or OPERATION_SUB
+',`m4_error(`Need OPERATION_add_n or OPERATION_sub_n
 ')')')
 
 
@@ -157,7 +157,7 @@ deflit(`FRAME',12)
 	cmpl	%ebx, %edi
 	je	L(inplace)
 
-ifdef(`OPERATION_ADD',`
+ifdef(`OPERATION_add_n',`
 	# reverse overlap can be handled in add
 	cmpl	%edx, %edi
 	je	L(inplace_reverse)
@@ -199,7 +199,7 @@ L(pic_ret):
 	ALIGN(16)
 deflit(`FRAME',12)
 
-ifdef(`OPERATION_ADD',`
+ifdef(`OPERATION_add_n',`
 L(inplace_reverse):
 	movl	%ebx, %edx
 ')
