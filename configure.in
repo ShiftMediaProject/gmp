@@ -224,15 +224,10 @@ fi
 #
 # SPEED_CYCLECOUNTER, cyclecounter_size and CALLING_CONVENTIONS_OBJS are
 # also set here, with an ABI suffix.
-#
-#
-# "family" is a remant of past configuration schemes, now used only for
-# setting up asm-syntax.h for m68k.
 
 
 # abilist needs to be non-empty, "standard" is just a generic name here
 abilist="standard"
-family=generic
 
 # FIXME: Prefer c89 to cc.
 cclist="gcc cc"
@@ -433,7 +428,7 @@ case $host in
   # are.  Nexts in particular are certainly at least 68020.
   #
   m68*-*-*)
-    family=m68k
+    GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
     gcc_cflags="-g $fomit_frame_pointer"
     gcc_cflags_optlist="optimize arch"
     gcc_cflags_optimize="-O2"   # changed below on gcc 2.95.x
@@ -457,7 +452,8 @@ case $host in
     # the bitfield instructions.
     case $host in
     [m680[01]0-*-*]) path="m68k" ;; 
-    *)               path="m68k/mc68020 m68k" ;;
+    *)               path="m68k/mc68020 m68k"
+                     extra_functions="udiv umul" ;;
     esac
     ;;
 
@@ -1256,29 +1252,6 @@ esac
 AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info read_real_time strtoul sysconf sysctl sysctlbyname times)
 
 
-# Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
-syntax=
-# For now, we use the old switch for setting syntax.  
-# FIXME: Remove when conversion to .asm is completed.
-changequote(,)
-case $host in
-  m680[234]0*-*-linuxaout* | m68k*-*-linuxaout* | \
-  m68k-next-nextstep* | \
-  m68000*-*-*)
-    syntax=mit
-    ;;
-  m680[234]0*-*-linux* | m68k*-*-linux*)
-    syntax=elf
-    ;;
-  m680[234]0*-*-* | m68k*-*-*)
-    syntax=mit
-    ;;
-esac
-changequote([,])
-
-
-
-
 # Pick the correct source files in $path and link them to mpn/.
 # $gmp_mpn_functions lists all functions we need.
 #
@@ -1440,6 +1413,11 @@ if test "$gmp_asm_syntax_testing" != no; then
   GMP_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
 
   case $host in
+    m68*-*-*)
+      GMP_ASM_M68K_INSTRUCTION
+      GMP_ASM_M68K_ADDRESSING
+      GMP_ASM_M68K_BRANCHES
+      ;;
     power*-*-*)
       GMP_ASM_POWERPC_R_REGISTERS
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
@@ -1456,21 +1434,6 @@ if test "$gmp_asm_syntax_testing" != no; then
         GMP_ASM_X86_MCOUNT
       fi
       ;;
-  esac
-
-  # Build an asm-syntax.h file for hosts that include that from the
-  # assembly files.
-  # FIXME: Remove when conversion to .asm is completed.
-  #
-  case "${family}-${underscore}-${asm_align}-${syntax}" in
-    m68k-yes-log-mit)
-      echo '#define MIT_SYNTAX' >asm-syntax.h
-      cat $srcdir/mpn/underscore.h >>asm-syntax.h
-      echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
-    m68k-no-nolog-elf)
-      echo '#define ELF_SYNTAX' >asm-syntax.h
-      echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
-      echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
   esac
 fi
 
