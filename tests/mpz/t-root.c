@@ -36,7 +36,7 @@ main (int argc, char **argv)
   mpz_t temp, temp2;
   mp_size_t x2_size;
   int i;
-  int reps = 5000;
+  int reps = 1000;
   unsigned long nth;
   gmp_randstate_ptr rands;
   mpz_t bs;
