@@ -26,10 +26,11 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* The x86s and m68020 and up have a "div" instruction, and gcc recognises
-   an adjacent "/" and "%" can be combined using that.  Elsewhere "/" and
-   "%" are subroutine calls which unfortunately aren't combined, we think a
-   multiply and subtract will be faster than a "%".  */
+/* The x86s and m68020 have a quotient and remainder "div" instruction and
+   gcc recognises an adjacent "/" and "%" can be combined using that.
+   Elsewhere "/" and "%" are either separate instructions, or separate
+   libgcc calls (which unfortunately gcc as of version 3.0 doesn't combine).
+   A multiply and subtract should be faster than a "%" in those cases.  */
 #if HAVE_HOST_CPU_FAMILY_x86            \
   || HAVE_HOST_CPU_m68020               \
   || HAVE_HOST_CPU_m68030               \
