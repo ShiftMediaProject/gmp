@@ -42,7 +42,7 @@ main (argc, argv)
   mp_size_t bprec = 100;
   mpf_t d, rerr, max_rerr, limit_rerr;
   char *str;
-  long bexp;
+  mp_exp_t bexp;
   long size, exp;
   int base;
   char buf[SIZE * BITS_PER_MP_LIMB + 5];
