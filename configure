@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.89
+# From configure.in Revision: 1.90
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4009,7 +4009,7 @@ echo "$ECHO_T""$gmp_cv_c_ansi2knr" 1>&6
 if test $gmp_cv_c_ansi2knr = no; then
   U= ANSI2KNR=
 else
-  U=  ANSI2KNR=./ansi2knr
+  U=_ ANSI2KNR=./ansi2knr
   # Ensure some checks needed by ansi2knr itself.
 
 echo $ECHO_N "checking for ANSI C header files... $ECHO_C" 1>&6
