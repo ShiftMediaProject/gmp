@@ -110,6 +110,11 @@ mpf_sub (r, u, v)
 
 		  if (usize == 0)
 		    {
+		      if (vsize > prec)
+			{
+			  vp += vsize - prec;
+			  vsize = prec;
+			}
 		      rsize = vsize;
 		      tp = (mp_ptr) vp;
 		      negate ^= 1;
@@ -117,6 +122,11 @@ mpf_sub (r, u, v)
 		    }
 		  if (vsize == 0)
 		    {
+		      if (usize > prec)
+			{
+			  up += usize - prec;
+			  usize = prec;
+			}
 		      rsize = usize;
 		      tp = (mp_ptr) up;
 		      goto normalize;
