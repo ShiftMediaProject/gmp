@@ -27,7 +27,7 @@ LIBS = @MPFR_LIBS@
 LDADD = libfrtests.a $(MPFR_LIBM) ../libmpfr.a $(top_builddir)/libgmp.la
 
 libfrtests_a_SOURCES = memory.c rnd_mode.c tests.c
-EXTRA_libfrtests_a_SOURCES = x86.asm
+EXTRA_libfrtests_a_SOURCES = amd64.asm x86.asm
 libfrtests_a_DEPENDENCIES = $(TESTS_ASM_OBJECTS)
 libfrtests_a_LIBADD = $(libfrtests_a_DEPENDENCIES)
 
