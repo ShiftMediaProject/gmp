@@ -948,9 +948,9 @@ if test $found_compiler = yes; then
   CPPFLAGS="$cppflags"
 
 
-  # Can easily have this in config.h too, if desired.
-# disable for now, it breaks `.asm' builds on HP-PA
-#  GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_ABI_$ABI')", POST)
+  # Could easily have this in config.h too, if desired.
+  ABI_nodots=`echo $ABI | sed 's/\./_/'`
+  GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_ABI_$ABI_nodots')", POST)
 
 
   # GMP_LDFLAGS substitution, selected according to ABI.
