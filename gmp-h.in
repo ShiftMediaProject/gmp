@@ -885,19 +885,19 @@ void mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_sr
 #endif
 
 #define mpn_incr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = p;			\
-    __x = *__p + incr;					\
+  do { mp_limb_t __x; mp_ptr __p = (p);			\
+    __x = *__p + (incr);				\
     *__p = __x;						\
-    if (__x < incr)					\
+    if (__x < (incr))					\
       while (++(*(++__p)) == 0)				\
         ;						\
   } while (0)
 
 #define mpn_decr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = p;			\
+  do { mp_limb_t __x; mp_ptr __p = (p);			\
     __x = *__p;						\
-    *__p = __x - incr;					\
-    if (__x < incr)					\
+    *__p = __x - (incr);				\
+    if (__x < (incr))					\
       while ((*(++__p))-- == 0)				\
         ;						\
   } while (0)
