@@ -114,6 +114,7 @@
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
      <code>count_leading_zeros</code>.
+
 </ul>
 
 
@@ -230,6 +231,9 @@
      generated from a gmp.in based on what's in the library.  gmp.h
      would still be compiler-independent though.
 
+<li> Make versions of <code>mpz_set_str</code> etc taking string
+     lengths rather than null-terminators.
+
 </ul>
 
 
@@ -310,9 +314,9 @@
        SysV 14 char names.
 
   <li> Enable support for FORTRAN versions of mpn files (eg. for
-       mpn/cray/mulww.f).  This means AC_PROG_F77 under relevant
-       targets and an "f" suffix in the mpn_path searching.  Hopefully
-       automake will generate everything we need in the makefiles.
+       mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
+       AC_PROG_F77 if such a file is found, .  Hopefully automake will
+       generate everything needed in the makefiles.
 
 </ul>
 
@@ -343,8 +347,9 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Make mpz_invert call mpn_gcdext directly.
 
 <li> Make a build option to enable execution profiling with gprof.  In
-     particular look at getting the right mcount call at the start of
-     each assembler subroutine (for important targets at least).
+     particular look at getting the right <code>mcount</code> call at
+     the start of each assembler subroutine (for important targets at
+     least).
 </ul>
 
 
