@@ -65,7 +65,7 @@ main (int argc, char **argv)
       mpz_rrandomb (x2, rands, x2_size);
 
       mpz_urandomb (bs, rands, 5L);
-      nth = mpz_getlimbn (bs, 0) % mpz_sizeinbase (x2, 2) + 1;
+      nth = mpz_getlimbn (bs, (mp_size_t) 0) % mpz_sizeinbase (x2, 2) + 1;
 
       mpz_urandomb (bs, rands, 2);
       bsi = mpz_get_ui (bs);
