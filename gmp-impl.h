@@ -206,8 +206,14 @@ union tmp_align_t {
 #define __TMP_ALIGN  sizeof (union tmp_align_t)
 
 /* Return "a" rounded upwards to a multiple of "m", if it isn't already.
-   "a" must be an unsigned type.  */
-#define ROUND_UP_MULTIPLE(a,m)  ((a) + (-(a))%(m))
+   "a" must be an unsigned type.
+   This is designed for use with a compile-time constant "m".
+   The POW2 case is expected to be usual, and gcc 3.0 and up recognises
+   "(-(8*n))%8" or the like is always zero, which means the rounding up in
+   the WANT_TMP_NOTREENTRANT version of TMP_ALLOC below will be a noop.  */
+#define ROUND_UP_MULTIPLE(a,m)          \
+  (POW2_P(m) ? (a) + (-(a))%(m)         \
+   : (a)+(m)-1 - (((a)+(m)-1) % (m)))
 
 #if WANT_TMP_ALLOCA
 /* Each TMP_ALLOC is simply an alloca(), and nothing else is needed.
@@ -246,8 +252,6 @@ void *__gmp_tmp_alloc _PROTO ((unsigned long)) ATTRIBUTE_MALLOC;
 void __gmp_tmp_mark _PROTO ((tmp_marker *));
 void __gmp_tmp_free _PROTO ((tmp_marker *));
 #define TMP_DECL(marker) tmp_marker marker
-/* gcc recognises "(-(8*n))%8" or the like is always zero, which means the
-   rounding up is a noop for allocs of whole limbs. */
 #define TMP_ALLOC(size) \
   __gmp_tmp_alloc (ROUND_UP_MULTIPLE ((unsigned long) (size), __TMP_ALIGN))
 #define TMP_MARK(marker) __gmp_tmp_mark (&marker)
