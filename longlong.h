@@ -454,7 +454,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 	   : "=a" (w0), "=d" (w1)					\
 	   : "%0" ((USItype)(u)), "rm" ((USItype)(v)))
 #define udiv_qrnnd(q, r, n1, n0, dx) /* d renamed to dx avoiding */	\
-  __asm__ ("divl %4"			stringification in K&R C	\
+  __asm__ ("divl %4"		     /* stringification in K&R C */	\
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "rm" ((USItype)(dx)))
 #define count_leading_zeros(count, x) \
