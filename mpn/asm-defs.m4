@@ -93,6 +93,9 @@ dnl       pushed back.  The limit is reasonably big and so long as macros
 dnl       don't gratuitously duplicate big arguments it isn't a problem.
 dnl       Normally an error message is given, but sometimes it just hangs.
 dnl
+dnl  eval() bitwise - GNU and SysV m4 have bitwise operators &,|,^
+dnl       available, but BSD m4 doesn't and instead ^ is exponentiation.
+dnl
 dnl  eval() ?: - The C ternary operator "?:" is available in BSD m4, but not
 dnl       in SysV or GNU m4 (as of GNU m4 1.4 and betas of 1.5).
 dnl
