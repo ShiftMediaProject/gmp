@@ -30,7 +30,7 @@
 	.set	noreorder
 	.set	volatile
 	.set	noat
-.rdata
+.text
 	.align	3
 $C36:
 	.t_floating	9223372036854775808.0
@@ -93,7 +93,7 @@ $73:
 	addq	$30,16,$30
 	ret	$31,($26),1
 	.end	__mpn_invert_normalized_limb
-.rdata
+.text
 	.align 1
 invtab:
 	.word 0xffff,0xffc0,0xff80,0xff40,0xff00,0xfec0,0xfe81,0xfe41
