@@ -1,6 +1,6 @@
 dnl  Alpha mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 1996, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
