@@ -1,14 +1,93 @@
-The (poorly optimized) code in this directory was originally written for a
-j90 system, but finished on a c90.  It should work on all Cray vector
-computers.  For the T3E and T3D systems, the `alpha' subdirectory at the
-same level as the directory containing this file, is much better.
+The code in this directory works for Cray vector systems such as C90,
+J90, T90 (both the CFP variant and the IEEE variant) and SV1.  (For
+the T3E and T3D systems, see the `alpha' subdirectory at the same
+level as the directory containing this file.)
 
-* `+' seems to be faster than `|' when combining carries.
+The cfp subdirectory is for systems utilizing the traditional Cray
+floating-point format, and the ieee subdirectory is for the newer
+systems that use the IEEE floating-point format.  
 
-* It is possible that the best multiply performance would be achived by
-  storing only 24 bits per element, and using lazy carry propagation.  Before
-  calling i24mult, full carry propagation would be needed.
+For best speed for cfp systems, we need a mul_basecase, since that
+reduces the need for carry propagation to a minimum.  Depending on the
+size (vn) of the smaller of the two operands (V), we should split U and V
+in different chunk sizes:
 
-* Supply tasking versions of the C loops.
+U split in 2 32-bit parts
+V split according to the table:
+parts			4	5	6	7	8
+bits/part		16	13	11	10	8
+max allowed vn		1	8	32	64	256
+number of multiplies	8	10	12	14	16
+peak cycles/limb	4	5	6	7	8
+
+U split in 3 22-bit parts
+V split according to the table:
+parts			3	4	5
+bits/part		22	16	13
+max allowed vn		16	1024	8192
+number of multiplies	9	12	15
+peak cycles/limb	4.5	6	7.5
+
+U split in 4 16-bit parts
+V split according to the table:
+parts			4
+bits/part		16
+max allowed vn		65536
+number of multiplies	16
+peak cycles/limb	8
+
+(Each T90 CPU can accumulate two products per cycle.)
 
 
+The corresponding tables for ieee systems:
+
+U split in 2 32-bit parts
+V split according to the table:
+parts			4	5	6	7	8
+bits/part		16	13	11	10	8
+max allowed vn		32	256	1024	2048	8192
+number of multiplies	8	10	12	14	16
+
+U split in 3 22-bit parts
+V split according to the table:
+parts			3	4	5
+bits/part		22	16	13
+max allowed vn		512	32768	262144
+number of multiplies	9	12	15
+
+U split in 4 16-bit parts
+V split according to the table:
+parts			4
+bits/part		16
+max allowed vn		2097152
+number of multiplies	16
+
+
+IDEAS:
+* Rewrite mpn_add_n:
+    short cy[n + 1];
+    #pragma _CRI ivdep
+      for (i = 0; i < n; i++)
+	{ s = up[i] + vp[i];
+	  rp[i] = s;
+	  cy[i + 1] = s < up[i]; }
+      more_carries = 0;
+    #pragma _CRI ivdep
+      for (i = 1; i < n; i++)
+	{ s = rp[i] + cy[i];
+	  rp[i] = s;
+	  more_carries += s < cy[i]; }
+      cys = 0;
+      if (more_carries)
+	{
+	  cys = rp[1] < cy[1];
+	  for (i = 2; i < n; i++)
+	    { rp[i] += cys;
+	      cys = rp[i] < cys; }
+	}
+      return cys + cy[n];
+
+* Write mpn_add3_n for adding three operands.  First add operands 1
+  and 2, and generate cy[].  Then add operand 3 to the partial result,
+  and accumulate carry into cy[].  Finally propagate carry just like
+  in the new mpn_add_n.
