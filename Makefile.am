@@ -159,7 +159,7 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/powm$U.lo mpbsd/sub$U.lo mpbsd/cmp$U.lo mpbsd/mfree$U.lo	\
   mpbsd/mtox$U.lo mpbsd/realloc$U.lo mpbsd/gcd$U.lo mpbsd/itom$U.lo	\
-  mpbsd/min$U.lo mpbsd/mul$U.lo mpbsd/mout$U.lo mpbsd/pow_ui$U.lo	\
+  mpbsd/min$U.lo mpbsd/mul$U.lo mpbsd/mout$U.lo mpbsd/rpow$U.lo		\
   mpbsd/sdiv$U.lo mpbsd/sqrtrem$U.lo mpbsd/xtom$U.lo
 
 
@@ -186,6 +186,7 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 
 # The selected mpz objects here support mpz/powm.c (built as mpbsd/powm.lo)
 # and can probably be removed when that switches to an mpn implementation.
+# (Apart from mpz/n_pow_ui$U.lo, which supports mpbsd/rpow.c)
 
 if WANT_MPBSD
 MPBSD_HEADERS_OPTION = mp.h
@@ -195,7 +196,8 @@ libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
   mp_minv_tab.c mp_set_fns.c stack-alloc.c
 libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
   mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
-  mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/realloc$U.lo mpz/set$U.lo		\
+  mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
+  mpz/realloc$U.lo mpz/set$U.lo						\
   mpz/set_ui$U.lo mpz/tdiv_r$U.lo mpz/sub$U.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
 libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
