@@ -32,8 +32,6 @@ END-INFO-DIR-ENTRY
 @ifinfo
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
 
-This is a draft edition of the documentation, last updated April 1996.
-
 Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
@@ -65,7 +63,7 @@ by the Foundation.
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
 @subtitle Edition 2.0
-@subtitle April 1996
+@subtitle May 1996
 
 @author by Torbj@"orn Granlund, TMG Datakonsult
 
@@ -109,8 +107,8 @@ by the Foundation.
 
 @top GNU MP
 
-This manual documents how to install and use the GNU Multiple Precision
-Arithmetic Library, version 2.0.
+This manual documents how to install and use the GNU multiple precision
+arithmetic library, version 2.0.
 
 @end ifinfo
 
@@ -205,7 +203,7 @@ Everyone should read @ref{MP Basics}.  If you need to install the library
 yourself, you need to read @ref{Installing MP}, too.
 
 The rest of the manual can be used for later reference, although it is
-probably a good idea too glance through it.
+probably a good idea to glance through it.
 
 
 @node Installing MP, MP Basics, Introduction to MP, Top
@@ -654,6 +652,7 @@ These functions assign new values to already initialized integers
 @deftypefunx void mpz_set_ui (mpz_t @var{rop}, unsigned long int @var{op})
 @deftypefunx void mpz_set_si (mpz_t @var{rop}, signed long int @var{op})
 @deftypefunx void mpz_set_d (mpz_t @var{rop}, double @var{op})
+@deftypefunx void mpz_set_q (mpz_t @var{rop}, mpq_t @var{op})
 @deftypefunx void mpz_set_f (mpz_t @var{rop}, mpf_t @var{op})
 Set the value of @var{rop} from @var{op}.
 @end deftypefun
@@ -708,12 +707,8 @@ Initialize @var{rop} with limb space and set the initial numeric value from
 @end deftypefun
 
 @deftypefun int mpz_init_set_str (mpz_t @var{rop}, char *@var{str}, int @var{base})
-Initialize @var{rop} and set its value from @var{str}, a '\0'-terminated C
-string in base @var{base}.  White space is allowed in the string, and is simply
-ignored.  The base may vary from 2 to 36.  If @var{base} is 0, the actual base
-is determined from the leading characters: if the first two characters are `0x'
-or `0X', hexadecimal is assumed, otherwise if the first character is `0', octal
-is assumed, otherwise decimal is assumed.
+Initialize @var{rop} and set its value like @code{mpz_set_str} (see its
+documentation above for details).
 
 If the string is a correct base @var{base} number, the function returns 0;
 if an error occurs it returns @minus{}1.  @var{rop} is initialized even if
@@ -728,14 +723,14 @@ an error occurs.  (I.e., you have to call @code{mpz_clear} for it.)
 @cindex Conversion functions
 
 This section describes functions for converting arbitrary precision integers
-to standard C types.  Functions for converting @strong{to} arbitrary
+to standard C types.  Functions for converting @emph{to} arbitrary
 precision integers are described in @ref{Assigning Integers} and @ref{I/O of
 Integers}.
 
 @deftypefun {unsigned long int} mpz_get_ui (mpz_t @var{op})
 Return the least significant part from @var{op}.  This function combined
 with @* @code{mpz_tdiv_q_2exp(@dots{}, @var{op}, CHAR_BIT*sizeof(unsigned
-long int))} can be used to extract the limbs of an integer efficiently.
+long int))} can be used to extract the limbs of an integer.
 @end deftypefun
 
 @deftypefun {signed long int} mpz_get_si (mpz_t @var{op})
@@ -746,6 +741,10 @@ as @var{op}.
 If @var{op} is too large to fit in a @code{signed long int}, the returned
 result is probably not very useful.  @c To find out if the value will fit, use
 @c the function @code{mpz_fits_si}.
+@end deftypefun
+
+@deftypefun double mpz_get_d (mpz_t @var{op})
+Convert @var{op} to a double.
 @end deftypefun
 
 @deftypefun {char *} mpz_get_str (char *@var{str}, int @var{base}, mpz_t @var{op})
@@ -763,7 +762,6 @@ character.
 @end deftypefun
 
 
-@need 2000
 @node Integer Arithmetic, Comparison Functions, Converting Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Arithmetic Functions
@@ -772,7 +770,14 @@ character.
 
 @deftypefun void mpz_add (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_add_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
 Set @var{rop} to @var{op1} + @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1} + @var{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun void mpz_sub (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -782,8 +787,42 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 
 @deftypefun void mpz_mul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_mul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
 Set @var{rop} to @var{op1} times @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1} \times @var{op2}$.
+@end tex
+@end iftex
 @end deftypefun
+
+@deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Set @var{rop} to @var{op1} times 2 raised to @var{op2}.  This operation can
+also be defined as a left shift, @var{op2} steps.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1} \times 2^{op2}$.  This operation can also be
+defined as a left shift, @var{op2} steps.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_neg (mpz_t @var{rop}, mpz_t @var{op})
+Set @var{rop} to @minus{}@var{op}.
+@end deftypefun
+
+@deftypefun void mpz_abs (mpz_t @var{rop}, mpz_t @var{op})
+Set @var{rop} to the absolute value of @var{op}.
+@end deftypefun
+
+@deftypefun void mpz_fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
+Set @var{rop} to @var{op}!, the factorial of @var{op}.
+@end deftypefun
+
+@subsection Division functions
 
 Division is undefined if the divisor is zero, and passing a zero divisor to
 the divide or modulo functions, as well passing a zero mod argument to the
@@ -815,13 +854,13 @@ computed.  Functions that compute both the quotient and remainder have
 
 @deftypefun void mpz_tdiv_q (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_tdiv_q_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to [@var{op1} / @var{op2}].  The quotient is truncated towards
+Set @var{rop} to [@var{op1}/@var{op2}].  The quotient is truncated towards
 0.
 @end deftypefun
 
 @deftypefun void mpz_tdiv_r (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_tdiv_r_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to (@var{op1} - [@var{op1} / @var{op2}] * @var{op2}).
+Set @var{rop} to (@var{op1} - [@var{op1}/@var{op2}] * @var{op2}).
 Unless the remainder is zero, it has the same sign as the dividend.
 @end deftypefun
 
@@ -838,17 +877,13 @@ undefined.
 @deftypefun void mpz_fdiv_q (mpz_t @var{rop1}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_fdiv_q_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 @ifinfo
-Set @var{rop} to @var{op1} / @var{op2}.  The quotient is rounded towards
+Set @var{rop} to @var{op1}/@var{op2}.  The quotient is rounded towards
 @minus{}infinity.
 @end ifinfo
 @iftex
-Set @var{rop} to
 @tex
-$\lfloor@var{op1} / @var{op2}\rfloor$.
-@end tex
-(I.e., round the quotient towards
-@tex
-$-\infty$.)
+Set @var{rop} to $\lfloor@var{op1}/@var{op2}\rfloor$.  (I.e., round
+the quotient towards $-\infty$.)
 @end tex
 @end iftex
 @end deftypefun
@@ -883,17 +918,13 @@ returned; it is not stored anywhere.
 @deftypefun void mpz_cdiv_q (mpz_t @var{rop1}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_cdiv_q_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 @ifinfo
-Set @var{rop} to @var{op1} / @var{op2}.  The quotient is rounded towards
+Set @var{rop} to @var{op1}/@var{op2}.  The quotient is rounded towards
 +infinity.
 @end ifinfo
 @iftex
-Set @var{rop} to
 @tex
-$\lceil@var{op1} / @var{op2}\rceil$.
-@end tex
-(I.e., round the quotient towards
-@tex
-$+\infty$.)
+Set @var{rop} to $\lceil@var{op1}/@var{op2}\rceil$.  (I.e., round the
+quotient towards $+\infty$.)
 @end tex
 @end iftex
 @end deftypefun
@@ -935,7 +966,7 @@ For @code{mpz_mod_ui} the remainder is small enough to fit in an
 @end deftypefun
 
 @deftypefun void mpz_divexact (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-Set @var{rop} to @var{op1} / @var{op2}.  This function produces correct
+Set @var{rop} to @var{op1}/@var{op2}.  This function produces correct
 results only when it is known in advance that @var{op2} divides
 @var{op1}.
 
@@ -945,16 +976,84 @@ instances in which exact division is known to occur, such as reducing a
 rational to lowest terms.
 @end deftypefun
 
+@deftypefun void mpz_tdiv_q_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.  The quotient is
+rounded towards 0.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1}/2^{op2}$.  The quotient is rounded towards 0.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_tdiv_r_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Divide @var{op1} by (2 raised to @var{op2}) and put the remainder in
+@var{rop}.  Unless it is zero, @var{rop} will have the same sign as @var{op1}.
+@end ifinfo
+@iftex
+@tex
+Divide @var{op1} by $2^{op2}$ and put the remainder in @var{rop}.  Unless it is
+zero, @var{rop} will have the same sign as @var{op1}.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_fdiv_q_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.  The quotient is
+rounded towards @minus{}infinity.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $\lfloor@var{op1}/2^{op2}\rfloor$.  The quotient is rounded
+towards $-\infty$.
+@end tex
+@end iftex
+@end deftypefun
+
+@deftypefun void mpz_fdiv_r_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
+Divide @var{op1} by (2 raised to @var{op2}) and put the remainder in
+@var{rop}.  The sign of @var{rop} will always be positive.
+@end ifinfo
+@iftex
+@tex
+Divide @var{op1} by $2^{op2}$ and put the remainder in @var{rop}.  The sign of
+@var{rop} will always be positive.
+@end tex
+@end iftex
+
+This operation can also be defined as masking of the @var{op2} least
+significant bits.
+@end deftypefun
+
+@subsection Exponentialization Functions
+
+@deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
+@deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
+Set @var{rop} to (@var{base} raised to @var{exp}) @code{mod} @var{mod}.  If
+@var{exp} is negative, the result is undefined.
+@end deftypefun
+
+@deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
+@deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
+Set @var{rop} to @var{base} raised to @var{exp}.
+@end deftypefun
+
+@subsection Square Root Functions
+
 @deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
 @ifinfo
 Set @var{rop} to the truncated integer part of the square root of
 @var{op}.
 @end ifinfo
 @iftex
-Set @var{rop} to
 @tex
-$\lfloor\sqrt{@var{op}}\rfloor$, the truncated integer part of the square
-root of @var{op}.
+Set @var{rop} to $\lfloor\sqrt{@var{op}}\rfloor$, the truncated integer
+part of the square root of @var{op}.
 @end tex
 @end iftex
 @end deftypefun
@@ -966,13 +1065,9 @@ like @code{mpz_sqrt}.  Set @var{rop2} to
 @var{op}@minus{}@var{rop1}*@var{rop1},
 @end ifinfo
 @iftex
-Set @var{rop1} to
 @tex
-$\lfloor\sqrt{@var{op}}\rfloor$,
-@end tex
-like @code{mpz_sqrt}.  Set @var{rop2} to
-@tex
-$(@var{op} - @var{rop1}^2)$,
+Set @var{rop1} to $\lfloor\sqrt{@var{op}}\rfloor$, like @code{mpz_sqrt}.
+Set @var{rop2} to $(@var{op} - @var{rop1}^2)$,
 @end tex
 @end iftex
 (i.e., zero if @var{op} is a perfect square).
@@ -986,14 +1081,18 @@ Return non-zero if @var{op} is a perfect square, i.e., if the square root of
 @var{op} is an integer.  Return zero otherwise.
 @end deftypefun
 
+@subsection Number Theoretic Functions
+
 @deftypefun int mpz_probab_prime_p (mpz_t @var{op}, int @var{reps})
+@ifinfo
 If this function returns 0, @var{op} is definitely not prime.  If it returns
 1, then @var{op} is `probably' prime.  The probability of a false positive is
-@ifinfo
 (1/4)**@var{reps}.
 @end ifinfo
 @iftex
 @tex
+If this function returns 0, @var{op} is definitely not prime.  If it returns
+1, then @var{op} is `probably' prime.  The probability of a false positive is
 $(1/4)^{{reps}}$.
 @end tex
 @end iftex
@@ -1001,21 +1100,6 @@ A reasonable value of reps is 25.
 
 An implementation of the probabilistic primality test found in Seminumerical
 Algorithms (@pxref{References} Knuth).
-@end deftypefun
-
-@deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
-@deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
-Set @var{rop} to (@var{base} raised to @var{exp}) @code{mod} @var{mod}.  If
-@var{exp} is negative, the result is undefined.
-@end deftypefun
-
-@deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
-@deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
-Set @var{rop} to @var{base} raised to @var{exp}.
-@end deftypefun
-
-@deftypefun void mpz_fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
-Set @var{rop} to @var{op}!, the factorial of @var{op}.
 @end deftypefun
 
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -1044,43 +1128,12 @@ Compute the inverse of @var{op1} modulo @var{op2} and put the result in
 function returns zero, do not assume anything about the value in @var{rop}.
 @end deftypefun
 
-@deftypefun void mpz_neg (mpz_t @var{rop}, mpz_t @var{op})
-Set @var{rop} to @minus{}@var{op}.
+@deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx int mpz_legendre (mpz_t @var{op1}, mpz_t @var{op2})
+Compute the Jacobi and Legendre symbols, respectively.
 @end deftypefun
 
-@deftypefun void mpz_abs (mpz_t @var{rop}, mpz_t @var{op})
-Set @var{rop} to the absolute value of @var{op}.
-@end deftypefun
-
-@deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @var{op1} times 2 raised to @var{op2}.  This operation can
-also be defined as a left shift, @var{op2} steps.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_q_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.  The quotient is
-rounded towards 0.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_q_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.  The quotient is
-rounded towards @minus{}infinity.
-@end deftypefun
-
-@deftypefun void mpz_tdiv_r_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by (2 raised to @var{op2}) and put the remainder in
-@var{rop}.  The sign of @var{rop} will have the same sign as @var{op1}, unless
-is becomes zero.
-@end deftypefun
-
-@deftypefun void mpz_fdiv_r_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Divide @var{op1} by (2 raised to @var{op2}) and put the remainder in
-@var{rop}.  The sign of @var{rop} will always be positive.
-
-This operation can also be defined as masking of the @var{op2} least
-significant bits.
-@end deftypefun
-
+@need 2000
 @node Comparison Functions, Integer Logic and Bit Fiddling, Integer Arithmetic, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Comparison Functions
@@ -1088,13 +1141,29 @@ significant bits.
 @deftypefun int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
+@ifinfo
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
-@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1}
-< @var{op2}.
+@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
+@var{op2}.
+@end ifinfo
+@iftex
+@tex
+Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
+@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
+< @var{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun int mpz_sgn (mpz_t @var{op})
+@ifinfo
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
+@end ifinfo
+@iftex
+@tex
+Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
+@end tex
+@end iftex
 @end deftypefun
 
 @node Integer Logic and Bit Fiddling, I/O of Integers, Comparison Functions, Integer Functions
@@ -1307,6 +1376,7 @@ function for all @code{mpq_t} variables when you are done with them.
 @end deftypefun
 
 @deftypefun void mpq_set (mpq_t @var{rop}, mpq_t @var{op})
+@deftypefunx void mpq_set_z (mpq_t @var{rop}, mpz_t @var{op})
 Assign @var{rop} from @var{op}.
 @end deftypefun
 
@@ -1330,11 +1400,18 @@ Set @var{difference} to @var{minuend} @minus{} @var{subtrahend}.
 @end deftypefun
 
 @deftypefun void mpq_mul (mpq_t @var{product}, mpq_t @var{multiplier}, mpq_t @var{multiplicand})
-Set @var{product} to @var{multiplier} times @var{multiplicand}
+@ifinfo
+Set @var{product} to @var{multiplier} times @var{multiplicand}.
+@end ifinfo
+@iftex
+@tex
+Set @var{product} to $@var{multiplier} \times @var{multiplicand}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun void mpq_div (mpq_t @var{quotient}, mpq_t @var{dividend}, mpq_t @var{divisor})
-Set @var{quotient} to @var{dividend} / @var{divisor}.
+Set @var{quotient} to @var{dividend}/@var{divisor}.
 @end deftypefun
 
 @deftypefun void mpq_neg (mpq_t @var{negated_operand}, mpq_t @var{operand})
@@ -1342,7 +1419,7 @@ Set @var{negated_operand} to @minus{}@var{operand}.
 @end deftypefun
 
 @deftypefun void mpq_inv (mpq_t @var{inverted_number}, mpq_t @var{number})
-Set @var{inverted_number} to 1 / @var{number}.  If the new denominator is
+Set @var{inverted_number} to 1/@var{number}.  If the new denominator is
 zero, this routine will divide by zero.
 @end deftypefun
 
@@ -1351,24 +1428,50 @@ zero, this routine will divide by zero.
 @section Comparison Functions
 
 @deftypefun int mpq_cmp (mpq_t @var{op1}, mpq_t @var{op2})
+@ifinfo
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
+@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
+< @var{op2}$.
+@end tex
+@end iftex
 
 To determine if two rationals are equal, @code{mpq_equal} is faster than
 @code{mpq_cmp}.
 @end deftypefun
 
 @deftypefun int mpq_cmp_ui (mpq_t @var{op1}, unsigned long int @var{num2}, unsigned long int @var{den2})
+@ifinfo
 Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
 @var{op1} > @var{num2}/@var{den2}, zero if @var{op1} = @var{num2}/@var{den2},
 and a negative value if @var{op1} < @var{num2}/@var{den2}.
+@end ifinfo
+@iftex
+@tex
+Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
+$@var{op1} > @var{num2}/@var{den2}$, zero if $@var{op1} =
+@var{num2}/@var{den2}$, and a negative value if $@var{op1} <
+@var{num2}/@var{den2}$.
+@end tex
+@end iftex
 
 This routine allows that @var{num2} and @var{den2} have common factors.
 @end deftypefun
 
 @deftypefun int mpq_sgn (mpq_t @var{op})
+@ifinfo
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
+@end ifinfo
+@iftex
+@tex
+Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun int mpq_equal (mpq_t @var{op1}, mpq_t @var{op2})
@@ -1397,6 +1500,10 @@ The @code{mpz} functions can be used on the result of these macros.
 @node Miscellaneous Rational Functions, , Applying Integer Functions, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
+
+@deftypefun double mpq_get_d (mpq_t @var{op})
+Convert @var{op} to a double.
+@end deftypefun
 
 These functions assign between either the numerator or denominator of a
 rational, and an integer.  Instead of using these functions, it is preferable
@@ -1522,6 +1629,7 @@ Free the space occupied by @var{x}.  Make sure to call this function for all
 @code{mpf_t} variables when you are done with them.
 @end deftypefun
 
+@need 2000
 Here is an example on how to initialize floating-point variables:
 @example
 @{
@@ -1571,8 +1679,8 @@ These functions assign new values to already initialized floats
 @deftypefunx void mpf_set_ui (mpf_t @var{rop}, unsigned long int @var{op})
 @deftypefunx void mpf_set_si (mpf_t @var{rop}, signed long int @var{op})
 @deftypefunx void mpf_set_d (mpf_t @var{rop}, double @var{op})
-@deftypefunx void mpf_set_q (mpf_t @var{rop}, mpq_t @var{op})
 @deftypefunx void mpf_set_z (mpf_t @var{rop}, mpz_t @var{op})
+@deftypefunx void mpf_set_q (mpf_t @var{rop}, mpq_t @var{op})
 Set the value of @var{rop} from @var{op}.
 @end deftypefun
 
@@ -1639,6 +1747,10 @@ set by @code{mpf_set_default_prec}.
 @section Conversion Functions
 @cindex Conversion functions
 
+@deftypefun double mpf_get_d (mpf_t @var{op})
+Convert @var{op} to a double.
+@end deftypefun
+
 @deftypefun {char *} mpf_get_str (char *@var{str}, mp_exp_t *@var{expptr}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
 Convert @var{op} to a string of digits in base @var{base}.  The base may vary
 from 2 to 36.  Generate at most @var{n_digits} significant digits, or if
@@ -1674,7 +1786,14 @@ returned as "31416" in the string and 1 written at @var{expptr}.
 
 @deftypefun void mpf_add (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_add_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
 Set @var{rop} to @var{op1} + @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1} + @var{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun void mpf_sub (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
@@ -1685,7 +1804,14 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 
 @deftypefun void mpf_mul (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_mul_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
 Set @var{rop} to @var{op1} times @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1} \times @var{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 Division is undefined if the divisor is zero, and passing a zero divisor to
@@ -1696,18 +1822,24 @@ functions in the same manner as other arithmetic exceptions.
 @deftypefun void mpf_div (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_ui_div (mpf_t @var{rop}, unsigned long int @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_div_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @var{op1} / @var{op2}.
-rounded towards 0.
+Set @var{rop} to @var{op1}/@var{op2}.
 @end deftypefun
 
 @deftypefun void mpf_sqrt (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_sqrt_ui (mpf_t @var{rop}, unsigned long int @var{op})
+@ifinfo
 Set @var{rop} to the square root of @var{op}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $\sqrt{@var{op}}$.
+@end tex
+@end iftex
 @end deftypefun
 
-@deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @var{op1} raised to @var{op2}.
-@end deftypefun
+@c @deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@c Set @var{rop} to @var{op1} raised to @var{op2}.
+@c @end deftypefun
 
 @deftypefun void mpf_neg (mpf_t @var{rop}, mpf_t @var{op})
 Set @var{rop} to @minus{}@var{op}.
@@ -1718,11 +1850,25 @@ Set @var{rop} to the absolute value of @var{op}.
 @end deftypefun
 
 @deftypefun void mpf_mul_2exp (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1} \times 2^{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun void mpf_div_2exp (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@ifinfo
 Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Set @var{rop} to $@var{op1}/2^{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @node Float Comparison, I/O of Floats, Float Arithmetic, Floating-point Functions
@@ -1734,9 +1880,18 @@ Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.
 @deftypefun int mpf_cmp (mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx int mpf_cmp_ui (mpf_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpf_cmp_si (mpf_t @var{op1}, signed long int @var{op2})
+@ifinfo
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
+@end ifinfo
+@iftex
+@tex
+Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
+@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
+< @var{op2}$.
+@end tex
+@end iftex
 @end deftypefun
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
@@ -1751,7 +1906,14 @@ result in @var{rop}.
 @end deftypefun
 
 @deftypefun int mpf_sgn (mpf_t @var{op})
+@ifinfo
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
+@end ifinfo
+@iftex
+@tex
+Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
+@end tex
+@end iftex
 @end deftypefun
 
 @node I/O of Floats, Miscellaneous Float Functions, Float Comparison, Floating-point Functions
@@ -2040,15 +2202,15 @@ Use @code{mpn_divrem_1} in its stead.}
 Divide @{@var{s1p}, @var{s1size}@} by @var{s2limb}, and return the remainder.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_pre_mod_1 (mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
+@deftypefun mp_limb_t mpn_preinv_mod_1 (mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_mod_1} in its stead.}
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_bdivmod (mp_limb_t * @var{dest_ptr}, mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, const mp_limb_t * @var{s2p}, mp_size_t @var{s2size}, unsigned long int @var{d})
-The function puts the low [@var{d} / @var{BITS_PER_MP_LIMB}] limbs of
+The function puts the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of
 @var{q} =
-@{@var{s1p}, @var{s1size}@} / @{@var{s2p}, @var{s2size}@}
+@{@var{s1p}, @var{s1size}@}/@{@var{s2p}, @var{s2size}@}
 mod 2^@var{d}
 at @var{dest_ptr},
 and returns the high @var{d} mod @var{BITS_PER_MP_LIMB} bits of @var{q}.
@@ -2056,7 +2218,7 @@ and returns the high @var{d} mod @var{BITS_PER_MP_LIMB} bits of @var{q}.
 @{@var{s1p}, @var{s1size}@} - @var{q} * @{@var{s2p}, @var{s2size}@}
 mod 2^(@var{s1size}*@var{BITS_PER_MP_LIMB})
 is placed at @var{s1p}.
-Since the low [@var{d} / @var{BITS_PER_MP_LIMB}] limbs of
+Since the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of
 this difference are zero, it is possible to overwrite the low limbs at
 @var{s1p} with this difference,
 provided @var{dest_ptr} <= @var{s1p}.
@@ -2139,7 +2301,14 @@ The areas at @var{r1p} and @var{sp} have to be distinct.  The areas at
 @var{r2p} and @var{sp} have to be identical or completely separate, not
 partially overlapping.
 
-The area at @var{r1p} needs to be @var{size} / 2 limbs large.
+@ifinfo
+The area at @var{r1p} needs to have space for ceil(@var{size}/2) limbs.
+@end ifinfo
+@iftex
+@tex
+The area at @var{r1p} needs to have space for $\lceil@var{size}/2\rceil$ limbs.
+@end tex
+@end iftex
 The area at @var{r2p} needs to be @var{size} limbs large.
 
 @strong{This interface is preliminary.  It might change incompatibly in
@@ -2268,7 +2437,7 @@ Multiply @var{src_1} and @var{src_2} and put the product in
 
 @deftypefun void mdiv (MINT *@var{dividend}, MINT *@var{divisor}, MINT *@var{quotient}, MINT *@var{remainder})
 @deftypefunx void sdiv (MINT *@var{dividend}, signed short int @var{divisor}, MINT *@var{quotient}, signed short int *@var{remainder})
-Set @var{quotient} to @var{dividend} / @var{divisor}, and @var{remainder} to
+Set @var{quotient} to @var{dividend}/@var{divisor}, and @var{remainder} to
 @var{dividend} mod @var{divisor}.  The quotient is rounded towards zero; the
 remainder has the same sign as the dividend unless it is zero.
 
@@ -2283,13 +2452,9 @@ Set @var{root} to the truncated integer part of the square root of
 @var{operand}@minus{}@var{root}*@var{root},
 @end ifinfo
 @iftex
-Set @var{root} to
 @tex
-$\lfloor\sqrt{@var{operand}}\rfloor$,
-@end tex
-like @code{mpz_sqrt}.  Set @var{remainder} to
-@tex
-$(operand - root^2)$,
+Set @var{root} to $\lfloor\sqrt{@var{operand}}\rfloor$, like
+@code{mpz_sqrt}.  Set @var{remainder} to $(operand - root^2)$,
 @end tex
 @end iftex
 (i.e., zero if @var{operand} is a perfect square).

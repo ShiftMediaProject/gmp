@@ -1,3 +1,88 @@
+Wed May 29 02:07:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* gmp.h (mp_bits_per_limb): Change qualifier from `const' to
+	__gmp_const.
+
+	* gmp.h (mpf_init_set_str): Add `const' qualifier for 2nd parameter.
+	* mpf/iset_str.c: Likewise.
+
+Mon May 27 00:15:58 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* gmp-impl.h: Declare __gmp_extract_double.
+
+	* mpz/set_q.c: Delete unused variables.
+
+	* gmp.h (mpq_equal): Declare.
+
+	* mpf/eq.c: mpf_cmp2 -> mpf_eq.
+
+Fri May 24 03:20:44 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* mpz/iset_d.c: Don't include <math.h>.
+
+	* insert-double.c (__gmp_scale2): New name for scal2.
+	* mpz/get_d.c: Corresponding change.
+	* mpf/get_d.c: Likewise.
+	* mpq/get_d.c: Likewise.
+	* gmp-impl.h: Declare __gmp_scale2.
+
+	* mpn/generic/scan0.c: Clarify comment.
+
+	* mpz/set_q.c: New file.
+	* Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h: Declare mpz_set_q.
+
+	* insert-double.c: New file.
+	* Makefile.in: Compile it.
+	* make.bat: Likewise.
+
+	* mpz/get_d.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h: Declare mpz_get_d.
+
+	* mpf/get_d.c: New file.
+	* mpf/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h: Declare mpf_get_d.
+
+	* make.bat: Compile things in alphabetical order.
+
+	* gmp-impl.h (MP_BASE_AS_DOUBLE): New #define.
+	(LIMBS_PER_DOUBLE): New #define.
+
+	* extract-double.c: New file.
+	* Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* mpz/set_d.c: Rewrite to use __gmp_extract_double.
+	* mpf/set_d.c: Likewise.
+
+	* mpn/configure.in: Use t-pwr-aix also for aix 3.2.4 and up.
+
+Wed May 22 02:48:35 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* gmp-impl.h: Rework code for defining ieee_double_extract.
+	(IEEE_DOUBLE_BIG_ENDIAN): Macro removed.
+	(_GMP_IEEE_FLOATS): New macro.
+	* mpn/vax/gmp-mparam.h: Delete.
+
+	* mpn/config/t-pwr-aix: New file.
+	* mpn/configure.in: Use t-pwr-aix for aix 4 and later.
+
+Mon May 20 16:30:31 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* gmp.h: In code for setting _GMP_H_HAVE_FILE, test more symbols.
+
+	* mpf/tests/t-add.c (oo): Add some `l' printf modifiers.
+	* mpf/tests/t-sub.c (oo): Likewise.
+	* mpf/tests/t-conv.c (oo): Likewise.
+	* mpf/tests/t-sqrt.c (oo): Likewise.
+
+	* mpz/tests/t-mul.c (_mpn_mul_classic): Remove unused variables.
+
+	* mpn/{pyr,i960,clipper}/*.s: Add missing copyright headers.
+
 Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpz/set_d.c: Call _mpz_realloc.
