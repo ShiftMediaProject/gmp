@@ -200,19 +200,6 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #endif /* _CRAYIEEE */
 #endif /* _CRAY */
 
-#if defined (__hppa) && W_TYPE_SIZE == 64
-#if defined (__GNUC__)
-#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("add%I5 %5,%r4,%1\n\tadd,dc %r2,%r3,%0"			\
-	   : "=r" (sh), "=&r" (sl)					\
-	   : "rM" (ah), "rM" (bh), "%rM" (al), "rI" (bl))
-#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("sub%I4 %4,%r5,%1\n\tsub,db %r2,%r3,%0"			\
-	   : "=r" (sh), "=&r" (sl)					\
-	   : "rM" (ah), "rM" (bh), "rI" (al), "rM" (bl))
-#endif
-#endif /* hppa */
-
 #if defined (__ia64) && W_TYPE_SIZE == 64
 #if defined (__GNUC__)
 /* Do both product parts in assembly, since that gives better code with
@@ -529,6 +516,20 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 "	sub		%0,%1,%0	; Subtract it.\n"		\
 	: "=r" (count), "=r" (__tmp) : "1" (x));			\
   } while (0)
+#endif /* hppa */
+
+/* These macros are for ABI=2.0w.  In ABI=2.0n they can't be used, since GCC
+   (3.2) puts longlong into two adjacent 32-bit registers.  Presumably this
+   is just a case of no direct support for 2.0n but treating it like 1.0. */
+#if defined (__hppa) && W_TYPE_SIZE == 64 && ! defined (_LONG_LONG_LIMB)
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ ("add%I5 %5,%r4,%1\n\tadd,dc %r2,%r3,%0"			\
+	   : "=r" (sh), "=&r" (sl)					\
+	   : "rM" (ah), "rM" (bh), "%rM" (al), "rI" (bl))
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  __asm__ ("sub%I4 %4,%r5,%1\n\tsub,db %r2,%r3,%0"			\
+	   : "=r" (sh), "=&r" (sl)					\
+	   : "rM" (ah), "rM" (bh), "rI" (al), "rM" (bl))
 #endif /* hppa */
 
 #if (defined (__i370__) || defined (__s390__) || defined (__mvs__)) && W_TYPE_SIZE == 32
