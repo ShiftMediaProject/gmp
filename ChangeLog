@@ -1,3 +1,12 @@
+2001-04-13  Kevin Ryde  <kevin@swox.se>
+
+	* ltmain.sh, aclocal.m4, configure: Update to libtool 1.3d.
+	* configure.in: Change ac_ to lt_ in lt_cv_archive_cmds_need_lc and
+	lt_cv_proc_cc_pic.
+
+	* config.guess (m68*-*-*): Detect exact cpu with BSD sysctl hw.model,
+	detect 68000/68010 with trapf, detect 68302 with bfffo.
+
 2001-04-11  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_ASM_M68K_INSTRUCTION, GMP_ASM_M68K_ADDRESSING,
