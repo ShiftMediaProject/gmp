@@ -1,5 +1,12 @@
 2000-06-27  Torbjorn Granlund  <tege@swox.com>
 
+	* mpf/tests/t-get_d.c: Be more lax about relative error, to
+	handle Cray floating point format.
+
+	* mpq/tests/t-get_d.c: Decrease default reps to 1000.
+
+	* mpf/tests/t-conv.c: Correct type of `bexp'.
+
 	* configure.in (cray vector machines): Don't inherit gmp_cflags_cc.
 
 	* tune/Makefile.am (EXTRA_DIST): Delete sparc64.asm.
