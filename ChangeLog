@@ -27,8 +27,8 @@ MA 02111-1307, USA.
 
 	* mpn/generic/mul_basecase.c, mpz/mul.c, mpz/n_pow_ui.c,
 	mpn/x86/pentium/mul_2.asm, tests/devel/try.c, tests/tests.h,
-	tests/refmpn.c, tune/speed.c, tune/speed.h, tune/common.c (mpn_mul_2):
-	New parameter style.
+	tests/refmpn.c, tune/speed.c, tune/speed.h, tune/common.c,
+	tune/many.pl (mpn_mul_2): New parameter style.
 	* gmp-impl.h (mpn_mul_2): Add prototype.
 	* configure.in (gmp_mpn_functions_optional): Add mul_2.
 
