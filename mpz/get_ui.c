@@ -25,8 +25,6 @@ MA 02111-1307, USA. */
 unsigned long int
 mpz_get_ui (mpz_srcptr integer)
 {
-  if (integer->_mp_size == 0)
-    return 0;
-  else
-    return integer->_mp_d[0];
+  mp_limb_t l = integer->_mp_d[0];
+  return integer->_mp_size ? l : 0;
 }
