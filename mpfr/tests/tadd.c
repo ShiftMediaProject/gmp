@@ -706,7 +706,8 @@ main (int argc, char *argv[])
 	  4.747530291205672325e-51);
   check53(277363943109.0, 11.0, GMP_RNDN, 277363943120.0);
   /* test denormalized numbers too */
-  check53(8.06294740693074521573e-310, 6.95250701071929654575e-310, GMP_RNDU,
+  x = 70360154255223.0; for (i=0; i<1073; i++) x = x / 2.0;
+  check53(8.06294740693074521573e-310, x, GMP_RNDU,
 	  1.5015454417650041761e-309);
 #ifdef HAVE_INFS
   /* the following check double overflow */

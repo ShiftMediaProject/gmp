@@ -67,7 +67,7 @@ tests_end_mpfr (void)
 void
 mpfr_test_init ()
 {
-  double c, d;
+  double c, d, eps;
 #ifdef __mips
   /* to get denormalized numbers on IRIX64 */
   union fpc_csr exp;
@@ -87,13 +87,18 @@ mpfr_test_init ()
 
   tests_machine_prec_double ();
 
-  c = 1.0 + DBL_EPSILON;
-  d = DBL_EPSILON * (1.0 - DBL_EPSILON) / 2.0;
+  /* generate DBL_EPSILON with a loop to avoid that the preprocessor
+     optimizes the code below in non-IEEE 754 mode, deciding that 
+     c = d is always false. */
+  for (eps = 1.0; eps != DBL_EPSILON; eps /= 2.0);
+  c = 1.0 + eps;
+  d = eps * (1.0 - eps) / 2.0;
   d += c;
   if (c != d)
     {
-      fprintf (stderr, "Warning: extended precision not disabled\n");
-      exit (1);
+      fprintf (stderr, "Warning: IEEE 754 standard not fully supported\n");
+      fprintf (stderr, "         (maybe extended precision not disabled)\n");
+      fprintf (stderr, "         Some tests may fail\n");
     }
 }
 
