@@ -34,9 +34,9 @@ mpn_random (mp_ptr ptr, mp_size_t size)
     return;
 
   rands = RANDS;
-  _gmp_rand (ptr, rands, size * BITS_PER_MP_LIMB);
+  _gmp_rand (ptr, rands, size * GMP_NUMB_BITS);
 
   /* Make sure the most significant limb is non-zero.  */
   while (ptr[size-1] == 0)
-    _gmp_rand (&ptr[size-1], rands, BITS_PER_MP_LIMB);
+    _gmp_rand (&ptr[size-1], rands, GMP_NUMB_BITS);
 }

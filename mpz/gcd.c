@@ -141,7 +141,7 @@ gcd (mpz_srcptr u, mpz_srcptr v, mpz_ptr g)
   if (g_zero_bits != 0)
     {
       mp_limb_t cy_limb;
-      gsize += (vp[vsize - 1] >> (BITS_PER_MP_LIMB - g_zero_bits)) != 0;
+      gsize += (vp[vsize - 1] >> (GMP_NUMB_BITS - g_zero_bits)) != 0;
       if (g->_mp_alloc < gsize)
 	_mpz_realloc (g, gsize);
       MPN_ZERO (g->_mp_d, g_zero_limbs);
