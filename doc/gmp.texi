@@ -2270,15 +2270,22 @@ The following programs are provided
 
 @itemize @bullet
 @item
+@cindex Expression parsing demo
+@cindex Parsing expressions demo
 @samp{pexpr} is an expression evaluator, the program used on the GMP web page.
 @item
+@cindex Expression parsing demo
+@cindex Parsing expressions demo
 The @samp{calc} subdirectory has a similar but simpler evaluator using
 @command{lex} and @command{yacc}.
 @item
+@cindex Expression parsing demo
+@cindex Parsing expressions demo
 The @samp{expr} subdirectory is yet another expression evaluator, a library
 designed for ease of use within a C program.  See @file{demos/expr/README} for
 more information.
 @item
+@cindex Factorization demo
 @samp{factorize} is a Pollard-Rho factorization program.
 @item
 @samp{isprime} is a command-line interface to the @code{mpz_probab_prime_p}
@@ -2290,6 +2297,8 @@ function.
 class numbers.
 @item
 @cindex @code{perl}
+@cindex GMP Perl module
+@cindex Perl module
 The @samp{perl} subdirectory is a comprehensive perl interface to GMP.  See
 @file{demos/perl/INSTALL} for more information.  Documentation is in POD
 format in @file{demos/perl/GMP.pm}.
@@ -7041,7 +7050,8 @@ GNU Pascal Compiler @spaceuref{http://www.gnu-pascal.de/} @* GMP unit.
 @item Perl
 @itemize @bullet
 @item
-GMP module, see @file{demos/perl} in the GMP sources.
+GMP module, see @file{demos/perl} in the GMP sources (@pxref{Demonstration
+Programs}).
 @item
 Math::GMP @spaceuref{http://www.cpan.org/} @* Compatible with Math::BigInt, but
 not as many functions as the GMP module above.
@@ -8824,24 +8834,27 @@ speedup over generic C by a factor of anything from 2 to 10.
 * Assembler Basics::            
 * Assembler Carry Propagation::  
 * Assembler Cache Handling::    
+* Assembler Functional Units::    
 * Assembler Floating Point::    
 * Assembler SIMD Instructions::  
 * Assembler Software Pipelining::  
 * Assembler Loop Unrolling::    
+* Assembler Writing Guide::    
 @end menu
 
 
 @node Assembler Code Organisation, Assembler Basics, Assembler Coding, Assembler Coding
 @subsection Code Organisation
+@cindex Assembler code organisation
+@cindex Code organisation
 
 The various @file{mpn} subdirectories contain machine-dependent code, written
 in C or assembler.  The @file{mpn/generic} subdirectory contains default code,
 used when there's no machine-specific version of a particular file.
 
 Each @file{mpn} subdirectory is for an ISA family.  Generally 32-bit and
-64-bit variants in a family cannot share code and will have separate
-directories.  Within a family further subdirectories may exist for CPU
-variants.
+64-bit variants in a family cannot share code and have separate directories.
+Within a family further subdirectories may exist for CPU variants.
 
 
 @node Assembler Basics, Assembler Carry Propagation, Assembler Code Organisation, Assembler Coding
@@ -8855,7 +8868,8 @@ repeated calls to these.  @code{mpn_add_n}, @code{mpn_sub_n},
 On some CPUs assembler versions of the internal functions
 @code{mpn_mul_basecase} and @code{mpn_sqr_basecase} give significant speedups,
 mainly through avoiding function call overheads.  They can also potentially
-make better use of a wide superscalar processor.
+make better use of a wide superscalar processor, as can bigger primitives like
+@code{mpn_addmul_2} or @code{mpn_addmul_4}.
 
 The restrictions on overlaps between sources and destinations
 (@pxref{Low-level Functions}) are designed to facilitate a variety of
@@ -8867,6 +8881,7 @@ processor, depending on the carry handling.
 
 @node Assembler Carry Propagation, Assembler Cache Handling, Assembler Basics, Assembler Coding
 @subsection Carry Propagation
+@cindex Assembler carry propagation
 
 The problem that presents most challenges in GMP is propagating carries from
 one limb to the next.  In functions like @code{mpn_addmul_1} and
@@ -8898,8 +8913,9 @@ would be better.  And so unfortunately almost any loop involving carry bits
 needs to be coded in assembler for best results.
 
 
-@node Assembler Cache Handling, Assembler Floating Point, Assembler Carry Propagation, Assembler Coding
+@node Assembler Cache Handling, Assembler Functional Units, Assembler Carry Propagation, Assembler Coding
 @subsection Cache Handling
+@cindex Assembler cache handling
 
 GMP aims to perform well both on operands that fit entirely in L1 cache and
 those which don't.
@@ -8940,8 +8956,41 @@ Some CPUs or systems have hardware that detects sequential memory accesses and
 initiates suitable cache movements automatically, making life easy.
 
 
-@node Assembler Floating Point, Assembler SIMD Instructions, Assembler Cache Handling, Assembler Coding
+@node Assembler Functional Units, Assembler Floating Point, Assembler Cache Handling, Assembler Coding
+@subsection Functional Units
+
+When choosing an approach for an assembler loop, consideration is given to
+what operations can execute simultaneously and what throughput can thereby be
+achieved.  In some cases an algorithm can be tweaked to accommodate available
+resources.
+
+Loop control will generally require a counter and pointer updates, costing as
+much as 5 instructions, plus any delays a branch introduces.  CPU addressing
+modes might reduce pointer updates, perhaps by allowing just one updating
+pointer and others expressed as offsets from it, or on CISC chips with all
+addressing done with the loop counter as a scaled index.
+
+The final loop control cost can be amortised by processing several limbs in
+each iteration (@pxref{Assembler Loop Unrolling}).  This at least ensures loop
+control isn't a big fraction the work done.
+
+Memory throughput is always a limit.  If perhaps only one load or one store
+can be done per cycle then 3 cycles/limb will the top speed for ``binary''
+operations like @code{mpn_add_n}, and any code achieving that is optimal.
+
+Integer resources can be freed up by having the loop counter in a float
+register, or by pressing the float units into use for some multiplying,
+perhaps doing every second limb on the float side (@pxref{Assembler Floating
+Point}).
+
+Float resources can be freed up by doing carry propagation on the integer
+side, or even by doing integer to float conversions in integers using bit
+twiddling.
+
+
+@node Assembler Floating Point, Assembler SIMD Instructions, Assembler Functional Units, Assembler Coding
 @subsection Floating Point
+@cindex Assembler floating Point
 
 Floating point arithmetic is used in GMP for multiplications on CPUs with poor
 integer multipliers.  It's mostly useful for @code{mpn_mul_1},
@@ -9146,6 +9195,7 @@ extends 33 bits into the high half).
 
 @node Assembler SIMD Instructions, Assembler Software Pipelining, Assembler Floating Point, Assembler Coding
 @subsection SIMD Instructions
+@cindex Assembler SIMD
 
 The single-instruction multiple-data support in current microprocessors is
 aimed at signal processing algorithms where each data point can be treated
@@ -9165,30 +9215,30 @@ haven't found a use so far.
 
 @node Assembler Software Pipelining, Assembler Loop Unrolling, Assembler SIMD Instructions, Assembler Coding
 @subsection Software Pipelining
+@cindex Assembler software pipelining
 
 Software pipelining consists of scheduling instructions around the branch
-point in a loop.  For example a loop taking a checksum of an array of limbs
-might have a load and an add, but the load wouldn't be for that add, rather
-for the one next time around the loop.  Each load then is effectively
-scheduled back in the previous iteration, allowing latency to be hidden.
+point in a loop.  For example a loop might issue a load not for use in the
+present iteration but the next, thereby allowing extra cycles for the data to
+arrive from memory.
 
 Naturally this is wanted only when doing things like loads or multiplies that
-take a few cycles to complete, and only where a CPU has multiple functional
-units so that other work can be done while waiting.
+take several cycles to complete, and only where a CPU has multiple functional
+units so that other work can be done in the meantime.
 
 A pipeline with several stages will have a data value in progress at each
 stage and each loop iteration moves them along one stage.  This is like
 juggling.
 
-Within the loop some moves between registers may be necessary to have the
-right values in the right places for each iteration.  Loop unrolling can help
-this, with each unrolled block able to use different registers for different
-values, even if some shuffling is still needed just before going back to the
-top of the loop.
+If the latency of some instruction is greater than the loop time then it will
+be necessary to unroll, so one register has a result ready to use while
+another (or multiple others) are still in progress.  (@pxref{Assembler Loop
+Unrolling}).
 
 
-@node Assembler Loop Unrolling,  , Assembler Software Pipelining, Assembler Coding
+@node Assembler Loop Unrolling, Assembler Writing Guide, Assembler Software Pipelining, Assembler Coding
 @subsection Loop Unrolling
+@cindex Assembler loop unrolling
 
 Loop unrolling consists of replicating code so that several limbs are
 processed in each loop.  At a minimum this reduces loop overheads by a
@@ -9196,12 +9246,15 @@ corresponding factor, but it can also allow better register usage, for example
 alternately using one register combination and then another.  Judicious use of
 @command{m4} macros can help avoid lots of duplication in the source code.
 
-Unrolling is commonly done to a power of 2 multiple so the number of unrolled
-loops and the number of remaining limbs can be calculated with a shift and
-mask.  But other multiples can be used too, just by subtracting each @var{n}
-limbs processed from a counter and waiting for less than @var{n} remaining (or
-offsetting the counter by @var{n} so it goes negative when there's less than
-@var{n} remaining).
+Any amount of unrolling can be handled with a loop counter that's decremented
+by @math{N} each time, stopping when the remaining count is less than the
+further @math{N} the loop will process.  Or by subtracting @math{N} at the
+start, the termination condition becomes when the counter @math{C} is less
+than 0 (and the count of remaining limbs is @math{C+N}).
+
+Alternately for a power of 2 unroll the loop count and remainder can be
+established with a shift and mask.  This is convenient if also making a
+computed jump into the middle of a large loop.
 
 The limbs not a multiple of the unrolling can be handled in various ways, for
 example
@@ -9229,11 +9282,60 @@ is attractive, but setups for the jump and adjustments for pointers can be
 tricky and could become quite difficult in combination with deep pipelining.
 @end itemize
 
-One way to write the setups and finishups for a pipelined unrolled loop is
-simply to duplicate the loop at the start and the end, then delete
-instructions at the start which have no valid antecedents, and delete
-instructions at the end whose results are unwanted.  Sizes not a multiple of
-the unrolling can then be handled as desired.
+
+@node Assembler Writing Guide,  , Assembler Loop Unrolling, Assembler Coding
+@subsection Writing Guide
+@cindex Assembler writing guide
+
+This is a guide to writing software pipelined loops for processing limb
+vectors in assembler.
+
+First determine the algorithm and which instructions are needed.  Code it
+without unrolling or scheduling, to make sure it works.  On a 3-operand CPU
+try to write each new value to a new register, this will greatly simply later
+steps.
+
+Then note for each instruction the functional unit and/or issue port
+requirements.  If an instruction can use either of two units, like U0 or U1
+then make a category ``U0/U1''.  Count the total using each unit (or combined
+unit), and count all instructions.
+
+Figure out from those counts the best possible loop time.  The goal will be to
+find a perfect schedule where instruction latencies are completely hidden.
+The total instruction count might be the limiting factor, or perhaps a
+particular functional unit.  It might be possible to tweak the instructions to
+help the limiting factor.
+
+Suppose the loop time is @math{N}, then make @math{N} issue buckets, with the
+final loop branch at the end of the last.  Now fill the buckets with dummy
+instructions using the functional units desired.  Run this to make sure the
+intended speed is reached.
+
+Now replace the dummy instructions with the real instructions from the slow
+but correct loop you started with.  The first will typically be a load
+instruction.  Then the instruction using that value is placed in a bucket an
+appropriate distance down.  Run the loop again, to check it still runs at
+target speed.
+
+Keep placing instructions, frequently measuring the loop.  After a few you
+will need to wrap around from the last bucket back to the top of the loop.  If
+you used the new-register for new-value strategy above then there will be no
+register conflicts.  If not then take care not to clobber something already in
+use.  Changing registers at this time is very error prone.
+
+The loop will overlap two or more of the original loop iterations, and the
+computation of one vector element result will be started in one iteration of
+the new loop, and completed one or several iterations later.
+
+The final step is to create feed-in and wind-down code for the loop.  A good
+way to do this is to make a copy (or copies) of the loop at the start and
+delete those instructions which don't have valid antecedents, and at the end
+replicate and delete those whose results are unwanted (including any further
+loads).
+
+The loop will have a minimum number of limbs loaded and processed, so the
+feed-in code must test if the request size is smaller and skip either to a
+suitable part of the wind-down or to special code for small sizes.
 
 
 @node Internals, Contributors, Algorithms, Top
@@ -9909,8 +10011,8 @@ technical report version also available
 
 @item
 Makoto Matsumoto and Takuji Nishimura, ``Mersenne Twister: A 623-dimensionally
-equidistributed unform pseudorandom number generator'', ACM Transactions on
-Modeling and Computer Simulation, volume 8, January 1998, pp.@: 3-30.
+equidistributed uniform pseudorandom number generator'', ACM Transactions on
+Modelling and Computer Simulation, volume 8, January 1998, pp.@: 3-30.
 Available online @texlinebreak{}
 @uref{http://www.math.keio.ac.jp/~nisimura/random/doc/mt.ps.gz} (or .pdf)
 
