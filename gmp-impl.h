@@ -1130,19 +1130,35 @@ extern const int __gmp_0;
 #endif
 #endif /* _LONG_LONG_LIMB */
 
-/*** Stuff used by mpn/generic/perfsqr.c and mpn/generic/next_prime.c ***/
-#if BITS_PER_MP_LIMB == 32
-#define PP 0xC0CFD797L		/* 3 x 5 x 7 x 11 x 13 x ... x 29 */
-#define PP_INVERTED 0x53E5645CL
-#define PP_MAXPRIME 29
-#define PP_MASK 0x208A28A8L
+/* Stuff used by mpn/generic/perfsqr.c and mpz/prime_p.c */
+#if BITS_PER_MP_LIMB == 2
+#define PP 0x3					/* 3 */
+#define PP_FIRST_OMITTED 5
 #endif
-
+#if BITS_PER_MP_LIMB == 4
+#define PP 0xF					/* 3 x 5 */
+#define PP_FIRST_OMITTED 7
+#endif
+#if BITS_PER_MP_LIMB == 8
+#define PP 0x69					/* 3 x 5 x 7 */
+#define PP_FIRST_OMITTED 11
+#endif
+#if BITS_PER_MP_LIMB == 16
+#define PP 0x3AA7				/* 3 x 5 x 7 x 11 x 13 */
+#define PP_FIRST_OMITTED 17
+#endif
+#if BITS_PER_MP_LIMB == 32
+#define PP 0xC0CFD797L				/* 3 x 5 x 7 x 11 x ... x 29 */
+#define PP_INVERTED 0x53E5645CL
+#define PP_FIRST_OMITTED 31
+#endif
 #if BITS_PER_MP_LIMB == 64
-#define PP CNST_LIMB(0xE221F97C30E94E1D)	/* 3 x 5 x 7 x 11 x 13 x ... x 53 */
+#define PP CNST_LIMB(0xE221F97C30E94E1D)	/* 3 x 5 x 7 x 11 x ... x 53 */
 #define PP_INVERTED CNST_LIMB(0x21CFE6CFC938B36B)
-#define PP_MAXPRIME 53
-#define PP_MASK CNST_LIMB(0x208A20A08A28A8)
+#define PP_FIRST_OMITTED 59
+#endif
+#ifndef PP_FIRST_OMITTED
+#define PP_FIRST_OMITTED 3
 #endif
 
 
