@@ -1,5 +1,9 @@
 2000-11-20  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tests/t-powm.c: Analogous changes as made 2000-11-12 to t-mul.c.
+	* mpz/tests/t-powm_ui.c: Likewise.
+	* mpz/tests/t-pow_ui.c: Likewise.
+	
 	* configure.in [compiler switch]: Pass "-Aa -D_HPUX_SOURCE" to cc for
 	all hppa versions.
 
