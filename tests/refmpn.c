@@ -574,6 +574,46 @@ refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
   return refmpn_sub_nc (rp, s1p, s2p, size, CNST_LIMB(0));
 }
 
+mp_limb_t
+refmpn_addlsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  mp_limb_t cy;
+  mp_ptr tp;
+  tp = refmpn_malloc_limbs (n);
+  cy  = refmpn_lshift (tp, vp, n, 1);
+  cy += refmpn_add_n (rp, up, tp, n);
+  free (tp);
+  return cy;
+}
+mp_limb_t
+refmpn_sublsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  mp_limb_t cy;
+  mp_ptr tp;
+  tp = refmpn_malloc_limbs (n);
+  cy  = mpn_lshift (tp, vp, n, 1);
+  cy += mpn_sub_n (rp, up, tp, n);
+  free (tp);
+  return cy;
+}
+mp_limb_t
+refmpn_rsh1add_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  mp_limb_t cya, cys;
+  cya = mpn_add_n (rp, up, vp, n);
+  cys = mpn_rshift (rp, rp, n, 1) >> GMP_NUMB_BITS - 1;
+  rp[n - 1] |= cya << (GMP_NUMB_BITS - 1);
+  return cys;
+}
+mp_limb_t
+refmpn_rsh1sub_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  mp_limb_t cya, cys;
+  cya = mpn_sub_n (rp, up, vp, n);
+  cys = mpn_rshift (rp, rp, n, 1) >> GMP_NUMB_BITS - 1;
+  rp[n - 1] |= cya << (GMP_NUMB_BITS - 1);
+  return cys;
+}
 
 /* Twos complement, return borrow. */
 mp_limb_t
