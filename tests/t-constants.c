@@ -27,6 +27,21 @@ MA 02111-1307, USA.
 #include "longlong.h"
 
 
+/* How many bits seem to work in the given type. */
+#define CALC_BITS_PER_TYPE(result, type)        \
+  do {                                          \
+    type  n = 1;                                \
+    result = 0;                                 \
+    while (n != 0)                              \
+      {                                         \
+        n <<= 1;                                \
+        result++;                               \
+      }                                         \
+  } while (0)
+
+
+/* FIXME: printf formats not right for a long long limb. */
+
 #if HAVE_STRINGIZE
 #define CHECK_CONSTANT(x,y)                                               \
   if ((x) != (y))                                                         \
@@ -41,6 +56,17 @@ MA 02111-1307, USA.
       printf ("%s is false\n", #x);     \
       abort ();                         \
     }
+#define CHECK_BITS_PER_TYPE(constant, type)             \
+  do {                                                  \
+    int   calculated;                                   \
+    CALC_BITS_PER_TYPE (calculated, type);              \
+    if (calculated != constant)                         \
+      {                                                 \
+        printf ("%s == %d, but calculated %d\n",        \
+                #constant, constant, calculated);       \
+        abort ();                                       \
+      }                                                 \
+  } while (0)
 
 #else
 #define CHECK_CONSTANT(x,y)                                               \
@@ -56,6 +82,17 @@ MA 02111-1307, USA.
       printf ("x is false\n");  \
       abort ();                 \
     }
+#define CHECK_BITS_PER_TYPE(constant, type)                                   \
+  do {                                                                        \
+    int   calculated;                                                         \
+    CALC_BITS_PER_TYPE (calculated, type);                                    \
+    if (calculated != constant)                                               \
+      {                                                                       \
+        printf ("constant == %d, but calculated %d\n", constant, calculated); \
+        abort ();                                                             \
+      }                                                                       \
+  } while (0)
+
 #endif
 
 
@@ -63,14 +100,21 @@ int
 main (void)
 {
   CHECK_CONSTANT (BYTES_PER_MP_LIMB, sizeof(mp_limb_t));
-  CHECK_CONSTANT (BITS_PER_MP_LIMB,  8*sizeof(mp_limb_t));
-  CHECK_CONSTANT (mp_bits_per_limb,  8*sizeof(mp_limb_t));
-  CHECK_CONSTANT (BITS_PER_LONGINT,  8*sizeof(long));
-  CHECK_CONSTANT (BITS_PER_INT,      8*sizeof(int));
-  CHECK_CONSTANT (BITS_PER_SHORTINT, 8*sizeof(short));
-  CHECK_CONSTANT (BITS_PER_CHAR,     8*sizeof(char));
+  CHECK_CONSTANT (mp_bits_per_limb, BITS_PER_MP_LIMB);
 
-  CHECK_CONDITION (2*sizeof(UHWtype) >= sizeof(UWtype));
+  CHECK_BITS_PER_TYPE (BITS_PER_MP_LIMB,  mp_limb_t);
+  CHECK_BITS_PER_TYPE (BITS_PER_LONGINT,  long);
+  CHECK_BITS_PER_TYPE (BITS_PER_INT,      int);
+  CHECK_BITS_PER_TYPE (BITS_PER_SHORTINT, short);
+  CHECK_BITS_PER_TYPE (BITS_PER_CHAR,     char);
+
+  /* UHWtype should have at least enough bits for half a UWtype */
+  {
+    int  bits_per_UWtype, bits_per_UHWtype;
+    CALC_BITS_PER_TYPE (bits_per_UWtype,  UWtype);
+    CALC_BITS_PER_TYPE (bits_per_UHWtype, UHWtype);
+    CHECK_CONDITION (2*bits_per_UHWtype >= bits_per_UWtype);
+  }
 
   {
     mp_limb_t  modlimb_inverse_3_calc;
