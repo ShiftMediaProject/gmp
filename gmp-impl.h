@@ -1,5 +1,8 @@
 /* Include file for internal GNU MP types and definitions.
 
+   THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND ARE ALMOST CERTAIN TO
+   BE SUBJECT TO INCOMPATIBLE CHANGES IN A FUTURE GNU MP RELEASE.
+
 Copyright (C) 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000 Free Software
 Foundation, Inc.
 
@@ -119,12 +122,12 @@ MA 02111-1307, USA. */
     (y) = __mp_srcptr_swap__tmp;                \
   } while (0)
 
-#define MPN_PTR_SWAP(xp, xs, yp, ys)    \
+#define MPN_PTR_SWAP(xp,xs, yp,ys)      \
   do {                                  \
     MP_PTR_SWAP (xp, yp);               \
     MP_SIZE_T_SWAP (xs, ys);            \
   } while(0)
-#define MPN_SRCPTR_SWAP(xp, xs, yp, ys) \
+#define MPN_SRCPTR_SWAP(xp,xs, yp,ys)   \
   do {                                  \
     MP_SRCPTR_SWAP (xp, yp);            \
     MP_SIZE_T_SWAP (xs, ys);            \
@@ -629,6 +632,51 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
   } while (0)
+
+
+/* modlimb_invert() sets "inv" to the multiplicative inverse of "n" modulo
+   2^BITS_PER_MP_LIMB, ie. so that inv*n == 1 mod 2^BITS_PER_MP_LIMB.
+   "n" must be odd (otherwise such an inverse doesn't exist).
+
+   This is not to be confused with invert_limb(), which is completely
+   different.
+
+   The table lookup gives an inverse with the low 8 bits valid, and each
+   multiply step doubles the number of bits.  See Jebelean's exact division
+   paper, end of section 4 (reference in gmp.texi). */
+
+#define modlimb_invert_table  __gmp_modlimb_invert_table
+extern const unsigned char  modlimb_invert_table[128];
+
+#if BITS_PER_MP_LIMB <= 32
+#define modlimb_invert(inv,n)                                   \
+  do {                                                          \
+    mp_limb_t  __n = (n);                                       \
+    mp_limb_t  __inv;                                           \
+    ASSERT ((__n & 1) == 1);                                    \
+    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
+    __inv = 2 * __inv - __inv * __inv * __n;    /* 32 */        \
+    ASSERT (__inv * __n == 1);                                  \
+    (inv) = __inv;                                              \
+  } while (0)
+#endif
+
+#if BITS_PER_MP_LIMB > 32 && BITS_PER_MP_LIMB <= 64
+#define modlimb_invert(inv,n)                                   \
+  do {                                                          \
+    mp_limb_t  __n = (n);                                       \
+    mp_limb_t  __inv;                                           \
+    ASSERT ((__n & 1) == 1);                                    \
+    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
+    __inv = 2 * __inv - __inv * __inv * __n;    /* 32 */        \
+    __inv = 2 * __inv - __inv * __inv * __n;    /* 64 */        \
+    ASSERT (__inv * __n == 1);                                  \
+    (inv) = __inv;                                              \
+  } while (0)
+#endif
+
 
 /* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
    between GCC 2 releases from 2.5, since __GNUC_MINOR__ wasn't introduced
