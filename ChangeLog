@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-02-29  Kevin Ryde  <kevin@swox.se>
+
+	* longlong.h (count_leading_zeros) [alpha gcc]: New version, inlining
+	mpn/alpha/cntlz.asm cmpbge technique.
+
+	* aclocal.m4, configure, ltmain.sh, */Makefile.in: Update to automake
+	1.8.2 and libtool 1.5.2.
+
+	* doc/gmp.texi (C++ Interface Integers): Note / and % rounding follows
+	C99 / and %.
+	(Exact Remainder): Index entries for divisibility testing algorithm.
+
+	* tune/time.c (speed_endtime): Return 0.0 for negative time measured.
+	Revise usage comments for clarity.
+	* tune/common.c (speed_measure): Recognise speed_endtime 0.0 for
+	failed measurement.
+
+	* tests/mpn/t-get_d.c (check_rand): Correction to nhigh_mask setup.
+
 2004-02-27  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/tuneup.c (tune_dc, tune_set_str): Up param.step_factor.
