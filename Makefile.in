@@ -180,8 +180,12 @@ EXTRA_HEADERS = mp.h
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
+# Having $(MACOS_GENERATED) as well as the macos directory ensures those
+# files are regenerated if necessary in a "make dist".
+#
 EXTRA_DIST = .gdbinit gmp-impl.h longlong.h stack-alloc.h urandom.h doc \
-  macos
+  macos $(MACOS_GENERATED)
+
 
 DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
 
@@ -270,6 +274,15 @@ libmp_la_LDFLAGS = \
 
 
 info_TEXINFOS = gmp.texi
+
+MACOS_GENERATED = macos/Makefile macos/Makefile.cw
+
+MACOS_DEPS = $(srcdir)/macos/configure			\
+  $(srcdir)/configure.in $(srcdir)/config.in		\
+  $(srcdir)/Makefile.am     $(srcdir)/mpz/Makefile.am	\
+  $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
+  $(srcdir)/mpn/powerpc32/*.asm
+
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -804,6 +817,7 @@ distdir: $(DISTFILES)
 	fi
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
+	$(mkinstalldirs) $(distdir)/macos
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -848,7 +862,7 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-info \
 		uninstall-includeHEADERS
 uninstall: uninstall-recursive
 all-am: Makefile $(INFO_DEPS) $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) \
-		config.h
+		config.h all-local
 all-redirect: all-recursive-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -925,13 +939,22 @@ maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
 dvi-am dvi check check-am installcheck-am installcheck all-recursive-am \
 install-exec-am install-exec install-data-am install-data install-am \
-install uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs-am installdirs mostlyclean-generic distclean-generic \
-clean-generic maintainer-clean-generic clean mostlyclean distclean \
-maintainer-clean
+install uninstall-am uninstall all-local all-redirect all-am all \
+install-strip installdirs-am installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
-# Don't ship CVS directories.
+# Keep the macos directory up-to-date during any development build.
+@MAINTAINER_MODE_TRUE@all-local: $(MACOS_GENERATED)
+
+$(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
+	cd $(srcdir)/macos; perl configure
+
+$(srcdir)/macos/Makefile.cw: $(MACOS_MAKEFILE_DEPS)
+	cd $(srcdir)/macos; perl configure cw
+
+# Don't ship CVS directories or emacs backups.
 dist-hook:
 	-find $(distdir) \( -name CVS -type d \) -o -name "*.~*" \
 		| xargs rm -rf
