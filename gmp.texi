@@ -349,7 +349,7 @@ Motorola:
 @samp{m88110}
 
 @item
-POWER: 
+POWER:
 @samp{power},
 @samp{rs6000},
 @samp{powerpc},
@@ -733,8 +733,8 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @section Compatibility with older versions
 
 @menu
-* Compatibility with Version 1.x::  	
-* Compatibility with Version 2.0.x::  
+* Compatibility with Version 1.x::
+* Compatibility with Version 2.0.x::
 @end menu
 
 @node    Compatibility with Version 1.x, Compatibility with Version 2.0.x, Compatibility with older versions, Compatibility with older versions
@@ -1438,7 +1438,7 @@ Set @var{rop} to the truncated integer part of the @var{n}th root of @var{op}.
 @iftex
 @tex
 Set @var{rop} to $\lfloor\root n \of {op}\rfloor$, the truncated integer
-part of the @var{n}th root of @var{op}. 
+part of the @var{n}th root of @var{op}.
 @end tex
 @end iftex
 Return non-zero if the computation was exact, i.e., if @var{op} is
@@ -1808,7 +1808,7 @@ parameter that is read and modified.  Please see the @ref{Random Number
 Functions} for more information on how to use and not to use random
 number functions.
 
-@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state}, 
+@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state},
 unsigned long int @var{n})
 Generate a uniform random integer in the range
 @ifinfo
@@ -1827,7 +1827,7 @@ invoking this function.
 @end deftypefun
 
 
-@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state}, 
+@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state},
 mpz_t @var{n})
 Generate a uniform random integer in the range 0 to
 @ifinfo
@@ -2590,7 +2590,7 @@ the next higher integer, @code{mpf_floor} to the next lower, and
 @end deftypefun
 
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state})
-Generate a universally distributed random float in the interval 
+Generate a universally distributed random float in the interval
 0 <= X < 1.
 
 The variable @var{state} must be initialized by calling one of the
@@ -3056,8 +3056,8 @@ The functions actually generating random functions are documented under
 See @ref{Random Number Functions} for a discussion on how to choose the
 initial seed value passed to these functions.
 
-@deftypefun int gmp_randinit (gmp_randstate_t @var{state}, unsigned long int 
-@var{size}, gmp_randalg_t @var{alg}) 
+@deftypefun int gmp_randinit (gmp_randstate_t @var{state}, unsigned long int
+@var{size}, gmp_randalg_t @var{alg})
 Initialize random state variable @var{state}.
 
 @var{alg} denotes what algorithm to use for random number generation.
@@ -3106,7 +3106,7 @@ to deallocate any memory allocated by this function.
 
 
 @ignore
-@deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a}, 
+@deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a},
 unsigned long int @var{c}, mpz_t @var{m})
 
 Initialize random state variable @var{state} with given linear congruential
@@ -3128,7 +3128,7 @@ scheme.
 
 Parameters @var{a}, @var{c}, and @var{m2exp} are the multiplier, adder, and
 modulus for the linear congruential scheme to use, respectively.  The modulus
-is expressed as a power of 2, so that 
+is expressed as a power of 2, so that
 @ifinfo
 @var{m} = 2^@var{m2exp}.
 @end ifinfo
@@ -3464,6 +3464,10 @@ Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
 Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
 @uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
 @end itemize
+
+@item
+Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, "Handbook of
+Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
 
 @node Concept Index, , , Top
 @comment  node-name,  next,  previous,  up
