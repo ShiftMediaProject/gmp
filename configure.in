@@ -129,7 +129,9 @@ case "$target" in
     # Don't perform any assembly syntax tests on this beast.
     gmp_no_asm_syntax_testing=yes
     cclist=cc
-    gmp_cflags_cc="$gmp_cflags_cc -O"
+    # Don't inherit default gmp_cflags_cc value; it comes with -g which
+    # disables all optimization on Cray vector systems
+    gmp_cflags_cc="-O"
     ;;
 
   # AMD and Intel x86 configurations
