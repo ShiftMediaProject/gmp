@@ -38,7 +38,6 @@ _mpq_cmp_ui (op1, num2, den2)
   mp_size_t den1_size = op1->_mp_den._mp_size;
   mp_size_t tmp1_size, tmp2_size;
   mp_ptr tmp1_ptr, tmp2_ptr;
-  mp_size_t num1_sign;
   mp_limb_t cy_limb;
   int cc;
   TMP_DECL (marker);
@@ -50,17 +49,14 @@ _mpq_cmp_ui (op1, num2, den2)
   if (num2 == 0)
     return num1_size;
 
-  num1_sign = num1_size;
-  num1_size = ABS (num1_size);
-
   /* NUM1 x DEN2 is either TMP1_SIZE limbs or TMP1_SIZE-1 limbs.
      Same for NUM1 x DEN1 with respect to TMP2_SIZE.  */
   if (num1_size > den1_size + 1)
     /* NUM1 x DEN2 is surely larger in magnitude than NUM2 x DEN1.  */
-    return num1_sign;
-  if (den1_size > num1_sign + 1)
+    return num1_size;
+  if (den1_size > num1_size + 1)
     /* NUM1 x DEN2 is surely smaller in magnitude than NUM2 x DEN1.  */
-    return -num1_sign;
+    return -num1_size;
 
   TMP_MARK (marker);
   tmp1_ptr = (mp_ptr) TMP_ALLOC ((num1_size + 1) * BYTES_PER_MP_LIMB);
@@ -77,5 +73,5 @@ _mpq_cmp_ui (op1, num2, den2)
   cc = tmp1_size - tmp2_size != 0
     ? tmp1_size - tmp2_size : mpn_cmp (tmp1_ptr, tmp2_ptr, tmp1_size);
   TMP_FREE (marker);
-  return (num1_sign < 0) ? -cc : cc;
+  return cc;
 }
