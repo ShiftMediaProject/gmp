@@ -335,7 +335,9 @@ print_define_end (const char *name, mp_size_t value)
     printf ("#define %-23s  ", name);
 
   if (value == MP_SIZE_T_MAX)
-    printf ("MP_SIZE_T_MAX\n");
+    printf ("MP_SIZE_T_MAX  /* never */\n");
+  else if (value == 0)
+    printf ("    0  /* always */\n");
   else
     printf ("%5ld\n", value);
 }
