@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 #ifndef GCDEXT_THRESHOLD
-#define GCDEXT_THRESHOLD 16
+#define GCDEXT_THRESHOLD 17
 #endif
 
 #ifndef EXTEND
