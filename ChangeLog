@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-10-07  Torbjorn Granlund  <tege@swox.com>
+
+	* configfsf.guess: Patch HP-UX code to accomodate HP compiler's new
+	inability to read from stdin.
+
+	* mpn/powerpc64/mode64/addsub_n.asm: Remove accidentally added file.
+
 2004-10-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/amd64/README: Update for new developments, fix typos.
