@@ -1,7 +1,8 @@
 /* mpz_init_set_si(val) -- Make a new multiple precision number with
    value val.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,16 +29,6 @@ mpz_init_set_si (mpz_ptr x, signed long int val)
 {
   x->_mp_alloc = 1;
   x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
-  if (val > 0)
-    {
-      x->_mp_d[0] = val;
-      x->_mp_size = 1;
-    }
-  else if (val < 0)
-    {
-      x->_mp_d[0] = (unsigned long) -val;
-      x->_mp_size = -1;
-    }
-  else
-    x->_mp_size = 0;
+  x->_mp_d[0] = (unsigned long) (val >= 0 ? val : -val);
+  x->_mp_size = (val > 0 ? 1 : val == 0 ? 0 : -1);
 }
