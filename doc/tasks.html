@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 8 Jan 2002.  An up-to-date version is available at
+  This file current as of 17 Jan 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -311,6 +311,9 @@ MA 02111-1307, USA.
 <li> <code>__mp_bases</code> field <code>big_base_inverted</code> is only used
      if <code>USE_PREINV_DIVREM_1</code> is true, and could be omitted
      otherwise, to save space.
+<li> <code>mpf_get_str</code> could just shift and mask for conversions to
+     power of 2 bases, like <code>mpn_get_str</code> does.  Even something
+     simple would probably be a considerable speedup.
 </ul>
 
 
@@ -598,6 +601,13 @@ MA 02111-1307, USA.
      recognise the Intel 80-bit format on i386, and IEEE 128-bit quad on
      sparc, hppa and power.  Might like an ABI sub-option or something when
      it's a compiler option for 64-bit or 128-bit <code>long double</code>.
+<li> <code>gmp_printf</code> could usefully accept an arbitrary base, for both
+     integer and float conversions.  Either a number in the format string or a
+     <code>*</code> to take a parameter should be allowed.  Maybe
+     <code>&amp;13r</code> (r for radix) or something like that.
+<li> <code>gmp_printf</code> could perhaps have a type code for an
+     <code>mp_limb_t</code>.  That would save an application from having to
+     worry whether it's a long or a long long.
 </ul>
 
 
@@ -732,9 +742,10 @@ MA 02111-1307, USA.
      <code>gmp_randclear</code>, and perhaps <code>gmp_randseed</code> if it
      became algorithm-specific.  This would be more modular, and would ensure
      only code for the desired algorithms is dragged into the link.
-<li> <code>mpz_urandomm</code> should do something for n&lt;=0 (but what?),
-     and the use of <code>mpz_mod</code> looks doubtful (does it suffice to
-     generate numbers of <code>nbits</code> until getting one &lt;n?)
+<li> <code>mpz_urandomm</code> should do something for n&lt;=0, but what?
+<li> <code>mpz_urandomm</code> implementation looks like it could be improved.
+     Perhaps it's enough to calculate <code>nbits</code> as ceil(log2(n)) and
+     call <code>_gmp_rand</code> until a value <code>&lt;n</code> is obtained.
 <li> <code>gmp_randstate_t</code> used for parameters perhaps should become
      <code>gmp_randstate_ptr</code> the same as other types.
 <li> Some of the empirical randomness tests could be included in a "make
@@ -778,6 +789,9 @@ MA 02111-1307, USA.
      return to a previous k at certain sizes.  This arises basically due to
      the step effect caused by size multiples effectively used for each k.
      Looking at a graph makes it fairly clear.
+<li> <code>__gmp_doprnt_mpf</code> does a rather unattractive round-to-nearest
+     on the string returned by <code>mpf_get_str</code>.  Perhaps some variant
+     of <code>mpf_get_str</code> could be made which would better suit.
 </ul>
 
 
