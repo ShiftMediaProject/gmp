@@ -40,7 +40,7 @@ mpz_fdiv_q (quot, dividend, divisor)
 
   TMP_MARK (marker);
 
-  MPZ_TMP_INIT (rem, 1 + ABS (dividend_size));
+  MPZ_TMP_INIT (rem, ABS (divisor_size));
 
   mpz_tdiv_qr (quot, rem, dividend, divisor);
 
