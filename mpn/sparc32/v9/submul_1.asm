@@ -47,14 +47,15 @@ ifdef(`PIC',
 
 	sethi	%hi(0xffff0000),%o0
 	andn	%i3,%o0,%o0
+	srl	%i3,16,%o1
 	stw	%o0,[%fp-16]
-	ld	[%fp-16],%f11
-	fxtod	%f10,%f6
-
-	srl	%i3,16,%o0
-	stw	%o0,[%fp-16]
-	ld	[%fp-16],%f11
-	fxtod	%f10,%f8
+	stw	%o1,[%fp-32]
+	fmovs	%f10,%f6
+	fmovs	%f10,%f8
+	ld	[%fp-16],%f7
+	ld	[%fp-32],%f9
+	fxtod	%f6,%f6
+	fxtod	%f8,%f8
 
 	mov	0,%g3			C cy = 0
 
