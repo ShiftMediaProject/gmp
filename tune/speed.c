@@ -667,7 +667,7 @@ Times are in seconds, accuracy is shown.\n\
    -P name    output plot files \"name.gnuplot\" and \"name.data\"\n\
    -a <type>  use given data: random(default), random2, zeros, ffs\n\
    -x, -y, -w, -W <align>  specify data alignments, sources and dests\n\
-   -o addrs   print addresses of data blocks
+   -o addrs   print addresses of data blocks\n\
 \n\
 If both -t and -f are used, it means step by the factor or the step, whichever\n\
 is greater.\n\
