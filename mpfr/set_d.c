@@ -46,7 +46,7 @@ int
 #if __STDC__
 __mpfr_extract_double (mp_ptr rp, double d, int e)
 #else
-__mpfr_extract_double (rp, d)
+__mpfr_extract_double (rp, d, e)
      mp_ptr rp;
      double d;
      int e;
