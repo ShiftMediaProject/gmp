@@ -18,6 +18,47 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-18  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (_gmp_rand): Avoid evaluating "state" more than once, for
+	the benefit places calling it with RANDS.
+
+	* randmt.c (randseed_mt): Use mpz_init for mod and seed1, for safety.
+
+	* tune/tuneup.c (sqr_karatsuba_threshold): Initialize to
+	TUNE_SQR_KARATSUBA_MAX so mpn_sqr_n works for randmt initialization.
+
+	* gmp.texi (Integer Comparisons): Remove mention of non-existant
+	mpz_cmpabs_si, reported by Conrad Curry.
+
+	* tune/speed.c, tune/speed.h, tune/common.c: Add gmp_randseed,
+	gmp_randseed_ui and mpz_urandomb.
+
+2002-09-18  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* tests/rand/gen.c: Add mt, remove lc and bbs.
+
+	* Makefile.am (libgmp_la_SOURCES): Add randmt.c, remove randlc.c and
+	randraw.c.
+
+	* randmt.c: New file.
+	* gmp-h.in (gmp_randinit_mt): Add prototype.
+	* randdef.c: Use gmp_randinit_mt.
+
+	* gmp-impl.h (RNG_FNPTR, RNG_STATE): New macros.
+	(gmp_randfnptr_t): New structure.
+	(_gmp_rand): Now a macro not a function.
+	* gmp-h.in (__gmp_randata_lc): Remove, now internal to randlc2x.c.
+	(__gmp_randstate_struct): Revise comments on field usage.
+	* randsd.c, randclr.c: Use function pointer scheme.
+	* randsdui.c: Use gmp_randseed.
+	* randraw.c: Remove file.
+	* randlc2x.c: Collect up lc_2exp related code from randsd.c, randclr.c
+	and randraw.c, use function pointer scheme.
+
+	* randlc.c: Remove file, never documented and never worked.
+	* gmp-h.in (gmp_randinit_lc): Remove prototype.
+
 2002-09-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/mod_34lsub1.asm: New file.
