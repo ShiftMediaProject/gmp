@@ -558,10 +558,11 @@ struct each_t  fun = { "Fun" };
   ((n) == 1 && (tr->flag & (TRY_SIZE2|TRY_XSIZE)) ? size2 : size)
 
 
-/* First three entries must be 0, 1, 2, for TRY_CARRYBIT and TRY_CARRY3 */
+/* First four entries must be 0,1,2,3 for TRY_CARRYBIT, TRY_CARRY3, and
+   TRY_CARRY4 */
 mp_limb_t  carry_array[] = {
-  0, 1, 2,
-  3, 4,
+  0, 1, 2, 3,
+  4,
   (mp_limb_t) 1 << 8,
   (mp_limb_t) 1 << 16,
   (mp_limb_t) -1
