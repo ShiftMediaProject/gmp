@@ -98,6 +98,43 @@ fi
 
 
 case "$guess_full" in
+
+alpha*-*-netbsd* | alpha*-*-freebsd*)
+  # configfsf.guess has a block of code not unlike this for OSF and linsux.
+  # Perhaps it'll support *BSD too some time, in which case the code here
+  # can be removed.
+
+  cat <<EOF >$dummy.s
+	.globl main
+	.ent main
+main:
+	.frame \$30,0,\$26,0
+	.prologue 0
+	.long 0x47e03d80 # implver $0
+	lda \$2,259
+	.long 0x47e20c21 # amask $2,$1
+	srl \$1,8,\$2
+	sll \$2,2,\$2
+	sll \$0,3,\$0
+	addl \$1,\$0,\$0
+	addl \$2,\$0,\$0
+	ret \$31,(\$26),1
+	.end main
+EOF
+  $CC_FOR_BUILD $dummy.s -o $dummy 2>/dev/null
+  if test "$?" = 0 ; then
+    ./$dummy
+    case "$?" in
+     7) exact_cpu=alpha      ;;
+    15)	exact_cpu=alphaev5   ;;
+    14) exact_cpu=alphaev56  ;;
+    10)	exact_cpu=alphapca56 ;;
+    16)	exact_cpu=alphaev6   ;;
+    esac
+  fi
+  rm -f $dummy.s $dummy
+  ;;
+
 rs6000-*-aix4* | powerpc-*-aix4*)
   cat >$dummy.c <<EOF
 #include <stdio.h>
