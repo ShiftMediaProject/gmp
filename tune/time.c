@@ -538,7 +538,7 @@ cgt_works_p (void)
   if (! have_cgt)
     return 0;
 
-  if (HAVE_CGT_ID)
+  if (! HAVE_CGT_ID)
     {
       if (speed_option_verbose)
         printf ("clock_gettime don't know what ID to use\n");
