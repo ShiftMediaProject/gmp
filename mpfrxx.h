@@ -24,7 +24,6 @@ MA 02111-1307, USA. */
 
 #include <iostream>
 #include <string>
-#include <strstream>
 #include <gmp.h>
 #include <mpfr.h>
 #include "gmpxx.h"
@@ -45,7 +44,6 @@ const int mpfr_default_base = 10;
   __gmp_expr<__gmpfr_value, __gmpfr_value> & fun(const __gmp_expr<T, U> &);
 
 #define __GMPFRN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                       \
   __gmp_expr & fun(signed char);                \
   __gmp_expr & fun(unsigned char);              \
   __gmp_expr & fun(signed int);                 \
@@ -90,7 +88,7 @@ public:
     mpfr_set(mp, f.mp, __gmp_default_rounding_mode);
   }
   __gmp_expr(const __gmp_expr &f, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set(mp, f.mp, mode); }
   template <class T, class U>
   __gmp_expr(const __gmp_expr<T, U> &expr)
@@ -99,71 +97,65 @@ public:
   __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int prec)
   { mpfr_init2(mp, prec); __gmp_set_expr(mp, expr); }
 
-  __gmp_expr(bool b)
-  { mpfr_init(mp); mpfr_set_ui(mp, b, __gmp_default_rounding_mode); }
-  __gmp_expr(bool b, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, prec); mpfr_set_ui(mp, b, mode); }
-
   __gmp_expr(signed char c)
   { mpfr_init(mp); mpfr_set_si(mp, c, __gmp_default_rounding_mode); }
   __gmp_expr(signed char c, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_si(mp, c, mode); }
   __gmp_expr(unsigned char c)
   { mpfr_init(mp); mpfr_set_ui(mp, c, __gmp_default_rounding_mode); }
   __gmp_expr(unsigned char c, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_ui(mp, c, mode); }
 
   __gmp_expr(signed int i)
   { mpfr_init(mp); mpfr_set_si(mp, i, __gmp_default_rounding_mode); }
   __gmp_expr(signed int i, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_si(mp, i, mode); }
   __gmp_expr(unsigned int i)
   { mpfr_init(mp); mpfr_set_ui(mp, i, __gmp_default_rounding_mode); }
   __gmp_expr(unsigned int i, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_ui(mp, i, mode); }
 
   __gmp_expr(signed short int s)
   { mpfr_init(mp); mpfr_set_si(mp, s, __gmp_default_rounding_mode); }
   __gmp_expr(signed short int s, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_si(mp, s, mode); }
   __gmp_expr(unsigned short int s)
   { mpfr_init(mp); mpfr_set_ui(mp, s, __gmp_default_rounding_mode); }
   __gmp_expr(unsigned short int s, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_ui(mp, s, mode); }
 
   __gmp_expr(signed long int l)
   { mpfr_init(mp); mpfr_set_si(mp, l, __gmp_default_rounding_mode); }
   __gmp_expr(signed long int l, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_si(mp, l, mode); }
   __gmp_expr(unsigned long int l)
   { mpfr_init(mp); mpfr_set_ui(mp, l, __gmp_default_rounding_mode); }
   __gmp_expr(unsigned long int l, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_ui(mp, l, mode); }
 
   __gmp_expr(float f)
   { mpfr_init(mp); mpfr_set_d(mp, f, __gmp_default_rounding_mode); }
   __gmp_expr(float f, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_d(mp, f, mode); }
   __gmp_expr(double d)
   { mpfr_init(mp); mpfr_set_d(mp, d, __gmp_default_rounding_mode); }
   __gmp_expr(double d, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_d(mp, d, mode); }
   /*
   __gmp_expr(long double ld)
   { mpfr_init(mp); mpfr_set_d(mp, ld, __gmp_default_rounding_mode); }
   __gmp_expr(long double ld, unsigned long int prec,
-	     char mode = __gmp_default_rounding_mode)
+	     mp_rnd_t mode = __gmp_default_rounding_mode)
   { mpfr_init2(mp, prec); mpfr_set_d(mp, ld, mode); }
   */
 
@@ -197,9 +189,6 @@ public:
   __gmp_expr<__gmpfr_value, __gmpfr_value> & operator=
   (const __gmp_expr<T, U> &expr)
   { __gmp_set_expr(mp, expr); return *this; }
-
-  __gmp_expr & operator=(bool b)
-  { mpfr_set_ui(mp, b, __gmp_default_rounding_mode); return *this; }
 
   __gmp_expr & operator=(signed char c)
   { mpfr_set_si(mp, c, __gmp_default_rounding_mode); return *this; }
@@ -246,25 +235,6 @@ public:
     __gmp_alloc_cstring temp(mpfr_get_str(0, expo, base, size, mp, rmode));
     return std::string(temp.str);
   }
-  std::string get_str2(int base = 10,
-		       mp_rnd_t rmode = __gmp_default_rounding_mode) const
-  {
-    std::ostrstream o;
-    mp_exp_t expo;
-    std::string temp(mpfr_get_str(0, &expo, base, 0, mp, rmode));
-
-    if (temp[0] == '-')
-      o << "-0." << temp.substr(1);
-    else
-      o << "0." << temp;
-
-    if (base <= 10)
-      o << "e" << expo << '\0';
-    else
-      o << "@" << expo << '\0';
-
-    return o.str();
-  }
 
   // conversion functions
   mpfr_srcptr get_mpfr_t() const { return mp; }
@@ -272,7 +242,8 @@ public:
 
   // signed long get_si() const { return mpfr_get_si(mp); }
   // unsigned long get_ui() const { return mpfr_get_ui(mp); }
-  double get_d() const { return mpfr_get_d(mp); } // should be long double
+  double get_d() const // should be long double
+  { return mpfr_get_d(mp, __gmp_default_rounding_mode); }
 
   // compound assignments
   __GMPFR_DECLARE_COMPOUND_OPERATOR(operator+=)
@@ -741,13 +712,6 @@ inline mpfr_class & mpfr_class::fun(const __gmp_expr<T, U> &expr)     \
 }
 
 #define __GMPFRN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)           \
-                                                                   \
-inline mpfr_class & mpfr_class::fun(bool b)                        \
-{                                                                  \
-  eval_fun::eval(mp, mp, (unsigned long int) b,                    \
-                 __gmp_default_rounding_mode);                     \
-  return *this;                                                    \
-}                                                                  \
                                                                    \
 inline mpfr_class & mpfr_class::fun(signed char c)                 \
 {                                                                  \
