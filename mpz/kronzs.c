@@ -44,8 +44,6 @@ mpz_kronecker_zi_si (a, b)
   int  result_bit1;
   int  twos;
 
-  ASSERT (sizeof (mp_limb_t) >= sizeof (long));
-
   if (b == 0)
     return JACOBI_Z0 (a);
 
