@@ -584,10 +584,10 @@ dnl  The warning from solaris 2.8 is supressed to stop anyone worrying that
 dnl  something might be wrong.
 
 AC_DEFUN(GMP_ASM_ALIGN_FILL_0x90,
-[AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
-                gmp_cv_asm_align_fill_0x90,
 [AC_REQUIRE([GMP_ASM_TEXT])
-cat > conftest.s <<EOF
+AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
+               gmp_cv_asm_align_fill_0x90,
+[cat > conftest.s <<EOF
       	$gmp_cv_asm_text
       	.align  4, 0x90
 	.byte   0
