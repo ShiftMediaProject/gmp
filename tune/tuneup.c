@@ -113,6 +113,8 @@ mp_size_t  tune_sqr_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  bz_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 
+mp_size_t  tune_mul_max[MAX_TABLE] = { 0, TOOM3_MUL_THRESHOLD_LIMIT };
+mp_size_t  tune_sqr_max[MAX_TABLE] = { KARATSUBA_SQR_THRESHOLD_MAX };
 
 /* Add an entry to the end of the dat[] array, reallocing to make it bigger
    if necessary.  */
@@ -182,7 +184,7 @@ analyze_dat (int i, int final)
 
 void
 one (speed_function_t function, mp_size_t table[], size_t max_table,
-     mp_size_t max_first_size, const char *name)
+     mp_size_t table_max_size[], const char *name)
 {
   int  i;
 
@@ -202,9 +204,10 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
         {
           double   ti, tiplus1, d;
 
-          if (i == 0 && max_first_size != 0 && s.size > max_first_size)
+          if (table_max_size != NULL && table_max_size[i] != 0
+              && s.size > table_max_size[i])
             {
-              fprintf (stderr, "Exceeded maximum first size (%ld) without finding a threshold\n", max_first_size);
+              fprintf (stderr, "Exceeded maximum size (%ld) without finding a threshold\n", table_max_size[i]);
               abort ();
             }
 
@@ -370,13 +373,13 @@ all (void)
   printf("\n");
 
   one (speed_mpn_sqr_n, tune_sqr_threshold, numberof(tune_sqr_threshold)-1,
-       KARATSUBA_SQR_THRESHOLD_MAX, "SQR");
+       tune_sqr_max, "SQR");
   printf("\n");
   
-  one (speed_mpn_bz_tdiv_qr, bz_threshold, 1, 0, "BZ");
+  one (speed_mpn_bz_tdiv_qr, bz_threshold, 1, NULL, "BZ");
   printf("\n");
 
-  one (speed_mpz_fib_ui, fib_threshold, 1, 0, "FIB");
+  one (speed_mpz_fib_ui, fib_threshold, 1, NULL, "FIB");
   printf("\n");
 }
 
