@@ -522,7 +522,7 @@ main (int argc, char **argv)
 	    FAIL2 (mpz_divexact, t, in2, NULL);
 	}
 
-      if (mpz_sgn (in2) != 0)
+      if (mpz_sgn (in2) > 0)
 	{
 	  /* Test mpz_divexact_gcd, same as mpz_divexact */
 	  mpz_mul (t, in1, in2);
