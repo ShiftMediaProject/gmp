@@ -5,7 +5,9 @@ AUTOMAKE_OPTIONS = gnu
 INCLUDES = -I$(top_srcdir) -I..
 LDADD = libstat.la ../../libgmp.la -lm
 
-noinst_PROGRAMS = findcl gen spect stat
+noinst_PROGRAMS = findlc gen gen.static spect stat
+gen_static_SOURCES = gen.c
+gen_static_LDFLAGS = -static
 
 noinst_LTLIBRARIES = libstat.la
 libstat_la_SOURCES = statlib.c zdiv_round.c
