@@ -481,7 +481,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
        __shift -= (__n < 0x10000);
        __shift -= (__n < 0x100);
 
-   The middle two sbbl and cmpl's pair, and with luck something the compiler
+   The middle two sbbl and cmpl's pair, and with luck something gcc
    generates might pair with the first cmpl and the last sbbl.  The "32+1"
    constant could be folded into __clz_tab[], but it doesn't seem worth
    making a different table just for that.  */
