@@ -1,7 +1,29 @@
 2000-07-25  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/hppa/gmp-mparam.h: Update threshold values from new `tune' run.
+
+	* mpn/pa64/gmp-mparam.h: Fill in values from `make tune' run.
+	* mpn/pa64w/gmp-mparam.h: Likewise.
+	* mpn/mips3/gmp-mparam.h: Likewise.
+
+	* tune/hppa2.asm: Fix typo in .level directive.
+
+	* configure.in: Add sparc64-*-linux* support (from Jakub Jelinek).
+	* configure: Regenerate.
+	
+	* mpn/sparc64/rshift.asm: Use %g5 instead of volatile stack frame area
+	for return value (from Jakub Jelinek).
+	* mpn/sparc64/lshift.asm: Likewise.
+
+	* mpf/get_prc.c: Revert Aug 8, 1996 change.
+
+	* version.c: No longer static.
+
 	* mpn/pa64/gmp-mparam.h: Only #define *_THRESHOLD if not already
 	defined.
+	* mpn/pa64w/gmp-mparam.h: Likewise.
+	* mpn/arm/gmp-mparam.h: Likewise.
+	* mpn/mips3/gmp-mparam.h: Likewise.
 
 2000-07-25  Kevin Ryde  <kevin@swox.se>
 
@@ -2616,7 +2638,8 @@
 
 2000-02-21  Torbjorn Granlund  <tege@swox.com>
 
-	* gmp.h: Undo 1996-10-06 NeXT change, it was clearly improperly written.
+	* gmp.h: Undo 1996-10-06 NeXT change, it was clearly improperly
+	written.
 
 2000-02-21  Linus Nordberg  <linus@swox.se>
 
@@ -3613,7 +3636,8 @@
 
 1998-10-19  Torbjorn Granlund  <tege@matematik.su.se>
 
-	* mpn/generic/bdivmod.c: Avoid using switch statement with mp_limb_t index.
+	* mpn/generic/bdivmod.c: Avoid using switch statement with mp_limb_t
+	index.
 
 1998-10-17  Torbjorn Granlund  <tege@matematik.su.se>
 
