@@ -1,6 +1,6 @@
 /* gmp_randinit_default -- initialize a random state with a default algorithm.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,5 +25,5 @@ MA 02111-1307, USA. */
 void
 gmp_randinit_default (gmp_randstate_t rstate)
 {
-  ASSERT_CARRY (gmp_randinit_lc_2exp_size (rstate, 32L));
+  gmp_randinit_mt (rstate);
 }
