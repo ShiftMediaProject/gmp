@@ -419,6 +419,14 @@ for tmp_underscore in "" "_"; do
 	$gmp_cv_check_asm_globl ${tmp_underscore}underscore_test
 ${tmp_underscore}underscore_test:
 EOF
+  case "$target" in
+  *-*-aix*)
+    cat >> conftes2.s <<EOF
+	$gmp_cv_check_asm_globl .${tmp_underscore}underscore_test
+.${tmp_underscore}underscore_test:
+EOF
+    ;;
+  esac
   tmp_compile="${CC-cc} conftes1.c conftes2.s 1>&AC_FD_CC"
   if AC_TRY_EVAL(tmp_compile); then
     eval tmp_result$tmp_underscore=yes
