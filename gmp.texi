@@ -2418,13 +2418,17 @@ it will change in a future release.}
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_scan0 (mpz_t @var{op}, unsigned long int @var{starting_bit})
-Scan @var{op}, starting with bit @var{starting_bit}, towards more significant
-bits, until the first clear bit is found.  Return the index of the found bit.
-@end deftypefun
+@deftypefunx {unsigned long int} mpz_scan1 (mpz_t @var{op}, unsigned long int @var{starting_bit})
+Scan @var{op}, starting from bit @var{starting_bit}, towards more significant
+bits, until the first 0 or 1 bit (respectively) is found.  Return the index of
+the found bit.
 
-@deftypefun {unsigned long int} mpz_scan1 (mpz_t @var{op}, unsigned long int @var{starting_bit})
-Scan @var{op}, starting with bit @var{starting_bit}, towards more significant
-bits, until the first set bit is found.  Return the index of the found bit.
+If the bit at @var{starting_bit} is already what's sought, then
+@var{starting_bit} is returned.
+
+If there's no bit found, then @var{MAX_ULONG} is returned.  This will happen
+in @code{mpz_scan0} past the end of a positive number, or @code{mpz_scan1}
+past the end of a negative.
 @end deftypefun
 
 @deftypefun void mpz_setbit (mpz_t @var{rop}, unsigned long int @var{bit_index})
