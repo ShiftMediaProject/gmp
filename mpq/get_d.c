@@ -1,4 +1,4 @@
-/* double mpq_get_d (mpq_t src) -- Return the double approximation to SRC.
+/* double mpq_get_d (mpq_t src) -- mpq to double, rounding towards zero.
 
 Copyright 1995, 1996, 2001, 2002, 2003 Free Software Foundation, Inc.
 
@@ -23,44 +23,21 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Algorithm:
-   1. Develop >= n bits of src.num / src.den, where n is the number of bits
-      in a double.  This (partial) division will use all bits from the
-      denominator.
-   2. Use the remainder to determine how to round the result.
-   3. Assign the integral result to a temporary double.
-   4. Scale the temporary double, and return the result.
 
-   An alternative algorithm, that would be faster:
-   0. Let n be somewhat larger than the number of significant bits in a double.
-   1. Extract the most significant n bits of the denominator, and an equal
-      number of bits from the numerator.
-   2. Interpret the extracted numbers as integers, call them a and b
-      respectively, and develop n bits of the fractions ((a + 1) / b) and
-      (a / (b + 1)) using mpn_divrem.
-   3. If the computed values are identical UP TO THE POSITION WE CARE ABOUT,
-      we are done.  If they are different, repeat the algorithm from step 1,
-      but first let n = n * 2.
-   4. If we end up using all bits from the numerator and denominator, fall
-      back to the first algorithm above.
-   5. Just to make life harder, The computation of a + 1 and b + 1 above
-      might give carry-out...  Needs special handling.  It might work to
-      subtract 1 in both cases instead.
-*/
+/* All that's required is to get the high 53 bits of the quotient num/den,
+   rounded towards zero.  More than 53 bits is fine, any excess is ignored
+   by mpn_get_d.
 
-/* HPPA 8000, 8200, 8500, and 8600 traps FCNV,UDW,DBL for values >= 2^63.  This
-   makes it slow.  Worse, the Linux kernel apparently uses untested code in its
-   trap handling routines, and gets the sign wrong.  Their compiler port
-   doesn't define __hppa as it should.  Here is a workaround:  */
-#if (defined (__hppa) || defined (__hppa__)) && GMP_LIMB_BITS == 64
-#define limb2dbl(limb) \
-    ((limb) >> (GMP_LIMB_BITS - 1) != 0  				\
-     ? 2.0 * (double) (mp_limb_signed_t) (((limb) >> 1) | ((limb) & 1))	\
-     : (double) (mp_limb_signed_t) (limb))
-#else
-#define limb2dbl(limb) \
-    (double) (limb)
-#endif
+   Enhancements:
+
+   With some shifts all we need is 1 or 2 limbs of quotient, ie. 1 or 2
+   steps of mpn_sb_divrem_mn, could call that directly instead of going via
+   mpn_divmod.
+
+   Use a quotient-only division, when it exists.  Since only 1 or 2 limbs of
+   quotient are needed, they could be estimated from the high limbs of num
+   and den, followed by a mul+cmp to see if 1 too big, without using any
+   temporary memory.  */
 
 double
 mpq_get_d (const MP_RAT *src)
