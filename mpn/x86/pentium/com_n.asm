@@ -3,7 +3,7 @@ dnl
 dnl  P5: 2.0 cycles/limb
 
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -30,6 +30,9 @@ C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C Nothing complicated here, just some care to avoid an AGI in the loop.
 C Further unrolling could approach 1.5 c/l if desired.
+C
+C On P55 some MMX code could approach 1.0 c/l if src and dst are the same
+C alignment mod 8, but that doesn't seem worth the trouble.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
