@@ -39,7 +39,6 @@ check_data (void)
     char        src[64];
 
   } data[] = {
-    { "0x123456789ABC", 3,1,  2,1,  0, { 0x12,0x34, 0x56,0x78, 0x9A,0xBC } },
 
     { "0", 0,1, 1,1, 0 },
     { "0", 1,1, 0,1, 0 },
@@ -94,6 +93,15 @@ check_data (void)
       { 0x0C,0xC0,0x0B,0xB0,0x0A,0xA0,0x09,0x90,
         0x08,0x80,0x07,0x70,0x06,0x60,0x05,0x50,
         0x04,0x40,0x03,0x30,0x02,0x20,0x01,0x10 } },
+
+    { "0x155555555555555555555555", 3,1,  4,1,  1,
+      { 0xD5,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0xD5,0x55,0x55,0x55 } },
+    { "0x155555555555555555555555", 3,-1,  4,1,  1,
+      { 0xD5,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0xD5,0x55,0x55,0x55 } },
+    { "0x155555555555555555555555", 3,1,  4,-1,  1,
+      { 0x55,0x55,0x55,0xD5, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0xD5 } },
+    { "0x155555555555555555555555", 3,-1,  4,-1,  1,
+      { 0x55,0x55,0x55,0xD5, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0xD5 } },
   };
 
   char    buf[sizeof(data[0].src) + sizeof (mp_limb_t)];
@@ -113,6 +121,7 @@ check_data (void)
           src = buf + align;
           memcpy (src, data[i].src, data[i].count * data[i].size);
 
+          mpz_set_ui (got, 0L);
           mpz_import (got, data[i].count, data[i].order,
                       data[i].size, data[i].endian, data[i].nail, src);
 
@@ -120,9 +129,10 @@ check_data (void)
           if (mpz_cmp (got, want) != 0)
             {
               printf ("wrong at data[%d]\n", i);
-              printf ("    count=%u order=%d  size=%u endian=%d nail=%u\n",
+              printf ("    count=%u order=%d  size=%u endian=%d nail=%u  align=%u\n",
                       data[i].count, data[i].order,
-                      data[i].size, data[i].endian, data[i].nail);
+                      data[i].size, data[i].endian, data[i].nail,
+                      align);
               mpz_trace ("    got ", got);
               mpz_trace ("    want", want);
               abort ();
