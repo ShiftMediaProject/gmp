@@ -136,6 +136,8 @@ double speed_mpn_andn_n _PROTO ((struct speed_params *s));
 double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_n _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_sb _PROTO ((struct speed_params *s));
+double speed_mpn_dc_divrem_sb_div _PROTO ((struct speed_params *s));
+double speed_mpn_dc_divrem_sb_inv _PROTO ((struct speed_params *s));
 double speed_mpn_dc_tdiv_qr _PROTO ((struct speed_params *s));
 double speed_MPN_COPY _PROTO ((struct speed_params *s));
 double speed_MPN_COPY_DECR _PROTO ((struct speed_params *s));
@@ -151,6 +153,8 @@ double speed_mpn_divrem_1f_div _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1_inv _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1f_inv _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2 _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_2_div _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_2_inv _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_finda _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
@@ -190,6 +194,9 @@ double speed_mpn_popcount _PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 _PROTO ((struct speed_params *s));
 double speed_redc _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
+double speed_mpn_sb_divrem_m3 _PROTO ((struct speed_params *s));
+double speed_mpn_sb_divrem_m3_div _PROTO ((struct speed_params *s));
+double speed_mpn_sb_divrem_m3_inv _PROTO ((struct speed_params *s));
 double speed_mpn_set_str _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
@@ -225,6 +232,9 @@ double speed_mpz_powm_ui _PROTO ((struct speed_params *s));
 double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));
 double speed_noop_wxys _PROTO ((struct speed_params *s));
+
+double speed_operator_div (struct speed_params *s);
+double speed_operator_mod (struct speed_params *s);
 
 double speed_udiv_qrnnd _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv _PROTO ((struct speed_params *s));
@@ -271,6 +281,12 @@ mp_limb_t mpn_divrem_1_div _PROTO ((mp_ptr qp, mp_size_t xsize,
 mp_limb_t mpn_divrem_1_inv _PROTO ((mp_ptr qp, mp_size_t xsize,
                                     mp_srcptr ap, mp_size_t size,
                                     mp_limb_t d));
+mp_limb_t mpn_divrem_2_div _PROTO ((mp_ptr qp, mp_size_t qxn,
+                                    mp_ptr np, mp_size_t nsize,
+                                    mp_srcptr dp));
+mp_limb_t mpn_divrem_2_inv _PROTO ((mp_ptr qp, mp_size_t qxn,
+                                    mp_ptr np, mp_size_t nsize,
+                                    mp_srcptr dp));
 mp_limb_t mpn_mod_1_div _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
 mp_limb_t mpn_mod_1_inv _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
 
@@ -289,6 +305,12 @@ mp_size_t mpn_gcdext_double
   _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
            mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
 
+mp_limb_t mpn_sb_divrem_mn_div _PROTO ((mp_ptr qp,
+                                        mp_ptr np,    mp_size_t nsize,
+                                        mp_srcptr dp, mp_size_t dsize));
+mp_limb_t mpn_sb_divrem_mn_inv _PROTO ((mp_ptr qp,
+                                        mp_ptr np,    mp_size_t nsize,
+                                        mp_srcptr dp, mp_size_t dsize));
 void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                    mp_ptr));
 void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -731,6 +753,48 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_ROUTINE_MPN_DC_TDIV_QR(function)          \
   SPEED_ROUTINE_MPN_DC_DIVREM_CALL                      \
     ((*function) (q, r, 0, a, 2*s->size, d, s->size))
+
+
+/* A division of s->size by 3 limbs */
+
+#define SPEED_ROUTINE_MPN_SB_DIVREM_M3(function)        \
+  {                                                     \
+    unsigned   i;                                       \
+    mp_ptr     a, d, q;                                 \
+    mp_size_t  qsize;                                   \
+    double     t;                                       \
+    TMP_DECL (marker);                                  \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 3);                 \
+                                                        \
+    TMP_MARK (marker);                                  \
+    a = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);   \
+                                                        \
+    d = SPEED_TMP_ALLOC_LIMBS (3, s->align_yp);         \
+    MPN_COPY (d, s->yp, 3);                             \
+    d[2] |= MP_LIMB_T_HIGHBIT;                          \
+                                                        \
+    qsize = s->size - 3;                                \
+    q = SPEED_TMP_ALLOC_LIMBS (qsize, s->align_wp);     \
+                                                        \
+    speed_operand_dst (s, a, s->size);                  \
+    speed_operand_src (s, d, 3);                        \
+    speed_operand_dst (s, q, qsize);                    \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      {                                                 \
+        MPN_COPY (a, s->xp, s->size);                   \
+        function (q, a, s->size, d, 3);                 \
+      }                                                 \
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
+  }  
 
 
 /* A remainder 2*s->size by s->size limbs */
@@ -1311,7 +1375,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     double    t;                                        \
     TMP_DECL (marker);                                  \
                                                         \
-    SPEED_RESTRICT_COND (s->size >= 1);                 \
+    SPEED_RESTRICT_COND (s->size >= 2);                 \
                                                         \
     TMP_MARK (marker);                                  \
     xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);  \
@@ -1592,29 +1656,33 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   SPEED_ROUTINE_COUNT_ZEROS (call, 0, zero)
 
 
-#define SPEED_ROUTINE_INVERT_LIMB_CALL(call)    \
-  {                                             \
-    unsigned   i, j;                            \
-    mp_limb_t  d, dinv=0;                       \
-    mp_ptr     xp = s->xp_block - 1;            \
-                                                \
-    s->time_divisor = SPEED_BLOCK_SIZE;         \
-                                                \
-    speed_starttime ();                         \
-    i = s->reps;                                \
-    do                                          \
-      {                                         \
-        j = SPEED_BLOCK_SIZE;                   \
-        do                                      \
-          {                                     \
-            d = dinv ^ xp[j];                   \
-            d |= MP_LIMB_T_HIGHBIT;             \
-            do { call; } while (0);             \
-          }                                     \
-        while (--j != 0);                       \
-      }                                         \
-    while (--i != 0);                           \
-    return speed_endtime();                     \
+#define SPEED_ROUTINE_INVERT_LIMB_CALL(call)                    \
+  {                                                             \
+    unsigned   i, j;                                            \
+    mp_limb_t  d, dinv=0;                                       \
+    mp_ptr     xp = s->xp_block - 1;                            \
+                                                                \
+    s->time_divisor = SPEED_BLOCK_SIZE;                         \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      {                                                         \
+        j = SPEED_BLOCK_SIZE;                                   \
+        do                                                      \
+          {                                                     \
+            d = dinv ^ xp[j];                                   \
+            d |= MP_LIMB_T_HIGHBIT;                             \
+            do { call; } while (0);                             \
+          }                                                     \
+        while (--j != 0);                                       \
+      }                                                         \
+    while (--i != 0);                                           \
+                                                                \
+    /* don't let the compiler optimize everything away */       \
+    noop_1 (dinv);                                              \
+                                                                \
+    return speed_endtime();                                     \
   }
 
 
