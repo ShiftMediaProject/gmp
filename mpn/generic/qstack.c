@@ -32,7 +32,7 @@ qstack_itch (mp_size_t size)
 {
   /* Limit on the recursion depth */
 
-  unsigned k = hgcd_max_recursion (size);
+  unsigned k = mpn_hgcd_max_recursion (size);
 
   ASSERT (2 * k < QSTACK_MAX_QUOTIENTS);
 
@@ -44,14 +44,14 @@ qstack_reset (struct qstack *stack,
 	      mp_size_t asize)
 {
   /* Limit on the recursion depth */
-  unsigned k = hgcd_max_recursion (asize);
+  unsigned k = mpn_hgcd_max_recursion (asize);
 
   stack->size_next = 0;
   stack->limb_next= 0;
   stack->nkeep = 2 * (k + 1);
   ASSERT (stack->nkeep < QSTACK_MAX_QUOTIENTS);
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 }
 
 void
@@ -79,7 +79,7 @@ qstack_rotate (struct qstack *stack,
 
   mp_size_t dropped_limbs;
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 
   if (stack->size_next > stack->nkeep)
     dropped_sizes = stack->size_next - stack->nkeep;
@@ -118,12 +118,12 @@ qstack_rotate (struct qstack *stack,
       else
 	stack->limb_next = 0;
     }
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 }
 
 #if WANT_ASSERT
 void
-qstack_sanity (struct qstack *stack)
+__gmpn_qstack_sanity (struct qstack *stack)
 {
   mp_size_t next;
   unsigned i;
@@ -143,7 +143,7 @@ qstack_sanity (struct qstack *stack)
 
 /* What's the right place for this function? */
 unsigned
-hgcd_max_recursion (mp_size_t n)
+mpn_hgcd_max_recursion (mp_size_t n)
 {
   int count;
 

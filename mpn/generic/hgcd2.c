@@ -91,7 +91,7 @@ div2 (mp_ptr rp,
 static inline void
 qstack_push_0 (struct qstack *stack)
 {
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 
   if (stack->size_next >= QSTACK_MAX_QUOTIENTS)
     qstack_rotate (stack, 0);
@@ -104,7 +104,7 @@ qstack_push_1 (struct qstack *stack, mp_limb_t q)
 {
   ASSERT (q >= 2);
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 
   if (stack->limb_next >= stack->limb_alloc)
     qstack_rotate (stack, 1);
@@ -115,7 +115,7 @@ qstack_push_1 (struct qstack *stack, mp_limb_t q)
   stack->size[stack->size_next++] = 1;
   stack->limb[stack->limb_next++] = q;
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 }
 
 /* Produce r_k from r_i and r_j, and push the corresponding

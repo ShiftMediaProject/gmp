@@ -3097,25 +3097,23 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 /* Limited by 2 + twice the bitsize of mp_size_t */
 #define QSTACK_MAX_QUOTIENTS 130
 
-/* Some useful macros */
+/* Name mangling */
+#define qstack_itch __gmpn_qstack_itch
+#define qstack_init __gmpn_qstack_init
+#define qstack_reset __gmpn_qstack_reset 
+#define qstack_rotate __gmpn_qstack_rotate
 
-/* Comparison of _normalized_ numbers. */
-#define MPN_LEQ_P(ap, asize, bp, bsize)				\
-((asize) < (bsize) || ((asize) == (bsize)			\
-		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
-
-/* Extract one limb, shifting count bits left
-    ________  ________
-   |___xh___||___xl___|
-	  |____r____|
-   >count <
-
-   The count includes any nail bits, so it should work fine if
-   count is computed using count_leading_zeros.
-*/
-
-#define MPN_EXTRACT_LIMB(count, xh, xl) \
-  (((xh) << (count)) | ((xl) >> (GMP_LIMB_BITS - (count))))
+#define mpn_hgcd2 __gmpn_hgcd2
+#define mpn_hgcd2_fix __gmpn_hgcd2_fix
+#define mpn_hgcd_max_recursion __gmpn_hgcd_max_recursion
+#define mpn_hgcd_init_itch __gmpn_hgcd_init_itch
+#define mpn_hgcd_init __gmpn_hgcd_init
+#define mpn_hgcd_lehmer_itch __gmpn_hgcd_lehmer_itch
+#define mpn_hgcd_lehmer __gmpn_hgcd_lehmer
+#define mpn_hgcd_itch __gmpn_hgcd_itch
+#define mpn_hgcd __gmpn_hgcd
+#define mpn_hgcd_equal __gmpn_hgcd_equal
+#define mpn_hgcd_fix __gmpn_hgcd_fix
 
 struct qstack
 {
@@ -3135,26 +3133,27 @@ struct qstack
 };
 
 mp_size_t
-qstack_itch (mp_size_t size);
+qstack_itch __GMP_PROTO ((mp_size_t size));
 
 void
-qstack_init (struct qstack *stack,
-	     mp_size_t asize,
-	     mp_limb_t *limbs, mp_size_t alloc);
+qstack_init __GMP_PROTO ((struct qstack *stack,
+			  mp_size_t asize,
+			  mp_limb_t *limbs, mp_size_t alloc));
 
 void
-qstack_reset (struct qstack *stack,
-	      mp_size_t asize);
+qstack_reset __GMP_PROTO ((struct qstack *stack,
+			   mp_size_t asize));
 
 void
-qstack_rotate (struct qstack *stack,
-	       mp_size_t size);
+qstack_rotate __GMP_PROTO ((struct qstack *stack,
+			    mp_size_t size));
 
 #if WANT_ASSERT
 void
-qstack_sanity (struct qstack *stack);
+__gmpn_qstack_sanity __GMP_PROTO ((struct qstack *stack));
+#define ASSERT_QSTACK __gmpn_qstack_sanity
 #else
-# define qstack_sanity(stack)
+# define ASSERT_QSTACK(stack)
 #endif
 
 struct hgcd2_row
@@ -3174,20 +3173,19 @@ struct hgcd2
 };
 
 int
-mpn_hgcd2 (struct hgcd2 *hgcd,
-	   mp_limb_t ah, mp_limb_t al,
-	   mp_limb_t bh, mp_limb_t bl,
-	   struct qstack *quotients);
+mpn_hgcd2 __GMP_PROTO ((struct hgcd2 *hgcd,
+			mp_limb_t ah, mp_limb_t al,
+			mp_limb_t bh, mp_limb_t bl,
+			struct qstack *quotients));
 
 mp_size_t
-mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
-	       int sign,
-	       mp_limb_t u, mp_srcptr ap, mp_size_t asize,
-	       mp_limb_t v, mp_srcptr bp, mp_size_t bsize);
+mpn_hgcd2_fix __GMP_PROTO ((mp_ptr rp, mp_size_t ralloc,
+			    int sign,
+			    mp_limb_t u, mp_srcptr ap, mp_size_t asize,
+			    mp_limb_t v, mp_srcptr bp, mp_size_t bsize));
 
-/* What's the right place for this? */
 unsigned
-hgcd_max_recursion (mp_size_t n);
+mpn_hgcd_max_recursion __GMP_PROTO ((mp_size_t n));
 
 struct hgcd_row
 {
@@ -3211,45 +3209,46 @@ struct hgcd
 };
 
 mp_size_t
-mpn_hgcd_init_itch (mp_size_t size);
+mpn_hgcd_init_itch __GMP_PROTO ((mp_size_t size));
 
 void
-mpn_hgcd_init (struct hgcd *hgcd,
-	       mp_size_t asize,
-	       mp_limb_t *limbs);
+mpn_hgcd_init __GMP_PROTO ((struct hgcd *hgcd,
+			    mp_size_t asize,
+			    mp_limb_t *limbs));
 
 mp_size_t
-mpn_hgcd_lehmer_itch (mp_size_t asize);
+mpn_hgcd_lehmer_itch __GMP_PROTO ((mp_size_t asize));
 
 int
-mpn_hgcd_lehmer (struct hgcd *hgcd,
-		 mp_srcptr ap, mp_size_t asize,
-		 mp_srcptr bp, mp_size_t bsize,
-		 struct qstack *quotients,
-		 mp_ptr tp, mp_size_t talloc);
+mpn_hgcd_lehmer __GMP_PROTO ((struct hgcd *hgcd,
+			      mp_srcptr ap, mp_size_t asize,
+			      mp_srcptr bp, mp_size_t bsize,
+			      struct qstack *quotients,
+			      mp_ptr tp, mp_size_t talloc));
 
 mp_size_t
-mpn_hgcd_itch (mp_size_t size);
+mpn_hgcd_itch __GMP_PROTO ((mp_size_t size));
 
 int
-mpn_hgcd (struct hgcd *hgcd,
-	  mp_srcptr ap, mp_size_t asize,
-	  mp_srcptr bp, mp_size_t bsize,
-	  struct qstack *quotients,
-	  mp_ptr tp, mp_size_t talloc);
+mpn_hgcd __GMP_PROTO ((struct hgcd *hgcd,
+		       mp_srcptr ap, mp_size_t asize,
+		       mp_srcptr bp, mp_size_t bsize,
+		       struct qstack *quotients,
+		       mp_ptr tp, mp_size_t talloc));
 
 #if WANT_ASSERT
 void
-hgcd_sanity (const struct hgcd *hgcd,
-	     mp_srcptr ap, mp_size_t asize,
-	     mp_srcptr bp, mp_size_t bsize,
-	     unsigned start, unsigned end);
+__gmpn_hgcd_sanity __GMP_PROTO ((const struct hgcd *hgcd,
+				 mp_srcptr ap, mp_size_t asize,
+				 mp_srcptr bp, mp_size_t bsize,
+				 unsigned start, unsigned end));
+#define ASSERT_HGCD __gmpn_hgcd_sanity
 #else
-# define hgcd_sanity(hgcd, ap, asize, bp, bsize, start, end)
+# define ASSERT_HGCD(hgcd, ap, asize, bp, bsize, start, end)
 #endif
 
 int
-mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B);
+mpn_hgcd_equal __GMP_PROTO ((const struct hgcd *A, const struct hgcd *B));
 
 /* Computes R = 2^k H + u A' - v B', which must be non-negative.
    Temporary space needed is k + uvsize.
@@ -3257,14 +3256,14 @@ mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B);
    H and R must not overlap. */
 
 mp_size_t
-mpn_hgcd_fix (mp_size_t k,
-	      mp_ptr rp, mp_size_t ralloc,
-	      mp_ptr hp, mp_size_t hsize,
-	      int sign,
-	      mp_srcptr up, mp_srcptr ap,
-	      mp_srcptr vp, mp_srcptr bp,
-	      mp_size_t uvsize,
-	      mp_ptr tp, mp_size_t talloc);
+mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
+			   mp_ptr rp, mp_size_t ralloc,
+			   mp_ptr hp, mp_size_t hsize,
+			   int sign,
+			   mp_srcptr up, mp_srcptr ap,
+			   mp_srcptr vp, mp_srcptr bp,
+			   mp_size_t uvsize,
+			   mp_ptr tp, mp_size_t talloc));
 
 /* This should be tuned while looking at performance for large numbers */
 #ifndef HGCD_SCHOENHAGE_THRESHOLD

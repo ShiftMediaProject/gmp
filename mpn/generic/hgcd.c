@@ -45,12 +45,31 @@ trace (const char *format, ...)
 }
 #endif
 
+/* Comparison of _normalized_ numbers. */
+
 #define MPN_EQUAL_P(ap, asize, bp, bsize)			\
 ((asize) == (bsize) && mpn_cmp ((ap), (bp), (asize)) == 0)
+
+#define MPN_LEQ_P(ap, asize, bp, bsize)				\
+((asize) < (bsize) || ((asize) == (bsize)			\
+		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
 
 #define MPN_LESS_P(ap, asize, bp, bsize)			\
 ((asize) < (bsize) || ((asize) == (bsize)			\
 		       && mpn_cmp ((ap), (bp), (asize)) < 0))
+
+/* Extract one limb, shifting count bits left
+    ________  ________
+   |___xh___||___xl___|
+	  |____r____|
+   >count <
+
+   The count includes any nail bits, so it should work fine if
+   count is computed using count_leading_zeros.
+*/
+
+#define MPN_EXTRACT_LIMB(count, xh, xl) \
+  (((xh) << (count)) | ((xl) >> (GMP_LIMB_BITS - (count))))
 
 /* Checks if a - b < c. Overwrites c. */
 static int
@@ -192,7 +211,7 @@ static mp_ptr
 qstack_push_start (struct qstack *stack,
 		   mp_size_t size)
 {
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 
   ASSERT (stack->limb_next <= stack->limb_alloc);
 
@@ -222,7 +241,7 @@ qstack_push_end (struct qstack *stack, mp_size_t size)
   stack->size[stack->size_next++] = size;
   stack->limb_next += size;
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 }
 
 static mp_size_t
@@ -297,7 +316,7 @@ qstack_adjust (struct qstack *stack, mp_limb_t d)
   ASSERT (d);
   ASSERT (stack->size_next);
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 
   if (stack->limb_next >= stack->limb_alloc)
     {
@@ -326,7 +345,7 @@ qstack_adjust (struct qstack *stack, mp_limb_t d)
 	}
     }
 
-  qstack_sanity (stack);
+  ASSERT_QSTACK (stack);
 }
 
 /* hgcd2 operations */
@@ -370,11 +389,11 @@ hgcd2_mul (struct hgcd_row *P, mp_size_t alloc,
     return n + (h != 0);
 }
 
-static mp_size_t
-hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
-	   int sign,
-	   mp_limb_t u, mp_srcptr ap, mp_size_t asize,
-	   mp_limb_t v, mp_srcptr bp, mp_size_t bsize)
+mp_size_t
+mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
+	       int sign,
+	       mp_limb_t u, mp_srcptr ap, mp_size_t asize,
+	       mp_limb_t v, mp_srcptr bp, mp_size_t bsize)
 {
   mp_size_t rsize;
   mp_limb_t cy;
@@ -426,8 +445,8 @@ mpn_hgcd_init_itch (mp_size_t size)
 
 void
 mpn_hgcd_init (struct hgcd *hgcd,
-	       mp_size_t asize,
-	       mp_limb_t *limbs)
+	   mp_size_t asize,
+	   mp_limb_t *limbs)
 {
   unsigned i;
   unsigned j;
@@ -454,10 +473,10 @@ mpn_hgcd_init (struct hgcd *hgcd,
 
 #if WANT_ASSERT
 void
-mpn_hgcd_sanity (const struct hgcd *hgcd,
-		 mp_srcptr ap, mp_size_t asize,
-		 mp_srcptr bp, mp_size_t bsize,
-		 unsigned start, unsigned end)
+__gmpn_hgcd_sanity (const struct hgcd *hgcd,
+		    mp_srcptr ap, mp_size_t asize,
+		    mp_srcptr bp, mp_size_t bsize,
+		    unsigned start, unsigned end)
 {
   int sign;
   unsigned i;
@@ -1313,7 +1332,7 @@ hgcd_case0 (struct hgcd *hgcd, mp_size_t M,
   
   if (hgcd->row[2].rsize <= M)
     return hgcd_small_1 (hgcd, M, quotients,
-			  tp, talloc);
+			 tp, talloc);
   else
     {
       /* Keep this remainder */
@@ -1461,7 +1480,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
   ASSERT (M);
 
 #if WANT_TRACE
-  trace ("mpn_hgcd_lehmer: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
+  trace ("hgcd_lehmer: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
 	 asize, bsize, HGCD_SCHOENHAGE_THRESHOLD);
 #endif
   
@@ -1480,7 +1499,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
       /* Max size after reduction, plus one */
       mp_size_t ralloc = hgcd->row[1].rsize + 1;
 
-      hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 
       switch (lehmer_step (&R,
 			   hgcd->row[0].rp, hgcd->row[0].rsize,
@@ -1496,11 +1515,11 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	    int res = hgcd_case0 (hgcd, M, quotients, tp, talloc);
 
 	    if (res > 0)
-	      hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 4);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
 	    if (res >= 0)
 	      return res;
 
-	    hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 	    break;
 	  }
 	case 2:
@@ -1508,16 +1527,16 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	  /* Compute r1 and r2, and check what happened */
 
 	  hgcd->row[2].rsize
-	    = hgcd2_fix (hgcd->row[2].rp, ralloc,
-			 ~R.sign,
-			 R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			 R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-
+	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
+			     ~R.sign,
+			     R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+	  
 	  hgcd->row[3].rsize
-	    = hgcd2_fix (hgcd->row[3].rp, ralloc,
-			 R.sign,
-			 R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			 R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
+			     R.sign,
+			     R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
 
 	  ASSERT (hgcd->row[2].rsize > M);
 
@@ -1533,13 +1552,13 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	      hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
 				      R.row + 1, hgcd->row, hgcd->size);
 	      hgcd->sign ^= ~R.sign;
-	      hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
 	      /* Discard r3, and the corresponding quotient */
 	      qstack_drop (quotients);
 
 	      hgcd_adjust (hgcd, quotients);
-	      hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
 	      /* FIXME: Bound on new r2? */
 
@@ -1559,17 +1578,17 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	     or too large. */
 
 	  hgcd->row[2].rsize
-	    = hgcd2_fix (hgcd->row[2].rp, ralloc,
-			 ~R.sign,
-			 R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			 R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
+			     ~R.sign,
+			     R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
 
 	  hgcd->row[3].rsize
-	    = hgcd2_fix (hgcd->row[3].rp, ralloc,
-			 R.sign,
-			 R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			 R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-
+	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
+			     R.sign,
+			     R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+	  
 	correct_r2:
 	  /* Discard r3, and the corresponding quotient */
 	  qstack_drop (quotients);
@@ -1584,7 +1603,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 				   R.row + 1, hgcd->row, hgcd->size);
 	  hgcd->sign ^= ~R.sign;
 
-	  hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
 	  HGCD_SWAP4_2 (hgcd->row);
 
@@ -1595,16 +1614,16 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	     Compute r2 and r3 */
 
 	  hgcd->row[2].rsize
-	    = hgcd2_fix (hgcd->row[2].rp, ralloc,
-			 R.sign,
-			 R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			 R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+	    = mpn_hgcd2_fix (hgcd->row[2].rp, ralloc,
+			     R.sign,
+			     R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
 
 	  hgcd->row[3].rsize
-	    = hgcd2_fix (hgcd->row[3].rp, ralloc,
-			 ~R.sign,
-			 R.row[3].u, hgcd->row[0].rp, hgcd->row[0].rsize,
-			 R.row[3].v, hgcd->row[1].rp, hgcd->row[1].rsize);
+	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
+			     ~R.sign,
+			     R.row[3].u, hgcd->row[0].rp, hgcd->row[0].rsize,
+			     R.row[3].v, hgcd->row[1].rp, hgcd->row[1].rsize);
 
 	  ASSERT (hgcd->row[2].rsize > M);
 
@@ -1627,7 +1646,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	}
     }
 
-  hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 
   return hgcd_final (hgcd, M, quotients, tp, talloc);
 }  
@@ -1637,11 +1656,11 @@ mpn_hgcd_itch (mp_size_t asize)
 {
   /* Scratch space is needed for calling hgcd. We need space for the
      results of all recursive calls. In addition, we need to call
-     hgcd_lehmer, hgcd_jebelean, mpn_hgcd_fix and hgcd_mul, for which
+     hgcd_lehmer, hgcd_jebelean, hgcd_fix and hgcd_mul, for which
      asize limbs should be enough. */
 
   /* Limit on the recursion depth */
-  unsigned k = hgcd_max_recursion (asize);
+  unsigned k = mpn_hgcd_max_recursion (asize);
 
   return asize + mpn_hgcd_init_itch (asize + k * (6 + 12));
 }  
@@ -1664,7 +1683,7 @@ mpn_hgcd (struct hgcd *hgcd,
 
   ASSERT (M);
 #if WANT_TRACE
-  trace ("mpn_hgcd: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
+  trace ("hgcd: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
 	 asize, bsize, HGCD_SCHOENHAGE_THRESHOLD);
 #endif
 
@@ -1713,11 +1732,11 @@ mpn_hgcd (struct hgcd *hgcd,
 	    int res = hgcd_case0 (hgcd, M, quotients, tp, talloc);
 
 	    if (res > 0)
-	      hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 4);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
 	    if (res >= 0)
 	      return res;
 
-	    hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 	    break;
 	  }
 
@@ -1725,7 +1744,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* Now r0 and r1 are correct, while r2 may be too large.
 	   * Compute r1 and r2, and check what happened */
 
-	  hgcd_sanity (&R,
+	  ASSERT_HGCD (&R,
 		       hgcd->row[0].rp + M, hgcd->row[0].rsize - M,
 		       hgcd->row[1].rp + M, hgcd->row[1].rsize - M,
 		       0, 4);
@@ -1768,13 +1787,13 @@ mpn_hgcd (struct hgcd *hgcd,
 				     hgcd->row, hgcd->size,
 				     tp, talloc);
 	      hgcd->sign ^= ~R.sign;
-	      hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
 	      /* Discard r3, and the corresponding quotient */
 	      qstack_drop (quotients);
 
 	      hgcd_adjust (hgcd, quotients);
-	      hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
 	      ASSERT (hgcd->row[3].rsize <= M + m + 1);
 
@@ -1793,7 +1812,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* Now r0, r1 and r2 are correct, while r3 may be too small
 	     or too large. */
 	  /* Compute r1 and r2, and check what happened */
-	  hgcd_sanity (&R,
+	  ASSERT_HGCD (&R,
 		       hgcd->row[0].rp + M, hgcd->row[0].rsize - M,
 		       hgcd->row[1].rp + M, hgcd->row[1].rsize - M,
 		       0, 4);
@@ -1847,7 +1866,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  For now, we don't compute r3, we just check the stop
 	  condition for r2. */
 
-	  hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 	  HGCD_SWAP4_2 (hgcd->row);
 
 	  break;
@@ -1856,7 +1875,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  /* All of r0, r1, r3 and r3 are correct.
 	     Compute r2 and r3 */
 
-	  hgcd_sanity (&R,
+	  ASSERT_HGCD (&R,
 		       hgcd->row[0].rp + M, hgcd->row[0].rsize - M,
 		       hgcd->row[1].rp + M, hgcd->row[1].rsize - M,
 		       0, 4);
@@ -1918,11 +1937,11 @@ mpn_hgcd (struct hgcd *hgcd,
 			    tp, talloc);
 
       if (res > 0)
-	hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 4);
+	ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
       if (res >= 0)
 	return res;
 
-      hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
     }
 
   ASSERT (hgcd->row[0].rsize >= hgcd->row[1].rsize);
@@ -1947,7 +1966,7 @@ mpn_hgcd (struct hgcd *hgcd,
 		      hgcd->row[0].rp + k, hgcd->row[0].rsize - k,
 		      hgcd->row[1].rp + k, hgcd->row[1].rsize - k,
 		      quotients, tp, talloc);
-
+      
       if (!res)
 	{
 	  /* The first remainder was small. Then there's a good chance
@@ -1957,11 +1976,11 @@ mpn_hgcd (struct hgcd *hgcd,
 			    tp, talloc);
 
 	  if (res > 0)
-	    hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 4);
+	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
 	  if (res >= 0)
 	    return res;
 
-	  hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 	  continue;
 	}
 
@@ -1994,7 +2013,7 @@ mpn_hgcd (struct hgcd *hgcd,
 			     tp, talloc);
       hgcd->sign ^= R.sign;
 
-      hgcd_sanity (hgcd, ap, asize, bp, bsize, 2, 4);
+      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
 
       if (hgcd->row[3].rsize <= M)
 	{
@@ -2085,14 +2104,14 @@ mpn_hgcd (struct hgcd *hgcd,
 #if WANT_ASSERT
 	  qstack_rotate (quotients, 0);
 #endif
-	  hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 4);
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
 	  return hgcd_jebelean (hgcd, M, tp, talloc);
 	}
 
       HGCD_SWAP4_2 (hgcd->row);
     }
 
-  hgcd_sanity (hgcd, ap, asize, bp, bsize, 0, 2);
+  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 
   return hgcd_final (hgcd, M, quotients, tp, talloc);
 }
