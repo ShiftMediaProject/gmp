@@ -1,27 +1,27 @@
-# AMD K6 mpn_mul_basecase -- multiply two mpn numbers.
-#
-# K6: approx 9.0 cycles per cross product on 30x30 limbs (with 16 limbs/loop
-#     unrolling).
+dnl  AMD K6 mpn_mul_basecase -- multiply two mpn numbers.
+dnl 
+dnl  K6: approx 9.0 cycles per cross product on 30x30 limbs (with 16 limbs/loop
+dnl      unrolling).
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
@@ -39,23 +39,23 @@ dnl  might explain it's good performance.
 deflit(UNROLL_COUNT, 16)
 
 
-# void mpn_mul_basecase (mp_ptr wp,
-#                        mp_srcptr xp, mp_size_t xsize,
-#                        mp_srcptr yp, mp_size_t ysize);
-#
-# Calculate xp,xsize multiplied by yp,ysize, storing the result in
-# wp,xsize+ysize.
-#
-# This routine is essentially the same as mpn/generic/mul_basecase.c, but
-# it's faster because it does most of the mpn_addmul_1() entry code only
-# once.  The saving is about 10-20% on typical sizes coming from the
-# Karatsuba multiply code.
-#
-# Future:
-#
-# The unrolled loop could be shared by mpn_addmul_1, with some extra stack
-# setups and maybe 2 or 3 wasted cycles at the end.  Code saving would be
-# 256 bytes.
+C void mpn_mul_basecase (mp_ptr wp,
+C                        mp_srcptr xp, mp_size_t xsize,
+C                        mp_srcptr yp, mp_size_t ysize);
+C
+C Calculate xp,xsize multiplied by yp,ysize, storing the result in
+C wp,xsize+ysize.
+C
+C This routine is essentially the same as mpn/generic/mul_basecase.c, but
+C it's faster because it does most of the mpn_addmul_1() entry code only
+C once.  The saving is about 10-20% on typical sizes coming from the
+C Karatsuba multiply code.
+C
+C Future:
+C
+C The unrolled loop could be shared by mpn_addmul_1, with some extra stack
+C setups and maybe 2 or 3 wasted cycles at the end.  Code saving would be
+C 256 bytes.
 
 ifdef(`PIC',`
 deflit(UNROLL_THRESHOLD, 8)
@@ -78,16 +78,16 @@ deflit(`FRAME',0)
 	movl	PARAM_YP, %eax
 
 	movl	PARAM_XP, %edx
-	movl	(%eax), %eax	# yp low limb
+	movl	(%eax), %eax	C yp low limb
 
 	cmpl	$2, %ecx
 	ja	L(xsize_more_than_two_limbs)
 	je	L(two_by_something)
 
 
-	# one limb by one limb
+	C one limb by one limb
 
-	movl	(%edx), %edx	# xp low limb
+	movl	(%edx), %edx	C xp low limb
 	movl	PARAM_WP, %ecx
 	
 	mull	%edx
@@ -97,7 +97,7 @@ deflit(`FRAME',0)
 	ret
 
 
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 L(two_by_something):
 	decl	PARAM_YSIZE
 	pushl	%ebx
@@ -107,21 +107,21 @@ deflit(`FRAME',4)
 	pushl	%esi
 deflit(`FRAME',8)
 
-	movl	%eax, %ecx	# yp low limb
-	movl	(%edx), %eax	# xp low limb	
+	movl	%eax, %ecx	C yp low limb
+	movl	(%edx), %eax	C xp low limb	
 
-	movl	%edx, %esi	# xp
+	movl	%edx, %esi	C xp
 	jnz	L(two_by_two)
 
 
-	# two limbs by one limb
+	C two limbs by one limb
 
 	mull	%ecx	
 
 	movl	%eax, (%ebx)
 	movl	4(%esi), %eax
 
-	movl	%edx, %esi	# carry
+	movl	%edx, %esi	C carry
 
 	mull	%ecx
 
@@ -138,28 +138,28 @@ deflit(`FRAME',8)
 	
 
 
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 	ALIGN(16)
 L(two_by_two):
-	# eax	xp low limb
-	# ebx	wp
-	# ecx	yp low limb
-	# edx
-	# esi	xp
-	# edi
-	# ebp
+	C eax	xp low limb
+	C ebx	wp
+	C ecx	yp low limb
+	C edx
+	C esi	xp
+	C edi
+	C ebp
 deflit(`FRAME',8)
 
-	mull	%ecx		# xp[0] * yp[0]
+	mull	%ecx		C xp[0] * yp[0]
 
 	push	%edi
 deflit(`FRAME',12)
 	movl	%eax, (%ebx)
 
 	movl	4(%esi), %eax
-	movl	%edx, %edi	# carry, for wp[1]
+	movl	%edx, %edi	C carry, for wp[1]
 
-	mull	%ecx		# xp[1] * yp[0]
+	mull	%ecx		C xp[1] * yp[0]
 
 	addl	%eax, %edi
 	movl	PARAM_YP, %ecx
@@ -167,21 +167,21 @@ deflit(`FRAME',12)
 	adcl	$0, %edx
 
 	movl	%edi, 4(%ebx)
-	movl	4(%ecx), %ecx	# yp[1]
+	movl	4(%ecx), %ecx	C yp[1]
 
-	movl	4(%esi), %eax	# xp[1]
-	movl	%edx, %edi	# carry, for wp[2]
+	movl	4(%esi), %eax	C xp[1]
+	movl	%edx, %edi	C carry, for wp[2]
 
-	mull	%ecx		# xp[1] * yp[1]
+	mull	%ecx		C xp[1] * yp[1]
 
 	addl	%eax, %edi
 
 	adcl	$0, %edx
 
-	movl	(%esi), %eax	# xp[0]
-	movl	%edx, %esi	# carry, for wp[3]
+	movl	(%esi), %eax	C xp[0]
+	movl	%edx, %esi	C carry, for wp[3]
 
-	mull	%ecx		# xp[0] * yp[1]
+	mull	%ecx		C xp[0] * yp[1]
 
 	addl	%eax, 4(%ebx)
 	adcl	%edx, %edi
@@ -197,24 +197,24 @@ deflit(`FRAME',12)
 	ret
 
 	
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 	ALIGN(16)
 L(xsize_more_than_two_limbs):
 
-# The first limb of yp is processed with a simple mpn_mul_1 style loop
-# inline.  Unrolling this doesn't seem worthwhile since it's only run once
-# (whereas the addmul below is run ysize-1 many times).  A call to the
-# actual mpn_mul_1 will be slowed down by the call and parameter pushing and
-# popping, and doesn't seem likely to be worthwhile on the typical 10-20
-# limb operations the Karatsuba code calls here with.
+C The first limb of yp is processed with a simple mpn_mul_1 style loop
+C inline.  Unrolling this doesn't seem worthwhile since it's only run once
+C (whereas the addmul below is run ysize-1 many times).  A call to the
+C actual mpn_mul_1 will be slowed down by the call and parameter pushing and
+C popping, and doesn't seem likely to be worthwhile on the typical 10-20
+C limb operations the Karatsuba code calls here with.
 
-	# eax	yp[0]
-	# ebx
-	# ecx	xsize
-	# edx	xp
-	# esi
-	# edi
-	# ebp
+	C eax	yp[0]
+	C ebx
+	C ecx	xsize
+	C edx	xp
+	C esi
+	C edi
+	C ebp
 deflit(`FRAME',0)
 
 	pushl	%edi		defframe_pushl(SAVE_EDI)
@@ -226,21 +226,21 @@ deflit(`FRAME',0)
 	movl	%eax, %ebp
 	pushl	%ebx		defframe_pushl(SAVE_EBX)
 
-	leal	(%edx,%ecx,4), %ebx	# xp end
+	leal	(%edx,%ecx,4), %ebx	C xp end
 	xorl	%esi, %esi
 
-	leal	(%edi,%ecx,4), %edi	# wp end of mul1
+	leal	(%edi,%ecx,4), %edi	C wp end of mul1
 	negl	%ecx
 
 
 L(mul1):
-	# eax	scratch
-	# ebx	xp end
-	# ecx	counter, negative
-	# edx	scratch
-	# esi	carry
-	# edi	wp end of mul1
-	# ebp	multiplier
+	C eax	scratch
+	C ebx	xp end
+	C ecx	counter, negative
+	C edx	scratch
+	C esi	carry
+	C edi	wp end of mul1
+	C ebp	multiplier
 
 	movl	(%ebx,%ecx,4), %eax
 
@@ -258,7 +258,7 @@ L(mul1):
 
 
 	movl	PARAM_YSIZE, %edx
-	movl	%esi, (%edi)		# final carry
+	movl	%esi, (%edi)		C final carry
 
 	movl	PARAM_XSIZE, %ecx
 	decl	%edx
@@ -279,28 +279,28 @@ L(ysize_more_than_one_limb):
 	jae	L(unroll)
 
 
-#------------------------------------------------------------------------------
-# Simple addmul loop.
-#
-# Using ebx and edi pointing at the ends of their respective locations saves
-# a couple of instructions in the outer loop.  The inner loop is still 11
-# cycles, the same as the simple loop in aorsmul_1.asm.
+C -----------------------------------------------------------------------------
+C Simple addmul loop.
+C
+C Using ebx and edi pointing at the ends of their respective locations saves
+C a couple of instructions in the outer loop.  The inner loop is still 11
+C cycles, the same as the simple loop in aorsmul_1.asm.
 
-	# eax	yp
-	# ebx	xp end
-	# ecx	xsize
-	# edx	ysize-1
-	# esi
-	# edi	wp end of mul1
-	# ebp
+	C eax	yp
+	C ebx	xp end
+	C ecx	xsize
+	C edx	ysize-1
+	C esi
+	C edi	wp end of mul1
+	C ebp
 
-	movl	4(%eax), %ebp		# multiplier
+	movl	4(%eax), %ebp		C multiplier
 	negl	%ecx
 
-	movl	%ecx, PARAM_XSIZE	# -xsize
-	xorl	%esi, %esi		# initial carry
+	movl	%ecx, PARAM_XSIZE	C -xsize
+	xorl	%esi, %esi		C initial carry
 
-	leal	4(%eax,%edx,4), %eax	# yp end
+	leal	4(%eax,%edx,4), %eax	C yp end
 	negl	%edx
 
 	movl	%eax, PARAM_YP
@@ -309,30 +309,30 @@ L(ysize_more_than_one_limb):
 	jmp	L(simple_outer_entry)
 
 
-	# aligning here saves a couple of cycles
+	C aligning here saves a couple of cycles
 	ALIGN(16)
 L(simple_outer_top):	
-	# edx	ysize counter, negative
+	C edx	ysize counter, negative
 
-	movl	PARAM_YP, %eax		# yp end
-	xorl	%esi, %esi		# carry
+	movl	PARAM_YP, %eax		C yp end
+	xorl	%esi, %esi		C carry
 
-	movl	PARAM_XSIZE, %ecx	# -xsize
+	movl	PARAM_XSIZE, %ecx	C -xsize
 	movl	%edx, PARAM_YSIZE
 
-	movl	(%eax,%edx,4), %ebp	# yp limb multiplier
+	movl	(%eax,%edx,4), %ebp	C yp limb multiplier
 L(simple_outer_entry):
 	addl	$4, %edi
 
 
 L(simple_inner):
-	# eax	scratch
-	# ebx	xp end
-	# ecx	counter, negative
-	# edx	scratch
-	# esi	carry
-	# edi	wp end of this addmul
-	# ebp	multiplier
+	C eax	scratch
+	C ebx	xp end
+	C ecx	counter, negative
+	C edx	scratch
+	C esi	carry
+	C edi	wp end of this addmul
+	C ebp	multiplier
 
 	movl	(%ebx,%ecx,4), %eax
 
@@ -363,39 +363,39 @@ L(simple_inner):
 	ret
 
 
-#------------------------------------------------------------------------------
-# Unrolled loop.
-#
-# The unrolled inner loop is the same as in aorsmul_1.asm, see that code for
-# some comments.
-#
-# VAR_COUNTER is for the inner loop, running from VAR_COUNTER_INIT down to
-# 0, inclusive.
-#
-# VAR_JMP is the computed jump into the unrolled loop.
-#
-# PARAM_XP and PARAM_WP get offset appropriately for where the unrolled loop
-# is entered.
-#
-# VAR_XP_LOW is the least significant limb of xp, which is needed at the
-# start of the unrolled loop.  This can't just be fetched through the xp
-# pointer because of the offset applied to it.
-#
-# PARAM_YSIZE is the outer loop counter, going from -(ysize-1) up to -1,
-# inclusive.
-#
-# PARAM_YP is offset appropriately so that the PARAM_YSIZE counter can be
-# added to give the location of the next limb of yp, which is the multiplier
-# in the unrolled loop.
-#
-# PARAM_WP is similarly offset so that the PARAM_YSIZE counter can be added
-# to give the starting point in the destination for each unrolled loop (this
-# point is one limb upwards for each limb of yp processed).
-#
-# Having PARAM_YSIZE count negative to zero means it's not necessary to
-# store new values of PARAM_YP and PARAM_WP on each loop.  Those values on
-# the stack remain constant and on each loop an leal adjusts them with the
-# PARAM_YSIZE counter value.
+C -----------------------------------------------------------------------------
+C Unrolled loop.
+C
+C The unrolled inner loop is the same as in aorsmul_1.asm, see that code for
+C some comments.
+C
+C VAR_COUNTER is for the inner loop, running from VAR_COUNTER_INIT down to
+C 0, inclusive.
+C
+C VAR_JMP is the computed jump into the unrolled loop.
+C
+C PARAM_XP and PARAM_WP get offset appropriately for where the unrolled loop
+C is entered.
+C
+C VAR_XP_LOW is the least significant limb of xp, which is needed at the
+C start of the unrolled loop.  This can't just be fetched through the xp
+C pointer because of the offset applied to it.
+C
+C PARAM_YSIZE is the outer loop counter, going from -(ysize-1) up to -1,
+C inclusive.
+C
+C PARAM_YP is offset appropriately so that the PARAM_YSIZE counter can be
+C added to give the location of the next limb of yp, which is the multiplier
+C in the unrolled loop.
+C
+C PARAM_WP is similarly offset so that the PARAM_YSIZE counter can be added
+C to give the starting point in the destination for each unrolled loop (this
+C point is one limb upwards for each limb of yp processed).
+C
+C Having PARAM_YSIZE count negative to zero means it's not necessary to
+C store new values of PARAM_YP and PARAM_WP on each loop.  Those values on
+C the stack remain constant and on each loop an leal adjusts them with the
+C PARAM_YSIZE counter value.
 
 
 defframe(VAR_COUNTER,      -20)
@@ -415,17 +415,17 @@ dnl
 define(`defframe_empty_if_zero_disabled',1)
 
 L(unroll):
-	# eax	yp (not used)
-	# ebx	xp end (not used)
-	# ecx	xsize
-	# edx	ysize-1
-	# esi
-	# edi	wp end of mul1 (not used)
-	# ebp
+	C eax	yp (not used)
+	C ebx	xp end (not used)
+	C ecx	xsize
+	C edx	ysize-1
+	C esi
+	C edi	wp end of mul1 (not used)
+	C ebp
 deflit(`FRAME', 16)
 
-	leal	-2(%ecx), %ebp	# one limb processed at start,
-	decl	%ecx		# and ebp is one less
+	leal	-2(%ecx), %ebp	C one limb processed at start,
+	decl	%ecx		C and ebp is one less
 
 	shrl	$UNROLL_LOG2, %ebp
 	negl	%ecx
@@ -440,7 +440,7 @@ deflit(`FRAME', 16+VAR_STACK_SPACE)
 	movl	%ebp, VAR_COUNTER_INIT
 	negl	%esi
 
-	# 15 code bytes per limb
+	C 15 code bytes per limb
 ifdef(`PIC',`
 	call	L(pic_calc)
 L(unroll_here):
@@ -455,23 +455,23 @@ L(unroll_here):
 	movl	%ecx, VAR_JMP
 
 	movl	(%ebx), %eax
-	leal	4(%edi,%esi,4), %edi	# wp adjust for unrolling and mul1
+	leal	4(%edi,%esi,4), %edi	C wp adjust for unrolling and mul1
 
-	leal	(%ebx,%esi,4), %ebx	# xp adjust for unrolling
+	leal	(%ebx,%esi,4), %ebx	C xp adjust for unrolling
 
 	movl	%eax, VAR_XP_LOW
 
 	movl	%ebx, PARAM_XP
 	movl	PARAM_YP, %ebx
 
-	leal	(%edi,%edx,4), %ecx	# wp adjust for ysize indexing
-	movl	4(%ebx), %ebp		# multiplier (yp second limb)
+	leal	(%edi,%edx,4), %ecx	C wp adjust for ysize indexing
+	movl	4(%ebx), %ebp		C multiplier (yp second limb)
 
-	leal	4(%ebx,%edx,4), %ebx	# yp adjust for ysize indexing
+	leal	4(%ebx,%edx,4), %ebx	C yp adjust for ysize indexing
 
 	movl	%ecx, PARAM_WP
 
-	leal	1(%esi), %ecx	# adjust parity for decl %ecx above
+	leal	1(%esi), %ecx	C adjust parity for decl %ecx above
 
 	movl	%ebx, PARAM_YP
 	negl	%edx
@@ -482,7 +482,7 @@ L(unroll_here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	# See README.family about old gas bugs
+	C See README.family about old gas bugs
 	leal	(%ecx,%esi,1), %ecx
 	addl	$L(unroll_entry)-L(unroll_here), %ecx
 	addl	(%esp), %ecx
@@ -490,24 +490,24 @@ L(pic_calc):
 ')
 
 
-#------------------------------------------------------------------------------
-	# Aligning here saves a couple of cycles per loop.  Using 32 doesn't
-	# cost any extra space, since the inner unrolled loop below is
-	# aligned to 32.
+C -----------------------------------------------------------------------------
+	C Aligning here saves a couple of cycles per loop.  Using 32 doesn't
+	C cost any extra space, since the inner unrolled loop below is
+	C aligned to 32.
 	ALIGN(32)
 L(unroll_outer_top):
-	# edx	ysize
+	C edx	ysize
 
 	movl	PARAM_YP, %eax
-	movl	%edx, PARAM_YSIZE	# incremented ysize counter
+	movl	%edx, PARAM_YSIZE	C incremented ysize counter
 
 	movl	PARAM_WP, %edi
 
 	movl	VAR_COUNTER_INIT, %ebx
-	movl	(%eax,%edx,4), %ebp	# next multiplier
+	movl	(%eax,%edx,4), %ebp	C next multiplier
 
 	movl	PARAM_XSIZE, %ecx
-	leal	(%edi,%edx,4), %edi	# adjust wp for where we are in yp
+	leal	(%edi,%edx,4), %edi	C adjust wp for where we are in yp
 
 	movl	VAR_XP_LOW, %eax
 	movl	%ebx, VAR_COUNTER
@@ -515,17 +515,17 @@ L(unroll_outer_top):
 L(unroll_outer_entry):
 	mull	%ebp
 
-	# using testb is a tiny bit faster than testl
+	C using testb is a tiny bit faster than testl
 	testb	$1, %cl
 
-	movl	%eax, %ecx	# low carry
+	movl	%eax, %ecx	C low carry
 	movl	VAR_JMP, %eax
 
-	movl	%edx, %esi	# high carry
+	movl	%edx, %esi	C high carry
 	movl	PARAM_XP, %ebx
 
 	jnz	L(unroll_noswap)
-	movl	%ecx, %esi	# high,low carry other way around
+	movl	%ecx, %esi	C high,low carry other way around
 
 	movl	%edx, %ecx
 L(unroll_noswap):
@@ -534,19 +534,19 @@ L(unroll_noswap):
 
 
 
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 	ALIGN(32)
 L(unroll_top):
-	# eax	scratch
-	# ebx	xp
-	# ecx	carry low
-	# edx	scratch
-	# esi	carry high
-	# edi	wp
-	# ebp	multiplier
-	# VAR_COUNTER  loop counter
-	#
-	# 15 code bytes each limb
+	C eax	scratch
+	C ebx	xp
+	C ecx	carry low
+	C edx	scratch
+	C esi	carry high
+	C edi	wp
+	C ebp	multiplier
+	C VAR_COUNTER  loop counter
+	C
+	C 15 code bytes each limb
 
 	leal	UNROLL_BYTES(%edi), %edi
 

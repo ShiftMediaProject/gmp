@@ -1,32 +1,32 @@
-# AMD K6 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
-# mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
-#  
-#         alignment dst/src1/src2, A=0mod8, N=4mod8
-#     A/A/A  A/A/N  A/N/A  A/N/N  N/A/A  N/A/N  N/N/A  N/N/N
-#
-# K6   1.2    1.5    1.5    1.2    1.2    1.5    1.5    1.2   and,andn,ior,xor
-# K6   1.5    1.75   2.0    1.75   1.75   2.0    1.75   1.5   iorn,xnor
-# K6   1.75   2.0    2.0    2.0    2.0    2.0    2.0    1.75  nand,nior
+dnl  AMD K6 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
+dnl  mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
+dnl   
+dnl          alignment dst/src1/src2, A=0mod8, N=4mod8
+dnl      A/A/A A/A/N A/N/A A/N/N N/A/A N/A/N N/N/A N/N/N
+dnl 
+dnl  K6   1.2   1.5   1.5   1.2   1.2   1.5   1.5   1.2    and,andn,ior,xor
+dnl  K6   1.5   1.75  2.0   1.75  1.75  2.0   1.75  1.5    iorn,xnor
+dnl  K6   1.75  2.0   2.0   2.0   2.0   2.0   2.0   1.75   nand,nior
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
@@ -68,32 +68,32 @@ ifdef(`M4_function',,
 MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n mpn_xor_n mpn_xnor_n)
 
 
-`#' void M4_function (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-`#'                   mp_size_t size);
-`#'
-`#' Do src1,size M4_operation src2,size, storing the result in dst,size.
-#
-# Unaligned movq loads and stores are a bit slower than aligned ones.  The
-# test at the start of the routine checks the alignment of src1 and if
-# necessary processes one limb separately at the low end to make it aligned.
-#
-# The raw speeds without this alignment switch are as follows.
-#
-#           alignment dst/src1/src2, A=0mod8, N=4mod8
-#     A/A/A  A/A/N  A/N/A  A/N/N  N/A/A  N/A/N  N/N/A  N/N/N
-#
-# K6                 1.5    2.0                 1.5    2.0    and,andn,ior,xor
-# K6                 1.75   2.2                 2.0    2.28   iorn,xnor
-# K6                 2.0    2.25                2.35   2.28   nand,nior
-#
-#
-# Future:
-#
-# K6 can do one 64-bit load per cycle so each of these routines should be
-# able to approach 1.0 c/l, if aligned.  The basic and/andn/ior/xor might be
-# able to get 1.0 with just a 4 limb loop, being 3 instructions per 2 limbs.
-# The others are 4 instructions per 2 limbs, and so can only approach 1.0
-# because there's nowhere to hide some loop control.
+C void M4_function (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C                   mp_size_t size);
+C
+C Do src1,size M4_operation src2,size, storing the result in dst,size.
+C
+C Unaligned movq loads and stores are a bit slower than aligned ones.  The
+C test at the start of the routine checks the alignment of src1 and if
+C necessary processes one limb separately at the low end to make it aligned.
+C
+C The raw speeds without this alignment switch are as follows.
+C
+C           alignment dst/src1/src2, A=0mod8, N=4mod8
+C     A/A/A  A/A/N  A/N/A  A/N/N  N/A/A  N/A/N  N/N/A  N/N/N
+C
+C K6                 1.5    2.0                 1.5    2.0    and,andn,ior,xor
+C K6                 1.75   2.2                 2.0    2.28   iorn,xnor
+C K6                 2.0    2.25                2.35   2.28   nand,nior
+C
+C
+C Future:
+C
+C K6 can do one 64-bit load per cycle so each of these routines should be
+C able to approach 1.0 c/l, if aligned.  The basic and/andn/ior/xor might be
+C able to get 1.0 with just a 4 limb loop, being 3 instructions per 2 limbs.
+C The others are 4 instructions per 2 limbs, and so can only approach 1.0
+C because there's nowhere to hide some loop control.
 
 defframe(PARAM_SIZE,16)
 defframe(PARAM_SRC2,12)
@@ -125,15 +125,15 @@ ifelse(M4_i_neg_dst,1,`	notl	%ecx')
 
 
 L(two_or_more):
-			# eax	src1
-			# ebx	src2
-			# ecx	size
-			# edx	dst
-			# esi
-			# edi
-			# ebp
-			#
-			# carry bit is low of size
+			C eax	src1
+			C ebx	src2
+			C ecx	size
+			C edx	dst
+			C esi
+			C edi
+			C ebp
+			C
+			C carry bit is low of size
 
 			pushl	%esi
 		FRAME_pushl()
@@ -167,20 +167,20 @@ ifelse(M4_i_neg_dst,1,`	notl	%ecx')
 
 L(still_two_or_more):
 ifelse(eval(M4_p_neg_src2 || M4_p_neg_dst),1,`
-			pcmpeqd	%mm7, %mm7	# all ones
+			pcmpeqd	%mm7, %mm7	C all ones
 ')
 
 			ALIGN(16)
 L(top):
-			# eax	src1
-			# ebx	src2
-			# ecx	counter
-			# edx	dst
-			# esi
-			# edi
-			# ebp
-			#
-			# carry bit is low of size
+			C eax	src1
+			C ebx	src2
+			C ecx	counter
+			C edx	dst
+			C esi
+			C edi
+			C ebp
+			C
+			C carry bit is low of size
 
 			movq	-8(%ebx,%ecx,8), %mm0
 ifelse(M4_p_neg_src2,1,`pxor	%mm7, %mm0')

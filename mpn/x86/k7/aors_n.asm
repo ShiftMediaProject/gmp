@@ -1,26 +1,26 @@
-# AMD K7 mpn_add_n/mpn_sub_n -- mpn add or subtract.
-#
-# K7: 1.64 cycles/limb (at 16 limb/loop).
+dnl  AMD K7 mpn_add_n/mpn_sub_n -- mpn add or subtract.
+dnl 
+dnl  K7: 1.64 cycles/limb (at 16 limb/loop).
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
@@ -52,23 +52,23 @@ ifdef(`OPERATION_add_n', `
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 
 
-`#' mp_limb_t M4_function_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-`#'                         mp_size_t size);
-`#' mp_limb_t M4_function_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-`#'	                   mp_size_t size, mp_limb_t carry);
-`#'
-`#' Calculate src1,size M4_description src2,size, and store the result in
-# dst,size.  The return value is the carry bit from the top of the result (1
-# or 0).
-#
-# The _nc version accepts 1 or 0 for an initial carry into the low limb of
-# the calculation.  Note values other than 1 or 0 here will lead to garbage
-# results.
-#
-# This code runs at 1.64 cycles/limb, which is probably the best possible
-# with plain integer operations.  Each limb is 2 loads and 1 store, and in
-# one cycle the K7 can do two loads, or a load and a store, leading to 1.5
-# c/l.
+C mp_limb_t M4_function_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C                         mp_size_t size);
+C mp_limb_t M4_function_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C	                   mp_size_t size, mp_limb_t carry);
+C
+C Calculate src1,size M4_description src2,size, and store the result in
+C dst,size.  The return value is the carry bit from the top of the result (1
+C or 0).
+C
+C The _nc version accepts 1 or 0 for an initial carry into the low limb of
+C the calculation.  Note values other than 1 or 0 here will lead to garbage
+C results.
+C
+C This code runs at 1.64 cycles/limb, which is probably the best possible
+C with plain integer operations.  Each limb is 2 loads and 1 store, and in
+C one cycle the K7 can do two loads, or a load and a store, leading to 1.5
+C c/l.
 
 dnl  Must have UNROLL_THRESHOLD >= 2, since the unrolled loop can't handle 1.
 ifdef(`PIC',`
@@ -100,7 +100,7 @@ EPILOGUE()
 
 PROLOGUE(M4_function_n)
 
-	xorl	%eax, %eax	# carry
+	xorl	%eax, %eax	C carry
 L(start):
 	movl	PARAM_SIZE, %ecx
 	subl	$STACK_SPACE, %esp
@@ -122,16 +122,16 @@ deflit(`FRAME',STACK_SPACE)
 	negl	%ecx
 	shrl	%eax
 
-	# This loop in in a single 16 byte code block already, so no
-	# alignment necessary.
+	C This loop in in a single 16 byte code block already, so no
+	C alignment necessary.
 L(simple):
-	# eax	scratch
-	# ebx	src1
-	# ecx	counter
-	# edx	src2
-	# esi
-	# edi	dst
-	# ebp
+	C eax	scratch
+	C ebx	src1
+	C ecx	counter
+	C edx	src2
+	C esi
+	C edi	dst
+	C ebp
 
 	movl	(%ebx,%ecx,4), %eax
 	M4_inst	(%edx,%ecx,4), %eax
@@ -149,13 +149,13 @@ L(simple):
 	ret
 
 
-# -----------------------------------------------------------------------------
-	# This is at 0x55, close enough to aligned.
+C -----------------------------------------------------------------------------
+	C This is at 0x55, close enough to aligned.
 L(unroll):
 deflit(`FRAME',STACK_SPACE)
 	movl	%ebp, SAVE_EBP
-	andl	$~1, %ecx		# size low bit masked out
-	andl	$1, PARAM_SIZE		# size low bit kept
+	andl	$~1, %ecx		C size low bit masked out
+	andl	$1, PARAM_SIZE		C size low bit kept
 
 	movl	%ecx, %edi
 	decl	%ecx
@@ -171,7 +171,7 @@ ifdef(`PIC',`
 	call	L(pic_calc)
 L(here):
 ',`
-	leal	L(entry) (%edi,%edi,8), %esi	# 9 bytes per
+	leal	L(entry) (%edi,%edi,8), %esi	C 9 bytes per
 ')
 	negl	%edi
 	shrl	%eax
@@ -185,7 +185,7 @@ L(here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	# See README.family about old gas bugs
+	C See README.family about old gas bugs
 	leal	(%edi,%edi,8), %esi
 	addl	$L(entry)-L(here), %esi
 	addl	(%esp), %esi
@@ -193,16 +193,16 @@ L(pic_calc):
 ')
 
 
-# -----------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 	ALIGN(32)
 L(top):
-	# eax	zero
-	# ebx	src1
-	# ecx	counter
-	# edx	src2
-	# esi	scratch (was computed jump)
-	# edi	dst
-	# ebp	scratch
+	C eax	zero
+	C ebx	src1
+	C ecx	counter
+	C edx	src2
+	C esi	scratch (was computed jump)
+	C edi	dst
+	C ebp	scratch
 
 	leal	UNROLL_BYTES(%edx), %edx
 

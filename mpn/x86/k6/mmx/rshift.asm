@@ -1,37 +1,37 @@
-# AMD K6 mpn_rshift -- mpn right shift.
-#
-# K6: 1.75 cycles/limb
+dnl  AMD K6 mpn_rshift -- mpn right shift.
+dnl 
+dnl  K6: 1.75 cycles/limb
 
 
-# Copyright (C) 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
 
 
-# mp_limb_t mpn_rshift (mp_ptr dst, mp_srcptr src, mp_size_t size,
-#                       unsigned shift);
-#
-# Shift src,size right by shift many bits and store the result in dst,size.
-# Zeros are shifted in at the left.  Return the bits shifted out at the
-# right.
+C mp_limb_t mpn_rshift (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                       unsigned shift);
+C
+C Shift src,size right by shift many bits and store the result in dst,size.
+C Zeros are shifted in at the left.  Return the bits shifted out at the
+C right.
 
 defframe(PARAM_SHIFT,16)
 defframe(PARAM_SIZE, 12)
@@ -49,9 +49,9 @@ deflit(UNROLL_THRESHOLD, 9)
 	ALIGN(32)
 
 PROLOGUE(mpn_rshift)
-	# The 1 limb case can be done without the push %ebx, but it's then
-	# still the same speed.  The push is left as a free helping hand for
-	# the two_or_more code.
+	C The 1 limb case can be done without the push %ebx, but it's then
+	C still the same speed.  The push is left as a free helping hand for
+	C the two_or_more code.
 
 	movl	PARAM_SIZE, %eax
 	pushl	%ebx
@@ -63,28 +63,28 @@ deflit(`FRAME',4)
 	movl	PARAM_SHIFT, %ecx
 	jnz	L(two_or_more)
 
-	movl	(%ebx), %edx		# src limb
+	movl	(%ebx), %edx		C src limb
 	movl	PARAM_DST, %ebx
 
-	shrdl(	%cl, %edx, %eax)	# return value
+	shrdl(	%cl, %edx, %eax)	C return value
 
  	shrl	%cl, %edx
 
-	movl	%edx, (%ebx)		# dst limb
+	movl	%edx, (%ebx)		C dst limb
 	popl	%ebx
 
 	ret
 
 
-#------------------------------------------------------------------------------
-	ALIGN(16)	# avoid offset 0x1f
+C -----------------------------------------------------------------------------
+	ALIGN(16)	C avoid offset 0x1f
 L(two_or_more):
-	# eax	size-1
-	# ebx	src
-	# ecx	shift
-	# edx
+	C eax	size-1
+	C ebx	src
+	C ecx	shift
+	C edx
 
-	movl	(%ebx), %edx	# src low limb
+	movl	(%ebx), %edx	C src low limb
 	negl	%ecx
 
 	addl	$32, %ecx
@@ -96,12 +96,12 @@ L(two_or_more):
 	jae	L(unroll)
 
 
-	# eax	size-1
-	# ebx	src
-	# ecx	32-shift
-	# edx	retval
-	#
-	# mm6	shift
+	C eax	size-1
+	C ebx	src
+	C ecx	32-shift
+	C edx	retval
+	C
+	C mm6	shift
 
 	movl	PARAM_DST, %ecx
 	leal	(%ebx,%eax,4), %ebx
@@ -109,17 +109,17 @@ L(two_or_more):
 	leal	-4(%ecx,%eax,4), %ecx
 	negl	%eax
 
-	# This loop runs at about 3 cycles/limb, which is the amount of
-	# decoding, this is despite every second access being unaligned.
+	C This loop runs at about 3 cycles/limb, which is the amount of
+	C decoding, this is despite every second access being unaligned.
 
 L(simple):
-	# eax	counter (negative)
-	# ebx	src, pointing at last limb
-	# ecx	dst, pointing at last limb
-	# edx	retval
-	#
-	# mm0	scratch
-	# mm6	shift
+	C eax	counter (negative)
+	C ebx	src, pointing at last limb
+	C ecx	dst, pointing at last limb
+	C edx	retval
+	C
+	C mm0	scratch
+	C mm6	shift
 
 	movq	(%ebx,%eax,4), %mm0
 	incl	%eax
@@ -139,78 +139,78 @@ L(simple):
 	ret
 
 
-#------------------------------------------------------------------------------
-# The strange offsets used on src and dst are due to the following,
-# - needing no displacement (%ebx,%eax,4) and (%edx,%eax,4) first in the loop
-# - needing the loop running %eax upwards from negative values and wanting
-#   to stop when %eax goes positive
-# - wanting to end up with %eax between 0 and 3 so as to be able to test for
-#   0-3 extras with test $2 and test $1
+C -----------------------------------------------------------------------------
+C The strange offsets used on src and dst are due to the following,
+C - needing no displacement (%ebx,%eax,4) and (%edx,%eax,4) first in the loop
+C - needing the loop running %eax upwards from negative values and wanting
+C   to stop when %eax goes positive
+C - wanting to end up with %eax between 0 and 3 so as to be able to test for
+C   0-3 extras with test $2 and test $1
 
 L(unroll):
-	# eax	size-1
-	# ebx	src
-	# ecx	32-shift
-	# edx	retval
-	#
-	# mm6	shift
+	C eax	size-1
+	C ebx	src
+	C ecx	32-shift
+	C edx	retval
+	C
+	C mm6	shift
 
 	addl	$32, %ecx
-	subl	$7, %eax		# size-8
+	subl	$7, %eax		C size-8
 
 	movd	%ecx, %mm7
 	movl	PARAM_DST, %ecx
 
-	movq	(%ebx), %mm2		# src low qword
-	leal	4(%ebx,%eax,4), %ebx	# src end - 28
+	movq	(%ebx), %mm2		C src low qword
+	leal	4(%ebx,%eax,4), %ebx	C src end - 28
 
 	testb	$4, %cl
-	leal	-12(%ecx,%eax,4), %ecx	# dst end - 44
+	leal	-12(%ecx,%eax,4), %ecx	C dst end - 44
 
-	notl	%eax			# -(size-7)
+	notl	%eax			C -(size-7)
 	jz	L(dst_aligned)
 
 	psrlq	%mm6, %mm2
 	incl	%eax
 
 	movd	%mm2, 12(%ecx,%eax,4)
-	movq	(%ebx,%eax,4), %mm2	# new src low qword
+	movq	(%ebx,%eax,4), %mm2	C new src low qword
 L(dst_aligned):
 
-	movq	8(%ebx,%eax,4), %mm0	# src second lowest qword
+	movq	8(%ebx,%eax,4), %mm0	C src second lowest qword
 
 
-	# This loop is the important bit, the rest is just support for it.
-	# Four src limbs are held at the start, and four more will be read.
-	# Four dst limbs will be written.
-	#
-	# The magic ingredients for speed here are
-	#
-	# - aligning the code to 32 bytes
-	# - fitting the first 10 instructions into 32 bytes (the first fetch
-	#   and store must have no displacements)
-	# - the instruction scheduling shown
+	C This loop is the important bit, the rest is just support for it.
+	C Four src limbs are held at the start, and four more will be read.
+	C Four dst limbs will be written.
+	C
+	C The magic ingredients for speed here are
+	C
+	C - aligning the code to 32 bytes
+	C - fitting the first 10 instructions into 32 bytes (the first fetch
+	C   and store must have no displacements)
+	C - the instruction scheduling shown
 
 
-	# Offset 0x88 here, so use a jump to get to L(top) in one cycle.
-	# This guards against executing through a bunch of nop's if a dumb
-	# assembler doesn't generate multi-byte do-nothing instructions when
-	# aligning.
+	C Offset 0x88 here, so use a jump to get to L(top) in one cycle.
+	C This guards against executing through a bunch of nop's if a dumb
+	C assembler doesn't generate multi-byte do-nothing instructions when
+	C aligning.
 
 	jmp	L(top)
 
 	ALIGN(32)
 L(top):
-	# eax	limb counter, negative
-	# ebx	src end - 28
-	# ecx	dst end - 44
-	# ecx	retval
-	#
-	# mm0	src next qword
-	# mm1	scratch
-	# mm2	src prev qword
-	# mm6	shift
-	# mm7	64-shift
+	C eax	limb counter, negative
+	C ebx	src end - 28
+	C ecx	dst end - 44
+	C ecx	retval
+	C
+	C mm0	src next qword
+	C mm1	scratch
+	C mm2	src prev qword
+	C mm6	shift
+	C mm7	64-shift
 
 	psrlq	%mm6, %mm2
 	addl	$4, %eax
@@ -231,19 +231,19 @@ L(top):
 	movq	8(%ebx,%eax,4), %mm0
 
 	movq	%mm1, 8(%ecx,%eax,4)
-	ja	L(top)		# jump if no carry and not zero
+	ja	L(top)		C jump if no carry and not zero
 
 
 
-	# Now have the four limbs in mm2 (low) and mm0 (high), and %eax is 0
-	# to 3 representing respectively 3 to 0 further limbs.
+	C Now have the four limbs in mm2 (low) and mm0 (high), and %eax is 0
+	C to 3 representing respectively 3 to 0 further limbs.
 
 
 	testb	$2, %al
 	jnz	L(finish_nottwo)
 
-	# Two or three extra limbs: rshift mm2, OR it with lshifted mm0, mm0
-	# becomes new mm2 and a new mm0 is loaded.
+	C Two or three extra limbs: rshift mm2, OR it with lshifted mm0, mm0
+	C becomes new mm2 and a new mm0 is loaded.
 
 	psrlq	%mm6, %mm2
 	movq	%mm0, %mm1
@@ -272,9 +272,9 @@ L(finish_nottwo):
 	jnz	L(finish_even)
 
 
-	# one further extra limb to process
+	C one further extra limb to process
 
-	movd	28-4(%ebx), %mm0	# src[size-1], most significant limb
+	movd	28-4(%ebx), %mm0	C src[size-1], most significant limb
 	popl	%ebx
 
 	movq	%mm0, %mm2
@@ -283,20 +283,20 @@ L(finish_nottwo):
 	por	%mm0, %mm1
 	psrlq	%mm6, %mm2
 
-	movq	%mm1, 44-12(%ecx)	# dst[size-3,size-2]
-	movd	%mm2, 44-4(%ecx)	# dst[size-1]
+	movq	%mm1, 44-12(%ecx)	C dst[size-3,size-2]
+	movd	%mm2, 44-4(%ecx)	C dst[size-1]
 
-	movl	%edx, %eax		# retval
+	movl	%edx, %eax		C retval
 
 	emms_or_femms
 	ret
 
 
 L(finish_even):
-	# no further extra limbs
+	C no further extra limbs
 
-	movq	%mm1, 44-8(%ecx)	# dst[size-2,size-1]
-	movl	%edx, %eax		# retval
+	movq	%mm1, 44-8(%ecx)	C dst[size-2,size-1]
+	movl	%edx, %eax		C retval
 
 	popl	%ebx
 

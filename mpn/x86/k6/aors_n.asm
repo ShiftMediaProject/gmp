@@ -1,26 +1,26 @@
-# AMD K6 mpn_add/sub_n -- mpn addition or subtraction.
-#
-# K6: normal 3.25 cycles/limb, in-place 2.75 cycles/limb.
+dnl  AMD K6 mpn_add/sub_n -- mpn addition or subtraction.
+dnl 
+dnl  K6: normal 3.25 cycles/limb, in-place 2.75 cycles/limb.
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
@@ -42,22 +42,22 @@ ifdef(`OPERATION_add_n', `
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 
 
-`#' mp_limb_t M4_function_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-`#'                          mp_size_t size);
-`#' mp_limb_t M4_function_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
-`#'	                      mp_size_t size, mp_limb_t carry);
-`#'
-`#' Calculate src1,size M4_description src2,size, and store the result in
-`#' dst,size.  The return value is the carry bit from the top of the result
-`#' (1 or 0).
-#
-# The _nc version accepts 1 or 0 for an initial carry into the low limb of
-# the calculation.  Note values other than 1 or 0 here will lead to garbage
-# results.
-#
-# Instruction decoding limits a normal dst=src1+src2 operation to 3 c/l, and
-# an in-place dst+=src to 2.5 c/l.  The unrolled loops have 1 cycle/loop of
-# loop control, which with 4 limbs/loop means an extra 0.25 c/l.
+C mp_limb_t M4_function_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C                          mp_size_t size);
+C mp_limb_t M4_function_nc (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C	                      mp_size_t size, mp_limb_t carry);
+C
+C Calculate src1,size M4_description src2,size, and store the result in
+C dst,size.  The return value is the carry bit from the top of the result
+C (1 or 0).
+C
+C The _nc version accepts 1 or 0 for an initial carry into the low limb of
+C the calculation.  Note values other than 1 or 0 here will lead to garbage
+C results.
+C
+C Instruction decoding limits a normal dst=src1+src2 operation to 3 c/l, and
+C an in-place dst+=src to 2.5 c/l.  The unrolled loops have 1 cycle/loop of
+C loop control, which with 4 limbs/loop means an extra 0.25 c/l.
 
 define(PARAM_CARRY, `FRAME+20(%esp)')
 define(PARAM_SIZE,  `FRAME+16(%esp)')
@@ -96,21 +96,21 @@ FRAME_pushl()
 	jae	L(unroll)
 
 
-	shrl	%eax		# initial carry flag
+	shrl	%eax		C initial carry flag
 
-	# offset 0x21 here, close enough to aligned
+	C offset 0x21 here, close enough to aligned
 L(simple):
-	# eax	scratch
-	# ebx	src1
-	# ecx	counter
-	# edx	src2
-	# esi
-	# edi	dst
-	# ebp
-	#
-	# The store to (%edi) could be done with a stosl; it'd be smaller
-	# code, but there's no speed gain and a cld would have to be added
-	# (per mpn/x86/README.family).
+	C eax	scratch
+	C ebx	src1
+	C ecx	counter
+	C edx	src2
+	C esi
+	C edi	dst
+	C ebp
+	C
+	C The store to (%edi) could be done with a stosl; it'd be smaller
+	C code, but there's no speed gain and a cld would have to be added
+	C (per mpn/x86/README.family).
 
 	movl	(%ebx), %eax
 	leal	4(%ebx), %ebx
@@ -133,15 +133,15 @@ L(simple):
 	ret
 
 
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 L(unroll):
-	# eax	carry
-	# ebx	src1
-	# ecx	counter
-	# edx	src2
-	# esi
-	# edi	dst
-	# ebp
+	C eax	carry
+	C ebx	src1
+	C ecx	counter
+	C edx	src2
+	C esi
+	C edi	dst
+	C ebp
 
 	cmpl	%edi, %ebx
 	pushl	%esi
@@ -168,13 +168,13 @@ ifdef(`OPERATION_add_n',`
 
 	ALIGN(32)
 L(normal_top):
-	# eax	counter, qwords, negative
-	# ebx	src1
-	# ecx	scratch
-	# edx	src2
-	# esi
-	# edi	dst
-	# ebp
+	C eax	counter, qwords, negative
+	C ebx	src1
+	C ecx	scratch
+	C edx	src2
+	C esi
+	C edi	dst
+	C ebp
 
  	movl	(%ebx,%ecx,4), %eax
 	leal	5(%ecx), %ecx
@@ -200,7 +200,7 @@ L(normal_top):
 	jz	L(normal_finish_one)
 	js	L(normal_done)
 
-	# two or three more limbs
+	C two or three more limbs
 
  	movl	(%ebx), %eax
  	M4_inst	(%edx), %eax
@@ -231,23 +231,23 @@ L(normal_done):
 	ret
 
 
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 
 ifdef(`OPERATION_add_n',`
 L(inplace_reverse):
-	# dst==src2
+	C dst==src2
 
 	movl	%ebx, %edx
 ')
 
 L(inplace):
-	# eax	initial carry
-	# ebx
-	# ecx	size
-	# edx	src
-	# esi
-	# edi	dst
-	# ebp
+	C eax	initial carry
+	C ebx
+	C ecx	size
+	C edx	src
+	C esi
+	C edi	dst
+	C ebp
 
 	leal	-1(%ecx), %esi
 	decl	%ecx
@@ -255,7 +255,7 @@ L(inplace):
 	andl	$~3, %ecx
 	andl	$3, %esi
 
- 	movl	(%edx), %ebx		# src low limb
+ 	movl	(%edx), %ebx		C src low limb
 	leal	(%edx,%ecx,4), %edx
 
 	leal	(%edi,%ecx,4), %edi
@@ -266,13 +266,13 @@ L(inplace):
 
 	ALIGN(32)
 L(inplace_top):
-	# eax
-	# ebx	next src limb
-	# ecx	size
-	# edx	src
-	# esi
-	# edi	dst
-	# ebp
+	C eax
+	C ebx	next src limb
+	C ecx	size
+	C edx	src
+	C esi
+	C edi	dst
+	C ebp
 
  	M4_inst	%ebx, (%edi,%ecx,4)
 
@@ -291,7 +291,7 @@ L(inplace_top):
 	loop	L(inplace_top)
 
 
-	# now %esi is 0 to 3 representing respectively 1 to 4 limbs more
+	C now %esi is 0 to 3 representing respectively 1 to 4 limbs more
 
  	M4_inst	%ebx, (%edi)
 
@@ -299,7 +299,7 @@ L(inplace_top):
 	jz	L(inplace_finish_one)
 	js	L(inplace_done)
 
-	# two or three more limbs
+	C two or three more limbs
 
  	movl	4(%edx), %eax
  	movl	8(%edx), %ebx

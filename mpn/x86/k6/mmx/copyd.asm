@@ -1,27 +1,27 @@
-# AMD K6 mpn_copyd -- copy limb vector, decrementing.
-#
-# K6: 0.56 or 1.0 cycles/limb (at 32 limbs/loop), depending on data
-# alignment.
+dnl  AMD K6 mpn_copyd -- copy limb vector, decrementing.
+dnl 
+dnl  K6: 0.56 or 1.0 cycles/limb (at 32 limbs/loop), depending on data
+dnl  alignment.
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
@@ -38,11 +38,11 @@ dnl  Maximum possible with the current code is 64, the minimum is 2.
 deflit(UNROLL_COUNT, 32)
 
 
-# void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);
-#
-# Copy src,size to dst,size, processing limbs from high to low addresses.
-#
-# The comments in copyi.asm apply here too.
+C void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C
+C Copy src,size to dst,size, processing limbs from high to low addresses.
+C
+C The comments in copyi.asm apply here too.
 
 
 defframe(PARAM_SIZE,12)
@@ -83,8 +83,8 @@ L(simple):
 
 
 L(unroll):
-	# if src and dst are different alignments mod8, then use rep movs
-	# if src and dst are both 4mod8 then process one limb to get 0mod8
+	C if src and dst are different alignments mod8, then use rep movs
+	C if src and dst are both 4mod8 then process one limb to get 0mod8
 
 	pushl	%ebx
 	leal	(%esi,%edi), %ebx
@@ -105,25 +105,25 @@ L(already_aligned):
 
 
 ifelse(UNROLL_BYTES,256,`
-	# for testing speed at 64 limbs/loop unrolling
+	C for testing speed at 64 limbs/loop unrolling
 	subl	$128, %esi
 	subl	$128, %edi
 ')
 
-	# aligning to 16 here isn't enough, 32 is needed to get the speeds
-	# claimed
+	C aligning to 16 here isn't enough, 32 is needed to get the speeds
+	C claimed
 	ALIGN(32)
 
 L(top):
-	# eax	saved esi
-	# ebx
-	# ecx	counter, limbs
-	# edx	saved edi
-	# esi	src, incrementing
-	# edi	dst, incrementing
-	# ebp
-	#
-	# `disp' is never 0, so don't need to force 0(%esi).
+	C eax	saved esi
+	C ebx
+	C ecx	counter, limbs
+	C edx	saved edi
+	C esi	src, incrementing
+	C edi	dst, incrementing
+	C ebp
+	C
+	C `disp' is never 0, so don't need to force 0(%esi).
 
 deflit(CHUNK_COUNT, 2)
 forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT-1, `
@@ -139,16 +139,16 @@ forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 	jns	L(top)
 
 
-	# now %ecx is -UNROLL_COUNT to -1 representing repectively 0 to
-	# UNROLL_COUNT-1 limbs remaining
+	C now %ecx is -UNROLL_COUNT to -1 representing repectively 0 to
+	C UNROLL_COUNT-1 limbs remaining
 
 	testb	$eval(UNROLL_COUNT/2), %cl
 
 	leal	UNROLL_COUNT(%ecx), %ecx
 	jz	L(not_half)
 
-	# at an unroll count of 32 this block of code is 16 cycles faster than
-	# the rep movs, less 3 or 4 to test whether to do it
+	C at an unroll count of 32 this block of code is 16 cycles faster than
+	C the rep movs, less 3 or 4 to test whether to do it
 
 forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT/2-1, `
 	deflit(`disp', eval(-4-i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,+128)))
@@ -163,7 +163,7 @@ L(not_half):
 
 
 ifelse(UNROLL_BYTES,256,`
-	# for testing speed at 64 limbs/loop unrolling
+	C for testing speed at 64 limbs/loop unrolling
 	addl	$128, %esi
 	addl	$128, %edi
 ')

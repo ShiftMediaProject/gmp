@@ -1,40 +1,41 @@
-# AMD K6 mpn_sqr_basecase -- square an mpn number.
-#
-# K6: approx 6.5 cycles per crossproduct, or 12 cycles per triangular product.
-#
-# Future: Some unrolling will be needed to help sizes 10 to 20.
+dnl  AMD K6 mpn_sqr_basecase -- square an mpn number.
+dnl 
+dnl  K6: approx 6.5 cycles per crossproduct, or 12 cycles per triangular
+dnl  product.
+dnl 
+dnl  Future: Some unrolling will be needed to help sizes 10 to 20.
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
 
 
-# void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);
-#
-# Calculate src,size squared, storing the result in dst,2*size.
-#
-# The algorithm is basically the same as mpn/generic/sqr_basecase.c, but a
-# lot of function call overheads are avoided, especially when the given size
-# is smallish.
+C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C
+C Calculate src,size squared, storing the result in dst,2*size.
+C
+C The algorithm is basically the same as mpn/generic/sqr_basecase.c, but a
+C lot of function call overheads are avoided, especially when the given size
+C is smallish.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
@@ -56,11 +57,11 @@ deflit(`FRAME',0)
 	ja	L(three_or_more)
 
 
-#------------------------------------------------------------------------------
-# one limb only
-	# eax	src
-	# ecx	size
-	# edx	dst
+C------------------------------------------------------------------------------
+C one limb only
+	C eax	src
+	C ecx	size
+	C edx	dst
 
 	movl	(%eax), %eax
 	movl	%edx, %ecx
@@ -71,17 +72,17 @@ deflit(`FRAME',0)
 	movl	%edx, 4(%ecx)
 	ret
 
-#------------------------------------------------------------------------------
+C------------------------------------------------------------------------------
 L(two_limbs):
-	# eax	src
-	# ecx	size
-	# edx	dst
+	C eax	src
+	C ecx	size
+	C edx	dst
 
 	pushl	%ebx
-	movl	%eax, %ebx	# src
+	movl	%eax, %ebx	C src
 
 	movl	(%ebx), %eax
-	movl	%edx, %ecx	# dst
+	movl	%edx, %ecx	C dst
 
 	mull	%eax
 
@@ -114,25 +115,25 @@ L(two_limbs):
 	ret
 
 
-#------------------------------------------------------------------------------
+C------------------------------------------------------------------------------
 L(three_or_more):
 	cmpl	$4, %ecx
 	jae	L(four_or_more)
 
 
-#------------------------------------------------------------------------------
-# three limbs
-	# eax	src
-	# ecx	size
-	# edx	dst
+C-----------------------------------------------------------------------------
+C three limbs
+	C eax	src
+	C ecx	size
+	C edx	dst
 
 	pushl	%ebx
-	movl	%eax, %ebx	# src
+	movl	%eax, %ebx	C src
 
 	movl	(%ebx), %eax
-	movl	%edx, %ecx	# dst
+	movl	%edx, %ecx	C dst
 
-	mull	%eax		# src[0] ^ 2
+	mull	%eax		C src[0] ^ 2
 
 	movl	%eax, (%ecx)
 	movl	4(%ebx), %eax
@@ -141,7 +142,7 @@ L(three_or_more):
 
 	pushl	%esi
 
-	mull	%eax		# src[1] ^ 2
+	mull	%eax		C src[1] ^ 2
 
 	movl	%eax, 8(%ecx)
 	movl	8(%ebx), %eax
@@ -150,7 +151,7 @@ L(three_or_more):
 
 	pushl	%edi
 
-	mull	%eax		# src[2] ^ 2
+	mull	%eax		C src[2] ^ 2
 
 	movl	%eax, 16(%ecx)
 	movl	(%ebx), %eax
@@ -158,7 +159,7 @@ L(three_or_more):
 	movl	%edx, 20(%ecx)
 	movl	4(%ebx), %edx
 
-	mull	%edx		# src[0] * src[1]
+	mull	%edx		C src[0] * src[1]
 
 	movl	%eax, %esi
 	movl	(%ebx), %eax
@@ -169,7 +170,7 @@ L(three_or_more):
 	pushl	%ebp
 	xorl	%ebp, %ebp
 
-	mull	%edx		# src[0] * src[2]
+	mull	%edx		C src[0] * src[2]
 
 	addl	%eax, %edi
 	movl	4(%ebx), %eax
@@ -179,20 +180,20 @@ L(three_or_more):
 	movl	%edx, %ebp
 	movl	8(%ebx), %edx
 
-	mull	%edx		# src[1] * src[2]
+	mull	%edx		C src[1] * src[2]
 
 	addl	%eax, %ebp
 
 	adcl	$0, %edx
 
 
-	# eax	will be dst[5]
-	# ebx	src
-	# ecx	dst
-	# edx	dst[4]
-	# esi	dst[1]
-	# edi	dst[2]
-	# ebp	dst[3]
+	C eax	will be dst[5]
+	C ebx	src
+	C ecx	dst
+	C edx	dst[4]
+	C esi	dst[1]
+	C edi	dst[2]
+	C ebp	dst[3]
 
 	xorl	%eax, %eax
 	addl	%esi, %esi
@@ -206,7 +207,7 @@ L(three_or_more):
 	adcl	%ebp, 12(%ecx)
 	adcl	%edx, 16(%ecx)
 	adcl	%eax, 20(%ecx)
-	# no carry here
+	C no carry here
 
 	popl	%ebp
 	popl	%edi
@@ -215,15 +216,15 @@ L(three_or_more):
 	ret
 
 
-#------------------------------------------------------------------------------
+C -----------------------------------------------------------------------------
 L(four_or_more):
-	# eax	src
-	# ebx
-	# ecx	size
-	# edx	dst
-	# esi
-	# edi
-	# ebp
+	C eax	src
+	C ebx
+	C ecx	size
+	C edx	dst
+	C esi
+	C edi
+	C ebp
 
 defframe(SAVE_EBX,-4)
 defframe(SAVE_ESI,-8)
@@ -234,7 +235,7 @@ deflit(STACK_SPACE,20)
 
 	subl	$STACK_SPACE, %esp
 deflit(`FRAME',STACK_SPACE)
-#	cmpl	$UNROLL_THRESHOLD, %ecx
+C	cmpl	$UNROLL_THRESHOLD, %ecx
 	
 	movl	%edi, SAVE_EDI
 	leal	4(%edx), %edi
@@ -246,34 +247,34 @@ deflit(`FRAME',STACK_SPACE)
 	movl	$0, %esi
 
 	movl	%ebp, SAVE_EBP
-#	jae	L(unroll)
+C	jae	L(unroll)
 
 
-#------------------------------------------------------------------------------
-# simple looping
-#
-# First multiply src[0]*src[1..size-1] and store at dst[1..size].
-# Further products are added in rather than stored.
+C -----------------------------------------------------------------------------
+C simple looping
+C
+C First multiply src[0]*src[1..size-1] and store at dst[1..size].
+C Further products are added in rather than stored.
  
-	# eax
-	# ebx	src+4
-	# ecx	size
-	# edx
-	# esi
-	# edi	dst
-	# ebp
+	C eax
+	C ebx	src+4
+	C ecx	size
+	C edx
+	C esi
+	C edi	dst
+	C ebp
 
-	movl	(%eax), %ebp	# multiplier
+	movl	(%eax), %ebp	C multiplier
 	decl	%ecx
 
 L(simple_mul):
-	# eax	scratch
-	# ebx	src ptr
-	# ecx	counter
-	# edx	scratch
-	# esi	carry
-	# edi	dst ptr
-	# ebp	multiplier
+	C eax	scratch
+	C ebx	src ptr
+	C ecx	counter
+	C edx	scratch
+	C esi	carry
+	C edi	dst ptr
+	C ebp	multiplier
 
 	movl	(%ebx), %eax
 	addl	$4, %ebx
@@ -291,25 +292,25 @@ L(simple_mul):
 	loop	L(simple_mul)
 
 
-#------------------------------------------------------------------------------
-# Add products src[n]*src[n+1..size-1] at dst[2*n-1...], for n=1..size-2.
-#
-# The last two products, which are the bottom right corner of the product
-# triangle, are left to the end.  These are src[size-3]*src[size-2,size-1]
-# and src[size-2]*src[size-1].  If size is 4 then it's only these corner
-# cases that need to be done.
-#
-# The outer loop has some trickery at the top of the loop to adjust ebx and
-# edi ready for the next pass, using the n from VAR_COUNTER to know how much
-# to decrease them by.
+C -----------------------------------------------------------------------------
+C Add products src[n]*src[n+1..size-1] at dst[2*n-1...], for n=1..size-2.
+C
+C The last two products, which are the bottom right corner of the product
+C triangle, are left to the end.  These are src[size-3]*src[size-2,size-1]
+C and src[size-2]*src[size-1].  If size is 4 then it's only these corner
+C cases that need to be done.
+C
+C The outer loop has some trickery at the top of the loop to adjust ebx and
+C edi ready for the next pass, using the n from VAR_COUNTER to know how much
+C to decrease them by.
 
-	# eax
-	# ebx	src ptr [size]
-	# ecx
-	# edx
-	# esi	carry
-	# edi	dst ptr [size-1]
-	# ebp
+	C eax
+	C ebx	src ptr [size]
+	C ecx
+	C edx
+	C esi	carry
+	C edi	dst ptr [size-1]
+	C ebp
 
 	movl	PARAM_SIZE, %ecx
 	movl	%esi, (%edi)
@@ -320,14 +321,14 @@ L(simple_mul):
 	movl	PARAM_SRC, %ebx
 	movl	PARAM_DST, %edi
 
-	movl	4(%ebx), %ebp	# src[1] multiplier
-	addl	$8, %ebx	# start multiplying from src[2]
+	movl	4(%ebx), %ebp	C src[1] multiplier
+	addl	$8, %ebx	C start multiplying from src[2]
 
-	addl	$12, %edi	# dst[3] first place to add to
-	movl	%ecx, %edx	# size-4
+	addl	$12, %edi	C dst[3] first place to add to
+	movl	%ecx, %edx	C size-4
 	
-	addl	$2, %ecx	# size-2 loop counter
-	negl	%edx		# -(size-4)
+	addl	$2, %ecx	C size-2 loop counter
+	negl	%edx		C -(size-4)
 
 	movl	%edx, VAR_COUNTER
 	jmp	L(simple_outer_entry)
@@ -335,31 +336,31 @@ L(simple_mul):
 
 	ALIGN(16)
 L(simple_outer_top):	
-	# ebx	src, pointing just after last limb
-	# edx	outer loop counter (negative)
-	# edi	dst, pointing at stored carry limb of previous loop
+	C ebx	src, pointing just after last limb
+	C edx	outer loop counter (negative)
+	C edi	dst, pointing at stored carry limb of previous loop
 
-	movl	%edx, VAR_COUNTER	# new value
+	movl	%edx, VAR_COUNTER	C new value
 	leal	-8(%ebx,%edx,4), %ebx
 
 	leal	-2(%edx), %ecx
-	movl	-4(%ebx), %ebp		# multiplier
+	movl	-4(%ebx), %ebp		C multiplier
 
 	negl	%ecx
 	leal	-4(%edi,%edx,4), %edi
 
 L(simple_outer_entry):
-	xorl	%esi, %esi		# initial carry
+	xorl	%esi, %esi		C initial carry
 
 
 L(simple_inner):
-	# eax	scratch
-	# ebx	src, progressing
-	# ecx	counter
-	# edx	scratch
-	# esi	carry
-	# edi	dst, progressing
-	# ebp	multiplier
+	C eax	scratch
+	C ebx	src, progressing
+	C ecx	counter
+	C edx	scratch
+	C esi	carry
+	C edi	dst, progressing
+	C ebp	multiplier
 
 	movl	(%ebx), %eax
 	addl	$4, %ebx
@@ -385,8 +386,8 @@ L(simple_inner):
 
 
 L(simple_corner):
-	# ebx	src just past end
-	# edi	dst at 2*size-5
+	C ebx	src just past end
+	C edi	dst at 2*size-5
 
 	movl	-12(%ebx), %ebp
 	movl	-8(%ebx), %eax
@@ -422,28 +423,28 @@ L(simple_corner):
 	movl	%edx, 8(%edi)
 	
 
-#------------------------------------------------------------------------------
-# Left shift of dst[1..2*size-2], high bit shifted out becomes dst[2*size-1].
+C -----------------------------------------------------------------------------
+C Left shift of dst[1..2*size-2], high bit shifted out becomes dst[2*size-1].
 
 
 	movl	PARAM_SIZE, %eax
-	xorl	%ecx, %ecx		# clear carry
+	xorl	%ecx, %ecx		C clear carry
 
 	movl	PARAM_DST, %edi
 
 	leal	(%edi,%eax,8), %edi
-	notl	%eax			# -size-1, preserve carry
+	notl	%eax			C -size-1, preserve carry
 
-	leal	2(%eax), %eax		# -(size-1)
+	leal	2(%eax), %eax		C -(size-1)
 
 L(simple_shift):
-	# eax	counter, negative
-	# ebx
-	# ecx
-	# edx
-	# esi
-	# edi	dst, pointing just after last limb
-	# ebp
+	C eax	counter, negative
+	C ebx
+	C ecx
+	C edx
+	C esi
+	C edi	dst, pointing just after last limb
+	C ebp
 
 	rcll	-4(%edi,%eax,8)
 	rcll	(%edi,%eax,8)
@@ -453,33 +454,33 @@ L(simple_shift):
 	setc	%al
 
 	movl	PARAM_SRC, %ebx
-	movl	%eax, -4(%edi)	# dst most significant limb
+	movl	%eax, -4(%edi)	C dst most significant limb
 
 	movl	PARAM_SIZE, %ecx
 
-#------------------------------------------------------------------------------
-# Now add in the squares on the diagonal, namely src[0]^2, src[1]^2, ...,
-# src[size-1]^2.  dst[0] hasn't yet been set at all yet, and just gets the
-# low limb of src[0]^2.
+C -----------------------------------------------------------------------------
+C Now add in the squares on the diagonal, namely src[0]^2, src[1]^2, ...,
+C src[size-1]^2.  dst[0] hasn't yet been set at all yet, and just gets the
+C low limb of src[0]^2.
 
-	movl	(%ebx), %eax	# src[0]
+	movl	(%ebx), %eax	C src[0]
 
 	mull	%eax
 
-	leal	(%ebx,%ecx,4), %ebx	# src point just after last limb
+	leal	(%ebx,%ecx,4), %ebx	C src point just after last limb
 	negl	%ecx
 
-	movl	%eax, (%edi,%ecx,8)	# dst[0]
+	movl	%eax, (%edi,%ecx,8)	C dst[0]
 	incl	%ecx
 
 L(simple_diag):
-	# eax	scratch
-	# ebx	src just after last limb
-	# ecx	counter, negative
-	# edx	carry
-	# esi	scratch
-	# edi	dst just after last limb
-	# ebp
+	C eax	scratch
+	C ebx	src just after last limb
+	C ecx	counter, negative
+	C edx	carry
+	C esi	scratch
+	C edi	dst just after last limb
+	C ebp
 
 	movl	(%ebx,%ecx,4), %eax
 	movl	%edx, %esi
@@ -496,7 +497,7 @@ L(simple_diag):
 	movl	SAVE_EBX, %ebx
 	movl	SAVE_ESI, %esi
 
-	addl	%edx, -4(%edi)	# dst most significant limb
+	addl	%edx, -4(%edi)	C dst most significant limb
 
 	movl	SAVE_EDI, %edi
 	movl	SAVE_EBP, %ebp
