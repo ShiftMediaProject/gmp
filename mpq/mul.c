@@ -1,6 +1,7 @@
-/* mpq_mul -- mutiply two rational numbers.
+/* mpq_mul -- multiply two rational numbers.
 
-Copyright 1991, 1994, 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 1996, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
