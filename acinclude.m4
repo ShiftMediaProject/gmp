@@ -1897,12 +1897,16 @@ else
   AC_CACHE_CHECK([whether vsnprintf works],
                  gmp_cv_func_vsnprintf,
   [AC_TRY_RUN([
+#include <string.h>  /* for strcmp */
+#include <stdio.h>   /* for vsnprintf */
+
 #if HAVE_STDARG
 #include <stdarg.h>
 #else
 #include <varargs.h>
 #endif
 
+int
 #if HAVE_STDARG
 check (const char *fmt, ...)
 #else
@@ -1930,6 +1934,8 @@ check (va_alist)
   /* allowed return values */
   if (ret != -1 && ret != 3 && ret != 11)
     exit (2);
+
+  return 0;
 }
 
 int
