@@ -20,13 +20,19 @@
 @finalout
 @end iftex
 
-@c Texinfo version 4 or up will be needed to process this into .info files.
+@c  Texinfo version 4 or up will be needed to process this into .info files.
 @c
-@c The edition number is in three places and the month/year in one, all
-@c taken from version.texi.  version.texi is created when you configure with
-@c --enable-maintainer-mode, and is included in a distribution made with
-@c "make dist".
-
+@c  The edition number is in three places and the month/year in one, all taken
+@c  from version.texi.  version.texi is created when you configure with
+@c  --enable-maintainer-mode, and is included in a distribution made with
+@c  "make dist".
+@c
+@c  "cindex" entries have been made for function categories and programming
+@c  topics.  Minutae like particular systems and processors mentioned in
+@c  various places have been left out so as not to bury important topics under
+@c  a lot of junk.  "mpn" functions aren't in the concept index because a
+@c  beginner looking for "GCD" or something is only going to be confused by
+@c  pointers to low level routines.
 
 @ifnottex
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
@@ -475,9 +481,21 @@ check the algorithm thresholds for their CPU.
 
 @item @option{--enable-mpbsd}
 
-The Berkeley MP compatibility library (@file{libmp.a}) and header file
+The Berkeley MP compatibility library (@file{libmp}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
+
+@item @option{--enable-assert}
+
+Enable some consistency checking within the library.  This can be of use while
+debugging, @pxref{Debugging}.
+
+@item @option{--enable-profiling=prof/gprof}
+
+Profiling support can be enabled either for @command{prof} or @command{gprof}.
+This adds @samp{-p} or @samp{-pg} respectively to the default @samp{CFLAGS}
+and for some targets adds corresponding @code{mcount} calls to the assembler
+code.  @xref{Profiling}.
 
 @item @option{MPN_PATH}
 
@@ -701,7 +719,7 @@ corresponding plain integer code.
 @item x86 GCC @samp{-march=pentiumpro}
 
 GCC 2.95.2 miscompiles @file{mpz/powm.c} when @samp{-march=pentiumpro} is
-used, so for relevant CPUs that option is in the default @env{CFLAGS} only for
+used, so for relevant CPUs that option is only in the default @env{CFLAGS} for
 GCC 2.96 and up.
 @end table
 
@@ -1083,7 +1101,7 @@ implementation of @file{stack-alloc.c}.
 @item
 On SCO systems the default @code{<ctype.h>} macros use per-file static
 variables and may not be reentrant, depending whether the compiler optimizes
-away fetches from them.  The functions affected are @code{mpz_set_str},
+away fetches from them.  The GMP functions affected are @code{mpz_set_str},
 @code{mpz_inp_str}, @code{mpf_set_str} and @code{mpf_inp_str}.
 @end itemize
 
