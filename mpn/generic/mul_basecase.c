@@ -44,49 +44,79 @@ MA 02111-1307, USA. */
    algorithm.  */
 
 void
-mpn_mul_basecase (mp_ptr prodp,
-		  mp_srcptr up, mp_size_t usize,
-		  mp_srcptr vp, mp_size_t vsize)
+mpn_mul_basecase (mp_ptr rp,
+		  mp_srcptr up, mp_size_t un,
+		  mp_srcptr vp, mp_size_t vn)
 {
-  ASSERT (usize >= vsize);
-  ASSERT (vsize >= 1);
-  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, up, usize));
-  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, vp, vsize));
+  ASSERT (un >= vn);
+  ASSERT (vn >= 1);
+  ASSERT (! MPN_OVERLAP_P (rp, un+vn, up, un));
+  ASSERT (! MPN_OVERLAP_P (rp, un+vn, vp, vn));
 
-  /* We first multiply by the low order one or two limbs, as the result can
-     be stored, not added, to PROD.  We also avoid a loop for zeroing this
-     way.  */
+  /* We first multiply by the low order limb (or depending on optional function
+     availability, limbs).  This result can be stored, not added, to rp.  We
+     also avoid a loop for zeroing this way.  */
+
 #if HAVE_NATIVE_mpn_mul_2
-  if (vsize >= 2)
+  if (vn >= 2)
     {
-      prodp[usize + 1] = mpn_mul_2 (prodp, up, usize, vp);
-      prodp += 2, vp += 2, vsize -= 2;
+      rp[un + 1] = mpn_mul_2 (rp, up, un, vp);
+      rp += 2, vp += 2, vn -= 2;
     }
   else
     {
-      prodp[usize] = mpn_mul_1 (prodp, up, usize, vp[0]);
+      rp[un] = mpn_mul_1 (rp, up, un, vp[0]);
       return;
     }
 #else
-  prodp[usize] = mpn_mul_1 (prodp, up, usize, vp[0]);
-  prodp += 1, vp += 1, vsize -= 1;
+  rp[un] = mpn_mul_1 (rp, up, un, vp[0]);
+  rp += 1, vp += 1, vn -= 1;
+#endif
+
+  /* Now accumulate the product of up[] and the next low-order limb (or
+     depending on optional function availability, limbs) from vp[0].  */
+
+#define MAX_LEFT MP_SIZE_T_MAX
+
+#if HAVE_NATIVE_mpn_addmul_4
+  while (vn >= 4)
+    {
+      rp[un + 4 - 1] = mpn_addmul_4 (rp, up, un, vp);
+      rp += 4, vp += 4, vn -= 4;
+    }
+#undef MAX_LEFT
+#define MAX_LEFT 3
+#endif
+
+#if HAVE_NATIVE_mpn_addmul_3
+  while (vn >= 3)
+    {
+      rp[un + 3 - 1] = mpn_addmul_3 (rp, up, un, vp);
+      if (MAX_LEFT - 3 <= 3)
+	break;
+      rp += 3, vp += 3, vn -= 3;
+    }
+#undef MAX_LEFT
+#define MAX_LEFT 2
 #endif
 
 #if HAVE_NATIVE_mpn_addmul_2
-  while (vsize >= 2)
+  while (vn >= 2)
     {
-      prodp[usize + 1] = mpn_addmul_2 (prodp, up, usize, vp[0], vp[1]);
-      prodp += 2, vp += 2, vsize -= 2;
+      rp[un + 2 - 1] = mpn_addmul_2 (rp, up, un, vp);
+      if (MAX_LEFT - 2 <= 2)
+	break;
+      rp += 2, vp += 2, vn -= 2;
     }
-  if (vsize != 0)
-    prodp[usize] = mpn_addmul_1 (prodp, up, usize, vp[0]);
-#else
-  /* For each iteration in the loop, multiply U with one limb from V, and
-     add the result to PROD.  */
-  while (vsize != 0)
-    {
-      prodp[usize] = mpn_addmul_1 (prodp, up, usize, vp[0]);
-      prodp += 1, vp += 1, vsize -= 1;
-    }
+#undef MAX_LEFT
+#define MAX_LEFT 1
 #endif
+
+  while (vn >= 0)
+    {
+      rp[un] = mpn_addmul_1 (rp, up, un, vp[0]);
+      if (MAX_LEFT - 1 <= 1)
+	break;
+      rp += 1, vp += 1, vn -= 1;
+    }
 }
