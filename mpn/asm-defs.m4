@@ -3,7 +3,7 @@ dnl
 dnl  m4 macros for gmp assembler, shared by all CPUs.
 dnl
 dnl  These macros are designed for use with any m4.  GNU m4 and BSD m4 work.
-dnl  GNU m4 has some advantages, such as filenames and line numbers in error
+dnl  GNU m4 has some advantages, like filenames and line numbers in error
 dnl  messages.
 
 
@@ -79,7 +79,7 @@ dnl       to 1, whereas GNU m4 sets it to 0.  In both, "foo()" sets $# to 1.
 dnl       This is worked around in various places.
 dnl
 dnl  len() - When "len()" is given an empty argument, BSD m4 evaluates to
-dnl       nothing, whereas GNU m4 it evaluates to 0.  See m4_length() below
+dnl       nothing, whereas GNU m4 evaluates to 0.  See m4_length() below
 dnl       which works around this.
 dnl
 dnl  translit() - GNU m4 accepts character ranges like A-Z, but BSD m4
@@ -417,6 +417,14 @@ dnl  evaluates to nothing given an empty argument.
 define(m4_length,
 m4_assert_onearg()
 `eval(len(`$1')-0)')
+
+
+dnl  Usage: m4_stringequal(x,y)
+dnl
+dnl  Expand to 1 or 0 according as strings x and y are equal or not.
+
+define(m4_stringequal_p,
+`ifelse(`$1',`$2',1,0)')
 
 
 dnl  Usage: m4_incr_or_decr(n,last)
