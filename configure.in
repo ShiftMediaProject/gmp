@@ -391,15 +391,19 @@ case $host in
     # gcc 3.1 adds ev45, ev67 (but ev45 is the same as ev4).
     # gcc 3.2 adds nothing.
     #
+    # gcc version "2.9-gnupro-99r1" under "-O2 -mcpu=ev6" strikes internal
+    # compiler errors too easily and is rejected by GMP_PROG_CC_WORKS.  Each
+    # -mcpu=ev6 below has a fallback to -mcpu=ev56 for this reason.
+    #
     case $host_cpu in
       alpha)        gcc_cflags_cpu="-mcpu=ev4" ;;
       alphaev5)     gcc_cflags_cpu="-mcpu=ev5" ;;
       alphaev56)    gcc_cflags_cpu="-mcpu=ev56" ;;
       alphapca56 | alphapca57)
                     gcc_cflags_cpu="-mcpu=pca56" ;;
-      alphaev6)     gcc_cflags_cpu="-mcpu=ev6" ;;
+      alphaev6)     gcc_cflags_cpu="-mcpu=ev6 -mcpu=ev56" ;;
       alphaev67 | alphaev68 | alphaev7*)
-                    gcc_cflags_cpu="-mcpu=ev67 -mcpu=ev6" ;;
+                    gcc_cflags_cpu="-mcpu=ev67 -mcpu=ev6 -mcpu=ev56" ;;
     esac
 
     # gcc version "2.9-gnupro-99r1" on alphaev68-dec-osf5.1 has been seen
