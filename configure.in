@@ -487,7 +487,8 @@ case ${target} in
     esac
 
     case ${target} in
-      [i[34]86*-*-*])
+      [i[34]86*-*-* | k5*-*-*])
+        # k5 is using the basic x86 code until we know what's good on it
         path="x86"
         ;;
       i586*-*-* | pentium-*-*)
