@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 3 May 2001.  An up-to-date version is available at
+  This file current as of 25 Jun 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
 </comment>
 
@@ -31,17 +31,19 @@
 <ul>
 <li> <strong>C++ wrapper</strong>
 
-  <p> A C++ wrapper for GMP is highly desirable.  Several people have started
-  writing one, but nobody has so far finished it.  For a wrapper to be useful,
-  one needs to pay attention to efficiency.
+  <p> A C++ wrapper for GMP is highly desirable.
+      <a href="http://www.sissa.it/~ballabio/gmp++.html">GMP++</a> has made
+      excellent progress on this.
+      For a wrapper to be useful, one needs to pay attention to efficiency.
 
   <ol>
     <li> Write arithmetic functions for direct applications of most
          elementary C++ types.  This might be necessary to avoid
          ambiguities, but it is also desirable from an efficiency
          standpoint.
-    <li> Avoid running constructors/destructors when not necessary.
-         For example, implement <code>a&nbsp+=&nbsp;b</code> by directly applying mpz_add.
+    <li> Avoid running constructors/destructors when not necessary.  For
+         example, implement <code>a&nbsp+=&nbsp;b</code> by directly applying
+         <code>mpz_add</code>.
   </ol>
 
 <p> <li> <strong>Faster multiplication</strong>
