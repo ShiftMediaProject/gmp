@@ -62,7 +62,7 @@ mpz_tdiv_q (quot, num, den)
   dp = PTR (den);
 
   /* FIXME: We should think about how to handle the temporary allocation.
-     Perhaps mpn_tdiv_qr should handle it, since it anyway often need to
+     Perhaps mpn_tdiv_qr should handle it, since it anyway often needs to
      allocate temp space.  */
 
   /* Copy denominator to temporary space if it overlaps with the quotient.  */
