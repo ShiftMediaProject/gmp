@@ -7016,8 +7016,7 @@ Kissme @spaceuref{http://kissme.sourceforge.net/}
 @item Lisp
 @itemize @bullet
 @item
-GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html} @* In the
-process of switching to GMP for bignums.
+GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html}
 @item
 Librep @spaceuref{http://librep.sourceforge.net/}
 @end itemize
@@ -7106,6 +7105,9 @@ GNU Smalltalk @spaceuref{http://www.smalltalk.org/versions/GNUSmalltalk.html}
 
 @item Other
 @itemize @bullet
+@item
+Axiom @uref{http://savannah.nongnu.org/projects/axiom} @* Computer algebra
+using GCL.
 @item
 DrGenius @spaceuref{http://drgenius.seul.org/} @* Geometry system and
 mathematical programming language.
