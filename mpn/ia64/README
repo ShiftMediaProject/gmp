@@ -92,6 +92,10 @@ for ELF, so the latter directives don't need to be given explicitly.
 relationships.  gas also accepts .pred.rel.mutex, but hpux "as"
 doesn't.
 
+.pred directives can't be put on a line with a label, like
+".Lfoo: .pred ...", the HP assembler on HP-UX 11.23 rejects that.
+gas is happy with it, and past versions of HP had seemed ok.
+
 // is the standard comment sequence, but we prefer "C" since it
 inhibits m4 macro expansion.  See comments in ia64-defs.m4.
 
