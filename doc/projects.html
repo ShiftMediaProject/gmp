@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 7 Dec 2001.  An up-to-date version is available at
+  This file current as of 9 Feb 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -213,6 +213,48 @@ MA 02111-1307, USA.
       time of a full multiply, or square, though work by Thom Mulders shows
       the advantage is progressively lost as Karatsuba and higher algorithms
       are applied.
+
+<p> <li> <strong>Exceptions</strong>
+
+  <p> Some sort of scheme for exceptions handling would be desirable.
+      Presently the only thing documented is that divide by zero in GMP
+      functions provokes a deliberate machine divide by zero.  The global
+      <code>gmp_errno</code> is not actually documented, except for the old
+      <code>gmp_randinit</code> function.  Being currently just a plain global
+      means it's not thread-safe.
+
+  <p> It should be possible to detect divide by zero, sqrt of negative, and
+      similar operand range errors at the start of functions, so an exception
+      handler (of whatever sort) would have a clean state and could recover
+      with <code>longjmp</code> or a C++ <code>throw</code> or whatever.
+
+  <p> Out-of-memory exceptions are harder.  They're just as likely to arise
+      deep in GMP internals, and a <code>longjmp</code> out would probably
+      cause memory leaks and possibly leave GMP variables being operated on in
+      an inconsistent state.  Explicitly recording the temporary memory in use
+      seems tedious and rather wasteful since an exception will normally be
+      rare.  Maybe the C++ destructor mechanism could help, though we don't
+      really want to depend on having that.
+
+  <p> A highly desirable feature for any scheme would be to make it work with
+      application supplied functions or third party libraries.  An exception
+      might be detected nice and early in a GMP entrypoint, but above it there
+      would be other routines to be jumped across, if possible.
+
+  <p> One scheme for out-of-memory would be to allow an application to
+      <code>longjmp</code> out of <code>__gmp_allocate_func</code> (and
+      <code>__gmp_reallocate_func</code>) but basically require it to do the
+      cleanups.  Since GMP allocates all memory through those functions the
+      application can know everything that's been given to GMP and can reclaim
+      that space.  By taking a snapshot of memory or otherwise identifying
+      memory activity after a particular time it could revert back to there.
+      GMP variables created or modified after would be garbage, those before
+      would remain.  The advantage of this scheme would be that it needs
+      nothing from GMP itself and would work nicely with other memory
+      allocation an application might be doing for its own purposes.  A
+      disadvantage would be that libc probably offers next to no help for
+      snapshotting memory, so an application would need a private scheme to
+      track what's dished when.
 
 <p> <li> <strong>Test Suite</strong>
 
