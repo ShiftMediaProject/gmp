@@ -118,13 +118,21 @@ char *newline = "";
 #define sigaltstack sigstack
 #endif
 
+#define HAVE_sigaltstack
+
+#if (defined (__linux__) && !defined (SA_ONSTACK)) || (_UNICOS)
+/* Older Linux have limited signal handling */
+#undef HAVE_sigaltstack
+#endif
+
 #if !defined(_WIN32) && !defined(__DJGPP__)
 void
 setup_error_handler ()
 {
   struct sigaction act;
-  struct sigaltstack sigstk;
 
+#if HAVE_sigaltstack
+  struct sigaltstack sigstk;
   /* Set up a stack for signal handling.  A typical cause of error is stack
      overflow, and in such situation a signal can not be delivered on the
      overflown stack.  */
@@ -134,7 +142,6 @@ setup_error_handler ()
   sigstk.ss_flags = 0;
 #endif /* ! _AIX */
 
-#ifndef _UNICOS
   if (sigaltstack (&sigstk, 0) < 0)
     perror("sigaltstack");
 #endif
@@ -142,7 +149,11 @@ setup_error_handler ()
   /* Initialize structure for sigaction (called below).  */
   act.sa_handler = cleanup_and_exit;
   sigemptyset (&(act.sa_mask));
+#if HAVE_sigaltstack
   act.sa_flags = SA_ONSTACK;
+#else
+  act.sa_flags = 0;
+#endif
 
 #ifdef LIMIT_RESOURCE_USAGE
   {
