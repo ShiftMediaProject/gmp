@@ -19,6 +19,41 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-18  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (--enable-fft): Make this the default.
+	* gmp.texi (Build Options): Update.
+
+	* Makefile.am (libmp_la_DEPENDENCIES): Revise mpz objects needed by
+	new mpz/powm.c.
+
+	* gmp.texi (Random State Initialization): Add gmp_randinit_default and
+	gmp_randinit_lc_2exp_size, mark gmp_randinit as obsolete.
+	(Random State Seeding): New section, taken from "Random State
+	Initialization" and "Random Number Functions".
+
+	* configure.in (AC_CHECK_DECLS): Add fgetc, fscanf, ungetc.
+	* scanf/fscanffuns.c: Use these, for the benefit of SunOS 4.
+
+	* gmp-impl.h, gmp-h.in (__gmp_default_fp_limb_precision): Move back to
+	gmp-impl.h now not required for inlined mpf.
+
+	* randlc2s.c (gmp_randinit_lc_2exp_size): New file, the size-based LC
+	selection from rand.c.
+	* rand.c (gmp_randinit): Use it.
+	* randdef.c (gmp_randinit_default): New file.
+	* gmp-impl.h (RANDS): Use it.
+	(ASSERT_CARRY): New macro.
+	* gmp-h.in (gmp_randinit_default, gmp_randinit_lc_2exp_size: Add
+	prototypes.
+	* Makefile.am (libgmp_la_SOURCES): Add randdef.c and randlc2s.c.
+
+	* printf/asprntffuns.c: Include config.h before using its defines.
+
+	* gmp-impl.h: Move C++ <string> to top of file to avoid the memset
+	redefine upsetting configure tests.  Remove <iostream> since <iosfwd>
+	in gmp.h suffices.
+
 2001-11-16  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Integer Exponentiation): mpz_powm supports negative
