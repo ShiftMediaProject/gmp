@@ -31,21 +31,11 @@ MA 02111-1307, USA.
 #if HAVE_UNISTD_H
 #include <unistd.h>     /* for isatty */
 #endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>   /* for itimer stuff */
-#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
 
 #include "try.h"
-
-
-#if HAVE_SETITIMER
-#define USE_SETITIMER 1
-#else
-#define USE_ALARM     1
-#endif
 
 
 /* An application can update this to get a count printed with the spinner.
@@ -55,7 +45,7 @@ unsigned long  spinner_count = 0;
 
 
 static int  spinner_wanted = -1;  /* -1 uninitialized, 1 wanted, 0 not */
-static int  spinner_tick = 0;     /* 1 ready to print, 0 not */
+static int  spinner_tick = 1;     /* 1 ready to print, 0 not */
 
 #define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
 
@@ -66,13 +56,8 @@ spinner_signal (int signum)
 {
   spinner_tick = 1;
 
-#if USE_SETITIMER
-  if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
-#endif
-#if USE_ALARM
   if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
   alarm (1);
-#endif
 }
 
 
@@ -96,22 +81,8 @@ spinner_init (void)
   if (!spinner_wanted)
     return;
 
-#if USE_SETITIMER
-  {
-    struct itimerval  t;
-    t.it_interval.tv_sec = 0;
-    t.it_interval.tv_usec = 250000;
-    t.it_value.tv_sec = 0;
-    t.it_value.tv_usec = 1;
-    if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
-    if (setitimer (ITIMER_REAL, &t, NULL) != 0)       abort ();
-  }
-#endif
-
-#if USE_ALARM
   if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
   alarm (1);
-#endif
 }
 
 
