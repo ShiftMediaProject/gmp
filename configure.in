@@ -1241,6 +1241,18 @@ if test "$enable_alloca" = yes && test "$gmp_cv_func_alloca" = no; then
   AC_MSG_ERROR([--enable-alloca=yes specified, but alloca not available])
 fi
 
+# On m68k NetBSD 1.4.1 getrusage() is doubtful.  ru_utime looks microsecond
+# accurate but has been seen remaining unchanged after many microseconds
+# have elapsed.  This upsets the tune and speed programs, so pretend it
+# doesn't exist.
+#
+# FIXME: Would prefer tune/time.c to do a run-time test for this rather than
+# driving it from the system name.
+#
+case $host in
+  m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
+esac
+
 AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info read_real_time strtoul sysconf sysctl sysctlbyname times)
 
 
