@@ -442,6 +442,12 @@ speed_mpn_divrem_1cf (struct speed_params *s)
 #endif
 
 double
+speed_mpn_divrem_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_2 (mpn_divrem_2);
+}
+
+double
 speed_mpn_mod_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1);
@@ -663,6 +669,13 @@ double
 speed_mpz_powm (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_POWM (mpz_powm);
+}
+
+
+double
+speed_modlimb_invert (struct speed_params *s)
+{
+  SPEED_ROUTINE_MODLIMB_INVERT (modlimb_invert);
 }
 
 
