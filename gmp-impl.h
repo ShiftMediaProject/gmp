@@ -992,24 +992,6 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ ^ *__s2++))
 #endif
 
-/* n==0 is allowed and is considered a zero value.  */
-#define mpn_zero_p  __MPN(zero_p)
-int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
-#if HAVE_INLINE || defined (_FORCE_INLINES)
-_EXTERN_INLINE int
-mpn_zero_p (mp_srcptr p, mp_size_t n)
-{
-  mp_size_t i;
-
-  ASSERT (n >= 0);
-  for (i = 0; i < n; i++)
-    if (p[i] != 0)
-      return 0;
-
-  return 1;
-}
-#endif
-
 
 /* MPN_INCR_U does {ptr,size} += n, MPN_DECR_U does {ptr,size} -= n, both
    expecting no carry (or borrow) from that.
