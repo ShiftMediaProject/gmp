@@ -31,7 +31,90 @@
 #define	RSHIFT	281
 #define	UMINUS	282
 
-#line 86 "calc.y"
+#line 1 "calc.y"
+
+/* A simple integer desk calculator using yacc and gmp.
+
+Copyright 2000, 2001 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place - Suite 330, Boston, MA 02111-1307, USA. */
+
+
+/* This is a simple program, meant only to show one way to use GMP for this
+   sort of thing.  There's few features, and error checking is minimal.
+   Standard input is read, there's no command line options.
+
+   Examples:
+       2+3*4        expressions are evaluated
+       x=5^6        variables a to z can be set and used
+
+   Operators:
+       + - *        arithmetic
+       / %          division and remainder (rounding towards negative infinity)
+       ^            exponentiation
+       !            factorial
+       << >>        left and right shifts
+       <= >= >      \ comparisons, giving 1 if true, 0 if false
+       == != <      /
+       && ||        logical and/or, giving 1 if true, 0 if false
+
+   Functions:
+       abs(n)       absolute value
+       bin(n,m)     binomial coefficient
+       fib(n)       fibonacci number
+       gcd(a,b,..)  greatest common divisor
+       kron(a,b)    kronecker symbol
+       lcm(a,b,..)  least common multiple
+       nextprime(n) next prime after n
+       powm(b,e,m)  modulo powering, b^e%m
+       root(n,r)    r-th root
+       sqrt(n)      square root
+
+   Other:
+       hex          \ set hex or decimal for input and output
+       decimal      /   ("0x" can be used for hex too)
+       quit         exit program (EOF works too)
+       ;            statements are separated with a ; or newline
+       \            continue expressions with \ before newline
+       # xxx        comments are # though to newline
+
+   Hex numbers must be entered in upper case, to distinguish them from the
+   variables a to f (like in bc).
+
+
+   Expressions are evaluated as they're read.  If user defined functions
+   were wanted it'd be necessary to build a parse tree like pexpr.c does, or
+   a list of operations for a stack based evaluator.  That would also make
+   it possible to detect and optimize evaluations "mod m" like pexpr.c does.
+
+   A stack is used for intermediate values in the expression evaluation,
+   separate from the yacc parser stack.  This is simple, makes error
+   recovery easy, minimizes the junk around mpz calls in the rules, and
+   saves initializing or clearing "mpz_t"s during a calculation.  A
+   disadvantage though is that variables must be copied to the stack to be
+   worked on.  A more sophisticated calculator or language system might be
+   able to avoid that when executing a compiled or semi-compiled form.
+
+   Avoiding repeated initializing and clearing of "mpz_t"s is important.  In
+   this program the time spent parsing is obviously much greater than any
+   possible saving from this, but a proper calculator or language should
+   take some trouble over it.  Don't be surprised if an init/clear takes 3
+   or more times as long as a 10 limb addition, depending on the system (see
+   the mpz_init_realloc_clear example in tune/README).  */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,7 +170,7 @@ mpz_t  variable[26];
     }
 
 
-#line 142 "calc.y"
+#line 140 "calc.y"
 typedef union {
   char  *str;
   int   var;
@@ -174,11 +257,11 @@ static const short yyrhs[] = {    44,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   166,   168,   170,   172,   173,   175,   177,   182,   188,   189,
-   190,   195,   197,   198,   199,   200,   201,   202,   204,   206,
-   208,   210,   212,   213,   214,   215,   216,   217,   219,   220,
-   222,   223,   225,   227,   228,   230,   231,   232,   233,   235,
-   237,   243,   253,   255,   257,   259
+   164,   166,   168,   170,   171,   173,   175,   180,   186,   187,
+   188,   193,   195,   196,   197,   198,   199,   200,   202,   204,
+   206,   208,   210,   211,   212,   213,   214,   215,   217,   218,
+   220,   221,   223,   225,   226,   228,   229,   230,   231,   233,
+   235,   241,   251,   253,   255,   257
 };
 #endif
 
@@ -906,11 +989,11 @@ yyreduce:
   switch (yyn) {
 
 case 5:
-#line 173 "calc.y"
+#line 171 "calc.y"
 { sp = stack[0]; yyerrok; ;
     break;}
 case 7:
-#line 177 "calc.y"
+#line 175 "calc.y"
 {
       mpz_out_str (stdout, obase, sp); putchar ('\n');
       sp--;
@@ -918,7 +1001,7 @@ case 7:
     ;
     break;}
 case 8:
-#line 182 "calc.y"
+#line 180 "calc.y"
 {
       CHECK_VARIABLE (yyvsp[-2].var);
       mpz_swap (variable[yyvsp[-2].var], sp);
@@ -927,131 +1010,131 @@ case 8:
     ;
     break;}
 case 9:
-#line 188 "calc.y"
+#line 186 "calc.y"
 { ibase = 16; obase = -16; ;
     break;}
 case 10:
-#line 189 "calc.y"
+#line 187 "calc.y"
 { ibase = 0;  obase = 10; ;
     break;}
 case 11:
-#line 190 "calc.y"
+#line 188 "calc.y"
 { exit (0); ;
     break;}
 case 13:
-#line 197 "calc.y"
+#line 195 "calc.y"
 { sp--; mpz_add    (sp, sp, sp+1); ;
     break;}
 case 14:
-#line 198 "calc.y"
+#line 196 "calc.y"
 { sp--; mpz_sub    (sp, sp, sp+1); ;
     break;}
 case 15:
-#line 199 "calc.y"
+#line 197 "calc.y"
 { sp--; mpz_mul    (sp, sp, sp+1); ;
     break;}
 case 16:
-#line 200 "calc.y"
+#line 198 "calc.y"
 { sp--; mpz_fdiv_q (sp, sp, sp+1); ;
     break;}
 case 17:
-#line 201 "calc.y"
+#line 199 "calc.y"
 { sp--; mpz_fdiv_r (sp, sp, sp+1); ;
     break;}
 case 18:
-#line 202 "calc.y"
+#line 200 "calc.y"
 { CHECK_UI ("exponentiation", sp);
                      sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 19:
-#line 204 "calc.y"
+#line 202 "calc.y"
 { CHECK_UI ("lshift", sp);
                      sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 20:
-#line 206 "calc.y"
+#line 204 "calc.y"
 { CHECK_UI ("rshift", sp);
                      sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 21:
-#line 208 "calc.y"
+#line 206 "calc.y"
 { CHECK_UI ("factorial", sp);
                      mpz_fac_ui (sp, mpz_get_ui (sp)); ;
     break;}
 case 22:
-#line 210 "calc.y"
+#line 208 "calc.y"
 { mpz_neg (sp, sp); ;
     break;}
 case 23:
-#line 212 "calc.y"
+#line 210 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <  0); ;
     break;}
 case 24:
-#line 213 "calc.y"
+#line 211 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <= 0); ;
     break;}
 case 25:
-#line 214 "calc.y"
+#line 212 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) == 0); ;
     break;}
 case 26:
-#line 215 "calc.y"
+#line 213 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) != 0); ;
     break;}
 case 27:
-#line 216 "calc.y"
+#line 214 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >= 0); ;
     break;}
 case 28:
-#line 217 "calc.y"
+#line 215 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >  0); ;
     break;}
 case 29:
-#line 219 "calc.y"
+#line 217 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_sgn (sp) && mpz_sgn (sp+1)); ;
     break;}
 case 30:
-#line 220 "calc.y"
+#line 218 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_sgn (sp) || mpz_sgn (sp+1)); ;
     break;}
 case 31:
-#line 222 "calc.y"
+#line 220 "calc.y"
 { mpz_abs (sp, sp); ;
     break;}
 case 32:
-#line 223 "calc.y"
+#line 221 "calc.y"
 { sp--; CHECK_UI ("binomial", sp+1);
                                     mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 33:
-#line 225 "calc.y"
+#line 223 "calc.y"
 { CHECK_UI ("fibonacci", sp);
                                     mpz_fib_ui (sp, mpz_get_ui (sp)); ;
     break;}
 case 35:
-#line 228 "calc.y"
+#line 226 "calc.y"
 { sp--; mpz_set_si (sp,
                                           mpz_kronecker (sp, sp+1)); ;
     break;}
 case 37:
-#line 231 "calc.y"
+#line 229 "calc.y"
 { mpz_nextprime (sp, sp); ;
     break;}
 case 38:
-#line 232 "calc.y"
+#line 230 "calc.y"
 { sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); ;
     break;}
 case 39:
-#line 233 "calc.y"
+#line 231 "calc.y"
 { sp--; CHECK_UI ("nth-root", sp+1);
                                     mpz_root (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 40:
-#line 235 "calc.y"
+#line 233 "calc.y"
 { mpz_sqrt (sp, sp); ;
     break;}
 case 41:
-#line 237 "calc.y"
+#line 235 "calc.y"
 {
         sp++;
         CHECK_OVERFLOW ();
@@ -1060,7 +1143,7 @@ case 41:
       ;
     break;}
 case 42:
-#line 243 "calc.y"
+#line 241 "calc.y"
 {
         sp++;
         CHECK_OVERFLOW ();
@@ -1072,11 +1155,11 @@ case 42:
       ;
     break;}
 case 44:
-#line 255 "calc.y"
+#line 253 "calc.y"
 { sp--; mpz_gcd (sp, sp, sp+1); ;
     break;}
 case 46:
-#line 259 "calc.y"
+#line 257 "calc.y"
 { sp--; mpz_lcm (sp, sp, sp+1); ;
     break;}
 }
@@ -1301,7 +1384,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 261 "calc.y"
+#line 259 "calc.y"
 
 
 yyerror (char *s)
