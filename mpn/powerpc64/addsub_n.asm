@@ -1,6 +1,6 @@
 # PowerPC-64 mpn_addsub_n -- Simultaneous add and sub.
 
-# Copyright 1999, 2000 Free Software Foundation, Inc.
+# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 
@@ -50,12 +50,12 @@ define(SAVE_CARRY_RESTORE_BORROW,
 
 ASM_START()
 PROLOGUE(mpn_addsub_n)
-	std	r14,-64(1)
-	std	r15,-56(1)
-	std	r16,-48(1)
-	std	r17,-40(1)
-	std	r18,-32(1)
-	std	r19,-24(1)
+	std	r14,-64(r1)
+	std	r15,-56(r1)
+	std	r16,-48(r1)
+	std	r17,-40(r1)
+	std	r18,-32(r1)
+	std	r19,-24(r1)
 
 	srdi	r7,r7,2
 	mtctr	r7		# copy size into CTR
@@ -97,11 +97,11 @@ PROLOGUE(mpn_addsub_n)
 	ldu	r17,32(r6)	# s2 L 4
 	bdnz	.Loop
 
-	ld	r14,-64(1)
-	ld	r15,-56(1)
-	ld	r16,-48(1)
-	ld	r17,-40(1)
-	ld	r18,-32(1)
-	ld	r19,-24(1)
+	ld	r14,-64(r1)
+	ld	r15,-56(r1)
+	ld	r16,-48(r1)
+	ld	r17,-40(r1)
+	ld	r18,-32(r1)
+	ld	r19,-24(r1)
 	blr
 EPILOGUE(mpn_addsub_n)

@@ -1,6 +1,6 @@
 #  PowerPC-64 mpn_lshift -- Shift a number left.
 
-# Copyright 1999, 2000 Free Software Foundation, Inc.
+# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 
@@ -63,14 +63,14 @@ PROLOGUE(mpn_lshift)
 	blr
 
 .LBIG:
-	std	r24,-64(1)
-	std	r25,-56(1)
-	std	r26,-48(1)
-	std	r27,-40(1)
-	std	r28,-32(1)
-	std	r29,-24(1)
-	std	r30,-16(1)
-	std	r31,-8(1)
+	std	r24,-64(r1)
+	std	r25,-56(r1)
+	std	r26,-48(r1)
+	std	r27,-40(r1)
+	std	r28,-32(r1)
+	std	r29,-24(r1)
+	std	r30,-16(r1)
+	std	r31,-8(r1)
 	ldu	r9,-8(r4)
 	subfic	r8,r6,64
 	srd	r3,r9,r8	# compute function return value
@@ -147,13 +147,13 @@ PROLOGUE(mpn_lshift)
 	mr	r0,r12
 
 	std	r0,-8(r7)
-	ld	r24,-64(1)
-	ld	r25,-56(1)
-	ld	r26,-48(1)
-	ld	r27,-40(1)
-	ld	r28,-32(1)
-	ld	r29,-24(1)
-	ld	r30,-16(1)
-	ld	r31,-8(1)
+	ld	r24,-64(r1)
+	ld	r25,-56(r1)
+	ld	r26,-48(r1)
+	ld	r27,-40(r1)
+	ld	r28,-32(r1)
+	ld	r29,-24(r1)
+	ld	r30,-16(r1)
+	ld	r31,-8(r1)
 	blr
 EPILOGUE(mpn_lshift)
