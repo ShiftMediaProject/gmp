@@ -486,9 +486,15 @@ case ${target} in
         ;;
     esac
 
+    # default for anything not otherwise mentioned
+    path="x86"
+ 
     case ${target} in
-      [i[34]86*-*-* | k5*-*-*])
-        # k5 is using the basic x86 code until we know what's good on it
+      [i[34]86*-*-*])
+        path="x86"
+        ;;
+      k5*-*-*)
+        # don't know what best suits k5
         path="x86"
         ;;
       i586*-*-* | pentium-*-*)
