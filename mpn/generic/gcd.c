@@ -428,7 +428,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 
 done:
   if (vp != gp)
-    MPN_COPY (gp, vp, vsize);
+    MPN_COPY_INCR (gp, vp, vsize);
   TMP_FREE (marker);
   return vsize;
 }
