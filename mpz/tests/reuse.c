@@ -24,15 +24,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
-#ifndef SIZE
-#define SIZE 50
-#endif
+void dump (char *, mpz_t, mpz_t, mpz_t);
 
 typedef void (*dss_func) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 typedef void (*dsi_func) _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
@@ -146,42 +145,60 @@ char *ds_func_names[] =
 #define FAIL(class,indx,op1,op2,op3) \
   do {									\
   class##_funcs[indx] = 0;						\
-  dump_abort (class##_func_names[indx], op1, op2, op3);			\
+  dump (class##_func_names[indx], op1, op2, op3);			\
   failures++;								\
   } while (0)
 #define FAIL2(fname,op1,op2,op3) \
   do {									\
-  dump_abort (#fname, op1, op2, op3);					\
+  dump (#fname, op1, op2, op3);					\
   failures++;								\
   } while (0)
 #else
 #define FAIL(class,indx,op1,op2,op3) \
   do {									\
   class/**/_funcs[indx] = 0;						\
-  dump_abort (class/**/_func_names[indx], op1, op2, op3);		\
+  dump (class/**/_func_names[indx], op1, op2, op3);		\
   failures++;								\
   } while (0)
 #define FAIL2(fname,op1,op2,op3) \
   do {									\
-  dump_abort ("fname", op1, op2, op3);					\
+  dump ("fname", op1, op2, op3);					\
   failures++;								\
   } while (0)
 #endif
 
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   int i;
   int pass, reps = 1000;
   mpz_t in1, in2, in3;
   unsigned long int in2i;
+  mp_size_t size;
   mpz_t res1, res2, res3;
   mpz_t ref1, ref2, ref3;
   mpz_t t;
   unsigned long int r1, r2;
   long failures = 0;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -199,9 +216,29 @@ main (argc, argv)
 
   for (pass = 1; pass <= reps; pass++)
     {
-      mpz_random2 (in1, urandom () % (2 * SIZE) - SIZE);
-      mpz_random2 (in2, urandom () % (2 * SIZE) - SIZE);
-      mpz_random2 (in3, urandom () % (2 * SIZE) - SIZE);
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 10 + 2;
+
+      mpz_urandomb (bs, rands, size_range);
+      size = mpz_get_ui (bs);
+      mpz_rrandomb (in1, rands, size);
+
+      mpz_urandomb (bs, rands, size_range);
+      size = mpz_get_ui (bs);
+      mpz_rrandomb (in2, rands, size);
+
+      mpz_urandomb (bs, rands, size_range);
+      size = mpz_get_ui (bs);
+      mpz_rrandomb (in3, rands, size);
+
+      mpz_urandomb (bs, rands, 3);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (in1, in1);
+      if ((bsi & 1) != 0)
+	mpz_neg (in2, in2);
+      if ((bsi & 1) != 0)
+	mpz_neg (in3, in3);
 
       for (i = 0; i < sizeof (dss_funcs) / sizeof (dss_func); i++)
 	{
@@ -495,16 +532,15 @@ main (argc, argv)
 
   if (failures != 0)
     {
-      fprintf (stderr, "mpz/reuse: %d error%s\n", failures, "s" + (failures == 1));
+      fprintf (stderr, "mpz/reuse: %ld error%s\n", failures, "s" + (failures == 1));
       exit (1);
     }
 
   exit (0);
 }
 
-dump_abort (name, in1, in2, in3)
-     char *name;
-     mpz_t in1, in2, in3;
+void
+dump (char *name, mpz_t in1, mpz_t in2, mpz_t in3)
 {
   printf ("failure in %s (", name);
   mpz_out_str (stdout, -16, in1);
