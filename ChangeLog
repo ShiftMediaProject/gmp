@@ -25,6 +25,7 @@ MA 02111-1307, USA.
 
 	* tests/amd64check.c, tests/amd64call.asm: New files, derived in part
 	from x86check.c and x86call.asm.
+	* tests/Makefile.am (EXTRA_libtests_la_SOURCES): Add them.
 	* configure.in (x86_64-*-* ABI=64): Use them.
 
 2004-04-03  Kevin Ryde  <kevin@swox.se>
