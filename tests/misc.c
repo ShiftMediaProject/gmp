@@ -313,7 +313,7 @@ mpz_pow2abs_p (mpz_srcptr z)
 void
 mpz_erandomb (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
 {
-  mpz_urandomb (rop, rstate, urandom () % nbits);
+  mpz_urandomb (rop, rstate, gmp_urandomm_ui (rstate, nbits));
 }
 
 void
@@ -327,7 +327,7 @@ mpz_erandomb_nonzero (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
 void
 mpz_errandomb (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
 {
-  mpz_rrandomb (rop, rstate, urandom () % nbits);
+  mpz_rrandomb (rop, rstate, gmp_urandomm_ui (rstate, nbits));
 }
 
 void
@@ -404,4 +404,23 @@ call_rand_algs (void (*func) __GMP_PROTO ((const char *, gmp_randstate_ptr)))
   gmp_randclear (rstate);
 
   mpz_clear (a);
+}
+
+
+/* Return +infinity if available, or 0 if not.
+   We don't want to use libm, so INFINITY or other system values are not
+   used here.  */
+double
+tests_infinity_d (void)
+{
+#if _GMP_IEEE_FLOATS
+  union ieee_double_extract x;
+  x.s.exp = 2047;
+  x.s.manl = 0;
+  x.s.manh = 0;
+  x.s.sig = 0;
+  return x.d;
+#else
+  return 0;
+#endif
 }
