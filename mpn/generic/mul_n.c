@@ -300,26 +300,32 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       p[n2] = w;
 
       n1 = n + 1;
-      if (n2 < KARATSUBA_SQR_THRESHOLD)
-	{
-	  if (n3 < KARATSUBA_SQR_THRESHOLD)
-	    {
-	      mpn_sqr_basecase (ws, p, n3);
-	      mpn_sqr_basecase (p, a, n3);
-	    }
-	  else
-	    {
-	      mpn_kara_sqr_n (ws, p, n3, ws + n1);
-	      mpn_kara_sqr_n (p, a, n3, ws + n1);
-	    }
-	  mpn_sqr_basecase (p + n1, a + n3, n2);
-	}
+
+      /* n2 is always either n3 or n3-1 so maybe the two sets of tests here
+         could be combined.  But that's not important, since the tests will
+         take a miniscule amount of time compared to the function calls.  */
+      if (BELOW_THRESHOLD (n3, BASECASE_SQR_THRESHOLD))
+        {
+          mpn_mul_basecase (ws, p, n3, p, n3);
+          mpn_mul_basecase (p,  a, n3, a, n3);
+        }
+      else if (BELOW_THRESHOLD (n3, KARATSUBA_SQR_THRESHOLD))
+        {
+          mpn_sqr_basecase (ws, p, n3);
+          mpn_sqr_basecase (p,  a, n3);
+        }
       else
-	{
-	  mpn_kara_sqr_n (ws, p, n3, ws + n1);		 /* (x-y)^2 */
-	  mpn_kara_sqr_n (p, a, n3, ws + n1);		 /* x^2	    */
-	  mpn_kara_sqr_n (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
-	}
+        {
+          mpn_kara_sqr_n   (ws, p, n3, ws + n1);	 /* (x-y)^2 */
+          mpn_kara_sqr_n   (p,  a, n3, ws + n1);	 /* x^2	    */
+        }
+      if (BELOW_THRESHOLD (n2, BASECASE_SQR_THRESHOLD))
+        mpn_mul_basecase (p + n1, a + n3, n2, a + n3, n2);
+      else if (BELOW_THRESHOLD (n2, KARATSUBA_SQR_THRESHOLD))
+        mpn_sqr_basecase (p + n1, a + n3, n2);
+      else
+        mpn_kara_sqr_n   (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
+
 
       /* Since x^2+y^2-(x-y)^2 = 2xy >= 0 there's no need to track the
 	 borrow from mpn_sub_n.	 If it occurs then it'll be cancelled by a
@@ -371,16 +377,22 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       mpn_sub_n (p, x, y, n2);
 
       /* Pointwise products. */
-      if (n2 < KARATSUBA_SQR_THRESHOLD)
+      if (BELOW_THRESHOLD (n2, BASECASE_SQR_THRESHOLD))
 	{
-	  mpn_sqr_basecase (ws, p, n2);
-	  mpn_sqr_basecase (p, a, n2);
+	  mpn_mul_basecase (ws,    p,      n2, p,      n2);
+	  mpn_mul_basecase (p,     a,      n2, a,      n2);
+	  mpn_mul_basecase (p + n, a + n2, n2, a + n2, n2);
+	}
+      else if (BELOW_THRESHOLD (n2, KARATSUBA_SQR_THRESHOLD))
+	{
+	  mpn_sqr_basecase (ws,    p,      n2);
+	  mpn_sqr_basecase (p,     a,      n2);
 	  mpn_sqr_basecase (p + n, a + n2, n2);
 	}
       else
 	{
-	  mpn_kara_sqr_n (ws, p, n2, ws + n);
-	  mpn_kara_sqr_n (p, a, n2, ws + n);
+	  mpn_kara_sqr_n (ws,    p,      n2, ws + n);
+	  mpn_kara_sqr_n (p,     a,      n2, ws + n);
 	  mpn_kara_sqr_n (p + n, a + n2, n2, ws + n);
 	}
 
@@ -1008,14 +1020,18 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 
 /* Like previous function but for squaring */
 
-#define TOOM3_SQR_REC(p, a, n, ws) \
-  do {								\
-    if (n < KARATSUBA_SQR_THRESHOLD)				\
-      mpn_sqr_basecase (p, a, n);				\
-    else if (n < TOOM3_SQR_THRESHOLD)				\
-      mpn_kara_sqr_n (p, a, n, ws);				\
-    else							\
-      mpn_toom3_sqr_n (p, a, n, ws);				\
+/* FIXME: If TOOM3_SQR_THRESHOLD is big enough it might never get into the
+   basecase range.  Try to arrange those conditonals go dead.  */
+#define TOOM3_SQR_REC(p, a, n, ws)                              \
+  do {                                                          \
+    if (BELOW_THRESHOLD (n, BASECASE_SQR_THRESHOLD))            \
+      mpn_mul_basecase (p, a, n, a, n);                         \
+    else if (BELOW_THRESHOLD (n, KARATSUBA_SQR_THRESHOLD))      \
+      mpn_sqr_basecase (p, a, n);                               \
+    else if (BELOW_THRESHOLD (n, TOOM3_SQR_THRESHOLD))          \
+      mpn_kara_sqr_n (p, a, n, ws);                             \
+    else                                                        \
+      mpn_toom3_sqr_n (p, a, n, ws);                            \
   } while (0)
 
 void

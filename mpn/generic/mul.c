@@ -48,13 +48,19 @@ mpn_sqr_n (mp_ptr prodp,
   ASSERT (un >= 1);
   ASSERT (! MPN_OVERLAP_P (prodp, 2*un, up, un));
 
-  if (un < KARATSUBA_SQR_THRESHOLD)
+  /* FIXME: Can this be removed? */
+  if (un == 0)
+    return;
+
+  if (BELOW_THRESHOLD (un, BASECASE_SQR_THRESHOLD))
+    { /* mul_basecase is faster than sqr_basecase on small sizes sometimes */
+      mpn_mul_basecase (prodp, up, un, up, un);
+    }
+  else if (BELOW_THRESHOLD (un, KARATSUBA_SQR_THRESHOLD))
     { /* plain schoolbook multiplication */
-      if (un == 0)
-	return;
       mpn_sqr_basecase (prodp, up, un);
     }
-  else if (un < TOOM3_SQR_THRESHOLD)
+  else if (BELOW_THRESHOLD (un, TOOM3_SQR_THRESHOLD))
     { /* karatsuba multiplication */
       mp_ptr tspace;
       TMP_DECL (marker);
@@ -64,7 +70,7 @@ mpn_sqr_n (mp_ptr prodp,
       TMP_FREE (marker);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (un < FFT_SQR_THRESHOLD)
+  else if (BELOW_THRESHOLD (un, FFT_SQR_THRESHOLD))
 #else
   else
 #endif
