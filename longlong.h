@@ -205,16 +205,6 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     (pl) = __m0 * __m1;							\
   } while (0)
 #define UMUL_TIME 14
-#ifndef LONGLONG_STANDALONE
-#define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __di;							\
-    __di = __MPN(invert_limb) (d);					\
-    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
-  } while (0)
-#define UDIV_PREINV_ALWAYS  1
-#define UDIV_NEEDS_NORMALIZATION 1
-#endif
-#define UDIV_TIME 220
 #define count_leading_zeros(count, x) \
   do {									\
     UWtype _x = (x), _y, _a, _c;					\
@@ -230,6 +220,16 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     (count) =  W_TYPE_SIZE - 1 - _c;					\
   } while (0)
 #endif
+#ifndef LONGLONG_STANDALONE
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UDItype __di;							\
+    __di = __MPN(invert_limb) (d);					\
+    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
+  } while (0)
+#define UDIV_PREINV_ALWAYS  1
+#define UDIV_NEEDS_NORMALIZATION 1
+#endif
+#define UDIV_TIME 220
 #endif
 
 
