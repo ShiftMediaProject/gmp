@@ -1,5 +1,14 @@
+2000-03-03  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in: Add --enable-assert, enable k6 logops functions.
+
+	* mpn/x86/k6/mmx/copyi.asm: Use m4 for divide, not as.
+	* mpn/x86/k6/mmx/copyd.asm: Ditto.
+	* mpn/x86/README.family: Add a note on this.
+
 2000-03-02  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/x86/k6/aors_n.asm: Don't use stosl.
 	* mpn/x86/copyi.asm: Use cld to clear direction flag.
 	* mpn/x86/divrem_1.asm: Ditto.
 	* mpn/x86/README.family: Add a note on this.
