@@ -248,11 +248,13 @@ main (int argc, char *argv[])
   {
     mp_limb_t  modlimb_inverse_3_calc;
     modlimb_invert (modlimb_inverse_3_calc, CNST_LIMB(3));
-    CHECK_LIMB (MODLIMB_INVERSE_3, modlimb_inverse_3_calc);
+    CHECK_LIMB (MODLIMB_INVERSE_3 & GMP_NUMB_MASK,
+                modlimb_inverse_3_calc & GMP_NUMB_MASK);
   }
 
   {
-    mp_limb_t  MODLIMB_INVERSE_3_times_3 = MODLIMB_INVERSE_3 * CNST_LIMB(3);
+    mp_limb_t  MODLIMB_INVERSE_3_times_3
+      = (MODLIMB_INVERSE_3 * CNST_LIMB(3)) & GMP_NUMB_MASK;
     CHECK_LIMB (MODLIMB_INVERSE_3_times_3, CNST_LIMB(1));
   }
 
