@@ -1651,7 +1651,7 @@ mpn_hgcd (struct hgcd *hgcd,
 
   ASSERT (asize >= 2);
 
-  if (N <= HGCD_SCHOENHAGE_THRESHOLD)
+  if (BELOW_THRESHOLD (N, HGCD_SCHOENHAGE_THRESHOLD))
     return mpn_hgcd_lehmer (hgcd, ap, asize, bp, bsize,
 			    quotients, tp, talloc);
 
