@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-16  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, gmp.texi: Remove powerpc64 ABI=32L, doesn't work and
+	is unlikely to ever do so.
+	* configure.in: Allow ABI=32 for powerpc64.
+	Reported by David Edelsohn.
+
 2002-11-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add addmul_2.c
