@@ -117,7 +117,15 @@ if test "$ac_cv_prog_gcc" = "yes"; then
 else
   GCC=
 fi
-dnl [Code for setting CFLAGS removed.]
+
+# Set CFLAGS if not already set.
+if test -z "$CFLAGS"; then
+  CFLAGS="-g"
+  if test "$GCC" = "yes"; then
+    CFLAGS="$CFLAGS -O2"
+  fi
+fi
+
 AC_SUBST(CC)
 AC_PROVIDE([AC_PROG_CC])
 ])dnl
