@@ -384,8 +384,8 @@ static char *yy_last_accepting_cpos;
 char *yytext;
 #line 1 "calclex.l"
 #define INITIAL 0
-/* Lexical analyzer for calc.y. */
-/*
+/* Lexical analyzer for calc.y.
+
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -401,13 +401,12 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
-#line 24 "calclex.l"
+Place - Suite 330, Boston, MA 02111-1307, USA. */
+#line 21 "calclex.l"
 #include "calc.h"
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
-#line 411 "calclex.c"
+#line 410 "calclex.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -558,10 +557,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 29 "calclex.l"
+#line 26 "calclex.l"
 
 
-#line 565 "calclex.c"
+#line 564 "calclex.c"
 
 	if ( yy_init )
 		{
@@ -646,92 +645,92 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 31 "calclex.l"
+#line 28 "calclex.l"
 { /* white space is skipped */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 33 "calclex.l"
+#line 30 "calclex.l"
 { /* semicolon or newline separates statements */
           return EOS; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 35 "calclex.l"
+#line 32 "calclex.l"
 { /* escaped newlines are skipped */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 38 "calclex.l"
+#line 35 "calclex.l"
 {
             /* comment through to escaped newline is skipped */ }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 40 "calclex.l"
+#line 37 "calclex.l"
 { /* comment through to newline is a separator */
             return EOS; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 42 "calclex.l"
+#line 39 "calclex.l"
 {   /* comment through to EOF skipped */ }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 45 "calclex.l"
+#line 42 "calclex.l"
 { return yytext[0]; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 46 "calclex.l"
+#line 43 "calclex.l"
 { return LE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 47 "calclex.l"
+#line 44 "calclex.l"
 { return GE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 48 "calclex.l"
+#line 45 "calclex.l"
 { return EQ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 49 "calclex.l"
+#line 46 "calclex.l"
 { return NE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 50 "calclex.l"
+#line 47 "calclex.l"
 { return LSHIFT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 51 "calclex.l"
+#line 48 "calclex.l"
 { return RSHIFT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 52 "calclex.l"
+#line 49 "calclex.l"
 { return LAND; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 53 "calclex.l"
+#line 50 "calclex.l"
 { return LOR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 55 "calclex.l"
+#line 52 "calclex.l"
 {
         yylval.str = yytext;
         return NUMBER; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 59 "calclex.l"
+#line 56 "calclex.l"
 {
         static struct {
           char  *name;
@@ -768,15 +767,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 93 "calclex.l"
+#line 90 "calclex.l"
 { return BAD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 95 "calclex.l"
+#line 92 "calclex.l"
 ECHO;
 	YY_BREAK
-#line 780 "calclex.c"
+#line 779 "calclex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1662,7 +1661,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 95 "calclex.l"
+#line 92 "calclex.l"
 
 
 int
