@@ -38,8 +38,8 @@ C that the feed-in code is somewhat sub-optimal for n mod 4 != 0.  Doing it
 C optimally would require duplicating most of the current feed-in code.
 
 C It is possible to do mpn_addmul_1 in just 2 c/l also for Itanium 1, but that
-C would require the use of ldpf8 for all loads.  Since that instruction require
-C 16-byte alignment, two loop variants would be necessary.
+C would require the use of ldpf8 for all loads.  Since that instruction
+C requires 16-byte alignment, two loop variants would be necessary.
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
