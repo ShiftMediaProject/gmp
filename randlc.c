@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 void
 #if __STDC__
 gmp_rand_init_lc (gmp_rand_state s,
-		  unsigned long int size,
+		  unsigned long int size, /* FIXME: Remove. */
 		  mpz_t seed,
 		  mpz_t a,
 		  unsigned long int c,
@@ -52,6 +52,6 @@ gmp_rand_init_lc (s, size, seed, a, c, m)
   s->data.lc->c = c;
 
   s->alg = GMP_RAND_ALG_LC;
-  s->size = size;
-  mpz_init_set_ui (s->seed, seed);
+  s->size = size;		/* FIXME: Should be log2(m). */
+  mpz_init_set (s->seed, seed);
 }

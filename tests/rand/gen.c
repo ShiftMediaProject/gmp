@@ -207,8 +207,9 @@ int main (argc, argv)
 
   if (!seed_from_user)
     mpz_set_ui (z_seed, (unsigned long int) time (NULL));
-  
   seed = mpz_get_ui (z_seed);
+
+  mpf_set_prec (f1, size);
   
   /* plant seed */
   switch (rfunc)

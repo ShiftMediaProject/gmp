@@ -20,14 +20,14 @@ mpn_rawrandom (rp, nbits, s)
 #endif
 {
   mp_ptr tp, seedp, ap, mp, mcopyp, sump, dstp;
-  mp_size_t tsize, rpsize, seedsize, asize, msize, mcopysize, sumsize, n;
+  mp_size_t tsize, rpsize, seedsize, asize, msize, sumsize, n;
   unsigned shiftcount;		/* FIXME: type? */
+  unsigned genbits;
   mp_size_t limbstocopy, nlimbs;
   mp_limb_t tlimb;		/* temp */
   
 
   seedp = PTR (s->seed);
-  seedsize = SIZ (s->seed);
   ap = PTR (s->data.lc->a);
   asize = SIZ (s->data.lc->a);
   mp = PTR (s->data.lc->m);
@@ -39,54 +39,49 @@ mpn_rawrandom (rp, nbits, s)
 
   TMP_DECL (mark);
 
-  /* We need two temp areas to work in.  The product seed*a needs
-     SIZ(seed)+SIZ(a) limbs. The sum seed*a + c may need one more
-     limb.  The result after doing mod m needs SIZ(m) limbs. */
 
-  /* Assumption: SIZ (seed) + SIZ (a) >= LIMBS_PER_LONGINT */
+  MPN_ZERO (rp, rpsize);	/* Clear destination. */
 
+  /* Temporary areas and their maximum sizes:
+     tp = seed*a -- SIZ(m)+SIZ(a) [since seed can grow up to the size of m]
+     sump = seed*a + c -- SIZ(tp) + 2 [one for c and one for shifting left]
+     mcopyp = shifted m -- SIZ(m)
+  */
+     
   TMP_MARK (mark);
-  tsize = seedsize + asize;
+  tsize = msize + asize;
   tp = TMP_ALLOC (tsize * BYTES_PER_MP_LIMB); 
-
-  /* Two extra limbs, one for adding c and one for shifting when
-     normalizing m. */
   sump = TMP_ALLOC ((2 + tsize) * BYTES_PER_MP_LIMB);
-
-  /* We need a copy of m since it has to be shifted left in order to
-     fulfill the requirements of mpn_divrem(). */
-  mcopysize = msize;		
   mcopyp = TMP_ALLOC (msize * BYTES_PER_MP_LIMB);
 
-  /* mpn_divrem doc: "It is required that the most significant bit of
-     the divisor is set." */
+  /* mpn_divrem() documentation: "It is required that the most
+     significant bit of the divisor is set." */
+  /* Normalize m (shift left) and store in mcopyp. */
   /* Assumption: m != 0 */
-
   count_leading_zeros (shiftcount, mp[msize - 1]); 
   if (shiftcount)
     mpn_lshift (mcopyp, mp, msize, shiftcount);
 
   nlimbs = rpsize;
   dstp = rp;
+  genbits = 0;
   /* rop = (seed * a + c) % m */
-  do
+  while (genbits < nbits)
     {
+      seedsize = SIZ (s->seed);
       if (seedsize >= asize)
 	tlimb = mpn_mul (tp, seedp, seedsize, ap, asize);
       else
 	tlimb = mpn_mul (tp, ap, asize, seedp, seedsize);
-      if (0 == tlimb)
-	tsize--;
+      sumsize = asize + seedsize + (tlimb != 0);
 
-      sumsize = tsize;
-      if (mpn_add_1 (sump, tp, tsize, (mp_limb_t) s->data.lc->c))
+      if (mpn_add_1 (sump, tp, sumsize, (mp_limb_t) s->data.lc->c))
 	{
 	  sump[sumsize] = 1;	/* Add carry. */
 	  sumsize++;
 	}
       
-      /* Shift sum the same amount that m was shifted to produce the
-         normalized copy in mcopyp. */
+      /* Shift sum left the same amount that m was shifted. */
       if (shiftcount)
 	{
 	  tlimb = mpn_lshift (sump, sump, sumsize, shiftcount);
@@ -106,37 +101,32 @@ mpn_rawrandom (rp, nbits, s)
 	mpn_rshift (sump, sump, sumsize, shiftcount);
       MPN_NORMALIZE (sump, sumsize);
 
-      /* FIXME: Use the s->size least significant bits.  Or should we
-         skip the BITS field in the scheme struct and let M determine
-         the size alone?  The user can still construct a fast (and
-         bad) generator by specing a scheme with a small M and ask for
-         lots of bits (NBITS).  In the case where the user passes
-         gmp_rand_init() a SIZE that doesn't correspond to any
-         tabulated scheme, we end up with two different situations:
-         (1) we get a scheme with a larger M than necessary, or (2) we
-         get a scheme with a smaller M than necessary.  The size of M
-         will affect sumsize above and all is well.  */
-
       /* Save result as next seed.  Make sure it's space for it. */
       if (sumsize > SIZ (s->seed))
-	_mpz_realloc (s->seed, sumsize);
+	  _mpz_realloc (s->seed, sumsize);
       MPN_COPY (PTR (s->seed), sump, sumsize);
-      
-      /* Don't copy more than the user wants. */
-      limbstocopy = MIN (nlimbs, sumsize); 
+      SIZ (s->seed) = sumsize;
 
-      MPN_COPY (dstp, sump, limbstocopy);
-      dstp += limbstocopy;
+      MPN_COPY (dstp, sump, sumsize);
 
-      nlimbs -= limbstocopy;
+      /* We have now generated s->size (SIZE) number of bits.  If
+      NBITS > SIZE, we take another round and generate another SIZE
+      number of bits, *overwriting* the X most significant bits of the
+      result from this round.  (Not too efficient!  In worst case,
+      we'll only generate 1 bit per round.  FIXME.) X is in this case
+      NBITS % BITS_PER_MP_LIMB.  */
+
+      if (genbits)
+	genbits -= nbits % BITS_PER_MP_LIMB;
+      genbits += s->size;
     }
-  while (nlimbs > 0);
+
 
   /* Mask off excess bits. */
   /* If we shift down, discarding least signifant bits, I *think* that
      we are making a mistake.  I don't think the numbers are
      universally distributed. */
-  n = nbits % BITS_PER_MP_LIMB;
+  n = genbits % nbits;
   if (n)
     rp[rpsize - 1] &= (~(mp_limb_t) 0) >> (BITS_PER_MP_LIMB - n);
 

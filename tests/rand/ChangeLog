@@ -1,3 +1,10 @@
+1999-05-26  Linus Nordberg  <linus@swox.se>
+
+	* Makefile (test, bigtest): Add 33-bit tests.
+
+	* gen.c (main): Set precision of variable passed to
+	mpf_urandomb().
+
 1999-05-21  Linus Nordberg  <linus@swox.se>
 
 	* gen.c (main): Pass `s' to rand-funcs instead of address of `s'.

@@ -1,3 +1,16 @@
+1999-05-26  Linus Nordberg  <linus@swox.se>
+
+	* mpn/generic/rawrandom.c (mpn_rawrandom): Count bits, not limbs,
+	to keep track of how many rounds to do in loop.  Clean up
+	temporary allocation.  Update `seedsize' inside loop.  Mask off
+	the correct number of bits from final result.
+ 
+	* randlc.c (gmp_rand_init_lc): Fix typo (don't call
+	mpz_init_set_ui()).
+
+	* mpn/generic/rawrandom.c (mpn_rawrandom): Set SIZ(s->seed) when
+	reallocating.
+
 1999-05-25  Linus Nordberg  <linus@swox.se>
 
 	* randcm.c: Remove.
@@ -8,6 +21,7 @@
 	__gmp_rand_init_common_ui().
 	* randlc.c (gmp_rand_init_lc): Don't call
 	__gmp_rand_init_common().
+
 	* randlcui.c (gmp_rand_init_lc_ui): Don't call
 	__gmp_rand_init_common_ui().
 
