@@ -89,8 +89,6 @@ CC = @CC@
 CCAS = @CCAS@
 CFLAGS_PIC = @CFLAGS_PIC@
 CPP = @CPP@
-CXX = @CXX@
-CXXLIBS = @CXXLIBS@
 DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -99,7 +97,6 @@ EXEEXT = @EXEEXT@
 GMP_LDFLAGS = @GMP_LDFLAGS@
 HAVE_MPFR = @HAVE_MPFR@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LIBCXXPRINTF_LA = @LIBCXXPRINTF_LA@
 LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -108,7 +105,6 @@ MAINT = @MAINT@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
-PRINTF_CXX_OBJECTS = @PRINTF_CXX_OBJECTS@
 RANLIB = @RANLIB@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
@@ -132,11 +128,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-@HAVE_CXX_TRUE@CHECK_CXX = t-ostream
-check_PROGRAMS = t-printf $(CHECK_CXX)
+check_PROGRAMS = t-printf
 TESTS = $(check_PROGRAMS)
-
-t_ostream_SOURCES = t-ostream.cc
 
 # t-printf.tmp is used by t-printf.c, removed automatically if the tests pass
 CLEANFILES = t-printf.tmp
@@ -144,14 +137,7 @@ subdir = tests/printf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@HAVE_CXX_TRUE@check_PROGRAMS = t-printf$(EXEEXT) t-ostream$(EXEEXT)
-@HAVE_CXX_FALSE@check_PROGRAMS = t-printf$(EXEEXT)
-am_t_ostream_OBJECTS = t-ostream.$(OBJEXT)
-t_ostream_OBJECTS = $(am_t_ostream_OBJECTS)
-t_ostream_LDADD = $(LDADD)
-t_ostream_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmp.la
-t_ostream_LDFLAGS =
+check_PROGRAMS = t-printf$(EXEEXT)
 t_printf_SOURCES = t-printf.c
 t_printf_OBJECTS = t-printf$U.$(OBJEXT)
 t_printf_LDADD = $(LDADD)
@@ -173,23 +159,14 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(t_ostream_SOURCES) t-printf.c
+DIST_SOURCES = t-printf.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(t_ostream_SOURCES) t-printf.c
+SOURCES = t-printf.c
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .lo .o .obj
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  tests/printf/Makefile
@@ -200,9 +177,6 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-t-ostream$(EXEEXT): $(t_ostream_OBJECTS) $(t_ostream_DEPENDENCIES)
-	@rm -f t-ostream$(EXEEXT)
-	$(CXXLINK) $(t_ostream_LDFLAGS) $(t_ostream_OBJECTS) $(t_ostream_LDADD) $(LIBS)
 t-printf$(EXEEXT): $(t_printf_OBJECTS) $(t_printf_DEPENDENCIES)
 	@rm -f t-printf$(EXEEXT)
 	$(LINK) $(t_printf_LDFLAGS) $(t_printf_OBJECTS) $(t_printf_LDADD) $(LIBS)
@@ -240,15 +214,6 @@ mostlyclean-kr:
 t-printf_.c: t-printf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-printf.c; then echo $(srcdir)/t-printf.c; else echo t-printf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-printf_.c || rm -f t-printf_.c
 t-printf_.$(OBJEXT) t-printf_.lo : $(ANSI2KNR)
-
-.cc.o:
-	$(CXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.cc.obj:
-	$(CXXCOMPILE) -c -o $@ `cygpath -w $<`
-
-.cc.lo:
-	$(LTCXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 uninstall-info-am:
 
 tags: TAGS
