@@ -20,6 +20,12 @@ MA 02111-1307, USA.
 
 2003-12-17  Niels Möller  <nisse@harpo.hack.org>
 
+	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer) [nails]:
+	Enabled code also for GMP_NAIL_BITS > 0.
+	* tune/speed.c [nails]: Enable speed_mpn_hgcd and
+	speed_mpn_hgcd_lehmer.
+	* tune/tuneup.c (tune_hgcd) [nails]: Likewise.
+
 	* mpn/generic/gcd.c [nails]: Use Schönhage's algorithm also for
 	GMP_NAIL_BITS > 0.
 
