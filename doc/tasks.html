@@ -319,12 +319,10 @@
      <code>AC_PROG_F77</code> if such a file is found.  Automake will generate
      some of what's needed in the makefiles, but libtool doesn't know fortran
      and so rules like the current ".asm.lo" will be needed.
-<li> Consider running <code>GMP_PROG_M4</code> only if it's needed, ie. if
-     there's a .asm in the mpn path.  This might help say a generic C build on
-     weird systems.
 <li> Consider running the <code>GMP_CHECK_ASM</code> tests only if they're
      needed, ie. if there's a .S or .asm in the mpn path.  Hopefully the path
-     can be determined without reference to those tests.
+     can be determined without reference to those tests.  (x86s need to know
+     whether the assembler supports MMX though.)
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
