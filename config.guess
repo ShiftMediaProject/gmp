@@ -502,9 +502,12 @@ main ()
 }
 EOF
 
-  $CC_FOR_BUILD ${dummy}1.s ${dummy}2.c -o $dummy >/dev/null 2>&1
-  if test "$?" = 0 ; then
-    exact_cpu=`./$dummy`
+  if ($CC_FOR_BUILD ${dummy}1.s ${dummy}2.c -o $dummy) >/dev/null 2>&1; then
+    # suppress SIGILL message on 80386
+    x=`$SHELL -c ./$dummy 2>/dev/null`
+    if test -n "$x"; then
+      exact_cpu=$x
+    fi
   fi
 
   # We need to remove some .o files here since lame C compilers
