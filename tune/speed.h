@@ -689,40 +689,6 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->size, s->xp, 0, s->r, 0))
 
 
-/* s->r is duplicated to form the multiplier.  Not sure if that's
-   particularly useful, but at least it provides some control.  */
-#define SPEED_ROUTINE_MPN_MUL_2(function)                       \
-  {                                                             \
-    mp_ptr     wp;                                              \
-    unsigned   i;                                               \
-    double     t;                                               \
-    mp_limb_t  mult[2];                                         \
-    TMP_DECL (marker);                                          \
-                                                                \
-    SPEED_RESTRICT_COND (s->size >= 1);                         \
-                                                                \
-    TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);        \
-    mult[0] = s->r;                                             \
-    mult[1] = s->r;                                             \
-                                                                \
-    speed_operand_src (s, s->xp, s->size);                      \
-    speed_operand_src (s, mult, 2);                             \
-    speed_operand_dst (s, wp, s->size+1);                       \
-    speed_cache_fill (s);                                       \
-                                                                \
-    speed_starttime ();                                         \
-    i = s->reps;                                                \
-    do                                                          \
-      function (wp, s->xp, s->size, mult);                      \
-    while (--i != 0);                                           \
-    t = speed_endtime ();                                       \
-                                                                \
-    TMP_FREE (marker);                                          \
-    return t;                                                   \
-  }
-
-
 #define SPEED_ROUTINE_MPN_PREINV_DIVREM_1_CALL(call)    \
   {                                                     \
     unsigned   shift;                                   \
@@ -747,39 +713,56 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   ((*function) (wp, s->size, s->xp, 0, s->r, dinv, shift))
 
 
-/* For mpn_lshift, mpn_rshift, mpn_mul_1, with r, or similar. */
-#define SPEED_ROUTINE_MPN_UNARY_2_CALL(call)                    \
+/* s->r is duplicated to form the multiplier, defaulting to
+   MP_BASES_BIG_BASE_10.  Not sure if that's particularly useful, but at
+   least it provides some control.  */
+#define SPEED_ROUTINE_MPN_UNARY_N(function,N)                   \
   {                                                             \
     mp_ptr     wp;                                              \
+    mp_size_t  wsize;                                           \
     unsigned   i;                                               \
     double     t;                                               \
-    mp_limb_t  h, l;                                            \
+    mp_limb_t  yp[N];                                           \
     TMP_DECL (marker);                                          \
                                                                 \
-    SPEED_RESTRICT_COND (s->size >= 1);                         \
+    SPEED_RESTRICT_COND (s->size >= N);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);        \
-    l = s->yp[0];                                               \
-    h = s->yp[1];                                               \
+    wsize = s->size + N-1;                                      \
+    wp = SPEED_TMP_ALLOC_LIMBS (wsize, s->align_wp);            \
+    for (i = 0; i < N; i++)                                     \
+      yp[i] = (s->r != 0 ? s->r : MP_BASES_BIG_BASE_10);        \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
-    speed_operand_dst (s, wp, s->size+1);                       \
+    speed_operand_src (s, yp, (mp_size_t) N);                   \
+    speed_operand_dst (s, wp, wsize);                           \
     speed_cache_fill (s);                                       \
                                                                 \
     speed_starttime ();                                         \
     i = s->reps;                                                \
     do                                                          \
-      call;                                                     \
+      function (wp, s->xp, s->size, yp);                        \
     while (--i != 0);                                           \
     t = speed_endtime ();                                       \
                                                                 \
     TMP_FREE (marker);                                          \
     return t;                                                   \
-  }  
+  }
 
-#define SPEED_ROUTINE_MPN_UNARY_2(function) \
-  SPEED_ROUTINE_MPN_UNARY_2_CALL ((*function) (wp, s->xp, s->size, l, h))
+#define SPEED_ROUTINE_MPN_UNARY_2(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 2)
+#define SPEED_ROUTINE_MPN_UNARY_3(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 3)
+#define SPEED_ROUTINE_MPN_UNARY_4(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 4)
+#define SPEED_ROUTINE_MPN_UNARY_5(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 5)
+#define SPEED_ROUTINE_MPN_UNARY_6(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 6)
+#define SPEED_ROUTINE_MPN_UNARY_7(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 7)
+#define SPEED_ROUTINE_MPN_UNARY_8(function)     \
+  SPEED_ROUTINE_MPN_UNARY_N (function, 8)
 
 
 /* For mpn_mul_basecase, xsize=r, ysize=s->size. */
