@@ -145,10 +145,10 @@ gcd (u, v, g)
       g_zero_bits = MIN (u_zero_bits, v_zero_bits);
     }
 
-  /*  Call mpn_gcd.  The 1st argument must not have more bits than the 2nd.  */
+  /*  Call mpn_gcd.  The 2nd argument must not have more bits than the 1st.  */
   vsize = (usize < vsize || (usize == vsize && up[usize-1] < vp[vsize-1]))
-    ? mpn_gcd (vp, up, usize, vp, vsize)
-    : mpn_gcd (vp, vp, vsize, up, usize);
+    ? mpn_gcd (vp, vp, vsize, up, usize)
+    : mpn_gcd (vp, up, usize, vp, vsize);
 
   /*  Here G <-- V << (g_zero_limbs*BITS_PER_MP_LIMB + g_zero_bits).  */
   gsize = vsize + g_zero_limbs;
