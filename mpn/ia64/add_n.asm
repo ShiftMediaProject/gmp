@@ -34,6 +34,13 @@ ASM_START()
 PROLOGUE(mpn_add_n)
 	.prologue
 	.save	ar.lc, r2
+ifdef(`HAVE_ABI_32',
+`		addp4	r32 = 0, r32
+		addp4	r33 = 0, r33
+		addp4	r34 = 0, r34
+		sxt4	r35 = r35
+		;;
+')
   { .mib;	cmp.eq		p6, p7 = 1, r35
 		add		r35 = -2, r35
 		nop.b		0
