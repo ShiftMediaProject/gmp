@@ -1818,10 +1818,15 @@ dnl  GMP_C_DOUBLE_FORMAT
 dnl  -------------------
 dnl  Determine the floating point format.
 dnl
-dnl  The number -123456789.0 should appear in the object file, with the
-dnl  special start and end sequences to avoid false matches.  "od -b" is
-dnl  supported even by Unix V7, and the awk used to do the matching doesn't
-dnl  use functions or anything, so even an "old" awk will suffice.
+dnl  The object file is grepped, in order to work when cross compiling.  A
+dnl  start and end sequence is included to avoid false matches, and
+dnl  allowance is made for the desired data crossing an "od -b" line
+dnl  boundary.  The test number is a small integer so it should appear
+dnl  exactly, no rounding or truncation etc.
+dnl
+dnl  "od -b", incidentally, is supported even by Unix V7, and the awk script
+dnl  used doesn't have functions or anything, so even an "old" awk should
+dnl  suffice.
 
 AC_DEFUN(GMP_C_DOUBLE_FORMAT,
 [AC_REQUIRE([AC_PROG_CC])
@@ -1940,7 +1945,7 @@ END {
 }
 ]
 EOF
-  gmp_cv_c_double_format=`od -b conftest.$OBJEXT | awk -f conftest.awk`
+  gmp_cv_c_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
   case $gmp_cv_c_double_format in
   unknown*)
     echo "cannot match anything, conftest.$OBJEXT contains" >&AC_FD_CC
