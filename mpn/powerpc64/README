@@ -1,16 +1,20 @@
 PPC630 (aka Power3) pipeline information:
 
 Decoding is 4-way and issue is 8-way with some out-of-order capability.
+Branches are handled separately, and are not part of the 4-way issue limit.
+
+Functional units:
 LS1  - ld/st unit 1
 LS2  - ld/st unit 2
-FXU1 - integer unit 1, handles any simple integer instructions
-FXU2 - integer unit 2, handles any simple integer instructions
+FXU1 - integer unit 1, handles any simple integer instruction
+FXU2 - integer unit 2, handles any simple integer instruction
 FXU3 - integer unit 3, handles integer multiply and divide
 FPU1 - floating-point unit 1
 FPU2 - floating-point unit 2
 
 Memory:		  Any two memory operations can issue, but memory subsystem
-		  can sustain just one store per cycle.
+		  can sustain just one store per cycle.  No need for data
+		  prefetch; the hardware has very sophisticated prefetch logic.
 Simple integer:	  2 operations (such as add, rl*)
 Integer multiply: 1 operation every 9th cycle worst case; exact timing depends
 		  on 2nd operand most significant bit position (10 bits per
@@ -34,3 +38,14 @@ mul:	      18 cycles (average) unless floating-point operations are used,
 	      but that would only help for multiplies of perhaps 10 and more
 	      limbs.
 addmul/submul:Same situation as for mul.
+
+
+IDEAS
+
+*mul_1: Handling one limb using mulld/mulhdu and two limbs using
+floating-point operations should give a performance of about 20 cycles
+for 3 limbs, or 7 cycles/limb.
+
+We should probably split the single-limb operand in 32-bit chunks, and
+the multi-limb operand in 16-bit chunks, allowing us to accumulate
+well in fp registers.
