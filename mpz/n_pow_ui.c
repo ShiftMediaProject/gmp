@@ -36,56 +36,6 @@ MA 02111-1307, USA. */
 #endif
 
 
-/* Set "p" to 1 if there's an odd number of 1 bits in "n", or to 0 if
-   there's an even number.  */
-
-#if BITS_PER_ULONG == 32
-#if defined (__GNUC__) && ! defined (NO_ASM) \
-  && (defined (__i386__) || defined (__i486__))
-#define ULONG_PARITY(p, n)              \
-  do {                                  \
-    char           __p;                 \
-    unsigned long  __n = (n);           \
-    __n ^= (__n >> 16);                 \
-    asm ("xorb   %h1, %b1\n"            \
-         "setpo  %0\n"                  \
-         : "=qm" (__p), "=q" (__n)      \
-         : "1" (__n));                  \
-    (p) = __p;                          \
-  } while (0)
-#else
-#define ULONG_PARITY(p, n)      \
-  do {                          \
-    unsigned long  __n = (n);   \
-    __n ^= (__n >> 16);         \
-    __n ^= (__n >> 8);          \
-    __n ^= (__n >> 4);          \
-    __n ^= (__n >> 2);          \
-    __n ^= (__n >> 1);          \
-    (p) = (int) __n & 1;        \
-  } while (0)
-#endif
-#endif
-
-#if BITS_PER_ULONG == 64
-#define ULONG_PARITY(p, n)      \
-  do {                          \
-    unsigned long  __n = (n);   \
-    __n ^= (__n >> 32);         \
-    __n ^= (__n >> 16);         \
-    __n ^= (__n >> 8);          \
-    __n ^= (__n >> 4);          \
-    __n ^= (__n >> 2);          \
-    __n ^= (__n >> 1);          \
-    (p) = (int) __n & 1;        \
-  } while (0)
-#endif
-
-#ifndef ULONG_PARITY
- #error Unrecognised BITS_PER_ULONG, cant define ULONG_PARITY
-#endif
-
-
 /* mpz_pow_ui and mpz_ui_pow_ui want to share almost all of this code.
    ui_pow_ui doesn't need the mpn_mul based powering loop or the tests on
    bsize==2 or >2, but separating that isn't easy because there's shared
