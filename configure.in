@@ -453,6 +453,7 @@ case $host in
     # imagine either of those compilers anywhere except their native
     # systems.
     #
+    GMP_INCLUDE_MPN(alpha/alpha-defs.m4)
     case $host in
       *-cray-unicos*)
         cc_cflags="-O"		# no -g, it silently disables all optimizations
