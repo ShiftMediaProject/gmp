@@ -208,7 +208,6 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
           if (c == 'x' || c == 'X')
             {
               base = 16;
-            store_get_digits:
               STORE (c);
               GET (c);
             }
