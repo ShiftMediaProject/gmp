@@ -373,8 +373,6 @@ distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
 
-# FIXME: Use `$(CCAS) $(COMPILE_FLAGS)' instead of $(COMPILE).
-
 # *.s are not preprocessed at all.
 .s.o:
 	$(CCAS) $(COMPILE_FLAGS) $<
