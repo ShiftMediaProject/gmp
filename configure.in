@@ -287,12 +287,10 @@ case $host in
   # This must come after alpha* so that we can recognize present and future
   # vector processors with a wildcard.
   *-cray-unicos*)
-    # Don't perform any assembly syntax tests on this beast.
     gmp_asm_syntax_testing=no
     cclist="cc"
     cc_cflags="-O3 -htask0 -Wa,-B"
     path="cray"
-    extra_functions="mulww"
     ;;
 
 
@@ -963,6 +961,20 @@ echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 
 
 AC_PROG_CC
+AC_PROG_CPP
+
+case $host_cpu in
+  c90 | t90)
+    AC_EGREP_CPP(yes,
+    [#ifdef _CRAYIEEE
+    yes
+    #endif],
+    [path="cray/ieee $path"],
+    [path="cray/cfp $path"; extra_functions="mulwwc90"]);;
+  j90 | sv1)
+    extra_functions="mulwwj90"
+    path="cray/cfp $path";;
+esac
 
 # Automake ansi2knr support.  This needs to be before compiler feature tests
 # because it will change CC/CFLAGS to put the compiler into ansi mode, if it
