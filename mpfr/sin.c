@@ -28,8 +28,8 @@ MA 02111-1307, USA. */
 int 
 mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode) 
 {
-  int precy, m, ok, e, inexact;
-  mpfr_t c;
+  int precy, m, ok, e, inexact, neg;
+  mpfr_t c, k;
 
   if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
     {
@@ -47,6 +47,18 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   m = precy + _mpfr_ceil_log2 ((double) precy) + ABS(MPFR_EXP(x)) + 13;
 
   mpfr_init2 (c, m);
+  mpfr_init2 (k, m);
+
+  /* first determine sign */
+  mpfr_const_pi (c, GMP_RNDN);
+  mpfr_mul_2exp (c, c, 1, GMP_RNDN); /* 2*Pi */
+  mpfr_div (k, x, c, GMP_RNDN);      /* x/(2*Pi) */
+  mpfr_floor (k, k);                 /* floor(x/(2*Pi)) */
+  mpfr_mul (c, k, c, GMP_RNDN);
+  mpfr_sub (k, x, c, GMP_RNDN);      /* 0 <= k < 2*Pi */
+  mpfr_const_pi (c, GMP_RNDN); /* cached */
+  neg = mpfr_cmp (k, c) > 0;
+  mpfr_clear (k);
 
   do
     {
@@ -55,7 +67,7 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_ui_sub (c, 1, c, GMP_RNDN);
       e = 2 + (-MPFR_EXP(c)) / 2;
       mpfr_sqrt (c, c, GMP_RNDN);
-      if (mpfr_cmp_ui (x, 0) < 0)
+      if (neg)
 	mpfr_neg (c, c, GMP_RNDN);
 
       /* the absolute error on c is at most 2^(e-m) = 2^(EXP(c)-err) */
