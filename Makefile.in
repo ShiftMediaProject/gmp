@@ -215,12 +215,11 @@ SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
 # to be BUILT_SOURCES, but are done that way to get all the built-time stuff
 # over with at the start.
 #
-EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h mpfrxx.h libmp.sym dumbmp.c gen-fib.c gen-bases.c
+EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fib.c gen-bases.c
 
 @WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
-@WANT_CXX_TRUE@@WANT_MPFR_TRUE@MPFRXX_HEADERS_OPTION = mpfrxx.h
 
-include_HEADERS = $(GMPXX_HEADERS_OPTION) $(MPFRXX_HEADERS_OPTION)
+include_HEADERS = $(GMPXX_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
