@@ -2803,9 +2803,7 @@ echo "include_mpn(\`mips32/mips-defs.m4')" >> $gmp_tmpconfigm4i
         cclist_n32="gcc cc"
         gcc_n32_cflags="-O2 -mabi=n32"
         gcc_n32_ldflags="-Wc,-mabi=n32"
-	# Pass just -O1, MIPSpro 7.2.1 miscompiles mpn/generic/divrem_1.c
-	# cvs version 1.20, for -O2 and -O3
-        cc_n32_cflags="-O1 -n32"        # no -g, it disables all optimizations
+        cc_n32_cflags="-O2 -n32"	# no -g, it disables all optimizations
         cc_n32_ldflags="-Wc,-n32"
         limb_n32=longlong
         path_n32="mips64"
@@ -7629,7 +7627,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7632 "configure"' > conftest.$ac_ext
+  echo '#line 7630 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -11094,7 +11092,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11097 "configure"
+#line 11095 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11192,7 +11190,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11195 "configure"
+#line 11193 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14307,7 +14305,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14310 "configure"
+#line 14308 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14405,7 +14403,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14408 "configure"
+#line 14406 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17041,7 +17039,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17044 "configure"
+#line 17042 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17139,7 +17137,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17142 "configure"
+#line 17140 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
