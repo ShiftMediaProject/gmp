@@ -101,7 +101,6 @@ L(pc):	rd	%pc,%o7
 	and	%g2, xffff, %g2
 	stx	%g2, [%sp+2223+16]
 	srlx	%i3, 48, %g3
-	and	%g3, xffff, %g3
 	stx	%g3, [%sp+2223+24]
 	ld	[%o7+L(noll)-L(pc)],%f2
 	srlx	%g4, 32, xffffffff	C store mask in register `xffffffff'
