@@ -1,14 +1,14 @@
-dnl  Alpha __gmpn_submul_1 -- Multiply a limb vector with a limb and
-dnl  subtract the result from a second limb vector.
+dnl  Alpha __gmpn_submul_1 -- Multiply a limb vector with a limb and subtract
+dnl  the result from a second limb vector.
 
 dnl  Copyright 1992, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
 dnl  The GNU MP Library is free software; you can redistribute it and/or modify
-dnl  it under the terms of the GNU Lesser General Public License as published by
-dnl  the Free Software Foundation; either version 2.1 of the License, or (at your
-dnl  option) any later version.
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
 dnl  The GNU MP Library is distributed in the hope that it will be useful, but
 dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
