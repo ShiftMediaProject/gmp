@@ -1,92 +1,549 @@
-# This file is a shell script fragment that supplies the information
-# necessary for a configure script to process the program in
-# this directory.  For more information, look at ../configure.
+dnl Process this file with autoconf to produce a configure script.
+dnl [AC_REVISION([$CVSid$])]
+AC_PREREQ(2.14)dnl
+AC_INIT(gmp-impl.h)
 
-configdirs="mpn mpz mpf mpq mpbsd"
-srctrigger=gmp-impl.h
-srcname="GNU Multi-Precision library"
+dnl Check system.
+AC_CANONICAL_SYSTEM
 
-# per-host:
+dnl  Automake
+AM_INIT_AUTOMAKE(gmp, 2.99)
+dnl  FIXME: [AM_CONFIG_HEADER invokes obsolete macro [AC_OUTPUT_COMMANDS].
+AM_CONFIG_HEADER(config.h:config.in)
+AM_MAINTAINER_MODE
 
-# per-target:
+dnl Switch on OS and determine what compiler to use.
+dnl
+dnl  os_64bit	           Set to "yes" if OS is 64-bit capable.
+dnl  cclist		   List of compilers, best first.
+dnl  gmp_cflags_{cc}	   Flags for compiler named {cc}.
+dnl  gmp_cflags64_{cc}     Flags for compiler named {cc} for 64-bit code.
+dnl
+os_64bit="no"
+cclist="gcc cc"
+gmp_cflags_gcc="-g -O2"
+gmp_cflags64_gcc="-mWHAT -g -O2"
+gmp_cflags_cc="-g"
+gmp_cflags64_cc="-g"
 
-case "${target}" in
-  sparc*-*-none | supersparc*-*-none | ultrasparc*-*-none | microsparc*-*-none | \
-  i[3456]86*-*-none | pentium*-*-none | k6*-*-none | athlon-*-none)
-    echo "*** Operating system specification required for this cpu." 1>&2
-    exit 1;;
-  sparc9-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-sprc9-gcc
-      CC="gcc -D_LONG_LONG_LIMB -O2"
+changequote(,)dnl
+case "$target" in
+  # Alpha
+  alpha*-*-*)
+    taste=`echo $target_cpu | sed s/^alpha//g`
+    if test -n "$taste"; then
+      gmp_optcflags_gcc="-mcpu=$taste"
+      gmp_cflags_cc="$gmp_cflags_cc -arch $taste -tune $taste"
     fi
     ;;
-  sparc9-*-* | sparc64*-*-* | ultrasparc*-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-sprc9-gcc
-    fi
+
+  # x86
+  *-*-freebsd[34]*)	# hides generic *bsd* alternative
+    gmp_cflags_gcc="-g -O -fomit-frame-pointer"
     ;;
-  sparc8-*-* | microsparc*-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-sprc8-gcc
-    fi
-    ;;
-  supersparc*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-supspc-gcc
-    fi
-    ;;
-  hppa2.0*-*-*)
-    CC="gcc -D_LONG_LONG_LIMB -O2"	# Don't use buggy system compiler!
-    ;;
-  m88110*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-m88110
-    fi
-    ;;
-  m68*-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-m68k
-    fi
+  i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k[5678]*-*-*bsd* | \
+  i[3456]86*-*-linuxaout* | pentium*-*-linuxaout* | k[5678]*-*-linuxaout* | \
+  i[3456]86*-*-linuxoldld* | pentium*-*-linuxoldld* | k[5678]*-*-linuxoldld* |\
+  i[3456]86*-*-nextstep* | i[3456]86*-*-nextstep* | k[5678]*-*-nextstep*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -DBROKEN_ALIGN -DOLD_GAS"
+    gmp_cflags_cc="$gmp_cflags_cc -DBROKEN_ALIGN -DOLD_GAS"
     ;;
   i[3456]86*-*-* | pentium*-*-* | k[5678]*-*-* | athlon-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-x86
-    fi
+    gmp_cflags_gcc="-g -O -fomit-frame-pointer"
     ;;
-  power-*-* | rs6000-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-pwr
-    fi
+
+  # Sparc
+  # FIXME: Is it `sparc9' or `sparcv9'?  config.guess says `sparc9'.
+  ultrasparc*-*-solaris2.[7-9] | sparc9-*-solaris2.[7-9])
+    ## FIXME: Match `sparc64*' as well?
+    ## FIXME: define _LONG_LONG_LIMB in config.h instead.
+    os_64bit=yes
+    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
+    gmp_cflags64_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v9 -D_LONG_LONG_LIMB"
+    gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
+    gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
-  powerpc-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-ppc
-    fi
+  ultrasparc*-*-* | sparc9-*-*)
+    ## FIXME: path=sparc32/v9
+    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
+    gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
-  powerpc64-*-aix*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-ppc64-aix
-    fi
+  microsparc*-*-solaris2.*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
+    gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
+  microsparc*-*-*)		# SunOS, Linux, *BSD
+    cclist="gcc acc cc"
+    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
+    gmp_cflags_acc="-g -O2 -cg92"
+    gmp_cflags_cc="-O2"		# FIXME: Flag for v8?
+    ;;
+  supersparc*-*-solaris2.*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8 -DSUPERSPARC"
+    gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4 -DSUPERSPARC"
+    ;;
+  supersparc*-*-*)		# SunOS, Linux, *BSD
+    cclist="gcc acc cc"
+    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8 -DSUPERSPARC"
+    gmp_cflags_acc="-g -O2 -cg92 -DSUPERSPARC"
+    gmp_cflags_cc="-O2 -DSUPERSPARC"	# FIXME: Flag for v8?
+    ;;
+  *sparc*-*-*)
+    cclist="gcc acc cc"
+    gmp_cflags_acc="-g -O2"
+    gmp_cflags_cc="-g -O2"
+    ;;
+
+  # POWER/PowerPC
+  dnl  FIXME: Should `power-*' use `-mpower'?
+  power*-*-aix[456789]*)
+    os_64bit=yes
+    cclist="gcc xlc cc"
+    gmp_cflags64_gcc="-g -O2 -mpowerpc64 -maix64"
+    gmp_cflags64_xlc="$gmp_cflags64_cc -q64 -qarch=ppc64 -qtune=pwr3 -O2"
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
+    gmp_cflags_cc="$gmp_cflags_cc -qarch=ppc -O2"
+    ;;
+  power*-*-aix*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
+    gmp_cflags_cc="$gmp_cflags_cc -qarch=ppc -O2"
+    ;;
+  power*-*-*linux* | power*-*-*bsd*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
+    ;;
+
+  # Motorola 68k family
+  m88110*-*-*)
+    gmp_cflags_gcc="-g -O -m88110"	dnl  FIXME: Use `-O2'?
+    ;;
+  m68*-*-*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -fomit-frame-pointer"
+    ;;
+
+  # HP
+  hppa2.0*-*-*)
+    cclist="gcc"	# Don't use buggy system compiler!
+    gmp_cflags_gcc="$gmp_cflags_gcc -D_LONG_LONG_LIMB"
+    ;;
+
+  # VAX
   vax*-*-*)
-    if [ x$with_gcc != xno ]
-    then
-      target_makefile_frag=config/mt-vax
+    gmp_cflags_gcc="$gmp_cflags_gcc -fomit-frame-pointer"
+    ;;
+
+  # Fujitsu
+  f30[01]-fujitsu-sysv*)
+    cclist="gcc vcc"
+    gmp_cflags_vcc="-g"		# FIXME: flags for vcc?
+    ;;
+esac
+changequote([,])dnl
+
+
+dnl  Find compiler.
+dnl  NOTE: This is our own AC_PROG_CC.  See acinclude.m4.
+GMP_PROG_CC_FIND($cclist, $os_64bit)
+
+dnl  Second round on OS to choose compiler and assembly code base.
+dnl  Set
+dnl    CC	Compiler to use.
+dnl    CFLAGS	Flags to use
+dnl    path	List of directory paths where assembly code is found.
+dnl    family   Processor family.  (FIXME: Used for asm-syntax.h.)
+dnl
+
+# If 64-bit OS and we have a 64-bit compiler, use it.
+if test -n "$os_64bit" && test -n "$CC64"; then
+  CC=$CC64
+  CFLAGS=$CFLAGS64
+else
+  eval CFLAGS=\$gmp_cflags_$CC  
+fi
+
+AR=ar		dnl  FIXME: Move.
+
+dnl  FIXME: Check for FPU and set `floating_point' appropriately.
+
+dnl  FIXME: Move to after we have chosen compiler.
+dnl  ========================================
+dnl  Configuring mpn.
+dnl  ----------------------------------------
+dnl  Set the following target specific variables:
+dnl  path		where to search for source files
+dnl  family		processor family (FIXME: Needed for building 
+dnl 			asm-syntax.h for now.)
+dnl  extra_functions	extra functions
+family=generic
+
+changequote(,)dnl
+case ${target} in
+  arm*-*-*)
+    path="arm"
+    ;;
+  sparc9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
+    family=sparc
+    if test -n "$CC64"; then
+      path="sparc64"
+    else
+      # FIXME: May use sparc32/v9 and/or sparc32/v8 depnding on CPU.
+      path="sparc32"
     fi
     ;;
-  *-*-linux*)
-    target_makefile_frag=config/mt-linux ;;
+  sparc8*-*-* | microsparc*-*-*)
+	path="sparc32/v8 sparc32"
+	if test x${floating_point} = xno
+	  then extra_functions="udiv_nfp"
+	  else extra_functions="udiv_fp"
+	fi
+	family=sparc;;
+  sparc9*-*-* | ultrasparc*-*-*)
+	path="sparc32/v9 sparc32/v8 sparc32"
+	extra_functions="udiv_fp"
+	family=sparc;;
+  supersparc*-*-*)
+	path="sparc32/v8/supersparc sparc32/v8 sparc32"
+	extra_functions="udiv"
+	family=sparc;;
+  sparc*-*-*) path="sparc32"
+	if test x${floating_point} = xno
+	  then extra_functions="udiv_nfp"
+	  else extra_functions="udiv_fp"
+	fi
+	family=sparc;;
+  hppa7000*-*-*) path="hppa/hppa1_1 hppa"
+		 extra_functions="udiv_qrnnd";;
+  hppa1.0*-*-*) path="hppa"
+		extra_functions="udiv_qrnnd";;
+  hppa2.0*-*-*) path="pa64"
+		target_makefile_frag=config/mt-pa2hpux
+		extra_functions="umul_ppmm udiv_qrnnd";;
+  hppa*-*-*)					#assume pa7100
+    path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
+    extra_functions="udiv_qrnnd";;
+  cray2-cray-unicos* | [xy]mp-cray-unicos* | [ctj]90-cray-unicos*)
+    path="cray";;
   f30[01]-fujitsu-sysv*)
-    CC=${CC-vcc}; export CC
+    path=fujitsu;;
+  alphaev5*-*-*) path="alpha/ev5 alpha"; extra_functions="invert-limb cntlz";;
+  alpha*-*-*) path="alpha"; extra_functions="invert-limb cntlz";;
+  am29000*-*-*) path="am29000";;
+  a29k*-*-*) path="am29000";;
+
+# Amd and Intel x86 configurations
+  i[34]86*-*-*)
+	path="x86"
+	family=x86;;
+  i586*-*-* | pentium-*-*)
+	path="x86/pentium x86"
+	family=x86;;
+  pentiummmx-*-*)
+	path="x86/pentium x86/mmx x86"
+	family=x86;;
+  i686*-*-* | pentiumpro-*-*)
+	path="x86/p6 x86"
+	family=x86;;
+  pentium[23]-*-*)
+	path="x86/p6 x86/mmx x86"
+	family=x86;;
+  k6*-*-*)
+	path="x86/k6 x86/mmx x86"
+	family=x86;;
+  athlon-*-*)
+	path="x86/k7 x86/mmx x86"
+	family=x86;;
+
+# Motorola 68k configurations.  Let m68k mean 68020-68040.
+  m680[234]0*-*-* | m68k*-*-* | \
+  m68*-next-nextstep*)		# Nexts are at least '020
+	path="m68k/mc68020 m68k"
+	family=m68k;;
+  m68000*-*-*)
+	path="m68k"
+	family=m68k;;
+
+  i960*-*-*) path="i960";;
+  m88k*-*-* | m88k*-*-*) path="m88k";;
+  m88110*-*-*) path="m88k/mc88110 m88k";;
+  ns32k*-*-*) path="n32k";;
+
+  pyramid-*-*) path="pyr";;
+  ppc601-*-*)
+    family=ppc
+    path="power powerpc32"
+    ;;
+  ppc620-*-* | powerpc64*-*-*)
+    family=ppc
+    if test -n "$CC64"; then
+      path="powerpc64"
+      dnl  FIXME: Make libtool pass `-X 64' to ar(1).  A workaround would be to
+      dnl  export environment variable `OBJECT_MODE=64'.
+      dnl  FIXME: Is shell command `export' safe to use?
+      dnl [OBJECT_MODE=64]
+      dnl [export OBJECT_MODE]
+      AR='ar -X 64'
+      dnl  FIXME: Shared libs fail on aix4.3.2.
+      dnl  FIXME: Should invoke [AC_DISABLE_SHARED], but gm4 recurses to death.
+      enable_shared=no
+    else
+      path="powerpc32"
+    fi
+    ;;
+  ppc60[234]*-*-* | powerpc*-*-*)
+    family=ppc
+    path="powerpc32"
+    ;;
+  rs6000-*-* | power-*-* | power2-*-*)
+    path="power"; extra_functions="udiv_w_sdiv";;
+  sh-*-*) path="sh";;
+  sh2-*-*) path="sh/sh2 sh";;
+  mips[34]*-*-*) path="mips3";;
+  mips*-*-irix6*) path="mips3";;
+  mips*-*-*) path="mips2";;
+  vax*-*-*) path="vax"; extra_functions="udiv_w_sdiv";;
+  z8000x*-*-*) path="z8000x"; extra_functions="udiv_w_sdiv";;
+  z8000*-*-*) path="z8000"; extra_functions="udiv_w_sdiv";;
+  clipper*-*-*) path="clipper";;
+  *-*-*);;
 esac
+changequote([,])dnl
+
+dnl
+dnl  Try compiler flags that may work with only some compiler versions.
+dnl
+
+eval optcflags=\$gmp_optcflags_$CC
+if test -n "$optcflags"; then
+  CFLAGS_save="$CFLAGS"
+  CFLAGS="$CFLAGS $optcflags"
+  AC_MSG_CHECKING([whether $CC accepts $optcflags])
+  AC_LANG_C
+  AC_TRY_COMPILER([int main(){return(0);}], optok, cross)
+  if test "$optok" = "yes"; then
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+    CFLAGS="$CFLAGS_save"
+  fi
+fi
+
+dnl  ``Select'' chosen compiler.
+GMP_PROG_CC_SELECT
+
+dnl  FIXME: Set CCAS.
+CCAS="$CC -c"
+
+dnl  Checks for programs.
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+dnl  FIXME: Find m4 and nm.  What nm to use if we're cross-compiling?
+M4=m4
+AC_SUBST(M4)
+NM=nm
+AC_SUBST(NM)
+
+dnl  Extensions for executable and object files.
+AC_EXEEXT
+AC_OBJEXT
+
+dnl  Use Libtool.
+dnl [AC_DISABLE_SHARED]
+dnl [automake-1.4 / libtool-1.3.4: [AM_PROG_LIBTOOL]
+GMP_PROG_LIBTOOL
+
+dnl Checks for libraries.
+dnl libm
+dnl FIXME: need libm?
+dnl [AC_CHECK_LIB(m, acos)]
+
+dnl Checks for header files.
+AC_HEADER_STDC
+dnl FIXME: need more header files?
+dnl [AC_CHECK_HEADERS(unistd.h)]
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl FIXME: If we need [AC_C_CONST], call [AC_PROGCC_STDC] first
+dnl FIXME: If we need [AC_C_INLINE], call [AC_PROGCC_STDC] first
+dnl FIXME: If we need [AC_TYPE_SIZE_T], call [AC_PROGCC_STDC] first
+
+dnl Checks for library functions.
+dnl AC_FUNC_MEMCMP
+dnl AC_TYPE_SIGNAL
+dnl AC_CHECK_FUNCS(strtol strtoul)
+
+dnl  ----------------------------------------
+dnl  The following variables are used later when creating asm-syntax.h.
+dnl
+dnl  Set `underscore' to "yes" if globals are prefixed by `_'.
+GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
+
+dnl  Set `asm_align' to "log" or "nolog".
+dnl  Used for picking which *_SYNTAX to define.
+dnl    Example: x86 + log -> BSD_SYNTAX
+GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
+
+dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
+syntax=
+
+dnl  FIXME: For now, we use the old switch
+changequote(,)dnl
+case "${target}" in
+  m680[234]0*-*-linuxaout* | m68k*-*-linuxaout* | \
+  m68k-next-nextstep* | \
+  m68000*-*-*)
+    syntax=mit
+    ;;
+  m680[234]0*-*-linux* | m68k*-*-linux*)
+    syntax=elf
+    ;;
+  m680[234]0*-*-* | m68k*-*-*)
+    syntax=mit
+    ;;
+  ppc601-*-aix[456789]* | ppc601-*-aix3.2.[456789] | \
+  ppc60[234]*-*-aix[456789]* | ppc60[234]*-*-aix3.2.[456789] | \
+  powerpc*-*-aix[456789]* | powerpc*-*-aix3.2.[456789])
+    syntax=aix;;
+  ppc601-apple-mach | \
+  ppc60[234]*-apple-mach | ppc60[234]*-apple-mach | \
+  powerpc*-apple-mach | powerpc*-apple-mach)
+    syntax=macho;;
+  ppc601-*-* | \
+  ppc60[234]*-*-* | ppc60[234]*-*-* | \
+  powerpc*-*-* | powerpc*-*-*)
+    syntax=elf;;
+  sparc9-*-solaris2* | ultrasparc*-*-solaris2*)
+    ;;
+esac
+changequote([,])dnl
+
+dnl  ----------------------------------------
+# Now build an asm-syntax.h file for targets that include that from the
+# assembly files.
+case "${family}-${underscore}-${asm_align}-${syntax}" in
+  x86-yes-log-*)
+    echo '#define BSD_SYNTAX' >asm-syntax.h
+    cat $srcdir/mpn/underscore.h >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h;;
+  x86-no-nolog-*)
+    echo '#define ELF_SYNTAX' >asm-syntax.h
+    echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h;;
+  x86-yes-nolog-*)	# FIXME: For x86-cygwin
+    echo '#define ELF_SYNTAX' >asm-syntax.h
+    cat $srcdir/mpn/underscore.h >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h
+    ;;
+  m68k-yes-log-mit)
+    echo '#define MIT_SYNTAX' >asm-syntax.h
+    cat $srcdir/mpn/underscore.h >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
+  m68k-no-nolog-elf)
+    echo '#define ELF_SYNTAX' >asm-syntax.h
+    echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
+  ppc-*-*-aix)
+    echo '#define AIX_SYNTAX' >asm-syntax.h
+    echo '#include "'$srcdir'/mpn/powerpc32/syntax.h"' >>asm-syntax.h;;
+  ppc-*-*-elf)
+    echo '#undef AIX_SYNTAX' >asm-syntax.h
+    echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/powerpc32/syntax.h"' >>asm-syntax.h;;
+  ppc-*-*-macho)
+    echo '#define MACHO_SYNTAX' >asm-syntax.h
+    cat $srcdir/mpn/underscore.h >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/powerpc32/syntax.h"' >>asm-syntax.h;;
+  sparc-yes-log-*)
+    cat $srcdir/mpn/underscore.h >asm-syntax.h;;
+  sparc-*)
+    echo '#define C_SYMBOL_NAME(name) name' >asm-syntax.h;;
+esac
+
+
+
+dnl  ----------------------------------------
+functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1 submul_1 \
+ lshift rshift divmod_1 divrem divrem_1 divrem_2 divrem_newt mod_1 pre_mod_1 \
+ dump mul mul_n mul_basecase sqr_basecase random random2 rawrandom \
+ sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp \
+ perfsqr bdivmod gcd_1 gcd gcdext"
+
+path="$path generic"
+mpn_objects=
+mpn_objs_in_libgmp="mpn/mp_bases.lo"
+files=
+links=
+sources=
+gmp_links=
+
+for fn in $functions ; do
+  mpn_objects="$mpn_objects $fn.lo"
+  mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/$fn.lo"
+  for dir in $path ; do
+    rm -f $fn.[Ssc] $fn.asm
+    if test -f $srcdir/mpn/$dir/$fn.asm ; then
+      files="$files mpn/$dir/$fn.asm"
+      links="$links mpn/$fn.asm"
+      gmp_links="$gmp_links mpn/$fn.asm:mpn/$dir/$fn.asm"
+      break
+    elif test -f $srcdir/mpn/$dir/$fn.S ; then
+      files="$files mpn/$dir/$fn.S"
+      links="$links mpn/$fn.S"
+      gmp_links="$gmp_links mpn/$fn.S:mpn/$dir/$fn.S"
+      break
+    elif test -f $srcdir/mpn/$dir/$fn.s ; then
+      files="$files mpn/$dir/$fn.s"
+      links="$links mpn/$fn.s"
+      gmp_links="$gmp_links mpn/$fn.s:mpn/$dir/$fn.s"
+      break
+    elif test -f $srcdir/mpn/$dir/$fn.c ; then
+      files="$files mpn/$dir/$fn.c"
+      links="$links mpn/$fn.c"
+      gmp_links="$gmp_links mpn/$fn.c:mpn/$dir/$fn.c"
+      break
+    fi
+  done
+done
+
+for dir in $path ; do
+  rm -f gmp-mparam.h
+  if test -f $srcdir/mpn/$dir/gmp-mparam.h ; then
+    files="$files mpn/$dir/gmp-mparam.h"
+    links="$links gmp-mparam.h"
+    gmp_links="$gmp_links gmp-mparam.h:mpn/$dir/gmp-mparam.h"
+    break
+  fi
+done
+
+AC_SUBST(mpn_objects)
+AC_SUBST(mpn_objs_in_libgmp)
+
+AC_SUBST(AR)		dnl  FIXME: Move.
+
+dnl  ----------------------------------------
+dnl  Debugging.
+dnl
+[echo "***DEBUG*** target=$target"]
+[echo "***DEBUG*** CC=$CC, CFLAGS=$CFLAGS"]
+[echo "***DEBUG*** CC64=$CC64, CFLAGS64=$CFLAGS64"]
+[echo "***DEBUG*** path=$path"]
+dnl [echo "***DEBUG*** mpn_objects=$mpn_objects"]
+dnl [echo "***DEBUG*** files=$files"]
+dnl [echo "***DEBUG*** links=$links"]
+dnl [echo "***DEBUG*** gmp_links=$gmp_links"]
+
+dnl  ----------------------------------------
+dnl  Make links.
+dnl autoconfig 2.13 style:
+dnl [AC_LINK_FILES($files, $links)]
+dnl autoconfig 2.14a style: 
+AC_CONFIG_LINKS($gmp_links)
+
+dnl  Set LTLIBOBJS.
+dnl LTLIBOBJS=`echo "$LIBOBJS" | sed 's/\.o/.lo/g'`
+dnl [AC_SUBST(LTLIBOBJS)]
+dnl LTALLOCA=`echo "$ALLOCA" | sed 's/\.o/.lo/g'`
+dnl [AC_SUBST(LTALLOCA)]
+
+dnl  Create Makefiles
+AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
+  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile demos/Makefile)
