@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-02-11  Kevin Ryde  <kevin@swox.se>
+
+	* longlong.h (power, powerpc): Use HAVE_HOST_CPU_FAMILY_power and
+	HAVE_HOST_CPU_FAMILY_powerpc rather than various cpp defines.
+
+	* gmp-impl.h: Add remarks about limits.h and Cray etc.
+
+	* mpn/ia64/mul_1.asm: Don't put .pred directives on labelled lines,
+	hpux 11.23 assembler doesn't like that.
+	* mpn/ia64/README: Add a note on this.
+
+	* dumbmp.c (mpz_mul): Set ALLOC(r) for new data block used.  Reported
+	by Jason Moxham.
+
+	* mpn/pa32/README, mpn/pa64/README (REFERENCES): New sections.
+
 2004-02-10  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-gcd.c: Decrease # of tests run.
