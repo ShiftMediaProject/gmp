@@ -57,10 +57,10 @@ MA 02111-1307, USA. */
 
 /* When U and V differ in size by more than BMOD_THRESHOLD, the accelerated
    algorithm reduces using the bmod operation.  Otherwise, the k-ary reduction
-   is used.  0 <= BMOD_THRESHOLD < BITS_PER_MP_LIMB.  */
+   is used.  0 <= BMOD_THRESHOLD < GMP_NUMB_BITS.  */
 enum
   {
-    BMOD_THRESHOLD = BITS_PER_MP_LIMB/2
+    BMOD_THRESHOLD = GMP_NUMB_BITS/2
   };
 
 
@@ -72,23 +72,28 @@ gcd_2 (mp_ptr vp, mp_srcptr up)
   mp_limb_t u0, u1, v0, v1;
   mp_size_t vsize;
 
-  u0 = up[0], u1 = up[1], v0 = vp[0], v1 = vp[1];
+  u0 = up[0];
+  u1 = up[1];
+  v0 = vp[0];
+  v1 = vp[1];
 
   while (u1 != v1 && u0 != v0)
     {
       unsigned long int r;
       if (u1 > v1)
 	{
-	  u1 -= v1 + (u0 < v0), u0 -= v0;
+	  u1 -= v1 + (u0 < v0);
+	  u0 = (u0 - v0) & GMP_NUMB_MASK;
 	  count_trailing_zeros (r, u0);
-	  u0 = u1 << (BITS_PER_MP_LIMB - r) | u0 >> r;
+	  u0 = ((u1 << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (u0 >> r);
 	  u1 >>= r;
 	}
       else  /* u1 < v1.  */
 	{
-	  v1 -= u1 + (v0 < u0), v0 -= u0;
+	  v1 -= u1 + (v0 < u0);
+	  v0 = (v0 - u0) & GMP_NUMB_MASK;
 	  count_trailing_zeros (r, v0);
-	  v0 = v1 << (BITS_PER_MP_LIMB - r) | v0 >> r;
+	  v0 = ((v1 << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (v0 >> r);
 	  v1 >>= r;
 	}
     }
@@ -105,15 +110,15 @@ gcd_2 (mp_ptr vp, mp_srcptr up)
   return 1;
 }
 
-/* The function find_a finds 0 < N < 2^BITS_PER_MP_LIMB such that there exists
-   0 < |D| < 2^BITS_PER_MP_LIMB, and N == D * C mod 2^(2*BITS_PER_MP_LIMB).
+/* The function find_a finds 0 < N < 2^GMP_NUMB_BITS such that there exists
+   0 < |D| < 2^GMP_NUMB_BITS, and N == D * C mod 2^(2*GMP_NUMB_BITS).
    In the reference article, D was computed along with N, but it is better to
-   compute D separately as D <-- N / C mod 2^(BITS_PER_MP_LIMB + 1), treating
+   compute D separately as D <-- N / C mod 2^(GMP_NUMB_BITS + 1), treating
    the result as a twos' complement signed integer.
 
-   Initialize N1 to C mod 2^(2*BITS_PER_MP_LIMB).  According to the reference
-   article, N2 should be initialized to 2^(2*BITS_PER_MP_LIMB), but we use
-   2^(2*BITS_PER_MP_LIMB) - N1 to start the calculations within double
+   Initialize N1 to C mod 2^(2*GMP_NUMB_BITS).  According to the reference
+   article, N2 should be initialized to 2^(2*GMP_NUMB_BITS), but we use
+   2^(2*GMP_NUMB_BITS) - N1 to start the calculations within double
    precision.  If N2 > N1 initially, the first iteration of the while loop
    will swap them.  In all other situations, N1 >= N2 is maintained.  */
 
@@ -130,33 +135,43 @@ find_a (mp_srcptr cp)
 {
   unsigned long int leading_zero_bits = 0;
 
-  mp_limb_t n1_l = cp[0];	/* N1 == n1_h * 2^BITS_PER_MP_LIMB + n1_l.  */
+  mp_limb_t n1_l = cp[0];	/* N1 == n1_h * 2^GMP_NUMB_BITS + n1_l.  */
   mp_limb_t n1_h = cp[1];
 
-  mp_limb_t n2_l = -n1_l;	/* N2 == n2_h * 2^BITS_PER_MP_LIMB + n2_l.  */
-  mp_limb_t n2_h = ~n1_h;
+  mp_limb_t n2_l = (-n1_l & GMP_NUMB_MASK);	/* N2 == n2_h * 2^GMP_NUMB_BITS + n2_l.  */
+  mp_limb_t n2_h = (~n1_h & GMP_NUMB_MASK);
 
   /* Main loop.  */
-  while (n2_h)			/* While N2 >= 2^BITS_PER_MP_LIMB.  */
+  while (n2_h != 0)		/* While N2 >= 2^GMP_NUMB_BITS.  */
     {
       /* N1 <-- N1 % N2.  */
-      if ((MP_LIMB_T_HIGHBIT >> leading_zero_bits & n2_h) == 0)
+      if (((GMP_NUMB_HIGHBIT >> leading_zero_bits) & n2_h) == 0)
 	{
 	  unsigned long int i;
 	  count_leading_zeros (i, n2_h);
-	  i -= leading_zero_bits, leading_zero_bits += i;
-	  n2_h = n2_h<<i | n2_l>>(BITS_PER_MP_LIMB - i), n2_l <<= i;
+	  i -= GMP_NAIL_BITS;
+	  i -= leading_zero_bits;
+	  leading_zero_bits += i;
+	  n2_h = ((n2_h << i) & GMP_NUMB_MASK) | (n2_l >> (GMP_NUMB_BITS - i));
+	  n2_l = (n2_l << i) & GMP_NUMB_MASK;
 	  do
 	    {
 	      if (n1_h > n2_h || (n1_h == n2_h && n1_l >= n2_l))
-		n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
-	      n2_l = n2_l>>1 | n2_h<<(BITS_PER_MP_LIMB - 1), n2_h >>= 1;
+		{
+		  n1_h -= n2_h + (n1_l < n2_l);
+		  n1_l = (n1_l - n2_l) & GMP_NUMB_MASK;
+		}
+	      n2_l = (n2_l >> 1) | ((n2_h << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK);
+	      n2_h >>= 1;
 	      i -= 1;
 	    }
-	  while (i);
+	  while (i != 0);
 	}
       if (n1_h > n2_h || (n1_h == n2_h && n1_l >= n2_l))
-	n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
+	{
+	  n1_h -= n2_h + (n1_l < n2_l);
+	  n1_l = (n1_l - n2_l) & GMP_NUMB_MASK;
+	}
 
       MP_LIMB_T_SWAP (n1_h, n2_h);
       MP_LIMB_T_SWAP (n1_l, n2_l);
@@ -179,14 +194,14 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
   ASSERT (vsize >= 1);
   ASSERT (usize >= vsize);
   ASSERT (vp[0] & 1);
-  ASSERT (up[usize-1] != 0);
-  ASSERT (vp[vsize-1] != 0);
+  ASSERT (up[usize - 1] != 0);
+  ASSERT (vp[vsize - 1] != 0);
 #if WANT_ASSERT
   if (usize == vsize)
     {
       int  uzeros, vzeros;
-      count_leading_zeros (uzeros, up[usize-1]);
-      count_leading_zeros (vzeros, vp[vsize-1]);
+      count_leading_zeros (uzeros, up[usize - 1]);
+      count_leading_zeros (vzeros, vp[vsize - 1]);
       ASSERT (uzeros <= vzeros);
     }
 #endif
@@ -208,10 +223,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       MPN_COPY (anchor_up, orig_up, usize);
       up = anchor_up;
 
-      count_leading_zeros (d, up[usize-1]);
-      d = usize * BITS_PER_MP_LIMB - d;
-      count_leading_zeros (vbitsize, vp[vsize-1]);
-      vbitsize = vsize * BITS_PER_MP_LIMB - vbitsize;
+      count_leading_zeros (d, up[usize - 1]);
+      d -= GMP_NAIL_BITS;
+      d = usize * GMP_NUMB_BITS - d;
+      count_leading_zeros (vbitsize, vp[vsize - 1]);
+      vbitsize -= GMP_NAIL_BITS;
+      vbitsize = vsize * GMP_NUMB_BITS - vbitsize;
       ASSERT (d >= vbitsize);
       d = d - vbitsize + 1;
 
@@ -220,7 +237,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       mpn_bdivmod (up, up, usize, vp, vsize, d);
 
       /* Now skip U/V mod 2^d and any low zero limbs.  */
-      d /= BITS_PER_MP_LIMB, up += d, usize -= d;
+      d /= GMP_NUMB_BITS, up += d, usize -= d;
       while (usize != 0 && up[0] == 0)
 	up++, usize--;
 
@@ -234,12 +251,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	{
 	  /* mpn_com_n can't be used here because anchor_up and up may
 	     partially overlap */
-	  if (up[usize-1] & MP_LIMB_T_HIGHBIT)  /* U < 0; take twos' compl. */
+	  if ((up[usize - 1] & GMP_NUMB_HIGHBIT) != 0)  /* U < 0; take twos' compl. */
 	    {
 	      mp_size_t i;
-	      anchor_up[0] = -up[0];
+	      anchor_up[0] = -up[0] & GMP_NUMB_MASK;
 	      for (i = 1; i < usize; i++)
-		anchor_up[i] = ~up[i];
+		anchor_up[i] = (~up[i] & GMP_NUMB_MASK);
 	      up = anchor_up;
 	    }
 
@@ -250,7 +267,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	      unsigned int r;
 	      count_trailing_zeros (r, up[0]);
 	      mpn_rshift (anchor_up, up, usize, r);
-	      usize -= (anchor_up[usize-1] == 0);
+	      usize -= (anchor_up[usize - 1] == 0);
 	    }
 	  else if (anchor_up != up)
 	    MPN_COPY_INCR (anchor_up, up, usize);
@@ -262,49 +279,52 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	    break;			/* isn't efficient for == 2 limbs.  */
 
 	  d = vbitsize;
-	  count_leading_zeros (vbitsize, vp[vsize-1]);
-	  vbitsize = vsize * BITS_PER_MP_LIMB - vbitsize;
+	  count_leading_zeros (vbitsize, vp[vsize - 1]);
+	  vbitsize -= GMP_NAIL_BITS;
+	  vbitsize = vsize * GMP_NUMB_BITS - vbitsize;
 	  d = d - vbitsize + 1;
 
 	  if (d > BMOD_THRESHOLD)	/* Bmod reduction.  */
 	    {
 	      up[usize++] = 0;
 	      mpn_bdivmod (up, up, usize, vp, vsize, d);
-	      d /= BITS_PER_MP_LIMB, up += d, usize -= d;
+	      d /= GMP_NUMB_BITS, up += d, usize -= d;
 	    }
 	  else				/* Kary reduction.  */
 	    {
 	      mp_limb_t bp[2], cp[2];
 
-	      /* C <-- V/U mod 2^(2*BITS_PER_MP_LIMB).  */
+	      /* C <-- V/U mod 2^(2*GMP_NUMB_BITS).  */
 	      {
 		mp_limb_t u_inv, hi, lo;
 		modlimb_invert (u_inv, up[0]);
-		cp[0] = vp[0] * u_inv;
-		umul_ppmm (hi, lo, cp[0], up[0]);
-		cp[1] = (vp[1] - hi - cp[0] * up[1]) * u_inv;
+		cp[0] = (vp[0] * u_inv) & GMP_NUMB_MASK;
+		umul_ppmm (hi, lo, cp[0], up[0] << GMP_NAIL_BITS);
+		lo >>= GMP_NAIL_BITS;
+		cp[1] = (vp[1] - hi - cp[0] * up[1]) * u_inv & GMP_NUMB_MASK;
 	      }
 
 	      /* U <-- find_a (C)  *  U.  */
 	      up[usize] = mpn_mul_1 (up, up, usize, find_a (cp));
 	      usize++;
 
-	      /* B <-- A/C == U/V mod 2^(BITS_PER_MP_LIMB + 1).
-		  bp[0] <-- U/V mod 2^BITS_PER_MP_LIMB and
-		  bp[1] <-- ( (U - bp[0] * V)/2^BITS_PER_MP_LIMB ) / V mod 2
+	      /* B <-- A/C == U/V mod 2^(GMP_NUMB_BITS + 1).
+		  bp[0] <-- U/V mod 2^GMP_NUMB_BITS and
+		  bp[1] <-- ( (U - bp[0] * V)/2^GMP_NUMB_BITS ) / V mod 2
 
 		  Like V/U above, but simplified because only the low bit of
 		  bp[1] is wanted. */
 	      {
 		mp_limb_t  v_inv, hi, lo;
 		modlimb_invert (v_inv, vp[0]);
-		bp[0] = up[0] * v_inv;
-		umul_ppmm (hi, lo, bp[0], vp[0]);
-		bp[1] = (up[1] + hi + (bp[0]&vp[1])) & 1;
+		bp[0] = (up[0] * v_inv) & GMP_NUMB_MASK;
+		umul_ppmm (hi, lo, bp[0], vp[0] << GMP_NAIL_BITS);
+		lo >>= GMP_NAIL_BITS;
+		bp[1] = (up[1] + hi + (bp[0] & vp[1])) & 1;
 	      }
 
 	      up[usize++] = 0;
-	      if (bp[1])	/* B < 0: U <-- U + (-B)  * V.  */
+	      if (bp[1] != 0)	/* B < 0: U <-- U + (-B)  * V.  */
 		{
 		   mp_limb_t c = mpn_addmul_1 (up, vp, vsize, -bp[0]);
 		   mpn_add_1 (up + vsize, up + vsize, usize - vsize, c);
@@ -322,7 +342,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	  while (usize != 0 && up[0] == 0)
 	    up++, usize--;
 	}
-      while (usize);
+      while (usize != 0);
 
       /* Compute GCD (ORIG_V, GCD (ORIG_U, V)).  Binary will execute twice.  */
       up = orig_up, usize = orig_usize;
@@ -337,15 +357,17 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       if (usize > 2)		/* First make U close to V in size.  */
 	{
 	  unsigned long int vbitsize, d;
-	  count_leading_zeros (d, up[usize-1]);
-	  d = usize * BITS_PER_MP_LIMB - d;
-	  count_leading_zeros (vbitsize, vp[vsize-1]);
-	  vbitsize = vsize * BITS_PER_MP_LIMB - vbitsize;
+	  count_leading_zeros (d, up[usize - 1]);
+	  d -= GMP_NAIL_BITS;
+	  d = usize * GMP_NUMB_BITS - d;
+	  count_leading_zeros (vbitsize, vp[vsize - 1]);
+	  vbitsize -= GMP_NAIL_BITS;
+	  vbitsize = vsize * GMP_NUMB_BITS - vbitsize;
 	  d = d - vbitsize - 1;
 	  if (d != -(unsigned long int)1 && d > 2)
 	    {
 	      mpn_bdivmod (up, up, usize, vp, vsize, d);  /* Result > 0.  */
-	      d /= (unsigned long int)BITS_PER_MP_LIMB, up += d, usize -= d;
+	      d /= (unsigned long int)GMP_NUMB_BITS, up += d, usize -= d;
 	    }
 	}
 
@@ -363,7 +385,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	      unsigned int r;
 	      count_trailing_zeros (r, up[0]);
 	      mpn_rshift (up, up, usize, r);
-	      usize -= (up[usize-1] == 0);
+	      usize -= (up[usize - 1] == 0);
 	    }
 
 	  /* Keep usize >= vsize.  */
