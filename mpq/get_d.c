@@ -23,8 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#include <math.h>
-
 /* Algorithm:
    1. Develop >= n bits of src.num / src.den, where n is the number of bits
       in a double.  This (partial) division will use all bits from the
@@ -138,15 +136,14 @@ mpq_get_d (src)
     }
 
   {
-    const double limbbase = 2.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1));
     double res;
     mp_size_t i;
 
     res = qp[qsize - 1];
     for (i = qsize - 2; i >= 0; i--)
-      res = res * limbbase + qp[i];
+      res = res * MP_BASE_AS_DOUBLE + qp[i];
 
-    res = ldexp (res, BITS_PER_MP_LIMB * (nsize - dsize - N_QLIMBS));
+    res = __gmp_scale2 (res, BITS_PER_MP_LIMB * (nsize - dsize - N_QLIMBS));
 
     TMP_FREE (marker);
     return sign_quotient >= 0 ? res : -res;
