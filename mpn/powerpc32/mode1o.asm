@@ -24,7 +24,8 @@ include(`../config.m4')
 
 C      cycles/limb
 C 604e:   6.0
-C 750:    6.25-12.5 depending on divisor
+C 750:    6.0-13.0, depending on divisor
+C 7400:   6.0-13.0, depending on divisor
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,
@@ -39,6 +40,13 @@ C get at the GOT/TOC/whatever.
 C
 C Using divwu for size==1 measured about 10 cycles slower on 604e, or about
 C 3-5 cycles faster on 750.  For now it doesn't seem worth bothering with.
+C
+C The loop allows an early-out on mullw for the inverse, and on mulhwu for
+C the divisor.  So the fastest is for instance divisor==1 (inverse==-1), and
+C the slowest is anything giving a full 32-bits in both, such as
+C divisor==0xDEADBEEF (inverse==0x904B300F).  These establish the stated
+C range above for 750 and 7400.
+C
 
 ASM_START()
 PROLOGUE(mpn_modexact_1_odd)
