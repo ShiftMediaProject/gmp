@@ -1,3 +1,7 @@
+2001-08-22  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (x86 mmx): Correction to mmx path stripping.
+
 2001-08-17  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, acinclude.m4, Makefile.am, printf/Makefile.am,
