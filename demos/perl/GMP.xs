@@ -192,7 +192,7 @@ typedef struct tmp_mpf_struct        tmp_mpf_t[1];
     f->allocated_prec = mpf_get_prec (f->m);    \
   } while (0)
 
-void
+static void
 tmp_mpf_grow (tmp_mpf_ptr f, unsigned long prec)
 {
   mpf_set_prec_raw (f->m, f->allocated_prec);
@@ -690,7 +690,7 @@ coerce_long (SV *sv)
 
 /* Prepare sv to be a changable mpz.  If it's not an mpz then turn it into
    one.  If it is an mpz then ensure the reference count is 1.  */
-mpz_ptr
+static mpz_ptr
 mutate_mpz (SV *sv)
 {
   mpz  old_z, new_z;
