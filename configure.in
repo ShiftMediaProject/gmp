@@ -502,12 +502,20 @@ case ${target} in
       i686*-*-* | pentiumpro-*-*)
 	path="x86/p6 x86"
         ;;
-      [pentium[23]-*-*])
+      pentium2-*-*)
 	path="x86/p6 x86"
 	# The pentium/mmx lshift and rshift are good on p6 and can be used
         # until there's something specific for p6.
 	if test "$tmp_mmx" = yes; then
           path="x86/p6/mmx x86/pentium/mmx $path"
+        fi
+        ;;
+      pentium3-*-*)
+	path="x86/p6 x86"
+	# The pentium/mmx lshift and rshift are good on p6 and can be used
+        # until there's something specific for p6.
+	if test "$tmp_mmx" = yes; then
+          path="x86/p6/p3mmx x86/p6/mmx x86/pentium/mmx $path"
         fi
         ;;
       k6*-*-*)
