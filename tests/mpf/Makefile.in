@@ -125,7 +125,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d \
-  t-misc t-fits t-get_si t-int_p
+  t-misc t-fits t-get_si t-int_p t-trunc
 
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpf
@@ -135,7 +135,7 @@ CONFIG_CLEAN_FILES =
 check_PROGRAMS =  t-add$(EXEEXT) t-sub$(EXEEXT) t-conv$(EXEEXT) \
 t-sqrt$(EXEEXT) t-muldiv$(EXEEXT) t-dm2exp$(EXEEXT) reuse$(EXEEXT) \
 t-get_d$(EXEEXT) t-misc$(EXEEXT) t-fits$(EXEEXT) t-get_si$(EXEEXT) \
-t-int_p$(EXEEXT)
+t-int_p$(EXEEXT) t-trunc$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I../../demos/expr
 CPPFLAGS = @CPPFLAGS@
@@ -214,13 +214,19 @@ t_sub_LDADD = $(LDADD)
 t_sub_DEPENDENCIES =  $(top_builddir)/tests/libtests.la \
 $(top_builddir)/libgmp.la
 t_sub_LDFLAGS = 
+t_trunc_SOURCES = t-trunc.c
+t_trunc_OBJECTS =  t-trunc$U.$(OBJEXT)
+t_trunc_LDADD = $(LDADD)
+t_trunc_DEPENDENCIES =  $(top_builddir)/tests/libtests.la \
+$(top_builddir)/libgmp.la
+t_trunc_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  reuse.c t-add.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c \
-t-get_si.c t-int_p.c t-misc.c t-muldiv.c t-sqrt.c t-sub.c
+t-get_si.c t-int_p.c t-misc.c t-muldiv.c t-sqrt.c t-sub.c t-trunc.c
 depcomp = 
 DIST_COMMON =  Makefile.am Makefile.in
 
@@ -228,8 +234,8 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = reuse.c t-add.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c t-get_si.c t-int_p.c t-misc.c t-muldiv.c t-sqrt.c t-sub.c
-OBJECTS = reuse$U.$(OBJEXT) t-add$U.$(OBJEXT) t-conv$U.$(OBJEXT) t-dm2exp$U.$(OBJEXT) t-fits$U.$(OBJEXT) t-get_d$U.$(OBJEXT) t-get_si$U.$(OBJEXT) t-int_p$U.$(OBJEXT) t-misc$U.$(OBJEXT) t-muldiv$U.$(OBJEXT) t-sqrt$U.$(OBJEXT) t-sub$U.$(OBJEXT)
+SOURCES = reuse.c t-add.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c t-get_si.c t-int_p.c t-misc.c t-muldiv.c t-sqrt.c t-sub.c t-trunc.c
+OBJECTS = reuse$U.$(OBJEXT) t-add$U.$(OBJEXT) t-conv$U.$(OBJEXT) t-dm2exp$U.$(OBJEXT) t-fits$U.$(OBJEXT) t-get_d$U.$(OBJEXT) t-get_si$U.$(OBJEXT) t-int_p$U.$(OBJEXT) t-misc$U.$(OBJEXT) t-muldiv$U.$(OBJEXT) t-sqrt$U.$(OBJEXT) t-sub$U.$(OBJEXT) t-trunc$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -334,6 +340,10 @@ t-sqrt$(EXEEXT): $(t_sqrt_OBJECTS) $(t_sqrt_DEPENDENCIES)
 t-sub$(EXEEXT): $(t_sub_OBJECTS) $(t_sub_DEPENDENCIES)
 	@rm -f t-sub$(EXEEXT)
 	$(LINK) $(t_sub_LDFLAGS) $(t_sub_OBJECTS) $(t_sub_LDADD) $(LIBS)
+
+t-trunc$(EXEEXT): $(t_trunc_OBJECTS) $(t_trunc_DEPENDENCIES)
+	@rm -f t-trunc$(EXEEXT)
+	$(LINK) $(t_trunc_LDFLAGS) $(t_trunc_OBJECTS) $(t_trunc_LDADD) $(LIBS)
 .c.o:
 	$(COMPILE) -c $<
 .c.obj:
@@ -364,12 +374,15 @@ t-sqrt_.c: t-sqrt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sqrt.c; then echo $(srcdir)/t-sqrt.c; else echo t-sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-sqrt_.c
 t-sub_.c: t-sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sub.c; then echo $(srcdir)/t-sub.c; else echo t-sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-sub_.c
+t-trunc_.c: t-trunc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-trunc.c; then echo $(srcdir)/t-trunc.c; else echo t-trunc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-trunc_.c
 reuse_.$(OBJEXT) reuse_.lo t-add_.$(OBJEXT) t-add_.lo t-conv_.$(OBJEXT) \
 t-conv_.lo t-dm2exp_.$(OBJEXT) t-dm2exp_.lo t-fits_.$(OBJEXT) \
 t-fits_.lo t-get_d_.$(OBJEXT) t-get_d_.lo t-get_si_.$(OBJEXT) \
 t-get_si_.lo t-int_p_.$(OBJEXT) t-int_p_.lo t-misc_.$(OBJEXT) \
 t-misc_.lo t-muldiv_.$(OBJEXT) t-muldiv_.lo t-sqrt_.$(OBJEXT) \
-t-sqrt_.lo t-sub_.$(OBJEXT) t-sub_.lo : $(ANSI2KNR)
+t-sqrt_.lo t-sub_.$(OBJEXT) t-sub_.lo t-trunc_.$(OBJEXT) t-trunc_.lo : \
+$(ANSI2KNR)
 
 tags: TAGS
 
