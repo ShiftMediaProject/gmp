@@ -165,8 +165,8 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
     __asm__ ("xma.hu %0 = %1, %2, f0"					\
-	     : "=e" (ph)						\
-	     : "e" (m0), "e" (m1));					\
+	     : "=f" (ph)						\
+	     : "f" (m0), "f" (m1));					\
     (pl) = __m0 * __m1;							\
   } while (0)
 #define count_leading_zeros(count, x) \
