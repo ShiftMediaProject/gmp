@@ -1,15 +1,8 @@
 divert(-1)
 dnl
 dnl  m4 macros for gmp assembly code, shared by all CPUs.
-dnl
-dnl  These macros are designed for use with any m4 and have been used on
-dnl  GNU, FreeBSD, OpenBSD and SysV.
-dnl
-dnl  GNU m4 and OpenBSD 2.7 m4 will give filenames and line numbers in error
-dnl  messages.
 
-
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -29,6 +22,13 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
+dnl  These macros are designed for use with any m4 and have been used on
+dnl  GNU, FreeBSD, NetBSD, OpenBSD and SysV.
+dnl
+dnl  GNU m4 and OpenBSD 2.7 m4 will give filenames and line numbers in error
+dnl  messages.
+dnl
+dnl
 dnl  Macros:
 dnl
 dnl  Most new m4 specific macros have an "m4_" prefix to emphasise they're
@@ -109,7 +109,7 @@ dnl       expression is ok, it just can't be a final result.  "-(" will of
 dnl       course upset parsing, with all sorts of strange effects.
 dnl
 dnl  eval() <<,>> - SysV m4 doesn't support shift operators in eval() (on
-dnl       SunOS 5.7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
+dnl       Solaris 7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
 dnl       m4_lshift() and m4_rshift() below for workarounds.
 dnl
 dnl  m4wrap() sequence - in BSD m4, m4wrap() replaces any previous m4wrap()
@@ -118,12 +118,13 @@ dnl       See m4wrap_prepend() below which brings uniformity to this.
 dnl
 dnl  m4wrap() 0xFF - old versions of BSD m4 store EOF in a C "char" under an
 dnl       m4wrap() and on systems where char is unsigned by default a
-dnl       spurious 0xFF is output.  This has been observed on recent Unicos
-dnl       Alpha and MacOS X systems.  An autoconf test is used to check for
-dnl       this, see the m4wrap handling below.  It might work to end the
-dnl       m4wrap string with a dnl to consume the 0xFF, but that probably
-dnl       induces the offending m4's to read from an already closed "FILE
-dnl       *", which could be bad on a glibc style stdio.
+dnl       spurious 0xFF is output.  This has been observed on recent Cray
+dnl       Unicos Alpha, Apple MacOS X, and HPUX 11 systems.  An autoconf
+dnl       test is used to check for this, see the m4wrap handling below.  It
+dnl       might work to end the m4wrap string with a dnl to consume the
+dnl       0xFF, but that probably induces the offending m4's to read from an
+dnl       already closed "FILE *", which could be bad on a glibc style
+dnl       stdio.
 dnl
 dnl  __file__,__line__ - GNU m4 and OpenBSD 2.7 m4 provide these, and
 dnl       they're used here to make error messages more informative.  GNU m4
