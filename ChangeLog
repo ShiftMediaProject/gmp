@@ -1,3 +1,77 @@
+2000-04-23  Kevin Ryde  <kevin@swox.se>
+
+	* tune/Makefile.am, common.c, rdtsc.asm, speed.c, speed.h, time.c,
+	tuneup.c: New files.
+	* tune/Makefile.in: New file, generated from Makefile.am.
+
+	* gmp-impl.h (ASSERT_NOREALLOC,TMP_ALLOC_LIMBS): New macros.
+	[TUNE_PROGRAM_BUILD] Further mods for tune program builds.
+
+	* mpz/Makefile.am: Add -DOPERATION_$* for new mul_siui.c.
+	Add rules to build mul_si and mul_ui from a common mul_siui.c.
+	* mpz/mul_siui.c: New file, derived from and replacing mul_ui.c.
+	* gmp.h (mpz_mul_si): New prototype and define.
+
+	* mpn/tests/*.c [__i386__] (CLOCK): Don't use floating point in
+	CLOCK because cpp can't handle floats in #if's (TIMES is derived
+	from CLOCK by default).
+
+	* mpn/asm-defs.m4 (include_mpn): New macro.
+	(m4_assert_numargs) Changes to implementation.
+
+	* mpf/Makefile.am: Add -DOPERATION_$* for new integer.c.
+	Remove explicit rules for floor.o etc.
+	* mpf/integer.c: Use OPERATION_$* for floor/ceil/trunc compiles.
+
+	* mpn/Makefile.am: Put "tests" in SUBDIRS.
+	* mpn/tests/Makefile.am: New file providing rules to build test
+	programs, nothing done in a "make all" or "make check" though.
+	* mpn/tests/README: New file.
+
+	* acconfig.h (HAVE_PENTIUM_RDTSC): New define.
+
+	* configure.in (x86): Rearrange target cases.
+	Add mulfunc aors_n and aorsmul_1 for x86 and pentium (now all x86s).
+	Remove asm-syntax.h generation not needed.
+	Remove now unused family=x86.
+	(sparc) Remove unused family=sparc.
+	(HAVE_PENTIUM_RDTSC) New AC_DEFINE and AM_CONDITIONAL.
+	(AM_C_PROTOTYPES) New test, supporting ansi2knr.
+	(AC_CHECK_HEADERS) Add getopt.h, unistd.h and sys/sysctl.h for
+	tune progs.
+	(AC_CHECK_FUNCS) Add getopt_long, sysconf and sysctlbyname for
+	tune progs.
+	(config.m4 CONFIG_TOP_SRCDIR) Renamed from CONFIG_SRCDIR.
+	(config.m4 asm-defs.m4) Use CONFIG_TOP_SRCDIR and include().
+	(gmp_m4postinc) Use include_mpn().
+	(gmp_links) Omit asm-defs.m4/asm.m4 and gmp_m4postinc's.
+	(MULFUNC_PROLOGUE) Fix regexps so all functions get AC_DEFINE'd.
+	(PROLOGUE) Ditto (native copyi and copyd were unused in gmp 3).
+	(KARATSUBA_SQR_THRESHOLD) Copy from gmp-mparam.h into config.m4.
+	(AC_OUTPUT) Add tune/Makefile, mpn/tests/Makefile.
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Add ansi2knr.
+	(SUBDIRS): Add tune, reorder directories.
+	(MPZ_OBJECTS): Add mpz/mul_si.lo.
+	(libmp_la_SOURCES): Use this for top-level objects, not .lo's.
+	* ansi2knr.{c,1}: New files, provided by automake.
+
+	* mpn/x86/aors_n.asm: Convert add_n.S and sub_n.S to a
+	multi-function aors_n.asm, no object code change.
+	* mpn/x86/pentium/aors_n.asm: Ditto.
+	* mpn/x86/aorsmul_1.asm: Ditto for addmul/submul.
+	* mpn/x86/pentium/aorsmul_1.asm: Ditto.
+
+	* mpn/x86/{lshift,mul_1,mul_basecase,rshift}.asm: Convert from .S,
+	no object code change.
+	* mpn/x86/pentium/{lshift,mul_1,mul_basecase,rshift}.asm: Ditto.
+
+	* gmp.texi (Reporting Bugs): Itemize the list of things to include.
+	(Miscellaneous Float Functions): Correct typo in mpf_ceil etc
+	argument types.
+	Change @ifinfo -> @ifnottex for benefit of makeinfo --html.
+	Remove unnecessary @iftex's around @tex.
+
 2000-04-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/nextprime.c: Rewrite still disabled code.
