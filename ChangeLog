@@ -1,3 +1,11 @@
+2000-04-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_n.c (INVERSE_3): New name for THIRD, define for
+	any BITS_PER_MP_LIMB.
+	(MP_LIMB_T_MAX): New.
+	(mpn_divexact3_n): Remove.
+	(interpolate3): Use mpn_divexact_by3 instead of mpn_divexact3_n.
+
 2000-04-05  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (KARATSUBA_MUL_THRESHOLD<2): Remove cpp test.
