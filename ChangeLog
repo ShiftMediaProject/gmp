@@ -1,5 +1,7 @@
 2000-10-24  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/x86/k6/cross.pl: Support 8 and 16 byte code alignment.
+
 	* mpq/aors.c, mpq/canonicalize.c: Skip two mpz_divexact calls if
 	gcd gives 1, which should be 60% of the time.
 	* gmp-impl.h (MPZ_EQUAL_1_P): New macro.
