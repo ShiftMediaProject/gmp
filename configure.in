@@ -1376,7 +1376,7 @@ if test "$gmp_asm_syntax_testing" != no; then
   GMP_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
 
   case $host in
-    powerpc*-*-*)
+    power*-*-*)
       GMP_ASM_POWERPC_R_REGISTERS
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
       case $host in
