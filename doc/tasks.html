@@ -318,6 +318,10 @@
        AC_PROG_F77 if such a file is found, .  Hopefully automake will
        generate everything needed in the makefiles.
 
+  <li> Only run GMP_PROG_M4 if it's needed, ie. if there's .asm files
+       selected from the mpn path.  This might help say a generic C
+       build on weird systems.
+
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
