@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for x86 assembler.
 
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -85,7 +85,7 @@ m4_assert_defined(`MCOUNT_NONPIC_CALL')
 `ifelse(ifdef(`PIC',`MCOUNT_PIC_REG',`MCOUNT_NONPIC_REG'),,,
 `	DATA
 	ALIGN(4)
-L(mcount_data):
+L(mcount_data_`'mcount_data_counter):
 	W32	0
 	TEXT
 ')dnl
@@ -97,18 +97,21 @@ ifdef(`PIC',
 `	pushl	%ebx
 	mcount_movl_GOT_ebx
 ifelse(MCOUNT_PIC_REG,,,
-`	leal	L(mcount_data)@GOTOFF(%ebx), MCOUNT_PIC_REG')
+`	leal	L(mcount_data_`'mcount_data_counter)@GOTOFF(%ebx), MCOUNT_PIC_REG')
 MCOUNT_PIC_CALL
 	popl	%ebx
 ',`dnl non-PIC
 ifelse(MCOUNT_NONPIC_REG,,,
-`	movl	`$'L(mcount_data), MCOUNT_NONPIC_REG
+`	movl	`$'L(mcount_data_`'mcount_data_counter), MCOUNT_NONPIC_REG
 ')dnl
 MCOUNT_NONPIC_CALL
 ')dnl
 ifelse(WANT_PROFILING,`gprof',
 `	popl	%ebp
-')')
+')
+define(`mcount_data_counter',eval(mcount_data_counter+1))')
+
+define(mcount_data_counter,1)
 
 dnl  Called: mcount_movl_GOT_ebx
 dnl  Label H is "here", the %eip obtained from the call.  C is the called
@@ -184,6 +187,7 @@ defframe_empty_if_zero(FRAME+($2))(%esp)')')
 
 dnl  Called: defframe_empty_if_zero(expression)
 define(defframe_empty_if_zero,
+m4_assert_numargs(1)
 `ifelse(defframe_empty_if_zero_disabled,1,
 `eval($1)',
 `m4_empty_if_zero($1)')')
@@ -243,6 +247,7 @@ dnl  Notice the defframe() is done with an unquoted -FRAME thus giving its
 dnl  current value without tracking future changes.
 
 define(defframe_pushl,
+m4_assert_numargs(1)
 `FRAME_pushl()defframe(`$1',-FRAME)')
 
 
@@ -330,6 +335,7 @@ dnl
 dnl  Expand to 1 if cmov is available, 0 if not.
 
 define(cmov_available_p,
+m4_assert_numargs(-1)
 `m4_ifdef_anyof_p(
 	`HAVE_HOST_CPU_pentiumpro',
 	`HAVE_HOST_CPU_pentium2',
@@ -349,6 +355,7 @@ dnl
 dnl  x86_lookup_p expands to 1 if `target' is found, or 0 if not.
 
 define(x86_lookup,
+m4_assert_numargs_range(1,999)
 `ifelse(eval($#<3),1,
 `m4_error(`unrecognised part of x86 instruction: $1
 ')',
@@ -356,6 +363,7 @@ define(x86_lookup,
 `x86_lookup(`$1',shift(shift(shift($@))))')')')
 
 define(x86_lookup_p,
+m4_assert_numargs_range(1,999)
 `ifelse(eval($#<3),1, `0',
 `ifelse(`$1',`$2',    `1',
 `x86_lookup_p(`$1',shift(shift(shift($@))))')')')
@@ -570,12 +578,14 @@ dnl  this loop_or_decljnz variation is enough to let the code be shared by
 dnl  all chips.
 
 define(loop_or_decljnz,
+m4_assert_numargs(-1)
 `ifelse(loop_is_better_p,1,
 	`loop',
 	`decl	%ecx
 	jnz')')
 
 define(loop_is_better_p,
+m4_assert_numargs(-1)
 `m4_ifdef_anyof_p(`HAVE_HOST_CPU_k6',
                   `HAVE_HOST_CPU_k62',
                   `HAVE_HOST_CPU_k63',
@@ -612,6 +622,7 @@ dnl  needed for any different operation or registers.  The table is split
 dnl  into separate macros to avoid overflowing BSD m4 macro expansion space.
 
 define(Zdisp,
+m4_assert_numargs(4)
 `define(`Zdisp_found',0)dnl
 Zdisp_1($@)dnl
 Zdisp_2($@)dnl
@@ -667,6 +678,7 @@ Zdisp_match( movd, %mm0, 0,(%edx,%ecx,4), `0x0f,0x7e,0x44,0x8a,0x00', $@)`'dnl
 ')
 
 define(Zdisp_match,
+m4_assert_numargs(9)
 `ifelse(eval(m4_stringequal_p(`$1',`$6')
 	&& m4_stringequal_p(`$2',0)
 	&& m4_stringequal_p(`$3',`$8')
@@ -715,6 +727,7 @@ dnl  just a plain "shldl ...", an error results.  This ensures the necessary
 dnl  variant treatment of %cl isn't accidentally bypassed.
 
 define(define_shd_instruction,
+m4_assert_numargs(1)
 `define($1,
 m4_instruction_wrapper()
 m4_assert_numargs(3)
@@ -792,6 +805,7 @@ dnl  won't suffer from the two forwards references bug in old gas (described
 dnl  in mpn/x86/README).
 
 define(movl_text_address,
+m4_assert_numargs(2)
 `ifdef(`PIC',
 	`call	L(movl_text_address_`'movl_text_address_counter)
 L(movl_text_address_`'movl_text_address_counter):
@@ -801,6 +815,18 @@ define(`movl_text_address_counter',incr(movl_text_address_counter))',
 	`movl	`$'$1, $2')')
 
 define(movl_text_address_counter,1)
+
+
+dnl  Usage: notl_or_xorl_GMP_NUMB_MASK(reg)
+dnl
+dnl  Expand to either "notl `reg'" or "xorl $GMP_NUMB_BITS,`reg'" as
+dnl  appropriate for nails in use or not.
+
+define(notl_or_xorl_GMP_NUMB_MASK,
+m4_assert_numargs(1)
+`ifelse(GMP_NAIL_BITS,0,
+`notl	`$1'',
+`xorl	$GMP_NUMB_MASK, `$1'')')
 
 
 divert`'dnl
