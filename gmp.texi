@@ -1415,6 +1415,11 @@ The @code{si} and @code{ui} functions exist for convenience and should be used
 where applicable.  But if for example an @code{mpz_t} contains a value that
 fits in an @code{unsigned long} there's no need extract it and call a
 @code{ui} function, just use the regular @code{mpz} function.
+
+@item Number Sequences
+Functions like @code{mpz_fac_ui}, @code{mpz_fib_ui} and @code{mpz_bin_uiui}
+are designed for calculating isolated values.  If a range of values is wanted
+it's probably better to call to get a starting point and iterate from there.
 @end table
 
 
