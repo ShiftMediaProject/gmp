@@ -1,6 +1,6 @@
 /* mpq_div -- divide two rational numbers.
 
-Copyright (C) 1991, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1994, 1995, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -35,6 +35,9 @@ mpq_div (quot, op1, op2)
   mpz_t gcd1, gcd2;
   mpz_t tmp1, tmp2;
   mpz_t numtmp;
+
+  if (op2->_mp_num._mp_size == 0)
+    DIVIDE_BY_ZERO;
 
   mpz_init (gcd1);
   mpz_init (gcd2);
