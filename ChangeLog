@@ -19,6 +19,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-30  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/s370: Rename to s390.
+	* configure.in (s3[6-9]0*-*-*): Update.
+	* mpn/Makefile.am (TARG_DIST): Add s390.
+
+	* mpz/fits_s.c, mpf/fits_s.c, mpf/fits_u.c: Remove files, unused since
+	change to .h style.
+
 2001-11-29  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-h.in: Declare mpz_get_d_2exp and mpf_get_d_2exp.
