@@ -431,9 +431,7 @@ speed_option_set (const char *s)
    s->size can be used creatively, and s->xp and s->yp can be ignored.  For
    example, speed_mpz_fac_ui() uses s->size as n for the factorial.  s->r is
    just a user-supplied parameter.  speed_mpn_lshift() uses it as a shift,
-   speed_mpn_mul_1() uses it as a multiplier.
-
-*/
+   speed_mpn_mul_1() uses it as a multiplier.  */
 
 
 /* MPN_COPY etc can be macros, so the _CALL forms are necessary */
@@ -536,13 +534,6 @@ speed_mpn_mod_1c (struct speed_params *s)
 }
 #endif
 
-#if 0
-double
-speed_mpn_divexact_by3c (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_COPYC (mpn_divexact_by3c);
-}
-#endif
 double
 speed_mpn_divexact_by3 (struct speed_params *s)
 {
@@ -568,7 +559,6 @@ speed_mpn_bz_tdiv_qr (struct speed_params *s)
 }
 
 
-
 double
 speed_mpn_popcount (struct speed_params *s)
 {
@@ -579,7 +569,6 @@ speed_mpn_hamdist (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_HAMDIST (mpn_hamdist);
 }
-
 
 
 double
