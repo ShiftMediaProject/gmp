@@ -404,9 +404,17 @@ unsigned long int mpz_cdiv_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATT
 void mpz_clear _PROTO ((mpz_ptr));
 void mpz_clrbit _PROTO ((mpz_ptr, unsigned long int));
 int mpz_cmp _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define mpz_cmp_d __gmp_mpz_cmp_d
+int     mpz_cmp_d _PROTO ((mpz_srcptr, double)) __GMP_ATTRIBUTE_PURE;
+
 int _mpz_cmp_si _PROTO ((mpz_srcptr, signed long int)) __GMP_ATTRIBUTE_PURE;
 int _mpz_cmp_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 int mpz_cmpabs _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define mpz_cmpabs_d __gmp_mpz_cmpabs_d
+int     mpz_cmpabs_d _PROTO ((mpz_srcptr, double)) __GMP_ATTRIBUTE_PURE;
+
 int mpz_cmpabs_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 void mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
 
@@ -420,6 +428,12 @@ int     mpz_congruent_2exp_p _PROTO ((mpz_srcptr a, mpz_srcptr c, unsigned long 
 int     mpz_congruent_ui_p _PROTO ((mpz_srcptr a, unsigned long c, unsigned long d)) __GMP_ATTRIBUTE_PURE;
 
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_divexact_si __gmpz_divexact_si
+void    mpz_divexact_si _PROTO ((mpz_ptr, mpz_srcptr, long));
+
+#define mpz_divexact_ui __gmpz_divexact_ui
+void    mpz_divexact_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
 
 #define mpz_divisible_p __gmpz_divisible_p
 int     mpz_divisible_p _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
@@ -702,7 +716,12 @@ void mpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_add_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_ceil _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_clear _PROTO ((mpf_ptr));
+
 int mpf_cmp _PROTO ((mpf_srcptr, mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define mpf_cmp_d __gmpf_cmp_d
+int     mpf_cmp_d _PROTO ((mpf_srcptr, double)) __GMP_ATTRIBUTE_PURE;
+
 int mpf_cmp_si _PROTO ((mpf_srcptr, signed long int)) __GMP_ATTRIBUTE_PURE;
 int mpf_cmp_ui _PROTO ((mpf_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 void mpf_div _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
@@ -731,6 +750,10 @@ int mpf_fits_ushort_p _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 void mpf_floor _PROTO ((mpf_ptr, mpf_srcptr));
 double mpf_get_d _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define           mpf_get_default_prec __gmpf_get_default_prec
+unsigned long int mpf_get_default_prec _PROTO ((void)) __GMP_ATTRIBUTE_PURE;
+
 unsigned long int mpf_get_prec _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpf_get_si __gmpf_get_si
