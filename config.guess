@@ -141,13 +141,18 @@ mips-*-irix[6789]*)
   ;;
 
 m68k-*-*)
-  # NetBSD (and presumably other *BSD) "sysctl hw.model" gives
+  # NetBSD (and presumably other *BSD) "sysctl hw.model" gives for example
   #   hw.model = Apple Macintosh Quadra 610  (68040)
   exact_cpu=`(sysctl hw.model) 2>/dev/null | sed -n 's/^.*\(680[012346]0\).*$/m\1/p'`
   if test -z "$exact_cpu"; then
+    # Linux kernel 2.2 gives for example "CPU: 68020" (tabs in between).
+    exact_cpu=`sed -n 's/^CPU:.*\(680[012346]0\).*$/m\1/p' /proc/cpuinfo 2>/dev/null`
+  fi
+  if test -z "$exact_cpu"; then
     # See if we can run: movel #0,%d0, rts
     # .byte is used to avoid problems with assembler syntax variations.
-    # For testing, add "illegal" using ".byte 0x4A, 0xFC" to provoke failures.
+    # For testing, add "illegal" possibly with ".byte 0x4A, 0xFC" to provoke
+    # failures.
     cat >$dummy.s <<EOF
 	.text
 	.globl main
