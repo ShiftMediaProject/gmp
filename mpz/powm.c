@@ -26,8 +26,12 @@ MA 02111-1307, USA. */
 
 /* returns -1/m mod 2^BITS_PER_MP_LIMB, suppose m odd */
 static mp_limb_t
+#if __STDC__
+mpz_dmprepare (mpz_srcptr m)
+#else
 mpz_dmprepare (m)
-     mpz_t m;
+     mpz_srcptr m;
+#endif
 {
   mp_limb_t m0, x; int k;
 
@@ -46,9 +50,16 @@ mpz_dmprepare (m)
 
 /* set c <- (a*b)/R^n mod m c has to have at least (2n) allocated limbs */
 static void
+#if __STDC__
+mpz_redc (mpz_t c, mpz_t a, mpz_t b, mpz_srcptr m, mp_limb_t Nprim)
+#else
 mpz_redc (c, a, b, m, Nprim)
-     mpz_t c, a, b, m;
+     mpz_t c;
+     mpz_t a;
+     mpz_t b;
+     mpz_srcptr m;
      mp_limb_t Nprim;
+#endif
 {
   mp_ptr cp, mp = PTR (m);
   mp_limb_t cy, cout = 0;
@@ -167,7 +178,7 @@ pow (base, e, mod, res)
       K *= 2;
     }
 
-  g = (*_mp_allocate_func) (K / 2 * sizeof (mpz_t));
+  g = (mpz_t *) (*_mp_allocate_func) (K / 2 * sizeof (mpz_t));
   /* compute x*R^n where R=2^BITS_PER_MP_LIMB */
   mpz_init (g[0]);
   if (use_redc)
