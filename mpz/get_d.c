@@ -38,6 +38,19 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
   return 1;
 }
 
+/* HPPA 8000, 8200, 8500, and 8600 traps FCNV,UDW,DBL for values >= 2^63.  This
+   makes it slow.  Worse, the Linux kernel apparently uses untested code in its
+   trap handling routines, and gets the sign wrong.  Their compiler port
+   doesn't define __hppa as it should.  Here is a workaround:  */
+#if (defined (__hppa) || defined (__hppa__)) && GMP_LIMB_BITS == 64
+#define limb2dbl(limb) \
+    ((limb) >> (GMP_LIMB_BITS - 1) != 0  				\
+     ? 2.0 * (double) (mp_limb_signed_t) (((limb) >> 1) | ((limb) & 1))	\
+     : (double) (mp_limb_signed_t) (limb))
+#else
+#define limb2dbl(limb) \
+    (double) (limb)
+#endif
 
 double
 mpz_get_d (mpz_srcptr src)
@@ -59,11 +72,12 @@ mpz_get_d (mpz_srcptr src)
 
   if (size == 1)
     {
-      res = qp[size - 1];
+      res = limb2dbl (qp[size - 1]);
     }
   else if (size == 2)
     {
-      res = MP_BASE_AS_DOUBLE * qp[size - 1] + qp[size - 2];
+      res = (MP_BASE_AS_DOUBLE * limb2dbl (qp[size - 1])
+	     + limb2dbl (qp[size - 2]));
     }
   else
     {
@@ -93,7 +107,7 @@ mpz_get_d (mpz_srcptr src)
 	    lz += (! mpn_zero_p (qp, size - 2));
 	}
 #endif
-      res = MP_BASE_AS_DOUBLE * hz + lz;
+      res = MP_BASE_AS_DOUBLE * limb2dbl (hz) + limb2dbl (lz);
       res = __gmp_scale2 (res, (size - 2) * GMP_NUMB_BITS - cnt);
 #endif
 #if BITS_PER_MP_LIMB == 64
@@ -111,7 +125,7 @@ mpz_get_d (mpz_srcptr src)
 	    hz += (! mpn_zero_p (qp, size - 1));
 	}
 #endif
-      res = hz;
+      res = limb2dbl (hz);
       res = __gmp_scale2 (res, (size - 1) * GMP_NUMB_BITS - cnt);
 #endif
     }

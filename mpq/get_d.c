@@ -48,6 +48,20 @@ MA 02111-1307, USA. */
       subtract 1 in both cases instead.
 */
 
+/* HPPA 8000, 8200, 8500, and 8600 traps FCNV,UDW,DBL for values >= 2^63.  This
+   makes it slow.  Worse, the Linux kernel apparently uses untested code in its
+   trap handling routines, and gets the sign wrong.  Their compiler port
+   doesn't define __hppa as it should.  Here is a workaround:  */
+#if (defined (__hppa) || defined (__hppa__)) && GMP_LIMB_BITS == 64
+#define limb2dbl(limb) \
+    ((limb) >> (GMP_LIMB_BITS - 1) != 0  				\
+     ? 2.0 * (double) (mp_limb_signed_t) (((limb) >> 1) | ((limb) & 1))	\
+     : (double) (mp_limb_signed_t) (limb))
+#else
+#define limb2dbl(limb) \
+    (double) (limb)
+#endif
+
 double
 mpq_get_d (const MP_RAT *src)
 {
@@ -149,9 +163,9 @@ mpq_get_d (const MP_RAT *src)
       }
 #endif
 
-    res = qp[qsize - 1];
+    res = limb2dbl (qp[qsize - 1]);
     for (i = qsize - 2; i >= 0; i--)
-      res = res * MP_BASE_AS_DOUBLE + qp[i];
+      res = res * MP_BASE_AS_DOUBLE + limb2dbl (qp[i]);
 
     res = __gmp_scale2 (res, GMP_NUMB_BITS * scale);
 
