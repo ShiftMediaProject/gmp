@@ -29,13 +29,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-if HAVE_CXX
-CHECK_CXX = t-ostream
-endif
-check_PROGRAMS = t-printf $(CHECK_CXX)
+check_PROGRAMS = t-printf
 TESTS = $(check_PROGRAMS)
-
-t_ostream_SOURCES = t-ostream.cc
 
 # t-printf.tmp is used by t-printf.c, removed automatically if the tests pass
 CLEANFILES = t-printf.tmp
