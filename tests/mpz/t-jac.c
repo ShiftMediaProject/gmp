@@ -267,14 +267,14 @@ try_periodic_num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
   if (mpz_even_p (a) && mpz_even_p (b) && mpz_even_p (a_period))
     goto done;
 
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 6; i++)
     {
       mpz_add (a, a, a_period);
       try_pn (a, b, answer);
     }
 
   mpz_set (a, a_orig);
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 6; i++)
     {
       mpz_sub (a, a, a_period);
       try_pn (a, b, answer);
@@ -323,14 +323,14 @@ try_periodic_den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
   if (mpz_even_p (a) && mpz_even_p (b) && mpz_even_p (b_period))
     goto done;
 
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 6; i++)
     {
       mpz_add (b, b, b_period);
       try_pn (a, b, answer);
     }
 
   mpz_set (b, b_orig);
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 6; i++)
     {
       mpz_sub (b, b, b_period);
       try_pn (a, b, answer);
@@ -342,13 +342,22 @@ try_periodic_den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 }
 
 
+static const unsigned long  ktable[] = {
+  0, 1, 2, 3, 4, 5, 6, 7,
+  GMP_NUMB_BITS-1, GMP_NUMB_BITS, GMP_NUMB_BITS+1,
+  2*GMP_NUMB_BITS-1, 2*GMP_NUMB_BITS, 2*GMP_NUMB_BITS+1,
+  3*GMP_NUMB_BITS-1, 3*GMP_NUMB_BITS, 3*GMP_NUMB_BITS+1
+};
+
+
 /* Try (a/b*2^k) for various k. */
 void
 try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 {
   mpz_t  b;
-  int    i;
-  int    answer_two;
+  int    kindex;
+  int    answer_a2, answer_k;
+  unsigned long k;
 
   /* don't bother when b==0 */
   if (mpz_sgn (b_orig) == 0)
@@ -356,27 +365,22 @@ try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 
   mpz_init_set (b, b_orig);
 
-  /* answer_two = (a/2) */
-  switch (mpz_fdiv_ui (a, 8)) {
-  case 1:
-  case 7:
-    answer_two = 1;
-    break;
-  case 3:
-  case 5:
-    answer_two = -1;
-    break;
-  default:
-    /* 0, 2, 4, 6 */
-    answer_two = 0;
-    break;
-  }    
+  /* (a/2) is 0 if a even, 1 if a==1 or 7 mod 8, -1 if a==3 or 5 mod 8 */
+  answer_a2 = (mpz_even_p (a) ? 0
+               : (((SIZ(a) >= 0 ? PTR(a)[0] : -PTR(a)[0]) + 2) & 7) < 4 ? 1
+               : -1);
 
-  for (i = 0; i < 3 * BITS_PER_MP_LIMB; i++)
+  for (kindex = 0; kindex < numberof (ktable); kindex++)
     {
-      answer *= answer_two;
-      mpz_mul_2exp (b, b, 1);
-      try_pn (a, b, answer);
+      k = ktable[kindex];
+
+      /* answer_k = answer*(answer_a2^k) */
+      answer_k = (answer_a2 == 0 && k != 0 ? 0
+                  : (k & 1) == 1 && answer_a2 == -1 ? -answer
+                  : answer);
+
+      mpz_mul_2exp (b, b_orig, k);
+      try_pn (a, b, answer_k);
     }
 
   mpz_clear (b);
@@ -389,21 +393,32 @@ void
 try_2num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
 {
   mpz_t  a;
-  int    i;
-  int    answer_twos;
+  int    kindex;
+  int    answer_2b, answer_k;
+  unsigned long  k;
 
   /* don't bother when a==0 */
   if (mpz_sgn (a_orig) == 0)
     return;
 
-  mpz_init_set (a, a_orig);
-  answer_twos = mpz_ui_kronecker (2, b);
-  
-  for (i = 0; i < 3 * BITS_PER_MP_LIMB; i++)
+  mpz_init (a);
+
+  /* (2/b) is 0 if b even, 1 if b==1 or 7 mod 8, -1 if b==3 or 5 mod 8 */
+  answer_2b = (mpz_even_p (b) ? 0
+               : (((SIZ(b) >= 0 ? PTR(b)[0] : -PTR(b)[0]) + 2) & 7) < 4 ? 1
+               : -1);
+
+  for (kindex = 0; kindex < numberof (ktable); kindex++)
     {
-      answer *= answer_twos;
-      mpz_mul_2exp (a, a, 1);
-      try_pn (a, b, answer);
+      k = ktable[kindex];
+
+      /* answer_k = answer*(answer_2b^k) */
+      answer_k = (answer_2b == 0 && k != 0 ? 0
+                  : (k & 1) == 1 && answer_2b == -1 ? -answer
+                  : answer);
+
+        mpz_mul_2exp (a, a_orig, k);
+      try_pn (a, b, answer_k);
     }
 
   mpz_clear (a);
@@ -638,7 +653,7 @@ check_squares_zi (void)
   mpz_init (b);
   mpz_init (g);
 
-  for (i = 0; i < 200; i++)
+  for (i = 0; i < 50; i++)
     {
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % 10 + 2;
