@@ -158,7 +158,8 @@ case "$target" in
       gmp_optcflags_gcc="-mcpu=$flavour"
       # FIXME: We shouldn't fail fatally if none of these work, but that's
       # how xoptcflags work and we don't have any other mechanism right now.
-      # Why do we need this here and not for alpha*-*-* below?
+      # It would be prettier to use a feature test for whether these assembly
+      # flags are necessary.
       gmp_xoptcflags_gcc="-Wa,-arch,${flavour} -Wa,-m${flavour}"
       gmp_optcflags_cc="-arch $flavour -tune $flavour"
     fi
@@ -171,6 +172,11 @@ case "$target" in
 	ev6? | ev7*) flavour=ev6;;
       esac
       gmp_optcflags_gcc="-mcpu=$flavour"
+      # FIXME: We shouldn't fail fatally if none of these work, but that's
+      # how xoptcflags work and we don't have any other mechanism right now.
+      # It would be prettier to use a feature test for whether these assembly
+      # flags are necessary.
+      gmp_xoptcflags_gcc="-Wa,-arch,${flavour} -Wa,-m${flavour}"
     fi
     ;;
   # Cray vector machines.  This must come after alpha* so that we can
