@@ -39,6 +39,7 @@ static const struct value hgcd_values[] = {
   { 4,
     "0x1bddff867272a9296ac493c251d7f46f09a5591fe",
     "0xb55930a2a68a916450a7de006031068c5ddb0e5c" },
+  { 4, "0x7FFFFC003FFFFFFFFFC5", "0x3FFFFE001FFFFFFFFFE3"},
 #endif
   { -1, NULL, NULL }
 };
