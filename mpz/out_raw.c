@@ -81,8 +81,6 @@ MA 02111-1307, USA. */
 #endif
 
 
-#define ROUNDUP   ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB)
-
 size_t
 mpz_out_raw (FILE *fp, mpz_srcptr x)
 {
