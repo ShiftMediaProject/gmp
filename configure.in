@@ -735,7 +735,7 @@ case $host in
     # the bitfield instructions.
     case $host in
     [m680[234]0-*-* | m68360-*-*])  path="m68k/mc68020 m68k" ;;
-    *)                              path="m68k" ;; 
+    *)                              path="m68k" ;;
     esac
     ;;
 
@@ -1135,7 +1135,7 @@ case $host in
           # registers properly, so ABI=32 is left as the only choice.
           #
           [*-*-solaris2.[0-6]*]) ;;
-    
+
           # BSD sparc64 ports are 64-bit-only systems, so ABI=64 is the only
           # choice.  In fact they need no special compiler flags, gcc -m64
           # is the default, but it doesn't hurt to add it.  v9 CPUs always
@@ -1366,14 +1366,14 @@ case $host in
       # we don't have any specific 32-bit code for opteron (x86_64), the
       # athlon code should be reasonable
       athlon-*-* | x86_64-*-*)    path="x86/k7/mmx x86/k7 x86" ;;
-      i786-*-* | pentium4-*-*)  
+      i786-*-* | pentium4-*-*)
         path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
       # VIA/Centaur processors, sold as CyrixIII and C3.
       viac32-*-*)   path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       viac3*-*-*)   path="x86/pentium/mmx x86/pentium x86";;
       *)              path="x86" ;;
     esac
- 
+
     # If the user asked for a fat build, override the path set above
     if test $enable_fat = yes; then
       extra_functions="$extra_functions fat fat_entry"
@@ -1536,7 +1536,7 @@ for abi in $abilist; do
       fi
     done
     cclist_chosen=$found
-  fi  
+  fi
 
   for ccbase in $cclist_chosen; do
 
@@ -1600,7 +1600,7 @@ for abi in $abilist; do
           if test -z "$cflags_maybe"; then continue; fi
           cflags="$cflags_maybe $cflags"
         fi
-        
+
         # Any user CFLAGS, even an empty string, takes precendence
         if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
 
@@ -2317,14 +2317,14 @@ fi
 #       and $gmp_mpn_functions are parsed by the "macos/configure"
 #       Perl script. So if you change the lines in a major way
 #       make sure to run and examine the output from
-#       
+#
 #           % (cd macos; perl configure)
 #
 # Note: $gmp_mpn_functions must have mod_1 before pre_mod_1 so the former
 #       can optionally provide the latter as an extra entrypoint.  Likewise
 #       divrem_1 and pre_divrem_1.
 
-gmp_mpn_functions_optional="umul udiv copyi copyd com_n 
+gmp_mpn_functions_optional="umul udiv copyi copyd com_n
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			\
   gcd_finda invert_limb sqr_diagonal					\
   mul_2 mul_3 mul_4							\
@@ -2334,11 +2334,11 @@ gmp_mpn_functions_optional="umul udiv copyi copyd com_n
 gmp_mpn_functions="$extra_functions					   \
   add add_1 add_n sub sub_1 sub_n mul_1 addmul_1			   \
   submul_1 lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2     \
-  fib2_ui mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump             \
+  fib2_ui mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump		   \
   mul mul_fft mul_n mul_basecase sqr_basecase random random2 pow_1	   \
   rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
   bdivmod gcd_1 gcd gcdext tdiv_qr dc_divrem_n sb_divrem_mn jacbase get_d  \
-  hgcd2 hgcd qstack mullow_n mullow_basecase \
+  hgcd2 hgcd qstack mullow_n mullow_basecase				   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,
@@ -2550,7 +2550,7 @@ DECL_$tmp_fbase (__MPN(${tmp_fbase}_init));" >>fat.h
         for tmp_ext in MPN_SUFFIXES; do
           tmp_file=$srcdir/mpn/$tmp_dir/$tmp_base.$tmp_ext
           if test -f $tmp_file; then
-    
+
             mpn_objects="$mpn_objects ${tmp_prefix}_$tmp_fn.lo"
             mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_prefix}_$tmp_fn.lo"
 
@@ -2603,7 +2603,7 @@ include][($mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.asm)
 #include \"$mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.c\"
 "] >mpn/${tmp_prefix}_$tmp_fn.c
                 ;;
-            esac           
+            esac
 
             # Prototype, and append to CPUVEC_SETUP for this directory.
             echo "DECL_$tmp_fbase (__gmpn_${tmp_fbase}_$tmp_suffix);" >>fat.h
@@ -3087,7 +3087,7 @@ use_readline=$with_readline
 if test $with_readline = detect; then
   use_readline=no
   AC_CHECK_LIB(readline, readline,
-    [AC_CHECK_HEADER(readline/readline.h, 
+    [AC_CHECK_HEADER(readline/readline.h,
       [AC_CHECK_HEADER(readline/history.h, use_readline=yes)])],
     , $LIBCURSES)
   AC_MSG_CHECKING(readline detected)
