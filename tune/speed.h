@@ -334,8 +334,8 @@ mp_limb_t mpn_divrem_2_div _PROTO ((mp_ptr qp, mp_size_t qxn,
 mp_limb_t mpn_divrem_2_inv _PROTO ((mp_ptr qp, mp_size_t qxn,
                                     mp_ptr np, mp_size_t nsize,
                                     mp_srcptr dp));
-mp_limb_t mpn_mod_1_div _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
-mp_limb_t mpn_mod_1_inv _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
+mp_limb_t mpn_mod_1_div _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d)) __GMP_ATTRIBUTE_PURE;
+mp_limb_t mpn_mod_1_inv _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d)) __GMP_ATTRIBUTE_PURE;
 
 mp_size_t mpn_gcd_binary
   _PROTO ((mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize));
@@ -388,7 +388,12 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
    actually macros too.
 
    The net effect is to bloat the object code, possibly in a big way, but
-   only what's being measured is being run, so that doesn't matter.  */
+   only what's being measured is being run, so that doesn't matter.
+
+   Note that if a called function is __GMP_ATTRIBUTE_PURE or
+   ATTRIBUTE_CONST, as for example mpn_mod_1, then the return value should
+   be used in some way, to stop gcc 3 and up from discarding the calls.  See
+   SPEED_ROUTINE_MPN_MOD_CALL for instance.  */
 
 
 #define SPEED_RESTRICT_COND(cond)   if (!(cond)) return -1.0;
@@ -740,6 +745,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_ROUTINE_MPN_MOD_CALL(call)        \
   {                                             \
     unsigned   i;                               \
+    mp_limb_t  dummy = 0;                       \
                                                 \
     SPEED_RESTRICT_COND (s->size >= 0);         \
                                                 \
@@ -749,8 +755,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();                         \
     i = s->reps;                                \
     do                                          \
-      call;                                     \
+      dummy += call;                            \
     while (--i != 0);                           \
+                                                \
+    noop_1 (dummy);                             \
     return speed_endtime ();                    \
   }  
 
@@ -771,6 +779,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   {                                                     \
     unsigned   i;                                       \
     mp_limb_t  inv;                                     \
+    mp_limb_t  dummy = 0;                               \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 0);                 \
     SPEED_RESTRICT_COND (s->r & MP_LIMB_T_HIGHBIT);     \
@@ -782,8 +791,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
-      (*function) (s->xp, s->size, s->r, inv);          \
+      dummy += (*function) (s->xp, s->size, s->r, inv); \
     while (--i != 0);                                   \
+                                                        \
+    noop_1 (dummy);                                     \
     return speed_endtime ();                            \
   }  
 
@@ -962,7 +973,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_POPCOUNT(function)    \
   {                                             \
-    unsigned  i;                                \
+    unsigned       i;                           \
+    unsigned long  dummy = 0;                   \
                                                 \
     SPEED_RESTRICT_COND (s->size >= 1);         \
                                                 \
@@ -972,27 +984,32 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();                         \
     i = s->reps;                                \
     do                                          \
-      function (s->xp, s->size);                \
+      dummy += function (s->xp, s->size);       \
     while (--i != 0);                           \
+                                                \
+    noop_1 ((mp_limb_t) dummy);                 \
     return speed_endtime ();                    \
   }  
 
-#define SPEED_ROUTINE_MPN_HAMDIST(function)     \
-  {                                             \
-    unsigned  i;                                \
-                                                \
-    SPEED_RESTRICT_COND (s->size >= 1);         \
-                                                \
-    speed_operand_src (s, s->xp, s->size);      \
-    speed_operand_src (s, s->yp, s->size);      \
-    speed_cache_fill (s);                       \
-                                                \
-    speed_starttime ();                         \
-    i = s->reps;                                \
-    do                                          \
-      function (s->xp, s->yp, s->size);         \
-    while (--i != 0);                           \
-    return speed_endtime ();                    \
+#define SPEED_ROUTINE_MPN_HAMDIST(function)             \
+  {                                                     \
+    unsigned       i;                                   \
+    unsigned long  dummy = 0;                           \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                 \
+                                                        \
+    speed_operand_src (s, s->xp, s->size);              \
+    speed_operand_src (s, s->yp, s->size);              \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      dummy += function (s->xp, s->yp, s->size);        \
+    while (--i != 0);                                   \
+                                                        \
+    noop_1 ((mp_limb_t) dummy);                         \
+    return speed_endtime ();                            \
   }  
 
 
@@ -1202,6 +1219,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     unsigned  i;                                        \
     double    t;                                        \
     TMP_DECL (marker);                                  \
+    mp_limb_t dummy = 0;                                \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 1);                 \
     SPEED_RESTRICT_COND (s->r != 0);                    \
@@ -1217,10 +1235,11 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
-      function (xp, s->size, s->r);                     \
+      dummy += function (xp, s->size, s->r);            \
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
                                                         \
+    noop_1 (dummy);                                     \
     TMP_FREE (marker);                                  \
     return t;                                           \
   }  
@@ -1233,6 +1252,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     unsigned  i, j;                                             \
     mp_ptr    px, py;                                           \
     mp_limb_t x_mask, y_mask;                                   \
+    mp_limb_t dummy = 0;                                        \
     double    t;                                                \
     TMP_DECL (marker);                                          \
                                                                 \
@@ -1265,7 +1285,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
         j = SPEED_BLOCK_SIZE;                                   \
         do                                                      \
           {                                                     \
-            call;                                               \
+            dummy += call;                                      \
           }                                                     \
         while (--j != 0);                                       \
       }                                                         \
@@ -1274,6 +1294,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                                 \
     TMP_FREE (marker);                                          \
                                                                 \
+    noop_1 (dummy);                                             \
     s->time_divisor = SPEED_BLOCK_SIZE;                         \
     return t;                                                   \
   }  
@@ -1459,6 +1480,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     mp_size_t j, pieces, psize;                                 \
     mp_ptr    px, py;                                           \
     double    t;                                                \
+    int       dummy = 0;                                        \
     TMP_DECL (marker);                                          \
                                                                 \
     TMP_MARK (marker);                                          \
@@ -1501,13 +1523,14 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
           {                                                     \
             PTR(a) = px+(j-1)*s->size;                          \
             PTR(b) = py+(j-1)*s->size;                          \
-            function (a, b);                                    \
+            dummy += function (a, b);                           \
           }                                                     \
         while (--j != 0);                                       \
       }                                                         \
     while (--i != 0);                                           \
     t = speed_endtime ();                                       \
                                                                 \
+    noop_1 ((mp_limb_t) dummy);                                 \
     TMP_FREE (marker);                                          \
     return t;                                                   \
   }  
@@ -1723,6 +1746,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     unsigned  i, j;                                             \
     mp_limb_t cp[SPEED_BLOCK_SIZE][2];                          \
     double    t;                                                \
+    mp_limb_t dummy = 0;                                        \
     TMP_DECL (marker);                                          \
                                                                 \
     TMP_MARK (marker);                                          \
@@ -1744,7 +1768,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
         j = SPEED_BLOCK_SIZE;                                   \
         do                                                      \
           {                                                     \
-            function (cp[j-1]);                                 \
+            dummy += function (cp[j-1]);                        \
           }                                                     \
         while (--j != 0);                                       \
       }                                                         \
