@@ -204,7 +204,7 @@ $(top_builddir)/ansi2knr:
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
 
 mostlyclean-kr:
-	-rm -f *_.c
+	-test "$U" = "" || rm -f *_.c
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
