@@ -30,21 +30,15 @@ gmp_rand_clear (s)
      gmp_rand_state s;
 #endif
 {
-
-
   mpz_clear (s->seed);
-  mpz_clear (s->maxval);
 
   switch (s->alg)
     {
     case GMP_RAND_ALG_LC:
-      {
-	  mpz_clear (s->data.lc->a);
-	  mpz_clear (s->data.lc->m);
-	  free (s->data.lc);
-	  break;
-    }
-
+      mpz_clear (s->data.lc->a);
+      mpz_clear (s->data.lc->m);
+      free (s->data.lc);
+      break;
     case GMP_RAND_ALG_BBS:
       mpz_clear (s->data.bbs->bi);
       free (s->data.bbs);

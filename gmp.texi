@@ -674,11 +674,22 @@ Initialize random state variable @var{state}.
 Use one of
 @itemize @minus
 @item GMP_RAND_ALG_LC -- Linear congruental.
+
+A fast generator defined by @math{X = (aX + c) mod m}.
+
+a, c, and m are picked from a table where the modulus (m) is a power of
+2 and the multiplier is congruent to 5 (mod 8).  The pick is based on
+parameter @var{size}.  Schemes up to and including 128 bits have all
+passed the spectral test, as defined in [D. Knuth, "The Art of Computer
+Programming: Volume 2, Seminumerical Algorithms", Third Edition, Addison
+Wesley, 1998, p.93.]
+
 @item GMP_RAND_ALG_BBS -- Blum, Blum, and Shub.
 @end itemize
 
 If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is
-used.
+used.  The default algorithm is typically a fast algorithm like the
+Linear Congruental.
 
 @var{size} is the size of the largest good quality random number to be
 generated, expressed in number of bits.  If the random generation

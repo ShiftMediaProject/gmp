@@ -1,5 +1,20 @@
 1999-05-25  Linus Nordberg  <linus@swox.se>
 
+	* randcm.c: Remove.
+	* randcmui.c: Remove.
+	* Makefile.in: Remove randcm and randcmui.
+	* make.bat: Ditto.
+	* gmp-impl.h: Remove prototypes for __gmp_rand_init_common() and
+	__gmp_rand_init_common_ui().
+	* randlc.c (gmp_rand_init_lc): Don't call
+	__gmp_rand_init_common().
+	* randlcui.c (gmp_rand_init_lc_ui): Don't call
+	__gmp_rand_init_common_ui().
+
+	* gmp.h (__gmp_rand_state_struct): Remove unused member `maxval'.
+	* randclr.c (gmp_rand_clear): Remove reference to s->maxval.
+	* randcm.c (__gmp_rand_init_common): Ditto
+
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Don't calculate nlimbs
 	twice.
 

@@ -51,5 +51,7 @@ gmp_rand_init_lc_ui (s, size, seed, a, c, m)
   mpz_init_set_ui (s->data.lc->m, m);
   s->data.lc->c = c;
 
-  __gmp_rand_init_common_ui (s, GMP_RAND_ALG_LC, size, seed);
+  s->alg = GMP_RAND_ALG_LC;
+  s->size = size;
+  mpz_init_set_ui (s->seed, seed);
 }

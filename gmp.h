@@ -147,11 +147,14 @@ typedef struct
 {
   gmp_rand_algorithm alg;	/* Algorithm used. */
   mpz_t seed;			/* Current seed. */
-
-  /* FIXME: Remove size and maxval. */
-  unsigned int size;		/* Requested size of result in bits. */
+  unsigned int size;		/* Requested maximum size of result,
+                                   in bits. */
+#if 0
+  /* FIXME: Remove. */
   mpz_t maxval;			/* Largest generated number (plus
 				   one). */
+#endif
+
   union {			/* Algorithm specific data. */
     __gmp_rand_data_lc *lc;	/* LC */
     __gmp_rand_data_bbs *bbs;	/* BBS */

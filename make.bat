@@ -309,8 +309,6 @@ gcc -c -I. -Impn -I.. -fomit-frame-pointer -O stack-alloc.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O rand.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randui.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randclr.c
-gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randcm.c
-gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randcmui.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randlc.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randlcui.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O version.c

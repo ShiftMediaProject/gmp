@@ -121,6 +121,7 @@ gmp_rand_init (s, alg, size, seed)
 	mpz_init_set_str (a, sp->astr, 0);
 	mpz_init_set_str (m, sp->mstr, 0);
 	gmp_rand_init_lc (s, sp->bits, seed, a, sp->c, m);
+	
 	mpz_clear (a);
 	mpz_clear (m);
 
@@ -158,7 +159,9 @@ gmp_rand_init (s, alg, size, seed)
 	    mpz_add_ui (seed, seed, 1);
 	  }
 
-	__gmp_rand_init_common (s, alg, size, seed);
+	s->alg = alg;
+	s->size = size;
+	mpz_init_set_ui (s->seed, seed);
 
 	mpz_clear (p);
 	mpz_clear (q);
