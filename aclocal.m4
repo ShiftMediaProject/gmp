@@ -1856,6 +1856,30 @@ AC_SUBST(TAL_OBJECT)
 ])
 
 
+dnl  GMP_FUNC_SSCANF_WRITABLE_INPUT
+dnl  ------------------------------
+dnl  Determine whether sscanf requires a writable input string.
+dnl
+dnl  FIXME: Run a program to try this, when doing a native build.
+
+AC_DEFUN(GMP_FUNC_SSCANF_WRITABLE_INPUT,
+[AC_CACHE_CHECK([whether sscanf needs writable input],
+                 gmp_cv_func_sscanf_writable_input,
+[case $host in
+  *-*-hpux9 | *-*-hpux9.*)
+     gmp_cv_func_sscanf_writable_input=yes ;;
+  *) gmp_cv_func_sscanf_writable_input=no  ;;
+esac
+])
+case $gmp_cv_func_sscanf_writable_input in
+  yes) AC_DEFINE(SSCANF_WRITABLE_INPUT, 1,
+                 [Define if sscanf requires writable inputs]) ;;
+  no)  ;;
+  *)   AC_MSG_ERROR([unrecognised \$gmp_cv_func_sscanf_writable_input]) ;;
+esac
+])
+
+
 dnl  GMP_FUNC_VSNPRINTF
 dnl  ------------------
 dnl  Check whether vsnprintf exists, and works properly.
