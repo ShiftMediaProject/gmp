@@ -287,9 +287,11 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define TMP_ALLOC_LIMBS(n)     TMP_ALLOC_TYPE(n,mp_limb_t)
 #define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
 
-/* It's more efficient to allocate one block than two, but when debugging
-   continue to do separate TMP_ALLOC's to let each get protected with its
-   own redzone.  */
+/* It's more efficient to allocate one block than two.  This is certainly
+   true of the malloc methods, but it can even be true of alloca if that
+   involves copying a chunk of stack (various RISCs), or a call to a stack
+   bounds check (mingw).  In any case, when debugging keep separate blocks
+   so a redzoning malloc debugger can protect each individually.  */
 #if WANT_TMP_DEBUG
 #define TMP_ALLOC_LIMBS_2(xp,xsize, yp,ysize)   \
   do {                                          \
@@ -1567,6 +1569,33 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
    chain, but on some chips it seems to upset the code generation a bit.)  */
 #ifndef UDIV_UNNORM_PREINV_TIME
 #define UDIV_UNNORM_PREINV_TIME  (UDIV_NORM_PREINV_TIME + 2)
+#endif
+
+
+#define mpn_preinv_divrem_1  __MPN(preinv_divrem_1)
+mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
+
+
+/* USE_PREINV_DIVREM_1 is whether to use mpn_preinv_divrem_1, or to just use
+   plain mpn_divrem_1.  If there's a native mpn_preinv_divrem_1 then it's
+   assumed to be fast.  If preinv is the only division method, then
+   mpn_preinv_divrem_1 will naturally want to be used.  Otherwise see which
+   of udiv_qrnnd or udiv_qrnnd_preinv is faster.  */
+
+#ifndef USE_PREINV_DIVREM_1
+#if HAVE_NATIVE_mpn_preinv_divrem_1 || UDIV_PREINV_ALWAYS
+#define USE_PREINV_DIVREM_1   1
+#else
+#define USE_PREINV_DIVREM_1   (UDIV_TIME > UDIV_NORM_PREINV_TIME)
+#endif
+#endif
+
+#if USE_PREINV_DIVREM_1
+#define MPN_DIVREM_OR_PREINV_DIVREM_1(qp,xsize,ap,size,d,dinv,shift)    \
+  mpn_preinv_divrem_1 (qp, xsize, ap, size, d, dinv, shift)
+#else
+#define MPN_DIVREM_OR_PREINV_DIVREM_1(qp,xsize,ap,size,d,dinv,shift)    \
+  mpn_divrem_1 (qp, xsize, ap, size, d)
 #endif
 
 
