@@ -82,18 +82,17 @@ Caller-saves but rotating: r32- f32-
 ================================================================
 mpn_add_n, mpn_sub_n:
 
-The current code runs at 2 cycles/limb on Itanium 1 and 1.25 cycles/limb
-on Itanium 2.  (Neeed to verify Itanium 1 time.)
+The current code runs at 2 c/l on Itanium 1 and 1.25 c/l on Itanium 2.
+(Neeed to verify Itanium 1 time.)
 
 ================================================================
 mpn_addmul_1:
 
-The current code runs at 3 cycles/limb on Itanium 1 and 2 cycles/limb
-on Itanium 2.
+The current code runs at 3 c/l on Itanium 1 and 2 c/l on Itanium 2.
 
-It would be possible to reach 2 cycles/limb for Itanium 1, using the
-ldpf8 instruction.  Since rp and up might be mutually aligned in two
-ways, we will need two loop variants, with the same basic structure:
+It would be possible to reach 2 c/l for Itanium 1, using the ldpf8
+instruction.  Since rp and up might be mutually aligned in two ways, we
+will need two loop variants, with the same basic structure:
 
   { .mfi	getf.sig
 		xma.l
@@ -131,16 +130,15 @@ of mpn_add_n above, 1.67 c/l.
 ================================================================
 mpn_submul_1:
 
-The current code runs at 4 cycles/limb on Itanium 1 and 3.5 cycles/limb
-on Itanium 2.  Getting to 3 cycles/limb would not be hard.  Getting to
-2 cycles/limb might be harder, but at any rate, something close to 2
-cycles/limb should be possible.
+The current code runs at 4 c/l on Itanium 1 and 3 c/l on Itanium 2.
+Getting to 2 c/l requires ldfp8 with all alignment overhead that
+implies.  Getting to 2.25 c/l would be straightforward with 4x
+unrolling.
 
 ================================================================
 mpn_mul_1:
 
-The current code runs at 2.5 cycles/limb on Itanium 1 and 2 cycles/limb
-on Itanium 2.
+The current code runs at 2.5 c/l on Itanium 1 and 2 c/l on Itanium 2.
 
 ================================================================
 mpn_addmul_N
@@ -209,8 +207,8 @@ Loop:	ldf8		u0 = [r33], 8
 ================================================================
 mpn_lshift, mpn_rshift
 
-The current code runs at 2 cycles/limb on Itanium 1 and 1 cycle/limb on
-Itanium 2.
+The current code runs at 2 c/l on Itanium 1 and 1 cycle/limb on Itanium
+2.
 
 Using 63 separate loops, we could use the double-word shrp instruction.
 That instruction has a plain single-cycle latency.  We need 63 loops
@@ -222,12 +220,11 @@ down I1 for a further limb every second cycle).
 ================================================================
 mpn_copyi, mpn_copyd
 
-The current code runs at 1 cycle/limb on Itanium 1 and 0.5 cycles/limb
-on Itanium 2.  But that is just for L1 cache hit.  On Itanium 2, the
-4-way unrolled loop takes just 2 cycles, and thus load-use scheduling
-isn't great.  It might be best to use modulo scheduled loops, since
-that will allow us to do better load-use scheduling without too much
-unrolling.
+The current code runs at 1 cycle/limb on Itanium 1 and 0.5 c/l on
+Itanium 2.  But that is just for L1 cache hit.  On Itanium 2, the 4-way
+unrolled loop takes just 2 cycles, and thus load-use scheduling isn't
+great.  It might be best to use modulo scheduled loops, since that will
+allow us to do better load-use scheduling without too much unrolling.
 
 Something is strange with these routines, depending on size or operand
 alignment, we get 1 c/l or 0.5 c/l on Itanium 2, according to
