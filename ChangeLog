@@ -19,6 +19,19 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (mpn_sb_get_str): Combine tail code for base 10
+	and generic bases.
+
+	* mpn/mp_bases.c: Add entries for base 256.  Remove __ prefix from
+	table name.
+	* gmp-impl.h (__mp_bases): Remove superflous `mp_' part of name, making
+	it __gmpn_bases instead of __gmpn_mp_bases.
+	(mp_bases): New #define.
+	* tune/speed.h (SPEED_ROUTINE_MPN_SET_STR): Allow bases up to 256.
+	(SPEED_ROUTINE_MPN_GET_STR): Likewise.
+
 2002-02-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/set_str.c (mpn_set_str): Use mpn_mul_1c if available.
