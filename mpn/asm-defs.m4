@@ -1094,6 +1094,8 @@ define_mpn(lshift)
 define_mpn(lshiftc)
 define_mpn(mod_1)
 define_mpn(mod_1c)
+define_mpn(modexact_1_odd)
+define_mpn(modexact_1c_odd)
 define_mpn(mul)
 define_mpn(mul_1)
 define_mpn(mul_1c)
@@ -1136,8 +1138,13 @@ dnl  above.  Also, "deflit" is used so that something like __clz_tab(%ebx)
 dnl  comes out as __gmpn_clz_tab(%ebx), for the benefit of CPUs with that
 dnl  style assembler syntax.
 
-deflit(__clz_tab,            `GSYM_PREFIX`'MPN(`clz_tab')')
-deflit(modlimb_invert_table, `GSYM_PREFIX`'__gmp_modlimb_invert_table')
+deflit(__clz_tab,
+m4_assert_defined(`GSYM_PREFIX')
+`GSYM_PREFIX`'MPN(`clz_tab')')
+
+deflit(modlimb_invert_table,
+m4_assert_defined(`GSYM_PREFIX')
+`GSYM_PREFIX`'__gmp_modlimb_invert_table')
 
 
 dnl  Usage: ASM_START()
@@ -1160,6 +1167,7 @@ dnl  The defaults here are something typical and sensible, but CPU or system
 dnl  specific m4 files redefine it as necessary.
 
 define(PROLOGUE,
+m4_assert_defined(`GSYM_PREFIX')
 `	TEXT
 	ALIGN(4)
 	GLOBL	GSYM_PREFIX`$1'
@@ -1167,6 +1175,7 @@ define(PROLOGUE,
 GSYM_PREFIX`$1':')
 
 define(`EPILOGUE',
+m4_assert_defined(`GSYM_PREFIX')
 `	SIZE(GSYM_PREFIX`$1',.-GSYM_PREFIX`$1')')
 
 
