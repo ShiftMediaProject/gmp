@@ -1,5 +1,5 @@
-dnl  SPARC v9 32-bit mpn_addmul_1 -- Multiply a limb vector with a limb and
-dnl  add the result to a second limb vector.
+dnl  SPARC v9 32-bit mpn_addmul_1 -- Multiply a limb vector with a limb and add
+dnl  the result to a second limb vector.
 
 dnl  Copyright 1998, 2000, 2001 Free Software Foundation, Inc.
 
@@ -20,270 +20,357 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-
 include(`../config.m4')
 
+C Algorithm: We use two floating-point multiplies per limb product, with the
+C invariant v operand split into two 16-bit pieces, and the u operand split
+C into 32-bit pieces.  We convert the two 48-bit products and transfer them to
+C the integer unit.
+
+C Speed: 7 cycles/limb on UltraSPARC-1/2.
+
+C Possible optimizations:
+C   1. Combine 32-bit memory operations into 64-bit operations.  Since we're
+C      memory bandwidth limited, this could save 1.5 cycles/limb.
+C   2. Unroll the inner loop.  Since we already use alternate temporary areas,
+C      it is very straightforward to unroll, using an exit branch midways.
+C      Unrolling would allow deeper scheduling which could improve speed for L2
+C      cache case.
+C   3. For mpn_mul_1: Use more alternating temp areas.  The std'es and ldx'es
+C      aren't sufficiently apart-scheduled with just two temp areas.
+C   4. Do some cross-jumping to save about 1/2 the code size.
+C   5. Specialize for particular v values.  If its upper 16 bits are zero, we
+C      could save many operations.
+
 C INPUT PARAMETERS
-C res_ptr	i0
-C s1_ptr	i1
-C size		i2
-C s2_limb	i3
+C rp	i0
+C up	i1
+C n	i2
+C v	i3
+
+define(`FSIZE',224)
 
 ASM_START()
-
-	TEXT
-	ALIGN(4)
-L(noll):
-	.word	0
-
 PROLOGUE(mpn_addmul_1)
-	save %sp,-256,%sp
+	add	%sp, -FSIZE, %sp
+	sethi	%hi(0xffff), %g1
+	srl	%o3, 16, %g2
+	or	%g1, %lo(0xffff), %g1
+	and	%o3, %g1, %g1
+	stx	%g1, [%sp+104]
+	stx	%g2, [%sp+112]
+	ldd	[%sp+104], %f6
+	ldd	[%sp+112], %f8
+	fxtod	%f6, %f6
+	fxtod	%f8, %f8
+	ld	[%sp+104], %f10		C zero f10
 
-ifdef(`PIC',
-`L(pc):	rd	%pc,%o7
-	ld	[%o7+L(noll)-L(pc)],%f10',
-`	sethi	%hi(L(noll)),%g1
-	ld	[%g1+%lo(L(noll))],%f10')
+	mov	0, %g3			C cy = 0
 
-	sethi	%hi(0xffff0000),%o0
-	andn	%i3,%o0,%o0
-	srl	%i3,16,%o1
-	stw	%o0,[%fp-16]
-	stw	%o1,[%fp-32]
-	fmovs	%f10,%f6
-	fmovs	%f10,%f8
-	ld	[%fp-16],%f7
-	ld	[%fp-32],%f9
-	fxtod	%f6,%f6
-	fxtod	%f8,%f8
+define(`fanop', `fitod %f18, %f0')	C  A quasi nop running in the FA pipe
 
-	mov	0,%g3			C cy = 0
+	add	%sp, 160, %o5		C point in scratch area
+	and	%o5, -32, %o5		C align at 0 (mod 32) in scratch area
 
-	ld	[%i1],%f11
-	subcc	%i2,1,%i2
-	be,pn	%icc,L(end1)
-	add	%i1,4,%i1		C s1_ptr++
+	subcc	%o2, 1, %o2
+	ld	[%o1], %f11		C read up[i]
+	add	%o1, 4, %o1		C up++
+	bne,pt	%icc, .L_two_or_more
+	fxtod	%f10, %f2
+.L_1:	fmuld	%f2, %f8, %f16
+	fmuld	%f2, %f6, %f4
+	fdtox	%f16, %f14
+	fdtox	%f4, %f12
+	std	%f14, [%o5+16]
+	std	%f12, [%o5+24]
+	ldx	[%o5+16], %g2		C p16
+	ldx	[%o5+24], %g1		C p0
+	lduw	[%o0], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0]
+	srlx	%g4, 32, %g3		C new cy
+	mov	%g3, %o0
+	retl
+	sub	%sp, -FSIZE, %sp
 
-	fxtod	%f10,%f2
-	ld	[%i1],%f11
-	add	%i1,4,%i1		C s1_ptr++
-	fmuld	%f2,%f8,%f16
-	fmuld	%f2,%f6,%f4
-	fdtox	%f16,%f14
-	std	%f14,[%fp-24]
-	fdtox	%f4,%f12
-	subcc	%i2,1,%i2
-	be,pn	%icc,L(end2)
-	std	%f12,[%fp-16]
+	.align	16
+.L_two_or_more:
+	subcc	%o2, 1, %o2
+	ld	[%o1], %f11		C read up[i]
+	fmuld	%f2, %f8, %f16
+	fmuld	%f2, %f6, %f4
+	add	%o1, 4, %o1		C up++
+	bne,pt	%icc, .L_three_or_more
+	fxtod	%f10, %f2
+.L_2:	fdtox	%f16, %f14
+	fdtox	%f4, %f12
+	std	%f14, [%o5+16]
+	fmuld	%f2, %f8, %f16
+	std	%f12, [%o5+24]
+	fmuld	%f2, %f6, %f4
+	fdtox	%f16, %f14
+	fdtox	%f4, %f12
+	std	%f14, [%o5+0]
+	std	%f12, [%o5+8]
+	lduw	[%o0], %g5		C read rp[i]
+	ldx	[%o5+16], %g2		C p16
+	ldx	[%o5+24], %g1		C p0
+	sllx	%g2, 16, %g4		C (p16 << 16)		* crossjmp pt
+	ldx	[%o5+0], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+0]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+4], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+4]
+	srlx	%g4, 32, %g3		C new cy
+	mov	%g3, %o0
+	retl
+	sub	%sp, -FSIZE, %sp
 
-	fxtod	%f10,%f2
-	ld	[%i1],%f11
-	add	%i1,4,%i1		C s1_ptr++
-	fmuld	%f2,%f8,%f16
-	fmuld	%f2,%f6,%f4
-	fdtox	%f16,%f14
-	std	%f14,[%fp-40]
-	fdtox	%f4,%f12
-	subcc	%i2,1,%i2
-	be,pn	%icc,L(end3)
-	std	%f12,[%fp-32]
+	.align	16
+.L_three_or_more:
+	subcc	%o2, 1, %o2
+	ld	[%o1], %f11		C read up[i]
+	fdtox	%f16, %f14
+	fdtox	%f4, %f12
+	std	%f14, [%o5+16]
+	fmuld	%f2, %f8, %f16
+	std	%f12, [%o5+24]
+	fmuld	%f2, %f6, %f4
+	add	%o1, 4, %o1		C up++
+	bne,pt	%icc, .L_four_or_more
+	fxtod	%f10, %f2
+.L_3:	fdtox	%f16, %f14
+	fdtox	%f4, %f12
+	std	%f14, [%o5+0]
+	fmuld	%f2, %f8, %f16
+	std	%f12, [%o5+8]
+	fmuld	%f2, %f6, %f4
+	fdtox	%f16, %f14
+	ldx	[%o5+16], %g2		C p16
+	fdtox	%f4, %f12
+	ldx	[%o5+24], %g1		C p0
+	std	%f14, [%o5+16]
+	std	%f12, [%o5+24]
+	lduw	[%o0], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+0]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+4], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+16], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+24], %g1		C p0
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+4]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+8], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+8]
+	srlx	%g4, 32, %g3		C new cy
+	mov	%g3, %o0
+	retl
+	sub	%sp, -FSIZE, %sp
 
-	fxtod	%f10,%f2
-	ld	[%i1],%f11
-	add	%i1,4,%i1		C s1_ptr++
-	lduw	[%i0],%g5
-	ldx	[%fp-24],%g2		C p16
-	fmuld	%f2,%f8,%f16
-	ldx	[%fp-16],%g1		C p0
-	fmuld	%f2,%f6,%f4
-	sllx	%g2,16,%g2		C align p16
-	fdtox	%f16,%f14
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	std	%f14,[%fp-24]
-	fdtox	%f4,%f12
-	add	%i0,4,%i0		C res_ptr++
-	subcc	%i2,1,%i2
-	be,pn	%icc,L(end4)
-	std	%f12,[%fp-16]
+	.align	16
+.L_four_or_more:
+	subcc	%o2, 1, %o2
+	ld	[%o1], %f11		C read up[i]
+	fdtox	%f16, %f14
+	fdtox	%f4, %f12
+	std	%f14, [%o5+0]
+	fmuld	%f2, %f8, %f16
+	std	%f12, [%o5+8]
+	fmuld	%f2, %f6, %f4
+	add	%o1, 4, %o1		C up++
+	bne,pt	%icc, .L_five_or_more
+	fxtod	%f10, %f2
+.L_4:	fdtox	%f16, %f14
+	ldx	[%o5+16], %g2		C p16
+	fdtox	%f4, %f12
+	ldx	[%o5+24], %g1		C p0
+	std	%f14, [%o5+16]
+	fmuld	%f2, %f8, %f16
+	std	%f12, [%o5+24]
+	fmuld	%f2, %f6, %f4
+	add	%o1, 4, %o1		C up++
+	lduw	[%o0], %g5		C read rp[i]
+	fdtox	%f16, %f14
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	fdtox	%f4, %f12
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	std	%f14, [%o5+0]
+	add	%g5, %g4, %g4		C p += rp[i]
+	std	%f12, [%o5+8]
+	stw	%g4, [%o0+0]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+4], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+16], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+24], %g1		C p0
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+4]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+8], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+8]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+12], %g5		C read rp[i]
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+12]
+	srlx	%g4, 32, %g3		C new cy
+	mov	%g3, %o0
+	retl
+	sub	%sp, -FSIZE, %sp
 
-	b,a	L(loopm)
+	.align	16
+.L_five_or_more:
+	subcc	%o2, 1, %o2
+	ld	[%o1], %f11		C read up[i]
+	fdtox	%f16, %f14
+	ldx	[%o5+16], %g2		C p16
+	fdtox	%f4, %f12
+	ldx	[%o5+24], %g1		C p0
+	std	%f14, [%o5+16]
+	fmuld	%f2, %f8, %f16
+	std	%f12, [%o5+24]
+	fmuld	%f2, %f6, %f4
+	add	%o1, 4, %o1		C up++
+	lduw	[%o0], %g5		C read rp[i]
+	bne,pt	%icc, .Loop
+	fxtod	%f10, %f2
+	b,a	.L_out_5
 
+C BEGIN MAIN LOOP
 	.align 16
-C BEGIN LOOP
-L(loop):
-	fxtod	%f10,%f2
-	ld	[%i1],%f11
-	add	%i1,4,%i1		C s1_ptr++
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-24],%g2		C p16
-	fmuld	%f2,%f8,%f16
-	ldx	[%fp-16],%g1		C p0
-	fmuld	%f2,%f6,%f4
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	fdtox	%f16,%f14
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	std	%f14,[%fp-24]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-16]
-	subcc	%i2,1,%i2
-	be,pn	%icc,L(loope)
-	add	%i0,4,%i0		C res_ptr++
-L(loopm):
-	fxtod	%f10,%f2
-	ld	[%i1],%f11
-	add	%i1,4,%i1		C s1_ptr++
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-40],%g2		C p16
-	fmuld	%f2,%f8,%f16
-	ldx	[%fp-32],%g1		C p0
-	fmuld	%f2,%f6,%f4
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	fdtox	%f16,%f14
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	std	%f14,[%fp-40]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-32]
-	subcc	%i2,1,%i2
-	bne,pt	%icc,L(loop)
-	add	%i0,4,%i0		C res_ptr++
-C END LOOP
+C -- 0
+.Loop:	nop
+	subcc	%o2, 1, %o2
+	ld	[%o1], %f11		C read up[i]
+	fdtox	%f16, %f14
+C -- 1
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	add	%o0, 4, %o0		C rp++
+	ldx	[%o5+0], %g2		C p16
+	fdtox	%f4, %f12
+C -- 2
+	nop
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	fanop
+C -- 3
+	nop
+	add	%g3, %g4, %g4		C p += cy
+	std	%f14, [%o5+0]
+	fmuld	%f2, %f8, %f16
+C -- 4
+	nop
+	add	%g5, %g4, %g4		C p += rp[i]
+	std	%f12, [%o5+8]
+	fmuld	%f2, %f6, %f4
+C -- 5
+	xor	%o5, 16, %o5		C alternate scratch variables
+	add	%o1, 4, %o1		C up++
+	stw	%g4, [%o0-4]
+	fanop
+C -- 6
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0], %g5		C read rp[i]
+	bne,pt	%icc, .Loop
+	fxtod	%f10, %f2
+C END MAIN LOOP
 
-	fxtod	%f10,%f2
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-24],%g2		C p16
-	fmuld	%f2,%f8,%f16
-	ldx	[%fp-16],%g1		C p0
-	fmuld	%f2,%f6,%f4
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	b,a	L(xxx)
-L(loope):
-L(end4):
-	fxtod	%f10,%f2
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-40],%g2		C p16
-	fmuld	%f2,%f8,%f16
-	ldx	[%fp-32],%g1		C p0
-	fmuld	%f2,%f6,%f4
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	fdtox	%f16,%f14
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	std	%f14,[%fp-40]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-32]
-	add	%i0,4,%i0		C res_ptr++
 
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-24],%g2		C p16
-	ldx	[%fp-16],%g1		C p0
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	b,a	L(yyy)
+.L_out_5:
+	fdtox	%f16, %f14
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	fdtox	%f4, %f12
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g4, %g3, %g4		C p += cy
+	std	%f14, [%o5+0]
+	fmuld	%f2, %f8, %f16
+	add	%g5, %g4, %g4		C p += rp[i]
+	std	%f12, [%o5+8]
+	fmuld	%f2, %f6, %f4
+	xor	%o5, 16, %o5
+	stw	%g4, [%o0+0]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+4], %g5		C read rp[i]
 
-L(end3):
-	fxtod	%f10,%f2
-	lduw	[%i0],%g5
-	ldx	[%fp-24],%g2		C p16
-	fmuld	%f2,%f8,%f16
-	ldx	[%fp-16],%g1		C p0
-	fmuld	%f2,%f6,%f4
-	sllx	%g2,16,%g2		C align p16
-L(xxx):	fdtox	%f16,%f14
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	std	%f14,[%fp-24]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-16]
-	add	%i0,4,%i0		C res_ptr++
+	fdtox	%f16, %f14
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	fdtox	%f4, %f12
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g3, %g4, %g4		C p += cy
+	std	%f14, [%o5+0]
+	add	%g5, %g4, %g4		C p += rp[i]
+	std	%f12, [%o5+8]
+	xor	%o5, 16, %o5
+	stw	%g4, [%o0+4]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+8], %g5		C read rp[i]
 
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-40],%g2		C p16
-	ldx	[%fp-32],%g1		C p0
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	add	%i0,4,%i0		C res_ptr++
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	xor	%o5, 16, %o5
+	stw	%g4, [%o0+8]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+12], %g5		C read rp[i]
 
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-24],%g2		C p16
-	ldx	[%fp-16],%g1		C p0
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	add	%i0,4,%i0		C res_ptr++
-	b,a	L(ret)
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	ldx	[%o5+0], %g2		C p16
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	ldx	[%o5+8], %g1		C p0
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+12]
+	srlx	%g4, 32, %g3		C new cy
+	lduw	[%o0+16], %g5		C read rp[i]
 
-L(end2):
-	fxtod	%f10,%f2
-	fmuld	%f2,%f8,%f16
-	fmuld	%f2,%f6,%f4
-	fdtox	%f16,%f14
-	std	%f14,[%fp-40]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-32]
-	lduw	[%i0],%g5
-	ldx	[%fp-24],%g2		C p16
-	ldx	[%fp-16],%g1		C p0
-	sllx	%g2,16,%g2		C align p16
-L(yyy):	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	add	%i0,4,%i0		C res_ptr++
+	sllx	%g2, 16, %g4		C (p16 << 16)
+	add	%g1, %g4, %g4		C p = p0 + (p16 << 16)
+	add	%g3, %g4, %g4		C p += cy
+	add	%g5, %g4, %g4		C p += rp[i]
+	stw	%g4, [%o0+16]
+	srlx	%g4, 32, %g3		C new cy
 
-	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	lduw	[%i0],%g5
-	srlx	%g4,32,%g3
-	ldx	[%fp-40],%g2		C p16
-	ldx	[%fp-32],%g1		C p0
-	sllx	%g2,16,%g2		C align p16
-	stw	%g4,[%i0-4]
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	add	%i0,4,%i0		C res_ptr++
-	b,a	L(ret)
-
-L(end1):
-	fxtod	%f10,%f2
-	fmuld	%f2,%f8,%f16
-	fmuld	%f2,%f6,%f4
-	fdtox	%f16,%f14
-	std	%f14,[%fp-24]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-16]
-
-	lduw	[%i0],%g5
-	ldx	[%fp-24],%g2		C p16
-	ldx	[%fp-16],%g1		C p0
-	sllx	%g2,16,%g2		C align p16
-	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
-	add	%i0,4,%i0		C res_ptr++
-
-L(ret):	add	%g5,%g1,%g1		C add *res_ptr to p0 (ADD2)
-	add	%g3,%g1,%g4		C p += cy
-	srlx	%g4,32,%g3
-	stw	%g4,[%i0-4]
-
-	ret
-	restore %g0,%g3,%o0		C sideeffect: put cy in retreg
+	mov	%g3, %o0
+	retl
+	sub	%sp, -FSIZE, %sp
 EPILOGUE(mpn_addmul_1)
