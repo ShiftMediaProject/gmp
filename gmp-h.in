@@ -194,7 +194,7 @@ typedef __mpq_struct *mpq_ptr;
    (global or via arguments) to generate a return value, but changes nothing
    and has no side-effects. */
 #if __GMP_GNUC_PREREQ (2,96)
-#define __GMP_ATTRIBUTE_PURE   __attribute__ ((pure))
+#define __GMP_ATTRIBUTE_PURE   __attribute__ ((__pure__))
 #else
 #define __GMP_ATTRIBUTE_PURE
 #endif
