@@ -1,8 +1,6 @@
 dnl  Intel Pentium-4 mpn_modexact_1_odd -- mpn by limb exact remainder.
-dnl
-dnl  P4: 19.0 cycles/limb 
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,6 +20,9 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P4: 19.0 cycles/limb 
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,

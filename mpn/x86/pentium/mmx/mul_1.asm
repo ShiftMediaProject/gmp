@@ -1,10 +1,6 @@
 dnl  Intel Pentium MMX mpn_mul_1 -- mpn by limb multiplication.
-dnl
-dnl     cycles/limb
-dnl  P5:   12.0   for 32-bit multiplier
-dnl         7.0   for 16-bit multiplier
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -24,6 +20,11 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C    cycles/limb
+C P5:   12.0   for 32-bit multiplier
+C        7.0   for 16-bit multiplier
 
 
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

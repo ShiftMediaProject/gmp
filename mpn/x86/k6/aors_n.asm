@@ -1,9 +1,6 @@
 dnl  AMD K6 mpn_add/sub_n -- mpn addition or subtraction.
-dnl 
-dnl  K6: normal 3.25 cycles/limb, in-place 2.75 cycles/limb.
 
-
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,8 +19,10 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K6: normal 3.25 cycles/limb, in-place 2.75 cycles/limb.
 
 
 ifdef(`OPERATION_add_n', `

@@ -1,19 +1,7 @@
 dnl  AMD K6-2 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
 dnl  mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
-dnl   
-dnl          alignment dst/src1/src2, A=0mod8, N=4mod8
-dnl       A/A/A A/A/N A/N/A A/N/N N/A/A N/A/N N/N/A N/N/N
-dnl 
-dnl  K6-2  1.2   1.5   1.5   1.2   1.2   1.5   1.5   1.2   and,andn,ior,xor
-dnl  K6-2  1.5   1.75  2.0   1.75  1.75  2.0   1.75  1.5   iorn,xnor
-dnl  K6-2  1.75  2.0   2.0   2.0   2.0   2.0   2.0   1.75  nand,nior
-dnl
-dnl  K6    1.5   1.68  1.75  1.2   1.75  1.75  1.68  1.5   and,andn,ior,xor
-dnl  K6    2.0   2.0   2.25  2.25  2.25  2.25  2.0   2.0   iorn,xnor
-dnl  K6    2.0   2.25  2.25  2.25  2.25  2.25  2.25  2.0   nand,nior
 
-
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -32,8 +20,19 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C         alignment dst/src1/src2, A=0mod8, N=4mod8
+C      A/A/A A/A/N A/N/A A/N/N N/A/A N/A/N N/N/A N/N/N
+C
+C K6-2  1.2   1.5   1.5   1.2   1.2   1.5   1.5   1.2   and,andn,ior,xor
+C K6-2  1.5   1.75  2.0   1.75  1.75  2.0   1.75  1.5   iorn,xnor
+C K6-2  1.75  2.0   2.0   2.0   2.0   2.0   2.0   1.75  nand,nior
+C
+C K6    1.5   1.68  1.75  1.2   1.75  1.75  1.68  1.5   and,andn,ior,xor
+C K6    2.0   2.0   2.25  2.25  2.25  2.25  2.0   2.0   iorn,xnor
+C K6    2.0   2.25  2.25  2.25  2.25  2.25  2.25  2.0   nand,nior
 
 
 dnl  M4_p and M4_i are the MMX and integer instructions

@@ -1,11 +1,6 @@
 dnl  AMD K6 mpn_divexact_1 -- mpn by limb exact division.
-dnl
-dnl          divisor
-dnl        odd   even
-dnl  K6:   10.0  12.0  cycles/limb 
-dnl  K6-2: 10.0  11.5
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -25,6 +20,12 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C         divisor
+C       odd   even
+C K6:   10.0  12.0  cycles/limb 
+C K6-2: 10.0  11.5
 
 
 C void mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

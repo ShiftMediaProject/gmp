@@ -1,10 +1,7 @@
 dnl  Intel P55 mpn_popcount, mpn_hamdist -- population count and hamming
 dnl  distance.
-dnl 
-dnl  P55: popcount 11.5 cycles/limb, hamdist 12.0 cycles/limb
 
-
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,8 +20,11 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C P55: popcount 11.5 cycles/limb, hamdist 12.0 cycles/limb
+
 
 MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 include_mpn(`x86/k6/mmx/popham.asm')

@@ -1,9 +1,6 @@
 dnl  AMD K6 mpn_mod_1 -- mpn by 1 gcd.
-dnl 
-dnl  K6: 9.5 cycles/bit (approx)   1x1 gcd
-dnl      11.0 cycles/limb          Nx1 reduction (modexact_1_odd)
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,6 +20,10 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C K6: 9.5 cycles/bit (approx)   1x1 gcd
+C     11.0 cycles/limb          Nx1 reduction (modexact_1_odd)
 
 
 C mp_limb_t mpn_gcd_1 (mp_srcptr src, mp_size_t size, mp_limb_t y);

@@ -1,16 +1,6 @@
 dnl  x86 mpn_divrem_1 -- mpn by limb division extending to fractional quotient.
-dnl
-dnl        cycles/limb
-dnl  486   approx 43 maybe
-dnl  P5        44
-dnl  P6        39
-dnl  P6MMX     39
-dnl  K6        20
-dnl  K7        42
-dnl  P4        58
 
-
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -29,8 +19,17 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C       cycles/limb
+C 486   approx 43 maybe
+C P5        44
+C P6        39
+C P6MMX     39
+C K6        20
+C K7        42
+C P4        58
 
 
 C mp_limb_t mpn_divrem_1 (mp_ptr dst, mp_size_t xsize,

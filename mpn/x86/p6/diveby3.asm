@@ -1,9 +1,6 @@
 dnl  Intel P6 mpn_divexact_by3 -- mpn division by 3, expecting no remainder.
-dnl       
-dnl  P6: 8.5 cycles/limb
 
-
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,16 +19,19 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
-dnl  The P5 code runs well on P6, in fact better than anything else found so
-dnl  far.  An imul is 4 cycles, meaning the two cmp/sbbl pairs on the
-dnl  dependent path are taking 4.5 cycles.
-dnl
-dnl  The destination cache line prefetching is unnecessary on P6, but
-dnl  removing it is a 2 cycle slowdown (approx), so it must be inducing
-dnl  something good in the out of order execution.
-
 include(`../config.m4')
+
+
+C P6: 8.5 cycles/limb
+
+
+C The P5 code runs well on P6, in fact better than anything else found so
+C far.  An imul is 4 cycles, meaning the two cmp/sbbl pairs on the dependent
+C path are taking 4.5 cycles.
+C
+C The destination cache line prefetching is unnecessary on P6, but removing
+C it is a 2 cycle slowdown (approx), so it must be inducing something good
+C in the out of order execution.
 
 MULFUNC_PROLOGUE(mpn_divexact_by3c)
 include_mpn(`x86/pentium/diveby3.asm')

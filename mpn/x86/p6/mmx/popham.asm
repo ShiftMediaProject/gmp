@@ -1,11 +1,7 @@
 dnl  Intel Pentium-II mpn_popcount, mpn_hamdist -- population count and
 dnl  hamming distance.
-dnl 
-dnl  P6MMX: popcount 11 cycles/limb (approx), hamdist 11.5 cycles/limb
-dnl  (approx)
 
-
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -24,8 +20,11 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C P6MMX: popcount 11 cycles/limb (approx), hamdist 11.5 cycles/limb (approx)
+
 
 MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 include_mpn(`x86/k6/mmx/popham.asm')

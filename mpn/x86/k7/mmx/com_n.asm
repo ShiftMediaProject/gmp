@@ -1,7 +1,4 @@
 dnl  AMD Athlon mpn_com_n -- mpn bitwise one's complement.
-dnl
-dnl  K7: 1.0 cycles/limb
-
 
 dnl  Copyright 2002 Free Software Foundation, Inc.
 dnl 
@@ -22,8 +19,10 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K7: 1.0 cycles/limb
 
 
 C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);

@@ -1,7 +1,4 @@
 dnl  Intel Pentium mpn_and_n,...,mpn_xnor_n -- bitwise logical operations.
-dnl
-dnl  P5: 3.0 c/l  and, ior, xor
-dnl      3.5 c/l  andn, iorn, nand, nior, xnor
 
 dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
@@ -23,6 +20,10 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P5: 3.0 c/l  and, ior, xor
+C     3.5 c/l  andn, iorn, nand, nior, xnor
 
 
 define(M4_choose_op,

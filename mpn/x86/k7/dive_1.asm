@@ -1,8 +1,6 @@
-dnl  AMD Athlon mpn_divexact_1 -- mpn by limb exact division.
-dnl
-dnl  K7: 11.0 cycles/limb 
+dnl  AMD K7 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,6 +20,9 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C K7: 11.0 cycles/limb 
 
 
 C void mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

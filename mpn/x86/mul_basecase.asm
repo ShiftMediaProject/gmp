@@ -1,16 +1,8 @@
 dnl  x86 mpn_mul_basecase -- Multiply two limb vectors and store the result
 dnl  in a third limb vector.
-dnl
-dnl      cycles/crossproduct
-dnl  P5:     15
-dnl  P6:      7.5
-dnl  K6:     12.5
-dnl  K7:      5.5
-dnl  P4:     24
 
-
-dnl  Copyright 1996, 1997, 1998, 1999, 2000, 2001 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free Software
+dnl  Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -29,8 +21,15 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C     cycles/crossproduct
+C P5:     15
+C P6:      7.5
+C K6:     12.5
+C K7:      5.5
+C P4:     24
 
 
 C void mpn_mul_basecase (mp_ptr wp,

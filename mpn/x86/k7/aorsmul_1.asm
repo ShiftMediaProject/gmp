@@ -1,12 +1,6 @@
 dnl  AMD K7 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
-dnl 
-dnl  K7: 3.9 cycles/limb.
-dnl 
-dnl  Future: It should be possible to avoid the separate mul after the
-dnl  unrolled loop by moving the movl/adcl to the top.
 
-
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -25,8 +19,14 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K7: 3.9 cycles/limb.
+C
+C Future: It should be possible to avoid the separate mul after the
+C unrolled loop by moving the movl/adcl to the top.
+
 
 
 dnl  K7: UNROLL_COUNT  cycles/limb

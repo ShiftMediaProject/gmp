@@ -1,13 +1,6 @@
 dnl  x86 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
-dnl
-dnl      cycles/limb
-dnl  P5:   3.375
-dnl  P6:   3.7
-dnl  K6:   3.5
-dnl  K7:   2.25
-dnl  P4:   8.75
 
-dnl  Copyright 1992, 1994, 1995, 1996, 1999, 2000, 2001 Free Software
+dnl  Copyright 1992, 1994, 1995, 1996, 1999, 2000, 2001, 2002 Free Software
 dnl  Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
@@ -27,8 +20,15 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C     cycles/limb
+C P5:   3.375
+C P6:   3.7
+C K6:   3.5
+C K7:   2.25
+C P4:   8.75
 
 
 ifdef(`OPERATION_add_n',`

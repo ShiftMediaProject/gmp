@@ -1,8 +1,6 @@
 dnl  Intel Pentium-4 mpn_add_n -- mpn addition.
-dnl
-dnl  P4: 4.0 cycles/limb
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -21,8 +19,11 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C P4: 4.0 cycles/limb if dst!=src1 and dst!=src2
+C     6.0 cycles/limb if dst==src1 or dst==src2
 
 
 C mp_limb_t mpn_add_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,

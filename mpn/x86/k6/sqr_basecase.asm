@@ -1,9 +1,4 @@
 dnl  AMD K6 mpn_sqr_basecase -- square an mpn number.
-dnl 
-dnl  K6: approx 4.7 cycles per cross product, or 9.2 cycles per triangular
-dnl  product (measured on the speed difference between 17 and 33 limbs,
-dnl  which is roughly the Karatsuba recursing range).
-
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
@@ -24,8 +19,12 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K6: approx 4.7 cycles per cross product, or 9.2 cycles per triangular
+C     product (measured on the speed difference between 17 and 33 limbs,
+C     which is roughly the Karatsuba recursing range).
 
 
 dnl  SQR_KARATSUBA_THRESHOLD_MAX is the maximum SQR_KARATSUBA_THRESHOLD this

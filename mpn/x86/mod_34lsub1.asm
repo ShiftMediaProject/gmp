@@ -1,13 +1,6 @@
 dnl  Generic x86 mpn_mod_32lsub1 -- mpn remainder modulo 2^24-1.
-dnl
-dnl       cycles/limb
-dnl  P5:     3.0
-dnl  P6:     3.66
-dnl  K6:     3.0
-dnl  K7:     1.3
-dnl  P4:     9
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -27,6 +20,14 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C      cycles/limb
+C P5:     3.0
+C P6:     3.66
+C K6:     3.0
+C K7:     1.3
+C P4:     9
 
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr src, mp_size_t size)

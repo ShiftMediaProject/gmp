@@ -1,9 +1,4 @@
 dnl  AMD K7 mpn_sqr_basecase -- square an mpn number.
-dnl 
-dnl  K7: approx 2.3 cycles/crossproduct, or 4.55 cycles/triangular product
-dnl  (measured on the speed difference between 25 and 50 limbs, which is
-dnl  roughly the Karatsuba recursing range).
-
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
@@ -24,8 +19,12 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K7: approx 2.3 cycles/crossproduct, or 4.55 cycles/triangular product
+C     (measured on the speed difference between 25 and 50 limbs, which is
+C     roughly the Karatsuba recursing range).
 
 
 dnl  These are the same as mpn/x86/k6/sqr_basecase.asm, see that code for

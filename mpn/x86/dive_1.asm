@@ -1,14 +1,6 @@
 dnl  x86 mpn_divexact_1 -- mpn by limb exact division.
-dnl 
-dnl      cycles/limb
-dnl  P54    30.0
-dnl  P55    29.0
-dnl  P6     13.0 odd divisor, 12.0 even (strangely)
-dnl  K6     14.0  
-dnl  K7     12.0
-dnl  P4     42.0
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -28,6 +20,15 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C     cycles/limb
+C P54    30.0
+C P55    29.0
+C P6     13.0 odd divisor, 12.0 even (strangely)
+C K6     14.0  
+C K7     12.0
+C P4     42.0
 
 
 C mp_limb_t mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

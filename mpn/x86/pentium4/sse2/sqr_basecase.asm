@@ -1,9 +1,6 @@
 dnl  Intel Pentium-4 mpn_sqr_basecase -- square an mpn number.
-dnl 
-dnl  P4: approx 3.5 cycles per crossproduct, or 7 cycles per triangular
-dnl  product, at around 30x30 limbs.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,6 +20,10 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P4: approx 3.5 cycles per crossproduct, or 7 cycles per triangular
+C     product, at around 30x30 limbs.
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);

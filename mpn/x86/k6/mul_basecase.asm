@@ -1,10 +1,6 @@
 dnl  AMD K6 mpn_mul_basecase -- multiply two mpn numbers.
-dnl 
-dnl  K6: approx 9.0 cycles per cross product on 30x30 limbs (with 16 limbs/loop
-dnl      unrolling).
 
-
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,8 +19,12 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K6: approx 9.0 cycles per cross product on 30x30 limbs (with 16 limbs/loop
+C     unrolling).
+
 
 
 dnl  K6: UNROLL_COUNT cycles/product (approx)

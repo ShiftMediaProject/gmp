@@ -1,10 +1,6 @@
 dnl  Intel P5 mpn_sqr_basecase -- square an mpn number.
-dnl 
-dnl  P5: approx 8 cycles per crossproduct, or 15.5 cycles per triangular
-dnl  product at around 20x20 limbs.
 
-
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,8 +19,11 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C P5: approx 8 cycles per crossproduct, or 15.5 cycles per triangular
+C product at around 20x20 limbs.
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);

@@ -1,10 +1,7 @@
 dnl  AMD K7 mpn_popcount, mpn_hamdist -- population count and hamming
 dnl  distance.
-dnl 
-dnl  K7: popcount 5.0 cycles/limb, hamdist 6.0 cycles/limb
 
-
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,8 +20,10 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C K7: popcount 5.0 cycles/limb, hamdist 6.0 cycles/limb
 
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);

@@ -1,6 +1,4 @@
 dnl  Intel Pentium mpn_com_n -- mpn ones complement.
-dnl
-dnl  P5: 1.75 cycles/limb
 
 dnl  Copyright 1996, 2001, 2002 Free Software Foundation, Inc.
 dnl 
@@ -22,6 +20,9 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P5: 1.75 cycles/limb
 
 
 C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);

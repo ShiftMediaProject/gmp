@@ -1,8 +1,6 @@
-dnl  Intel Pentium 4 mpn_lshift -- left shift.
-dnl 
-dnl  Pentium 4: 1.75 cycles/limb.
+dnl  Intel Pentium-4 mpn_lshift -- left shift.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,6 +20,10 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P4: 1.75 cycles/limb.
+
 
 MULFUNC_PROLOGUE(mpn_lshift)
 include_mpn(`x86/pentium/mmx/lshift.asm')

@@ -1,8 +1,6 @@
 dnl  Intel P6 mpn_copyd -- copy limb vector backwards.
-dnl
-dnl  P6: 1.75 cycles/limb, or 0.75 if no overlap
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,6 +20,9 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P6: 1.75 cycles/limb, or 0.75 if no overlap
 
 
 C void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);

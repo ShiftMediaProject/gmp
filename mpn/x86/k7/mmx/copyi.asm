@@ -1,11 +1,6 @@
 dnl  AMD K7 mpn_copyi -- copy limb vector, incrementing.
-dnl 
-dnl     alignment dst/src, A=0mod8 N=4mod8
-dnl        A/A   A/N   N/A   N/N
-dnl  K7    0.75  1.0   1.0   0.75
 
-
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -24,8 +19,12 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C    alignment dst/src, A=0mod8 N=4mod8
+C       A/A   A/N   N/A   N/N
+C K7    0.75  1.0   1.0   0.75
 
 
 C void mpn_copyi (mp_ptr dst, mp_srcptr src, mp_size_t size);

@@ -1,10 +1,7 @@
 dnl  Intel Pentium-4 mpn_submul_1 -- Multiply a limb vector with a limb and
 dnl  subtract the result from a second limb vector.
-dnl 
-dnl  Pentium4: 7 cycles/limb, unstable timing, at least on early Pentium4
-dnl  silicon (stepping 10).
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -23,8 +20,11 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C P4: 7 cycles/limb, unstable timing, at least on early Pentium4 silicon
+C     (stepping 10).
 
 
 C mp_limb_t mpn_submul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

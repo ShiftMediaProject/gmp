@@ -1,8 +1,6 @@
 dnl  Intel P5 mpn_hamdist -- mpn hamming distance.
-dnl
-dnl  P5: 14.0 cycles/limb
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,6 +20,9 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C P5: 14.0 cycles/limb
 
 
 C unsigned long mpn_hamdist (mp_srcptr src1, mp_srcptr src2, mp_size_t size);

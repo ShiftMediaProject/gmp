@@ -1,9 +1,7 @@
 dnl  Intel Pentium-4 mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
-dnl 
-dnl  Pentium4: 4 cycles/limb
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,8 +20,10 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+
+C P4: 4 cycles/limb
 
 
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
