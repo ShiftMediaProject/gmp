@@ -64,10 +64,13 @@ gas doesn't accept "foo::" to create a global symbol, use separate
 hpux "as" doesn't.
 
 .proc / .endp generates the appropriate .type and .size information
-for ELF, so those directives don't need to be given explicitly.
+for ELF, so the latter directives don't need to be given explicitly.
 
-gas accepts ".pred.rel.mutex ...", but HP as demands ".pred.rel
-"mutex",...".
+gas accepts .pred.rel.mutex, but HP as demands .pred.rel "mutex".
+
+Although "//" is standardized as the comment sequence we prefer "C"
+since it inhibits m4 macro expansion.  See comments in ia64-defs.m4.
+
 
 
 REGISTER USAGE
@@ -267,5 +270,5 @@ All the above documents can be found online at
 ----------------
 Local variables:
 mode: text
-fill-column: 76
+fill-column: 70
 End:
