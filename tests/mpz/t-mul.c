@@ -81,7 +81,7 @@ int
 main (int argc, char **argv)
 {
   mpz_t multiplier, multiplicand;
-  mp_size_t multiplier_size, multiplicand_size, size;
+  mp_size_t multiplier_size, multiplicand_size, size, max_fft_thres;
   int i;
   int reps = 500;
   gmp_randstate_ptr rands;
@@ -123,17 +123,20 @@ main (int argc, char **argv)
       one (i, multiplicand, multiplier);
     }
 
-  size = 20;
-  for (i = 0; size / GMP_NUMB_BITS < SQR_FFT_THRESHOLD; i++)
-    {
-      size = size * 5 / 4;
-      mpz_rrandomb (multiplier, rands, size);
-      mpz_rrandomb (multiplicand, rands, size);
+  /* Make sure to test the FFT multiply code.  The loop above will generate
+     large numbers, up to 32767 bits, but that is typically not large enough
+     for the FFT thresholds.  */
 
-      /* printf ("%d %d\n", SIZ (multiplier), SIZ (multiplicand)); */
+  mpz_urandomb (bs, rands, 32);
+  max_fft_thres = GMP_NUMB_BITS * MAX (SQR_FFT_THRESHOLD, MUL_FFT_THRESHOLD);
+  size = mpz_get_ui (bs) % max_fft_thres + max_fft_thres;
 
-      one (-1, multiplicand, multiplier);
-    }
+  mpz_rrandomb (multiplier, rands, size);
+  mpz_rrandomb (multiplicand, rands, size);
+
+  /* printf ("%d %d\n", SIZ (multiplier), SIZ (multiplicand)); */
+
+  one (-1, multiplicand, multiplier);
 
   mpz_clear (bs);
   mpz_clear (multiplier);
