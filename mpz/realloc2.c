@@ -26,9 +26,13 @@ void
 mpz_realloc2 (mpz_ptr x, unsigned long bits)
 {
   mp_size_t  new_limbs, old_limbs;
+
   new_limbs = (bits + BITS_PER_MP_LIMB-1) / BITS_PER_MP_LIMB;
   new_limbs = MAX (new_limbs, 1);
-  new_limbs = MAX (new_limbs, ABSIZ(x));
+
+  if (ABSIZ(m) > new_limbs)
+    SIZ(m) = 0;
+
   old_limbs = ALLOC(x);
   ALLOC(x) = new_limbs;
   PTR(x) = __GMP_REALLOCATE_FUNC_LIMBS (PTR(x), old_limbs, new_limbs);
