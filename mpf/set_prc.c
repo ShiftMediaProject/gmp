@@ -1,6 +1,6 @@
 /* mpf_set_prec(x) -- Change the precision of x.
 
-Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,7 +43,7 @@ mpf_set_prec (x, prec_in_bits)
       mp_size_t offset = size - (prec + 1);
       mp_ptr xp = x->_mp_d;
 
-      MPN_COPY (xp, xp + offset, prec + 1);
+      MPN_COPY_INCR (xp, xp + offset, prec + 1);
     }
 
   x->_mp_d = (mp_ptr) (*_mp_reallocate_func)
