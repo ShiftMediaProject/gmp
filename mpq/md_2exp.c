@@ -26,7 +26,7 @@ MA 02111-1307, USA.
 #include "longlong.h"
 
 
-/* The multiplier/divisor "n" representing 2^n, is applied by right shifting
+/* The multiplier/divisor "n", representing 2^n, is applied by right shifting
    "r" until it's odd (if it isn't already), and left shifting "l" for the
    rest. */
 
