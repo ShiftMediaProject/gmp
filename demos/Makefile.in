@@ -125,7 +125,7 @@ LDADD = $(top_builddir)/libgmp.la
 # None of these programs are built by default, but "make <whatever>" will
 # build one once libgmp.la has been built.
 #
-EXTRA_PROGRAMS = factorize isprime pexpr primes
+EXTRA_PROGRAMS = factorize isprime pexpr primes qcn
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 subdir = demos
@@ -158,12 +158,17 @@ primes_OBJECTS =  primes$U.$(OBJEXT)
 primes_LDADD = $(LDADD)
 primes_DEPENDENCIES =  $(top_builddir)/libgmp.la
 primes_LDFLAGS = 
+qcn_SOURCES = qcn.c
+qcn_OBJECTS =  qcn$U.$(OBJEXT)
+qcn_LDADD = $(LDADD)
+qcn_DEPENDENCIES =  $(top_builddir)/libgmp.la
+qcn_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  factorize.c isprime.c pexpr.c primes.c
+DIST_SOURCES =  factorize.c isprime.c pexpr.c primes.c qcn.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -171,8 +176,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = factorize.c isprime.c pexpr.c primes.c
-OBJECTS = factorize$U.$(OBJEXT) isprime$U.$(OBJEXT) pexpr$U.$(OBJEXT) primes$U.$(OBJEXT)
+SOURCES = factorize.c isprime.c pexpr.c primes.c qcn.c
+OBJECTS = factorize$U.$(OBJEXT) isprime$U.$(OBJEXT) pexpr$U.$(OBJEXT) primes$U.$(OBJEXT) qcn$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -236,6 +241,10 @@ pexpr$(EXEEXT): $(pexpr_OBJECTS) $(pexpr_DEPENDENCIES)
 primes$(EXEEXT): $(primes_OBJECTS) $(primes_DEPENDENCIES)
 	@rm -f primes$(EXEEXT)
 	$(LINK) $(primes_LDFLAGS) $(primes_OBJECTS) $(primes_LDADD) $(LIBS)
+
+qcn$(EXEEXT): $(qcn_OBJECTS) $(qcn_DEPENDENCIES)
+	@rm -f qcn$(EXEEXT)
+	$(LINK) $(qcn_LDFLAGS) $(qcn_OBJECTS) $(qcn_LDADD) $(LIBS)
 .c.o:
 	$(COMPILE) -c $<
 .c.obj:
@@ -250,8 +259,11 @@ pexpr_.c: pexpr.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pexpr.c; then echo $(srcdir)/pexpr.c; else echo pexpr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pexpr_.c
 primes_.c: primes.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/primes.c; then echo $(srcdir)/primes.c; else echo primes.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > primes_.c
+qcn_.c: qcn.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/qcn.c; then echo $(srcdir)/qcn.c; else echo qcn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > qcn_.c
 factorize_.$(OBJEXT) factorize_.lo isprime_.$(OBJEXT) isprime_.lo \
-pexpr_.$(OBJEXT) pexpr_.lo primes_.$(OBJEXT) primes_.lo : $(ANSI2KNR)
+pexpr_.$(OBJEXT) pexpr_.lo primes_.$(OBJEXT) primes_.lo qcn_.$(OBJEXT) \
+qcn_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
