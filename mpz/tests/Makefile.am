@@ -2,7 +2,7 @@
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -I../..
 LDADD = ../../libgmp.la
 
 noinst_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
