@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 18 Oct 2002.  An up-to-date version is available at
+  This file current as of 26 Oct 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -537,8 +537,8 @@ MA 02111-1307, USA.
       large amounts of code dedicated to sophisticated prime testing
       algorithms, but basic things well-implemented would suit.  Tests
       offering certainty are probably all too big or too slow (or both!) to
-      justify inclusion in the main library.  Demo programs showing what can
-      be done would be good though.
+      justify inclusion in the main library.  Demo programs showing some
+      possibilities would be good though.
 
   <p> The present "repetitions" argument to <code>mpz_probab_prime_p</code> is
       rather specific to the Miller-Rabin tests of the current implementation.
@@ -556,16 +556,16 @@ MA 02111-1307, USA.
       to use, so successive tests could increase confidence in the result.
 
   <p> <code>mpn_mod_34lsub1</code> is an obvious and easy improvement to the
-      trial divisions.  And since the various prime factors are constants,
-      such a remainder can be tested with something like
+      trial divisions.  And since the various prime factors are constants, the
+      remainder can be tested with something like
 <pre>
 #define MP_LIMB_DIVISIBLE_7_P(n) \
   ((n) * MODLIMB_INVERSE_7 &lt;= MP_LIMB_T_MAX/7)
 </pre>
       Which would help compilers that don't know how to optimize divisions by
-      constants, and is in fact an improvement on current gcc (3.2) code.
-      This technique works for any modulus, see Granlund and Montgomery
-      "Division by Invariant Integers" section 9.
+      constants, and is even an improvement on current gcc 3.2 code.  This
+      technique works for any modulus, see Granlund and Montgomery "Division
+      by Invariant Integers" section 9.
 
   <p> The trial divisions are done with primes generated and grouped at
       runtime.  This could instead be a table of data, with pre-calculated
@@ -584,24 +584,28 @@ MA 02111-1307, USA.
       A strong pseudoprime test can reveal one, so perhaps such a test could
       be inserted part way though the dividing.
 
-  <p> Lucas pseudoprime tests (ie. quadratic tests) take about 3x longer than
-      a plain pseudoprime test, but offer more than 3x the confidence of
-      having a prime.  Such tests probably need to be run with completely
-      random P and Q to satisfy the theory, though single-limb P and Q could
-      be run much faster.  It's probably best to do at least one spsp test
-      before any quadratic ones, since it can identify composites in less
-      total time.  Some thought needs to be given to the structure of which
-      tests and how many are done, based on what sort of inputs we expect,
-      with a view to minimizing average time.
+  <p> Jon Grantham "Frobenius Pseudoprimes" (www.pseudoprime.com) describes a
+      quadratic pseudoprime test taking about 3x longer than a plain test, but
+      with only a 1/7710 chance of error (whereas 3 plain Miller-Rabin tests
+      would offer only (1/4)^3 == 1/64).  Such a test needs completely random
+      parameters to satisfy the theory, though single-limb values would run
+      faster.  It's probably best to do at least one plain Miller-Rabin before
+      any quadratic tests, since that can identify composites in less total
+      time.
+
+  <p> Some thought needs to be given to the structure of which tests (trial
+      division, Miller-Rabin, quadratic) and how many are done, based on what
+      sort of inputs we expect, with a view to minimizing average time.
 
   <p> It might be a good idea to break out subroutines for the various tests,
       so that an application can combine them in ways it prefers, if sensible
       defaults in <code>mpz_probab_prime_p</code> don't suit.  In particular
       this would let applications skip tests it knew would be unprofitable,
-      like trial dividing when an input is known to have no small factors.
+      like trial dividing when an input is already known to have no small
+      factors.
 
-  <p> For small inputs various combinations of theory and explicit search make
-      it relatively easy to offer certainty.  For instance numbers up to 2^32
+  <p> For small inputs, combinations of theory and explicit search make it
+      relatively easy to offer certainty.  For instance numbers up to 2^32
       could be handled with a strong pseudoprime test and table lookup.  But
       it's rather doubtful whether a smallnum prime test belongs in a bignum
       library.  Perhaps if it had other internal uses.
