@@ -51,7 +51,7 @@ MA 02111-1307, USA. */
 
 #define MOD_1_NORM_THRESHOLD              0  /* always */
 #define MOD_1_UNNORM_THRESHOLD            0  /* always */
-#define USE_PREINV_DIVREM_1               0
+#define USE_PREINV_DIVREM_1               1
 #define USE_PREINV_MOD_1                  1
 #define DIVREM_2_THRESHOLD                0  /* always */
 #define DIVEXACT_1_THRESHOLD              0  /* always */
