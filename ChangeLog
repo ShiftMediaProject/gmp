@@ -1,3 +1,33 @@
+2001-02-11  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Low-level Functions): Note mpn_get_str clobbers its input
+	plus 1 extra limb.
+
+	* mpfr/add.c,agm.c,exp2.c,exp3.c,generic.c,log2.c,pi.c,print_raw.c,
+	set_d.c,sin_cos.c,sqrtrem.c,sub.c: Apply some tweaks for K&R.
+	* tests/mpz/reuse.c, tests/mpq/t-md_2exp.c, demos/pexpr.c,
+	demos/expr/t-expr.c: Ditto.
+	
+	* mpfr/sqrt.c: Use mpn_sqrtrem not mpn_sqrtrem_new.
+	* mpfr/sqrtrem.c: Use mpn_sqrtrem not mpn_sqrtrem_new.
+
+	* configure.in (HAVE_ABI_$abi): New define in config.m4.
+
+	* gmp-impl.h (mpn_sqr_diagonal): Add prototype and define.
+	* tune/speed.c,speed.h,common.c,many.pl: Add measuring of
+	mpn_sqr_diagonal.
+
+	* gmp.texi, acinclude.m4: Mention x86 solaris 2.7 has the reg->reg
+	movq bug the same as 2.6.
+
+	* mpfr/Makefile.am (EXTRA_DIST): Add mpfr-test.h and mpf2mpfr.h.
+
+	* mpn/x86/README: Merge contents of README.family.
+	* mpn/x86/README.family: Remove file.
+
+	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add mode1o, gcd_finda,
+	invert_limb, sqr_diagonal; remove mod_1_rs; sort alphabetically.
+
 2001-02-10  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (gmp_mpn_functions_optional): List sqr_diagonal.
@@ -14,6 +44,9 @@
 	Update some comments.
 
 2001-02-09  Kevin Ryde  <kevin@swox.se>
+
+	* acconfig.h: Add HAVE_NATIVE_mpn_modexact_1_odd and
+	HAVE_NATIVE_mpn_modexact_1c_odd.
 
 	* configure.in (CCAS): Don't override a user selection.
 
