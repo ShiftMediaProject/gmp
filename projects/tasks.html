@@ -48,8 +48,6 @@
 <li> In the development sources, we return abs(a%b) in the
      <code>mpz_*_ui</code> division routines.  Perhaps make them return the
      real remainder instead?  Changes return type to <code>signed long int</code>.
-<li> libmp/mout calls strlen with incompatible type (possibly fixed now).
-<li> libmp/mtox returns from incompatible type (possibly fixed now).
 <li> <code>mpf_eq</code> is not always correct, when one operand is
      1000000000... and the other operand is 0111111111..., i.e., extremely
      close.  There is a special case in <code>mpf_sub</code> for this
@@ -84,7 +82,7 @@
      <code>count_trailing_zeros</code> is slow and it's probably worth
      handling the frequently occurring 0 to 2 trailing zeros cases specially.
 <li> Change all places that use <code>udiv_qrnnd</code> for inverting limbs to
-     instead use <code>mpn_invert_limb</code>.
+     instead use <code>invert_limb</code>.
 <li> Reorganize longlong.h so that we can inline the operations even for the
      system compiler.  When there is no such compiler feature, make calls to
      stub functions.  Write such stub functions for as many machines as
@@ -108,7 +106,17 @@
      <code>mpf_get_prec</code>, <code>mpf_set_prec_raw</code>,
      <code>mpf_set_ui</code>, <code>mpf_init</code>, <code>mpf_init2</code>,
      <code>mpf_clear</code>, <code>mpf_set_si</code>.
+
+<li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> aren't very
+     fast on one or two limb moduli, due to a lot of function call
+     overheads.  These could perhaps be be handled as special cases.
+
+<li> <code>mpn_gcd</code> might be able to be sped up on small to
+     moderate sizes by improving <code>find_a</code>, possibly just by
+     providing an alternate implementation for CPUs with slowish
+     <code>count_leading_zeros</code>.
 </ul>
+
 
 <h4>Machine Dependent Optimization</h4>
 <ul>
@@ -208,10 +216,11 @@
      <code>gmp_snprintf</code>.
 <li> Implement some <code>mpq</code> input and output functions.
 
-<li> Implement mixed precision Kronecker/Jacobi symbol.  Make a new
-     <code>mpz_kronecker</code> for full precision, leave
-     <code>mpz_jacobi</code> for compatibility.  Kevin is working on
-     this.
+<li> Implement a full precision <code>mpz_kronecker</code>, leave
+     <code>mpz_jacobi</code> for compatibility.  An efficient
+     algorithm would be wanted (for both), probably binary GCD with
+     Lehmer style multi-steps, possibly sharing code with
+     <code>mpz_gcdext</code>.
 
 <li> Make the mpn logops and copys available in gmp.h.  Since they can
      be either library functions or inlines gmp.h would need to be
