@@ -58,20 +58,24 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      base_size = urandom () % 2 * SIZE - SIZE;
-      mpz_random2 (base, base_size);
+      do
+	{
+	  base_size = urandom () % 2 * SIZE - SIZE;
+	  mpz_random2 (base, base_size);
 
-      exp_size = urandom () % (EXP_SIZE + 1);
-      mpz_random2 (exp, exp_size);
+	  exp_size = urandom () % (EXP_SIZE + 1);
+	  mpz_random2 (exp, exp_size);
 
-      mod_size = urandom () % SIZE /* - SIZE/2 */;
-      mpz_random2 (mod, mod_size);
-      if (mpz_cmp_ui (mod, 0) == 0)
-	continue;
+      /* Loop until mathematically well-defined.  */
+	}
+      while (mpz_cmp_ui (base, 0) == 0 && mpz_cmp_ui (exp, 0) == 0);
 
-      /* This is mathematically undefined.  */
-      if (mpz_cmp_ui (base, 0) == 0 && mpz_cmp_ui (exp, 0) == 0)
-	continue;
+      do
+	{
+	  mod_size = urandom () % SIZE /* - SIZE/2 */;
+	  mpz_random2 (mod, mod_size);
+	}
+      while (mpz_cmp_ui (mod, 0) == 0);
 
 #if 0
       putc ('\n', stderr);
