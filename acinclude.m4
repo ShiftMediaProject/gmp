@@ -28,7 +28,7 @@ dnl    a.out - normal unix style
 dnl    b.out - i960 systems, including gcc there
 dnl    a.exe - djgpp
 dnl    a_out.exe - OpenVMS DEC C called via GNV wrapper (gnv.sourceforge.net)
-dnl    conftest.exe - Microsoft C, and probably other DOS compilers
+dnl    conftest.exe - various DOS compilers
 
 
 define(X86_PATTERN,
@@ -2123,11 +2123,10 @@ dnl  GMP_C_INLINE
 dnl  ------------
 dnl  Establish an "inline" keyword, if possible.
 dnl
-dnl  This is the same as AC_C_INLINE, but introduing a typedef into the test
-dnl  program.  Some versions of HP C succeed when the return value is a
-dnl  plain builtin type like "int", but fail when it's a typedef.
+dnl  This is the same as AC_C_INLINE, but the #define of inline is applied
+dnl  only to C, not C++.
 dnl
-dnl  FIXME: Autoconf 2.54 will have this in the normal AC_C_INLINE.
+dnl  FIXME: Hopefully autoconf will address this itself some time.
 
 AC_DEFUN(GMP_C_INLINE,
 [AC_CACHE_CHECK([for inline], gmp_cv_c_inline,
@@ -2146,11 +2145,15 @@ if test $gmp_cv_c_inline = inline; then
   gmp_cv_c_inline=yes
 fi
 ])
+AH_VERBATIM(inline,
+[/* Define as `__inline' if that's what the C compiler calls it, or to nothing
+   if it is not supported. */
+#ifndef __cplusplus
+#undef inline
+#endif])
 case $gmp_cv_c_inline in
   inline | yes) ;;
-  no) AC_DEFINE(inline,,
-                [Define as `__inline' if that's what the C compiler calls it,
-                 or to nothing if it is not supported.]) ;;
+  no) AC_DEFINE(inline, [ ]) ;;
   *)  AC_DEFINE_UNQUOTED(inline, $gmp_cv_c_inline) ;;
 esac
 ])
