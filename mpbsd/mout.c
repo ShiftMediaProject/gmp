@@ -44,6 +44,7 @@ mout (x)
   if (x_size == 0)
     {
       fputc ('0', stdout);
+      fputc ('\n', stdout);
       return;
     }
   if (x_size < 0)
