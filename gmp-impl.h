@@ -555,9 +555,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define POWM_THRESHOLD                    0
 
 #undef GCD_ACCEL_THRESHOLD
-#undef GCDEXT_THRESHOLD
 #define GCD_ACCEL_THRESHOLD               3
-#define GCDEXT_THRESHOLD                 20
 
 #undef DIVREM_1_NORM_THRESHOLD
 #undef DIVREM_1_UNNORM_THRESHOLD
@@ -2209,7 +2207,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
     _q1 = ~(_n2 + _xh);							\
     umul_ppmm (_xh, _xl, _q1, d);					\
-    add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
+    add_ssaaaa (_xh, _xl, _xh, _xl, _n2, _n10);				\
     _xh -= (d);								\
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
@@ -2221,7 +2219,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   do {									\
     mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
+    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (lgup - 1));\
     _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
     _n1 = LIMB_HIGHBIT_TO_MASK (_n10);                                  \
     _nadj = _n10 + (_n1 & (dnorm));					\
@@ -3209,7 +3207,7 @@ void
 __gmpn_qstack_sanity __GMP_PROTO ((struct qstack *stack));
 #define ASSERT_QSTACK __gmpn_qstack_sanity
 #else
-# define ASSERT_QSTACK(stack)
+#define ASSERT_QSTACK(stack)
 #endif
 
 struct hgcd2_row
@@ -3307,7 +3305,7 @@ __gmpn_hgcd_sanity __GMP_PROTO ((const struct hgcd *hgcd,
 				 unsigned start, unsigned end));
 #define ASSERT_HGCD __gmpn_hgcd_sanity
 #else
-# define ASSERT_HGCD(hgcd, ap, asize, bp, bsize, start, end)
+#define ASSERT_HGCD(hgcd, ap, asize, bp, bsize, start, end)
 #endif
 
 int
@@ -3322,21 +3320,21 @@ mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
 			   mp_ptr tp, mp_size_t talloc));
 
 #ifndef HGCD_SCHOENHAGE_THRESHOLD
-# define HGCD_SCHOENHAGE_THRESHOLD 150
+#define HGCD_SCHOENHAGE_THRESHOLD 150
 #endif
 
 #if 0
 #ifndef GCD_LEHMER_THRESHOLD
-# define GCD_LEHMER_THRESHOLD 200
+#define GCD_LEHMER_THRESHOLD 200
 #endif
 #endif
 
 #ifndef GCD_SCHOENHAGE_THRESHOLD
-# define GCD_SCHOENHAGE_THRESHOLD 1000
+#define GCD_SCHOENHAGE_THRESHOLD 1000
 #endif
 
 #ifndef GCDEXT_SCHOENHAGE_THRESHOLD
-# define GCDEXT_SCHOENHAGE_THRESHOLD 40
+#define GCDEXT_SCHOENHAGE_THRESHOLD 600
 #endif
 
 /* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
@@ -3759,9 +3757,9 @@ extern mp_size_t                     gcd_lehmer_threshold;
 #define GCD_SCHOENHAGE_THRESHOLD     gcd_schoenhage_threshold
 extern mp_size_t                     gcd_schoenhage_threshold;
 
-#undef GCDEXT_THRESHOLD
-#define GCDEXT_THRESHOLD             gcdext_threshold
-extern mp_size_t                     gcdext_threshold;
+#undef GCDEXT_SCHOENHAGE_THRESHOLD
+#define GCDEXT_SCHOENHAGE_THRESHOLD  gcdext_schoenhage_threshold
+extern mp_size_t                     gcdext_schoenhage_threshold;
 
 #undef DIVREM_1_NORM_THRESHOLD
 #define DIVREM_1_NORM_THRESHOLD      divrem_1_norm_threshold
@@ -3805,9 +3803,9 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #undef MUL_KARATSUBA_THRESHOLD_LIMIT
 #undef MUL_TOOM3_THRESHOLD_LIMIT
 #define SQR_KARATSUBA_MAX_GENERIC      200
-#define MUL_KARATSUBA_THRESHOLD_LIMIT  700
-#define MUL_TOOM3_THRESHOLD_LIMIT      700
-#define GET_STR_THRESHOLD_LIMIT        500
+#define MUL_KARATSUBA_THRESHOLD_LIMIT  150
+#define MUL_TOOM3_THRESHOLD_LIMIT      300
+#define GET_STR_THRESHOLD_LIMIT        150
 
 #if TUNE_PROGRAM_BUILD
 /* "thresh" will normally be a variable when tuning, so use the cached
