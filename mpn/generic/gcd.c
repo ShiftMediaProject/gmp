@@ -128,7 +128,6 @@ gcd_2 (mp_ptr vp, mp_srcptr up)
 
 #if HAVE_NATIVE_mpn_gcd_finda
 #define find_a(cp)  mpn_gcd_finda (cp)
-
 #else
 static
 #if ! defined (__i386__)
@@ -474,7 +473,7 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
     {
       ASSERT (vp[0] != 0);
       if (EVEN_P (vp[0]))
-	{	  
+	{
 	  count_trailing_zeros (shift, vp[0]);
 	  ASSERT (shift > 0);
 	  ASSERT_NOCARRY (mpn_rshift (vp, vp, vsize, shift));
@@ -498,7 +497,7 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       if (EVEN_P (vp[0]))
 	{
 	  unsigned vcount;
-      
+
 	  count_trailing_zeros (vcount, vp[0]);
 	  ASSERT (vcount > 0);
 	  ASSERT_NOCARRY (mpn_rshift (vp, vp, vsize, vcount));
@@ -523,7 +522,7 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 	  shift = MIN (ucount, vcount);
 	}
     }
-  
+
   gsize = gcd_binary_odd (gp, up, usize, vp, vsize);
   if (shift)
     {
@@ -531,7 +530,7 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       if (cy)
 	gp[gsize++] = cy;
     }
-  return gsize + zero_words;  
+  return gsize + zero_words;
 }
 
 #define MPN_LEQ_P(ap, asize, bp, bsize)				\
@@ -630,7 +629,7 @@ gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
   r[2].uvp[0] = r[2].uvp[1] = NULL;
   r[3].uvp[0] = r[3].uvp[1] = NULL;
 #endif
-  
+
   while (ABOVE_THRESHOLD (r[0].rsize, GCD_LEHMER_THRESHOLD) && r[1].rsize > 0)
     {
       struct hgcd2 hgcd;
@@ -744,7 +743,7 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
   r[2].uvp[0] = r[2].uvp[1] = NULL;
   r[3].uvp[0] = r[3].uvp[1] = NULL;
 #endif
-  
+
   scratch = mpn_hgcd_init_itch ((asize + 1)/2);
   ASSERT (scratch <= talloc);
   mpn_hgcd_init (&hgcd, (asize + 1)/2, tp);
@@ -754,8 +753,8 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
     mp_size_t nlimbs = qstack_itch ((asize + 1)/2);
 
     ASSERT (nlimbs <= talloc);
-    qstack_init (&quotients, (asize + 1) / 2,
-		 tp, nlimbs);
+
+    qstack_init (&quotients, (asize + 1) / 2, tp, nlimbs);
 
     tp += nlimbs;
     talloc -= nlimbs;
@@ -828,7 +827,7 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 
 	    ASSERT (res == res_lehmer);
 	    ASSERT (res == 0 || mpn_hgcd_equal (&hgcd, &hgcd_lehmer));
-	    
+
 	    TMP_FREE (marker);
 	  }
 #endif
@@ -902,12 +901,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       mp_size_t scratch;
       mp_ptr tp;
       mp_size_t gsize;
-      
+
       TMP_MARK (marker);
-      
+
       scratch = GCD_LEHMER_ITCH (usize);
       tp = TMP_ALLOC (scratch * sizeof (mp_limb_t));
-      
+
       gsize = gcd_lehmer (gp, up, usize, vp, vsize, tp, scratch);
       TMP_FREE (marker);
       return gsize;
@@ -918,12 +917,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       mp_size_t scratch;
       mp_ptr tp;
       mp_size_t gsize;
-      
+
       TMP_MARK (marker);
-      
+
       scratch = gcd_schoenhage_itch (usize);
       tp = TMP_ALLOC (scratch * sizeof (mp_limb_t));
-      
+
       gsize = gcd_schoenhage (gp, up, usize, vp, vsize, tp, scratch);
       TMP_FREE (marker);
       return gsize;
@@ -936,4 +935,4 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
   return gcd_binary_odd (gp, up, usize, vp, vsize);
 }
 #endif /* GMP_NAIL_BITS != 0 */
-  
+
