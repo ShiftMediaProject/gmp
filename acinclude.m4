@@ -145,6 +145,7 @@ ifelse(eval(89),89,`define(t2,Y)',
 ifelse(t1`'t2,YY,`good
 ')dnl]
 EOF
+dnl ' <- balance the quotes for emacs sh-mode
   echo "trying m4" >&AC_FD_CC
   gmp_tmp_val=`(m4 conftest.m4) 2>&AC_FD_CC`
   echo "$gmp_tmp_val" >&AC_FD_CC
@@ -234,6 +235,31 @@ fi
 ])
 
 
+dnl  GMP_PROG_CC_IS_GNU(CC,[ACTIONS-IF-YES][,ACTIONS-IF-NO])
+dnl  -------------------------------------------------------
+dnl  Determine whether the given compiler is GNU C.
+dnl
+dnl  This test is the same as autoconf _AC_LANG_COMPILER_GNU, but doesn't
+dnl  cache the result.  The same "ifndef" style test is used, to avoid
+dnl  problems with syntax checking cpp's used on NeXT and Apple systems.
+
+AC_DEFUN(GMP_PROG_CC_IS_GNU,
+[cat >conftest.c <<EOF
+#ifndef __GNUC__
+  choke me
+#endif
+EOF
+gmp_compile="$1 -c conftest.c"
+if AC_TRY_EVAL(gmp_compile); then
+  rm -f conftest*
+  ifelse([$2],,:,[$2])
+else
+  rm -f conftest*
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
 dnl  GMP_HPC_HPPA_2_0(cc,[ACTION-IF-GOOD][,ACTION-IF-BAD])
 dnl  ---------------------------------------------------------
 dnl  Find out whether a HP compiler is good enough to generate hppa 2.0.
@@ -269,12 +295,12 @@ fi
 ])
 
 
-dnl  GMP_GCC_MARCH_PENTIUMPRO(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
-dnl  ------------------------------------------------------------
+dnl  GMP_GCC_MARCH_PENTIUMPRO(CCBASE,CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
+dnl  ----------------------------------------------------------------------
 dnl
-dnl  mpz/powm.c swox cvs rev 1.4 tickles a bug in gcc 2.95.2 when
-dnl  -march=pentiumpro is used.  The problem appears to be fixed in 2.96, so
-dnl  that option is used only on 2.96 and up.
+dnl  mpz/powm.c swox cvs rev 1.4 tickled a bug in gcc 2.95.2 when
+dnl  -march=pentiumpro was used.  The problem appears to be fixed in 2.96,
+dnl  so that option is used only on 2.96 and up.
 dnl
 dnl  The bug was incorrect code generated for a simple ABSIZ(z) expression
 dnl  in mpz_redc(), some registers being clobbered near a cmov.  There's no
@@ -288,25 +314,19 @@ dnl  ok to cache the result.
 AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
 [AC_CACHE_CHECK([whether $1 -march=pentiumpro is good],
                 gmp_cv_gcc_march_pentiumpro,
-[cat >conftest.c <<EOF
-#ifdef __GNUC__
-  yes;
-#endif
-EOF
-gmp_preprocess="$1 -E conftest.c"
-if AC_TRY_EVAL(gmp_preprocess) | grep yes >/dev/null; then
-  major=`($1 --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-  minor=`($1 --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-  echo "$1 major '$major', minor '$minor'" >&AC_FD_CC
+[if test $1 = gcc; then
+  major=`($2 --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+  minor=`($2 --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+  echo "$2 major '$major', minor '$minor'" >&AC_FD_CC
   GMP_COMPARE_GE($major, 2, $minor, 96)
   gmp_cv_gcc_march_pentiumpro="$gmp_compare_ge"
 else
   gmp_cv_gcc_march_pentiumpro=not-applicable
 fi])
 if test $gmp_cv_gcc_march_pentiumpro = yes; then
-  ifelse([$2],,:,[$2])
-else
   ifelse([$3],,:,[$3])
+else
+  ifelse([$4],,:,[$4])
 fi
 ])
 
@@ -489,6 +509,9 @@ AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
                gmp_cv_asm_underscore,
 [cat >conftes1.c <<EOF
+#ifdef __cplusplus
+extern "C" { void underscore_test(); }
+#endif
 main () { underscore_test(); }
 EOF
 for tmp_underscore in "" "_"; do
@@ -708,7 +731,15 @@ echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_TYPE
 dnl  ------------
-dnl  Can we say `.type'?
+dnl  Can we say ".type", and how?
+dnl
+dnl  For ELF systems .type is important, and failing to have it can lead to
+dnl  strange problems.  For instance on i386 GNU/Linux if a program refers
+dnl  to a function in a shared library that doesn't have .type, then calls
+dnl  to it either from the program or the library get immediate segvs,
+dnl  apparently due to an uninitialized program PLT entry.  If the only
+dnl  references are from within the library then calls from there work fine
+dnl  (and that can hide the problem).
 
 AC_DEFUN(GMP_ASM_TYPE,
 [AC_CACHE_CHECK([how the .type assembly directive should be used],
@@ -720,7 +751,7 @@ AC_DEFUN(GMP_ASM_TYPE,
 done
 rm -f conftest*
 if test -z "$gmp_cv_asm_type"; then
-  gmp_cv_asm_type="[dnl]"
+  gmp_cv_asm_type=""
 fi
 ])
 echo ["define(<TYPE>, <$gmp_cv_asm_type>)"] >> $gmp_tmpconfigm4
@@ -736,7 +767,7 @@ AC_DEFUN(GMP_ASM_SIZE,
                 gmp_cv_asm_size,
 [GMP_TRY_ASSEMBLE([	.size	sym,1],
   [gmp_cv_asm_size=".size	\$][1,\$][2"],
-  [gmp_cv_asm_size="[dnl]"])
+  [gmp_cv_asm_size=""])
 ])
 echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 ])
