@@ -1,6 +1,6 @@
 /* mpf_init_set_si() -- Initialize a float and assign it from a signed int.
 
-Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,7 +43,7 @@ mpf_init_set_si (r, val)
     }
   else if (val < 0)
     {
-      r->_mp_d[0] = -val;
+      r->_mp_d[0] = (unsigned long) -val;
       r->_mp_size = -1;
       r->_mp_exp = 1;
     }
