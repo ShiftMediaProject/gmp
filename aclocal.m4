@@ -1447,6 +1447,72 @@ echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 ])
 
 
+dnl  GMP_ASM_COFF_TYPE
+dnl  -----------------
+dnl  Determine whether the assembler supports COFF type information.
+dnl
+dnl  Currently this is only needed for mingw (and cygwin perhaps) and so is
+dnl  run only on the x86s, but it ought to work anywhere.
+dnl
+dnl  On MINGW, recent versions of the linker have an automatic import scheme
+dnl  for data in a DLL which is referenced by a mainline but without
+dnl  __declspec (__dllimport__) on the prototype.  It seems functions
+dnl  without type information are treated as data, or something, and calls
+dnl  to them from the mainline will crash.  gcc puts type information on the
+dnl  C functions it generates, we need to do the same for assembler
+dnl  functions.
+dnl
+dnl  This applies only to functions without __declspec(__dllimport__),
+dnl  ie. without __GMP_DECLSPEC in the case of libgmp, so it also works just
+dnl  to ensure all assembler functions used from outside libgmp have
+dnl  __GMP_DECLSPEC on their prototypes.  But this isn't an ideal situation,
+dnl  since we don't want perfectly valid calls going wrong just because
+dnl  there wasn't a prototype in scope.
+dnl
+dnl  When an auto-import takes place, the following a warning is given by
+dnl  the linker.  This shouldn't be seen for any functions.
+dnl
+dnl      Info: resolving _foo by linking to __imp__foo (auto-import)
+dnl
+dnl
+dnl  COFF type directives look like the following
+dnl
+dnl      .def    _foo
+dnl      .scl    2
+dnl      .type   32
+dnl      .endef
+dnl
+dnl  _foo is the symbol with GSYM_PREFIX (_).  .scl is the storage class, 2
+dnl  for external, 3 for static.  .type is the object type, 32 for a
+dnl  function.
+dnl
+dnl  On an ELF system, this is (correctly) rejected due to .def, .endef and
+dnl  .scl being invalid, and .type not having enough arguments.
+
+AC_DEFUN(GMP_ASM_COFF_TYPE,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_ASM_UNDERSCORE])
+AC_CACHE_CHECK([for assembler COFF type directives],
+		gmp_cv_asm_x86_coff_type,
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	$gmp_cv_asm_globl ${tmp_gsym_prefix}foo$gmp_cv_asm_globl_attr
+	.def	${tmp_gsym_prefix}foo
+	.scl	2
+	.type	32
+	.endef
+${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix
+],
+  [gmp_cv_asm_x86_coff_type=yes],
+  [gmp_cv_asm_x86_coff_type=no])
+])
+echo ["define(<HAVE_COFF_TYPE>, <$gmp_cv_asm_x86_coff_type>)"] >> $gmp_tmpconfigm4
+])
+
+
 dnl  GMP_ASM_LSYM_PREFIX
 dnl  -------------------
 dnl  What is the prefix for a local label?
