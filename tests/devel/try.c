@@ -1222,6 +1222,13 @@ const struct choice_t choice_array[] = {
   { TRY_FUNFUN(__GMPN_COPY_INCR), TYPE_COPYI },
 #endif
 
+#if HAVE_NATIVE_mpn_copyi
+  { TRY(mpn_copyi), TYPE_COPYI },
+#endif
+#if HAVE_NATIVE_mpn_copyd
+  { TRY(mpn_copyd), TYPE_COPYD },
+#endif
+
   { TRY_FUNFUN(mpn_and_n),  TYPE_AND_N  },
   { TRY_FUNFUN(mpn_andn_n), TYPE_ANDN_N },
   { TRY_FUNFUN(mpn_nand_n), TYPE_NAND_N },
