@@ -7,6 +7,9 @@
 #define MPN_KARA_MUL_N_TSIZE(n)  (2*((n)+BITS_PER_MP_LIMB))
 #define MPN_KARA_SQR_N_TSIZE(n)  (2*((n)+BITS_PER_MP_LIMB))
 
+#define __GMPN_TOOM3_MUL_N_TSIZE(n) (2*(n) + 3*BITS_PER_MP_LIMB)
+#define __GMPN_TOOM3_SQR_N_TSIZE(n) (2*((n) + BITS_PER_MP_LIMB))
+
 
 void pentium_wbinvd(void);
 
