@@ -109,7 +109,10 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   seedp = PTR (rstate->_mp_seed);
   seedn = SIZ (rstate->_mp_seed);
 
-  if (seedn == 0)
+  ap = PTR (rstate->_mp_algdata._mp_lc->_mp_a);
+  an = SIZ (rstate->_mp_algdata._mp_lc->_mp_a);
+
+  if (seedn == 0 || an == 0)
     {
       /* Seed is 0.  Result is C % M.  Assume table is sensibly stored,
 	 with C smaller than M.  */
@@ -119,9 +122,6 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
       SIZ (rstate->_mp_seed) = 1;
       return m2exp;
     }
-
-  ap = PTR (rstate->_mp_algdata._mp_lc->_mp_a);
-  an = SIZ (rstate->_mp_algdata._mp_lc->_mp_a);
 
   /* Allocate temporary storage.  Let there be room for calculation of
      (A * seed + C) % M, or M if bigger than that.  */
