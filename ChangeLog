@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-24  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Integer Import and Export): Clarify treatment of signs,
+	reported by Kent Boortz.
+
+	* randmt.c: Use gmp_uint_least32_t.
+	(randseed_mt): Add nails to mpz_export in case mt[i] more than 32 bits.
+
+	* gmp-impl.h (gmp_uint_least32_t): New typedef, replacing GMP_UINT32.
+	* configure.in (AC_CHECK_TYPES): Add uint_least32_t.
+	(AC_CHECK_SIZEOF): Add unsigned short.
+
 2002-12-22  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (ULONG_PARITY) [generic C]: Mask result to a single bit.
