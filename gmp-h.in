@@ -81,7 +81,11 @@ MA 02111-1307, USA. */
        option is given (in which case it's 1).
 
    _WIN32 - tested for by gnu ansidecl.h, no doubt on the assumption that
-      all w32 compilers are ansi.  */
+      all w32 compilers are ansi.
+
+   Note: This same set of tests is used by gen-psqr.c and
+   demos/expr/expr-impl.h, so if anything needs adding, then be sure to
+   update those too.  */
 
 #if  defined (__STDC__)                                 \
   || defined (__cplusplus)                              \
@@ -206,7 +210,7 @@ typedef struct
 #endif /* __GNU_MP__ */
 
 
-typedef __mpz_struct MP_INT;
+typedef __mpz_struct MP_INT;    /* gmp 1 source compatibility */
 typedef __mpz_struct mpz_t[1];
 
 typedef mp_limb_t *		mp_ptr;
@@ -228,7 +232,7 @@ typedef struct
   __mpz_struct _mp_den;
 } __mpq_struct;
 
-typedef __mpq_struct MP_RAT;
+typedef __mpq_struct MP_RAT;    /* gmp 1 source compatibility */
 typedef __mpq_struct mpq_t[1];
 
 typedef struct
