@@ -86,7 +86,7 @@ deflit(`FRAME',SAVE_SIZE)
 
 	movl	(%edx), %edx		# src limb
 
-	shrdl	%cl, %edx, %eax		# eax was decremented to zero
+	shrdl(	%cl, %edx, %eax)	# eax was decremented to zero
 
  	shrl	%cl, %edx
 
