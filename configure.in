@@ -550,7 +550,9 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_32=ia64.lo
         cyclecounter_size_32=2
 
-        cc_64_cflags="+DD64 +O3"
+        # must have +DD64 in CPPFLAGS to get right __LP64__ for headers
+        cc_64_cflags="+O3"
+        cc_64_cppflags="+DD64"
         gcc_64_cflags="-mlp64 -O2"
         ;;
     esac
