@@ -2115,6 +2115,11 @@ random state and are hence not reentrant.  The newer random number functions
 that accept a @code{gmp_randstate_t} parameter can be used instead.
 
 @item
+@code{gmp_randinit} (obsolete) returns an error indication through a global
+variable, which is not thread safe.  Applications are advised to use
+@code{gmp_randinit_lc_2exp} instead.
+
+@item
 @code{mp_set_memory_functions} uses global variables to store the selected
 memory allocation functions.
 
@@ -5486,14 +5491,18 @@ Initialize @var{rop} with a copy of the algorithm and state from @var{op}.
 @strong{This function is obsolete.}
 
 Initialize @var{state} with an algorithm selected by @var{alg}.  The only
-choice is @code{GMP_RAND_ALG_LC}, which is @code{gmp_randinit_lc_2exp_size}.
-A third parameter of type @code{unsigned long} is required, this is the
-@var{size} for that function.  @code{GMP_RAND_ALG_DEFAULT} or 0 are the same
-as @code{GMP_RAND_ALG_LC}.
+choice is @code{GMP_RAND_ALG_LC}, which is @code{gmp_randinit_lc_2exp_size}
+described above.  A third parameter of type @code{unsigned long} is required,
+this is the @var{size} for that function.  @code{GMP_RAND_ALG_DEFAULT} or 0
+are the same as @code{GMP_RAND_ALG_LC}.
 
-@code{gmp_randinit} sets bits in @code{gmp_errno} to indicate an error.
-@code{GMP_ERROR_UNSUPPORTED_ARGUMENT} if @var{alg} is unsupported, or
-@code{GMP_ERROR_INVALID_ARGUMENT} if the @var{size} parameter is too big.
+@c  For reference, this is the only place gmp_errno has been documented, and
+@c  due to being non thread safe we won't be adding to it's uses.
+@code{gmp_randinit} sets bits in the global variable @code{gmp_errno} to
+indicate an error.  @code{GMP_ERROR_UNSUPPORTED_ARGUMENT} if @var{alg} is
+unsupported, or @code{GMP_ERROR_INVALID_ARGUMENT} if the @var{size} parameter
+is too big.  It may be noted this error reporting is not thread safe (a good
+reason to use @code{gmp_randinit_lc_2exp_size} instead).
 @end deftypefun
 
 @deftypefun void gmp_randclear (gmp_randstate_t @var{state})
