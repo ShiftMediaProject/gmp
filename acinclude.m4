@@ -429,12 +429,12 @@ dnl  in particular that grepping doesn't work with SunOS 4 native grep since
 dnl  that grep seems to have trouble with '\0's in files.
 
 AC_DEFUN(GMP_ASM_UNDERSCORE,
-[AC_CACHE_CHECK([if globals are prefixed by underscore], 
-	        gmp_cv_asm_underscore,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
-cat > conftes1.c <<EOF
+AC_CACHE_CHECK([if globals are prefixed by underscore], 
+	        gmp_cv_asm_underscore,
+[cat > conftes1.c <<EOF
 main () { underscore_test(); }
 EOF
 for tmp_underscore in "" "_"; do
