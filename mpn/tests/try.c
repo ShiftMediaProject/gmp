@@ -1091,8 +1091,8 @@ try_one (void)
       if (tr->flag & TRY_SRC1_GCDDATA)
         {
           /* s[1] no more bits than s[0] */
-          if (s[i].p[SRC_SIZE(i)-1] > s[0].p[size-1])
-            s[i].p[SRC_SIZE(i)-1] %= (s[0].p[size-1]+1);
+          if (i == 1 && size2 == size)
+            s[1].p[size-1] &= refmpn_msbone_mask (s[0].p[size-1]);
 
           /* normalized */
           s[i].p[SRC_SIZE(i)-1] += (s[i].p[SRC_SIZE(i)-1] == 0);
