@@ -5,7 +5,7 @@
    REST ARE INTERNALS AND ARE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE
    CHANGES OR DISAPPEAR COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 2000, 2001, 2002 Free Software
+Copyright 1991, 1993, 1994, 1996, 1998, 2000, 2001, 2002, 2003 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -65,8 +65,8 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
   mp_size_t xsize;
   const unsigned char *digit_value;
 
-  if (EOF != -1)		/* FIXME: handle this by adding explicit */
-    abort ();			/* comparisons of c and EOF before each  */
+  ASSERT_ALWAYS (EOF == -1);	/* FIXME: handle this by adding explicit */
+         			/* comparisons of c and EOF before each  */
 				/* read of digit_value[].  */
 
   digit_value = digit_value_tab;
