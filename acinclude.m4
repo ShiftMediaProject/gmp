@@ -21,6 +21,15 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
+dnl  Some tests use, or must delete, the default compiler output.  The
+dnl  possible filenames are based on what autoconf looks for, namely
+dnl
+dnl    a.out - normal unix style
+dnl    a.exe - djgpp
+dnl    a_out.exe - OpenVMS DEC C called via GNV wrapper (gnv.sourceforge.net)
+dnl    conftest.exe - Microsoft C, and probably other DOS compilers
+
+
 define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
@@ -456,14 +465,14 @@ gmp_prog_cc_works=no
 gmp_compile="$1 conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   if test "$cross_compiling" = no; then
-    if AC_TRY_COMMAND([./a.out || ./a.exe || ./conftest]); then
+    if AC_TRY_COMMAND([./a.out || ./a.exe || ./a_out.exe || ./conftest]); then
       gmp_prog_cc_works=yes
     fi
   else
     gmp_prog_cc_works=yes
   fi
 fi
-rm -f conftest* a.out a.exe
+rm -f conftest* a.out a.exe a_out.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
 if test $gmp_prog_cc_works = yes; then
   ifelse([$2],,:,[$2])
@@ -733,7 +742,7 @@ EOF
     fi
   fi
   cat conftest.out >&AC_FD_CC
-  rm -f conftest* a.out
+  rm -f conftest* a.out a.exe a_out.exe
   AC_MSG_RESULT($result)
   if test "$result" = yes; then
       ifelse([$4],,:,[$4])
@@ -999,7 +1008,7 @@ else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
-rm -f conftes1* conftes2* a.out
+rm -f conftes1* conftes2* a.out a.exe a_out.exe
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
