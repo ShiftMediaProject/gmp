@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.155
+# From configure.in Revision: 1.156
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4219,10 +4219,39 @@ EOF
   fi
 done
 
+SPEED_CYCLECOUNTER_OBJ=
+cyclecounter_size=2
+case ${target} in
+  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
+    # Availability of rdtsc is checked at run-time.
+    SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
+  alpha*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=alpha.lo
+    cyclecounter_size=1 ;;
+  sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
+  hppa2*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
+  hppa*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
+  ia64*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
+esac
+
+if test -n "$SPEED_CYCLECOUNTER_OBJ"
+then
+  cat >>confdefs.h <<EOF
+#define HAVE_SPEED_CYCLECOUNTER $cyclecounter_size
+EOF
+
+  # All cycle counters are .asm files currently
+  found_asm=yes
+fi
+
 # Don't demand an m4 unless it's actually needed.
 if test $found_asm = yes; then
   echo $ECHO_N "checking for suitable m4... $ECHO_C" 1>&6
-echo "configure:4226: checking for suitable m4" 1>&5
+echo "configure:4255: checking for suitable m4" 1>&5
 if test "${gmp_cv_prog_m4+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4281,7 +4310,7 @@ fi
 
 if test "$gmp_no_asm_syntax_testing" != yes; then
   echo $ECHO_N "checking how to switch to text section... $ECHO_C" 1>&6
-echo "configure:4285: checking how to switch to text section" 1>&5
+echo "configure:4314: checking how to switch to text section" 1>&5
 if test "${gmp_cv_asm_text+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4300,7 +4329,7 @@ echo "$ECHO_T""$gmp_cv_asm_text" 1>&6
 echo "define(<TEXT>, <$gmp_cv_asm_text>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking how to switch to data section... $ECHO_C" 1>&6
-echo "configure:4304: checking how to switch to data section" 1>&5
+echo "configure:4333: checking how to switch to data section" 1>&5
 if test "${gmp_cv_asm_data+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4318,7 +4347,7 @@ echo "$ECHO_T""$gmp_cv_asm_data" 1>&6
 echo "define(<DATA>, <$gmp_cv_asm_data>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking how to switch to read-only data section... $ECHO_C" 1>&6
-echo "configure:4322: checking how to switch to read-only data section" 1>&5
+echo "configure:4351: checking how to switch to read-only data section" 1>&5
 if test "${gmp_cv_asm_rodata+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4335,7 +4364,7 @@ echo "$ECHO_T""$gmp_cv_asm_rodata" 1>&6
 echo "define(<RODATA>, <$gmp_cv_asm_rodata>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking how to export a symbol... $ECHO_C" 1>&6
-echo "configure:4339: checking how to export a symbol" 1>&5
+echo "configure:4368: checking how to export a symbol" 1>&5
 if test "${gmp_cv_asm_globl+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4349,7 +4378,7 @@ echo "$ECHO_T""$gmp_cv_asm_globl" 1>&6
 echo "define(<GLOBL>, <$gmp_cv_asm_globl>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking what assembly label suffix to use... $ECHO_C" 1>&6
-echo "configure:4353: checking what assembly label suffix to use" 1>&5
+echo "configure:4382: checking what assembly label suffix to use" 1>&5
 if test "${gmp_cv_asm_label_suffix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4363,14 +4392,14 @@ echo "$ECHO_T""$gmp_cv_asm_label_suffix" 1>&6
 echo "define(<LABEL_SUFFIX>, <\$1$gmp_cv_asm_label_suffix>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking how the .type assembly directive should be used... $ECHO_C" 1>&6
-echo "configure:4367: checking how the .type assembly directive should be used" 1>&5
+echo "configure:4396: checking how the .type assembly directive should be used" 1>&5
 if test "${gmp_cv_asm_type+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
   ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
 for gmp_tmp_prefix in @ \# %; do
   echo "	.type	sym,${gmp_tmp_prefix}function" > conftest.s
-  if { (eval echo configure:4374: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+  if { (eval echo configure:4403: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
     gmp_cv_asm_type=".type	\$1,${gmp_tmp_prefix}\$2"
     break
   fi
@@ -4384,13 +4413,13 @@ echo "$ECHO_T""$gmp_cv_asm_type" 1>&6
 echo "define(<TYPE>, <$gmp_cv_asm_type>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking if the .size assembly directive works... $ECHO_C" 1>&6
-echo "configure:4388: checking if the .size assembly directive works" 1>&5
+echo "configure:4417: checking if the .size assembly directive works" 1>&5
 if test "${gmp_cv_asm_size+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
   ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
 echo '	.size	sym,1' > conftest.s
-if { (eval echo configure:4394: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+if { (eval echo configure:4423: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
   gmp_cv_asm_size=".size	\$1,\$2"
 else
   gmp_cv_asm_size="dnl"
@@ -4401,7 +4430,7 @@ echo "$ECHO_T""$gmp_cv_asm_size" 1>&6
 echo "define(<SIZE>, <$gmp_cv_asm_size>)" >> $gmp_tmpconfigm4
 
 echo $ECHO_N "checking what prefix to use for a local label... $ECHO_C" 1>&6
-echo "configure:4405: checking what prefix to use for a local label" 1>&5
+echo "configure:4434: checking what prefix to use for a local label" 1>&5
 if test "${gmp_cv_asm_lsym_prefix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4417,7 +4446,7 @@ dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
 	.byte 0
 EOF
-  if { (eval echo configure:4421: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+  if { (eval echo configure:4450: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
     $NM conftest.o >/dev/null 2>&1
     gmp_rc=$?
     if test "$gmp_rc" != "0"; then
@@ -4441,7 +4470,7 @@ echo "$ECHO_T""$gmp_cv_asm_lsym_prefix" 1>&6
 echo "define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)" >> $gmp_tmpconfigm4
 
 echo $ECHO_N "checking how to define a 32-bit word... $ECHO_C" 1>&6
-echo "configure:4445: checking how to [define] a 32-bit word" 1>&5
+echo "configure:4474: checking how to [define] a 32-bit word" 1>&5
 if test "${gmp_cv_asm_w32+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4470,7 +4499,7 @@ case "$target" in
 foo${gmp_cv_asm_label_suffix}
 	.byte	0
 EOF
-      if { (eval echo configure:4474: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+      if { (eval echo configure:4503: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
 
         gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
              -e 's;[^1-9]*\([0-9]*\).*;\1;'`
@@ -4494,7 +4523,7 @@ echo "$ECHO_T""$gmp_cv_asm_w32" 1>&6
 echo "define(<W32>, <$gmp_cv_asm_w32>)" >> $gmp_tmpconfigm4
 
   echo $ECHO_N "checking if globals are prefixed by underscore... $ECHO_C" 1>&6
-echo "configure:4498: checking if globals are prefixed by underscore" 1>&5
+echo "configure:4527: checking if globals are prefixed by underscore" 1>&5
 if test "${gmp_cv_asm_underscore+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4517,7 +4546,7 @@ EOF
     ;;
   esac
   tmp_compile="${CC-cc} conftes1.c conftes2.s 1>&5"
-  if { (eval echo configure:4521: \"$tmp_compile\") 1>&5; (eval $tmp_compile) 2>&5; }; then
+  if { (eval echo configure:4550: \"$tmp_compile\") 1>&5; (eval $tmp_compile) 2>&5; }; then
     eval tmp_result$tmp_underscore=yes
   else
     eval tmp_result$tmp_underscore=no
@@ -4554,7 +4583,7 @@ echo 'define(<GSYM_PREFIX>, <>)' >> $gmp_tmpconfigm4
 fi
 
 echo $ECHO_N "checking if .align assembly directive is logarithmic... $ECHO_C" 1>&6
-echo "configure:4558: checking if .align assembly directive is logarithmic" 1>&5
+echo "configure:4587: checking if .align assembly directive is logarithmic" 1>&5
 if test "${gmp_cv_asm_align_log+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4572,7 +4601,7 @@ foo$gmp_cv_asm_label_suffix
 	.byte	2
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
-if { (eval echo configure:4576: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+if { (eval echo configure:4605: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
 
   gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
        -e 's;[^1-9]*\([0-9]*\).*;\1;'`
@@ -4602,7 +4631,7 @@ fi
     i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
 
 echo $ECHO_N "checking if the assembler takes cl with shldl... $ECHO_C" 1>&6
-echo "configure:4606: checking if the assembler takes cl with shldl" 1>&5
+echo "configure:4635: checking if the assembler takes cl with shldl" 1>&5
 if test "${gmp_cv_asm_shldl_cl+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4611,7 +4640,7 @@ else
 	shldl	%cl, %eax, %ebx
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
-if { (eval echo configure:4615: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+if { (eval echo configure:4644: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
   gmp_cv_asm_shldl_cl=yes
 else
   gmp_cv_asm_shldl_cl=no
@@ -4631,7 +4660,7 @@ echo 'define(<WANT_SHLDL_CL>, <0>)' >> $gmp_tmpconfigm4
 fi
 
       echo $ECHO_N "checking if the .align directive accepts an 0x90 fill in .text... $ECHO_C" 1>&6
-echo "configure:4635: checking if the .align directive accepts an 0x90 fill in .text" 1>&5
+echo "configure:4664: checking if the .align directive accepts an 0x90 fill in .text" 1>&5
 if test "${gmp_cv_asm_align_fill_0x90+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4665,14 +4694,14 @@ echo "define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)" >> $gmp_tmpconfig
       if test "$enable_profiling" != no; then
 
 echo $ECHO_N "checking how to call x86 mcount... $ECHO_C" 1>&6
-echo "configure:4669: checking how to call x86 mcount" 1>&5
+echo "configure:4698: checking how to call x86 mcount" 1>&5
 cat >conftest.c <<EOF
 foo(){bar();}
 EOF
 
 if test "$enable_static" = yes; then
   gmp_asmout_compile="$CC $CFLAGS -S conftest.c 1>&5"
-  if { (eval echo configure:4676: \"$gmp_asmout_compile\") 1>&5; (eval $gmp_asmout_compile) 2>&5; }; then
+  if { (eval echo configure:4705: \"$gmp_asmout_compile\") 1>&5; (eval $gmp_asmout_compile) 2>&5; }; then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_nonpic_reg="`sed -n '/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p' conftest.s`"
     else
@@ -4689,7 +4718,7 @@ fi
 
 if test "$enable_shared" = yes; then
   gmp_asmout_compile="$CC $CFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&5"
-  if { (eval echo configure:4693: \"$gmp_asmout_compile\") 1>&5; (eval $gmp_asmout_compile) 2>&5; }; then
+  if { (eval echo configure:4722: \"$gmp_asmout_compile\") 1>&5; (eval $gmp_asmout_compile) 2>&5; }; then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_pic_reg="`sed -n 's/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p' conftest.s`"
     else
@@ -4769,7 +4798,7 @@ for tmp_pair in BITS_PER_MP_LIMB:mp_limb_t \
     continue
   fi
   echo $ECHO_N "checking sizeof $tmp_type... $ECHO_C" 1>&6
-echo "configure:4773: checking sizeof $tmp_type" 1>&5
+echo "configure:4802: checking sizeof $tmp_type" 1>&5
 if eval "test \"\${gmp_cv_c_sizes_$tmp_type+set}\" = set"; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4818,33 +4847,6 @@ gmp_srclinks=
 for f in $gmp_links; do
   gmp_srclinks="$gmp_srclinks `echo $f | sed 's/\(.*\):.*/\1/'`"
 done
-
-SPEED_CYCLECOUNTER_OBJ=
-cyclecounter_size=2
-case ${target} in
-  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
-    # Availability of rdtsc is checked at run-time.
-    SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
-  alpha*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=alpha.lo
-    cyclecounter_size=1 ;;
-  sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
-  hppa2*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
-  hppa*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
-  ia64*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
-esac
-
-if test -n "$SPEED_CYCLECOUNTER_OBJ"
-then
-  cat >>confdefs.h <<EOF
-#define HAVE_SPEED_CYCLECOUNTER $cyclecounter_size
-EOF
-
-fi
 
 # A recompiled sqr_basecase for use in the tune program, if necessary.
 TUNE_SQR_OBJ=
@@ -5201,11 +5203,11 @@ s%@STRIP@%$STRIP%;t t
 s%@LIBTOOL@%$LIBTOOL%;t t
 s%@U@%$U%;t t
 s%@ANSI2KNR@%$ANSI2KNR%;t t
+s%@SPEED_CYCLECOUNTER_OBJ@%$SPEED_CYCLECOUNTER_OBJ%;t t
 s%@M4@%$M4%;t t
 s%@mpn_objects@%$mpn_objects%;t t
 s%@mpn_objs_in_libgmp@%$mpn_objs_in_libgmp%;t t
 s%@gmp_srclinks@%$gmp_srclinks%;t t
-s%@SPEED_CYCLECOUNTER_OBJ@%$SPEED_CYCLECOUNTER_OBJ%;t t
 s%@TUNE_SQR_OBJ@%$TUNE_SQR_OBJ%;t t
 CEOF
 
@@ -5541,3 +5543,4 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
+
