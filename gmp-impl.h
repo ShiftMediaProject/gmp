@@ -1101,7 +1101,6 @@ union ieee_double_extract
 /* Maximum number of limbs it will take to store any `double'.
    We assume doubles have 53 mantissam bits.  */
 #define LIMBS_PER_DOUBLE ((53 + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB + 1)
-#endif
 
 double __gmp_scale2 _PROTO ((double, int));
 int __gmp_extract_double _PROTO ((mp_ptr, double));
