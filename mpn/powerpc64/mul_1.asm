@@ -27,6 +27,7 @@ C res_ptr	r3
 C s1_ptr	r4
 C size		r5
 C s2_limb	r6
+C cy_limb	r7
 
 C PPC630: 6 to 18 cycles/limb, depending on multiplier.  This cannot be
 C improved unless floating-point operations are used instead of the slow
@@ -34,19 +35,22 @@ C mulld/mulhdu.
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
+	li	r7,0		C cy_limb = 0
+
+PROLOGUE(mpn_mul_1c)
 	mtctr	r5
-	li	r9,0		C cy_limb = 0
 	addic	r0,r0,0
 	cal	r3,-8(r3)
 	cal	r4,-8(r4)
 .Loop:
 	ldu	r0,8(r4)
-	mulld	r7,r0,r6
-	adde	r7,r7,r9
-	mulhdu	r9,r0,r6
-	stdu	r7,8(r3)
+	mulld	r9,r0,r6
+	adde	r9,r9,r7
+	mulhdu	r7,r0,r6
+	stdu	r9,8(r3)
 	bdnz	.Loop
 
-	addze	r3,r9
+	addze	r3,r7
 	blr
 EPILOGUE(mpn_mul_1)
+EPILOGUE(mpn_mul_1c)
