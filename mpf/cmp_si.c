@@ -1,7 +1,7 @@
 /* mpf_cmp_si -- Compare a float with a signed integer.
 
-Copyright 1993, 1994, 1995, 1999, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1993, 1994, 1995, 1999, 2000, 2001, 2002, 2004 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,9 +61,9 @@ mpf_cmp_si (mpf_srcptr u, long int vval)
 
   /* 2. Are the exponents different (V's exponent == 1)?  */
 #if GMP_NAIL_BITS != 0
-  if (uexp > 1 + (vval > GMP_NUMB_MAX))
+  if (uexp > 1 + ((unsigned long) vval > GMP_NUMB_MAX))
     return usign;
-  if (uexp < 1 + (vval > GMP_NUMB_MAX))
+  if (uexp < 1 + ((unsigned long) vval > GMP_NUMB_MAX))
     return -usign;
 #else
   if (uexp > 1)
@@ -79,7 +79,7 @@ mpf_cmp_si (mpf_srcptr u, long int vval)
   if (usize >= 2 && uexp == 2)
     {
       if ((ulimb >> GMP_NAIL_BITS) != 0)
-	return 1;
+	return usign;
       ulimb = (ulimb << GMP_NUMB_BITS) | up[usize - 2];
       usize--;
     }
