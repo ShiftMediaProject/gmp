@@ -215,7 +215,6 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = . devel mpn mpz mpq mpf rand misc cxx mpbsd
 
 # COMPILE minus CC.

@@ -195,8 +195,6 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-
 INCLUDES = -D__GMP_WITHIN_GMPXX -I$(top_srcdir)
 
 @WANT_CXX_TRUE@noinst_LTLIBRARIES = libcxx.la

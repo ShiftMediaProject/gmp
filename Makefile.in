@@ -237,7 +237,6 @@ LIBMP_LT_CURRENT = 4
 LIBMP_LT_REVISION = 4
 LIBMP_LT_AGE = 1
 
-AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 ACLOCAL_AMFLAGS = -I mpfr
 @MAINTAINER_MODE_TRUE@@WANT_MPFR_FALSE@MPFR_DIR = mpfr
 
@@ -624,13 +623,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-ANSI2KNR = @ANSI2KNR@
-ansi2knr: ansi2knr.$(OBJEXT)
-	$(LINK) ansi2knr.$(OBJEXT) $(LIBS)
-ansi2knr.$(OBJEXT): $(CONFIG_HEADER)
-
-clean-krextra:
-	-rm -f ansi2knr
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
 
 mostlyclean-kr:
 	-test "$U" = "" || rm -f *_.c
@@ -1093,8 +1088,7 @@ distcleancheck: distclean
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(INFO_DEPS) $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) \
-		config.h
+all-am: Makefile $(INFO_DEPS) $(LTLIBRARIES) $(HEADERS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
 	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) $(DESTDIR)$(includedir) $(DESTDIR)$(includedir)
@@ -1127,7 +1121,7 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
-clean-am: clean-generic clean-krextra clean-libLTLIBRARIES clean-libtool \
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-recursive
@@ -1204,7 +1198,7 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 uninstall-info: uninstall-info-recursive
 
 .PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am check check-am clean \
-	clean-generic clean-krextra clean-libLTLIBRARIES clean-libtool \
+	clean-generic clean-libLTLIBRARIES clean-libtool \
 	clean-recursive ctags ctags-recursive dist dist-all dist-gzip \
 	dist-info distcheck distclean distclean-compile \
 	distclean-generic distclean-hdr distclean-libtool \
