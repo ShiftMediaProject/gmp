@@ -1,3 +1,30 @@
+2000-04-24  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_CHECK_FUNCS): Add strtoul.
+
+	* mpn/generic/mul_n.c [TUNE_PROGRAM_BUILD] (mpn_mul_n): Bigger
+	array for karatsuba temporary space for tune program build.
+	(mpn_toom3_sqr_n) Remove an unused variable.
+
+	* demos/Makefile.am (AUTOMAKE_OPTIONS): Add ansi2knr.
+	Add "allprogs:" pseudo-target.
+	* demos/factorize.c, demos/isprime.c: Switch to ANSI functions,
+	rely on ansi2knr.
+
+	* gmp.texi (Getting the Latest Version of GMP): Add reference to
+	ftp.gnu.org mirrors list.
+	* INSTALL: Add arg count check to example programs.
+
+	* mpn/x86/*/*.asm: Convert to FORTRAN ... or rather to
+	FORTRAN-style "C" commenting to support Solaris "as".
+	* mpn/x86/x86-defs.m4: Ditto, and add another Zdisp insn.
+	* mpn/asm-defs.m4 (C): Update comments.
+	* mpn/x86/README.family: Add a note on commenting, remove
+	description of .S files.
+
+	* mpn/sparc64/addmul_1.asm, mul_1.asm, submul_1.asm: Use
+	include_mpn().
+
 2000-04-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32: Use dnl/C instead of `#' for comments.
@@ -9,8 +36,8 @@
 
 2000-04-23  Kevin Ryde  <kevin@swox.se>
 
-	* tune/Makefile.am, common.c, rdtsc.asm, speed.c, speed.h, time.c,
-	tuneup.c: New files.
+	* tune/Makefile.am, README, common.c, rdtsc.asm, speed.c, speed.h,
+	time.c, tuneup.c: New files.
 	* tune/Makefile.in: New file, generated from Makefile.am.
 
 	* gmp-impl.h (ASSERT_NOREALLOC,TMP_ALLOC_LIMBS): New macros.
@@ -30,7 +57,7 @@
 
 	* mpf/Makefile.am: Add -DOPERATION_$* for new integer.c.
 	Remove explicit rules for floor.o etc.
-	* mpf/integer.c: Use OPERATION_$* for floor/ceil/trunc compiles.
+	* mpf/integer.c: Use OPERATION_$* for floor/ceil/trunc.
 
 	* mpn/Makefile.am: Put "tests" in SUBDIRS.
 	* mpn/tests/Makefile.am: New file providing rules to build test
