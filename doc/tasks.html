@@ -29,8 +29,6 @@
 <li> mpn/generic/get_str.c stores <code>mp_size_t</code> data in several int
      variables.  (It is also really slow.  Perhaps just call
      <code>mpn_divrem_1</code>.  See also optimization item below.)
-<li> <code>mpf_random2</code> and <code>mpfr_random2</code> incorrectly assume
-     <code>random()</code> returns enough bits for an <code>mp_exp_t</code>.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c:
@@ -53,8 +51,6 @@
      not use just whole limbs, but partial limbs.
 <li> NeXT might not have <code>__builtin_constant_p</code> available.  Same
      problem with MacOS X.
-<li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
-     mp?/tests/*.c.
 <li> <code>TMP_ALLOC</code> is not reentrant when using stack-alloc.c.  Perhaps
      make it so by default and leave a --enable-alloca=malloc-nonreentrant with
      the current code.  A reentrant version will probably be slower since it
@@ -100,13 +96,18 @@
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
 <li> Consider inlining these functions: <code>mpz_size</code>,
      <code>mpz_set_ui</code>, <code>mpz_set_q</code>, <code>mpz_clear</code>,
-     <code>mpz_init</code>, <code>mpz_get_ui</code>, <code>mpz_scan0</code>,
-     <code>mpz_scan1</code>, <code>mpz_getlimbn</code>,
+     <code>mpz_init</code>, <code>mpz_get_ui</code>, <code>mpz_getlimbn</code>,
      <code>mpz_init_set_ui</code>, <code>mpz_perfect_square_p</code>,
      <code>mpz_popcount</code>, <code>mpf_size</code>,
      <code>mpf_get_prec</code>, <code>mpf_set_prec_raw</code>,
      <code>mpf_set_ui</code>, <code>mpf_init</code>, <code>mpf_init2</code>,
      <code>mpf_clear</code>, <code>mpf_set_si</code>.
+     <br>
+     These will want to be done with <code>extern inline</code> in the style
+     of the current <code>mpn_add</code> etc, since applications might be
+     using them as function pointers.  The GLIBC trick of first defining a
+     prototype then a macro looks like it won't work with the GMP
+     <code>__gmpz</code> renamings.
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> aren't very
      fast on one or two limb moduli, due to a lot of function call
      overheads.  These could perhaps be handled as special cases.
@@ -336,8 +337,9 @@
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
-<li> Configure in demos directory.  Now pexpr.c is becoming the usual *nix
-     mess of nested ifdefs.
+<li> demos/pexpr.c: is becoming the usual *nix mess of nested ifdefs.  Instead
+     use the results of configure tests.  pexpr.c could be generated from a
+     pexpr.in with a set of #undef's.
 <li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
      used.  Check all such for bit rot and then put umul and udiv in
      <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
@@ -347,18 +349,13 @@
 <li> HPPA <code>mpn_umul_ppmm</code> and <code>mpn_udiv_qrnnd</code> have a
      different parameter order than those functions on other CPUs.  It might
      avoid confusion to have them under different names, maybe
-     <code>mpn_umul_ppmm_plast</code> or some such.  Prototypes then wouldn't
+     <code>mpn_umul_ppmm_r</code> or some such.  Prototypes then wouldn't
      be conditionalized, and the appropriate form could be selected with the
      <code>HAVE_NATIVE</code> scheme if/when the code switches to use a
      <code>PROLOGUE</code> style.
 <li> Combine the pa64 and pa64w directories.
 <li> Rename `mips2' =&gt; `mips32' and `mips3' =&gt; `mips64'.
 </ul>
-
-<p> When testing, make sure to test at least the following for all out
-target machines: (1) Both gcc and cc (and c89).  (2) Both 32-bit mode
-and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
-`make' and GNU `make'. (4) With and without GNU binutils.
 
 
 <h4>Miscellaneous</h4>
@@ -367,8 +364,12 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
-<li> Rewrite the various mpX_random* to use the new GMP random generators.
 <li> Merge mpn/pa64 and pa64w.
+<li> <code>mpz_urandomm</code> should do something for n&lt;=0 (but what?),
+     and the use of <code>mpz_mod</code> looks doubtful (does it suffice to
+     generate numbers of <code>nbits</code> until getting one &lt;n?)
+<li> demos/factorize.c should use the GMP random functions when restarting
+     Pollard-Rho, not <code>random</code> / <code>mrand48</code>.
 </ul>
 
 
