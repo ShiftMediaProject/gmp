@@ -1,3 +1,8 @@
+2000-10-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/mips3/add_n.s: Decrease carry recurrence from 4 to 3 cycles.
+	* mpn/mips3/sub_n.s: Likewise.
+
 2000-10-04  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (sparc64-*-linux*): Set path according to CC64.
