@@ -28,8 +28,8 @@ translation approved by the Foundation.
 
 Indirect:
 gmp.info-1: 1018
-gmp.info-2: 50735
-gmp.info-3: 94051
+gmp.info-2: 50874
+gmp.info-3: 94190
 
 Tag Table:
 (Indirect)
@@ -38,38 +38,38 @@ Node: Copying2028
 Node: Introduction to MP3728
 Node: Installing MP5657
 Node: MP Basics10220
-Node: Reporting Bugs16396
-Node: Integer Functions17916
-Node: Initializing Integers18523
-Node: Assigning Integers20639
-Node: Simultaneous Integer Init & Assign21914
-Node: Converting Integers23528
-Node: Integer Arithmetic25197
-Node: Comparison Functions36046
-Node: Integer Logic and Bit Fiddling36948
-Node: I/O of Integers39009
-Node: Miscellaneous Integer Functions41490
-Node: Rational Number Functions43160
-Node: Initializing Rationals44455
-Node: Assigning Rationals45625
-Node: Comparing Rationals46588
-Node: Applying Integer Functions47871
-Node: Miscellaneous Rational Functions48689
-Node: Floating-point Functions50735
-Node: Initializing Floats52583
-Node: Assigning Floats55335
-Node: Simultaneous Float Init & Assign56927
-Node: Converting Floats58444
-Node: Float Arithmetic60023
-Node: Float Comparison61932
-Node: I/O of Floats62958
-Node: Miscellaneous Float Functions65074
-Node: Low-level Functions65757
-Node: BSD Compatible Functions82125
-Node: Custom Allocation86461
-Node: Contributors88799
-Node: References90398
-Node: Concept Index91434
-Node: Function Index94051
+Node: Reporting Bugs16508
+Node: Integer Functions18028
+Node: Initializing Integers18635
+Node: Assigning Integers20751
+Node: Simultaneous Integer Init & Assign22026
+Node: Converting Integers23640
+Node: Integer Arithmetic25309
+Node: Comparison Functions36185
+Node: Integer Logic and Bit Fiddling37087
+Node: I/O of Integers39148
+Node: Miscellaneous Integer Functions41629
+Node: Rational Number Functions43299
+Node: Initializing Rationals44594
+Node: Assigning Rationals45764
+Node: Comparing Rationals46727
+Node: Applying Integer Functions48010
+Node: Miscellaneous Rational Functions48828
+Node: Floating-point Functions50874
+Node: Initializing Floats52722
+Node: Assigning Floats55474
+Node: Simultaneous Float Init & Assign57066
+Node: Converting Floats58583
+Node: Float Arithmetic60162
+Node: Float Comparison62071
+Node: I/O of Floats63097
+Node: Miscellaneous Float Functions65213
+Node: Low-level Functions65896
+Node: BSD Compatible Functions82264
+Node: Custom Allocation86600
+Node: Contributors88938
+Node: References90537
+Node: Concept Index91573
+Node: Function Index94190
 
 End Tag Table

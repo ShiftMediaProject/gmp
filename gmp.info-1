@@ -416,6 +416,9 @@ MP, with a few exceptions.
      implementated as macros, and thereby sometimes evaluate their
      arguments multiple times.
 
+  8. The functions `mpz_pow_ui' and `mpz_ui_pow_ui' now yield 1 for
+     0^0.  (In version 1, they yielded 0.)
+
 
 Getting the Latest Version of MP
 ================================
@@ -856,7 +859,7 @@ Exponentialization Functions
           EXP)
  - Function: void mpz_ui_pow_ui (mpz_t ROP, unsigned long int BASE,
           unsigned long int EXP)
-     Set ROP to BASE raised to EXP.
+     Set ROP to BASE raised to EXP.  The case of 0^0 yields 1.
 
 Square Root Functions
 ---------------------

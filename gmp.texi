@@ -520,6 +520,9 @@ undocumented in previous releases.
 are now implementated as macros, and thereby sometimes evaluate their
 arguments multiple times.
 
+@item The functions @code{mpz_pow_ui} and @code{mpz_ui_pow_ui} now yield 1
+for 0^0.  (In version 1, they yielded 0.)
+
 @end enumerate
 
 
@@ -1048,6 +1051,14 @@ Set @var{rop} to (@var{base} raised to @var{exp}) @code{mod} @var{mod}.  If
 @deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
 @deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
 Set @var{rop} to @var{base} raised to @var{exp}.
+@ifinfo
+The case of 0^0 yields 1.
+@end ifinfo
+@iftex
+@tex
+The case of $0^0$ yields 1.
+@end tex
+@end iftex
 @end deftypefun
 
 @subsection Square Root Functions

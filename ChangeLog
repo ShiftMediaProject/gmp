@@ -1,6 +1,14 @@
-Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* Version 2.0.1 released.
+
+	* mpz/pow_ui.c: Swap tests for (e == 0) and (bsize == 0).
+	* mpz/ui_pow_ui.c: Swap tests for (e == 0) and (blimb == 0).
+
+	* config/mt-linux (AR_FLAGS): New file.
+	* configure.in: Use config/mt-linux for all linux systems.
+
+Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/tests/ref.c: Cast result of TMP_ALLOC to the right pointer type.
 
