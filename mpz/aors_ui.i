@@ -1,7 +1,7 @@
 /* mpz_add_ui, mpz_sub_ui -- Add or subtract an mpz_t and an unsigned
    one-word integer.
 
-Copyright 1991, 1993, 1994, 1996, 1999, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1999, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
