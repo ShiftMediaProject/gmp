@@ -1,3 +1,54 @@
+2001-07-24  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options): Add --enable-cxx.
+	(Converting Floats): Note mpf_get_str only generates accurately
+	representable digits.
+	(Low-level Functions): Note mpn_get_str requires non-zero high limb.
+	(Formatted Output): New chapter.
+	(Multiplication Algorithms): Use @quotation with @multitable.
+	(Toom-Cook 3-Way Multiplication): Ditto.
+
+	* tests/memory.c (tests_free_nosize): New function.
+	* tests/tests.h (tests_allocate etc): Add prototypes.
+
+	* tests/printf: New directory.
+	* tests/printf/Makefile.am, t-printf.c, t-ostream.cc: New files.
+	* configure.in, tests/Makefile.am: Add them.
+
+	* configure.in, acinclude.m4 (GMP_PROG_CXX): New macro.
+	* configure.in (--enable-cxx): New option.
+	(AC_CHECK_HEADERS): Add locale.h and sys/types.h, remove unistd.h.
+	(AC_CHECK_TYPES): Add intmax_t, long double, long long, ptrdiff_t,
+	quad_t.
+	(AC_CHECK_FUNCS): Add localeconv, memset, obstack_vprintf, snprintf,
+	strchr, vsnprintf.
+
+	* gmp-h.in, gmp-impl.h: Additions for gmp_printf etc.
+
+	* printf: New directory.
+	* printf/Makefile.am, asprintf.c, doprnt.c, doprntf.c, doprntfx.cc,
+	doprnti.c, doprntix.cc, fprintf.c, obprintf.c, obprntffuns.c,
+	obvprintf.c, osfuns.cc, osmpf.cc, osmpq.cc, osmpz.cc, printf.c,
+	printffuns.c, snprintf.c, snprntffuns.c, sprintf.c, sprintffuns.c,
+	vasprintf.c, vfprintf.c, vprintf.c, vsnprintf.c, vsprintf.c: New
+	files.
+	* configure.in, Makefile.am: Add them.
+
+	* configure.in (HAVE_INLINE): Remove AC_DEFINE, unused.
+	(AC_CHECK_TYPES): Don't test for void, assume it always exists.
+
+	* gmp-impl.h (__GMP_REALLOCATE_FUNC_MAYBE): New macro.
+	* mpz/get_str.c, mpq/get_str.c, mpf/get_str.c: Use it.
+
+	* gmp-impl.h (mpn_fib2_ui): Use __MPN.
+	(MPN_COPY_DECR): Fix an ASSERT.
+	(CAST_TO_VOID): Remove macro.
+
+	* gmp-h.in (mpq_out_str): Give #define even without prototype.
+	(mpz_cmp_d, mpz_cmpabs_d): Corrections to #defines.
+
+	* tests/devel/try.c: Add mpn_add and mpn_sub, don't use CAST_TO_VOID.
+
 2001-07-23  Torbjorn Granlund  <tege@swox.com>
 
 	* config.guess: Recognize pentium4.
