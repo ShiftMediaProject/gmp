@@ -27,5 +27,9 @@ MA 02111-1307, USA. */
 #define BITS_PER_CHAR 8
 
 /* These values are for the R10000.  */
+#ifndef KARATSUBA_MUL_THRESHOLD
 #define KARATSUBA_MUL_THRESHOLD 16
+#endif
+#ifndef KARATSUBA_SQR_THRESHOLD
 #define KARATSUBA_SQR_THRESHOLD 32
+#endif
