@@ -1,6 +1,5 @@
-/* Header for speed and threshold things. */
+/* Header for speed and threshold things.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #ifndef __SPEED_H__
 #define __SPEED_H__
@@ -221,6 +219,7 @@ double speed_mpn_udiv_qrnnd _PROTO ((struct speed_params *s));
 double speed_mpn_umul_ppmm _PROTO ((struct speed_params *s));
 double speed_mpn_xnor_n _PROTO ((struct speed_params *s));
 double speed_mpn_xor_n _PROTO ((struct speed_params *s));
+double speed_MPN_ZERO _PROTO ((struct speed_params *s));
 
 double speed_mpq_init_clear _PROTO ((struct speed_params *s));
 
@@ -1832,3 +1831,32 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     while (--i != 0);                           \
     return speed_endtime ();                    \
   }
+
+
+#define SPEED_ROUTINE_MPN_ZERO_CALL(call)               \
+  {                                                     \
+    mp_ptr    wp;                                       \
+    unsigned  i;                                        \
+    double    t;                                        \
+    TMP_DECL (marker);                                  \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 0);                 \
+                                                        \
+    TMP_MARK (marker);                                  \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    speed_operand_dst (s, wp, s->size);                 \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      call;                                             \
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
+  }  
+
+#define SPEED_ROUTINE_MPN_ZERO(function)                \
+  SPEED_ROUTINE_MPN_ZERO_CALL (function (wp, s->size))
