@@ -24,19 +24,19 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-#if defined (OPERATION_floor)
+#if defined (OPERATION_floor) || defined (OPERATION_floor_)
 #define _MPF_FLOOR_OR_CEIL
 #define FUNC_NAME mpf_floor
 #define MPF_FLOOR 1
 #define MPF_CEIL 0
 
-#elif defined (OPERATION_ceil)
+#elif defined (OPERATION_ceil) || defined (OPERATION_ceil_)
 #define _MPF_FLOOR_OR_CEIL
 #define FUNC_NAME mpf_ceil
 #define MPF_CEIL 1
 #define MPF_FLOOR 0
 
-#elif defined (OPERATION_trunc)
+#elif defined (OPERATION_trunc) ||  defined (OPERATION_trunc_)
 #define FUNC_NAME mpf_trunc
 
 #else
