@@ -313,9 +313,9 @@ case $host in
 
   alpha*-*-*)
     case $host_cpu in
-      alphaev5 | alphapca5*) path="alpha/ev5 alpha" ;;
-      alphaev6*)             path="alpha/ev6 alpha/ev5 alpha" ;;
-      *)                     path="alpha" ;;
+      alphaev5* | alphapca5*) path="alpha/ev5 alpha" ;;
+      alphaev6*)              path="alpha/ev6 alpha/ev5 alpha" ;;
+      *)                      path="alpha" ;;
     esac
     extra_functions="cntlz"
     gcc_cflags_optlist="cpu asm"
