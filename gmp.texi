@@ -1436,14 +1436,13 @@ Options}, for ways to address this.
 @item Heap Problems
 The most likely cause of application problems with GMP is heap corruption.
 Failing to @code{init} GMP variables will have unpredictable effects, and
-corruption arising elsewhere in a program may well affect GMP.
-
-Initializing GMP variables more than once or failing to clear them will cause
-memory leaks.
+corruption arising elsewhere in a program may well affect GMP.  Initializing
+GMP variables more than once or failing to clear them will cause memory leaks.
 
 In all such cases a malloc debugger is recommended.  On a GNU or BSD system
-the standard C library @code{malloc} has some diagnostic facilities.  Other
-possibilities, in no particular order, include
+the standard C library @code{malloc} has some diagnostic facilities, see
+@ref{Allocation Debugging,,,libc,The GNU C Library Reference Manual}, or
+@samp{man 3 malloc}.  Other possibilities, in no particular order, include
 
 @display
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc}
@@ -4834,11 +4833,12 @@ high and low ends of the dividend, and can halve once more the number of
 crossproducts needed in a 2N@cross{}N division.
 
 A special case exact division by 3 exists in @code{mpn_divexact_by3},
-supporting Toom-3 multiplication and currently not otherwise available from
-high level functions.  It forms quotient digits with a multiply by the modular
-inverse of 3 (which is @code{0xAA...AAB}) but instead of multiplying back by 3
-to subtract it can just do two comparisons to determine the borrow required in
-the next limb.
+supporting Toom-3 multiplication and @code{mpq} canonicalizations.  It forms
+quotient digits with a multiply by the modular inverse of 3 (which is
+@code{0xAA..AAB}) and uses two comparisons to determine a borrow for the next
+limb.  The multiplications don't need to be on the dependent chain, so long as
+the effect of the borrows is applied.  Only a few optimized assembler
+implementations currently exist.
 
 
 @node Small Quotient Division,  , Exact Division, Division Algorithms
