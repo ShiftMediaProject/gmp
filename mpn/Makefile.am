@@ -24,7 +24,6 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
-GENERIC_SOURCES = mp_bases.c
 OFILES = @mpn_objects@
 
 
@@ -47,7 +46,7 @@ nodist_libdummy_la_SOURCES =						    \
 
 
 noinst_LTLIBRARIES = libmpn.la
-libmpn_la_SOURCES = $(GENERIC_SOURCES)
+libmpn_la_SOURCES = mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
