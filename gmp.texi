@@ -849,7 +849,7 @@ Functions for floating-point arithmetic, with names beginning with
 functions is this class.
 
 @item
-Functions compatible with Berkeley GMP, such as @code{itom}, @code{madd}, and
+Functions compatible with Berkeley MP, such as @code{itom}, @code{madd}, and
 @code{mult}.  The associated type is @code{MINT}.
 
 @item
