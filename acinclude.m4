@@ -94,17 +94,24 @@ dnl  GMP_PROG_AR
 dnl  -----------
 dnl  GMP additions to $AR.
 dnl
-dnl  Not sure if it's really necessary to use AC_CHECK_TOOL and look for a
-dnl  ${host_alias}-ar, but it won't hurt.
+dnl  A cross-"ar" may be necessary when cross-compiling since the build
+dnl  system "ar" might try to interpret the object files to build a symbol
+dnl  table index, hence the use of AC_CHECK_TOOL.
+dnl
+dnl  A user-selected $AR is always left unchanged.  AC_CHECK_TOOL is still
+dnl  run to get the "checking" message printed though.
 
 AC_DEFUN(GMP_PROG_AR,
-[dnl  Make sure we establish $AR before libtool initialization.
+[dnl  Want to establish $AR before libtool initialization.
 AC_BEFORE([$0],[AC_PROG_LIBTOOL])
+gmp_user_AR=$AR
 AC_CHECK_TOOL(AR, ar, ar)
-                      eval arflags=\"\$ar${abi1}_flags\"
-test -n "$arflags" || eval arflags=\"\$ar${abi2}_flags\"
-if test -n "$arflags"; then
-  AR="$AR $arflags"
+if test -n "$gmp_user_AR"; then
+                        eval arflags=\"\$ar${abi1}_flags\"
+  test -n "$arflags" || eval arflags=\"\$ar${abi2}_flags\"
+  if test -n "$arflags"; then
+    AR="$AR $arflags"
+  fi
 fi
 ])
 
@@ -177,16 +184,22 @@ dnl  GMP additions to libtool AC_PROG_NM.
 dnl
 dnl  Note that if AC_PROG_NM can't find a working nm it still leaves
 dnl  $NM set to "nm", so $NM can't be assumed to actually work.
+dnl
+dnl  A user-selected $NM is always left unchanged.  AC_PROG_NM is still run
+dnl  to get the "checking" message printed though.
 
 AC_DEFUN(GMP_PROG_NM,
 [dnl  Make sure we're the first to call AC_PROG_NM, so our extra flags are
  dnl  used by everyone.
 AC_BEFORE([$0],[AC_PROG_NM])
+gmp_user_NM=$NM
 AC_PROG_NM
-                      eval nmflags=\"\$nm${abi1}_flags\"
-test -n "$nmflags" || eval nmflags=\"\$nm${abi2}_flags\"
-if test -n "$nmflags"; then
-  NM="$NM $nmflags"
+if test -n "$gmp_user_NM"; then
+                        eval nmflags=\"\$nm${abi1}_flags\"
+  test -n "$nmflags" || eval nmflags=\"\$nm${abi2}_flags\"
+  if test -n "$nmflags"; then
+    NM="$NM $nmflags"
+  fi
 fi
 ])
 
