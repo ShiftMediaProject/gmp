@@ -62,10 +62,10 @@ mpz_probab_prime_p (mpz_srcptr n, int reps)
 #if defined (PP)
   /* Check if n has small factors.  */
 #if defined (PP_INVERTED)
-  r = MPN_MOD_OR_PREINV_MOD_1 (PTR(n), SIZ(n), (mp_limb_t) PP,
+  r = MPN_MOD_OR_PREINV_MOD_1 (PTR(n), (mp_size_t) SIZ(n), (mp_limb_t) PP,
                                (mp_limb_t) PP_INVERTED);
 #else
-  r = mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) PP);
+  r = mpn_mod_1 (PTR(n), (mp_size_t) SIZ(n), (mp_limb_t) PP);
 #endif
   if (r % 3 == 0
 #if BITS_PER_MP_LIMB >= 4
@@ -110,11 +110,11 @@ mpz_probab_prime_p (mpz_srcptr n, int reps)
 	    umul_ppmm (p1, p0, p, q);
 	    if (p1 != 0)
 	      {
-		r = mpn_mod_1 (PTR(n), SIZ(n), p);
+		r = mpn_mod_1 (PTR(n), (mp_size_t) SIZ(n), p);
 		while (--nprimes >= 0)
 		  if (r % primes[nprimes] == 0)
 		    {
-		      ASSERT_ALWAYS (mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) primes[nprimes]) == 0);
+		      ASSERT_ALWAYS (mpn_mod_1 (PTR(n), (mp_size_t) SIZ(n), (mp_limb_t) primes[nprimes]) == 0);
 		      return 0;
 		    }
 		p = q;
