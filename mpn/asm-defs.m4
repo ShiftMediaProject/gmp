@@ -1450,19 +1450,38 @@ m4_assert_numargs(1)
 `defn(`LSYM_PREFIX')$1')
 
 
+dnl  Usage: LDEF(name)
+dnl
+dnl  Generate a directive to define a local label.
+dnl
+dnl  On systems with a fixed syntax for defining labels there's no need to
+dnl  use this macro, it's only meant for systems where the syntax varies,
+dnl  like hppa which is "L(foo):" with gas, but just "L(foo)" in column 0
+dnl  with the system `as'.
+dnl
+dnl  The extra `' after LABEL_SUFFIX avoids any chance of a following
+dnl  "(...)"  being interpreted as an argument list.  Not that it'd be
+dnl  sensible to write anything like that after an LDEF(), but just in case.
+
+define(LDEF,
+m4_assert_numargs(1)
+m4_assert_defined(`LABEL_SUFFIX')
+`L(`$1')`'LABEL_SUFFIX`'')
+
+
 dnl  Usage: INT32(label,value)
 dnl         INT64(label,first,second)
 
 define(`INT32',
 m4_assert_defined(`W32')
 `	ALIGN(4)
-`$1'`'LABEL_SUFFIX
+LDEF(`$1')
 	W32	$2')
 
 define(`INT64',
 m4_assert_defined(`W32')
 `	ALIGN(8)
-`$1'`'LABEL_SUFFIX
+LDEF(`$1')
 	W32	$2
 	W32	$3')
 
