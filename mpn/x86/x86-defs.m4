@@ -261,8 +261,7 @@ dnl  delete any following parenthesized expression.  name(%edi) will come
 dnl  out say as 16(%esp)(%edi).  This isn't valid assembler and should
 dnl  provoke an error, which is better than silently giving just 16(%esp).
 dnl
-dnl  See README.family for more on the suggested way to access the stack
-dnl  frame.
+dnl  See README for more on the suggested way to access the stack frame.
 
 define(defframe,
 m4_assert_numargs(2)
@@ -646,6 +645,7 @@ Zdisp_match( addl, %esi, 0,(%edi),        `0x01,0x77,0x00',           $@)`'dnl
 Zdisp_match( sbbl, 0,(%edx), %eax,        `0x1b,0x42,0x00',           $@)`'dnl
 Zdisp_match( sbbl, 0,(%edx), %esi,        `0x1b,0x72,0x00',           $@)`'dnl
 Zdisp_match( subl, %ecx, 0,(%edi),        `0x29,0x4f,0x00',           $@)`'dnl
+Zdisp_match( movzbl, 0,(%eax,%ebp), %eax, `0x0f,0xb6,0x44,0x28,0x00', $@)`'dnl
 Zdisp_match( movzbl, 0,(%ecx,%edi), %edi, `0x0f,0xb6,0x7c,0x39,0x00', $@)`'dnl
 ')
 define(Zdisp_2,`dnl
@@ -661,6 +661,7 @@ define(Zdisp_3,`dnl
 Zdisp_match( movq, 0,(%eax,%ecx,8), %mm0, `0x0f,0x6f,0x44,0xc8,0x00', $@)`'dnl
 Zdisp_match( movq, 0,(%ebx,%eax,4), %mm0, `0x0f,0x6f,0x44,0x83,0x00', $@)`'dnl
 Zdisp_match( movq, 0,(%ebx,%eax,4), %mm2, `0x0f,0x6f,0x54,0x83,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%ebx,%ecx,4), %mm0, `0x0f,0x6f,0x44,0x8b,0x00', $@)`'dnl
 Zdisp_match( movq, 0,(%esi), %mm0,        `0x0f,0x6f,0x46,0x00',      $@)`'dnl
 Zdisp_match( movq, %mm0, 0,(%edi),        `0x0f,0x7f,0x47,0x00',      $@)`'dnl
 Zdisp_match( movq, %mm2, 0,(%ecx,%eax,4), `0x0f,0x7f,0x54,0x81,0x00', $@)`'dnl
@@ -798,7 +799,7 @@ dnl  the call on CPUs with return address branch predition.
 dnl
 dnl  The addl generated here has a backward reference to the label, and so
 dnl  won't suffer from the two forwards references bug in old gas (described
-dnl  in mpn/x86/README.family).
+dnl  in mpn/x86/README).
 
 define(movl_text_address,
 `ifdef(`PIC',
