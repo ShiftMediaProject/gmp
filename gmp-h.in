@@ -136,7 +136,18 @@ MA 02111-1307, USA. */
    variables, the various internals in gmp-impl.h etc can be left unadorned.
    But internals used by the test programs or speed measuring programs
    should have __GMP_DECLSPEC, and certainly constants or variables must
-   have it or the wrong address will be resolved.  */
+   have it or the wrong address will be resolved.
+
+   In gcc __declspec can go at either the start or end of a prototype.
+
+   In Microsoft C __declspec must go at the start, or after the type like
+   void __declspec(...) *foo()".  There's no __dllexport or anything to
+   guard against someone foolish #defining dllexport.  _export used to be
+   available, but no longer.
+
+   In Borland C _export still exists, but needs to go after the type, like
+   "void _export foo();".  Would have to change the __GMP_DECLSPEC syntax to
+   make use of that.  Probably more trouble than it's worth.  */
 
 #if defined (__GNUC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(__dllexport__)
