@@ -49,3 +49,13 @@ for 3 limbs, or 7 cycles/limb.
 We should probably split the single-limb operand in 32-bit chunks, and
 the multi-limb operand in 16-bit chunks, allowing us to accumulate
 well in fp registers.
+
+lwz,std,lfd
+fmadd,fmadd,fmul,fmul
+fctidz,stfd,ld,fctidz,stfd,ld
+add,adde
+lwz,std,lfd
+fmadd,fmadd,fmul,fmul
+fctidz,stfd,ld,fctidz,stfd,ld
+add,adde
+srd,sld,add,adde,add,adde
