@@ -44,7 +44,8 @@ LDADD = $(DEPENDENCIES)
 
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
-libspeed_la_SOURCES = common.c modlinv.c time.c noop.c mul_n_mpn.c mul_n_open.c
+libspeed_la_SOURCES = \
+  common.c freq.c modlinv.c mul_n_mpn.c mul_n_open.c noop.c time.c
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
 
@@ -80,6 +81,9 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 
 # Generating these little files at build time seems better than including
 # them in the distribution, since the list can be changed easily.
+#
+# FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
+# so the recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c bz_divrem_n.c tdiv_qr.c gcd.c gcdext.c
 TUNE_MPZ_SRCS = fib_ui.c powm.c
@@ -96,12 +100,12 @@ $(TUNE_MPZ_SRCS):
 	  echo "#include \"mpz/$$i\"" >>$$i; \
 	done
 
-sqr_basecase.c:
+sqr_basecase.c: $(top_srcdir)/mpn/sqr_basecase.c
 	echo '#define TUNE_PROGRAM_BUILD 1' >sqr_basecase.c
 	echo '#define TUNE_PROGRAM_BUILD_SQR 1' >>sqr_basecase.c
 	echo '#include "mpn/sqr_basecase.c"' >>sqr_basecase.c
 
-sqr_asm.asm:
+sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 
