@@ -35,8 +35,11 @@ MA 02111-1307, USA. */
     http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz
 */
 
-static mp_limb_t mpn_bz_div_3_halves_by_2 ();
-static mp_limb_t mpn_bz_divrem_aux ();
+static mp_limb_t mpn_bz_div_3_halves_by_2 _PROTO ((mp_ptr, mp_ptr, mp_srcptr,
+                                                   mp_size_t, mp_ptr));
+
+static mp_limb_t mpn_bz_divrem_aux _PROTO ((mp_ptr, mp_ptr, mp_srcptr,
+                                            mp_size_t, mp_ptr));
 
 /* mpn_bz_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
    div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
@@ -76,11 +79,15 @@ unused_mpn_divrem (qp, qxn, np, nn, dp, dn)
    Requires that the most significant bit of the divisor is set.  */
 
 mp_limb_t
+#if __STDC__
+mpn_bz_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
+#else
 mpn_bz_divrem_n (qp, np, dp, n)
      mp_ptr qp;
      mp_ptr np;
      mp_srcptr dp;
      mp_size_t n;
+#endif
 {
   mp_limb_t qhl = 0;
   if (mpn_cmp (np + n, dp, n) >= 0)
@@ -133,12 +140,16 @@ mpn_bz_divrem_n (qp, np, dp, n)
    assumes mpn_cmp (np + n, dp, n) < 0 */
 
 static mp_limb_t
+#if __STDC__
+mpn_bz_divrem_aux (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr tmp)
+#else
 mpn_bz_divrem_aux (qp, np, dp, n, tmp)
      mp_ptr qp;
      mp_ptr np;
      mp_srcptr dp;
      mp_size_t n;
      mp_ptr tmp;
+#endif
 {
   mp_limb_t qhl;
 
@@ -178,12 +189,17 @@ mpn_bz_divrem_aux (qp, np, dp, n, tmp)
    the remainder in (np, 2n) */
 
 static mp_limb_t
+#if __STDC__
+mpn_bz_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
+                          mp_ptr tmp)
+#else
 mpn_bz_div_3_halves_by_2 (qp, np, dp, n, tmp)
      mp_ptr qp;
      mp_ptr np;
      mp_srcptr dp;
      mp_size_t n;
      mp_ptr tmp;
+#endif
 {
   mp_size_t twon = n + n;
   mp_limb_t qhl;
