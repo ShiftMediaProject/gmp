@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.176
+# From configure.in Revision: 1.177
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4408,10 +4408,10 @@ case ${target} in
       SPEED_CYCLECOUNTER_OBJ=hppa2.lo
     else
       SPEED_CYCLECOUNTER_OBJ=hppa.lo
-      cyclecounter_size=1 ;;
+      cyclecounter_size=1
     fi;;
   hppa*-*-*)
-    SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
+    SPEED_CYCLECOUNTER_OBJ=hppa.lo
     cyclecounter_size=1 ;;
   ia64*-*-*)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
