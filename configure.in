@@ -116,19 +116,30 @@ case "$target" in
     fi
     ;;
 
-  # x86
-  [*-*-freebsd[3-9]*])	# hides generic *bsd* alternative
+  # AMD and Intel x86 configurations
+  [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+    # Rumour has it -O2 used to give worse register allocation than just -O.
     gmp_cflags_gcc="-g -O -fomit-frame-pointer"
-    ;;
-  [i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k[5678]*-*-*bsd* |] \
-  [i[3456]86*-*-linuxaout* | pentium*-*-linuxaout* | k[5678]*-*-linuxaout* |] \
-  [i[3456]86*-*-linuxoldld* | pentium*-*-linuxoldld* | k[5678]*-*-linuxoldld* |] \
-  [i[3456]86*-*-nextstep* | i[3456]86*-*-nextstep* | k[5678]*-*-nextstep*])
-    gmp_cflags_gcc="$gmp_cflags_gcc -DBROKEN_ALIGN -DOLD_GAS"
-    gmp_cflags_cc="$gmp_cflags_cc -DBROKEN_ALIGN -DOLD_GAS"
-    ;;
-  [i[3456]86*-*-* | pentium*-*-* | k[5678]*-*-* | athlon-*-*])
-    gmp_cflags_gcc="-g -O -fomit-frame-pointer"
+
+    case "${target}" in
+      i386*-*-*)    gmp_optcflags_gcc="-mcpu=i386 -march=i386";;
+      i486*-*-*)    gmp_optcflags_gcc="-mcpu=i486 -march=i486";;
+      i586*-*-* | pentium-*-* | pentiummmx-*-*)
+                    gmp_optcflags_gcc="-mcpu=pentium -march=pentium";;
+
+      # Removed -march=pentiumpro since it triggers a bug in mpn/powm.c
+      # (swox' cvs rev 1.4) with gcc 2.95.2.
+      [i686*-*-* | pentiumpro-*-* | pentium[23]-*-*])
+                    gmp_optcflags_gcc="-mcpu=pentiumpro";;
+
+      k6*-*-*)      gmp_optcflags_gcc="-mcpu=k6 -march=k6";;
+
+      # Athlon instruction costs are close to p6: 3 cycle load latency, 4-6
+      # cycle mul, 40 cycle div, pairable adc, ...
+      # FIXME: Change this when gcc gets something specific for Athlon.
+      # Removed -march=pentiumpro, per i686 above.
+      athlon-*-*)   gmp_optcflags_gcc="-mcpu=pentiumpro";;
+    esac
     ;;
 
   # Sparc
@@ -243,23 +254,6 @@ case "$target" in
     ;;
 esac
 
-case "$target" in
-  i386*-*-*)    gmp_optcflags_gcc="-mcpu=i386 -march=i386";;
-  i486*-*-*)    gmp_optcflags_gcc="-mcpu=i486 -march=i486";;
-  i586*-*-* | pentium-*-* | pentiummmx-*-*)
-                gmp_optcflags_gcc="-mcpu=pentium -march=pentium";;
-  [i686*-*-* | pentiumpro-*-* | pentium[23]-*-*])
-                gmp_optcflags_gcc="-mcpu=pentiumpro";;
-		# removed -march=pentiumpro since it triggers a bug in
-		# mpn/powm.c (swox' cvs rev 1.4) with gcc 2.95.2
-  k6*-*-*)      gmp_optcflags_gcc="-mcpu=k6 -march=k6";;
-
-  # Athlon instruction costs are probably a bit closer to p6 than k6
-  # (3 cycle load latency, 4-6 cycle mul, 40 cycle div, ...).
-  # FIXME: Change this when gcc gets something specific for Athlon.
-  athlon-*-*)   gmp_optcflags_gcc="-mcpu=pentiumpro";;
-                # removed -march=pentiumpro, see i686 above for details
-esac
 
 # Save CFLAGS given on command line.
 gmp_user_CFLAGS="$CFLAGS"
@@ -338,11 +332,7 @@ dnl --------------------
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_CHECK_PROG(M4, m4, m4, :)
-if test "$M4" = ":"; then
-  echo ["$0: fatal: need m4"]
-  exit 1
-fi  
+GMP_PROG_M4
 AC_CHECK_TOOL(AR, ar, ar)
 AC_CHECK_TOOL(NM, nm, :)
 if test "$NM" = ":"; then
@@ -457,7 +447,7 @@ case ${target} in
 
   [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
     gmp_m4postinc="x86/x86-defs.m4"
-    extra_functions="copyi copyd"
+    extra_functions="copyd copyi udiv umul"
 
     gmp_mulfunc_files="aors_n aorsmul_1"
     gmp_mf_aors_n="add_n sub_n"
