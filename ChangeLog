@@ -1,3 +1,26 @@
+2000-03-02  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/copyi.asm: Use cld to clear direction flag.
+	* mpn/x86/divrem_1.asm: Ditto.
+	* mpn/x86/README.family: Add a note on this.
+
+	* mpn/x86/k6/mmx/copyi.asm: Rewrite.
+	* mpn/x86/k6/mmx/copyd.asm: New file.
+	* mpn/x86/k6/README: Update, and small amendments.
+
+	* mpn/x86/x86-defs.m4 (Zdisp): New macro.
+	* mpn/asm-defs.m4 (m4_stringequal_p): New macro.
+
+	* mpn/x86/p6/aorsmul_1.asm: Use Zdisp to force zero displacements.
+	* mpn/x86/k6/aorsmul_1.asm: Ditto.
+	* mpn/x86/k6/mul_1.asm: Ditto.
+	* mpn/x86/k6/mul_basecase.asm: Ditto.
+	* mpn/x86/k7/aors_n.asm: Ditto.
+	* mpn/x86/k7/aorsmul_1.asm: Ditto.
+	* mpn/x86/k7/mul_1.asm: Ditto.
+	* mpn/x86/k7/mul_basecase.asm: Ditto.
+	* mpn/x86/README.family: Add a note on this.
+
 2000-02-27  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/divrem.c (mpn_divrem_classic): Patch to avoid gcc
