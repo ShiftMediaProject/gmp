@@ -1949,56 +1949,7 @@ if test $enable_mpfr = yes; then
   esac
   AC_SUBST(CFLAGS_IEEE_WITH_INEXACT)  
 
-AC_CHECK_HEADERS(fpu_control.h)
-
-dnl Check for fesetround
-AC_MSG_CHECKING(for fesetround)
-saved_LIBS="$LIBS"
-LIBS="$LIBS $LM9X"
-AC_TRY_LINK([#include <fenv.h>], [fesetround(FE_TONEAREST);],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_FESETROUND,1,[Define if `fesetround' and <fenv.h> exist.])],
-  [AC_MSG_RESULT(no)
-   LIBS="$saved_LIBS"]
-)
-
-dnl Check random functions
-AC_CHECK_FUNCS(lrand48)
-
-dnl Check whether 0/0, 1/0, -1/0, sqrt(-1) are valid expressions
-AC_MSG_CHECKING(for valid NaN)
-AC_TRY_RUN([
-#include <math.h>
-int main()
-{
-  double x = (0.0/0.0) + sqrt(-1.0);
-  return x == 1.0/0.0;
-}
-],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_INFS,1,[Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate infinities])],
-  AC_MSG_RESULT(no),
-  AC_MSG_RESULT(no)
-)
-
-dnl Check if denormalized numbers are supported
-AC_MSG_CHECKING(for denormalized numbers)
-AC_TRY_RUN([
-#include <math.h>
-#include <stdio.h>
-int main()
-{
-  double x = 2.22507385850720138309e-308;
-  fprintf (stderr, "%e\n", x / 2.0);
-  return 2.0 * (x / 2.0) != x;
-}
-],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_DENORMS,1,[Define if denormalized floats work.])],
-  AC_MSG_RESULT(no),
-  AC_MSG_RESULT(no)
-)
-
+  MPFR_CONFIGS
 fi
 
 

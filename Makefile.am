@@ -62,6 +62,7 @@ LIBMP_LT_AGE =      1
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
+ACLOCAL_AMFLAGS = -I mpfr
 
 
 # FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
