@@ -33,6 +33,9 @@
 
 	* tune/speed.h (speed_cyclecounter): Inline asm version for i386.
 
+	* mpz/cfdiv_r_2exp.c (cfdiv_r_2exp): Only reread up after second
+	realloc, first is under w!=u.
+
 2001-03-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/sub_n.c: Rewrite using `majority' logic.
