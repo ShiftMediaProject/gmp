@@ -251,7 +251,8 @@ The following files need to be updated when going to a new version of
 the build tools.  Unfortunately the tools generally don't identify
 when an out-of-date version is present.
 
-aclocal.m4 is updated by running "aclocal".
+aclocal.m4 is updated by running "aclocal".  (Only needed for a new
+automake or libtool.)
 
 INSTALL.autoconf can be copied from INSTALL in autoconf.
 
@@ -280,8 +281,8 @@ During development:
     Input files                       Tool       Output files
     ---------------------------------------------------------
                                  
-    acinclude.m4                \    aclocal
-    $prefix/share/aclocal*/*.m4 / --------------> aclocal.m4
+                                     aclocal
+    $prefix/share/aclocal*/*.m4 ----------------> aclocal.m4
 
                    
     configure.in \                   autoconf
