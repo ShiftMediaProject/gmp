@@ -31,8 +31,8 @@ dnl  Only recent versions of gas know psadbw, in particular gas 2.9.1 on
 dnl  FreeBSD 3.3 and 3.4 doesn't recognise it.
 
 define(psadbw_mm4_mm0,
-`ifelse(m4_ifdef_anyof_p(`HAVE_TARGET_CPU_athlon',
-                         `HAVE_TARGET_CPU_pentium3'),1,
+`ifelse(m4_ifdef_anyof_p(`HAVE_HOST_CPU_athlon',
+                         `HAVE_HOST_CPU_pentium3'),1,
 	`.byte 0x0f,0xf6,0xc4	C psadbw %mm4, %mm0',
 
 `m4_warning(`warning, using simulated and only partly functional psadbw, use for testing only
