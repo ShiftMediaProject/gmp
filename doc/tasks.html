@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 24 Oct 2003.  An up-to-date version is available at
+  This file current as of 25 Oct 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -240,6 +240,7 @@ MA 02111-1307, USA.
      <code>mpz_t</code> is that its callers leave it to make a good estimate
      of the result size.  Callers of <code>mpn_pow_1</code> already know the
      size by separate means (<code>mp_bases</code>).
+<li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 </ul>
 
 
@@ -732,7 +733,6 @@ MA 02111-1307, USA.
      A basic extended Euclidean algorithm or multi-step variant leads to
      |x|&lt;|b| and |y|&lt;|a| or something like that, but there's probably
      two solutions under just those restrictions.
-<li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> demos/factorize.c: use <code>mpz_divisible_ui_p</code> rather than
      <code>mpz_tdiv_qr_ui</code>.  (Of course dividing multiple primes at a
      time would be better still.)
