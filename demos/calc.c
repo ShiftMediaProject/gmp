@@ -30,7 +30,7 @@
 #define	RSHIFT	280
 #define	UMINUS	281
 
-#line 99 "calc.y"
+#line 85 "calc.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,7 +86,7 @@ mpz_t  variable[26];
     }
 
 
-#line 155 "calc.y"
+#line 141 "calc.y"
 typedef union {
   char  *str;
   int   var;
@@ -172,11 +172,11 @@ static const short yyrhs[] = {    43,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   179,   181,   183,   185,   186,   188,   190,   195,   201,   202,
-   203,   208,   210,   211,   212,   213,   214,   215,   217,   219,
-   221,   223,   225,   226,   227,   228,   229,   230,   232,   233,
-   235,   236,   238,   240,   241,   242,   243,   244,   246,   248,
-   254,   264,   266,   268,   270
+   165,   167,   169,   171,   172,   174,   176,   181,   187,   188,
+   189,   194,   196,   197,   198,   199,   200,   201,   203,   205,
+   207,   209,   211,   212,   213,   214,   215,   216,   218,   219,
+   221,   222,   224,   226,   227,   228,   229,   230,   232,   234,
+   240,   250,   252,   254,   256
 };
 #endif
 
@@ -888,11 +888,11 @@ yyreduce:
   switch (yyn) {
 
 case 5:
-#line 186 "calc.y"
+#line 172 "calc.y"
 { sp = stack[0]; yyerrok; ;
     break;}
 case 7:
-#line 190 "calc.y"
+#line 176 "calc.y"
 {
       mpz_out_str (stdout, obase, sp); putchar ('\n');
       sp--;
@@ -900,7 +900,7 @@ case 7:
     ;
     break;}
 case 8:
-#line 195 "calc.y"
+#line 181 "calc.y"
 {
       CHECK_VARIABLE (yyvsp[-2].var);
       mpz_swap (variable[yyvsp[-2].var], sp);
@@ -909,126 +909,126 @@ case 8:
     ;
     break;}
 case 9:
-#line 201 "calc.y"
+#line 187 "calc.y"
 { ibase = 16; obase = -16; ;
     break;}
 case 10:
-#line 202 "calc.y"
+#line 188 "calc.y"
 { ibase = 0;  obase = 10; ;
     break;}
 case 11:
-#line 203 "calc.y"
+#line 189 "calc.y"
 { exit (0); ;
     break;}
 case 13:
-#line 210 "calc.y"
+#line 196 "calc.y"
 { sp--; mpz_add    (sp, sp, sp+1); ;
     break;}
 case 14:
-#line 211 "calc.y"
+#line 197 "calc.y"
 { sp--; mpz_sub    (sp, sp, sp+1); ;
     break;}
 case 15:
-#line 212 "calc.y"
+#line 198 "calc.y"
 { sp--; mpz_mul    (sp, sp, sp+1); ;
     break;}
 case 16:
-#line 213 "calc.y"
+#line 199 "calc.y"
 { sp--; mpz_fdiv_q (sp, sp, sp+1); ;
     break;}
 case 17:
-#line 214 "calc.y"
+#line 200 "calc.y"
 { sp--; mpz_fdiv_r (sp, sp, sp+1); ;
     break;}
 case 18:
-#line 215 "calc.y"
+#line 201 "calc.y"
 { CHECK_UI ("exponentiation", sp);
                      sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 19:
-#line 217 "calc.y"
+#line 203 "calc.y"
 { CHECK_UI ("lshift", sp);
                      sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 20:
-#line 219 "calc.y"
+#line 205 "calc.y"
 { CHECK_UI ("rshift", sp);
                      sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 21:
-#line 221 "calc.y"
+#line 207 "calc.y"
 { CHECK_UI ("factorial", sp);
                      mpz_fac_ui (sp, mpz_get_ui (sp)); ;
     break;}
 case 22:
-#line 223 "calc.y"
+#line 209 "calc.y"
 { mpz_neg (sp, sp); ;
     break;}
 case 23:
-#line 225 "calc.y"
+#line 211 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <  0); ;
     break;}
 case 24:
-#line 226 "calc.y"
+#line 212 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <= 0); ;
     break;}
 case 25:
-#line 227 "calc.y"
+#line 213 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) == 0); ;
     break;}
 case 26:
-#line 228 "calc.y"
+#line 214 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) != 0); ;
     break;}
 case 27:
-#line 229 "calc.y"
+#line 215 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >= 0); ;
     break;}
 case 28:
-#line 230 "calc.y"
+#line 216 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >  0); ;
     break;}
 case 29:
-#line 232 "calc.y"
+#line 218 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_sgn (sp) && mpz_sgn (sp+1)); ;
     break;}
 case 30:
-#line 233 "calc.y"
+#line 219 "calc.y"
 { sp--; mpz_set_ui (sp, mpz_sgn (sp) || mpz_sgn (sp+1)); ;
     break;}
 case 31:
-#line 235 "calc.y"
+#line 221 "calc.y"
 { mpz_abs (sp, sp); ;
     break;}
 case 32:
-#line 236 "calc.y"
+#line 222 "calc.y"
 { sp--; CHECK_UI ("binomial", sp+1);
                                     mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 33:
-#line 238 "calc.y"
+#line 224 "calc.y"
 { CHECK_UI ("fibonacci", sp);
                                     mpz_fib_ui (sp, mpz_get_ui (sp)); ;
     break;}
 case 36:
-#line 242 "calc.y"
+#line 228 "calc.y"
 { mpz_nextprime (sp, sp); ;
     break;}
 case 37:
-#line 243 "calc.y"
+#line 229 "calc.y"
 { sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); ;
     break;}
 case 38:
-#line 244 "calc.y"
+#line 230 "calc.y"
 { sp--; CHECK_UI ("nth-root", sp+1);
                                     mpz_root (sp, sp, mpz_get_ui (sp+1)); ;
     break;}
 case 39:
-#line 246 "calc.y"
+#line 232 "calc.y"
 { mpz_sqrt (sp, sp); ;
     break;}
 case 40:
-#line 248 "calc.y"
+#line 234 "calc.y"
 {
         sp++;
         CHECK_OVERFLOW ();
@@ -1037,7 +1037,7 @@ case 40:
       ;
     break;}
 case 41:
-#line 254 "calc.y"
+#line 240 "calc.y"
 {
         sp++;
         CHECK_OVERFLOW ();
@@ -1049,11 +1049,11 @@ case 41:
       ;
     break;}
 case 43:
-#line 266 "calc.y"
+#line 252 "calc.y"
 { sp--; mpz_gcd (sp, sp, sp+1); ;
     break;}
 case 45:
-#line 270 "calc.y"
+#line 256 "calc.y"
 { sp--; mpz_lcm (sp, sp, sp+1); ;
     break;}
 }
@@ -1278,7 +1278,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 272 "calc.y"
+#line 258 "calc.y"
 
 
 yyerror (char *s)
