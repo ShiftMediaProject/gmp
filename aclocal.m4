@@ -1588,9 +1588,6 @@ AC_DEFUN(GMP_OPTION_ALLOCA,
 AC_CACHE_CHECK([how to allocate temporary memory],
                gmp_cv_option_alloca,
 [case $enable_alloca in
-  alloca | malloc-reentrant | malloc-notreentrant)
-    gmp_cv_option_alloca=$enable_alloca
-    ;;
   yes)
     gmp_cv_option_alloca=alloca
     ;;
@@ -1602,6 +1599,9 @@ AC_CACHE_CHECK([how to allocate temporary memory],
     yes)  gmp_cv_option_alloca=alloca ;;
     *)    gmp_cv_option_alloca=malloc-$enable_alloca ;;
     esac
+    ;;
+  *)
+    gmp_cv_option_alloca=$enable_alloca
     ;;
 esac
 ])
