@@ -35,10 +35,10 @@ check_print (mpf_srcptr src, mpf_srcptr got, mpf_srcptr want)
   mpf_trace ("want", want);
 
   printf ("got  size=%d exp=%ld\n", SIZ(got), EXP(got));
-  mpn_trace ("     limbs=", PTR(got), ABSIZ(got));
+  mpn_trace ("     limbs=", PTR(got), (mp_size_t) ABSIZ(got));
 
   printf ("want size=%d exp=%ld\n", SIZ(want), EXP(want));
-  mpn_trace ("     limbs=", PTR(want), ABSIZ(want));
+  mpn_trace ("     limbs=", PTR(want), (mp_size_t) ABSIZ(want));
 }
 
 void
