@@ -154,6 +154,48 @@ check_mpz (void)
     mpz_class b(a, base); ASSERT_ALWAYS(b == 4095);
   }
 
+  // mpz_class(const char *) with invalid
+  {
+    try {
+      const char *a = "ABC";
+      mpz_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpz_class(const char *, int) with invalid
+  {
+    try {
+      const char *a = "GHI";
+      int base = 16;
+      mpz_class b(a, base);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpz_class(const std::string &) with invalid
+  {
+    try {
+      string a("abc");
+      mpz_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpz_class(const std::string &, int) with invalid
+  {
+    try {
+      string a("ZZZ");
+      int base = 8;
+      mpz_class b(a, base);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
   // mpz_class(mpz_srcptr)
   {
     mpz_t a;
@@ -296,6 +338,48 @@ check_mpq (void)
     string a("7777");
     int base = 8;
     mpq_class b(a, base); ASSERT_ALWAYS(b == 4095);
+  }
+
+  // mpq_class(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpq_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpq_class(const char *, int) with invalid
+  {
+    try {
+      const char *a = "ZZZ";
+      int base = 16;
+      mpq_class b (a, base);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpq_class(const std::string &) with invalid
+  {
+    try {
+      string a("abc");
+      mpq_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpq_class(const std::string &, int) with invalid
+  {
+    try {
+      string a("ZZZ");
+      int base = 8;
+      mpq_class b (a, base);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
   }
 
   // mpq_class(mpq_srcptr)
@@ -548,6 +632,66 @@ check_mpf (void)
     string a("FFFF");
     int prec = 256, base = 16;
     mpf_class b(a, prec, base); ASSERT_ALWAYS(b == 65535u);
+  }
+
+  // mpf_class(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpf_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpf_class(const char *, unsigned long int, int = 0) with invalid
+  {
+    try {
+      const char *a = "def";
+      int prec = 256;
+      mpf_class b(a, prec); ASSERT_ALWAYS(b == 1234567890L);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+  {
+    try {
+      const char *a = "ghi";
+      int prec = 64, base = 8;
+      mpf_class b(a, prec, base); ASSERT_ALWAYS(b == 262143L);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpf_class(const std::string &) with invalid
+  {
+    try {
+      string a("abc");
+      mpf_class b(a); ASSERT_ALWAYS(b == 1234567890L);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpf_class(const std::string &, unsigned long int, int = 0) with invalid
+  {
+    try {
+      string a("def");
+      int prec = 128;
+      mpf_class b(a, prec); ASSERT_ALWAYS(b == 1234567890L);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+  {
+    try {
+      string a("ghi");
+      int prec = 256, base = 16;
+      mpf_class b(a, prec, base); ASSERT_ALWAYS(b == 65535u);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
   }
 
   // mpf_class(mpf_srcptr)
@@ -813,6 +957,66 @@ check_mpfr (void)
     string a("ffff");
     int prec = 256, base = 16;
     mpfr_class b(a, prec, base); ASSERT_ALWAYS(b == 65535u);
+  }
+
+  // mpfr_class(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpfr_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpfr_class(const char *, unsigned long int, int = 0) with invalid
+  {
+    try {
+      const char *a = "def";
+      int prec = 256;
+      mpfr_class b(a, prec);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+  {
+    try {
+      const char *a = "ghi";
+      int prec = 64, base = 8;
+      mpfr_class b(a, prec, base);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpfr_class(const std::string &) with invalid
+  {
+    try {
+      string a("abc");
+      mpfr_class b(a);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // mpfr_class(const std::string &, unsigned long int, int = 0) with invalid
+  {
+    try {
+      string a("def");
+      int prec = 128;
+      mpfr_class b(a, prec);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+  {
+    try {
+      string a("ghi");
+      int prec = 256, base = 16;
+      mpfr_class b(a, prec, base);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
   }
 
   // mpfr_class(mpfr_srcptr)
