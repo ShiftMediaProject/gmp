@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 
 void debug_mp ();
 
-main (inr argc, char **argv)
+main (int argc, char **argv)
 {
   mpz_t op1, op2;
   mp_size_t size;
