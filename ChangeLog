@@ -12,6 +12,10 @@
 
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/tdiv_qr.c: Use udiv_qrnnd instead of mpn_divrem_1
+	when computing appropriate quotient; mpn_divrem_1 writes too
+	many quotient limbs.
+
 	* mpn/asm-defs.m4: invert_normalized_limb => invert_limb.
 	* mpn/alpha/invert_limb.asm: mpn_invert_normalized_limb =>
 	mpn_invert_limb.
