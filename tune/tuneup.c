@@ -128,6 +128,7 @@ struct param_t {
   int               stop_since_change;
   mp_size_t         min_size;
   mp_size_t         max_size[MAX_TABLE];
+  mp_size_t         check_size;
 };
 
 
@@ -264,6 +265,29 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
   DEFAULT (min_size, 10);
   for (i = 0; i < numberof (param->max_size); i++)
     DEFAULT (max_size[i], MAX_SIZE);
+
+  if (param->check_size != 0)
+    {
+      double   t1, t2;
+      s.size = param->check_size;
+      t1 = tuneup_measure (param->function, &s);
+      t2 = tuneup_measure (param->function2, &s);
+      if (t1 == -1.0 || t2 == -1.0)
+        {
+          printf ("Oops, can't run both functions at size %ld\n", s.size);
+          abort ();
+        }
+      t1 *= param->function_fudge;
+
+      if (t1 < t2)
+        {
+          if (option_trace)
+            printf ("function2 never faster: t1=%.9f t2=%.9f\n", t1, t2);
+          table[0] = MP_SIZE_T_MAX;
+          print_define (param->name[0], table[0]);
+          return;
+        }
+    }
 
   s.size = param->min_size;
 
@@ -657,7 +681,6 @@ all (void)
     param.function = speed_mpn_dc_tdiv_qr;
     one (dc_threshold, 1, &param);
   }
-  printf("\n");
 
   /* This is an indirect determination, based on a comparison between redc
      and mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
@@ -702,9 +725,12 @@ all (void)
   {
     static struct param_t  param;
     param.name[0] = "GCDEXT_THRESHOLD";
-    param.function = speed_mpn_gcdext;
-    param.min_size = 1;
-    param.max_size[0] = 200;
+    param.function = speed_mpn_gcdext_one_single;
+    param.function_fudge = 2.0;
+    param.function2 = speed_mpn_gcdext_one_double;
+    param.min_size = 10;
+    param.max_size[0] = 300;
+    param.check_size = 300;
     one (gcdext_threshold, 1, &param);
   }
   printf("\n");
