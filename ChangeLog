@@ -1,5 +1,17 @@
 2000-04-12  Linus Nordberg  <linus@swox.se>
 
+	* randlc.c (gmp_randinit_lc): Disable function.
+	* gmp.texi (Random State Initialization): Remove gmp_randinit_lc.
+
+	* acinclude.m4 (GMP_CHECK_CC_64BIT): Compiling an empty main
+	successfully with `-n32' will have to suffice on irix6.
+	* aclocal.m4: Regenerate.
+
+	* configure.in (sparc): Don't pass -D_LONG_LONG_LIMB to compiler.
+	(mips-sgi-irix6.*): Use compiler option `-n32' rather than `-64'
+	for 64-bit `cc'.  Add options for gcc.
+	* configure: Regenerate.
+
 	* mpf/urandomb.c (mpf_urandomb): Add third parameter 'nbits'.  If
 	'nbits' doesn't make even limbs, shift up result before
 	normalizing.
@@ -15,11 +27,14 @@
 
 	* config.in: Regenerate for HAVE_DECL_OPTARG.
 
-	* randraw.c (lc): Change return type.
-	Initialize `shiftcount' to avoid compiler warnings.
+	* randraw.c (_gmp_rand): Fix bug with _LONG_LONG_LIMB.
+	(lc): Change return type.
 	Use one temporary storage instead of two.
-	If M is a power of 2 and bigger than the maximum size of T, don't
-	do any modulus operation at all.
+	Handle seed of size 0.
+	Avoid modulus operation in some cases.
+	Abort if M is not a power of 2.
+	Fix bug with 64-bit limbs.
+	Fix bug with small seed, small A and large M.
 
 2000-04-12  Kevin Ryde  <kevin@swox.se>
 
