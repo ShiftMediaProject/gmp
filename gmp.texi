@@ -427,6 +427,7 @@ are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
 @end table
 
 
+@need 2000
 @section Notes for Particular Systems
 @table @asis
 
