@@ -54,6 +54,10 @@ __gmp_doprnt_float_digits (const struct doprnt_params_t *p,
 {
   int  ndigits;
 
+  /* all significant digits */
+  if (p->prec == -1)
+    return 0;
+
   ASSERT (p->prec >= 0);
 
   switch (p->conv) {
@@ -105,7 +109,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
                     char *s,
                     mp_exp_t exp)
 {
-  int   len, newlen, justify, sign, justlen, explen, showbaselen;
+  int   len, prec, newlen, justify, sign, justlen, explen, showbaselen;
   int   signlen, intlen, intzeros, pointlen, fraczeros, fraclen, preczeros;
   int   retval = 0;
   char  exponent[BITS_PER_MP_LIMB + 10];
@@ -113,6 +117,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
   const char  *point;
 
   len = strlen (s);
+  prec = p->prec;
 
   TRACE (printf ("__gmp_doprnt_float\n");
          printf ("  s %s\n", s);
@@ -130,9 +135,12 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
 
   switch (p->conv) {
   case DOPRNT_CONV_FIXED:
-    /* Truncate if necessary so fraction will be at most p->prec digits. */
-    ASSERT (p->prec >= 0);
-    newlen = exp + p->prec;
+    if (prec == -1)
+      prec = MAX (0, len-exp);   /* retain all digits */
+
+    /* Truncate if necessary so fraction will be at most prec digits. */
+    ASSERT (prec >= 0);
+    newlen = exp + prec;
     if (newlen < 0)
       {
         /* first non-zero digit is below target prec, and at least one zero
@@ -222,6 +230,10 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
     {
       int   expval;
       char  expsign;
+
+      if (prec == -1)
+        prec = MAX (0, len-1);   /* retain all digits */
+
     scientific:
       TRACE (printf ("  scientific s.sss\n"));
 
@@ -258,12 +270,15 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
     /*FALLTHRU*/  /* to stop variables looking uninitialized */
 
   case DOPRNT_CONV_GENERAL:
+    if (prec == -1)
+      prec = len;   /* retain all digits */
+
     /* The exponent for "scientific" will be exp-1, choose scientific if
        this is < -4 or >= prec (and minimum 1 for prec).  For f==0 will have
        exp==0 and get the desired "fixed".  This rule follows glibc.  For
        fixed there's no need to truncate, the desired ndigits will already
        be as required.  */
-    if (exp-1 < -4 || exp-1 >= MAX (1, p->prec))
+    if (exp-1 < -4 || exp-1 >= MAX (1, prec))
       goto scientific;
     else
       goto fixed;
@@ -271,12 +286,15 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
 
   TRACE (printf ("  intlen %d fraczeros %d fraclen %d\n",
                  intlen, fraczeros, fraclen));
+  ASSERT (p->prec == -1
+          ? intlen + fraclen == strlen (s)
+          : intlen + fraclen <= strlen (s));
 
   if (p->showtrailing)
     {
       /* Pad to requested precision with trailing zeros, for general this is
          all digits, for fixed and scientific just the fraction.  */
-      preczeros = p->prec - (fraczeros + fraclen
+      preczeros = prec - (fraczeros + fraclen
                              + (p->conv == DOPRNT_CONV_GENERAL
                                 ? intlen + intzeros : 0));
       preczeros = MAX (0, preczeros);
@@ -284,7 +302,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
   else
     preczeros = 0;
   TRACE (printf ("  prec=%d showtrailing=%d, pad with preczeros %d\n",
-                 p->prec, p->showtrailing, preczeros));
+                 prec, p->showtrailing, preczeros));
 
   /* radix point if needed, or if forced */
   point = ".";
@@ -308,7 +326,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
   case DOPRNT_SHOWBASE_NO:
     break;
   case DOPRNT_SHOWBASE_NONZERO:
-    if (len == 0)
+    if (intlen == 0)
       break;
     /*FALLTHRU*/
   case DOPRNT_SHOWBASE_YES:

@@ -132,7 +132,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
   size_t   alloc_fmt_size;
   char     *fmt, *alloc_fmt, *last_fmt, *this_fmt;
   int      retval = 0;
-  int      type, fchar, *value;
+  int      type, fchar, *value, seen_precision;
   struct doprnt_params_t param;
 
   TRACE (printf ("gmp_doprnt \"%s\"\n", orig_fmt));
@@ -177,6 +177,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
       param.showtrailing = 1;
       param.sign = '\0';
       param.width = 0;
+      seen_precision = 0;
 
       /* This loop parses a single % sequence.  "break" from the switch
          means continue with this %, "goto next" means the conversion
@@ -189,7 +190,11 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             break;
 
           switch (fchar) {
+
           case 'a':
+            /* %a behaves like %e, but defaults to all significant digits,
+               and there's no leading zeros on the exponent (which is in
+               fact bit-based) */
             param.base = 16;
             param.expfmt = "p%c%d";
             goto conv_a;
@@ -199,8 +204,10 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
           conv_a:
             param.conv = DOPRNT_CONV_SCIENTIFIC;
             param.exptimes4 = 1;
+            if (! seen_precision)
+              param.prec = -1;  /* default to all digits */
             param.showbase = DOPRNT_SHOWBASE_YES;
-            param.showtrailing = 0;
+            param.showtrailing = 1;
             goto floating;
 
           case 'c':
@@ -303,10 +310,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
                 int        ndigits, ret;
                 FLUSH ();
                 f = va_arg (ap, mpf_srcptr);
-                if (fchar == 'a' || fchar == 'A')
-                  ndigits = 0;  /* all significant digits */
-                else
-                  ndigits = __gmp_doprnt_float_digits (&param, f);
+                ndigits = __gmp_doprnt_float_digits (&param, f);
                 s = mpf_get_str (NULL, &exp, param.base, ndigits, f);
                 ASSERT_DOPRNT_NDIGITS (param, ndigits, exp);
                 ret = __gmp_doprnt_float (funs, data, &param, s, exp);
@@ -410,6 +414,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             param.justify = DOPRNT_JUSTIFY_LEFT;
             break;
           case '.':
+            seen_precision = 1;
             value = &param.prec;
             break;
 
