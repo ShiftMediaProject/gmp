@@ -3095,7 +3095,7 @@ Return non-zero if @var{n} is exactly divisible by @var{d}, or in the case of
 @var{n} is divisible by @var{d} if there exists an integer @var{q} satisfying
 @math{@var{n} = @var{q}@GMPmultiply{}@var{d}}.  Unlike the other division
 functions, @math{@var{d}=0} is accepted and following the rule it can be seen
-that only 0 is divisible by 0.
+that only 0 is considered divisible by 0.
 @end deftypefun
 
 @deftypefun int mpz_congruent_p (mpz_t @var{n}, mpz_t @var{c}, mpz_t @var{d})
@@ -3109,8 +3109,8 @@ case of @code{mpz_congruent_2exp_p} modulo @m{2^b,2^@var{b}}.
 @var{n} is congruent to @var{c} mod @var{d} if there exists an integer @var{q}
 satisfying @math{@var{n} = @var{c} + @var{q}@GMPmultiply{}@var{d}}.  Unlike
 the other division functions, @math{@var{d}=0} is accepted and following the
-rule it can be seen that @var{n} and @var{c} are congruent mod 0 only when
-exactly equal.
+rule it can be seen that @var{n} and @var{c} are considered congruent mod 0
+only when exactly equal.
 @end deftypefun
 
 
