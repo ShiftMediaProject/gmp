@@ -97,6 +97,11 @@ mpz_set_str (x, str, base)
 	      base = 16;
 	      c = *str++;
 	    }
+	  else if (c == 'b' || c == 'B')
+	    {
+	      base = 2;
+	      c = *str++;
+	    }
 	}
     }
 
@@ -121,7 +126,8 @@ mpz_set_str (x, str, base)
 
   str_size = s - begs;
 
-  xsize = str_size / __mp_bases[base].chars_per_limb + 1;
+  xsize = (((mp_size_t) (str_size / __mp_bases[base].chars_per_bit_exactly))
+	   / BITS_PER_MP_LIMB + 2);
   if (x->_mp_alloc < xsize)
     _mpz_realloc (x, xsize);
 
