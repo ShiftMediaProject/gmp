@@ -1,3 +1,8 @@
+2000-10-25  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c (speed_cpu_frequency_sysctlbyname): Support hw.model
+	string for alpha FreeBSD 4.1.
+
 2000-10-24  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/freq.c: Explicitly #include config.h before other include files.
