@@ -227,7 +227,7 @@ setup_error_handler (void)
     setrlimit (RLIMIT_DATA, &limit);
 
     getrlimit (RLIMIT_STACK, &limit);
-    limit.rlim_cur = 1 * 1024 * 1024;
+    limit.rlim_cur = 4 * 1024 * 1024;
     setrlimit (RLIMIT_STACK, &limit);
 
     SIGNAL (SIGXCPU);
