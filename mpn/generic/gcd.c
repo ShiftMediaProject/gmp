@@ -196,16 +196,17 @@ mpn_gcd (gp, up, usize, vp, vsize)
   ASSERT (up[usize-1] != 0);
   ASSERT (vp[vsize-1] != 0);
 #if WANT_ASSERT
-  {
-    int  ulead, vlead;
-    count_leading_zeros (ulead, up[usize-1]);
-    count_leading_zeros (vlead, vp[vsize-1]);
-    ASSERT (ulead <= vlead);
-  }
+  if (usize == vsize)
+    {
+      int  uzeros, vzeros;
+      count_leading_zeros (uzeros, up[usize-1]);
+      count_leading_zeros (vzeros, vp[vsize-1]);
+      ASSERT (uzeros <= vzeros);
+    }
 #endif    
   ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
-  ASSERT (MPN_SAME_OR_SEPARATE_P (gp, up, usize));
-  ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, usize, vp, vsize));
+  ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, vsize, up, usize));
+  ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, vsize, vp, vsize));
 
   TMP_MARK (marker);
 
@@ -225,6 +226,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
       d = usize * BITS_PER_MP_LIMB - d;
       count_leading_zeros (vbitsize, vp[vsize-1]);
       vbitsize = vsize * BITS_PER_MP_LIMB - vbitsize;
+      ASSERT (d >= vbitsize);
       d = d - vbitsize + 1;
 
       /* Use bmod reduction to quickly discover whether V divides U.  */
