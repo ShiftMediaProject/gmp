@@ -543,6 +543,9 @@ double mpq_get_d _PROTO ((mpq_srcptr));
 void mpq_set_d _PROTO ((mpq_ptr, double));
 void mpq_canonicalize _PROTO ((mpq_ptr));
 
+#define mpq_swap __gmpq_swap
+void mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
+
 #ifdef _GMP_H_HAVE_FILE
 #define mpq_out_str __gmpq_out_str
 size_t mpq_out_str _PROTO ((FILE *, int, mpq_srcptr));
@@ -666,6 +669,9 @@ void mpf_trunc _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_ui_div _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
+
+#define mpf_swap __gmpf_swap
+void mpf_swap _PROTO ((mpf_ptr, mpf_ptr));
 
 #if defined (__cplusplus)
 }
