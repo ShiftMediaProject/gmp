@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/copyi.asm: Optimize for Itanium 2.
+	* mpn/ia64/copyd.asm: Likewise.
+
 2002-11-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/sqr_diagonal.asm: New file.
