@@ -1621,7 +1621,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
    Give leading=1 if foo is leading zeros, leading=0 for trailing.
    Give zero=1 if n=0 is allowed in the call, zero=0 if not.  */
 
-#define SPEED_ROUTINE_COUNT_ZEROS(call, leading, zero)                     \
+#define SPEED_ROUTINE_COUNT_ZEROS_C(call, leading, zero)                   \
   {                                                                        \
     mp_ptr     xp = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_xp); \
     int        i, c;                                                       \
@@ -1653,11 +1653,15 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     return t;                                                              \
   }                                                                        \
   
-#define SPEED_ROUTINE_COUNT_LEADING_ZEROS(call,zero)    \
-  SPEED_ROUTINE_COUNT_ZEROS (call, 1, zero)
+#define SPEED_ROUTINE_COUNT_LEADING_ZEROS_C(call,zero)  \
+  SPEED_ROUTINE_COUNT_ZEROS_C (call, 1, zero)
+#define SPEED_ROUTINE_COUNT_LEADING_ZEROS(fun)          \
+  SPEED_ROUTINE_COUNT_ZEROS_C (fun (c, n), 1, 0)
 
-#define SPEED_ROUTINE_COUNT_TRAILING_ZEROS(call,zero)   \
-  SPEED_ROUTINE_COUNT_ZEROS (call, 0, zero)
+#define SPEED_ROUTINE_COUNT_TRAILING_ZEROS_C(call,zero) \
+  SPEED_ROUTINE_COUNT_ZEROS_C (call, 0, zero)
+#define SPEED_ROUTINE_COUNT_TRAILING_ZEROS(call)        \
+  SPEED_ROUTINE_COUNT_ZEROS_C (fun (c, n), 0, 0)
 
 
 #define SPEED_ROUTINE_INVERT_LIMB_CALL(call)                    \

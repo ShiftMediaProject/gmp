@@ -1668,13 +1668,13 @@ speed_count_leading_zeros (struct speed_params *s)
 #else
 #define COUNT_LEADING_ZEROS_0_ALLOWED   0
 #endif
-  SPEED_ROUTINE_COUNT_LEADING_ZEROS (count_leading_zeros (c, n),
-                                     COUNT_LEADING_ZEROS_0_ALLOWED)
+  SPEED_ROUTINE_COUNT_LEADING_ZEROS_C (count_leading_zeros (c, n),
+                                       COUNT_LEADING_ZEROS_0_ALLOWED)
 }
 double
 speed_count_trailing_zeros (struct speed_params *s)
 {
-  SPEED_ROUTINE_COUNT_TRAILING_ZEROS (count_trailing_zeros (c, n), 0)
+  SPEED_ROUTINE_COUNT_TRAILING_ZEROS_C (count_trailing_zeros (c, n), 0)
 }
 
 
