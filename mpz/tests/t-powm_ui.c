@@ -135,7 +135,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
-dump_abort (mpz_t dividend, mpz_t divisor;
+dump_abort (mpz_t dividend, mpz_t divisor)
 {
   fprintf (stderr, "ERROR\n");
   fprintf (stderr, "dividend = "); debug_mp (dividend, -16);

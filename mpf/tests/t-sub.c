@@ -107,7 +107,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
-oo (mpf_t)
+oo (mpf_t x)
 {
   mp_size_t i;
   printf (" exp = %ld\n", x->_mp_exp);
