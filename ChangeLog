@@ -1,3 +1,27 @@
+2000-05-28  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, tune/*: Change pentium rdtsc cycle scheme to
+	HAVE_SPEED_CYCLECOUNTER and SPEED_CYCLECOUNTER_OBJS.
+	* tune/pentium.asm: Renamed and converted from rdtsc.asm.
+	* tune/sparcv9.asm: New file, by Torbjorn.
+	* tune/sparc64.asm: New file.
+	* tune/tuneup.c: Put a limit on gcdext search.
+
+	* gmp.h (mp_set_memory_functions): Add extern "C".
+	* mp.h (__GNU_MP__): Bump to "3".
+	* mpz/add.c,mul.c,powm.c,sub.c,sqrtrem.c,tdiv_qr.c [BERKELEY_MP]:
+	Include mp.h for mpbsd compile.
+	* mpz/gcd.c: Ditto, and remove _mpz_realloc declaration.
+
+	* gmp.texi (Integer Functions): Flatten @subsections into @sections.
+	(Floating-point Functions): Ditto.
+	(Integer Random Numbers): Split from miscelaneous as a sep section.
+	(Installing GMP): Make nodes for the sections.
+	Add more "@cindex"s.
+	(Known Build Problems): Remove SunOS get_d problem, believed fixed.
+	(Notes for Particular Systems): Remove HPPA note since now PIC.
+	(References): URL for Jebelean.
+
 2000-05-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/pa64w: New directory, contents based on corresponding mpn/pa64
