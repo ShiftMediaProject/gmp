@@ -73,6 +73,7 @@ MA 02111-1307, USA. */
 #define SIZ(x) ((x)->_mp_size)
 #define ABSIZ(x) ABS (SIZ (x))
 #define PTR(x) ((x)->_mp_d)
+#define LIMBS(x) ((x)->_mp_d)
 #define EXP(x) ((x)->_mp_exp)
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
@@ -362,9 +363,23 @@ typedef unsigned int UHWtype;
 
 /* Define ieee_double_extract and _GMP_IEEE_FLOATS.  */
 
+#if (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))
+/* Special case for little endian ARM since floats remain in big-endian.  */
+#define _GMP_IEEE_FLOATS 1
+union ieee_double_extract
+{
+  struct
+    {
+      unsigned int manh:20;
+      unsigned int exp:11;
+      unsigned int sig:1;
+      unsigned int manl:32;
+    } s;
+  double d;
+};
+#else
 #if defined (_LITTLE_ENDIAN) || defined (__LITTLE_ENDIAN__)		\
  || defined (__alpha)							\
- || (defined (__arm__) && defined (__ARMWEL__))				\
  || defined (__clipper__)						\
  || defined (__cris)							\
  || defined (__i386__)							\
@@ -414,6 +429,7 @@ union ieee_double_extract
     } s;
   double d;
 };
+#endif
 #endif
 #endif
 
