@@ -818,8 +818,8 @@ If you think you have found a bug in the GMP library, please investigate it and
 report it.  We have made this library available to you, and it is not too much
 to ask you to report the bugs that you find.
 
-But before you report a bug, please check @uref{http://www.swox.com/gmp/} for
-patches for this release.
+Before you report a bug, you may want to check @uref{http://www.swox.com/gmp/}
+for patches for this release.
 
 There are a few things you should think about when you put your bug report
 together.
@@ -836,6 +836,9 @@ corners in compilers.  Therefore, please include compiler version information
 in your bug report.  This can be extracted using @samp{what `which cc`}, or,
 if you're using gcc, @samp{gcc -v}.  Also, include the output from @samp{uname
 -a}.
+
+If the bug is related to @samp{configure}, please include the file
+@file{config.log} in the bug report.
 
 If your bug report is good, we will do our best to help you to get a corrected
 version of the library; if the bug report is poor, we won't do anything about
@@ -3440,7 +3443,7 @@ The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
 Richard M. Stallman, "Using and Porting GCC", Free Software Foundation,
-1999, @url{ftp://ftp.gnu.org/pub/gnu/gcc/}.
+1999, @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}.
 
 @item
 Peter L. Montgomery, "Modular Multiplication Without Trial Division", in
@@ -3465,7 +3468,7 @@ v. 21 (March), 1995, pp. 111-122.
 @item
 Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
 Max-Planck-Institut fuer Informatik Reseach Report MPI-I-98-1-022,
-@url{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
+@uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
 @end itemize
 
 @node Concept Index, , , Top
