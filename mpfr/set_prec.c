@@ -42,7 +42,7 @@ mpfr_set_prec (x, p)
   xsize = (p - 1)/BITS_PER_MP_LIMB + 1; /* new limb size */
 
   if (xsize > ABSSIZE(x)) {
-    x -> _mp_d = (mp_ptr) (*_mp_reallocate_func) 
+    x -> _mp_d = (mp_ptr) (*__gmp_reallocate_func) 
       (x -> _mp_d, ABSSIZE(x)*BYTES_PER_MP_LIMB, xsize * BYTES_PER_MP_LIMB);
     SIZE(x) = xsize; /* new number of allocated limbs */
   }

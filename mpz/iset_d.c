@@ -33,7 +33,7 @@ mpz_init_set_d (dest, val)
 #endif
 {
   dest->_mp_alloc = 1;
-  dest->_mp_d = (mp_ptr) (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+  dest->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
   dest->_mp_size = 0;
   mpz_set_d (dest, val);
 }

@@ -37,7 +37,7 @@ mpz_array_init (arr, arr_size, nbits)
   mp_size_t nlimbs;
 
   nlimbs = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
-  p = (mp_ptr) (*_mp_allocate_func) (arr_size * nlimbs * BYTES_PER_MP_LIMB);
+  p = (mp_ptr) (*__gmp_allocate_func) (arr_size * nlimbs * BYTES_PER_MP_LIMB);
 
   for (i = 0; i < arr_size; i++)
     {

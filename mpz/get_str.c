@@ -67,7 +67,7 @@ mpz_get_str (res_str, base, x)
     {
       /* We didn't get a string from the user.  Allocate one (and return
 	 a pointer to it).  */
-      res_str = (char *) (*_mp_allocate_func) (str_size);
+      res_str = (char *) (*__gmp_allocate_func) (str_size);
       /* Make str, the variable used for raw result from mpn_get_str,
 	 point to the same string, but just after a possible minus sign.  */
       str = (unsigned char *) res_str + 1;

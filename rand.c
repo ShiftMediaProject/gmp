@@ -137,7 +137,7 @@ gmp_randinit (va_alist)
 	
 	/* Allocate algorithm specific data. */
 	rstate->data.bbs = (__gmp_rand_data_bbs *)
-	  (*_mp_allocate_func) (sizeof (__gmp_rand_data_bbs));
+	  (*__gmp_allocate_func) (sizeof (__gmp_rand_data_bbs));
 
 	mpz_init (rstate->data.bbs->bi); /* The Blum integer. */
 	mpz_mul (rstate->data.bbs->bi, p, q);

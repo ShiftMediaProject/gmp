@@ -65,7 +65,7 @@ xtom (str)
   mp_size_t xsize;
   int c;
   int negative;
-  MINT *x = (MINT *) (*_mp_allocate_func) (sizeof (MINT));
+  MINT *x = (MINT *) (*__gmp_allocate_func) (sizeof (MINT));
   TMP_DECL (marker);
 
   /* Skip whitespace.  */
@@ -106,7 +106,7 @@ xtom (str)
 
   xsize = str_size / __mp_bases[16].chars_per_limb + 1;
   x->_mp_alloc = xsize;
-  x->_mp_d = (mp_ptr) (*_mp_allocate_func) (xsize * BYTES_PER_MP_LIMB);
+  x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (xsize * BYTES_PER_MP_LIMB);
 
   xsize = mpn_set_str (x->_mp_d, (unsigned char *) begs, str_size, 16);
   x->_mp_size = negative ? -xsize : xsize;

@@ -44,5 +44,5 @@ mpf_dump (u)
     printf ("-0.%se%ld\n", str + 1, exp);
   else
     printf ("0.%se%ld\n", str, exp);
-  (*_mp_free_func) (str, 0);/* ??? broken alloc interface, pass what size ??? */
+  (*__gmp_free_func) (str, 0);/* ??? broken alloc interface, pass what size ??? */
 }

@@ -36,13 +36,13 @@ mp_set_memory_functions (alloc_func, realloc_func, free_func)
 #endif
 {
   if (alloc_func == 0)
-    alloc_func = _mp_default_allocate;
+    alloc_func = __gmp_default_allocate;
   if (realloc_func == 0)
-    realloc_func = _mp_default_reallocate;
+    realloc_func = __gmp_default_reallocate;
   if (free_func == 0)
-    free_func = _mp_default_free;
+    free_func = __gmp_default_free;
 
-  _mp_allocate_func = alloc_func;
-  _mp_reallocate_func = realloc_func;
-  _mp_free_func = free_func;
+  __gmp_allocate_func = alloc_func;
+  __gmp_reallocate_func = realloc_func;
+  __gmp_free_func = free_func;
 }

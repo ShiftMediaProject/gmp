@@ -42,7 +42,7 @@ mpfr_init2 (x, p)
   xsize = (p - 1)/BITS_PER_MP_LIMB + 1; 
 
   x -> _mp_prec = p;
-  x -> _mp_d = (mp_ptr) (*_mp_allocate_func) 
+  x -> _mp_d = (mp_ptr) (*__gmp_allocate_func) 
     (xsize * BYTES_PER_MP_LIMB);
   x -> _mp_size = xsize;
   x -> _mp_exp = 0; /* avoids uninitialized memory reads for zero */

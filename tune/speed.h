@@ -126,8 +126,8 @@ double speed_modlimb_invert_mul1 _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_loop _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_cond _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_arith _PROTO ((struct speed_params *s));
-double speed_mp_allocate_free _PROTO ((struct speed_params *s));
-double speed_mp_allocate_reallocate_free _PROTO ((struct speed_params *s));
+double speed__gmp_allocate_free _PROTO ((struct speed_params *s));
+double speed__gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
 
 double speed_mpf_init_clear _PROTO ((struct speed_params *s));
 
@@ -227,10 +227,10 @@ void noop_wxys _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void mpn_cache_fill _PROTO ((mp_srcptr ptr, mp_size_t size));
 void mpn_cache_fill_dummy _PROTO ((mp_limb_t n));
 mp_ptr speed_tmp_alloc_adjust _PROTO ((void *ptr, mp_size_t align));
-void *_mp_allocate_or_reallocate _PROTO ((void *ptr,
+void *__gmp_allocate_or_reallocate _PROTO ((void *ptr,
                                           size_t oldsize, size_t newsize));
 void *align_pointer _PROTO ((void *p, size_t align));
-void *_mp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
+void *__gmp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
 void speed_cache_fill _PROTO ((struct speed_params *s));
 void speed_operand_src _PROTO ((struct speed_params *s,
                                 mp_ptr ptr, mp_size_t size));

@@ -77,10 +77,10 @@ msqrt (op, root, rem)
 	  free_me_size = root->_mp_alloc;
 	}
       else
-	(*_mp_free_func) (root_ptr, root->_mp_alloc * BYTES_PER_MP_LIMB);
+	(*__gmp_free_func) (root_ptr, root->_mp_alloc * BYTES_PER_MP_LIMB);
 
       root->_mp_alloc = root_size;
-      root_ptr = (mp_ptr) (*_mp_allocate_func) (root_size * BYTES_PER_MP_LIMB);
+      root_ptr = (mp_ptr) (*__gmp_allocate_func) (root_size * BYTES_PER_MP_LIMB);
       root->_mp_d = root_ptr;
     }
   else
@@ -106,6 +106,6 @@ msqrt (op, root, rem)
   rem->_mp_size = rem_size;
 
   if (free_me != NULL)
-    (*_mp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
+    (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
   TMP_FREE (marker);
 }

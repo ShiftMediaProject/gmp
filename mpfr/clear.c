@@ -32,5 +32,5 @@ mpfr_clear (m)
      mpfr_ptr m;
 #endif
 {
-  (*_mp_free_func) (m->_mp_d, ((m->_mp_prec>>3) + 1));
+  (*__gmp_free_func) (m->_mp_d, ((m->_mp_prec>>3) + 1));
 }

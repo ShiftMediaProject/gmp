@@ -36,7 +36,7 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 
   /* Allocate algorithm specific data. */
   rstate->algdata.lc = (__gmp_randata_lc *)
-    (*_mp_allocate_func) (sizeof (__gmp_randata_lc));
+    (*__gmp_allocate_func) (sizeof (__gmp_randata_lc));
 
   mpz_init_set (rstate->algdata.lc->a, a);
   rstate->algdata.lc->c = c;

@@ -85,10 +85,10 @@ mult (u, v, w)
 	  free_me_size = w->_mp_alloc;
 	}
       else
-	(*_mp_free_func) (wp, w->_mp_alloc * BYTES_PER_MP_LIMB);
+	(*__gmp_free_func) (wp, w->_mp_alloc * BYTES_PER_MP_LIMB);
 
       w->_mp_alloc = wsize;
-      wp = (mp_ptr) (*_mp_allocate_func) (wsize * BYTES_PER_MP_LIMB);
+      wp = (mp_ptr) (*__gmp_allocate_func) (wsize * BYTES_PER_MP_LIMB);
       w->_mp_d = wp;
     }
   else
@@ -126,6 +126,6 @@ mult (u, v, w)
 
   w->_mp_size = sign_product < 0 ? -wsize : wsize;
   if (free_me != NULL)
-    (*_mp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
+    (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
   TMP_FREE (marker);
 }

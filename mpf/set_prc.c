@@ -46,7 +46,7 @@ mpf_set_prec (x, prec_in_bits)
       MPN_COPY_INCR (xp, xp + offset, prec + 1);
     }
 
-  x->_mp_d = (mp_ptr) (*_mp_reallocate_func)
+  x->_mp_d = (mp_ptr) (*__gmp_reallocate_func)
     (x->_mp_d,
      (x->_mp_prec + 1) * BYTES_PER_MP_LIMB, (prec + 1) * BYTES_PER_MP_LIMB);
   x->_mp_prec = prec;

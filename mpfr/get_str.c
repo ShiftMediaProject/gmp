@@ -60,7 +60,7 @@ char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
   neg = (SIGN(op)<0) ? 1 : 0;
 
   if (!NOTZERO(op)) {
-    if (str==NULL) str0=str=(*_mp_allocate_func)(neg + n + 2);
+    if (str==NULL) str0=str=(*__gmp_allocate_func)(neg + n + 2);
     if (SIGN(op)<0) *str++ = '-';
     for (f=0;f<n;f++) *str++ = '0';
     *expptr = 1;
@@ -196,7 +196,7 @@ char *mpfr_get_str(str, expptr, base, n, op, rnd_mode)
 
   /* computes the number of characters needed */
   q = neg + n + 2; /* n+1 may not be enough for 100000... */
-  if (str==NULL) str0=str=(*_mp_allocate_func)(q);
+  if (str==NULL) str0=str=(*__gmp_allocate_func)(q);
   if (neg) *str++='-';
   mpz_get_str(str, base, bz); /* n digits of mantissa */
   if (strlen(str)==n+1) f++; /* possible due to rounding */

@@ -34,9 +34,9 @@ itom (n)
   MINT *x;
   mp_ptr xp;
 
-  x = (MINT *) (*_mp_allocate_func) (sizeof (MINT));
+  x = (MINT *) (*__gmp_allocate_func) (sizeof (MINT));
   x->_mp_alloc = 1;
-  x->_mp_d = xp = (mp_ptr) (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+  x->_mp_d = xp = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
   if (n > 0)
     {
       x->_mp_size = 1;

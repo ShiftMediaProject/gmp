@@ -58,7 +58,7 @@ main (argc, argv)
 
       str = mpz_get_str ((char *) 0, base, op1);
       MPZ_SET_STR_OR_ABORT (op2, str, base);
-      (*_mp_free_func) (str, 0);
+      (*__gmp_free_func) (str, 0);
 
       if (mpz_cmp (op1, op2))
 	{

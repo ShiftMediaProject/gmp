@@ -115,9 +115,9 @@ mpz_powm_ui (res, base, exp, mod)
 	  free_me_size = res->_mp_alloc;
 	}
       else
-	(*_mp_free_func) (rp, res->_mp_alloc * BYTES_PER_MP_LIMB);
+	(*__gmp_free_func) (rp, res->_mp_alloc * BYTES_PER_MP_LIMB);
 
-      rp = (mp_ptr) (*_mp_allocate_func) (size * BYTES_PER_MP_LIMB);
+      rp = (mp_ptr) (*__gmp_allocate_func) (size * BYTES_PER_MP_LIMB);
       res->_mp_alloc = size;
       res->_mp_d = rp;
     }
@@ -243,6 +243,6 @@ mpz_powm_ui (res, base, exp, mod)
   res->_mp_size = rsize;
 
   if (free_me != NULL)
-    (*_mp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
+    (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
   TMP_FREE (marker);
 }

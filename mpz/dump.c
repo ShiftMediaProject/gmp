@@ -40,5 +40,5 @@ mpz_dump (u)
 
   str = mpz_get_str (0, 10, u);
   printf ("%s\n", str);
-  (*_mp_free_func) (str, 0);/* ??? broken alloc interface, pass what size ??? */
+  (*__gmp_free_func) (str, 0);/* ??? broken alloc interface, pass what size ??? */
 }

@@ -38,7 +38,7 @@ mpz_init_set_str (x, str, base)
 #endif
 {
   x->_mp_alloc = 1;
-  x->_mp_d = (mp_ptr) (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+  x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
 
   /* if str has no digits mpz_set_str leaves x->_mp_size unset */
   x->_mp_size = 0;

@@ -35,7 +35,7 @@ _mpz_realloc (m, new_size)
   if (new_size == 0)
     new_size = 1;
 
-  m->_mp_d = (mp_ptr) (*_mp_reallocate_func) (m->_mp_d,
+  m->_mp_d = (mp_ptr) (*__gmp_reallocate_func) (m->_mp_d,
 					      m->_mp_alloc * BYTES_PER_MP_LIMB,
 					      new_size * BYTES_PER_MP_LIMB);
   m->_mp_alloc = new_size;

@@ -38,13 +38,13 @@ gmp_randclear (rstate)
       mpz_clear (rstate->algdata.lc->a);
       if (rstate->algdata.lc->m2exp == 0)
 	mpz_clear (rstate->algdata.lc->m);
-      (*_mp_free_func) (rstate->algdata.lc, sizeof (*rstate->algdata.lc));
+      (*__gmp_free_func) (rstate->algdata.lc, sizeof (*rstate->algdata.lc));
       break;
 
 #if 0
     case GMP_RAND_ALG_BBS:
       mpz_clear (rstate->algdata.bbs->bi);
-      (*_mp_free_func) (rstate->algdata.bbs, sizeof (*rstate->algdata.bbs));
+      (*__gmp_free_func) (rstate->algdata.bbs, sizeof (*rstate->algdata.bbs));
       break;
 #endif /* 0 */
 

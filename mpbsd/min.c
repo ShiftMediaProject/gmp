@@ -66,7 +66,7 @@ min (dest)
   mp_size_t dest_size;
 
   alloc_size = 100;
-  str = (char *) (*_mp_allocate_func) (alloc_size);
+  str = (char *) (*__gmp_allocate_func) (alloc_size);
   str_size = 0;
 
   /* Skip whitespace.  */
@@ -91,7 +91,7 @@ min (dest)
 	{
 	  size_t old_alloc_size = alloc_size;
 	  alloc_size = alloc_size * 3 / 2;
-	  str = (char *) (*_mp_reallocate_func) (str, old_alloc_size, alloc_size);
+	  str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
 	}
       dig = digit_value_in_base (c, 10);
       if (dig < 0)
@@ -109,6 +109,6 @@ min (dest)
   dest_size = mpn_set_str (dest->_mp_d, (unsigned char *) str, str_size, 10);
   dest->_mp_size = negative ? -dest_size : dest_size;
 
-  (*_mp_free_func) (str, alloc_size);
+  (*__gmp_free_func) (str, alloc_size);
   return;
 }

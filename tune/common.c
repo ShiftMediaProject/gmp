@@ -332,19 +332,19 @@ align_pointer (void *p, size_t align)
 /* Note that memory allocated with this function can never be freed, because
    the start address of the block allocated is discarded. */
 void *
-_mp_allocate_func_aligned (size_t bytes, size_t align)
+__gmp_allocate_func_aligned (size_t bytes, size_t align)
 {
-  return align_pointer ((*_mp_allocate_func) (bytes + align-1), align);
+  return align_pointer ((*__gmp_allocate_func) (bytes + align-1), align);
 }
 
 
 void *
-_mp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize)
+__gmp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize)
 {
   if (ptr == NULL)
-    return (*_mp_allocate_func) (newsize);
+    return (*__gmp_allocate_func) (newsize);
   else
-    return (*_mp_reallocate_func) (ptr, oldsize, newsize);
+    return (*__gmp_reallocate_func) (ptr, oldsize, newsize);
 }
 
 
@@ -385,7 +385,7 @@ mpz_init_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
 
   MPN_NORMALIZE (p, size);
   ALLOC(z) = MAX (size, 1);
-  PTR(z) = _MP_ALLOCATE_FUNC_LIMBS (ALLOC(z));
+  PTR(z) = __GMP_ALLOCATE_FUNC_LIMBS (ALLOC(z));
   SIZ(z) = size;
   MPN_COPY (PTR(z), p, size);
 }
@@ -936,7 +936,7 @@ speed_noop_wxys (struct speed_params *s)
 
 
 /* Compare these to see how much malloc/free costs and then how much
-   _mp_default_allocate/free and mpz_init/clear add.  mpz_init/clear or
+   __gmp_default_allocate/free and mpz_init/clear add.  mpz_init/clear or
    mpq_init/clear will be doing a 1 limb allocate, so use that as the size
    when including them in comparisons.  */
 
@@ -960,23 +960,23 @@ speed_malloc_realloc_free (struct speed_params *s)
 }  
 
 double
-speed_mp_allocate_free (struct speed_params *s)
+speed__gmp_allocate_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
-                            p = (*_mp_allocate_func) (bytes);
-                            (*_mp_free_func) (p, bytes));
+                            p = (*__gmp_allocate_func) (bytes);
+                            (*__gmp_free_func) (p, bytes));
 }  
 
 double
-speed_mp_allocate_reallocate_free (struct speed_params *s)
+speed__gmp_allocate_reallocate_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE
     (void *p,
-     p = (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
-     p = (*_mp_reallocate_func) (p, bytes, BYTES_PER_MP_LIMB);
-     (*_mp_free_func) (p, bytes));
+     p = (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
+     p = (*__gmp_reallocate_func) (p, bytes, BYTES_PER_MP_LIMB);
+     (*__gmp_free_func) (p, bytes));
 }  
 
 double

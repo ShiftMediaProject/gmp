@@ -31,10 +31,10 @@ mpq_init (x)
 #endif
 {
   x->_mp_num._mp_alloc = 1;
-  x->_mp_num._mp_d = (mp_ptr) (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+  x->_mp_num._mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
   x->_mp_num._mp_size = 0;
   x->_mp_den._mp_alloc = 1;
-  x->_mp_den._mp_d = (mp_ptr) (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+  x->_mp_den._mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
   x->_mp_den._mp_d[0] = 1;
   x->_mp_den._mp_size = 1;
 }

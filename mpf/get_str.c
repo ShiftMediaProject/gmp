@@ -107,7 +107,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
     {
       /* We didn't get a string from the user.  Allocate one (and return
 	 a pointer to it) with space for `-' and terminating null.  */
-      digit_ptr = (char *) (*_mp_allocate_func) (n_digits + 2);
+      digit_ptr = (char *) (*__gmp_allocate_func) (n_digits + 2);
     }
 
   if (usize == 0)

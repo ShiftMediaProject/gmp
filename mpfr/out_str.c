@@ -60,6 +60,6 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
     fprintf(stream, "%s", s);
   }
 
-  (*_mp_free_func)(s0, l); 
+  (*__gmp_free_func)(s0, l); 
   return l;
 }

@@ -45,7 +45,7 @@ mpf_inp_str (rop, stream, base)
     stream = stdin;
 
   alloc_size = 100;
-  str = (char *) (*_mp_allocate_func) (alloc_size);
+  str = (char *) (*__gmp_allocate_func) (alloc_size);
   str_size = 0;
   nread = 0;
 
@@ -63,7 +63,7 @@ mpf_inp_str (rop, stream, base)
 	{
 	  size_t old_alloc_size = alloc_size;
 	  alloc_size = alloc_size * 3 / 2;
-	  str = (char *) (*_mp_reallocate_func) (str, old_alloc_size, alloc_size);
+	  str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
 	}
       if (c == EOF || isspace (c))
 	break;
@@ -76,7 +76,7 @@ mpf_inp_str (rop, stream, base)
     {
       size_t old_alloc_size = alloc_size;
       alloc_size = alloc_size * 3 / 2;
-      str = (char *) (*_mp_reallocate_func) (str, old_alloc_size, alloc_size);
+      str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
     }
   str[str_size] = 0;
 
@@ -84,6 +84,6 @@ mpf_inp_str (rop, stream, base)
   if (retval == -1)
     return 0;			/* error */
 
-  (*_mp_free_func) (str, alloc_size);
+  (*__gmp_free_func) (str, alloc_size);
   return str_size + nread;
 }

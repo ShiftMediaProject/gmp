@@ -33,7 +33,7 @@ mpz_init_set_si (x, val)
 #endif
 {
   x->_mp_alloc = 1;
-  x->_mp_d = (mp_ptr) (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+  x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
   if (val > 0)
     {
       x->_mp_d[0] = val;

@@ -139,7 +139,7 @@ add_dat (mp_size_t size, double d)
 
   if (ndat == allocdat)
     {
-      dat = (struct dat_t *) _mp_allocate_or_reallocate
+      dat = (struct dat_t *) __gmp_allocate_or_reallocate
         (dat, allocdat * sizeof(dat[0]),
          (allocdat+ALLOCDAT_STEP) * sizeof(dat[0]));
       allocdat += ALLOCDAT_STEP;

@@ -31,5 +31,5 @@ mpf_clear (m)
      mpf_ptr m;
 #endif
 {
-  (*_mp_free_func) (m->_mp_d, (m->_mp_prec + 1) * BYTES_PER_MP_LIMB);
+  (*__gmp_free_func) (m->_mp_d, (m->_mp_prec + 1) * BYTES_PER_MP_LIMB);
 }

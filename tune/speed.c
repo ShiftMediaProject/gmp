@@ -217,8 +217,8 @@ const struct routine_t {
 
   { "malloc_free",                 speed_malloc_free                 },
   { "malloc_realloc_free",         speed_malloc_realloc_free         },
-  { "mp_allocate_free",            speed_mp_allocate_free            },
-  { "mp_allocate_reallocate_free", speed_mp_allocate_reallocate_free },
+  { "mp_allocate_free",            speed__gmp_allocate_free            },
+  { "mp_allocate_reallocate_free", speed__gmp_allocate_reallocate_free },
   { "mpz_init_clear",              speed_mpz_init_clear              },
   { "mpq_init_clear",              speed_mpq_init_clear              },
   { "mpf_init_clear",              speed_mpf_init_clear              },
@@ -546,9 +546,9 @@ run_gnuplot (int argc, char *argv[])
   FILE  *fp;
   int   i;
      
-  plot_filename = (char *) (*_mp_allocate_func)
+  plot_filename = (char *) (*__gmp_allocate_func)
     (strlen (option_gnuplot_basename) + 20);
-  data_filename = (char *) (*_mp_allocate_func)
+  data_filename = (char *) (*__gmp_allocate_func)
     (strlen (option_gnuplot_basename) + 20);
       
   sprintf (plot_filename, "%s.gnuplot", option_gnuplot_basename);
@@ -884,7 +884,7 @@ main (int argc, char *argv[])
                 if (size_num == size_allocnum)
                   {
                     size_array = (struct size_array_t *)
-                      _mp_allocate_or_reallocate
+                      __gmp_allocate_or_reallocate
                       (size_array,
                        size_allocnum * sizeof(size_array[0]),
                        (size_allocnum+10) * sizeof(size_array[0]));
@@ -959,7 +959,7 @@ main (int argc, char *argv[])
   srandom (option_seed);
   srand48 (option_seed);
 
-  choice = (struct choice_t *) (*_mp_allocate_func)
+  choice = (struct choice_t *) (*__gmp_allocate_func)
     ((argc - optind) * sizeof(choice[0]));
   for ( ; optind < argc; optind++)
     {

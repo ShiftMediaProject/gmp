@@ -31,6 +31,6 @@ mfree (m)
      MINT *m;
 #endif
 {
-  (*_mp_free_func) (m->_mp_d, m->_mp_alloc * BYTES_PER_MP_LIMB);
-  (*_mp_free_func) (m, sizeof (MINT));
+  (*__gmp_free_func) (m->_mp_d, m->_mp_alloc * BYTES_PER_MP_LIMB);
+  (*__gmp_free_func) (m, sizeof (MINT));
 }

@@ -102,7 +102,7 @@ typedef __gmp_const __mpfr_struct *mpfr_srcptr;
 
 /* reallocates the mantissa of x to q bits and sets the precision to q */
 #define _mpfr_realloc(x, q) { \
-    (x)->_mp_d = (mp_ptr) (*_mp_reallocate_func) \
+    (x)->_mp_d = (mp_ptr) (*__gmp_reallocate_func) \
        ((x)->_mp_d, (x)->_mp_prec>>3 + 1, (q)>>3 + 1); \
     (x)->_mp_prec = q; }
 

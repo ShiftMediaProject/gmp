@@ -124,7 +124,7 @@ mpz_inp_str (x, stream, base)
     }
 
   alloc_size = 100;
-  str = (char *) (*_mp_allocate_func) (alloc_size);
+  str = (char *) (*__gmp_allocate_func) (alloc_size);
   str_size = 0;
 
   for (;;)
@@ -134,7 +134,7 @@ mpz_inp_str (x, stream, base)
 	{
 	  size_t old_alloc_size = alloc_size;
 	  alloc_size = alloc_size * 3 / 2;
-	  str = (char *) (*_mp_reallocate_func) (str, old_alloc_size, alloc_size);
+	  str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
 	}
       dig = digit_value_in_base (c, base);
       if (dig < 0)
@@ -149,7 +149,7 @@ mpz_inp_str (x, stream, base)
   if (str_size == 0)
     {
       x->_mp_size = 0;
-      (*_mp_free_func) (str, alloc_size);
+      (*__gmp_free_func) (str, alloc_size);
       return nread;
     }
 
@@ -162,6 +162,6 @@ mpz_inp_str (x, stream, base)
   xsize = mpn_set_str (x->_mp_d, (unsigned char *) str, str_size, base);
   x->_mp_size = negative ? -xsize : xsize;
 
-  (*_mp_free_func) (str, alloc_size);
+  (*__gmp_free_func) (str, alloc_size);
   return str_size + nread;
 }

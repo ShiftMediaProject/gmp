@@ -675,7 +675,7 @@ mpn_mul_fft (op, pl, n, nl, m, ml, k)
                   pl,pl,K,nprime,nprime,2.0*(double)N/Nprime/K);
            printf("   temp space %ld\n", 2*K*(nprime+1)));
 
-    A = _MP_ALLOCATE_FUNC_LIMBS (2*K*(nprime+1));
+    A = __GMP_ALLOCATE_FUNC_LIMBS (2*K*(nprime+1));
     B = A+K*(nprime+1);
     Ap = TMP_ALLOC_MP_PTRS (K); 
     Bp = TMP_ALLOC_MP_PTRS (K); 
@@ -703,7 +703,7 @@ mpn_mul_fft (op, pl, n, nl, m, ml, k)
     }
     mpn_mul_fft_internal(op,n,m,pl,k,K,Ap,Bp,A,B,nprime,l,Mp,_fft_l,T,0);
     TMP_FREE(marker);
-    _MP_FREE_FUNC_LIMBS (A, 2*K*(nprime+1));
+    __GMP_FREE_FUNC_LIMBS (A, 2*K*(nprime+1));
 }
 
 
@@ -737,11 +737,11 @@ mpn_mul_fft_full (op, n, nl, m, ml)
   TRACE (printf ("mpn_mul_fft_full nl=%ld ml=%ld -> pl=%ld k=%d\n",
                  nl, ml, pl, k));
 
-  pad_op = _MP_ALLOCATE_FUNC_LIMBS (pl+1);
+  pad_op = __GMP_ALLOCATE_FUNC_LIMBS (pl+1);
   mpn_mul_fft (pad_op, pl, n, nl, m, ml, k);
 
   ASSERT (mpn_zero_p (pad_op+nl+ml, pl+1-(nl+ml)));
   MPN_COPY (op, pad_op, nl+ml);
 
-  _MP_FREE_FUNC_LIMBS (pad_op, pl+1);
+  __GMP_FREE_FUNC_LIMBS (pad_op, pl+1);
 }

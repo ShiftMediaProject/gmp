@@ -43,7 +43,7 @@ mtox (x)
 
   if (xsize == 0)
     {
-      str = (unsigned char *) (*_mp_allocate_func) (2);
+      str = (unsigned char *) (*__gmp_allocate_func) (2);
       str[0] = '0';
       str[1] = 0;
       return (char *) str;
@@ -55,7 +55,7 @@ mtox (x)
   TMP_MARK (marker);
   str_size = ((size_t) (xsize * BITS_PER_MP_LIMB
 			* __mp_bases[16].chars_per_bit_exactly)) + 3;
-  str = (unsigned char *) (*_mp_allocate_func) (str_size);
+  str = (unsigned char *) (*__gmp_allocate_func) (str_size);
   s = str;
 
   if (xsign < 0)
