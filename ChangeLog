@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-02-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/arm/copyi.asm: New file.
+	* mpn/arm/copyd.asm: New file.
+
 2003-02-16  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Tolerate incorrect last data
