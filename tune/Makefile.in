@@ -13,7 +13,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -117,6 +117,7 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
+GMP_NAIL_BITS = @GMP_NAIL_BITS@
 HAVE_MPFR_01 = @HAVE_MPFR_01@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LEX = @LEX@
@@ -167,6 +168,7 @@ libspeed_la_SOURCES = \
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
+  jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c time.c			\
   sb_div.c sb_inv.c
@@ -284,10 +286,11 @@ libdummy_la_OBJECTS = $(nodist_libdummy_la_OBJECTS)
 am_libspeed_la_OBJECTS = common$U.lo divrem1div$U.lo divrem1inv$U.lo \
 	divrem2div$U.lo divrem2inv$U.lo freq$U.lo gcd_bin$U.lo \
 	gcd_finda_gen$U.lo gcdext_single$U.lo gcdext_double$U.lo \
-	gcdextod$U.lo gcdextos$U.lo mod_1_div$U.lo mod_1_inv$U.lo \
-	modlinv$U.lo mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo \
-	powm_mod$U.lo powm_redc$U.lo pre_divrem_1$U.lo time$U.lo \
-	sb_div$U.lo sb_inv$U.lo
+	gcdextod$U.lo gcdextos$U.lo jacbase1$U.lo jacbase2$U.lo \
+	jacbase3$U.lo mod_1_div$U.lo mod_1_inv$U.lo modlinv$U.lo \
+	mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo powm_mod$U.lo \
+	powm_redc$U.lo pre_divrem_1$U.lo time$U.lo sb_div$U.lo \
+	sb_inv$U.lo
 libspeed_la_OBJECTS = $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS = speed$(EXEEXT) speed-dynamic$(EXEEXT) \
 	speed-ext$(EXEEXT) tuneup$(EXEEXT)
@@ -422,6 +425,12 @@ gcdextod_.c: gcdextod.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdextod.c; then echo $(srcdir)/gcdextod.c; else echo gcdextod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdextod_.c || rm -f gcdextod_.c
 gcdextos_.c: gcdextos.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdextos.c; then echo $(srcdir)/gcdextos.c; else echo gcdextos.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdextos_.c || rm -f gcdextos_.c
+jacbase1_.c: jacbase1.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/jacbase1.c; then echo $(srcdir)/jacbase1.c; else echo jacbase1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > jacbase1_.c || rm -f jacbase1_.c
+jacbase2_.c: jacbase2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/jacbase2.c; then echo $(srcdir)/jacbase2.c; else echo jacbase2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > jacbase2_.c || rm -f jacbase2_.c
+jacbase3_.c: jacbase3.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/jacbase3.c; then echo $(srcdir)/jacbase3.c; else echo jacbase3.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > jacbase3_.c || rm -f jacbase3_.c
 mod_1_.c: mod_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mod_1.c; then echo $(srcdir)/mod_1.c; else echo mod_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mod_1_.c || rm -f mod_1_.c
 mod_1_div_.c: mod_1_div.c $(ANSI2KNR)
@@ -475,12 +484,14 @@ gcd_.$(OBJEXT) gcd_.lo gcd_bin_.$(OBJEXT) gcd_bin_.lo \
 gcd_finda_gen_.$(OBJEXT) gcd_finda_gen_.lo gcdext_double_.$(OBJEXT) \
 gcdext_double_.lo gcdext_single_.$(OBJEXT) gcdext_single_.lo \
 gcdextod_.$(OBJEXT) gcdextod_.lo gcdextos_.$(OBJEXT) gcdextos_.lo \
-mod_1_.$(OBJEXT) mod_1_.lo mod_1_div_.$(OBJEXT) mod_1_div_.lo \
-mod_1_inv_.$(OBJEXT) mod_1_inv_.lo modlinv_.$(OBJEXT) modlinv_.lo \
-mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) \
-mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) \
-mul_n_open_.lo noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) \
-powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
+jacbase1_.$(OBJEXT) jacbase1_.lo jacbase2_.$(OBJEXT) jacbase2_.lo \
+jacbase3_.$(OBJEXT) jacbase3_.lo mod_1_.$(OBJEXT) mod_1_.lo \
+mod_1_div_.$(OBJEXT) mod_1_div_.lo mod_1_inv_.$(OBJEXT) mod_1_inv_.lo \
+modlinv_.$(OBJEXT) modlinv_.lo mul_.$(OBJEXT) mul_.lo \
+mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo \
+mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
+noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) powm_mod_.lo \
+powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
 pre_divrem_1_.lo sb_div_.$(OBJEXT) sb_div_.lo sb_divrem_mn_.$(OBJEXT) \
 sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo speed_.$(OBJEXT) \
 speed_.lo speed-ext_.$(OBJEXT) speed-ext_.lo sqr_basecase_.$(OBJEXT) \
