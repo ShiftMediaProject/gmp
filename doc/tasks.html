@@ -536,15 +536,27 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <li> Alpha ev67 and ev68: Recognise these in config.guess, the same as recent
      configfsf.guess does.  (Not that we've got anything specific for them
      right now.)
+<li> Alpha: On OSF the nm format is not recognised by
+     <code>GMP_ASM_LSYM_PREFIX</code>.  We end up falling back on
+     <code>L</code> which is probably right, but it might be desirable to
+     recognise the format, or try to jam it into BSD mode or whatever.
+<li> HPPA: rename `hppa' =&gt; `pa32'.
+<li> HPPA: Combine the pa64 and pa64w directories.
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
 <li> HPPA 2.0w: gcc is rumoured to support 2.0w as of version 3, though
      perhaps just as a build-time choice.  In any case, figure out how to
      identify a suitable gcc or put it in the right mode, for the GMP compiler
      choices.
+<li> Mips: Rename `mips2' =&gt; `mips32' and `mips3' =&gt; `mips64'.
 <li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
      "hinv -c processor" gives lots of information on Irix.  Standard
      config.guess etc append "el" to indicate endianness, but GMP probably
      doesn't care about endianness and could forget about that.
+<li> Mips: IRIX 6.5 "as" doesn't like the <code>.byte</code> used in
+     <code>GMP_ASM_LSYM_PREFIX</code> because it's data being emitted in the
+     text section.  It also complains about lacking
+     <code>.ent</code>/<code>.end</code> directives.  The <code>L</code> is
+     probably right, but perhaps the test should be improved.
 <li> Power: config.guess might be able to use AIX 4
      <code>_system_configuration.implementation</code> for more accurate CPU
      determination.
@@ -577,10 +589,11 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      be conditionalized, and the appropriate form could be selected with the
      <code>HAVE_NATIVE</code> scheme if/when the code switches to use a
      <code>PROLOGUE</code> style.
-<li> Combine the pa64 and pa64w directories.
-<li> Rename `mips2' =&gt; `mips32' and `mips3' =&gt; `mips64'.
 <li> <code>DItype</code>: The setup in gmp-impl.h for non-GCC could use an
      autoconf test to determine whether <code>long long</code> is available.
+<li> m88k: Make the assembler code work on non-underscore systems.  Conversion
+     to .asm would be desirable.  Ought to be easy, but would want to be
+     tested.
 </ul>
 
 
