@@ -96,6 +96,12 @@ MA 02111-1307, USA. */
 # endif
 #endif
 
+/* const and signed must match __gmp_const and __gmp_signed, so follow the
+   decision made for those in gmp.h.    */
+#if ! __GMP_HAVE_CONST
+#define const   /* empty */
+#define signed  /* empty */
+#endif
 
 /* "const" basically means a function does nothing but examine its arguments
    and give a return value, it doesn't read or write any memory (neither
@@ -556,14 +562,6 @@ void __gmp_default_free _PROTO ((void *, size_t));
       (ptr) = (type *) (*__gmp_reallocate_func)                         \
         (ptr, (oldsize) * sizeof (type), (newsize) * sizeof (type));    \
   } while (0)
-
-
-/* const and signed must match __gmp_const and __gmp_signed, so follow the
-   decision made for those in gmp.h.    */
-#if ! __GMP_HAVE_CONST
-#define const   /* empty */
-#define signed  /* empty */
-#endif
 
 
 /* Dummy for non-gcc, code involving it will go dead. */
