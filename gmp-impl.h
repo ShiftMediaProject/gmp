@@ -27,6 +27,13 @@ MA 02111-1307, USA. */
 #ifndef __GMP_IMPL_H__
 #define __GMP_IMPL_H__
 
+/* On Cray vector systems "short" and "unsigned short" might not be the same
+   number of bits, making the SHRT_MAX defaults below fail.  (This depends
+   on compiler options.)  Instead use limits.h.  */
+#if defined _CRAY
+#include <limits.h>
+#endif
+
 #if ! __GMP_WITHIN_CONFIGURE
 #include "config.h"
 #include "gmp-mparam.h"
@@ -82,6 +89,50 @@ MA 02111-1307, USA. */
 #endif
 
 
+/* "const" basically means a function does nothing but examine its arguments
+   and give a return value, it doesn't read or write any memory (neither
+   global nor pointed to by arguments), and has no other side-effects.  This
+   is more restrictive than "pure".  See info node "(gcc)Function
+   Attributes".  */
+#if HAVE_ATTRIBUTE_CONST
+#define ATTRIBUTE_CONST  __attribute__ ((const))
+#else
+#define ATTRIBUTE_CONST
+#endif
+
+#if HAVE_ATTRIBUTE_NORETURN
+#define ATTRIBUTE_NORETURN  __attribute__ ((noreturn))
+#else
+#define ATTRIBUTE_NORETURN
+#endif
+
+/* "malloc" means a function behaves like malloc in that the pointer it
+   returns doesn't alias anything.  */
+#if HAVE_ATTRIBUTE_MALLOC
+#define ATTRIBUTE_MALLOC  __attribute__ ((malloc))
+#else
+#define ATTRIBUTE_MALLOC
+#endif
+
+
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
+
+/* The alignment in bytes, used for TMP_ALLOCed blocks, when alloca or
+   __gmp_allocate_func doesn't already determine it.  Currently TMP_ALLOC
+   isn't used for "double"s, so that's not in the union.  */
+union tmp_align_t {
+  mp_limb_t  l;
+  char       *p;
+};
+#define __TMP_ALIGN  sizeof (union tmp_align_t)
+
+/* Return "a" rounded upwards to a multiple of "m", if it isn't already.
+   "a" must be an unsigned type.  */
+#define ROUND_UP_MULTIPLE(a,m)  ((a) + (-(a))%(m))
+
 #if WANT_TMP_ALLOCA
 /* Each TMP_ALLOC is simply an alloca(), and nothing else is needed.
    This is the preferred method.  */
@@ -91,8 +142,40 @@ MA 02111-1307, USA. */
 #define TMP_FREE(m)
 #endif
 
-#if WANT_TMP_MALLOC
-#include "stack-alloc.h"
+#if WANT_TMP_REENTRANT
+/* See tal-reent.c for some comments. */
+struct tmp_reentrant_t {
+  struct tmp_reentrant_t  *next;
+  size_t                  size;   /* bytes, including header */
+};
+void *__gmp_tmp_reentrant_alloc _PROTO ((struct tmp_reentrant_t **, size_t)) ATTRIBUTE_MALLOC;
+void  __gmp_tmp_reentrant_free _PROTO ((struct tmp_reentrant_t *));
+#define TMP_DECL(marker)   struct tmp_reentrant_t *__tmp_marker
+/* don't demand NULL, just cast a zero */
+#define TMP_MARK(marker) \
+  do { __tmp_marker = (struct tmp_reentrant_t *) 0; } while (0)
+#define TMP_ALLOC(size)    __gmp_tmp_reentrant_alloc (&__tmp_marker, size)
+#define TMP_FREE(marker)   __gmp_tmp_reentrant_free  (__tmp_marker)
+#endif
+
+#if WANT_TMP_NOTREENTRANT
+/* See stack-alloc.c for some comments. */
+struct tmp_marker
+{
+  struct tmp_stack *which_chunk;
+  void *alloc_point;
+};
+typedef struct tmp_marker tmp_marker;
+void *__gmp_tmp_alloc _PROTO ((unsigned long)) ATTRIBUTE_MALLOC;
+void __gmp_tmp_mark _PROTO ((tmp_marker *));
+void __gmp_tmp_free _PROTO ((tmp_marker *));
+#define TMP_DECL(marker) tmp_marker marker
+/* gcc recognises "(-(8*n))%8" or the like is always zero, which means the
+   rounding up is a noop for allocs of whole limbs. */
+#define TMP_ALLOC(size) \
+  __gmp_tmp_alloc (ROUND_UP_MULTIPLE ((unsigned long) (size)))
+#define TMP_MARK(marker) __gmp_tmp_mark (&marker)
+#define TMP_FREE(marker) __gmp_tmp_free (&marker)
 #endif
 
 #if WANT_TMP_DEBUG
@@ -107,12 +190,9 @@ struct tmp_debug_entry_t {
   char                      *block;
   size_t                    size;
 };
-void  __gmp_tmp_debug_mark  _PROTO ((const char *, int,
-                                     struct tmp_debug_t **));
-void *__gmp_tmp_debug_alloc _PROTO ((const char *, int,
-                                     struct tmp_debug_t **, size_t));
-void  __gmp_tmp_debug_free  _PROTO ((const char *, int,
-                                     struct tmp_debug_t **));
+void  __gmp_tmp_debug_mark  _PROTO ((const char *, int, struct tmp_debug_t **));
+void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, struct tmp_debug_t **, size_t)) ATTRIBUTE_MALLOC;
+void  __gmp_tmp_debug_free  _PROTO ((const char *, int, struct tmp_debug_t **));
 /* don't demand NULL, just cast a zero */
 #define TMP_DECL(marker)                                        \
   struct tmp_debug_t  *__tmp_marker = (struct tmp_debug_t *) 0
@@ -129,6 +209,24 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int,
 #define TMP_ALLOC_TYPE(n,type) ((type *) TMP_ALLOC ((n) * sizeof (type)))
 #define TMP_ALLOC_LIMBS(n)     TMP_ALLOC_TYPE(n,mp_limb_t)
 #define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
+
+/* It's more efficient to allocate one block than two, but when debugging
+   continue to do separate TMP_ALLOC's to let each get protected with its
+   own redzone.  */
+#if WANT_TMP_DEBUG
+#define TMP_ALLOC_LIMBS_2(xp,xsize, yp,ysize)   \
+  do {                                          \
+    (xp) = TMP_ALLOC_LIMBS (xsize);             \
+    (yp) = TMP_ALLOC_LIMBS (ysize);             \
+  } while (0)
+#else
+#define TMP_ALLOC_LIMBS_2(xp,xsize, yp,ysize)   \
+  do {                                          \
+    (xp) = TMP_ALLOC_LIMBS ((xsize) + (ysize)); \
+    (yp) = (xp) + (xsize);                      \
+  } while (0)
+#endif
+
 
 /* From gmp.h, nicer names for internal use. */
 #define MPN_CMP(result, xp, yp, size)  __GMPN_CMP(result, xp, yp, size)
@@ -148,16 +246,11 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int,
 #define ALLOC(x) ((x)->_mp_alloc)
 
 
+/* Might be already defined by gmp-mparam.h, otherwise use what's in gmp.h. */
 #ifndef BITS_PER_MP_LIMB
 #define BITS_PER_MP_LIMB  __GMP_BITS_PER_MP_LIMB
 #endif
 
-/* On Cray vector systems "short" and "unsigned short" might not be the same
-   number of bits, making the SHRT_MAX defaults below fail.  (This depends
-   on compiler options.)  Instead use limits.h.  */
-#if defined _CRAY
-#include <limits.h>
-#endif
 
 /* The "short" defines are a bit different because shorts are promoted to
    ints by ~ or >> etc.  */
@@ -281,10 +374,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int,
 #define ASM_L(name)  LSYM_PREFIX "asm_%=_" #name
 
 
-#if defined (__cplusplus)
-extern "C" {
-#endif
-
 void *__gmp_default_allocate _PROTO ((size_t));
 void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
 void __gmp_default_free _PROTO ((void *, size_t));
@@ -308,24 +397,6 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #if ! __GMP_HAVE_CONST
 #define const   /* empty */
 #define signed  /* empty */
-#endif
-
-
-/* See "(gcc)Function Attributes".  Basically "const" means a function does
-   nothing but examine its arguments and give a return value, it doesn't
-   read or write any memory (neither global nor pointed to by arguments),
-   and has no other side-effects. */
-
-#if HAVE_ATTRIBUTE_CONST
-#define ATTRIBUTE_CONST  __attribute__ ((const))
-#else
-#define ATTRIBUTE_CONST
-#endif
-
-#if HAVE_ATTRIBUTE_NORETURN
-#define ATTRIBUTE_NORETURN  __attribute__ ((noreturn))
-#else
-#define ATTRIBUTE_NORETURN
 #endif
 
 
