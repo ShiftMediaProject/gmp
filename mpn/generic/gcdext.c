@@ -31,7 +31,22 @@ MA 02111-1307, USA. */
 int arr[BITS_PER_MP_LIMB];
 #endif
 
-#define SGN(A) (((A) < 0) ? -1 : ((A) > 0))
+
+/* mpn_gcdext (GP, SP, SSIZE, UP, USIZE, VP, VSIZE)
+
+   Compute the extended GCD of {UP,USIZE} and {VP,VSIZE} and store the
+   greatest common divisor at GP, and the first cofactor at SP.  Write the
+   size of the cofactor through the pointer SSIZE.  Return the size of the
+   value at GP.  Note that SP might be a negative number; this is denoted
+   by storing the negative of the size through SSIZE.
+
+   {UP,USIZE} and {VP,VSIZE} are both clobbered.
+
+   The space allocation for all four areas needs to be USIZE+1.
+
+   Preconditions: 1) U >= V.
+		  2) V > 0.
+*/
 
 /* Idea 1: After we have performed a full division, don't shift operands back,
 	   but instead account for the extra factors-of-2 thus introduced.
@@ -42,17 +57,19 @@ int arr[BITS_PER_MP_LIMB];
 	   could make them share space, and have the latter variables grow
 	   into the former.  */
 
-/* Precondition: U >= V.  */
+#define swapptr(xp,yp) \
+do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 
 mp_size_t
 #if EXTEND
 #if __STDC__
-mpn_gcdext (mp_ptr gp, mp_ptr s0p,
+mpn_gcdext (mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
 	    mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize)
 #else
-mpn_gcdext (gp, s0p, up, size, vp, vsize)
+mpn_gcdext (gp, s0p, s0size, up, size, vp, vsize)
      mp_ptr gp;
      mp_ptr s0p;
+     mp_size_t *s0size;
      mp_ptr up;
      mp_size_t size;
      mp_ptr vp;
@@ -82,14 +99,15 @@ mpn_gcd (gp, up, size, vp, vsize)
 #if EXTEND
   mp_ptr s1p;
   mp_ptr orig_s0p = s0p;
-  mp_size_t ssize, orig_size = size;
+  mp_size_t ssize;
+  int sign = 1;
   TMP_DECL (mark);
 
   TMP_MARK (mark);
 
   tp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   wp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
-  s1p = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+  s1p = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
 
   MPN_ZERO (s0p, size);
   MPN_ZERO (s1p, size);
@@ -117,6 +135,7 @@ mpn_gcd (gp, up, size, vp, vsize)
       /* This is really what it boils down to in this case... */
       s0p[0] = 0;
       s1p[0] = 1;
+      sign = -sign;
 #endif
       size = vsize;
       if (cnt != 0)
@@ -124,10 +143,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  mpn_rshift (up, up, size, cnt);
 	  mpn_rshift (vp, vp, size, cnt);
 	}
-      {
-	mp_ptr xp;
-	xp = up; up = vp; vp = xp;
-      }
+      swapptr (up, vp);
     }
 
   for (;;)
@@ -149,12 +165,6 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  vh = (vh << cnt) | (vp[size - 2] >> (BITS_PER_MP_LIMB - cnt));
 	}
 
-#if 0
-      /* For now, only handle BITS_PER_MP_LIMB-1 bits.  This makes
-	 room for sign bit.  */
-      uh >>= 1;
-      vh >>= 1;
-#endif
       A = 1;
       B = 0;
       C = 0;
@@ -179,6 +189,9 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  T = uh - q * vh;
 	  uh = vh;
 	  vh = T;
+#if EXTEND
+	  sign = -sign;
+#endif
 	}
 
 #if RECORD
@@ -209,32 +222,56 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  qh = mpn_divmod (up + vsize, up, size, vp, vsize);
 #if EXTEND
 	  MPN_COPY (tp, s0p, ssize);
-	  for (i = 0; i < size - vsize; i++)
-	    {
-	      mp_limb_t cy;
-	      cy = mpn_addmul_1 (tp + i, s1p, ssize, up[vsize + i]);
-	      if (cy != 0)
-		tp[ssize++] = cy;
-	    }
-	  if (qh != 0)
-	    {
-	      mp_limb_t cy;
-	      abort ();
-	      /* XXX since qh == 1, mpn_addmul_1 is overkill */
-	      cy = mpn_addmul_1 (tp + size - vsize, s1p, ssize, qh);
-	      if (cy != 0)
-		tp[ssize++] = cy;
-      	    }
-#if 0
-	  MPN_COPY (s0p, s1p, ssize); /* should be old ssize, kind of */
-	  MPN_COPY (s1p, tp, ssize);
-#else
 	  {
-	    mp_ptr xp;
-	    xp = s0p; s0p = s1p; s1p = xp;
-	    xp = s1p; s1p = tp; tp = xp;
+	    mp_size_t qsize;
+
+	    qsize = size - vsize; /* size of stored quotient from division */
+	    if (ssize < qsize)
+	      {
+		MPN_ZERO (tp + ssize, qsize - ssize);
+		MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
+		for (i = 0; i < ssize; i++)
+		  {
+		    mp_limb_t cy;
+		    cy = mpn_addmul_1 (tp + i, up + vsize, qsize, s1p[i]);
+		    tp[qsize + i] = cy;
+		  }
+		if (qh != 0)
+		  {
+		    mp_limb_t cy;
+		    cy = mpn_add_n (tp + qsize, tp + qsize, s1p, ssize);
+		    if (cy != 0)
+		      abort ();
+		  }
+	      }
+	    else
+	      {
+		MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
+		for (i = 0; i < qsize; i++)
+		  {
+		    mp_limb_t cy;
+		    cy = mpn_addmul_1 (tp + i, s1p, ssize, up[vsize + i]);
+		    tp[ssize + i] = cy;
+		  }
+		if (qh != 0)
+		  {
+		    mp_limb_t cy;
+		    cy = mpn_add_n (tp + qsize, tp + qsize, s1p, ssize);
+		    if (cy != 0)
+		      {
+			tp[qsize + ssize] = cy;
+			s1p[qsize + ssize] = 0;
+			ssize++;
+		      }
+		  }
+	      }
+	    ssize += qsize;
+	    ssize -= tp[ssize - 1] == 0;
 	  }
-#endif
+
+	  sign = -sign;
+	  swapptr (s0p, s1p);
+	  swapptr (s1p, tp);
 #endif
 	  size = vsize;
 	  if (cnt != 0)
@@ -242,24 +279,18 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      mpn_rshift (up, up, size, cnt);
 	      mpn_rshift (vp, vp, size, cnt);
 	    }
-
-	  {
-	    mp_ptr xp;
-	    xp = up; up = vp; vp = xp;
-	  }
-	  MPN_NORMALIZE (up, size);
+	  swapptr (up, vp);
 	}
       else
 	{
+#if EXTEND
+	  mp_size_t tsize, wsize;
+#endif
 	  /* T = U*A + V*B
 	     W = U*C + V*D
 	     U = T
 	     V = W	   */
 
-	  if (SGN(A) == SGN(B))	/* should be different sign */
-	    abort ();
-	  if (SGN(C) == SGN(D))	/* should be different sign */
-	    abort ();
 #if STAT
 	  { mp_limb_t x;
 	    x = ABS (A) | ABS (B) | ABS (C) | ABS (D);
@@ -268,7 +299,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 #endif
 	  if (A == 0)
 	    {
-	      if (B != 1) abort ();
+	      /* B == 1 */
 	      MPN_COPY (tp, vp, size);
 	    }
 	  else
@@ -295,22 +326,20 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      mpn_submul_1 (wp, vp, size, -D);
 	    }
 
-	  {
-	    mp_ptr xp;
-	    xp = tp; tp = up; up = xp;
-	    xp = wp; wp = vp; vp = xp;
-	  }
+	  swapptr (tp, up);
+	  swapptr (wp, vp);
 
 #if EXTEND
-	  { mp_limb_t cy;
-	  MPN_ZERO (tp, orig_size);
 	  if (A == 0)
 	    {
-	      if (B != 1) abort ();
+	      /* B == 1 */
 	      MPN_COPY (tp, s1p, ssize);
+	      tsize = ssize;
+	      tp[ssize] = 0;	/* must zero since wp might spill below */
 	    }
 	  else
 	    {
+	      mp_limb_t cy;
 	      if (A < 0)
 		{
 		  cy = mpn_mul_1 (tp, s1p, ssize, B);
@@ -321,34 +350,34 @@ mpn_gcd (gp, up, size, vp, vsize)
 		  cy = mpn_mul_1 (tp, s0p, ssize, A);
 		  cy += mpn_addmul_1 (tp, s1p, ssize, -B);
 		}
-	      if (cy != 0)
-		tp[ssize++] = cy;
+	      tp[ssize] = cy;
+	      tsize = ssize + (cy != 0);
 	    }
-	  MPN_ZERO (wp, orig_size);
-	  if (C < 0)
-	    {
-	      cy = mpn_mul_1 (wp, s1p, ssize, D);
-	      cy += mpn_addmul_1 (wp, s0p, ssize, -C);
-	    }
-	  else
-	    {
-	      cy = mpn_mul_1 (wp, s0p, ssize, C);
-	      cy += mpn_addmul_1 (wp, s1p, ssize, -D);
-	    }
-	  if (cy != 0)
-	    wp[ssize++] = cy;
-	  }
+
 	  {
-	    mp_ptr xp;
-	    xp = tp; tp = s0p; s0p = xp;
-	    xp = wp; wp = s1p; s1p = xp;
+	    mp_limb_t cy;
+	    if (C < 0)
+	      {
+		cy = mpn_mul_1 (wp, s1p, ssize, D);
+		cy += mpn_addmul_1 (wp, s0p, ssize, -C);
+	      }
+	    else
+	      {
+		cy = mpn_mul_1 (wp, s0p, ssize, C);
+		cy += mpn_addmul_1 (wp, s1p, ssize, -D);
+	      }
+	    wp[ssize] = cy;
+	    wsize = ssize + (cy != 0);
 	  }
+	  ssize = MAX (wsize, tsize);
+
+	  swapptr (tp, s0p);
+	  swapptr (wp, s1p);
 #endif
 #if 0	/* Is it a win to remove multiple zeros here? */
 	  MPN_NORMALIZE (up, size);
 #else
-	  if (up[size - 1] == 0)
-	    size--;
+	  size -= up[size - 1] == 0;
 #endif
 	}
     }
@@ -363,8 +392,10 @@ mpn_gcd (gp, up, size, vp, vsize)
       if (gp != up)
 	MPN_COPY (gp, up, size);
 #if EXTEND
+      MPN_NORMALIZE (s0p, ssize);
       if (orig_s0p != s0p)
 	MPN_COPY (orig_s0p, s0p, ssize);
+      *s0size = sign >= 0 ? ssize : -ssize;
 #endif
       TMP_FREE (mark);
       return size;
@@ -373,29 +404,42 @@ mpn_gcd (gp, up, size, vp, vsize)
     {
       mp_limb_t vl, ul, t;
 #if EXTEND
-      mp_limb_t cy;
-      mp_size_t i;
+      mp_size_t qsize, i;
 #endif
       vl = vp[0];
 #if EXTEND
       t = mpn_divmod_1 (wp, up, size, vl);
+
       MPN_COPY (tp, s0p, ssize);
-      for (i = 0; i < size; i++)
+
+      qsize = size - (wp[size - 1] == 0); /* size of quotient from division */
+      if (ssize < qsize)
 	{
-	  cy = mpn_addmul_1 (tp + i, s1p, ssize, wp[i]);
-	  if (cy != 0)
-	    tp[ssize++] = cy;
+	  MPN_ZERO (tp + ssize, qsize - ssize);
+	  MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
+	  for (i = 0; i < ssize; i++)
+	    {
+	      mp_limb_t cy;
+	      cy = mpn_addmul_1 (tp + i, wp, qsize, s1p[i]);
+	      tp[qsize + i] = cy;
+	    }
 	}
-#if 0
-      MPN_COPY (s0p, s1p, ssize);
-      MPN_COPY (s1p, tp, ssize);
-#else
-      {
-	mp_ptr xp;
-	xp = s0p; s0p = s1p; s1p = xp;
-	xp = s1p; s1p = tp; tp = xp;
-      }
-#endif
+      else
+	{
+	  MPN_ZERO (s1p + ssize, qsize); /* zero s1 too */
+	  for (i = 0; i < qsize; i++)
+	    {
+	      mp_limb_t cy;
+	      cy = mpn_addmul_1 (tp + i, s1p, ssize, wp[i]);
+	      tp[ssize + i] = cy;
+	    }
+	}
+      ssize += qsize;
+      ssize -= tp[ssize - 1] == 0;
+
+      sign = -sign;
+      swapptr (s0p, s1p);
+      swapptr (s1p, tp);
 #else
       t = mpn_mod_1 (up, size, vl);
 #endif
@@ -405,25 +449,26 @@ mpn_gcd (gp, up, size, vp, vsize)
 	{
 	  mp_limb_t t;
 #if EXTEND
-	  mp_limb_t q, cy;
+	  mp_limb_t q;
 	  q = ul / vl;
-	  t = ul - q*vl;
+	  t = ul - q * vl;
 
 	  MPN_COPY (tp, s0p, ssize);
-	  cy = mpn_addmul_1 (tp, s1p, ssize, q);
-	  if (cy != 0)
-	    tp[ssize++] = cy;
-#if 0
-	  MPN_COPY (s0p, s1p, ssize);
-	  MPN_COPY (s1p, tp, ssize);
-#else
-	  {
-	    mp_ptr xp;
-	    xp = s0p; s0p = s1p; s1p = xp;
-	    xp = s1p; s1p = tp; tp = xp;
-	  }
-#endif
 
+	  MPN_ZERO (s1p + ssize, 1); /* zero s1 too */
+	  for (i = 0; i < 1; i++)
+	    {
+	      mp_limb_t cy;
+	      cy = mpn_addmul_1 (tp + i, s1p, ssize, q);
+	      tp[ssize + i] = cy;
+	    }
+
+	  ssize += 1;
+	  ssize -= tp[ssize - 1] == 0;
+
+	  sign = -sign;
+	  swapptr (s0p, s1p);
+	  swapptr (s1p, tp);
 #else
 	  t = ul % vl;
 #endif
@@ -432,8 +477,10 @@ mpn_gcd (gp, up, size, vp, vsize)
 	}
       gp[0] = ul;
 #if EXTEND
+      MPN_NORMALIZE (s0p, ssize);
       if (orig_s0p != s0p)
 	MPN_COPY (orig_s0p, s0p, ssize);
+      *s0size = sign >= 0 ? ssize : -ssize;
 #endif
       TMP_FREE (mark);
       return 1;
