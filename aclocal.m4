@@ -2434,13 +2434,14 @@ AC_DEFUN([AC_LIBTOOL_COMPILER_OPTION],
    echo "$lt_simple_compile_test_code" > conftest.$ac_ext
    if (eval $ac_compile 2>conftest.err) && test -s $ac_outfile; then
      # The compiler can only warn and ignore the option if not recognized
-     # So say no if there are warnings
-     if test -s conftest.err; then
-       # Append any errors to the config.log.
-       cat conftest.err 1>&AS_MESSAGE_LOG_FD
-     else
-       $2=yes
-     fi
+     # So say no if there are warnings mentioning the option
+     cat conftest.err 1>&AS_MESSAGE_LOG_FD
+     $2=yes
+     for lt_i in $3; do
+       if grep -- $lt_i conftest.err >/dev/null; then
+         $2=no
+       fi
+     done
    fi
    $rm conftest*
    CFLAGS="$save_CFLAGS"
