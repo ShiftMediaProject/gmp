@@ -42,14 +42,14 @@ MA 02111-1307, USA. */
 /*== Function declarations =================================================*/
 
 static void evaluate3 _PROTO ((mp_ptr, mp_ptr, mp_ptr,
-                               mp_ptr, mp_ptr, mp_ptr,
-                               mp_srcptr, mp_srcptr, mp_srcptr,
-                               mp_size_t, mp_size_t));
+			       mp_ptr, mp_ptr, mp_ptr,
+			       mp_srcptr, mp_srcptr, mp_srcptr,
+			       mp_size_t, mp_size_t));
 static void interpolate3 _PROTO ((mp_srcptr,
-                                  mp_ptr, mp_ptr, mp_ptr,
-                                  mp_srcptr,
-                                  mp_ptr, mp_ptr, mp_ptr,
-                                  mp_size_t, mp_size_t));
+				  mp_ptr, mp_ptr, mp_ptr,
+				  mp_srcptr,
+				  mp_ptr, mp_ptr, mp_ptr,
+				  mp_size_t, mp_size_t));
 static mp_limb_t add2Times _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 
@@ -62,25 +62,18 @@ static mp_limb_t add2Times _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
  */
 
 void
-#if __STDC__
 mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
-#else
-mpn_kara_mul_n(p, a, b, n, ws)
-     mp_ptr    p;
-     mp_srcptr a;
-     mp_srcptr b;
-     mp_size_t n;
-     mp_ptr    ws;
-#endif
 {
-  mp_limb_t i, sign, w, w0, w1;
+  mp_limb_t w, w0, w1;
   mp_size_t n2;
   mp_srcptr x, y;
+  mp_size_t i;
+  int sign;
 
   n2 = n >> 1;
   ASSERT (n2 > 0);
 
-  if (n & 1)
+  if ((n & 1) != 0)
     {
       /* Odd length. */
       mp_size_t n1, n3, nm1;
@@ -105,7 +98,7 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	    {
 	      x = a + n3;
 	      y = a;
-	      sign = 1;
+	      sign = ~0;
 	    }
 	  else
 	    {
@@ -133,7 +126,7 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	    {
 	      x = b + n3;
 	      y = b;
-	      sign ^= 1;
+	      sign = ~sign;
 	    }
 	  else
 	    {
@@ -183,12 +176,11 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	{
 	  mp_limb_t x;
 	  i = n1 + n3;
-	  do
-	    {
-	      x = p[i] + 1;
-	      p[i] = x;
-	      ++i;
-	    } while (x == 0);
+	  do {
+	    x = p[i] + 1;
+	    p[i] = x;
+	    ++i;
+	  } while (x == 0);
 	}
     }
   else
@@ -209,7 +201,7 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	{
 	  x = a + n2;
 	  y = a;
-	  sign = 1;
+	  sign = ~0;
 	}
       else
 	{
@@ -230,7 +222,7 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	{
 	  x = b + n2;
 	  y = b;
-	  sign ^= 1;
+	  sign = ~sign;
 	}
       else
 	{
@@ -260,45 +252,22 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
-      /* TO DO: could put "if (w) { ... }" here.
-       * Less work but badly predicted branch.
-       * No measurable difference in speed on Alpha.
-       */
-      i = n + n2;
-      t = p[i] + w;
-      p[i] = t;
-      if (t < w)
-	{
-	  do
-	    {
-	      ++i;
-	      w = p[i] + 1;
-	      p[i] = w;
-	    }
-	  while (w == 0);
-	}
+      mpn_incr_u (p + n2 + n, w);
     }
 }
 
 void
-#if __STDC__
 mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
-#else
-mpn_kara_sqr_n (p, a, n, ws)
-     mp_ptr    p;
-     mp_srcptr a;
-     mp_size_t n;
-     mp_ptr    ws;
-#endif
 {
-  mp_limb_t i, w, w0, w1;
+  mp_limb_t w, w0, w1;
   mp_size_t n2;
   mp_srcptr x, y;
+  mp_size_t i;
 
   n2 = n >> 1;
   ASSERT (n2 > 0);
 
-  if (n & 1)
+  if ((n & 1) != 0)
     {
       /* Odd length. */
       mp_size_t n1, n3, nm1;
@@ -349,17 +318,17 @@ mpn_kara_sqr_n (p, a, n, ws)
 	}
       else
 	{
-	  mpn_kara_sqr_n (ws, p, n3, ws + n1);           /* (x-y)^2 */
-	  mpn_kara_sqr_n (p, a, n3, ws + n1);            /* x^2     */
-	  mpn_kara_sqr_n (p + n1, a + n3, n2, ws + n1);  /* y^2     */
+	  mpn_kara_sqr_n (ws, p, n3, ws + n1);		 /* (x-y)^2 */
+	  mpn_kara_sqr_n (p, a, n3, ws + n1);		 /* x^2	    */
+	  mpn_kara_sqr_n (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
 	}
 
       /* Since x^2+y^2-(x-y)^2 = 2xy >= 0 there's no need to track the
-         borrow from mpn_sub_n.  If it occurs then it'll be cancelled by a
-         carry from ws[n].  Further, since 2xy fits in n1 limbs there won't
-         be any carry out of ws[n] other than cancelling that borrow. */
+	 borrow from mpn_sub_n.	 If it occurs then it'll be cancelled by a
+	 carry from ws[n].  Further, since 2xy fits in n1 limbs there won't
+	 be any carry out of ws[n] other than cancelling that borrow. */
 
-      mpn_sub_n (ws, p, ws, n1);             /* x^2-(x-y)^2 */
+      mpn_sub_n (ws, p, ws, n1);	     /* x^2-(x-y)^2 */
 
       nm1 = n - 1;
       if (mpn_add_n (ws, p + n1, ws, nm1))   /* x^2+y^2-(x-y)^2 = 2xy */
@@ -369,16 +338,15 @@ mpn_kara_sqr_n (p, a, n, ws)
 	  if (x == 0)
 	    ++ws[n];
 	}
-
       if (mpn_add_n (p + n3, p + n3, ws, n1))
 	{
 	  mp_limb_t x;
 	  i = n1 + n3;
 	  do {
-            x = p[i] + 1;
-            p[i] = x;
-            ++i;
-          } while (x == 0);
+	    x = p[i] + 1;
+	    p[i] = x;
+	    ++i;
+	  } while (x == 0);
 	}
     }
   else
@@ -424,27 +392,7 @@ mpn_kara_sqr_n (p, a, n, ws)
       w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
-
-      /* w=0 or 1 because x^2+y^2-(x-y)^2 = 2xy */
-      ASSERT (w == 0 || w == 1);
-
-      /* TO DO: could put "if (w) { ... }" here.
-       * Less work but badly predicted branch.
-       * No measurable difference in speed on Alpha.
-       */
-      i = n + n2;
-      t = p[i] + w;
-      p[i] = t;
-      if (t < w)
-	{
-	  do
-	    {
-	      ++i;
-	      w = p[i] + 1;
-	      p[i] = w;
-	    }
-	  while (w == 0);
-	}
+      mpn_incr_u (p + n2 + n, w);
     }
 }
 
@@ -455,15 +403,7 @@ mpn_kara_sqr_n (p, a, n, ws)
    FIXME: gcc won't inline this because it uses alloca. */
 #if USE_MORE_MPN
 static inline mp_limb_t
-#if __STDC__
 add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
-#else
-add2Times (z, x, y, n)
-     mp_ptr    z;
-     mp_srcptr x;
-     mp_srcptr y;
-     mp_size_t n;
-#endif
 {
   mp_ptr t;
   mp_limb_t c;
@@ -478,15 +418,7 @@ add2Times (z, x, y, n)
 #else
 
 static mp_limb_t
-#if __STDC__
 add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
-#else
-add2Times (z, x, y, n)
-     mp_ptr    z;
-     mp_srcptr x;
-     mp_srcptr y;
-     mp_size_t n;
-#endif
 {
   mp_limb_t c, v, w;
 
@@ -529,24 +461,8 @@ add2Times (z, x, y, n)
  */
 #if USE_MORE_MPN
 static void
-#if __STDC__
 evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
-	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t len, mp_size_t len2)
-#else
-evaluate3 (ph, p1, p2, pth, pt1, pt2,
-           A, B, C, len, len2)
-     mp_ptr    ph;
-     mp_ptr    p1;
-     mp_ptr    p2;
-     mp_ptr    pth;
-     mp_ptr    pt1;
-     mp_ptr    pt2;
-     mp_srcptr A;
-     mp_srcptr B;
-     mp_srcptr C;
-     mp_size_t len;
-     mp_size_t len2;
-#endif
+	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t len,mp_size_t len2)
 {
   mp_limb_t c, d, e;
   
@@ -587,24 +503,8 @@ evaluate3 (ph, p1, p2, pth, pt1, pt2,
 #else
 
 static void
-#if __STDC__
 evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t l, mp_size_t ls)
-#else
-evaluate3 (ph, p1, p2, pth, pt1, pt2,
-           A, B, C, l, ls)
-     mp_ptr    ph;
-     mp_ptr    p1;
-     mp_ptr    p2;
-     mp_ptr    pth;
-     mp_ptr    pt1;
-     mp_ptr    pt2;
-     mp_srcptr A;
-     mp_srcptr B;
-     mp_srcptr C;
-     mp_size_t l;
-     mp_size_t ls;
-#endif
 {
   mp_limb_t a,b,c, i, t, th,t1,t2, vh,v1,v2;
 
@@ -695,23 +595,8 @@ evaluate3 (ph, p1, p2, pth, pt1, pt2,
 
 #if USE_MORE_MPN
 static void
-#if __STDC__
 interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
-              mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t len, mp_size_t len2)
-#else
-interpolate3 (A, B, C, D, E,
-              ptb, ptc, ptd, len, len2)
-     mp_srcptr A;
-     mp_ptr    B;
-     mp_ptr    C;
-     mp_ptr    D;
-     mp_srcptr E;
-     mp_ptr    ptb;
-     mp_ptr    ptc;
-     mp_ptr    ptd;
-     mp_size_t len;
-     mp_size_t len2;
-#endif
+	      mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t len,mp_size_t len2)
 {
   mp_ptr ws;
   mp_limb_t t, tb,tc,td;
@@ -721,9 +606,9 @@ interpolate3 (A, B, C, D, E,
   ASSERT (len - len2 == 0 || len - len2 == 2 || len - len2 == 4);
 
   /* Let x1, x2, x3 be the values to interpolate.  We have:
-   *         b = 16*a + 8*x1 + 4*x2 + 2*x3 +    e
-   *         c =    a +   x1 +   x2 +   x3 +    e
-   *         d =    a + 2*x1 + 4*x2 + 8*x3 + 16*e
+   *	     b = 16*a + 8*x1 + 4*x2 + 2*x3 +	e
+   *	     c =    a +	  x1 +	 x2 +	x3 +	e
+   *	     d =    a + 2*x1 + 4*x2 + 8*x3 + 16*e
    */
 
   ws = (mp_ptr) TMP_ALLOC (len * BYTES_PER_MP_LIMB);
@@ -731,9 +616,9 @@ interpolate3 (A, B, C, D, E,
   tb = *ptb; tc = *ptc; td = *ptd;
 
 
-  /* b := b - 16*a -    e
-   * c := c -    a -    e
-   * d := d -    a - 16*e
+  /* b := b - 16*a -	e
+   * c := c -	 a -	e
+   * d := d -	 a - 16*e
    */
 
   t = mpn_lshift (ws, A, len, 4);
@@ -842,23 +727,8 @@ interpolate3 (A, B, C, D, E,
 #else
 
 static void
-#if __STDC__
 interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 	      mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t l, mp_size_t ls)
-#else
-interpolate3 (A, B, C, D, E,
-              ptb, ptc, ptd, l, ls)
-     mp_srcptr A;
-     mp_ptr    B;
-     mp_ptr    C;
-     mp_ptr    D;
-     mp_srcptr E;
-     mp_ptr    ptb;
-     mp_ptr    ptc;
-     mp_ptr    ptd;
-     mp_size_t l;
-     mp_size_t ls;
-#endif
 {
   mp_limb_t a,b,c,d,e,t, i, sb,sc,sd, ob,oc,od;
   const mp_limb_t maskOffHalf = (~(mp_limb_t) 0) << (BITS_PER_MP_LIMB >> 1);
@@ -1036,8 +906,8 @@ interpolate3 (A, B, C, D, E,
  */
 
 /* TO DO: If TOOM3_MUL_THRESHOLD is much bigger than KARATSUBA_MUL_THRESHOLD then the
- *        recursion in mpn_toom3_mul_n() will always bottom out with mpn_kara_mul_n()
- *        because the "n < KARATSUBA_MUL_THRESHOLD" test here will always be false.
+ *	  recursion in mpn_toom3_mul_n() will always bottom out with mpn_kara_mul_n()
+ *	  because the "n < KARATSUBA_MUL_THRESHOLD" test here will always be false.
  */
 
 #define TOOM3_MUL_REC(p, a, b, n, ws) \
@@ -1051,16 +921,7 @@ interpolate3 (A, B, C, D, E,
   } while (0)
 
 void
-#if __STDC__
 mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
-#else
-mpn_toom3_mul_n (p, a, b, n, ws)
-     mp_ptr    p;
-     mp_srcptr a;
-     mp_srcptr b;
-     mp_size_t n;
-     mp_ptr    ws;
-#endif
 {
   mp_limb_t cB,cC,cD, dB,dC,dD, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
@@ -1162,15 +1023,7 @@ mpn_toom3_mul_n (p, a, b, n, ws)
   } while (0)
 
 void
-#if __STDC__
 mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
-#else
-mpn_toom3_sqr_n (p, a, n, ws)
-     mp_ptr    p;
-     mp_srcptr a;
-     mp_size_t n;
-     mp_ptr    ws;
-#endif
 {
   mp_limb_t cB,cC,cD, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
@@ -1227,7 +1080,7 @@ mpn_toom3_sqr_n (p, a, n, ws)
     {
       tC += add2Times (C + l, C + l, B, l);
       if (cC == 2)
-        tC += add2Times (C + l, C + l, B, l);
+	tC += add2Times (C + l, C + l, B, l);
     }
 #endif
   ASSERT (tC < 9);
@@ -1250,15 +1103,7 @@ mpn_toom3_sqr_n (p, a, n, ws)
 }
 
 void
-#if __STDC__
 mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
-#else
-mpn_mul_n (p, a, b, n)
-     mp_ptr    p;
-     mp_srcptr a;
-     mp_srcptr b;
-     mp_size_t n;
-#endif
 {
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (p, 2*n, a, n));
@@ -1294,7 +1139,7 @@ mpn_mul_n (p, a, b, n)
 #if WANT_FFT || TUNE_PROGRAM_BUILD
   else
     {
-      mpn_mul_fft_full (p, a, n, b, n);      
+      mpn_mul_fft_full (p, a, n, b, n);	     
     }
 #endif
 }
