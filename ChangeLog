@@ -1,3 +1,8 @@
+2001-09-10  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpn/t-iord_u.c (check_incr_data): Work around HP compiler bug.
+	(check_decr_data): Likewise.
+
 2001-09-08  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Integer Logic and Bit Fiddling): Update mpz_hamdist
