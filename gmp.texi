@@ -1966,10 +1966,10 @@ return value is the absolute value of the remainder.
 
 The @code{2exp} functions do a right shift of @var{n} by @var{b} bits to form
 @var{q}, and a mask leaving the low @var{b} bits for @var{r}, although the
-effect of rounding is then applied.  The @code{fdiv} @code{2exp} forms will be
-simple shifts and masks for positive @var{n}, or for negative @var{n} will be
-effectively twos complement arithmetic shifts and masks (although the
-implementation is actually signed magnitude).
+effect of rounding is then applied.  For positive @var{n} both @code{fdiv} and
+@code{tdiv} are simple shifts and masks.  For negative @var{n}, @code{tdiv} is
+effectively a twos complement arithmetic shift (although the implementation is
+actually signed magnitude).
 
 Currently @code{cdiv} @code{2exp} forms are not available.
 @end deftypefun
