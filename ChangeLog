@@ -1,3 +1,7 @@
+2000-12-01  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (union ieee_double_extract): Test for _CRAYIEEE.
+
 2000-11-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-mul.c (base_mul): Fix re-evaluation problems in macro
