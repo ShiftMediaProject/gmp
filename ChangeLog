@@ -1,5 +1,8 @@
 2000-09-06  Kevin Ryde  <kevin@swox.se>
 
+	* gmp.texi (Build Options): Clarify where to find CFLAGS.
+	(Known Build Problems): Note SCO -lc problem.
+
 	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_CALL): Fix for sizes > 512 limbs.
 
 	* doc/multiplication: Corrections and additions pointed out by Paul.
