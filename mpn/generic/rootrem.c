@@ -84,7 +84,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 
   xn = (xnb + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
 
-  qp = TMP_ALLOC_LIMBS (un);	/* should try and reduce this allocation */
+  qp = TMP_ALLOC_LIMBS (un + 1);
   xp = TMP_ALLOC_LIMBS (xn + 1);
 
   /* Set initial root to only ones.  This is an overestimate of the actual root
