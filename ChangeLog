@@ -36,9 +36,10 @@ MA 02111-1307, USA.
 	* demos/pexpr.c, demos/pexpr-config-h.in, configure.in: Use an
 	autoconf test for stack_t.
 
-	* configure.in, gmp-h.in, mp-h.in, macos/configure: Use
-	__GMP_LIBGMP_DLL to enable windows declspec, don't require _WIN32
-	(etc), remove __GMP_LIBGMP_SHARED and __GMP_LIBGMP_STATIC.
+	* configure.in, gmp-h.in, mp-h.in, macos/configure, tests/mpz/reuse.c,
+	tests/mpf/reuse.c: Use __GMP_LIBGMP_DLL to enable windows declspec,
+	don't require _WIN32 (etc), remove __GMP_LIBGMP_SHARED and
+	__GMP_LIBGMP_STATIC.
 
 	* gmp-impl.h (mp_bases): Add __GMP_DECLSPEC, for the benefit of
 	tests/t-constants.c.
