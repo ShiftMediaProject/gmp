@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 
 SUBDIRS = tests
 
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -DOPERATION_$*
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
@@ -38,7 +38,7 @@ libmpz_la_SOURCES = \
   fits_ulong_p.c fits_ushort_p.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
-  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c nextprime.c \
+  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
@@ -46,3 +46,12 @@ libmpz_la_SOURCES = \
   sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
+
+EXTRA_DIST = mul_siui.c
+nodist_libmpz_la_SOURCES = mul_si.c mul_ui.c
+CLEANFILES = $(nodist_libmpz_la_SOURCES)
+
+mul_si.c: $(srcdir)/mul_siui.c
+	cp $(srcdir)/mul_siui.c mul_si.c
+mul_ui.c: $(srcdir)/mul_siui.c
+	cp $(srcdir)/mul_siui.c mul_ui.c
