@@ -21,6 +21,14 @@ MA 02111-1307, USA.
 
 2002-04-05  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h: Replace nail mpn_incr_u, mpn_decr_u with faster versions.
+	(mp_bases[10] values): Check GMP_NUMB_BITS instead of BITS_PER_MP_LIMB.
+	Add GMP_NUMB_BITS == 30 version.
+	(__gmp_doprnt, etc): Remove parameter names.
+
+	* mpn/generic/mul_n.c: Nailify Karatsuba code.
+	* mpn/generic/get_str.c: Nailify for non power-of-two bases.
+	* mpn/generic/sqr_basecase.c: Nailify.
 	* mpn/generic/lshift.c: Nailify.
 	* mpn/generic/rshift.c: Likewise.
 	* mpn/generic/add_n.c: Nailify.  Revamp non-nail code.
