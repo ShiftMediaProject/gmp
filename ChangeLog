@@ -1,3 +1,7 @@
+2001-01-31  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Don't ever pass -mips3; let ABI flags imply ISA.
+
 2001-01-31  Kevin Ryde  <kevin@swox.se>
 
 	* tune/time.c: Remove unnecessary longlong.h.
