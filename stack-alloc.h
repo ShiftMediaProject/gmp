@@ -35,9 +35,15 @@ struct tmp_marker
 
 typedef struct tmp_marker tmp_marker;
 
+#if __STDC__
 void *__tmp_alloc (unsigned long);
 void __tmp_mark (tmp_marker *);
 void __tmp_free (tmp_marker *);
+#else
+void *__tmp_alloc ();
+void __tmp_mark ();
+void __tmp_free ();
+#endif
 
 #ifndef __TMP_ALIGN
 #define __TMP_ALIGN 8
