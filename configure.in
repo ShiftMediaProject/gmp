@@ -70,7 +70,7 @@ esac],
 
 if test "$enable_assert" = "yes"; then
   AC_DEFINE(WANT_ASSERT,1,
-  [./configure --enable-assert option, to enable some ASSERT()s])
+  [Define to 1 to enable ASSERT checking, per --enable-assert])
 fi
 
 
@@ -118,7 +118,7 @@ esac],
 
 if test "$enable_fft" = "yes"; then
   AC_DEFINE(WANT_FFT,1,
-  [./configure --enable-fft option, to enable FFTs for multiplication])
+  [Define to 1 to enable FFTs for multiplication, per --enable-fft])
 fi
 
 
@@ -1302,7 +1302,7 @@ if test $found_compiler = yes; then
 
   if test -n "$CALLING_CONVENTIONS_OBJS"; then
     AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,
-    [Define if tests/libtests has calling conventions checking for the CPU])
+    [Define to 1 if tests/libtests has calling conventions checking for the CPU])
   fi
   AC_SUBST(CALLING_CONVENTIONS_OBJS)
 
@@ -1997,7 +1997,7 @@ if test "$gmp_mparam_dir" = generic; then
   fi
 fi
 AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
-                   [The gmp-mparam.h to update when tuning.])
+[The gmp-mparam.h file (a string) the tune program should suggest updating.])
 
 
 # Copy any SQR_KARATSUBA_THRESHOLD from gmp-mparam.h to config.m4.
