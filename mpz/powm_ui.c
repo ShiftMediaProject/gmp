@@ -226,7 +226,15 @@ mpz_powm_ui (res, base, exp, mod)
     MPN_NORMALIZE (rp, rsize);
   }
 
-  res->_mp_size = negative_result == 0 ? rsize : -rsize;
+  if (negative_result && rsize != 0)
+    {
+      if (mod_shift_cnt != 0)
+	mpn_rshift (mp, mp, msize, mod_shift_cnt);
+      mpn_sub (rp, mp, msize, rp, rsize);
+      rsize = msize;
+      MPN_NORMALIZE (rp, rsize);
+    }
+  res->_mp_size = rsize;
 
   if (free_me != NULL)
     (*_mp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
