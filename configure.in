@@ -1907,6 +1907,17 @@ AC_SUBST(mpn_objs_in_libgmp)
 AC_SUBST(gmp_srclinks)
 
 
+# Configs for mpfr.
+#
+if test $enable_mpfr = yes; then
+  AC_CHECK_FUNCS(__setfpucw)
+  if test "$ac_cv_func___setfpucw" != yes; then
+    AC_DEFINE(LIBC211,1,
+    [Define if you don't have `__setfpucw' (eg. glibc 2.1 and up)])
+  fi
+fi
+
+
 # A recompiled sqr_basecase for use in the tune program, if necessary.
 TUNE_SQR_OBJ=
 test -d tune || mkdir tune
