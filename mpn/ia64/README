@@ -197,10 +197,10 @@ pattern:
 ================================================================
 mpn_mul_8
 
-The add+add+cmp+cmp we use on the other codes is optimal for
-shortening recurrencies (2 cycles) but the sequence takes up 4
-execution slots.  When recurrency depth is not critical, a more
-standard 3-cycle add+cmp+add is better.
+The add+cmp+add we use on the other codes is optimal for shortening
+recurrencies (2 cycles) but the sequence takes up 4 execution slots.  When
+recurrency depth is not critical, a more standard 3-cycle add+cmp+add is
+better.
 
 /* First load the 8 values from v */
 	ldfp8		v0, v1 = [r35], 16;;
