@@ -541,15 +541,15 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #undef DIVREM_2_THRESHOLD
 #undef DIVEXACT_1_THRESHOLD
 #undef MODEXACT_1_ODD_THRESHOLD
-#define DIVREM_1_NORM_THRESHOLD           MP_SIZE_T_MAX  /* preinv always */
-#define DIVREM_1_UNNORM_THRESHOLD         MP_SIZE_T_MAX  /* always */
-#define MOD_1_NORM_THRESHOLD              MP_SIZE_T_MAX  /* always */
-#define MOD_1_UNNORM_THRESHOLD            MP_SIZE_T_MAX  /* always */
-#define USE_PREINV_DIVREM_1               0  /* preinv never */
-#define USE_PREINV_MOD_1                  0  /* preinv never */
-#define DIVREM_2_THRESHOLD                MP_SIZE_T_MAX  /* preinv never */
-#define DIVEXACT_1_THRESHOLD              MP_SIZE_T_MAX  /* always */
-#define MODEXACT_1_ODD_THRESHOLD          MP_SIZE_T_MAX  /* always */
+#define DIVREM_1_NORM_THRESHOLD           MP_SIZE_T_MAX  /* no preinv */
+#define DIVREM_1_UNNORM_THRESHOLD         MP_SIZE_T_MAX  /* no preinv */
+#define MOD_1_NORM_THRESHOLD              MP_SIZE_T_MAX  /* no preinv */
+#define MOD_1_UNNORM_THRESHOLD            MP_SIZE_T_MAX  /* no preinv */
+#define USE_PREINV_DIVREM_1               0  /* no preinv */
+#define USE_PREINV_MOD_1                  0  /* no preinv */
+#define DIVREM_2_THRESHOLD                MP_SIZE_T_MAX  /* no preinv */
+#define DIVEXACT_1_THRESHOLD              MP_SIZE_T_MAX  /* never */
+#define MODEXACT_1_ODD_THRESHOLD          MP_SIZE_T_MAX  /* never */
 
 #undef GET_STR_DC_THRESHOLD
 #undef GET_STR_PRECOMPUTE_THRESHOLD
