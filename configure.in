@@ -458,7 +458,7 @@ case $host in
     gcc_cflags_arch="-mpa-risc-1-1"
     cc_cflags="+DA1.1 +O2"
     path="pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32"
-    extra_functions="udiv_qrnnd"
+    extra_functions="udiv"
 
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
     cyclecounter_size=1
@@ -496,7 +496,7 @@ case $host in
         cc_20n_testlist="hpc-hppa-2-0"
         path_20n="pa64"
 	limb_20n=longlong
-        extra_functions_20n="umul_ppmm udiv_qrnnd"
+        extra_functions_20n="umul udiv"
         SPEED_CYCLECOUNTER_OBJ_20n=hppa2.lo
         cyclecounter_size_20n=2
 
@@ -517,7 +517,7 @@ case $host in
           cc_20w_cflags="+DD64 +O3"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
-          extra_functions_20w="umul_ppmm udiv_qrnnd"
+          extra_functions_20w="umul udiv"
           SPEED_CYCLECOUNTER_OBJ_20w=hppa2w.lo
           cyclecounter_size_20w=2
 	  ;;
@@ -1833,8 +1833,7 @@ for tmp_fn in $gmp_mpn_functions; do
               and_n | ior_n | xor_n | \
               copyi | copyd | \
               popcount | hamdist | \
-              udiv | udiv_qrnnd | udiv_w_sdiv | udiv_fp | udiv_nfp | \
-              umul | umul_ppmm | \
+              udiv | udiv_w_sdiv | umul | \
               cntlz | invert_limb)
                 # these operations are either unaffected by nails or defined
                 # to operate on full limbs
