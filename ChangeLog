@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa32/pa-defs.m4 (PROLOGUE_cpu): Zap spurious argument to `.proc'.
+	Add empty `.callinfo'.
+
 2002-12-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/sse2/addmul_1.asm: Don't reuse `ret' symbol for a
