@@ -1285,6 +1285,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       mp_ptr tp;
       mp_size_t talloc = gcdext_lehmer_itch (asize, bsize);
       TMP_DECL (marker);
+      TMP_MARK (marker);
 
       tp = TMP_ALLOC_LIMBS (talloc);
       gsize = gcdext_lehmer (gp, up, usizep, ap, asize, bp, bsize,
@@ -1298,6 +1299,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       mp_ptr tp;
       mp_size_t talloc = gcdext_schoenhage_itch (asize, bsize);
       TMP_DECL (marker);
+      TMP_MARK (marker);
 
       tp = TMP_ALLOC_LIMBS (talloc);
       gsize = gcdext_schoenhage (gp, up, usizep, ap, asize, bp, bsize,
