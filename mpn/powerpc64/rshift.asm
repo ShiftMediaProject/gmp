@@ -1,43 +1,43 @@
-# PowerPC-64 mpn_rshift -- Shift a number right.
+dnl  PowerPC-64 mpn_rshift -- Shift a number right.
 
-# Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
-# This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at your
-# option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-# You should have received a copy of the GNU Lesser General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C		cycles/limb
+C POWER3/PPC630:     2.25
+C POWER4/PPC970:     ?
 
-# ppc630: 2.25 cycles/limb
-
-
-# INPUT PARAMETERS
-# res_ptr	r3
-# s1_ptr	r4
-# size		r5
-# cnt		r6
+C INPUT PARAMETERS
+C res_ptr	r3
+C s1_ptr	r4
+C size		r5
+C cnt		r6
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	mtctr	r5		# copy size into CTR
-	addi	r7,r3,-8	# move adjusted res_ptr to free return reg
+	mtctr	r5		C copy size into CTR
+	addi	r7,r3,-8	C move adjusted res_ptr to free return reg
 	subfic	r8,r6,64
-	ld	r11,0(r4)	# load first s1 limb
-	sld	r3,r11,r8	# compute function return value
+	ld	r11,0(r4)	C load first s1 limb
+	sld	r3,r11,r8	C compute function return value
 	bdz	.Lend1
 
 .Loop:	ldu	r10,8(r4)

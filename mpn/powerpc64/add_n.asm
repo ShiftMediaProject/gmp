@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,13 +22,15 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C s2_ptr	r5
-C size		r6
+C		cycles/limb
+C POWER3/PPC630:     1.5
+C POWER4/PPC970:     2?
 
-C This code runs at 1.5 cycles/limb on the PPC630.
+C INPUT PARAMETERS
+C rp	r3
+C up	r4
+C vp	r5
+C n	r6
 
 ASM_START()
 PROLOGUE(mpn_add_n)
@@ -59,4 +61,4 @@ PROLOGUE(mpn_add_n)
 	li	r3,0		C load cy into ...
 	addze	r3,r3		C ... return value register
 	blr
-EPILOGUE(mpn_add_n)
+EPILOGUE()

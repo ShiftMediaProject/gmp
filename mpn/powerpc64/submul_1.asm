@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,16 +22,16 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C		cycles/limb
+C POWER3/PPC630:     6-18
+C POWER4/PPC970:     ?
+
 C INPUT PARAMETERS
 C res_ptr	r3
 C s1_ptr	r4
 C size		r5
 C s2_limb	r6
 C cy_limb	r7
-
-C PPC630: 6 to 18 cycles/limb, depending on multiplier.  This cannot be
-C improved unless floating-point operations are used instead of the slow
-C mulld/mulhdu.
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
