@@ -1,6 +1,7 @@
 /* Intel Pentium-4 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001, 2002, 2003, 2004 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -42,8 +43,8 @@ MA 02111-1307, USA. */
 #define GCDEXT_THRESHOLD                 64
 #define JACOBI_BASE_METHOD                1
 
-#define USE_PREINV_DIVREM_1               1
-#define USE_PREINV_MOD_1                  1
+#define USE_PREINV_DIVREM_1               1  /* native */
+#define USE_PREINV_MOD_1                  1  /* native */
 #define DIVREM_2_THRESHOLD            MP_SIZE_T_MAX  /* never */
 #define DIVEXACT_1_THRESHOLD              0  /* always */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always */
