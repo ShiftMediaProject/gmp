@@ -1,3 +1,19 @@
+2000-06-27  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (cray vector machines): Don't inherit gmp_cflags_cc.
+
+	* tune/Makefile.am (EXTRA_DIST): Delete sparc64.asm.
+
+	* configure.in (cray vector machines): Set extra_functions.
+
+	* mpn/cray/mulww.f: New file with vectorizing cray code.
+	* mpn/cray/mulww.s: Generated from mulww.f.
+	* mpn/cray/mul_1.c: New file.
+	* mpn/cray/addmul_1.c: New file.
+	* mpn/cray/submul_1.c: New file.
+	* mpn/cray/add_n.c: New file.
+	* mpn/cray/sub_n.c: New file.
+
 2000-06-21  Kevin Ryde  <kevin@swox.se>
 	
 	* mpn/generic/mul_n.c (mpn_kara_mul_n, mpn_kara_sqr_n): Use
