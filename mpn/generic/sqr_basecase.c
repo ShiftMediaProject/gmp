@@ -81,16 +81,6 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	  cy = mpn_addmul_2s (tp + 2 * i, up + i + 1, n - (i + 1), up + i);
 	  tp[n + i] = cy;
 	}
-
-      MPN_SQR_DIAGONAL (rp, up, n);
-
-#if HAVE_NATIVE_mpn_addlsh1_n
-      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
-#else
-      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
-      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
-      rp[2 * n - 1] += cy;
-#endif
     }
   else
     {
@@ -111,17 +101,17 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	}
       cy = mpn_addmul_1 (tp + 2 * n - 4, up + n - 1, 1, up[n - 2]);
       tp[2 * n - 3] = cy;
+    }
 
-      MPN_SQR_DIAGONAL (rp, up, n);
+  MPN_SQR_DIAGONAL (rp, up, n);
 
 #if HAVE_NATIVE_mpn_addlsh1_n
-      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
+  cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
 #else
-      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
-      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
-      rp[2 * n - 1] += cy;
+  cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
+  cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
+  rp[2 * n - 1] += cy;
 #endif
-    }
 }
 #define READY_WITH_mpn_sqr_basecase
 #endif
@@ -168,6 +158,16 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	  return;
 	}
 
+      /* The code below doesn't like unnormalized operands.  Since such
+	 operands are unusual, handle them with a dumb recursion.  */
+      if (up[n - 1] == 0)
+	{
+	  rp[2 * n - 2] = 0;
+	  rp[2 * n - 1] = 0;
+	  mpn_sqr_basecase (rp, up, n - 1);
+	  return;
+	}
+
       MPN_ZERO (tp, n);
 
       for (i = 0; i <= n - 2; i += 2)
@@ -187,14 +187,6 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	  __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
 	  mpn_incr_u (rp + i + 4, cy);
 	}
-
-#if HAVE_NATIVE_mpn_addlsh1_n
-      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
-#else
-      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
-      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
-      rp[2 * n - 1] += cy;
-#endif
     }
   else
     {
@@ -205,6 +197,16 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	  rp[0] = 0;
 	  rp[1] = 0;
 	  rp[3] = mpn_addmul_2 (rp, up, 2, up);
+	  return;
+	}
+
+      /* The code below doesn't like unnormalized operands.  Since such
+	 operands are unusual, handle them with a dumb recursion.  */
+      if (up[n - 1] == 0)
+	{
+	  rp[2 * n - 2] = 0;
+	  rp[2 * n - 1] = 0;
+	  mpn_sqr_basecase (rp, up, n - 1);
 	  return;
 	}
 
@@ -231,17 +233,16 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 	  __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
 	  mpn_incr_u (rp + i + 4, cy);
 	}
-      __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
-      mpn_decr_u (rp + i + 4, cy);
+      mpn_decr_u (rp + i + 2, (x1 | x0) != 0);
+    }
 
 #if HAVE_NATIVE_mpn_addlsh1_n
-      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
+  cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
 #else
-      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
-      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
-      rp[2 * n - 1] += cy;
+  cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
+  cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
+  rp[2 * n - 1] += cy;
 #endif
-    }
 }
 #define READY_WITH_mpn_sqr_basecase
 #endif
