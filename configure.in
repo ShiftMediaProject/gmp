@@ -1091,7 +1091,26 @@ echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_CPP
-GMP_OPTION_CXX
+
+# The C++ compiler, if required
+have_cxx=no
+if test $enable_cxx != no; then
+  GMP_PROG_CXX
+fi
+AM_CONDITIONAL(HAVE_CXX, test $have_cxx = yes)
+
+# FIXME: This hack is because automake doesn't seem to like AM_CONDITIONAL
+# defined variables in libgmp_la_DEPENDENCIES.
+if test $have_cxx = yes; then
+  PRINTF_CXX_OBJECTS='$(PRINTF_CXX_OBJECTS)'
+  LIBCXXPRINTF_LA='libcxxprintf.la'
+else
+  PRINTF_CXX_OBJECTS=
+  LIBCXXPRINTF_LA=
+fi
+AC_SUBST(PRINTF_CXX_OBJECTS)
+AC_SUBST(LIBCXXPRINTF_LA)
+
 
 case $host_cpu in
   c90 | t90)
@@ -1261,7 +1280,7 @@ AC_HEADER_STDC
 AC_HEADER_TIME
 
 # inttypes.h and unistd.h are already in the autoconf default tests
-AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h sys/types.h)
 
 # optarg should be in unistd.h, which is already in the default includes
 AC_CHECK_DECLS(optarg)
