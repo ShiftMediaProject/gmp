@@ -299,11 +299,14 @@ EOF
     i86pc:SunOS:5.*:*)
 	echo i386-pc-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
 	exit 0 ;;
-    sun4*:SunOS:6*:*)
-	# According to config.sub, this is the proper way to canonicalize
-	# SunOS6.  Hard to guess exactly what SunOS6 will be like, but
-	# it's likely to be more like Solaris than SunOS4.
-	echo sparc-sun-solaris3`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+    sun4[md]:SunOS:*:*)
+	case "`/usr/bin/arch -k`" in
+	    Series*|S4*)
+		UNAME_RELEASE=`uname -v`
+		;;
+	esac
+	# Japanese Language versions have a version number like `4.1.3-JL'.
+	echo sparcv8-sun-sunos`echo ${UNAME_RELEASE}|sed -e 's/-/_/'`
 	exit 0 ;;
     sun4*:SunOS:*:*)
 	case "`/usr/bin/arch -k`" in
