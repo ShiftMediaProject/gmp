@@ -60,7 +60,7 @@ DATASTART(L(dat))
 	.t_floating 2.0
 DATAEND()
 
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com_n,gp)
 
 	ALIGN(16)
 
