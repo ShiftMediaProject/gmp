@@ -24,14 +24,11 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* gmp.h defines a macro for mpq_cmp_ui.  */
-#undef mpq_cmp_ui
-
 int
 #if __STDC__
-mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
+_mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
 #else
-mpq_cmp_ui (op1, num2, den2)
+_mpq_cmp_ui (op1, num2, den2)
      const MP_RAT *op1;
      unsigned long int num2;
      unsigned long int den2;
