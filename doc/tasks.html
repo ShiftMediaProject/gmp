@@ -279,9 +279,8 @@
      unconditionally.)
 <li> Build multiple variants of the library under certain systems.
      An example is -n32, -o32, and -64 on Irix.
-<li> Check name conflicts under DOS 8.3 filenames and DJGPP, with a
-     view to avoiding at least the simplest ones.  Similarly old
-     SysV 14 char names.
+<li> There's a few filenames that don't fit in 14 chars, if this
+     matters.
 <li> Enable support for FORTRAN versions of mpn files (eg. for
      mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
      AC_PROG_F77 if such a file is found, .  Hopefully automake will
