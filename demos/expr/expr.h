@@ -1,7 +1,6 @@
-/* Header for expression evaluation. */
+/* Header for expression evaluation.
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -102,7 +101,7 @@ MA 02111-1307, USA.
 #define MPEXPR_TYPE_OPERATOR       0x2000
 
 
-typedef void (*mpexpr_fun_t) _PROTO ((void));
+typedef void (*mpexpr_fun_t) __GMP_PROTO ((void));
 
 struct mpexpr_operator_t {
   __gmp_const char  *name;
@@ -112,31 +111,31 @@ struct mpexpr_operator_t {
 };
 
 
-int mpf_expr_a _PROTO ((__gmp_const struct mpexpr_operator_t *table,
+int mpf_expr_a __GMP_PROTO ((__gmp_const struct mpexpr_operator_t *table,
                         mpf_ptr res, int base, unsigned long prec,
                         __gmp_const char *e, size_t elen,
                         mpf_srcptr var[26]));
-int mpf_expr _PROTO ((mpf_ptr res, int base, __gmp_const char *e, ...));
+int mpf_expr __GMP_PROTO ((mpf_ptr res, int base, __gmp_const char *e, ...));
 
-int mpq_expr_a _PROTO ((__gmp_const struct mpexpr_operator_t *table,
+int mpq_expr_a __GMP_PROTO ((__gmp_const struct mpexpr_operator_t *table,
                         mpq_ptr res, int base,
                         __gmp_const char *e, size_t elen,
                         mpq_srcptr var[26]));
-int mpq_expr _PROTO ((mpq_ptr res, int base, __gmp_const char *e, ...));
+int mpq_expr __GMP_PROTO ((mpq_ptr res, int base, __gmp_const char *e, ...));
 
-int mpz_expr_a _PROTO ((__gmp_const struct mpexpr_operator_t *table,
+int mpz_expr_a __GMP_PROTO ((__gmp_const struct mpexpr_operator_t *table,
                         mpz_ptr res, int base,
                         __gmp_const char *e, size_t elen,
                         mpz_srcptr var[26]));
-int mpz_expr _PROTO ((mpz_ptr res, int base, __gmp_const char *e, ...));
+int mpz_expr __GMP_PROTO ((mpz_ptr res, int base, __gmp_const char *e, ...));
 
 /* when mpfr.h has been included */
 #ifdef GMP_RNDZ
-int mpfr_expr_a _PROTO ((__gmp_const struct mpexpr_operator_t *table,
+int mpfr_expr_a __GMP_PROTO ((__gmp_const struct mpexpr_operator_t *table,
                          mpfr_ptr res, int base, unsigned long prec,
                          __gmp_const char *e, size_t elen,
                          mpfr_srcptr var[26]));
-int mpfr_expr _PROTO ((mpfr_ptr res, int base, __gmp_const char *e, ...));
+int mpfr_expr __GMP_PROTO ((mpfr_ptr res, int base, __gmp_const char *e, ...));
 #endif
 
 #endif
