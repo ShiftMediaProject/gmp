@@ -28,6 +28,13 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
+
+/* FIXME: N=1000000 tests as a default is excessive.
+
+   FIXME: Comparing against mpfr_get_si/ui is not ideal, it'd be better to
+   have all tests examine the bits in mpfr_t for what should come out.  */
+
+
 int
 main (int argc, char *argv[])
 {
@@ -48,7 +55,7 @@ main (int argc, char *argv[])
     {
       z = (long) (randlimb () & LONG_MAX) + LONG_MIN/2;
       inex = mpfr_set_si(x, z, GMP_RNDZ);
-      d = (long) mpfr_get_d1 (x);
+      d = mpfr_get_si (x, GMP_RNDZ);
       if (d != z) {
 	fprintf(stderr, "Error in mpfr_set_si: expected %ld got %ld\n", z, d); exit(1);
       }
@@ -65,7 +72,7 @@ main (int argc, char *argv[])
     {
       zl = randlimb ();
       inex = mpfr_set_ui (x, zl, GMP_RNDZ);
-      dl = (unsigned long) mpfr_get_d1 (x);
+      dl = mpfr_get_ui (x, GMP_RNDZ);
       if (dl != zl) {
 	fprintf(stderr, "Error in mpfr_set_ui: expected %lu got %lu\n", zl, dl); exit(1);
       }
@@ -112,17 +119,17 @@ main (int argc, char *argv[])
 
   mpfr_set_prec(x, 2);
   inex = mpfr_set_si(x, 33096, GMP_RNDU);
-  if (mpfr_get_d1 (x) != 49152.0 || inex <= 0)
+  if (mpfr_get_si (x, GMP_RNDZ) != 49152 || inex <= 0)
   {
-    fprintf(stderr, "Error in mpfr_set_si, expected 49152, got %lu, inex %d\n",
-	    (unsigned long) mpfr_get_d1 (x), inex);
+    fprintf(stderr, "Error in mpfr_set_si, expected 49152, got %ld, inex %d\n",
+            mpfr_get_si (x, GMP_RNDZ), inex);
     exit(1);
   }
   inex = mpfr_set_ui(x, 33096, GMP_RNDU);
-  if (mpfr_get_d1 (x) != 49152.0)
+  if (mpfr_get_si (x, GMP_RNDZ) != 49152)
   {
-    fprintf(stderr, "Error in mpfr_set_ui, expected 49152, got %lu, inex %d\n",
-	    (unsigned long) mpfr_get_d1 (x), inex);
+    fprintf(stderr, "Error in mpfr_set_ui, expected 49152, got %ld, inex %d\n",
+	    mpfr_get_si (x, GMP_RNDZ), inex);
     exit(1);
   }
 
