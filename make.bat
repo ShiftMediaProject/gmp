@@ -268,6 +268,7 @@ cd ..
 
 gcc -c -I. -Impn -I.. -g -O memory.c
 gcc -c -I. -Impn -I.. -g -O mp_set_fns.c
+gcc -c -I. -Impn -I.. -g -O extract-double.c
 gcc -c -I. -Impn -I.. -g -O mp_clz_tab.c
 gcc -c -I. -Impn -I.. -g -O version.c
 gcc -c -I. -Impn -I.. -g -O stack-alloc.c
