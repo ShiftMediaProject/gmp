@@ -145,53 +145,8 @@ at any rate, something close to 2 cycles/limb should be possible.
 ================================================================
 mpn_mul_1:
 
-The current code runs at 4 cycles/limb on Itanium and 6 cycles/limb on
-Itanium 2.  The code is very similar to the mpn_addmul_1 code.  See
-comments above.
-
-Faster code wouldn't be too hard to write.  This is one possible
-pattern (here unrolled 2x, needs >= 6x, or modulo scheduling, for full
-speed):
-
-  { .mfi	getf.sig
-		xma.l
-	   (p6) cmp.leu		p8, p9 =
-} { .mfi	stf8		[rp] =
-		xma.hu
-	   (p7) cmp.ltu		p8, p9 =
-		;;
-} { .mib	getf.sig
-	   (p8) add 1
-		nop.b		0
-} { .mib	ldf8		 = [up], 8
-	   (p9) add
-		nop.b		0
-		;;
-}
-  { .mfi	getf.sig
-		xma.l
-	   (p8) cmp.leu		p6, p7 =
-} { .mfi	stf8		[rp] =
-		xma.hu
-	   (p9) cmp.ltu		p6, p7 =
-		;;
-} { .mib	getf.sig
-	   (p6) add 1
-		nop.b		0
-} { .mib	ldf8		 = [up], 8
-	   (p7) add
-		br.cloop
-		;;
-}
-
-1 limb/12 instructions
-	   12 insn/max 6 insn/cycle:		2.0 cycles/limb
-	   4 memops/max 2 memops/cycle:		2.0 cycles/limb
-	   4 intops/max 2 intops/cycle:		2.0 cycles/limb
-	   2 fpops/max 2 fpops/cycle:		1.0 cycles/limb
-
-We could do even better on Itanium 2 using the carry propagation
-scheme of mpn_add_n above, 1.58 c/l.
+The current code runs at 2.5 cycles/limb on Itanium and 2 cycles/limb
+on Itanium 2.
 
 ================================================================
 mpn_addmul_N
@@ -269,6 +224,20 @@ instruction.  That instruction has a plain single-cycle latency.  We
 need 63 loops since this instruction only accept immediate count.
 That would lead to a somewhat silly code size, but the speed would
 double on Itanium to 1 c/l and tripple on Itanium 2 to 0.5 c/l.
+
+================================================================
+mpn_copyi, mpn_copyd
+
+The current code runs at 1 cycle/limb on Itanium and 0.5 cycles/limb
+on Itanium 2.  But that is just for L1 cache hit.  On Itanium 2, the
+4-way unrolled loop takes just 2 cycles, and thus load-use scheduling
+isn't great.  It might be best to use modulo scheduled loops, since
+that will allow us to do better load-use scheduling without too much
+unrolling.
+
+Something is strange with these routines, depending on size or operand
+alignment, we get 1 c/l or 0.5 c/l on Itanium 2, according to
+tests/devel/try.  Cache bank conflicts?
 
 
 
