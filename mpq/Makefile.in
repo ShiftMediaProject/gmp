@@ -123,6 +123,9 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
+# Tell gmp.h it's building gmp, not an application, used by windows DLL stuff.
+AM_CPPFLAGS = -D__GMP_WITHIN_GMP
+
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
   abs.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
