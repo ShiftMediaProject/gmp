@@ -1140,7 +1140,9 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  gmp_randseed_ui (RANDS, option_seed);
+  gmp_randinit_default (__gmp_rands);
+  __gmp_rands_initialized = 1;
+  gmp_randseed_ui (__gmp_rands, option_seed);
 
   choice = (struct choice_t *) (*__gmp_allocate_func)
     ((argc - optind) * sizeof(choice[0]));
