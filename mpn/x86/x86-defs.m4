@@ -145,12 +145,72 @@ define(PROLOGUE_cpu,
 m4_assert_numargs(1)
 	`GLOBL	$1
 	TYPE($1,`function')
-$1:')
+$1:
+ifelse(WANT_PROFILING,`no',,`call_mcount
+')')')
 
 define(EPILOGUE_cpu,
 m4_assert_numargs(1)
 `	SIZE($1,.-$1)')
 
+
+dnl  Usage: call_mcount
+dnl
+dnl  For `gprof' style profiling, %ebp is setup as a frame pointer.  None of
+dnl  the assembler routines use %ebp this way, so it's done only for the
+dnl  benefit of mcount.  glibc sysdeps/i386/i386-mcount.S shows how mcount
+dnl  gets the current function from (%esp) and the parent from 4(%ebp).
+dnl
+dnl  For `prof' style profiling gcc generates mcount calls without setting
+dnl  up %ebp, and the same is done here.
+
+define(`call_mcount',
+m4_assert_defined(`WANT_PROFILING')
+m4_assert_defined(`MCOUNT_PIC_REG')
+m4_assert_defined(`MCOUNT_NONPIC_REG')
+m4_assert_defined(`MCOUNT_PIC_CALL')
+m4_assert_defined(`MCOUNT_NONPIC_CALL')
+`ifelse(MCOUNT_REG,,,
+`	DATA
+L(mcount_data):
+	W32	0
+	TEXT
+')dnl
+ifelse(WANT_PROFILING,`gprof',
+`	pushl	%ebp
+	movl	%esp, %ebp
+')dnl
+ifdef(`PIC',
+`	pushl	%ebx
+	movl_GOT_ebx
+ifelse(MCOUNT_PIC_REG,,,
+`	leal	L(mcount_data)@GOTOFF(%ebx), MCOUNT_PIC_REG')
+MCOUNT_PIC_CALL
+	popl	%ebx
+',`dnl non-PIC
+ifelse(MCOUNT_NONPIC_REG,,,
+`	movl	`$'L(mcount_data), MCOUNT_NONPIC_REG
+')dnl
+MCOUNT_NONPIC_CALL
+')dnl
+ifelse(WANT_PROFILING,`gprof',
+`	popl	%ebp
+')')
+
+dnl  Called: movl_GOT_ebx
+define(movl_GOT_ebx,
+m4_assert_numargs(-1)
+`	call	L(movl_GOT_ebx_C`'movl_GOT_ebx_counter)
+L(movl_GOT_ebx_H`'movl_GOT_ebx_counter):
+	jmp	Lnum(movl_GOT_ebx_J`'movl_GOT_ebx_counter)
+L(movl_GOT_ebx_C`'movl_GOT_ebx_counter):
+	movl	(%esp), %ebx
+	ret
+L(movl_GOT_ebx_J`'movl_GOT_ebx_counter):
+	addl	$GSYM_PREFIX`'_GLOBAL_OFFSET_TABLE_+[.-Lnum(1)], %ebx
+define(`movl_GOT_ebx_counter',incr(movl_GOT_ebx_counter))')
+
+define(movl_GOT_ebx_counter,1)
 
 
 dnl  --------------------------------------------------------------------------
