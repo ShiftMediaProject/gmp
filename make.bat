@@ -101,10 +101,13 @@ gcc -c -I. -I.. -I../mpn -g -O set.c
 gcc -c -I. -I.. -I../mpn -g -O set_ui.c
 gcc -c -I. -I.. -I../mpn -g -O set_si.c
 gcc -c -I. -I.. -I../mpn -g -O set_str.c
+gcc -c -I. -I.. -I../mpn -g -O set_d.c
+gcc -c -I. -I.. -I../mpn -g -O set_f.c
 gcc -c -I. -I.. -I../mpn -g -O iset.c
 gcc -c -I. -I.. -I../mpn -g -O iset_ui.c
 gcc -c -I. -I.. -I../mpn -g -O iset_si.c
 gcc -c -I. -I.. -I../mpn -g -O iset_str.c
+gcc -c -I. -I.. -I../mpn -g -O iset_d.c
 gcc -c -I. -I.. -I../mpn -g -O clear.c
 gcc -c -I. -I.. -I../mpn -g -O get_ui.c
 gcc -c -I. -I.. -I../mpn -g -O get_si.c
@@ -175,8 +178,6 @@ gcc -c -I. -I.. -I../mpn -g -O tdiv_qr_ui.c
 gcc -c -I. -I.. -I../mpn -g -O tdiv_q_ui.c
 gcc -c -I. -I.. -I../mpn -g -O tdiv_r_ui.c
 gcc -c -I. -I.. -I../mpn -g -O mod.c
-gcc -c -I. -I.. -I../mpn -g -O set_d.c
-gcc -c -I. -I.. -I../mpn -g -O iset_d.c
 gcc -c -I. -I.. -I../mpn -g -O divexact.c
 gcc -c -I. -I.. -I../mpn -g -O array_init.c
 gcc -c -I. -I.. -I../mpn -g -O scan0.c
@@ -196,6 +197,7 @@ gcc -c -I. -I.. -I../mpn -g -O set_ui.c
 gcc -c -I. -I.. -I../mpn -g -O set_si.c
 gcc -c -I. -I.. -I../mpn -g -O set_str.c
 gcc -c -I. -I.. -I../mpn -g -O set_d.c
+gcc -c -I. -I.. -I../mpn -g -O set_z.c
 gcc -c -I. -I.. -I../mpn -g -O iset.c
 gcc -c -I. -I.. -I../mpn -g -O iset_ui.c
 gcc -c -I. -I.. -I../mpn -g -O iset_si.c
@@ -227,8 +229,11 @@ gcc -c -I. -I.. -I../mpn -g -O mul_2exp.c
 gcc -c -I. -I.. -I../mpn -g -O div_2exp.c
 gcc -c -I. -I.. -I../mpn -g -O abs.c
 gcc -c -I. -I.. -I../mpn -g -O neg.c
-gcc -c -I. -I.. -I../mpn -g -O set_dfl_prec.c
-gcc -c -I. -I.. -I../mpn -g -O set_prec.c
+gcc -c -I. -I.. -I../mpn -g -O set_q.c
+gcc -c -I. -I.. -I../mpn -g -O set_dfl_prc.c
+gcc -c -I. -I.. -I../mpn -g -O set_prc.c
+gcc -c -I. -I.. -I../mpn -g -O set_prc_raw.c
+gcc -c -I. -I.. -I../mpn -g -O get_prc.c
 gcc -c -I. -I.. -I../mpn -g -O ui_div.c
 gcc -c -I. -I.. -I../mpn -g -O sqrt_ui.c
 del libmpf.a
@@ -255,6 +260,7 @@ gcc -c -I. -I.. -I../mpn -g -O set_num.c
 gcc -c -I. -I.. -I../mpn -g -O set_si.c
 gcc -c -I. -I.. -I../mpn -g -O set_ui.c
 gcc -c -I. -I.. -I../mpn -g -O sub.c
+gcc -c -I. -I.. -I../mpn -g -O equal.c
 del libmpq.a
 ar cr libmpq.a *.o
 cd ..
