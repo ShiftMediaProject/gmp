@@ -458,17 +458,10 @@ dnl  Usage: femms
 dnl
 dnl  Gas 2.9.1 which comes with FreeBSD 3.4 doesn't support femms, so the
 dnl  following is a replacement using .byte.
-dnl
-dnl  If femms isn't available, an emms is generated instead, for convenience
-dnl  when testing on a machine without femms.
 
 define(femms,
 m4_assert_numargs(-1)
-`ifelse(femms_available_p,1,
-`.byte	15,14	C AMD 3DNow femms',
-`emms`'dnl
-m4_warning(`warning, using emms in place of femms, use for testing only
-')')')
+`.byte	15,14	C AMD 3DNow femms')
 
 
 dnl  Usage: jadcl0(op)
@@ -500,20 +493,6 @@ L(jadcl0_`'jadcl0_counter):
 define(`jadcl0_counter',incr(jadcl0_counter))')')
 
 define(jadcl0_counter,1)
-
-
-dnl  Usage: cmov_available_p
-dnl
-dnl  Expand to 1 if cmov is available, 0 if not.
-
-define(cmov_available_p,
-m4_assert_numargs(-1)
-`m4_ifdef_anyof_p(
-	`HAVE_HOST_CPU_pentiumpro',
-	`HAVE_HOST_CPU_pentium2',
-	`HAVE_HOST_CPU_pentium3',
-	`HAVE_HOST_CPU_pentium4',
-	`HAVE_HOST_CPU_athlon')')
 
 
 dnl  Usage: x86_lookup(target, key,value, key,value, ...)
@@ -597,16 +576,12 @@ define(x86_opcode_tttn_list,
 `nle',15, `g',  15')
 
 
-dnl  Usage: cmovCC(srcreg,dstreg)
+dnl  Usage: cmovCC(%srcreg,%dstreg)
 dnl
-dnl  Generate a cmov instruction if the host supports cmov, or simulate it
-dnl  with a conditional jump if not (the latter being meant only for
-dnl  testing).  For example,
+dnl  Emit a cmov instruction, using a .byte sequence, since various past
+dnl  versions of gas don't know cmov.  For example,
 dnl
 dnl         cmovz(  %eax, %ebx)
-dnl
-dnl  cmov instructions are generated using .byte sequences, since only
-dnl  recent versions of gas know cmov.
 dnl
 dnl  The source operand can only be a plain register.  (m4 code implementing
 dnl  full memory addressing modes exists, believe it or not, but isn't
@@ -614,8 +589,8 @@ dnl  currently needed and isn't included.)
 dnl
 dnl  All the standard conditions are defined.  Attempting to use one without
 dnl  the macro parentheses, such as just "cmovbe %eax, %ebx", will provoke
-dnl  an error.  This ensures the necessary .byte sequences aren't
-dnl  accidentally missed.
+dnl  an error.  This protects against writing something old gas wouldn't
+dnl  understand.
 
 dnl  Called: define_cmov_many(cond,tttn,cond,tttn,...)
 define(define_cmov_many,
@@ -623,42 +598,19 @@ define(define_cmov_many,
 `define_cmov(`$1',`$2')define_cmov_many(shift(shift($@)))')')
 
 dnl  Called: define_cmov(cond,tttn)
+dnl  Emit basically define(cmov<cond>,`cmov_internal(<cond>,<ttn>,`$1',`$2')')
 define(define_cmov,
 m4_assert_numargs(2)
 `define(`cmov$1',
 m4_instruction_wrapper()
 m4_assert_numargs(2)
-`cmov_internal'(m4_doublequote($`'0),``$1',`$2'',dnl
+`cmov_internal'(m4_doublequote($`'0),``$2'',dnl
 m4_doublequote($`'1),m4_doublequote($`'2)))')
 
 define_cmov_many(x86_opcode_tttn_list)
 
-
-dnl  Called: cmov_internal(name,cond,tttn,src,dst)
+dnl  Called: cmov_internal(name,tttn,src,dst)
 define(cmov_internal,
-m4_assert_numargs(5)
-`ifelse(cmov_available_p,1,
-`cmov_bytes_tttn(`$1',`$3',`$4',`$5')',
-`m4_warning(`warning, simulating cmov with jump, use for testing only
-')cmov_simulate(`$2',`$4',`$5')')')
-
-dnl  Called: cmov_simulate(cond,src,dst)
-dnl  If this is going to be used with memory operands for the source it will
-dnl  need to be changed to do a fetch even if the condition is false, so as
-dnl  to trigger exceptions the same way a real cmov does.
-define(cmov_simulate,
-m4_assert_numargs(3)
-`j$1	L(cmov_T`'cmov_counter)	C cmov$1 $2, $3
-	jmp	L(cmov_F`'cmov_counter)
-L(cmov_T`'cmov_counter):
-	movl	$2, $3
-L(cmov_F`'cmov_counter):
-define(`cmov_counter',incr(cmov_counter))')
-
-define(cmov_counter,1)
-
-dnl  Called: cmov_bytes_tttn(name,tttn,src,dst)
-define(cmov_bytes_tttn,
 m4_assert_numargs(4)
 `.byte	dnl
 15, dnl
@@ -686,11 +638,13 @@ define(x86_opcode_regmmx_list,
 `%mm7',7')
 
 
-dnl  Usage: psadbw(src,dst)
+dnl  Usage: psadbw(%srcreg,%dstreg)
 dnl
-dnl  Only recent versions of gas know psadbw, in particular gas 2.9.1 on
-dnl  FreeBSD 3.3 and 3.4 doesn't recognise it, so instead emit .byte
-dnl  sequences.
+dnl  Oldish versions of gas don't know psadbw, in particular gas 2.9.1 on
+dnl  FreeBSD 3.3 and 3.4 doesn't, so instead emit .byte sequences.  For
+dnl  example,
+dnl
+dnl         psadbw( %mm1, %mm2)
 dnl
 dnl  Only register->register forms are supported here, which suffices for
 dnl  the current code.
@@ -698,45 +652,9 @@ dnl  the current code.
 define(psadbw,
 m4_instruction_wrapper()
 m4_assert_numargs(2)
-`ifelse(psadbw_available_p,1,
-`psadbw_bytes(`$1',`$2')',
-`psadbw_simulate(`$1',`$2')')')
-
-define(psadbw_available_p,
-m4_assert_numargs(-1)
-`m4_ifdef_anyof_p(`HAVE_HOST_CPU_pentium3',
-                  `HAVE_HOST_CPU_pentium4',
-                  `HAVE_HOST_CPU_athlon')')
-
-dnl  Called: psadbw_bytes(src,dst)
-define(psadbw_bytes,
-m4_assert_numargs(2)
 `.byte 0x0f,0xf6,dnl
 eval(192+x86_opcode_regmmx(`$2')*8+x86_opcode_regmmx(`$1')) dnl
 	C `psadbw $1, $2'')
-
-dnl  Called: psadbw_simulate(src,dst)
-define(psadbw_simulate,
-m4_assert_numargs(2)
-`m4_warning(`warning, using simulated and only partly functional psadbw, use testing only
-')	C This works enough for the sum of bytes done in some of the popcounts,
-	C but is otherwise a long way short of correct.
-	pushl	%eax
-	pushl	%edx
-	pushf
-	subl	$`'8, %esp
-	movq	$2, (%esp)
-	movzbl	(%esp), %eax
-forloop(i,1,7,
-`	movzbl	i`'(%esp), %edx
-	addl	%edx, %eax
-')
-	movd	%eax, $2
-	addl	$`'8, %esp
-	popf
-	popl	%edx
-	popl	%eax
-')
 
 
 dnl  Usage: Zdisp(inst,op,op,op)
