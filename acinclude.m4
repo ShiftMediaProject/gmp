@@ -580,15 +580,16 @@ dnl  size==1 case in mpn/generic/mode1o.c, and this shows up in
 dnl  tests/mpz/t-jac.c as a wrong result from mpz_kronecker_ui.
 
 AC_DEFUN(GMP_GCC_ARM_UMODSI,
-[AC_MSG_CHECKING([whether gcc unsigned division works])
-GMP_GCC_VERSION_GE([$1], 2,95,4)
-case $gmp_compare_ge in
-yes)
-  ifelse([$2],,:,[$2])
-  gmp_gcc_arm_umodsi_result=yes ;;
-*)
-  ifelse([$3],,:,[$3])
-  gmp_gcc_arm_umodsi_result="no, gcc <= 2.95.3" ;;
+[AC_MSG_CHECKING([whether ARM gcc unsigned division works])
+tmp_version=`$1 --version`
+echo "$tmp_version" >&AC_FD_CC
+case $tmp_version in
+  [2.95 | 2.95.[123]])
+    ifelse([$3],,:,[$3])
+    gmp_gcc_arm_umodsi_result="no, gcc 2.95.[0123]" ;;
+  *)
+    ifelse([$2],,:,[$2])
+    gmp_gcc_arm_umodsi_result=yes ;;
 esac
 AC_MSG_RESULT([$gmp_gcc_arm_umodsi_result])
 ])
@@ -919,10 +920,14 @@ dnl  This method should be more reliable than grepping a .o file or using
 dnl  nm, since it corresponds to what a real program is going to do.  Note
 dnl  in particular that grepping doesn't work with SunOS 4 native grep since
 dnl  that grep seems to have trouble with '\0's in files.
+dnl
+dnl  In the past GLOBL_ATTR wasn't used here and it seemed to work anyway
+dnl  (on hppa*-*-hpux* which uses ",entry").
 
 AC_DEFUN(GMP_ASM_UNDERSCORE,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
                gmp_cv_asm_underscore,
@@ -935,13 +940,13 @@ EOF
 for tmp_underscore in "" "_"; do
   cat >conftes2.s <<EOF
       	$gmp_cv_asm_text
-	$gmp_cv_asm_globl ${tmp_underscore}underscore_test
+	$gmp_cv_asm_globl ${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
 ${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
   case $host in
   *-*-aix*)
     cat >>conftes2.s <<EOF
-	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
+	$gmp_cv_asm_globl .${tmp_underscore}underscore_test$gmp_cv_asm_globl_attr
 .${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
     ;;
@@ -1171,7 +1176,7 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
-dnl  Can we say `.global'?
+dnl  Can we say `.globl'?
 
 AC_DEFUN(GMP_ASM_GLOBL,
 [AC_CACHE_CHECK([how to export a symbol],
@@ -1187,7 +1192,7 @@ echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL_ATTR
 dnl  ------------------
-dnl  Do we need something after `.global symbol'?
+dnl  Do we need something after `GLOBL symbol'?
 
 AC_DEFUN(GMP_ASM_GLOBL_ATTR,
 [AC_CACHE_CHECK([if the export directive needs an attribute],
@@ -1378,9 +1383,9 @@ dnl  -----------------------------------------------
 dnl  Determine whether the assembler supports MMX instructions.
 dnl
 dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
-dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
-dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
-dnl  needed at all, at least for just checking instruction syntax.
+dnl  here.  ".text" is believed to be correct on all x86 systems.  Actually
+dnl  ".text" probably isn't needed at all, at least for just checking
+dnl  instruction syntax.
 dnl
 dnl  "movq %mm0, %mm1" should assemble to "0f 6f c8", but Solaris 2.6 and
 dnl  2.7 wrongly assemble it to "0f 6f c1" (that being the reverse "movq
@@ -2742,8 +2747,8 @@ else
 fi
 ])
 case $gmp_cv_check_libm_for_build in
-yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
-no)  LIBM_FOR_BUILD= ;;
-*)   LIBM_FOR_BUILD=$gmp_cv_check_libm_for_build
+  yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
+  no)  LIBM_FOR_BUILD= ;;
+  *)   LIBM_FOR_BUILD=$gmp_cv_check_libm_for_build ;;
 esac
 ])
