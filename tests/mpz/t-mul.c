@@ -214,14 +214,21 @@ ref_mpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 
   mul_kara (tp + 2 * vn, up, vp, vn, tp);
 
-  if (un - vn < vn)
-    ref_mpn_mul (wp + vn, vp, vn, up + vn, un - vn);
-  else
-    ref_mpn_mul (wp + vn, up + vn, un - vn, vp, vn);
+  if (un != vn)
+    {
+      if (un - vn < vn)
+	ref_mpn_mul (wp + vn, vp, vn, up + vn, un - vn);
+      else
+	ref_mpn_mul (wp + vn, up + vn, un - vn, vp, vn);
 
-  MPN_COPY (wp, tp + 2 * vn, vn);
-  cy = mpn_add_n (wp + vn, wp + vn, tp + 3 * vn, vn);
-  mpn_incr_u (wp + 2 * vn, cy);
+      MPN_COPY (wp, tp + 2 * vn, vn);
+      cy = mpn_add_n (wp + vn, wp + vn, tp + 3 * vn, vn);
+      mpn_incr_u (wp + 2 * vn, cy);
+    }
+  else
+    {
+      MPN_COPY (wp, tp + 2 * vn, 2 * vn);
+    }
 
   __GMP_FREE_FUNC_LIMBS (tp, 4 * vn);
 }
