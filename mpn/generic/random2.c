@@ -55,6 +55,9 @@ mpn_random2 (res_ptr, size)
   unsigned int ran;
   mp_limb_t limb;
 
+  /* FIXME: Is size==0 supposed to be allowed? */
+  ASSERT (size >= 0);
+
   limb = 0;
 
   /* Start off in a random bit position in the most significant limb.  */

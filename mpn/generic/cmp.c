@@ -40,6 +40,10 @@ mpn_cmp (op1_ptr, op2_ptr, size)
   mp_size_t i;
   mp_limb_t op1_word, op2_word;
 
+  /* Suspect size==0 is required by mpf/cmp.c, though this isn't a
+     documented feature. */
+  ASSERT (size >= 0);
+
   for (i = size - 1; i >= 0; i--)
     {
       op1_word = op1_ptr[i];

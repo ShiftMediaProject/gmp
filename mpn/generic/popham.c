@@ -99,6 +99,10 @@ FUNCTION (ARGUMENTS)
   unsigned long int  result = 0;
   mp_size_t  i;
 
+  /* mpz/popcount.c and mpz/hamdist.c pass size==0 though this isn't a
+     documented feature. */
+  ASSERT (size >= 0);
+
   for (i = 0; i < size; i++)
     result += popc_limb (OPERAND);
 

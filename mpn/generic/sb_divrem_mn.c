@@ -71,7 +71,12 @@ mpn_sb_divrem_mn (qp, np, nsize, dp, dsize)
   mp_limb_t dxinv;
   int have_preinv;
 
-  ASSERT_ALWAYS (dsize > 2);
+  ASSERT (nsize >= dsize);
+  ASSERT (dsize > 2);
+  ASSERT (dp[dsize-1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (! MPN_OVERLAP_P (np, nsize, dp, dsize));
+  ASSERT (! MPN_OVERLAP_P (qp, nsize-dsize, dp, dsize));
+  ASSERT (! MPN_OVERLAP_P (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
 
   np += nsize - dsize;
   dx = dp[dsize - 1];

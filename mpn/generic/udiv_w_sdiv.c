@@ -39,6 +39,9 @@ mpn_udiv_w_sdiv (rp, a1, a0, d)
   mp_limb_t q, r;
   mp_limb_t c0, c1, b1;
 
+  ASSERT (d != 0);
+  ASSERT (a1 < d);
+
   if ((mp_limb_signed_t) d >= 0)
     {
       if (a1 < d - a1 - (a0 >> (BITS_PER_MP_LIMB - 1)))

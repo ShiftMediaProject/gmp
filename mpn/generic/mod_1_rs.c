@@ -62,6 +62,7 @@ mpn_mod_1_rshift (ptr, size, shift, divisor)
   ASSERT (shift >= 1);
   ASSERT (shift < BITS_PER_MP_LIMB);
   ASSERT (size >= 1);
+  ASSERT (divisor != 0);
 
   if (size == 1)
     return (ptr[0] >> shift) % divisor;

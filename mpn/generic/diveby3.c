@@ -50,6 +50,8 @@ mpn_divexact_by3c (dst, src, size, c)
   mp_size_t  i;
 
   ASSERT (size >= 1);
+  ASSERT (c == 0 || c == 1 || c == 2);
+  ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size));
 
   i = 0;
   do

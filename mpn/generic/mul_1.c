@@ -1,7 +1,8 @@
 /* mpn_mul_1 -- Multiply a limb vector with a single limb and
    store the product in a second limb vector.
 
-Copyright (C) 1991, 1992, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1992, 1993, 1994, 1996, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,6 +35,9 @@ mpn_mul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
   register mp_limb_t cy_limb;
   register mp_size_t j;
   register mp_limb_t prod_high, prod_low;
+
+  ASSERT (s1_size >= 1);
+  ASSERT (MPN_SAME_OR_SEPARATE_P (res_ptr, s1_ptr, s1_size));
 
   /* The loop counter and index J goes from -S1_SIZE to -1.  This way
      the loop becomes faster.  */

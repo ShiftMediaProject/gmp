@@ -52,6 +52,9 @@ mpn_sqr_n (prodp, up, un)
      mp_size_t un;
 #endif
 {
+  ASSERT (un >= 1);
+  ASSERT (! MPN_OVERLAP_P (prodp, 2*un, up, un));
+
   if (un < KARATSUBA_SQR_THRESHOLD)
     { /* plain schoolbook multiplication */
       if (un == 0)
@@ -105,6 +108,11 @@ mpn_mul (prodp, up, un, vp, vn)
 {
   mp_size_t l;
   mp_limb_t c;
+
+  ASSERT (un >= vn);
+  ASSERT (vn >= 1);
+  ASSERT (! MPN_OVERLAP_P (prodp, un+vn, up, un));
+  ASSERT (! MPN_OVERLAP_P (prodp, un+vn, vp, vn));
 
   if (up == vp && un == vn)
     {

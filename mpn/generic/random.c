@@ -34,6 +34,9 @@ mpn_random (res_ptr, size)
 {
   mp_size_t i;
 
+  /* FIXME: Is size==0 supposed to be allowed? */
+  ASSERT (size >= 0);
+
   for (i = 0; i < size; i++)
     res_ptr[i] = urandom ();
 

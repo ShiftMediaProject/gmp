@@ -55,6 +55,8 @@ mpn_perfect_square_p (up, usize)
   int res;
   TMP_DECL (marker);
 
+  ASSERT (usize >= 1);
+
   /* The first test excludes 55/64 (85.9%) of the perfect square candidates
      in O(1) time.  */
   if ((sq_res_0x100[(unsigned int) up[0] % 0x100] & 1) == 0)

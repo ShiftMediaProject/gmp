@@ -61,6 +61,10 @@ mpn_get_str (str, base, mptr, msize)
   mp_size_t out_len;
   register unsigned char *s;
 
+  ASSERT (msize >= 0);
+  ASSERT (base >= 2);
+  ASSERT (base < numberof (__mp_bases));
+
   big_base = __mp_bases[base].big_base;
 
   s = str;

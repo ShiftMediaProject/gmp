@@ -41,6 +41,9 @@ mpn_sqr_basecase (prodp, up, n)
 {
   mp_size_t i;
 
+  ASSERT (n >= 1);
+  ASSERT (! MPN_OVERLAP_P (prodp, 2*n, up, n));
+
   {
     /* N.B.!  We need the superfluous indirection through argh to work around
        a reloader bug in GCC 2.7.*.  */

@@ -52,6 +52,9 @@ mpn_preinv_mod_1 (dividend_ptr, dividend_size, divisor_limb, divisor_limb_invert
   mp_limb_t n0, r;
   int dummy;
 
+  ASSERT (dividend_size >= 1);
+  ASSERT (divisor_limb != 0);
+
   i = dividend_size - 1;
   r = dividend_ptr[i];
 

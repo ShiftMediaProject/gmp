@@ -48,6 +48,11 @@ mpn_mul_basecase (prodp, up, usize, vp, vsize)
      mp_size_t vsize;
 #endif
 {
+  ASSERT (usize >= vsize);
+  ASSERT (vsize >= 1);
+  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, up, usize));
+  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, vp, vsize));
+
   /* We first multiply by the low order one or two limbs, as the result can
      be stored, not added, to PROD.  We also avoid a loop for zeroing this
      way.  */

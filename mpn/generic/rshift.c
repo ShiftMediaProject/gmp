@@ -1,6 +1,6 @@
 /* mpn_rshift -- Shift right a low-level natural-number integer.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,6 +48,11 @@ mpn_rshift (wp, up, usize, cnt)
   register unsigned sh_1, sh_2;
   register mp_size_t i;
   mp_limb_t retval;
+
+  ASSERT (usize >= 1);
+  ASSERT (cnt >= 1);
+  ASSERT (cnt < BITS_PER_MP_LIMB);
+  ASSERT (MPN_SAME_OR_INCR_P (wp, up, usize));
 
 #ifdef DEBUG
   if (usize == 0 || cnt == 0)

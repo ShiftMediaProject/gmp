@@ -42,6 +42,9 @@ mpn_set_str (xp, str, str_len, base)
   int indigits_per_limb;
   mp_limb_t res_digit;
 
+  ASSERT (base >= 2);
+  ASSERT (base < numberof (__mp_bases));
+
   big_base = __mp_bases[base].big_base;
   indigits_per_limb = __mp_bases[base].chars_per_limb;
 

@@ -49,6 +49,11 @@ mpn_lshift (wp, up, usize, cnt)
   register mp_size_t i;
   mp_limb_t retval;
 
+  ASSERT (usize >= 1);
+  ASSERT (cnt >= 1);
+  ASSERT (cnt < BITS_PER_MP_LIMB);
+  ASSERT (MPN_SAME_OR_DECR_P (wp, up, usize));
+
 #ifdef DEBUG
   if (usize == 0 || cnt == 0)
     abort ();

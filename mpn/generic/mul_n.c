@@ -1305,6 +1305,10 @@ mpn_mul_n (p, a, b, n)
      mp_size_t n;
 #endif
 {
+  ASSERT (n >= 1);
+  ASSERT (! MPN_OVERLAP_P (p, 2*n, a, n));
+  ASSERT (! MPN_OVERLAP_P (p, 2*n, b, n));
+
   if (n < KARATSUBA_MUL_THRESHOLD)
     mpn_mul_basecase (p, a, n, b, n);
   else if (n < TOOM3_MUL_THRESHOLD)

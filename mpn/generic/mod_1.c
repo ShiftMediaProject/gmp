@@ -49,7 +49,12 @@ mpn_mod_1 (dividend_ptr, dividend_size, divisor_limb)
   mp_limb_t n1, n0, r;
   int dummy;
 
-  /* Botch: Should this be handled at all?  Rely on callers?  */
+  ASSERT (dividend_size >= 0);
+  ASSERT (divisor_limb != 0);
+
+  /* Botch: Should this be handled at all?  Rely on callers?
+     Note size==0 is currently required by mpz/fdiv_r_ui.c and possibly
+     other places.  */
   if (dividend_size == 0)
     return 0;
 

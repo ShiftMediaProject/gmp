@@ -44,6 +44,10 @@ FUNCTION (mp_ptr res_ptr, mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
   register mp_limb_t x, y, cy;
   register mp_size_t j;
 
+  ASSERT (size >= 1);
+  ASSERT (MPN_SAME_OR_SEPARATE_P (res_ptr, s1_ptr, size));
+  ASSERT (MPN_SAME_OR_SEPARATE_P (res_ptr, s2_ptr, size));
+
   /* The loop counter and index J goes from -SIZE to -1.  This way
      the loop becomes faster.  */
   j = -size;
