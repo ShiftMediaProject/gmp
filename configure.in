@@ -54,7 +54,18 @@ fi
 GMP_INIT(config.m4)
 
 AC_CANONICAL_HOST
-AM_INIT_AUTOMAKE
+
+dnl  Automake "no-dependencies" is used because include file dependencies
+dnl  are not useful to us.  Pretty much everything depends just on gmp.h,
+dnl  gmp-impl.h and longlong.h, and yet only rarely does everything need to
+dnl  be rebuilt for changes to those files.
+dnl
+dnl  "no-dependencies" also helps with the way we're setup to run
+dnl  AC_PROG_CXX only conditionally.  If dependencies are used then recent
+dnl  automake (eg 1.7.2) appends an AM_CONDITIONAL to AC_PROG_CXX, and then
+dnl  gets upset if it's not actually executed.
+dnl
+AM_INIT_AUTOMAKE([gnu no-dependencies $(top_builddir)/ansi2knr])
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
