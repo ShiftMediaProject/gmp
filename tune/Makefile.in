@@ -462,7 +462,7 @@ tune: tuneup
 
 # "mk" is multiplication in the karatsuba range
 # "st" is squaring in the toom-cook range, etc
-# "g" forms output graphs
+# "g" forms produce graphs
 
 mk:
 	./speed -s 5-30 -c mpn_mul_basecase.0 mpn_kara_mul_n
