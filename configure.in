@@ -87,14 +87,14 @@ esac],
 
 
 AC_ARG_ENABLE(cxx,
-AC_HELP_STRING([--enable-cxx],[enable C++ support [default=detect]]),
+AC_HELP_STRING([--enable-cxx],[enable C++ support [default=no]]),
 [case $enableval in
 yes|no|detect) ;;
 *)
   AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect])
   ;;
 esac],
-[enable_cxx=detect])
+[enable_cxx=no])
 
 
 AC_ARG_ENABLE(fft,
@@ -1109,8 +1109,8 @@ if test $enable_cxx != no; then
 fi
 AM_CONDITIONAL(HAVE_CXX, test $have_cxx = yes)
 
-# FIXME: This hack is because automake doesn't seem to like AM_CONDITIONAL
-# defined variables in libgmp_la_DEPENDENCIES.
+# FIXME: These hacks work around a couple of places automake 1.4f doesn't
+# like AM_CONDITIONALs.
 if test $have_cxx = yes; then
   PRINTF_CXX_OBJECTS='$(PRINTF_CXX_OBJECTS)'
   LIBCXXPRINTF_LA='libcxxprintf.la'
