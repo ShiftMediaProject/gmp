@@ -121,6 +121,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_srcdir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 
 EXTRA_DIST = rdtsc.asm
+noinst_HEADERS = speed.h
 
 @HAVE_PENTIUM_RDTSC_TRUE@PENTIUM_RDTSC_OBJ = @HAVE_PENTIUM_RDTSC_TRUE@rdtsc.lo
 
@@ -194,7 +195,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libspeed_la_SOURCES) $(speed_SOURCES) \
 $(tuneup_SOURCES)
-DIST_COMMON =  README Makefile.am Makefile.in
+HEADERS =  $(noinst_HEADERS)
+
+DIST_COMMON =  README $(noinst_HEADERS) Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -345,7 +348,7 @@ install-am: all-am
 install: install-am
 uninstall-am:
 uninstall: uninstall-am
-all-am: Makefile
+all-am: Makefile $(HEADERS)
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -399,9 +402,13 @@ distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
 
-# Force sqr_basecase.h to be built ready for tuneup.c, using DEPENDENCIES
-# etc doesn't work when ansi2knr gets run
-tuneup.c: sqr_basecase.h
+allprogs: $(EXTRA_PROGRAMS)
+
+# Don't know how to get tuneup$U.lo to depend on sqr_basecase.h, so just do
+# an explicit make of it.  A plain "make tuneup" will fail if used directly.
+tune:
+	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup
+	./tuneup
 .asm.o:
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
@@ -469,9 +476,6 @@ bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
 
 tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
 	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/tdiv_qr.c
-
-tune: tuneup
-	./tuneup
 
 # "mk" is multiplication in the karatsuba range
 # "st" is squaring in the toom-cook range, etc
