@@ -1,3 +1,28 @@
+2000-02-24  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/x86-defs.m4 (femms): Generate emms if 3dnow not available.
+	* mpn/x86/x86-defs.m4 (FRAME_popl): New macro.
+
+	* Makefile.am: Add info_TEXINFOS = gmp.texi
+
+	* mpn/x86/divrem_1.asm: Moved from mpn/x86/k6, allow size==0,
+	conditionalize loop versus decl/jnz.
+	* mpn/x86/mod_1.asm: Ditto.
+	* gmp.texi (mpn_divrem_1,mpn_mod_1): Add that size==0 is allowed.
+	* mpn/tests/ref.c (refmpn_divrem_1c,etc): Allow size==0.
+
+	* mpn/x86/k6/aors_n.asm: Avoid gas 1.92.3 leal displacement
+	expression problem.
+	* mpn/x86/k6/aorsmul_1.asm: Ditto.
+	* mpn/x86/k6/mul_1.asm: Ditto.
+	* mpn/x86/k6/mul_basecase.asm: Ditto
+	* mpn/x86/k7/aors_n.asm: Ditto.
+	* mpn/x86/k7/aorsmul_1.asm: Ditto.
+	* mpn/x86/k7/mul_1.asm: Ditto.
+	* mpn/x86/k7/mul_basecase.asm: Ditto.
+	* mpn/x86/k7/rshift.asm: Ditto.
+	* mpn/x86/README.family: Describe problem.
+
 2000-02-23  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/addmul_1.S: Amend comments, this code no longer used by
