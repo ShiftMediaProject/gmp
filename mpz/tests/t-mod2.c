@@ -27,7 +27,7 @@ MA 02111-1307, USA.
 
 
 struct {
-  const char  *s;
+  char           *s;
   int            odd, even;
   unsigned long  mod2, mod4, mod8;
 } data[] = {
