@@ -66,7 +66,7 @@ char *dss_func_names[] =
   "mpz_xinvert"
 };
 
-char dss_func_division[] = {0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1};
+char dss_func_division[] = {0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1};
 
 main (argc, argv)
      int argc;
