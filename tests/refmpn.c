@@ -1219,7 +1219,7 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 
   if (dsize == 1)
     {
-      rp[0] = refmpn_divrem_1 (qp, 0, np, nsize, dp[0]);
+      rp[0] = refmpn_divmod_1 (qp, np, nsize, dp[0]);
       return;
     }
   else
