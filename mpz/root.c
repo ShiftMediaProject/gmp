@@ -23,7 +23,6 @@ MA 02111-1307, USA. */
 #include <stdio.h>  /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
 
 int
 mpz_root (mpz_ptr root, mpz_srcptr u, unsigned long int nth)
