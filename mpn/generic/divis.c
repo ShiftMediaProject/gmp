@@ -30,11 +30,6 @@ MA 02111-1307, USA.
 #include "longlong.h"
 
 
-/* A bit mask of all the least significant zero bits of n. */
-#define LOW_ZEROS_MASK(n)  (((n) & -(n)) - 1)
-
-
-
 /* Determine whether {ap,asize} is divisible by {dp,dsize}.  Must have both
    operands normalized, meaning high limbs non-zero, except that asize==0 is
    allowed.

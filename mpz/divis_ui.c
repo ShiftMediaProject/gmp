@@ -26,10 +26,6 @@ MA 02111-1307, USA.
 #include "longlong.h"
 
 
-/* A bit mask of all the least significant zero bits of n. */
-#define LOW_ZEROS_MASK(n)  (((n) & -(n)) - 1)
-
-
 int
 mpz_divisible_ui_p (mpz_srcptr a, unsigned long d)
 {
