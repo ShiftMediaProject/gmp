@@ -83,7 +83,7 @@ PROLOGUE(mpn_gcd_1, gp)
 
 	mov	r18, r9			C l   hold y across call
 
-	cmpult	r6, r10, r2		C u   test x_twos < y_twos 
+	cmpult	r6, r10, r2		C u   test x_twos < y_twos
 
 	cmovne	r2, r6, r10		C l   common_twos = min(x_twos,y_twos)
 	bne	r5, L(one)		C U   no modexact if size==1
@@ -122,7 +122,7 @@ L(top):
 	unop				C l   \ force cmoveq into l0
 	unop				C u   /
 
-	C				C cmoveq2 L0, cmovne2 U0 
+	C				C cmoveq2 L0, cmovne2 U0
 
 	srl	r4, r8, r0		C U0  x = new_x >> twos
 	bne	r7, L(top)		C U1  stop when d==0

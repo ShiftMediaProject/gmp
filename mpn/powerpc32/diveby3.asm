@@ -79,7 +79,7 @@ L(top):
 	stwu	r8, 4(r3)	C dst[i-1] = q
 
 	C serialize
-	subfe	r7, r6, r7 	C l = s - carry
+	subfe	r7, r6, r7	C l = s - carry
 	bdnz	L(top)
 
 

@@ -39,14 +39,13 @@ MA 02111-1307, USA. */
    what the code runs as.
 
        ev4    ev5   ev6
-        1      3     1    sub    y = x - h
+        1      1     1    sub    y = x - h
        23     13     7    mulq   q = y * inverse
-       23     14     7    umulh  h = high (q * d)
+       23     15     7    umulh  h = high (q * d)
        --     --    --
        47     30    15
 
-   The time to load src[i+1] and establish x hides under under the umulh
-   latency.  */
+   The time to load src[i+1] and establish x hides under the umulh latency.  */
 
 void
 mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)

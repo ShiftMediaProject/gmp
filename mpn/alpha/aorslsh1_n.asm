@@ -29,6 +29,8 @@ C EV6:     4.375 (i.e., worse than separate mpn_lshift and mpn_add_n at 3.875)
 C TODO
 C  * Write special version for ev6, as this is a slowdown for 100 < n < 2200
 C    compared to separate mpn_lshift and mpn_add_n.
+C  * Use addq instead of sll for left shift, and similarly cmplt instead of srl
+C    for right shift.
 
 dnl  INPUT PARAMETERS
 define(`rp',`r16')

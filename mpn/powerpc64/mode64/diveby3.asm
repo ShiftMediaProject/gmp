@@ -74,7 +74,7 @@ L(top):
 	mulhdu	r6, r8, r0	C c = high(3*q)
 	stdu	r8, 8(r3)	C dst[i-1] = q
 
-	subfe	r7, r6, r7 	C l = s - carry
+	subfe	r7, r6, r7	C l = s - carry
 	bdnz	L(top)
 
 

@@ -45,7 +45,7 @@ PROLOGUE(mpn_divexact_1)
 
 	btl	$0, %eax
 	jnc	L(evn)			C skip bsfq unless divisor is even
-	
+
 L(odd):	movq	%rax, %rbx
 	shrl	%eax
 	andl	$127, %eax		C d/2, 7 bits

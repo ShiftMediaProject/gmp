@@ -85,7 +85,7 @@ deflit(`FRAME',STACK_SPACE)
 
 	sbbl	%edx, %esi
 
- 	jb	L(top)
+	jb	L(top)
 
 	movl	%ecx, %eax
 	movl	%edx, %ebx

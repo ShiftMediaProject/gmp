@@ -22,8 +22,9 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C P4: 4.0 cycles/limb if dst!=src1 and dst!=src2
-C     6.0 cycles/limb if dst==src1 or dst==src2
+C P4 Willamette, Northwood: 4.0 cycles/limb if dst!=src1 and dst!=src2
+C			    6.0 cycles/limb if dst==src1 or dst==src2
+C P4 Prescott:		    >= 5 cycles/limb
 
 
 C mp_limb_t mpn_sub_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,

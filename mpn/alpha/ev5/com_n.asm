@@ -54,7 +54,7 @@ C no increment and the first store in the loop (r24) is a repeat of dst[0].
 C
 C Note that the load for r24 after the possible pointer increment is done
 C before the explicit store to dst[0], in case src==dst.
-C 
+
 
 ASM_START()
 
@@ -113,8 +113,8 @@ L(top):
 	unop
 	unop
 
- 	fbeq	f0, L(done_2)
- 	unop
+	fbeq	f0, L(done_2)
+	unop
 	ldq	r22, 24(r17)		C src[i+3]
 	ldq	r23, 32(r17)		C src[i+4]
 

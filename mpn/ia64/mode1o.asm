@@ -237,7 +237,7 @@ ABI32(` addp4	r32 = 0, r32')		C M1  src entend
 }	;;
 
 	C Wait for table load.
-        C Hope for an L1 hit of 1 cycles to ALU, but could be more.
+	C Hope for an L1 hit of 1 cycles to ALU, but could be more.
 	setf.sig f7 = r3		C M2  inverse, 8 bits
 (p6)	ldf8	f11 = [r32], 8		C M1  src[1], if size!=1
 	;;

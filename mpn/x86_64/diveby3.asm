@@ -40,7 +40,7 @@ PROLOGUE(mpn_divexact_by3c)
 
 	movq	$0x5555555555555556, %r11
 	leaq	-1(%r11,%r11), %r10
-	leaq	-2(%r11,%r11), %r8	
+	leaq	-2(%r11,%r11), %r8
 	leaq	(up,n,8), up		C &up[n-1]
 
 	subq	cy, %rax

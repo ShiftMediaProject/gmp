@@ -63,7 +63,7 @@ deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
 
- 	leal	(%edx,%ecx,4), %edx	C dst end
+	leal	(%edx,%ecx,4), %edx	C dst end
 	negl	%ecx			C -size
 
 L(top):
@@ -73,8 +73,8 @@ L(top):
 	C edx	dst end
 	C mm0	carry
 
- 	movd	(%eax), %mm1
- 	movd	(%ebx), %mm2
+	movd	(%eax), %mm1
+	movd	(%ebx), %mm2
 	leal	4(%eax), %eax
 	leal	4(%ebx), %ebx
 	paddq	%mm2, %mm1

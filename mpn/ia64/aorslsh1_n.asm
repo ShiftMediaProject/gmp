@@ -166,7 +166,7 @@ ifdef(`HAVE_ABI_32',`
 	cmp.PRED	p8, p0 = w3, u3		C			M I
 	br		.LL01			C			B
 
-.Lb10: 	ld8		v2 = [vp], 8		C			M01
+.Lb10:	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01
 	add		n = -1, n		C loop count		M I
 	add		x1 = r11, r11		C			M I

@@ -26,7 +26,7 @@ C Itanium 2:  1.5
 
 C TODO
 C  * Rewrite function entry code using aorslsh1_n.asm style.
-C  * Micro-optimize feed-in and wind-down code.  
+C  * Micro-optimize feed-in and wind-down code.
 
 C INPUT PARAMETERS
 define(`rp',`r32')
