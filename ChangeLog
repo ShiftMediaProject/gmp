@@ -6,6 +6,13 @@
 	* memory.c: Add code enabled for DEBUG that adds special patterns
 	around allocated blocks.
 
+2000-05-05  Linus Nordberg  <linus@swox.se>
+
+	* gmp.texi (Miscellaneous Float Functions): Correct parameter list
+	for mpf_urandomb().
+
+	* configure.in: Invoke AC_REVISION.
+
 2000-05-05  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi: Use @dircategory and @direntry.
