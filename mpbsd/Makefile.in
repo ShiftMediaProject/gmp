@@ -127,8 +127,12 @@ mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
+# -I$(top_srcdir)/mpz is for #includes done by mpz .c files.  Perhaps most
+# compilers are smart enough to look in the same directory as the .c file
+# already, but lets make absolutely sure.
+#
 INCLUDES = -DBERKELEY_MP -D__GMP_WITHIN_GMP -D__gmpz_realloc=_mp_realloc \
-	-I$(top_srcdir)
+	-I$(top_srcdir) -I$(top_srcdir)/mpz
 
 
 # The mpz sources here all know to look for -DBERKELEY_MP to compile to in
