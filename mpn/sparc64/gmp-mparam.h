@@ -27,8 +27,18 @@ MA 02111-1307, USA. */
 #define BITS_PER_CHAR 8
 
 #ifndef KARATSUBA_MUL_THRESHOLD
-#define KARATSUBA_MUL_THRESHOLD 8
+#define KARATSUBA_MUL_THRESHOLD 16	/* tested 2000-04-02 */
+#endif
+#ifndef TOOM3_MUL_THRESHOLD
+#define TOOM3_MUL_THRESHOLD 265		/* tested 2000-04-02 */
 #endif
 #ifndef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD 10
+#define KARATSUBA_SQR_THRESHOLD 20	/* estimated 2000-04-02 */
 #endif
+#ifndef TOOM3_SQR_THRESHOLD
+#define TOOM3_SQR_THRESHOLD 400		/* estimated 2000-04-02 */
+#endif
+
+/* Tell the toom3 multiply implementation to call low-level mpn
+   functions instead of open-coding operations in C.  */
+#define USE_MORE_MPN 1
