@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-01  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (mpn_get_str): Rewrite to become sub-quadratic.
+	(mpn_dc_get_str, mpn_sb_get_str): New functions.
+
 2002-01-31  Kevin Ryde  <kevin@swox.se>
 
 	* gmpxx.h (cmp): Renamed from "compare".
@@ -45,7 +50,8 @@ MA 02111-1307, USA.
 
 2002-01-30  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/generic/set_str.c: Add sub-quadratic code.
+	* mpn/generic/set_str.c: Rewrite to become sub-quadratic.
+	(convert_blocks): New function.
 
 2002-01-30  Kevin Ryde  <kevin@swox.se>
 
