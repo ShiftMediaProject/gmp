@@ -917,7 +917,7 @@ if test "$gmp_no_asm_syntax_testing" != yes; then
 
   case $target in
     powerpc*-*-*)
-      GMP_ASM_POWERPC_REGISTERS
+      GMP_ASM_POWERPC_R_REGISTERS
       gmp_m4postinc="powerpc32/powerpc-defs.m4"
 
       case "$target" in
