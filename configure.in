@@ -493,13 +493,14 @@ GMP_INCLUDE(asm-defs.m4)
 
 dnl  config.m4 post-includes
 dnl  -----------------------
+changequote(,)dnl
 gmp_m4postinc=
 case "$target" in
   i?86*-*-* | k[5-8]*-*-* | pentium*-*-*)
-# Uncomment when there is a x86-defs.m4:
-#    gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
+    gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
     ;;
 esac
+changequote([,])dnl
 
 files=
 links=
