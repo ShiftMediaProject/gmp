@@ -1,5 +1,8 @@
 2001-02-05  Kevin Ryde  <kevin@swox.se>
 
+	* Makefile.am (libgmp, libmp): Construct from mpn/libmpn.la etc rather
+	than explicitly listed objects.
+
 	* urandom.h: Use rand() on mingw.
 
 	* mpn/powerpc64/lshift.asm,addsub_n.asm: Use r1 not 1.
