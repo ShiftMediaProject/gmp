@@ -2043,7 +2043,7 @@ struct __gmp_cmp_function
     mpq_t temp;
     mpq_init(temp);
     mpq_set_d(temp, d);
-    i = -mpq_cmp(temp, q);
+    i = mpq_cmp(temp, q);
     mpq_clear(temp);
     return i;
   }
@@ -2130,7 +2130,7 @@ struct __gmp_cmp_function
     mpfr_clear(temp);
     return i;
   }
-  static bool eval(double d, mpfr_srcptr f)
+  static int eval(double d, mpfr_srcptr f)
   {
     int i;
     mpfr_t temp;
