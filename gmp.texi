@@ -1703,10 +1703,11 @@ identify powers of two or other special forms, because such inputs will
 usually be very rare and testing every time would be wasteful.
 
 @item @code{si} and @code{ui} functions
-The @code{si} and @code{ui} functions exist for convenience and should be used
-where applicable.  But if for example an @code{mpz_t} contains a value that
-fits in an @code{unsigned long} there's no need extract it and call a
-@code{ui} function, just use the regular @code{mpz} function.
+The @code{ui} functions and the small number of @code{si} functions exist for
+convenience and should be used where applicable.  But if for example an
+@code{mpz_t} contains a value that fits in an @code{unsigned long} there's no
+need extract it and call a @code{ui} function, just use the regular @code{mpz}
+function.
 
 @item Number Sequences
 Functions like @code{mpz_fac_ui}, @code{mpz_fib_ui} and @code{mpz_bin_uiui}
@@ -2329,8 +2330,8 @@ same way as for normal C @code{int} arithmetic.
 
 @sp 1
 Divide @var{n} by @var{d}, forming a quotient @var{q} and/or remainder
-@var{r}.  For the @code{2exp} functions the divisor is @m{2^b, 2^@var{b}}.
-The rounding is in three styles, each suiting different applications.
+@var{r}.  For the @code{2exp} functions, @ma{@var{d}=2^@var{b}}.  The rounding
+is in three styles, each suiting different applications.
 
 @itemize @bullet
 @item
@@ -2530,8 +2531,11 @@ Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
 @end deftypefun
 
 @deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx void mpz_lcm_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long @var{op2})
 @cindex Least common multiple functions
 Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
+@var{rop} is always positive, irrespective of the signs of @var{op1} and
+@var{op2}.  @var{rop} will be zero if either @var{op1} or @var{op2} is zero.
 @end deftypefun
 
 @deftypefun int mpz_invert (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
