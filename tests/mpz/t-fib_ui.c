@@ -1,6 +1,6 @@
 /* Test mpz_fib_ui and mpz_fib2_ui.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -47,6 +47,23 @@ MA 02111-1307, USA. */
 #define MPZ_FIB_SIZE_FLOAT(n) \
   ((mp_size_t) ((n) * 0.6942419 / BITS_PER_MP_LIMB + 1))
 
+
+/* If the data put into the table by mpn/generic/fib_ui.c doesn't match the
+   size setup by gmp-impl.h then there'll be zero entries at the end.  Check
+   that this hasn't happened.  Any problem here should be blamed on the
+   program at the end of mpn/generic/fib_ui.c, which generates the data.
+
+   FIB_TABLE(0) is of course meant to be zero, so skip that. */
+
+void
+check_fib_table (void)
+{
+  int  i;
+  for (i = 1; i <= FIB_TABLE_LIMIT; i++)
+    ASSERT_ALWAYS (FIB_TABLE(i) != 0);
+}
+
+
 int
 main (int argc, char *argv[])
 {
@@ -60,6 +77,8 @@ main (int argc, char *argv[])
     limit = ULONG_MAX;
   else if (argc > 1)
     limit = atoi (argv[1]);
+
+  check_fib_table ();
 
   /* start at n==0 */
   mpz_init_set_ui (want_fn1, 1);  /* F[-1] */
