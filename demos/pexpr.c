@@ -201,6 +201,7 @@ setup_error_handler ()
   sigaction (SIGSEGV, &act, 0);
   sigaction (SIGBUS, &act, 0);
   sigaction (SIGFPE, &act, 0);
+  sigaction (SIGABRT, &act, 0);
 }
 #endif /* ! _WIN32 && ! __DJGPP__ */
 
