@@ -506,6 +506,7 @@ freq_attr_get_invent (int help)
 
        CPU: AMD Athlon(tm) Processor (755.29-MHz 686-class CPU)
        CPU: Pentium 4 (1707.56-MHz 686-class CPU)
+       CPU: i486 DX4 (486-class CPU)
 
    This is useful on FreeBSD 4.x, where there's no sysctl machdep.tsc_freq
    or machdep.i586_freq.
@@ -521,6 +522,7 @@ freq_bsd_dmesg (int help)
   char    buf[256], *p;
   double  val;
   int     ret = 0;
+  int     end;
 
   HELP ("BSD /var/run/dmesg.boot file");
 
@@ -532,7 +534,9 @@ freq_bsd_dmesg (int help)
             {
               for (p = buf; *p != '\0'; p++)
                 {
-                  if (sscanf (p, "(%lf-MHz", &val) == 1)
+                  end = 0;
+                  if (sscanf (p, "(%lf-MHz%n", &val, &end) == 1
+                      && end != 0)
                     {
                       speed_cycletime = 1e-6 / val;
                       if (speed_option_verbose)
