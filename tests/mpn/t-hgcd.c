@@ -70,7 +70,7 @@ main (int argc, char **argv)
   int i, j, chain_len;
   gmp_randstate_ptr rands;
   mpz_t bs;
-  unsigned long bsi, size_range;
+  unsigned long size_range;
 
   tests_start ();
   rands = RANDS;
@@ -196,7 +196,6 @@ one_test (mpz_t a, mpz_t b, int i)
   mp_ptr hgcd_init_tp;
   mp_ptr qstack_tp;
   mp_ptr hgcd_tp;
-  int k;
   
   asize = a->_mp_size;
   bsize = b->_mp_size;
