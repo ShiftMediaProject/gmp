@@ -19,6 +19,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
@@ -28,6 +32,7 @@ MA 02111-1307, USA. */
 
 #define SGN(x) ((x) < 0 ? -1 : (x) > 0 ? 1 : 0)
 
+int
 ref_mpq_cmp_ui (mpq_t a, unsigned long int bn, unsigned long int bd)
 {
   mpz_t ai, bi;
