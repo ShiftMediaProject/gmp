@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 21 Oct 2003.  An up-to-date version is available at
+  This file current as of 22 Oct 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -132,9 +132,8 @@ MA 02111-1307, USA.
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
      <code>count_leading_zeros</code>.
-<li> Toom3 <code>USE_MORE_MPN</code> could use a low to high cache localized
-     evaluate and interpolate.  The necessary <code>mpn_divexact_by3c</code>
-     exists.
+<li> Toom3 could use a low to high cache localized evaluate and interpolate.
+     The necessary <code>mpn_divexact_by3c</code> exists.
 <li> <code>mpn_mul_basecase</code> on NxM with big N but small M could try for
      better cache locality by taking N piece by piece.  The current code could
      be left available for CPUs without caching.  Depending how karatsuba etc
