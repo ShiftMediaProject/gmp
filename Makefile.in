@@ -134,7 +134,7 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/swap.lo mpz/tdiv_ui.lo mpz/tdiv_q.lo mpz/tdiv_q_2exp.lo mpz/tdiv_q_ui.lo \
   mpz/tdiv_qr.lo mpz/tdiv_qr_ui.lo mpz/tdiv_r.lo mpz/tdiv_r_2exp.lo \
   mpz/tdiv_r_ui.lo mpz/tstbit.lo mpz/ui_pow_ui.lo mpz/urandomb.lo \
-  mpz/urandomn.lo mpz/xor.lo
+  mpz/urandomm.lo mpz/xor.lo
 
 MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/cmp_ui.lo mpq/div.lo mpq/get_d.lo mpq/get_den.lo mpq/get_num.lo \
