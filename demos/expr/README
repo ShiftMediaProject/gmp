@@ -135,9 +135,9 @@ The following is the full set of functions,
 
         mpz_expr
             abs bin clrbit cmp cmpabs congruent_p divisible_p even_p fib fac
-            gcd hamdist invert jacobi kronecker lcm max min nextprime odd_p
-            perfect_power_p perfect_square_p popcount powm probab_prime_p
-            root scan0 scan1 setbit sgn sqrt
+            gcd hamdist invert jacobi kronecker lcm lucnum max min nextprime
+            odd_p perfect_power_p perfect_square_p popcount powm
+            probab_prime_p root scan0 scan1 setbit sgn sqrt
 
         mpq_expr
             abs, cmp, den, max, min, num, sgn

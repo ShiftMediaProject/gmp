@@ -151,6 +151,7 @@ static __gmp_const struct mpexpr_operator_t  _mpz_expr_standard_table[] = {
   { "kronecker", (mpexpr_fun_t) mpz_kronecker,     MPEXPR_TYPE_I_BINARY      },
   { "lcm",       (mpexpr_fun_t) mpz_lcm,           MPEXPR_TYPE_BINARY
                                                    | MPEXPR_TYPE_PAIRWISE    },
+  { "lucnum",    (mpexpr_fun_t) mpz_lucnum_ui,     MPEXPR_TYPE_UNARY_UI      },
   { "max",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_MAX
                                                    | MPEXPR_TYPE_PAIRWISE    },
   { "min",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_MIN
