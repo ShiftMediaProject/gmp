@@ -1,5 +1,5 @@
 Copyright 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999 2000, 2001,
-	  2002, 2003, 2004 Free Software Foundation, Inc.
+	  2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 .
 This file is part of the GNU MP Library.
 .
@@ -17,6 +17,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
+
+2005-02-17  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/divrem_1.asm: Add preinv entry point.
 
 2005-01-13  Torbjorn Granlund  <tege@swox.com>
 
