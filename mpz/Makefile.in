@@ -95,14 +95,12 @@ install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
-#AUTOMAKE_OPTIONS = gnu no-dependencies
-
 
 AUTOMAKE_OPTIONS = gnu
 
-# $top_srcdir is needed for `#include "gmp-impl.h"'.  FIXME?
-# FIXME: Need `-I$(srcdir)' and `-I.'?  Where to find config.h?
-INCLUDES = -I$(top_srcdir)
+# $top_srcdir is needed for `#include "gmp-impl.h"'.
+# .. is needed for config.h and gmp-mparam.h.
+INCLUDES = -I$(top_srcdir) -I..
 
 EXTRA_DIST = tests dmincl.c
 
@@ -128,12 +126,11 @@ libmpz_la_SOURCES = \
 
 subdir = mpz
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 LTLIBRARIES =  $(noinst_LTLIBRARIES)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
+DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@

@@ -3271,12 +3271,19 @@ else
 fi
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
 gmp_cv_check_asm_lsym_prefix="L"
-for gmp_tmp_pre in .L $ L$; do
+for gmp_tmp_pre in L .L $ L$; do
   cat > conftest.s <<EOF
+dummy${gmp_cv_check_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_check_asm_label_suffix}
 	.byte 0
 EOF
-  if { (eval echo configure:3280: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+  if { (eval echo configure:3281: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+    $NM conftest.o >/dev/null 2>&1
+    gmp_rc=$?
+    if test "$gmp_rc" != "0"; then
+      echo "configure: $NM failure, using default"
+      break
+    fi
     if $NM conftest.o | grep gurkmacka >/dev/null; then true; else
       gmp_cv_check_asm_lsym_prefix="$gmp_tmp_pre"
       break
@@ -3294,7 +3301,7 @@ echo "$ac_t""$gmp_cv_check_asm_lsym_prefix" 1>&6
 echo "define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}>)" >> $gmp_tmpconfigm4
 
 echo $ac_n "checking how to define a 32-bit word... $ac_c" 1>&6
-echo "configure:3298: checking how to [define] a 32-bit word" 1>&5
+echo "configure:3305: checking how to [define] a 32-bit word" 1>&5
 if test "${gmp_cv_check_asm_w32+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3311,7 +3318,7 @@ for gmp_tmp_op in .long .word; do
 foo${gmp_cv_check_asm_label_suffix}
 	.byte	0
 EOF
-  if { (eval echo configure:3315: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+  if { (eval echo configure:3322: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
     
     gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
          -e 's;[^1-9]*\([0-9]*\).*;\1;'`
@@ -3332,17 +3339,17 @@ echo "$ac_t""$gmp_cv_check_asm_w32" 1>&6
 echo "define(<W32>, <$gmp_cv_check_asm_w32>)" >> $gmp_tmpconfigm4
 
 echo $ac_n "checking if symbols are prefixed by underscore... $ac_c" 1>&6
-echo "configure:3336: checking if symbols are prefixed by underscore" 1>&5
+echo "configure:3343: checking if symbols are prefixed by underscore" 1>&5
 if test "${gmp_cv_check_asm_underscore+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3341 "configure"
+#line 3348 "configure"
 #include "confdefs.h"
 void underscore_test(void) {
 return; }
 EOF
-if { (eval echo configure:3346: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:3353: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   if grep _underscore_test conftest* >/dev/null; then
     gmp_cv_check_asm_underscore=yes
   else
@@ -3369,7 +3376,7 @@ echo 'define(<GSYM_PREFIX>, <>)' >> $gmp_tmpconfigm4
 fi    
 
 echo $ac_n "checking if .align assembly directive is logarithmic... $ac_c" 1>&6
-echo "configure:3373: checking if .align assembly directive is logarithmic" 1>&5
+echo "configure:3380: checking if .align assembly directive is logarithmic" 1>&5
 if test "${gmp_cv_check_asm_align_log+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3387,7 +3394,7 @@ foo$gmp_cv_check_asm_label_suffix
 	.byte	2
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&5"
-if { (eval echo configure:3391: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
+if { (eval echo configure:3398: \"$ac_assemble\") 1>&5; (eval $ac_assemble) 2>&5; }; then
   
   gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
        -e 's;[^1-9]*\([0-9]*\).*;\1;'`
@@ -3487,8 +3494,8 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#define C_SYMBOL_NAME(name) name' >asm-syntax.h;;
 esac
 
-files=
-links=
+# Set up `gmp_links'.  It's a list of link:file pairs that configure will
+# process to create link -> file.
 gmp_links=
 
 # Include assembly definition files and link them to mpn/.
@@ -3555,6 +3562,17 @@ for m in $gmp_mulfunc_files; do
   rm -f mpn/$m.asm
   for d in $path; do
     if test -f $srcdir/mpn/$d/$m.asm; then
+      # find entry points
+
+      gmp_ep=`grep -h "^[ 	]*MULFUNC_PROLOGUE" $srcdir/mpn/$d/$m.asm \
+             | sed 's/MULFUNC_PROLOGUE(_*\(.*\))/\1/'`
+
+      for gmp_tmp in $gmp_ep; do
+        cat >>confdefs.h <<EOF
+#define HAVE_NATIVE_${gmp_tmp} 1
+EOF
+
+      done
       eval mf=\$gmp_mf_$m
       for f in $mf; do
         gmp_links="$gmp_links mpn/$f.asm:mpn/$d/$m.asm"
@@ -3570,38 +3588,46 @@ for m in $gmp_mulfunc_files; do
   done
 done
 
+# Create links for .asm, .S, .s, or .c files.
 for tmp_fn in ${gmp_mpn_functions} ; do
   rm -f mpn/${tmp_fn}.Ssc mpn/${tmp_fn}.asm
+  gmp_ep=
+  gmp_tmp=
   for tmp_dir in $path ; do
     if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.asm"
-      links="$links mpn/${tmp_fn}.asm"
       gmp_links="$gmp_links mpn/${tmp_fn}.asm:mpn/${tmp_dir}/${tmp_fn}.asm"
+
+      gmp_ep=`grep -h "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm \
+             | sed 's/PROLOGUE(_*\(.*\))/\1/'`
+
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.S ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.S"
-      links="$links mpn/${tmp_fn}.S"
       gmp_links="$gmp_links mpn/${tmp_fn}.S:mpn/${tmp_dir}/${tmp_fn}.S"
+
+      gmp_ep=`grep -h "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.S \
+             | sed 's/PROLOGUE(C_SYMBOL_NAME(_*\(.*\)))/\1/'`
+
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.s ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.s"
-      links="$links mpn/${tmp_fn}.s"
       gmp_links="$gmp_links mpn/${tmp_fn}.s:mpn/${tmp_dir}/${tmp_fn}.s"
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.c ; then
-      files="$files mpn/${tmp_dir}/${tmp_fn}.c"
-      links="$links mpn/${tmp_fn}.c"
       gmp_links="$gmp_links mpn/${tmp_fn}.c:mpn/${tmp_dir}/${tmp_fn}.c"
       break
     fi
   done
+  for gmp_tmp in $gmp_ep; do
+    cat >>confdefs.h <<EOF
+#define HAVE_NATIVE_${gmp_tmp} 1
+EOF
+
+  done
 done
 
+# Create link for gmp-mparam.h.
 for tmp_dir in $path ; do
   rm -f gmp-mparam.h
   if test -f $srcdir/mpn/${tmp_dir}/gmp-mparam.h ; then
-    files="$files mpn/${tmp_dir}/gmp-mparam.h"
-    links="$links gmp-mparam.h"
     gmp_links="$gmp_links gmp-mparam.h:mpn/${tmp_dir}/gmp-mparam.h"
     break
   fi
@@ -3715,7 +3741,7 @@ config_headers="\\
 config_links="\\
   $gmp_links"
 config_commands="\\
-  default-1 default-2"
+  default-1"
 
 ac_cs_usage="\\
 \\\`$CONFIG_STATUS' instantiates files from templates according to the
@@ -3808,7 +3834,6 @@ Try \\\`$CONFIG_STATUS --help' for more information."; exit 1 ;;
   'mpq/tests/Makefile' ) CONFIG_FILES="\$CONFIG_FILES mpq/tests/Makefile" ;;
   '$gmp_links' ) CONFIG_LINKS="\$CONFIG_LINKS $gmp_links" ;;
   'default-1' ) CONFIG_COMMANDS="\$CONFIG_COMMANDS default-1" ;;
-  'default-2' ) CONFIG_COMMANDS="\$CONFIG_COMMANDS default-2" ;;
   'config.h' ) CONFIG_HEADERS="\$CONFIG_HEADERS config.h:config.in" ;;
 
   # This is an error.
@@ -4254,8 +4279,7 @@ for ac_file in .. $CONFIG_COMMANDS; do if test "x$ac_file" != x..; then
   ac_source=`echo "$ac_file" | sed 's%[^:]*:%%'`
 
   case "$ac_dest" in
-    default-1 ) test -z "$CONFIG_HEADERS" || echo timestamp > stamp-h ;;
-    default-2 ) 
+    default-1 ) 
 test x"$AMDEP" != x"" ||
 for mf in $CONFIG_FILES; do
   case "$mf" in

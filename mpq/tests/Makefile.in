@@ -98,19 +98,18 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -I../..
 LDADD = ../../libgmp.la
 
 noinst_PROGRAMS = t-cmp t-cmp_ui t-get_d
 subdir = mpq/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 noinst_PROGRAMS =  t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-get_d$(EXEEXT)
 PROGRAMS =  $(noinst_PROGRAMS)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
