@@ -1,4 +1,27 @@
+2000-12-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/cray/mul_1.c: Use dynamic arrays, get rid of TMP_*.
+	* mpn/cray/addmul_1.c: Likewise.
+	* mpn/cray/submul_1.c: Likewise.
+	* mpn/cray/add_n.c: Likewise.
+	* mpn/cray/sub_n.c: Likewise.
+
+	* configure.in (default cc_cflags,cc_64_cflags): Remove -g/add -O.
+	(mips*-*-irix[6789]*]): Remove -g from cc_*_cflags.
+
 2000-12-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_n.c: Delete K&R function headers.
+
+	* mpn/generic/mul_n.c (mpn_kara_mul_n): Clean up type confusion
+	between mp_limb_t and mp_size_t.
+	(mpn_kara_sqr_n): Likewise.
+
+	* mpn/generic/mul_n.c (mpn_kara_mul_n): Use mpn_incr_u.
+	(mpn_kara_sqr_n): Likewise.
+
+	* mpn/generic/mul_n.c (mpn_kara_mul_n): Change handling of `sign'
+	to work around GCC 2.8.1 MIPS bug.
 
 	* configure.in (implied alpha*-cray-unicos*): Remove -g from cc_cflags.
 
