@@ -1016,7 +1016,7 @@ __GMP_DECLSPEC unsigned long int mpz_remove __GMP_PROTO ((mpz_ptr, mpz_srcptr, m
 __GMP_DECLSPEC int mpz_root __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 
 #define mpz_rootrem __gmpz_rootrem
-__GMP_DECLSPEC int mpz_rootrem __GMP_PROTO ((mpz_ptr,mpz_ptr, mpz_srcptr, unsigned long int));
+__GMP_DECLSPEC void mpz_rootrem __GMP_PROTO ((mpz_ptr,mpz_ptr, mpz_srcptr, unsigned long int));
 
 #define mpz_rrandomb __gmpz_rrandomb
 __GMP_DECLSPEC void mpz_rrandomb __GMP_PROTO ((mpz_ptr, gmp_randstate_t, unsigned long int));

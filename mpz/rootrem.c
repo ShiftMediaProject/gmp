@@ -1,7 +1,7 @@
 /* mpz_rootrem(root, rem, u, nth) --  Set ROOT to floor(U^(1/nth)) and
-   set REM to the remainder.  Return an indication if the result is exact.
+   set REM to the remainder.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-int
+void
 mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
 {
   mp_ptr rootp, up, remp;
@@ -47,7 +47,7 @@ mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
       if (root != NULL)
 	SIZ(root) = 0;
       SIZ(rem) = 0;
-      return 1;			/* exact result */
+      return;
     }
 
   un = ABS (us);
@@ -82,6 +82,4 @@ mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
     __GMP_FREE_FUNC_LIMBS (rootp, rootn);
 
   SIZ(rem) = remn;
-
-  return remn == 0;
 }
