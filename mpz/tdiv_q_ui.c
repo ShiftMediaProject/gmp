@@ -49,7 +49,6 @@ mpz_tdiv_q_ui (mpz_ptr quot, mpz_srcptr dividend, unsigned long int divisor)
   if (divisor > GMP_NUMB_MAX)
     {
       mp_limb_t dp[2], rp[2];
-      TMP_DECL (mark);
 
       if (nn == 1)		/* tdiv_qr requirements; tested above for 0 */
 	{
@@ -58,11 +57,9 @@ mpz_tdiv_q_ui (mpz_ptr quot, mpz_srcptr dividend, unsigned long int divisor)
 	  return rl;
 	}
 
-      TMP_MARK (mark);
       dp[0] = divisor & GMP_NUMB_MASK;
       dp[1] = divisor >> GMP_NUMB_BITS;
       mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
-      TMP_FREE (mark);
       rl = rp[0] + (rp[1] << GMP_NUMB_BITS);
       qn = nn - 2 + 1; qn -= qp[qn - 1] == 0; qn -= qn != 0 && qp[qn - 1] == 0;
     }
