@@ -964,7 +964,7 @@ foreach my $file_full (@files) {
       
       my $renaming;
       foreach my $fun (@{$funs}) {
-        if ($mpX eq 'mpn_') {
+        if ($mpX eq 'mpn_' && $lang eq '.c') {
           $renaming .= "\t\t-DHAVE_NATIVE_mpn_$fun=1 \\\n";
         }
 
