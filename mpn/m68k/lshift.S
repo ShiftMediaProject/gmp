@@ -27,7 +27,6 @@ MA 02111-1307, USA. */
   cnt		(sp + 12)
 */
 
-#include "sysdep.h"
 #include "asm-syntax.h"
 
 #define res_ptr a1

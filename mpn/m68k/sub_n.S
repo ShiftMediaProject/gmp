@@ -28,7 +28,6 @@ MA 02111-1307, USA. */
   size		(sp + 12)
 */
 
-#include "sysdep.h"
 #include "asm-syntax.h"
 
 	TEXT
