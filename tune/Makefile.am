@@ -1,0 +1,161 @@
+## Process this file with automake to generate Makefile.in
+
+# Copyright (C) 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+
+
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_srcdir)/ansi2knr
+
+INCLUDES = -I$(top_srcdir)
+
+EXTRA_DIST = rdtsc.asm
+
+if HAVE_PENTIUM_RDTSC
+PENTIUM_RDTSC_OBJ = rdtsc.lo
+endif
+
+# No dependency on libgmp, so can use libgmptune instead for tune program
+EXTRA_LTLIBRARIES = libspeed.la
+libspeed_la_SOURCES = common.c time.c noop.c
+libspeed_la_LIBADD = $(PENTIUM_RDTSC_OBJ)
+
+# Both libspeed and the programs are built static-only since static is
+# fastest and will be preferred by users who care about speed.
+LDFLAGS = -static
+LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
+
+EXTRA_PROGRAMS = speed tuneup
+
+tuneup_SOURCES = tuneup.c
+tuneup_LDADD = libspeed.la libgmptune.a -lm
+tuneup.o: libgmptune.a
+
+speed_SOURCES = speed.c
+
+SQR_CLEANFILES = sqr_basecase.c sqr_basecase.h sqr_basecase.asm
+CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
+	$(SQR_CLEANFILES) libgmptune.a libgmptmp.a
+
+
+# This bit is the same as mpn/Makefile.am
+SUFFIXES = .asm
+.asm.o:
+	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.asm.obj:
+	$(M4) $(M4FLAGS) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.asm.lo:
+	$(M4) $(M4FLAGS) -DPIC -DOPERATION_$* $< >tmp-$*.s
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
+	rm -f tmp-$*.s
+
+
+# Recompiled versions of $(LIBGMPTUNE_OBJS) are always used.  sqr_basecase.o
+# is replaced if it's mpn/generic/sqr_basecase.c (due to the fixed size
+# temporary array), or sqr_basecase.asm with a KARATSUBA_SQR_THRESHOLD_MAX
+# (because that says it normally supports only up to
+# KARATSUBA_SQR_THRESHOLD).
+
+SQR_GENERIC_MAX = 200
+
+LIBGMPTUNE_OBJS = mul_n.o mul.o bz_divrem_n.o tdiv_qr.o
+
+libgmptune.a: $(top_builddir)/.libs/libgmp.a $(LIBGMPTUNE_OBJS)
+	cp -f $(top_builddir)/.libs/libgmp.a libgmptmp.a
+	ar r libgmptmp.a $(LIBGMPTUNE_OBJS)
+	rm -f $(SQR_CLEANFILES)
+	echo "" >sqr_basecase.h
+	if test -f $(top_builddir)/mpn/sqr_basecase.c; then		\
+	  $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-generic;			\
+        else								\
+	  if grep KARATSUBA_SQR_THRESHOLD_MAX				\
+	      $(top_builddir)/mpn/sqr_basecase.asm >/dev/null; then	\
+	    $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-asm;			\
+	  fi								\
+	fi
+	mv libgmptmp.a libgmptune.a
+
+sqr-basecase-generic:
+	cp $(top_builddir)/mpn/sqr_basecase.c .
+	$(MAKE) $(AM_MAKEFLAGS) \
+		CFLAGS='$(CFLAGS) -DKARATSUBA_THRESHOLD=$(SQR_GENERIC_MAX)' \
+		sqr_basecase.o
+	ar r libgmptmp.a sqr_basecase.o
+	echo '#define KARATSUBA_SQR_MAX  $(SQR_GENERIC_MAX)' >sqr_basecase.h
+
+sqr-basecase-asm:
+	cp $(top_builddir)/mpn/sqr_basecase.asm .
+	$(MAKE) $(AM_MAKEFLAGS) \
+		M4FLAGS='-DKARATSUBA_SQR_THRESHOLD_OVERRIDE=KARATSUBA_SQR_THRESHOLD_MAX' \
+		sqr_basecase.o
+	ar r libgmptmp.a sqr_basecase.o
+	echo "#define KARATSUBA_SQR_MAX  `sed -n 's/def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' sqr_basecase.asm`" >sqr_basecase.h
+
+
+THRESHOLDS = -DTUNE_PROGRAM_BUILD=1
+
+mul_n.o: $(top_builddir)/mpn/mul_n$U.c
+	$(COMPILE) $(THRESHOLDS) -c $<
+
+mul.o: $(top_builddir)/mpn/mul$U.c
+	$(COMPILE) $(THRESHOLDS) -c $<
+
+bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n$U.c
+	$(COMPILE) $(THRESHOLDS) -c $<
+
+tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr$U.c
+	$(COMPILE) $(THRESHOLDS) -c $<
+
+
+tune: tuneup
+	./tuneup
+
+
+
+# "mk" is multiplication in the karatsuba range
+# "st" is squaring in the toom-cook range, etc
+# "g" forms produce graphs
+
+mk:
+	./speed -s 5-30 -c mpn_mul_basecase.0 mpn_kara_mul_n
+
+MTS = -s 50-150 -c
+mt:
+	./speed $(MTS) mpn_kara_mul_n mpn_toom3_mul_n | less
+mtg:
+	./speed $(MTS) -P mtg mpn_kara_mul_n mpn_toom3_mul_n
+
+sk:
+	./speed -s 5-30 -c mpn_sqr_basecase mpn_kara_sqr_n mpn_sqr_n
+
+STS = -s 50-150 -c
+st:
+	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n | less
+stg:
+	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
+
+
+graph:
+	./speed -s 1-5000 -f 1.02 -P graph mpn_mul_n mpn_sqr
+	gnuplot graph.gnuplot
