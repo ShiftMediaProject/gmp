@@ -12,16 +12,16 @@ CFLAGS = -g -O
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
 TEST_SRCS = t-mul.c t-tdiv.c t-tdiv_ui.c t-fdiv.c t-fdiv_ui.c t-gcd.c \
-  dive.c t-sqrtrem.c convert.c io.c logic.c t-powm.c t-powm_ui.c \
+  dive.c t-sqrtrem.c convert.c io.c logic.c bit.c t-powm.c t-powm_ui.c \
   reuse.c
 TEST_OBJS = t-mul.o t-tdiv.o t-tdiv_ui.o t-fdiv.o t-fdiv_ui.o t-gcd.o \
- dive.o t-sqrtrem.o convert.o io.o logic.o t-powm.o t-powm_ui.o \
+ dive.o t-sqrtrem.o convert.o io.o logic.o bit.o t-powm.o t-powm_ui.o \
  reuse.o
 TESTS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
- dive t-sqrtrem convert io logic t-powm t-powm_ui reuse
+ dive t-sqrtrem convert io logic bit t-powm t-powm_ui reuse
 
 check: Makefile st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-dive \
-  st-sqrtrem st-convert st-io st-logic st-powm st-powm_ui st-reuse
+  st-sqrtrem st-convert st-io st-logic st-bit st-powm st-powm_ui st-reuse
 	@echo "The tests passed."
 
 st-mul: t-mul
@@ -57,6 +57,9 @@ st-io: io
 st-logic: logic
 	./logic
 	touch $@
+st-bit: bit
+	./bit
+	touch $@
 st-powm: t-powm
 	./t-powm
 	touch $@
@@ -89,6 +92,8 @@ io: io.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 logic: logic.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+bit: bit.o $(TEST_LIBS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 t-powm: t-powm.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 t-powm_ui: t-powm_ui.o $(TEST_LIBS)
@@ -107,6 +112,7 @@ t-sqrtrem.o: $(srcdir)/t-sqrtrem.c
 convert.o: $(srcdir)/convert.c
 io.o: $(srcdir)/io.c
 logic.o: $(srcdir)/logic.c
+bit.o: $(srcdir)/bit.c
 t-powm.o: $(srcdir)/t-powm.c
 t-powm_ui.o: $(srcdir)/t-powm_ui.c
 reuse.o: $(srcdir)/reuse.c
