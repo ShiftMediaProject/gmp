@@ -629,6 +629,62 @@ main ()
 }
 ])
 
+GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization 2],
+[/* The following is mis-compiled by Intel ia-64 icc version 1.8 under
+    "icc -O3",  After several calls, the function writes parial garbage to
+    the result vector.  Perhaps relates to the chk.a.nc insn.  This code needs
+    to be run to show the problem, but that's fine, the offending cc is a
+    native-only compiler so we don't have to worry about cross compiling.  */
+
+#include <stdlib.h>
+void
+lshift_com (rp, up, n, cnt)
+  unsigned long *rp;
+  unsigned long *up;
+  long n;
+  unsigned cnt;
+{
+  unsigned long high_limb, low_limb;
+  unsigned tnc;
+  long i;
+  up += n;
+  rp += n;
+  tnc = 8 * sizeof (unsigned long) - cnt;
+  low_limb = *--up;
+  high_limb = low_limb << cnt;
+  for (i = n - 1; i != 0; i--)
+    {
+      low_limb = *--up;
+      *--rp = ~(high_limb | (low_limb >> tnc));
+      high_limb = low_limb << cnt;
+    }
+  *--rp = ~high_limb;
+}
+int
+main ()
+{
+  unsigned long *r, *r2;
+  unsigned long a[88 + 1];
+  long i;
+  for (i = 0; i < 88 + 1; i++)
+    a[i] = ~0L;
+  r = malloc (10000 * sizeof (unsigned long));
+  r2 = r;
+  for (i = 0; i < 528; i += 22)
+    {
+      lshift_com (r2, a,
+		  i / (8 * sizeof (unsigned long)) + 1,
+		  i % (8 * sizeof (unsigned long)));
+      r2 += 88 + 1;
+    }
+  if (r[2048] != 0 || r[2049] != 0 || r[2050] != 0 || r[2051] != 0 ||
+      r[2052] != 0 || r[2053] != 0 || r[2054] != 0)
+    abort ();
+  return 0;
+}
+])
+
+
 # A certain _GLOBAL_OFFSET_TABLE_ problem in past versions of gas, tickled
 # by recent versions of gcc.
 #
