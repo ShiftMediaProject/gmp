@@ -975,6 +975,122 @@ speed_mpn_mul_fft_sqr (struct speed_params *s)
 
 
 double
+speed_mpn_hgcd (struct speed_params *s)
+{
+  mp_ptr wp;
+  mp_size_t hgcd_init_scratch = mpn_hgcd_init_itch (s->size);
+  mp_size_t qstack_scratch = qstack_itch (s->size);
+  mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
+  mp_ptr ap;
+  mp_ptr bp;
+  
+  struct hgcd hgcd;
+  struct qstack quotients;
+  int res;
+  unsigned i;
+  double t;
+  TMP_DECL (marker);
+
+  if (s->size < 2)
+    return -1;
+
+  TMP_MARK (marker);
+  
+  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
+  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
+
+  MPN_COPY (ap, s->xp, s->size);
+  MPN_COPY (bp, s->yp, s->size);
+  ap[s->size - 1] |= 1;
+  bp[s->size - 1] |= 1;
+
+  /* We must have a >= b */
+  if (mpn_cmp (ap, bp, s->size) < 0)
+    MP_PTR_SWAP (ap, bp);
+    
+  mpn_hgcd_init (&hgcd, s->size,
+		 SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp));
+  qstack_init (&quotients, s->size,
+	       SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp),
+	       qstack_scratch);
+  wp = SPEED_TMP_ALLOC_LIMBS (hgcd_scratch, s->align_wp);
+
+  speed_starttime (); 
+  i = s->reps; 
+  do {
+    qstack_reset (&quotients, s->size);
+    res = mpn_hgcd (&hgcd, ap, s->size, bp, s->size,
+		    &quotients,
+		    wp, hgcd_scratch);
+  }
+  while (--i != 0); 
+  t = speed_endtime (); 
+#if WANT_ASSERT
+  if (res)
+    hgcd_sanity (&hgcd, ap, s->size, bp, s->size, 0, 4);
+#endif
+  TMP_FREE (marker);
+  return t;
+}
+double
+speed_mpn_hgcd_lehmer (struct speed_params *s)
+{
+  mp_ptr wp;
+  mp_size_t hgcd_init_scratch = mpn_hgcd_init_itch (s->size);
+  mp_size_t qstack_scratch = qstack_itch (s->size);
+  mp_size_t hgcd_scratch = mpn_hgcd_lehmer_itch (s->size);
+  mp_ptr ap;
+  mp_ptr bp;
+  
+  struct hgcd hgcd;
+  struct qstack quotients;
+  int res;
+  unsigned i;
+  double t;
+  TMP_DECL (marker);
+
+  if (s->size < 2)
+    return -1;
+
+  TMP_MARK (marker);
+  
+  ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
+  bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
+
+  MPN_COPY (ap, s->xp, s->size);
+  MPN_COPY (bp, s->yp, s->size);
+  ap[s->size - 1] |= 1;
+  bp[s->size - 1] |= 1;
+
+  /* We must have a >= b */
+  if (mpn_cmp (ap, bp, s->size) < 0)
+    MP_PTR_SWAP (ap, bp);
+    
+  mpn_hgcd_init (&hgcd, s->size,
+		 SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp));
+  qstack_init (&quotients, s->size,
+	       SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp),
+	       qstack_scratch);
+  wp = SPEED_TMP_ALLOC_LIMBS (hgcd_scratch, s->align_wp);
+
+  speed_starttime (); 
+  i = s->reps; 
+  do {
+    qstack_reset (&quotients, s->size);
+    res = mpn_hgcd_lehmer (&hgcd, ap, s->size, bp, s->size,
+			   &quotients,
+			   wp, hgcd_scratch);
+  }
+  while (--i != 0); 
+  t = speed_endtime (); 
+#if WANT_ASSERT
+  if (res)
+    hgcd_sanity (&hgcd, ap, s->size, bp, s->size, 0, 4);
+#endif
+  TMP_FREE (marker);
+  return t;
+}
+double
 speed_mpn_gcd (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd);
@@ -983,6 +1099,11 @@ double
 speed_mpn_gcd_binary (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd_binary);
+}
+double
+speed_mpn_gcd_accel (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD (mpn_gcd_accel);
 }
 
 #if HAVE_NATIVE_mpn_gcd_finda

@@ -1,7 +1,7 @@
-/* mpn/generic/gcd.c forced to use the binary algorithm. */
+/* mpn/generic/gcd.c forced to use the accelerated binary algorithm. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,10 +24,8 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#undef  GCD_ACCEL_THRESHOLD
-#define GCD_ACCEL_THRESHOLD  MP_SIZE_T_MAX
 #undef  GCD_SCHOENHAGE_THRESHOLD
 #define GCD_SCHOENHAGE_THRESHOLD  MP_SIZE_T_MAX
-#define __gmpn_gcd  mpn_gcd_binary
+#define __gmpn_gcd  mpn_gcd_accel
 
 #include "../mpn/generic/gcd.c"

@@ -983,11 +983,11 @@ euclid_step (struct hgcd_row *r, mp_size_t usize,
   return hgcd_update_uv (r, usize, qp, qsize);
 }
 
-static int
-lehmer_step (struct hgcd2 *hgcd,
-	     mp_srcptr ap, mp_size_t asize,
-	     mp_srcptr bp, mp_size_t bsize,
-	     struct qstack *quotients)
+int
+mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
+		       mp_srcptr ap, mp_size_t asize,
+		       mp_srcptr bp, mp_size_t bsize,
+		       struct qstack *quotients)
 {
   mp_limb_t ah;
   mp_limb_t al;
@@ -1458,10 +1458,10 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 
       ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 
-      switch (lehmer_step (&R,
-			   hgcd->row[0].rp, hgcd->row[0].rsize,
-			   hgcd->row[1].rp, hgcd->row[1].rsize,
-			   quotients))
+      switch (mpn_hgcd2_lehmer_step (&R,
+				     hgcd->row[0].rp, hgcd->row[0].rsize,
+				     hgcd->row[1].rp, hgcd->row[1].rsize,
+				     quotients))
 	{
 	default:
 	  ASSERT_FAIL (1);

@@ -161,7 +161,9 @@ mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
+mp_size_t  hgcd_schoenhage_threshold    = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
+mp_size_t  gcd_schoenhage_threshold     = MP_SIZE_T_MAX;
 mp_size_t  gcdext_threshold             = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
@@ -972,6 +974,17 @@ tune_powm (void)
 
 
 void
+tune_hgcd (void)
+{
+  static struct param_t  param;
+  param.name = "HGCD_SCHOENHAGE_THRESHOLD";
+  param.function = speed_mpn_hgcd;
+  /* We seem to get strange results for small sizes */
+  param.min_size = 50;
+  one (&hgcd_schoenhage_threshold, &param);
+}
+
+void
 tune_gcd_accel (void)
 {
   static struct param_t  param;
@@ -981,6 +994,15 @@ tune_gcd_accel (void)
   one (&gcd_accel_threshold, &param);
 }
 
+void
+tune_gcd_schoenhage (void)
+{
+  static struct param_t  param;
+  param.name = "GCD_SCHOENHAGE_THRESHOLD";
+  param.function = speed_mpn_gcd;
+  param.min_size = hgcd_schoenhage_threshold;
+  one (&gcd_schoenhage_threshold, &param);
+}
 
 /* A comparison between the speed of a single limb step and a double limb
    step is made.  On a 32-bit limb the ratio is about 2.2 single steps to
@@ -1654,7 +1676,9 @@ all (void)
   tune_powm ();
   printf("\n");
 
+  tune_hgcd ();
   tune_gcd_accel ();
+  tune_gcd_schoenhage ();
   tune_gcdext ();
   tune_jacobi_base ();
   printf("\n");

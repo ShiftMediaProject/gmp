@@ -247,11 +247,14 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
+  { "mpn_hgcd",          speed_mpn_hgcd             },
+  { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
   { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
   { "mpn_gcd",           speed_mpn_gcd                    },
   { "mpn_gcd_binary",    speed_mpn_gcd_binary             },
+  { "mpn_gcd_accel",     speed_mpn_gcd_accel              },
   { "find_a",            speed_find_a,        FLAG_NODATA },
 #if HAVE_NATIVE_mpn_gcd_finda
   { "mpn_gcd_finda",     speed_mpn_gcd_finda, FLAG_NODATA },

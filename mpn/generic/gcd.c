@@ -1,6 +1,6 @@
 /* mpn/gcd.c: mpn_gcd for gcd of two odd integers.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002 Free
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2003 Free
 Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -47,6 +47,10 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+
+#ifndef NULL
+# define NULL ((void *) 0)
+#endif
 
 /* If MIN (usize, vsize) >= GCD_ACCEL_THRESHOLD, then the accelerated
    algorithm is used, otherwise the binary algorithm is used.  This may be
@@ -181,9 +185,9 @@ find_a (mp_srcptr cp)
 }
 #endif
 
-
-mp_size_t
-mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
+/* v must be odd */
+static mp_size_t
+gcd_binary_odd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 {
   mp_ptr orig_vp = vp;
   mp_size_t orig_vsize = vsize;
@@ -439,4 +443,483 @@ done:
     MPN_COPY_INCR (gp, vp, vsize);
   TMP_FREE (marker);
   return vsize;
+}
+
+#define EVEN_P(x) (((x) & 1) == 0)
+
+/* Allows an even v */
+static mp_size_t
+gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
+{
+  mp_size_t zero_words = 0;
+  mp_size_t gsize;
+  unsigned shift = 0;
+
+  ASSERT (usize > 0);
+  ASSERT (vsize > 0);
+
+  if (up[0] == 0 && vp[0] == 0)
+    {
+      do
+	gp[zero_words++] = 0;
+      while (up[zero_words] == 0 && vp[zero_words] == 0);
+
+      up += zero_words; usize -= zero_words;
+      vp += zero_words; vsize -= zero_words;
+      gp += zero_words;
+    }
+
+  /* Now u and v can have a common power of two < 2^GMP_NUMB_BITS */
+  if (up[0] == 0)
+    {
+      ASSERT (vp[0] != 0);
+      if (EVEN_P (vp[0]))
+	{	  
+	  count_trailing_zeros (shift, vp[0]);
+	  ASSERT (shift > 0);
+	  ASSERT_NOCARRY (mpn_rshift (vp, vp, vsize, shift));
+	  if (vp[vsize - 1] == 0)
+	    vsize--;
+	}
+    }
+  else if (vp[0] == 0)
+    {
+      if (EVEN_P (up[0]))
+	{
+	  count_trailing_zeros (shift, up[0]);
+	  ASSERT (shift > 0);
+	}
+      while (vp[0] == 0)
+	{
+	  vp++;
+	  vsize--;
+	}
+
+      if (EVEN_P (vp[0]))
+	{
+	  unsigned vcount;
+      
+	  count_trailing_zeros (vcount, vp[0]);
+	  ASSERT (vcount > 0);
+	  ASSERT_NOCARRY (mpn_rshift (vp, vp, vsize, vcount));
+	  if (vp[vsize - 1] == 0)
+	    vsize--;
+	}
+    }
+  else if (EVEN_P (vp[0]))
+    {
+      unsigned vcount;
+      count_trailing_zeros (vcount, vp[0]);
+      ASSERT (vcount > 0);
+      ASSERT_NOCARRY (mpn_rshift (vp, vp, vsize, vcount));
+      if (vp[vsize - 1] == 0)
+	vsize--;
+
+      if (EVEN_P (up[0]))
+	{
+	  unsigned ucount;
+	  count_trailing_zeros (ucount, up[0]);
+	  ASSERT (ucount > 0);
+	  shift = MIN (ucount, vcount);
+	}
+    }
+  
+  gsize = gcd_binary_odd (gp, up, usize, vp, vsize);
+  if (shift)
+    {
+      mp_limb_t cy = mpn_lshift (gp, gp, gsize, shift);
+      if (cy)
+	gp[gsize++] = cy;
+    }
+  return gsize + zero_words;  
+}
+
+/* Sets (a, b, c, d)  <--  (c, d, a, b) */
+#define NHGCD_SWAP4_2(row)			\
+do {						\
+  struct hgcd_row __nhgcd_swap4_2_tmp = row[0];	\
+  row[0] = row[2];				\
+  row[2] = __nhgcd_swap4_2_tmp;			\
+  __nhgcd_swap4_2_tmp = row[1];			\
+  row[1] = row[3];				\
+  row[3] = __nhgcd_swap4_2_tmp;			\
+} while (0)
+
+/* Sets (a, b, c)  <--  (b, c, a) */
+#define NHGCD_SWAP3_LEFT(row)				\
+do {							\
+  struct hgcd_row __nhgcd_swap4_left_tmp = row[0];	\
+  row[0] = row[1];					\
+  row[1] = row[2];					\
+  row[2] = __nhgcd_swap4_left_tmp;			\
+} while (0)
+
+static mp_size_t
+hgcd_tdiv (mp_ptr qp,
+	   mp_ptr rp, mp_size_t *rsizep,
+	   mp_srcptr ap, mp_size_t asize,
+	   mp_srcptr bp, mp_size_t bsize)
+{
+  mp_size_t qsize;
+  mp_size_t rsize;
+
+  mpn_tdiv_qr (qp, rp, 0, ap, asize, bp, bsize);
+
+  rsize = bsize;
+  MPN_NORMALIZE (rp, rsize);
+  *rsizep = rsize;
+
+  qsize = asize - bsize + 1;
+  qsize -= (qp[qsize - 1] == 0);
+
+  if (qsize == 1 && qp[0] == 1)
+    return 0;
+
+  return qsize;
+}
+
+
+#if 0
+#define GCD_LEHMER_ITCH(asize) (5*((asize) + 1))
+
+static mp_size_t
+gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
+	    mp_srcptr bp, mp_size_t bsize,
+	    mp_ptr tp, mp_size_t talloc)
+{
+  struct hgcd_row r[4];
+  mp_ptr qp;
+  mp_size_t qsize;
+  mp_size_t ralloc = asize + 1;
+
+  ASSERT (asize >= bsize);
+  ASSERT (bsize > 0);
+
+#if 0
+  if (asize <= MPN_GCD_LEHMER_THRESHOLD)
+    {
+      ASSERT (asize + bsize + 2 <= talloc);
+
+      MPN_COPY (tp, ap, asize);
+      MPN_COPY (tp + asize + 1, bp, bsize);
+      return nhgcd_gcd_binary (gp, tp, asize, tp + asize + 1, bsize);
+    }
+#endif
+
+  ASSERT (MPN_LEQ_P (bp, bsize, ap, asize));
+  ASSERT (5 * asize  + 4 <= talloc);
+
+  r[0].rp = tp; tp += ralloc; talloc -= ralloc;
+  r[1].rp = tp; tp += ralloc; talloc -= ralloc;
+  r[2].rp = tp; tp += ralloc; talloc -= ralloc;
+  r[3].rp = tp; tp += ralloc; talloc -= ralloc;
+  qp = tp; tp += asize; talloc -= asize;
+
+  MPN_COPY (r[0].rp, ap, asize); r[0].rsize = asize;
+  MPN_COPY (r[1].rp, bp, bsize); r[1].rsize = bsize;
+
+#if 0
+  /* u and v fields aren't used, but zero them out so that we can call
+     trace_nhgcd_row */
+  r[0].uvp[0] = r[0].uvp[1] = NULL;
+  r[1].uvp[0] = r[1].uvp[1] = NULL;
+  r[2].uvp[0] = r[2].uvp[1] = NULL;
+  r[3].uvp[0] = r[3].uvp[1] = NULL;
+#endif
+  
+  while (r[0].rsize > GCD_LEHMER_THRESHOLD && r[1].rsize > 0)
+    {
+      struct hgcd2 hgcd;
+      int res = mpn_hgcd2_lehmer_step (&hgcd,
+				       r[0].rp, r[0].rsize,
+				       r[1].rp, r[1].rsize,
+				       NULL);
+
+      if (!res || (res == 2 && hgcd.row[0].v == 0))
+	{
+	  qsize = hgcd_tdiv (qp, r[2].rp, &r[2].rsize,
+			     r[0].rp, r[0].rsize,
+			     r[1].rp, r[1].rsize);
+	  NHGCD_SWAP3_LEFT (r);
+	}
+      else
+	{
+	  const struct hgcd2_row *s = hgcd.row + (res - 2);
+	  int sign = hgcd.sign;
+	  if (res == 3)
+	    sign = ~sign;
+
+	  /* s[0] and s[1] correct. */
+	  r[2].rsize
+	    = mpn_hgcd2_fix (r[2].rp, ralloc,
+			     sign,
+			     s[0].u, r[0].rp, r[0].rsize,
+			     s[0].v, r[1].rp, r[1].rsize);
+
+	  r[3].rsize
+	    = mpn_hgcd2_fix (r[3].rp, ralloc,
+			     ~sign,
+			     s[1].u, r[0].rp, r[0].rsize,
+			     s[1].v, r[1].rp, r[1].rsize);
+
+	  NHGCD_SWAP4_2 (r);
+	}
+    }
+
+  if (r[1].rsize == 0)
+    {
+      MPN_COPY (gp, r[0].rp, r[0].rsize);
+      return r[0].rsize;
+    }
+
+  return gcd_binary (gp, r[0].rp, r[0].rsize, r[1].rp, r[1].rsize);
+}
+#endif
+
+/* FIXME: Some duplication, this function is also in hgcd.c. Perhaps
+ * we can use some simpler test here? */
+/* Only the first row has v = 0, a = 1 * a + 0 * b */
+static int
+hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
+{
+  mp_size_t i;
+  for (i = 0; i < n; i++)
+    if (r->uvp[1][i] != 0)
+      return 0;
+
+  return 1;
+}
+
+static mp_size_t
+gcd_schoenhage_itch (mp_size_t asize)
+{
+  /* Size for hgcd calls */
+  mp_size_t ralloc = asize + 1;
+  mp_size_t hgcd_size = (asize + 1) / 2;
+  return
+    + 4 * ralloc                      /* Remainder storage */
+    + mpn_hgcd_init_itch (hgcd_size)  /* hgcd storage */
+    + qstack_itch (hgcd_size)
+    + mpn_hgcd_itch (hgcd_size)       /* nhgcd call */
+    + 1+ 3 * asize / 4;               /* hgcd_fix */
+}
+
+static mp_size_t
+gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
+		mp_srcptr bp, mp_size_t bsize,
+		mp_ptr tp, mp_size_t talloc)
+{
+  mp_size_t scratch;
+  struct hgcd hgcd;
+  struct qstack quotients;
+  struct hgcd_row r[4];
+
+  mp_size_t ralloc = asize + 1;
+
+  ASSERT (asize >= bsize);
+  ASSERT (bsize > 0);
+
+  ASSERT (MPN_LEQ_P (bp, bsize, ap, asize));
+
+  ASSERT (4 * ralloc <= talloc);
+  tp += ralloc; talloc -= ralloc;
+  r[0].rp = tp; tp += ralloc; talloc -= ralloc;
+  r[1].rp = tp; tp += ralloc; talloc -= ralloc;
+  r[2].rp = tp; tp += ralloc; talloc -= ralloc;
+  r[3].rp = tp; tp += ralloc; talloc -= ralloc;
+
+  MPN_COPY (r[0].rp, ap, asize); r[0].rsize = asize;
+  MPN_COPY (r[1].rp, bp, bsize); r[1].rsize = bsize;
+
+#if 0
+  /* We don't use the u and v fields, but zero them out so that we can
+     call trace_nhgcd_row while debugging. */
+  r[0].uvp[0] = r[0].uvp[1] = NULL;
+  r[1].uvp[0] = r[1].uvp[1] = NULL;
+  r[2].uvp[0] = r[2].uvp[1] = NULL;
+  r[3].uvp[0] = r[3].uvp[1] = NULL;
+#endif
+  
+  scratch = mpn_hgcd_init_itch ((asize + 1)/2);
+  ASSERT (scratch <= talloc);
+  mpn_hgcd_init (&hgcd, (asize + 1)/2, tp);
+  tp += scratch; talloc -= scratch;
+
+  {
+    mp_size_t nlimbs = qstack_itch ((asize + 1)/2);
+
+    ASSERT (nlimbs <= talloc);
+    qstack_init (&quotients, (asize + 1) / 2,
+		 tp, nlimbs);
+
+    tp += nlimbs;
+    talloc -= nlimbs;
+  }
+
+  while (r[0].rsize > GCD_SCHOENHAGE_THRESHOLD && r[1].rsize > 0)
+    {
+      mp_size_t k = r[0].rsize / 2;
+      int res;
+
+#if 0
+      trace ("nhgcd_gcd_schoenhage\n");
+      trace_nhgcd_row (r);
+      trace_nhgcd_row (r + 1);
+#endif
+      if (r[1].rsize <= k)
+	goto euclid;
+
+      qstack_reset (&quotients, r[0].rsize - k);
+
+      res = mpn_hgcd (&hgcd,
+		      r[0].rp + k, r[0].rsize - k,
+		      r[1].rp + k, r[1].rsize - k,
+		      &quotients,
+		      tp, talloc);
+
+      if (!res || (res == 2
+		   && hgcd_start_row_p (hgcd.row, hgcd.size)))
+	{
+	euclid:
+	  ASSERT (r[0].rsize - r[1].rsize + 1 <= talloc);
+	  hgcd_tdiv (tp, r[2].rp, &r[2].rsize,
+		     r[0].rp, r[0].rsize,
+		     r[1].rp, r[1].rsize);
+
+	  NHGCD_SWAP3_LEFT (r);
+	}
+      else
+	{
+	  const struct hgcd_row *s = hgcd.row + (res - 2);
+	  int sign = hgcd.sign;
+	  if (res == 3)
+	    sign = ~sign;
+
+#if WANT_ASSERT
+	  {
+	    struct hgcd hgcd_lehmer;
+	    int res_lehmer;
+
+	    TMP_DECL (marker);
+	    mp_size_t init_scratch = mpn_hgcd_init_itch (r[0].rsize - k);
+	    mp_size_t lehmer_scratch = mpn_hgcd_lehmer_itch (r[0].rsize - k);
+	    mp_ptr space;
+
+	    TMP_MARK (marker);
+	    space = TMP_ALLOC (sizeof (mp_limb_t *)
+			       * (init_scratch + lehmer_scratch));
+
+	    qstack_reset (&quotients, r[0].rsize - k);
+	    mpn_hgcd_init (&hgcd_lehmer,
+			   r[0].rsize - k,
+			   space);
+
+	    res_lehmer = mpn_hgcd_lehmer (&hgcd_lehmer,
+					  r[0].rp + k, r[0].rsize - k,
+					  r[1].rp + k, r[1].rsize - k,
+					  &quotients,
+					  space+ init_scratch, lehmer_scratch);
+
+	    ASSERT (res == res_lehmer);
+	    ASSERT (res == 0 || mpn_hgcd_equal (&hgcd, &hgcd_lehmer));
+	    
+	    TMP_FREE (marker);
+	  }
+#endif
+	  /* s[0] and s[1] are correct */
+	  r[2].rsize
+	    = mpn_hgcd_fix (k, r[2].rp, ralloc,
+			    s[0].rp, s[0].rsize,
+			    sign,
+			    s[0].uvp[0], r[0].rp,
+			    s[0].uvp[1], r[1].rp,
+			    hgcd.size,
+			    tp, talloc);
+
+	  r[3].rsize
+	    = mpn_hgcd_fix (k, r[3].rp, ralloc,
+			    s[1].rp, s[1].rsize,
+			    ~sign,
+			    s[1].uvp[0], r[0].rp,
+			    s[1].uvp[1], r[1].rp,
+			    hgcd.size,
+			    tp, talloc);
+
+	  NHGCD_SWAP4_2 (r);
+	}
+    }
+
+#if 0
+  trace ("nhgcd_gcd_schoenhage after loop\n");
+  trace_nhgcd_row (r);
+  trace_nhgcd_row (r + 1);
+#endif
+
+  if (r[1].rsize == 0)
+    {
+      MPN_COPY (gp, r[0].rp, r[0].rsize);
+      return r[0].rsize;
+    }
+#if 0
+  else if (r[0].rsize > GCD_LEHMER_THRESHOLD)
+    return gcd_lehmer (gp,
+		       r[0].rp, r[0].rsize,
+		       r[1].rp, r[1].rsize,
+		       tp, talloc);
+#endif
+  else
+    return gcd_binary (gp,
+		       r[0].rp, r[0].rsize,
+		       r[1].rp, r[1].rsize);
+}
+
+/* Should we perform an initial division? */
+mp_size_t
+mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
+{
+  TMP_DECL (marker);
+
+  if (usize <= GCD_SCHOENHAGE_THRESHOLD)
+    return gcd_binary_odd (gp, up, usize, vp, vsize);
+
+  /* The algorithms below require normalized input, and up >= vp */
+  MPN_NORMALIZE (up, usize);
+  MPN_NORMALIZE (vp, vsize);
+  ASSERT (usize >= vsize);
+
+  if (usize == vsize && mpn_cmp (up, vp, usize) < 0)
+    MP_PTR_SWAP (up, vp);
+
+#if 0
+  if (usize <= GCD_SCHOENHAGE_THRESHOLD)
+    {
+      mp_size_t scratch;
+      mp_ptr tp;
+      mp_size_t gsize;
+      
+      TMP_MARK (marker);
+      
+      scratch = GCD_LEHMER_ITCH (usize);
+      tp = TMP_ALLOC (scratch * sizeof (mp_limb_t));
+      
+      gsize = gcd_lehmer (gp, up, usize, vp, vsize, tp, scratch);
+      TMP_FREE (marker);
+      return gsize;
+    }
+  else
+#endif
+    {
+      mp_size_t scratch;
+      mp_ptr tp;
+      mp_size_t gsize;
+      
+      TMP_MARK (marker);
+      
+      scratch = gcd_schoenhage_itch (usize);
+      tp = TMP_ALLOC (scratch * sizeof (mp_limb_t));
+      
+      gsize = gcd_schoenhage (gp, up, usize, vp, vsize, tp, scratch);
+      TMP_FREE (marker);
+      return gsize;
+    }
 }
