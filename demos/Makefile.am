@@ -25,13 +25,32 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
+BUILT_SOURCES = calc.c calc.h calclex.c
+EXTRA_DIST = calc.y calclex.l
+
+calc_SOURCES = calc.c calclex.c calc.h
 qcn_LDADD = $(LDADD) -lm
 
 # None of these programs are built by default, but "make <whatever>" will
-# build one once libgmp.la has been built.
+# build them once libgmp.la has been built.
 #
-EXTRA_PROGRAMS = factorize isprime pexpr primes qcn
+EXTRA_PROGRAMS = calc factorize isprime pexpr primes qcn
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 
+
 allprogs: $(EXTRA_PROGRAMS)
+
+
+# The distribution includes calc.c, calc.h and calclex.c, generated with
+# bison and flex, so the calc program can be built even if yacc and lex
+# aren't available.  The rules below will regenerate those files if you
+# modify calc.y or calclex.l.
+#
+# The "cd"s ensure $(srcdir) doesn't get into the "#line"s in the generated
+# files.
+
+$(srcdir)/calclex.c: calclex.l
+	cd $(srcdir); lex -ocalclex.c calclex.l
+$(srcdir)/calc.c $(srcdir)/calc.h: calc.y
+	cd $(srcdir); yacc -d -ocalc.c calc.y
