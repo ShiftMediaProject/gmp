@@ -48,6 +48,10 @@ MA 02111-1307, USA. */
 #endif
 #endif
 
+#if defined (alloca)
+#define HAVE_ALLOCA
+#endif
+
 #if ! defined (HAVE_ALLOCA) || USE_STACK_ALLOC
 #include "stack-alloc.h"
 #else
@@ -306,39 +310,39 @@ extern mp_size_t __gmp_default_fp_limb_precision;
    so that its most significant bit is set.  LGUP is ceil(log2(D)).  */
 #define udiv_qrnnd_preinv2gen(q, r, nh, nl, d, di, dnorm, lgup) \
   do {									\
-    mp_limb_t n2, n10, n1, nadj, q1;					\
+    mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
-    n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
-    n1 = ((mp_limb_signed_t) n10 >> (BITS_PER_MP_LIMB - 1));		\
-    nadj = n10 + (n1 & (dnorm));					\
-    umul_ppmm (_xh, _xl, di, n2 - n1);					\
-    add_ssaaaa (_xh, _xl, _xh, _xl, 0, nadj);				\
-    q1 = ~(n2 + _xh);							\
-    umul_ppmm (_xh, _xl, q1, d);					\
+    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
+    _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
+    _n1 = ((mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1));		\
+    _nadj = _n10 + (_n1 & (dnorm));					\
+    umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
+    add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
+    _q1 = ~(_n2 + _xh);							\
+    umul_ppmm (_xh, _xl, _q1, d);					\
     add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
     _xh -= (d);								\
     (r) = _xl + ((d) & _xh);						\
-    (q) = _xh - q1;							\
+    (q) = _xh - _q1;							\
   } while (0)
 /* Exactly like udiv_qrnnd_preinv, but branch-free.  It is not clear which
    version to use.  */
 #define udiv_qrnnd_preinv2norm(q, r, nh, nl, d, di) \
   do {									\
-    mp_limb_t n2, n10, n1, nadj, q1;					\
+    mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    n2 = (nh);								\
-    n10 = (nl);								\
-    n1 = ((mp_limb_signed_t) n10 >> (BITS_PER_MP_LIMB - 1));		\
-    nadj = n10 + (n1 & (d));						\
-    umul_ppmm (_xh, _xl, di, n2 - n1);					\
-    add_ssaaaa (_xh, _xl, _xh, _xl, 0, nadj);				\
-    q1 = ~(n2 + _xh);							\
-    umul_ppmm (_xh, _xl, q1, d);					\
+    _n2 = (nh);								\
+    _n10 = (nl);							\
+    _n1 = ((mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1));		\
+    _nadj = _n10 + (_n1 & (d));						\
+    umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
+    add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
+    _q1 = ~(_n2 + _xh);							\
+    umul_ppmm (_xh, _xl, _q1, d);					\
     add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
     _xh -= (d);								\
     (r) = _xl + ((d) & _xh);						\
-    (q) = _xh - q1;							\
+    (q) = _xh - _q1;							\
   } while (0)
 
 /* The `mode' attribute was introduced in GCC 2.2, but we can only distinguish
