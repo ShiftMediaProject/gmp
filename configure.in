@@ -440,11 +440,11 @@ case $host in
 
     case $host in
       mips*-*-irix6*)
-        # n32L uses a long long limb, but is setup by _ABIN32 in gmp.h.
-        abilist="n32L 32"
-        gcc_n32L_cflags="-g -O2 -mabi=n32 -mips3"
-        cc_n32L_cflags="-g -O2 -n32 -mips3"
-        path_n32L="mips3"
+        # n32 uses a long long limb, but setup by _ABIN32 in gmp.h.
+        abilist="n32 32"
+        gcc_n32_cflags="-g -O2 -mabi=n32 -mips3"
+        cc_n32_cflags="-g -O2 -n32 -mips3"
+        path_n32="mips3"
         ;;
       [mips[34]*-*-*])
         path="mips3"
