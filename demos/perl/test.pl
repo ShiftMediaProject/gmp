@@ -1,6 +1,6 @@
 # GMP perl module tests
 
-# Copyright 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -230,6 +230,25 @@ foreach my $x (-123, -1, 0, 1, 123) {
   }
 }
 
+{ my ($dbl, $exp) = get_d_2exp (0);
+  ok ($dbl == 0); ok ($exp == 0); }
+{ my ($dbl, $exp) = get_d_2exp (1);
+  ok ($dbl == 0.5); ok ($exp == 1); }
+{ my ($dbl, $exp) = get_d_2exp (0.5);
+  ok ($dbl == 0.5); ok ($exp == 0); }
+{ my ($dbl, $exp) = get_d_2exp (0.25);
+  ok ($dbl == 0.5); ok ($exp == -1); }
+{ my ($dbl, $exp) = get_d_2exp ("1.0");
+  ok ($dbl == 0.5); ok ($exp == 1); }
+{ my ($dbl, $exp) = get_d_2exp (mpz ("256"));
+  ok ($dbl == 0.5); ok ($exp == 9); }
+{ my ($dbl, $exp) = get_d_2exp (mpq ("1/16"));
+  ok ($dbl == 0.5); ok ($exp == -3); }
+{ my ($dbl, $exp) = get_d_2exp (mpf ("1.5"));
+  ok ($dbl == 0.75); ok ($exp == 1); }
+{ my ($dbl, $exp) = get_d_2exp (mpf ("3.0"));
+  ok ($dbl == 0.75); ok ($exp == 2); }
+
 foreach my $xpair ([-123,"-7b"], [-1,"-1"], [0,"0"], [1,"1"], [123,"7b"]) {
   my $x = $$xpair[0];
   my $xhex = $$xpair[1];
@@ -428,7 +447,9 @@ ok (bin(3,3) == 1);
   ok ($r == -3);
 }
 
-{
+{ my $a = 3; clrbit ($a, 1); ok ($a == 1); }
+{ my $a = 3; clrbit ($a, 2); ok ($a == 3); }
+{ # mutate only given variable
   my $a = 3;
   my $b = $a;
   ok ($b == 3);
@@ -438,7 +459,23 @@ ok (bin(3,3) == 1);
   $b = $a;
   ok ($b == 2);
 }
-{
+
+{ my $a = 3; combit ($a, 1); ok ($a == 1); }
+{ my $a = 3; combit ($a, 2); ok ($a == 7); }
+{ # mutate only given variable
+  my $a = 3;
+  my $b = $a;
+  ok ($b == 3);
+  combit ($a, 0);
+  ok ($a == 2);
+  ok ($b == 3);
+  $b = $a;
+  ok ($b == 2);
+}
+
+{ my $a = 3; setbit ($a, 1); ok ($a == 3); }
+{ my $a = 3; setbit ($a, 2); ok ($a == 7); }
+{ # mutate only given variable
   my $a = 0;
   my $b = $a;
   ok ($b == 0);
@@ -683,6 +720,17 @@ ok (root(243,5) == 3);
   ok (! $e);
 }
 
+{ my ($root, $rem) = rootrem (mpz(0), 1);
+  ok ($root == 0); ok ($rem == 0); }
+{ my ($root, $rem) = rootrem (mpz(0), 2);
+  ok ($root == 0); ok ($rem == 0); }
+{ my ($root, $rem) = rootrem (mpz(64), 2);
+  ok ($root == 8); ok ($rem == 0); }
+{ my ($root, $rem) = rootrem (mpz(64), 3);
+  ok ($root == 4); ok ($rem == 0); }
+{ my ($root, $rem) = rootrem (mpz(65), 3);
+  ok ($root == 4); ok ($rem == 1); }
+
 {
   my $ulong_max = ~ 0;
   ok (scan0 (0, 0) == 0);
@@ -847,14 +895,52 @@ ok (reldiff (4,2) == 0.5);
 { my $r = randstate('lc_2exp_size', 64);        ok (defined $r); }
 { my $r = randstate('lc_2exp_size', 999999999); ok (! defined $r); }
 { my $r = randstate('mt');                      ok (defined $r); }
+
+{ # copying a randstate results in same sequence
+  my $r1 = randstate('lc_2exp_size', 64);
+  $r1->seed(123);
+  my $r2 = randstate($r1);
+  for (1 .. 20) {
+    my $z1 = mpz_urandomb($r1, 20);
+    my $z2 = mpz_urandomb($r2, 20);
+    ok ($z1 == $z2);
+  }
+}
+
+
 {
   my $r = randstate();
   $r->seed(123);
   $r->seed(time());
-  mpf_urandomb($r,1024);
-  mpz_urandomb($r,1024);
-  mpz_rrandomb($r,1024);
-  mpz_urandomm($r,mpz(3)**100);
+
+  {
+    my $f = mpf_urandomb($r,1024);
+    ok (UNIVERSAL::isa($f,"GMP::Mpf"));
+  }
+
+  {
+    my $z = mpz_urandomb($r, 1024);
+    ok (UNIVERSAL::isa($z,"GMP::Mpz"));
+  }
+  {
+    my $z = mpz_rrandomb($r, 1024);
+    ok (UNIVERSAL::isa($z,"GMP::Mpz"));
+  }
+  {
+    my $z = mpz_urandomm($r, mpz(3)**100);
+    ok (UNIVERSAL::isa($z,"GMP::Mpz"));
+  }
+  
+  foreach (1 .. 20) {
+    my $u = gmp_urandomb_ui($r,8);
+    ok ($u >= 0);
+    ok ($u < 256);
+  }
+  foreach (1 .. 20) {
+    my $u = gmp_urandomm_ui($r,8);
+    ok ($u >= 0);
+    ok ($u < 8);
+  }
 }
 
 

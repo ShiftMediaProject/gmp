@@ -1,6 +1,6 @@
 /* GMP module external subroutines.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -837,6 +837,60 @@ CODE:
       }
 OUTPUT:
     RETVAL
+
+
+void
+get_d_2exp (sv)
+    SV *sv
+PREINIT:
+    double ret;
+    long   exp;
+PPCODE:
+    if (SvIOK(sv))
+      {
+        ret = (double) SvIVX(sv);
+        goto use_frexp;
+      }
+    else if (SvNOK(sv))
+      {
+        int i_exp;
+        ret = SvNVX(sv);
+      use_frexp:
+        ret = frexp (ret, &i_exp);
+        exp = i_exp;
+      }
+    else if (SvPOKorp(sv))
+      {
+        /* put strings through mpf to give full exp range */
+        tmp_mpf_set_prec (tmp_mpf_0, DBL_MANT_DIG);
+        my_mpf_set_svstr (tmp_mpf_0->m, sv);
+        ret = mpf_get_d_2exp (&exp, tmp_mpf_0->m);
+      }
+    else if (SvROK(sv))
+      {
+        if (sv_derived_from (sv, mpz_class))
+          ret = mpz_get_d_2exp (&exp, SvMPZ(sv)->m);
+        else if (sv_derived_from (sv, mpq_class))
+          {
+            tmp_mpf_set_prec (tmp_mpf_0, DBL_MANT_DIG);
+            mpf_set_q (tmp_mpf_0->m, SvMPQ(sv)->m);
+            ret = mpf_get_d_2exp (&exp, tmp_mpf_0->m);
+          }
+        else if (sv_derived_from (sv, mpf_class))
+          {
+            ret = mpf_get_d_2exp (&exp, SvMPF(sv));
+            printf ("exp %d\n", exp);
+          }
+        else
+          goto invalid;
+      }
+    else
+      {
+      invalid:
+        croak ("GMP::get_d_2exp invalid argument");
+      }
+    PUSHs (sv_2mortal (newSVnv (ret)));
+    PUSHs (sv_2mortal (newSViv (exp)));
 
 
 long
@@ -1874,6 +1928,23 @@ PPCODE:
     sv = (exact ? &PL_sv_yes : &PL_sv_no); sv_2mortal(sv); PUSHs(sv);
 
 
+void
+rootrem (z, n)
+    mpz_coerce   z
+    ulong_coerce n
+PREINIT:
+    SV  *sv;
+    mpz root;
+    mpz rem;
+PPCODE:
+    root = new_mpz();
+    rem = new_mpz();
+    mpz_rootrem (root->m, rem->m, z, n);
+    EXTEND (SP, 2);
+    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, root); PUSHs(sv);
+    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, rem);  PUSHs(sv);
+
+
 unsigned long
 scan0 (z, start)
     mpz_coerce   z
@@ -1900,15 +1971,16 @@ setbit (z, bit)
     ulong_coerce bit
 ALIAS:
     GMP::Mpz::clrbit = 1
+    GMP::Mpz::combit = 2
 PREINIT:
     static const struct {
       void (*op) (mpz_ptr, unsigned long);
     } table[] = {
       { mpz_setbit }, /* 0 */
       { mpz_clrbit }, /* 1 */
+      { mpz_combit }, /* 2 */
     };
 CODE:
-    TRACE (printf ("%s %s\n", mpz_class, (ix==0 ? "setbit" : "clrbit")));
     assert (SvROK(ST(0)) && SvREFCNT(SvRV(ST(0))) == 1);
     assert_table (ix);
     (*table[ix].op) (z, bit);
@@ -2665,38 +2737,47 @@ CODE:
       }
     else
       {
-        STRLEN      len;
-        const char  *method = SvPV (ST(0), len);
-        assert (len == strlen (method));
-        if (strcmp (method, "lc_2exp") == 0)
-          {
-            if (items != 4)
-              goto invalid;
-            gmp_randinit_lc_2exp (RETVAL,
-                                  coerce_mpz (tmp_mpz_0, ST(1)),
-                                  coerce_ulong (ST(2)),
-                                  coerce_ulong (ST(3)));
-          }
-        else if (strcmp (method, "lc_2exp_size") == 0)
-          {
-            if (items != 2)
-              goto invalid;
-            if (! gmp_randinit_lc_2exp_size (RETVAL, coerce_ulong (ST(1))))
-              {
-                Safefree (RETVAL);
-                XSRETURN_UNDEF;
-              }
-          }
-        else if (strcmp (method, "mt") == 0)
+        if (SvROK (ST(0)) && sv_derived_from (ST(0), rand_class))
           {
             if (items != 1)
               goto invalid;
-            gmp_randinit_mt (RETVAL);
+            gmp_randinit_set (RETVAL, SvRANDSTATE (ST(0)));
           }
         else
           {
-          invalid:
-            croak ("%s new: invalid arguments", rand_class);
+            STRLEN      len;
+            const char  *method = SvPV (ST(0), len);
+            assert (len == strlen (method));
+            if (strcmp (method, "lc_2exp") == 0)
+              {
+                if (items != 4)
+                  goto invalid;
+                gmp_randinit_lc_2exp (RETVAL,
+                                      coerce_mpz (tmp_mpz_0, ST(1)),
+                                      coerce_ulong (ST(2)),
+                                      coerce_ulong (ST(3)));
+              }
+            else if (strcmp (method, "lc_2exp_size") == 0)
+              {
+                if (items != 2)
+                  goto invalid;
+                if (! gmp_randinit_lc_2exp_size (RETVAL, coerce_ulong (ST(1))))
+                  {
+                    Safefree (RETVAL);
+                    XSRETURN_UNDEF;
+                  }
+              }
+            else if (strcmp (method, "mt") == 0)
+              {
+                if (items != 1)
+                  goto invalid;
+                gmp_randinit_mt (RETVAL);
+              }
+            else
+              {
+              invalid:
+                croak ("%s new: invalid arguments", rand_class);
+              }
           }
       }
 OUTPUT:
@@ -2761,5 +2842,25 @@ mpf_urandomb (r, bits)
 CODE:
     RETVAL = new_mpf (bits);
     mpf_urandomb (RETVAL, r, bits);
+OUTPUT:
+    RETVAL
+
+
+unsigned long
+gmp_urandomb_ui (r, bits)
+    randstate    r
+    ulong_coerce bits
+ALIAS:
+    GMP::Rand::gmp_urandomm_ui = 1
+PREINIT:
+    static const struct {
+      unsigned long (*fun) (gmp_randstate_t r, unsigned long bits);
+    } table[] = {
+      { gmp_urandomb_ui }, /* 0 */
+      { gmp_urandomm_ui }, /* 1 */
+    };
+CODE:
+    assert_table (ix);
+    RETVAL = (*table[ix].fun) (r, bits);
 OUTPUT:
     RETVAL

@@ -1,6 +1,6 @@
 # GMP perl module
 
-# Copyright 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -32,8 +32,9 @@ require DynaLoader;
 
 @EXPORT = qw();
 @EXPORT_OK = qw(version);
-%EXPORT_TAGS = ('all' => [qw(get_d get_si get_str integer_p printf sgn
-                             sprintf)],
+%EXPORT_TAGS = ('all' => [qw(
+                             get_d get_d_2exp get_si get_str integer_p
+                             printf sgn sprintf)],
 		'constants' => [()]);
 Exporter::export_ok_tags('all');
 
@@ -174,12 +175,12 @@ corresponding GMP mpz functions,
 
 =item
 
-bin, cdiv, cdiv_2exp, clrbit, congruent_p, congruent_2exp_p, divexact,
-divisible_p, divisible_2exp_p, even_p, fac, fdiv, fdiv_2exp, fib, fib2, gcd,
-gcdext, hamdist, invert, jacobi, kronecker, lcm, lucnum, lucnum2, mod,
-mpz_export, mpz_import, nextprime, odd_p, perfect_power_p, perfect_square_p,
-popcount, powm, probab_prime_p, realloc, remove, root, roote, scan0, scan1,
-setbit, sizeinbase, sqrtrem, tdiv, tdiv_2exp, tstbit
+bin, cdiv, cdiv_2exp, clrbit, combit, congruent_p, congruent_2exp_p,
+divexact, divisible_p, divisible_2exp_p, even_p, fac, fdiv, fdiv_2exp, fib,
+fib2, gcd, gcdext, hamdist, invert, jacobi, kronecker, lcm, lucnum, lucnum2,
+mod, mpz_export, mpz_import, nextprime, odd_p, perfect_power_p,
+perfect_square_p, popcount, powm, probab_prime_p, realloc, remove, root,
+roote, scan0, scan1, setbit, sizeinbase, sqrtrem, tdiv, tdiv_2exp, tstbit
 
 =back
 
@@ -205,16 +206,16 @@ functions.  The string input for C<mpz_import> is interpreted as byte data
 and must be a multiple of size bytes.  C<mpz_export> conversely returns a
 string of byte data, which will be a multiple of size bytes.
 
-C<invert> returns the inverse, or undef if it doesn't exist.
-C<remove> returns a remainder/multiplicty pair.  C<root> returns the
-nth root, and C<roote> returns a root/bool pair, the bool indicating
-whether the root is exact.  C<sqrtrem> returns a root/remainder pair.
+C<invert> returns the inverse, or undef if it doesn't exist.  C<remove>
+returns a remainder/multiplicty pair.  C<root> returns the nth root, and
+C<roote> returns a root/bool pair, the bool indicating whether the root is
+exact.  C<sqrtrem> and C<rootrem> return a root/remainder pair.
 
-C<clrbit> and C<setbit> expect a variable which they can modify, it doesn't
-make sense to pass a literal constant.  Only the given variable is modified,
-if other variables are referencing the same mpz object then a new copy is
-made of it.  If the variable isn't an mpz it will be coerced to one.  For
-instance,
+C<clrbit>, C<combit> and C<setbit> expect a variable which they can modify,
+it doesn't make sense to pass a literal constant.  Only the given variable
+is modified, if other variables are referencing the same mpz object then a
+new copy is made of it.  If the variable isn't an mpz it will be coerced to
+one.  For instance,
 
     use GMP::Mpz qw(setbit);
     setbit (123, 0);  # wrong, don't pass a constant
@@ -345,25 +346,30 @@ The following functions are available in the GMP class,
 
 =item
 
-fits_slong_p, get_d, get_si, get_str, integer_p, printf, sgn, sprintf,
-version
+fits_slong_p, get_d, get_d_2exp, get_si, get_str, integer_p, printf, sgn,
+sprintf, version
 
 =back
 
-C<get_str> accepts an integer, string, float, mpz, mpq or mpf.  The base is
-specified by an optional second parameter, or defaults to decimal.  A
-negative base means upper case, as per the C functions.  For integer,
-integer string, mpz or mpq operands a string is returned.  For example,
+C<get_d_2exp> accepts any integer, string, float, mpz, mpq or mpf operands
+and returns a float and an integer exponent,
+
+    ($dbl, $exp) = get_d_2exp (mpf ("3.0"));
+    # dbl is 0.75, exp is 2
+
+C<get_str> takes an optional second argument which is the base, defaulting
+to decimal.  A negative base means upper case, as per the C functions.  For
+integer, -integer string, mpz or mpq operands a string is returned.
 
     use GMP qw(:all);
     use GMP::Mpq qw(:all);
     print get_str(mpq(-5,8)),"\n";      # -5/8
     print get_str(255,16),"\n";         # ff
 
-For float, float strings or mpf operands C<get_str> accepts an optional
-third parameter being how many digits to produce, which defaults to 0
-meaning all digits.  No more digits than can be accurately represented by
-the float precision are ever produced though.  A string/exponent pair is
+For float, float strings or mpf operands, C<get_str> accepts an optional
+third parameter being how many digits to produce, defaulting to 0 which
+means all digits.  (Only as many digits as can be accurately represented by
+the float precision are ever produced though.)  A string/exponent pair is
 returned, as per the C mpf_get_str function.  For example,
 
     use GMP qw(:all);
@@ -424,12 +430,14 @@ generation.  C<randstate> creates a new object, for example,
     $r = randstate('lc_2exp_size', 64);
     $r = randstate('lc_2exp', 43840821, 1, 32);
     $r = randstate('mt');
+    $r = randstate($another_r);
 
 With no parameters this corresponds to the C function
 C<gmp_randinit_default>, and is a compromise between speed and randomness.
 'lc_2exp_size' corresponds to C<gmp_randinit_lc_2exp_size>, 'lc_2exp'
 corresponds to C<gmp_randinit_lc_2exp>, and 'mt' corresponds to
-C<gmp_randinit_mt>.
+C<gmp_randinit_mt>.  Or when passed another randstate object, a copy of that
+object is made.
 
 'lc_2exp_size' can fail if the requested size is bigger than the internal
 table provides for, in which case undef is returned.  The maximum size
@@ -447,7 +455,8 @@ Random numbers can be generated with the following functions,
 
 =item
 
-mpf_urandomb, mpz_rrandomb, mpz_urandomb, mpz_urandomm
+mpf_urandomb, mpz_rrandomb, mpz_urandomb, mpz_urandomm,
+gmp_urandomb_ui, gmp_urandomm_ui
 
 =back
 
@@ -456,10 +465,11 @@ corresponding GMP function.  For example,
 
     use GMP::Rand (:all);
     $r = randstate();
-    $a = mpz_urandomb($r,256);         # uniform, 256 bits
-    $b = mpz_urandomm($r,mpz(3)**100); # uniform, 0 to 3**100-1
-    $c = mpz_rrandomb($r,1024);        # special, 1024 bits
-    $f = mpf_urandomb($r,128);         # uniform, 128 bits, 0<=$f<1
+    $a = mpz_urandomb($r,256);         # uniform mpz, 256 bits
+    $b = mpz_urandomm($r,mpz(3)**100); # uniform mpz, 0 to 3**100-1
+    $c = mpz_rrandomb($r,1024);        # special mpz, 1024 bits
+    $f = mpf_urandomb($r,128);         # uniform mpf, 128 bits, 0<=$f<1
+    $f = gmp_urandomm_ui($r,56);       # uniform int, 0 to 55
 
 =head2 Coercion
 
