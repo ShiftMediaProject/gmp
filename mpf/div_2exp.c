@@ -51,38 +51,43 @@ mpf_div_2exp (r, u, exp)
   abs_usize = ABS (usize);
   up = u->_mp_d;
 
-  if (abs_usize > prec)
-    {
-      up += abs_usize - prec;
-      abs_usize = prec;
-    }
-
   if (exp % BITS_PER_MP_LIMB == 0)
     {
+      prec++;			/* retain more precision here as we don't need
+				   to account for carry-out here */
+      if (abs_usize > prec)
+	{
+	  up += abs_usize - prec;
+	  abs_usize = prec;
+	}
       if (rp != up)
 	MPN_COPY_INCR (rp, up, abs_usize);
       r->_mp_exp = uexp - exp / BITS_PER_MP_LIMB;
     }
   else
     {
-      /* Use mpn_lshift since mpn_rshift operates upwards, and we therefore
-	 would clobber part of U before using that part, when R == U.  */
       mp_limb_t cy_limb;
-      if (rp < up)
+      mp_size_t adj;
+      if (abs_usize > prec)
 	{
+	  up += abs_usize - prec;
+	  abs_usize = prec;
+	  /* Use mpn_rshift since mpn_lshift operates downwards, and we
+	     therefore would clobber part of U before using that part, in case
+	     R is the same variable as U.  */
 	  cy_limb = mpn_rshift (rp + 1, up, abs_usize, exp % BITS_PER_MP_LIMB);
 	  rp[0] = cy_limb;
-	  cy_limb = rp[abs_usize] != 0;
+	  adj = rp[abs_usize] != 0;
 	}
       else
 	{
-	  cy_limb = mpn_lshift (rp, up, abs_usize, -exp % BITS_PER_MP_LIMB);
+	  cy_limb = mpn_lshift (rp, up, abs_usize, (-exp) % BITS_PER_MP_LIMB);
 	  rp[abs_usize] = cy_limb;
-	  cy_limb = cy_limb != 0;
+	  adj = cy_limb != 0;
 	}
 
-      abs_usize += cy_limb;
-      r->_mp_exp = uexp - exp / BITS_PER_MP_LIMB - 1 + cy_limb;
+      abs_usize += adj;
+      r->_mp_exp = uexp - exp / BITS_PER_MP_LIMB - 1 + adj;
     }
   r->_mp_size = usize >= 0 ? abs_usize : -abs_usize;
 }
