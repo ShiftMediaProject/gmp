@@ -104,6 +104,7 @@ MA 02111-1307, USA. */
 #if ! defined (NO_ASM)
 
 #if defined (__alpha) && W_TYPE_SIZE == 64
+/* Most alpha-based machines, except Cray systems. */
 #if defined (__GNUC__)
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
@@ -139,6 +140,7 @@ long __MPN(count_leading_zeros) ();
 #endif /* __alpha */
 
 #if defined (_CRAYIEEE) && W_TYPE_SIZE == 64
+/* Cray T90/ieee, T3D, and T3E */
 #include <intrinsics.h>
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
@@ -146,7 +148,23 @@ long __MPN(count_leading_zeros) ();
     (ph) = _int_mult_upper (m0, m1);					\
     (pl) = __m0 * __m1;							\
   } while (0)
-#endif
+#if defined (_CRAYMPP)
+/* T3D and T3E alpha-based machines */
+#ifndef LONGLONG_STANDALONE
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UDItype __di;							\
+    __di = __MPN(invert_limb) (d);					\
+    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
+  } while (0)
+#define UDIV_PREINV_ALWAYS  1
+#define UDIV_NEEDS_NORMALIZATION 1
+#define UDIV_TIME 220
+long __MPN(count_leading_zeros) ();
+#define count_leading_zeros(count, x) \
+  ((count) = __MPN(count_leading_zeros) (x))
+#endif /* LONGLONG_STANDALONE */
+#endif /* _CRAYMPP */
+#endif /* _CRAYIEEE */
 
 #if defined (__hppa) && W_TYPE_SIZE == 64
 /* We put the result pointer parameter last here, since it makes passing
