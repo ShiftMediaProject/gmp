@@ -1501,8 +1501,8 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #define mpn_decr_u(ptr, incr)  MPN_DECR_U (ptr, 0, incr)
 #endif
 
-#ifndef mpn_incr_u
 #if GMP_NAIL_BITS == 0
+#ifndef mpn_incr_u
 #define mpn_incr_u(p,incr)                              \
   do {                                                  \
     mp_limb_t __x;                                      \
@@ -1521,41 +1521,8 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
             ;                                           \
       }                                                 \
   } while (0)
-#else /* GMP_NAIL_BITS != 0 */
-#define mpn_incr_u(p,incr)                              \
-  do {                                                  \
-    mp_limb_t __x;                                      \
-    mp_ptr __p = (p);                                   \
-    ASSERT_LIMB (incr);                                 \
-    if (__builtin_constant_p (incr) && (incr) == 1)     \
-      {                                                 \
-        do                                              \
-          {                                             \
-            ASSERT_LIMB (*__p);                         \
-            __x = *__p + 1;                             \
-            *__p++ = __x & GMP_NUMB_MASK;               \
-          }                                             \
-        while ((__x & GMP_NAIL_LOWBIT) != 0);           \
-      }                                                 \
-    else                                                \
-      {                                                 \
-        ASSERT_LIMB (*__p);                             \
-        __x = *__p + (incr);                            \
-        for (;;)                                        \
-          {                                             \
-            *__p++ = __x & GMP_NUMB_MASK;               \
-            if ((__x & GMP_NAIL_LOWBIT) == 0)           \
-              break;                                    \
-            ASSERT_LIMB (__p[1]);                       \
-            __x = *__p + 1;                             \
-          }                                             \
-      }                                                 \
-  } while (0)
 #endif
-#endif
-
 #ifndef mpn_decr_u
-#if GMP_NAIL_BITS == 0
 #define mpn_decr_u(p,incr)                              \
   do {                                                  \
     mp_limb_t __x;                                      \
@@ -1574,35 +1541,68 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
             ;                                           \
       }                                                 \
   } while (0)
-#else /* GMP_NAIL_BITS != 0 */
-#define mpn_decr_u(p,incr)                              \
-  do {                                                  \
-    mp_limb_t __x;                                      \
-    mp_ptr __p = (p);                                   \
-    ASSERT_LIMB (incr);                                 \
-    if (__builtin_constant_p (incr) && (incr) == 1)     \
-      {                                                 \
-        do                                              \
-          {                                             \
-            ASSERT_LIMB (*__p);                         \
-            __x = *__p - 1;                             \
-            *__p++ = __x & GMP_NUMB_MASK;               \
-          }                                             \
-        while ((__x & GMP_NAIL_LOWBIT) != 0);           \
-      }                                                 \
-    else                                                \
-      {                                                 \
-        ASSERT_LIMB (*__p);                             \
-        __x = *__p - (incr);                            \
-        for (;;)                                        \
-          {                                             \
-            *__p++ = __x & GMP_NUMB_MASK;               \
-            if ((__x & GMP_NAIL_LOWBIT) == 0)           \
-              break;                                    \
-            ASSERT_LIMB (__p[1]);                       \
-            __x = *__p - 1;                             \
-          }                                             \
-      }                                                 \
+#endif
+#endif
+
+#if GMP_NAIL_BITS >= 1
+#ifndef mpn_incr_u
+#define mpn_incr_u(p,incr)                              \
+  do {							\
+    mp_limb_t __x;					\
+    mp_ptr __p = (p);					\
+    if (__builtin_constant_p (incr) && (incr) == 1)	\
+      {							\
+	do						\
+	  {						\
+	    __x = (*__p + 1) & GMP_NUMB_MASK;		\
+	    *__p++ = __x;				\
+	  }						\
+	while (__x == 0);				\
+      }							\
+    else						\
+      {							\
+	__x = (*__p + (incr)) & GMP_NUMB_MASK;		\
+	*__p = __x;					\
+	if (__x == 0)					\
+	  {						\
+	    do						\
+	      {						\
+		__x = (*__p + 1) & GMP_NUMB_MASK;	\
+		*__p++ = __x;				\
+	      }						\
+	    while (__x == 0);				\
+	  }						\
+      }							\
+  } while (0)
+#endif
+#ifndef mpn_decr_u
+#define mpn_decr_u(p,incr)				\
+  do {							\
+    mp_limb_t __x;					\
+    mp_ptr __p = (p);					\
+    if (__builtin_constant_p (incr) && (incr) == 1)	\
+      {							\
+	do						\
+	  {						\
+	    __x = *__p;					\
+	    *__p++ = (__x - 1) & GMP_NUMB_MASK;		\
+	  }						\
+	while (__x == 0);				\
+      }							\
+    else						\
+      {							\
+	__x = *__p;					\
+	*__p = (__x - (incr)) & GMP_NUMB_MASK;		\
+	if (__x == 0)					\
+	  {						\
+	    do						\
+	      {						\
+		__x = *__p;				\
+		*__p++ = (__x - 1) & GMP_NUMB_MASK;	\
+	      }						\
+	    while (__x == 0);				\
+	  }						\
+      }							\
   } while (0)
 #endif
 #endif
@@ -1660,31 +1660,37 @@ struct bases
 __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
 /* mp_bases[10] values, generated by mpn/mp_bases.c */
-#if BITS_PER_MP_LIMB == 4
+#if GMP_NUMB_BITS == 4
 #define MP_BASES_CHARS_PER_LIMB_10      1
 #define MP_BASES_BIG_BASE_10            CNST_LIMB(0xa)
 #define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x9)
 #define MP_BASES_NORMALIZATION_STEPS_10 0
 #endif
-#if BITS_PER_MP_LIMB == 8
+#if GMP_NUMB_BITS == 8
 #define MP_BASES_CHARS_PER_LIMB_10      2
 #define MP_BASES_BIG_BASE_10            CNST_LIMB(0x64)
 #define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x47)
 #define MP_BASES_NORMALIZATION_STEPS_10 1
 #endif
-#if BITS_PER_MP_LIMB == 16
+#if GMP_NUMB_BITS == 16
 #define MP_BASES_CHARS_PER_LIMB_10      4
 #define MP_BASES_BIG_BASE_10            CNST_LIMB(0x2710)
 #define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0xa36e)
 #define MP_BASES_NORMALIZATION_STEPS_10 2
 #endif
-#if BITS_PER_MP_LIMB == 32
+#if GMP_NUMB_BITS == 32
 #define MP_BASES_CHARS_PER_LIMB_10      9
 #define MP_BASES_BIG_BASE_10            CNST_LIMB(0x3b9aca00)
 #define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x12e0be82)
 #define MP_BASES_NORMALIZATION_STEPS_10 2
 #endif
-#if BITS_PER_MP_LIMB == 64
+#if GMP_NUMB_BITS == 30
+#define MP_BASES_CHARS_PER_LIMB_10      9
+#define MP_BASES_BIG_BASE_10            CNST_LIMB(0x3b9aca00)
+#define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x04B82FA0)
+#define MP_BASES_NORMALIZATION_STEPS_10 0
+#endif
+#if GMP_NUMB_BITS == 64
 #define MP_BASES_CHARS_PER_LIMB_10      19
 #define MP_BASES_BIG_BASE_10            CNST_LIMB(0x8ac7230489e80000)
 #define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0xd83c94fb6d2ac34a)
@@ -2718,18 +2724,18 @@ struct gmp_snprintf_t {
       DOPRNT_MEMORY (ptr, len);         \
   } while (0)
 
-__GMP_DECLSPEC int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *funs, void *data, const char *fmt, va_list ap));
-__GMP_DECLSPEC int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *funs, void *data, const struct doprnt_params_t *p, const char *s));
-__GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *funs, void * data, const struct doprnt_params_t *p, mpf_srcptr f));
-int __gmp_replacement_vsnprintf _PROTO ((char *buf, size_t buf_size,
-                                         const char *fmt, va_list ap));
+__GMP_DECLSPEC int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *, void *, const char *, va_list));
+__GMP_DECLSPEC int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *));
+__GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, mpf_srcptr));
+/* why no __GMP_DECLSPEC here??? */
+int __gmp_replacement_vsnprintf _PROTO ((char *, size_t, const char *, va_list));
 #endif /* _GMP_H_HAVE_VA_LIST */
 
 
-typedef int (*gmp_doscan_scan_t)  _PROTO ((void *data, const char *fmt, ...));
-typedef void *(*gmp_doscan_step_t) _PROTO ((void *data, int new_chars));
-typedef int (*gmp_doscan_get_t)   _PROTO ((void *data));
-typedef int (*gmp_doscan_unget_t) _PROTO ((int c, void *data));
+typedef int (*gmp_doscan_scan_t)  _PROTO ((void *, const char *, ...));
+typedef void *(*gmp_doscan_step_t) _PROTO ((void *, int));
+typedef int (*gmp_doscan_get_t)   _PROTO ((void *));
+typedef int (*gmp_doscan_unget_t) _PROTO ((int, void *));
 
 struct gmp_doscan_funs_t {
   gmp_doscan_scan_t   scan;
@@ -2741,8 +2747,8 @@ extern const struct gmp_doscan_funs_t  __gmp_fscanf_funs;
 extern const struct gmp_doscan_funs_t  __gmp_sscanf_funs;
 
 #if _GMP_H_HAVE_VA_LIST
-int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *funs, void *data,
-                          const char *orig_fmt, va_list orig_ap));
+int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *, void *,
+                          const char *, va_list));
 #endif
 
 
