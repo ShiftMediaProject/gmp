@@ -256,6 +256,19 @@ case "$target" in
     ;;
 esac
 
+dnl  Check for programs needed by macros for finding compiler.
+dnl  More programs are checked for below, when a compiler is found.
+AC_CHECK_TOOL(NM, nm, :)
+if test "$NM" = ":"; then
+  echo ["$0: fatal: need nm"]
+  exit 1
+fi
+# nm on AIX needs to know the object file format 
+case "$target" in
+  powerpc64*-*-aix*)
+    NM="$NM -X 64"
+    ;;
+esac   
 
 # Save CFLAGS given on command line.
 gmp_user_CFLAGS="$CFLAGS"
@@ -336,16 +349,10 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 GMP_PROG_M4
 AC_CHECK_TOOL(AR, ar, ar)
-AC_CHECK_TOOL(NM, nm, :)
-if test "$NM" = ":"; then
-  echo ["$0: fatal: need nm"]
-  exit 1
-fi
-# nm and ar on AIX needs to know the object file format 
+# ar on AIX needs to know the object file format 
 case "$target" in
   powerpc64*-*-aix*)
     AR="$AR -X 64"
-    NM="$NM -X 64"
     ;;
 esac   
 dnl  FIXME: Find good ld?  /usr/ucb/ld on Solaris won't work.
