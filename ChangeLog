@@ -22,6 +22,7 @@ MA 02111-1307, USA.
 
 	* acinclude.m4 (GMP_PROG_CC_WORKS): Add case provoking AIX power2
 	assembler, test code by Torbjorn.
+	* configure.in (power*-*-*): Add a comment about -mcpu=rios2 fallback.
 
 	* tune/speed.c (main): Use gmp_randinit_default explicitly on
 	__gmp_rands, since RANDS doesn't allow seeding.
