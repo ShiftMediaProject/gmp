@@ -532,14 +532,14 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 mk:
 	./speed -s 5-40 -c mpn_mul_basecase mpn_kara_mul_n
 mt:
-	./speed $(MTS) mpn_kara_mul_n mpn_toom3_mul_n | less
+	./speed $(MTS) mpn_kara_mul_n mpn_toom3_mul_n
 mtg:
 	./speed $(MTS) -P mtg mpn_kara_mul_n mpn_toom3_mul_n
 
 sk:
 	./speed -s 5-40 -c mpn_sqr_basecase mpn_kara_sqr_n
 st:
-	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n | less
+	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
 
