@@ -130,12 +130,12 @@ main (void)
     mpf_set_d (f, 1.5);
     ostrstream  got;
     got << f << '\0';
+    mpf_clear (f);
     if (strcmp (got.str(), "1,5") != 0)
       {
         printf ("Test skipped, replacing localeconv doesn't work\n");
         goto done;
       }
-    mpf_clear (f);
   }
 
   check_input ();

@@ -151,12 +151,12 @@ main (void)
     decimal_point = ",";
     mpf_set_d (f, 1.5);
     gmp_snprintf (buf, sizeof(buf), "%.1Ff", f);
+    mpf_clear (f);
     if (strcmp (buf, "1,5") != 0)
       {
         printf ("Test skipped, replacing localeconv doesn't work\n");
         goto done;
       }
-    mpf_clear (f);
   }
 
   check_input ();
