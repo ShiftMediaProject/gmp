@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_gcd_finda.
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -85,7 +85,7 @@ deflit(`FRAME',STACK_SPACE)
 
 	sbbl	%edx, %esi
 
-	jbe	L(top)
+ 	jb	L(top)
 
 	movl	%ecx, %eax
 	movl	%edx, %ebx
