@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -423,6 +423,16 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             /* glibc strerror(errno), no argument */
             goto next;
             
+          case 'M': /* mp_limb_t */
+            /* mung format string to l or L and let plain printf handle this */
+#if _LONG_LONG_LIMB
+            type = 'L';
+#else
+            type = 'l';
+#endif
+            fmt[-1] = type;
+            break;
+
           case 'n':
             {
               void  *p;
