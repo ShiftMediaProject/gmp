@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-01-25  Torbjorn Granlund  <tege@swox.com>
+
+	With Niels Möller:
+	* mpn/generic/hgcd.c: Add const and inline to several functions.
+	(qstack_push_start qstack_push_end qstack_push_quotient): Remove.
+	(euclid_step): Insert removed functions here.
+	(hgcd_adjust): Simplify, don't handle d != 1.
+	(qstack_adjust): Corresponding changes.
+	(mpn_hgcd2_lehmer_step): Remove redundant tests	for bh against zero.
+	(hgcd_start_row_p): Tweak.
+	(hgcd_final): Shorten life of ralloc.
+
 2004-01-24  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpf/t-sqrt.c (check_rand1): Further diagnostic printouts.
