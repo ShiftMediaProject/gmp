@@ -19,6 +19,46 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/array_init.c, mpz/cfdiv_q_2exp.c, mpz/cfdiv_r_2exp.c,
+	mpz/cong_2exp.c, mpz/divis_2exp.c, mpz/hamdist.c, mpz/init2.c,
+	mpz/mul_2exp.c, mpz/realloc2.c, mpz/scan0.c, mpz/scan1.c,
+	mpz/setbit.c, mpz/tdiv_q_2exp.c, mpz/tdiv_r_2exp.c, mpz/tstbit.c,
+	mpz/urandomb.c: Use GMP_NUMB_BITS.
+
+	* mpz/iset_str.c [__CHECKER__]: Store a dummy value to the low limb to
+	stop it appearing uninitialized.
+
+	* gmp-h.in (__GMP_NOTHROW): New macro.
+	(mp_set_memory_functions, mpz_cmp, mpz_cmp_si, mpz_cmp_ui, mpz_cmpabs,
+	mpz_cmpabs_ui, mpz_congruent_2exp_p, mpz_divisible_2exp_p,
+	mpz_fits_sint_p, mpz_fits_slong_p, mpz_fits_sshort_p, mpz_fits_uint_p,
+	mpz_fits_ulong_p, mpz_fits_ushort_p, mpz_get_si, mpz_get_ui,
+	mpz_getlimbn, mpz_hamdist, mpz_popcount, mpz_scan0, mpz_scan1,
+	mpz_size, mpz_sizeinbase, mpz_swap, mpz_tstbit, mpq_equal, mpq_swap,
+	mpf_cmp, mpf_cmp_si, mpf_cmp_ui, mpf_fits_sint_p, mpf_fits_slong_p,
+	mpf_fits_sshort_p, mpf_fits_uint_p, mpf_fits_ulong_p,
+	mpf_fits_ushort_p, mpf_get_default_prec, mpf_get_prec, mpf_get_si,
+	mpf_get_ui, mpf_integer_p, mpf_set_default_prec, mpf_set_prec_raw,
+	mpf_size, mpf_swap, mpn_add_1, mpn_cmp, mpn_hamdist, mpn_popcount,
+	mpn_sub_1): Use it.
+
+	* gmp-impl.h (MPN_SIZEINBASE, MPN_SIZEINBASE_16): New macros from
+	mpn_sizeinbase, and use GMP_NUMB_BITS.
+	* mpz/get_str.c, mpz/sizeinbase.c, mpbsd/mout.c, tune/speed.h: Use
+	MPN_SIZEINBASE.
+	* mpbsd/mtox.c: Use MPN_SIZEINBASE_16.
+
+	* configure.in, mpn/Makefile.am, gmp-impl.h (mpn_sizeinbase): Remove.
+	* mpn/generic/sizeinbase.c: Remove file.
+
+	* gmp-impl.h (MPN_GET_STR_SIZE): Remove.
+	* tests/mpn/t-g_str_size.c: Remove file.
+	* tests/mpn/Makefile.am: Update.
+
+	* Makefile.am (dist-hook): Don't distribute cvs merge ".#" files.
+
 2002-02-08  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Override extra_functions for all sparcv8 systems, not
