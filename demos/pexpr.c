@@ -569,7 +569,7 @@ struct functions fns[] =
 #endif
   {"and", AND, 0},
   {"ior", IOR, 0},
-#if #if __GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1
+#if __GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1
   {"xor", XOR, 0},
 #endif
   {"plus", PLUS, 0},
@@ -981,6 +981,38 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	mpz_set_ui (r, cnt - 1);
 	mpz_clear (lhs); mpz_clear (rhs);
       }
+      return;
+    case FERMAT:
+      {
+	unsigned long int t;
+	mpz_init (lhs);
+	mpz_eval_expr (lhs, e->operands.ops.lhs);
+	t = (unsigned long int) 1 << mpz_get_ui (lhs);
+	if (mpz_cmp_ui (lhs, ~(unsigned long int) 0) > 0 || t == 0)
+	  {
+	    error = "too large Mersenne number index";
+	    mpz_clear (lhs);
+	    longjmp (errjmpbuf, 1);
+	  }
+	mpz_set_ui (r, 1);
+	mpz_mul_2exp (r, r, t);
+	mpz_add_ui (r, r, 1);
+	mpz_clear (lhs);
+      }
+      return;
+    case MERSENNE:
+      mpz_init (lhs);
+      mpz_eval_expr (lhs, e->operands.ops.lhs);
+      if (mpz_cmp_ui (lhs, ~(unsigned long int) 0) > 0)
+	{
+	  error = "too large Mersenne number index";
+	  mpz_clear (lhs);
+	  longjmp (errjmpbuf, 1);
+	}
+      mpz_set_ui (r, 1);
+      mpz_mul_2exp (r, r, mpz_get_ui (lhs));
+      mpz_sub_ui (r, r, 1);
+      mpz_clear (lhs);
       return;
     case FIBONACCI:
       { mpz_t t;
