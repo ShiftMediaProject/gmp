@@ -697,7 +697,8 @@ dnl -----------------------------
 dnl These are mainly for the benefit of supplementary programs.  The library
 dnl itself doesn't use anything weird.
 
-AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info srandom strtoul sysconf sysctl sysctlbyname times)
+dnl GMP_FUNC_ALLOCA
 
 dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
 dnl for ansi2knr, and instead use our own test.  (It's only a warning
