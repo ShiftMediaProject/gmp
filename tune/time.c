@@ -41,8 +41,8 @@ MA 02111-1307, USA. */
    gets a default based on the measuring method chosen.
 
    speed_cycletime - the time in seconds for each CPU cycle, for example on
-   a 100 MHz CPU this would be 1.0e-8.  This is 0.0 when uninitialized, or
-   1.0 if the CPU frequency couldn't be determined.
+   a 100 MHz CPU this would be 1.0e-8.  If the CPU frequency is unknown this
+   is 0.0 if the time base is in seconds, or 1.0 if it's in cycles.
 
 
    speed_endtime() and speed_unittime are normally in seconds, but if a
