@@ -1768,26 +1768,39 @@ for tmp_fn in $gmp_mpn_functions; do
           # Generic code always supports all nails.
           #
           if test $GMP_NAIL_BITS != 0 && test $tmp_dir != generic; then
-            nails=[`sed -n 's/^[ 	]*NAILS_SUPPORT(\(.*\))/\1/p' $tmp_file `]
-            for n in $nails; do
-              case $n in
-              *-*)
-                n_start=`echo "$n" | sed -n 's/\(.*\)-.*/\1/p'`
-                n_end=`echo "$n" | sed -n 's/.*-\(.*\)/\1/p'`
+            case $tmp_fn in
+              and_n | ior_n | xor_n | \
+              copyi | copyd | \
+              popcount | hamdist | \
+              udiv | udiv_qrnnd | udiv_w_sdiv | udiv_fp | udiv_nfp | \
+              umul | umul_ppmm | \
+              cntlz | invert_limb)
+                # these operations are either unaffected by nails or defined
+                # to operate on full limbs
                 ;;
               *)
-                n_start=$n
-                n_end=$n
+                nails=[`sed -n 's/^[ 	]*NAILS_SUPPORT(\(.*\))/\1/p' $tmp_file `]
+                for n in $nails; do
+                  case $n in
+                  *-*)
+                    n_start=`echo "$n" | sed -n 's/\(.*\)-.*/\1/p'`
+                    n_end=`echo "$n" | sed -n 's/.*-\(.*\)/\1/p'`
+                    ;;
+                  *)
+                    n_start=$n
+                    n_end=$n
+                    ;;
+                  esac
+                  if test $GMP_NAIL_BITS -ge $n_start && test $GMP_NAIL_BITS -le $n_end; then
+                    found=yes
+                    break
+                  fi
+                done
+                if test $found != yes; then
+                  continue
+                fi
                 ;;
-              esac
-              if test $GMP_NAIL_BITS -ge $n_start && test $GMP_NAIL_BITS -le $n_end; then
-                found=yes
-                break
-              fi
-            done
-            if test $found != yes; then
-              continue
-            fi
+            esac
           fi
 
           found=yes
