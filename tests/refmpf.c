@@ -39,7 +39,7 @@ refmpf_add (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
   if (SIZ (u) == 0)
     {
       size = ABSIZ (v);
-      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC ((size+1) * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (v), size);
       exp = EXP (v);
       neg = SIZ (v) < 0;
@@ -48,7 +48,7 @@ refmpf_add (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
   if (SIZ (v) == 0)
     {
       size = ABSIZ (u);
-      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC ((size+1) * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (u), size);
       exp = EXP (u);
       neg = SIZ (u) < 0;
@@ -112,7 +112,7 @@ refmpf_sub (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
   if (SIZ (u) == 0)
     {
       size = ABSIZ (v);
-      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC ((size+1) * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (v), size);
       exp = EXP (v);
       neg = SIZ (v) > 0;
@@ -121,7 +121,7 @@ refmpf_sub (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
   if (SIZ (v) == 0)
     {
       size = ABSIZ (u);
-      wt = (mp_ptr) TMP_ALLOC (size * BYTES_PER_MP_LIMB);
+      wt = (mp_ptr) TMP_ALLOC ((size+1) * BYTES_PER_MP_LIMB);
       MPN_COPY (wt, PTR (u), size);
       exp = EXP (u);
       neg = SIZ (u) < 0;
