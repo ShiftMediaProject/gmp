@@ -694,6 +694,7 @@ case $host in
     esac
 
     case $host in
+      i486*-*-*)                  path="x86/i486 x86" ;;
       i586*-*-* | pentium-*-*)    path="x86/pentium x86" ;;
       pentiummmx-*-*)             path="x86/pentium/mmx x86/pentium x86" ;;
       i686*-*-* | pentiumpro-*-*) path="x86/p6 x86" ;;
