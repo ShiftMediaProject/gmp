@@ -20,78 +20,80 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
+include(`../config.m4')
 
-dnl  This approaches ?? cycles/limb on PA8000 and 6.75 cycles/limb on PA8500
-dnl  for huge operands.
+C		    cycles/limb
+C 8000,8200:		7
+C 8500,8600,8700:	6.5
 
-dnl  The feed-in and wind-down code has not yet been scheduled.  Many cycles
-dnl  could be saved there per call.
+C  The feed-in and wind-down code has not yet been scheduled.  Many cycles
+C  could be saved there per call.
 
-dnl  DESCRIPTION:
-dnl  The main loop "BIG" is 4-way unrolled, mainly to allow
-dnl  effective use of ADD,DC.  Delays in moving data via the cache from the FP
-dnl  registers to the IU registers, have demanded a deep software pipeline, and
-dnl  a lot of stack slots for partial products in flight.
-dnl
-dnl  CODE STRUCTURE:
-dnl  save-some-registers
-dnl  do 0, 1, 2, or 3 limbs
-dnl  if done, restore-some-regs and return
-dnl  save-many-regs
-dnl  do 4, 8, ... limb
-dnl  restore-all-regs
+C  DESCRIPTION:
+C  The main loop "BIG" is 4-way unrolled, mainly to allow
+C  effective use of ADD,DC.  Delays in moving data via the cache from the FP
+C  registers to the IU registers, have demanded a deep software pipeline, and
+C  a lot of stack slots for partial products in flight.
+C
+C  CODE STRUCTURE:
+C  save-some-registers
+C  do 0, 1, 2, or 3 limbs
+C  if done, restore-some-regs and return
+C  save-many-regs
+C  do 4, 8, ... limb
+C  restore-all-regs
 
-dnl  STACK LAYOUT:
-dnl  HP-PA stack grows upwards.  We could allocate 8 fewer slots by using the
-dnl  slots marked FREE, as well as some slots in the caller's "frame marker".
-dnl
-dnl -00 <- r30
-dnl -08  FREE
-dnl -10  tmp
-dnl -18  tmp
-dnl -20  tmp
-dnl -28  tmp
-dnl -30  tmp
-dnl -38  tmp
-dnl -40  tmp
-dnl -48  tmp
-dnl -50  tmp
-dnl -58  tmp
-dnl -60  tmp
-dnl -68  tmp
-dnl -70  tmp
-dnl -78  tmp
-dnl -80  tmp
-dnl -88  tmp
-dnl -90  FREE
-dnl -98  FREE
-dnl -a0  FREE
-dnl -a8  FREE
-dnl -b0  r13
-dnl -b8  r12
-dnl -c0  r11
-dnl -c8  r10
-dnl -d0  r8
-dnl -d8  r8
-dnl -e0  r7
-dnl -e8  r6
-dnl -f0  r5
-dnl -f8  r4
-dnl -100 r3
-dnl  Previous frame:
-dnl  [unused area]
-dnl -38/-138 vlimb home slot.  For 2.0N, the vlimb arg will arrive here.
+C  STACK LAYOUT:
+C  HP-PA stack grows upwards.  We could allocate 8 fewer slots by using the
+C  slots marked FREE, as well as some slots in the caller's "frame marker".
+C
+C -00 <- r30
+C -08  FREE
+C -10  tmp
+C -18  tmp
+C -20  tmp
+C -28  tmp
+C -30  tmp
+C -38  tmp
+C -40  tmp
+C -48  tmp
+C -50  tmp
+C -58  tmp
+C -60  tmp
+C -68  tmp
+C -70  tmp
+C -78  tmp
+C -80  tmp
+C -88  tmp
+C -90  FREE
+C -98  FREE
+C -a0  FREE
+C -a8  FREE
+C -b0  r13
+C -b8  r12
+C -c0  r11
+C -c8  r10
+C -d0  r8
+C -d8  r8
+C -e0  r7
+C -e8  r6
+C -f0  r5
+C -f8  r4
+C -100 r3
+C  Previous frame:
+C  [unused area]
+C -38/-138 vlimb home slot.  For 2.0N, the vlimb arg will arrive here.
 
 
 include(`../config.m4')
 
-dnl INPUT PARAMETERS:
-define(`rp',`%r26')	dnl
-define(`up',`%r25')	dnl
-define(`n',`%r24')	dnl
-define(`vlimb',`%r23')	dnl
+C INPUT PARAMETERS:
+define(`rp',`%r26')	C
+define(`up',`%r25')	C
+define(`n',`%r24')	C
+define(`vlimb',`%r23')	C
 
-define(`climb',`%r23')	dnl
+define(`climb',`%r23')	C
 
 ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0w
@@ -108,21 +110,21 @@ ifdef(`HAVE_ABI_2_0w',
 	ldo		0(%r0), climb		C clear climb
 	fldd		-0x138(%r30), %fr8	C put vlimb in fp register
 
-define(`p032a1',`%r1')	dnl
-define(`p032a2',`%r19')	dnl
+define(`p032a1',`%r1')	C
+define(`p032a2',`%r19')	C
 
-define(`m032',`%r20')	dnl
-define(`m096',`%r21')	dnl
+define(`m032',`%r20')	C
+define(`m096',`%r21')	C
 
-define(`p000a',`%r22')	dnl
-define(`p064a',`%r29')	dnl
+define(`p000a',`%r22')	C
+define(`p064a',`%r29')	C
 
-define(`s000',`%r31')	dnl
+define(`s000',`%r31')	C
 
-define(`ma000',`%r4')	dnl
-define(`ma064',`%r20')	dnl
+define(`ma000',`%r4')	C
+define(`ma064',`%r20')	C
 
-define(`r000',`%r3')	dnl
+define(`r000',`%r3')	C
 
 	extrd,u		n, 63, 2, %r5
 	cmpb,=		%r5, %r0, L(BIG)
@@ -178,46 +180,46 @@ LDEF(three_or_more)
 	depd,z		m032, 31, 32, ma000
 	extrd,u		m032, 31, 32, ma064
 	ldd		0(rp), r000
-dnl	addib,=		-1, %r5, L(0_out)
+C	addib,=		-1, %r5, L(0_out)
 	depd		m096, 31, 32, ma064
-LDEF(Loop0)
-dnl	xmpyu		%fr8R, %fr4L, %fr22
-dnl	xmpyu		%fr8L, %fr4R, %fr23
-dnl	ldd		-0x78(%r30), p032a1
-dnl	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
-dnl
-dnl	xmpyu		%fr8R, %fr4R, %fr24
-dnl	xmpyu		%fr8L, %fr4L, %fr25
-dnl	ldd		-0x70(%r30), p032a2
-dnl	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
-dnl
-dnl	ldo		8(rp), rp
-dnl	add		climb, p000a, s000
-dnl	ldd		-0x80(%r30), p000a
-dnl	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
-dnl
-dnl	add,dc		p064a, %r0, climb
-dnl	ldo		8(up), up
-dnl	ldd		-0x68(%r30), p064a
-dnl	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
-dnl
-dnl	add		ma000, s000, s000
-dnl	add,dc		ma064, climb, climb
-dnl	fldd		0(up), %fr4
-dnl
-dnl	sub		r000, s000, s000
-dnl	sub,db		%r0, climb, climb
-dnl	sub		%r0, climb, climb
-dnl	std		s000, -8(rp)
-dnl
-dnl	add		p032a1, p032a2, m032
-dnl	add,dc		%r0, %r0, m096
-dnl
-dnl	depd,z		m032, 31, 32, ma000
-dnl	extrd,u		m032, 31, 32, ma064
-dnl	ldd		0(rp), r000
-dnl	addib,<>	-1, %r5, L(Loop0)
-dnl	depd		m096, 31, 32, ma064
+LDEF(loop0)
+C	xmpyu		%fr8R, %fr4L, %fr22
+C	xmpyu		%fr8L, %fr4R, %fr23
+C	ldd		-0x78(%r30), p032a1
+C	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
+C
+C	xmpyu		%fr8R, %fr4R, %fr24
+C	xmpyu		%fr8L, %fr4L, %fr25
+C	ldd		-0x70(%r30), p032a2
+C	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
+C
+C	ldo		8(rp), rp
+C	add		climb, p000a, s000
+C	ldd		-0x80(%r30), p000a
+C	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
+C
+C	add,dc		p064a, %r0, climb
+C	ldo		8(up), up
+C	ldd		-0x68(%r30), p064a
+C	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
+C
+C	add		ma000, s000, s000
+C	add,dc		ma064, climb, climb
+C	fldd		0(up), %fr4
+C
+C	sub		r000, s000, s000
+C	sub,db		%r0, climb, climb
+C	sub		%r0, climb, climb
+C	std		s000, -8(rp)
+C
+C	add		p032a1, p032a2, m032
+C	add,dc		%r0, %r0, m096
+C
+C	depd,z		m032, 31, 32, ma000
+C	extrd,u		m032, 31, 32, ma064
+C	ldd		0(rp), r000
+C	addib,<>	-1, %r5, L(loop0)
+C	depd		m096, 31, 32, ma064
 LDEF(0_out)
 	ldo		8(up), up
 	xmpyu		%fr8R, %fr4L, %fr22
@@ -281,49 +283,49 @@ LDEF(0_one_out)
 	cmpib,>=	4, n, L(done)
 	ldo		8(rp), rp
 
-dnl 4-way unrolled code.
+C 4-way unrolled code.
 
 LDEF(BIG)
 
-define(`p032a1',`%r1')	dnl
-define(`p032a2',`%r19')	dnl
-define(`p096b1',`%r20')	dnl
-define(`p096b2',`%r21')	dnl
-define(`p160c1',`%r22')	dnl
-define(`p160c2',`%r29')	dnl
-define(`p224d1',`%r31')	dnl
-define(`p224d2',`%r3')	dnl
-			dnl
-define(`m032',`%r4')	dnl
-define(`m096',`%r5')	dnl
-define(`m160',`%r6')	dnl
-define(`m224',`%r7')	dnl
-define(`m288',`%r8')	dnl
-			dnl
-define(`p000a',`%r1')	dnl
-define(`p064a',`%r19')	dnl
-define(`p064b',`%r20')	dnl
-define(`p128b',`%r21')	dnl
-define(`p128c',`%r22')	dnl
-define(`p192c',`%r29')	dnl
-define(`p192d',`%r31')	dnl
-define(`p256d',`%r3')	dnl
-			dnl
-define(`s000',`%r10')	dnl
-define(`s064',`%r11')	dnl
-define(`s128',`%r12')	dnl
-define(`s192',`%r13')	dnl
-			dnl
-define(`ma000',`%r9')	dnl
-define(`ma064',`%r4')	dnl
-define(`ma128',`%r5')	dnl
-define(`ma192',`%r6')	dnl
-define(`ma256',`%r7')	dnl
-			dnl
-define(`r000',`%r1')	dnl
-define(`r064',`%r19')	dnl
-define(`r128',`%r20')	dnl
-define(`r192',`%r21')	dnl
+define(`p032a1',`%r1')	C
+define(`p032a2',`%r19')	C
+define(`p096b1',`%r20')	C
+define(`p096b2',`%r21')	C
+define(`p160c1',`%r22')	C
+define(`p160c2',`%r29')	C
+define(`p224d1',`%r31')	C
+define(`p224d2',`%r3')	C
+			C
+define(`m032',`%r4')	C
+define(`m096',`%r5')	C
+define(`m160',`%r6')	C
+define(`m224',`%r7')	C
+define(`m288',`%r8')	C
+			C
+define(`p000a',`%r1')	C
+define(`p064a',`%r19')	C
+define(`p064b',`%r20')	C
+define(`p128b',`%r21')	C
+define(`p128c',`%r22')	C
+define(`p192c',`%r29')	C
+define(`p192d',`%r31')	C
+define(`p256d',`%r3')	C
+			C
+define(`s000',`%r10')	C
+define(`s064',`%r11')	C
+define(`s128',`%r12')	C
+define(`s192',`%r13')	C
+			C
+define(`ma000',`%r9')	C
+define(`ma064',`%r4')	C
+define(`ma128',`%r5')	C
+define(`ma192',`%r6')	C
+define(`ma256',`%r7')	C
+			C
+define(`r000',`%r1')	C
+define(`r064',`%r19')	C
+define(`r128',`%r20')	C
+define(`r192',`%r21')	C
 
 	std		%r6, -0xe8(%r30)
 	std		%r7, -0xe0(%r30)
@@ -435,7 +437,7 @@ LDEF(8_or_more)
 	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	addib,=		-1, n, L(end2)
 	xmpyu		%fr8L, %fr7L, %fr27
-LDEF(Loop)
+LDEF(loop)
 	add		p032a1, p032a2, m032
 	ldd		-0x80(%r30), p000a
 	add,dc		p096b1, p096b2, m096
@@ -550,7 +552,7 @@ LDEF(Loop)
 	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	xmpyu		%fr8L, %fr7L, %fr27
 
-	addib,<>	-1, n, L(Loop)
+	addib,<>	-1, n, L(loop)
 	ldo		32(rp), rp
 
 LDEF(end2)
