@@ -47,6 +47,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    allow either to be omitted for open interval.  (But disallow
    "primes -c -f FROM" since that would be infinity.)  Allow printing a
    limited *number* of primes using syntax like "primes -f FROM -n NUMBER".
+ * When looking for maxgaps, we should not perform any primality testing until
+   we find possible record gaps.  Should speed up the searches tremendously.
  */
 
 #include "gmp.h"
