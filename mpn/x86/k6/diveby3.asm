@@ -70,7 +70,7 @@ deflit(`FRAME',0)
 	ALIGN(32)
 L(top):
 	C eax	scratch, low product
-	C ebx	carry limb (0 to 3)
+	C ebx	carry limb (0 to 2)
 	C ecx	counter, limbs, negative
 	C edx	scratch, high product
 	C esi	&src[size]
