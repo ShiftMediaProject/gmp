@@ -29,13 +29,13 @@ MA 02111-1307, USA. */
    2*prec or 2*prec-1 limbs, both such sizes resulting in prec limbs.
 
    The choice between 2*prec or 2*prec-1 limbs is based on the input
-   exponent.  With b=2^GMP_NUMB_BITS is the limb base then we can think of
+   exponent.  With b=2^GMP_NUMB_BITS the limb base then we can think of
    effectively taking out a factor b^(2k), for suitable k, to get to an
    integer input of the desired size ready for mpn_sqrtrem.  It must be an
    even power taken out, ie. an even number of limbs, so the square root
-   gives b^k, keeping the radix point on a limb boundary.  So if EXP(r) is
-   even we'll get an even number of input limbs (ie. 2*prec), or if EXP(r)
-   is odd we get an odd number (ie. 2*prec-1).
+   gives factor b^k and the radix point is still on a limb boundary.  So if
+   EXP(r) is even we'll get an even number of input limbs 2*prec, or if
+   EXP(r) is odd we get an odd number 2*prec-1.
 
    Further limbs below the 2*prec or 2*prec-1 used don't affect the result
    and are simply truncated.  This can be seen by considering an integer x,
@@ -55,8 +55,8 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
 {
   mp_size_t usize;
   mp_ptr up, tp;
-  mp_size_t prec;
-  mp_exp_t tsize, rexp;
+  mp_size_t prec, tsize;
+  mp_exp_t uexp, expodd;
   TMP_DECL (marker);
 
   usize = u->_mp_size;
@@ -71,11 +71,18 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
 
   TMP_MARK (marker);
 
+  uexp = u->_mp_exp;
   prec = r->_mp_prec;
-  rexp = (u->_mp_exp + 1) >> 1;	/* round towards -inf */
-  tsize = 2 * prec - (u->_mp_exp & 1);
-
   up = u->_mp_d;
+
+  expodd = (uexp & 1);
+  tsize = 2 * prec - expodd;
+  r->_mp_size = prec;
+  r->_mp_exp = (uexp + expodd) / 2;    /* ceil(uexp/2) */
+
+  /* root size is ceil(tsize/2), this will be our desired "prec" limbs */
+  ASSERT ((tsize + 1) / 2 == prec);
+
   tp = (mp_ptr) TMP_ALLOC (tsize * BYTES_PER_MP_LIMB);
 
   if (usize > tsize)
@@ -92,7 +99,5 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
 
   mpn_sqrtrem (r->_mp_d, NULL, tp, tsize);
 
-  r->_mp_size = (tsize + 1) / 2;
-  r->_mp_exp = rexp;
   TMP_FREE (marker);
 }
