@@ -1180,8 +1180,8 @@ as simple as configuring with a special @samp{libdir}, or it might require
 more than that.  Note that builds for different ABIs need to done separately,
 with a fresh @command{./configure} and @command{make} each.
 
-@table @asis
 @sp 1
+@table @asis
 @need 1000
 @item HPPA 2.0 (@samp{hppa2.0*}, @samp{hppa64})
 @cindex HPPA
