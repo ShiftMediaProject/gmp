@@ -1,3 +1,27 @@
+2000-03-20  Linus Nordberg  <linus@swox.se>
+
+	* rand.c (__gmp_rand_scheme): Clean up some.  Use slightly better
+	multipliers.
+
+	* configure.in (AC_OUTPUT): Add tests/Makefile and
+	tests/rand/Makefile.
+
+	* acinclude.m4 (AC_CANONICAL_BUILD): Define to
+	`_AC_CANONICAL_BUILD' to deal with incompabilities between
+	Autoconf and Libtool.
+	(AC_CHECK_TOOL_PREFIX): Likewise.
+
+	* Makefile.am (EXTRA_DIST): Add directory `tests'.
+
+ 	* mkinstalldirs: Update (Automake 2000-03-17).
+	* ltconfig: Update (Libtool 2000-03-17).
+	* ltmain.sh: Ditto.
+	
+	* configure: Regenerate with new autoconf/-make/libtool suite.
+	* aclocal.m4: Ditto.
+	* config.in: Ditto.
+	* all Makefile.in's: Ditto.
+	
 2000-03-20  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (main): Don't allow `-N' for base, require `-bN'.
