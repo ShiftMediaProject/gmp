@@ -8,7 +8,7 @@ This directory contains code optimized for the AMD Athalon CPU.
 
 STATUS
 
-Times for the loops, with all code and data in L1 cache, are as follows.
+Times for the loops, with all code and data in L1 cache.
 
                                cycles/limb
 	mpn_add/sub_n             1.6
@@ -20,6 +20,7 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_mul_1                 3.4
 	mpn_add/submul_1          3.9
 
+	mpn_mul_basecase          4.42 cycles/crossproduct (approx)
 
 Prefetching of sources hasn't yet been tried.
 
