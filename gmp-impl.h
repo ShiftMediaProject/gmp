@@ -680,7 +680,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
 
 
 /* Dummy for non-gcc, code involving it will go dead. */
-#ifndef __GNUC__
+#if ! defined (__GNUC__) || __GNUC__ < 2
 #define __builtin_constant_p(x)   0
 #endif
 
@@ -865,6 +865,15 @@ __GMP_DECLSPEC mp_limb_t mpn_sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, 
 
 #define mpn_submul_1c __MPN(submul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
+#define mpn_invert_2exp __MPN(invert_2exp)
+__GMP_DECLSPEC void mpn_invert_2exp __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define mpn_redc_1 __MPN(redc_1)
+__GMP_DECLSPEC void mpn_redc_1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t);)
+
+#define mpn_redc_2 __MPN(redc_2)
+__GMP_DECLSPEC void mpn_redc_2 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
@@ -2010,7 +2019,7 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 #define MPN_SIZEINBASE(result, ptr, size, base)                         \
   do {                                                                  \
     int       __lb_base, __cnt;                                         \
-    mp_size_t __totbits;                                                \
+    size_t __totbits;                                                   \
                                                                         \
     ASSERT ((size) >= 0);                                               \
     ASSERT ((base) >= 2);                                               \
@@ -2023,7 +2032,7 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
       {                                                                 \
         /* Calculate the total number of significant bits of X.  */     \
         count_leading_zeros (__cnt, (ptr)[(size)-1]);                   \
-        __totbits = (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);   \
+        __totbits = (size_t) (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);\
                                                                         \
         if (POW2_P (base))                                              \
           {                                                             \
@@ -2051,7 +2060,7 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
       {                                                                 \
         /* Calculate the total number of significant bits of X.  */     \
         count_leading_zeros (__cnt, (ptr)[(size)-1]);                   \
-        __totbits = (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);   \
+        __totbits = (size_t) (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);\
         (result) = (__totbits + 4 - 1) / 4;                             \
       }                                                                 \
   } while (0)
@@ -2174,20 +2183,20 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   } while (0)
 
 /* Like udiv_qrnnd_preinv, but branch-free. */
-#define udiv_qrnnd_preinv2(q, r, nh, nl, d, di)                         \
+#define udiv_qrnnd_preinv2(q, r, nh, nl, d, di)				\
   do {									\
-    mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
+    mp_limb_t _n2, _n10, _nmask, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
     _n2 = (nh);								\
     _n10 = (nl);							\
-    _n1 = LIMB_HIGHBIT_TO_MASK (_n10);                                  \
-    _nadj = _n10 + (_n1 & (d));						\
-    umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
+    _nmask = LIMB_HIGHBIT_TO_MASK (_n10);				\
+    _nadj = _n10 + (_nmask & (d));					\
+    umul_ppmm (_xh, _xl, di, _n2 - _nmask);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
     _q1 = ~(_n2 + _xh);							\
     umul_ppmm (_xh, _xl, _q1, d);					\
     add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
-    _xh -= (d);								\
+    _xh -= (d);					/* xh = 0 or -1 */	\
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
   } while (0)
@@ -2196,13 +2205,13 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
    so that its most significant bit is set.  LGUP is ceil(log2(D)).  */
 #define udiv_qrnnd_preinv2gen(q, r, nh, nl, d, di, dnorm, lgup) \
   do {									\
-    mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
+    mp_limb_t _n2, _n10, _nmask, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
     _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
     _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
-    _n1 = LIMB_HIGHBIT_TO_MASK (_n10);                                  \
-    _nadj = _n10 + (_n1 & (dnorm));					\
-    umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
+    _nmask = LIMB_HIGHBIT_TO_MASK (_n10);				\
+    _nadj = _n10 + (_nmask & (dnorm));					\
+    umul_ppmm (_xh, _xl, di, _n2 - _nmask);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
     _q1 = ~(_n2 + _xh);							\
     umul_ppmm (_xh, _xl, _q1, d);					\
