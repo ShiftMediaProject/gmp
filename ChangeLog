@@ -1,3 +1,45 @@
+2001-05-26  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (ABI and ISA, Reentrancy): Minor tweaks
+	(Notes for Package Builds): Note gmp.h is a generated file.
+	(Notes for Particular Systems): -march=pentiumpro is used for gcc
+	2.95.4 and up.
+	(Assembler Loop Unrolling): Mention non power-of-2 unrolling.
+	(Internals): New chapter.
+	* mpf/README: Remove file.
+	
+	* demos/expr/README: Miscellaneous rewordings.
+
+	* demos/perl: New directory.
+	* demos/Makefile.am: Add it.
+	* demos/perl/INSTALL, Makefile.PL, GMP.pm, GMP.xs, typemap,
+	GMP/Mpz.pm, GMP/Mpq.pm, GMP/mpf.pm, GMP/Rand.pm, sample.pl, test.pl:
+	New files.
+	
+	* configure, aclocal.m4: Update to autoconf 2.50.
+
+	* configure, aclocal.m4, ltmain.sh: Update to libtool 1.4.
+
+	* configure, aclocal.m4, missing, ansi2knr.c, */Makefile.in: Update to
+	automake 1.4f.
+	* Makefile.am: Conditionalize mpfr in $(SUBDIRS) to handle mpfr.info.
+	* mpfr/Makefile.am (INFO_DEPS): Remove previous mpfr.info handling.
+	* mpn/Makefile.am (GENERIC_SOURCES): Remove this, just put mp_bases.c
+	in libmpn_la_SOURCES.
+	* tests/Makefile.am (tests.h): Move from EXTRA_HEADERS to
+	libtests_la_SOURCES.
+	* ltconfig: Remove file, no longer needed.
+
+	* Makefile.am (gmp-impl.h, longlong.h, stack-alloc.h): Move from
+	EXTRA_DIST to libgmp_la_SOURCES, so they get included in TAGS.
+	* tests/rand/Makefile.am (gmpstat.h): Move to libstat_la_SOURCES
+	similarly.
+
+	* config.guess (68k-*-*): Use $SHELL not "sh", tweak some comments.
+
+	* mpfr/mpfr.texi (Introduction to MPFR): Tweak table formatting, note
+	non-free programs must be able to be re-linked.
+
 2001-05-20  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/powerpc64/addmul_1.asm,mul_1.asm,submul_1.asm: Add carry-in
