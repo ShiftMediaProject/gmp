@@ -1190,7 +1190,7 @@ void
 mpf_set_si (mpf_ptr f, long n)
 {
   f->_mp_d[0] = (unsigned long) (n >= 0 ? n : -n);
-  f->_mp_exp = (n != 0);
+  f->_mp_exp = 1;
   f->_mp_size = (n < 0 ? -1 : n != 0);
 }
 #endif
@@ -1203,7 +1203,8 @@ void
 mpf_set_ui (mpf_ptr f, unsigned long n)
 {
   f->_mp_d[0] = n;
-  f->_mp_exp = f->_mp_size = (n != 0);
+  f->_mp_exp = 1;
+  f->_mp_size = (n != 0);
 }
 #endif
 
