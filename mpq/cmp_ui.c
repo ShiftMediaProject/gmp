@@ -35,6 +35,19 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
   int cc;
   TMP_DECL (marker);
 
+#if GMP_NAIL_BITS != 0
+  if ((num2 | den2) > GMP_NUMB_MAX)
+    {
+      mpq_t op2;
+      mpq_init (op2);
+      mpz_set_ui (mpq_numref (op2), num2);
+      mpz_set_ui (mpq_denref (op2), den2);
+      cc = mpq_cmp (op1, op2);
+      mpq_clear (op2);
+      return cc;
+    }
+#endif
+
   /* need canonical sign to get right result */
   ASSERT (den1_size > 0);
 
