@@ -23,6 +23,14 @@ MA 02111-1307, USA.
 
 	* mpz/fits_s.h: Rewrite.
 
+	* mpz/jacobi.c: Nailify.
+	* mpz/kronuz.c: Additional nailify changes.
+	* mpz/kronsz.c: Likewise.
+
+2002-04-22  Kevin Ryde  <kevin@swox.se>
+
+	Hi Kevin!
+	
 2002-04-22  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c: Handle "binomial" operator.
