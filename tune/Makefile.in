@@ -70,6 +70,7 @@ AMTAR = @AMTAR@
 AR = @AR@
 AS = @AS@
 AWK = @AWK@
+CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
 CC = @CC@
 CCAS = @CCAS@
 CPP = @CPP@
@@ -514,6 +515,9 @@ fib:
 	./speed -s 80-120 -c mpz_fib_ui
 fibg:
 	./speed -s 10-300 -P fibg mpz_fib_ui
+
+gcd:
+	./speed -s 1-20 -c mpn_gcd
 
 graph:
 	./speed -s 1-5000 -f 1.02 -P graph mpn_mul_n mpn_sqr
