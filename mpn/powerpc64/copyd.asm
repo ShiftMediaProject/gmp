@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_copyd
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
