@@ -584,7 +584,7 @@ case $host in
     ;;
 
 
-  ia64*-*-* | itanium-*-* | itanium2-*-*)
+  IA64_PATTERN)
     abilist="64"
     GMP_INCLUDE_MPN(ia64/default.m4)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo
