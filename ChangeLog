@@ -1,3 +1,11 @@
+2000-11-02  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add udiv_qrnnd.c
+	and udiv_w_sdiv.c.
+
+	* mpn/generic/mul_n.c (mpn_kara_sqr_n): Remove a duplicate
+	subtract at the evaluate stage.
+
 2000-11-01  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in [compiler switch] (sparc64-*-linux*): Spell
