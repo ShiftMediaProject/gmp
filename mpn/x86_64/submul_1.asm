@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract the
 dnl  result from a second limb vector.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,8 +23,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C         cycles/limb
-C Hammer:     3.75
+C		    cycles/limb
+C Hammer:		3.75
+C Prescott/Nocona:	21-23 (fluctuating due to w/c problems)
 
 
 C INPUT PARAMETERS

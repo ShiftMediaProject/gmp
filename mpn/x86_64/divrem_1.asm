@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,16 +21,16 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C         integer part  fraction part
-C         cycles/limb   cycles/limb
-C Hammer:     17            15
+C		   integer part    fraction part
+C		    cycles/limb     cycles/limb
+C Hammer:		17		15
+C Prescott/Nocona:	83		57
 
 
 C mp_limb_t mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
 C                         mp_srcptr np, mp_size_t nn, mp_limb_t d);
 
 C TODO
-C  * Implement mpn_preinv_divrem_1 entry point
 C  * Address FIXME below about leading quotient limbs optimization
 C  * Optimize by doing some software pipelining and local scheduling
 C  * Optimize by using mmx instructions for shifting

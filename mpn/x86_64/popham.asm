@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_popcount, mpn_hamdist -- population count and hamming distance.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,10 +23,10 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C	     popcount	      hamdist
-C	    cycles/limb	    cycles/limb
-C K8:		6.0		7.5
-C Nocona:	 ?		 ?
+C		     popcount	      hamdist
+C		    cycles/limb	    cycles/limb
+C Hammer:		6.0		7.5
+C Prescott/Nocona:	12		14.5
 
 C TODO
 C  * Tune.  It should be possible to reach 5 c/l for popcount and 6 c/l for

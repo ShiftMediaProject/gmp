@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_com_n.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,8 +22,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C     cycles/limb
-C K8:     1.28
+C		    cycles/limb
+C Hammer:		1.28
+C Prescott/Nocona:	3
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')

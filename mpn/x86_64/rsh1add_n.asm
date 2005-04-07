@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_rsh1add_n -- rp[] = (up[] + vp[]) >> 1
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,9 +22,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C         cycles/limb
-C Hammer:     2.14	(mpn_add_n + mpn_rshift need 4.125)
-C (The exact timing seems to be 15/7 = 2.1429 c/l.  Odd.)
+C		    cycles/limb
+C Hammer:		2.14	(mpn_add_n + mpn_rshift need 4.125)
+C Prescott/Nocona:	13
 
 C It should be possible to get well under 2 c/l for this operation, to
 C about 40/8/3 = 1.667 c/l.

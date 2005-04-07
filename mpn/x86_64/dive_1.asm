@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,8 +22,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C     cycles/limb
-C K8:    10
+C		    cycles/limb
+C Hammer:		10
+C Prescott/Nocona:	33
 
 C A quick adoption of the 32-bit K7 code.
 

@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_rshift -- mpn left shift.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -22,8 +22,9 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C         cycles/limb
-C Hammer:     2.375
+C		    cycles/limb
+C Hammer:		2.375
+C Prescott/Nocona:	8
 
 
 C INPUT PARAMETERS

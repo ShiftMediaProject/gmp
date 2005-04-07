@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_divexact_by3 -- mpn division by 3, expecting no remainder.
 
-dnl  Copyright 2000, 2002, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2004, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -22,7 +22,9 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C K8: 7 cycles/limb
+C		    cycles/limb
+C Hammer:		7
+C Prescott/Nocona:	24
 
 C Based on 32-bit Athlon code.
 C Not carefully optimized, but it already runs quite well.

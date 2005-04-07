@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,8 +22,10 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C         cycles/limb
-C Hammer:     2.14	(mpn_lshift + mpn_add_n need 4.125)
+C		    cycles/limb
+C Hammer:		2.14
+C Prescott/Nocona:	14
+
 
 C Sometimes speed degenerates to 2.58 c/l, supposedly related to that some
 C operand alignments cause conflicts in the blocked cache.

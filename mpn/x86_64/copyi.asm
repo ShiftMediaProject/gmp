@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_copyi -- copy limb vector, incrementing.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,8 +22,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C         cycles/limb
-C Hammer:     1
+C		    cycles/limb
+C Hammer:		1
+C Prescott/Nocona:	2
 
 
 C INPUT PARAMETERS

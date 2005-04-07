@@ -22,8 +22,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C     cycles/limb
-C K8:     1.5
+C		    cycles/limb
+C Hammer:		1.5
+C Prescott/Nocona:	3-3.5
 
 C TODO
 C  * Clean up VARIANT_3 feed-in code.
