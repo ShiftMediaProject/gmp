@@ -1,4 +1,4 @@
-dnl  Alpha EV5 __gmpn_sub_n -- Subtract two limb vectors of the same length > 0
+dnl  Alpha EV5 mpn_sub_n -- Subtract two limb vectors of the same length > 0
 dnl  and store difference in a third limb vector.
 
 dnl  Copyright 1995, 1999, 2000 Free Software Foundation, Inc.
@@ -21,6 +21,11 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
+
+C      cycles/limb
+C EV4:     ?
+C EV5:     4.75
+C EV6:     3
 
 dnl  INPUT PARAMETERS
 dnl  res_ptr	r16

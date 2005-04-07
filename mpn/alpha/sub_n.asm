@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C      cycles/limb
 C EV4:     7.75
-C EV5:     4.75
+C EV5:     5.75
 C EV6:     4
 
 C  INPUT PARAMETERS
