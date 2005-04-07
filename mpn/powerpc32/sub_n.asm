@@ -1,6 +1,6 @@
 dnl  PowerPC-32 mpn_sub_n -- subtract limb vectors.
 
-dnl  Copyright 2002 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -34,17 +34,25 @@ C rp	r3
 C s1p	r4
 C s2p	r5
 C n	r6
+C cy	r7
 
 ASM_START()
-PROLOGUE(mpn_sub_n)
+PROLOGUE(mpn_sub_nc)
+	subfic	r0,r7,0		C set hw cy from cy argument
 	cmpwi	cr0,r6,15	C more than 15 limbs?
-	bgt	L(BIG)		C branch if more than 15 limbs
+	ble	L(com)		C branch if <= 15 limbs
+	b	L(BIG)
+EPILOGUE(mpn_sub_nc)
+PROLOGUE(mpn_sub_n)
+	subfc	r0,r0,r0	C set hw cy
+	cmpwi	cr0,r6,15	C more than 15 limbs?
+	bgt	L(BIG)		C branch if > 15 limbs
 
-	mtctr	r6		C copy size into CTR
+L(com):	mtctr	r6		C copy size into CTR
 	addi	r3,r3,-4	C offset rp, it's updated before it's used
 	lwz	r0,0(r4)	C load s1 limb
 	lwz	r7,0(r5)	C load s2 limb
-	subfc	r10,r7,r0
+	subfe	r10,r7,r0
 	bdz	L(endS)
 L(loopS):
 	lwzu	r0,4(r4)	C load s1 limb
@@ -65,11 +73,10 @@ L(BIG):
 	addi	r4,r4,-4
 	addi	r5,r5,-4
 	addi	r3,r3,-4
-	addic	r0,r1,-1	C set cy
 	beq	L(multiple_of_4)
 	lwzu	r0,4(r4)	C load s1 limb
 	lwzu	r7,4(r5)	C load s2 limb
-	subfc	r10,r7,r0
+	subfe	r10,r7,r0
 	bdz	L(end0)
 L(loop0):
 	lwzu	r0,4(r4)	C load s1 limb
