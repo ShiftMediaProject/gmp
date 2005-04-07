@@ -38,9 +38,9 @@ PROLOGUE(mpn_add_n)
 	sri	10,6,1		C count for unrolled loop
 	a	7,0,8		C add least significant limbs, set cy
 	mtctr	10		C copy count into CTR
-	beq	0,Leven		C branch if even C of limbs (C of limbs >= 2)
+	beq	0,Leven		C branch if even # of limbs (# of limbs >= 2)
 
-C We have an odd C of limbs.  Add the first limbs separately.
+C We have an odd # of limbs.  Add the first limbs separately.
 	cmpi	1,10,0		C is count for unrolled loop zero?
 	bc	4,6,L1		C bne cr1,L1 (misassembled by gas)
 	st	7,4(3)
