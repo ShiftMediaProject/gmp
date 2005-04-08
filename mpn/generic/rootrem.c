@@ -7,7 +7,7 @@
    FUTURE GNU MP RELEASE.
 
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -94,7 +94,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 
   xn = (xnb + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
 
-  qp = TMP_ALLOC_LIMBS (un + 1);
+  qp = TMP_ALLOC_LIMBS (PP_ALLOC);
   xp = TMP_ALLOC_LIMBS (xn + 1);
 
   /* Set initial root to only ones.  This is an overestimate of the actual root
