@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_sqr_diagonal.
 
-dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -32,6 +32,8 @@ C n	r5
 
 ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	r5, r5, 0, 32')		C zero extend n
 	mtctr	r5
 .Loop:
 	ld	r0, 0(r4)

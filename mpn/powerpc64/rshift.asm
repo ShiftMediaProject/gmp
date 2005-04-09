@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_rshift -- rp[] = up[] >> cnt
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -42,6 +42,8 @@ define(`h1',`r11')
 
 ASM_START()
 PROLOGUE(mpn_rshift)
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	n, n, 0, 32')	C zero extend n
 	mtctr	n		C copy n to count register
 	addi	rp, rp, -16
 	subfic	tnc, cnt, 64	C reverse shift count

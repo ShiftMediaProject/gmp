@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_copyd
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -32,13 +32,17 @@ C n	r5
 
 ASM_START()
 PROLOGUE(mpn_copyd)
-	rldicl.	r0, r5, 3, 59	C r0 = (r5 & 3) << 3; cr0 = (n == 4t)?
+	rldic.	r0, r5, 3, 59	C r0 = (r5 & 3) << 3; cr0 = (n == 4t)?
 	cmpldi	cr6, r0, 16	C cr6 = (n cmp 4t + 2)?
 
-	sldi	r6, r5, 3
+ifdef(`HAVE_ABI_mode32',
+`	rldic	r6, r5, 3, 32',	C byte count corresponding to n
+`	rldicr	r6, r5, 3, 60')	C byte count corresponding to n
 
 	addi	r5, r5, 4	C compute...
-	srdi	r5, r5, 2	C ...branch count
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	r5, r5, 62,34',	C ...branch count
+`	rldicl	r5, r5, 62, 2')	C ...branch count
 	mtctr	r5
 
 	add	r4, r4, r6
@@ -62,7 +66,6 @@ PROLOGUE(mpn_copyd)
 	std	r6, 0(r3)
 .LL00:	addi	r4, r4, -32
 	addi	r3, r3, -32
-
 	bdnz	.Loop
 
 	blr

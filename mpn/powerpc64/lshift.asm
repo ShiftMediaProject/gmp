@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_lshift -- rp[] = up[] << cnt
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -42,8 +42,15 @@ define(`h1',`r11')
 
 ASM_START()
 PROLOGUE(mpn_lshift)
-	mtctr	n		C copy n to count register
-	sldi	r0, n, 3	C byte count corresponding to n
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	r7, r5, 0, 32	C zero extend n
+	mtctr	r7',		C copy n to count register
+`	mtctr	n')		C copy n to count register
+
+ifdef(`HAVE_ABI_mode32',
+`	rldic	r0, n, 3, 32',	C byte count corresponding to n
+`	rldicr	r0, n, 3, 60')	C byte count corresponding to n
+
 	add	rp, rp, r0	C rp = rp + n
 	add	up, up, r0	C up = up + n
 	addi	rp, rp, 8	C rp now points 16 beyond end

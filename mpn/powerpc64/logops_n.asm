@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
 dnl  mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
 
-dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -92,11 +92,13 @@ PROLOGUE(func)
 	ld	r8, 0(r4)	C read lowest u limb
 	ld	r9, 0(r5)	C read lowest v limb
 	addi	r6, r6, 3	C compute branch count (1)
-	rldicl.	r0, r6, 3, 59	C r0 = (n-1 & 3) << 3; cr0 = (n == 4(t+1))?
+	rldic.	r0, r6, 3, 59	C r0 = (n-1 & 3) << 3; cr0 = (n == 4(t+1))?
 	cmpldi	cr6, r0, 16	C cr6 = (n cmp 4t + 3)
 
-	srdi	r6, r6, 2	C compute branch count (2)
-	mtctr	r6		C compute branch count (3)
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	r6, r6, 62,34',	C ...branch count
+`	rldicl	r6, r6, 62, 2')	C ...branch count
+	mtctr	r6
 
 	ld	r6, 0(r4)	C read lowest u limb (again)
 	ld	r7, 0(r5)	C read lowest v limb (again)
