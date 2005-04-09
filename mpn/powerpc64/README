@@ -112,7 +112,8 @@ FPU2 - floating-point unit 2
 While this is one integer unit less than POWER3/PPC630, the remaining units
 are more powerful; here they handle multiply and divide.
 
-Memory:		  2 ld/st.  (Verify that two store can issue per cycle.)
+Memory:		  2 ld/st.  Stores go to the L2 cache, which can sustain just
+		  one store per cycle.
 		  L1 load latency: to gregs 3-4 cycles, to fregs 5-6 cycles.
 		  Operations that modify the address register might be split
 		  to use also a an integer issue slot.
