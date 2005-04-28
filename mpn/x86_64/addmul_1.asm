@@ -25,7 +25,7 @@ include(`../config.m4')
 
 C		    cycles/limb
 C Hammer:		3.25
-C Prescott/Nocona:	16.3-18 (fluctuating due to w/c problems)
+C Prescott/Nocona:	16.3-18 (fluctuating due to w/c buffer problems)
 
 C TODO
 C  * Perhaps make this use the algorithm of mul_1.asm.
