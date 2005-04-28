@@ -38,32 +38,31 @@ C n	rcx
 	ALIGN(16)
 ASM_START()
 PROLOGUE(mpn_sub_n)
-	pushq	%rbx			C				1
 	movq	%rcx, %r8		C				3
 	shrq	$2, %rcx		C				4
 	je	.Lend			C				2
 	andl	$3, %r8d		C				4
-	.byte	0x66, 0x90		C				2
+	.byte	0x66, 0x90, 0x90	C				2
 
 C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
 .Loop:	movq	(%rsi), %rax		C				3
-	movq	8(%rsi), %rbx		C				4
+	movq	8(%rsi), %r9		C				4
 	leaq	32(%rsi), %rsi		C				4
 
 	sbbq	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
 
-	sbbq	8(%rdx), %rbx		C				4
-	movq	%rbx, 8(%rdi)		C				4
+	sbbq	8(%rdx), %r9		C				4
+	movq	%r9, 8(%rdi)		C				4
 
 	movq	-16(%rsi), %rax		C				4
-	movq	-8(%rsi), %rbx		C				4
+	movq	-8(%rsi), %r9		C				4
 
 	sbbq	16(%rdx), %rax		C				4
 	movq	%rax, 16(%rdi)		C				4
 
-	sbbq	24(%rdx), %rbx		C				4
-	movq	%rbx, 24(%rdi)		C				4
+	sbbq	24(%rdx), %r9		C				4
+	movq	%r9, 24(%rdi)		C				4
 	decq	%rcx			C				3
 
 	leaq	32(%rdx), %rdx		C				4
@@ -77,7 +76,6 @@ C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
 
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
-	popq	%rbx			C				1
 	ret				C				1
 
 .Lend:	testl	%eax, %eax		C clear cy			2
@@ -89,35 +87,32 @@ C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
 	movq	%rax, (%rdi)		C				3
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
-	popq	%rbx			C				1
 	ret				C				1
 
 .L1:	decl	%r8d			C				3
 	jne	.L2			C				2
 
 	movq	(%rsi), %rax		C				3
-	movq	8(%rsi), %rbx		C				4
+	movq	8(%rsi), %r9		C				4
 	sbbq	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
-	sbbq	8(%rdx), %rbx		C				4
-	movq	%rbx, 8(%rdi)		C				4
+	sbbq	8(%rdx), %r9		C				4
+	movq	%r9, 8(%rdi)		C				4
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
-	popq	%rbx			C				1
 	ret				C				1
 
 .L2:
 	movq	(%rsi), %rax		C				3
-	movq	8(%rsi), %rbx		C				4
+	movq	8(%rsi), %r9		C				4
 	sbbq	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
-	sbbq	8(%rdx), %rbx		C				4
-	movq	%rbx, 8(%rdi)		C				4
+	sbbq	8(%rdx), %r9		C				4
+	movq	%r9, 8(%rdi)		C				4
 	movq	16(%rsi), %rax		C				4
 	sbbq	16(%rdx), %rax		C				4
 	movq	%rax, 16(%rdi)		C				4
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
-	popq	%rbx			C				1
 	ret				C				1
 EPILOGUE()
