@@ -16,7 +16,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -44,7 +44,7 @@ PROLOGUE(mpn_mul_1)
 	addi	r3, r3, -8
 	addi	r4, r4, -8
 
-.Loop:	ldu	r0, 8(r4)
+L(oop):	ldu	r0, 8(r4)
 	mulld	r9, r0, r6
 	adde	r12, r9, r7	C add old high limb and new low limb
 	srdi	r5, r9, 32
@@ -52,7 +52,7 @@ PROLOGUE(mpn_mul_1)
 	adde	r5, r5, r11	C add high limb parts, set cy
 	mulhdu	r7, r0, r6
 	stdu	r12, 8(r3)
-	bdnz	.Loop
+	bdnz	L(oop)
 
 	addze	r4, r7
 	srdi	r3, r4, 32

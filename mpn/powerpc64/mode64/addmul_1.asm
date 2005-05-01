@@ -16,7 +16,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -52,11 +52,11 @@ PROLOGUE(mpn_addmul_1)
 	addi	n, n, 3		C compute count...
 	srdi	n, n, 2		C ...for ctr
 	mtctr	n		C copy count into ctr
-	beq	cr0, .Lb00
-	blt	cr6, .Lb01
-	beq	cr6, .Lb10
+	beq	cr0, L(b00)
+	blt	cr6, L(b01)
+	beq	cr6, L(b10)
 
-.Lb11:	ld	r26, 0(up)
+L(b11):	ld	r26, 0(up)
 	ld	r28, 0(rp)
 	addi	up, up, 8
 	nop
@@ -65,9 +65,9 @@ PROLOGUE(mpn_addmul_1)
 	addc	r0, r0, r28
 	std	r0, 0(rp)
 	addi	rp, rp, 8
-	b	.Lfic
+	b	L(fic)
 
-.Lb00:	ld	r26, 0(up)
+L(b00):	ld	r26, 0(up)
 	ld	r27, 8(up)
 	ld	r28, 0(rp)
 	ld	r29, 8(rp)
@@ -84,17 +84,17 @@ PROLOGUE(mpn_addmul_1)
 	adde	r7, r7, r29
 	std	r7, 8(rp)
 	addi	rp, rp, 16
-	b	.Lfic
+	b	L(fic)
 
-.Lb01:	bdnz	.Lgrt1
+L(b01):	bdnz	L(grt1)
 	ld	r26, 0(up)
 	ld	r28, 0(rp)
 	mulld	r0, r26, r6
 	mulhdu	r8, r26, r6
 	addc	r0, r0, r28
 	std	r0, 0(rp)
-	b	.Lret
-.Lgrt1:	ld	r26, 0(up)
+	b	L(ret)
+L(grt1):	ld	r26, 0(up)
 	ld	r27, 8(up)
 	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6
@@ -117,17 +117,17 @@ PROLOGUE(mpn_addmul_1)
 	std	r9, 16(rp)
 	addi	up, up, 24
 	addi	rp, rp, 24
-	b	.Lfic
+	b	L(fic)
 
-.Lb10:	addic	r0, r0, 0
+L(b10):	addic	r0, r0, 0
 	li	r12, 0		C cy_limb = 0
-.Lfic:	ld	r26, 0(up)
+L(fic):	ld	r26, 0(up)
 	ld	r27, 8(up)
 	addi	up, up, 16
-	bdz	.Lend
+	bdz	L(end)
 
 				C registers dying
-.Loop:	mulld	r0, r26, r6	C
+L(oop):	mulld	r0, r26, r6	C
 	mulhdu	r5, r26, r6	C 26
 	ld	r26, 0(up)	C
 	ld	r28, 0(rp)	C
@@ -158,9 +158,9 @@ PROLOGUE(mpn_addmul_1)
 	std	r11, 24(rp)	C 11
 	addi	up, up, 32	C
 	addi	rp, rp, 32	C
-	bdnz	.Loop		C
+	bdnz	L(oop)		C
 
-.Lend:	mulld	r0, r26, r6
+L(end):	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6
 	ld	r28, 0(rp)
 	nop
@@ -175,7 +175,7 @@ PROLOGUE(mpn_addmul_1)
 	std	r0, 0(rp)
 	adde	r7, r7, r29
 	std	r7, 8(rp)
-.Lret:	addze	r3, r8
+L(ret):	addze	r3, r8
 	ld	r31, -8(r1)
 	ld	r30, -16(r1)
 	ld	r29, -24(r1)

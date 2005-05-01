@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -92,11 +92,11 @@ PROLOGUE(func)
 	addi	r6, r6, 3	C compute count...
 	srdi	r6, r6, 2	C ...for ctr
 	mtctr	r6		C copy count into ctr
-	beq	cr0, .Lb00
-	blt	cr6, .Lb01
-	beq	cr6, .Lb10
+	beq	cr0, L(b00)
+	blt	cr6, L(b01)
+	beq	cr6, L(b10)
 
-.Lb11:	ld	r8, 0(r4)	C load s1 limb
+L(b11):	ld	r8, 0(r4)	C load s1 limb
 	ld	r9, 0(r5)	C load s2 limb
 	ld	r10, 8(r4)	C load s1 limb
 	ld	r11, 8(r5)	C load s2 limb
@@ -111,20 +111,20 @@ PROLOGUE(func)
 	std	r30, 8(r3)
 	std	r31, 16(r3)
 	addi	r3, r3, 24
-	bdnz	.Lgo
-	b	.Lret
+	bdnz	L(go)
+	b	L(ret)
 
-.Lb01:	ld	r12, 0(r4)	C load s1 limb
+L(b01):	ld	r12, 0(r4)	C load s1 limb
 	addi	r4, r4, 8
 	ld	r0, 0(r5)	C load s2 limb
 	addi	r5, r5, 8
 	ADDSUB	r31, r0, r12	C add
 	std	r31, 0(r3)
 	addi	r3, r3, 8
-	bdnz	.Lgo
-	b	.Lret
+	bdnz	L(go)
+	b	L(ret)
 
-.Lb10:	ld	r10, 0(r4)	C load s1 limb
+L(b10):	ld	r10, 0(r4)	C load s1 limb
 	ld	r11, 0(r5)	C load s2 limb
 	ld	r12, 8(r4)	C load s1 limb
 	addi	r4, r4, 16
@@ -135,11 +135,11 @@ PROLOGUE(func)
 	std	r30, 0(r3)
 	std	r31, 8(r3)
 	addi	r3, r3, 16
-	bdnz	.Lgo
-	b	.Lret
+	bdnz	L(go)
+	b	L(ret)
 
-.Lb00:	INITCY			C clear/set cy
-.Lgo:	ld	r6, 0(r4)	C load s1 limb
+L(b00):	INITCY			C clear/set cy
+L(go):	ld	r6, 0(r4)	C load s1 limb
 	ld	r7, 0(r5)	C load s2 limb
 	ld	r8, 8(r4)	C load s1 limb
 	ld	r9, 8(r5)	C load s2 limb
@@ -147,12 +147,12 @@ PROLOGUE(func)
 	ld	r11, 16(r5)	C load s2 limb
 	ld	r12, 24(r4)	C load s1 limb
 	ld	r0, 24(r5)	C load s2 limb
-	bdz	.Lend
+	bdz	L(end)
 
 	addi	r4, r4, 32
 	addi	r5, r5, 32
 
-.Loop:	ADDSUBC	r28, r7, r6
+L(oop):	ADDSUBC	r28, r7, r6
 	ld	r6, 0(r4)	C load s1 limb
 	ld	r7, 0(r5)	C load s2 limb
 	ADDSUBC	r29, r9, r8
@@ -171,9 +171,9 @@ PROLOGUE(func)
 	std	r30, 16(r3)
 	std	r31, 24(r3)
 	addi	r3, r3, 32
-	bdnz	.Loop		C decrement ctr and loop back
+	bdnz	L(oop)		C decrement ctr and loop back
 
-.Lend:	ADDSUBC	r28, r7, r6
+L(end):	ADDSUBC	r28, r7, r6
 	ADDSUBC	r29, r9, r8
 	ADDSUBC	r30, r11, r10
 	ADDSUBC	r31, r0, r12
@@ -182,7 +182,7 @@ PROLOGUE(func)
 	std	r30, 16(r3)
 	std	r31, 24(r3)
 
-.Lret:	ld	r31, -8(r1)
+L(ret):	ld	r31, -8(r1)
 	ld	r30, -16(r1)
 	ld	r29, -24(r1)
 	ld	r28, -32(r1)

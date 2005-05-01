@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -55,21 +55,21 @@ PROLOGUE(mpn_rsh1add_n)
 	rldicl	r12, x, 0, 63	C return value
 	srdi	s1, x, 1
 
-	bdz	.L1
+	bdz	L(1)
 
 	ld	u0, 8(up)
 	ld	v0, 8(vp)
 
-	bdz	.Lend
+	bdz	L(end)
 
-.Loop:	ldu	u1, 16(up)
+L(oop):	ldu	u1, 16(up)
 	ldu	v1, 16(vp)
 	adde	x, v0, u0
 	srdi	s0, x, 1
 	rldimi	s1, x, 63, 0
 	std	s1, 8(rp)
 
-	bdz	.Lexit
+	bdz	L(exit)
 
 	ld	u0, 8(up)
 	ld	v0, 8(vp)
@@ -78,9 +78,9 @@ PROLOGUE(mpn_rsh1add_n)
 	rldimi	s0, x, 63, 0
 	stdu	s0, 16(rp)
 
-	bdnz	.Loop
+	bdnz	L(oop)
 
-.Lend:	adde	x, v0, u0
+L(end):	adde	x, v0, u0
 	srdi	s0, x, 1
 	rldimi	s1, x, 63, 0
 	std	s1, 8(rp)
@@ -92,12 +92,12 @@ PROLOGUE(mpn_rsh1add_n)
 	mr	r3, r12
 	blr
 
-.Lexit:	adde	x, v1, u1
+L(exit):	adde	x, v1, u1
 	srdi	s1, x, 1
 	rldimi	s0, x, 63, 0
 	stdu	s0, 16(rp)
 
-.L1:	li	x, 0
+L(1):	li	x, 0
 	addze	x, x
 	rldimi	s1, x, 63, 0
 	std	s1, 8(rp)

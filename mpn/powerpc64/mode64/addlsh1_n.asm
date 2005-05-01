@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -51,16 +51,16 @@ PROLOGUE(mpn_addlsh1_n)
 	addi	up, up, -8	C update up
 	addi	rp, rp, -8	C update rp
 	sldi	s1, v0, 1
-	bdz	.Lend		C If done, skip loop
+	bdz	L(end)		C If done, skip loop
 
-.Loop:	ld	v1, 8(vp)	C load v limb
+L(oop):	ld	v1, 8(vp)	C load v limb
 	adde	s1, s1, u0	C add limbs with cy, set cy
 	std	s1, 8(rp)	C store result limb
 	srdi	s0, v0, 63	C shift down previous v limb
 	ldu	u0, 16(up)	C load u limb and update up
 	rldimi	s0, v1, 1, 0	C left shift v limb and merge with prev v limb
 
-	bdz	.Lexit		C decrement ctr and exit if done
+	bdz	L(exit)		C decrement ctr and exit if done
 
 	ldu	v0, 16(vp)	C load v limb and update vp
 	adde	s0, s0, u0	C add limbs with cy, set cy
@@ -69,14 +69,14 @@ PROLOGUE(mpn_addlsh1_n)
 	ld	u0, 8(up)	C load u limb
 	rldimi	s1, v0, 1, 0	C left shift v limb and merge with prev v limb
 
-	bdnz	.Loop		C decrement ctr and loop back
+	bdnz	L(oop)		C decrement ctr and loop back
 
-.Lend:	adde	r7, s1, u0
+L(end):	adde	r7, s1, u0
 	std	r7, 8(rp)	C store last result limb
 	srdi	r3, v0, 63
 	addze	r3, r3
 	blr
-.Lexit:	adde	r7, s0, u0
+L(exit):	adde	r7, s0, u0
 	std	r7, 16(rp)	C store last result limb
 	srdi	r3, v1, 63
 	addze	r3, r3

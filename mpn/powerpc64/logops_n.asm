@@ -16,7 +16,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -107,31 +107,31 @@ ifdef(`HAVE_ABI_mode32',
 	add	r4, r4, r0	C offset up
 	add	r3, r3, r0	C offset rp
 
-	beq	cr0, .LL01
-	blt	cr6, .LL10
-	beq	cr6, .LL11
-	b	.LL00
+	beq	cr0, L(L01)
+	blt	cr6, L(L10)
+	beq	cr6, L(L11)
+	b	L(L00)
 
-.Loop:	ld	r8, -24(r4)
+L(oop):	ld	r8, -24(r4)
 	ld	r9, -24(r5)
 	logop	r10, r6, r7
 	std	r10, -32(r3)
-.LL00:	ld	r6, -16(r4)
+L(L00):	ld	r6, -16(r4)
 	ld	r7, -16(r5)
 	logop	r10, r8, r9
 	std	r10, -24(r3)
-.LL11:	ld	r8, -8(r4)
+L(L11):	ld	r8, -8(r4)
 	ld	r9, -8(r5)
 	logop	r10, r6, r7
 	std	r10, -16(r3)
-.LL10:	ld	r6, 0(r4)
+L(L10):	ld	r6, 0(r4)
 	ld	r7, 0(r5)
 	logop	r10, r8, r9
 	std	r10, -8(r3)
-.LL01:	addi	r5, r5, 32
+L(L01):	addi	r5, r5, 32
 	addi	r4, r4, 32
 	addi	r3, r3, 32
-	bdnz	.Loop
+	bdnz	L(oop)
 
 	logop	r10, r6, r7
 	std	r10, -32(r3)

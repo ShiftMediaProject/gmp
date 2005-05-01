@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -60,21 +60,21 @@ ifdef(`HAVE_ABI_mode32',
 	ld	u0, 0(up)
 	sld	h0, u0, cnt
 	srd	r12, u0, tnc	C return value
-	bdz	.L1		C jump for n = 1
+	bdz	L(1)		C jump for n = 1
 
 	ld	u1, -8(up)
-	bdz	.L2		C jump for n = 2
+	bdz	L(2)		C jump for n = 2
 
 	ldu	u0, -16(up)
-	bdz	.Lend		C jump for n = 3
+	bdz	L(end)		C jump for n = 3
 
-.Loop:	srd	v1, u1, tnc
+L(oop):	srd	v1, u1, tnc
 	sld	h1, u1, cnt
 	ld	u1, -8(up)
 	or	h0, v1, h0
 	stdu	h0, -16(rp)
 
-	bdz	.Lexit
+	bdz	L(exit)
 
 	srd	v0, u0, tnc
 	sld	h0, u0, cnt
@@ -82,9 +82,9 @@ ifdef(`HAVE_ABI_mode32',
 	or	h1, v0, h1
 	std	h1, -8(rp)
 
-	bdnz	.Loop
+	bdnz	L(oop)
 
-.Lend:	srd	v1, u1, tnc
+L(end):	srd	v1, u1, tnc
 	sld	h1, u1, cnt
 	or	h0, v1, h0
 	stdu	h0, -16(rp)
@@ -92,7 +92,7 @@ ifdef(`HAVE_ABI_mode32',
 	sld	h0, u0, cnt
 	or	h1, v0, h1
 	std	h1, -8(rp)
-.L1:	std	h0, -16(rp)
+L(1):	std	h0, -16(rp)
 ifdef(`HAVE_ABI_mode32',
 `	srdi	r3, r12, 32
 	mr	r4, r12
@@ -100,11 +100,11 @@ ifdef(`HAVE_ABI_mode32',
 ')
 	blr
 
-.Lexit:	srd	v0, u0, tnc
+L(exit):	srd	v0, u0, tnc
 	sld	h0, u0, cnt
 	or	h1, v0, h1
 	std	h1, -8(rp)
-.L2:	srd	v1, u1, tnc
+L(2):	srd	v1, u1, tnc
 	sld	h1, u1, cnt
 	or	h0, v1, h0
 	stdu	h0, -16(rp)

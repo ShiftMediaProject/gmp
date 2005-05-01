@@ -16,7 +16,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -39,16 +39,16 @@ PROLOGUE(mpn_sub_n)
 	ld	r8, 0(r4)	C load least significant s1 limb
 	ld	r0, 0(r5)	C load least significant s2 limb
 	addi	r3, r3, -8	C offset res_ptr, it's updated before it's used
-	bdz	.Lend		C If done, skip loop
+	bdz	L(end)		C If done, skip loop
 
-.Loop:	ld	r9, 8(r4)	C load s1 limb
+L(oop):	ld	r9, 8(r4)	C load s1 limb
 	ld	r10, 8(r5)	C load s2 limb
 	subfe	r7, r0, r8	C subtract limbs with cy, set cy
 	srdi	r6, r0, 32
 	srdi	r11, r8, 32
 	subfe	r6, r6, r11
 	std	r7, 8(r3)	C store result limb
-	bdz	.Lexit		C decrement CTR and exit if done
+	bdz	L(exit)		C decrement CTR and exit if done
 	ldu	r8, 16(r4)	C load s1 limb and update s1_ptr
 	ldu	r0, 16(r5)	C load s2 limb and update s2_ptr
 	subfe	r7, r10, r9	C subtract limbs with cy, set cy
@@ -56,9 +56,9 @@ PROLOGUE(mpn_sub_n)
 	srdi	r11, r9, 32
 	subfe	r6, r6, r11
 	stdu	r7, 16(r3)	C store result limb and update res_ptr
-	bdnz	.Loop		C decrement CTR and loop back
+	bdnz	L(oop)		C decrement CTR and loop back
 
-.Lend:	subfe	r7, r0, r8
+L(end):	subfe	r7, r0, r8
 	srdi	r6, r0, 32
 	srdi	r11, r8, 32
 	subfe	r6, r6, r11
@@ -67,7 +67,7 @@ PROLOGUE(mpn_sub_n)
 	subfic	r4, r3, 0	C ... return value register
 	li	r3, 0		C zero extend return value
 	blr
-.Lexit:	subfe	r7, r10, r9
+L(exit):	subfe	r7, r10, r9
 	srdi	r6, r10, 32
 	srdi	r11, r9, 32
 	subfe	r6, r6, r11

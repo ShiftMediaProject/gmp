@@ -16,7 +16,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -42,7 +42,7 @@ PROLOGUE(mpn_submul_1c)
 	addic	r0,r0,0
 	addi	r3, r3, -8
 	addi	r4, r4, -8
-.Loop:
+L(oop):
 	ldu	r0,8(r4)
 	ld	r10,8(r3)
 	mulld	r9,r0,r6
@@ -52,7 +52,7 @@ PROLOGUE(mpn_submul_1c)
 	subf	r12,r9,r10
 	addc	r11,r9,r12		C invert carry from subf
 	stdu	r12,8(r3)
-	bdnz	.Loop
+	bdnz	L(oop)
 
 	addze	r3,r7
 	blr

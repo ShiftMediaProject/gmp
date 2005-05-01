@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -50,23 +50,23 @@ ifdef(`HAVE_ABI_mode32',
 	sub	r4, r4, r0	C offset up
 	sub	r3, r3, r0	C offset rp
 
-	beq	cr0, .LL00
-	blt	cr6, .LL01
-	beq	cr6, .LL10
-	b	.LL11
+	beq	cr0, L(L00)
+	blt	cr6, L(L01)
+	beq	cr6, L(L10)
+	b	L(L11)
 
 	ALIGN(8)
-.Loop:	ld	r6, 24(r4)
+L(oop):	ld	r6, 24(r4)
 	std	r6, 24(r3)
-.LL11:	ld	r6, 16(r4)
+L(L11):	ld	r6, 16(r4)
 	std	r6, 16(r3)
-.LL10:	ld	r6, 8(r4)
+L(L10):	ld	r6, 8(r4)
 	std	r6, 8(r3)
-.LL01:	ld	r6, 0(r4)
+L(L01):	ld	r6, 0(r4)
 	std	r6, 0(r3)
-.LL00:	addi	r4, r4, -32
+L(L00):	addi	r4, r4, -32
 	addi	r3, r3, -32
-	bdnz	.Loop
+	bdnz	L(oop)
 
 	blr
 EPILOGUE()
