@@ -949,12 +949,20 @@ case $host in
             # accomodate both styles, but the proper 64-bit registers will
             # be fastest and are what we really want to use.
             #
-	    abilist="mode32 $abilist"
+	    abilist="mode64 mode32 $abilist"
 	    cclist_mode32="gcc"
-	    gcc_mode32_cflags="-O3 -mpowerpc64"
-	    gcc_mode32_cflags_optlist="cpu"
+	    gcc_mode32_cflags="-mpowerpc64"
+	    gcc_mode32_cflags_optlist="cpu opt"
+	    gcc_mode32_cflags_opt="-fast -O3 -O2 -O1"
+	    gcc_cflags_opt="-fast -O3 -O2 -O1"
 	    path_mode32="powerpc64/mode32 powerpc64"
 	    limb_mode32=longlong
+	    cclist_mode64="gcc"
+	    gcc_mode64_cflags="-m64"
+	    gcc_mode64_cflags_optlist="cpu opt"
+	    gcc_mode64_cflags_opt="-fast -O3 -O2 -O1"
+	    path_mode64="powerpc64/mode64 powerpc64"
+	    any_mode64_testlist="sizeof-long-8"
 	    ;;
 	  *-*-linux*)
 	    # On GNU/Linux, assume the processor is in 64-bit mode.  Some
@@ -2897,6 +2905,11 @@ if test "$gmp_asm_syntax_testing" != no; then
         powerpc*-*-linux*)
 	  case $ABI in
 	    mode64) GMP_INCLUDE_MPN(powerpc64/linux64.m4) ;;
+          esac
+          ;;
+        powerpc*-*-darwin*)
+	  case $ABI in
+	    mode64) GMP_INCLUDE_MPN(powerpc64/darwin.m4) ;;
           esac
           ;;
       esac
