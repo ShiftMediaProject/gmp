@@ -1,6 +1,6 @@
 /* mpn_popcount, mpn_hamdist -- mpn bit population count/hamming distance.
 
-Copyright 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1994, 1996, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -56,8 +56,8 @@ FNAME (mp_srcptr up,
       p1 -= (p1 >> 1) & MP_LIMB_T_MAX/3;				/* 2 0-2 */
       p1 = ((p1 >> 2) & MP_LIMB_T_MAX/5) + (p1 & MP_LIMB_T_MAX/5);	/* 4 0-4 */
 
-      p01 = p0 + p1;
-      p01 = ((p01 >> 4) & MP_LIMB_T_MAX/17) + (p01 & MP_LIMB_T_MAX/17);	/* 8 0-8 */
+      p01 = p0 + p1;							/* 8 0-8 */
+      p01 = ((p01 >> 4) & MP_LIMB_T_MAX/17) + (p01 & MP_LIMB_T_MAX/17);	/* 8 0-16 */
 
       p2 = POPHAM (up[2], vp[2]);
       p2 -= (p2 >> 1) & MP_LIMB_T_MAX/3;				/* 2 0-2 */
@@ -67,16 +67,18 @@ FNAME (mp_srcptr up,
       p3 -= (p3 >> 1) & MP_LIMB_T_MAX/3;				/* 2 0-2 */
       p3 = ((p3 >> 2) & MP_LIMB_T_MAX/5) + (p3 & MP_LIMB_T_MAX/5);	/* 4 0-4 */
 
-      p23 = p2 + p3;
-      p23 = ((p23 >> 4) & MP_LIMB_T_MAX/17) + (p23 & MP_LIMB_T_MAX/17);	/* 8 0-8 */
+      p23 = p2 + p3;							/* 8 0-8 */
+      p23 = ((p23 >> 4) & MP_LIMB_T_MAX/17) + (p23 & MP_LIMB_T_MAX/17);	/* 8 0-16 */
 
-      x = p01 + p23;							/* 8 0-16 */
-      x = (x >> 8) + x;
-      x = (x >> 16) + x;
+      x = p01 + p23;							/* 8 0-32 */
+      x = (x >> 8) + x;							/* 8 0-64 */
+      x = (x >> 16) + x;						/* 8 0-128 */
 #if GMP_LIMB_BITS > 32
-      x = (x >> 32) + x;
-#endif
+      x = ((x >> 32) & 0xff) + (x & 0xff);				/* 8 0-256 */
+      result += x;
+#else
       result += x & 0xff;
+#endif
       up += 4;
 #if OPERATION_hamdist
       vp += 4;
