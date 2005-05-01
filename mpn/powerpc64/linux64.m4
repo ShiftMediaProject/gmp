@@ -45,19 +45,19 @@ define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 `	.size	.$1, .-.$1')
 
-define(`TOCREF',
-m4_assert_numargs(1)
-`$1@toc')
+define(`LDSYM',
+m4_assert_numargs(2)
+`	ld	$1, $2@toc(2)')
 
 define(`DEF_OBJECT',
-m4_assert_numargs(2)
+m4_assert_numargs(1)
 `	.section	".toc", "aw"
-$2:	.tc	$1[TC], $1
+$1:	.tc	..$1[TC], ..$1
 
 	.section	.rodata
-	ALIGN(2)
-	.type	$1, @object
-$1:
+	.align	2
+	.type	..$1, @object
+..$1:
 ')
 
 define(`END_OBJECT',
