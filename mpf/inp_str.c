@@ -1,7 +1,7 @@
 /* mpf_inp_str(dest_float, stream, base) -- Input a number in base
    BASE from stdio stream STREAM and store the result in DEST_FLOAT.
 
-Copyright 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1996, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,7 +31,7 @@ mpf_inp_str (mpf_ptr rop, FILE *stream, int base)
   char *str;
   size_t alloc_size, str_size;
   int c;
-  size_t retval;
+  int res;
   size_t nread;
 
   if (stream == 0)
@@ -74,10 +74,10 @@ mpf_inp_str (mpf_ptr rop, FILE *stream, int base)
     }
   str[str_size] = 0;
 
-  retval = mpf_set_str (rop, str, base);
+  res = mpf_set_str (rop, str, base);
   (*__gmp_free_func) (str, alloc_size);
 
-  if (retval == -1)
+  if (res == -1)
     return 0;			/* error */
 
   return str_size + nread;
