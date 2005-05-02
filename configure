@@ -4898,7 +4898,7 @@ echo >conftest.c
 gmp_tmp_vs=`$cc  -V -c -o conftest.$OBJEXT conftest.c 2>&1 | grep "^ccom:"`
 echo "Version string: $gmp_tmp_vs" >&5
 rm conftest*
-gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
+gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\([0-9]*\).*/\1/'`
 gmp_tmp_v2=`echo $gmp_tmp_vs | sed 's/.* .\..*\.\(.*\)\..* HP C.*/\1/'`
 gmp_tmp_v3=`echo $gmp_tmp_vs | sed 's/.* .\..*\..*\.\(.*\) HP C.*/\1/'`
 echo "Version number: $gmp_tmp_v1.$gmp_tmp_v2.$gmp_tmp_v3" >&5
