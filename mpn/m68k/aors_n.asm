@@ -1,7 +1,7 @@
 dnl  mc68020 mpn_add_n, mpn_sub_n -- add or subtract limb vectors
 
-dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001, 2002, 2003 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001, 2002, 2003, 2005 Free
+dnl  Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -35,7 +35,7 @@ ifdef(`OPERATION_add_n',`
 `m4_error(`Need OPERATION_add_n or OPERATION_sub_n
 ')')')
 
-MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
+MULFUNC_PROLOGUE(mpn_add_n mpn_sub_n)
 
 
 C INPUT PARAMETERS
