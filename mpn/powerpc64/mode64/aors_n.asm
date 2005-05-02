@@ -79,6 +79,7 @@ ifdef(`OPERATION_sub_n',`
   define(INITCY,	`addic	r0, r1, -1')
 ')
 
+MULFUNC_PROLOGUE(mpn_add_n mpn_sub_n)
 
 ASM_START()
 PROLOGUE(func)
