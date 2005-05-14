@@ -799,13 +799,13 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addq %5,%1\n\tadcq %3,%0"					\
 	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
-	   : "0"  ((UDItype)(ah)), "g" ((UDItype)(bh)),			\
-	     "%1" ((UDItype)(al)), "g" ((UDItype)(bl)))
+	   : "0"  ((UDItype)(ah)), "rme" ((UDItype)(bh)),		\
+	     "%1" ((UDItype)(al)), "rme" ((UDItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("subq %5,%1\n\tsbbq %3,%0"					\
 	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
-	   : "0" ((UDItype)(ah)), "g" ((UDItype)(bh)),			\
-	     "1" ((UDItype)(al)), "g" ((UDItype)(bl)))
+	   : "0" ((UDItype)(ah)), "rme" ((UDItype)(bh)),		\
+	     "1" ((UDItype)(al)), "rme" ((UDItype)(bl)))
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("mulq %3"							\
 	   : "=a" (w0), "=d" (w1)					\
