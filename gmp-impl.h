@@ -2192,8 +2192,8 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     _nmask = LIMB_HIGHBIT_TO_MASK (_n10);				\
     _nadj = _n10 + (_nmask & (d));					\
     umul_ppmm (_xh, _xl, di, _n2 - _nmask);				\
-    add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
-    _q1 = ~(_n2 + _xh);							\
+    add_ssaaaa (_xh, _xl, _xh, _xl, _n2, _nadj);			\
+    _q1 = ~_xh;								\
     umul_ppmm (_xh, _xl, _q1, d);					\
     add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
     _xh -= (d);					/* xh = 0 or -1 */	\
@@ -2212,8 +2212,8 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     _nmask = LIMB_HIGHBIT_TO_MASK (_n10);				\
     _nadj = _n10 + (_nmask & (dnorm));					\
     umul_ppmm (_xh, _xl, di, _n2 - _nmask);				\
-    add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
-    _q1 = ~(_n2 + _xh);							\
+    add_ssaaaa (_xh, _xl, _xh, _xl, _n2, _nadj);			\
+    _q1 = ~_xh;								\
     umul_ppmm (_xh, _xl, _q1, d);					\
     add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
     _xh -= (d);								\
