@@ -62,9 +62,9 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
   if (BELOW_THRESHOLD (n, MULLOW_BASECASE_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
-      mp_limb_t ws[2 * (MULLOW_BASECASE_THRESHOLD - 1)];
-      mpn_mul_basecase (tp, xp, n, yp, n);
-      MPN_COPY (rp, tp, n);
+      mp_limb_t ws[2 * (MULLOW_BASECASE_THRESHOLD)];
+      mpn_mul_basecase (ws, xp, n, yp, n);
+      MPN_COPY (rp, ws, n);
     }
   else if (BELOW_THRESHOLD (n, MULLOW_DC_THRESHOLD))
     {
