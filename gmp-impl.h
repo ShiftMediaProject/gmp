@@ -702,7 +702,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
    disable it when profiling (profiling being a slowdown anyway).  */
 
 #if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96) && ! defined (PIC) \
-  && ! WANT_PROFILING_PROF && ! WANT_PROFILING_GPROF 
+  && ! WANT_PROFILING_PROF && ! WANT_PROFILING_GPROF
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
@@ -2374,7 +2374,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
    It's not clear whether this is the best way to do this calculation.
    Anything congruent to -a would be fine for the one limb congruence
-   tests.  */ 
+   tests.  */
 
 #define NEG_MOD(r, a, d)						\
   do {									\
@@ -2938,7 +2938,7 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
 #define FORCE_DOUBLE(d)  do { } while (0)
 #endif
 
-                                                                       
+
 extern int __gmp_junk;
 extern const int __gmp_0;
 void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
@@ -3144,12 +3144,12 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 /* HGCD definitions */
 
 /* Limited by 2 + twice the bitsize of mp_size_t */
-#define QSTACK_MAX_QUOTIENTS 82 
+#define QSTACK_MAX_QUOTIENTS 82
 
 /* Name mangling */
 #define qstack_itch __gmpn_qstack_itch
 #define qstack_init __gmpn_qstack_init
-#define qstack_reset __gmpn_qstack_reset 
+#define qstack_reset __gmpn_qstack_reset
 #define qstack_rotate __gmpn_qstack_rotate
 
 #define mpn_hgcd2 __gmpn_hgcd2
@@ -3171,13 +3171,13 @@ struct qstack
   mp_size_t size[QSTACK_MAX_QUOTIENTS];
   mp_ptr limb;
   mp_size_t limb_alloc;
-  
+
   /* Number of quotients to keep when we discard old quotients */
   unsigned nkeep;
 
   /* Top quotient is of size size[size_next-1], and starts at
      limb+limb_next - size[size_next-1]. We use size_next == 0 for an
-     empty stack.*/ 
+     empty stack.*/
   unsigned size_next;
   mp_size_t limb_next;
 };
@@ -3218,7 +3218,6 @@ struct hgcd2
   /* Sign of the first row, sign >= 0 implies that u >= 0 and v <= 0,
      sign < 0 implies u <= 0, v >= 0 */
   int sign;
-  
   struct hgcd2_row row[4];
 };
 
@@ -3253,10 +3252,8 @@ struct hgcd_row
 struct hgcd
 {
   int sign;
-
   /* Space allocated for the uv entries, for sanity checking */
   mp_size_t alloc;
-  
   /* Size of the largest u,v entry, usually row[3].uvp[1]. This
      element should be normalized. Smaller elements must be zero
      padded, and all unused limbs (i.e. between size and alloc) must
@@ -3502,7 +3499,7 @@ struct gmp_snprintf_t {
     ASSERT ((fun) != NULL);                     \
     DOPRNT_ACCUMULATE ((*(fun)) params);        \
   } while (0)
-    
+
 #define DOPRNT_FORMAT(fmt, ap)                          \
   DOPRNT_ACCUMULATE_FUN (funs->format, (data, fmt, ap))
 #define DOPRNT_MEMORY(ptr, len)                                 \
