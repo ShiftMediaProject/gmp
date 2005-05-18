@@ -284,6 +284,13 @@ extern "C" {
           ptr = TMP_ALLOC (bytes);
           TMP_FREE (marker);
 
+   New interface:
+     Make TMP_DECL, TMP_MARK, and TMP_FREE argument-less.
+     New TMP_SDECL, TMP_SMARK, and TMP_SFREE for small-only allocating functions
+     Add TMP_SALLOC for known-small allocations
+     Add TMP_BALLOC for known-big allocations
+     Make TMP_ALLOC choose TMP_SALLOC or TMP_BALLOC depending on size
+
    TMP_DECL just declares a variable, but might be empty and so must be last
    in a list of variables.  TMP_MARK must be done before any TMP_ALLOC.
    TMP_ALLOC(0) is not allowed.  TMP_FREE doesn't need to be done if a
@@ -314,47 +321,62 @@ union tmp_align_t {
   (POW2_P(m) ? (a) + (-(a))%(m)         \
    : (a)+(m)-1 - (((a)+(m)-1) % (m)))
 
-#if WANT_TMP_ALLOCA
-/* Each TMP_ALLOC is simply an alloca(), and nothing else is needed.
-   This is the preferred method.  */
-#define TMP_DECL(m)
-#define TMP_ALLOC(x) alloca(x)
-#define TMP_MARK(m)
-#define TMP_FREE(m)
-#endif
-
-#if WANT_TMP_REENTRANT
-/* See tal-reent.c for some comments. */
+#if defined (WANT_TMP_ALLOCA) || defined (WANT_TMP_REENTRANT)
 struct tmp_reentrant_t {
   struct tmp_reentrant_t  *next;
-  size_t                  size;   /* bytes, including header */
+  size_t		  size;	  /* bytes, including header */
 };
 void *__gmp_tmp_reentrant_alloc _PROTO ((struct tmp_reentrant_t **, size_t)) ATTRIBUTE_MALLOC;
 void  __gmp_tmp_reentrant_free _PROTO ((struct tmp_reentrant_t *));
-#define TMP_DECL(marker)   struct tmp_reentrant_t *__tmp_marker
-/* don't demand NULL, just cast a zero */
-#define TMP_MARK(marker) \
-  do { __tmp_marker = (struct tmp_reentrant_t *) 0; } while (0)
-#define TMP_ALLOC(size)    __gmp_tmp_reentrant_alloc (&__tmp_marker, size)
-#define TMP_FREE(marker)   __gmp_tmp_reentrant_free  (__tmp_marker)
+#endif
+
+#if WANT_TMP_ALLOCA
+#define TMP_SDECL
+#define TMP_DECL		struct tmp_reentrant_t *__tmp_marker
+#define TMP_SMARK
+#define TMP_MARK		__tmp_marker = 0
+#define TMP_SALLOC(n)		alloca(n)
+#define TMP_BALLOC(n)		__gmp_tmp_reentrant_alloc (&__tmp_marker, n)
+#define TMP_ALLOC(n)							\
+  (LIKELY ((n) < 65536) ? TMP_SALLOC(n) : TMP_BALLOC(n))
+#define TMP_SFREE
+#define TMP_FREE							   \
+  do {									   \
+    if (UNLIKELY (__tmp_marker != 0)) __gmp_tmp_reentrant_free (__tmp_marker); \
+  } while (0)
+#endif
+
+#if WANT_TMP_REENTRANT
+#define TMP_SDECL		TMP_DECL
+#define TMP_DECL		struct tmp_reentrant_t *__tmp_marker
+#define TMP_SMARK		TMP_MARK
+#define TMP_MARK		__tmp_marker = 0
+#define TMP_SALLOC(n)		TMP_ALLOC(n)
+#define TMP_BALLOC(n)		TMP_ALLOC(n)
+#define TMP_ALLOC(n)		__gmp_tmp_reentrant_alloc (&__tmp_marker, n)
+#define TMP_SFREE		TMP_FREE
+#define TMP_FREE		__gmp_tmp_reentrant_free (__tmp_marker)
 #endif
 
 #if WANT_TMP_NOTREENTRANT
-/* See tal-notreent.c for some comments. */
 struct tmp_marker
 {
   struct tmp_stack *which_chunk;
   void *alloc_point;
 };
-typedef struct tmp_marker tmp_marker;
 void *__gmp_tmp_alloc _PROTO ((unsigned long)) ATTRIBUTE_MALLOC;
-void __gmp_tmp_mark _PROTO ((tmp_marker *));
-void __gmp_tmp_free _PROTO ((tmp_marker *));
-#define TMP_DECL(marker) tmp_marker marker
-#define TMP_ALLOC(size) \
-  __gmp_tmp_alloc (ROUND_UP_MULTIPLE ((unsigned long) (size), __TMP_ALIGN))
-#define TMP_MARK(marker) __gmp_tmp_mark (&marker)
-#define TMP_FREE(marker) __gmp_tmp_free (&marker)
+void __gmp_tmp_mark _PROTO ((struct tmp_marker *));
+void __gmp_tmp_free _PROTO ((struct tmp_marker *));
+#define TMP_SDECL		TMP_DECL
+#define TMP_DECL		struct tmp_marker __tmp_marker
+#define TMP_SMARK		TMP_MARK
+#define TMP_MARK		__gmp_tmp_mark (&__tmp_marker)
+#define TMP_SALLOC(n)		TMP_ALLOC(n)
+#define TMP_BALLOC(n)		TMP_ALLOC(n)
+#define TMP_ALLOC(n)							\
+  __gmp_tmp_alloc (ROUND_UP_MULTIPLE ((unsigned long) (n), __TMP_ALIGN))
+#define TMP_SFREE		TMP_FREE
+#define TMP_FREE		__gmp_tmp_free (&__tmp_marker)
 #endif
 
 #if WANT_TMP_DEBUG
@@ -416,13 +438,19 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
                            marker, &__tmp_marker,               \
                            __tmp_marker_name, marker_name);     \
   } while (0)
-#endif
+#endif /* WANT_TMP_DEBUG */
 
 
 /* Allocating various types. */
-#define TMP_ALLOC_TYPE(n,type) ((type *) TMP_ALLOC ((n) * sizeof (type)))
-#define TMP_ALLOC_LIMBS(n)     TMP_ALLOC_TYPE(n,mp_limb_t)
-#define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
+#define TMP_ALLOC_TYPE(n,type)  ((type *) TMP_ALLOC ((n) * sizeof (type)))
+#define TMP_SALLOC_TYPE(n,type) ((type *) TMP_SALLOC ((n) * sizeof (type)))
+#define TMP_BALLOC_TYPE(n,type) ((type *) TMP_BALLOC ((n) * sizeof (type)))
+#define TMP_ALLOC_LIMBS(n)      TMP_ALLOC_TYPE(n,mp_limb_t)
+#define TMP_SALLOC_LIMBS(n)     TMP_SALLOC_TYPE(n,mp_limb_t)
+#define TMP_BALLOC_LIMBS(n)     TMP_BALLOC_TYPE(n,mp_limb_t)
+#define TMP_ALLOC_MP_PTRS(n)    TMP_ALLOC_TYPE(n,mp_ptr)
+#define TMP_SALLOC_MP_PTRS(n)   TMP_SALLOC_TYPE(n,mp_ptr)
+#define TMP_BALLOC_MP_PTRS(n)   TMP_BALLOC_TYPE(n,mp_ptr)
 
 /* It's more efficient to allocate one block than two.  This is certainly
    true of the malloc methods, but it can even be true of alloca if that
