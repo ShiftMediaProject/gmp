@@ -279,28 +279,21 @@ extern "C" {
 #endif
 
 
-/* Usage: TMP_DECL (marker);
-          TMP_MARK (marker);
+/* Usage: TMP_DECL;
+          TMP_MARK;
           ptr = TMP_ALLOC (bytes);
-          TMP_FREE (marker);
+          TMP_FREE;
 
-   New interface:
-     Make TMP_DECL, TMP_MARK, and TMP_FREE argument-less.
-     New TMP_SDECL, TMP_SMARK, and TMP_SFREE for small-only allocating functions
-     Add TMP_SALLOC for known-small allocations
-     Add TMP_BALLOC for known-big allocations
-     Make TMP_ALLOC choose TMP_SALLOC or TMP_BALLOC depending on size
+   Small allocations should use TMP_SALLOC, big allocations should use
+   TMP_BALLOC.  Allocations that might be small or big should use TMP_ALLOC.
+
+   Functions that use just TMP_SALLOC should use TMP_SDECL, TMP_SMARK, and
+   TMP_SFREE.
 
    TMP_DECL just declares a variable, but might be empty and so must be last
    in a list of variables.  TMP_MARK must be done before any TMP_ALLOC.
    TMP_ALLOC(0) is not allowed.  TMP_FREE doesn't need to be done if a
-   TMP_MARK was made, but then no TMP_ALLOCs.
-
-   The name "marker" isn't used by the malloc-reentrant and debug methods,
-   instead they hardcode a name which TMP_ALLOC will know.  For that reason
-   two TMP_DECLs are not allowed, unless one is in a nested "{ }" block, and
-   in that case TMP_MARK, TMP_ALLOC and TMP_FREE will refer to the TMP_DECL
-   which is in scope, irrespective of the marker name given.  */
+   TMP_MARK was made, but then no TMP_ALLOCs.  */
 
 /* The alignment in bytes, used for TMP_ALLOCed blocks, when alloca or
    __gmp_allocate_func doesn't already determine it.  Currently TMP_ALLOC
