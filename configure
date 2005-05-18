@@ -27114,6 +27114,7 @@ echo "$as_me: error: --enable-alloca=alloca specified, but alloca not available"
 #define WANT_TMP_ALLOCA 1
 _ACEOF
 
+    TAL_OBJECT=tal-reent$U.lo
     ;;
   malloc-reentrant)
     cat >>confdefs.h <<\_ACEOF
