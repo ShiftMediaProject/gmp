@@ -38,9 +38,9 @@ mpf_reldiff (mpf_t rdiff, mpf_srcptr x, mpf_srcptr y)
     {
       mp_size_t dprec;
       mpf_t d;
-      TMP_DECL (marker);
+      TMP_DECL;
 
-      TMP_MARK (marker);
+      TMP_MARK;
       dprec = PREC(rdiff) + ABSIZ(x);
       ASSERT (PREC(rdiff)+1 == dprec - ABSIZ(x) + 1);
 
@@ -51,7 +51,7 @@ mpf_reldiff (mpf_t rdiff, mpf_srcptr x, mpf_srcptr y)
       SIZ(d) = ABSIZ(d);
       mpf_div (rdiff, d, x);
 
-      TMP_FREE (marker);
+      TMP_FREE;
     }
 }
 

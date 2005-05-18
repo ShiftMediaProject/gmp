@@ -34,7 +34,7 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
   mp_ptr tmp1_ptr, tmp2_ptr;
   mp_limb_t cy_limb;
   int cc;
-  TMP_DECL (marker);
+  TMP_DECL;
 
 #if GMP_NAIL_BITS != 0
   if ((num2 | den2) > GMP_NUMB_MAX)
@@ -71,7 +71,7 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
     /* NUM1 x DEN2 is surely smaller in magnitude than NUM2 x DEN1.  */
     return -num1_size;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   tmp1_ptr = (mp_ptr) TMP_ALLOC ((num1_size + 1) * BYTES_PER_MP_LIMB);
   tmp2_ptr = (mp_ptr) TMP_ALLOC ((den1_size + 1) * BYTES_PER_MP_LIMB);
 
@@ -87,6 +87,6 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
 
   cc = tmp1_size - tmp2_size != 0
     ? tmp1_size - tmp2_size : mpn_cmp (tmp1_ptr, tmp2_ptr, tmp1_size);
-  TMP_FREE (marker);
+  TMP_FREE;
   return cc;
 }

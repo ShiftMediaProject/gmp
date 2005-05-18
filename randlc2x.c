@@ -71,7 +71,7 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   int cy;
   mp_size_t xn;
   gmp_rand_lc_struct *p;
-  TMP_DECL (mark);
+  TMP_DECL;
 
   p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
 
@@ -86,7 +86,7 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   /* Allocate temporary storage.  Let there be room for calculation of
      (A * seed + C) % M, or M if bigger than that.  */
 
-  TMP_MARK (mark);
+  TMP_MARK;
 
   ta = an + seedn + 1;
   tn = BITS_TO_LIMBS (m2exp);
@@ -132,7 +132,7 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
 	MPN_COPY_INCR (rp, tp + xn, tn);
     }
 
-  TMP_FREE (mark);
+  TMP_FREE;
 
   /* Return number of valid bits in the result.  */
   return (m2exp + 1) / 2;
@@ -148,11 +148,11 @@ randget_lc (gmp_randstate_t rstate, mp_ptr rp, unsigned long int nbits)
   mp_ptr tp;
   mp_size_t tn;
   gmp_rand_lc_struct *p;
-  TMP_DECL (lcmark);
+  TMP_DECL;
 
   p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
 
-  TMP_MARK (lcmark);
+  TMP_MARK;
 
   chunk_nbits = p->_mp_m2exp / 2;
   tn = BITS_TO_LIMBS (chunk_nbits);
@@ -215,7 +215,7 @@ randget_lc (gmp_randstate_t rstate, mp_ptr rp, unsigned long int nbits)
 	  &= ~(~CNST_LIMB (0) << nbits % GMP_NUMB_BITS);
     }
 
-  TMP_FREE (lcmark);
+  TMP_FREE;
 }
 
 

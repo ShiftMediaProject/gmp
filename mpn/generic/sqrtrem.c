@@ -212,7 +212,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   mp_limb_t *tp, s0[1], cc, high, rl;
   int c;
   mp_size_t rn, tn;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (nn >= 0);
   ASSERT_MPN (np, nn);
@@ -235,7 +235,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   c = c / 2; /* we have to shift left by 2c bits to normalize {np, nn} */
   tn = (nn + 1) / 2; /* 2*tn is the smallest even integer >= nn */
 
-  TMP_MARK (marker);
+  TMP_MARK;
   if (nn % 2 != 0 || c > 0)
     {
       tp = TMP_ALLOC_LIMBS (2 * tn);
@@ -281,6 +281,6 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
 
   MPN_NORMALIZE (rp, rn);
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return rn;
 }

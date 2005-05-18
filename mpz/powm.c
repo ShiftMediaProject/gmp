@@ -60,14 +60,14 @@ static void
 reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn)
 {
   mp_ptr qp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   qp = TMP_ALLOC_LIMBS (an - mn + 1);
 
   mpn_tdiv_qr (qp, tp, 0L, ap, an, mp, mn);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 #if REDUCE_EXPONENT
@@ -166,14 +166,14 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 #if REDUCE_EXPONENT
   mpz_t new_e;
 #endif
-  TMP_DECL (marker);
+  TMP_DECL;
 
   mp = PTR(m);
   mn = ABSIZ (m);
   if (mn == 0)
     DIVIDE_BY_ZERO;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   es = SIZ (e);
   if (es <= 0)
@@ -184,7 +184,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	     m equals 1.  */
 	  SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
 	  PTR(r)[0] = 1;
-	  TMP_FREE (marker);	/* we haven't really allocated anything here */
+	  TMP_FREE;	/* we haven't really allocated anything here */
 	  return;
 	}
 #if HANDLE_NEGATIVE_EXPONENT
@@ -457,5 +457,5 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   MPN_COPY (PTR(r), xp, xn);
 
   __GMP_FREE_FUNC_LIMBS (gp, K / 2 * mn);
-  TMP_FREE (marker);
+  TMP_FREE;
 }

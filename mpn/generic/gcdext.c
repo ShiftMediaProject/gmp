@@ -932,7 +932,7 @@ sanity_check_row (mp_srcptr ap, mp_size_t asize,
   mp_ptr rp;
   mp_size_t i;
 
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (asize > 0 && ap[asize - 1] != 0);
   ASSERT (bsize > 0 && bp[bsize - 1] != 0);
@@ -976,7 +976,7 @@ sanity_check_row (mp_srcptr ap, mp_size_t asize,
       qsize += (qp[qsize] != 0);
       ASSERT (MPN_LEQ_P (qp, qsize, ap, asize));
     }
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 # define ASSERT_ROW(ap, asize, bp, bsize, sign, usize, r) \
 sanity_check_row (ap, asize, bp, bsize, sign, usize, r)
@@ -1285,13 +1285,13 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       mp_size_t gsize;
       mp_ptr tp;
       mp_size_t talloc = gcdext_lehmer_itch (asize, bsize);
-      TMP_DECL (marker);
-      TMP_MARK (marker);
+      TMP_DECL;
+      TMP_MARK;
 
       tp = TMP_ALLOC_LIMBS (talloc);
       gsize = gcdext_lehmer (gp, up, usizep, ap, asize, bp, bsize,
 			     tp, talloc);
-      TMP_FREE (marker);
+      TMP_FREE;
       return gsize;
     }
   else
@@ -1299,13 +1299,13 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       mp_size_t gsize;
       mp_ptr tp;
       mp_size_t talloc = gcdext_schoenhage_itch (asize, bsize);
-      TMP_DECL (marker);
-      TMP_MARK (marker);
+      TMP_DECL;
+      TMP_MARK;
 
       tp = TMP_ALLOC_LIMBS (talloc);
       gsize = gcdext_schoenhage (gp, up, usizep, ap, asize, bp, bsize,
 				 tp, talloc);
-      TMP_FREE (marker);
+      TMP_FREE;
       return gsize;
     }
 }

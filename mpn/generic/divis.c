@@ -73,7 +73,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
   mp_limb_t  alow, dlow, dmask;
   mp_ptr     qp, rp;
   mp_size_t  i;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (asize >= 0);
   ASSERT (asize == 0 || ap[asize-1] != 0);
@@ -138,7 +138,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
 	}
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   rp = TMP_ALLOC_LIMBS (asize+1);
   qp = rp + dsize;
@@ -151,12 +151,12 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
     {
       if (rp[i] != 0)
 	{
-	  TMP_FREE (marker);
+	  TMP_FREE;
 	  return 0;
 	}
     }
   while (++i < dsize);
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return 1;
 }

@@ -29,9 +29,9 @@ mpz_fdiv_qr (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
   mp_size_t divisor_size = divisor->_mp_size;
   mp_size_t xsize;
   mpz_t temp_divisor;		/* N.B.: lives until function returns! */
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* We need the original value of the divisor after the quotient and
      remainder have been preliminary calculated.  We have to copy it to
@@ -52,5 +52,5 @@ mpz_fdiv_qr (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
       mpz_add (rem, rem, divisor);
     }
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

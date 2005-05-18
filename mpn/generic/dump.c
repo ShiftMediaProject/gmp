@@ -82,11 +82,11 @@ void
 mpn_dump (mp_srcptr p, mp_size_t n)
 {
   mp_ptr tp;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
+  TMP_DECL;
+  TMP_MARK;
   tp = TMP_ALLOC_LIMBS (n);
   MPN_COPY (tp, p, n);
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 #endif

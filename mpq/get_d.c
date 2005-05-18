@@ -105,7 +105,7 @@ mpq_get_d (const MP_RAT *src)
 #define N_QLIMBS (1 + (sizeof (double) + BYTES_PER_MP_LIMB-1) / BYTES_PER_MP_LIMB)
   mp_limb_t qarr[N_QLIMBS + 1];
   mp_ptr qp = qarr;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (dsize > 0);    /* canonical src */
 
@@ -113,7 +113,7 @@ mpq_get_d (const MP_RAT *src)
   if (UNLIKELY (nsize == 0))
     return 0.0;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   nsize = ABS (nsize);
   dsize = ABS (dsize);
   np = src->_mp_num._mp_d;
@@ -161,6 +161,6 @@ mpq_get_d (const MP_RAT *src)
   qsize -= (qp[qsize-1] == 0);
 
   res = mpn_get_d (qp, qsize, sign_quotient, exp);
-  TMP_FREE (marker);
+  TMP_FREE;
   return res;
 }

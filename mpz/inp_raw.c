@@ -122,9 +122,9 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
           int        bits;
           mp_size_t  tpos;
           mp_ptr     tp;
-          TMP_DECL (marker);
+          TMP_DECL;
 
-          TMP_MARK (marker);
+          TMP_MARK;
           tp = TMP_ALLOC_LIMBS (abs_xsize);
           limb = 0;
           bits = 0;
@@ -151,7 +151,7 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
           ASSERT (tpos == abs_xsize);
 
           MPN_COPY (xp, tp, abs_xsize);
-          TMP_FREE (marker);
+          TMP_FREE;
         }
 
       /* GMP 1.x mpz_out_raw wrote high zero bytes, strip any high zero

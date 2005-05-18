@@ -62,9 +62,9 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   unsigned int cnt;
   mp_size_t i;
   unsigned long int n_valid_bits, adj;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* The extra factor 1.585 = log(3)/log(2) here is for the worst case
      overestimate of the root, i.e., when the code rounds a root that is
@@ -88,7 +88,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       mpn_sub_1 (remp, up, un, (mp_limb_t) 1);
       MPN_NORMALIZE (remp, un);
       rootp[0] = 1;
-      TMP_FREE (marker);
+      TMP_FREE;
       return un;
     }
 
@@ -172,6 +172,6 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   mpn_sub (remp, up, un, pp, pn);
   MPN_NORMALIZE (remp, un);
   MPN_COPY (rootp, xp, xn);
-  TMP_FREE (marker);
+  TMP_FREE;
   return un;
 }

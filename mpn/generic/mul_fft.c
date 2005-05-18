@@ -322,9 +322,9 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
       int j, inc2 = 2 * inc;
       int *lk = *ll;
       mp_ptr tmp;
-      TMP_DECL(marker);
+      TMP_DECL;
 
-      TMP_MARK(marker);
+      TMP_MARK;
       tmp = TMP_ALLOC_LIMBS (n + 1);
       mpn_fft_fft_sqr (Ap, K/2,ll-1,2 * omega,n,inc2, tp);
       mpn_fft_fft_sqr (Ap+inc, K/2,ll-1,2 * omega,n,inc2, tp);
@@ -339,7 +339,7 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
           mpn_fft_add_modF      (Ap[inc], Ap[0], tp, n);
           mpn_fft_add_modF      (Ap[0], Ap[0], tmp, n);
 	}
-      TMP_FREE(marker);
+      TMP_FREE;
     }
 }
 
@@ -453,9 +453,9 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 {
   int i;
   int sqr = (ap == bp);
-  TMP_DECL(marker);
+  TMP_DECL;
 
-  TMP_MARK(marker);
+  TMP_MARK;
 
   if (n >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
     {
@@ -540,7 +540,7 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 	  a[n] = mpn_sub_n (a, tp, tpn, n) && mpn_add_1 (a, a, n, CNST_LIMB(1));
 	}
     }
-  TMP_FREE(marker);
+  TMP_FREE;
 }
 
 
@@ -572,9 +572,9 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
     {
       int j, K2 = K / 2;
       mp_ptr *Bp = Ap + K2, tmp;
-      TMP_DECL(marker);
+      TMP_DECL;
 
-      TMP_MARK(marker);
+      TMP_MARK;
       tmp = TMP_ALLOC_LIMBS (n + 1);
       mpn_fft_fftinv (Ap, K2, 2 * omega, n, tp);
       mpn_fft_fftinv (Bp, K2, 2 * omega, n, tp);
@@ -590,7 +590,7 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
           mpn_fft_add_modF      (Bp[0], Ap[0], tp, n);
           mpn_fft_add_modF      (Ap[0], Ap[0], tmp, n);
 	}
-      TMP_FREE(marker);
+      TMP_FREE;
     }
 }
 
@@ -661,8 +661,8 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
   int i, j, cc;
   mp_ptr tmp;
   mp_size_t Kl = K * l;
-  TMP_DECL(marker);
-  TMP_MARK(marker);
+  TMP_DECL;
+  TMP_MARK;
 
   ASSERT_ALWAYS (nl <= 2 * Kl);
   if (nl > Kl) /* normalize {n, nl} mod 2^(Kl*GMP_NUMB_BITS)+1 */
@@ -697,7 +697,7 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
       A += nprime + 1;
     }
   ASSERT_ALWAYS (nl == 0);
-  TMP_FREE(marker);
+  TMP_FREE;
 }
 
 /* op <- n*m mod 2^N+1 with fft of size 2^k where N=pl*GMP_NUMB_BITS
@@ -838,12 +838,12 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   mp_ptr *Ap, *Bp, A, T, B;
   int **_fft_l;
   int sqr = (n == m && nl == ml);
-  TMP_DECL(marker);
+  TMP_DECL;
 
   TRACE (printf ("\nmpn_mul_fft pl=%ld nl=%ld ml=%ld k=%d\n", pl, nl, ml, k));
   ASSERT_ALWAYS (mpn_fft_next_size (pl, k) == pl);
 
-  TMP_MARK(marker);
+  TMP_MARK;
   N = pl * GMP_NUMB_BITS;
   _fft_l = TMP_ALLOC_TYPE (k + 1, int*);
   for (i = 0; i <= k; i++)
@@ -894,7 +894,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
 
   i = mpn_mul_fft_internal (op, n, m, pl, k, K, Ap, Bp, A, B, nprime, l, Mp, _fft_l, T, 0);
 
-  TMP_FREE(marker);
+  TMP_FREE;
   __GMP_FREE_FUNC_LIMBS (A, 2 * K * (nprime + 1));
 
   return i;
@@ -962,14 +962,14 @@ mpn_mul_fft_full (mp_ptr op,
 #else
   {
     mp_ptr tmp;
-    TMP_DECL(marker);
+    TMP_DECL;
 
-    TMP_MARK(marker);
+    TMP_MARK;
     tmp = TMP_ALLOC_LIMBS (l);
     MPN_COPY (tmp, pad_op, l);
     c2 = mpn_sub_n (pad_op,      pad_op, pad_op + l, l);
     cc += mpn_add_n (pad_op + l, tmp,    pad_op + l, l);
-    TMP_FREE(marker);
+    TMP_FREE;
   }
 #endif
   c2 += oldcc;

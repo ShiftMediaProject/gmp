@@ -67,7 +67,7 @@ mpn_fib2_ui (mp_ptr fp, mp_ptr f1p, unsigned long int n)
   mp_ptr         xp, yp;
   mp_size_t      size;
   unsigned long  nfirst, mask;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   TRACE (printf ("mpn_fib2_ui n=%lu\n", n));
 
@@ -88,7 +88,7 @@ mpn_fib2_ui (mp_ptr fp, mp_ptr f1p, unsigned long int n)
     {
       mp_size_t  alloc;
 
-      TMP_MARK (marker);
+      TMP_MARK;
       alloc = MPN_FIB2_SIZE (n);
       TMP_ALLOC_LIMBS_2 (xp,alloc, yp,alloc);
 
@@ -158,7 +158,7 @@ mpn_fib2_ui (mp_ptr fp, mp_ptr f1p, unsigned long int n)
 	}
       while (mask != 1);
 
-      TMP_FREE (marker);
+      TMP_FREE;
     }
 
   TRACE (printf ("done size=%ld\n", size);

@@ -28,9 +28,9 @@ mpz_cdiv_r (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
 {
   mp_size_t divisor_size = divisor->_mp_size;
   mpz_t temp_divisor;		/* N.B.: lives until function returns! */
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* We need the original value of the divisor after the remainder has been
      preliminary calculated.  We have to copy it to temporary space if it's
@@ -48,5 +48,5 @@ mpz_cdiv_r (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
   if ((divisor_size ^ dividend->_mp_size) >= 0 && rem->_mp_size != 0)
     mpz_sub (rem, rem, divisor);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

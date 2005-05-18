@@ -350,14 +350,14 @@ tuneup_measure (speed_function_t fun,
 {
   static struct param_t  dummy;
   double   t;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (! param)
     param = &dummy;
 
   s->size += param->size_extra;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   SPEED_TMP_ALLOC_LIMBS (s->xp, s->size, 0);
   SPEED_TMP_ALLOC_LIMBS (s->yp, s->size, 0);
 
@@ -379,7 +379,7 @@ tuneup_measure (speed_function_t fun,
 
   s->size -= param->size_extra;
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return t;
 }
 
@@ -1628,9 +1628,9 @@ void
 all (void)
 {
   time_t  start_time, end_time;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   SPEED_TMP_ALLOC_LIMBS (s.xp_block, SPEED_BLOCK_SIZE, 0);
   SPEED_TMP_ALLOC_LIMBS (s.yp_block, SPEED_BLOCK_SIZE, 0);
 
@@ -1734,7 +1734,7 @@ all (void)
   printf ("/* Tuneup completed successfully, took %ld seconds */\n",
           end_time - start_time);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 

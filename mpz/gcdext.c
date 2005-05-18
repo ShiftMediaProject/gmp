@@ -36,9 +36,9 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   mpz_srcptr u, v;
   mpz_ptr ss, tt;
   __mpz_struct stmp, gtmp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* mpn_gcdext requires that U >= V.  Therefore, we often have to swap U and
      V.  This in turn leads to a lot of complications.  The computed cofactor
@@ -124,5 +124,5 @@ mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
   MPN_COPY (gp, tmp_gp, gsize);
   SIZ (g) = gsize;
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

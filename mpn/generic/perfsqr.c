@@ -217,14 +217,14 @@ mpn_perfect_square_p (mp_srcptr up, mp_size_t usize)
   {
     mp_ptr root_ptr;
     int res;
-    TMP_DECL (marker);
+    TMP_DECL;
 
-    TMP_MARK (marker);
+    TMP_MARK;
     root_ptr = (mp_ptr) TMP_ALLOC ((usize + 1) / 2 * BYTES_PER_MP_LIMB);
 
     /* Iff mpn_sqrtrem returns zero, the square is perfect.  */
     res = ! mpn_sqrtrem (root_ptr, NULL, up, usize);
-    TMP_FREE (marker);
+    TMP_FREE;
 
     return res;
   }

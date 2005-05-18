@@ -162,7 +162,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 #else
   mp_limb_t      b_twolimbs[2];
 #endif
-  TMP_DECL (marker);
+  TMP_DECL;
 
   TRACE (printf ("mpz_n_pow_ui rp=0x%lX bp=0x%lX bsize=%ld e=%lu (0x%lX)\n",
                  PTR(r), bp, bsize, e, e);
@@ -211,7 +211,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
   TRACE (printf ("trailing zero btwos=%d rtwos_limbs=%ld rtwos_bits=%lu\n",
                  btwos, rtwos_limbs, rtwos_bits));
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   rl = 1;
 #if HAVE_NATIVE_mpn_mul_2
@@ -511,7 +511,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
   ASSERT (rp == PTR(r) + rtwos_limbs);
   TRACE (mpn_trace ("end loop r", rp, rsize));
-  TMP_FREE (marker);
+  TMP_FREE;
 
   /* Apply any partial limb factors of 2. */
   if (rtwos_bits != 0)

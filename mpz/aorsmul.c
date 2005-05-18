@@ -45,7 +45,7 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
   mp_size_t  xsize, ysize, tsize, wsize, wsize_signed;
   mp_ptr     wp, tp;
   mp_limb_t  c, high;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   /* w unaffected if x==0 or y==0 */
   xsize = SIZ(x);
@@ -91,7 +91,7 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   tp = TMP_ALLOC_LIMBS (tsize);
 
   high = mpn_mul (tp, PTR(x),xsize, PTR(y),ysize);
@@ -139,7 +139,7 @@ mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
 
   SIZ(w) = (wsize_signed >= 0 ? wsize : -wsize);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 

@@ -200,8 +200,8 @@ mpz_addmul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
       mpz_t t;
       mp_ptr tp;
       mp_size_t xn;
-      TMP_DECL (mark);
-      TMP_MARK (mark);
+      TMP_DECL;
+      TMP_MARK;
       xn = SIZ (x);
       MPZ_TMP_INIT (t, ABS (xn) + 1);
       tp = PTR (t);
@@ -212,7 +212,7 @@ mpz_addmul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
       PTR(t) = tp + 1;
       SIZ(t) = xn;
       mpz_aorsmul_1 (w, t, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) 0);
-      TMP_FREE (mark);
+      TMP_FREE;
       return;
     }
 #endif
@@ -228,8 +228,8 @@ mpz_submul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
       mpz_t t;
       mp_ptr tp;
       mp_size_t xn;
-      TMP_DECL (mark);
-      TMP_MARK (mark);
+      TMP_DECL;
+      TMP_MARK;
       xn = SIZ (x);
       MPZ_TMP_INIT (t, ABS (xn) + 1);
       tp = PTR (t);
@@ -240,7 +240,7 @@ mpz_submul_ui (mpz_ptr w, mpz_srcptr x, unsigned long y)
       PTR(t) = tp + 1;
       SIZ(t) = xn;
       mpz_aorsmul_1 (w, t, (mp_limb_t) y & GMP_NUMB_MASK, (mp_size_t) -1);
-      TMP_FREE (mark);
+      TMP_FREE;
       return;
     }
 #endif

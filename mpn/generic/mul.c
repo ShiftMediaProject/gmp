@@ -133,8 +133,8 @@ mpn_mul (mp_ptr prodp,
   if (un != vn)
     { mp_limb_t t;
       mp_ptr ws;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
+      TMP_DECL;
+      TMP_MARK;
 
       prodp += vn;
       l = vn;
@@ -194,7 +194,7 @@ mpn_mul (mp_ptr prodp,
 	    }
 	}
 
-      TMP_FREE (marker);
+      TMP_FREE;
     }
   return prodp[un + vn - 1];
 }

@@ -42,7 +42,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   int c;
   int negative;
   const unsigned char *digit_value;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   digit_value = digit_value_tab;
   if (base > 36)
@@ -101,7 +101,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
       return 0;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   str_size = strlen (str - 1);
   s = begs = (char *) TMP_ALLOC (str_size + 1);
 
@@ -114,7 +114,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
 	  int dig = digit_value[c];
 	  if (dig >= base)
 	    {
-	      TMP_FREE (marker);
+	      TMP_FREE;
 	      return -1;
 	    }
 	  *s++ = dig;
@@ -132,6 +132,6 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   xsize = mpn_set_str (x->_mp_d, (unsigned char *) begs, str_size, base);
   x->_mp_size = negative ? -xsize : xsize;
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return 0;
 }

@@ -52,7 +52,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
   mp_size_t      size, xalloc;
   unsigned long  n2;
   mp_limb_t      c, c2;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (n <= FIB_TABLE_LIMIT)
     {
@@ -66,7 +66,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
   MPZ_REALLOC (fn, 2*xalloc+1);
   fp = PTR (fn);
 
-  TMP_MARK (marker);
+  TMP_MARK;
   TMP_ALLOC_LIMBS_2 (xp,xalloc, yp,xalloc);
   size = mpn_fib2_ui (xp, yp, n2);
 
@@ -140,5 +140,5 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
   TRACE (printf ("done special, size=%ld\n", size);
          mpn_trace ("fp ", fp, size));
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

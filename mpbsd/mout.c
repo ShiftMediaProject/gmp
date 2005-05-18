@@ -35,7 +35,7 @@ mout (const MINT *x)
   unsigned char *str;
   size_t str_size;
   int i;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   x_size = x->_mp_size;
   if (x_size == 0)
@@ -50,7 +50,7 @@ mout (const MINT *x)
       x_size = -x_size;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   x_ptr = x->_mp_d;
   MPN_SIZEINBASE (str_size, x_ptr, x_size, 10);
   str_size += 2;
@@ -89,5 +89,5 @@ mout (const MINT *x)
 	fputc (' ', stdout);
     }
   fputc ('\n', stdout);
-  TMP_FREE (marker);
+  TMP_FREE;
 }

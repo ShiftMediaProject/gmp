@@ -33,7 +33,7 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   mp_exp_t exp;
   mp_size_t ediff;
   int negate;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   usize = u->_mp_size;
   vsize = v->_mp_size;
@@ -62,7 +62,7 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* Signs are now known to be the same.  */
   negate = usize < 0;
@@ -407,5 +407,5 @@ general_case:
   if (rsize == 0)
     exp = 0;
   r->_mp_exp = exp;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

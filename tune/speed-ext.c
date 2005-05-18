@@ -182,11 +182,11 @@ mean_open2 (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size)
     unsigned  i;                                        \
     mp_ptr    wp;                                       \
     double    t;                                        \
-    TMP_DECL (marker);                                  \
+    TMP_DECL;                                  \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 1);                 \
                                                         \
-    TMP_MARK (marker);                                  \
+    TMP_MARK;                                  \
     SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
@@ -201,7 +201,7 @@ mean_open2 (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size)
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
                                                         \
-    TMP_FREE (marker);                                  \
+    TMP_FREE;                                  \
     return t;                                           \
   }
 

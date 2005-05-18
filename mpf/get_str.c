@@ -122,7 +122,7 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   const char *num_to_text;
   size_t alloc_size = 0;
   char *dp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   up = PTR(u);
   un = ABSIZ(u);
@@ -166,7 +166,7 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
       goto done;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* Allocate temporary digit space.  We can't put digits directly in the user
      area, since we generate more digits than requested.  (We allocate
@@ -302,7 +302,7 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
       n_digits++;
     }
 
-  TMP_FREE (marker);
+  TMP_FREE;
 
  done:
   /* If the string was alloced then resize it down to the actual space

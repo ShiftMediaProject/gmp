@@ -42,7 +42,7 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
   mp_size_t qsize, tsize;
   mp_srcptr np, dp;
   mp_size_t nsize, dsize;
-  TMP_DECL (marker);
+  TMP_DECL;
 
 #if WANT_ASSERT
   {
@@ -87,7 +87,7 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
       DIVIDE_BY_ZERO;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /*  QUOT <-- NUM/2^r, T <-- DEN/2^r where = r number of twos in DEN.  */
   while (dp[0] == 0)
@@ -124,5 +124,5 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
 
   quot->_mp_size = (num->_mp_size ^ den->_mp_size) >= 0 ? qsize : -qsize;
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

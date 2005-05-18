@@ -29,7 +29,7 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
 {
   mpz_t g;
   mp_size_t usize, vsize, size;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   usize = SIZ (u);
   vsize = SIZ (v);
@@ -70,7 +70,7 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
       goto one;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   size = MAX (usize, vsize);
   MPZ_TMP_INIT (g, size);
 
@@ -80,5 +80,5 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
 
   SIZ (r) = ABS (SIZ (r));	/* result always positive */
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

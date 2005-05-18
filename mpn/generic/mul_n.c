@@ -866,12 +866,12 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
 #endif
     {
       mp_ptr ws;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
+      TMP_DECL;
+      TMP_MARK;
       /* Allocate workspace with TMP_ALLOC interface: fast. */
       ws = TMP_ALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (n));
       mpn_toom3_mul_n (p, a, b, n, ws);
-      TMP_FREE (marker);
+      TMP_FREE;
     }
   else
 #if WANT_FFT || TUNE_PROGRAM_BUILD
@@ -917,11 +917,11 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
   else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))
     { /* karatsuba multiplication */
       mp_ptr ws;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
+      TMP_DECL;
+      TMP_MARK;
       ws = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (n));
       mpn_kara_sqr_n (p, a, n, ws);
-      TMP_FREE (marker);
+      TMP_FREE;
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
   else if (BELOW_THRESHOLD (n, SQR_FFT_THRESHOLD))
@@ -930,12 +930,12 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
 #endif
     {
       mp_ptr ws;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
+      TMP_DECL;
+      TMP_MARK;
       /* Allocate workspace with TMP_ALLOC interface: fast. */
       ws = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (n));
       mpn_toom3_sqr_n (p, a, n, ws);
-      TMP_FREE (marker);
+      TMP_FREE;
     }
   else
 #if WANT_FFT || TUNE_PROGRAM_BUILD

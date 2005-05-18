@@ -49,7 +49,7 @@ mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
       mp_limb_t dp[2];
       mp_ptr rp, qp;
       mp_size_t rn;
-      TMP_DECL (mark);
+      TMP_DECL;
 
       if (nn == 1)		/* tdiv_qr requirements; tested above for 0 */
 	{
@@ -62,12 +62,12 @@ mpz_tdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
       MPZ_REALLOC (rem, 2);
       rp = PTR(rem);
 
-      TMP_MARK (mark);
+      TMP_MARK;
       dp[0] = divisor & GMP_NUMB_MASK;
       dp[1] = divisor >> GMP_NUMB_BITS;
       qp = TMP_ALLOC_LIMBS (nn - 2 + 1);
       mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
-      TMP_FREE (mark);
+      TMP_FREE;
       rl = rp[0] + (rp[1] << GMP_NUMB_BITS);
       rn = 2 - (rp[1] == 0);  rn -= (rp[rn - 1] == 0);
       SIZ(rem) = ns >= 0 ? rn : -rn;

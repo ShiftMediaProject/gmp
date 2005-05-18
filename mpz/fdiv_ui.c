@@ -47,7 +47,7 @@ mpz_fdiv_ui (mpz_srcptr dividend, unsigned long int divisor)
       mp_limb_t dp[2], rp[2];
       mp_ptr qp;
       mp_size_t rn;
-      TMP_DECL (mark);
+      TMP_DECL;
 
       if (nn == 1)		/* tdiv_qr requirements; tested above for 0 */
 	{
@@ -56,12 +56,12 @@ mpz_fdiv_ui (mpz_srcptr dividend, unsigned long int divisor)
 	}
       else
 	{
-	  TMP_MARK (mark);
+	  TMP_MARK;
 	  dp[0] = divisor & GMP_NUMB_MASK;
 	  dp[1] = divisor >> GMP_NUMB_BITS;
 	  qp = TMP_ALLOC_LIMBS (nn - 2 + 1);
 	  mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
-	  TMP_FREE (mark);
+	  TMP_FREE;
 	  rl = rp[0] + (rp[1] << GMP_NUMB_BITS);
 	}
 

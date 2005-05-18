@@ -27,12 +27,12 @@ void
 mpq_canonicalize (MP_RAT *op)
 {
   mpz_t gcd;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (op->_mp_den._mp_size == 0)
     DIVIDE_BY_ZERO;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* ??? Dunno if the 1+ is needed.  */
   MPZ_TMP_INIT (gcd, 1 + MAX (ABS (op->_mp_num._mp_size),
@@ -50,5 +50,5 @@ mpq_canonicalize (MP_RAT *op)
       op->_mp_num._mp_size = -op->_mp_num._mp_size;
       op->_mp_den._mp_size = -op->_mp_den._mp_size;
     }
-  TMP_FREE (marker);
+  TMP_FREE;
 }

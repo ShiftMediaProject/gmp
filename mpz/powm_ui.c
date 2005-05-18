@@ -31,14 +31,14 @@ static void
 reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn)
 {
   mp_ptr qp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   qp = TMP_ALLOC_LIMBS (an - mn + 1);
 
   mpn_tdiv_qr (qp, tp, 0L, ap, an, mp, mn);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 void
@@ -49,7 +49,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
   int m_zero_cnt;
   int c;
   mp_limb_t e;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   mp = PTR(m);
   mn = ABSIZ(m);
@@ -65,7 +65,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* Normalize m (i.e. make its most significant bit set) as required by
      division functions below.  */
@@ -96,7 +96,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
   if (bn == 0)
     {
       SIZ(r) = 0;
-      TMP_FREE (marker);
+      TMP_FREE;
       return;
     }
 
@@ -193,5 +193,5 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
   SIZ (r) = xn;
   MPN_COPY (PTR(r), xp, xn);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

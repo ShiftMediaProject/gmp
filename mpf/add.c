@@ -33,7 +33,7 @@ mpf_add (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   mp_size_t ediff;
   mp_limb_t cy;
   int negate;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   usize = u->_mp_size;
   vsize = v->_mp_size;
@@ -63,7 +63,7 @@ mpf_add (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* Signs are now known to be the same.  */
   negate = usize < 0;
@@ -171,5 +171,5 @@ mpf_add (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
 
   r->_mp_size = negate ? -rsize : rsize;
   r->_mp_exp = uexp;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

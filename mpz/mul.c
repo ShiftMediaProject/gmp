@@ -43,7 +43,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
   mp_ptr free_me;
   size_t free_me_size;
   mp_limb_t cy_limb;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   sign_product = usize ^ vsize;
   usize = ABS (usize);
@@ -91,7 +91,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
     }
 #endif
 
-  TMP_MARK (marker);
+  TMP_MARK;
   free_me = NULL;
   up = u->_mp_d;
   vp = v->_mp_d;
@@ -142,5 +142,5 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
   w->_mp_size = sign_product < 0 ? -wsize : wsize;
   if (free_me != NULL)
     (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
-  TMP_FREE (marker);
+  TMP_FREE;
 }

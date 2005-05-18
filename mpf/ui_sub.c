@@ -33,7 +33,7 @@ mpf_ui_sub (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   mp_size_t ediff;
   int negate;
   mp_limb_t ulimb;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   vsize = v->_mp_size;
 
@@ -60,7 +60,7 @@ mpf_ui_sub (mpf_ptr r, unsigned long int u, mpf_srcptr v)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* Signs are now known to be the same.  */
 
@@ -323,5 +323,5 @@ mpf_ui_sub (mpf_ptr r, unsigned long int u, mpf_srcptr v)
  done:
   r->_mp_size = negate ? -rsize : rsize;
   r->_mp_exp = uexp;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

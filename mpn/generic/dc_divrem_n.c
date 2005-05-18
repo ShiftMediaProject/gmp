@@ -50,13 +50,13 @@ mpn_dc_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
 {
   mp_limb_t ret;
   mp_ptr scratch;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
+  TMP_DECL;
+  TMP_MARK;
 
   scratch = TMP_ALLOC_LIMBS (n);
   ret = mpn_dc_div_2_by_1 (qp, np, dp, n, scratch);
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return ret;
 }
 

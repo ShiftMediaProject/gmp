@@ -68,8 +68,8 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
       {
 	mp_ptr n2p, d2p;
 	mp_limb_t qhl, cy;
-	TMP_DECL (marker);
-	TMP_MARK (marker);
+	TMP_DECL;
+	TMP_MARK;
 	if ((dp[1] & GMP_NUMB_HIGHBIT) == 0)
 	  {
 	    int cnt;
@@ -99,15 +99,15 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
             rp[0] = n2p[0];
             rp[1] = n2p[1];
 	  }
-	TMP_FREE (marker);
+	TMP_FREE;
 	return;
       }
 
     default:
       {
 	int adjust;
-	TMP_DECL (marker);
-	TMP_MARK (marker);
+	TMP_DECL;
+	TMP_MARK;
 	adjust = np[nn - 1] >= dp[dn - 1];	/* conservative tests for quotient size */
 	if (nn + adjust >= 2 * dn)
 	  {
@@ -180,7 +180,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      mpn_rshift (rp, n2p, dn, cnt);
 	    else
 	      MPN_COPY (rp, n2p, dn);
-	    TMP_FREE (marker);
+	    TMP_FREE;
 	    return;
 	  }
 
@@ -235,7 +235,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    if (qn == 0)
 	      {
 		MPN_COPY (rp, np, dn);
-		TMP_FREE (marker);
+		TMP_FREE;
 		return;
 	      }
 
@@ -397,7 +397,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		mpn_add_n (rp, rp, dp, dn);
 	      }
 	  }
-	TMP_FREE (marker);
+	TMP_FREE;
 	return;
       }
     }

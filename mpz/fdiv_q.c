@@ -29,9 +29,9 @@ mpz_fdiv_q (mpz_ptr quot, mpz_srcptr dividend, mpz_srcptr divisor)
   mp_size_t dividend_size = dividend->_mp_size;
   mp_size_t divisor_size = divisor->_mp_size;
   mpz_t rem;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   MPZ_TMP_INIT (rem, ABS (divisor_size));
 
@@ -40,5 +40,5 @@ mpz_fdiv_q (mpz_ptr quot, mpz_srcptr dividend, mpz_srcptr divisor)
   if ((divisor_size ^ dividend_size) < 0 && rem->_mp_size != 0)
     mpz_sub_ui (quot, quot, 1L);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

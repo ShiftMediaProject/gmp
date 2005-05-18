@@ -89,7 +89,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   mp_limb_t  alow, blow, ahigh, bhigh, asecond, bsecond;
   unsigned   atwos, btwos;
   int        result_bit1;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   TRACE (printf ("start asize=%d bsize=%d\n", SIZ(a), SIZ(b));
          mpz_trace (" a", a);
@@ -190,7 +190,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
     }
 
 
-  TMP_MARK (marker);
+  TMP_MARK;
   TMP_ALLOC_LIMBS_2 (ap, asize, bp, bsize);
 
   MPN_RSHIFT_OR_COPY (ap, asrcp, asize, atwos);
@@ -296,7 +296,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
     }
 
   ASSERT (asize == 1 && bsize == 1);  /* just alow and blow left */
-  TMP_FREE (marker);
+  TMP_FREE;
 
   /* (1/b)=1 always (in this case have b==1 because a>=b) */
   if (alow == 1)
@@ -309,6 +309,6 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
   return mpn_jacobi_base (blow, alow, result_bit1);
 
  zero:
-  TMP_FREE (marker);
+  TMP_FREE;
   return 0;
 }

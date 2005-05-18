@@ -52,7 +52,7 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
   mp_ptr     lp, xp;
   mp_limb_t  c;
   int        zeros;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   TRACE (printf ("mpn_lucnum_ui n=%lu\n", n));
 
@@ -71,7 +71,7 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
   MPZ_REALLOC (ln, lalloc);
   lp = PTR (ln);
 
-  TMP_MARK (marker);
+  TMP_MARK;
   xalloc = lalloc;
   xp = TMP_ALLOC_LIMBS (xalloc);
 
@@ -196,5 +196,5 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
   ASSERT (lp == PTR(ln));
   SIZ(ln) = lsize;
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

@@ -40,7 +40,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   size_t alloc_size = 0;
   char *num_to_text;
   int i;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (base >= 0)
     {
@@ -77,7 +77,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     }
 
   /* mpn_get_str clobbers its input on non power-of-2 bases */
-  TMP_MARK (marker);
+  TMP_MARK;
   xp = x->_mp_d;
   if (! POW2_P (base))
     {
@@ -103,7 +103,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     res_str[i] = num_to_text[str[i]];
   res_str[str_size] = 0;
 
-  TMP_FREE (marker);
+  TMP_FREE;
 
   /* if allocated then resize down to the actual space required */
   if (alloc_size != 0)

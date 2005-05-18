@@ -40,7 +40,7 @@ xtom (const char *str)
   int c;
   int negative;
   MINT *x = (MINT *) (*__gmp_allocate_func) (sizeof (MINT));
-  TMP_DECL (marker);
+  TMP_DECL;
 
   /* Skip whitespace.  */
   do
@@ -57,7 +57,7 @@ xtom (const char *str)
   if (digit_value[c] >= 16)
     return 0;			/* error if no digits */
 
-  TMP_MARK (marker);
+  TMP_MARK;
   str_size = strlen (str - 1);
   s = begs = (char *) TMP_ALLOC (str_size + 1);
 
@@ -68,7 +68,7 @@ xtom (const char *str)
 	  int dig = digit_value[c];
 	  if (dig >= 16)
 	    {
-	      TMP_FREE (marker);
+	      TMP_FREE;
 	      return 0;
 	    }
 	  *s++ = dig;
@@ -85,6 +85,6 @@ xtom (const char *str)
   xsize = mpn_set_str (x->_mp_d, (unsigned char *) begs, str_size, 16);
   x->_mp_size = negative ? -xsize : xsize;
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return x;
 }

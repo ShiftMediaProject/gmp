@@ -1240,8 +1240,8 @@ void
 mpn_kara_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
 {
   mp_ptr  tspace;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
+  TMP_DECL;
+  TMP_MARK;
   tspace = TMP_ALLOC_LIMBS (MPN_KARA_MUL_N_TSIZE (size));
   mpn_kara_mul_n (dst, src1, src2, size, tspace);
 }
@@ -1249,18 +1249,18 @@ void
 mpn_kara_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
   mp_ptr tspace;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
+  TMP_DECL;
+  TMP_MARK;
   tspace = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (size));
   mpn_kara_sqr_n (dst, src, size, tspace);
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 void
 mpn_toom3_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
 {
   mp_ptr  tspace;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
+  TMP_DECL;
+  TMP_MARK;
   tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (size));
   mpn_toom3_mul_n (dst, src1, src2, size, tspace);
 }
@@ -1268,11 +1268,11 @@ void
 mpn_toom3_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
   mp_ptr tspace;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
+  TMP_DECL;
+  TMP_MARK;
   tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (size));
   mpn_toom3_sqr_n (dst, src, size, tspace);
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 mp_limb_t
 umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)

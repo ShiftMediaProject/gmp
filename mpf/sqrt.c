@@ -57,7 +57,7 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
   mp_ptr up, tp;
   mp_size_t prec, tsize;
   mp_exp_t uexp, expodd;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   usize = u->_mp_size;
   if (usize <= 0)
@@ -69,7 +69,7 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   uexp = u->_mp_exp;
   prec = r->_mp_prec;
@@ -99,5 +99,5 @@ mpf_sqrt (mpf_ptr r, mpf_srcptr u)
 
   mpn_sqrtrem (r->_mp_d, NULL, tp, tsize);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

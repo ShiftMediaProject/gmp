@@ -29,7 +29,7 @@ mpz_tdiv_r (mpz_ptr rem, mpz_srcptr num, mpz_srcptr den)
   mp_size_t ql;
   mp_size_t ns, ds, nl, dl;
   mp_ptr np, dp, qp, rp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ns = SIZ (num);
   ds = SIZ (den);
@@ -55,7 +55,7 @@ mpz_tdiv_r (mpz_ptr rem, mpz_srcptr num, mpz_srcptr den)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   qp = (mp_ptr) TMP_ALLOC (ql * BYTES_PER_MP_LIMB);
   rp = PTR (rem);
   np = PTR (num);
@@ -87,5 +87,5 @@ mpz_tdiv_r (mpz_ptr rem, mpz_srcptr num, mpz_srcptr den)
   MPN_NORMALIZE (rp, dl);
 
   SIZ (rem) = ns >= 0 ? dl : -dl;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

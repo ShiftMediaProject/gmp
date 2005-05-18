@@ -124,7 +124,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   const char  *point = GMP_DECIMAL_POINT;
   size_t      pointlen = strlen (point);
   const unsigned char *digit_value;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   c = (unsigned char) *str;
 
@@ -186,7 +186,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	}
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   s = begs = (char *) TMP_ALLOC (str_size + 1);
 
   /* Loop through mantissa, converting it from ASCII to raw byte values.  */
@@ -205,7 +205,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	      if (dotpos != 0)
 		{
 		  /* already saw a decimal point, another is invalid */
-		  TMP_FREE (marker);
+		  TMP_FREE;
 		  return -1;
 		}
 	      dotpos = s;
@@ -218,7 +218,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	      dig = digit_value[c];
 	      if (dig >= base)
 		{
-		  TMP_FREE (marker);
+		  TMP_FREE;
 		  return -1;
 		}
 	      *s++ = dig;
@@ -259,7 +259,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       {
 	SIZ(x) = 0;
 	EXP(x) = 0;
-	TMP_FREE (marker);
+	TMP_FREE;
 	return 0;
       }
 
@@ -287,7 +287,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	MPN_COPY (PTR(x), mp, mn);
 	SIZ(x) = negative ? -mn : mn;
 	EXP(x) = mn + madj;
-	TMP_FREE (marker);
+	TMP_FREE;
 	return 0;
       }
 
@@ -361,7 +361,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     MPN_COPY (PTR(x), tp, rn);
     SIZ(x) = negative ? -rn : rn;
     EXP(x) = exp_in_limbs;
-    TMP_FREE (marker);
+    TMP_FREE;
     return 0;
   }
 }

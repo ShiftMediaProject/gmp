@@ -57,7 +57,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
   mp_ptr     xp;
   mp_limb_t  alow, clow, dlow, dmask, r;
   int        result;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   dsize = SIZ(d);
   if (UNLIKELY (dsize == 0))
@@ -145,7 +145,7 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
         }
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   xp = TMP_ALLOC_LIMBS (asize+1);
 
   /* calculate abs(a-c) */
@@ -169,6 +169,6 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
 
   result = mpn_divisible_p (xp, asize, dp, dsize);
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return result;
 }

@@ -29,9 +29,9 @@ mpf_mul (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   mp_size_t usize, vsize;
   mp_size_t sign_product;
   mp_size_t prec = r->_mp_prec;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   usize = u->_mp_size;
   vsize = v->_mp_size;
   sign_product = usize ^ vsize;
@@ -83,5 +83,5 @@ mpf_mul (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       r->_mp_exp = u->_mp_exp + v->_mp_exp - adj;
       r->_mp_size = sign_product >= 0 ? rsize : -rsize;
     }
-  TMP_FREE (marker);
+  TMP_FREE;
 }

@@ -31,9 +31,9 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   mp_ptr res_ptr;
   mp_size_t res_size, res_alloc;
   mp_size_t i;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   op1_size = op1->_mp_size;
   op2_size = op2->_mp_size;
 
@@ -142,7 +142,7 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  MPN_NORMALIZE (res_ptr, res_size);
 	  res->_mp_size = res_size;
-	  TMP_FREE (marker);
+	  TMP_FREE;
 	  return;
 	}
       else
@@ -203,6 +203,6 @@ mpz_xor (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
     MPN_NORMALIZE (res_ptr, res_size);
     res->_mp_size = -res_size;
-    TMP_FREE (marker);
+    TMP_FREE;
   }
 }

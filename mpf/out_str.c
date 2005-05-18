@@ -46,9 +46,9 @@ mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
   char *str;
   mp_exp_t exp;
   size_t written;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   if (base == 0)
     base = 10;
@@ -96,6 +96,6 @@ mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
     written += fpret;
   }
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return ferror (stream) ? 0 : written;
 }

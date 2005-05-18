@@ -35,7 +35,7 @@ mpq_cmp (const MP_RAT *op1, const MP_RAT *op2)
   mp_ptr tmp1_ptr, tmp2_ptr;
   mp_size_t num1_sign;
   int cc;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   /* need canonical signs to get right result */
   ASSERT (den1_size > 0);
@@ -88,7 +88,7 @@ mpq_cmp (const MP_RAT *op1, const MP_RAT *op2)
 
   /* 3. Finally, cross multiply and compare.  */
 
-  TMP_MARK (marker);
+  TMP_MARK;
   TMP_ALLOC_LIMBS_2 (tmp1_ptr,tmp1_size, tmp2_ptr,tmp2_size);
 
   if (num1_size >= den2_size)
@@ -112,6 +112,6 @@ mpq_cmp (const MP_RAT *op1, const MP_RAT *op2)
 
   cc = tmp1_size - tmp2_size != 0
     ? tmp1_size - tmp2_size : mpn_cmp (tmp1_ptr, tmp2_ptr, tmp1_size);
-  TMP_FREE (marker);
+  TMP_FREE;
   return num1_sign < 0 ? -cc : cc;
 }

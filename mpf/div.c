@@ -63,7 +63,7 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
   mp_size_t sign_quotient, prec, high_zero, chop;
   mp_exp_t rexp;
   int copy_u;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   usize = u->_mp_size;
   vsize = v->_mp_size;
@@ -82,7 +82,7 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   rexp = u->_mp_exp - v->_mp_exp + 1;
 
   rp = r->_mp_d;
@@ -144,5 +144,5 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
 
   r->_mp_size = sign_quotient >= 0 ? rsize : -rsize;
   r->_mp_exp = rexp;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

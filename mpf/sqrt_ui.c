@@ -63,7 +63,7 @@ mpf_sqrt_ui (mpf_ptr r, unsigned long int u)
   mp_size_t rsize, zeros;
   mp_ptr tp;
   mp_size_t prec;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (UNLIKELY (u == 0))
     {
@@ -72,7 +72,7 @@ mpf_sqrt_ui (mpf_ptr r, unsigned long int u)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   prec = r->_mp_prec;
   zeros = 2 * prec - 2;
@@ -95,5 +95,5 @@ mpf_sqrt_ui (mpf_ptr r, unsigned long int u)
 
   r->_mp_size = prec;
   r->_mp_exp = 1;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

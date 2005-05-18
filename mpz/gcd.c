@@ -43,7 +43,7 @@ gcd (mpz_srcptr u, mpz_srcptr v, mpz_ptr g)
   mp_ptr vp = v->_mp_d;
   mp_size_t vsize = ABS (v->_mp_size);
   mp_size_t gsize;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   /* GCD(0, V) == V.  */
   if (usize == 0)
@@ -83,7 +83,7 @@ gcd (mpz_srcptr u, mpz_srcptr v, mpz_ptr g)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /*  Eliminate low zero bits from U and V and move to temporary storage.  */
   while (*up == 0)
@@ -161,5 +161,5 @@ gcd (mpz_srcptr u, mpz_srcptr v, mpz_ptr g)
     }
 
   g->_mp_size = gsize;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

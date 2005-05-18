@@ -30,9 +30,9 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
   mp_ptr root_ptr, op_ptr;
   mp_ptr free_me = NULL;
   mp_size_t free_me_size;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   op_size = op->_mp_size;
   if (op_size <= 0)
     {
@@ -81,5 +81,5 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
 
   if (free_me != NULL)
     (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
-  TMP_FREE (marker);
+  TMP_FREE;
 }

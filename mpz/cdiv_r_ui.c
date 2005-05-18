@@ -50,7 +50,7 @@ mpz_cdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
       mp_limb_t dp[2];
       mp_ptr rp, qp;
       mp_size_t rn;
-      TMP_DECL (mark);
+      TMP_DECL;
 
       MPZ_REALLOC (rem, 2);
       rp = PTR(rem);
@@ -62,12 +62,12 @@ mpz_cdiv_r_ui (mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
 	}
       else
 	{
-	  TMP_MARK (mark);
+	  TMP_MARK;
 	  dp[0] = divisor & GMP_NUMB_MASK;
 	  dp[1] = divisor >> GMP_NUMB_BITS;
 	  qp = TMP_ALLOC_LIMBS (nn - 2 + 1);
 	  mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
-	  TMP_FREE (mark);
+	  TMP_FREE;
 	  rl = rp[0] + (rp[1] << GMP_NUMB_BITS);
 	}
 

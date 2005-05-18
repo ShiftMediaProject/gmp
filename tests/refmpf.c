@@ -35,9 +35,9 @@ refmpf_add (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
   int neg;
   mp_exp_t exp;
   mp_limb_t cy;
-  TMP_DECL (mark);
+  TMP_DECL;
 
-  TMP_MARK (mark);
+  TMP_MARK;
 
   if (SIZ (u) == 0)
     {
@@ -98,7 +98,7 @@ done:
   MPN_COPY (PTR (w), wt, size);
   SIZ (w) = neg == 0 ? size : -size;
   EXP (w) = exp;
-  TMP_FREE (mark);
+  TMP_FREE;
 }
 
 
@@ -206,9 +206,9 @@ refmpf_sub (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
   mp_ptr ut, vt, wt;
   int neg;
   mp_exp_t exp;
-  TMP_DECL (mark);
+  TMP_DECL;
 
-  TMP_MARK (mark);
+  TMP_MARK;
 
   if (SIZ (u) == 0)
     {
@@ -280,7 +280,7 @@ done:
   MPN_COPY (PTR (w), wt, size);
   SIZ (w) = neg == 0 ? size : -size;
   EXP (w) = exp;
-  TMP_FREE (mark);
+  TMP_FREE;
 }
 
 

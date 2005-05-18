@@ -248,9 +248,9 @@ mpn_tracea_file (const char *filename,
 {
   char  *s;
   int   i;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   s = (char *) TMP_ALLOC (strlen (filename) + 50);
 
   for (i = 0; i < count; i++)
@@ -259,7 +259,7 @@ mpn_tracea_file (const char *filename,
       mpn_trace_file (s, a[i], size);
     }
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 

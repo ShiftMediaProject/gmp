@@ -36,7 +36,7 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   mp_size_t sign_quotient;
   mp_size_t prec;
   mp_exp_t rexp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   vsize = v->_mp_size;
   sign_quotient = vsize;
@@ -53,7 +53,7 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   rexp = 1 - v->_mp_exp + 1;
 
   rp = r->_mp_d;
@@ -114,5 +114,5 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
 
   r->_mp_size = sign_quotient >= 0 ? rsize : -rsize;
   r->_mp_exp = rexp;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

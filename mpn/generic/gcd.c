@@ -190,7 +190,7 @@ gcd_binary_odd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsiz
   mp_ptr orig_vp = vp;
   mp_size_t orig_vsize = vsize;
   int binary_gcd_ctr;		/* Number of times binary gcd will execute.  */
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (usize >= 1);
   ASSERT (vsize >= 1);
@@ -211,7 +211,7 @@ gcd_binary_odd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsiz
   ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, vsize, up, usize));
   ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, vsize, vp, vsize));
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* Use accelerated algorithm if vsize is over GCD_ACCEL_THRESHOLD.
      Two EXTRA limbs for U and V are required for kary reduction.  */
@@ -439,7 +439,7 @@ gcd_binary_odd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsiz
 done:
   if (vp != gp)
     MPN_COPY_INCR (gp, vp, vsize);
-  TMP_FREE (marker);
+  TMP_FREE;
   return vsize;
 }
 
@@ -843,15 +843,15 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       mp_size_t scratch;
       mp_ptr tp;
       mp_size_t gsize;
-      TMP_DECL (marker);
+      TMP_DECL;
 
-      TMP_MARK (marker);
+      TMP_MARK;
 
       scratch = GCD_LEHMER_ITCH (usize);
       tp = TMP_ALLOC_LIMBS (scratch);
 
       gsize = gcd_lehmer (gp, up, usize, vp, vsize, tp, scratch);
-      TMP_FREE (marker);
+      TMP_FREE;
       return gsize;
     }
   else

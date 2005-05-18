@@ -922,7 +922,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     int        k;                                       \
     unsigned   i;                                       \
     double     t;                                       \
-    TMP_DECL (marker);                                  \
+    TMP_DECL;                                  \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 1);                 \
                                                         \
@@ -931,7 +931,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     else                                                \
       k = mpn_fft_best_k (s->size, sqr);                \
                                                         \
-    TMP_MARK (marker);                                  \
+    TMP_MARK;                                  \
     pl = mpn_fft_next_size (s->size, k);                \
     SPEED_TMP_ALLOC_LIMBS (wp, pl+1, s->align_wp);      \
                                                         \
@@ -948,7 +948,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
                                                         \
-    TMP_FREE (marker);                                  \
+    TMP_FREE;                                  \
     return t;                                           \
   }
 
@@ -993,12 +993,12 @@ speed_mpn_hgcd (struct speed_params *s)
   int res;
   unsigned i;
   double t;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (s->size < 2)
     return -1;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
   SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
@@ -1033,7 +1033,7 @@ speed_mpn_hgcd (struct speed_params *s)
   if (res)
     ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
 #endif
-  TMP_FREE (marker);
+  TMP_FREE;
   return t;
 }
 #if 0
@@ -1053,12 +1053,12 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   int res;
   unsigned i;
   double t;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   if (s->size < 2)
     return -1;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
   SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
@@ -1093,7 +1093,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   if (res)
     ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
 #endif
-  TMP_FREE (marker);
+  TMP_FREE;
   return t;
 }
 #endif
@@ -1288,9 +1288,9 @@ speed_noop_wxs (struct speed_params *s)
   mp_ptr   wp;
   unsigned i;
   double   t;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   wp = TMP_ALLOC_LIMBS (1);
 
   speed_starttime ();
@@ -1300,7 +1300,7 @@ speed_noop_wxs (struct speed_params *s)
   while (--i != 0);
   t = speed_endtime ();
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return t;
 }
 
@@ -1310,9 +1310,9 @@ speed_noop_wxys (struct speed_params *s)
   mp_ptr   wp;
   unsigned i;
   double   t;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   wp = TMP_ALLOC_LIMBS (1);
 
   speed_starttime ();
@@ -1322,7 +1322,7 @@ speed_noop_wxys (struct speed_params *s)
   while (--i != 0);
   t = speed_endtime ();
 
-  TMP_FREE (marker);
+  TMP_FREE;
   return t;
 }
 

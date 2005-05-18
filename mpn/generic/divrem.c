@@ -46,9 +46,9 @@ mpn_divrem (mp_ptr qp, mp_size_t qxn,
       mp_limb_t ret;
       mp_ptr q2p;
       mp_size_t qn;
-      TMP_DECL (marker);
+      TMP_DECL;
 
-      TMP_MARK (marker);
+      TMP_MARK;
       q2p = (mp_ptr) TMP_ALLOC ((nn + qxn) * BYTES_PER_MP_LIMB);
 
       np[0] = mpn_divrem_1 (q2p, qxn, np, nn, dp[0]);
@@ -56,7 +56,7 @@ mpn_divrem (mp_ptr qp, mp_size_t qxn,
       MPN_COPY (qp, q2p, qn);
       ret = q2p[qn];
 
-      TMP_FREE (marker);
+      TMP_FREE;
       return ret;
     }
   else if (dn == 2)
@@ -68,9 +68,9 @@ mpn_divrem (mp_ptr qp, mp_size_t qxn,
       mp_ptr rp, q2p;
       mp_limb_t qhl;
       mp_size_t qn;
-      TMP_DECL (marker);
+      TMP_DECL;
 
-      TMP_MARK (marker);
+      TMP_MARK;
       if (qxn != 0)
 	{
 	  mp_ptr n2p;
@@ -95,7 +95,7 @@ mpn_divrem (mp_ptr qp, mp_size_t qxn,
 	  MPN_COPY (qp, q2p, qn);
 	  qhl = q2p[qn];
 	}
-      TMP_FREE (marker);
+      TMP_FREE;
       return qhl;
     }
 }

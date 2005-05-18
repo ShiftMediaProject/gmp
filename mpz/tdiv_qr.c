@@ -37,7 +37,7 @@ mdiv (mpz_srcptr num, mpz_srcptr den, mpz_ptr quot, mpz_ptr rem)
   mp_size_t ql;
   mp_size_t ns, ds, nl, dl;
   mp_ptr np, dp, qp, rp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ns = SIZ (num);
   ds = SIZ (den);
@@ -68,7 +68,7 @@ mdiv (mpz_srcptr num, mpz_srcptr den, mpz_ptr quot, mpz_ptr rem)
 
   MPZ_REALLOC (quot, ql);
 
-  TMP_MARK (marker);
+  TMP_MARK;
   qp = PTR (quot);
   rp = PTR (rem);
   np = PTR (num);
@@ -104,5 +104,5 @@ mdiv (mpz_srcptr num, mpz_srcptr den, mpz_ptr quot, mpz_ptr rem)
 
   SIZ (quot) = (ns ^ ds) >= 0 ? ql : -ql;
   SIZ (rem) = ns >= 0 ? dl : -dl;
-  TMP_FREE (marker);
+  TMP_FREE;
 }

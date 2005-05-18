@@ -30,7 +30,7 @@ mpz_lucnum2_ui (mpz_ptr ln, mpz_ptr lnsub1, unsigned long n)
   mp_ptr     lp, l1p, f1p;
   mp_size_t  size;
   mp_limb_t  c;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (ln != lnsub1);
 
@@ -51,7 +51,7 @@ mpz_lucnum2_ui (mpz_ptr ln, mpz_ptr lnsub1, unsigned long n)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
   size = MPN_FIB2_SIZE (n);
   f1p = TMP_ALLOC_LIMBS (size);
 
@@ -79,5 +79,5 @@ mpz_lucnum2_ui (mpz_ptr ln, mpz_ptr lnsub1, unsigned long n)
   l1p[size] = c;
   SIZ(lnsub1) = size + (c != 0);
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

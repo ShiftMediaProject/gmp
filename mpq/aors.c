@@ -37,9 +37,9 @@ mpq_aors (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2,
   mp_size_t op1_den_size =      op1->_mp_den._mp_size;
   mp_size_t op2_num_size = ABS (op2->_mp_num._mp_size);
   mp_size_t op2_den_size =      op2->_mp_den._mp_size;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   MPZ_TMP_INIT (gcd, MIN (op1_den_size, op2_den_size));
   MPZ_TMP_INIT (tmp1, op1_num_size + op2_den_size);
   MPZ_TMP_INIT (tmp2, op2_num_size + op1_den_size);
@@ -87,7 +87,7 @@ mpq_aors (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2,
       (*fun) (&(rop->_mp_num), tmp1, tmp2);
       mpz_mul (&(rop->_mp_den), &(op1->_mp_den), &(op2->_mp_den));
     }
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 

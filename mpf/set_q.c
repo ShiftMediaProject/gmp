@@ -69,7 +69,7 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
   mp_size_t sign_quotient, high_zero;
   mp_ptr qp, tp, remp;
   mp_exp_t exp;
-  TMP_DECL (marker);
+  TMP_DECL;
 
   ASSERT (SIZ(&q->_mp_den) > 0);  /* canonical q */
 
@@ -83,7 +83,7 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
       return;
     }
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   prec = PREC (r);
   qp = PTR (r);
@@ -141,5 +141,5 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
   EXP (r) = exp;
   SIZ (r) = sign_quotient >= 0 ? qsize : -qsize;
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }

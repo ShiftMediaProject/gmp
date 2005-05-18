@@ -459,9 +459,9 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
   const char  *first_open_fastest, *first_open_notfastest, *first_close;
   int         i, fastest, want_data;
   double      fastest_time;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
 
   /* allocate data, unless all routines are NODATA */
   want_data = 0;
@@ -625,7 +625,7 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
       fprintf (fp, "\n");
     }
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 void
@@ -633,9 +633,9 @@ run_all (FILE *fp)
 {
   mp_size_t  prev_size;
   int        i;
-  TMP_DECL (marker);
+  TMP_DECL;
 
-  TMP_MARK (marker);
+  TMP_MARK;
   SPEED_TMP_ALLOC_LIMBS (sp.xp_block, SPEED_BLOCK_SIZE, sp.align_xp);
   SPEED_TMP_ALLOC_LIMBS (sp.yp_block, SPEED_BLOCK_SIZE, sp.align_yp);
 
@@ -676,7 +676,7 @@ run_all (FILE *fp)
         }
     }
 
-  TMP_FREE (marker);
+  TMP_FREE;
 }
 
 
