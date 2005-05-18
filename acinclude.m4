@@ -3398,6 +3398,7 @@ case $gmp_cv_option_alloca in
       AC_MSG_ERROR([--enable-alloca=alloca specified, but alloca not available])
     fi
     AC_DEFINE(WANT_TMP_ALLOCA)
+    TAL_OBJECT=tal-reent$U.lo
     ;;
   malloc-reentrant)
     AC_DEFINE(WANT_TMP_REENTRANT)
