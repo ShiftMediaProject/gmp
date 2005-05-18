@@ -850,9 +850,11 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
   ASSERT (! MPN_OVERLAP_P (p, 2 * n, a, n));
   ASSERT (! MPN_OVERLAP_P (p, 2 * n, b, n));
 
-  if (n < MUL_KARATSUBA_THRESHOLD)
-    mpn_mul_basecase (p, a, n, b, n);
-  else if (n < MUL_TOOM3_THRESHOLD)
+  if (BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
+    {
+      mpn_mul_basecase (p, a, n, b, n);
+    }
+  else if (BELOW_THRESHOLD (n, MUL_TOOM3_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
       mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
@@ -860,18 +862,17 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mpn_kara_mul_n (p, a, b, n, ws);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (n < MUL_FFT_THRESHOLD)
+  else if (BELOW_THRESHOLD (n, MUL_FFT_THRESHOLD))
 #else
-  else if (n < MPN_TOOM3_MAX_N)
+  else if (BELOW_THRESHOLD (n, MPN_TOOM3_MAX_N))
 #endif
     {
       mp_ptr ws;
-      TMP_DECL;
-      TMP_MARK;
-      /* Allocate workspace with TMP_ALLOC interface: fast. */
-      ws = TMP_ALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (n));
+      TMP_SDECL;
+      TMP_SMARK;
+      ws = TMP_SALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (n));
       mpn_toom3_mul_n (p, a, b, n, ws);
-      TMP_FREE;
+      TMP_SFREE;
     }
   else
 #if WANT_FFT || TUNE_PROGRAM_BUILD
@@ -887,9 +888,9 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       will take much longer than malloc()/free().  */
       mp_ptr ws;  mp_size_t ws_size;
       ws_size = MPN_TOOM3_MUL_N_TSIZE (n);
-      ws = __GMP_ALLOCATE_FUNC_LIMBS ((size_t) ws_size);
+      ws = __GMP_ALLOCATE_FUNC_LIMBS (ws_size);
       mpn_toom3_mul_n (p, a, b, n, ws);
-      __GMP_FREE_FUNC_LIMBS (ws, (size_t) ws_size);
+      __GMP_FREE_FUNC_LIMBS (ws, ws_size);
     }
 #endif
 }
@@ -911,31 +912,28 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
       mpn_mul_basecase (p, a, n, a, n);
     }
   else if (BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))
-    { /* plain schoolbook multiplication */
+    {
       mpn_sqr_basecase (p, a, n);
     }
   else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))
-    { /* karatsuba multiplication */
-      mp_ptr ws;
-      TMP_DECL;
-      TMP_MARK;
-      ws = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (n));
+    {
+      /* Allocate workspace of fixed size on stack: fast! */
+      mp_limb_t ws[MPN_KARA_SQR_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
+      ASSERT (SQR_TOOM3_THRESHOLD <= MUL_TOOM3_THRESHOLD_LIMIT);
       mpn_kara_sqr_n (p, a, n, ws);
-      TMP_FREE;
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
   else if (BELOW_THRESHOLD (n, SQR_FFT_THRESHOLD))
 #else
-  else if (n < MPN_TOOM3_MAX_N)
+  else if (BELOW_THRESHOLD (n, MPN_TOOM3_MAX_N))
 #endif
     {
       mp_ptr ws;
-      TMP_DECL;
-      TMP_MARK;
-      /* Allocate workspace with TMP_ALLOC interface: fast. */
-      ws = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (n));
+      TMP_SDECL;
+      TMP_SMARK;
+      ws = TMP_SALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (n));
       mpn_toom3_sqr_n (p, a, n, ws);
-      TMP_FREE;
+      TMP_SFREE;
     }
   else
 #if WANT_FFT || TUNE_PROGRAM_BUILD
