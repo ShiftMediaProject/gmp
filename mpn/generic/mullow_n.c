@@ -61,14 +61,10 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
 {
   if (BELOW_THRESHOLD (n, MULLOW_BASECASE_THRESHOLD))
     {
-      mp_ptr tp;
-      TMP_DECL;
-      TMP_MARK;
-      tp = TMP_ALLOC_LIMBS (2 * n);
-
+      /* Allocate workspace of fixed size on stack: fast! */
+      mp_limb_t ws[2 * (MULLOW_BASECASE_THRESHOLD - 1)];
       mpn_mul_basecase (tp, xp, n, yp, n);
       MPN_COPY (rp, tp, n);
-      TMP_FREE;
     }
   else if (BELOW_THRESHOLD (n, MULLOW_DC_THRESHOLD))
     {
@@ -80,9 +76,9 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
       mp_size_t n1 = (n+1) >> 1;	/* ceil(n/2) */
       mp_size_t n2 = n - n1;		/* floor(n/2) */
       mp_ptr tp;
-      TMP_DECL;
-      TMP_MARK;
-      tp = TMP_ALLOC_LIMBS (n1);
+      TMP_SDECL;
+      TMP_SMARK;
+      tp = TMP_SALLOC_LIMBS (n1);
 
       /* Split as x = x1 2^(n1 GMP_NUMB_BITS) + x0,
                   y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
@@ -99,12 +95,12 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
       /* x0 * y1 * 2^(n2 GMP_NUMB_BITS) */
       mpn_mullow_n (tp, yp + n2, xp, n1);
       mpn_add_n (rp + n2, rp + n2, tp, n1);
-      TMP_FREE;
+      TMP_SFREE;
     }
   else
     {
-      /* For really large operands, use plain mpn_mul_n but through away upper
-	 n limbs of result.  */
+      /* For really large operands, use plain mpn_mul_n but throw away upper n
+	 limbs of result.  */
       mp_ptr tp;
       TMP_DECL;
       TMP_MARK;
