@@ -46,14 +46,14 @@ MA 02111-1307, USA. */
   FIXME: Perhaps call mpn_kara_mul_n instead of mpn_mul_n?
   FIXME: Call mpn_mul_basecase for really small operands, it might be faster
          than mpn_mullow_basecase when the former is in assembly, or when we
-         have mpn_admul_2.
+         have mpn_addmul_2.
   THINK: If mpn_mul_basecase is always faster than mpn_mullow_basecase
          (typically thanks for mpn_addmul_2) should we unconditionally use
          mpn_mul_n?
   FIXME: The recursive calls to mpn_mullow_n use sizes n/2 (one uses floor(n/2)
          and the other ceil(n/2)).  Depending on the values of the various
          _THRESHOLDs, this may never trigger MULLOW_BASECASE_THRESHOLD.
-	 Should we worry abuot this overhead?
+	 Should we worry about this overhead?
 */
 
 void
