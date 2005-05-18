@@ -1405,6 +1405,9 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #ifndef MUL_TOOM3_THRESHOLD_LIMIT
 #define MUL_TOOM3_THRESHOLD_LIMIT  MUL_TOOM3_THRESHOLD
 #endif
+#ifndef MULLOW_BASECASE_THRESHOLD_LIMIT
+#define MULLOW_BASECASE_THRESHOLD_LIMIT  MULLOW_BASECASE_THRESHOLD
+#endif
 
 /* SQR_BASECASE_THRESHOLD is where mpn_sqr_basecase should take over from
    mpn_mul_basecase in mpn_sqr_n.  Default is to use mpn_sqr_basecase
@@ -3816,10 +3819,12 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #undef MUL_KARATSUBA_THRESHOLD_LIMIT
 #undef MUL_TOOM3_THRESHOLD_LIMIT
-#define SQR_KARATSUBA_MAX_GENERIC      200
-#define MUL_KARATSUBA_THRESHOLD_LIMIT  700
-#define MUL_TOOM3_THRESHOLD_LIMIT      700
-#define GET_STR_THRESHOLD_LIMIT        150
+#undef MULLOW_BASECASE_THRESHOLD_LIMIT
+#define SQR_KARATSUBA_MAX_GENERIC       200
+#define MUL_KARATSUBA_THRESHOLD_LIMIT   700
+#define MUL_TOOM3_THRESHOLD_LIMIT       700
+#define MULLOW_BASECASE_THRESHOLD_LIMIT 200
+#define GET_STR_THRESHOLD_LIMIT         150
 
 /* "thresh" will normally be a variable when tuning, so use the cached
    result.  This helps mpn_sb_divrem_mn for instance.  */
