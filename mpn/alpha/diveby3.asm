@@ -1,6 +1,6 @@
-dnl  Alpha mpn_divexact_by3 -- mpn division by 3, expecting no remainder.
+dnl  Alpha mpn_divexact_by3c -- mpn division by 3, expecting no remainder.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -29,6 +29,10 @@ C EV6:     6.3
 C TODO
 C  * Trim this to 6.0 c/l for ev6.
 C  * Write special ev5 version, should reach 9 c/l, and could be smaller.
+C  * Try prefetch for destination, using lds.
+C  * Improve feed-in code, by moving initial mulq earlier; make initial load
+C    to u0/u0 to save smoe copying.
+C  * Combine u0 and u2, u1 and u3.
 
 C INPUT PARAMETERS
 define(`rp',	`r16')
@@ -86,16 +90,19 @@ $Lb11:	ldq	u3, 8(up)
 	lda	up, -24(up)
 	lda	rp, -24(rp)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q0
+	mov	r28, u2
 	br	r31, $L11
 
 $Lb00:	ldq	u2, 8(up)
 	lda	up, -16(up)
 	lda	rp, -16(rp)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q1
+	mov	r28, u1
 	br	r31, $L00
 
 $Lb01:	lda	rp, -8(rp)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q0
+	mov	r28, u0
 	blt	n, $Lcj1
 	ldq	u1, 8(up)
 	lda	up, -8(up)
@@ -103,6 +110,7 @@ $Lb01:	lda	rp, -8(rp)
 
 $Lb10:	ldq	u0, 8(up)
 	mulq	r28, xAAAAAAAAAAAAAAAB, q1
+	mov	r28, u3
 	blt	n, $Lend
 
 	ALIGN(16)
