@@ -178,13 +178,15 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 
       MPN_SQR_DIAGONAL (rp, up, n);
 
-      for (i = 2; i + 2 <= 2 * n; i += 4)
+      for (i = 2;; i += 4)
 	{
 	  x0 = rp[i + 0];
 	  rp[i + 0] = (-x0) & GMP_NUMB_MASK;
 	  x1 = rp[i + 1];
 	  rp[i + 1] = (-x1 - (x0 != 0)) & GMP_NUMB_MASK;
 	  __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
+	  if (i + 4 >= 2 * n)
+	    break;
 	  mpn_incr_u (rp + i + 4, cy);
 	}
     }
