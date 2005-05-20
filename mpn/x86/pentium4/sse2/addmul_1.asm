@@ -45,7 +45,7 @@ defframe(PARAM_DST,       4)
 	ALIGN(16)
 PROLOGUE(mpn_addmul_1c)
 deflit(`FRAME',0)
-	movd	PARAM_CARRY, %mm0
+	movd	PARAM_CARRY, %mm4
 	jmp	L(start_1c)
 EPILOGUE()
 
