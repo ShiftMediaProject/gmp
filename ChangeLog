@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-05-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/sqr_basecase.c (mpn_sqr_basecase, addmul_2 version):
+	Avoid accesses out-of-bound in MPN_SQR_DIAGONAL applicate code.
+
 2005-05-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/diveby3.asm: Make it actually work.
