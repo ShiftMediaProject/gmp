@@ -941,7 +941,7 @@ param_init (void)
   p->src[0] = 1;
   p->dst[0] = 1;
   p->dst_size[0] = SIZE_1;
-  p->divisor = DIVISOR_LIMB;
+  p->divisor = UDIV_NEEDS_NORMALIZATION ? DIVISOR_NORM : DIVISOR_LIMB;
   p->data = DATA_UDIV_QRNND;
   p->overlap = OVERLAP_NONE;
   REFERENCE (refmpn_udiv_qrnnd);
