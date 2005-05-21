@@ -76,8 +76,8 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
       /* Operand too large for the current nails size.  Use temporary for
 	 intermediate products, to allow prod and mult being identical.  */
       mp_ptr tp;
-      TMP_DECL (mark);
-      TMP_MARK (mark);
+      TMP_DECL;
+      TMP_MARK;
 
       tp = TMP_ALLOC_LIMBS (size + 2);
 
@@ -90,7 +90,7 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
       MPZ_REALLOC (prod, size);
       pp = PTR(prod);
       MPN_COPY (pp, tp, size);
-      TMP_FREE (mark);
+      TMP_FREE;
     }
 #endif
 
