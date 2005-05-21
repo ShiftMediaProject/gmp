@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2005-05-21  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/devel/try.c (param_init): Setup TYPE_UDIV_QRNND entry
+	according to UDIV_NEEDS_NORMALIZATION.
+
 	* mpz/mul_i.h: Remove left-over TMP_XXXX marker arguments.
 
 2005-05-20  Torbjorn Granlund  <tege@swox.com>
