@@ -656,13 +656,13 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 
 #if (defined (__i386__) || defined (__i486__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("addl %5,%1\n\tadcl %3,%0"					\
-	   : "=r" ((USItype)(sh)), "=&r" ((USItype)(sl))		\
+  __asm__ ("addl %5,%k1\n\tadcl %3,%k0"					\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0"  ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "%1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("subl %5,%1\n\tsbbl %3,%0"					\
-	   : "=r" ((USItype)(sh)), "=&r" ((USItype)(sl))		\
+  __asm__ ("subl %5,%k1\n\tsbbl %3,%k0"					\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define umul_ppmm(w1, w0, u, v) \
