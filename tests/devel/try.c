@@ -954,7 +954,7 @@ param_init (void)
   p = &param[TYPE_DIVEXACT_1];
   p->dst[0] = 1;
   p->src[0] = 1;
-  p->divisor = 1;
+  p->divisor = DIVISOR_LIMB;
   p->data = DATA_MULTIPLE_DIVISOR;
   VALIDATE (validate_divexact_1);
   REFERENCE (refmpn_divmod_1);
@@ -1014,6 +1014,7 @@ param_init (void)
   p->src[0] = 1;
   p->size = SIZE_ALLOW_ZERO;
   p->src[1] = 1;
+  p->data = DATA_SRC1_ODD;
   p->size2 = 1;
   p->carry = CARRY_4;
   p->carry_sign = 1;
@@ -1021,6 +1022,7 @@ param_init (void)
 
   p = &param[TYPE_MPZ_KRONECKER];
   COPY (TYPE_MPZ_JACOBI);
+  p->data = 0;			/* clear inherited DATA_SRC1_ODD */
   REFERENCE (refmpz_kronecker);
 
 
