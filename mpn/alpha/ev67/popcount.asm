@@ -1,6 +1,6 @@
 dnl  Alpha ev67 mpn_popcount -- mpn bit population count.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -27,11 +27,11 @@ C ev67: 1.5 cycles/limb
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C
-C This schedule seems necessary for the full 1.5 c/l, the IQ can't quite
-C hide all latencies, the addq's must be deferred to the next iteration.
+C This schedule seems necessary for the full 1.5 c/l, the IQ can't quite hide
+C all latencies, the addq's must be deferred to the next iteration.
 C
-C Further unrolling could perhaps approach 0.75 or 1.0 c/l, depending on
-C when all the rename gets used up.
+C Since we need just 3 instructions per limb, further unrolling could approach
+C 1.0 c/l.
 C
 C The main loop processes two limbs at a time.  An odd size is handled by
 C processing src[0] at the start.  If the size is even that result is
@@ -45,20 +45,20 @@ PROLOGUE(mpn_popcount)
 	C r17	size
 
 	ldq	r0, 0(r16)		C L0  src[0]
-	and	r17, 1, r8		C u1  1 if size odd
+	and	r17, 1, r8		C U1  1 if size odd
 	srl	r17, 1, r17		C U0  size, limb pairs
 
-	s8addq	r8, r16, r16		C l1  src++ if size odd
+	s8addq	r8, r16, r16		C L1  src++ if size odd
 	ctpop	r0, r0			C U0
 	beq	r17, L(one)		C U1  if size==1
 
-	cmoveq	r8, r31, r0		C l   discard first limb if size even
-	clr	r3			C l
+	cmoveq	r8, r31, r0		C L   discard first limb if size even
+	clr	r3			C L
 
-	clr	r4			C l
-	unop				C u
-	unop				C l
-	unop				C u
+	clr	r4			C L
+	unop				C U
+	unop				C L
+	unop				C U
 
 
 	ALIGN(16)
@@ -71,19 +71,20 @@ L(top):
 
 	ldq	r1, 0(r16)		C L
 	ldq	r2, 8(r16)		C L
-	lda	r16, 16(r16)		C u
-	lda	r17, -1(r17)		C u
+	lda	r16, 16(r16)		C U
+	lda	r17, -1(r17)		C U
 
-	addq	r0, r3, r0		C l
-	addq	r0, r4, r0		C l
+	addq	r0, r3, r0		C L
+	addq	r0, r4, r0		C L
 	ctpop	r1, r3			C U0
 	ctpop	r2, r4			C U0
 
+	ldl	r31, 512(r16)		C L	prefetch
 	bne	r17, L(top)		C U
 
 
-	addq	r0, r3, r0		C l
-	addq	r0, r4, r0		C u
+	addq	r0, r3, r0		C L
+	addq	r0, r4, r0		C U
 L(one):
 	ret	r31, (r26), 1		C L0
 
