@@ -1142,6 +1142,7 @@ param_init (void)
   REFERENCE (refmpn_zero);
 
   p = &param[TYPE_GET_STR];
+  p->retval = 1;
   p->src[0] = 1;
   p->size = SIZE_ALLOW_ZERO;
   p->dst[0] = 1;
@@ -1860,6 +1861,7 @@ compare (void)
     {
       switch (tr->dst_size[i]) {
       case SIZE_RETVAL:
+      case SIZE_GET_STR:
         d[i].size = ref.retval;
         break;
       }
