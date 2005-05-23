@@ -1770,10 +1770,15 @@ refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
     }
   while (size != 0);
 
-  /* at most one leading zero */
-  ASSERT (d == dst || d == dst+1);
+  /* Move result back and decrement dsize if we didn't generate
+     the maximum possible digits.  */
   if (d != dst)
-    *dst = 0;
+    {
+      size_t i;
+      dsize -= d - dst;
+      for (i = 0; i < dsize; i++)
+	dst[i] = d[i];
+    }
 
   if (POW2_P (base))
     free (src);
