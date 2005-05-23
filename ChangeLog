@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2005-05-23  Torbjorn Granlund  <tege@swox.com>
 
+	* longlong.h (many places): Remove lvalue casts.
+
 	* gmp-impl.h (MPF_SIGNIFICANT_DIGITS): Cast prec to avoid overflow
 	for > 4G digits.
 
