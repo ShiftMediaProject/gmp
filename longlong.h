@@ -390,16 +390,16 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #if defined (__arc__)
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add.f\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
-	   : "=r" ((USItype) (sh)),					\
-	     "=&r" ((USItype) (sl))					\
+	   : "=r" (sh),							\
+	     "=&r" (sl)							\
 	   : "r"  ((USItype) (ah)),					\
 	     "rIJ" ((USItype) (bh)),					\
 	     "%r" ((USItype) (al)),					\
 	     "rIJ" ((USItype) (bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub.f\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
-	   : "=r" ((USItype) (sh)),					\
-	     "=&r" ((USItype) (sl))					\
+	   : "=r" (sh),							\
+	     "=&r" (sl)							\
 	   : "r" ((USItype) (ah)),					\
 	     "rIJ" ((USItype) (bh)),					\
 	     "r" ((USItype) (al)),					\
@@ -547,21 +547,21 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if defined (__gmicro__) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add.w %5,%1\n\taddx %3,%0"					\
-	   : "=g" ((USItype)(sh)), "=&g" ((USItype)(sl))		\
+	   : "=g" (sh), "=&g" (sl)					\
 	   : "0"  ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "%1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub.w %5,%1\n\tsubx %3,%0"					\
-	   : "=g" ((USItype)(sh)), "=&g" ((USItype)(sl))		\
+	   : "=g" (sh), "=&g" (sl)					\
 	   : "0" ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define umul_ppmm(ph, pl, m0, m1) \
   __asm__ ("mulx %3,%0,%1"						\
-	   : "=g" ((USItype)(ph)), "=r" ((USItype)(pl))			\
+	   : "=g" (ph), "=r" (pl)					\
 	   : "%0" ((USItype)(m0)), "g" ((USItype)(m1)))
 #define udiv_qrnnd(q, r, nh, nl, d) \
   __asm__ ("divx %4,%0,%1"						\
-	   : "=g" ((USItype)(q)), "=r" ((USItype)(r))			\
+	   : "=g" (q), "=r" (r)						\
 	   : "1" ((USItype)(nh)), "0" ((USItype)(nl)), "g" ((USItype)(d)))
 #define count_leading_zeros(count, x) \
   __asm__ ("bsch/1 %1,%0"						\
@@ -797,13 +797,13 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 
 #if defined (__amd64__) && W_TYPE_SIZE == 64
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("addq %5,%1\n\tadcq %3,%0"					\
-	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
+  __asm__ ("addq %5,%q1\n\tadcq %3,%q0"					\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0"  ((UDItype)(ah)), "rme" ((UDItype)(bh)),		\
 	     "%1" ((UDItype)(al)), "rme" ((UDItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("subq %5,%1\n\tsbbq %3,%0"					\
-	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
+  __asm__ ("subq %5,%q1\n\tsbbq %3,%q0"					\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((UDItype)(ah)), "rme" ((UDItype)(bh)),		\
 	     "1" ((UDItype)(al)), "rme" ((UDItype)(bl)))
 #define umul_ppmm(w1, w0, u, v) \
@@ -891,12 +891,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
      || defined (__mc5307__)) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add%.l %5,%1\n\taddx%.l %3,%0"				\
-	   : "=d" ((USItype)(sh)), "=&d" ((USItype)(sl))		\
+	   : "=d" (sh), "=&d" (sl)					\
 	   : "0"  ((USItype)(ah)), "d" ((USItype)(bh)),			\
 	     "%1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub%.l %5,%1\n\tsubx%.l %3,%0"				\
-	   : "=d" ((USItype)(sh)), "=&d" ((USItype)(sl))		\
+	   : "=d" (sh), "=&d" (sl)					\
 	   : "0" ((USItype)(ah)), "d" ((USItype)(bh)),			\
 	     "1" ((USItype)(al)), "g" ((USItype)(bl)))
 /* The '020, '030, '040 and CPU32 have 32x32->64 and 64/32->32q-32r.  */
@@ -907,17 +907,17 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
      || defined (__NeXT__)
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("mulu%.l %3,%1:%0"						\
-	   : "=d" ((USItype)(w0)), "=d" ((USItype)(w1))			\
+	   : "=d" (w0), "=d" (w1)					\
 	   : "%0" ((USItype)(u)), "dmi" ((USItype)(v)))
 #define UMUL_TIME 45
 #define udiv_qrnnd(q, r, n1, n0, d) \
   __asm__ ("divu%.l %4,%1:%0"						\
-	   : "=d" ((USItype)(q)), "=d" ((USItype)(r))			\
+	   : "=d" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "dmi" ((USItype)(d)))
 #define UDIV_TIME 90
 #define sdiv_qrnnd(q, r, n1, n0, d) \
   __asm__ ("divs%.l %4,%1:%0"						\
-	   : "=d" ((USItype)(q)), "=d" ((USItype)(r))			\
+	   : "=d" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "dmi" ((USItype)(d)))
 #else /* for other 68k family members use 16x16->32 multiplication */
 #define umul_ppmm(xh, xl, a, b) \
@@ -944,7 +944,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 "	add%.l	%3,%1\n"						\
 "	addx%.l	%2,%0\n"						\
 "	| End inlined umul_ppmm"					\
-	      : "=&d" ((USItype)(xh)), "=&d" ((USItype)(xl)),		\
+	      : "=&d" (xh), "=&d" (xl),					\
 		"=d" (__umul_tmp1), "=&d" (__umul_tmp2)			\
 	      : "%2" ((USItype)(a)), "d" ((USItype)(b)));		\
   } while (0)
@@ -962,7 +962,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   && ! defined (__mcpu32__)
 #define count_leading_zeros(count, x) \
   __asm__ ("bfffo %1{%b2:%b2},%0"					\
-	   : "=d" ((USItype) (count))					\
+	   : "=d" (count)						\
 	   : "od" ((USItype) (x)), "n" (0))
 #define COUNT_LEADING_ZEROS_0 32
 #endif
@@ -1063,7 +1063,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define count_trailing_zeros(count,x) \
   do {									\
     __asm__ ("ffsd	%2,%0"						\
-	     : "=r" ((USItype) (count))					\
+	     : "=r" (count)						\
 	     : "0" ((USItype) 0), "r" ((USItype) (x)));			\
   } while (0)
 #endif /* __ns32000__ */
@@ -1213,12 +1213,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if defined (__pyr__) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addw %5,%1\n\taddwc %3,%0"					\
-	   : "=r" ((USItype)(sh)), "=&r" ((USItype)(sl))		\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0"  ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "%1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("subw %5,%1\n\tsubwb %3,%0"					\
-	   : "=r" ((USItype)(sh)), "=&r" ((USItype)(sl))		\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "1" ((USItype)(al)), "g" ((USItype)(bl)))
 /* This insn works on Pyramids with AP, XP, or MI CPUs, but not with SP.  */
@@ -1235,12 +1235,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if defined (__ibm032__) /* RT/ROMP */  && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("a %1,%5\n\tae %0,%3"					\
-	   : "=r" ((USItype)(sh)), "=&r" ((USItype)(sl))		\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0"  ((USItype)(ah)), "r" ((USItype)(bh)),			\
 	     "%1" ((USItype)(al)), "r" ((USItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("s %1,%5\n\tse %0,%3"					\
-	   : "=r" ((USItype)(sh)), "=&r" ((USItype)(sl))		\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((USItype)(ah)), "r" ((USItype)(bh)),			\
 	     "1" ((USItype)(al)), "r" ((USItype)(bl)))
 #define smul_ppmm(ph, pl, m0, m1) \
@@ -1265,7 +1265,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 "	m	r2,%3\n"						\
 "	cas	%0,r2,r0\n"						\
 "	mfs	r10,%1"							\
-	   : "=r" ((USItype)(ph)), "=r" ((USItype)(pl))			\
+	   : "=r" (ph), "=r" (pl)					\
 	   : "%r" ((USItype)(m0)), "r" ((USItype)(m1))			\
 	   : "r2")
 #define UMUL_TIME 20
@@ -1274,11 +1274,11 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   do {									\
     if ((x) >= 0x10000)							\
       __asm__ ("clz	%0,%1"						\
-	       : "=r" ((USItype)(count)) : "r" ((USItype)(x) >> 16));	\
+	       : "=r" (count) : "r" ((USItype)(x) >> 16));		\
     else								\
       {									\
 	__asm__ ("clz	%0,%1"						\
-		 : "=r" ((USItype)(count)) : "r" ((USItype)(x)));	\
+		 : "=r" (count) : "r" ((USItype)(x)));			\
 	(count) += 16;							\
       }									\
   } while (0)
@@ -1498,12 +1498,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if defined (__vax__) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addl2 %5,%1\n\tadwc %3,%0"					\
-	   : "=g" ((USItype)(sh)), "=&g" ((USItype)(sl))		\
+	   : "=g" (sh), "=&g" (sl)					\
 	   : "0"  ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "%1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("subl2 %5,%1\n\tsbwc %3,%0"					\
-	   : "=g" ((USItype)(sh)), "=&g" ((USItype)(sl))		\
+	   : "=g" (sh), "=&g" (sl)					\
 	   : "0" ((USItype)(ah)), "g" ((USItype)(bh)),			\
 	     "1" ((USItype)(al)), "g" ((USItype)(bl)))
 #define smul_ppmm(xh, xl, m0, m1) \
@@ -1531,7 +1531,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define count_trailing_zeros(count,x)					\
   do {									\
     __asm__ ("ffs 0, 31, %1, %0"					\
-	     : "=g" ((USItype) (count))					\
+	     : "=g" (count)						\
 	     : "g" ((USItype) (x)));					\
   } while (0)
 #endif
@@ -1540,12 +1540,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if defined (__z8000__) && W_TYPE_SIZE == 16
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add	%H1,%H5\n\tadc	%H0,%H3"				\
-	   : "=r" ((unsigned int)(sh)), "=&r" ((unsigned int)(sl))	\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0"  ((unsigned int)(ah)), "r" ((unsigned int)(bh)),	\
 	     "%1" ((unsigned int)(al)), "rQR" ((unsigned int)(bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub	%H1,%H5\n\tsbc	%H0,%H3"				\
-	   : "=r" ((unsigned int)(sh)), "=&r" ((unsigned int)(sl))	\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "0" ((unsigned int)(ah)), "r" ((unsigned int)(bh)),	\
 	     "1" ((unsigned int)(al)), "rQR" ((unsigned int)(bl)))
 #define umul_ppmm(xh, xl, m0, m1) \
