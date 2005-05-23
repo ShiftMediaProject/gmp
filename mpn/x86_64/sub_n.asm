@@ -27,24 +27,33 @@ C		    cycles/limb
 C Hammer:		1.7
 C Prescott/Nocona:	11
 
+MULFUNC_PROLOGUE(mpn_sub_n mpn_sub_nc)
 
 C INPUT PARAMETERS
 C rp	rdi
 C up	rsi
 C vp	rdx
 C n	rcx
+C cy	r8		(only for mpn_sub_nc)
 
 	TEXT
 	ALIGN(16)
 ASM_START()
+PROLOGUE(mpn_sub_nc)
+	movq	%rcx, %r10		C				3
+	andl	$3, %r10d		C				4
+	shrq	$2, %rcx		C				4
+	bt	$0, %r8			C cy flag <- carry parameter	5
+	je	.L0			C				2
+	jmp	.Loop			C				2
+EPILOGUE()
 PROLOGUE(mpn_sub_n)
-	movq	%rcx, %r8		C				3
+	movq	%rcx, %r10		C				3
 	shrq	$2, %rcx		C				4
 	je	.Lend			C				2
-	andl	$3, %r8d		C				4
-	.byte	0x66, 0x90, 0x90	C				2
+	andl	$3, %r10d		C				4
 
-C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
+C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
 .Loop:	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
 	leaq	32(%rsi), %rsi		C				4
@@ -70,8 +79,8 @@ C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
 	jne	.Loop			C				2
 
 
-	incl	%r8d			C				3
-	decl	%r8d			C				3
+	incl	%r10d			C				3
+	decl	%r10d			C				3
 	jne	.L0			C				2
 
 	sbbl	%eax,%eax		C				2
@@ -79,7 +88,7 @@ C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
 	ret				C				1
 
 .Lend:	testl	%eax, %eax		C clear cy			2
-.L0:	decl	%r8d			C				3
+.L0:	decl	%r10d			C				3
 	jne	.L1			C				2
 
 	movq	(%rsi), %rax		C				3
@@ -89,7 +98,7 @@ C Main loop.  16-byte aligned.  Blocks between blank lines take one cycle.
 	negl	%eax			C				2
 	ret				C				1
 
-.L1:	decl	%r8d			C				3
+.L1:	decl	%r10d			C				3
 	jne	.L2			C				2
 
 	movq	(%rsi), %rax		C				3
