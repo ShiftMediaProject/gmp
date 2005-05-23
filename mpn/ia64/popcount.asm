@@ -1,6 +1,7 @@
 dnl  IA-64 mpn_popcount.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -46,6 +47,7 @@ ifdef(`HAVE_ABI_32',
 		sxt4	r33 = r33
 		;;
 ')
+		add	r24 = 512, r32
 		and	r22 = 3, r33
 		shr.u	r23 = r33, 2	;;
 		mov	ar.lc = r22
@@ -79,19 +81,23 @@ ifdef(`HAVE_ABI_32',
 		br.cloop.dptk	.Loop  ;;
 		br.sptk		.Ldone0
 
-.Loop:		add	r8 = r8, r20
+.Loop:
+  { .mmi;	lfetch	[r24], 32
+		add	r8 = r8, r20
 		popcnt	r20 = r16
-		ld8	r16 = [r32], 8	;;
+} { .mmi;	ld8	r16 = [r32], 8	;;
 		add	r8 = r8, r21
 		popcnt	r21 = r17
-		ld8	r17 = [r32], 8	;;
+} { .mmi;	ld8	r17 = [r32], 8	;;
 		add	r8 = r8, r22
 		popcnt	r22 = r18
-		ld8	r18 = [r32], 8	;;
+} { .mmi;	ld8	r18 = [r32], 8	;;
 		add	r8 = r8, r23
 		popcnt	r23 = r19
-		ld8	r19 = [r32], 8
+} { .mmb	ld8	r19 = [r32], 8
+		nop.m	0
 		br.cloop.dptk	.Loop	;;
+}
 
 .Ldone0:
 		add	r8 = r8, r20

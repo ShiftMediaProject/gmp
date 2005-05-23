@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_divexact_by3c -- mpn by 3 exact division.
 
-dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -58,6 +58,7 @@ ifdef(`HAVE_ABI_32',`
 	add		r15 = -2, n		C FIXME
 	;;
 	shr		r15 = r15, 1
+	add		r11 = 512, up
 	;;
 	mov		ar.lc = r15		C loop count
 	mov		upf = up		C for loads into fpreg
@@ -189,6 +190,7 @@ C *** MAIN LOOP START ***
    (p6)	add		cy = 1, cy
    (p6)	add		l0 = l0, r0x5555555555555555
 	;;
+	lfetch.nt1	[r11], 16
    (p7)	add		cy = 1, cy
    (p7)	add		l0 = l0, r0x5555555555555555
 	nop.b		0

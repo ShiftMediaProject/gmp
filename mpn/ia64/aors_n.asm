@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
-dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -148,8 +148,12 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u1 = [up], 8		C			M01
 	add		n = -1, n		C loop count		M I
 	;;
+	add		r11 = 512, vp
 	ld8		v2 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u2 = [up], 8		C			M01
+	nop.i		0
+	nop.b		0
 	;;
 	ld8		v3 = [vp], 8		C			M01
 	ld8		u3 = [up], 8		C			M01
@@ -192,7 +196,9 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u7 = [up], 8		C			M01
 	ADDSUB		w2 = u2, v2		C			M I
 	;;
+	add		r11 = 512, vp
 	ld8		v0 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u0 = [up], 8		C			M01
 	br.cloop.dptk	.Loop			C			B
 	br		.Lcj9			C			B
@@ -229,7 +235,9 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u6 = [up], 8		C			M01
 	ADDSUB		w0 = u0, v0		C			M I
 	;;
+	add		r11 = 512, vp
 	ld8		v7 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u7 = [up], 8		C			M01
 	br		.LL01x			C			B
 
@@ -264,12 +272,16 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u4 = [up], 8		C			M01
 	mov.i		ar.lc = n		C			I0
 	ADDSUB		w7 = u7, v7		C			M I
+	nop.i		0
+	nop.b		0
 	;;
 	ld8		v5 = [vp], 8		C			M01
 	ld8		u5 = [up], 8		C			M01
 	cmp.PRED	p9, p0 = w7, u7		C			M I
 	;;
+	add		r11 = 512, vp
 	ld8		v6 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u6 = [up], 8		C			M01
    (p8)	cmp.eq.or	p9, p0 = LIM, w7	C			M I
 	;;
@@ -320,7 +332,9 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u5 = [up], 8		C			M01
 	ADDSUB		w7 = u7, v7		C			M I
 	;;
+	add		r11 = 512, vp
 	ld8		v6 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u6 = [up], 8		C			M01
 	cmp.PRED	p9, p0 = w7, u7		C			M I
 	;;
@@ -367,7 +381,9 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u4 = [up], 8		C			M01
 	ADDSUB		w6 = u6, v6		C			M I
 	;;
+	add		r11 = 512, vp
 	ld8		v5 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u5 = [up], 8		C			M01
 	br		.LL101			C			B
 
@@ -397,12 +413,16 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u1 = [up], 8		C			M01
 	mov.i		ar.lc = n		C			I0
 	cmp.PRED	p9, p0 = w3, r10	C			M I
+	nop.i		0
+	nop.b		0
 	;;
 	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01
 	ADDSUB		w4 = u4, v4		C			M I
 	;;
+	add		r11 = 512, vp
 	ld8		v3 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u3 = [up], 8		C			M01
 	br		.LL11x			C			B
 
@@ -440,10 +460,15 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u1 = [up], 8		C			M01
 	mov.i		ar.lc = n		C			I0
    (p8)	cmp.eq.or	p9, p0 = LIM, w3	C			M I
+	nop.i		0
+	nop.b		0
 	;;
+	add		r11 = 512, vp
 	ld8		v2 = [vp], 8		C			M01
+	add		r10 = 512, up
 	ld8		u2 = [up], 8		C			M01
    (p8)	add		w3 = INCR, w3		C			M I
+	nop.b		0
 	;;
 	ld8		v3 = [vp], 8		C			M01
 	ld8		u3 = [up], 8		C			M01
@@ -477,14 +502,15 @@ C *** MAIN LOOP START ***
 .LL000:	st8		[rp] = w1, 16		C			M23
 	st8		[rpx] = w2, 32		C			M23
    (p8)	cmp.eq.or	p9, p0 = LIM, w3	C			M I
+	lfetch		[r10], 64
    (p8)	add		w3 = INCR, w3		C			M I
 	ADDSUB		w4 = u4, v4		C			M I
 	;;
 .LL11x:	st8		[rp] = w3, 8		C			M23
 	ld8		v4 = [vp], 8		C			M01
 	cmp.PRED	p6, p0 = w4, u4		C			M I
-	ADDSUB		w5 = u5, v5		C			M I
 	ld8		u4 = [up], 8		C			M01
+	ADDSUB		w5 = u5, v5		C			M I
 	;;
 	ld8		v5 = [vp], 8		C			M01
 	cmp.PRED	p7, p0 = w5, u5		C			M I
@@ -510,14 +536,15 @@ C *** MAIN LOOP START ***
 .LL100:	st8		[rp] = w5, 16		C			M23
 	st8		[rpx] = w6, 32		C			M23
    (p8)	cmp.eq.or	p9, p0 = LIM, w7	C			M I
+	lfetch		[r11], 64
    (p8)	add		w7 = INCR, w7		C			M I
 	ADDSUB		w0 = u0, v0		C			M I
 	;;
 .LL01x:	st8		[rp] = w7, 8		C			M23
 	ld8		v0 = [vp], 8		C			M01
 	cmp.PRED	p6, p0 = w0, u0		C			M I
-	ADDSUB		w1 = u1, v1		C			M I
 	ld8		u0 = [up], 8		C			M01
+	ADDSUB		w1 = u1, v1		C			M I
 	br.cloop.dptk	.Loop			C			B
 	;;
 C *** MAIN LOOP END ***

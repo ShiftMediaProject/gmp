@@ -1,6 +1,7 @@
 dnl  IA-64 mpn_lshift/mpn_rshift.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -43,12 +44,16 @@ ifdef(`OPERATION_lshift',`
 	define(`FSH',`shl')
 	define(`BSH',`shr.u')
 	define(`UPD',`-8')
+	define(`POFF',`-512')
+	define(`PUPD',`-32')
 	define(`func',`mpn_lshift')
 ')
 ifdef(`OPERATION_rshift',`
 	define(`FSH',`shr.u')
 	define(`BSH',`shl')
 	define(`UPD',`8')
+	define(`POFF',`512')
+	define(`PUPD',`32')
 	define(`func',`mpn_rshift')
 ')
 
@@ -89,8 +94,8 @@ ifdef(`OPERATION_lshift',
 	;;
 }
 {.mmi
+	add		r11 = POFF, up
 	ld8		r10 = [up], UPD
-	nop		0
 	mov.i		ar.lc = n
 }
    (p6)	br.dptk		.Lb01
@@ -279,34 +284,39 @@ ifdef(`OPERATION_lshift',
 
 C *** MAIN LOOP START ***
 	ALIGN(32)
-.Ltop:	or		r15 = r27, r26
-	FSH		r24 = r18, cnt
-	BSH		r25 = r19, tnc
-	st8		[rp] = r14, UPD
-	ld8		r18 = [up], UPD
-	nop.b		0
+.Ltop:
+.mmi;	st8		[rp] = r14, UPD		C M2
+	lfetch		[r11], PUPD
+	FSH		r24 = r18, cnt		C I0
+.mmi;	ld8		r18 = [up], UPD		C M1
+	or		r15 = r27, r26		C M3
+	BSH		r25 = r19, tnc		C I1
 	;;
-.LL11:	or		r14 = r21, r20
+.LL11:
+.mmi;	st8		[rp] = r15, UPD
+	nop.m		0
 	FSH		r26 = r19, cnt
+.mmi;	ld8		r19 = [up], UPD
+	or		r14 = r21, r20
 	BSH		r27 = r16, tnc
-	st8		[rp] = r15, UPD
-	ld8		r19 = [up], UPD
-	nop.b		0
 	;;
-.LL10:	or		r15 = r23, r22
+.LL10:
+.mmi;	st8		[rp] = r14, UPD
+	nop.m		0
 	FSH		r20 = r16, cnt
+.mmi;	ld8		r16 = [up], UPD
+	or		r15 = r23, r22
 	BSH		r21 = r17, tnc
-	st8		[rp] = r14, UPD
-	ld8		r16 = [up], UPD
-	nop.b		0
 	;;
-.LL01:	or		r14 = r25, r24
-	FSH		r22 = r17, cnt
-	BSH		r23 = r18, tnc
-	st8		[rp] = r15, UPD
+.LL01:
+.mmi;	st8		[rp] = r15, UPD
 	ld8		r17 = [up], UPD
+	FSH		r22 = r17, cnt
+.mib;	or		r14 = r25, r24
+	BSH		r23 = r18, tnc
 	br.cloop.dptk	.Ltop
 	;;
+
 C *** MAIN LOOP END ***
 
 .Lbot:	or		r15 = r27, r26
