@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -68,11 +68,13 @@ my %optable =
    'lda'    => 'E',
    'ldah'   => 'E',
    'ldbu'   => 'L',
+   'ldl'    => 'L',
    'ldq'    => 'L',
    'ldt'    => 'L',
    'ret'    => 'L',
    'mov'    => 'E',
    'mulq'   => 'U',
+   'negq'   => 'E',
    'nop'    => 'E',
    'not'    => 'E',
    's8addq' => 'E',
