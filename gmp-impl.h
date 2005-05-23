@@ -3381,7 +3381,7 @@ extern mp_size_t __gmp_default_fp_limb_precision;
 #define MPF_SIGNIFICANT_DIGITS(n, base, prec)                           \
   do {                                                                  \
     ASSERT (base >= 2 && base < numberof (mp_bases));                   \
-    (n) = 2 + (size_t) ((((prec) - 1) * BITS_PER_MP_LIMB)               \
+    (n) = 2 + (size_t) ((((size_t) (prec) - 1) * GMP_NUMB_BITS)         \
                         * mp_bases[(base)].chars_per_bit_exactly);      \
   } while (0)
 
