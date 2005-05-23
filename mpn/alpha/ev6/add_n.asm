@@ -1,7 +1,7 @@
 dnl  Alpha ev6 mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 2000, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -197,9 +197,9 @@ $ret4:	cmpult	r5,	r4,	r21	C U0 did it carry
 $ret5:	ldq	r6,	48(r17)		C L0 get next ones
 	ldq	r7,	48(r18)		C L1
 
-	bis	r31,	r31,	r31	C L  damp out
+	ldl	r31, 256(r17)		C L0 prefetch
 	addq	r8,	r21,	r8	C U1 carry from last
-	bis	r31,	r31,	r31	C L  moves in L !
+	ldl	r31, 256(r18)		C L1 prefetch
 	addq	r9,	r10,	r11	C U0 add two data
 
 	beq	r8,	$fix6		C U1 fix exact zero

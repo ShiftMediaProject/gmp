@@ -1,7 +1,7 @@
 dnl  Alpha ev6 mpn_sub_n -- Subtract two limb vectors of the same length > 0
 dnl  and store difference in a third limb vector.
 
-dnl  Copyright 2000, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -197,9 +197,9 @@ $ret4:	cmpult	r3,	r4,	r21	C U0 did it borrow
 $ret5:	ldq	r6,	48(r17)		C L0 get next ones
 	ldq	r7,	48(r18)		C L1
 
-	bis	r31,	r31,	r31	C L  damp out
+	ldl	r31, 256(r17)		C L0 prefetch
 	subq	r8,	r21,	r25	C U1 borrow from last
-	bis	r31,	r31,	r31	C L  moves in L !
+	ldl	r31, 256(r18)		C L1 prefetch
 	subq	r9,	r10,	r11	C U0 sub two data
 
 	beq	r8,	$fix6		C U1 fix exact zero
