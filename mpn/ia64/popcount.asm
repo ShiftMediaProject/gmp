@@ -33,98 +33,97 @@ C Itanium 2:  1
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C
-C 1 c/l is optimal on both itanium and itanium2.  itanium can only sustain 1
-C load and 1 store per cycle, and itanium2 has only one popcnt unit.
+C 1 c/l is optimal on both Itanium and Itanium2.
 
 ASM_START()
 PROLOGUE(mpn_popcount)
 	.prologue
-	.save	ar.lc, r2
-		mov	r2 = ar.lc
+	.save		ar.lc, r2
+	mov		r2 = ar.lc
 	.body
 ifdef(`HAVE_ABI_32',
-`		addp4	r32 = 0, r32
-		sxt4	r33 = r33
-		;;
+`	addp4		r32 = 0, r32
+	sxt4		r33 = r33
+	;;
 ')
-		add	r24 = 512, r32
-		and	r22 = 3, r33
-		shr.u	r23 = r33, 2	;;
-		mov	ar.lc = r22
-		mov	r8 = 0		;;
-		br.cloop.dpnt	.Loop0	;;
-		br.sptk	.L0
-.Loop0:		ld8	r16 = [r32], 8	;;
-		popcnt	r20 = r16	;;
-		add	r8 = r8, r20
-		br.cloop.dptk	.Loop0	;;
+	add		r24 = 512, r32
+	and		r22 = 3, r33
+	shr.u		r23 = r33, 2	;;
+	mov		ar.lc = r22
+	mov		r8 = 0		;;
+	br.cloop.dpnt	.Loop0	;;
+	br.sptk		.L0
+.Loop0:	ld8		r16 = [r32], 8	;;
+	popcnt		r20 = r16	;;
+	add		r8 = r8, r20
+	br.cloop.dptk	.Loop0	;;
 
-.L0:		mov	ar.lc = r23	;;
-		br.cloop.dptk	.L1	;;
-		mov	ar.lc = r2
-		br.ret.sptk.many b0	;;
-.L1:		ld8	r16 = [r32], 8	;;
-		ld8	r17 = [r32], 8	;;
-		ld8	r18 = [r32], 8	;;
-		ld8	r19 = [r32], 8	;;
-		br.cloop.dptk	.L2    ;;
-		br.sptk		.Ldone1	;;
+.L0:	mov		ar.lc = r23	;;
+	br.cloop.dptk	.L1	;;
+	mov		ar.lc = r2
+	br.ret.sptk.many b0	;;
+.L1:	ld8		r16 = [r32], 8	;;
+	ld8		r17 = [r32], 8	;;
+	ld8		r18 = [r32], 8	;;
+	ld8		r19 = [r32], 8	;;
+	br.cloop.dptk	.L2    ;;
+	br.sptk		.Ldone1	;;
 .L2:
-		popcnt	r20 = r16
-		ld8	r16 = [r32], 8	;;
-		popcnt	r21 = r17
-		ld8	r17 = [r32], 8	;;
-		popcnt	r22 = r18
-		ld8	r18 = [r32], 8	;;
-		popcnt	r23 = r19
-		ld8	r19 = [r32], 8	;;
-		br.cloop.dptk	.Loop  ;;
-		br.sptk		.Ldone0
+	popcnt		r20 = r16
+	ld8		r16 = [r32], 8	;;
+	popcnt		r21 = r17
+	ld8		r17 = [r32], 8	;;
+	popcnt		r22 = r18
+	ld8		r18 = [r32], 8	;;
+	popcnt		r23 = r19
+	ld8		r19 = [r32], 8	;;
+	br.cloop.dptk	.Loop  ;;
+	br.sptk		.Ldone0
 
 .Loop:
-  { .mmi;	lfetch	[r24], 32
-		add	r8 = r8, r20
-		popcnt	r20 = r16
-} { .mmi;	ld8	r16 = [r32], 8	;;
-		add	r8 = r8, r21
-		popcnt	r21 = r17
-} { .mmi;	ld8	r17 = [r32], 8	;;
-		add	r8 = r8, r22
-		popcnt	r22 = r18
-} { .mmi;	ld8	r18 = [r32], 8	;;
-		add	r8 = r8, r23
-		popcnt	r23 = r19
-} { .mmb	ld8	r19 = [r32], 8
-		nop.m	0
-		br.cloop.dptk	.Loop	;;
+ {.mmi;	lfetch		[r24], 32
+	add		r8 = r8, r20
+	popcnt		r20 = r16
+}{.mmi;	ld8		r16 = [r32], 8	;;
+	add		r8 = r8, r21
+	popcnt		r21 = r17
+}{.mmi;	ld8		r17 = [r32], 8	;;
+	add		r8 = r8, r22
+	popcnt		r22 = r18
+}{.mmi;	ld8		r18 = [r32], 8	;;
+	add		r8 = r8, r23
+	popcnt		r23 = r19
+}{.mmb;	ld8		r19 = [r32], 8
+	nop.m		0
+	br.cloop.dptk	.Loop	;;
 }
 
 .Ldone0:
-		add	r8 = r8, r20
-		popcnt	r20 = r16	;;
-		add	r8 = r8, r21
-		popcnt	r21 = r17	;;
-		add	r8 = r8, r22
-		popcnt	r22 = r18	;;
-		add	r8 = r8, r23
-		popcnt	r23 = r19	;;
-		add	r21 = r21, r20
-		add	r23 = r23, r22	;;
-		add	r8 = r8, r21	;;
-		add	r8 = r8, r23
-		mov	ar.lc = r2
-		br.ret.sptk.many b0
+	add		r8 = r8, r20
+	popcnt		r20 = r16	;;
+	add		r8 = r8, r21
+	popcnt		r21 = r17	;;
+	add		r8 = r8, r22
+	popcnt		r22 = r18	;;
+	add		r8 = r8, r23
+	popcnt		r23 = r19	;;
+	add		r21 = r21, r20
+	add		r23 = r23, r22	;;
+	add		r8 = r8, r21	;;
+	add		r8 = r8, r23
+	mov		ar.lc = r2
+	br.ret.sptk.many b0
 
 .Ldone1:
-		popcnt	r20 = r16
-		popcnt	r21 = r17
-		popcnt	r22 = r18
-		popcnt	r23 = r19	;;
-		add	r21 = r21, r20
-		add	r23 = r23, r22	;;
-		add	r8 = r8, r21	;;
-		add	r8 = r8, r23
-		mov	ar.lc = r2
-		br.ret.sptk.many b0
+	popcnt		r20 = r16
+	popcnt		r21 = r17
+	popcnt		r22 = r18
+	popcnt		r23 = r19	;;
+	add		r21 = r21, r20
+	add		r23 = r23, r22	;;
+	add		r8 = r8, r21	;;
+	add		r8 = r8, r23
+	mov		ar.lc = r2
+	br.ret.sptk.many b0
 EPILOGUE(mpn_popcount)
 ASM_END()
