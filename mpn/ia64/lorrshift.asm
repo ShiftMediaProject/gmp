@@ -65,43 +65,36 @@ PROLOGUE(func)
 	.save		ar.lc, r2
 	.body
 ifdef(`HAVE_ABI_32',
-`	addp4	rp = 0, rp
-	addp4	up = 0, up
-	sxt4	n = n
-	zxt4	cnt = cnt
+`	addp4		rp = 0, rp
+	addp4		up = 0, up
+	sxt4		n = n
+	zxt4		cnt = cnt
 	;;
 ')
-{.mmi
-	nop		0
+ {.mmi;	nop		0
 	and		r14 = 3, n
 	mov		r2 = ar.lc
-}
-{.mmi
-	add		r15 = -1, n
+}{.mmi;	add		r15 = -1, n
 	sub		tnc = 64, cnt
+	nop		0
 	;;
-}
-{.mmi
-	cmp.eq		p6, p0 = 1, r14
+}{.mmi;	cmp.eq		p6, p0 = 1, r14
 	cmp.eq		p7, p0 = 2, r14
 	shr.u		n = r15, 2
-}
-{.mmi
-	cmp.eq		p8, p0 = 3, r14
+}{.mmi;	cmp.eq		p8, p0 = 3, r14
 ifdef(`OPERATION_lshift',
 `	shladd		up = r15, 3, up
 	shladd		rp = r15, 3, rp')
 	;;
-}
-{.mmi
-	add		r11 = POFF, up
+}{.mmi;	add		r11 = POFF, up
 	ld8		r10 = [up], UPD
 	mov.i		ar.lc = n
-}
+}{.bbb;
    (p6)	br.dptk		.Lb01
    (p7)	br.dptk		.Lb10
    (p8)	br.dptk		.Lb11
 	;;
+}
 
 .Lb00:	ld8		r19 = [up], UPD
 	;;
@@ -285,37 +278,37 @@ ifdef(`OPERATION_lshift',
 C *** MAIN LOOP START ***
 	ALIGN(32)
 .Ltop:
-.mmi;	st8		[rp] = r14, UPD		C M2
-	lfetch		[r11], PUPD
-	FSH		r24 = r18, cnt		C I0
-.mmi;	ld8		r18 = [up], UPD		C M1
+ {.mmi;	st8		[rp] = r14, UPD		C M2
 	or		r15 = r27, r26		C M3
+	FSH		r24 = r18, cnt		C I0
+}{.mmi;	ld8		r18 = [up], UPD		C M1
+	lfetch		[r11], PUPD
 	BSH		r25 = r19, tnc		C I1
-	;;
+	;; }
 .LL11:
-.mmi;	st8		[rp] = r15, UPD
-	nop.m		0
-	FSH		r26 = r19, cnt
-.mmi;	ld8		r19 = [up], UPD
+ {.mmi;	st8		[rp] = r15, UPD
 	or		r14 = r21, r20
-	BSH		r27 = r16, tnc
-	;;
-.LL10:
-.mmi;	st8		[rp] = r14, UPD
+	FSH		r26 = r19, cnt
+}{.mmi;	ld8		r19 = [up], UPD
 	nop.m		0
-	FSH		r20 = r16, cnt
-.mmi;	ld8		r16 = [up], UPD
+	BSH		r27 = r16, tnc
+	;; }
+.LL10:
+ {.mmi;	st8		[rp] = r14, UPD
 	or		r15 = r23, r22
+	FSH		r20 = r16, cnt
+}{.mmi;	ld8		r16 = [up], UPD
+	nop.m		0
 	BSH		r21 = r17, tnc
-	;;
+	;; }
 .LL01:
-.mmi;	st8		[rp] = r15, UPD
-	ld8		r17 = [up], UPD
+ {.mmi;	st8		[rp] = r15, UPD
+	or		r14 = r25, r24
 	FSH		r22 = r17, cnt
-.mib;	or		r14 = r25, r24
+}{.mib;	ld8		r17 = [up], UPD
 	BSH		r23 = r18, tnc
 	br.cloop.dptk	.Ltop
-	;;
+	;; }
 
 C *** MAIN LOOP END ***
 
@@ -338,7 +331,6 @@ C *** MAIN LOOP END ***
 	FSH		r22 = r17, cnt
 	st8		[rp] = r15, UPD
 	;;
-
 .Lr4:	or		r15 = r27, r26
 	st8		[rp] = r14, UPD
 	;;
@@ -348,7 +340,7 @@ C *** MAIN LOOP END ***
 .Lr2:	st8		[rp] = r14, UPD
 	;;
 .Lr1:	st8		[rp] = r22, UPD
-	mov	ar.lc = r2
+	mov		ar.lc = r2
 	br.ret.sptk.many b0
 EPILOGUE(func)
 ASM_END()
