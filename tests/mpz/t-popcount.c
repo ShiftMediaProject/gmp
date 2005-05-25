@@ -144,7 +144,7 @@ check_random (void)
       ref = refmpz_popcount (arg);
       if (got != ref)
 	{
-          printf ("mpz_popcount wrong\n", i); 
+          printf ("mpz_popcount wrong on random\n"); 
           printf ("         ");   mpz_out_str (stdout, 10, arg); printf ("\n");
           printf ("         0x"); mpz_out_str (stdout, 16, arg); printf ("\n");
           printf ("   got   %lu\n", got);
