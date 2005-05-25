@@ -46,7 +46,7 @@ check_one (const char *name, mpf_srcptr x, double y, int cmp)
       printf    ("  y %g\n", y);
       mp_trace_base=-16;
       mpf_trace ("  x", x);
-      printf    ("  y %A\n", y);
+      printf    ("  y %g\n", y);
       printf    ("  y");
       for (i = 0; i < sizeof(y); i++)
         printf (" %02X", (unsigned) ((unsigned char *) &y)[i]);

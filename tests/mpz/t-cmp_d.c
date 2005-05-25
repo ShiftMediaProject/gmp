@@ -52,7 +52,7 @@ check_one (const char *name, mpz_srcptr x, double y, int cmp, int cmpabs)
       printf    ("  y %g\n", y);
       mp_trace_base=-16;
       mpz_trace ("  x", x);
-      printf    ("  y %A\n", y);
+      printf    ("  y %g\n", y);
       printf    ("  y");
       for (i = 0; i < sizeof(y); i++)
         printf (" %02X", (unsigned) ((unsigned char *) &y)[i]);
