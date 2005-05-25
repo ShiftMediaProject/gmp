@@ -1,6 +1,6 @@
 /* Test gmp_urandomb_ui.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,6 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "tests.h"
