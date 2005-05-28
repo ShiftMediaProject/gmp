@@ -18,6 +18,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-05-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/mode1o.asm: Rewrite to actually work.
+
+	* mpn/powerpc32/aix.m4 (LEA): New macro.
+	(ASM_END): New macro.
+
+	* mpn/powerpc32/linux.m4: New file.
+	* mpn/powerpc32/darwin.m4: New file.
+
 2005-05-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mullow_n.c: Remove FIXME mentioning fixed flaw.
