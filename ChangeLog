@@ -37,7 +37,7 @@ MA 02111-1307, USA.
 	* demos/isprime.c: #include stdlib.h.
 	* tests/rand/t-urbui.c: Likewise.
 	* tests/rand/t-urmui.c: Likewise.
-	
+
 	* tests/mpz/t-popcount.c (check_random): Remove spurious printf arg.
 
 	* mpn/ia64/lorrshift.asm: Cleanup code layout.
@@ -81,7 +81,7 @@ MA 02111-1307, USA.
 	* tests/devel/try.c (param_init) [TYPE_MPZ_JACOBI]: Add DATA_SRC1_ODD.
 	(param_init) [TYPE_MPZ_KRONECKER]: Clear inherited DATA_SRC1_ODD.
 	(param_init) [TYPE_DIVEXACT_1]: Use symbolic name DIVISOR_LIMB.
-	
+
 2005-05-21  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/devel/try.c (param_init) [TYPE_MPZ_JACOBI]: Initialize divisor
