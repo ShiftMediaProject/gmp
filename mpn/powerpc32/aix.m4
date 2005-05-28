@@ -21,7 +21,7 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 define(`ASM_START',
-	`.toc')
+`	.toc')
 
 dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
@@ -33,7 +33,7 @@ m4_assert_numargs(1)
 	`
 	.globl	$1
 	.globl	.$1
-	.csect	[DS],2
+	.csect	[DS], 2
 $1:
 	.long	.$1, TOC[tc0], 0
 	.csect	[PR]
@@ -43,5 +43,15 @@ $1:
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 `')
+
+define(`LEA',
+m4_assert_numargs(2)
+`define(`TOC_ENTRY',
+`	.toc
+tc$2:
+	.tc	$2[TC], $2[RW]')'
+`	lwz	$1, tc$2(2)')
+
+define(`ASM_END', TOC_ENTRY)
 
 divert
