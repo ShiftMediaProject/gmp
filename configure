@@ -30054,12 +30054,18 @@ echo "include_mpn(\`powerpc32/aix.m4')" >> $gmp_tmpconfigm4i
 	    mode64)
 echo "include_mpn(\`powerpc64/linux64.m4')" >> $gmp_tmpconfigm4i
  ;;
+	    32)
+echo "include_mpn(\`powerpc32/linux.m4')" >> $gmp_tmpconfigm4i
+ ;;
           esac
           ;;
         powerpc*-*-darwin*)
 	  case $ABI in
 	    mode64)
 echo "include_mpn(\`powerpc64/darwin.m4')" >> $gmp_tmpconfigm4i
+ ;;
+	    32)
+echo "include_mpn(\`powerpc32/darwin.m4')" >> $gmp_tmpconfigm4i
  ;;
           esac
           ;;
