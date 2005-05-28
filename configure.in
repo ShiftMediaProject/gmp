@@ -2904,12 +2904,14 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
         powerpc*-*-linux*)
 	  case $ABI in
-	    mode64) GMP_INCLUDE_MPN(powerpc64/linux64.m4) ;;
+	    mode64)     GMP_INCLUDE_MPN(powerpc64/linux64.m4) ;;
+	    32)         GMP_INCLUDE_MPN(powerpc32/linux.m4) ;;
           esac
           ;;
         powerpc*-*-darwin*)
 	  case $ABI in
-	    mode64) GMP_INCLUDE_MPN(powerpc64/darwin.m4) ;;
+	    mode64)     GMP_INCLUDE_MPN(powerpc64/darwin.m4) ;;
+	    32)         GMP_INCLUDE_MPN(powerpc32/darwin.m4) ;;
           esac
           ;;
       esac
