@@ -46,7 +46,7 @@ m4_assert_numargs(2)
 	addis	$1, $1, ha16($2-1b)
 	la	$1, lo16($2-1b)($1)
 	mtlr	r0			C restore return address
-',`	
+',`
 	lis	$1, ha16($2)
 	la	$1, lo16($2)($1)
 ')')
