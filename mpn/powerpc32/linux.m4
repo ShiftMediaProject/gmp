@@ -49,4 +49,9 @@ define(`ASM_END', `dnl')
 ifdef(`PIC',`
 define(`PIC_SLOW')')
 
+dnl  64-bit "long long" parameters are put in an even-odd pair, skipping an
+dnl  even register if that was in turn.  I wish somebody could explain why that
+dnl  is a good idea.
+define(`BROKEN_LONGLONG_PARAM')
+
 divert
