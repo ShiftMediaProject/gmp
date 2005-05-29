@@ -950,11 +950,11 @@ case $host in
             # be fastest and are what we really want to use.
             #
 	    abilist="mode64 mode32 $abilist"
+	    gcc_cflags_opt="-fast -O3 -O2 -O1"	# will this become used?
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="cpu opt"
 	    gcc_mode32_cflags_opt="-fast -O3 -O2 -O1"
-	    gcc_cflags_opt="-fast -O3 -O2 -O1"
 	    path_mode32="powerpc64/mode32 powerpc64"
 	    limb_mode32=longlong
 	    cclist_mode64="gcc"
@@ -979,11 +979,17 @@ case $host in
             # obsolete before too long.  We prefer plain gcc when it knows
             # 64-bits.
 	    #
-	    abilist="mode64 $abilist"
+	    abilist="mode64 mode32 $abilist"
+	    cclist_mode32="gcc"
+	    gcc_mode32_cflags="-mpowerpc64 -Wa,-mppc64"
+	    gcc_mode32_cflags_optlist="cpu opt"
+	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
+	    path_mode32="powerpc64/mode32 powerpc64"
+	    limb_mode32=longlong
 	    cclist_mode64="gcc gcc64"
 	    gcc_mode64_cflags_maybe="-m64"
-	    gcc_mode64_cflags="-O3"
-	    gcc_mode64_cflags_optlist="cpu"
+	    gcc_mode64_cflags_optlist="cpu opt"
+	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
 	    path_mode64="powerpc64/mode64 powerpc64"
 	    any_mode64_testlist="sizeof-long-8"
 	    ;;
@@ -2898,20 +2904,20 @@ if test "$gmp_asm_syntax_testing" != no; then
       case $host in
         powerpc*-*-aix*)
 	  case $ABI in
-	    64 | aix64) GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
-            *)          GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
+	    64 | aix64)  GMP_INCLUDE_MPN(powerpc64/aix.m4) ;;
+            *)           GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
           esac
           ;;
         powerpc*-*-linux*)
 	  case $ABI in
-	    mode64)     GMP_INCLUDE_MPN(powerpc64/linux64.m4) ;;
-	    32)         GMP_INCLUDE_MPN(powerpc32/linux.m4) ;;
+	    mode64)      GMP_INCLUDE_MPN(powerpc64/linux64.m4) ;;
+	    mode32 | 32) GMP_INCLUDE_MPN(powerpc32/linux.m4) ;;
           esac
           ;;
         powerpc*-*-darwin*)
 	  case $ABI in
-	    mode64)     GMP_INCLUDE_MPN(powerpc64/darwin.m4) ;;
-	    32)         GMP_INCLUDE_MPN(powerpc32/darwin.m4) ;;
+	    mode64)      GMP_INCLUDE_MPN(powerpc64/darwin.m4) ;;
+	    32)          GMP_INCLUDE_MPN(powerpc32/darwin.m4) ;;
           esac
           ;;
       esac
