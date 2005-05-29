@@ -1,7 +1,7 @@
 divert(-1)
-dnl  m4 macros for Linux 64-bit assembly.
+dnl  m4 macros for powerpc64 GNU/Linux assembly.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
