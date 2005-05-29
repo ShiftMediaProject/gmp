@@ -30,15 +30,19 @@ C INPUT PARAMETERS
 C rp	r3
 C up	r4
 C n	r5
-C v	r6,r7
+C v	r6,r7  or  r7,r8
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
 
+ifdef(`BROKEN_LONGLONG_PARAM',
+`	rldimi	r8, r7, 32,0	C assemble vlimb from separate 32-bit arguments
+	mr	r6, r8
+',`
 	rldimi	r7, r6, 32,0	C assemble vlimb from separate 32-bit arguments
 	mr	r6, r7
+')
 	li	r7, 0		C cy_limb = 0
-
 	mtctr	r5
 	addic	r0, r0, 0
 	addi	r3, r3, -8
