@@ -105,6 +105,7 @@ tests_rand_start (void)
           struct timeval  tv;
           gettimeofday (&tv, NULL);
           seed = tv.tv_sec ^ (tv.tv_usec << 12);
+	  seed &= 0xffffffff;
 #else
           time_t  tv;
           time (&tv);
