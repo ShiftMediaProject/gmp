@@ -35,7 +35,7 @@ MA 02111-1307, USA.
 	* mpn/powerpc64/mode32/mul_1.asm: Handle BROKEN_LONGLONG_PARAM.
 	* mpn/powerpc64/mode32/addmul_1.asm: Likewise.
 	* mpn/powerpc64/mode32/submul_1.asm: Likewise.
-	
+
 	* mpn/powerpc32/mode1o.asm: Rewrite to actually work.
 
 	* mpn/powerpc32/aix.m4 (LEA): New macro.
@@ -45,7 +45,7 @@ MA 02111-1307, USA.
 	* mpn/powerpc32/darwin.m4: New file.
 	* configure.in: Use linux.m4 and darwin.m4.
 	(powerpc64-linux-gnu): Add support for mode32.
-	
+
 2005-05-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mullow_n.c: Remove FIXME mentioning fixed flaw.
