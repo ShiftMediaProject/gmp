@@ -2885,7 +2885,7 @@ main (int argc, char *argv[])
         case 'E':
           /* re-seed */
           sscanf (optarg, "%lu", &seed);
-          printf ("Re-seeding with %lu\"\n", seed);
+          printf ("Re-seeding with %lu\n", seed);
           break;
         case 'p':
           option_print = 1;
