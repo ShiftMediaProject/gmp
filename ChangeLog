@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-06-02  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/refmpn.c (refmpn_divmod_1c_workaround): Implement workaround
+	to gcc 3.4.x bug triggered on powerpc64 with 32-bit ABI.
+
 2005-06-01  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/devel/try.c (main): Fix a typo.
