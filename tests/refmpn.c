@@ -1105,12 +1105,13 @@ refmpn_divmod_1c_workaround (mp_ptr rp, mp_srcptr sp, mp_size_t size,
                              mp_limb_t divisor, mp_limb_t carry)
 {
   mp_size_t  i;
+  mp_limb_t rem[1];
   for (i = size-1; i >= 0; i--)
     {
-      rp[i] = refmpn_udiv_qrnnd (&carry, carry,
+      rp[i] = refmpn_udiv_qrnnd (rem, carry,
                                  sp[i] << GMP_NAIL_BITS,
                                  divisor << GMP_NAIL_BITS);
-      carry >>= GMP_NAIL_BITS;
+      carry = *rem >> GMP_NAIL_BITS;
     }
   return carry;
 }
@@ -1733,6 +1734,7 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
       free (d2p);
     }
 }
+
 
 size_t
 refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
