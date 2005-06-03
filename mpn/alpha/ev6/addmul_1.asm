@@ -75,7 +75,7 @@ $1mod8:	ldq	r5,	0(r16)		C
 	cmpult	r23,	r7,	r20	C
 	addq	r8,	r20,	r0	C
 	stq	r23,	0(r16)		C
-	bge	r18,	ent1
+	bge	r18,	$ent1
 	ret	r31,	(r26),	1
 
 $L1:	lda	r8,	0(r31)		C zero carry reg
@@ -120,9 +120,9 @@ $6mod8:	ldq	r0,	0(r17)		C
 	umulh	r19,	r0,	r6	C
 	addq	r4,	r25,	r4	C lo + acc
 	mulq	r19,	r1,	r7	C
-	br	r31,	ent6
+	br	r31,	$ent6
 
-ent1:	lda	r17,	8(r17)
+$ent1:	lda	r17,	8(r17)
 	lda	r16,	8(r16)
 	lda	r8,	0(r0)
 $0mod8:	ldq	r0,	0(r17)		C
@@ -140,7 +140,7 @@ $0mod8:	ldq	r0,	0(r17)		C
 	addq	r4,	r2,	r4	C lo + acc
 	mulq	r19,	r1,	r28	C
 	lda	r16,	-16(r16)
-	br	r31,	ent0
+	br	r31,	$ent0
 
 $3mod8:	ldq	r1,	0(r17)		C
 	ldq	r5,	0(r16)		C
@@ -169,7 +169,7 @@ $2mod8:	ldq	r0,	0(r17)		C
 	umulh	r19,	r0,	r6	C
 	addq	r4,	r25,	r4	C lo + acc
 	mulq	r19,	r1,	r7	C
-	br	r31,	ent2
+	br	r31,	$ent2
 
 $5mod8:	ldq	r1,	0(r17)		C
 	ldq	r5,	0(r16)		C
@@ -231,7 +231,7 @@ $Loop:
 	mulq	r19,	r1,	r7	C U1
 	bis	r31,	r31,	r31	C L1 st slosh
 	addq	r24,	r21,	r24	C U0 hi mul + carry
-ent2:
+$ent2:
 	cmpult	r4,	r25,	r20	C L0 lo add => carry
 	bis	r31,	r31,	r31	C U1 mt
 	lda	r18,	-8(r18)		C L1 bookkeeping
@@ -266,7 +266,7 @@ ent2:
 	mulq	r19,	r1,	r28	C U1
 	bis	r31,	r31,	r31	C L1 st slosh
 	addq	r8,	r21,	r8	C L0 hi mul + carry
-ent0:
+$ent0:
 	cmpult	r4,	r2,	r20	C L0 lo add => carry
 	bis	r31,	r31,	r31	C U1 mt
 	lda	r17,	64(r17)		C L1 bookkeeping
@@ -301,7 +301,7 @@ ent0:
 	mulq	r19,	r1,	r7	C U1
 	bis	r31,	r31,	r31	C L1 st slosh
 	addq	r24,	r21,	r24	C U0 hi mul + carry
-ent6:
+$ent6:
 	cmpult	r4,	r25,	r20	C L0 lo add => carry
 	bis	r31,	r31,	r31	C U1 mt
 	lda	r16,	64(r16)		C L1 bookkeeping
