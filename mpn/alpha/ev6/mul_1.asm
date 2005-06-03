@@ -1,7 +1,7 @@
 dnl  Alpha ev6 mpn_mul_1 -- Multiply a limb vector with a limb and store the
 dnl  result in a second limb vector.
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -64,7 +64,6 @@ C   2. Improve feed-in code, perhaps with the equivalent of switch(n%8) unless
 C      that is too costly.
 C   3. Consider using 4-way unrolling, even if that runs slower.
 C   4. Reduce register usage.  In particular, try to avoid using r29.
-
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
@@ -129,7 +128,7 @@ $L_9_or_more:
 	mulq	r2,r19,r3	C r3 = prod_low
 	umulh	r2,r19,r21	C r21 = prod_high
 	beq	r20,$Le1b	C jump if size was == 1
-	bis	r31,	r31,	r0	C FIXME: shouldtn't need this
+	bis	r31, r31, r0	C FIXME: shouldtn't need this
 	ldq	r2,0(r17)	C r2 = s1_limb
 	lda	r17,8(r17)	C s1_ptr++
 	lda	r20,-1(r20)	C size--
@@ -205,7 +204,7 @@ $L_8_or_more:
 	lda	r16,	32(r16)		C L1 bookkeeping
 	addq	r13,	r31,	r13	C U0 start carry cascade
 	umulh	r12,	r19,	r21	C U1 #06
-	br	r31,	ret0c
+	br	r31,	$ret0c
 
 $L_16_or_more:
 C ---------------------------------------------------------------
@@ -225,23 +224,23 @@ C ---------------------------------------------------------------
 	addq	r13,	r31,	r13	C U0 start carry cascade
 
 	umulh	r12,	r19,	r21	C U1 #06
-C	beq	r13,	fix0w		C U0
-ret0w:	addq	r22,	r14,	r26	C L0
+C	beq	r13,	$fix0w		C U0
+$ret0w:	addq	r22,	r14,	r26	C L0
 	ldq	r10,	40(r17)		C L1
 
 	mulq	r9,	r19,	r22	C U1 #07
-	beq	r26,	fix1w		C U0
-ret1w:	addq	r23,	r24,	r27	C L0
+	beq	r26,	$fix1w		C U0
+$ret1w:	addq	r23,	r24,	r27	C L0
 	ldq	r11,	48(r17)		C L1
 
 	umulh	r9,	r19,	r23	C U1 #08
-	beq	r27,	fix2w		C U0
-ret2w:	addq	r28,	r25,	r28	C L0
+	beq	r27,	$fix2w		C U0
+$ret2w:	addq	r28,	r25,	r28	C L0
 	ldq	r12,	56(r17)		C L1
 
 	mulq	r10,	r19,	r24	C U1 #09
-	beq	r28,	fix3w		C U0
-ret3w:	addq	r1,	r2,	r20	C L0 sum 2 mul's
+	beq	r28,	$fix3w		C U0
+$ret3w:	addq	r1,	r2,	r20	C L0 sum 2 mul's
 	ldq	r9,	64(r17)		C L1
 
 	addq	r3,	r4,	r2	C L0 #10 2 mul's
@@ -268,18 +267,18 @@ C	bra	$L_middle_of_unrolled_loop
 	ldq	r10,	8(r17)		C L1
 
 	umulh	r12,	r19,	r1	C U1 #15
-	beq	r20,	fix4		C U0
-ret4w:	addq	r2,	r29,	r6	C L0
+	beq	r20,	$fix4		C U0
+$ret4w:	addq	r2,	r29,	r6	C L0
 	ldq	r11,	16(r17)		C L1
 
 	mulq	r9,	r19,	r2	C U1 #16
-	beq	r6,	fix5		C U0
-ret5w:	addq	r14,	r4,	r7	C L0
+	beq	r6,	$fix5		C U0
+$ret5w:	addq	r14,	r4,	r7	C L0
 	ldq	r12,	24(r17)		C L1
 
 	umulh	r9,	r19,	r3	C U1 #17
-	beq	r7,	fix6		C U0
-ret6w:	addq	r5,	r8,	r8	C L0 sum 2
+	beq	r7,	$fix6		C U0
+$ret6w:	addq	r5,	r8,	r8	C L0 sum 2
 	addq	r21,	r22,	r13	C L1 sum 2 mul's
 
 	mulq	r10,	r19,	r4	C U1 #18
@@ -315,23 +314,23 @@ $Loop:
 	addq	r13,	r29,	r13	C U0 start carry cascade
 
 	umulh	r12,	r19,	r21	C U1 #06
-	beq	r13,	fix0		C U0
-ret0:	addq	r22,	r14,	r26	C L0
+	beq	r13,	$fix0		C U0
+$ret0:	addq	r22,	r14,	r26	C L0
 	ldq	r10,	40(r17)		C L1
 
 	mulq	r9,	r19,	r22	C U1 #07
-	beq	r26,	fix1		C U0
-ret1:	addq	r23,	r24,	r27	C L0
+	beq	r26,	$fix1		C U0
+$ret1:	addq	r23,	r24,	r27	C L0
 	ldq	r11,	48(r17)		C L1
 
 	umulh	r9,	r19,	r23	C U1 #08
-	beq	r27,	fix2		C U0
-ret2:	addq	r28,	r25,	r28	C L0
+	beq	r27,	$fix2		C U0
+$ret2:	addq	r28,	r25,	r28	C L0
 	ldq	r12,	56(r17)		C L1
 
 	mulq	r10,	r19,	r24	C U1 #09
-	beq	r28,	fix3		C U0
-ret3:	addq	r1,	r2,	r20	C L0 sum 2 mul's
+	beq	r28,	$fix3		C U0
+$ret3:	addq	r1,	r2,	r20	C L0 sum 2 mul's
 	ldq	r9,	64(r17)		C L1
 
 	addq	r3,	r4,	r2	C L0 #10 2 mul's
@@ -360,18 +359,18 @@ $L_middle_of_unrolled_loop:
 	ldq	r10,	8(r17)		C L1
 
 	umulh	r12,	r19,	r1	C U1 #15
-	beq	r20,	fix4		C U0
-ret4:	addq	r2,	r29,	r6	C L0
+	beq	r20,	$fix4		C U0
+$ret4:	addq	r2,	r29,	r6	C L0
 	ldq	r11,	16(r17)		C L1
 
 	mulq	r9,	r19,	r2	C U1 #16
-	beq	r6,	fix5		C U0
-ret5:	addq	r14,	r4,	r7	C L0
+	beq	r6,	$fix5		C U0
+$ret5:	addq	r14,	r4,	r7	C L0
 	ldq	r12,	24(r17)		C L1
 
 	umulh	r9,	r19,	r3	C U1 #17
-	beq	r7,	fix6		C U0
-ret6:	addq	r5,	r8,	r8	C L0 sum 2
+	beq	r7,	$fix6		C U0
+$ret6:	addq	r5,	r8,	r8	C L0 sum 2
 	addq	r21,	r22,	r13	C L1 sum 2 mul's
 
 	mulq	r10,	r19,	r4	C U1 #18
@@ -402,14 +401,14 @@ $Lend:
 	addq	r13,	r29,	r13	C U0 start carry cascade
 
 	umulh	r12,	r19,	r21	C U1 #06
-	beq	r13,	fix0c		C U0
-ret0c:	addq	r22,	r14,	r26	C L0
-	beq	r26,	fix1c		C U0
-ret1c:	addq	r23,	r24,	r27	C L0
-	beq	r27,	fix2c		C U0
-ret2c:	addq	r28,	r25,	r28	C L0
-	beq	r28,	fix3c		C U0
-ret3c:	addq	r1,	r2,	r20	C L0 sum 2 mul's
+	beq	r13,	$fix0c		C U0
+$ret0c:	addq	r22,	r14,	r26	C L0
+	beq	r26,	$fix1c		C U0
+$ret1c:	addq	r23,	r24,	r27	C L0
+	beq	r27,	$fix2c		C U0
+$ret2c:	addq	r28,	r25,	r28	C L0
+	beq	r28,	$fix3c		C U0
+$ret3c:	addq	r1,	r2,	r20	C L0 sum 2 mul's
 	addq	r3,	r4,	r2	C L0 #10 2 mul's
 	lda	r17,	64(r17)		C L1 bookkeeping
 	cmpult	r20,	r1,	r29	C U0 carry from sum
@@ -422,12 +421,12 @@ ret3c:	addq	r1,	r2,	r20	C L0 sum 2 mul's
 	cmpult	r14,	r6,	r3	C U0 carry from sum
 	addq	r7,	r3,	r5	C L0 eat carry
 	addq	r20,	r15,	r20	C U0 carry cascade
-	beq	r20,	fix4c		C U0
-ret4c:	addq	r2,	r29,	r6	C L0
-	beq	r6,	fix5c		C U0
-ret5c:	addq	r14,	r4,	r7	C L0
-	beq	r7,	fix6c		C U0
-ret6c:	addq	r5,	r8,	r8	C L0 sum 2
+	beq	r20,	$fix4c		C U0
+$ret4c:	addq	r2,	r29,	r6	C L0
+	beq	r6,	$fix5c		C U0
+$ret5c:	addq	r14,	r4,	r7	C L0
+	beq	r7,	$fix6c		C U0
+$ret6c:	addq	r5,	r8,	r8	C L0 sum 2
 	cmpult	r8,	r5,	r29	C L0 carry from last bunch
 	stq	r20,	0(r16)		C L0
 	stq	r6,	8(r16)		C L1
@@ -447,42 +446,42 @@ ret6c:	addq	r5,	r8,	r8	C L0 sum 2
 	lda	r30,	224(r30)
 	ret	r31,	(r26),	1
 
-C fix0w:	bis	r14,	r29,	r14	C join carries
-C	br	r31,	ret0w
-fix1w:	bis	r24,	r14,	r24	C join carries
-	br	r31,	ret1w
-fix2w:	bis	r25,	r24,	r25	C join carries
-	br	r31,	ret2w
-fix3w:	bis	r15,	r25,	r15	C join carries
-	br	r31,	ret3w
-fix0:	bis	r14,	r29,	r14	C join carries
-	br	r31,	ret0
-fix1:	bis	r24,	r14,	r24	C join carries
-	br	r31,	ret1
-fix2:	bis	r25,	r24,	r25	C join carries
-	br	r31,	ret2
-fix3:	bis	r15,	r25,	r15	C join carries
-	br	r31,	ret3
-fix4:	bis	r29,	r15,	r29	C join carries
-	br	r31,	ret4
-fix5:	bis	r4,	r29,	r4	C join carries
-	br	r31,	ret5
-fix6:	addq	r5,	r4,	r5	C can't carry twice!
-	br	r31,	ret6
-fix0c:	bis	r14,	r29,	r14	C join carries
-	br	r31,	ret0c
-fix1c:	bis	r24,	r14,	r24	C join carries
-	br	r31,	ret1c
-fix2c:	bis	r25,	r24,	r25	C join carries
-	br	r31,	ret2c
-fix3c:	bis	r15,	r25,	r15	C join carries
-	br	r31,	ret3c
-fix4c:	bis	r29,	r15,	r29	C join carries
-	br	r31,	ret4c
-fix5c:	bis	r4,	r29,	r4	C join carries
-	br	r31,	ret5c
-fix6c:	addq	r5,	r4,	r5	C can't carry twice!
-	br	r31,	ret6c
+C $fix0w:	bis	r14,	r29,	r14	C join carries
+C	br	r31,	$ret0w
+$fix1w:	bis	r24,	r14,	r24	C join carries
+	br	r31,	$ret1w
+$fix2w:	bis	r25,	r24,	r25	C join carries
+	br	r31,	$ret2w
+$fix3w:	bis	r15,	r25,	r15	C join carries
+	br	r31,	$ret3w
+$fix0:	bis	r14,	r29,	r14	C join carries
+	br	r31,	$ret0
+$fix1:	bis	r24,	r14,	r24	C join carries
+	br	r31,	$ret1
+$fix2:	bis	r25,	r24,	r25	C join carries
+	br	r31,	$ret2
+$fix3:	bis	r15,	r25,	r15	C join carries
+	br	r31,	$ret3
+$fix4:	bis	r29,	r15,	r29	C join carries
+	br	r31,	$ret4
+$fix5:	bis	r4,	r29,	r4	C join carries
+	br	r31,	$ret5
+$fix6:	addq	r5,	r4,	r5	C can't carry twice!
+	br	r31,	$ret6
+$fix0c:	bis	r14,	r29,	r14	C join carries
+	br	r31,	$ret0c
+$fix1c:	bis	r24,	r14,	r24	C join carries
+	br	r31,	$ret1c
+$fix2c:	bis	r25,	r24,	r25	C join carries
+	br	r31,	$ret2c
+$fix3c:	bis	r15,	r25,	r15	C join carries
+	br	r31,	$ret3c
+$fix4c:	bis	r29,	r15,	r29	C join carries
+	br	r31,	$ret4c
+$fix5c:	bis	r4,	r29,	r4	C join carries
+	br	r31,	$ret5c
+$fix6c:	addq	r5,	r4,	r5	C can't carry twice!
+	br	r31,	$ret6c
 
 EPILOGUE(mpn_mul_1)
 ASM_END()
