@@ -1395,7 +1395,9 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_preinv_divrem_1), TYPE_PREINV_DIVREM_1 },
 #endif
   { TRY(mpn_mod_1),        TYPE_MOD_1 },
+#if USE_PREINV_MOD_1
   { TRY(mpn_preinv_mod_1), TYPE_PREINV_MOD_1 },
+#endif
 #if HAVE_NATIVE_mpn_divrem_1c
   { TRY(mpn_divrem_1c),    TYPE_DIVREM_1C },
 #endif
@@ -1438,7 +1440,9 @@ const struct choice_t choice_array[] = {
 
 
   { TRY(mpn_mul_basecase), TYPE_MUL_BASECASE },
-  { TRY(mpn_sqr_basecase), TYPE_SQR },
+#if SQR_KARATSUBA_THRESHOLD > 0
+  { try(mpn_sqr_basecase), TYPE_SQR },
+#endif
 
   { TRY(mpn_mul),    TYPE_MUL_BASECASE },
   { TRY(mpn_mul_n),  TYPE_MUL_N },
