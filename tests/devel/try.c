@@ -1441,7 +1441,7 @@ const struct choice_t choice_array[] = {
 
   { TRY(mpn_mul_basecase), TYPE_MUL_BASECASE },
 #if SQR_KARATSUBA_THRESHOLD > 0
-  { try(mpn_sqr_basecase), TYPE_SQR },
+  { TRY(mpn_sqr_basecase), TYPE_SQR },
 #endif
 
   { TRY(mpn_mul),    TYPE_MUL_BASECASE },
