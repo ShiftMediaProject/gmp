@@ -3,7 +3,7 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -380,7 +380,7 @@ void
 validate_mod_34lsub1 (void)
 {
 #define CNST_34LSUB1   ((CNST_LIMB(1) << (3 * (GMP_NUMB_BITS / 4))) - 1)
-  
+
   mp_srcptr  ptr = s[0].p;
   int        error = 0;
   mp_limb_t  got, got_mod, want, want_mod;
@@ -389,7 +389,7 @@ validate_mod_34lsub1 (void)
 
   got = fun.retval;
   got_mod = got % CNST_34LSUB1;
-  
+
   want = refmpn_mod_34lsub1 (ptr, size);
   want_mod = want % CNST_34LSUB1;
 
@@ -399,7 +399,7 @@ validate_mod_34lsub1 (void)
       gmp_printf ("want  0x%MX reduced from 0x%MX\n", want_mod, want);
       error = 1;
     }
-  
+
   if (error)
     validate_fail ();
 }
@@ -420,19 +420,19 @@ validate_divexact_1 (void)
     rem = refmpn_divrem_1 (tp, 0, src, size, divisor);
     if (rem != 0)
       {
-        gmp_printf ("Remainder a%%d == 0x%MX, mpn_divexact_1 undefined\n", rem);
-        error = 1;
+	gmp_printf ("Remainder a%%d == 0x%MX, mpn_divexact_1 undefined\n", rem);
+	error = 1;
       }
     if (! refmpn_equal_anynail (tp, dst, size))
       {
-        printf ("Quotient a/d wrong\n");
-        mpn_trace ("fun ", dst, size);
-        mpn_trace ("want", tp, size);
-        error = 1;
+	printf ("Quotient a/d wrong\n");
+	mpn_trace ("fun ", dst, size);
+	mpn_trace ("want", tp, size);
+	error = 1;
       }
     free (tp);
   }
-  
+
   if (error)
     validate_fail ();
 }
@@ -454,18 +454,18 @@ validate_modexact_1c_odd (void)
   if (carry < divisor)
     {
       if (! (r < divisor))
-        {
-          printf ("Don't have r < divisor\n");
-          error = 1;
-        }
+	{
+	  printf ("Don't have r < divisor\n");
+	  error = 1;
+	}
     }
   else /* carry >= divisor */
     {
       if (! (r <= divisor))
-        {
-          printf ("Don't have r <= divisor\n");
-          error = 1;
-        }
+	{
+	  printf ("Don't have r <= divisor\n");
+	  error = 1;
+	}
     }
 
   {
@@ -475,15 +475,15 @@ validate_modexact_1c_odd (void)
 
     for (k = size-1; k <= size; k++)
       {
-        /* set {tp,size+1} to r*b^k + a - c */
-        refmpn_copyi (tp, ptr, size);
-        tp[size] = 0;
-        ASSERT_NOCARRY (refmpn_add_1 (tp+k, tp+k, size+1-k, r));
-        if (refmpn_sub_1 (tp, tp, size+1, c))
-          ASSERT_CARRY (mpn_add_1 (tp, tp, size+1, divisor));
-       
-        if (refmpn_mod_1 (tp, size+1, divisor) == 0)
-          goto good_remainder;
+	/* set {tp,size+1} to r*b^k + a - c */
+	refmpn_copyi (tp, ptr, size);
+	tp[size] = 0;
+	ASSERT_NOCARRY (refmpn_add_1 (tp+k, tp+k, size+1-k, r));
+	if (refmpn_sub_1 (tp, tp, size+1, c))
+	  ASSERT_CARRY (mpn_add_1 (tp, tp, size+1, divisor));
+
+	if (refmpn_mod_1 (tp, size+1, divisor) == 0)
+	  goto good_remainder;
       }
     printf ("Remainder matches neither r*b^(size-1) nor r*b^size\n");
     error = 1;
@@ -491,7 +491,7 @@ validate_modexact_1c_odd (void)
   good_remainder:
     free (tp);
   }
-  
+
   if (error)
     validate_fail ();
 }
@@ -1499,7 +1499,7 @@ mprotect_maybe (void *addr, size_t len, int prot)
   if (mprotect (addr, len, prot) != 0)
     {
       fprintf (stderr, "Cannot mprotect %p 0x%X 0x%X: %s\n",
-               addr, len, prot, strerror (errno));
+	       addr, len, prot, strerror (errno));
       exit (1);
     }
 #else
@@ -1507,9 +1507,9 @@ mprotect_maybe (void *addr, size_t len, int prot)
     static int  warned = 0;
     if (!warned)
       {
-        fprintf (stderr,
-                 "mprotect not available, bounds testing not performed\n");
-        warned = 1;
+	fprintf (stderr,
+		 "mprotect not available, bounds testing not performed\n");
+	warned = 1;
       }
   }
 #endif
@@ -1559,7 +1559,7 @@ malloc_region (struct region_t *r, mp_size_t n)
   if (p == (void *) -1)
     {
       fprintf (stderr, "Cannot mmap %#x anon bytes: %s\n",
-               nbytes, strerror (errno));
+	       nbytes, strerror (errno));
       exit (1);
     }
 #else
@@ -1610,10 +1610,10 @@ int        carry_index;
 #define CARRY_ITERATION                                                 \
   for (carry_index = 0;                                                 \
        (carry_index < numberof (carry_array)                            \
-        ? (carry = carry_array[carry_index])                            \
-        : (MPN_RANDOM_ALT (carry_index, &carry, 1), (mp_limb_t) 0)),    \
-         (tr->carry == CARRY_DIVISOR ? carry %= divisor : 0),           \
-         carry_index < CARRY_COUNT;                                     \
+	? (carry = carry_array[carry_index])                            \
+	: (MPN_RANDOM_ALT (carry_index, &carry, 1), (mp_limb_t) 0)),    \
+	 (tr->carry == CARRY_DIVISOR ? carry %= divisor : 0),           \
+	 carry_index < CARRY_COUNT;                                     \
        carry_index++)
 
 
@@ -1647,8 +1647,8 @@ int        divisor_index;
 #define ARRAY_ITERATION(var, index, limit, array, randoms, cond)        \
   for (index = 0;                                                       \
        (index < numberof (array)                                        \
-        ? (var = array[index])                                          \
-        : (MPN_RANDOM_ALT (index, &var, 1), (mp_limb_t) 0)),            \
+	? (var = array[index])                                          \
+	: (MPN_RANDOM_ALT (index, &var, 1), (mp_limb_t) 0)),            \
        index < limit;                                                   \
        index++)
 
@@ -1659,7 +1659,7 @@ int        divisor_index;
 
 #define MULTIPLIER_ITERATION                                            \
   ARRAY_ITERATION(multiplier, multiplier_index, MULTIPLIER_COUNT,       \
-                  multiplier_array, MULTIPLIER_RANDOMS, TRY_MULTIPLIER)
+		  multiplier_array, MULTIPLIER_RANDOMS, TRY_MULTIPLIER)
 
 #define DIVISOR_COUNT                           \
   (tr->divisor                                  \
@@ -1668,7 +1668,7 @@ int        divisor_index;
 
 #define DIVISOR_ITERATION                                               \
   ARRAY_ITERATION(divisor, divisor_index, DIVISOR_COUNT, divisor_array, \
-                  DIVISOR_RANDOMS, TRY_DIVISOR)
+		  DIVISOR_RANDOMS, TRY_DIVISOR)
 
 
 /* overlap_array[].s[i] is where s[i] should be, 0 or 1 means overlapping
@@ -1731,7 +1731,7 @@ t_random (mp_ptr ptr, mp_size_t n)
       static mp_limb_t  counter = 0;
       mp_size_t  i;
       for (i = 0; i < n; i++)
-        ptr[i] = ++counter;
+	ptr[i] = ++counter;
     }
     break;
   case DATA_ZEROS:
@@ -1757,7 +1757,7 @@ t_random (mp_ptr ptr, mp_size_t n)
   for (t_rand = 0; t_rand < T_RAND_COUNT; t_rand++)
 
 
-void 
+void
 print_each (const struct each_t *e)
 {
   int  i;
@@ -1767,15 +1767,15 @@ print_each (const struct each_t *e)
     mpn_trace ("   retval", &e->retval, 1);
 
   for (i = 0; i < NUM_DESTS; i++)
-    { 
+    {
       if (tr->dst[i])
-        {
-          if (tr->dst_bytes[i])
-            byte_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
-          else
-            mpn_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
-          printf ("        located %p\n", e->d[i].p);
-        }
+	{
+	  if (tr->dst_bytes[i])
+	    byte_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
+	  else
+	    mpn_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
+	  printf ("        located %p\n", e->d[i].p);
+	}
     }
 
   for (i = 0; i < NUM_SOURCES; i++)
@@ -1812,32 +1812,32 @@ print_all (void)
   for (i = 0; i < NUM_DESTS; i++)
     if (tr->dst[i])
       printf ("   d[%d] %s, align %ld, size %ld\n",
-              i, d[i].high ? "high" : "low",
-              (long) d[i].align, (long) d[i].size);
+	      i, d[i].high ? "high" : "low",
+	      (long) d[i].align, (long) d[i].size);
 
   for (i = 0; i < NUM_SOURCES; i++)
     {
       if (tr->src[i])
-        {
-          printf ("   s[%d] %s, align %ld, ",
-                  i, s[i].high ? "high" : "low", (long) s[i].align);
-          switch (overlap->s[i]) {
-          case -1:
-            printf ("no overlap\n");
-            break;
-          default:
-            printf ("==d[%d]%s\n",
-                    overlap->s[i],
-                    tr->overlap == OVERLAP_LOW_TO_HIGH ? "+a"
-                    : tr->overlap == OVERLAP_HIGH_TO_LOW ? "-a"
-                    : "");
-            break;
-          }
-          printf ("   s[%d]=", i);
-          if (tr->carry_sign && (carry & (1 << i)))
-            printf ("-");
-          mpn_trace (NULL, s[i].p, SRC_SIZE(i));
-        }
+	{
+	  printf ("   s[%d] %s, align %ld, ",
+		  i, s[i].high ? "high" : "low", (long) s[i].align);
+	  switch (overlap->s[i]) {
+	  case -1:
+	    printf ("no overlap\n");
+	    break;
+	  default:
+	    printf ("==d[%d]%s\n",
+		    overlap->s[i],
+		    tr->overlap == OVERLAP_LOW_TO_HIGH ? "+a"
+		    : tr->overlap == OVERLAP_HIGH_TO_LOW ? "-a"
+		    : "");
+	    break;
+	  }
+	  printf ("   s[%d]=", i);
+	  if (tr->carry_sign && (carry & (1 << i)))
+	    printf ("-");
+	  mpn_trace (NULL, s[i].p, SRC_SIZE(i));
+	}
     }
 
   if (tr->dst0_from_src1)
@@ -1850,14 +1850,14 @@ print_all (void)
 
 void
 compare (void)
-{ 
+{
   int  error = 0;
   int  i;
 
   if (tr->retval && ref.retval != fun.retval)
     {
       gmp_printf ("Different return values (%Mu, %Mu)\n",
-                  ref.retval, fun.retval);
+		  ref.retval, fun.retval);
       error = 1;
     }
 
@@ -1866,39 +1866,39 @@ compare (void)
       switch (tr->dst_size[i]) {
       case SIZE_RETVAL:
       case SIZE_GET_STR:
-        d[i].size = ref.retval;
-        break;
+	d[i].size = ref.retval;
+	break;
       }
     }
 
   for (i = 0; i < NUM_DESTS; i++)
     {
       if (! tr->dst[i])
-        continue;
+	continue;
 
       if (tr->dst_bytes[i])
-        {
-          if (memcmp (ref.d[i].p, fun.d[i].p, d[i].size) != 0)
-            {
-              printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
-                      i,
-                      (long) byte_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
-                      (long) byte_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
-              error = 1;
-            }
-        }
+	{
+	  if (memcmp (ref.d[i].p, fun.d[i].p, d[i].size) != 0)
+	    {
+	      printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
+		      i,
+		      (long) byte_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+		      (long) byte_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
+	      error = 1;
+	    }
+	}
       else
-        {
-          if (d[i].size != 0
-              && ! refmpn_equal_anynail (ref.d[i].p, fun.d[i].p, d[i].size))
-            {
-              printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
-                      i,
-                      (long) mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
-                      (long) mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
-              error = 1;
-            }
-        }
+	{
+	  if (d[i].size != 0
+	      && ! refmpn_equal_anynail (ref.d[i].p, fun.d[i].p, d[i].size))
+	    {
+	      printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
+		      i,
+		      (long) mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+		      (long) mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
+	      error = 1;
+	    }
+	}
     }
 
   if (error)
@@ -2005,7 +2005,7 @@ call (struct each_t *e, tryfun_t function)
     break;
   case TYPE_DIVEXACT_BY3C:
     e->retval = CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size,
-                                                carry);
+						carry);
     break;
 
 
@@ -2033,7 +2033,7 @@ call (struct each_t *e, tryfun_t function)
       shift = refmpn_count_leading_zeros (divisor);
       dinv = refmpn_invert_limb (divisor << shift);
       e->retval = CALLING_CONVENTIONS (function)
-        (e->d[0].p, size2, e->s[0].p, size, divisor, dinv, shift);
+	(e->d[0].p, size2, e->s[0].p, size, divisor, dinv, shift);
     }
     break;
   case TYPE_MOD_1:
@@ -2072,7 +2072,7 @@ call (struct each_t *e, tryfun_t function)
     break;
   case TYPE_TDIV_QR:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->d[1].p, 0,
-                                    e->s[0].p, size, e->s[1].p, size2);
+				    e->s[0].p, size, e->s[1].p, size2);
     break;
 
   case TYPE_GCD_1:
@@ -2097,8 +2097,8 @@ call (struct each_t *e, tryfun_t function)
       mprotect_region (&s[0].region, PROT_READ|PROT_WRITE);
       mprotect_region (&s[1].region, PROT_READ|PROT_WRITE);
       e->retval = CALLING_CONVENTIONS (function) (e->d[0].p,
-                                                  e->s[0].p, size,
-                                                  e->s[1].p, size2);
+						  e->s[0].p, size,
+						  e->s[1].p, size2);
       refmpn_copyi (e->s[0].p, s0, size);
       refmpn_copyi (e->s[1].p, s1, size2);
       free (s0);
@@ -2184,11 +2184,11 @@ call (struct each_t *e, tryfun_t function)
 
   case TYPE_POPCOUNT:
     e->retval = (* (unsigned long (*)(ANYARGS))
-                 CALLING_CONVENTIONS (function)) (e->s[0].p, size);
+		 CALLING_CONVENTIONS (function)) (e->s[0].p, size);
     break;
   case TYPE_HAMDIST:
     e->retval = (* (unsigned long (*)(ANYARGS))
-                 CALLING_CONVENTIONS (function)) (e->s[0].p, e->s[1].p, size);
+		 CALLING_CONVENTIONS (function)) (e->s[0].p, e->s[1].p, size);
     break;
 
   case TYPE_SQRTREM:
@@ -2208,26 +2208,26 @@ call (struct each_t *e, tryfun_t function)
       ASSERT_ALWAYS (sizeinbase <= d[0].size);
       fill = d[0].size - sizeinbase;
       if (d[0].high)
-        {
-          memset (e->d[0].p, 0xBA, fill);
-          dst = (char *) e->d[0].p + fill;
-        }
+	{
+	  memset (e->d[0].p, 0xBA, fill);
+	  dst = (char *) e->d[0].p + fill;
+	}
       else
-        {
-          dst = (char *) e->d[0].p;
-          memset (dst + sizeinbase, 0xBA, fill);
-        }
+	{
+	  dst = (char *) e->d[0].p;
+	  memset (dst + sizeinbase, 0xBA, fill);
+	}
       if (POW2_P (base))
-        {
-          e->retval = CALLING_CONVENTIONS (function) (dst, base,
-                                                      e->s[0].p, size);
-        }
+	{
+	  e->retval = CALLING_CONVENTIONS (function) (dst, base,
+						      e->s[0].p, size);
+	}
       else
-        {
-          refmpn_copy (e->d[1].p, e->s[0].p, size);
-          e->retval = CALLING_CONVENTIONS (function) (dst, base,
-                                                      e->d[1].p, size);
-        }
+	{
+	  refmpn_copy (e->d[1].p, e->s[0].p, size);
+	  e->retval = CALLING_CONVENTIONS (function) (dst, base,
+						      e->d[1].p, size);
+	}
       refmpn_zero (e->d[1].p, size);  /* cloberred or unused */
     }
     break;
@@ -2254,59 +2254,59 @@ pointer_setup (struct each_t *e)
       switch (tr->dst_size[i]) {
       case 0:
       case SIZE_RETVAL: /* will be adjusted later */
-        d[i].size = size;
-        break;
+	d[i].size = size;
+	break;
 
       case SIZE_1:
-        d[i].size = 1;
-        break;
+	d[i].size = 1;
+	break;
       case SIZE_2:
-        d[i].size = 2;
-        break;
+	d[i].size = 2;
+	break;
       case SIZE_3:
-        d[i].size = 3;
-        break;
-        
+	d[i].size = 3;
+	break;
+
       case SIZE_PLUS_1:
-        d[i].size = size+1;
-        break;
+	d[i].size = size+1;
+	break;
       case SIZE_PLUS_MSIZE_SUB_1:
-        d[i].size = size + tr->msize - 1;
-        break;
+	d[i].size = size + tr->msize - 1;
+	break;
 
       case SIZE_SUM:
-        if (tr->size2)
-          d[i].size = size + size2;
-        else
-          d[i].size = 2*size;
-        break;
+	if (tr->size2)
+	  d[i].size = size + size2;
+	else
+	  d[i].size = 2*size;
+	break;
 
       case SIZE_SIZE2:
-        d[i].size = size2;
-        break;
+	d[i].size = size2;
+	break;
 
       case SIZE_DIFF:
-        d[i].size = size - size2;
-        break;
+	d[i].size = size - size2;
+	break;
 
       case SIZE_DIFF_PLUS_1:
-        d[i].size = size - size2 + 1;
-        break;
+	d[i].size = size - size2 + 1;
+	break;
 
       case SIZE_CEIL_HALF:
-        d[i].size = (size+1)/2;
-        break;
+	d[i].size = (size+1)/2;
+	break;
 
       case SIZE_GET_STR:
-        {
-          mp_limb_t ff = GMP_NUMB_MAX;
-          MPN_SIZEINBASE (d[i].size, &ff - (size-1), size, base);
-        }
-        break;
+	{
+	  mp_limb_t ff = GMP_NUMB_MAX;
+	  MPN_SIZEINBASE (d[i].size, &ff - (size-1), size, base);
+	}
+	break;
 
       default:
-        printf ("Unrecognised dst_size type %d\n", tr->dst_size[i]);
-        abort ();
+	printf ("Unrecognised dst_size type %d\n", tr->dst_size[i]);
+	abort ();
       }
     }
 
@@ -2317,38 +2317,38 @@ pointer_setup (struct each_t *e)
 
       /* possible room for overlapping sources */
       for (j = 0; j < numberof (overlap->s); j++)
-        if (overlap->s[j] == i)
-          offset = MAX (offset, s[j].align);
+	if (overlap->s[j] == i)
+	  offset = MAX (offset, s[j].align);
 
       if (d[i].high)
-        {
-          if (tr->dst_bytes[i])
-            {
-              e->d[i].p = (mp_ptr)
-                ((char *) (e->d[i].region.ptr + e->d[i].region.size)
-                 - d[i].size - d[i].align);
-            }
-          else
-            {
-              e->d[i].p = e->d[i].region.ptr + e->d[i].region.size
-                - d[i].size - d[i].align;
-              if (tr->overlap == OVERLAP_LOW_TO_HIGH)
-                e->d[i].p -= offset;
-            }
-        }
+	{
+	  if (tr->dst_bytes[i])
+	    {
+	      e->d[i].p = (mp_ptr)
+		((char *) (e->d[i].region.ptr + e->d[i].region.size)
+		 - d[i].size - d[i].align);
+	    }
+	  else
+	    {
+	      e->d[i].p = e->d[i].region.ptr + e->d[i].region.size
+		- d[i].size - d[i].align;
+	      if (tr->overlap == OVERLAP_LOW_TO_HIGH)
+		e->d[i].p -= offset;
+	    }
+	}
       else
-        {
-          if (tr->dst_bytes[i])
-            {
-              e->d[i].p = (mp_ptr) ((char *) e->d[i].region.ptr + d[i].align);
-            }
-          else
-            {
-              e->d[i].p = e->d[i].region.ptr + d[i].align;
-              if (tr->overlap == OVERLAP_HIGH_TO_LOW)
-                e->d[i].p += offset;
-            }
-        }
+	{
+	  if (tr->dst_bytes[i])
+	    {
+	      e->d[i].p = (mp_ptr) ((char *) e->d[i].region.ptr + d[i].align);
+	    }
+	  else
+	    {
+	      e->d[i].p = e->d[i].region.ptr + d[i].align;
+	      if (tr->overlap == OVERLAP_HIGH_TO_LOW)
+		e->d[i].p += offset;
+	    }
+	}
     }
 
   /* establish e->s[].p sources */
@@ -2357,24 +2357,24 @@ pointer_setup (struct each_t *e)
       int  o = overlap->s[i];
       switch (o) {
       case -1:
-        /* no overlap */
-        e->s[i].p = s[i].p;
-        break;
+	/* no overlap */
+	e->s[i].p = s[i].p;
+	break;
       case 0:
       case 1:
-        /* overlap with d[o] */
-        if (tr->overlap == OVERLAP_HIGH_TO_LOW)
-          e->s[i].p = e->d[o].p - s[i].align;
-        else if (tr->overlap == OVERLAP_LOW_TO_HIGH)
-          e->s[i].p = e->d[o].p + s[i].align;
-        else if (tr->size2 == SIZE_FRACTION)
-          e->s[i].p = e->d[o].p + size2;
-        else
-          e->s[i].p = e->d[o].p;
-        break;
+	/* overlap with d[o] */
+	if (tr->overlap == OVERLAP_HIGH_TO_LOW)
+	  e->s[i].p = e->d[o].p - s[i].align;
+	else if (tr->overlap == OVERLAP_LOW_TO_HIGH)
+	  e->s[i].p = e->d[o].p + s[i].align;
+	else if (tr->size2 == SIZE_FRACTION)
+	  e->s[i].p = e->d[o].p + size2;
+	else
+	  e->s[i].p = e->d[o].p;
+	break;
       default:
-        abort();
-        break;
+	abort();
+	break;
       }
     }
 }
@@ -2414,9 +2414,9 @@ try_one (void)
   for (i = 0; i < NUM_SOURCES; i++)
     {
       if (s[i].high)
-        s[i].p = s[i].region.ptr + s[i].region.size - SRC_SIZE(i) - s[i].align;
+	s[i].p = s[i].region.ptr + s[i].region.size - SRC_SIZE(i) - s[i].align;
       else
-        s[i].p = s[i].region.ptr + s[i].align;
+	s[i].p = s[i].region.ptr + s[i].align;
     }
 
   pointer_setup (&ref);
@@ -2430,54 +2430,54 @@ try_one (void)
   for (i = 0; i < NUM_SOURCES; i++)
     {
       if (! tr->src[i])
-        continue;
+	continue;
 
       mprotect_region (&s[i].region, PROT_READ|PROT_WRITE);
       t_random (s[i].p, SRC_SIZE(i));
 
       switch (tr->data) {
       case DATA_NON_ZERO:
-        if (refmpn_zero_p (s[i].p, SRC_SIZE(i)))
-          s[i].p[0] = 1;
-        break;
+	if (refmpn_zero_p (s[i].p, SRC_SIZE(i)))
+	  s[i].p[0] = 1;
+	break;
 
       case DATA_MULTIPLE_DIVISOR:
-        /* same number of low zero bits as divisor */
-        s[i].p[0] &= ~ LOW_ZEROS_MASK (divisor);
-        refmpn_sub_1 (s[i].p, s[i].p, size,
-                      refmpn_mod_1 (s[i].p, size, divisor));
-        break;
+	/* same number of low zero bits as divisor */
+	s[i].p[0] &= ~ LOW_ZEROS_MASK (divisor);
+	refmpn_sub_1 (s[i].p, s[i].p, size,
+		      refmpn_mod_1 (s[i].p, size, divisor));
+	break;
 
       case DATA_GCD:
-        /* s[1] no more bits than s[0] */
-        if (i == 1 && size2 == size)
-          s[1].p[size-1] &= refmpn_msbone_mask (s[0].p[size-1]);
+	/* s[1] no more bits than s[0] */
+	if (i == 1 && size2 == size)
+	  s[1].p[size-1] &= refmpn_msbone_mask (s[0].p[size-1]);
 
-        /* high limb non-zero */
-        s[i].p[SRC_SIZE(i)-1] += (s[i].p[SRC_SIZE(i)-1] == 0);
+	/* high limb non-zero */
+	s[i].p[SRC_SIZE(i)-1] += (s[i].p[SRC_SIZE(i)-1] == 0);
 
-        /* odd */
-        s[i].p[0] |= 1;
-        break;
+	/* odd */
+	s[i].p[0] |= 1;
+	break;
 
       case DATA_SRC1_ODD:
-        if (i == 1)
-          s[i].p[0] |= 1;
-        break;
+	if (i == 1)
+	  s[i].p[0] |= 1;
+	break;
 
       case DATA_SRC1_HIGHBIT:
-        if (i == 1)
-          {
-            if (tr->size2)
-              s[i].p[size2-1] |= GMP_NUMB_HIGHBIT;
-            else
-              s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
-          }
-        break;
+	if (i == 1)
+	  {
+	    if (tr->size2)
+	      s[i].p[size2-1] |= GMP_NUMB_HIGHBIT;
+	    else
+	      s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
+	  }
+	break;
 
       case DATA_UDIV_QRNND:
-        s[i].p[1] %= divisor;
-        break;
+	s[i].p[1] %= divisor;
+	break;
       }
 
       mprotect_region (&s[i].region, PROT_READ);
@@ -2486,39 +2486,39 @@ try_one (void)
   for (i = 0; i < NUM_DESTS; i++)
     {
       if (! tr->dst[i])
-        continue;
+	continue;
 
       if (tr->dst0_from_src1 && i==0)
-        {
-          mp_size_t  copy = MIN (d[0].size, SRC_SIZE(1));
-          mp_size_t  fill = MAX (0, d[0].size - copy);
-          MPN_COPY (fun.d[0].p, s[1].region.ptr, copy);
-          MPN_COPY (ref.d[0].p, s[1].region.ptr, copy);
-          refmpn_fill (fun.d[0].p + copy, fill, DEADVAL);
-          refmpn_fill (ref.d[0].p + copy, fill, DEADVAL);
-        }
+	{
+	  mp_size_t  copy = MIN (d[0].size, SRC_SIZE(1));
+	  mp_size_t  fill = MAX (0, d[0].size - copy);
+	  MPN_COPY (fun.d[0].p, s[1].region.ptr, copy);
+	  MPN_COPY (ref.d[0].p, s[1].region.ptr, copy);
+	  refmpn_fill (fun.d[0].p + copy, fill, DEADVAL);
+	  refmpn_fill (ref.d[0].p + copy, fill, DEADVAL);
+	}
       else if (tr->dst_bytes[i])
-        {
-          memset (ref.d[i].p, 0xBA, d[i].size);
-          memset (fun.d[i].p, 0xBA, d[i].size);
-        }
+	{
+	  memset (ref.d[i].p, 0xBA, d[i].size);
+	  memset (fun.d[i].p, 0xBA, d[i].size);
+	}
       else
-        {
-          refmpn_fill (ref.d[i].p, d[i].size, DEADVAL);
-          refmpn_fill (fun.d[i].p, d[i].size, DEADVAL);
-        }
+	{
+	  refmpn_fill (ref.d[i].p, d[i].size, DEADVAL);
+	  refmpn_fill (fun.d[i].p, d[i].size, DEADVAL);
+	}
     }
 
   for (i = 0; i < NUM_SOURCES; i++)
     {
       if (! tr->src[i])
-        continue;
+	continue;
 
       if (ref.s[i].p != s[i].p)
-        {
-          refmpn_copyi (ref.s[i].p, s[i].p, SRC_SIZE(i));
-          refmpn_copyi (fun.s[i].p, s[i].p, SRC_SIZE(i));
-        }
+	{
+	  refmpn_copyi (ref.s[i].p, s[i].p, SRC_SIZE(i));
+	  refmpn_copyi (fun.s[i].p, s[i].p, SRC_SIZE(i));
+	}
     }
 
   if (option_print)
@@ -2531,10 +2531,10 @@ try_one (void)
       trap_location = TRAP_NOWHERE;
 
       if (! CALLING_CONVENTIONS_CHECK ())
-        {
-          print_all();
-          abort();
-        }
+	{
+	  print_all();
+	  abort();
+	}
 
       (*tr->validate) ();
     }
@@ -2547,10 +2547,10 @@ try_one (void)
       trap_location = TRAP_NOWHERE;
 
       if (! CALLING_CONVENTIONS_CHECK ())
-        {
-          print_all();
-          abort();
-        }
+	{
+	  print_all();
+	  abort();
+	}
 
       compare ();
     }
@@ -2559,8 +2559,8 @@ try_one (void)
 
 #define SIZE_ITERATION                                          \
   for (size = MAX3 (option_firstsize,                           \
-                    choice->minsize,                            \
-                    (tr->size == SIZE_ALLOW_ZERO) ? 0 : 1);     \
+		    choice->minsize,                            \
+		    (tr->size == SIZE_ALLOW_ZERO) ? 0 : 1);     \
        size <= option_lastsize;                                 \
        size++)
 
@@ -2569,7 +2569,7 @@ try_one (void)
    : tr->size2 == SIZE_FRACTION ? option_firstsize2     \
    : tr->size2 ?                                        \
    MAX (choice->minsize, (option_firstsize2 != 0        \
-                          ? option_firstsize2 : 1))     \
+			  ? option_firstsize2 : 1))     \
    : 0)
 
 #define SIZE2_LAST                                      \
@@ -2732,21 +2732,21 @@ Error, error, cannot get page size
 
     for (i = 0; i < NUM_SOURCES; i++)
       {
-        malloc_region (&s[i].region, 2*option_lastsize+ALIGNMENTS-1);
-        printf ("s[%d] %p to %p (0x%lX bytes)\n",
-                i, s[i].region.ptr,
-                s[i].region.ptr + s[i].region.size,
-                (long) s[i].region.size * BYTES_PER_MP_LIMB);
+	malloc_region (&s[i].region, 2*option_lastsize+ALIGNMENTS-1);
+	printf ("s[%d] %p to %p (0x%lX bytes)\n",
+		i, s[i].region.ptr,
+		s[i].region.ptr + s[i].region.size,
+		(long) s[i].region.size * BYTES_PER_MP_LIMB);
       }
 
 #define INIT_EACH(e,es)                                                 \
     for (i = 0; i < NUM_DESTS; i++)                                     \
       {                                                                 \
-        malloc_region (&e.d[i].region, 2*option_lastsize+ALIGNMENTS-1); \
-        printf ("%s d[%d] %p to %p (0x%lX bytes)\n",                    \
-                es, i, e.d[i].region.ptr,                               \
-                e.d[i].region.ptr + e.d[i].region.size,                 \
-                (long) e.d[i].region.size * BYTES_PER_MP_LIMB);         \
+	malloc_region (&e.d[i].region, 2*option_lastsize+ALIGNMENTS-1); \
+	printf ("%s d[%d] %p to %p (0x%lX bytes)\n",                    \
+		es, i, e.d[i].region.ptr,                               \
+		e.d[i].region.ptr + e.d[i].region.size,                 \
+		(long) e.d[i].region.size * BYTES_PER_MP_LIMB);         \
       }
 
     INIT_EACH(ref, "ref");
@@ -2766,7 +2766,7 @@ strmatch_wild (const char *pattern, const char *str)
       plen = strlen (pattern);
       slen = strlen (str);
       return (plen == 0
-              || (slen >= plen && memcmp (pattern, str+slen-plen, plen) == 0));
+	      || (slen >= plen && memcmp (pattern, str+slen-plen, plen) == 0));
     }
 
   /* wildcard at end */
@@ -2787,12 +2787,12 @@ try_name (const char *name)
   for (i = 0; i < numberof (choice_array); i++)
     {
       if (strmatch_wild (name, choice_array[i].name))
-        {
-          choice = &choice_array[i];
-          tr = &param[choice->type];
-          try_many ();
-          found = 1;
-        }
+	{
+	  choice = &choice_array[i];
+	  tr = &param[choice->type];
+	  try_many ();
+	  found = 1;
+	}
     }
 
   if (!found)
@@ -2830,10 +2830,10 @@ usage (const char *prog)
   for (i = 0; i < numberof (choice_array); i++)
     {
       if (col + 1 + strlen (choice_array[i].name) > 79)
-        {
-          printf ("\n");
-          col = 0;
-        }
+	{
+	  printf ("\n");
+	  col = 0;
+	}
       printf (" %s", choice_array[i].name);
       col += 1 + strlen (choice_array[i].name);
     }
@@ -2863,70 +2863,70 @@ main (int argc, char *argv[])
 
     while ((opt = getopt(argc, argv, "19a:b:E:pRr:S:s:Wz")) != EOF)
       {
-        switch (opt) {
-        case '1':
-          /* use limb data values 1, 2, 3, ... etc */
-          option_data = DATA_SEQ;
-          break;
-        case '9':
-          /* use limb data values 0xFFF...FFF always */
-          option_data = DATA_FFS;
-          break;
-        case 'a':
-          if (strcmp (optarg, "zeros") == 0)     option_data = DATA_ZEROS;
-          else if (strcmp (optarg, "seq") == 0)  option_data = DATA_SEQ;
-          else if (strcmp (optarg, "ffs") == 0)  option_data = DATA_FFS;
-          else if (strcmp (optarg, "2fd") == 0)  option_data = DATA_2FD;
-          else
-            {
-              fprintf (stderr, "unrecognised data option: %s\n", optarg);
-              exit (1);
-            }
-          break;
-        case 'b':
-          mp_trace_base = atoi (optarg);
-          break;
-        case 'E':
-          /* re-seed */
-          sscanf (optarg, "%lu", &seed);
-          printf ("Re-seeding with %lu\n", seed);
-          break;
-        case 'p':
-          option_print = 1;
-          break;
-        case 'R':
-          /* randomize */
+	switch (opt) {
+	case '1':
+	  /* use limb data values 1, 2, 3, ... etc */
+	  option_data = DATA_SEQ;
+	  break;
+	case '9':
+	  /* use limb data values 0xFFF...FFF always */
+	  option_data = DATA_FFS;
+	  break;
+	case 'a':
+	  if (strcmp (optarg, "zeros") == 0)     option_data = DATA_ZEROS;
+	  else if (strcmp (optarg, "seq") == 0)  option_data = DATA_SEQ;
+	  else if (strcmp (optarg, "ffs") == 0)  option_data = DATA_FFS;
+	  else if (strcmp (optarg, "2fd") == 0)  option_data = DATA_2FD;
+	  else
+	    {
+	      fprintf (stderr, "unrecognised data option: %s\n", optarg);
+	      exit (1);
+	    }
+	  break;
+	case 'b':
+	  mp_trace_base = atoi (optarg);
+	  break;
+	case 'E':
+	  /* re-seed */
+	  sscanf (optarg, "%lu", &seed);
+	  printf ("Re-seeding with %lu\n", seed);
+	  break;
+	case 'p':
+	  option_print = 1;
+	  break;
+	case 'R':
+	  /* randomize */
 	  seed = time (NULL);
-          printf ("Seeding with %lu, re-run using \"-E %lu\"\n", seed, seed);
-          break;
-        case 'r':
+	  printf ("Seeding with %lu, re-run using \"-E %lu\"\n", seed, seed);
+	  break;
+	case 'r':
 	  option_repetitions = atoi (optarg);
-          break;
-        case 's':
-          {
-            char  *p;
-            option_firstsize = atoi (optarg);
-            if ((p = strchr (optarg, '-')) != NULL)
-              option_lastsize = atoi (p+1);
-          }
-          break;
-        case 'S':
-          /* -S <size> sets the starting size for the second of a two size
-             routine (like mpn_mul_basecase) */
+	  break;
+	case 's':
+	  {
+	    char  *p;
+	    option_firstsize = atoi (optarg);
+	    if ((p = strchr (optarg, '-')) != NULL)
+	      option_lastsize = atoi (p+1);
+	  }
+	  break;
+	case 'S':
+	  /* -S <size> sets the starting size for the second of a two size
+	     routine (like mpn_mul_basecase) */
 	  option_firstsize2 = atoi (optarg);
-          break;
-        case 'W':
-          /* use this when running in the debugger */
-          option_spinner = 0;
-          break;
-        case 'z':
-          /* disable redzones */
-          option_redzones = 0;
-          break;
-        case '?':
-          usage (argv[0]);
-          break;
-        }
+	  break;
+	case 'W':
+	  /* use this when running in the debugger */
+	  option_spinner = 0;
+	  break;
+	case 'z':
+	  /* disable redzones */
+	  option_redzones = 0;
+	  break;
+	case '?':
+	  usage (argv[0]);
+	  break;
+	}
       }
 
     gmp_randinit_default (__gmp_rands);
@@ -2943,4 +2943,4 @@ main (int argc, char *argv[])
     try_name (argv[i]);
 
   return 0;
-} 
+}
