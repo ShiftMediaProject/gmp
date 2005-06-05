@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_addlsh1_n/mpn_sublsh1_n -- rp[] = up[] +- (vp[] << 1).
 
-dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -69,31 +69,25 @@ ifdef(`HAVE_ABI_32',`
 	zxt4		n = n			C			I
 	;;
 ')
-{.mmi
-	ld8		r11 = [vp], 8		C			M01
+ {.mmi;	ld8		r11 = [vp], 8		C			M01
 	ld8		r10 = [up], 8		C			M01
 	mov.i		r2 = ar.lc		C			I0
-}
-{.mmi
-	and		r14 = 3, n		C			M I
+}{.mmi;	and		r14 = 3, n		C			M I
 	cmp.lt		p15, p0 = 4, n		C			M I
-	shr.u		n = n, 2		C			I0
+	add		n = -4, n		C			M I
 	;;
-}
-{.mmi
-	cmp.eq		p6, p0 = 1, r14		C			M I
+}{.mmi;	cmp.eq		p6, p0 = 1, r14		C			M I
 	cmp.eq		p7, p0 = 2, r14		C			M I
 	cmp.eq		p8, p0 = 3, r14		C			M I
-}
-{.bbb
-  (p6)	br.dptk	.Lb01				C			B
-  (p7)	br.dptk	.Lb10				C			B
-  (p8)	br.dptk	.Lb11				C			B
+}{.bbb
+  (p6)	br.dptk		.Lb01			C			B
+  (p7)	br.dptk		.Lb10			C			B
+  (p8)	br.dptk		.Lb11			C			B
 }
 
 .Lb00:	ld8		v0 = [vp], 8		C			M01
 	ld8		u0 = [up], 8		C			M01
-	add		n = -2, n		C loop count		M I
+	shr.u		n = n, 2		C			I0
 	;;
 	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
@@ -117,6 +111,7 @@ ifdef(`HAVE_ABI_32',`
 .grt4:	ld8		v3 = [vp], 8		C			M01
 	shrp		x0 = v0, r11, 63	C			I0
 	cmp.PRED	p8, p0 = w3, r10	C			M I
+	add		n = -1, n
 	;;
 	ld8		u3 = [up], 8		C			M01
 	mov.i		ar.lc = n		C			I0
@@ -124,20 +119,24 @@ ifdef(`HAVE_ABI_32',`
 	ld8		v0 = [vp], 8		C			M01
 	ADDSUB		w0 = u0, x0		C			M I
 	;;
-	cmp.PRED	p6, p0 = w0, u0
+	cmp.PRED	p6, p0 = w0, u0		C			M I
 	ld8		u0 = [up], 8		C			M01
 	ADDSUB		w1 = u1, x1		C			M I
 	br		.LL00			C			B
 
 .Lb01:	add		x2 = r11, r11		C			M I
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 2		C			I0
   (p15)	br.dpnt		.grt1			C			B
 	;;
 	ADDSUB		w2 = r10, x2		C			M I
 	shr.u		r8 = r11, 63		C retval		I0
 	;;
 	cmp.PRED	p6, p0 = w2, r10	C			M I
-	br		.Lcj1			C			B
+	;;
+	st8		[rp] = w2, 8		C			M23
+   (p6)	add		r8 = 1, r8		C			M I
+	br.ret.sptk	b0			C			B
+
 
 .grt1:	ld8		v3 = [vp], 8		C			M01
 	ld8		u3 = [up], 8		C			M01
@@ -168,7 +167,7 @@ ifdef(`HAVE_ABI_32',`
 
 .Lb10:	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 2		C			I0
 	add		x1 = r11, r11		C			M I
   (p15)	br.dpnt		.grt2			C			B
 	;;
@@ -207,8 +206,8 @@ ifdef(`HAVE_ABI_32',`
 
 .Lb11:	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
+	shr.u		n = n, 2		C			I0
 	add		x0 = r11, r11		C			M I
-	add		n = -1, n		C loop count		M I
 	;;
 	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01

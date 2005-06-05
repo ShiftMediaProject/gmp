@@ -65,30 +65,31 @@ PROLOGUE(func)
 	.save		ar.lc, r2
 	.body
 ifdef(`HAVE_ABI_32',
-`	addp4		rp = 0, rp
-	addp4		up = 0, up
-	sxt4		n = n
-	zxt4		cnt = cnt
+`	addp4		rp = 0, rp		C			M I
+	addp4		up = 0, up		C			M I
+	sxt4		n = n			C			M I
+	zxt4		cnt = cnt		C			I
 	;;
 ')
- {.mmi;	nop		0
-	and		r14 = 3, n
-	mov		r2 = ar.lc
-}{.mmi;	add		r15 = -1, n
-	sub		tnc = 64, cnt
-	nop		0
+
+ {.mmi;	cmp.lt		p14, p15 = 4, n		C			M I
+	and		r14 = 3, n		C			M I
+	mov.i		r2 = ar.lc		C			I0
+}{.mmi;	add		r15 = -1, n		C			M I
+	sub		tnc = 64, cnt		C			M I
+	add		r16 = -5, n
 	;;
-}{.mmi;	cmp.eq		p6, p0 = 1, r14
-	cmp.eq		p7, p0 = 2, r14
-	shr.u		n = r15, 2
-}{.mmi;	cmp.eq		p8, p0 = 3, r14
+}{.mmi;	cmp.eq		p6, p0 = 1, r14		C			M I
+	cmp.eq		p7, p0 = 2, r14		C			M I
+	shr.u		n = r16, 2		C			I0
+}{.mmi;	cmp.eq		p8, p0 = 3, r14		C			M I
 ifdef(`OPERATION_lshift',
-`	shladd		up = r15, 3, up
-	shladd		rp = r15, 3, rp')
+`	shladd		up = r15, 3, up		C			M I
+	shladd		rp = r15, 3, rp')	C			M I
 	;;
-}{.mmi;	add		r11 = POFF, up
-	ld8		r10 = [up], UPD
-	mov.i		ar.lc = n
+}{.mmi;	add		r11 = POFF, up		C			M I
+	ld8		r10 = [up], UPD		C			M01
+	mov.i		ar.lc = n		C			I0
 }{.bbb;
    (p6)	br.dptk		.Lb01
    (p7)	br.dptk		.Lb10
@@ -102,7 +103,7 @@ ifdef(`OPERATION_lshift',
 	;;
 	ld8		r17 = [up], UPD
 	BSH		r8 = r10, tnc		C function return value
-	br.cloop.dpnt	.grt4
+  (p14)	br		.grt4
 
 	FSH		r24 = r10, cnt
 	BSH		r25 = r19, tnc
@@ -138,12 +139,10 @@ ifdef(`OPERATION_lshift',
 	br.cloop.dpnt	.Ltop
 	br		.Lbot
 
-.Lb01:	br.cloop.dpnt	.grt1
-	;;
-
-	BSH		r8 = r10, tnc		C function return value
-	FSH		r22 = r10, cnt
-	br		.Lr1			C return
+.Lb01:
+  (p15)	BSH		r8 = r10, tnc		C function return value	I
+  (p15)	FSH		r22 = r10, cnt		C			I
+  (p15)	br.cond.dptk	.Lr1			C return		B
 
 .grt1:	ld8		r18 = [up], UPD
 	;;
@@ -186,7 +185,7 @@ ifdef(`OPERATION_lshift',
 
 
 .Lb10:	ld8		r17 = [up], UPD
-	br.cloop.dpnt	.grt2
+  (p14)	br		.grt2
 
 	BSH		r8 = r10, tnc		C function return value
 	;;
@@ -236,7 +235,7 @@ ifdef(`OPERATION_lshift',
 	;;
 	ld8		r17 = [up], UPD
 	BSH		r8 = r10, tnc		C function return value
-	br.cloop.dpnt	.grt3
+  (p14)	br		.grt3
 	;;
 
 	FSH		r26 = r10, cnt
@@ -327,9 +326,9 @@ C *** MAIN LOOP END ***
 	BSH		r21 = r17, tnc
 	st8		[rp] = r14, UPD
 	;;
-.Lr5:	or		r14 = r25, r24
+.Lr5:	st8		[rp] = r15, UPD
+	or		r14 = r25, r24
 	FSH		r22 = r17, cnt
-	st8		[rp] = r15, UPD
 	;;
 .Lr4:	or		r15 = r27, r26
 	st8		[rp] = r14, UPD
@@ -339,8 +338,8 @@ C *** MAIN LOOP END ***
 	;;
 .Lr2:	st8		[rp] = r14, UPD
 	;;
-.Lr1:	st8		[rp] = r22, UPD
-	mov		ar.lc = r2
-	br.ret.sptk.many b0
+.Lr1:	st8		[rp] = r22, UPD		C			M23
+	mov		ar.lc = r2		C			I0
+	br.ret.sptk.many b0			C			B
 EPILOGUE(func)
 ASM_END()

@@ -80,7 +80,7 @@ ifdef(`HAVE_ABI_32',`
 {.mmi
 	and		r14 = 7, n		C			M I
 	cmp.lt		p15, p14 = 8, n		C			M I
-	shr.u		n = n, 3		C			I0
+	add		n = -8, n		C			M I
 	;;
 }
 {.mmi		C 01
@@ -146,7 +146,7 @@ ifdef(`HAVE_ABI_32',`
 
 .grt8:	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
 	;;
 	add		r11 = 512, vp
 	ld8		v2 = [vp], 8		C			M01
@@ -170,7 +170,7 @@ ifdef(`HAVE_ABI_32',`
 
 .grt1:	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
 	;;
 	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01
@@ -215,7 +215,7 @@ ifdef(`HAVE_ABI_32',`
 
 .grt2:	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
 	;;
 	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01
@@ -262,7 +262,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v2 = [vp], 8		C			M01
 	ld8		u2 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
 	;;
 	ld8		v3 = [vp], 8		C			M01
 	ld8		u3 = [up], 8		C			M01
@@ -313,7 +313,7 @@ ifdef(`HAVE_ABI_32',`
 
 .grt4:	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
 	cmp.PRED	p7, p0 = w5, r10	C			M I
 	;;
 	ld8		v2 = [vp], 8		C			M01
@@ -359,7 +359,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		v0 = [vp], 8		C			M01
 	ld8		u0 = [up], 8		C			M01
 	ADDSUB		w5 = u5, v5		C			M I
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
   (p15)	br.cond.dpnt	.grt5			C			B
 	;;
 	cmp.PRED	p7, p0 = w5, u5		C			M I
@@ -397,7 +397,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v6 = [vp], 8		C			M01
 	ld8		u6 = [up], 8		C			M01
-	add		n = -1, n		C loop count		M I
+	shr.u		n = n, 3		C			I0
 	;;
 	ld8		v7 = [vp], 8		C			M01
 	ld8		u7 = [up], 8		C			M01
@@ -458,7 +458,7 @@ ifdef(`HAVE_ABI_32',`
 
 .grt7:	ld8		v1 = [vp], 8		C			M01
 	ld8		u1 = [up], 8		C			M01
-	mov.i		ar.lc = n		C			I0
+	shr.u		n = n, 3		C			I0
    (p8)	cmp.eq.or	p9, p0 = LIM, w3	C			M I
 	nop.i		0
 	nop.b		0
@@ -472,6 +472,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v3 = [vp], 8		C			M01
 	ld8		u3 = [up], 8		C			M01
+	mov.i		ar.lc = n		C			I0
 	st8		[rp] = w2, 8		C			M23
 	ADDSUB		w4 = u4, v4		C			M I
 	br		.LL11x			C			B
