@@ -1,165 +1,353 @@
-dnl  Itanium-2 mpn_hamdist -- mpn hamming distance.
+dnl  IA-64 mpn_hamdist -- mpn hamming distance.
 
-dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
-dnl
-dnl  The GNU MP Library is free software; you can redistribute it and/or
-dnl  modify it under the terms of the GNU Lesser General Public License as
-dnl  published by the Free Software Foundation; either version 2.1 of the
-dnl  License, or (at your option) any later version.
-dnl
-dnl  The GNU MP Library is distributed in the hope that it will be useful,
-dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl  Lesser General Public License for more details.
-dnl
-dnl  You should have received a copy of the GNU Lesser General Public
-dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
-dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
-dnl  Suite 330, Boston, MA 02111-1307, USA.
+
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
+
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
+
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C           cycles/limb
+C Itanium 2:     1
 
-C            cycles/limb
-C itanium-2:    1.0           from L1 cache
-C               1.875-2.3125  from L2, depending on operand alignments
+C INPUT PARAMETERS
+define(`up', `r32')
+define(`vp', `r33')
+define(`n', `r34')
 
+define(`u0',`r16') define(`u1',`r17') define(`u2',`r18') define(`u3',`r19')
+define(`v0',`r20') define(`v1',`r21') define(`v2',`r22') define(`v3',`r23')
+define(`x0',`r24') define(`x1',`r25') define(`x2',`r26') define(`x3',`r27')
+define(`c0',`r28') define(`c1',`r29') define(`c2',`r30') define(`c3',`r31')
+define(`s',`r8')
 
-C mpn_hamdist (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
-C
-C The loads are scheduled for an L2 hit of 5 cycles.  But unfortunately we
-C don't address the fact that L2 is not true dual ported and requires
-C different address bits 7:4.  Even when those are forced to be different
-C (eg. tune/speed.c run with -x2), we only seem to get 1.875, so perhaps
-C there's more to it than that.  The docs say L2 can sustain reads of
-C 4x8bytes per cycle, so presumably throughput isn't the limitation.
-C
-C The ar.ec epilogue count is deliberately shortened and the last three
-C steps done explicitly at the end.  These are just adds and can be nicely
-C paired with the register restores.
-C
-C 32-byte alignment on the loop is essential for the claimed speed, since we
-C need 2 bundles fetched from there in 1 cycle.
-C
-C Enhancements:
-C
-C It'd be possible to reduce the loop count and do the first few iterations
-C (ie. loads) in parallel with the initial register setups.  ar.lc would be
-C size-N (or 0 if size<N, and ar.ec reduced in that case too).  pr would get
-C min(size,N) bits set.  The gain would be at most 5 cycles, since that's
-C the time now until the first load.  Perhaps not worth the trouble.
-C
 
 ASM_START()
-		.explicit
-
 PROLOGUE(mpn_hamdist)
-
-		C r32	xp
-		C r33	yp
-		C r34	size
-
-define(xp_param, r32)
-define(yp_param, r33)
-define(siz,      r34)
-
-define(save_pfs, r14)
-define(save_lc,  r15)
-define(save_pr,  r16)
-define(xp,       r17)
-define(yp,       r18)
-
 	.prologue
 ifdef(`HAVE_ABI_32',
-`		addp4	xp_param = 0, xp_param	C M
-		addp4	yp_param = 0, yp_param	C M
-		sxt4	siz = siz		C I
-		nop.m	0			C pad for 32-byte alignment
-		nop.m	0			C   at .Ltop
-		nop.i	0
-		;;
+`	addp4		up = 0, up		C			M I
+	addp4		vp = 0, vp		C			M I
+	zxt4		n = n			C			I
+	;;
 ')
 
-	.save	ar.pfs, save_pfs
-		alloc	save_pfs = ar.pfs, 3,21,0,24	C M2
-		mov	xp = xp_param		C M0
-	.save	ar.lc, save_lc
-		mov	save_lc = ar.lc		C I0
-		mov	yp = yp_param		C M1
-		add	siz = -1, siz		C M3  size-1
-		nop.i	0
-		;;
+ {.mmi;	ld8		r10 = [up], 8		C load first ulimb	M01
+	ld8		r11 = [vp], 8		C load first vlimb	M01
+	mov.i		r2 = ar.lc		C save ar.lc		I0
+}{.mmi;	and		r14 = 3, n		C			M I
+	cmp.lt		p15, p0 = 4, n		C small count?		M I
+	add		n = -5, n		C			M I
+	;;
+}{.mmi;	cmp.eq		p6, p0 = 1, r14		C			M I
+	cmp.eq		p7, p0 = 2, r14		C			M I
+	cmp.eq		p8, p0 = 3, r14		C			M I
+}{.bbb
+  (p6)	br.dptk		.Lb01			C			B
+  (p7)	br.dptk		.Lb10			C			B
+  (p8)	br.dptk		.Lb11			C			B
+}
 
-		mov	r8 = 0			C M0  total
-		mov	ar.lc = siz		C I0  size-1
 
-	.save	pr, save_pr
-		mov	save_pr = pr		C I0
-	.body
+.Lb00:	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	shr.u		n = n, 2		C			I0
+	xor		x0 = r10, r11		C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	mov.i		ar.lc = n		C			I0
+	xor		x1 = u1, v1		C			M I
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	xor		x2 = u2, v2		C			M I
+	mov		s = 0			C			M I
+  (p15)	br		.grt4			C			B
+	;;
+	popcnt		c0 = x0			C			I0
+	xor		x3 = u3, v3		C			M I
+	;;
+	popcnt		c1 = x1			C			I0
+	;;
+	popcnt		c2 = x2			C			I0
+	br		.Lcj4			C			B
 
-		mov	ar.ec = 9		C I0
+.grt4:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	xor		x1 = u1, v1		C			M I
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	xor		x2 = u2, v2		C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	popcnt		c0 = x0			C			I0
+	xor		x3 = u3, v3		C			M I
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	popcnt		c1 = x1			C			I0
+	xor		x0 = u0, v0		C			M I
+	br.cloop.dpnt	.grt8			C			B
 
-		mov	pr.rot = 1<<16		C I0  p16 true, others false
-		;;
+	popcnt		c2 = x2			C			I0
+	xor		x1 = u1, v1		C			M I
+	br		.Lcj8			C			B
 
-		C Stages:
-		C
-		C p16 r32	load from x
-		C p17 r33	.
-		C p18 r34	.
-		C p19 r35	.
-		C p20 r36	.
-		C p21 r37	xor x,y
-		C p22 r38	.
-		C p23 r39	.
-		C p24 r40	popcount xor
-		C p25 r41	.
-		C p26 r42	.
-		C p27 r43	add to total
-		C
-		C     r44	load from y
-		C     r45	.
-		C     r46	.
-		C     r47	.
-		C     r48	.
-		C     r49	xor above
-		C
-		C total 18 regs
+.grt8:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	popcnt		c2 = x2			C			I0
+	xor		x1 = u1, v1		C			M I
+	br		.LL00			C			B
 
-		ALIGN(32)
-.Ltop:
-	(p16)	ld8	r32 = [xp], 8		C M0
-	(p16)	ld8	r44 = [yp], 8		C M1
-	(p24)	popcnt	r40 = r40		C I0
-	(p21)	xor	r37 = r37, r49		C M2
-	(p27)	add	r8 = r8, r43		C I1
-		br.cexit.spnt.few.clr .Ldone	C B0
-		;;
 
-	(p16)	ld8	r32 = [xp], 8		C M0
-	(p16)	ld8	r44 = [yp], 8		C M1
-	(p24)	popcnt	r40 = r40		C I0
-	(p21)	xor	r37 = r37, r49		C M2
-	(p27)	add	r8 = r8, r43		C I1
-		br.ctop.sptk.few.clr .Ltop	C B0
-		;;
+.Lb01:	xor		x3 = r10, r11		C			M I
+	shr.u		n = n, 2		C			I0
+  (p15)	br		.grt1			C			B
+	;;
+	popcnt		r8 = x3			C			I0
+	br.ret.sptk.many b0			C			B
 
-.Ldone:
-		ASSERT(p25)			C last limb of source data
+.grt1:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	mov.i		ar.lc = n		C			I0
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	mov		s = 0			C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	xor		x0 = u0, v0		C			M I
+	br.cloop.dpnt	.grt5			C			B
 
-	(p27)	add	r8 = r8, r43		C M0
-		mov	ar.lc = save_lc		C I0
-		;;
+	xor		x1 = u1, v1		C			M I
+	;;
+	popcnt		c3 = x3			C			I0
+	xor		x2 = u2, v2		C			M I
+	;;
+	popcnt		c0 = x0			C			I0
+	xor		x3 = u3, v3		C			M I
+	;;
+	popcnt		c1 = x1			C			I0
+	br		.Lcj5			C			B
 
-	(p26)	add	r8 = r8, r42		C M0
-		mov	pr = save_pr, 0x1fffe	C I0
-		;;
+.grt5:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	xor		x1 = u1, v1		C			M I
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	popcnt		c3 = x3			C			I0
+	xor		x2 = u2, v2		C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	popcnt		c0 = x0			C			I0
+	xor		x3 = u3, v3		C			M I
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	popcnt		c1 = x1			C			I0
+	xor		x0 = u0, v0		C			M I
+	br.cloop.dpnt	.Loop			C			B
+	br		.Lend			C			B
 
-		add	r8 = r8, r41		C M0
-		mov	ar.pfs = save_pfs	C I0
-		br.ret.sptk.many b0
 
+.Lb10:	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	xor		x2 = r10, r11		C			M I
+  (p15)	br		.grt2			C			B
+	;;
+	xor		x3 = u3, v3		C			M I
+	;;
+	popcnt		c2 = x2			C			I0
+	;;
+	popcnt		c3 = x3			C			I0
+	;;
+	add		s = c2, c3		C			M I
+	br.ret.sptk.many b0			C			B
+
+.grt2:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	shr.u		n = n, 2		C			I0
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	mov.i		ar.lc = n		C			I0
+	mov		s = 0			C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	xor		x3 = u3, v3		C			M I
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	xor		x0 = u0, v0		C			M I
+	br.cloop.dptk	.grt6			C			B
+
+	popcnt		c2 = x2			C			I0
+	xor		x1 = u1, v1		C			M I
+	;;
+	popcnt		c3 = x3			C			I0
+	xor		x2 = u2, v2		C			M I
+	;;
+	popcnt		c0 = x0			C			I0
+	xor		x3 = u3, v3		C			M I
+	br		.Lcj6			C			B
+
+.grt6:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	popcnt		c2 = x2			C			I0
+	xor		x1 = u1, v1		C			M I
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	popcnt		c3 = x3			C			I0
+	xor		x2 = u2, v2		C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	popcnt		c0 = x0			C			I0
+	xor		x3 = u3, v3		C			M I
+	br		.LL10			C			B
+
+
+.Lb11:	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	shr.u		n = n, 2		C			I0
+	xor		x1 = r10, r11		C			M I
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	xor		x2 = u2, v2		C			M I
+  (p15)	br		.grt3			C			B
+	;;
+	xor		x3 = u3, v3		C			M I
+	;;
+	popcnt		c1 = x1			C			I0
+	;;
+	popcnt		c2 = x2			C			I0
+	;;
+	popcnt		c3 = x3			C			I0
+	;;
+	add		s = c1, c2		C			M I
+	;;
+	add		s = s, c3		C			M I
+	br.ret.sptk.many b0			C			B
+
+.grt3:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	mov.i		ar.lc = n		C			I0
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	mov		s = 0			C			M I
+	;;
+	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	xor		x3 = u3, v3		C			M I
+	;;
+	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	popcnt		c1 = x1			C			I0
+	xor		x0 = u0, v0		C			M I
+	br.cloop.dptk	.grt7			C			B
+	popcnt		c2 = x2			C			I0
+	xor		x1 = u1, v1		C			M I
+	;;
+	popcnt		c3 = x3			C			I0
+	xor		x2 = u2, v2		C			M I
+	br		.Lcj7			C			B
+
+.grt7:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	popcnt		c2 = x2			C			I0
+	xor		x1 = u1, v1		C			M I
+	;;
+	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	popcnt		c3 = x3			C			I0
+	xor		x2 = u2, v2		C			M I
+	br		.LL11			C			B
+
+
+	ALIGN(32)
+.Loop:	ld8		u0 = [up], 8		C			M01
+	ld8		v0 = [vp], 8		C			M01
+	popcnt		c2 = x2			C			I0
+	add		s = s, c3		C			M I
+	xor		x1 = u1, v1		C			M I
+	nop.b		1			C			-
+	;;
+.LL00:	ld8		u1 = [up], 8		C			M01
+	ld8		v1 = [vp], 8		C			M01
+	popcnt		c3 = x3			C			I0
+	add		s = s, c0		C			M I
+	xor		x2 = u2, v2		C			M I
+	nop.b		1			C			-
+	;;
+.LL11:	ld8		u2 = [up], 8		C			M01
+	ld8		v2 = [vp], 8		C			M01
+	popcnt		c0 = x0			C			I0
+	add		s = s, c1		C			M I
+	xor		x3 = u3, v3		C			M I
+	nop.b		1			C			-
+	;;
+.LL10:	ld8		u3 = [up], 8		C			M01
+	ld8		v3 = [vp], 8		C			M01
+	popcnt		c1 = x1			C			I0
+	add		s = s, c2		C			M I
+	xor		x0 = u0, v0		C			M I
+	br.cloop.dptk	.Loop			C			B
+	;;
+
+.Lend:	popcnt		c2 = x2			C			I0
+	add		s = s, c3		C			M I
+	xor		x1 = u1, v1		C			M I
+	;;
+.Lcj8:	popcnt		c3 = x3			C			I0
+	add		s = s, c0		C			M I
+	xor		x2 = u2, v2		C			M I
+	;;
+.Lcj7:	popcnt		c0 = x0			C			I0
+	add		s = s, c1		C			M I
+	xor		x3 = u3, v3		C			M I
+	;;
+.Lcj6:	popcnt		c1 = x1			C			I0
+	add		s = s, c2		C			M I
+	;;
+.Lcj5:	popcnt		c2 = x2			C			I0
+	add		s = s, c3		C			M I
+	;;
+.Lcj4:	popcnt		c3 = x3			C			I0
+	add		s = s, c0		C			M I
+	;;
+	add		s = s, c1		C			M I
+	;;
+	add		s = s, c2		C			M I
+	;;
+	add		s = s, c3		C			M I
+	mov.i		ar.lc = r2		C			I0
+	br.ret.sptk.many b0			C			B
 EPILOGUE()
 ASM_END()
