@@ -182,6 +182,7 @@ ifdef(`HAVE_ABI_32',
 .Lcj3:	add		s = s, c2		C			M I
 	;;
 .Lcj2:	add		s = s, c3		C			M I
+	mov.i		ar.lc = r2		C			I0
 	br.ret.sptk.many b0			C			B
 EPILOGUE()
 ASM_END()
