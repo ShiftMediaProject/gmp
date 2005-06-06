@@ -135,8 +135,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	st8		[rp] = w2, 8		C			M23
    (p6)	add		r8 = 1, r8		C			M I
-	br.ret.sptk	b0			C			B
-
+	br.ret.sptk.many b0			C			B
 
 .grt1:	ld8		v3 = [vp], 8		C			M01
 	ld8		u3 = [up], 8		C			M01
@@ -244,41 +243,41 @@ ifdef(`HAVE_ABI_32',`
 C *** MAIN LOOP START ***
 	ALIGN(32)
 .Loop:	st8		[rp] = w1, 8		C			M23
-	shrp		x0 = v0, v3, 63
+	shrp		x0 = v0, v3, 63		C			I0
    (p8)	cmp.eq.or	p6, p0 = LIM, w2	C			M I
    (p8)	add		w2 = INCR, w2		C			M I
-	ld8		v3 = [vp], 8
+	ld8		v3 = [vp], 8		C			M01
 	cmp.PRED	p8, p0 = w3, u3		C			M I
 	;;
-.LL01:	ld8		u3 = [up], 8
-	shrp		x1 = v1, v0, 63
+.LL01:	ld8		u3 = [up], 8		C			M01
+	shrp		x1 = v1, v0, 63		C			I0
    (p6)	cmp.eq.or	p8, p0 = LIM, w3	C			M I
    (p6)	add		w3 = INCR, w3		C			M I
-	ld8		v0 = [vp], 8
+	ld8		v0 = [vp], 8		C			M01
 	ADDSUB		w0 = u0, x0		C			M I
 	;;
 	st8		[rp] = w2, 8		C			M23
 	cmp.PRED	p6, p0 = w0, u0		C			M I
-	ld8		u0 = [up], 8
+	ld8		u0 = [up], 8		C			M01
 	ADDSUB		w1 = u1, x1		C			M I
 	;;
 .LL00:	st8		[rp] = w3, 8		C			M23
-	shrp		x2 = v2, v1, 63
+	shrp		x2 = v2, v1, 63		C			I0
    (p8)	cmp.eq.or	p6, p0 = LIM, w0	C			M I
    (p8)	add		w0 = INCR, w0		C			M I
-	ld8		v1 = [vp], 8
+	ld8		v1 = [vp], 8		C			M01
 	cmp.PRED	p8, p0 = w1, u1		C			M I
 	;;
-.LL11:	ld8		u1 = [up], 8
-	shrp		x3 = v3, v2, 63
+.LL11:	ld8		u1 = [up], 8		C			M01
+	shrp		x3 = v3, v2, 63		C			I0
    (p6)	cmp.eq.or	p8, p0 = LIM, w1	C			M I
    (p6)	add		w1 = INCR, w1		C			M I
-	ld8		v2 = [vp], 8
+	ld8		v2 = [vp], 8		C			M01
 	ADDSUB		w2 = u2, x2		C			M I
 	;;
 	st8		[rp] = w0, 8		C			M23
 	cmp.PRED	p6, p0 = w2, u2		C			M I
-	ld8		u2 = [up], 8
+	ld8		u2 = [up], 8		C			M01
 	ADDSUB		w3 = u3, x3		C			M I
 	br.cloop.dptk	.Loop			C			B
 	;;
@@ -317,10 +316,9 @@ C *** MAIN LOOP END ***
    (p8)	cmp.eq.or	p6, p0 = LIM, w2	C			M I
    (p8)	add		w2 = INCR, w2		C			M I
 	;;
-.Lcj1:
-	st8		[rp] = w2, 8		C			M23
+.Lcj1:	st8		[rp] = w2, 8		C			M23
 	mov.i		ar.lc = r2		C			I0
    (p6)	add		r8 = 1, r8		C			M I
-	br.ret.sptk	b0			C			B
+	br.ret.sptk.many b0			C			B
 EPILOGUE()
 ASM_END()
