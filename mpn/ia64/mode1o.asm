@@ -302,10 +302,12 @@ ASSERT(p6, `
 	C f10	src[i] * inverse
 	C f11	scratch src[i+1]
 
+	add	r16 = 160, r32
 	ldf8	f11 = [r32], 8		C src[i+1]
 	;;
 	C 2 cycles
 
+	lfetch	[r16]
 	xma.l	f10 = f9, f8, f10	C q = c * -inverse + si
 	;;
 	C 3 cycles
