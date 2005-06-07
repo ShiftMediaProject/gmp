@@ -69,7 +69,7 @@ void
 mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 {
   mp_size_t  i;
-  mp_limb_t  c, l, ls, s, s_next, inverse, dummy;
+  mp_limb_t  c, h, l, ls, s, s_next, inverse, dummy;
   unsigned   shift;
 
   ASSERT (size >= 1);
@@ -114,8 +114,8 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 	  l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
 
-          umul_ppmm (l, dummy, l, divisor);
-	  c += l;
+          umul_ppmm (h, dummy, l, divisor);
+	  c += h;
 
           i++;
 	}
@@ -135,8 +135,8 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 
       do
 	{
-	  umul_ppmm (l, dummy, l, divisor);
-	  c += l;
+	  umul_ppmm (h, dummy, l, divisor);
+	  c += h;
 
 	  s = src[i];
           SUBC_LIMB (c, l, s, c);
