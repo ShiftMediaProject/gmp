@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-06-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/diveby3.asm: Update TODO list.
+
+	* mpn/ia64/mode1o.asm: Fix comment typos.
+
+	* mpn/ia64/dive_1.asm: New file.
+
 2005-06-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/mode1o.asm: Add prefetching.
