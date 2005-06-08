@@ -225,10 +225,10 @@ ABI32(`	zxt4	r33 = r33')		C I1  size extend
 }	;;
 
 { .mmi;	add	r3 = r3, r15		C M0  table entry address
-ABI32(` addp4	r32 = 0, r32')		C M1  src entend
+ABI32(` addp4	r32 = 0, r32')		C M1  src extend
 	mov	ar.lc = r33		C I0  size-1 loop count
 }{.mmi;	setf.sig f12 = r16		C M2  -divisor
-	setf.sig f8 = r17		C M2  -1
+	setf.sig f8 = r17		C M3  -1
 }	;;
 
 { .mmi;	ld1	r3 = [r3]		C M0  inverse, 8 bits
