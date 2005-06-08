@@ -26,9 +26,10 @@ C Itanium:    6.0?
 C Itanium 2:  4.0
 
 C TODO
-C  * Handle odd n better
-C  * Consider scheduling ldf8 closer to xma for simpler feed-in/wind-down code
-C  * Optimize function entry code
+C  * Optimize function entry code, handle odd n better
+C  * Rewrite inner loop.  It now overschedules ldf8 2 cycles, xma 2 cycles, and
+C    getf one cycle.  The result is that the total latency is 20 cycles instead
+C    of 15.
 
 C INPUT PARAMETERS
 define(`rp',`r32')
