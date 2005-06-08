@@ -79,7 +79,7 @@ ifdef(`HAVE_ABI_32',
 	sxt4		n = n')			C I1  size extend
 	;;
 .Lhere:
- {.mmi	ld8		r20 = [up], 8		C M0  up[0]
+ {.mmi;	ld8		r20 = [up], 8		C M0  up[0]
   (p8)	andcm		r8 = r8, divisor	C M1
 	mov		r15 = ip		C I0  .Lhere
 	;;
@@ -150,6 +150,7 @@ ifdef(`HAVE_ABI_32',
 
   (p7)	br		.Ln2
   (p10)	br		.grt3
+	;;
 
 .Ln1:	xmpy.l		f12 = f10, f7		C q = ulimb * inverse
 	br		.Lx1
