@@ -96,7 +96,6 @@ $ret6f:	cmpult	r7,	v1,	r23	C U0 did it carry
 	ldq	v1,	32(r18)		C L1
 
 	lda	r17,	40(r17)		C L0 move pointer
-	bis	r31,	r31,	r31	C U
 	lda	r18,	40(r18)		C L1 move pointer
 
 	lda	r16,	-8(r16)
@@ -192,15 +191,13 @@ $ret6:	cmpult	r7,	v1,	r23	C U0 did it carry
 	bge	r19,	$Loop		C U1 loop control
 C ==== main loop end
 
-$Lend:
-	addq	u0,	v0,	r2	C U1 add two data
+$Lend:	addq	u0,	v0,	r2	C U1 add two data
 	addq	r7,	r22,	r7	C U0 add in carry
 	stq	r5,	8(r16)		C L0 put an answer
 	stq	r8,	16(r16)		C L1 pair
 	cmpult	r2,	v0,	cy1	C U1 did it carry
 	beq	r7,	$fix7c		C U0 fix exact 0
-$ret7c:
-	addq	r2,	r23,	r2	C U1 carry from last
+$ret7c:	addq	r2,	r23,	r2	C U1 carry from last
 	addq	u1,	v1,	r5	C U0 add two data
 	beq	r2,	$fix0c		C U1 fix exact zero
 $ret0c:	cmpult	r5,	v1,	cy0	C U0 did it carry
@@ -208,8 +205,7 @@ $ret0c:	cmpult	r5,	v1,	cy0	C U0 did it carry
 	stq	r7,	24(r16)		C L0 store pair
 	stq	r2,	32(r16)		C L1
 	beq	r5,	$fix1c		C U0 fix exact zero
-$ret1c:
-	stq	r5,	40(r16)		C L0 put an answer
+$ret1c:	stq	r5,	40(r16)		C L0 put an answer
 	lda	r16,	48(r16)		C L0 move pointer
 
 	lda	r19,	8(r19)
@@ -223,33 +219,33 @@ $Lsmall:
 
 	ALIGN(8)
 $Loop0:	addq	u1,	v1,	r2	C main add
-	ldq	u1,	8(r17)
 	cmpult	r2,	v1,	r8	C compute cy from last add
+	ldq	u1,	8(r17)
 	ldq	v1,	8(r18)
-	addq	r2,	cy0,	cy1	C carry add
+	addq	r2,	cy0,	r5	C carry add
 	lda	r17,	8(r17)
 	lda	r18,	8(r18)
-	stq	cy1,	0(r16)
-	cmpult	cy1,	r2,	cy0	C compute cy from last add
+	stq	r5,	0(r16)
+	cmpult	r5,	r2,	cy0	C compute cy from last add
 	lda	r19,	-1(r19)		C decr loop cnt
 	bis	r8,	cy0,	cy0	C combine cy from the two adds
 	lda	r16,	8(r16)
 	bne	r19,	$Loop0
 $Lend0:	addq	u1,	v1,	r2	C main add
-	addq	r2,	cy0,	cy1	C carry add
+	addq	r2,	cy0,	r5	C carry add
 	cmpult	r2,	v1,	r8	C compute cy from last add
-	cmpult	cy1,	r2,	cy0	C compute cy from last add
-	stq	cy1,	0(r16)
-	bis	r8,	cy0,	cy0	C combine cy from the two adds
-
-$Lret:
-	lda	r0,	0(cy0)		C copy carry into return register
+	cmpult	r5,	r2,	cy0	C compute cy from last add
+	stq	r5,	0(r16)
+	bis	r8,	cy0,	r0	C combine cy from the two adds
 	ret	r31,(r26),1
 
+	ALIGN(8)
+$Lret:	lda	r0,	0(cy0)		C copy carry into return register
+	ret	r31,(r26),1
 
-$fix5f: bis	r23,	cy0,	r23	C bring forward carry
+$fix5f:	bis	r23,	cy0,	r23	C bring forward carry
 	br	r31,	$ret5f
-$fix6f: bis	r22,	r23,	r22	C bring forward carry
+$fix6f:	bis	r22,	r23,	r22	C bring forward carry
 	br	r31,	$ret6f
 $fix0:	bis	cy1,	r23,	cy1	C bring forward carry
 	br	r31,	$ret0
