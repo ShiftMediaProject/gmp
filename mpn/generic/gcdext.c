@@ -931,8 +931,8 @@ sanity_check_row (mp_srcptr ap, mp_size_t asize,
   mp_size_t qsize;
   mp_ptr rp;
   mp_size_t i;
-
   TMP_DECL;
+  TMP_MARK;
 
   ASSERT (asize > 0 && ap[asize - 1] != 0);
   ASSERT (bsize > 0 && bp[bsize - 1] != 0);
