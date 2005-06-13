@@ -918,8 +918,8 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
   else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
-      mp_limb_t ws[MPN_KARA_SQR_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
-      ASSERT (SQR_TOOM3_THRESHOLD <= MUL_TOOM3_THRESHOLD_LIMIT);
+      mp_limb_t ws[MPN_KARA_SQR_N_TSIZE (SQR_TOOM3_THRESHOLD_LIMIT-1)];
+      ASSERT (SQR_TOOM3_THRESHOLD <= SQR_TOOM3_THRESHOLD_LIMIT);
       mpn_kara_sqr_n (p, a, n, ws);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
