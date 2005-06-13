@@ -20,6 +20,11 @@ MA 02111-1307, USA.
 
 2005-06-13  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h (SQR_TOOM3_THRESHOLD_LIMIT): New #define.
+	* tune/tuneup.c (tune_sqr): Use SQR_TOOM3_THRESHOLD_LIMIT.
+	(sqr_toom3_threshold): Initialize from SQR_TOOM3_THRESHOLD_LIMIT.
+	* mpn/generic/mul_n.c (mpn_sqr_n): Use SQR_TOOM3_THRESHOLD_LIMIT.
+
 	* gmp-impl.h (mpn_nand_n, mpn_iorn_n, mpn_nior_n, mpn_xnor_n):
 	Handle nails.
 
