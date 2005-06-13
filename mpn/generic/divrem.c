@@ -71,7 +71,7 @@ mpn_divrem (mp_ptr qp, mp_size_t qxn,
       TMP_DECL;
 
       TMP_MARK;
-      if (qxn != 0)
+      if (UNLIKELY (qxn != 0))
 	{
 	  mp_ptr n2p;
 	  n2p = (mp_ptr) TMP_ALLOC ((nn + qxn) * BYTES_PER_MP_LIMB);
