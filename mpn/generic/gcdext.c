@@ -1131,6 +1131,29 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       *usizep = (rsign >= 0) ? rsize : - rsize;
       return r[0].rsize;
     }
+  else if (r[0].rsize == 1)
+    {
+      mp_limb_t u;
+      mp_limb_t v;
+      mp_limb_t cy;
+
+      gp[0] = gcdext_1 (&u, &v, r[0].rp[0], r[1].rp[0]);
+
+      /* g = u r0 + v r1 = (u u0 + v u1) a + (...) b */
+      cy = mpn_addmul2_n_1 (up, rsize,
+			    r[0].uvp[0], u,
+			    r[1].uvp[0], v);
+
+      rsize++;
+      if (cy)
+	up[rsize++] = cy;
+      else
+	MPN_NORMALIZE (up, rsize);
+
+      *usizep = (rsign >= 0) ? rsize : -rsize;
+      return 1;
+
+    }
   else
     {
       /* We have r0 = u0 a + v0 b,
