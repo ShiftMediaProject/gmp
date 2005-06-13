@@ -37,6 +37,12 @@ MA 02111-1307, USA.
 	* gmp-impl.h (mpn_nand_n, mpn_iorn_n, mpn_nior_n, mpn_xnor_n):
 	Handle nails.
 
+2005-06-13  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext.c (gcdext_schoenhage): Check for the
+	(unlikely) case that one of the hgcd/euclid steps results in two
+	remainders of one limb each. Then use gcdext_1.
+
 2005-06-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/ev6/sub_n.asm: Analogous changes as to add_n.asm last.
