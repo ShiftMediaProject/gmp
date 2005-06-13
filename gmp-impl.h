@@ -1728,7 +1728,7 @@ void mpn_andn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 void mpn_nand_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_nand_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ & *__s2++))
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ & *__s2++) & GMP_NUMB_MASK)
 #endif
 
 #if HAVE_NATIVE_mpn_ior_n
@@ -1744,7 +1744,7 @@ void mpn_ior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_iorn_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ | ~*__s2++)
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = (*__s1++ | ~*__s2++) & GMP_NUMB_MASK)
 #endif
 
 #if HAVE_NATIVE_mpn_nior_n
@@ -1752,7 +1752,7 @@ void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 void mpn_nior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_nior_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ | *__s2++))
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ | *__s2++) & GMP_NUMB_MASK)
 #endif
 
 #if HAVE_NATIVE_mpn_xor_n
@@ -1768,7 +1768,7 @@ void mpn_xor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_xnor_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ ^ *__s2++))
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ ^ *__s2++) & GMP_NUMB_MASK)
 #endif
 
 
