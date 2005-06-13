@@ -1432,6 +1432,11 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define SQR_TOOM3_THRESHOLD 128
 #endif
 
+/* See comments above about MUL_TOOM3_THRESHOLD_LIMIT.  */
+#ifndef SQR_TOOM3_THRESHOLD_LIMIT
+#define SQR_TOOM3_THRESHOLD_LIMIT  SQR_TOOM3_THRESHOLD
+#endif
+
 /* First k to use for an FFT modF multiply.  A modF FFT is an order
    log(2^k)/log(2^(k-1)) algorithm, so k=3 is merely 1.5 like karatsuba,
    whereas k=4 is 1.33 which is faster than toom3 at 1.485.    */
@@ -3820,10 +3825,12 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #undef MUL_KARATSUBA_THRESHOLD_LIMIT
 #undef MUL_TOOM3_THRESHOLD_LIMIT
 #undef MULLOW_BASECASE_THRESHOLD_LIMIT
+#undef SQR_TOOM3_THRESHOLD_LIMIT
 #define SQR_KARATSUBA_MAX_GENERIC       200
 #define MUL_KARATSUBA_THRESHOLD_LIMIT   700
 #define MUL_TOOM3_THRESHOLD_LIMIT       700
 #define MULLOW_BASECASE_THRESHOLD_LIMIT 200
+#define SQR_TOOM3_THRESHOLD_LIMIT       400
 #define GET_STR_THRESHOLD_LIMIT         150
 
 /* "thresh" will normally be a variable when tuning, so use the cached
