@@ -155,7 +155,7 @@ mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_karatsuba_threshold
   = (TUNE_SQR_KARATSUBA_MAX == 0 ? MP_SIZE_T_MAX : TUNE_SQR_KARATSUBA_MAX);
-mp_size_t  sqr_toom3_threshold          = MP_SIZE_T_MAX;
+mp_size_t  sqr_toom3_threshold          = SQR_TOOM3_THRESHOLD_LIMIT;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mullow_basecase_threshold    = MP_SIZE_T_MAX;
@@ -941,6 +941,7 @@ tune_sqr (void)
     param.function = speed_mpn_sqr_n;
     param.min_size = MAX3 (MPN_TOOM3_SQR_N_MINSIZE,
                            SQR_KARATSUBA_THRESHOLD, SQR_BASECASE_THRESHOLD);
+    param.max_size = SQR_TOOM3_THRESHOLD_LIMIT-1;
     one (&sqr_toom3_threshold, &param);
   }
 }
