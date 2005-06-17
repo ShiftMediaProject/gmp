@@ -1,7 +1,8 @@
 dnl  PowerPC-64 mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl  the result to a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -16,9 +17,9 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
-dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl  MA 02111-1307, USA.
+dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write
+dnl  to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+dnl  Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
@@ -29,7 +30,7 @@ C POWER4/PPC970:     8
 C TODO
 C  * Reduce the number of registers used.  Some mul destination registers could
 C    be coalesced.
-C  * Delay std for presering registers, and suppress them for n=1.
+C  * Delay std for preserving registers, and suppress them for n=1.
 C  * Write faster feed-in code.  If nothing else, avoid one or two up updates.
 
 C INPUT PARAMETERS
