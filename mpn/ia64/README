@@ -57,7 +57,7 @@ latencies, 9 cycles on the Itanium 1 and 6 cycles on the Itanium 2.
 The software pipeline stuff using br.ctop instruction causes delays, since
 many issue slots are taken up by instructions with zero predicates, and
 since many extra instructions are needed to set things up.  These features
-are clearly designed for code density, speed.
+are clearly designed for code density, not speed.
 
 Misc pipeline limitations (Itanium 1):
 * The getf.sig instruction can only execute in M0.
