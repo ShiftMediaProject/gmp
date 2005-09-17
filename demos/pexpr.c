@@ -724,6 +724,9 @@ struct functions fns[] =
   {"nextprime", NEXTPRIME, 1},
   {"binom", BINOM, 2},
   {"binomial", BINOM, 2},
+  {"fac", FAC, 1},
+  {"fact", FAC, 1},
+  {"factorial", FAC, 1},
   {"", NOP, 0}
 };
 
