@@ -108,6 +108,12 @@ factor_using_division_2kp (mpz_t t, unsigned int limit, unsigned long p)
   mpz_t f;
   unsigned int k;
 
+  if (flag_verbose)
+    {
+      printf ("[trial division (%u)] ", limit);
+      fflush (stdout);
+    }
+
   mpz_init (r);
   mpz_init_set_ui (f, 2 * p);
   mpz_add_ui (f, f, 1);
@@ -219,6 +225,8 @@ S4:
 	}
       while (mpz_cmp_ui (g, 1) == 0);
 
+      mpz_div (n, n, g);	/* divide by g, before g is overwritten */
+
       if (!mpz_probab_prime_p (g, 3))
 	{
 	  do
@@ -235,7 +243,6 @@ S4:
 	      fflush (stdout);
 	    }
 	  factor_using_pollard_rho (g, a_int, p);
-	  break;
 	}
       else
 	{
@@ -243,7 +250,6 @@ S4:
 	  fflush (stdout);
 	  fputc (' ', stdout);
 	}
-      mpz_div (n, n, g);
       mpz_mod (x, x, n);
       mpz_mod (x1, x1, n);
       mpz_mod (y, y, n);
