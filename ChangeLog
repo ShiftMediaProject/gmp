@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-10-26  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (POWERPC64_PATTERN/*-*-darwin*): Set
+	SPEED_CYCLECOUNTER_OBJ_mode64 and cyclecounter_size_mode64.
+	(POWERPC64_PATTERN/*-*-linux*): Likewise.
+
+2005-10-03  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/factorize.c (factor_using_division_2kp): Honor verbose flag.
+	(factor_using_pollard_rho): Divide out new factor before it's
+	clobbered.  Don't stop factoring after a composite factor was found.
+
 2005-09-17  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (fns): Add factorial keywords.
