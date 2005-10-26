@@ -962,6 +962,8 @@ case $host in
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-fast -O3 -O2 -O1"
 	    path_mode64="powerpc64/mode64 powerpc64"
+            SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
+            cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
 	    ;;
 	  *-*-linux*)
@@ -991,6 +993,8 @@ case $host in
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
 	    path_mode64="powerpc64/mode64 powerpc64"
+            SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
+            cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
 	    ;;
         esac
