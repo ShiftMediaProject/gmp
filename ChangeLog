@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2005-10-26  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/tuneup.c (tune_mullow): Update param.max_size for each threshold
+	measurement.
+
 	* configure.in (POWERPC64_PATTERN/*-*-darwin*): Set
 	SPEED_CYCLECOUNTER_OBJ_mode64 and cyclecounter_size_mode64.
 	(POWERPC64_PATTERN/*-*-linux*): Likewise.
