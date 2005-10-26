@@ -860,10 +860,12 @@ tune_mullow (void)
 
   param.name = "MULLOW_DC_THRESHOLD";
   param.min_size = mul_karatsuba_threshold;
+  param.max_size = 1000;
   one (&mullow_dc_threshold, &param);
 
   param.name = "MULLOW_MUL_N_THRESHOLD";
   param.min_size = mullow_dc_threshold;
+  param.max_size = 2000;
   one (&mullow_mul_n_threshold, &param);
 
   /* disabled until tuned */
