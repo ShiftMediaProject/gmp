@@ -1,7 +1,8 @@
 /* mpq_canonicalize(op) -- Remove common factors of the denominator and
    numerator in OP.
 
-Copyright 1991, 1994, 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 1996, 2000, 2001, 2005 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

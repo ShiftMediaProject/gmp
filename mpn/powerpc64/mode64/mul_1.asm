@@ -1,7 +1,8 @@
 dnl  PowerPC-64 mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 

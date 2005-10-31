@@ -1,7 +1,7 @@
 dnl  Alpha mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 1995, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1995, 2000, 2002, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

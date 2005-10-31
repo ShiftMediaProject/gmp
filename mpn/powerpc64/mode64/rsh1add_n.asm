@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_rsh1add_n -- rp[] = (up[] + vp[]) >> 1
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

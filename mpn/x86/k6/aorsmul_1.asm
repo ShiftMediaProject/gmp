@@ -1,6 +1,7 @@
 dnl  AMD K6 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2005 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,18 +24,18 @@ include(`../config.m4')
 
 
 C                           cycles/limb
-C P5:                           
+C P5:
 C P6 model 0-8,10-12)            5.94
-C P6 model 9  (Banias)          
+C P6 model 9  (Banias)
 C P6 model 13 (Dothan)           5.57
-C P4 model 0  (Willamette)      
-C P4 model 1  (?)               
-C P4 model 2  (Northwood)       
-C P4 model 3  (Prescott)        
-C P4 model 4  (Nocona)          
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
 C K6:                           7.65-8.5 (data dependent)
-C K7:                           
-C K8:                           
+C K7:
+C K8:
 
 
 dnl  K6:           large multpliers  small multpliers

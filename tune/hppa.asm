@@ -1,6 +1,6 @@
 dnl  HPPA 32-bit time stamp counter access routine.
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

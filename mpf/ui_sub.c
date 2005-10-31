@@ -1,6 +1,7 @@
 /* mpf_ui_sub -- Subtract a float from an unsigned long int.
 
-Copyright 1993, 1994, 1995, 1996, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 1996, 2001, 2002, 2005 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

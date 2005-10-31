@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_mul_1 -- mpn by limb multiply.
 
-dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2002, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,18 +23,18 @@ include(`../config.m4')
 
 
 C                           cycles/limb
-C P5:                           
+C P5:
 C P6 model 0-8,10-12)            5.5
-C P6 model 9  (Banias)          
+C P6 model 9  (Banias)
 C P6 model 13 (Dothan)           4.87
-C P4 model 0  (Willamette)      
-C P4 model 1  (?)               
-C P4 model 2  (Northwood)       
-C P4 model 3  (Prescott)        
-C P4 model 4  (Nocona)          
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
 C K6:                            6.25
-C K7:                           
-C K8:                           
+C K7:
+C K8:
 
 
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

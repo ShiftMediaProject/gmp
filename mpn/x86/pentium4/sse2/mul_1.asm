@@ -1,7 +1,7 @@
 dnl  Intel Pentium-4 mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
-dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,7 +23,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 C                           src != dst      src == dst
-C P6 model 9  (Banias)          ?.?             
+C P6 model 9  (Banias)          ?.?
 C P6 model 13 (Dothan)          4.75            4.75
 C P4 model 0  (Willamette)      4.0             6.0
 C P4 model 1  (?)               4.0             6.0

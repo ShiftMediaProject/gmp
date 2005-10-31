@@ -3,7 +3,7 @@
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE AND ARE ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_divrem_2 -- Divide an n-limb number by a 2-limb number.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

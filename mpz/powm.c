@@ -1,6 +1,6 @@
 /* mpz_powm(res,base,exp,mod) -- Set RES to (base**exp) mod MOD.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2005 Free Software
 Foundation, Inc.  Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.

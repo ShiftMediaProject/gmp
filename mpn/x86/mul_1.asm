@@ -1,8 +1,8 @@
 dnl  x86 mpn_mul_1 (for 386, 486, and Pentium Pro) -- Multiply a limb vector
 dnl  with a limb and store the result in a second limb vector.
 
-dnl  Copyright 1992, 1994, 1997, 1998, 1999, 2000, 2001, 2002 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1992, 1994, 1997, 1998, 1999, 2000, 2001, 2002, 2005 Free
+dnl  Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -27,16 +27,16 @@ include(`../config.m4')
 C                           cycles/limb
 C P5:                           12.5
 C P6 model 0-8,10-12)            5.5
-C P6 model 9  (Banias)           
+C P6 model 9  (Banias)
 C P6 model 13 (Dothan)           5.25
 C P4 model 0  (Willamette)      19.0
 C P4 model 1  (?)               19.0
 C P4 model 2  (Northwood)       19.0
-C P4 model 3  (Prescott)         
-C P4 model 4  (Nocona)           
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
 C K6:                           10.5
 C K7:                            4.5
-C K8:                            
+C K8:
 
 
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,

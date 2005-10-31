@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_divexact_by3 -- mpn by 3 exact division
 
-dnl  Copyright 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_divrem_1 -- Divide an mpn number by an unnormalized limb.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

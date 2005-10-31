@@ -1,6 +1,7 @@
 /* mpf_sqrt_ui -- Compute the square root of an unsigned integer.
 
-Copyright 1993, 1994, 1996, 2000, 2001, 2004 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001, 2004, 2005 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

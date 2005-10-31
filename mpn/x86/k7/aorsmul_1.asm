@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,18 +23,18 @@ include(`../config.m4')
 
 
 C                           cycles/limb
-C P5:                           
+C P5:
 C P6 model 0-8,10-12)            6.35
-C P6 model 9  (Banias)          
+C P6 model 9  (Banias)
 C P6 model 13 (Dothan)           6.25
-C P4 model 0  (Willamette)      
-C P4 model 1  (?)               
-C P4 model 2  (Northwood)       
-C P4 model 3  (Prescott)        
-C P4 model 4  (Nocona)          
-C K6:                           
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)
+C P4 model 3  (Prescott)
+C P4 model 4  (Nocona)
+C K6:
 C K7:                            3.9
-C K8:                           
+C K8:
 
 
 dnl  K7: UNROLL_COUNT  cycles/limb

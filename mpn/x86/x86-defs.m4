@@ -5,7 +5,7 @@ dnl  m4 macros for x86 assembler.
 
 
 dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
 dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ dnl
 dnl  2. Immediates in macro definitions need a space or `' to stop the $
 dnl     looking like a macro parameter.  For example,
 dnl
-dnl  	        define(foo, `mov $ 123, %eax')
+dnl	        define(foo, `mov $ 123, %eax')
 dnl
 dnl     This is only a problem in macro definitions, not in ordinary text,
 dnl     and not in macro parameters like text passed to forloop() or ifdef().

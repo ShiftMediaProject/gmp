@@ -1,6 +1,6 @@
 /* mpz_and -- Logical and.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2003 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2003, 2005 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

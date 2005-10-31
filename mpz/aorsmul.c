@@ -1,6 +1,6 @@
 /* mpz_addmul, mpz_submul -- add or subtract multiple.
 
-Copyright 2001, 2004 Free Software Foundation, Inc.
+Copyright 2001, 2004, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
