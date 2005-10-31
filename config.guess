@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -91,7 +91,7 @@ if test x"$CC_FOR_BUILD" = x; then
       CC_FOR_BUILD="$CC"
     else
       echo 'dummy(){}' >$dummy.c
-      for c in cc gcc c89 c99; do 
+      for c in cc gcc c89 c99; do
 	  ($c $dummy.c -c) >/dev/null 2>&1
 	  if test $? = 0; then
 	      CC_FOR_BUILD="$c"; break
@@ -325,7 +325,7 @@ rs6000-*-* | powerpc*-*-*)
   # (as noted below).  But the man page says the command is still "under
   # development", so it doesn't seem wise to use it just yet, not while
   # there's an alternative.
-
+  #
   # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS
   # and AIX don't allow it in user mode, but the Linux kernel does.
   #
@@ -369,13 +369,13 @@ main ()
   case 0x0008: puts ("powerpc750");  break;
   case 0x0009: puts ("powerpc604e"); break;
   case 0x000a: puts ("powerpc604e"); break;  /* 604ev5 */
-  case 0x000c: puts ("powerpc7400");  break;
+  case 0x000c: puts ("powerpc7400"); break;
   case 0x0041: puts ("powerpc630");  break;
   case 0x0050: puts ("powerpc860");  break;
-  case 0x8000: puts ("powerpc7450");  break;
-  case 0x8001: puts ("powerpc7455");  break;
-  case 0x8002: puts ("powerpc7457");  break;
-  case 0x800c: puts ("powerpc7410");  break;
+  case 0x8000: puts ("powerpc7450"); break;
+  case 0x8001: puts ("powerpc7455"); break;
+  case 0x8002: puts ("powerpc7457"); break;
+  case 0x800c: puts ("powerpc7410"); break;
   }
   return 0;
 }
@@ -435,7 +435,7 @@ main ()
 #ifdef POWER_630
   case POWER_630:    puts ("powerpc630"); break;
 #endif
-  /* Dunno what this is, leave it out for now. 
+  /* Dunno what this is, leave it out for now.
   case POWER_A35:    puts ("powerpca35"); break;
   */
   /* This is waiting for a bit more info.
@@ -553,7 +553,7 @@ sparc-*-* | sparc64-*-*)
       fi
     done
     rm -f conftest.dat
-  fi  
+  fi
 
   # Grep the output from prtconf on Solaris.
   # Use an explicit /usr/sbin, since that directory might not be in a normal
@@ -593,7 +593,7 @@ sparc-*-* | sparc64-*-*)
       fi
     fi
     rm -f conftest.dat
-  fi  
+  fi
 
   # Grep the output from sysctl hw.model on sparc or sparc64 *BSD.
   # Use an explicit /sbin, since that directory might not be in a normal
@@ -624,7 +624,7 @@ sparc-*-* | sparc64-*-*)
       fi
     fi
     rm -f conftest.dat
-  fi  
+  fi
 
   # sun4m and sun4d are v8s of some sort, sun4u is a v9 of some sort
   #
@@ -746,6 +746,8 @@ EOF
     fi
   fi
 
+  # We need to remove some .o files here since lame C compilers
+  # generate these even when not asked.
   rm -f ${dummy}1.s ${dummy}1.o ${dummy}2.c ${dummy}2.o $dummy
   ;;
 
