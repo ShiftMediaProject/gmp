@@ -106,7 +106,7 @@ mpz_probab_prime_p (mpz_srcptr n, int reps)
 
     nprimes = 0;
     p = 1;
-    ln2 = mpz_sizeinbase (n, 2) / 30; ln2 = ln2 * ln2;
+    ln2 = mpz_sizeinbase (n, 2);	/* FIXME: tune this limit */
     for (q = PP_FIRST_OMITTED; q < ln2; q += 2)
       {
 	if (isprime (q))
