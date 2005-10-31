@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_addmul_2 -- Multiply a n-limb number with a 2-limb number and
 dnl  add the result to a (n+1)-limb number.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -120,7 +120,7 @@ ifdef(`HAVE_ABI_32',
 }{.mmi		C 01
 	ldf8		uy = [up], 8		C			M
 	ldf8		v1 = [vp]		C			M
-	shr.u		n = n, 2		C			I
+	shr.u		n = n, 2		C			I0
 }{.mmi
 	ldf8		ry = [rp], -8		C			M
 	cmp.eq		p10, p0 = 1, r14	C			M I
