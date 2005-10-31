@@ -20,6 +20,18 @@ MA 02111-1307, USA.
 
 2005-10-31  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/pprime_p.c (mpz_probab_prime_p): Considerably limit trial
+	dividing.
+
+	* mpz/perfpow.c (mpz_perfect_power_p): Use mpz_divisible_ui_p instead
+	of mpz_tdiv_ui.
+
+	* mpz/divegcd.c: Correct probability number for GCD == 1.
+
+	* mpn/x86_64/mul_basecase.asm: Remove an obsolete comment.
+
+	* mpn/x86: Add cycle counts for array of x86 processors.
+
 	* mpn/x86/k7/mod_34lsub1.asm: Remove spurious mentions of ebp.
 
 	* mpn/powerpc32: Add POWER5 timings.
