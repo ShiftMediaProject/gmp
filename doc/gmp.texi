@@ -14,7 +14,7 @@ This manual describes how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-2003, 2004 Free Software Foundation, Inc.
+2003, 2004, 2005 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
@@ -528,7 +528,7 @@ GMP library and one for discussions about development of GMP@.  These lists are
 @uref{http://swox.com/mailman/listinfo/}.  
 @end display
 
-The proper place for bug reports is @email{bug-gmp@@gnu.org}.  See
+The proper place for bug reports is @email{gmp-bugs@@swox.com}.  See
 @ref{Reporting Bugs} for information about reporting bugs.
 
 @sp 1
@@ -573,7 +573,7 @@ And you can install (under @file{/usr/local} by default) with
 make install
 @end example
 
-If you experience problems, please report them to @email{bug-gmp@@gnu.org}.
+If you experience problems, please report them to @email{gmp-bugs@@swox.com}.
 See @ref{Reporting Bugs}, for information on what to include in useful bug
 reports.
 
@@ -1790,7 +1790,7 @@ to be incompatible with future versions of GMP.}
 @section Headers and Libraries
 @cindex Headers
 
-@cindex @code{gmp.h}
+@cindex @file{gmp.h}
 @cindex Include files
 @cindex @code{#include}
 All declarations needed to use GMP are collected in the include file
@@ -2517,7 +2517,7 @@ particular order, include
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
 @uref{http://dmalloc.com/}
 @uref{http://www.perens.com/FreeSoftware/} @ (electric fence)
-@uref{http://packages.debian.org/fda/}
+@uref{http://packages.debian.org/fda}
 @uref{http://www.gnupdate.org/components/leakbug/}
 @uref{http://people.redhat.com/~otaylor/memprof/}
 @uref{http://www.cbmamiga.demon.co.uk/mpatrol/}
@@ -2616,7 +2616,7 @@ versions of checker (0.9.9.1) don't yet support the standard C++ library.
 
 @item Valgrind
 @cindex Valgrind
-The valgrind program (@uref{http://valgrind.kde.org/}) is a memory
+The valgrind program (@uref{http://valgrind.org/}) is a memory
 checker for x86s.  It translates and emulates machine instructions to do
 strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
@@ -2880,7 +2880,7 @@ If your bug report is good, we will do our best to help you get a corrected
 version of the library; if the bug report is poor, we won't do anything about
 it (except maybe ask you to send a better report).
 
-Send your report to: @email{bug-gmp@@gnu.org}.
+Send your report to: @email{gmp-bugs@@swox.com}.
 
 If you think something in this manual is unclear, or downright incorrect, or if
 the language needs to be improved, please send a note to the same address.
@@ -6684,7 +6684,7 @@ the future, maybe a preprocessor define, a global flag, or an @code{ios} flag
 pressed into service.  Or maybe, at the risk of inconsistency, the
 @code{mpq_class} @code{operator>>} could canonicalize and leave @code{mpq_t}
 @code{operator>>} not doing so, for use on those occasions when that's
-acceptable.  Send feedback or alternate ideas to @email{bug-gmp@@gnu.org}.
+acceptable.  Send feedback or alternate ideas to @email{gmp-bugs@@swox.com}.
 
 @item Subclassing
 Subclassing the GMP C++ classes works, but is not currently recommended.
@@ -7006,10 +7006,10 @@ than C, though perhaps with varying levels of functionality and efficiency.
 GMP C++ class interface, @pxref{C++ Class Interface} @* Straightforward
 interface, expression templates to eliminate temporaries.
 @item
-ALP @spaceuref{http://www.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
+ALP @spaceuref{http://www-sop.inria.fr/saga/logiciels/ALP/} @* Linear algebra and
 polynomials using templates.
 @item
-Arithmos @spaceuref{http://win-www.uia.ac.be/u/cant/arithmos/} @* Rationals
+Arithmos @spaceuref{http://www.win.ua.ac.be/~cant/arithmos/} @* Rationals
 with infinities and square roots.
 @item
 CLN @spaceuref{http://www.ginac.de/CLN/} @* High level classes for arithmetic.
@@ -7074,7 +7074,7 @@ an arbitrary precision @code{mpeval}.
 @item ML
 @itemize @bullet
 @item
-MLton compiler @spaceuref{http://www.mlton.org/}
+MLton compiler @spaceuref{http://mlton.org/}
 @end itemize
 
 @item Objective Caml
@@ -7144,7 +7144,7 @@ GNU Guile (upcoming 1.8) @spaceuref{http://www.gnu.org/software/guile/guile.html
 @item
 RScheme @spaceuref{http://www.rscheme.org/}
 @item
-STklos @spaceuref{http://kaolin.unice.fr/STklos/}
+STklos @spaceuref{http://www.stklos.org/}
 @c
 @c  For reference, MzScheme uses some of gmp, but (as of version 205) it only
 @c  has copies of some of the generic C code, and we don't consider that a
@@ -7175,8 +7175,7 @@ language.
 Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
 computer algebra using GCL.
 @item
-Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q/} @* Equational
-programming system.
+Q @spaceuref{http://q-lang.sourceforge.net/} @* Equational programming system.
 @item
 Regina @spaceuref{http://regina.sourceforge.net/} @* Topological calculator.
 @item
