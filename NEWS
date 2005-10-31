@@ -23,7 +23,7 @@ Changes between MP version 4.1.3 and 4.2
 
 * Bug fixes.
 * New systems supported: HPPA-2.0 gcc, IA-64 HP-UX, PowerPC-64 Darwin,
-  Sparc64 GNU/Linux, 
+  Sparc64 GNU/Linux.
 * New i386 fat binaries, selecting optimized code at runtime.
 * New build option: --enable-profiling=instrument.
 * New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
