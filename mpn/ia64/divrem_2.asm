@@ -178,8 +178,8 @@ C *** MAIN LOOP START ***
 	;;	C 41
   (p8)	cmp.eq.or	p6, p0 = 0, R1		C p6 = final cy from high limb
   (p8)	add		R1 = -1, R1
-	cmp.ne		p10, p0 = r0, r0	C clear p10
-	cmp.ne		p13, p0 = r0, r0	C clear p13
+	cmp.ne		p10, p0 = r0, r0	C clear p10 FIXME: use unc below!
+	cmp.ne		p13, p0 = r0, r0	C clear p13 FIXME: use unc below!
 	;;	C 42
   (p6)	add		R0 = R0, d0
   (p6)	add		R1 = R1, d1
