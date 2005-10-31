@@ -58,6 +58,12 @@ mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
   if (stream == 0)
     stream = stdout;
 
+  /* Consider these changes:
+     * Don't allocate memory here for huge n_digits; pass NULL to mpf_get_str.
+     * Make mpf_get_str allocate extra space when passed NULL, to avoid
+       allocating two huge string buffers.
+     * Implement more/other allocation reductions tricks.  */
+
   str = (char *) TMP_ALLOC (n_digits + 2); /* extra for minus sign and \0 */
 
   mpf_get_str (str, &exp, base, n_digits, op);
