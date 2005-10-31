@@ -98,8 +98,8 @@ mpz_perfect_power_p (mpz_srcptr u)
   for (i = 1; primes[i] != 0; i++)
     {
       prime = primes[i];
-      rem = mpz_tdiv_ui (u2, prime);
-      if (rem == 0)		/* divisable by this prime? */
+
+      if (mpz_divisible_ui_p (u2, prime))	/* divisible by this prime? */
 	{
 	  rem = mpz_tdiv_q_ui (q, u2, prime * prime);
 	  if (rem != 0)
