@@ -83,29 +83,29 @@ PROLOGUE(mpn_addmul_2)
 C MAIN LOOP
 Loop:
 	bis	r31,	r31,	r31		C U1	nop
+	addq	r19,	acc0,	acc0		C U0	propagate nail
 	ldq	rlimb,	0(rp)			C L0
 	ldq	ulimb,	0(up)			C L1
-	addq	r19,	acc0,	acc0		C U0	propagate nail
 
-	lda	rp,	8(rp)			C L0
+	lda	rp,	8(rp)			C L1
 	srl	m0a,NAIL_BITS,	r8		C U0
-	lda	up,	8(up)			C L1
+	lda	up,	8(up)			C L0
 	mulq	v0,	ulimb,	m0a		C U1
 
 	addq	r8,	acc0,	r19		C U0
-	addq	m0b,	acc1,	acc0		C L0
+	addq	m0b,	acc1,	acc0		C L1
 	umulh	v0,	ulimb,	m0b		C U1
-	bis	r31,	r31,	r31		C L1	nop
+	bis	r31,	r31,	r31		C L0	nop
 
-	addq	rlimb,	r19,	r19		C L0	FINAL PROD-SUM
+	addq	rlimb,	r19,	r19		C L1	FINAL PROD-SUM
 	srl	m1a,NAIL_BITS,	r8		C U0
-	bis	r31,	r31,	r31		C L1	nop
+	bis	r31,	r31,	r31		C L0	nop
 	mulq	v1,	ulimb,	m1a		C U1
 
 	addq	r8,	acc0,	acc0		C U0
-	bis	r31,	m1b,	acc1		C L0
+	bis	r31,	m1b,	acc1		C L1
 	umulh	v1,	ulimb,	m1b		C U1
-	and	r19,numb_mask,	r28		C L1	extract numb part
+	and	r19,numb_mask,	r28		C L0	extract numb part
 
 	lda	n,	-1(n)			C L0
 	srl	r19,NUMB_BITS,	r19		C U1	extract nail part

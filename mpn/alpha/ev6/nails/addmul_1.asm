@@ -391,13 +391,13 @@ C
 	srl	m1a,NAIL_BITS,	r8		C U0
 	ldq	rl0,	32(rp)			C L1
 C
-	bis	r31,	r31,	r31		C U1	nop
 	bis	r31,	r31,	r31		C L0	nop
-	lda	n,	-4(n)			C U0
-	bis	r31,	r31,	r31		C L1	nop
-C
 	bis	r31,	r31,	r31		C U1	nop
-	lda	up,	32(up)			C L0
+	lda	n,	-4(n)			C L1
+	bis	r31,	r31,	r31		C U0	nop
+C
+	bis	r31,	r31,	r31		C L0	nop
+	lda	up,	32(up)			C U1
 	lda	rp,	32(rp)			C L1
 	bge	n,	Loop			C U0
 

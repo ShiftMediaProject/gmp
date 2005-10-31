@@ -136,10 +136,10 @@ Loop:
 	lda	n,	-1(n)			C L1
 	mulq	v2,	ulimb,	m2a		C U1
 
-	addq	r8,	acc1,	acc1		C U0
+	addq	r8,	acc1,	acc1		C L1
 	addq	m2b,	acc3,	acc2		C L0
 	umulh	v2,	ulimb,	m2b		C U1
-	srl	r19,NUMB_BITS,	r19		C L1	extract nail part
+	srl	r19,NUMB_BITS,	r19		C U0	extract nail part
 
 	bis	r31,	r31,	r31		C L0	nop
 	srl	m3a,NAIL_BITS,	r8		C U0
