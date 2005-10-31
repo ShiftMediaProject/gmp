@@ -33,7 +33,7 @@ MA 02111-1307, USA.  */
    section 4.5.2 theorem D.
 
             GCD     chance
-             1       60.7%
+             1       60.8%
             2^k      20.2%     (1<=k<32)
            3*2^k      9.0%     (1<=k<32)
            other     10.1%
