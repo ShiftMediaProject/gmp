@@ -80,7 +80,6 @@ L(three_or_more):
 	C edx	src
 	C esi
 	C edi
-	C ebp
 
 	pushl	%ebx	FRAME_pushl()
 	xorl	%eax, %eax
@@ -99,7 +98,6 @@ L(top):
 	C edx	src
 	C esi	acc 2mod3
 	C edi
-	C ebp
 
 	leal	24(%edx), %edx
 	leal	-2(%ecx), %ecx
@@ -145,7 +143,6 @@ L(combine):
 	C edx
 	C esi	acc 2mod3
 	C edi	mask
-	C ebp
 
 	sbbl	%ecx, %ecx		C carry
 	movl	%eax, %edx		C 0mod3
