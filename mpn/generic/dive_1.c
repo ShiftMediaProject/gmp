@@ -109,15 +109,15 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 	  ls = ((s >> shift) | (s_next << (GMP_NUMB_BITS-shift))) & GMP_NUMB_MASK;
 	  s = s_next;
 
-          SUBC_LIMB (c, l, ls, c);
+	  SUBC_LIMB (c, l, ls, c);
 
 	  l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
 
-          umul_ppmm (h, dummy, l, divisor);
+	  umul_ppmm (h, dummy, l, divisor);
 	  c += h;
 
-          i++;
+	  i++;
 	}
       while (i < size);
 
@@ -139,9 +139,9 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 	  c += h;
 
 	  s = src[i];
-          SUBC_LIMB (c, l, s, c);
+	  SUBC_LIMB (c, l, s, c);
 
-          l = (l * inverse) & GMP_NUMB_MASK;
+	  l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
 	  i++;
 	}
