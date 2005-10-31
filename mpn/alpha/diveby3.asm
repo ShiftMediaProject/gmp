@@ -31,7 +31,7 @@ C  * Trim this to 6.0 c/l for ev6.
 C  * Write special ev5 version, should reach 9 c/l, and could be smaller.
 C  * Try prefetch for destination, using lds.
 C  * Improve feed-in code, by moving initial mulq earlier; make initial load
-C    to u0/u0 to save smoe copying.
+C    to u0/u0 to save some copying.
 C  * Combine u0 and u2, u1 and u3.
 
 C INPUT PARAMETERS
