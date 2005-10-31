@@ -20,6 +20,27 @@ MA 02111-1307, USA.
 
 2005-10-31  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc32: Add POWER5 timings.
+
+	* mpn/powerpc32/README: Describe global refefence variations.
+
+	* mpn/ia64/divrem_2.asm: Add some comments.
+
+	* mpn/ia64/divrem_1.asm: Reformat.
+
+	* mpn/ia64/addmul_2.asm: Correct a comment on slotting.
+	* mpn/ia64/logops_n.asm: Likewise.
+
+	* mpn/ia64/addmul_1.asm: Remove a redundant preg mutex decl.
+
+	* mpn/generic/dive_1.c: Whitespace cleanup.
+
+	* mpn/alpha/ev6/nails/addmul_1.asm: Correct comments on slotting.
+	* mpn/alpha/ev6/nails/addmul_2.asm: Likewise.
+	* mpn/alpha/ev6/nails/addmul_4.asm: Likewise.
+
+	* mpf/out_str.c: List some allocation improvement ideas.
+
 	* doc/gmp.texi: Update many URLs and email addresses.
 
 	* gmp-h.in (_GMP_H_HAVE_FILE): Check also _STDIO_H_INCLUDED.

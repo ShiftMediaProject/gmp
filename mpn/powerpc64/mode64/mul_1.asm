@@ -27,7 +27,8 @@ C POWER3/PPC630:     6-18?
 C POWER4/PPC970:     7.25
 
 C TODO
-C  * Try to reduce the number of needed live registers
+C  * Try to reduce the number of needed live registers (at least r5 and r10
+C    could be combined)
 C  * Optimize feed-in code, for speed and size.
 C  * Clean up r12/r7 usage in feed-in code.
 
