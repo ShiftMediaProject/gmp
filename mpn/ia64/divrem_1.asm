@@ -73,21 +73,27 @@ ifdef(`HAVE_ABI_32',
 	;;
 ')
 	mov		r40 = r38
-	shladd		r34 = r35, 3, r34	;;
-	adds		r34 = -8, r34		;;
-	ld8		r39 = [r34], -8		;;
+	shladd		r34 = r35, 3, r34
+	;;
+	adds		r34 = -8, r34
+	;;
+	ld8		r39 = [r34], -8
+	;;
 
-	add		r15 = r35, r33		;;
+	add		r15 = r35, r33
+	;;
 	mov		r8 = r37
-	shladd		r32 = r15, 3, r32		C r32 = rp + n + qxn
-	cmp.le		p8, p0 = 0, r36	;;
-	adds		r32 = -8, r32			C r32 = rp + n + qxn - 1
+	shladd		r32 = r15, 3, r32	C r32 = rp + n + qxn
+	cmp.le		p8, p0 = 0, r36
+	;;
+	adds		r32 = -8, r32		C r32 = rp + n + qxn - 1
 	cmp.leu		p6, p7 = r36, r39
    (p8)	br.cond.dpnt	.Lpunnorm
 	;;
 
    (p6)	addl		r15 = 1, r0
-   (p7)	mov		r15 = r0		;;
+   (p7)	mov		r15 = r0
+	;;
    (p6)	sub		r38 = r39, r36
    (p7)	mov		r38 = r39
 	st8		[r32] = r15, -8
@@ -106,7 +112,8 @@ ifdef(`HAVE_ABI_32',
 	adds		r35 = -1, r35		C un--
    (p8)	br.cond.dpnt	.Lpu
 
-	mov		r23 = 1			;;
+	mov		r23 = 1
+	;;
 	setf.sig	f6 = r8
 	setf.sig	f12 = r23
 	br		.L435
@@ -130,23 +137,31 @@ ifdef(`HAVE_ABI_32',
 	;;
 ')
 	mov		r38 = r0
-	add		r15 = r35, r33		;;
-	cmp.ne		p6, p7 = 0, r15		;;
+	add		r15 = r35, r33
+	;;
+	cmp.ne		p6, p7 = 0, r15
+	;;
    (p7)	mov		r8 = r0
    (p7)	br.cond.dpnt	.Lret
-	shladd		r14 = r15, 3, r32		C r14 = rp + n + qxn
-	cmp.le		p6, p7 = 0, r36	;;
-	adds		r32 = -8, r14			C r32 = rp + n + qxn - 1
+	shladd		r14 = r15, 3, r32	C r14 = rp + n + qxn
+	cmp.le		p6, p7 = 0, r36
+	;;
+	adds		r32 = -8, r14		C r32 = rp + n + qxn - 1
    (p6)	br.cond.dpnt	.Lunnorm
 	cmp.eq		p6, p7 = 0, r35
    (p6)	br.cond.dpnt	.L179
-	shladd		r14 = r35, 3, r34	;;
+	shladd		r14 = r35, 3, r34
+	;;
 	adds		r14 = -8, r14
-	adds		r35 = -1, r35		;;
-	ld8		r38 = [r14]		;;
-	cmp.leu		p6, p7 = r36, r38	;;
+	adds		r35 = -1, r35
+	;;
+	ld8		r38 = [r14]
+	;;
+	cmp.leu		p6, p7 = r36, r38
+	;;
    (p6)	addl		r15 = 1, r0
-   (p7)	mov		r15 = r0		;;
+   (p7)	mov		r15 = r0
+	;;
 	st8		[r32] = r15, -8
   (p6)	sub		r38 = r38, r36
 
@@ -157,7 +172,8 @@ ifdef(`HAVE_ABI_32',
 	;;
 	shladd		r34 = r35, 3, r34
 .Lpn:
-	mov		r23 = 1			;;
+	mov		r23 = 1
+	;;
 	setf.sig	f6 = r8
 	setf.sig	f12 = r23
 	cmp.le		p6, p7 = 0, r35
@@ -165,10 +181,11 @@ ifdef(`HAVE_ABI_32',
    (p7)	br.cond.dpnt	.L435
 	setf.sig	f10 = r36
 	mov		ar.lc = r35
-	setf.sig	f7 = r38		;;
+	setf.sig	f7 = r38
+	;;
 	sub		r28 = -1, r36
 C Develop quotient limbs for normalized divisor
-.Loop1:		C 00			C q=r18 nh=r38/f7
+.Loop1:		C 00				C q=r18 nh=r38/f7
 	ld8		r20 = [r34], -8
 	xma.hu		f11 = f7, f6, f0
 	;;	C 04
@@ -220,59 +237,80 @@ C Develop quotient limbs for normalized divisor
 	mux1		r16 = r36, @rev
 	cmp.eq		p6, p7 = 0, r35
    (p6)	br.cond.dpnt	.L322
-	shladd		r34 = r35, 3, r34	;;
-	adds		r34 = -8, r34		;;
-	ld8		r39 = [r34]		;;
+	shladd		r34 = r35, 3, r34
+	;;
+	adds		r34 = -8, r34
+	;;
+	ld8		r39 = [r34]
+	;;
 	cmp.leu		p6, p7 = r36, r39
    (p6)	br.cond.dptk	.L322
-	adds		r34 = -8, r34		;;
-	mov		r38 = r39		;;
+	adds		r34 = -8, r34
+	;;
+	mov		r38 = r39
+	;;
 	cmp.ne		p6, p7 = 1, r15
-	st8		[r32] = r0, -8		;;
+	st8		[r32] = r0, -8
+	;;
    (p7)	mov		r8 = r38
    (p7)	br.cond.dpnt	.Lret
 	adds		r35 = -1, r35
 .L322:
-	sub		r14 = r0, r16		;;
-	or		r14 = r16, r14		;;
+	sub		r14 = r0, r16
+	;;
+	or		r14 = r16, r14
+	;;
 	mov		r16 = -8
-	czx1.l		r14 = r14		;;
-	shladd		r16 = r14, 3, r16	;;
-	shr.u		r14 = r36, r16		;;
-	cmp.geu		p6, p7 = 15, r14	;;
+	czx1.l		r14 = r14
+	;;
+	shladd		r16 = r14, 3, r16
+	;;
+	shr.u		r14 = r36, r16
+	;;
+	cmp.geu		p6, p7 = 15, r14
+	;;
    (p7)	shr.u		r14 = r14, 4
-   (p7)	adds		r16 = 4, r16		;;
-	cmp.geu		p6, p7 = 3, r14		;;
+   (p7)	adds		r16 = 4, r16
+	;;
+	cmp.geu		p6, p7 = 3, r14
+	;;
    (p7)	shr.u		r14 = r14, 2
-   (p7)	adds		r16 = 2, r16		;;
+   (p7)	adds		r16 = 2, r16
+	;;
 	tbit.nz		p6, p7 = r14, 1
-	mov		r14 = 63		;;
+	;;
 	.pred.rel "mutex",p6,p7
-  (p6)	sub		r40 = r14, r16, 1
-  (p7)	sub		r40 = r14, r16		;;
+  (p6)	sub		r40 = 62, r16
+  (p7)	sub		r40 = 63, r16
+	;;
 	shl		r45 = r36, r40
 	shl		r36 = r36, r40
 	shl		r38 = r38, r40
 	br.call.sptk.many b0 = mpn_invert_limb
 	;;
 .Lpu:
-	mov		r23 = 1			;;
+	mov		r23 = 1
+	;;
 	setf.sig	f6 = r8
 	setf.sig	f12 = r23
 	cmp.eq		p6, p7 = 0, r35
    (p6)	br.cond.dpnt	.L435
 	sub		r16 = 64, r40
-	adds		r35 = -2, r35		;;
+	adds		r35 = -2, r35
+	;;
 	ld8		r39 = [r34], -8
-	cmp.le		p6, p7 = 0, r35	;;
-	shr.u		r14 = r39, r16		;;
+	cmp.le		p6, p7 = 0, r35
+	;;
+	shr.u		r14 = r39, r16
+	;;
 	or		r38 = r14, r38
    (p7)	br.cond.dpnt	.Lend3
 	;;
 	mov		r22 = r16
 	setf.sig	f10 = r36
 	setf.sig	f7 = r38
-	mov		ar.lc = r35		;;
+	mov		ar.lc = r35
+	;;
 C Develop quotient limbs for unnormalized divisor
 .Loop3:
 	ld8		r14 = [r34], -8
