@@ -22,7 +22,19 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C P6: 6.35 cycles/limb (at 16 limbs/loop).
+C                           cycles/limb
+C P5:                           
+C P6 model 0-8,10-12)            6.44
+C P6 model 9  (Banias)          
+C P6 model 13 (Dothan)           6.11
+C P4 model 0  (Willamette)      
+C P4 model 1  (?)               
+C P4 model 2  (Northwood)       
+C P4 model 3  (Prescott)        
+C P4 model 4  (Nocona)          
+C K6:                           
+C K7:                           
+C K8:                           
 
 
 dnl  P6 UNROLL_COUNT cycles/limb

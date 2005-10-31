@@ -22,9 +22,19 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C K6: 7.65 to 8.5 cycles/limb (at 16 limbs/loop and depending on the data),
-C     PIC adds about 6 cycles at the start.
-
+C                           cycles/limb
+C P5:                           
+C P6 model 0-8,10-12)            5.94
+C P6 model 9  (Banias)          
+C P6 model 13 (Dothan)           5.57
+C P4 model 0  (Willamette)      
+C P4 model 1  (?)               
+C P4 model 2  (Northwood)       
+C P4 model 3  (Prescott)        
+C P4 model 4  (Nocona)          
+C K6:                           7.65-8.5 (data dependent)
+C K7:                           
+C K8:                           
 
 
 dnl  K6:           large multpliers  small multpliers

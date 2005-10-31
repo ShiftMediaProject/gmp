@@ -24,12 +24,19 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C     cycles/limb
-C P5:   14.75
-C P6:    7.5
-C K6:   12.5
-C K7:    5.25
-C P4:   24
+C                           cycles/limb
+C P5:                           14.75
+C P6 model 0-8,10-12)            7.5
+C P6 model 9  (Banias)           
+C P6 model 13 (Dothan)           6.75
+C P4 model 0  (Willamette)      24.0
+C P4 model 1  (?)               24.0
+C P4 model 2  (Northwood)       24.0
+C P4 model 3  (Prescott)         
+C P4 model 4  (Nocona)           
+C K6:                           12.5
+C K7:                            5.25
+C K8:                            
 
 
 ifdef(`OPERATION_addmul_1',`

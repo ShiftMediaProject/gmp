@@ -23,8 +23,13 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C P4 Willamette/Northwood: 5.5 cycles/limb, fluctuating
-C P4 Prescott:		   6.0 cycles/limb
+C P3 model 9  (Banias)          ?.?
+C P3 model 13 (Dothan)          5.8
+C P4 model 0  (Willamette)      5.5
+C P4 model 1  (?)               5.5
+C P4 model 2  (Northwood)       5.5
+C P4 model 3  (Prescott)        6.0
+C P4 model 4  (Nocona)          
 
 C mp_limb_t mpn_addmul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                         mp_limb_t multiplier);

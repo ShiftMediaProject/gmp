@@ -22,9 +22,14 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
-
-C P4: 4 cycles/limb src!=dst, 6 cycles/limb src==dst
-
+C                           src != dst      src == dst
+C P6 model 9  (Banias)          ?.?             
+C P6 model 13 (Dothan)          4.75            4.75
+C P4 model 0  (Willamette)      4.0             6.0
+C P4 model 1  (?)               4.0             6.0
+C P4 model 2  (Northwood)       4.0             6.0
+C P4 model 3  (Prescott)        ?.?             ?.?
+C P4 model 4  (Nocona)          ?.?             ?.?
 
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                      mp_limb_t multiplier);
