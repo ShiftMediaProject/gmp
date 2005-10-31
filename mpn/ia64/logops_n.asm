@@ -90,7 +90,7 @@ ifdef(`HAVE_ABI_32',
 {.mmi
 	and		r14 = 3, n		C			M I
 	cmp.lt		p15, p14 = 4, n		C			M I
-	shr.u		n = n, 2		C			I
+	shr.u		n = n, 2		C			I0
 	;;
 }
 {.mmi
