@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-10-31  Torbjorn Granlund  <tege@swox.com>
+
+	* doc/gmp.texi: Update many URLs and email addresses.
+
+	* gmp-h.in (_GMP_H_HAVE_FILE): Check also _STDIO_H_INCLUDED.
+
 2005-10-26  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/tuneup.c (tune_mullow): Update param.max_size for each threshold
