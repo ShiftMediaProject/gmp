@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_mul_basecase -- multiply two mpn numbers.
 
-dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -28,8 +28,6 @@ C TODO
 C  * Microoptimize outside of loops for speed and better ALIGN-ment
 C  * Perhaps reorg .Lc code snippets.
 C  * Consider changing offsets, thus avoiding the initial leaq's
-C  * Write mpn_redc_1 based on this code.  It will be smaller, since
-C    no mul_1 loops will be needed
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
