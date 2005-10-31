@@ -23,10 +23,13 @@ include(`../config.m4')
 
 
 C                cycles/limb
-C 604e:		   6.0
-C 750:		   6.0-13.0, depending on divisor
-C 7400:		   6.0-13.0, depending on divisor
-C power5:	   12.0
+C 603e:             ?
+C 604e:             6.0
+C 75x (G3):         6.0-13.0, depending on divisor
+C 7400,7410 (G4):   6.0-13.0, depending on divisor
+C 744x,745x (G4+):  8.0-10.0
+C power4/ppc970:   14.75
+C power5:          12.0
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,

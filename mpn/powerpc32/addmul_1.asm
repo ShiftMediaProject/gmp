@@ -29,7 +29,8 @@ C 604e:            6.75
 C 75x (G3):        8.7-14.3
 C 7400,7410 (G4):  8.7-14.3
 C 744x,745x (G4+): 9.5
-C power4/ppc970:   6.250
+C power4/ppc970:   6.25
+C power5:          6.25
 
 C INPUT PARAMETERS
 C rp	r3

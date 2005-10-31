@@ -30,6 +30,7 @@ C 7400,7410 (G4):  3.0
 C 7445,7455 (G4+): 2.5
 C 7447,7457 (G4+): 2.25
 C power4/ppc970:   2.5
+C power5:          2.5
 
 C INPUT PARAMETERS
 C rp	r3

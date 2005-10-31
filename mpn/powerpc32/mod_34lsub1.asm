@@ -22,9 +22,10 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C      cycles/limb
-C 750:     3.0
-C 7400:    3.0
+C                cycles/limb
+C 750:             3.0
+C 7400:            3.0
+C power5:          2.5
 
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr src, mp_size_t size)
