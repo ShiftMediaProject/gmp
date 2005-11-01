@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-11-02  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/reuse.c: Test mpz_rootrem.
+
 2005-10-31  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/pprime_p.c (mpz_probab_prime_p): Considerably limit trial
