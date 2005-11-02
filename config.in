@@ -2,8 +2,8 @@
 
 /*
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
-Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -508,6 +508,10 @@ MA 02111-1307, USA.
 #ifndef __cplusplus
 #undef inline
 #endif
+
+/* Define to equivalent of C99 restrict keyword, or to nothing if this is not
+   supported. Do not define if restrict is supported directly. */
+#undef restrict
 
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */
