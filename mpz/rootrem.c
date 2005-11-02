@@ -1,7 +1,7 @@
 /* mpz_rootrem(root, rem, u, nth) --  Set ROOT to floor(U^(1/nth)) and
    set REM to the remainder.
 
-Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,7 +20,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>  /* for NULL */
+#include <stdio.h>		/* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -29,8 +29,8 @@ mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
 {
   mp_ptr rootp, up, remp;
   mp_size_t us, un, rootn, remn;
+  TMP_DECL;
 
-  up = PTR(u);
   us = SIZ(u);
 
   /* even roots of negatives provoke an exception */
@@ -53,18 +53,20 @@ mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
   un = ABS (us);
   rootn = (un - 1) / nth + 1;
 
-  if (root != NULL)
-    {
-      rootp = MPZ_REALLOC (root, rootn);
-      up = PTR(u);
-    }
-  else
-    {
-      rootp = __GMP_ALLOCATE_FUNC_LIMBS (rootn);
-    }
+  TMP_MARK;
 
-  MPZ_REALLOC (rem, un);
-  remp = PTR(rem);
+  /* FIXME: Perhaps disallow root == NULL */
+  if (root != NULL && u != root)
+    rootp = MPZ_REALLOC (root, rootn);
+  else
+    rootp = TMP_ALLOC_LIMBS (rootn);
+
+  if (u != rem)
+    remp = MPZ_REALLOC (rem, un);
+  else
+    remp = TMP_ALLOC_LIMBS (un);
+
+  up = PTR(u);
 
   if (nth == 1)
     {
@@ -73,13 +75,19 @@ mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
     }
   else
     {
-      remn = mpn_rootrem (rootp, remp, up, un, nth);
+      remn = mpn_rootrem (rootp, remp, up, un, (mp_limb_t) nth);
     }
 
   if (root != NULL)
-    SIZ(root) = us >= 0 ? rootn : -rootn;
-  else
-    __GMP_FREE_FUNC_LIMBS (rootp, rootn);
+    {
+      SIZ(root) = us >= 0 ? rootn : -rootn;
+      if (u == root)
+	MPN_COPY (up, rootp, rootn);
+      else if (u == rem)
+	MPN_COPY (up, remp, remn);
+    }
 
   SIZ(rem) = remn;
+  TMP_FREE;
 }
+
