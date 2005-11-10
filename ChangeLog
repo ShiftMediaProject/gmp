@@ -18,7 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-11-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_fft.c: Inline mpn_fft_mul_2exp_modF,
+	mpn_fft_add_modF and mpn_fft_normalize.
+
 2005-11-02  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/reuse.c: Increase operand size, decrease # of reps.
 
 	* mpz/rootrem.c: Adapt to new mpn_rootrem.
 	* mpz/root.c: Likewise.
