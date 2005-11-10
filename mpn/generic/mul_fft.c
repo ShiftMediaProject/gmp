@@ -76,7 +76,7 @@ FFT_TABLE_ATTRS mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE] = {
 static int mpn_mul_fft_internal
 _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_ptr *,
 	 mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_size_t, int **, mp_ptr,
-         int));
+	 int));
 
 
 /* Find the best k to use for a mod 2^(m*GMP_NUMB_BITS)+1 FFT for m >= n.
@@ -189,20 +189,20 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, int e, mp_size_t n)
   if (negate)
     {
       /* r[0..d-1]  <-- lshift(a[n-d]..a[n-1], sh)
-         r[d..n-1]  <-- -lshift(a[0]..a[n-d-1],  sh) */
+	 r[d..n-1]  <-- -lshift(a[0]..a[n-d-1],  sh) */
       if (sh)
-        {
-          /* no out shift below since a[n] <= 1 */
-          mpn_lshift (r, a + n - d, d + 1, sh);
-          rd = r[d];
-          cc = mpn_lshift_com (r + d, a, n - d, sh);
-        }
+	{
+	  /* no out shift below since a[n] <= 1 */
+	  mpn_lshift (r, a + n - d, d + 1, sh);
+	  rd = r[d];
+	  cc = mpn_lshift_com (r + d, a, n - d, sh);
+	}
       else
-        {
-          MPN_COPY (r, a + n - d, d);
-          rd = a[n];
-          mpn_com_n (r + d, a, n - d);
-        }
+	{
+	  MPN_COPY (r, a + n - d, d);
+	  rd = a[n];
+	  mpn_com_n (r + d, a, n - d);
+	}
 
       /* add cc to r[0], and add rd to r[d] */
 
@@ -211,7 +211,7 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, int e, mp_size_t n)
       r[n] = 0;
       /* cc < 2^sh <= 2^(GMP_NUMB_BITS-1) thus no overflow here */
       cc ++; /* warning: don't put this in the mpn_incr_u call,
-                since it may be a macro and evaluate its arg. two times */
+		since it may be a macro and evaluate its arg. two times */
       mpn_incr_u (r, cc);
 
       rd ++;
@@ -225,7 +225,7 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, int e, mp_size_t n)
 
   /* if negate=0,
         r[0..d-1]  <-- -lshift(a[n-d]..a[n-1], sh)
-        r[d..n-1]  <-- lshift(a[0]..a[n-d-1],  sh) 
+        r[d..n-1]  <-- lshift(a[0]..a[n-d-1],  sh)
   */
   if (sh != 0)
     {
@@ -250,7 +250,7 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, int e, mp_size_t n)
     {
       /* now add 1 in r[0], subtract 1 in r[d] */
       if (cc-- == 0) /* then add 1 to r[0] */
-        cc = mpn_add_1 (r, r, n, CNST_LIMB(1));
+	cc = mpn_add_1 (r, r, n, CNST_LIMB(1));
       cc = mpn_sub_1 (r, r, d, cc) + CNST_LIMB(1);
       /* add 1 to cc instead of rd since rd might overflow */
     }
@@ -267,7 +267,7 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, int e, mp_size_t n)
 /* r <- a+b mod 2^(n*GMP_NUMB_BITS)+1.
    Assumes a and b are semi-normalized.
 */
-static void
+static inline void
 mpn_fft_add_modF (mp_ptr r, mp_srcptr a, mp_srcptr b, int n)
 {
   r[n] = a[n] + b[n] + mpn_add_n (r, a, b, n);
@@ -284,7 +284,7 @@ mpn_fft_add_modF (mp_ptr r, mp_srcptr a, mp_srcptr b, int n)
 /* r <- a-b mod 2^(n*GMP_NUMB_BITS)+1.
    Assumes a and b are semi-normalized.
 */
-static void
+static inline void
 mpn_fft_sub_modF (mp_ptr r, mp_srcptr a, mp_srcptr b, int n)
 {
   mp_limb_t c;
@@ -314,9 +314,9 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
       cy = mpn_sub_n (Ap[inc], tp, Ap[inc], n + 1);
 #endif
       if (Ap[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
-        Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
+	Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
       if (cy) /* Ap[inc][n] can be -1 or -2 */
-        Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, ~Ap[inc][n] + CNST_LIMB(1));
+	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, ~Ap[inc][n] + CNST_LIMB(1));
     }
   else
     {
@@ -333,12 +333,12 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
 	 A[(2j+1)inc] <- A[2*j*inc] + omega^l[k][(2j+1)inc] A[(2j+1)inc] */
       for (j = 0; j < K / 2; j++, lk += 2, Ap += 2 * inc)
 	{
-          /* Ap[inc] <- Ap[0] + Ap[inc] * 2^(lk[1] * omega)
-             Ap[0]   <- Ap[0] + Ap[inc] * 2^(lk[0] * omega) */
-          mpn_fft_mul_2exp_modF (tp,  Ap[inc], lk[1] * omega, n);
-          mpn_fft_mul_2exp_modF (tmp, Ap[inc], lk[0] * omega, n);
-          mpn_fft_add_modF      (Ap[inc], Ap[0], tp, n);
-          mpn_fft_add_modF      (Ap[0], Ap[0], tmp, n);
+	  /* Ap[inc] <- Ap[0] + Ap[inc] * 2^(lk[1] * omega)
+	     Ap[0]   <- Ap[0] + Ap[inc] * 2^(lk[0] * omega) */
+	  mpn_fft_mul_2exp_modF (tp,  Ap[inc], lk[1] * omega, n);
+	  mpn_fft_mul_2exp_modF (tmp, Ap[inc], lk[0] * omega, n);
+	  mpn_fft_add_modF	(Ap[inc], Ap[0], tp, n);
+	  mpn_fft_add_modF	(Ap[0], Ap[0], tmp, n);
 	}
       TMP_FREE;
     }
@@ -352,7 +352,7 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
 */
 static inline void
 mpn_fft_butterfly (mp_ptr A0, mp_ptr A1, mp_ptr B0, mp_ptr B1, int e0, int e1,
-                   mp_ptr t0, mp_ptr t1, mp_size_t n)
+		   mp_ptr t0, mp_ptr t1, mp_size_t n)
 {
   int dif;
 
@@ -382,7 +382,7 @@ mpn_fft_butterfly (mp_ptr A0, mp_ptr A1, mp_ptr B0, mp_ptr B1, int e0, int e1,
 
 /* input: A[0] ... A[inc*(K-1)] are residues mod 2^N+1 where
 	  N=n*GMP_NUMB_BITS, and 2^omega is a primitive root mod 2^N+1
-   output: A[inc*l[k][i]] <- \sum (2^omega)^(ij) A[inc*j] mod 2^N+1 
+   output: A[inc*l[k][i]] <- \sum (2^omega)^(ij) A[inc*j] mod 2^N+1
    tp must have space for 2*(n+1) limbs.
 */
 
@@ -405,13 +405,13 @@ mpn_fft_fft (mp_ptr *Ap, mp_ptr *Bp, mp_size_t K, int **ll,
       cb = mpn_sub_n (Bp[inc], tp, Bp[inc], n + 1);
 #endif
       if (Ap[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
-        Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
+	Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
       if (ca) /* Ap[inc][n] can be -1 or -2 */
-        Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, ~Ap[inc][n] + CNST_LIMB(1));
+	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, ~Ap[inc][n] + CNST_LIMB(1));
       if (Bp[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
-        Bp[0][n] = CNST_LIMB(1) - mpn_sub_1 (Bp[0], Bp[0], n, Bp[0][n] - CNST_LIMB(1));
+	Bp[0][n] = CNST_LIMB(1) - mpn_sub_1 (Bp[0], Bp[0], n, Bp[0][n] - CNST_LIMB(1));
       if (cb) /* Bp[inc][n] can be -1 or -2 */
-        Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, ~Bp[inc][n] + CNST_LIMB(1));
+	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, ~Bp[inc][n] + CNST_LIMB(1));
     }
   else
     {
@@ -425,8 +425,8 @@ mpn_fft_fft (mp_ptr *Ap, mp_ptr *Bp, mp_size_t K, int **ll,
       /* A[2*j*inc]   <- A[2*j*inc] + omega^l[k][2*j*inc] A[(2j+1)inc]
 	 A[(2j+1)inc] <- A[2*j*inc] + omega^l[k][(2j+1)inc] A[(2j+1)inc] */
       for (j = 0; j < K / 2; j++, lk += 2, Ap += 2 * inc, Bp += 2 * inc)
-        mpn_fft_butterfly (Ap[0], Ap[inc], Bp[0], Bp[inc], (lk[0] * omega) % N,
-                           (lk[1] * omega) % N, tmp, tp, n);
+	mpn_fft_butterfly (Ap[0], Ap[inc], Bp[0], Bp[inc], (lk[0] * omega) % N,
+			   (lk[1] * omega) % N, tmp, tp, n);
     }
 }
 
@@ -438,12 +438,13 @@ mpn_fft_fft (mp_ptr *Ap, mp_ptr *Bp, mp_size_t K, int **ll,
    borrow and the limbs must be zeroed out again.  This will occur very
    infrequently.  */
 
-static void
+static inline void
 mpn_fft_normalize (mp_ptr ap, mp_size_t n)
 {
-  if (ap[n])
+  if (ap[n] != 0)
     {
-      if ((ap[n] = mpn_sub_1 (ap, ap, n, CNST_LIMB(1))))
+      ap[n] = mpn_sub_1 (ap, ap, n, CNST_LIMB(1));
+      if (ap[n] != 0)
 	MPN_ZERO (ap, n);
     }
 }
@@ -476,16 +477,16 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 
       /* we should ensure that nprime2 is a multiple of the next K */
       if (nprime2 >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
-        {
-          unsigned long K3;
-          while (nprime2 % (K3 = 1 << mpn_fft_best_k (nprime2, sqr)))
-            {
-              nprime2 = ((nprime2 + K3 - 1) / K3) * K3;
-              Nprime2 = nprime2 * BITS_PER_MP_LIMB;
-              /* warning: since nprime2 changed, K3 may change too! */
-            }
-          ASSERT(nprime2 % K3 == 0);
-        }
+	{
+	  unsigned long K3;
+	  while (nprime2 % (K3 = 1 << mpn_fft_best_k (nprime2, sqr)))
+	    {
+	      nprime2 = ((nprime2 + K3 - 1) / K3) * K3;
+	      Nprime2 = nprime2 * BITS_PER_MP_LIMB;
+	      /* warning: since nprime2 changed, K3 may change too! */
+	    }
+	  ASSERT(nprime2 % K3 == 0);
+	}
       ASSERT_ALWAYS(nprime2 < n); /* otherwise we'll loop */
 
       Mp2 = Nprime2 / K2;
@@ -495,7 +496,7 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
       A = TMP_ALLOC_LIMBS (2 * K2 * (nprime2 + 1));
       T = TMP_ALLOC_LIMBS (2 * (nprime2 + 1));
       B = A + K2 * (nprime2 + 1);
-      _fft_l = TMP_ALLOC_TYPE (k + 1, int*);
+      _fft_l = TMP_ALLOC_TYPE (k + 1, int *);
       for (i = 0; i <= k; i++)
 	_fft_l[i] = TMP_ALLOC_TYPE (1<<i, int);
       mpn_fft_initl (_fft_l, k);
@@ -506,7 +507,7 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 	{
 	  mpn_fft_normalize (*ap, n);
 	  if (!sqr)
-            mpn_fft_normalize (*bp, n);
+	    mpn_fft_normalize (*bp, n);
 	  mpn_mul_fft_internal (*ap, *ap, *bp, n, k, K2, Ap, Bp, A, B, nprime2,
 			       l, Mp2, _fft_l, T, 1);
 	}
@@ -565,9 +566,9 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
       cy = mpn_sub_n (Ap[1], tp, Ap[1], n + 1);
 #endif
       if (Ap[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
-        Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
+	Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
       if (cy) /* Ap[1][n] can be -1 or -2 */
-        Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, ~Ap[1][n] + CNST_LIMB(1));
+	Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, ~Ap[1][n] + CNST_LIMB(1));
     }
   else
     {
@@ -583,13 +584,13 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
 	 A[j+K/2] <- A[j] + omega^(j+K/2) A[j+K/2] */
       for (j = 0; j < K2; j++, Ap++, Bp++)
 	{
-          /* Bp[0] <- Ap[0] + Bp[0] * 2^((j + K2) * omega)
-             Ap[0] <- Ap[0] + Bp[0] * 2^(j * omega)
-          */
-          mpn_fft_mul_2exp_modF (tp,  Bp[0], (j + K2) * omega, n);
-          mpn_fft_mul_2exp_modF (tmp, Bp[0], j * omega, n);
-          mpn_fft_add_modF      (Bp[0], Ap[0], tp, n);
-          mpn_fft_add_modF      (Ap[0], Ap[0], tmp, n);
+	  /* Bp[0] <- Ap[0] + Bp[0] * 2^((j + K2) * omega)
+	     Ap[0] <- Ap[0] + Bp[0] * 2^(j * omega)
+	  */
+	  mpn_fft_mul_2exp_modF (tp,  Bp[0], (j + K2) * omega, n);
+	  mpn_fft_mul_2exp_modF (tmp, Bp[0], j * omega, n);
+	  mpn_fft_add_modF	(Bp[0], Ap[0], tp, n);
+	  mpn_fft_add_modF	(Ap[0], Ap[0], tmp, n);
 	}
       TMP_FREE;
     }
@@ -650,14 +651,14 @@ mpn_fft_norm_modF (mp_ptr rp, mp_size_t n, mp_ptr ap, mp_size_t an)
 }
 
 /* store in A[0..nprime] the first M bits from {n, nl},
-   in A[nprime+1..] the following M bits, ... 
+   in A[nprime+1..] the following M bits, ...
    Assumes M is a multiple of GMP_NUMB_BITS (M = l * GMP_NUMB_BITS).
    T must have space for at least (nprime + 1) limbs.
    We must have nl <= 2*K*l.
 */
 static void
 mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
-                       mp_size_t nl, int l, int Mp, mp_ptr T)
+		       mp_size_t nl, int l, int Mp, mp_ptr T)
 {
   int i, j, cc;
   mp_ptr tmp;
@@ -690,11 +691,11 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
 	  nl -= j;
 	  MPN_COPY (T, n, j);
 	  MPN_ZERO (T + j, nprime + 1 - j);
-          n += l;
+	  n += l;
 	  mpn_fft_mul_2exp_modF (A, T, i * Mp, nprime);
 	}
       else
-        MPN_ZERO (A, nprime + 1);
+	MPN_ZERO (A, nprime + 1);
       A += nprime + 1;
     }
   ASSERT_ALWAYS (nl == 0);
@@ -706,7 +707,7 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
    op must have space for pl+1 limbs if rec=1 (and pl limbs if rec=0).
    One must have pl = mpn_fft_next_size (pl, k).
    T must have space for 2 * (nprime + 1) limbs.
-   
+
    If rec=0, then store only the pl low bits of the result, and return
    the out carry.
 */
@@ -733,7 +734,7 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
     {
       mpn_mul_fft_decompose (A, Ap, K, nprime, n, K * l + 1, l, Mp, T);
       if (!sqr)
-        mpn_mul_fft_decompose (B, Bp, K, nprime, m, K * l + 1, l, Mp, T);
+	mpn_mul_fft_decompose (B, Bp, K, nprime, m, K * l + 1, l, Mp, T);
     }
 
   /* direct fft's */
@@ -770,7 +771,7 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
       j = (K - i) % K;
       if (mpn_add_n (n, n, Bp[j], nprime + 1))
 	sqr += mpn_add_1 (n + nprime + 1, n + nprime + 1,
-                          pla - sh - nprime - 1, CNST_LIMB(1));
+			  pla - sh - nprime - 1, CNST_LIMB(1));
       T[2 * l] = i + 1; /* T = (i + 1)*2^(2*M) */
       if (mpn_cmp (Bp[j], T, nprime + 1) > 0)
 	{ /* subtract 2^N'+1 */
@@ -846,7 +847,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
 
   TMP_MARK;
   N = pl * GMP_NUMB_BITS;
-  _fft_l = TMP_ALLOC_TYPE (k + 1, int*);
+  _fft_l = TMP_ALLOC_TYPE (k + 1, int *);
   for (i = 0; i <= k; i++)
     _fft_l[i] = TMP_ALLOC_TYPE (1 << i, int);
   mpn_fft_initl (_fft_l, k);
@@ -865,11 +866,11 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
     {
       unsigned long K2;
       while (nprime % (K2 = 1 << mpn_fft_best_k (nprime, sqr)))
-        {
-          nprime = ((nprime + K2 - 1) / K2) * K2;
-          Nprime = nprime * BITS_PER_MP_LIMB;
-          /* warning: since nprime changed, K2 may change too! */
-        }
+	{
+	  nprime = ((nprime + K2 - 1) / K2) * K2;
+	  Nprime = nprime * BITS_PER_MP_LIMB;
+	  /* warning: since nprime changed, K2 may change too! */
+	}
       TRACE (printf ("new maxLK=%d, Np=%d, np=%d\n", maxLK, Nprime, nprime));
       ASSERT(nprime % K2 == 0);
     }
@@ -932,14 +933,14 @@ mpn_mul_fft_full (mp_ptr op,
       k2 = mpn_fft_best_k (pl2, sqr); /* best fft size for pl2 limbs */
       pl2 = mpn_fft_next_size (pl2, k2);
       pl3 = 3 * pl2 / 2; /* since k>=FFT_FIRST_K=4, pl2 is a multiple of 2^4,
-                            thus pl2 / 2 is exact */
+			    thus pl2 / 2 is exact */
       /*      k3 = mpn_fft_best_k (pl3, sqr); */
       k3 = k2;
     }
   while (mpn_fft_next_size (pl3, k3) != pl3);
 
   TRACE (printf ("mpn_mul_fft_full nl=%ld ml=%ld -> pl2=%ld pl3=%ld k=%d\n",
-                 nl, ml, pl2, pl3, k2));
+		 nl, ml, pl2, pl3, k2));
 
   ASSERT_ALWAYS(pl3 <= pl);
   mpn_mul_fft (op, pl3, n, nl, m, ml, k3);     /* mu */
