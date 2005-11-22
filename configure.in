@@ -1161,7 +1161,7 @@ case $host in
           # Solaris 6 and earlier cannot run ABI=64 since it doesn't save
           # registers properly, so ABI=32 is left as the only choice.
           #
-          [*-*-solaris2.[0-6]*]) ;;
+          [*-*-solaris2.[0-6] | *-*-solaris2.[0-6].*]) ;;
 
           # BSD sparc64 ports are 64-bit-only systems, so ABI=64 is the only
           # choice.  In fact they need no special compiler flags, gcc -m64
