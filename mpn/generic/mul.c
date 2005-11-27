@@ -129,6 +129,12 @@ mpn_mul (mp_ptr prodp,
       return prodp[un + vn - 1];
     }
 
+  if (ABOVE_THRESHOLD (vn, MUL_FFT_THRESHOLD))
+    {
+      mpn_mul_fft_full (prodp, up, un, vp, vn);
+      return prodp[un + vn - 1];
+    }
+
   mpn_mul_n (prodp, up, vp, vn);
   if (un != vn)
     { mp_limb_t t;
