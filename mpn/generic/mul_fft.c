@@ -660,24 +660,54 @@ static void
 mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
 		       mp_size_t nl, int l, int Mp, mp_ptr T)
 {
-  int i, j, cc;
+  int i, j;
   mp_ptr tmp;
   mp_size_t Kl = K * l;
   TMP_DECL;
   TMP_MARK;
 
-  ASSERT_ALWAYS (nl <= 2 * Kl);
   if (nl > Kl) /* normalize {n, nl} mod 2^(Kl*GMP_NUMB_BITS)+1 */
     {
-      int dif = nl - Kl;
+      mp_size_t dif = nl - Kl;
+      mp_limb_signed_t cy;
 
-      /* FIXME: we could subtract the "high" part from the low part in place,
-	 while doing the decomposition below */
       tmp = TMP_ALLOC_LIMBS(Kl + 1);
-      MPN_COPY(tmp, n, Kl);
-      cc = mpn_sub_n (tmp, tmp, n + Kl, dif);
-      cc = mpn_sub_1 (tmp + dif, tmp + dif, Kl - dif, (mp_limb_t) cc);
-      tmp[Kl] = mpn_add_1 (tmp, tmp, Kl, (mp_limb_t) cc);
+
+      if (dif > Kl)
+	{
+	  int subp = 0;
+
+	  cy = mpn_sub_n (tmp, n, n + Kl, Kl);
+	  n += 2 * Kl;
+	  dif -= Kl;
+
+	  /* now dif > 0 */
+	  while (dif > Kl)
+	    {
+	      if (subp)
+		cy += mpn_sub_n (tmp, tmp, n, Kl);
+	      else
+		cy -= mpn_add_n (tmp, tmp, n, Kl);
+	      subp ^= 1;
+	      n += Kl;
+	      dif -= Kl;
+	    }
+	  /* now dif <= Kl */
+	  if (subp)
+	    cy += mpn_sub (tmp, tmp, Kl, n, dif);
+	  else
+	    cy -= mpn_add (tmp, tmp, Kl, n, dif);
+	  if (cy >= 0)
+	    cy = mpn_add_1 (tmp, tmp, Kl, cy);
+	  else
+	    cy = mpn_sub_1 (tmp, tmp, Kl, -cy);
+	}
+      else /* dif <= Kl, i.e. nl <= 2 * Kl */
+	{
+	  cy = mpn_sub (tmp, n, Kl, n + Kl, dif);
+	  cy = mpn_add_1 (tmp, tmp, Kl, cy);
+	}
+      tmp[Kl] = cy;
       nl = Kl + 1;
       n = tmp;
     }
