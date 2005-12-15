@@ -190,7 +190,7 @@ setup_error_handler (void)
   sigemptyset (&(act.sa_mask));
 #define SIGNAL(sig)  sigaction (sig, &act, NULL)
 #else
-  struct { int sa_flags } act;
+  struct { int sa_flags; } act;
 #define SIGNAL(sig)  signal (sig, cleanup_and_exit)
 #endif
   act.sa_flags = 0;
