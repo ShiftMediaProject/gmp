@@ -206,7 +206,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 
 	       2) Is the most significant limb from the remainder < p, where p
 		  is the product of the most significant limb from the quotient
-		  and the next(d).  (Next(d) denotes the next ignored limb from
+		  and the next(d)?  (Next(d) denotes the next ignored limb from
 		  the denominator.)  If it is, decrement qest, and adjust the
 		  remainder accordingly.
 
@@ -310,7 +310,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	       it catches all cases where the quotient is 2 too large.  */
 	    {
 	      mp_limb_t dl, x;
-	      mp_limb_t h, l;
+	      mp_limb_t h, dummy;
 
 	      if (in - 2 < 0)
 		dl = 0;
@@ -324,8 +324,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      if (cnt != 0)
 		x |= dl >> (GMP_NUMB_BITS - cnt);
 #endif
-	      umul_ppmm (h, l, x, qp[qn - 1] << GMP_NAIL_BITS);
-	      l >>= GMP_NAIL_BITS;
+	      umul_ppmm (h, dummy, x, qp[qn - 1] << GMP_NAIL_BITS);
 
 	      if (n2p[qn - 1] < h)
 		{
