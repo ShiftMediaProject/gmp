@@ -111,7 +111,8 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
   else
     {
       /* one alloc with a conditionalized size, for efficiency */
-      remp = TMP_ALLOC_LIMBS (dsize + (zeros > 0 ? tsize : 0));
+      mp_size_t size = dsize + (zeros > 0 ? tsize : 0);
+      remp = TMP_ALLOC_LIMBS (size);
       tp = remp + dsize;
     }
 
