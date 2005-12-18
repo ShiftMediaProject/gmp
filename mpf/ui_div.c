@@ -77,7 +77,8 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   else
     {
       /* one alloc with calculated size, for efficiency */
-      remp = TMP_ALLOC_LIMBS (vsize + tsize + (rp == vp ? vsize : 0));
+      mp_size_t size = vsize + tsize + (rp == vp ? vsize : 0);
+      remp = TMP_ALLOC_LIMBS (size);
       tp = remp + vsize;
       new_vp = tp + tsize;
     }
