@@ -24,7 +24,7 @@ include(`../config.m4')
 
 
 C		    cycles/limb
-C Hammer:		3.75
+C Hammer:		3.5
 C Prescott/Nocona:	21-23 (fluctuating due to w/c problems)
 
 
@@ -36,52 +36,48 @@ C vl	rcx
 
 	TEXT
 	ALIGN(16)
-	.byte	0x66, 0x90, 0x66, 0x90, 0x66, 0x90, 0x66, 0x90
+	.byte	0,0,0			C				      3
 ASM_START()
 PROLOGUE(mpn_submul_1)
-	pushq	%r12			C				      2
 	pushq	%rbx			C				      1
-
-	movq	%rdx, %rbx
-	xorq	%r8, %r8		C clear carry limb		      3
-	xorq	%r12, %r12		C maintain r12 = 0 FIXME: don't!      3
-	subq	$4, %rbx
-	jb	.Lend
-	.byte	0x66, 0x90, 0x66, 0x90, 0x66, 0x90
+	movq	%rdx, %rbx		C				      3
+	xorl	%r8d, %r8d		C clear carry limb		      3
+	subq	$4, %rbx		C				      4
+	jb	.Lend			C				      2
 .Loop:
 	movq	(%rsi), %rax		C				      3
 	mulq	%rcx			C				      3
-	movq	%r12, %r9		C				      3
+	xorl	%r9d, %r9d		C				      3
 	addq	%rax, %r8		C				      3
 	adcq	%rdx, %r9		C				      3
 
 	movq	8(%rsi), %rax		C				      4
 	mulq	%rcx			C				      3
-	movq	%r12, %r10		C				      3
+	xorl	%r10d, %r10d		C				      3
 	addq	%rax, %r9		C				      3
 	adcq	%rdx, %r10		C				      3
 
 	movq	16(%rsi), %rax		C				      4
 	mulq	%rcx			C				      3
-	movq	%r12, %r11		C				      3
+	xorl	%r11d, %r11d		C				      3
 	addq	%rax, %r10		C				      3
 	adcq	%rdx, %r11		C				      3
 
 	movq	24(%rsi), %rax		C				      4
+	addq	$32, %rsi		C				      4
 	mulq	%rcx			C				      3
 	addq	%rax, %r11		C				      3
-	adcq	%r12, %rdx		C				      3
+	adcq	$0, %rdx		C				      4
 
 	subq	%r8, (%rdi)		C				      3
 	sbbq	%r9, 8(%rdi)		C				      4
 	sbbq	%r10, 16(%rdi)		C				      4
 	sbbq	%r11, 24(%rdi)		C				      4
 
-	movq	%r12, %r8		C				      3
-	adcq	%rdx, %r8		C				      3
+	movq	%rdx, %r8		C				      3
+	adcq	$0,%r8			C				      4
 
-	leaq	32(%rsi), %rsi		C				      4
-	leaq	32(%rdi), %rdi		C				      4
+	addq	$32, %rdi		C				      4
 	subq	$4, %rbx		C				      4
 	jae	.Loop			C				      2
 
@@ -90,12 +86,11 @@ PROLOGUE(mpn_submul_1)
 
 	movq	%r8, %rax		C				      3
 	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 
 .Lend:	movq	(%rsi), %rax		C				      3
 	mulq	%rcx			C				      3
-	movq	%r12, %r9		C				      3
+	xorl	%r9d, %r9d		C				      3
 	addq	%rax, %r8		C				      3
 	adcq	%rdx, %r9		C				      3
 
@@ -103,15 +98,14 @@ PROLOGUE(mpn_submul_1)
 	jne	.L1			C				      2
 
 	subq	%r8, (%rdi)		C				      3
-	adcq	%r12, %r9		C				      3
+	adcq	$0, %r9			C				      4
 	movq	%r9, %rax		C				      3
 	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 
 .L1:	movq	8(%rsi), %rax		C				      4
 	mulq	%rcx			C				      3
-	movq	%r12, %r10		C				      3
+	xorl	%r10d, %r10d		C				      3
 	addq	%rax, %r9		C				      3
 	adcq	%rdx, %r10		C				      3
 
@@ -120,24 +114,22 @@ PROLOGUE(mpn_submul_1)
 
 	subq	%r8, (%rdi)		C				      3
 	sbbq	%r9, 8(%rdi)		C				      4
-	adcq	%r12, %r10		C				      3
+	adcq	$0, %r10		C				      4
 	movq	%r10, %rax		C				      3
 	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 
 .L2:	movq	16(%rsi), %rax		C				      4
 	mulq	%rcx			C				      3
-	movq	%r12, %r11		C				      3
+	xorl	%r11d, %r11d		C				      3
 	addq	%rax, %r10		C				      3
 	adcq	%rdx, %r11		C				      3
 
 	subq	%r8, (%rdi)		C				      3
 	sbbq	%r9, 8(%rdi)		C				      4
 	sbbq	%r10, 16(%rdi)		C				      4
-	adcq	%r12, %r11		C				      3
+	adcq	$0, %r11		C				      4
 	movq	%r11, %rax		C				      3
 	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 EPILOGUE()
