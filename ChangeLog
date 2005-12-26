@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2005-12-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/mod_34lsub1.asm: New file.
+
 2005-12-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/submul_1.asm: Save a push/pop by not using register r12.
