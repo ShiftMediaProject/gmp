@@ -43,7 +43,7 @@ PROLOGUE(mpn_mod_34lsub1)
 	li	r0, -0x5556		C 0xFFFFFFFFFFFFAAAA
 	rldimi	r0, r0, 16, 32		C 0xFFFFFFFFAAAAAAAA
 	rldimi	r0, r0, 32, 63		C 0xAAAAAAAAAAAAAAAB
-	mulhdu	r0, n, r0
+	mulhdu	r0, r0, n
 	srdi	r0, r0, 1		C r0 = [n / 3]
 	mtctr	r0
 
