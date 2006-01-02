@@ -26,6 +26,8 @@ dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
 
+define(`DARWIN')
+
 define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 `	.text
@@ -61,5 +63,8 @@ $1:
 
 define(`END_OBJECT',
 m4_assert_numargs(1))
+
+define(`CALL',
+	`bl	GSYM_PREFIX`'$1')
 
 divert
