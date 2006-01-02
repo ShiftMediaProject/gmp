@@ -62,4 +62,8 @@ $1:	.tc	..$1[TC], ..$1
 define(`END_OBJECT',
 m4_assert_numargs(1))
 
+define(`CALL',
+	`bl	.$1
+	nop')
+
 divert

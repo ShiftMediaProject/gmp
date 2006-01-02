@@ -64,4 +64,8 @@ define(`END_OBJECT',
 m4_assert_numargs(1)
 `	.size	$1, .-$1')
 
+define(`CALL',
+	`bl	GSYM_PREFIX`'$1
+	nop')
+
 divert
