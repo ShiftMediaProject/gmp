@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_divexact_by3 -- mpn by 3 exact division
 
-dnl  Copyright 2002, 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,12 +23,18 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     13
-C POWER4/PPC970:     17
+C POWER4/PPC970:     16
+C POWER5:	     16
 
+C INPUT PARAMETERS
+define(`rp', `r3')
+define(`up', `r4')
+define(`n', `r5')
+define(`cy', `r6')
 
-C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C void mpn_divexact_by3 (mp_ptr rp, mp_srcptr up, mp_size_t n);
 C
-C mulld has the src[] limb in the second operand, since there's at least a
+C mulld has the up[] limb in the second operand, since there's at least a
 C chance of it giving an early-out on ppc630, which the inverse 0xAA..AB
 C will never give.
 C
@@ -38,53 +44,37 @@ C for ppc630.
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
 
-	C r3	dst
-	C r4	src
-	C r5	size
-	C r6	carry
+	mtctr	n		C size
+	ld	r7, 0(up)	C up[0]
 
-	mtctr	r5		C size
-	ld	r7, 0(r4)	C src[0]
+	li	r5, -0x5556	C 0xFFFFFFFFFFFFAAAA
+	rldimi	r5, r5, 16, 32	C 0xFFFFFFFFAAAAAAAA
+	rldimi	r5, r5, 32, 63	C 0xAAAAAAAAAAAAAAAB = 1/3
 
-	lis	r5, 0xAAAA	C Form the constant 0xAAAAAAAAAAAAAAAB.
-	ori	r5, r5, 0xAAAA	C Could also use the toc, or find some
-	rldimi	r5, r5, 32, 0	C more clever use of the rl* instructions
-	addi	r5, r5, 1	C to save the addi
-
-	subi	r3, r3, 8	C adjust dst for first stdu
+	subi	r3, r3, 8	C adjust rp for first stdu
 
 	li	r0, 3		C multiplier 3
 
-	subfc	r7, r6, r7	C l = src[0] - carry
+	subfc	r7, cy, r7	C l = up[0] - carry
 	bdz	L(one)
 
-L(top):
-	C r0	3
-	C r3	dst, incrementing
-	C r4	src, incrementing
-	C r5	inverse
-	C r6	carry
-	C r7	l
-
-	mulld	r8, r5, r7	C q = l * inverse
-	ldu	r7, 8(r4)	C src[i]
-
-	C
+	ALIGN(8)
+L(top):	mulld	r8, r5, r7	C q = l * inverse
+	nop
+	ldu	r7, 8(up)	C up[i]
 
 	mulhdu	r6, r8, r0	C c = high(3*q)
-	stdu	r8, 8(r3)	C dst[i-1] = q
+	stdu	r8, 8(rp)	C rp[i-1] = q
 
 	subfe	r7, r6, r7	C l = s - carry
 	bdnz	L(top)
 
-
-L(one):
-	subfe	r4, r4, r4	C ca 0 or -1
+L(one):	subfe	r4, r4, r4	C 0 or -1
 
 	mulld	r8, r7, r5	C q = l * inverse
 
 	mulhdu	r6, r8, r0	C c = high(3*q)
-	stdu	r8, 8(r3)	C dst[i] = q
+	std	r8, 8(rp)	C rp[i] = q
 
 	subf	r3, r4, r6	C carry + ca
 
