@@ -1,8 +1,8 @@
 dnl  PowerPC-64 mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl  the result to a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -154,7 +154,7 @@ L(oop):	mulld	r0, r26, r6	C
 	adde	r7, r7, r29	C 7 29
 	std	r7, 8(rp)	C 7
 	adde	r9, r9, r30	C 9 30
-	std	r9, 16(rp)	C 0
+	std	r9, 16(rp)	C 9
 	adde	r11, r11, r31	C 11 31
 	std	r11, 24(rp)	C 11
 	addi	up, up, 32	C
