@@ -32,14 +32,13 @@ CODE ORGANIZATION
 	mpn/powerpc64/mode64   code for mode64
 
 
-The mode32 and mode64 sub-directories contain code which is for use in
-the respective chip mode, 32 or 64.  The top-level directory is code
-that's unaffected by the mode.
+The mode32 and mode64 sub-directories contain code which is for use in the
+respective chip mode, 32 or 64.  The top-level directory is code that's
+unaffected by the mode.
 
-The "adde" instruction is the main difference between mode32 and
-mode64.  It operates on either on a 32-bit or 64-bit quantity
-according to the chip mode.  Other instructions have an operand size
-in their opcode and hence don't vary.
+The "adde" instruction is the main difference between mode32 and mode64.  It
+operates on either on a 32-bit or 64-bit quantity according to the chip mode.
+Other instructions have an operand size in their opcode and hence don't vary.
 
 
 
@@ -130,20 +129,20 @@ Floating-point square root:
 
 IDEAS
 
-*mul_1: Handling one limb using mulld/mulhdu and two limbs using
-floating-point operations should give a performance of about 20 cycles
-for 3 limbs, or 7 cycles/limb.
+*mul_1: Handling one limb using mulld/mulhdu and two limbs using floating-
+point operations should give performance of about 20 cycles for 3 limbs, or 7
+cycles/limb.
 
-We should probably split the single-limb operand in 32-bit chunks, and
-the multi-limb operand in 16-bit chunks, allowing us to accumulate
-well in fp registers.
+We should probably split the single-limb operand in 32-bit chunks, and the
+multi-limb operand in 16-bit chunks, allowing us to accumulate well in fp
+registers.
 
-Problem is to get 32-bit or 16-bit words to the fp registers.  Only
-64-bit fp memops copies bits without fiddling with them.  We might
-therefore need to load to integer registers with zero extension, store
-as 64 bits into temp space, and then load to fp regs.  Alternatively,
-load directly to fp space and add well-chosen constants to get
-cancelation.  (Other part after given by subsequent subtraction.)
+Problem is to get 32-bit or 16-bit words to the fp registers.  Only 64-bit fp
+memops copies bits without fiddling with them.  We might therefore need to
+load to integer registers with zero extension, store as 64 bits into temp
+space, and then load to fp regs.  Alternatively, load directly to fp space
+and add well-chosen constants to get cancelation.  (Other part after given by
+subsequent subtraction.)
 
 Possible code mix for load-via-intregs variant:
 
