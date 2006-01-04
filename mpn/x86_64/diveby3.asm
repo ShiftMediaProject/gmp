@@ -23,11 +23,8 @@ include(`../config.m4')
 
 
 C		    cycles/limb
-C Hammer:		7
-C Prescott/Nocona:	24
-
-C Based on 32-bit Athlon code.
-C Not carefully optimized, but it already runs quite well.
+C Hammer:		 5
+C Prescott/Nocona:	20.5
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
@@ -37,40 +34,93 @@ define(`cy',	`%rcx')
 
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
-
-	movq	(up), %rax		C up low limb
-
-	movq	$0x5555555555555556, %r11
-	leaq	-1(%r11,%r11), %r10
-	leaq	-2(%r11,%r11), %r8
-	leaq	(up,n,8), up		C &up[n-1]
-
-	subq	cy, %rax
-
-	setc	%cl
-	decq	n
-	jz	.Lend
-
-	leaq	(rp,n,8), rp		C &rp[n-1]
+	push	%rbx
+	movq	(up), %rax
+	movq	$0x5555555555555555, %r10
+	leaq	(%r10,%r10), %r11		C 0xAAAAAAAAAAAAAAAA
+	mov	%rcx, %r8
+	imulq	%r10, %r8
+	leaq	1(%r10,%r10), %r9		C 0xAAAAAAAAAAAAAAAB
+	leaq	(up,n,8), up
+	leaq	-8(rp,n,8), rp
 	negq	n
 
-.Loop:	imulq	%r10, %rax
-	movq	%rax, (rp,n,8)
-	cmpq	%r11, %rax
-	sbbq	$-1, cy			C +1 if result>=ceil(b/3)
-	cmpq	%rax, %r8
-	movq	(up,n,8), %rax		C next up limb
-	sbbq	cy, %rax		C and further 1 if result>=ceil(b*2/3)
-	incq	n
-	setc	%cl			C new carry
-	jnz	.Loop
+	imulq	%r9, %rax
 
-.Lend:	imulq	%r10, %rax
-	movq	%rax, (rp)
-	cmpq	%r11, %rax
-	sbbq	$-1, cy			C +1 if eax>=ceil(b/3)
-	cmpq	%rax, %r8
-	movq	n, %rax			C n is zero here
-	adcq	cy, %rax		C further +1 if eax>=ceil(b*2/3)
+	incq	n
+	jz,pn	.Lendo
+
+	.align 16
+.Loop:	movq	(up,n,8), %rbx
+	imulq	%r9, %rbx
+	addq	%r8, %rax
+	cmpq	%rcx, -8(up,n,8)		C highly unlikely carry!!!
+	movq	%rax, (rp,n,8)
+	jc,pn	.Lc0
+.Lb0:	xor	%r8, %r8
+	cmpq	%rax, %r10
+	cmovc	%r10, %r8
+	setc	%cl
+	cmpq	%rax, %r11
+	cmovc	%r11, %r8
+	adcq	$0, %rcx
+
+	incq	n
+	jz,pn	.Lende
+
+	movq	(up,n,8), %rax
+	imulq	%r9, %rax
+	addq	%r8, %rbx
+	cmpq	%rcx, -8(up,n,8)
+	movq	%rbx, (rp,n,8)
+	jc,pn	.Lc1
+.Lb1:	xor	%r8, %r8
+	cmpq	%rbx, %r10
+	cmovc	%r10, %r8
+	setc	%cl
+	cmpq	%rbx, %r11
+	cmovc	%r11, %r8
+	adcq	$0, %rcx
+
+	incq	n
+	jnz,pt	.Loop
+
+.Lendo:	addq	%r8, %rax
+	cmpq	%rcx, -8(up,n,8)
+	movq	%rax, (rp,n,8)
+	jc,pn	.Lc2
+.Lb2:	xor	%r8, %r8
+	cmpq	%rax, %r10
+	cmovc	%r10, %r8
+	setc	%cl
+	cmpq	%rax, %r11
+	cmovc	%r11, %r8
+	adcq	$0, %rcx
+	movq	%rcx, %rax
+	pop	%rbx
 	ret
+
+.Lende:	addq	%r8, %rbx
+	cmpq	%rcx, -8(up,n,8)
+	movq	%rbx, (rp,n,8)
+	jc,pn	.Lc3
+.Lb3:	xor	%r8, %r8
+	cmpq	%rbx, %r10
+	cmovc	%r10, %r8
+	setc	%cl
+	cmpq	%rbx, %r11
+	cmovc	%r11, %r8
+	adcq	$0, %rcx
+	movq	%rcx, %rax
+	pop	%rbx
+	ret
+
+.Lc0:	incq	%rax
+	jmp .Lb0
+.Lc1:	incq	%rbx
+	jmp .Lb1
+.Lc2:	incq	%rax
+	jmp .Lb2
+.Lc3:	incq	%rbx
+	jmp .Lb3
 EPILOGUE()
