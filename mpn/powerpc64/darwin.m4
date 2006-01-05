@@ -42,7 +42,8 @@ m4_assert_numargs(1))
 define(`LDSYM',
 m4_assert_numargs(2)
 `ifdef(`PIC',
-`	mflr	r0			C save return address
+`
+	mflr	r0			C save return address
 	bcl	20, 31, 1f
 1:	mflr	$1
 	addis	$1, $1, ha16($2-1b)
@@ -66,5 +67,7 @@ m4_assert_numargs(1))
 
 define(`CALL',
 	`bl	GSYM_PREFIX`'$1')
+
+define(`ASM_END')
 
 divert
