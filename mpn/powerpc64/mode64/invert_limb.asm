@@ -108,3 +108,4 @@ DEF_OBJECT(approx_tab)
 	.short	528,527,526,525,524,523,522,521
 	.short	520,519,518,517,516,515,514,513
 END_OBJECT(approx_tab)
+ASM_END()
