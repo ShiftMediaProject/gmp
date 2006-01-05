@@ -22,87 +22,96 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     ?
+C POWER3/PPC630:    13-19
 C POWER4/PPC970:     16
-C POWER5:	     ?
+C POWER5:	     16
+
+C TODO
+C  * Check if n=1 code is really an improvment.  It probably isn't.
+C  * Perhaps remove L(norm) code, it is currently unreachable.
+C  * Make more similar to mode1o.asm.
 
 C INPUT PARAMETERS
 define(`rp', `r3')
 define(`up', `r4')
-define(`n', `r5')
-define(`d', `r6')
+define(`n',  `r5')
+define(`d',  `r6')
 
 
 ASM_START()
 PROLOGUE(mpn_divexact_1)
 	addic.	n, n, -1
 	ld	r12, 0(up)
-	bne	cr0, L2
+	bne	cr0, L(2)
 	divdu	r0, r12, d
 	std	r0, 0(rp)
 	blr
-L2:
+L(2):
 	rldicl.	r0, d, 0, 63
 	li	r10, 0
-	bne	cr0, L7
+	bne	cr0, L(7)
 	neg	r0, d
 	and	r0, d, r0
 	cntlzd	r0, r0
 	subfic	r0, r0, 63
 	rldicl	r10, r0, 0, 32
 	srd	d, d, r0
-L7:
-	LDSYM(	r2, GSYM_PREFIX`'__gmp_modlimb_invert_table)
+L(7):
+	mtctr	n
+	LDSYM(	r5, modlimb_invert_table)
 	rldicl	r11, d, 63, 57
 C	cmpdi	cr7, r0, 0
-	lbzx	r0, r2, r11
+	lbzx	r0, r5, r11
 	mulld	r9, r0, r0
 	sldi	r0, r0, 1
 	mulld	r9, d, r9
 	subf	r0, r9, r0
-	mulld	r2, r0, r0
+	mulld	r5, r0, r0
 	sldi	r0, r0, 1
-	mulld	r2, d, r2
-	subf	r0, r2, r0
+	mulld	r5, d, r5
+	subf	r0, r5, r0
 	mulld	r9, r0, r0
 	sldi	r0, r0, 1
 	mulld	r9, d, r9
-	subf	r7, r9, r0		; r7 = 1/d mod 2^64
-	mtctr	n
-C	beq	cr7, Lnorm
-	subfic	r8, r10, 64		; set carry as side effect
-	li	r2, 0
+	subf	r7, r9, r0		C r7 = 1/d mod 2^64
+C	beq	cr7, L(norm)
+	subfic	r8, r10, 64		C set carry as side effect
+	li	r5, 0
 
 	ALIGN(16)
-Loop0:	srd	r11, r12, r10
+L(loop0):
+	srd	r11, r12, r10
 	ld	r12, 8(up)
 	addi	up, up, 8
 	sld	r0, r12, r8
 	or	r11, r11, r0
-	subfe	r9, r2, r11
+	subfe	r9, r5, r11
 	mulld	r0, r7, r9
 	std	r0, 0(rp)
 	addi	rp, rp, 8
-	mulhdu	r2, r0, d
-	bdnz	Loop0
+	mulhdu	r5, r0, d
+	bdnz	L(loop0)
 
 	srd	r0, r12, r10
-	subfe	r0, r2, r0
+	subfe	r0, r5, r0
 	mulld	r0, r7, r0
 	std	r0, 0(rp)
 	blr
 
 	ALIGN(16)
-Lnorm:	mulld	r11, r12, r7
+L(norm):
+	mulld	r11, r12, r7
 	std	r11, 0(rp)
 	ALIGN(16)
-Loop1:	mulhdu	r2, r11, d
+L(loop1):
+	mulhdu	r5, r11, d
 	ld	r9, 8(up)
 	addi	up, up, 8
-	subfe	r2, r2, r9
-	mulld	r11, r7, r2
+	subfe	r5, r5, r9
+	mulld	r11, r7, r5
 	std	r11, 8(rp)
 	addi	rp, rp, 8
-	bdnz	Loop1
+	bdnz	L(loop1)
 	blr
 EPILOGUE()
+ASM_END()
