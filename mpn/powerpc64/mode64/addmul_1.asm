@@ -24,8 +24,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     6-18?
+C POWER3/PPC630:    6-18
 C POWER4/PPC970:     8
+C POWER5:            8
 
 C TODO
 C  * Reduce the number of registers used.  Some mul destination registers could
@@ -87,7 +88,7 @@ L(b00):	ld	r26, 0(up)
 	addi	rp, rp, 16
 	b	L(fic)
 
-L(b01):	bdnz	L(grt1)
+L(b01):	bdnz	L(gt1)
 	ld	r26, 0(up)
 	ld	r28, 0(rp)
 	mulld	r0, r26, r6
@@ -95,7 +96,7 @@ L(b01):	bdnz	L(grt1)
 	addc	r0, r0, r28
 	std	r0, 0(rp)
 	b	L(ret)
-L(grt1):	ld	r26, 0(up)
+L(gt1):	ld	r26, 0(up)
 	ld	r27, 8(up)
 	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6
@@ -126,9 +127,8 @@ L(fic):	ld	r26, 0(up)
 	ld	r27, 8(up)
 	addi	up, up, 16
 	bdz	L(end)
-
 				C registers dying
-L(oop):	mulld	r0, r26, r6	C
+L(top):	mulld	r0, r26, r6	C
 	mulhdu	r5, r26, r6	C 26
 	ld	r26, 0(up)	C
 	ld	r28, 0(rp)	C
@@ -159,7 +159,7 @@ L(oop):	mulld	r0, r26, r6	C
 	std	r11, 24(rp)	C 11
 	addi	up, up, 32	C
 	addi	rp, rp, 32	C
-	bdnz	L(oop)		C
+	bdnz	L(top)		C
 
 L(end):	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6

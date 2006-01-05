@@ -1,8 +1,8 @@
 dnl  PowerPC-64 mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,8 +24,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     6-18?
+C POWER3/PPC630:    6-18
 C POWER4/PPC970:     7.25
+C POWER5:            7.75
 
 C TODO
 C  * Try to reduce the number of needed live registers (at least r5 and r10
@@ -85,13 +86,13 @@ L(b00):	ld	r27, 8(up)
 	b	L(fic)
 
 	nop			C alignment
-L(b01):	bdnz	L(grt1)
+L(b01):	bdnz	L(gt1)
 	mulld	r0, r26, r6
 	mulhdu	r8, r26, r6
 	addc	r0, r0, r12
 	std	r0, 0(rp)
 	b	L(ret)
-L(grt1):	ld	r27, 8(up)
+L(gt1):	ld	r27, 8(up)
 	nop
 	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6
@@ -116,8 +117,8 @@ L(fic):	ld	r26, 0(up)
 L(b10):	ld	r27, 8(up)
 	addi	up, up, 16
 	bdz	L(end)
-L(oop):
-	mulld	r0, r26, r6
+
+L(top):	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6
 	ld	r26, 0(up)
 	nop
@@ -148,7 +149,7 @@ L(oop):
 	std	r11, 24(rp)
 
 	addi	rp, rp, 32
-	bdnz	L(oop)
+	bdnz	L(top)
 
 L(end):	mulld	r0, r26, r6
 	mulhdu	r5, r26, r6
