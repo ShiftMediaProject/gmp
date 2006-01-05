@@ -1,8 +1,8 @@
 dnl  PowerPC-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2006 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,38 +24,41 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     6-18
-C POWER4/PPC970:     10
+C POWER3/PPC630:    6-18
+C POWER4/PPC970:    10
+C POWER5:           10.5
 
 C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C size		r5
-C s2_limb	r6
-C cy_limb	r7
+define(`rp', `r3')
+define(`up', `r4')
+define(`n', `r5')
+define(`vl', `r6')
+define(`cy', `r7')
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
-	li	r7,0			C cy_limb = 0
+	li	cy, 0			C cy_limb = 0
 
 PROLOGUE(mpn_submul_1c)
-	mtctr	r5
-	addic	r0,r0,0
-	addi	r3, r3, -8
-	addi	r4, r4, -8
-L(oop):
-	ldu	r0,8(r4)
-	ld	r10,8(r3)
-	mulld	r9,r0,r6
-	adde	r9,r9,r7
-	mulhdu	r7,r0,r6
-	addze	r7,r7
-	subf	r12,r9,r10
-	addc	r11,r9,r12		C invert carry from subf
-	stdu	r12,8(r3)
-	bdnz	L(oop)
+	mtctr	n
+	addic	r0, r0, 0
+	addi	rp, rp, -8
+	ALIGN(16)
+L(top):
+	ld	r0, 0(up)
+	ld	r10, 8(rp)
+	mulld	r9, r0, vl
+	mulhdu	r5, r0, vl
+	adde	r9, r9, cy
+	addi	up, up, 8
+	addze	cy, r5
+	subf	r12, r9, r10
+	not	r0, r10
+	addc	r11, r9, r0		C inverted carry from subf
+	stdu	r12, 8(rp)
+	bdnz	L(top)
 
-	addze	r3,r7
+	addze	r3, cy
 	blr
 EPILOGUE(mpn_submul_1)
 EPILOGUE(mpn_submul_1c)
