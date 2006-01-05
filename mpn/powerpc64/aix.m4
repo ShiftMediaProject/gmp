@@ -47,16 +47,16 @@ m4_assert_numargs(1)
 
 define(`LDSYM',
 m4_assert_numargs(2)
-`	ld	$1, $2(2)')
+`define(`TOC_ENTRY',
+`	.toc
+..$2:	.tc	$2[TC], $2[RW]')'
+	`ld	$1, ..$2(2)')
 
 define(`DEF_OBJECT',
 m4_assert_numargs(1)
-`	.toc
-$1:	.tc	..$1[TC], ..$1
-
-	.csect	[RO], 3
+`	.csect	[RO], 3
 	.align	2
-..$1:
+$1:
 ')
 
 define(`END_OBJECT',
@@ -65,5 +65,7 @@ m4_assert_numargs(1))
 define(`CALL',
 	`bl	.$1
 	nop')
+
+define(`ASM_END', TOC_ENTRY)
 
 divert

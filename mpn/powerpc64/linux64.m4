@@ -47,17 +47,18 @@ m4_assert_numargs(1)
 
 define(`LDSYM',
 m4_assert_numargs(2)
-`	ld	$1, $2@toc(2)')
+`define(`TOC_ENTRY',
+`	.section	".toc", "aw"
+..$2:	.tc	$2[TC], $2')'
+	`ld	$1, ..$2@toc(2)')
 
 define(`DEF_OBJECT',
 m4_assert_numargs(1)
-`	.section	".toc", "aw"
-$1:	.tc	..$1[TC], ..$1
-
+`
 	.section	.rodata
 	.align	2
-	.type	..$1, @object
-..$1:
+	.type	$1, @object
+$1:
 ')
 
 define(`END_OBJECT',
@@ -67,5 +68,7 @@ m4_assert_numargs(1)
 define(`CALL',
 	`bl	GSYM_PREFIX`'$1
 	nop')
+
+define(`ASM_END', TOC_ENTRY)
 
 divert
