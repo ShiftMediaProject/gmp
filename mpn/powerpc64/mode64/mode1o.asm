@@ -1,4 +1,4 @@
-dnl  PowerPC-64 mpn_divexact_1 -- mpn by limb exact division.
+dnl  PowerPC-64 mpn_modexact_1_odd -- mpn by limb exact remainder.
 
 dnl  Copyright 2006 Free Software Foundation, Inc.
 
