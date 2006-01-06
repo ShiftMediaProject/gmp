@@ -38,6 +38,9 @@ define(`cy', `r6')
 
 
 ASM_START()
+
+EXTERN(modlimb_invert_table)
+
 PROLOGUE(mpn_modexact_1c_odd)
 	addic.	n, n, -1		C set carry as side effect
 	ld	r8, 0(up)

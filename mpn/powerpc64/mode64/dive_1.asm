@@ -39,6 +39,9 @@ define(`d',  `r6')
 
 
 ASM_START()
+
+EXTERN(modlimb_invert_table)
+
 PROLOGUE(mpn_divexact_1)
 	addic.	n, n, -1
 	ld	r12, 0(up)
