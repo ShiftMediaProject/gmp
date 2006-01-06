@@ -38,7 +38,6 @@ $1:')
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1))
 
-
 define(`LDSYM',
 m4_assert_numargs(2)
 `ifdef(`PIC',
@@ -54,6 +53,9 @@ m4_assert_numargs(2)
 	la	$1, lo16($2)($1)
 ')')
 
+define(`EXTERN',
+m4_assert_numargs(1)
+`dnl')
 
 define(`DEF_OBJECT',
 m4_assert_numargs(1)
