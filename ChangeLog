@@ -18,6 +18,21 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2006-01-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/mode64/mod_34lsub1.asm: Tune to 1.5 c/l.
+
+	* mpn/generic/mullow_n.c (MUL_BASECASE_ALLOC): New #define.
+	(mpn_mullow_n): Use it.
+
+	* mpn/powerpc64/mode64/dive_1.asm: Use EXTERN.
+	* mpn/powerpc64/mode64/mode1o.asm: Likewise.
+
+	* mpn/powerpc64/aix.m4 (EXTERN): Define to import symbol.
+	(LDSYM): Remove [RW] attribute.
+	* mpn/powerpc64/linux64.m4 (EXTERN): Dummy definition.
+	* mpn/powerpc64/darwin.m4 (EXTERN): Likewise.
+
 2006-01-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/mode64/mode1o.asm: New file.
