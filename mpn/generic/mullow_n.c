@@ -40,6 +40,9 @@ MA 02111-1307, USA. */
 #define MULLOW_MUL_N_THRESHOLD 10*MULLOW_DC_THRESHOLD
 #endif
 
+/* Avoid zero allocations when MULLOW_BASECASE_THRESHOLD is 0.  */
+#define MUL_BASECASE_ALLOC \
+ (MULLOW_BASECASE_THRESHOLD_LIMIT == 0 ? 1 : 2*MULLOW_BASECASE_THRESHOLD_LIMIT)
 
 /*
   FIXME: This function should accept a temporary area.
@@ -59,7 +62,7 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
   if (BELOW_THRESHOLD (n, MULLOW_BASECASE_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
-      mp_limb_t ws[2 * (MULLOW_BASECASE_THRESHOLD_LIMIT)];
+      mp_limb_t ws[MUL_BASECASE_ALLOC];
       mpn_mul_basecase (ws, xp, n, yp, n);
       MPN_COPY (rp, ws, n);
     }
