@@ -49,8 +49,12 @@ define(`LDSYM',
 m4_assert_numargs(2)
 `define(`TOC_ENTRY',
 `	.toc
-..$2:	.tc	$2[TC], $2[RW]')'
+..$2:	.tc	$2[TC], $2')'
 	`ld	$1, ..$2(2)')
+
+define(`EXTERN',
+m4_assert_numargs(1)
+`	.globl	$1')
 
 define(`DEF_OBJECT',
 m4_assert_numargs(1)
