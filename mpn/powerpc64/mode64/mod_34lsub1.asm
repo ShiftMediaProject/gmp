@@ -23,8 +23,8 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     1.33
-C POWER4/PPC970:     1.67
-C POWER5:	     2
+C POWER4/PPC970:     1.5
+C POWER5:	     1.57
 
 C INPUT PARAMETERS
 define(`up',`r3')
@@ -55,14 +55,28 @@ PROLOGUE(mpn_mod_34lsub1)
 
 	ALIGN(16)
 L(top):	addc	r8, r8, r5
+	nop
 	ld	r5, 0(up)
 	adde	r9, r9, r6
 	ld	r6, 8(up)
 	adde	r10, r10, r7
 	ld	r7, 16(up)
-	addi	up, up, 24
+	addi	up, up, 48
+	addze	r11, r11
+	bdz	L(endx)
+	addc	r8, r8, r5
+	nop
+	ld	r5, -24(up)
+	adde	r9, r9, r6
+	ld	r6, -16(up)
+	adde	r10, r10, r7
+	ld	r7, -8(up)
 	addze	r11, r11
 	bdnz	L(top)
+
+	addi	up, up, 24
+L(endx):	
+	addi	up, up, -24
 
 L(end):	addc	r8, r8, r5
 	adde	r9, r9, r6
