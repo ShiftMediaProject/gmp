@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2006-01-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (mpn_sb_get_str): Fix digit count computation,
+	was inaccurate for nails.
+
+2006-01-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/mode1o.asm: Remove unneeded carry register zeroing.
+
+2006-01-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/sqr_diagonal.asm: New file.
+
 2006-01-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/mode64/mod_34lsub1.asm: Tune to 1.5 c/l.
