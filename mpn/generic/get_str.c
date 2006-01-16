@@ -194,10 +194,10 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	  un -= rp[un] == 0;
 	  frac = (rp[0] + 1) << GMP_NAIL_BITS;
 	  s -= MP_BASES_CHARS_PER_LIMB_10;
+	  i = MP_BASES_CHARS_PER_LIMB_10;
 #if HAVE_HOST_CPU_FAMILY_x86
 	  /* The code below turns out to be a bit slower for x86 using gcc.
 	     Use plain code.  */
-	  i = MP_BASES_CHARS_PER_LIMB_10;
 	  do
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
@@ -212,23 +212,26 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
+	      i--;
 	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 1)
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
+	      i--;
 	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 2)
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
+	      i--;
 	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 3)
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
+	      i--;
 	    }
-	  i = MP_BASES_CHARS_PER_LIMB_10 - (4-MP_BASES_NORMALIZATION_STEPS_10);
 	  frac = (frac + 0xf) >> 4;
 	  do
 	    {
