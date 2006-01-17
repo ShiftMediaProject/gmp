@@ -2712,7 +2712,7 @@ for tmp_fn in $gmp_mpn_functions; do
           #
           if test $GMP_NAIL_BITS != 0 && test $tmp_dir != generic; then
             case $tmp_fn in
-              and_n | ior_n | xor_n | \
+              and_n | ior_n | xor_n | andn_n \
               copyi | copyd | \
               popcount | hamdist | \
               udiv | udiv_w_sdiv | umul | \
