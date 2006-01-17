@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if 1
 
 /* The algorithm here is basically the same as mpn_divexact_1, as described
    in the manual.  Namely at each step q = (src[i]-c)*inverse, and new c =
@@ -46,35 +47,35 @@ MA 02111-1307, USA. */
    "l=s-c".  See below for alternative code which avoids that.  */
 
 mp_limb_t
-mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
+mpn_divexact_by3c (mp_ptr restrict rp, mp_srcptr restrict up, mp_size_t un, mp_limb_t c)
 {
   mp_limb_t  l, q, s;
   mp_size_t  i;
 
-  ASSERT (size >= 1);
+  ASSERT (un >= 1);
   ASSERT (c == 0 || c == 1 || c == 2);
-  ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size));
+  ASSERT (MPN_SAME_OR_SEPARATE_P (rp, up, un));
 
   i = 0;
   do
     {
-      s = src[i];
+      s = up[i];
       SUBC_LIMB (c, l, s, c);
 
       q = (l * MODLIMB_INVERSE_3) & GMP_NUMB_MASK;
-      dst[i] = q;
+      rp[i] = q;
 
       c += (q >= GMP_NUMB_CEIL_MAX_DIV3);
       c += (q >= GMP_NUMB_CEIL_2MAX_DIV3);
     }
-  while (++i < size);
+  while (++i < un);
 
   ASSERT (c == 0 || c == 1 || c == 2);
   return c;
 }
 
 
-#if 0
+#else
 
 /* The following alternative code re-arranges the quotient calculation from
    (src[i]-c)*inverse to instead
@@ -113,36 +114,34 @@ mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
    mpn/ia64/diveby3.asm.  */
 
 mp_limb_t
-mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
+mpn_divexact_by3c (mp_ptr restrict rp, mp_srcptr restrict up, mp_size_t un, mp_limb_t cy)
 {
-  mp_limb_t  s, sm, l, q, qx, c1, c2, c3;
+  mp_limb_t  s, sm, cl, q, qx, c2, c3;
   mp_size_t  i;
 
-  ASSERT (size >= 1);
-  ASSERT (c == 0 || c == 1 || c == 2);
-  ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size));
+  ASSERT (un >= 1);
+  ASSERT (cy == 0 || cy == 1 || cy == 2);
+  ASSERT (MPN_SAME_OR_SEPARATE_P (rp, up, un));
 
-  l = (c == 0 ? 0 : c == 1 ? -MODLIMB_INVERSE_3 : -2*MODLIMB_INVERSE_3);
+  cl = cy == 0 ? 0 : cy == 1 ? -MODLIMB_INVERSE_3 : -2*MODLIMB_INVERSE_3;
 
-  for (i = 0; i < size; i++)
+  for (i = 0; i < un; i++)
     {
-      s = src[i];
-      sm = s * MODLIMB_INVERSE_3;
+      s = up[i];
+      sm = (s * MODLIMB_INVERSE_3) & GMP_NUMB_MASK;
 
-      q = l + sm;
-      c1 = (s < c);
+      q = (cl + sm) & GMP_NUMB_MASK;
+      rp[i] = q;
+      qx = q + (s < cy);
 
-      dst[i] = q;
-      qx = q + c1;
+      c2 = qx >= GMP_NUMB_CEIL_MAX_DIV3;
+      c3 = qx >= GMP_NUMB_CEIL_2MAX_DIV3 ;
 
-      c2 = (qx > MP_LIMB_T_MAX/3);
-      c3 = (qx > (MP_LIMB_T_MAX/3)*2);
-
-      c = c2 + c3;
-      l = (-c2 & -MODLIMB_INVERSE_3) + (-c3 & -MODLIMB_INVERSE_3);
+      cy = c2 + c3;
+      cl = (-c2 & -MODLIMB_INVERSE_3) + (-c3 & -MODLIMB_INVERSE_3);
     }
 
-  return c;
+  return cy;
 }
 
 #endif
