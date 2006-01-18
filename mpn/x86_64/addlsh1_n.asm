@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 
-dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,26 +23,18 @@ include(`../config.m4')
 
 
 C		    cycles/limb
-C Hammer:		2.14
-C Prescott/Nocona:	14
+C Hammer:		2
+C Prescott/Nocona:	?
 
 
-C Sometimes speed degenerates to 2.58 c/l, supposedly related to that some
-C operand alignments cause conflicts in the blocked cache.
+C Sometimes speed degenerates, supposedly related to that some operand
+C alignments cause cache conflicts.
 
-C The speed is limited by decoding/issue bandwith.  There are 25 instructions
-C in the loop, which corresponds to 25/3/4 = 2.083 c/l.  Better speed could be
-C achieved by using indexed addressing (and thereby saving pointer updates) and
-C by using more unrolling.  Since we save and restore carry using two registers
-C (ebp and eax), carry is irrelevant between these instructions, and that could
-C be used for loop counter update using addq, as required for proper indexed
-C addressing.
+C The speed is limited by decoding/issue bandwidth.  There are 22 instructions
+C in the loop, which corresponds to ceil(26/3)/4 = 2.0 c/l.
 
-C It should be possible to get well under 2 c/l for this operation, to about
-C 38/8/3 = 1.583 c/l.
-
-C FIXME: Use technique of rsh1add_n.asm to handle unrolling.  That will save
-C a register (rbx) and allow for a noticable constant speedup.
+C Each limb needs 4 instructions, which corresponds to 1.33 c/l.  8-way
+C unrolling could approach 1.625 c/l.
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
@@ -54,90 +46,89 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_addlsh1_n)
-	pushq	%rbx			C				1
-	pushq	%rbp			C				1
+	pushq	%rbp
 
-	xorl	%eax, %eax		C				2
-	movl	%ecx, %ebx		C				2
-
-	shrq	$2, n			C				4
-	clc				C				1
-	je	.Lend			C				2
-	andl	$3, %ebx		C				3
-	ALIGN(16)
-.Loop:
-	sbbl	%ebp, %ebp		C save acy
-	addl	%eax, %eax		C restore scy
-
-	leaq	32(up), up
-	leaq	32(rp), rp
-
-	movq	0(vp), %r8
-	adcq	%r8, %r8
-	movq	8(vp), %r9
-	adcq	%r9, %r9
-	movq	16(vp), %r10
-	adcq	%r10, %r10
-	movq	24(vp), %r11
-	adcq	%r11, %r11
-	leaq	32(vp), vp
-
-	sbbl	%eax, %eax		C save scy
-	addl	%ebp, %ebp		C restore acy
-
-	adcq	-32(up), %r8
-	movq	%r8, -32(rp)
-	adcq	-24(up), %r9
-	movq	%r9, -24(rp)
-	adcq	-16(up), %r10
-	movq	%r10, -16(rp)
-	adcq	-8(up), %r11
-	movq	%r11, -8(rp)
-
-	decq	n
-	jne	.Loop
-.Lend:
-	incl	%ebx
-	decl	%ebx
-	je	.Lret
-
-	sbbl	%ebp, %ebp		C save acy
-	addl	%eax, %eax		C restore scy
 	movq	(vp), %r8
-	adcq	%r8, %r8
+	movl	%ecx, %eax
+	leaq	(rp,n,8), rp
+	leaq	(up,n,8), up
+	leaq	(vp,n,8), vp
+	negq	n
+	xorl	%ebp, %ebp
+	andl	$3, %eax
+	je	.Lb00
+	cmpl	$2, %eax
+	jc	.Lb01
+	je	.Lb10
+
+.Lb11:	addq	%r8, %r8
+	movq	8(vp,n,8), %r9
+	adcq	%r9, %r9
+	movq	16(vp,n,8), %r10
+	adcq	%r10, %r10
+	sbbl	%eax, %eax		C save scy
+	addq	(up,n,8), %r8
+	adcq	8(up,n,8), %r9
+	movq	%r8, (rp,n,8)
+	movq	%r9, 8(rp,n,8)
+	adcq	16(up,n,8), %r10
+	movq	%r10, 16(rp,n,8)
+	sbbl	%ebp, %ebp		C save acy
+	addq	$3, n
+	jmp	.LL
+
+.Lb10:	addq	%r8, %r8
+	movq	8(vp,n,8), %r9
+	adcq	%r9, %r9
+	sbbl	%eax, %eax		C save scy
+	addq	(up,n,8), %r8
+	adcq	8(up,n,8), %r9
+	movq	%r8, (rp,n,8)
+	movq	%r9, 8(rp,n,8)
+	sbbl	%ebp, %ebp		C save acy
+	addq	$2, n
+	jmp	.LL
+
+.Lb01:	addq	%r8, %r8
+	sbbl	%eax, %eax		C save scy
+	addq	(up,n,8), %r8
+	movq	%r8, (rp,n,8)
+	sbbl	%ebp, %ebp		C save acy
+	incq	n
+.LL:	jns,pn	.Lend
+
+	ALIGN(16)
+.Loop:	addl	%eax, %eax		C restore scy
+
+	movq	(vp,n,8), %r8
+.Lb00:	adcq	%r8, %r8
+	movq	8(vp,n,8), %r9
+	adcq	%r9, %r9
+	movq	16(vp,n,8), %r10
+	adcq	%r10, %r10
+	movq	24(vp,n,8), %r11
+	adcq	%r11, %r11
+
 	sbbl	%eax, %eax		C save scy
 	addl	%ebp, %ebp		C restore acy
-	adcq	(up), %r8
-	movq	%r8, (rp)
-	decl	%ebx
-	je	.Lret
+
+	adcq	(up,n,8), %r8
+	nop				C Hammer speedup!
+	adcq	8(up,n,8), %r9
+	movq	%r8, (rp,n,8)
+	movq	%r9, 8(rp,n,8)
+	adcq	16(up,n,8), %r10
+	adcq	24(up,n,8), %r11
+	movq	%r10, 16(rp,n,8)
+	movq	%r11, 24(rp,n,8)
 
 	sbbl	%ebp, %ebp		C save acy
-	addl	%eax, %eax		C restore scy
-	movq	8(vp), %r8
-	adcq	%r8, %r8
-	sbbl	%eax, %eax		C save scy
-	addl	%ebp, %ebp		C restore acy
-	adcq	8(up), %r8
-	movq	%r8, 8(rp)
-	decl	%ebx
-	je	.Lret
+	addq	$4, n
+	js,pt	.Loop
 
-	sbbl	%ebp, %ebp		C save acy
-	addl	%eax, %eax		C restore scy
-	movq	16(vp), %r8
-	adcq	%r8, %r8
-	sbbl	%eax, %eax		C save scy
-	addl	%ebp, %ebp		C restore acy
-	adcq	16(up), %r8
-	movq	%r8, 16(rp)
-	decl	%ebx
-	je	.Lret
-.Lret:
-	sbbl	$0, %eax
+.Lend:	addl	%ebp, %eax
 	negl	%eax
 
-	popq	%rbp			C				1
-	popq	%rbx			C				1
-	ret				C				1
+	popq	%rbp
+	ret
 EPILOGUE()
