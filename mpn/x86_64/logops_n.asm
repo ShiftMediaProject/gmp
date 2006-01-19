@@ -1,6 +1,6 @@
 dnl  AMD64 logops.
 
-dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,10 +24,7 @@ include(`../config.m4')
 
 C		    cycles/limb
 C Hammer:		1.5
-C Prescott/Nocona:	3-3.5
-
-C TODO
-C  * Clean up VARIANT_3 feed-in code.
+C Prescott/Nocona:	2.8/3.35/3.60 (variant1/variant2/variant3)
 
 ifdef(`OPERATION_and_n',`
   define(`func',`mpn_and_n')
@@ -78,6 +75,7 @@ ifdef(`VARIANT_1',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
+	movq	(vp), %r8
 	movl	%ecx, %eax
 	leaq	(vp,n,8), vp
 	leaq	(up,n,8), up
@@ -85,50 +83,37 @@ PROLOGUE(func)
 	negq	n
 	andl	$3, %eax
 	je	.Lb00
-	cmpl	$1, %eax
-	je	.Lb01
 	cmpl	$2, %eax
+	jc	.Lb01
 	je	.Lb10
 
-.Lb11:	movq	(vp,n,8), %r8
-	LOGOP	(up,n,8), %r8
+.Lb11:	LOGOP	(up,n,8), %r8
+	movq	%r8, (rp,n,8)
+	decq	n
+	jmp	.Le11
+.Lb10:	addq	$-2, n
+	jmp	.Le10
+.Lb01:	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	incq	n
-.Lb10:	movq	(vp,n,8), %r8
-	movq	8(vp,n,8), %r9
-	LOGOP	(up,n,8), %r8
-	LOGOP	8(up,n,8), %r9
-	movq	%r8, (rp,n,8)
-	movq	%r9, 8(rp,n,8)
-	addq	$2, n
-	jnc	.Loop
-	ret
-.Lb01:	movq	(vp,n,8), %r8
-	LOGOP	(up,n,8), %r8
-	movq	%r8, (rp,n,8)
-	addq	$1, n
-	jnc	.Loop
-	ret
-
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0
-.Lb00:
+	jz	.Lret
 
 .Loop:	movq	(vp,n,8), %r8
-	movq	8(vp,n,8), %r9
+.Lb00:	movq	8(vp,n,8), %r9
 	LOGOP	(up,n,8), %r8
 	LOGOP	8(up,n,8), %r9
 	nop
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-	movq	16(vp,n,8), %r8
-	movq	24(vp,n,8), %r9
+.Le11:	movq	16(vp,n,8), %r8
+.Le10:	movq	24(vp,n,8), %r9
 	LOGOP	16(up,n,8), %r8
 	LOGOP	24(up,n,8), %r9
 	movq	%r8, 16(rp,n,8)
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	.Loop
-	ret
+.Lret:	ret
 EPILOGUE()
 ')
 
@@ -136,6 +121,8 @@ ifdef(`VARIANT_2',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
+	movq	(vp), %r8
+	notq	%r8
 	movl	%ecx, %eax
 	leaq	(vp,n,8), vp
 	leaq	(up,n,8), up
@@ -143,47 +130,33 @@ PROLOGUE(func)
 	negq	n
 	andl	$3, %eax
 	je	.Lb00
-	cmpl	$1, %eax
-	je	.Lb01
 	cmpl	$2, %eax
+	jc	.Lb01
 	je	.Lb10
 
-.Lb11:	movq	(vp,n,8), %r8
-	notq	%r8
-	LOGOP	(up,n,8), %r8
+.Lb11:	LOGOP	(up,n,8), %r8
+	movq	%r8, (rp,n,8)
+	decq	n
+	jmp	.Le11
+.Lb10:	addq	$-2, n
+	jmp	.Le10
+	.byte	0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
+.Lb01:	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	incq	n
-.Lb10:	movq	(vp,n,8), %r8
-	movq	8(vp,n,8), %r9
-	notq	%r8
-	notq	%r9
-	LOGOP	(up,n,8), %r8
-	LOGOP	8(up,n,8), %r9
-	movq	%r8, (rp,n,8)
-	movq	%r9, 8(rp,n,8)
-	addq	$2, n
-	jnc	.Loop
-	ret
-.Lb01:	movq	(vp,n,8), %r8
-	notq	%r8
-	LOGOP	(up,n,8), %r8
-	movq	%r8, (rp,n,8)
-	addq	$1, n
-	jnc	.Loop
-	ret
-.Lb00:
+	jz	.Lret
 
 .Loop:	movq	(vp,n,8), %r8
-	movq	8(vp,n,8), %r9
 	notq	%r8
+.Lb00:	movq	8(vp,n,8), %r9
 	notq	%r9
 	LOGOP	(up,n,8), %r8
 	LOGOP	8(up,n,8), %r9
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-	movq	16(vp,n,8), %r8
-	movq	24(vp,n,8), %r9
+.Le11:	movq	16(vp,n,8), %r8
 	notq	%r8
+.Le10:	movq	24(vp,n,8), %r9
 	notq	%r9
 	LOGOP	16(up,n,8), %r8
 	LOGOP	24(up,n,8), %r9
@@ -191,7 +164,7 @@ PROLOGUE(func)
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	.Loop
-	ret
+.Lret:	ret
 EPILOGUE()
 ')
 
@@ -199,86 +172,50 @@ ifdef(`VARIANT_3',`
 	TEXT
 	ALIGN(32)
 PROLOGUE(func)
+	movq	(vp), %r8
 	movl	%ecx, %eax
-	leaq	-16(up,n,8), up
 	leaq	(vp,n,8), vp
-	leaq	-16(rp,n,8), rp
+	leaq	(up,n,8), up
+	leaq	(rp,n,8), rp
 	negq	n
 	andl	$3, %eax
 	je	.Lb00
-	cmpl	$1, %eax
-	je	.Lb01
 	cmpl	$2, %eax
+	jc	.Lb01
 	je	.Lb10
 
-.Lb11:	movq	(vp,n,8), %r10
-	LOGOP	16(up,n,8), %r10
-	notq	%r10
-	movq	%r10, 16(rp,n,8)
-	addq	$3, n
-	jmp	.Lent
-
-.Lb00:	movq	(vp,n,8), %r10
-	movq	8(vp,n,8), %r11
-	LOGOP	16(up,n,8), %r10
-	LOGOP	24(up,n,8), %r11
-	notq	%r10
-	notq	%r11
-	movq	%r10, 16(rp,n,8)
-	movq	%r11, 24(rp,n,8)
-	addq	$4, n
-	jmp	.Lent
-
-
-.Lb01:	movq	(vp,n,8), %r10
-	LOGOP	16(up,n,8), %r10
-	notq	%r10
-	movq	%r10, 16(rp,n,8)
-	cmpq	$-1, %rcx
-	je	.Lret
-	movq	8(vp,n,8), %r10
-	movq	16(vp,n,8), %r11
-	LOGOP	24(up,n,8), %r10
-	LOGOP	32(up,n,8), %r11
-	notq	%r10
-	notq	%r11
-	movq	%r10, 24(rp,n,8)
-	movq	%r11, 32(rp,n,8)
-
-	addq	$5, n
-	jmp	.Lent
-
-.Lb10:	addq	$2, n
-.Lent:	movq	-16(vp,n,8), %r8
-	movq	-8(vp,n,8), %r9
-	jc	.Lend
-
-	.byte	0x66, 0x66, 0x90, 0x66, 0x66, 0x90
-.Loop:	LOGOP	(up,n,8), %r8
-	LOGOP	8(up,n,8), %r9
+.Lb11:	LOGOP	(up,n,8), %r8
 	notq	%r8
+	movq	%r8, (rp,n,8)
+	decq	n
+	jmp	.Le11
+.Lb10:	addq	$-2, n
+	jmp	.Le10
+	.byte	0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
+.Lb01:	LOGOP	(up,n,8), %r8
+	notq	%r8
+	movq	%r8, (rp,n,8)
+	incq	n
+	jz	.Lret
+
+.Loop:	movq	(vp,n,8), %r8
+.Lb00:	movq	8(vp,n,8), %r9
+	LOGOP	(up,n,8), %r8
+	notq	%r8
+	LOGOP	8(up,n,8), %r9
 	notq	%r9
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-	movq	(vp,n,8), %r8
-	movq	8(vp,n,8), %r9
+.Le11:	movq	16(vp,n,8), %r8
+.Le10:	movq	24(vp,n,8), %r9
 	LOGOP	16(up,n,8), %r8
-	LOGOP	24(up,n,8), %r9
 	notq	%r8
+	LOGOP	24(up,n,8), %r9
 	notq	%r9
 	movq	%r8, 16(rp,n,8)
 	movq	%r9, 24(rp,n,8)
-	movq	16(vp,n,8), %r8
-	movq	24(vp,n,8), %r9
 	addq	$4, n
 	jnc	.Loop
-
-.Lend:	LOGOP	(up,n,8), %r8
-	LOGOP	8(up,n,8), %r9
-	notq	%r8
-	notq	%r9
-	movq	%r8, (rp,n,8)
-	movq	%r9, 8(rp,n,8)
 .Lret:	ret
 EPILOGUE()
 ')
