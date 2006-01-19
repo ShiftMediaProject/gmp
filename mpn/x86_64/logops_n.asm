@@ -56,7 +56,7 @@ ifdef(`OPERATION_xor_n',`
   define(`LOGOP',`xorq')')
 ifdef(`OPERATION_xnor_n',`
   define(`func',`mpn_xnor_n')
-  define(`VARIANT_3')
+  define(`VARIANT_2')
   define(`LOGOP',`xorq')')
 
 
