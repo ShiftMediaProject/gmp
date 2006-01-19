@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_com_n.
 
-dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,8 +23,8 @@ include(`../config.m4')
 
 
 C		    cycles/limb
-C Hammer:		1.28
-C Prescott/Nocona:	3
+C Hammer:		1.3
+C Prescott/Nocona:	2.78
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
@@ -33,54 +33,45 @@ define(`n',`%rdx')
 
 
 ASM_START()
+	TEXT
+	ALIGN(32)
 PROLOGUE(mpn_com_n)
+	movq	(up), %r8
 	movl	%edx, %eax
 	leaq	(up,n,8), up
 	leaq	(rp,n,8), rp
 	negq	n
 	andl	$3, %eax
 	je	.Lb00
-	cmpl	$1, %eax
-	je	.Lb01
 	cmpl	$2, %eax
+	jc	.Lb01
 	je	.Lb10
 
-.Lb11:	movq	(up,n,8), %r8
-	notq	%r8
+.Lb11:	notq	%r8
+	movq	%r8, (rp,n,8)
+	decq	n
+	jmp	.Le11
+.Lb10:	addq	$-2, n
+	jmp	.Le10
+	.byte	0x90,0x90,0x90,0x90,0x90,0x90
+.Lb01:	notq	%r8
 	movq	%r8, (rp,n,8)
 	incq	n
-.Lb10:	movq	(up,n,8), %r8
-	movq	8(up,n,8), %r9
-	notq	%r8
-	notq	%r9
-	movq	%r8, (rp,n,8)
-	movq	%r9, 8(rp,n,8)
-	addq	$2, n
-	jnc	.Loop
-	ret
-.Lb01:	movq	(up,n,8), %r8
-	notq	%r8
-	movq	%r8, (rp,n,8)
-	addq	$1, n
-	jnc	.Loop
-	ret
+	jz	.Lret
 
-	ALIGN(32)
-	.byte	0,0,0,0,0,0
-.Lb00:
 .Loop:	movq	(up,n,8), %r8
-	movq	8(up,n,8), %r9
+.Lb00:	movq	8(up,n,8), %r9
 	notq	%r8
 	notq	%r9
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-	movq	16(up,n,8), %r8
-	movq	24(up,n,8), %r9
+.Le11:	movq	16(up,n,8), %r8
+.Le10:	movq	24(up,n,8), %r9
 	notq	%r8
 	notq	%r9
 	movq	%r8, 16(rp,n,8)
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
 	jnc	.Loop
-	ret
+.Lret:	ret
 EPILOGUE()
