@@ -832,7 +832,7 @@ case $host in
   # -Wa,-mppc was used only if it worked.  The right flag on darwin would be
   # "-arch ppc" or some such, but that's already the default.)
   #
-  powerpc*-*-*)
+  [powerpc*-*-* | power[3-9]-*-*])
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     HAVE_HOST_CPU_FAMILY_powerpc=1
     abilist="32"
