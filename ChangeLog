@@ -23,6 +23,8 @@ MA 02111-1307, USA.
 	* config.guess: Recognize power4 and up under linux-gnu.
 	* config.sub: Generalize power recognition code.
 	* acinclude.m4 (POWERPC64_PATTERN): Add 64-bit powerpc processors.
+	* configure.in: Recognize powerpc procssors masquerading as power
+	procssors.
 
 2006-01-19  Torbjorn Granlund  <tege@swox.com>
 
