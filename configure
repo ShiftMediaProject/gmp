@@ -2956,7 +2956,7 @@ echo "include_mpn(\`mips32/mips-defs.m4')" >> $gmp_tmpconfigm4i
   # -Wa,-mppc was used only if it worked.  The right flag on darwin would be
   # "-arch ppc" or some such, but that's already the default.)
   #
-  powerpc*-*-*)
+  powerpc*-*-* | power[3-9]-*-*)
     cat >>confdefs.h <<\_ACEOF
 #define HAVE_HOST_CPU_FAMILY_powerpc 1
 _ACEOF
