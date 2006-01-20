@@ -25,8 +25,8 @@ include(`../config.m4')
 
 C		     popcount	      hamdist
 C		    cycles/limb	    cycles/limb
-C Hammer:		6.0		7.5
-C Prescott/Nocona:	12		14.5
+C Hammer:		6		7
+C Prescott/Nocona:	12		14.3
 
 C TODO
 C  * Tune.  It should be possible to reach 5 c/l for popcount and 6 c/l for
@@ -85,8 +85,7 @@ PROLOGUE(func)
 	jnc	.Loop
 
 	movq	(up,n,8), %r8
- HAM(`	movq	(vp,n,8), %r9	')
- HAM(`	xorq	%r9, %r8	')
+ HAM(`	xorq	(vp,n,8), %r8	')
 
 	movq	%r8, %r9
 	shrq	$1, %r8
@@ -114,12 +113,9 @@ PROLOGUE(func)
 
 	ALIGN(16)
 .Loop:	movq	(up,n,8), %r8
- HAM(`	movq	(vp,n,8), %r9	')
- HAM(`	xorq	%r9, %r8	')
 	movq	8(up,n,8), %r12
- HAM(`	movq	8(vp,n,8), %r13	')
- HAM(`	xorq	%r13, %r12	')
- HAM(`	nop			')
+ HAM(`	xorq	(vp,n,8), %r8	')
+ HAM(`	xorq	8(vp,n,8), %r12	')
 
 	movq	%r8, %r9
 	movq	%r12, %r13
