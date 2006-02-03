@@ -20,6 +20,14 @@ MA 02111-1307, USA.
 
 2006-02-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc64/linux64.m4 (PROLOGUE_cpu): Align function start to
+	16-multiple.
+	* mpn/powerpc64/aix.m4: Likewise.
+	* mpn/powerpc64/darwin.m4: Likewise.
+
+	* mpn/powerpc64/copyi.asm: Align loop to 16-multiple.
+	* mpn/powerpc64/copyd.asm: Likewise
+
 	* configure.in (powerpc): Add vmx to relevant paths.
 
 	* mpn/powerpc64/linux64.m4 (DEF_OBJECT): Accept 2nd argument, for
