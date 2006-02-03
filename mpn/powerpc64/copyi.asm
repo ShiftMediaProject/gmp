@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     1
-C POWER4/PPC970:     1
+C POWER4/PPC970:     1.25
 
 C INPUT PARAMETERS
 C rp	r3
@@ -49,7 +49,7 @@ ifdef(`HAVE_ABI_mode32',
 	beq	cr6, L(L10)
 	b	L(L11)
 
-	ALIGN(8)
+	ALIGN(16)
 L(oop):	ld	r6, -32(r4)
 	std	r6, -32(r3)
 L(L11):	ld	r6, -24(r4)

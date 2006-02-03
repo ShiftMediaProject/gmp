@@ -55,7 +55,7 @@ ifdef(`HAVE_ABI_mode32',
 	beq	cr6, L(L10)
 	b	L(L11)
 
-	ALIGN(8)
+	ALIGN(16)
 L(oop):	ld	r6, 24(r4)
 	std	r6, 24(r3)
 L(L11):	ld	r6, 16(r4)
