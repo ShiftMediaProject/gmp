@@ -41,8 +41,16 @@ m4_assert_numargs(1)
 
 define(`LEA',
 m4_assert_numargs(2)
-`	lis	$1, $2@ha
-	la	$1, $2@l($1)')
+`ifdef(`PIC',`
+	mflr	r0
+	bl	_GLOBAL_OFFSET_TABLE_@local-4
+	mflr	$1
+	mtlr	r0
+	lwz	$1, $2@got($1)
+',`
+	lis	$1, $2@ha
+	la	$1, $2@l($1)
+')')
 
 define(`DEF_OBJECT',
 m4_assert_numargs_range(1,2)
