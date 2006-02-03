@@ -839,8 +839,9 @@ case $host in
     cclist="gcc cc"
     cc_cflags="-O2"
     gcc_cflags="-O2 -mpowerpc"
-    gcc_cflags_optlist="precomp cpu"
+    gcc_cflags_optlist="precomp subtype cpu"
     gcc_cflags_precomp="-no-cpp-precomp"
+    gcc_cflags_subtype="-force_cpusubtype_ALL"	# for vmx on darwin
 
     # grab this object, though it's not a true cycle counter routine
     SPEED_CYCLECOUNTER_OBJ=powerpc.lo
