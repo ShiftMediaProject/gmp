@@ -847,8 +847,12 @@ case $host in
     cyclecounter_size=0
 
     case $host_cpu in
-      powerpc740 | powerpc750 | powerpc7400)
+      powerpc740 | powerpc750)
         path="powerpc32/750 powerpc32" ;;
+      powerpc7400)
+        path="powerpc32/vmx powerpc32/750 powerpc32" ;;
+      [powerpc745?)
+        path="powerpc32/vmx powerpc32 powerpc32" ;;
       *)
         path="powerpc32" ;;
     esac
@@ -931,7 +935,7 @@ case $host in
             # Must indicate object type to ar and nm
 	    ar_aix64_flags="-X64"
 	    nm_aix64_flags="-X64"
-            path_aix64="powerpc64/mode64 powerpc64"
+            path_aix64="powerpc64/mode64 powerpc64/vmx powerpc64"
             # grab this object, though it's not a true cycle counter routine
             SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
             cyclecounter_size_aix64=0
@@ -955,13 +959,13 @@ case $host in
 	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="cpu opt"
 	    gcc_mode32_cflags_opt="-fast -O3 -O2 -O1"
-	    path_mode32="powerpc64/mode32 powerpc64"
+	    path_mode32="powerpc64/mode32 powerpc64/vmx powerpc64"
 	    limb_mode32=longlong
 	    cclist_mode64="gcc"
 	    gcc_mode64_cflags="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-fast -O3 -O2 -O1"
-	    path_mode64="powerpc64/mode64 powerpc64"
+	    path_mode64="powerpc64/mode64 powerpc64/vmx powerpc64"
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
@@ -986,13 +990,13 @@ case $host in
 	    gcc_mode32_cflags="-mpowerpc64 -Wa,-mppc64"
 	    gcc_mode32_cflags_optlist="cpu opt"
 	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
-	    path_mode32="powerpc64/mode32 powerpc64"
+	    path_mode32="powerpc64/mode32 powerpc64/vmx powerpc64"
 	    limb_mode32=longlong
 	    cclist_mode64="gcc gcc64"
 	    gcc_mode64_cflags_maybe="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
-	    path_mode64="powerpc64/mode64 powerpc64"
+	    path_mode64="powerpc64/mode64 powerpc64/vmx powerpc64"
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
