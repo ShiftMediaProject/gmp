@@ -133,27 +133,27 @@ xorl r,r   false read dependency recognised
 REFERENCES
 
 "AMD Athlon Processor X86 Code Optimization Guide", AMD publication number
-22007, revision E, November 1999.  Available on-line,
+22007, revision K, February 2002.  Available on-line,
 
-	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22007.pdf
+http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/22007.pdf
 
-"3DNow Technology Manual", AMD publication number 21928F/0-August 1999.
+"3DNow Technology Manual", AMD publication number 21928G/0-March 2000.
 This describes the femms and prefetch instructions.  Available on-line,
 
-	http://www.amd.com/K6/k6docs/pdf/21928.pdf
+http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/21928.pdf
 
 "AMD Extensions to the 3DNow and MMX Instruction Sets Manual", AMD
-publication number 22466, revision B, August 1999.  This describes
+publication number 22466, revision D, March 2000.  This describes
 instructions added in the Athlon processor, such as pswapd and the extra
 prefetch forms.  Available on-line,
 
-	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22466.pdf
+http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/22466.pdf
 
 "3DNow Instruction Porting Guide", AMD publication number 22621, revision B,
 August 1999.  This has some notes on general Athlon optimizations as well as
 3DNow.  Available on-line,
 
-	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22621.pdf
+http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/22621.pdf
 
 
 
