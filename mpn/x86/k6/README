@@ -212,26 +212,26 @@ REFERENCES
 number 21924, revision D amendment 0, January 2000.  This describes K6-2 and
 K6-3.  Available on-line,
 
-	http://www.amd.com/K6/k6docs/pdf/21924.pdf
+http://vip.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/21924.pdf
 
 "AMD-K6 MMX Enhanced Processor x86 Code Optimization Application Note", AMD
 publication number 21828, revision A amendment 0, August 1997.  This is an
 older edition of the above document, describing plain K6.  Available
 on-line,
 
-	http://www.amd.com/K6/k6docs/pdf/21828.pdf
+http://vip.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/21828.pdf
 
-"3DNow Technology Manual", AMD publication number 21928F/0-August 1999.
+"3DNow Technology Manual", AMD publication number 21928G/0-March 2000.
 This describes the femms and prefetch instructions, but nothing else from
 3DNow has been used.  Available on-line,
 
-	http://www.amd.com/K6/k6docs/pdf/21928.pdf
+http://vip.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/21928.pdf
 
 "3DNow Instruction Porting Guide", AMD publication number 22621, revision B,
 August 1999.  This has some notes on general K6 optimizations as well as
 3DNow.  Available on-line,
 
-	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22621.pdf
+http://vip.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/22621.pdf
 
 
 
