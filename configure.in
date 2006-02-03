@@ -851,7 +851,7 @@ case $host in
         path="powerpc32/750 powerpc32" ;;
       powerpc7400)
         path="powerpc32/vmx powerpc32/750 powerpc32" ;;
-      [powerpc745?)
+      [powerpc745?])
         path="powerpc32/vmx powerpc32 powerpc32" ;;
       *)
         path="powerpc32" ;;
