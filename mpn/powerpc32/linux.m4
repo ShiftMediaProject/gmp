@@ -44,6 +44,19 @@ m4_assert_numargs(2)
 `	lis	$1, $2@ha
 	la	$1, $2@l($1)')
 
+define(`DEF_OBJECT',
+m4_assert_numargs_range(1,2)
+`
+	.section	.rodata
+	ALIGN(ifelse($#,1,2,$2))
+	.type	$1, @object
+$1:
+')
+
+define(`END_OBJECT',
+m4_assert_numargs(1)
+`	.size	$1, .-$1')
+
 define(`ASM_END', `dnl')
 
 ifdef(`PIC',`

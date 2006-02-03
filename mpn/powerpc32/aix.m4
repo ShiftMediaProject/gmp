@@ -52,6 +52,16 @@ tc$2:
 	.tc	$2[TC], $2[RW]')'
 `	lwz	$1, tc$2(2)')
 
+define(`DEF_OBJECT',
+m4_assert_numargs_range(1,2)
+`	.csect	[RO], 3
+	ALIGN(ifelse($#,1,2,$2))
+$1:
+')
+
+define(`END_OBJECT',
+m4_assert_numargs(1))
+
 define(`ASM_END', TOC_ENTRY)
 
 divert
