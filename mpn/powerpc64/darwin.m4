@@ -32,7 +32,7 @@ define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
 `	.text
 	.globl	$1
-	.align	3
+	.align	4
 $1:')
 
 define(`EPILOGUE_cpu',

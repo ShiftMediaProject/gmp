@@ -38,7 +38,7 @@ m4_assert_numargs(1)
 $1:
 	.llong	.$1, TOC[tc0], 0
 	.csect	[PR]
-	.align	2
+	.align	4
 .$1:')
 
 define(`EPILOGUE_cpu',
