@@ -57,10 +57,10 @@ m4_assert_numargs(1)
 `dnl')
 
 define(`DEF_OBJECT',
-m4_assert_numargs(1)
+m4_assert_numargs_range(1,2)
 `
 	.section	.rodata
-	.align	2
+	ALIGN(ifelse($#,1,2,$2))
 	.type	$1, @object
 $1:
 ')

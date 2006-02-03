@@ -57,9 +57,9 @@ m4_assert_numargs(1)
 `	.globl	$1')
 
 define(`DEF_OBJECT',
-m4_assert_numargs(1)
+m4_assert_numargs_range(1,2)
 `	.csect	[RO], 3
-	.align	2
+	ALIGN(ifelse($#,1,2,$2))
 $1:
 ')
 
