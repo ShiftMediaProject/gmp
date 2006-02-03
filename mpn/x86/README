@@ -486,12 +486,15 @@ addl.
 
 REFERENCES
 
-"Intel Architecture Software Developer's Manual", volumes 1 to 3, 2001,
-order numbers 245470, 245471 and 245472.  Available on-line,
+"Intel Architecture Software Developer's Manual", volumes 1, 2a, 2b, 3a, 3b,
+2006, order numbers 253665 through 253669.  Available on-line,
 
-	http://developer.intel.com/design/pentium4/manuals/245470.htm
-	http://developer.intel.com/design/pentium4/manuals/245471.htm
-	http://developer.intel.com/design/pentium4/manuals/245472.htm
+	ftp://download.intel.com/design/Pentium4/manuals/25366518.pdf
+	ftp://download.intel.com/design/Pentium4/manuals/25366618.pdf
+	ftp://download.intel.com/design/Pentium4/manuals/25366718.pdf
+	ftp://download.intel.com/design/Pentium4/manuals/25366818.pdf
+	ftp://download.intel.com/design/Pentium4/manuals/25366918.pdf
+
 
 "System V Application Binary Interface", Unix System Laboratories Inc, 1992,
 published by Prentice Hall, ISBN 0-13-880410-9.  And the "Intel386 Processor
