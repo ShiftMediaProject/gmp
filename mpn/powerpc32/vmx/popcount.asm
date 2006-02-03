@@ -19,7 +19,7 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-include(`powerpc64/vmx/popcount/asm')
+include(`powerpc64/vmx/popcount.asm')
 
 C                   cycles/limb
 C 7400,7410 (G4):       2.75
