@@ -33,6 +33,7 @@ C TODO
 C  * Tune the awkward huge n outer loop code.
 C  * Two lvx, two vperm, and two vxor could make us a similar hamdist.
 C  * For the 970, a combined VMX+intop approach might be best.
+C  * Compress cnsts table in 64-bit mode, only half the values are needed.
 
 define(`GMP_LIMB_BYTES', eval(GMP_LIMB_BITS/8))
 define(`LIMBS_PER_VR',  eval(16/GMP_LIMB_BYTES))
@@ -91,6 +92,9 @@ C Load various constants into vector registers
 	lvx	x00110011, r12, r11	C 0x5555...55
 	vspltisb x00001111, 15		C 0x0f0f...0f
 
+LIMB64(`lis	r0, LIMBS_CHUNK_THRES	')
+LIMB64(`cmpd	cr7, n, r0		')
+
 	lvx	v0, 0, up
 	addi	r7, r11, 96
 	rlwinm	r6, up, 2,26,29
@@ -113,13 +117,10 @@ LIMB64(`rlwinm	r8, up, 29,31,31	')
 	ble	L(lsum)
 
 C For 64-bit machines, handle huge n that would overflow vsum4ubs
-LIMB64(`lis	r0, LIMBS_CHUNK_THRES
-	cmpd	cr7, n, r0
-	ble	cr7, L(small)
-	addis	r9, n, -LIMBS_PER_CHUNK	C remaining n
-	lis	n, LIMBS_PER_CHUNK
+LIMB64(`ble	cr7, L(small)		')
+LIMB64(`addis	r9, n, -LIMBS_PER_CHUNK	') C remaining n
+LIMB64(`lis	n, LIMBS_PER_CHUNK	')
 L(small):
-')
 
 
 LIMB32(`srwi	r7, n, 3	')	C loop count corresponding to n
