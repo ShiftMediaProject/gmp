@@ -38,7 +38,7 @@ define(`GMP_LIMB_BYTES', eval(GMP_LIMB_BITS/8))
 define(`LIMBS_PER_VR',  eval(16/GMP_LIMB_BYTES))
 define(`LIMBS_PER_2VR', eval(32/GMP_LIMB_BYTES))
 
-ifdef(`OPERATION_hamdist',,`define(`OPERATION_popcount')')
+define(`OPERATION_popcount')
 
 ifdef(`OPERATION_popcount',`
   define(`func',`mpn_popcount')
@@ -75,10 +75,8 @@ C in vsum4ubs.  For large operands, we work in chunks, of size LIMBS_PER_CHUNK.
 define(`LIMBS_PER_CHUNK', 0x1000)
 define(`LIMBS_CHUNK_THRES', 0x1001)
 
-MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
-
 ASM_START()
-PROLOGUE(func)
+PROLOGUE(mpn_popcount)
 	mfspr	r10, 256
 	oris	r0, r10, 0xfffc		C Set VRSAVE bit 0-13
 	mtspr	256, r0
