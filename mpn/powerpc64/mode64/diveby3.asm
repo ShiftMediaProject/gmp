@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_divexact_by3 -- mpn by 3 exact division
 
-dnl  Copyright 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
+dnl  Copyright 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,8 +23,8 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     13
-C POWER4/PPC970:     16
-C POWER5:	     16
+C POWER4/PPC970:     13
+C POWER5:	     13
 
 C INPUT PARAMETERS
 define(`rp', `r3')
@@ -32,52 +32,54 @@ define(`up', `r4')
 define(`n', `r5')
 define(`cy', `r6')
 
-C void mpn_divexact_by3 (mp_ptr rp, mp_srcptr up, mp_size_t n);
-C
-C mulld has the up[] limb in the second operand, since there's at least a
-C chance of it giving an early-out on ppc630, which the inverse 0xAA..AB
-C will never give.
-C
-C mulhdu has the "3" multiplier in the second operand, which is an early-out
-C for ppc630.
+define(`xAAAAAAAB',`r7')
+define(`xAAAAAAAA',  `r9')
+define(`q', `r10')
+define(`ul', `r11')
+define(`one',  `r12')
+
 
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
 
-	mtctr	n		C size
-	ld	r7, 0(up)	C up[0]
+	mtctr	r5
+	li	r7, -0x5556		C 0xFFFFFFFFFFFFAAAA
+	ld	ul, 0(up)
+	rldimi	r7, r7, 16, 32		C 0xFFFFFFFFAAAAAAAA
+	rldimi	r7, r7, 32, 63		C 0xAAAAAAAAAAAAAAAB = 1/3
 
-	li	r5, -0x5556	C 0xFFFFFFFFFFFFAAAA
-	rldimi	r5, r5, 16, 32	C 0xFFFFFFFFAAAAAAAA
-	rldimi	r5, r5, 32, 63	C 0xAAAAAAAAAAAAAAAB = 1/3
+	addi	r9, r7, -1		C 0xAAAAAAAAAAAAAAAA
+	li	one, 1
 
-	subi	r3, r3, 8	C adjust rp for first stdu
+	subfc	ul, cy, ul		C  C = (cy <= up[0])
+	subfe	cy, r1, r1		C  cy = -(cy > up[0])
+	bdz	L(end)
 
-	li	r0, 3		C multiplier 3
+	ALIGN(16)
+L(top):	mulld	q, ul, xAAAAAAAB
 
-	subfc	r7, cy, r7	C l = up[0] - carry
-	bdz	L(one)
+	ld	ul, 8(up)
+	addi	up, up, 8
+	addc	r0, xAAAAAAAA, q	C set C flag if q >= 0x5555...56
 
-	ALIGN(8)
-L(top):	mulld	r8, r5, r7	C q = l * inverse
-	nop
-	ldu	r7, 8(up)	C up[i]
+	subfe	cy, cy, one		C cy = 1-cy-1+C
+	subfc	r0, q, xAAAAAAAA	C set C flag if q < 0xAAAA...AA
 
-	mulhdu	r6, r8, r0	C c = high(3*q)
-	stdu	r8, 8(rp)	C rp[i-1] = q
+	subfe	ul, cy, ul		C ul = ul-cy-1+C
+	std	q, 0(rp)
+	addi	rp, rp, 8
 
-	subfe	r7, r6, r7	C l = s - carry
+	subfe	cy, r1, r1
 	bdnz	L(top)
 
-L(one):	subfe	r4, r4, r4	C 0 or -1
+L(end):	mulld	q, ul, xAAAAAAAB
+	addc	r0, xAAAAAAAA, q
 
-	mulld	r8, r7, r5	C q = l * inverse
+	subfe	cy, cy, one
+	subfc	r0, q, xAAAAAAAA
 
-	mulhdu	r6, r8, r0	C c = high(3*q)
-	std	r8, 8(rp)	C rp[i] = q
-
-	subf	r3, r4, r6	C carry + ca
-
+	std	q, 0(rp)
+	subfe	r3, r1, r1
+	subf	r3, r3, cy
 	blr
-
 EPILOGUE()
