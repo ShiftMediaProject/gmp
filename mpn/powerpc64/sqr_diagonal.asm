@@ -15,7 +15,7 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYINGL(IB).  If not, write to
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
@@ -35,16 +35,23 @@ PROLOGUE(mpn_sqr_diagonal)
 ifdef(`HAVE_ABI_mode32',
 `	rldicl	r5, r5, 0, 32')		C zero extend n
 	mtctr	r5
-L(oop):
 	ld	r0, 0(r4)
-	nop
-	mulld	r5, r0, r0
+	bdz	L(end)
+	ALIGN(16)
+
+L(top):	mulld	r5, r0, r0
 	mulhdu	r6, r0, r0
-	std	r5, 0(r3)
+	ld	r0, 8(r4)
 	addi	r4, r4, 8
+	std	r5, 0(r3)
 	std	r6, 8(r3)
 	addi	r3, r3, 16
-	bdnz	L(oop)
+	bdnz	L(top)
+
+L(end):	mulld	r5, r0, r0
+	mulhdu	r6, r0, r0
+	std	r5, 0(r3)
+	std	r6, 8(r3)
 
 	blr
 EPILOGUE()
