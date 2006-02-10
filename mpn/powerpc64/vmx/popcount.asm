@@ -83,7 +83,7 @@ PROLOGUE(mpn_popcount)
 	mtspr	256, r0
 
 C Load various constants into vector registers
-	LDSYM(r11, cnsts)
+	LDSYM(	r11, cnsts)
 	li	r12, 16
 	vspltisb cnt1, 1		C 0x0101...01 used as shift count
 	vspltisb cnt2, 2		C 0x0202...02 used as shift count
@@ -131,10 +131,12 @@ LIMB64(`srdi	r7, n, 2	')	C loop count corresponding to n
 
 	ALIGN(8)
 L(top):	lvx	v0, 0, up
+	li	r7, 128			C prefetch distance
 L(ent):	lvx	v1, r12, up
 	addi	up, up, 32
 	vsr	v4, v0, cnt1
 	vsr	v5, v1, cnt1
+	dcbt	up, r7			C prefetch
 	vand	v8, v4, x01010101
 	vand	v9, v5, x01010101
 	vsububm	v0, v0, v8		C 64 2-bit accumulators (0..2)
@@ -194,7 +196,7 @@ LIMB64(`rlwinm	r6, n, 5,26,26	')
 	vsum4ubs v3, v6, v3		C sum 4 x 4 bytes into 4 32-bit fields
 
 L(rt):
-	li	r7, -16			C FIXME: does all ppc32 and ppc64...
+	li	r7, -16			C FIXME: does all ppc32 and ppc64 ABIs
 	stvx	v3, r7, r1		C FIXME: ...support storing below sp?
 
 	lwz	r7, -16(r1)
