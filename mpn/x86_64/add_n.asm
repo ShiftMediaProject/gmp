@@ -34,7 +34,7 @@ C rp	rdi
 C up	rsi
 C vp	rdx
 C n	rcx
-C cy	r8		(only for mpn_sub_nc)
+C cy	r8		(only for mpn_add_nc)
 
 	TEXT
 	ALIGN(16)

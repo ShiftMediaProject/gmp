@@ -25,7 +25,7 @@ include(`../config.m4')
 
 C		    cycles/limb
 C Hammer:		3.5
-C Prescott/Nocona:	21-23 (fluctuating due to w/c problems)
+C Prescott/Nocona:	20.5-21.5 (fluctuating due to w/c problems)
 
 
 C INPUT PARAMETERS

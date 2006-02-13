@@ -56,7 +56,7 @@ well:
 
 	mul_1:		3.0
 	addmul_1:	3.25
-	submul_1:	3.75
+	submul_1:	3.5
 
 
 mpn_add_n, mpn_sub_n:

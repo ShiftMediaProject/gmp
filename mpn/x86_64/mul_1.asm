@@ -25,7 +25,7 @@ include(`../config.m4')
 
 C		    cycles/limb
 C Hammer:		 3
-C Prescott/Nocona:	13
+C Prescott/Nocona:	12.6
 
 C TODO
 C  * Perhaps make this use the algorithm of addmul_1.asm.
