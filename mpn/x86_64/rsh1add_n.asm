@@ -26,8 +26,9 @@ C		    cycles/limb
 C Hammer:		2.14	(mpn_add_n + mpn_rshift need 4.125)
 C Prescott/Nocona:	13
 
-C It should be possible to get well under 2 c/l for this operation, to
-C about 40/8/3 = 1.667 c/l.
+C TODO
+C  * Rewrite to use indexed addressing, like addlsh1.asm and sublsh1.asm.
+C  * Try to approach the cache bandwidth 1.5 c/l.  It should be possible.
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
@@ -41,13 +42,13 @@ ASM_START()
 	ALIGN(16)
 	.byte	0,0,0,0,0,0,0,0
 PROLOGUE(mpn_rsh1add_n)
-	pushq	%r12			C				1
+	pushq	%rbx			C				1
 
 	xorl	%eax, %eax
-	movq	(up), %r12
-	adcq	(vp), %r12
+	movq	(up), %rbx
+	addq	(vp), %rbx
 
-	rcrq	%r12			C rotate, save acy
+	rcrq	%rbx			C rotate, save acy
 	adcl	%eax, %eax		C return value
 
 	movl	n32, %r11d
@@ -58,20 +59,20 @@ PROLOGUE(mpn_rsh1add_n)
 
 .Ln1:	cmpl	$2, %r11d
 	jne	.Ln2			C jump unless n = 2 6 10 ...
-	addq	%r12, %r12		C rotate carry limb, restore acy
+	addq	%rbx, %rbx		C rotate carry limb, restore acy
 	movq	8(up), %r10
 	adcq	8(vp), %r10
 	leaq	8(up), up
 	leaq	8(vp), vp
 	leaq	8(rp), rp
 	rcrq	%r10
-	rcrq	%r12
-	movq	%r12, -8(rp)
+	rcrq	%rbx
+	movq	%rbx, -8(rp)
 	jmp	.Lcj1
 
 .Ln2:	cmpl	$3, %r11d
 	jne	.Ln3			C jump unless n = 3 7 11 ...
-	addq	%r12, %r12		C rotate carry limb, restore acy
+	addq	%rbx, %rbx		C rotate carry limb, restore acy
 	movq	8(up), %r9
 	movq	16(up), %r10
 	adcq	8(vp), %r9
@@ -81,12 +82,12 @@ PROLOGUE(mpn_rsh1add_n)
 	leaq	16(rp), rp
 	rcrq	%r10
 	rcrq	%r9
-	rcrq	%r12
-	movq	%r12, -16(rp)
+	rcrq	%rbx
+	movq	%rbx, -16(rp)
 	jmp	.Lcj2
 
 .Ln3:	decq	n			C come here for n = 4 8 12 ...
-	addq	%r12, %r12		C rotate carry limb, restore acy
+	addq	%rbx, %rbx		C rotate carry limb, restore acy
 	movq	8(up), %r8
 	movq	16(up), %r9
 	adcq	8(vp), %r8
@@ -99,17 +100,17 @@ PROLOGUE(mpn_rsh1add_n)
 	rcrq	%r10
 	rcrq	%r9
 	rcrq	%r8
-	rcrq	%r12
-	movq	%r12, -24(rp)
+	rcrq	%rbx
+	movq	%rbx, -24(rp)
 	movq	%r8, -16(rp)
 .Lcj2:	movq	%r9, -8(rp)
-.Lcj1:	movq	%r10, %r12
+.Lcj1:	movq	%r10, %rbx
 
 .Ldo:
 	shrq	$2, n			C				4
 	je	.Lend			C				2
 	ALIGN(16)
-.Loop:	addq	%r12, %r12		C rotate carry limb, restore acy
+.Loop:	addq	%rbx, %rbx		C rotate carry limb, restore acy
 
 	movq	8(up), %r8
 	movq	16(up), %r9
@@ -128,18 +129,18 @@ PROLOGUE(mpn_rsh1add_n)
 	rcrq	%r9
 	rcrq	%r8
 
-	rcrq	%r12
-	movq	%r12, 0(rp)
+	rcrq	%rbx
+	movq	%rbx, (rp)
 	movq	%r8, 8(rp)
 	movq	%r9, 16(rp)
 	movq	%r10, 24(rp)
-	movq	%r11, %r12
+	movq	%r11, %rbx
 
 	leaq	32(rp), rp
 	decq	n
 	jne	.Loop
 
-.Lend:	movq	%r12, 0(rp)
-	popq	%r12
+.Lend:	movq	%rbx, (rp)
+	popq	%rbx
 	ret
 EPILOGUE()
