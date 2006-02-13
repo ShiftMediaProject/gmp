@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2001, 2002, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2004, 2005, 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -53,27 +53,28 @@ L(odd):	movq	%rax, %rbx
 
 ifdef(`PIC',`
 	movq	modlimb_invert_table@GOTPCREL(%rip), %rdx
-	movzbl	(%rax,%rdx), %eax			C inv 8 bits
 ',`
-	movzbl	modlimb_invert_table(%rax), %eax	C inv 8 bits
+	movabsq	$modlimb_invert_table, %rdx
 ')
+
+	movzbl	(%rax,%rdx), %eax	C inv 8 bits
 
 	movq	%rbx, %r11		C d without twos
 
 	leal	(%rax,%rax), %edx	C 2*inv
 	imull	%eax, %eax		C inv*inv
 	imull	%ebx, %eax		C inv*inv*d
-	subl	%eax, %edx		C inv = 2*inv - inv*inv*d
+	subl	%eax, %edx		C inv = 2*inv - inv*inv*d, 16 bits
 
 	leal	(%rdx,%rdx), %eax	C 2*inv
 	imull	%edx, %edx		C inv*inv
 	imull	%ebx, %edx		C inv*inv*d
-	subl	%edx, %eax		C inv = 2*inv - inv*inv*d
+	subl	%edx, %eax		C inv = 2*inv - inv*inv*d, 32 bits
 
 	leaq	(%rax,%rax), %rdx	C 2*inv
 	imulq	%rax, %rax		C inv*inv
 	imulq	%rbx, %rax		C inv*inv*d
-	subq	%rax, %rdx		C inv = 2*inv - inv*inv*d
+	subq	%rax, %rdx		C inv = 2*inv - inv*inv*d, 64 bits
 
 	leaq	(%rsi,%r8,8), %rsi	C up end
 	leaq	-8(%rdi,%r8,8), %rdi	C rp end
