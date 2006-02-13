@@ -38,8 +38,8 @@ C up	r4
 C n	r5
 C vl	r6
 
-C This is optimized for the PPC604.  It has not been tuned for PPC601,
-C PPC603, PPC750 (G3), 7400 (G4), 7450 (G4+).
+C This is optimized for the PPC604.  It has not been tuned for other
+C PowerPC processors.
 C
 C Loop Analysis for the 604:
 C 12 mem insn
