@@ -30,8 +30,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_cast_SOURCES) $(t_constr_SOURCES) $(t_headers_SOURCES) $(t_istream_SOURCES) $(t_locale_SOURCES) $(t_misc_SOURCES) $(t_ops_SOURCES) $(t_ostream_SOURCES) $(t_prec_SOURCES) $(t_rand_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
 
 srcdir = @srcdir@

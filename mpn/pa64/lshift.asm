@@ -16,8 +16,8 @@ dnl  License for more details.
 
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl  MA 02111-1307, USA.
+dnl  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+dnl  MA 02110-1301, USA.
 
 
 dnl  This runs at 1.5 cycles/limb on PA8000 and 1.0 cycles/limb on PA8500.

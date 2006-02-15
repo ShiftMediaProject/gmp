@@ -30,8 +30,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 SOURCES = anymul_1.c aors_n.c copy.c divmod_1.c divrem.c logops_n.c shift.c try.c tst-addsub.c
 
 srcdir = @srcdir@

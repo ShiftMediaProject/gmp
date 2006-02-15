@@ -30,8 +30,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 SOURCES = t-aors_1.c t-asmtype.c t-divrem_1.c t-fat.c t-get_d.c t-hgcd.c t-instrument.c t-iord_u.c t-mp_bases.c t-perfsqr.c t-scan.c
 
 srcdir = @srcdir@

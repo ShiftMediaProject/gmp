@@ -30,8 +30,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 
 # Copyright 1996, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
 # Inc.
@@ -50,8 +50,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-hightomask.c t-modlinv.c t-parity.c t-popc.c t-sub.c
 
 srcdir = @srcdir@
