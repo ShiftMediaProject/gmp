@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2006-02-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/default.m4 (PROLOGUE_cpu): Align functions at 16-byte
+	boundary.
+
+	* mpn/alpha/ev6/nails/aors_n.asm: New file.
+	* mpn/alpha/ev6/nails/add_n.asm: Remove.
+	* mpn/alpha/ev6/nails/sub_n.asm: Remove.
+
+	* mpn/alpha/ev6/nails/addmul_1.asm: Rewrite.
+	* mpn/alpha/ev6/nails/submul_1.asm: Likewise.
+	* mpn/alpha/ev6/nails/mul_1.asm: Likewise.
+
+	* mpn/alpha/ev6/nails/addmul_2.asm: Use L() for labels.
+	* mpn/alpha/ev6/nails/addmul_3.asm: Use L() for labels.
+	* mpn/alpha/ev6/nails/addmul_4.asm: Use L() for labels.
+
 2006-02-13  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32/diveby3.asm: Trivially reorder loop insns to save
