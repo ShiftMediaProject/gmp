@@ -107,7 +107,7 @@ L(3m4):	ldq	ul3,	0(up)
 	srl	m0a,NAIL_BITS,	t0
 	addq	t0,	m3b,	acc0
 	srl	acc1,NUMB_BITS,	t1
-	br	L(t3)
+	br	r31,	L(ta3)
 
 L(ge3):	ldq	ul2,	0(up)
 	mulq	vl0,	ul1,	m1a
@@ -126,7 +126,7 @@ L(ge3):	ldq	ul2,	0(up)
 	mulq	vl0,	ul3,	m3a
 	addq	t0,	m3b,	acc0
 	srl	acc1,NUMB_BITS,	t1
-	br	L(el3)
+	br	r31,	L(el3)
 
 L(0m4):	lda	n,	-8(n)
 	ldq	ul2,	0(up)
@@ -152,7 +152,7 @@ L(0m4):	lda	n,	-8(n)
 	srl	m3a,NAIL_BITS,	t0
 	addq	t0,	m2b,	acc1
 	srl	acc0,NUMB_BITS,	t1
-	br	L(t4)
+	br	r31,	L(ta4)
 
 L(ge4):	ldq	rl2,	0(rp)
 	srl	m2a,NAIL_BITS,	t0
@@ -168,7 +168,7 @@ L(ge4):	ldq	rl2,	0(rp)
 	mulq	vl0,	ul2,	m2a
 	addq	t0,	m2b,	acc1
 	srl	acc0,NUMB_BITS,	t1
-	br	L(el0)
+	br	r31,	L(el0)
 
 L(2m4):	lda	n,	-4(n)
 	ldq	ul0,	0(up)
@@ -189,7 +189,7 @@ L(2m4):	lda	n,	-4(n)
 	srl	m1a,NAIL_BITS,	t0
 	addq	t0,	m0b,	acc1
 	srl	acc0,NUMB_BITS,	t1
-	br	L(t2)
+	br	r31,	L(ta2)
 
 L(ge2):	ldq	ul2,	0(up)
 	mulq	vl0,	ul1,	m1a
@@ -215,7 +215,7 @@ L(ge2):	ldq	ul2,	0(up)
 	srl	acc0,NUMB_BITS,	t1
 	bge	n,	L(el2)
 
-	br	L(t6)
+	br	r31,	L(ta6)
 
 L(1m4):	lda	n,	-4(n)
 	ldq	ul1,	0(up)
@@ -227,7 +227,7 @@ L(1m4):	lda	n,	-4(n)
 	umulh	vl0,	ul1,	m1b
 	ldq	rl1,	24(rp)
 	srl	m1a,NAIL_BITS,	t0
-	addq	t0,	rl1,	acc1
+	addq	rl1,	t0,	acc1
 	and	acc1,numb_mask,	r28
 	srl	acc1,NUMB_BITS,	t1
 	stq	r28,	24(rp)
@@ -258,10 +258,10 @@ L(ge1):	ldq	ul2,	0(up)
 	mulq	vl0,	ul1,	m1a
 	addq	t0,	m1b,	acc0
 	srl	acc1,NUMB_BITS,	t1
-	blt	n,	L(t5)
+	blt	n,	L(ta5)
 
 L(ge5):	ldq	ul2,	0(up)
-	br	L(el1)
+	br	r31,	L(el1)
 
 	ALIGN(16)
 L(top):	mulq	vl0,	ul0,	m0a		C U1
@@ -274,7 +274,7 @@ L(el2):	umulh	vl0,	ul0,	m0b		C U1
 	addq	rl1,	acc1,	acc1		C U0
 	ldq	rl2,	0(rp)			C L1
 C
-	bis	r31,	r31,	r31		C U1	nop
+	unop					C U1
 	addq	t1,	acc1,	acc1		C L0
 	srl	m2a,NAIL_BITS,	t0		C U0
 	ldq	ul2,	0(up)			C L1
@@ -289,15 +289,10 @@ L(el1):	umulh	vl0,	ul1,	m1b		C U1
 	addq	rl2,	acc0,	acc0		C U0
 	ldq	rl3,	8(rp)			C L1
 C
-	bis	r31,	r31,	r31		C U1	nop
+	lda	n,	-4(n)			C L1
 	addq	t1,	acc0,	acc0		C L0
 	srl	m3a,NAIL_BITS,	t0		C U0
 	ldq	ul3,	8(up)			C L1
-C
-	bis	r31,	r31,	r31		C L0	nop
-	bis	r31,	r31,	r31		C U1	nop
-	lda	n,	-4(n)			C L1
-	bis	r31,	r31,	r31		C U0	nop
 C
 	mulq	vl0,	ul2,	m2a		C U1
 	addq	t0,	m2b,	acc1		C L0
@@ -309,7 +304,7 @@ L(el0):	umulh	vl0,	ul2,	m2b		C U1
 	addq	rl3,	acc1,	acc1		C U0
 	ldq	rl0,	16(rp)			C L1
 C
-	bis	r31,	r31,	r31		C U1	nop
+	unop					C U1
 	addq	t1,	acc1,	acc1		C L0
 	srl	m0a,NAIL_BITS,	t0		C U0
 	ldq	ul0,	16(up)			C L1
@@ -324,13 +319,13 @@ L(el3):	umulh	vl0,	ul3,	m3b		C U1
 	addq	rl0,	acc0,	acc0		C U0
 	ldq	rl1,	24(rp)			C L1
 C
-	bis	r31,	r31,	r31		C U1	nop
+	unop					C U1
 	addq	t1,	acc0,	acc0		C L0
 	srl	m1a,NAIL_BITS,	t0		C U0
 	ldq	ul1,	24(up)			C L1
 C
 	lda	up,	32(up)			C L0
-	bis	r31,	r31,	r31		C U1	nop
+	unop					C U1
 	lda	rp,	32(rp)			C L1
 	bge	n,	L(top)			C U0
 
@@ -338,7 +333,7 @@ L(end):	mulq	vl0,	ul0,	m0a
 	addq	t0,	m0b,	acc1
 	srl	acc0,NUMB_BITS,	t1
 	stq	r28,	-24(rp)
-L(t6):	umulh	vl0,	ul0,	m0b
+L(ta6):	umulh	vl0,	ul0,	m0b
 	and	acc0,numb_mask,	r28
 	addq	rl1,	acc1,	acc1
 	ldq	rl2,	0(rp)
@@ -348,7 +343,7 @@ L(t6):	umulh	vl0,	ul0,	m0b
 	addq	t0,	m1b,	acc0
 	srl	acc1,NUMB_BITS,	t1
 	stq	r28,	-16(rp)
-L(t5):	umulh	vl0,	ul1,	m1b
+L(ta5):	umulh	vl0,	ul1,	m1b
 	and	acc1,numb_mask,	r28
 	addq	rl2,	acc0,	acc0
 	ldq	rl3,	8(rp)
@@ -359,7 +354,7 @@ L(t5):	umulh	vl0,	ul1,	m1b
 	stq	r28,	-8(rp)
 	unop
 	ALIGN(16)
-L(t4):	and	acc0,numb_mask,	r28
+L(ta4):	and	acc0,numb_mask,	r28
 	addq	rl3,	acc1,	acc1
 	ldq	rl0,	16(rp)
 	addq	t1,	acc1,	acc1
@@ -369,7 +364,7 @@ L(t4):	and	acc0,numb_mask,	r28
 	stq	r28,	0(rp)
 	unop
 	ALIGN(16)
-L(t3):	and	acc1,numb_mask,	r28
+L(ta3):	and	acc1,numb_mask,	r28
 	addq	rl0,	acc0,	acc0
 	ldq	rl1,	24(rp)
 	addq	t1,	acc0,	acc0
@@ -379,7 +374,7 @@ L(t3):	and	acc1,numb_mask,	r28
 	stq	r28,	8(rp)
 	unop
 	ALIGN(16)
-L(t2):	and	acc0,numb_mask,	r28
+L(ta2):	and	acc0,numb_mask,	r28
 	addq	rl1,	acc1,	acc1
 	addq	t1,	acc1,	acc1
 	srl	acc1,NUMB_BITS,	t1
@@ -388,5 +383,5 @@ L(t2):	and	acc0,numb_mask,	r28
 	addq	t1,	m1b,	r0
 	stq	r28,	24(rp)
 	ret	r31,	(r26),	1
-EPILOGUE(mpn_addmul_1)
+EPILOGUE()
 ASM_END()
