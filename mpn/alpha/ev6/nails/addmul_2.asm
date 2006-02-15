@@ -1,6 +1,6 @@
 dnl  Alpha ev6 nails mpn_addmul_2.
 
-dnl  Copyright 2002, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2005, 2006 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -78,11 +78,9 @@ PROLOGUE(mpn_addmul_2)
 	mulq	v1,	ulimb,	m1a		C U1
 	umulh	v1,	ulimb,	m1b		C U1
 	lda	n,	-1(n)
-	beq	n,	Lend			C U0
+	beq	n,	L(end)			C U0
 	ALIGN(16)
-C MAIN LOOP
-Loop:
-	bis	r31,	r31,	r31		C U1	nop
+L(top):	bis	r31,	r31,	r31		C U1	nop
 	addq	r19,	acc0,	acc0		C U0	propagate nail
 	ldq	rlimb,	0(rp)			C L0
 	ldq	ulimb,	0(up)			C L1
@@ -110,10 +108,9 @@ Loop:
 	lda	n,	-1(n)			C L0
 	srl	r19,NUMB_BITS,	r19		C U1	extract nail part
 	stq	r28,	-8(rp)			C L1
-	bne	n,	Loop			C U0
-C END LOOP
-Lend:
-	ldq	rlimb,	0(rp)
+	bne	n,	L(top)			C U0
+
+L(end):	ldq	rlimb,	0(rp)
 	addq	r19,	acc0,	acc0		C	propagate nail
 	lda	rp,	8(rp)
 	srl	m0a,NAIL_BITS,	r8		C U0
@@ -135,5 +132,5 @@ Lend:
 	addq	r19,	acc1,	r0
 
 	ret	r31,	(r26),	1
-EPILOGUE(mpn_addmul_2)
+EPILOGUE()
 ASM_END()
