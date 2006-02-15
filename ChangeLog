@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2006-02-15  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/devel/addmul_N.c: New file.
+	* tests/devel/mul_N.c: New file.
+
 	* mpn/alpha/default.m4 (PROLOGUE_cpu): Align functions at 16-byte
 	boundary.
 
