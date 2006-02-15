@@ -70,8 +70,10 @@ cputime ()
 }
 #endif
 
+static void print_posneg (mp_limb_t);
 static void mpn_print (mp_ptr, mp_size_t);
 
+#define LXW ((int) (2 * sizeof (mp_limb_t)))
 #define M * 1000000
 
 #ifndef CLOCK
@@ -88,10 +90,11 @@ static void mpn_print (mp_ptr, mp_size_t);
 #define TIMES OPS/(SIZE+1)
 #endif
 
+int
 main (int argc, char **argv)
 {
-  mp_ptr s1, dx, dy;
-  mp_limb_t cyx, cyy;
+  mp_ptr s1, ref, rp;
+  mp_limb_t cy_ref, cy_try;
   int i;
   long t0, t;
   unsigned int test;
@@ -101,8 +104,9 @@ main (int argc, char **argv)
   unsigned int ntests;
 
   s1 = malloc (SIZE * sizeof (mp_limb_t));
-  dx = malloc ((SIZE + 2) * sizeof (mp_limb_t));
-  dy = malloc ((SIZE + 2) * sizeof (mp_limb_t));
+  ref = malloc (SIZE * sizeof (mp_limb_t));
+  rp = malloc ((SIZE + 2) * sizeof (mp_limb_t));
+  rp++;
 
   ntests = ~(unsigned) 0;
   if (argc == 2)
@@ -124,8 +128,8 @@ main (int argc, char **argv)
       size = SIZE;
 #endif
 
-      dy[0] = 0x87654321;
-      dy[size+1] = 0x12345678;
+      rp[-1] = 0x87654321;
+      rp[size] = 0x12345678;
 
 #ifdef FIXED_XLIMB
       xlimb = FIXED_XLIMB;
@@ -135,12 +139,12 @@ main (int argc, char **argv)
 
 #if TIMES != 1
       mpn_random (s1, size);
-      mpn_random (dy+1, size);
+      mpn_random (rp, size);
 
-      MPN_COPY (dx, dy, size+2);
+      MPN_COPY (ref, rp, size);
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	func (dx+1, s1, size, xlimb);
+	func (ref, s1, size, xlimb);
       t = cputime() - t0;
       cyc = ((double) t * CLOCK) / (TIMES * size * 1000.0);
       printf (funcname ":    %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
@@ -151,9 +155,9 @@ main (int argc, char **argv)
 #ifndef NOCHECK
       mpn_random2 (s1, size);
 #ifdef ZERO
-      memset (dy+1, 0, size * sizeof *s1);
+      memset (rp, 0, size * sizeof *rp);
 #else
-      mpn_random2 (dy+1, size);
+      mpn_random2 (rp, size);
 #endif
 #if defined (PRINT) || defined (XPRINT)
       printf ("xlimb=");
@@ -162,50 +166,43 @@ main (int argc, char **argv)
 #ifdef PRINT
 #ifndef OPERATION_mul_1
       printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
-      mpn_print (dy+1, size);
+      mpn_print (rp, size);
 #endif
       printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "");
       mpn_print (s1, size);
 #endif
 
-      MPN_COPY (dx, dy, size+2);
-      cyx = reffunc (dx+1, s1, size, xlimb);
-      cyy = func (dy+1, s1, size, xlimb);
+      MPN_COPY (ref, rp, size);
+      cy_ref = reffunc (ref, s1, size, xlimb);
+      cy_try = func (rp, s1, size, xlimb);
 
 #ifdef PRINT
-      mpn_print (&cyx, 1);
-      mpn_print (dx+1, size);
-      mpn_print (&cyy, 1);
-      mpn_print (dy+1, size);
+      mpn_print (&cy_ref, 1);
+      mpn_print (ref, size);
+      mpn_print (&cy_try, 1);
+      mpn_print (rp, size);
 #endif
 
-      if (cyx != cyy || mpn_cmp (dx, dy, size+2) != 0
-	  || dx[0] != 0x87654321 || dx[size+1] != 0x12345678)
+      if (cy_ref != cy_try || mpn_cmp (ref, rp, size) != 0
+	  || rp[-1] != 0x87654321 || rp[size] != 0x12345678)
 	{
-#ifndef PRINT
-	  mpn_print (&cyx, 1);
-	  mpn_print (dx+1, size);
-	  mpn_print (&cyy, 1);
-	  mpn_print (dy+1, size);
-#endif
-	  printf ("\n");
-	  printf ("%*s ", (int) (2 * sizeof(mp_limb_t)), "DIFF:");
-	  for (i = size; i != 0; i--)
+	  printf ("\n        ref%*s try%*s diff\n", LXW - 3, "", 2 * LXW - 6, "");
+	  for (i = 0; i < size; i++)
 	    {
-	      mp_limb_t diff = dy[i] ^ dx[i];
-	      if (diff != 0)
-		printf ("%*lX", (int) (2 * sizeof(mp_limb_t)), diff);
-	      else
-		printf ("%*s", (int) (2 * sizeof(mp_limb_t)), "");
-#ifdef SPACE
-	      if (i != 0)
-		printf (" ");
-#endif
+	      printf ("%6d: ", i);
+	      printf ("%0*llX ", LXW, (unsigned long long) ref[i]);
+	      printf ("%0*llX ", LXW, (unsigned long long) rp[i]);
+	      print_posneg (rp[i] - ref[i]);
+	      printf ("\n");
 	    }
+	  printf ("retval: ");
+	  printf ("%0*llX ", LXW, (unsigned long long) cy_ref);
+	  printf ("%0*llX ", LXW, (unsigned long long) cy_try);
+	  print_posneg (cy_try - cy_ref);
 	  printf ("\n");
-	  if (dy[0] != 0x87654321)
+	  if (rp[-1] != 0x87654321)
 	    printf ("clobbered at low end\n");
-	  if (dy[size+1] != 0x12345678)
+	  if (rp[size] != 0x12345678)
 	    printf ("clobbered at high end\n");
 	  printf ("TEST NUMBER %u\n", test);
 	  abort();
@@ -213,6 +210,24 @@ main (int argc, char **argv)
 #endif
     }
   exit (0);
+}
+
+static void
+print_posneg (mp_limb_t d)
+{
+  char buf[LXW + 2];
+  if (d == 0)
+    printf (" %*X", LXW, 0);
+  else if (-d < d)
+    {
+      sprintf (buf, "%llX", (unsigned long long) -d);
+      printf ("%*s-%s", LXW - (int) strlen (buf), "", buf);
+    }
+  else
+    {
+      sprintf (buf, "%llX", (unsigned long long) d);
+      printf ("%*s+%s", LXW - (int) strlen (buf), "", buf);
+    }
 }
 
 static void
