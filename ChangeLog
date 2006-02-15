@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2006-02-15  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/devel/anymul_1.c: Copy error reporting code from addmul_N.c.
+
 	* tests/devel/addmul_N.c: New file.
 	* tests/devel/mul_N.c: New file.
 
