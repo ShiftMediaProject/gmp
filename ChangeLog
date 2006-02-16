@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-02-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/addmul_1.asm: Correct slotting comments.
+
 2006-02-15  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/devel/anymul_1.c: Copy error reporting code from addmul_N.c.
