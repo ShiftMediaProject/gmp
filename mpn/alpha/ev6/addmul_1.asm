@@ -205,13 +205,13 @@ $Loop:
 
 	bis	r31,	r31,	r31	C U1 mt
 	addq	r5,	r7,	r23	C L0 lo + acc
-	addq	r6,	r21,	r6	C L0 hi mul + carry
+	addq	r6,	r21,	r6	C U0 hi mul + carry
 	ldq	r4,	0(r16)		C L1
 
 	umulh	r19,	r1,	r8	C U1
 	cmpult	r23,	r7,	r20	C L0 lo add => carry
 	addq	r23,	r6,	r23	C U0 hi add => answer
-	ldq	r1,	8(r17)		C
+	ldq	r1,	8(r17)		C L1
 
 	mulq	r19,	r0,	r2	C U1
 	cmpult	r23,	r6,	r21	C L0 hi add => carry
@@ -219,7 +219,7 @@ $Loop:
 	ldq	r5,	8(r16)		C L1
 
 	umulh	r19,	r0,	r6	C U1
-	addq	r4,	r25,	r4	C L0 lo + acc
+	addq	r4,	r25,	r4	C U0 lo + acc
 	stq	r22,	-16(r16)	C L0
 	stq	r23,	-8(r16)		C L1
 
@@ -275,7 +275,7 @@ $ent0:
 
 	bis	r31,	r31,	r31	C U1 mt
 	addq	r5,	r7,	r23	C L0 lo + acc
-	addq	r6,	r21,	r6	C L0 hi mul + carry
+	addq	r6,	r21,	r6	C U0 hi mul + carry
 	ldq	r4,	32(r16)		C L1
 
 	umulh	r19,	r1,	r8	C U1
@@ -289,7 +289,7 @@ $ent0:
 	ldq	r5,	40(r16)		C L1
 
 	umulh	r19,	r0,	r6	C U1
-	addq	r4,	r25,	r4	C L0 lo + acc
+	addq	r4,	r25,	r4	C U0 lo + acc
 	stq	r22,	16(r16)		C L0
 	stq	r23,	24(r16)		C L1
 
