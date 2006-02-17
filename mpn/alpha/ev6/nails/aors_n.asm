@@ -56,9 +56,11 @@ NAILS_SUPPORT(1-63)
 
 ifdef(`OPERATION_add_n', `
 	define(`OP',        addq)
+	define(`CYSH',`GMP_NUMB_BITS')
 	define(`func',  mpn_add_n)')
 ifdef(`OPERATION_sub_n', `
 	define(`OP',        subq)
+	define(`CYSH',63)
 	define(`func',  mpn_sub_n)')
 
 MULFUNC_PROLOGUE(mpn_add_n mpn_sub_n)
