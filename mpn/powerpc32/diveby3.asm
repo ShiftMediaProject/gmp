@@ -4,67 +4,81 @@ dnl  Copyright 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
-dnl  The GNU MP Library is free software; you can redistribute it and/or modify
-dnl  it under the terms of the GNU Lesser General Public License as published
-dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
-dnl  your option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Lesser General Public License as
+dnl  published by the Free Software Foundation; either version 2.1 of the
+dnl  License, or (at your option) any later version.
 dnl
-dnl  The GNU MP Library is distributed in the hope that it will be useful, but
-dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-dnl  License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Lesser General Public License for more details.
 dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-dnl  MA 02110-1301, USA.
+dnl  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+dnl  Boston, MA 02110-1301, USA.
 
 include(`../config.m4')
 
 C                cycles/limb
-C 603e:             ?
-C 604e:             7 UPDATE
-C 75x (G3):         9
-C 7400,7410 (G4):   9
-C 744x,745x (G4+):  9
-C power4/ppc970:   13
-C power5:           ?
+C 603e:              ?
+C 604e:              ?
+C 75x (G3):          ?
+C 7400,7410 (G4):    8
+C 744x,745x (G4+):   6
+C power4/ppc970:    12
+C power5:            ?
 
 C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
-C Scheduling the load back a bit gets us down from 11 c/l to 10 c/l.
+C We avoid the slow subfe instruction and instead rely on an extremely unlikely
+C branch.
 C
 C The mullw has the inverse in the first operand, since 0xAA..AB won't allow
 C any early-out.  The src[] data normally won't either, but there's at least
 C a chance, whereas 0xAA..AB never will.  If, for instance, src[] is all
 C zeros (not a sensible input of course) we run at 7.0 c/l on ppc750.
 C
-C The mulhwu has the "3" multiplier in the second operand, which lets 750
-C and 7400 use an early-out.  The other way around costs an extra 3.5 c/l or
-C so, on average.
+C The mulhwu has the "3" multiplier in the second operand, which lets 750 and
+C 7400 use an early-out.
+
+C INPUT PARAMETERS
+define(`rp', `r3')
+define(`up', `r4')
+define(`n',  `r5')
+define(`cy', `r6')
 
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
-	mtctr	r5		C size
-	lwz	r7, 0(r4)	C src[0]
-	lis	r5, 0xAAAA	C inverse high
-	subi	r3, r3, 4	C adjust dst for first stwu
-	li	r0, 3		C multiplier 3
-	ori	r5, r5, 0xAAAB	C inverse low
-	subfc	r7, r6, r7	C l = src[0] - carry
+	lwz	r11, 0(rp)
+	mtctr	n
+	lis	r12, 0xAAAA
+	ori	r12, r12, 0xAAAB
+	li	r10, 3
+
+	cmplw	cr7, cy, r11
+	subf	r11, cy, r11
+
+	mullw	r0, r11, r12
+	stw	r0, 0(up)
 	bdz	L(one)
 
-L(top):	mullw	r8, r5, r7	C q = inverse * l
-	lwzu	r7, 4(r4)	C src[i]
-	mulhwu	r6, r8, r0	C c = high(3*q)
-	subfe	r7, r6, r7	C l = s - carry
-	stwu	r8, 4(r3)	C dst[i-1] = q
+L(top):	lwzu	r9, 4(rp)
+	mulhwu	r7, r0, r10
+	bgt-	cr7, L(adj)		C very unlikely branch
+L(bko):	cmplw	cr7, r7, r9
+	subf	r0, r7, r9
+	mullw	r0, r12, r0
+	stwu	r0, 4(up)
 	bdnz	L(top)
 
-L(one):	subfe	r4, r4, r4	C ca 0 or -1
-	mullw	r8, r7, r5	C q = l * inverse
-	mulhwu	r6, r8, r0	C c = high(3*q)
-	stwu	r8, 4(r3)	C dst[i] = q
-	subf	r3, r4, r6	C carry + ca
+L(one):	mulhwu	r3, r0, r10
+	blelr+	cr7
+	addi	r3, r3, 1
 	blr
+
+L(adj):	addi	r7, r7, 1
+	b	L(bko)
 EPILOGUE()
+ASM_END()
