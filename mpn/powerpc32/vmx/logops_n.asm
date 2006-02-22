@@ -235,8 +235,6 @@ L(top):	lvx	v0, 0, up
 	logop(	v6, v4, v5)
 	vnega(	v6, v6)
 	stvx	v6, 0, rp
-C	addi	up, up, 16
-C	addi	vp, vp, 16
 	addi	rp, rp, 4
 	b	L(tail)
 
