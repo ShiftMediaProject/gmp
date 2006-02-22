@@ -170,23 +170,15 @@ LIMB32(`addi	r10, r10, GMP_LIMB_BYTES')
 LIMB32(`bne	L(top0)		')
 
 	addi	rp, rp, 16		C update rp, but preserve its alignment
-					C FIXME: it might simplify things to align it
 
 L(aligned):
 LIMB64(`srdi	r7, n, 1	')	C loop count corresponding to n
 LIMB32(`srwi	r7, n, 2	')	C loop count corresponding to n
 	mtctr	r7			C copy n to count register
 
-	rlwinm	r0, up, 0,28,31		C up & 15
-	cmpwi	cr6, r0, 0
-	rlwinm	r0, vp, 0,28,31		C vp & 15
-	cmpwi	cr7, r0, 0
-
 	li	r10, 16
 	lvsl	us, 0, up
 	lvsl	vs, 0, vp
-
-	vxor	v7, v7, v7
 
 	lvx	v2, 0, up
 	lvx	v3, 0, vp
@@ -270,7 +262,7 @@ L(end):	andi.	r0, up, 15
 L(tail):
 LIMB32(`rlwinm.	r7, n, 0,30,31	')	C r7 = n mod 4
 LIMB64(`rlwinm.	r7, n, 0,31,31	')	C r7 = n mod 2
-	beqlr
+	beq	L(ret)
 	addi	rp, rp, 15
 LIMB32(`rlwinm	rp, rp, 0,0,27	')
 LIMB64(`rldicr	rp, rp, 0,59	')
@@ -287,7 +279,7 @@ LIMB64(`std	r0, 0(rp)	')
 LIMB32(`addi	r10, r10, GMP_LIMB_BYTES')
 LIMB32(`bne	L(top2)		')
 
-	mtspr	256, r12
+L(ret):	mtspr	256, r12
 	blr
 EPILOGUE()
 
