@@ -51,7 +51,7 @@ define(`cy', `r6')
 
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
-	lwz	r11, 0(rp)
+	lwz	r11, 0(up)
 	mtctr	n
 	lis	r12, 0xAAAA
 	ori	r12, r12, 0xAAAB
@@ -61,16 +61,16 @@ PROLOGUE(mpn_divexact_by3c)
 	subf	r11, cy, r11
 
 	mullw	r0, r11, r12
-	stw	r0, 0(up)
+	stw	r0, 0(rp)
 	bdz	L(one)
 
-L(top):	lwzu	r9, 4(rp)
+L(top):	lwzu	r9, 4(up)
 	mulhwu	r7, r0, r10
 	bgt-	cr7, L(adj)		C very unlikely branch
 L(bko):	cmplw	cr7, r7, r9
 	subf	r0, r7, r9
 	mullw	r0, r12, r0
-	stwu	r0, 4(up)
+	stwu	r0, 4(rp)
 	bdnz	L(top)
 
 L(one):	mulhwu	r3, r0, r10
