@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2006-02-22  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc32/vmx/logops_n.asm: New file.
+
 	* mpn/powerpc32/diveby3.asm: Rewrite.
 
 2006-02-21  Torbjorn Granlund  <tege@swox.com>
