@@ -93,7 +93,7 @@ L(big):
 	addi	rp, rp, -16
 	addi	up, up, -16
 	mfspr	r12, 256
-	oris	r0, r12, 0xf8		C Set VRSAVE bit 0-4
+	oris	r0, r12, 0xf800		C Set VRSAVE bit 0-4
 	mtspr	256, r0
 
 LIMB32(`rlwinm.	r7, rp, 30,30,31')	C (rp >> 2) mod 4
