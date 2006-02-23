@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-02-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/vmx/copyd.asm: Set right VRSAVE bits.
+	* mpn/powerpc32/vmx/copyi.asm: Likewise.
+
 2006-02-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32/vmx/logops_n.asm: New file.
