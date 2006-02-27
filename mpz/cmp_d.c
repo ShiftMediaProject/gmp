@@ -121,12 +121,15 @@ mpz_cmp_d (mpz_srcptr z, double d)
   RETURN_NONZERO (zp, zsize-3, ret);
 
 #else
-  for (i = 1; i <= LIMBS_PER_DOUBLE; i++)
-    {
-      RETURN_CMP (zp[zsize-i], darray[LIMBS_PER_DOUBLE-i]);
-      if (i >= zsize)
-        RETURN_NONZERO (darray, LIMBS_PER_DOUBLE-i, -ret);
-    }
+  {
+    int i;
+    for (i = 1; i <= LIMBS_PER_DOUBLE; i++)
+      {
+	RETURN_CMP (zp[zsize-i], darray[LIMBS_PER_DOUBLE-i]);
+	if (i >= zsize)
+	  RETURN_NONZERO (darray, LIMBS_PER_DOUBLE-i, -ret);
+      }
+  }
   RETURN_NONZERO (zp, zsize-LIMBS_PER_DOUBLE, ret);
 #endif
 #endif
