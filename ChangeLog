@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-02-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/cmp_d.c (mpz_cmp_d): Declare `i'.
+
 2006-02-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32/vmx/copyd.asm: Set right VRSAVE bits.
