@@ -245,25 +245,33 @@ __gmp_extract_double (mp_ptr rp, double d)
 #endif
 
 #if LIMBS_PER_DOUBLE > 3
-  /* Insert code for splitting manh,,manl into LIMBS_PER_DOUBLE
-     mp_limb_t's at rp.  */
-  if (sc != 0)
+  if (sc == 0)
     {
-      /* This is not perfect, and would fail for GMP_LIMB_BITS == 16.
-	 The ASSERT_ALWAYS should catch the problematic cases.  */
-      ASSERT_ALWAYS ((manl << sc) == 0);
-      manl = (manh << sc) | (manl >> (GMP_LIMB_BITS - sc));
-      manh = manh >> (GMP_LIMB_BITS - sc);
+      int i;
+
+      for (i = LIMBS_PER_DOUBLE - 1; i >= 0; i--)
+	{
+	  rp[i] = manh >> (BITS_PER_ULONG - GMP_NUMB_BITS);
+	  manh = ((manh << GMP_NUMB_BITS)
+		  | (manl >> (BITS_PER_ULONG - GMP_NUMB_BITS)));
+	  manl = manl << GMP_NUMB_BITS;
+	}
+      exp--;
     }
-  {
-    int i;
-    for (i = LIMBS_PER_DOUBLE - 1; i >= 0; i--)
-      {
-	rp[i] = manh >> (BITS_PER_LONGINT - GMP_LIMB_BITS);
-	manh = ((manh << GMP_LIMB_BITS)
-		| (manl >> (BITS_PER_LONGINT - GMP_LIMB_BITS)));
-	manl = manl << GMP_LIMB_BITS;
-      }
+  else
+    {
+      int i;
+
+      rp[LIMBS_PER_DOUBLE - 1] = (manh >> (GMP_LIMB_BITS - sc));
+      manh = (manh << sc) | (manl >> (GMP_LIMB_BITS - sc));
+      manl = (manl << sc);
+      for (i = LIMBS_PER_DOUBLE - 2; i >= 0; i--)
+	{
+	  rp[i] = manh >> (BITS_PER_ULONG - GMP_NUMB_BITS);
+	  manh = ((manh << GMP_NUMB_BITS)
+		  | (manl >> (BITS_PER_ULONG - GMP_NUMB_BITS)));
+	  manl = manl << GMP_NUMB_BITS;
+	}
   }
 #endif
 
