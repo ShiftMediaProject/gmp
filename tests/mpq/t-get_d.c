@@ -22,6 +22,7 @@ MA 02110-1301, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -128,7 +129,7 @@ check_random (int argc, char **argv)
   int test, reps = 100000;
 
   if (argc == 2)
-     reps = atoi (argv[1]);
+     reps = 100 * atoi (argv[1]);
 
   mpq_init (q);
 
@@ -136,15 +137,15 @@ check_random (int argc, char **argv)
     {
       mpn_random2 (rp, LIMBS_PER_DOUBLE);
       d = rp[0] + rp[1] * 4294967296.0;
-      d = ldexp (d, rp[2] % 1000 - 500);
+      d = ldexp (d, (int) (rp[2] % 1000) - 500);
       mpq_set_d (q, d);
       nd = mpz_get_d (mpq_numref (q));
       dd = mpz_get_d (mpq_denref (q));
       d2 = nd / dd;
       if (d != d2)
 	{
-	  printf ("%.16f\n", d);
-	  printf ("%.16f\n", d2);
+	  printf ("%.16g\n", d);
+	  printf ("%.16g\n", d2);
 	  abort ();
 	}
     }
