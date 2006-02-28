@@ -29,7 +29,7 @@ MA 02110-1301, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if BITS_PER_MP_LIMB != 32 && BITS_PER_MP_LIMB != 64
+#if LIMBS_PER_DOUBLE > 4
   choke me
 #endif
 
@@ -53,11 +53,14 @@ mpq_set_d (mpq_ptr dest, double d)
   exp = __gmp_extract_double (tp, d);
 
   /* There are two main version of the conversion.  The `then' arm handles
-     things that have a fractional part, while the `else' part handles
-     only integers.  */
-#if BITS_PER_MP_LIMB == 32
+     numbers with a fractional part, while the `else' arm handles integers.  */
+#if LIMBS_PER_DOUBLE == 4
+  if (exp <= 1 || (exp == 2 && (tp[0] | tp[1]) != 0))
+#endif
+#if LIMBS_PER_DOUBLE == 3
   if (exp <= 1 || (exp == 2 && tp[0] != 0))
-#else
+#endif
+#if LIMBS_PER_DOUBLE == 2
   if (exp <= 1)
 #endif
     {
@@ -70,25 +73,35 @@ mpq_set_d (mpq_ptr dest, double d)
 	}
 
       dn = -exp;
-      if (dest->_mp_num._mp_alloc < 3)
-	_mpz_realloc (&(dest->_mp_num), 3);
+      MPZ_REALLOC (&(dest->_mp_num), 3);
       np = PTR(&(dest->_mp_num));
-#if BITS_PER_MP_LIMB == 32
+#if LIMBS_PER_DOUBLE == 4
+      if ((tp[0] | tp[1] | tp[2]) == 0)
+	np[0] = tp[3], nn = 1;
+      else if ((tp[0] | tp[1]) == 0)
+	np[1] = tp[3], np[0] = tp[2], nn = 2;
+      else if (tp[0] == 0)
+	np[2] = tp[3], np[1] = tp[2], np[0] = tp[1], nn = 3;
+      else
+	np[3] = tp[3], np[2] = tp[2], np[1] = tp[1], np[0] = tp[0], nn = 4;
+#endif
+#if LIMBS_PER_DOUBLE == 3
       if ((tp[0] | tp[1]) == 0)
 	np[0] = tp[2], nn = 1;
       else if (tp[0] == 0)
 	np[1] = tp[2], np[0] = tp[1], nn = 2;
       else
 	np[2] = tp[2], np[1] = tp[1], np[0] = tp[0], nn = 3;
-#else
+#endif
+#if LIMBS_PER_DOUBLE == 2
       if (tp[0] == 0)
 	np[0] = tp[1], nn = 1;
       else
 	np[1] = tp[1], np[0] = tp[0], nn = 2;
 #endif
       dn += nn + 1;
-      if (dest->_mp_den._mp_alloc < dn)
-	_mpz_realloc (&(dest->_mp_den), dn);
+      ASSERT_ALWAYS (dn > 0);
+      MPZ_REALLOC (&(dest->_mp_den), dn);
       dp = PTR(&(dest->_mp_den));
       MPN_ZERO (dp, dn - 1);
       dp[dn - 1] = 1;
@@ -106,35 +119,39 @@ mpq_set_d (mpq_ptr dest, double d)
   else
     {
       nn = exp;
-      if (dest->_mp_num._mp_alloc < nn)
-	_mpz_realloc (&(dest->_mp_num), nn);
+      MPZ_REALLOC (&(dest->_mp_num), nn);
       np = PTR(&(dest->_mp_num));
-#if BITS_PER_MP_LIMB == 32
       switch (nn)
         {
 	default:
-          MPN_ZERO (np, nn - 3);
-          np += nn - 3;
+	  MPN_ZERO (np, nn - LIMBS_PER_DOUBLE);
+	  np += nn - LIMBS_PER_DOUBLE;
 	  /* fall through */
+#if LIMBS_PER_DOUBLE == 2
+	case 2:
+	  np[1] = tp[1], np[0] = tp[0];
+	  break;
+#endif
+#if LIMBS_PER_DOUBLE == 3
 	case 3:
 	  np[2] = tp[2], np[1] = tp[1], np[0] = tp[0];
 	  break;
 	case 2:
 	  np[1] = tp[2], np[0] = tp[1];
 	  break;
-	}
-#else
-      switch (nn)
-        {
-	default:
-	  MPN_ZERO (np, nn - 2);
-	  np += nn - 2;
-	  /* fall through */
-	case 2:
-	  np[1] = tp[1], np[0] = tp[0];
-	  break;
-	}
 #endif
+#if LIMBS_PER_DOUBLE == 4
+	case 4:
+	  np[3] = tp[3], np[2] = tp[2], np[1] = tp[1], np[0] = tp[0];
+	  break;
+	case 3:
+	  np[2] = tp[3], np[1] = tp[2], np[0] = tp[1];
+	  break;
+	case 2:
+	  np[1] = tp[3], np[0] = tp[2];
+	  break;
+#endif
+	}
       dp = PTR(&(dest->_mp_den));
       dp[0] = 1;
       SIZ(&(dest->_mp_den)) = 1;
