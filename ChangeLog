@@ -18,9 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-02-28  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpq/t-get_d.c (check_random): New function.
+	(main): Call check_random.
+
+	* mpq/set_d.c: Make choices based on LIMBS_PER_DOUBLE, not
+	BITS_PER_MP_LIMB.  Make it work for LIMBS_PER_DOUBLE == 4.
+	Use MPZ_REALLOC.
+
+	* mpz/set_d.c: Make it work for LIMBS_PER_DOUBLE == 4.
+
+	* extract-dbl.c: Make it work for LIMBS_PER_DOUBLE > 3.
+
 2006-02-27  Torbjorn Granlund  <tege@swox.com>
 
-	* mpz/cmp_d.c (mpz_cmp_d): Declare `i'.
+	* mpz/cmp_d.c: Declare `i'.
+	* mpz/cmpabs_d.c: Likewise.
 
 2006-02-23  Torbjorn Granlund  <tege@swox.com>
 
