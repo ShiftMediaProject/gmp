@@ -120,6 +120,38 @@ check_monotonic (int argc, char **argv)
 }
 
 void
+check_random (int argc, char **argv)
+{
+  double d, d2, nd, dd;
+  mpq_t q;
+  mp_limb_t rp[LIMBS_PER_DOUBLE];
+  int test, reps = 100000;
+
+  if (argc == 2)
+     reps = atoi (argv[1]);
+
+  mpq_init (q);
+
+  for (test = 0; test < reps; test++)
+    {
+      mpn_random2 (rp, LIMBS_PER_DOUBLE);
+      d = rp[0] + rp[1] * 4294967296.0;
+      d = ldexp (d, rp[2] % 1000 - 500);
+      mpq_set_d (q, d);
+      nd = mpz_get_d (mpq_numref (q));
+      dd = mpz_get_d (mpq_denref (q));
+      d2 = nd / dd;
+      if (d != d2)
+	{
+	  printf ("%.16f\n", d);
+	  printf ("%.16f\n", d2);
+	  abort ();
+	}
+    }
+  mpq_clear (q);
+}
+
+void
 dump (mpq_t x)
 {
   mpz_out_str (stdout, 10, mpq_numref (x));
@@ -195,6 +227,7 @@ main (int argc, char **argv)
 
   check_onebit ();
   check_monotonic (argc, argv);
+  check_random (argc, argv);
 
   tests_end ();
   exit (0);
