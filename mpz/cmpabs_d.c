@@ -106,7 +106,7 @@ mpz_cmpabs_d (mpz_srcptr z, double d)
   RETURN_NONZERO (zp, zsize-3, 1);
 #endif
 
-#if LIMBS_PER_DOUBLE > 4
+#if LIMBS_PER_DOUBLE >= 4
   {
     int i;
     for (i = 1; i <= LIMBS_PER_DOUBLE; i++)
