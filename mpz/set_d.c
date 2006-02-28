@@ -58,45 +58,48 @@ mpz_set_d (mpz_ptr r, double d)
 
   rp = PTR (r);
 
-#if BITS_PER_MP_LIMB == 32
   switch (rn)
     {
     default:
-      MPN_ZERO (rp, rn - 3);
-      rp += rn - 3;
+      MPN_ZERO (rp, rn - LIMBS_PER_DOUBLE);
+      rp += rn - LIMBS_PER_DOUBLE;
       /* fall through */
-    case 3:
-      rp[2] = tp[2];
-      rp[1] = tp[1];
-      rp[0] = tp[0];
-      break;
-    case 2:
-      rp[1] = tp[2];
-      rp[0] = tp[1];
-      break;
-    case 1:
-      rp[0] = tp[2];
-      break;
-    case 0:
-      break;
-    }
-#else
-  switch (rn)
-    {
-    default:
-      MPN_ZERO (rp, rn - 2);
-      rp += rn - 2;
-      /* fall through */
+#if LIMBS_PER_DOUBLE == 2
     case 2:
       rp[1] = tp[1], rp[0] = tp[0];
       break;
     case 1:
       rp[0] = tp[1];
       break;
+#endif
+#if LIMBS_PER_DOUBLE == 3
+    case 3:
+      rp[2] = tp[2], rp[1] = tp[1], rp[0] = tp[0];
+      break;
+    case 2:
+      rp[1] = tp[2], rp[0] = tp[1];
+      break;
+    case 1:
+      rp[0] = tp[2];
+      break;
+#endif
+#if LIMBS_PER_DOUBLE == 4
+    case 4:
+      rp[3] = tp[3], rp[2] = tp[2], rp[1] = tp[1], rp[0] = tp[0];
+      break;
+    case 3:
+      rp[2] = tp[3], rp[1] = tp[2], rp[0] = tp[1];
+      break;
+    case 2:
+      rp[1] = tp[3], rp[0] = tp[2];
+      break;
+    case 1:
+      rp[0] = tp[3];
+      break;
+#endif
     case 0:
       break;
     }
-#endif
 
   SIZ(r) = negative ? -rn : rn;
 }
