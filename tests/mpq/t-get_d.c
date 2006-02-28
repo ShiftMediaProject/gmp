@@ -22,7 +22,6 @@ MA 02110-1301, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -120,6 +119,43 @@ check_monotonic (int argc, char **argv)
   mpq_clear (qnew_d);
 }
 
+double
+my_ldexp (double d, int e)
+{
+  for (;;)
+    {
+      if (e > 0)
+	{
+	  if (e >= 16)
+	    {
+	      d *= 65536.0;
+	      e -= 16;
+	    }
+	  else
+	    {
+	      d *= 2.0;
+	      e -= 1;
+	    }
+	}
+      else if (e < 0)
+	{
+   
+	  if (e <= -16)
+	    {
+	      d /= 65536.0;
+	      e += 16;
+	    }
+	  else
+	    {
+	      d /= 2.0;
+	      e += 1;
+	    }
+	}
+      else
+	return d;
+    }
+}
+
 void
 check_random (int argc, char **argv)
 {
@@ -137,7 +173,7 @@ check_random (int argc, char **argv)
     {
       mpn_random2 (rp, LIMBS_PER_DOUBLE);
       d = rp[0] + rp[1] * 4294967296.0;
-      d = ldexp (d, (int) (rp[2] % 1000) - 500);
+      d = my_ldexp (d, (int) (rp[2] % 1000) - 500);
       mpq_set_d (q, d);
       nd = mpz_get_d (mpq_numref (q));
       dd = mpz_get_d (mpq_denref (q));
