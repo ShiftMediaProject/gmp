@@ -92,7 +92,7 @@ mpz_cmp_d (mpz_srcptr z, double d)
   dexp = __gmp_extract_double (darray, d);
   ASSERT (dexp >= 1);
 
-  /* 4. Different high limb positions. */
+  /* 4. Check for different high limb positions. */
   if (zsize != dexp)
     return (zsize >= dexp ? ret : -ret);
 
@@ -106,8 +106,8 @@ mpz_cmp_d (mpz_srcptr z, double d)
 
   RETURN_CMP (zp[zsize-2], darray[0]);
   RETURN_NONZERO (zp, zsize-2, ret);
+#endif
 
-#else
 #if LIMBS_PER_DOUBLE == 3
   RETURN_CMP (zp[zsize-1], darray[2]);
   if (zsize == 1)
@@ -119,8 +119,9 @@ mpz_cmp_d (mpz_srcptr z, double d)
 
   RETURN_CMP (zp[zsize-3], darray[0]);
   RETURN_NONZERO (zp, zsize-3, ret);
+#endif
 
-#else
+#if LIMBS_PER_DOUBLE > 4
   {
     int i;
     for (i = 1; i <= LIMBS_PER_DOUBLE; i++)
@@ -129,8 +130,7 @@ mpz_cmp_d (mpz_srcptr z, double d)
 	if (i >= zsize)
 	  RETURN_NONZERO (darray, LIMBS_PER_DOUBLE-i, -ret);
       }
+    RETURN_NONZERO (zp, zsize-LIMBS_PER_DOUBLE, ret);
   }
-  RETURN_NONZERO (zp, zsize-LIMBS_PER_DOUBLE, ret);
-#endif
 #endif
 }

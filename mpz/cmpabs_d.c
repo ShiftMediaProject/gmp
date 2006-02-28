@@ -91,8 +91,8 @@ mpz_cmpabs_d (mpz_srcptr z, double d)
 
   RETURN_CMP (zp[zsize-2], darray[0]);
   RETURN_NONZERO (zp, zsize-2, 1);
+#endif
 
-#else
 #if LIMBS_PER_DOUBLE == 3
   RETURN_CMP (zp[zsize-1], darray[2]);
   if (zsize == 1)
@@ -104,8 +104,9 @@ mpz_cmpabs_d (mpz_srcptr z, double d)
 
   RETURN_CMP (zp[zsize-3], darray[0]);
   RETURN_NONZERO (zp, zsize-3, 1);
+#endif
 
-#else
+#if LIMBS_PER_DOUBLE > 4
   {
     int i;
     for (i = 1; i <= LIMBS_PER_DOUBLE; i++)
@@ -114,8 +115,7 @@ mpz_cmpabs_d (mpz_srcptr z, double d)
 	if (i >= zsize)
 	  RETURN_NONZERO (darray, LIMBS_PER_DOUBLE-i, -1);
       }
+    RETURN_NONZERO (zp, zsize-LIMBS_PER_DOUBLE, 1);
   }
-  RETURN_NONZERO (zp, zsize-LIMBS_PER_DOUBLE, 1);
-#endif
 #endif
 }
