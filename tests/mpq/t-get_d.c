@@ -93,7 +93,7 @@ check_monotonic (int argc, char **argv)
 	  new_d = mpq_get_d (a);
 	  if (last_d > new_d)
 	    {
-	      fprintf (stderr, "\nERROR (test %d/%d): bad mpq_get_d results\n", i, j);
+	      printf ("\nERROR (test %d/%d): bad mpq_get_d results\n", i, j);
 	      printf ("last: %.16g\n", last_d);
 	      printf (" new: %.16g\n", new_d); dump (a);
 	      abort ();
@@ -102,8 +102,7 @@ check_monotonic (int argc, char **argv)
 	  MPQ_CHECK_FORMAT (qnew_d);
 	  if (mpq_cmp (qlast_d, qnew_d) > 0)
 	    {
-	      fprintf (stderr,
-		       "ERROR (test %d/%d): bad mpq_set_d results\n", i, j);
+	      printf ("ERROR (test %d/%d): bad mpq_set_d results\n", i, j);
 	      printf ("last: %.16g\n", last_d); dump (qlast_d);
 	      printf (" new: %.16g\n", new_d); dump (qnew_d);
 	      abort ();
@@ -161,8 +160,9 @@ check_random (int argc, char **argv)
 {
   double d, d2, nd, dd;
   mpq_t q;
-  mp_limb_t rp[LIMBS_PER_DOUBLE];
+  mp_limb_t rp[LIMBS_PER_DOUBLE + 1];
   int test, reps = 100000;
+  int i;
 
   if (argc == 2)
      reps = 100 * atoi (argv[1]);
@@ -171,15 +171,18 @@ check_random (int argc, char **argv)
 
   for (test = 0; test < reps; test++)
     {
-      mpn_random2 (rp, LIMBS_PER_DOUBLE);
-      d = rp[0] + rp[1] * 4294967296.0;
-      d = my_ldexp (d, (int) (rp[2] % 1000) - 500);
+      mpn_random2 (rp, LIMBS_PER_DOUBLE + 1);
+      d = 0.0;
+      for (i = LIMBS_PER_DOUBLE - 1; i >= 0; i--)
+	d = d * MP_BASE_AS_DOUBLE + rp[i];
+      d = my_ldexp (d, (int) (rp[LIMBS_PER_DOUBLE] % 1000) - 500);
       mpq_set_d (q, d);
       nd = mpz_get_d (mpq_numref (q));
       dd = mpz_get_d (mpq_denref (q));
       d2 = nd / dd;
       if (d != d2)
 	{
+	  printf ("ERROR (check_random test %d): bad mpq_set_d results\n", test);
 	  printf ("%.16g\n", d);
 	  printf ("%.16g\n", d2);
 	  abort ();
