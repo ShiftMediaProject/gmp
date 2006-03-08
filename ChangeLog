@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2006-03-08  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/get_si.c: Fix a typo.
+
 	* tests/mpq/t-get_d.c (check_random): Improve random generation for
 	nails.
 
