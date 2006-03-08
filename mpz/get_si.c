@@ -1,7 +1,7 @@
 /* mpz_get_si(integer) -- Return the least significant digit from INTEGER.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002, 2006 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,7 +31,7 @@ mpz_get_si (mpz_srcptr z)
   mp_limb_t zl = zp[0];
 
 #if GMP_NAIL_BITS != 0
-  if (ULONG_MAX > GMP_NUMB_MAX != 0 && ABS (size) >= 2)
+  if (ULONG_MAX > GMP_NUMB_MAX && ABS (size) >= 2)
     zl |= zp[1] << GMP_NUMB_BITS;
 #endif
 
