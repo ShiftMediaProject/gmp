@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2006-04-05  Torbjorn Granlund  <tege@swox.com>
 
+	* tal-notreent.c (__gmp_tmp_mark): Add "struct" tag for tmp_marker.
+	(__gmp_tmp_free): Likewise.
+	
 	* mpn/generic/mul_fft.c: Optimize many scalar divisions and mod
 	operations into masks and shifts.
 	(mpn_fft_mul_modF_K): Fix a spurious ASSERT_NOCARRY.
