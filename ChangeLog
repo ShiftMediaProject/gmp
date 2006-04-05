@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_fft.c: Optimize many scalar divisions and mod
+	operations into masks and shifts.
+	(mpn_fft_mul_modF_K): Fix a spurious ASSERT_NOCARRY.
+	(mpn_fft_belge_butterfly, mpn_fft_fft_belgeRec, mpn_fft_fft_belge,
+	mpn_fft_fft_belgeInvRec, mpn_fft_fft_belgeInv): Add Pierrick Gaudry's
+	implementation of the cache-optimized "belge" FFT code.
+	(mpn_fft_fft_sqr, mpn_fft_butterfly, mpn_fft_fft, mpn_fft_fftinv):
+	Remove.
+	(mpn_mul_fft_internal): Corresponding updates.
+
 2006-03-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/get_si.c: Fix a typo.
