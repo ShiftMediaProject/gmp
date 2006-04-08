@@ -23,6 +23,7 @@ MA 02110-1301, USA.
 	* tests/mpz/t-io_raw.c: Fix printf type/arg mismatches.
 	* tests/mpz/t-export.c: Likewise.
 	* tests/mpz/io.c: Likewise.
+	* tests/t-constants.c: Likewise.
 
 	* mpn/ia64/popcount.asm: Append "cond.dptk" to conditional branches to
 	placate icc.
