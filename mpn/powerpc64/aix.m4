@@ -45,7 +45,7 @@ define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 `')
 
-define(`LDSYM',
+define(`LEA',
 m4_assert_numargs(2)
 `define(`TOC_ENTRY',
 `	.toc
