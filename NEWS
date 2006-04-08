@@ -1,4 +1,4 @@
-Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005 Free Software
+Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -15,44 +15,81 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-02110-1301, USA.
+the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301, USA.
 
 
-Changes between MP version 4.1.3 and 4.2
+Changes between GMP version 4.1.4 and 4.2
 
-* Bug fixes.
-* New systems supported: HPPA-2.0 gcc, IA-64 HP-UX, PowerPC-64 Darwin,
-  Sparc64 GNU/Linux.
-* New i386 fat binaries, selecting optimized code at runtime.
-* New build option: --enable-profiling=instrument.
-* New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
-  gmp_randinit_default.
-* New memory function: mp_get_memory_functions.
-* New random functions: gmp_randinit_set, gmp_urandomb_ui, gmp_urandomm_ui.
-* New integer functions: mpz_combit, mpz_rootrem.
-* gmp_printf etc new type "M" for mp_limb_t.
-* gmp_scanf and friends now accept C99 hex floats.
-* Numeric input and output can now be in bases up to 62.
-* Comparisons mpz_cmp_d, mpz_cmpabs_d, mpf_cmp_d recognise infinities.
-* Conversions mpz_get_d, mpq_get_d, mpf_get_d truncate towards zero,
-  previously their behaviour was unspecified.
+  Bugs:
+  * Minor bug fixes and code generalizations.
+  * Expanded and improved test suite.
 
-Changes between MP version 4.1.2 and 4.1.3
+  Speedups:
+  * Many minor optimizations, too many to mention here.
+  * Division now always subquadratic.
+  * Computation of n-factorial much faster.
+  * Added basic x86-64 assembly code.
+  * Floating-point output is now subquadratic for all bases.
+  * FFT multiply code now about 25% faster.
+  * Toom3 multiply code ??? faster.
 
-* Bug fixes.
+  Features:
+  * Much improved configure.
+  * Workarounds for many more compiler bugs.
+  * Temporary allocations are now made on the stack only if small.
+  * New systems supported: HPPA-2.0 gcc, IA-64 HP-UX, PowerPC-64 Darwin,
+    Sparc64 GNU/Linux.
+  * New i386 fat binaries, selecting optimised code at runtime (--enable-fat).
+  * New build option: --enable-profiling=instrument.
+  * New memory function: mp_get_memory_functions.
+  * New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
+    gmp_randinit_default.
+  * New random functions: gmp_randinit_set, gmp_urandomb_ui, gmp_urandomm_ui.
+  * New integer functions: mpz_combit, mpz_rootrem.
+  * gmp_printf etc new type "M" for mp_limb_t.
+  * gmp_scanf and friends now accept C99 hex floats.
+  * Numeric input and output can now be in bases up to 62.
+  * Comparisons mpz_cmp_d, mpz_cmpabs_d, mpf_cmp_d recognise infinities.
+  * Conversions mpz_get_d, mpq_get_d, mpf_get_d truncate towards zero,
+    previously their behaviour was unspecified.
+  * Fixes for overflow issues with operands >= 2^31 bits.
+
+  Caveats:
+  * mpfr is gone, and will from now on be released only separately.  Please see
+    www.mpfr.org.
+
+Changes between GMP version 4.1.3 and 4.1.4
+
+* Bug fix to FFT multiplication code (crash for huge operands).
+* Bug fix to mpf_sub (miscomputation).
+* Support for powerpc64-gnu-linux.
+* Better support for AMD64 in 32-bit mode.
+* Upwardly binary compatible with 4.1.3, 4.1.2, 4.1.1, 4.1, 4.0.1, 4.0,
+  and 3.x versions.
+
+Changes between GMP version 4.1.2 and 4.1.3
+
+* Bug fix for FFT multiplication code (miscomputation).
+* Bug fix to K6 assembly code for gcd.
+* Bug fix to IA-64 assembly code for population count.
+* Portability improvements, most notably functional AMD64 support.
 * mpz_export allows NULL for countp parameter.
+* Many minor bug fixes.
+* mpz_export allows NULL for countp parameter.
+* Upwardly binary compatible with 4.1.2, 4.1.1, 4.1, 4.0.1, 4.0, and 3.x
+  versions.
 
-Changes between MP version 4.1.1 and 4.1.2
+Changes between GMP version 4.1.1 and 4.1.2
 
 * Bug fixes.
 
-Changes between MP version 4.1 and 4.1.1
+Changes between GMP version 4.1 and 4.1.1
 
 * Bug fixes.
 * New systems supported: NetBSD and OpenBSD sparc64.
 
-Changes between MP version 4.0.1 and 4.1
+Changes between GMP version 4.0.1 and 4.1
 
 * Bug fixes.
 * Speed improvements.
@@ -75,11 +112,11 @@ Changes between MP version 4.0.1 and 4.1
 * Nails-enabled Alpha 21264 assembly code, allowing up to 75% better
   performance.  (Use --enable-nails=4 to enable it.)
 
-Changes between MP version 4.0 and 4.0.1
+Changes between GMP version 4.0 and 4.0.1
 
 * Bug fixes.
 
-Changes between MP version 3.1.1 and 4.0
+Changes between GMP version 3.1.1 and 4.0
 
 * Bug fixes.
 * Speed improvements.
@@ -123,12 +160,12 @@ Changes between MP version 3.1.1 and 4.0
 * New preliminary perl interface (see demos/perl).
 * Tuned algorithm thresholds for many more CPUs.
 
-Changes between MP version 3.1 and 3.1.1
+Changes between GMP version 3.1 and 3.1.1
 
 * Bug fixes for division (rare), mpf_get_str, FFT, and miscellaneous minor
   things.
 
-Changes between MP version 3.0 and 3.1
+Changes between GMP version 3.0 and 3.1
 
 * Bug fixes.
 * Improved `make check' running more tests.
@@ -154,12 +191,12 @@ Changes between MP version 3.0 and 3.1
   To try it, pass --enable-mpfr to configure.  See the mpfr subdirectory for
   more information; it is not documented in the main GMP manual.
 
-Changes between MP version 3.0 and 3.0.1
+Changes between GMP version 3.0 and 3.0.1
 
 * Memory leaks in gmp_randinit and mpz_probab_prime_p fixed.
 * Documentation for gmp_randinit fixed.  Misc documentation errors fixed.
 
-Changes between MP version 2.0 and 3.0
+Changes between GMP version 2.0 and 3.0
 
 * Source level compatibility with past releases (except mpn_gcd).
 * Bug fixes.
@@ -191,11 +228,11 @@ Changes between MP version 2.0 and 3.0
 * Better support for MIPS R4x000 and R5000 under Irix 6.
 * Improved support for SPARCv8 and SPARCv9 processors.
 
-Changes between MP version 2.0 and 2.0.2
+Changes between GMP version 2.0 and 2.0.2
 
 * Many bug fixes.
 
-Changes between MP version 1.3.2 and 2.0
+Changes between GMP version 1.3.2 and 2.0
 
 * Division routines in the mpz class have changed.  There are three classes of
   functions, that rounds the quotient to -infinity, 0, and +infinity,
