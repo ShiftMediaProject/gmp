@@ -148,8 +148,8 @@ ifdef(`HAVE_ABI_32',
 	;;
 	xma.l		f7 = f7, f12, f14	C Newton i*i*-d + 2*i, 64 bits
 
-  (p7)	br		.Ln2
-  (p10)	br		.grt3
+  (p7)	br.cond.dptk	.Ln2
+  (p10)	br.cond.dptk	.grt3
 	;;
 
 .Ln1:	xmpy.l		f12 = f10, f7		C q = ulimb * inverse
@@ -173,7 +173,7 @@ ifdef(`HAVE_ABI_32',
 	shr.u		r23 = r21, rshift
 	;;
 	setf.sig	f11 = r31
-  (p8)	br		.Lx3			C branch for n = 3
+  (p8)	br.cond.dptk	.Lx3			C branch for n = 3
 	;;
 	ld8		r21 = [up], 8
 	br		.Lent

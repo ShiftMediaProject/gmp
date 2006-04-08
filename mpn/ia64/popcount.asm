@@ -70,7 +70,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	ld8		u3 = [up], 8		C			M01
 	popcnt		c1 = u1			C			I0
-  (p15)	br		.grt4			C			B
+  (p15)	br.cond.dptk	.grt4			C			B
 	;;
 	nop.m	0				C			-
 	nop.m	0				C			-
@@ -108,7 +108,7 @@ ifdef(`HAVE_ABI_32',
 
 .Lb10:	ld8		u3 = [up], 8		C			M01
 	shr.u		n = n, 2		C			I0
-  (p15)	br		.grt2			C			B
+  (p15)	br.cond.dptk	.grt2			C			B
 
 	popcnt		s = r10			C			I0
 	;;
@@ -134,7 +134,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	ld8		u3 = [up], 8		C			M01
 	popcnt		s = r10			C			I0
-  (p15)	br		.grt3			C			B
+  (p15)	br.cond.dptk	.grt3			C			B
 
 	popcnt		c2 = u2			C			I0
 	;;

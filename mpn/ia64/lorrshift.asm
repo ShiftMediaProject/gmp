@@ -103,7 +103,7 @@ ifdef(`OPERATION_lshift',
 	;;
 	ld8		r17 = [up], UPD
 	BSH		r8 = r10, tnc		C function return value
-  (p14)	br		.grt4
+  (p14)	br.cond.dptk	.grt4
 
 	FSH		r24 = r10, cnt
 	BSH		r25 = r19, tnc
@@ -185,7 +185,7 @@ ifdef(`OPERATION_lshift',
 
 
 .Lb10:	ld8		r17 = [up], UPD
-  (p14)	br		.grt2
+  (p14)	br.cond.dptk	.grt2
 
 	BSH		r8 = r10, tnc		C function return value
 	;;
@@ -235,7 +235,7 @@ ifdef(`OPERATION_lshift',
 	;;
 	ld8		r17 = [up], UPD
 	BSH		r8 = r10, tnc		C function return value
-  (p14)	br		.grt3
+  (p14)	br.cond.dptk	.grt3
 	;;
 
 	FSH		r26 = r10, cnt
