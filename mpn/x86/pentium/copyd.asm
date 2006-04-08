@@ -1,6 +1,6 @@
 dnl  Intel Pentium mpn_copyd -- copy limb vector, decrementing.
 
-dnl  Copyright 1996, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2001, 2002, 2006 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,6 +33,8 @@ defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
 defframe(PARAM_DST, 4)
 
+	TEXT
+	ALIGN(8)
 PROLOGUE(mpn_copyd)
 deflit(`FRAME',0)
 
