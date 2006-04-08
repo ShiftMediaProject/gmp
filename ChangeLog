@@ -18,11 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/popcount.asm: Append "cond.dptk" to conditional branches to
+	placate icc.
+	* mpn/ia64/hamdist.asm: Likewise.
+	* mpn/ia64/lorrshift.asm: Likewise.
+	* mpn/ia64/dive_1.asm: Likewise.
+
 2006-04-05  Torbjorn Granlund  <tege@swox.com>
 
 	* tal-notreent.c (__gmp_tmp_mark): Add "struct" tag for tmp_marker.
 	(__gmp_tmp_free): Likewise.
-	
+
 	* mpn/generic/mul_fft.c: Optimize many scalar divisions and mod
 	operations into masks and shifts.
 	(mpn_fft_mul_modF_K): Fix a spurious ASSERT_NOCARRY.
