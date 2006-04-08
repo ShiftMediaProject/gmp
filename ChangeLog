@@ -20,6 +20,15 @@ MA 02110-1301, USA.
 
 2006-04-08  Torbjorn Granlund  <tege@swox.com>
 
+	* gmpxx.h: Remove missed MPFR references.
+
+	* gmp-impl.h (LIMBS_PER_DOUBLE): Adjust formula to not be pessimistic.
+
+	* gmp-impl.h (TMP_*, WANT_TMP_DEBUG): Don't expect marker argument;
+	define TMP_SALLOC and TMP_BALLOC.
+
+	* mpn/minithres/gmp-mparam.h: New file.
+
 	* tests/mpz/t-io_raw.c: Fix printf type/arg mismatches.
 	* tests/mpz/t-export.c: Likewise.
 	* tests/mpz/io.c: Likewise.
@@ -45,6 +54,46 @@ MA 02110-1301, USA.
 	(mpn_fft_fft_sqr, mpn_fft_butterfly, mpn_fft_fft, mpn_fft_fftinv):
 	Remove.
 	(mpn_mul_fft_internal): Corresponding updates.
+
+2006-03-26  Torbjorn Granlund  <tege@swox.com>
+
+	* Version 4.2 released.
+
+	* mpn/powerpc64/aix.m4 (LEA): Renamed from LDSYM.
+	* mpn/powerpc64/darwin.m4: Likewise.
+	* mpn/powerpc64/linux64.m4: Likewise.
+	* mpn/powerpc64/vmx/popcount.asm: Use LEA, not LDSYM.
+
+2006-03-23  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h: (class gmp_allocated_string): Prefix strlen with std::.
+
+	* gmpxx.h (__GMP_DEFINE_TERNARY_EXPR2): Remove for now.
+	(struct __gmp_ternary_addmul2): Likewise.
+	(struct __gmp_ternary_submul2): Likewise.
+
+	* gmpxx.h: #include <cstring>.
+	(struct __gmp_alloc_cstring): Prefix strlen with std::.
+
+	* mpn/x86/pentium/com_n.asm: Add TEXT and ALIGN.
+	* mpn/x86/pentium/copyi.asm: Likewise.
+	* mpn/x86/pentium/copyd.asm: Likewise.
+
+2006-03-22  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in: Add a "using std::FILE" for C++.
+	(_GMP_H_HAVE_FILE): Check also _ISO_STDIO_ISO_H.
+
+	* gmpxx.h: Remove mpfr code.
+	* tests/cxx: Likewise.
+
+	* gmp-impl.h (FORCE_DOUBLE): Rename a tempvar to avoid a clash with
+	GNU/Linux public include file.
+
+	* configure.in (powerpc64, darwin): New optional, gcc_cflags_subtype.
+	Grab powerpc32/darwin.m4 for ABI=mode32.
+
+	* configure.in: Use host_cpu whenever just the cpu type is needed.
 
 2006-03-08  Torbjorn Granlund  <tege@swox.com>
 
