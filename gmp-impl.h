@@ -4,7 +4,7 @@
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005 Free Software Foundation, Inc.
+2004, 2005, 2006 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -393,15 +393,12 @@ void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, int,
 void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
                                      struct tmp_debug_t **,
                                      const char *, const char *));
-#if HAVE_STRINGIZE
-#define TMP_DECL(marker) TMP_DECL_NAME(marker, #marker)
-#define TMP_MARK(marker) TMP_MARK_NAME(marker, #marker)
-#define TMP_FREE(marker) TMP_FREE_NAME(marker, #marker)
-#else
-#define TMP_DECL(marker) TMP_DECL_NAME(marker, "marker")
-#define TMP_MARK(marker) TMP_MARK_NAME(marker, "marker")
-#define TMP_FREE(marker) TMP_FREE_NAME(marker, "marker")
-#endif
+#define TMP_SDECL TMP_DECL_NAME(__tmp_xmarker, "__tmp_marker")
+#define TMP_DECL TMP_DECL_NAME(__tmp_xmarker, "__tmp_marker")
+#define TMP_SMARK TMP_MARK_NAME(__tmp_xmarker, "__tmp_marker")
+#define TMP_MARK TMP_MARK_NAME(__tmp_xmarker, "__tmp_marker")
+#define TMP_SFREE TMP_FREE_NAME(__tmp_xmarker, "__tmp_marker")
+#define TMP_FREE TMP_FREE_NAME(__tmp_xmarker, "__tmp_marker")
 /* The marker variable is designed to provoke an uninitialized varialble
    warning from the compiler if TMP_FREE is used without a TMP_MARK.
    __tmp_marker_inscope does the same for TMP_ALLOC.  Runtime tests pick
@@ -421,6 +418,8 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
                            &__tmp_marker, &__tmp_marker_struct, \
                            __tmp_marker_name, marker_name);     \
   } while (0)
+#define TMP_SALLOC(n)		TMP_ALLOC(n)
+#define TMP_BALLOC(n)		TMP_ALLOC(n)
 #define TMP_ALLOC(size)                                                 \
   __gmp_tmp_debug_alloc (ASSERT_FILE, ASSERT_LINE,                      \
                          __tmp_marker_inscope,                          \
@@ -1070,7 +1069,7 @@ mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
   } while (0)
 #endif
 
-/* used by mpfr and test programs, hence __GMP_DECLSPEC */
+/* used by test programs, hence __GMP_DECLSPEC */
 #ifndef mpn_copyi  /* if not done with cpuvec in a fat binary */
 #define mpn_copyi __MPN(copyi)
 __GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
@@ -1123,7 +1122,7 @@ __GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-/* used by mpfr and test programs, hence __GMP_DECLSPEC */
+/* used by test programs, hence __GMP_DECLSPEC */
 #ifndef mpn_copyd  /* if not done with cpuvec in a fat binary */
 #define mpn_copyd __MPN(copyd)
 __GMP_DECLSPEC void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
@@ -2894,7 +2893,7 @@ union ieee_double_extract
 #define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (GMP_NUMB_BITS - 2)))
 /* Maximum number of limbs it will take to store any `double'.
    We assume doubles have 53 mantissam bits.  */
-#define LIMBS_PER_DOUBLE ((53 + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS + 1)
+#define LIMBS_PER_DOUBLE ((53 + GMP_NUMB_BITS - 2) / GMP_NUMB_BITS + 1)
 
 int __gmp_extract_double _PROTO ((mp_ptr, double));
 
@@ -2962,7 +2961,7 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
 #if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86      \
      || defined (__amd64__))
 #define FORCE_DOUBLE(d) \
-  do { volatile double __force = (d); (d) = __force; } while (0)
+  do { volatile double __gmp_force = (d); (d) = __gmp_force; } while (0)
 #else
 #define FORCE_DOUBLE(d)  do { } while (0)
 #endif
@@ -3865,7 +3864,7 @@ class gmp_allocated_string {
   gmp_allocated_string(char *arg)
   {
     str = arg;
-    len = strlen (str);
+    len = std::strlen (str);
   }
   ~gmp_allocated_string()
   {
