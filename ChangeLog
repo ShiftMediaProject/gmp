@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2006-04-08  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-io_raw.c: Fix printf type/arg mismatches.
+	* tests/mpz/t-export.c: Likewise.
+
 	* mpn/ia64/popcount.asm: Append "cond.dptk" to conditional branches to
 	placate icc.
 	* mpn/ia64/hamdist.asm: Likewise.
