@@ -1,7 +1,7 @@
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005 Free Software Foundation, Inc.
+2004, 2005, 2006 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -326,7 +326,8 @@ typedef __mpq_struct *mpq_ptr;
   || defined (_FILE_DEFINED)          /* Microsoft */           \
   || defined (__STDIO__)              /* Apple MPW MrC */       \
   || defined (_MSL_STDIO_H)           /* Metrowerks */          \
-  || defined (_STDIO_H_INCLUDED)      /* QNX4 */
+  || defined (_STDIO_H_INCLUDED)      /* QNX4 */		\
+  || defined (_ISO_STDIO_ISO_H)       /* Sun C++ */
 #define _GMP_H_HAVE_FILE 1
 #endif
 
@@ -511,6 +512,7 @@ typedef __mpq_struct *mpq_ptr;
 
 #if defined (__cplusplus)
 extern "C" {
+using std::FILE;
 #endif
 
 #define mp_set_memory_functions __gmp_set_memory_functions
@@ -2089,7 +2091,7 @@ mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_
 #define mpq_sgn(Q) ((Q)->_mp_num._mp_size < 0 ? -1 : (Q)->_mp_num._mp_size > 0)
 
 /* When using GCC, optimize certain common comparisons.  */
-#if defined (__GNUC__)
+#if defined (__GNUC__) && __GNUC__ >= 2
 #define mpz_cmp_ui(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0				\
    ? mpz_sgn (Z) : _mpz_cmp_ui (Z,UI))
@@ -2165,8 +2167,8 @@ enum
 
 /* Major version number is the value of __GNU_MP__ too, above and in mp.h. */
 #define __GNU_MP_VERSION 4
-#define __GNU_MP_VERSION_MINOR 1
-#define __GNU_MP_VERSION_PATCHLEVEL 90
+#define __GNU_MP_VERSION_MINOR 90
+#define __GNU_MP_VERSION_PATCHLEVEL 0
 
 #define __GMP_H__
 #endif /* __GMP_H__ */
