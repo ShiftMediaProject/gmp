@@ -90,8 +90,8 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @subtitle Edition @value{EDITION}
 @subtitle @value{UPDATED}
 
-@author by Torbj@"orn Granlund, Swox AB
-@email{tege@@swox.com}
+@c @author by Torbj@"orn Granlund, Swox AB
+@c @email{tege@@swox.com}
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -470,12 +470,12 @@ by using sophisticated algorithms, by including carefully optimized assembly
 code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
-There is carefully optimized assembly code for these CPUs:
+There is assembly code for these CPUs:
 @cindex CPU types
 ARM,
 DEC Alpha 21064, 21164, and 21264,
 AMD 29000,
-AMD K6, K6-2, Athlon, and AMD64,
+AMD K6, K6-2, Athlon, and Athlon64,
 Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
 Intel Pentium, Pentium Pro/II/III, Pentium 4, generic x86,
@@ -520,12 +520,11 @@ near you, see @uref{http://www.gnu.org/order/ftp.html} for a full list.
 
 @cindex Mailing lists
 There are three public mailing lists of interest.  One for release
-announcements, one for general questions and discussions about usage of the
-GMP library and one for discussions about development of GMP@.  These lists are
-@strong{not} for bug reports.  For more information, see
+announcements, one for general questions and discussions about usage of the GMP
+library and one for bug reports.  For more information, see
 
 @display
-@uref{http://swox.com/mailman/listinfo/}.  
+@uref{http://swox.com/mailman/listinfo/}.
 @end display
 
 The proper place for bug reports is @email{gmp-bugs@@swox.com}.  See
@@ -578,11 +577,11 @@ See @ref{Reporting Bugs}, for information on what to include in useful bug
 reports.
 
 @menu
-* Build Options::               
-* ABI and ISA::                 
-* Notes for Package Builds::    
-* Notes for Particular Systems::  
-* Known Build Problems::        
+* Build Options::
+* ABI and ISA::
+* Notes for Package Builds::
+* Notes for Particular Systems::
+* Known Build Problems::
 @end menu
 
 
@@ -775,7 +774,7 @@ Motorola:
 @nisamp{m88110}
 
 @item
-POWER: 
+POWER:
 @nisamp{power},
 @nisamp{power1},
 @nisamp{power2},
@@ -1013,13 +1012,8 @@ For convenience, the following choices are also available.
 @samp{malloc-notreentrant}.
 @end itemize
 
-@code{alloca} is reentrant and fast, and is recommended, but when working with
-large numbers it can overflow the available stack space, in which case one of
-the two malloc methods will need to be used.  Alternately it might be possible
-to increase available stack with @command{limit}, @command{ulimit} or
-@code{setrlimit}, or under DJGPP with @command{stubedit} or
-@code{@w{_stklen}}.  Note that depending on the system the only indication of
-stack overflow might be a segmentation violation (@pxref{Debugging}).
+@code{alloca} is reentrant and fast, and is recommended.  It actually allocates
+just small blocks on the stack; larger ones use malloc-reentrant.
 
 @samp{malloc-reentrant} is, as the name suggests, reentrant and thread safe,
 but @samp{malloc-notreentrant} is faster and should be used if reentrancy is
@@ -1711,7 +1705,7 @@ symptom is a ``syntax error'' on the following line of the top-level
 @file{Makefile}.
 
 @example
-libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES) 
+libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES)
 @end example
 
 Either use GNU Make, or as a workaround remove
@@ -1769,21 +1763,21 @@ manual is strongly discouraged.  If you do so your application is guaranteed
 to be incompatible with future versions of GMP.}
 
 @menu
-* Headers and Libraries::       
-* Nomenclature and Types::      
-* Function Classes::            
-* Variable Conventions::        
-* Parameter Conventions::       
-* Memory Management::           
-* Reentrancy::                  
-* Useful Macros and Constants::  
-* Compatibility with older versions::  
-* Demonstration Programs::      
-* Efficiency::                  
-* Debugging::                   
-* Profiling::                   
-* Autoconf::                    
-* Emacs::                       
+* Headers and Libraries::
+* Nomenclature and Types::
+* Function Classes::
+* Variable Conventions::
+* Parameter Conventions::
+* Memory Management::
+* Reentrancy::
+* Useful Macros and Constants::
+* Compatibility with older versions::
+* Demonstration Programs::
+* Efficiency::
+* Debugging::
+* Profiling::
+* Autoconf::
+* Emacs::
 @end menu
 
 @node Headers and Libraries, Nomenclature and Types, GMP Basics, GMP Basics
@@ -2238,7 +2232,7 @@ source and binary compatible with the standard @file{libmp}.
 
 @c Pure assignment functions do not canonicalize the assigned variable.  It is
 @c the responsibility of the user to canonicalize the assigned variable before
-@c any arithmetic operations are performed on that variable.  
+@c any arithmetic operations are performed on that variable.
 @c Note that this is an incompatible change from version 1 of the library.
 
 @c @end enumerate
@@ -2758,7 +2752,7 @@ AC_CHECK_LIB(gmp, __gmpz_init, ,
 If functions added in some particular version of GMP are required, then one of
 those can be used when checking.  For example @code{mpz_mul_si} was added in
 GMP 3.1,
-    
+
 @example
 AC_CHECK_LIB(gmp, __gmpz_mul_si, ,
   [AC_MSG_ERROR(
@@ -2897,22 +2891,22 @@ These functions start with the prefix @code{mpz_}.
 GMP integers are stored in objects of type @code{mpz_t}.
 
 @menu
-* Initializing Integers::       
-* Assigning Integers::          
-* Simultaneous Integer Init & Assign::  
-* Converting Integers::         
-* Integer Arithmetic::          
-* Integer Division::            
-* Integer Exponentiation::      
-* Integer Roots::               
-* Number Theoretic Functions::  
-* Integer Comparisons::         
-* Integer Logic and Bit Fiddling::  
-* I/O of Integers::             
-* Integer Random Numbers::      
-* Integer Import and Export::   
-* Miscellaneous Integer Functions::  
-* Integer Special Functions::   
+* Initializing Integers::
+* Assigning Integers::
+* Simultaneous Integer Init & Assign::
+* Converting Integers::
+* Integer Arithmetic::
+* Integer Division::
+* Integer Exponentiation::
+* Integer Roots::
+* Number Theoretic Functions::
+* Integer Comparisons::
+* Integer Logic and Bit Fiddling::
+* I/O of Integers::
+* Integer Random Numbers::
+* Integer Import and Export::
+* Miscellaneous Integer Functions::
+* Integer Special Functions::
 @end menu
 
 @node Initializing Integers, Assigning Integers, Integer Functions, Integer Functions
@@ -3710,6 +3704,10 @@ Set bit @var{bit_index} in @var{rop}.
 Clear bit @var{bit_index} in @var{rop}.
 @end deftypefun
 
+@deftypefun void mpz_combit (mpz_t @var{rop}, unsigned long int @var{bit_index})
+Complement bit @var{bit_index} in @var{rop}.
+@end deftypefun
+
 @deftypefun int mpz_tstbit (mpz_t @var{op}, unsigned long int @var{bit_index})
 Test bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
 @end deftypefun
@@ -4087,12 +4085,12 @@ Remove any factors that are common to the numerator and denominator of
 @end deftypefun
 
 @menu
-* Initializing Rationals::      
-* Rational Conversions::        
-* Rational Arithmetic::         
-* Comparing Rationals::         
-* Applying Integer Functions::  
-* I/O of Rationals::            
+* Initializing Rationals::
+* Rational Conversions::
+* Rational Arithmetic::
+* Comparing Rationals::
+* Applying Integer Functions::
+* I/O of Rationals::
 @end menu
 
 @node Initializing Rationals, Rational Conversions, Rational Number Functions, Rational Number Functions
@@ -4424,14 +4422,14 @@ computer often differ from the results on a computer with a different word
 size.
 
 @menu
-* Initializing Floats::         
-* Assigning Floats::            
-* Simultaneous Float Init & Assign::  
-* Converting Floats::           
-* Float Arithmetic::            
-* Float Comparison::            
-* I/O of Floats::               
-* Miscellaneous Float Functions::  
+* Initializing Floats::
+* Assigning Floats::
+* Simultaneous Float Init & Assign::
+* Converting Floats::
+* Float Arithmetic::
+* Float Comparison::
+* I/O of Floats::
+* Miscellaneous Float Functions::
 @end menu
 
 @node Initializing Floats, Assigning Floats, Floating-point Functions, Floating-point Functions
@@ -4447,7 +4445,7 @@ initialized variables are unaffected.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpf_get_default_prec (void)
-Return the default default precision actually used.
+Return the default precision actually used.
 @end deftypefun
 
 An @code{mpf_t} object must be initialized before storing the first value in
@@ -5455,9 +5453,9 @@ change in the future).  The new functions accepting a @code{gmp_randstate_t}
 are recommended for applications that care about randomness.
 
 @menu
-* Random State Initialization::  
-* Random State Seeding::        
-* Random State Miscellaneous::  
+* Random State Initialization::
+* Random State Seeding::
+* Random State Miscellaneous::
 @end menu
 
 @node Random State Initialization, Random State Seeding, Random Number Functions, Random Number Functions
@@ -5587,9 +5585,9 @@ Return a uniformly distributed random number in the range 0 to
 @cindex @code{printf} formatted output
 
 @menu
-* Formatted Output Strings::    
-* Formatted Output Functions::  
-* C++ Formatted Output::        
+* Formatted Output Strings::
+* Formatted Output Functions::
+* C++ Formatted Output::
 @end menu
 
 @node Formatted Output Strings, Formatted Output Functions, Formatted Output, Formatted Output
@@ -5811,7 +5809,7 @@ if the C library @code{vsnprintf} is the older GLIBC 2.0.x style.
 @end deftypefun
 
 @deftypefun int gmp_asprintf (char **@var{pp}, const char *@var{fmt}, @dots{})
-@deftypefunx int gmp_vasprintf (char *@var{pp}, const char *@var{fmt}, va_list @var{ap})
+@deftypefunx int gmp_vasprintf (char **@var{pp}, const char *@var{fmt}, va_list @var{ap})
 Form a null-terminated string in a block of memory obtained from the current
 memory allocation function (@pxref{Custom Allocation}).  The block will be the
 size of the string and null-terminator.  The address of the block in stored to
@@ -5911,9 +5909,9 @@ results.  For classes with overloading, see @ref{C++ Class Interface}.
 @cindex @code{scanf} formatted input
 
 @menu
-* Formatted Input Strings::     
-* Formatted Input Functions::   
-* C++ Formatted Input::         
+* Formatted Input Strings::
+* Formatted Input Functions::
+* C++ Formatted Input::
 @end menu
 
 
@@ -6198,12 +6196,12 @@ and might be subject to incompatible changes if some unforeseen difficulty
 reveals itself.}
 
 @menu
-* C++ Interface General::       
-* C++ Interface Integers::      
-* C++ Interface Rationals::     
-* C++ Interface Floats::        
-* C++ Interface Random Numbers::  
-* C++ Interface Limitations::   
+* C++ Interface General::
+* C++ Interface Integers::
+* C++ Interface Rationals::
+* C++ Interface Floats::
+* C++ Interface Random Numbers::
+* C++ Interface Limitations::
 @end menu
 
 
@@ -7199,14 +7197,14 @@ compatible with future GMP releases should take care to use only the
 documented functions.
 
 @menu
-* Multiplication Algorithms::   
-* Division Algorithms::         
-* Greatest Common Divisor Algorithms::  
-* Powering Algorithms::         
-* Root Extraction Algorithms::  
-* Radix Conversion Algorithms::  
-* Other Algorithms::            
-* Assembler Coding::            
+* Multiplication Algorithms::
+* Division Algorithms::
+* Greatest Common Divisor Algorithms::
+* Powering Algorithms::
+* Root Extraction Algorithms::
+* Radix Conversion Algorithms::
+* Other Algorithms::
+* Assembler Coding::
 @end menu
 
 
@@ -7236,11 +7234,11 @@ operands.  This is not very efficient, and is slated for improvement in the
 future.
 
 @menu
-* Basecase Multiplication::     
-* Karatsuba Multiplication::    
-* Toom 3-Way Multiplication::  
-* FFT Multiplication::          
-* Other Multiplication::        
+* Basecase Multiplication::
+* Karatsuba Multiplication::
+* Toom 3-Way Multiplication::
+* FFT Multiplication::
+* Other Multiplication::
 @end menu
 
 
@@ -7898,12 +7896,12 @@ GMP.
 @cindex Division algorithms
 
 @menu
-* Single Limb Division::        
-* Basecase Division::           
-* Divide and Conquer Division::  
-* Exact Division::              
-* Exact Remainder::             
-* Small Quotient Division::     
+* Single Limb Division::
+* Basecase Division::
+* Divide and Conquer Division::
+* Exact Division::
+* Exact Remainder::
+* Small Quotient Division::
 @end menu
 
 
@@ -8181,10 +8179,10 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 @cindex GCD algorithms
 
 @menu
-* Binary GCD::                  
-* Accelerated GCD::             
-* Extended GCD::                
-* Jacobi Symbol::               
+* Binary GCD::
+* Accelerated GCD::
+* Extended GCD::
+* Jacobi Symbol::
 @end menu
 
 
@@ -8338,8 +8336,8 @@ twiddling, avoiding table lookups or conditional jumps.
 @cindex Powering algorithms
 
 @menu
-* Normal Powering Algorithm::   
-* Modular Powering Algorithm::  
+* Normal Powering Algorithm::
+* Modular Powering Algorithm::
 @end menu
 
 
@@ -8378,10 +8376,10 @@ applied to odd moduli.
 @cindex Root extraction algorithms
 
 @menu
-* Square Root Algorithm::       
-* Nth Root Algorithm::          
-* Perfect Square Algorithm::    
-* Perfect Power Algorithm::     
+* Square Root Algorithm::
+* Nth Root Algorithm::
+* Perfect Square Algorithm::
+* Perfect Power Algorithm::
 @end menu
 
 
@@ -8560,8 +8558,8 @@ Radix conversions are less important than other algorithms.  A program
 dominated by conversions should probably use a different data representation.
 
 @menu
-* Binary to Radix::             
-* Radix to Binary::             
+* Binary to Radix::
+* Radix to Binary::
 @end menu
 
 
@@ -8680,12 +8678,12 @@ much faster than @code{mpn_divrem_1} (often by a factor of 10, or more).
 @section Other Algorithms
 
 @menu
-* Prime Testing Algorithm::     
-* Factorial Algorithm::         
-* Binomial Coefficients Algorithm::  
-* Fibonacci Numbers Algorithm::  
-* Lucas Numbers Algorithm::     
-* Random Number Algorithms::    
+* Prime Testing Algorithm::
+* Factorial Algorithm::
+* Binomial Coefficients Algorithm::
+* Fibonacci Numbers Algorithm::
+* Lucas Numbers Algorithm::
+* Random Number Algorithms::
 @end menu
 
 
@@ -8967,16 +8965,16 @@ easily expressed in C@.  GCC @code{asm} blocks help a lot and are provided in
 speedup over generic C by a factor of anything from 2 to 10.
 
 @menu
-* Assembler Code Organisation::  
-* Assembler Basics::            
-* Assembler Carry Propagation::  
-* Assembler Cache Handling::    
-* Assembler Functional Units::    
-* Assembler Floating Point::    
-* Assembler SIMD Instructions::  
-* Assembler Software Pipelining::  
-* Assembler Loop Unrolling::    
-* Assembler Writing Guide::    
+* Assembler Code Organisation::
+* Assembler Basics::
+* Assembler Carry Propagation::
+* Assembler Cache Handling::
+* Assembler Functional Units::
+* Assembler Floating Point::
+* Assembler SIMD Instructions::
+* Assembler Software Pipelining::
+* Assembler Loop Unrolling::
+* Assembler Writing Guide::
 @end menu
 
 
@@ -9491,11 +9489,11 @@ Applications expecting to be compatible with future releases should use only
 the documented interfaces described in previous chapters.}
 
 @menu
-* Integer Internals::           
-* Rational Internals::          
-* Float Internals::             
-* Raw Output Internals::        
-* C++ Interface Internals::     
+* Integer Internals::
+* Rational Internals::
+* Float Internals::
+* Raw Output Internals::
+* C++ Interface Internals::
 @end menu
 
 @node Integer Internals, Rational Internals, Internals, Internals
@@ -10022,13 +10020,13 @@ mathematical expertise helped improve several algorithms.
 
 Paul Zimmermann wrote the Divide and Conquer division code, the REDC code, the
 REDC-based mpz_powm code, the FFT multiply code, and the Karatsuba square root
-code.  He also rewrote the Toom3 code for GMP 5.  The ECMNET project Paul is
+code.  He also rewrote the Toom3 code for GMP 4.2.  The ECMNET project Paul is
 organizing was a driving force behind many of the optimizations in GMP 3.
 
 Linus Nordberg wrote the new configure system based on autoconf and
 implemented the new random functions.
 
-Kent Boortz made the Macintosh port.
+Kent Boortz made the Mac OS 9 port.
 
 Kevin Ryde worked on a number of things: optimized x86 code, m4 asm macros,
 parameter tuning, speed measuring, the configure system, function inlining,
