@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/asm-defs.m4 (ASM_END): Provide (empty) default.
+
 2006-04-08  Torbjorn Granlund  <tege@swox.com>
 
 	* gmpxx.h: Remove missed MPFR references.
