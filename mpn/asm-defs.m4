@@ -1416,6 +1416,14 @@ dnl  it's redefined by CPU specific m4 files.
 define(ASM_START)
 
 
+dnl  Usage: ASM_END()
+dnl
+dnl  Emit any directives needed once at the end of an assembler file.  The
+dnl  default for this is nothing, but it's redefined by CPU specific m4 files.
+
+define(ASM_END)
+
+
 dnl  Usage: PROLOGUE(foo[,param])
 dnl         EPILOGUE(foo)
 dnl
