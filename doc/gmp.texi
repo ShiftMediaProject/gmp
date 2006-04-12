@@ -14,7 +14,7 @@ This manual describes how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-2003, 2004, 2005 Free Software Foundation, Inc.
+2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
@@ -866,6 +866,14 @@ generic C code can be selected with CPU @samp{none}.  For example,
 Note that this will run quite slowly, but it should be portable and should at
 least make it possible to get something running if all else fails.
 
+@item Fat binary, @option{--enable-fat}
+@cindex Fat binary
+@cindex @option{--enable-fat}
+Using @option{--enable-fat} selects a ``fat binary'' build on x86, where
+optimized low level subroutines are chosen at runtime according to the CPU
+detected.  This means more code, but gives good performance on all x86 chips.
+(This option might become available for more architectures in the future.)
+
 @item @option{ABI}
 @cindex ABI
 On some systems GMP supports multiple ABIs (application binary interfaces),
@@ -1417,10 +1425,11 @@ or perhaps the loader.
 When building a package for a CPU family, care should be taken to use
 @samp{--host} (or @samp{--build}) to choose the least common denominator among
 the CPUs which might use the package.  For example this might mean plain
-@samp{sparc} (meaning V7) for SPARCs.  For x86s, @samp{i386} is a fat binary
-build, making a runtime selection of optimized low level routines.  This is a
-good choice for packaging to run on a range of x86 chips (@pxref{Notes for
-Particular Systems}).
+@samp{sparc} (meaning V7) for SPARCs.
+
+For x86s, @option{--enable-fat} sets things up for a fat binary build, making a
+runtime selection of optimized low level routines.  This is a good choice for
+packaging to run on a range of x86 chips.
 
 Users who care about speed will want GMP built for their exact CPU type, to
 make best use of the available optimizations.  Providing a way to suitably
@@ -1623,11 +1632,6 @@ GNU m4).
 @cindex x86
 @cindex 80x86
 @cindex i386
-@cindex Fat binary
-@samp{i386} selects a ``fat binary'' build, where optimized low level
-subroutines are chosen at runtime according to the CPU detected.  This means
-more code, but gives good performance on all x86 chips.
-
 @samp{i586}, @samp{pentium} or @samp{pentiummmx} code is good for its intended
 P5 Pentium chips, but quite slow when run on Intel P6 class chips (PPro, P-II,
 P-III)@.  @samp{i386} is a better choice when making binaries that must run on
