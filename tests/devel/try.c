@@ -1319,6 +1319,13 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_sub_nc),    TYPE_SUB_NC },
 #endif
 
+#if HAVE_NATIVE_mpn_addsub_n
+  { TRY(mpn_addsub_n),  TYPE_ADDSUB_N  },
+#endif
+#if HAVE_NATIVE_mpn_addsub_nc
+  { TRY(mpn_addsub_nc), TYPE_ADDSUB_NC },
+#endif
+
   { TRY(mpn_addmul_1),  TYPE_ADDMUL_1  },
   { TRY(mpn_submul_1),  TYPE_SUBMUL_1  },
 #if HAVE_NATIVE_mpn_addmul_1c
