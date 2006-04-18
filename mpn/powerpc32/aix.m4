@@ -44,6 +44,8 @@ define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 `')
 
+define(`TOC_ENTRY', `')
+
 define(`LEA',
 m4_assert_numargs(2)
 `define(`TOC_ENTRY',
@@ -51,6 +53,10 @@ m4_assert_numargs(2)
 tc$2:
 	.tc	$2[TC], $2[RW]')'
 `	lwz	$1, tc$2(2)')
+
+define(`EXTERN',
+m4_assert_numargs(1)
+`	.globl	$1')
 
 define(`DEF_OBJECT',
 m4_assert_numargs_range(1,2)
