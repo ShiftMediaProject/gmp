@@ -1,7 +1,7 @@
 divert(-1)
 dnl  m4 macros for Mac OS 32-bit assembly.
 
-dnl  Copyright 2005 Free Software Foundation, Inc.
+dnl  Copyright 2005, 2006 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
