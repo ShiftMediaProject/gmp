@@ -30,6 +30,8 @@ MA 02110-1301, USA.
 
 	* mpn/powerpc32/aix.m4 (EXTERN): New, copied form powerpc64/aix.m4.
 	* mpn/powerpc32/mode1o.asm: Use EXTERN.
+	* mpn/powerpc32/linux.m4 (EXTERN): Provide dummy definition.
+	* mpn/powerpc32/darwin.m4 (EXTERN): Likewise.
 
 2006-04-13  Torbjorn Granlund  <tege@swox.com>
 
