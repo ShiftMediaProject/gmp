@@ -52,6 +52,10 @@ m4_assert_numargs(2)
 	la	$1, $2@l($1)
 ')')
 
+define(`EXTERN',
+m4_assert_numargs(1)
+`dnl')
+
 define(`DEF_OBJECT',
 m4_assert_numargs_range(1,2)
 `
