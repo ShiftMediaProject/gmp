@@ -53,6 +53,9 @@ C range above for 750 and 7400.
 
 
 ASM_START()
+
+EXTERN(modlimb_invert_table)
+
 PROLOGUE(mpn_modexact_1_odd)
 	li	r6, 0
 
