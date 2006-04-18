@@ -61,7 +61,7 @@ L(4):	subf	r3, r8, r6
 	subf	r3, r8, r3
 	blr
 
-L(2):	LDSYM(	r7, modlimb_invert_table)
+L(2):	LEA(	r7, modlimb_invert_table)
 	rldicl	r9, d, 63, 57
 	mtctr	n
 	lbzx	r0, r7, r9
