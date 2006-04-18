@@ -1,5 +1,5 @@
 Copyright 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
-	  2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+	  2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 .
 This file is part of the GNU MP Library.
 .
@@ -18,7 +18,33 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/mode64/invert_limb.asm: Use LEA, not LDSYM.
+	* mpn/powerpc64/mode64/mode1o.asm: Likewise.
+	* mpn/powerpc64/mode64/dive_1.asm: Likewise.
+
+	* mpn/powerpc64/linux64.m4 (TOC_ENTRY): Define to empty.
+	* mpn/powerpc64/aix.m4 (TOC_ENTRY): Likewise.
+	* mpn/powerpc32/aix.m4 (TOC_ENTRY): Likewise.
+
+	* mpn/powerpc32/aix.m4 (EXTERN): New, copied form powerpc64/aix.m4.
+	* mpn/powerpc32/mode1o.asm: Use EXTERN.
+
+2006-04-13  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_fft.c: Use new thresholds mechanism if MUL_FFT_TABLE2
+	is defined.
+	(mpn_lshiftc): New name for mpn_lshift_com (for consistency with some
+	stuff already in 4.1.4.
+	(mpn_fft_mul_2exp_modF): Reorganize initial operand reductions to avoid
+	divisions.
+
+	* tests/devel/try.c (choice_array): Add mpn_addsub_n[c].
+
 2006-04-11  Torbjorn Granlund  <tege@swox.com>
+
+	* aclocal.m4: Regenerate with patched libtool.
 
 	* mpn/asm-defs.m4 (ASM_END): Provide (empty) default.
 
