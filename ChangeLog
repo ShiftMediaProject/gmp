@@ -18,7 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-19  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/linux64.m4 (ASM_END): Quote TOC_ENTRY.
+
 2006-04-18  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (gmp_mpn_functions_optional): Add lshiftc.
+	(HAVE_NATIVE): Add lshiftc.
 
 	* mpn/powerpc64/mode64/invert_limb.asm: Use LEA, not LDSYM.
 	* mpn/powerpc64/mode64/mode1o.asm: Likewise.
