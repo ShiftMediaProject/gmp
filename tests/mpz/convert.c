@@ -1,7 +1,7 @@
 /* Test conversion using mpz_get_str and mpz_set_str.
 
-Copyright 1993, 1994, 1996, 1999, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1993, 1994, 1996, 1999, 2000, 2001, 2002, 2006 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,7 +36,7 @@ main (int argc, char **argv)
   mpz_t op1, op2;
   mp_size_t size;
   int i;
-  int reps = 10000;
+  int reps = 2000;
   char *str, *buf;
   int base;
   gmp_randstate_ptr rands;
@@ -59,8 +59,8 @@ main (int argc, char **argv)
       /* 1. Generate random mpz_t and convert to a string and back to mpz_t
 	 again.  */
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 12 + 2;	/* 2..13 */
-      mpz_urandomb (bs, rands, size_range);	/* 3..8191 bits */
+      size_range = mpz_get_ui (bs) % 15 + 2;	/* 2..16 */
+      mpz_urandomb (bs, rands, size_range);	/* 3..65536 bits */
       size = mpz_get_ui (bs);
       mpz_rrandomb (op1, rands, size);
 
