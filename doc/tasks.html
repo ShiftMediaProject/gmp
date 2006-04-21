@@ -1,11 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>
-    GMP Itemized Development Tasks
-  </title>
+  <title>GMP Itemized Development Tasks</title>
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" href="gmp.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-<body bgcolor=lightgreen>
 
 <center>
   <h1>
@@ -14,7 +14,7 @@
 </center>
 
 <font size=-1>
-Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc. <br><br>
+Copyright 2000, 2001, 2002, 2003, 2004, 2006 Free Software Foundation, Inc. <br><br>
 This file is part of the GNU MP Library. <br><br>
 The GNU MP Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published
@@ -32,12 +32,10 @@ MA 02110-1301, USA.
 
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
-<comment>
-  This file current as of 6 May 2004.  An up-to-date version is available at
+  This file current as of 21 Apr 2006.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
-</comment>
 
 <p> These are itemized GMP development tasks.  Not all the tasks
     listed here are suitable for volunteers, but many of them are.
@@ -211,7 +209,7 @@ MA 02110-1301, USA.
      and not prec+1 limbs, then move the available limbs up to prec+1 and do
      an in-place there.
 <li> <code>mpf_div_ui</code>: Whether the high quotient limb is zero can be
-     determined by testing the dividend for high<divisor.  When non-zero, the
+     determined by testing the dividend for high&lt;divisor.  When non-zero, the
      divison can be done on prec dividend limbs instead of prec+1.  The result
      size is also known before the division, so that can be a tail call (once
      the <code>TMP_ALLOC</code> is eliminated).
@@ -299,25 +297,6 @@ MA 02110-1301, USA.
 
 <h4>Machine Dependent Optimization</h4>
 <ul>
-<li> Run the `tune' utility for more compiler/CPU combinations.  We would like
-     to have gmp-mparam.h files in practically every implementation specific
-     mpn subdirectory, and repeat each *_THRESHOLD for gcc and the system
-     compiler.  See the `tune' top-level directory for more information.
-	<pre>
-	#ifdef (__GNUC__)
-	#if __GNUC__ == 2 && __GNUC_MINOR__ == 7
-	...
-	#endif
-	#if __GNUC__ == 2 && __GNUC_MINOR__ == 8
-	...
-	#endif
-	#ifndef MUL_KARATSUBA_THRESHOLD
-	/* Default GNUC values */
-	...
-	#endif
-	#else /* system compiler */
-	...
-	#endif	</pre>
 <li> <code>invert_limb</code> on various processors might benefit from the
      little Newton iteration done for alpha and ia64.
 <li> Alpha 21264: <code>mpn_addlsh1_n</code> could be implemented with
@@ -594,7 +573,7 @@ MA 02110-1301, USA.
      too, but <code>mpf</code> would be a start.
      <br>
      <code>long double</code> is an ANSI-ism, so everything involving it would
-     need to be suppressed on a K&R compiler.
+     need to be suppressed on a K&amp;R compiler.
      <br>
      There'd be some work to be done by <code>configure</code> to recognise
      the format in use, MPFR has a start on this.  Often <code>long
@@ -835,7 +814,7 @@ MA 02110-1301, USA.
 
 <h4>Bright Ideas</h4>
 
-The following may or may not be feasible, and aren't likely to get done in the
+<p> The following may or may not be feasible, and aren't likely to get done in the
 near future, but are at least worth thinking about.
 
 <ul>
@@ -891,7 +870,7 @@ near future, but are at least worth thinking about.
 
 <h4>Old and Obsolete Stuff</h4>
 
-The following tasks apply to chips or systems that are old and/or obsolete.
+<p> The following tasks apply to chips or systems that are old and/or obsolete.
 It's unlikely anything will be done about them unless anyone is actively using
 them.
 
