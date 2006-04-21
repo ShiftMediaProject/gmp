@@ -1,4 +1,5 @@
-Copyright 1996, 1997, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1996, 1997, 1999, 2000, 2001, 2002, 2006 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -41,12 +42,18 @@ impatient, try this
 
 	./configure
 	make
+	make check		<= VERY IMPORTANT!!
 
 If that fails, or you care about the performance of GMP, you need to read the
 full instructions in the chapter "Installing GMP" in the manual.
 
-Optionally, you can install with the following.  This will be to /usr/local by
-default, and you'll probably need to be "root" to be able to write there.
+You should not skip the "make check" part; the risk that the GMP sources are
+miscompiled are unfortunately quite high.  And if they indeed are, "make check"
+is very likely to trigger the compiler-introduced bug.
+
+Optionally, you can install the library with the following command.  This will
+be to /usr/local by default, and you'll probably need to be "root" to be able
+to write there.
 
 	make install
 
