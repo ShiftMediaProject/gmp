@@ -75,7 +75,7 @@ L(top):	addc	r8, r8, r5
 	bdnz	L(top)
 
 	addi	up, up, 24
-L(endx):	
+L(endx):
 	addi	up, up, -24
 
 L(end):	addc	r8, r8, r5

@@ -38,7 +38,7 @@ use strict;
 
 # The U or L which various instructions demand, or E if either.
 #
-my %optable = 
+my %optable =
   (
    'addq'   => 'E',
    'and'    => 'E',
@@ -93,7 +93,7 @@ my %optable =
 # Slottings used for a given pattern of U/L/E in an octaword.  This is as
 # per the "Ebox Slotting" section of the EV6 hardware reference manual.
 #
-my %slottable = 
+my %slottable =
   (
    'EEEE' => 'ULUL',
    'EEEL' => 'ULUL',
@@ -286,7 +286,7 @@ sub disassemble {
       }
     }
   }
-  
+
   close IN || die "Error from objdump (or objdump not available)\n";
 }
 

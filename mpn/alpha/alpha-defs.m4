@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for Alpha assembler.
 
 dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
-dnl 
+dnl
 dnl  This file is part of the GNU MP Library.
 dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or

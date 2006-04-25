@@ -267,7 +267,7 @@ qstack_push_1 (struct qstack *stack, mp_limb_t q)
    Return 0 on failure (if B or A mod B fits in a single limb). Return
    1 if r0 and r1 are correct, but we still make no progress because
    r0 = A, r1 = B.
-   
+
    Otherwise return 2, 3 or 4 depending on how many of the r:s that
    satisfy Jebelean's criterion. */
 /* FIXME: There are two more micro optimizations that could be done to

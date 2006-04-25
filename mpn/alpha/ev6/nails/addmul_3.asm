@@ -19,21 +19,20 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 51 Franklin Street,
 dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 
-
-dnl  Runs at 3.0 cycles/limb.  With unrolling, the ulimb load and the 3
-dnl  bookkeeping increments and the `bis' that copies from r22 to r6 could be
-dnl  removed and the instruction count reduced from 26 to to 21.  We could
-dnl  thereby probably reach 2 cycles/limb, the IMUL bandwidth.
-
 include(`../config.m4')
 
-dnl  INPUT PARAMETERS
+C Runs at 3.0 cycles/limb.
+
+C With 2-way unrolling, we could probably reach 2.25 c/l (3.33 i/c).
+
+
+C  INPUT PARAMETERS
 define(`rp',`r16')
 define(`up',`r17')
 define(`n',`r18')
 define(`vp',`r19')
 
-dnl  Useful register aliases
+C  Useful register aliases
 define(`numb_mask',`r24')
 define(`ulimb',`r25')
 define(`rlimb',`r27')
@@ -53,12 +52,12 @@ define(`v0',`r6')
 define(`v1',`r7')
 define(`v2',`r23')
 
-dnl Used for temps: r8 r19 r28
+C Used for temps: r8 r19 r28
 
 define(`NAIL_BITS',`GMP_NAIL_BITS')
 define(`NUMB_BITS',`GMP_NUMB_BITS')
 
-dnl  This declaration is munged by configure
+C  This declaration is munged by configure
 NAILS_SUPPORT(3-63)
 
 ASM_START()
@@ -88,45 +87,44 @@ PROLOGUE(mpn_addmul_3)
 	mulq	v2,	ulimb,	m2a		C U1
 	umulh	v2,	ulimb,	m2b		C U1
 	beq	n,	L(end)			C U0
-	ALIGN(16)
-L(top):	bis	r31,	r31,	r31		C	nop
-	ldq	rlimb,	0(rp)
-	ldq	ulimb,	0(up)
-	addq	r19,	acc0,	acc0		C	propagate nail
 
-	lda	rp,	8(rp)
+	ALIGN(16)
+L(top):	ldq	rlimb,	0(rp)			C L1
+	ldq	ulimb,	0(up)			C L0
+	bis	r31,	r31,	r31		C U0	nop
+	addq	r19,	acc0,	acc0		C U1	propagate nail
+
+	lda	rp,	8(rp)			C L1
 	srl	m0a,NAIL_BITS,	r8		C U0
-	lda	up,	8(up)
+	lda	up,	8(up)			C L0
 	mulq	v0,	ulimb,	m0a		C U1
 
-	addq	r8,	acc0,	r19
-	addq	m0b,	acc1,	acc0
+	addq	r8,	acc0,	r19		C U0
+	addq	m0b,	acc1,	acc0		C L1
 	umulh	v0,	ulimb,	m0b		C U1
-	bis	r31,	r31,	r31		C	nop
+	bis	r31,	r31,	r31		C L0	nop
 
-	addq	rlimb,	r19,	r19
+	addq	rlimb,	r19,	r19		C L1
 	srl	m1a,NAIL_BITS,	r8		C U0
-	bis	r31,	r31,	r31		C	nop
+	bis	r31,	r31,	r31		C L0	nop
 	mulq	v1,	ulimb,	m1a		C U1
 
-	addq	r8,	acc0,	acc0
-	addq	m1b,	acc2,	acc1
+	addq	r8,	acc0,	acc0		C U0
+	addq	m1b,	acc2,	acc1		C L1
 	umulh	v1,	ulimb,	m1b		C U1
-	and	r19,numb_mask,	r28		C	extract numb part
+	and	r19,numb_mask,	r28		C L0	extract numb part
 
-	bis	r31,	r31,	r31		C	nop
+	bis	r31,	r31,	r31		C L1	nop
 	srl	m2a,NAIL_BITS,	r8		C U0
-	lda	n,	-1(n)
+	lda	n,	-1(n)			C L0
 	mulq	v2,	ulimb,	m2a		C U1
 
-	addq	r8,	acc1,	acc1
-	bis	r31,	m2b,	acc2
+	addq	r8,	acc1,	acc1		C L0
+	bis	r31,	m2b,	acc2		C L1
 	umulh	v2,	ulimb,	m2b		C U1
-	srl	r19,NUMB_BITS,	r19		C	extract nail part
+	srl	r19,NUMB_BITS,	r19		C U0	extract nail part
 
-	bis	r31,	r31,	r31		C	nop
-	stq	r28,	-8(rp)
-
+	stq	r28,	-8(rp)			C L
 	bne	n,	L(top)			C U0
 
 L(end):	ldq	rlimb,	0(rp)

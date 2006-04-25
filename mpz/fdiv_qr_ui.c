@@ -70,7 +70,7 @@ mpz_fdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long in
 	  dp[1] = divisor >> GMP_NUMB_BITS;
 	  mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
 	  rl = rp[0] + (rp[1] << GMP_NUMB_BITS);
-	  qn = nn - 2 + 1; 
+	  qn = nn - 2 + 1;
 	}
 
       if (rl != 0 && ns < 0)

@@ -63,7 +63,7 @@ void
 __gmp_tmp_reentrant_free (struct tmp_reentrant_t *mark)
 {
   struct tmp_reentrant_t  *next;
-  
+
   while (mark != NULL)
     {
       next = mark->next;

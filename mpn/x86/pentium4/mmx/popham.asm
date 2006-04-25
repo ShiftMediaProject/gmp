@@ -23,9 +23,14 @@ dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C P4: popcount 8.5 cycles/limb
-C     hamdist  9.5 cycles/limb
-
+C			     popcount	     hamdist
+C P3 model 9  (Banias)          ?		?
+C P3 model 13 (Dothan)		6		6
+C P4 model 0  (Willamette)
+C P4 model 1  (?)
+C P4 model 2  (Northwood)       8		9
+C P4 model 3  (Prescott)        8		9
+C P4 model 4  (Nocona)
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C unsigned long mpn_hamdist (mp_srcptr src, mp_srcptr src2, mp_size_t size);
@@ -35,8 +40,8 @@ C Two movd's and a punpckldq seems to be the same speed as an aligned movq,
 C and using them saves fiddling about with alignment testing on entry.
 C
 C For popcount there's 13 mmx instructions in the loop, so perhaps 6.5 c/l
-C might be possible, but 8.5 c/l relying on out-of-order execution is
-C already quite reasonable.
+C might be possible, but 8 c/l relying on out-of-order execution is already
+C quite reasonable.
 
 ifdef(`OPERATION_popcount',,
 `ifdef(`OPERATION_hamdist',,

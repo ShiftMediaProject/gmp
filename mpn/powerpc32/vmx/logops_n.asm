@@ -299,4 +299,4 @@ C	rlwinm	r0, vp, 0,28,31
 C	cmpwi	cr7, r0, 0
 C	cror	cr6, cr0, cr7
 C	crand	cr0, cr0, cr7
-C	
+
