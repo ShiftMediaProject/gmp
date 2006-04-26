@@ -526,6 +526,9 @@ sparc-*-* | sparc64-*-*)
     elif grep 'cpu.*MB86904' /proc/cpuinfo >/dev/null; then
       # actually MicroSPARC-II
       exact_cpu=microsparc
+    elif grep 'cpu.*UltraSparc T1' /proc/cpuinfo >/dev/null; then
+      # this grep pattern has not been tested against any Linux
+      exact_cpu="ultrasparct1"
     elif grep 'cpu.*UltraSparc III' /proc/cpuinfo >/dev/null; then
       exact_cpu="ultrasparc3"
     elif grep 'cpu.*UltraSparc IIi' /proc/cpuinfo >/dev/null; then
@@ -572,31 +575,39 @@ sparc-*-* | sparc64-*-*)
   # /usr/sbin/sysdef prints similar information, but includes all loadable
   # cpu modules, not just the real cpu.
   #
-  if test -z "$exact_cpu"; then
-    if $SHELL -c /usr/sbin/prtconf 2>/dev/null >conftest.dat; then
-      if grep 'SUNW,UltraSPARC-III' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc3
-      elif grep 'SUNW,UltraSPARC-IIi' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc2i
-      elif grep 'SUNW,UltraSPARC-II' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc2
-      elif grep 'SUNW,UltraSPARC' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc
-      elif grep 'Ross,RT62.' conftest.dat >/dev/null; then
-        # RT620, RT625, RT626 hypersparcs (v8).
-        exact_cpu=sparcv8
-      elif grep 'TI,TMS390Z5.' conftest.dat >/dev/null; then
-        # TMS390Z50 and TMS390Z55
-        exact_cpu=supersparc
-      elif grep 'TI,TMS390S10' conftest.dat >/dev/null; then
-        exact_cpu=microsparc
-      elif grep 'FMI,MB86904' conftest.dat >/dev/null; then
-        # actually MicroSPARC-II
-        exact_cpu=microsparc
+  # We first try a plain prtconf, since that is known to work on older systems.
+  # But for newer T1 systems, that doesn't produce any useful output, we need
+  # "prtconf -vp" there.
+  #
+  for prtconfopt in "" "-vp"; do
+    if test -z "$exact_cpu"; then
+      if $SHELL -c "/usr/sbin/prtconf $prtconfopt" 2>/dev/null >conftest.dat; then
+	if grep 'SUNW,UltraSPARC-T1' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparct1
+	elif grep 'SUNW,UltraSPARC-III' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparc3
+	elif grep 'SUNW,UltraSPARC-IIi' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparc2i
+	elif grep 'SUNW,UltraSPARC-II' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparc2
+	elif grep 'SUNW,UltraSPARC' conftest.dat >/dev/null; then
+	  exact_cpu=ultrasparc
+	elif grep 'Ross,RT62.' conftest.dat >/dev/null; then
+	  # RT620, RT625, RT626 hypersparcs (v8).
+	  exact_cpu=sparcv8
+	elif grep 'TI,TMS390Z5.' conftest.dat >/dev/null; then
+	  # TMS390Z50 and TMS390Z55
+	  exact_cpu=supersparc
+	elif grep 'TI,TMS390S10' conftest.dat >/dev/null; then
+	  exact_cpu=microsparc
+	elif grep 'FMI,MB86904' conftest.dat >/dev/null; then
+	  # actually MicroSPARC-II
+	  exact_cpu=microsparc
+	fi
       fi
+      rm -f conftest.dat
     fi
-    rm -f conftest.dat
-  fi
+  done
 
   # Grep the output from sysctl hw.model on sparc or sparc64 *BSD.
   # Use an explicit /sbin, since that directory might not be in a normal
@@ -606,7 +617,10 @@ sparc-*-* | sparc64-*-*)
   #
   if test -z "$exact_cpu"; then
     if $SHELL -c "/sbin/sysctl hw.model" 2>/dev/null >conftest.dat; then
-      if grep 'UltraSparc-III' conftest.dat >/dev/null; then
+      if grep 'UltraSparc-T1' conftest.dat >/dev/null; then
+	# this grep pattern has not been tested against any BSD
+        exact_cpu=ultrasparct1
+      elif grep 'UltraSparc-III' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc3
       elif grep 'UltraSparc-IIi' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc2i
