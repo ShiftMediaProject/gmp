@@ -18,6 +18,15 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-26  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Try to recognize Ultrasparc T1 (as ultrasparct1).
+	* config.sub: Handle ultrasparct1.
+
+2006-04-20  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/convert.c: Increase operands range.
+
 2006-04-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/linux64.m4 (ASM_END): Quote TOC_ENTRY.
