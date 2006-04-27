@@ -958,19 +958,22 @@ case $host in
 	    # mode to handle 64-bit instructions.  But for that, also
 	    # -force_cpusubtype_ALL is needed.
 	    #
+	    # Do not use -fast for Darwin, it actually adds options
+	    # incompatible with a shared library.
+	    #
 	    abilist="mode64 mode32 $abilist"
-	    gcc_cflags_opt="-fast -O3 -O2 -O1"	# will this become used?
+	    gcc_cflags_opt="-O3 -O2 -O1"	# will this become used?
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="subtype cpu opt"
 	    gcc_mode32_cflags_subtype="-force_cpusubtype_ALL"
-	    gcc_mode32_cflags_opt="-fast -O3 -O2 -O1"
+	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
 	    path_mode32="powerpc64/mode32 $vmx_path powerpc64"
 	    limb_mode32=longlong
 	    cclist_mode64="gcc"
 	    gcc_mode64_cflags="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
-	    gcc_mode64_cflags_opt="-fast -O3 -O2 -O1"
+	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
 	    path_mode64="powerpc64/mode64 $vmx_path powerpc64"
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
@@ -2933,6 +2936,10 @@ if test "$gmp_asm_syntax_testing" != no; then
 	    mode32 | 32) GMP_INCLUDE_MPN(powerpc32/darwin.m4) ;;
           esac
           ;;
+        *)
+	  # Assume unrecognized operating system is the powerpc eABI
+          GMP_INCLUDE_MPN(powerpc32/eabi.m4)
+	  ;;
       esac
       ;;
     power*-*-aix*)
