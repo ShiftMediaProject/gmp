@@ -64,7 +64,7 @@ static void ap_product_small _PROTO ((mpz_t ret, mp_limb_t start, mp_limb_t step
   } while (0)
 
 
-#if BITS_PER_ULONG == BITS_PER_MP_LIMB
+#if BITS_PER_ULONG == GMP_LIMB_BITS
 #define BSWAP_ULONG(x,y)	BSWAP_LIMB(x,y)
 #endif
 
