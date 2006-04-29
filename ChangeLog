@@ -18,16 +18,34 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-04-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/divexact.c: Call mpz_tdiv_q for large operands.
+
+	* configure.in (powerpc-*-darwin): Remove -fast, it affects PIC.
+
 2006-04-26  Torbjorn Granlund  <tege@swox.com>
 
 	* config.guess: Try to recognize Ultrasparc T1 (as ultrasparct1).
 	* config.sub: Handle ultrasparct1.
+
+2006-04-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/gmp-mparam.h: Retune, without separation of GNUC and
+	non-GNUC data.
 
 2006-04-20  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/convert.c: Increase operands range.
 
 2006-04-19  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Support powerpc eABI.
+	* mpn/powerpc32/eabi.m4: New file.
+
+	* configure.in: Support powerpc *bsd.
+	* mpn/powerpc64/elf.m4: New name for mpn/powerpc64/linux64.m4.
+	* mpn/powerpc32/elf.m4: New name for mpn/powerpc32/linux.m4.
 
 	* mpn/powerpc64/linux64.m4 (ASM_END): Quote TOC_ENTRY.
 
