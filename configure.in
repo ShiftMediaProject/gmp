@@ -979,7 +979,7 @@ case $host in
             cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
 	    ;;
-	  *-*-linux*)
+	  *-*-linux* | *-*-*bsd*)
 	    # On GNU/Linux, assume the processor is in 64-bit mode.  Some
 	    # environments have a gcc that is always in 64-bit mode, while
 	    # others require -m64, hence the use of cflags_maybe.  The
@@ -2924,10 +2924,10 @@ if test "$gmp_asm_syntax_testing" != no; then
             *)           GMP_INCLUDE_MPN(powerpc32/aix.m4) ;;
           esac
           ;;
-        *-*-linux*)
+        *-*-linux* | *-*-*bsd*)
 	  case $ABI in
-	    mode64)      GMP_INCLUDE_MPN(powerpc64/linux64.m4) ;;
-	    mode32 | 32) GMP_INCLUDE_MPN(powerpc32/linux.m4) ;;
+	    mode64)      GMP_INCLUDE_MPN(powerpc64/elf.m4) ;;
+	    mode32 | 32) GMP_INCLUDE_MPN(powerpc32/elf.m4) ;;
           esac
           ;;
         *-*-darwin*)
