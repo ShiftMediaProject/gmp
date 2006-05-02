@@ -65,7 +65,6 @@ define(`cnt4',`v13')
 ifelse(GMP_LIMB_BITS,32,`
 	define(`LIMB32',`	$1')
 	define(`LIMB64',`')
-	define(`LDSYM', `LEA($1,$2)')
 ',`
 	define(`LIMB32',`')
 	define(`LIMB64',`	$1')
@@ -82,8 +81,11 @@ PROLOGUE(mpn_popcount)
 	oris	r0, r10, 0xfffc		C Set VRSAVE bit 0-13
 	mtspr	256, r0
 
+ifdef(`HAVE_ABI_mode32',
+`	rldicl	n, n, 0, 32')		C zero extend n
+
 C Load various constants into vector registers
-	LDSYM(	r11, cnsts)
+	LEA(	r11, cnsts)
 	li	r12, 16
 	vspltisb cnt1, 1		C 0x0101...01 used as shift count
 	vspltisb cnt2, 2		C 0x0202...02 used as shift count
