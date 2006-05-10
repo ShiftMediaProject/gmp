@@ -582,6 +582,7 @@ reports.
 * Notes for Package Builds::
 * Notes for Particular Systems::
 * Known Build Problems::
+* Performance optimization::
 @end menu
 
 
@@ -1656,7 +1657,7 @@ Install a recent @command{gas} if MMX code is wanted on these systems.
 
 
 @need 2000
-@node Known Build Problems,  , Notes for Particular Systems, Installing GMP
+@node Known Build Problems, Performance optimization, Notes for Particular Systems, Installing GMP
 @section Known Build Problems
 @cindex Build problems known
 
@@ -1755,6 +1756,42 @@ then fails the tests, apparently due to some incorrect data relocations within
 @code{gmp_randinit_lc_2exp_size}.  The exact cause is unknown,
 @samp{--disable-shared} is recommended.
 @end table
+
+
+@need 2000
+@node Performance optimization, , Known Build Problems, Installing GMP
+@section Performance optimization
+@cindex Optimizing performance
+
+@c At some point, this should perhaps move to a separate chapter on optimizing
+@c performance.
+
+For optimal performance, build GMP for the exact CPU type of the target
+computer, see @ref{Build Options}.
+
+Unlike what is the case for most other programs, the compiler typically
+doesn't matter much, since GMP uses assembly language for the most critical
+operation.
+
+In particular for long-running GMP applications, and applications demanding
+extremely large numbers, building and running the @code{tuneup} program in the
+@file{tune} subdirectory, can be important.  For example,
+
+@example
+cd tune
+make tuneup
+./tuneup
+@end example
+
+will generate better contents for the @file{gmp-mparam.h} parameter file.
+
+To use the results, put the output in the file file indicated in the
+@samp{Parameters for ...} header.  Then recompile from scratch.
+
+The @code{tuneup} program takes one useful parameter, @samp{-f NNN}, which
+instructs the program how long to check FFT multiply parameters.  If you're
+going to use GMP for extremely large numbers, you may want to run @code{tuneup}
+with a large NNN value.
 
 
 @node GMP Basics, Reporting Bugs, Installing GMP, Top
