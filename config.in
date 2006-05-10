@@ -2,8 +2,8 @@
 
 /*
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005 Free
-Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -233,6 +233,7 @@ MA 02110-1301, USA.
 #undef HAVE_NATIVE_mpn_invert_limb
 #undef HAVE_NATIVE_mpn_ior_n
 #undef HAVE_NATIVE_mpn_iorn_n
+#undef HAVE_NATIVE_mpn_lshiftc
 #undef HAVE_NATIVE_mpn_mod_1
 #undef HAVE_NATIVE_mpn_mod_1c
 #undef HAVE_NATIVE_mpn_modexact_1_odd
