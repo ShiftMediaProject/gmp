@@ -26,8 +26,12 @@ Changes between GMP version 4.2 and 4.2.1
   * Broken support for 32-bit AIX fixed.
   * Misc minor fixes.
 
+  Speedups:
+  * Exact division (mpz_divexact) now falls back to plain division for large
+    operands.
+
   Features:
-  * Untested support for PowerPC eABI and powerpc*-*-*bsd.
+  * Support for some new systems.
 
 
 Changes between GMP version 4.1.4 and 4.2
