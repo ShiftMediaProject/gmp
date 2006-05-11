@@ -967,8 +967,8 @@ usage (void)
   printf ("\n");
   printf ("%s", speed_time_string);
   printf ("\n");
-  printf ("Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n");
-  printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
+  printf ("Gnuplot home page http://www.gnuplot.info/\n");
+  printf ("Quickplot home page http://quickplot.sourceforge.net/\n");
 }
 
 void
