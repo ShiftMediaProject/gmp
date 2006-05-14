@@ -1,6 +1,6 @@
 dnl  PowerPC-64 mpn_sqr_diagonal.
 
-dnl  Copyright 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
