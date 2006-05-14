@@ -272,8 +272,7 @@ POSITION INDEPENDENT CODE
 
     Unfortunately -Bsymbolic does bad things to global variables defined in
     a shared library but accessed by non-PIC code from the mainline (or a
-    static library).  This arises for us with mpfr using __gmp_allocate_func
-    and friends, making -Bsymbolic unusable.
+    static library).
 
     The problem is that the mainline needs a fixed data address to avoid
     text segment relocations, so space is allocated in its data segment and
