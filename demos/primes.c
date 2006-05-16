@@ -327,7 +327,7 @@ find_primes (unsigned char *s, mpz_t  fr, unsigned long ssize,
 		    goto out;
 		  mpz_add_ui (tmp, fr, (j * sizeof (long) + ij) * 2);
 		  if (mpz_cmp (tmp, siev_sqr_lim) < 0 ||
-		      mpz_probab_prime_p (tmp, 3))
+		      mpz_probab_prime_p (tmp, 10))
 		    report (tmp);
 		}
 	    }
