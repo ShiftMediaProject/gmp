@@ -850,7 +850,7 @@ case $host in
         path="powerpc32/750 powerpc32" ;;
       powerpc7400)
         path="powerpc32/vmx powerpc32/750 powerpc32" ;;
-      [powerpc745?])
+      [powerpc74[45]?])
         path="powerpc32/vmx powerpc32 powerpc32" ;;
       *)
         path="powerpc32" ;;
@@ -886,7 +886,8 @@ case $host in
       powerpc7400 | powerpc7410)
 		    gcc_cflags_asm="-Wa,-maltivec"
 		    gcc_cflags_cpu="-mcpu=7400 -mcpu=750" ;;
-      powerpc745?)  gcc_cflags_asm="-Wa,-maltivec"
+      [powerpc74[45]?])
+		    gcc_cflags_asm="-Wa,-maltivec"
 		    gcc_cflags_cpu="-mcpu=7450" ;;
       powerpc750)   gcc_cflags_cpu="-mcpu=750" ;;
       powerpc801)   gcc_cflags_cpu="-mcpu=801" ;;
@@ -1421,8 +1422,10 @@ case $host in
       *)                    path="x86" ;;
     esac
 
-    # If the user asked for a fat build, override the path set above
+    # If the user asked for a fat build, override the path and flags set above
     if test $enable_fat = yes; then
+      gcc_cflags_cpu=""
+      gcc_cflags_arch=""
       extra_functions="$extra_functions fat fat_entry"
       path="x86/fat x86"
       fat_path="x86 x86/fat x86/i486
