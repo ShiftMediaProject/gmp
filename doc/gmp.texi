@@ -2552,7 +2552,7 @@ particular order, include
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
 @uref{http://dmalloc.com/}
 @uref{http://www.perens.com/FreeSoftware/} @ (electric fence)
-@uref{http://packages.debian.org/fda}
+@uref{http://packages.debian.org/stable/devel/fda}
 @uref{http://www.gnupdate.org/components/leakbug/}
 @uref{http://people.redhat.com/~otaylor/memprof/}
 @uref{http://www.cbmamiga.demon.co.uk/mpatrol/}
@@ -2633,9 +2633,9 @@ For C++, add @samp{--enable-cxx CXXFLAGS=-g}.
 @item Checker
 @cindex Checker
 @cindex GCC Checker
-The GCC checker (@uref{http://savannah.gnu.org/projects/checker/}) can be used
-with GMP@.  It contains a stub library which means GMP applications compiled
-with checker can use a normal GMP build.
+The GCC checker (@uref{http://savannah.nongnu.org/projects/checker/}) can be
+used with GMP@.  It contains a stub library which means GMP applications
+compiled with checker can use a normal GMP build.
 
 A build of GMP with checking within GMP itself can be made.  This will run
 very very slowly.  On GNU/Linux for example,
@@ -7064,7 +7064,7 @@ NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
 @item D
 @itemize @bullet
 @item
-gmp-d @spaceuref{http://home.comcast.net/~benhinkle/gmp-d}
+gmp-d @spaceuref{http://home.comcast.net/~benhinkle/gmp-d/}
 @end itemize
 
 @item Fortran
