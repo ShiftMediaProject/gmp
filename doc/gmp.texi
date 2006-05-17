@@ -2708,8 +2708,8 @@ instead.
 
 @item @samp{--enable-profiling=gprof}
 @cindex @code{gprof}
-Build with support for @command{gprof} (@GMPpxreftop{gprof, GNU gprof}), which
-means @samp{-pg} added to the @samp{CFLAGS}.
+Build with support for @command{gprof}, which means @samp{-pg} added to the
+@samp{CFLAGS}.
 
 This provides call graph construction in addition to call counting and program
 counter sampling, which makes it possible to count calls coming from different
@@ -10202,7 +10202,7 @@ Makoto Matsumoto and Takuji Nishimura, ``Mersenne Twister: A 623-dimensionally
 equidistributed uniform pseudorandom number generator'', ACM Transactions on
 Modelling and Computer Simulation, volume 8, January 1998, pp.@: 3-30.
 Available online @texlinebreak{}
-@uref{http://www.math.keio.ac.jp/~nisimura/random/doc/mt.ps.gz} (or .pdf)
+@uref{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/mt.ps.gz} (or .pdf)
 
 @item
 R. Moenck and A. Borodin, ``Fast Modular Transforms via Division'',
