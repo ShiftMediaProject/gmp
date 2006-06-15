@@ -676,9 +676,10 @@ case $host in
 	cclist="gcc icc"
 	icc_cflags="-no-gcc"
 	icc_cflags_optlist="opt"
-	# FIXME: Check if -O3 is really right.  The manual warns it is for
-	# large data sets, for which GMP uses assembly loops.
-	icc_cflags_opt="-O3 -O2 -O1"
+	# Don't use -O3, it is for "large data sets" and also miscompiles GMP.
+	# But icc miscompiles GMP at any optimization level, at higher levels
+	# it miscompiles more files...
+	icc_cflags_opt="-O2 -O1"
 	;;
 
       *-*-hpux*)
