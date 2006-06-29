@@ -1294,7 +1294,7 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 
 @sp 1
 @need 1000
-@item PowerPC 64 (@samp{powerpc64}, @samp{powerpc620}, @samp{powerpc630}, @samp{powerpc970})
+@item PowerPC 64 (@samp{powerpc64}, @samp{powerpc620}, @samp{powerpc630}, @samp{powerpc970}, @samp{power4}, @samp{power5})
 @cindex PowerPC
 @table @asis
 @item @samp{ABI=aix64}
@@ -1307,12 +1307,21 @@ gcc  -maix64
 xlc  -q64
 @end example
 
+@item @samp{ABI=mode64}
+The @samp{mode64} ABI uses 64-bit limbs and pointers, and is the default on
+64-bit GNU/Linux, BSD, and Mac OS X/Darwin systems.  Applications must be
+compiled with
+
+@example
+gcc  -m64
+@end example
+
 @item @samp{ABI=mode32}
 @cindex AIX
 The @samp{mode32} ABI uses a 64-bit @code{long long} limb but with the chip
-still in 32-bit mode and using 32-bit calling conventions.  This is the
-default on PowerPC 64 @samp{*-*-darwin*} systems.  No special compiler options
-are needed for applications.
+still in 32-bit mode and using 32-bit calling conventions.  This is the default
+on for systems where the true 64-bit ABIs are unavailable.  No special compiler
+options are needed for applications.
 
 @item @samp{ABI=32}
 This is the basic 32-bit PowerPC ABI, with a 32-bit limb.  No special compiler
@@ -3155,8 +3164,13 @@ Functions,,, libc, The GNU C Library Reference Manual}).
 @end deftypefun
 
 @deftypefun {char *} mpz_get_str (char *@var{str}, int @var{base}, mpz_t @var{op})
-Convert @var{op} to a string of digits in base @var{base}.  The base may vary
-from 2 to 36.
+Convert @var{op} to a string of digits in base @var{base}.  The base argument
+may vary from 2 to 62 or from @minus{}2 to @minus{}36.
+
+For @var{base} in the range 2..36, digits and lower-case letters are used; for
+@minus{}2..@minus{}36, digits and upper-case letters are used; for 37..62,
+digits, upper-case letters, and lower-case letters (in that significance order)
+are used.
 
 If @var{str} is @code{NULL}, the result string is allocated using the current
 allocation function (@pxref{Custom Allocation}).  The block will be
@@ -3772,7 +3786,13 @@ for these functions.
 
 @deftypefun size_t mpz_out_str (FILE *@var{stream}, int @var{base}, mpz_t @var{op})
 Output @var{op} on stdio stream @var{stream}, as a string of digits in base
-@var{base}.  The base may vary from 2 to 36.
+@var{base}.  The base argument may vary from 2 to 62 or from @minus{}2 to
+@minus{}36.
+
+For @var{base} in the range 2..36, digits and lower-case letters are used; for
+@minus{}2..@minus{}36, digits and upper-case letters are used; for 37..62,
+digits, upper-case letters, and lower-case letters (in that significance order)
+are used.
 
 Return the number of bytes written, or if an error occurred, return 0.
 @end deftypefun
@@ -3994,7 +4014,7 @@ yes, zero if no.  These macros evaluate their argument more than once.
 @cindex Size in digits
 @cindex Digits in an integer
 Return the size of @var{op} measured in number of digits in the given
-@var{base}.  @var{base} can vary from 2 to 36.  The sign of @var{op} is
+@var{base}.  @var{base} can vary from 2 to 62.  The sign of @var{op} is
 ignored, just the absolute value is used.  The result will be either exact or
 1 too big.  If @var{base} is a power of 2, the result is always exact.  If
 @var{op} is zero the return value is always 1.
@@ -4706,11 +4726,16 @@ See also @code{mpf_fits_slong_p} and @code{mpf_fits_ulong_p}
 @end deftypefun
 
 @deftypefun {char *} mpf_get_str (char *@var{str}, mp_exp_t *@var{expptr}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
-Convert @var{op} to a string of digits in base @var{base}.  @var{base} can be
-2 to 36.  Up to @var{n_digits} digits will be generated.  Trailing zeros are
-not returned.  No more digits than can be accurately represented by @var{op}
-are ever generated.  If @var{n_digits} is 0 then that accurate maximum number
-of digits are generated.
+Convert @var{op} to a string of digits in base @var{base}.  The base argument
+may vary from 2 to 62 or from @minus{}2 to @minus{}36.  Up to @var{n_digits}
+digits will be generated.  Trailing zeros are not returned.  No more digits
+than can be accurately represented by @var{op} are ever generated.  If
+@var{n_digits} is 0 then that accurate maximum number of digits are generated.
+
+For @var{base} in the range 2..36, digits and lower-case letters are used; for
+@minus{}2..@minus{}36, digits and upper-case letters are used; for 37..62,
+digits, upper-case letters, and lower-case letters (in that significance order)
+are used.
 
 If @var{str} is @code{NULL}, the result string is allocated using the current
 allocation function (@pxref{Custom Allocation}).  The block will be
@@ -4865,10 +4890,15 @@ Print @var{op} to @var{stream}, as a string of digits.  Return the number of
 bytes written, or if an error occurred, return 0.
 
 The mantissa is prefixed with an @samp{0.} and is in the given @var{base},
-which may vary from 2 to 36.  An exponent then printed, separated by an
-@samp{e}, or if @var{base} is greater than 10 then by an @samp{@@}.  The
-exponent is always in decimal.  The decimal point follows the current locale,
-on systems providing @code{localeconv}.
+which may vary from 2 to 62 or from @minus{}2 to @minus{}36.  An exponent is
+then printed, separated by an @samp{e}, or if the base is greater than 10 then
+by an @samp{@@}.  The exponent is always in decimal.  The decimal point follows
+the current locale, on systems providing @code{localeconv}.
+
+For @var{base} in the range 2..36, digits and lower-case letters are used; for
+@minus{}2..@minus{}36, digits and upper-case letters are used; for 37..62,
+digits, upper-case letters, and lower-case letters (in that significance order)
+are used.
 
 Up to @var{n_digits} will be printed from the mantissa, except that no more
 digits than are accurately representable by @var{op} will be printed.
@@ -7932,6 +7962,11 @@ typical signal processing algorithm, but is of course of vital importance to
 GMP.
 
 
+@c FIXME: This is mighty ugly, but a cleaner @need triggers texinfo bugs that
+@c screws up layout here and there in the rest of the manual.
+@tex
+\goodbreak
+@end tex
 @node Division Algorithms, Greatest Common Divisor Algorithms, Multiplication Algorithms, Algorithms
 @section Division Algorithms
 @cindex Division algorithms
@@ -8218,6 +8253,9 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 @section Greatest Common Divisor
 @cindex Greatest common divisor algorithms
 @cindex GCD algorithms
+
+@strong{This section needs to be rewritten, it currently describes the
+algorithms used in GMP 4.}
 
 @menu
 * Binary GCD::
