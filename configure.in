@@ -852,7 +852,7 @@ case $host in
       powerpc7400)
         path="powerpc32/vmx powerpc32/750 powerpc32" ;;
       [powerpc74[45]?])
-        path="powerpc32/vmx powerpc32 powerpc32" ;;
+        path="powerpc32/vmx powerpc32" ;;
       *)
         path="powerpc32" ;;
     esac
