@@ -19,21 +19,21 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 51 Franklin Street,
 dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 
-
-dnl  Runs at 2.5 cycles/limb.  With unrolling, the ulimb load and the 3
-dnl  bookkeeping increments and the `bis' that copies from r23 to r7 could be
-dnl  removed and the instruction count reduced from 31 to to 26.  We could
-dnl  thereby surely reach 2 cycles/limb, the IMUL bandwidth.
-
 include(`../config.m4')
 
-dnl  INPUT PARAMETERS
+C Runs at 2.5 cycles/limb.
+
+C We should go for 2-way unrolling over 17 cycles, for 2.125 c/l corresponding
+C to 3.24 insn/cycle.
+
+
+C  INPUT PARAMETERS
 define(`rp',`r16')
 define(`up',`r17')
 define(`n',`r18')
 define(`vp',`r19')
 
-dnl  Useful register aliases
+C  Useful register aliases
 define(`numb_mask',`r24')
 define(`ulimb',`r25')
 define(`rlimb',`r27')
@@ -57,12 +57,12 @@ define(`v1',`r7')
 define(`v2',`r23')
 define(`v3',`r15')
 
-dnl Used for temps: r8 r19 r28
+C Used for temps: r8 r19 r28
 
 define(`NAIL_BITS',`GMP_NAIL_BITS')
 define(`NUMB_BITS',`GMP_NUMB_BITS')
 
-dnl  This declaration is munged by configure
+C  This declaration is munged by configure
 NAILS_SUPPORT(4-63)
 
 ASM_START()
@@ -103,11 +103,17 @@ PROLOGUE(mpn_addmul_4)
 	mulq	v3,	ulimb,	m3a		C U1
 	umulh	v3,	ulimb,	m3b		C U1
 	beq	n,	L(end)			C U0
+
 	ALIGN(16)
 L(top):	bis	r31,	r31,	r31		C U1	nop
 	ldq	rlimb,	0(rp)			C L0
 	ldq	ulimb,	0(up)			C L1
 	addq	r19,	acc0,	acc0		C U0	propagate nail
+
+	bis	r31,	r31,	r31		C L0	nop
+	bis	r31,	r31,	r31		C U1	nop
+	bis	r31,	r31,	r31		C L1	nop
+	bis	r31,	r31,	r31		C U0	nop
 
 	lda	rp,	8(rp)			C L0
 	srl	m0a,NAIL_BITS,	r8		C U0
