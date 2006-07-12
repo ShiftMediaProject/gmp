@@ -24,7 +24,7 @@ include(`../config.m4')
 C      cycles/limb
 C EV4:     42
 C EV5:     18
-C EV6:      4
+C EV6:      3.45
 
 C  INPUT PARAMETERS
 C  rp	r16
