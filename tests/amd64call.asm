@@ -1,6 +1,6 @@
 dnl  AMD64 calling conventions checking.
 
-dnl  Copyright 2000, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2003, 2004, 2006 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -108,7 +108,7 @@ PROLOGUE(calling_conventions)
 	movq	$0xAB78DE89FF5125BB, %r10
 	movq	$0x1238901890189031, %r11
 
-	jmpq	*G(calling_conventions_function)
+	jmp	*G(calling_conventions_function)
 
 L(return):
 	movq	%rbx, G(calling_conventions_rbx)
@@ -132,6 +132,6 @@ L(return):
 	movq	G(calling_conventions_save_r14), %r14
 	movq	G(calling_conventions_save_r15), %r15
 
-	jmpq	*G(calling_conventions_retaddr)
+	jmp	*G(calling_conventions_retaddr)
 
 EPILOGUE()
