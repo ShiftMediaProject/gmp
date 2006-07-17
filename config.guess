@@ -376,6 +376,7 @@ main ()
   case 0x8000: puts ("powerpc7450"); break;
   case 0x8001: puts ("powerpc7455"); break;
   case 0x8002: puts ("powerpc7457"); break;
+  case 0x8003: puts ("powerpc7447"); break; /* really 7447A */
   case 0x800c: puts ("powerpc7410"); break;
   }
   return 0;
@@ -488,7 +489,10 @@ main (void)
       case CPU_SUBTYPE_POWERPC_750:   puts ("powerpc750");  break;
       case CPU_SUBTYPE_POWERPC_7400:  puts ("powerpc7400"); break;
       case CPU_SUBTYPE_POWERPC_7450:  puts ("powerpc7450"); break;
-      /* Darwin 6.8.5 doesn't define a constant for 970, but gives 100 */
+      /* Darwin 6.8.5 doesn't define the following */
+      case 0x8001:                    puts ("powerpc7455"); break;
+      case 0x8002:                    puts ("powerpc7457"); break;
+      case 0x8003:                    puts ("powerpc7447"); break;
       case 100:                       puts ("powerpc970");  break;
       }
     }
