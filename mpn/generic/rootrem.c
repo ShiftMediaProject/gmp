@@ -366,9 +366,9 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  if (i == 1)
 	    {
 	      /* Last iteration: we don't need W anymore. */
-	      /* mpn_pow_1 requires that both qp and wp have enough
-		 enough space to store the result {sp,sn}^k + 1 limb */
-	      approx = approx && (sp[0] > (mp_limb_t) 1);
+	      /* mpn_pow_1 requires that both qp and wp have enough space to
+		 store the result {sp,sn}^k + 1 limb */
+	      approx = approx && (sp[0] > 1);
 	      qn = (approx == 0) ? mpn_pow_1 (qp, sp, sn, k, wp) : 0;
 	    }
 	  else
@@ -438,7 +438,7 @@ mpn_tdiv_q (mp_ptr qp, mp_ptr rp, mp_size_t qxn, mp_srcptr np, mp_size_t nn,
 	 B = 2^GMP_NUMB_BITS.
 	 We have Q' <= T <= Q'+1, and since floor(Q'/B) = Q, we have
 	 Q = floor(T/B), unless the last limb of T only consists of zeroes. */
-      if (tp[0] != (mp_limb_t) 0)
+      if (tp[0] != 0)
 	{
 	  /* simply truncate one limb of T */
 	  MPN_COPY (qp, tp + 1, qn + 1);
