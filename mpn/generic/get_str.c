@@ -1,32 +1,32 @@
 /* mpn_get_str -- Convert a MSIZE long limb vector pointed to by MPTR
    to a printable string in STR in base BASE.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002 Free Software
-Foundation, Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at your
+The GNU MP Library is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-License for more details.
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+for more details.
 
-You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-MA 02110-1301, USA. */
+You should have received a copy of the GNU Lesser General Public License along
+with the GNU MP Library; see the file COPYING.LIB.  If not, write to the Free
+Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
+USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
 /* Conversion of U {up,un} to a string in base b.  Internally, we convert to
-     base B = b^m, the largest power of b that fits a limb.  Basic algorithms:
+   base B = b^m, the largest power of b that fits a limb.  Basic algorithms:
 
   A) Divide U repeatedly by B, generating a quotient and remainder, until the
      quotient becomes zero.  The remainders hold the converted digits.  Digits
@@ -37,11 +37,10 @@ MA 02110-1301, USA. */
      come out from left to right.  (Currently not used herein, except for in
      code for converting single limbs to individual digits.)
 
-  C) Compute B^1, B^2, B^4, ..., B^(2^s), for s such that B^(2^s) > sqrt(U).
-     Then divide U by B^(2^k), generating an integer quotient and remainder.
-     Recursively convert the quotient, then the remainder, using the
-     precomputed powers.  Digits come out from left to right.  (Used in
-     mpn_dc_get_str.)
+  C) Compute B^1, B^2, B^4, ..., B^s, for s such that B^s just above sqrt(U).
+     Then divide U by B^s, generating quotient and remainder.  Recursively
+     convert the quotient, then the remainder, using the precomputed powers.
+     Digits come out from left to right.  (Used in mpn_dc_get_str.)
 
   When using algorithm C, algorithm B might be suitable for basecase code,
   since the required b^g power will be readily accessible.
@@ -135,37 +134,26 @@ MA 02110-1301, USA. */
 #define GET_STR_PRECOMPUTE_THRESHOLD 30
 #endif
 
-struct powers
-{
-  size_t digits_in_base;
-  mp_ptr p;
-  mp_size_t n;		/* mpz_struct uses int for sizes, but not mpn! */
-  int base;
-};
-typedef struct powers powers_t;
-
 
-/* Convert {UP,UN} to a string with a base as represented in POWTAB, and put
-   the string in STR.  Generate LEN characters, possibly padding with zeros to
-   the left.  If LEN is zero, generate as many characters as required.
-   Return a pointer immediately after the last digit of the result string.
-   Complexity is O(UN^2); intended for small conversions.  */
+/* Convert {up,un} to a string in base base, and put the result in str.
+   Generate len characters, possibly padding with zeros to the left.  If len is
+   zero, generate as many characters as required.  Return a pointer immediately
+   after the last digit of the result string.  Complexity is O(un^2); intended
+   for small conversions.  */
 static unsigned char *
 mpn_sb_get_str (unsigned char *str, size_t len,
-		mp_ptr up, mp_size_t un,
-		const powers_t *powtab)
+		mp_ptr up, mp_size_t un, int base)
 {
   mp_limb_t rl, ul;
   unsigned char *s;
-  int base;
   size_t l;
   /* Allocate memory for largest possible string, given that we only get here
      for operands with un < GET_STR_PRECOMPUTE_THRESHOLD and that the smallest
      base is 3.  7/11 is an approximation to 1/log2(3).  */
 #if TUNE_PROGRAM_BUILD
-#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * BITS_PER_MP_LIMB * 7 / 11)
+#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * GMP_LIMB_BITS * 7 / 11)
 #else
-#define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB * 7 / 11)
+#define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * GMP_LIMB_BITS * 7 / 11)
 #endif
   unsigned char buf[BUF_ALLOC];
 #if TUNE_PROGRAM_BUILD
@@ -174,7 +162,6 @@ mpn_sb_get_str (unsigned char *str, size_t len,
   mp_limb_t rp[GET_STR_PRECOMPUTE_THRESHOLD];
 #endif
 
-  base = powtab->base;
   if (base == 10)
     {
       /* Special case code for base==10 so that the compiler has a chance to
@@ -194,10 +181,10 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	  un -= rp[un] == 0;
 	  frac = (rp[0] + 1) << GMP_NAIL_BITS;
 	  s -= MP_BASES_CHARS_PER_LIMB_10;
-	  i = MP_BASES_CHARS_PER_LIMB_10;
 #if HAVE_HOST_CPU_FAMILY_x86
 	  /* The code below turns out to be a bit slower for x86 using gcc.
 	     Use plain code.  */
+	  i = MP_BASES_CHARS_PER_LIMB_10;
 	  do
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
@@ -212,31 +199,28 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
-	      i--;
 	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 1)
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
-	      i--;
 	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 2)
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
-	      i--;
 	    }
 	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 3)
 	    {
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
-	      i--;
 	    }
+	  i = MP_BASES_CHARS_PER_LIMB_10 - (4-MP_BASES_NORMALIZATION_STEPS_10);
 	  frac = (frac + 0xf) >> 4;
 	  do
 	    {
 	      frac *= 10;
-	      digit = frac >> (BITS_PER_MP_LIMB - 4);
+	      digit = frac >> (GMP_LIMB_BITS - 4);
 	      *s++ = digit;
 	      frac &= (~(mp_limb_t) 0) >> 4;
 	    }
@@ -323,7 +307,7 @@ mpn_dc_get_str (unsigned char *str, size_t len,
   if (un < GET_STR_DC_THRESHOLD)
     {
       if (un != 0)
-	str = mpn_sb_get_str (str, len, up, un, powtab);
+	str = mpn_sb_get_str (str, len, up, un, powtab->base);
       else
 	{
 	  while (len != 0)
@@ -352,8 +336,12 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 
 	  mpn_tdiv_qr (qp, rp, 0L, up, un, pwp, pwn);
 	  qn = un - pwn; qn += qp[qn] != 0;		/* quotient size */
+
+	  ASSERT (qn < pwn || (qn == pwn && mpn_cmp (qp, pwp, pwn) < 0));
+
 	  if (len != 0)
 	    len = len - powtab->digits_in_base;
+
 	  str = mpn_dc_get_str (str, len, qp, qn, powtab - 1, tmp + un - pwn + 1);
 	  str = mpn_dc_get_str (str, powtab->digits_in_base, rp, pwn, powtab - 1, tmp);
 	}
@@ -362,6 +350,27 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 }
 
 
+/*
+   Example sequences:
+
+   1  1  2  3  5  9  17		(worst case for un = 33,34)
+   1  1  1  2s
+         2a    4s
+            3a    8s
+               5a    16s
+                  9a
+                     17a
+
+   1  1  2  4  8  16  32	(best case for un = 63,64)
+   1  1  2s 4s 8s 16s 32s
+
+   1  1  2  4  7  14  28	(medium)
+   1  1  1  3sa
+         2a    7sa
+            4a    17s
+                      28s
+*/
+
 /* There are no leading zeros on the digits generated at str, but that's not
    currently a documented feature.  */
 
@@ -371,12 +380,13 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
   mp_ptr powtab_mem, powtab_mem_ptr;
   mp_limb_t big_base;
   size_t digits_in_base;
-  powers_t powtab[30];
+  powers_t powtab[GMP_LIMB_BITS];
   int pi;
   mp_size_t n;
   mp_ptr p, t;
   size_t out_len;
   mp_ptr tmp;
+  TMP_DECL;
 
   /* Special case zero, as the code below doesn't handle it.  */
   if (un == 0)
@@ -437,18 +447,16 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
   /* General case.  The base is not a power of 2.  */
 
   if (un < GET_STR_PRECOMPUTE_THRESHOLD)
-    {
-      struct powers ptab[1];
-      ptab[0].base = base;
-      return mpn_sb_get_str (str, (size_t) 0, up, un, ptab) - str;
-    }
+    return mpn_sb_get_str (str, (size_t) 0, up, un, base) - str;
+
+  TMP_MARK;
 
   /* Allocate one large block for the powers of big_base.  With the current
      scheme, we need to allocate twice as much as would be possible if a
      minimal set of powers were generated.  */
-#define POWTAB_ALLOC_SIZE (2 * un + 30)
-#define TMP_ALLOC_SIZE (un + 30)
-  powtab_mem = __GMP_ALLOCATE_FUNC_LIMBS (POWTAB_ALLOC_SIZE);
+#define POWTAB_ALLOC_SIZE (un + 2 * GMP_LIMB_BITS)
+#define TMP_ALLOC_SIZE (un)
+  powtab_mem = TMP_BALLOC_LIMBS (POWTAB_ALLOC_SIZE);
   powtab_mem_ptr = powtab_mem;
 
   /* Compute a table of powers: big_base^1, big_base^2, big_base^4, ...,
@@ -458,43 +466,84 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
   big_base = __mp_bases[base].big_base;
   digits_in_base = __mp_bases[base].chars_per_limb;
 
-  powtab[0].base = base; /* FIXME: hack for getting base to mpn_sb_get_str */
-  powtab[1].p = &big_base;
-  powtab[1].n = 1;
-  powtab[1].digits_in_base = digits_in_base;
-  powtab[1].base = base;
-  powtab[2].p = &big_base;
-  powtab[2].n = 1;
-  powtab[2].digits_in_base = digits_in_base;
-  powtab[2].base = base;
-  n = 1;
-  pi = 2;
-  p = &big_base;
-  for (;;)
-    {
-      ++pi;
-      t = powtab_mem_ptr;
-      powtab_mem_ptr += 2 * n;
-      mpn_sqr_n (t, p, n);
-      n *= 2; n -= t[n - 1] == 0;
-      digits_in_base *= 2;
-      p = t;
-      powtab[pi].p = p;
-      powtab[pi].n = n;
-      powtab[pi].digits_in_base = digits_in_base;
-      powtab[pi].base = base;
+  {
+    mp_size_t n_pows, xn, pn, exptab[GMP_LIMB_BITS], bexp;
+    mp_limb_t cy;
+    n_pows = 0;
+    xn = 1 + un*(__mp_bases[base].chars_per_bit_exactly*GMP_NUMB_BITS)/__mp_bases[base].chars_per_limb;
+    for (pn = xn; pn != 1; pn = (pn + 1) >> 1)
+      {
+	exptab[n_pows] = pn;
+	n_pows++;
+      }
+    exptab[n_pows] = 1;
 
-      if (2 * n > un)
-	break;
+    powtab[0].p = &big_base;
+    powtab[0].n = 1;
+    powtab[0].digits_in_base = digits_in_base;
+    powtab[0].base = base;
+
+    powtab[1].p = powtab_mem_ptr;  powtab_mem_ptr += 2;
+    powtab[1].p[0] = big_base;
+    powtab[1].n = 1;
+    powtab[1].digits_in_base = digits_in_base;
+    powtab[1].base = base;
+
+    n = 1;
+    p = &big_base;
+    bexp = 1;
+    for (pi = 2; pi < n_pows; pi++)
+      {
+	t = powtab_mem_ptr;
+	powtab_mem_ptr += 2 * n + 2;
+
+	ASSERT_ALWAYS (powtab_mem_ptr < powtab_mem + POWTAB_ALLOC_SIZE);
+
+	mpn_sqr_n (t, p, n);
+
+	digits_in_base *= 2;
+	n *= 2;  n -= t[n - 1] == 0;
+	bexp *= 2;
+
+	if (bexp + 1 < exptab[n_pows - pi])
+	  {
+	    digits_in_base += __mp_bases[base].chars_per_limb;
+	    cy = mpn_mul_1 (t, t, n, big_base);
+	    t[n] = cy;
+	    n += cy != 0;
+	    bexp += 1;
+	  }
+	p = t;
+	powtab[pi].p = p;
+	powtab[pi].n = n;
+	powtab[pi].digits_in_base = digits_in_base;
+	powtab[pi].base = base;
+      }
+
+    for (pi = 1; pi < n_pows; pi++)
+      {
+	t = powtab[pi].p;
+	n = powtab[pi].n;
+	cy = mpn_mul_1 (t, t, n, big_base);
+	t[n] = cy;
+	n += cy != 0;
+	powtab[pi].n = n;
+	powtab[pi].digits_in_base += __mp_bases[base].chars_per_limb;
+      }
+
+#if 0
+    { int i;
+      printf ("Computed table values for base=%d, un=%d, xn=%d:\n", base, un, xn);
+      for (i = 0; i < n_pows; i++)
+	printf ("%2d: %10ld %10ld %11ld\n", i, exptab[n_pows-i], powtab[i].n, powtab[i].digits_in_base);
     }
-  ASSERT_ALWAYS (POWTAB_ALLOC_SIZE > powtab_mem_ptr - powtab_mem);
+#endif
+  }
 
   /* Using our precomputed powers, now in powtab[], convert our number.  */
-  tmp = __GMP_ALLOCATE_FUNC_LIMBS (TMP_ALLOC_SIZE);
-  out_len = mpn_dc_get_str (str, 0, up, un, powtab + pi, tmp) - str;
-  __GMP_FREE_FUNC_LIMBS (tmp, TMP_ALLOC_SIZE);
-
-  __GMP_FREE_FUNC_LIMBS (powtab_mem, POWTAB_ALLOC_SIZE);
+  tmp = TMP_BALLOC_LIMBS (TMP_ALLOC_SIZE);
+  out_len = mpn_dc_get_str (str, 0, up, un, powtab - 1 + pi, tmp) - str;
+  TMP_FREE;
 
   return out_len;
 }
