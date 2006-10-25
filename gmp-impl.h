@@ -595,13 +595,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define USE_PREINV_MOD_1                  0  /* no preinv */
 #define DIVREM_2_THRESHOLD                MP_SIZE_T_MAX  /* no preinv */
 
-#undef GET_STR_DC_THRESHOLD
-#undef GET_STR_PRECOMPUTE_THRESHOLD
-#undef SET_STR_THRESHOLD
-#define GET_STR_DC_THRESHOLD             22
-#define GET_STR_PRECOMPUTE_THRESHOLD     42
-#define SET_STR_THRESHOLD              3259
-
 /* mpn/generic/mul_fft.c is not nails-capable. */
 #undef  MUL_FFT_THRESHOLD
 #undef  SQR_FFT_THRESHOLD
@@ -826,6 +819,9 @@ __GMP_DECLSPEC mp_limb_t mpn_rsh1add_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
    complement negative.  */
 #define mpn_rsh1sub_n __MPN(rsh1sub_n)
 __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
+#define mpn_lshiftc __MPN(lshiftc)
+__GMP_DECLSPEC mp_limb_t mpn_lshiftc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 
 #define mpn_addsub_n __MPN(addsub_n)
 __GMP_DECLSPEC mp_limb_t mpn_addsub_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
@@ -1503,6 +1499,21 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define DIV_DC_THRESHOLD    (3 * MUL_KARATSUBA_THRESHOLD)
 #endif
 
+#ifndef GET_STR_DC_THRESHOLD
+#define GET_STR_DC_THRESHOLD             22
+#endif
+
+#ifndef GET_STR_PRECOMPUTE_THRESHOLD
+#define GET_STR_PRECOMPUTE_THRESHOLD     35
+#endif
+
+#ifndef SET_STR_DC_THRESHOLD
+#define SET_STR_DC_THRESHOLD             2500
+#endif
+
+#ifndef SET_STR_PRECOMPUTE_THRESHOLD
+#define SET_STR_PRECOMPUTE_THRESHOLD     5000
+#endif
 
 /* Return non-zero if xp,xsize and yp,ysize overlap.
    If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
@@ -3358,6 +3369,20 @@ mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
 #define GCDEXT_SCHOENHAGE_THRESHOLD 600
 #endif
 
+/* Definitions for mpn_set_str */
+struct powers
+{
+  mp_ptr p;			/* actual power value */
+  mp_size_t n;			/* # of limbs at p */
+  size_t digits_in_base;	/* number of corresponding digits */
+  int base;
+};
+typedef struct powers powers_t;
+#define mpn_dc_set_str_powtab_alloc(n) ((n) + GMP_LIMB_BITS)
+#define mpn_dc_set_str_itch(n) (n)
+
+
+
 /* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
    limb and adds an extra limb.  __GMPF_PREC_TO_BITS drops that extra limb,
    hence giving back the user's size in bits rounded up.  Notice that
@@ -3811,6 +3836,14 @@ extern mp_size_t                     get_str_dc_threshold;
 #undef GET_STR_PRECOMPUTE_THRESHOLD
 #define GET_STR_PRECOMPUTE_THRESHOLD get_str_precompute_threshold
 extern mp_size_t                     get_str_precompute_threshold;
+
+#undef  SET_STR_DC_THRESHOLD
+#define SET_STR_DC_THRESHOLD         set_str_dc_threshold
+extern mp_size_t                     set_str_dc_threshold;
+
+#undef SET_STR_PRECOMPUTE_THRESHOLD
+#define SET_STR_PRECOMPUTE_THRESHOLD set_str_precompute_threshold
+extern mp_size_t                     set_str_precompute_threshold;
 
 #undef  SET_STR_THRESHOLD
 #define SET_STR_THRESHOLD            set_str_threshold
