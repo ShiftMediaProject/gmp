@@ -630,7 +630,7 @@ validate_sqrtrem (void)
 #define TYPE_XOR_N            76
 #define TYPE_XNOR_N           77
 
-#define TYPE_MUL_BASECASE     80
+#define TYPE_MUL_MN           80
 #define TYPE_MUL_N            81
 #define TYPE_SQR              82
 #define TYPE_UMUL_PPMM        83
@@ -1059,7 +1059,7 @@ param_init (void)
   p->src[1] = 1;
   REFERENCE (refmpn_mul_n);
 
-  p = &param[TYPE_MUL_BASECASE];
+  p = &param[TYPE_MUL_MN];
   COPY (TYPE_MUL_N);
   p->size2 = 1;
   REFERENCE (refmpn_mul_basecase);
@@ -1446,12 +1446,12 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_lshift),     TYPE_LSHIFT },
 
 
-  { TRY(mpn_mul_basecase), TYPE_MUL_BASECASE },
+  { TRY(mpn_mul_basecase), TYPE_MUL_MN },
 #if SQR_KARATSUBA_THRESHOLD > 0
   { TRY(mpn_sqr_basecase), TYPE_SQR },
 #endif
 
-  { TRY(mpn_mul),    TYPE_MUL_BASECASE },
+  { TRY(mpn_mul),    TYPE_MUL_MN },
   { TRY(mpn_mul_n),  TYPE_MUL_N },
   { TRY(mpn_sqr_n),  TYPE_SQR },
 
@@ -2163,7 +2163,7 @@ call (struct each_t *e, tryfun_t function)
     }
     break;
 
-  case TYPE_MUL_BASECASE:
+  case TYPE_MUL_MN:
     CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, e->s[1].p, size2);
     break;
