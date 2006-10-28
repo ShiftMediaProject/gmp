@@ -1,6 +1,6 @@
 dnl  Intel Pentium-4 mpn_addlsh1_n -- mpn x+2*y.
 
-dnl  Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003, 2004, 2006 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -22,10 +22,10 @@ dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C        cycles/limb (approx)
-C      dst!=src1,2  dst==src1  dst==src2
-C P4:      4.5         7.25       6.75
-
+C          cycles/limb (approx)
+C          dst!=src1,2  dst==src1  dst==src2
+C P4 m2:      4.5         ?7.25      ?6.75
+C P4 m3:      5.3         ?	     ?
 
 C mp_limb_t mpn_addlsh1_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
 C                          mp_size_t size);
@@ -48,7 +48,7 @@ dnl  re-use parameter space
 define(SAVE_EBX,`PARAM_SRC1')
 
 	TEXT
-	ALIGN(16)
+	ALIGN(8)
 
 PROLOGUE(mpn_addlsh1_n)
 deflit(`FRAME',0)
@@ -75,19 +75,21 @@ L(top):
 
 	movd	(%eax), %mm1
 	movd	(%ebx), %mm2
+	psrlq	$32, %mm0
 	leal	4(%eax), %eax
 	leal	4(%ebx), %ebx
+
 	paddq	%mm2, %mm1
 	paddq	%mm2, %mm1
 
 	paddq	%mm1, %mm0
 
 	movd	%mm0, (%edx,%ecx,4)
-	psrlq	$32, %mm0
 	addl	$1, %ecx
 	jnz	L(top)
 
 
+	psrlq	$32, %mm0
 	movl	SAVE_EBX, %ebx
 	movd	%mm0, %eax
 	emms
