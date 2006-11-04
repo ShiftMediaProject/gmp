@@ -23,9 +23,10 @@ dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		10
-C Prescott/Nocona:	33
+C	    cycles/limb
+C K8:		10
+C P4:		33
+C P6-15:	13
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,

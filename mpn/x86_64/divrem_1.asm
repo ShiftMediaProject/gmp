@@ -21,10 +21,11 @@ dnl  Boston, MA 02110-1301, USA.
 
 include(`../config.m4')
 
-C		   integer part    fraction part
-C		    cycles/limb     cycles/limb
-C Hammer:		17		15
-C Prescott/Nocona:	83		57
+C	   integer part    fraction part
+C	    cycles/limb     cycles/limb
+C K8:		17		15
+C P4:		83		57
+C P6-15:	32		21
 
 
 C mp_limb_t mpn_divrem_1 (mp_ptr qp, mp_size_t fn,

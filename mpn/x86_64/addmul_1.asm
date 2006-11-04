@@ -23,9 +23,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		3.25
-C Prescott/Nocona:	15.5-17 (fluctuating due to w/c buffer problems)
+C	    cycles/limb
+C K8:		3.25
+C P4:		15.5-17 (fluctuating due to w/c buffer problems)
+C P6-15:	5.6
 
 C TODO
 C  * Perhaps make this use the algorithm of mul_1.asm.

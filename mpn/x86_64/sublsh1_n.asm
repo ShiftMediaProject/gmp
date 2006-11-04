@@ -22,9 +22,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		2.21
-C Prescott/Nocona:	?
+C	    cycles/limb
+C K8:		2.21
+C P4:		?
+C P6-15:	3.5
 
 
 C Sometimes speed degenerates, supposedly related to that some operand

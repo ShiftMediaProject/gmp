@@ -22,9 +22,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		1.5
-C Prescott/Nocona:	2.8/3.35/3.60 (variant1/variant2/variant3)
+C	    cycles/limb
+C K8:		1.5
+C P4:		2.8/3.35/3.60 (variant1/variant2/variant3)
+C P6-15:	2.0
 
 ifdef(`OPERATION_and_n',`
   define(`func',`mpn_and_n')

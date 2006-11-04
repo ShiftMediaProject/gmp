@@ -25,8 +25,9 @@ include(`../config.m4')
 
 C		     popcount	      hamdist
 C		    cycles/limb	    cycles/limb
-C Hammer:		6		7
-C Prescott/Nocona:	12		14.3
+C K8:			 6		 7
+C P4:			12		14.3
+C P6-15:		 7		 8
 
 C TODO
 C  * Tune.  It should be possible to reach 5 c/l for popcount and 6 c/l for

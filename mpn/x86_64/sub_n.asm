@@ -23,9 +23,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		1.7
-C Prescott/Nocona:	11
+C	    cycles/limb
+C K8:		1.7
+C P4:		11
+C P6-15:	5.0
 
 MULFUNC_PROLOGUE(mpn_sub_n mpn_sub_nc)
 

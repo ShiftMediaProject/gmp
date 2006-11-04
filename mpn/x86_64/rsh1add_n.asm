@@ -22,9 +22,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		2.14	(mpn_add_n + mpn_rshift need 4.125)
-C Prescott/Nocona:	13
+C	    cycles/limb
+C K8:		2.14	(mpn_add_n + mpn_rshift need 4.125)
+C P4:		13
+C P6-15:	3.8
 
 C TODO
 C  * Rewrite to use indexed addressing, like addlsh1.asm and sublsh1.asm.

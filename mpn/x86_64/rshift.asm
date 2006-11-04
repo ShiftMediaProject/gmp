@@ -22,9 +22,10 @@ dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		2.375
-C Prescott/Nocona:	8
+C	    cycles/limb
+C K8:		2.375
+C P4:		8
+C P6-15:	2.15
 
 
 C INPUT PARAMETERS

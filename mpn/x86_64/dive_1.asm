@@ -22,9 +22,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		10
-C Prescott/Nocona:	33
+C	    cycles/limb
+C K8:		10
+C P4:		33
+C P6-15:	13.25
 
 C A quick adoption of the 32-bit K7 code.
 

@@ -23,9 +23,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		3.5
-C Prescott/Nocona:	20.5-21.5 (fluctuating due to w/c problems)
+C	    cycles/limb
+C K8:		3.5
+C P4:	     20.5-21.5 (fluctuating due to w/c problems)
+C P6-15:	5.9
 
 
 C INPUT PARAMETERS

@@ -22,9 +22,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		1
-C Prescott/Nocona:	2
+C	    cycles/limb
+C K8:		1
+C P4:		2
+C P6-15:	1
 
 
 C INPUT PARAMETERS

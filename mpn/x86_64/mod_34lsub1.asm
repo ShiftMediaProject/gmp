@@ -22,9 +22,11 @@ dnl  Fifth Floor, Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C          cycles/limb
-C Athlon64:    1.0
-C Pentium4:    3.7
+C	    cycles/limb
+C K8:		1.0
+C P4:  		3.7
+C P6-15:	1.6
+
 
 C INPUT PARAMETERS
 C up	rdi

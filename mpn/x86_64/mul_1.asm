@@ -23,9 +23,10 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C Hammer:		 3
-C Prescott/Nocona:	12.6
+C	    cycles/limb
+C K8:		 3
+C P4:		12.6
+C P6-15:	 4.1
 
 C TODO
 C  * Perhaps make this use the algorithm of addmul_1.asm.
