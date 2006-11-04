@@ -32,6 +32,11 @@ MA 02110-1301, USA.
 	of separate SET_STR_DC_THRESHOLD and SET_STR_PRECOMPUTE_THRESHOLD.
 	Add tuning and speed measurement of mpn_addsub_n.
 
+2006-10-31  Torbjorn Granlund  <tege@swox.com>
+
+	* gmpxx.h: Remove ternary stuff, it is hardly an optimization and it
+	writes to destination before reading all source operands.
+
 2006-10-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/set_str.c: Complete rewrite.
