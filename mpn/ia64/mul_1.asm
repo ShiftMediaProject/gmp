@@ -1,5 +1,5 @@
-dnl  IA-64 mpn_mul_1 -- Multiply a limb vector with a limb and store the result
-dnl  in a second limb vector.
+dnl  IA-64 mpn_mul_1, mpn_mul_1c -- Multiply a limb vector with a limb and
+dnl  store the result in a second limb vector.
 
 dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
@@ -23,7 +23,6 @@ dnl  Boston, MA 02110-1301, USA.
 include(`../config.m4')
 
 C         cycles/limb
-C Itanium:    ?
 C Itanium 2:  2.0
 
 C TODO
@@ -52,9 +51,9 @@ ifdef(`HAVE_ABI_32',
 	zxt4		n = n			C I
 	;;
 ')
-{.mmi
+{.mfi
 	adds		r15 = -1, n		C M I
-	nop.m		0			C M
+	mov		f9 = f0			C F
 	mov.i		r2 = ar.lc		C I0
 }
 {.mmi
@@ -63,6 +62,7 @@ ifdef(`HAVE_ABI_32',
 	and		r14 = 3, n		C M I
 	;;
 }
+.Lcommon:
 {.mii
 	setf.sig	f6 = vl			C M2 M3
 	shr.u		r31 = r15, 2		C I
@@ -89,8 +89,8 @@ ifdef(`HAVE_ABI_32',
 .Lb01:	mov		r20 = 0
 	br.cloop.dptk	.grt1			C B
 
-	xma.l		f39 = f7, f6, f0	C F
-	xma.hu		f43 = f7, f6, f0	C F
+	xma.l		f39 = f7, f6, f9	C F
+	xma.hu		f43 = f7, f6, f9	C F
 	;;
 	getf.sig	r8 = f43		C M2
 	stf8		[rp] = f39		C M2 M3
@@ -159,8 +159,8 @@ ifdef(`HAVE_ABI_32',
 	mov		r23 = 0
 	br.cloop.dptk	.grt2
 
-	xma.l		f38 = f7, f6, f0
-	xma.hu		f42 = f7, f6, f0
+	xma.l		f38 = f7, f6, f9
+	xma.hu		f42 = f7, f6, f9
 	;;
 	stf8		[rp] = f38, 8
 	xma.l		f39 = f35, f6, f42
@@ -234,8 +234,8 @@ ifdef(`HAVE_ABI_32',
 	br.cloop.dptk	.grt3
 	;;
 
-	xma.l		f37 = f7, f6, f0
-	xma.hu		f41 = f7, f6, f0
+	xma.l		f37 = f7, f6, f9
+	xma.hu		f41 = f7, f6, f9
 	xma.l		f38 = f34, f6, f0
 	xma.hu		f42 = f34, f6, f0
 	xma.l		f39 = f35, f6, f0
@@ -303,8 +303,8 @@ ifdef(`HAVE_ABI_32',
 	ldf8		f34 = [up], 8
 	;;
 	ldf8		f35 = [up], 8
-	xma.l		f36 = f7, f6, f0
-	xma.hu		f40 = f7, f6, f0
+	xma.l		f36 = f7, f6, f9
+	xma.hu		f40 = f7, f6, f9
 	br.cloop.dptk	.grt4
 
 	xma.l		f37 = f33, f6, f0
@@ -544,5 +544,28 @@ C *** MAIN LOOP END ***
    (p8)	add		r8 = 1, r8
 	mov.i		ar.lc = r2
 	br.ret.sptk.many b0
+EPILOGUE()
+
+PROLOGUE(mpn_mul_1c)
+	.prologue
+	.save	ar.lc, r2
+	.body
+ifdef(`HAVE_ABI_32',
+`	addp4		rp = 0, rp		C M I
+	addp4		up = 0, up		C M I
+	zxt4		n = n			C I
+	;;
+')
+{.mmi
+	adds		r15 = -1, n		C M I
+	setf.sig	f9 = r36		C M2 M3
+	mov.i		r2 = ar.lc		C I0
+}
+{.mmb
+	ldf8		f7 = [up], 8		C M
+	and		r14 = 3, n		C M I
+	br.sptk		.Lcommon
+	;;
+}
 EPILOGUE()
 ASM_END()
