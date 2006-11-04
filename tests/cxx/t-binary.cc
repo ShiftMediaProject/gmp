@@ -24,9 +24,6 @@ MA 02110-1301, USA. */
 #include <iostream>
 
 #include "gmp.h"
-#ifdef WANT_MPFR
-#  include "mpfr.h"
-#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -416,141 +413,6 @@ check_mpf (void)
   }
 }
 
-void
-check_mpfr (void)
-{
-#ifdef WANT_MPFR
-
-  // template <class T, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, T>, __gmp_expr<T, T>, Op> >
-  {
-    mpfr_class a(1), b(2);
-    mpfr_class c(a + b); ASSERT_ALWAYS(c == 3);
-  }
-  {
-    mpfr_class a(1.5), b(6);
-    mpfr_class c;
-    c = a / b; ASSERT_ALWAYS(c == 0.25);
-  }
-
-  // template <class T, class U, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, T>, U, Op> >
-  {
-    mpfr_class a(1);
-    signed int b = -2;
-    mpfr_class c(a - b); ASSERT_ALWAYS(c == 3);
-  }
-  {
-    mpfr_class a(2);
-    mpfr_class b;
-    b = a + 0; ASSERT_ALWAYS(b == 2);
-  }
-
-  // template <class T, class U, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<U, __gmp_expr<T, T>, Op> >
-  {
-    mpfr_class a(2);
-    unsigned int b = 3;
-    mpfr_class c;
-    c = b / a; ASSERT_ALWAYS(c == 1.5);
-  }
-
-  // template <class T, class U, class V, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, T>, __gmp_expr<U, V>, Op> >
-  {
-    mpfr_class a(2);
-    mpz_class b(3);
-    mpfr_class c(a - b); ASSERT_ALWAYS(c == -1);
-  }
-  {
-    mpfr_class a(3);
-    mpz_class b(2), c(1);
-    mpfr_class d;
-    d = a * (b + c); ASSERT_ALWAYS(d == 9);
-  }
-
-  // template <class T, class U, class V, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<U, V>, __gmp_expr<T, T>, Op> >
-  {
-    mpfr_class a(6);
-    mpq_class b(3, 4);
-    mpfr_class c(a * b); ASSERT_ALWAYS(c == 4.5);
-  }
-
-  // template <class T, class U, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, T>, __gmp_expr<T, U>, Op> >
-  {
-    mpfr_class a(2), b(-3);
-    mpfr_class c;
-    c = a * (-b); ASSERT_ALWAYS(c == 6);
-  }
-
-  // template <class T, class U, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<T, T>, Op> >
-  {
-    mpfr_class a(3), b(4), c(5);
-    mpfr_class d;
-    d = (a / b) - c; ASSERT_ALWAYS(d == -4.25);
-  }
-
-  // template <class T, class U, class V, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
-  {
-    mpfr_class a(3);
-    unsigned int b = 2;
-    mpfr_class c((-a) >> b); ASSERT_ALWAYS(c == -0.75);
-  }
-
-  // template <class T, class U, class V, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<U, __gmp_expr<T, V>, Op> >
-  {
-    mpfr_class a(2), b(3);
-    double c = 5.0;
-    mpfr_class d;
-    d = c / (a + b); ASSERT_ALWAYS(d == 1);
-  }
-
-  // template <class T, class U, class V, class W, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
-  {
-    mpfr_class a(2), b(3);
-    mpz_class c(4);
-    mpfr_class d;
-    d = (a + b) * c; ASSERT_ALWAYS(d == 20);
-  }
-  {
-    mpfr_class a(2), b(3);
-    mpq_class c(1, 2), d(1, 4);
-    mpfr_class e;
-    e = (a * b) / (c + d); ASSERT_ALWAYS(e == 8);
-  }
-
-  // template <class T, class U, class V, class W, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<U, V>, __gmp_expr<T, W>, Op> >
-  {
-    mpfr_class a(1), b(2);
-    mpq_class c(3);
-    mpfr_class d(c / (a + b)); ASSERT_ALWAYS(d == 1);
-  }
-  {
-    mpfr_class a(1);
-    mpz_class b(2);
-    mpq_class c(3, 4);
-    mpfr_class d;
-    d = (-c) + (a + b); ASSERT_ALWAYS(d == 2.25);
-  }
-
-  // template <class T, class U, class V, class Op>
-  // __gmp_expr<T, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<T, V>, Op> >
-  {
-    mpfr_class a(1), b(2), c(3);
-    mpfr_class d;
-    d = (a + b) * (-c); ASSERT_ALWAYS(d == -9);
-  }
-
-#endif /* WANT_MPFR */
-}
-
 
 int
 main (void)
@@ -560,7 +422,6 @@ main (void)
   check_mpz();
   check_mpq();
   check_mpf();
-  check_mpfr();
 
   tests_end();
   return 0;

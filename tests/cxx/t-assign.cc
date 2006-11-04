@@ -25,9 +25,6 @@ MA 02110-1301, USA. */
 #include <string>
 
 #include "gmp.h"
-#ifdef WANT_MPFR
-#  include "mpfr.h"
-#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -506,188 +503,6 @@ check_mpf (void)
   }
 }
 
-void
-check_mpfr (void)
-{
-#ifdef WANT_MPFR
-
-  // operator=(const mpz_class &)
-  {
-    mpz_class a(123);
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS (b == 123);
-  }
-
-  // operator=(const mpq_class &)
-  {
-    mpq_class a(123);
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS (b == 123);
-  }
-
-  // operator=(const mpf_class &)
-  {
-    mpf_class a(123);
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS (b == 123);
-  }
-
-  // operator=(const mpfr_class &)
-  {
-    mpfr_class a(123), b;
-    b = a; ASSERT_ALWAYS(b == 123);
-  }
-
-  // template <class T, class U> operator=(const __gmp_expr<T, U> &)
-  // not tested here, see t-unary.cc, t-binary.cc
-
-  // operator=(signed char)
-  {
-    signed char a = -127;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == -127);
-  }
-
-  // operator=(unsigned char)
-  {
-    unsigned char a = 255;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 255);
-  }
-
-  // either signed or unsigned char, machine dependent
-  {
-    mpfr_class a;
-    a = 'A'; ASSERT_ALWAYS(a == 65);
-  }
-  {
-    mpfr_class a;
-    a = 'z'; ASSERT_ALWAYS(a == 122);
-  }
-
-  // operator=(signed int)
-  {
-    signed int a = 0;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 0);
-  }
-  {
-    signed int a = -123;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == -123);
-  }
-  {
-    signed int a = 32767;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 32767);
-  }
-
-  // operator=(unsigned int)
-  {
-    unsigned int a = 65535u;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 65535u);
-  }
-
-  // operator=(signed short int)
-  {
-    signed short int a = -12345;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == -12345);
-  }
-
-  // operator=(unsigned short int)
-  {
-    unsigned short int a = 54321u;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 54321u);
-  }
-
-  // operator=(signed long int)
-  {
-    signed long int a = -1234567890L;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == -1234567890L);
-  }
-
-  // operator=(unsigned long int)
-  {
-    unsigned long int a = 3456789012UL;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 3456789012UL);
-  }
-
-  // operator=(float)
-  {
-    float a = 123.0;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 123);
-  }
-
-  // operator=(double)
-  {
-    double a = 0.0;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 0);
-  }
-  {
-    double a = -12.375;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == -12.375);
-  }
-  {
-    double a = 6.789e+3;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 6789);
-  }
-  {
-    double a = 9.375e-1;
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 0.9375);
-  }
-
-  // operator=(long double)
-  // currently not implemented
-
-  // operator=(const char *)
-  {
-    const char *a = "1234567890";
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 1234567890L);
-  }
-
-  // operator=(const std::string &)
-  {
-    string a("1234567890");
-    mpfr_class b;
-    b = a; ASSERT_ALWAYS(b == 1234567890L);
-  }
-
-  // operator=(const char *) with invalid
-  {
-    try {
-      const char *a = "abc";
-      mpfr_class b;
-      b = a;
-      ASSERT_ALWAYS (0);  /* should not be reached */
-    } catch (invalid_argument) {
-    }
-  }
-
-  // operator=(const std::string &) with invalid
-  {
-    try {
-      string a("def");
-      mpfr_class b;
-      b = a;
-      ASSERT_ALWAYS (0);  /* should not be reached */
-    } catch (invalid_argument) {
-    }
-  }
-
-#endif /* WANT_MPFR */
-}
-
 
 int
 main (void)
@@ -697,7 +512,6 @@ main (void)
   check_mpz();
   check_mpq();
   check_mpf();
-  check_mpfr();
 
   tests_end();
   return 0;

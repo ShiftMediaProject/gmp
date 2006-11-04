@@ -24,9 +24,6 @@ MA 02110-1301, USA. */
 #include <iostream>
 
 #include "gmp.h"
-#ifdef WANT_MPFR
-#  include "mpfr.h"
-#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -693,16 +690,6 @@ check_mpf (void)
   // currently there's no ternary mpf operation
 }
 
-void
-check_mpfr (void)
-{
-#ifdef WANT_MPFR
-
-  // currently there's no ternary mpfr operation
-
-#endif /* WANT_MPFR */
-}
-
 
 int
 main (void)
@@ -744,7 +731,6 @@ main (void)
 
   check_mpq();
   check_mpf();
-  check_mpfr();
 
   tests_end();
   return 0;
