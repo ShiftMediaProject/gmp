@@ -90,4 +90,3 @@ mpz_rootrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr u, unsigned long int nth)
   SIZ(rem) = remn;
   TMP_FREE;
 }
-
