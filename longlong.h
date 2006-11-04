@@ -1036,6 +1036,11 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define UDIV_TIME 140
 #endif /* __mips */
 
+#if defined (__mmix__) && W_TYPE_SIZE == 64
+#define umul_ppmm(w1, w0, u, v) \
+  __asm__ ("MULU %0,%2,%3" : "=r" (w0), "=z" (w1) : "r" (u), "r" (v))
+#endif
+
 #if defined (__ns32000__) && W_TYPE_SIZE == 32
 #define umul_ppmm(w1, w0, u, v) \
   ({union {UDItype __ll;						\
