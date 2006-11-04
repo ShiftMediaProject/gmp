@@ -277,7 +277,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   else
     {
       /* |b| < m.  We pad out operands to become mn limbs,  which simplifies
-	 the rest of the function, but slows things down when the |b| << m.  */
+	 the rest of the function, but slows things down when |b| << m.  */
       if (use_redc)
 	{
 	  MPN_ZERO (tp, mn);
