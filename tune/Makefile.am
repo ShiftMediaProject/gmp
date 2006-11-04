@@ -48,7 +48,7 @@ libspeed_la_SOURCES =							\
   jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c					\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
-  set_strb.c set_strs.c time.c						\
+  set_strb.c set_strs.c set_strp.c time.c						\
   sb_div.c sb_inv.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
@@ -126,7 +126,7 @@ DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c gcdext.c get_str.c \
-  hgcd.c mul_n.c mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c
+  set_str.c hgcd.c mul_n.c mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c
 
 $(TUNE_MPN_SRCS_BASIC):
 	for i in $(TUNE_MPN_SRCS_BASIC); do \
