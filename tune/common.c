@@ -1,7 +1,7 @@
 /* Shared speed subroutines.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation,
-Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -767,6 +767,14 @@ speed_mpn_sub_n (struct speed_params *s)
 SPEED_ROUTINE_MPN_BINARY_N (mpn_sub_n);
 }
 
+#if HAVE_NATIVE_mpn_addsub_n
+double
+speed_mpn_addsub_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDSUB_N_CALL (mpn_addsub_n (ap, sp, s->xp, s->yp, s->size));
+}
+#endif
+
 #if HAVE_NATIVE_mpn_addlsh1_n
 double
 speed_mpn_addlsh1_n (struct speed_params *s)
@@ -923,7 +931,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     int        k;                                       \
     unsigned   i;                                       \
     double     t;                                       \
-    TMP_DECL;                                  \
+    TMP_DECL;                                           \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 1);                 \
                                                         \
@@ -932,7 +940,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     else                                                \
       k = mpn_fft_best_k (s->size, sqr);                \
                                                         \
-    TMP_MARK;                                  \
+    TMP_MARK;                                           \
     pl = mpn_fft_next_size (s->size, k);                \
     SPEED_TMP_ALLOC_LIMBS (wp, pl+1, s->align_wp);      \
                                                         \
@@ -949,7 +957,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
                                                         \
-    TMP_FREE;                                  \
+    TMP_FREE;                                           \
     return t;                                           \
   }
 
@@ -2021,19 +2029,18 @@ speed_mpn_get_str (struct speed_params *s)
 double
 speed_mpn_set_str (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SET_STR (mpn_set_str);
+  SPEED_ROUTINE_MPN_SET_STR_CALL (mpn_set_str (wp, xp, s->size, base));
 }
 double
-speed_mpn_set_str_basecase (struct speed_params *s)
+speed_mpn_bc_set_str (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SET_STR (mpn_set_str_basecase);
+  SPEED_ROUTINE_MPN_SET_STR_CALL (mpn_bc_set_str (wp, xp, s->size, base));
 }
 double
-speed_mpn_set_str_subquad (struct speed_params *s)
+speed_mpn_dc_set_str (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SET_STR (mpn_set_str_subquad);
+  SPEED_ROUTINE_MPN_SET_STR_CALL (mpn_dc_set_str (wp, xp, s->size, base));
 }
-
 
 double
 speed_MPN_ZERO (struct speed_params *s)

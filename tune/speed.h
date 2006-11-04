@@ -1,6 +1,7 @@
 /* Header for speed and threshold things.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -147,6 +148,7 @@ double speed_mpf_init_clear _PROTO ((struct speed_params *s));
 
 double speed_mpn_add_n _PROTO ((struct speed_params *s));
 double speed_mpn_addlsh1_n _PROTO ((struct speed_params *s));
+double speed_mpn_addsub_n _PROTO ((struct speed_params *s));
 double speed_mpn_and_n _PROTO ((struct speed_params *s));
 double speed_mpn_andn_n _PROTO ((struct speed_params *s));
 double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
@@ -239,8 +241,9 @@ double speed_mpn_sb_divrem_m3 _PROTO ((struct speed_params *s));
 double speed_mpn_sb_divrem_m3_div _PROTO ((struct speed_params *s));
 double speed_mpn_sb_divrem_m3_inv _PROTO ((struct speed_params *s));
 double speed_mpn_set_str _PROTO ((struct speed_params *s));
-double speed_mpn_set_str_basecase _PROTO ((struct speed_params *s));
-double speed_mpn_set_str_subquad _PROTO ((struct speed_params *s));
+double speed_mpn_bc_set_str _PROTO ((struct speed_params *s));
+double speed_mpn_dc_set_str _PROTO ((struct speed_params *s));
+double speed_mpn_set_str_pre _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_diagonal _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
@@ -293,7 +296,6 @@ double speed_udiv_qrnnd_preinv1 _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv2 _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_c _PROTO ((struct speed_params *s));
 double speed_umul_ppmm _PROTO ((struct speed_params *s));
-
 
 /* Prototypes for other routines */
 
@@ -645,6 +647,58 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_operand_src (s, xp, s->size);					\
     speed_operand_src (s, yp, s->size);					\
     speed_operand_dst (s, wp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      call;								\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+
+/* For mpn_add_n, mpn_sub_n, or similar. */
+#define SPEED_ROUTINE_MPN_ADDSUB_N_CALL(call)				\
+  {									\
+    mp_ptr     ap, sp;							\
+    mp_ptr     xp, yp;							\
+    unsigned   i;							\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ap, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (sp, s->size, s->align_wp);			\
+									\
+    xp = s->xp;								\
+    yp = s->yp;								\
+									\
+    if ((s->r & 1) != 0) { xp = ap; }					\
+    if ((s->r & 2) != 0) { yp = ap; }					\
+    if ((s->r & 4) != 0) { xp = sp; }					\
+    if ((s->r & 8) != 0) { yp = sp; }					\
+    if ((s->r & 3) == 3  ||  (s->r & 12) == 12)				\
+      {									\
+	TMP_FREE;							\
+	return -1.0;							\
+      }									\
+									\
+    /* initialize ap if operand overlap */				\
+    if (xp == ap || yp == ap)						\
+      MPN_COPY (ap, s->xp, s->size);					\
+    /* initialize sp if operand overlap */				\
+    if (xp == sp || yp == sp)						\
+      MPN_COPY (sp, s->xp, s->size);					\
+									\
+    speed_operand_src (s, xp, s->size);					\
+    speed_operand_src (s, yp, s->size);					\
+    speed_operand_dst (s, ap, s->size);					\
+    speed_operand_dst (s, sp, s->size);					\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
@@ -1187,7 +1241,6 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_FREE;								\
     return t;								\
   }
-
 
 /* A remainder 2*s->size by s->size limbs */
 
@@ -2009,7 +2062,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 /* s->size controls the number of digits in the input, s->r is the base, or
    decimal by default. */
-#define SPEED_ROUTINE_MPN_SET_STR(function)				\
+#define SPEED_ROUTINE_MPN_SET_STR_CALL(call)				\
   {									\
     unsigned char *xp;							\
     mp_ptr     wp;							\
@@ -2046,7 +2099,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, xp, s->size, base);					\
+      call;								\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

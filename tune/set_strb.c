@@ -26,8 +26,13 @@ MA 02110-1301, USA. */
 #define SIZE_T_MAX  ((size_t) ULONG_MAX)
 #endif
 
-#undef SET_STR_THRESHOLD
-#define SET_STR_THRESHOLD  SIZE_T_MAX /* always */
+#undef SET_STR_DC_THRESHOLD
+#define SET_STR_DC_THRESHOLD           SIZE_T_MAX /* always */
+#undef SET_STR_PRECOMPUTE_THRESHOLD
+#define SET_STR_PRECOMPUTE_THRESHOLD   SIZE_T_MAX /* always */
 #define __gmpn_set_str mpn_set_str_basecase
+#define mpn_bc_set_str mpn_bc_set_str_basecase
+#define mpn_dc_set_str mpn_dc_set_str_basecase
+#define mpn_set_str_compute_powtab mpn_set_str_compute_powtab_basecase
 
 #include "mpn/generic/set_str.c"

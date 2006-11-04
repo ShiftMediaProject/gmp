@@ -1,6 +1,6 @@
 /* Speed measuring program.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -155,6 +155,10 @@ const struct routine_t {
   { "mpn_add_n",         speed_mpn_add_n,     FLAG_R_OPTIONAL },
   { "mpn_sub_n",         speed_mpn_sub_n,     FLAG_R_OPTIONAL },
 
+#if HAVE_NATIVE_mpn_addsub_n
+  { "mpn_addsub_n",      speed_mpn_addsub_n,     FLAG_R_OPTIONAL },
+#endif
+
   { "mpn_addmul_1",      speed_mpn_addmul_1,  FLAG_R },
   { "mpn_submul_1",      speed_mpn_submul_1,  FLAG_R },
 #if HAVE_NATIVE_mpn_addmul_2
@@ -300,9 +304,9 @@ const struct routine_t {
 
   { "mpn_get_str",       speed_mpn_get_str,  FLAG_R_OPTIONAL },
 
-  { "mpn_set_str",          speed_mpn_set_str,          FLAG_R_OPTIONAL },
-  { "mpn_set_str_basecase", speed_mpn_set_str_basecase, FLAG_R_OPTIONAL },
-  { "mpn_set_str_subquad",  speed_mpn_set_str_subquad,  FLAG_R_OPTIONAL },
+  { "mpn_set_str",         speed_mpn_set_str,     FLAG_R_OPTIONAL },
+  { "mpn_set_str_basecase",speed_mpn_bc_set_str,  FLAG_R_OPTIONAL },
+  { "mpn_set_str_subquad", speed_mpn_dc_set_str,  FLAG_R_OPTIONAL },
 
   { "mpn_sqrtrem",       speed_mpn_sqrtrem          },
   { "mpn_rootrem",       speed_mpn_rootrem, FLAG_R  },
@@ -1238,5 +1242,3 @@ main (int argc, char *argv[])
 
   return 0;
 }
-
-

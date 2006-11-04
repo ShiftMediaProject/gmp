@@ -22,10 +22,13 @@ MA 02110-1301, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Note this is designed only for SET_STR_BLOCK_SIZE==1. */
-
-#undef SET_STR_THRESHOLD
-#define SET_STR_THRESHOLD  2 /* never */
+#undef SET_STR_DC_THRESHOLD
+#define SET_STR_DC_THRESHOLD  2 /* never */
+#undef SET_STR_PRECOMPUTE_THRESHOLD
+#define SET_STR_PRECOMPUTE_THRESHOLD  2 /* never */
 #define __gmpn_set_str mpn_set_str_subquad
+#define mpn_bc_set_str mpn_bc_set_str_subquad
+#define mpn_dc_set_str mpn_dc_set_str_subquad
+#define mpn_set_str_compute_powtab mpn_set_str_compute_powtab_subquad
 
 #include "mpn/generic/set_str.c"
