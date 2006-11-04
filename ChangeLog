@@ -18,6 +18,90 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2006-11-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/bin_uiui.c: Simplify.
+
+	* longlong.h (umul_ppmm) [mmix]: New.
+
+	* tune/tuneup.c, tune/common.c, tune/speed.c, tune/speed.h,
+	tune/set_strb.c, tune/set_strs.c: Add tuning and speed measurements
+	of separate SET_STR_DC_THRESHOLD and SET_STR_PRECOMPUTE_THRESHOLD.
+	Add tuning and speed measurement of mpn_addsub_n.
+
+2006-10-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/set_str.c: Complete rewrite (made last April).
+	* mpn/generic/get_str.c: Likewise.
+
+	* gmp-impl.h (struct powers, powers_t): New types.
+	Restructure GET_STR_* and SET_STR_* thresholds.
+
+2006-09-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/rootrem.c: Remove some redundant casts.
+
+2006-07-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/nails/addmul_2.asm: Make it run at claimed speed.
+	* mpn/alpha/ev6/nails/addmul_4.asm: Likewise.
+
+	* mpf/get_str.c: Avoid copying result when not needed.  Misc cleanups.
+
+	* tests/amd64call.asm: Use jmp instead of jmpq to placate Solaris.
+
+2006-06-30  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (powerpc-*): Remove repeated path component.
+
+2006-06-15  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: (ia64-*-linux*): Don't use -O3.
+
+2006-06-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpq/get_str.c: Fix upper base limit boundary in an ASSERT.
+
+	* tests/refmpn.c (refmpn_sb_divrem_mn): Use ASSERT_CARRY for add-back.
+
+2006-05-31  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-set_d.c (check_data): Add more data points.
+
+	* mpz/set_d.c: Handle negative return values from __gmp_extract_double.
+
+2006-05-17  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Clear out gcc_cflags_cpu and gcc_cflags_arch for a fat
+	build.
+
+2006-05-16  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/primes.c (find_primes): Increase mpz_probab_prime_p cnt to 10.
+
+	* mpn/generic/addsub_n.c: Fix criteria form when to call _nc functions.
+
+2006-05-12  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Recognize more ppc processor types.
+
+2006-05-11  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/speed.c (usage): Update URL for gnuplot and quickplot.
+
+2006-05-10  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (powerpc-*-*): Pass -maltivec to assembler for
+	appropriate CPUs.
+
+2006-05-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/aix.m4 (LEA): Remove [RW] attribute.
+
+2006-05-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/vmx/popcount.asm: Conditionally zero extend n.
+
 2006-04-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/divexact.c: Call mpz_tdiv_q for large operands.
@@ -85,6 +169,8 @@ MA 02110-1301, USA.
 	* mpn/asm-defs.m4 (ASM_END): Provide (empty) default.
 
 2006-04-08  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (gmp_mpn_functions_optional): Add addsub.
 
 	* gmpxx.h: Remove missed MPFR references.
 
@@ -302,8 +388,8 @@ MA 02110-1301, USA.
 	* config.guess: Recognize power4 and up under linux-gnu.
 	* config.sub: Generalize power recognition code.
 	* acinclude.m4 (POWERPC64_PATTERN): Add 64-bit powerpc processors.
-	* configure.in: Recognize powerpc procssors masquerading as power
-	procssors.
+	* configure.in: Recognize powerpc processors masquerading as power
+	processors.
 
 2006-01-19  Torbjorn Granlund  <tege@swox.com>
 
@@ -472,7 +558,7 @@ MA 02110-1301, USA.
 
 	* mpn/powerpc32: Add POWER5 timings.
 
-	* mpn/powerpc32/README: Describe global refefence variations.
+	* mpn/powerpc32/README: Describe global reference variations.
 
 	* mpn/ia64/divrem_2.asm: Add some comments.
 
@@ -1095,7 +1181,7 @@ MA 02110-1301, USA.
 	* mpn/powerpc64/mode64/add_n.asm: Delete.
 	* mpn/powerpc64/mode64/sub_n.asm: Delete.
 
-	* configfsf.guess: Patch HP-UX code to accomodate HP compiler's new
+	* configfsf.guess: Patch HP-UX code to accommodate HP compiler's new
 	inability to read from stdin.
 
 	* mpn/powerpc64/mode64/addsub_n.asm: Remove accidentally added file.
