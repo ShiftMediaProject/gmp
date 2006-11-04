@@ -24,9 +24,6 @@ MA 02110-1301, USA. */
 #include <iostream>
 
 #include "gmp.h"
-#ifdef WANT_MPFR
-#  include "mpfr.h"
-#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -123,38 +120,6 @@ check_mpf (void)
   }
 }
 
-void
-check_mpfr (void)
-{
-#ifdef WANT_MPFR
-
-  // template <class T, class Op>
-  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, T>, Op> >
-  {
-    mpfr_class a(1);
-    mpfr_class b(+a); ASSERT_ALWAYS(b == 1);
-  }
-  {
-    mpfr_class a(2);
-    mpfr_class b;
-    b = -a; ASSERT_ALWAYS(b == -2);
-  }
-
-  // template <class T, class U, class Op>
-  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
-  {
-    mpfr_class a(1);
-    mpfr_class b(-(-a)); ASSERT_ALWAYS(b == 1);
-  }
-  {
-    mpfr_class a(2);
-    mpfr_class b;
-    b = -(-(-a)); ASSERT_ALWAYS(b == -2);
-  }
-
-#endif /* WANT_MPFR */
-}
-
 
 int
 main (void)
@@ -164,7 +129,6 @@ main (void)
   check_mpz();
   check_mpq();
   check_mpf();
-  check_mpfr();
 
   tests_end();
   return 0;
