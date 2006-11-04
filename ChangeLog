@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2006-11-04  Torbjorn Granlund  <tege@swox.com>
 
+	* extract-dbl.c: Rewrite to handle nails better, and for general
+	optimization.
+
 	* mpz/bin_uiui.c: Simplify.
 
 	* longlong.h (umul_ppmm) [mmix]: New.
@@ -31,7 +34,7 @@ MA 02110-1301, USA.
 
 2006-10-25  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/generic/set_str.c: Complete rewrite (made last April).
+	* mpn/generic/set_str.c: Complete rewrite.
 	* mpn/generic/get_str.c: Likewise.
 
 	* gmp-impl.h (struct powers, powers_t): New types.
