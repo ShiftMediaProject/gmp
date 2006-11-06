@@ -235,6 +235,13 @@ const struct routine_t {
   { "mpn_sb_divrem_m3_div", speed_mpn_sb_divrem_m3_div },
   { "mpn_sb_divrem_m3_inv", speed_mpn_sb_divrem_m3_inv },
 
+  { "mpn_bdiv_qr",		speed_mpn_bdiv_qr },
+  { "mpn_bdiv_q",		speed_mpn_bdiv_q },
+  { "mpn_binvert",		speed_mpn_binvert },
+  { "mpn_div_qr",		speed_mpn_div_qr },
+  { "mpn_div_q",		speed_mpn_div_q },
+  { "mpn_invert",		speed_mpn_invert },
+
   { "mpn_lshift",        speed_mpn_lshift, FLAG_R   },
   { "mpn_rshift",        speed_mpn_rshift, FLAG_R   },
 
