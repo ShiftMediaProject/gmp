@@ -296,7 +296,7 @@ __gmp_randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 	  {
 	    if (bits_in_pool < 32)	/* Need more bits.  */
 	      {
-		/* 64-bit right shift. */
+		/* 64-bit right shift.  */
 		NEXT_RANDOM;
 		bitpool_h = y;
 		bitpool_l |= (bitpool_h << bits_in_pool) & 0xFFFFFFFF;
@@ -307,7 +307,7 @@ __gmp_randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 		bits_in_pool += 32;	/* We've got 32 more bits.  */
 	      }
 
-	    /* Fill a 32-bit chunk */
+	    /* Fill a 32-bit chunk.  */
 	    dest[i] |= ((mp_limb_t) bitpool_l) << bitidx;
 	    bitpool_l = bitpool_h;
 	    bits_in_pool -= 32;
@@ -385,15 +385,17 @@ void
 __gmp_randinit_mt_noseed (gmp_randstate_t rstate)
 {
   int i;
+  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / sizeof(mp_limb_t)) + 1;
   gmp_rand_mt_struct *p;
 
   /* Set the generator functions.  */
   RNG_FNPTR (rstate) = (void *) &Mersenne_Twister_Generator_Noseed;
 
   /* Allocate the MT-specific state.  */
-  p = (gmp_rand_mt_struct *)
-    (*__gmp_allocate_func) (sizeof (gmp_rand_mt_struct));
+
+  p = (gmp_rand_mt_struct *) __GMP_ALLOCATE_FUNC_LIMBS (sz);
   RNG_STATE (rstate) = (mp_ptr) p;
+  ALLOC (rstate->_mp_seed) = sz;     /* Initialize alloc field to placate Camm.  */
 
   /* Set state for default seed.  */
   for (i = 0; i < N; i++)
