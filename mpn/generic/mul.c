@@ -67,10 +67,19 @@ mpn_mul (mp_ptr prodp,
 
   if (vn < MUL_KARATSUBA_THRESHOLD)
     { /* plain schoolbook multiplication */
-      if (un <= MUL_BASECASE_MAX_UN)
+
+      /* Unless un is very large, or else if have an applicable mpn_mul_N,
+	 perform basecase multiply directly.  */
+      if (un <= MUL_BASECASE_MAX_UN
+#if HAVE_NATIVE_mpn_mul_2
+	  || vn <= 2
+#else
+	  || vn == 1
+#endif
+	  )
 	mpn_mul_basecase (prodp, up, un, vp, vn);
       else
-	{
+ 	{
 	  /* We have un >> MUL_BASECASE_MAX_UN > vn.  For better memory
 	     locality, split up[] into MUL_BASECASE_MAX_UN pieces and multiply
 	     these pieces with the vp[] operand.  After each such partial
@@ -129,78 +138,75 @@ mpn_mul (mp_ptr prodp,
       return prodp[un + vn - 1];
     }
 
-  if (ABOVE_THRESHOLD (vn, MUL_FFT_THRESHOLD))
+  if (ABOVE_THRESHOLD ((un + vn) >> 1, MUL_FFT_THRESHOLD) &&
+      ABOVE_THRESHOLD (vn, MUL_FFT_THRESHOLD / 3)) /* FIXME */
     {
       mpn_mul_fft_full (prodp, up, un, vp, vn);
       return prodp[un + vn - 1];
     }
 
-  mpn_mul_n (prodp, up, vp, vn);
-  if (un != vn)
-    { mp_limb_t t;
+#define C42  (un >= 3 * vn)
+  if (C42)
+    {
       mp_ptr ws;
+      mp_limb_t cy;
       TMP_DECL;
+
+      mpn_mul_toom42 (prodp, up, 2 * vn, vp, vn);
+      un -= 2 * vn;
+      up += 2 * vn;
+      prodp += 2 * vn;
+
       TMP_MARK;
+      ws = TMP_SALLOC_LIMBS (4 * vn + 10);		/* FIXME */
 
-      prodp += vn;
-      l = vn;
-      up += vn;
-      un -= vn;
-
-      if (un < vn)
+      while (C42)
 	{
-	  /* Swap u's and v's. */
-	  MPN_SRCPTR_SWAP (up,un, vp,vn);
+	  mpn_mul_toom42 (ws, up, 2 * vn, vp, vn);
+	  un -= 2 * vn;
+	  up += 2 * vn;
+	  cy = mpn_add_n (prodp, prodp, ws, vn);
+	  MPN_COPY (prodp + vn, ws + vn, 2 * vn);
+	  mpn_incr_u (prodp + vn, cy);
+	  prodp += 2 * vn;
 	}
-
-      ws = TMP_ALLOC_LIMBS ((vn >= MUL_KARATSUBA_THRESHOLD ? vn : un) + vn);
-
-      t = 0;
-      while (vn >= MUL_KARATSUBA_THRESHOLD)
+  
+      if (un * 2 > vn * 3 + 8)
+	{
+	  mpn_mul_toom42 (ws, up, un, vp, vn);
+	  cy = mpn_add_n (prodp, prodp, ws, vn);
+	  MPN_COPY (prodp + vn, ws + vn, un);
+	  mpn_incr_u (prodp + vn, cy);
+	}
+      else if (un > (vn+1)/2*2)
+	{
+	  mpn_mul_toom32 (ws, up, un, vp, vn);
+	  cy = mpn_add_n (prodp, prodp, ws, vn);
+	  MPN_COPY (prodp + vn, ws + vn, un);
+	  mpn_incr_u (prodp + vn, cy);
+	}
+      else
 	{
 	  mpn_mul_n (ws, up, vp, vn);
-	  if (l <= 2*vn)
-	    {
-	      t += mpn_add_n (prodp, prodp, ws, l);
-	      if (l != 2*vn)
-		{
-		  t = mpn_add_1 (prodp + l, ws + l, 2*vn - l, t);
-		  l = 2*vn;
-		}
-	    }
-	  else
-	    {
-	      c = mpn_add_n (prodp, prodp, ws, 2*vn);
-	      t += mpn_add_1 (prodp + 2*vn, prodp + 2*vn, l - 2*vn, c);
-	    }
-	  prodp += vn;
-	  l -= vn;
-	  up += vn;
-	  un -= vn;
-	  if (un < vn)
-	    {
-	      /* Swap u's and v's. */
-	      MPN_SRCPTR_SWAP (up,un, vp,vn);
-	    }
+	  if (un != vn)
+	    ws[2*vn] = mpn_addmul_1 (ws + vn, vp, vn, up[vn]);
+	  cy = mpn_add_n (prodp, prodp, ws, vn);
+	  MPN_COPY (prodp + vn, ws + vn, un);
+	  mpn_incr_u (prodp + vn, cy);
 	}
-
-      if (vn != 0)
-	{
-	  mpn_mul_basecase (ws, up, un, vp, vn);
-	  if (l <= un + vn)
-	    {
-	      t += mpn_add_n (prodp, prodp, ws, l);
-	      if (l != un + vn)
-		t = mpn_add_1 (prodp + l, ws + l, un + vn - l, t);
-	    }
-	  else
-	    {
-	      c = mpn_add_n (prodp, prodp, ws, un + vn);
-	      t += mpn_add_1 (prodp + un + vn, prodp + un + vn, l - un - vn, c);
-	    }
-	}
-
       TMP_FREE;
+      return prodp[un + vn - 1];
+    }
+
+  if (un * 2 > vn * 3 + 8)
+    mpn_mul_toom42 (prodp, up, un, vp, vn);
+  else if (un > (vn+1)/2*2)
+    mpn_mul_toom32 (prodp, up, un, vp, vn);
+  else
+    {
+      mpn_mul_n (prodp, up, vp, vn);
+      if (un != vn)
+	prodp[2*vn] = mpn_addmul_1 (prodp + vn, vp, vn, up[vn]);
     }
   return prodp[un + vn - 1];
 }
