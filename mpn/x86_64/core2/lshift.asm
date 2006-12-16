@@ -43,7 +43,7 @@ ASM_START()
 	ALIGN(8)
 PROLOGUE(mpn_lshift)
 
-	sub	$8, %rsi			C adjust src
+	sub	$8, %rsi		C adjust src
 
 	mov	(%rsi,%rdx,8), %r8	C read most significant limb
 	xorl	%eax, %eax
