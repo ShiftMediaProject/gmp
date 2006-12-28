@@ -29,6 +29,16 @@ You should have received a copy of the GNU General Public License along with
 the GNU MP Library; see the file COPYING.  If not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
+
+/*
+  Things to work on:
+
+  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
+     avoided by instead reusing the pp area and the scratch allocation.
+
+  2. Apply optimizations also to mul_toom42.c.
+*/
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -91,17 +101,13 @@ mpn_mul_toom32 (mp_ptr pp,
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= n);
 
-  /* FIXME: All these 4 allocations should be removed and the operands should
-     reuse the pp area, and scratch area (allocated below).  Some thought is
-     needed on operand placement and operand order to achieve best locality. */
-
   TMP_MARK;
 
   as1 = TMP_SALLOC_LIMBS (n + 1);
   asm1 = TMP_SALLOC_LIMBS (n + 1);
 
   bs1 = TMP_SALLOC_LIMBS (n + 1);
-  bsm1 = TMP_SALLOC_LIMBS (n + 1);
+  bsm1 = TMP_SALLOC_LIMBS (n);
 
   a0_a2 = pp;
 
@@ -182,53 +188,81 @@ mpn_mul_toom32 (mp_ptr pp,
 	  mpn_sub (bsm1, b0, n, b1, t);
 	}
     }
-  bsm1[n] = 0;			/* pad to make bsm1 as long as asm1 */
 
-  scratch = TMP_SALLOC_LIMBS (4 * n + 4);
+  ASSERT (as1[n] <= 2);
+  ASSERT (bs1[n] <= 1);
+  ASSERT (asm1[n] <= 1);
+/*ASSERT (bsm1[n] == 0); */
 
 #define v0    pp				/* 2n */
 #define v1    (scratch)				/* 2n+1 */
 #define vinf  (pp + 3 * n)			/* s+t */
-#define vm1   (scratch + 2 * n + 2)		/* 2n+2 */
+#define vm1   (scratch + 2 * n + 1)		/* 2n+1 */
 
-  mpn_mul_n (vm1, asm1, bsm1, n + 1);           /* vm1,  2n+1 limbs */
+  scratch = TMP_SALLOC_LIMBS (4 * n + 2);
 
+  /* vm1, 2n+1 limbs */
+  mpn_mul_n (vm1, asm1, bsm1, n);
+  vm1[2 * n] = 0;
+  if (asm1[n] != 0)
+    vm1[2 * n] = mpn_add_n (vm1 + n, vm1 + n, bsm1, n);
+
+  /* vinf, s+t limbs */
   if (s > t)  mpn_mul (vinf, a2, s, b1, t);
-  else        mpn_mul (vinf, b1, t, a2, s);	/* vinf, s+t  limbs */
+  else        mpn_mul (vinf, b1, t, a2, s);
 
-  mpn_mul_n (v1, as1, bs1, n + 1);		/* v1,   2n+1 limbs */
+  /* v1, 2n+1 limbs */
+  mpn_mul_n (v1, as1, bs1, n);
+  if (as1[n] == 1)
+    {
+      cy = bs1[n] + mpn_add_n (v1 + n, v1 + n, bs1, n);
+    }
+  else if (as1[n] == 2)
+    {
+#if HAVE_NATIVE_mpn_addlsh1_n
+      cy = 2 * bs1[n] + mpn_addlsh1_n (v1 + n, v1 + n, bs1, n);
+#else
+      cy = 2 * bs1[n] + mpn_addmul_1 (v1 + n, bs1, n, CNST_LIMB(2));
+#endif
+    }
+  else
+    cy = 0;
+  v1[2 * n] = cy;
 
-  mpn_mul_n (v0, ap, bp, n);                    /* v0,   2n   limbs */
+  if (bs1[n] != 0)
+    v1[2 * n] += mpn_add_n (v1 + n, v1 + n, as1, n);
+
+  mpn_mul_n (v0, ap, bp, n);                    /* v0, 2n limbs */
 
   /* Interpolate */
 
   if (vm1_neg)
     {
 #if HAVE_NATIVE_mpn_rsh1add_n
-      cy = mpn_rsh1add_n (vm1, v1, vm1, 2 * n + 1);
+      mpn_rsh1add_n (vm1, v1, vm1, 2 * n + 1);
 #else
-      cy = mpn_add_n (vm1, v1, vm1, 2 * n + 1);
-      cy = mpn_rshift (vm1, vm1, 2 * n + 1, 1);
+      mpn_add_n (vm1, v1, vm1, 2 * n + 1);
+      mpn_rshift (vm1, vm1, 2 * n + 1, 1);
 #endif
     }
   else
     {
 #if HAVE_NATIVE_mpn_rsh1sub_n
-      cy = mpn_rsh1sub_n (vm1, v1, vm1, 2 * n + 1);
+      mpn_rsh1sub_n (vm1, v1, vm1, 2 * n + 1);
 #else
-      cy = mpn_sub_n (vm1, v1, vm1, 2 * n + 1);
-      cy = mpn_rshift (vm1, vm1, 2 * n + 1, 1);
+      mpn_sub_n (vm1, v1, vm1, 2 * n + 1);
+      mpn_rshift (vm1, vm1, 2 * n + 1, 1);
 #endif
     }
 
-  cy = mpn_sub_n (v1, v1, vm1, 2 * n + 1);
+  mpn_sub_n (v1, v1, vm1, 2 * n + 1);
   v1[2 * n] -= mpn_sub_n (v1, v1, v0, 2 * n);
 
   /*
     pp[] prior to operations:
      |_H vinf|_L vinf|_______|_______|_______|
 
-    summation scheme:
+    summation scheme for remaining operations:
      |_______|_______|_______|_______|_______|
      |_Hvinf_|_Lvinf_|       |_H v0__|_L v0__|
 		     | H vm1 | L vm1 |
@@ -376,7 +410,7 @@ main (int argc, char **argv)
   else
     return 1;
 
-  if (!(2 * an > 3 * bn && an < 4 * bn))
+  if (!(an > bn && an < 3 * bn))
     {
       fprintf (stderr, "Invalid value combination of an,bn\n");
       return 1;

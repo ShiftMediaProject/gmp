@@ -29,6 +29,16 @@ You should have received a copy of the GNU General Public License along with
 the GNU MP Library; see the file COPYING.  If not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
+
+/*
+  Things to work on:
+
+  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
+     avoided by instead reusing the pp area and the scratch allocation.
+
+  2. Apply optimizations also to mul_toom32.c.
+*/
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -57,8 +67,8 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
 	       <-t--><--n-->
 
   v0  =  a0             * b0       #   A(0)*B(0)
-  v1  = (a0+ a1+ a2+ a3)*(b0+ b1)  #   A(1)*B(1)
-  vm1 = (a0- a1+ a2- a3)*(b0- b1)  #  A(-1)*B(-1)
+  v1  = (a0+ a1+ a2+ a3)*(b0+ b1)  #   A(1)*B(1)      ah  <= 3  bh <= 1
+  vm1 = (a0- a1+ a2- a3)*(b0- b1)  #  A(-1)*B(-1)    |ah| <= 1  bh = 0
   v2  = (a0+2a1+4a2+8a3)*(b0+2b1)  #   A(2)*B(2)
   vinf=              a3 *     b1   # A(inf)*B(inf)
 */
@@ -70,7 +80,7 @@ mpn_mul_toom42 (mp_ptr pp,
 {
   mp_size_t n, s, t;
   int vm1_neg;
-  mp_limb_t cy, vinf0, vinf1;
+  mp_limb_t cy, vinf0;
   mp_ptr a0_a2, a1_a3;
   mp_ptr as1, asm1, as2;
   mp_ptr bs1, bsm1, bs2;
@@ -92,10 +102,6 @@ mpn_mul_toom42 (mp_ptr pp,
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= n);
 
-  /* FIXME: All these 6 allocations should be removed and the operands should
-     reuse the pp area, and scratch area (allocated below).  Some thought is
-     needed on operand placement and operand order to achieve best locality. */
-
   TMP_MARK;
 
   as1 = TMP_SALLOC_LIMBS (n + 1);
@@ -103,7 +109,7 @@ mpn_mul_toom42 (mp_ptr pp,
   as2 = TMP_SALLOC_LIMBS (n + 1);
 
   bs1 = TMP_SALLOC_LIMBS (n + 1);
-  bsm1 = TMP_SALLOC_LIMBS (n + 1);
+  bsm1 = TMP_SALLOC_LIMBS (n);
   bs2 = TMP_SALLOC_LIMBS (n + 1);
 
   a0_a2 = pp;
@@ -199,34 +205,67 @@ mpn_mul_toom42 (mp_ptr pp,
 	  mpn_sub (bsm1, b0, n, b1, t);
 	}
     }
-  bsm1[n] = 0;			/* pad to make bsm1 as long as asm1 */
 
   /* Compute bs2, recycling bs1. bs2=bs1+b1  */
   mpn_add (bs2, bs1, n + 1, b1, t);
 
+  ASSERT (as1[n] <= 3);
+  ASSERT (bs1[n] <= 1);
+/*ASSERT (bsm1[n] == 0);*/
+  ASSERT (asm1[n] <= 1);
+  ASSERT (as2[n] <= 14);
+  ASSERT (bs2[n] <= 2);
+
 #define v0    pp				/* 2n */
-#define v1    (pp+2*n)				/* 2n+1 */
-#define vinf  (pp+4*n)				/* s+t */
-#define vm1   scratch				/* 2n+2 */
-#define v2    (scratch + 2 * n + 2)		/* 2n+2 */
+#define v1    (pp + 2 * n)			/* 2n+1 */
+#define vinf  (pp + 4 * n)			/* s+t */
+#define vm1   scratch				/* 2n+1 */
+#define v2    (scratch + 2 * n + 1)		/* 2n+2 */
 
-  /* We could trim this to 4n+4 if HAVE_NATIVE_mpn_sublsh1_n, since
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
      mpn_toom3_interpolate only needs scratch otherwise.  */
-  scratch = TMP_SALLOC_LIMBS (6 * n + 4);
+  scratch = TMP_SALLOC_LIMBS (6 * n + 3);
 
-  mpn_mul_n (vm1, asm1, bsm1, n + 1);		/* vm1, 2n+1 limbs */
+  /* vm1, 2n+1 limbs */
+  mpn_mul_n (vm1, asm1, bsm1, n);
+  vm1[2 * n] = 0;
+  if (asm1[n] != 0)
+    vm1[2 * n] = mpn_add_n (vm1 + n, vm1 + n, bsm1, n);
 
-  mpn_mul_n (v2, as2, bs2, n + 1);		/* v2,  2n+1 limbs */
+  mpn_mul_n (v2, as2, bs2, n + 1);		/* v2, 2n+1 limbs */
 
+  /* vinf, s+t limbs */
   if (s > t)  mpn_mul (vinf, a3, s, b1, t);
   else        mpn_mul (vinf, b1, t, a3, s);
 
   vinf0 = vinf[0];				/* v1 overlaps with this */
-  vinf1 = vinf[1];				/* v1 pseudo-overlaps with this */
-  mpn_mul_n (v1, as1, bs1, n + 1);
-  vinf[1] = vinf1;
 
-  mpn_mul_n (v0, ap, bp, n);			/* v0,  2n   limbs */
+  /* v1, 2n+1 limbs */
+  mpn_mul_n (v1, as1, bs1, n);
+  if (as1[n] == 1)
+    {
+      cy = bs1[n] + mpn_add_n (v1 + n, v1 + n, bs1, n);
+    }
+  else if (as1[n] == 2)
+    {
+#if HAVE_NATIVE_mpn_addlsh1_n
+      cy = 2 * bs1[n] + mpn_addlsh1_n (v1 + n, v1 + n, bs1, n);
+#else
+      cy = 2 * bs1[n] + mpn_addmul_1 (v1 + n, bs1, n, CNST_LIMB(2));
+#endif
+    }
+  else if (as1[n] == 3)
+    {
+      cy = 3 * bs1[n] + mpn_addmul_1 (v1 + n, bs1, n, CNST_LIMB(3));
+    }
+  else
+    cy = 0;
+  v1[2 * n] = cy;
+
+  if (bs1[n] != 0)
+    v1[2 * n] += mpn_add_n (v1 + n, v1 + n, as1, n);
+
+  mpn_mul_n (v0, ap, bp, n);			/* v0, 2n limbs */
 
   mpn_toom3_interpolate (pp, v2, vm1, n, s + t, 1^vm1_neg, vinf0, scratch + 4 * n + 4);
 
