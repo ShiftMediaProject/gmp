@@ -1,13 +1,9 @@
 /* mpn_mul -- Multiply two natural numbers.
 
-   THE HELPER FUNCTIONS IN THIS FILE (meaning everything except mpn_mul)
-   ARE INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS ONLY SAFE TO REACH
-   THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED
-   THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
+   Contributed by Torbjorn Granlund.
 
-
-Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2005
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2005,
+2006 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -171,7 +167,7 @@ mpn_mul (mp_ptr prodp,
 	  prodp += 2 * vn;
 	}
   
-      if (un * 2 > vn * 3 + 8)
+      if (un * 4 > vn * 7 + 2)
 	{
 	  mpn_mul_toom42 (ws, up, un, vp, vn);
 	  cy = mpn_add_n (prodp, prodp, ws, vn);
@@ -187,9 +183,11 @@ mpn_mul (mp_ptr prodp,
 	}
       else
 	{
+	  /* FIXME: Should invoke a new mpn_mul_toom22 here, with code from the
+	     current mpn_kara_mul_n, but handling unbalanced operands.  */
 	  mpn_mul_n (ws, up, vp, vn);
 	  if (un != vn)
-	    ws[2*vn] = mpn_addmul_1 (ws + vn, vp, vn, up[vn]);
+	    ws[2 * vn] = mpn_addmul_1 (ws + vn, vp, vn, up[vn]);
 	  cy = mpn_add_n (prodp, prodp, ws, vn);
 	  MPN_COPY (prodp + vn, ws + vn, un);
 	  mpn_incr_u (prodp + vn, cy);
@@ -198,7 +196,7 @@ mpn_mul (mp_ptr prodp,
       return prodp[un + vn - 1];
     }
 
-  if (un * 2 > vn * 3 + 8)
+  if (un * 4 > vn * 7 + 2)
     mpn_mul_toom42 (prodp, up, un, vp, vn);
   else if (un > (vn+1)/2*2)
     mpn_mul_toom32 (prodp, up, un, vp, vn);
@@ -206,7 +204,7 @@ mpn_mul (mp_ptr prodp,
     {
       mpn_mul_n (prodp, up, vp, vn);
       if (un != vn)
-	prodp[2*vn] = mpn_addmul_1 (prodp + vn, vp, vn, up[vn]);
+	prodp[2 * vn] = mpn_addmul_1 (prodp + vn, vp, vn, up[vn]);
     }
   return prodp[un + vn - 1];
 }
