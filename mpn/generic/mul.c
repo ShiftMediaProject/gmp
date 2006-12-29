@@ -55,9 +55,12 @@ mpn_mul (mp_ptr prodp,
   ASSERT (! MPN_OVERLAP_P (prodp, un+vn, up, un));
   ASSERT (! MPN_OVERLAP_P (prodp, un+vn, vp, vn));
 
-  if (up == vp && un == vn)
+  if (un == vn)
     {
-      mpn_sqr_n (prodp, up, un);
+      if (up == vp)
+	mpn_sqr_n (prodp, up, un);
+      else
+	mpn_mul_n (prodp, up, vp, un);
       return prodp[2 * un - 1];
     }
 
@@ -141,8 +144,7 @@ mpn_mul (mp_ptr prodp,
       return prodp[un + vn - 1];
     }
 
-#define C42  (un >= 3 * vn)
-  if (C42)
+  if (un >= 3 * vn)
     {
       mp_ptr ws;
       mp_limb_t cy;
@@ -154,9 +156,9 @@ mpn_mul (mp_ptr prodp,
       prodp += 2 * vn;
 
       TMP_MARK;
-      ws = TMP_SALLOC_LIMBS (4 * vn + 10);		/* FIXME */
+      ws = TMP_SALLOC_LIMBS (4 * vn);		/* FIXME */
 
-      while (C42)
+      while (un >= 3 * vn)
 	{
 	  mpn_mul_toom42 (ws, up, 2 * vn, vp, vn);
 	  un -= 2 * vn;
@@ -167,14 +169,14 @@ mpn_mul (mp_ptr prodp,
 	  prodp += 2 * vn;
 	}
   
-      if (un * 4 > vn * 7 + 2)
+      if (5 * un > 9 * vn)
 	{
 	  mpn_mul_toom42 (ws, up, un, vp, vn);
 	  cy = mpn_add_n (prodp, prodp, ws, vn);
 	  MPN_COPY (prodp + vn, ws + vn, un);
 	  mpn_incr_u (prodp + vn, cy);
 	}
-      else if (un > (vn+1)/2*2)
+      else if (9 * un > 10 * vn)
 	{
 	  mpn_mul_toom32 (ws, up, un, vp, vn);
 	  cy = mpn_add_n (prodp, prodp, ws, vn);
@@ -183,11 +185,8 @@ mpn_mul (mp_ptr prodp,
 	}
       else
 	{
-	  /* FIXME: Should invoke a new mpn_mul_toom22 here, with code from the
-	     current mpn_kara_mul_n, but handling unbalanced operands.  */
-	  mpn_mul_n (ws, up, vp, vn);
-	  if (un != vn)
-	    ws[2 * vn] = mpn_addmul_1 (ws + vn, vp, vn, up[vn]);
+	  mp_ptr scratch = ws + (un + vn);
+	  mpn_mul_toom22 (ws, up, un, vp, vn, scratch);
 	  cy = mpn_add_n (prodp, prodp, ws, vn);
 	  MPN_COPY (prodp + vn, ws + vn, un);
 	  mpn_incr_u (prodp + vn, cy);
@@ -196,15 +195,17 @@ mpn_mul (mp_ptr prodp,
       return prodp[un + vn - 1];
     }
 
-  if (un * 4 > vn * 7 + 2)
+  if (un * 5 > vn * 9)
     mpn_mul_toom42 (prodp, up, un, vp, vn);
-  else if (un > (vn+1)/2*2)
+  else if (9 * un > 10 * vn)
     mpn_mul_toom32 (prodp, up, un, vp, vn);
   else
     {
-      mpn_mul_n (prodp, up, vp, vn);
-      if (un != vn)
-	prodp[2 * vn] = mpn_addmul_1 (prodp + vn, vp, vn, up[vn]);
+      TMP_DECL; TMP_MARK;
+      mp_ptr scratch = TMP_SALLOC_LIMBS (un + vn);
+      mpn_mul_toom22 (prodp, up, un, vp, vn, scratch);
+      TMP_FREE;
     }
+
   return prodp[un + vn - 1];
 }
