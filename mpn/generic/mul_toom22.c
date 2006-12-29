@@ -48,7 +48,7 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
 /*
   Evaluate in: -1, 0, +inf
 
-  <-s-><--n-->
+  <-s--><--n-->
    ____ ______
   |_a1_|___a0_|
    |b1_|___b0_|
