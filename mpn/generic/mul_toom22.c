@@ -70,7 +70,6 @@ mpn_mul_toom22 (mp_ptr pp,
   mp_limb_t cy, cy2;
   mp_ptr asm1;
   mp_ptr bsm1;
-  TMP_DECL;
 
 #define a0  ap
 #define a1  (ap + n)
@@ -84,8 +83,6 @@ mpn_mul_toom22 (mp_ptr pp,
 
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= s);
-
-  TMP_MARK;
 
   asm1 = pp;
   bsm1 = pp + n;
@@ -179,8 +176,6 @@ mpn_mul_toom22 (mp_ptr pp,
 
   mpn_incr_u (pp + 2 * n, cy2);
   mpn_incr_u (pp + 3 * n, cy);
-
-  TMP_FREE;
 }
 
 
