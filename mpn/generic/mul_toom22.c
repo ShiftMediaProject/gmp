@@ -30,15 +30,6 @@ the GNU MP Library; see the file COPYING.  If not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 
-/*
-  Things to work on:
-
-  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
-     avoided by instead reusing the pp area and the scratch allocation.
-
-  2. Apply optimizations also to mul_toom32.c.
-*/
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
