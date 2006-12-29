@@ -349,7 +349,7 @@ void
 __gmp_randclear_mt (gmp_randstate_t rstate)
 {
   (*__gmp_free_func) ((void *) RNG_STATE (rstate),
-		      sizeof (gmp_rand_mt_struct));
+		      ALLOC (rstate->_mp_seed) * BYTES_PER_MP_LIMB);
 }
 
 void __gmp_randiset_mt __GMP_PROTO ((gmp_randstate_ptr dst, gmp_randstate_srcptr src));
@@ -364,42 +364,44 @@ static const gmp_randfnptr_t Mersenne_Twister_Generator_Noseed = {
 void
 __gmp_randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
 {
+  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / BYTES_PER_MP_LIMB) + 1;
   gmp_rand_mt_struct *dstp, *srcp;
-  int  i;
+  mp_size_t i;
 
-  srcp = (gmp_rand_mt_struct *) RNG_STATE (src);
-  dstp = (*__gmp_allocate_func) (sizeof (gmp_rand_mt_struct));
-
-  RNG_STATE (dst) = (void *) dstp;
+  /* Set the generator functions.  */
   RNG_FNPTR (dst) = (void *) &Mersenne_Twister_Generator_Noseed;
 
+  /* Allocate the MT-specific state.  */
+  dstp = (gmp_rand_mt_struct *) __GMP_ALLOCATE_FUNC_LIMBS (sz);
+  RNG_STATE (dst) = (mp_ptr) dstp;
+  ALLOC (dst->_mp_seed) = sz;     /* Initialize alloc field to placate Camm.  */
+
+  /* Copy state.  */
+  srcp = (gmp_rand_mt_struct *) RNG_STATE (src);
   for (i = 0; i < N; i++)
     dstp->mt[i] = srcp->mt[i];
 
   dstp->mti = srcp->mti;
 }
 
-
-/* Initialize MT-specific data.  */
 void
-__gmp_randinit_mt_noseed (gmp_randstate_t rstate)
+__gmp_randinit_mt_noseed (gmp_randstate_ptr dst)
 {
-  int i;
-  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / sizeof(mp_limb_t)) + 1;
-  gmp_rand_mt_struct *p;
+  const mp_size_t sz = ((sizeof (gmp_rand_mt_struct) - 1) / BYTES_PER_MP_LIMB) + 1;
+  gmp_rand_mt_struct *dstp;
+  mp_size_t i;
 
   /* Set the generator functions.  */
-  RNG_FNPTR (rstate) = (void *) &Mersenne_Twister_Generator_Noseed;
+  RNG_FNPTR (dst) = (void *) &Mersenne_Twister_Generator_Noseed;
 
   /* Allocate the MT-specific state.  */
-
-  p = (gmp_rand_mt_struct *) __GMP_ALLOCATE_FUNC_LIMBS (sz);
-  RNG_STATE (rstate) = (mp_ptr) p;
-  ALLOC (rstate->_mp_seed) = sz;     /* Initialize alloc field to placate Camm.  */
+  dstp = (gmp_rand_mt_struct *) __GMP_ALLOCATE_FUNC_LIMBS (sz);
+  RNG_STATE (dst) = (mp_ptr) dstp;
+  ALLOC (dst->_mp_seed) = sz;     /* Initialize alloc field to placate Camm.  */
 
   /* Set state for default seed.  */
   for (i = 0; i < N; i++)
-    p->mt[i] = default_state[i];
+    dstp->mt[i] = default_state[i];
 
-  ((gmp_rand_mt_struct *) RNG_STATE (rstate))->mti = WARM_UP % N;
+  dstp->mti = WARM_UP % N;
 }
