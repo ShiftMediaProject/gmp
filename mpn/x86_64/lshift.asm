@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_lshift -- mpn left shift.
 
-dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,158 +23,204 @@ include(`../config.m4')
 
 
 C	    cycles/limb
-C K8:		2.375
+C K8:		2.375  (1.375 for cnt=1)
 C P4:		8
 C P6-15:	2.15
 
 
 C INPUT PARAMETERS
-C rp	rdi
-C up	rsi
-C n	rdx
-C cnt	rcx
-
-define(`rp',`%rdi')
-define(`up',`%rsi')
-define(`n',`%rdx')
+define(`rp',	`%rdi')
+define(`up',	`%rsi')
+define(`n',	`%rdx')
+define(`cnt',	`%rcx')
 
 ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_lshift)
-	negl	%ecx			C put rsh count in cl
-	movq	-8(up,n,8), %rax
-	shrq	%cl, %rax		C function return value
+	cmp	$1, %cl
+	jne	L(gen)
 
-	negl	%ecx			C put lsh count in cl
-	leal	1(n), %r8d
-	andl	$3, %r8d
+C For cnt=1 we want to work from lowest limb towards higher limbs.
+C Check for bad overlap (up=rp is OK!) up=1..rp+n-1 is bad.
+C FIXME: this could surely be done more cleverly.
+
+	mov    rp, %rax
+	sub    up, %rax
+	je     L(fwd)			C rp = up
+	shr    $3, %rax
+	cmp    n, %rax
+	jb     L(gen)
+
+L(fwd):	mov	n, %rax
+	shr	$2, n
+	je	L(e1)
+	and	$3, %eax
+
+	ALIGN(8)
+	nop
+	nop
+L(t1):	mov	(up), %r8
+	mov	8(up), %r9
+	mov	16(up), %r10
+	mov	24(up), %r11
+	lea	32(up), up
+	adc	%r8, %r8
+	mov	%r8, (rp)
+	adc	%r9, %r9
+	mov	%r9, 8(rp)
+	adc	%r10, %r10
+	mov	%r10, 16(rp)
+	adc	%r11, %r11
+	mov	%r11, 24(rp)
+	lea	32(rp), rp
+	dec	n	
+	jne	L(t1)
+
+	inc	%eax
+	dec	%eax
+	jne	L(n00)
+	adc	%eax, %eax
+	ret
+L(e1):	test	%eax, %eax			C clear cy
+L(n00):	mov	(up), %r8
+	dec	%eax
+	jne	L(n01)
+	adc	%r8, %r8
+	mov	%r8, (rp)
+L(ret):	adc	%eax, %eax
+	ret
+L(n01):	dec	%eax
+	jne	L(n10)
+	mov	8(up), %r9
+	adc	%r8, %r8
+	adc	%r9, %r9
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	adc	%eax, %eax
+	ret
+L(n10):	mov	8(up), %r9
+	mov	16(up), %r10
+	adc	%r8, %r8
+	adc	%r9, %r9
+	adc	%r10, %r10
+	dec	%eax
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	mov	%r10, 16(rp)
+	adc	%eax, %eax
+	ret
+
+L(gen):	neg	%ecx			C put rsh count in cl
+	mov	-8(up,n,8), %rax
+	shr	%cl, %rax		C function return value
+
+	neg	%ecx			C put lsh count in cl
+	lea	1(n), %r8d
+	and	$3, %r8d
 	je	.Lrolx			C jump for n = 3, 7, 11, ...
 
-	decl	%r8d
+	dec	%r8d
 	jne	.L1
 C	n = 4, 8, 12, ...
-	movq	-8(up,n,8), %r10
-	shlq	%cl, %r10
-	negl	%ecx			C put rsh count in cl
-	movq	-16(up,n,8), %r8
-	shrq	%cl, %r8
-	orq	%r8, %r10
-	movq	%r10, -8(rp,n,8)
-	decq	n
+	mov	-8(up,n,8), %r10
+	shl	%cl, %r10
+	neg	%ecx			C put rsh count in cl
+	mov	-16(up,n,8), %r8
+	shr	%cl, %r8
+	or	%r8, %r10
+	mov	%r10, -8(rp,n,8)
+	dec	n
 	jmp	.Lroll
 
-.L1:	decl	%r8d
+.L1:	dec	%r8d
 	je	.L1x			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
-	movq	-8(up,n,8), %r10
-	shlq	%cl, %r10
-	negl	%ecx			C put rsh count in cl
-	movq	-16(up,n,8), %r8
-	shrq	%cl, %r8
-	orq	%r8, %r10
-	movq	%r10, -8(rp,n,8)
-	decq	n
-	negl	%ecx			C put lsh count in cl
+	mov	-8(up,n,8), %r10
+	shl	%cl, %r10
+	neg	%ecx			C put rsh count in cl
+	mov	-16(up,n,8), %r8
+	shr	%cl, %r8
+	or	%r8, %r10
+	mov	%r10, -8(rp,n,8)
+	dec	n
+	neg	%ecx			C put lsh count in cl
 .L1x:
-	cmpq	$1, n
+	cmp	$1, n
 	je	.Last
-	movq	-8(up,n,8), %r10
-	shlq	%cl, %r10
-	movq	-16(up,n,8), %r11
-	shlq	%cl, %r11
-	negl	%ecx			C put rsh count in cl
-	movq	-16(up,n,8), %r8
-	movq	-24(up,n,8), %r9
-	shrq	%cl, %r8
-	orq	%r8, %r10
-	shrq	%cl, %r9
-	orq	%r9, %r11
-	movq	%r10, -8(rp,n,8)
-	movq	%r11, -16(rp,n,8)
-	subq	$2, n
+	mov	-8(up,n,8), %r10
+	shl	%cl, %r10
+	mov	-16(up,n,8), %r11
+	shl	%cl, %r11
+	neg	%ecx			C put rsh count in cl
+	mov	-16(up,n,8), %r8
+	mov	-24(up,n,8), %r9
+	shr	%cl, %r8
+	or	%r8, %r10
+	shr	%cl, %r9
+	or	%r9, %r11
+	mov	%r10, -8(rp,n,8)
+	mov	%r11, -16(rp,n,8)
+	sub	$2, n
 
-.Lroll:	negl	%ecx			C put lsh count in cl
-.Lrolx:	movq	-8(up,n,8), %r10
-	shlq	%cl, %r10
-	movq	-16(up,n,8), %r11
-	shlq	%cl, %r11
+.Lroll:	neg	%ecx			C put lsh count in cl
+.Lrolx:	mov	-8(up,n,8), %r10
+	shl	%cl, %r10
+	mov	-16(up,n,8), %r11
+	shl	%cl, %r11
 
-	subq	$4, n			C				      4
+	sub	$4, n			C				      4
 	jb	.Lend			C				      2
 	ALIGN(16)
 .Loop:
 	C finish stuff from lsh block
-	negl	%ecx			C put rsh count in cl
-	movq	16(up,n,8), %r8
-	movq	8(up,n,8), %r9
-	shrq	%cl, %r8
-	orq	%r8, %r10
-	shrq	%cl, %r9
-	orq	%r9, %r11
-	movq	%r10, 24(rp,n,8)
-	movq	%r11, 16(rp,n,8)
+	neg	%ecx			C put rsh count in cl
+	mov	16(up,n,8), %r8
+	mov	8(up,n,8), %r9
+	shr	%cl, %r8
+	or	%r8, %r10
+	shr	%cl, %r9
+	or	%r9, %r11
+	mov	%r10, 24(rp,n,8)
+	mov	%r11, 16(rp,n,8)
 	C start two new rsh
-	movq	0(up,n,8), %r8
-	movq	-8(up,n,8), %r9
-	shrq	%cl, %r8
-	shrq	%cl, %r9
+	mov	0(up,n,8), %r8
+	mov	-8(up,n,8), %r9
+	shr	%cl, %r8
+	shr	%cl, %r9
 
 	C finish stuff from rsh block
-	negl	%ecx			C put lsh count in cl
-	movq	8(up,n,8), %r10
-	movq	0(up,n,8), %r11
-	shlq	%cl, %r10
-	orq	%r10, %r8
-	shlq	%cl, %r11
-	orq	%r11, %r9
-	movq	%r8, 8(rp,n,8)
-	movq	%r9, 0(rp,n,8)
+	neg	%ecx			C put lsh count in cl
+	mov	8(up,n,8), %r10
+	mov	0(up,n,8), %r11
+	shl	%cl, %r10
+	or	%r10, %r8
+	shl	%cl, %r11
+	or	%r11, %r9
+	mov	%r8, 8(rp,n,8)
+	mov	%r9, 0(rp,n,8)
 	C start two new lsh
-	movq	-8(up,n,8), %r10
-	movq	-16(up,n,8), %r11
-	shlq	%cl, %r10
-	shlq	%cl, %r11
+	mov	-8(up,n,8), %r10
+	mov	-16(up,n,8), %r11
+	shl	%cl, %r10
+	shl	%cl, %r11
 
-	subq	$4, n
+	sub	$4, n
 	jae	.Loop			C				      2
 .Lend:
-	negl	%ecx			C put rsh count in cl
-	movq	16(up,n,8), %r8
-	shrq	%cl, %r8
-	orq	%r8, %r10
-	movq	8(up,n,8), %r9
-	shrq	%cl, %r9
-	orq	%r9, %r11
-	movq	%r10, 24(rp,n,8)
-	movq	%r11, 16(rp,n,8)
+	neg	%ecx			C put rsh count in cl
+	mov	16(up,n,8), %r8
+	shr	%cl, %r8
+	or	%r8, %r10
+	mov	8(up,n,8), %r9
+	shr	%cl, %r9
+	or	%r9, %r11
+	mov	%r10, 24(rp,n,8)
+	mov	%r11, 16(rp,n,8)
 
-	negl	%ecx			C put lsh count in cl
-.Last:	movq	(up), %r10
-	shlq	%cl, %r10
-	movq	%r10, (rp)
+	neg	%ecx			C put lsh count in cl
+.Last:	mov	(up), %r10
+	shl	%cl, %r10
+	mov	%r10, (rp)
 	ret
 EPILOGUE()
-C Special for cnt = 1.  Could reach 1 c/l.
-C
-C	movq	(up), %r8
-C	movq	-8(up), %r9
-C	movq	-16(up), %r10
-C	movq	-24(up), %r11
-C	adcq
-C	adcq
-C	adcq
-C	adcq
-C	movq
-C	movq
-C	movq
-C	movq
-C
-C	decq
-C	bne	.Loop
-C
-C Special for cnt = 1.  Needs 2 c/l.  No win.
-C	rclq	$1,    (up)
-C	rclq	$1,  -8(up)
-C	rclq	$1, -16(up)
-C	rclq	$1, -24(up)
