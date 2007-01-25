@@ -1,7 +1,6 @@
-dnl  x86 mpn_lshift -- mpn left shift.
+dnl  x86-64 mpn_lshift optimized for "Core 2".
 
-dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001, 2002, 2006 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -24,55 +23,106 @@ include(`../config.m4')
 
 
 C	    cycles/limb
-C K8:		4.5
-C P4:	       16
-C P6-15:	1.75
-
-C This code was created from the generic x86 code, with minor improvements.
-C With more unrolling, it should be possible to approach 1 cycle/limb on P6-15.
+C K8:		4.3
+C P4:	       14.7
+C P6-15:	1.27
 
 
 C INPUT PARAMETERS
-C rp    rdi
-C up    rsi
-C n     rdx
-C cnt   rcx
+define(`rp',	`%rdi')
+define(`up',	`%rsi')
+define(`n',	`%rdx')
+define(`cnt',	`%cl')
 
 ASM_START()
 	TEXT
-	ALIGN(8)
+	ALIGN(16)
 PROLOGUE(mpn_lshift)
+	lea	-8(rp,n,8), rp
+	lea	-8(up,n,8), up
 
-	sub	$8, %rsi		C adjust src
+	mov	%edx, %eax
+	and	$3, %eax
+	jne	L(nb00)
+L(b00):	C n = 4, 8, 12, ...
+	mov	(up), %r10
+	mov	-8(up), %r11
+	xor	%eax, %eax
+	shld	%cl, %r10, %rax
+	mov	-16(up), %r8
+	lea	24(rp), rp
+	sub	$4, n
+	jmp	L(00)
 
-	mov	(%rsi,%rdx,8), %r8	C read most significant limb
-	xorl	%eax, %eax
-	shld	%cl, %r8, %rax		C compute carry limb
-	dec	%rdx
-	jz	L(end)
-	testb	$1, %dl
-	jz	L(1)			C enter loop in the middle
-	inc	%rdx
-	jmp	L(mid)
+L(nb00):C n = 1, 5, 9, ...
+	cmp	$2, %eax
+	jae	L(nb01)
+L(b01):	mov	(up), %r9
+	xor	%eax, %eax
+	shld	%cl, %r9, %rax
+	sub	$2, n
+	jb	L(le1)
+	mov	-8(up), %r10
+	mov	-16(up), %r11
+	lea	-8(up), up
+	lea	16(rp), rp
+	jmp	L(01)
+L(le1):	shl	%cl, %r9
+	mov	%r9, (rp)
+	ret
 
-L(1):	mov	%r8, %r9
+L(nb01):C n = 2, 6, 10, ...
+	jne	L(b11)
+L(b10):	mov	(up), %r8
+	mov	-8(up), %r9
+	xor	%eax, %eax
+	shld	%cl, %r8, %rax
+	sub	$3, n
+	jb	L(le2)
+	mov	-16(up), %r10
+	lea	-16(up), up
+	lea	8(rp), rp
+	jmp	L(10)
+L(le2):	shld	%cl, %r9, %r8
+	mov	%r8, (rp)
+	shl	%cl, %r9
+	mov	%r9, -8(rp)
+	ret
 
-	ALIGN(8)
-L(top):	mov	(%rsi,%rdx,8), %r8	C load next lower limb
-	shld	%cl, %r8, %r9		C compute result limb
-	mov	%r9, (%rdi,%rdx,8)	C store it
-L(mid):	mov	-8(%rsi,%rdx,8), %r9
+	ALIGN(16)			C performance critical!
+L(b11):	C n = 3, 7, 11, ...
+	mov	(up), %r11
+	mov	-8(up), %r8
+	xor	%eax, %eax
+	shld	%cl, %r11, %rax
+	mov	-16(up), %r9
+	lea	-24(up), up
+	sub	$4, n
+	jb	L(end)
+
+	ALIGN(16)
+L(top):	shld	%cl, %r8, %r11
+	mov	(up), %r10
+	mov	%r11, (rp)
+L(10):	shld	%cl, %r9, %r8
+	mov	-8(up), %r11
+	mov	%r8, -8(rp)
+L(01):	shld	%cl, %r10, %r9
+	mov	-16(up), %r8
+	mov	%r9, -16(rp)
+L(00):	shld	%cl, %r11, %r10
+	mov	-24(up), %r9
+	lea	-32(up), up
+	mov	%r10, -24(rp)
+	lea	-32(rp), rp
+	sub	$4, n
+	jnc	L(top)
+
+L(end):	shld	%cl, %r8, %r11
+	mov	%r11, (rp)
 	shld	%cl, %r9, %r8
-	mov	%r8, -8(%rdi,%rdx,8)
-	sub	$2, %rdx
-	jnz	L(top)
-
-	shl	%cl, %r9		C compute least significant limb
-	mov	%r9, (%rdi)		C store it
+	mov	%r8, -8(rp)
+	shl	%cl, %r9
+	mov	%r9, -16(rp)
 	ret
-
-L(end):	shl	%cl, %r8		C compute least significant limb
-	mov	%r8, (%rdi)		C store it
-	ret
-
 EPILOGUE()
