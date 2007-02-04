@@ -37,8 +37,8 @@ C P6 model 9   (Banias)         ?
 C P6 model 13  (Dothan)         5.24
 C P6 model 14  (Yonah)          ?
 C P4 model 0-1 (Willamette):    5
-C P4 model 2   (Northwood):     5
-C P4 model 3-4 (Prescott):      5
+C P4 model 2   (Northwood):     4.60 at 32 limbs
+C P4 model 3-4 (Prescott):      4.94 at 32 limbs
 
 C INPUT PARAMETERS
 C rp		sp + 4
