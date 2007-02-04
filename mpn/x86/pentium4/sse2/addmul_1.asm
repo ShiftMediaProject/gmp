@@ -1,135 +1,184 @@
-dnl  Intel Pentium-4 mpn_addmul_1 -- Multiply a limb vector with a limb and add
-dnl  the result to a second limb vector.
+dnl  mpn_addmul_1 for Pentium 4 and P6 models with SSE2 (i.e., 9,D,E,F).
 
-dnl  Copyright 2001, 2002, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2005, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
-dnl  The GNU MP Library is free software; you can redistribute it and/or
-dnl  modify it under the terms of the GNU Lesser General Public License as
-dnl  published by the Free Software Foundation; either version 2.1 of the
-dnl  License, or (at your option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 dnl
-dnl  The GNU MP Library is distributed in the hope that it will be useful,
-dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl  Lesser General Public License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 dnl
-dnl  You should have received a copy of the GNU Lesser General Public
-dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
-dnl  not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-dnl  Fifth Floor, Boston, MA 02110-1301, USA.
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C TODO:
+C  * Tweak eax/edx offsets in loop as to save some lea's
+C  * Perhaps software pipeline small-case code
 
-C P3 model 9  (Banias)          ?.?
-C P3 model 13 (Dothan)          5.8
-C P4 model 0  (Willamette)      5.5
-C P4 model 1  (?)               5.5
-C P4 model 2  (Northwood)       5.5
-C P4 model 3  (Prescott)        6.0
-C P4 model 4  (Nocona)
+C                           cycles/limb
+C P6 model 0-8,10-12)           -
+C P6 model 9   (Banias)         ?
+C P6 model 13  (Dothan)         5.24
+C P4 model 0-1 (Willamette):    5
+C P4 model 2   (Northwood):     5
+C P4 model 3-4 (Prescott):      5
 
-C mp_limb_t mpn_addmul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                         mp_limb_t multiplier);
-C mp_limb_t mpn_addmul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                          mp_limb_t multiplier, mp_limb_t carry);
-C
-C Only the carry limb propagation is on the dependent chain, but some other
-C Pentium4 pipeline magic brings down performance to 6 cycles/l from the
-C ideal 4 cycles/l.
-
-defframe(PARAM_CARRY,     20)
-defframe(PARAM_MULTIPLIER,16)
-defframe(PARAM_SIZE,      12)
-defframe(PARAM_SRC,       8)
-defframe(PARAM_DST,       4)
+C INPUT PARAMETERS
+C rp		sp + 4
+C up		sp + 8
+C n		sp + 12
+C v0		sp + 16
 
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_addmul_1c)
-deflit(`FRAME',0)
-	movd	PARAM_CARRY, %mm4
-	jmp	L(start_1c)
+	mov	4(%esp), %edx
+	mov	8(%esp), %eax
+	mov	12(%esp), %ecx
+	movd	16(%esp), %mm7
+	movd	20(%esp), %mm6
+	jmp	.Lent
 EPILOGUE()
-
+	ALIGN(16)
 PROLOGUE(mpn_addmul_1)
-deflit(`FRAME',0)
-	pxor	%mm4, %mm4
-L(start_1c):
-	movl	PARAM_SRC, %eax
-	movl	PARAM_SIZE, %ecx
-	movl	PARAM_DST, %edx
-	movd	PARAM_MULTIPLIER, %mm7
+	mov	4(%esp), %edx
+	mov	8(%esp), %eax
+	mov	12(%esp), %ecx
+	movd	16(%esp), %mm7
+	pxor	%mm6, %mm6
+.Lent:	cmp	$4, %ecx
+	jnc	.Large
 
-	C eax	src, incrementing
-	C ecx	loop counter, decrementing
-	C edx	dst, incrementing
-	C
-	C mm4	carry, low 32-bits
-	C mm7	multiplier
-
-	movd		(%eax), %mm2	C ul = up[i]
-	pmuludq		%mm7, %mm2
-
-	shrl	$1, %ecx
-	jnc	L(even)
-
-	leal		4(%eax), %eax
-	movd		(%edx), %mm1
-	paddq		%mm2, %mm1
-	paddq		%mm1, %mm4
-	movd		%mm4, (%edx)
-	psrlq		$32, %mm4
-
-	testl	%ecx, %ecx
-	jz	L(rtn)
-	leal	4(%edx), %edx
-
-	movd		(%eax), %mm2	C ul = up[i]
-	pmuludq		%mm7, %mm2
-L(even):
-	movd		4(%eax), %mm0	C ul = up[i]
-	movd		(%edx), %mm1	C rl = rp[0]
-	pmuludq		%mm7, %mm0
-
-	subl	$1, %ecx
-	jz	L(end)
-L(loop):
-	paddq		%mm2, %mm1	C rl += prod
-	movd		8(%eax), %mm2	C ul = up[i]
-	paddq		%mm1, %mm4	C mm4 = prod + cy
-	movd		4(%edx), %mm3	C rl = rp[0]
-	pmuludq		%mm7, %mm2
-	movd		%mm4, (%edx)
-	psrlq		$32, %mm4
-
-	paddq		%mm0, %mm3	C rl += prod
-	movd		12(%eax), %mm0	C ul = up[i]
-	paddq		%mm3, %mm4	C mm4 = prod + cy
-	movd		8(%edx), %mm1	C rl = rp[0]
-	pmuludq		%mm7, %mm0
-	movd		%mm4, 4(%edx)
-	psrlq		$32, %mm4
-
-	leal	8(%eax), %eax
-	leal	8(%edx), %edx
-	subl	$1, %ecx
-	jnz	L(loop)
-L(end):
-	paddq		%mm2, %mm1	C rl += prod
-	paddq		%mm1, %mm4	C mm4 = prod + cy
-	movd		4(%edx), %mm3	C rl = rp[0]
-	movd		%mm4, (%edx)
-	psrlq		$32, %mm4
-	paddq		%mm0, %mm3	C rl += prod
-	paddq		%mm3, %mm4	C mm4 = prod + cy
-	movd		%mm4, 4(%edx)
-	psrlq		$32, %mm4
-L(rtn):
-	movd	%mm4, %eax
+.Llp0:	movd	(%eax), %mm0
+	lea	4(%eax), %eax
+	movd	(%edx), %mm4
+	lea	4(%edx), %edx
+	pmuludq	%mm7, %mm0
+	paddq	%mm0, %mm4
+	paddq	%mm4, %mm6
+	movd	%mm6, -4(%edx)
+	psrlq	$32, %mm6
+	dec	%ecx
+	jnz	.Llp0
+	movd	%mm6, %eax
 	emms
 	ret
 
+.Large:	and	$3, %ecx
+	je	.L0
+	cmp	$2, %ecx
+	jc	.L1
+	je	.L2
+	jmp	.L3			C FIXME: one case should fall through
+
+.L0:	movd	(%eax), %mm3
+	sub	12(%esp), %ecx		C loop count
+	lea	-16(%eax), %eax
+	lea	-12(%edx), %edx
+	pmuludq	%mm7, %mm3
+	movd	20(%eax), %mm0
+	movd	12(%edx), %mm5
+	pmuludq	%mm7, %mm0
+	movd	24(%eax), %mm1
+	paddq	%mm3, %mm5
+	movd	16(%edx), %mm4
+	jmp	.L00
+
+.L1:	movd	(%eax), %mm2
+	sub	12(%esp), %ecx
+	lea	-12(%eax), %eax
+	lea	-8(%edx), %edx
+	movd	8(%edx), %mm4
+	pmuludq	%mm7, %mm2
+	movd	16(%eax), %mm3
+	pmuludq	%mm7, %mm3
+	movd	20(%eax), %mm0
+	paddq	%mm2, %mm4
+	movd	12(%edx), %mm5
+	jmp	.L01
+
+.L2:	movd	(%eax), %mm1
+	sub	12(%esp), %ecx
+	lea	-8(%eax), %eax
+	lea	-4(%edx), %edx
+	pmuludq	%mm7, %mm1
+	movd	12(%eax), %mm2
+	movd	4(%edx), %mm5
+	pmuludq	%mm7, %mm2
+	movd	16(%eax), %mm3
+	paddq	%mm1, %mm5
+	movd	8(%edx), %mm4
+	jmp	.L10
+
+.L3:	movd	(%eax), %mm0
+	sub	12(%esp), %ecx
+	lea	-4(%eax), %eax
+	pmuludq	%mm7, %mm0
+	movd	8(%eax), %mm1
+	movd	(%edx), %mm4
+	pmuludq	%mm7, %mm1
+	movd	12(%eax), %mm2
+	paddq	%mm0, %mm4
+	movd	4(%edx), %mm5
+
+	ALIGN(16)
+.Loop:	pmuludq	%mm7, %mm2
+	paddq	%mm4, %mm6
+	movd	16(%eax), %mm3
+	paddq	%mm1, %mm5
+	movd	8(%edx), %mm4
+	movd	%mm6, 0(%edx)
+	psrlq	$32, %mm6
+.L10:	pmuludq	%mm7, %mm3
+	paddq	%mm5, %mm6
+	movd	20(%eax), %mm0
+	paddq	%mm2, %mm4
+	movd	12(%edx), %mm5
+	movd	%mm6, 4(%edx)
+	psrlq	$32, %mm6
+.L01:	pmuludq	%mm7, %mm0
+	paddq	%mm4, %mm6
+	movd	24(%eax), %mm1
+	paddq	%mm3, %mm5
+	movd	16(%edx), %mm4
+	movd	%mm6, 8(%edx)
+	psrlq	$32, %mm6
+.L00:	pmuludq	%mm7, %mm1
+	paddq	%mm5, %mm6
+	movd	28(%eax), %mm2
+	paddq	%mm0, %mm4
+	movd	20(%edx), %mm5
+	movd	%mm6, 12(%edx)
+	psrlq	$32, %mm6
+	lea	16(%eax), %eax
+	lea	16(%edx), %edx
+	add	$4, %ecx
+	jnz	.Loop
+
+.Lend:	pmuludq	%mm7, %mm2
+	paddq	%mm4, %mm6
+	paddq	%mm1, %mm5
+	movd	8(%edx), %mm4
+	movd	%mm6, 0(%edx)
+	psrlq	$32, %mm6
+	paddq	%mm5, %mm6
+	paddq	%mm2, %mm4
+	movd	%mm6, 4(%edx)
+	psrlq	$32, %mm6
+	paddq	%mm4, %mm6
+	movd	%mm6, 8(%edx)
+	psrlq	$32, %mm6
+	movd	%mm6, %eax
+	emms
+	ret
 EPILOGUE()
