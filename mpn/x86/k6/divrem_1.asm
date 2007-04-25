@@ -34,7 +34,7 @@ C
 C The code here is basically the same as mpn/x86/divrem_1.asm, but uses loop
 C instead of decl+jnz, since it comes out 2 cycles/limb faster.
 C
-C A test is done to see if the high limb is less the the divisor, and if so
+C A test is done to see if the high limb is less than the divisor, and if so
 C one less div is done.  A div is 20 cycles, so assuming high<divisor about
 C half the time, then this test saves half that amount.  The branch
 C misprediction penalty is less than that.

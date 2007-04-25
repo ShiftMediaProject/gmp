@@ -39,7 +39,7 @@ step (const char **sp, int n)
 {
   ASSERT (n >= 0);
 
-  /* shouldn't push us past the the end of the string */
+  /* shouldn't push us past the end of the string */
 #if WANT_ASSERT
   {
     int  i;

@@ -204,7 +204,7 @@ To cleanup to the state before configure you execute the output from
 
         % make clean
 
-To remove the the resulting library as well you do
+To remove the resulting library as well you do
 
         % make distclean
 
@@ -240,4 +240,4 @@ remove files from the Unix side while MPW is running. MPW cache
 information about what the file system looks like and gets very
 confused or crash.
 
-Kent Boortz <kent@swox.se>
+Kent Boortz

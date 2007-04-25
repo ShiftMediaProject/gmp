@@ -40,7 +40,7 @@ C mpn/generic/mod_1.c, but has the advantage that we get the desired divl
 C instruction even when gcc is not being used (where longlong.h only has the
 C rather slow generic C udiv_qrnnd().
 C
-C A test is done to see if the high limb is less the the divisor, and if so
+C A test is done to see if the high limb is less than the divisor, and if so
 C one less div is done.  A div is between 20 and 40 cycles on the various
 C x86s, so assuming high<divisor about half the time, then this test saves
 C half that amount.  The branch misprediction penalty on each chip is less
