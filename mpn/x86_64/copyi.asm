@@ -58,17 +58,17 @@ PROLOGUE(mpn_copyi)
 	movq	%r11, (rp)
 	jnc	.Loop
 
-.Lend:	shrl	$1, %edx		C edx = lowart(n)
+.Lend:	shrl	%edx			C edx = lowpart(n)
 	jnc	1f
 	movq	(up), %r8
 	movq	%r8, 8(rp)
 	leaq	8(rp), rp
 	leaq	8(up), up
-1:	shrl	$1, %edx		C edx = lowart(n)
+1:	shrl	%edx			C edx = lowpart(n)
 	jnc	1f
 	movq	(up), %r8
 	movq	8(up), %r9
 	movq	%r8, 8(rp)
 	movq	%r9, 16(rp)
-1:	ret				C				1
+1:	ret
 EPILOGUE()
