@@ -79,23 +79,23 @@ define(`n',	`%r11')
 	adc	%rax, %r9
 	mov	-16(up,n,8), %rax
 	adc	%rdx, %r8
-
 	mul	vl
+
 	ADDSUB	%r9 , -32(rp,n,8)
 	mov	$0  , %r9
 	adc	%rax, %r8
 	nop
 	mov	-8(up,n,8), %rax
 	adc	%rdx, %r9
-
 	mul	vl
+
 	ADDSUB	%r8 , -24(rp,n,8)
 	mov	$0  , %r8
 	adc	%rax, %r9
 	mov	(up,n,8), %rax
 	adc	%rdx, %r8
-
 	mul	vl
+
 	ADDSUB	%r9 , -16(rp,n,8)
 	mov	$0  , %r9
 	adc	%rax, %r8
