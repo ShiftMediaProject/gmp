@@ -89,7 +89,7 @@ PROLOGUE(func)
  HAM(`	xorq	(vp,n,8), %r8	')
 
 	movq	%r8, %r9
-	shrq	$1, %r8
+	shrq	%r8
 	andq	h55555555, %r8
 	subq	%r8, %r9
 
@@ -120,8 +120,8 @@ PROLOGUE(func)
 
 	movq	%r8, %r9
 	movq	%r12, %r13
-	shrq	$1, %r8
-	shrq	$1, %r12
+	shrq	%r8
+	shrq	%r12
 	andq	h55555555, %r8
 	andq	h55555555, %r12
 	subq	%r8, %r9
