@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 dnl  store difference in a third limb vector.
 
-dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,7 +24,7 @@ include(`../config.m4')
 
 
 C	    cycles/limb
-C K8:		1.7
+C K8:		1.69
 C P4:		11
 C P6-15:	5.0
 
