@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_mul_1 -- Multiply a limb vector with a limb and store the
 dnl  result in a second limb vector.
 
-dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,8 +22,7 @@ dnl  Boston, MA 02110-1301, USA.
 
 include(`../config.m4')
 
-
-C	    cycles/limb
+C	     cycles/limb
 C K8:		 3
 C P4:		12.6
 C P6-15:	 4.1
