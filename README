@@ -1,4 +1,4 @@
-Copyright 1991, 1996, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1996, 1999, 2000, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -79,8 +79,8 @@ There are five classes of functions in GNU MP.
     using the GNU version by testing if the symbol __GNU_MP__ is defined.
 
 For more information on how to use GNU MP, please refer to the documentation.
-It is composed from the file gmp.texi, and can be displayed on the screen or
-printed.  How to do that, as well how to build the library, is described in
+It is composed from the file doc/gmp.texi, and can be displayed on the screen
+or printed.  How to do that, as well how to build the library, is described in
 the INSTALL file in this directory.
 
 
@@ -89,13 +89,13 @@ the INSTALL file in this directory.
 
 If you find a bug in the library, please make sure to tell us about it!
 
-You should first check the GNU MP web pages at http://www.swox.com/gmp/,
-under "Status of the current release".  There will be patches for all known
-serious bugs there.
+You should first check the GNU MP web pages at http://gmplib.org/, under
+"Status of the current release".  There will be patches for all known serious
+bugs there.
 
-Report bugs to bug-gmp@gnu.org.  What information is needed in a good bug
-report is described in the manual.  The same address can be used for
-suggesting modifications and enhancements.
+Report bugs to gmp-bugs@swox.com.  What information is needed in a useful bug
+report is described in the manual.  The same address can be used for suggesting
+modifications and enhancements.
 
 
 
