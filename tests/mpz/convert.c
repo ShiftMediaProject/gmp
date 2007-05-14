@@ -1,6 +1,6 @@
 /* Test conversion using mpz_get_str and mpz_set_str.
 
-Copyright 1993, 1994, 1996, 1999, 2000, 2001, 2002, 2006 Free Software
+Copyright 1993, 1994, 1996, 1999, 2000, 2001, 2002, 2006, 2007 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -30,6 +30,36 @@ MA 02110-1301, USA. */
 
 void debug_mp _PROTO ((mpz_t, int));
 
+
+void
+string_urandomb (char *bp, size_t len, int base, gmp_randstate_ptr rands)
+{
+  mpz_t bs;
+  unsigned long bsi;
+  int d, l;
+  char *collseq = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+  mpz_init (bs);
+
+  while (len != 0)
+    {
+      mpz_urandomb (bs, rands, 32);
+      bsi = mpz_get_ui (bs);
+
+      d = (bsi & 0xffff) % base;
+      l = (bsi >> 16) % 20;
+      l = MIN (l, len);
+
+      memset (bp, collseq[d], l);
+
+      len -= l;
+      bp += l;
+    }
+
+  bp[0] = '\0';
+  mpz_clear (bs);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -37,11 +67,12 @@ main (int argc, char **argv)
   mp_size_t size;
   int i;
   int reps = 2000;
-  char *str, *buf;
+  char *str, *buf, *bp;
   int base;
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
+  size_t len;
 
   tests_start ();
   rands = RANDS;
@@ -90,21 +121,26 @@ main (int argc, char **argv)
 
       (*__gmp_free_func) (str, strlen (str) + 1);
 
-#if 0
       /* 2. Generate random string and convert to mpz_t and back to a string
 	 again.  */
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % 10 + 2;	/* 2..11 */
       mpz_urandomb (bs, rands, size_range);	/* 3..2047 bits */
-      len = mpz_get_ui (bs);
+      len = mpz_get_ui (bs) + 1;
       buf = (*__gmp_allocate_func) (len + 1);
-      string_urandomb (buf, len, base);
+      if (base == 0)
+	base = 10;
+      string_urandomb (buf, len, base, rands);
       mpz_set_str_or_abort (op1, buf, base);
       str = mpz_get_str ((char *) 0, base, op1);
 
-      if (strcmp (str, buf) != 0)
+      /* Skip over leading zeros, but don't leave the string at zero length. */
+      for (bp = buf; bp[0] == '0' && bp[1] != '\0'; bp++)
+	;
+
+      if (strcasecmp (str, bp) != 0)
 	{
-	  fprintf (stderr, "ERROR, str and buf different\n");
+	  fprintf (stderr, "ERROR, str and buf different in test %d\n", i);
 	  fprintf (stderr, "str  = %s\n", str);
 	  fprintf (stderr, "buf  = %s\n", buf);
 	  fprintf (stderr, "base = %d\n", base);
@@ -114,7 +150,6 @@ main (int argc, char **argv)
 
       (*__gmp_free_func) (buf, len + 1);
       (*__gmp_free_func) (str, strlen (str) + 1);
-#endif
     }
 
   mpz_clear (bs);
