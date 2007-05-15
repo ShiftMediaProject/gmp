@@ -1,6 +1,6 @@
 /* Memory allocation used during tests.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,10 +20,18 @@ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA. */
 
 #include <stdio.h>
-#include <stdlib.h>  /* for abort */
+#include <stdlib.h>		/* for abort */
+#include <string.h>		/* for memcpy, memcmp */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if GMP_LIMB_BITS == 64
+#define PATTERN1 CNST_LIMB(0xcafebabedeadbeef)
+#define PATTERN2 CNST_LIMB(0xabacadabaedeedab)
+#else
+#define PATTERN1 CNST_LIMB(0xcafebabe)
+#define PATTERN2 CNST_LIMB(0xdeadbeef)
+#endif
 
 /* Each block allocated is a separate malloc, for the benefit of a redzoning
    malloc debugger during development or when bug hunting.
@@ -68,10 +76,12 @@ void *
 tests_allocate (size_t size)
 {
   struct header  *h;
+  void *rptr, *ptr;
+  mp_limb_t PATTERN2_var;
 
   if (size == 0)
     {
-      printf ("tests_allocate(): attempt to allocate 0 bytes\n");
+      fprintf (stderr, "tests_allocate(): attempt to allocate 0 bytes\n");
       abort ();
     }
 
@@ -79,8 +89,16 @@ tests_allocate (size_t size)
   h->next = tests_memory_list;
   tests_memory_list = h;
 
+  rptr = __gmp_default_allocate (size + 2 * sizeof (mp_limb_t));
+  ptr = (void *) ((long) rptr + sizeof (mp_limb_t));
+
+  *((mp_limb_t *) ((long) ptr - sizeof (mp_limb_t)))
+    = PATTERN1 - ((mp_limb_t) ptr);
+  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+  memcpy ((mp_limb_t *) ((long) ptr + size), &PATTERN2_var, sizeof (mp_limb_t));
+
   h->size = size;
-  h->ptr = __gmp_default_allocate (size);
+  h->ptr = ptr;
   return h->ptr;
 }
 
@@ -88,32 +106,57 @@ void *
 tests_reallocate (void *ptr, size_t old_size, size_t new_size)
 {
   struct header  **hp, *h;
+  void *rptr;
+  mp_limb_t PATTERN2_var;
 
   if (new_size == 0)
     {
-      printf ("tests_reallocate(): attempt to reallocate 0x%lX to 0 bytes\n",
-              (unsigned long) ptr);
+      fprintf (stderr, "tests_reallocate(): attempt to reallocate 0x%lX to 0 bytes\n",
+	       (unsigned long) ptr);
       abort ();
     }
 
   hp = tests_memory_find (ptr);
   if (hp == NULL)
     {
-      printf ("tests_reallocate(): attempt to reallocate bad pointer 0x%lX\n",
-              (unsigned long) ptr);
+      fprintf (stderr, "tests_reallocate(): attempt to reallocate bad pointer 0x%lX\n",
+	       (unsigned long) ptr);
       abort ();
     }
   h = *hp;
 
   if (h->size != old_size)
     {
-      printf ("tests_reallocate(): bad old size %u, should be %u\n",
-              old_size, h->size);
+      fprintf (stderr, "tests_reallocate(): bad old size %lu, should be %lu\n",
+	       (unsigned long) old_size, (unsigned long) h->size);
       abort ();
     }
 
+  if (*((mp_limb_t *) ((long) ptr - sizeof (mp_limb_t)))
+      != PATTERN1 - ((mp_limb_t) ptr))
+    {
+      fprintf (stderr, "in realloc: redzone clobbered before block\n");
+      abort ();
+    }
+  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+  if (memcmp ((mp_limb_t *) ((long) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
+    {
+      fprintf (stderr, "in realloc: redzone clobbered after block\n");
+      abort ();
+    }
+
+  rptr = __gmp_default_reallocate ((void *) ((long) ptr - sizeof (mp_limb_t)),
+				 old_size + 2 * sizeof (mp_limb_t),
+				 new_size + 2 * sizeof (mp_limb_t));
+  ptr = (void *) ((long) rptr + sizeof (mp_limb_t));
+
+  *((mp_limb_t *) ((long) ptr - sizeof (mp_limb_t)))
+    = PATTERN1 - ((mp_limb_t) ptr);
+  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+  memcpy ((mp_limb_t *) ((long) ptr + new_size), &PATTERN2_var, sizeof (mp_limb_t));
+
   h->size = new_size;
-  h->ptr = __gmp_default_reallocate (ptr, old_size, new_size);
+  h->ptr = ptr;
   return h->ptr;
 }
 
@@ -123,8 +166,8 @@ tests_free_find (void *ptr)
   struct header  **hp = tests_memory_find (ptr);
   if (hp == NULL)
     {
-      printf ("tests_free(): attempt to free bad pointer 0x%lX\n",
-              (unsigned long) ptr);
+      fprintf (stderr, "tests_free(): attempt to free bad pointer 0x%lX\n",
+	       (unsigned long) ptr);
       abort ();
     }
   return hp;
@@ -135,10 +178,25 @@ tests_free_nosize (void *ptr)
 {
   struct header  **hp = tests_free_find (ptr);
   struct header  *h = *hp;
+  mp_limb_t PATTERN2_var;
 
   *hp = h->next;  /* unlink */
 
-  __gmp_default_free (ptr, h->size);
+  if (*((mp_limb_t *) ((long) ptr - sizeof (mp_limb_t)))
+      != PATTERN1 - ((mp_limb_t) ptr))
+    {
+      fprintf (stderr, "in free: redzone clobbered before block\n");
+      abort ();
+    }
+  PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
+  if (memcmp ((mp_limb_t *) ((long) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
+    {
+      fprintf (stderr, "in free: redzone clobbered after block\n");
+      abort ();
+    }
+
+  __gmp_default_free ((void *) ((long) ptr - sizeof(mp_limb_t)),
+		      h->size + 2 * sizeof (mp_limb_t));
   __gmp_default_free (h, sizeof (*h));
 }
 
@@ -150,7 +208,8 @@ tests_free (void *ptr, size_t size)
 
   if (h->size != size)
     {
-      printf ("tests_free(): bad size %u, should be %u\n", size, h->size);
+      fprintf (stderr, "tests_free(): bad size %lu, should be %lu\n",
+	       (unsigned long) size, (unsigned long) h->size);
       abort ();
     }
 
@@ -171,13 +230,13 @@ tests_memory_end (void)
       struct header  *h;
       unsigned  count;
 
-      printf ("tests_memory_end(): not all memory freed\n");
+      fprintf (stderr, "tests_memory_end(): not all memory freed\n");
 
       count = 0;
       for (h = tests_memory_list; h != NULL; h = h->next)
-        count++;
+	count++;
 
-      printf ("    %u blocks remaining\n", count);
+      fprintf (stderr, "    %u blocks remaining\n", count);
       abort ();
     }
 }
