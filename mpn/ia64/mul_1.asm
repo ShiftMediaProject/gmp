@@ -1,8 +1,8 @@
 dnl  IA-64 mpn_mul_1, mpn_mul_1c -- Multiply a limb vector with a limb and
 dnl  store the result in a second limb vector.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2007 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2006, 2007 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -31,7 +31,7 @@ C  * Further optimize feed-in and wind-down code, both for speed and code size.
 C  * Handle low limb input and results specially, using a common stf8 in the
 C    epilogue.
 C  * Use 1 c/l carry propagation scheme in wind-down code.
-C  * Use extra pointer register for up to speed up feed-in loads.
+C  * Use extra pointer register for `up' to speed up feed-in loads.
 C  * Work out final differences with addmul_1.asm.
 
 C INPUT PARAMETERS
@@ -552,6 +552,7 @@ PROLOGUE(mpn_mul_1c)
 	.prologue
 	.save	ar.lc, r2
 	.body
+
 ifdef(`HAVE_ABI_32',
 `	addp4		rp = 0, rp		C M I
 	addp4		up = 0, up		C M I
