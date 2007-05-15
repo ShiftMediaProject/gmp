@@ -2,30 +2,33 @@
    Convert a STR_LEN long base BASE byte string pointed to by STR to a limb
    vector pointed to by RES_PTR.  Return the number of limbs in RES_PTR.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006 Free
+   Contributed to the GNU project by Torbjorn Granlund.
+
+   THE FUNCTIONS IN THIS FILE, EXCEPT mpn_set_str, ARE INTERNAL WITH A MUTABLE
+   INTERFACE.  IT IS ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN
+   FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE
+   GNU MP RELEASE.
+
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006, 2007 Free
 Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
 The GNU MP Library is free software; you can redistribute it and/or modify it
-under the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
-option) any later version.
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2.1 of the License, or (at your option) any
+later version.
 
 The GNU MP Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
-for more details.
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
 
-You should have received a copy of the GNU Lesser General Public License along
-with the GNU MP Library; see the file COPYING.LIB.  If not, write to the Free
-Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
-USA. */
+You should have received a copy of the GNU General Public License along with
+the GNU MP Library; see the file COPYING.  If not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
-/* Originally written 2004, but it was left non-working.
-   Fixed 2006-03 at LORIA.
-
-   TODO:
+/* TODO:
 
       Perhaps do not compute the highest power?
       Instead, multiply twice by the 2nd highest power:
@@ -191,12 +194,12 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
 #else
       if (CLEVER_CONDITION_1 ())
 	{
-	  // perform adjustment operation of previous
+	  /* perform adjustment operation of previous */
 	  cy = mpn_mul_1 (p, p, n, big_base);
 	}
       if (CLEVER_CONDITION_2 ())
 	{
-	  // perform adjustment operation of new
+	  /* perform adjustment operation of new */
 	  cy = mpn_mul_1 (t, t, n, big_base);
 	}
 #endif
@@ -245,8 +248,11 @@ mpn_dc_set_str (mp_ptr rp, const unsigned char *str, size_t str_len,
   else
     ln = mpn_dc_set_str (tp, str, len_lo, powtab + 1, tp + powtab->n + 1);
 
-  cy = mpn_add_n (rp, rp, tp, ln);
-  mpn_incr_u (rp + ln, cy);
+  if (ln != 0)
+    {
+      cy = mpn_add_n (rp, rp, tp, ln);
+      mpn_incr_u (rp + ln, cy);
+    }
   n = hn + powtab->n;
   return n - (rp[n - 1] == 0);
 }
