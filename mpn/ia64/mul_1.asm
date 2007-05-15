@@ -1,7 +1,8 @@
 dnl  IA-64 mpn_mul_1, mpn_mul_1c -- Multiply a limb vector with a limb and
 dnl  store the result in a second limb vector.
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2007 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -38,6 +39,7 @@ define(`rp', `r32')
 define(`up', `r33')
 define(`n', `r34')
 define(`vl', `r35')
+define(`cy', `r36')	C for mpn_mul_1c
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
@@ -103,8 +105,8 @@ ifdef(`HAVE_ABI_32',
 	ldf8		f33 = [up], 8
 	;;
 	ldf8		f34 = [up], 8
-	xma.l		f39 = f7, f6, f0
-	xma.hu		f43 = f7, f6, f0
+	xma.l		f39 = f7, f6, f9
+	xma.hu		f43 = f7, f6, f9
 	;;
 	ldf8		f35 = [up], 8
 	br.cloop.dptk	.grt5
@@ -176,8 +178,8 @@ ifdef(`HAVE_ABI_32',
 	ldf8		f32 = [up], 8
 	;;
 	ldf8		f33 = [up], 8
-	xma.l		f38 = f7, f6, f0
-	xma.hu		f42 = f7, f6, f0
+	xma.l		f38 = f7, f6, f9
+	xma.hu		f42 = f7, f6, f9
 	;;
 	ldf8		f34 = [up], 8
 	xma.l		f39 = f35, f6, f0
@@ -251,8 +253,8 @@ ifdef(`HAVE_ABI_32',
 
 .grt3:
 	ldf8		f32 = [up], 8
-	xma.l		f37 = f7, f6, f0
-	xma.hu		f41 = f7, f6, f0
+	xma.l		f37 = f7, f6, f9
+	xma.hu		f41 = f7, f6, f9
 	;;
 	ldf8		f33 = [up], 8
 	xma.l		f38 = f34, f6, f0
@@ -558,7 +560,7 @@ ifdef(`HAVE_ABI_32',
 ')
 {.mmi
 	adds		r15 = -1, n		C M I
-	setf.sig	f9 = r36		C M2 M3
+	setf.sig	f9 = cy			C M2 M3
 	mov.i		r2 = ar.lc		C I0
 }
 {.mmb
