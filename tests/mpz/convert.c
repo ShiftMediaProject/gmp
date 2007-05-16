@@ -41,12 +41,11 @@ string_urandomb (char *bp, size_t len, int base, gmp_randstate_ptr rands)
 
   mpz_init (bs);
 
+  mpz_urandomb (bs, rands, 32);
+  bsi = mpz_get_ui (bs);
+  d = bsi % base;
   while (len != 0)
     {
-      mpz_urandomb (bs, rands, 32);
-      bsi = mpz_get_ui (bs);
-
-      d = (bsi & 0xffff) % base;
       l = (bsi >> 16) % 20;
       l = MIN (l, len);
 
@@ -54,6 +53,12 @@ string_urandomb (char *bp, size_t len, int base, gmp_randstate_ptr rands)
 
       len -= l;
       bp += l;
+
+      mpz_urandomb (bs, rands, 32);
+      bsi = mpz_get_ui (bs);
+      d = bsi & 0xfff;
+      if (d >= base)
+	d = 0;
     }
 
   bp[0] = '\0';
@@ -124,13 +129,14 @@ main (int argc, char **argv)
       /* 2. Generate random string and convert to mpz_t and back to a string
 	 again.  */
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 10 + 2;	/* 2..11 */
-      mpz_urandomb (bs, rands, size_range);	/* 3..2047 bits */
+      size_range = mpz_get_ui (bs) % 14 + 1;	/* 1..14 */
+      mpz_urandomb (bs, rands, size_range);	/* 1..16384 digits */
       len = mpz_get_ui (bs) + 1;
       buf = (*__gmp_allocate_func) (len + 1);
       if (base == 0)
 	base = 10;
       string_urandomb (buf, len, base, rands);
+
       mpz_set_str_or_abort (op1, buf, base);
       str = mpz_get_str ((char *) 0, base, op1);
 
