@@ -95,7 +95,7 @@ tests_allocate (size_t size)
   *((mp_limb_t *) ((long) ptr - sizeof (mp_limb_t)))
     = PATTERN1 - ((mp_limb_t) ptr);
   PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
-  memcpy ((mp_limb_t *) ((long) ptr + size), &PATTERN2_var, sizeof (mp_limb_t));
+  memcpy ((void *) ((long) ptr + size), &PATTERN2_var, sizeof (mp_limb_t));
 
   h->size = size;
   h->ptr = ptr;
@@ -139,7 +139,7 @@ tests_reallocate (void *ptr, size_t old_size, size_t new_size)
       abort ();
     }
   PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
-  if (memcmp ((mp_limb_t *) ((long) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
+  if (memcmp ((void *) ((long) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
     {
       fprintf (stderr, "in realloc: redzone clobbered after block\n");
       abort ();
@@ -153,7 +153,7 @@ tests_reallocate (void *ptr, size_t old_size, size_t new_size)
   *((mp_limb_t *) ((long) ptr - sizeof (mp_limb_t)))
     = PATTERN1 - ((mp_limb_t) ptr);
   PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
-  memcpy ((mp_limb_t *) ((long) ptr + new_size), &PATTERN2_var, sizeof (mp_limb_t));
+  memcpy ((void *) ((long) ptr + new_size), &PATTERN2_var, sizeof (mp_limb_t));
 
   h->size = new_size;
   h->ptr = ptr;
@@ -189,7 +189,7 @@ tests_free_nosize (void *ptr)
       abort ();
     }
   PATTERN2_var = PATTERN2 - ((mp_limb_t) ptr);
-  if (memcmp ((mp_limb_t *) ((long) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
+  if (memcmp ((void *) ((long) ptr + h->size), &PATTERN2_var, sizeof (mp_limb_t)))
     {
       fprintf (stderr, "in free: redzone clobbered after block\n");
       abort ();
