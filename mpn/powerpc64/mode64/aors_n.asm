@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
-dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004, 2005, 2007 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -68,23 +68,33 @@ C n	r6
 ifdef(`OPERATION_add_n',`
   define(ADDSUBC,	adde)
   define(ADDSUB,	addc)
-  define(func, mpn_add_n)
+  define(func,		mpn_add_n)
+  define(func_nc,	mpn_add_nc)
   define(GENRVAL,	`addi	r3, r3, 1')
-  define(INITCY,	`addic	r0, r0, 0')
+  define(SETCBR,	`addic	r0, $1, -1')
+  define(CLRCB,		`addic	r0, r0, 0')
 ')
 ifdef(`OPERATION_sub_n',`
   define(ADDSUBC,	subfe)
   define(ADDSUB,	subfc)
-  define(func, mpn_sub_n)
+  define(func,		mpn_sub_n)
+  define(func_nc,	mpn_sub_nc)
   define(GENRVAL,	`neg	r3, r3')
-  define(INITCY,	`addic	r0, r1, -1')
+  define(SETCBR,	`subfic	r0, $1, 0')
+  define(CLRCB,		`addic	r0, r1, -1')
 ')
 
-MULFUNC_PROLOGUE(mpn_add_n mpn_sub_n)
+MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 
 ASM_START()
+PROLOGUE(func_nc)
+	SETCBR(r7)
+	b	L(ent)	
+EPILOGUE()
+
 PROLOGUE(func)
-	std	r31, -8(r1)
+	CLRCB
+L(ent):	std	r31, -8(r1)
 	std	r30, -16(r1)
 	std	r29, -24(r1)
 	std	r28, -32(r1)
@@ -106,7 +116,7 @@ L(b11):	ld	r8, 0(r4)	C load s1 limb
 	addi	r4, r4, 24
 	ld	r0, 16(r5)	C load s2 limb
 	addi	r5, r5, 24
-	ADDSUB	r29, r9, r8
+	ADDSUBC	r29, r9, r8
 	ADDSUBC	r30, r11, r10
 	ADDSUBC	r31, r0, r12
 	std	r29, 0(r3)
@@ -120,7 +130,7 @@ L(b01):	ld	r12, 0(r4)	C load s1 limb
 	addi	r4, r4, 8
 	ld	r0, 0(r5)	C load s2 limb
 	addi	r5, r5, 8
-	ADDSUB	r31, r0, r12	C add
+	ADDSUBC	r31, r0, r12	C add
 	std	r31, 0(r3)
 	addi	r3, r3, 8
 	bdnz	L(go)
@@ -132,7 +142,7 @@ L(b10):	ld	r10, 0(r4)	C load s1 limb
 	addi	r4, r4, 16
 	ld	r0, 8(r5)	C load s2 limb
 	addi	r5, r5, 16
-	ADDSUB	r30, r11, r10	C add
+	ADDSUBC	r30, r11, r10	C add
 	ADDSUBC	r31, r0, r12	C add
 	std	r30, 0(r3)
 	std	r31, 8(r3)
@@ -140,7 +150,7 @@ L(b10):	ld	r10, 0(r4)	C load s1 limb
 	bdnz	L(go)
 	b	L(ret)
 
-L(b00):	INITCY			C clear/set cy
+L(b00):	C INITCY		C clear/set cy
 L(go):	ld	r6, 0(r4)	C load s1 limb
 	ld	r7, 0(r5)	C load s2 limb
 	ld	r8, 8(r4)	C load s1 limb
