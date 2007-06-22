@@ -24,19 +24,10 @@ include(`../config.m4')
 
 C		    cycles/limb
 C K8:			2.5
-C Prescott/Nocona:	3.47
-C P6-15:		4.75
-
-C TODO
-C  This runs slower than mpn_lshift, in spite that the inner loops are similar.
-C  Proper scheduling should cut a few cycles.
+C Prescott/Nocona:	3.29
+C P6-15:		2.1 (fluctuates, presumably cache related)
 
 C INPUT PARAMETERS
-C rp	rdi
-C up	rsi
-C n	rdx
-C cnt	rcx
-
 define(`rp',`%rdi')
 define(`up',`%rsi')
 define(`n',`%rdx')
@@ -117,7 +108,7 @@ C	n = 2, 6, 10, 16, ...
 	psllq	%mm5, %mm0
 	por	%mm0, %mm2
 	psllq	%mm5, %mm1
-	movq	0(up,n,8), %mm0
+	movq	(up,n,8), %mm0
 	por	%mm1, %mm3
 	movq	8(up,n,8), %mm1
 	movq	%mm2, -24(rp,n,8)
@@ -128,7 +119,7 @@ C	n = 2, 6, 10, 16, ...
 
 	C finish stuff from rsh block
 	movq	-8(up,n,8), %mm2
-	movq	0(up,n,8), %mm3
+	movq	(up,n,8), %mm3
 	psrlq	%mm4, %mm2
 	por	%mm2, %mm0
 	psrlq	%mm4, %mm3
@@ -136,12 +127,12 @@ C	n = 2, 6, 10, 16, ...
 	por	%mm3, %mm1
 	movq	16(up,n,8), %mm3
 	movq	%mm0, -8(rp,n,8)
-	movq	%mm1, 0(rp,n,8)
+	movq	%mm1, (rp,n,8)
 	C start two new lsh
+	add	$4, n
 	psrlq	%mm4, %mm2
 	psrlq	%mm4, %mm3
 
-	add	$4, n
 	jae	.Loop			C				      2
 .Lend:
 	movq	-16(up,n,8), %mm0
