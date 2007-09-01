@@ -1375,7 +1375,7 @@ case $host in
         gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium"
         ;;
       i786 | pentium4)
-        # pentiumpro is the primary fallback when gcc doens't know pentium4.
+        # pentiumpro is the primary fallback when gcc doesn't know pentium4.
         # This gets us cmov to eliminate branches.  Maybe "athlon" would be
         # a possibility on gcc 3.0.
         #
@@ -1413,9 +1413,9 @@ case $host in
       pentium3)             path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
-      # we don't have any specific 32-bit code for opteron, the
+      # we don't have any specific 32-bit code for athlon64/opteron, the
       # athlon code should be reasonable
-      athlon | athlon64)      path="x86/k7/mmx x86/k7 x86" ;;
+      athlon | athlon64)    path="x86/k7/mmx x86/k7 x86" ;;
       i786 | pentium4)      path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
       # VIA/Centaur processors, sold as CyrixIII and C3.
       viac32)               path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
@@ -1445,26 +1445,30 @@ case $host in
     fi
 
     case $host_cpu in
-      athlon64 | x86_64)
-        abilist="64 32"
-        path_64="x86_64"
+      athlon64 | core2 | pentium4 | x86_64)
         cclist_64="gcc"
         gcc_64_cflags="-O2 -m64"
         gcc_64_cflags_optlist="cpu"
         CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
         SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
         cyclecounter_size_64=2
-        ;;
-      core2)
-        abilist="64 32"
-        path_64="x86_64/core2 x86_64"
-        cclist_64="gcc"
-        gcc_64_cflags="-O2 -m64"
-        gcc_64_cflags_optlist="cpu"
-        CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
-        SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
-        cyclecounter_size_64=2
-        ;;
+
+	case $host_cpu in
+	  athlon64 | x86_64)
+	    abilist="64 32"
+	    path_64="x86_64"
+	    ;;
+	  pentium4)
+	    abilist="64 32"
+	    path_64="x86_64/pentium4 x86_64"
+	    cclist_64="gcc"
+	    ;;
+	  core2)
+	    abilist="64 32"
+	    path_64="x86_64/core2 x86_64"
+	    ;;
+	esac
+	;;
     esac
     ;;
 
@@ -2401,7 +2405,12 @@ gmp_mpn_functions="$extra_functions					   \
   rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
   bdivmod gcd_1 gcd gcdext tdiv_qr dc_divrem_n sb_divrem_mn jacbase get_d  \
   hgcd2 hgcd qstack mullow_n mullow_basecase				   \
-  mul_toom22 mul_toom32 mul_toom42					   \
+  mul_toom22 mul_toom32 mul_toom42 mul_toom62 mul_toom53 mul_toom44	   \
+  toom_interpolate_5pts toom_interpolate_7pts invert binvert		   \
+  sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \
+  mu_div_qr mu_divappr_q mu_div_q					   \
+  sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
+  divexact								   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,
