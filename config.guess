@@ -658,8 +658,8 @@ sparc-*-* | sparc64-*-*)
   fi
   ;;
 
-i?86-*-*)
-  cat <<EOF >${dummy}1.s
+i?86-*-* | amd64-*-* | x86_64-*-*)
+  cat <<EOF >${dummy}0.s
 	.globl cpuid
 	.globl _cpuid
 cpuid:
@@ -675,6 +675,21 @@ _cpuid:
 	movl %ecx,8(%esi)
 	popl %ebx
 	popl %esi
+	ret
+EOF
+  cat <<EOF >${dummy}1.s
+	.globl cpuid
+	.globl _cpuid
+cpuid:
+_cpuid:
+	push %rbx
+	mov %esi,%eax
+	.byte 0x0f
+	.byte 0xa2
+	mov %ebx,(%rdi)
+	mov %edx,4(%rdi)
+	mov %ecx,8(%rdi)
+	pop %rbx
 	ret
 EOF
   cat <<EOF >${dummy}2.c
@@ -707,7 +722,8 @@ main ()
 	case 6:
 	  if (model == 1)	modelstr = "pentiumpro";
 	  else if (model <= 6)	modelstr = "pentium2";
-	  else			modelstr = "pentium3";
+	  else if (model <= 14)	modelstr = "pentium3";
+	  else			modelstr = "core2";
 	  break;
 	case 15:
 	  modelstr = "pentium4";
@@ -728,9 +744,7 @@ main ()
 	  modelstr = "athlon";
 	  break;
 	case 15:
-	  /* We might want to return opteron, athlon64, or the CPU core name
-	     hammer here instead of the architecture name x86_64.  */
-	  modelstr = "x86_64";
+	  modelstr = "athlon64";
 	  break;
 	}
     }
@@ -768,9 +782,25 @@ EOF
     fi
   fi
 
+  if test -z "$exact_cpu"; then
+  if ($CC_FOR_BUILD ${dummy}0.s ${dummy}2.c -o $dummy) >/dev/null 2>&1; then
+    # On 80386 and early 80486 cpuid is not available and will result in a
+    # SIGILL message, hence 2>/dev/null.
+    #
+    # On i386-unknown-freebsd4.9, "/bin/sh -c ./dummy" seems to send an
+    # "Illegal instruction (core dumped)" message to stdout, so we test $?
+    # to check if the program run was successful.
+    #
+    x=`$SHELL -c ./$dummy 2>/dev/null`
+    if test $? = 0 && test -n "$x"; then
+      exact_cpu=$x
+    fi
+  fi
+  fi
+
   # We need to remove some .o files here since lame C compilers
   # generate these even when not asked.
-  rm -f ${dummy}1.s ${dummy}1.o ${dummy}2.c ${dummy}2.o $dummy
+  rm -f ${dummy}0.s ${dummy}0.o ${dummy}1.s ${dummy}1.o ${dummy}2.c ${dummy}2.o $dummy
   ;;
 
 esac
