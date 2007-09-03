@@ -75,14 +75,14 @@ define(`n',	`%r11')
 
 	ALIGN(16)
 .Loop:	ADDSUB	%r8 , -40(rp,n,8)
-	mov	$0  , %r8
+	mov	$0  , %r8d
 	adc	%rax, %r9
 	mov	-16(up,n,8), %rax
 	adc	%rdx, %r8
 	mul	vl
 
 	ADDSUB	%r9 , -32(rp,n,8)
-	mov	$0  , %r9
+	mov	$0  , %r9d
 	adc	%rax, %r8
 	nop
 	mov	-8(up,n,8), %rax
@@ -90,14 +90,14 @@ define(`n',	`%r11')
 	mul	vl
 
 	ADDSUB	%r8 , -24(rp,n,8)
-	mov	$0  , %r8
+	mov	$0  , %r8d
 	adc	%rax, %r9
 	mov	(up,n,8), %rax
 	adc	%rdx, %r8
 	mul	vl
 
 	ADDSUB	%r9 , -16(rp,n,8)
-	mov	$0  , %r9
+	mov	$0  , %r9d
 	adc	%rax, %r8
 	mov	8(up,n,8), %rax
 	nop
@@ -111,7 +111,7 @@ define(`n',	`%r11')
 	je	.Lb11
 
 	ADDSUB	%r8 , -40(rp,n,8)
-	mov	$0  , %r8
+	mov	$0  , %r8d
 	adc	%rax, %r9
 	mov	-16(up,n,8), %rax
 	adc	%rdx, %r8
@@ -120,7 +120,7 @@ define(`n',	`%r11')
 	je	.Lb00
 
 	ADDSUB	%r9 , -32(rp,n,8)
-	mov	$0  , %r9
+	mov	$0  , %r9d
 	adc	%rax, %r8
 	mov	-8(up,n,8), %rax
 	adc	%rdx, %r9
@@ -129,7 +129,7 @@ define(`n',	`%r11')
 	je	.Lb01
 
 	ADDSUB	%r8 , -24(rp,n,8)
-	mov	$0  , %r8
+	mov	$0  , %r8d
 	adc	%rax, %r9
 	mov	(up,n,8), %rax
 	adc	%rdx, %r8
