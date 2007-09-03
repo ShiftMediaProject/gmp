@@ -1,6 +1,7 @@
-dnl  AMD64 mpn_mod_34lsub1 -- remainder modulo 2^24-1.
+dnl  AMD64 mpn_mod_34lsub1 -- remainder modulo 2^48-1.
 
-dnl  Copyright 2000, 2001, 2002, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2007 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -24,8 +25,8 @@ include(`../config.m4')
 
 C	    cycles/limb
 C K8:		1.0
-C P4:  		3.7
-C P6-15:	1.6
+C P4:  		3.2
+C P6-15:	1.5
 
 
 C INPUT PARAMETERS
@@ -62,103 +63,103 @@ C	...
 	ALIGN(32)
 PROLOGUE(mpn_mod_34lsub1)
 
-	movq	$0x0000FFFFFFFFFFFF, %r11
+	mov	$0x0000FFFFFFFFFFFF, %r11
 
-	subq	$2, %rsi
+	sub	$2, %rsi
 	ja	L(gt2)
 
-	movq	(%rdi), %rax
+	mov	(%rdi), %rax
+	nop
 	jb	L(1)
 
-	movq	8(%rdi), %rsi
-	movq	%rax, %rdx
-	shrq	$48, %rax		C src[0] low
+	mov	8(%rdi), %rsi
+	mov	%rax, %rdx
+	shr	$48, %rax		C src[0] low
 
-	andq	%r11, %rdx		C src[0] high
-	addq	%rdx, %rax
-	movl	%esi, %edx
+	and	%r11, %rdx		C src[0] high
+	add	%rdx, %rax
+	mov	%esi, %edx
 
-	shrq	$32, %rsi		C src[1] high
-	addq	%rsi, %rax
+	shr	$32, %rsi		C src[1] high
+	add	%rsi, %rax
 
-	shlq	$16, %rdx		C src[1] low
-	addq	%rdx, %rax
+	shl	$16, %rdx		C src[1] low
+	add	%rdx, %rax
 
 L(1):	ret
 
 
-L(gt2):	xorl	%eax, %eax
-	xorl	%ecx, %ecx
-	xorl	%edx, %edx
-	xorq	%r8, %r8
-	xorq	%r9, %r9
-	xorq	%r10, %r10
+	ALIGN(16)
+L(gt2):	xor	%eax, %eax
+	xor	%ecx, %ecx
+	xor	%edx, %edx
+	xor	%r8, %r8
+	xor	%r9, %r9
+	xor	%r10, %r10
 
-L(top):	addq	(%rdi), %rax
-	adcq	$0, %r10
-	addq	8(%rdi), %rcx
-	adcq	$0, %r8
-	addq	16(%rdi), %rdx
-	adcq	$0, %r9
+L(top):	add	(%rdi), %rax
+	adc	$0, %r10
+	add	8(%rdi), %rcx
+	adc	$0, %r8
+	add	16(%rdi), %rdx
+	adc	$0, %r9
 
-	leaq	48(%rdi), %rdi
-
-	subq	$3,%rsi
+	sub	$3,%rsi
 	jng	L(end)
 
-	addq	-24(%rdi), %rax
-	adcq	$0, %r10
-	addq	-16(%rdi), %rcx
-	adcq	$0, %r8
-	addq	-8(%rdi), %rdx
-	adcq	$0, %r9
+	add	24(%rdi), %rax
+	adc	$0, %r10
+	add	32(%rdi), %rcx
+	adc	$0, %r8
+	add	40(%rdi), %rdx
+	lea	48(%rdi), %rdi
+	adc	$0, %r9
 
-	subq	$3,%rsi
+	sub	$3,%rsi
 	jg	L(top)
 
-	addq	$24, %rdi
 
+	add	$-24, %rdi
+L(end):	add	%r9, %rax
+	adc	%r10, %rcx
+	adc	%r8, %rdx
 
-L(end):	addq	%r9, %rax
-	adcq	%r10, %rcx
-	adcq	%r8, %rdx
-
-	incq	%rsi
-	movq	$0xFFFFFFFFFFFFFFFF, %r10
+	inc	%rsi
+	mov	$0x1, %r10d
 	js	L(combine)
 
-	movq	$0xFFFFFFFFFFFF0000, %r10
-	adcq	-24(%rdi), %rax
-	decq	%rsi
+	mov	$0x10000, %r10d
+	adc	24(%rdi), %rax
+	dec	%rsi
 	js	L(combine)
 
-	adcq	-16(%rdi), %rcx
-	movq	$0xFFFFFFFF00000000, %r10
+	adc	32(%rdi), %rcx
+	mov	$0x100000000, %r10
 
 L(combine):
-	sbbq	%rsi, %rsi		C carry
-	movq	%rax, %rdi		C 0mod3
-	shrq	$48, %rax		C 0mod3 high
+	sbb	%rsi, %rsi		C carry
+	mov	%rax, %rdi		C 0mod3
+	shr	$48, %rax		C 0mod3 high
 
-	andq	%r10, %rsi		C carry masked
-	andq	%r11, %rdi		C 0mod3 low
-	movl	%ecx, %r10d		C 1mod3
+	and	%r10, %rsi		C carry masked
+	and	%r11, %rdi		C 0mod3 low
+	mov	%ecx, %r10d		C 1mod3
 
-	subq	%rsi, %rax		C apply carry
-	shrq	$32, %rcx		C 1mod3 high
+	add	%rsi, %rax		C apply carry
+	shr	$32, %rcx		C 1mod3 high
 
-	addq	%rdi, %rax		C apply 0mod3 low
+	add	%rdi, %rax		C apply 0mod3 low
 	movzwl	%dx, %edi		C 2mod3
-	shlq	$16, %r10		C 1mod3 low
+	shl	$16, %r10		C 1mod3 low
 
-	addq	%rcx, %rax		C apply 1mod3 high
-	shrq	$16, %rdx		C 2mod3 high
+	add	%rcx, %rax		C apply 1mod3 high
+	shr	$16, %rdx		C 2mod3 high
 
-	addq	%r10, %rax		C apply 1mod3 low
-	shlq	$32, %rdi		C 2mod3 low
+	add	%r10, %rax		C apply 1mod3 low
+	shl	$32, %rdi		C 2mod3 low
 
-	addq	%rdx, %rax		C apply 2mod3 high
-	addq	%rdi, %rax		C apply 2mod3 low
+	add	%rdx, %rax		C apply 2mod3 high
+	add	%rdi, %rax		C apply 2mod3 low
 
 	ret
 EPILOGUE()
