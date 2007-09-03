@@ -1,19 +1,19 @@
 dnl  AMD64 calling conventions checking.
 
-dnl  Copyright 2000, 2003, 2004, 2006 Free Software Foundation, Inc.
-dnl 
+dnl  Copyright 2000, 2003, 2004, 2006, 2007 Free Software Foundation, Inc.
+dnl
 dnl  This file is part of the GNU MP Library.
-dnl 
+dnl
 dnl  The GNU MP Library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public License as
 dnl  published by the Free Software Foundation; either version 2.1 of the
 dnl  License, or (at your option) any later version.
-dnl 
+dnl
 dnl  The GNU MP Library is distributed in the hope that it will be useful,
 dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl  Lesser General Public License for more details.
-dnl 
+dnl
 dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 51 Franklin Street,
@@ -82,13 +82,6 @@ PROLOGUE(calling_conventions)
 	movq	%r14, G(calling_conventions_save_r14)
 	movq	%r15, G(calling_conventions_save_r15)
 
-	movq	G(calling_conventions_save_rbx), %rbx
-	movq	G(calling_conventions_save_rbp), %rbp
-	movq	G(calling_conventions_save_r12), %r12
-	movq	G(calling_conventions_save_r13), %r13
-	movq	G(calling_conventions_save_r14), %r14
-	movq	G(calling_conventions_save_r15), %r15
-
 	C values we expect to see unchanged, as per amd64check.c
 	movq	$0x1234567887654321, %rbx
 	movq	$0x89ABCDEFFEDCBA98, %rbp
@@ -103,7 +96,7 @@ PROLOGUE(calling_conventions)
 	C ENHANCE-ME: If we knew how many of the parameter registers were
 	C actually being used we could put junk in the rest.  Maybe we could
 	C get try.c to communicate this to us.
-	C 
+	C
 	movq	$0xFEEDABBACAAFBEED, %rax
 	movq	$0xAB78DE89FF5125BB, %r10
 	movq	$0x1238901890189031, %r11
