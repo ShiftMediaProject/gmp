@@ -63,6 +63,35 @@ C
 C Perhaps the finit should be done only if the tags word isn't clear, but
 C nothing uses the rounding mode or anything at the moment.
 
+define(`WANT_RBX', eval(8*0)($1))
+define(`WANT_RBP', eval(8*1)($1))
+define(`WANT_R12', eval(8*2)($1))
+define(`WANT_R13', eval(8*3)($1))
+define(`WANT_R14', eval(8*4)($1))
+define(`WANT_R15', eval(8*5)($1))
+
+define(`JUNK_RAX', eval(8*6)($1))
+define(`JUNK_R10', eval(8*7)($1))
+define(`JUNK_R11', eval(8*8)($1))
+
+define(`SAVE_RBX', eval(8*9)($1))
+define(`SAVE_RBP', eval(8*10)($1))
+define(`SAVE_R12', eval(8*11)($1))
+define(`SAVE_R13', eval(8*12)($1))
+define(`SAVE_R14', eval(8*13)($1))
+define(`SAVE_R15', eval(8*14)($1))
+
+define(`RETADDR',  eval(8*15)($1))
+
+define(`RBX',	   eval(8*16)($1))
+define(`RBP',	   eval(8*17)($1))
+define(`R12',	   eval(8*18)($1))
+define(`R13',	   eval(8*19)($1))
+define(`R14',	   eval(8*20)($1))
+define(`R15',	   eval(8*21)($1))
+define(`RFLAGS',   eval(8*22)($1))
+
+
 define(G,
 m4_assert_numargs(1)
 `GSYM_PREFIX`'$1')
@@ -70,25 +99,29 @@ m4_assert_numargs(1)
 	TEXT
 	ALIGN(32)
 PROLOGUE(calling_conventions)
-	movq	(%rsp), %rax
-	movq	%rax, G(calling_conventions_retaddr)
+	push	%rdi
+	movq	G(calling_conventions_values)@GOTPCREL(%rip), %rdi
 
-	movq	$L(return), (%rsp)
+	movq	8(%rsp), %rax
+	movq	%rax, RETADDR(%rdi)
 
-	movq	%rbx, G(calling_conventions_save_rbx)
-	movq	%rbp, G(calling_conventions_save_rbp)
-	movq	%r12, G(calling_conventions_save_r12)
-	movq	%r13, G(calling_conventions_save_r13)
-	movq	%r14, G(calling_conventions_save_r14)
-	movq	%r15, G(calling_conventions_save_r15)
+	leaq	L(return)(%rip), %rax
+	movq	%rax, 8(%rsp)
+
+	movq	%rbx, SAVE_RBX(%rdi)
+	movq	%rbp, SAVE_RBP(%rdi)
+	movq	%r12, SAVE_R12(%rdi)
+	movq	%r13, SAVE_R13(%rdi)
+	movq	%r14, SAVE_R14(%rdi)
+	movq	%r15, SAVE_R15(%rdi)
 
 	C values we expect to see unchanged, as per amd64check.c
-	movq	$0x1234567887654321, %rbx
-	movq	$0x89ABCDEFFEDCBA98, %rbp
-	movq	$0xDEADBEEFBADECAFE, %r12
-	movq	$0xFFEEDDCCBBAA9988, %r13
-	movq	$0x0011223344556677, %r14
-	movq	$0x1234432156788765, %r15
+	movq	WANT_RBX(%rdi), %rbx
+	movq	WANT_RBP(%rdi), %rbp
+	movq	WANT_R12(%rdi), %r12
+	movq	WANT_R13(%rdi), %r13
+	movq	WANT_R14(%rdi), %r14
+	movq	WANT_R15(%rdi), %r15
 
 	C Try to provoke a problem by starting with junk in the registers,
 	C especially %rax which will be the return value.
@@ -96,35 +129,39 @@ PROLOGUE(calling_conventions)
 	C ENHANCE-ME: If we knew how many of the parameter registers were
 	C actually being used we could put junk in the rest.  Maybe we could
 	C get try.c to communicate this to us.
-	C
-	movq	$0xFEEDABBACAAFBEED, %rax
-	movq	$0xAB78DE89FF5125BB, %r10
-	movq	$0x1238901890189031, %r11
+C	movq	JUNK_RAX(%rdi), %rax		C overwritten below anyway
+	movq	JUNK_R10(%rdi), %r10
+	movq	JUNK_R11(%rdi), %r11
 
-	jmp	*G(calling_conventions_function)
+	movq	G(calling_conventions_function)@GOTPCREL(%rip), %rax
+	pop	%rdi
+	jmp	*(%rax)
 
 L(return):
-	movq	%rbx, G(calling_conventions_rbx)
-	movq	%rbp, G(calling_conventions_rbp)
-	movq	%r12, G(calling_conventions_r12)
-	movq	%r13, G(calling_conventions_r13)
-	movq	%r14, G(calling_conventions_r14)
-	movq	%r15, G(calling_conventions_r15)
+	movq	G(calling_conventions_values)@GOTPCREL(%rip), %rdi
+
+	movq	%rbx, RBX(%rdi)
+	movq	%rbp, RBP(%rdi)
+	movq	%r12, R12(%rdi)
+	movq	%r13, R13(%rdi)
+	movq	%r14, R14(%rdi)
+	movq	%r15, R15(%rdi)
 
 	pushfq
 	popq	%rbx
-	movq	%rbx, G(calling_conventions_rflags)
+	movq	%rbx, RFLAGS(%rdi)
 
-	fstenv	G(calling_conventions_fenv)
+	movq	G(calling_conventions_fenv)@GOTPCREL(%rip), %rbx
+	fstenv	(%rbx)
 	finit
 
-	movq	G(calling_conventions_save_rbx), %rbx
-	movq	G(calling_conventions_save_rbp), %rbp
-	movq	G(calling_conventions_save_r12), %r12
-	movq	G(calling_conventions_save_r13), %r13
-	movq	G(calling_conventions_save_r14), %r14
-	movq	G(calling_conventions_save_r15), %r15
+	movq	SAVE_RBX(%rdi), %rbx
+	movq	SAVE_RBP(%rdi), %rbp
+	movq	SAVE_R12(%rdi), %r12
+	movq	SAVE_R13(%rdi), %r13
+	movq	SAVE_R14(%rdi), %r14
+	movq	SAVE_R15(%rdi), %r15
 
-	jmp	*G(calling_conventions_retaddr)
+	jmp	*RETADDR(%rdi)
 
 EPILOGUE()
