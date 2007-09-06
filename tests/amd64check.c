@@ -1,6 +1,6 @@
 /* AMD64 calling conventions checking.
 
-Copyright 2000, 2001, 2004 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2004, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,15 +25,31 @@ MA 02110-1301, USA. */
 #include "tests.h"
 
 
-/* temporaries */
-long  calling_conventions_save_rbx;
-long  calling_conventions_save_rbp;
-long  calling_conventions_save_r12;
-long  calling_conventions_save_r13;
-long  calling_conventions_save_r14;
-long  calling_conventions_save_r15;
-long  calling_conventions_retaddr;
-long  calling_conventions_retval;
+/* Vector if constants and register values.  We use one vector to allow access
+   via a base pointer, very beneficial for the PIC-enabled amd64call.asm.  */
+long calling_conventions_values[23] =
+{
+  0x1234567887654321L,		/* want_rbx */
+  0x89ABCDEFFEDCBA98L,		/* want_rbp */
+  0xDEADBEEFBADECAFEL,		/* want_r12 */
+  0xFFEEDDCCBBAA9988L,		/* want_r13 */
+  0x0011223344556677L,		/* want_r14 */
+  0x1234432156788765L,		/* want_r15 */
+
+  0xFEEDABBACAAFBEED,		/* JUNK_RAX */
+  0xAB78DE89FF5125BB,		/* JUNK_R10 */
+  0x1238901890189031		/* JUNK_R11 */
+
+  /* rest of array used for dynamic values.  */
+};
+
+/* Index starts for various regions in above vector.  */
+#define WANT	0
+#define JUNK	6
+#define SAVE	9
+#define RETADDR	15
+#define VAL	16
+#define RFLAGS	22
 
 /* values to check */
 struct {
@@ -42,21 +58,9 @@ struct {
   int  tag;
   int  other[4];
 } calling_conventions_fenv;
-long  calling_conventions_rbx;
-long  calling_conventions_rbp;
-long  calling_conventions_r12;
-long  calling_conventions_r13;
-long  calling_conventions_r14;
-long  calling_conventions_r15;
-long  calling_conventions_rflags;
 
-/* expected values, as per amd64call.asm */
-const long  calling_conventions_want_rbx = 0x1234567887654321L;
-const long  calling_conventions_want_rbp = 0x89ABCDEFFEDCBA98L;
-const long  calling_conventions_want_r12 = 0xDEADBEEFBADECAFEL;
-const long  calling_conventions_want_r13 = 0xFFEEDDCCBBAA9988L;
-const long  calling_conventions_want_r14 = 0x0011223344556677L;
-const long  calling_conventions_want_r15 = 0x1234432156788765L;
+
+char *regname[6] = {"rbx", "rbp", "r12", "r13", "r14", "r15"};
 
 #define DIR_BIT(rflags)   (((rflags) & (1<<10)) != 0)
 
@@ -68,27 +72,26 @@ calling_conventions_check (void)
 {
   const char  *header = "Violated calling conventions:\n";
   int  ret = 1;
+  int i;
 
-#define CHECK(callreg, regstr, value)                   \
-  if (callreg != value)                                 \
-    {                                                   \
-      printf ("%s   %s  got 0x%016lX want 0x%016lX\n",  \
-              header, regstr, callreg, value);          \
-      header = "";                                      \
-      ret = 0;                                          \
+#define CHECK(callreg, regstr, value)			\
+  if (callreg != value)					\
+    {							\
+      printf ("%s   %s	got 0x%016lX want 0x%016lX\n",	\
+	      header, regstr, callreg, value);		\
+      header = "";					\
+      ret = 0;						\
     }
 
-  CHECK (calling_conventions_rbx, "rbx", calling_conventions_want_rbx);
-  CHECK (calling_conventions_rbp, "rbp", calling_conventions_want_rbp);
-  CHECK (calling_conventions_r12, "r12", calling_conventions_want_r12);
-  CHECK (calling_conventions_r13, "r13", calling_conventions_want_r13);
-  CHECK (calling_conventions_r14, "r14", calling_conventions_want_r14);
-  CHECK (calling_conventions_r15, "r15", calling_conventions_want_r15);
+  for (i = 0; i < 6; i++)
+    {
+      CHECK (calling_conventions_values[VAL+i], regname[i], calling_conventions_values[WANT+i]);
+    }
 
-  if (DIR_BIT (calling_conventions_rflags) != 0)
+  if (DIR_BIT (calling_conventions_values[RFLAGS]) != 0)
     {
       printf ("%s   rflags dir bit  got %d want 0\n",
-              header, DIR_BIT (calling_conventions_rflags));
+	      header, DIR_BIT (calling_conventions_values[RFLAGS]));
       header = "";
       ret = 0;
     }
@@ -96,7 +99,7 @@ calling_conventions_check (void)
   if ((calling_conventions_fenv.tag & 0xFFFF) != 0xFFFF)
     {
       printf ("%s   fpu tags  got 0x%lX want 0xFFFF\n",
-              header, calling_conventions_fenv.tag & 0xFFFF);
+	      header, calling_conventions_fenv.tag & 0xFFFF);
       header = "";
       ret = 0;
     }
