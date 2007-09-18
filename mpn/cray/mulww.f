@@ -6,7 +6,7 @@ c     This file is part of the GNU MP Library.
 
 c     The GNU MP Library is free software; you can redistribute it and/or
 c     modify it under the terms of the GNU Lesser General Public License as
-c     published by the Free Software Foundation; either version 2.1 of the
+c     published by the Free Software Foundation; either version 3 of the
 c     License, or (at your option) any later version.
 
 c     The GNU MP Library is distributed in the hope that it will be useful,
@@ -14,10 +14,8 @@ c     but WITHOUT ANY WARRANTY; without even the implied warranty of
 c     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 c     Lesser General Public License for more details.
 
-c     You should have received a copy of the GNU Lesser General Public
-c     License along with the GNU MP Library; see the file COPYING.LIB.  If
-c     not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-c     Fifth Floor, Boston, MA 02110-1301, USA.
+c     You should have received a copy of the GNU Lesser General Public License
+c     along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 c     p1[] = hi(a[]*s); the upper limbs of each product
 c     p0[] = low(a[]*s); the corresponding lower limbs

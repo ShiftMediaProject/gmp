@@ -3924,7 +3924,7 @@ ifelse([$1], [],
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful, but
@@ -3934,7 +3934,6 @@ ifelse([$1], [],
 #
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # As a special exception to the GNU General Public License, if you
 # distribute this file as part of a program that contains a
@@ -5935,7 +5934,6 @@ AC_MSG_RESULT([$SED])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 # AM_AUTOMAKE_VERSION(VERSION)
 # ----------------------------
@@ -5966,7 +5964,6 @@ AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # For projects using AC_CONFIG_AUX_DIR([foo]), Autoconf sets
@@ -6030,7 +6027,6 @@ am_aux_dir=`cd $ac_aux_dir && pwd`
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 6
@@ -6073,7 +6069,6 @@ fi])])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 # serial 7
 
@@ -6100,7 +6095,6 @@ AU_DEFUN([AM_CONFIG_HEADER], [AC_CONFIG_HEADERS($@)])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 11
@@ -6222,7 +6216,6 @@ echo "timestamp for $1" >`AS_DIRNAME([$1])`/stamp-h[]$_am_stamp_count])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 AC_DEFUN([AM_PROG_INSTALL_SH],
@@ -6245,7 +6238,6 @@ AC_SUBST(install_sh)])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 1
@@ -6279,7 +6271,6 @@ AC_SUBST([am__leading_dot])])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 4
@@ -6314,7 +6305,6 @@ fi])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 3
@@ -6353,7 +6343,6 @@ AU_DEFUN([jm_MAINTAINER_MODE], [AM_MAINTAINER_MODE])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 3
@@ -6400,7 +6389,6 @@ fi
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # Automake 1.8 used `mkdir -m 0755 -p --' to ensure that directories
@@ -6464,7 +6452,6 @@ AC_SUBST([mkdir_p])])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 2
@@ -6508,7 +6495,6 @@ AC_DEFUN([_AM_IF_OPTION],
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 3
@@ -6547,7 +6533,6 @@ AU_DEFUN([fp_C_PROTOTYPES], [AM_C_PROTOTYPES])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # serial 3
@@ -6609,7 +6594,6 @@ AC_MSG_RESULT(yes)])
 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
 # One issue with vendor `install' (even GNU) is that you can't

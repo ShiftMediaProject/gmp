@@ -2,7 +2,7 @@
 # @configure_input@
 
 # Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-# 2003, 2004, 2005 Free Software Foundation, Inc.
+# 2003, 2004  Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -14,14 +14,14 @@
 
 @SET_MAKE@
 
-# Copyright 1996, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
+# Copyright 1996, 1998, 1999, 2000, 2001, 2002, 2005 Free Software Foundation,
 # Inc.
 #
 # This file is part of the GNU MP Library.
 #
 # The GNU MP Library is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at your
+# the Free Software Foundation; either version 3 of the License, or (at your
 # option) any later version.
 #
 # The GNU MP Library is distributed in the hope that it will be useful, but
@@ -30,9 +30,7 @@
 # License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-# MA 02110-1301, USA.
+# along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 # Copyright 1996, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
 # Inc.
@@ -41,7 +39,7 @@
 #
 # The GNU MP Library is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at your
+# the Free Software Foundation; either version 3 of the License, or (at your
 # option) any later version.
 #
 # The GNU MP Library is distributed in the hope that it will be useful, but
@@ -50,9 +48,7 @@
 # License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-# MA 02110-1301, USA.
+# along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 SOURCES = $(nodist_libmpn_la_SOURCES) $(nodist_EXTRA_libmpn_la_SOURCES)
 
@@ -270,6 +266,7 @@ nodist_EXTRA_libmpn_la_SOURCES = \
   hamdist.c hgcd2.c hgcd.c invert_limb.c				    \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mod_34lsub1.c mode1o.c	    \
   mul.c mul_1.c mul_2.c mul_fft.c mul_n.c mul_basecase.c		    \
+  mul_toom22.c mul_toom32.c mul_toom42.c				    \
   mullow_n.c mullow_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c	    \
   pre_divrem_1.c pre_mod_1.c pow_1.c qstack.c random.c random2.c rshift.c   \
   rootrem.c sb_divrem_mn.c scan0.c scan1.c set_str.c			    \
@@ -483,6 +480,12 @@ mul_fft_.c: mul_fft.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_fft.c; then echo $(srcdir)/mul_fft.c; else echo mul_fft.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 mul_n_.c: mul_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n.c; then echo $(srcdir)/mul_n.c; else echo mul_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+mul_toom22_.c: mul_toom22.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_toom22.c; then echo $(srcdir)/mul_toom22.c; else echo mul_toom22.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+mul_toom32_.c: mul_toom32.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_toom32.c; then echo $(srcdir)/mul_toom32.c; else echo mul_toom32.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+mul_toom42_.c: mul_toom42.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_toom42.c; then echo $(srcdir)/mul_toom42.c; else echo mul_toom42.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 mullow_basecase_.c: mullow_basecase.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mullow_basecase.c; then echo $(srcdir)/mullow_basecase.c; else echo mullow_basecase.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 mullow_n_.c: mullow_n.c $(ANSI2KNR)
@@ -567,7 +570,9 @@ mod_34lsub1_.$(OBJEXT) mod_34lsub1_.lo mode1o_.$(OBJEXT) mode1o_.lo \
 mp_bases_.$(OBJEXT) mp_bases_.lo mul_.$(OBJEXT) mul_.lo \
 mul_1_.$(OBJEXT) mul_1_.lo mul_2_.$(OBJEXT) mul_2_.lo \
 mul_basecase_.$(OBJEXT) mul_basecase_.lo mul_fft_.$(OBJEXT) \
-mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo mullow_basecase_.$(OBJEXT) \
+mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo mul_toom22_.$(OBJEXT) \
+mul_toom22_.lo mul_toom32_.$(OBJEXT) mul_toom32_.lo \
+mul_toom42_.$(OBJEXT) mul_toom42_.lo mullow_basecase_.$(OBJEXT) \
 mullow_basecase_.lo mullow_n_.$(OBJEXT) mullow_n_.lo nand_n_.$(OBJEXT) \
 nand_n_.lo nior_n_.$(OBJEXT) nior_n_.lo perfsqr_.$(OBJEXT) perfsqr_.lo \
 popcount_.$(OBJEXT) popcount_.lo pow_1_.$(OBJEXT) pow_1_.lo \
