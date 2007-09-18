@@ -65,7 +65,7 @@ this program.  If not, see http://www.gnu.org/licenses/.  */
 
 
 #define TIME(t,func)							\
-  do { int __t0, __t, __tmp;						\
+  do { int __t0, __tmp;							\
     __t0 = cputime ();							\
     {func;}								\
     __tmp = cputime () - __t0;						\
@@ -93,7 +93,8 @@ jmp_buf errjmpbuf;
 
 enum op_t {NOP, LIT, NEG, NOT, PLUS, MINUS, MULT, DIV, MOD, REM, INVMOD, POW,
 	   AND, IOR, XOR, SLL, SRA, POPCNT, HAMDIST, GCD, LCM, SQRT, ROOT, FAC,
-	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM, NEXTPRIME, BINOM};
+	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM, NEXTPRIME, BINOM,
+	   TIMING};
 
 /* Type for the expression tree.  */
 struct expr
@@ -316,6 +317,10 @@ main (int argc, char **argv)
 	base = 8;
       else if (arg[1] == 'd' && arg[2] == 0)
 	base = 10;
+      else if (arg[1] == 'v' && arg[2] == 0)
+	{
+	  printf ("pexpr linked to gmp %s\n", __gmp_version);
+	}
       else if (strcmp (arg, "-html") == 0)
 	{
 	  flag_html = 1;
@@ -726,6 +731,7 @@ struct functions fns[] =
   {"fac", FAC, 1},
   {"fact", FAC, 1},
   {"factorial", FAC, 1},
+  {"time", TIMING, 1},
   {"", NOP, 0}
 };
 
@@ -1137,7 +1143,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       return;
     case HAMDIST:
       { long int cnt;
-        mpz_init (lhs); mpz_init (rhs);
+	mpz_init (lhs); mpz_init (rhs);
 	mpz_eval_expr (lhs, e->operands.ops.lhs);
 	mpz_eval_expr (rhs, e->operands.ops.rhs);
 	cnt = mpz_hamdist (lhs, rhs);
@@ -1284,6 +1290,14 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	mpz_bin_ui (r, lhs, k);
       }
       mpz_clear (lhs); mpz_clear (rhs);
+      return;
+    case TIMING:
+      {
+	int t0;
+	t0 = cputime ();
+	mpz_eval_expr (r, e->operands.ops.lhs);
+	printf ("time: %d\n", cputime () - t0);
+      }
       return;
     default:
       abort ();
