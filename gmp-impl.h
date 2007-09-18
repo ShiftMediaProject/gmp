@@ -10,7 +10,7 @@ This file is part of the GNU MP Library.
 
 The GNU MP Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at your
+the Free Software Foundation; either version 3 of the License, or (at your
 option) any later version.
 
 The GNU MP Library is distributed in the hope that it will be useful, but
@@ -19,9 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-MA 02110-1301, USA. */
+along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* __GMP_DECLSPEC must be given on any global data that will be accessed
@@ -1005,12 +1003,30 @@ void mpn_kara_mul_n _PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_kara_sqr_n  __MPN(kara_sqr_n)
 void mpn_kara_sqr_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
+#define mpn_toom_interpolate_5pts  __MPN(toom_interpolate_5pts)
+void mpn_toom_interpolate_5pts _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t, mp_ptr));
+
+enum toom4_flags { toom4_w1_neg = 1, toom4_w3_neg = 2 }; /* FIXME */
+#define mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
+void mpn_toom_interpolate_7pts (mp_ptr, mp_size_t, enum toom4_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr);
+
 #define mpn_toom3_mul_n  __MPN(toom3_mul_n)
 void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
+
+#define mpn_mul_toom44  __MPN(mul_toom44)
+void mpn_mul_toom44 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
 #define mpn_toom3_sqr_n  __MPN(toom3_sqr_n)
 void mpn_toom3_sqr_n _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
+#define mpn_mul_toom22  __MPN(mul_toom22)
+void mpn_mul_toom22 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+
+#define mpn_mul_toom32  __MPN(mul_toom32)
+void mpn_mul_toom32 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+
+#define mpn_mul_toom42  __MPN(mul_toom42)
+void mpn_mul_toom42 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
 #define mpn_fft_best_k __MPN(fft_best_k)
 int     mpn_fft_best_k _PROTO ((mp_size_t n, int sqr)) ATTRIBUTE_CONST;
@@ -1036,8 +1052,74 @@ mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t,
 #define mpn_dc_divrem_n  __MPN(dc_divrem_n)
 mp_limb_t mpn_dc_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 
-/* #define mpn_tdiv_q  __MPN(tdiv_q) */
-/* void mpn_tdiv_q _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)); */
+#define mpn_sb_div_qr  __MPN(sb_div_qr)
+mp_limb_t mpn_sb_div_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define mpn_sb_div_q  __MPN(sb_div_q)
+mp_limb_t mpn_sb_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define mpn_sb_divappr_q  __MPN(sb_divappr_q)
+mp_limb_t mpn_sb_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define mpn_dc_div_qr  __MPN(dc_div_qr)
+mp_limb_t mpn_dc_div_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+#define mpn_dc_div_qr_n  __MPN(dc_div_qr_n)
+mp_limb_t mpn_dc_div_qr_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_ptr));
+#define mpn_dc_div_q  __MPN(dc_div_q)
+mp_limb_t mpn_dc_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+#define mpn_preinv_dc_div_qr  __MPN(preinv_dc_div_qr)
+mp_limb_t mpn_preinv_dc_div_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define mpn_dc_divappr_q  __MPN(dc_divappr_q)
+mp_limb_t mpn_dc_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+#define mpn_dc_divappr_q_n  __MPN(dc_divappr_q_n)
+mp_limb_t mpn_dc_divappr_q_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_ptr));
+#define mpn_preinv_dc_divappr_q  __MPN(preinv_dc_divappr_q)
+mp_limb_t mpn_preinv_dc_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define mpn_mu_div_qr  __MPN(mu_div_qr)
+mp_limb_t mpn_mu_div_qr _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_mu_div_qr_itch  __MPN(mu_div_qr_itch)
+mp_size_t mpn_mu_div_qr_itch _PROTO ((mp_size_t, mp_size_t, int));
+#define      mpn_preinv_mu_div_qr  __MPN(preinv_mu_div_qr)
+void      mpn_preinv_mu_div_qr _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_mu_divappr_q  __MPN(mu_divappr_q)
+mp_limb_t mpn_mu_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_mu_divappr_q_itch  __MPN(mu_divappr_q_itch)
+mp_size_t mpn_mu_divappr_q_itch _PROTO ((mp_size_t, mp_size_t, int));
+#define      mpn_preinv_mu_divappr_q  __MPN(preinv_mu_divappr_q)
+void      mpn_preinv_mu_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_mu_div_q  __MPN(mu_div_q)
+mp_limb_t mpn_mu_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define      mpn_invert  __MPN(invert)
+void      mpn_invert _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
+#define      mpn_binvert  __MPN(binvert)
+void      mpn_binvert _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_binvert_itch  __MPN(binvert_itch)
+mp_size_t mpn_binvert_itch _PROTO ((mp_size_t));
+#define mpn_sb_bdiv_qr  __MPN(sb_bdiv_qr)
+mp_limb_t mpn_sb_bdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define      mpn_sb_bdiv_q  __MPN(sb_bdiv_q)
+void      mpn_sb_bdiv_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define mpn_dc_bdiv_qr  __MPN(dc_bdiv_qr)
+mp_limb_t mpn_dc_bdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define mpn_dc_bdiv_qr_n_itch  __MPN(dc_bdiv_qr_n_itch)
+mp_size_t mpn_dc_bdiv_qr_n_itch _PROTO ((mp_size_t n));
+#define mpn_dc_bdiv_qr_n  __MPN(dc_bdiv_qr_n)
+mp_limb_t mpn_dc_bdiv_qr_n _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_limb_t dinv, mp_ptr tp));
+#define      mpn_dc_bdiv_q  __MPN(dc_bdiv_q)
+void      mpn_dc_bdiv_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define mpn_dc_bdiv_q_n_itch  __MPN(dc_bdiv_q_n_itch)
+mp_size_t mpn_dc_bdiv_q_n_itch _PROTO ((mp_size_t n));
+#define      mpn_dc_bdiv_q_n  __MPN(dc_bdiv_q_n)
+void      mpn_dc_bdiv_q_n _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_limb_t dinv, mp_ptr tp));
+
+#define      mpn_mu_bdiv_q  __MPN(mu_bdiv_q)
+void      mpn_mu_bdiv_q _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_mu_bdiv_q_itch  __MPN(mu_bdiv_q_itch)
+mp_size_t mpn_mu_bdiv_q_itch _PROTO ((mp_size_t, mp_size_t));
+
+#define      mpn_divexact  __MPN(divexact)
+void      mpn_divexact _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_divexact_itch  __MPN(divexact_itch)
+mp_size_t mpn_divexact_itch _PROTO ((mp_size_t, mp_size_t));
+
 
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
@@ -1430,6 +1512,50 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 /* See comments above about MUL_TOOM3_THRESHOLD_LIMIT.  */
 #ifndef SQR_TOOM3_THRESHOLD_LIMIT
 #define SQR_TOOM3_THRESHOLD_LIMIT  SQR_TOOM3_THRESHOLD
+#endif
+
+#ifndef DC_DIV_QR_THRESHOLD
+#define DC_DIV_QR_THRESHOLD       43
+#endif
+
+#ifndef DC_DIVAPPR_Q_THRESHOLD
+#define DC_DIVAPPR_Q_THRESHOLD   208
+#endif
+
+#ifndef DC_DIV_Q_THRESHOLD
+#define DC_DIV_Q_THRESHOLD       228
+#endif
+
+#ifndef DC_BDIV_QR_THRESHOLD
+#define DC_BDIV_QR_THRESHOLD      52
+#endif
+
+#ifndef DC_BDIV_Q_THRESHOLD
+#define DC_BDIV_Q_THRESHOLD      224
+#endif
+
+#ifndef DIVEXACT_JEB_THRESHOLD
+#define DIVEXACT_JEB_THRESHOLD    25
+#endif
+
+#ifndef INV_NEWTON_THRESHOLD
+#define INV_NEWTON_THRESHOLD     654
+#endif
+
+#ifndef BINV_NEWTON_THRESHOLD
+#define BINV_NEWTON_THRESHOLD    807
+#endif
+
+#ifndef MU_DIVAPPR_Q_THRESHOLD
+#define MU_DIVAPPR_Q_THRESHOLD  4000
+#endif
+
+#ifndef MU_DIV_Q_THRESHOLD
+#define MU_DIV_Q_THRESHOLD      4000
+#endif
+
+#ifndef MU_BDIV_Q_THRESHOLD
+#define MU_BDIV_Q_THRESHOLD     2000
 #endif
 
 /* First k to use for an FFT modF multiply.  A modF FFT is an order
@@ -2396,6 +2522,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);			\
     (inv) = __inv & GMP_NUMB_MASK;					\
   } while (0)
+#define binvert_limb modlimb_invert /* backward compatibility */
 
 /* Multiplicative inverse of 3, modulo 2^GMP_NUMB_BITS.
    Eg. 0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits.
