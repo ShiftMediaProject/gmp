@@ -1,8 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2004
-# Free Software Foundation, Inc.
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2004,
+# 2006 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -31,6 +31,8 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 # Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the
 # libtool manual.
 #
+#	CURRENT:REVISION:AGE
+#
 # 1. No interfaces changed, only implementations (good): Increment REVISION.
 #
 # 2. Interfaces added, none removed (good): Increment CURRENT, increment
@@ -56,8 +58,9 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 #        4.1.3    6:3:3    3:5:0   4:7:1
 #        4.1.4    6:3:3    3:5:0   4:7:1	WRONG, same as 4.1.3!
 #        4.2      6:0:3    3:2:0   4:4:1	REALLY WRONG, same as 4.1!
-#        4.2.1    7:1:4    4:1:1   4:10:1
-#        5.0      8:0:5    5:0:2   4:11:1	PRELIMINARY
+#        4.2.1    7:1:4    4:1:1   4:10:1	WRONG for libgmpxx
+#        4.2.2    7:2:4    4:2:0   4:11:1
+#        5.0      8:0:5    5:0:1   4:12:1	PRELIMINARY
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
@@ -76,10 +79,10 @@ LIBGMP_LT_AGE =      5
 
 LIBGMPXX_LT_CURRENT =  5
 LIBGMPXX_LT_REVISION = 0
-LIBGMPXX_LT_AGE =      2
+LIBGMPXX_LT_AGE =      1
 
 LIBMP_LT_CURRENT =  4
-LIBMP_LT_REVISION = 11
+LIBMP_LT_REVISION = 12
 LIBMP_LT_AGE =      1
 
 
