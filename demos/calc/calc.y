@@ -105,7 +105,7 @@ mpz_t    stack[100];
 mpz_ptr  sp = stack[0];
 
 #define CHECK_OVERFLOW()                                                  \
-  if (sp >= stack[numberof(stack)])                                       \
+  if (sp >= stack[numberof(stack)])	/* FIXME */			\
     {                                                                     \
       fprintf (stderr,                                                    \
                "Value stack overflow, too much nesting in expression\n"); \

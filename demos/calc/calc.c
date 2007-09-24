@@ -143,7 +143,7 @@ mpz_ptr  sp = stack[0];
   if (sp >= stack[numberof(stack)])                                       \
     {                                                                     \
       fprintf (stderr,                                                    \
-               "Value stack overflow, too much nesting in expression\n"); \
+	       "Value stack overflow, too much nesting in expression\n"); \
       YYERROR;                                                            \
     }
 
@@ -280,11 +280,11 @@ static const short yyrline[] =
 /* YYTNAME[TOKEN_NUM] -- String name of the token TOKEN_NUM. */
 static const char *const yytname[] =
 {
-  "$", "error", "$undefined.", "EOS", "BAD", "HELP", "HEX", "DECIMAL", 
-  "QUIT", "ABS", "BIN", "FIB", "GCD", "KRON", "LCM", "LUCNUM", 
-  "NEXTPRIME", "POWM", "ROOT", "SQRT", "NUMBER", "VARIABLE", "LOR", 
-  "LAND", "'<'", "'>'", "EQ", "NE", "LE", "GE", "LSHIFT", "RSHIFT", "'+'", 
-  "'-'", "'*'", "'/'", "'%'", "UMINUS", "'^'", "'!'", "'='", "'('", "')'", 
+  "$", "error", "$undefined.", "EOS", "BAD", "HELP", "HEX", "DECIMAL",
+  "QUIT", "ABS", "BIN", "FIB", "GCD", "KRON", "LCM", "LUCNUM",
+  "NEXTPRIME", "POWM", "ROOT", "SQRT", "NUMBER", "VARIABLE", "LOR",
+  "LAND", "'<'", "'>'", "EQ", "NE", "LE", "GE", "LSHIFT", "RSHIFT", "'+'",
+  "'-'", "'*'", "'/'", "'%'", "UMINUS", "'^'", "'!'", "'='", "'('", "')'",
   "','", "top", "statements", "statement", "e", "gcdlist", "lcmlist", 0
 };
 #endif
@@ -485,18 +485,18 @@ static const short yycheck[] =
    Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002 Free Software
    Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
-   any later version.
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 3, or (at your option) any later
+   version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+   more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see http://www.gnu.org/licenses/.  */
+   You should have received a copy of the GNU General Public License along with
+   this program.  If not, see http://www.gnu.org/licenses/.  */
 
 /* As a special exception, when this file is copied by Bison into a
    Bison output file, you may use that output file without restriction.
@@ -611,7 +611,7 @@ union yyalloc
 #define YYEMPTY		-2
 #define YYEOF		0
 #define YYACCEPT	goto yyacceptlab
-#define YYABORT 	goto yyabortlab
+#define YYABORT	goto yyabortlab
 #define YYERROR		goto yyerrlab1
 /* Like YYERROR except do call yyerror.  This remains here temporarily
    to ease the transition to the new meaning of YYERROR, for GCC.
@@ -629,7 +629,7 @@ do								\
       goto yybackup;						\
     }								\
   else								\
-    { 								\
+    {								\
       yyerror ("syntax error: cannot back up");			\
       YYERROR;							\
     }								\
@@ -647,7 +647,7 @@ while (0)
    its range to the last symbol.  */
 
 #ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)       	\
+# define YYLLOC_DEFAULT(Current, Rhs, N)	\
    Current.last_line   = Rhs[N].last_line;	\
    Current.last_column = Rhs[N].last_column;
 #endif
@@ -1242,22 +1242,22 @@ case 18:
 case 19:
 #line 204 "calc.y"
 { CHECK_UI ("Exponent", sp);
-                     sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); }
+		     sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); }
     break;
 case 20:
 #line 206 "calc.y"
 { CHECK_UI ("Shift count", sp);
-                     sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); }
+		     sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); }
     break;
 case 21:
 #line 208 "calc.y"
 { CHECK_UI ("Shift count", sp);
-                     sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); }
+		     sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); }
     break;
 case 22:
 #line 210 "calc.y"
 { CHECK_UI ("Factorial", sp);
-                     mpz_fac_ui (sp, mpz_get_ui (sp)); }
+		     mpz_fac_ui (sp, mpz_get_ui (sp)); }
     break;
 case 23:
 #line 212 "calc.y"
@@ -1302,22 +1302,22 @@ case 32:
 case 33:
 #line 225 "calc.y"
 { sp--; CHECK_UI ("Binomial base", sp+1);
-                                    mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); }
+				    mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); }
     break;
 case 34:
 #line 227 "calc.y"
 { CHECK_UI ("Fibonacci", sp);
-                                    mpz_fib_ui (sp, mpz_get_ui (sp)); }
+				    mpz_fib_ui (sp, mpz_get_ui (sp)); }
     break;
 case 36:
 #line 230 "calc.y"
 { sp--; mpz_set_si (sp,
-                                          mpz_kronecker (sp, sp+1)); }
+					  mpz_kronecker (sp, sp+1)); }
     break;
 case 38:
 #line 233 "calc.y"
 { CHECK_UI ("Lucas number", sp);
-                                    mpz_lucnum_ui (sp, mpz_get_ui (sp)); }
+				    mpz_lucnum_ui (sp, mpz_get_ui (sp)); }
     break;
 case 39:
 #line 235 "calc.y"
@@ -1330,7 +1330,7 @@ case 40:
 case 41:
 #line 237 "calc.y"
 { sp--; CHECK_UI ("Nth-root", sp+1);
-                                    mpz_root (sp, sp, mpz_get_ui (sp+1)); }
+				    mpz_root (sp, sp, mpz_get_ui (sp+1)); }
     break;
 case 42:
 #line 239 "calc.y"
@@ -1339,22 +1339,22 @@ case 42:
 case 43:
 #line 241 "calc.y"
 {
-        sp++;
-        CHECK_OVERFLOW ();
-        CHECK_VARIABLE (yyvsp[0].var);
-        mpz_set (sp, variable[yyvsp[0].var]);
+	sp++;
+	CHECK_OVERFLOW ();
+	CHECK_VARIABLE (yyvsp[0].var);
+	mpz_set (sp, variable[yyvsp[0].var]);
       }
     break;
 case 44:
 #line 247 "calc.y"
 {
-        sp++;
-        CHECK_OVERFLOW ();
-        if (mpz_set_str (sp, yyvsp[0].str, ibase) != 0)
-          {
-            fprintf (stderr, "Invalid number: %s\n", yyvsp[0].str);
-            YYERROR;
-          }
+	sp++;
+	CHECK_OVERFLOW ();
+	if (mpz_set_str (sp, yyvsp[0].str, ibase) != 0)
+	  {
+	    fprintf (stderr, "Invalid number: %s\n", yyvsp[0].str);
+	    YYERROR;
+	  }
       }
     break;
 case 46:
@@ -1616,24 +1616,24 @@ main (int argc, char *argv[])
   for (i = 1; i < argc; i++)
     {
       if (strcmp (argv[i], "--readline") == 0)
-        calc_option_readline = 1;
+	calc_option_readline = 1;
       else if (strcmp (argv[i], "--noreadline") == 0)
-        calc_option_readline = 0;
+	calc_option_readline = 0;
       else if (strcmp (argv[i], "--help") == 0)
-        {
-          printf ("Usage: calc [--option]...\n");
-          printf ("  --readline    use readline\n");
-          printf ("  --noreadline  don't use readline\n");
-          printf ("  --help        this message\n");
-          printf ("Readline is only available when compiled in,\n");
-          printf ("and in that case it's the default on a tty.\n");
-          exit (0);
-        }
+	{
+	  printf ("Usage: calc [--option]...\n");
+	  printf ("  --readline    use readline\n");
+	  printf ("  --noreadline  don't use readline\n");
+	  printf ("  --help        this message\n");
+	  printf ("Readline is only available when compiled in,\n");
+	  printf ("and in that case it's the default on a tty.\n");
+	  exit (0);
+	}
       else
-        {
-          fprintf (stderr, "Unrecognised option: %s\n", argv[i]);
-          exit (1);
-        }
+	{
+	  fprintf (stderr, "Unrecognised option: %s\n", argv[i]);
+	  exit (1);
+	}
     }
 
 #if WITH_READLINE
