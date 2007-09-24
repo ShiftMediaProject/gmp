@@ -21,8 +21,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C K7: popcount 5.0 cycles/limb, hamdist 6.0 cycles/limb
-
+C			     popcount	     hamdist
+C P3 generic			6.5		7
+C P3 model 9  (Banias)          ?		?
+C P3 model 13 (Dothan)		5.75		6
+C K7				5		6
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C unsigned long mpn_hamdist (mp_srcptr src, mp_srcptr src2, mp_size_t size);
