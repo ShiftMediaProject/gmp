@@ -1,8 +1,8 @@
 /* mpn_mul_toom42 -- Multiply {ap,an} and {bp,bn} where an is nominally twice
-   as large as bn.  Or more accurately, 3bn < 2an < 8bn.  This function should
-   probably not be used when 3an > 8bn, for efficiency reasons.
+   as large as bn.  Or more accurately, (3/2)bn < an < 4bn.
 
-   Contributed by Torbjorn Granlund.  Additional improvement by Marco Bodrato.
+   Contributed to the GNU project by Torbjorn Granlund.
+   Additional improvements by Marco Bodrato.
 
    The idea of using asymmetric operands was suggested by Marco Bodrato and
    Alberto Zanoni.
@@ -11,7 +11,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2006 Free Software Foundation, Inc.
+Copyright 2006, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -41,9 +41,6 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void mpn_toom3_interpolate (mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int,
-			    mp_limb_t, mp_ptr);
-
 static inline int
 mpn_zero_p (mp_srcptr ap, mp_size_t n)
 {
@@ -56,8 +53,7 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
   return 1;
 }
 
-/*
-  Evaluate in: -1, 0, +1, +2, +inf
+/* Evaluate in: -1, 0, +1, +2, +inf
 
   <-s-><--n--><--n--><--n-->
    ___ ______ ______ ______
@@ -65,11 +61,11 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
 	       |_b1_|___b0_|
 	       <-t--><--n-->
 
-  v0  =  a0             * b0       #   A(0)*B(0)
-  v1  = (a0+ a1+ a2+ a3)*(b0+ b1)  #   A(1)*B(1)      ah  <= 3  bh <= 1
-  vm1 = (a0- a1+ a2- a3)*(b0- b1)  #  A(-1)*B(-1)    |ah| <= 1  bh = 0
-  v2  = (a0+2a1+4a2+8a3)*(b0+2b1)  #   A(2)*B(2)
-  vinf=              a3 *     b1   # A(inf)*B(inf)
+  v0  =  a0             * b0      #   A(0)*B(0)
+  v1  = (a0+ a1+ a2+ a3)*(b0+ b1) #   A(1)*B(1)      ah  <= 3  bh <= 1
+  vm1 = (a0- a1+ a2- a3)*(b0- b1) #  A(-1)*B(-1)    |ah| <= 1  bh  = 0
+  v2  = (a0+2a1+4a2+8a3)*(b0+2b1) #   A(2)*B(2)      ah  <= 14 bh <= 2
+  vinf=              a3 *     b1  # A(inf)*B(inf)
 */
 
 void
@@ -210,8 +206,8 @@ mpn_mul_toom42 (mp_ptr pp,
 
   ASSERT (as1[n] <= 3);
   ASSERT (bs1[n] <= 1);
-/*ASSERT (bsm1[n] == 0);*/
   ASSERT (asm1[n] <= 1);
+/*ASSERT (bsm1[n] == 0);*/
   ASSERT (as2[n] <= 14);
   ASSERT (bs2[n] <= 2);
 
@@ -222,14 +218,15 @@ mpn_mul_toom42 (mp_ptr pp,
 #define v2    (scratch + 2 * n + 1)		/* 2n+2 */
 
   /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom3_interpolate only needs scratch otherwise.  */
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
   scratch = TMP_SALLOC_LIMBS (6 * n + 3);
 
   /* vm1, 2n+1 limbs */
   mpn_mul_n (vm1, asm1, bsm1, n);
-  vm1[2 * n] = 0;
+  cy = 0;
   if (asm1[n] != 0)
-    vm1[2 * n] = mpn_add_n (vm1 + n, vm1 + n, bsm1, n);
+    cy = mpn_add_n (vm1 + n, vm1 + n, bsm1, n);
+  vm1[2 * n] = cy;
 
   mpn_mul_n (v2, as2, bs2, n + 1);		/* v2, 2n+1 limbs */
 
@@ -259,18 +256,23 @@ mpn_mul_toom42 (mp_ptr pp,
     }
   else
     cy = 0;
-  v1[2 * n] = cy;
-
   if (bs1[n] != 0)
-    v1[2 * n] += mpn_add_n (v1 + n, v1 + n, as1, n);
+    cy += mpn_add_n (v1 + n, v1 + n, as1, n);
+  v1[2 * n] = cy;
 
   mpn_mul_n (v0, ap, bp, n);			/* v0, 2n limbs */
 
-  mpn_toom3_interpolate (pp, v2, vm1, n, s + t, 1^vm1_neg, vinf0, scratch + 4 * n + 4);
+  mpn_toom_interpolate_5pts (pp, v2, vm1, n, s + t, 1^vm1_neg, vinf0, scratch + 4 * n + 4);
 
   TMP_FREE;
 }
 
+
+#define CONCAT(name,M,N)  name ## M ## N
+
+#define M 4
+#define N 2
+#define mpn_mul_toomMN CONCAT(mpn_mul_toom,4,2)
 
 #ifdef CHECK
 #include <stdlib.h>
@@ -295,8 +297,9 @@ dumpy (mp_srcptr p, mp_size_t n)
 int
 main (int argc, char **argv)
 {
-  mp_size_t n, s, t, an, bn;
+  mp_size_t n, s, t, an, bn, clearn;
   mp_ptr ap, bp, refp, pp;
+  mp_limb_t keep;
   int test;
   int maxn;
   int norandom;
@@ -304,15 +307,15 @@ main (int argc, char **argv)
   TMP_DECL;
   TMP_MARK;
 
-  an = 4 * SIZE;
-  bn = 2 * SIZE;
+  an = M * SIZE;
+  bn = N * SIZE;
   norandom = 0;
 
   if (argc >= 2)
     {
       maxn = strtol (argv[1], 0, 0);
-      an = 4 * maxn;
-      bn = 2 * maxn;
+      an = M * maxn;
+      bn = N * maxn;
       if (argc == 3)
 	{
 	  an = maxn;
@@ -326,11 +329,11 @@ main (int argc, char **argv)
   ap = TMP_ALLOC_LIMBS (an);
   bp = TMP_ALLOC_LIMBS (bn);
   refp = TMP_ALLOC_LIMBS (an + bn);
-  pp = TMP_ALLOC_LIMBS (an + bn);
+  pp = TMP_ALLOC_LIMBS (an + bn + 1);
 
   for (test = 0;; test++)
     {
-      if (err == 0 && test % 0x1000 == 0)
+      if (err == 0 && test % 0x100 == 0)
 	{
 	  printf ("\r%d", test);  fflush (stdout);
 	}
@@ -338,18 +341,35 @@ main (int argc, char **argv)
 	{
 	  n = random () % maxn + 1;
 	  s = random () % n + 1;
+#if M == N
+	  t = random () % s + 1;
+#else
 	  t = random () % n + 1;
-	  an = 3 * n + s;
-	  bn = n + t;
+#endif
+	  an = (M - 1) * n + s;
+	  bn = (N - 1) * n + t;
 	}
       mpn_random2 (ap, an);
+      clearn = random () % (an + 1);
+      MPN_ZERO (ap + clearn, an - clearn);
+
       mpn_random2 (bp, bn);
-      mpn_random2 (pp, an+bn);
-      mpn_mul_toom42 (pp, ap, an, bp, bn);
+      clearn = random () % (bn + 1);
+      MPN_ZERO (bp + clearn, bn - clearn);
+
+      mpn_random2 (pp, an + bn + 1);
+      keep = pp[an + bn];
+
+      mpn_mul_toomMN (pp, ap, an, bp, bn);
       mpn_mul (refp, ap, an, bp, bn);
-      if (mpn_cmp (refp, pp, an + bn) != 0)
+      if (pp[an + bn] != keep || mpn_cmp (refp, pp, an + bn) != 0)
 	{
 	  printf ("ERROR in test %d\n", test);
+	  if (pp[an + bn] != keep)
+	    {
+	      printf ("pp high:"); dumpy (pp + an + bn, 1);
+	      printf ("keep:   "); dumpy (&keep, 1);
+	    }
 	  dumpy (ap, an);
 	  dumpy (bp, bn);
 	  dumpy (pp, an + bn);
@@ -403,10 +423,12 @@ main (int argc, char **argv)
 
   mpn_random (ap, an);
   mpn_random (bp, bn);
-  TIME (t, mpn_mul_toom42 (pp, ap, an, bp, bn));
-  printf ("mpn_mul_toom42: %f\n", t);
+  TIME (t, mpn_mul_toomMN (pp, ap, an, bp, bn));
+  printf ("mpn_mul_toom%d%d:   %f\n", M, N, t);
   TIME (t, mpn_mul (refp, ap, an, bp, bn));
-  printf ("mpn_mul:        %f\n", t);
+  printf ("mpn_mul:          %f\n", t);
+  TIME (t, mpn_mul_basecase (refp, ap, an, bp, bn));
+  printf ("mpn_mul_basecase: %f\n", t);
   TMP_FREE;
 
   return 0;
