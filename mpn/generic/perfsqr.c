@@ -93,75 +93,75 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD34_BITS  (GMP_NUMB_BITS / 4 * 3)
 #define MOD34_MASK  ((CNST_LIMB(1) << MOD34_BITS) - 1)
 
-#define PERFSQR_MOD_34(r, up, usize)                    \
-  do {                                                  \
-    (r) = mpn_mod_34lsub1 (up, usize);                  \
-    (r) = ((r) & MOD34_MASK) + ((r) >> MOD34_BITS);     \
+#define PERFSQR_MOD_34(r, up, usize)				\
+  do {								\
+    (r) = mpn_mod_34lsub1 (up, usize);				\
+    (r) = ((r) & MOD34_MASK) + ((r) >> MOD34_BITS);		\
   } while (0)
 
 /* FIXME: The %= here isn't good, and might destroy any savings from keeping
    the PERFSQR_MOD_IDX stuff within a limb (rather than needing umul_ppmm).
    Maybe a new sort of mpn_preinv_mod_1 could accept an unnormalized divisor
-   and a shift count, like mpn_preinv_divrem_1.  But mod_34lsub1 is our
-   normal case, so lets not worry too much about mod_1.  */
-#define PERFSQR_MOD_PP(r, up, usize)                            \
-  do {                                                          \
-    if (USE_PREINV_MOD_1)                                       \
-      {                                                         \
-        (r) = mpn_preinv_mod_1 (up, usize, PERFSQR_PP_NORM,     \
-                                PERFSQR_PP_INVERTED);           \
-        (r) %= PERFSQR_PP;                                      \
-      }                                                         \
-    else                                                        \
-      {                                                         \
-        (r) = mpn_mod_1 (up, usize, PERFSQR_PP);                \
-      }                                                         \
+   and a shift count, like mpn_preinv_divrem_1.	 But mod_34lsub1 is our
+   normal case, so lets not worry too much about mod_1.	 */
+#define PERFSQR_MOD_PP(r, up, usize)				\
+  do {								\
+    if (USE_PREINV_MOD_1)					\
+      {								\
+	(r) = mpn_preinv_mod_1 (up, usize, PERFSQR_PP_NORM,	\
+				PERFSQR_PP_INVERTED);		\
+	(r) %= PERFSQR_PP;					\
+      }								\
+    else							\
+      {								\
+	(r) = mpn_mod_1 (up, usize, PERFSQR_PP);		\
+      }								\
   } while (0)
 
-#define PERFSQR_MOD_IDX(idx, r, d, inv)                 \
-  do {                                                  \
-    mp_limb_t  q;                                       \
-    ASSERT ((r) <= PERFSQR_MOD_MASK);                   \
-    ASSERT ((((inv) * (d)) & PERFSQR_MOD_MASK) == 1);   \
-    ASSERT (MP_LIMB_T_MAX / (d) >= PERFSQR_MOD_MASK);   \
-                                                        \
-    q = ((r) * (inv)) & PERFSQR_MOD_MASK;               \
-    ASSERT (r == ((q * (d)) & PERFSQR_MOD_MASK));       \
-    (idx) = (q * (d)) >> PERFSQR_MOD_BITS;              \
+#define PERFSQR_MOD_IDX(idx, r, d, inv)				\
+  do {								\
+    mp_limb_t  q;						\
+    ASSERT ((r) <= PERFSQR_MOD_MASK);				\
+    ASSERT ((((inv) * (d)) & PERFSQR_MOD_MASK) == 1);		\
+    ASSERT (MP_LIMB_T_MAX / (d) >= PERFSQR_MOD_MASK);		\
+								\
+    q = ((r) * (inv)) & PERFSQR_MOD_MASK;			\
+    ASSERT (r == ((q * (d)) & PERFSQR_MOD_MASK));		\
+    (idx) = (q * (d)) >> PERFSQR_MOD_BITS;			\
   } while (0)
 
-#define PERFSQR_MOD_1(r, d, inv, mask)                          \
-  do {                                                          \
-    unsigned   idx;                                             \
-    ASSERT ((d) <= GMP_LIMB_BITS);                              \
-    PERFSQR_MOD_IDX(idx, r, d, inv);                            \
-    TRACE (printf ("  PERFSQR_MOD_1 d=%u r=%lu idx=%u\n",       \
-                   d, r%d, idx));                               \
-    if ((((mask) >> idx) & 1) == 0)                             \
-      {                                                         \
-        TRACE (printf ("  non-square\n"));                      \
-        return 0;                                               \
-      }                                                         \
+#define PERFSQR_MOD_1(r, d, inv, mask)				\
+  do {								\
+    unsigned   idx;						\
+    ASSERT ((d) <= GMP_LIMB_BITS);				\
+    PERFSQR_MOD_IDX(idx, r, d, inv);				\
+    TRACE (printf ("  PERFSQR_MOD_1 d=%u r=%lu idx=%u\n",	\
+		   d, r%d, idx));				\
+    if ((((mask) >> idx) & 1) == 0)				\
+      {								\
+	TRACE (printf ("  non-square\n"));			\
+	return 0;						\
+      }								\
   } while (0)
 
 /* The expression "(int) idx - GMP_LIMB_BITS < 0" lets the compiler use the
-   sign bit from "idx-GMP_LIMB_BITS", which might help avoid a branch.  */
-#define PERFSQR_MOD_2(r, d, inv, mhi, mlo)                      \
-  do {                                                          \
-    mp_limb_t  m;                                               \
-    unsigned   idx;                                             \
-    ASSERT ((d) <= 2*GMP_LIMB_BITS);                            \
-                                                                \
-    PERFSQR_MOD_IDX (idx, r, d, inv);                           \
-    TRACE (printf ("  PERFSQR_MOD_2 d=%u r=%lu idx=%u\n",       \
-                   d, r%d, idx));                               \
-    m = ((int) idx - GMP_LIMB_BITS < 0 ? (mlo) : (mhi));        \
-    idx %= GMP_LIMB_BITS;                                       \
-    if (((m >> idx) & 1) == 0)                                  \
-      {                                                         \
-        TRACE (printf ("  non-square\n"));                      \
-        return 0;                                               \
-      }                                                         \
+   sign bit from "idx-GMP_LIMB_BITS", which might help avoid a branch.	*/
+#define PERFSQR_MOD_2(r, d, inv, mhi, mlo)			\
+  do {								\
+    mp_limb_t  m;						\
+    unsigned   idx;						\
+    ASSERT ((d) <= 2*GMP_LIMB_BITS);				\
+								\
+    PERFSQR_MOD_IDX (idx, r, d, inv);				\
+    TRACE (printf ("  PERFSQR_MOD_2 d=%u r=%lu idx=%u\n",	\
+		   d, r%d, idx));				\
+    m = ((int) idx - GMP_LIMB_BITS < 0 ? (mlo) : (mhi));	\
+    idx %= GMP_LIMB_BITS;					\
+    if (((m >> idx) & 1) == 0)					\
+      {								\
+	TRACE (printf ("  non-square\n"));			\
+	return 0;						\
+      }								\
   } while (0)
 
 
@@ -177,7 +177,7 @@ mpn_perfect_square_p (mp_srcptr up, mp_size_t usize)
   {
     unsigned  idx = up[0] % 0x100;
     if (((sq_res_0x100[idx / GMP_LIMB_BITS]
-          >> (idx % GMP_LIMB_BITS)) & 1) == 0)
+	  >> (idx % GMP_LIMB_BITS)) & 1) == 0)
       return 0;
   }
 

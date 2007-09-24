@@ -83,8 +83,8 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn + (cy != 0), d2p);
 	    if (cy == 0)
 	      qp[nn - 2] = qhl;	/* always store nn-2+1 quotient limbs */
-            rp[0] = (n2p[0] >> cnt)
-              | ((n2p[1] << (GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK);
+	    rp[0] = (n2p[0] >> cnt)
+	      | ((n2p[1] << (GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK);
 	    rp[1] = (n2p[1] >> cnt);
 	  }
 	else
@@ -94,8 +94,8 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    MPN_COPY (n2p, np, nn);
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
 	    qp[nn - 2] = qhl;	/* always store nn-2+1 quotient limbs */
-            rp[0] = n2p[0];
-            rp[1] = n2p[1];
+	    rp[0] = n2p[0];
+	    rp[1] = n2p[1];
 	  }
 	TMP_FREE;
 	return;
