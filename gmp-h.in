@@ -1,7 +1,7 @@
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2006 Free Software Foundation, Inc.
+2004, 2005, 2006, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -414,11 +414,17 @@ typedef __mpq_struct *mpq_ptr;
    inline" would be an acceptable substitute if the compiler (or linker)
    discards unused statics.  */
 
-/* gcc has __inline__ in all modes, including strict ansi.  Give a prototype
-   for an inline too, so as to correctly specify "dllimport" on windows, in
-   case the function is called rather than inlined.  */
+ /* gcc has __inline__ in all modes, including strict ansi.  Give a prototype
+    for an inline too, so as to correctly specify "dllimport" on windows, in
+    case the function is called rather than inlined.
+    GCC 4.3 and above with -std=c99 or -std=gnu99 implements ISO C99
+    inline semantics, unless -fgnu89-inline is used.  */
 #ifdef __GNUC__
+#ifdef __GNUC_STDC_INLINE__
+#define __GMP_EXTERN_INLINE extern __inline__ __attribute__ ((__gnu_inline__))
+#else
 #define __GMP_EXTERN_INLINE      extern __inline__
+#endif
 #define __GMP_INLINE_PROTOTYPES  1
 #endif
 
@@ -510,7 +516,9 @@ typedef __mpq_struct *mpq_ptr;
 
 #if defined (__cplusplus)
 extern "C" {
+#ifdef _GMP_H_HAVE_FILE
 using std::FILE;
+#endif
 #endif
 
 #define mp_set_memory_functions __gmp_set_memory_functions
@@ -1522,6 +1530,9 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, m
 #define mpn_mul_n __MPN(mul_n)
 __GMP_DECLSPEC void mpn_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
+#define mpn_neg_n __MPN(neg_n)
+__GMP_DECLSPEC mp_limb_t mpn_neg_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
 #define mpn_perfect_square_p __MPN(perfect_square_p)
 __GMP_DECLSPEC int mpn_perfect_square_p __GMP_PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
@@ -2075,6 +2086,24 @@ mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_
   mp_limb_t  __gmp_c;
   __GMPN_SUB_1 (__gmp_c, __gmp_dst, __gmp_src, __gmp_size, __gmp_n);
   return __gmp_c;
+}
+#endif
+
+#if defined (__GMP_EXTERN_INLINE) || defined (__GMP_FORCE_mpn_neg_n)
+#if ! defined (__GMP_FORCE_mpn_neg_n)
+__GMP_EXTERN_INLINE
+#endif
+mp_limb_t
+mpn_neg_n (mp_ptr __gmp_rp, mp_srcptr __gmp_up, mp_size_t __gmp_n)
+{
+  mp_limb_t __gmp_ul, __gmp_cy;
+  __gmp_cy = 0;
+  do {
+      __gmp_ul = *__gmp_up++;
+      *__gmp_rp++ = -__gmp_ul - __gmp_cy;
+      __gmp_cy |= __gmp_ul != 0;
+  } while (--__gmp_n != 0);
+  return __gmp_cy;
 }
 #endif
 
