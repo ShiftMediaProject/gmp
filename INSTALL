@@ -34,9 +34,8 @@ or in emacs
 	C-u C-h i gmp.info
 
 
-Here are some brief instructions on how to install GMP, and some examples to
-help you get started using it.  First you need to compile.  Since you're
-impatient, try this
+Here are some brief instructions on how to install GMP.  First you need to
+compile.  Since you're impatient, try this
 
 	./configure
 	make
