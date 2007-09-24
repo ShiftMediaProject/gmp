@@ -2,11 +2,11 @@
 
                   GMP port to Power Macintosh and MacOS
 
-                       Kent Boortz <kent@swox.se>
+                             Kent Boortz
 
 ===========================================================================
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -96,7 +96,7 @@ From the MPW development environment you need at least
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./About_MPW_etc.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/MPW_Shell.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Scripts.sit.hqx
-    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/GetFileName.sit.hqx    
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/GetFileName.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/Make.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/MrC.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/PPCAsm.sit.hqx
@@ -104,7 +104,7 @@ From the MPW development environment you need at least
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/Libraries.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/RuntimeLibraries.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/Interfaces/CIncludes.sit.hqx
-    
+
 Put these into a folder and drag the whole folder to the "StuffIt
 Expander" icon to unpack them.
 
