@@ -30,14 +30,14 @@ check_one (mpq_srcptr q, int base, const char *want)
 {
   char    *str, *ret;
   size_t  str_alloc;
-  
+
   MPQ_CHECK_FORMAT (q);
   mp_trace_base = base;
 
   str_alloc =
     mpz_sizeinbase (mpq_numref(q), ABS(base)) +
     mpz_sizeinbase (mpq_denref(q), ABS(base)) + 3;
-  
+
   str = mpq_get_str (NULL, base, q);
   if (strlen(str)+1 > str_alloc)
     {
@@ -57,9 +57,9 @@ check_one (mpq_srcptr q, int base, const char *want)
       abort ();
     }
   (*__gmp_free_func) (str, strlen (str) + 1);
-  
+
   str = (char *) (*__gmp_allocate_func) (str_alloc);
-  
+
   ret = mpq_get_str (str, base, q);
   if (str != ret)
     {

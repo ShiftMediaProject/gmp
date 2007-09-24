@@ -94,7 +94,7 @@ check_samples (void)
 
   {
     unsigned long y;
-  
+
     mpz_set_ui (x, 1L);
     y = 0;
     mpz_mul_ui (got, x, y);

@@ -66,17 +66,17 @@ check_data (void)
 
       got = mpf_get_si (f);
       if (got != data[i].want)
-        {
-          printf ("mpf_get_si wrong at data[%d]\n", i); 
-          printf ("   f     \"%s\"\n", data[i].f);
-          printf ("     dec "); mpf_out_str (stdout, 10, 0, f); printf ("\n");
-          printf ("     hex "); mpf_out_str (stdout, 16, 0, f); printf ("\n");
-          printf ("     size %ld\n", (long) SIZ(f));
-          printf ("     exp  %ld\n", (long) EXP(f));
-          printf ("   got   %ld (0x%lX)\n", got, got);
-          printf ("   want  %ld (0x%lX)\n", data[i].want, data[i].want);
-          abort();                                    
-        }
+	{
+	  printf ("mpf_get_si wrong at data[%d]\n", i);
+	  printf ("   f     \"%s\"\n", data[i].f);
+	  printf ("     dec "); mpf_out_str (stdout, 10, 0, f); printf ("\n");
+	  printf ("     hex "); mpf_out_str (stdout, 16, 0, f); printf ("\n");
+	  printf ("     size %ld\n", (long) SIZ(f));
+	  printf ("     exp  %ld\n", (long) EXP(f));
+	  printf ("   got   %ld (0x%lX)\n", got, got);
+	  printf ("   want  %ld (0x%lX)\n", data[i].want, data[i].want);
+	  abort();
+	}
     }
   mpf_clear (f);
 }
@@ -121,7 +121,7 @@ void
 check_limbdata (void)
 {
 #define M  GMP_NUMB_MAX
-  
+
   static const struct {
     mp_exp_t       exp;
     mp_size_t      size;
@@ -195,16 +195,16 @@ check_limbdata (void)
 
       got = mpf_get_si (f);
       if (got != data[i].want)
-        {
-          printf    ("mpf_get_si wrong at limb data[%d]\n", i);
-          mpf_trace ("  f", f);
-          mpn_trace ("  d", data[i].d, data[i].size);
-          printf    ("  size %ld\n", (long) data[i].size);
-          printf    ("  exp %ld\n", (long) data[i].exp);
-          printf    ("  got   %lu (0x%lX)\n", got, got);
-          printf    ("  want  %lu (0x%lX)\n", data[i].want, data[i].want);
-          abort();
-        }
+	{
+	  printf    ("mpf_get_si wrong at limb data[%d]\n", i);
+	  mpf_trace ("  f", f);
+	  mpn_trace ("  d", data[i].d, data[i].size);
+	  printf    ("  size %ld\n", (long) data[i].size);
+	  printf    ("  exp %ld\n", (long) data[i].exp);
+	  printf    ("  got   %lu (0x%lX)\n", got, got);
+	  printf    ("  want  %lu (0x%lX)\n", data[i].want, data[i].want);
+	  abort();
+	}
     }
 }
 

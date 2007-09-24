@@ -28,7 +28,7 @@ void
 check_one (mpq_srcptr want, int base, const char *str)
 {
   mpq_t   got;
-  
+
   MPQ_CHECK_FORMAT (want);
   mp_trace_base = base;
 

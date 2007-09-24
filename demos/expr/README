@@ -411,7 +411,7 @@ where.
         static const struct mpexpr_operator_t  table[] = {
 	  { "^",   (mpexpr_fun_t) mpz_pow_ui,
             MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC,           9 },
-  
+
           { "!",   (mpexpr_fun_t) mpz_fac_ui, MPEXPR_TYPE_UNARY_UI,   8 },
           { "-",   (mpexpr_fun_t) mpz_neg,
             MPEXPR_TYPE_UNARY | MPEXPR_TYPE_PREFIX,                   7 },

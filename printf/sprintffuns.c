@@ -53,7 +53,7 @@ gmp_sprintf_format (char **bufp, const char *fmt, va_list ap)
   vsprintf (buf, fmt, ap);
   ret = strlen (buf);
   *bufp = buf + ret;
-  return ret;  
+  return ret;
 }
 
 static int
@@ -62,7 +62,7 @@ gmp_sprintf_memory (char **bufp, const char *str, size_t len)
   char  *buf = *bufp;
   *bufp = buf + len;
   memcpy (buf, str, len);
-  return len;  
+  return len;
 }
 
 static int
@@ -72,7 +72,7 @@ gmp_sprintf_reps (char **bufp, int c, int reps)
   ASSERT (reps >= 0);
   *bufp = buf + reps;
   memset (buf, c, reps);
-  return reps;  
+  return reps;
 }
 
 static int

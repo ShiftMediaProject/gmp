@@ -76,7 +76,7 @@ static __gmp_const struct mpexpr_operator_t  _mpq_expr_standard_table[] = {
 
   { "**",  (mpexpr_fun_t) e_mpq_pow_ui,
     MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC,                   220 },
-  
+
   { "!",   (mpexpr_fun_t) e_mpq_sgn,
     MPEXPR_TYPE_LOGICAL_NOT | MPEXPR_TYPE_PREFIX,                     210 },
   { "-",   (mpexpr_fun_t) mpq_neg,

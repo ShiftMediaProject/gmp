@@ -30,7 +30,7 @@ this program.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* change this to "#define TRACE(x) x" for a few diagnostics */
-#define TRACE(x) 
+#define TRACE(x)
 
 
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
@@ -47,12 +47,12 @@ calc_completion_entry (const char *text, int state)
       len = strlen (text);
     }
   TRACE (printf ("calc_completion_entry %s %d, index=%d len=%d\n",
-                 text, state, index, len));
+		 text, state, index, len));
   while ((name = calc_keywords[index].name) != NULL)
     {
       index++;
       if (memcmp (name, text, len) == 0)
-        return (strdup (name));
+	return (strdup (name));
     }
   return NULL;
 }
@@ -95,24 +95,24 @@ calc_input (char *buf, size_t max_size)
       size_t         copy_size;
 
       if (upto >= line_size)
-        {
-          if (line != NULL)
-            free (line);
+	{
+	  if (line != NULL)
+	    free (line);
 
-          line = readline (calc_more_input ? "more> " : "> ");
-          calc_more_input = 1;
-          if (line == NULL)
-            return 0;
-          TRACE (printf ("readline: %s\n", line));
+	  line = readline (calc_more_input ? "more> " : "> ");
+	  calc_more_input = 1;
+	  if (line == NULL)
+	    return 0;
+	  TRACE (printf ("readline: %s\n", line));
 
-          if (line[0] != '\0')
-            add_history (line);
+	  if (line[0] != '\0')
+	    add_history (line);
 
-          line_size = strlen (line);
-          line[line_size] = '\n';
-          line_size++;
-          upto = 0;
-        }
+	  line_size = strlen (line);
+	  line[line_size] = '\n';
+	  line_size++;
+	  upto = 0;
+	}
 
       copy_size = MIN (line_size-upto, max_size);
       memcpy (buf, line+upto, copy_size);

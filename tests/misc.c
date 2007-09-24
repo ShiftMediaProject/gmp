@@ -563,4 +563,3 @@ tests_sigfpe_done (void)
 {
   signal (SIGFPE, SIG_DFL);
 }
-

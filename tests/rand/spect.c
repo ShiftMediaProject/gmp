@@ -126,7 +126,7 @@ main (int argc, char *argv[])
 }
 
 
-void 
+void
 debug_foo()
 {
   if (0)

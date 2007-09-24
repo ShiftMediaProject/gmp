@@ -24,7 +24,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 Test 1000 real numbers.
 
   $ gen 30000 | stat -2 1000
-Test 1000 real numbers 30 times and then test the 30 results in a 
+Test 1000 real numbers 30 times and then test the 30 results in a
 ``second level''.
 
   $ gen -f mpz_urandomb 1000 | stat -i 0xffffffff
@@ -62,7 +62,7 @@ print_ks_results (mpf_t f_p, mpf_t f_p_prob,
   m = mpf_get_d (f_m);
   pp = mpf_get_d (f_p_prob);
   mp = mpf_get_d (f_m_prob);
-  
+
   fprintf (fp, "%.4f (%.0f%%)\t", p, pp * 100.0);
   fprintf (fp, "%.4f (%.0f%%)\n", m, mp * 100.0);
 }
@@ -117,7 +117,7 @@ f_freq (const unsigned l1runs, const unsigned l2runs,
   mpf_init (f_p);  mpf_init (f_m);
   mpf_init (f_p_prob);  mpf_init (f_m_prob);
 
-  
+
   /* Allocate space for 1st level results. */
   l1res = (mpf_t *) malloc (l2runs * 2 * sizeof (mpf_t));
   if (NULL == l1res)
@@ -125,7 +125,7 @@ f_freq (const unsigned l1runs, const unsigned l2runs,
       fprintf (stderr, "stat: malloc failure\n");
       exit (1);
     }
-  
+
   printf ("\nEquidistribution/Frequency test on real numbers (0<=X<1):\n");
   printf ("\tKp\t\tKm\n");
 
@@ -177,7 +177,7 @@ f_freq (const unsigned l1runs, const unsigned l2runs,
   mpf_clear (f_p);  mpf_clear (f_m);
   mpf_clear (f_p_prob);  mpf_clear (f_m_prob);
   free (l1res);
-}  
+}
 
 /* z_freq(l1runs, l2runs, zvec, n, max) -- frequency test on integers
    0<=z<=MAX */
@@ -201,13 +201,13 @@ z_freq (const unsigned l1runs,
 
   d_V = mpf_get_d (V);
   printf ("V = %.2f (n = %lu)\n", d_V, n);
-  
+
   mpf_clear (V);
 }
 
 unsigned int stat_debug = 0;
 
-int 
+int
 main (argc, argv)
      int argc;
      char *argv[];
@@ -221,7 +221,7 @@ main (argc, argv)
     "       -r max   input is real numbers 0 <= R < 1 and use MAX as\n" \
     "                maximum value when converting real numbers to integers\n" \
     "";
-  
+
   mpf_t fvec[FVECSIZ];
   mpz_t zvec[FVECSIZ];
   unsigned long int f, n, vecentries;
@@ -235,11 +235,11 @@ main (argc, argv)
     l2runs = 1;			/* 2nd level runs */
   mpf_t f_temp;
   mpz_t z_imax;			/* max value when converting between
-                                   real number and integer. */
+				   real number and integer. */
   mpf_t f_imax_plus1;		/* f_imax + 1 stored in an mpf_t for
-                                   convenience */
+				   convenience */
   mpf_t f_imax_minus1;		/* f_imax - 1 stored in an mpf_t for
-                                   convenience */
+				   convenience */
 
 
   mpf_init (f_temp);
@@ -297,7 +297,7 @@ main (argc, argv)
   if (argc < 1)
     fp = stdin;
   else
-    filen = argv[0]; 
+    filen = argv[0];
 
   if (fp != stdin)
     if (NULL == (fp = fopen (filen, "r")))
@@ -327,7 +327,7 @@ main (argc, argv)
 	  if (!mpz_inp_str (zvec[f], fp, 10))
 	    break;
 	}
-    }    
+    }
   vecentries = n = f;		/* number of entries read */
   fclose (fp);
 
@@ -359,7 +359,7 @@ main (argc, argv)
     }
   else				/* integer input; fill fvec[] */
     {
-      /*    mpf_set_z (f_imax_minus1, z_imax); 
+      /*    mpf_set_z (f_imax_minus1, z_imax);
 	    mpf_sub_ui (f_imax_minus1, f_imax_minus1, 1);*/
       for (f = 0; f < n; f++)
 	{
@@ -373,7 +373,7 @@ main (argc, argv)
 	    }
 	}
     }
-  
+
   /* 2 levels? */
   if (1 != l2runs)
     {
@@ -394,7 +394,7 @@ main (argc, argv)
   z_freq (l1runs, l2runs, zvec, n, mpz_get_ui (z_imax));
 #endif
 
-  mpf_clear (f_temp); mpz_clear (z_imax); 
+  mpf_clear (f_temp); mpz_clear (z_imax);
   mpf_clear (f_imax_plus1);
   mpf_clear (f_imax_minus1);
   for (f = 0; f < vecentries; f++)
@@ -405,8 +405,3 @@ main (argc, argv)
 
   return 0;
 }
-
-
-
-
-

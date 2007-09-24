@@ -83,92 +83,92 @@ check_data (void)
   for (i = 0; i < numberof (data); i++)
     {
       for (pre = 0; pre <= 3; pre++)
-        {
-          for (post = 0; post <= 2; post++)
-            {
-              mpz_set_str_or_abort (want, data[i].want, 0);
-              MPZ_CHECK_FORMAT (want);
+	{
+	  for (post = 0; post <= 2; post++)
+	    {
+	      mpz_set_str_or_abort (want, data[i].want, 0);
+	      MPZ_CHECK_FORMAT (want);
 
-              /* create the file new each time to ensure its length is what
-                 we want */
-              fp = fopen (FILENAME, "w+");
-              ASSERT_ALWAYS (fp != NULL);
-              for (j = 0; j < pre; j++)
-                putc (' ', fp);
-              fputs (data[i].inp, fp);
-              for (j = 0; j < post; j++)
-                putc (' ', fp);
-              fflush (fp);
-              ASSERT_ALWAYS (! ferror(fp));
+	      /* create the file new each time to ensure its length is what
+		 we want */
+	      fp = fopen (FILENAME, "w+");
+	      ASSERT_ALWAYS (fp != NULL);
+	      for (j = 0; j < pre; j++)
+		putc (' ', fp);
+	      fputs (data[i].inp, fp);
+	      for (j = 0; j < post; j++)
+		putc (' ', fp);
+	      fflush (fp);
+	      ASSERT_ALWAYS (! ferror(fp));
 
-              rewind (fp);
-              got_nread = mpz_inp_str (got, fp, data[i].base);
+	      rewind (fp);
+	      got_nread = mpz_inp_str (got, fp, data[i].base);
 
-              if (got_nread != 0)
-                {
-                  ftell_nread = ftell (fp);
-                  if (got_nread != ftell_nread)
-                    {
-                      printf ("mpz_inp_str nread wrong\n");
-                      printf ("  inp          \"%s\"\n", data[i].inp);
-                      printf ("  base         %d\n", data[i].base);
-                      printf ("  pre          %d\n", pre);
-                      printf ("  post         %d\n", post);
-                      printf ("  got_nread    %d\n", got_nread);
-                      printf ("  ftell_nread  %ld\n", ftell_nread);
-                      abort ();
-                    }
-                }
+	      if (got_nread != 0)
+		{
+		  ftell_nread = ftell (fp);
+		  if (got_nread != ftell_nread)
+		    {
+		      printf ("mpz_inp_str nread wrong\n");
+		      printf ("  inp          \"%s\"\n", data[i].inp);
+		      printf ("  base         %d\n", data[i].base);
+		      printf ("  pre          %d\n", pre);
+		      printf ("  post         %d\n", post);
+		      printf ("  got_nread    %d\n", got_nread);
+		      printf ("  ftell_nread  %ld\n", ftell_nread);
+		      abort ();
+		    }
+		}
 
-              /* if data[i].inp is a whole string to read and there's no post
-                 whitespace then expect to have EOF */
-              if (post == 0 && data[i].want_nread == strlen(data[i].inp))
-                {
-                  int  c = getc(fp);
-                  if (c != EOF)
-                    {
-                      printf ("mpz_inp_str didn't read to EOF\n");
-                      printf ("  inp   \"%s\"\n", data[i].inp);
-                      printf ("  base  %d\n", data[i].base);
-                      printf ("  pre   %d\n", pre);
-                      printf ("  post  %d\n", post);
-                      printf ("  c     '%c' %#x\n", c, c);
-                      abort ();
-                    }
-                }
+	      /* if data[i].inp is a whole string to read and there's no post
+		 whitespace then expect to have EOF */
+	      if (post == 0 && data[i].want_nread == strlen(data[i].inp))
+		{
+		  int  c = getc(fp);
+		  if (c != EOF)
+		    {
+		      printf ("mpz_inp_str didn't read to EOF\n");
+		      printf ("  inp   \"%s\"\n", data[i].inp);
+		      printf ("  base  %d\n", data[i].base);
+		      printf ("  pre   %d\n", pre);
+		      printf ("  post  %d\n", post);
+		      printf ("  c     '%c' %#x\n", c, c);
+		      abort ();
+		    }
+		}
 
-              /* only expect "pre" included in the count when non-zero */
-              want_nread = data[i].want_nread;
-              if (want_nread != 0)
-                want_nread += pre;
+	      /* only expect "pre" included in the count when non-zero */
+	      want_nread = data[i].want_nread;
+	      if (want_nread != 0)
+		want_nread += pre;
 
-              if (got_nread != want_nread)
-                {
-                  printf ("mpz_inp_str nread wrong\n");
-                  printf ("  inp         \"%s\"\n", data[i].inp);
-                  printf ("  base        %d\n", data[i].base);
-                  printf ("  pre         %d\n", pre);
-                  printf ("  post        %d\n", post);
-                  printf ("  got_nread   %d\n", got_nread);
-                  printf ("  want_nread  %d\n", want_nread);
-                  abort ();
-                }
+	      if (got_nread != want_nread)
+		{
+		  printf ("mpz_inp_str nread wrong\n");
+		  printf ("  inp         \"%s\"\n", data[i].inp);
+		  printf ("  base        %d\n", data[i].base);
+		  printf ("  pre         %d\n", pre);
+		  printf ("  post        %d\n", post);
+		  printf ("  got_nread   %d\n", got_nread);
+		  printf ("  want_nread  %d\n", want_nread);
+		  abort ();
+		}
 
-              MPZ_CHECK_FORMAT (got);
-      
-              if (mpz_cmp (got, want) != 0)
-                {
-                  printf ("mpz_inp_str wrong result\n");
-                  printf ("  inp   \"%s\"\n", data[i].inp);
-                  printf ("  base  %d\n", data[i].base);
-                  mpz_trace ("  got ",  got);
-                  mpz_trace ("  want", want);
-                  abort ();
-                }
+	      MPZ_CHECK_FORMAT (got);
 
-              ASSERT_ALWAYS (fclose (fp) == 0);
-            }
-        }
+	      if (mpz_cmp (got, want) != 0)
+		{
+		  printf ("mpz_inp_str wrong result\n");
+		  printf ("  inp   \"%s\"\n", data[i].inp);
+		  printf ("  base  %d\n", data[i].base);
+		  mpz_trace ("  got ",  got);
+		  mpz_trace ("  want", want);
+		  abort ();
+		}
+
+	      ASSERT_ALWAYS (fclose (fp) == 0);
+	    }
+	}
     }
 
   mpz_clear (got);

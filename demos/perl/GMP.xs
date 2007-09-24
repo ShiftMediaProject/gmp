@@ -63,7 +63,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 #define NDEBUG
 
 /* Change this to "#define TRACE(x) x" for some diagnostics. */
-#define TRACE(x) 
+#define TRACE(x)
 
 
 #include <assert.h>

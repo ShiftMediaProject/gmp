@@ -80,5 +80,3 @@ mpz_kronecker_si (mpz_srcptr a, long b)
   JACOBI_MOD_OR_MODEXACT_1_ODD (result_bit1, a_rem, a_ptr, a_size, b_limb);
   return mpn_jacobi_base (a_rem, b_limb, result_bit1);
 }
-
-

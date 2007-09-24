@@ -131,7 +131,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
 	  unsigned  twos;
 	  count_trailing_zeros (twos, dlow);
 	  dlow = (dlow >> twos) | (dsecond << (GMP_NUMB_BITS-twos));
-          ASSERT_LIMB (dlow);
+	  ASSERT_LIMB (dlow);
 	  return MPN_MOD_OR_MODEXACT_1_ODD (ap, asize, dlow) == 0;
 	}
     }

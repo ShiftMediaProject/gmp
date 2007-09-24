@@ -70,7 +70,7 @@ spinner_signal (int signum)
 
    This is done the first time spinner() is called, so an application
    doesn't need to call this directly.
-  
+
    The spinner is only wanted if the output is a tty.  */
 
 #define SPINNER_WANTED_INIT() \
@@ -80,8 +80,8 @@ void
 spinner_init (void)
 {
   spinner_wanted = isatty (fileno (stdout));
-  if (spinner_wanted == -1)                   
-    abort ();                                  
+  if (spinner_wanted == -1)
+    abort ();
 
   if (!spinner_wanted)
     return;
@@ -116,14 +116,14 @@ spinner (void)
       spinner_tick = 0;
 
       if (spinner_count != 0)
-        {
-          sprintf (buf+1, " %lu\r", spinner_count);
-        }
+	{
+	  sprintf (buf+1, " %lu\r", spinner_count);
+	}
       else
-        {
-          buf[1] = '\r';
-          buf[2] = '\0';
-        }
+	{
+	  buf[1] = '\r';
+	  buf[2] = '\0';
+	}
       fputs (buf, stdout);
     }
 }

@@ -136,7 +136,7 @@ my_ldexp (double d, int e)
 	}
       else if (e < 0)
 	{
-   
+
 	  if (e <= -16)
 	    {
 	      d /= 65536.0;
@@ -225,35 +225,35 @@ check_onebit (void)
 
       mpq_set_ui (q, 1L, 1L);
       if (exp >= 0)
-        mpq_mul_2exp (q, q, exp);
+	mpq_mul_2exp (q, q, exp);
       else
-        mpq_div_2exp (q, q, -exp);
+	mpq_div_2exp (q, q, -exp);
 
       want = 1.0;
       for (l = 0; l < exp; l++)
-        want *= 2.0;
+	want *= 2.0;
       for (l = 0; l > exp; l--)
-        want /= 2.0;
+	want /= 2.0;
 
       for (neg = 0; neg <= 1; neg++)
-        {
-          if (neg)
-            {
-              mpq_neg (q, q);
-              want = -want;
-            }
+	{
+	  if (neg)
+	    {
+	      mpq_neg (q, q);
+	      want = -want;
+	    }
 
-          got = mpq_get_d (q);
+	  got = mpq_get_d (q);
 
-          if (got != want)
-            {
-              printf    ("mpq_get_d wrong on %s2**%ld\n", neg ? "-" : "", exp);
-              mpq_trace ("   q    ", q);
-              d_trace   ("   want ", want);
-              d_trace   ("   got  ", got);
-              abort();
-            }
-        }
+	  if (got != want)
+	    {
+	      printf    ("mpq_get_d wrong on %s2**%ld\n", neg ? "-" : "", exp);
+	      mpq_trace ("   q    ", q);
+	      d_trace   ("   want ", want);
+	      d_trace   ("   got  ", got);
+	      abort();
+	    }
+	}
     }
   mpq_clear (q);
 }

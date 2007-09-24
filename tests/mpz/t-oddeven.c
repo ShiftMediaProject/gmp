@@ -61,16 +61,16 @@ check_data (void)
       mpz_set_str_or_abort (n, data[i].n, 0);
 
       if ((mpz_odd_p (n) != 0) != data[i].odd)
-        {
-          printf ("mpz_odd_p wrong on data[%d]\n", i); 
-          abort();                                    
-        }
+	{
+	  printf ("mpz_odd_p wrong on data[%d]\n", i);
+	  abort();
+	}
 
       if ((mpz_even_p (n) != 0) != data[i].even)
-        {
-          printf ("mpz_even_p wrong on data[%d]\n", i); 
-          abort();                                    
-        }
+	{
+	  printf ("mpz_even_p wrong on data[%d]\n", i);
+	  abort();
+	}
     }
 
   mpz_clear (n);

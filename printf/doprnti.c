@@ -39,9 +39,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 int
 __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
-                      void *data,
-                      const struct doprnt_params_t *p,
-                      const char *s)
+		      void *data,
+		      const struct doprnt_params_t *p,
+		      const char *s)
 {
   int         retval = 0;
   int         slen, justlen, showbaselen, sign, signlen, slashlen, zeros;

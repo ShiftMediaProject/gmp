@@ -50,7 +50,7 @@ check_one (mpz_srcptr a, unsigned long d)
     }                           \
   else                          \
     fun (dst, src, d);
-  
+
   for (inplace = 0; inplace <= 1; inplace++)
     {
       INPLACE (mpz_fdiv_q_2exp, q, a, d);
@@ -59,15 +59,15 @@ check_one (mpz_srcptr a, unsigned long d)
       mpz_mul_2exp (p, q, d);
       mpz_add (p, p, r);
       if (mpz_sgn (r) < 0 || mpz_cmp (r, d2exp) >= 0)
-        {
-          printf ("mpz_fdiv_r_2exp result out of range\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_fdiv_r_2exp result out of range\n");
+	  goto error;
+	}
       if (mpz_cmp (p, a) != 0)
-        {
-          printf ("mpz_fdiv_[qr]_2exp doesn't multiply back\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_fdiv_[qr]_2exp doesn't multiply back\n");
+	  goto error;
+	}
 
 
       INPLACE (mpz_cdiv_q_2exp, q, a, d);
@@ -76,15 +76,15 @@ check_one (mpz_srcptr a, unsigned long d)
       mpz_mul_2exp (p, q, d);
       mpz_add (p, p, r);
       if (mpz_sgn (r) > 0 || mpz_cmpabs (r, d2exp) >= 0)
-        {
-          printf ("mpz_cdiv_r_2exp result out of range\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_cdiv_r_2exp result out of range\n");
+	  goto error;
+	}
       if (mpz_cmp (p, a) != 0)
-        {
-          printf ("mpz_cdiv_[qr]_2exp doesn't multiply back\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_cdiv_[qr]_2exp doesn't multiply back\n");
+	  goto error;
+	}
 
 
       INPLACE (mpz_tdiv_q_2exp, q, a, d);
@@ -93,20 +93,20 @@ check_one (mpz_srcptr a, unsigned long d)
       mpz_mul_2exp (p, q, d);
       mpz_add (p, p, r);
       if (mpz_sgn (r) != 0 && mpz_sgn (r) != mpz_sgn (a))
-        {
-          printf ("mpz_tdiv_r_2exp result wrong sign\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_tdiv_r_2exp result wrong sign\n");
+	  goto error;
+	}
       if (mpz_cmpabs (r, d2exp) >= 0)
-        {
-          printf ("mpz_tdiv_r_2exp result out of range\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_tdiv_r_2exp result out of range\n");
+	  goto error;
+	}
       if (mpz_cmp (p, a) != 0)
-        {
-          printf ("mpz_tdiv_[qr]_2exp doesn't multiply back\n");
-          goto error;
-        }
+	{
+	  printf ("mpz_tdiv_[qr]_2exp doesn't multiply back\n");
+	  goto error;
+	}
     }
 
   mpz_clear (d2exp);
@@ -173,10 +173,10 @@ check_various (void)
       mpz_mul_2exp (a, a, n);
 
       for (j = 0; j < numberof (table); j++)
-        {
-          d = table[j];
-          check_all (a, d);
-        }
+	{
+	  d = table[j];
+	  check_all (a, d);
+	}
     }
 
   mpz_clear (a);

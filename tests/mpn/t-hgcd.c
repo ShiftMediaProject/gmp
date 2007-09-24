@@ -49,7 +49,7 @@ struct hgcd_ref
 {
   /* Sign here, u and v are stored as absolute values */
   int sign;
-  
+
   mpz_t r[4];
   mpz_t u[4];
   mpz_t v[4];
@@ -81,7 +81,7 @@ main (int argc, char **argv)
   for (i = 0; hgcd_values[i].res >= 0; i++)
     {
       int res;
-      
+
       mpz_set_str (op1, hgcd_values[i].a, 0);
       mpz_set_str (op2, hgcd_values[i].b, 0);
 
@@ -97,7 +97,7 @@ main (int argc, char **argv)
 	  abort ();
 	}
     }
-  
+
   for (i = 0; i < 15; i++)
     {
       /* Generate plain operands with unknown gcd.  These types of operands
@@ -166,7 +166,7 @@ main (int argc, char **argv)
       if (mpz_size(op1) > 0)
 	one_test (op1, op2, i);
     }
-  
+
   exit (0);
 }
 
@@ -193,7 +193,7 @@ one_test (mpz_t a, mpz_t b, int i)
   mp_ptr hgcd_init_tp;
   mp_ptr qstack_tp;
   mp_ptr hgcd_tp;
-  
+
   asize = a->_mp_size;
   bsize = b->_mp_size;
 
@@ -208,23 +208,23 @@ one_test (mpz_t a, mpz_t b, int i)
   hgcd_scratch = mpn_hgcd_itch (asize);
   hgcd_tp = refmpn_malloc_limbs (hgcd_scratch);
 
-#if 0  
+#if 0
   fprintf (stderr,
 	   "one_test: i = %d asize = %d, bsize = %d\n",
 	   i, a->_mp_size, b->_mp_size);
-  
+
   gmp_fprintf (stderr,
 	       "one_test: i = %d\n"
 	       "  a = %Zx\n"
 	       "  b = %Zx\n",
-	       i, a, b);  
+	       i, a, b);
 #endif
   hgcd_ref_init (&ref);
-  
+
   res[0] = hgcd_ref (&ref, a, b);
-  res[1] = mpn_hgcd (&hgcd, 
-		     a->_mp_d, asize, 
-		     b->_mp_d, bsize, 
+  res[1] = mpn_hgcd (&hgcd,
+		     a->_mp_d, asize,
+		     b->_mp_d, bsize,
 		     &quotients,
 		     hgcd_tp, hgcd_scratch);
 
@@ -256,7 +256,7 @@ one_test (mpz_t a, mpz_t b, int i)
   refmpn_free_limbs (qstack_tp);
   refmpn_free_limbs (hgcd_tp);
   hgcd_ref_clear (&ref);
-  
+
   return res[0];
 }
 
@@ -282,7 +282,7 @@ hgcd_ref_clear (struct hgcd_ref *hgcd)
       mpz_clear (hgcd->u[i]);
       mpz_clear (hgcd->v[i]);
     }
-}     
+}
 
 static int
 hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
@@ -291,7 +291,7 @@ hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
   mpz_t t;
   mpz_t q;
   int res;
-  
+
   if (mpz_size(b) <= M)
     return 0;
 
@@ -305,7 +305,7 @@ hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
     }
 
   mpz_set (hgcd->r[0], a); mpz_set (hgcd->r[1], b);
-  
+
   mpz_set_ui (hgcd->u[0], 1); mpz_set_ui (hgcd->v[0], 0);
   mpz_set_ui (hgcd->u[1], 0); mpz_set_ui (hgcd->v[1], 1);
   mpz_set_ui (hgcd->u[2], 1); mpz_set    (hgcd->v[2], q);
@@ -313,7 +313,7 @@ hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
   hgcd->sign = 0;
 
   mpz_init (t);
-  
+
   for (;;)
     {
       mpz_fdiv_qr(q, hgcd->r[3], hgcd->r[1], hgcd->r[2]);
@@ -323,7 +323,7 @@ hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
 
       mpz_mul (hgcd->v[3], q, hgcd->v[2]);
       mpz_add (hgcd->v[3], hgcd->v[3], hgcd->v[1]);
-      
+
       if (mpz_size (hgcd->r[3]) <= M)
 	{
 #if 0
@@ -347,7 +347,7 @@ hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
 	    }
 
 	  /* Check r1 >= t + r2 */
-	  mpz_add (t, t, hgcd->r[2]);	  
+	  mpz_add (t, t, hgcd->r[2]);
 	  if (mpz_cmp (hgcd->r[1], t) < 0)
 	    {
 	      res = 2; break;
@@ -402,10 +402,10 @@ hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
       mpz_swap (hgcd->v[1], hgcd->v[2]);
       mpz_swap (hgcd->v[2], hgcd->v[3]);
     }
-  
+
   mpz_clear (t);
   mpz_clear (q);
-  
+
   return res;
 }
 
@@ -423,7 +423,7 @@ static int
 hgcd_ref_equal (const struct hgcd *hgcd, const struct hgcd_ref *ref)
 {
   unsigned i;
-  
+
   if (ref->sign != hgcd->sign)
     return 0;
 

@@ -51,7 +51,7 @@ noop_wxys (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size)
 }
 
 /*ARGSUSED*/
-void 
+void
 mpn_cache_fill_dummy (mp_limb_t n)
 {
 }

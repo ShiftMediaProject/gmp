@@ -62,7 +62,7 @@ for (each observation Xj)
 			rp = max (rp, j/n - b[k])
 
 Kp = sqr (n) * rp
-Km = sqr (n) * rm 
+Km = sqr (n) * rm
 
 */
 
@@ -94,15 +94,15 @@ ks (mpf_t Kp,
   mpf_t f_jnq;			/* j/n or (j-1)/n */
   unsigned long int j;
 
-  /* Sort the vector in ascending order. */  
+  /* Sort the vector in ascending order. */
   qsort (X, n, sizeof (__mpf_struct), mpf_cmp);
 
   /* K-S test. */
-  /* 	Kp = sqr(n) * max(j/n - F(Xj))		for all 1<=j<=n
+  /*	Kp = sqr(n) * max(j/n - F(Xj))		for all 1<=j<=n
 	Km = sqr(n) * max(F(Xj) - (j-1)/n))	for all 1<=j<=n
   */
 
-  mpf_init (Kt); mpf_init (f_x); mpf_init (f_j); mpf_init (f_jnq); 
+  mpf_init (Kt); mpf_init (f_x); mpf_init (f_j); mpf_init (f_jnq);
   mpf_set_ui (Kp, 0);  mpf_set_ui (Km, 0);
   for (j = 1; j <= n; j++)
     {
@@ -140,7 +140,7 @@ ks (mpf_t Kp,
   mpf_mul (Kp, Kp, Kt);
   mpf_mul (Km, Km, Kt);
 
-  mpf_clear (Kt); mpf_clear (f_x); mpf_clear (f_j); mpf_clear (f_jnq); 
+  mpf_clear (Kt); mpf_clear (f_x); mpf_clear (f_j); mpf_clear (f_jnq);
 }
 
 /* ks_table(val, n) -- calculate probability for Kp/Km less than or
@@ -175,7 +175,7 @@ ks_table (mpf_t p, mpf_t val, const unsigned int n)
 #else
   /* hmmm, gmp doesn't have pow() for floats.  use doubles. */
   mpf_set_d (t2, pow (M_E, -(2 * pow (mpf_get_d (val), 2))));
-#endif  
+#endif
 
   /* p = 1 - t1 * t2 */
   mpf_mul (t1, t1, t2);
@@ -204,7 +204,7 @@ x2_table (double t[],
 
   /* value = v + sqrt(2*v) * X[p] + (2/3) * X[p]^2 - 2/3 + O(1/sqrt(t) */
   /* NOTE: The O() term is ignored for simplicity. */
-  
+
   for (f = 0; f < 7; f++)
       t[f] =
 	v +
@@ -218,7 +218,7 @@ being greater than or equal to any number in the sequence.  For a
 random real number between zero and one given by a uniformly
 distributed random number generator, this is simply equal to X. */
 
-static void 
+static void
 P (mpf_t p, mpf_t x)
 {
   mpf_set (p, x);
@@ -279,7 +279,7 @@ x2 (mpf_t V,			/* result */
     fprintf (stderr, "\n");
   mpf_div_ui (V, V, n);
   mpf_sub_ui (V, V, n);
-  
+
   mpf_clear (f_t); mpf_clear (f_t2);
 }
 
@@ -361,14 +361,14 @@ mpz_freqt (mpf_t V,
 
 /* debug dummy to drag in dump funcs */
 void
-foo_debug () 
+foo_debug ()
 {
   if (0)
     {
-      mpf_dump (0); 
+      mpf_dump (0);
 #ifndef OLDGMP
       mpz_dump (0);
-#endif      
+#endif
     }
 }
 
@@ -385,7 +385,7 @@ merit (mpf_t rop, unsigned int t, mpf_t v, mpz_t m)
   mpf_set_z (f_m, m);
   mpf_init_set_d (f_const, M_PI);
   mpf_init_set_d (f_pi, M_PI);
-  
+
   switch (t)
     {
     case 2:			/* PI */
@@ -432,7 +432,7 @@ merit_u (unsigned int t, mpf_t v, mpz_t m)
 {
   mpf_t rop;
   double res;
-  
+
   mpf_init (rop);
   merit (rop, t, v, m);
   res = mpf_get_d (rop);
@@ -530,7 +530,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 
   /* S1 [Initialize.] */
   ui_t = 2 - 1;			/* NOTE: `t' in description == ui_t + 1
-                                   for easy indexing */
+				   for easy indexing */
   mpz_set (h, a);
   mpz_set (hp, m);
   mpz_set_ui (p, 1);
@@ -582,7 +582,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 
       mpz_mul (tmp1, q, p);
       mpz_sub (v, pp, tmp1);	/* v = pp - q*p */
-  
+
       mpz_pow_ui (tmp1, u, 2);
       mpz_pow_ui (tmp2, v, 2);
       mpz_add (tmp1, tmp1, tmp2);
@@ -613,13 +613,13 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
     }
   mpf_set_z (f_tmp1, s);
   mpf_sqrt (rop[ui_t - 1], f_tmp1);
-      
+
   /* S4 [Advance t.] */
   mpz_neg (U[0][0], h);
   mpz_set (U[0][1], p);
   mpz_neg (U[1][0], hp);
   mpz_set (U[1][1], pp);
-  
+
   mpz_set (V[0][0], pp);
   mpz_set (V[0][1], hp);
   mpz_neg (V[1][0], p);
@@ -645,7 +645,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
       mpz_set_ui (U[ui_t][ui_t], 1); /* U: Last col in new row. */
 
       mpz_set (V[ui_t][ui_t], m); /* V: Last col in new row. */
-      
+
       /* "Finally, for 1 <= i < t,
 	   set q = round (vi1 * r / m),
 	   vit = vi1*r - q*m,
@@ -676,7 +676,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
       /* S5 [Transform.] */
       if (g_debug > DEBUG_2)
 	printf ("(t, k, j, q1, q2, ...)\n");
-      do 
+      do
 	{
 	  if (g_debug > DEBUG_2)
 	    printf ("(%u, %u, %u", ui_t + 1, ui_k + 1, ui_j + 1);
@@ -706,7 +706,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 			  mpz_mul (tmp1, q, U[ui_i][ui_l]);
 			  mpz_add (U[ui_j][ui_l], U[ui_j][ui_l], tmp1); /* Uj=Uj+q*Ui */
 			}
-		      
+
 		      vz_dot (tmp1, U[ui_j], U[ui_j], ui_t + 1); /* tmp1=dot(Uj,Uj) */
 		      if (mpz_cmp (tmp1, s) < 0) /* s = min(s,dot(Uj,Uj)) */
 			mpz_set (s, tmp1);
@@ -761,7 +761,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 	}
 
       /* S8 [Advance X[k].] */
-      do 
+      do
 	{
 	  if (g_debug > DEBUG_2)
 	    {
@@ -772,7 +772,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 	      printf ("\n");
 	      fflush (stdout);
 	    }
-	      
+
 	  if (mpz_cmp (X[ui_k], Z[ui_k]))
 	    {
 	      mpz_add_ui (X[ui_k], X[ui_k], 1);
@@ -835,4 +835,3 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 
   return;
 }
-

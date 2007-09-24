@@ -39,7 +39,7 @@ try_mpz_bin_ui (mpz_srcptr want, mpz_srcptr n, unsigned long k)
       printf ("  k=%lu\n", k);
       printf ("  got="); mpz_out_str (stdout, 10, got); printf ("\n");
       printf ("  want="); mpz_out_str (stdout, 10, want); printf ("\n");
-      abort();                                    
+      abort();
     }
   mpz_clear (got);
 }
@@ -60,7 +60,7 @@ try_mpz_bin_uiui (mpz_srcptr want, unsigned long n, unsigned long k)
       printf ("  k=%lu\n", k);
       printf ("  got="); mpz_out_str (stdout, 10, got); printf ("\n");
       printf ("  want="); mpz_out_str (stdout, 10, want); printf ("\n");
-      abort();                                    
+      abort();
     }
   mpz_clear (got);
 }
@@ -169,7 +169,7 @@ samples (void)
       try_mpz_bin_ui (want, n, data[i].k);
 
       if (mpz_fits_ulong_p (n))
-        try_mpz_bin_uiui (want, mpz_get_ui (n), data[i].k);
+	try_mpz_bin_uiui (want, mpz_get_ui (n), data[i].k);
     }
 
   mpz_clear (n);

@@ -37,11 +37,11 @@ check_onebit (void)
       mpz_setbit (n, i);
       got = mpz_popcount (n);
       if (got != 1)
-        {
-          printf ("mpz_popcount wrong on single bit at %lu\n", i); 
-          printf ("   got %lu, want 1\n", got);
-          abort();                                    
-        }
+	{
+	  printf ("mpz_popcount wrong on single bit at %lu\n", i);
+	  printf ("   got %lu, want 1\n", got);
+	  abort();
+	}
       mpz_clrbit (n, i);
     }
   mpz_clear (n);
@@ -77,15 +77,15 @@ check_data (void)
       mpz_set_str_or_abort (n, data[i].n, 0);
       got = mpz_popcount (n);
       if (got != data[i].want)
-        {
-          printf ("mpz_popcount wrong at data[%d]\n", i); 
-          printf ("   n     \"%s\"\n", data[i].n);
-          printf ("         ");   mpz_out_str (stdout, 10, n); printf ("\n");
-          printf ("         0x"); mpz_out_str (stdout, 16, n); printf ("\n");
-          printf ("   got   %lu\n", got);
-          printf ("   want  %lu\n", data[i].want);
-          abort();                                    
-        }
+	{
+	  printf ("mpz_popcount wrong at data[%d]\n", i);
+	  printf ("   n     \"%s\"\n", data[i].n);
+	  printf ("         ");   mpz_out_str (stdout, 10, n); printf ("\n");
+	  printf ("         0x"); mpz_out_str (stdout, 16, n); printf ("\n");
+	  printf ("   got   %lu\n", got);
+	  printf ("   want  %lu\n", data[i].want);
+	  abort();
+	}
     }
   mpz_clear (n);
 }
@@ -142,12 +142,12 @@ check_random (void)
       ref = refmpz_popcount (arg);
       if (got != ref)
 	{
-          printf ("mpz_popcount wrong on random\n"); 
-          printf ("         ");   mpz_out_str (stdout, 10, arg); printf ("\n");
-          printf ("         0x"); mpz_out_str (stdout, 16, arg); printf ("\n");
-          printf ("   got   %lu\n", got);
-          printf ("   want  %lu\n", ref);
-          abort();                                    
+	  printf ("mpz_popcount wrong on random\n");
+	  printf ("         ");   mpz_out_str (stdout, 10, arg); printf ("\n");
+	  printf ("         0x"); mpz_out_str (stdout, 16, arg); printf ("\n");
+	  printf ("   got   %lu\n", got);
+	  printf ("   want  %lu\n", ref);
+	  abort();
 	  abort ();
 	}
     }

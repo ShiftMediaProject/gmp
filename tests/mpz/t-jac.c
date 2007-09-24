@@ -23,7 +23,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    To check the test data against PARI-GP, run
 
-           t-jac -p | gp -q
+	   t-jac -p | gp -q
 
    It takes a while because the output from "t-jac -p" is big.
 
@@ -93,8 +93,8 @@ try_base (mp_limb_t a, mp_limb_t b, int answer)
   if (got != answer)
     {
       printf (LL("mpn_jacobi_base (%lu, %lu) is %d should be %d\n",
-                 "mpn_jacobi_base (%llu, %llu) is %d should be %d\n"),
-              a, b, got, answer);
+		 "mpn_jacobi_base (%llu, %llu) is %d should be %d\n"),
+	      a, b, got, answer);
       abort ();
     }
 }
@@ -176,7 +176,7 @@ try_zi_zi (mpz_srcptr a, mpz_srcptr b, int answer)
   if (got != answer)
     {
       printf ("mpz_kronecker (");
-      mpz_out_str (stdout, 10, a); 
+      mpz_out_str (stdout, 10, a);
       printf (", ");
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
@@ -189,9 +189,9 @@ void
 try_pari (mpz_srcptr a, mpz_srcptr b, int answer)
 {
   printf ("try(");
-  mpz_out_str (stdout, 10, a); 
+  mpz_out_str (stdout, 10, a);
   printf (",");
-  mpz_out_str (stdout, 10, b); 
+  mpz_out_str (stdout, 10, b);
   printf (",%d)\n", answer);
 }
 
@@ -221,7 +221,7 @@ try_each (mpz_srcptr a, mpz_srcptr b, int answer)
     try_si_zi (mpz_get_si (a), b, answer);
 
   try_zi_zi (a, b, answer);
-}        
+}
 
 
 /* Try (a/b) and (a/-b). */
@@ -287,11 +287,11 @@ try_periodic_num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
 /* Try (a/b+k*p) for various k, using the fact (a/b) is periodic in b of
    period p.
 
-                               period p
-           a==0,1mod4             a
-           a==2mod4              4*a
-           a==3mod4 and b odd    4*a
-           a==3mod4 and b even   8*a
+			       period p
+	   a==0,1mod4             a
+	   a==2mod4              4*a
+	   a==3mod4 and b odd    4*a
+	   a==3mod4 and b even   8*a
 
    In Henri Cohen's book the period is given as 4*a for all a==2,3mod4, but
    a counterexample would seem to be (3/2)=-1 which with (3/14)=+1 doesn't
@@ -365,8 +365,8 @@ try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 
   /* (a/2) is 0 if a even, 1 if a==1 or 7 mod 8, -1 if a==3 or 5 mod 8 */
   answer_a2 = (mpz_even_p (a) ? 0
-               : (((SIZ(a) >= 0 ? PTR(a)[0] : -PTR(a)[0]) + 2) & 7) < 4 ? 1
-               : -1);
+	       : (((SIZ(a) >= 0 ? PTR(a)[0] : -PTR(a)[0]) + 2) & 7) < 4 ? 1
+	       : -1);
 
   for (kindex = 0; kindex < numberof (ktable); kindex++)
     {
@@ -374,8 +374,8 @@ try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 
       /* answer_k = answer*(answer_a2^k) */
       answer_k = (answer_a2 == 0 && k != 0 ? 0
-                  : (k & 1) == 1 && answer_a2 == -1 ? -answer
-                  : answer);
+		  : (k & 1) == 1 && answer_a2 == -1 ? -answer
+		  : answer);
 
       mpz_mul_2exp (b, b_orig, k);
       try_pn (a, b, answer_k);
@@ -403,8 +403,8 @@ try_2num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
 
   /* (2/b) is 0 if b even, 1 if b==1 or 7 mod 8, -1 if b==3 or 5 mod 8 */
   answer_2b = (mpz_even_p (b) ? 0
-               : (((SIZ(b) >= 0 ? PTR(b)[0] : -PTR(b)[0]) + 2) & 7) < 4 ? 1
-               : -1);
+	       : (((SIZ(b) >= 0 ? PTR(b)[0] : -PTR(b)[0]) + 2) & 7) < 4 ? 1
+	       : -1);
 
   for (kindex = 0; kindex < numberof (ktable); kindex++)
     {
@@ -412,10 +412,10 @@ try_2num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
 
       /* answer_k = answer*(answer_2b^k) */
       answer_k = (answer_2b == 0 && k != 0 ? 0
-                  : (k & 1) == 1 && answer_2b == -1 ? -answer
-                  : answer);
+		  : (k & 1) == 1 && answer_2b == -1 ? -answer
+		  : answer);
 
-        mpz_mul_2exp (a, a_orig, k);
+	mpz_mul_2exp (a, a_orig, k);
       try_pn (a, b, answer_k);
     }
 
@@ -460,7 +460,7 @@ check_data (void)
     {  "5",  "0", 0 },
     { "24", "60", 0 },
 
-    /* (a/1) = 1, any a 
+    /* (a/1) = 1, any a
        In particular note (0/1)=1 so that (a/b)=(a mod b/b). */
     { "0", "1", 1 },
     { "1", "1", 1 },
@@ -727,7 +727,7 @@ main (int argc, char *argv[])
   if (argc >= 2 && strcmp (argv[1], "-p") == 0)
     {
       option_pari = 1;
-      
+
       printf ("\
 try(a,b,answer) =\n\
 {\n\

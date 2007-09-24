@@ -156,7 +156,7 @@ int main (argc, argv)
 #else
 	ul_adder = (unsigned long int) atoi (str_adder);
 #endif
-	
+
 	if (mpz_init_set_str (z_a, str_a, 0))
 	  {
 	    fprintf (stderr, "gen: bad LC scheme parameter `a': %s\n", str_a);
@@ -469,7 +469,7 @@ int main (argc, argv)
       break;
     }
   mpf_clear (f1);
-  mpf_clear (f_xf); 
+  mpf_clear (f_xf);
   mpf_clear (f_xt);
   mpz_clear (z1);
   mpz_clear (z_seed);

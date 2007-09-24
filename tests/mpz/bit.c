@@ -51,38 +51,38 @@ check_clr_extend (void)
   for (i = 1; i < 5; i++)
     {
       for (f = 0; f <= 1; f++)
-        {
-          /* lots of 1 bits in _mp_d */
-          mpz_set_ui (got, 1L);
-          mpz_mul_2exp (got, got, 10*GMP_NUMB_BITS);
-          mpz_sub_ui (got, got, 1L);
+	{
+	  /* lots of 1 bits in _mp_d */
+	  mpz_set_ui (got, 1L);
+	  mpz_mul_2exp (got, got, 10*GMP_NUMB_BITS);
+	  mpz_sub_ui (got, got, 1L);
 
-          /* value -2^(n-1) representing ..11100..00 */
-          mpz_set_si (got, -1L);
-          mpz_mul_2exp (got, got, i*GMP_NUMB_BITS-1);
+	  /* value -2^(n-1) representing ..11100..00 */
+	  mpz_set_si (got, -1L);
+	  mpz_mul_2exp (got, got, i*GMP_NUMB_BITS-1);
 
-          /* complement bit n, giving ..11000..00 which is -2^n */
-          if (f == 0)
-            mpz_clrbit (got, i*GMP_NUMB_BITS-1);
-          else
-            mpz_combit (got, i*GMP_NUMB_BITS-1);
-          MPZ_CHECK_FORMAT (got);
+	  /* complement bit n, giving ..11000..00 which is -2^n */
+	  if (f == 0)
+	    mpz_clrbit (got, i*GMP_NUMB_BITS-1);
+	  else
+	    mpz_combit (got, i*GMP_NUMB_BITS-1);
+	  MPZ_CHECK_FORMAT (got);
 
-          mpz_set_si (want, -1L);
-          mpz_mul_2exp (want, want, i*GMP_NUMB_BITS);
+	  mpz_set_si (want, -1L);
+	  mpz_mul_2exp (want, want, i*GMP_NUMB_BITS);
 
-          if (mpz_cmp (got, want) != 0)
-            {
-              if (f == 0)
-                printf ("mpz_clrbit: ");
-              else
-                printf ("mpz_combit: ");
-              printf ("wrong after extension\n");
-              mpz_trace ("got ", got);
-              mpz_trace ("want", want);
-              abort ();
-            }
-        }
+	  if (mpz_cmp (got, want) != 0)
+	    {
+	      if (f == 0)
+		printf ("mpz_clrbit: ");
+	      else
+		printf ("mpz_combit: ");
+	      printf ("wrong after extension\n");
+	      mpz_trace ("got ", got);
+	      mpz_trace ("want", want);
+	      abort ();
+	    }
+	}
     }
 
   mpz_clear (got);
@@ -124,14 +124,14 @@ check_com_negs (void)
       mpz_combit (got, data[i].bit);
 
       if (mpz_cmp (got, want) != 0)
-        {
-          printf ("mpz_combit: wrong on neg data[%d]\n", i);
-          mpz_trace ("inp ", inp);
-          printf    ("bit %lu\n", data[i].bit);
-          mpz_trace ("got ", got);
-          mpz_trace ("want", want);
-          abort ();
-        }
+	{
+	  printf ("mpz_combit: wrong on neg data[%d]\n", i);
+	  mpz_trace ("inp ", inp);
+	  printf    ("bit %lu\n", data[i].bit);
+	  mpz_trace ("got ", got);
+	  mpz_trace ("want", want);
+	  abort ();
+	}
     }
 
   mpz_clear (inp);
@@ -161,30 +161,30 @@ check_tstbit (void)
       mpn_random2 (pos+zeros, (mp_size_t) NUM_LIMBS);
 
       for (low1 = 0; low1 <= 1; low1++)
-        {
-          if (low1)
-            pos[0] |= 1;
+	{
+	  if (low1)
+	    pos[0] |= 1;
 
-          refmpn_neg_n (neg, pos, (mp_size_t) numberof(neg));
-          mpz_set_n (z, neg, (mp_size_t) numberof(neg));
-          mpz_neg (z, z);
+	  refmpn_neg_n (neg, pos, (mp_size_t) numberof(neg));
+	  mpz_set_n (z, neg, (mp_size_t) numberof(neg));
+	  mpz_neg (z, z);
 
-          for (i = 0; i < numberof(pos)*GMP_NUMB_BITS; i++)
-            {
-              got = mpz_tstbit (z, i);
-              want = refmpn_tstbit (pos, i);
-              if (got != want)
-                {
-                  printf ("wrong at bit %lu, with %d zeros\n", i, zeros);
-                  printf ("z neg "); debug_mp (z, -16);
-                  mpz_set_n (z, pos, (mp_size_t) numberof(pos));
-                  printf ("pos   "); debug_mp (z, -16);
-                  mpz_set_n (z, neg, (mp_size_t) numberof(neg));
-                  printf ("neg   "); debug_mp (z, -16);
-                  exit (1);
-                }
-            }
-        }
+	  for (i = 0; i < numberof(pos)*GMP_NUMB_BITS; i++)
+	    {
+	      got = mpz_tstbit (z, i);
+	      want = refmpn_tstbit (pos, i);
+	      if (got != want)
+		{
+		  printf ("wrong at bit %lu, with %d zeros\n", i, zeros);
+		  printf ("z neg "); debug_mp (z, -16);
+		  mpz_set_n (z, pos, (mp_size_t) numberof(pos));
+		  printf ("pos   "); debug_mp (z, -16);
+		  mpz_set_n (z, neg, (mp_size_t) numberof(neg));
+		  printf ("neg   "); debug_mp (z, -16);
+		  exit (1);
+		}
+	    }
+	}
     }
   mpz_clear (z);
 }
@@ -202,55 +202,55 @@ check_single (void)
   for (limb = 0; limb < 4; limb++)
     {
       for (offset = (limb==0 ? 0 : -2); offset <= 2; offset++)
-        {
-          for (initial = 0; initial >= -1; initial--)
-            {
-              mpz_set_si (x, (long) initial);
+	{
+	  for (initial = 0; initial >= -1; initial--)
+	    {
+	      mpz_set_si (x, (long) initial);
 
-              bit = (unsigned long) limb*BITS_PER_MP_LIMB + offset;
+	      bit = (unsigned long) limb*BITS_PER_MP_LIMB + offset;
 
-              mpz_clrbit (x, bit);
-              MPZ_CHECK_FORMAT (x);
-              if (mpz_tstbit (x, bit) != 0)
-                {
-                  printf ("check_single(): expected 0\n");
-                  abort ();
-                }
-          
-              mpz_setbit (x, bit);
-              MPZ_CHECK_FORMAT (x);
-              if (mpz_tstbit (x, bit) != 1)
-                {
-                  printf ("check_single(): expected 1\n");
-                  abort ();
-                }
-          
-              mpz_clrbit (x, bit);
-              MPZ_CHECK_FORMAT (x);
-              if (mpz_tstbit (x, bit) != 0)
-                {
-                  printf ("check_single(): expected 0\n");
-                  abort ();
-                }
+	      mpz_clrbit (x, bit);
+	      MPZ_CHECK_FORMAT (x);
+	      if (mpz_tstbit (x, bit) != 0)
+		{
+		  printf ("check_single(): expected 0\n");
+		  abort ();
+		}
 
-              mpz_combit (x, bit);
-              MPZ_CHECK_FORMAT (x);
-              if (mpz_tstbit (x, bit) != 1)
-                {
-                  printf ("check_single(): expected 1\n");
-                  abort ();
-                }
+	      mpz_setbit (x, bit);
+	      MPZ_CHECK_FORMAT (x);
+	      if (mpz_tstbit (x, bit) != 1)
+		{
+		  printf ("check_single(): expected 1\n");
+		  abort ();
+		}
 
-              mpz_combit (x, bit);
-              MPZ_CHECK_FORMAT (x);
-              if (mpz_tstbit (x, bit) != 0)
-                {
-                  printf ("check_single(): expected 0\n");
-                  abort ();
-                }
-            }
-        }
-    }          
+	      mpz_clrbit (x, bit);
+	      MPZ_CHECK_FORMAT (x);
+	      if (mpz_tstbit (x, bit) != 0)
+		{
+		  printf ("check_single(): expected 0\n");
+		  abort ();
+		}
+
+	      mpz_combit (x, bit);
+	      MPZ_CHECK_FORMAT (x);
+	      if (mpz_tstbit (x, bit) != 1)
+		{
+		  printf ("check_single(): expected 1\n");
+		  abort ();
+		}
+
+	      mpz_combit (x, bit);
+	      MPZ_CHECK_FORMAT (x);
+	      if (mpz_tstbit (x, bit) != 0)
+		{
+		  printf ("check_single(): expected 0\n");
+		  abort ();
+		}
+	    }
+	}
+    }
 
   mpz_clear (x);
 }
@@ -371,5 +371,3 @@ main (int argc, char *argv[])
   tests_end ();
   exit (0);
 }
-
-

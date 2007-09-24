@@ -278,19 +278,19 @@ During development:
 
     Input files                       Tool       Output files
     ---------------------------------------------------------
-                                 
+
                                      aclocal
     $prefix/share/aclocal*/*.m4 ----------------> aclocal.m4
 
-                   
+
     configure.in \                   autoconf
     aclocal.m4   / -----------------------------> configure
 
-                  
+
     */Makefile.am \                  automake
     configure.in  | ----------------------------> Makefile.in
     aclocal.m4    /
-                    
+
     configure.in \                  autoheader
     aclocal.m4   / -----------------------------> config.in
 

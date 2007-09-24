@@ -29,7 +29,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* Change this to "#define TRACE(x) x" for some traces. */
-#define TRACE(x) 
+#define TRACE(x)
 
 
 /* FIXME: Shouldn't use plain mpz functions in a reference routine. */
@@ -144,29 +144,29 @@ refmpz_kronecker (mpz_srcptr a_orig, mpz_srcptr b_orig)
       ASSERT (mpz_sgn (b) > 0);
 
       TRACE (printf ("top\n");
-             mpz_trace (" a", a);
-             mpz_trace (" b", b));
+	     mpz_trace (" a", a);
+	     mpz_trace (" b", b));
 
       if (mpz_cmp (a, b) < 0)
-        {
-          TRACE (printf ("swap\n"));
-          mpz_swap (a, b);
-          result_bit1 ^= JACOBI_RECIP_UU_BIT1 (PTR(a)[0], PTR(b)[0]);
-        }
+	{
+	  TRACE (printf ("swap\n"));
+	  mpz_swap (a, b);
+	  result_bit1 ^= JACOBI_RECIP_UU_BIT1 (PTR(a)[0], PTR(b)[0]);
+	}
 
       if (mpz_cmp_ui (b, 1) == 0)
-        break;
+	break;
 
       mpz_sub (a, a, b);
       TRACE (printf ("sub\n");
-             mpz_trace (" a", a));
+	     mpz_trace (" a", a));
       if (mpz_sgn (a) == 0)
-        goto zero;
+	goto zero;
 
       twos = mpz_scan1 (a, 0L);
       mpz_fdiv_q_2exp (a, a, twos);
       TRACE (printf ("twos %lu\n", twos);
-             mpz_trace (" a", a));
+	     mpz_trace (" a", a));
       result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, PTR(b)[0]);
     }
 

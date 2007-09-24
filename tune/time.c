@@ -276,11 +276,11 @@ static const int  have_mftb = 1;
     unsigned  __h1, __l, __h2;          \
     do {                                \
       asm volatile ("mftbu %0\n"        \
-                    "mftb  %1\n"        \
-                    "mftbu %2"          \
-                    : "=r" (__h1),      \
-                      "=r" (__l),       \
-                      "=r" (__h2));     \
+		    "mftb  %1\n"        \
+		    "mftbu %2"          \
+		    : "=r" (__h1),      \
+		      "=r" (__l),       \
+		      "=r" (__h2));     \
     } while (__h1 != __h2);             \
     a[0] = __l;                         \
     a[1] = __h1;                        \
@@ -411,7 +411,7 @@ char *
 unittime_string (double t)
 {
   static char  buf[128];
-  
+
   const char  *unit;
   int         prec;
 
@@ -464,16 +464,16 @@ cycles_works_p (void)
     old_handler = signal (SIGILL, cycles_works_handler);
     if (old_handler == SIG_ERR)
       {
-        if (speed_option_verbose)
-          printf ("cycles_works_p(): SIGILL not supported, assuming speed_cyclecounter() works\n");
-        goto yes;
+	if (speed_option_verbose)
+	  printf ("cycles_works_p(): SIGILL not supported, assuming speed_cyclecounter() works\n");
+	goto yes;
       }
     if (setjmp (cycles_works_buf))
       {
-        if (speed_option_verbose)
-          printf ("cycles_works_p(): SIGILL during speed_cyclecounter(), so doesn't work\n");
-        result = 0;
-        goto done;
+	if (speed_option_verbose)
+	  printf ("cycles_works_p(): SIGILL during speed_cyclecounter(), so doesn't work\n");
+	result = 0;
+	goto done;
       }
     speed_cyclecounter (cycles);
     signal (SIGILL, old_handler);
@@ -509,12 +509,12 @@ clk_tck (void)
   if (result != -1L)
     {
       if (speed_option_verbose)
-        printf ("sysconf(_SC_CLK_TCK) is %ld per second\n", result);
+	printf ("sysconf(_SC_CLK_TCK) is %ld per second\n", result);
       return result;
     }
 
   fprintf (stderr,
-           "sysconf(_SC_CLK_TCK) not working, using CLK_TCK instead\n");
+	   "sysconf(_SC_CLK_TCK) not working, using CLK_TCK instead\n");
 #endif
 
 #ifdef CLK_TCK
@@ -560,52 +560,52 @@ clk_tck (void)
     type      st, et;                                                   \
     long      dt, half_tick;                                            \
     unsigned  attempt, reps, i, j;                                      \
-                                                                        \
+									\
     if (result != -1)                                                   \
       return result;                                                    \
-                                                                        \
+									\
     result = 0;                                                         \
     half_tick = (1000000L / clk_tck ()) / 2;                            \
-                                                                        \
+									\
     for (attempt = 0; attempt < 5; attempt++)                           \
       {                                                                 \
-        reps = 0;                                                       \
-        for (;;)                                                        \
-          {                                                             \
-            get (st);                                                   \
-            for (i = 0; i < reps; i++)                                  \
-              for (j = 0; j < 100; j++)                                 \
-                noop_1 (CNST_LIMB(0));                                  \
-            get (et);                                                   \
-                                                                        \
-            dt = (sec(et)-sec(st))*1000000L + usec(et)-usec(st);        \
-                                                                        \
-            if (speed_option_verbose >= 2)                              \
-              printf ("%s attempt=%u, reps=%u, dt=%ld\n",               \
-                      name, attempt, reps, dt);                         \
-                                                                        \
-            if (dt >= 2)                                                \
-              break;                                                    \
-                                                                        \
-            reps = (reps == 0 ? 1 : 2*reps);                            \
-            if (reps == 0)                                              \
-              break;  /* uint overflow, not normal */                   \
-          }                                                             \
-                                                                        \
-        if (dt < half_tick)                                             \
-          {                                                             \
-            result = 1;                                                 \
-            break;                                                      \
-          }                                                             \
+	reps = 0;                                                       \
+	for (;;)                                                        \
+	  {                                                             \
+	    get (st);                                                   \
+	    for (i = 0; i < reps; i++)                                  \
+	      for (j = 0; j < 100; j++)                                 \
+		noop_1 (CNST_LIMB(0));                                  \
+	    get (et);                                                   \
+									\
+	    dt = (sec(et)-sec(st))*1000000L + usec(et)-usec(st);        \
+									\
+	    if (speed_option_verbose >= 2)                              \
+	      printf ("%s attempt=%u, reps=%u, dt=%ld\n",               \
+		      name, attempt, reps, dt);                         \
+									\
+	    if (dt >= 2)                                                \
+	      break;                                                    \
+									\
+	    reps = (reps == 0 ? 1 : 2*reps);                            \
+	    if (reps == 0)                                              \
+	      break;  /* uint overflow, not normal */                   \
+	  }                                                             \
+									\
+	if (dt < half_tick)                                             \
+	  {                                                             \
+	    result = 1;                                                 \
+	    break;                                                      \
+	  }                                                             \
       }                                                                 \
-                                                                        \
+									\
     if (speed_option_verbose)                                           \
       {                                                                 \
-        if (result)                                                     \
-          printf ("%s is microsecond accurate\n", name);                \
-        else                                                            \
-          printf ("%s is only %s clock tick accurate\n",                \
-                  name, unittime_string (1.0/clk_tck()));               \
+	if (result)                                                     \
+	  printf ("%s is microsecond accurate\n", name);                \
+	else                                                            \
+	  printf ("%s is only %s clock tick accurate\n",                \
+		  name, unittime_string (1.0/clk_tck()));               \
       }                                                                 \
     return result;                                                      \
   }
@@ -618,7 +618,7 @@ gettimeofday_microseconds_p (void)
 #define timeval_tv_sec(t)      ((t).tv_sec)
 #define timeval_tv_usec(t)     ((t).tv_usec)
   MICROSECONDS_P ("gettimeofday", struct_timeval,
-                  call_gettimeofday, timeval_tv_sec, timeval_tv_usec);
+		  call_gettimeofday, timeval_tv_sec, timeval_tv_usec);
 }
 
 int
@@ -628,7 +628,7 @@ getrusage_microseconds_p (void)
 #define rusage_tv_sec(t)    ((t).ru_utime.tv_sec)
 #define rusage_tv_usec(t)   ((t).ru_utime.tv_usec)
   MICROSECONDS_P ("getrusage", struct_rusage,
-                  call_getrusage, rusage_tv_sec, rusage_tv_usec);
+		  call_getrusage, rusage_tv_sec, rusage_tv_usec);
 }
 
 /* Test whether getrusage goes backwards, return non-zero if it does
@@ -665,25 +665,25 @@ getrusage_backwards_p (void)
       getrusage (0, &next);
 
       if (next.ru_utime.tv_sec < prev.ru_utime.tv_sec
-          || (next.ru_utime.tv_sec == prev.ru_utime.tv_sec
-              && next.ru_utime.tv_usec < prev.ru_utime.tv_usec))
-        {
-          if (speed_option_verbose)
-            printf ("getrusage went backwards (attempt %d: %ld.%06ld -> %ld.%06ld)\n",
-                    i,
-                    prev.ru_utime.tv_sec, prev.ru_utime.tv_usec,
-                    next.ru_utime.tv_sec, next.ru_utime.tv_usec);
-          result = 1;
-          break;
-        }
+	  || (next.ru_utime.tv_sec == prev.ru_utime.tv_sec
+	      && next.ru_utime.tv_usec < prev.ru_utime.tv_usec))
+	{
+	  if (speed_option_verbose)
+	    printf ("getrusage went backwards (attempt %d: %ld.%06ld -> %ld.%06ld)\n",
+		    i,
+		    prev.ru_utime.tv_sec, prev.ru_utime.tv_usec,
+		    next.ru_utime.tv_sec, next.ru_utime.tv_usec);
+	  result = 1;
+	  break;
+	}
 
       /* minimum 1000 attempts, then stop after either 0.1 seconds or 50000
-         attempts, whichever comes first */
+	 attempts, whichever comes first */
       d = 1000000 * (next.ru_utime.tv_sec - start.ru_utime.tv_sec)
-        + (next.ru_utime.tv_usec - start.ru_utime.tv_usec);
+	+ (next.ru_utime.tv_usec - start.ru_utime.tv_usec);
       i++;
       if (i > 50000 || (i > 1000 && d > 100000))
-        break;
+	break;
     }
 
   return result;
@@ -721,7 +721,7 @@ cgt_works_p (void)
   if (! have_cgt_id)
     {
       if (speed_option_verbose)
-        printf ("clock_gettime don't know what ID to use\n");
+	printf ("clock_gettime don't know what ID to use\n");
       result = 0;
       return result;
     }
@@ -733,7 +733,7 @@ cgt_works_p (void)
   if (clock_gettime (CGT_ID, &unit) != 0)
     {
       if (speed_option_verbose)
-        printf ("clock_gettime id=%d error: %s\n", CGT_ID, strerror (errno));
+	printf ("clock_gettime id=%d error: %s\n", CGT_ID, strerror (errno));
       result = 0;
       return result;
     }
@@ -742,14 +742,14 @@ cgt_works_p (void)
   if (clock_getres (CGT_ID, &unit) != 0)
     {
       if (speed_option_verbose)
-        printf ("clock_getres id=%d error: %s\n", CGT_ID, strerror (errno));
+	printf ("clock_getres id=%d error: %s\n", CGT_ID, strerror (errno));
       result = 0;
       return result;
     }
 
   cgt_unittime = unit.tv_sec + unit.tv_nsec * 1e-9;
   printf ("clock_gettime is %s accurate\n",
-          unittime_string (cgt_unittime));
+	  unittime_string (cgt_unittime));
   result = 1;
   return result;
 }
@@ -762,8 +762,8 @@ freq_measure_mftb_one (void)
 #define timeval_tv_sec(t)      ((t).tv_sec)
 #define timeval_tv_usec(t)     ((t).tv_usec)
   FREQ_MEASURE_ONE ("mftb", struct_timeval,
-                    call_gettimeofday, MFTB,
-                    timeval_tv_sec, timeval_tv_usec);
+		    call_gettimeofday, MFTB,
+		    timeval_tv_sec, timeval_tv_usec);
 }
 
 
@@ -793,13 +793,13 @@ mftb_works_p (void)
   if (old_handler == SIG_ERR)
     {
       if (speed_option_verbose)
-        printf ("mftb_works_p(): SIGILL not supported, assuming mftb works\n");
+	printf ("mftb_works_p(): SIGILL not supported, assuming mftb works\n");
       return 1;
     }
   if (setjmp (mftb_works_buf))
     {
       if (speed_option_verbose)
-        printf ("mftb_works_p(): SIGILL during mftb, so doesn't work\n");
+	printf ("mftb_works_p(): SIGILL during mftb, so doesn't work\n");
       return 0;
     }
   MFTB (a);
@@ -824,7 +824,7 @@ mftb_works_p (void)
   if (cycletime == -1.0)
     {
       if (speed_option_verbose)
-        printf ("mftb_works_p(): cannot measure mftb period\n");
+	printf ("mftb_works_p(): cannot measure mftb period\n");
       return 0;
     }
 
@@ -855,7 +855,7 @@ sgi_works_p (void)
     {
       /* ENODEV is the error when a counter is not available */
       if (speed_option_verbose)
-        printf ("syssgi SGI_QUERY_CYCLECNTR error: %s\n", strerror (errno));
+	printf ("syssgi SGI_QUERY_CYCLECNTR error: %s\n", strerror (errno));
       result = 0;
       return result;
     }
@@ -869,10 +869,10 @@ sgi_works_p (void)
   if (size == -1)
     {
       if (speed_option_verbose)
-        {
-          printf ("syssgi SGI_CYCLECNTR_SIZE error: %s\n", strerror (errno));
-          printf ("    will assume size==4\n");
-        }
+	{
+	  printf ("syssgi SGI_CYCLECNTR_SIZE error: %s\n", strerror (errno));
+	  printf ("    will assume size==4\n");
+	}
       size = 32;
     }
 #else
@@ -897,7 +897,7 @@ sgi_works_p (void)
   if (fd == -1)
     {
       if (speed_option_verbose)
-        printf ("open /dev/mmem: %s\n", strerror (errno));
+	printf ("open /dev/mmem: %s\n", strerror (errno));
       result = 0;
       return result;
     }
@@ -906,14 +906,14 @@ sgi_works_p (void)
   if (virtpage == (void *) -1)
     {
       if (speed_option_verbose)
-        printf ("mmap /dev/mmem: %s\n", strerror (errno));
+	printf ("mmap /dev/mmem: %s\n", strerror (errno));
       result = 0;
       return result;
     }
 
   /* address of least significant 4 bytes, knowing mips is big endian */
   sgi_addr = (unsigned *) ((char *) virtpage + offset
-                           + size/8 - sizeof(unsigned));
+			   + size/8 - sizeof(unsigned));
   result = 1;
   return result;
 
@@ -951,72 +951,72 @@ speed_time_init (void)
 
       /* only used if a supplementary method is chosen below */
       cycles_limit = (have_cycles == 1 ? M_2POW32 : M_2POW64) / 2.0
-        * speed_cycletime;
+	* speed_cycletime;
 
       if (have_grus && getrusage_microseconds_p() && ! getrusage_backwards_p())
-        {
-          /* this is a good combination */
-          use_grus = 1;
-          supplement_unittime = grus_unittime = 1.0e-6;
-          strcpy (speed_time_string, "CPU cycle counter, supplemented by microsecond getrusage()");
-        }
+	{
+	  /* this is a good combination */
+	  use_grus = 1;
+	  supplement_unittime = grus_unittime = 1.0e-6;
+	  strcpy (speed_time_string, "CPU cycle counter, supplemented by microsecond getrusage()");
+	}
       else if (have_cycles == 1)
-        {
-          /* When speed_cyclecounter has a limited range, look for something
-             to supplement it. */
-          if (have_gtod && gettimeofday_microseconds_p())
-            {
-              use_gtod = 1;
-              supplement_unittime = gtod_unittime = 1.0e-6;
-              strcpy (speed_time_string, "CPU cycle counter, supplemented by microsecond gettimeofday()");
-            }
-          else if (have_grus)
-            {
-              use_grus = 1;
-              supplement_unittime = grus_unittime = 1.0 / (double) clk_tck ();
-              sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick getrusage()", unittime_string (supplement_unittime));
-            }
-          else if (have_times)
-            {
-              use_times = 1;
-              supplement_unittime = times_unittime = 1.0 / (double) clk_tck ();
-              sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick times()", unittime_string (supplement_unittime));
-            }
-          else if (have_gtod)
-            {
-              use_gtod = 1;
-              supplement_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
-              sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick gettimeofday()", unittime_string (supplement_unittime));
-            }
-          else
-            {
-              fprintf (stderr, "WARNING: cycle counter is 32 bits and there's no other functions.\n");
-              fprintf (stderr, "    Wraparounds may produce bad results on long measurements.\n");
-            }
-        }
+	{
+	  /* When speed_cyclecounter has a limited range, look for something
+	     to supplement it. */
+	  if (have_gtod && gettimeofday_microseconds_p())
+	    {
+	      use_gtod = 1;
+	      supplement_unittime = gtod_unittime = 1.0e-6;
+	      strcpy (speed_time_string, "CPU cycle counter, supplemented by microsecond gettimeofday()");
+	    }
+	  else if (have_grus)
+	    {
+	      use_grus = 1;
+	      supplement_unittime = grus_unittime = 1.0 / (double) clk_tck ();
+	      sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick getrusage()", unittime_string (supplement_unittime));
+	    }
+	  else if (have_times)
+	    {
+	      use_times = 1;
+	      supplement_unittime = times_unittime = 1.0 / (double) clk_tck ();
+	      sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick times()", unittime_string (supplement_unittime));
+	    }
+	  else if (have_gtod)
+	    {
+	      use_gtod = 1;
+	      supplement_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
+	      sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick gettimeofday()", unittime_string (supplement_unittime));
+	    }
+	  else
+	    {
+	      fprintf (stderr, "WARNING: cycle counter is 32 bits and there's no other functions.\n");
+	      fprintf (stderr, "    Wraparounds may produce bad results on long measurements.\n");
+	    }
+	}
 
       if (use_grus || use_times || use_gtod)
-        {
-          /* must know cycle period to compare cycles to other measuring
-             (via cycles_limit) */
-          speed_cycletime_need_seconds ();
+	{
+	  /* must know cycle period to compare cycles to other measuring
+	     (via cycles_limit) */
+	  speed_cycletime_need_seconds ();
 
-          if (speed_precision * supplement_unittime > cycles_limit)
-            {
-              fprintf (stderr, "WARNING: requested precision can't always be achieved due to limited range\n");
-              fprintf (stderr, "    cycle counter and limited precision supplemental method\n");
-              fprintf (stderr, "    (%s)\n", speed_time_string);
-            }
-        }
+	  if (speed_precision * supplement_unittime > cycles_limit)
+	    {
+	      fprintf (stderr, "WARNING: requested precision can't always be achieved due to limited range\n");
+	      fprintf (stderr, "    cycle counter and limited precision supplemental method\n");
+	      fprintf (stderr, "    (%s)\n", speed_time_string);
+	    }
+	}
     }
   else if (have_stck)
     {
       strcpy (speed_time_string, "STCK timestamp");
       /* stck is in units of 2^-12 microseconds, which is very likely higher
-         resolution than a cpu cycle */
+	 resolution than a cpu cycle */
       if (speed_cycletime == 0.0)
-        speed_cycletime_fail
-          ("Need to know CPU frequency for effective stck unit");
+	speed_cycletime_fail
+	  ("Need to know CPU frequency for effective stck unit");
       speed_unittime = MAX (speed_cycletime, STCK_PERIOD);
       DEFAULT (speed_precision, 10000);
     }
@@ -1026,7 +1026,7 @@ speed_time_init (void)
       DEFAULT (speed_precision, 10000);
       speed_unittime = mftb_unittime;
       sprintf (speed_time_string, "mftb counter (%s)",
-               unittime_string (speed_unittime));
+	       unittime_string (speed_unittime));
     }
   else if (have_sgi && sgi_works_p ())
     {
@@ -1034,7 +1034,7 @@ speed_time_init (void)
       DEFAULT (speed_precision, 10000);
       speed_unittime = sgi_unittime;
       sprintf (speed_time_string, "syssgi() mmap counter (%s), supplemented by millisecond getrusage()",
-               unittime_string (speed_unittime));
+	       unittime_string (speed_unittime));
       /* supplemented with getrusage, which we assume to have 1ms resolution */
       use_grus = 1;
       supplement_unittime = 1e-3;
@@ -1047,22 +1047,22 @@ speed_time_init (void)
       read_real_time (&t, sizeof(t));
       switch (t.flag) {
       case RTC_POWER:
-        /* FIXME: What's the actual RTC resolution? */
-        speed_unittime = 1e-7;
-        strcpy (speed_time_string, "read_real_time() power nanoseconds");
-        break;
+	/* FIXME: What's the actual RTC resolution? */
+	speed_unittime = 1e-7;
+	strcpy (speed_time_string, "read_real_time() power nanoseconds");
+	break;
       case RTC_POWER_PC:
-        t.tb_high = 1;
-        t.tb_low = 0;
-        time_base_to_time (&t, sizeof(t));
-        speed_unittime = TIMEBASESTRUCT_SECS(&t) / M_2POW32;
-        sprintf (speed_time_string, "%s read_real_time() powerpc ticks",
-                 unittime_string (speed_unittime));
-        break;
+	t.tb_high = 1;
+	t.tb_low = 0;
+	time_base_to_time (&t, sizeof(t));
+	speed_unittime = TIMEBASESTRUCT_SECS(&t) / M_2POW32;
+	sprintf (speed_time_string, "%s read_real_time() powerpc ticks",
+		 unittime_string (speed_unittime));
+	break;
       default:
-        fprintf (stderr, "ERROR: Unrecognised timebasestruct_t flag=%d\n",
-                 t.flag);
-        abort ();
+	fprintf (stderr, "ERROR: Unrecognised timebasestruct_t flag=%d\n",
+		 t.flag);
+	abort ();
       }
     }
   else if (have_cgt && cgt_works_p() && cgt_unittime < 1.5e-6)
@@ -1077,7 +1077,7 @@ speed_time_init (void)
   else if (have_times && clk_tck() > 1000000)
     {
       /* Cray vector systems have times() which is clock cycle resolution
-         (eg. 450 MHz).  */
+	 (eg. 450 MHz).  */
       DEFAULT (speed_precision, 10000);
       goto choose_times;
     }
@@ -1108,7 +1108,7 @@ speed_time_init (void)
       use_times = 1;
       speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
       sprintf (speed_time_string, "%s clock tick times()",
-               unittime_string (speed_unittime));
+	       unittime_string (speed_unittime));
     }
   else if (have_grus)
     {
@@ -1117,7 +1117,7 @@ speed_time_init (void)
       speed_unittime = grus_unittime = 1.0 / (double) clk_tck ();
       DEFAULT (speed_precision, 200);
       sprintf (speed_time_string, "%s clock tick getrusage()\n",
-               unittime_string (speed_unittime));
+	       unittime_string (speed_unittime));
     }
   else if (have_gtod)
     {
@@ -1126,7 +1126,7 @@ speed_time_init (void)
       speed_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
       DEFAULT (speed_precision, 200);
       sprintf (speed_time_string, "%s clock tick gettimeofday()",
-               unittime_string (speed_unittime));
+	       unittime_string (speed_unittime));
     }
   else
     {
@@ -1141,10 +1141,10 @@ speed_time_init (void)
       printf ("    speed_precision     %d\n", speed_precision);
       printf ("    speed_unittime      %.2g\n", speed_unittime);
       if (supplement_unittime)
-        printf ("    supplement_unittime %.2g\n", supplement_unittime);
+	printf ("    supplement_unittime %.2g\n", supplement_unittime);
       printf ("    use_tick_boundary   %d\n", use_tick_boundary);
       if (have_cycles)
-        printf ("    cycles_limit        %.2g seconds\n", cycles_limit);
+	printf ("    cycles_limit        %.2g seconds\n", cycles_limit);
     }
 }
 
@@ -1194,25 +1194,25 @@ speed_starttime (void)
   if (have_grus && use_grus)
     {
       if (use_tick_boundary)
-        grus_tick_boundary ();
+	grus_tick_boundary ();
       else
-        getrusage (0, &start_grus);
+	getrusage (0, &start_grus);
     }
 
   if (have_gtod && use_gtod)
     {
       if (use_tick_boundary)
-        gtod_tick_boundary ();
+	gtod_tick_boundary ();
       else
-        gettimeofday (&start_gtod, NULL);
+	gettimeofday (&start_gtod, NULL);
     }
 
   if (have_times && use_times)
     {
       if (use_tick_boundary)
-        times_tick_boundary ();
+	times_tick_boundary ();
       else
-        times (&start_times);
+	times (&start_times);
     }
 
   if (have_cgt && use_cgt)
@@ -1321,7 +1321,7 @@ timespec_diff_secs (const struct_timespec *end, const struct_timespec *start)
 /* This is for use after time_base_to_time, ie. for seconds and nanoseconds. */
 double
 timebasestruct_diff_secs (const timebasestruct_t *end,
-                          const timebasestruct_t *start)
+			  const timebasestruct_t *start)
 {
   DIFF_SECS_ROUTINE (tb_high, tb_low, 1e-9);
 }
@@ -1350,7 +1350,7 @@ speed_endtime (void)
   do {                                                                    \
     if (speed_option_verbose >= 3)                                        \
       printf ("speed_endtime(): cycle counter limit exceeded, used %s\n", \
-              name);                                                      \
+	      name);                                                      \
     result = value;                                                       \
     goto done;                                                            \
   } while (0)
@@ -1387,44 +1387,44 @@ speed_endtime (void)
     {
       printf ("speed_endtime():\n");
       if (use_cycles)
-        printf ("   cycles  0x%X,0x%X -> 0x%X,0x%X\n",
-                start_cycles[1], start_cycles[0],
-                end_cycles[1], end_cycles[0]);
+	printf ("   cycles  0x%X,0x%X -> 0x%X,0x%X\n",
+		start_cycles[1], start_cycles[0],
+		end_cycles[1], end_cycles[0]);
 
       if (use_stck)
-        printf ("   stck  0x%lX -> 0x%lX\n", start_stck, end_stck);
+	printf ("   stck  0x%lX -> 0x%lX\n", start_stck, end_stck);
 
       if (use_mftb)
-        printf ("   mftb  0x%X,%08X -> 0x%X,%08X\n",
-                start_mftb[1], start_mftb[0],
-                end_mftb[1], end_mftb[0]);
+	printf ("   mftb  0x%X,%08X -> 0x%X,%08X\n",
+		start_mftb[1], start_mftb[0],
+		end_mftb[1], end_mftb[0]);
 
       if (use_sgi)
-        printf ("   sgi  0x%X -> 0x%X\n", start_sgi, end_sgi);
+	printf ("   sgi  0x%X -> 0x%X\n", start_sgi, end_sgi);
 
       if (use_rrt)
-        printf ("   read_real_time  (%d)%u,%u -> (%d)%u,%u\n",
-                start_rrt.flag, start_rrt.tb_high, start_rrt.tb_low,
-                end_rrt.flag, end_rrt.tb_high, end_rrt.tb_low);
+	printf ("   read_real_time  (%d)%u,%u -> (%d)%u,%u\n",
+		start_rrt.flag, start_rrt.tb_high, start_rrt.tb_low,
+		end_rrt.flag, end_rrt.tb_high, end_rrt.tb_low);
 
       if (use_cgt)
-        printf ("   clock_gettime  %ld.%09ld -> %ld.%09ld\n",
-                start_cgt.tv_sec, start_cgt.tv_nsec,
-                end_cgt.tv_sec, end_cgt.tv_nsec);
+	printf ("   clock_gettime  %ld.%09ld -> %ld.%09ld\n",
+		start_cgt.tv_sec, start_cgt.tv_nsec,
+		end_cgt.tv_sec, end_cgt.tv_nsec);
 
       if (use_gtod)
-        printf ("   gettimeofday  %ld.%06ld -> %ld.%06ld\n",
-                start_gtod.tv_sec, start_gtod.tv_usec,
-                end_gtod.tv_sec, end_gtod.tv_usec);
+	printf ("   gettimeofday  %ld.%06ld -> %ld.%06ld\n",
+		start_gtod.tv_sec, start_gtod.tv_usec,
+		end_gtod.tv_sec, end_gtod.tv_usec);
 
       if (use_grus)
-        printf ("   getrusage  %ld.%06ld -> %ld.%06ld\n",
-                start_grus.ru_utime.tv_sec, start_grus.ru_utime.tv_usec,
-                end_grus.ru_utime.tv_sec, end_grus.ru_utime.tv_usec);
+	printf ("   getrusage  %ld.%06ld -> %ld.%06ld\n",
+		start_grus.ru_utime.tv_sec, start_grus.ru_utime.tv_usec,
+		end_grus.ru_utime.tv_sec, end_grus.ru_utime.tv_usec);
 
       if (use_times)
-        printf ("   times  %ld -> %ld\n",
-                start_times.tms_utime, end_times.tms_utime);
+	printf ("   times  %ld -> %ld\n",
+		start_times.tms_utime, end_times.tms_utime);
     }
 
   if (use_rrt)
@@ -1446,14 +1446,14 @@ speed_endtime (void)
       t_grus = rusage_diff_secs (&end_grus, &start_grus);
 
       /* Use getrusage() if the cycle counter limit would be exceeded, or if
-         it provides enough accuracy already. */
-      if (use_cycles)  
-        {
-          if (t_grus >= speed_precision*grus_unittime)
-            END_ENOUGH ("getrusage()", t_grus);
-          if (t_grus >= cycles_limit)
-            END_EXCEED ("getrusage()", t_grus);
-        }
+	 it provides enough accuracy already. */
+      if (use_cycles)
+	{
+	  if (t_grus >= speed_precision*grus_unittime)
+	    END_ENOUGH ("getrusage()", t_grus);
+	  if (t_grus >= cycles_limit)
+	    END_EXCEED ("getrusage()", t_grus);
+	}
     }
 
   if (use_times)
@@ -1461,14 +1461,14 @@ speed_endtime (void)
       t_times = (end_times.tms_utime - start_times.tms_utime) * times_unittime;
 
       /* Use times() if the cycle counter limit would be exceeded, or if
-         it provides enough accuracy already. */
-      if (use_cycles)  
-        {
-          if (t_times >= speed_precision*times_unittime)
-            END_ENOUGH ("times()", t_times);
-          if (t_times >= cycles_limit)
-            END_EXCEED ("times()", t_times);
-        }
+	 it provides enough accuracy already. */
+      if (use_cycles)
+	{
+	  if (t_times >= speed_precision*times_unittime)
+	    END_ENOUGH ("times()", t_times);
+	  if (t_times >= cycles_limit)
+	    END_EXCEED ("times()", t_times);
+	}
     }
 
   if (use_gtod)
@@ -1476,21 +1476,21 @@ speed_endtime (void)
       t_gtod = timeval_diff_secs (&end_gtod, &start_gtod);
 
       /* Use gettimeofday() if it measured a value bigger than the cycle
-         counter can handle.  */
-      if (use_cycles)  
-        {
-          if (t_gtod >= cycles_limit)
-            END_EXCEED ("gettimeofday()", t_gtod);
-        }
+	 counter can handle.  */
+      if (use_cycles)
+	{
+	  if (t_gtod >= cycles_limit)
+	    END_EXCEED ("gettimeofday()", t_gtod);
+	}
     }
-  
+
   if (use_mftb)
     {
       t_mftb = speed_mftb_diff (end_mftb, start_mftb) * mftb_unittime;
       END_USE ("mftb", t_mftb);
     }
 
-  if (use_stck)  
+  if (use_stck)
     {
       t_stck = (end_stck - start_stck) * STCK_PERIOD;
       END_USE ("stck", t_stck);
@@ -1502,10 +1502,10 @@ speed_endtime (void)
       END_USE ("SGI hardware counter", t_sgi);
     }
 
-  if (use_cycles)  
+  if (use_cycles)
     {
       t_cycles = speed_cyclecounter_diff (end_cycles, start_cycles)
-        * speed_cycletime;
+	* speed_cycletime;
       END_USE ("cycle counter", t_cycles);
     }
 
@@ -1526,7 +1526,7 @@ speed_endtime (void)
   if (result < 0.0)
     {
       if (speed_option_verbose >= 2)
-        fprintf (stderr, "speed_endtime(): warning, treating negative time as zero: %.9f\n", result);
+	fprintf (stderr, "speed_endtime(): warning, treating negative time as zero: %.9f\n", result);
       result = 0.0;
     }
   return result;

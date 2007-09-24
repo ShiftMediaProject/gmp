@@ -31,7 +31,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    mpz/mpq/mpf being run (if you have the wrong trace function it'll
    probably segv).  */
 
-#define TRACE(x) 
+#define TRACE(x)
 #define MPX_TRACE  mpz_trace
 
 
@@ -77,17 +77,17 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   do {                                                                  \
     if (p->data_top + 1 >= p->data_alloc)                               \
       {                                                                 \
-        void *(*reallocate_func) (void *, size_t, size_t);              \
-        mp_get_memory_functions (NULL, &reallocate_func, NULL);         \
-        TRACE (printf ("grow stack from %d\n", p->data_alloc));         \
-        REALLOC (p->data_stack, p->data_alloc, 20, union mpX_t);        \
+	void *(*reallocate_func) (void *, size_t, size_t);              \
+	mp_get_memory_functions (NULL, &reallocate_func, NULL);         \
+	TRACE (printf ("grow stack from %d\n", p->data_alloc));         \
+	REALLOC (p->data_stack, p->data_alloc, 20, union mpX_t);        \
       }                                                                 \
     ASSERT (p->data_top + 1 <= p->data_inited);                         \
     if (p->data_top + 1 == p->data_inited)                              \
       {                                                                 \
-        TRACE (printf ("initialize %d\n", p->data_top + 1));            \
-        (*p->mpX_init) (&p->data_stack[p->data_top + 1], p->prec);      \
-        p->data_inited++;                                               \
+	TRACE (printf ("initialize %d\n", p->data_top + 1));            \
+	(*p->mpX_init) (&p->data_stack[p->data_top + 1], p->prec);      \
+	p->data_inited++;                                               \
       }                                                                 \
   } while (0)
 
@@ -159,38 +159,38 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
       break;
 
   TRACE (printf ("lookahead at: \"%.*s\" length %u, word %u\n",
-                 (int) p->elen, p->e, p->elen, wlen));
+		 (int) p->elen, p->e, p->elen, wlen));
 
   op_found = NULL;
   oplen_found = 0;
   for (op = p->table; op->name != NULL; op++)
     {
       if (op->type == MPEXPR_TYPE_NEW_TABLE)
-        {
-          printf ("new\n");
-          op = (struct mpexpr_operator_t *) op->name - 1;
-          continue;
-        }
+	{
+	  printf ("new\n");
+	  op = (struct mpexpr_operator_t *) op->name - 1;
+	  continue;
+	}
 
       oplen = strlen (op->name);
       if (! ((WHOLEWORD (op) ? wlen == oplen : p->elen >= oplen)
-             && memcmp (p->e, op->name, oplen) == 0))
-        continue;
+	     && memcmp (p->e, op->name, oplen) == 0))
+	continue;
 
       /* Shorter matches don't replace longer previous ones. */
       if (op_found && oplen < oplen_found)
-        continue;
+	continue;
 
       /* On a match of equal length to a previous one, the old match isn't
-         replaced if it has the preferred prefix, and if it doesn't then
-         it's not replaced if the new one also doesn't.  */
+	 replaced if it has the preferred prefix, and if it doesn't then
+	 it's not replaced if the new one also doesn't.  */
       if (op_found && oplen == oplen_found
-          && ((op_found->type & MPEXPR_TYPE_PREFIX) == prefix
-              || (op->type & MPEXPR_TYPE_PREFIX) != prefix))
-        continue;
+	  && ((op_found->type & MPEXPR_TYPE_PREFIX) == prefix
+	      || (op->type & MPEXPR_TYPE_PREFIX) != prefix))
+	continue;
 
       /* This is now either the first match seen, or a longer than previous
-         match, or an equal to previous one but with a preferred prefix. */
+	 match, or an equal to previous one but with a preferred prefix. */
       op_found = op;
       oplen_found = oplen;
     }
@@ -200,30 +200,30 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
       p->e += oplen_found, p->elen -= oplen_found;
 
       if (op_found->type == MPEXPR_TYPE_VARIABLE)
-        {
-          if (p->elen == 0)
-            ERROR ("end of string expecting a variable",
-                   MPEXPR_RESULT_PARSE_ERROR);
-          i = p->e[0] - 'a';
-          if (i < 0 || i >= MPEXPR_VARIABLES)
-            ERROR ("bad variable name", MPEXPR_RESULT_BAD_VARIABLE);
-          goto variable;
-        }
+	{
+	  if (p->elen == 0)
+	    ERROR ("end of string expecting a variable",
+		   MPEXPR_RESULT_PARSE_ERROR);
+	  i = p->e[0] - 'a';
+	  if (i < 0 || i >= MPEXPR_VARIABLES)
+	    ERROR ("bad variable name", MPEXPR_RESULT_BAD_VARIABLE);
+	  goto variable;
+	}
 
       if (op_found->precedence == 0)
-        {
-          TRACE (printf ("lookahead function: %s\n", op_found->name));
-          p->token = TOKEN_FUNCTION;
-          p->token_op = op_found;
-          return 1;
-        }
+	{
+	  TRACE (printf ("lookahead function: %s\n", op_found->name));
+	  p->token = TOKEN_FUNCTION;
+	  p->token_op = op_found;
+	  return 1;
+	}
       else
-        {
-          TRACE (printf ("lookahead operator: %s\n", op_found->name));
-          p->token = TOKEN_OPERATOR;
-          p->token_op = op_found;
-          return 1;
-        }
+	{
+	  TRACE (printf ("lookahead operator: %s\n", op_found->name));
+	  p->token = TOKEN_OPERATOR;
+	  p->token_op = op_found;
+	  return 1;
+	}
     }
 
   oplen = (*p->mpX_number) (SP+1, p->e, p->elen, p->base);
@@ -243,9 +243,9 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
     variable:
       p->e++, p->elen--;
       if (p->var[i] == NULL)
-        ERROR ("NULL variable", MPEXPR_RESULT_BAD_VARIABLE);
+	ERROR ("NULL variable", MPEXPR_RESULT_BAD_VARIABLE);
       TRACE (printf ("lookahead variable: var[%d] = ", i);
-             MPX_TRACE ("", p->var[i]));
+	     MPX_TRACE ("", p->var[i]));
       p->token = TOKEN_VALUE;
       DATA_PUSH ();
       (*p->mpX_set) (SP, p->var[i]);
@@ -267,9 +267,9 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
   do {                                                                     \
     if (p->control_top + 1 >= p->control_alloc)                            \
       {                                                                    \
-        TRACE (printf ("grow control stack from %d\n", p->control_alloc)); \
-        REALLOC (p->control_stack, p->control_alloc, 20,                   \
-                 struct mpexpr_control_t);                                 \
+	TRACE (printf ("grow control stack from %d\n", p->control_alloc)); \
+	REALLOC (p->control_stack, p->control_alloc, 20,                   \
+		 struct mpexpr_control_t);                                 \
       }                                                                    \
   } while (0)
 
@@ -303,8 +303,8 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
     printf ("%s depth %d:", str, p->control_top);       \
     for (i = 0; i <= p->control_top; i++)               \
       printf (" \"%s\"(%d)",                            \
-              p->control_stack[i].op->name,             \
-              p->control_stack[i].argcount);            \
+	      p->control_stack[i].op->name,             \
+	      p->control_stack[i].argcount);            \
     printf ("\n");                                      \
   });
 
@@ -325,9 +325,9 @@ lookahead (struct mpexpr_parse_t *p, int prefix)
   do {                                                                     \
     if (CP->argcount != (n))                                               \
       {                                                                    \
-        TRACE (printf ("wrong number of arguments for %s, got %d want %d", \
-                       str, CP->argcount, n));                             \
-        ERROR ("", MPEXPR_RESULT_PARSE_ERROR);                             \
+	TRACE (printf ("wrong number of arguments for %s, got %d want %d", \
+		       str, CP->argcount, n));                             \
+	ERROR ("", MPEXPR_RESULT_PARSE_ERROR);                             \
       }                                                                    \
   } while (0)
 
@@ -366,7 +366,7 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
   mp_get_memory_functions (&allocate_func, &reallocate_func, &free_func);
 
   TRACE (printf ("mpexpr_evaluate() base %d \"%.*s\"\n",
-                 p->base, (int) p->elen, p->e));
+		 p->base, (int) p->elen, p->e));
 
   /* "done" is a special sentinel at the bottom of the control stack,
      precedence -1 is lower than any normal operator.  */
@@ -376,7 +376,7 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
 
     p->control_alloc = 20;
     p->control_stack = ALLOCATE_FUNC_TYPE (p->control_alloc,
-                                           struct mpexpr_control_t);
+					   struct mpexpr_control_t);
     p->control_top = 0;
     CP->op = &operator_done;
     CP->argcount = 1;
@@ -415,19 +415,19 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
 
     LOOKAHEAD (MPEXPR_TYPE_PREFIX);
     if (! (p->token == TOKEN_OPERATOR
-           && p->token_op->type == MPEXPR_TYPE_OPENPAREN))
+	   && p->token_op->type == MPEXPR_TYPE_OPENPAREN))
       ERROR ("expected open paren for function", MPEXPR_RESULT_PARSE_ERROR);
 
     TRACE (printf ("open paren for function \"%s\"\n", CP->op->name));
 
     if ((CP->op->type & MPEXPR_TYPE_MASK_ARGCOUNT) == MPEXPR_TYPE_NARY(0))
       {
-        LOOKAHEAD (0);
-        if (! (p->token == TOKEN_OPERATOR
-               && p->token_op->type == MPEXPR_TYPE_CLOSEPAREN))
-          ERROR ("expected close paren for 0ary function",
-                 MPEXPR_RESULT_PARSE_ERROR);
-        goto apply_control_lookahead;
+	LOOKAHEAD (0);
+	if (! (p->token == TOKEN_OPERATOR
+	       && p->token_op->type == MPEXPR_TYPE_CLOSEPAREN))
+	  ERROR ("expected close paren for 0ary function",
+		 MPEXPR_RESULT_PARSE_ERROR);
+	goto apply_control_lookahead;
       }
 
     goto another_expr_lookahead;
@@ -455,51 +455,51 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
      || ((tprec) == (cprec) && ! ((ttype) & MPEXPR_TYPE_RIGHTASSOC)))
 
     if (PRECEDENCE_TEST_REDUCE (p->token_op->precedence, CP->op->precedence,
-                                p->token_op->type,       CP->op->type))
+				p->token_op->type,       CP->op->type))
       {
-        TRACE (printf ("defer operator: %s (prec %d vs %d, type 0x%X)\n",
-                       p->token_op->name,
-                       p->token_op->precedence, CP->op->precedence,
-                       p->token_op->type));
-        goto apply_control;
+	TRACE (printf ("defer operator: %s (prec %d vs %d, type 0x%X)\n",
+		       p->token_op->name,
+		       p->token_op->precedence, CP->op->precedence,
+		       p->token_op->type));
+	goto apply_control;
       }
 
     /* An argsep is a binary operator, but is never pushed on the control
        stack, it just accumulates an extra argument for a function. */
     if (p->token_op->type == MPEXPR_TYPE_ARGSEP)
       {
-        if (CP->op->precedence != 0)
-          ERROR ("ARGSEP not in a function call", MPEXPR_RESULT_PARSE_ERROR);
+	if (CP->op->precedence != 0)
+	  ERROR ("ARGSEP not in a function call", MPEXPR_RESULT_PARSE_ERROR);
 
-        TRACE (printf ("argsep for function \"%s\"(%d)\n",
-                       CP->op->name, CP->argcount));
+	TRACE (printf ("argsep for function \"%s\"(%d)\n",
+		       CP->op->name, CP->argcount));
 
 #define IS_PAIRWISE(type)                                               \
-        (((type) & (MPEXPR_TYPE_MASK_ARGCOUNT | MPEXPR_TYPE_PAIRWISE))  \
-         == (MPEXPR_TYPE_BINARY | MPEXPR_TYPE_PAIRWISE))
+	(((type) & (MPEXPR_TYPE_MASK_ARGCOUNT | MPEXPR_TYPE_PAIRWISE))  \
+	 == (MPEXPR_TYPE_BINARY | MPEXPR_TYPE_PAIRWISE))
 
-        if (IS_PAIRWISE (CP->op->type) && CP->argcount >= 2)
-          {
-            TRACE (printf ("    will reduce pairwise now\n"));
-            CP->argcount--;
-            CONTROL_PUSH (CP->op, 2);
-            goto apply_control;
-          }
+	if (IS_PAIRWISE (CP->op->type) && CP->argcount >= 2)
+	  {
+	    TRACE (printf ("    will reduce pairwise now\n"));
+	    CP->argcount--;
+	    CONTROL_PUSH (CP->op, 2);
+	    goto apply_control;
+	  }
 
-        CP->argcount++;
-        goto another_expr_lookahead;
+	CP->argcount++;
+	goto another_expr_lookahead;
       }
 
     switch (p->token_op->type & MPEXPR_TYPE_MASK_ARGCOUNT) {
     case MPEXPR_TYPE_NARY(1):
       /* Postfix unary operators can always be applied immediately.  The
-         easiest way to do this is just push it on the control stack and go
-         to the normal control stack reduction code. */
+	 easiest way to do this is just push it on the control stack and go
+	 to the normal control stack reduction code. */
 
       TRACE (printf ("postfix unary operator: %s\n", p->token_op->name));
       if (p->token_op->type & MPEXPR_TYPE_PREFIX)
-        ERROR ("prefix unary operator used postfix",
-               MPEXPR_RESULT_PARSE_ERROR);
+	ERROR ("prefix unary operator used postfix",
+	       MPEXPR_RESULT_PARSE_ERROR);
       CONTROL_PUSH (p->token_op, 1);
       goto apply_control_lookahead;
 
@@ -513,7 +513,7 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
     }
 
     TRACE (printf ("unrecognised operator \"%s\" type: 0x%X",
-                   CP->op->name, CP->op->type));
+		   CP->op->name, CP->op->type));
     ERROR ("", MPEXPR_RESULT_PARSE_ERROR);
     break;
 
@@ -534,10 +534,10 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
      otherwise recognise the various uses of SP as common subexpressions.  */
 
   TRACE (printf ("apply control: nested %d, \"%s\" 0x%X, %d args\n",
-                 p->control_top, CP->op->name, CP->op->type, CP->argcount));
+		 p->control_top, CP->op->name, CP->op->type, CP->argcount));
 
   TRACE (printf ("apply 0x%X-ary\n",
-                 CP->op->type & MPEXPR_TYPE_MASK_ARGCOUNT));
+		 CP->op->type & MPEXPR_TYPE_MASK_ARGCOUNT));
   switch (CP->op->type & MPEXPR_TYPE_MASK_ARGCOUNT) {
   case MPEXPR_TYPE_NARY(0):
     {
@@ -547,14 +547,14 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
       sp = SP;
       switch (CP->op->type & MPEXPR_TYPE_MASK_ARGSTYLE) {
       case 0:
-        (* (mpexpr_fun_0ary_t) CP->op->fun) (sp);
-        break;
+	(* (mpexpr_fun_0ary_t) CP->op->fun) (sp);
+	break;
       case MPEXPR_TYPE_RESULT_INT:
-        (*p->mpX_set_si) (sp, (long) (* (mpexpr_fun_i_0ary_t) CP->op->fun) ());
-        break;
+	(*p->mpX_set_si) (sp, (long) (* (mpexpr_fun_i_0ary_t) CP->op->fun) ());
+	break;
       default:
-        ERROR ("unrecognised 0ary argument calling style",
-               MPEXPR_RESULT_BAD_TABLE);
+	ERROR ("unrecognised 0ary argument calling style",
+	       MPEXPR_RESULT_BAD_TABLE);
       }
     }
     break;
@@ -567,63 +567,63 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
 
       switch (CP->op->type & MPEXPR_TYPE_MASK_SPECIAL) {
       case 0:
-        /* not a special */
-        break;
+	/* not a special */
+	break;
 
       case MPEXPR_TYPE_DONE & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special done\n"));
-        goto done;
+	TRACE (printf ("special done\n"));
+	goto done;
 
       case MPEXPR_TYPE_LOGICAL_NOT & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special logical not\n"));
-        (*p->mpX_set_si)
-          (sp, (long) ((* (mpexpr_fun_i_unary_t) CP->op->fun) (sp) == 0));
-        goto apply_control_done;
+	TRACE (printf ("special logical not\n"));
+	(*p->mpX_set_si)
+	  (sp, (long) ((* (mpexpr_fun_i_unary_t) CP->op->fun) (sp) == 0));
+	goto apply_control_done;
 
       case MPEXPR_TYPE_CLOSEPAREN & MPEXPR_TYPE_MASK_SPECIAL:
-        CONTROL_POP ();
-        if (CP->op->type == MPEXPR_TYPE_OPENPAREN)
-          {
-            TRACE (printf ("close paren matching open paren\n"));
-            CONTROL_POP ();
-            goto another_operator;
-          }
-        if (CP->op->precedence == 0)
-          {
-            TRACE (printf ("close paren for function\n"));
-            goto apply_control;
-          }
-        ERROR ("unexpected close paren", MPEXPR_RESULT_PARSE_ERROR);
+	CONTROL_POP ();
+	if (CP->op->type == MPEXPR_TYPE_OPENPAREN)
+	  {
+	    TRACE (printf ("close paren matching open paren\n"));
+	    CONTROL_POP ();
+	    goto another_operator;
+	  }
+	if (CP->op->precedence == 0)
+	  {
+	    TRACE (printf ("close paren for function\n"));
+	    goto apply_control;
+	  }
+	ERROR ("unexpected close paren", MPEXPR_RESULT_PARSE_ERROR);
 
       default:
-        TRACE (printf ("unrecognised special unary operator 0x%X",
-                       CP->op->type & MPEXPR_TYPE_MASK_SPECIAL));
-        ERROR ("", MPEXPR_RESULT_BAD_TABLE);
+	TRACE (printf ("unrecognised special unary operator 0x%X",
+		       CP->op->type & MPEXPR_TYPE_MASK_SPECIAL));
+	ERROR ("", MPEXPR_RESULT_BAD_TABLE);
       }
 
       switch (CP->op->type & MPEXPR_TYPE_MASK_ARGSTYLE) {
       case 0:
-        (* (mpexpr_fun_unary_t) CP->op->fun) (sp, sp);
-        break;
+	(* (mpexpr_fun_unary_t) CP->op->fun) (sp, sp);
+	break;
       case MPEXPR_TYPE_LAST_UI:
-        CHECK_UI (sp);
-        (* (mpexpr_fun_unary_ui_t) CP->op->fun)
-          (sp, (*p->mpX_get_ui) (sp));
-        break;
+	CHECK_UI (sp);
+	(* (mpexpr_fun_unary_ui_t) CP->op->fun)
+	  (sp, (*p->mpX_get_ui) (sp));
+	break;
       case MPEXPR_TYPE_RESULT_INT:
-        (*p->mpX_set_si)
-          (sp, (long) (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp));
-        break;
+	(*p->mpX_set_si)
+	  (sp, (long) (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp));
+	break;
       case MPEXPR_TYPE_RESULT_INT | MPEXPR_TYPE_LAST_UI:
-        CHECK_UI (sp);
-        (*p->mpX_set_si)
-          (sp,
-           (long) (* (mpexpr_fun_i_unary_ui_t) CP->op->fun)
-           ((*p->mpX_get_ui) (sp)));
-        break;
+	CHECK_UI (sp);
+	(*p->mpX_set_si)
+	  (sp,
+	   (long) (* (mpexpr_fun_i_unary_ui_t) CP->op->fun)
+	   ((*p->mpX_get_ui) (sp)));
+	break;
       default:
-        ERROR ("unrecognised unary argument calling style",
-               MPEXPR_RESULT_BAD_TABLE);
+	ERROR ("unrecognised unary argument calling style",
+	       MPEXPR_RESULT_BAD_TABLE);
       }
     }
     break;
@@ -634,113 +634,113 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
 
       /* pairwise functions are allowed to have just one argument */
       if ((CP->op->type & MPEXPR_TYPE_PAIRWISE)
-          && CP->op->precedence == 0
-          && CP->argcount == 1)
-        goto apply_control_done;
+	  && CP->op->precedence == 0
+	  && CP->argcount == 1)
+	goto apply_control_done;
 
       CHECK_ARGCOUNT ("binary", 2);
       DATA_POP (1);
       sp = SP;
       TRACE (MPX_TRACE ("lhs", sp);
-             MPX_TRACE ("rhs", sp+1));
+	     MPX_TRACE ("rhs", sp+1));
 
       if (CP->op->type & MPEXPR_TYPE_MASK_CMP)
-        {
-          int  type = CP->op->type;
-          int  cmp = (* (mpexpr_fun_i_binary_t) CP->op->fun)
-            (sp, sp+1);
-          (*p->mpX_set_si)
-            (sp,
-             (long)
-             ((  (cmp  < 0) & ((type & MPEXPR_TYPE_MASK_CMP_LT) != 0))
-              | ((cmp == 0) & ((type & MPEXPR_TYPE_MASK_CMP_EQ) != 0))
-              | ((cmp  > 0) & ((type & MPEXPR_TYPE_MASK_CMP_GT) != 0))));
-          goto apply_control_done;
-        }
+	{
+	  int  type = CP->op->type;
+	  int  cmp = (* (mpexpr_fun_i_binary_t) CP->op->fun)
+	    (sp, sp+1);
+	  (*p->mpX_set_si)
+	    (sp,
+	     (long)
+	     ((  (cmp  < 0) & ((type & MPEXPR_TYPE_MASK_CMP_LT) != 0))
+	      | ((cmp == 0) & ((type & MPEXPR_TYPE_MASK_CMP_EQ) != 0))
+	      | ((cmp  > 0) & ((type & MPEXPR_TYPE_MASK_CMP_GT) != 0))));
+	  goto apply_control_done;
+	}
 
       switch (CP->op->type & MPEXPR_TYPE_MASK_SPECIAL) {
       case 0:
-        /* not a special */
-        break;
+	/* not a special */
+	break;
 
       case MPEXPR_TYPE_QUESTION & MPEXPR_TYPE_MASK_SPECIAL:
-        ERROR ("'?' without ':'", MPEXPR_RESULT_PARSE_ERROR);
+	ERROR ("'?' without ':'", MPEXPR_RESULT_PARSE_ERROR);
 
       case MPEXPR_TYPE_COLON & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special colon\n"));
-        CONTROL_POP ();
-        if (CP->op->type != MPEXPR_TYPE_QUESTION)
-          ERROR ("':' without '?'", MPEXPR_RESULT_PARSE_ERROR);
+	TRACE (printf ("special colon\n"));
+	CONTROL_POP ();
+	if (CP->op->type != MPEXPR_TYPE_QUESTION)
+	  ERROR ("':' without '?'", MPEXPR_RESULT_PARSE_ERROR);
 
-        CP->argcount--;
-        DATA_POP (1);
-        sp--;
-        TRACE (MPX_TRACE ("query", sp);
-               MPX_TRACE ("true",  sp+1);
-               MPX_TRACE ("false", sp+2));
-        (*p->mpX_set)
-          (sp, (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp)
-           ? sp+1 : sp+2);
-        goto apply_control_done;
+	CP->argcount--;
+	DATA_POP (1);
+	sp--;
+	TRACE (MPX_TRACE ("query", sp);
+	       MPX_TRACE ("true",  sp+1);
+	       MPX_TRACE ("false", sp+2));
+	(*p->mpX_set)
+	  (sp, (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp)
+	   ? sp+1 : sp+2);
+	goto apply_control_done;
 
       case MPEXPR_TYPE_LOGICAL_AND & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special logical and\n"));
-        (*p->mpX_set_si)
-          (sp,
-           (long)
-           ((* (mpexpr_fun_i_unary_t) CP->op->fun) (sp)
-            && (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp+1)));
-        goto apply_control_done;
+	TRACE (printf ("special logical and\n"));
+	(*p->mpX_set_si)
+	  (sp,
+	   (long)
+	   ((* (mpexpr_fun_i_unary_t) CP->op->fun) (sp)
+	    && (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp+1)));
+	goto apply_control_done;
 
       case MPEXPR_TYPE_LOGICAL_OR & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special logical and\n"));
-        (*p->mpX_set_si)
-          (sp,
-           (long)
-           ((* (mpexpr_fun_i_unary_t) CP->op->fun) (sp)
-            || (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp+1)));
-        goto apply_control_done;
+	TRACE (printf ("special logical and\n"));
+	(*p->mpX_set_si)
+	  (sp,
+	   (long)
+	   ((* (mpexpr_fun_i_unary_t) CP->op->fun) (sp)
+	    || (* (mpexpr_fun_i_unary_t) CP->op->fun) (sp+1)));
+	goto apply_control_done;
 
       case MPEXPR_TYPE_MAX & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special max\n"));
-        if ((* (mpexpr_fun_i_binary_t) CP->op->fun) (sp, sp+1) < 0)
-          (*p->mpX_swap) (sp, sp+1);
-        goto apply_control_done;
+	TRACE (printf ("special max\n"));
+	if ((* (mpexpr_fun_i_binary_t) CP->op->fun) (sp, sp+1) < 0)
+	  (*p->mpX_swap) (sp, sp+1);
+	goto apply_control_done;
       case MPEXPR_TYPE_MIN & MPEXPR_TYPE_MASK_SPECIAL:
-        TRACE (printf ("special min\n"));
-        if ((* (mpexpr_fun_i_binary_t) CP->op->fun) (sp, sp+1) > 0)
-          (*p->mpX_swap) (sp, sp+1);
-        goto apply_control_done;
+	TRACE (printf ("special min\n"));
+	if ((* (mpexpr_fun_i_binary_t) CP->op->fun) (sp, sp+1) > 0)
+	  (*p->mpX_swap) (sp, sp+1);
+	goto apply_control_done;
 
       default:
-        ERROR ("unrecognised special binary operator",
-               MPEXPR_RESULT_BAD_TABLE);
+	ERROR ("unrecognised special binary operator",
+	       MPEXPR_RESULT_BAD_TABLE);
       }
 
       switch (CP->op->type & MPEXPR_TYPE_MASK_ARGSTYLE) {
       case 0:
-        (* (mpexpr_fun_binary_t) CP->op->fun) (sp, sp, sp+1);
-        break;
+	(* (mpexpr_fun_binary_t) CP->op->fun) (sp, sp, sp+1);
+	break;
       case MPEXPR_TYPE_LAST_UI:
-        CHECK_UI (sp+1);
-        (* (mpexpr_fun_binary_ui_t) CP->op->fun)
-          (sp, sp, (*p->mpX_get_ui) (sp+1));
-        break;
+	CHECK_UI (sp+1);
+	(* (mpexpr_fun_binary_ui_t) CP->op->fun)
+	  (sp, sp, (*p->mpX_get_ui) (sp+1));
+	break;
       case MPEXPR_TYPE_RESULT_INT:
-        (*p->mpX_set_si)
-          (sp,
-           (long) (* (mpexpr_fun_i_binary_t) CP->op->fun) (sp, sp+1));
-        break;
+	(*p->mpX_set_si)
+	  (sp,
+	   (long) (* (mpexpr_fun_i_binary_t) CP->op->fun) (sp, sp+1));
+	break;
       case MPEXPR_TYPE_LAST_UI | MPEXPR_TYPE_RESULT_INT:
-        CHECK_UI (sp+1);
-        (*p->mpX_set_si)
-          (sp,
-           (long) (* (mpexpr_fun_i_binary_ui_t) CP->op->fun)
-           (sp, (*p->mpX_get_ui) (sp+1)));
-        break;
+	CHECK_UI (sp+1);
+	(*p->mpX_set_si)
+	  (sp,
+	   (long) (* (mpexpr_fun_i_binary_ui_t) CP->op->fun)
+	   (sp, (*p->mpX_get_ui) (sp+1)));
+	break;
       default:
-        ERROR ("unrecognised binary argument calling style",
-               MPEXPR_RESULT_BAD_TABLE);
+	ERROR ("unrecognised binary argument calling style",
+	       MPEXPR_RESULT_BAD_TABLE);
       }
     }
     break;
@@ -753,34 +753,34 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
       DATA_POP (2);
       sp = SP;
       TRACE (MPX_TRACE ("arg1", sp);
-             MPX_TRACE ("arg2", sp+1);
-             MPX_TRACE ("arg3", sp+1));
+	     MPX_TRACE ("arg2", sp+1);
+	     MPX_TRACE ("arg3", sp+1));
 
       switch (CP->op->type & MPEXPR_TYPE_MASK_ARGSTYLE) {
       case 0:
-        (* (mpexpr_fun_ternary_t) CP->op->fun) (sp, sp, sp+1, sp+2);
-        break;
+	(* (mpexpr_fun_ternary_t) CP->op->fun) (sp, sp, sp+1, sp+2);
+	break;
       case MPEXPR_TYPE_LAST_UI:
-        CHECK_UI (sp+2);
-        (* (mpexpr_fun_ternary_ui_t) CP->op->fun)
-          (sp, sp, sp+1, (*p->mpX_get_ui) (sp+2));
-        break;
+	CHECK_UI (sp+2);
+	(* (mpexpr_fun_ternary_ui_t) CP->op->fun)
+	  (sp, sp, sp+1, (*p->mpX_get_ui) (sp+2));
+	break;
       case MPEXPR_TYPE_RESULT_INT:
-        (*p->mpX_set_si)
-          (sp,
-           (long) (* (mpexpr_fun_i_ternary_t) CP->op->fun)
-           (sp, sp+1, sp+2));
-        break;
+	(*p->mpX_set_si)
+	  (sp,
+	   (long) (* (mpexpr_fun_i_ternary_t) CP->op->fun)
+	   (sp, sp+1, sp+2));
+	break;
       case MPEXPR_TYPE_LAST_UI | MPEXPR_TYPE_RESULT_INT:
-        CHECK_UI (sp+2);
-        (*p->mpX_set_si)
-          (sp,
-           (long) (* (mpexpr_fun_i_ternary_ui_t) CP->op->fun)
-           (sp, sp+1, (*p->mpX_get_ui) (sp+2)));
-        break;
+	CHECK_UI (sp+2);
+	(*p->mpX_set_si)
+	  (sp,
+	   (long) (* (mpexpr_fun_i_ternary_ui_t) CP->op->fun)
+	   (sp, sp+1, (*p->mpX_get_ui) (sp+2)));
+	break;
       default:
-        ERROR ("unrecognised binary argument calling style",
-               MPEXPR_RESULT_BAD_TABLE);
+	ERROR ("unrecognised binary argument calling style",
+	       MPEXPR_RESULT_BAD_TABLE);
       }
     }
     break;
@@ -799,20 +799,20 @@ mpexpr_evaluate (struct mpexpr_parse_t *p)
   if (p->error_code == MPEXPR_RESULT_OK)
     {
       if (p->data_top != 0)
-        {
-          TRACE (printf ("data stack want top at 0, got %d\n", p->data_top));
-          p->error_code = MPEXPR_RESULT_PARSE_ERROR;
-        }
+	{
+	  TRACE (printf ("data stack want top at 0, got %d\n", p->data_top));
+	  p->error_code = MPEXPR_RESULT_PARSE_ERROR;
+	}
       else
-        (*p->mpX_set_or_swap) (p->res, SP);
+	(*p->mpX_set_or_swap) (p->res, SP);
     }
 
   {
     int  i;
     for (i = 0; i < p->data_inited; i++)
       {
-        TRACE (printf ("clear %d\n", i));
-        (*p->mpX_clear) (p->data_stack+i);
+	TRACE (printf ("clear %d\n", i));
+	(*p->mpX_clear) (p->data_stack+i);
       }
   }
 

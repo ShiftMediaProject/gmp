@@ -55,9 +55,9 @@ check_one (mpf_srcptr src, mpf_srcptr trunc, mpf_srcptr ceil, mpf_srcptr floor)
   MPF_CHECK_FORMAT (got);                       \
   if (mpf_cmp (got, want) != 0)                 \
     {                                           \
-        printf ("%s wrong\n", name);            \
-        check_print (src, got, want);           \
-        abort ();                               \
+	printf ("%s wrong\n", name);            \
+	check_print (src, got, want);           \
+	abort ();                               \
     }
 
   CHECK_SEP ("mpf_trunc", mpf_trunc, trunc);
@@ -70,9 +70,9 @@ check_one (mpf_srcptr src, mpf_srcptr trunc, mpf_srcptr ceil, mpf_srcptr floor)
   MPF_CHECK_FORMAT (got);               \
   if (mpf_cmp (got, want) != 0)         \
     {                                   \
-        printf ("%s wrong\n", name);    \
-        check_print (src, got, want);   \
-        abort ();                       \
+	printf ("%s wrong\n", name);    \
+	check_print (src, got, want);   \
+	abort ();                       \
     }
 
   CHECK_INPLACE ("mpf_trunc", mpf_trunc, trunc);
@@ -138,7 +138,7 @@ check_various (void)
   mpf_set (ceil,  src);
   mpf_set (floor, src);
   check_all (src, trunc, ceil, floor);
-  
+
   /* 1/2^1024, fraction only */
   mpf_set_ui (src, 1L);
   mpf_div_2exp (src,  src, 1024L);
@@ -154,7 +154,7 @@ check_various (void)
   mpf_set_si (ceil, 1L);
   mpf_set_si (floor, 0L);
   check_all (src, trunc, ceil, floor);
-  
+
   /* 123+1/2^64 */
   mpf_set_ui (src, 1L);
   mpf_div_2exp (src,  src, 64L);

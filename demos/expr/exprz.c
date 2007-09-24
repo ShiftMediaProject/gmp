@@ -90,8 +90,8 @@ static __gmp_const struct mpexpr_operator_t  _mpz_expr_standard_table[] = {
 
   { "**",  (mpexpr_fun_t) mpz_pow_ui,
     MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC,                  220 },
-  
-  { "~",   (mpexpr_fun_t) mpz_com, 
+
+  { "~",   (mpexpr_fun_t) mpz_com,
     MPEXPR_TYPE_UNARY | MPEXPR_TYPE_PREFIX,                          210 },
   { "!",   (mpexpr_fun_t) e_mpz_sgn,
     MPEXPR_TYPE_LOGICAL_NOT | MPEXPR_TYPE_PREFIX,                    210 },
@@ -141,18 +141,18 @@ static __gmp_const struct mpexpr_operator_t  _mpz_expr_standard_table[] = {
   { "fib",       (mpexpr_fun_t) mpz_fib_ui,        MPEXPR_TYPE_UNARY_UI      },
   { "fac",       (mpexpr_fun_t) mpz_fac_ui,        MPEXPR_TYPE_UNARY_UI      },
   { "gcd",       (mpexpr_fun_t) mpz_gcd,           MPEXPR_TYPE_BINARY
-                                                   | MPEXPR_TYPE_PAIRWISE    },
+						   | MPEXPR_TYPE_PAIRWISE    },
   { "hamdist",   (mpexpr_fun_t) e_mpz_hamdist,     MPEXPR_TYPE_BINARY        },
   { "invert",    (mpexpr_fun_t) mpz_invert,        MPEXPR_TYPE_BINARY        },
   { "jacobi",    (mpexpr_fun_t) mpz_jacobi,        MPEXPR_TYPE_I_BINARY      },
   { "kronecker", (mpexpr_fun_t) mpz_kronecker,     MPEXPR_TYPE_I_BINARY      },
   { "lcm",       (mpexpr_fun_t) mpz_lcm,           MPEXPR_TYPE_BINARY
-                                                   | MPEXPR_TYPE_PAIRWISE    },
+						   | MPEXPR_TYPE_PAIRWISE    },
   { "lucnum",    (mpexpr_fun_t) mpz_lucnum_ui,     MPEXPR_TYPE_UNARY_UI      },
   { "max",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_MAX
-                                                   | MPEXPR_TYPE_PAIRWISE    },
+						   | MPEXPR_TYPE_PAIRWISE    },
   { "min",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_MIN
-                                                   | MPEXPR_TYPE_PAIRWISE    },
+						   | MPEXPR_TYPE_PAIRWISE    },
   { "nextprime", (mpexpr_fun_t) mpz_nextprime,     MPEXPR_TYPE_UNARY         },
   { "odd_p",     (mpexpr_fun_t) e_mpz_odd_p,       MPEXPR_TYPE_I_UNARY       },
   { "perfect_power_p", (mpexpr_fun_t)mpz_perfect_power_p, MPEXPR_TYPE_I_UNARY},
@@ -208,4 +208,3 @@ mpz_expr (va_alist)
 
   return mpz_expr_a (mpz_expr_standard_table, res, base, e, strlen(e), var);
 }
-

@@ -39,7 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* change this to "#define TRACE(x) x" for diagnostics */
-#define TRACE(x) 
+#define TRACE(x)
 
 
 /* The separate of __gmp_doprnt_float_digits and __gmp_doprnt_float is so
@@ -52,10 +52,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 int
 __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
-                  void *data,
-                  const struct doprnt_params_t *p,
-                  const char *point,
-                  mpf_srcptr f)
+		  void *data,
+		  const struct doprnt_params_t *p,
+		  const char *point,
+		  mpf_srcptr f)
 {
   int         prec, ndigits, free_size, len, newlen, justify, justlen, explen;
   int         showbaselen, sign, signlen, intlen, intzeros, pointlen;
@@ -67,7 +67,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
   int         retval = 0;
 
   TRACE (printf ("__gmp_doprnt_float\n");
-         printf ("  conv=%d prec=%d\n", p->conv, p->prec));
+	 printf ("  conv=%d prec=%d\n", p->conv, p->prec));
 
   prec = p->prec;
   if (prec <= -1)
@@ -76,40 +76,40 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
       ndigits = 0;
 
       /* arrange the fixed/scientific decision on a "prec" implied by how
-         many significant digits there are */
+	 many significant digits there are */
       if (p->conv == DOPRNT_CONV_GENERAL)
-        MPF_SIGNIFICANT_DIGITS (prec, PREC(f), ABS(p->base));
+	MPF_SIGNIFICANT_DIGITS (prec, PREC(f), ABS(p->base));
     }
   else
     {
       switch (p->conv) {
       case DOPRNT_CONV_FIXED:
-        /* Precision is digits after the radix point.  Try not to generate
-           too many more than will actually be required.  If f>=1 then
-           overestimate the integer part, and add prec.  If f<1 then
-           underestimate the zeros between the radix point and the first
-           digit and subtract that from prec.  In either case add 2 so the
-           round to nearest can be applied accurately.  */
-        ndigits = prec + 2
-          + EXP(f) * (__mp_bases[ABS(p->base)].chars_per_limb + (EXP(f)>=0));
-        ndigits = MAX (ndigits, 1);
-        break;
+	/* Precision is digits after the radix point.  Try not to generate
+	   too many more than will actually be required.  If f>=1 then
+	   overestimate the integer part, and add prec.  If f<1 then
+	   underestimate the zeros between the radix point and the first
+	   digit and subtract that from prec.  In either case add 2 so the
+	   round to nearest can be applied accurately.  */
+	ndigits = prec + 2
+	  + EXP(f) * (__mp_bases[ABS(p->base)].chars_per_limb + (EXP(f)>=0));
+	ndigits = MAX (ndigits, 1);
+	break;
 
       case DOPRNT_CONV_SCIENTIFIC:
-        /* precision is digits after the radix point, and there's one digit
-           before */
-        ndigits = prec + 1;
-        break;
+	/* precision is digits after the radix point, and there's one digit
+	   before */
+	ndigits = prec + 1;
+	break;
 
       default:
-        ASSERT (0);
-        /*FALLTHRU*/
-        
+	ASSERT (0);
+	/*FALLTHRU*/
+
       case DOPRNT_CONV_GENERAL:
-        /* precision is total digits, but be sure to ask mpf_get_str for at
-           least 1, not 0 */
-        ndigits = MAX (prec, 1);
-        break;
+	/* precision is total digits, but be sure to ask mpf_get_str for at
+	   least 1, not 0 */
+	ndigits = MAX (prec, 1);
+	break;
       }
     }
   TRACE (printf ("  ndigits %d\n", ndigits));
@@ -119,13 +119,13 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
   free_ptr = s;
   free_size = len + 1;
   TRACE (printf ("  s   %s\n", s);
-         printf ("  exp %ld\n", exp);
-         printf ("  len %d\n", len));
+	 printf ("  exp %ld\n", exp);
+	 printf ("  len %d\n", len));
 
   /* For fixed mode check the ndigits formed above was in fact enough for
      the integer part plus p->prec after the radix point. */
   ASSERT ((p->conv == DOPRNT_CONV_FIXED && p->prec > -1)
-          ? ndigits >= MAX (1, exp + p->prec + 2) : 1);
+	  ? ndigits >= MAX (1, exp + p->prec + 2) : 1);
 
   sign = p->sign;
   if (s[0] == '-')
@@ -146,85 +146,85 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
     newlen = exp + prec;
     if (newlen < 0)
       {
-        /* first non-zero digit is below target prec, and at least one zero
-           digit in between, so print zero */
-        len = 0;
-        exp = 0;
+	/* first non-zero digit is below target prec, and at least one zero
+	   digit in between, so print zero */
+	len = 0;
+	exp = 0;
       }
     else if (len <= newlen)
       {
-        /* already got few enough digits */
+	/* already got few enough digits */
       }
     else
       {
-        /* discard excess digits and round to nearest */
+	/* discard excess digits and round to nearest */
 
-        const char  *num_to_text = (p->base >= 0
-                                    ? "0123456789abcdefghijklmnopqrstuvwxyz"
-                                    : "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        int  base = ABS(p->base);
-        int  n;
+	const char  *num_to_text = (p->base >= 0
+				    ? "0123456789abcdefghijklmnopqrstuvwxyz"
+				    : "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	int  base = ABS(p->base);
+	int  n;
 
-        ASSERT (base <= 36);
+	ASSERT (base <= 36);
 
-        len = newlen;
-        n = DIGIT_VALUE (s[len]);
-        TRACE (printf ("  rounding with %d\n", n));
-        if (n >= (base + 1) / 2)
-          {
-            /* propagate a carry */
-            for (;;)
-              {
-                if (len == 0)
-                  {
-                    s[0] = '1';
-                    len = 1;
-                    exp++;
-                    break;
-                  }
-                n = DIGIT_VALUE (s[len-1]);
-                ASSERT (n >= 0 && n < base);
-                n++;
-                if (n != base)
-                  {
-                    TRACE (printf ("  storing now %d\n", n));
-                    s[len-1] = num_to_text[n];
-                    break;
-                  }
-                len--;
-              }
-          }
-        else
-          {
-            /* truncate only, strip any trailing zeros now exposed */
-            while (len > 0 && s[len-1] == '0')
-              len--;
-          }
+	len = newlen;
+	n = DIGIT_VALUE (s[len]);
+	TRACE (printf ("  rounding with %d\n", n));
+	if (n >= (base + 1) / 2)
+	  {
+	    /* propagate a carry */
+	    for (;;)
+	      {
+		if (len == 0)
+		  {
+		    s[0] = '1';
+		    len = 1;
+		    exp++;
+		    break;
+		  }
+		n = DIGIT_VALUE (s[len-1]);
+		ASSERT (n >= 0 && n < base);
+		n++;
+		if (n != base)
+		  {
+		    TRACE (printf ("  storing now %d\n", n));
+		    s[len-1] = num_to_text[n];
+		    break;
+		  }
+		len--;
+	      }
+	  }
+	else
+	  {
+	    /* truncate only, strip any trailing zeros now exposed */
+	    while (len > 0 && s[len-1] == '0')
+	      len--;
+	  }
 
-        /* Can have newlen==0, in which case the truncate was just to check
-           for a carry turning it into "1".  If we're left with len==0 then
-           adjust exp to match.  */
-        if (len == 0)
-          exp = 0;
-      }  
+	/* Can have newlen==0, in which case the truncate was just to check
+	   for a carry turning it into "1".  If we're left with len==0 then
+	   adjust exp to match.  */
+	if (len == 0)
+	  exp = 0;
+      }
 
   fixed:
     ASSERT (len == 0 ? exp == 0 : 1);
     if (exp <= 0)
       {
-        TRACE (printf ("  fixed 0.000sss\n"));
-        intlen = 0;
-        intzeros = 1;
-        fraczeros = -exp;
-        fraclen = len;
+	TRACE (printf ("  fixed 0.000sss\n"));
+	intlen = 0;
+	intzeros = 1;
+	fraczeros = -exp;
+	fraclen = len;
       }
     else
       {
-        TRACE (printf ("  fixed sss.sss or sss000\n"));
-        intlen = MIN (len, exp);
-        intzeros = exp - intlen;
-        fraczeros = 0;
-        fraclen = len - intlen;
+	TRACE (printf ("  fixed sss.sss or sss000\n"));
+	intlen = MIN (len, exp);
+	intzeros = exp - intlen;
+	fraczeros = 0;
+	fraclen = len - intlen;
       }
     explen = 0;
     break;
@@ -235,7 +235,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
       char  expsign;
 
       if (prec <= -1)
-        prec = MAX (0, len-1);   /* retain all digits */
+	prec = MAX (0, len-1);   /* retain all digits */
 
     scientific:
       TRACE (printf ("  scientific s.sss\n"));
@@ -247,18 +247,18 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
 
       expval = (exp-intlen);
       if (p->exptimes4)
-        expval <<= 2;
+	expval <<= 2;
 
       /* Split out the sign since %o or %x in expfmt give negatives as twos
-         complement, not with a sign. */
+	 complement, not with a sign. */
       expsign = (expval >= 0 ? '+' : '-');
       expval = ABS (expval);
 
 #if HAVE_VSNPRINTF
       explen = snprintf (exponent, sizeof(exponent),
-                         p->expfmt, expsign, expval);
+			 p->expfmt, expsign, expval);
       /* test for < sizeof-1 since a glibc 2.0.x return of sizeof-1 might
-         mean truncation */
+	 mean truncation */
       ASSERT (explen >= 0 && explen < sizeof(exponent)-1);
 #else
       sprintf (exponent, p->expfmt, expsign, expval);
@@ -286,24 +286,24 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
   }
 
   TRACE (printf ("  intlen %d intzeros %d fraczeros %d fraclen %d\n",
-                 intlen, intzeros, fraczeros, fraclen));
+		 intlen, intzeros, fraczeros, fraclen));
   ASSERT (p->prec <= -1
-          ? intlen + fraclen == strlen (s)
-          : intlen + fraclen <= strlen (s));
+	  ? intlen + fraclen == strlen (s)
+	  : intlen + fraclen <= strlen (s));
 
   if (p->showtrailing)
     {
       /* Pad to requested precision with trailing zeros, for general this is
-         all digits, for fixed and scientific just the fraction.  */
+	 all digits, for fixed and scientific just the fraction.  */
       preczeros = prec - (fraczeros + fraclen
-                          + (p->conv == DOPRNT_CONV_GENERAL
-                             ? intlen + intzeros : 0));
+			  + (p->conv == DOPRNT_CONV_GENERAL
+			     ? intlen + intzeros : 0));
       preczeros = MAX (0, preczeros);
     }
   else
     preczeros = 0;
   TRACE (printf ("  prec=%d showtrailing=%d, pad with preczeros %d\n",
-                 prec, p->showtrailing, preczeros));
+		 prec, p->showtrailing, preczeros));
 
   /* radix point if needed, or if forced */
   pointlen = ((fraczeros + fraclen + preczeros) != 0 || p->showpoint != 0)
@@ -333,11 +333,11 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
     break;
   }
   TRACE (printf ("  showbase %s showbaselen %d\n",
-                 showbase == NULL ? "" : showbase, showbaselen));
+		 showbase == NULL ? "" : showbase, showbaselen));
 
   /* left over field width */
   justlen = p->width - (signlen + showbaselen + intlen + intzeros + pointlen
-                        + fraczeros + fraclen + preczeros + explen);
+			+ fraczeros + fraclen + preczeros + explen);
   TRACE (printf ("  justlen %d fill 0x%X\n", justlen, p->fill));
 
   justify = p->justify;
@@ -345,7 +345,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
     justify = DOPRNT_JUSTIFY_NONE;
 
   TRACE (printf ("  justify type %d  intlen %d pointlen %d fraclen %d\n",
-                 justify, intlen, pointlen, fraclen));
+		 justify, intlen, pointlen, fraclen));
 
   if (justify == DOPRNT_JUSTIFY_RIGHT)         /* pad for right */
     DOPRNT_REPS (p->fill, justlen);
@@ -370,7 +370,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
 
   DOPRNT_MEMORY_MAYBE (exponent, explen);      /* exp */
 
-  if (justify == DOPRNT_JUSTIFY_LEFT)          /* pad for left */         
+  if (justify == DOPRNT_JUSTIFY_LEFT)          /* pad for left */
     DOPRNT_REPS (p->fill, justlen);
 
  done:

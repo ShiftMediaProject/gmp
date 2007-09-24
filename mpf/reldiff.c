@@ -52,4 +52,3 @@ mpf_reldiff (mpf_t rdiff, mpf_srcptr x, mpf_srcptr y)
       TMP_FREE;
     }
 }
-

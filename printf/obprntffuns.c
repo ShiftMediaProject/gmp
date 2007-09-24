@@ -46,7 +46,7 @@ static int
 gmp_obstack_memory (struct obstack *ob, const char *ptr, size_t len)
 {
   obstack_grow (ob, ptr, len);
-  return len;  
+  return len;
 }
 
 static int

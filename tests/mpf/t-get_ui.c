@@ -102,16 +102,16 @@ check_limbdata (void)
 
       got = mpf_get_ui (f);
       if (got != data[i].want)
-        {
-          printf    ("mpf_get_ui wrong at limb data[%d]\n", i);
-          mpf_trace ("  f", f);
-          mpn_trace ("  d", data[i].d, data[i].size);
-          printf    ("  size %ld\n", (long) data[i].size);
-          printf    ("  exp %ld\n", (long) data[i].exp);
-          printf    ("  got   %lu (0x%lX)\n", got, got);
-          printf    ("  want  %lu (0x%lX)\n", data[i].want, data[i].want);
-          abort();
-        }
+	{
+	  printf    ("mpf_get_ui wrong at limb data[%d]\n", i);
+	  mpf_trace ("  f", f);
+	  mpn_trace ("  d", data[i].d, data[i].size);
+	  printf    ("  size %ld\n", (long) data[i].size);
+	  printf    ("  exp %ld\n", (long) data[i].exp);
+	  printf    ("  got   %lu (0x%lX)\n", got, got);
+	  printf    ("  want  %lu (0x%lX)\n", data[i].want, data[i].want);
+	  abort();
+	}
     }
 }
 

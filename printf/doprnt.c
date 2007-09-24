@@ -62,7 +62,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* change this to "#define TRACE(x) x" for diagnostics */
-#define TRACE(x) 
+#define TRACE(x)
 
 
 /* Should be portable, but in any case this is only used under some ASSERTs. */
@@ -132,15 +132,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   do {                                                  \
     if (this_fmt == last_fmt)                           \
       {                                                 \
-        TRACE (printf ("nothing to flush\n"));          \
-        ASSERT (va_equal (this_ap, last_ap));           \
+	TRACE (printf ("nothing to flush\n"));          \
+	ASSERT (va_equal (this_ap, last_ap));           \
       }                                                 \
     else                                                \
       {                                                 \
-        ASSERT (*this_fmt == '%');                      \
-        *this_fmt = '\0';                               \
-        TRACE (printf ("flush \"%s\"\n", last_fmt));    \
-        DOPRNT_FORMAT (last_fmt, last_ap);              \
+	ASSERT (*this_fmt == '%');                      \
+	*this_fmt = '\0';                               \
+	TRACE (printf ("flush \"%s\"\n", last_fmt));    \
+	DOPRNT_FORMAT (last_fmt, last_ap);              \
       }                                                 \
   } while (0)
 
@@ -151,7 +151,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 int
 __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
-              const char *orig_fmt, va_list orig_ap)
+	      const char *orig_fmt, va_list orig_ap)
 {
   va_list  ap, this_ap, last_ap;
   size_t   alloc_fmt_size;
@@ -195,7 +195,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 
       fmt = strchr (fmt, '%');
       if (fmt == NULL)
-        break;
+	break;
 
       /* this_fmt and this_ap are the current '%' sequence being considered */
       this_fmt = fmt;
@@ -203,12 +203,12 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
       fmt++; /* skip the '%' */
 
       TRACE (printf ("considering\n");
-             printf ("  last: \"%s\"\n", last_fmt);
-             printf ("  this: \"%s\"\n", this_fmt));
+	     printf ("  last: \"%s\"\n", last_fmt);
+	     printf ("  this: \"%s\"\n", this_fmt));
 
       type = '\0';
       value = &param.width;
-  
+
       param.base = 10;
       param.conv = 0;
       param.expfmt = "e%c%02d";
@@ -224,379 +224,379 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
       seen_precision = 0;
 
       /* This loop parses a single % sequence.  "break" from the switch
-         means continue with this %, "goto next" means the conversion
-         character has been seen and a new % should be sought.  */
+	 means continue with this %, "goto next" means the conversion
+	 character has been seen and a new % should be sought.  */
       for (;;)
-        {
-          fchar = *fmt++;
-          if (fchar == '\0')
-            break;
+	{
+	  fchar = *fmt++;
+	  if (fchar == '\0')
+	    break;
 
-          switch (fchar) {
+	  switch (fchar) {
 
-          case 'a':
-            /* %a behaves like %e, but defaults to all significant digits,
-               and there's no leading zeros on the exponent (which is in
-               fact bit-based) */
-            param.base = 16;
-            param.expfmt = "p%c%d";
-            goto conv_a;
-          case 'A':
-            param.base = -16;
-            param.expfmt = "P%c%d";
-          conv_a:
-            param.conv = DOPRNT_CONV_SCIENTIFIC;
-            param.exptimes4 = 1;
-            if (! seen_precision)
-              param.prec = -1;  /* default to all digits */
-            param.showbase = DOPRNT_SHOWBASE_YES;
-            param.showtrailing = 1;
-            goto floating_a;
+	  case 'a':
+	    /* %a behaves like %e, but defaults to all significant digits,
+	       and there's no leading zeros on the exponent (which is in
+	       fact bit-based) */
+	    param.base = 16;
+	    param.expfmt = "p%c%d";
+	    goto conv_a;
+	  case 'A':
+	    param.base = -16;
+	    param.expfmt = "P%c%d";
+	  conv_a:
+	    param.conv = DOPRNT_CONV_SCIENTIFIC;
+	    param.exptimes4 = 1;
+	    if (! seen_precision)
+	      param.prec = -1;  /* default to all digits */
+	    param.showbase = DOPRNT_SHOWBASE_YES;
+	    param.showtrailing = 1;
+	    goto floating_a;
 
-          case 'c':
-            /* Let's assume wchar_t will be promoted to "int" in the call,
-               the same as char will be. */
-            (void) va_arg (ap, int);
-            goto next;
+	  case 'c':
+	    /* Let's assume wchar_t will be promoted to "int" in the call,
+	       the same as char will be. */
+	    (void) va_arg (ap, int);
+	    goto next;
 
-          case 'd':
-          case 'i':
-          case 'u':
-          integer:
-            TRACE (printf ("integer, base=%d\n", param.base));
-            if (! seen_precision)
-              param.prec = -1;
-            switch (type) {
-            case 'j':
-              /* Let's assume uintmax_t is the same size as intmax_t. */
+	  case 'd':
+	  case 'i':
+	  case 'u':
+	  integer:
+	    TRACE (printf ("integer, base=%d\n", param.base));
+	    if (! seen_precision)
+	      param.prec = -1;
+	    switch (type) {
+	    case 'j':
+	      /* Let's assume uintmax_t is the same size as intmax_t. */
 #if HAVE_INTMAX_T
-              (void) va_arg (ap, intmax_t);
+	      (void) va_arg (ap, intmax_t);
 #else
-              ASSERT_FAIL (intmax_t not available);
+	      ASSERT_FAIL (intmax_t not available);
 #endif
-              break;
-            case 'l':
-              (void) va_arg (ap, long);
-              break;
-            case 'L':
+	      break;
+	    case 'l':
+	      (void) va_arg (ap, long);
+	      break;
+	    case 'L':
 #if HAVE_LONG_LONG
-              (void) va_arg (ap, long long);
+	      (void) va_arg (ap, long long);
 #else
-              ASSERT_FAIL (long long not available);
+	      ASSERT_FAIL (long long not available);
 #endif
-              break;
-            case 'N':
-              {
-                mp_ptr     xp;
-                mp_size_t  xsize, abs_xsize;
-                mpz_t      z;
-                FLUSH ();
-                xp = va_arg (ap, mp_ptr);
-                PTR(z) = xp;
-                xsize = (int) va_arg (ap, mp_size_t);
-                abs_xsize = ABS (xsize);
-                MPN_NORMALIZE (xp, abs_xsize);
-                SIZ(z) = (xsize >= 0 ? abs_xsize : -abs_xsize);
-                ASSERT_CODE (ALLOC(z) = abs_xsize);
-                gmp_str = mpz_get_str (NULL, param.base, z);
-                goto gmp_integer;
-              }
-              /* break; */
-            case 'q':
-              /* quad_t is probably the same as long long, but let's treat
-                 it separately just to be sure.  Also let's assume u_quad_t
-                 will be the same size as quad_t.  */
+	      break;
+	    case 'N':
+	      {
+		mp_ptr     xp;
+		mp_size_t  xsize, abs_xsize;
+		mpz_t      z;
+		FLUSH ();
+		xp = va_arg (ap, mp_ptr);
+		PTR(z) = xp;
+		xsize = (int) va_arg (ap, mp_size_t);
+		abs_xsize = ABS (xsize);
+		MPN_NORMALIZE (xp, abs_xsize);
+		SIZ(z) = (xsize >= 0 ? abs_xsize : -abs_xsize);
+		ASSERT_CODE (ALLOC(z) = abs_xsize);
+		gmp_str = mpz_get_str (NULL, param.base, z);
+		goto gmp_integer;
+	      }
+	      /* break; */
+	    case 'q':
+	      /* quad_t is probably the same as long long, but let's treat
+		 it separately just to be sure.  Also let's assume u_quad_t
+		 will be the same size as quad_t.  */
 #if HAVE_QUAD_T
-              (void) va_arg (ap, quad_t);
+	      (void) va_arg (ap, quad_t);
 #else
-              ASSERT_FAIL (quad_t not available);
+	      ASSERT_FAIL (quad_t not available);
 #endif
-              break;
-            case 'Q':
-              FLUSH ();
-              gmp_str = mpq_get_str (NULL, param.base, va_arg(ap, mpq_srcptr));
-              goto gmp_integer;
-            case 't':
+	      break;
+	    case 'Q':
+	      FLUSH ();
+	      gmp_str = mpq_get_str (NULL, param.base, va_arg(ap, mpq_srcptr));
+	      goto gmp_integer;
+	    case 't':
 #if HAVE_PTRDIFF_T
-              (void) va_arg (ap, ptrdiff_t);
+	      (void) va_arg (ap, ptrdiff_t);
 #else
-              ASSERT_FAIL (ptrdiff_t not available);
+	      ASSERT_FAIL (ptrdiff_t not available);
 #endif
-              break;
-            case 'z':
-              (void) va_arg (ap, size_t);
-              break;
-            case 'Z':
-              {
-                int   ret;
-                FLUSH ();
-                gmp_str = mpz_get_str (NULL, param.base,
-                                       va_arg (ap, mpz_srcptr));
-              gmp_integer:
-                ret = __gmp_doprnt_integer (funs, data, &param, gmp_str);
-                (*__gmp_free_func) (gmp_str, strlen(gmp_str)+1);
-                DOPRNT_ACCUMULATE (ret);
-                va_copy (last_ap, ap);
-                last_fmt = fmt;
-              }
-              break;
-            default:
-              /* default is an "int", and this includes h=short and hh=char
-                 since they're promoted to int in a function call */
-              (void) va_arg (ap, int);
-              break;
-            }
-            goto next;
+	      break;
+	    case 'z':
+	      (void) va_arg (ap, size_t);
+	      break;
+	    case 'Z':
+	      {
+		int   ret;
+		FLUSH ();
+		gmp_str = mpz_get_str (NULL, param.base,
+				       va_arg (ap, mpz_srcptr));
+	      gmp_integer:
+		ret = __gmp_doprnt_integer (funs, data, &param, gmp_str);
+		(*__gmp_free_func) (gmp_str, strlen(gmp_str)+1);
+		DOPRNT_ACCUMULATE (ret);
+		va_copy (last_ap, ap);
+		last_fmt = fmt;
+	      }
+	      break;
+	    default:
+	      /* default is an "int", and this includes h=short and hh=char
+		 since they're promoted to int in a function call */
+	      (void) va_arg (ap, int);
+	      break;
+	    }
+	    goto next;
 
-          case 'E':
-            param.base = -10;
-            param.expfmt = "E%c%02d";
-            /*FALLTHRU*/
-          case 'e':
-            param.conv = DOPRNT_CONV_SCIENTIFIC;
-          floating:
-            if (param.showbase == DOPRNT_SHOWBASE_NONZERO)
-              {
-                /* # in %e, %f and %g */
-                param.showpoint = 1;
-                param.showtrailing = 1;
-              }
-          floating_a:
-            switch (type) {
-            case 'F':
-              FLUSH ();
-              DOPRNT_ACCUMULATE (__gmp_doprnt_mpf (funs, data, &param,
-                                                   GMP_DECIMAL_POINT,
-                                                   va_arg (ap, mpf_srcptr)));
-              va_copy (last_ap, ap);
-              last_fmt = fmt;
-              break;
-            case 'L':
+	  case 'E':
+	    param.base = -10;
+	    param.expfmt = "E%c%02d";
+	    /*FALLTHRU*/
+	  case 'e':
+	    param.conv = DOPRNT_CONV_SCIENTIFIC;
+	  floating:
+	    if (param.showbase == DOPRNT_SHOWBASE_NONZERO)
+	      {
+		/* # in %e, %f and %g */
+		param.showpoint = 1;
+		param.showtrailing = 1;
+	      }
+	  floating_a:
+	    switch (type) {
+	    case 'F':
+	      FLUSH ();
+	      DOPRNT_ACCUMULATE (__gmp_doprnt_mpf (funs, data, &param,
+						   GMP_DECIMAL_POINT,
+						   va_arg (ap, mpf_srcptr)));
+	      va_copy (last_ap, ap);
+	      last_fmt = fmt;
+	      break;
+	    case 'L':
 #if HAVE_LONG_DOUBLE
-              (void) va_arg (ap, long double);
+	      (void) va_arg (ap, long double);
 #else
-              ASSERT_FAIL (long double not available);
+	      ASSERT_FAIL (long double not available);
 #endif
-              break;
-            default:
-              (void) va_arg (ap, double);
-              break;
-            }
-            goto next;
+	      break;
+	    default:
+	      (void) va_arg (ap, double);
+	      break;
+	    }
+	    goto next;
 
-          case 'f':
-            param.conv = DOPRNT_CONV_FIXED;
-            goto floating;
+	  case 'f':
+	    param.conv = DOPRNT_CONV_FIXED;
+	    goto floating;
 
-          case 'F': /* mpf_t     */
-          case 'j': /* intmax_t  */
-          case 'L': /* long long */
-          case 'N': /* mpn       */
-          case 'q': /* quad_t    */
-          case 'Q': /* mpq_t     */
-          case 't': /* ptrdiff_t */
-          case 'z': /* size_t    */
-          case 'Z': /* mpz_t     */
-          set_type:
-            type = fchar;
-            break;
+	  case 'F': /* mpf_t     */
+	  case 'j': /* intmax_t  */
+	  case 'L': /* long long */
+	  case 'N': /* mpn       */
+	  case 'q': /* quad_t    */
+	  case 'Q': /* mpq_t     */
+	  case 't': /* ptrdiff_t */
+	  case 'z': /* size_t    */
+	  case 'Z': /* mpz_t     */
+	  set_type:
+	    type = fchar;
+	    break;
 
-          case 'G':
-            param.base = -10;
-            param.expfmt = "E%c%02d";
-            /*FALLTHRU*/
-          case 'g':
-            param.conv = DOPRNT_CONV_GENERAL;
-            param.showtrailing = 0;
-            goto floating;
+	  case 'G':
+	    param.base = -10;
+	    param.expfmt = "E%c%02d";
+	    /*FALLTHRU*/
+	  case 'g':
+	    param.conv = DOPRNT_CONV_GENERAL;
+	    param.showtrailing = 0;
+	    goto floating;
 
-          case 'h':
-            if (type != 'h')
-              goto set_type;
-            type = 'H';   /* internal code for "hh" */
-            break;
+	  case 'h':
+	    if (type != 'h')
+	      goto set_type;
+	    type = 'H';   /* internal code for "hh" */
+	    break;
 
-          case 'l':
-            if (type != 'l')
-              goto set_type;
-            type = 'L';   /* "ll" means "L" */
-            break;
-            
-          case 'm':
-            /* glibc strerror(errno), no argument */
-            goto next;
-            
-          case 'M': /* mp_limb_t */
-            /* mung format string to l or ll and let plain printf handle it */
+	  case 'l':
+	    if (type != 'l')
+	      goto set_type;
+	    type = 'L';   /* "ll" means "L" */
+	    break;
+
+	  case 'm':
+	    /* glibc strerror(errno), no argument */
+	    goto next;
+
+	  case 'M': /* mp_limb_t */
+	    /* mung format string to l or ll and let plain printf handle it */
 #if _LONG_LONG_LIMB
-            memmove (fmt+1, fmt, strlen (fmt)+1);
-            fmt[-1] = 'l';
-            fmt[0] = 'l';
-            fmt++;
-            type = 'L';
+	    memmove (fmt+1, fmt, strlen (fmt)+1);
+	    fmt[-1] = 'l';
+	    fmt[0] = 'l';
+	    fmt++;
+	    type = 'L';
 #else
-            fmt[-1] = 'l';
-            type = 'l';
+	    fmt[-1] = 'l';
+	    type = 'l';
 #endif
-            break;
+	    break;
 
-          case 'n':
-            {
-              void  *p;
-              FLUSH ();
-              p = va_arg (ap, void *);
-              switch (type) {
-              case '\0': * (int       *) p = retval; break;
-              case 'F':  mpf_set_si ((mpf_ptr) p, (long) retval); break;
-              case 'H':  * (char      *) p = retval; break;
-              case 'h':  * (short     *) p = retval; break;
+	  case 'n':
+	    {
+	      void  *p;
+	      FLUSH ();
+	      p = va_arg (ap, void *);
+	      switch (type) {
+	      case '\0': * (int       *) p = retval; break;
+	      case 'F':  mpf_set_si ((mpf_ptr) p, (long) retval); break;
+	      case 'H':  * (char      *) p = retval; break;
+	      case 'h':  * (short     *) p = retval; break;
 #if HAVE_INTMAX_T
-              case 'j':  * (intmax_t  *) p = retval; break;
+	      case 'j':  * (intmax_t  *) p = retval; break;
 #else
-              case 'j':  ASSERT_FAIL (intmax_t not available); break;
+	      case 'j':  ASSERT_FAIL (intmax_t not available); break;
 #endif
-              case 'l':  * (long      *) p = retval; break;
+	      case 'l':  * (long      *) p = retval; break;
 #if HAVE_QUAD_T && HAVE_LONG_LONG
-              case 'q':
-                ASSERT_ALWAYS (sizeof (quad_t) == sizeof (long long));
-                /*FALLTHRU*/
+	      case 'q':
+		ASSERT_ALWAYS (sizeof (quad_t) == sizeof (long long));
+		/*FALLTHRU*/
 #else
-              case 'q':  ASSERT_FAIL (quad_t not available); break;
+	      case 'q':  ASSERT_FAIL (quad_t not available); break;
 #endif
 #if HAVE_LONG_LONG
-              case 'L':  * (long long *) p = retval; break;
+	      case 'L':  * (long long *) p = retval; break;
 #else
-              case 'L':  ASSERT_FAIL (long long not available); break;
+	      case 'L':  ASSERT_FAIL (long long not available); break;
 #endif
-              case 'N':
-                {
-                  mp_size_t  n;
-                  n = va_arg (ap, mp_size_t);
-                  n = ABS (n);
-                  if (n != 0)
-                    {
-                      * (mp_ptr) p = retval;
-                      MPN_ZERO ((mp_ptr) p + 1, n - 1);
-                    }
-                }
-                break;
-              case 'Q':  mpq_set_si ((mpq_ptr) p, (long) retval, 1L); break;
+	      case 'N':
+		{
+		  mp_size_t  n;
+		  n = va_arg (ap, mp_size_t);
+		  n = ABS (n);
+		  if (n != 0)
+		    {
+		      * (mp_ptr) p = retval;
+		      MPN_ZERO ((mp_ptr) p + 1, n - 1);
+		    }
+		}
+		break;
+	      case 'Q':  mpq_set_si ((mpq_ptr) p, (long) retval, 1L); break;
 #if HAVE_PTRDIFF_T
-              case 't':  * (ptrdiff_t *) p = retval; break;
+	      case 't':  * (ptrdiff_t *) p = retval; break;
 #else
-              case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
+	      case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
 #endif
-              case 'z':  * (size_t    *) p = retval; break;
-              case 'Z':  mpz_set_si ((mpz_ptr) p, (long) retval); break;
-              }
-            }
-            va_copy (last_ap, ap);
-            last_fmt = fmt;
-            goto next;
+	      case 'z':  * (size_t    *) p = retval; break;
+	      case 'Z':  mpz_set_si ((mpz_ptr) p, (long) retval); break;
+	      }
+	    }
+	    va_copy (last_ap, ap);
+	    last_fmt = fmt;
+	    goto next;
 
-          case 'o':
-            param.base = 8;
-            goto integer;
+	  case 'o':
+	    param.base = 8;
+	    goto integer;
 
-          case 'p':
-          case 's':
-            /* "void *" will be good enough for "char *" or "wchar_t *", no
-               need for separate code.  */
-            (void) va_arg (ap, const void *);
-            goto next;
-            
-          case 'x':
-            param.base = 16;
-            goto integer;
-          case 'X':
-            param.base = -16;
-            goto integer;
+	  case 'p':
+	  case 's':
+	    /* "void *" will be good enough for "char *" or "wchar_t *", no
+	       need for separate code.  */
+	    (void) va_arg (ap, const void *);
+	    goto next;
 
-          case '%':
-            goto next;
+	  case 'x':
+	    param.base = 16;
+	    goto integer;
+	  case 'X':
+	    param.base = -16;
+	    goto integer;
 
-          case '#':
-            param.showbase = DOPRNT_SHOWBASE_NONZERO;
-            break;
+	  case '%':
+	    goto next;
 
-          case '\'':
-            /* glibc digit grouping, just pass it through, no support for it
-               on gmp types */
-            break;
+	  case '#':
+	    param.showbase = DOPRNT_SHOWBASE_NONZERO;
+	    break;
 
-          case '+':
-          case ' ':
-            param.sign = fchar;
-            break;
+	  case '\'':
+	    /* glibc digit grouping, just pass it through, no support for it
+	       on gmp types */
+	    break;
 
-          case '-':
-            param.justify = DOPRNT_JUSTIFY_LEFT;
-            break;
-          case '.':
-            seen_precision = 1;
-            param.prec = -1; /* "." alone means all necessary digits */
-            value = &param.prec;
-            break;
+	  case '+':
+	  case ' ':
+	    param.sign = fchar;
+	    break;
 
-          case '*':
-            {
-              int n = va_arg (ap, int);
+	  case '-':
+	    param.justify = DOPRNT_JUSTIFY_LEFT;
+	    break;
+	  case '.':
+	    seen_precision = 1;
+	    param.prec = -1; /* "." alone means all necessary digits */
+	    value = &param.prec;
+	    break;
 
-              if (value == &param.width)
-                {
-                  /* negative width means left justify */
-                  if (n < 0)
-                    {
-                      param.justify = DOPRNT_JUSTIFY_LEFT;
-                      n = -n;
-                    }
-                  param.width = n;
-                }
-              else
-                {
-                  /* don't allow negative precision */
-                  param.prec = MAX (0, n);
-                }
-            }                
-            break;
+	  case '*':
+	    {
+	      int n = va_arg (ap, int);
 
-          case '0':
-            if (value == &param.width)
-              {
-                /* in width field, set fill */
-                param.fill = '0';
+	      if (value == &param.width)
+		{
+		  /* negative width means left justify */
+		  if (n < 0)
+		    {
+		      param.justify = DOPRNT_JUSTIFY_LEFT;
+		      n = -n;
+		    }
+		  param.width = n;
+		}
+	      else
+		{
+		  /* don't allow negative precision */
+		  param.prec = MAX (0, n);
+		}
+	    }
+	    break;
 
-                /* for right justify, put the fill after any minus sign */
-                if (param.justify == DOPRNT_JUSTIFY_RIGHT)
-                  param.justify = DOPRNT_JUSTIFY_INTERNAL;
-              }
-            else
-              {
-                /* in precision field, set value */
-                *value = 0;
-              }
-            break;
+	  case '0':
+	    if (value == &param.width)
+	      {
+		/* in width field, set fill */
+		param.fill = '0';
 
-          case '1': case '2': case '3': case '4': case '5':
-          case '6': case '7': case '8': case '9':
-            /* process all digits to form a value */
-            {
-              int  n = 0;
-              do {
-                n = n * 10 + (fchar-'0');
-                fchar = *fmt++;
-              } while (isascii (fchar) && isdigit (fchar));
-              fmt--; /* unget the non-digit */
-              *value = n;
-            }
-            break;
+		/* for right justify, put the fill after any minus sign */
+		if (param.justify == DOPRNT_JUSTIFY_RIGHT)
+		  param.justify = DOPRNT_JUSTIFY_INTERNAL;
+	      }
+	    else
+	      {
+		/* in precision field, set value */
+		*value = 0;
+	      }
+	    break;
 
-          default:
-            /* something invalid */
-            ASSERT (0);
-            goto next;
-          }
-        }
+	  case '1': case '2': case '3': case '4': case '5':
+	  case '6': case '7': case '8': case '9':
+	    /* process all digits to form a value */
+	    {
+	      int  n = 0;
+	      do {
+		n = n * 10 + (fchar-'0');
+		fchar = *fmt++;
+	      } while (isascii (fchar) && isdigit (fchar));
+	      fmt--; /* unget the non-digit */
+	      *value = n;
+	    }
+	    break;
+
+	  default:
+	    /* something invalid */
+	    ASSERT (0);
+	    goto next;
+	  }
+	}
 
     next:
       /* Stop parsing the current "%" format, look for a new one. */

@@ -70,19 +70,19 @@ check_data (void)
       mpz_set_str_or_abort (bz, data[i].b, 0);
 
       if (mpz_fits_slong_p (bz))
-        {
-          b = mpz_get_si (bz);
-          got = mpz_cmp_si (a, b);
-          if (SGN (got) != data[i].want)
-            {
-              printf ("mpz_cmp_si wrong on data[%d]\n", i);
-              printf ("  a="); mpz_out_str (stdout, 10, a); printf ("\n");
-              printf ("  b=%ld\n", b);
-              printf ("  got=%d\n", got);
-              printf ("  want=%d\n", data[i].want);
-              abort();                                    
-            }
-        }
+	{
+	  b = mpz_get_si (bz);
+	  got = mpz_cmp_si (a, b);
+	  if (SGN (got) != data[i].want)
+	    {
+	      printf ("mpz_cmp_si wrong on data[%d]\n", i);
+	      printf ("  a="); mpz_out_str (stdout, 10, a); printf ("\n");
+	      printf ("  b=%ld\n", b);
+	      printf ("  got=%d\n", got);
+	      printf ("  want=%d\n", data[i].want);
+	      abort();
+	    }
+	}
     }
 
   mpz_clear (a);

@@ -86,72 +86,72 @@ check_data (void)
   for (i = 0; i < numberof (data); i++)
     {
       for (post = 0; post <= 2; post++)
-        {
-          mpq_set_str_or_abort (want, data[i].want, 0);
-          MPQ_CHECK_FORMAT (want);
+	{
+	  mpq_set_str_or_abort (want, data[i].want, 0);
+	  MPQ_CHECK_FORMAT (want);
 
-          fp = fopen (FILENAME, "w+");
-          ASSERT_ALWAYS (fp != NULL);
-          fputs (data[i].inp, fp);
-          for (j = 0; j < post; j++)
-            putc (' ', fp);
-          fflush (fp);
-          ASSERT_ALWAYS (! ferror(fp));
+	  fp = fopen (FILENAME, "w+");
+	  ASSERT_ALWAYS (fp != NULL);
+	  fputs (data[i].inp, fp);
+	  for (j = 0; j < post; j++)
+	    putc (' ', fp);
+	  fflush (fp);
+	  ASSERT_ALWAYS (! ferror(fp));
 
-          rewind (fp);
-          got_nread = mpq_inp_str (got, fp, data[i].base);
+	  rewind (fp);
+	  got_nread = mpq_inp_str (got, fp, data[i].base);
 
-          if (got_nread != 0)
-            {
-              ftell_nread = ftell (fp);
-              if (got_nread != ftell_nread)
-                {
-                  printf ("mpq_inp_str nread wrong\n");
-                  printf ("  inp          \"%s\"\n", data[i].inp);
-                  printf ("  base         %d\n", data[i].base);
-                  printf ("  got_nread    %d\n", got_nread);
-                  printf ("  ftell_nread  %ld\n", ftell_nread);
-                  abort ();
-                }
-            }
+	  if (got_nread != 0)
+	    {
+	      ftell_nread = ftell (fp);
+	      if (got_nread != ftell_nread)
+		{
+		  printf ("mpq_inp_str nread wrong\n");
+		  printf ("  inp          \"%s\"\n", data[i].inp);
+		  printf ("  base         %d\n", data[i].base);
+		  printf ("  got_nread    %d\n", got_nread);
+		  printf ("  ftell_nread  %ld\n", ftell_nread);
+		  abort ();
+		}
+	    }
 
-          if (post == 0 && data[i].want_nread == strlen(data[i].inp))
-            {
-              int  c = getc(fp);
-              if (c != EOF)
-                {
-                  printf ("mpq_inp_str didn't read to EOF\n");
-                  printf ("  inp         \"%s\"\n", data[i].inp);
-                  printf ("  base        %d\n", data[i].base);
-                  printf ("  c '%c' %#x\n", c, c);
-                  abort ();
-                }
-            }
+	  if (post == 0 && data[i].want_nread == strlen(data[i].inp))
+	    {
+	      int  c = getc(fp);
+	      if (c != EOF)
+		{
+		  printf ("mpq_inp_str didn't read to EOF\n");
+		  printf ("  inp         \"%s\"\n", data[i].inp);
+		  printf ("  base        %d\n", data[i].base);
+		  printf ("  c '%c' %#x\n", c, c);
+		  abort ();
+		}
+	    }
 
-          if (got_nread != data[i].want_nread)
-            {
-              printf ("mpq_inp_str nread wrong\n");
-              printf ("  inp         \"%s\"\n", data[i].inp);
-              printf ("  base        %d\n", data[i].base);
-              printf ("  got_nread   %d\n", got_nread);
-              printf ("  want_nread  %d\n", data[i].want_nread);
-              abort ();
-            }
+	  if (got_nread != data[i].want_nread)
+	    {
+	      printf ("mpq_inp_str nread wrong\n");
+	      printf ("  inp         \"%s\"\n", data[i].inp);
+	      printf ("  base        %d\n", data[i].base);
+	      printf ("  got_nread   %d\n", got_nread);
+	      printf ("  want_nread  %d\n", data[i].want_nread);
+	      abort ();
+	    }
 
-          MPQ_CHECK_FORMAT (got);
-      
-          if (! mpq_equal (got, want))
-            {
-              printf ("mpq_inp_str wrong result\n");
-              printf ("  inp   \"%s\"\n", data[i].inp);
-              printf ("  base  %d\n", data[i].base);
-              mpq_trace ("  got ",  got);
-              mpq_trace ("  want", want);
-              abort ();
-            }
+	  MPQ_CHECK_FORMAT (got);
 
-          ASSERT_ALWAYS (fclose (fp) == 0);
-        }
+	  if (! mpq_equal (got, want))
+	    {
+	      printf ("mpq_inp_str wrong result\n");
+	      printf ("  inp   \"%s\"\n", data[i].inp);
+	      printf ("  base  %d\n", data[i].base);
+	      mpq_trace ("  got ",  got);
+	      mpq_trace ("  want", want);
+	      abort ();
+	    }
+
+	  ASSERT_ALWAYS (fclose (fp) == 0);
+	}
     }
 
   mpq_clear (got);

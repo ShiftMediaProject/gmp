@@ -103,7 +103,7 @@ main (int argc, char *argv[])
   unsigned long int m2exp;
 #define DIMS 6			/* dimensions run in spectral test */
   mpf_t v[DIMS-1];		/* spectral test result (there's no v
-                                   for 1st dimension */
+				   for 1st dimension */
   mpf_t f_merit, low_merit, high_merit;
   mpz_t acc, minus8;
   mpz_t min, max;
@@ -190,7 +190,7 @@ main (int argc, char *argv[])
   mpz_setbit (s, 0);		/* Make it odd.  */
 
   v_best = m_best = 2*(DIMS-1);
-  for (;;) 
+  for (;;)
     {
       mpz_add (acc, acc, s);
       mpz_mod_2exp (acc, acc, m2exp);
@@ -211,7 +211,7 @@ main (int argc, char *argv[])
 
 	  if (mpf_cmp_ui (v[f], 1 << (30 / (f + 2) + (f == 2))) < 0)
 	    v_lose++;
-	    
+
 	  if (mpf_cmp (f_merit, low_merit) < 0)
 	    m_lose++;
 

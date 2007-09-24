@@ -294,7 +294,7 @@ my @table =
        'speed' => 'SPEED_ROUTINE_MPN_BINARY_N',
        'speed_flags'=> 'FLAG_R_OPTIONAL',
      },
-     
+
      {
        'regexp'=> 'addmul_1|submul_1',
        'ret'   => 'mp_limb_t',
@@ -529,7 +529,7 @@ my @table =
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr cp',
      },
-     
+
 
      {
        'regexp'=> 'jacobi',
@@ -634,7 +634,7 @@ my @table =
        'speed' => 'SPEED_ROUTINE_MPN_UNARY_2',
        'speed_flags'=> 'FLAG_R',
      },
-     
+
      {
        'regexp'=> 'mul_basecase',
        'ret'   => 'void',
@@ -656,7 +656,7 @@ my @table =
        'speed' => 'none',
        'try-minsize' => 3,
      },
-       
+
 
      {
        'regexp'=> 'popham',
@@ -770,7 +770,7 @@ if (defined $ENV{table2}) {
 }
 
 
-my %pictable = 
+my %pictable =
     (
      'yes' => {
        'suffix' =>  '_pic',
@@ -924,7 +924,7 @@ foreach my $file_full (@files) {
   elsif ($lang eq '.S') { @pic_choices=('no','yes'); }
   elsif ($lang eq '.h') { @pic_choices=('no'); }
   else { next };
-  
+
   my ($t, $file_match);
   foreach my $p (@table) {
     # print " ",$p->{'regexp'},"\n" if $opt{'t'};
@@ -961,7 +961,7 @@ foreach my $file_full (@files) {
   if (defined $t->{'carrys'}) { $carrys = $t->{'carrys'}; }
   else                        { $carrys = ['','c'];       }
   print "carrys $carrys @$carrys\n" if $opt{'t'};
-  
+
   # some restriction functions are implemented, but they're not very useful
   my $restriction='';
 
@@ -982,9 +982,9 @@ foreach my $file_full (@files) {
     die "Can't determine suffix for: $file_full (path $path)\n";
   }
   print "suffix $suffix\n" if $opt{'t'};
-  
+
   $count_files++;
-  
+
   foreach my $obj (@{$objs}) {
     print "obj $obj\n" if $opt{'t'};
 
@@ -1005,7 +1005,7 @@ foreach my $file_full (@files) {
 
     foreach my $pic (map {$pictable{$_}} @pic_choices) {
       print "pic $pic->{'suffix'}\n" if $opt{'t'};
-      
+
       my $objbase = "${obj}_$suffix$pic->{'suffix'}";
       print "objbase $objbase\n" if $opt{'t'};
 
@@ -1014,7 +1014,7 @@ foreach my $file_full (@files) {
       }
 
       my $tmp_file = "tmp-$objbase.c";
-      
+
       my $renaming;
       foreach my $fun (@{$funs}) {
         if ($mpX eq 'mpn_' && $lang eq '.c') {
@@ -1143,14 +1143,14 @@ EOF
 	if (! defined $args) { $args = $t->{'args'}; }
 	if (! defined $args) { die "Need args for $fun\n"; }
 	print "args $args\n" if $opt{'t'};
-      
+
 	foreach my $carry (@$carrys) {
 	  print "carry $carry\n" if $opt{'t'};
 
 	  my $fun_carry = $fun;
 	  if (! ($fun_carry =~ s/_1/_1$carry/)) { $fun_carry = "$fun$carry"; }
           print "fun_carry $fun_carry\n" if $opt{'t'};
-		    
+
 	  if ($lang =~ /\.(asm|S)/
 	      && ! grep(m"PROLOGUE\((.* )?$mpX$fun_carry[ ,)]",@file_contents)) {
 	    print "no PROLOGUE $mpX$fun_carry\n" if $opt{'t'};
@@ -1166,7 +1166,7 @@ EOF
 	    print "no mention of #define $fun_carry\n" if $opt{'t'};
 	    next;
 	  }
-	  
+
 	  $count_functions++;
 
 	  my $carryarg;
@@ -1174,7 +1174,7 @@ EOF
 	  if ($carry eq '')             { $carryarg = ''; }
 	  else                          { $carryarg = ', mp_limb_t carry'; }
 	  print "carryarg $carryarg\n" if $opt{'t'};
-	  
+
 	  my $funfull="$mpX${fun_carry}_$suffix$pic->{'suffix'}";
 	  print "funfull $funfull\n" if $opt{'t'};
 
@@ -1183,7 +1183,7 @@ EOF
 	    $SPEED_EXTRA_PROTOS .= $proto;
 	    $TRY_EXTRA_PROTOS .= $proto;
 	  }
-	  
+
 	  my $try_type = $t->{"try-$fun"};
 	  $try_type = $t->{'try'} if ! defined $try_type;
 	  if (! defined $try_type) {
@@ -1194,7 +1194,7 @@ EOF
 	    }
 	  }
 	  print "try_type $try_type\n" if $opt{'t'};
-	  
+
 	  my $try_minsize = $t->{'try-minsize'};
 	  if (defined $try_minsize) {
 	    $try_minsize = ", " . $try_minsize;
@@ -1202,7 +1202,7 @@ EOF
 	    $try_minsize = "";
 	  }
 	  print "try_minsize $try_minsize\n" if $opt{'t'};
-	  
+
 	  if ($try_type ne 'none') {
 	    $TRY_EXTRA_ROUTINES .=
 		"  { TRY($mpX${fun_carry}_$suffix$pic->{'suffix'}), $try_type$try_minsize }, \\\n";
@@ -1211,7 +1211,7 @@ EOF
 	  my $speed_flags = $t->{'speed_flags'};
 	  $speed_flags = '0' if ! defined $speed_flags;
 	  print "speed_flags $speed_flags\n" if $opt{'t'};
-	  
+
 	  my $speed_routine = $t->{'speed'};
 	  $speed_routine = "SPEED_ROUTINE_\U$mpX\U$fun"
 	      if !defined $speed_routine;
@@ -1219,19 +1219,19 @@ EOF
 	    $speed_routine = "$speed_routine\U$carry";
 	  }
 	  print "speed_routine $speed_routine\n" if $opt{'t'};
-	  
+
 	  my @speed_suffixes = ();
 	  push (@speed_suffixes, '') if $speed_routine ne 'none';
 	  push (@speed_suffixes, @{$t->{'speed_suffixes'}})
 	      if defined $t->{'speed_suffixes'};
-	  
+
           my $macro_speed = $t->{'macro-speed'};
           $macro_speed = "$speed_routine ($fun_carry)" if ! defined $macro_speed;
           $macro_speed =~ s/\$fun/$fun_carry/g;
 
 	  foreach my $S (@speed_suffixes) {
 	    my $Sfunfull="$mpX${fun_carry}${S}_$suffix$pic->{'suffix'}";
-	    
+
 	    $SPEED_EXTRA_PROTOS .=
 	      "double speed_$Sfunfull _PROTO ((struct speed_params *s)); \\\n";
 	    $SPEED_EXTRA_ROUTINES .=
@@ -1323,7 +1323,7 @@ EOF
 
 close MAKEFILE or die;
 
-print "Total $count_files files, $count_functions functions\n";    
+print "Total $count_files files, $count_functions functions\n";
 
 
 

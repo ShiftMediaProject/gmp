@@ -222,7 +222,7 @@ fi],
   fi
 fi])
 ])
-  
+
 
 dnl  GMP_PROG_AR
 dnl  -----------
@@ -286,7 +286,7 @@ dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
 dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
 dnl  AC_PATH_PROG or AC_CHECK_PROG, but tests each m4 found to see if it's
 dnl  good enough.
-dnl 
+dnl
 dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
 AC_DEFUN([GMP_PROG_M4],
@@ -1159,7 +1159,7 @@ if AC_TRY_EVAL(gmp_compile); then
   if grep "Unknown CPU identifier" conftest.out >/dev/null; then : ;
   else
     result=yes
-  fi    
+  fi
 fi
 cat conftest.out >&AC_FD_CC
 rm -f conftest*
@@ -1488,7 +1488,7 @@ case $srcdir in
 esac
 echo ["define(<CONFIG_TOP_SRCDIR>,<\`$tmp'>)"] >>$gmp_tmpconfigm4
 
-# All CPUs use asm-defs.m4 
+# All CPUs use asm-defs.m4
 echo ["include][(CONFIG_TOP_SRCDIR\`/mpn/asm-defs.m4')"] >>$gmp_tmpconfigm4i
 ])
 
@@ -1560,7 +1560,7 @@ dnl  variables will get expanded.  Don't forget to invoke GMP_FINISH to
 dnl  create file config.m4.  config.m4 uses `<' and '>' as quote characters
 dnl  for all defines.
 
-AC_DEFUN([GMP_DEFINE], 
+AC_DEFUN([GMP_DEFINE],
 [AC_REQUIRE([GMP_INIT])
 echo ['define(<$1>, <$2>)'] >>ifelse([$3], [POST],
                               $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
@@ -1663,7 +1663,7 @@ dnl  good reason for nm to fail though.
 
 AC_DEFUN([GMP_ASM_UNDERSCORE],
 [AC_REQUIRE([GMP_PROG_NM])
-AC_CACHE_CHECK([if globals are prefixed by underscore], 
+AC_CACHE_CHECK([if globals are prefixed by underscore],
                gmp_cv_asm_underscore,
 [gmp_cv_asm_underscore="unknown"
 cat >conftest.c <<EOF
@@ -1946,7 +1946,7 @@ dnl
 dnl  other - .globl is usual.
 dnl
 dnl  "gas" tends to accept .globl everywhere, in addition to .export or
-dnl  .global or whatever the system assembler demands.  
+dnl  .global or whatever the system assembler demands.
 
 AC_DEFUN([GMP_ASM_GLOBL],
 [AC_REQUIRE([GMP_ASM_TEXT])
@@ -2137,7 +2137,7 @@ AC_DEFUN([GMP_ASM_LSYM_PREFIX],
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_PROG_NM])
-AC_CACHE_CHECK([for assembler local label prefix], 
+AC_CACHE_CHECK([for assembler local label prefix],
                gmp_cv_asm_lsym_prefix,
 [gmp_tmp_pre_appears=yes
 for gmp_tmp_pre in L .L $ L$; do
@@ -2200,7 +2200,7 @@ AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([how to define a 32-bit word],
 	       gmp_cv_asm_w32,
-[case $host in 
+[case $host in
   *-*-hpux*)
     # FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
     # that it's at 0x0.  We'll have to declare another symbol before the
@@ -2283,7 +2283,7 @@ AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_ASM_UNDERSCORE])
 AC_REQUIRE([AC_LIBTOOL_PROG_COMPILER_PIC])
-AC_CACHE_CHECK([if _GLOBAL_OFFSET_TABLE_ is prefixed by underscore], 
+AC_CACHE_CHECK([if _GLOBAL_OFFSET_TABLE_ is prefixed by underscore],
                gmp_cv_asm_x86_got_underscore,
 [gmp_cv_asm_x86_got_underscore="not applicable"
 if test $gmp_cv_asm_underscore = yes; then
@@ -2314,7 +2314,7 @@ if test "$gmp_cv_asm_x86_got_underscore" = "yes"; then
   GMP_DEFINE(GOT_GSYM_PREFIX, [_])
 else
   GMP_DEFINE(GOT_GSYM_PREFIX, [])
-fi    
+fi
 ])
 
 
@@ -3585,7 +3585,7 @@ die die die
   [case $ac_cv_c_inline in
   yes) tmp_inline=inline ;;
   *)   tmp_inline=$ac_cv_c_inline ;;
-  esac    
+  esac
   AC_MSG_WARN([gmp.h doesnt recognise compiler "$tmp_inline", inlines will be unavailable])])
   ;;
 esac
@@ -3636,7 +3636,7 @@ else
     AC_MSG_ERROR([Cannot find a build system compiler])
   fi
 fi
-    
+
 AC_ARG_VAR(CC_FOR_BUILD,[build system C compiler])
 AC_SUBST(CC_FOR_BUILD)
 ])

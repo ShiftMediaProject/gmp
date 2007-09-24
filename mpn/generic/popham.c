@@ -42,7 +42,7 @@ FNAME (mp_srcptr up,
   mp_size_t i;
 
   ASSERT (n >= 1);		/* Actually, this code handles any n, but some
-				   assembly implementations does not.  */
+				   assembly implementations do not.  */
 
   for (i = n >> 2; i != 0; i--)
     {

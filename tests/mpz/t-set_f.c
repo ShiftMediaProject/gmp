@@ -42,44 +42,44 @@ check_one (mpz_srcptr z)
   for (sh = 0; sh < numberof(shift); sh++)
     {
       for (shneg = 0; shneg <= 1; shneg++)
-        {
-          for (neg = 0; neg <= 1; neg++)
-            {
-              mpf_set_z (f, z);
-              mpz_set (want, z);
-            
-              if (neg)
-                {
-                  mpf_neg (f, f);
-                  mpz_neg (want, want);
-                }
+	{
+	  for (neg = 0; neg <= 1; neg++)
+	    {
+	      mpf_set_z (f, z);
+	      mpz_set (want, z);
 
-              if (shneg)
-                {
-                  mpz_tdiv_q_2exp (want, want, shift[sh]);
-                  mpf_div_2exp (f, f, shift[sh]);
-                }
-              else
-                {
-                  mpz_mul_2exp (want, want, shift[sh]);
-                  mpf_mul_2exp (f, f, shift[sh]);
-                }
+	      if (neg)
+		{
+		  mpf_neg (f, f);
+		  mpz_neg (want, want);
+		}
 
-              mpz_set_f (got, f);
-              MPZ_CHECK_FORMAT (got);
+	      if (shneg)
+		{
+		  mpz_tdiv_q_2exp (want, want, shift[sh]);
+		  mpf_div_2exp (f, f, shift[sh]);
+		}
+	      else
+		{
+		  mpz_mul_2exp (want, want, shift[sh]);
+		  mpf_mul_2exp (f, f, shift[sh]);
+		}
 
-              if (mpz_cmp (got, want) != 0)
-                {
-                  printf ("wrong result\n");
-                  printf ("  shift  %d\n", shneg ? -shift[sh] : shift[sh]);
-                  printf ("  neg    %d\n", neg);
-                  mpf_trace ("     f", f);
-                  mpz_trace ("   got", got);
-                  mpz_trace ("  want", want);
-                  abort ();
-                }
-            }
-        }
+	      mpz_set_f (got, f);
+	      MPZ_CHECK_FORMAT (got);
+
+	      if (mpz_cmp (got, want) != 0)
+		{
+		  printf ("wrong result\n");
+		  printf ("  shift  %d\n", shneg ? -shift[sh] : shift[sh]);
+		  printf ("  neg    %d\n", neg);
+		  mpf_trace ("     f", f);
+		  mpz_trace ("   got", got);
+		  mpz_trace ("  want", want);
+		  abort ();
+		}
+	    }
+	}
     }
 
   mpf_clear (f);

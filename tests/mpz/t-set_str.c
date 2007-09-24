@@ -28,7 +28,7 @@ void
 check_one (mpz_srcptr want, int base, const char *str)
 {
   mpz_t   got;
-  
+
   MPZ_CHECK_FORMAT (want);
   mp_trace_base = (base == 0 ? 16 : base);
 

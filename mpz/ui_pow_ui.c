@@ -46,4 +46,3 @@ mpz_ui_pow_ui (mpz_ptr r, unsigned long b, unsigned long e)
 #endif
     }
 }
-

@@ -52,11 +52,11 @@ check_data (void)
     {
       m = itom (data[i].m);
       if (m->_mp_size != data[i].want_size
-          || (m->_mp_size != 0 && m->_mp_d[0] != data[i].want_limb))
-        {
-          printf ("itom wrong on data[%d]\n", i); 
-          abort();                                    
-        }
+	  || (m->_mp_size != 0 && m->_mp_d[0] != data[i].want_limb))
+	{
+	  printf ("itom wrong on data[%d]\n", i);
+	  abort();
+	}
       mfree (m);
     }
 }

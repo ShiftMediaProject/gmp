@@ -42,7 +42,7 @@ at the end of a bundle, but can be put between operations within some bundle
 types too.
 
 The Itanium 1 and Itanium 2 implementations can under ideal conditions
-execute two bundles per cycle.  The Itanium 2 allows 4 of these instructions
+execute two bundles per cycle.  The Itanium 1 allows 4 of these instructions
 to do integer operations, while the Itanium 2 allows all 6 to be integer
 operations.
 

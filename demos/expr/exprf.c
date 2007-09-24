@@ -38,7 +38,7 @@ static __gmp_const struct mpexpr_operator_t  _mpf_expr_standard_table[] = {
 
   { "**",  (mpexpr_fun_t) mpf_pow_ui,
     MPEXPR_TYPE_BINARY_UI | MPEXPR_TYPE_RIGHTASSOC,                   220 },
-  
+
   { "!",   (mpexpr_fun_t) e_mpf_sgn,
     MPEXPR_TYPE_LOGICAL_NOT | MPEXPR_TYPE_PREFIX,                     210 },
   { "-",   (mpexpr_fun_t) mpf_neg,
@@ -123,5 +123,5 @@ mpf_expr (va_alist)
     return ret;
 
   return mpf_expr_a (mpf_expr_standard_table, res, base,
-                     mpf_get_prec (res), e, strlen(e), var);
+		     mpf_get_prec (res), e, strlen(e), var);
 }

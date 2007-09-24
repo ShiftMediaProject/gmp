@@ -51,15 +51,15 @@ check_data (void)
 
       got = mpz_get_si (n);
       if (got != data[i].want)
-        {
-          printf ("mpz_get_si wrong at data[%d]\n", i); 
-          printf ("   n     \"%s\" (", data[i].n);
-          mpz_out_str (stdout, 10, n); printf (", hex ");
-          mpz_out_str (stdout, 16, n); printf (")\n");
-          printf ("   got   %ld (0x%lX)\n", got, got);
-          printf ("   want  %ld (0x%lX)\n", data[i].want, data[i].want);
-          abort();                                    
-        }
+	{
+	  printf ("mpz_get_si wrong at data[%d]\n", i);
+	  printf ("   n     \"%s\" (", data[i].n);
+	  mpz_out_str (stdout, 10, n); printf (", hex ");
+	  mpz_out_str (stdout, 16, n); printf (")\n");
+	  printf ("   got   %ld (0x%lX)\n", got, got);
+	  printf ("   want  %ld (0x%lX)\n", data[i].want, data[i].want);
+	  abort();
+	}
     }
   mpz_clear (n);
 }

@@ -60,14 +60,14 @@ check_one (mpz_srcptr want, mpz_srcptr base, unsigned long exp)
       unsigned long  base_u = mpz_get_ui (base);
       mpz_ui_pow_ui (got, base_u, exp);
       if (mpz_cmp (got, want))
-        {
-          printf    ("mpz_ui_pow_ui wrong\n");
-          printf    ("  base=%lu (0x%lX)\n", base_u, base_u);
-          printf    ("  exp = %lu (0x%lX)\n", exp, exp);
-          mpz_trace ("  got ", got);
-          mpz_trace ("  want", want);
-          abort ();
-        }
+	{
+	  printf    ("mpz_ui_pow_ui wrong\n");
+	  printf    ("  base=%lu (0x%lX)\n", base_u, base_u);
+	  printf    ("  exp = %lu (0x%lX)\n", exp, exp);
+	  mpz_trace ("  got ", got);
+	  mpz_trace ("  want", want);
+	  abort ();
+	}
     }
 
   mpz_clear (got);
@@ -163,7 +163,7 @@ check_random (int reps)
   int                i;
   unsigned long      size_range, exp;
   gmp_randstate_ptr  rands = RANDS;
-  
+
   mpz_init (base);
   mpz_init (want);
 

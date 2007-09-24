@@ -28,14 +28,14 @@ use GMP::Mpz qw(:constants);
   ok (UNIVERSAL::isa ($a, "GMP::Mpz"));
 }
 use GMP::Mpz qw(:noconstants);
-  
+
 use GMP::Mpq qw(:constants);
 {
   my $a = 123;
   ok (UNIVERSAL::isa ($a, "GMP::Mpq"));
 }
 use GMP::Mpq qw(:noconstants);
-  
+
 use GMP::Mpf qw(:constants);
 {
   my $a = 123;
