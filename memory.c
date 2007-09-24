@@ -44,7 +44,7 @@ __gmp_default_allocate (size_t size)
   ret = malloc (size);
   if (ret == 0)
     {
-      fprintf (stderr, "GNU MP: Cannot allocate memory (size=%u)\n", size);
+      fprintf (stderr, "GNU MP: Cannot allocate memory (size=%lu)\n", (long) size);
       abort ();
     }
 
@@ -92,7 +92,7 @@ __gmp_default_reallocate (void *oldptr, size_t old_size, size_t new_size)
   ret = realloc (oldptr, new_size);
   if (ret == 0)
     {
-      fprintf (stderr, "GNU MP: Cannot reallocate memory (old_size=%u new_size=%u)\n", old_size, new_size);
+      fprintf (stderr, "GNU MP: Cannot reallocate memory (old_size=%lu new_size=%lu)\n", (long) old_size, (long) new_size);
       abort ();
     }
 
