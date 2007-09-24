@@ -216,7 +216,7 @@ S4:
 	{
 	  if (p != 0)
 	    {
-	      mpz_powm_ui (y, y, p, n); mpz_add (y, y, a); 
+	      mpz_powm_ui (y, y, p, n); mpz_add (y, y, a);
 	    }
 	  else
 	    {
@@ -231,11 +231,11 @@ S4:
       if (!mpz_probab_prime_p (g, 3))
 	{
 	  do
-            {
-              mp_limb_t a_limb;
-              mpn_random (&a_limb, (mp_size_t) 1);
-              a_int = (int) a_limb;
-            }
+	    {
+	      mp_limb_t a_limb;
+	      mpn_random (&a_limb, (mp_size_t) 1);
+	      a_int = (int) a_limb;
+	    }
 	  while (a_int == -2 || a_int == 0);
 
 	  if (flag_verbose)
@@ -307,6 +307,7 @@ factor (mpz_t t, unsigned long p)
     }
 }
 
+int
 main (int argc, char *argv[])
 {
   mpz_t t;
