@@ -1,6 +1,6 @@
 dnl  PowerPC-32 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 
-dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2007 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -54,16 +54,17 @@ PROLOGUE(mpn_addlsh1_n)
 	addi	up, up, -4	C update up
 	addi	rp, rp, -4	C update rp
 	slwi	s1, v0, 1
-	bdz	.Lend		C If done, skip loop
+	bdz	L(end)		C If done, skip loop
 
-.Loop:	lwz	v1, 4(vp)	C load v limb
+L(loop):
+	lwz	v1, 4(vp)	C load v limb
 	adde	s1, s1, u0	C add limbs with cy, set cy
 	srwi	s0, v0, 31	C shift down previous v limb
 	stw	s1, 4(rp)	C store result limb
 	lwzu	u0, 8(up)	C load u limb and update up
 	rlwimi	s0, v1, 1, 0,30	C left shift v limb and merge with prev v limb
 
-	bdz	.Lexit		C decrement ctr and exit if done
+	bdz	L(exit)		C decrement ctr and exit if done
 
 	lwzu	v0, 8(vp)	C load v limb and update vp
 	adde	s0, s0, u0	C add limbs with cy, set cy
@@ -72,14 +73,15 @@ PROLOGUE(mpn_addlsh1_n)
 	lwz	u0, 4(up)	C load u limb
 	rlwimi	s1, v0, 1, 0,30	C left shift v limb and merge with prev v limb
 
-	bdnz	.Loop		C decrement ctr and loop back
+	bdnz	L(loop)		C decrement ctr and loop back
 
-.Lend:	adde	r7, s1, u0
+L(end):	adde	r7, s1, u0
 	srwi	r4, v0, 31
 	stw	r7, 4(rp)	C store last result limb
 	addze	r3, r4
 	blr
-.Lexit:	adde	r7, s0, u0
+L(exit):
+	adde	r7, s0, u0
 	srwi	r4, v1, 31
 	stw	r7, 8(rp)	C store last result limb
 	addze	r3, r4
