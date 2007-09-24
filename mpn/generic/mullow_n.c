@@ -46,7 +46,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   FIXME: This function should accept a temporary area.
   FIXME: Perhaps call mpn_kara_mul_n instead of mpn_mul_n?
   THINK: If mpn_mul_basecase is always faster than mpn_mullow_basecase
-         (typically thanks for mpn_addmul_2) should we unconditionally use
+         (typically thanks to mpn_addmul_2) should we unconditionally use
          mpn_mul_n?
   FIXME: The recursive calls to mpn_mullow_n use sizes n/2 (one uses floor(n/2)
          and the other ceil(n/2)).  Depending on the values of the various
