@@ -22,6 +22,9 @@ include(`../config.m4')
 
 C P6: 2.0 cycles/limb
 
+C TODO
+C  Experiments with more unrolling indicate that 1.5 c/l is possible on P6-13
+C  with the current carry handling scheme.
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr src, mp_size_t size)
 C
