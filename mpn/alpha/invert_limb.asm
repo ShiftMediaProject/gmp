@@ -1,6 +1,7 @@
 dnl  Alpha mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 1996, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2000, 2001, 2002, 2003, 2007 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -20,9 +21,9 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C      cycles/limb
-C EV4:    175
-C EV5:    125
-C EV6:     67
+C EV4:    ~175
+C EV5:    ~111-126
+C EV6:    ~52-76
 
 C  This is based on ideas of Peter L. Montgomery.
 
@@ -45,7 +46,7 @@ $73:
 	ldt	f10,0(r1)		C f10 = 2^63
 	divt	f10,f1,f10		C f10 = 2^63 / (u / 2)
 	LEA(r2,$invtab-4096)
-	srl	r16,52,r1		C extract high 8 bits
+	srl	r16,52,r1		C extract high 12 bits
 	addq	r1,r1,r1		C align ...0000bbbbbbbb0
 	addq	r1,r2,r1		C compute array offset
 	ldq_u	r2,0(r1)		C load quadword containing our 16 bits
