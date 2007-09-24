@@ -1,6 +1,6 @@
 /* Test locale support in C++ functions.
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +19,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <clocale>
 #include <iostream>
+#include <cstdlib>
 
 #include "gmp.h"
 #include "gmp-impl.h"
