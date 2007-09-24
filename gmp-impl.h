@@ -2649,7 +2649,8 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
   } while (0)
 #endif
 
-#if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_FAMILY_x86
+#if defined (__GNUC__) && ! defined (__INTEL_COMPILER)			\
+    && ! defined (NO_ASM) && HAVE_HOST_CPU_FAMILY_x86
 #if __GMP_GNUC_PREREQ (3,1)
 #define __GMP_qm "=Qm"
 #define __GMP_q "=Q"
