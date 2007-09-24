@@ -33,7 +33,7 @@ dnl  has its most significant bit set, and we add the multiplier if the
 dnl  multiplicand has its most significant bit set.  We need to preserve the
 dnl  carry flag between each iteration, so we have to compute the compensation
 dnl  carefully (the natural, srai+and doesn't work).  Since all POWER can
-dnl  branch in zero cycles, we use conditional branches to for the additions.
+dnl  branch in zero cycles, we use conditional branches for the compensation.
 
 include(`../config.m4')
 

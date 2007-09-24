@@ -22,7 +22,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 dnl  INPUT PARAMETERS
 dnl  res_ptr	r3
 dnl  s1_ptr	r4
-dnl  size		r5
+dnl  size	r5
 dnl  s2_limb	r6
 
 dnl  The POWER architecture has no unsigned 32x32->64 bit multiplication
@@ -33,7 +33,7 @@ dnl  has its most significant bit set, and we add the multiplier if the
 dnl  multiplicand has its most significant bit set.  We need to preserve the
 dnl  carry flag between each iteration, so we have to compute the compensation
 dnl  carefully (the natural, srai+and doesn't work).  Since all POWER can
-dnl  branch in zero cycles, we use conditional branches to for the additions.
+dnl  branch in zero cycles, we use conditional branches for the compensation.
 
 include(`../config.m4')
 
