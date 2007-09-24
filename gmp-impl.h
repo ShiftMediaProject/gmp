@@ -4,7 +4,7 @@
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2006 Free Software Foundation, Inc.
+2004, 2005, 2006, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -2311,7 +2311,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 #endif
 
 #ifndef udiv_qrnnd_preinv
-#define udiv_qrnnd_preinv udiv_qrnnd_preinv2
+#define udiv_qrnnd_preinv udiv_qrnnd_preinv3
 #endif
 
 /* Divide the two-limb number in (NH,,NL) by D, with DI being the largest
@@ -2384,6 +2384,51 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     _xh -= (d);								\
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
+  } while (0)
+
+/*  udiv_qrnnd_preinv3 -- Based on work by Niels Möller.
+
+    We write things strangely below, to help gcc.  A more straightforward
+    version:
+
+    _r = (nl) - _qh * (d);
+    _t = _r + (d);
+    if (_r >= _ql)
+      {
+        _qh--;
+        _r = _t;
+      }
+
+    For one operation shorter critical path, one may want to use this form:
+
+    _p = _qh * (d)
+    _s = (nl) + (d);
+    _r = (nl) - _p;
+    _t = _s - _p;
+    if (_r >= _ql)
+      {
+        _qh--;
+        _r = _t;
+      }
+*/
+#define udiv_qrnnd_preinv3(q, r, nh, nl, d, di)				\
+  do {									\
+    mp_limb_t _qh, _ql, _r, _t;						\
+    umul_ppmm (_qh, _ql, (nh), (di));					\
+    add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
+    _r = (nl) - _qh * (d);						\
+    if (_r > _ql)	/* both > and >= should be OK */		\
+      {									\
+	_r += (d);							\
+	_qh--;								\
+      }									\
+    if (UNLIKELY (_r >= (d)))						\
+      {									\
+	_r -= (d);							\
+	_qh++;								\
+      }									\
+    (r) = _r;								\
+    (q) = _qh;								\
   } while (0)
 
 
