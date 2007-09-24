@@ -17,6 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,53 +42,53 @@ check_all (mpz_ptr want, mpz_srcptr x_orig, mpz_srcptr y_orig)
       mpz_swap (x, y);
 
       for (negx = 0; negx < 2; negx++)
-        {
-          mpz_neg (x, x);
+	{
+	  mpz_neg (x, x);
 
-          for (negy = 0; negy < 2; negy++)
-            {
-              mpz_neg (y, y);
+	  for (negy = 0; negy < 2; negy++)
+	    {
+	      mpz_neg (y, y);
 
-              for (inplace = 0; inplace <= 1; inplace++)
-                {
-                  if (inplace)
-                    { mpz_set (got, x); mpz_lcm (got, got, y); }
-                  else
-                    mpz_lcm (got, x, y);
-                  MPZ_CHECK_FORMAT (got);
+	      for (inplace = 0; inplace <= 1; inplace++)
+		{
+		  if (inplace)
+		    { mpz_set (got, x); mpz_lcm (got, got, y); }
+		  else
+		    mpz_lcm (got, x, y);
+		  MPZ_CHECK_FORMAT (got);
 
-                  if (mpz_cmp (got, want) != 0)
-                    {
-                      printf ("mpz_lcm wrong, inplace=%d\n", inplace);
-                    fail:
-                      mpz_trace ("x", x);
-                      mpz_trace ("y", y);
-                      mpz_trace ("got", got);
-                      mpz_trace ("want", want);
-                      abort ();
-                    }
+		  if (mpz_cmp (got, want) != 0)
+		    {
+		      printf ("mpz_lcm wrong, inplace=%d\n", inplace);
+		    fail:
+		      mpz_trace ("x", x);
+		      mpz_trace ("y", y);
+		      mpz_trace ("got", got);
+		      mpz_trace ("want", want);
+		      abort ();
+		    }
 
-                  if (mpz_fits_ulong_p (y))
-                    {
-                      unsigned long  yu = mpz_get_ui (y);
-                      if (inplace)
-                        { mpz_set (got, x); mpz_lcm_ui (got, got, yu); }
-                      else
-                        mpz_lcm_ui (got, x, yu);
-          
-                      if (mpz_cmp (got, want) != 0)
-                        {
-                          printf ("mpz_lcm_ui wrong, inplace=%d\n", inplace);
-                          printf    ("yu=%lu\n", yu);
-                          goto fail;
-                        }
-                    }
-                }
-            }
-        }
+		  if (mpz_fits_ulong_p (y))
+		    {
+		      unsigned long  yu = mpz_get_ui (y);
+		      if (inplace)
+			{ mpz_set (got, x); mpz_lcm_ui (got, got, yu); }
+		      else
+			mpz_lcm_ui (got, x, yu);
+
+		      if (mpz_cmp (got, want) != 0)
+			{
+			  printf ("mpz_lcm_ui wrong, inplace=%d\n", inplace);
+			  printf    ("yu=%lu\n", yu);
+			  goto fail;
+			}
+		    }
+		}
+	    }
+	}
     }
 
-  mpz_clear (got);  
+  mpz_clear (got);
   mpz_clear (x);
   mpz_clear (y);
 }
