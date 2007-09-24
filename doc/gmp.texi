@@ -446,9 +446,9 @@ have is not what we distributed, so that any problems introduced by others
 will not reflect on our reputation.@refill
 
 The precise conditions of the license for the GNU MP library are found in the
-Lesser General Public License version 2.1 that accompanies the source code,
+Lesser General Public License version 3 that accompanies the source code,
 see @file{COPYING.LIB}.  Certain demonstration programs are provided under the
-terms of the plain General Public License version 2, see @file{COPYING}.
+terms of the plain General Public License version 3, see @file{COPYING}.
 
 
 @node Introduction to GMP, Installing GMP, Copying, Top
@@ -5071,7 +5071,7 @@ least significant limbs of the result to @var{rp}.  Return carry, either 0 or
 
 This is the lowest-level function for addition.  It is the preferred function
 for addition, since it is written in assembly for most CPUs.  For addition of
-a variable to itself (i.e., @var{s1p} equals @var{s2p}, use @code{mpn_lshift}
+a variable to itself (i.e., @var{s1p} equals @var{s2p}) use @code{mpn_lshift}
 with a count of 1 for optimal speed.
 @end deftypefun
 
