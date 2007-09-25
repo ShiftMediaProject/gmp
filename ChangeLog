@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2007-09-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/invert.c: New file, placeholder for now.
+
 2006-11-04  Torbjorn Granlund  <tege@swox.com>
 
 	* extract-dbl.c: Rewrite to handle nails better, and for general
