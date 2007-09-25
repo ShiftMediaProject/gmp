@@ -1087,7 +1087,7 @@ void      mpn_preinv_mu_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr,
 #define mpn_mu_div_q  __MPN(mu_div_q)
 mp_limb_t mpn_mu_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define      mpn_invert  __MPN(invert)
-void      mpn_invert _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+void      mpn_invert _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define      mpn_binvert  __MPN(binvert)
 void      mpn_binvert _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
