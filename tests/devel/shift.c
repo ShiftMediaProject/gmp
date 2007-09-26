@@ -137,7 +137,7 @@ main (int argc, char **argv)
 #endif
 
 #ifndef NOCHECK
-      mpn_random2 (s1, size);
+      mpn_random (s1, size);
 
 #ifdef PRINT
       printf ("cnt=%-*d ", (int) (2 * sizeof(mp_limb_t)) - 4, cnt);
@@ -193,7 +193,7 @@ mpn_print (mp_ptr p, mp_size_t size)
 #ifdef _LONG_LONG_LIMB
       printf ("%0*lX%0*lX", (int) (sizeof(mp_limb_t)),
 	      (unsigned long) (p[i] >> (BITS_PER_MP_LIMB/2)),
-              (int) (sizeof(mp_limb_t)), (unsigned long) (p[i]));
+	      (int) (sizeof(mp_limb_t)), (unsigned long) (p[i]));
 #else
       printf ("%0*lX", (int) (2 * sizeof(mp_limb_t)), p[i]);
 #endif

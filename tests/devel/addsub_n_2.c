@@ -79,25 +79,13 @@ cputime ()
 #define SIZE 328
 #endif
 #ifndef TIMES
-#define TIMES OPS/SIZE
-#else
-#undef OPS
-#define OPS (SIZE*TIMES)
+#define TIMES OPS/(SIZE+1)
 #endif
 
 
 mp_limb_t
-#if __STDC__
 refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
 		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
-#else
-refmpn_addsub_n (r1p, r2p, s1p, s2p, n)
-     register mp_ptr r1p;
-     register mp_ptr r2p;
-     register mp_srcptr s1p;
-     register mp_srcptr s2p;
-     mp_size_t n;
-#endif
 {
   mp_ptr p;
   mp_limb_t acy, scy;
@@ -110,9 +98,7 @@ refmpn_addsub_n (r1p, r2p, s1p, s2p, n)
   return 2 * acy + scy;
 }
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   int test;
   mp_ptr a1, a2, a3, a4;

@@ -17,8 +17,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
 #include <time.h>
@@ -45,30 +47,12 @@ cputime ()
 }
 #endif
 
+static void mpn_print (mp_ptr, mp_size_t);
+
 #define M * 1000000
 
 #ifndef CLOCK
-#if defined (__m88k__)
-#define CLOCK 20 M
-#elif defined (__i386__)
-#define CLOCK (16666667)
-#elif defined (__m68k__)
-#define CLOCK (20 M)
-#elif defined (_IBMR2)
-#define CLOCK (25 M)
-#elif defined (__sparc__)
-#define CLOCK (20 M)
-#elif defined (__sun__)
-#define CLOCK (20 M)
-#elif defined (__mips)
-#define CLOCK (40 M)
-#elif defined (__hppa__)
-#define CLOCK (50 M)
-#elif defined (__alpha)
-#define CLOCK (133 M)
-#else
 #error "Don't know CLOCK of your machine"
-#endif
 #endif
 
 #ifndef OPS
@@ -79,52 +63,138 @@ cputime ()
 #endif
 #ifndef TIMES
 #define TIMES OPS/SIZE
-#else
-#undef OPS
-#define OPS (SIZE*TIMES)
 #endif
 
+#ifndef FSIZE
+#define FSIZE SIZE
+#endif
+
+int
 main ()
 {
-  mp_limb_t nptr[SIZE];
-  mp_limb_t qptr[SIZE];
-  mp_limb_t pptr[SIZE];
-  mp_limb_t dlimb, rlimb, plimb;
-  mp_size_t nsize, qsize, psize;
+  mp_limb_t np[SIZE];
+  mp_limb_t dx[SIZE + FSIZE + 2];
+  mp_limb_t dy[SIZE + FSIZE + 2];
+  mp_limb_t dlimb;
+  mp_size_t nn, fn;
+  mp_limb_t retx, rety;
   int test;
+#if TIMES != 1
+  int i;
+  long t0, t;
+  double cyc;
+#endif
 
   for (test = 0; ; test++)
     {
-#ifdef RANDOM
-      nsize = random () % SIZE + 1;
-#else
-      nsize = SIZE;
+#if TIMES == 1 && ! defined (PRINT)
+      if (test % (SIZE > 100000 ? 1 : 100000 / SIZE) == 0)
+	{
+	  printf ("\r%u", test);
+	  fflush (stdout);
+	}
 #endif
 
-      mpn_random2 (nptr, nsize);
+#ifdef RANDOM
+      nn = random () % (SIZE + 1);
+      fn = random () % (FSIZE + 1);
+#else
+      nn = SIZE;
+      fn = FSIZE;
+#endif
 
-      mpn_random2 (&dlimb, 1);
-      if (dlimb == 0)
-	abort ();
+      dx[0] = 0x87654321;
+      dx[nn + fn + 1] = 0x12345678;
+      dy[0] = 0x87654321;
+      dy[nn + fn + 1] = 0x12345678;
+      mpn_random2 (np, nn);
 
-      rlimb = mpn_divmod_1 (qptr, nptr, nsize, dlimb);
-      qsize = nsize - (qptr[nsize - 1] == 0);
-      if (qsize == 0)
+#ifdef FIXED_DLIMB
+      dlimb = FIXED_DLIMB;
+#else
+      do
 	{
-	  plimb = rlimb;
-	  psize = qsize;
+	  mpn_random2 (&dlimb, 1);
+#ifdef FORCE_NORM
+	  dlimb |= GMP_NUMB_HIGHBIT;
+#endif
+#ifdef FORCE_UNNORM
+	  dlimb &= GMP_NUMB_MAX >> 1;
+#endif
 	}
-      else
+      while (dlimb == 0);
+#endif
+
+#if defined (PRINT) || defined (XPRINT)
+      printf ("N=");
+      mpn_print (np, nn);
+      printf ("D=");
+      mpn_print (&dlimb, 1);
+      printf ("nn=%ld\n", (long) nn);
+#endif
+
+#if TIMES != 1
+      t0 = cputime();
+      for (i = 0; i < TIMES; i++)
+	mpn_divrem_1 (dx + 1, 0L, np, nn, dlimb);
+      t = cputime() - t0;
+      cyc = ((double) t * CLOCK) / (TIMES * nn * 1000.0);
+      printf ("mpn_divrem_1 int:    %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
+	      t, cyc,
+	      CLOCK/cyc*BITS_PER_MP_LIMB*BITS_PER_MP_LIMB/1e9);
+      t0 = cputime();
+      for (i = 0; i < TIMES; i++)
+	mpn_divrem_1 (dx + 1, fn, np, 0, dlimb);
+      t = cputime() - t0;
+      cyc = ((double) t * CLOCK) / (TIMES * fn * 1000.0);
+      printf ("mpn_divrem_1 frac:   %5ldms (%.3f cycles/limb) [%.2f Gb/s]\n",
+	      t, cyc,
+	      CLOCK/cyc*BITS_PER_MP_LIMB*BITS_PER_MP_LIMB/1e9);
+#endif
+
+      retx = refmpn_divrem_1 (dx + 1, fn, np, nn, dlimb);
+      rety = mpn_divrem_1 (dy + 1, fn, np, nn, dlimb);
+
+#ifndef NOCHECK
+      if (retx != rety || mpn_cmp (dx, dy, fn + nn + 2) != 0)
 	{
-	  plimb = mpn_mul_1 (pptr, qptr, qsize, dlimb);
-	  psize = qsize;
-	  plimb += mpn_add_1 (pptr, pptr, psize, rlimb);
+	  printf ("ERROR in test %d, nn=%ld, fn=%ld\n", test, nn, fn);
+	  mpn_print (np, nn);
+	  mpn_print (&dlimb, 1);
+	  printf ("rq: ");
+	  mpn_print (dx + 1, nn + fn);
+	  printf ("rr: %*lX\n", (int) (2 * sizeof(mp_limb_t)), retx);
+	  printf (" q: ");
+	  mpn_print (dy + 1, nn + fn);
+	  printf (" r: %*lX\n", (int) (2 * sizeof(mp_limb_t)), rety);
+	  if (dy[0] != 0x87654321)
+	    printf ("clobbered at low end %*lX\n", (int) (2 * sizeof(mp_limb_t)), dy[0]);
+	  if (dy[nn + fn + 1] != 0x12345678)
+	    printf ("clobbered at high end\n");
+	  abort ();
 	}
-      if (plimb != 0)
-	pptr[psize++] = plimb;
-
-
-      if (nsize != psize || mpn_cmp (nptr, pptr, nsize) != 0)
-	abort ();
+#endif
     }
+}
+
+static void
+mpn_print (mp_ptr p, mp_size_t size)
+{
+  mp_size_t i;
+
+  for (i = size - 1; i >= 0; i--)
+    {
+#ifdef _LONG_LONG_LIMB
+      printf ("%0*lX%0*lX", (int) (sizeof(mp_limb_t)),
+	      (unsigned long) (p[i] >> (BITS_PER_MP_LIMB/2)),
+              (int) (sizeof(mp_limb_t)), (unsigned long) (p[i]));
+#else
+      printf ("%0*lX", (int) (2 * sizeof(mp_limb_t)), p[i]);
+#endif
+#ifdef SPACE
+      if (i != 0)
+	printf (" ");
+#endif
+    }
+  puts ("");
 }

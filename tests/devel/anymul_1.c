@@ -112,7 +112,7 @@ main (int argc, char **argv)
   for (test = 1; test <= ntests; test++)
     {
 #if TIMES == 1 && ! defined (PRINT)
-      if (test % (SIZE > 10000 ? 1 : 10000 / SIZE) == 0)
+      if (test % (1 + 0x80000 / (SIZE + 20)) == 0)
 	{
 	  printf ("\r%u", test);
 	  fflush (stdout);

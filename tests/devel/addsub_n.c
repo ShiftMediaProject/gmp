@@ -16,6 +16,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -79,9 +80,6 @@ cputime ()
 #endif
 #ifndef TIMES
 #define TIMES OPS/SIZE
-#else
-#undef OPS
-#define OPS (SIZE*TIMES)
 #endif
 
 
@@ -113,20 +111,45 @@ main (argc, argv)
      int argc;
      char **argv;
 {
-  mp_limb_t s1[SIZE];
-  mp_limb_t s2[SIZE];
-  mp_limb_t d1x[SIZE+2];
-  mp_limb_t d2x[SIZE+2];
-  mp_limb_t d1y[SIZE+2];
-  mp_limb_t d2y[SIZE+2];
+  mp_ptr mem;
+  mp_ptr s1;
+  mp_ptr s2;
+  mp_ptr d1x;
+  mp_ptr d2x;
+  mp_ptr d1y;
+  mp_ptr d2y;
   int cyx, cyy;
   int i;
   long t0, t;
   int test;
   mp_size_t size;
+  unsigned int ntests;
 
-  for (test = 0; ; test++)
+  mem = malloc ((6 * SIZE + 8) * sizeof (mp_limb_t));
+
+  s1 = mem + 0;
+  s2 = mem + SIZE;
+  d1x = mem + 2 * SIZE;
+  d2x = mem + 3 * SIZE + 2;
+  d1y = mem + 4 * SIZE + 4;
+  d2y = mem + 5 * SIZE + 6;
+
+  ntests = ~(unsigned) 0;
+  if (argc == 2)
+    ntests = strtol (argv[1], 0, 0);
+
+  for (test = 1; test <= ntests; test++)
+    ;
+  for (test = 1; test <= ntests; test++)
     {
+#if TIMES == 1 && ! defined (PRINT)
+      if (test % (SIZE > 100000 ? 1 : 100000 / SIZE) == 0)
+	{
+	  printf ("\r%d", test);
+	  fflush (stdout);
+	}
+#endif
+
 #ifdef RANDOM
       size = (random () % SIZE + 1);
 #else
@@ -148,17 +171,10 @@ main (argc, argv)
 
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	refmpn_addsub_n (d1x+1, d2x+1, s1, s2, size);
-      t = cputime() - t0;
-      printf ("refmpn_addsub_n:   %ldms (%.2f cycles/limb)\n",
-	      t, ((double) t * CLOCK) / (OPS * 1000.0));
-
-      t0 = cputime();
-      for (i = 0; i < TIMES; i++)
 	mpn_addsub_n (d1x+1, d2x+1, s1, s2, size);
       t = cputime() - t0;
-      printf ("   mpn_addsub_n:   %ldms (%.2f cycles/limb)\n",
-	      t, ((double) t * CLOCK) / (OPS * 1000.0));
+      printf ("   mpn_addsub_n:   %ldms (%.3f cycles/limb)\n",
+	      t, ((double) t * CLOCK) / (TIMES * size * 1000.0));
 #endif
 
 #ifndef NOCHECK
