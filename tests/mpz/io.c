@@ -62,7 +62,7 @@ main (int argc, char **argv)
   mpz_init (op1);
   mpz_init (op2);
 
-  fp = fopen (FILENAME, "w+"); 
+  fp = fopen (FILENAME, "w+");
 
   for (i = 0; i < reps; i++)
     {
@@ -83,33 +83,33 @@ main (int argc, char **argv)
       if (base == 1)
 	base = 0;
 
-      rewind (fp);  
+      rewind (fp);
       if (mpz_out_str (fp, base, op1) == 0
-          || putc (' ', fp) == EOF
-          || fflush (fp) != 0)
-        {
-          printf ("mpz_out_str write error\n");
-          abort ();
-        }
+	  || putc (' ', fp) == EOF
+	  || fflush (fp) != 0)
+	{
+	  printf ("mpz_out_str write error\n");
+	  abort ();
+	}
 
-      rewind (fp);  
+      rewind (fp);
       nread = mpz_inp_str (op2, fp, base);
       if (nread == 0)
-        {
-          if (ferror (fp))
-            printf ("mpz_inp_str stream read error\n");
-          else
-            printf ("mpz_inp_str data conversion error\n");
+	{
+	  if (ferror (fp))
+	    printf ("mpz_inp_str stream read error\n");
+	  else
+	    printf ("mpz_inp_str data conversion error\n");
 	  abort ();
 	}
 
       if (nread != ftell(fp))
-        {
-          printf ("mpz_inp_str nread doesn't match ftell\n");
-          printf ("  nread  %lu\n", (unsigned long) nread);
-          printf ("  ftell  %ld\n", ftell(fp));
-          abort ();
-        }
+	{
+	  printf ("mpz_inp_str nread doesn't match ftell\n");
+	  printf ("  nread  %lu\n", (unsigned long) nread);
+	  printf ("  ftell  %ld\n", ftell(fp));
+	  abort ();
+	}
 
       if (mpz_cmp (op1, op2))
 	{
