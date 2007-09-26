@@ -98,7 +98,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   /* Convert result to printable chars, and move down if there was a leading
      zero.  */
   for (i = 0; i < str_size; i++)
-    res_str[i] = num_to_text[str[i]];
+    res_str[i] = num_to_text[(int) str[i]];
   res_str[str_size] = 0;
 
   TMP_FREE;
