@@ -71,14 +71,14 @@ prime_p (unsigned long n)
 
 /* The formula is as follows, with d < 0.
 
-               w * sqrt(-d)      inf      p
-        h(d) = ------------ *  product --------
-                  2 * pi         p=2   p - (d/p)
-                             
+	       w * sqrt(-d)      inf      p
+	h(d) = ------------ *  product --------
+		  2 * pi         p=2   p - (d/p)
+
 
    (d/p) is the Kronecker symbol and the product is over primes p.  w is 6
    when d=-3, 4 when d=-4, or 2 otherwise.
-  
+
    Calculating the product up to p=infinity would take a long time, so for
    the estimate primes up to 132,000 are used.  Shanks found this giving an
    accuracy of about 1 part in 1000, in normal cases.  */
@@ -142,20 +142,20 @@ main (int argc, char *argv[])
   for (i = 1; i < argc; i++)
     {
       if (strcmp (argv[i], "-p") == 0)
-        {
-          i++;
-          if (i >= argc)
-            {
-              fprintf (stderr, "Missing argument to -p\n");
-              exit (1);
-            }
-          p_limit = atoi (argv[i]);
-        }
+	{
+	  i++;
+	  if (i >= argc)
+	    {
+	      fprintf (stderr, "Missing argument to -p\n");
+	      exit (1);
+	    }
+	  p_limit = atoi (argv[i]);
+	}
       else
-        {
-          qcn_str (argv[i]);
-          saw_number = 1;
-        }
+	{
+	  qcn_str (argv[i]);
+	  saw_number = 1;
+	}
     }
 
   if (! saw_number)
