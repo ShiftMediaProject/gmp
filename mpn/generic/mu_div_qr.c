@@ -163,8 +163,8 @@ mpn_mu_div_qr2 (mp_ptr qp,
 
 #if 1
   /* This alternative inverse computation method gets slightly more accurate
-     results.  FIXME: Temp allocation needs not analysed, itch function not
-     adapted.  */
+     results.  FIXMEs: (1) Temp allocation needs not analysed (2) itch function
+     not adapted (3) mpn_invert scratch needs not met.  */
   ip = scratch;
   tp = scratch + in + 1;
 
@@ -173,7 +173,7 @@ mpn_mu_div_qr2 (mp_ptr qp,
     {
       MPN_COPY (tp + 1, dp, in);
       tp[0] = 1;
-      mpn_invert (ip, tp, in + 1);
+      mpn_invert (ip, tp, in + 1, NULL);
       MPN_COPY_INCR (ip, ip + 1, in);
     }
   else
@@ -183,7 +183,7 @@ mpn_mu_div_qr2 (mp_ptr qp,
 	MPN_ZERO (ip, in);
       else
 	{
-	  mpn_invert (ip, tp, in + 1);
+	  mpn_invert (ip, tp, in + 1, NULL);
 	  MPN_COPY_INCR (ip, ip + 1, in);
 	}
     }
@@ -199,11 +199,11 @@ mpn_mu_div_qr2 (mp_ptr qp,
     {
       tp[in + 1] = 0;
       MPN_COPY (tp + in + 2, dp, in);
-      mpn_invert (tp, tp + in + 1, in + 1);
+      mpn_invert (tp, tp + in + 1, in + 1, NULL);
     }
   else
     {
-      mpn_invert (tp, dp + dn - (in + 1), in + 1);
+      mpn_invert (tp, dp + dn - (in + 1), in + 1, NULL);
     }
   cy = mpn_sub_1 (tp, tp, in + 1, GMP_NUMB_HIGHBIT);
   if (UNLIKELY (cy != 0))

@@ -87,7 +87,7 @@ mpn_mu_div_q (mp_ptr qp,
 	{
 	  MPN_COPY (scratch + 1, dp, in);
 	  scratch[0] = 1;
-	  mpn_invert (ip, scratch, in + 1);
+	  mpn_invert (ip, scratch, in + 1, NULL);
 	  MPN_COPY_INCR (ip, ip + 1, in);
 	}
       else
@@ -97,7 +97,7 @@ mpn_mu_div_q (mp_ptr qp,
 	    MPN_ZERO (ip, in);
 	  else
 	    {
-	      mpn_invert (ip, scratch, in + 1);
+	      mpn_invert (ip, scratch, in + 1, NULL);
 	      MPN_COPY_INCR (ip, ip + 1, in);
 	    }
 	}

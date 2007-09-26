@@ -187,7 +187,10 @@ mpn_divexact (mp_ptr qp,
       if (cy != 0)
 	dip[0] = dip[1] = 0;
       else
-	mpn_invert (dip, xp, 2);
+	{
+	  mp_limb_t scratch[10];	/* FIXME */
+	  mpn_invert (dip, xp, 2, scratch);
+	}
 
       qp[qn0 - 1 + nn1 - qn1] = mpn_sb_divappr_q (qp + qn0 - 1, tp, nn1, xdp, qn1, dip);
     }

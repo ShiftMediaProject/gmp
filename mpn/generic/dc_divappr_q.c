@@ -187,7 +187,10 @@ mpn_dc_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn
   if (cy != 0)
     dip[0] = dip[1] = 0;
   else
-    mpn_invert (dip, xp, 2);
+    {
+      mp_limb_t scratch[10];	/* FIXME */
+      mpn_invert (dip, xp, 2, scratch);
+    }
 
   return mpn_preinv_dc_divappr_q (qp, np, nn, dp, dn, dip);
 }
