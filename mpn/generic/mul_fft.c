@@ -85,7 +85,7 @@ struct nk {
 static struct nk mpn_fft_table2[2][MPN_FFT_TABLE2_SIZE] =
 {
   MUL_FFT_TABLE2,
-  SQR_FFT_TABLE2,
+  SQR_FFT_TABLE2
 };
 
 int
