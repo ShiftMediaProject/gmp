@@ -91,6 +91,7 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define STAT(x)
 #endif
 
+#include <stdlib.h>		/* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 

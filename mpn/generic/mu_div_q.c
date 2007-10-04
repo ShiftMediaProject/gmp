@@ -44,6 +44,7 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   3. The allocations done here should be made from the scratch area.
 */
 
+#include <stdlib.h>		/* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 
