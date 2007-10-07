@@ -24,13 +24,16 @@ dnl  way EPILOGUE_cpu is handled.
 
 define(`LEA',`
 define(`EPILOGUE_cpu',
-`       .section __IMPORT,__pointers,non_lazy_symbol_pointers
+`	L(movl_eip_`'substr($2,1)):
+	movl	(%esp), $2
+	ret_internal
+	.section __IMPORT,__pointers,non_lazy_symbol_pointers
 L($1`'$non_lazy_ptr):
         .indirect_symbol $1
         .long    0
 ')
-        call    L(movl_eip_`'$2)
-        movl    L($1`'$non_lazy_ptr)-.(%$2), %$2
+        call    L(movl_eip_`'substr($2,1))
+        movl    L($1`'$non_lazy_ptr)-.($2), $2
 ')
 
 divert`'dnl
