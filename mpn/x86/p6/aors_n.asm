@@ -19,7 +19,14 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-C P6-13: 2.25 cycles/limb
+C TODO:
+C  * Avoid indexed adressing, it makes us stall on the two-ported register
+C    file.
+
+C                           cycles/limb
+C P6 model 0-8,10-12)           3.17
+C P6 model 9   (Banias)         ?
+C P6 model 13  (Dothan)         2.25
 
 
 define(`rp',	`%edi')
