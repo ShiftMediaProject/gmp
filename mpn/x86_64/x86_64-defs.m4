@@ -87,5 +87,21 @@ define(`ASSERT_counter',incr(ASSERT_counter))')')')
 
 define(ASSERT_counter,1)
 
+define(`LEA',`
+	mov	$1@GOTPCREL(%rip), $2
+')
+
+
+define(`DEF_OBJECT',
+m4_assert_numargs_range(1,2)
+`	RODATA
+	ALIGN(ifelse($#,1,2,$2))
+$1:
+')
+
+define(`END_OBJECT',
+m4_assert_numargs(1)
+`	SIZE(`$1',.-`$1')')
+
 
 divert`'dnl
