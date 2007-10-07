@@ -43,17 +43,17 @@ PROLOGUE(mpn_sub_nc)
 	andl	$3, %r10d		C				4
 	shrq	$2, %rcx		C				4
 	bt	$0, %r8			C cy flag <- carry parameter	5
-	je	.L0			C				2
-	jmp	.Loop			C				2
+	je	L(0)			C				2
+	jmp	L(oop)			C				2
 EPILOGUE()
 PROLOGUE(mpn_sub_n)
 	movq	%rcx, %r10		C				3
 	shrq	$2, %rcx		C				4
-	je	.Lend			C				2
+	je	L(end)			C				2
 	andl	$3, %r10d		C				4
 
 C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
-.Loop:	movq	(%rsi), %rax		C				3
+L(oop):	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
 	leaq	32(%rsi), %rsi		C				4
 
@@ -75,20 +75,20 @@ C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
 
 	leaq	32(%rdx), %rdx		C				4
 	leaq	32(%rdi), %rdi		C				4
-	jne	.Loop			C				2
+	jne	L(oop)			C				2
 
 
 	incl	%r10d			C				3
 	decl	%r10d			C				3
-	jne	.L0			C				2
+	jne	L(0)			C				2
 
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
 	ret				C				1
 
-.Lend:	testl	%eax, %eax		C clear cy			2
-.L0:	decl	%r10d			C				3
-	jne	.L1			C				2
+L(end):	testl	%eax, %eax		C clear cy			2
+L(0):	decl	%r10d			C				3
+	jne	L(1)			C				2
 
 	movq	(%rsi), %rax		C				3
 	sbbq	(%rdx), %rax		C				3
@@ -97,8 +97,8 @@ C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
 	negl	%eax			C				2
 	ret				C				1
 
-.L1:	decl	%r10d			C				3
-	jne	.L2			C				2
+L(1):	decl	%r10d			C				3
+	jne	L(2)			C				2
 
 	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
@@ -110,7 +110,7 @@ C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
 	negl	%eax			C				2
 	ret				C				1
 
-.L2:
+L(2):
 	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
 	sbbq	(%rdx), %rax		C				3

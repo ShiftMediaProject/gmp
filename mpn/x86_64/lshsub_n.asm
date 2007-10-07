@@ -58,10 +58,10 @@ PROLOGUE(mpn_lshsub_n)
 
 	mov	%eax, %r11d
 	and	$3, %r11d
-	je	.L4
+	je	L(4)
 	sub	$1, %r11d
 
-.Loopette:
+L(oopette):
 	add	%ebx, %ebx		C restore carry flag
 	mov	0(up), %r8
 	lea	8(up), up
@@ -78,14 +78,14 @@ PROLOGUE(mpn_lshsub_n)
 	mov	%r8, 0(rp)
 	lea	8(rp), rp
 	sub	$1, %r11d
-	jnc	.Loopette
+	jnc	L(oopette)
 
-.L4:
+L(4):
 	sub	$4, %rax
-	jc	.Lend
+	jc	L(end)
 
 	ALIGN(16)
-.Loop:
+L(oop):
 	add	%ebx, %ebx		C restore carry flag
 
 	mov	0(up), %r8
@@ -135,8 +135,8 @@ PROLOGUE(mpn_lshsub_n)
 	lea	32(rp), rp
 
 	sub	$4, %rax
-	jnc	.Loop
-.Lend:
+	jnc	L(oop)
+L(end):
 	neg	%ebx
 	shl	%cl, %rbx
 	adc	%r15, %rbx

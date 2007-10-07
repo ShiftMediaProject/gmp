@@ -36,8 +36,8 @@ define(`n',	`%rcx')
 define(`invm',	`%r8')
 
 ifdef(`PIC',
-  `define(`CALL',`call	$1@PLT')',
-  `define(`CALL',`call	$1')')
+  `define(`CALL',`call	'GSYM_PREFIX`$1@PLT')',
+  `define(`CALL',`call	'GSYM_PREFIX'$1')')
 
 define(`mp',`%rbx')
 
@@ -54,14 +54,14 @@ PROLOGUE(mpn_redc_1)
 	negq	%rbp			C rbp = -n
 	movl	%ecx, %eax
 	andl	$3, %eax
-	je	.Lb00
+	je	L(b00)
 	cmpl	$1, %eax
-	je	.Lb01
+	je	L(b01)
 	cmpl	$2, %eax
-	je	.Lb10
+	je	L(b10)
 	nop
 
-.Lb11:	movq	(up,%rbp,8), %r12	C load up[0]
+L(b11):	movq	(up,%rbp,8), %r12	C load up[0]
 	imulq	invm, %r12
 	leaq	6(%rbp), %r11		C inner-loop count
 
@@ -88,10 +88,10 @@ PROLOGUE(mpn_redc_1)
 	adcq	%rdx, %r9
 
 	testq	%r11, %r11
-	jns	.Lc11			C FIXME: Special exit for un=vn=1?
+	jns	L(c11)			C FIXME: Special exit for un=vn=1?
 
 	ALIGN(8)
-.Li11:	movq	-24(mp,%r11,8), %rax
+L(i11):	movq	-24(mp,%r11,8), %rax
 	mulq	%r12
 	addq	-24(up,%r11,8), %rax
 	adcq	%r10, %rdx
@@ -124,17 +124,17 @@ PROLOGUE(mpn_redc_1)
 	movq	%rax, (up,%r11,8)
 	adcq	%rdx, %r9
 	addq	$4, %r11
-	jae	.Li11
+	jae	L(i11)
 
-.Lc11:	movq	%r9, (up,%rbp,8)
+L(c11):	movq	%r9, (up,%rbp,8)
 	addq	$8, up
 	decq	n
-	jne	.Lb11
-	jmp	.Lcommon
+	jne	L(b11)
+	jmp	L(common)
 
 
 	ALIGN(8)
-.Lb10:	movq	(up,%rbp,8), %r12	C load up[0]
+L(b10):	movq	(up,%rbp,8), %r12	C load up[0]
 	imulq	invm, %r12
 	leaq	5(%rbp), %r11		C inner-loop count
 
@@ -153,10 +153,10 @@ PROLOGUE(mpn_redc_1)
 	adcq	%rdx, %r9
 
 	testq	%r11, %r11
-	jns	.Lc10			C FIXME: Special exit for un=vn=1?
+	jns	L(c10)			C FIXME: Special exit for un=vn=1?
 
 	ALIGN(8)
-.Li10:	movq	-24(mp,%r11,8), %rax
+L(i10):	movq	-24(mp,%r11,8), %rax
 	mulq	%r12
 	addq	-24(up,%r11,8), %rax
 	adcq	%r10, %rdx
@@ -189,23 +189,23 @@ PROLOGUE(mpn_redc_1)
 	movq	%rax, (up,%r11,8)
 	adcq	%rdx, %r9
 	addq	$4, %r11
-	jae	.Li10
+	jae	L(i10)
 
-.Lc10:	movq	%r9, (up,%rbp,8)
+L(c10):	movq	%r9, (up,%rbp,8)
 	addq	$8, up
 	decq	n
-	jne	.Lb10
-	jmp	.Lcommon
+	jne	L(b10)
+	jmp	L(common)
 
 
 	ALIGN(8)
-.Lb00:	movq	(up,%rbp,8), %r12	C load up[0]
+L(b00):	movq	(up,%rbp,8), %r12	C load up[0]
 	imulq	invm, %r12
 	leaq	3(%rbp), %r11		C inner-loop count
 	xorl	%r9d, %r9d		C clear carry limb
 
 	ALIGN(8)
-.Li00:	movq	-24(mp,%r11,8), %rax
+L(i00):	movq	-24(mp,%r11,8), %rax
 	mulq	%r12
 	addq	-24(up,%r11,8), %rax
 	adcq	%r10, %rdx
@@ -238,17 +238,17 @@ PROLOGUE(mpn_redc_1)
 	movq	%rax, (up,%r11,8)
 	adcq	%rdx, %r9
 	addq	$4, %r11
-	jae	.Li00
+	jae	L(i00)
 
-.Lc00:	movq	%r9, (up,%rbp,8)
+L(c00):	movq	%r9, (up,%rbp,8)
 	addq	$8, up
 	decq	n
-	jne	.Lb00
-	jmp	.Lcommon
+	jne	L(b00)
+	jmp	L(common)
 
 
 	ALIGN(8)
-.Lb01:	movq	(up,%rbp,8), %r12	C load up[0]
+L(b01):	movq	(up,%rbp,8), %r12	C load up[0]
 	imulq	invm, %r12
 	leaq	4(%rbp), %r11		C inner-loop count
 
@@ -259,16 +259,16 @@ PROLOGUE(mpn_redc_1)
 	movq	%rdx, %r9
 
 	testq	%r11, %r11
-	js	.Li01
+	js	L(i01)
 
 	addq	(up), %rdx
 	jnc	1f
 	subq	-8(mp), %rdx
 1:	movq	%rdx, (rp)
-	jmp	.Lret
+	jmp	L(ret)
 
 	ALIGN(8)
-.Li01:	movq	-24(mp,%r11,8), %rax
+L(i01):	movq	-24(mp,%r11,8), %rax
 	mulq	%r12
 	addq	-24(up,%r11,8), %rax
 	adcq	%r10, %rdx
@@ -301,14 +301,14 @@ PROLOGUE(mpn_redc_1)
 	movq	%rax, (up,%r11,8)
 	adcq	%rdx, %r9
 	addq	$4, %r11
-	jae	.Li01
+	jae	L(i01)
 
-.Lc01:	movq	%r9, (up,%rbp,8)
+L(c01):	movq	%r9, (up,%rbp,8)
 	addq	$8, up
 	decq	n
-	jne	.Lb01
+	jne	L(b01)
 
-.Lcommon:
+L(common):
 	leaq	(mp,%rbp,8), mp		C restore entry mp
 
 C   cy = mpn_add_n (rp, up, up - n, n);
@@ -320,7 +320,7 @@ C		    rdi rsi  rdx    rcx
 	movq	rp, %rdi
 	CALL(`	mpn_add_n')
 	testl	%eax, %eax
-	jz	.Lret
+	jz	L(ret)
 
 C     mpn_sub_n (rp, rp, mp, n);
 C		 rdi rsi rdx rcx
@@ -330,7 +330,7 @@ C		 rdi rsi rdx rcx
 	movq	(%rsp), %rcx		C pass entry n
 	CALL(`	mpn_sub_n')
 
-.Lret:	popq	n			C just increment rsp
+L(ret):	popq	n			C just increment rsp
 	popq	%r12
 	popq	%rbx
 	popq	%rbp

@@ -52,10 +52,10 @@ PROLOGUE(mpn_rshift)
 	negq	n
 
 	andl	$3, %r8d
-	je	.Lrolx			C jump for n = 3, 7, 11, ...
+	je	L(rolx)			C jump for n = 3, 7, 11, ...
 
 	decl	%r8d
-	jne	.L1
+	jne	L(1)
 C	n = 4, 8, 12, ...
 	movq	8(up,n,8), %r10
 	shrq	%cl, %r10
@@ -65,10 +65,10 @@ C	n = 4, 8, 12, ...
 	orq	%r8, %r10
 	movq	%r10, 8(rp,n,8)
 	incq	n
-	jmp	.Lroll
+	jmp	L(roll)
 
-.L1:	decl	%r8d
-	je	.L1x			C jump for n = 1, 5, 9, 13, ...
+L(1):	decl	%r8d
+	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
 	movq	8(up,n,8), %r10
 	shrq	%cl, %r10
@@ -79,9 +79,9 @@ C	n = 2, 6, 10, 16, ...
 	movq	%r10, 8(rp,n,8)
 	incq	n
 	negl	%ecx			C put lsh count in cl
-.L1x:
+L(1x):
 	cmpq	$-1, n
-	je	.Last
+	je	L(ast)
 	movq	8(up,n,8), %r10
 	shrq	%cl, %r10
 	movq	16(up,n,8), %r11
@@ -97,16 +97,16 @@ C	n = 2, 6, 10, 16, ...
 	movq	%r11, 16(rp,n,8)
 	addq	$2, n
 
-.Lroll:	negl	%ecx			C put lsh count in cl
-.Lrolx:	movq	8(up,n,8), %r10
+L(roll):	negl	%ecx			C put lsh count in cl
+L(rolx):	movq	8(up,n,8), %r10
 	shrq	%cl, %r10
 	movq	16(up,n,8), %r11
 	shrq	%cl, %r11
 
 	addq	$4, n			C				      4
-	jb	.Lend			C				      2
+	jb	L(end)			C				      2
 	ALIGN(16)
-.Loop:
+L(oop):
 	C finish stuff from lsh block
 	negl	%ecx			C put rsh count in cl
 	movq	-16(up,n,8), %r8
@@ -140,8 +140,8 @@ C	n = 2, 6, 10, 16, ...
 	shrq	%cl, %r11
 
 	addq	$4, n
-	jae	.Loop			C				      2
-.Lend:
+	jae	L(oop)			C				      2
+L(end):
 	negl	%ecx			C put rsh count in cl
 	movq	-16(up,n,8), %r8
 	shlq	%cl, %r8
@@ -153,7 +153,7 @@ C	n = 2, 6, 10, 16, ...
 	movq	%r11, -16(rp,n,8)
 
 	negl	%ecx			C put lsh count in cl
-.Last:	movq	(up), %r10
+L(ast):	movq	(up), %r10
 	shrq	%cl, %r10
 	movq	%r10, (rp)
 	ret

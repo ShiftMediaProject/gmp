@@ -48,9 +48,9 @@ PROLOGUE(mpn_mul_1c)
 	leaq	(%rdi,%rdx,8), %rdi	C				      4
 	negq	%r11			C				      3
 	addq	$3, %r11		C				      4
-	jb	.Ltail			C jump for n = 1, 2, 3		      2
+	jb	L(tail)			C jump for n = 1, 2, 3		      2
 
-.Loop:	movq	-24(%rsi,%r11,8), %rax	C				      5
+L(oop):	movq	-24(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
 	xorq	%r9, %r9		C				      3
 	addq	%rax, %r8		C				      3
@@ -81,42 +81,42 @@ PROLOGUE(mpn_mul_1c)
 	movq	%r9, (%rdi,%r11,8)	C				      4
 
 	addq	$4, %r11		C				      4
-	jae	.Loop			C				      2
+	jae	L(oop)			C				      2
 
 	cmpl	$3, %r11d		C				      4
-	jne	.Ltail			C				      2
+	jne	L(tail)			C				      2
 
 	movq	%r8, %rax		C				      3
 	ret				C				      1
 
-.Ltail:	movq	-24(%rsi,%r11,8), %rax	C				      5
+L(tail):	movq	-24(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
 	xorq	%r9, %r9		C				      3
 	addq	%rax, %r8		C				      3
 	adcq	%rdx, %r9		C				      3
 
 	cmpl	$2, %r11d		C				      4
-	jne	.L1			C				      2
+	jne	L(1)			C				      2
 
 	movq	%r8, -8(%rdi)		C				      4
 	movq	%r9, %rax		C				      3
 	ret				C				      1
 
-.L1:	movq	-16(%rsi,%r11,8), %rax	C				      5
+L(1):	movq	-16(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
 	xorq	%r10, %r10		C				      3
 	addq	%rax, %r9		C				      3
 	adcq	%rdx, %r10		C				      3
 
 	cmpl	$1, %r11d		C				      4
-	jne	.L2			C				      2
+	jne	L(2)			C				      2
 
 	movq	%r8, -16(%rdi)		C				      4
 	movq	%r9, -8(%rdi)		C				      4
 	movq	%r10, %rax		C				      3
 	ret				C				      1
 
-.L2:	movq	-8(%rsi), %rax		C				      4
+L(2):	movq	-8(%rsi), %rax		C				      4
 	mulq	%rcx			C				      3
 	xorq	%r11, %r11		C				      3
 	addq	%rax, %r10		C				      3

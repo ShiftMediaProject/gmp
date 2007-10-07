@@ -54,10 +54,10 @@ PROLOGUE(mpn_rsh1add_n)
 	andl	$3, %r11d
 
 	cmpl	$1, %r11d
-	je	.Ldo			C jump if n = 1 5 9 ...
+	je	L(do)			C jump if n = 1 5 9 ...
 
-.Ln1:	cmpl	$2, %r11d
-	jne	.Ln2			C jump unless n = 2 6 10 ...
+L(n1):	cmpl	$2, %r11d
+	jne	L(n2)			C jump unless n = 2 6 10 ...
 	addq	%rbx, %rbx		C rotate carry limb, restore acy
 	movq	8(up), %r10
 	adcq	8(vp), %r10
@@ -67,10 +67,10 @@ PROLOGUE(mpn_rsh1add_n)
 	rcrq	%r10
 	rcrq	%rbx
 	movq	%rbx, -8(rp)
-	jmp	.Lcj1
+	jmp	L(cj1)
 
-.Ln2:	cmpl	$3, %r11d
-	jne	.Ln3			C jump unless n = 3 7 11 ...
+L(n2):	cmpl	$3, %r11d
+	jne	L(n3)			C jump unless n = 3 7 11 ...
 	addq	%rbx, %rbx		C rotate carry limb, restore acy
 	movq	8(up), %r9
 	movq	16(up), %r10
@@ -83,9 +83,9 @@ PROLOGUE(mpn_rsh1add_n)
 	rcrq	%r9
 	rcrq	%rbx
 	movq	%rbx, -16(rp)
-	jmp	.Lcj2
+	jmp	L(cj2)
 
-.Ln3:	decq	n			C come here for n = 4 8 12 ...
+L(n3):	decq	n			C come here for n = 4 8 12 ...
 	addq	%rbx, %rbx		C rotate carry limb, restore acy
 	movq	8(up), %r8
 	movq	16(up), %r9
@@ -102,14 +102,14 @@ PROLOGUE(mpn_rsh1add_n)
 	rcrq	%rbx
 	movq	%rbx, -24(rp)
 	movq	%r8, -16(rp)
-.Lcj2:	movq	%r9, -8(rp)
-.Lcj1:	movq	%r10, %rbx
+L(cj2):	movq	%r9, -8(rp)
+L(cj1):	movq	%r10, %rbx
 
-.Ldo:
+L(do):
 	shrq	$2, n			C				4
-	je	.Lend			C				2
+	je	L(end)			C				2
 	ALIGN(16)
-.Loop:	addq	%rbx, %rbx		C rotate carry limb, restore acy
+L(oop):	addq	%rbx, %rbx		C rotate carry limb, restore acy
 
 	movq	8(up), %r8
 	movq	16(up), %r9
@@ -137,9 +137,9 @@ PROLOGUE(mpn_rsh1add_n)
 
 	leaq	32(rp), rp
 	decq	n
-	jne	.Loop
+	jne	L(oop)
 
-.Lend:	movq	%rbx, (rp)
+L(end):	movq	%rbx, (rp)
 	popq	%rbx
 	ret
 EPILOGUE()

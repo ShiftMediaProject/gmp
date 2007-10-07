@@ -47,16 +47,16 @@ PROLOGUE(mpn_divexact_by3c)
 	imulq	%r9, %rax
 
 	incq	n
-	jz,pn	.Lendo
+	jz,pn	L(endo)
 
 	.align 16
-.Loop:	movq	(up,n,8), %rbx
+L(oop):	movq	(up,n,8), %rbx
 	imulq	%r9, %rbx
 	addq	%r8, %rax
 	cmpq	%rcx, -8(up,n,8)		C highly unlikely carry!!!
 	movq	%rax, (rp,n,8)
-	jc,pn	.Lc0
-.Lb0:	xor	%r8, %r8
+	jc,pn	L(c0)
+L(b0):	xor	%r8, %r8
 	cmpq	%rax, %r10
 	cmovc	%r10, %r8
 	setc	%cl
@@ -65,15 +65,15 @@ PROLOGUE(mpn_divexact_by3c)
 	adcq	$0, %rcx
 
 	incq	n
-	jz,pn	.Lende
+	jz,pn	L(ende)
 
 	movq	(up,n,8), %rax
 	imulq	%r9, %rax
 	addq	%r8, %rbx
 	cmpq	%rcx, -8(up,n,8)
 	movq	%rbx, (rp,n,8)
-	jc,pn	.Lc1
-.Lb1:	xor	%r8, %r8
+	jc,pn	L(c1)
+L(b1):	xor	%r8, %r8
 	cmpq	%rbx, %r10
 	cmovc	%r10, %r8
 	setc	%cl
@@ -82,13 +82,13 @@ PROLOGUE(mpn_divexact_by3c)
 	adcq	$0, %rcx
 
 	incq	n
-	jnz,pt	.Loop
+	jnz,pt	L(oop)
 
-.Lendo:	addq	%r8, %rax
+L(endo):	addq	%r8, %rax
 	cmpq	%rcx, -8(up,n,8)
 	movq	%rax, (rp,n,8)
-	jc,pn	.Lc2
-.Lb2:	xor	%r8, %r8
+	jc,pn	L(c2)
+L(b2):	xor	%r8, %r8
 	cmpq	%rax, %r10
 	cmovc	%r10, %r8
 	setc	%cl
@@ -99,11 +99,11 @@ PROLOGUE(mpn_divexact_by3c)
 	pop	%rbx
 	ret
 
-.Lende:	addq	%r8, %rbx
+L(ende):	addq	%r8, %rbx
 	cmpq	%rcx, -8(up,n,8)
 	movq	%rbx, (rp,n,8)
-	jc,pn	.Lc3
-.Lb3:	xor	%r8, %r8
+	jc,pn	L(c3)
+L(b3):	xor	%r8, %r8
 	cmpq	%rbx, %r10
 	cmovc	%r10, %r8
 	setc	%cl
@@ -114,12 +114,12 @@ PROLOGUE(mpn_divexact_by3c)
 	pop	%rbx
 	ret
 
-.Lc0:	incq	%rax
-	jmp .Lb0
-.Lc1:	incq	%rbx
-	jmp .Lb1
-.Lc2:	incq	%rax
-	jmp .Lb2
-.Lc3:	incq	%rbx
-	jmp .Lb3
+L(c0):	incq	%rax
+	jmp L(b0)
+L(c1):	incq	%rbx
+	jmp L(b1)
+L(c2):	incq	%rax
+	jmp L(b2)
+L(c3):	incq	%rbx
+	jmp L(b3)
 EPILOGUE()

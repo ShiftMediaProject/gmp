@@ -60,10 +60,10 @@ define(`n',	`%r11')
 	mov	(up,n,8), %r12
 	mov	%r12, %rax
 	add	$3, n
-	jns	.Lend			C <= 4 iterations
+	jns	L(end)			C <= 4 iterations
 
 	ALIGN(32)
-.Loop:	mul	vl
+L(oop):	mul	vl
 	add	%rax, %rbx
 	mov	%r12, %rax
 	adc	%rdx, %rcx
@@ -103,7 +103,7 @@ define(`n',	`%r11')
 	adc	%rdx, %rcx
 
 	add	$3, n
-	jns	.Lend
+	jns	L(end)
 
 	mul	vl
 	add	%rax, %rbx
@@ -145,9 +145,9 @@ define(`n',	`%r11')
 	adc	%rdx, %rcx
 
 	add	$3, n
-	js	.Loop
+	js	L(oop)
 
-.Lend:	jne	.Ln3
+L(end):	jne	L(n3)
 	mul	vl
 	add	%rax, %rbx
 	mov	%r12, %rax
@@ -183,10 +183,10 @@ define(`n',	`%r11')
 	adc	%rdx, %rcx
 	mov	%rbx, (rp)
 	mov	%rcx, %rax
-	jmp	.Lret
+	jmp	L(ret)
 
-.Ln3:	cmp	$1, n
-	jne	.Ln2
+L(n3):	cmp	$1, n
+	jne	L(n2)
 	mul	vl
 	add	%rax, %rbx
 	mov	%r12, %rax
@@ -210,9 +210,9 @@ define(`n',	`%r11')
 	adc	%rdx, %rbx
 	mov	%rbp, (rp)
 	mov	%rbx, %rax
-	jmp	.Lret
+	jmp	L(ret)
 
-.Ln2:	mul	vl
+L(n2):	mul	vl
 	add	%rax, %rbx
 	mov	%r12, %rax
 	adc	%rdx, %rcx
@@ -224,7 +224,7 @@ define(`n',	`%r11')
 	mov	%rcx, (rp)
 	mov	%rbp, %rax
 
-.Lret:	pop	%r12
+L(ret):	pop	%r12
 	pop	%rbp
 	pop	%rbx
 	ret

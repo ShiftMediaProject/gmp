@@ -41,9 +41,9 @@ ASM_START()
 PROLOGUE(mpn_copyi)
 	leaq	-8(rp), rp
 	subq	$4, n
-	jc	.Lend
+	jc	L(end)
 	ALIGN(16)
-.Loop:	movq	(up), %r8
+L(oop):	movq	(up), %r8
 	movq	8(up), %r9
 	leaq	32(rp), rp
 	movq	16(up), %r10
@@ -54,9 +54,9 @@ PROLOGUE(mpn_copyi)
 	subq	$4, n
 	movq	%r10, -8(rp)
 	movq	%r11, (rp)
-	jnc	.Loop
+	jnc	L(oop)
 
-.Lend:	shrl	%edx			C edx = lowpart(n)
+L(end):	shrl	%edx			C edx = lowpart(n)
 	jnc	1f
 	movq	(up), %r8
 	movq	%r8, 8(rp)

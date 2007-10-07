@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
 
-dnl  Copyright 2003, 2005, 2006 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006, 2007 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -55,12 +55,12 @@ PROLOGUE(mpn_addlsh1_n)
 	negq	n
 	xorl	%ebp, %ebp
 	andl	$3, %eax
-	je	.Lb00
+	je	L(b00)
 	cmpl	$2, %eax
-	jc	.Lb01
-	je	.Lb10
+	jc	L(b01)
+	je	L(b10)
 
-.Lb11:	addq	%r8, %r8
+L(b11):	addq	%r8, %r8
 	movq	8(vp,n,8), %r9
 	adcq	%r9, %r9
 	movq	16(vp,n,8), %r10
@@ -74,9 +74,9 @@ PROLOGUE(mpn_addlsh1_n)
 	movq	%r10, 16(rp,n,8)
 	sbbl	%ebp, %ebp		C save acy
 	addq	$3, n
-	jmp	.LL
+	jmp	L(ent)
 
-.Lb10:	addq	%r8, %r8
+L(b10):	addq	%r8, %r8
 	movq	8(vp,n,8), %r9
 	adcq	%r9, %r9
 	sbbl	%eax, %eax		C save scy
@@ -86,21 +86,21 @@ PROLOGUE(mpn_addlsh1_n)
 	movq	%r9, 8(rp,n,8)
 	sbbl	%ebp, %ebp		C save acy
 	addq	$2, n
-	jmp	.LL
+	jmp	L(ent)
 
-.Lb01:	addq	%r8, %r8
+L(b01):	addq	%r8, %r8
 	sbbl	%eax, %eax		C save scy
 	addq	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	sbbl	%ebp, %ebp		C save acy
 	incq	n
-.LL:	jns,pn	.Lend
+L(ent):	jns,pn	L(end)
 
 	ALIGN(16)
-.Loop:	addl	%eax, %eax		C restore scy
+L(oop):	addl	%eax, %eax		C restore scy
 
 	movq	(vp,n,8), %r8
-.Lb00:	adcq	%r8, %r8
+L(b00):	adcq	%r8, %r8
 	movq	8(vp,n,8), %r9
 	adcq	%r9, %r9
 	movq	16(vp,n,8), %r10
@@ -123,9 +123,9 @@ PROLOGUE(mpn_addlsh1_n)
 
 	sbbl	%ebp, %ebp		C save acy
 	addq	$4, n
-	js,pt	.Loop
+	js,pt	L(oop)
 
-.Lend:	addl	%ebp, %eax
+L(end):	addl	%ebp, %eax
 	negl	%eax
 
 	popq	%rbp

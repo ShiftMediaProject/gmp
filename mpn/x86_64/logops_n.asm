@@ -81,38 +81,38 @@ PROLOGUE(func)
 	leaq	(rp,n,8), rp
 	negq	n
 	andl	$3, %eax
-	je	.Lb00
+	je	L(b00)
 	cmpl	$2, %eax
-	jc	.Lb01
-	je	.Lb10
+	jc	L(b01)
+	je	L(b10)
 
-.Lb11:	LOGOP	(up,n,8), %r8
+L(b11):	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	decq	n
-	jmp	.Le11
-.Lb10:	addq	$-2, n
-	jmp	.Le10
-.Lb01:	LOGOP	(up,n,8), %r8
+	jmp	L(e11)
+L(b10):	addq	$-2, n
+	jmp	L(e10)
+L(b01):	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	incq	n
-	jz	.Lret
+	jz	L(ret)
 
-.Loop:	movq	(vp,n,8), %r8
-.Lb00:	movq	8(vp,n,8), %r9
+L(oop):	movq	(vp,n,8), %r8
+L(b00):	movq	8(vp,n,8), %r9
 	LOGOP	(up,n,8), %r8
 	LOGOP	8(up,n,8), %r9
 	nop
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-.Le11:	movq	16(vp,n,8), %r8
-.Le10:	movq	24(vp,n,8), %r9
+L(e11):	movq	16(vp,n,8), %r8
+L(e10):	movq	24(vp,n,8), %r9
 	LOGOP	16(up,n,8), %r8
 	LOGOP	24(up,n,8), %r9
 	movq	%r8, 16(rp,n,8)
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
-	jnc	.Loop
-.Lret:	ret
+	jnc	L(oop)
+L(ret):	ret
 EPILOGUE()
 ')
 
@@ -128,42 +128,42 @@ PROLOGUE(func)
 	leaq	(rp,n,8), rp
 	negq	n
 	andl	$3, %eax
-	je	.Lb00
+	je	L(b00)
 	cmpl	$2, %eax
-	jc	.Lb01
-	je	.Lb10
+	jc	L(b01)
+	je	L(b10)
 
-.Lb11:	LOGOP	(up,n,8), %r8
+L(b11):	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	decq	n
-	jmp	.Le11
-.Lb10:	addq	$-2, n
-	jmp	.Le10
+	jmp	L(e11)
+L(b10):	addq	$-2, n
+	jmp	L(e10)
 	.byte	0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
-.Lb01:	LOGOP	(up,n,8), %r8
+L(b01):	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
 	incq	n
-	jz	.Lret
+	jz	L(ret)
 
-.Loop:	movq	(vp,n,8), %r8
+L(oop):	movq	(vp,n,8), %r8
 	notq	%r8
-.Lb00:	movq	8(vp,n,8), %r9
+L(b00):	movq	8(vp,n,8), %r9
 	notq	%r9
 	LOGOP	(up,n,8), %r8
 	LOGOP	8(up,n,8), %r9
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-.Le11:	movq	16(vp,n,8), %r8
+L(e11):	movq	16(vp,n,8), %r8
 	notq	%r8
-.Le10:	movq	24(vp,n,8), %r9
+L(e10):	movq	24(vp,n,8), %r9
 	notq	%r9
 	LOGOP	16(up,n,8), %r8
 	LOGOP	24(up,n,8), %r9
 	movq	%r8, 16(rp,n,8)
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
-	jnc	.Loop
-.Lret:	ret
+	jnc	L(oop)
+L(ret):	ret
 EPILOGUE()
 ')
 
@@ -178,35 +178,35 @@ PROLOGUE(func)
 	leaq	(rp,n,8), rp
 	negq	n
 	andl	$3, %eax
-	je	.Lb00
+	je	L(b00)
 	cmpl	$2, %eax
-	jc	.Lb01
-	je	.Lb10
+	jc	L(b01)
+	je	L(b10)
 
-.Lb11:	LOGOP	(up,n,8), %r8
+L(b11):	LOGOP	(up,n,8), %r8
 	notq	%r8
 	movq	%r8, (rp,n,8)
 	decq	n
-	jmp	.Le11
-.Lb10:	addq	$-2, n
-	jmp	.Le10
+	jmp	L(e11)
+L(b10):	addq	$-2, n
+	jmp	L(e10)
 	.byte	0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
-.Lb01:	LOGOP	(up,n,8), %r8
+L(b01):	LOGOP	(up,n,8), %r8
 	notq	%r8
 	movq	%r8, (rp,n,8)
 	incq	n
-	jz	.Lret
+	jz	L(ret)
 
-.Loop:	movq	(vp,n,8), %r8
-.Lb00:	movq	8(vp,n,8), %r9
+L(oop):	movq	(vp,n,8), %r8
+L(b00):	movq	8(vp,n,8), %r9
 	LOGOP	(up,n,8), %r8
 	notq	%r8
 	LOGOP	8(up,n,8), %r9
 	notq	%r9
 	movq	%r8, (rp,n,8)
 	movq	%r9, 8(rp,n,8)
-.Le11:	movq	16(vp,n,8), %r8
-.Le10:	movq	24(vp,n,8), %r9
+L(e11):	movq	16(vp,n,8), %r8
+L(e10):	movq	24(vp,n,8), %r9
 	LOGOP	16(up,n,8), %r8
 	notq	%r8
 	LOGOP	24(up,n,8), %r9
@@ -214,7 +214,7 @@ PROLOGUE(func)
 	movq	%r8, 16(rp,n,8)
 	movq	%r9, 24(rp,n,8)
 	addq	$4, n
-	jnc	.Loop
-.Lret:	ret
+	jnc	L(oop)
+L(ret):	ret
 EPILOGUE()
 ')

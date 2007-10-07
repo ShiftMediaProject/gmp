@@ -49,10 +49,10 @@ PROLOGUE(mpn_rshift)
 	shl	%cl, %rax		C function return value
 
 	and	$3, %r8d
-	je	.Lrolx			C jump for n = 3, 7, 11, ...
+	je	L(rolx)			C jump for n = 3, 7, 11, ...
 
 	dec	%r8d
-	jne	.L1
+	jne	L(1)
 C	n = 4, 8, 12, ...
 	movq	8(up,n,8), %mm2
 	psrlq	%mm4, %mm2
@@ -61,10 +61,10 @@ C	n = 4, 8, 12, ...
 	por	%mm0, %mm2
 	movq	%mm2, 8(rp,n,8)
 	inc	n
-	jmp	.Lroll
+	jmp	L(roll)
 
-.L1:	dec	%r8d
-	je	.L1x			C jump for n = 1, 5, 9, 13, ...
+L(1):	dec	%r8d
+	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
 	movq	8(up,n,8), %mm2
 	psrlq	%mm4, %mm2
@@ -73,9 +73,9 @@ C	n = 2, 6, 10, 16, ...
 	por	%mm0, %mm2
 	movq	%mm2, 8(rp,n,8)
 	inc	n
-.L1x:
+L(1x):
 	cmp	$-1, n
-	je	.Last
+	je	L(ast)
 	movq	8(up,n,8), %mm2
 	psrlq	%mm4, %mm2
 	movq	16(up,n,8), %mm3
@@ -90,16 +90,16 @@ C	n = 2, 6, 10, 16, ...
 	movq	%mm3, 16(rp,n,8)
 	add	$2, n
 
-.Lroll:
-.Lrolx:	movq	8(up,n,8), %mm2
+L(roll):
+L(rolx):	movq	8(up,n,8), %mm2
 	psrlq	%mm4, %mm2
 	movq	16(up,n,8), %mm3
 	psrlq	%mm4, %mm3
 
 	add	$4, n			C				      4
-	jb	.Lend			C				      2
+	jb	L(end)			C				      2
 	ALIGN(32)
-.Loop:
+L(oop):
 	C finish stuff from lsh block
 	movq	-16(up,n,8), %mm0
 	movq	-8(up,n,8), %mm1
@@ -131,8 +131,8 @@ C	n = 2, 6, 10, 16, ...
 	psrlq	%mm4, %mm2
 	psrlq	%mm4, %mm3
 
-	jae	.Loop			C				      2
-.Lend:
+	jae	L(oop)			C				      2
+L(end):
 	movq	-16(up,n,8), %mm0
 	psllq	%mm5, %mm0
 	por	%mm0, %mm2
@@ -142,7 +142,7 @@ C	n = 2, 6, 10, 16, ...
 	movq	%mm2, -24(rp,n,8)
 	movq	%mm3, -16(rp,n,8)
 
-.Last:	movq	(up), %mm2
+L(ast):	movq	(up), %mm2
 	psrlq	%mm4, %mm2
 	movq	%mm2, (rp)
 	emms

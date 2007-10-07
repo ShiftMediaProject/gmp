@@ -52,7 +52,7 @@ define(`n',	`%r11')
 	mul	vl			C ...and start first multiply
 
 	cmp	$1, n			C need special handling for n = 1
-	je	.Ln1
+	je	L(n1)
 
 	lea	-8(up,n,8), up		C point at end of area
 	lea	(rp,n,8), rp		C point at end of area
@@ -64,15 +64,15 @@ define(`n',	`%r11')
 	mul	vl
 
 	add	$5, n
-	jns	.Lend			C jump for n = 2, 3, 4, 5
-	jmp	.Loop
-.Ln1:	ADDSUB	%rax, (rp)
+	jns	L(end)			C jump for n = 2, 3, 4, 5
+	jmp	L(oop)
+L(n1):	ADDSUB	%rax, (rp)
 	adc	$0, %rdx
 	mov	%rdx, %rax
 	ret
 
 	ALIGN(16)
-.Loop:	ADDSUB	%r8 , -40(rp,n,8)
+L(oop):	ADDSUB	%r8 , -40(rp,n,8)
 	mov	$0  , %r8d
 	adc	%rax, %r9
 	mov	-16(up,n,8), %rax
@@ -103,10 +103,10 @@ define(`n',	`%r11')
 	mul	vl
 
 	add	$4, n
-	js	.Loop
+	js	L(oop)
 
-.Lend:	cmp	$3, n
-	je	.Lb11
+L(end):	cmp	$3, n
+	je	L(b11)
 
 	ADDSUB	%r8 , -40(rp,n,8)
 	mov	$0  , %r8d
@@ -115,7 +115,7 @@ define(`n',	`%r11')
 	adc	%rdx, %r8
 	mul	vl
 	cmp	$2, n
-	je	.Lb00
+	je	L(b00)
 
 	ADDSUB	%r9 , -32(rp,n,8)
 	mov	$0  , %r9d
@@ -124,7 +124,7 @@ define(`n',	`%r11')
 	adc	%rdx, %r9
 	mul	vl
 	cmp	$1, n
-	je	.Lb01
+	je	L(b01)
 
 	ADDSUB	%r8 , -24(rp,n,8)
 	mov	$0  , %r8d
@@ -140,7 +140,7 @@ define(`n',	`%r11')
 	adc	$0  , %rax
 	ret
 
-.Lb01:	ADDSUB	%r8 , -24(rp,n,8)
+L(b01):	ADDSUB	%r8 , -24(rp,n,8)
 	adc	%rax, %r9
 	mov	$0  , %eax
 	adc	%rdx, %rax
@@ -148,7 +148,7 @@ define(`n',	`%r11')
 	adc	$0  , %rax
 	ret
 
-.Lb00:	ADDSUB	%r9 , -32(rp,n,8)
+L(b00):	ADDSUB	%r9 , -32(rp,n,8)
 	adc	%rax, %r8
 	mov	$0  , %eax
 	adc	%rdx, %rax
@@ -156,7 +156,7 @@ define(`n',	`%r11')
 	adc	$0  , %rax
 	ret
 
-.Lb11:	ADDSUB	%r8 , -40(rp,n,8)
+L(b11):	ADDSUB	%r8 , -40(rp,n,8)
 	adc	%rax, %r9
 	mov	$0  , %eax
 	adc	%rdx, %rax

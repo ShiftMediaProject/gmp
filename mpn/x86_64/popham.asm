@@ -81,7 +81,7 @@ PROLOGUE(func)
 	xorl	%eax, %eax
 
 	btq	$0, n
-	jnc	.Loop
+	jnc	L(oop)
 
 	movq	(up,n,8), %r8
  HAM(`	xorq	(vp,n,8), %r8	')
@@ -108,10 +108,10 @@ PROLOGUE(func)
 
 	addq	%r9, %rax		C add to total
 	addq	$1, n
-	jz	.Ldone
+	jz	L(done)
 
 	ALIGN(16)
-.Loop:	movq	(up,n,8), %r8
+L(oop):	movq	(up,n,8), %r8
 	movq	8(up,n,8), %r12
  HAM(`	xorq	(vp,n,8), %r8	')
  HAM(`	xorq	8(vp,n,8), %r12	')
@@ -148,9 +148,9 @@ PROLOGUE(func)
 
 	addq	%r9, %rax		C add to total
 	addq	$2, n
-	jnc	.Loop
+	jnc	L(oop)
 
-.Ldone:
+L(done):
  HAM(`	popq	%r14		')
 	popq	%r13
 	popq	%r12

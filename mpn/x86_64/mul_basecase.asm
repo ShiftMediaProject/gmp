@@ -99,9 +99,9 @@ define(`vp', `%r14')
 	mov	un, %r11		C move away from rdx
 define(`un', `%r11')
 	test	$1, vn			C vn odd?
-	je	.Luse_mul_2
+	je	L(use_mul_2)
 
-.Luse_mul_1:
+L(use_mul_1):
 	mov	(vp), %rbp		C read vp[0]
 	lea	8(vp), vp		C vp += 1
 	dec	vn			C vn -= 1
@@ -109,9 +109,9 @@ define(`un', `%r11')
 	neg	%rbx			C				  mul_1
 	xor	%ecx, %ecx		C clear carry limb		  mul_1
 	add	$3, %rbx		C				  mul_1
-	jb	.Led1			C jump for n = 1, 2, 3		  mul_1
+	jb	L(ed1)			C jump for n = 1, 2, 3		  mul_1
 
-.Llp1:	mov	-24(up,%rbx,8), %rax	C				  mul_1
+L(lp1):	mov	-24(up,%rbx,8), %rax	C				  mul_1
 	mul	%rbp			C				  mul_1
 	xor	%r9, %r9		C				  mul_1
 	add	%rax, %rcx		C				  mul_1
@@ -136,41 +136,41 @@ define(`un', `%r11')
 	mov	%r10, -8(rp,%rbx,8)	C				  mul_1
 	mov	%r9, (rp,%rbx,8)	C				  mul_1
 	add	$4, %rbx		C				  mul_1
-	jae	.Llp1			C				  mul_1
+	jae	L(lp1)			C				  mul_1
 
 	cmp	$3, %ebx		C				  mul_1
-	jne	.Led1			C				  mul_1
+	jne	L(ed1)			C				  mul_1
 
 	mov	%rcx, (rp)		C				  mul_1
 	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	.Ljn1			C				  mul_1
+	jmp	L(jn1)			C				  mul_1
 
-.Led1:	mov	-24(up,%rbx,8), %rax	C				  mul_1
+L(ed1):	mov	-24(up,%rbx,8), %rax	C				  mul_1
 	mul	%rbp			C				  mul_1
 	xor	%r9, %r9		C				  mul_1
 	add	%rax, %rcx		C				  mul_1
 	adc	%rdx, %r9		C				  mul_1
 	cmp	$2, %ebx		C				  mul_1
-	jne	.L1			C				  mul_1
+	jne	L(1)			C				  mul_1
 	mov	%rcx, -8(rp)		C				  mul_1
 	mov	%r9, (rp)		C				  mul_1
 	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	.Ljn1			C				  mul_1
+	jmp	L(jn1)			C				  mul_1
 
-.L1:	mov	-16(up,%rbx,8), %rax	C				  mul_1
+L(1):	mov	-16(up,%rbx,8), %rax	C				  mul_1
 	mul	%rbp			C				  mul_1
 	xor	%r10, %r10		C				  mul_1
 	add	%rax, %r9		C				  mul_1
 	adc	%rdx, %r10		C				  mul_1
 	cmp	$1, %ebx		C				  mul_1
-	jne	.L2			C				  mul_1
+	jne	L(2)			C				  mul_1
 	mov	%rcx, -16(rp)		C				  mul_1
 	mov	%r9, -8(rp)		C				  mul_1
 	mov	%r10, (rp)		C				  mul_1
 	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	.Ljn1			C				  mul_1
+	jmp	L(jn1)			C				  mul_1
 
-.L2:	mov	-8(up), %rax		C				  mul_1
+L(2):	mov	-8(up), %rax		C				  mul_1
 	mul	%rbp			C				  mul_1
 	xor	%rbx, %rbx		C				  mul_1
 	add	%rax, %r10		C				  mul_1
@@ -180,9 +180,9 @@ define(`un', `%r11')
 	mov	%r10, -8(rp)		C				  mul_1
 	mov	%rbx, (rp)		C				  mul_1
 	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	.Ljn1			C				  mul_1
+	jmp	L(jn1)			C				  mul_1
 
-.Luse_mul_2:
+L(use_mul_2):
 
 define(`v0', `%r9')  define(`v1', `%r10')
 define(`j',`%r13')
@@ -202,10 +202,10 @@ define(`j',`%r13')
 	mov	(up,j,8), %r12		C				  mul_2
 	mov	%r12, %rax		C				  mul_2
 	add	$3, j			C				  mul_2
-	jns	.Led2			C <= 4 iterations
+	jns	L(ed2)			C <= 4 iterations
 
 	ALIGN(32)
-.Llp2:	mul	v0			C				  mul_2
+L(lp2):	mul	v0			C				  mul_2
 	add	%rax, %rbx		C				  mul_2
 	mov	%r12, %rax		C				  mul_2
 	adc	%rdx, %rcx		C				  mul_2
@@ -242,7 +242,7 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				  mul_2
 	adc	%rdx, %rcx		C				  mul_2
 	add	$3, j			C				  mul_2
-	jns	.Led2			C				  mul_2
+	jns	L(ed2)			C				  mul_2
 	mul	v0			C				  mul_2
 	add	%rax, %rbx		C				  mul_2
 	mov	%r12, %rax		C				  mul_2
@@ -280,9 +280,9 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				  mul_2
 	adc	%rdx, %rcx		C				  mul_2
 	add	$3, j			C				  mul_2
-	js	.Llp2			C				  mul_2
+	js	L(lp2)			C				  mul_2
 
-.Led2:	jne	.Ln3			C				  mul_2
+L(ed2):	jne	L(n3)			C				  mul_2
 	mul	v0			C				  mul_2
 	add	%rax, %rbx		C				  mul_2
 	mov	%r12, %rax		C				  mul_2
@@ -317,10 +317,10 @@ define(`j',`%r13')
 	mov	%rbx, (rp)		C				  mul_2
 	mov	%rcx, 8(rp)		C				  mul_2
 	lea	16(rp), rp		C rp += 2
-	jmp	.Ljn1			C				  mul_2
+	jmp	L(jn1)			C				  mul_2
 
-.Ln3:	cmp	$1, j			C				  mul_2
-	jne	.Ln2			C				  mul_2
+L(n3):	cmp	$1, j			C				  mul_2
+	jne	L(n2)			C				  mul_2
 	mul	v0			C				  mul_2
 	add	%rax, %rbx		C				  mul_2
 	mov	-16(up), %rax		C				  mul_2
@@ -344,9 +344,9 @@ define(`j',`%r13')
 	mov	%rbp, (rp)		C				  mul_2
 	mov	%rbx, 8(rp)		C				  mul_2
 	lea	16(rp), rp		C rp += 2
-	jmp	.Ljn1			C				  mul_2
+	jmp	L(jn1)			C				  mul_2
 
-.Ln2:	mul	v0			C				  mul_2
+L(n2):	mul	v0			C				  mul_2
 	add	%rax, %rbx		C				  mul_2
 	mov	-8(up), %rax		C				  mul_2
 	adc	%rdx, %rcx		C				  mul_2
@@ -358,10 +358,10 @@ define(`j',`%r13')
 	mov	%rcx, (rp)		C				  mul_2
 	mov	%rbp, 8(rp)		C				  mul_2
 	lea	16(rp), rp		C rp += 2
-C	jmp	.Ljn1			C				  mul_2
+C	jmp	L(jn1)			C				  mul_2
 
-.Ljn1:	test	vn, vn
-	je	.Lolex
+L(jn1):	test	vn, vn
+	je	L(olex)
 
 C In order to choose the right variant of code, compute un mod 3.
 	movabs	$0x5555555555555555, %rdx
@@ -369,14 +369,14 @@ C In order to choose the right variant of code, compute un mod 3.
 	mul	%rdx			C rdx = un / 3 (for relevant un)
 	lea	2(%rdx,%rdx,2), %rdx
 	sub	un, %rdx		C rdx = -(un mod 3)	FIXME
-	js	.LM0
-	je	.LM2
+	js	L(M0)
+	je	L(M2)
 
 define(`v0', `%r9')  define(`v1', `%r10')
 define(`j',`%r13')
 
-.LM1:
-.LM1_lpo:
+L(M1):
+L(M1_lpo):
 	mov	(vp), v0		C				    LM1
 	mov	8(vp), v1		C				    LM1
 	lea	16(vp), vp		C vp += 2
@@ -391,10 +391,10 @@ define(`j',`%r13')
 	mov	(up,j,8), %r12		C				    LM1
 	mov	%r12, %rax		C				    LM1
 	add	$3, j			C				    LM1
-	jns	.LM1_lpie		C <= 4 iterations
+	jns	L(M1_lpie)		C <= 4 iterations
 
 	ALIGN(16)
-.LM1_lpi:
+L(M1_lpi):
 	mul	v0			C				    LM1
 	add	%rax, %rbx		C				    LM1
 	mov	%r12, %rax		C				    LM1
@@ -432,7 +432,7 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				    LM1
 	adc	%rdx, %rcx		C				    LM1
 	add	$3, j			C				    LM1
-	jns	.LM1_lpie		C				    LM1
+	jns	L(M1_lpie)		C				    LM1
 	mul	v0			C				    LM1
 	add	%rax, %rbx		C				    LM1
 	mov	%r12, %rax		C				    LM1
@@ -470,9 +470,9 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				    LM1
 	adc	%rdx, %rcx		C				    LM1
 	add	$3, j			C				    LM1
-	js	.LM1_lpi		C				    LM1
+	js	L(M1_lpi)		C				    LM1
 
-.LM1_lpie:
+L(M1_lpie):
 	mul	v0			C				    LM1
 	add	%rax, %rbx		C				    LM1
 	mov	%r12, %rax		C				    LM1
@@ -487,11 +487,11 @@ define(`j',`%r13')
 
 	lea	16(rp), rp		C rp += 2			    LM1
 	sub	$2, vn			C vn -= 2			    LM1
-	jne	.LM1_lpo		C				    LM1
-	jmp	.Lolex			C				    LM1
+	jne	L(M1_lpo)		C				    LM1
+	jmp	L(olex)			C				    LM1
 
-.LM2:
-.LM2_lpo:
+L(M2):
+L(M2_lpo):
 	mov	(vp), v0		C				    LM2
 	mov	8(vp), v1		C				    LM2
 	lea	16(vp), vp		C vp += 2
@@ -506,10 +506,10 @@ define(`j',`%r13')
 	mov	(up,j,8), %r12		C				    LM2
 	mov	%r12, %rax		C				    LM2
 	add	$3, j			C				    LM2
-	jns	.LM2_lpie		C <= 4 iterations
+	jns	L(M2_lpie)		C <= 4 iterations
 
 	ALIGN(16)
-.LM2_lpi:
+L(M2_lpi):
 	mul	v0			C				    LM2
 	add	%rax, %rbx		C				    LM2
 	mov	%r12, %rax		C				    LM2
@@ -547,7 +547,7 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				    LM2
 	adc	%rdx, %rcx		C				    LM2
 	add	$3, j			C				    LM2
-	jns	.LM2_lpie		C				    LM2
+	jns	L(M2_lpie)		C				    LM2
 	mul	v0			C				    LM2
 	add	%rax, %rbx		C				    LM2
 	mov	%r12, %rax		C				    LM2
@@ -585,9 +585,9 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				    LM2
 	adc	%rdx, %rcx		C				    LM2
 	add	$3, j			C				    LM2
-	js	.LM2_lpi		C				    LM2
+	js	L(M2_lpi)		C				    LM2
 
-.LM2_lpie:
+L(M2_lpie):
 	mul	v0			C				    LM2
 	add	%rax, %rbx		C				    LM2
 	mov	%r12, %rax		C				    LM2
@@ -614,11 +614,11 @@ define(`j',`%r13')
 
 	lea	16(rp), rp		C rp += 2			    LM2
 	sub	$2, vn			C vn -= 2			    LM2
-	jne	.LM2_lpo		C				    LM2
-	jmp	.Lolex			C				    LM2
+	jne	L(M2_lpo)		C				    LM2
+	jmp	L(olex)			C				    LM2
 
-.LM0:
-.LM0_lpo:
+L(M0):
+L(M0_lpo):
 	mov	(vp), v0		C				    LM0
 	mov	8(vp), v1		C				    LM0
 	lea	16(vp), vp		C vp += 2
@@ -633,10 +633,10 @@ define(`j',`%r13')
 	mov	(up,j,8), %r12		C				    LM0
 	mov	%r12, %rax		C				    LM0
 	add	$3, j			C				    LM0
-	jns	.LM0_lpie		C <= 4 iterations
+	jns	L(M0_lpie)		C <= 4 iterations
 
 	ALIGN(16)
-.LM0_lpi:
+L(M0_lpi):
 	mul	v0			C				    LM0
 	add	%rax, %rbx		C				    LM0
 	mov	%r12, %rax		C				    LM0
@@ -674,7 +674,7 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				    LM0
 	adc	%rdx, %rcx		C				    LM0
 	add	$3, j			C				    LM0
-	jns	.LM0_lpie		C				    LM0
+	jns	L(M0_lpie)		C				    LM0
 	mul	v0			C				    LM0
 	add	%rax, %rbx		C				    LM0
 	mov	%r12, %rax		C				    LM0
@@ -712,9 +712,9 @@ define(`j',`%r13')
 	mov	%r12, %rax		C				    LM0
 	adc	%rdx, %rcx		C				    LM0
 	add	$3, j			C				    LM0
-	js	.LM0_lpi		C				    LM0
+	js	L(M0_lpi)		C				    LM0
 
-.LM0_lpie:
+L(M0_lpie):
 	mul	v0			C				    LM0
 	add	%rax, %rbx		C				    LM0
 	mov	%r12, %rax		C				    LM0
@@ -753,9 +753,10 @@ define(`j',`%r13')
 
 	lea	16(rp), rp		C rp += 2			    LM0
 	sub	$2, vn			C vn -= 2			    LM0
-	jne	.LM0_lpo		C				    LM0
+	jne	L(M0_lpo)		C				    LM0
 
-.Lolex:	pop	%r14
+L(olex):
+	pop	%r14
 	pop	%r13
 	pop	%r12
 	pop	%rbp

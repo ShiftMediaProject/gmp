@@ -71,10 +71,10 @@ PROLOGUE(func)
 
 	mov	%eax, %r11d
 	and	$3, %r11d
-	je	.L4
+	je	L(4)
 	sub	$1, %r11d
 
-.Loopette:
+L(oopette):
 	mov	0(vp), %r8
 	mov	%r8, %r12
 	shl	%cl, %r8
@@ -91,13 +91,13 @@ PROLOGUE(func)
 	lea	8(vp), vp
 	lea	8(rp), rp
 	sub	$1, %r11d
-	jnc	.Loopette
+	jnc	L(oopette)
 
-.L4:
+L(4):
 	sub	$4, %rax
-	jc	.Lend
+	jc	L(end)
 
-.Loop:
+L(oop):
 	mov	0(vp), %r8
 	mov	%r8, %r12
 	mov	8(vp), %r9
@@ -145,8 +145,8 @@ PROLOGUE(func)
 	lea	32(rp), rp
 
 	sub	$4, %rax
-	jnc	.Loop
-.Lend:
+	jnc	L(oop)
+L(end):
 	add	%ebx, %ebx
 	adc	$0, %r15
 	mov	%r15, %rax
