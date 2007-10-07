@@ -21,7 +21,7 @@ include(`../config.m4')
 
 
 C         cycles/limb
-C Athlon:     1.0
+C Athlon:     1.25
 C Hammer:     1.0
 
 
