@@ -4,7 +4,8 @@ divert(-1)
 dnl  m4 macros for x86 assembler.
 
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2007 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -920,5 +921,32 @@ m4_assert_numargs(1)
 `notl	`$1'',
 `xorl	$GMP_NUMB_MASK, `$1'')')
 
+
+dnl  Usage LEA(symbol,reg)
+
+define(`LEA',`
+define(`EPILOGUE_cpu',
+`
+L(movl_eip_`'substr($2,1)):
+	movl	(%esp), $2
+	ret_internal
+	SIZE(`$1',.-`$1')')
+
+        call    L(movl_eip_`'substr($2,1))
+        addl    $_GLOBAL_OFFSET_TABLE_, $2
+        movl    $1@GOT($2), $2
+')
+
+
+define(`DEF_OBJECT',
+m4_assert_numargs_range(1,2)
+	`RODATA
+	ALIGN(ifelse($#,1,2,$2))
+$1:
+')
+
+define(`END_OBJECT',
+m4_assert_numargs(1)
+`	SIZE(`$1',.-`$1')')
 
 divert`'dnl
