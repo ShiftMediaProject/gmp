@@ -1,9 +1,9 @@
 /* mpn_mul -- Multiply two natural numbers.
 
-   Contributed by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2005,
-2006 Free Software Foundation, Inc.
+2006, 2007 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,9 +45,6 @@ mpn_mul (mp_ptr prodp,
 	 mp_srcptr up, mp_size_t un,
 	 mp_srcptr vp, mp_size_t vn)
 {
-  mp_size_t l;
-  mp_limb_t c;
-
   ASSERT (un >= vn);
   ASSERT (vn >= 1);
   ASSERT (! MPN_OVERLAP_P (prodp, un+vn, up, un));
@@ -166,7 +163,7 @@ mpn_mul (mp_ptr prodp,
 	  mpn_incr_u (prodp + vn, cy);
 	  prodp += 2 * vn;
 	}
-  
+
       if (5 * un > 9 * vn)
 	{
 	  mpn_mul_toom42 (ws, up, un, vp, vn);
@@ -199,8 +196,9 @@ mpn_mul (mp_ptr prodp,
     mpn_mul_toom32 (prodp, up, un, vp, vn);
   else
     {
+      mp_ptr scratch;
       TMP_DECL; TMP_MARK;
-      mp_ptr scratch = TMP_SALLOC_LIMBS (un + vn);
+      scratch = TMP_SALLOC_LIMBS (un + vn);
       mpn_mul_toom22 (prodp, up, un, vp, vn, scratch);
       TMP_FREE;
     }
