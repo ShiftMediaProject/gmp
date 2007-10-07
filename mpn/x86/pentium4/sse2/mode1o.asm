@@ -1,6 +1,6 @@
 dnl  Intel Pentium-4 mpn_modexact_1_odd -- mpn by limb exact remainder.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -43,12 +43,6 @@ deflit(`FRAME',0)
 	movd	PARAM_CARRY, %mm1
 	jmp	L(start_1c)
 
-ifdef(`PIC',`
-L(movl_eip_edx):
-	movl	(%esp), %edx
-	ret_internal
-')
-
 EPILOGUE()
 
 
@@ -67,15 +61,9 @@ L(start_1c):
 	andl	$127, %eax		C d/2, 7 bits
 
 ifdef(`PIC',`
-	call	L(movl_eip_edx)
-
-	addl	$_GLOBAL_OFFSET_TABLE_, %edx
-
-	movl	modlimb_invert_table@GOT(%edx), %edx
-	C
+	LEA(	modlimb_invert_table, %edx)
 	movzbl	(%eax,%edx), %eax			C inv 8 bits
 ',`
-dnl non-PIC
 	movzbl	modlimb_invert_table(%eax), %eax	C inv 8 bits
 ')
 

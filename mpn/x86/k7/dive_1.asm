@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_divexact_1 -- mpn by limb exact division.
 
-dnl  Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2004, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -76,15 +76,9 @@ L(strip_twos):
 	andl	$127, %eax		C d/2, 7 bits
 
 ifdef(`PIC',`
-	call	L(movl_eip_edx)
-
-	addl	$_GLOBAL_OFFSET_TABLE_, %edx
-
-	movl	modlimb_invert_table@GOT(%edx), %edx
-
+	LEA(	modlimb_invert_table, %edx)
 	movzbl	(%eax,%edx), %eax			C inv 8 bits
 ',`
-dnl non-PIC
 	movzbl	modlimb_invert_table(%eax), %eax	C inv 8 bits
 ')
 
@@ -130,12 +124,6 @@ dnl non-PIC
 	movl	%edi, VAR_DST_END
 	xorl	%ebx, %ebx
 	jmp	L(entry)
-
-ifdef(`PIC',`
-L(movl_eip_edx):
-	movl	(%esp), %edx
-	ret_internal
-')
 
 	ALIGN(8)
 L(top):

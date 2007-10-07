@@ -1,6 +1,6 @@
 dnl  Intel P6 mpn_modexact_1_odd -- exact division style remainder.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -75,13 +75,9 @@ deflit(`FRAME',0)
 	andl	$127, %eax
 
 ifdef(`PIC',`
-	call	L(movl_eip_ebp)
-	addl	$_GLOBAL_OFFSET_TABLE_, %ebp
-	movl	modlimb_invert_table@GOT(%ebp), %ebp
+	LEA(	modlimb_invert_table, %ebp)
 	movzbl	(%eax,%ebp), %ebp			C inv 8 bits
-
 ',`
-dnl non-PIC
 	movzbl	modlimb_invert_table(%eax), %ebp	C inv 8 bits
 ')
 
@@ -255,12 +251,5 @@ L(even_one):
 	addl	$STACK_SPACE, %esp
 
 	ret
-
-
-ifdef(`PIC',`
-L(movl_eip_ebp):
-	movl	(%esp), %ebp
-	ret_internal
-')
 
 EPILOGUE()

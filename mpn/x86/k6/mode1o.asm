@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_modexact_1_odd -- exact division style remainder.
 
-dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2007 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -53,12 +53,6 @@ deflit(`FRAME',0)
 	movl	PARAM_CARRY, %edx
 	jmp	L(start_1c)
 
-ifdef(`PIC',`
-L(movl_eip_edi):
-	movl	(%esp), %edi
-	ret_internal
-')
-
 EPILOGUE()
 
 
@@ -80,16 +74,9 @@ L(start_1c):
 	pushl	%ebp		FRAME_pushl()
 
 ifdef(`PIC',`
-	call	L(movl_eip_edi)
-
-	addl	$_GLOBAL_OFFSET_TABLE_, %edi
-	C
-	movl	modlimb_invert_table@GOT(%edi), %edi
-	C
+	LEA(	modlimb_invert_table, %edi)
 Zdisp(	movzbl,	0,(%ecx,%edi), %edi)			C inv 8 bits
 ',`
-
-dnl non-PIC
 	movzbl	modlimb_invert_table(%ecx), %edi	C inv 8 bits
 ')
 	leal	(%edi,%edi), %ecx	C 2*inv

@@ -98,7 +98,7 @@ LIMB32(`push	%ebx		')
 	pxor	%xmm3, %xmm3		C zero grand total count
 LIMB64(`pxor	zero, zero	')
 ifdef(`PIC',`
-	mov	cnsts@GOTPCREL(%rip), breg
+	LEA(	cnsts, breg)
 ',`
 LIMB32(`mov	$cnsts, breg	')
 LIMB64(`movabs	$cnsts, breg	')
