@@ -35,7 +35,10 @@ define(`EPILOGUE_cpu',
 m4_assert_numargs(1))
 
 
-define(`LEA',
+dnl  LEAL -- Load Effective Address Local.  This is to be used for symbols
+dnl  defined in the same file.
+
+define(`LEAL',
 m4_assert_numargs(2)
 `ifdef(`PIC',
 `	mflr	r0			C save return address
