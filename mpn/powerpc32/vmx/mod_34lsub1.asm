@@ -143,7 +143,7 @@ L(large):
 	vxor	c0, v0, v0
 	li	r6, 32
 	vxor	c1, v0, v0
-	LEA(	r11, cnsts)
+	LEAL(	r11, cnsts)
 	vxor	c2, v0, v0
 	vxor	z, v0, v0
 
