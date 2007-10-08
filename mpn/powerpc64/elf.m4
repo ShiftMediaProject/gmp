@@ -52,6 +52,9 @@ m4_assert_numargs(2)
 ..$2:	.tc	$2[TC], $2')'
 	`ld	$1, ..$2@toc(2)')
 
+define(`LEAL',LEA)
+
+
 define(`EXTERN',
 m4_assert_numargs(1)
 `dnl')
