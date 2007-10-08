@@ -175,7 +175,6 @@ mp_size_t  get_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  get_str_precompute_threshold = MP_SIZE_T_MAX;
 mp_size_t  set_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  set_str_precompute_threshold = MP_SIZE_T_MAX;
-// mp_size_t  set_str_threshold            = MP_SIZE_T_MAX;
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
