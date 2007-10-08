@@ -36,7 +36,11 @@ $1:')
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1))
 
-define(`LEA',
+dnl  LEAL -- Load Effective Address Local.  This is to be used for symbols
+dnl  defined in the same file.  It will not work for externally defined
+dnl  symbols.
+
+define(`LEAL',
 m4_assert_numargs(2)
 `ifdef(`PIC',
 `
@@ -45,6 +49,29 @@ m4_assert_numargs(2)
 1:	mflr	$1
 	addis	$1, $1, ha16($2-1b)
 	la	$1, lo16($2-1b)($1)
+	mtlr	r0			C restore return address
+',`
+	lis	$1, ha16($2)
+	la	$1, lo16($2)($1)
+')')
+
+dnl  LEA -- Load Effective Address.  This is to be used for symbols defined in
+dnl  another file.  It will not work for locally defined symbols.
+
+define(`LEA',
+m4_assert_numargs(2)
+`ifdef(`PIC',
+`define(`EPILOGUE_cpu',
+`	.non_lazy_symbol_pointer
+`L'$2`'$non_lazy_ptr:
+	.indirect_symbol $2
+	.quad	0
+')
+	mflr	r0			C save return address
+	bcl	20, 31, 1f
+1:	mflr	$1
+	addis	$1, $1, ha16(`L'$2`'$non_lazy_ptr-1b)
+	ld	$1, lo16(`L'$2`'$non_lazy_ptr-1b)($1)
 	mtlr	r0			C restore return address
 ',`
 	lis	$1, ha16($2)
