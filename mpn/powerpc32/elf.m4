@@ -50,6 +50,11 @@ m4_assert_numargs(2)
 	la	$1, $2@l($1)
 ')')
 
+define(`LEAL',
+m4_assert_numargs(2)
+`LEA($1,$2)')
+
+
 define(`EXTERN',
 m4_assert_numargs(1)
 `dnl')
