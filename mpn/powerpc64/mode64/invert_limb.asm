@@ -28,7 +28,7 @@ C more optimization headroom.
 
 ASM_START()
 PROLOGUE(mpn_invert_limb)
-	LEA(	r12, approx_tab)
+	LEAL(	r12, approx_tab)
 
 	srdi	r11, r3, 32		C r11 = d >> 32
 	rlwinm  r9, r11, 10, 23, 30	C r9 = ((d >> 55) & 0xff) << 1
