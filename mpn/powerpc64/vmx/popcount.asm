@@ -83,7 +83,7 @@ ifdef(`HAVE_ABI_mode32',
 `	rldicl	n, n, 0, 32')		C zero extend n
 
 C Load various constants into vector registers
-	LEA(	r11, cnsts)
+	LEAL(	r11, cnsts)
 	li	r12, 16
 	vspltisb cnt1, 1		C 0x0101...01 used as shift count
 	vspltisb cnt2, 2		C 0x0202...02 used as shift count
