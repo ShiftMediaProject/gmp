@@ -250,7 +250,7 @@ check_vsnprintf (const char *want, const char *fmt, va_list ap)
 	      printf ("gmp_vsnprintf wrong result string\n");
 	    error:
 	      printf ("  fmt       |%s|\n", fmt);
-	      printf ("  bufsize   %u\n", bufsize);
+	      printf ("  bufsize   %lu\n", (unsigned long) bufsize);
 	      printf ("  got       |%s|\n", got);
 	      printf ("  want      |%.*s|\n", got_len, want);
 	      printf ("  want full |%s|\n", want);
