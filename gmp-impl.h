@@ -2413,7 +2413,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 */
 #define udiv_qrnnd_preinv3(q, r, nh, nl, d, di)				\
   do {									\
-    mp_limb_t _qh, _ql, _r, _t;						\
+    mp_limb_t _qh, _ql, _r;						\
     umul_ppmm (_qh, _ql, (nh), (di));					\
     add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
     _r = (nl) - _qh * (d);						\
