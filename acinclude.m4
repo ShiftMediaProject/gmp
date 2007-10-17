@@ -514,6 +514,7 @@ GMP_PROG_CC_WORKS_PART([$1], [gnupro alpha ev6 char spilling],
    values being spilled into floating point registers.  The problem doesn't
    show up all the time, but has occurred enough in GMP for us to reject
    this compiler+flags.  */
+#include <string.h>  /* for memcpy */
 struct try_t
 {
  char dst[2];
@@ -588,7 +589,7 @@ GMP_PROG_CC_WORKS_PART([$1], [long long reliability test 1],
    Extracted from tests/mpn/t-iord_u.c.  Causes Apple's gcc 3.3 build 1640 and
    1666 to segfault with e.g., -O2 -mpowerpc64.  */
 
-#ifdef __GNUC__
+#if defined (__GNUC__) && ! defined (__cplusplus)
 typedef unsigned long long t1;typedef t1*t2;
 __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
 {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
@@ -605,7 +606,7 @@ GMP_PROG_CC_WORKS_PART([$1], [long long reliability test 2],
    Extracted from mpz/cfdiv_q_2exp.c.  Causes Apple's gcc 3.3 build 1640 and
    1666 to get an ICE with -O1 -mpowerpc64.  */
 
-#ifdef __GNUC__
+#if defined (__GNUC__) && ! defined (__cplusplus)
 f(int u){int i;long long x;x=u?~0:0;if(x)for(i=0;i<9;i++);x&=g();if(x)g();}
 g(){}
 #else
@@ -623,6 +624,7 @@ GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization],
    but that's fine, the offending cc is a native-only compiler so we don't
    have to worry about cross compiling.  */
 
+#if ! defined (__cplusplus)                                         
 unsigned long
 lshift_com (rp, up, n, cnt)
   unsigned long *rp;
@@ -656,6 +658,13 @@ main ()
     return 1;
   return 0;
 }
+#else
+int
+main ()
+{
+  return 0;
+}
+#endif
 ])
 
 GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization 2],
@@ -665,6 +674,7 @@ GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization 2],
     to be run to show the problem, but that's fine, the offending cc is a
     native-only compiler so we don't have to worry about cross compiling.  */
 
+#if ! defined (__cplusplus)                                         
 #include <stdlib.h>
 void
 lshift_com (rp, up, n, cnt)
@@ -711,6 +721,13 @@ main ()
     abort ();
   return 0;
 }
+#else
+int
+main ()
+{
+  return 0;
+}
+#endif
 ])
 
 
