@@ -148,10 +148,10 @@ check_data (void)
           if (mpz_cmp (got, want) != 0)
             {
               printf ("wrong at data[%d]\n", i);
-              printf ("    count=%u order=%d  size=%u endian=%d nail=%u  align=%u\n",
-                      data[i].count, data[i].order,
-                      data[i].size, data[i].endian, data[i].nail,
-                      align);
+              printf ("    count=%lu order=%d  size=%lu endian=%d nail=%u  align=%lu\n",
+                      (unsigned long) data[i].count, data[i].order,
+                      (unsigned long) data[i].size, data[i].endian, data[i].nail,
+                      (unsigned long) align);
               mpz_trace ("    got ", got);
               mpz_trace ("    want", want);
               abort ();
