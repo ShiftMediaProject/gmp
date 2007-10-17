@@ -1521,7 +1521,9 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 
   for (;;)
     {
+#if WANT_ASSERT
       mp_size_t L = hgcd->row[0].rsize;
+#endif
       mp_size_t ralloc;
 
       mp_size_t qsize;
@@ -1961,7 +1963,9 @@ mpn_hgcd (struct hgcd *hgcd,
   while (hgcd->row[1].rsize > M + 1)
     {
       mp_size_t k = 2*M - hgcd->row[0].rsize;
+#if WANT_ASSERT
       mp_size_t n1 = hgcd->row[0].rsize - k;
+#endif
       mp_size_t qsize;
       mp_srcptr qp;
       int res;
