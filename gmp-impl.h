@@ -769,9 +769,6 @@ void __gmpz_aorsmul_1 _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, mp_limb_t v
 void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
 
 
-#define mpn_add_nc __MPN(add_nc)
-__GMP_DECLSPEC mp_limb_t mpn_add_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
-
 #define mpn_addmul_1c __MPN(addmul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
@@ -873,9 +870,6 @@ __GMP_DECLSPEC void mpn_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_sqr_basecase __MPN(sqr_basecase)
 __GMP_DECLSPEC void mpn_sqr_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
-
-#define mpn_sub_nc __MPN(sub_nc)
-__GMP_DECLSPEC mp_limb_t mpn_sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #define mpn_submul_1c __MPN(submul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
@@ -1910,6 +1904,35 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_xnor_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ ^ *__s2++) & GMP_NUMB_MASK)
+#endif
+
+#if HAVE_NATIVE_mpn_add_nc
+#define mpn_add_nc __MPN(add_nc)
+__GMP_DECLSPEC mp_limb_t mpn_add_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+#else
+static inline
+mp_limb_t
+mpn_add_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t ci)
+{
+  mp_limb_t co;
+  co = mpn_add_n (rp, up, vp, n);
+  co += mpn_add_1 (rp, rp, n, ci);
+  return co;
+}
+#endif
+
+#if HAVE_NATIVE_mpn_sub_nc
+#define mpn_sub_nc __MPN(sub_nc)
+__GMP_DECLSPEC mp_limb_t mpn_sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+#else
+static inline mp_limb_t
+mpn_sub_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t ci)
+{
+  mp_limb_t co;
+  co = mpn_sub_n (rp, up, vp, n);
+  co += mpn_sub_1 (rp, rp, n, ci);
+  return co;
+}
 #endif
 
 
