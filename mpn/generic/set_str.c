@@ -58,14 +58,7 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 
-#ifndef SET_STR_DC_THRESHOLD
-#define SET_STR_DC_THRESHOLD 2000
-#endif
-
-#ifndef SET_STR_PRECOMPUTE_THRESHOLD
-#define SET_STR_PRECOMPUTE_THRESHOLD 5000
-#endif
-
+/* FIXME: These should be static, except that libspeed needs them.  */
 mp_size_t mpn_bc_set_str (mp_ptr, const unsigned char *, size_t, int);
 mp_size_t mpn_dc_set_str (mp_ptr, const unsigned char *, size_t,
 			  const powers_t *, mp_ptr);
@@ -224,6 +217,7 @@ mpn_dc_set_str (mp_ptr rp, const unsigned char *str, size_t str_len,
 
   if (str_len <= len_lo)
     {
+      ASSERT_ALWAYS (0);
       if (BELOW_THRESHOLD (str_len, SET_STR_DC_THRESHOLD))
 	return mpn_bc_set_str (rp, str, str_len, powtab->base);
       else
