@@ -1620,7 +1620,7 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #endif
 
 #ifndef GET_STR_DC_THRESHOLD
-#define GET_STR_DC_THRESHOLD             22
+#define GET_STR_DC_THRESHOLD             18
 #endif
 
 #ifndef GET_STR_PRECOMPUTE_THRESHOLD
@@ -1628,11 +1628,11 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #endif
 
 #ifndef SET_STR_DC_THRESHOLD
-#define SET_STR_DC_THRESHOLD             2500
+#define SET_STR_DC_THRESHOLD            750
 #endif
 
 #ifndef SET_STR_PRECOMPUTE_THRESHOLD
-#define SET_STR_PRECOMPUTE_THRESHOLD     5000
+#define SET_STR_PRECOMPUTE_THRESHOLD   2000
 #endif
 
 /* Return non-zero if xp,xsize and yp,ysize overlap.
