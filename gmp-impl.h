@@ -3565,17 +3565,20 @@ mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
 #define GCDEXT_SCHOENHAGE_THRESHOLD 600
 #endif
 
-/* Definitions for mpn_set_str */
+/* Definitions for mpn_set_str and mpn_get_str */
 struct powers
 {
   mp_ptr p;			/* actual power value */
   mp_size_t n;			/* # of limbs at p */
+  mp_size_t shift;		/* weight og lowest limb, in limb base B */
   size_t digits_in_base;	/* number of corresponding digits */
   int base;
 };
 typedef struct powers powers_t;
 #define mpn_dc_set_str_powtab_alloc(n) ((n) + GMP_LIMB_BITS)
 #define mpn_dc_set_str_itch(n) (n)
+#define mpn_dc_get_str_powtab_alloc(n) ((n) + 2 * GMP_LIMB_BITS)
+#define mpn_dc_get_str_itch(n) ((n) + GMP_LIMB_BITS)
 
 
 
