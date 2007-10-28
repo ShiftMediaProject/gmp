@@ -1,23 +1,30 @@
 /* mpn_get_str -- Convert a MSIZE long limb vector pointed to by MPTR
    to a printable string in STR in base BASE.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006 Free
+   Contributed to the GNU project by Torbjorn Granlund.
+
+   THE FUNCTIONS IN THIS FILE, EXCEPT mpn_get_str, ARE INTERNAL WITH A MUTABLE
+   INTERFACE.  IT IS ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN
+   FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE
+   GNU MP RELEASE.
+
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006, 2007 Free
 Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
 The GNU MP Library is free software; you can redistribute it and/or modify it
-under the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 3 of the License, or (at your
-option) any later version.
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option) any
+later version.
 
 The GNU MP Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
-for more details.
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
 
-You should have received a copy of the GNU Lesser General Public License along
-with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
+You should have received a copy of the GNU General Public License along with
+the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -51,20 +58,20 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   2. Store the powers of (C) in normalized form, with the normalization count.
      Quotients will usually need to be left-shifted before each divide, and
      remainders will either need to be left-shifted of right-shifted.
-  3. When b is even, the powers will end up with lots of low zero limbs.  Could
-     save significant time in the mpn_tdiv_qr call by stripping these zeros.
-  4. In the code for developing digits from a single limb, we could avoid using
+  3. In the code for developing digits from a single limb, we could avoid using
      a full umul_ppmm except for the first (or first few) digits, provided base
      is even.  Subsequent digits can be developed using plain multiplication.
      (This saves on register-starved machines (read x86) and on all machines
      that generate the upper product half using a separate instruction (alpha,
      powerpc, IA-64) or lacks such support altogether (sparc64, hppa64).
-  5. Separate mpn_dc_get_str basecase code from code for small conversions. The
+  4. Separate mpn_dc_get_str basecase code from code for small conversions. The
      former code will have the exact right power readily available in the
      powtab parameter for dividing the current number into a fraction.  Convert
      that using algorithm B.
-  6. Completely avoid division.  Compute the inverses of the powers now in
+  5. Completely avoid division.  Compute the inverses of the powers now in
      powtab instead of the actual powers.
+  6. Decrease powtab allocation for even bases.  E.g. for base 10 we could save
+     about 30% (1-log(5)/log(10)).
 
   Basic structure of (C):
     mpn_get_str:
@@ -304,7 +311,7 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 		mp_ptr up, mp_size_t un,
 		const powers_t *powtab, mp_ptr tmp)
 {
-  if (un < GET_STR_DC_THRESHOLD)
+  if (BELOW_THRESHOLD (un, GET_STR_DC_THRESHOLD))
     {
       if (un != 0)
 	str = mpn_sb_get_str (str, len, up, un, powtab->base);
@@ -321,11 +328,13 @@ mpn_dc_get_str (unsigned char *str, size_t len,
     {
       mp_ptr pwp, qp, rp;
       mp_size_t pwn, qn;
+      mp_size_t sn;
 
       pwp = powtab->p;
       pwn = powtab->n;
+      sn = powtab->shift;
 
-      if (un < pwn || (un == pwn && mpn_cmp (up, pwp, un) < 0))
+      if (un < pwn + sn || (un == pwn + sn && mpn_cmp (up + sn, pwp, un - sn) < 0))
 	{
 	  str = mpn_dc_get_str (str, len, up, un, powtab - 1, tmp);
 	}
@@ -334,16 +343,16 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 	  qp = tmp;		/* (un - pwn + 1) limbs for qp */
 	  rp = up;		/* pwn limbs for rp; overwrite up area */
 
-	  mpn_tdiv_qr (qp, rp, 0L, up, un, pwp, pwn);
-	  qn = un - pwn; qn += qp[qn] != 0;		/* quotient size */
+	  mpn_tdiv_qr (qp, rp + sn, 0L, up + sn, un - sn, pwp, pwn);
+	  qn = un - sn - pwn; qn += qp[qn] != 0;		/* quotient size */
 
-	  ASSERT (qn < pwn || (qn == pwn && mpn_cmp (qp, pwp, pwn) < 0));
+	  ASSERT (qn < pwn + sn || (qn == pwn + sn && mpn_cmp (qp + sn, pwp, pwn) < 0));
 
 	  if (len != 0)
 	    len = len - powtab->digits_in_base;
 
-	  str = mpn_dc_get_str (str, len, qp, qn, powtab - 1, tmp + un - pwn + 1);
-	  str = mpn_dc_get_str (str, powtab->digits_in_base, rp, pwn, powtab - 1, tmp);
+	  str = mpn_dc_get_str (str, len, qp, qn, powtab - 1, tmp + qn);
+	  str = mpn_dc_get_str (str, powtab->digits_in_base, rp, pwn + sn, powtab - 1, tmp);
 	}
     }
   return str;
@@ -446,22 +455,16 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
   /* General case.  The base is not a power of 2.  */
 
-  if (un < GET_STR_PRECOMPUTE_THRESHOLD)
+  if (BELOW_THRESHOLD (un, GET_STR_PRECOMPUTE_THRESHOLD))
     return mpn_sb_get_str (str, (size_t) 0, up, un, base) - str;
 
   TMP_MARK;
 
-  /* Allocate one large block for the powers of big_base.  With the current
-     scheme, we need to allocate twice as much as would be possible if a
-     minimal set of powers were generated.  */
-#define POWTAB_ALLOC_SIZE (un + 2 * GMP_LIMB_BITS)
-#define TMP_ALLOC_SIZE (un)
-  powtab_mem = TMP_BALLOC_LIMBS (POWTAB_ALLOC_SIZE);
+  /* Allocate one large block for the powers of big_base.  */
+  powtab_mem = TMP_BALLOC_LIMBS (mpn_dc_get_str_powtab_alloc (un));
   powtab_mem_ptr = powtab_mem;
 
-  /* Compute a table of powers: big_base^1, big_base^2, big_base^4, ...,
-     big_base^(2^k), for k such that the biggest power is between U and
-     sqrt(U).  */
+  /* Compute a table of powers, were the largest power is >= sqrt(U).  */
 
   big_base = __mp_bases[base].big_base;
   digits_in_base = __mp_bases[base].chars_per_limb;
@@ -469,6 +472,8 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
   {
     mp_size_t n_pows, xn, pn, exptab[GMP_LIMB_BITS], bexp;
     mp_limb_t cy;
+    mp_size_t shift;
+
     n_pows = 0;
     xn = 1 + un*(__mp_bases[base].chars_per_bit_exactly*GMP_NUMB_BITS)/__mp_bases[base].chars_per_limb;
     for (pn = xn; pn != 1; pn = (pn + 1) >> 1)
@@ -482,22 +487,25 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
     powtab[0].n = 1;
     powtab[0].digits_in_base = digits_in_base;
     powtab[0].base = base;
+    powtab[0].shift = 0;
 
     powtab[1].p = powtab_mem_ptr;  powtab_mem_ptr += 2;
     powtab[1].p[0] = big_base;
     powtab[1].n = 1;
     powtab[1].digits_in_base = digits_in_base;
     powtab[1].base = base;
+    powtab[1].shift = 0;
 
     n = 1;
     p = &big_base;
     bexp = 1;
+    shift = 0;
     for (pi = 2; pi < n_pows; pi++)
       {
 	t = powtab_mem_ptr;
 	powtab_mem_ptr += 2 * n + 2;
 
-	ASSERT_ALWAYS (powtab_mem_ptr < powtab_mem + POWTAB_ALLOC_SIZE);
+	ASSERT_ALWAYS (powtab_mem_ptr < powtab_mem + mpn_dc_get_str_powtab_alloc (un));
 
 	mpn_sqr_n (t, p, n);
 
@@ -513,11 +521,20 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 	    n += cy != 0;
 	    bexp += 1;
 	  }
+	shift *= 2;
+	/* Strip low zero limbs.  */
+	while (t[0] == 0)
+	  {
+	    t++;
+	    n--;
+	    shift++;
+	  }
 	p = t;
 	powtab[pi].p = p;
 	powtab[pi].n = n;
 	powtab[pi].digits_in_base = digits_in_base;
 	powtab[pi].base = base;
+	powtab[pi].shift = shift;
       }
 
     for (pi = 1; pi < n_pows; pi++)
@@ -527,6 +544,12 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 	cy = mpn_mul_1 (t, t, n, big_base);
 	t[n] = cy;
 	n += cy != 0;
+	if (t[0] == 0)
+	  {
+	    powtab[pi].p = t + 1;
+	    n--;
+	    powtab[pi].shift++;
+	  }
 	powtab[pi].n = n;
 	powtab[pi].digits_in_base += __mp_bases[base].chars_per_limb;
       }
@@ -535,13 +558,13 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
     { int i;
       printf ("Computed table values for base=%d, un=%d, xn=%d:\n", base, un, xn);
       for (i = 0; i < n_pows; i++)
-	printf ("%2d: %10ld %10ld %11ld\n", i, exptab[n_pows-i], powtab[i].n, powtab[i].digits_in_base);
+	printf ("%2d: %10ld %10ld %11ld %ld\n", i, exptab[n_pows-i], powtab[i].n, powtab[i].digits_in_base, powtab[i].shift);
     }
 #endif
   }
 
   /* Using our precomputed powers, now in powtab[], convert our number.  */
-  tmp = TMP_BALLOC_LIMBS (TMP_ALLOC_SIZE);
+  tmp = TMP_BALLOC_LIMBS (mpn_dc_get_str_itch (un));
   out_len = mpn_dc_get_str (str, 0, up, un, powtab - 1 + pi, tmp) - str;
   TMP_FREE;
 
