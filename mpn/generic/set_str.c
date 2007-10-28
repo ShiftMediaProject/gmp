@@ -143,6 +143,7 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
   mp_limb_t big_base, big_base_inverted;
   int chars_per_limb;
   size_t digits_in_base;
+  mp_size_t shift;
 
   powtab_mem_ptr = powtab_mem;
 
@@ -167,6 +168,7 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
   powtab[i].digits_in_base = digits_in_base;
   powtab[i].base = base;
 
+  shift = 0;
   for (pi = i - 1; pi >= 0; pi--)
     {
       t = powtab_mem_ptr;
@@ -196,11 +198,21 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
 	  cy = mpn_mul_1 (t, t, n, big_base);
 	}
 #endif
+      shift *= 2;
+      /* Strip low zero limbs, but be careful to keep the result divisible by
+	 big_base.  */
+      while (t[0] == 0 && (t[1] & ((big_base & -big_base) - 1)) == 0)
+	{
+	  t++;
+	  n--;
+	  shift++;
+	}
       p = t;
       powtab[pi].p = p;
       powtab[pi].n = n;
       powtab[pi].digits_in_base = digits_in_base;
       powtab[pi].base = base;
+      powtab[pi].shift = shift;
     }
 }
 
@@ -210,44 +222,46 @@ mpn_dc_set_str (mp_ptr rp, const unsigned char *str, size_t str_len,
 {
   size_t len_lo, len_hi;
   mp_limb_t cy;
-  mp_size_t ln, hn, n;
+  mp_size_t ln, hn, n, sn;
 
   len_lo = powtab->digits_in_base;
   len_hi = str_len - len_lo;
 
-  if (str_len <= len_lo)
-    {
-      ASSERT_ALWAYS (0);
-      if (BELOW_THRESHOLD (str_len, SET_STR_DC_THRESHOLD))
-	return mpn_bc_set_str (rp, str, str_len, powtab->base);
-      else
-	return mpn_dc_set_str (rp, str, str_len, powtab + 1, tp);
-    }
-
-  ASSERT_ALWAYS (len_lo >= len_hi);
+  ASSERT (str_len > len_lo);
+  ASSERT (len_lo >= len_hi);
 
   if (BELOW_THRESHOLD (len_hi, SET_STR_DC_THRESHOLD))
     hn = mpn_bc_set_str (tp, str, len_hi, powtab->base);
   else
     hn = mpn_dc_set_str (tp, str, len_hi, powtab + 1, rp);
 
+  sn = powtab->shift;
+
   if (hn == 0)
-    MPN_ZERO (rp, powtab->n);
+    {
+      MPN_ZERO (rp, powtab->n + sn);
+    }
   else
-    mpn_mul (rp, powtab->p, powtab->n, tp, hn);
+    {
+      if (powtab->n > hn)
+	mpn_mul (rp + sn, powtab->p, powtab->n, tp, hn);
+      else
+	mpn_mul (rp + sn, tp, hn, powtab->p, powtab->n);
+      MPN_ZERO (rp, sn);
+    }
 
   str = str + str_len - len_lo;
   if (BELOW_THRESHOLD (len_lo, SET_STR_DC_THRESHOLD))
     ln = mpn_bc_set_str (tp, str, len_lo, powtab->base);
   else
-    ln = mpn_dc_set_str (tp, str, len_lo, powtab + 1, tp + powtab->n + 1);
+    ln = mpn_dc_set_str (tp, str, len_lo, powtab + 1, tp + powtab->n + sn + 1);
 
   if (ln != 0)
     {
       cy = mpn_add_n (rp, rp, tp, ln);
       mpn_incr_u (rp + ln, cy);
     }
-  n = hn + powtab->n;
+  n = hn + powtab->n + sn;
   return n - (rp[n - 1] == 0);
 }
 
