@@ -241,7 +241,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     size_t n_chars_needed;
 
     /* This breaks things like 0.000...0001.  To safely ignore superfluous
-       digits, we need to skip over leadng zeros.  */
+       digits, we need to skip over leading zeros.  */
     /* Just consider the relevant leading digits of the mantissa.  */
     n_chars_needed = 2 + (size_t)
       (((size_t) prec * GMP_NUMB_BITS) * mp_bases[base].chars_per_bit_exactly);
@@ -271,8 +271,29 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       }
 
     if (expptr != 0)
-      /* FIXME: Should do some error checking here.  */
-      exp_in_base = strtol (expptr, (char **) 0, exp_base);
+      {
+	/* Scan and convert the exponent, in base exp_base.  */
+	long dig, neg = -(long) ('-' == expptr[0]);
+	expptr -= neg;			/* conditional increment */
+	c = (unsigned char) *expptr++;
+	dig = digit_value[c];
+	if (dig >= exp_base)
+	  {
+	    TMP_FREE;
+	    return -1;
+	  }
+	exp_in_base = dig;
+	c = (unsigned char) *expptr++;
+	dig = digit_value[c];
+	while (dig < exp_base)
+	  {
+	    exp_in_base = exp_in_base * exp_base;
+	    exp_base += dig;
+	    c = (unsigned char) *expptr++;
+	    dig = digit_value[c];
+	  }
+	exp_in_base = (exp_in_base ^ neg) - neg; /* conditional negation */
+      }
     else
       exp_in_base = 0;
     if (dotpos != 0)
