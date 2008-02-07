@@ -174,13 +174,6 @@ L(odd_entry):
 	ret
 
 
-	ALIGN(8)
-	nop	C code alignment, necessary for claimed speed
-	nop
-',`
-C non-PIC code alignment already ok at 0x9a
-')
-
 L(even):
 	C eax
 	C ebx	src end
