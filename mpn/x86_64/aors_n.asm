@@ -29,16 +29,27 @@ C P6-15:	5.0
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc)
 
 C INPUT PARAMETERS
-C rp	rdi
-C up	rsi
-C vp	rdx
-C n	rcx
-C cy	r8		(only for mpn_add_nc)
+define(`rp',	`%rdi')
+define(`up',	`%rsi')
+define(`vp',	`%rdx')
+define(`n',	`%rcx')
+define(`cy',	`%r8')		C (only for mpn_add_nc)
 
+ifdef(`OPERATION_add_n', `
+	define(ADCSBB,	      adc)
+	define(func,	      mpn_add_n)
+	define(func_nc,	      mpn_add_nc)')
+ifdef(`OPERATION_sub_n', `
+	define(ADCSBB,	      sbb)
+	define(func,	      mpn_sub_n)
+	define(func_nc,	      mpn_sub_nc)')
+
+MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
+
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
-PROLOGUE(mpn_add_nc)
+PROLOGUE(func_nc)
 	movq	%rcx, %r10		C				3
 	andl	$3, %r10d		C				4
 	shrq	$2, %rcx		C				4
@@ -46,7 +57,7 @@ PROLOGUE(mpn_add_nc)
 	je	L(0)			C				2
 	jmp	L(oop)			C				2
 EPILOGUE()
-PROLOGUE(mpn_add_n)
+PROLOGUE(func)
 	movq	%rcx, %r10		C				3
 	shrq	$2, %rcx		C				4
 	je	L(end)			C				2
@@ -57,19 +68,19 @@ L(oop):	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
 	leaq	32(%rsi), %rsi		C				4
 
-	adcq	(%rdx), %rax		C				3
+	ADCSBB	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
 
-	adcq	8(%rdx), %r9		C				4
+	ADCSBB	8(%rdx), %r9		C				4
 	movq	%r9, 8(%rdi)		C				4
 
 	movq	-16(%rsi), %rax		C				4
 	movq	-8(%rsi), %r9		C				4
 
-	adcq	16(%rdx), %rax		C				4
+	ADCSBB	16(%rdx), %rax		C				4
 	movq	%rax, 16(%rdi)		C				4
 
-	adcq	24(%rdx), %r9		C				4
+	ADCSBB	24(%rdx), %r9		C				4
 	movq	%r9, 24(%rdi)		C				4
 	decq	%rcx			C				3
 
@@ -91,7 +102,7 @@ L(0):	decl	%r10d			C				3
 	jne	L(1)			C				2
 
 	movq	(%rsi), %rax		C				3
-	adcq	(%rdx), %rax		C				3
+	ADCSBB	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
@@ -102,9 +113,9 @@ L(1):	decl	%r10d			C				3
 
 	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
-	adcq	(%rdx), %rax		C				3
+	ADCSBB	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
-	adcq	8(%rdx), %r9		C				4
+	ADCSBB	8(%rdx), %r9		C				4
 	movq	%r9, 8(%rdi)		C				4
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
@@ -113,12 +124,12 @@ L(1):	decl	%r10d			C				3
 L(2):
 	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
-	adcq	(%rdx), %rax		C				3
+	ADCSBB	(%rdx), %rax		C				3
 	movq	%rax, (%rdi)		C				3
-	adcq	8(%rdx), %r9		C				4
+	ADCSBB	8(%rdx), %r9		C				4
 	movq	%r9, 8(%rdi)		C				4
 	movq	16(%rsi), %rax		C				4
-	adcq	16(%rdx), %rax		C				4
+	ADCSBB	16(%rdx), %rax		C				4
 	movq	%rax, 16(%rdi)		C				4
 	sbbl	%eax,%eax		C				2
 	negl	%eax			C				2
