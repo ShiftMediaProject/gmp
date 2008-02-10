@@ -101,9 +101,10 @@ L(pic_calc):
 	ALIGN(16)
 .Loop:
 	jecxz	.Lend
-L(ent):	mov	0(up,n,4), %eax
-	ADCSBB	0(vp,n,4), %eax
-	mov	%eax, 0(rp,n,4)
+L(ent):
+Zdisp(	mov,	0,(up,n,4), %eax)
+Zdisp(	ADCSBB,	0,(vp,n,4), %eax)
+Zdisp(	mov,	%eax, 0,(rp,n,4))
 
 	mov	4(up,n,4), %edx
 	ADCSBB	4(vp,n,4), %edx
