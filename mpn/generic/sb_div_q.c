@@ -147,7 +147,7 @@ mpn_sb_div_q (mp_ptr qp,
 	 FIXME: The quality of this code isn't the same as the code above.
 	 1. We don't compute things in an optimal order, high-to-low, in order
 	    to terminate as quickly as possible.
-	 2. We mess with pointer and sizes, adding and subtracting and
+	 2. We mess with pointers and sizes, adding and subtracting and
 	    adjusting to get things right.  It surely could be streamlined.
 	 3. The only termination criteria are that we determine that the
 	    quotient needs to be adjusted, or that we have recomputed
