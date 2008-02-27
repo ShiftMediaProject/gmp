@@ -1222,18 +1222,12 @@ case $host in
           *-*-solaris*)
             # Sun cc.
             #
-            # -fast enables different optimizations depending on compiler
-            # version.  Unfortunately it does things according to the native
-            # system, which may not be optimal when cross compiling (to a
-            # different sparc).  -xchip from cc_cflags_cpu will override at
-            # least that part of its selections.
-            #
-            # -fns=no and -fsimple=1 disable some transformations that
-            # conflict with IEEE 754, which some compiler versions perform
-            # under -fast.
+            # We used to have -fast and some fixup options here, but it
+            # recurrently caused problems with miscompilation.  Of course,
+            # -fast is documented as miscompiling things for the sake of speed.
             #
             cclist_64="$cclist_64 cc"
-            cc_64_cflags="-fast -fns=no -fsimple=1 -xarch=v9"
+            cc_64_cflags="-O3 -xarch=v9"
             cc_64_cflags_optlist="cpu"
             ;;
         esac
@@ -1365,6 +1359,10 @@ case $host in
         gcc_cflags_cpu="-mtune=k6-3 -mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k6-3 -march=k6"
         ;;
+      geode)
+        gcc_cflags_cpu="-mtune=k6-3 -mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=k6-3 -march=k6"
+        ;;
       athlon)
         # Athlon instruction costs are close to P6 (3 cycle load latency,
         # 4-6 cycle mul, 40 cycle div, pairable adc, etc) so if gcc doesn't
@@ -1411,6 +1409,7 @@ case $host in
       pentium3 | core2)     path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
+      geode)                path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       # we don't have any specific 32-bit code for athlon64/opteron, the
       # athlon code should be reasonable
       athlon | athlon64)    path="x86/k7/mmx x86/k7 x86" ;;
