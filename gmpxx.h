@@ -659,18 +659,72 @@ struct __gmp_binary_and
 {
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_and(z, w, v); }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int i)
+  {
+    mpz_t temp;
+    mp_limb_t limbs[2];
+    temp->_mp_d = limbs;
+    temp->_mp_alloc = 2;
+    mpz_set_ui (temp, i);
+    mpz_and (z, w, temp);
+  }
+  static void eval(mpz_ptr z, unsigned long int i, mpz_srcptr w)
+  {
+    mpz_t temp;
+    mp_limb_t limbs[2];
+    temp->_mp_d = limbs;
+    temp->_mp_alloc = 2;
+    mpz_set_ui (temp, i);
+    mpz_and (z, temp, w);
+  }
 };
 
 struct __gmp_binary_ior
 {
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_ior(z, w, v); }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int i)
+  {
+    mpz_t temp;
+    mp_limb_t limbs[2];
+    temp->_mp_d = limbs;
+    temp->_mp_alloc = 2;
+    mpz_set_ui (temp, i);
+    mpz_ior (z, w, temp);
+  }
+  static void eval(mpz_ptr z, unsigned long int i, mpz_srcptr w)
+  {
+    mpz_t temp;
+    mp_limb_t limbs[2];
+    temp->_mp_d = limbs;
+    temp->_mp_alloc = 2;
+    mpz_set_ui (temp, i);
+    mpz_ior (z, temp, w);
+  }
 };
 
 struct __gmp_binary_xor
 {
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_xor(z, w, v); }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int i)
+  {
+    mpz_t temp;
+    mp_limb_t limbs[2];
+    temp->_mp_d = limbs;
+    temp->_mp_alloc = 2;
+    mpz_set_ui (temp, i);
+    mpz_xor (z, w, temp);
+  }
+  static void eval(mpz_ptr z, unsigned long int i, mpz_srcptr w)
+  {
+    mpz_t temp;
+    mp_limb_t limbs[2];
+    temp->_mp_d = limbs;
+    temp->_mp_alloc = 2;
+    mpz_set_ui (temp, i);
+    mpz_xor (z, temp, w);
+  }
 };
 
 struct __gmp_binary_lshift
