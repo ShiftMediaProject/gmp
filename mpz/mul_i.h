@@ -1,7 +1,7 @@
 /* mpz_mul_ui/si (product, multiplier, small_multiplicand) -- Set PRODUCT to
    MULTIPLICATOR times SMALL_MULTIPLICAND.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2005 Free Software
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2005, 2008 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -60,7 +60,7 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
 
   sml = MULTIPLICAND_ABS (small_mult);
 
-  if (small_mult <= GMP_NUMB_MAX)
+  if (sml <= GMP_NUMB_MAX)
     {
       MPZ_REALLOC (prod, size + 1);
       pp = PTR(prod);
