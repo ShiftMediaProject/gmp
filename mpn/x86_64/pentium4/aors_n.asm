@@ -111,7 +111,7 @@ L(n01):	jne	L(n10)		C n = 2, 6, 10, ...
 L(rc3a):	lea	16(up), up
 	lea	16(vp), vp
 	sub	$4, n
-	jnc	L(oop)
+	jnc	L(top)
 	jmp	L(end)
 
 L(n10):	mov	(up), %r10	C n = 3, 7, 11, ...
@@ -139,7 +139,7 @@ L(c3):	mov	$1, %al
 	jmp	L(rc3)
 
 	ALIGN(16)
-L(oop):	mov	(up), %r8	C not on critical path
+L(top):	mov	(up), %r8	C not on critical path
 	ADDSUB	%r15, %r14	C not on critical path
 	mov	(vp), %r9	C not on critical path
 	setc	%bl		C save carry out
@@ -171,7 +171,7 @@ L(L10):	ADDSUB	%rbx, %r12
 	jc	L(c3)
 L(rc3):	lea	32(rp), rp
 	sub	$4, n
-	jnc	L(oop)
+	jnc	L(top)
 
 L(end):	ADDSUB	%r15, %r14
 	setc	%bl
