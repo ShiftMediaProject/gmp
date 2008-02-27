@@ -737,6 +737,7 @@ main ()
 	  else if (model <= 7)	modelstr = "k6";
 	  else if (model <= 8)	modelstr = "k62";
 	  else if (model <= 9)	modelstr = "k63";
+	  else                  modelstr = "geode";
 	  break;
 	case 6:
 	  modelstr = "athlon";
