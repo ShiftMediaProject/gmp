@@ -54,8 +54,8 @@ along with this file.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Define auxiliary asm macros.
 
-   1) umul_ppmm(high_prod, low_prod, multipler, multiplicand) multiplies two
-   UWtype integers MULTIPLER and MULTIPLICAND, and generates a two UWtype
+   1) umul_ppmm(high_prod, low_prod, multiplier, multiplicand) multiplies two
+   UWtype integers MULTIPLIER and MULTIPLICAND, and generates a two UWtype
    word product in HIGH_PROD and LOW_PROD.
 
    2) __umulsidi3(a,b) multiplies two UWtype integers A and B, and returns a
@@ -175,6 +175,14 @@ along with this file.  If not, see http://www.gnu.org/licenses/.  */
 #if defined (__alpha) && W_TYPE_SIZE == 64
 /* Most alpha-based machines, except Cray systems. */
 #if defined (__GNUC__)
+#if __GMP_GNUC_PREREQ (3,3)
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    (ph) = __builtin_alpha_umulh (__m0, __m1);				\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#else
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
@@ -183,6 +191,7 @@ along with this file.  If not, see http://www.gnu.org/licenses/.  */
 	     : "%rJ" (m0), "rI" (m1));					\
     (pl) = __m0 * __m1;							\
   } while (0)
+#endif
 #define UMUL_TIME 18
 #else /* ! __GNUC__ */
 #include <machine/builtins.h>
@@ -782,7 +791,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define count_trailing_zeros(count, x)					\
   do {									\
     ASSERT ((x) != 0);							\
-    __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));	\
+    __asm__ ("bsfl %1,%k0" : "=r" (count) : "rm" ((USItype)(x)));	\
   } while (0)
 #endif /* asm bsfl */
 
