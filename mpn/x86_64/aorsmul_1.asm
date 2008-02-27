@@ -33,7 +33,6 @@ define(`vl',	`%rcx')
 ifdef(`OPERATION_addmul_1',`
       define(`ADDSUB',        `add')
       define(`func',  `mpn_addmul_1')
-
 ')
 ifdef(`OPERATION_submul_1',`
       define(`ADDSUB',        `sub')
