@@ -740,7 +740,7 @@ struct __gmp_binary_lshift
 struct __gmp_binary_rshift
 {
   static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
-  { mpz_tdiv_q_2exp(z, w, l); }
+  { mpz_fdiv_q_2exp(z, w, l); }
   static void eval(mpq_ptr q, mpq_srcptr r, unsigned long int l)
   { mpq_div_2exp(q, r, l); }
   static void eval(mpf_ptr f, mpf_srcptr g, unsigned long int l)
