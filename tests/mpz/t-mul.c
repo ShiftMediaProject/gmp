@@ -70,6 +70,7 @@ main (int argc, char **argv)
 {
   mpz_t op1, op2;
   int i;
+  int fft_max_2exp;
 
   gmp_randstate_ptr rands;
   mpz_t bs;
@@ -79,16 +80,25 @@ main (int argc, char **argv)
   rands = RANDS;
 
   extra_fft = getenv ("GMP_CHECK_FFT");
+  fft_max_2exp = 22;
+  if (extra_fft != NULL)
+    fft_max_2exp = atoi (extra_fft);
+
+  if (fft_max_2exp == 1)	/* compat with old use of GMP_CHECK_FFT */
+    fft_max_2exp = 27;		/* default limit, good for any machine */
 
   mpz_init (bs);
   mpz_init (op1);
   mpz_init (op2);
 
   fsize_range = 4 << 8;		/* a fraction 1/256 of size_range */
-  for (i = 0; fsize_range >> 8 < (extra_fft ? 27 : 22); i++)
+  for (i = 0;; i++)
     {
       size_range = fsize_range >> 8;
       fsize_range = fsize_range * 33 / 32;
+
+      if (size_range > fft_max_2exp)
+	break;
 
       mpz_urandomb (bs, rands, size_range);
       mpz_rrandomb (op1, rands, mpz_get_ui (bs));
@@ -106,21 +116,20 @@ main (int argc, char **argv)
       one (i, op2, op1);
     }
 
-  if (extra_fft)
-    for (i = -50; i < 0; i++)
-      {
-	mpz_urandomb (bs, rands, 32);
-	size_range = mpz_get_ui (bs) % 27;
+  for (i = -50; i < 0; i++)
+    {
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % fft_max_2exp;
 
-	mpz_urandomb (bs, rands, size_range);
-	mpz_rrandomb (op1, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
-	mpz_urandomb (bs, rands, size_range);
-	mpz_rrandomb (op2, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
+      mpz_urandomb (bs, rands, size_range);
+      mpz_rrandomb (op1, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
+      mpz_urandomb (bs, rands, size_range);
+      mpz_rrandomb (op2, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
 
-	/* printf ("%d: %d %d\n", i, SIZ (op1), SIZ (op2)); */
-	fflush (stdout);
-	one (-1, op2, op1);
-      }
+      /* printf ("%d: %d %d\n", i, SIZ (op1), SIZ (op2)); */
+      fflush (stdout);
+      one (-1, op2, op1);
+    }
 
   mpz_clear (bs);
   mpz_clear (op1);
