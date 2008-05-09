@@ -1026,7 +1026,7 @@ void mpn_mul_toom42 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 int     mpn_fft_best_k _PROTO ((mp_size_t n, int sqr)) ATTRIBUTE_CONST;
 
 #define mpn_mul_fft  __MPN(mul_fft)
-int mpn_mul_fft _PROTO ((mp_ptr op, mp_size_t pl,
+void mpn_mul_fft _PROTO ((mp_ptr op, mp_size_t pl,
                           mp_srcptr n, mp_size_t nl,
                           mp_srcptr m, mp_size_t ml,
                           int k));
