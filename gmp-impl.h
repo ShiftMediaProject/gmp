@@ -2438,7 +2438,10 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   do {									\
     mp_limb_t _qh, _ql, _r;						\
     umul_ppmm (_qh, _ql, (nh), (di));					\
-    add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
+    if (__builtin_constant_p (nl) && (nl) == 0)				\
+      _qh += (nh) + 1;							\
+    else								\
+      add_ssaaaa (_qh, _ql, _qh, _ql, (nh) + 1, (nl));			\
     _r = (nl) - _qh * (d);						\
     if (_r > _ql)	/* both > and >= should be OK */		\
       {									\
