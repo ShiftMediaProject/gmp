@@ -1,6 +1,7 @@
 /* _mpz_realloc -- make the mpz_t have NEW_ALLOC digits allocated.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2008 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,6 +18,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdlib.h>
+#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -27,6 +30,23 @@ _mpz_realloc (mpz_ptr m, mp_size_t new_alloc)
 
   /* Never allocate zero space. */
   new_alloc = MAX (new_alloc, 1);
+
+  if (sizeof (mp_size_t) == sizeof (int))
+    {
+      if (UNLIKELY (new_alloc > INT_MAX / GMP_NUMB_BITS))
+	{
+	  fprintf (stderr, "gmp: overflow in mpz type\n");
+	  abort ();
+	}
+    }
+  else
+    {
+      if (UNLIKELY (new_alloc > INT_MAX))
+	{
+	  fprintf (stderr, "gmp: overflow in mpz type\n");
+	  abort ();
+	}
+    }
 
   mp = __GMP_REALLOCATE_FUNC_LIMBS (PTR(m), ALLOC(m), new_alloc);
   PTR(m) = mp;
