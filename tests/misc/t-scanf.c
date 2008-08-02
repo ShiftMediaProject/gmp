@@ -1382,7 +1382,7 @@ check_n (void)
     mpq_t  x[2];
     mpq_init (x[0]);
     mpq_init (x[1]);
-    mpq_set_ui (x[0], -987L, 654L);
+    mpq_set_ui (x[0], 987L, 654L);
     mpq_set_ui (x[1], 4115L, 226L);
     ret = gmp_sscanf ("xyz   ", "xyz%Qn", x[0]);
     MPQ_CHECK_FORMAT (x[0]);
@@ -1407,8 +1407,8 @@ check_n (void)
     mpf_t  x[2];
     mpf_init (x[0]);
     mpf_init (x[1]);
-    mpf_set_ui (x[0], -987L);
-    mpf_set_ui (x[1],  654L);
+    mpf_set_ui (x[0], 987L);
+    mpf_set_ui (x[1], 654L);
     ret = gmp_sscanf ("xyz   ", "xyz%Fn", x[0]);
     MPF_CHECK_FORMAT (x[0]);
     MPF_CHECK_FORMAT (x[1]);

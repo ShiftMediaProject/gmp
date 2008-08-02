@@ -837,7 +837,7 @@ check_n (void)
     mpq_t  x[2];
     mpq_init (x[0]);
     mpq_init (x[1]);
-    mpq_set_ui (x[0], -987L, 654L);
+    mpq_set_ui (x[0], 987L, 654L);
     mpq_set_ui (x[1], 4115L, 226L);
     check_one ("123456", "%d%Qn%d", 123, x[0], 456);
     MPQ_CHECK_FORMAT (x[0]);
@@ -852,8 +852,8 @@ check_n (void)
     mpf_t  x[2];
     mpf_init (x[0]);
     mpf_init (x[1]);
-    mpf_set_ui (x[0], -987L);
-    mpf_set_ui (x[1],  654L);
+    mpf_set_ui (x[0], 987L);
+    mpf_set_ui (x[1], 654L);
     check_one ("123456", "%d%Fn%d", 123, x[0], 456);
     MPF_CHECK_FORMAT (x[0]);
     MPF_CHECK_FORMAT (x[1]);
