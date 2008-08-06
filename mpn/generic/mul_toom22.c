@@ -10,7 +10,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2006, 2007 Free Software Foundation, Inc.
+Copyright 2006, 2007, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -158,7 +158,6 @@ mpn_mul_toom22 (mp_ptr pp,
 #define v0	pp				/* 2n */
 #define vinf	(pp + 2 * n)			/* s+t */
 #define vm1	scratch				/* 2n */
-#define tp	(scratch + 2*n)
 
   /* vm1, 2n limbs */
   mpn_mul_n (vm1, asm1, bsm1, n);
@@ -172,13 +171,13 @@ mpn_mul_toom22 (mp_ptr pp,
   STAT (t_interpol -= cputime ());
 
   /* H(v0) + L(vinf) */
-  cy = mpn_add_n (tp, v0 + n, vinf, n);
+  cy = mpn_add_n (pp + 2 * n, v0 + n, vinf, n);
 
   /* L(v0) + H(v0) */
-  cy2 = cy + mpn_add_n (pp + n, tp, v0, n);
+  cy2 = cy + mpn_add_n (pp + n, pp + 2 * n, v0, n);
 
   /* L(vinf) + H(vinf) */
-  cy += mpn_add (pp + 2 * n, tp, n, vinf + n, s + t - n);
+  cy += mpn_add (pp + 2 * n, pp + 2 * n, n, vinf + n, s + t - n);
 
   if (vm1_neg)
     cy += mpn_add_n (pp + n, pp + n, vm1, 2 * n);
