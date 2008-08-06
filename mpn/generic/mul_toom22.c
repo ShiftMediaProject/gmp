@@ -31,6 +31,16 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#ifdef STAT
+#undef STAT
+#define WANT_STAT
+int cputime (void);
+#define STAT(x) x
+double t_eval, t_interpol, t_mulpts, t_total;
+#else
+#define STAT(x)
+#endif
+
 static inline int
 mpn_zero_p (mp_srcptr ap, mp_size_t n)
 {
@@ -84,6 +94,8 @@ mpn_mul_toom22 (mp_ptr pp,
 
   asm1 = pp;
   bsm1 = pp + n;
+
+  STAT (t_eval -= cputime ());
 
   vm1_neg = 0;
 
@@ -141,6 +153,8 @@ mpn_mul_toom22 (mp_ptr pp,
 	}
     }
 
+  STAT (t_eval += cputime ());
+
 #define v0	pp				/* 2n */
 #define vinf	(pp + 2 * n)			/* s+t */
 #define vm1	scratch				/* 2n */
@@ -154,6 +168,8 @@ mpn_mul_toom22 (mp_ptr pp,
 
   /* v0, 2n limbs */
   mpn_mul_n (v0, ap, bp, n);
+
+  STAT (t_interpol -= cputime ());
 
   /* H(v0) + L(vinf) */
   cy = mpn_add_n (tp, v0 + n, vinf, n);
@@ -177,6 +193,8 @@ mpn_mul_toom22 (mp_ptr pp,
     mpn_incr_u (pp + 3 * n, cy);
   else
     mpn_decr_u (pp + 3 * n, 1);
+
+  STAT (t_interpol += cputime ());
 }
 
 
@@ -344,6 +362,79 @@ main (int argc, char **argv)
   TIME (t, mpn_mul_basecase (refp, ap, an, bp, bn));
   printf ("mpn_mul_basecase: %f\n", t);
   TMP_FREE;
+
+#ifdef WANT_STAT
+  printf ("time in eval       : %f\n", t_eval);
+  printf ("time in interpolate: %f\n", t_interpol);
+#endif
+
+  return 0;
+}
+#endif
+
+#ifdef WANT_STAT
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "timing.h"
+
+int
+main (int argc, char **argv)
+{
+  mp_size_t an, bn;
+  mp_ptr ap, bp, pp, scratch;
+  long reps, i;
+  double t0;
+  TMP_DECL;
+  TMP_MARK;
+
+  if (argc < 3)
+    return 1;
+
+  reps = strtol (argv[1], 0, 0);
+
+  if (argc >= 3)
+    {
+      an = bn = strtol (argv[2], 0, 0);
+      if (argc == 4)
+	bn = strtol (argv[2], 0, 0);
+    }
+
+  if (!(an >= bn && an < 2 * bn))
+    {
+      fprintf (stderr, "Invalid value combination of an,bn\n");
+      return 1;
+    }
+
+  ap = TMP_ALLOC_LIMBS (an);
+  bp = TMP_ALLOC_LIMBS (bn);
+  pp = TMP_ALLOC_LIMBS (an + bn);
+  scratch = TMP_SALLOC_LIMBS (an + bn);
+
+  mpn_random (ap, an);
+  mpn_random (bp, bn);
+
+  t_eval = 0;
+  t_interpol = 0;
+
+  t0 = cputime ();
+  for (i = reps; i != 0; i--)
+    mpn_mul_toomMN (pp, ap, an, bp, bn, scratch);
+  t_total = cputime () - t0;
+  t_mulpts = t_total - t_eval - t_interpol;
+  TMP_FREE;
+
+  printf ("time in eval           : %.10f\n", t_eval);
+  printf ("time in interpolate    : %.10f\n", t_interpol);
+  printf ("time in mul points     : %.10f\n", t_mulpts);
+  printf ("time total mul_toom22  : %.10f\n", t_total);
+
+  t0 = cputime ();
+  for (i = reps; i != 0; i--)
+    mpn_mul (pp, ap, an, bp, bn);
+  t_total = cputime () - t0;
+  printf ("time in mpn_mul        : %.10f\n", t_total);
+
 
   return 0;
 }
