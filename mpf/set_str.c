@@ -2,8 +2,8 @@
    in base BASE to a float in dest.  If BASE is zero, the leading characters
    of STRING is used to figure out the base.
 
-Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2005, 2007 Free
-Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2005, 2007,
+2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -273,8 +273,11 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     if (expptr != 0)
       {
 	/* Scan and convert the exponent, in base exp_base.  */
-	long dig, neg = -(long) ('-' == expptr[0]);
-	expptr -= neg;			/* conditional increment */
+	long dig, minus, plusminus;
+	c = (unsigned char) *expptr;
+	minus = -(long) (c == '-');
+	plusminus = minus | -(long) (c == '+');
+	expptr -= plusminus;			/* conditional increment */
 	c = (unsigned char) *expptr++;
 	dig = digit_value[c];
 	if (dig >= exp_base)
@@ -292,7 +295,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    c = (unsigned char) *expptr++;
 	    dig = digit_value[c];
 	  }
-	exp_in_base = (exp_in_base ^ neg) - neg; /* conditional negation */
+	exp_in_base = (exp_in_base ^ minus) - minus; /* conditional negation */
       }
     else
       exp_in_base = 0;
