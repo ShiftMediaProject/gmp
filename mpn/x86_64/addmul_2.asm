@@ -21,7 +21,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8:		 2.86
+C K8,K9:	 2.86
+C K10:		 2.86
 C P4:		13.65	FIXME now it seems to magically have dropped to 15 c/l.
 C P6-15:	 4.67
 
@@ -36,9 +37,9 @@ define(`up',	`%rsi')
 define(`n',	`%rdx')
 define(`vp',	`%rcx')
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(mpn_addmul_2)
 
 	push	%rbx
