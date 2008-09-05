@@ -123,7 +123,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   mpn_addmul_1 (w5, w4, m, 45);
   mpn_sub_n (w2, w2, w4, m);
   /* Rely on divexact working with two's complement */
-  divexact_odd (w2, w2, m, 3);
+  mpn_divexact_by3c (w2, w2, m, 0);
   mpn_sub_n (w4, w4, w2, m);
 
   mpn_sub_n (w1, w1, w5, m);
