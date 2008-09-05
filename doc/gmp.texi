@@ -503,7 +503,7 @@ Pyramid AP/XP.
 For up-to-date information on GMP, please see the GMP web pages at
 
 @display
-@uref{http://swox.com/gmp/}
+@uref{http://gmplib.org/}
 @end display
 
 @cindex Latest version of GMP
@@ -1674,7 +1674,7 @@ Install a recent @command{gas} if MMX code is wanted on these systems.
 @c This section is more or less meant for known build problems that are not
 @c otherwise worked around and require some sort of manual intervention.
 
-You might find more up-to-date information at @uref{http://swox.com/gmp/}.
+You might find more up-to-date information at @uref{http://gmplib.org/}.
 
 @table @asis
 @item Compiler link options
@@ -1881,7 +1881,7 @@ g++ mycxxprog.cc -lgmpxx -lgmp
 
 @cindex Libtool
 GMP is built using Libtool and an application can use that to link if desired,
-@GMPpxreftop{libtool, GNU Libtool}
+@GMPpxreftop{libtool, GNU Libtool}.
 
 If GMP has been installed to a non-standard location then it may be necessary
 to use @samp{-I} and @samp{-L} compiler options to point to the right
@@ -2797,7 +2797,7 @@ found.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, ,
-  [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp/])])
+  [AC_MSG_ERROR([GNU MP not found, see http://gmplib.org/])])
 @end example
 
 If functions added in some particular version of GMP are required, then one of
@@ -2807,7 +2807,7 @@ GMP 3.1,
 @example
 AC_CHECK_LIB(gmp, __gmpz_mul_si, ,
   [AC_MSG_ERROR(
-  [GNU MP not found, or not 3.1 or up, see http://swox.com/gmp/])])
+  [GNU MP not found, or not 3.1 or up, see http://gmplib.org/])])
 @end example
 
 An alternative would be to test the version number in @file{gmp.h} using say
@@ -2867,7 +2867,7 @@ much to ask you to report the bugs you find.
 
 Before you report a bug, check it's not already addressed in @ref{Known Build
 Problems}, or perhaps @ref{Notes for Particular Systems}.  You may also want
-to check @uref{http://swox.com/gmp/} for patches for this release.
+to check @uref{http://gmplib.org/} for patches for this release.
 
 Please include the following in any report,
 
@@ -2905,7 +2905,7 @@ The output from running @samp{./config.guess}, and from running
 @samp{./configfsf.guess} (might be the same).
 
 @item
-If the bug is related to @samp{configure}, then the contents of
+If the bug is related to @samp{configure}, then the compressed contents of
 @file{config.log}.
 
 @item
@@ -3907,7 +3907,7 @@ This function is obsolete.  Use @code{mpz_rrandomb} instead.
 @code{mpz_t} variables can be converted to and from arbitrary words of binary
 data with the following functions.
 
-@deftypefun void mpz_import (mpz_t @var{rop}, size_t @var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, const void *@var{op})
+@deftypefun void mpz_import (mpz_t @var{rop}, size_t @var{count}, int @var{order}, size_t @var{size}, int @var{endian}, size_t @var{nails}, const void *@var{op})
 @cindex Integer import
 @cindex Import
 Set @var{rop} from an array of word data at @var{op}.
@@ -3943,7 +3943,7 @@ feature can account for this, by passing for instance
 @code{8*sizeof(int)-INT_BIT}.
 @end deftypefun
 
-@deftypefun {void *} mpz_export (void *@var{rop}, size_t *@var{countp}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
+@deftypefun {void *} mpz_export (void *@var{rop}, size_t *@var{countp}, int @var{order}, size_t @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
 @cindex Integer export
 @cindex Export
 Fill @var{rop} with word data from @var{op}.
@@ -5541,7 +5541,7 @@ between speed and randomness, and is recommended for applications with no
 special requirements.  Currently this is @code{gmp_randinit_mt}.
 @end deftypefun
 
-@deftypefun int gmp_randinit_mt (gmp_randstate_t @var{state})
+@deftypefun void gmp_randinit_mt (gmp_randstate_t @var{state})
 @cindex Mersenne twister random numbers
 Initialize @var{state} for a Mersenne Twister algorithm.  This algorithm is
 fast and has good randomness properties.
