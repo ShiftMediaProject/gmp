@@ -1,13 +1,12 @@
 /* mpn_mul_n and helper function -- Multiply/square natural numbers.
 
-   THE HELPER FUNCTIONS IN THIS FILE (meaning everything except mpn_mul_n)
-   ARE INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS ONLY SAFE TO REACH
-   THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED
-   THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
-
+   THE HELPER FUNCTIONS IN THIS FILE (meaning everything except mpn_mul_n) ARE
+   INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY SAFE TO REACH THEM THROUGH
+   DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED THAT THEY'LL CHANGE
+   OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2005, Free Software Foundation, Inc.
+2005 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -391,7 +390,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 
    Exact sequence described in a comment in mpn_toom3_mul_n.
    mpn_toom3_mul_n() and mpn_toom3_sqr_n() implement steps 1-2.
-   mpn_toom3_interpolate() implements steps 3-4.
+   mpn_toom_interpolate_5pts() implements steps 3-4.
 
    Reference: What About Toom-Cook Matrices Optimality? Marco Bodrato
    and Alberto Zanoni, October 19, 2006, http://bodrato.it/papers/#CIVV2006
@@ -411,146 +410,6 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
    with an add_n or addlsh1_n.  Would that be faster than an extra limb on a
    (recursed) multiply/square?
 */
-void
-mpn_toom3_interpolate (mp_ptr c, mp_ptr v2, mp_ptr vm1,
-		       mp_size_t k, mp_size_t twor, int sa,
-		       mp_limb_t vinf0, mp_ptr ws)
-{
-  mp_limb_t cy, saved;
-  mp_size_t twok = k + k;
-  mp_size_t kk1 = twok + 1;
-  mp_ptr c1, v1, c3, vinf, c5;
-  mp_limb_t cout; /* final carry, should be zero at the end */
-
-  c1 = c  + k;
-  v1 = c1 + k;
-  c3 = v1 + k;
-  vinf = c3 + k;
-  c5 = vinf + k;
-
-#define v0 (c)
-  /* (1) v2 <- v2-vm1 < v2+|vm1|,       (16 8 4 2 1) - (1 -1 1 -1  1) =
-     thus 0 <= v2 < 50*B^(2k) < 2^6*B^(2k)             (15 9 3  3  0)
-  */
-  if (sa <= 0)
-    mpn_add_n (v2, v2, vm1, kk1);
-  else
-    mpn_sub_n (v2, v2, vm1, kk1);
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       v1       hi(vinf)       |vm1|     v2-vm1      EMPTY */
-
-  ASSERT_NOCARRY (mpn_divexact_by3 (v2, v2, kk1));    /* v2 <- v2 / 3 */
-						      /* (5 3 1 1 0)*/
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       v1      hi(vinf)       |vm1|     (v2-vm1)/3    EMPTY */
-
-  /* (2) vm1 <- tm1 := (v1 - sa*vm1) / 2  [(1 1 1 1 1) - (1 -1 1 -1 1)] / 2 =
-     tm1 >= 0                                            (0  1 0  1 0)
-     No carry comes out from {v1, kk1} +/- {vm1, kk1},
-     and the division by two is exact */
-  if (sa <= 0)
-    {
-#ifdef HAVE_NATIVE_mpn_rsh1add_n
-      mpn_rsh1add_n (vm1, v1, vm1, kk1);
-#else
-      mpn_add_n (vm1, v1, vm1, kk1);
-      mpn_rshift (vm1, vm1, kk1, 1);
-#endif
-    }
-  else
-    {
-#ifdef HAVE_NATIVE_mpn_rsh1sub_n
-      mpn_rsh1sub_n (vm1, v1, vm1, kk1);
-#else
-      mpn_sub_n (vm1, v1, vm1, kk1);
-      mpn_rshift (vm1, vm1, kk1, 1);
-#endif
-    }
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       v1        hi(vinf)       tm1     (v2-vm1)/3    EMPTY */
-
-  /* (3) v1 <- t1 := v1 - v0    (1 1 1 1 1) - (0 0 0 0 1) = (1 1 1 1 0)
-     t1 >= 0
-  */
-  vinf[0] -= mpn_sub_n (v1, v1, c, twok);
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0     v1-v0        hi(vinf)       tm1     (v2-vm1)/3    EMPTY */
-
-  /* (4) v2 <- t2 := ((v2-vm1)/3-t1)/2 = (v2-vm1-3*t1)/6
-     t2 >= 0                  [(5 3 1 1 0) - (1 1 1 1 0)]/2 = (2 1 0 0 0)
-  */
-#ifdef HAVE_NATIVE_mpn_rsh1sub_n
-  mpn_rsh1sub_n (v2, v2, v1, kk1);
-#else
-  mpn_sub_n (v2, v2, v1, kk1);
-  mpn_rshift (v2, v2, kk1, 1);
-#endif
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0     v1-v0        hi(vinf)     tm1    (v2-vm1-3t1)/6    EMPTY */
-
-  /* (5) v1 <- t1-tm1           (1 1 1 1 0) - (0 1 0 1 0) = (1 0 1 0 0)
-     result is v1 >= 0
-  */
-  mpn_sub_n (v1, v1, vm1, kk1);
-
-  /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0   v1-v0-tm1      hi(vinf)     tm1    (v2-vm1-3t1)/6    EMPTY */
-
-  /* (6) v2 <- v2 - 2*vinf,     (2 1 0 0 0) - 2*(1 0 0 0 0) = (0 1 0 0 0)
-     result is v2 >= 0 */
-  saved = vinf[0];       /* Remember v1's highest byte (will be overwritten). */
-  vinf[0] = vinf0;       /* Set the right value for vinf0                     */
-#ifdef HAVE_NATIVE_mpn_sublsh1_n
-  cy = mpn_sublsh1_n (v2, v2, vinf, twor);
-#else
-  cy = mpn_lshift (ws, vinf, twor, 1);
-  cy += mpn_sub_n (v2, v2, ws, twor);
-#endif
-  MPN_DECR_U (v2 + twor, kk1 - twor, cy);
-
-  /* (7) v1 <- v1 - vinf,       (1 0 1 0 0) - (1 0 0 0 0) = (0 0 1 0 0)
-     result is >= 0 */
-  cy = mpn_sub_n (v1, v1, vinf, twor);          /* vinf is at most twor long.  */
-  vinf[0] = saved;
-  MPN_DECR_U (v1 + twor, kk1 - twor, cy);       /* Treat the last bytes.       */
-  __GMPN_ADD_1 (cout, vinf, vinf, twor, vinf0); /* Add vinf0, propagate carry. */
-
-  /* (8) vm1 <- vm1-t2          (0 1 0 1 0) - (0 1 0 0 0) = (0 0 0 1 0)
-     vm1 >= 0
-  */
-  mpn_sub_n (vm1, vm1, v2, kk1);            /* No overlapping here.        */
-
-  /********************* Beginning the final phase **********************/
-
-  /* {c,2k} {c+2k,2k  } {c+4k ,2r } {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       t1      hi(t1)+vinf   tm1    (v2-vm1-3t1)/6    EMPTY */
-
-  /* (9) add t2 in {c+3k, ...} */
-  cy = mpn_add_n (c3, c3, v2, kk1);
-  __GMPN_ADD_1 (cout, c5 + 1, c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
-
-  /* {c,2k} {c+2k,2k  } {c+4k ,2r } {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       t1      hi(t1)+vinf   tm1    (v2-vm1-3t1)/6    EMPTY */
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t1         vinf      tm1  t2
-		    +t2 */
-
-  /* add vm1 in {c+k, ...} */
-  cy = mpn_add_n (c1, c1, vm1, kk1);
-  __GMPN_ADD_1 (cout, c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t1         vinf      tm1  t2
-	  +tm1      +t2    */
-
-#undef v0
-#undef t2
-}
 
 #define TOOM3_MUL_REC(p, a, b, n, ws) \
   do {								\
@@ -755,7 +614,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0       v1       vinf[1..]      vm1       v2               */
 
-  mpn_toom3_interpolate (c, v2, t, k, 2*r, sa, vinf0, trec );
+  mpn_toom_interpolate_5pts (c, v2, t, k, 2*r, sa, vinf0, trec);
 
 #undef v2
 }
@@ -826,7 +685,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   vinf0 = c4[0];
   c4[0] = saved;
 
-  mpn_toom3_interpolate (c, v2, t, k, 2*r,  1, vinf0, trec);
+  mpn_toom_interpolate_5pts (c, v2, t, k, 2*r,  1, vinf0, trec);
 
 #undef v2
 }
