@@ -1,4 +1,4 @@
-Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
+Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008
 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -32,6 +32,28 @@ Changes between GMP version 4.X and 5.0
   Features:
   * New mpn functions: XXX
 
+
+Changes between GMP version 4.2.2 and 4.2.3
+
+  Bugs:
+  * Fix x86 CPU recognition code to properly identify recent AMD and Intel
+    64-bit processors.
+  * The >> operator of the C++ wrapper gmpxx.h now does floor rounding, not
+    truncation.
+  * Inline semantics now follow the C99 standard, and works with recent GCC
+    releases.
+  * C++ bitwise logical operations work for more types.
+  * For C++, gmp.h now includes cstdio, improving compiler compatibility.
+  * Bases > 36 now work properly in mpf_set_str.
+
+  Speedups:
+  * None, except that proper processor recognition helps affected processors.
+
+  Features:
+  * The allocation functions now detect overflow of the mpz_t type.  This means
+    that overflow will now cause an abort, except when the allocation
+    computation itself overflows.  (Such overflow can probably only happen in
+    powering functions; we will detect powering overflow in the future.)
 
 Changes between GMP version 4.2.1 and 4.2.2
 
