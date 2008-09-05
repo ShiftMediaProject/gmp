@@ -71,6 +71,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   mp_limb_t name __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t))
 #define DECL_gcd_1(name) \
   mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_gcdext_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_ptr, mp_limb_t, mp_limb_t))
 #define DECL_lshift(name) \
   mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned))
 #define DECL_mod_1(name) \
@@ -3381,177 +3383,102 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 /* HGCD definitions */
 
-/* Limited by 2 + twice the bitsize of mp_size_t */
-#define QSTACK_MAX_QUOTIENTS 82
+#define mpn_hgcd2 __MPN (hgcd2)
+#define mpn_hgcd_mul_matrix1_vector __MPN (hgcd_mul_matrix1_vector)
+#define mpn_hgcd_mul_matrix1_inverse_vector __MPN (hgcd_mul_matrix1_inverse_vector)
 
-/* Name mangling */
-#define qstack_itch __gmpn_qstack_itch
-#define qstack_init __gmpn_qstack_init
-#define qstack_reset __gmpn_qstack_reset
-#define qstack_rotate __gmpn_qstack_rotate
+#define mpn_hgcd_matrix_init __MPN (hgcd_matrix_init)
+#define mpn_hgcd_matrix_mul __MPN (hgcd_matrix_mul)
+#define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
+#define mpn_hgcd_step __MPN (hgcd_step)
+#define mpn_hgcd_itch __MPN (hgcd_itch)
+#define mpn_hgcd __MPN (hgcd)
 
-#define mpn_hgcd2 __gmpn_hgcd2
-#define mpn_hgcd2_fix __gmpn_hgcd2_fix
-#define mpn_hgcd2_lehmer_step __gmpn_hgcd2_lehmer_step
-#define mpn_hgcd_max_recursion __gmpn_hgcd_max_recursion
-#define mpn_hgcd_init_itch __gmpn_hgcd_init_itch
-#define mpn_hgcd_init __gmpn_hgcd_init
-#define mpn_hgcd_lehmer_itch __gmpn_hgcd_lehmer_itch
-#define mpn_hgcd_lehmer __gmpn_hgcd_lehmer
-#define mpn_hgcd_itch __gmpn_hgcd_itch
-#define mpn_hgcd __gmpn_hgcd
-#define mpn_hgcd_equal __gmpn_hgcd_equal
-#define mpn_hgcd_fix __gmpn_hgcd_fix
-
-struct qstack
+/* The matrix non-negative M = (u, u'; v,v') keeps track of the
+   reduction (a;b) = M (alpha; beta) where alpha, beta are smaller
+   than a, b. The determinant must always be one, so that M has an
+   inverse (v', -u'; -v, u). Elements always fit in GMP_NUMB_BITS - 1
+   bits. */
+struct hgcd_matrix1
 {
-  /* Throughout the code we represent q = 1 with qsize = 0. */
-  mp_size_t size[QSTACK_MAX_QUOTIENTS];
-  mp_ptr limb;
-  mp_size_t limb_alloc;
-
-  /* Number of quotients to keep when we discard old quotients */
-  unsigned nkeep;
-
-  /* Top quotient is of size size[size_next-1], and starts at
-     limb+limb_next - size[size_next-1]. We use size_next == 0 for an
-     empty stack.*/
-  unsigned size_next;
-  mp_size_t limb_next;
-};
-
-mp_size_t
-qstack_itch __GMP_PROTO ((mp_size_t size));
-
-void
-qstack_init __GMP_PROTO ((struct qstack *stack,
-			  mp_size_t asize,
-			  mp_limb_t *limbs, mp_size_t alloc));
-
-void
-qstack_reset __GMP_PROTO ((struct qstack *stack,
-			   mp_size_t asize));
-
-void
-qstack_rotate __GMP_PROTO ((struct qstack *stack,
-			    mp_size_t size));
-
-#if WANT_ASSERT
-void
-__gmpn_qstack_sanity __GMP_PROTO ((struct qstack *stack));
-#define ASSERT_QSTACK __gmpn_qstack_sanity
-#else
-#define ASSERT_QSTACK(stack)
-#endif
-
-struct hgcd2_row
-{
-  /* r = (-)u a + (-)v b */
-  mp_limb_t u;
-  mp_limb_t v;
-};
-
-struct hgcd2
-{
-  /* Sign of the first row, sign >= 0 implies that u >= 0 and v <= 0,
-     sign < 0 implies u <= 0, v >= 0 */
-  int sign;
-  struct hgcd2_row row[4];
+  mp_limb_t u[2][2];
 };
 
 int
-mpn_hgcd2 __GMP_PROTO ((struct hgcd2 *hgcd,
-			mp_limb_t ah, mp_limb_t al,
-			mp_limb_t bh, mp_limb_t bl,
-			struct qstack *quotients));
+mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
+	   struct hgcd_matrix1 *M);
 
 mp_size_t
-mpn_hgcd2_fix __GMP_PROTO ((mp_ptr rp, mp_size_t ralloc,
-			    int sign,
-			    mp_limb_t u, mp_srcptr ap, mp_size_t asize,
-			    mp_limb_t v, mp_srcptr bp, mp_size_t bsize));
+mpn_hgcd_mul_matrix1_vector (struct hgcd_matrix1 *M, mp_size_t n,
+			     mp_ptr ap, mp_ptr bp, mp_ptr tp);
 
-int
-mpn_hgcd2_lehmer_step __GMP_PROTO ((struct hgcd2 *hgcd,
-				    mp_srcptr ap, mp_size_t asize,
-				    mp_srcptr bp, mp_size_t bsize,
-				    struct qstack *quotients));
+mp_size_t
+mpn_hgcd_mul_matrix1_inverse_vector (struct hgcd_matrix1 *M, mp_size_t n,
+				     mp_ptr ap, mp_ptr bp, mp_ptr tp);
 
-unsigned
-mpn_hgcd_max_recursion __GMP_PROTO ((mp_size_t n));
-
-struct hgcd_row
+struct hgcd_matrix
 {
-  /* [rp, rsize] should always be normalized. */
-  mp_ptr rp; mp_size_t rsize;
-  mp_ptr uvp[2];
-};
-
-struct hgcd
-{
-  int sign;
-  /* Space allocated for the uv entries, for sanity checking */
+  /* For sanity checking only */
   mp_size_t alloc;
-  /* Size of the largest u,v entry, usually row[3].uvp[1]. This
-     element should be normalized. Smaller elements must be zero
-     padded, and all unused limbs (i.e. between size and alloc) must
-     be zero. */
-  mp_size_t size;
-  struct hgcd_row row[4];
+
+  mp_size_t n;
+  mp_ptr p[2][2];
+  /* Temporary storage, of the same size as the elements */
+  mp_ptr tp;
 };
 
-mp_size_t
-mpn_hgcd_init_itch __GMP_PROTO ((mp_size_t size));
+#define MPN_HGCD_MATRIX_INIT_ITCH(n) (5 * ((n+1)/2))
 
 void
-mpn_hgcd_init __GMP_PROTO ((struct hgcd *hgcd,
-			    mp_size_t asize,
-			    mp_limb_t *limbs));
+mpn_hgcd_matrix_init (struct hgcd_matrix *M, mp_size_t n, mp_ptr p);
 
-mp_size_t
-mpn_hgcd_lehmer_itch __GMP_PROTO ((mp_size_t asize));
-
-int
-mpn_hgcd_lehmer __GMP_PROTO ((struct hgcd *hgcd,
-			      mp_srcptr ap, mp_size_t asize,
-			      mp_srcptr bp, mp_size_t bsize,
-			      struct qstack *quotients,
-			      mp_ptr tp, mp_size_t talloc));
-
-mp_size_t
-mpn_hgcd_itch __GMP_PROTO ((mp_size_t size));
-
-int
-mpn_hgcd __GMP_PROTO ((struct hgcd *hgcd,
-		       mp_srcptr ap, mp_size_t asize,
-		       mp_srcptr bp, mp_size_t bsize,
-		       struct qstack *quotients,
-		       mp_ptr tp, mp_size_t talloc));
-
-#if WANT_ASSERT
 void
-__gmpn_hgcd_sanity __GMP_PROTO ((const struct hgcd *hgcd,
-				 mp_srcptr ap, mp_size_t asize,
-				 mp_srcptr bp, mp_size_t bsize,
-				 unsigned start, unsigned end));
-#define ASSERT_HGCD __gmpn_hgcd_sanity
-#else
-#define ASSERT_HGCD(hgcd, ap, asize, bp, bsize, start, end)
+mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
+		     mp_ptr tp);
+mp_size_t
+mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
+			mp_size_t n, mp_ptr ap, mp_ptr bp,
+			mp_size_t p, mp_ptr tp);
+
+#define MPN_HGCD_STEP_ITCH(n) ((n) + 1)
+
+mp_size_t
+mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
+	       struct hgcd_matrix *M, mp_ptr tp);
+
+mp_size_t
+mpn_hgcd_itch (mp_size_t n);
+
+mp_size_t
+mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
+	  struct hgcd_matrix *M, mp_ptr tp);
+
+#define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
+#define mpn_gcd_lehmer __MPN(gcd_lehmer)
+#define mpn_lgcd __MPN(lgcd)
+
+/* Needs storage for the division */
+#define MPN_GCD_SUBDIV_STEP_ITCH(n) ((n)+1)
+
+mp_size_t
+mpn_gcd_subdiv_step (mp_ptr gp, mp_size_t *gn,
+		     mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp);
+
+#define MPN_GCD_LEHMER_ITCH(an) ((an) + 1)
+
+mp_size_t
+mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n);
+
+#if 0
+mp_size_t
+mpn_lgcd (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t bn);
 #endif
 
-int
-mpn_hgcd_equal __GMP_PROTO ((const struct hgcd *A, const struct hgcd *B));
+/* 4*(an + 1) + 4*(bn + 1) + an */
+#define MPN_GCDEXT_LEHMER_ITCH(an, bn) (5*(an) + 4*(bn) + 8)
 
-mp_size_t
-mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
-			   mp_ptr rp, mp_size_t ralloc,
-			   int sign, mp_size_t uvsize,
-			   const struct hgcd_row *s,
-			   mp_srcptr ap, mp_srcptr bp,
-			   mp_ptr tp, mp_size_t talloc));
-
-#ifndef HGCD_SCHOENHAGE_THRESHOLD
-#define HGCD_SCHOENHAGE_THRESHOLD 150
+#ifndef HGCD_THRESHOLD
+#define HGCD_THRESHOLD 400
 #endif
 
 #if 0
@@ -3987,9 +3914,9 @@ extern mp_size_t                     div_dc_threshold;
 #define POWM_THRESHOLD               powm_threshold
 extern mp_size_t                     powm_threshold;
 
-#undef  HGCD_SCHOENHAGE_THRESHOLD
-#define HGCD_SCHOENHAGE_THRESHOLD    hgcd_schoenhage_threshold
-extern mp_size_t                     hgcd_schoenhage_threshold;
+#undef  HGCD_THRESHOLD
+#define HGCD_THRESHOLD    	     hgcd_threshold
+extern mp_size_t                     hgcd_threshold;
 
 #undef  GCD_ACCEL_THRESHOLD
 #define GCD_ACCEL_THRESHOLD          gcd_accel_threshold

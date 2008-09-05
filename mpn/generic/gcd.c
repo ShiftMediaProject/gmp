@@ -48,6 +48,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#define WITH_HGCD 0
+#if WITH_HGCD
+#define mpn_binary_odd mpn_gcd
+#endif
 
 /* If MIN (usize, vsize) >= GCD_ACCEL_THRESHOLD, then the accelerated
    algorithm is used, otherwise the binary algorithm is used.  This may be
@@ -441,6 +445,7 @@ done:
   return vsize;
 }
 
+#if WITH_HGCD
 #define EVEN_P(x) (((x) & 1) == 0)
 
 /* Allows an even v */
@@ -867,3 +872,4 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       return gsize;
     }
 }
+#endif /* WITH_HGCD */

@@ -37,6 +37,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 # define NULL ((void *) 0)
 #endif
 
+#define WITH_HGCD 0
+
+#if WITH_HGCD
 #if WANT_TRACE
 static void
 trace (const char *format, ...)
@@ -57,289 +60,6 @@ trace (const char *format, ...)
 ((asize) < (bsize) || ((asize) == (bsize)			\
 		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
 
-/* Returns g, u and v such that g = u A - v B. There are three
-   different cases for the result:
-
-     g = u A - v B, 0 < u < b, 0 < v < a
-     g = A          u = 1, v = 0
-     g = B          u = B, v = A - 1
-
-   We always return with 0 < u <= b, 0 <= v < a.
-*/
-#if GCDEXT_1_USE_BINARY
-
-static mp_limb_t
-gcdext_1_odd (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
-{
-  mp_limb_t u0;
-  mp_limb_t v0;
-  mp_limb_t v1;
-  mp_limb_t u1;
-
-  mp_limb_t B = b;
-  mp_limb_t A = a;
-
-  /* Through out this function maintain
-
-     a = u0 A - v0 B
-     b = u1 A - v1 B
-
-     where A and B are odd. */
-
-  u0 = 1; v0 = 0;
-  u1 = b; v1 = a-1;
-
-  if (A == 1)
-    {
-      *up = u0; *vp = v0;
-      return 1;
-    }
-  else if (B == 1)
-    {
-      *up = u1; *vp = v1;
-      return 1;
-    }
-
-  while (a != b)
-    {
-      mp_limb_t mask;
-
-      ASSERT (a % 2 == 1);
-      ASSERT (b % 2 == 1);
-
-      ASSERT (0 < u0); ASSERT (u0 <= B);
-      ASSERT (0 < u1); ASSERT (u1 <= B);
-
-      ASSERT (0 <= v0); ASSERT (v0 < A);
-      ASSERT (0 <= v1); ASSERT (v1 < A);
-
-      if (a > b)
-	{
-	  MP_LIMB_T_SWAP (a, b);
-	  MP_LIMB_T_SWAP (u0, u1);
-	  MP_LIMB_T_SWAP (v0, v1);
-	}
-
-      ASSERT (a < b);
-
-      /* Makes b even */
-      b -= a;
-
-      mask = - (mp_limb_t) (u1 < u0);
-      u1 += B & mask;
-      v1 += A & mask;
-      u1 -= u0;
-      v1 -= v0;
-
-      ASSERT (b % 2 == 0);
-
-      do
-	{
-	  /* As b = u1 A + v1 B is even, while A and B are odd,
-	     either both or none of u1, v1 is even */
-
-	  ASSERT (u1 % 2 == v1 % 2);
-
-	  mask = -(u1 & 1);
-	  u1 = u1 / 2 + ((B / 2) & mask) - mask;
-	  v1 = v1 / 2 + ((A / 2) & mask) - mask;
-
-	  b /= 2;
-	}
-      while (b % 2 == 0);
-    }
-
-  /* Now g = a = b */
-  ASSERT (a == b);
-  ASSERT (u1 <= B);
-  ASSERT (v1 < A);
-
-  ASSERT (A % a == 0);
-  ASSERT (B % a == 0);
-  ASSERT (u0 % (B/a) == u1 % (B/a));
-  ASSERT (v0 % (A/a) == v1 % (A/a));
-
-  *up = u0; *vp = v0;
-
-  return a;
-}
-
-static mp_limb_t
-gcdext_1 (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
-{
-  unsigned shift = 0;
-  mp_limb_t g;
-  mp_limb_t u;
-  mp_limb_t v;
-
-  /* We use unsigned values in the range 0, ... B - 1. As the values
-     are uniquely determined only modulo B, we can add B at will, to
-     get numbers in range or flip the least significant bit. */
-  /* Deal with powers of two */
-  while ((a | b) % 2 == 0)
-    {
-      a /= 2; b /= 2; shift++;
-    }
-
-  if (b % 2 == 0)
-    {
-      unsigned k = 0;
-
-      do {
-	b /= 2; k++;
-      } while (b % 2 == 0);
-
-      g = gcdext_1_odd (&u, &v, a, b);
-
-      while (k--)
-	{
-	  /* We have g = u a + v b, and need to construct
-	     g = u'a + v'(2b).
-
-	     If v is even, we can just set u' = u, v' = v/2
-	     If v is odd, we can set v' = (v + a)/2, u' = u + b
-	  */
-
-	  if (v % 2 == 0)
-	    v /= 2;
-	  else
-	    {
-	      u = u + b;
-	      v = v/2 + a/2 + 1;
-	    }
-	  b *= 2;
-	}
-    }
-  else if (a % 2 == 0)
-    {
-      unsigned k = 0;
-
-      do {
-	a /= 2; k++;
-      } while (a % 2 == 0);
-
-      g = gcdext_1_odd (&u, &v, a, b);
-
-      while (k--)
-	{
-	  /* We have g = u a + v b, and need to construct
-	     g = u'(2a) + v'b.
-
-	     If u is even, we can just set u' = u/2, v' = v.
-	     If u is odd, we can set u' = (u + b)/2
-	  */
-
-	  if (u % 2 == 0)
-	    u /= 2;
-	  else
-	    {
-	      u = u/2 + b/2 + 1;
-	      v = v + a;
-	    }
-	  a *= 2;
-	}
-    }
-  else
-    /* Ok, both are odd */
-    g = gcdext_1_odd (&u, &v, a, b);
-
-  *up = u;
-  *vp = v;
-
-  return g << shift;
-}
-
-#else /* ! GCDEXT_1_USE_BINARY */
-static mp_limb_t
-gcdext_1_u (mp_limb_t *up, mp_limb_t a, mp_limb_t b)
-{
-  /* Maintain
-
-     a =   u0 A mod B
-     b = - u1 A mod B
-  */
-  mp_limb_t u0 = 1;
-  mp_limb_t u1 = 0;
-  mp_limb_t B = b;
-
-  ASSERT (a >= b);
-  ASSERT (b > 0);
-
-  for (;;)
-    {
-      mp_limb_t q;
-
-      q = a / b;
-      a -= q * b;
-
-      if (a == 0)
-	{
-	  *up = B - u1;
-	  return b;
-	}
-      u0 += q * u1;
-
-      q = b / a;
-      b -= q * a;
-
-      if (b == 0)
-	{
-	  *up = u0;
-	  return a;
-	}
-      u1 += q * u0;
-    }
-}
-
-static mp_limb_t
-gcdext_1 (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
-{
-  /* Maintain
-
-     a =   u0 A - v0 B
-     b = - u1 A + v1 B = (B - u1) A - (A - v1) B
-  */
-  mp_limb_t u0 = 1;
-  mp_limb_t v0 = 0;
-  mp_limb_t u1 = 0;
-  mp_limb_t v1 = 1;
-
-  mp_limb_t A = a;
-  mp_limb_t B = b;
-
-  ASSERT (a >= b);
-  ASSERT (b > 0);
-
-  for (;;)
-    {
-      mp_limb_t q;
-
-      q = a / b;
-      a -= q * b;
-
-      if (a == 0)
-	{
-	  *up = B - u1;
-	  *vp = A - v1;
-	  return b;
-	}
-      u0 += q * u1;
-      v0 += q * v1;
-
-      q = b / a;
-      b -= q * a;
-
-      if (b == 0)
-	{
-	  *up = u0;
-	  *vp = v0;
-	  return a;
-	}
-      u1 += q * u0;
-      v1 += q * v0;
-    }
-}
-#endif /* ! GCDEXT_1_USE_BINARY */
 
 /* FIXME: Duplicated in gcd.c */
 static mp_size_t
@@ -1330,3 +1050,14 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       return gsize;
     }
 }
+#else /* !WITH_HGCD */
+mp_size_t
+mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
+	    mp_ptr ap, mp_size_t asize, mp_ptr bp, mp_size_t bsize)
+{
+  ASSERT (asize >= bsize);
+  ASSERT (bsize > 0);
+
+  return gcdext_lehmer(gp, up, usizep, ap, asize, bp, bsize);
+}
+#endif
