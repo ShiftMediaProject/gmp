@@ -1,0 +1,49 @@
+syntax: regexp
+
+# This files ignores the files demos/calc/calc-config.h and
+# demos/pexpr-config.h, which is desired, but I don't understand why.
+
+^configure
+^aclocal\.m4
+^autom4te\.cache
+Makefile\.in
+
+^config\.cache
+^config\.h
+^config\.log
+^config\.m4
+^config\.status
+^gmp\.h
+^mp\.h
+^libtool
+^stamp-h1
+Makefile
+
+^gmp-mparam.h
+
+^gen-bases
+^gen-fac_ui
+^gen-fib
+^gen-psqr
+
+^mp_bases\.h
+^fib_table\.h
+^mpn/perfsqr\.h
+^mpz/fac_ui.h
+
+^doc/gmp\.info.*
+^doc/stamp-vti
+^doc/version\.texi
+
+# All source files in mpn/ are iether generated, or links
+^mpn/.*\.c
+^mpn/.*\.asm
+^
+^\.libs
+
+.*\.a
+.*\.la
+.*\.o
+.*\.lo
+
+.*~

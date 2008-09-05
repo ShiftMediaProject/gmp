@@ -1,4 +1,0 @@
-*.lo
-.libs
-Makefile
-libmpq.la
