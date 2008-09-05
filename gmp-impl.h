@@ -3421,24 +3421,20 @@ struct qstack
 };
 
 mp_size_t
-qstack_itch __GMP_PROTO ((mp_size_t size));
+qstack_itch __GMP_PROTO ((mp_size_t));
 
 void
-qstack_init __GMP_PROTO ((struct qstack *stack,
-			  mp_size_t asize,
-			  mp_limb_t *limbs, mp_size_t alloc));
+qstack_init __GMP_PROTO ((struct qstack *, mp_size_t, mp_limb_t *, mp_size_t));
 
 void
-qstack_reset __GMP_PROTO ((struct qstack *stack,
-			   mp_size_t asize));
+qstack_reset __GMP_PROTO ((struct qstack *, mp_size_t));
 
 void
-qstack_rotate __GMP_PROTO ((struct qstack *stack,
-			    mp_size_t size));
+qstack_rotate __GMP_PROTO ((struct qstack *, mp_size_t));
 
 #if WANT_ASSERT
 void
-__gmpn_qstack_sanity __GMP_PROTO ((struct qstack *stack));
+__gmpn_qstack_sanity __GMP_PROTO ((struct qstack *));
 #define ASSERT_QSTACK __gmpn_qstack_sanity
 #else
 #define ASSERT_QSTACK(stack)
@@ -3460,25 +3456,25 @@ struct hgcd2
 };
 
 int
-mpn_hgcd2 __GMP_PROTO ((struct hgcd2 *hgcd,
-			mp_limb_t ah, mp_limb_t al,
-			mp_limb_t bh, mp_limb_t bl,
-			struct qstack *quotients));
+mpn_hgcd2 __GMP_PROTO ((struct hgcd2 *,
+			mp_limb_t, mp_limb_t,
+			mp_limb_t, mp_limb_t,
+			struct qstack *));
 
 mp_size_t
-mpn_hgcd2_fix __GMP_PROTO ((mp_ptr rp, mp_size_t ralloc,
-			    int sign,
-			    mp_limb_t u, mp_srcptr ap, mp_size_t asize,
-			    mp_limb_t v, mp_srcptr bp, mp_size_t bsize));
+mpn_hgcd2_fix __GMP_PROTO ((mp_ptr, mp_size_t,
+			    int,
+			    mp_limb_t, mp_srcptr, mp_size_t,
+			    mp_limb_t, mp_srcptr, mp_size_t));
 
 int
-mpn_hgcd2_lehmer_step __GMP_PROTO ((struct hgcd2 *hgcd,
-				    mp_srcptr ap, mp_size_t asize,
-				    mp_srcptr bp, mp_size_t bsize,
-				    struct qstack *quotients));
+mpn_hgcd2_lehmer_step __GMP_PROTO ((struct hgcd2 *,
+				    mp_srcptr, mp_size_t,
+				    mp_srcptr, mp_size_t,
+				    struct qstack *));
 
 unsigned
-mpn_hgcd_max_recursion __GMP_PROTO ((mp_size_t n));
+mpn_hgcd_max_recursion __GMP_PROTO ((mp_size_t));
 
 struct hgcd_row
 {
@@ -3501,54 +3497,54 @@ struct hgcd
 };
 
 mp_size_t
-mpn_hgcd_init_itch __GMP_PROTO ((mp_size_t size));
+mpn_hgcd_init_itch __GMP_PROTO ((mp_size_t));
 
 void
-mpn_hgcd_init __GMP_PROTO ((struct hgcd *hgcd,
-			    mp_size_t asize,
-			    mp_limb_t *limbs));
+mpn_hgcd_init __GMP_PROTO ((struct hgcd *,
+			    mp_size_t,
+			    mp_limb_t *));
 
 mp_size_t
-mpn_hgcd_lehmer_itch __GMP_PROTO ((mp_size_t asize));
+mpn_hgcd_lehmer_itch __GMP_PROTO ((mp_size_t));
 
 int
-mpn_hgcd_lehmer __GMP_PROTO ((struct hgcd *hgcd,
-			      mp_srcptr ap, mp_size_t asize,
-			      mp_srcptr bp, mp_size_t bsize,
-			      struct qstack *quotients,
-			      mp_ptr tp, mp_size_t talloc));
+mpn_hgcd_lehmer __GMP_PROTO ((struct hgcd *,
+			      mp_srcptr, mp_size_t,
+			      mp_srcptr, mp_size_t,
+			      struct qstack *,
+			      mp_ptr, mp_size_t));
 
 mp_size_t
-mpn_hgcd_itch __GMP_PROTO ((mp_size_t size));
+mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 
 int
-mpn_hgcd __GMP_PROTO ((struct hgcd *hgcd,
-		       mp_srcptr ap, mp_size_t asize,
-		       mp_srcptr bp, mp_size_t bsize,
-		       struct qstack *quotients,
-		       mp_ptr tp, mp_size_t talloc));
+mpn_hgcd __GMP_PROTO ((struct hgcd *,
+		       mp_srcptr, mp_size_t,
+		       mp_srcptr, mp_size_t,
+		       struct qstack *,
+		       mp_ptr, mp_size_t));
 
 #if WANT_ASSERT
 void
-__gmpn_hgcd_sanity __GMP_PROTO ((const struct hgcd *hgcd,
-				 mp_srcptr ap, mp_size_t asize,
-				 mp_srcptr bp, mp_size_t bsize,
-				 unsigned start, unsigned end));
+__gmpn_hgcd_sanity __GMP_PROTO ((const struct hgcd *,
+				 mp_srcptr, mp_size_t,
+				 mp_srcptr, mp_size_t,
+				 unsigned, unsigned));
 #define ASSERT_HGCD __gmpn_hgcd_sanity
 #else
 #define ASSERT_HGCD(hgcd, ap, asize, bp, bsize, start, end)
 #endif
 
 int
-mpn_hgcd_equal __GMP_PROTO ((const struct hgcd *A, const struct hgcd *B));
+mpn_hgcd_equal __GMP_PROTO ((const struct hgcd *, const struct hgcd *));
 
 mp_size_t
-mpn_hgcd_fix __GMP_PROTO ((mp_size_t k,
-			   mp_ptr rp, mp_size_t ralloc,
-			   int sign, mp_size_t uvsize,
-			   const struct hgcd_row *s,
-			   mp_srcptr ap, mp_srcptr bp,
-			   mp_ptr tp, mp_size_t talloc));
+mpn_hgcd_fix __GMP_PROTO ((mp_size_t,
+			   mp_ptr, mp_size_t,
+			   int, mp_size_t,
+			   const struct hgcd_row *,
+			   mp_srcptr, mp_srcptr,
+			   mp_ptr, mp_size_t));
 
 #ifndef HGCD_SCHOENHAGE_THRESHOLD
 #define HGCD_SCHOENHAGE_THRESHOLD 150
@@ -3573,7 +3569,7 @@ struct powers
 {
   mp_ptr p;			/* actual power value */
   mp_size_t n;			/* # of limbs at p */
-  mp_size_t shift;		/* weight og lowest limb, in limb base B */
+  mp_size_t shift;		/* weight of lowest limb, in limb base B */
   size_t digits_in_base;	/* number of corresponding digits */
   int base;
 };
