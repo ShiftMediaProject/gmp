@@ -190,7 +190,8 @@ main ()
       /* "GenuineIntel" */
       switch ((getcpuid(3LL) >> 24) & 0xFF) {
       case 0x07: puts ("itanium");  break;
-      case 0x1F: puts ("itanium2"); break;
+      case 0x1F: puts ("itanium2"); break; /* McKinley, Madison */
+      case 0x20: puts ("itanium2"); break; /* Montecito */
       }
     }
   return 0;
@@ -708,7 +709,7 @@ main ()
   model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
   stepping = fms & 0xf;
 
-  modelstr = "i486";
+  modelstr = "$guess_cpu";
   if (strcmp (vendor_string, "GenuineIntel") == 0)
     {
       switch (family)
@@ -747,6 +748,7 @@ main ()
 	  modelstr = "athlon";
 	  break;
 	case 15:
+	case 16:
 	  modelstr = "athlon64";
 	  break;
 	}
