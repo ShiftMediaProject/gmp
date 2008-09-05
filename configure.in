@@ -1345,7 +1345,7 @@ case $host in
         gcc_cflags_cpu="-mtune=pentium2 -mcpu=pentium2 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium2 -march=pentiumpro -march=pentium"
         ;;
-      pentium3)
+      pentium3 | pentiumm)
         gcc_cflags_cpu="-mtune=pentium3 -mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium3 -march=pentiumpro -march=pentium"
         ;;
@@ -1408,7 +1408,8 @@ case $host in
       pentiummmx)           path="x86/pentium/mmx x86/pentium x86" ;;
       i686 | pentiumpro)    path="x86/p6 x86" ;;
       pentium2)             path="x86/p6/mmx x86/p6 x86" ;;
-      pentium3 | core2)     path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+      pentium3 | pentiumm | core2)
+      	       	 	    path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
       geode)                path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
