@@ -6,6 +6,7 @@ syntax: regexp
 ^configure
 ^aclocal\.m4
 ^autom4te\.cache
+^config\.in
 Makefile\.in
 
 ^config\.cache
