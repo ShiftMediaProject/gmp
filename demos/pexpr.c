@@ -301,7 +301,7 @@ main (int argc, char **argv)
       else if (arg[1] == 'b' && arg[2] >= '0' && arg[2] <= '9')
 	{
 	  base = atoi (arg + 2);
-	  if (base < 2 || base > 36)
+	  if (base < 2 || base > 62)
 	    {
 	      fprintf (stderr, "error: invalid output base\n");
 	      exit (-1);
