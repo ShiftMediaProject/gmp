@@ -20,10 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		3.15	(mpn_sub_n + mpn_lshift costs about 4 c/l)
-C P4:		?
-C P6-15:	4.35
+C	     cycles/limb
+C K8,K9:	 3.15	(mpn_sub_n + mpn_lshift costs about 4 c/l)
+C K10:		 3.15	(mpn_sub_n + mpn_lshift costs about 4 c/l)
+C P4:		16.5
+C P6-15:	 4.35
 
 C This was written quickly and not optimized at all, but it runs very well on
 C K8.  But perhaps one could get under 3 c/l.  Ideas:

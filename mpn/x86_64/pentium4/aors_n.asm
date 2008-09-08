@@ -20,10 +20,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C K8:			2.8
-C Prescott/Nocona:	4.0
-C P6-15:		2.55
+C	     cycles/limb
+C K8,K9:	 2.8
+C K10:		 2.8
+C P4:		 4
+C P6-15:	 3.6-5	(fluctuating)
+
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

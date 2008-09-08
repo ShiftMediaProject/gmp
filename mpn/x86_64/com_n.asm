@@ -21,7 +21,8 @@ include(`../config.m4')
 
 
 C	    cycles/limb
-C K8:		1.25
+C K8,K9:	1.25
+C K10:		1.25
 C P4:		2.78
 C P6-15:	1.1
 

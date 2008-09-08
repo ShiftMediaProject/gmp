@@ -21,7 +21,8 @@ include(`../config.m4')
 
 C	   integer part    fraction part
 C	    cycles/limb     cycles/limb
-C K8:		17		15
+C K8,K9:	17		15
+C K10:		17		15
 C P4:		83		57
 C P6-15:	32		21
 

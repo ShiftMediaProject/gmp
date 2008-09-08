@@ -20,10 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		2.14	(mpn_add_n + mpn_rshift need 4.125)
-C P4:		13
-C P6-15:	3.8
+C	     cycles/limb
+C K8,K9:	 2.14	(mpn_add_n + mpn_rshift need 4.125)
+C K10:		 2.14	(mpn_add_n + mpn_rshift need 4.125)
+C P4:		12.75
+C P6-15:	 3.75
 
 C TODO
 C  * Rewrite to use indexed addressing, like addlsh1.asm and sublsh1.asm.

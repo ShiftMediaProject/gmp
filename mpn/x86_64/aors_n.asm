@@ -21,10 +21,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		1.69
-C P4:		11
-C P6-15:	5.0
+C	     cycles/limb
+C K8,K9:	 1.69
+C K10:		 2
+C P4:		10.5
+C P6-15:	 4.87
 
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc)
 

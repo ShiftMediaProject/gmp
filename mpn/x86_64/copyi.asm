@@ -21,9 +21,10 @@ include(`../config.m4')
 
 
 C	    cycles/limb
-C K8:		1
-C P4:		2
-C P6-15:	1
+C K8,K9:	1
+C K10:		1
+C P4:		2.8
+C P6-15:	1.2
 
 
 C INPUT PARAMETERS

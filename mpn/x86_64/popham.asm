@@ -23,16 +23,14 @@ include(`../config.m4')
 
 C		     popcount	      hamdist
 C		    cycles/limb	    cycles/limb
-C K8:			 6		 7
+C K8,K9:		 6		 7
+C K10:			 6		 7
 C P4:			12		14.3
 C P6-15:		 7		 8
 
 C TODO
 C  * Tune.  It should be possible to reach 5 c/l for popcount and 6 c/l for
-C    hamdist.
-C  * Consider a combined SSE2 + integer operation loop.  It seems hard to beat
-C    5 c/l for popcount though, due to the 2-slot decode type of most needed
-C    SSE2 insns.
+C    hamdist for K8/K9.
 
 
 ifdef(`OPERATION_popcount',`

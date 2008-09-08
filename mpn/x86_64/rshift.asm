@@ -20,10 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		2.375
-C P4:		8
-C P6-15:	2.15
+C	     cycles/limb
+C K8,K9:	 2.375
+C K10:		 2.375
+C P4:		 8
+C P6-15:	 2.11
 
 
 C INPUT PARAMETERS
