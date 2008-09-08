@@ -65,7 +65,7 @@ ifdef(`HAVE_ABI_32',
 .Lcommon:
 {.mii
 	setf.sig	f6 = vl			C M2 M3
-	shr.u		r31 = r15, 2		C I
+	shr.u		r31 = r15, 2		C I0
 	cmp.eq		p10, p0 = 0, r14	C M I
 }
 {.mii
