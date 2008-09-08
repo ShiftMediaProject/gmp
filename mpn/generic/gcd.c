@@ -49,9 +49,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #define WITH_HGCD 0
-#if WITH_HGCD
-#define mpn_binary_odd mpn_gcd
-#endif
 
 /* If MIN (usize, vsize) >= GCD_ACCEL_THRESHOLD, then the accelerated
    algorithm is used, otherwise the binary algorithm is used.  This may be
@@ -586,103 +583,6 @@ hgcd_tdiv (mp_ptr qp,
 }
 
 
-#if 0
-#define GCD_LEHMER_ITCH(asize) (5*((asize) + 1))
-
-static mp_size_t
-gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
-	    mp_srcptr bp, mp_size_t bsize,
-	    mp_ptr tp, mp_size_t talloc)
-{
-  struct hgcd_row r[4];
-  mp_ptr qp;
-  mp_size_t qsize;
-  mp_size_t ralloc = asize + 1;
-
-  ASSERT (asize >= bsize);
-  ASSERT (bsize > 0);
-
-#if 0
-  if (BELOW_THRESHOLD (asize, MPN_GCD_LEHMER_THRESHOLD))
-    {
-      ASSERT (asize + bsize + 2 <= talloc);
-
-      MPN_COPY (tp, ap, asize);
-      MPN_COPY (tp + asize + 1, bp, bsize);
-      return nhgcd_gcd_binary (gp, tp, asize, tp + asize + 1, bsize);
-    }
-#endif
-
-  ASSERT (MPN_LEQ_P (bp, bsize, ap, asize));
-  ASSERT (5 * asize  + 4 <= talloc);
-
-  r[0].rp = tp; tp += ralloc; talloc -= ralloc;
-  r[1].rp = tp; tp += ralloc; talloc -= ralloc;
-  r[2].rp = tp; tp += ralloc; talloc -= ralloc;
-  r[3].rp = tp; tp += ralloc; talloc -= ralloc;
-  qp = tp; tp += asize; talloc -= asize;
-
-  MPN_COPY (r[0].rp, ap, asize); r[0].rsize = asize;
-  MPN_COPY (r[1].rp, bp, bsize); r[1].rsize = bsize;
-
-#if 0
-  /* u and v fields aren't used, but zero them out so that we can call
-     trace_nhgcd_row */
-  r[0].uvp[0] = r[0].uvp[1] = NULL;
-  r[1].uvp[0] = r[1].uvp[1] = NULL;
-  r[2].uvp[0] = r[2].uvp[1] = NULL;
-  r[3].uvp[0] = r[3].uvp[1] = NULL;
-#endif
-
-  while (ABOVE_THRESHOLD (r[0].rsize, GCD_LEHMER_THRESHOLD) && r[1].rsize > 0)
-    {
-      struct hgcd2 hgcd;
-      int res = mpn_hgcd2_lehmer_step (&hgcd,
-				       r[0].rp, r[0].rsize,
-				       r[1].rp, r[1].rsize,
-				       NULL);
-
-      if (!res || (res == 2 && hgcd.row[0].v == 0))
-	{
-	  qsize = hgcd_tdiv (qp, r[2].rp, &r[2].rsize,
-			     r[0].rp, r[0].rsize,
-			     r[1].rp, r[1].rsize);
-	  NHGCD_SWAP3_LEFT (r);
-	}
-      else
-	{
-	  const struct hgcd2_row *s = hgcd.row + (res - 2);
-	  int sign = hgcd.sign;
-	  if (res == 3)
-	    sign = ~sign;
-
-	  /* s[0] and s[1] correct. */
-	  r[2].rsize
-	    = mpn_hgcd2_fix (r[2].rp, ralloc,
-			     sign,
-			     s[0].u, r[0].rp, r[0].rsize,
-			     s[0].v, r[1].rp, r[1].rsize);
-
-	  r[3].rsize
-	    = mpn_hgcd2_fix (r[3].rp, ralloc,
-			     ~sign,
-			     s[1].u, r[0].rp, r[0].rsize,
-			     s[1].v, r[1].rp, r[1].rsize);
-
-	  NHGCD_SWAP4_2 (r);
-	}
-    }
-
-  if (r[1].rsize == 0)
-    {
-      MPN_COPY (gp, r[0].rp, r[0].rsize);
-      return r[0].rsize;
-    }
-
-  return gcd_binary (gp, r[0].rp, r[0].rsize, r[1].rp, r[1].rsize);
-}
-#endif
-
 static mp_size_t
 gcd_schoenhage_itch (mp_size_t asize)
 {
@@ -850,7 +750,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 
       TMP_MARK;
 
-      scratch = GCD_LEHMER_ITCH (usize);
+      scratch = MPN_GCD_LEHMER_ITCH (usize);
       tp = TMP_ALLOC_LIMBS (scratch);
 
       gsize = gcd_lehmer (gp, up, usize, vp, vsize, tp, scratch);
@@ -872,4 +772,19 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       return gsize;
     }
 }
-#endif /* WITH_HGCD */
+#else /* !WITH_HGCD */
+mp_size_t
+mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
+{
+  mp_size_t gn;
+  mp_ptr tp;
+  
+  TMP_DECL;
+  TMP_MARK;
+
+  tp = TMP_ALLOC_LIMBS(MPN_GCD_LEHMER_ITCH(usize));
+  gn = mpn_gcd_lehmer(gp, up, usize, vp, vsize, tp);
+  TMP_FREE;
+  return gn;
+}
+#endif /* !WITH_HGCD */
