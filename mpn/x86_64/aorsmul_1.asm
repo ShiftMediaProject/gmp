@@ -41,9 +41,9 @@ ifdef(`OPERATION_submul_1',`
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(func)
 	mov	n   , %r11		C move away n from rdx, mul uses it
 define(`n',	`%r11')

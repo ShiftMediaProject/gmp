@@ -42,6 +42,8 @@ ifdef(`PIC',
 define(`mp',`%rbx')
 
 ASM_START()
+	TEXT
+	ALIGN(32)
 PROLOGUE(mpn_redc_1)
 	pushq	%rbp
 	pushq	%rbx

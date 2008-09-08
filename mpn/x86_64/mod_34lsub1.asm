@@ -57,7 +57,7 @@ C	adcq	$0, %r8
 C	...
 
 
-
+ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mod_34lsub1)

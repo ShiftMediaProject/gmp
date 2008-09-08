@@ -35,6 +35,7 @@ C up		rsi
 C n		rdx
 C divisor	rcx
 
+ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_divexact_1)

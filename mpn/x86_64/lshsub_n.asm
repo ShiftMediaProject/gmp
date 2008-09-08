@@ -41,9 +41,9 @@ define(`vp',	`%rdx')
 define(`n',	`%rcx')
 define(`cnt'	`%r8')
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(mpn_lshsub_n)
 
 	push	%r12

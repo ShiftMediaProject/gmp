@@ -36,10 +36,10 @@ C n		rdx
 C vl		rcx
 C cylimb	r8
 
+ASM_START()
 	TEXT
 	ALIGN(16)
 	.byte	0,0,0,0,0,0,0,0,0	C this aligns the loop		      9
-ASM_START()
 PROLOGUE(mpn_mul_1)
 	xorl	%r8d, %r8d		C clear carry limb		      3
 PROLOGUE(mpn_mul_1c)

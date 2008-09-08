@@ -71,8 +71,8 @@ C experiments with binutils 2.13 looked worrylingly like it might come out
 C with an unwanted text segment relocation though, even with ".protected".
 
 
+ASM_START()
 	TEXT
-
 	ALIGN(32)
 PROLOGUE(mpn_modexact_1_odd)
 

@@ -33,6 +33,8 @@ define(`n',	`%rdx')
 define(`cy',	`%rcx')
 
 ASM_START()
+	TEXT
+	ALIGN(16)
 PROLOGUE(mpn_divexact_by3c)
 	push	%rbx
 	movq	(up), %rax

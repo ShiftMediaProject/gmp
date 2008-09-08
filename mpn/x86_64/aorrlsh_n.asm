@@ -54,9 +54,9 @@ ifdef(`OPERATION_rsblsh_n',`
 
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_rsblsh_n)
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(func)
 
 	push	%r12

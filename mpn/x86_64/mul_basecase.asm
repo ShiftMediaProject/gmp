@@ -82,9 +82,9 @@ define(`un',	`%rdx')
 define(`vp',	`%rcx')
 define(`vn',	`%r8')
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(mpn_mul_basecase)
 
 	push	%rbx
