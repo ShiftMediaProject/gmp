@@ -90,6 +90,10 @@ div2 (mp_ptr rp,
 }
 #else /* GMP_NAIL_BITS != 0 */
 /* Check all functions for nail support. */
+/* hgcd2 should be defined to take inputs including nail bits, and
+   produce a matrix with elements also including nail bits. This is
+   necessary, for the matrix elements to be useful with mpn_mul_1,
+   mpn_addmul_1 and friends. */
 #error Not implemented
 #endif /* GMP_NAIL_BITS != 0 */
 
