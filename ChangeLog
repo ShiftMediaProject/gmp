@@ -1,3 +1,52 @@
+2008-09-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/invert.c: Add working but slow code.
+
+	* mpn/x86_64/x86_64-defs.m4 (R32, R8): New macros.
+
+	* mpn/ia64/submul_1.asm: Move some labels for broader assembler
+	compatibility.
+
+	* gmp-impl.h (mpn_mul_3, mpn_mul_4): Declare.
+	* tests/tests.h (refmpn_mul_3, refmpn_mul_4): Declare.
+	* tests/try.c (param_init): Set things up for mpn_mul_3 and mpn_mul_4.
+	(choice_array): Likewise.
+	(call): Likewise.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES):
+	Add mul_3.c and mul_4.
+	* mpn/asm-defs.m4: Define mul_3 and mul_4.
+	* tests/refmpn.c (refmpn_mul_N): New function.
+	(refmpn_mul_2): Remove old definition, call refmpn_mul_N.
+	(refmpn_mul_3, refmpn_mul_4): New functions.
+	* tune/common.c (speed_mpn_mul_3, speed_mpn_mul_4): New functions.
+	* tune/speed.h (speed_mpn_mul_3, speed_mpn_mul_4): Declare.
+	* tune/speed.c (routine): New entries for mpn_mul_2 and mpn_mul_3.
+
+	* ltmain.sh: Update to libtool 1.5.24.
+
+	* mpn/generic/mul_toom22.c: Compute s and t more cleverly.
+
+	* gmp-h.in (__GMP_CC): New #define.
+	(__GMP_CFLAGS): New #define.
+
+2008-09-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/toom_interpolate_7pts.c: Use mpn_divexact_by3c instead of
+	divexact_odd.
+
+	* doc/texinfo.tex: Update to 2007-06-29.13.
+
+	* doc/gmp.texi: Update GMP site URL.  Fix some typos.
+
+	* demos/pexpr.c (main): Allow bases up to 62.
+
+	* gmp-impl.h: Remove formal parameter names from function prototypes.
+
+	* config.guess: Recognize recent AMD and Itanium CPUs.
+	Default X86 CPU recognition to configfsf.guess' value.
+
+	* configure.in: Handle core2 separately from athlon64.
+
 2008-09-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* */Makefile.in, configure, aclocal.m4, config.in: Removed files
@@ -17,11 +66,28 @@
 	* tests/misc/t-scanf.c: Avoid negative arguments to _ui functions.
 	* tests/misc/t-printf.c: Likewise.
 
+2008-08-01  Torbjorn Granlund  <tege@swox.com>
+
+	* gmpxx.h (__GMP_DBL_LIMBS): Use DBL_MAX_EXP instead of
+	std::numeric_limits<double>::max_exponent for better portability.
+
+2008-07-29  Torbjorn Granlund  <tege@swox.com>
+
+	* gmpxx.h (__GMP_DBL_LIMBS): New #define.
+	(__GMP_ULI_LIMBS): New #define.
+	(__GMPXX_TMP_UI): New macro.
+	(__GMPXX_TMP_SI): New macro.
+	(__GMPXX_TMP_D): New macro.
+	(struct __gmp_binary_and): Rewrite, using the new macros.
+	(struct __gmp_binary_ior): Likewise.
+	(struct __gmp_binary_xor): Likewise.
+
 2008-07-24  Torbjorn Granlund  <tege@swox.com>
 
 	* gmpxx.h: Use __GMPZ_* instead of __GMPZZ_* for bitwise ops, remove
 	__GMPZZ_*.
 	Remove repeated #undefs.
+	(__gmp_alloc_cstring): Declare freefunc as extern "C".
 
 2008-07-21  Torbjorn Granlund  <tege@swox.com>
 
@@ -74,7 +140,8 @@
 
 2008-02-28  Torbjorn Granlund  <tege@swox.com>
 
-	* tests/cxx/t-binary.cc (check_mpz): Expect floor rounding for right shift.
+	* tests/cxx/t-binary.cc (check_mpz): Expect floor rounding for right
+	shift.
 
 2008-02-27  Torbjorn Granlund  <tege@swox.com>
 
@@ -236,6 +303,12 @@
 	* mpn/generic/invert.c: New file, placeholder for now.
 
 2007-09-24  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/toom_interpolate_5pts.c: New file, contents from
+	mpn/generic/mul_n.c
+	* mpn/generic/mul_n.c (mpn_toom3_interpolate): Function removed.
+
+	* mpn/generic/toom_interpolate_7pts.c: New file.
 
 	* mpn/x86/k7/mmx/popham.asm: Table cycle counts.
 
