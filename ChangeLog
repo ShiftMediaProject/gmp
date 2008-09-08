@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-08  Niels Möller  <niels@swift.nada.kth.se>
+
+	* configure.in (gmp_mpn_functions): Added gcdext_lehmer.
+
 2008-09-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* */Makefile.in, configure, aclocal.m4, config.in: Removed files
