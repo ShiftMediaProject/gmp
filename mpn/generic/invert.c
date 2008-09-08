@@ -17,17 +17,36 @@ details.
 You should have received a copy of the GNU General Public License along with
 the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
 mp_size_t
 mpn_invert_itch (mp_size_t n)
 {
-  abort ();
+  return 3 * n + 2;
 }
 
 void
-mpn_invert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
+mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
-  abort ();
+  mp_ptr np, rp;
+  mp_size_t i;
+  TMP_DECL;
+
+  TMP_MARK;
+  if (scratch == NULL)
+    {
+      scratch = TMP_ALLOC_LIMBS (mpn_invert_itch (n));
+    }
+
+  np = scratch;					/* 2 * n limbs */
+  rp = scratch + 2 * n;				/* n + 2 limbs */
+  for (i = n - 1; i >= 0; i--)
+    np[i] = ~CNST_LIMB(0);
+  mpn_com_n (np + n, dp, n);
+  mpn_tdiv_qr (rp, ip, 0L, np, 2 * n, dp, n);
+  MPN_COPY (ip, rp, n);
+
+  TMP_FREE;
 }
