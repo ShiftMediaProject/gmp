@@ -465,9 +465,8 @@ ifdef(`HAVE_ABI_32',
    (p6)	add		r8 = 1, r8
 	;;				C 02
 }
-.LL00:
 {.mmi
-	ldf8		f45 = [rp], 8
+.LL00:	ldf8		f45 = [rp], 8
 	cmp.ltu		p6, p0 = r24, r8
 	sub		r14 = r24, r8
 }
@@ -488,9 +487,8 @@ ifdef(`HAVE_ABI_32',
    (p6)	add		r8 = 1, r8
 	;;				C 04
 }
-.LL11:
 {.mmi
-	ldf8		f46 = [rp], 8
+.LL11:	ldf8		f46 = [rp], 8
 	cmp.ltu		p6, p0 = r25, r8
 	sub		r14 = r25, r8
 }
@@ -511,9 +509,8 @@ ifdef(`HAVE_ABI_32',
    (p6)	add		r8 = 1, r8
 	;;				C 06
 }
-.LL10:
 {.mmi
-	ldf8		f47 = [rp], 8
+.LL10:	ldf8		f47 = [rp], 8
 	cmp.ltu		p6, p0 = r26, r8
 	sub		r14 = r26, r8
 }
