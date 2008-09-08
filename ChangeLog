@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-08  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_itch): New function.
+	(mpn_gcdext_lehmer): Various bugfixes.
+
 	* gcdext.c (mpn_gcdext): Allocate scratch space for gcdext_lehmer.
 
 	* mpn/generic/gcd_lehmer.c (gcd_2): ASSERT that inputs are odd.

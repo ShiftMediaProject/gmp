@@ -22,11 +22,25 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static mp_size_t
-gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
-	       mp_srcptr ap, mp_size_t an,
-	       mp_srcptr bp, mp_size_t n,
-	       mp_ptr tp)
+/* Temporary storage: an + 1 for initial division, independent of
+   everything else. 2*(n+1) for u. n+1 for the matrix-vector
+   multiplications (if hgcd2 succeeds). If hgcd fails, n+1 limbs are
+   needed for the division, with most n for the quotient, and n+1 for
+   the product q u0.
+
+   In all, max(an + 1, 4n + 3). */
+
+mp_size_t
+mpn_gcdext_lehmer_itch (mp_size_t an, mp_size_t bn)
+{
+  return MAX(an+1, 4*bn + 3);
+}
+
+mp_size_t
+mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
+		   mp_ptr ap, mp_size_t an,
+		   mp_ptr bp, mp_size_t n,
+		   mp_ptr tp)
 {
   mp_size_t ualloc = n + 1;
 
@@ -43,11 +57,6 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   mp_ptr u0;
   mp_ptr u1;
   
-  u0 = tp; tp += n + 1;
-  u1 = tp; tp += n + 1;
-
-  u0[0] = 0; u1[0] = 1; un = 1;
-
   if (an > n)
     {
       /* Initial division */
@@ -63,6 +72,12 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       else
 	MPN_COPY(ap, tp, n);
     }
+
+  u0 = tp; tp += ualloc;
+  u1 = tp; tp += ualloc;
+
+  u0[0] = 0; u1[0] = 1; un = 1;
+
   while (n >= 2)
     {
       struct hgcd_matrix1 M;
@@ -79,9 +94,9 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  int shift;
 
 	  count_leading_zeros (shift, mask);
-	  ah = MPN_EXTRACT_LIMB (shift, ap[1], ap[0]);
+	  ah = MPN_EXTRACT_NUMB (shift, ap[1], ap[0]);
 	  al = ap[0] << shift;
-	  bh = MPN_EXTRACT_LIMB (shift, bp[1], bp[0]);
+	  bh = MPN_EXTRACT_NUMB (shift, bp[1], bp[0]);
 	  bl = bp[0] << shift;	  
 	}
       else if (mask & GMP_NUMB_HIGHBIT)
@@ -94,10 +109,10 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  int shift;
 
 	  count_leading_zeros (shift, mask);
-	  ah = MPN_EXTRACT_LIMB (shift, ap[n-1], ap[n-2]);
-	  al = MPN_EXTRACT_LIMB (shift, ap[n-2], ap[n-3]);
-	  bh = MPN_EXTRACT_LIMB (shift, bp[n-1], bp[n-2]);
-	  bl = MPN_EXTRACT_LIMB (shift, bp[n-2], bp[n-3]);
+	  ah = MPN_EXTRACT_NUMB (shift, ap[n-1], ap[n-2]);
+	  al = MPN_EXTRACT_NUMB (shift, ap[n-2], ap[n-3]);
+	  bh = MPN_EXTRACT_NUMB (shift, bp[n-1], bp[n-2]);
+	  bl = MPN_EXTRACT_NUMB (shift, bp[n-2], bp[n-3]);
 	}
 
       /* Try an mpn_nhgcd2 step */
@@ -135,8 +150,8 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	      MPN_COPY (gp, ap, n);
 	      MPN_NORMALIZE(u0, un);
 	      MPN_COPY (up, u0, un);
-	      *gn = n;
-	      return -un;
+	      *usize = - un;
+	      return n;
 	    }
 
 	  if (ap[an-1] < bp[an-1])
@@ -149,10 +164,10 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  if (bn == 0)
 	    {
 	      MPN_COPY (gp, ap, n);
-	      MPN_NORMALIZE (u2, un);
-	      MPN_COPY (up, u2, un);
-	      *gn = n;
-	      return un;
+	      MPN_NORMALIZE (u1, un);
+	      MPN_COPY (up, u1, un);
+	      *usize = un;
+	      return n;
 	    }
 
 	  /* Reduce a -= b, u1 += u0 */
@@ -184,8 +199,9 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  qn = an - bn + 1;
 	  mpn_tdiv_qr (tp, tp + qn, 0, ap, an, bp, bn);
 
-	  /* Normalizing seems to be the simplest way to test if the remainder
-	     is zero. */
+	  /* Normalizing seems to be the simplest way to test if the
+	     remainder is zero. FIXME: Use mpn_zero_p function or
+	     macro. See toom functions. */
 	  an = bn;
 	  MPN_NORMALIZE (tp + qn, an);
 	  if (an == 0)
@@ -193,16 +209,19 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	      MPN_COPY (gp, bp, bn);
 	      MPN_NORMALIZE (u0, un);
 	      MPN_COPY (up, u0, un);
-	      *gn = bn;
-	      return -un;
+	      *usize = -un;
+	      return bn;
 	    }
 
 	  MPN_COPY (ap, tp + qn, bn);
-	  
+	  n = bn;
+
 	  /* Update u1 += q u0 */
 	  qn -= (tp[qn -1] == 0);
 	  u0n = un;
 	  MPN_NORMALIZE (u0, u0n);
+	  ASSERT (u0n + qn <= ualloc);
+
 	  if (qn > u0n)
 	    mpn_mul (tp + qn, tp, qn, u0, u0n);
 	  else
@@ -226,18 +245,20 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   if (ap[0] == 0)
     {
       gp[0] = bp[0];
-      *gn = 1;
+
       MPN_NORMALIZE (u0, un);
       MPN_COPY (up, u0, un);
-      return -un;
+      *usize = - un;
+      return 1;
     }
   else if (bp[0] == 0)
     {
       gp[0] = ap[0];
-      *gn = 1;
+
       MPN_NORMALIZE (u1, un);
       MPN_COPY (up, u1, un);
-      return un;
+      *usize = un;
+      return 1;
     }
   else
     {
@@ -246,7 +267,6 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       mp_limb_t v;
 
       gp[0] = mpn_gcdext_1 (&u, &v, ap[0], bp[0]);
-      *gn = 1;
 
       /* Set up = u u1 + v u0. Keep track of size, un grows by one or
 	 two limbs. */
@@ -262,6 +282,7 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	    up[un++] = 1;
 	}
       
-      return un;
+      *usize = un;
+      return 1;
     }
 }
