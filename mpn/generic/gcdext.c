@@ -1055,9 +1055,18 @@ mp_size_t
 mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	    mp_ptr ap, mp_size_t asize, mp_ptr bp, mp_size_t bsize)
 {
+  mp_size_t gn;
+  mp_ptr tp;
+  TMP_DECL;
+  TMP_MARK;
+
   ASSERT (asize >= bsize);
   ASSERT (bsize > 0);
 
-  return gcdext_lehmer(gp, up, usizep, ap, asize, bp, bsize);
+  tp = TMP_ALLOC_LIMBS(mpn_gcdext_lehmer_itch(asize, bsize));
+  gn = mpn_gcdext_lehmer(gp, up, usizep, ap, asize, bp, bsize, tp);
+  TMP_FREE;
+
+  return gn;
 }
-#endif
+#endif /* !WITH_HGCD */
