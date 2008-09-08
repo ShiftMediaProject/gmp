@@ -25,7 +25,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "tests.h"
 
-static int one_test __GMP_PROTO ((mpz_t, mpz_t, int));
+static mp_size_t one_test __GMP_PROTO ((mpz_t, mpz_t, int));
 static void debug_mp __GMP_PROTO ((mpz_t, int));
 
 #define MIN_OPERAND_SIZE 2
@@ -34,31 +34,26 @@ static void debug_mp __GMP_PROTO ((mpz_t, int));
 struct value { int res; const char *a; const char *b; };
 static const struct value hgcd_values[] = {
 #if GMP_NUMB_BITS == 32
-  { 4,
+  { 5,
     "0x1bddff867272a9296ac493c251d7f46f09a5591fe",
     "0xb55930a2a68a916450a7de006031068c5ddb0e5c" },
   { 4,
     "0x2f0ece5b1ee9c15e132a01d55768dc13",
     "0x1c6f4fd9873cdb24466e6d03e1cc66e7" },
-  { 4, "0x7FFFFC003FFFFFFFFFC5", "0x3FFFFE001FFFFFFFFFE3"},
+  { 3, "0x7FFFFC003FFFFFFFFFC5", "0x3FFFFE001FFFFFFFFFE3"},
 #endif
   { -1, NULL, NULL }
 };
 
 struct hgcd_ref
 {
-  /* Sign here, u and v are stored as absolute values */
-  int sign;
-
-  mpz_t r[4];
-  mpz_t u[4];
-  mpz_t v[4];
+  mpz_t m[2][2];
 };
 
 static void hgcd_ref_init __GMP_PROTO ((struct hgcd_ref *hgcd));
 static void hgcd_ref_clear __GMP_PROTO ((struct hgcd_ref *hgcd));
-static int hgcd_ref __GMP_PROTO ((struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b));
-static int hgcd_ref_equal __GMP_PROTO ((const struct hgcd *hgcd, const struct hgcd_ref *ref));
+static int hgcd_ref __GMP_PROTO ((struct hgcd_ref *hgcd, mpz_t a, mpz_t b));
+static int hgcd_ref_equal __GMP_PROTO ((const struct hgcd_matrix *hgcd, const struct hgcd_ref *ref));
 
 int
 main (int argc, char **argv)
@@ -80,7 +75,7 @@ main (int argc, char **argv)
 
   for (i = 0; hgcd_values[i].res >= 0; i++)
     {
-      int res;
+      mp_size_t res;
 
       mpz_set_str (op1, hgcd_values[i].a, 0);
       mpz_set_str (op2, hgcd_values[i].b, 0);
@@ -117,7 +112,7 @@ main (int argc, char **argv)
       if (mpz_cmp (op1, op2) < 0)
 	mpz_swap (op1, op2);
 
-      if (mpz_size(op1) > 0)
+      if (mpz_size (op1) > 0)
 	one_test (op1, op2, i);
 
       /* Generate a division chain backwards, allowing otherwise
@@ -163,7 +158,7 @@ main (int argc, char **argv)
       if (mpz_cmp (op1, op2) < 0)
 	mpz_swap (op1, op2);
 
-      if (mpz_size(op1) > 0)
+      if (mpz_size (op1) > 0)
 	one_test (op1, op2, i);
     }
 
@@ -177,33 +172,37 @@ debug_mp (mpz_t x, int base)
 }
 
 static int
+mpz_mpn_equal (const mpz_t a, mp_srcptr bp, mp_size_t bsize);
+
+static mp_size_t
 one_test (mpz_t a, mpz_t b, int i)
 {
-  struct hgcd hgcd;
+  struct hgcd_matrix hgcd;
   struct hgcd_ref ref;
-  struct qstack quotients;
-  int res[2];
+
+  mpz_t ref_r0;
+  mpz_t ref_r1;
+  mpz_t hgcd_r0;
+  mpz_t hgcd_r1;
+
+  mp_size_t res[2];
   mp_size_t asize;
   mp_size_t bsize;
 
   mp_size_t hgcd_init_scratch;
-  mp_size_t qstack_scratch;
   mp_size_t hgcd_scratch;
 
   mp_ptr hgcd_init_tp;
-  mp_ptr qstack_tp;
   mp_ptr hgcd_tp;
 
   asize = a->_mp_size;
   bsize = b->_mp_size;
 
-  hgcd_init_scratch = mpn_hgcd_init_itch (asize);
-  hgcd_init_tp = refmpn_malloc_limbs (hgcd_init_scratch);
-  mpn_hgcd_init (&hgcd, asize, hgcd_init_tp);
+  ASSERT (asize >= bsize);
 
-  qstack_scratch = qstack_itch (asize);
-  qstack_tp = refmpn_malloc_limbs (qstack_scratch);
-  qstack_init (&quotients, asize, qstack_tp, qstack_scratch);
+  hgcd_init_scratch = MPN_HGCD_MATRIX_INIT_ITCH (asize);
+  hgcd_init_tp = refmpn_malloc_limbs (hgcd_init_scratch);
+  mpn_hgcd_matrix_init (&hgcd, asize, hgcd_init_tp);
 
   hgcd_scratch = mpn_hgcd_itch (asize);
   hgcd_tp = refmpn_malloc_limbs (hgcd_scratch);
@@ -221,28 +220,37 @@ one_test (mpz_t a, mpz_t b, int i)
 #endif
   hgcd_ref_init (&ref);
 
-  res[0] = hgcd_ref (&ref, a, b);
-  res[1] = mpn_hgcd (&hgcd,
-		     a->_mp_d, asize,
-		     b->_mp_d, bsize,
-		     &quotients,
-		     hgcd_tp, hgcd_scratch);
+  mpz_init_set (ref_r0, a);
+  mpz_init_set (ref_r1, b);
+  res[0] = hgcd_ref (&ref, ref_r0, ref_r1);
+
+  mpz_init_set (hgcd_r0, a);
+  mpz_init_set (hgcd_r1, b);
+  if (bsize < asize)
+    {
+      _mpz_realloc (hgcd_r1, asize);
+      MPN_ZERO (hgcd_r1->_mp_d + bsize, asize - bsize);
+    }
+  res[1] = mpn_hgcd (hgcd_r0->_mp_d,
+		     hgcd_r1->_mp_d,
+		     asize,
+		     &hgcd, hgcd_tp);
 
   if (res[0] != res[1])
     {
       fprintf (stderr, "ERROR in test %d\n", i);
-      fprintf (stderr, "Different return code from hgcd and hgcd_ref\n");
+      fprintf (stderr, "Different return value from hgcd and hgcd_ref\n");
       fprintf (stderr, "op1=");                 debug_mp (a, -16);
       fprintf (stderr, "op2=");                 debug_mp (b, -16);
-      fprintf (stderr, "hgcd_ref: %d\n", res[0]);
-      fprintf (stderr, "mpn_hgcd: %d\n", res[1]);
+      fprintf (stderr, "hgcd_ref: %ld\n", (long) res[0]);
+      fprintf (stderr, "mpn_hgcd: %ld\n", (long) res[1]);
       abort ();
     }
   if (res[0] > 0)
     {
-      ASSERT_HGCD (&hgcd, a->_mp_d, asize, b->_mp_d, bsize, 0, 4);
-
-      if (!hgcd_ref_equal (&hgcd, &ref))
+      if (!hgcd_ref_equal (&hgcd, &ref)
+	  || !mpz_mpn_equal (ref_r0, hgcd_r0->_mp_d, res[1])
+	  || !mpz_mpn_equal (ref_r1, hgcd_r1->_mp_d, res[1]))
 	{
 	  fprintf (stderr, "ERROR in test %d\n", i);
 	  fprintf (stderr, "mpn_hgcd and hgcd_ref returned different values\n");
@@ -253,9 +261,12 @@ one_test (mpz_t a, mpz_t b, int i)
     }
 
   refmpn_free_limbs (hgcd_init_tp);
-  refmpn_free_limbs (qstack_tp);
   refmpn_free_limbs (hgcd_tp);
   hgcd_ref_clear (&ref);
+  mpz_clear (ref_r0);
+  mpz_clear (ref_r1);
+  mpz_clear (hgcd_r0);
+  mpz_clear (hgcd_r1);
 
   return res[0];
 }
@@ -264,11 +275,11 @@ static void
 hgcd_ref_init (struct hgcd_ref *hgcd)
 {
   unsigned i;
-  for (i = 0; i<4; i++)
+  for (i = 0; i<2; i++)
     {
-      mpz_init (hgcd->r[i]);
-      mpz_init (hgcd->u[i]);
-      mpz_init (hgcd->v[i]);
+      unsigned j;
+      for (j = 0; j<2; j++)
+	mpz_init (hgcd->m[i][j]);
     }
 }
 
@@ -276,137 +287,91 @@ static void
 hgcd_ref_clear (struct hgcd_ref *hgcd)
 {
   unsigned i;
-  for (i = 0; i<4; i++)
+  for (i = 0; i<2; i++)
     {
-      mpz_clear (hgcd->r[i]);
-      mpz_clear (hgcd->u[i]);
-      mpz_clear (hgcd->v[i]);
+      unsigned j;
+      for (j = 0; j<2; j++)
+	mpz_clear (hgcd->m[i][j]);
     }
 }
 
+
 static int
-hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b)
+sdiv_qr (mpz_t q, mpz_t r, mp_size_t s, const mpz_t a, const mpz_t b)
 {
-  mp_size_t M = (a->_mp_size + 1) / 2;
-  mpz_t t;
+  mpz_fdiv_qr (q, r, a, b);
+  if (mpz_size (r) <= s)
+    {
+      mpz_add (r, r, b);
+      mpz_sub_ui (q, q, 1);
+    }
+
+  return (mpz_sgn (q) > 0);
+}
+
+static int
+hgcd_ref (struct hgcd_ref *hgcd, mpz_t a, mpz_t b)
+{
+  mp_size_t n = MAX (mpz_size (a), mpz_size (b));
+  mp_size_t s = n/2 + 1;
+  mp_size_t asize;
+  mp_size_t bsize;
   mpz_t q;
   int res;
 
-  if (mpz_size(b) <= M)
+  if (mpz_size (a) <= s || mpz_size (b) <= s)
+    return 0;
+
+  res = mpz_cmp (a, b);
+  if (res < 0)
+    {
+      mpz_sub (b, b, a);
+      if (mpz_size (b) <= s)
+	return 0;
+
+      mpz_set_ui (hgcd->m[0][0], 1); mpz_set_ui (hgcd->m[0][1], 0);
+      mpz_set_ui (hgcd->m[1][0], 1); mpz_set_ui (hgcd->m[1][1], 1);
+    }
+  else if (res > 0)
+    {
+      mpz_sub (a, a, b);
+      if (mpz_size (a) <= s)
+	return 0;
+
+      mpz_set_ui (hgcd->m[0][0], 1); mpz_set_ui (hgcd->m[0][1], 1);
+      mpz_set_ui (hgcd->m[1][0], 0); mpz_set_ui (hgcd->m[1][1], 1);
+    }
+  else
     return 0;
 
   mpz_init (q);
-  mpz_fdiv_qr(q, hgcd->r[2], a, b);
-
-  if (mpz_size (hgcd->r[2]) <= M)
-    {
-      mpz_clear (q);
-      return 0;
-    }
-
-  mpz_set (hgcd->r[0], a); mpz_set (hgcd->r[1], b);
-
-  mpz_set_ui (hgcd->u[0], 1); mpz_set_ui (hgcd->v[0], 0);
-  mpz_set_ui (hgcd->u[1], 0); mpz_set_ui (hgcd->v[1], 1);
-  mpz_set_ui (hgcd->u[2], 1); mpz_set    (hgcd->v[2], q);
-
-  hgcd->sign = 0;
-
-  mpz_init (t);
 
   for (;;)
     {
-      mpz_fdiv_qr(q, hgcd->r[3], hgcd->r[1], hgcd->r[2]);
+      ASSERT (mpz_size (a) > s);
+      ASSERT (mpz_size (b) > s);
 
-      mpz_mul (hgcd->u[3], q, hgcd->u[2]);
-      mpz_add (hgcd->u[3], hgcd->u[3], hgcd->u[1]);
-
-      mpz_mul (hgcd->v[3], q, hgcd->v[2]);
-      mpz_add (hgcd->v[3], hgcd->v[3], hgcd->v[1]);
-
-      if (mpz_size (hgcd->r[3]) <= M)
+      if (mpz_cmp (a, b) > 0)
 	{
-#if 0
-	  unsigned i;
-	  printf("hgcd_ref: sign = %d\n", hgcd->sign);
-	  for (i = 0; i < 4; i++)
-	    gmp_printf("r = %Zd, u = %Zd, v = %Zd\n",
-		       hgcd->r[i], hgcd->u[i], hgcd->v[i]);
-#endif
-	  /* Check Jebelean's criterion */
-
-	  if (hgcd->sign >= 0)
-	    {
-	      /* Check if r1 - r2 >= u2 - u1 */
-	      mpz_add (t, hgcd->u[2], hgcd->u[1]);
-	    }
-	  else
-	    {
-	      /* Check if r1 - r2 >= v2 - v1 */
-	      mpz_add (t, hgcd->v[2], hgcd->v[1]);
-	    }
-
-	  /* Check r1 >= t + r2 */
-	  mpz_add (t, t, hgcd->r[2]);
-	  if (mpz_cmp (hgcd->r[1], t) < 0)
-	    {
-	      res = 2; break;
-	    }
-
-	  /* Now r2 is correct */
-	  if (hgcd->sign >= 0)
-	    {
-	      /* Check r3 >= max (-u3, -v3) = u3 */
-	      if (mpz_cmp (hgcd->r[3], hgcd->u[3]) < 0)
-		{
-		  res = 3; break;
-		}
-
-	      /* Check r3 - r2 >= v3 - v2 */
-	      mpz_add (t, hgcd->v[3], hgcd->v[2]);
-	    }
-	  else
-	    {
-	      /* Check r3 >= max (-u3, -v3) = v3 */
-	      if (mpz_cmp (hgcd->r[3], hgcd->v[3]) < 0)
-		{
-		  res = 3; break;
-		}
-
-	      /* Check r3 - r2 >= u3 - u2 */
-	      mpz_add (t, hgcd->u[3], hgcd->u[2]);
-	    }
-
-	  /* Check r2 >= t + r3 */
-	  mpz_add (t, t, hgcd->r[3]);
-	  if (mpz_cmp (hgcd->r[2], t) < 0)
-	    {
-	      res = 3; break;
-	    }
-
-	  /* Now r3 is correct */
-	  res = 4; break;
+	  if (!sdiv_qr (q, a, s, a, b))
+	    break;
+	  mpz_addmul (hgcd->m[0][1], q, hgcd->m[0][0]);
+	  mpz_addmul (hgcd->m[1][1], q, hgcd->m[1][0]);
 	}
-
-      /* Shift rows */
-      hgcd->sign = ~hgcd->sign;
-      mpz_swap (hgcd->r[0], hgcd->r[1]);
-      mpz_swap (hgcd->r[1], hgcd->r[2]);
-      mpz_swap (hgcd->r[2], hgcd->r[3]);
-
-      mpz_swap (hgcd->u[0], hgcd->u[1]);
-      mpz_swap (hgcd->u[1], hgcd->u[2]);
-      mpz_swap (hgcd->u[2], hgcd->u[3]);
-
-      mpz_swap (hgcd->v[0], hgcd->v[1]);
-      mpz_swap (hgcd->v[1], hgcd->v[2]);
-      mpz_swap (hgcd->v[2], hgcd->v[3]);
+      else
+	{
+	  if (!sdiv_qr (q, b, s, b, a))
+	    break;
+	  mpz_addmul (hgcd->m[0][0], q, hgcd->m[0][1]);
+	  mpz_addmul (hgcd->m[1][0], q, hgcd->m[1][1]);
+	}
     }
 
-  mpz_clear (t);
   mpz_clear (q);
 
-  return res;
+  asize = mpz_size (a);
+  bsize = mpz_size (b);
+  return MAX (asize, bsize);
 }
 
 static int
@@ -416,25 +381,22 @@ mpz_mpn_equal (const mpz_t a, mp_srcptr bp, mp_size_t bsize)
   mp_size_t asize = a->_mp_size;
 
   MPN_NORMALIZE (bp, bsize);
-  return asize == bsize && mpn_cmp(ap, bp, asize) == 0;
+  return asize == bsize && mpn_cmp (ap, bp, asize) == 0;
 }
 
 static int
-hgcd_ref_equal (const struct hgcd *hgcd, const struct hgcd_ref *ref)
+hgcd_ref_equal (const struct hgcd_matrix *hgcd, const struct hgcd_ref *ref)
 {
   unsigned i;
 
-  if (ref->sign != hgcd->sign)
-    return 0;
-
-  for (i = 0; i<4; i++)
+  for (i = 0; i<2; i++)
     {
-      if (!mpz_mpn_equal (ref->r[i], hgcd->row[i].rp, hgcd->row[i].rsize))
-	return 0;
-      if (!mpz_mpn_equal (ref->u[i], hgcd->row[i].uvp[0], hgcd->size))
-	return 0;
-      if (!mpz_mpn_equal (ref->v[i], hgcd->row[i].uvp[1], hgcd->size))
-	return 0;
+      unsigned j;
+
+      for (j = 0; j<2; j++)
+	if (!mpz_mpn_equal (ref->m[i][j], hgcd->p[i][j], hgcd->n))
+	  return 0;
     }
+
   return 1;
 }

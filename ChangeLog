@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2008-09-08  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/t-hgcd.c: Updated tests. Rewrite of hgcd_ref.
+
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_itch): New function.
 	(mpn_gcdext_lehmer): Various bugfixes.
 
