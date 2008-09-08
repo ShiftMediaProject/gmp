@@ -561,6 +561,8 @@ validate_sqrtrem (void)
 #define TYPE_MUL_1C            8
 
 #define TYPE_MUL_2             9
+#define TYPE_MUL_3             92
+#define TYPE_MUL_4             93
 
 #define TYPE_ADDMUL_1         10
 #define TYPE_ADDMUL_1C        11
@@ -726,6 +728,16 @@ param_init (void)
   p->msize = 2;
   p->overlap = OVERLAP_NOT_SRC2;
   REFERENCE (refmpn_mul_2);
+
+  p = &param[TYPE_MUL_3];
+  COPY (TYPE_MUL_2);
+  p->msize = 3;
+  REFERENCE (refmpn_mul_3);
+
+  p = &param[TYPE_MUL_4];
+  COPY (TYPE_MUL_2);
+  p->msize = 4;
+  REFERENCE (refmpn_mul_4);
 
 
   p = &param[TYPE_ADDMUL_1];
@@ -1439,6 +1451,12 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mul_2
   { TRY(mpn_mul_2),      TYPE_MUL_2, 2 },
 #endif
+#if HAVE_NATIVE_mpn_mul_3
+  { TRY(mpn_mul_3),      TYPE_MUL_3, 3 },
+#endif
+#if HAVE_NATIVE_mpn_mul_4
+  { TRY(mpn_mul_4),      TYPE_MUL_4, 4 },
+#endif
 
   { TRY(mpn_rshift),     TYPE_RSHIFT },
   { TRY(mpn_lshift),     TYPE_LSHIFT },
@@ -1958,10 +1976,12 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_MUL_2:
+  case TYPE_MUL_3:
+  case TYPE_MUL_4:
     if (size == 1)
       abort ();
     e->retval = CALLING_CONVENTIONS (function)
-      (e->d[0].p, e->s[0].p, size, e->s[1].p);
+      (e->d[0].p, e->s[0].p, size, multiplier_N);
     break;
 
   case TYPE_ADDMUL_2:

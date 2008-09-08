@@ -537,6 +537,20 @@ speed_mpn_mul_2 (struct speed_params *s)
   SPEED_ROUTINE_MPN_UNARY_2 (mpn_mul_2);
 }
 #endif
+#if HAVE_NATIVE_mpn_mul_3
+double
+speed_mpn_mul_3 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_3 (mpn_mul_3);
+}
+#endif
+#if HAVE_NATIVE_mpn_mul_4
+double
+speed_mpn_mul_4 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_4 (mpn_mul_4);
+}
+#endif
 
 
 double

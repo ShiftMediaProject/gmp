@@ -216,6 +216,8 @@ double speed_mpn_modexact_1c_odd _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_mul_2 _PROTO ((struct speed_params *s));
+double speed_mpn_mul_3 _PROTO ((struct speed_params *s));
+double speed_mpn_mul_4 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr _PROTO ((struct speed_params *s));

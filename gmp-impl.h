@@ -852,6 +852,12 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, 
 #define mpn_mul_2 __MPN(mul_2)
 mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
+#define mpn_mul_3 __MPN(mul_3)
+__GMP_DECLSPEC mp_limb_t mpn_mul_3 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
+#define mpn_mul_4 __MPN(mul_4)
+__GMP_DECLSPEC mp_limb_t mpn_mul_4 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
 #ifndef mpn_mul_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_mul_basecase __MPN(mul_basecase)
 __GMP_DECLSPEC void mpn_mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
