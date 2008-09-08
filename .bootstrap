@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# FIXME: Add libtoolize too to this list?
+# FIXME: Use automake -a? Then we could remove various
+# automake-supplied files from the repository.
+
+# Sticks to automake-1.8, since later versions complains needs the
+# ylwrap script.
+aclocal-1.8 && autoconf && autoheader && automake-1.8
