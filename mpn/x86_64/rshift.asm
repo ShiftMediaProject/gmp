@@ -41,121 +41,121 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_rshift)
-	negl	%ecx			C put rsh count in cl
-	movq	(up), %rax
-	shlq	%cl, %rax		C function return value
-	negl	%ecx			C put lsh count in cl
+	neg	%ecx			C put rsh count in cl
+	mov	(up), %rax
+	shl	%cl, %rax		C function return value
+	neg	%ecx			C put lsh count in cl
 
-	leal	1(n), %r8d
+	lea	1(n), R32(%r8)
 
-	leaq	-8(up,n,8), up
-	leaq	-8(rp,n,8), rp
-	negq	n
+	lea	-8(up,n,8), up
+	lea	-8(rp,n,8), rp
+	neg	n
 
-	andl	$3, %r8d
-	je	L(rolx)			C jump for n = 3, 7, 11, ...
+	and	$3, R32(%r8)
+	je	L(rlx)			C jump for n = 3, 7, 11, ...
 
-	decl	%r8d
+	dec	R32(%r8)
 	jne	L(1)
 C	n = 4, 8, 12, ...
-	movq	8(up,n,8), %r10
-	shrq	%cl, %r10
-	negl	%ecx			C put rsh count in cl
-	movq	16(up,n,8), %r8
-	shlq	%cl, %r8
-	orq	%r8, %r10
-	movq	%r10, 8(rp,n,8)
-	incq	n
-	jmp	L(roll)
+	mov	8(up,n,8), %r10
+	shr	%cl, %r10
+	neg	%ecx			C put rsh count in cl
+	mov	16(up,n,8), %r8
+	shl	%cl, %r8
+	or	%r8, %r10
+	mov	%r10, 8(rp,n,8)
+	inc	n
+	jmp	L(rll)
 
-L(1):	decl	%r8d
+L(1):	dec	R32(%r8)
 	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
-	movq	8(up,n,8), %r10
-	shrq	%cl, %r10
-	negl	%ecx			C put rsh count in cl
-	movq	16(up,n,8), %r8
-	shlq	%cl, %r8
-	orq	%r8, %r10
-	movq	%r10, 8(rp,n,8)
-	incq	n
-	negl	%ecx			C put lsh count in cl
+	mov	8(up,n,8), %r10
+	shr	%cl, %r10
+	neg	%ecx			C put rsh count in cl
+	mov	16(up,n,8), %r8
+	shl	%cl, %r8
+	or	%r8, %r10
+	mov	%r10, 8(rp,n,8)
+	inc	n
+	neg	%ecx			C put lsh count in cl
 L(1x):
-	cmpq	$-1, n
+	cmp	$-1, n
 	je	L(ast)
-	movq	8(up,n,8), %r10
-	shrq	%cl, %r10
-	movq	16(up,n,8), %r11
-	shrq	%cl, %r11
-	negl	%ecx			C put rsh count in cl
-	movq	16(up,n,8), %r8
-	movq	24(up,n,8), %r9
-	shlq	%cl, %r8
-	orq	%r8, %r10
-	shlq	%cl, %r9
-	orq	%r9, %r11
-	movq	%r10, 8(rp,n,8)
-	movq	%r11, 16(rp,n,8)
-	addq	$2, n
+	mov	8(up,n,8), %r10
+	shr	%cl, %r10
+	mov	16(up,n,8), %r11
+	shr	%cl, %r11
+	neg	%ecx			C put rsh count in cl
+	mov	16(up,n,8), %r8
+	mov	24(up,n,8), %r9
+	shl	%cl, %r8
+	or	%r8, %r10
+	shl	%cl, %r9
+	or	%r9, %r11
+	mov	%r10, 8(rp,n,8)
+	mov	%r11, 16(rp,n,8)
+	add	$2, n
 
-L(roll):	negl	%ecx			C put lsh count in cl
-L(rolx):	movq	8(up,n,8), %r10
-	shrq	%cl, %r10
-	movq	16(up,n,8), %r11
-	shrq	%cl, %r11
+L(rll):	neg	%ecx			C put lsh count in cl
+L(rlx):	mov	8(up,n,8), %r10
+	shr	%cl, %r10
+	mov	16(up,n,8), %r11
+	shr	%cl, %r11
 
-	addq	$4, n			C				      4
+	add	$4, n			C				      4
 	jb	L(end)			C				      2
 	ALIGN(16)
 L(oop):
 	C finish stuff from lsh block
-	negl	%ecx			C put rsh count in cl
-	movq	-16(up,n,8), %r8
-	movq	-8(up,n,8), %r9
-	shlq	%cl, %r8
-	orq	%r8, %r10
-	shlq	%cl, %r9
-	orq	%r9, %r11
-	movq	%r10, -24(rp,n,8)
-	movq	%r11, -16(rp,n,8)
+	neg	%ecx			C put rsh count in cl
+	mov	-16(up,n,8), %r8
+	mov	-8(up,n,8), %r9
+	shl	%cl, %r8
+	or	%r8, %r10
+	shl	%cl, %r9
+	or	%r9, %r11
+	mov	%r10, -24(rp,n,8)
+	mov	%r11, -16(rp,n,8)
 	C start two new rsh
-	movq	0(up,n,8), %r8
-	movq	8(up,n,8), %r9
-	shlq	%cl, %r8
-	shlq	%cl, %r9
+	mov	(up,n,8), %r8
+	mov	8(up,n,8), %r9
+	shl	%cl, %r8
+	shl	%cl, %r9
 
 	C finish stuff from rsh block
-	negl	%ecx			C put lsh count in cl
-	movq	-8(up,n,8), %r10
-	movq	0(up,n,8), %r11
-	shrq	%cl, %r10
-	orq	%r10, %r8
-	shrq	%cl, %r11
-	orq	%r11, %r9
-	movq	%r8, -8(rp,n,8)
-	movq	%r9, 0(rp,n,8)
+	neg	%ecx			C put lsh count in cl
+	mov	-8(up,n,8), %r10
+	mov	0(up,n,8), %r11
+	shr	%cl, %r10
+	or	%r10, %r8
+	shr	%cl, %r11
+	or	%r11, %r9
+	mov	%r8, -8(rp,n,8)
+	mov	%r9, 0(rp,n,8)
 	C start two new lsh
-	movq	8(up,n,8), %r10
-	movq	16(up,n,8), %r11
-	shrq	%cl, %r10
-	shrq	%cl, %r11
+	mov	8(up,n,8), %r10
+	mov	16(up,n,8), %r11
+	shr	%cl, %r10
+	shr	%cl, %r11
 
-	addq	$4, n
+	add	$4, n
 	jae	L(oop)			C				      2
 L(end):
-	negl	%ecx			C put rsh count in cl
-	movq	-16(up,n,8), %r8
-	shlq	%cl, %r8
-	orq	%r8, %r10
-	movq	-8(up,n,8), %r9
-	shlq	%cl, %r9
-	orq	%r9, %r11
-	movq	%r10, -24(rp,n,8)
-	movq	%r11, -16(rp,n,8)
+	neg	%ecx			C put rsh count in cl
+	mov	-16(up,n,8), %r8
+	shl	%cl, %r8
+	or	%r8, %r10
+	mov	-8(up,n,8), %r9
+	shl	%cl, %r9
+	or	%r9, %r11
+	mov	%r10, -24(rp,n,8)
+	mov	%r11, -16(rp,n,8)
 
-	negl	%ecx			C put lsh count in cl
-L(ast):	movq	(up), %r10
-	shrq	%cl, %r10
-	movq	%r10, (rp)
+	neg	%ecx			C put lsh count in cl
+L(ast):	mov	(up), %r10
+	shr	%cl, %r10
+	mov	%r10, (rp)
 	ret
 EPILOGUE()

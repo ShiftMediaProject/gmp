@@ -101,6 +101,8 @@ define(`vp', `%r14')
 define(`un', `%r11')
 	test	$1, vn			C vn odd?
 	je	L(use_mul_2)
+	bt	$0, vn			C vn odd?
+	jnc	L(use_mul_2)
 
 L(use_mul_1):
 	mov	(vp), %rbp		C read vp[0]
@@ -205,7 +207,7 @@ define(`j',`%r13')
 	add	$3, j			C				  mul_2
 	jns	L(ed2)			C <= 4 iterations
 
-	ALIGN(32)
+	ALIGN(16)
 L(lp2):	mul	v0			C				  mul_2
 	add	%rax, %rbx		C				  mul_2
 	mov	%r12, %rax		C				  mul_2
