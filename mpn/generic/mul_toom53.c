@@ -159,7 +159,7 @@ mpn_mul_toom53 (mp_ptr pp,
   /* Compute ash and asmh.  */
 #if HAVE_NATIVE_mpn_addlsh_n
   cy  = mpn_addlsh_n (gp, a2, a0, n, 2);		/* 4a0  +  a2       */
-  cy = 4 * cy + mpn_addlsh_n (gp, a4, gp, n, 2);	/* 16a0 + 4a2 +  a4 */ // FIXME s
+  cy = 4 * cy + mpn_addlsh_n (gp, a4, gp, n, 2);	/* 16a0 + 4a2 +  a4 */ /* FIXME s */
   gp[n] = cy;
   cy  = mpn_addlsh_n (hp, a3, a1, n, 2);		/*  4a1 +  a3       */
   cy = 2 * cy + mpn_lshift (hp, hp, n, 1);		/*  8a1 + 2a3       */
