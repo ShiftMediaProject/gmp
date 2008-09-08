@@ -3383,6 +3383,23 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 /* HGCD definitions */
 
+/* Extract one numb, shifting count bits left
+    ________  ________
+   |___xh___||___xl___|
+	  |____r____|
+   >count <
+
+   The count includes any nail bits, so it should work fine if count
+   is computed using count_leading_zeros. If GMP_NAIL_BITS > 0, all of
+   xh, xl and r include nail bits. Must have 0 < count < GMP_LIMB_BITS.
+
+   FIXME: Is the masking with GMP_NUMB_BITS really needed?
+*/
+
+#define MPN_EXTRACT_NUMB(count, xh, xl)				\
+  ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
+   ((xl) >> (GMP_LIMB_BITS - (count))))
+
 #define mpn_hgcd2 __MPN (hgcd2)
 #define mpn_hgcd_mul_matrix1_vector __MPN (hgcd_mul_matrix1_vector)
 #define mpn_hgcd_mul_matrix1_inverse_vector __MPN (hgcd_mul_matrix1_inverse_vector)
@@ -3393,6 +3410,10 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define mpn_hgcd_step __MPN (hgcd_step)
 #define mpn_hgcd_itch __MPN (hgcd_itch)
 #define mpn_hgcd __MPN (hgcd)
+
+#define mpn_gcd_lehmer __MPN(gcd_lehmer)
+#define mpn_gcdext_lehmer __MPN(gcdext_lehmer)
+#define mpn_gcdext_lehmer_itch __MPN(gcdext_lehmer_itch)
 
 /* The matrix non-negative M = (u, u'; v,v') keeps track of the
    reduction (a;b) = M (alpha; beta) where alpha, beta are smaller
@@ -3455,7 +3476,6 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
 #define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
 #define mpn_gcd_lehmer __MPN(gcd_lehmer)
-#define mpn_lgcd __MPN(lgcd)
 
 /* Needs storage for the division */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) ((n)+1)
@@ -3467,12 +3487,17 @@ mpn_gcd_subdiv_step (mp_ptr gp, mp_size_t *gn,
 #define MPN_GCD_LEHMER_ITCH(an) ((an) + 1)
 
 mp_size_t
-mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n);
+mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n,
+		mp_ptr tp);
 
-#if 0
 mp_size_t
-mpn_lgcd (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t bn);
-#endif
+mpn_gcdext_lehmer_itch (mp_size_t an, mp_size_t bn);
+
+mp_size_t
+mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
+		   mp_ptr ap, mp_size_t an,
+		   mp_ptr bp, mp_size_t n,
+		   mp_ptr tp);
 
 /* 4*(an + 1) + 4*(bn + 1) + an */
 #define MPN_GCDEXT_LEHMER_ITCH(an, bn) (5*(an) + 4*(bn) + 8)
