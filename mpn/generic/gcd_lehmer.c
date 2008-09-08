@@ -25,22 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Extract one limb, shifting count bits left
-    ________  ________
-   |___xh___||___xl___|
-	  |____r____|
-   >count <
-
-   The count includes any nail bits, so it should work fine if
-   count is computed using count_leading_zeros.
-*/
-
-#define MPN_EXTRACT_LIMB(count, xh, xl)				\
-  ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
-   ((xl) >> (GMP_LIMB_BITS - (count))))
-
 /* Use binary algorithm to compute G <-- GCD (U, V) for usize, vsize == 2.
-   Both U and V must be odd.  */
+   Both U and V must be odd. */
 static inline mp_size_t
 gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
 {
@@ -51,6 +37,9 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
   u1 = up[1];
   v0 = vp[0];
   v1 = vp[1];
+
+  ASSERT (u0 & 1);
+  ASSERT (v0 & 1);
 
   /* Check for u0 != v0 needed to ensure that argument to
    * count_trailing_zeros is non-zero. */
@@ -75,7 +64,7 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
 	}
     }
 
-  gp[0] = v0, gp[1] = v1, gn = 1 + (v1 != 0);
+  gp[0] = u0, gp[1] = u1, gn = 1 + (u1 != 0);
 
   /* If U == V == GCD, done.  Otherwise, compute GCD (V, |U - V|).  */
   if (u1 == v1 && u0 == v0)
@@ -87,22 +76,14 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
   return 1;
 }
 
+/* Temporary storage: Initial division needs (an + 1), rest needs n + 1 */
 mp_size_t
-mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n)
+mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_ptr tp)
 {
   mp_size_t gn;
-  mp_ptr tp;
   mp_size_t scratch;
-  TMP_DECL;
 
   ASSERT(bp[n-1] > 0);
-
-  /* Initial division needs (an + 1), rest needs n + 1 */
-  scratch = an + 1;
-
-  TMP_MARK;
-  
-  tp = TMP_ALLOC_LIMBS (scratch);
 
   if (an > n)
     {
@@ -112,7 +93,6 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n)
       if (an == 0)
 	{
 	  MPN_COPY (gp, bp, n);
-	  TMP_FREE;
 	  return n;
 	}
       else
@@ -138,10 +118,10 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n)
 	  int shift;
 
 	  count_leading_zeros (shift, mask);
-	  ah = MPN_EXTRACT_LIMB (shift, ap[n-1], ap[n-2]);
-	  al = MPN_EXTRACT_LIMB (shift, ap[n-2], ap[n-3]);
-	  bh = MPN_EXTRACT_LIMB (shift, bp[n-1], bp[n-2]);
-	  bl = MPN_EXTRACT_LIMB (shift, bp[n-2], bp[n-3]);
+	  ah = MPN_EXTRACT_NUMB (shift, ap[n-1], ap[n-2]);
+	  al = MPN_EXTRACT_NUMB (shift, ap[n-2], ap[n-3]);
+	  bh = MPN_EXTRACT_NUMB (shift, bp[n-1], bp[n-2]);
+	  bl = MPN_EXTRACT_NUMB (shift, bp[n-2], bp[n-3]);
 	}
 
       /* Try an mpn_nhgcd2 step */
@@ -158,12 +138,30 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n)
 	  /* Temporary storage n + 1 */
 	  n = mpn_gcd_subdiv_step (gp, &gn, ap, bp, n, tp);
 	  if (n == 0)
-	    {
-	      TMP_FREE;
-	      return gn;
-	    }
+	    return gn;
 	}
     }
-  TMP_FREE;
+
+  /* Due to the calling convention for mpn_gcd, at most one can be
+     even. */
+
+  if (! (ap[0] & 1))
+    MP_PTR_SWAP (ap, bp);
+
+  ASSERT (ap[0] & 1);
+
+  if (bp[0] == 0)
+    {
+      *gp = mpn_gcd_1 (ap, 2, bp[1]);
+      return 1;
+    }
+  else if (! (bp[0] & 1))
+    {
+      int r;
+      count_trailing_zeros (r, bp[0]);
+      bp[0] = ((bp[1] << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (bp[0] >> r);
+      bp[1] >>= r;
+    }
+
   return gcd_2(gp, ap, bp);
 }

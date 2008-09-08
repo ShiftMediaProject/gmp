@@ -18,7 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
-2008-09-08  Niels Möller  <niels@swift.nada.kth.se>
+2008-09-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcd_lehmer.c (gcd_2): ASSERT that inputs are odd.
+	(mpn_gcd_lehmer): Added tp argument, for scratch space. Make both
+	arguments odd before calling gcd_2.
+
+	* mpn/generic/hgcd.c (mpn_hgcd): Allow the trivial case n <= 2,
+	and return 0 immediately.
 
 	* gmp-impl.h (MPN_EXTRACT_NUMB): New macro.
 
