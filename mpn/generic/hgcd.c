@@ -21,45 +21,15 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#define WANT_TRACE 0
-
-#if WANT_TRACE
-# include <stdio.h>
-# include <stdarg.h>
-#endif
-
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if WANT_TRACE
-static void
-trace (const char *format, ...)
-{
-  va_list args;
-  va_start (args, format);
-  gmp_vfprintf (stderr, format, args);
-  va_end (args);
-}
-#endif
-
-/* Extract one limb, shifting count bits left
-    ________  ________
-   |___xh___||___xl___|
-	  |____r____|
-   >count <
-
-   The count includes any nail bits, so it should work fine if
-   count is computed using count_leading_zeros.
-*/
-
-#define MPN_EXTRACT_LIMB(count, xh, xl)				\
-  ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
-   ((xl) >> (GMP_LIMB_BITS - (count))))
+#undef HGCD_THRESHOLD
+#define HGCD_THRESHOLD 10
 
 /* For input of size n, matrix elements are of size at most ceil(n/2)
    - 1, but we need one limb extra. */
-
 void
 mpn_hgcd_matrix_init (struct hgcd_matrix *M, mp_size_t n, mp_ptr p)
 {
@@ -198,14 +168,14 @@ hgcd_matrix_mul_1 (struct hgcd_matrix *M, const struct hgcd_matrix1 *M1)
   ASSERT (M->n < M->alloc);
 }
 
-/* Perform a few steps, using some of mpn_nhgcd2, subtraction and
+/* Perform a few steps, using some of mpn_hgcd2, subtraction and
    division. Reduces the size by almost one limb or more, but never
    below the given size s. Return new size for a and b, or 0 if no
    more steps are possible. M = NULL is allowed, if M is not needed.
    FIXME: I don't think there's any need to allow M == NULL.
 
    Needs temporary space for division, n + 1 limbs, and for
-   hgcd_matrix1_vector, n limbs. */
+   hgcd_mul_matrix1_vector, n limbs. */
 mp_size_t
 mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
 	       struct hgcd_matrix *M, mp_ptr tp)
@@ -241,25 +211,25 @@ mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
       int shift;
 
       count_leading_zeros (shift, mask);
-      ah = MPN_EXTRACT_LIMB (shift, ap[n-1], ap[n-2]);
-      al = MPN_EXTRACT_LIMB (shift, ap[n-2], ap[n-3]);
-      bh = MPN_EXTRACT_LIMB (shift, bp[n-1], bp[n-2]);
-      bl = MPN_EXTRACT_LIMB (shift, bp[n-2], bp[n-3]);
+      ah = MPN_EXTRACT_NUMB (shift, ap[n-1], ap[n-2]);
+      al = MPN_EXTRACT_NUMB (shift, ap[n-2], ap[n-3]);
+      bh = MPN_EXTRACT_NUMB (shift, bp[n-1], bp[n-2]);
+      bl = MPN_EXTRACT_NUMB (shift, bp[n-2], bp[n-3]);
     }
 
-  /* Try an mpn_nhgcd2 step */
-  if (mpn_nhgcd2 (ah, al, bh, bl, &M1))
+  /* Try an mpn_hgcd2 step */
+  if (mpn_hgcd2 (ah, al, bh, bl, &M1))
     {
       /* Multiply M <- M * M1 */
       if (M)
 	hgcd_matrix_mul_1 (M, &M1);
 
       /* Multiply M1^{-1} (a;b) */
-      return mpn_hgcd_matrix1_vector (&M1, n, ap, bp, tp);
+      return mpn_hgcd_mul_matrix1_inverse_vector (&M1, n, ap, bp, tp);
     }
 
  subtract:
-  /* There are two ways in which mpn_nhgcd2 can fail. Either one of ah and
+  /* There are two ways in which mpn_hgcd2 can fail. Either one of ah and
      bh was too small, or ah, bh were (almost) equal. Perform one
      subtraction step (for possible cancellation of high limbs),
      followed by one division. */
@@ -411,7 +381,7 @@ mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
    b, or zero if no reduction is possible. */
 static mp_size_t
 hgcd_base (mp_ptr ap, mp_ptr bp, mp_size_t n,
-	    struct hgcd_matrix *M, mp_ptr tp)
+	   struct hgcd_matrix *M, mp_ptr tp)
 {
   mp_size_t s = n/2 + 1;
   mp_size_t nn;
@@ -705,15 +675,19 @@ mpn_hgcd_itch (mp_size_t n)
 
 mp_size_t
 mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
-	   struct hgcd_matrix *M, mp_ptr tp)
+	  struct hgcd_matrix *M, mp_ptr tp)
 {
   mp_size_t s = n/2 + 1;
   mp_size_t n2 = (3*n)/4 + 1;
   
   mp_size_t p, nn;
   int success = 0;
-  
-  ASSERT (n > s);
+
+  if (n <= s)
+    /* Happens when n <= 2, a fairly uninteresting case but exercised
+       by the random inputs of the testsuite. */
+    return 0;
+
   ASSERT ((ap[n-1] | bp[n-1]) > 0);
 
   ASSERT ((n+1)/2 - 1 < M->alloc);
