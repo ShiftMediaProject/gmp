@@ -20,6 +20,11 @@ MA 02110-1301, USA.
 
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
+	* gmp-impl.h (MPN_HGCD_LEHMER_ITCH): New macro.
+
+	* hgcd.c (mpn_hgcd_lehmer): Renamed function, from hgcd_base. Made
+	non-static.
+
 	* gcd_lehmer.c (mpn_gcd_lehmer): Use hgcd2 also for n == 2.
 
 	* gcdext_lehmer.c (mpn_gcdext_lehmer): Simplified code for

@@ -3408,6 +3408,7 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define mpn_hgcd_step __MPN (hgcd_step)
 #define mpn_hgcd_itch __MPN (hgcd_itch)
 #define mpn_hgcd __MPN (hgcd)
+#define mpn_hgcd_lehmer __MPN (hgcd_lehmer)
 
 #define mpn_gcd_lehmer __MPN(gcd_lehmer)
 #define mpn_gcdext_lehmer __MPN(gcdext_lehmer)
@@ -3471,6 +3472,12 @@ mpn_hgcd_itch (mp_size_t n);
 mp_size_t
 mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  struct hgcd_matrix *M, mp_ptr tp);
+
+#define MPN_HGCD_LEHMER_ITCH MPN_HGCD_STEP_ITCH
+
+mp_size_t
+mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
+		 struct hgcd_matrix *M, mp_ptr tp);
 
 #define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
 #define mpn_gcd_lehmer __MPN(gcd_lehmer)

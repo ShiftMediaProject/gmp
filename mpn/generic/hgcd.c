@@ -374,14 +374,12 @@ mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
   return bn;
 }
 
-#define HGCD_BASE_ITCH MPN_HGCD_STEP_ITCH
-
 /* Reduces a,b until |a-b| fits in n/2 + 1 limbs. Constructs matrix M
    with elements of size at most (n+1)/2 - 1. Returns new size of a,
    b, or zero if no reduction is possible. */
-static mp_size_t
-hgcd_base (mp_ptr ap, mp_ptr bp, mp_size_t n,
-	   struct hgcd_matrix *M, mp_ptr tp)
+mp_size_t
+mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
+		 struct hgcd_matrix *M, mp_ptr tp)
 {
   mp_size_t s = n/2 + 1;
   mp_size_t nn;
@@ -663,10 +661,10 @@ mpn_hgcd_itch (mp_size_t n)
     k++;
 
   if (k == 0)
-    return HGCD_BASE_ITCH (n);
+    return MPN_HGCD_LEHMER_ITCH (n);
 
   return 18 * ((n+3) / 4) + 11 * k
-    + HGCD_BASE_ITCH (HGCD_THRESHOLD);
+    + MPN_HGCD_LEHMER_ITCH (HGCD_THRESHOLD);
 }
 
 /* Reduces a,b until |a-b| fits in n/2 + 1 limbs. Constructs matrix M
@@ -693,7 +691,7 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
   ASSERT ((n+1)/2 - 1 < M->alloc);
 
   if (BELOW_THRESHOLD (n, HGCD_THRESHOLD))
-    return hgcd_base (ap, bp, n, M, tp);
+    return mpn_hgcd_lehmer (ap, bp, n, M, tp);
 
   p = n/2;
   nn = mpn_hgcd (ap + p, bp + p, n - p, M, tp);
