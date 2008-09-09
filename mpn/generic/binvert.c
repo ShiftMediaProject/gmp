@@ -54,8 +54,8 @@ mpn_neg_n (mp_ptr __gmp_rp, mp_srcptr __gmp_up, mp_size_t __gmp_n)
   r[k+1] = r[k] + r[k] - r[k]*(u*r[k])
 */
 
-/* This is intended constant THRESHOLDs only, where the compiler can completely
-   fold the result.  */
+/* This is intended for constant THRESHOLDs only, where the compiler can
+   completely fold the result.  */
 #define LOG2C(n) \
  (((n) >=    0x1) + ((n) >=    0x2) + ((n) >=    0x4) + ((n) >=    0x8) + \
   ((n) >=   0x10) + ((n) >=   0x20) + ((n) >=   0x40) + ((n) >=   0x80) + \
