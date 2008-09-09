@@ -252,6 +252,7 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
       fprintf (stderr, "op1=");                 debug_mp (op1, -16);
       fprintf (stderr, "op2=");                 debug_mp (op2, -16);
       fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd1, -16);
+      fprintf (stderr, "s=");                   debug_mp (s, -16);
       abort ();
     }
 

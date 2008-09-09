@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpz/t-gcd.c (one_test): Display co-factor when mpn_gcdext
+	fails.
+
 	* gcd_lehmer.c (mpn_gcd_lehmer): At end of loop, need to handle
 	the special case n == 1 correctly.
 
