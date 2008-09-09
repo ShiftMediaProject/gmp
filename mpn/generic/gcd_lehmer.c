@@ -90,6 +90,7 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_p
 
   if (an > n)
     {
+      /* FIXME: Can call tdiv_qr and store the remainder directly at ap. */
       mpn_tdiv_qr (tp + n, tp, 0, ap, an, bp, n);
       an = n;
       MPN_NORMALIZE (tp, an);
