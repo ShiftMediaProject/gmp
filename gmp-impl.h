@@ -3392,8 +3392,6 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
    The count includes any nail bits, so it should work fine if count
    is computed using count_leading_zeros. If GMP_NAIL_BITS > 0, all of
    xh, xl and r include nail bits. Must have 0 < count < GMP_LIMB_BITS.
-
-   FIXME: Is the masking with GMP_NUMB_BITS really needed?
 */
 
 #define MPN_EXTRACT_NUMB(count, xh, xl)				\
