@@ -56,7 +56,8 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   mp_size_t un;
   mp_ptr u0;
   mp_ptr u1;
-  
+  int swapped;
+
   if (an > n)
     {
       /* Initial division */
@@ -72,11 +73,13 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       else
 	MPN_COPY(ap, tp, n);
     }
-
+  MPN_ZERO (tp, 2*ualloc);
   u0 = tp; tp += ualloc;
   u1 = tp; tp += ualloc;
 
-  u0[0] = 0; u1[0] = 1; un = 1;
+  u1[0] = 1; un = 1;
+
+  swapped = 0;
 
   while (n >= 2)
     {
@@ -87,7 +90,12 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       mask = ap[n-1] | bp[n-1];
       ASSERT (mask > 0);
 
-      if (n == 2)
+      if (mask & GMP_NUMB_HIGHBIT)
+	{
+	  ah = ap[n-1]; al = ap[n-2];
+	  bh = bp[n-1]; bl = bp[n-2];
+	}
+      else if (n == 2)
 	{
 	  /* We use the full inputs without truncation, so we can
 	     safely shift left. */
@@ -98,11 +106,6 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  al = ap[0] << shift;
 	  bh = MPN_EXTRACT_NUMB (shift, bp[1], bp[0]);
 	  bl = bp[0] << shift;	  
-	}
-      else if (mask & GMP_NUMB_HIGHBIT)
-	{
-	  ah = ap[n-1]; al = ap[n-2];
-	  bh = bp[n-1]; bl = bp[n-2];
 	}
       else
 	{
@@ -139,59 +142,80 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  ASSERT (n > 0);
 	  ASSERT (ap[n-1] > 0 || bp[n-1] > 0);
 
-	  /* First, make sure that an >= bn, and subtract an -= bn */
-	  for (an = n; an > 0; an--)
-	    if (ap[an-1] != bp[an-1])
-	      break;
-
-	  if (an == 0)
-	    {
-	      /* Done */
-	      MPN_COPY (gp, ap, n);
-	      MPN_NORMALIZE(u0, un);
-	      MPN_COPY (up, u0, un);
-	      *usize = - un;
-	      return n;
-	    }
-
-	  if (ap[an-1] < bp[an-1])
-	    {
-	      MP_PTR_SWAP (ap, bp);
-	      MP_PTR_SWAP (u0, u1);
-	    }
-	  bn = n; /* FIXME: Can b be non-normalized here??? */
+	  an = bn = n;
+	  MPN_NORMALIZE (ap, an);
 	  MPN_NORMALIZE (bp, bn);
-	  if (bn == 0)
+
+	  if (UNLIKELY (an == 0))
 	    {
-	      MPN_COPY (gp, ap, n);
+	    return_b:
+	      MPN_COPY (gp, bp, bn);
+	      MPN_NORMALIZE (u0, un);
+	      MPN_COPY (up, u0, un);
+	      if (!swapped)
+		un = -un;
+	      *usize = un;
+	      return bn;
+	    }
+	  else if (UNLIKELY (bn == 0))
+	    {
+	    return_a:
+	      MPN_COPY (gp, ap, an);
 	      MPN_NORMALIZE (u1, un);
 	      MPN_COPY (up, u1, un);
+	      if (swapped)
+		un = -un;
 	      *usize = un;
-	      return n;
+	      return an;
 	    }
 
-	  /* Reduce a -= b, u1 += u0 */
-	  ASSERT_NOCARRY (mpn_sub_n (ap, ap, bp, an));
-	  MPN_NORMALIZE (ap, an);
-	  ASSERT (an > 0);
-
-	  u1[un] = mpn_add_n (u1, u1, u0, un);
-	  u0[un] = 0;
-	  un += (u1[un] > 0);
-
+	  /* Arrange so that a > b, subtract an -= bn, and maintain
+	     normalization. */
 	  if (an < bn)
 	    {
 	      MPN_PTR_SWAP (ap, an, bp, bn);
 	      MP_PTR_SWAP (u0, u1);
+	      swapped ^= 1;
 	    }
 	  else if (an == bn)
 	    {
 	      int c;
 	      MPN_CMP (c, ap, bp, an);
-	      if (c < 0)
+	      if (UNLIKELY (c == 0))
+		goto return_a;
+	      else if (c < 0)
 		{
 		  MP_PTR_SWAP (ap, bp);
 		  MP_PTR_SWAP (u0, u1);
+		  swapped ^= 1;
+		}
+	    }
+	  /* Reduce a -= b, u1 += u0 */
+	  ASSERT_NOCARRY (mpn_sub (ap, ap, an, bp, bn));
+	  MPN_NORMALIZE (ap, an);
+	  ASSERT (an > 0);
+
+	  u1[un] = mpn_add_n (u1, u1, u0, un);
+	  un += (u1[un] > 0);
+
+	  /* Arrange so that a > b, and divide a = q b + r */
+	  if (an < bn)
+	    {
+	      MPN_PTR_SWAP (ap, an, bp, bn);
+	      MP_PTR_SWAP (u0, u1);
+	      swapped ^= 1;
+	    }
+	  else if (an == bn)
+	    {
+	      int c;
+	      MPN_CMP (c, ap, bp, an);
+	      if (UNLIKELY (c == 0))
+		goto return_a;
+	      else if (c < 0)
+		{
+		  MP_PTR_SWAP (ap, bp);
+		  MP_PTR_SWAP (u0, u1);
+		  swapped ^= 1;
 		}
 	    }
 
@@ -205,13 +229,7 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  an = bn;
 	  MPN_NORMALIZE (tp + qn, an);
 	  if (an == 0)
-	    {
-	      MPN_COPY (gp, bp, bn);
-	      MPN_NORMALIZE (u0, un);
-	      MPN_COPY (up, u0, un);
-	      *usize = -un;
-	      return bn;
-	    }
+	    goto return_b;
 
 	  MPN_COPY (ap, tp + qn, bn);
 	  n = bn;
@@ -230,16 +248,15 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  if (qn + u0n > un)
 	    {
 	      ASSERT_NOCARRY (mpn_add (u1, tp + qn, qn + u0n, u1, un));
-	      MPN_ZERO (u0 + un, qn + u0n - un);
 	      un = qn + u0n;
 	      un -= (u1[un-1] == 0);
 	    }
 	  else
 	    {
 	      u1[un] = mpn_add (u1, u1, un, tp + qn, qn + u0n);
-	      u0[un] = 0;
 	      un += (u1[un] > 0);
 	    }
+	  ASSERT (un < ualloc);
 	}
     }
   if (ap[0] == 0)
@@ -248,7 +265,9 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
       MPN_NORMALIZE (u0, un);
       MPN_COPY (up, u0, un);
-      *usize = - un;
+      if (!swapped)
+	un = -un;
+      *usize = un;
       return 1;
     }
   else if (bp[0] == 0)
@@ -257,6 +276,8 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
       MPN_NORMALIZE (u1, un);
       MPN_COPY (up, u1, un);
+      if (!swapped)
+	un = un;
       *usize = un;
       return 1;
     }
@@ -273,7 +294,7 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       uh = mpn_mul_1 (up, u1, un, u);
       vh = mpn_addmul_1 (up, u0, un, v);
 
-      if ( (vh | uh) > 0)
+      if ( (uh | vh) > 0)
 	{
 	  mp_limb_t cy;
 	  uh += vh;
@@ -281,7 +302,9 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  if (uh < vh)
 	    up[un++] = 1;
 	}
-      
+      if (swapped)
+	un = -un;
+
       *usize = un;
       return 1;
     }

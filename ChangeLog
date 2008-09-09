@@ -20,6 +20,10 @@ MA 02110-1301, USA.
 
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
+	* gcdext_lehmer.c (mpn_gcdext_lehmer): Simplified code for
+	division step. Added proper book-keeping of swaps, which affect
+	the sign of the returned cofactor.
+
 	* tests/mpz/t-gcd.c (one_test): Display co-factor when mpn_gcdext
 	fails.
 
