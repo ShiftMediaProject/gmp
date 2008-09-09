@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
+	* gcd_lehmer.c (mpn_gcd_lehmer): Use hgcd2 also for n == 2.
+
 	* gcdext_lehmer.c (mpn_gcdext_lehmer): Simplified code for
 	division step. Added proper book-keeping of swaps, which affect
 	the sign of the returned cofactor.

@@ -25,6 +25,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#if 0
 /* Use binary algorithm to compute G <-- GCD (U, V) for usize, vsize == 2.
    Both U and V must be odd. */
 static inline mp_size_t
@@ -75,6 +76,7 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
 
   return 1;
 }
+#endif
 
 /* Temporary storage: Initial division needs (an + 1), rest needs n + 1 */
 mp_size_t
@@ -100,7 +102,7 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_p
 	MPN_COPY (ap, tp, n);
     }
 
-  while (n > 2)
+  while (n >= 2)
     {
       struct hgcd_matrix1 M;
       mp_limb_t ah, al, bh, bl;
@@ -113,6 +115,18 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_p
 	{
 	  ah = ap[n-1]; al = ap[n-2];
 	  bh = bp[n-1]; bl = bp[n-2];
+	}
+      else if (n == 2)
+	{
+	  /* We use the full inputs without truncation, so we can
+	     safely shift left. */
+	  int shift;
+
+	  count_leading_zeros (shift, mask);
+	  ah = MPN_EXTRACT_NUMB (shift, ap[1], ap[0]);
+	  al = ap[0] << shift;
+	  bh = MPN_EXTRACT_NUMB (shift, bp[1], bp[0]);
+	  bl = bp[0] << shift;	  
 	}
       else
 	{
@@ -143,31 +157,6 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_p
 	}
     }
 
-  if (n == 1)
-    {
-      *gp = mpn_gcd_1(ap, n, bp[0]);
-      return 1;
-    }
-
-  /* Due to the calling convention for mpn_gcd, at most one can be
-     even. */
-  if (! (ap[0] & 1))
-    MP_PTR_SWAP (ap, bp);
-
-  ASSERT (ap[0] & 1);
-
-  if (bp[0] == 0)
-    {
-      *gp = mpn_gcd_1 (ap, 2, bp[1]);
-      return 1;
-    }
-  else if (! (bp[0] & 1))
-    {
-      int r;
-      count_trailing_zeros (r, bp[0]);
-      bp[0] = ((bp[1] << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK) | (bp[0] >> r);
-      bp[1] >>= r;
-    }
-
-  return gcd_2(gp, ap, bp);
+  *gp = mpn_gcd_1(ap, 1, bp[0]);
+  return 1;
 }
