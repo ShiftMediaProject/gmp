@@ -83,6 +83,7 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_p
   mp_size_t gn;
   mp_size_t scratch;
 
+  ASSERT(ap[an-1] > 0);
   ASSERT(bp[n-1] > 0);
 
   if (an > n)
@@ -142,9 +143,14 @@ mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_p
 	}
     }
 
+  if (n == 1)
+    {
+      *gp = mpn_gcd_1(ap, n, bp[0]);
+      return 1;
+    }
+
   /* Due to the calling convention for mpn_gcd, at most one can be
      even. */
-
   if (! (ap[0] & 1))
     MP_PTR_SWAP (ap, bp);
 
