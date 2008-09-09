@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer): Adapted
+	to new hgcd interface.
+
 	* gmp-impl.h (MPN_HGCD_LEHMER_ITCH): New macro.
 
 	* hgcd.c (mpn_hgcd_lehmer): Renamed function, from hgcd_base. Made
