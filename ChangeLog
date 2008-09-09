@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-09  Niels Möller  <nisse@lysator.liu.se>
+
+	* gcd_subdiv_step.c (mpn_gcd_subdiv_step): Simplified function.
+	The special cancellation logic is not needed here.
+
 2008-09-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-hgcd.c: Updated tests. Rewrite of hgcd_ref.
