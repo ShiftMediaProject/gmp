@@ -1,6 +1,6 @@
 /* Test mp*_class binary expressions.
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -147,6 +147,27 @@ check_mpz (void)
     mpz_class d;
     d = (a - b) * (-c); ASSERT_ALWAYS(d == 14);
   }
+
+  {
+    mpz_class a(0xcafe), b(0xbeef), c, want;
+    c = a & b; ASSERT_ALWAYS (c == 0x8aee);
+    c = a | b; ASSERT_ALWAYS (c == 0xfeff);
+    c = a ^ b; ASSERT_ALWAYS (c == 0x7411);
+    c = a & 0xbeef; ASSERT_ALWAYS (c == 0x8aee);
+    c = a | 0xbeef; ASSERT_ALWAYS (c == 0xfeff);
+    c = a ^ 0xbeef; ASSERT_ALWAYS (c == 0x7411);
+    c = a & -0xbeef; ASSERT_ALWAYS (c == 0x4010);
+    c = a | -0xbeef; ASSERT_ALWAYS (c == -0x3401);
+    c = a ^ -0xbeef; ASSERT_ALWAYS (c == -0x7411);
+    c = a & 48879.0; ASSERT_ALWAYS (c == 0x8aee);
+    c = a | 48879.0; ASSERT_ALWAYS (c == 0xfeff);
+    c = a ^ 48879.0; ASSERT_ALWAYS (c == 0x7411);
+
+    c = a | 1267650600228229401496703205376.0; // 2^100
+    want = "0x1000000000000000000000cafe";
+    ASSERT_ALWAYS (c == want);
+  }
+
 }
 
 void
