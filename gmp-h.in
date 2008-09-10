@@ -22,6 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if defined (__cplusplus)
 #include <iosfwd>   /* for std::istream, std::ostream, std::string */
+#include <cstdio>
 #endif
 
 
@@ -420,7 +421,7 @@ typedef __mpq_struct *mpq_ptr;
     GCC 4.3 and above with -std=c99 or -std=gnu99 implements ISO C99
     inline semantics, unless -fgnu89-inline is used.  */
 #ifdef __GNUC__
-#ifdef __GNUC_STDC_INLINE__
+#if (defined __GNUC_STDC_INLINE__) || (__GNUC__ == 4 && __GNUC_MINOR__ == 2)
 #define __GMP_EXTERN_INLINE extern __inline__ __attribute__ ((__gnu_inline__))
 #else
 #define __GMP_EXTERN_INLINE      extern __inline__
@@ -516,9 +517,7 @@ typedef __mpq_struct *mpq_ptr;
 
 #if defined (__cplusplus)
 extern "C" {
-#ifdef _GMP_H_HAVE_FILE
 using std::FILE;
-#endif
 #endif
 
 #define mp_set_memory_functions __gmp_set_memory_functions
