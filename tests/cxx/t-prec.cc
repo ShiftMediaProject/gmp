@@ -40,25 +40,6 @@ small_prec = 64, medium_prec = 128, large_prec = 192, very_large_prec = 256;
   ASSERT_ALWAYS(mpf_eq(_a, _c, prec)); \
 }
 
-#define ASSERT_ALWAYS_PREC2(a, s, prec) \
-{                                       \
-  mpfr_srcptr _a = a.get_mpfr_t();      \
-  mpfr_class _b(strip(s), prec);        \
-  mpfr_srcptr _c = _b.get_mpfr_t();     \
-  ASSERT_ALWAYS(mpfr_eq(_a, _c, prec)); \
-}
-
-
-// mpfr_get_str doesn't accept whitespace, strip it
-string
-strip (const char *ptr)
-{
-  string s(ptr);
-  size_t pos;
-  while ((pos = s.find(" ")) != string::npos)
-    s.replace(pos, 1, "");
-  return s;
-}
 
 
 void
