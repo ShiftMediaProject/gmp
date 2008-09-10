@@ -162,7 +162,7 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
-mp_size_t  hgcd_schoenhage_threshold    = MP_SIZE_T_MAX;
+mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
 mp_size_t  gcd_schoenhage_threshold     = MP_SIZE_T_MAX;
 mp_size_t  gcdext_schoenhage_threshold  = MP_SIZE_T_MAX;
@@ -1010,12 +1010,12 @@ void
 tune_hgcd (void)
 {
   static struct param_t  param;
-  param.name = "HGCD_SCHOENHAGE_THRESHOLD";
+  param.name = "HGCD_THRESHOLD";
   param.function = speed_mpn_hgcd;
   /* We seem to get strange results for small sizes */
-  param.min_size = 50;
+  param.min_size = 30;
   param.step_factor = 0.05;
-  one (&hgcd_schoenhage_threshold, &param);
+  one (&hgcd_threshold, &param);
 }
 
 void
@@ -1034,7 +1034,7 @@ tune_gcd_schoenhage (void)
   static struct param_t  param;
   param.name = "GCD_SCHOENHAGE_THRESHOLD";
   param.function = speed_mpn_gcd;
-  param.min_size = hgcd_schoenhage_threshold;
+  param.min_size = hgcd_threshold;
   param.max_size = 3000;
   param.step_factor = 0.1;
   one (&gcd_schoenhage_threshold, &param);
@@ -1046,7 +1046,7 @@ tune_gcdext_schoenhage (void)
   static struct param_t  param;
   param.name = "GCDEXT_SCHOENHAGE_THRESHOLD";
   param.function = speed_mpn_gcdext;
-  param.min_size = hgcd_schoenhage_threshold;
+  param.min_size = hgcd_threshold;
   param.max_size = 3000;
   param.step_factor = 0.1;
   one (&gcdext_schoenhage_threshold, &param);
@@ -1772,9 +1772,11 @@ all (void)
   printf("\n");
 
   tune_hgcd ();
+#if 0
   tune_gcd_accel ();
   tune_gcd_schoenhage ();
   tune_gcdext_schoenhage ();
+#endif
   tune_jacobi_base ();
   printf("\n");
 
