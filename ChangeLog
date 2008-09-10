@@ -1,3 +1,7 @@
+2008-09-09  Torbjorn Granlund  <tege@swox.com>
+
+	* doc/gmp.texi: Fix a typo and clarify mpn_gcdext docs.
+
 2008-09-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/invert.c: Add working but slow code.
@@ -81,6 +85,10 @@
 	(struct __gmp_binary_and): Rewrite, using the new macros.
 	(struct __gmp_binary_ior): Likewise.
 	(struct __gmp_binary_xor): Likewise.
+
+2008-07-28  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/cxx/t-binary.cc: Add some tests for logical operations.
 
 2008-07-24  Torbjorn Granlund  <tege@swox.com>
 
