@@ -164,7 +164,7 @@ mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
-mp_size_t  gcd_schoenhage_threshold     = MP_SIZE_T_MAX;
+mp_size_t  gcd_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  gcdext_schoenhage_threshold  = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
@@ -1018,6 +1018,7 @@ tune_hgcd (void)
   one (&hgcd_threshold, &param);
 }
 
+#if 0
 void
 tune_gcd_accel (void)
 {
@@ -1027,17 +1028,17 @@ tune_gcd_accel (void)
   param.min_size = 1;
   one (&gcd_accel_threshold, &param);
 }
-
+#endif
 void
-tune_gcd_schoenhage (void)
+tune_gcd_dc (void)
 {
   static struct param_t  param;
-  param.name = "GCD_SCHOENHAGE_THRESHOLD";
+  param.name = "GCD_DC_THRESHOLD";
   param.function = speed_mpn_gcd;
   param.min_size = hgcd_threshold;
   param.max_size = 3000;
   param.step_factor = 0.1;
-  one (&gcd_schoenhage_threshold, &param);
+  one (&gcd_dc_threshold, &param);
 }
 
 void
@@ -1772,9 +1773,9 @@ all (void)
   printf("\n");
 
   tune_hgcd ();
+  tune_gcd_dc ();
 #if 0
   tune_gcd_accel ();
-  tune_gcd_schoenhage ();
   tune_gcdext_schoenhage ();
 #endif
   tune_jacobi_base ();

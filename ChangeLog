@@ -20,6 +20,14 @@ MA 02110-1301, USA.
 
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/common.c: #if:ed out speed_mpn_gcd_binary and
+	speed_mpn_gcd_accel.
+	* tune/speed.c (routine): #if:ed out mpn_gcd_binary, mpn_gcd_accel
+	and find_a.
+	* tune/Makefile.am (libspeed_la_SOURCES): Removed gcd_bin.c
+	gcd_accel.c gcd_finda_gen.c.
+	* tune/tuneup.c: Enable tuning of GCD_DC_THRESHOLD.
+
 	* mpn/generic/gcd.c (mpn_gcd): Rewrote and simplified. Now uses
 	the new mpn_hgcd interface.
 
