@@ -25,9 +25,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#undef HGCD_THRESHOLD
-#define HGCD_THRESHOLD 10
-
 /* For input of size n, matrix elements are of size at most ceil(n/2)
    - 1, but we need one limb extra. */
 void

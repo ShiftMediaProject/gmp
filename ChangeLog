@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd.c: Don't hardcode small HGCD_THRESHOLD.
+	* mpn/x86_64/gmp-mparam.h (HGCD_THRESHOLD): Reduced from 145 to
+	120.
 	* */gmp-mparam.h: Renamed HGCD_SCHOENHAGE_THRESHOLD to
 	HGCD_THRESHOLD.
 
