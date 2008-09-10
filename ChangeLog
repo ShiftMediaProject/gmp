@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcd.c (mpn_gcd): Rewrote and simplified. Now uses
+	the new mpn_hgcd interface.
+
 	* */gmp-mparam.h: Renamed GCD_SCHOENHAGE_THRESHOLD to
 	GCD_DC_THRESHOLD.
 
