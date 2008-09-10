@@ -54,7 +54,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_Q_THRESHOLD              10
 #define DIVEXACT_JEB_THRESHOLD           27
 
-#define HGCD_SCHOENHAGE_THRESHOLD       133
+#define HGCD_THRESHOLD                  133
 #define GCD_ACCEL_THRESHOLD              10
 #define GCD_SCHOENHAGE_THRESHOLD        792
 #define GCDEXT_SCHOENHAGE_THRESHOLD     339

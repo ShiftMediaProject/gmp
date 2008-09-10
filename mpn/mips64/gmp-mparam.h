@@ -36,7 +36,7 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIV_DC_THRESHOLD                 53
 #define POWM_THRESHOLD                   61
 
-#define HGCD_SCHOENHAGE_THRESHOLD       116
+#define HGCD_THRESHOLD                  116
 #define GCD_ACCEL_THRESHOLD               3
 #define GCD_SCHOENHAGE_THRESHOLD        492
 #define GCDEXT_THRESHOLD                  0  /* always */

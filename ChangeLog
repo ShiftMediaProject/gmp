@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* */gmp-mparam.h: Renamed HGCD_SCHOENHAGE_THRESHOLD to
+	HGCD_THRESHOLD.
+
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer): Adapted

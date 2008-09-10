@@ -49,7 +49,7 @@ MA 02110-1301, USA. */
 #define DC_BDIV_Q_THRESHOLD              10
 #define DIVEXACT_JEB_THRESHOLD           40
 
-#define HGCD_SCHOENHAGE_THRESHOLD       191
+#define HGCD_THRESHOLD                  191
 #define GCD_ACCEL_THRESHOLD               5
 #define GCD_SCHOENHAGE_THRESHOLD        948
 #define GCDEXT_SCHOENHAGE_THRESHOLD     254
