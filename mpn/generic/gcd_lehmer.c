@@ -76,30 +76,16 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
   return 1;
 }
 
-/* Temporary storage: Initial division needs (an + 1), rest needs n + 1 */
+/* Temporary storage: n + 1 */
 mp_size_t
-mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n, mp_ptr tp)
+mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 {
   mp_size_t gn;
   mp_size_t scratch;
 
-  ASSERT(ap[an-1] > 0);
-  ASSERT(bp[n-1] > 0);
-
-  if (an > n)
-    {
-      /* FIXME: Can call tdiv_qr and store the remainder directly at ap. */
-      mpn_tdiv_qr (tp + n, tp, 0, ap, an, bp, n);
-      an = n;
-      MPN_NORMALIZE (tp, an);
-      if (an == 0)
-	{
-	  MPN_COPY (gp, bp, n);
-	  return n;
-	}
-      else
-	MPN_COPY (ap, tp, n);
-    }
+  /* Relax this requirement, and normalize at the start? Must disallow
+     A = B = 0, though. */
+  ASSERT(ap[n-1] > 0 || bp[n-1] > 0);
 
   while (n > 2)
     {
