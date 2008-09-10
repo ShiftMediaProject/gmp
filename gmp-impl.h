@@ -3392,6 +3392,9 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
    The count includes any nail bits, so it should work fine if count
    is computed using count_leading_zeros. If GMP_NAIL_BITS > 0, all of
    xh, xl and r include nail bits. Must have 0 < count < GMP_LIMB_BITS.
+
+   FIXME: Omit masking with GMP_NUMB_MASK, and let callers do that for
+   those calls where the count high bits of xh may be non-zero.
 */
 
 #define MPN_EXTRACT_NUMB(count, xh, xl)				\
@@ -3410,7 +3413,7 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define mpn_hgcd __MPN (hgcd)
 #define mpn_hgcd_lehmer __MPN (hgcd_lehmer)
 
-#define mpn_gcd_lehmer __MPN(gcd_lehmer)
+#define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
 #define mpn_gcdext_lehmer __MPN(gcdext_lehmer)
 #define mpn_gcdext_lehmer_itch __MPN(gcdext_lehmer_itch)
 
@@ -3480,7 +3483,7 @@ mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
 		 struct hgcd_matrix *M, mp_ptr tp);
 
 #define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
-#define mpn_gcd_lehmer __MPN(gcd_lehmer)
+#define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
 
 /* Needs storage for the division */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) ((n)+1)
@@ -3489,11 +3492,11 @@ mp_size_t
 mpn_gcd_subdiv_step (mp_ptr gp, mp_size_t *gn,
 		     mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp);
 
-#define MPN_GCD_LEHMER_ITCH(an) ((an) + 1)
+#define MPN_GCD_LEHMER_N_ITCH(n) ((n) + 1)
 
 mp_size_t
-mpn_gcd_lehmer (mp_ptr gp, mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n,
-		mp_ptr tp);
+mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n,
+		  mp_ptr tp);
 
 mp_size_t
 mpn_gcdext_lehmer_itch (mp_size_t an, mp_size_t bn);
