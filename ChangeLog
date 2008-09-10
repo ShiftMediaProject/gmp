@@ -1,3 +1,7 @@
+2008-09-10  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in: Unconditionally include <cstdio>.
+
 2008-09-09  Torbjorn Granlund  <tege@swox.com>
 
 	* doc/gmp.texi: Fix a typo and clarify mpn_gcdext docs.
@@ -100,6 +104,14 @@
 2008-07-21  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/amd64check.c: Fix a printf type clash.
+
+	* gmp-h.in: Include <cstdlib> for C++.
+	* gmp-h.in: Handle new gcc 4.3 inline semantics defaults.
+
+	* configfsf.guess: Update to version of 2008-04-14.
+	* configfsf.sub: Update to version of 2008-06-16.
+
+	* configure.in: Separate core2 and athlon64 flags handling.
 
 2008-06-19  Torbjorn Granlund  <tege@swox.com>
 
