@@ -81,6 +81,7 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
   swapped = 0;
 
+  /* FIXME: Handle n == 2 differently, after the loop? */
   while (n >= 2)
     {
       struct hgcd_matrix1 M;
