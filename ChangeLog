@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* */gmp-mparam.h: Renamed GCD_SCHOENHAGE_THRESHOLD to
+	GCD_DC_THRESHOLD.
+
 	* mpn/generic/gcd_lehmer.c (mpn_gcd_lehmer_n): Renamed (was
 	mpn_gcd_lehmer). Now takes inputs of equal size.
 

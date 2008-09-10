@@ -3520,8 +3520,8 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 #endif
 #endif
 
-#ifndef GCD_SCHOENHAGE_THRESHOLD
-#define GCD_SCHOENHAGE_THRESHOLD 1000
+#ifndef GCD_DC_THRESHOLD
+#define GCD_DC_THRESHOLD 1000
 #endif
 
 #ifndef GCDEXT_SCHOENHAGE_THRESHOLD
@@ -3961,9 +3961,9 @@ extern mp_size_t                     gcd_accel_threshold;
 extern mp_size_t                     gcd_lehmer_threshold;
 #endif
 
-#undef  GCD_SCHOENHAGE_THRESHOLD
-#define GCD_SCHOENHAGE_THRESHOLD     gcd_schoenhage_threshold
-extern mp_size_t                     gcd_schoenhage_threshold;
+#undef  GCD_DC_THRESHOLD
+#define GCD_DC_THRESHOLD             gcd_dc_threshold
+extern mp_size_t                     gcd_dc_threshold;
 
 #undef GCDEXT_SCHOENHAGE_THRESHOLD
 #define GCDEXT_SCHOENHAGE_THRESHOLD  gcdext_schoenhage_threshold

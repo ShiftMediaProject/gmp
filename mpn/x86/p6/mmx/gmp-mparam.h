@@ -56,7 +56,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define HGCD_THRESHOLD                  145
 #define GCD_ACCEL_THRESHOLD               5
-#define GCD_SCHOENHAGE_THRESHOLD        537
+#define GCD_DC_THRESHOLD                537
 #define GCDEXT_SCHOENHAGE_THRESHOLD     948
 #define JACOBI_BASE_METHOD                1
 

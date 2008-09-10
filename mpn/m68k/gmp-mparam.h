@@ -39,7 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define HGCD_THRESHOLD                  116
 #define GCD_ACCEL_THRESHOLD               3
-#define GCD_SCHOENHAGE_THRESHOLD        590
+#define GCD_DC_THRESHOLD                590
 #define GCDEXT_THRESHOLD                 35
 #define JACOBI_BASE_METHOD                2
 
