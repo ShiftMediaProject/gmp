@@ -3408,14 +3408,17 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define mpn_hgcd_matrix_init __MPN (hgcd_matrix_init)
 #define mpn_hgcd_matrix_mul __MPN (hgcd_matrix_mul)
 #define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
+#define mpn_hgcd_addmul2_n __MPN(hgcd_addmul2_n)
+
 #define mpn_hgcd_step __MPN (hgcd_step)
 #define mpn_hgcd_itch __MPN (hgcd_itch)
 #define mpn_hgcd __MPN (hgcd)
 #define mpn_hgcd_lehmer __MPN (hgcd_lehmer)
 
 #define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
-#define mpn_gcdext_lehmer __MPN(gcdext_lehmer)
-#define mpn_gcdext_lehmer_itch __MPN(gcdext_lehmer_itch)
+#define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
+#define mpn_gcdext_lehmer_n __MPN(gcdext_lehmer_n)
+#define mpn_gcdext_subdiv_step __MPN(gcdext_subdiv_step)
 
 /* The matrix non-negative M = (u, u'; v,v') keeps track of the
    reduction (a;b) = M (alpha; beta) where alpha, beta are smaller
@@ -3463,6 +3466,13 @@ mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
 			mp_size_t n, mp_ptr ap, mp_ptr bp,
 			mp_size_t p, mp_ptr tp);
 
+/* FIXME: Better name for this? */
+mp_limb_t
+mpn_hgcd_addmul2_n (mp_ptr, mp_size_t,
+		    mp_srcptr, mp_srcptr, mp_size_t,
+		    mp_srcptr, mp_srcptr, mp_size_t,
+		    mp_ptr);
+
 #define MPN_HGCD_STEP_ITCH(n) ((n) + 1)
 
 mp_size_t
@@ -3482,9 +3492,6 @@ mp_size_t
 mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
 		 struct hgcd_matrix *M, mp_ptr tp);
 
-#define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
-#define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
-
 /* Needs storage for the division */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) ((n)+1)
 
@@ -3498,14 +3505,21 @@ mp_size_t
 mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n,
 		  mp_ptr tp);
 
-mp_size_t
-mpn_gcdext_lehmer_itch (mp_size_t an, mp_size_t bn);
+/* To calculate the needed scratch space, n should be a bound for both
+   input and output sizes. */
+#define MPN_GCDEXT_SUBDIV_ITCH(n) (2*(n) + 1)
 
 mp_size_t
-mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
-		   mp_ptr ap, mp_size_t an,
-		   mp_ptr bp, mp_size_t n,
-		   mp_ptr tp);
+mpn_gcdext_subdiv_step (mp_ptr, mp_size_t *, mp_ptr, mp_size_t *,
+			mp_ptr, mp_ptr, mp_size_t,
+			mp_ptr, mp_ptr, mp_size_t *, mp_ptr);
+
+#define MPN_GCDEXT_LEHMER_N_ITCH(n) (4*(n) + 3)
+
+mp_size_t
+mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
+		     mp_ptr ap, mp_ptr bp, mp_size_t n,
+		     mp_ptr tp);
 
 /* 4*(an + 1) + 4*(bn + 1) + an */
 #define MPN_GCDEXT_LEHMER_ITCH(an, bn) (5*(an) + 4*(bn) + 8)
@@ -3524,8 +3538,8 @@ mpn_gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 #define GCD_DC_THRESHOLD 1000
 #endif
 
-#ifndef GCDEXT_SCHOENHAGE_THRESHOLD
-#define GCDEXT_SCHOENHAGE_THRESHOLD 600
+#ifndef GCDEXT_DC_THRESHOLD
+#define GCDEXT_DC_THRESHOLD 600
 #endif
 
 /* Definitions for mpn_set_str and mpn_get_str */
@@ -3965,9 +3979,9 @@ extern mp_size_t                     gcd_lehmer_threshold;
 #define GCD_DC_THRESHOLD             gcd_dc_threshold
 extern mp_size_t                     gcd_dc_threshold;
 
-#undef GCDEXT_SCHOENHAGE_THRESHOLD
-#define GCDEXT_SCHOENHAGE_THRESHOLD  gcdext_schoenhage_threshold
-extern mp_size_t                     gcdext_schoenhage_threshold;
+#undef GCDEXT_DC_THRESHOLD
+#define GCDEXT_DC_THRESHOLD          gcdext_dc_threshold
+extern mp_size_t                     gcdext_dc_threshold;
 
 #undef DIVREM_1_NORM_THRESHOLD
 #define DIVREM_1_NORM_THRESHOLD      divrem_1_norm_threshold
