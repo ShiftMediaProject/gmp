@@ -398,59 +398,77 @@ mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
     }
 }
 
-/* Computes r = u x + v y. rn is the size of the result area, and must
-   be at least one larger than the result. Needs temporary space of the same size.
-   Returns size of result. Zero inputs are allowed.
+/* Computes r = u0 x0 + u1 x1. rn is the size of the result area, and
+   must be at least one larger than the result. Needs temporary space
+   of the same size. Returns size of result. Non-normalized inputs,
+   including zero, are allowed.
 
    No overlap between input and output is allowed, since rp is used
    for temporary storage. */
-static mp_limb_t
-addmul2_n (mp_ptr rp,
-	   mp_srcptr up, mp_size_t un, mp_srcptr xp, mp_size_t xn,
-	   mp_srcptr vp, mp_size_t vn, mp_srcptr yp, mp_size_t yn,
-	   mp_ptr tp)
+
+/* FIXME: What's a good name for this function? */
+mp_limb_t
+mpn_hgcd_addmul2_n (mp_ptr rp, mp_size_t rn,
+		    mp_srcptr u0, mp_srcptr u1, mp_size_t un,
+		    mp_srcptr x0, mp_srcptr x1, mp_size_t xn,
+		    mp_ptr tp)
 {
+  mp_size_t u0n, u1n, x0n, x1n;
+  
   mp_size_t t0n, t1n;
   mp_size_t n;
   mp_limb_t cy;
 
-  /* t0 = u * x is stored at rp, and t1 = v * y at tp. */
-  t0n = xn + un;
-  t1n = yn + vn;
+  /* FIXME: Could omit normalization in the common case that
+     un + xn <= rn. */
+  u0n = u1n = un;
+  MPN_NORMALIZE (u0, u0n);
+  MPN_NORMALIZE (u1, u1n);
+
+  x0n = x1n = xn;
+  MPN_NORMALIZE (x0, x0n);
+  MPN_NORMALIZE (x1, x1n);
+
+  /* t0 = u0 * x0 is stored at rp, and t1 = u1 * x1 at tp. */
+  t0n = u0n + x0n;
+  t1n = u1n + x1n;
+
+  ASSERT (t0n <= rn);
+  ASSERT (t1n <= rn);
 
   /* Handle zero cases */
-  if (xn == 0 || un == 0)
+  if (x0n == 0 || u0n == 0)
     {
-      if (yn == 0 || vn == 0)
+      if (x1n == 0 || u1n == 0)
 	return 0;
 
       tp = rp;
       t0n = 0;
     }
-  else if (yn == 0 || vn == 0)
+  else if (x1n == 0 || u1n == 0)
     {
-      ASSERT (xn > 0);
-      ASSERT (un > 0);
+      ASSERT (x0n > 0);
+      ASSERT (u0n > 0);
 
       t1n = 0;
     }
 
   if (t0n > 0)
     {
-      if (xn >= un)
-	mpn_mul (rp, xp, xn, up, un);
+      if (x0n >= u0n)
+	mpn_mul (rp, x0, x0n, u0, u0n);
       else
-	mpn_mul (rp, up, un, xp, xn);
+	mpn_mul (rp, u0, u0n, x0, x0n);
 
       t0n -= (rp[t0n-1] == 0);
     }
 
   if (t1n > 0)
     {
-      if (yn >= vn)
-	mpn_mul (tp, yp, yn, vp, vn);
+      if (x1n >= u1n)
+	mpn_mul (tp, x1, x1n, u1, u1n);
       else
-	mpn_mul (tp, vp, vn, yp, yn);
+	mpn_mul (tp, u1, u1n, x1, x1n);
 
       t1n -= (tp[t1n-1] == 0);
     }
@@ -473,6 +491,8 @@ addmul2_n (mp_ptr rp,
   rp[n] = cy;
   n += (cy != 0);
 
+  ASSERT (n < rn);
+
   return n;
 }
 
@@ -488,7 +508,6 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
   mp_ptr m01 = M1->p[0][1];
   mp_ptr m10 = M1->p[1][0];
   mp_ptr m11 = M1->p[1][1];
-  mp_size_t n00, n01, n10, n11;
 
   mp_size_t n;
 
@@ -498,16 +517,19 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
   /* About the new size of M:s elements. Since M1's diagonal elements
      are > 0, no element can decrease. The typical case is that the
      new elements are of size M->n + M1->n, one limb more or less. But
-     it may be smaller, consider for example (1,x;0,1)(1,x;0,1) =
-     (1,2x;0,1), where size is increased by a single bit no matter how
+     it may be smaller, consider for example (1,x;0,1)(1,y;0,1) =
+     (1,x+y;0,1), where size is increased by a single bit no matter how
      large x is. So to avoid writing past the end of M, we need to
-     normalise the numbers. */
+     normalize the numbers. */
 
-  n00 = n01 = n10 = n11 = M1->n;
-  MPN_NORMALIZE (m00, n00);
-  MPN_NORMALIZE (m01, n01);
-  MPN_NORMALIZE (m10, n10);
-  MPN_NORMALIZE (m11, n11);
+  /* FIXME: The case (1,x;0,1)(1,y;0,1) with large x and y can't
+     happen in hgcd, since it corresponds to a quotient q >= x + y which
+     is split in the middle. See if we can get by without
+     normalization? */
+
+  /* FIXME: This function could be sped up a little using Strassen
+     multiplication, and in FFT multiplication range, it could be sped
+     up quite a lot using invariance. */
 
   n = 0;
   for (row = 0; row < 2; row++)
@@ -518,22 +540,13 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
       MPN_COPY (up, M->p[row][0], M->n);
       MPN_COPY (vp, M->p[row][1], M->n);
 
-      un = vn = M->n;
-      MPN_NORMALIZE (up, un);
-      MPN_NORMALIZE (vp, vn);
-
-      ASSERT (n00 + un <= M->alloc);
-      ASSERT (n01 + un <= M->alloc);
-      ASSERT (n10 + vn <= M->alloc);
-      ASSERT (n11 + vn <= M->alloc);
-
       /* Compute (u', v') = (u,v) (r00, r01; r10, r11)
 	 = (r00 u + r10 v, r01 u + r11 v) */
 
-      nn = addmul2_n (M->p[row][0], up, un, m00, n00, vp, vn, m10, n10, M->tp);
+      nn = mpn_hgcd_addmul2_n (M->p[row][0], M->alloc, up, vp, M->n, m00, m10, M1->n, M->tp);
       if (nn > n)
 	n = nn;
-      nn = addmul2_n (M->p[row][1], up, un, m01, n01, vp, vn, m11, n11, M->tp);
+      nn = mpn_hgcd_addmul2_n (M->p[row][1], M->alloc, up, vp, M->n, m01, m11, M1->n, M->tp);
       if (nn > n)
 	n = nn;
     }
