@@ -36,10 +36,10 @@ Makefile
 ^doc/stamp-vti
 ^doc/version\.texi
 
-# All source files in mpn/ are iether generated, or links
-^mpn/.*\.c
-^mpn/.*\.asm
-^
+# All source files in mpn/ are either generated, or links
+^mpn/[^/]*\.c
+^mpn/[^/]*\.asm
+
 ^\.libs
 
 .*\.a
