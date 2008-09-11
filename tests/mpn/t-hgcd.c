@@ -128,7 +128,7 @@ main (int argc, char **argv)
       chain_len = 1000000;
 #else
       mpz_urandomb (bs, rands, 32);
-      chain_len = mpz_get_ui (bs) % (GMP_NUMB_BITS * GCD_SCHOENHAGE_THRESHOLD / 256);
+      chain_len = mpz_get_ui (bs) % (GMP_NUMB_BITS * GCD_DC_THRESHOLD / 256);
 #endif
 
       for (j = 0; j < chain_len; j++)
@@ -141,7 +141,7 @@ main (int argc, char **argv)
 	  mpz_add (op1, op1, temp1);
 
 	  /* Don't generate overly huge operands.  */
-	  if (SIZ (op1) > 3 * GCD_SCHOENHAGE_THRESHOLD)
+	  if (SIZ (op1) > 3 * GCD_DC_THRESHOLD)
 	    break;
 
 	  mpz_urandomb (bs, rands, 32);
@@ -152,7 +152,7 @@ main (int argc, char **argv)
 	  mpz_add (op2, op2, temp1);
 
 	  /* Don't generate overly huge operands.  */
-	  if (SIZ (op2) > 3 * GCD_SCHOENHAGE_THRESHOLD)
+	  if (SIZ (op2) > 3 * GCD_DC_THRESHOLD)
 	    break;
 	}
       if (mpz_cmp (op1, op2) < 0)
