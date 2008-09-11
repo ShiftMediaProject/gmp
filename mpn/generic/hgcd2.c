@@ -104,9 +104,9 @@ div2 (mp_ptr rp,
 /* FIXME: Possible optimizations:
 
    The div2 function starts with checking the most significant bit of
-   the numerator. When we call div2, that bit is know in advance for
-   all but the one or two first calls, so we could split div2 in two
-   functions, and call the right one.
+   the numerator. We can maintained normalized operands here, call
+   hgcd with normalized operands only, which should make the code
+   simpler and possibly faster.
 
    Experiment with table lookups on the most significant bits.
 
