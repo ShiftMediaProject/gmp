@@ -47,10 +47,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_Q_THRESHOLD              10
 #define DIVEXACT_JEB_THRESHOLD           50
 
-#define HGCD_THRESHOLD                  120
+#define HGCD_THRESHOLD                  121
 #define GCD_ACCEL_THRESHOLD               3
-#define GCD_DC_THRESHOLD                445
-#define GCDEXT_SCHOENHAGE_THRESHOLD     713
+#define GCD_DC_THRESHOLD                493
+#define GCDEXT_DC_THRESHOLD             409
 #define JACOBI_BASE_METHOD                1
 
 #define MOD_1_NORM_THRESHOLD              0  /* always */

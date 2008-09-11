@@ -165,7 +165,7 @@ mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
 mp_size_t  gcd_dc_threshold             = MP_SIZE_T_MAX;
-mp_size_t  gcdext_schoenhage_threshold  = MP_SIZE_T_MAX;
+mp_size_t  gcdext_dc_threshold          = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
@@ -1042,15 +1042,15 @@ tune_gcd_dc (void)
 }
 
 void
-tune_gcdext_schoenhage (void)
+tune_gcdext_dc (void)
 {
   static struct param_t  param;
-  param.name = "GCDEXT_SCHOENHAGE_THRESHOLD";
+  param.name = "GCDEXT_DC_THRESHOLD";
   param.function = speed_mpn_gcdext;
   param.min_size = hgcd_threshold;
   param.max_size = 3000;
   param.step_factor = 0.1;
-  one (&gcdext_schoenhage_threshold, &param);
+  one (&gcdext_dc_threshold, &param);
 }
 
 
@@ -1774,9 +1774,9 @@ all (void)
 
   tune_hgcd ();
   tune_gcd_dc ();
+  tune_gcdext_dc ();
 #if 0
   tune_gcd_accel ();
-  tune_gcdext_schoenhage ();
 #endif
   tune_jacobi_base ();
   printf("\n");

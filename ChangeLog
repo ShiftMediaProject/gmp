@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-11  Niels Möller  <nisse@king.swox.se>
+
+	* tune/tuneup.c: Updated tuning of gcdext.
+
+	* mpn/x86_64/gmp-mparam.h (GCDEXT_DC_THRESHOLD): Reduced threshold
+	from 713 to 409.
+
 2008-09-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h: Updated for gcdext changes.
