@@ -20,6 +20,16 @@ MA 02110-1301, USA.
 
 2008-09-11  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcdext.c (compute_v): Accept non-normalized a and b
+	as inputs.
+	(mpn_gcdext): Rewrote and simplified. Now uses the new mpn_hgcd
+	interface.
+
+	* mpn/generic/hgcd.c (mpn_hgcd_addmul2_n): Renamed from addmul2_n
+	and made non-static. Changed interface to take non-normalized
+	inputs, and only two size arguments.
+	(mpn_hgcd_matrix_mul): Simplified using new mpn_hgcd_addmul2_n.
+
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_itch): Deleted
 	function.
 	(mpn_gcdext_lehmer_n): Renamed from mpn_gcd_lehmer. Now takes
