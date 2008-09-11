@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-11  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_itch): Deleted
+	function.
+	(mpn_gcdext_lehmer_n): Renamed from mpn_gcd_lehmer. Now takes
+	inputs of equal size. Moved the code for the division step to a
+	separate function...
+	* mpn/generic/gcdext_subdiv_step.c (mpn_gcdext_subdiv_step): New
+	file, new function.
+
+	* configure.in (gmp_mpn_functions): Added gcdext_subdiv_step.
+
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c: #if:ed out speed_mpn_gcd_binary and
