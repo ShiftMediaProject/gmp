@@ -80,7 +80,6 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
 mp_size_t
 mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 {
-  mp_size_t gn;
   mp_size_t scratch;
 
   /* Relax this requirement, and normalize at the start? Must disallow
@@ -122,6 +121,7 @@ mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 	  /* mpn_hgcd2 has failed. Then either one of a or b is very
 	     small, or the difference is very small. Perform one
 	     subtraction followed by one division. */
+	  mp_size_t gn;
 
 	  /* Temporary storage n + 1 */
 	  n = mpn_gcd_subdiv_step (gp, &gn, ap, bp, n, tp);
