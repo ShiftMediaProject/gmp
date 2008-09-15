@@ -49,6 +49,5 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifndef GCD_ACCEL_THRESHOLD
 #define GCD_ACCEL_THRESHOLD       46
 #endif
-#ifndef GCDEXT_THRESHOLD
 #define GCDEXT_THRESHOLD          33
 #endif

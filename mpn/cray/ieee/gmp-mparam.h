@@ -37,7 +37,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HGCD_THRESHOLD                  964
 #define GCD_ACCEL_THRESHOLD               3
 #define GCD_DC_THRESHOLD                964
-#define GCDEXT_THRESHOLD                  0  /* always */
 #define JACOBI_BASE_METHOD                2
 
 #define DIVREM_1_NORM_THRESHOLD           0  /* preinv always */

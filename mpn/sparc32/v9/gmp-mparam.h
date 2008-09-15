@@ -37,7 +37,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HGCD_THRESHOLD                  210
 #define GCD_ACCEL_THRESHOLD               4
 #define GCD_DC_THRESHOLD               1291
-#define GCDEXT_THRESHOLD                  9
 #define JACOBI_BASE_METHOD                2
 
 #define DIVREM_1_NORM_THRESHOLD       MP_SIZE_T_MAX  /* never */
