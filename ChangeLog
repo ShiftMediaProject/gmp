@@ -20,6 +20,12 @@ MA 02110-1301, USA.
 
 2008-09-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd.c (mpn_hgcd_matrix_init): Updated for deleted
+	tp pointer.
+	(hgcd_matrix_update_q): Likewise.
+	(mpn_hgcd_matrix_mul): Likewise.
+	(mpn_hgcd_itch): Updated calculation of scratch space.
+
 	* gmp-impl.h (struct hgcd_matrix): Deleted tp pointer.
 	(MPN_HGCD_MATRIX_INIT_ITCH): Reduced storage.
 	(mpn_hgcd_step, MPN_HGCD_STEP_ITCH): Deleted declarations.
