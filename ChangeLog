@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-15  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* mpn/x86_64/gmp-mparam.h (MATRIX22_STRASSEN_THRESHOLD): New
+	threshold.
+
 	* mpn/generic/hgcd.c (mpn_hgcd_matrix_mul): Use mpn_matrix22_mul.
 	(mpn_hgcd_itch): Updated calculation of scratch space. Use
 	count_leading_zeros to get the recursion depth.
