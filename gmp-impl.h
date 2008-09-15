@@ -3397,6 +3397,10 @@ mpn_matrix22_mul_strassen (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
 			   mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t,
 			   mp_ptr);
 
+#ifndef MATRIX22_STRASSEN_THRESHOLD
+#define MATRIX22_STRASSEN_THRESHOLD 30
+#endif
+
 /* HGCD definitions */
 
 /* Extract one numb, shifting count bits left
@@ -3976,6 +3980,10 @@ extern mp_size_t                     div_dc_threshold;
 #undef  POWM_THRESHOLD
 #define POWM_THRESHOLD               powm_threshold
 extern mp_size_t                     powm_threshold;
+
+#undef  MATRIX22_STRASSEN_THRESHOLD
+#define MATRIX22_STRASSEN_THRESHOLD  matrix22_strassen_threshold
+extern mp_size_t                     matrix22_strassen_threshold;
 
 #undef  HGCD_THRESHOLD
 #define HGCD_THRESHOLD    	     hgcd_threshold

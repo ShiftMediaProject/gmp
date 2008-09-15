@@ -25,8 +25,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#define MATRIX22_STRASSEN_THRESHOLD 0
-
 #define MUL(rp, ap, an, bp, bn) do {		\
   if (an >= bn)					\
     mpn_mul (rp, ap, an, bp, bn);		\

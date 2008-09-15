@@ -162,6 +162,7 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
+mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
 mp_size_t  gcd_dc_threshold             = MP_SIZE_T_MAX;
@@ -1007,6 +1008,16 @@ tune_powm (void)
 
 
 void
+tune_matrix22_mul (void)
+{
+  static struct param_t  param;
+  param.name = "MATRIX22_STRASSEN_THRESHOLD";
+  param.function = speed_mpn_matrix22_mul;
+  param.min_size = 2;
+  one (&matrix22_strassen_threshold, &param);
+}
+
+void
 tune_hgcd (void)
 {
   static struct param_t  param;
@@ -1772,6 +1783,7 @@ all (void)
   tune_powm ();
   printf("\n");
 
+  tune_matrix22_mul ();
   tune_hgcd ();
   tune_gcd_dc ();
   tune_gcdext_dc ();

@@ -985,6 +985,61 @@ speed_mpn_mullow_basecase (struct speed_params *s)
 }
 
 double
+speed_mpn_matrix22_mul (struct speed_params *s)
+{
+  /* Speed params only includes 2 inputs, so we have to invent the
+     other 6. */
+
+  mp_ptr a1, a2, a3;
+  mp_ptr r0, r1, r2, r3;
+  mp_ptr b1, b2, b3;
+  mp_ptr tp;
+  mp_size_t scratch;
+  unsigned i;
+  double t;
+  TMP_DECL;
+
+  TMP_MARK;
+  SPEED_TMP_ALLOC_LIMBS (a1, s->size, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (a2, s->size, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (a3, s->size, s->align_xp);
+
+  SPEED_TMP_ALLOC_LIMBS (b1, s->size, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (b2, s->size, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (b3, s->size, s->align_yp);
+
+  SPEED_TMP_ALLOC_LIMBS (r0, 2 * s->size +1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (r1, 2 * s->size +1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (r2, 2 * s->size +1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (r3, 2 * s->size +1, s->align_xp);
+
+  mpn_random (a1, s->size);
+  mpn_random (a2, s->size);
+  mpn_random (a3, s->size);
+  mpn_random (b1, s->size);
+  mpn_random (b2, s->size);
+  mpn_random (b3, s->size);
+
+  scratch = mpn_matrix22_mul_itch (s->size, s->size);
+  SPEED_TMP_ALLOC_LIMBS (tp, scratch, s->align_wp);
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    {
+      MPN_COPY (r0, s->xp, s->size); 
+      MPN_COPY (r1, a1, s->size); 
+      MPN_COPY (r2, a2, s->size); 
+      MPN_COPY (r3, a3, s->size);
+      mpn_matrix22_mul (r0, r1, r2, r3, s->size, s->yp, b1, b2, b3, s->size, tp);
+    }
+  while (--i != 0);
+  t = speed_endtime();
+  TMP_FREE;
+  return t;
+}
+
+double
 speed_mpn_hgcd (struct speed_params *s)
 {
   mp_ptr wp;

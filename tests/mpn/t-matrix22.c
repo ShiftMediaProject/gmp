@@ -167,8 +167,7 @@ one_test (const struct matrix *A, const struct matrix *B, int i)
   matrix_clear (&P);
 }
 
-/* FIXME: Should be larger than MATRIX22_STRASSEN_THRESHOLD */
-#define MAX_SIZE 1
+#define MAX_SIZE (2+2*MATRIX22_STRASSEN_THRESHOLD)
 
 int
 main (int argc, char **argv)

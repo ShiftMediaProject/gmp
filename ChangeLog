@@ -20,9 +20,22 @@ MA 02110-1301, USA.
 
 2008-09-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/tuneup.c (tune_matrix22_mul): New function.
+	(all): Use it.
+
+	* tune/common.c (speed_mpn_matrix22_mul): New function.
+
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Added matrix22_mul.c.
+
+	* tests/mpn/t-matrix22.c: Use MATRIX22_STRASSEN_THRESHOLD to
+	select sizes for tests.
+
+	* gmp-impl.h (MATRIX22_STRASSEN_THRESHOLD): New threshold
+
 	* configure.in (gmp_mpn_functions): Added matrix22_mul.
 	* gmp-impl.h: Added declarations for mpn_matrix22_mul and related
 	functions.
+
 	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Added
 	matrix22_mul.c.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-matrix22.

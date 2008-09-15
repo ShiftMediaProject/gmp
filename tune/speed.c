@@ -249,6 +249,8 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
+  { "mpn_matrix22_mul",  speed_mpn_matrix22_mul     },
+
   { "mpn_hgcd",          speed_mpn_hgcd             },
   { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
 
