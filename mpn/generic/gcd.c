@@ -53,8 +53,15 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 
   if (ABOVE_THRESHOLD (n, GCD_DC_THRESHOLD))
     {
-      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH ((n+1)/2);
-      scratch = matrix_scratch + 3*n/2 + 1;
+      mp_size_t hgcd_scratch;
+      mp_size_t update_scratch;
+      mp_size_t n1 = (n+1)/2;
+      mp_size_t scratch;
+      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n1);
+      hgcd_scratch = mpn_hgcd_itch (n1);
+      update_scratch = 3*n/2 + 1;
+
+      scratch = matrix_scratch + MAX(hgcd_scratch, update_scratch);
       if (scratch > talloc)
 	talloc = scratch;
     }

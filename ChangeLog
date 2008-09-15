@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-15  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
+
+	* mpn/generic/gcd.c (mpn_gcd): Fixed calculation of scratch space,
+	and use mpn_hgcd_itch.
+
 2008-09-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/tuneup.c (tune_matrix22_mul): New function.
