@@ -496,62 +496,85 @@ mpn_hgcd_addmul2_n (mp_ptr rp, mp_size_t rn,
   return n;
 }
 
-/* Multiply M by M1 from the right. Needs 2*M->n temporary storage
-   (and additionally uses M->tp). */
+/* Multiply M by M1 from the right. Needs 4*(M->n + M1->n) + 5 limbs
+   of temporary storage (see mpn_matrix22_mul_itch. (And additionally
+   may use M->tp).
+
+   FIXME: Since M->tp i sof limited use here, delete that from the
+   matrix struct? */
 void
 mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
 		     mp_ptr tp)
 {
-  unsigned row;
-
-  mp_ptr m00 = M1->p[0][0];
-  mp_ptr m01 = M1->p[0][1];
-  mp_ptr m10 = M1->p[1][0];
-  mp_ptr m11 = M1->p[1][1];
-
-  mp_size_t n;
-
-  mp_ptr up = tp;
-  mp_ptr vp = tp + M->n;
-
-  /* About the new size of M:s elements. Since M1's diagonal elements
-     are > 0, no element can decrease. The typical case is that the
-     new elements are of size M->n + M1->n, one limb more or less. But
-     it may be smaller, consider for example (1,x;0,1)(1,y;0,1) =
-     (1,x+y;0,1), where size is increased by a single bit no matter how
-     large x is. So to avoid writing past the end of M, we need to
-     normalize the numbers. */
-
-  /* FIXME: The case (1,x;0,1)(1,y;0,1) with large x and y can't
-     happen in hgcd, since it corresponds to a quotient q >= x + y which
-     is split in the middle. See if we can get by without
-     normalization? */
-
-  /* FIXME: This function could be sped up a little using Strassen
-     multiplication, and in FFT multiplication range, it could be sped
-     up quite a lot using invariance. */
-
-  n = 0;
-  for (row = 0; row < 2; row++)
+  if (M->n + M1->n < M->alloc)
     {
-      mp_size_t un, vn;
-      mp_size_t nn;
+      /* We don't need to normalize inputs. */
+      mp_size_t n;
+      mpn_matrix22_mul (M->p[0][0], M->p[0][1],
+			M->p[1][0], M->p[1][1], M->n,
+			M1->p[0][0], M1->p[0][1],
+			M1->p[1][0], M1->p[1][1], M1->n, tp);
 
-      MPN_COPY (up, M->p[row][0], M->n);
-      MPN_COPY (vp, M->p[row][1], M->n);
-
-      /* Compute (u', v') = (u,v) (r00, r01; r10, r11)
-	 = (r00 u + r10 v, r01 u + r11 v) */
-
-      nn = mpn_hgcd_addmul2_n (M->p[row][0], M->alloc, up, vp, M->n, m00, m10, M1->n, M->tp);
-      if (nn > n)
-	n = nn;
-      nn = mpn_hgcd_addmul2_n (M->p[row][1], M->alloc, up, vp, M->n, m01, m11, M1->n, M->tp);
-      if (nn > n)
-	n = nn;
+      for (n = M->n + M1->n + 1;
+	   ((M->p[0][0][n-1] | M->p[0][1][n-1]
+	     | M->p[1][0][n-1] | M->p[1][1][n-1]) == 0);
+	   n--)
+	;
+      M->n = n;      
     }
-  ASSERT (n < M->alloc);
-  M->n = n;
+  else
+    {
+      unsigned row;
+
+      mp_ptr m00 = M1->p[0][0];
+      mp_ptr m01 = M1->p[0][1];
+      mp_ptr m10 = M1->p[1][0];
+      mp_ptr m11 = M1->p[1][1];
+
+      mp_size_t n;
+
+      mp_ptr up = tp;
+      mp_ptr vp = tp + M->n;
+
+      /* About the new size of M:s elements. Since M1's diagonal elements
+	 are > 0, no element can decrease. The typical case is that the
+	 new elements are of size M->n + M1->n, one limb more or less. But
+	 it may be smaller, consider for example (1,x;0,1)(1,y;0,1) =
+	 (1,x+y;0,1), where size is increased by a single bit no matter how
+	 large x is. So to avoid writing past the end of M, we need to
+	 normalize the numbers. */
+
+      /* FIXME: The case (1,x;0,1)(1,y;0,1) with large x and y can't
+	 happen in hgcd, since it corresponds to a quotient q >= x + y which
+	 is split in the middle. See if we can get by without
+	 normalization? */
+
+      /* FIXME: This function could be sped up a little using Strassen
+	 multiplication, and in FFT multiplication range, it could be sped
+	 up quite a lot using invariance. */
+
+      n = 0;
+      for (row = 0; row < 2; row++)
+	{
+	  mp_size_t un, vn;
+	  mp_size_t nn;
+
+	  MPN_COPY (up, M->p[row][0], M->n);
+	  MPN_COPY (vp, M->p[row][1], M->n);
+
+	  /* Compute (u', v') = (u,v) (r00, r01; r10, r11)
+	     = (r00 u + r10 v, r01 u + r11 v) */
+
+	  nn = mpn_hgcd_addmul2_n (M->p[row][0], M->alloc, up, vp, M->n, m00, m10, M1->n, M->tp);
+	  if (nn > n)
+	    n = nn;
+	  nn = mpn_hgcd_addmul2_n (M->p[row][1], M->alloc, up, vp, M->n, m01, m11, M1->n, M->tp);
+	  if (nn > n)
+	    n = nn;
+	}
+      ASSERT (n < M->alloc);
+      M->n = n;
+    }
 }
 
 /* Multiplies the least significant p limbs of (a;b) by M^-1.
@@ -645,15 +668,16 @@ unsigned mpn_hgcd_max_recursion (mp_size_t n) { int count;
    (after this, the storage needed for M1 can be recycled).
 
    Let S(r) denote the required storage. For M1 we need 5 * ceil(n1/2)
-   = 5 * ceil(n/4), and for the hgcd_matrix_adjust call, we need n + 2. In
-   total, 5 * ceil(n/4) + n + 2 <= 9 ceil(n/4) + 2.
+   = 5 * ceil(n/4), for the hgcd_matrix_adjust call, we need n + 2,
+   and for the hgcd_matrix_mul, we may need 4 ceil(n/2) + 1. In total,
+   5 * ceil(n/4) + 4 ceil(n/2) + 1 <= 13 ceil(n/4) + 1.
 
    For the recursive call, we need S(n1) = S(ceil(n/2)).
 
-   S(n) <= 9*ceil(n/4) + 2 + S(ceil(n/2))
-        <= 9*(ceil(n/4) + ... + ceil(n/2^(1+k))) + 2k + S(ceil(n/2^k))
-        <= 9*(2 ceil(n/4) + k) + 2k + S(n/2^k)   
-	<= 18 ceil(n/4) + 11k + S(n/2^k)
+   S(n) <= 13*ceil(n/4) + 1 + S(ceil(n/2))
+        <= 13*(ceil(n/4) + ... + ceil(n/2^(1+k))) + k + S(ceil(n/2^k))
+        <= 13*(2 ceil(n/4) + k) + k + S(n/2^k)   
+	<= 26 ceil(n/4) + 14k + S(n/2^k)
 	
 */
 
@@ -661,19 +685,18 @@ mp_size_t
 mpn_hgcd_itch (mp_size_t n)
 {
   unsigned k;
-  mp_size_t nn;
+  int count;
+  mp_size_t nscaled;
 
-  /* Inefficient way to almost compute
-     log_2(n/HGCD_BASE_THRESHOLD) */
-  for (k = 0, nn = n;
-       ABOVE_THRESHOLD (nn, HGCD_THRESHOLD);
-       nn = (nn + 1) / 2)
-    k++;
-
-  if (k == 0)
+  if (BELOW_THRESHOLD (n, HGCD_THRESHOLD))
     return MPN_HGCD_LEHMER_ITCH (n);
 
-  return 18 * ((n+3) / 4) + 11 * k
+  /* Get the recursion depth. */
+  nscaled = (n - 1) / (HGCD_THRESHOLD - 1);
+  count_leading_zeros (count, nscaled);
+  k = GMP_LIMB_BITS - count;
+
+  return 26 * ((n+3) / 4) + 14 * k
     + MPN_HGCD_LEHMER_ITCH (HGCD_THRESHOLD);
 }
 
