@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (struct hgcd_matrix): Deleted tp pointer.
+	(MPN_HGCD_MATRIX_INIT_ITCH): Reduced storage.
+	(mpn_hgcd_step, MPN_HGCD_STEP_ITCH): Deleted declarations.
+
 2008-09-15  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
 	* mpn/x86_64/gmp-mparam.h (MATRIX22_STRASSEN_THRESHOLD): New

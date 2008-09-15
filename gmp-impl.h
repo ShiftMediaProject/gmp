@@ -3469,11 +3469,9 @@ struct hgcd_matrix
 
   mp_size_t n;
   mp_ptr p[2][2];
-  /* Temporary storage, of the same size as the elements */
-  mp_ptr tp;
 };
 
-#define MPN_HGCD_MATRIX_INIT_ITCH(n) (5 * ((n+1)/2))
+#define MPN_HGCD_MATRIX_INIT_ITCH(n) (4 * ((n+1)/2))
 
 void
 mpn_hgcd_matrix_init (struct hgcd_matrix *M, mp_size_t n, mp_ptr p);
@@ -3493,12 +3491,6 @@ mpn_hgcd_addmul2_n (mp_ptr, mp_size_t,
 		    mp_srcptr, mp_srcptr, mp_size_t,
 		    mp_ptr);
 
-#define MPN_HGCD_STEP_ITCH(n) ((n) + 1)
-
-mp_size_t
-mpn_hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
-	       struct hgcd_matrix *M, mp_ptr tp);
-
 mp_size_t
 mpn_hgcd_itch (mp_size_t n);
 
@@ -3506,7 +3498,7 @@ mp_size_t
 mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  struct hgcd_matrix *M, mp_ptr tp);
 
-#define MPN_HGCD_LEHMER_ITCH MPN_HGCD_STEP_ITCH
+#define MPN_HGCD_LEHMER_ITCH(n) ((n) + 1)
 
 mp_size_t
 mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
