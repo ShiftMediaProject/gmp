@@ -21,8 +21,6 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#include <stdio.h>
-
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -125,8 +123,6 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
 
   MUL (u0, r0, rn, m0, mn); /* 0 */
   MUL (u1, r1, rn, m2, mn); /* 1 */
-  gmp_fprintf (stderr, "u0 = %Nx\n", u0, rn + mn);
-  gmp_fprintf (stderr, "u1 = %Nx\n", u1, rn + mn);
 
   MPN_COPY (s2, r3, rn);
       
@@ -147,13 +143,11 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
 
   r2s = abs_sub_n (r2, r0, r2, rn);
   r0[rn+mn] = mpn_add_n (r0, u0, u1, rn + mn);
-  gmp_fprintf (stderr, "r0 = %Nx\n", r0, rn + mn + 1);
 
   MUL(u1, s3, rn+1, t3, mn+1); /* 3 */
   u1s = s3s ^ t3s;
   ASSERT (u1[rn+mn+1] == 0);
   ASSERT (u1[rn+mn] < 4);
-  gmp_fprintf (stderr, "u3 = %s%Nx\n", u1s ? "-" : "", u1, rn + mn + 1);
 
   if (u1s)
     {
@@ -165,14 +159,11 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
       u0[rn+mn] = u1[rn+mn] + mpn_add_n (u0, u0, u1, rn + mn);
       u0s = 0;
     }
-  gmp_fprintf (stderr, "u0 + u3 = %s%Nx\n", u0s ? "-" : "", u0, rn + mn + 1);
   MUL(u1, r3, rn + 1, t2, mn); /* 2 */
   u1s = t2s;
   ASSERT (u1[rn+mn] < 2);
-  gmp_fprintf (stderr, "u2 = %s%Nx\n", u1s ? "-" : "", u1, rn + mn + 1);
 
   u1s = add_signed_n (u1, u0, u0s, u1, u1s, rn + mn + 1);
-  gmp_fprintf (stderr, "u0 + u2 + u3 = %s%Nx\n", u1s ? "-" : "", u1, rn + mn + 1);
 
   t2s = abs_sub_n (t2, m3, m1, mn);
   if (s3s)
@@ -190,18 +181,14 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
       s3s = abs_sub_n (s3, r1, s3, rn);
     }
   MUL (r1, s3, rn+1, m3, mn); /* 5 */
-  gmp_fprintf (stderr, "u5 = %s%Nx\n", s3s ? "-" : "", r1, rn + mn + 1);
   ASSERT_NOCARRY(add_signed_n (r1, r1, s3s, u1, u1s, rn + mn + 1));
-  gmp_fprintf (stderr, "r1 = %Nx\n", r1, rn + mn + 1);
   ASSERT (r1[rn + mn] < 2);
 
   MUL (r3, r2, rn, t2, mn); /* 4 */
   r3s = r2s ^ t2s;
-  gmp_fprintf (stderr, "u4 = %s%Nx\n", r3s ? "-" : "", r3, rn + mn);
   r3[rn + mn] = 0;
   u0s = add_signed_n (u0, u0, u0s, r3, r3s, rn + mn + 1);
   ASSERT_NOCARRY (add_signed_n (r3, r3, r3s, u1, u1s, rn + mn + 1));
-  gmp_fprintf (stderr, "r3 = %Nx\n", r3, rn + mn + 1);
   ASSERT (r3[rn + mn] < 2);
 
   if (t3s)
@@ -219,10 +206,8 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
       t3s = abs_sub_n (t3, m2, t3, mn);
     }
   MUL (r2, s2, rn, t3, mn + 1); /* 6 */
-  gmp_fprintf (stderr, "u6 = %s%Nx\n", t3s ? "-" : "", r2, rn + mn + 1);
 
   ASSERT_NOCARRY (add_signed_n (r2, r2, t3s, u0, u0s, rn + mn + 1));
-  gmp_fprintf (stderr, "r2 = %Nx\n", r2, rn + mn + 1);
   ASSERT (r2[rn + mn] < 2);
 }
 

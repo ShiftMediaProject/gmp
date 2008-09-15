@@ -145,12 +145,6 @@ one_test (const struct matrix *A, const struct matrix *B, int i)
   tp = refmpn_malloc_limbs (mpn_matrix22_mul_itch (A->n, B->n));
 			    
   ref_matrix22_mul (&R, A, B, tp);
-  gmp_fprintf (stderr,"A = (%Nx, %Nx\n      %Nx, %Nx)\n"
-	       "B = (%Nx, %Nx\n      %Nx, %Nx)\n"
-	       "R = (%Nx, %Nx (expected)\n      %Nx, %Nx)\n",
-	       A->e00, A->n, A->e01, A->n, A->e10, A->n, A->e11, A->n, 
-	       B->e00, B->n, B->e01, B->n, B->e10, B->n, B->e11, B->n, 
-	       R.e00, R.n, R.e01, R.n, R.e10, R.n, R.e11, R.n);
   matrix_copy (&P, A);
   mpn_matrix22_mul (P.e00, P.e01, P.e10, P.e11, A->n,
 		    B->e00, B->e01, B->e10, B->e11, B->n, tp);
@@ -209,4 +203,6 @@ main (int argc, char **argv)
   mpz_clear (bs);
   matrix_clear (&A);
   matrix_clear (&B);
+
+  return 0;
 }
