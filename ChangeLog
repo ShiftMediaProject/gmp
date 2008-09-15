@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* configure.in (gmp_mpn_functions): Added matrix22_mul.
+	* gmp-impl.h: Added declarations for mpn_matrix22_mul and related
+	functions.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Added
+	matrix22_mul.c.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-matrix22.
+
+	* tests/mpn/t-matrix22.c: New file.
+	* mpn/generic/matrix22_mul.c: New file.
+
 2008-09-11  Niels Möller  <nisse@king.swox.se>
 
 	* tune/tuneup.c: Updated tuning of gcdext.

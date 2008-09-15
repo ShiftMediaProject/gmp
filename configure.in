@@ -2405,6 +2405,7 @@ gmp_mpn_functions="$extra_functions					   \
   bdivmod gcd_1 gcd gcdext_1 gcdext gcd_lehmer gcd_subdiv_step \
   gcdext_lehmer gcdext_subdiv_step \
   tdiv_qr dc_divrem_n sb_divrem_mn jacbase get_d  \
+  matrix22_mul \
   hgcd2 hgcd mullow_n mullow_basecase				   \
   mul_toom22 mul_toom32 mul_toom42 mul_toom62 mul_toom53 mul_toom44	   \
   toom_interpolate_5pts toom_interpolate_7pts invert binvert		   \

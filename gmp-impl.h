@@ -3380,6 +3380,22 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
       }                                                                    \
   } while (0)
 
+/* Matrix multiplication */
+#define mpn_matrix22_mul __MPN(matrix22_mul)
+#define mpn_matrix22_strassen __MPN(matrix22_mul_strassen)
+#define mpn_matrix22_mul_itch __MPN(matrix22_mul_itch)
+
+mp_size_t
+mpn_matrix22_mul_itch (mp_size_t, mp_size_t);
+
+void
+mpn_matrix22_mul (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
+		  mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t,
+		  mp_ptr);
+void
+mpn_matrix22_mul_strassen (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
+			   mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t,
+			   mp_ptr);
 
 /* HGCD definitions */
 
