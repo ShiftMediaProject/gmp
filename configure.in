@@ -2414,7 +2414,7 @@ gmp_mpn_functions="$extra_functions					   \
   sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \
   mu_div_qr mu_divappr_q mu_div_q					   \
   sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
-  divexact								   \
+  divexact bdiv_dbm1c							   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,
@@ -2864,6 +2864,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_addsub_n
 #undef HAVE_NATIVE_mpn_and_n
 #undef HAVE_NATIVE_mpn_andn_n
+#undef HAVE_NATIVE_mpn_bdiv_dbm1c
 #undef HAVE_NATIVE_mpn_com_n
 #undef HAVE_NATIVE_mpn_copyd
 #undef HAVE_NATIVE_mpn_copyi

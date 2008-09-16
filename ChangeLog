@@ -1,3 +1,25 @@
+2008-09-16  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (mpn_divexact_by3, mpn_divexact_by5, mpn_divexact_by7,
+	mpn_divexact_by9, mpn_divexact_by11, mpn_divexact_by13,
+	mpn_divexact_by15): New macros, defined in terms of mpn_bdiv_dbm1.
+
+	* configure.in (gmp_mpn_functions): List bdiv_dbm1c.
+	* mpn/asm-defs.m4: Define bdiv_dbm1c.
+	* gmp-impl.h (mpn_bdiv_dbm1c): Declare.
+	(mpn_bdiv_dbm1): New macro.
+	* mpn/generic/bdiv_dbm1c.c: New file.
+	* mpn/alpha/bdiv_dbm1c.asm: New file.
+	* mpn/ia64/bdiv_dbm1c.asm: New file.
+	* mpn/powerpc32/bdiv_dbm1c.asm: New file.
+	* mpn/powerpc64/mode64/bdiv_dbm1c.asm: New file.
+	* mpn/x86/bdiv_dbm1c.asm: New file.
+	* mpn/x86_64/bdiv_dbm1c.asm: New file.
+
+	* mpn/generic/diveby3.c: Add mpn_bdiv_dbm1c based function.
+	Choose function depending on DIVEXACT_BY3_METHOD.
+	* gmp-impl.h (DIVEXACT_BY3_METHOD): Provide default.
+
 2008-09-10  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-h.in: Unconditionally include <cstdio>.
@@ -2977,7 +2999,7 @@
 2003-12-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/gcd.c (gcd_schoenhage_itch): Avoid unary "+".
-	 (mpn_gcd): Allocate scratch space on heap for gcd_schoenhage.
+	(mpn_gcd): Allocate scratch space on heap for gcd_schoenhage.
 	(mpn_gcd): Don't invoke MPN_NORMALIZE on input operands.
 
 2003-12-23  Kevin Ryde  <kevin@swox.se>

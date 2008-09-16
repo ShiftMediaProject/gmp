@@ -1120,6 +1120,55 @@ void      mpn_divexact _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size
 #define mpn_divexact_itch  __MPN(divexact_itch)
 mp_size_t mpn_divexact_itch _PROTO ((mp_size_t, mp_size_t));
 
+#define mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
+mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+#define mpn_bdiv_dbm1(dst, src, size, divisor) \
+  mpn_bdiv_dbm1c (dst, src, size, divisor, __GMP_CAST (mp_limb_t, 0))
+
+
+#ifndef DIVEXACT_BY3_METHOD
+#if GMP_NUMB_BITS % 2 == 0
+#define DIVEXACT_BY3_METHOD 0	/* default to using mpn_bdiv_dbm1c */
+#else
+#define DIVEXACT_BY3_METHOD 1
+#endif
+#endif
+
+#if DIVEXACT_BY3_METHOD == 0
+#undef mpn_divexact_by3
+#define mpn_divexact_by3(dst,src,size) \
+  (3 & mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 3)))
+#endif
+
+#if GMP_NUMB_BITS % 4 == 0
+#define mpn_divexact_by5(dst,src,size) \
+  (7 & 3 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 5)))
+#endif
+
+#if GMP_NUMB_BITS % 6 == 0
+#define mpn_divexact_by7(dst,src,size) \
+  (7 & 1 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 7)))
+#endif
+
+#if GMP_NUMB_BITS % 6 == 0
+#define mpn_divexact_by9(dst,src,size) \
+  (15 & 7 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 9)))
+#endif
+
+#if GMP_NUMB_BITS % 10 == 0
+#define mpn_divexact_by11(dst,src,size) \
+  (15 & 5 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 11)))
+#endif
+
+#if GMP_NUMB_BITS % 12 == 0
+#define mpn_divexact_by13(dst,src,size) \
+  (15 & 3 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 13)))
+#endif
+
+#if GMP_NUMB_BITS % 4 == 0
+#define mpn_divexact_by15(dst,src,size) \
+  (15 & 1 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 15)))
+#endif
 
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
