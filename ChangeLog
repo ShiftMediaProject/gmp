@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (MPN_HGCD_MATRIX_INIT_ITCH): Increased storage by four limbs.
+	(MPN_HGCD_LEHMER_ITCH): Reduced storage by one limb.
+	(MPN_GCD_SUBDIV_STEP_ITCH): Likewise.
+	(MPN_GCD_LEHMER_N_ITCH): Likewise.
+
+	* mpn/generic/hgcd.c (mpn_hgcd_matrix_init): Use two extra limbs.
+	(hgcd_step): Use overlapping arguments to mpn_tdiv_qr.
+	(mpn_hgcd_matrix_mul): Deleted normalization code. Tigher bounds
+	for the element size of the product. Needs two extra limbs of
+	storage for the elements.
+	(mpn_hgcd_itch): Updated storage calculation.
+
+	* mpn/generic/gcd_subdiv_step.c (mpn_gcd_subdiv_step): Use
+	overlapping arguments to mpn_tdiv_qr. Use mpn_zero_p.
+
+	* mpn/generic/gcd.c (mpn_gcd): Use mpn_zero_p.
+
 2008-09-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_matrix_init): Updated for deleted

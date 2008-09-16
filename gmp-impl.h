@@ -3471,7 +3471,7 @@ struct hgcd_matrix
   mp_ptr p[2][2];
 };
 
-#define MPN_HGCD_MATRIX_INIT_ITCH(n) (4 * ((n+1)/2))
+#define MPN_HGCD_MATRIX_INIT_ITCH(n) (4 * ((n+1)/2 + 1))
 
 void
 mpn_hgcd_matrix_init (struct hgcd_matrix *M, mp_size_t n, mp_ptr p);
@@ -3498,20 +3498,20 @@ mp_size_t
 mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  struct hgcd_matrix *M, mp_ptr tp);
 
-#define MPN_HGCD_LEHMER_ITCH(n) ((n) + 1)
+#define MPN_HGCD_LEHMER_ITCH(n) (n)
 
 mp_size_t
 mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
 		 struct hgcd_matrix *M, mp_ptr tp);
 
-/* Needs storage for the division */
-#define MPN_GCD_SUBDIV_STEP_ITCH(n) ((n)+1)
+/* Needs storage for the quotient */
+#define MPN_GCD_SUBDIV_STEP_ITCH(n) (n)
 
 mp_size_t
 mpn_gcd_subdiv_step (mp_ptr gp, mp_size_t *gn,
 		     mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp);
 
-#define MPN_GCD_LEHMER_N_ITCH(n) ((n) + 1)
+#define MPN_GCD_LEHMER_N_ITCH(n) (n)
 
 mp_size_t
 mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n,

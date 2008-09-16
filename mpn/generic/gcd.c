@@ -22,6 +22,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+static inline int
+mpn_zero_p (mp_srcptr ap, mp_size_t n)
+{
+  mp_size_t i;
+  for (i = n - 1; i >= 0; i--)
+    {
+      if (ap[i] != 0)
+	return 0;
+    }
+  return 1;
+}
+
 /* Uses the HGCD operation described in
 
      N. Möller, On Schönhage's algorithm and subquadratic integer gcd
@@ -73,11 +85,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
     {
       mpn_tdiv_qr (tp, up, 0, up, usize, vp, n);
 
-      /* FIXME: Use mpn_zero_p */
-      usize = n;
-      MPN_NORMALIZE (up, usize);
-
-      if (!usize)
+      if (mpn_zero_p (up, n))
 	{
 	  MPN_COPY (gp, vp, n);
 	  TMP_FREE;
@@ -103,7 +111,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 	}
       else
 	{
-	  /* Temporary storage n + 1 */
+	  /* Temporary storage n */
 	  n = mpn_gcd_subdiv_step (gp, &gn, up, vp, n, tp);
 	  if (n == 0)
 	    {

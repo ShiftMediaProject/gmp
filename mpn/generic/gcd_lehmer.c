@@ -76,7 +76,7 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
   return 1;
 }
 
-/* Temporary storage: n + 1 */
+/* Temporary storage: n */
 mp_size_t
 mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 {
@@ -123,7 +123,7 @@ mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 	     subtraction followed by one division. */
 	  mp_size_t gn;
 
-	  /* Temporary storage n + 1 */
+	  /* Temporary storage n */
 	  n = mpn_gcd_subdiv_step (gp, &gn, ap, bp, n, tp);
 	  if (n == 0)
 	    return gn;
