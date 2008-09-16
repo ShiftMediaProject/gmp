@@ -36,7 +36,15 @@ divexact_2exp (mp_ptr rp, mp_srcptr sp, mp_size_t n, unsigned shift)
 }
 
 /* For odd divisors, mpn_divexact_1 works fine with two's complement. */
-#define divexact_odd mpn_divexact_1
+#ifndef mpn_divexact_by3
+#define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
+#endif
+#ifndef mpn_divexact_by9
+#define mpn_divexact_by9(dst,src,size) mpn_divexact_1(dst,src,size,9)
+#endif
+#ifndef mpn_divexact_by15
+#define mpn_divexact_by15(dst,src,size) mpn_divexact_1(dst,src,size,15)
+#endif
 
 /* Interpolation for toom4, using the evaluation points infinity, 2,
    1, -1, 1/2, -1/2. More precisely, we want to compute
@@ -123,17 +131,17 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   mpn_addmul_1 (w5, w4, m, 45);
   mpn_sub_n (w2, w2, w4, m);
   /* Rely on divexact working with two's complement */
-  mpn_divexact_by3c (w2, w2, m, 0);
+  mpn_divexact_by3 (w2, w2, m);
   mpn_sub_n (w4, w4, w2, m);
 
   mpn_sub_n (w1, w1, w5, m);
   mpn_lshift (tp, w3, m, 4);
   mpn_sub_n (w5, w5, tp, m);
   divexact_2exp (w5, w5, m, 1);
-  divexact_odd (w5, w5, m, 9);
+  mpn_divexact_by9 (w5, w5, m);
   mpn_sub_n (w3, w3, w5, m);
   divexact_2exp (w1, w1, m, 1);
-  divexact_odd (w1, w1, m, 15);
+  mpn_divexact_by15 (w1, w1, m);
   mpn_add_n (w1, w1, w5, m);
   divexact_2exp (w1, w1, m, 1);
   mpn_sub_n (w5, w5, w1, m);
@@ -148,7 +156,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
 
   /* Addition chain. Note carries and the 2n'th limbs that need to be
    * added in.
-   * 
+   *
    * Special care is needed for w2[2n] and the corresponding carry,
    * since the "simple" way of adding it all together would overwrite
    * the limb at wp[2*n] and rp[4*n] (same location) with the sum of
