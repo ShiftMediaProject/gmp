@@ -3428,7 +3428,6 @@ mpn_matrix22_mul_strassen (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
 #define mpn_hgcd_matrix_init __MPN (hgcd_matrix_init)
 #define mpn_hgcd_matrix_mul __MPN (hgcd_matrix_mul)
 #define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
-#define mpn_hgcd_addmul2_n __MPN(hgcd_addmul2_n)
 
 #define mpn_hgcd_step __MPN (hgcd_step)
 #define mpn_hgcd_itch __MPN (hgcd_itch)
@@ -3483,13 +3482,6 @@ mp_size_t
 mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
 			mp_size_t n, mp_ptr ap, mp_ptr bp,
 			mp_size_t p, mp_ptr tp);
-
-/* FIXME: Better name for this? */
-mp_limb_t
-mpn_hgcd_addmul2_n (mp_ptr, mp_size_t,
-		    mp_srcptr, mp_srcptr, mp_size_t,
-		    mp_srcptr, mp_srcptr, mp_size_t,
-		    mp_ptr);
 
 mp_size_t
 mpn_hgcd_itch (mp_size_t n);

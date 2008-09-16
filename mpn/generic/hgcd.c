@@ -399,104 +399,6 @@ mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
     }
 }
 
-/* Computes r = u0 x0 + u1 x1. rn is the size of the result area, and
-   must be at least one larger than the result. Needs temporary space
-   of the same size. Returns size of result. Non-normalized inputs,
-   including zero, are allowed.
-
-   No overlap between input and output is allowed, since rp is used
-   for temporary storage. */
-
-/* FIXME: What's a good name for this function? */
-mp_limb_t
-mpn_hgcd_addmul2_n (mp_ptr rp, mp_size_t rn,
-		    mp_srcptr u0, mp_srcptr u1, mp_size_t un,
-		    mp_srcptr x0, mp_srcptr x1, mp_size_t xn,
-		    mp_ptr tp)
-{
-  mp_size_t u0n, u1n, x0n, x1n;
-  
-  mp_size_t t0n, t1n;
-  mp_size_t n;
-  mp_limb_t cy;
-
-  /* FIXME: Could omit normalization in the common case that
-     un + xn <= rn. */
-  u0n = u1n = un;
-  MPN_NORMALIZE (u0, u0n);
-  MPN_NORMALIZE (u1, u1n);
-
-  x0n = x1n = xn;
-  MPN_NORMALIZE (x0, x0n);
-  MPN_NORMALIZE (x1, x1n);
-
-  /* t0 = u0 * x0 is stored at rp, and t1 = u1 * x1 at tp. */
-  t0n = u0n + x0n;
-  t1n = u1n + x1n;
-
-  ASSERT (t0n <= rn);
-  ASSERT (t1n <= rn);
-
-  /* Handle zero cases */
-  if (x0n == 0 || u0n == 0)
-    {
-      if (x1n == 0 || u1n == 0)
-	return 0;
-
-      tp = rp;
-      t0n = 0;
-    }
-  else if (x1n == 0 || u1n == 0)
-    {
-      ASSERT (x0n > 0);
-      ASSERT (u0n > 0);
-
-      t1n = 0;
-    }
-
-  if (t0n > 0)
-    {
-      if (x0n >= u0n)
-	mpn_mul (rp, x0, x0n, u0, u0n);
-      else
-	mpn_mul (rp, u0, u0n, x0, x0n);
-
-      t0n -= (rp[t0n-1] == 0);
-    }
-
-  if (t1n > 0)
-    {
-      if (x1n >= u1n)
-	mpn_mul (tp, x1, x1n, u1, u1n);
-      else
-	mpn_mul (tp, u1, u1n, x1, x1n);
-
-      t1n -= (tp[t1n-1] == 0);
-    }
-  else
-    return t0n;
-
-  if (t0n == 0)
-    return t1n;
-
-  if (t0n >= t1n)
-    {
-      cy = mpn_add (rp, rp, t0n, tp, t1n);
-      n = t0n;
-    }
-  else
-    {
-      cy = mpn_add (rp, tp, t1n, rp, t0n);
-      n = t1n;
-    }
-  rp[n] = cy;
-  n += (cy != 0);
-
-  ASSERT (n < rn);
-
-  return n;
-}
-
 /* Multiply M by M1 from the right. Needs 4*(M->n + M1->n) + 5 limbs
    of temporary storage (see mpn_matrix22_mul_itch). */
 void
@@ -603,18 +505,6 @@ mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
   ASSERT (ap[n-1] > 0 || bp[n-1] > 0);
   return n;  
 }
-
-#if 0
-/* From the old hgcd code. Use something similar to compute the
- * recursion depth below? */
-unsigned mpn_hgcd_max_recursion (mp_size_t n) { int count;
-
-  count_leading_zeros (count, (mp_limb_t)
-		       (1 + n / (HGCD_SCHOENHAGE_THRESHOLD  - 5)));
-
-  return GMP_LIMB_BITS - count;
-}
-#endif
 
 /* Size analysis for hgcd:
 

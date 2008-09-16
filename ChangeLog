@@ -20,6 +20,13 @@ MA 02110-1301, USA.
 
 2008-09-16  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/hgcd.c (mpn_hgcd_addmul2_n): Moved function to
+	gcdext.c, where it is used.
+	* mpn/generic/gcdext.c (addmul2_n): Moved and renamed, was
+	mpn_hgcd_addmul2_n. Made static. Deleted input normalization.
+	Deleted rn argument.
+	(mpn_gcdext): Updated calls to addmul2_n, and added assertions.
+
 	* gmp-impl.h (MPN_HGCD_MATRIX_INIT_ITCH): Increased storage by four limbs.
 	(MPN_HGCD_LEHMER_ITCH): Reduced storage by one limb.
 	(MPN_GCD_SUBDIV_STEP_ITCH): Likewise.

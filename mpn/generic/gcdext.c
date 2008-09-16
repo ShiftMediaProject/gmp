@@ -34,6 +34,44 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
   return 1;
 }
 
+/* Computes r = u0 x0 + u1 x1. Needs n = un + xn limbs of temporary
+   storage. Result is of size n-1, n or n+1, and the size is returned
+   (if inputs are non-normalized, result may be non-normalized too).
+
+   No overlap between input and output is allowed, since rp is used
+   for temporary storage. */
+
+static mp_size_t
+addmul2_n (mp_ptr rp,
+	   mp_srcptr u0, mp_srcptr u1, mp_size_t un,
+	   mp_srcptr x0, mp_srcptr x1, mp_size_t xn,
+	   mp_ptr tp)
+{
+  mp_limb_t cy;
+  mp_size_t n;
+
+  if (xn >= un)
+    {
+      mpn_mul (rp, x0, xn, u0, un);
+      mpn_mul (tp, x1, xn, u1, un);
+    }
+  else
+    {
+      mpn_mul (rp, u0, un, x0, xn);
+      mpn_mul (tp, u1, un, x1, xn);
+    }
+
+  n = un + xn;
+  cy = mpn_add_n (rp, rp, tp, n);
+
+  if (cy > 0)
+    rp[n++] = cy;
+  else
+    MPN_NORMALIZE (rp, n);
+
+  return n;
+}
+
 #define COMPUTE_V_ITCH(n) (2*(n) + 1)
 
 /* Computes |v| = |(g - u a)| / b, where u may be positive or
@@ -246,11 +284,14 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  MPN_COPY (t0, u0, un);
 	  MPN_COPY (t1, u1, un);
 
+	  /* By the same analysis as for mpn_hgcd_matrix_mul */
+	  ASSERT (M.n + un <= ualloc);
+
 	  /* Temporary storage un */
-	  n0 = mpn_hgcd_addmul2_n (u0, ualloc, t0, t1, un,
-				   M.p[0][0], M.p[1][0], M.n, t1 + un);
-	  n1 = mpn_hgcd_addmul2_n (u1, ualloc, t0, t1, un,
-				   M.p[0][1], M.p[1][1], M.n, t1 + un);
+	  n0 = addmul2_n (u0, t0, t1, un,
+			  M.p[0][0], M.p[1][0], M.n, t1 + un);
+	  n1 = addmul2_n (u1, t0, t1, un,
+			  M.p[0][1], M.p[1][1], M.n, t1 + un);
 	  
 	  if (n0 > un)
 	    un = n0;
@@ -258,6 +299,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	    un = n1;
 
 	  ASSERT (un < ualloc);
+	  ASSERT ( (u0[un-1] | u1[un-1]) > 0);
 	}
       else
 	{
