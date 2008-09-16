@@ -1,5 +1,8 @@
 2008-09-16  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/toom_interpolate_7pts.c: Use new mpn_divexact_byN
+	functions.
+
 	* gmp-impl.h (mpn_divexact_by3, mpn_divexact_by5, mpn_divexact_by7,
 	mpn_divexact_by9, mpn_divexact_by11, mpn_divexact_by13,
 	mpn_divexact_by15): New macros, defined in terms of mpn_bdiv_dbm1.
