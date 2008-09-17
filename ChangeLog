@@ -20,8 +20,11 @@ MA 02110-1301, USA.
 
 2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* mpn/x86_64/gmp-mparam.h: (GCD_DC_THRESHOLD): Reduced from 493 to
+	412.
+
 	* mpn/generic/gcd.c (CHOOSE_P): New macro, to determine the
-	splitwhen calling hgcd. Use p = 2n/3, as that seems better than
+	split when calling hgcd. Use p = 2n/3, as that seems better than
 	the more obvious split p = n/2.
 	(mpn_gcd): Use CHOOSE_P, and generalized the calculation of
 	scratch space.
