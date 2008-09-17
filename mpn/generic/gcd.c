@@ -43,6 +43,14 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
   then uses Lehmer's algorithm.
 */
 
+/* Some reasonable choices are n / 2 (same as in hgcd), and p = (n +
+ * 2)/3, which gives a balanced multiplication in
+ * mpn_hgcd_matrix_adjust. However, p = 2 n/3 gives slightly better
+ * performance. The matrix-vector multiplication is then
+ * 4:1-unbalanced, with matrix elements of size n/6, and vector
+ * elements of size p = 2n/3. */
+#define CHOOSE_P(n) (2*(n) / 3)
+
 mp_size_t
 mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 {
@@ -67,11 +75,11 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
     {
       mp_size_t hgcd_scratch;
       mp_size_t update_scratch;
-      mp_size_t n1 = (n+1)/2;
+      mp_size_t p = CHOOSE_P (n);
       mp_size_t scratch;
-      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n1);
-      hgcd_scratch = mpn_hgcd_itch (n1);
-      update_scratch = 3*n/2 + 1;
+      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - p);
+      hgcd_scratch = mpn_hgcd_itch (n - p);
+      update_scratch = p + n - 1;
 
       scratch = matrix_scratch + MAX(hgcd_scratch, update_scratch);
       if (scratch > talloc)
@@ -96,17 +104,16 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   while (ABOVE_THRESHOLD (n, GCD_DC_THRESHOLD))
     {
       struct hgcd_matrix M;
-      /* FIXME: Investigate if we can gain by using a different ratio? */
-      mp_size_t p = n/2;
+      mp_size_t p = CHOOSE_P (n);
       mp_size_t matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - p);
       mp_size_t nn;
       mpn_hgcd_matrix_init (&M, n - p, tp);
       nn = mpn_hgcd (up + p, vp + p, n - p, &M, tp + matrix_scratch);
       if (nn > 0)
 	{
-	  ASSERT (M.n <= (n + 3) / 4);
-	  ASSERT (2*(M.n + p) <= 3*n / 2 + 1);
-	  /* Temporary storage 2 (p + M->n) <= 1 + floor(3n/2) */
+	  ASSERT (M.n <= (n - p - 1)/2);
+	  ASSERT (M.n + p <= (p + n - 1) / 2);
+	  /* Temporary storage 2 (p + M->n) <= p + n - 1. */
 	  n = mpn_hgcd_matrix_adjust (&M, p + nn, up, vp, p, tp + matrix_scratch);
 	}
       else

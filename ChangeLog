@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
+
+	* mpn/generic/gcd.c (CHOOSE_P): New macro, to determine the
+	splitwhen calling hgcd. Use p = 2n/3, as that seems better than
+	the more obvious split p = n/2.
+	(mpn_gcd): Use CHOOSE_P, and generalized the calculation of
+	scratch space.
+
 2008-09-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_addmul2_n): Moved function to
