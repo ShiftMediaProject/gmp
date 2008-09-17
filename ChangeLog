@@ -1,3 +1,21 @@
+2008-09-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/gmp-mparam.h (DIVEXACT_BY3_METHOD): Define.
+
+	* mpn/ia64/diveby3.asm: Remove.
+	* mpn/x86/diveby3.asm: Remove.
+	* mpn/x86/k6/diveby3.asm: Remove.
+	* mpn/x86/k7/diveby3.asm: Remove.
+	* mpn/x86/p6/diveby3.asm: Remove.
+	* mpn/x86/pentium/diveby3.asm: Remove.
+	* mpn/x86_64/diveby3.asm: Remove.
+
+	* configure.in (HAVE_NATIVE): List divexact_by3c.
+
+	* gmp-impl.h (mpn_divexact_by3c): Override gmp-h.in's definition.
+	(DIVEXACT_BY3_METHOD): Don't default to 0 if
+	HAVE_NATIVE_mpn_divexact_by3c.
+
 2008-09-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/toom_interpolate_7pts.c: Use new mpn_divexact_byN
@@ -8,6 +26,7 @@
 	mpn_divexact_by15): New macros, defined in terms of mpn_bdiv_dbm1.
 
 	* configure.in (gmp_mpn_functions): List bdiv_dbm1c.
+	(HAVE_NATIVE): Likewise.
 	* mpn/asm-defs.m4: Define bdiv_dbm1c.
 	* gmp-impl.h (mpn_bdiv_dbm1c): Declare.
 	(mpn_bdiv_dbm1): New macro.
