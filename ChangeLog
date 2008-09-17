@@ -9,6 +9,7 @@
 	* mpn/x86/p6/diveby3.asm: Remove.
 	* mpn/x86/pentium/diveby3.asm: Remove.
 	* mpn/x86_64/diveby3.asm: Remove.
+	* mpn/x86/pentium4/sse2/diveby3.asm: Remove.
 
 	* configure.in (HAVE_NATIVE): List divexact_by3c.
 

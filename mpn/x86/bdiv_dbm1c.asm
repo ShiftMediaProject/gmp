@@ -23,7 +23,7 @@ C	    cycles/limb
 C K7:		 3.5
 C P4 m0:	  ?
 C P4 m1:	  ?
-C P4 m2:	  ?
+C P4 m2:	13.67
 C P4 m3:	  ?
 C P4 m4:	  ?
 C P6-13:	 5.1
