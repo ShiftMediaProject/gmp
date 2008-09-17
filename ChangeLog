@@ -20,6 +20,9 @@ MA 02110-1301, USA.
 
 2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* mpn/x86_64/gmp-mparam.h (GCDEXT_DC_THRESHOLD): Reduced threshold
+	from 409 to 258.
+
 	* mpn/generic/gcdext.c (CHOOSE_P): New macro. Use p = n/5.
 	(mpn_gcdext): Use CHOOSE_P, and generalized the calculation of
 	scratch space.
