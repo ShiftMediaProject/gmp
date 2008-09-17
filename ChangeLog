@@ -20,8 +20,13 @@ MA 02110-1301, USA.
 
 2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* mpn/generic/gcdext.c (mpn_gcdext): p = n/5 caused a
+	slowdown for large inputs. As a compromise, use p = n/2 for the
+	first iteration, and p = n/3 for the rest. Handle the first
+	iteration specially, since the initial u0 and u1 are trivial.
+
 	* mpn/x86_64/gmp-mparam.h (GCDEXT_DC_THRESHOLD): Reduced threshold
-	from 409 to 258.
+	from 409 to 390.
 
 	* mpn/generic/gcdext.c (CHOOSE_P): New macro. Use p = n/5.
 	(mpn_gcdext): Use CHOOSE_P, and generalized the calculation of

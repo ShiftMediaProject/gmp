@@ -172,10 +172,15 @@ compute_v (mp_ptr vp,
    
 */
 
-
-/* Empirically choosen, somewhere around 1/4 and 1/5 seems to give the
- * best performance. */
-#define CHOOSE_P(n) ((n) / 5)
+/* Optimal choice of p seems difficult. In each iteration the division
+ * of work beteen hgcd and the updates of u0 and u1 depends on the
+ * current size of the u. It may be desirable to use a different
+ * choice of p in each iteration. Also the input size seems to matter;
+ * choosing p = n / 3 in the first iteration seems to improve
+ * performance slightly for input size just above the theshold, but
+ * degrade performance for larger inputs. */
+#define CHOOSE_P_1(n) ((n) / 2)
+#define CHOOSE_P_2(n) ((n) / 3)
 
 mp_size_t
 mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
@@ -213,10 +218,13 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       /* For hgcd loop. */
       mp_size_t hgcd_scratch;
       mp_size_t update_scratch;
-      mp_size_t p = CHOOSE_P (n);
-      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - p);
-      hgcd_scratch = mpn_hgcd_itch (n - p);
-      update_scratch = p + n - 1;
+      mp_size_t p1 = CHOOSE_P_1 (n);
+      mp_size_t p2 = CHOOSE_P_2 (n);
+      mp_size_t min_p = MIN(p1, p2);
+      mp_size_t max_p = MAX(p1, p2);
+      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - min_p);
+      hgcd_scratch = mpn_hgcd_itch (n - min_p);
+      update_scratch = max_p + n - 1;
       
       scratch = matrix_scratch + MAX(hgcd_scratch, update_scratch);
       if (scratch > talloc)
@@ -261,12 +269,64 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   u0 = tp; tp += ualloc;
   u1 = tp; tp += ualloc;
 
-  u1[0] = 1; un = 1;
+  {
+    /* For the first hgcd call, there are no u updates, and it makes
+       some sense to use a different choice for p. */
 
-  do
+    /* FIXME: We could trim use of temporary storage, since u0 and u1
+       are not used yet. For the hgcd call, we could swap in the u0
+       and u1 pointers for the relevant matrix elements. We could also
+       use a specialized hgcd function which computes only the last
+       two elements of the mamtrix. */
+
+    struct hgcd_matrix M;
+    mp_size_t p = CHOOSE_P_1 (n); /* Same as for gcd. */
+    mp_size_t nn;
+
+    mpn_hgcd_matrix_init (&M, n - p, tp);
+    nn = mpn_hgcd (ap + p, bp + p, n - p, &M, tp + matrix_scratch);
+    if (nn > 0)
+      {
+	ASSERT (M.n <= (n - p - 1)/2);
+	ASSERT (M.n + p <= (p + n - 1) / 2);
+
+	/* Temporary storage 2 (p + M->n) <= p + n - 1 */
+	n = mpn_hgcd_matrix_adjust (&M, p + nn, ap, bp, p, tp + matrix_scratch);
+
+	MPN_COPY (u0, M.p[1][0], M.n);
+	MPN_COPY (u1, M.p[1][1], M.n);
+	un = M.n;
+	while ( (u0[un-1] | u1[un-1] ) == 0)
+	  un--;
+      }
+    else
+      {
+	/* mpn_hgcd has failed. Then either one of a or b is very
+	   small, or the difference is very small. Perform one
+	   subtraction followed by one division. */
+	mp_size_t gn;
+	mp_size_t updated_un = 1;
+
+	u1[0] = 1;
+	
+	/* Temporary storage n + 1 */
+	n = mpn_gcdext_subdiv_step (gp, &gn, up, usizep, ap, bp, n,
+				    u0, u1, &updated_un, tp);
+	if (n == 0)
+	  {
+	    TMP_FREE;
+	    return gn;
+	  }
+
+	un = updated_un;
+	ASSERT (un < ualloc);
+      }
+  }
+  
+  while (ABOVE_THRESHOLD (n, GCDEXT_DC_THRESHOLD))
     {
       struct hgcd_matrix M;
-      mp_size_t p = CHOOSE_P (n);
+      mp_size_t p = CHOOSE_P_2 (n);
       mp_size_t nn;
 
       mpn_hgcd_matrix_init (&M, n - p, tp);
@@ -327,7 +387,6 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  ASSERT (un < ualloc);
 	}
     }
-  while (ABOVE_THRESHOLD (n, GCDEXT_DC_THRESHOLD));
   
   if (mpn_zero_p (ap, n))
     {
