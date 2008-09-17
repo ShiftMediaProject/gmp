@@ -1139,9 +1139,11 @@ mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, 
 #define mpn_divexact_by3(dst,src,size) \
   (3 & mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 3)))
 /* override mpn_divexact_by3c defined in gmp.h */
+/*
 #undef mpn_divexact_by3c
 #define mpn_divexact_by3c(dst,src,size,cy) \
   (3 & mpn_bdiv_dbm1c (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 3, GMP_NUMB_MASK / 3 * cy)))
+*/
 #endif
 
 #if GMP_NUMB_BITS % 4 == 0
