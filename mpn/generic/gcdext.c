@@ -171,6 +171,12 @@ compute_v (mp_ptr vp,
    + 1 for v and 2T + 1 scratch space. In all, 7T + 3 is sufficient.
    
 */
+
+
+/* Empirically choosen, somewhere around 1/4 and 1/5 seems to give the
+ * best performance. */
+#define CHOOSE_P(n) ((n) / 5)
+
 mp_size_t
 mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	    mp_ptr ap, mp_size_t an, mp_ptr bp, mp_size_t n)
@@ -207,10 +213,10 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       /* For hgcd loop. */
       mp_size_t hgcd_scratch;
       mp_size_t update_scratch;
-      mp_size_t n1 = (n+1)/2;
-      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n1);
-      hgcd_scratch = mpn_hgcd_itch (n1);
-      update_scratch = 3*(n+1);
+      mp_size_t p = CHOOSE_P (n);
+      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - p);
+      hgcd_scratch = mpn_hgcd_itch (n - p);
+      update_scratch = p + n - 1;
       
       scratch = matrix_scratch + MAX(hgcd_scratch, update_scratch);
       if (scratch > talloc)
@@ -260,8 +266,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   do
     {
       struct hgcd_matrix M;
-      /* FIXME: Investigate if we can gain by using a different ratio? */
-      mp_size_t p = n/2;
+      mp_size_t p = CHOOSE_P (n);
       mp_size_t nn;
 
       mpn_hgcd_matrix_init (&M, n - p, tp);
@@ -273,10 +278,10 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  mp_ptr t1;
 	  
 	  t0 = tp + matrix_scratch;
-	  ASSERT (M.n <= (n + 3) / 4);
-	  ASSERT (2*(M.n + p) <= 3*n / 2 + 1);
+	  ASSERT (M.n <= (n - p - 1)/2);
+	  ASSERT (M.n + p <= (p + n - 1) / 2);
 
-	  /* Temporary storage 2 (p + M->n) <= 1 + floor(3n/2) */
+	  /* Temporary storage 2 (p + M->n) <= p + n - 1 */
 	  n = mpn_hgcd_matrix_adjust (&M, p + nn, ap, bp, p, t0);
 
 	  t1 = t0 + un;
