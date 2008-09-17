@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* tune/tuneup.c (tune_hgcd): Use default step factor.
+
 	* mpn/x86_64/gmp-mparam.h: (GCD_DC_THRESHOLD): Reduced from 493 to
 	412.
 

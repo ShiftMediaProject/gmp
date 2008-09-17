@@ -1025,7 +1025,6 @@ tune_hgcd (void)
   param.function = speed_mpn_hgcd;
   /* We seem to get strange results for small sizes */
   param.min_size = 30;
-  param.step_factor = 0.05;
   one (&hgcd_threshold, &param);
 }
 
