@@ -418,6 +418,12 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
      using invariance. */
   ASSERT (M->n + M1->n < M->alloc);
 
+  ASSERT ((M->p[0][0][M->n-1] | M->p[0][1][M->n-1]
+	   | M->p[1][0][M->n-1] | M->p[1][1][M->n-1]) > 0);
+
+  ASSERT ((M1->p[0][0][M1->n-1] | M1->p[0][1][M1->n-1]
+	   | M1->p[1][0][M1->n-1] | M1->p[1][1][M1->n-1]) > 0);
+
   mpn_matrix22_mul (M->p[0][0], M->p[0][1],
 		    M->p[1][0], M->p[1][1], M->n,
 		    M1->p[0][0], M1->p[0][1],

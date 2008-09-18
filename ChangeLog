@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
+2008-09-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd.c (mpn_hgcd_matrix_mul): Assert that inputs are
+	normalized.
+
 2008-09-17  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
 	* mpn/generic/gcdext.c (mpn_gcdext): p = n/5 caused a
