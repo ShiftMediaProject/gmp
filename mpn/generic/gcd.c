@@ -55,7 +55,13 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
  * the ratio of the time for the mpn_hgcd call, and the time for the
  * multiplication in mpn_hgcd_matrix_adjust, is roughly 1/(alpha -
  * 1). */
+#ifdef TUNE_GCD_P
+#define P_TABLE_SIZE 10000
+mp_size_t p_table[P_TABLE_SIZE];
+#define CHOOSE_P(n) ( (n) < P_TABLE_SIZE ? p_table[n] : 2*(n)/3)
+#else
 #define CHOOSE_P(n) (2*(n) / 3)
+#endif
 
 mp_size_t
 mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
@@ -77,16 +83,27 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   if (scratch > talloc)
     talloc = scratch;
 
+#if TUNE_GCD_P
+  if (CHOOSE_P (n) > 0)
+#else
   if (ABOVE_THRESHOLD (n, GCD_DC_THRESHOLD))
+#endif
     {
       mp_size_t hgcd_scratch;
       mp_size_t update_scratch;
       mp_size_t p = CHOOSE_P (n);
       mp_size_t scratch;
+#if TUNE_GCD_P
+      /* Worst case, since we don't guarantee that n - CHOOSE_P(n)
+	 is increasing */
+      matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n);
+      hgcd_scratch = mpn_hgcd_itch (n);
+      update_scratch = 2*(n - 1);
+#else
       matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - p);
       hgcd_scratch = mpn_hgcd_itch (n - p);
       update_scratch = p + n - 1;
-
+#endif
       scratch = matrix_scratch + MAX(hgcd_scratch, update_scratch);
       if (scratch > talloc)
 	talloc = scratch;
@@ -106,8 +123,12 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 	  return n;
 	}
     }
-  
+
+#if TUNE_GCD_P
+  while (CHOOSE_P (n) > 0)
+#else
   while (ABOVE_THRESHOLD (n, GCD_DC_THRESHOLD))
+#endif
     {
       struct hgcd_matrix M;
       mp_size_t p = CHOOSE_P (n);
@@ -138,3 +159,114 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   TMP_FREE;
   return gn;
 }
+
+#ifdef TUNE_GCD_P
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+#define TIME(res, code) do {						\
+    clock_t time_start;							\
+    clock_t time_end;							\
+    clock_t time_end_time;						\
+    unsigned time_iter = 0;						\
+									\
+    time_start = clock();						\
+    time_end_time = time_start + CLOCKS_PER_SEC / 100;			\
+    do									\
+      {									\
+	code;								\
+	time_end = clock();						\
+	time_iter++;							\
+      }									\
+    while (time_end <= time_end_time);					\
+									\
+    (res) = (double) (time_end - time_start) / (CLOCKS_PER_SEC * time_iter); \
+  } while (0)
+
+int
+main(int argc, char *argv)
+{
+  gmp_randstate_t rands;
+  mp_size_t n;
+  mp_ptr ap;
+  mp_ptr bp;
+  mp_ptr up;
+  mp_ptr vp;
+  mp_ptr gp;
+  mp_ptr tp;
+  TMP_DECL;
+
+  /* Unbuffered so if output is redirected to a file it isn't lost if the
+     program is killed part way through.  */
+  setbuf (stdout, NULL);
+  setbuf (stderr, NULL);
+
+  gmp_randinit_default (rands);
+
+  TMP_MARK;
+
+  ap = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  bp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  up = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  vp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  gp = TMP_ALLOC_LIMBS (P_TABLE_SIZE);
+  tp = TMP_ALLOC_LIMBS (MPN_GCD_LEHMER_N_ITCH (P_TABLE_SIZE));
+
+  mpn_random (ap, P_TABLE_SIZE);
+  mpn_random (bp, P_TABLE_SIZE);
+  
+  memset (p_table, 0, sizeof(p_table));
+  
+  for (n = 10; n++; n < P_TABLE_SIZE)
+    {
+      mp_size_t p;
+      mp_size_t best_p;
+      double best_time;
+      double lehmer_time;
+
+      if (ap[n-1] == 0)
+	ap[n-1] = 1;
+
+      if (bp[n-1] == 0)
+	bp[n-1] = 1;
+
+      p_table[n] = 0;
+      TIME(lehmer_time, {
+	  MPN_COPY (up, ap, n);
+	  MPN_COPY (vp, bp, n);
+	  mpn_gcd_lehmer_n (gp, up, vp, n, tp);
+	});
+
+      best_time = lehmer_time;
+      best_p = 0;
+
+      for (p = 1; p < n; p += (n+9)/10)
+	{
+	  double t;
+
+	  p_table[n] = p;
+	  TIME(t, {
+	      MPN_COPY (up, ap, n);
+	      MPN_COPY (vp, bp, n);
+	      mpn_gcd (gp, up, n, vp, n);
+	    });
+
+	  if (t < best_time)
+	    {
+	      best_time = t;
+	      best_p = p;
+	    }
+	}
+      printf("%6d %6d %5.3g", n, best_p, (double) best_p / n);
+      if (best_p > 0)
+	printf(" %5.3g%%", 100 * (lehmer_time - best_time) / lehmer_time);
+      printf("\n");
+
+      p_table[n] = best_p;
+    }
+  TMP_FREE;
+  gmp_randclear(rands);
+  return 0;
+}
+#endif /* TUNE_GCD_P */

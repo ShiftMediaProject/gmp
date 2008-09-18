@@ -20,6 +20,8 @@ MA 02110-1301, USA.
 
 2008-09-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcd.c (main): Added code for tuning of CHOOSE_P.
+
 	* mpn/generic/hgcd.c (mpn_hgcd_matrix_mul): Assert that inputs are
 	normalized.
 
