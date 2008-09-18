@@ -49,6 +49,12 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
  * performance. The matrix-vector multiplication is then
  * 4:1-unbalanced, with matrix elements of size n/6, and vector
  * elements of size p = 2n/3. */
+
+/* From analysis of the theoretical running time, it appears that when
+ * multiplication takes time O(n^alpha), p should be choosen so that
+ * the ratio of the time for the mpn_hgcd call, and the time for the
+ * multiplication in mpn_hgcd_matrix_adjust, is roughly 1/(alpha -
+ * 1). */
 #define CHOOSE_P(n) (2*(n) / 3)
 
 mp_size_t
