@@ -345,7 +345,9 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  n = mpn_hgcd_matrix_adjust (&M, p + nn, ap, bp, p, t0);
 
 	  t1 = t0 + un;
-	  
+
+	  /* FIXME: This copying could be avoided by some swapping of
+	   * pointers. May need more temporary storage, though. */
 	  MPN_COPY (t0, u0, un);
 	  MPN_COPY (t1, u1, un);
 

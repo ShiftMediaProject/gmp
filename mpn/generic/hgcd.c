@@ -152,6 +152,7 @@ hgcd_matrix_mul_1 (struct hgcd_matrix *M, const struct hgcd_matrix1 *M1,
 	  u' += r01 * t
       */
 
+      /* FIXME: Duplication with mpn_hgcd_mul_matrix1_vector. */
       MPN_COPY (tp, M->p[row][0], M->n);
       c0 =     mpn_mul_1 (M->p[row][0], M->p[row][0], M->n, M1->u[0][0]);
       c0 += mpn_addmul_1 (M->p[row][0], M->p[row][1], M->n, M1->u[1][0]);

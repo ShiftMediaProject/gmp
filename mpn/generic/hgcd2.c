@@ -237,6 +237,8 @@ mpn_hgcd_mul_matrix1_vector (struct hgcd_matrix1 *M, mp_size_t n,
      b += u01 * t
   */
 
+  /* This copying could be avoided if we let our caller swap some
+   * pointers. */
   MPN_COPY (tp, ap, n);
 
   ah =     mpn_mul_1 (ap, ap, n, M->u[0][0]);
@@ -269,6 +271,8 @@ mpn_hgcd_mul_matrix1_inverse_vector (struct hgcd_matrix1 *M, mp_size_t n,
      b -= u10 * t
   */
 
+  /* This copying could be avoided if we let our caller swap some
+   * pointers. */
   MPN_COPY (tp, ap, n);
 
   h0 =    mpn_mul_1 (ap, ap, n, M->u[1][1]);
