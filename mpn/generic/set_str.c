@@ -9,8 +9,8 @@
    FACT, IT IS ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE
    GNU MP RELEASE.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006, 2007 Free
-Software Foundation, Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002, 2004, 2006, 2007,
+2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -167,6 +167,7 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
   powtab[i].n = n;
   powtab[i].digits_in_base = digits_in_base;
   powtab[i].base = base;
+  powtab[i].shift = 0;
 
   shift = 0;
   for (pi = i - 1; pi >= 0; pi--)
@@ -225,9 +226,16 @@ mpn_dc_set_str (mp_ptr rp, const unsigned char *str, size_t str_len,
   mp_size_t ln, hn, n, sn;
 
   len_lo = powtab->digits_in_base;
-  len_hi = str_len - len_lo;
 
-  ASSERT (str_len > len_lo);
+  if (str_len <= len_lo)
+    {
+      if (BELOW_THRESHOLD (str_len, SET_STR_DC_THRESHOLD))
+	return mpn_bc_set_str (rp, str, str_len, powtab->base);
+      else
+	return mpn_dc_set_str (rp, str, str_len, powtab + 1, tp);
+    }
+
+  len_hi = str_len - len_lo;
   ASSERT (len_lo >= len_hi);
 
   if (BELOW_THRESHOLD (len_hi, SET_STR_DC_THRESHOLD))
