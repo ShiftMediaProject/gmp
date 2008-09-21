@@ -1,3 +1,15 @@
+2008-09-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (GET_STR_DC_THRESHOLD): Remove default.
+	(GET_STR_PRECOMPUTE_THRESHOLD): Likewise.
+	Misc code cleanups.
+
+	* gmp-impl.h (mpn_dc_set_str_itch): Allocate GMP_LIMB_BITS more limbs.
+
+	Revert:
+	* mpn/generic/set_str.c:
+	(mpn_dc_set_str): Remove impossible case, replace by an ASSERT.
+
 2008-09-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/ev6/gmp-mparam.h (DIVEXACT_BY3_METHOD): Define.
