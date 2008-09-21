@@ -3557,7 +3557,7 @@ struct powers
 };
 typedef struct powers powers_t;
 #define mpn_dc_set_str_powtab_alloc(n) ((n) + GMP_LIMB_BITS)
-#define mpn_dc_set_str_itch(n) (n)
+#define mpn_dc_set_str_itch(n) ((n) + GMP_LIMB_BITS)
 #define mpn_dc_get_str_powtab_alloc(n) ((n) + 2 * GMP_LIMB_BITS)
 #define mpn_dc_get_str_itch(n) ((n) + GMP_LIMB_BITS)
 
