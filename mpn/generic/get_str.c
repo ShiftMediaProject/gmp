@@ -1,5 +1,4 @@
-/* mpn_get_str -- Convert a MSIZE long limb vector pointed to by MPTR
-   to a printable string in STR in base BASE.
+/* mpn_get_str -- Convert {UP,USIZE} to a base BASE string in STR.
 
    Contributed to the GNU project by Torbjorn Granlund.
 
@@ -42,10 +41,11 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      come out from left to right.  (Currently not used herein, except for in
      code for converting single limbs to individual digits.)
 
-  C) Compute B^1, B^2, B^4, ..., B^s, for s such that B^s just above sqrt(U).
-     Then divide U by B^s, generating quotient and remainder.  Recursively
-     convert the quotient, then the remainder, using the precomputed powers.
-     Digits come out from left to right.  (Used in mpn_dc_get_str.)
+  C) Compute B^1, B^2, B^4, ..., B^s, for s such that B^s is just above
+     sqrt(U).  Then divide U by B^s, generating quotient and remainder.
+     Recursively convert the quotient, then the remainder, using the
+     precomputed powers.  Digits come out from left to right.  (Used in
+     mpn_dc_get_str.)
 
   When using algorithm C, algorithm B might be suitable for basecase code,
   since the required b^g power will be readily accessible.
@@ -127,16 +127,6 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     (q) = __q;                          \
     (r) = __r;                          \
   } while (0)
-#endif
-
-/* When to stop divide-and-conquer and call the basecase mpn_get_str.  */
-#ifndef GET_STR_DC_THRESHOLD
-#define GET_STR_DC_THRESHOLD 15
-#endif
-/* Whether to bother at all with precomputing powers of the base, or go
-   to the basecase mpn_get_str directly.  */
-#ifndef GET_STR_PRECOMPUTE_THRESHOLD
-#define GET_STR_PRECOMPUTE_THRESHOLD 30
 #endif
 
 
@@ -249,9 +239,9 @@ mpn_sb_get_str (unsigned char *str, size_t len,
       mp_limb_t big_base, big_base_inverted;
       unsigned normalization_steps;
 
-      chars_per_limb = __mp_bases[base].chars_per_limb;
-      big_base = __mp_bases[base].big_base;
-      big_base_inverted = __mp_bases[base].big_base_inverted;
+      chars_per_limb = mp_bases[base].chars_per_limb;
+      big_base = mp_bases[base].big_base;
+      big_base_inverted = mp_bases[base].big_base_inverted;
       count_leading_zeros (normalization_steps, big_base);
 
       MPN_COPY (rp + 1, up, un);
@@ -359,27 +349,6 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 }
 
 
-/*
-   Example sequences:
-
-   1  1  2  3  5  9  17		(worst case for un = 33,34)
-   1  1  1  2s
-         2a    4s
-            3a    8s
-               5a    16s
-                  9a
-                     17a
-
-   1  1  2  4  8  16  32	(best case for un = 63,64)
-   1  1  2s 4s 8s 16s 32s
-
-   1  1  2  4  7  14  28	(medium)
-   1  1  1  3sa
-         2a    7sa
-            4a    17s
-                      28s
-*/
-
 /* There are no leading zeros on the digits generated at str, but that's not
    currently a documented feature.  */
 
@@ -408,11 +377,12 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
     {
       /* The base is a power of 2.  Convert from most significant end.  */
       mp_limb_t n1, n0;
-      int bits_per_digit = __mp_bases[base].big_base;
+      int bits_per_digit = mp_bases[base].big_base;
       int cnt;
       int bit_pos;
       mp_size_t i;
       unsigned char *s = str;
+      unsigned long bits;
 
       n1 = up[un - 1];
       count_leading_zeros (cnt, n1);
@@ -421,15 +391,11 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 	 R + bits_per_digit * n when input ends in nth least significant
 	 nibble. */
 
-      {
-	unsigned long bits;
-
-	bits = GMP_NUMB_BITS * un - cnt + GMP_NAIL_BITS;
-	cnt = bits % bits_per_digit;
-	if (cnt != 0)
-	  bits += bits_per_digit - cnt;
-	bit_pos = bits - (un - 1) * GMP_NUMB_BITS;
-      }
+      bits = GMP_NUMB_BITS * un - cnt + GMP_NAIL_BITS;
+      cnt = bits % bits_per_digit;
+      if (cnt != 0)
+	bits += bits_per_digit - cnt;
+      bit_pos = bits - (un - 1) * GMP_NUMB_BITS;
 
       /* Fast loop for bit output.  */
       i = un - 1;
@@ -466,8 +432,8 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
   /* Compute a table of powers, were the largest power is >= sqrt(U).  */
 
-  big_base = __mp_bases[base].big_base;
-  digits_in_base = __mp_bases[base].chars_per_limb;
+  big_base = mp_bases[base].big_base;
+  digits_in_base = mp_bases[base].chars_per_limb;
 
   {
     mp_size_t n_pows, xn, pn, exptab[GMP_LIMB_BITS], bexp;
@@ -475,7 +441,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
     mp_size_t shift;
 
     n_pows = 0;
-    xn = 1 + un*(__mp_bases[base].chars_per_bit_exactly*GMP_NUMB_BITS)/__mp_bases[base].chars_per_limb;
+    xn = 1 + un*(mp_bases[base].chars_per_bit_exactly*GMP_NUMB_BITS)/mp_bases[base].chars_per_limb;
     for (pn = xn; pn != 1; pn = (pn + 1) >> 1)
       {
 	exptab[n_pows] = pn;
@@ -515,7 +481,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
 	if (bexp + 1 < exptab[n_pows - pi])
 	  {
-	    digits_in_base += __mp_bases[base].chars_per_limb;
+	    digits_in_base += mp_bases[base].chars_per_limb;
 	    cy = mpn_mul_1 (t, t, n, big_base);
 	    t[n] = cy;
 	    n += cy != 0;
@@ -551,7 +517,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 	    powtab[pi].shift++;
 	  }
 	powtab[pi].n = n;
-	powtab[pi].digits_in_base += __mp_bases[base].chars_per_limb;
+	powtab[pi].digits_in_base += mp_bases[base].chars_per_limb;
       }
 
 #if 0
