@@ -218,7 +218,7 @@ double speed_mpn_mul_1_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_mul_2 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_3 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_4 _PROTO ((struct speed_params *s));
-double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
+double speed_mpn_mul _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_full _PROTO ((struct speed_params *s));
@@ -849,8 +849,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   SPEED_ROUTINE_MPN_UNARY_N (function, 8)
 
 
-/* For mpn_mul_basecase, xsize=r, ysize=s->size. */
-#define SPEED_ROUTINE_MPN_MUL_BASECASE(function)			\
+/* For mpn_mul, mpn_mul_basecase, xsize=r, ysize=s->size. */
+#define SPEED_ROUTINE_MPN_MUL(function)					\
   {									\
     mp_ptr    wp;							\
     mp_size_t size1;							\
