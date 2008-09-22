@@ -219,6 +219,7 @@ double speed_mpn_mul_2 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_3 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_4 _PROTO ((struct speed_params *s));
 double speed_mpn_mul _PROTO ((struct speed_params *s));
+double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_full _PROTO ((struct speed_params *s));

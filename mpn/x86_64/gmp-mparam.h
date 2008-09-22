@@ -65,6 +65,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GET_STR_PRECOMPUTE_THRESHOLD     28
 #define SET_STR_DC_THRESHOLD            438
 #define SET_STR_PRECOMPUTE_THRESHOLD   2083
+
 #define MUL_FFT_TABLE  { 400, 800, 2112, 3840, 11264, 36864, 0 }
 #define MUL_FFT_MODF_THRESHOLD          464
 #define MUL_FFT_THRESHOLD              6272
