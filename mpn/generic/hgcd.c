@@ -154,14 +154,22 @@ hgcd_matrix_mul_1 (struct hgcd_matrix *M, const struct hgcd_matrix1 *M1,
 
       /* FIXME: Duplication with mpn_hgcd_mul_matrix1_vector. */
       MPN_COPY (tp, M->p[row][0], M->n);
+#if HAVE_NATIVE_mpn_addaddmul_1msb0
+      c0 = mpn_addaddmul_1msb0 (M->p[row][0],
+				M->p[row][0], M->p[row][1], M->n,
+				M1->u[0][0], M1->u[1][0]);
+      c1 = mpn_addaddmul_1msb0 (M->p[row][1],
+				M->p[row][1], tp, M->n,
+				M1->u[1][1], M1->u[0][1]);
+#else /* ! HAVE_NATIVE_mpn_addaddmul_1msb0 */
       c0 =     mpn_mul_1 (M->p[row][0], M->p[row][0], M->n, M1->u[0][0]);
       c0 += mpn_addmul_1 (M->p[row][0], M->p[row][1], M->n, M1->u[1][0]);
-      M->p[row][0][M->n] = c0;
 
       c1 =     mpn_mul_1 (M->p[row][1], M->p[row][1], M->n, M1->u[1][1]);
       c1 += mpn_addmul_1 (M->p[row][1], tp,        M->n, M1->u[0][1]);
+#endif /* ! HAVE_NATIVE_mpn_addaddmul_1msb0 */
+      M->p[row][0][M->n] = c0;
       M->p[row][1][M->n] = c1;
-
       grow |= (c0 | c1);
     }
   M->n += (grow != 0);
@@ -192,7 +200,6 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
   mp_limb_t mask;
   mp_limb_t ah, al, bh, bl;
   mp_size_t an, bn, qn;
-  mp_ptr qp;
   int col;
 
   ASSERT (n > s);

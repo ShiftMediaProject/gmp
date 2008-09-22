@@ -241,16 +241,20 @@ mpn_hgcd_mul_matrix1_vector (struct hgcd_matrix1 *M, mp_size_t n,
    * pointers. */
   MPN_COPY (tp, ap, n);
 
+#if HAVE_NATIVE_mpn_addaddmul_1msb0
+  ah = mpn_addaddmul_1msb0 (ap, ap, bp, n, M->u[0][0], M->u[1][0]);
+  bh = mpn_addaddmul_1msb0 (bp, bp, tp, n, M->u[1][1], M->u[0][1]);
+#else
   ah =     mpn_mul_1 (ap, ap, n, M->u[0][0]);
   ah += mpn_addmul_1 (ap, bp, n, M->u[1][0]);
 
   bh =     mpn_mul_1 (bp, bp, n, M->u[1][1]);
   bh += mpn_addmul_1 (bp, tp, n, M->u[0][1]);
-
+#endif
   ap[n] = ah;
   bp[n] = bh;
   
-  n += (ap[n] | bp[n]) > 0;
+  n += (ah | bh) > 0;
   return n;
 }
 

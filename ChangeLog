@@ -1,5 +1,8 @@
 2008-09-22  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* mpn/generic/hgcd.c (hgcd_matrix_mul_1): Use mpn_addaddmul_1msb0.
+	* mpn/generic/hgcd2.c (mpn_hgcd_mul_matrix1_vector): Likewise.
+
 	* mpn/generic/gcd.c: Use libspeed for timing measurements.
 
 	* gmp-impl.h: Declare mpn_addaddmul_1msb0.
