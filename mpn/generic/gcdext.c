@@ -300,9 +300,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
     /* FIXME: We could trim use of temporary storage, since u0 and u1
        are not used yet. For the hgcd call, we could swap in the u0
-       and u1 pointers for the relevant matrix elements. We could also
-       use a specialized hgcd function which computes only the last
-       two elements of the matrix. */
+       and u1 pointers for the relevant matrix elements. */
 
     struct hgcd_matrix M;
     mp_size_t p = CHOOSE_P_1 (n); /* Same as for gcd. */

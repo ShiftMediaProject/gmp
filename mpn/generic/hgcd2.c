@@ -220,8 +220,8 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
   return 1;
 }
 
-/* Multiply (a;b) by M = (u00, u01; u10, u11). Needs n limbs of
-   temporary storage. Vector must have space for n + 1 limbs. */
+/* Sets (r;b) = (a;b) M, with M = (u00, u01; u10, u11). Vector must
+ * have space for n + 1 limbs. Uses three buffers to avoid a copy*/
 mp_size_t
 mpn_hgcd_mul_matrix1_vector (const struct hgcd_matrix1 *M,
 			     mp_ptr rp, mp_srcptr ap, mp_ptr bp, mp_size_t n)
@@ -253,15 +253,15 @@ mpn_hgcd_mul_matrix1_vector (const struct hgcd_matrix1 *M,
   return n;
 }
 
-/* Multiply (a;b) by M^{-1} = (u11, -u01; -u10, u00) from the left.
-   Needs n limbs of temporary storage. */
+/* Sets (r;b) = M^{-1}(a;b), with M^{-1} = (u11, -u01; -u10, u00) from
+   the left. Uses three buffers, to avoid a copy. */
 mp_size_t
 mpn_hgcd_mul_matrix1_inverse_vector (const struct hgcd_matrix1 *M,
 				     mp_ptr rp, mp_srcptr ap, mp_ptr bp, mp_size_t n)
 {
   mp_limb_t h0, h1;
 
-  /* Compute (a;b) <-- (u11 a - u01 b; -u10 a + u00 b) as
+  /* Compute (r;b) <-- (u11 a - u01 b; -u10 a + u00 b) as
 
      r  = u11 * a
      r -= u01 * b
