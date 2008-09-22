@@ -21,10 +21,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		1.69
-C P4:		11
-C P6-15:	5.0
+C	     cycles/limb
+C K8,K9:	 1.69
+C K10:		 2
+C P4:		10.5
+C P6-15:	 4.87
 
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc)
 
@@ -55,7 +56,7 @@ PROLOGUE(func_nc)
 	shrq	$2, %rcx		C				4
 	bt	$0, %r8			C cy flag <- carry parameter	5
 	je	L(0)			C				2
-	jmp	L(oop)			C				2
+	jmp	L(top)			C				2
 EPILOGUE()
 PROLOGUE(func)
 	movq	%rcx, %r10		C				3
@@ -64,7 +65,7 @@ PROLOGUE(func)
 	andl	$3, %r10d		C				4
 
 C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
-L(oop):	movq	(%rsi), %rax		C				3
+L(top):	movq	(%rsi), %rax		C				3
 	movq	8(%rsi), %r9		C				4
 	leaq	32(%rsi), %rsi		C				4
 
@@ -86,7 +87,7 @@ L(oop):	movq	(%rsi), %rax		C				3
 
 	leaq	32(%rdx), %rdx		C				4
 	leaq	32(%rdi), %rdi		C				4
-	jne	L(oop)			C				2
+	jne	L(top)			C				2
 
 
 	incl	%r10d			C				3

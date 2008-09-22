@@ -40,6 +40,7 @@ C 64-bit                     popcount        hamdist
 C                           cycles/limb     cycles/limb
 C P4 model 4 (Nocona):          8
 C K8:                           7.5
+C K10:				3.5
 C P6-15:			3.68
 
 C TODO

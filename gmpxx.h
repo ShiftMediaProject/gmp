@@ -1,6 +1,6 @@
 /* gmpxx.h -- C++ class wrapper for GMP types.  -*- C++ -*-
 
-Copyright 2001, 2002, 2003, 2006 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2006, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -37,6 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <cstring>  /* for strlen */
 #include <string>
 #include <stdexcept>
+#include <cfloat>
 #include <gmp.h>
 
 
@@ -655,76 +656,82 @@ struct __gmp_binary_modulus
   }
 };
 
+// Max allocations for plain types when converted to mpz_t
+#define __GMP_DBL_LIMBS (2 + DBL_MAX_EXP / GMP_NUMB_BITS)
+#define __GMP_ULI_LIMBS (1 + (8 * sizeof (long) - 1) / GMP_NUMB_BITS)
+
+#define __GMPXX_TMP_UI							\
+  mpz_t temp;								\
+  mp_limb_t limbs[__GMP_ULI_LIMBS];					\
+  temp->_mp_d = limbs;							\
+  temp->_mp_alloc = __GMP_ULI_LIMBS;					\
+  mpz_set_ui (temp, l)
+#define __GMPXX_TMP_SI							\
+  mpz_t temp;								\
+  mp_limb_t limbs[__GMP_ULI_LIMBS];					\
+  temp->_mp_d = limbs;							\
+  temp->_mp_alloc = __GMP_ULI_LIMBS;					\
+  mpz_set_si (temp, l)
+#define __GMPXX_TMP_D							\
+  mpz_t temp;								\
+  mp_limb_t limbs[__GMP_DBL_LIMBS];					\
+  temp->_mp_d = limbs;							\
+  temp->_mp_alloc = __GMP_DBL_LIMBS;					\
+  mpz_set_d (temp, d)
+
 struct __gmp_binary_and
 {
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_and(z, w, v); }
-  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int i)
-  {
-    mpz_t temp;
-    mp_limb_t limbs[2];
-    temp->_mp_d = limbs;
-    temp->_mp_alloc = 2;
-    mpz_set_ui (temp, i);
-    mpz_and (z, w, temp);
-  }
-  static void eval(mpz_ptr z, unsigned long int i, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mp_limb_t limbs[2];
-    temp->_mp_d = limbs;
-    temp->_mp_alloc = 2;
-    mpz_set_ui (temp, i);
-    mpz_and (z, temp, w);
-  }
+
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  {  __GMPXX_TMP_UI;   mpz_and (z, w, temp);  }
+  static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
+  {  __GMPXX_TMP_UI;   mpz_and (z, w, temp);  }
+  static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
+  {  __GMPXX_TMP_SI;   mpz_and (z, w, temp);  }
+  static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
+  {  __GMPXX_TMP_SI;   mpz_and (z, w, temp);  }
+  static void eval(mpz_ptr z, mpz_srcptr w, double d)
+  {  __GMPXX_TMP_D;    mpz_and (z, w, temp); }
+  static void eval(mpz_ptr z, double d, mpz_srcptr w)
+  {  __GMPXX_TMP_D;    mpz_and (z, w, temp); }
 };
 
 struct __gmp_binary_ior
 {
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_ior(z, w, v); }
-  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int i)
-  {
-    mpz_t temp;
-    mp_limb_t limbs[2];
-    temp->_mp_d = limbs;
-    temp->_mp_alloc = 2;
-    mpz_set_ui (temp, i);
-    mpz_ior (z, w, temp);
-  }
-  static void eval(mpz_ptr z, unsigned long int i, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mp_limb_t limbs[2];
-    temp->_mp_d = limbs;
-    temp->_mp_alloc = 2;
-    mpz_set_ui (temp, i);
-    mpz_ior (z, temp, w);
-  }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  {  __GMPXX_TMP_UI;   mpz_ior (z, w, temp);  }
+  static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
+  {  __GMPXX_TMP_UI;   mpz_ior (z, w, temp);  }
+  static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
+  {  __GMPXX_TMP_SI;   mpz_ior (z, w, temp);  }
+  static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
+  {  __GMPXX_TMP_SI;   mpz_ior (z, w, temp);  }
+  static void eval(mpz_ptr z, mpz_srcptr w, double d)
+  {  __GMPXX_TMP_D;    mpz_ior (z, w, temp); }
+  static void eval(mpz_ptr z, double d, mpz_srcptr w)
+  {  __GMPXX_TMP_D;    mpz_ior (z, w, temp); }
 };
 
 struct __gmp_binary_xor
 {
   static void eval(mpz_ptr z, mpz_srcptr w, mpz_srcptr v)
   { mpz_xor(z, w, v); }
-  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int i)
-  {
-    mpz_t temp;
-    mp_limb_t limbs[2];
-    temp->_mp_d = limbs;
-    temp->_mp_alloc = 2;
-    mpz_set_ui (temp, i);
-    mpz_xor (z, w, temp);
-  }
-  static void eval(mpz_ptr z, unsigned long int i, mpz_srcptr w)
-  {
-    mpz_t temp;
-    mp_limb_t limbs[2];
-    temp->_mp_d = limbs;
-    temp->_mp_alloc = 2;
-    mpz_set_ui (temp, i);
-    mpz_xor (z, temp, w);
-  }
+  static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
+  {  __GMPXX_TMP_UI;   mpz_xor (z, w, temp);  }
+  static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
+  {  __GMPXX_TMP_UI;   mpz_xor (z, w, temp);  }
+  static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
+  {  __GMPXX_TMP_SI;   mpz_xor (z, w, temp);  }
+  static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
+  {  __GMPXX_TMP_SI;   mpz_xor (z, w, temp);  }
+  static void eval(mpz_ptr z, mpz_srcptr w, double d)
+  {  __GMPXX_TMP_D;    mpz_xor (z, w, temp); }
+  static void eval(mpz_ptr z, double d, mpz_srcptr w)
+  {  __GMPXX_TMP_D;    mpz_xor (z, w, temp); }
 };
 
 struct __gmp_binary_lshift
@@ -1345,13 +1352,17 @@ struct __gmp_rand_function
 /* this is much the same as gmp_allocated_string in gmp-impl.h
    since gmp-impl.h is not publicly available, I redefine it here
    I use a different name to avoid possible clashes */
+
+extern "C" {
+  typedef void (*__gmp_freefunc_t) (void *, size_t);
+}
 struct __gmp_alloc_cstring
 {
   char *str;
   __gmp_alloc_cstring(char *s) { str = s; }
   ~__gmp_alloc_cstring()
   {
-    void (*freefunc) (void *, size_t);
+    __gmp_freefunc_t freefunc;
     mp_get_memory_functions (NULL, NULL, &freefunc);
     (*freefunc) (str, std::strlen(str)+1);
   }
@@ -1670,9 +1681,9 @@ public:
   __GMP_DECLARE_COMPOUND_OPERATOR(operator/=)
   __GMP_DECLARE_COMPOUND_OPERATOR(operator%=)
 
-  __GMPP_DECLARE_COMPOUND_OPERATOR(operator&=)
-  __GMPP_DECLARE_COMPOUND_OPERATOR(operator|=)
-  __GMPP_DECLARE_COMPOUND_OPERATOR(operator^=)
+  __GMP_DECLARE_COMPOUND_OPERATOR(operator&=)
+  __GMP_DECLARE_COMPOUND_OPERATOR(operator|=)
+  __GMP_DECLARE_COMPOUND_OPERATOR(operator^=)
 
   __GMP_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
   __GMP_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
@@ -3060,9 +3071,6 @@ __GMPN_DEFINE_COMPOUND_OPERATOR(type, fun, eval_fun)
 #define __GMPZ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
 __GMP_DEFINE_COMPOUND_OPERATOR(mpz, fun, eval_fun)
 
-#define __GMPZZ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
-__GMPP_DEFINE_COMPOUND_OPERATOR(mpz, fun, eval_fun)
-
 #define __GMPQ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun) \
 __GMP_DEFINE_COMPOUND_OPERATOR(mpq, fun, eval_fun)
 
@@ -3163,9 +3171,9 @@ __GMPZ_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
 __GMPZ_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
 __GMPZ_DEFINE_COMPOUND_OPERATOR(operator%=, __gmp_binary_modulus)
 
-__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
-__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
-__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
 
 __GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
 __GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
@@ -3323,7 +3331,6 @@ public:
 #undef __GMP_DECLARE_INCREMENT_OPERATOR
 
 #undef __GMPZQ_DEFINE_EXPR
-#undef __GMP_DEFINE_TERNARY_EXPR
 
 #undef __GMP_DEFINE_UNARY_FUNCTION
 #undef __GMP_DEFINE_UNARY_TYPE_FUNCTION
@@ -3348,15 +3355,7 @@ public:
 #undef __GMPN_DEFINE_BINARY_TYPE_FUNCTION
 #undef __GMP_DEFINE_BINARY_TYPE_FUNCTION
 
-#undef __GMPP_DECLARE_COMPOUND_OPERATOR
-#undef __GMPN_DECLARE_COMPOUND_OPERATOR
-#undef __GMP_DECLARE_COMPOUND_OPERATOR
-
-#undef __GMP_DECLARE_COMPOUND_OPERATOR_UI
-#undef __GMP_DECLARE_INCREMENT_OPERATOR
-
 #undef __GMPZ_DEFINE_COMPOUND_OPERATOR
-#undef __GMPZZ_DEFINE_COMPOUND_OPERATOR
 #undef __GMPZN_DEFINE_COMPOUND_OPERATOR
 #undef __GMPZNN_DEFINE_COMPOUND_OPERATOR
 #undef __GMPZNS_DEFINE_COMPOUND_OPERATOR
@@ -3373,8 +3372,6 @@ public:
 #undef __GMPN_DEFINE_COMPOUND_OPERATOR
 #undef __GMP_DEFINE_COMPOUND_OPERATOR
 
-#undef __GMPZ_DEFINE_COMPOUND_OPERATOR
-#undef __GMPZZ_DEFINE_COMPOUND_OPERATOR
 #undef __GMPQ_DEFINE_COMPOUND_OPERATOR
 #undef __GMPF_DEFINE_COMPOUND_OPERATOR
 

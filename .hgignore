@@ -1,6 +1,6 @@
 syntax: regexp
 
-# This files ignores the files demos/calc/calc-config.h and
+# This file ignores the files demos/calc/calc-config.h and
 # demos/pexpr-config.h, which is desired, but I don't understand why.
 
 ^configure
@@ -20,7 +20,7 @@ Makefile\.in
 ^stamp-h1
 Makefile
 
-^gmp-mparam.h
+^gmp-mparam\.h
 
 ^gen-bases
 ^gen-fac_ui
@@ -30,7 +30,7 @@ Makefile
 ^mp_bases\.h
 ^fib_table\.h
 ^mpn/perfsqr\.h
-^mpz/fac_ui.h
+^mpz/fac_ui\.h
 
 ^doc/gmp\.info.*
 ^doc/stamp-vti

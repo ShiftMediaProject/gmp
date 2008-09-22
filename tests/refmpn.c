@@ -1,8 +1,8 @@
 /* Reference mpn functions, designed to be simple, portable and independent
    of the normal gmp code.  Speed isn't a consideration.
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005 Free
-Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
+2007, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -790,15 +790,17 @@ refmpn_mul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 
 
 mp_limb_t
-refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_srcptr mult)
+refmpn_mul_N (mp_ptr dst, mp_srcptr src, mp_size_t size,
+	      mp_srcptr mult, mp_size_t msize)
 {
   mp_ptr     src_copy;
-  mp_limb_t  c;
+  mp_limb_t  ret;
+  mp_size_t  i;
 
   ASSERT (refmpn_overlap_fullonly_p (dst, src, size));
-  ASSERT (! refmpn_overlap_p (dst, size+1, mult, (mp_size_t) 2));
-  ASSERT (size >= 1);
-  ASSERT_MPN (mult, 2);
+  ASSERT (! refmpn_overlap_p (dst, size+msize-1, mult, msize));
+  ASSERT (size >= msize);
+  ASSERT_MPN (mult, msize);
 
   /* in case dst==src */
   src_copy = refmpn_malloc_limbs (size);
@@ -806,11 +808,29 @@ refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_srcptr mult)
   src = src_copy;
 
   dst[size] = refmpn_mul_1 (dst, src, size, mult[0]);
-  c = refmpn_addmul_1 (dst+1, src, size, mult[1]);
+  for (i = 1; i < msize-1; i++)
+    dst[size+i] = refmpn_addmul_1 (dst+i, src, size, mult[i]);
+  ret = refmpn_addmul_1 (dst+i, src, size, mult[i]);
+
   free (src_copy);
-  return c;
+  return ret;
 }
 
+mp_limb_t
+refmpn_mul_2 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_mul_N (rp, sp, size, mult, (mp_size_t) 2);
+}
+mp_limb_t
+refmpn_mul_3 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_mul_N (rp, sp, size, mult, (mp_size_t) 3);
+}
+mp_limb_t
+refmpn_mul_4 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_mul_N (rp, sp, size, mult, (mp_size_t) 4);
+}
 
 #define AORSMUL_1C(operation_n)                                 \
   {                                                             \

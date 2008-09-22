@@ -294,7 +294,11 @@ mp_limb_t refmpn_mul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
 mp_limb_t refmpn_mul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  mp_limb_t multiplier, mp_limb_t carry));
 mp_limb_t refmpn_mul_2 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
-                                mp_srcptr mult));
+				     mp_srcptr mult));
+mp_limb_t refmpn_mul_3 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
+				     mp_srcptr mult));
+mp_limb_t refmpn_mul_4 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
+				     mp_srcptr mult));
 
 void refmpn_mul_basecase __GMP_PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,

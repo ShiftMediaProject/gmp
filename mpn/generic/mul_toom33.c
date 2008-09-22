@@ -411,11 +411,13 @@ main (int argc, char **argv)
   else
     return 1;
 
-//  if (!(2 * an > 3 * bn && an < 4 * bn))
-//    {
-//      fprintf (stderr, "Invalid value combination of an,bn\n");
-//      return 1;
-//    }
+#if 0
+  if (!(2 * an > 3 * bn && an < 4 * bn))
+    {
+      fprintf (stderr, "Invalid value combination of an,bn\n");
+      return 1;
+    }
+#endif
 
   ap = TMP_ALLOC_LIMBS (an);
   bp = TMP_ALLOC_LIMBS (bn);

@@ -854,6 +854,12 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, 
 #define mpn_mul_2 __MPN(mul_2)
 mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
+#define mpn_mul_3 __MPN(mul_3)
+__GMP_DECLSPEC mp_limb_t mpn_mul_3 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
+#define mpn_mul_4 __MPN(mul_4)
+__GMP_DECLSPEC mp_limb_t mpn_mul_4 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
 #ifndef mpn_mul_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_mul_basecase __MPN(mul_basecase)
 __GMP_DECLSPEC void mpn_mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
@@ -1116,6 +1122,61 @@ void      mpn_divexact _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size
 #define mpn_divexact_itch  __MPN(divexact_itch)
 mp_size_t mpn_divexact_itch _PROTO ((mp_size_t, mp_size_t));
 
+#define mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
+mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+#define mpn_bdiv_dbm1(dst, src, size, divisor) \
+  mpn_bdiv_dbm1c (dst, src, size, divisor, __GMP_CAST (mp_limb_t, 0))
+
+
+#ifndef DIVEXACT_BY3_METHOD
+#if GMP_NUMB_BITS % 2 == 0 && ! defined (HAVE_NATIVE_mpn_divexact_by3c)
+#define DIVEXACT_BY3_METHOD 0	/* default to using mpn_bdiv_dbm1c */
+#else
+#define DIVEXACT_BY3_METHOD 1
+#endif
+#endif
+
+#if DIVEXACT_BY3_METHOD == 0
+#undef mpn_divexact_by3
+#define mpn_divexact_by3(dst,src,size) \
+  (3 & mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 3)))
+/* override mpn_divexact_by3c defined in gmp.h */
+/*
+#undef mpn_divexact_by3c
+#define mpn_divexact_by3c(dst,src,size,cy) \
+  (3 & mpn_bdiv_dbm1c (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 3, GMP_NUMB_MASK / 3 * cy)))
+*/
+#endif
+
+#if GMP_NUMB_BITS % 4 == 0
+#define mpn_divexact_by5(dst,src,size) \
+  (7 & 3 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 5)))
+#endif
+
+#if GMP_NUMB_BITS % 6 == 0
+#define mpn_divexact_by7(dst,src,size) \
+  (7 & 1 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 7)))
+#endif
+
+#if GMP_NUMB_BITS % 6 == 0
+#define mpn_divexact_by9(dst,src,size) \
+  (15 & 7 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 9)))
+#endif
+
+#if GMP_NUMB_BITS % 10 == 0
+#define mpn_divexact_by11(dst,src,size) \
+  (15 & 5 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 11)))
+#endif
+
+#if GMP_NUMB_BITS % 12 == 0
+#define mpn_divexact_by13(dst,src,size) \
+  (15 & 3 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 13)))
+#endif
+
+#if GMP_NUMB_BITS % 4 == 0
+#define mpn_divexact_by15(dst,src,size) \
+  (15 & 1 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 15)))
+#endif
 
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
@@ -3450,16 +3511,16 @@ struct hgcd_matrix1
 };
 
 int
-mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
-	   struct hgcd_matrix1 *M);
+mpn_hgcd2 __GMP_PROTO ((mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t,
+			struct hgcd_matrix1 *));
 
 mp_size_t
-mpn_hgcd_mul_matrix1_vector (struct hgcd_matrix1 *M, mp_size_t n,
-			     mp_ptr ap, mp_ptr bp, mp_ptr tp);
+mpn_hgcd_mul_matrix1_vector __GMP_PROTO ((struct hgcd_matrix1 *, mp_size_t,
+					  mp_ptr, mp_ptr, mp_ptr));
 
 mp_size_t
-mpn_hgcd_mul_matrix1_inverse_vector (struct hgcd_matrix1 *M, mp_size_t n,
-				     mp_ptr ap, mp_ptr bp, mp_ptr tp);
+mpn_hgcd_mul_matrix1_inverse_vector __GMP_PROTO ((struct hgcd_matrix1 *, mp_size_t,
+						  mp_ptr, mp_ptr, mp_ptr));
 
 struct hgcd_matrix
 {
@@ -3473,57 +3534,57 @@ struct hgcd_matrix
 #define MPN_HGCD_MATRIX_INIT_ITCH(n) (4 * ((n+1)/2 + 1))
 
 void
-mpn_hgcd_matrix_init (struct hgcd_matrix *M, mp_size_t n, mp_ptr p);
+mpn_hgcd_matrix_init __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr));
 
 void
-mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
-		     mp_ptr tp);
+mpn_hgcd_matrix_mul __GMP_PROTO ((struct hgcd_matrix *, const struct hgcd_matrix *,
+				  mp_ptr));
 mp_size_t
-mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
-			mp_size_t n, mp_ptr ap, mp_ptr bp,
-			mp_size_t p, mp_ptr tp);
+mpn_hgcd_matrix_adjust __GMP_PROTO ((struct hgcd_matrix *,
+				     mp_size_t, mp_ptr, mp_ptr,
+				     mp_size_t, mp_ptr));
 
 mp_size_t
-mpn_hgcd_itch (mp_size_t n);
+mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 
 mp_size_t
-mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
-	  struct hgcd_matrix *M, mp_ptr tp);
+mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t,
+		       struct hgcd_matrix *, mp_ptr));
 
 #define MPN_HGCD_LEHMER_ITCH(n) (n)
 
 mp_size_t
-mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
-		 struct hgcd_matrix *M, mp_ptr tp);
+mpn_hgcd_lehmer __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t,
+			      struct hgcd_matrix *, mp_ptr));
 
 /* Needs storage for the quotient */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) (n)
 
 mp_size_t
-mpn_gcd_subdiv_step (mp_ptr gp, mp_size_t *gn,
-		     mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp);
+mpn_gcd_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *,
+				  mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
 #define MPN_GCD_LEHMER_N_ITCH(n) (n)
 
 mp_size_t
-mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n,
-		  mp_ptr tp);
+mpn_gcd_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t,
+			       mp_ptr));
 
 /* To calculate the needed scratch space, n should be a bound for both
    input and output sizes. */
 #define MPN_GCDEXT_SUBDIV_ITCH(n) (2*(n) + 1)
 
 mp_size_t
-mpn_gcdext_subdiv_step (mp_ptr, mp_size_t *, mp_ptr, mp_size_t *,
-			mp_ptr, mp_ptr, mp_size_t,
-			mp_ptr, mp_ptr, mp_size_t *, mp_ptr);
+mpn_gcdext_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t *,
+				     mp_ptr, mp_ptr, mp_size_t,
+				     mp_ptr, mp_ptr, mp_size_t *, mp_ptr));
 
 #define MPN_GCDEXT_LEHMER_N_ITCH(n) (4*(n) + 3)
 
 mp_size_t
-mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
-		     mp_ptr ap, mp_ptr bp, mp_size_t n,
-		     mp_ptr tp);
+mpn_gcdext_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t *,
+				  mp_ptr, mp_ptr, mp_size_t,
+				  mp_ptr));
 
 /* 4*(an + 1) + 4*(bn + 1) + an */
 #define MPN_GCDEXT_LEHMER_ITCH(an, bn) (5*(an) + 4*(bn) + 8)
@@ -3551,7 +3612,7 @@ struct powers
 {
   mp_ptr p;			/* actual power value */
   mp_size_t n;			/* # of limbs at p */
-  mp_size_t shift;		/* weight og lowest limb, in limb base B */
+  mp_size_t shift;		/* weight of lowest limb, in limb base B */
   size_t digits_in_base;	/* number of corresponding digits */
   int base;
 };

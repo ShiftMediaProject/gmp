@@ -1,6 +1,6 @@
 /* mpn_divexact_by3c -- mpn exact division by 3.
 
-Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,7 +20,23 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#if 1
+#if DIVEXACT_BY3_METHOD == 0
+
+mp_limb_t
+mpn_divexact_by3c (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_limb_t c)
+{
+  mp_limb_t r;
+  r = mpn_bdiv_dbm1c (rp, up, un, GMP_NUMB_MASK / 3, GMP_NUMB_MASK / 3 * c);
+
+  /* Possible bdiv_dbm1 return values are C * (GMP_NUMB_MASK / 3), 0 <= C < 3.
+     We want to return C.  We compute the remainder mod 4 and notice that the
+     inverse of (2^(2k)-1)/3 mod 4 is 1.  */
+  return r & 3;
+}
+
+#endif
+
+#if DIVEXACT_BY3_METHOD == 1
 
 /* The algorithm here is basically the same as mpn_divexact_1, as described
    in the manual.  Namely at each step q = (src[i]-c)*inverse, and new c =
@@ -73,7 +89,9 @@ mpn_divexact_by3c (mp_ptr restrict rp, mp_srcptr restrict up, mp_size_t un, mp_l
 }
 
 
-#else
+#endif
+
+#if DIVEXACT_BY3_METHOD == 2
 
 /* The following alternative code re-arranges the quotient calculation from
    (src[i]-c)*inverse to instead

@@ -20,10 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		1.5
-C P4:		2.8/3.35/3.60 (variant1/variant2/variant3)
-C P6-15:	2.0
+C	     cycles/limb
+C K8,K9:	 1.5
+C K10:		 1.75-2 (fluctuating)
+C P4:		 2.8/3.35/3.60 (variant1/variant2/variant3)
+C P6-15:	 2.0
 
 ifdef(`OPERATION_and_n',`
   define(`func',`mpn_and_n')

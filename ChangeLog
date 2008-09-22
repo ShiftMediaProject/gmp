@@ -1,22 +1,33 @@
-Copyright 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
-	  2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
-.
-This file is part of the GNU MP Library.
-.
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at your
-option) any later version.
-.
-The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-License for more details.
-.
-You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-MA 02110-1301, USA.
+2008-09-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (GET_STR_DC_THRESHOLD): Remove default.
+	(GET_STR_PRECOMPUTE_THRESHOLD): Likewise.
+	Misc code cleanups.
+
+	* gmp-impl.h (mpn_dc_set_str_itch): Allocate GMP_LIMB_BITS more limbs.
+
+	Revert:
+	* mpn/generic/set_str.c:
+	(mpn_dc_set_str): Remove impossible case, replace by an ASSERT.
+
+2008-09-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/gmp-mparam.h (DIVEXACT_BY3_METHOD): Define.
+
+	* mpn/ia64/diveby3.asm: Remove.
+	* mpn/x86/diveby3.asm: Remove.
+	* mpn/x86/k6/diveby3.asm: Remove.
+	* mpn/x86/k7/diveby3.asm: Remove.
+	* mpn/x86/p6/diveby3.asm: Remove.
+	* mpn/x86/pentium/diveby3.asm: Remove.
+	* mpn/x86_64/diveby3.asm: Remove.
+	* mpn/x86/pentium4/sse2/diveby3.asm: Remove.
+
+	* configure.in (HAVE_NATIVE): List divexact_by3c.
+
+	* gmp-impl.h (mpn_divexact_by3c): Override gmp-h.in's definition.
+	(DIVEXACT_BY3_METHOD): Don't default to 0 if
+	HAVE_NATIVE_mpn_divexact_by3c.
 
 2008-09-18  Niels Möller  <nisse@lysator.liu.se>
 
@@ -49,6 +60,32 @@ MA 02110-1301, USA.
 	the more obvious split p = n/2.
 	(mpn_gcd): Use CHOOSE_P, and generalized the calculation of
 	scratch space.
+
+2008-09-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/toom_interpolate_7pts.c: Use new mpn_divexact_byN
+	functions.
+
+	* gmp-impl.h (mpn_divexact_by3, mpn_divexact_by5, mpn_divexact_by7,
+	mpn_divexact_by9, mpn_divexact_by11, mpn_divexact_by13,
+	mpn_divexact_by15): New macros, defined in terms of mpn_bdiv_dbm1.
+
+	* configure.in (gmp_mpn_functions): List bdiv_dbm1c.
+	(HAVE_NATIVE): Likewise.
+	* mpn/asm-defs.m4: Define bdiv_dbm1c.
+	* gmp-impl.h (mpn_bdiv_dbm1c): Declare.
+	(mpn_bdiv_dbm1): New macro.
+	* mpn/generic/bdiv_dbm1c.c: New file.
+	* mpn/alpha/bdiv_dbm1c.asm: New file.
+	* mpn/ia64/bdiv_dbm1c.asm: New file.
+	* mpn/powerpc32/bdiv_dbm1c.asm: New file.
+	* mpn/powerpc64/mode64/bdiv_dbm1c.asm: New file.
+	* mpn/x86/bdiv_dbm1c.asm: New file.
+	* mpn/x86_64/bdiv_dbm1c.asm: New file.
+
+	* mpn/generic/diveby3.c: Add mpn_bdiv_dbm1c based function.
+	Choose function depending on DIVEXACT_BY3_METHOD.
+	* gmp-impl.h (DIVEXACT_BY3_METHOD): Provide default.
 
 2008-09-16  Niels Möller  <nisse@lysator.liu.se>
 
@@ -158,6 +195,10 @@ MA 02110-1301, USA.
 
 	* configure.in (gmp_mpn_functions): Added gcdext_subdiv_step.
 
+2008-09-10  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in: Unconditionally include <cstdio>.
+
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c: #if:ed out speed_mpn_gcd_binary and
@@ -186,6 +227,10 @@ MA 02110-1301, USA.
 	* */gmp-mparam.h: Renamed HGCD_SCHOENHAGE_THRESHOLD to
 	HGCD_THRESHOLD.
 
+2008-09-09  Torbjorn Granlund  <tege@swox.com>
+
+	* doc/gmp.texi: Fix a typo and clarify mpn_gcdext docs.
+
 2008-09-09  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer): Adapted
@@ -211,6 +256,37 @@ MA 02110-1301, USA.
 	* gcd_subdiv_step.c (mpn_gcd_subdiv_step): Simplified function.
 	The special cancellation logic is not needed here.
 
+2008-09-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/invert.c: Add working but slow code.
+
+	* mpn/x86_64/x86_64-defs.m4 (R32, R8): New macros.
+
+	* mpn/ia64/submul_1.asm: Move some labels for broader assembler
+	compatibility.
+
+	* gmp-impl.h (mpn_mul_3, mpn_mul_4): Declare.
+	* tests/tests.h (refmpn_mul_3, refmpn_mul_4): Declare.
+	* tests/try.c (param_init): Set things up for mpn_mul_3 and mpn_mul_4.
+	(choice_array): Likewise.
+	(call): Likewise.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES):
+	Add mul_3.c and mul_4.
+	* mpn/asm-defs.m4: Define mul_3 and mul_4.
+	* tests/refmpn.c (refmpn_mul_N): New function.
+	(refmpn_mul_2): Remove old definition, call refmpn_mul_N.
+	(refmpn_mul_3, refmpn_mul_4): New functions.
+	* tune/common.c (speed_mpn_mul_3, speed_mpn_mul_4): New functions.
+	* tune/speed.h (speed_mpn_mul_3, speed_mpn_mul_4): Declare.
+	* tune/speed.c (routine): New entries for mpn_mul_2 and mpn_mul_3.
+
+	* ltmain.sh: Update to libtool 1.5.24.
+
+	* mpn/generic/mul_toom22.c: Compute s and t more cleverly.
+
+	* gmp-h.in (__GMP_CC): New #define.
+	(__GMP_CFLAGS): New #define.
+
 2008-09-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-hgcd.c: Updated tests. Rewrite of hgcd_ref.
@@ -231,15 +307,577 @@ MA 02110-1301, USA.
 
 	* configure.in (gmp_mpn_functions): Added gcdext_lehmer.
 
+2008-09-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/toom_interpolate_7pts.c: Use mpn_divexact_by3c instead of
+	divexact_odd.
+
+	* doc/texinfo.tex: Update to 2007-06-29.13.
+
+	* doc/gmp.texi: Update GMP site URL.  Fix some typos.
+
+	* demos/pexpr.c (main): Allow bases up to 62.
+
+	* gmp-impl.h: Remove formal parameter names from function prototypes.
+
+	* config.guess: Recognize recent AMD and Itanium CPUs.
+	Default X86 CPU recognition to configfsf.guess' value.
+
+	* configure.in: Handle core2 separately from athlon64.
+
 2008-09-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* */Makefile.in, configure, aclocal.m4, config.in: Removed files
 	from repository. They're instead generated by automake and
 	autoconf before distribution.
 
+2008-08-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_toom22.c: Add statistics gathering functionality,
+	triggered by cpp predef STAT.
+
+	From David Harvey:
+	* mpn/generic/mul_toom22.c: Decrease scratch space usage.
+
+2008-08-02  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/misc/t-scanf.c: Avoid negative arguments to _ui functions.
+	* tests/misc/t-printf.c: Likewise.
+
+2008-08-01  Torbjorn Granlund  <tege@swox.com>
+
+	* gmpxx.h (__GMP_DBL_LIMBS): Use DBL_MAX_EXP instead of
+	std::numeric_limits<double>::max_exponent for better portability.
+
+2008-07-29  Torbjorn Granlund  <tege@swox.com>
+
+	* gmpxx.h (__GMP_DBL_LIMBS): New #define.
+	(__GMP_ULI_LIMBS): New #define.
+	(__GMPXX_TMP_UI): New macro.
+	(__GMPXX_TMP_SI): New macro.
+	(__GMPXX_TMP_D): New macro.
+	(struct __gmp_binary_and): Rewrite, using the new macros.
+	(struct __gmp_binary_ior): Likewise.
+	(struct __gmp_binary_xor): Likewise.
+
+2008-07-28  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/cxx/t-binary.cc: Add some tests for logical operations.
+
+2008-07-24  Torbjorn Granlund  <tege@swox.com>
+
+	* gmpxx.h: Use __GMPZ_* instead of __GMPZZ_* for bitwise ops, remove
+	__GMPZZ_*.
+	Remove repeated #undefs.
+	(__gmp_alloc_cstring): Declare freefunc as extern "C".
+
+2008-07-21  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/amd64check.c: Fix a printf type clash.
+
+	* gmp-h.in: Include <cstdlib> for C++.
+	* gmp-h.in: Handle new gcc 4.3 inline semantics defaults.
+
+	* configfsf.guess: Update to version of 2008-04-14.
+	* configfsf.sub: Update to version of 2008-06-16.
+
+	* configure.in: Separate core2 and athlon64 flags handling.
+
+2008-06-19  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Recognize pentiumm and AMD geode.
+	* config.sub: Likewise.
+	* configure.in: Likewise.
+
+2008-06-02  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Disallow odd nails sizes.
+	* configure.in: Inherit default gcc_cflags/gcc_64_cflags everywhere.
+
+2008-05-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/realloc.c: Check for mpz_t overflow.
+	* mpz/realloc2.c: Likewise.
+
+	* configure.in (sparc): Remove -fast, it causes documented
+	miscompilation.
+
+	* config.guess: Properly handle the "extended" variants of x86 cpuid.
+
+2008-05-09  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (mpn_mul_fft): Now void.
+	(udiv_qrnnd_preinv3): Special case for constant (nl).
+
+2008-05-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_fft.c: Clean up types in TRACE (printf (...)).
+	(TRACE): Redefine to allow command line control.
+	(mpn_mul_fft_internal): Now void, remove return value.
+	(mpn_mul_fft): Likewise.
+	(MPN_FFT_TABLE2_SIZE): Up size fro 256 to 512.
+	(mpn_fft_fft): Call mpn_fft_mul_2exp_modF just once instead of twice,
+	then add/subtract result.  Get rid of temp allocation as a result.
+	Remove some redundant CNST_LIMB.
+	(mpn_fft_fftinv): Analogous changes.
+	(mpn_fft_sub_modF): Re-enable, now needed by mpn_fft_fft and
+	mpn_fft_fftinv.
+
+2008-03-10  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-mul.c (main): Let GMP_CHECK_FFT mean largest allowed
+	power-of-2 of test operands.
+
+2008-02-28  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/cxx/t-binary.cc (check_mpz): Expect floor rounding for right
+	shift.
+
+2008-02-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/mul_i.h: Check sml's size (not the signed small_mult).
+
+	* longlong.h (umul_ppmm) [alpha]: Define using __builtin_alpha_umulh
+	when possible.
+
+	* longlong.h (count_trailing_zeros): Force destination register mode.
+
+	* gmpxx.h (struct __gmp_binary_rshift): Use floor rounding, not
+	truncation.
+
+	* gmpxx.h (__gmp_binary_and, __gmp_binary_ior, __gmp_binary_xor):
+	Add variants with unsigned long int argument.
+
+	* config.sub: Recog geode.
+	* config.guess: Likewise.
+	* acinclude.m4 (X86_PATTERN): Likewise.
+
+2008-02-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/p6/aors_n.asm: Use Zdisp to work around GNU as bug.
+	* mpn/x86/x86-defs.m4 (Zdisp): Add more instructions.
+
+2008-02-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aors_n.asm: New file.
+	* mpn/x86_64/add_n.asm: Delete.
+	* mpn/x86_64/sub_n.asm: Delete.
+
+2008-02-07  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/k6/mmx/dive_1.asm: Fix typo in last change.
+
+2007-12-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/set_str.c (mpf_set_str): Write own code for converting the
+	exponent, avoids strtol base < 36 limitation.
+
+2007-10-28  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (mpn_dc_get_str_itch): New macro.
+	(mpn_dc_get_str_powtab_alloc): New macro.
+	(struct powers): Add field "shift".
+
+	* mpn/generic/get_str.c: Compute powers without low zero limbs; all
+	functions modified.  Correct temporary allocation.  Misc cleanups.
+
+	* mpn/generic/set_str.c: Compute powers without low zero limbs; all
+	functions modified.
+	(mpn_dc_set_str): Remove impossible case, replace by an ASSERT.
+
+2007-10-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/set_str.c: Remove default thresholds, not in gmp-impl.h.
+	(mpn_dc_set_str): Insert ASSERT_ALWAYS in a presumably dead code arm.
+
+2007-10-22  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (mpn_add_nc): Define as inline function, unless NATIVE.
+	(mpn_sub_nc): Likewise.
+
+2007-10-17  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/misc/t-printf.c: Fix a printf type clash.
+	* tests/mpq/t-get_str.c: Likewise.
+	* tests/mpz/t-import.c: Likewise.
+
+	* acinclude.m4: Conditionally disable some tests when compiled by a C++
+	compiler.
+
+	* gmp-impl.h (udiv_qrnnd_preinv3): Remove an unused variable.
+
+	* mpn/generic/hgcd.c: Add some WANT_ASSERTs to shut up warnings.
+
+2007-10-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/elf.m4 (LEAL): Define as an alias for LEA.
+	* mpn/powerpc32/darwin.m4 (LEAL): Likewise.
+	* mpn/powerpc64/aix.m4: Likewise.
+
+	* mpn/powerpc64/vmx/popcount.asm: Use LEAL.
+
+	* mpn/powerpc64/darwin.m4 (LEAL): New name for LEA, since it is only
+	usable for local symbols.
+	(LEA): Replace with code for external references.
+
+
+	* mpn/powerpc32/vmx/mod_34lsub1.asm: Use LEAL.
+
+2007-10-07  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/dive_1.asm: Use LEA, remove explicit movl_eip_*.
+	* mpn/x86/k6/mode1o.asm: Likewise.
+	* mpn/x86/k6/mmx/dive_1.asm: Likewise.
+	* mpn/x86/k7/dive_1.asm: Likewise.
+	* mpn/x86/k7/mode1o.asm: Likewise.
+	* mpn/x86/p6/dive_1.asm: Likewise.
+	* mpn/x86/p6/mode1o.asm: Likewise.
+	* mpn/x86/pentium4/sse2/dive_1.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mode1o.asm: Likewise.
+	* mpn/x86/pentium4/sse2/popcount.asm: Likewise.
+
+	* mpn/x86/p6/aors_n.asm: Table cycle counts.
+
+	* mpn/x86/k7/mod_34lsub1.asm: Fix over-optimisitc cycle count claims.
+
+	* mpn/x86/x86-defs.m4 (DEF_OBJECT, END_OBJECT): New define's.
+
+	* mpn/x86/darwin.m4 (LEA): Put also movl_eip_XX into EPILOGUE_cpu.
+	Expect target register to have prepended %.
+
+	* mpn/x86_64/add_n.asm: Use L() for labels.
+	* mpn/x86_64/addlsh1_n.asm: Likewise.
+	* mpn/x86_64/addmul_2.asm: Likewise.
+	* mpn/x86_64/aorrlsh_n.asm: Likewise.
+	* mpn/x86_64/aorsmul_1.asm: Likewise.
+	* mpn/x86_64/com_n.asm: Likewise.
+	* mpn/x86_64/copyd.asm: Likewise.
+	* mpn/x86_64/copyi.asm: Likewise.
+	* mpn/x86_64/diveby3.asm: Likewise.
+	* mpn/x86_64/logops_n.asm: Likewise.
+	* mpn/x86_64/lshsub_n.asm: Likewise.
+	* mpn/x86_64/mul_1.asm: Likewise.
+	* mpn/x86_64/mul_2.asm: Likewise.
+	* mpn/x86_64/mul_basecase.asm: Likewise.
+	* mpn/x86_64/popham.asm: Likewise.
+	* mpn/x86_64/redc_1.asm: Likewise.
+	* mpn/x86_64/rsh1add_n.asm: Likewise.
+	* mpn/x86_64/rsh1sub_n.asm: Likewise.
+	* mpn/x86_64/rshift.asm: Likewise.
+	* mpn/x86_64/sub_n.asm: Likewise.
+	* mpn/x86_64/sublsh1_n.asm Likewise.
+	* mpn/x86_64/pentium4/aors_n.asm: Likewise.
+	* mpn/x86_64/pentium4/lshift.asm: Likewise.
+	* mpn/x86_64/pentium4/rshift.asm: Likewise.
+
+	* mpn/x86_64/x86_64-defs.m4: New file, defining LEA, DEF_OBJECT, and
+	END_OBJECT.
+
+	* mpn/generic/mul.c: Put TMP_DECL as last decl.
+
+2007-10-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/pentium4/sse2/popcount.asm: New file.
+
 2007-09-26  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/get_str.c: Cast a char index to int to shut up compilers.
+
+	* dc_div_qr.c: Pass dummy scratch argument to mpn_invert.
+	* dc_divappr_q.c: Likewise.
+	* mu_div_qr.c: Likewise.
+	* mu_divappr_q.c: Likewise.
+	* mu_div_q.c: Likewise.
+	* divexact.c: Likewise.
+
 	* mpn/generic/invert.c: New file, placeholder for now.
+
+2007-09-24  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/toom_interpolate_5pts.c: New file, contents from
+	mpn/generic/mul_n.c
+	* mpn/generic/mul_n.c (mpn_toom3_interpolate): Function removed.
+
+	* mpn/generic/toom_interpolate_7pts.c: New file.
+
+	* mpn/x86/k7/mmx/popham.asm: Table cycle counts.
+
+	* mpn/x86/k6/README: Update URLs.
+
+	* mpn/powerpc32/README: Update URL's, company names.
+
+	* mpn/generic/get_d.c: Complete rewrite.
+
+	* mpn/generic/mul_toom33.c: New file.
+
+	* mpn/generic/mul_toom22.c: Make orthogonal with other toomXY files.
+	* mpn/generic/mul_toom32.c: Likewise.
+	* mpn/generic/mul_toom42.c: Likewise.
+
+	* mpn/alpha/invert_limb.asm: Update cycle counts.  Fix a comment typo.
+
+	* mpf/get_str.c: Include stdlib.h, not stdio.h for NULL.
+
+	* doc/gmp.texi: Fix a typo.
+
+	* memory.c (__gmp_default_allocate, __gmp_default_reallocate):
+	Cast size operands in error fprintf's.
+
+	* longlong.h (sub_ddmmss) [powerpc 64]: Add more variants for constant
+	args.
+
+	* gmp-impl.h (udiv_qrnnd_preinv3): New define.
+	* gmp-impl.h (ULONG_PARITY): Exclude masquerading __INTEL_COMPILER from
+	ia64 asm.
+
+	* gmp-h.in (mpn_neg_n): New function.
+
+2007-09-18  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (main): Add -v option.
+	(enum op_t): New tag TIMING.
+	(mpz_eval_expr): Execute TIMING.
+	(fns): Add TIMING entry.
+
+	* gmp-impl.h: Add decls and THRESHOLDs for new toom multiplication
+	functions and division functions.
+
+2007-09-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/addlsh1_n.asm: Use L() for labels.
+	* mpn/powerpc32/sublsh1_n.asm: Likewise.
+
+2007-09-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/x86-defs.m4 (LEA): New define.
+	* mpn/x86/darwin.m4: New file, for now just defining LEA.
+	* configure.in: Pick up x86/darwin.m4.
+	* mpn/x86/*: Use LEA for PIC references.
+
+	* configure.in: For X86/32, treat core2 like pentium3.
+
+2007-09-06  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/amd64check.c (calling_conventions_values): Put constants,
+	dynamic values in this array (was in scalars).
+	(calling_conventions_check): Corresponding changes.
+	* tests/amd64call.asm: Rewrite to be PIC, smaller, using amd64check.c's
+	array.
+
+2007-09-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/pentium4/sse2/mul_basecase.asm: Misc cleanups.
+	* mpn/x86/pentium4/sse2/sqr_basecase.asm: Likewise.
+
+	* mpn/x86_64/mod_34lsub1.asm: Optimize loop, reduce code size.
+
+	* tests/amd64call.asm: Remove bogus no-op moves.
+
+2007-09-03  Torbjorn Granlund  <tege@swox.com>
+
+	From Richard Guenther:
+	* gmp-h.in (__GMP_EXTERN_INLINE): Declare conditionally on
+	__GNUC_STDC_INLINE__.
+
+	* tests/cxx/t-locale.cc: #include <cstdlib>, for abort.
+
+	* mpn/x86_64/core2/popcount.asm: New file.
+	* mpn/x86_64/pentium4/popcount.asm: New file.
+
+	* mpn/x86_64/addmul_2.asm: New file.
+	* mpn/x86_64/mul_2.asm: New file.
+
+	* mpn/x86_64/aorsmul_1.asm: Use 32-bit mov for zeroing registers
+	(saves space).
+
+2007-09-01  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Handle athlon64, core2, and pentium4 separately for
+	64-bit ABI.
+
+	* config.sub: Recog athlon64, core2, and opteron.
+
+	* config.guess: Do two x86 variants, for 32-bit ABI and 64-bit ABI.
+	Return "athlon64" and "core2", not x86_64.
+
+2007-08-31  Torbjorn Granlund  <tege@swox.com>
+
+	From Patrick Pelissier:
+	* gmp-h.in: Don't refer to FILE from C++ unless we've seen FILE.
+
+2007-08-30  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/isprime.c: Include string.h for strcmp.
+
+	* demos/factorize.c (main): Declare to int.
+
+2007-06-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/pentium4/lshift.asm: Minor tuning.
+	* mpn/x86_64/pentium4/rshift.asm: Likewise.
+
+2007-05-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/mode64/aors_n.asm: Add _nc entry points.
+
+2007-05-22  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/memory.c: Cast calls to new mem* calls to avoid unaligned ops.
+
+2007-05-16  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/convert.c: Tweak operand sizes for best coverage.
+
+	* tests/memory.c: Add red zones around allocations.
+
+2007-05-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/mul_1.asm: Make mul_1c entry point actually work.
+
+	* mpn/generic/set_str.c (mpn_dc_set_str): Avoid calling mpn_add_n when
+	ln == 0.
+
+	* tests/mpz/convert.c (string_urandomb): New function.
+	(main): Use it by enabling ifdef'ed out code.
+
+2007-04-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/mul_basecase.asm: Complete rewrite.
+
+	* mpn/x86_64/copyi.asm: Use short shift-by-one form.  Misc cleanups.
+	* mpn/x86_64/copyi.asm: Likewise.
+	* mpn/x86_64/popham.asm: Likewise.
+
+	* mpn/x86_64/aorsmul_1.asm: Cleanup formatting.
+
+2007-04-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/divexact.c: Handle undefined case of |N| < |D| to avoid segfaults.
+
+2007-02-24  Torbjorn Granlund  <tege@swox.com>
+
+	* doc/gmp.texi (Toom 3-Way Multiplication): Fix typo.
+	(mpz_scan0, mpz_scan1): Fix typos.
+	(Float Internals): Rewrite paragraph about struct types.
+
+2007-02-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/pentium4/sse2/sqr_basecase.asm: Complete rewrite (except
+	diagonal code).
+
+2007-02-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_fft.c (mpn_fft_fft): New name for mpn_fft_fft_sqr,
+	old mpn_fft_fft removed.
+	(mpn_mul_fft_internal): Call mpn_fft_fft separately for each operand.
+	(mpn_fft_add_modF): Rewrite to avoid random branches.
+	(mpn_fft_sub_modF): Likewise.
+
+	* mpn/x86/pentium4/sse2/addmul_1.asm: Complete rewrite.
+	* mpn/x86/pentium4/sse2/mul_1.asm: Complete rewrite.
+	* mpn/x86/pentium4/sse2/mul_basecase.asm: Complete rewrite, based on
+	new addmul and mul code.
+
+2007-01-31  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_str.c (mpn_sb_get_str): Get loop count for frac
+	development right.
+
+	* mpn/powerpc32/vmx/mod_34lsub1.asm: New file.
+
+	* mpn/powerpc32/aors_n.asm: New file, complete rewrite.
+	* mpn/powerpc32/add_n.asm: Remove.
+	* mpn/powerpc32/sub_n.asm: Remove.
+
+2007-01-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/core2/aors_n.asm: Add _nc entry points, minor cleanups.
+
+	* mpn/x86_64/core2/lshift.asm: Rewrite.
+	* mpn/x86_64/core2/rshift.asm: Rewrite.
+
+	* mpn/x86_64/pentium4/lshift.asm: Swap some loop insns for a small
+	speedup.
+	* mpn/x86_64/pentium4/rshift.asm: New file, based on lshift.asm.
+
+	* mpn/x86_64/pentium4/gmp-mparam.h: New file.
+
+	* mpn/x86_64/pentium4/aors_n.asm: Complete rewrite of add/subtract
+	code.
+	* mpn/x86_64/pentium4/add_n.asm: Remove.
+	* mpn/x86_64/pentium4/sub_n.asm: Remove.
+
+2007-01-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/lshift.asm: Add special case for cnt=1.
+
+2007-01-19  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aorsmul_1.asm: New file, written from scratch, finally at
+	3.0 c/l on K8 (addmul_1 was 3.3; submul_1 was 3.5).
+	* mpn/x86_64/addmul_1.asm: Remove.
+	* mpn/x86_64/submul_1.asm: Remove.
+
+2006-12-29  Torbjorn Granlund  <tege@swox.com>
+
+	* randmt.c (__gmp_randclear_mt): Initialize ALLOC field, like in
+	__gmp_randinit_mt_noseed.
+	(__gmp_randclear_mt, __gmp_randinit_mt_noseed): Make similar functions
+	look similar.
+	(__gmp_randclear_mt): Pass actually allocated size.
+
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Add mul_toom22.c,
+	mul_toom32.c, mul_toom42.c.
+
+	* configure.in: Recognize athlon64 and core2 as alternatives to x86_64.
+	Provide special settings for core2.
+
+	* configure.in (gmp_mpn_functions): Add mul_toom22, mul_toom32,
+	mul_toom42.
+
+	* mpn/generic/mul_toom22.c: New file.
+	* mpn/generic/mul.c: Use mpn_mul_toom22.  Trim cutoff points between
+	the mpn_mul_toomN2 functions.  Handle balanced operands at function
+	entry.
+
+2006-12-29  Marco Bodrato  <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mul_n.c: Rewrite interpolation code.
+
+2006-12-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_toom32.c: New file.
+	* mpn/generic/mul_toom42.c: New file.
+	* mpn/generic/mul.c: Use mpn_mul_toom32 and mpn_mul_toom42 for
+	unbalanced operands.
+
+2006-12-17  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aorrlsh_n.asm: New file.
+	* mpn/x86_64/lshsub_n.asm: New file.
+
+	* mpn/x86_64/core2/aors_n.asm: New file.
+	* mpn/x86_64/core2/lshift.asm: New file.
+	* mpn/x86_64/core2/rshift.asm: New file.
+
+	* mpn/x86/p6/aors_n.asm: Replace K7 grabbing code with P6 specific
+	code.
+
+	* mpn/x86/p6/lshsub_n.asm: New file.
+
+2006-11-23  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_MUL_BASECASE): Allocate space for xp
+	locally, s->xp might be insufficient.
+
+2006-11-22  Torbjorn Granlund  <tege@swox.com>
+
+	* randmt.c (__gmp_randinit_mt_noseed): Initialize ALLOC field of result
+	param.
+
+2006-11-06  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/set_strp.c: New file.
 
 2006-11-04  Torbjorn Granlund  <tege@swox.com>
 
@@ -2618,7 +3256,7 @@ MA 02110-1301, USA.
 2003-12-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/gcd.c (gcd_schoenhage_itch): Avoid unary "+".
-	 (mpn_gcd): Allocate scratch space on heap for gcd_schoenhage.
+	(mpn_gcd): Allocate scratch space on heap for gcd_schoenhage.
 	(mpn_gcd): Don't invoke MPN_NORMALIZE on input operands.
 
 2003-12-23  Kevin Ryde  <kevin@swox.se>
@@ -22062,20 +22700,3 @@ Tue Mar  3 18:50:10 1991  Torbjorn Granlund  (tege@musta.nada.kth.se)
 	* msqrt: Use the low level routines.  Use low precision in the
 	beginning, and increase the precision as the result converges.
 	(This optimization gave a 6-fold speedup.)
-
-
-
-Local Variables:
-mode: indented-text
-left-margin: 8
-fill-column: 79
-version-control: never
-eval: (unless (string-match "GNU Emacs \\(21\.[4-9]\\|22\.\\)" (emacs-version))
-	(save-excursion
-	  (goto-char (point-min))
-	  (when (looking-at "Copyright")
-	    (search-forward "\n\n")
-	    (skip-chars-forward "\n")
-	    (narrow-to-region (point) (point-max))
-	    (message "Note! narrowed to hide copyright notice"))))
-End:

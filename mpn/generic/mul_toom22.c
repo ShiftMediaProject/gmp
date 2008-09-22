@@ -84,9 +84,8 @@ mpn_mul_toom22 (mp_ptr pp,
 #define b0  bp
 #define b1  (bp + n)
 
-  n = (an + 1) >> 1;
-
-  s = an - n;
+  s = an >> 1;
+  n = an - s;
   t = bn - n;
 
   ASSERT (0 < s && s <= n);

@@ -20,10 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		2.21
-C P4:		?
-C P6-15:	3.5
+C	     cycles/limb
+C K8,K9:	 2.2
+C K10:		 2.2
+C P4:		12.75
+C P6-15:	 3.45
 
 
 C Sometimes speed degenerates, supposedly related to that some operand

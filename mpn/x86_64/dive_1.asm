@@ -20,8 +20,9 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		10
+C	     cycles/limb
+C K8,K9:	10
+C K10:		10
 C P4:		33
 C P6-15:	13.25
 
@@ -34,6 +35,7 @@ C up		rsi
 C n		rdx
 C divisor	rcx
 
+ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_divexact_1)

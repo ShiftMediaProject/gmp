@@ -22,10 +22,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
-C P4:		?
-C P6-15:	4.0
+C	     cycles/limb
+C K8,K9:	 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
+C K10:		 3.25	(mpn_lshift + mpn_add_n costs about 4.1 c/l)
+C P4:		14
+C P6-15:	 4
 
 C This was written quickly and not optimized at all.  Surely one could get
 C closer to 3 c/l or perhaps even under 3 c/l.  Ideas:
@@ -53,9 +54,9 @@ ifdef(`OPERATION_rsblsh_n',`
 
 MULFUNC_PROLOGUE(mpn_addlsh_n mpn_rsblsh_n)
 
+ASM_START()
 	TEXT
 	ALIGN(16)
-ASM_START()
 PROLOGUE(func)
 
 	push	%r12

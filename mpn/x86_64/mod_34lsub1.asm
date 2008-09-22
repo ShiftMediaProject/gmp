@@ -21,10 +21,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		1.0
-C P4:  		3.2
-C P6-15:	1.5
+C	     cycles/limb
+C K8,K9:	 1.0
+C K10:		 1.12
+C P4:  		 3.25
+C P6-15:	 1.5
 
 
 C INPUT PARAMETERS
@@ -56,7 +57,7 @@ C	adcq	$0, %r8
 C	...
 
 
-
+ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_mod_34lsub1)

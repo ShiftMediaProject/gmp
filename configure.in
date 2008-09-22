@@ -1345,7 +1345,7 @@ case $host in
         gcc_cflags_cpu="-mtune=pentium2 -mcpu=pentium2 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium2 -march=pentiumpro -march=pentium"
         ;;
-      pentium3)
+      pentium3 | pentiumm)
         gcc_cflags_cpu="-mtune=pentium3 -mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium3 -march=pentiumpro -march=pentium"
         ;;
@@ -1391,9 +1391,13 @@ case $host in
         gcc_cflags_cpu="-mtune=c3 -mcpu=c3 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=c3 -march=pentium-mmx -march=pentium"
         ;;
-      athlon64 | core2 | x86_64)
+      athlon64 | x86_64)
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
+        ;;
+      core2)
+        gcc_cflags_cpu="-mtune=core2 -mtune=k8"
+        gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
         ;;
       *)
         gcc_cflags_cpu="-mtune=i486 -mcpu=i486 -m486"
@@ -1408,7 +1412,8 @@ case $host in
       pentiummmx)           path="x86/pentium/mmx x86/pentium x86" ;;
       i686 | pentiumpro)    path="x86/p6 x86" ;;
       pentium2)             path="x86/p6/mmx x86/p6 x86" ;;
-      pentium3 | core2)     path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+      pentium3 | pentiumm | core2)
+      	       	 	    path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
       geode)                path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
@@ -2412,7 +2417,7 @@ gmp_mpn_functions="$extra_functions					   \
   sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \
   mu_div_qr mu_divappr_q mu_div_q					   \
   sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
-  divexact								   \
+  divexact bdiv_dbm1c							   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,
@@ -2862,10 +2867,12 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_addsub_n
 #undef HAVE_NATIVE_mpn_and_n
 #undef HAVE_NATIVE_mpn_andn_n
+#undef HAVE_NATIVE_mpn_bdiv_dbm1c
 #undef HAVE_NATIVE_mpn_com_n
 #undef HAVE_NATIVE_mpn_copyd
 #undef HAVE_NATIVE_mpn_copyi
 #undef HAVE_NATIVE_mpn_divexact_1
+#undef HAVE_NATIVE_mpn_divexact_by3c
 #undef HAVE_NATIVE_mpn_divrem_1
 #undef HAVE_NATIVE_mpn_divrem_1c
 #undef HAVE_NATIVE_mpn_divrem_2

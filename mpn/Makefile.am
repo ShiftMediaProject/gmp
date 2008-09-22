@@ -42,7 +42,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   hamdist.c hgcd2.c hgcd.c invert_limb.c				    \
   ior_n.c iorn_n.c jacbase.c lshift.c \
   matrix22_mul.c mod_1.c mod_34lsub1.c mode1o.c	    \
-  mul.c mul_1.c mul_2.c mul_fft.c mul_n.c mul_basecase.c		    \
+  mul.c mul_1.c mul_2.c mul_3.c mul_4.c mul_fft.c mul_n.c mul_basecase.c    \
   mul_toom22.c mul_toom32.c mul_toom42.c				    \
   mullow_n.c mullow_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c	    \
   pre_divrem_1.c pre_mod_1.c pow_1.c qstack.c random.c random2.c rshift.c   \

@@ -20,10 +20,11 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C	    cycles/limb
-C K8:		2.375  (1.375 for cnt=1)
-C P4:		8
-C P6-15:	2.15
+C	     cycles/limb
+C K8,K9:	 2.375	(1.375 for cnt=1)
+C K10:		 2.375	(1.375 for cnt=1)
+C P4:		 8	(10.5  for cnt=1)
+C P6-15:	 2.11	(4.28 for cnt=1)
 
 
 C INPUT PARAMETERS
@@ -50,10 +51,10 @@ C FIXME: this could surely be done more cleverly.
 	cmp    n, %rax
 	jb     L(gen)
 
-L(fwd):	mov	n, %rax
+L(fwd):	mov	R32(n), R32(%rax)
 	shr	$2, n
 	je	L(e1)
-	and	$3, %eax
+	and	$3, R32(%rax)
 
 	ALIGN(8)
 	nop
@@ -89,24 +90,22 @@ L(n00):	mov	(up), %r8
 L(ret):	adc	%eax, %eax
 	ret
 L(n01):	dec	%eax
-	jne	L(n10)
 	mov	8(up), %r9
+	jne	L(n10)
 	adc	%r8, %r8
 	adc	%r9, %r9
 	mov	%r8, (rp)
 	mov	%r9, 8(rp)
 	adc	%eax, %eax
 	ret
-L(n10):	mov	8(up), %r9
-	mov	16(up), %r10
+L(n10):	mov	16(up), %r10
 	adc	%r8, %r8
 	adc	%r9, %r9
 	adc	%r10, %r10
-	dec	%eax
 	mov	%r8, (rp)
 	mov	%r9, 8(rp)
 	mov	%r10, 16(rp)
-	adc	%eax, %eax
+	adc	$-1, %eax
 	ret
 
 L(gen):	neg	%ecx			C put rsh count in cl
