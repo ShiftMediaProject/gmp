@@ -74,6 +74,6 @@ perfsqr.h:
 	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/perfsqr.h
 
 tune-gcd-p: gcd.c
-	$(COMPILE) -DTUNE_GCD_P=1 gcd.c -o tune-gcd-p -L ../.libs -lgmp
+	$(COMPILE) -g -O1 -I $(top_srcdir)/tune -DTUNE_GCD_P=1 gcd.c -o tune-gcd-p -L ../.libs -L../tune/.libs -lspeed -lgmp -lm
 
 include Makeasm.am
