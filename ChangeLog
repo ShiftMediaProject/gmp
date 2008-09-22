@@ -1,3 +1,12 @@
+2008-09-22  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
+
+	* gmp-impl.h: Declare mpn_addaddmul_1msb0.
+	* mpn/asm-defs.m4: Added addaddmul_1msb0.
+	* mpn/x86_64/addaddmul_1msb0.asm: New file.
+	* configure.in (gmp_mpn_functions_optional): Added
+	addaddmul_1msb0.
+	(HAVE_NATIVE): List addaddmul_1msb0.
+
 2008-09-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/get_str.c (GET_STR_DC_THRESHOLD): Remove default.
