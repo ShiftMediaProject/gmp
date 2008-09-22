@@ -137,42 +137,16 @@ static void
 hgcd_matrix_mul_1 (struct hgcd_matrix *M, const struct hgcd_matrix1 *M1,
 		   mp_ptr tp)
 {
-  unsigned row;
-  mp_limb_t grow;
-  for (row = 0, grow = 0; row < 2; row++)
-    {
-      mp_limb_t c0, c1;
+  mp_size_t n0, n1;
 
-      /* Compute (u, u') <-- (r00 u + r10 u', r01 u + r11 u') as
+  /* Could avoid copy by some swapping of pointers. */
+  MPN_COPY (tp, M->p[0][0], M->n);
+  n0 = mpn_hgcd_mul_matrix1_vector (M1, M->p[0][0], tp, M->p[0][1], M->n);
+  MPN_COPY (tp, M->p[1][0], M->n);
+  n1 = mpn_hgcd_mul_matrix1_vector (M1, M->p[1][0], tp, M->p[1][1], M->n);
 
-	  t   = u
-	  u  *= r00
-	  u  += r10 * u'
-	  u' *= r11
-	  u' += r01 * t
-      */
-
-      /* FIXME: Duplication with mpn_hgcd_mul_matrix1_vector. */
-      MPN_COPY (tp, M->p[row][0], M->n);
-#if HAVE_NATIVE_mpn_addaddmul_1msb0
-      c0 = mpn_addaddmul_1msb0 (M->p[row][0],
-				M->p[row][0], M->p[row][1], M->n,
-				M1->u[0][0], M1->u[1][0]);
-      c1 = mpn_addaddmul_1msb0 (M->p[row][1],
-				M->p[row][1], tp, M->n,
-				M1->u[1][1], M1->u[0][1]);
-#else /* ! HAVE_NATIVE_mpn_addaddmul_1msb0 */
-      c0 =     mpn_mul_1 (M->p[row][0], M->p[row][0], M->n, M1->u[0][0]);
-      c0 += mpn_addmul_1 (M->p[row][0], M->p[row][1], M->n, M1->u[1][0]);
-
-      c1 =     mpn_mul_1 (M->p[row][1], M->p[row][1], M->n, M1->u[1][1]);
-      c1 += mpn_addmul_1 (M->p[row][1], tp,        M->n, M1->u[0][1]);
-#endif /* ! HAVE_NATIVE_mpn_addaddmul_1msb0 */
-      M->p[row][0][M->n] = c0;
-      M->p[row][1][M->n] = c1;
-      grow |= (c0 | c1);
-    }
-  M->n += (grow != 0);
+  /* Depends on zero initialization */
+  M->n = MAX(n0, n1);
   ASSERT (M->n < M->alloc);
 }
 
@@ -237,8 +211,10 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
       /* Multiply M <- M * M1 */
       hgcd_matrix_mul_1 (M, &M1, tp);
 
+      /* Can't swap inputs, so we need to copy. */
+      MPN_COPY (tp, ap, n);
       /* Multiply M1^{-1} (a;b) */
-      return mpn_hgcd_mul_matrix1_inverse_vector (&M1, n, ap, bp, tp);
+      return mpn_hgcd_mul_matrix1_inverse_vector (&M1, ap, tp, bp, n);
     }
 
  subtract:
