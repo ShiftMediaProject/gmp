@@ -223,35 +223,30 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 /* Multiply (a;b) by M = (u00, u01; u10, u11). Needs n limbs of
    temporary storage. Vector must have space for n + 1 limbs. */
 mp_size_t
-mpn_hgcd_mul_matrix1_vector (struct hgcd_matrix1 *M, mp_size_t n,
-			     mp_ptr ap, mp_ptr bp, mp_ptr tp)
+mpn_hgcd_mul_matrix1_vector (const struct hgcd_matrix1 *M,
+			     mp_ptr rp, mp_srcptr ap, mp_ptr bp, mp_size_t n)
 {
   mp_limb_t ah, bh;
 
-  /* Compute (a,b) <-- (u00 a + u10 b, u01 a + u11 b) as
+  /* Compute (r,b) <-- (u00 a + u10 b, u01 a + u11 b) as
 
-     t  = a
-     a *= u00
-     a += u10 * b
+     r  = u00 * a
+     r += u10 * b
      b *= u11
-     b += u01 * t
+     b += u01 * a
   */
 
-  /* This copying could be avoided if we let our caller swap some
-   * pointers. */
-  MPN_COPY (tp, ap, n);
-
 #if HAVE_NATIVE_mpn_addaddmul_1msb0
-  ah = mpn_addaddmul_1msb0 (ap, ap, bp, n, M->u[0][0], M->u[1][0]);
-  bh = mpn_addaddmul_1msb0 (bp, bp, tp, n, M->u[1][1], M->u[0][1]);
+  ah = mpn_addaddmul_1msb0 (rp, ap, bp, n, M->u[0][0], M->u[1][0]);
+  bh = mpn_addaddmul_1msb0 (bp, bp, ap, n, M->u[1][1], M->u[0][1]);
 #else
-  ah =     mpn_mul_1 (ap, ap, n, M->u[0][0]);
-  ah += mpn_addmul_1 (ap, bp, n, M->u[1][0]);
+  ah =     mpn_mul_1 (rp, ap, n, M->u[0][0]);
+  ah += mpn_addmul_1 (rp, bp, n, M->u[1][0]);
 
   bh =     mpn_mul_1 (bp, bp, n, M->u[1][1]);
-  bh += mpn_addmul_1 (bp, tp, n, M->u[0][1]);
+  bh += mpn_addmul_1 (bp, ap, n, M->u[0][1]);
 #endif
-  ap[n] = ah;
+  rp[n] = ah;
   bp[n] = bh;
   
   n += (ah | bh) > 0;
@@ -261,33 +256,27 @@ mpn_hgcd_mul_matrix1_vector (struct hgcd_matrix1 *M, mp_size_t n,
 /* Multiply (a;b) by M^{-1} = (u11, -u01; -u10, u00) from the left.
    Needs n limbs of temporary storage. */
 mp_size_t
-mpn_hgcd_mul_matrix1_inverse_vector (struct hgcd_matrix1 *M, mp_size_t n,
-				     mp_ptr ap, mp_ptr bp, mp_ptr tp)
+mpn_hgcd_mul_matrix1_inverse_vector (const struct hgcd_matrix1 *M,
+				     mp_ptr rp, mp_srcptr ap, mp_ptr bp, mp_size_t n)
 {
   mp_limb_t h0, h1;
 
   /* Compute (a;b) <-- (u11 a - u01 b; -u10 a + u00 b) as
 
-     t  = a
-     a *= u11
-     a -= u01 * b
+     r  = u11 * a
+     r -= u01 * b
      b *= u00
-     b -= u10 * t
+     b -= u10 * a
   */
 
-  /* This copying could be avoided if we let our caller swap some
-   * pointers. */
-  MPN_COPY (tp, ap, n);
-
-  h0 =    mpn_mul_1 (ap, ap, n, M->u[1][1]);
-  h1 = mpn_submul_1 (ap, bp, n, M->u[0][1]);
+  h0 =    mpn_mul_1 (rp, ap, n, M->u[1][1]);
+  h1 = mpn_submul_1 (rp, bp, n, M->u[0][1]);
   ASSERT (h0 == h1);
 
   h0 =    mpn_mul_1 (bp, bp, n, M->u[0][0]);
-  h1 = mpn_submul_1 (bp, tp, n, M->u[1][0]);
+  h1 = mpn_submul_1 (bp, ap, n, M->u[1][0]);
   ASSERT (h0 == h1);
 
-  n -= (ap[n-1] | bp[n-1]) == 0;
+  n -= (rp[n-1] | bp[n-1]) == 0;
   return n;
 }
-
