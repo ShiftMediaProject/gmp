@@ -1,3 +1,11 @@
+2008-09-22  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/speed.c (routine): New entry for mpn_mul.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Renamed from
+	SPEED_ROUTINE_MPN_MUL_BASECASE.
+	(speed_mpn_mul): Renamed from speed_mpn_mul_basecase.
+	* tune/common.c: Corresponding changes.
+	
 2008-09-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/get_str.c (GET_STR_DC_THRESHOLD): Remove default.
