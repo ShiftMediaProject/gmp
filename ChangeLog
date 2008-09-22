@@ -1,5 +1,7 @@
 2008-09-22  Niels Möller <nisse@lysator.liu.se>  <nisse@king.swox.se>
 
+	* mpn/generic/gcd.c: Use libspeed for timing measurements.
+
 	* gmp-impl.h: Declare mpn_addaddmul_1msb0.
 	* mpn/asm-defs.m4: Added addaddmul_1msb0.
 	* mpn/x86_64/addaddmul_1msb0.asm: New file.

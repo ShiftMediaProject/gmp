@@ -164,25 +164,42 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include "speed.h"
 
-#define TIME(res, code) do {						\
-    clock_t time_start;							\
-    clock_t time_end;							\
-    clock_t time_end_time;						\
-    unsigned time_iter = 0;						\
-									\
-    time_start = clock();						\
-    time_end_time = time_start + CLOCKS_PER_SEC / 100;			\
-    do									\
-      {									\
-	code;								\
-	time_end = clock();						\
-	time_iter++;							\
-      }									\
-    while (time_end <= time_end_time);					\
-									\
-    (res) = (double) (time_end - time_start) / (CLOCKS_PER_SEC * time_iter); \
-  } while (0)
+static int
+compare_double(const void *ap, const void *bp)
+{
+  double a = * (const double *) ap;
+  double b = * (const double *) bp;
+
+  if (a < b)
+    return -1;
+  else if (a > b)
+    return 1;
+  else
+    return 0;
+}
+
+static double
+median (double *v, size_t n)
+{
+  qsort(v, n, sizeof(*v), compare_double);
+
+  return v[n/2];
+}
+
+#define TIME(res, code) do {				\
+  double time_measurement[5];				\
+  unsigned time_i;					\
+							\
+  for (time_i = 0; time_i < 5; time_i++)		\
+    {							\
+      speed_starttime();				\
+      code;						\
+      time_measurement[time_i] = speed_endtime();	\
+    }							\
+  res = median(time_measurement, 5);			\
+} while (0)
 
 int
 main(int argc, char *argv)
@@ -218,7 +235,7 @@ main(int argc, char *argv)
   
   memset (p_table, 0, sizeof(p_table));
   
-  for (n = 10; n++; n < P_TABLE_SIZE)
+  for (n = 100; n++; n < P_TABLE_SIZE)
     {
       mp_size_t p;
       mp_size_t best_p;
@@ -241,11 +258,12 @@ main(int argc, char *argv)
       best_time = lehmer_time;
       best_p = 0;
 
-      for (p = 1; p < n; p += (n+9)/10)
+      for (p = 1; p < n; p++)
 	{
 	  double t;
 
 	  p_table[n] = p;
+
 	  TIME(t, {
 	      MPN_COPY (up, ap, n);
 	      MPN_COPY (vp, bp, n);
@@ -260,7 +278,15 @@ main(int argc, char *argv)
 	}
       printf("%6d %6d %5.3g", n, best_p, (double) best_p / n);
       if (best_p > 0)
-	printf(" %5.3g%%", 100 * (lehmer_time - best_time) / lehmer_time);
+	{
+	  double speedup = 100 * (lehmer_time - best_time) / lehmer_time;
+	  printf(" %5.3g%%", speedup);
+	  if (speedup < 1.0)
+	    {
+	      printf(" (ignored)");
+	      best_p = 0;
+	    }
+	}
       printf("\n");
 
       p_table[n] = best_p;
