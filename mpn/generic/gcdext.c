@@ -34,40 +34,65 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
   return 1;
 }
 
-/* Computes r = u0 x0 + u1 x1. Needs n = un + xn limbs of temporary
-   storage. Result is of size n-1, n or n+1, and the size is returned
-   (if inputs are non-normalized, result may be non-normalized too).
-
-   No overlap between input and output is allowed, since rp is used
-   for temporary storage. */
-
-static mp_size_t
-addmul2_n (mp_ptr rp,
-	   mp_srcptr u0, mp_srcptr u1, mp_size_t un,
-	   mp_srcptr x0, mp_srcptr x1, mp_size_t xn,
-	   mp_ptr tp)
+/* Computes (r;b) = (a; b) M. Result is of size n + M->n +/- 1, and
+   the size is returned (if inputs are non-normalized, result may be
+   non-normalized too). Temporary space needed is M->n + n.
+ */
+static size_t
+hgcd_mul_matrix_vector (struct hgcd_matrix *M,
+			mp_ptr rp, mp_srcptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 {
-  mp_limb_t cy;
-  mp_size_t n;
+  mp_limb_t ah, bh;
 
-  if (xn >= un)
+  /* Compute (r,b) <-- (u00 a + u10 b, u01 a + u11 b) as
+
+     t  = u00 * a
+     r  = u10 * b
+     r += t;
+     
+     t  = u11 * b
+     b  = u01 * a
+     b += t;
+  */
+  
+  if (M->n >= n)
     {
-      mpn_mul (rp, x0, xn, u0, un);
-      mpn_mul (tp, x1, xn, u1, un);
+      mpn_mul (tp, M->p[0][0], M->n, ap, n);
+      mpn_mul (rp, M->p[1][0], M->n, bp, n);
     }
   else
     {
-      mpn_mul (rp, u0, un, x0, xn);
-      mpn_mul (tp, u1, un, x1, xn);
+      mpn_mul (tp, ap, n, M->p[0][0], M->n);
+      mpn_mul (rp, bp, n, M->p[1][0], M->n);
     }
 
-  n = un + xn;
-  cy = mpn_add_n (rp, rp, tp, n);
+  ah = mpn_add_n (rp, rp, tp, n + M->n);
 
-  if (cy > 0)
-    rp[n++] = cy;
+  if (M->n >= n)
+    {
+      mpn_mul (tp, M->p[1][1], M->n, bp, n);
+      mpn_mul (bp, M->p[0][1], M->n, ap, n);
+    }
   else
-    MPN_NORMALIZE (rp, n);
+    {
+      mpn_mul (tp, bp, n, M->p[1][1], M->n);
+      mpn_mul (bp, ap, n, M->p[0][1], M->n);
+    }
+  bh = mpn_add_n (bp, bp, tp, n + M->n);
+
+  n += M->n;
+  if ( (ah | bh) > 0)
+    {
+      rp[n] = ah;
+      bp[n] = bh;
+      n++;
+    }
+  else
+    {
+      /* Normalize */
+      while ( (rp[n-1] | bp[n-1]) == 0)
+	n--;
+    }
 
   return n;
 }
@@ -161,7 +186,7 @@ compute_v (mp_ptr vp,
 
    Storage for hgcd, input (n + 1)/2: 9 n/4 plus some.
    
-   When hgcd succeeds: 1 + floor(3n/2) for adjusting a and b, and 3(n+1) for the cofactors.
+   When hgcd succeeds: 1 + floor(3n/2) for adjusting a and b, and 2(n+1) for the cofactors.
    
    When hgcd fails: 2n + 1 for mpn_gcdext_subdiv_step, which is less.
    
@@ -309,9 +334,9 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
 	u1[0] = 1;
 	
-	/* Temporary storage n + 1 */
+	/* Temporary storage 2n + 1 */
 	n = mpn_gcdext_subdiv_step (gp, &gn, up, usizep, ap, bp, n,
-				    u0, u1, &updated_un, tp);
+				    u0, u1, &updated_un, tp, tp + n);
 	if (n == 0)
 	  {
 	    TMP_FREE;
@@ -333,9 +358,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       nn = mpn_hgcd (ap + p, bp + p, n - p, &M, tp + matrix_scratch);
       if (nn > 0)
 	{
-	  mp_size_t n0, n1;
 	  mp_ptr t0;
-	  mp_ptr t1;
 	  
 	  t0 = tp + matrix_scratch;
 	  ASSERT (M.n <= (n - p - 1)/2);
@@ -344,26 +367,15 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  /* Temporary storage 2 (p + M->n) <= p + n - 1 */
 	  n = mpn_hgcd_matrix_adjust (&M, p + nn, ap, bp, p, t0);
 
-	  t1 = t0 + un;
+	  /* By the same analysis as for mpn_hgcd_matrix_mul */
+	  ASSERT (M.n + un <= ualloc);
 
 	  /* FIXME: This copying could be avoided by some swapping of
 	   * pointers. May need more temporary storage, though. */
 	  MPN_COPY (t0, u0, un);
-	  MPN_COPY (t1, u1, un);
 
-	  /* By the same analysis as for mpn_hgcd_matrix_mul */
-	  ASSERT (M.n + un <= ualloc);
-
-	  /* Temporary storage un */
-	  n0 = addmul2_n (u0, t0, t1, un,
-			  M.p[0][0], M.p[1][0], M.n, t1 + un);
-	  n1 = addmul2_n (u1, t0, t1, un,
-			  M.p[0][1], M.p[1][1], M.n, t1 + un);
-	  
-	  if (n0 > un)
-	    un = n0;
-	  if (n1 > un)
-	    un = n1;
+	  /* Temporary storage ualloc */
+	  un = hgcd_mul_matrix_vector (&M, u0, t0, u1, un, t0 + un);
 
 	  ASSERT (un < ualloc);
 	  ASSERT ( (u0[un-1] | u1[un-1]) > 0);
@@ -376,9 +388,9 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  mp_size_t gn;
 	  mp_size_t updated_un = un;
 
-	  /* Temporary storage n + 1 */
+	  /* Temporary storage 2n + 1 */
 	  n = mpn_gcdext_subdiv_step (gp, &gn, up, usizep, ap, bp, n,
-				      u0, u1, &updated_un, tp);
+				      u0, u1, &updated_un, tp, tp + n);
 	  if (n == 0)
 	    {
 	      TMP_FREE;
