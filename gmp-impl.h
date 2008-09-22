@@ -3518,12 +3518,12 @@ mpn_hgcd2 __GMP_PROTO ((mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t,
 			struct hgcd_matrix1 *));
 
 mp_size_t
-mpn_hgcd_mul_matrix1_vector __GMP_PROTO ((struct hgcd_matrix1 *, mp_size_t,
-					  mp_ptr, mp_ptr, mp_ptr));
+mpn_hgcd_mul_matrix1_vector __GMP_PROTO ((const struct hgcd_matrix1 *,
+					  mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
 
 mp_size_t
-mpn_hgcd_mul_matrix1_inverse_vector __GMP_PROTO ((struct hgcd_matrix1 *, mp_size_t,
-						  mp_ptr, mp_ptr, mp_ptr));
+mpn_hgcd_mul_matrix1_inverse_vector __GMP_PROTO ((const struct hgcd_matrix1 *,
+						  mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
 
 struct hgcd_matrix
 {
@@ -3573,14 +3573,11 @@ mp_size_t
 mpn_gcd_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t,
 			       mp_ptr));
 
-/* To calculate the needed scratch space, n should be a bound for both
-   input and output sizes. */
-#define MPN_GCDEXT_SUBDIV_ITCH(n) (2*(n) + 1)
-
 mp_size_t
 mpn_gcdext_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t *,
 				     mp_ptr, mp_ptr, mp_size_t,
-				     mp_ptr, mp_ptr, mp_size_t *, mp_ptr));
+				     mp_ptr, mp_ptr, mp_size_t *,
+				     mp_ptr, mp_ptr));
 
 #define MPN_GCDEXT_LEHMER_N_ITCH(n) (4*(n) + 3)
 

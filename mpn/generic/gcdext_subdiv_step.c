@@ -43,15 +43,15 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
    *gn, and returns zero. Otherwise, compute the reduced a and b,
    return the new size, and cofactors. */
 
-/* Temporary storage: Let N be a bound both for the inputs a, b, and
-   the cofactors u0, u1 after the division step. Then up to N is
-   needed for the quotient, and N+1 for the product q u0. All in all,
-   2N + 1. */
+/* Temporary storage: Needs n limbs for the quotient, at qp. tp must
+   point to an area large enough for the resulting cofactor, plus one
+   limb extra. All in all, 2N + 1 if N is a bound for both inputs and
+   outputs. */
 mp_size_t
 mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
 			mp_ptr ap, mp_ptr bp, mp_size_t n,
-			mp_ptr u0, mp_ptr u1, mp_size_t *unp, mp_ptr tp)
-
+			mp_ptr u0, mp_ptr u1, mp_size_t *unp,
+			mp_ptr qp, mp_ptr tp)
 {
   mp_size_t an, bn, un;
   mp_size_t qn;
@@ -150,7 +150,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
 
   /* Reduce a -= q b, u1 += q u0 */
   qn = an - bn + 1;
-  mpn_tdiv_qr (tp, ap, 0, ap, an, bp, bn);
+  mpn_tdiv_qr (qp, ap, 0, ap, an, bp, bn);
 
   if (mpn_zero_p (ap, bn))
     goto return_b;
@@ -163,22 +163,22 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
 
   if (u0n > 0)
     {
-      qn -= (tp[qn - 1] == 0);
+      qn -= (qp[qn - 1] == 0);
 
       if (qn > u0n)
-	mpn_mul (tp + qn, tp, qn, u0, u0n);
+	mpn_mul (tp, qp, qn, u0, u0n);
       else
-	mpn_mul (tp + qn, u0, u0n, tp, qn);
+	mpn_mul (tp, u0, u0n, qp, qn);
 
       if (qn + u0n > un)
 	{
-	  ASSERT_NOCARRY (mpn_add (u1, tp + qn, qn + u0n, u1, un));
+	  ASSERT_NOCARRY (mpn_add (u1, tp, qn + u0n, u1, un));
 	  un = qn + u0n;
 	  un -= (u1[un-1] == 0);
 	}
       else
 	{
-	  u1[un] = mpn_add (u1, u1, un, tp + qn, qn + u0n);
+	  u1[un] = mpn_add (u1, u1, un, tp, qn + u0n);
 	  un += (u1[un] > 0);
 	}
     }
