@@ -149,7 +149,6 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
       if ( (uh | vh) > 0)
 	{
-	  mp_limb_t cy;
 	  uh += vh;
 	  up[un++] = uh;
 	  if (uh < vh)

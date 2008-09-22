@@ -80,8 +80,6 @@ gcd_2 (mp_ptr gp, mp_srcptr up, mp_srcptr vp)
 mp_size_t
 mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 {
-  mp_size_t scratch;
-
   /* Relax this requirement, and normalize at the start? Must disallow
      A = B = 0, though. */
   ASSERT(ap[n-1] > 0 || bp[n-1] > 0);
