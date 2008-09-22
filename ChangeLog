@@ -4,6 +4,8 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Renamed from
 	SPEED_ROUTINE_MPN_MUL_BASECASE.
 	(speed_mpn_mul): Renamed from speed_mpn_mul_basecase.
+	(SPEED_ROUTINE_MPN_MUL): Allocate our own memory of xp operand.
+
 	* tune/common.c: Corresponding changes.
 	
 2008-09-21  Torbjorn Granlund  <tege@swox.com>
