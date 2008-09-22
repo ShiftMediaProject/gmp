@@ -111,9 +111,10 @@ mpn_gcd_lehmer_n (mp_ptr gp, mp_ptr ap, mp_ptr bp, mp_size_t n, mp_ptr tp)
 
       /* Try an mpn_nhgcd2 step */
       if (mpn_hgcd2 (ah, al, bh, bl, &M))
-	/* Temporary storage n */
-	n = mpn_hgcd_mul_matrix1_inverse_vector (&M, n, ap, bp, tp);
-
+	{
+	  n = mpn_hgcd_mul_matrix1_inverse_vector (&M, tp, ap, bp, n);
+	  MP_PTR_SWAP (ap, tp);
+	}
       else
 	{
 	  /* mpn_hgcd2 has failed. Then either one of a or b is very

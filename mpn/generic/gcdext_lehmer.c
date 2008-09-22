@@ -22,7 +22,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Temporary storage: 2*(n+1) for u. n+1 for the matrix-vector
+/* Temporary storage: 3*(n+1) for u. n+1 for the matrix-vector
    multiplications (if hgcd2 succeeds). If hgcd fails, n+1 limbs are
    needed for the division, with most n for the quotient, and n+1 for
    the product q u0. In all, 4n + 3. */
@@ -46,11 +46,13 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   mp_size_t un;
   mp_ptr u0;
   mp_ptr u1;
+  mp_ptr u2;
 
-  MPN_ZERO (tp, 2*ualloc);
+  MPN_ZERO (tp, 3*ualloc);
   u0 = tp; tp += ualloc;
   u1 = tp; tp += ualloc;
-
+  u2 = tp; tp += ualloc;
+  
   u1[0] = 1; un = 1;
 
   /* FIXME: Handle n == 2 differently, after the loop? */
@@ -94,8 +96,10 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       /* Try an mpn_nhgcd2 step */
       if (mpn_hgcd2 (ah, al, bh, bl, &M))
 	{
-	  n = mpn_hgcd_mul_matrix1_inverse_vector (&M, n, ap, bp, tp);
-	  un = mpn_hgcd_mul_matrix1_vector(&M, un, u0, u1, tp);
+	  n = mpn_hgcd_mul_matrix1_inverse_vector (&M, tp, ap, bp, n);
+	  MP_PTR_SWAP (ap, tp);
+	  un = mpn_hgcd_mul_matrix1_vector(&M, u2, u0, u1, un);
+	  MP_PTR_SWAP (u0, u2);
 	}
       else
 	{
@@ -105,9 +109,10 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  mp_size_t gn;
 	  mp_size_t updated_un = un;
 
-	  /* Temporary storage n + 1 */
+	  /* Temporary storage n for the quotient and ualloc for the
+	     new cofactor. */
 	  n = mpn_gcdext_subdiv_step (gp, &gn, up, usize, ap, bp, n,
-				      u0, u1, &updated_un, tp);
+				      u0, u1, &updated_un, tp, u2);
 	  if (n == 0)
 	    return gn;
 

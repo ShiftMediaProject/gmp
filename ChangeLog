@@ -1,5 +1,12 @@
 2008-09-22  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Updated for
+	interface changes in mpn_hgcd_mul_matrix1_vector,
+	mpn_hgcd_mul_matrix1_inverse_vector and mpn_gcdext_subdiv_step.
+
+	* mpn/generic/gcd_lehmer.c (mpn_gcd_lehmer_n): Updated for
+	interface change in mpn_hgcd_mul_matrix1_inverse_vector.
+
 	* mpn/generic/gcdext_subdiv_step.c (mpn_gcdext_subdiv_step): Use
 	separate scratch arguments for the quotient and for the cofactor
 	update.
