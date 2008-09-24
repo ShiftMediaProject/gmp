@@ -1,3 +1,8 @@
+2008-09-24  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Handle --enable-minithres.
+	* mpn/minithres/gmp-mparam.h: Update all values.
+
 2008-09-22  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.c (routine): New entry for mpn_mul.
