@@ -219,6 +219,7 @@ double speed_mpn_mul_1_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_mul_2 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_3 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_4 _PROTO ((struct speed_params *s));
+double speed_mpn_mul _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr _PROTO ((struct speed_params *s));
@@ -850,10 +851,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   SPEED_ROUTINE_MPN_UNARY_N (function, 8)
 
 
-/* For mpn_mul_basecase, xsize=r, ysize=s->size. */
-#define SPEED_ROUTINE_MPN_MUL_BASECASE(function)			\
+/* For mpn_mul, mpn_mul_basecase, xsize=r, ysize=s->size. */
+#define SPEED_ROUTINE_MPN_MUL(function)					\
   {									\
-    mp_ptr    wp;							\
+    mp_ptr    wp, xp;							\
     mp_size_t size1;							\
     unsigned  i;							\
     double    t;							\
@@ -866,8 +867,9 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, size1 + s->size, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (xp, size1, s->align_xp);			\
 									\
-    speed_operand_src (s, s->xp, size1);				\
+    speed_operand_src (s, xp, size1);					\
     speed_operand_src (s, s->yp, s->size);				\
     speed_operand_dst (s, wp, size1 + s->size);				\
     speed_cache_fill (s);						\
@@ -875,7 +877,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, s->xp, size1, s->yp, s->size);			\
+      function (wp, xp, size1, s->yp, s->size);				\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

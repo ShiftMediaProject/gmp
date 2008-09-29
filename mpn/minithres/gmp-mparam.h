@@ -1,6 +1,6 @@
 /* Minimal values gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000, 2006 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2006, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,13 +17,15 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+/* The values in this file are not currently minimal.
+   Trimming them further would be good.  */
 
-#define MUL_KARATSUBA_THRESHOLD           2
-#define MUL_TOOM3_THRESHOLD              17
+#define MUL_KARATSUBA_THRESHOLD           8
+#define MUL_TOOM3_THRESHOLD              20
 
 #define SQR_BASECASE_THRESHOLD            0
-#define SQR_KARATSUBA_THRESHOLD           2
-#define SQR_TOOM3_THRESHOLD              17
+#define SQR_KARATSUBA_THRESHOLD           8
+#define SQR_TOOM3_THRESHOLD              20
 
 #define MULLOW_BASECASE_THRESHOLD         0
 #define MULLOW_DC_THRESHOLD               2
@@ -47,14 +49,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIVEXACT_1_THRESHOLD              0  /* always (native) */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always (native) */
 
-#define GET_STR_DC_THRESHOLD              2
-#define GET_STR_PRECOMPUTE_THRESHOLD      4
+#define GET_STR_DC_THRESHOLD              4
+#define GET_STR_PRECOMPUTE_THRESHOLD     10
 #define SET_STR_THRESHOLD                64
+#define SET_STR_PRECOMPUTE_THRESHOLD    100
 
-#define MUL_FFT_TABLE  { 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 0}
+#define MUL_FFT_TABLE  {256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0}
 #define MUL_FFT_MODF_THRESHOLD 32
-#define MUL_FFT_THRESHOLD     128
+#define MUL_FFT_THRESHOLD      256
 
-#define SQR_FFT_TABLE  { 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 0}
+#define SQR_FFT_TABLE  {256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0}
 #define SQR_FFT_MODF_THRESHOLD 32
-#define SQR_FFT_THRESHOLD     128
+#define SQR_FFT_THRESHOLD      256

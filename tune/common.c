@@ -879,7 +879,12 @@ speed_mpn_mul_n_sqr (struct speed_params *s)
 double
 speed_mpn_mul_basecase (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MUL_BASECASE(mpn_mul_basecase);
+  SPEED_ROUTINE_MPN_MUL(mpn_mul_basecase);
+}
+double
+speed_mpn_mul (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL(mpn_mul);
 }
 double
 speed_mpn_sqr_basecase (struct speed_params *s)

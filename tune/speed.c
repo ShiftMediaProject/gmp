@@ -143,7 +143,6 @@ const struct routine_t {
   const char        *name;
   speed_function_t  fun;
   int               flag;
-  
 } routine[] = {
 
   { "noop",              speed_noop                 },
@@ -287,7 +286,8 @@ const struct routine_t {
   { "mpn_jacobi_base_2", speed_mpn_jacobi_base_2    },
   { "mpn_jacobi_base_3", speed_mpn_jacobi_base_3    },
 
-  { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
+  { "mpn_mul",           speed_mpn_mul,         FLAG_R_OPTIONAL },
+  { "mpn_mul_basecase",  speed_mpn_mul_basecase,FLAG_R_OPTIONAL },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
 #if HAVE_NATIVE_mpn_sqr_diagonal
   { "mpn_sqr_diagonal",  speed_mpn_sqr_diagonal     },
@@ -702,7 +702,7 @@ fopen_for_write (const char *filename)
     }
   return fp;
 }
-      
+
 void
 fclose_written (FILE *fp, const char *filename)
 {
@@ -726,12 +726,12 @@ run_gnuplot (int argc, char *argv[])
   char  *data_filename;
   FILE  *fp;
   int   i;
-     
+
   plot_filename = (char *) (*__gmp_allocate_func)
     (strlen (option_gnuplot_basename) + 20);
   data_filename = (char *) (*__gmp_allocate_func)
     (strlen (option_gnuplot_basename) + 20);
-      
+
   sprintf (plot_filename, "%s.gnuplot", option_gnuplot_basename);
   sprintf (data_filename, "%s.data",    option_gnuplot_basename);
 
@@ -823,7 +823,7 @@ r_string (const char *s)
       mp_limb_t  l;
       if (n > BITS_PER_MP_LIMB)
         {
-          fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
+          fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n",
                    n, BITS_PER_MP_LIMB);
           exit (1);
         }
@@ -834,7 +834,7 @@ r_string (const char *s)
     {
       if (n > BITS_PER_MP_LIMB)
         {
-          fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
+          fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n",
                    n, BITS_PER_MP_LIMB);
           exit (1);
         }
@@ -920,7 +920,7 @@ void
 usage (void)
 {
   int  i;
-  
+
   speed_time_init ();
 
   printf ("Usage: speed [-options] -s size <routine>...\n");
@@ -959,12 +959,12 @@ usage (void)
 
   for (i = 0; i < numberof (routine); i++)
     {
-      if (routine[i].flag & FLAG_R) 
-        printf ("\t%s.r\n", routine[i].name); 
-      else if (routine[i].flag & FLAG_R_OPTIONAL) 
-        printf ("\t%s (optional .r)\n", routine[i].name); 
+      if (routine[i].flag & FLAG_R)
+        printf ("\t%s.r\n", routine[i].name);
+      else if (routine[i].flag & FLAG_R_OPTIONAL)
+        printf ("\t%s (optional .r)\n", routine[i].name);
       else
-        printf ("\t%s\n", routine[i].name); 
+        printf ("\t%s\n", routine[i].name);
     }
   printf ("\n");
   printf ("Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n");
@@ -1177,7 +1177,7 @@ main (int argc, char *argv[])
       choice[num_choices] = c;
       num_choices++;
     }
-  
+
   if ((option_cmp == CMP_RATIO || option_cmp == CMP_DIFFERENCE) &&
       num_choices < 2)
     {
@@ -1203,7 +1203,7 @@ main (int argc, char *argv[])
                 speed_measure (speed_noop, NULL) / speed_cycletime);
       printf (", precision %d units of %.2e secs",
               speed_precision, speed_unittime);
-      
+
       if (speed_cycletime == 1.0 || speed_cycletime == 0.0)
         printf (", CPU freq unknown\n");
       else
@@ -1211,7 +1211,7 @@ main (int argc, char *argv[])
 
       printf ("       ");
       for (i = 0; i < num_choices; i++)
-        printf (" %*s", COLUMN_WIDTH, choice[i].name); 
+        printf (" %*s", COLUMN_WIDTH, choice[i].name);
       printf ("\n");
 
       run_all (stdout);
@@ -1228,7 +1228,7 @@ main (int argc, char *argv[])
         else
           printf ("getrusage(): utime %ld.%06ld data %ld stack %ld maxresident %ld\n",
                   r.ru_utime.tv_sec, r.ru_utime.tv_usec,
-                  r.ru_idrss, r.ru_isrss, r.ru_ixrss); 
+                  r.ru_idrss, r.ru_isrss, r.ru_ixrss);
       }
 #else
       printf ("getrusage() not available\n");

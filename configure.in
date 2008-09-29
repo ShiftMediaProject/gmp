@@ -220,6 +220,16 @@ esac],
 [enable_fat=no])
 
 
+AC_ARG_ENABLE(minithres,
+AC_HELP_STRING([--enable-minithres],
+               [choose minimal thresholds for testing [[default=no]]]),
+[case $enableval in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-minithres, need yes or no]) ;;
+esac],
+[enable_minithres=no])
+
+
 
 tmp_host=`echo $host_cpu | sed 's/\./_/'`
 AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_$tmp_host)
@@ -3015,6 +3025,11 @@ if test "$gmp_asm_syntax_testing" != no; then
   esac
 fi
 
+# For --enable-minithres, prepend "minithres" to path so that its special
+# gmp-mparam.h will be used.
+if test $enable_minithres = yes; then
+  path="minithres $path"
+fi
 
 # Create link for gmp-mparam.h.
 gmp_mparam_source=
