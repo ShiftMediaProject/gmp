@@ -49,12 +49,12 @@ hgcd_mul_matrix_vector (struct hgcd_matrix *M,
      t  = u00 * a
      r  = u10 * b
      r += t;
-     
+
      t  = u11 * b
      b  = u01 * a
      b += t;
   */
-  
+
   if (M->n >= n)
     {
       mpn_mul (tp, M->p[0][0], M->n, ap, n);
@@ -117,7 +117,7 @@ compute_v (mp_ptr vp,
   ASSERT (n > 0);
   ASSERT (gn > 0);
   ASSERT (usize != 0);
-  
+
   size = ABS (usize);
   ASSERT (size <= n);
 
@@ -128,7 +128,7 @@ compute_v (mp_ptr vp,
     mpn_mul (tp, ap, an, up, size);
   else
     mpn_mul (tp, up, size, ap, an);
-    
+
   size += an;
 
   ASSERT (gn <= size);
@@ -185,24 +185,24 @@ compute_v (mp_ptr vp,
    Storage for hgcd matrix M, with input ceil(n/2): 5 * ceil(n/4)
 
    Storage for hgcd, input (n + 1)/2: 9 n/4 plus some.
-   
+
    When hgcd succeeds: 1 + floor(3n/2) for adjusting a and b, and 2(n+1) for the cofactors.
-   
+
    When hgcd fails: 2n + 1 for mpn_gcdext_subdiv_step, which is less.
-   
+
    For the lehmer call after the loop, Let T denote
    GCDEXT_DC_THRESHOLD. For the gcdext_lehmer call, we need T each for
    u, a and b, and 4T+3 scratch space. Next, for compute_v, we need T
    + 1 for v and 2T + 1 scratch space. In all, 7T + 3 is sufficient.
-   
+
 */
 
 /* Optimal choice of p seems difficult. In each iteration the division
- * of work beteen hgcd and the updates of u0 and u1 depends on the
+ * of work between hgcd and the updates of u0 and u1 depends on the
  * current size of the u. It may be desirable to use a different
  * choice of p in each iteration. Also the input size seems to matter;
  * choosing p = n / 3 in the first iteration seems to improve
- * performance slightly for input size just above the theshold, but
+ * performance slightly for input size just above the threshold, but
  * degrade performance for larger inputs. */
 #define CHOOSE_P_1(n) ((n) / 2)
 #define CHOOSE_P_2(n) ((n) / 3)
@@ -221,7 +221,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   mp_ptr u1;
 
   mp_ptr tp;
-  
+
   TMP_DECL;
 
   ASSERT (an >= n);
@@ -232,7 +232,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   /* FIXME: Check for small sizes first, before setting up temporary
      storage etc. */
   talloc = MPN_GCDEXT_LEHMER_N_ITCH(n);
-  
+
   /* For initial division */
   scratch = an - n + 1;
   if (scratch > talloc)
@@ -250,7 +250,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       matrix_scratch = MPN_HGCD_MATRIX_INIT_ITCH (n - min_p);
       hgcd_scratch = mpn_hgcd_itch (n - min_p);
       update_scratch = max_p + n - 1;
-      
+
       scratch = matrix_scratch + MAX(hgcd_scratch, update_scratch);
       if (scratch > talloc)
 	talloc = scratch;
@@ -289,7 +289,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       TMP_FREE;
       return gn;
     }
-  
+
   MPN_ZERO (tp, 2*ualloc);
   u0 = tp; tp += ualloc;
   u1 = tp; tp += ualloc;
@@ -331,7 +331,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	mp_size_t updated_un = 1;
 
 	u1[0] = 1;
-	
+
 	/* Temporary storage 2n + 1 */
 	n = mpn_gcdext_subdiv_step (gp, &gn, up, usizep, ap, bp, n,
 				    u0, u1, &updated_un, tp, tp + n);
@@ -345,7 +345,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	ASSERT (un < ualloc);
       }
   }
-  
+
   while (ABOVE_THRESHOLD (n, GCDEXT_DC_THRESHOLD))
     {
       struct hgcd_matrix M;
@@ -357,7 +357,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       if (nn > 0)
 	{
 	  mp_ptr t0;
-	  
+
 	  t0 = tp + matrix_scratch;
 	  ASSERT (M.n <= (n - p - 1)/2);
 	  ASSERT (M.n + p <= (p + n - 1) / 2);
@@ -399,7 +399,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  ASSERT (un < ualloc);
 	}
     }
-  
+
   if (mpn_zero_p (ap, n))
     {
       MPN_COPY (gp, bp, n);
@@ -436,14 +436,14 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
     {
       /* We have A = ... a + ... b
 		 B =  u0 a +  u1 b
-		 
+
 		 a = u1  A + ... B
 		 b = -u0 A + ... B
 
-         with bounds
+	 with bounds
 
 	   |u0|, |u1| <= B / min(a, b)
-	 
+
 	 Compute g = u a + v b = (u u1 - v u0) A + (...) B
 	 Here, u, v are bounded by
 
@@ -456,7 +456,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
       mp_size_t lehmer_un;
       mp_size_t lehmer_vn;
       mp_size_t gn;
-      
+
       mp_ptr lehmer_up;
       mp_ptr lehmer_vp;
       int negate;
@@ -482,7 +482,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
       lehmer_vp = tp;
       /* Compute v = (g - u a) / b */
-      lehmer_vn = compute_v (lehmer_vp, 
+      lehmer_vn = compute_v (lehmer_vp,
 			     ap, bp, n, gp, gn, lehmer_up, lehmer_un, tp + n + 1);
 
       if (lehmer_un > 0)
@@ -501,7 +501,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	{
 	  ASSERT (un == 1);
 	  ASSERT (u0[0] == 1);
-	  
+
 	  /* u1 == 0 ==> u u1 + v u0 = v */
 	  MPN_COPY (up, lehmer_vp, lehmer_vn);
 	  *usizep = negate ? lehmer_vn : - lehmer_vn;
