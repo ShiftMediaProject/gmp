@@ -99,7 +99,7 @@ hgcd_matrix_update_q (struct hgcd_matrix *M, mp_srcptr qp, mp_size_t qn,
 	  if (M->p[0][1-col][n-1] > 0 || M->p[1][1-col][n-1] > 0)
 	    break;
 	}
-      
+
       ASSERT (qn + n <= M->alloc);
 
       for (row = 0; row < 2; row++)
@@ -249,10 +249,10 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
     }
 
   bn = n;
-  MPN_NORMALIZE (bp, bn);  
+  MPN_NORMALIZE (bp, bn);
   if (bn <= s)
     return 0;
-  
+
   /* We have #a, #b > s. When is it possible that #(a-b) < s? For
      cancellation to happen, the numbers must be of the form
 
@@ -275,7 +275,7 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
       if (c < 0)
 	{
 	  mp_limb_t cy;
-	  
+
 	  /* The limbs from k and up are cancelled. */
 	  if (k == s)
 	    return 0;
@@ -292,12 +292,12 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
     }
   else
     ASSERT_NOCARRY (mpn_sub_n (ap, ap, bp, an));
-  
+
   ASSERT (an > s);
   ASSERT (ap[an-1] > 0);
   ASSERT (bn > s);
   ASSERT (bp[bn-1] > 0);
-  
+
   hgcd_matrix_update_1 (M, col);
 
   if (an < bn)
@@ -320,7 +320,7 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
   qn = an + 1 - bn;
 
   /* FIXME: We could use an approximate division, that may return a
-     too small quotient, and only guarantess that the size of r is
+     too small quotient, and only guarantee that the size of r is
      almost the size of b. FIXME: Let ap and remainder overlap. */
   mpn_tdiv_qr (tp, ap, 0, ap, an, bp, bn);
   qn -= (tp[qn -1] == 0);
@@ -379,7 +379,7 @@ mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
       ASSERT (n > s);
       nn = hgcd_step (n, ap, bp, s, M, tp);
       if (!nn )
-	return n;      
+	return n;
     }
 }
 
@@ -493,7 +493,7 @@ mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
 	n--;
     }
   ASSERT (ap[n-1] > 0 || bp[n-1] > 0);
-  return n;  
+  return n;
 }
 
 /* Size analysis for hgcd:
@@ -511,10 +511,10 @@ mpn_hgcd_matrix_adjust (struct hgcd_matrix *M,
    For the recursive call, we need S(n1) = S(ceil(n/2)).
 
    S(n) <= 12*ceil(n/4) + 5 + S(ceil(n/2))
-        <= 12*(ceil(n/4) + ... + ceil(n/2^(1+k))) + 5k + S(ceil(n/2^k))
-        <= 12*(2 ceil(n/4) + k) + 5k + S(n/2^k)   
+	<= 12*(ceil(n/4) + ... + ceil(n/2^(1+k))) + 5k + S(ceil(n/2^k))
+	<= 12*(2 ceil(n/4) + k) + 5k + S(n/2^k)
 	<= 24 ceil(n/4) + 17k + S(n/2^k)
-	
+
 */
 
 mp_size_t
@@ -546,7 +546,7 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 {
   mp_size_t s = n/2 + 1;
   mp_size_t n2 = (3*n)/4 + 1;
-  
+
   mp_size_t p, nn;
   int success = 0;
 
@@ -623,5 +623,5 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
       n = nn;
       success = 1;
-    } 
+    }
 }
