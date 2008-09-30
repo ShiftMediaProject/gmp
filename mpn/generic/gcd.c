@@ -51,7 +51,7 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
  * elements of size p = 2n/3. */
 
 /* From analysis of the theoretical running time, it appears that when
- * multiplication takes time O(n^alpha), p should be choosen so that
+ * multiplication takes time O(n^alpha), p should be chosen so that
  * the ratio of the time for the mpn_hgcd call, and the time for the
  * multiplication in mpn_hgcd_matrix_adjust, is roughly 1/(alpha -
  * 1). */
@@ -69,7 +69,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   mp_size_t talloc;
   mp_size_t scratch;
   mp_size_t matrix_scratch;
-  
+
   mp_size_t gn;
   mp_ptr tp;
   TMP_DECL;
@@ -77,7 +77,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t n)
   /* FIXME: Check for small sizes first, before setting up temporary
      storage etc. */
   talloc = MPN_GCD_LEHMER_N_ITCH(n);
-  
+
   /* For initial division */
   scratch = usize - n + 1;
   if (scratch > talloc)
@@ -232,9 +232,9 @@ main(int argc, char *argv)
 
   mpn_random (ap, P_TABLE_SIZE);
   mpn_random (bp, P_TABLE_SIZE);
-  
+
   memset (p_table, 0, sizeof(p_table));
-  
+
   for (n = 100; n++; n < P_TABLE_SIZE)
     {
       mp_size_t p;
@@ -258,7 +258,7 @@ main(int argc, char *argv)
       best_time = lehmer_time;
       best_p = 0;
 
-      for (p = 1; p < n; p++)
+      for (p = n * 0.48; p < n * 0.77; p++)
 	{
 	  double t;
 
