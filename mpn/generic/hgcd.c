@@ -395,7 +395,7 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
      are > 0, no element can decrease. The new elements are of size
      M->n + M1->n, one limb more or less. The computation of the
      matrix product produces elements of size M->n + M1->n + 1. But
-     the true size, after normalization, may be two limbs smaller. */
+     the true size, after normalization, may be three limbs smaller. */
 
   /* FIXME: Strassen multiplication gives only a small speedup. In FFT
      multiplication range, this function could be sped up quite a lot
@@ -413,16 +413,16 @@ mpn_hgcd_matrix_mul (struct hgcd_matrix *M, const struct hgcd_matrix *M1,
 		    M1->p[0][0], M1->p[0][1],
 		    M1->p[1][0], M1->p[1][1], M1->n, tp);
 
-  n = M->n + M1->n + 1;
-  n -= ((M->p[0][0][n-1] | M->p[0][1][n-1]
-	 | M->p[1][0][n-1] | M->p[1][1][n-1]) == 0);
-  n -= ((M->p[0][0][n-1] | M->p[0][1][n-1]
-	 | M->p[1][0][n-1] | M->p[1][1][n-1]) == 0);
+  /* Index of last potentially non-zero limb, size is one greater. */
+  n = M->n + M1->n;
 
-  ASSERT ((M->p[0][0][n-1] | M->p[0][1][n-1]
-	   | M->p[1][0][n-1] | M->p[1][1][n-1]) > 0);
+  n -= ((M->p[0][0][n] | M->p[0][1][n] | M->p[1][0][n] | M->p[1][1][n]) == 0);
+  n -= ((M->p[0][0][n] | M->p[0][1][n] | M->p[1][0][n] | M->p[1][1][n]) == 0);
+  n -= ((M->p[0][0][n] | M->p[0][1][n] | M->p[1][0][n] | M->p[1][1][n]) == 0);
 
-  M->n = n;
+  ASSERT ((M->p[0][0][n] | M->p[0][1][n] | M->p[1][0][n] | M->p[1][1][n]) > 0);
+
+  M->n = n + 1;
 }
 
 /* Multiplies the least significant p limbs of (a;b) by M^-1.

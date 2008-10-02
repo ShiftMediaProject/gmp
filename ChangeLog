@@ -1,3 +1,7 @@
+2008-10-02  Niels Möller  <nisse@lysator.liu.se>
+
+	* hgcd.c (mpn_hgcd_matrix_mul): Fixed normalization bug.
+
 2008-09-24  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Handle --enable-minithres.
