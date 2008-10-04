@@ -1,7 +1,7 @@
-dnl  AMD64 mpn_addmul_2 -- Multiply an n-limb vector with a 2-limb and add the
-dnl  result to a third limb vector.
+dnl  AMD64 mpn_addmul_2 -- Multiply an n-limb vector with a 2-limb vector and
+dnl  add the result to a third limb vector.
 
-dnl  Copyright 2007 Free Software Foundation, Inc.
+dnl  Copyright 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,218 +21,147 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 2.86
-C K10:		 2.86
-C P4:		13.65	FIXME now it seems to magically have dropped to 15 c/l.
-C P6-15:	 4.67
+C K8,K9:	 2.375
+C K10:		 ?
+C P4:		 ?
+C P6-15:	 4.45
+
+C This code is the result of running a code generation and permutation tool
+C suite written by David Harvey and Torbjorn Granlund.
 
 C TODO
-C  1. Try scheduling mul last in loop, just like we do in addmul_1.
-C  2. Try more loop variants, play with this variant more.  We reached the
-C     current speed without much effort, surely it is not ultimate.
+C  * Work on feed-in and wind-down code.
+C  * Convert "mov $0" to "xor".
+C  * Adjust initial lea to save some bytes.
+C  * Perhaps adjust n from n_param&3 value?
 
 C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`n',	`%rdx')
-define(`vp',	`%rcx')
+define(`rp',     `%rdi')
+define(`up',     `%rsi')
+define(`n_param',`%rdx')
+define(`vp',     `%rcx')
+
+define(`v0', `%r8')
+define(`v1', `%r9')
+define(`w0', `%rbx')
+define(`w1', `%rcx')
+define(`w2', `%rbp')
+define(`w3', `%r10')
+define(`n',  `%r11')
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_addmul_2)
-
 	push	%rbx
 	push	%rbp
-	push	%r12
 
-define(`vl', `%r9')
-define(`vh', `%r10')
-	mov  (vp), vl
-	mov  8(vp), vh
+	mov	(vp), v0
+	mov	8(vp), v1
 
-	mov	n, %r11
-define(`n',	`%r11')
-
-	lea	(up,n,8), up
-	lea	(rp,n,8), rp
+	mov	n_param, n
 	neg	n
+	lea	-32(up,n_param,8), up
+	lea	-32(rp,n_param,8), rp
 
-	xor	%r8, %r8
-	xor	%ebx, %ebx
-	xor	%ecx, %ecx
-	xor	%rbp, %rbp
-
-	mov	(up,n,8), %r12
-	mov	%r12, %rax
+	and	$3, R32(n_param)
+	jz	L(am2p0)
+	cmp	$2, R32(n_param)
+	jc	L(am2p1)
+	jz	L(am2p2)
+L(am2p3):
+	mov	32(up,n,8), %rax
+	mul	v0
+	mov	%rax, w1
+	mov	32(up,n,8), %rax
+	mov	%rdx, w2
+	xor	R32(w3), R32(w3)
+	add	$2, n
+	jmp	L(am3)
+L(am2p0):
+	mov	32(up,n,8), %rax
+	mul	v0
+	mov	%rax, w0
+	mov	32(up,n,8), %rax
+	mov	%rdx, w1
+	xor	R32(w2), R32(w2)
 	add	$3, n
-	jns	L(end)			C <= 4 iterations
+	jmp	L(am0)
+L(am2p1):
+	mov	32(up,n,8), %rax
+	mul	v0
+	mov	%rax, w3
+	mov	32(up,n,8), %rax
+	mov	%rdx, w0
+	xor	R32(w1), R32(w1)
+	jmp	L(am1)
+L(am2p2):
+	mov	32(up,n,8), %rax
+	mul	v0
+	mov	%rax, w2
+	mov	32(up,n,8), %rax
+	mov	%rdx, w3
+	xor	R32(w0), R32(w0)
+	xor	R32(w1), R32(w1)
+	add	$1, n
+	jmp	L(am2)
 
 	ALIGN(32)
-L(oop):	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	add	%rbx, -24(rp,n,8)
-	mov	-16(up,n,8), %r12
-	mov	%r8d, %ebx
-	adc	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
+L(top):
+	add	w3, (rp,n,8)
+	adc	%rax, w0
+	mov	8(up,n,8), %rax
+	adc	%rdx, w1
+	mov	$0, R32(w2)
+	mul	v0
+	add	%rax, w0
+	mov	8(up,n,8), %rax
+	adc	%rdx, w1
+	adc	$0, R32(w2)
+L(am0):	mul	v1
+	add	w0, 8(rp,n,8)
+	adc	%rax, w1
+	adc	%rdx, w2
+	mov	16(up,n,8), %rax
+	mov	$0, R32(w3)
+	mul	v0
+	add	%rax, w1
+	mov	16(up,n,8), %rax
+	adc	%rdx, w2
+	adc	$0, R32(w3)
+L(am3):	mul	v1
+	add	w1, 16(rp,n,8)
+	adc	%rax, w2
+	mov	24(up,n,8), %rax
+	adc	%rdx, w3
+	mul	v0
+	mov	$0, R32(w0)
+	add	%rax, w2
+	adc	%rdx, w3
+	mov	$0, R32(w1)
+	mov	24(up,n,8), %rax
+	adc	$0, R32(w0)
+L(am2):	mul	v1
+	add	w2, 24(rp,n,8)
+	adc	%rax, w3
+	adc	%rdx, w0
+	mov	32(up,n,8), %rax
+	mul	v0
+	add	%rax, w3
+	mov	32(up,n,8), %rax
+	adc	%rdx, w0
+	adc	$0, R32(w1)
+L(am1):	mul	v1
+	add	$4, n
+	js	L(top)
 
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	add	%rcx, -16(rp,n,8)
-	mov	-8(up,n,8), %r12
-	mov	%r8d, %ecx
-	adc	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
+	add	w3, (rp,n,8)
+	adc	%rax, w0
+	adc	%rdx, w1
+	mov	w0, 8(rp,n,8)
+	mov	w1, %rax
 
-	mul	vl
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	adc	$0, %ecx
-	mul	vh
-	add	%rbp, -8(rp,n,8)
-	mov	(up,n,8), %r12
-	mov	%r8d, %ebp
-	adc	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-
-	add	$3, n
-	jns	L(end)
-
-	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	add	%rbx, -24(rp,n,8)
-	mov	-16(up,n,8), %r12
-	mov	%r8d, %ebx
-	adc	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	add	%rcx, -16(rp,n,8)
-	mov	-8(up,n,8), %r12
-	mov	%r8d, %ecx
-	adc	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-
-	mul	vl
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	adc	$0, %ecx
-	mul	vh
-	add	%rbp, -8(rp,n,8)
-	mov	(up,n,8), %r12
-	mov	%r8d, %ebp
-	adc	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-
-	add	$3, n
-	js	L(oop)
-
-L(end):	jne	L(n3)
-	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	add	%rbx, -24(rp)
-	mov	-16(up), %r12
-	mov	%r8d, %ebx
-	adc	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	add	%rcx, -16(rp)
-	mov	-8(up), %r12
-	mov	%r8d, %ecx
-	adc	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	mul	vl
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	adc	$0, %ecx
-	mul	vh
-	add	%rbp, -8(rp)
-	adc	%rax, %rbx
-	adc	%rdx, %rcx
-	mov	%rbx, (rp)
-	mov	%rcx, %rax
-	jmp	L(ret)
-
-L(n3):	cmp	$1, n
-	jne	L(n2)
-	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	add	%rbx, -16(rp)
-	mov	-8(up), %r12
-	mov	%r8d, %ebx
-	adc	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	add	%rcx, -8(rp)
-	adc	%rax, %rbp
-	adc	%rdx, %rbx
-	mov	%rbp, (rp)
-	mov	%rbx, %rax
-	jmp	L(ret)
-
-L(n2):	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	add	%rbx, -8(rp)
-	adc	%rax, %rcx
-	adc	%rdx, %rbp
-	mov	%rcx, (rp)
-	mov	%rbp, %rax
-
-L(ret):	pop	%r12
 	pop	%rbp
 	pop	%rbx
 	ret
-
 EPILOGUE()
