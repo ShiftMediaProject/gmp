@@ -1,3 +1,15 @@
+2008-10-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aorsmul_1.asm: Replace with loopmix-optimized code.
+	* mpn/x86_64/mul_1.asm: Likewise.
+	* mpn/x86_64/addmul_2.asm: Likewise.
+	* mpn/x86_64/mul_2.asm: Likewise.
+	* mpn/x86_64/mul_basecase.asm: Likewise.
+
+2008-10-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/minithres/gmp-mparam.h: Update FFT values.
+
 2008-09-24  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Handle --enable-minithres.
@@ -12,7 +24,7 @@
 	(SPEED_ROUTINE_MPN_MUL): Allocate our own memory of xp operand.
 
 	* tune/common.c: Corresponding changes.
-	
+
 2008-09-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/get_str.c (GET_STR_DC_THRESHOLD): Remove default.
