@@ -27,6 +27,12 @@ mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
 {
   mpz_t gcd1, gcd2;
   mpz_t tmp1, tmp2;
+  mp_size_t op1_num_size;
+  mp_size_t op1_den_size;
+  mp_size_t op2_num_size;
+  mp_size_t op2_den_size;
+  mp_size_t alloc;
+  TMP_DECL;
 
   if (op1 == op2)
     {
@@ -36,15 +42,39 @@ mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
       return;
     }
 
-  mpz_init (gcd1);
-  mpz_init (gcd2);
-  mpz_init (tmp1);
-  mpz_init (tmp2);
+  op1_num_size = ABS (op1->_mp_num._mp_size);
+  op1_den_size =      op1->_mp_den._mp_size;
+  op2_num_size = ABS (op2->_mp_num._mp_size);
+  op2_den_size =      op2->_mp_den._mp_size;
 
-  /* PROD might be identical to either operand, so don't store the
-     result there until we are finished with the input operands.  We
-     dare to overwrite the numerator of PROD when we are finished
-     with the numerators of OP1 and OP2.  */
+  if (op1_num_size == 0 || op2_num_size)
+    {
+      /* We special case this to simplify allocation logic; gcd(0,x) = x
+	 is a singular case for the allocations.  */
+      prod->_mp_num._mp_size = 0;
+      prod->_mp_den._mp_d[0] = 1;
+      prod->_mp_den._mp_size = 1;
+      return;
+    }
+
+  TMP_MARK;
+
+  alloc = MIN (op1_num_size, op2_den_size);
+  MPZ_TMP_INIT (gcd1, alloc);
+
+  alloc = MIN (op2_num_size, op1_den_size);
+  MPZ_TMP_INIT (gcd2, alloc);
+
+  alloc = MAX (op1_num_size, op2_den_size);
+  MPZ_TMP_INIT (tmp1, alloc);
+
+  alloc = MAX (op2_num_size, op1_den_size);
+  MPZ_TMP_INIT (tmp2, alloc);
+
+  /* PROD might be identical to either operand, so don't store the result there
+     until we are finished with the input operands.  We can overwrite the
+     numerator of PROD when we are finished with the numerators of OP1 and
+     OP2.  */
 
   mpz_gcd (gcd1, &(op1->_mp_num), &(op2->_mp_den));
   mpz_gcd (gcd2, &(op2->_mp_num), &(op1->_mp_den));
@@ -59,8 +89,5 @@ mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
 
   mpz_mul (&(prod->_mp_den), tmp1, tmp2);
 
-  mpz_clear (tmp2);
-  mpz_clear (tmp1);
-  mpz_clear (gcd2);
-  mpz_clear (gcd1);
+  TMP_FREE;
 }
