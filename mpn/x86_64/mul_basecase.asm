@@ -93,8 +93,7 @@ L(mul_1_prologue_0):
 	mov	%rax, w2
 	mov	%rdx, w3
 C	mov	$0, R32(w0)		C FIXME: isn't already w0 == 0?
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_0) - 1b), outer_addr
+	lea	L(addmul_outer_0)(%rip), outer_addr
 	jmp	L(mul_1_entry_0)
 
 L(mul_1_prologue_1):
@@ -108,8 +107,7 @@ L(mul_1_prologue_1):
 	mov	%rdx, w2
 	mov	$0, R32(w3)
 	mov	(up,n,8), %rax
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_1) - 1b), outer_addr
+	lea	L(addmul_outer_1)(%rip), outer_addr
 	jmp	L(mul_1_entry_1)
 
 L(mul_1_prologue_2):
@@ -119,16 +117,14 @@ L(mul_1_prologue_2):
 	mov	24(up,n,8), %rax
 	mov	$0, R32(w2)
 	mov	$0, R32(w3)
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_2) - 1b), outer_addr
+	lea	L(addmul_outer_2)(%rip), outer_addr
 	jmp	L(mul_1_entry_2)
 
 L(mul_1_prologue_3):
 	add	$-1, n
 	mov	%rax, w3
 	mov	%rdx, w0
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_3) - 1b), outer_addr
+	lea	L(addmul_outer_3)(%rip), outer_addr
 	jmp	L(mul_1_entry_3)
 
 
@@ -210,16 +206,14 @@ L(mul_2_prologue_0):
 	mov	%rdx, w1
 	mov	$0, R32(w2)
 	mov	-24(up,n,8), %rax
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_0) - 1b), outer_addr
+	lea	L(addmul_outer_0)(%rip), outer_addr
 	jmp	L(mul_2_entry_0)
 
 L(mul_2_prologue_1):
 	mov	%rax, w3
 	mov	%rdx, w0
 	mov	$0, R32(w1)
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_1) - 1b), outer_addr
+	lea	L(addmul_outer_1)(%rip), outer_addr
 	jmp	L(mul_2_entry_1)
 
 L(mul_2_prologue_2):
@@ -229,8 +223,7 @@ L(mul_2_prologue_2):
 	mov	$0, R32(w0)
 	mov	$0, R32(w1)
 	mov	-8(up,n,8), %rax
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_2) - 1b), outer_addr
+	lea	L(addmul_outer_2)(%rip), outer_addr
 	jmp	L(mul_2_entry_2)
 
 L(mul_2_prologue_3):
@@ -240,8 +233,7 @@ L(mul_2_prologue_3):
 	mov	$0, R32(w3)
 	mov	$0, R32(w0)
 	mov	-16(up,n,8), %rax
-	lea	0(%rip), outer_addr	C FIXME: combine lea/add
-1:	add	$(L(addmul_outer_3) - 1b), outer_addr
+	lea	L(addmul_outer_3)(%rip), outer_addr
 	jmp	L(mul_2_entry_3)
 
 
