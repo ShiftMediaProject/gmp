@@ -825,10 +825,8 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
      < K 2^(2M) [2^(M(K-1)) + 2^(M(K-2)) + ... ]
      < K 2^(2M) 2^(M(K-1))*2 = 2^(M*K+M+k+1) */
   i = mpn_fft_norm_modF (op, pl, p, pla);
-#if 0				/* this can hardly happen */
   if (rec) /* store the carry out */
     op[pl] = i;
-#endif
 }
 
 /* return the lcm of a and 2^k */

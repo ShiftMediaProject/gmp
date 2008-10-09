@@ -1,7 +1,7 @@
-dnl  AMD64 mpn_mul_2 -- Multiply an n-limb vector with a 2-limb and store the
-dnl  result in a third limb vector.
+dnl  AMD64 mpn_mul_2 -- Multiply an n-limb vector with a 2-limb vector and
+dnl  store the result in a third limb vector.
 
-dnl  Copyright 2007 Free Software Foundation, Inc.
+dnl  Copyright 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,213 +21,153 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 2.86
-C K10:		 2.86
-C P4:		12.25
-C P6-15:	 4.18
+C K8,K9:	 2.275
+C K10:		 2.275
+C P4:		 ?
+C P6-15:	 4.0
+
+C This code is the result of running a code generation and permutation tool
+C suite written by David Harvey and Torbjorn Granlund.
+
+C TODO
+C  * Work on feed-in and wind-down code.
+C  * Convert "mov $0" to "xor".
+C  * Adjust initial lea to save some bytes.
+C  * Perhaps adjust n from n_param&3 value?
+C  * Replace with 2.25 c/l loopmix sequence.
 
 C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`n',	`%rdx')
-define(`vp',	`%rcx')
+define(`rp',	 `%rdi')
+define(`up',	 `%rsi')
+define(`n_param',`%rdx')
+define(`vp',	 `%rcx')
+
+define(`v0', `%r8')
+define(`v1', `%r9')
+define(`w0', `%rbx')
+define(`w1', `%rcx')
+define(`w2', `%rbp')
+define(`w3', `%r10')
+define(`n',  `%r11')
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_2)
-
 	push	%rbx
 	push	%rbp
-	push	%r12
 
-define(`vl', `%r9')
-define(`vh', `%r10')
-	mov  (vp), vl
-	mov  8(vp), vh
+	mov	(vp), v0
+	mov	8(vp), v1
 
-	mov	n, %r11
-define(`n',	`%r11')
+	mov	(up), %rax
 
-	lea	(up,n,8), up
-	lea	(rp,n,8), rp
+	mov	n_param, n
 	neg	n
+	lea	-8(up,n_param,8), up
+	lea	-8(rp,n_param,8), rp
 
-	xor	%r8, %r8
-	xor	%ebx, %ebx
-	xor	%ecx, %ecx
-	xor	%rbp, %rbp
+	and	$3, R32(n_param)
+	jz	L(m2p0)
+	cmp	$2, R32(n_param)
+	jc	L(m2p1)
+	jz	L(m2p2)
+L(m2p3):
+	mul	v0
+	xor	R32(w3), R32(w3)
+	mov	%rax, w1
+	mov	%rdx, w2
+	mov	8(up,n,8), %rax
+	add	$-1, n
+	mul	v1
+	add	%rax, w2
+	jmp	L(m23)
+L(m2p0):
+	mul	v0
+	xor	R32(w2), R32(w2)
+	mov	%rax, w0
+	mov	%rdx, w1
+	jmp	L(m20)
+L(m2p1):
+	mul	v0
+	xor	R32(w3), R32(w3)
+	xor	R32(w0), R32(w0)
+	xor	R32(w1), R32(w1)
+	add	$1, n
+	jmp	L(m2top)
+L(m2p2):
+	mul	v0
+	xor	R32(w0), R32(w0)
+	xor	R32(w1), R32(w1)
+	mov	%rax, w2
+	mov	%rdx, w3
+	mov	8(up,n,8), %rax
+	add	$-2, n
+	jmp	L(m22)
 
-	mov	(up,n,8), %r12
-	mov	%r12, %rax
-	add	$3, n
-	jns	L(end)			C <= 4 iterations
 
 	ALIGN(32)
-L(oop):	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	mov	%rbx, -24(rp,n,8)
-	mov	-16(up,n,8), %r12
-	mov	%r8d, %ebx
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
+L(m2top):
+	add	%rax, w3
+	adc	%rdx, w0
+	mov	0(up,n,8), %rax
+	adc	$0, R32(w1)
+	mov	$0, R32(w2)
+	mul	v1
+	add	%rax, w0
+	mov	w3, 0(rp,n,8)
+	adc	%rdx, w1
+	mov	8(up,n,8), %rax
+	mul	v0
+	add	%rax, w0
+	adc	%rdx, w1
+	adc	$0, R32(w2)
+L(m20):	mov	8(up,n,8), %rax
+	mul	v1
+	add	%rax, w1
+	adc	%rdx, w2
+	mov	16(up,n,8), %rax
+	mov	$0, R32(w3)
+	mul	v0
+	add	%rax, w1
+	mov	16(up,n,8), %rax
+	adc	%rdx, w2
+	adc	$0, R32(w3)
+	mul	v1
+	add	%rax, w2
+	mov	w0, 8(rp,n,8)
+L(m23):	adc	%rdx, w3
+	mov	24(up,n,8), %rax
+	mul	v0
+	mov	$0, R32(w0)
+	add	%rax, w2
+	adc	%rdx, w3
+	mov	w1, 16(rp,n,8)
+	mov	24(up,n,8), %rax
+	mov	$0, R32(w1)
+	adc	$0, R32(w0)
+L(m22):	mul	v1
+	add	%rax, w3
+	mov	w2, 24(rp,n,8)
+	adc	%rdx, w0
+	mov	32(up,n,8), %rax
+	mul	v0
+	add	$4, n
+	js	L(m2top)
 
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	mov	%rcx, -16(rp,n,8)
-	mov	-8(up,n,8), %r12
-	mov	%r8d, %ecx
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
 
-	mul	vl
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	adc	$0, %ecx
-	mul	vh
-	mov	%rbp, -8(rp,n,8)
-	mov	(up,n,8), %r12
-	mov	%r8d, %ebp
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
+	add	%rax, w3
+	adc	%rdx, w0
+	adc	$0, R32(w1)
+	mov	(up), %rax
+	mul	v1
+	mov	w3, (rp)
+	add	%rax, w0
+	adc	%rdx, w1
+	mov	w0, 8(rp)
+	mov	w1, %rax
 
-	add	$3, n
-	jns	L(end)
-
-	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	mov	%rbx, -24(rp,n,8)
-	mov	-16(up,n,8), %r12
-	mov	%r8d, %ebx
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	mov	%rcx, -16(rp,n,8)
-	mov	-8(up,n,8), %r12
-	mov	%r8d, %ecx
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-
-	mul	vl
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	adc	$0, %ecx
-	mul	vh
-	mov	%rbp, -8(rp,n,8)
-	mov	(up,n,8), %r12
-	mov	%r8d, %ebp
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-
-	add	$3, n
-	js	L(oop)
-
-L(end):	jne	L(n3)
-	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	mov	%rbx, -24(rp)
-	mov	-16(up), %r12
-	mov	%r8d, %ebx
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	mov	%rcx, -16(rp)
-	mov	-8(up), %r12
-	mov	%r8d, %ecx
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	mul	vl
-	add	%rax, %rbp
-	mov	%r12, %rax
-	adc	%rdx, %rbx
-	adc	$0, %ecx
-	mul	vh
-	mov	%rbp, -8(rp)
-	add	%rax, %rbx
-	adc	%rdx, %rcx
-	mov	%rbx, (rp)
-	mov	%rcx, %rax
-	jmp	L(ret)
-
-L(n3):	cmp	$1, n
-	jne	L(n2)
-	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	mov	%rbx, -16(rp)
-	mov	-8(up), %r12
-	mov	%r8d, %ebx
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	mul	vl
-	add	%rax, %rcx
-	mov	%r12, %rax
-	adc	%rdx, %rbp
-	adc	$0, %ebx
-	mul	vh
-	mov	%rcx, -8(rp)
-	add	%rax, %rbp
-	adc	%rdx, %rbx
-	mov	%rbp, (rp)
-	mov	%rbx, %rax
-	jmp	L(ret)
-
-L(n2):	mul	vl
-	add	%rax, %rbx
-	mov	%r12, %rax
-	adc	%rdx, %rcx
-	adc	$0, %ebp
-	mul	vh
-	mov	%rbx, -8(rp)
-	add	%rax, %rcx
-	adc	%rdx, %rbp
-	mov	%rcx, (rp)
-	mov	%rbp, %rax
-
-L(ret):	pop	%r12
 	pop	%rbp
 	pop	%rbx
 	ret
-
 EPILOGUE()

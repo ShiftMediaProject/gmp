@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_mul_basecase.
 
-dnl  Copyright 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -20,749 +20,438 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8,K9:	 2.86    (3.14 at 20x20)
-C K10:		 2.86    (3.14 at 20x20)
-C P4:		13.65
-C P6-15:	 4.67
+C K8,K9:	 2.375
+C K10:		 ?
+C P4:		 ?
+C P6-15:	 4.45
 
-C Outline of algorithm:
-C
-C   if (vn & 1)
-C     {
-C       rp[] = mpn_mul_1 (rp, up, un, vp[0]);
-C       rp++, vp++, vn--;
-C     }
-C   else
-C     {
-C       rp[] = mpn_mul_2 (rp, up, un, vp);
-C       rp += 2, vp += 2, vn -= 2;
-C     }
-C   if (vn == 0)
-C     return;
-C   switch (un % 3)
-C     {
-C     case 0:
-C       do
-C         {
-C           rp[un + 1] = _0_mpn_addmul_2 (rp, up, un, vp);
-C           rp += 2, vp += 2, vn -= 2;
-C         }
-C       while (vn != 0);
-C       break;
-C     case 1:
-C       do
-C         {
-C           rp[un + 1] = _1_mpn_addmul_2 (rp, up, un, vp);
-C           rp += 2, vp += 2, vn -= 2;
-C         }
-C       while (vn != 0);
-C       break;
-C     case 2:
-C       do
-C         {
-C           rp[un + 1] = _2_mpn_addmul_2 (rp, up, un, vp);
-C           rp += 2, vp += 2, vn -= 2;
-C         }
-C       while (vn != 0);
-C       break;
-C     }
+C The inner loops of this code are the result of running a code generation and
+C permutation tool suite written by David Harvey and Torbjorn Granlund.
 
-C STATUS
-C  * This is fairly raw, the code could surely take some polishing.  Perhaps a
-C    register or two less could be used.
-C  * This code is slower than the old, plain code for vn<=3, in particular for
-C    vn=3.  The best way of improving it might be writing some sort of mul_3 or
-C    addmul_3 building block.  That block might very well become faster than
-C    out present addmul_2, and should then be made the main worker.
+C TODO
+C  * Finish.
 
 C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`un',	`%rdx')
-define(`vp',	`%rcx')
-define(`vn',	`%r8')
+define(`rp',      `%rdi')
+define(`up',      `%rsi')
+define(`un_param',`%rdx')
+define(`vp_param',`%rcx')
+define(`vn',      `%r8')
+
+define(`v0', `%r12')
+define(`v1', `%r9')
+
+define(`w0', `%rbx')
+define(`w1', `%rcx')
+define(`w2', `%rbp')
+define(`w3', `%r10')
+
+define(`n',  `%r11')
+define(`outer_addr', `%r14')
+define(`un',  `%r13')
+define(`vp',  `%r15')
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mul_basecase)
-
 	push	%rbx
 	push	%rbp
 	push	%r12
 	push	%r13
 	push	%r14
+	push	%r15
 
-	lea	(up,un,8), up		C
-	lea	(rp,un,8), rp		C
-	lea	(vp), %r14		C
-define(`vp', `%r14')
-	mov	un, %r11		C move away from rdx
-define(`un', `%r11')
-	test	$1, vn			C vn odd?
-	je	L(use_mul_2)
-	bt	$0, vn			C vn odd?
-	jnc	L(use_mul_2)
+	lea	(rp,un_param,8), rp
+	lea	(up,un_param,8), up
+	mov	un_param, un
+	mov	vp_param, vp
 
-L(use_mul_1):
-	mov	(vp), %rbp		C read vp[0]
+	test	$1, R8(vn)
+	jz	L(mul_2)
+
+C ===========================================================
+C     mul_1 for vp[0] if vn is odd
+
+L(mul_1):
+	mov	$0, R32(n)
+	sub	un, n
+
+	mov	(up,n,8), %rax
+	mov	(vp), v0
+	mul	v0
+
+	mov	R32(un), R32(w0)
+	and	$3, R32(w0)
+	jz	L(mul_1_prologue_0)
+	cmp	$2, R32(w0)
+	jc	L(mul_1_prologue_1)
+	jz	L(mul_1_prologue_2)
+	jmp	L(mul_1_prologue_3)
+
+L(mul_1_prologue_0):
+	mov	%rax, w2
+	mov	%rdx, w3
+C	mov	$0, R32(w0)		C FIXME: isn't already w0 == 0?
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_0) - 1b), outer_addr
+	jmp	L(mul_1_entry_0)
+
+L(mul_1_prologue_1):
+	cmp	$1, un
+	jne	2f
+	mov	%rax, -8(rp)
+	mov	%rdx, (rp)
+	jmp	L(ret)
+2:	add	$1, n
+	mov	%rax, w1
+	mov	%rdx, w2
+	mov	$0, R32(w3)
+	mov	(up,n,8), %rax
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_1) - 1b), outer_addr
+	jmp	L(mul_1_entry_1)
+
+L(mul_1_prologue_2):
+	add	$-2, n
+	mov	%rax, w0
+	mov	%rdx, w1
+	mov	24(up,n,8), %rax
+	mov	$0, R32(w2)
+	mov	$0, R32(w3)
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_2) - 1b), outer_addr
+	jmp	L(mul_1_entry_2)
+
+L(mul_1_prologue_3):
+	add	$-1, n
+	mov	%rax, w3
+	mov	%rdx, w0
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_3) - 1b), outer_addr
+	jmp	L(mul_1_entry_3)
+
+
+	C this loop is 10 c/loop = 2.5 c/l on K8
+
+	ALIGN(32)
+L(mul_1_top):
+	mov	w0, -16(rp,n,8)
+	add	%rax, w1
+	mov	(up,n,8), %rax
+	adc	%rdx, w2
+L(mul_1_entry_1):
+	mov	$0, R32(w0)
+	mul	v0
+	mov	w1, -8(rp,n,8)
+	add	%rax, w2
+	adc	%rdx, w3
+L(mul_1_entry_0):
+	mov	8(up,n,8), %rax
+	mul	v0
+	mov	w2, (rp,n,8)
+	add	%rax, w3
+	adc	%rdx, w0
+L(mul_1_entry_3):
+	mov	16(up,n,8), %rax
+	mul	v0
+	mov	w3, 8(rp,n,8)
+	mov	$0, R32(w2)		C zero
+	mov	w2, w3			C zero
+	add	%rax, w0
+	mov	24(up,n,8), %rax
+	mov	w2, w1			C zero
+	adc	%rdx, w1
+L(mul_1_entry_2):
+	mul	v0
+	add	$4, n
+	js	L(mul_1_top)
+
+	mov	w0, -16(rp,n,8)
+	add	%rax, w1
+	mov	w1, -8(rp,n,8)
+	adc	%rdx, w2
+	mov	w2, (rp,n,8)
+
+	lea	8(rp), rp		C rp += 1
 	lea	8(vp), vp		C vp += 1
-	dec	vn			C vn -= 1
-	mov	un, %rbx		C				  mul_1
-	neg	%rbx			C				  mul_1
-	xor	%ecx, %ecx		C clear carry limb		  mul_1
-	add	$3, %rbx		C				  mul_1
-	jb	L(ed1)			C jump for n = 1, 2, 3		  mul_1
+	add	$-1, vn			C vn -= 1
+	jz	L(ret)
 
-L(lp1):	mov	-24(up,%rbx,8), %rax	C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%r9, %r9		C				  mul_1
-	add	%rax, %rcx		C				  mul_1
-	adc	%rdx, %r9		C				  mul_1
-	mov	-16(up,%rbx,8), %rax	C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%r10, %r10		C				  mul_1
-	add	%rax, %r9		C				  mul_1
-	adc	%rdx, %r10		C				  mul_1
-	mov	%rcx, -24(rp,%rbx,8)	C				  mul_1
-	mov	%r9, -16(rp,%rbx,8)	C				  mul_1
-	mov	-8(up,%rbx,8), %rax	C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%r9, %r9		C				  mul_1
-	add	%rax, %r10		C				  mul_1
-	adc	%rdx, %r9		C				  mul_1
-	mov	(up,%rbx,8), %rax	C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%rcx, %rcx		C				  mul_1
-	add	%rax, %r9		C				  mul_1
-	adc	%rdx, %rcx		C				  mul_1
-	mov	%r10, -8(rp,%rbx,8)	C				  mul_1
-	mov	%r9, (rp,%rbx,8)	C				  mul_1
-	add	$4, %rbx		C				  mul_1
-	jae	L(lp1)			C				  mul_1
+	mov	(vp), v0
+	mov	8(vp), v1
+	neg	un
+	jmp	*outer_addr
 
-	cmp	$3, %ebx		C				  mul_1
-	jne	L(ed1)			C				  mul_1
+C ===========================================================
+C     mul_2 for vp[0], vp[1] if vn is even
 
-	mov	%rcx, (rp)		C				  mul_1
-	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	L(jn1)			C				  mul_1
+L(mul_2):
+	mov	$0, R32(n)
+	sub	un, n
 
-L(ed1):	mov	-24(up,%rbx,8), %rax	C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%r9, %r9		C				  mul_1
-	add	%rax, %rcx		C				  mul_1
-	adc	%rdx, %r9		C				  mul_1
-	cmp	$2, %ebx		C				  mul_1
-	jne	L(1)			C				  mul_1
-	mov	%rcx, -8(rp)		C				  mul_1
-	mov	%r9, (rp)		C				  mul_1
-	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	L(jn1)			C				  mul_1
+	mov	(vp), v0
+	mov	8(vp), v1
 
-L(1):	mov	-16(up,%rbx,8), %rax	C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%r10, %r10		C				  mul_1
-	add	%rax, %r9		C				  mul_1
-	adc	%rdx, %r10		C				  mul_1
-	cmp	$1, %ebx		C				  mul_1
-	jne	L(2)			C				  mul_1
-	mov	%rcx, -16(rp)		C				  mul_1
-	mov	%r9, -8(rp)		C				  mul_1
-	mov	%r10, (rp)		C				  mul_1
-	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	L(jn1)			C				  mul_1
+	mov	(up,n,8), %rax
+	mul	v0
 
-L(2):	mov	-8(up), %rax		C				  mul_1
-	mul	%rbp			C				  mul_1
-	xor	%rbx, %rbx		C				  mul_1
-	add	%rax, %r10		C				  mul_1
-	adc	%rdx, %rbx		C				  mul_1
-	mov	%rcx, -24(rp)		C				  mul_1
-	mov	%r9, -16(rp)		C				  mul_1
-	mov	%r10, -8(rp)		C				  mul_1
-	mov	%rbx, (rp)		C				  mul_1
-	lea	8(rp), rp		C rp += 1			  mul_1
-	jmp	L(jn1)			C				  mul_1
+	mov	R32(un), R32(w0)
+	and	$3, R32(w0)
+	jz	L(mul_2_prologue_0)
+	cmp	$2, R32(w0)
+	jc	L(mul_2_prologue_1)
+	jz	L(mul_2_prologue_2)
+	jmp	L(mul_2_prologue_3)
 
-L(use_mul_2):
+L(mul_2_prologue_0):
+	add	$3, n
+	mov	%rax, w0
+	mov	%rdx, w1
+	mov	$0, R32(w2)
+	mov	-24(up,n,8), %rax
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_0) - 1b), outer_addr
+	jmp	L(mul_2_entry_0)
 
-define(`v0', `%r9')  define(`v1', `%r10')
-define(`j',`%r13')
+L(mul_2_prologue_1):
+	mov	%rax, w3
+	mov	%rdx, w0
+	mov	$0, R32(w1)
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_1) - 1b), outer_addr
+	jmp	L(mul_2_entry_1)
 
-	mov	(vp), v0		C				  mul_2
-	mov	8(vp), v1		C				  mul_2
-	lea	16(vp), vp		C vp += 2
-	sub	$2, vn			C vn -= 2
+L(mul_2_prologue_2):
+	add	$1, n
+	mov	%rax, w2
+	mov	%rdx, w3
+	mov	$0, R32(w0)
+	mov	$0, R32(w1)
+	mov	-8(up,n,8), %rax
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_2) - 1b), outer_addr
+	jmp	L(mul_2_entry_2)
 
-	mov	un, j			C				  mul_2
-	neg	j			C				  mul_2
+L(mul_2_prologue_3):
+	add	$2, n
+	mov	%rax, -16(rp,n,8)
+	mov	%rdx, w2
+	mov	$0, R32(w3)
+	mov	$0, R32(w0)
+	mov	-16(up,n,8), %rax
+	lea	0(%rip), outer_addr	C FIXME: combine lea/add
+1:	add	$(L(addmul_outer_3) - 1b), outer_addr
+	jmp	L(mul_2_entry_3)
 
-	xor	%ebx, %ebx		C				  mul_2
-	xor	%ecx, %ecx		C				  mul_2
-	xor	%rbp, %rbp		C				  mul_2
 
-	mov	(up,j,8), %r12		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	add	$3, j			C				  mul_2
-	jns	L(ed2)			C <= 4 iterations
+	C this loop is 18 c/loop = 2.25 c/l on K8
 
-	ALIGN(16)
-L(lp2):	mul	v0			C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	adc	$0, %ebp		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbx, -24(rp,j,8)	C				  mul_2
-	mov	-16(up,j,8), %r12	C				  mul_2
-	mov	$0, %ebx		C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	adc	$0, %ebx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rcx, -16(rp,j,8)	C				  mul_2
-	mov	-8(up,j,8), %r12	C				  mul_2
-	mov	$0, %ecx		C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	adc	$0, %ecx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbp, -8(rp,j,8)	C				  mul_2
-	mov	(up,j,8), %r12		C				  mul_2
-	mov	$0, %ebp		C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	add	$3, j			C				  mul_2
-	jns	L(ed2)			C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	adc	$0, %ebp		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbx, -24(rp,j,8)	C				  mul_2
-	mov	-16(up,j,8), %r12	C				  mul_2
-	mov	$0, %ebx		C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	adc	$0, %ebx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rcx, -16(rp,j,8)	C				  mul_2
-	mov	-8(up,j,8), %r12	C				  mul_2
-	mov	$0, %ecx		C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	adc	$0, %ecx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbp, -8(rp,j,8)	C				  mul_2
-	mov	(up,j,8), %r12		C				  mul_2
-	mov	$0, %ebp		C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	add	$3, j			C				  mul_2
-	js	L(lp2)			C				  mul_2
+	ALIGN(32)
+L(mul_2_top):
+	mul	v1
+	add	%rax, w0
+	adc	%rdx, w1
+	mov	-24(up,n,8), %rax
+	mov	$0, R32(w2)
+	mul	v0
+	add	%rax, w0
+	mov	-24(up,n,8), %rax
+	adc	%rdx, w1
+	adc	$0, R32(w2)
+L(mul_2_entry_0):
+	mul	v1
+	add	%rax, w1
+	mov	w0, -24(rp,n,8)
+	adc	%rdx, w2
+	mov	-16(up,n,8), %rax
+	mul	v0
+	mov	$0, R32(w3)
+	add	%rax, w1
+	adc	%rdx, w2
+	mov	-16(up,n,8), %rax
+	adc	$0, R32(w3)
+	mov	$0, R32(w0)
+	mov	w1, -16(rp,n,8)
+L(mul_2_entry_3):
+	mul	v1
+	add	%rax, w2
+	mov	-8(up,n,8), %rax
+	adc	%rdx, w3
+	mov	$0, R32(w1)
+	mul	v0
+	add	%rax, w2
+	mov	-8(up,n,8), %rax
+	adc	%rdx, w3
+	adc	$0, R32(w0)
+L(mul_2_entry_2):
+	mul	v1
+	add	%rax, w3
+	mov	w2, -8(rp,n,8)
+	adc	%rdx, w0
+	mov	(up,n,8), %rax
+	mul	v0
+	add	%rax, w3
+	adc	%rdx, w0
+	adc	$0, R32(w1)
+L(mul_2_entry_1):
+	add	$4, n
+	mov	-32(up,n,8), %rax
+	mov	w3, -32(rp,n,8)
+	js	L(mul_2_top)
 
-L(ed2):	jne	L(n3)			C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	%r12, %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	adc	$0, %ebp		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbx, -24(rp)		C				  mul_2
-	mov	$0, %ebx		C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	-16(up), %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	-16(up), %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	adc	$0, %ebx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rcx, -16(rp)		C				  mul_2
-	mov	$0, %ecx		C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	mov	-8(up), %rax		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	mov	-8(up), %rax		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	adc	$0, %ecx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbp, -8(rp)		C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	mov	%rbx, (rp)		C				  mul_2
-	mov	%rcx, 8(rp)		C				  mul_2
+	mul	v1
+	add	%rax, w0
+	adc	%rdx, w1
+	mov	w0, -24(rp,n,8)
+	mov	w1, -16(rp,n,8)
+
 	lea	16(rp), rp		C rp += 2
-	jmp	L(jn1)			C				  mul_2
+	lea	16(vp), vp		C vp += 2
+	add	$-2, vn			C vn -= 2
+	jz	L(ret)
 
-L(n3):	cmp	$1, j			C				  mul_2
-	jne	L(n2)			C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	-16(up), %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	adc	$0, %ebp		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbx, -16(rp)		C				  mul_2
-	mov	$0, %ebx		C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	-8(up), %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	mul	v0			C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	mov	-8(up), %rax		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	adc	$0, %ebx		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rcx, -8(rp)		C				  mul_2
-	add	%rax, %rbp		C				  mul_2
-	adc	%rdx, %rbx		C				  mul_2
-	mov	%rbp, (rp)		C				  mul_2
-	mov	%rbx, 8(rp)		C				  mul_2
+	mov	(vp), v0
+	mov	8(vp), v1
+	neg	un
+	jmp	*outer_addr
+
+
+C ===========================================================
+C     addmul_2 for remaining vp's
+
+	C in the following prologues, we reuse un to store the
+	C adjusted value of n that is reloaded on each iteration
+
+L(addmul_outer_0):
+	add	$3, un
+	lea	0(%rip), outer_addr
+
+	mov	un, n
+	mov	-24(up,un,8), %rax
+	mul	v0
+	mov	%rax, w0
+	mov	-24(up,un,8), %rax
+	mov	%rdx, w1
+	xor	R32(w2), R32(w2)
+	jmp	L(addmul_entry_0)
+
+L(addmul_outer_1):
+	lea	0(%rip), outer_addr
+
+	mov	un, n
+	mov	(up,un,8), %rax
+	mul	v0
+	mov	%rax, w3
+	mov	(up,un,8), %rax
+	mov	%rdx, w0
+	xor	R32(w1), R32(w1)
+	jmp	L(addmul_entry_1)
+
+L(addmul_outer_2):
+	add	$1, un
+	lea	0(%rip), outer_addr
+
+	mov	un, n
+	mov	-8(up,un,8), %rax
+	mul	v0
+	mov	%rax, w2
+	mov	-8(up,un,8), %rax
+	mov	%rdx, w3
+	xor	R32(w0), R32(w0)
+	xor	R32(w1), R32(w1)
+	jmp	L(addmul_entry_2)
+
+L(addmul_outer_3):
+	add	$2, un
+	lea	0(%rip), outer_addr
+
+	mov	un, n
+	mov	-16(up,un,8), %rax
+	mul	v0
+	mov	%rax, w1
+	mov	-16(up,un,8), %rax
+	mov	%rdx, w2
+	xor	R32(w3), R32(w3)
+	jmp	L(addmul_entry_3)
+
+	C this loop is 19 c/loop = 2.375 c/l on K8
+
+	ALIGN(32)
+L(addmul_top):
+	add	w3, -32(rp,n,8)
+	adc	%rax, w0
+	mov	-24(up,n,8), %rax
+	adc	%rdx, w1
+	mov	$0, R32(w2)
+	mul	v0
+	add	%rax, w0
+	mov	-24(up,n,8), %rax
+	adc	%rdx, w1
+	adc	$0, R32(w2)
+L(addmul_entry_0):
+	mul	v1
+	mov	$0, R32(w3)
+	add	w0, -24(rp,n,8)
+	adc	%rax, w1
+	mov	-16(up,n,8), %rax
+	adc	%rdx, w2
+	mul	v0
+	add	%rax, w1
+	mov	-16(up,n,8), %rax
+	adc	%rdx, w2
+	adc	$0, R32(w3)
+L(addmul_entry_3):
+	mul	v1
+	add	w1, -16(rp,n,8)
+	adc	%rax, w2
+	mov	-8(up,n,8), %rax
+	adc	%rdx, w3
+	mul	v0
+	mov	$0, R32(w0)
+	add	%rax, w2
+	adc	%rdx, w3
+	mov	$0, R32(w1)
+	mov	-8(up,n,8), %rax
+	adc	$0, R32(w0)
+L(addmul_entry_2):
+	mul	v1
+	add	w2, -8(rp,n,8)
+	adc	%rax, w3
+	adc	%rdx, w0
+	mov	(up,n,8), %rax
+	mul	v0
+	add	%rax, w3
+	mov	(up,n,8), %rax
+	adc	%rdx, w0
+	adc	$0, R32(w1)
+L(addmul_entry_1):
+	mul	v1
+	add	$4, n
+	js	L(addmul_top)
+
+	add	w3, -32(rp,n,8)
+	adc	%rax, w0
+	adc	%rdx, w1
+	mov	w0, -24(rp,n,8)
+	mov	w1, -16(rp,n,8)
+
 	lea	16(rp), rp		C rp += 2
-	jmp	L(jn1)			C				  mul_2
-
-L(n2):	mul	v0			C				  mul_2
-	add	%rax, %rbx		C				  mul_2
-	mov	-8(up), %rax		C				  mul_2
-	adc	%rdx, %rcx		C				  mul_2
-	adc	$0, %ebp		C				  mul_2
-	mul	v1			C				  mul_2
-	mov	%rbx, -8(rp)		C				  mul_2
-	add	%rax, %rcx		C				  mul_2
-	adc	%rdx, %rbp		C				  mul_2
-	mov	%rcx, (rp)		C				  mul_2
-	mov	%rbp, 8(rp)		C				  mul_2
-	lea	16(rp), rp		C rp += 2
-C	jmp	L(jn1)			C				  mul_2
-
-L(jn1):	test	vn, vn
-	je	L(olex)
-
-C In order to choose the right variant of code, compute un mod 3.
-	movabs	$0x5555555555555555, %rdx
-	mov	un, %rax
-	mul	%rdx			C rdx = un / 3 (for relevant un)
-	lea	2(%rdx,%rdx,2), %rdx
-	sub	un, %rdx		C rdx = -(un mod 3)	FIXME
-	js	L(M0)
-	je	L(M2)
-
-define(`v0', `%r9')  define(`v1', `%r10')
-define(`j',`%r13')
-
-L(M1):
-L(M1_lpo):
-	mov	(vp), v0		C				    LM1
-	mov	8(vp), v1		C				    LM1
 	lea	16(vp), vp		C vp += 2
+	add	$-2, vn			C vn -= 2
+	jz	L(ret)
 
-	mov	un, j			C				    LM1
-	neg	j			C				    LM1
+	mov	(vp), v0
+	mov	8(vp), v1
+	jmp	*outer_addr
 
-	xor	%ebx, %ebx		C				    LM1
-	xor	%ecx, %ecx		C				    LM1
-	xor	%ebp, %ebp		C				    LM1
 
-	mov	(up,j,8), %r12		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	add	$3, j			C				    LM1
-	jns	L(M1_lpie)		C <= 4 iterations
-
-	ALIGN(16)
-L(M1_lpi):
-	mul	v0			C				    LM1
-	add	%rax, %rbx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rcx		C				    LM1
-	adc	$0, %ebp		C				    LM1
-	mul	v1			C				    LM1
-	add	%rbx, -24(rp,j,8)	C				    LM1
-	mov	-16(up,j,8), %r12	C				    LM1
-	mov	$0, %ebx		C				    LM1
-	adc	%rax, %rcx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbp		C				    LM1
-	mul	v0			C				    LM1
-	add	%rax, %rcx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbp		C				    LM1
-	adc	$0, %ebx		C				    LM1
-	mul	v1			C				    LM1
-	add	%rcx, -16(rp,j,8)	C				    LM1
-	mov	-8(up,j,8), %r12	C				    LM1
-	mov	$0, %ecx		C				    LM1
-	adc	%rax, %rbp		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbx		C				    LM1
-	mul	v0			C				    LM1
-	add	%rax, %rbp		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbx		C				    LM1
-	adc	$0, %ecx		C				    LM1
-	mul	v1			C				    LM1
-	add	%rbp, -8(rp,j,8)	C				    LM1
-	mov	(up,j,8), %r12		C				    LM1
-	mov	$0, %ebp		C				    LM1
-	adc	%rax, %rbx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rcx		C				    LM1
-	add	$3, j			C				    LM1
-	jns	L(M1_lpie)		C				    LM1
-	mul	v0			C				    LM1
-	add	%rax, %rbx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rcx		C				    LM1
-	adc	$0, %ebp		C				    LM1
-	mul	v1			C				    LM1
-	add	%rbx, -24(rp,j,8)	C				    LM1
-	mov	-16(up,j,8), %r12	C				    LM1
-	mov	$0, %ebx		C				    LM1
-	adc	%rax, %rcx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbp		C				    LM1
-	mul	v0			C				    LM1
-	add	%rax, %rcx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbp		C				    LM1
-	adc	$0, %ebx		C				    LM1
-	mul	v1			C				    LM1
-	add	%rcx, -16(rp,j,8)	C				    LM1
-	mov	-8(up,j,8), %r12	C				    LM1
-	mov	$0, %ecx		C				    LM1
-	adc	%rax, %rbp		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbx		C				    LM1
-	mul	v0			C				    LM1
-	add	%rax, %rbp		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rbx		C				    LM1
-	adc	$0, %ecx		C				    LM1
-	mul	v1			C				    LM1
-	add	%rbp, -8(rp,j,8)	C				    LM1
-	mov	(up,j,8), %r12		C				    LM1
-	mov	$0, %ebp		C				    LM1
-	adc	%rax, %rbx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rcx		C				    LM1
-	add	$3, j			C				    LM1
-	js	L(M1_lpi)		C				    LM1
-
-L(M1_lpie):
-	mul	v0			C				    LM1
-	add	%rax, %rbx		C				    LM1
-	mov	%r12, %rax		C				    LM1
-	adc	%rdx, %rcx		C				    LM1
-	adc	$0, %ebp		C				    LM1
-	mul	v1			C				    LM1
-	add	%rbx, -8(rp)		C				    LM1
-	adc	%rax, %rcx		C				    LM1
-	adc	%rdx, %rbp		C				    LM1
-	mov	%rcx, (rp)		C				    LM1
-	mov	%rbp, 8(rp)		C				    LM1
-
-	lea	16(rp), rp		C rp += 2			    LM1
-	sub	$2, vn			C vn -= 2			    LM1
-	jne	L(M1_lpo)		C				    LM1
-	jmp	L(olex)			C				    LM1
-
-L(M2):
-L(M2_lpo):
-	mov	(vp), v0		C				    LM2
-	mov	8(vp), v1		C				    LM2
-	lea	16(vp), vp		C vp += 2
-
-	mov	un, j			C				    LM2
-	neg	j			C				    LM2
-
-	xor	%ebx, %ebx		C				    LM2
-	xor	%ecx, %ecx		C				    LM2
-	xor	%ebp, %ebp		C				    LM2
-
-	mov	(up,j,8), %r12		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	add	$3, j			C				    LM2
-	jns	L(M2_lpie)		C <= 4 iterations
-
-	ALIGN(16)
-L(M2_lpi):
-	mul	v0			C				    LM2
-	add	%rax, %rbx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rcx		C				    LM2
-	adc	$0, %ebp		C				    LM2
-	mul	v1			C				    LM2
-	add	%rbx, -24(rp,j,8)	C				    LM2
-	mov	-16(up,j,8), %r12	C				    LM2
-	mov	$0, %ebx		C				    LM2
-	adc	%rax, %rcx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbp		C				    LM2
-	mul	v0			C				    LM2
-	add	%rax, %rcx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbp		C				    LM2
-	adc	$0, %ebx		C				    LM2
-	mul	v1			C				    LM2
-	add	%rcx, -16(rp,j,8)	C				    LM2
-	mov	-8(up,j,8), %r12	C				    LM2
-	mov	$0, %ecx		C				    LM2
-	adc	%rax, %rbp		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbx		C				    LM2
-	mul	v0			C				    LM2
-	add	%rax, %rbp		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbx		C				    LM2
-	adc	$0, %ecx		C				    LM2
-	mul	v1			C				    LM2
-	add	%rbp, -8(rp,j,8)	C				    LM2
-	mov	(up,j,8), %r12		C				    LM2
-	mov	$0, %ebp		C				    LM2
-	adc	%rax, %rbx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rcx		C				    LM2
-	add	$3, j			C				    LM2
-	jns	L(M2_lpie)		C				    LM2
-	mul	v0			C				    LM2
-	add	%rax, %rbx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rcx		C				    LM2
-	adc	$0, %ebp		C				    LM2
-	mul	v1			C				    LM2
-	add	%rbx, -24(rp,j,8)	C				    LM2
-	mov	-16(up,j,8), %r12	C				    LM2
-	mov	$0, %ebx		C				    LM2
-	adc	%rax, %rcx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbp		C				    LM2
-	mul	v0			C				    LM2
-	add	%rax, %rcx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbp		C				    LM2
-	adc	$0, %ebx		C				    LM2
-	mul	v1			C				    LM2
-	add	%rcx, -16(rp,j,8)	C				    LM2
-	mov	-8(up,j,8), %r12	C				    LM2
-	mov	$0, %ecx		C				    LM2
-	adc	%rax, %rbp		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbx		C				    LM2
-	mul	v0			C				    LM2
-	add	%rax, %rbp		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbx		C				    LM2
-	adc	$0, %ecx		C				    LM2
-	mul	v1			C				    LM2
-	add	%rbp, -8(rp,j,8)	C				    LM2
-	mov	(up,j,8), %r12		C				    LM2
-	mov	$0, %ebp		C				    LM2
-	adc	%rax, %rbx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rcx		C				    LM2
-	add	$3, j			C				    LM2
-	js	L(M2_lpi)		C				    LM2
-
-L(M2_lpie):
-	mul	v0			C				    LM2
-	add	%rax, %rbx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rcx		C				    LM2
-	adc	$0, %ebp		C				    LM2
-	mul	v1			C				    LM2
-	add	%rbx, -16(rp)		C				    LM2
-	mov	-8(up), %r12		C				    LM2
-	mov	$0, %ebx		C				    LM2
-	adc	%rax, %rcx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbp		C				    LM2
-	mul	v0			C				    LM2
-	add	%rax, %rcx		C				    LM2
-	mov	%r12, %rax		C				    LM2
-	adc	%rdx, %rbp		C				    LM2
-	adc	$0, %ebx		C				    LM2
-	mul	v1			C				    LM2
-	add	%rcx, -8(rp)		C				    LM2
-	adc	%rax, %rbp		C				    LM2
-	adc	%rdx, %rbx		C				    LM2
-	mov	%rbp, (rp)		C				    LM2
-	mov	%rbx, 8(rp)		C				    LM2
-
-	lea	16(rp), rp		C rp += 2			    LM2
-	sub	$2, vn			C vn -= 2			    LM2
-	jne	L(M2_lpo)		C				    LM2
-	jmp	L(olex)			C				    LM2
-
-L(M0):
-L(M0_lpo):
-	mov	(vp), v0		C				    LM0
-	mov	8(vp), v1		C				    LM0
-	lea	16(vp), vp		C vp += 2
-
-	mov	un, j			C				    LM0
-	neg	j			C				    LM0
-
-	xor	%ebx, %ebx		C				    LM0
-	xor	%ecx, %ecx		C				    LM0
-	xor	%ebp, %ebp		C				    LM0
-
-	mov	(up,j,8), %r12		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	add	$3, j			C				    LM0
-	jns	L(M0_lpie)		C <= 4 iterations
-
-	ALIGN(16)
-L(M0_lpi):
-	mul	v0			C				    LM0
-	add	%rax, %rbx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rcx		C				    LM0
-	adc	$0, %ebp		C				    LM0
-	mul	v1			C				    LM0
-	add	%rbx, -24(rp,j,8)	C				    LM0
-	mov	-16(up,j,8), %r12	C				    LM0
-	mov	$0, %ebx		C				    LM0
-	adc	%rax, %rcx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbp		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rcx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbp		C				    LM0
-	adc	$0, %ebx		C				    LM0
-	mul	v1			C				    LM0
-	add	%rcx, -16(rp,j,8)	C				    LM0
-	mov	-8(up,j,8), %r12	C				    LM0
-	mov	$0, %ecx		C				    LM0
-	adc	%rax, %rbp		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbx		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rbp		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbx		C				    LM0
-	adc	$0, %ecx		C				    LM0
-	mul	v1			C				    LM0
-	add	%rbp, -8(rp,j,8)	C				    LM0
-	mov	(up,j,8), %r12		C				    LM0
-	mov	$0, %ebp		C				    LM0
-	adc	%rax, %rbx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rcx		C				    LM0
-	add	$3, j			C				    LM0
-	jns	L(M0_lpie)		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rbx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rcx		C				    LM0
-	adc	$0, %ebp		C				    LM0
-	mul	v1			C				    LM0
-	add	%rbx, -24(rp,j,8)	C				    LM0
-	mov	-16(up,j,8), %r12	C				    LM0
-	mov	$0, %ebx		C				    LM0
-	adc	%rax, %rcx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbp		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rcx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbp		C				    LM0
-	adc	$0, %ebx		C				    LM0
-	mul	v1			C				    LM0
-	add	%rcx, -16(rp,j,8)	C				    LM0
-	mov	-8(up,j,8), %r12	C				    LM0
-	mov	$0, %ecx		C				    LM0
-	adc	%rax, %rbp		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbx		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rbp		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbx		C				    LM0
-	adc	$0, %ecx		C				    LM0
-	mul	v1			C				    LM0
-	add	%rbp, -8(rp,j,8)	C				    LM0
-	mov	(up,j,8), %r12		C				    LM0
-	mov	$0, %ebp		C				    LM0
-	adc	%rax, %rbx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rcx		C				    LM0
-	add	$3, j			C				    LM0
-	js	L(M0_lpi)		C				    LM0
-
-L(M0_lpie):
-	mul	v0			C				    LM0
-	add	%rax, %rbx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rcx		C				    LM0
-	adc	$0, %ebp		C				    LM0
-	mul	v1			C				    LM0
-	add	%rbx, -24(rp)		C				    LM0
-	mov	-16(up), %r12		C				    LM0
-	mov	$0, %ebx		C				    LM0
-	adc	%rax, %rcx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbp		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rcx		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbp		C				    LM0
-	adc	$0, %ebx		C				    LM0
-	mul	v1			C				    LM0
-	add	%rcx, -16(rp)		C				    LM0
-	mov	-8(up), %r12		C				    LM0
-	mov	$0, %ecx		C				    LM0
-	adc	%rax, %rbp		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbx		C				    LM0
-	mul	v0			C				    LM0
-	add	%rax, %rbp		C				    LM0
-	mov	%r12, %rax		C				    LM0
-	adc	%rdx, %rbx		C				    LM0
-	adc	$0, %ecx		C				    LM0
-	mul	v1			C				    LM0
-	add	%rbp, -8(rp)		C				    LM0
-	adc	%rax, %rbx		C				    LM0
-	adc	%rdx, %rcx		C				    LM0
-	mov	%rbx, (rp)		C				    LM0
-	mov	%rcx, 8(rp)		C				    LM0
-
-	lea	16(rp), rp		C rp += 2			    LM0
-	sub	$2, vn			C vn -= 2			    LM0
-	jne	L(M0_lpo)		C				    LM0
-
-L(olex):
+L(ret):	pop	%r15
 	pop	%r14
 	pop	%r13
 	pop	%r12
 	pop	%rbp
 	pop	%rbx
 	ret
+
 EPILOGUE()

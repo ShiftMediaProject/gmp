@@ -1,3 +1,24 @@
+2008-10-09  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86/k7/gmp-mparam.h: Updated GCD-related values.
+
+2008-10-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_fft.c (mpn_mul_fft_internal): Do store
+	mpn_fft_norm_modF return value, if (rec).
+
+2008-10-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aorsmul_1.asm: Replace with loopmix-optimized code.
+	* mpn/x86_64/mul_1.asm: Likewise.
+	* mpn/x86_64/addmul_2.asm: Likewise.
+	* mpn/x86_64/mul_2.asm: Likewise.
+	* mpn/x86_64/mul_basecase.asm: Likewise.
+
+2008-10-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/minithres/gmp-mparam.h: Update FFT values.
+
 2008-10-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* hgcd.c (mpn_hgcd_matrix_mul): Fixed normalization bug.

@@ -54,10 +54,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SET_STR_THRESHOLD                64
 #define SET_STR_PRECOMPUTE_THRESHOLD    100
 
-#define MUL_FFT_TABLE  {256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0}
-#define MUL_FFT_MODF_THRESHOLD 32
-#define MUL_FFT_THRESHOLD      256
+#define MUL_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
+#define MUL_FFT_MODF_THRESHOLD  65
+#define MUL_FFT_THRESHOLD      200
 
-#define SQR_FFT_TABLE  {256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0}
-#define SQR_FFT_MODF_THRESHOLD 32
-#define SQR_FFT_THRESHOLD      256
+#define SQR_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
+#define SQR_FFT_MODF_THRESHOLD  65
+#define SQR_FFT_THRESHOLD      200

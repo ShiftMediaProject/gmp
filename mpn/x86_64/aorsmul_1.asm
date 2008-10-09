@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_addmul_1 and mpn_submul_1.
 
-dnl  Copyright 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -20,15 +20,25 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8:		 3.0    (unlucky alignment can lead to 3.17)
-C P4:		15.5-17 (fluctuating due to w/c buffer problems)
-C P6-15:	 5.17
+C K8,K9:	 2.5
+C K10:		 2.5
+C P4:		14.9
+C P6-15:	 5.09
+
+C The inner loop of this code is the result of running a code generation and
+C permutation tool suite written by David Harvey and Torbjorn Granlund.
+
+C TODO:
+C  * The inner loop is great, but the prologue and epilogue code was
+C    quickly written.  Tune it!
 
 C INPUT PARAMETERS
-define(`rp',	`%rdi')
-define(`up',	`%rsi')
-define(`n',	`%rdx')
-define(`vl',	`%rcx')
+define(`rp',	 `%rdi')
+define(`up',	 `%rsi')
+define(`n_param',`%rdx')
+define(`vl',	 `%rcx')
+
+define(`n',	`%r11')
 
 ifdef(`OPERATION_addmul_1',`
       define(`ADDSUB',        `add')
@@ -45,122 +55,92 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
-	mov	n   , %r11		C move away n from rdx, mul uses it
-define(`n',	`%r11')
-	mov	(up), %rax		C load first limbs early...
-	mul	vl			C ...and start first multiply
-
-	cmp	$1, n			C need special handling for n = 1
-	je	L(n1)
-
-	lea	-8(up,n,8), up		C point at end of area
-	lea	(rp,n,8), rp		C point at end of area
-	neg	n
-
-	mov	%rax, %r8
-	mov	16(up,n,8), %rax
-	mov	%rdx, %r9
+	mov	(up), %rax		C read first u limb early
+	push	%rbx
+	mov	n_param, %rbx		C move away n from rdx, mul uses it
 	mul	vl
+	mov	%rbx, %r11
 
-	add	$5, n
-	jns	L(end)			C jump for n = 2, 3, 4, 5
-	jmp	L(oop)
-L(n1):	ADDSUB	%rax, (rp)
-	adc	$0, %rdx
-	mov	%rdx, %rax
-	ret
+	and	$3, R32(%rbx)
+	jz	L(b0)
+	cmp	$2, R32(%rbx)
+	jz	L(b2)
+	jg	L(b3)
+
+L(b1):	dec	n
+	jne	L(gt1)
+	ADDSUB	%rax, (rp)
+	jmp	L(ret)
+L(gt1):	lea	8(up,n,8), up
+	lea	-8(rp,n,8), rp
+	neg	n
+	xor	%r10, %r10
+	xor	R32(%rbx), R32(%rbx)
+	mov	%rax, %r9
+	mov	(up,n,8), %rax
+	mov	%rdx, %r8
+	jmp	L(L1)
+
+L(b0):	lea	(up,n,8), up
+	lea	-16(rp,n,8), rp
+	neg	n
+	xor	%r10, %r10
+	mov	%rax, %r8
+	mov	%rdx, %rbx
+	jmp	 L(L0)
+
+L(b3):	lea	-8(up,n,8), up
+	lea	-24(rp,n,8), rp
+	neg	n
+	mov	%rax, %rbx
+	mov	%rdx, %r10
+	jmp	L(L3)
+
+L(b2):	lea	-16(up,n,8), up
+	lea	-32(rp,n,8), rp
+	neg	n
+	xor	%r8, %r8
+	xor	R32(%rbx), R32(%rbx)
+	mov	%rax, %r10
+	mov	24(up,n,8), %rax
+	mov	%rdx, %r9
+	jmp	L(L2)
 
 	ALIGN(16)
-L(oop):	ADDSUB	%r8 , -40(rp,n,8)
-	mov	$0  , %r8d
-	adc	%rax, %r9
-	mov	-16(up,n,8), %rax
-	adc	%rdx, %r8
-	mul	vl
-
-	ADDSUB	%r9 , -32(rp,n,8)
-	mov	$0  , %r9d
-	adc	%rax, %r8
-	nop
-	mov	-8(up,n,8), %rax
-	adc	%rdx, %r9
-	mul	vl
-
-	ADDSUB	%r8 , -24(rp,n,8)
-	mov	$0  , %r8d
+L(top):	ADDSUB	%r10, (rp,n,8)
 	adc	%rax, %r9
 	mov	(up,n,8), %rax
 	adc	%rdx, %r8
-	mul	vl
-
-	ADDSUB	%r9 , -16(rp,n,8)
-	mov	$0  , %r9d
+	mov	$0, %r10d
+L(L1):	mul	vl
+	ADDSUB	%r9, 8(rp,n,8)
 	adc	%rax, %r8
-	mov	8(up,n,8), %rax
-	nop
-	adc	%rdx, %r9
+	adc	%rdx, %rbx
+L(L0):	mov	8(up,n,8), %rax
 	mul	vl
-
+	ADDSUB	%r8, 16(rp,n,8)
+	adc	%rax, %rbx
+	adc	%rdx, %r10
+L(L3):	mov	16(up,n,8), %rax
+	mul	vl
+	ADDSUB	%rbx, 24(rp,n,8)
+	mov	$0, %r8d		# zero
+	mov	%r8, %rbx		# zero
+	adc	%rax, %r10
+	mov	24(up,n,8), %rax
+	mov	%r8, %r9		# zero
+	adc	%rdx, %r9
+L(L2):	mul	vl
 	add	$4, n
-	js	L(oop)
+	js	 L(top)
 
-L(end):	cmp	$3, n
-	je	L(b11)
-
-	ADDSUB	%r8 , -40(rp,n,8)
-	mov	$0  , %r8d
+	ADDSUB	%r10, (rp,n,8)
 	adc	%rax, %r9
-	mov	-16(up,n,8), %rax
-	adc	%rdx, %r8
-	mul	vl
-	cmp	$2, n
-	je	L(b00)
+	adc	%r8, %rdx
+	ADDSUB	%r9, 8(rp,n,8)
+L(ret):	adc	$0, %rdx
+	mov	%rdx, %rax
 
-	ADDSUB	%r9 , -32(rp,n,8)
-	mov	$0  , %r9d
-	adc	%rax, %r8
-	mov	-8(up,n,8), %rax
-	adc	%rdx, %r9
-	mul	vl
-	cmp	$1, n
-	je	L(b01)
-
-	ADDSUB	%r8 , -24(rp,n,8)
-	mov	$0  , %r8d
-	adc	%rax, %r9
-	mov	(up,n,8), %rax
-	adc	%rdx, %r8
-	mul	vl
-	ADDSUB	%r9 , -16(rp,n,8)
-	adc	%rax, %r8
-	mov	$0  , %eax
-	adc	%rdx, %rax
-	ADDSUB	%r8 , -8(rp,n,8)
-	adc	$0  , %rax
+	pop	%rbx
 	ret
-
-L(b01):	ADDSUB	%r8 , -24(rp,n,8)
-	adc	%rax, %r9
-	mov	$0  , %eax
-	adc	%rdx, %rax
-	ADDSUB	%r9 , -16(rp,n,8)
-	adc	$0  , %rax
-	ret
-
-L(b00):	ADDSUB	%r9 , -32(rp,n,8)
-	adc	%rax, %r8
-	mov	$0  , %eax
-	adc	%rdx, %rax
-	ADDSUB	%r8 , -24(rp,n,8)
-	adc	$0  , %rax
-	ret
-
-L(b11):	ADDSUB	%r8 , -40(rp,n,8)
-	adc	%rax, %r9
-	mov	$0  , %eax
-	adc	%rdx, %rax
-	ADDSUB	%r9 , -32(rp,n,8)
-	adc	$0  , %rax
-	ret
-
 EPILOGUE()

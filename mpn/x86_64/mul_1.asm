@@ -1,7 +1,6 @@
-dnl  AMD64 mpn_mul_1 -- Multiply a limb vector with a limb and store the
-dnl  result in a second limb vector.
+dnl  AMD64 mpn_mul_1.
 
-dnl  Copyright 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,112 +20,127 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles/limb
-C K8:		 3
-C P4:		12.6
-C P6-15:	 4.1
+C K8,K9:	 2.5
+C K10:		 2.5
+C P4:		 12.3
+C P6-15:	 4.0
 
-C TODO
-C  * Perhaps make this use the algorithm of addmul_1.asm.
+C The inner loop of this code is the result of running a code generation and
+C permutation tool suite written by David Harvey and Torbjorn Granlund.
 
+C TODO:
+C  * The inner loop is great, but the prologue and epilogue code was
+C    quickly written.  Tune it!
 
 C INPUT PARAMETERS
-C rp		rdi
-C up		rsi
-C n		rdx
-C vl		rcx
-C cylimb	r8
+define(`rp',	 `%rdi')
+define(`up',	 `%rsi')
+define(`n_param',`%rdx')
+define(`vl',	 `%rcx')
+
+define(`n',	`%r11')
 
 ASM_START()
 	TEXT
 	ALIGN(16)
-	.byte	0,0,0,0,0,0,0,0,0	C this aligns the loop		      9
-PROLOGUE(mpn_mul_1)
-	xorl	%r8d, %r8d		C clear carry limb		      3
 PROLOGUE(mpn_mul_1c)
-	movq	%rdx, %r11		C				      3
-	leaq	(%rsi,%rdx,8), %rsi	C				      4
-	leaq	(%rdi,%rdx,8), %rdi	C				      4
-	negq	%r11			C				      3
-	addq	$3, %r11		C				      4
-	jb	L(tail)			C jump for n = 1, 2, 3		      2
+	push	%rbx
+	mov	%r8, %r10
+	jmp	L(common)
+EPILOGUE()
 
-L(oop):	movq	-24(%rsi,%r11,8), %rax	C				      5
-	mulq	%rcx			C				      3
-	xorq	%r9, %r9		C				      3
-	addq	%rax, %r8		C				      3
-	adcq	%rdx, %r9		C				      3
+PROLOGUE(mpn_mul_1)
+	push	%rbx
+	xor	%r10, %r10
+L(common):
+	mov	(up), %rax		C read first u limb early
+	mov	n_param, %rbx		C move away n from rdx, mul uses it
+	mul	vl
+	mov	%rbx, %r11
 
-	movq	-16(%rsi,%r11,8), %rax	C				      5
-	mulq	%rcx			C				      3
-	xorq	%r10, %r10		C				      3
-	addq	%rax, %r9		C				      3
-	adcq	%rdx, %r10		C				      3
+	add	%r10, %rax
+	adc	$0, %rdx
 
-	movq	%r8, -24(%rdi,%r11,8)	C				      5
-	movq	%r9, -16(%rdi,%r11,8)	C				      5
+	and	$3, R32(%rbx)
+	jz	L(b0)
+	cmp	$2, R32(%rbx)
+	jz	L(b2)
+	jg	L(b3)
 
-	movq	-8(%rsi,%r11,8), %rax	C				      5
-	mulq	%rcx			C				      3
-	xorq	%r9, %r9		C				      3
-	addq	%rax, %r10		C				      3
-	adcq	%rdx, %r9		C				      3
+L(b1):	dec	n
+	jne	L(gt1)
+	mov	%rax, (rp)
+	jmp	L(ret)
+L(gt1):	lea	8(up,n,8), up
+	lea	-8(rp,n,8), rp
+	neg	n
+	xor	%r10, %r10
+	xor	R32(%rbx), R32(%rbx)
+	mov	%rax, %r9
+	mov	(up,n,8), %rax
+	mov	%rdx, %r8
+	jmp	L(L1)
 
-	movq	(%rsi,%r11,8), %rax	C				      4
-	mulq	%rcx			C				      3
-	xorq	%r8, %r8		C				      3
-	addq	%rax, %r9		C				      3
-	adcq	%rdx, %r8		C				      3
+L(b0):	lea	(up,n,8), up
+	lea	-16(rp,n,8), rp
+	neg	n
+	xor	%r10, %r10
+	mov	%rax, %r8
+	mov	%rdx, %rbx
+	jmp	 L(L0)
 
-	movq	%r10, -8(%rdi,%r11,8)	C				      5
-	movq	%r9, (%rdi,%r11,8)	C				      4
+L(b3):	lea	-8(up,n,8), up
+	lea	-24(rp,n,8), rp
+	neg	n
+	mov	%rax, %rbx
+	mov	%rdx, %r10
+	jmp	L(L3)
 
-	addq	$4, %r11		C				      4
-	jae	L(oop)			C				      2
+L(b2):	lea	-16(up,n,8), up
+	lea	-32(rp,n,8), rp
+	neg	n
+	xor	%r8, %r8
+	xor	R32(%rbx), R32(%rbx)
+	mov	%rax, %r10
+	mov	24(up,n,8), %rax
+	mov	%rdx, %r9
+	jmp	L(L2)
 
-	cmpl	$3, %r11d		C				      4
-	jne	L(tail)			C				      2
+	ALIGN(16)
+L(top):	mov	%r10, (rp,n,8)
+	add	%rax, %r9
+	mov	(up,n,8), %rax
+	adc	%rdx, %r8
+	mov	$0, %r10d
+L(L1):	mul	vl
+	mov	%r9, 8(rp,n,8)
+	add	%rax, %r8
+	adc	%rdx, %rbx
+L(L0):	mov	8(up,n,8), %rax
+	mul	vl
+	mov	%r8, 16(rp,n,8)
+	add	%rax, %rbx
+	adc	%rdx, %r10
+L(L3):	mov	16(up,n,8), %rax
+	mul	vl
+	mov	%rbx, 24(rp,n,8)
+	mov	$0, %r8d		# zero
+	mov	%r8, %rbx		# zero
+	add	%rax, %r10
+	mov	24(up,n,8), %rax
+	mov	%r8, %r9		# zero
+	adc	%rdx, %r9
+L(L2):	mul	vl
+	add	$4, n
+	js	 L(top)
 
-	movq	%r8, %rax		C				      3
-	ret				C				      1
+	mov	%r10, (rp,n,8)
+	add	%rax, %r9
+	adc	%r8, %rdx
+	mov	%r9, 8(rp,n,8)
+	add	%r8, %rdx
+L(ret):	mov	%rdx, %rax
 
-L(tail):	movq	-24(%rsi,%r11,8), %rax	C				      5
-	mulq	%rcx			C				      3
-	xorq	%r9, %r9		C				      3
-	addq	%rax, %r8		C				      3
-	adcq	%rdx, %r9		C				      3
-
-	cmpl	$2, %r11d		C				      4
-	jne	L(1)			C				      2
-
-	movq	%r8, -8(%rdi)		C				      4
-	movq	%r9, %rax		C				      3
-	ret				C				      1
-
-L(1):	movq	-16(%rsi,%r11,8), %rax	C				      5
-	mulq	%rcx			C				      3
-	xorq	%r10, %r10		C				      3
-	addq	%rax, %r9		C				      3
-	adcq	%rdx, %r10		C				      3
-
-	cmpl	$1, %r11d		C				      4
-	jne	L(2)			C				      2
-
-	movq	%r8, -16(%rdi)		C				      4
-	movq	%r9, -8(%rdi)		C				      4
-	movq	%r10, %rax		C				      3
-	ret				C				      1
-
-L(2):	movq	-8(%rsi), %rax		C				      4
-	mulq	%rcx			C				      3
-	xorq	%r11, %r11		C				      3
-	addq	%rax, %r10		C				      3
-	adcq	%rdx, %r11		C				      3
-
-	movq	%r8, -24(%rdi)		C				      4
-	movq	%r9, -16(%rdi)		C				      4
-	movq	%r10, -8(%rdi)		C				      4
-	movq	%r11, %rax		C				      3
-	ret				C				      1
-EPILOGUE(mpn_mul_1)
-EPILOGUE(mpn_mul_1c)
-
+	pop	%rbx
+	ret
+EPILOGUE()
