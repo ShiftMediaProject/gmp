@@ -41,10 +41,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIV_DC_THRESHOLD                 84
 #define POWM_THRESHOLD                  134
 
-#define HGCD_THRESHOLD                  220
+#define HGCD_THRESHOLD                  159
 #define GCD_ACCEL_THRESHOLD               3
-#define GCD_DC_THRESHOLD                908
-#define GCDEXT_SCHOENHAGE_THRESHOLD     683
+#define GCD_DC_THRESHOLD                481
+#define GCDEXT_DC_THRESHOLD             489
 #define JACOBI_BASE_METHOD                1
 
 #define USE_PREINV_DIVREM_1               1  /* native */
