@@ -1698,7 +1698,9 @@ refmpn_sb_divrem_mn (mp_ptr qp,
     }
 
   /* remainder < divisor */
+#if 0		/* ASSERT triggers gcc 4.2.1 bug */
   ASSERT (refmpn_cmp (np, dp, dsize) < 0);
+#endif
 
   /* multiply back to original */
   {
