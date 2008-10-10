@@ -1,3 +1,7 @@
+2008-10-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpq/mul.c: Fix typo in last change.
+
 2008-10-09  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/refmpn.c (refmpn_sb_divrem_mn): Work around a gcc bug.
