@@ -47,7 +47,7 @@ mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
   op2_num_size = ABS (op2->_mp_num._mp_size);
   op2_den_size =      op2->_mp_den._mp_size;
 
-  if (op1_num_size == 0 || op2_num_size)
+  if (op1_num_size == 0 || op2_num_size == 0)
     {
       /* We special case this to simplify allocation logic; gcd(0,x) = x
 	 is a singular case for the allocations.  */
