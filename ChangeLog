@@ -1,5 +1,8 @@
 2008-10-15  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/mips64/divrem_1.asm: Remove file, it is n32-only, and uses an old
+	algorithm.
+
 	* config.guess, config.sub, configure.in: Support Intel Atom processor.
 
 2008-10-10  Torbjorn Granlund  <tege@swox.com>
