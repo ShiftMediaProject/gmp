@@ -29,7 +29,9 @@ C The inner loops of this code are the result of running a code generation and
 C permutation tool suite written by David Harvey and Torbjorn Granlund.
 
 C TODO
-C  * Finish.
+C  * Use fewer registers.
+C  * Avoid some "mov $0,r" and instead use "xor r,r".
+C  * Don't align loops to a 32-byte boundaries.
 
 C INPUT PARAMETERS
 define(`rp',      `%rdi')
@@ -163,11 +165,11 @@ L(mul_1_entry_2):
 	add	$4, n
 	js	L(mul_1_top)
 
-	mov	w0, -16(rp,n,8)
+	mov	w0, -16(rp)
 	add	%rax, w1
-	mov	w1, -8(rp,n,8)
+	mov	w1, -8(rp)
 	adc	%rdx, w2
-	mov	w2, (rp,n,8)
+	mov	w2, (rp)
 
 	lea	8(rp), rp		C rp += 1
 	lea	8(vp), vp		C vp += 1
@@ -295,8 +297,8 @@ L(mul_2_entry_1):
 	mul	v1
 	add	%rax, w0
 	adc	%rdx, w1
-	mov	w0, -24(rp,n,8)
-	mov	w1, -16(rp,n,8)
+	mov	w0, (rp)
+	mov	w1, 8(rp)
 
 	lea	16(rp), rp		C rp += 2
 	lea	16(vp), vp		C vp += 2
@@ -422,11 +424,11 @@ L(addmul_entry_1):
 	add	$4, n
 	js	L(addmul_top)
 
-	add	w3, -32(rp,n,8)
+	add	w3, -8(rp)
 	adc	%rax, w0
 	adc	%rdx, w1
-	mov	w0, -24(rp,n,8)
-	mov	w1, -16(rp,n,8)
+	mov	w0, (rp)
+	mov	w1, 8(rp)
 
 	lea	16(rp), rp		C rp += 2
 	lea	16(vp), vp		C vp += 2
