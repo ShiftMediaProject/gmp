@@ -1,5 +1,7 @@
 2008-10-15  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/x86_64/mul_basecase.asm: Simplify addressing in epilogue.
+
 	* mpn/mips64/divrem_1.asm: Remove file, it is n32-only, and uses an old
 	algorithm.
 
