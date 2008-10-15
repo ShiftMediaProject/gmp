@@ -336,7 +336,7 @@ find_primes (unsigned char *s, mpz_t  fr, unsigned long ssize,
   mpz_clear (tmp);
 }
 
-/* Generate a lits of primes and store in the global array primes[].  */
+/* Generate a list of primes and store in the global array primes[].  */
 void
 make_primelist (unsigned long maxprime)
 {
