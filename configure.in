@@ -1281,7 +1281,7 @@ case $host in
   # mode, in case -m32 has failed not because it's an old gcc, but because
   # it's a dual 32/64-bit gcc without a 32-bit libc, or whatever.
   #
-  X86_PATTERN | athlon64-*-* | core2-*-* | x86_64-*-*)
+  X86_PATTERN | athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*)
     abilist="32"
     cclist="gcc icc cc"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
@@ -1459,7 +1459,7 @@ case $host in
     fi
 
     case $host_cpu in
-      athlon64 | core2 | pentium4 | x86_64)
+      athlon64 | atom | core2 | pentium4 | x86_64)
         cclist_64="gcc"
         gcc_64_cflags="$gcc_64_cflags -m64"
         gcc_64_cflags_optlist="cpu"
@@ -1480,6 +1480,11 @@ case $host in
 	  core2)
 	    abilist="64 32"
 	    path_64="x86_64/core2 x86_64"
+	    ;;
+	  atom)
+	    # The AMD K8/K9/K10 code seems best for Intel Atom
+	    abilist="64 32"
+	    path_64="x86_64"
 	    ;;
 	esac
 	;;
@@ -2025,7 +2030,7 @@ done
 # enough assembler.
 #
 case $host in
-  X86_PATTERN | athlon64-*-* | core2-*-* | x86_64-*-*)
+  X86_PATTERN | athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*)
     if test "$ABI" = 32; then
       case "$path $fat_path" in
         *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
@@ -2996,7 +3001,7 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
       esac
       ;;
-    X86_PATTERN | athlon64-*-* | core2-*-* | x86_64-*-*)
+    X86_PATTERN | athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*)
       GMP_ASM_ALIGN_FILL_0x90
       case $ABI in
         32)

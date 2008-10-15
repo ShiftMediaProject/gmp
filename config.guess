@@ -725,7 +725,8 @@ main ()
 	  else if (model <= 9)	modelstr = "pentiumm";
 	  else if (model <= 12)	modelstr = "pentium3";
 	  else if (model <= 14)	modelstr = "pentiumm";
-	  else			modelstr = "core2";
+	  else if (model <= 27)	modelstr = "core2";
+	  else			modelstr = "atom";
 	  break;
 	case 15:
 	  modelstr = "pentium4";
