@@ -25,7 +25,8 @@ C	     cycles/limb
 C K8,K9:	 1.0
 C K10:		 1.12
 C P4:  		 3.25
-C P6-15:	 1.5
+C P6-15 (Core2): 1.5
+C P6-28 (Atom):	 2.5
 
 
 C INPUT PARAMETERS

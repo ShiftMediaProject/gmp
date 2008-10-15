@@ -24,7 +24,8 @@ C	     cycles/limb
 C K8,K9:	 2.375	(1.375 for cnt=1)
 C K10:		 2.375	(1.375 for cnt=1)
 C P4:		 8	(10.5  for cnt=1)
-C P6-15:	 2.11	(4.28 for cnt=1)
+C P6-15 (Core2): 2.11	(4.28 for cnt=1)
+C P6-28 (Atom):	 5.9
 
 
 C INPUT PARAMETERS

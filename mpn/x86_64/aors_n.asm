@@ -1,7 +1,6 @@
-dnl  AMD64 mpn_add_n -- Add two limb vectors of the same length > 0 and store
-dnl  sum in a third limb vector.
+dnl  AMD64 mpn_add_n, mpn_sub_n
 
-dnl  Copyright 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -25,7 +24,8 @@ C	     cycles/limb
 C K8,K9:	 1.69
 C K10:		 2
 C P4:		10.5
-C P6-15:	 4.87
+C P6-15 (Core2): 4.87
+C P6-28 (Atom):	 4
 
 MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc)
 

@@ -24,7 +24,8 @@ C	    cycles/limb     cycles/limb
 C K8,K9:	17		15
 C K10:		17		15
 C P4:		83		57
-C P6-15:	32		21
+C P6-15 (Core2):32		21
+C P6-28 (Atom):	70		39
 
 
 C mp_limb_t mpn_divrem_1 (mp_ptr qp, mp_size_t fn,

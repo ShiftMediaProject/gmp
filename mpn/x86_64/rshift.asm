@@ -24,18 +24,15 @@ C	     cycles/limb
 C K8,K9:	 2.375
 C K10:		 2.375
 C P4:		 8
-C P6-15:	 2.11
+C P6-15 (Core2): 2.11
+C P6-28 (Atom):	 5.9
 
 
 C INPUT PARAMETERS
-C rp	rdi
-C up	rsi
-C n	rdx
-C cnt	rcx
-
-define(`rp',`%rdi')
-define(`up',`%rsi')
-define(`n',`%rdx')
+define(`rp',	`%rdi')
+define(`up',	`%rsi')
+define(`n',	`%rdx')
+define(`cnt',	`%rcx')
 
 ASM_START()
 	TEXT
