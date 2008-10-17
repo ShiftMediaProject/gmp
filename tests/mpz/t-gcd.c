@@ -1,7 +1,7 @@
 /* Test mpz_gcd, mpz_gcdext, and mpz_gcd_ui.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005,
+2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -60,16 +60,16 @@ check_data (void)
       mpz_gcd (got, a, b);
       MPZ_CHECK_FORMAT (got);
       if (mpz_cmp (got, want) != 0)
-        {
-          printf    ("mpz_gcd wrong on data[%d]\n", i);
-          printf    (" a  %s\n", data[i].a);
-          printf    (" b  %s\n", data[i].b);
-          mpz_trace (" a", a);
-          mpz_trace (" b", b);
-          mpz_trace (" want", want);
-          mpz_trace (" got ", got);
-          abort ();
-        }
+	{
+	  printf    ("mpz_gcd wrong on data[%d]\n", i);
+	  printf    (" a  %s\n", data[i].a);
+	  printf    (" b  %s\n", data[i].b);
+	  mpz_trace (" a", a);
+	  mpz_trace (" b", b);
+	  mpz_trace (" want", want);
+	  mpz_trace (" got ", got);
+	  abort ();
+	}
     }
 
   mpz_clear (a);
@@ -291,7 +291,7 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
   mpz_mul (temp1, temp1, op1);
   mpz_mul (temp2, temp2, op2);
   mpz_add (temp1, temp1, temp2);
-  
+
   if (mpz_cmp (gcd1, gcd2) != 0
       || mpz_cmp (gcd2, temp1) != 0)
     {
@@ -314,7 +314,7 @@ gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
      allow gcd(0,0) = 0. */
   if (mpz_sgn (g) < 0)
     return 0;
-  
+
   if (mpz_sgn (a) == 0)
     {
       /* Must have g == abs (b). Any value for s is in some sense "correct",
@@ -334,7 +334,7 @@ gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
 	 && mpz_divisible_p (b, g)
 	 && mpz_cmpabs (s, b) <= 0))
     return 0;
-      
+
   mpz_mul(temp1, s, a);
   mpz_sub(temp1, g, temp1);
   mpz_tdiv_qr(temp1, temp2, temp1, b);
