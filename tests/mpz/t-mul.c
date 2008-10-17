@@ -95,14 +95,15 @@ main (int argc, char **argv)
   for (i = 0;; i++)
     {
       size_range = fsize_range >> 8;
-      fsize_range = fsize_range * 33 / 32;
+      fsize_range = fsize_range * 257 / 256;
 
       if (size_range > fft_max_2exp)
 	break;
 
       mpz_urandomb (bs, rands, size_range);
       mpz_rrandomb (op1, rands, mpz_get_ui (bs));
-      mpz_urandomb (bs, rands, size_range);
+      if (i & 1)
+	mpz_urandomb (bs, rands, size_range);
       mpz_rrandomb (op2, rands, mpz_get_ui (bs));
 
       mpz_urandomb (bs, rands, 4);
