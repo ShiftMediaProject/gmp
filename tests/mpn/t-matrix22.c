@@ -1,7 +1,6 @@
 /* Tests matrix22_mul.
 
-Copyright 2008 Free
-Software Foundation, Inc.
+Copyright 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,7 +32,7 @@ struct matrix {
 
 static void
 matrix_init (struct matrix *M, mp_size_t n)
-{  
+{
   mp_ptr p = refmpn_malloc_limbs (4*(n+1));
   M->e00 = p; p += n+1;
   M->e01 = p; p += n+1;
@@ -77,7 +76,7 @@ matrix_random(struct matrix *M, mp_size_t n, gmp_randstate_ptr rands)
   mpn_random (M->e00, n);
   mpn_random (M->e01, n);
   mpn_random (M->e10, n);
-  mpn_random (M->e11, n);  
+  mpn_random (M->e11, n);
 }
 
 #define MUL(rp, ap, an, bp, bn) do { \
@@ -94,7 +93,7 @@ ref_matrix22_mul (struct matrix *R,
 {
   mp_size_t an, bn, n;
   mp_ptr r00, r01, r10, r11, a00, a01, a10, a11, b00, b01, b10, b11;
-  
+
   if (A->n >= B->n)
     {
       r00 = R->e00; a00 = A->e00; b00 = B->e00;
@@ -109,12 +108,12 @@ ref_matrix22_mul (struct matrix *R,
       r00 = R->e00; a00 = B->e00; b00 = A->e00;
       r01 = R->e10; a01 = B->e10; b01 = A->e10;
       r10 = R->e01; a10 = B->e01; b10 = A->e01;
-      r11 = R->e11; a11 = B->e11; b11 = A->e11;      
+      r11 = R->e11; a11 = B->e11; b11 = A->e11;
       an = B->n, bn = A->n;
     }
   n = an + bn;
   R->n = n + 1;
-  
+
   mpn_mul (r00, a00, an, b00, bn);
   mpn_mul (tp, a01, an, b10, bn);
   r00[n] = mpn_add_n (r00, r00, tp, n);
@@ -143,7 +142,7 @@ one_test (const struct matrix *A, const struct matrix *B, int i)
   matrix_init (&P, A->n + B->n + 1);
 
   tp = refmpn_malloc_limbs (mpn_matrix22_mul_itch (A->n, B->n));
-			    
+
   ref_matrix22_mul (&R, A, B, tp);
   matrix_copy (&P, A);
   mpn_matrix22_mul (P.e00, P.e01, P.e10, P.e11, A->n,
@@ -156,9 +155,9 @@ one_test (const struct matrix *A, const struct matrix *B, int i)
 		   "B = (%Nx, %Nx\n      %Nx, %Nx)\n"
 		   "R = (%Nx, %Nx (expected)\n      %Nx, %Nx)\n"
 		   "P = (%Nx, %Nx (incorrect)\n      %Nx, %Nx)\n",
-		   A->e00, A->n, A->e01, A->n, A->e10, A->n, A->e11, A->n, 
-		   B->e00, B->n, B->e01, B->n, B->e10, B->n, B->e11, B->n, 
-		   R.e00, R.n, R.e01, R.n, R.e10, R.n, R.e11, R.n, 
+		   A->e00, A->n, A->e01, A->n, A->e10, A->n, A->e11, A->n,
+		   B->e00, B->n, B->e01, B->n, B->e10, B->n, B->e11, B->n,
+		   R.e00, R.n, R.e01, R.n, R.e10, R.n, R.e11, R.n,
 		   P.e00, P.n, P.e01, P.n, P.e10, P.n, P.e11, P.n);
       abort();
     }
