@@ -52,7 +52,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   u0 = tp; tp += ualloc;
   u1 = tp; tp += ualloc;
   u2 = tp; tp += ualloc;
-  
+
   u1[0] = 1; un = 1;
 
   /* FIXME: Handle n == 2 differently, after the loop? */
@@ -80,7 +80,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  ah = MPN_EXTRACT_NUMB (shift, ap[1], ap[0]);
 	  al = ap[0] << shift;
 	  bh = MPN_EXTRACT_NUMB (shift, bp[1], bp[0]);
-	  bl = bp[0] << shift;	  
+	  bl = bp[0] << shift;
 	}
       else
 	{
