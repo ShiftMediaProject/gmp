@@ -60,7 +60,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
   int swapped;
 
   an = bn = n;
-	  
+
   ASSERT (an > 0);
   ASSERT (ap[an-1] > 0 || bp[an-1] > 0);
 
@@ -70,7 +70,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
   un = *unp;
 
   swapped = 0;
-  
+
   if (UNLIKELY (an == 0))
     {
     return_b:
@@ -81,7 +81,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
       MPN_COPY (up, u0, un);
 
       *usizep = swapped ? un : -un;
-      
+
       return 0;
     }
   else if (UNLIKELY (bn == 0))
@@ -89,12 +89,12 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
     return_a:
       MPN_COPY (gp, ap, an);
       *gn = an;
-      
+
       MPN_NORMALIZE (u1, un);
       MPN_COPY (up, u1, un);
 
       *usizep = swapped ? -un : un;
-      
+
       return 0;
     }
 
