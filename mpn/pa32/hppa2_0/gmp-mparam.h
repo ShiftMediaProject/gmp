@@ -35,7 +35,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define POWM_THRESHOLD               166
 
 #define GCD_ACCEL_THRESHOLD            4
-#define GCDEXT_THRESHOLD               0
 
 #define DIVREM_1_NORM_THRESHOLD        4
 #define DIVREM_1_UNNORM_THRESHOLD      6

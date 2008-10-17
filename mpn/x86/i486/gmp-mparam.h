@@ -37,7 +37,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define POWM_THRESHOLD                   38
 
 #define GCD_ACCEL_THRESHOLD               3
-#define GCDEXT_THRESHOLD                 55
 #define JACOBI_BASE_METHOD                2
 
 #define USE_PREINV_DIVREM_1               0

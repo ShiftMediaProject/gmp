@@ -254,17 +254,20 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
+  { "mpn_matrix22_mul",  speed_mpn_matrix22_mul     },
+
   { "mpn_hgcd",          speed_mpn_hgcd             },
-#if 0
   { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
-#endif
+
   { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
   { "mpn_gcd",           speed_mpn_gcd                    },
+#if 0
   { "mpn_gcd_binary",    speed_mpn_gcd_binary             },
   { "mpn_gcd_accel",     speed_mpn_gcd_accel              },
   { "find_a",            speed_find_a,        FLAG_NODATA },
+#endif
 #if HAVE_NATIVE_mpn_gcd_finda
   { "mpn_gcd_finda",     speed_mpn_gcd_finda, FLAG_NODATA },
 #endif

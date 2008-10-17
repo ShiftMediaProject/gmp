@@ -162,10 +162,11 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
-mp_size_t  hgcd_schoenhage_threshold    = MP_SIZE_T_MAX;
+mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
+mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
-mp_size_t  gcd_schoenhage_threshold     = MP_SIZE_T_MAX;
-mp_size_t  gcdext_schoenhage_threshold  = MP_SIZE_T_MAX;
+mp_size_t  gcd_dc_threshold             = MP_SIZE_T_MAX;
+mp_size_t  gcdext_dc_threshold          = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
@@ -1007,17 +1008,27 @@ tune_powm (void)
 
 
 void
+tune_matrix22_mul (void)
+{
+  static struct param_t  param;
+  param.name = "MATRIX22_STRASSEN_THRESHOLD";
+  param.function = speed_mpn_matrix22_mul;
+  param.min_size = 2;
+  one (&matrix22_strassen_threshold, &param);
+}
+
+void
 tune_hgcd (void)
 {
   static struct param_t  param;
-  param.name = "HGCD_SCHOENHAGE_THRESHOLD";
+  param.name = "HGCD_THRESHOLD";
   param.function = speed_mpn_hgcd;
   /* We seem to get strange results for small sizes */
-  param.min_size = 50;
-  param.step_factor = 0.05;
-  one (&hgcd_schoenhage_threshold, &param);
+  param.min_size = 30;
+  one (&hgcd_threshold, &param);
 }
 
+#if 0
 void
 tune_gcd_accel (void)
 {
@@ -1027,29 +1038,29 @@ tune_gcd_accel (void)
   param.min_size = 1;
   one (&gcd_accel_threshold, &param);
 }
-
+#endif
 void
-tune_gcd_schoenhage (void)
+tune_gcd_dc (void)
 {
   static struct param_t  param;
-  param.name = "GCD_SCHOENHAGE_THRESHOLD";
+  param.name = "GCD_DC_THRESHOLD";
   param.function = speed_mpn_gcd;
-  param.min_size = hgcd_schoenhage_threshold;
+  param.min_size = hgcd_threshold;
   param.max_size = 3000;
   param.step_factor = 0.1;
-  one (&gcd_schoenhage_threshold, &param);
+  one (&gcd_dc_threshold, &param);
 }
 
 void
-tune_gcdext_schoenhage (void)
+tune_gcdext_dc (void)
 {
   static struct param_t  param;
-  param.name = "GCDEXT_SCHOENHAGE_THRESHOLD";
+  param.name = "GCDEXT_DC_THRESHOLD";
   param.function = speed_mpn_gcdext;
-  param.min_size = hgcd_schoenhage_threshold;
+  param.min_size = hgcd_threshold;
   param.max_size = 3000;
   param.step_factor = 0.1;
-  one (&gcdext_schoenhage_threshold, &param);
+  one (&gcdext_dc_threshold, &param);
 }
 
 
@@ -1771,10 +1782,13 @@ all (void)
   tune_powm ();
   printf("\n");
 
+  tune_matrix22_mul ();
   tune_hgcd ();
+  tune_gcd_dc ();
+  tune_gcdext_dc ();
+#if 0
   tune_gcd_accel ();
-  tune_gcd_schoenhage ();
-  tune_gcdext_schoenhage ();
+#endif
   tune_jacobi_base ();
   printf("\n");
 

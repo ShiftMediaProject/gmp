@@ -42,9 +42,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIV_DC_THRESHOLD                 37
 #define POWM_THRESHOLD                   73
 
-#define HGCD_SCHOENHAGE_THRESHOLD        97
+#define HGCD_THRESHOLD                   97
 #define GCD_ACCEL_THRESHOLD               3
-#define GCD_SCHOENHAGE_THRESHOLD        849
+#define GCD_DC_THRESHOLD                849
 #define GCDEXT_THRESHOLD                 14
 #define JACOBI_BASE_METHOD                2
 

@@ -82,10 +82,10 @@ check_data (void)
    to reinitialize them for each test.  */
 mpz_t gcd1, gcd2, s, t, temp1, temp2;
 
-#if GCD_SCHOENHAGE_THRESHOLD > GCDEXT_SCHOENHAGE_THRESHOLD
-#define MAX_SCHOENHAGE_THRESHOLD GCD_SCHOENHAGE_THRESHOLD
+#if GCD_DC_THRESHOLD > GCDEXT_DC_THRESHOLD
+#define MAX_SCHOENHAGE_THRESHOLD GCD_DC_THRESHOLD
 #else
-#define MAX_SCHOENHAGE_THRESHOLD GCDEXT_SCHOENHAGE_THRESHOLD
+#define MAX_SCHOENHAGE_THRESHOLD GCDEXT_DC_THRESHOLD
 #endif
 
 /* Define this to make all operands be large enough for Schoenhage gcd
@@ -252,6 +252,7 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
       fprintf (stderr, "op1=");                 debug_mp (op1, -16);
       fprintf (stderr, "op2=");                 debug_mp (op2, -16);
       fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd1, -16);
+      fprintf (stderr, "s=");                   debug_mp (s, -16);
       abort ();
     }
 

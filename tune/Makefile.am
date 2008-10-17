@@ -41,7 +41,7 @@ EXTRA_LTLIBRARIES = libspeed.la
 
 libspeed_la_SOURCES =							\
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
-  freq.c gcd_bin.c gcd_accel.c gcd_finda_gen.c					\
+  freq.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c					\
@@ -124,7 +124,7 @@ DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c gcdext.c get_str.c \
-  set_str.c hgcd.c mul_n.c mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c
+  set_str.c matrix22_mul.c hgcd.c mul_n.c mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c
 
 $(TUNE_MPN_SRCS_BASIC):
 	for i in $(TUNE_MPN_SRCS_BASIC); do \

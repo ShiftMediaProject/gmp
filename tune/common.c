@@ -1004,18 +1004,71 @@ speed_mpn_mullow_basecase (struct speed_params *s)
 }
 
 double
+speed_mpn_matrix22_mul (struct speed_params *s)
+{
+  /* Speed params only includes 2 inputs, so we have to invent the
+     other 6. */
+
+  mp_ptr a1, a2, a3;
+  mp_ptr r0, r1, r2, r3;
+  mp_ptr b1, b2, b3;
+  mp_ptr tp;
+  mp_size_t scratch;
+  unsigned i;
+  double t;
+  TMP_DECL;
+
+  TMP_MARK;
+  SPEED_TMP_ALLOC_LIMBS (a1, s->size, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (a2, s->size, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (a3, s->size, s->align_xp);
+
+  SPEED_TMP_ALLOC_LIMBS (b1, s->size, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (b2, s->size, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (b3, s->size, s->align_yp);
+
+  SPEED_TMP_ALLOC_LIMBS (r0, 2 * s->size +1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (r1, 2 * s->size +1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (r2, 2 * s->size +1, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (r3, 2 * s->size +1, s->align_xp);
+
+  mpn_random (a1, s->size);
+  mpn_random (a2, s->size);
+  mpn_random (a3, s->size);
+  mpn_random (b1, s->size);
+  mpn_random (b2, s->size);
+  mpn_random (b3, s->size);
+
+  scratch = mpn_matrix22_mul_itch (s->size, s->size);
+  SPEED_TMP_ALLOC_LIMBS (tp, scratch, s->align_wp);
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    {
+      MPN_COPY (r0, s->xp, s->size); 
+      MPN_COPY (r1, a1, s->size); 
+      MPN_COPY (r2, a2, s->size); 
+      MPN_COPY (r3, a3, s->size);
+      mpn_matrix22_mul (r0, r1, r2, r3, s->size, s->yp, b1, b2, b3, s->size, tp);
+    }
+  while (--i != 0);
+  t = speed_endtime();
+  TMP_FREE;
+  return t;
+}
+
+double
 speed_mpn_hgcd (struct speed_params *s)
 {
   mp_ptr wp;
-  mp_size_t hgcd_init_scratch = mpn_hgcd_init_itch (s->size);
-  mp_size_t qstack_scratch = qstack_itch (s->size);
+  mp_size_t hgcd_init_scratch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);
   mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
   mp_ptr ap;
   mp_ptr bp;
   mp_ptr tmp1, tmp2;
 
-  struct hgcd hgcd;
-  struct qstack quotients;
+  struct hgcd_matrix hgcd;
   int res;
   unsigned i;
   double t;
@@ -1029,53 +1082,38 @@ speed_mpn_hgcd (struct speed_params *s)
   SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
   SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
 
-  MPN_COPY (ap, s->xp, s->size);
-  MPN_COPY (bp, s->yp, s->size);
-  ap[s->size - 1] |= 1;
-  bp[s->size - 1] |= 1;
-
-  /* We must have a >= b */
-  if (mpn_cmp (ap, bp, s->size) < 0)
-    MP_PTR_SWAP (ap, bp);
+  s->xp[s->size - 1] |= 1;
+  s->yp[s->size - 1] |= 1;
 
   SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
-  mpn_hgcd_init (&hgcd, s->size, tmp1);
-  SPEED_TMP_ALLOC_LIMBS (tmp2, qstack_scratch, s->align_wp);
-  qstack_init (&quotients, s->size, tmp2, qstack_scratch);
+  mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
   SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
 
   speed_starttime ();
   i = s->reps;
   do
     {
-      qstack_reset (&quotients, s->size);
-      res = mpn_hgcd (&hgcd, ap, s->size, bp, s->size,
-                      &quotients,
-                      wp, hgcd_scratch);
+      MPN_COPY (ap, s->xp, s->size);
+      MPN_COPY (bp, s->yp, s->size);
+      res = mpn_hgcd (ap, bp, s->size, &hgcd, wp);
     }
   while (--i != 0);
   t = speed_endtime ();
-#if WANT_ASSERT
-  if (res)
-    ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
-#endif
   TMP_FREE;
   return t;
 }
-#if 0
+
 double
 speed_mpn_hgcd_lehmer (struct speed_params *s)
 {
   mp_ptr wp;
-  mp_size_t hgcd_init_scratch = mpn_hgcd_init_itch (s->size);
-  mp_size_t qstack_scratch = qstack_itch (s->size);
-  mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
+  mp_size_t hgcd_init_scratch = MPN_HGCD_MATRIX_INIT_ITCH (s->size);
+  mp_size_t hgcd_scratch = MPN_HGCD_LEHMER_ITCH (s->size);
   mp_ptr ap;
   mp_ptr bp;
   mp_ptr tmp1, tmp2;
 
-  struct hgcd hgcd;
-  struct qstack quotients;
+  struct hgcd_matrix hgcd;
   int res;
   unsigned i;
   double t;
@@ -1089,45 +1127,33 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   SPEED_TMP_ALLOC_LIMBS (ap, s->size + 1, s->align_xp);
   SPEED_TMP_ALLOC_LIMBS (bp, s->size + 1, s->align_yp);
 
-  MPN_COPY (ap, s->xp, s->size);
-  MPN_COPY (bp, s->yp, s->size);
-  ap[s->size - 1] |= 1;
-  bp[s->size - 1] |= 1;
-
-  /* We must have a >= b */
-  if (mpn_cmp (ap, bp, s->size) < 0)
-    MP_PTR_SWAP (ap, bp);
+  s->xp[s->size - 1] |= 1;
+  s->yp[s->size - 1] |= 1;
 
   SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
-  mpn_hgcd_init (&hgcd, s->size, tmp1);
-  SPEED_TMP_ALLOC_LIMBS (tmp2, qstack_scratch, s->align_wp);
-  qstack_init (&quotients, s->size, tmp2, qstack_scratch);
+  mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
   SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
 
   speed_starttime ();
   i = s->reps;
   do
     {
-      qstack_reset (&quotients, s->size);
-      res = mpn_hgcd_lehmer (&hgcd, ap, s->size, bp, s->size,
-                             &quotients,
-                             wp, hgcd_scratch);
+      MPN_COPY (ap, s->xp, s->size);
+      MPN_COPY (bp, s->yp, s->size);
+      res = mpn_hgcd_lehmer (ap, bp, s->size, &hgcd, wp);
     }
   while (--i != 0);
   t = speed_endtime ();
-#if WANT_ASSERT
-  if (res)
-    ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
-#endif
   TMP_FREE;
   return t;
 }
-#endif
+
 double
 speed_mpn_gcd (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd);
 }
+#if 0
 double
 speed_mpn_gcd_binary (struct speed_params *s)
 {
@@ -1138,7 +1164,7 @@ speed_mpn_gcd_accel (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd_accel);
 }
-
+#endif
 #if HAVE_NATIVE_mpn_gcd_finda
 double
 speed_mpn_gcd_finda (struct speed_params *s)
