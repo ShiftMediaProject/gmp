@@ -117,7 +117,7 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	   struct hgcd_matrix1 *M)
 {
   mp_limb_t u00, u01, u10, u11;
-  
+
   if (ah < 2 || bh < 2)
     return 0;
 
@@ -248,7 +248,7 @@ mpn_hgcd_mul_matrix1_vector (const struct hgcd_matrix1 *M,
 #endif
   rp[n] = ah;
   bp[n] = bh;
-  
+
   n += (ah | bh) > 0;
   return n;
 }
