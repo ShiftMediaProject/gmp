@@ -60,7 +60,7 @@ add_signed_n (mp_ptr rp,
     {
       ASSERT_NOCARRY (mpn_add_n (rp, ap, bp, n));
       return as;
-    }      
+    }
 }
 
 mp_size_t
@@ -74,7 +74,7 @@ mpn_matrix22_mul_itch (mp_size_t rn, mp_size_t mn)
 }
 
 /* Algorithm:
-    
+
     / s0 \   /  1  0  0  0 \ / r0 \
     | s1 |   |  0  1  0  0 | | r1 |
     | s2 |   |  0  0  1  1 | | r2 |
@@ -123,7 +123,7 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
   MUL (u1, r1, rn, m2, mn); /* 1 */
 
   MPN_COPY (s2, r3, rn);
-      
+
   r3[rn] = mpn_add_n (r3, r3, r2, rn);
   r0[rn] = 0;
   s3s = abs_sub_n (s3, r3, r0, rn + 1);
@@ -149,7 +149,7 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
 
   if (u1s)
     {
-      u0[rn+mn] = 0;      
+      u0[rn+mn] = 0;
       u0s = abs_sub_n (u0, u0, u1, rn + mn + 1);
     }
   else
