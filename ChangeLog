@@ -1,3 +1,10 @@
+2008-10-19  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aors_n.asm: Remove redundant MULFUNC_PROLOGUE.
+
+	* gmp-impl.h (popc_limb): Remove redundant checks of GMP_LIMB_BITS
+	inside several of these macros.
+
 2008-10-17  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-mul.c: Use slower geometric progression for operand
