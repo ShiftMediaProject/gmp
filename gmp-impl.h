@@ -3043,8 +3043,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
     __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
     __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
-    if (GMP_LIMB_BITS > 8)						\
-      __x = ((__x >> 8) + __x);						\
+    __x = ((__x >> 8) + __x);						\
     (result) = __x & 0xff;						\
   } while (0)
 #endif
@@ -3056,10 +3055,8 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
     __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
     __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
-    if (GMP_LIMB_BITS > 8)						\
-      __x = ((__x >> 8) + __x);						\
-    if (GMP_LIMB_BITS > 16)						\
-      __x = ((__x >> 16) + __x);					\
+    __x = ((__x >> 8) + __x);						\
+    __x = ((__x >> 16) + __x);						\
     (result) = __x & 0xff;						\
   } while (0)
 #endif
@@ -3071,12 +3068,9 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
     __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
     __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
-    if (GMP_LIMB_BITS > 8)						\
-      __x = ((__x >> 8) + __x);						\
-    if (GMP_LIMB_BITS > 16)						\
-      __x = ((__x >> 16) + __x);					\
-    if (GMP_LIMB_BITS > 32)						\
-      __x = ((__x >> 32) + __x);					\
+    __x = ((__x >> 8) + __x);						\
+    __x = ((__x >> 16) + __x);						\
+    __x = ((__x >> 32) + __x);						\
     (result) = __x & 0xff;						\
   } while (0)
 #endif
