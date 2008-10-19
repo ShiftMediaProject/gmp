@@ -27,8 +27,6 @@ C P4:		10.5
 C P6-15 (Core2): 4.87
 C P6-28 (Atom):	 4
 
-MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc)
-
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
 define(`up',	`%rsi')
