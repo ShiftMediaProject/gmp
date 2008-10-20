@@ -1484,7 +1484,7 @@ case $host in
 	  atom)
 	    # The AMD K8/K9/K10 code seems best for Intel Atom
 	    abilist="64 32"
-	    path_64="x86_64"
+	    path_64="x86_64/atom x86_64"
 	    ;;
 	esac
 	;;
