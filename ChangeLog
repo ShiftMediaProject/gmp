@@ -1,3 +1,11 @@
+2008-10-21  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Set up specific path for x86_64/atom.
+
+2008-10-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/core2/aorsmul_1.asm: New file.
+
 2008-10-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/aors_n.asm: Remove redundant MULFUNC_PROLOGUE.
