@@ -2930,15 +2930,15 @@ main (int argc, char *argv[])
 	case 's':
 	  {
 	    char  *p;
-	    option_firstsize = atoi (optarg);
+	    option_firstsize = strtol (optarg, 0, 0);
 	    if ((p = strchr (optarg, '-')) != NULL)
-	      option_lastsize = atoi (p+1);
+	      option_lastsize = strtol (p+1, 0, 0);
 	  }
 	  break;
 	case 'S':
 	  /* -S <size> sets the starting size for the second of a two size
 	     routine (like mpn_mul_basecase) */
-	  option_firstsize2 = atoi (optarg);
+	  option_firstsize2 = strtol (optarg, 0, 0);
 	  break;
 	case 'W':
 	  /* use this when running in the debugger */
