@@ -1,3 +1,10 @@
+2008-10-21  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Removed
+	qstack.c.
+
+	* mpn/generic/qstack.c: Deleted obsolete file.
+
 2008-10-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/aors_n.asm: Remove redundant MULFUNC_PROLOGUE.
