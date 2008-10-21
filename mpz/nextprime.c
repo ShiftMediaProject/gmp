@@ -1,6 +1,6 @@
 /* mpz_nextprime(p,t) - compute the next prime > t and store that in p.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,30 +19,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
-void
-mpz_nextprime (mpz_ptr p, mpz_srcptr t)
+static const unsigned char primegap[] =
 {
-  mpz_add_ui (p, t, 1L);
-  while (! mpz_probab_prime_p (p, 5))
-    mpz_add_ui (p, p, 1L);
-}
-
-#if 0
-/* This code is not yet tested.  Will be enabled some time. */
-
-status unsigned short primes[] =
-{
-3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,
-101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,
-191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,
-281,283,293,307,311,313,317,331,337,347,349,353,359,367,373,379,383,
-389,397,401,409,419,421,431,433,439,443,449,457,461,463,467,479,487,
-491,499,503,509,521,523,541,547,557,563,569,571,577,587,593,599,601,
-607,613,617,619,631,641,643,647,653,659,661,673,677,683,691,701,709,
-719,727,733,739,743,751,757,761,769,773,787,797,809,811,821,823,827,
-829,839,853,857,859,863,877,881,883,887,907,911,919,929,937,941,947,
-953,967,971,977,983,991,997
+  2,2,4,2,4,2,4,6,2,6,4,2,4,6,6,2,6,4,2,6,4,6,8,4,2,4,2,4,14,4,6,
+  2,10,2,6,6,4,6,6,2,10,2,4,2,12,12,4,2,4,6,2,10,6,6,6,2,6,4,2,10,14,4,2,
+  4,14,6,10,2,4,6,8,6,6,4,6,8,4,8,10,2,10,2,6,4,6,8,4,2,4,12,8,4,8,4,6,
+  12,2,18,6,10,6,6,2,6,10,6,6,2,6,6,4,2,12,10,2,4,6,6,2,12,4,6,8,10,8,10,8,
+  6,6,4,8,6,4,8,4,14,10,12,2,10,2,4,2,10,14,4,2,4,14,4,2,4,20,4,8,10,8,4,6,
+  6,14,4,6,6,8,6,12
 };
 
 #define NUMBER_OF_PRIMES 167
@@ -50,11 +36,11 @@ status unsigned short primes[] =
 void
 mpz_nextprime (mpz_ptr p, mpz_srcptr n)
 {
-  mpz_t tmp;
   unsigned short *moduli;
   unsigned long difference;
   int i;
-  int composite;
+  unsigned prime_limit;
+  unsigned long prime;
 
   /* First handle tiny numbers */
   if (mpz_cmp_ui (n, 2) < 0)
@@ -68,39 +54,53 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
   if (mpz_cmp_ui (p, 7) <= 0)
     return;
 
-  prime_limit = NUMBER_OF_PRIMES - 1;
-  if (mpz_cmp_ui (p, primes[prime_limit]) <= 0)
-    /* Just use first three entries (3,5,7) of table for small numbers */
-    prime_limit = 3;
-  if (prime_limit)
+  int cnt;
+  mp_size_t pn;
+  unsigned long nbits;
+
+  pn = SIZ(p);
+  count_leading_zeros (cnt, PTR(p)[pn - 1]);
+  nbits = pn * GMP_NUMB_BITS - (cnt - GMP_NAIL_BITS);
+  if (nbits / 2 >= NUMBER_OF_PRIMES)
+    prime_limit = NUMBER_OF_PRIMES - 1;
+  else
+    prime_limit = nbits / 2;
+
+  /* Compute residues modulo small odd primes */
+  moduli = TMP_SALLOC_TYPE (prime_limit * sizeof moduli[0], unsigned short);
+  /* FIXME: Compute lazily? */
+  prime = 3;
+  for (i = 0; i < prime_limit; i++)
     {
-      /* Compute residues modulo small odd primes */
-      moduli = (unsigned short *) TMP_ALLOC (prime_limit * sizeof moduli[0]);
-      for (i = 0; i < prime_limit; i++)
-	moduli[i] = mpz_fdiv_ui (p, primes[i]);
+      moduli[i] = mpz_fdiv_ui (p, prime);
+      prime += primegap[i];
     }
+
+  unsigned incr = 0;
   for (difference = 0; ; difference += 2)
     {
-      composite = 0;
-
       /* First check residues */
+      prime = 3;
       for (i = 0; i < prime_limit; i++)
 	{
-	  int acc, pr;
-	  composite |= (moduli[i] == 0);
-	  acc = moduli[i] + 2;
-	  pr = primes[i];
-	  moduli[i] = acc >= pr ? acc - pr : acc;
+	  unsigned r;
+	  /* FIXME: Reduce moduli + incr and store back, to allow for
+	     division-free reductions.  Alternatively, table primes[]'s
+	     inverses (mod 2^16).  */
+	  r = (moduli[i] + incr) % prime;
+	  prime += primegap[i];
+
+	  if (r == 0)
+	    goto next;
 	}
-      if (composite)
-	continue;
 
       mpz_add_ui (p, p, difference);
       difference = 0;
 
       /* Miller-Rabin test */
-      if (mpz_millerrabin (p, 2))
+      if (mpz_millerrabin (p, 5))
 	break;
+    next:;
+      incr += 2;
     }
 }
-#endif
