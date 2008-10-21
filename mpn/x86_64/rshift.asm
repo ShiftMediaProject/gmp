@@ -25,7 +25,7 @@ C K8,K9:	 2.375
 C K10:		 2.375
 C P4:		 8
 C P6-15 (Core2): 2.11
-C P6-28 (Atom):	 5.9
+C P6-28 (Atom):	 5.75
 
 
 C INPUT PARAMETERS
