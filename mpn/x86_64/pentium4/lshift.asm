@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_lshift optimized for Pentium 4.
 
-dnl  Copyright 2003, 2005, 2007 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2007, 2008 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -20,10 +20,12 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-C		    cycles/limb
-C K8:			2.5
-C Prescott/Nocona:	3.29
-C P6-15:		2.1 (fluctuates, presumably cache related)
+C	     cycles/limb
+C K8,K9:	 2.5
+C K10:		 ?
+C P4:		 3.29
+C P6-15 (Core2): 2.1 (fluctuates, presumably cache related)
+C P6-28 (Atom):	14.3
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
@@ -46,7 +48,7 @@ PROLOGUE(mpn_lshift)
 	shr	%cl, %rax		C function return value
 
 	and	$3, %r8d
-	je	L(rolx)			C jump for n = 3, 7, 11, ...
+	je	L(rol)			C jump for n = 3, 7, 11, ...
 
 	dec	%r8d
 	jne	L(1)
@@ -58,7 +60,7 @@ C	n = 4, 8, 12, ...
 	por	%mm0, %mm2
 	movq	%mm2, -8(rp,n,8)
 	dec	n
-	jmp	L(roll)
+	jmp	L(rol)
 
 L(1):	dec	%r8d
 	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
@@ -87,8 +89,7 @@ L(1x):
 	movq	%mm3, -16(rp,n,8)
 	sub	$2, n
 
-L(roll):
-L(rolx):	movq	-8(up,n,8), %mm2
+L(rol):	movq	-8(up,n,8), %mm2
 	psllq	%mm4, %mm2
 	movq	-16(up,n,8), %mm3
 	psllq	%mm4, %mm3
@@ -96,7 +97,7 @@ L(rolx):	movq	-8(up,n,8), %mm2
 	sub	$4, n			C				      4
 	jb	L(end)			C				      2
 	ALIGN(32)
-L(oop):
+L(top):
 	C finish stuff from lsh block
 	movq	16(up,n,8), %mm0
 	movq	8(up,n,8), %mm1
@@ -128,7 +129,7 @@ L(oop):
 	psllq	%mm4, %mm2
 	psllq	%mm4, %mm3
 
-	jae	L(oop)			C				      2
+	jae	L(top)			C				      2
 L(end):
 	movq	16(up,n,8), %mm0
 	psrlq	%mm5, %mm0
