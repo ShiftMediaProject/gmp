@@ -56,12 +56,8 @@ EPILOGUE()
 
 PROLOGUE(func)
 	xor	%r8, %r8
-L(ent):
-	push	%rbx
+L(ent):	push	%rbx
 	push	%r12
-	push	%r13
-	push	%r14
-	push	%r15
 
 	mov	%ecx, %eax
 	and	$3, %eax
@@ -71,7 +67,7 @@ L(ent):
 	mov	(vp), %r9
 	mov	8(up), %r10
 	ADDSUB	%r9, %r8
-	mov	8(vp), %r11
+	mov	8(vp), %r9
 	setc	%al
 	lea	-16(rp), rp
 	sub	$4, n
@@ -79,20 +75,20 @@ L(ent):
 
 L(n00):	cmp	$2, %eax
 	jnc	L(n01)		C n = 1, 5, 9, ...
-	mov	(up), %r14
-	mov	(vp), %r15
+	mov	(up), %r11
+	mov	(vp), %r9
 	mov	%r8, %rax
 	xor	%ebx, %ebx
 	sub	$4, n
 	jnc	L(gt1)
-	ADDSUB	%r15, %r14
+	ADDSUB	%r9, %r11
 	setc	%bl
-	ADDSUB	%rax, %r14
+	ADDSUB	%rax, %r11
 	adc	$0, %ebx
-	mov	%r14, (rp)
-	jmp	L(ret1)
+	mov	%r11, (rp)
+	jmp	L(ret)
 L(gt1):	mov	8(up), %r8
-	ADDSUB	%r15, %r14
+	ADDSUB	%r9, %r11
 	mov	8(vp), %r9
 	setc	%bl
 	lea	-8(rp), rp
@@ -102,11 +98,11 @@ L(gt1):	mov	8(up), %r8
 
 L(n01):	jne	L(n10)		C n = 2, 6, 10, ...
 	mov	(up), %r12
-	mov	(vp), %r13
+	mov	(vp), %r9
 	mov	%r8, %rbx
-	mov	8(up), %r14
-	ADDSUB	%r13, %r12
-	mov	8(vp), %r15
+	mov	8(up), %r11
+	ADDSUB	%r9, %r12
+	mov	8(vp), %r9
 	setc	%al
 	ADDSUB	%rbx, %r12
 	jc	L(c3a)
@@ -117,12 +113,12 @@ L(rc3a):	lea	16(up), up
 	jmp	L(end)
 
 L(n10):	mov	(up), %r10	C n = 3, 7, 11, ...
-	mov	(vp), %r11
+	mov	(vp), %r9
 	mov	%r8, %rax
 	xor	%ebx, %ebx
 	mov	8(up), %r12
-	ADDSUB	%r11, %r10
-	mov	8(vp), %r13
+	ADDSUB	%r9, %r10
+	mov	8(vp), %r9
 	setc	%bl
 	lea	-24(rp), rp
 	lea	-8(up), up
@@ -140,32 +136,34 @@ L(c2):	mov	$1, %bl
 L(c3):	mov	$1, %al
 	jmp	L(rc3)
 
+	C %r11 
+
 	ALIGN(16)
 L(top):	mov	(up), %r8	C not on critical path
-	ADDSUB	%r15, %r14	C not on critical path
+	ADDSUB	%r9, %r11	C not on critical path
 	mov	(vp), %r9	C not on critical path
 	setc	%bl		C save carry out
 	mov	%r12, (rp)
-L(L01):	ADDSUB	%rax, %r14	C apply previous carry out
+L(L01):	ADDSUB	%rax, %r11	C apply previous carry out
 	jc	L(c0)		C jump if ripple
 L(rc0):	mov	8(up), %r10
 	ADDSUB	%r9, %r8
-	mov	8(vp), %r11
+	mov	8(vp), %r9
 	setc	%al
-	mov	%r14, 8(rp)
+	mov	%r11, 8(rp)
 L(L00):	ADDSUB	%rbx, %r8
 	jc	L(c1)
 L(rc1):	mov	16(up), %r12
-	ADDSUB	%r11, %r10
-	mov	16(vp), %r13
+	ADDSUB	%r9, %r10
+	mov	16(vp), %r9
 	setc	%bl
 	mov	%r8, 16(rp)
 L(L11):	ADDSUB	%rax, %r10
 	jc	L(c2)
-L(rc2):	mov	24(up), %r14
-	ADDSUB	%r13, %r12
+L(rc2):	mov	24(up), %r11
+	ADDSUB	%r9, %r12
 	lea	32(up), up
-	mov	24(vp), %r15
+	mov	24(vp), %r9
 	lea	32(vp), vp
 	setc	%al
 	mov	%r10, 24(rp)
@@ -175,22 +173,18 @@ L(rc3):	lea	32(rp), rp
 	sub	$4, n
 	jnc	L(top)
 
-L(end):	ADDSUB	%r15, %r14
+L(end):	ADDSUB	%r9, %r11
 	setc	%bl
 	mov	%r12, (rp)
-	ADDSUB	%rax, %r14
-	jc	L(c0c)
-L(rc0c):	mov	%r14, 8(rp)
+	ADDSUB	%rax, %r11
+	jnc	L(1)
+	mov	$1, %bl
+L(1):	mov	%r11, 8(rp)
 
-L(ret1):	mov	%ebx, %eax
-	pop	%r15
-	pop	%r14
-	pop	%r13
+L(ret):	mov	%ebx, %eax
 	pop	%r12
 	pop	%rbx
 	ret
 
-L(c0c):	mov	$1, %bl
-	jmp	L(rc0c)
 
 EPILOGUE()

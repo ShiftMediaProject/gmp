@@ -1,9 +1,18 @@
+2008-10-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/pentium4/aors_n.asm: Use fewer registers.
+
+	* configure.in: Set up specific path for x86_64/atom.
+
 2008-10-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Removed
 	qstack.c.
-
 	* mpn/generic/qstack.c: Deleted obsolete file.
+
+2008-10-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/core2/aorsmul_1.asm: New file.
 
 2008-10-19  Torbjorn Granlund  <tege@swox.com>
 
