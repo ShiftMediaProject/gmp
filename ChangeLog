@@ -1,5 +1,12 @@
 2008-10-21  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/nextprime.c: Rewrite.
+
+	* tests/devel/try.c (main): Use strtol for 's' and 'S' optargs.
+
+	* mpn/x86_64/pentium4/rshift.asm: Misc cleanups.
+	* mpn/x86_64/pentium4/lshift.asm: Likewise.
+
 	* mpn/x86_64/pentium4/aors_n.asm: Use fewer registers.
 
 	* configure.in: Set up specific path for x86_64/atom.
