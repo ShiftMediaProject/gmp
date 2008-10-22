@@ -1,3 +1,8 @@
+2008-10-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/atom/aors_n.asm: New file.
+	* mpn/x86_64/atom/gmp-mparam.h: New file.
+
 2008-10-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/nextprime.c: Rewrite.
