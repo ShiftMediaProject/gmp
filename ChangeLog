@@ -1,5 +1,7 @@
 2008-10-24  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/x86_64/gmp-mparam.h (MUL_FFT_TABLE2, SQR_FFT_TABLE2): Extend.
+
 	* mpz/nextprime.c: Move declarations to function beginning.
 
 2008-10-23  Niels Möller  <nisse@lysator.liu.se>
