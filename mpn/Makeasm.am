@@ -22,7 +22,7 @@
 # COMPILE minus CC.
 #
 COMPILE_FLAGS = $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(ASMFLAGS)
 
 # Flags used for preprocessing (in ansi2knr rules).
 #
