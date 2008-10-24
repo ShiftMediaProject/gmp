@@ -41,6 +41,10 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
   int i;
   unsigned prime_limit;
   unsigned long prime;
+  int cnt;
+  mp_size_t pn;
+  unsigned long nbits;
+  unsigned incr;
 
   /* First handle tiny numbers */
   if (mpz_cmp_ui (n, 2) < 0)
@@ -53,10 +57,6 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
 
   if (mpz_cmp_ui (p, 7) <= 0)
     return;
-
-  int cnt;
-  mp_size_t pn;
-  unsigned long nbits;
 
   pn = SIZ(p);
   count_leading_zeros (cnt, PTR(p)[pn - 1]);
@@ -76,7 +76,7 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
       prime += primegap[i];
     }
 
-  unsigned incr = 0;
+  incr = 0;
   for (difference = 0; ; difference += 2)
     {
       /* First check residues */
