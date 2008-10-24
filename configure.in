@@ -2068,6 +2068,8 @@ echo "      MPN_PATH=\"$path\""
 # Automake ansi2knr support.
 AM_C_PROTOTYPES
 
+CL_AS_NOEXECSTACK
+
 GMP_PROG_AR
 GMP_PROG_NM
 
