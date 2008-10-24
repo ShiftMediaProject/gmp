@@ -1,3 +1,7 @@
+2008-10-24  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/nextprime.c: Move declarations to function beginning.
+
 2008-10-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (DECL_gcdext_1): Deleted.
