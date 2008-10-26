@@ -1873,7 +1873,7 @@ refmpn_random2 (mp_ptr ptr, mp_size_t size)
   mp_size_t  i;
   mp_limb_t  bit, mask, limb;
   int        run;
-  
+
   if (GMP_NAIL_BITS == 0)
     {
       mpn_random2 (ptr, size);
