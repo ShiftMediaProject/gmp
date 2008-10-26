@@ -1052,9 +1052,9 @@ speed_mpn_matrix22_mul (struct speed_params *s)
   i = s->reps;
   do
     {
-      MPN_COPY (r0, s->xp, s->size); 
-      MPN_COPY (r1, a1, s->size); 
-      MPN_COPY (r2, a2, s->size); 
+      MPN_COPY (r0, s->xp, s->size);
+      MPN_COPY (r1, a1, s->size);
+      MPN_COPY (r2, a2, s->size);
       MPN_COPY (r3, a3, s->size);
       mpn_matrix22_mul (r0, r1, r2, r3, s->size, s->yp, b1, b2, b3, s->size, tp);
     }
