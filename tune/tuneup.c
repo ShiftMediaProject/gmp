@@ -1598,7 +1598,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
   for (i = 0; i < s->size; i++)
     str[i] = s->xp[i] % base;
 
-  wn = ((mp_size_t) (s->size / __mp_bases[base].chars_per_bit_exactly)) 
+  wn = ((mp_size_t) (s->size / __mp_bases[base].chars_per_bit_exactly))
     / BITS_PER_MP_LIMB + 2;
   SPEED_TMP_ALLOC_LIMBS (wp, wn, s->align_wp);
 
@@ -1621,7 +1621,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
   i = s->reps;
   do
     {
-      mpn_pre_set_str (wp, str, s->size, powtab, tp); 
+      mpn_pre_set_str (wp, str, s->size, powtab, tp);
     }
   while (--i != 0);
   t = speed_endtime ();
