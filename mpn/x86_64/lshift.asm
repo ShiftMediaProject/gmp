@@ -74,7 +74,7 @@ L(t1):	mov	(up), %r8
 	adc	%r11, %r11
 	mov	%r11, 24(rp)
 	lea	32(rp), rp
-	dec	n	
+	dec	n
 	jne	L(t1)
 
 	inc	%eax
