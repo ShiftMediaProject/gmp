@@ -136,8 +136,6 @@ L(c2):	mov	$1, %bl
 L(c3):	mov	$1, %al
 	jmp	L(rc3)
 
-	C %r11 
-
 	ALIGN(16)
 L(top):	mov	(up), %r8	C not on critical path
 	ADDSUB	%r9, %r11	C not on critical path
