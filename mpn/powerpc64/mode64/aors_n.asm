@@ -87,7 +87,7 @@ MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
 ASM_START()
 PROLOGUE(func_nc)
 	SETCBR(r7)
-	b	L(ent)	
+	b	L(ent)
 EPILOGUE()
 
 PROLOGUE(func)
