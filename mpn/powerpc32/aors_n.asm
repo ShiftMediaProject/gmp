@@ -60,7 +60,7 @@ EPILOGUE()
 
 PROLOGUE(func)
 IFADD(`	addic	r0, n, 0')		C clear carry
-IFSUB(`	addic	r0, n, -1')		C set carry  
+IFSUB(`	addic	r0, n, -1')		C set carry
 L(ent):	andi.	r0, n, 3
 	addi	r3, r3, -12
 	addi	n, n, 1
