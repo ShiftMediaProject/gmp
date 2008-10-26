@@ -1422,8 +1422,8 @@ case $host in
       pentiummmx)           path="x86/pentium/mmx x86/pentium x86" ;;
       i686 | pentiumpro)    path="x86/p6 x86" ;;
       pentium2)             path="x86/p6/mmx x86/p6 x86" ;;
-      pentium3 | pentiumm | core2)
-      	       	 	    path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+      pentium3)             path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+      pentiumm | core2)     path="x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
       geode)                path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
