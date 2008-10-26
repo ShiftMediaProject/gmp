@@ -624,7 +624,7 @@ GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization],
    but that's fine, the offending cc is a native-only compiler so we don't
    have to worry about cross compiling.  */
 
-#if ! defined (__cplusplus)                                         
+#if ! defined (__cplusplus)
 unsigned long
 lshift_com (rp, up, n, cnt)
   unsigned long *rp;
@@ -674,7 +674,7 @@ GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization 2],
     to be run to show the problem, but that's fine, the offending cc is a
     native-only compiler so we don't have to worry about cross compiling.  */
 
-#if ! defined (__cplusplus)                                         
+#if ! defined (__cplusplus)
 #include <stdlib.h>
 void
 lshift_com (rp, up, n, cnt)
