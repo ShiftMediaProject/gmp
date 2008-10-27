@@ -4,6 +4,16 @@
 	for each call to mpn_hgcd.
 	(speed_mpn_hgcd_lehmer): Likewise.
 
+2008-10-26  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Point to p6/sse2 for pentiumm and core2.
+
+	* gmp-impl.h (mpn_add_nc, mpn_sub_nc): Move these macros to after fat
+	definitions.
+
+	* tune/common.c, tune/speed.c, tune/speed.h:
+	Add speed measurement of mpn_bdiv_dbm1c.
+
 2008-10-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/gmp-mparam.h (MUL_FFT_TABLE2, SQR_FFT_TABLE2): Extend.
@@ -508,7 +518,15 @@
 	* tests/misc/t-scanf.c: Avoid negative arguments to _ui functions.
 	* tests/misc/t-printf.c: Likewise.
 
+	* acinclude.m4 (X86_PATTERN): Add geode.
+
+	* acinclude.m4 (CL_AS_NOEXECSTACK): Avoid -q flag to grep.
+
 2008-08-01  Torbjorn Granlund  <tege@swox.com>
+
+	* acinclude.m4 (CL_AS_NOEXECSTACK): New.
+	* configure.in: Use CL_AS_NOEXECSTACK.
+	* mpn/Makeasm.am: Use ASM_FLAGS (defined by CL_AS_NOEXECSTACK).
 
 	* gmpxx.h (__GMP_DBL_LIMBS): Use DBL_MAX_EXP instead of
 	std::numeric_limits<double>::max_exponent for better portability.
