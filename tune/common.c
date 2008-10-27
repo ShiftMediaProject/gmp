@@ -1092,7 +1092,6 @@ speed_mpn_hgcd (struct speed_params *s)
   s->yp[s->size - 1] |= 1;
 
   SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
-  mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
   SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
 
   speed_starttime ();
@@ -1101,6 +1100,7 @@ speed_mpn_hgcd (struct speed_params *s)
     {
       MPN_COPY (ap, s->xp, s->size);
       MPN_COPY (bp, s->yp, s->size);
+      mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
       res = mpn_hgcd (ap, bp, s->size, &hgcd, wp);
     }
   while (--i != 0);
@@ -1137,7 +1137,6 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   s->yp[s->size - 1] |= 1;
 
   SPEED_TMP_ALLOC_LIMBS (tmp1, hgcd_init_scratch, s->align_wp);
-  mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
   SPEED_TMP_ALLOC_LIMBS (wp, hgcd_scratch, s->align_wp);
 
   speed_starttime ();
@@ -1146,6 +1145,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
     {
       MPN_COPY (ap, s->xp, s->size);
       MPN_COPY (bp, s->yp, s->size);
+      mpn_hgcd_matrix_init (&hgcd, s->size, tmp1);
       res = mpn_hgcd_lehmer (ap, bp, s->size, &hgcd, wp);
     }
   while (--i != 0);

@@ -1,3 +1,9 @@
+2008-10-27  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/common.c (speed_mpn_hgcd): Call mpn_hgcd_matrix_init once
+	for each call to mpn_hgcd.
+	(speed_mpn_hgcd_lehmer): Likewise.
+
 2008-10-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/gmp-mparam.h (MUL_FFT_TABLE2, SQR_FFT_TABLE2): Extend.
