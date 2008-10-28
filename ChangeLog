@@ -1,3 +1,8 @@
+2008-10-28  Torbjorn Granlund  <tege@swox.com>
+
+	From Mickael Gastineau:
+	* gmp-h.in (gmp_urandomm_ui, gmp_urandomb_ui): Add __GMP_DECLSPEC.
+
 2008-10-27  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-h.in (mpn_gcdext_1): Remove bogus __GMP_ATTRIBUTE_PURE.
