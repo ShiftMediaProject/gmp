@@ -1,5 +1,17 @@
 2008-10-29  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in (x86 fat_path): Add "x86/p6/sse2".
+
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Recognize sse2 capable p6
+	(pentiumm, core2).
+
+	* mpn/x86/p6/sse2/mul_1.asm: New file.
+	* mpn/x86/p6/sse2/addmul_1.asm: New file.
+	* mpn/x86/p6/sse2/submul_1.asm: New file.
+	* mpn/x86/p6/sse2/mul_basecase.asm: New file.
+	* mpn/x86/p6/sse2/sqr_basecase.asm: New file.
+	* mpn/x86/p6/sse2/popcount.asm: New file.
+
 	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Handle "extended" fields for
 	model and family.
 
