@@ -1,3 +1,8 @@
+2008-10-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Handle "extended" fields for
+	model and family.
+
 2008-10-28  Torbjorn Granlund  <tege@swox.com>
 
 	From Mickael Gastineau:
