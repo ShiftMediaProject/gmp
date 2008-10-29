@@ -1447,7 +1447,7 @@ case $host in
 		x86/k6 x86/k6/mmx x86/k6/k62mmx
 		x86/k7 x86/k7/mmx
 		x86/pentium x86/pentium/mmx
-		x86/p6 x86/p6/mmx x86/p6/p3mmx
+		x86/p6 x86/p6/mmx x86/p6/p3mmx x86/p6/sse2
 		x86/pentium4 x86/pentium4/mmx x86/pentium4/sse2"
       fat_functions="add_n addmul_1 copyd copyi
 		     dive_1 diveby3 divrem_1 gcd_1 lshift

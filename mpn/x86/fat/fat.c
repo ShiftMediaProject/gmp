@@ -217,7 +217,7 @@ __gmpn_cpuvec_init (void)
               break;
 
             case 6:
-              TRACE (printf ("  pentiumpro\n"));
+              TRACE (printf ("  p6\n"));
               CPUVEC_SETUP_p6;
               if (model >= 2)
                 {
@@ -228,6 +228,11 @@ __gmpn_cpuvec_init (void)
                 {
                   TRACE (printf ("  pentium3\n"));
                   CPUVEC_SETUP_p6_p3mmx;
+                }
+              if (model >= 0xD || model == 9)
+                {
+                  TRACE (printf ("  p6 with sse2\n"));
+                  CPUVEC_SETUP_p6_sse2;
                 }
               break;
 
