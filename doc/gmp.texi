@@ -10117,9 +10117,17 @@ Jason Moxham rewrote @code{mpz_fac_ui}.
 Pedro Gimeno implemented the Mersenne Twister and made other random number
 improvements.
 
-Niels M@"oller wrote the sub-quadratic GCD code introduced with GMP 5, the
-quadratic Hensel division code, and (with Torbj@"orn) the new divide and
-conquer division code for GMP 5.
+Niels M@"oller wrote the sub-quadratic GCD and extended GCD code introduced
+with GMP 4.3, the quadratic Hensel division code, and (with Torbj@"orn) the
+new divide and conquer division code for GMP 4.3.
+
+David Harvey worked on the internal function @code{mpn_bdiv_dbm1},
+implementing division relevant to Toom multiplication.  He also worked on
+loopmix sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}.
+
+(This list is chronological, not ordered after significance.  If you have
+contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
+about the omission!)
 
 The development of floating point functions of GNU MP 2, were supported in part
 by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
@@ -10127,10 +10135,6 @@ System SOlving).
 
 The development of GMP 2, 3, and 4 was supported in part by the IDA Center for
 Computing Sciences.
-
-(This list is chronological, not ordered after significance.  If you have
-contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
-about the omission!)
 
 Thanks go to Hans Thorsen for donating an SGI system for the GMP test system
 environment.
