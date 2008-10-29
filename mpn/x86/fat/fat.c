@@ -195,8 +195,8 @@ __gmpn_cpuvec_init (void)
       vendor_string[12] = 0;
 
       fms = __gmpn_cpuid (dummy_string, 1);
-      family = (fms >> 8) & 15;
-      model = (fms >> 4) & 15;
+      family = ((fms >> 8) & 0xf) + ((fms >> 20) & 0xff);
+      model = ((fms >> 4) & 0xf) + ((fms >> 12) & 0xf0);
 
       if (strcmp (vendor_string, "GenuineIntel") == 0)
         {
