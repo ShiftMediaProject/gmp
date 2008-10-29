@@ -10117,9 +10117,9 @@ Jason Moxham rewrote @code{mpz_fac_ui}.
 Pedro Gimeno implemented the Mersenne Twister and made other random number
 improvements.
 
-Niels M@"oller wrote the sub-quadratic GCD and extended GCD code introduced
-with GMP 4.3, the quadratic Hensel division code, and (with Torbj@"orn) the
-new divide and conquer division code for GMP 4.3.
+Niels M@"oller wrote the sub-quadratic GCD and extended GCD code, the
+quadratic Hensel division code, and (with Torbj@"orn) the new divide and
+conquer division code for GMP 4.3.
 
 David Harvey worked on the internal function @code{mpn_bdiv_dbm1},
 implementing division relevant to Toom multiplication.  He also worked on
