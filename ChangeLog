@@ -1,3 +1,7 @@
+2008-10-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/p6/sse2/gmp-mparam.h: New file.
+
 2008-10-29  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (x86 fat_path): Add "x86/p6/sse2".
