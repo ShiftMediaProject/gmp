@@ -95,7 +95,7 @@ main (int argc, char **argv)
   for (i = 0;; i++)
     {
       size_range = fsize_range >> 8;
-      fsize_range = fsize_range * 257 / 256;
+      fsize_range = fsize_range * 33 / 32;
 
       if (size_range > fft_max_2exp)
 	break;
