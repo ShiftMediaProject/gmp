@@ -1,3 +1,7 @@
+2008-11-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/k7/mod_34lsub1.asm: Use movzb for masking low 8 bits.
+
 2008-10-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/p6/sse2/gmp-mparam.h: New file.
