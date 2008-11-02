@@ -1,6 +1,7 @@
 dnl  AMD K7 mpn_mod_34lsub1 -- remainder modulo 2^24-1.
 
-dnl  Copyright 2000, 2001, 2002, 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2004, 2005, 2008 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -21,8 +22,8 @@ include(`../config.m4')
 
 
 C         cycles/limb
-C Athlon:     1.25
-C Hammer:     1.0
+C Athlon:     1
+C Hammer:     1
 
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr src, mp_size_t size)
@@ -160,7 +161,7 @@ L(combine):
 
 	addl	%ebx, %eax		C apply 1mod3 high
 	shrl	$8, %esi		C 2mod3 high
-	andl	$0xFF, %edx		C 2mod3 low
+	movzbl	%dl, %edx		C 2mod3 low
 
 	addl	%edi, %eax		C apply 1mod3 low
 	shll	$16, %edx		C 2mod3 low
