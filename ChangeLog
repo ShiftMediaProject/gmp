@@ -1,4 +1,14 @@
+2008-11-08  Torbjorn Granlund  <tege@swox.com>
+
+	* doc/gmp.texi (Float Comparison): Update mpf_eq documentation.
+
+	* mpf/eq.c: Compare limb[0] just up to the specified bit.
+
 2008-11-02  Torbjorn Granlund  <tege@swox.com>
+
+	Undo, it made testing too slow:
+	* tests/mpz/t-mul.c: Use slower geometric progression for operand
+	sizes.
 
 	* mpn/x86/k7/mod_34lsub1.asm: Use movzb for masking low 8 bits.
 
