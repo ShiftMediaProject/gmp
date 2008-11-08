@@ -1,8 +1,12 @@
+2008-11-09  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/cxx/t-prec.cc: Use the right precision for all float constants.
+
 2008-11-08  Torbjorn Granlund  <tege@swox.com>
 
 	* doc/gmp.texi (Float Comparison): Update mpf_eq documentation.
 
-	* mpf/eq.c: Compare limb[0] just up to the specified bit.
+	* mpf/eq.c: Compare the right number of bits.
 
 2008-11-02  Torbjorn Granlund  <tege@swox.com>
 
