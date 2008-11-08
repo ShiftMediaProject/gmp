@@ -1,6 +1,6 @@
 /* mpf_eq -- Compare two floats up to a specified bit #.
 
-Copyright 1993, 1995, 1996, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1993, 1995, 1996, 2001, 2002, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,6 +26,7 @@ mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
   mp_srcptr up, vp;
   mp_size_t usize, vsize, size, i;
   mp_exp_t uexp, vexp;
+  mp_limb_t diff;
 
   uexp = u->_mp_exp;
   vexp = v->_mp_exp;
@@ -99,11 +100,12 @@ mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
   up += usize - size;
   vp += vsize - size;
 
-  for (i = size - 1; i >= 0; i--)
+  for (i = size - 1; i > 0; i--)
     {
       if (up[i] != vp[i])
 	return 0;
     }
 
-  return 1;
+  diff = (up[0] ^ vp[0]) >> GMP_NUMB_BITS - 1 - (n_bits - 1) % GMP_NUMB_BITS;
+  return diff == 0;
 }
