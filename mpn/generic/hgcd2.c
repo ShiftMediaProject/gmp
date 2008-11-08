@@ -28,8 +28,63 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if GMP_NAIL_BITS == 0
 
-/* Copied from mpn/generic/gcdext.c, and modified slightly to return
+/* Copied from the old mpn/generic/gcdext.c, and modified slightly to return
    the remainder. */
+
+/* Single-limb division optimized for small quotients. */
+static inline mp_limb_t
+div1 (mp_ptr rp,
+      mp_limb_t n0,
+      mp_limb_t d0)
+{
+  mp_limb_t q = 0;
+
+  if ((mp_limb_signed_t) n0 < 0)
+    {
+      int cnt;
+      for (cnt = 1; (mp_limb_signed_t) d0 >= 0; cnt++)
+	{
+	  d0 = d0 << 1;
+	}
+
+      q = 0;
+      while (cnt)
+	{
+	  q <<= 1;
+	  if (n0 >= d0)
+	    {
+	      n0 = n0 - d0;
+	      q |= 1;
+	    }
+	  d0 = d0 >> 1;
+	  cnt--;
+	}
+    }
+  else
+    {
+      int cnt;
+      for (cnt = 0; n0 >= d0; cnt++)
+	{
+	  d0 = d0 << 1;
+	}
+
+      q = 0;
+      while (cnt)
+	{
+	  d0 = d0 >> 1;
+	  q <<= 1;
+	  if (n0 >= d0)
+	    {
+	      n0 = n0 - d0;
+	      q |= 1;
+	    }
+	  cnt--;
+	}
+    }
+  *rp = n0;
+  return q;
+}
+
 /* Two-limb division optimized for small quotients.  */
 static inline mp_limb_t
 div2 (mp_ptr rp,
@@ -88,6 +143,51 @@ div2 (mp_ptr rp,
 
   return q;
 }
+
+#if 0
+/* This div2 uses less branches, but it seems to nevertheless be
+   slightly slower than the above code. */
+static inline mp_limb_t
+div2 (mp_ptr rp,
+      mp_limb_t nh, mp_limb_t nl,
+      mp_limb_t dh, mp_limb_t dl)
+{
+  mp_limb_t q = 0;
+  int ncnt;
+  int dcnt;
+  
+  count_leading_zeros (ncnt, nh);
+  count_leading_zeros (dcnt, dh);
+  dcnt -= ncnt;
+  
+  dh = (dh << dcnt) + (-(dcnt > 0) & (dl >> (GMP_LIMB_BITS - dcnt)));
+  dl <<= dcnt;
+
+  do
+    {
+      mp_limb_t bit;
+      q <<= 1;
+      if (UNLIKELY (nh == dh))
+	bit = (nl >= dl);
+      else
+	bit = (nh > dh);
+
+      q |= bit;
+
+      sub_ddmmss (nh, nl, nh, nl, (-bit) & dh, (-bit) & dl);
+
+      dl = (dh << (GMP_LIMB_BITS - 1)) | (dl >> 1);
+      dh = dh >> 1;
+    }
+  while (dcnt--);
+
+  rp[0] = nl;
+  rp[1] = nh;
+
+  return q;
+}
+#endif
+
 #else /* GMP_NAIL_BITS != 0 */
 /* Check all functions for nail support. */
 /* hgcd2 should be defined to take inputs including nail bits, and
@@ -97,7 +197,7 @@ div2 (mp_ptr rp,
 #error Not implemented
 #endif /* GMP_NAIL_BITS != 0 */
 
-/* Reduces a,b until |a-b| fits in one limb + 1 bit. Constructs
+/* Reduces a,b until |a-b| (almost) fits in one limb + 1 bit. Constructs
    matrix M. Returns 1 if we make progress, i.e. can perform at least
    one subtraction. Otherwise returns zero.. */
 
@@ -147,7 +247,15 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
     {
       ASSERT (ah >= bh);
       if (ah == bh)
-	break;
+	goto done;
+
+      if (ah < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2)))
+	{
+	  ah = (ah << (GMP_LIMB_BITS / 2) ) + (al >> (GMP_LIMB_BITS / 2));
+	  bh = (bh << (GMP_LIMB_BITS / 2) ) + (bl >> (GMP_LIMB_BITS / 2));
+	  
+	  break;
+	}
 
       /* Subtract a -= q b, and multiply M from the right by (1 q ; 0
 	 1), affecting the second column of M. */
@@ -155,7 +263,7 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
       sub_ddmmss (ah, al, ah, al, bh, bl);
 
       if (ah < 2)
-	break;
+	goto done;
 
       if (ah <= bh)
 	{
@@ -173,7 +281,7 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	      /* A is too small, but q is correct. */
 	      u01 += q * u00;
 	      u11 += q * u10;
-	      break;
+	      goto done;
 	    }
 	  q++;
 	  u01 += q * u00;
@@ -182,14 +290,22 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
     subtract_a:
       ASSERT (bh >= ah);
       if (ah == bh)
-	break;
+	goto done;
+
+      if (bh < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2)))
+	{
+	  ah = (ah << (GMP_LIMB_BITS / 2) ) + (al >> (GMP_LIMB_BITS / 2));
+	  bh = (bh << (GMP_LIMB_BITS / 2) ) + (bl >> (GMP_LIMB_BITS / 2));
+	  
+	  goto subtract_a1;
+	}
 
       /* Subtract b -= q a, and multiply M from the right by (1 0 ; q
 	 1), affecting the first column of M. */
       sub_ddmmss (bh, bl, bh, bl, ah, al);
 
       if (bh < 2)
-	break;
+	goto done;
 
       if (bh <= ah)
 	{
@@ -207,13 +323,84 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	      /* B is too small, but q is correct. */
 	      u00 += q * u01;
 	      u10 += q * u11;
-	      break;
+	      goto done;
 	    }
 	  q++;
 	  u00 += q * u01;
 	  u10 += q * u11;
 	}
     }
+
+  /* NOTE: Since we discard the least significant half limb, we don't
+     get a truly maximal M (corresponding to |a - b| <
+     2^{GMP_LIMB_BITS +1}). */
+  /* Single precision loop */
+  for (;;)
+    {
+      ASSERT (ah >= bh);
+      if (ah == bh)
+	break;
+
+      ah -= bh;
+      if (ah < (CNST_LIMB (1) << (GMP_LIMB_BITS / 2 + 1)))
+	break;
+
+      if (ah <= bh)
+	{
+	  /* Use q = 1 */
+	  u01 += u00;
+	  u11 += u10;
+	}
+      else
+	{
+	  mp_limb_t r;
+	  mp_limb_t q = div1 (&r, ah, bh);
+	  ah = r;
+	  if (ah < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2 + 1)))
+	    {
+	      /* A is too small, but q is correct. */
+	      u01 += q * u00;
+	      u11 += q * u10;
+	      break;
+	    }
+	  q++;
+	  u01 += q * u00;
+	  u11 += q * u10;
+	}
+    subtract_a1:
+      ASSERT (bh >= ah);
+      if (ah == bh)
+	break;
+
+      bh -= ah;
+      if (bh < (CNST_LIMB (1) << (GMP_LIMB_BITS / 2 + 1)))
+	break;
+
+      if (bh <= ah)
+	{
+	  /* Use q = 1 */
+	  u00 += u01;
+	  u10 += u11;
+	}
+      else
+	{
+	  mp_limb_t r;
+	  mp_limb_t q = div1 (&r, bh, ah);
+	  bh = r;
+	  if (bh < (CNST_LIMB(1) << (GMP_LIMB_BITS / 2 + 1)))
+	    {
+	      /* B is too small, but q is correct. */
+	      u00 += q * u01;
+	      u10 += q * u11;
+	      break;
+	    }
+	  q++;
+	  u00 += q * u01;
+	  u10 += q * u11;
+	}	    
+    }
+  
+ done:
   M->u[0][0] = u00; M->u[0][1] = u01;
   M->u[1][0] = u10; M->u[1][1] = u11;
 

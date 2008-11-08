@@ -12,6 +12,12 @@
 
 	* mpn/x86/k7/mod_34lsub1.asm: Use movzb for masking low 8 bits.
 
+2008-10-31  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd2.c (div1): New function (taken from old gcdext
+	implementation)
+	(mpn_hgcd2): Use single precision for the second half of the work.
+
 2008-10-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/p6/sse2/gmp-mparam.h: New file.
