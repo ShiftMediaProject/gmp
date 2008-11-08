@@ -4849,9 +4849,9 @@ Return non-zero if the first @var{op3} bits of @var{op1} and @var{op2} are
 equal, zero otherwise.  I.e., test if @var{op1} and @var{op2} are approximately
 equal.
 
-Caution: Currently only whole limbs are compared, and only in an exact
-fashion.  In the future values like 1000 and 0111 may be considered the same
-to 3 bits (on the basis that their difference is that small).
+Caution: All version of GMP up to version 4.2.4 compared just whole limbs,
+meaning that typically more bits than specified were required to be equal for
+the function to return true.
 @end deftypefun
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
