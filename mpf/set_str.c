@@ -137,7 +137,12 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       c = (unsigned char) *++str;
     }
 
+  /* Default base to decimal.  */
+  if (base == 0)
+    base = 10;
+
   exp_base = base;
+
   if (base < 0)
     {
       exp_base = 10;
@@ -164,10 +169,6 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       if (digit_value[(unsigned char) str[pointlen]] >= (base == 0 ? 10 : base))
 	return -1;
     }
-
-  /* Default base to decimal.  */
-  if (base == 0)
-    base = 10;
 
   /* Locate exponent part of the input.  Look from the right of the string,
      since the exponent is usually a lot shorter than the mantissa.  */
@@ -249,7 +250,8 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       str_size = n_chars_needed;
 #endif
 
-    ma = 2 * (prec + 1);
+    ma = (((mp_size_t) (str_size / mp_bases[base].chars_per_bit_exactly))
+	  / GMP_NUMB_BITS + 2);
     mp = TMP_ALLOC_LIMBS (ma);
     mn = mpn_set_str (mp, (unsigned char *) begs, str_size, base);
 
