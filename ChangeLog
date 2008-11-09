@@ -1,5 +1,7 @@
 2008-11-09  Torbjorn Granlund  <tege@swox.com>
 
+	* mpf/set_str.c: Default 'base' before letting exp_base inherit it.
+
 	* tests/cxx/t-prec.cc: Use the right precision for all float constants.
 
 2008-11-08  Torbjorn Granlund  <tege@swox.com>
@@ -2383,6 +2385,12 @@
 2004-08-29  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-sizeinbase.c: Disable mpz_fake_bits and check_sample.
+
+2008-08-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/set_str.c: Allocate mantissa space based on mantissa size,
+	not on destination variable space.
+	* mpf/set_str.c: Accept unary plus before exponent.
 
 2004-07-16  Torbjorn Granlund  <tege@swox.com>
 
