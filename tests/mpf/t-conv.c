@@ -1,6 +1,6 @@
 /* Test mpf_get_str and mpf_set_str.
 
-Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2000, 2001, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -69,6 +69,22 @@ main (int argc, char **argv)
   mpf_init (x);
   mpf_init (y);
   mpf_init (d);
+
+  /* First test some specific values.  */
+
+  mpf_set_str (y, "1.23456e1000", 0);
+
+  mpf_set_str (x, "1.23456e1000", 10);
+  if (mpf_cmp (x, y) != 0)
+    abort ();
+  mpf_set_str (x, "1.23456e+1000", 0);
+  if (mpf_cmp (x, y) != 0)
+    abort ();
+  mpf_set_str (x, "1.23456e+1000", 10);
+  if (mpf_cmp (x, y) != 0)
+    abort ();
+
+  /* Now test random values.  */
 
   for (i = 0; i < reps; i++)
     {
