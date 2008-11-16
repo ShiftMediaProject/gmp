@@ -155,11 +155,11 @@ div2 (mp_ptr rp,
   mp_limb_t q = 0;
   int ncnt;
   int dcnt;
-  
+
   count_leading_zeros (ncnt, nh);
   count_leading_zeros (dcnt, dh);
   dcnt -= ncnt;
-  
+
   dh = (dh << dcnt) + (-(dcnt > 0) & (dl >> (GMP_LIMB_BITS - dcnt)));
   dl <<= dcnt;
 
@@ -253,7 +253,7 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	{
 	  ah = (ah << (GMP_LIMB_BITS / 2) ) + (al >> (GMP_LIMB_BITS / 2));
 	  bh = (bh << (GMP_LIMB_BITS / 2) ) + (bl >> (GMP_LIMB_BITS / 2));
-	  
+
 	  break;
 	}
 
@@ -296,7 +296,7 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	{
 	  ah = (ah << (GMP_LIMB_BITS / 2) ) + (al >> (GMP_LIMB_BITS / 2));
 	  bh = (bh << (GMP_LIMB_BITS / 2) ) + (bl >> (GMP_LIMB_BITS / 2));
-	  
+
 	  goto subtract_a1;
 	}
 
@@ -397,9 +397,9 @@ mpn_hgcd2 (mp_limb_t ah, mp_limb_t al, mp_limb_t bh, mp_limb_t bl,
 	  q++;
 	  u00 += q * u01;
 	  u10 += q * u11;
-	}	    
+	}
     }
-  
+
  done:
   M->u[0][0] = u00; M->u[0][1] = u01;
   M->u[1][0] = u10; M->u[1][1] = u11;
