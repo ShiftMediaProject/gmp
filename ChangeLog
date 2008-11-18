@@ -1,3 +1,17 @@
+2008-11-18  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-powm.c: Print test number when failing a test.
+
+	* mpn/x86_64/redc_1.asm (CALL): Move from here...
+	* mpn/x86_64/x86_64-defs.m4: ...to here.
+
+	* gmp-impl.h (mpn_jacobi_base): Remove parameter names.
+
+2008-11-11  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpf/t-conv.c: Add some specific tests, supplementing the random
+	tests.
+
 2008-11-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/set_str.c: Default 'base' before letting exp_base inherit it.
