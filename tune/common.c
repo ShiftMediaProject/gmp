@@ -1171,13 +1171,6 @@ speed_mpn_gcd_accel (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCD (mpn_gcd_accel);
 }
 #endif
-#if HAVE_NATIVE_mpn_gcd_finda
-double
-speed_mpn_gcd_finda (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_GCD_FINDA (mpn_gcd_finda);
-}
-#endif
 
 
 double
