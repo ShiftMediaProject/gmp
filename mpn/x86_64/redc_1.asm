@@ -35,10 +35,6 @@ define(`param_mp',`%rdx')
 define(`n',	`%rcx')
 define(`invm',	`%r8')
 
-ifdef(`PIC',
-  `define(`CALL',`call	'GSYM_PREFIX`$1@PLT')',
-  `define(`CALL',`call	'GSYM_PREFIX'$1')')
-
 define(`mp',`%rbx')
 
 ASM_START()
@@ -320,7 +316,7 @@ C		    rdi rsi  rdx    rcx
 	movq	rp, %rbp		C preserve rp over first call
 	movq	(%rsp), %rcx		C pass entry n
 	movq	rp, %rdi
-	CALL(`	mpn_add_n')
+	CALL(	mpn_add_n)
 	testl	%eax, %eax
 	jz	L(ret)
 
@@ -330,7 +326,7 @@ C		 rdi rsi rdx rcx
 	movq	%rbp, %rsi
 	movq	mp, %rdx
 	movq	(%rsp), %rcx		C pass entry n
-	CALL(`	mpn_sub_n')
+	CALL(	mpn_sub_n)
 
 L(ret):	popq	n			C just increment rsp
 	popq	%r12
