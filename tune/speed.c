@@ -270,9 +270,6 @@ const struct routine_t {
   { "mpn_gcd_accel",     speed_mpn_gcd_accel              },
   { "find_a",            speed_find_a,        FLAG_NODATA },
 #endif
-#if HAVE_NATIVE_mpn_gcd_finda
-  { "mpn_gcd_finda",     speed_mpn_gcd_finda, FLAG_NODATA },
-#endif
 
   { "mpn_gcdext",            speed_mpn_gcdext            },
   { "mpn_gcdext_single",     speed_mpn_gcdext_single     },
