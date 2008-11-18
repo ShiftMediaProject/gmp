@@ -844,7 +844,7 @@ mp_size_t mpn_fib2_ui _PROTO ((mp_ptr, mp_ptr, unsigned long));
 mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2])) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_jacobi_base __MPN(jacobi_base)
-int mpn_jacobi_base _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1)) ATTRIBUTE_CONST;
+int mpn_jacobi_base _PROTO ((mp_limb_t, mp_limb_t, int)) ATTRIBUTE_CONST;
 
 #define mpn_mod_1c __MPN(mod_1c)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1c __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
@@ -3131,7 +3131,7 @@ union ieee_double_extract
    that don't convert ulong->double correctly (eg. SunOS 4 native cc).  */
 #define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (GMP_NUMB_BITS - 2)))
 /* Maximum number of limbs it will take to store any `double'.
-   We assume doubles have 53 mantissam bits.  */
+   We assume doubles have 53 mantissa bits.  */
 #define LIMBS_PER_DOUBLE ((53 + GMP_NUMB_BITS - 2) / GMP_NUMB_BITS + 1)
 
 int __gmp_extract_double _PROTO ((mp_ptr, double));
