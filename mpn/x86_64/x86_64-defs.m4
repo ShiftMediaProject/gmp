@@ -137,4 +137,13 @@ define(`R8',
 		$1,`%r14',`%r14b',
 		$1,`%r15',`%r15b')')
 
+
+dnl  Usage: CALL(funcname)
+dnl
+
+ifdef(`PIC',
+  `define(`CALL',`call	GSYM_PREFIX`'$1@PLT')',
+  `define(`CALL',`call	GSYM_PREFIX`'$1')')
+
+
 divert`'dnl
