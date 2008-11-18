@@ -191,7 +191,6 @@ double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1N _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_binary _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_accel _PROTO ((struct speed_params *s));
-double speed_mpn_gcd_finda _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext_double _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext_one_double _PROTO ((struct speed_params *s));
