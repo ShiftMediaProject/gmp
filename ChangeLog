@@ -1,5 +1,20 @@
 2008-11-18  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in: Remove gcd_finda related declarations.
+	* gmp-impl.h (mpn_gcd_finda): Remove declaration.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Remove gcd_finda.
+	* mpn/asm-defs.m4: Remove define_mpn(gcd_finda).
+	* mpn/x86/k6/gcd_finda.asm: Remove file.
+	* tests/devel/try.c (param_init): Remove mpn_gcd_finda.
+	(choice_array): Remove mpn_gcd_finda.
+	* tests/mpn/t-instrument.c (check): Remove testing of mpn_gcd_finda.
+	* tests/refmpn.c (refmpn_gcd_finda): Remove.
+	* tests/tests.h (refmpn_gcd_finda): Remove declaration.
+	* tune/common.c (speed_mpn_gcd_finda): Remove.
+	* tune/gcd_finda_gen.c: Remove file.
+	* tune/speed.h (speed_mpn_gcd_finda): Remove declaration.
+	* tune/speed.c (routine): Remove mpn_gcd_finda entry.
+
 	* tests/mpz/t-powm.c: Print test number when failing a test.
 
 	* mpn/x86_64/redc_1.asm (CALL): Move from here...
