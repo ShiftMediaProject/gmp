@@ -110,7 +110,7 @@ main (int argc, char **argv)
 
       if (mpz_cmp (r1, r2) != 0)
 	{
-	  fprintf (stderr, "\nIncorrect results for operands:\n");
+	  fprintf (stderr, "\nIncorrect results in test %d for operands:\n", i);
 	  debug_mp (base, -16);
 	  debug_mp (exp, -16);
 	  debug_mp (mod, -16);
