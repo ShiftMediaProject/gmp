@@ -136,11 +136,11 @@ double speed_invert_limb _PROTO ((struct speed_params *s));
 double speed_malloc_free _PROTO ((struct speed_params *s));
 double speed_malloc_realloc_free _PROTO ((struct speed_params *s));
 double speed_memcpy _PROTO ((struct speed_params *s));
-double speed_modlimb_invert _PROTO ((struct speed_params *s));
-double speed_modlimb_invert_mul1 _PROTO ((struct speed_params *s));
-double speed_modlimb_invert_loop _PROTO ((struct speed_params *s));
-double speed_modlimb_invert_cond _PROTO ((struct speed_params *s));
-double speed_modlimb_invert_arith _PROTO ((struct speed_params *s));
+double speed_binvert_limb _PROTO ((struct speed_params *s));
+double speed_binvert_limb_mul1 _PROTO ((struct speed_params *s));
+double speed_binvert_limb_loop _PROTO ((struct speed_params *s));
+double speed_binvert_limb_cond _PROTO ((struct speed_params *s));
+double speed_binvert_limb_arith _PROTO ((struct speed_params *s));
 
 double speed_mpf_init_clear _PROTO ((struct speed_params *s));
 
@@ -1302,7 +1302,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     /* modulus must be odd */						\
     MPN_COPY (mp, s->yp, s->size);					\
     mp[0] |= 1;								\
-    modlimb_invert (Nprim, mp[0]);					\
+    binvert_limb (Nprim, mp[0]);					\
 									\
     speed_operand_src (s, ap, 2*s->size+1);				\
     speed_operand_dst (s, tp, 2*s->size+1);				\
@@ -1477,7 +1477,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_ROUTINE_MPZ_POWM_UI(function)				\
   {									\
     mpz_t     r, b, m;							\
-    unsigned  long  e = (~ (unsigned long) 0) / 3;			\
+    unsigned  long  e;							\
     unsigned  i;							\
     double    t;							\
 									\
@@ -1489,6 +1489,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     mpz_init (m);							\
     mpz_set_n (m, s->xp, s->size);					\
     PTR(m)[0] |= 1;							\
+									\
+    e = (~ (unsigned long) 0) / 3;					\
+    if (s->r != 0)							\
+      e = s->r;								\
 									\
     mpz_init_set (b, m);						\
     mpz_sub_ui (b, b, 2);						\
