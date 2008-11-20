@@ -1,5 +1,18 @@
 2008-11-20  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h: Rename modlimb_invert to binvert_limb.
+	* tune/speed.h: Likewise.
+	* tune/modlinv.c: Likewise.
+	* tune/common.c: Likewise.
+	* tests/t-modlinv.c: Likewise.
+	* tests/t-constants.c: Likewise.
+	* mpn/sparc64/mode1o.c: Likewise.
+	* mpn/alpha/dive_1.c: Likewise.
+	* mpn/sparc64/dive_1.c: Likewise.
+	* mpn/generic/mode1o.c: Likewise.
+	* mpn/generic/dive_1.c: Likewise.
+	* mpn/generic/bdivmod.c: Likewise.
+
 	* mpn/x86_64/aors_n.asm: Replace with slightly faster, more alignment
 	neutral loop.
 
