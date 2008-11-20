@@ -1,3 +1,8 @@
+2008-11-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/aors_n.asm: Replace with slightly faster, more alignment
+	neutral loop.
+
 2008-11-18  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Remove gcd_finda related declarations.
