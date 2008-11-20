@@ -93,7 +93,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    The special case for size==1 is so that it can be assumed c<=d in the
    high<=divisor test at the end.  c<=d is only guaranteed after at least
    one iteration of the main loop.  There's also a decent chance one % is
-   faster than a modlimb_invert, though that will depend on the processor.
+   faster than a binvert_limb, though that will depend on the processor.
 
    A CPU specific implementation might want to omit the size==1 code or the
    high<divisor test.  mpn/x86/k6/mode1o.asm for instance finds neither
@@ -133,7 +133,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d,
     }
 
 
-  modlimb_invert (inverse, d);
+  binvert_limb (inverse, d);
   dmul = d << GMP_NAIL_BITS;
 
   i = 0;
@@ -201,7 +201,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
   ASSERT (size >= 1);
   ASSERT (d & 1);
 
-  modlimb_invert (inverse, d);
+  binvert_limb (inverse, d);
   dmul = d << GMP_NAIL_BITS;
 
   for (i = 0; i < size; i++)
