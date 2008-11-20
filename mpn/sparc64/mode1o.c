@@ -97,7 +97,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t orig_
       return h;
     }
 
-  modlimb_invert (inverse, d);
+  binvert_limb (inverse, d);
 
   if (d <= 0xFFFFFFFF)
     {
