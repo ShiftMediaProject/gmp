@@ -67,7 +67,7 @@ mpn_bdivmod (mp_ptr qp, mp_ptr up, mp_size_t usize,
   ASSERT_MPN (vp, vsize);
 
   /* 1/V mod 2^GMP_NUMB_BITS. */
-  modlimb_invert (v_inv, vp[0]);
+  binvert_limb (v_inv, vp[0]);
 
   /* Fast code for two cases previously used by the accel part of mpn_gcd.
      (Could probably remove this now it's inlined there.) */
