@@ -2602,7 +2602,7 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
-#define modlimb_invert(inv,n)						\
+#define binvert_limb(inv,n)						\
   do {									\
     mp_limb_t  __n = (n);						\
     mp_limb_t  __inv;							\
@@ -2625,7 +2625,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);			\
     (inv) = __inv & GMP_NUMB_MASK;					\
   } while (0)
-#define binvert_limb modlimb_invert /* backward compatibility */
+#define modlimb_invert binvert_limb  /* backward compatibility */
 
 /* Multiplicative inverse of 3, modulo 2^GMP_NUMB_BITS.
    Eg. 0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits.
