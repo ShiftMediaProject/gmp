@@ -1,4 +1,4 @@
-/* Test modlimb_invert.
+/* Test binvert_limb.
 
 Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
@@ -31,11 +31,11 @@ one (mp_limb_t n)
 {
   mp_limb_t  inv, prod;
 
-  modlimb_invert (inv, n);
+  binvert_limb (inv, n);
   prod = (inv * n) & GMP_NUMB_MASK;
   if (prod != 1)
     {
-      printf ("modlimb_invert wrong\n");
+      printf ("binvert_limb wrong\n");
       mp_limb_trace ("  n       ", n);
       mp_limb_trace ("  got     ", inv);
       mp_limb_trace ("  product ", prod);
