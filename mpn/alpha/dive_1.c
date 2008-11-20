@@ -68,7 +68,7 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
       divisor >>= rshift;
     }
 
-  modlimb_invert (inverse, divisor);
+  binvert_limb (inverse, divisor);
   lshift = 64 - rshift;
 
   c = 0;
