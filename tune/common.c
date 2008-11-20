@@ -1314,9 +1314,9 @@ speed_mpz_powm_ui (struct speed_params *s)
 
 
 double
-speed_modlimb_invert (struct speed_params *s)
+speed_binvert_limb (struct speed_params *s)
 {
-  SPEED_ROUTINE_MODLIMB_INVERT (modlimb_invert);
+  SPEED_ROUTINE_MODLIMB_INVERT (binvert_limb);
 }
 
 
