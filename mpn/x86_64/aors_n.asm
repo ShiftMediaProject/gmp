@@ -19,13 +19,15 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 include(`../config.m4')
 
-
 C	     cycles/limb
-C K8,K9:	 1.69
-C K10:		 2
-C P4:		10.5
-C P6-15 (Core2): 4.87
+C K8,K9:	 1.5
+C K10:		 1.5
+C P4:		 ?
+C P6-15 (Core2): 4.9
 C P6-28 (Atom):	 4
+
+C The inner loop of this code is the result of running a code generation and
+C permutation tool suite written by David Harvey and Torbjorn Granlund.
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
@@ -49,88 +51,88 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func_nc)
-	movq	%rcx, %r10		C				3
-	andl	$3, %r10d		C				4
-	shrq	$2, %rcx		C				4
-	bt	$0, %r8			C cy flag <- carry parameter	5
-	je	L(0)			C				2
-	jmp	L(top)			C				2
+	mov	R32(n), R32(%rax)
+	and	$3, R32(%rax)
+	shr	$2, n
+	bt	$0, %r8			C cy flag <- carry parameter
+	jz	L(1)
+	jmp	L(ent)
 EPILOGUE()
+	ALIGN(16)
 PROLOGUE(func)
-	movq	%rcx, %r10		C				3
-	shrq	$2, %rcx		C				4
-	je	L(end)			C				2
-	andl	$3, %r10d		C				4
+	mov	R32(n), R32(%rax)
+	shr	$2, n
+	jz	L(0)
+	and	$3, R32(%rax)
 
-C Main loop.  1 mod 16 aligned.  Blocks between blank lines take one cycle.
-L(top):	movq	(%rsi), %rax		C				3
-	movq	8(%rsi), %r9		C				4
-	leaq	32(%rsi), %rsi		C				4
+L(ent):	mov	(up), %r8
+	mov	8(up), %r9
+	dec	n
+	jmp	L(mid)
 
-	ADCSBB	(%rdx), %rax		C				3
-	movq	%rax, (%rdi)		C				3
+	ALIGN(16)
+L(top):	ADCSBB	(vp), %r8
+	ADCSBB	8(vp), %r9
+	ADCSBB	16(vp), %r10
+	ADCSBB	24(vp), %r11
+	mov	%r8, (rp)
+	lea	32(up), up
+	mov	%r9, 8(rp)
+	mov	%r10, 16(rp)
+	dec	n
+	mov	%r11, 24(rp)
+	lea	32(vp), vp
+	mov	(up), %r8
+	mov	8(up), %r9
+	lea	32(rp), rp
+L(mid):	mov	16(up), %r10
+	mov	24(up), %r11
+	jnz	L(top)
 
-	ADCSBB	8(%rdx), %r9		C				4
-	movq	%r9, 8(%rdi)		C				4
+L(end):	lea	32(up), up
+	ADCSBB	(vp), %r8
+	ADCSBB	8(vp), %r9
+	ADCSBB	16(vp), %r10
+	ADCSBB	24(vp), %r11
+	lea	32(vp), vp
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	mov	%r10, 16(rp)
+	mov	%r11, 24(rp)
+	lea	32(rp), rp
 
-	movq	-16(%rsi), %rax		C				4
-	movq	-8(%rsi), %r9		C				4
+	inc	R32(%rax)
+	dec	R32(%rax)
+	jnz	L(1)
+	adc	%eax, %eax
+	ret
 
-	ADCSBB	16(%rdx), %rax		C				4
-	movq	%rax, 16(%rdi)		C				4
+L(0):	test	R32(%rax), R32(%rax)
+L(1):	dec	R32(%rax)
+	mov	(up), %r8
+	jnz	L(2)
+	ADCSBB	(vp), %r8
+	mov	%r8, (rp)
+	adc	%eax, %eax
+	ret
 
-	ADCSBB	24(%rdx), %r9		C				4
-	movq	%r9, 24(%rdi)		C				4
-	decq	%rcx			C				3
+L(2):	dec	R32(%rax)
+	mov	8(up), %r9
+	jnz	L(3)
+	ADCSBB	(vp), %r8
+	ADCSBB	8(vp), %r9
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	adc	%eax, %eax
+	ret
 
-	leaq	32(%rdx), %rdx		C				4
-	leaq	32(%rdi), %rdi		C				4
-	jne	L(top)			C				2
-
-
-	incl	%r10d			C				3
-	decl	%r10d			C				3
-	jne	L(0)			C				2
-
-	sbbl	%eax,%eax		C				2
-	negl	%eax			C				2
-	ret				C				1
-
-L(end):	testl	%eax, %eax		C clear cy			2
-L(0):	decl	%r10d			C				3
-	jne	L(1)			C				2
-
-	movq	(%rsi), %rax		C				3
-	ADCSBB	(%rdx), %rax		C				3
-	movq	%rax, (%rdi)		C				3
-	sbbl	%eax,%eax		C				2
-	negl	%eax			C				2
-	ret				C				1
-
-L(1):	decl	%r10d			C				3
-	jne	L(2)			C				2
-
-	movq	(%rsi), %rax		C				3
-	movq	8(%rsi), %r9		C				4
-	ADCSBB	(%rdx), %rax		C				3
-	movq	%rax, (%rdi)		C				3
-	ADCSBB	8(%rdx), %r9		C				4
-	movq	%r9, 8(%rdi)		C				4
-	sbbl	%eax,%eax		C				2
-	negl	%eax			C				2
-	ret				C				1
-
-L(2):
-	movq	(%rsi), %rax		C				3
-	movq	8(%rsi), %r9		C				4
-	ADCSBB	(%rdx), %rax		C				3
-	movq	%rax, (%rdi)		C				3
-	ADCSBB	8(%rdx), %r9		C				4
-	movq	%r9, 8(%rdi)		C				4
-	movq	16(%rsi), %rax		C				4
-	ADCSBB	16(%rdx), %rax		C				4
-	movq	%rax, 16(%rdi)		C				4
-	sbbl	%eax,%eax		C				2
-	negl	%eax			C				2
-	ret				C				1
+L(3):	mov	16(up), %r10
+	ADCSBB	(vp), %r8
+	ADCSBB	8(vp), %r9
+	ADCSBB	16(vp), %r10
+	mov	%r8, (rp)
+	mov	%r9, 8(rp)
+	mov	%r10, 16(rp)
+	setc	%al
+	ret
 EPILOGUE()
