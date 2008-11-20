@@ -248,7 +248,7 @@ main (int argc, char *argv[])
   ASSERT_ALWAYS_LIMB (MODLIMB_INVERSE_3);
   {
     mp_limb_t  modlimb_inverse_3_calc;
-    modlimb_invert (modlimb_inverse_3_calc, CNST_LIMB(3));
+    binvert_limb (modlimb_inverse_3_calc, CNST_LIMB(3));
     ASSERT_ALWAYS_LIMB (modlimb_inverse_3_calc);
     CHECK_LIMB (MODLIMB_INVERSE_3, modlimb_inverse_3_calc);
   }
