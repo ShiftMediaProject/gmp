@@ -92,7 +92,7 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
   else
     shift = 0;
 
-  modlimb_invert (inverse, divisor);
+  binvert_limb (inverse, divisor);
   divisor <<= GMP_NAIL_BITS;
 
   if (shift != 0)
