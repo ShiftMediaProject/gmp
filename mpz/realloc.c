@@ -33,7 +33,7 @@ _mpz_realloc (mpz_ptr m, mp_size_t new_alloc)
 
   if (sizeof (mp_size_t) == sizeof (int))
     {
-      if (UNLIKELY (new_alloc > INT_MAX / GMP_NUMB_BITS))
+      if (UNLIKELY (new_alloc > ULONG_MAX / GMP_NUMB_BITS))
 	{
 	  fprintf (stderr, "gmp: overflow in mpz type\n");
 	  abort ();
