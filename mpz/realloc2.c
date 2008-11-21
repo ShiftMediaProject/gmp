@@ -25,23 +25,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpz_realloc2 (mpz_ptr m, unsigned long bits)
 {
-  mp_ptr mp;
   mp_size_t new_alloc;
 
-  new_alloc = (bits + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
+  bits -= (bits != 0);		/* Round down, except if 0 */
+  new_alloc = 1 + bits / GMP_NUMB_BITS;
 
-  /* Never allocate zero space. */
-  new_alloc = MAX (new_alloc, 1);
-
-  if (sizeof (mp_size_t) == sizeof (int))
-    {
-      if (UNLIKELY (new_alloc > INT_MAX / GMP_NUMB_BITS))
-	{
-	  fprintf (stderr, "gmp: overflow in mpz type\n");
-	  abort ();
-	}
-    }
-  else
+  if (sizeof (unsigned long) > sizeof (int)) /* param vs _mp_size field */
     {
       if (UNLIKELY (new_alloc > INT_MAX))
 	{
@@ -50,8 +39,7 @@ mpz_realloc2 (mpz_ptr m, unsigned long bits)
 	}
     }
 
-  mp = __GMP_REALLOCATE_FUNC_LIMBS (PTR(m), ALLOC(m), new_alloc);
-  PTR(m) = mp;
+  PTR(m) = __GMP_REALLOCATE_FUNC_LIMBS (PTR(m), ALLOC(m), new_alloc);
   ALLOC(m) = new_alloc;
 
   /* Don't create an invalid number; if the current value doesn't fit after
