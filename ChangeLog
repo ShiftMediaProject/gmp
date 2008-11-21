@@ -1,5 +1,8 @@
 2008-11-21  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/devel/try.c (malloc_region, mprotect_maybe): Add casts for
+	printf type correctness.
+
 	* gmp-h.in (__GNU_MP_VERSION_MINOR): Bump.
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
