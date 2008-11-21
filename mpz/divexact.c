@@ -63,10 +63,11 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
   dp = den->_mp_d;
   qp = quot->_mp_d;
 
-  if (nsize == 0)
+  if (nsize < dsize)
     {
-      if (dsize == 0)
-	DIVIDE_BY_ZERO;
+      /* This special case avoids segfaults below when the function is
+	 incorrectly called with |N| < |D|, N != 0.  It also handles the
+	 well-defined case N = 0.  */
       quot->_mp_size = 0;
       return;
     }
