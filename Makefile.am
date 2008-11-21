@@ -60,7 +60,9 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 #        4.2      6:0:3    3:2:0   4:4:1	REALLY WRONG, same as 4.1!
 #        4.2.1    7:1:4    4:1:1   4:10:1	WRONG for libgmpxx
 #        4.2.2    7:2:4    4:2:0   4:11:1
-#        5.0      8:0:5    5:0:1   4:12:1	PRELIMINARY
+#        4.2.3    7:3:4    4:3:0   4:12:1
+#        4.2.4    7:4:4    4:4:0   4:13:1
+#        4.3      8:0:5    5:0:1   4:14:1	PRELIMINARY
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
@@ -82,7 +84,7 @@ LIBGMPXX_LT_REVISION = 0
 LIBGMPXX_LT_AGE =      1
 
 LIBMP_LT_CURRENT =  4
-LIBMP_LT_REVISION = 12
+LIBMP_LT_REVISION = 14
 LIBMP_LT_AGE =      1
 
 
