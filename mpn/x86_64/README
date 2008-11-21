@@ -1,4 +1,4 @@
-Copyright 2003, 2004 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2006, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,92 +22,42 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 			AMD64 MPN SUBROUTINES
 
 
-This directory contains mpn functions for AMD64 chips.  It might also be
-useful for 64-bit Pentiums, but that chip's poor carry handling makes it
-unlikely.  We'll need completely separate code (in a subdirectory).
+This directory contains mpn functions for AMD64 chips.  It is also useful
+for 64-bit Pentiums, and "Core 2".
 
 
 		     RELEVANT OPTIMIZATION ISSUES
 
-The only AMD64 core as of this writing is the AMD Hammer, sold under the
-names Opteron and Athlon64.  The Hammer can sustain up to 3 instructions per
-cycle, but in practice that is only possible for integer instructions.  But
-almost any three integer instructions can issue simultaneously, including
-any 3 ALU operations, including shifts.  Up to two memory operations can
-issue each cycle.
+The Opteron and Athlon64 can sustain up to 3 instructions per cycle, but in
+practice that is only possible for integer instructions.  But almost any
+three integer instructions can issue simultaneously, including any 3 ALU
+operations, including shifts.  Up to two memory operations can issue each
+cycle.
 
 Scheduling typically requires that load-use instructions are split into
 separate load and use instructions.  That requires more decode resources,
-and it is rarely a win.  Hammer is a deep out-of-order core.
+and it is rarely a win.  Opteron/Athlon64 have deep out-of-order core.
 
 
-		      STATUS OF INDIVIDUAL ROUTINES
-
-mpn_addmul_1, mpn_submul_1, mpn_mul_1:
-
-It is possible to run the critical mulq instruction at a rate 1 every 2nd
-cycle.  But only if either the low or the high product part is ignored.
-As soon as we use the full product, any tested sequence needs 3 cycles.
-
-Considering this core limitation, the current multiplication code runs very
-well:
-
-	mul_1:		3.0
-	addmul_1:	3.25
-	submul_1:	3.5
+Optimizing for 64-bit Pentium4 is probably a waste of time, as the most
+critical instructions are very poorly implemented here.  Perhaps we could
+save a cycle or two, but the most common loops now run at between 10 and 22
+cycles, so a saved cycle isn't too exciting.
 
 
-mpn_add_n, mpn_sub_n:
+The new spin of the venerable P6 core, the "Core 2" is much better than the
+Pentium4 for the GMP loops.  Its integer pipeline is somewhat similar to to
+the Opteron/Athlon64 pipeline, except that the GMP favourites ADC/SBB and
+MUL are slower.  Furthermore, an INC/DEC followed by ADC/SBB incur a
+pipeline stall of around 10 cycles.  The default mpn_add_n and mpn_sub_n
+code suffers badly from the stall.  The code in the core2 subdirectory uses
+the almost forgotten instruction JRCXZ for loop control, and updates the
+induction variable using LEA.
 
-Currently: 1.75 cycles/limb, using 4-way unrolling.
-
-It seems possible to reach the ld/st bandwidth 1.5 cycles/limb, perhaps even
-with only 2-way unrolling, by making use of indexed addressing.
-
-
-mpn_lshift, mpn_rshift:
-
-Currently: 2.375 cycles/limb, using 4-way unrolling.
-
-Using integer instructions, it seems 2 cycles/limb is the limit.  It might be
-possible to use 128-bit SSE2 instructions for better performance, but since
-Hammer in practice only executes 1 SSE instruction/cycle, that seem unlikely.
-
-The mpn_lshift code should have a special case for count=1, since that could be
-done at 1 cycle/limb.
-
-
-mpn_copyi, mpn_copyd:
-
-Currently: 1 cycle/limb, using 4-way unrolling.  Slow for 1-limb operations,
-somewhat varying performance for small blocks.  The code uses an unusual
-method for the non-unrolled code, which might need improvements.
-
-Using integer instructions, 1 cycle/limb is the limit.  SSE 128-bit
-instructions would surely be a win for 128-bit aligned operations, but one
-would probably want to fall back to integer instructions for small or
-unaligned operations.  SSE instructions might reach 0.5 cycles/limb.
-
-
-logops:
-
-All logops could be made to run at 1.5 cycles/limb using integer
-instructions.  SSE operations could perhaps reach 0.75 cycles/limb, but only
-if all 3 operands are 128-bit aligned.  That 1/8 win doesn't seem worth the
-implementation effort.
-
-
-mpn_divrem_1, mpn_mod_1, mpn_preinv_divrem_1, mpn_preinv_mod_1:
-
-The current divrem_1.asm code needs 17 cycles/limb.  Experimental versions
-need only 15 cycles/limb.
-
-While this is the best divrem_1 performance of all chips, even better
-performance seems attainable by using a two-limb inverse, developing two
-quotient limbs per iteration.
 
 
 REFERENCES
 
 "System V Application Binary Interface AMD64 Architecture Processor
-Supplement", draft version 0.90, April 2003.
+Supplement", draft version 0.99, December 2007.
+http://www.x86-64.org/documentation/abi.pdf
