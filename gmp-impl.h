@@ -2579,7 +2579,7 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
    : mpn_mod_1 (src, size, divisor))
 
 
-/* modlimb_invert() sets inv to the multiplicative inverse of n modulo
+/* binvert_limb() sets inv to the multiplicative inverse of n modulo
    2^GMP_NUMB_BITS, ie. satisfying inv*n == 1 mod 2^GMP_NUMB_BITS.
    n must be odd (otherwise such an inverse doesn't exist).
 
@@ -2599,8 +2599,8 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
    A 4-bit inverse can be obtained effectively from xoring bits 1 and 2 into
    bit 3, for instance with (((n + 2) & 4) << 1) ^ n.  */
 
-#define modlimb_invert_table  __gmp_modlimb_invert_table
-__GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
+#define binvert_limb_table  __gmp_binvert_limb_table
+__GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 
 #define binvert_limb(inv,n)						\
   do {									\
@@ -2608,7 +2608,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __inv;							\
     ASSERT ((__n & 1) == 1);						\
 									\
-    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */		\
+    __inv = binvert_limb_table[(__n/2) & 0x7F]; /*  8 */		\
     if (GMP_NUMB_BITS > 8)   __inv = 2 * __inv - __inv * __inv * __n;	\
     if (GMP_NUMB_BITS > 16)  __inv = 2 * __inv - __inv * __inv * __n;	\
     if (GMP_NUMB_BITS > 32)  __inv = 2 * __inv - __inv * __inv * __n;	\

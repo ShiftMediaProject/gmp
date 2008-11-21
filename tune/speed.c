@@ -329,7 +329,7 @@ const struct routine_t {
   { "mpz_powm",          speed_mpz_powm             },
   { "mpz_powm_mod",      speed_mpz_powm_mod         },
   { "mpz_powm_redc",     speed_mpz_powm_redc        },
-  { "mpz_powm_ui",       speed_mpz_powm_ui          },
+  { "mpz_powm_ui",       speed_mpz_powm_ui,  FLAG_R_OPTIONAL },
 
   { "mpz_mod",           speed_mpz_mod              },
   { "redc",              speed_redc                 },
@@ -359,11 +359,11 @@ const struct routine_t {
 
   { "MPN_ZERO",          speed_MPN_ZERO             },
 
-  { "modlimb_invert",       speed_modlimb_invert,       FLAG_NODATA },
-  { "modlimb_invert_mul1",  speed_modlimb_invert_mul1,  FLAG_NODATA },
-  { "modlimb_invert_loop",  speed_modlimb_invert_loop,  FLAG_NODATA },
-  { "modlimb_invert_cond",  speed_modlimb_invert_cond,  FLAG_NODATA },
-  { "modlimb_invert_arith", speed_modlimb_invert_arith, FLAG_NODATA },
+  { "binvert_limb",       speed_binvert_limb,       FLAG_NODATA },
+  { "binvert_limb_mul1",  speed_binvert_limb_mul1,  FLAG_NODATA },
+  { "binvert_limb_loop",  speed_binvert_limb_loop,  FLAG_NODATA },
+  { "binvert_limb_cond",  speed_binvert_limb_cond,  FLAG_NODATA },
+  { "binvert_limb_arith", speed_binvert_limb_arith, FLAG_NODATA },
 
   { "malloc_free",                  speed_malloc_free                  },
   { "malloc_realloc_free",          speed_malloc_realloc_free          },

@@ -112,13 +112,13 @@ L(here):
 
 	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(here)], %ebp
 	C AGI
-	movl	modlimb_invert_table@GOT(%ebp), %ebp
+	movl	binvert_limb_table@GOT(%ebp), %ebp
 	C AGI
 	movzbl	(%eax,%ebp), %eax
 ',`
 
 dnl non-PIC
-	movzbl	modlimb_invert_table(%eax), %eax	C inv 8 bits
+	movzbl	binvert_limb_table(%eax), %eax	C inv 8 bits
 ')
 
 	movl	%eax, %ebp		C inv

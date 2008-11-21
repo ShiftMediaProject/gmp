@@ -75,10 +75,10 @@ deflit(`FRAME',0)
 	andl	$127, %eax
 
 ifdef(`PIC',`
-	LEA(	modlimb_invert_table, %ebp)
-	movzbl	(%eax,%ebp), %ebp			C inv 8 bits
+	LEA(	binvert_limb_table, %ebp)
+	movzbl	(%eax,%ebp), %ebp		C inv 8 bits
 ',`
-	movzbl	modlimb_invert_table(%eax), %ebp	C inv 8 bits
+	movzbl	binvert_limb_table(%eax), %ebp	C inv 8 bits
 ')
 
 	leal	(%ebp,%ebp), %eax	C 2*inv

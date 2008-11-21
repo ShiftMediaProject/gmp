@@ -75,7 +75,7 @@ PROLOGUE(mpn_modexact_1c_odd,gp)
 	C r18	d
 	C r19	c
 
-	LEA(r0, modlimb_invert_table)
+	LEA(r0, binvert_limb_table)
 	srl	r18, 1, r20		C d >> 1
 
 	and	r20, 127, r20		C idx = d>>1 & 0x7F

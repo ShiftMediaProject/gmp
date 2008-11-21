@@ -97,7 +97,7 @@ C probably be about 14 cycles (2 per bit beyond the first couple).  Or it
 C could be taken from 4 bits to 8 with xmpy doubling as used beyond 8 bits,
 C but that would be about 11 cycles.
 C
-C The table is not the same as modlimb_invert_table, instead it's 256 bytes,
+C The table is not the same as binvert_limb_table, instead it's 256 bytes,
 C designed to be indexed by the low byte of the divisor.  The divisor is
 C always odd, so the relevant data is every second byte in the table.  The
 C padding lets us use zxt1 instead of extr.u, the latter would cost an extra

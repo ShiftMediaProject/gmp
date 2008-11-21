@@ -63,7 +63,7 @@ C used.
 C
 C Enhancements:
 C
-C For PIC, we shouldn't really need the GOT fetch for modlimb_invert_table,
+C For PIC, we shouldn't really need the GOT fetch for binvert_limb_table,
 C it'll be in rodata or text in libgmp.so and can be accessed directly %rip
 C relative.  This would be for small model only (something we don't
 C presently detect, but which is all that gcc 3.3.3 supports), since 8-byte
@@ -89,9 +89,9 @@ PROLOGUE(mpn_modexact_1c_odd)
 	movq	%rdx, %r8		C d
 	shrl	%edx			C d/2
 ifdef(`PIC',`
-	movq	modlimb_invert_table@GOTPCREL(%rip), %r9
+	movq	binvert_limb_table@GOTPCREL(%rip), %r9
 ',`
-	movabsq	$modlimb_invert_table, %r9
+	movabsq	$binvert_limb_table, %r9
 ')
 
 	andl	$127, %edx

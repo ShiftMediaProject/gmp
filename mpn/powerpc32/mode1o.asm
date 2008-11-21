@@ -36,7 +36,7 @@ C mp_limb_t mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size,
 C                                mp_limb_t divisor, mp_limb_t carry);
 C
 C For PIC, the inverse is established arithmetically since it measures about
-C 5 cycles faster than the nonsense needed to access modlimb_invert_table in
+C 5 cycles faster than the nonsense needed to access binvert_limb_table in
 C SVR4 or Darwin style PIC.  AIX might be better, since it avoids bl/mflr to
 C get at the GOT/TOC/whatever.
 C
@@ -52,7 +52,7 @@ C range above for 750 and 7400.
 
 ASM_START()
 
-EXTERN(modlimb_invert_table)
+EXTERN(binvert_limb_table)
 
 PROLOGUE(mpn_modexact_1_odd)
 	li	r6, 0
@@ -74,7 +74,7 @@ C Load from our table with PIC is so slow on Linux and Darwin that we avoid it
 	mullw	r7, r7, r8		C i*i*d
 	sub	r4, r4, r7		C inverse, 8 bits
 ',`
-	LEA(	r7, modlimb_invert_table)
+	LEA(	r7, binvert_limb_table)
 	rlwinm	r4, r5, 31,25,31	C (divisor/2) & 0x7F
 	lbzx	r4, r4,r7		C inverse, 8 bits
 ')

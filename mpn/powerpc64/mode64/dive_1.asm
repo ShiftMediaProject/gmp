@@ -38,7 +38,7 @@ define(`d',  `r6')
 
 ASM_START()
 
-EXTERN(modlimb_invert_table)
+EXTERN(binvert_limb_table)
 
 PROLOGUE(mpn_divexact_1)
 	addic.	n, n, -1
@@ -59,7 +59,7 @@ L(2):
 	srd	d, d, r0
 L(7):
 	mtctr	n
-	LEA(	r5, modlimb_invert_table)
+	LEA(	r5, binvert_limb_table)
 	rldicl	r11, d, 63, 57
 C	cmpdi	cr7, r0, 0
 	lbzx	r0, r5, r11

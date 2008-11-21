@@ -74,10 +74,10 @@ L(start_1c):
 	pushl	%ebp		FRAME_pushl()
 
 ifdef(`PIC',`
-	LEA(	modlimb_invert_table, %edi)
-Zdisp(	movzbl,	0,(%ecx,%edi), %edi)			C inv 8 bits
+	LEA(	binvert_limb_table, %edi)
+Zdisp(	movzbl,	0,(%ecx,%edi), %edi)		C inv 8 bits
 ',`
-	movzbl	modlimb_invert_table(%ecx), %edi	C inv 8 bits
+	movzbl	binvert_limb_table(%ecx), %edi	C inv 8 bits
 ')
 	leal	(%edi,%edi), %ecx	C 2*inv
 

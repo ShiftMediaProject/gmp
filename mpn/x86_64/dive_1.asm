@@ -54,9 +54,9 @@ L(odd):	movq	%rax, %rbx
 	andl	$127, %eax		C d/2, 7 bits
 
 ifdef(`PIC',`
-	movq	modlimb_invert_table@GOTPCREL(%rip), %rdx
+	movq	binvert_limb_table@GOTPCREL(%rip), %rdx
 ',`
-	movabsq	$modlimb_invert_table, %rdx
+	movabsq	$binvert_limb_table, %rdx
 ')
 
 	movzbl	(%rax,%rdx), %eax	C inv 8 bits

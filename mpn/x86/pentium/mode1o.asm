@@ -83,7 +83,7 @@ L(here):
 	andl	$127, %eax
 	movl	PARAM_SIZE, %ebx
 
-	movl	modlimb_invert_table@GOT(%ecx), %ecx
+	movl	binvert_limb_table@GOT(%ecx), %ecx
 	subl	$2, %ebx
 
 	movb	(%eax,%ecx), %cl			C inv 8 bits
@@ -100,7 +100,7 @@ dnl non-PIC
 	subl	$2, %ebx
 	jc	L(one_limb)
 
-	movb	modlimb_invert_table(%eax), %cl		C inv 8 bits
+	movb	binvert_limb_table(%eax), %cl		C inv 8 bits
 ')
 
 	movl	%ecx, %eax

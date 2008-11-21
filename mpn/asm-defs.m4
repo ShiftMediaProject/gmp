@@ -1361,8 +1361,12 @@ define_mpn(preinv_divrem_1)
 define_mpn(preinv_mod_1)
 define_mpn(nand_n)
 define_mpn(nior_n)
+define_mpn(powm)
+define_mpn(powlo)
 define_mpn(random)
 define_mpn(random2)
+define_mpn(redc_1)
+define_mpn(redc_2)
 define_mpn(rsh1add_n)
 define_mpn(rsh1sub_n)
 define_mpn(rshift)
@@ -1403,9 +1407,9 @@ deflit(__clz_tab,
 m4_assert_defined(`GSYM_PREFIX')
 `GSYM_PREFIX`'MPN(`clz_tab')')
 
-deflit(modlimb_invert_table,
+deflit(binvert_limb_table,
 m4_assert_defined(`GSYM_PREFIX')
-`GSYM_PREFIX`'__gmp_modlimb_invert_table')
+`GSYM_PREFIX`'__gmp_binvert_limb_table')
 
 
 dnl  Usage: ASM_START()

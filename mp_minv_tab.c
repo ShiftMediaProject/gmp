@@ -1,4 +1,4 @@
-/* A table of data supporting modlimb_invert().
+/* A table of data supporting binvert_limb().
 
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND MAY CHANGE
    INCOMPATIBLY OR DISAPPEAR IN A FUTURE GNU MP RELEASE.  */
@@ -25,10 +25,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-/* modlimb_invert_table[i] is the multiplicative inverse of 2*i+1 mod 256,
-   ie. (modlimb_invert_table[i] * (2*i+1)) % 256 == 1 */
+/* binvert_limb_table[i] is the multiplicative inverse of 2*i+1 mod 256,
+   ie. (binvert_limb_table[i] * (2*i+1)) % 256 == 1 */
 
-const unsigned char  modlimb_invert_table[128] = {
+const unsigned char  binvert_limb_table[128] = {
   0x01, 0xAB, 0xCD, 0xB7, 0x39, 0xA3, 0xC5, 0xEF,
   0xF1, 0x1B, 0x3D, 0xA7, 0x29, 0x13, 0x35, 0xDF,
   0xE1, 0x8B, 0xAD, 0x97, 0x19, 0x83, 0xA5, 0xCF,

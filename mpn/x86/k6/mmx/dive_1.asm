@@ -86,10 +86,10 @@ L(strip_twos):
 	andl	$127, %eax		C d/2, 7 bits
 
 ifdef(`PIC',`
-	LEA(	modlimb_invert_table, %ebp)
+	LEA(	binvert_limb_table, %ebp)
 Zdisp(	movzbl,	0,(%eax,%ebp), %eax)
 ',`
-	movzbl	modlimb_invert_table(%eax), %eax	C inv 8 bits
+	movzbl	binvert_limb_table(%eax), %eax	C inv 8 bits
 ')
 	pushl	%edi		FRAME_pushl()
 
