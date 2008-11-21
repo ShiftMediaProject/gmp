@@ -1,6 +1,6 @@
 /* mpz_init2 -- initialize mpz, with requested size in bits.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,18 +17,31 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdlib.h>
+#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
 void
 mpz_init2 (mpz_ptr x, unsigned long bits)
 {
-  mp_size_t  limbs;
-  limbs = (bits + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
-  limbs = MAX (limbs, 1);
+  mp_size_t  new_alloc;
+
+  bits -= (bits != 0);		/* Round down, except if 0 */
+  new_alloc = 1 + bits / GMP_NUMB_BITS;
+
+  if (sizeof (unsigned long) > sizeof (int)) /* param vs _mp_size field */
+    {
+      if (UNLIKELY (new_alloc > INT_MAX))
+	{
+	  fprintf (stderr, "gmp: overflow in mpz type\n");
+	  abort ();
+	}
+    }
+
+  PTR(x) = __GMP_ALLOCATE_FUNC_LIMBS (new_alloc);
+  ALLOC(x) = new_alloc;
   SIZ(x) = 0;
-  ALLOC(x) = limbs;
-  PTR(x) = __GMP_ALLOCATE_FUNC_LIMBS (limbs);
 
 #ifdef __CHECKER__
   /* let the low limb look initialized, for the benefit of mpz_get_ui etc */
