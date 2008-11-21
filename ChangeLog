@@ -12,6 +12,26 @@
 	* mpn/generic/mode1o.c: Likewise.
 	* mpn/generic/dive_1.c: Likewise.
 	* mpn/generic/bdivmod.c: Likewise.
+	* mpn/alpha/mode1o.asm: Likewise.
+	* mpn/asm-defs.m4: Likewise.
+	* mpn/ia64/mode1o.asm: Likewise.
+	* mpn/powerpc32/README: Likewise.
+	* mpn/powerpc32/mode1o.asm: Likewise.
+	* mpn/powerpc64/mode64/dive_1.asm: Likewise.
+	* mpn/powerpc64/mode64/mode1o.asm: Likewise.
+	* mpn/x86/dive_1.asm: Likewise.
+	* mpn/x86/k6/mmx/dive_1.asm: Likewise.
+	* mpn/x86/k6/mode1o.asm: Likewise.
+	* mpn/x86/k7/dive_1.asm: Likewise.
+	* mpn/x86/k7/mode1o.asm: Likewise.
+	* mpn/x86/p6/dive_1.asm: Likewise.
+	* mpn/x86/p6/mode1o.asm: Likewise.
+	* mpn/x86/pentium/dive_1.asm: Likewise.
+	* mpn/x86/pentium/mode1o.asm: Likewise.
+	* mpn/x86/pentium4/sse2/dive_1.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mode1o.asm: Likewise.
+	* mpn/x86_64/dive_1.asm: Likewise.
+	* mpn/x86_64/mode1o.asm: Likewise.
 
 	* mpn/x86_64/aors_n.asm: Replace with slightly faster, more alignment
 	neutral loop.
