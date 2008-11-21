@@ -1,3 +1,10 @@
+2008-11-21  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in (__GNU_MP_VERSION_MINOR): Bump.
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
+	Bump version info.
+
 2008-11-20  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h: Rename modlimb_invert to binvert_limb.
@@ -494,6 +501,8 @@
 
 2008-09-10  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/devel/anymul_1.c: Include <string.h>.
+
 	* gmp-h.in: Unconditionally include <cstdio>.
 
 2008-09-10  Niels Möller  <nisse@lysator.liu.se>
@@ -580,9 +589,6 @@
 	* ltmain.sh: Update to libtool 1.5.24.
 
 	* mpn/generic/mul_toom22.c: Compute s and t more cleverly.
-
-	* gmp-h.in (__GMP_CC): New #define.
-	(__GMP_CFLAGS): New #define.
 
 2008-09-08  Niels Möller  <nisse@lysator.liu.se>
 
@@ -676,9 +682,16 @@
 	Remove repeated #undefs.
 	(__gmp_alloc_cstring): Declare freefunc as extern "C".
 
+2008-07-23  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in (__GMP_CC): New define, undocumented for now.
+	(__GMP_CFLAGS): Likewise.
+
 2008-07-21  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/amd64check.c: Fix a printf type clash.
+
+	* mpz/realloc.c: Amend last fix.
 
 	* gmp-h.in: Include <cstdlib> for C++.
 	* gmp-h.in: Handle new gcc 4.3 inline semantics defaults.
@@ -699,10 +712,14 @@
 	* configure.in: Disallow odd nails sizes.
 	* configure.in: Inherit default gcc_cflags/gcc_64_cflags everywhere.
 
-2008-05-22  Torbjorn Granlund  <tege@swox.com>
+2008-05-23  Torbjorn Granlund  <tege@swox.com>
 
-	* mpz/realloc.c: Check for mpz_t overflow.
+	* mpz/init2.c: Rewrite to avoid internal overflow and to detect mpz_t
+	overflow.
 	* mpz/realloc2.c: Likewise.
+	* mpz/realloc.c: Detect mpz_t overflow.
+	
+2008-05-22  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (sparc): Remove -fast, it causes documented
 	miscompilation.
