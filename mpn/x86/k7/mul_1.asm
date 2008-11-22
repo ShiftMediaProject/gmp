@@ -1,6 +1,7 @@
-dnl  AMD K7 mpn_mul_1 -- mpn by limb multiply.
+dnl  AMD K7 mpn_mul_1.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2005, 2008 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -22,252 +23,205 @@ include(`../config.m4')
 
 C                           cycles/limb
 C P5:
-C P6 model 0-8,10-12)            4.95
+C P6 model 0-8,10-12)
 C P6 model 9  (Banias)
-C P6 model 13 (Dothan)           4.79
+C P6 model 13 (Dothan)
 C P4 model 0  (Willamette)
 C P4 model 1  (?)
 C P4 model 2  (Northwood)
 C P4 model 3  (Prescott)
 C P4 model 4  (Nocona)
 C K6:
-C K7:                            3.4
+C K7:                            3.25
+C K8:
 
+C TODO
+C  * Improve feed-in and wind-down code.  We beat the old code for all n != 1,
+C    but we might be able to do even better.
+C  * The feed-in code for mul_1c is crude.
 
-dnl  K7: UNROLL_COUNT cycles/limb
-dnl           8           3.9
-dnl          16           3.4
-dnl          32           3.4
-dnl          64           3.35
-dnl  Maximum possible with the current code is 64.
-
-deflit(UNROLL_COUNT, 16)
-
-
-C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                      mp_limb_t multiplier);
-C mp_limb_t mpn_mul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                       mp_limb_t multiplier, mp_limb_t carry);
-C
-C Multiply src,size by mult and store the result in dst,size.
-C Return the carry limb from the top of the result.
-C
-C mpn_mul_1c() accepts an initial carry for the calculation, it's added into
-C the low limb of the destination.
-C
-C Variations on the unrolled loop have been tried, with the current
-C registers or with the counter on the stack to free up ecx.  The current
-C code is the fastest found.
-C
-C An interesting effect is that removing the stores "movl %ebx, disp0(%edi)"
-C from the unrolled loop actually slows it down to 5.0 cycles/limb.  Code
-C with this change can be tested on sizes of the form UNROLL_COUNT*n+1
-C without having to change the computed jump.  There's obviously something
-C fishy going on, perhaps with what execution units the mul needs.
-
-defframe(PARAM_CARRY,     20)
-defframe(PARAM_MULTIPLIER,16)
-defframe(PARAM_SIZE,      12)
-defframe(PARAM_SRC,       8)
-defframe(PARAM_DST,       4)
-
-defframe(SAVE_EBP, -4)
-defframe(SAVE_EDI, -8)
-defframe(SAVE_ESI, -12)
-defframe(SAVE_EBX, -16)
-deflit(STACK_SPACE, 16)
-
-dnl  Must have UNROLL_THRESHOLD >= 2, since the unrolled loop can't handle 1.
-ifdef(`PIC',`
-deflit(UNROLL_THRESHOLD, 7)
-',`
-deflit(UNROLL_THRESHOLD, 5)
-')
-
+ASM_START()
 	TEXT
-	ALIGN(32)
+	ALIGN(16)
 PROLOGUE(mpn_mul_1c)
-deflit(`FRAME',0)
-	movl	PARAM_CARRY, %edx
-	jmp	L(start_nc)
+	add	$-16, %esp
+	mov	%ebp, (%esp)
+	mov	%ebx, 4(%esp)
+	mov	%esi, 8(%esp)
+	mov	%edi, 12(%esp)
+
+	mov	20(%esp), %edi
+	mov	24(%esp), %esi
+	mov	28(%esp), %ebp
+	mov	32(%esp), %ecx
+	mov	%ebp, %ebx
+	shr	$2, %ebp
+	mov	%ebp, 28(%esp)
+	mov	(%esi), %eax
+	and	$3, %ebx
+	jz	L(c0)
+	cmp	$2, %ebx
+	mov	36(%esp), %ebx
+	jz	L(c2)
+	jg	L(c3)
+
+L(c1):	lea	-4(%edi), %edi
+	mul	%ecx
+	test	%ebp, %ebp
+	jnz	1f
+	add	%ebx, %eax
+	mov	%eax, 4(%edi)
+	mov	%edx, %eax
+	adc	%ebp, %eax
+	jmp	L(rt)
+1:	add	%eax, %ebx
+	mov	$0, %ebp
+	adc	%edx, %ebp
+	mov	4(%esi), %eax
+	jmp	L(1)
+
+L(c2):	lea	4(%esi), %esi
+	mul	%ecx
+	test	%ebp, %ebp
+	mov	%ebx, %ebp
+	jnz	2f
+	add	%eax, %ebp
+	mov	$0, %ebx
+	adc	%edx, %ebx
+	mov	(%esi), %eax
+	jmp	L(cj2)
+2:	add	%eax, %ebp
+	mov	$0, %ebx
+	adc	%edx, %ebx
+	mov	(%esi), %eax
+	jmp	L(2)
+
+L(c3):	lea	8(%esi), %esi
+	lea	-12(%edi), %edi
+	mul	%ecx
+	add	%eax, %ebx
+	mov	$0, %ebp
+	adc	%edx, %ebp
+	mov	-4(%esi), %eax
+	incl	28(%esp)
+	jmp	L(3)
+
+L(c0):	mov	36(%esp), %ebx
+	lea	-4(%esi), %esi
+	lea	-8(%edi), %edi
+	mul	%ecx
+	mov	%ebx, %ebp
+	add	%eax, %ebp
+	mov	$0, %ebx
+	adc	%edx, %ebx
+	mov	8(%esi), %eax
+	jmp	L(0)
+
 EPILOGUE()
-
-
+	ALIGN(16)
 PROLOGUE(mpn_mul_1)
-deflit(`FRAME',0)
-	xorl	%edx, %edx	C initial carry
-L(start_nc):
-	movl	PARAM_SIZE, %ecx
-	subl	$STACK_SPACE, %esp
-deflit(`FRAME', STACK_SPACE)
+	add	$-16, %esp
+	mov	%ebp, (%esp)
+	mov	%ebx, 4(%esp)
+	mov	%esi, 8(%esp)
+	mov	%edi, 12(%esp)
 
-	movl	%edi, SAVE_EDI
-	movl	%ebx, SAVE_EBX
-	movl	%edx, %ebx
+	mov	20(%esp), %edi
+	mov	24(%esp), %esi
+	mov	28(%esp), %ebp
+	mov	32(%esp), %ecx
+	mov	%ebp, %ebx
+	shr	$2, %ebp
+	mov	%ebp, 28(%esp)
+	mov	(%esi), %eax
+	and	$3, %ebx
+	jz	L(b0)
+	cmp	$2, %ebx
+	jz	L(b2)
+	jg	L(b3)
 
-	movl	%esi, SAVE_ESI
-	movl	PARAM_SRC, %esi
-	cmpl	$UNROLL_THRESHOLD, %ecx
+L(b1):	lea	-4(%edi), %edi
+	mul	%ecx
+	test	%ebp, %ebp
+	jnz	L(gt1)
+	mov	%eax, 4(%edi)
+	mov	%edx, %eax
+	jmp	L(rt)
+L(gt1):	mov	%eax, %ebx
+	mov	%edx, %ebp
+	mov	4(%esi), %eax
+	jmp	L(1)
 
-	movl	PARAM_DST, %edi
-	movl	%ebp, SAVE_EBP
-	jae	L(unroll)
+L(b2):	lea	4(%esi), %esi
+	mul	%ecx
+	test	%ebp, %ebp
+	mov	%eax, %ebp
+	mov	%edx, %ebx
+	mov	(%esi), %eax
+	jnz	L(2)
+	jmp	L(cj2)
 
-	leal	(%esi,%ecx,4), %esi
-	leal	(%edi,%ecx,4), %edi
-	negl	%ecx
+L(b3):	lea	8(%esi), %esi
+	lea	-12(%edi), %edi
+	mul	%ecx
+	mov	%eax, %ebx
+	mov	%edx, %ebp
+	mov	-4(%esi), %eax
+	incl	28(%esp)
+	jmp	L(3)
 
-	movl	PARAM_MULTIPLIER, %ebp
+L(b0):	lea	-4(%esi), %esi
+	lea	-8(%edi), %edi
+	mul	%ecx
+	mov	%eax, %ebp
+	mov	%edx, %ebx
+	mov	8(%esi), %eax
+	jmp	L(0)
 
-L(simple):
-	C eax	scratch
-	C ebx	carry
-	C ecx	counter (negative)
-	C edx	scratch
-	C esi	src
-	C edi	dst
-	C ebp	multiplier
+	ALIGN(16)
+L(top):	mov	$0, %ebx
+	adc	%edx, %ebx
+L(2):	mul	%ecx
+	add	%eax, %ebx
+	mov	%ebp, 0(%edi)
+	mov	4(%esi), %eax
+	mov	$0, %ebp
+	adc	%edx, %ebp
+L(1):	mul	%ecx
+	add	%eax, %ebp
+	mov	8(%esi), %eax
+	mov	%ebx, 4(%edi)
+	mov	$0, %ebx
+	adc	%edx, %ebx
+L(0):	mov	%ebp, 8(%edi)
+	mul	%ecx
+	add	%eax, %ebx
+	mov	12(%esi), %eax
+	lea	16(%esi), %esi
+	mov	$0, %ebp
+	adc	%edx, %ebp
+L(3):	mov	%ebx, 12(%edi)
+	mul	%ecx
+	lea	16(%edi), %edi
+	add	%eax, %ebp
+	decl	28(%esp)
+	mov	0(%esi), %eax
+	jnz	L(top)
 
-	movl	(%esi,%ecx,4), %eax
+L(end):	mov	$0, %ebx
+	adc	%edx, %ebx
+L(cj2):	mul	%ecx
+	add	%eax, %ebx
+	mov	%ebp, (%edi)
+L(cj1):	mov	%ebx, 4(%edi)
+	adc	$0, %edx
+	mov	%edx, %eax
 
-	mull	%ebp
-
-	addl	%ebx, %eax
-	movl	%eax, (%edi,%ecx,4)
-	movl	$0, %ebx
-
-	adcl	%edx, %ebx
-	incl	%ecx
-	jnz	L(simple)
-
-	movl	%ebx, %eax
-	movl	SAVE_EBX, %ebx
-	movl	SAVE_ESI, %esi
-
-	movl	SAVE_EDI, %edi
-	movl	SAVE_EBP, %ebp
-	addl	$STACK_SPACE, %esp
-
+L(rt):	mov	(%esp), %ebp
+	mov	4(%esp), %ebx
+	mov	8(%esp), %esi
+	mov	12(%esp), %edi
+	add	$16, %esp
 	ret
-
-
-C -----------------------------------------------------------------------------
-C The mov to load the next source limb is done well ahead of the mul, this
-C is necessary for full speed.  It leads to one limb handled separately
-C after the loop.
-C
-C When unrolling to 32 or more, an offset of +4 is used on the src pointer,
-C to avoid having an 0x80 displacement in the code for the last limb in the
-C unrolled loop.  This is for a fair comparison between 16 and 32 unrolling.
-
-ifelse(eval(UNROLL_COUNT >= 32),1,`
-deflit(SRC_OFFSET,4)
-',`
-deflit(SRC_OFFSET,)
-')
-
-	C this is offset 0x62, so close enough to aligned
-L(unroll):
-	C eax
-	C ebx	initial carry
-	C ecx	size
-	C edx
-	C esi	src
-	C edi	dst
-	C ebp
-deflit(`FRAME', STACK_SPACE)
-
-	leal	-1(%ecx), %edx	C one limb handled at end
-	leal	-2(%ecx), %ecx	C and ecx is one less than edx
-	movl	%ebp, SAVE_EBP
-
-	negl	%edx
-	shrl	$UNROLL_LOG2, %ecx	C unrolled loop counter
-	movl	(%esi), %eax		C src low limb
-
-	andl	$UNROLL_MASK, %edx
-	movl	PARAM_DST, %edi
-
-	movl	%edx, %ebp
-	shll	$4, %edx
-
-	C 17 code bytes per limb
-ifdef(`PIC',`
-	call	L(add_eip_to_edx)
-L(here):
-',`
-	leal	L(entry) (%edx,%ebp), %edx
-')
-	negl	%ebp
-
-	leal	ifelse(UNROLL_BYTES,256,128+) SRC_OFFSET(%esi,%ebp,4), %esi
-	leal	ifelse(UNROLL_BYTES,256,128) (%edi,%ebp,4), %edi
-	movl	PARAM_MULTIPLIER, %ebp
-
-	jmp	*%edx
-
-
-ifdef(`PIC',`
-L(add_eip_to_edx):
-	C See mpn/x86/README about old gas bugs
-	leal	(%edx,%ebp), %edx
-	addl	$L(entry)-L(here), %edx
-	addl	(%esp), %edx
-	ret_internal
-')
-
-
-C ----------------------------------------------------------------------------
-	ALIGN(32)
-L(top):
-	C eax	next src limb
-	C ebx	carry
-	C ecx	counter
-	C edx	scratch
-	C esi	src+4
-	C edi	dst
-	C ebp	multiplier
-	C
-	C 17 code bytes per limb processed
-
-L(entry):
-forloop(i, 0, UNROLL_COUNT-1, `
-	deflit(`disp_dst', eval(i*4 ifelse(UNROLL_BYTES,256,-128)))
-	deflit(`disp_src', eval(disp_dst + 4-(SRC_OFFSET-0)))
-
-	mull	%ebp
-
-	addl	%eax, %ebx
-Zdisp(	movl,	disp_src,(%esi), %eax)
-Zdisp(	movl,	%ebx, disp_dst,(%edi))
-
-	movl	$0, %ebx
-	adcl	%edx, %ebx
-')
-
-	decl	%ecx
-
-	leal	UNROLL_BYTES(%esi), %esi
-	leal	UNROLL_BYTES(%edi), %edi
-	jns	L(top)
-
-
-deflit(`disp0', ifelse(UNROLL_BYTES,256,-128))
-
-	mull	%ebp
-
-	addl	%eax, %ebx
-	movl	$0, %eax
-	movl	SAVE_ESI, %esi
-
-	movl	%ebx, disp0(%edi)
-	movl	SAVE_EBX, %ebx
-	movl	SAVE_EDI, %edi
-
-	adcl	%edx, %eax
-	movl	SAVE_EBP, %ebp
-	addl	$STACK_SPACE, %esp
-
-	ret
-
 EPILOGUE()
+ASM_END()
