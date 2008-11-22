@@ -1,4 +1,13 @@
+2008-11-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/k7/mul_1.asm: Rewrite for smaller size and better speed.
+	* mpn/x86/k7/aorsmul_1.asm: Likewise.
+
+	* acinclude.m4 (GMP_VERSION): Include last component even when zero.
+
 2008-11-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/README: Rewrite.
 
 	* tests/devel/try.c (malloc_region, mprotect_maybe): Add casts for
 	printf type correctness.
