@@ -146,8 +146,7 @@ dnl  like 3.0.1 if patchlevel > 0.
 define(GMP_VERSION,
 [GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp-h.in)[]dnl
 .GMP_HEADER_GETVAL(__GNU_MP_VERSION_MINOR,gmp-h.in)[]dnl
-ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in) > 0),1,
-[.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in)])])
+.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in)])
 
 
 dnl  GMP_SUBST_CHECK_FUNCS(func,...)
