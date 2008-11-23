@@ -1,3 +1,12 @@
+2008-11-23  Torbjorn Granlund  <tege@swox.com>
+
+	* alpha/divrem_2.asm: New file.
+	* powerpc32/divrem_2.asm: New file.
+	* powerpc64/mode64/divrem_2.asm: New file.
+	* x86/divrem_2.asm: New file.
+	* x86_64/divrem_2.asm: New file.
+	* tests/refmpn.c (refmpn_divrem_2): New function.
+
 2008-11-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/k7/mul_1.asm: Rewrite for smaller size and better speed.
