@@ -31,6 +31,7 @@ C    Newton's method and mulq, or perhaps the faster fdiv.
 C  * The loop has not been carefully tuned, nor analysed for critical path
 C    length.  It seems that 20 c/l is a bit long, compared to the 13 c/l for
 C    mpn_divrem_1.
+C  * Clean up.  This code is really crude.
 
 
 C INPUT PARAMETERS
@@ -74,7 +75,7 @@ PROLOGUE(mpn_divrem_2)
 	or	%al, %dl
 	jne	L(23)
 L(2):
-	lea	-3(%rcx,%r13), %rbx
+	lea	-3(%rcx,%r13), %rbx	C un + fn - 3
 	test	%rbx, %rbx
 	js	L(6)
 	mov	%r11, %rdx
@@ -84,19 +85,18 @@ L(2):
 	mov	%r11, %rdx
 	mov	%rax, %rdi
 	imul	%rax, %rdx
-	mov	%rdx, -8(%rsp)
+	mov	%rdx, %r14
 	mul	%r8
-	mov	-8(%rsp), %rax
 	mov	%rdx, %rcx
 	mov	$-1, %rdx
-	add	%r8, %rax
+	add	%r8, %r14
 	adc	$0, %rdx
-	add	%rcx, %rax
+	add	%rcx, %r14
 	adc	$0, %rdx
 	js	L(8)
 L(18):
 	dec	%rdi
-	sub	%r11, %rax
+	sub	%r11, %r14
 	sbb	$0, %rdx
 	jns	L(18)
 L(8):
@@ -106,33 +106,33 @@ C n2      un      n1  di  qp  d0        d1  up  fn      msl
 C     n2  un     -d1      n1     di XX              XX
 
 ifdef(`NEW',`
-	lea	(%rbp,%rbx,8), %r14
+	lea	(%rbp,%rbx,8), %rbp
 	mov	%rbx, %rcx		C un
 	mov	%r9, %rbx
 	mov	%rdi, %r9		C di
-	mov	%r10, %rbp
+	mov	%r10, %r14
 	mov	%r11, %rsi
 	neg	%rsi			C -d1
 	ALIGN(16)
 L(loop):
 	mov	%r9, %rax		C di
 	mul	%rbx
-	add	%rbp, %rax
+	add	%r14, %rax
 	mov	%rax, %r10		C q0
 	adc	%rbx, %rdx
 	mov	%rdx, %rdi		C q
 	imul	%rsi, %rdx
 	mov	%r8, %rax
-	lea	(%rdx, %rbp), %rbx	C n1 -= ...
+	lea	(%rdx, %r14), %rbx	C n1 -= ...
 	mul	%rdi
-	xor	R32(%rbp), R32(%rbp)
-	cmp	%r13, %rcx
-	jl	L(19)
-	mov	(%r12), %rbp
+	xor	R32(%r14), R32(%r14)
+	cmp	%rcx, %r13
+	jg	L(19)
+	mov	(%r12), %r14
 	sub	$8, %r12
-L(19):	sub	%r8, %rbp
+L(19):	sub	%r8, %r14
 	sbb	%r11, %rbx
-	sub	%rax, %rbp
+	sub	%rax, %r14
 	sbb	%rdx, %rbx
 	inc	%rdi
 	xor	R32(%rdx), R32(%rdx)
@@ -142,14 +142,17 @@ L(19):	sub	%r8, %rbp
 	add	%rdx, %rdi		C q--
 	and	%rdx, %rax		C d0 or 0
 	and	%r11, %rdx		C d1 or 0
-	add	%rax, %rbp
+	add	%rax, %r14
 	adc	%rdx, %rbx
 	cmp	%r11, %rbx
 	jae	L(fix)
-L(bck):	mov	%rdi, (%r14)
-	sub	$8, %r14
+L(bck):	mov	%rdi, (%rbp)
+	sub	$8, %rbp
 	dec	%rcx
 	jns	L(loop)
+
+	mov	%r14, %r10
+	mov	%rbx, %r9
 ',`
 	lea	(%rbp,%rbx,8), %rbp
 	mov	%rbx, %rcx
@@ -161,8 +164,8 @@ L(loop):
 	mul	%rdi
 	mov	%r11, %r9
 	add	%rsi, %rax
-	mov	%rax, %rbx		# q0
-	adc	%r14, %rdx		# q
+	mov	%rax, %rbx		C q0
+	adc	%r14, %rdx		C q
 	lea	1(%rdx), %r10
 	mov	%rdx, %rax
 	imul	%rdx, %r9
@@ -193,8 +196,13 @@ L(14):	mov	%r10, (%rbp)
 	mov	%r9, %rsi
 	dec	%rcx
 	jns	L(loop)
+
+	mov	%rsi, %r10
+	mov	%rax, %r9
 ')
 L(6):
+	mov	%r10, 8(%r12)
+	mov	%r9, 16(%r12)
 	pop	%rbx
 	pop	%rbp
 	pop	%r12
@@ -211,12 +219,12 @@ L(23):
 
 ifdef(`NEW',`
 L(fix):	seta	%dl
-	cmp	%r8, %rbp
+	cmp	%r8, %r14
 	setae	%al
 	orb	%dl, %al
 	je	L(bck)
 	inc	%rdi
-	sub	%r8, %rbp
+	sub	%r8, %r14
 	sbb	%r11, %rbx
 	jmp	L(bck)
 ',`
