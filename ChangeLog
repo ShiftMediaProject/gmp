@@ -1,5 +1,7 @@
 2008-11-23  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/x86_64/divrem_1.asm: Rewrite.
+
 	* alpha/divrem_2.asm: New file.
 	* powerpc32/divrem_2.asm: New file.
 	* powerpc64/mode64/divrem_2.asm: New file.
