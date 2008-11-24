@@ -42,15 +42,15 @@ C TODO
 C  * Perhaps keep ecx or esi in stack slot, freeing up a reg for q0.
 C  * The loop has not been carefully tuned.  We should at the very least do
 C    some local insn swapping.
-C  * The code outside the main loop is pure gcc generated.  Clean up!
+C  * The code outside the main loop is what gcc generated.  Clean up!
 C  * Clean up stack slot usage.
 
 C INPUT PARAMETERS
-define(`qp',            `%edi')
-define(`fn',            `%esi')
-define(`up_param',      `%edx')
-define(`un_param',      `%ecx')
-define(`d',             `%e8')
+C qp
+C fn
+C up_param
+C un_param
+C dp
 
 
 C eax ebx ecx edx esi edi ebp
@@ -65,20 +65,19 @@ PROLOGUE(mpn_divrem_2)
 	push	%esi
 	push	%ebx
 	sub	$36, %esp
-	mov	68(%esp), %ecx
-	mov	72(%esp), %esi
+	mov	68(%esp), %ecx		C un
+	mov	72(%esp), %esi		C dp
 	movl	$0, 32(%esp)
 	lea	0(,%ecx,4), %edi
-	add	64(%esp), %edi
+	add	64(%esp), %edi		C up
 	mov	(%esi), %ebx
 	mov	4(%esi), %eax
 	mov	%ebx, 20(%esp)
 	sub	$12, %edi
 	mov	%eax, 24(%esp)
 	mov	%edi, 12(%esp)
-	mov	12(%esp), %edx
-	mov	8(%edx), %ebx
-	mov	4(%edx), %ebp
+	mov	8(%edi), %ebx
+	mov	4(%edi), %ebp
 	cmp	%eax, %ebx
 	jb	L(8)
 	seta	%dl
@@ -87,7 +86,7 @@ PROLOGUE(mpn_divrem_2)
 	or	%dl, %al
 	jne	L(35)
 L(8):
-	mov	60(%esp), %esi
+	mov	60(%esp), %esi		C fn
 	lea	-3(%esi,%ecx), %edi
 	test	%edi, %edi
 	js	L(9)
@@ -137,14 +136,12 @@ L(loop):
 	mov	20(%esp), %eax
 	lea	(%edx, %ebp), %ebx	C n1 -= ...
 	mul	%edi
-
 	xor	%ebp, %ebp
 	cmp	60(%esp), %ecx
 	jl	L(19)
 	mov	(%esi), %ebp
 	sub	$4, %esi
-L(19):
-	sub	20(%esp), %ebp
+L(19):	sub	20(%esp), %ebp
 	sbb	24(%esp), %ebx
 	sub	%eax, %ebp
 	sbb	%edx, %ebx
@@ -160,13 +157,14 @@ L(19):
 	adc	%edx, %ebx
 	cmp	24(%esp), %ebx
 	jae	L(fix)
-L(bck):
-	mov	56(%esp), %edx
+L(bck):	mov	56(%esp), %edx
 	mov	%edi, (%edx, %ecx, 4)
 	dec	%ecx
 	jns	L(loop)
 
-L(9):
+L(9):	mov	64(%esp), %esi		C up
+	mov	%ebp, (%esi)
+	mov	%ebx, 4(%esi)
 	mov	32(%esp), %eax
 	add	$36, %esp
 	pop	%ebx
@@ -185,8 +183,7 @@ L(fix):	seta	%dl
 	sbb	24(%esp), %ebx
 	jmp	L(bck)
 
-L(35):
-	sub	20(%esp), %ebp
+L(35):	sub	20(%esp), %ebp
 	sbb	24(%esp), %ebx
 	movl	$1, 32(%esp)
 	jmp	L(8)
