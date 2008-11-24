@@ -138,8 +138,7 @@ L(loop):
 	addi	r5, r12, 1
 	ble-	cr7, L(23)
 	lwzu	r9, -4(r29)
-L(23):
-	mullw	r11, r12, r7		C t0 = LO(d0 * q)
+L(23):	mullw	r11, r12, r7		C t0 = LO(d0 * q)
 	subfc	r28, r7, r9		C n0 -= d0
 	subfe	r0, r10, r0		C n1 -= d1
 	mulhwu	r12, r12, r7		C t1 = HI(d0 * q)
@@ -150,15 +149,15 @@ L(23):
 	addc	r28, r28, r7
 	adde	r12, r12, r10
 	addi	r5, r5, -1
-L(24):
-	cmplw	cr7, r12, r10
+L(24):	cmplw	cr7, r12, r10
 	bge-	cr7, L(fix)
-L(bck):
-	stw	r5, 0(r8)
+L(bck):	stw	r5, 0(r8)
 	addi	r8, r8, -4
 	bdnz	L(loop)
 
-L(ret):	lmw	r28, 8(r1)
+L(ret):	stw	r28, 0(r29)
+	stw	r12, 4(r29)
+	lmw	r28, 8(r1)
 	addi	r1, r1, 32
 	blr
 
