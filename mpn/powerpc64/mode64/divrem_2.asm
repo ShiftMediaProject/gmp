@@ -128,12 +128,10 @@ L(loop):
 	ld	r7, 0(r26)
 	addi	r26, r26, -8
 	nop
-L(60):
-	subfc	r7, r28, r7
+L(60):	subfc	r7, r28, r7
 	subfe	r31, r30, r31
 	subfc	r7, r10, r7
 	subfe	r4, r11, r31
-
 	subfc	r9, r6, r4
 	subfe	r9, r1, r1
 	andc	r6, r28, r9
@@ -143,12 +141,13 @@ L(60):
 	subf	r8, r9, r8
 	cmpld	cr7, r29, r30
 	bge-	cr7, L(fix)
-L(bck):
-	std	r8, 0(r24)
+L(bck):	std	r8, 0(r24)
 	addi	r24, r24, -8
 	addi	r27, r27, -1
 	bdnz	L(loop)
 L(18):
+	std	r31, 8(r26)
+	std	r29, 16(r26)
 	mr	r3, r23
 	addi	r1, r1, 192
 	ld	r0, 16(r1)
