@@ -72,7 +72,7 @@ C	stq	r14, 48(r30)
 	subq	r11, r12, r11
 	subq	r11, r2, r11
 	subq	r9, r10, r9
-	lda	r3, 1(r31)		C most_significant_q_limb = 0
+	lda	r3, 1(r31)		C most_significant_q_limb = 1
 L(L8):	stq	r3, 72(r30)
 
 	addq	r15, r19, r19
@@ -116,8 +116,7 @@ L(loop):
 	beq	r5, L(L31)
 	ldq	r5, 0(r13)
 	lda	r13, -8(r13)
-L(L31):
-	subq	r9, r12, r9		C n1 -= d1
+L(L31):	subq	r9, r12, r9		C n1 -= d1
 	cmpult	r5, r10, r1		C
 	subq	r9, r1, r9		C
 	subq	r5, r10, r5		C n0 -= d0
@@ -136,12 +135,13 @@ L(L31):
 	addq	r1, r11, r11		C n1 += cy
 	cmpult	r11, r12, r1		C
 	beq	r1, L(fix)		C
-L(bck):
-	stq	r6, 0(r16)
+L(bck):	stq	r6, 0(r16)
 	lda	r16, -8(r16)
 	lda	r19, -1(r19)
 	bge	r19, L(loop)
-L(L10):
+
+L(L10):	stq	r9, 8(r13)
+	stq	r11, 16(r13)
 	ldq	r0, 72(r30)
 	ldq	r26, 0(r30)
 	ldq	r9, 8(r30)
@@ -153,8 +153,8 @@ C	ldq	r14, 48(r30)
 	ldq	r15, 56(r30)
 	lda	r30, 80(r30)
 	ret	r31, (r26), 1
-L(fix):
-	cmpule	r11, r12, r1
+
+L(fix):	cmpule	r11, r12, r1
 	cmpult	r9, r10, r2
 	and	r1, r2, r1
 	bne	r1, L(bck)
