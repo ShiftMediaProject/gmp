@@ -78,11 +78,11 @@ L(b1):	lea	-4(%esi), %esi
 	lea	-4(%edi), %edi
 	mul	%ecx
 	mov	%eax, %ebx
-	mov	8(%esi), %eax
 	mov	%edx, %ebp
 	cmpl	$0, 28(%esp)
-	jne	L(1)
-	jmp	L(cj1)
+	jz	L(cj1)
+	mov	8(%esi), %eax
+	jmp	L(1)
 
 L(b2):	mul	%ecx
 	mov	%eax, %ebp
@@ -112,25 +112,25 @@ L(b0):	lea	-8(%esi), %esi
 	ALIGN(16)
 L(top):	lea	16(%edi), %edi
 L(2):	mul	%ecx
-	add	%ebp, 0(%edi)
+	ADDSUB	%ebp, 0(%edi)
 	mov	$0, %ebp
 	adc	%eax, %ebx
 	mov	8(%esi), %eax
 	adc	%edx, %ebp
 L(1):	mul	%ecx
-	add	%ebx, 4(%edi)
+	ADDSUB	%ebx, 4(%edi)
 	mov	$0, %ebx
 	adc	%eax, %ebp
 	mov	12(%esi), %eax
 	adc	%edx, %ebx
 L(0):	mul	%ecx
-	add	%ebp, 8(%edi)
+	ADDSUB	%ebp, 8(%edi)
 	mov	$0, %ebp
 	adc	%eax, %ebx
 	adc	%edx, %ebp
 	mov	16(%esi), %eax
 L(3):	mul	%ecx
-	add	%ebx, 12(%edi)
+	ADDSUB	%ebx, 12(%edi)
 	adc	%eax, %ebp
 	mov	20(%esi), %eax
 	lea	16(%esi), %esi
@@ -141,10 +141,10 @@ L(3):	mul	%ecx
 
 L(end):	lea	16(%edi), %edi
 L(cj2):	mul	%ecx
-	add	%ebp, (%edi)
+	ADDSUB	%ebp, (%edi)
 	adc	%eax, %ebx
 	adc	$0, %edx
-L(cj1):	add	%ebx, 4(%edi)
+L(cj1):	ADDSUB	%ebx, 4(%edi)
 	adc	$0, %edx
 	mov	%edx, %eax
 	mov	(%esp), %ebp
