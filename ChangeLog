@@ -1,3 +1,7 @@
+2008-11-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/k7/aorsmul_1.asm: Actually handle mpn_submul_1.
+
 2008-11-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/divrem_1.asm: Rewrite.
