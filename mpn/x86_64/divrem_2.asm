@@ -39,13 +39,13 @@ define(`qp',		`%rdi')
 define(`fn',		`%rsi')
 define(`up_param',	`%rdx')
 define(`un_param',	`%rcx')
-define(`d',		`%r8')
+define(`dp',		`%r8')
 
-define(`di',		`%r9')
+define(`dinv',		`%r9')
 
 
 C rax rbx rcx rdx rsi rdi rbp r8  r9  r10 r11 r12 r13 r14 r15
-C         cnt         qp      d   di
+C         cnt         qp      d  dinv
 
 ASM_START()
 	TEXT
@@ -102,8 +102,8 @@ L(18):
 L(8):
 
 C rax rbx rcx rdx rsi rdi rbp r8 r9 r10 r11 r12 r13 r14 r15
-C n2      un      n1  di  qp  d0        d1  up  fn      msl
-C     n2  un     -d1      n1     di XX              XX
+C n2      un      n1 dinv qp  d0        d1  up  fn      msl
+C     n2  un     -d1      n1    dinv XX              XX
 
 ifdef(`NEW',`
 	lea	(%rbp,%rbx,8), %rbp
@@ -190,8 +190,8 @@ L(13):	sub	%r8, %r9
 	add	%rbx, %r9
 	adc	%rsi, %rax
 	cmp	%rax, %r11
-	jbe	L(24)
-L(14):	mov	%r10, (%rbp)
+	jbe	L(fix)
+L(bck):	mov	%r10, (%rbp)
 	sub	$8, %rbp
 	mov	%r9, %rsi
 	dec	%rcx
@@ -211,8 +211,8 @@ L(6):
 	mov	%r15, %rax
 	pop	%r15
 	ret
-L(23):
-	inc	R32(%r15)
+
+L(23):	inc	R32(%r15)
 	sub	%r8, %r10
 	sbb	%r11, %r9
 	jmp	L(2)
@@ -228,13 +228,12 @@ L(fix):	seta	%dl
 	sbb	%r11, %rbx
 	jmp	L(bck)
 ',`
-L(24):
-	jb	L(88)
+L(fix):	jb	L(88)
 	cmp	%r8, %r9
-	jb	L(14)
+	jb	L(bck)
 L(88):	inc	%r10
 	sub	%r8, %r9
 	sbb	%r11, %rax
-	jmp	L(14)
+	jmp	L(bck)
 ')
 EPILOGUE()
