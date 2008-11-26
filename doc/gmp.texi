@@ -513,7 +513,7 @@ For up-to-date information on GMP, please see the GMP web pages at
 The latest version of the library is available at
 
 @display
-@uref{ftp://ftp.gnu.org/gnu/gmp}
+@uref{ftp://ftp.gnu.org/gnu/gmp/}
 @end display
 
 Many sites around the world mirror @samp{ftp.gnu.org}, please use a mirror
