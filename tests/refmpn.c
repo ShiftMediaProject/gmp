@@ -1743,6 +1743,26 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
     }
 }
 
+void
+refmpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
+{
+  mp_size_t j;
+  mp_limb_t cy;
+
+  ASSERT_MPN (up, 2*n);
+  /* ASSERT about directed overlap rp, up */
+  /* ASSERT about overlap rp, mp */
+  /* ASSERT about overlap up, mp */
+
+  for (j = n - 1; j >= 0; j--)
+    {
+      up[0] = mpn_addmul_1 (up, mp, n, (up[0] * invm) & GMP_NUMB_MASK);
+      up++;
+    }
+  cy = mpn_add_n (rp, up, up - n, n);
+  if (cy != 0)
+    mpn_sub_n (rp, rp, mp, n);
+}
 
 size_t
 refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
