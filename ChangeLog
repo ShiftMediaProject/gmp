@@ -1,3 +1,11 @@
+2008-11-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/redc_1.asm: Rewrite.
+
+2008-11-27  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/refmpn.c (refmpn_redc_1): New function.
+
 2008-11-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/k7/aorsmul_1.asm: Actually handle mpn_submul_1.
@@ -745,7 +753,7 @@
 	overflow.
 	* mpz/realloc2.c: Likewise.
 	* mpz/realloc.c: Detect mpz_t overflow.
-	
+
 2008-05-22  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (sparc): Remove -fast, it causes documented
