@@ -6,7 +6,7 @@
 
 
 Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004,
-2005 Free Software Foundation, Inc.
+2005, 2008 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -108,8 +108,8 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 #else
   cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
   cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
-  rp[2 * n - 1] += cy;
 #endif
+  rp[2 * n - 1] += cy;
 }
 #define READY_WITH_mpn_sqr_basecase
 #endif
