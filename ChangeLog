@@ -1,3 +1,7 @@
+2008-11-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/sqr_basecase.c: Fix typo in mpn_addmul_2s variant.
+
 2008-11-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/redc_1.asm: Rewrite.
