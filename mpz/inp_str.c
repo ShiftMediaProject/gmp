@@ -64,7 +64,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
   const unsigned char *digit_value;
 
   ASSERT_ALWAYS (EOF == -1);	/* FIXME: handle this by adding explicit */
-         			/* comparisons of c and EOF before each  */
+				/* comparisons of c and EOF before each  */
 				/* read of digit_value[].  */
 
   digit_value = digit_value_tab;
