@@ -28,16 +28,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_KARATSUBA_THRESHOLD          28
 #define MUL_TOOM3_THRESHOLD              97
 
-#define SQR_BASECASE_THRESHOLD           28
-#define SQR_KARATSUBA_THRESHOLD          87
-#define SQR_TOOM3_THRESHOLD             105
+#define SQR_BASECASE_THRESHOLD           0  /* always (native) */
+#define SQR_KARATSUBA_THRESHOLD          56
+#define SQR_TOOM3_THRESHOLD              87
 
-#define MULLOW_BASECASE_THRESHOLD         4
+#define MULLOW_BASECASE_THRESHOLD        28
 #define MULLOW_DC_THRESHOLD              28
-#define MULLOW_MUL_N_THRESHOLD          260
+#define MULLOW_MUL_N_THRESHOLD          188
 
 #define DIV_SB_PREINV_THRESHOLD           0  /* always */
-#define DIV_DC_THRESHOLD                 88
+#define DIV_DC_THRESHOLD                 52
 #define POWM_THRESHOLD                  185
 
 #define DC_DIV_QR_THRESHOLD              42
@@ -59,7 +59,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define USE_PREINV_MOD_1                  1
 #define DIVREM_2_THRESHOLD                0  /* always */
 #define DIVEXACT_1_THRESHOLD              0  /* always (native) */
-
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always (native) */
 
 #define GET_STR_DC_THRESHOLD             15
