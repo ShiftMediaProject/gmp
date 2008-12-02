@@ -73,7 +73,7 @@ mpn_mul (mp_ptr prodp,
 	  )
 	mpn_mul_basecase (prodp, up, un, vp, vn);
       else
- 	{
+	{
 	  /* We have un >> MUL_BASECASE_MAX_UN > vn.  For better memory
 	     locality, split up[] into MUL_BASECASE_MAX_UN pieces and multiply
 	     these pieces with the vp[] operand.  After each such partial
