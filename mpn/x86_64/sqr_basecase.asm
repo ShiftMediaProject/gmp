@@ -28,13 +28,18 @@ C NOTES
 C   * This code only handles operands up to SQR_KARATSUBA_THRESHOLD_MAX.  That
 C     means we can safely use 32-bit operations for all sizes, unlike in e.g.,
 C     mpn_addmul_1.
-C   * We can reach the stack without a frame pointer even after the tp
-C     allocation, since the allocation is actually fixed.
+C   * The jump table could probably be optimized.
+C   * Add special code for n = 4, modify jump table code to handle that.
+C   * The special code for n=1,2,3 was quickly written.  It is probably too
+C     large and unnecessarily slow.
+C   *  Consider combining small cases code so that the n=k-1 code jumps into
+C      the middle of the n=k code.
+C   * Avoid saving registers for small cases code.
 C   * Needed variables:
 C    n   r11  input size
 C    i   r8   work left, initially n
 C    j   r9   inner loop count
-C        r15  FIXME: unused, don't save/restore
+C        r15  unused
 C    v0  r13
 C    v1  r14
 C    rp  rdi
@@ -56,19 +61,16 @@ define(`n_param', `%rdx')
 define(`SQR_KARATSUBA_THRESHOLD_MAX', 200)
 define(`STACK_ALLOC', eval(8*2*SQR_KARATSUBA_THRESHOLD_MAX))
 
-define(`n',     `%r11')
+define(`n',	`%r11')
 define(`tp',	`%r12')
 define(`i',	`%r8')
 define(`j',	`%r9')
 define(`v0',	`%r13')
 define(`v1',	`%r14')
-
-FIXME:
-define(`w0', `%rbx')
-define(`w1', `%rcx')
-define(`w2', `%rbp')
-define(`w3', `%r10')
-
+define(`w0',	`%rbx')
+define(`w1',	`%rcx')
+define(`w2',	`%rbp')
+define(`w3',	`%r10')
 
 
 ASM_START()
@@ -77,13 +79,11 @@ ASM_START()
 
 PROLOGUE(mpn_sqr_basecase)
 	add	$-48, %rsp
-
 	mov	%rbx, 40(%rsp)
 	mov	%rbp, 32(%rsp)
 	mov	%r12, 24(%rsp)
 	mov	%r13, 16(%rsp)
 	mov	%r14, 8(%rsp)
-	mov	%r15, (%rsp)
 
 	mov	R32(n_param), R32(n)		C free original n register (rdx)
 	mov	R32(n_param), R32(%rcx)
@@ -95,6 +95,7 @@ PROLOGUE(mpn_sqr_basecase)
 	movslq	(%rdx,%rcx,4), %rcx
 	add	%rdx, %rcx
 	jmp	*%rcx
+
 	DATA
 	ALIGN(8)
 L(jmptab):
@@ -238,9 +239,7 @@ L(L3):	xor	R32(w1), R32(w1)
 	adc	%rdx, w1
 	mov	w2, 8(tp)
 	mov	w1, 16(tp)
-	lea	24(tp), tp		C undo offset FIXME
-	lea	eval(2*8)(tp), tp	C tp += 2
-C	dec	R32(i)			C i -= 1
+	lea	eval(24+2*8)(tp), tp	C tp += 2, undo offset FIXME
 	cmp	$3, R32(i)
 	je	L(last)
 	jmp	L(dowhile)
@@ -322,7 +321,7 @@ L(m0):	mov	-16(up,j,8), %rax	C u2, u6 ...
 
 	lea	-8(up), up		C undo offset FIXME
 	lea	eval(3*8)(tp), tp	C tp += 3
-	add	$-2, R32(i)		C i -= 1
+	add	$-2, R32(i)		C i -= 2
 	cmp	$3, R32(i)
 	je	L(last)
 	jmp	L(dowhile)
@@ -383,8 +382,7 @@ L(L1):	xor	R32(w0), R32(w0)
 	mov	w2, 8(tp)
 	mov	w1, 16(tp)
 
-	lea	24(tp), tp		C undo offset FIXME
-	lea	eval(2*8)(tp), tp	C tp += FIXME
+	lea	eval(24+2*8)(tp), tp	C tp += 2, undo offset FIXME
 	jmp	L(dowhile_mid)
 
 
@@ -467,7 +465,7 @@ L(m2):	mov	(up,j,8), %rax
 
 	lea	-8(up), up		C undo offset FIXME
 	lea	eval(3*8)(tp), tp	C tp += 3
-	add	$-2, R32(i)		C i -= 1
+	add	$-2, R32(i)		C i -= 2
 	jmp	L(dowhile_mid)
 
 L(dowhile):
@@ -552,7 +550,6 @@ L(am2):	mov	32(up,j,8), %rax
 
 L(dowhile_mid):
 C Function mpn_addmul_2s_m0(tp, up - (i - 1), i - 1, up - i)
-
 	mov	$1, R32(j)
 	sub	i, j
 
@@ -636,17 +633,12 @@ L(20):	mov	16(up,j,8), %rax
 L(last):
 
 C Function mpn_addmul_2s_2
-
-	mov	$3, R32(j)		C FIXME ?? replace n by 3 ??
-	neg	j
-
 	mov	-24(up), v0
 	mov	-16(up), v1
-
 	mov	-16(up), %rax
 	mul	v0
-	mov	$0, R32(w3)
-	add	%rax, -8(tp,j,8)
+	xor	R32(w3), R32(w3)
+	add	%rax, -32(tp)
 	adc	%rdx, w3
 	xor	R32(w0), R32(w0)
 	xor	R32(w1), R32(w1)
@@ -656,41 +648,98 @@ C Function mpn_addmul_2s_2
 	mov	-8(up), %rax
 	adc	%rdx, w0
 	mul	v1
-	add	w3, (tp,j,8)
+	add	w3, -24(tp)
 	adc	%rax, w0
 	adc	%rdx, w1
-	mov	w0, 8(tp,j,8)
-	mov	w1, 16(tp,j,8)
+	mov	w0, -16(tp)
+	mov	w1, -8(tp)
 
-C Function mpn_sqr_diagonal
+C Function mpn_sqr_diag_addlsh1
 	mov	R32(n), R32(j)
+	shl	$3, n
+	sub	n, up
+
+	mov	(%rsp), %r11
+
+	bt	$0, j
+	lea	-4(j,j),j
+	jc	L(odd)
+
+L(evn):	lea	(rp,j,8), rp
+	lea	(up,j,4), up
+	lea	8(%rsp,j,8), tp
 	neg	j
-L(diag_top):
-	mov	(up,j,8), %rax
+
+	add	%r11, %r11
+	sbb	R32(%rbx), R32(%rbx)		C save CF
+	mov	(up,j,4), %rax
 	mul	%rax
-	mov	%rax, (rp)
-	mov	%rdx, 8(rp)
-	lea	16(rp), rp
-	inc	j
-	js	L(diag_top)
+	add	%rdx, %r11
+	mov	%rax, (rp,j,8)
+	jmp	L(d0)
 
-	mov	rp, %r12		C Save rp+2n. CAUTION: overwrites tp
-	mov	R32(n), R32(%rax)
-	shl	$4, R32(%rax)
-	sub	%rax, rp		C rp restored from last loop
+L(odd):	lea	-16(rp,j,8), rp
+	lea	-8(up,j,4), up
+	lea	-8(%rsp,j,8), tp
+	neg	j
 
-C Call mpn_addlsh1_n.  Note that rp lives in %rdi, so we have to be careful
-C with the order in which we assign the parameters.  Do arg2 before arg1!
-	lea	8(rp), %rsi		C arg2: rp + 1
-	lea	8(rp), %rdi		C arg1: rp + 1
-	lea	(%rsp), %rdx		C arg3: tp
-	lea	-2(,n,2), %rcx	C arg4: 2n - 2
-	CALL(	mpn_addlsh1_n)
-	add	%rax, -8(%r12)
+	add	%r11, %r11
+	sbb	R32(%rbp), R32(%rbp)		C save CF
+	mov	8(up,j,4), %rax
+	mul	%rax
+	add	%rdx, %r11
+	mov	%rax, 16(rp,j,8)
+	jmp	L(d1)
 
-L(rt):
-	add	$STACK_ALLOC, %rsp
-	pop	%r15
+	ALIGN(16)
+L(top):	mov	(up,j,4), %rax
+	mul	%rax
+	add	R32(%rbp), R32(%rbp)		C restore carry
+	adc	%rax, %r10
+	adc	%rdx, %r11
+	mov	%r10, (rp,j,8)
+L(d0):	mov	%r11, 8(rp,j,8)
+	mov	(tp,j,8), %r10
+	adc	%r10, %r10
+	mov	8(tp,j,8), %r11
+	adc	%r11, %r11
+	nop
+	sbb	R32(%rbp), R32(%rbp)		C save CF
+	mov	8(up,j,4), %rax
+	mul	%rax
+	add	R32(%rbx), R32(%rbx)		C restore carry
+	adc	%rax, %r10
+	adc	%rdx, %r11
+	mov	%r10, 16(rp,j,8)
+L(d1):	mov	%r11, 24(rp,j,8)
+	mov	16(tp,j,8), %r10
+	adc	%r10, %r10
+	mov	24(tp,j,8), %r11
+	adc	%r11, %r11
+	sbb	R32(%rbx), R32(%rbx)		C save CF
+	add	$4, j
+	js	L(top)
+
+L(end):	mov	(up,j,4), %rax
+	mul	%rax
+	add	R32(%rbp), R32(%rbp)		C restore carry
+	adc	%rax, %r10
+	adc	%rdx, %r11
+	mov	%r10, (rp,j,8)
+	mov	%r11, 8(rp,j,8)
+	mov	(tp,j,8), %r10
+	adc	%r10, %r10
+	sbb	R32(%rbp), R32(%rbp)		C save CF
+	neg	R32(%rbp)
+	mov	8(up,j,4), %rax
+	mul	%rax
+	add	R32(%rbx), R32(%rbx)		C restore carry
+	adc	%rax, %r10
+	adc	%rbp, %rdx
+	mov	%r10, 16(rp,j,8)
+	mov	%rdx, 24(rp,j,8)
+
+	add	$eval(8+STACK_ALLOC), %rsp
 	pop	%r14
 	pop	%r13
 	pop	%r12
