@@ -756,9 +756,9 @@ speed_mpz_mod (struct speed_params *s)
   SPEED_ROUTINE_MPZ_MOD (mpz_mod);
 }
 double
-speed_redc (struct speed_params *s)
+speed_mpn_redc_1 (struct speed_params *s)
 {
-  SPEED_ROUTINE_REDC (redc);
+  SPEED_ROUTINE_REDC_1 (mpn_redc_1);
 }
 
 

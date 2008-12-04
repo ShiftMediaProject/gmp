@@ -332,7 +332,7 @@ const struct routine_t {
   { "mpz_powm_ui",       speed_mpz_powm_ui,  FLAG_R_OPTIONAL },
 
   { "mpz_mod",           speed_mpz_mod              },
-  { "redc",              speed_redc                 },
+  { "mpn_redc_1",        speed_mpn_redc_1           },
 
   { "MPN_COPY",          speed_MPN_COPY             },
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },

@@ -235,7 +235,7 @@ double speed_mpn_popcount _PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1 _PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1f _PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 _PROTO ((struct speed_params *s));
-double speed_redc _PROTO ((struct speed_params *s));
+double speed_mpn_redc_1 _PROTO ((struct speed_params *s));
 double speed_mpn_rsh1add_n _PROTO ((struct speed_params *s));
 double speed_mpn_rsh1sub_n _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
@@ -1280,7 +1280,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   }
 
 
-#define SPEED_ROUTINE_REDC(function)					\
+#define SPEED_ROUTINE_REDC_1(function)					\
   {									\
     unsigned   i;							\
     mp_ptr     cp, mp, tp, ap;						\
@@ -1314,7 +1314,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     i = s->reps;							\
     do {								\
       MPN_COPY (tp, ap, 2*s->size);					\
-      function (cp, mp, s->size, Nprim, tp);				\
+      function (cp, tp, mp, s->size, Nprim);				\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\
