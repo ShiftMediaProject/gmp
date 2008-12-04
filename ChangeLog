@@ -1,5 +1,7 @@
 2008-12-05  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/redc_2.c: New file.
+
 	* configure.in (gmp_mpn_functions): List redc_1 and redc_2.
 	(HAVE_NATIVE): Likewise.
 
