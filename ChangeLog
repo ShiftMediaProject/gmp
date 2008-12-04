@@ -1,5 +1,8 @@
 2008-12-05  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in (gmp_mpn_functions): List redc_1 and redc_2.
+	(HAVE_NATIVE): Likewise.
+
 	* tune/common.c (speed_mpn_redc_1): Renamed from speed_redc.
 	* tune/speed.c (routine): Remove "redc", and "mpn_redc_1".
 	* tune/speed.h (SPEED_ROUTINE_REDC_1): Renamed from SPEED_ROUTINE_REDC.
