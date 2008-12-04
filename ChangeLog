@@ -1,3 +1,10 @@
+2008-12-05  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/common.c (speed_mpn_redc_1): Renamed from speed_redc.
+	* tune/speed.c (routine): Remove "redc", and "mpn_redc_1".
+	* tune/speed.h (SPEED_ROUTINE_REDC_1): Renamed from SPEED_ROUTINE_REDC.
+	Updated call.
+
 2008-12-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/sqr_basecase.asm: Inline a combined diagonal product code
