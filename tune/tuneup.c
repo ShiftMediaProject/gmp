@@ -998,7 +998,7 @@ tune_powm (void)
 {
   static struct param_t  param;
   param.name = "POWM_THRESHOLD";
-  param.function = speed_redc;
+  param.function = speed_mpn_redc_1;
   param.function2 = speed_mpz_mod;
   param.step_factor = 0.03;
   param.stop_factor = 1.1;
