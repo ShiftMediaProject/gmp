@@ -10,6 +10,7 @@
 	* tune/speed.c (routine): Remove "redc", and "mpn_redc_1".
 	* tune/speed.h (SPEED_ROUTINE_REDC_1): Renamed from SPEED_ROUTINE_REDC.
 	Updated call.
+	* tune/tuneup.c (tune_powm): Update redc call.
 
 2008-12-04  Torbjorn Granlund  <tege@swox.com>
 
