@@ -124,11 +124,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define WANT_TMP_DEBUG 0
 #endif
 
-
-/* Might search and replace _PROTO to __GMP_PROTO internally one day, to
-   avoid two names for one thing, but no hurry for that.  */
-#define _PROTO(x)  __GMP_PROTO(x)
-
 /* The following tries to get a good version of alloca.  The tests are
    adapted from autoconf AC_FUNC_ALLOCA, with a couple of additions.
    Whether this succeeds is tested by GMP_FUNC_ALLOCA and HAVE_ALLOCA will
@@ -317,8 +312,8 @@ struct tmp_reentrant_t {
   struct tmp_reentrant_t  *next;
   size_t		  size;	  /* bytes, including header */
 };
-void *__gmp_tmp_reentrant_alloc _PROTO ((struct tmp_reentrant_t **, size_t)) ATTRIBUTE_MALLOC;
-void  __gmp_tmp_reentrant_free _PROTO ((struct tmp_reentrant_t *));
+void *__gmp_tmp_reentrant_alloc __GMP_PROTO ((struct tmp_reentrant_t **, size_t)) ATTRIBUTE_MALLOC;
+void  __gmp_tmp_reentrant_free __GMP_PROTO ((struct tmp_reentrant_t *));
 #endif
 
 #if WANT_TMP_ALLOCA
@@ -355,9 +350,9 @@ struct tmp_marker
   struct tmp_stack *which_chunk;
   void *alloc_point;
 };
-void *__gmp_tmp_alloc _PROTO ((unsigned long)) ATTRIBUTE_MALLOC;
-void __gmp_tmp_mark _PROTO ((struct tmp_marker *));
-void __gmp_tmp_free _PROTO ((struct tmp_marker *));
+void *__gmp_tmp_alloc __GMP_PROTO ((unsigned long)) ATTRIBUTE_MALLOC;
+void __gmp_tmp_mark __GMP_PROTO ((struct tmp_marker *));
+void __gmp_tmp_free __GMP_PROTO ((struct tmp_marker *));
 #define TMP_SDECL		TMP_DECL
 #define TMP_DECL		struct tmp_marker __tmp_marker
 #define TMP_SMARK		TMP_MARK
@@ -382,13 +377,13 @@ struct tmp_debug_entry_t {
   char                      *block;
   size_t                    size;
 };
-void  __gmp_tmp_debug_mark  _PROTO ((const char *, int, struct tmp_debug_t **,
+void  __gmp_tmp_debug_mark  __GMP_PROTO ((const char *, int, struct tmp_debug_t **,
                                      struct tmp_debug_t *,
                                      const char *, const char *));
-void *__gmp_tmp_debug_alloc _PROTO ((const char *, int, int,
+void *__gmp_tmp_debug_alloc __GMP_PROTO ((const char *, int, int,
                                      struct tmp_debug_t **, const char *,
                                      size_t)) ATTRIBUTE_MALLOC;
-void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
+void  __gmp_tmp_debug_free  __GMP_PROTO ((const char *, int, int,
                                      struct tmp_debug_t **,
                                      const char *, const char *));
 #define TMP_SDECL TMP_DECL_NAME(__tmp_xmarker, "__tmp_marker")
@@ -397,7 +392,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define TMP_MARK TMP_MARK_NAME(__tmp_xmarker, "__tmp_marker")
 #define TMP_SFREE TMP_FREE_NAME(__tmp_xmarker, "__tmp_marker")
 #define TMP_FREE TMP_FREE_NAME(__tmp_xmarker, "__tmp_marker")
-/* The marker variable is designed to provoke an uninitialized varialble
+/* The marker variable is designed to provoke an uninitialized variable
    warning from the compiler if TMP_FREE is used without a TMP_MARK.
    __tmp_marker_inscope does the same for TMP_ALLOC.  Runtime tests pick
    these things up too.  */
@@ -659,9 +654,9 @@ __GMP_DECLSPEC extern void * (*__gmp_allocate_func) __GMP_PROTO ((size_t));
 __GMP_DECLSPEC extern void * (*__gmp_reallocate_func) __GMP_PROTO ((void *, size_t, size_t));
 __GMP_DECLSPEC extern void   (*__gmp_free_func) __GMP_PROTO ((void *, size_t));
 
-void *__gmp_default_allocate _PROTO ((size_t));
-void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
-void __gmp_default_free _PROTO ((void *, size_t));
+void *__gmp_default_allocate __GMP_PROTO ((size_t));
+void *__gmp_default_reallocate __GMP_PROTO ((void *, size_t, size_t));
+void __gmp_default_free __GMP_PROTO ((void *, size_t));
 
 #define __GMP_ALLOCATE_FUNC_TYPE(n,type) \
   ((type *) (*__gmp_allocate_func) ((n) * sizeof (type)))
@@ -762,36 +757,36 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #endif
 
 
-void __gmpz_aorsmul_1 _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, mp_limb_t v, mp_size_t sub))) REGPARM_ATTR(1);
+void __gmpz_aorsmul_1 __GMP_PROTO ((REGPARM_3_1 (mpz_ptr, mpz_srcptr, mp_limb_t, mp_size_t))) REGPARM_ATTR(1);
 #define mpz_aorsmul_1(w,u,v,sub)  __gmpz_aorsmul_1 (REGPARM_3_1 (w, u, v, sub))
 
 #define mpz_n_pow_ui __gmpz_n_pow_ui
-void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
+void    mpz_n_pow_ui __GMP_PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
 
 
 #define mpn_addmul_1c __MPN(addmul_1c)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
 #define mpn_addmul_2 __MPN(addmul_2)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_2 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_addmul_3 __MPN(addmul_3)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_3 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_3 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_addmul_4 __MPN(addmul_4)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_4 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_4 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_addmul_5 __MPN(addmul_5)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_5 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_5 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_addmul_6 __MPN(addmul_6)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_6 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_6 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_addmul_7 __MPN(addmul_7)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_7 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_7 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_addmul_8 __MPN(addmul_8)
-__GMP_DECLSPEC mp_limb_t mpn_addmul_8 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_addmul_8 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 /* mpn_addlsh1_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+2*{b,n}, and
    returns the carry out (0, 1 or 2).  */
@@ -834,14 +829,14 @@ __GMP_DECLSPEC mp_limb_t mpn_divrem_1c __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcpt
 __GMP_DECLSPEC void mpn_dump __GMP_PROTO ((mp_srcptr, mp_size_t));
 
 #define mpn_fib2_ui __MPN(fib2_ui)
-mp_size_t mpn_fib2_ui _PROTO ((mp_ptr, mp_ptr, unsigned long));
+mp_size_t mpn_fib2_ui __GMP_PROTO ((mp_ptr, mp_ptr, unsigned long));
 
 /* Remap names of internal mpn functions.  */
 #define __clz_tab               __MPN(clz_tab)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
 
 #define mpn_jacobi_base __MPN(jacobi_base)
-int mpn_jacobi_base _PROTO ((mp_limb_t, mp_limb_t, int)) ATTRIBUTE_CONST;
+int mpn_jacobi_base __GMP_PROTO ((mp_limb_t, mp_limb_t, int)) ATTRIBUTE_CONST;
 
 #define mpn_mod_1c __MPN(mod_1c)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1c __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
@@ -850,13 +845,13 @@ __GMP_DECLSPEC mp_limb_t mpn_mod_1c __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_
 __GMP_DECLSPEC mp_limb_t mpn_mul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
 #define mpn_mul_2 __MPN(mul_2)
-mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+mp_limb_t mpn_mul_2 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_mul_3 __MPN(mul_3)
-__GMP_DECLSPEC mp_limb_t mpn_mul_3 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_mul_3 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #define mpn_mul_4 __MPN(mul_4)
-__GMP_DECLSPEC mp_limb_t mpn_mul_4 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+__GMP_DECLSPEC mp_limb_t mpn_mul_4 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 #ifndef mpn_mul_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_mul_basecase __MPN(mul_basecase)
@@ -895,9 +890,9 @@ typedef const __gmp_randstate_struct *gmp_randstate_srcptr;
 
 /* Pseudo-random number generator function pointers structure.  */
 typedef struct {
-  void (*randseed_fn) __GMP_PROTO ((gmp_randstate_t rstate, mpz_srcptr seed));
-  void (*randget_fn) __GMP_PROTO ((gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits));
-  void (*randclear_fn) __GMP_PROTO ((gmp_randstate_t rstate));
+  void (*randseed_fn) __GMP_PROTO ((gmp_randstate_t, mpz_srcptr));
+  void (*randget_fn) __GMP_PROTO ((gmp_randstate_t, mp_ptr, unsigned long int));
+  void (*randclear_fn) __GMP_PROTO ((gmp_randstate_t));
   void (*randiset_fn) __GMP_PROTO ((gmp_randstate_ptr, gmp_randstate_srcptr));
 } gmp_randfnptr_t;
 
@@ -965,7 +960,7 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
    that case o(n) will be really limited.  If toom3 is used for arbitrarily
    large operands, o(n) will be larger.  These definitions handle operands of
    up to 8956264246117233 limbs.  A single multiplication using toom3 on the
-   fastest hardware currently (2003) would need 100 million years, which
+   fastest hardware currently (2008) would need 10 million years, which
    suggests that these limits are acceptable.  */
 #if WANT_FFT
 #if HAVE_NATIVE_mpn_sublsh1_n
@@ -994,135 +989,139 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM3_MUL_N_MINSIZE   17
 #define MPN_TOOM3_SQR_N_MINSIZE   17
 
-#define mpn_sqr_diagonal __MPN(sqr_diagonal)
-void mpn_sqr_diagonal _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#define   mpn_sqr_diagonal __MPN(sqr_diagonal)
+void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
-#define mpn_kara_mul_n	__MPN(kara_mul_n)
-void mpn_kara_mul_n _PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_kara_mul_n	__MPN(kara_mul_n)
+void      mpn_kara_mul_n __GMP_PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
-#define mpn_kara_sqr_n  __MPN(kara_sqr_n)
-void mpn_kara_sqr_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_kara_sqr_n  __MPN(kara_sqr_n)
+void      mpn_kara_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
-#define mpn_toom_interpolate_5pts  __MPN(toom_interpolate_5pts)
-void mpn_toom_interpolate_5pts _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t, mp_ptr));
+#define   mpn_toom_interpolate_5pts  __MPN(toom_interpolate_5pts)
+void      mpn_toom_interpolate_5pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t, mp_ptr));
 
 enum toom4_flags { toom4_w1_neg = 1, toom4_w3_neg = 2 }; /* FIXME */
-#define mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
-void mpn_toom_interpolate_7pts (mp_ptr, mp_size_t, enum toom4_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr);
+#define   mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
+void      mpn_toom_interpolate_7pts (mp_ptr, mp_size_t, enum toom4_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr);
 
-#define mpn_toom3_mul_n  __MPN(toom3_mul_n)
-void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
+#define   mpn_toom3_mul_n  __MPN(toom3_mul_n)
+void      mpn_toom3_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
 
-#define mpn_mul_toom44  __MPN(mul_toom44)
-void mpn_mul_toom44 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom3_sqr_n  __MPN(toom3_sqr_n)
+void      mpn_toom3_sqr_n __GMP_PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
-#define mpn_toom3_sqr_n  __MPN(toom3_sqr_n)
-void mpn_toom3_sqr_n _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mul_toom22  __MPN(mul_toom22)
+void      mpn_mul_toom22 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
 
-#define mpn_mul_toom22  __MPN(mul_toom22)
-void mpn_mul_toom22 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+#define   mpn_mul_toom33  __MPN(mul_toom33)
+void      mpn_mul_toom33 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
-#define mpn_mul_toom32  __MPN(mul_toom32)
-void mpn_mul_toom32 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+#define   mpn_mul_toom44  __MPN(mul_toom44)
+void      mpn_mul_toom44 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
-#define mpn_mul_toom42  __MPN(mul_toom42)
-void mpn_mul_toom42 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+#define   mpn_mul_toom32  __MPN(mul_toom32)
+void      mpn_mul_toom32 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
-#define mpn_fft_best_k __MPN(fft_best_k)
-int     mpn_fft_best_k _PROTO ((mp_size_t n, int sqr)) ATTRIBUTE_CONST;
+#define   mpn_mul_toom42  __MPN(mul_toom42)
+void      mpn_mul_toom42 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
-#define mpn_mul_fft  __MPN(mul_fft)
-void mpn_mul_fft _PROTO ((mp_ptr op, mp_size_t pl,
-                          mp_srcptr n, mp_size_t nl,
-                          mp_srcptr m, mp_size_t ml,
-                          int k));
+#define   mpn_mul_toom53  __MPN(mul_toom53)
+void      mpn_mul_toom53 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
 
-#define mpn_mul_fft_full  __MPN(mul_fft_full)
-void mpn_mul_fft_full _PROTO ((mp_ptr op,
-                               mp_srcptr n, mp_size_t nl,
-                               mp_srcptr m, mp_size_t ml));
+#define   mpn_mul_toom62  __MPN(mul_toom62)
+void      mpn_mul_toom62 (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+
+#define   mpn_fft_best_k __MPN(fft_best_k)
+int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
+
+#define   mpn_mul_fft  __MPN(mul_fft)
+void      mpn_mul_fft __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, int));
+
+#define   mpn_mul_fft_full  __MPN(mul_fft_full)
+void      mpn_mul_fft_full __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
 #define   mpn_fft_next_size __MPN(fft_next_size)
-mp_size_t mpn_fft_next_size _PROTO ((mp_size_t pl, int k)) ATTRIBUTE_CONST;
+mp_size_t mpn_fft_next_size __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
 
-#define mpn_sb_divrem_mn  __MPN(sb_divrem_mn)
-mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t,
-                                    mp_srcptr, mp_size_t));
+#define   mpn_sb_divrem_mn  __MPN(sb_divrem_mn)
+mp_limb_t mpn_sb_divrem_mn __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 
-#define mpn_dc_divrem_n  __MPN(dc_divrem_n)
-mp_limb_t mpn_dc_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
+#define   mpn_dc_divrem_n  __MPN(dc_divrem_n)
+mp_limb_t mpn_dc_divrem_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 
-#define mpn_sb_div_qr  __MPN(sb_div_qr)
-mp_limb_t mpn_sb_div_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
-#define mpn_sb_div_q  __MPN(sb_div_q)
-mp_limb_t mpn_sb_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
-#define mpn_sb_divappr_q  __MPN(sb_divappr_q)
-mp_limb_t mpn_sb_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
-#define mpn_dc_div_qr  __MPN(dc_div_qr)
-mp_limb_t mpn_dc_div_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
-#define mpn_dc_div_qr_n  __MPN(dc_div_qr_n)
-mp_limb_t mpn_dc_div_qr_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_ptr));
-#define mpn_dc_div_q  __MPN(dc_div_q)
-mp_limb_t mpn_dc_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
-#define mpn_preinv_dc_div_qr  __MPN(preinv_dc_div_qr)
-mp_limb_t mpn_preinv_dc_div_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
-#define mpn_dc_divappr_q  __MPN(dc_divappr_q)
-mp_limb_t mpn_dc_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
-#define mpn_dc_divappr_q_n  __MPN(dc_divappr_q_n)
-mp_limb_t mpn_dc_divappr_q_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_ptr));
-#define mpn_preinv_dc_divappr_q  __MPN(preinv_dc_divappr_q)
-mp_limb_t mpn_preinv_dc_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
-#define mpn_mu_div_qr  __MPN(mu_div_qr)
-mp_limb_t mpn_mu_div_qr _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_mu_div_qr_itch  __MPN(mu_div_qr_itch)
-mp_size_t mpn_mu_div_qr_itch _PROTO ((mp_size_t, mp_size_t, int));
-#define      mpn_preinv_mu_div_qr  __MPN(preinv_mu_div_qr)
-void      mpn_preinv_mu_div_qr _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_mu_divappr_q  __MPN(mu_divappr_q)
-mp_limb_t mpn_mu_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_mu_divappr_q_itch  __MPN(mu_divappr_q_itch)
-mp_size_t mpn_mu_divappr_q_itch _PROTO ((mp_size_t, mp_size_t, int));
-#define      mpn_preinv_mu_divappr_q  __MPN(preinv_mu_divappr_q)
-void      mpn_preinv_mu_divappr_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_mu_div_q  __MPN(mu_div_q)
-mp_limb_t mpn_mu_div_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define      mpn_invert  __MPN(invert)
-void      mpn_invert _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_sb_div_qr  __MPN(sb_div_qr)
+mp_limb_t mpn_sb_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define   mpn_sb_div_q  __MPN(sb_div_q)
+mp_limb_t mpn_sb_div_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define   mpn_sb_divappr_q  __MPN(sb_divappr_q)
+mp_limb_t mpn_sb_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define   mpn_dc_div_qr  __MPN(dc_div_qr)
+mp_limb_t mpn_dc_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_dc_div_qr_n  __MPN(dc_div_qr_n)
+mp_limb_t mpn_dc_div_qr_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_ptr));
+#define   mpn_dc_div_q  __MPN(dc_div_q)
+mp_limb_t mpn_dc_div_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_preinv_dc_div_qr  __MPN(preinv_dc_div_qr)
+mp_limb_t mpn_preinv_dc_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define   mpn_dc_divappr_q  __MPN(dc_divappr_q)
+mp_limb_t mpn_dc_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_dc_divappr_q_n  __MPN(dc_divappr_q_n)
+mp_limb_t mpn_dc_divappr_q_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_ptr));
+#define   mpn_preinv_dc_divappr_q  __MPN(preinv_dc_divappr_q)
+mp_limb_t mpn_preinv_dc_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr));
+#define   mpn_mu_div_qr  __MPN(mu_div_qr)
+mp_limb_t mpn_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mu_div_qr_itch  __MPN(mu_div_qr_itch)
+mp_size_t mpn_mu_div_qr_itch __GMP_PROTO ((mp_size_t, mp_size_t, int));
+#define   mpn_preinv_mu_div_qr  __MPN(preinv_mu_div_qr)
+void      mpn_preinv_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mu_divappr_q  __MPN(mu_divappr_q)
+mp_limb_t mpn_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mu_divappr_q_itch  __MPN(mu_divappr_q_itch)
+mp_size_t mpn_mu_divappr_q_itch __GMP_PROTO ((mp_size_t, mp_size_t, int));
+#define   mpn_preinv_mu_divappr_q  __MPN(preinv_mu_divappr_q)
+void      mpn_preinv_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mu_div_q  __MPN(mu_div_q)
+mp_limb_t mpn_mu_div_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_invert  __MPN(invert)
+void      mpn_invert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
-#define      mpn_binvert  __MPN(binvert)
-void      mpn_binvert _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_binvert_itch  __MPN(binvert_itch)
-mp_size_t mpn_binvert_itch _PROTO ((mp_size_t));
-#define mpn_sb_bdiv_qr  __MPN(sb_bdiv_qr)
-mp_limb_t mpn_sb_bdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
-#define      mpn_sb_bdiv_q  __MPN(sb_bdiv_q)
-void      mpn_sb_bdiv_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
-#define mpn_dc_bdiv_qr  __MPN(dc_bdiv_qr)
-mp_limb_t mpn_dc_bdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
-#define mpn_dc_bdiv_qr_n_itch  __MPN(dc_bdiv_qr_n_itch)
-mp_size_t mpn_dc_bdiv_qr_n_itch _PROTO ((mp_size_t n));
-#define mpn_dc_bdiv_qr_n  __MPN(dc_bdiv_qr_n)
-mp_limb_t mpn_dc_bdiv_qr_n _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_limb_t dinv, mp_ptr tp));
-#define      mpn_dc_bdiv_q  __MPN(dc_bdiv_q)
-void      mpn_dc_bdiv_q _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
-#define mpn_dc_bdiv_q_n_itch  __MPN(dc_bdiv_q_n_itch)
-mp_size_t mpn_dc_bdiv_q_n_itch _PROTO ((mp_size_t n));
-#define      mpn_dc_bdiv_q_n  __MPN(dc_bdiv_q_n)
-void      mpn_dc_bdiv_q_n _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_limb_t dinv, mp_ptr tp));
+#define   mpn_binvert  __MPN(binvert)
+void      mpn_binvert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_binvert_itch  __MPN(binvert_itch)
+mp_size_t mpn_binvert_itch __GMP_PROTO ((mp_size_t));
+#define   mpn_sb_bdiv_qr  __MPN(sb_bdiv_qr)
+mp_limb_t mpn_sb_bdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define   mpn_sb_bdiv_q  __MPN(sb_bdiv_q)
+void      mpn_sb_bdiv_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define   mpn_dc_bdiv_qr  __MPN(dc_bdiv_qr)
+mp_limb_t mpn_dc_bdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define   mpn_dc_bdiv_qr_n_itch  __MPN(dc_bdiv_qr_n_itch)
+mp_size_t mpn_dc_bdiv_qr_n_itch __GMP_PROTO ((mp_size_t));
+#define   mpn_dc_bdiv_qr_n  __MPN(dc_bdiv_qr_n)
+mp_limb_t mpn_dc_bdiv_qr_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr));
+#define   mpn_dc_bdiv_q  __MPN(dc_bdiv_q)
+void      mpn_dc_bdiv_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
+#define   mpn_dc_bdiv_q_n_itch  __MPN(dc_bdiv_q_n_itch)
+mp_size_t mpn_dc_bdiv_q_n_itch __GMP_PROTO ((mp_size_t));
+#define   mpn_dc_bdiv_q_n  __MPN(dc_bdiv_q_n)
+void      mpn_dc_bdiv_q_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr));
 
-#define      mpn_mu_bdiv_q  __MPN(mu_bdiv_q)
-void      mpn_mu_bdiv_q _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_mu_bdiv_q_itch  __MPN(mu_bdiv_q_itch)
-mp_size_t mpn_mu_bdiv_q_itch _PROTO ((mp_size_t, mp_size_t));
+#define   mpn_mu_bdiv_q  __MPN(mu_bdiv_q)
+void      mpn_mu_bdiv_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mu_bdiv_q_itch  __MPN(mu_bdiv_q_itch)
+mp_size_t mpn_mu_bdiv_q_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
-#define      mpn_divexact  __MPN(divexact)
-void      mpn_divexact _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_divexact_itch  __MPN(divexact_itch)
-mp_size_t mpn_divexact_itch _PROTO ((mp_size_t, mp_size_t));
+#define   mpn_divexact  __MPN(divexact)
+void      mpn_divexact __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_divexact_itch  __MPN(divexact_itch)
+mp_size_t mpn_divexact_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
-#define mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
+
+#define   mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
 mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
-#define mpn_bdiv_dbm1(dst, src, size, divisor) \
+#define   mpn_bdiv_dbm1(dst, src, size, divisor) \
   mpn_bdiv_dbm1c (dst, src, size, divisor, __GMP_CAST (mp_limb_t, 0))
 
 
@@ -1177,19 +1176,18 @@ mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, 
 #endif
 
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
-void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
+void mpz_divexact_gcd __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
 #define mpz_inp_str_nowhite __gmpz_inp_str_nowhite
 #ifdef _GMP_H_HAVE_FILE
-size_t mpz_inp_str_nowhite _PROTO ((mpz_ptr x, FILE *stream, int base, int c, size_t nread));
+size_t mpz_inp_str_nowhite __GMP_PROTO ((mpz_ptr, FILE *, int, int, size_t));
 #endif
 
 #define mpn_divisible_p __MPN(divisible_p)
-int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
-                                 mp_srcptr dp, mp_size_t dsize)) __GMP_ATTRIBUTE_PURE;
+int     mpn_divisible_p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_rootrem __MPN(rootrem)
-mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+mp_size_t mpn_rootrem __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 
 #if defined (_CRAY)
@@ -1205,7 +1203,7 @@ mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
 /* used by test programs, hence __GMP_DECLSPEC */
 #ifndef mpn_copyi  /* if not done with cpuvec in a fat binary */
 #define mpn_copyi __MPN(copyi)
-__GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+__GMP_DECLSPEC void mpn_copyi __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 #if ! defined (MPN_COPY_INCR) && HAVE_NATIVE_mpn_copyi
@@ -1258,7 +1256,7 @@ __GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 /* used by test programs, hence __GMP_DECLSPEC */
 #ifndef mpn_copyd  /* if not done with cpuvec in a fat binary */
 #define mpn_copyd __MPN(copyd)
-__GMP_DECLSPEC void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+__GMP_DECLSPEC void mpn_copyd __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 #if ! defined (MPN_COPY_DECR) && HAVE_NATIVE_mpn_copyd
@@ -1746,8 +1744,8 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define ASSERT_FILE  ""
 #endif
 
-void __gmp_assert_header _PROTO ((const char *filename, int linenum));
-__GMP_DECLSPEC void __gmp_assert_fail _PROTO ((const char *filename, int linenum, const char *expr)) ATTRIBUTE_NORETURN;
+void __gmp_assert_header __GMP_PROTO ((const char *, int));
+__GMP_DECLSPEC void __gmp_assert_fail __GMP_PROTO ((const char *, int, const char *)) ATTRIBUTE_NORETURN;
 
 #if HAVE_STRINGIZE
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
@@ -1874,7 +1872,7 @@ __GMP_DECLSPEC void __gmp_assert_fail _PROTO ((const char *filename, int linenum
 
 #if HAVE_NATIVE_mpn_com_n
 #define mpn_com_n __MPN(com_n)
-void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+void mpn_com_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_com_n(d,s,n)                                \
   do {                                                  \
@@ -1905,7 +1903,7 @@ void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_and_n
 #define mpn_and_n __MPN(and_n)
-void mpn_and_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_and_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_and_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ & *__s2++)
@@ -1913,7 +1911,7 @@ void mpn_and_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_andn_n
 #define mpn_andn_n __MPN(andn_n)
-void mpn_andn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_andn_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_andn_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ & ~*__s2++)
@@ -1921,7 +1919,7 @@ void mpn_andn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_nand_n
 #define mpn_nand_n __MPN(nand_n)
-void mpn_nand_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_nand_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_nand_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ & *__s2++) & GMP_NUMB_MASK)
@@ -1929,7 +1927,7 @@ void mpn_nand_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_ior_n
 #define mpn_ior_n __MPN(ior_n)
-void mpn_ior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_ior_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_ior_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ | *__s2++)
@@ -1937,7 +1935,7 @@ void mpn_ior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_iorn_n
 #define mpn_iorn_n __MPN(iorn_n)
-void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_iorn_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_iorn_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = (*__s1++ | ~*__s2++) & GMP_NUMB_MASK)
@@ -1945,7 +1943,7 @@ void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_nior_n
 #define mpn_nior_n __MPN(nior_n)
-void mpn_nior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_nior_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_nior_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ | *__s2++) & GMP_NUMB_MASK)
@@ -1953,7 +1951,7 @@ void mpn_nior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_xor_n
 #define mpn_xor_n __MPN(xor_n)
-void mpn_xor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_xor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_xor_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ ^ *__s2++)
@@ -1961,7 +1959,7 @@ void mpn_xor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #if HAVE_NATIVE_mpn_xnor_n
 #define mpn_xnor_n __MPN(xnor_n)
-void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_xnor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_xnor_n(d, s1, s2, n) \
   MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ ^ *__s2++) & GMP_NUMB_MASK)
@@ -2348,7 +2346,7 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
 /* Use a library function for invert_limb, if available. */
 #define mpn_invert_limb  __MPN(invert_limb)
-mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
+mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 #if ! defined (invert_limb) && HAVE_NATIVE_mpn_invert_limb
 #define invert_limb(invxl,xl)           \
   do {                                  \
@@ -2492,7 +2490,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 
 #ifndef mpn_preinv_divrem_1  /* if not done with cpuvec in a fat binary */
 #define mpn_preinv_divrem_1  __MPN(preinv_divrem_1)
-mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
+mp_limb_t mpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
 #endif
 
 
@@ -2526,7 +2524,7 @@ mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, 
 
 #ifndef mpn_mod_34lsub1  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_34lsub1 __MPN(mod_34lsub1)
-mp_limb_t mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
+mp_limb_t mpn_mod_34lsub1 __GMP_PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 #endif
 
 
@@ -2544,7 +2542,7 @@ mp_limb_t mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
 #ifndef mpn_divexact_1  /* if not done with cpuvec in a fat binary */
 #define mpn_divexact_1 __MPN(divexact_1)
-void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+void    mpn_divexact_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 #endif
 
 #define MPN_DIVREM_OR_DIVEXACT_1(dst, src, size, divisor)                     \
@@ -2560,14 +2558,12 @@ void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #ifndef mpn_modexact_1c_odd  /* if not done with cpuvec in a fat binary */
 #define mpn_modexact_1c_odd  __MPN(modexact_1c_odd)
-mp_limb_t mpn_modexact_1c_odd _PROTO ((mp_srcptr src, mp_size_t size,
-                                       mp_limb_t divisor, mp_limb_t c)) __GMP_ATTRIBUTE_PURE;
+mp_limb_t mpn_modexact_1c_odd __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
 #endif
 
 #if HAVE_NATIVE_mpn_modexact_1_odd
 #define mpn_modexact_1_odd   __MPN(modexact_1_odd)
-mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
-                                      mp_limb_t divisor)) __GMP_ATTRIBUTE_PURE;
+mp_limb_t mpn_modexact_1_odd __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
 #else
 #define mpn_modexact_1_odd(src,size,divisor) \
   mpn_modexact_1c_odd (src, size, divisor, CNST_LIMB(0))
@@ -3131,7 +3127,7 @@ union ieee_double_extract
    We assume doubles have 53 mantissa bits.  */
 #define LIMBS_PER_DOUBLE ((53 + GMP_NUMB_BITS - 2) / GMP_NUMB_BITS + 1)
 
-int __gmp_extract_double _PROTO ((mp_ptr, double));
+int __gmp_extract_double __GMP_PROTO ((mp_ptr, double));
 
 #define mpn_get_d __gmpn_get_d
 double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATTRIBUTE_PURE;
@@ -3205,10 +3201,10 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
 
 extern int __gmp_junk;
 extern const int __gmp_0;
-void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
-void __gmp_divide_by_zero _PROTO ((void)) ATTRIBUTE_NORETURN;
-void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
-void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
+void __gmp_exception __GMP_PROTO ((int)) ATTRIBUTE_NORETURN;
+void __gmp_divide_by_zero __GMP_PROTO ((void)) ATTRIBUTE_NORETURN;
+void __gmp_sqrt_of_negative __GMP_PROTO ((void)) ATTRIBUTE_NORETURN;
+void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORETURN;
 #define GMP_ERROR(code)   __gmp_exception (code)
 #define DIVIDE_BY_ZERO    __gmp_divide_by_zero ()
 #define SQRT_OF_NEGATIVE  __gmp_sqrt_of_negative ()
@@ -3406,20 +3402,11 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 /* Matrix multiplication */
 #define mpn_matrix22_mul __MPN(matrix22_mul)
-#define mpn_matrix22_strassen __MPN(matrix22_mul_strassen)
+mp_size_t mpn_matrix22_mul_itch __GMP_PROTO ((mp_size_t, mp_size_t));
+#define mpn_matrix22_mul_strassen __MPN(matrix22_mul_strassen)
+void mpn_matrix22_mul __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_matrix22_mul_itch __MPN(matrix22_mul_itch)
-
-mp_size_t
-mpn_matrix22_mul_itch (mp_size_t, mp_size_t);
-
-void
-mpn_matrix22_mul (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
-		  mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t,
-		  mp_ptr);
-void
-mpn_matrix22_mul_strassen (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
-			   mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t,
-			   mp_ptr);
+void mpn_matrix22_mul_strassen __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #ifndef MATRIX22_STRASSEN_THRESHOLD
 #define MATRIX22_STRASSEN_THRESHOLD 30
@@ -3445,23 +3432,6 @@ mpn_matrix22_mul_strassen (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t,
   ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
    ((xl) >> (GMP_LIMB_BITS - (count))))
 
-#define mpn_hgcd2 __MPN (hgcd2)
-#define mpn_hgcd_mul_matrix1_vector __MPN (hgcd_mul_matrix1_vector)
-#define mpn_hgcd_mul_matrix1_inverse_vector __MPN (hgcd_mul_matrix1_inverse_vector)
-
-#define mpn_hgcd_matrix_init __MPN (hgcd_matrix_init)
-#define mpn_hgcd_matrix_mul __MPN (hgcd_matrix_mul)
-#define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
-
-#define mpn_hgcd_step __MPN (hgcd_step)
-#define mpn_hgcd_itch __MPN (hgcd_itch)
-#define mpn_hgcd __MPN (hgcd)
-#define mpn_hgcd_lehmer __MPN (hgcd_lehmer)
-
-#define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
-#define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
-#define mpn_gcdext_lehmer_n __MPN(gcdext_lehmer_n)
-#define mpn_gcdext_subdiv_step __MPN(gcdext_subdiv_step)
 
 /* The matrix non-negative M = (u, u'; v,v') keeps track of the
    reduction (a;b) = M (alpha; beta) where alpha, beta are smaller
@@ -3473,90 +3443,68 @@ struct hgcd_matrix1
   mp_limb_t u[2][2];
 };
 
-int
-mpn_hgcd2 __GMP_PROTO ((mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t,
-			struct hgcd_matrix1 *));
+#define mpn_hgcd2 __MPN (hgcd2)
+int mpn_hgcd2 __GMP_PROTO ((mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t,	struct hgcd_matrix1 *));
 
-mp_size_t
-mpn_hgcd_mul_matrix1_vector __GMP_PROTO ((const struct hgcd_matrix1 *,
-					  mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
+#define mpn_hgcd_mul_matrix1_vector __MPN (hgcd_mul_matrix1_vector)
+mp_size_t mpn_hgcd_mul_matrix1_vector __GMP_PROTO ((const struct hgcd_matrix1 *, mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
 
-mp_size_t
-mpn_hgcd_mul_matrix1_inverse_vector __GMP_PROTO ((const struct hgcd_matrix1 *,
-						  mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
+#define mpn_hgcd_mul_matrix1_inverse_vector __MPN (hgcd_mul_matrix1_inverse_vector)
+mp_size_t mpn_hgcd_mul_matrix1_inverse_vector __GMP_PROTO ((const struct hgcd_matrix1 *, mp_ptr, mp_srcptr, mp_ptr, mp_size_t));
 
 struct hgcd_matrix
 {
-  /* For sanity checking only */
-  mp_size_t alloc;
-
+  mp_size_t alloc;		/* for sanity checking only */
   mp_size_t n;
   mp_ptr p[2][2];
 };
 
 #define MPN_HGCD_MATRIX_INIT_ITCH(n) (4 * ((n+1)/2 + 1))
 
-void
-mpn_hgcd_matrix_init __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr));
+#define mpn_hgcd_matrix_init __MPN (hgcd_matrix_init)
+void mpn_hgcd_matrix_init __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr));
 
-void
-mpn_hgcd_matrix_mul __GMP_PROTO ((struct hgcd_matrix *, const struct hgcd_matrix *,
-				  mp_ptr));
-mp_size_t
-mpn_hgcd_matrix_adjust __GMP_PROTO ((struct hgcd_matrix *,
-				     mp_size_t, mp_ptr, mp_ptr,
-				     mp_size_t, mp_ptr));
+#define mpn_hgcd_matrix_mul __MPN (hgcd_matrix_mul)
+void mpn_hgcd_matrix_mul __GMP_PROTO ((struct hgcd_matrix *, const struct hgcd_matrix *, mp_ptr));
 
-mp_size_t
-mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
+#define mpn_hgcd_matrix_adjust __MPN (hgcd_matrix_adjust)
+mp_size_t mpn_hgcd_matrix_adjust __GMP_PROTO ((struct hgcd_matrix *, mp_size_t, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
-mp_size_t
-mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t,
-		       struct hgcd_matrix *, mp_ptr));
+#define mpn_hgcd_itch __MPN (hgcd_itch)
+mp_size_t mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
+
+#define mpn_hgcd __MPN (hgcd)
+mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
 #define MPN_HGCD_LEHMER_ITCH(n) (n)
 
-mp_size_t
-mpn_hgcd_lehmer __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t,
-			      struct hgcd_matrix *, mp_ptr));
+#define mpn_hgcd_lehmer __MPN (hgcd_lehmer)
+mp_size_t mpn_hgcd_lehmer __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
 /* Needs storage for the quotient */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) (n)
 
-mp_size_t
-mpn_gcd_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *,
-				  mp_ptr, mp_ptr, mp_size_t, mp_ptr));
+#define mpn_gcd_subdiv_step __MPN(gcd_subdiv_step)
+mp_size_t mpn_gcd_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
 #define MPN_GCD_LEHMER_N_ITCH(n) (n)
 
-mp_size_t
-mpn_gcd_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t,
-			       mp_ptr));
+#define mpn_gcd_lehmer_n __MPN(gcd_lehmer_n)
+mp_size_t mpn_gcd_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
-mp_size_t
-mpn_gcdext_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t *,
-				     mp_ptr, mp_ptr, mp_size_t,
-				     mp_ptr, mp_ptr, mp_size_t *,
-				     mp_ptr, mp_ptr));
+#define mpn_gcdext_subdiv_step __MPN(gcdext_subdiv_step)
+mp_size_t mpn_gcdext_subdiv_step __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_ptr));
 
 #define MPN_GCDEXT_LEHMER_N_ITCH(n) (4*(n) + 3)
 
-mp_size_t
-mpn_gcdext_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t *,
-				  mp_ptr, mp_ptr, mp_size_t,
-				  mp_ptr));
+#define mpn_gcdext_lehmer_n __MPN(gcdext_lehmer_n)
+mp_size_t mpn_gcdext_lehmer_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
 /* 4*(an + 1) + 4*(bn + 1) + an */
 #define MPN_GCDEXT_LEHMER_ITCH(an, bn) (5*(an) + 4*(bn) + 8)
 
 #ifndef HGCD_THRESHOLD
 #define HGCD_THRESHOLD 400
-#endif
-
-#if 0
-#ifndef GCD_LEHMER_THRESHOLD
-#define GCD_LEHMER_THRESHOLD 200
-#endif
 #endif
 
 #ifndef GCD_DC_THRESHOLD
@@ -3582,6 +3530,10 @@ typedef struct powers powers_t;
 #define mpn_dc_get_str_powtab_alloc(n) ((n) + 2 * GMP_LIMB_BITS)
 #define mpn_dc_get_str_itch(n) ((n) + GMP_LIMB_BITS)
 
+#define   mpn_dc_set_str __MPN(dc_set_str)
+mp_size_t mpn_dc_set_str __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, const powers_t *, mp_ptr));
+#define   mpn_bc_set_str __MPN(bc_set_str)
+mp_size_t mpn_bc_set_str __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, int));
 
 
 /* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
@@ -3617,7 +3569,7 @@ extern mp_size_t __gmp_default_fp_limb_precision;
 
 
 /* Decimal point string, from the current C locale.  Needs <langinfo.h> for
-   nl_langinfo and constants, preferrably with _GNU_SOURCE defined to get
+   nl_langinfo and constants, preferably with _GNU_SOURCE defined to get
    DECIMAL_POINT from glibc, and needs <locale.h> for localeconv, each under
    their respective #if HAVE_FOO_H.
 
@@ -3671,10 +3623,10 @@ struct doprnt_params_t {
 
 #if _GMP_H_HAVE_VA_LIST
 
-typedef int (*doprnt_format_t) _PROTO ((void *data, const char *fmt, va_list ap));
-typedef int (*doprnt_memory_t) _PROTO ((void *data, const char *str, size_t len));
-typedef int (*doprnt_reps_t) _PROTO ((void *data, int c, int reps));
-typedef int (*doprnt_final_t) _PROTO ((void *data));
+typedef int (*doprnt_format_t) __GMP_PROTO ((void *, const char *, va_list));
+typedef int (*doprnt_memory_t) __GMP_PROTO ((void *, const char *, size_t));
+typedef int (*doprnt_reps_t)   __GMP_PROTO ((void *, int, int));
+typedef int (*doprnt_final_t)  __GMP_PROTO ((void *));
 
 struct doprnt_funs_t {
   doprnt_format_t  format;
@@ -3726,9 +3678,9 @@ struct gmp_asprintf_t {
       }                                                                 \
   } while (0)
 
-__GMP_DECLSPEC int __gmp_asprintf_memory _PROTO ((struct gmp_asprintf_t *d, const char *str, size_t len));
-__GMP_DECLSPEC int __gmp_asprintf_reps _PROTO ((struct gmp_asprintf_t *d, int c, int reps));
-__GMP_DECLSPEC int __gmp_asprintf_final _PROTO ((struct gmp_asprintf_t *d));
+__GMP_DECLSPEC int __gmp_asprintf_memory __GMP_PROTO ((struct gmp_asprintf_t *, const char *, size_t));
+__GMP_DECLSPEC int __gmp_asprintf_reps __GMP_PROTO ((struct gmp_asprintf_t *, int, int));
+__GMP_DECLSPEC int __gmp_asprintf_final __GMP_PROTO ((struct gmp_asprintf_t *));
 
 /* buf is where to write the next output, and size is how much space is left
    there.  If the application passed size==0 then that's what we'll have
@@ -3774,20 +3726,20 @@ struct gmp_snprintf_t {
       DOPRNT_MEMORY (ptr, len);         \
   } while (0)
 
-__GMP_DECLSPEC int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *, void *, const char *, va_list));
-__GMP_DECLSPEC int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *));
+__GMP_DECLSPEC int __gmp_doprnt __GMP_PROTO ((const struct doprnt_funs_t *, void *, const char *, va_list));
+__GMP_DECLSPEC int __gmp_doprnt_integer __GMP_PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *));
 
 #define __gmp_doprnt_mpf __gmp_doprnt_mpf2
-__GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *, mpf_srcptr));
+__GMP_DECLSPEC int __gmp_doprnt_mpf __GMP_PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *, mpf_srcptr));
 
-int __gmp_replacement_vsnprintf _PROTO ((char *, size_t, const char *, va_list));
+int __gmp_replacement_vsnprintf __GMP_PROTO ((char *, size_t, const char *, va_list));
 #endif /* _GMP_H_HAVE_VA_LIST */
 
 
-typedef int (*gmp_doscan_scan_t)  _PROTO ((void *, const char *, ...));
-typedef void *(*gmp_doscan_step_t) _PROTO ((void *, int));
-typedef int (*gmp_doscan_get_t)   _PROTO ((void *));
-typedef int (*gmp_doscan_unget_t) _PROTO ((int, void *));
+typedef int (*gmp_doscan_scan_t)  __GMP_PROTO ((void *, const char *, ...));
+typedef void *(*gmp_doscan_step_t) __GMP_PROTO ((void *, int));
+typedef int (*gmp_doscan_get_t)   __GMP_PROTO ((void *));
+typedef int (*gmp_doscan_unget_t) __GMP_PROTO ((int, void *));
 
 struct gmp_doscan_funs_t {
   gmp_doscan_scan_t   scan;
@@ -3799,7 +3751,7 @@ extern const struct gmp_doscan_funs_t  __gmp_fscanf_funs;
 extern const struct gmp_doscan_funs_t  __gmp_sscanf_funs;
 
 #if _GMP_H_HAVE_VA_LIST
-int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *, void *,
+int __gmp_doscan __GMP_PROTO ((const struct gmp_doscan_funs_t *, void *,
                           const char *, va_list));
 #endif
 
@@ -3935,7 +3887,7 @@ mpn_sub_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t ci)
    It's necessary to keep these thresholds as #defines (just to an
    identically named variable), since various defaults are established based
    on #ifdef in the .c files.  For some this is not so (the defaults are
-   instead establshed above), but all are done this way for consistency. */
+   instead established above), but all are done this way for consistency. */
 
 #undef  MUL_KARATSUBA_THRESHOLD
 #define MUL_KARATSUBA_THRESHOLD      mul_karatsuba_threshold
@@ -4026,12 +3978,6 @@ extern mp_size_t                     hgcd_threshold;
 #undef  GCD_ACCEL_THRESHOLD
 #define GCD_ACCEL_THRESHOLD          gcd_accel_threshold
 extern mp_size_t                     gcd_accel_threshold;
-
-#if 0
-#undef  GCD_LEHMER_THRESHOLD
-#define GCD_LEHMER_THRESHOLD         gcd_lehmer_threshold
-extern mp_size_t                     gcd_lehmer_threshold;
-#endif
 
 #undef  GCD_DC_THRESHOLD
 #define GCD_DC_THRESHOLD             gcd_dc_threshold
