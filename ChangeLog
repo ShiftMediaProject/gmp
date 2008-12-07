@@ -1,5 +1,7 @@
 2008-12-07  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/set_str.c: Remove prototypes (they are in gmp-impl.h).
+
 	* tune/set_strs.c, tune/set_strb.c: Make prototypes effective by moving
 	the #define mpn_set_str* before including gmp-impl.h.
 
