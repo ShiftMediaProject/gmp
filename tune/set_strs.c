@@ -17,6 +17,11 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#define __gmpn_set_str mpn_set_str_subquad
+#define __gmpn_bc_set_str mpn_bc_set_str_subquad
+#define __gmpn_dc_set_str mpn_dc_set_str_subquad
+#define __gmpn_set_str_compute_powtab mpn_set_str_compute_powtab_subquad
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -24,11 +29,5 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SET_STR_DC_THRESHOLD  2 /* never */
 #undef SET_STR_PRECOMPUTE_THRESHOLD
 #define SET_STR_PRECOMPUTE_THRESHOLD  2 /* never */
-#define __gmpn_set_str mpn_set_str_subquad
-#undef mpn_bc_set_str
-#define mpn_bc_set_str mpn_bc_set_str_subquad
-#undef mpn_dc_set_str
-#define mpn_dc_set_str mpn_dc_set_str_subquad
-#define mpn_set_str_compute_powtab mpn_set_str_compute_powtab_subquad
 
 #include "mpn/generic/set_str.c"
