@@ -57,15 +57,6 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-
-mp_size_t mpn_bc_set_str
-  __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, int));
-mp_size_t mpn_dc_set_str
-  __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, const powers_t *, mp_ptr));
-void mpn_set_str_compute_powtab
-  __GMP_PROTO ((powers_t *, mp_ptr, mp_size_t, int));
-
-
 mp_size_t
 mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 {
