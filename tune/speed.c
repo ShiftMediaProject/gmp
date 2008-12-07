@@ -312,7 +312,6 @@ const struct routine_t {
 
   { "mpn_set_str",         speed_mpn_set_str,     FLAG_R_OPTIONAL },
   { "mpn_set_str_basecase",speed_mpn_bc_set_str,  FLAG_R_OPTIONAL },
-  { "mpn_set_str_subquad", speed_mpn_dc_set_str,  FLAG_R_OPTIONAL },
 
   { "mpn_sqrtrem",       speed_mpn_sqrtrem          },
   { "mpn_rootrem",       speed_mpn_rootrem, FLAG_R  },
