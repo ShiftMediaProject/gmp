@@ -49,8 +49,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   } while (0)
 
 typedef mp_limb_t (*mpn_aors_1_t)
-     _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
-mpn_aors_1_t fudge _PROTO ((mpn_aors_1_t));
+     __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+mpn_aors_1_t fudge __GMP_PROTO ((mpn_aors_1_t));
 
 
 void

@@ -34,9 +34,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 */
 
 static mp_limb_t mpn_dc_div_3_by_2
-  _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch));
+  __GMP_PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch));
 static mp_limb_t mpn_dc_div_2_by_1
-  _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch));
+  __GMP_PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch));
 
 /* mpn_dc_divrem_n - Implements algorithm of page 8 in [1]: divides (np,2n)
    by (dp,n) and puts the quotient in (qp,n), the remainder in (np,n).

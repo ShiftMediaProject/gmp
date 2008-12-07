@@ -123,7 +123,7 @@ tests_rand_end (void)
 
 
 /* Only used if CPU calling conventions checking is available. */
-mp_limb_t (*calling_conventions_function) _PROTO ((ANYARGS));
+mp_limb_t (*calling_conventions_function) __GMP_PROTO ((ANYARGS));
 
 
 /* Return p advanced to the next multiple of "align" bytes.  "align" must be

@@ -48,14 +48,14 @@ main (void)
 
 #else /* ! DLL_EXPORT */
 
-void dump _PROTO ((char *, mpz_t, mpz_t, mpz_t));
+void dump __GMP_PROTO ((char *, mpz_t, mpz_t, mpz_t));
 
-typedef void (*dss_func) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
-typedef void (*dsi_func) _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
-typedef unsigned long int (*dsi_div_func) _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
-typedef unsigned long int (*ddsi_div_func) _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, unsigned long int));
-typedef void (*ddss_div_func) _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr));
-typedef void (*ds_func) _PROTO ((mpz_ptr, mpz_srcptr));
+typedef void (*dss_func) __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+typedef void (*dsi_func) __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+typedef unsigned long int (*dsi_div_func) __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+typedef unsigned long int (*ddsi_div_func) __GMP_PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, unsigned long int));
+typedef void (*ddss_div_func) __GMP_PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr));
+typedef void (*ds_func) __GMP_PROTO ((mpz_ptr, mpz_srcptr));
 
 
 void

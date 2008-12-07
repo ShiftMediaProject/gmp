@@ -39,7 +39,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define EPSIZE SIZE
 #endif
 
-void dump _PROTO ((mpq_t));
+void dump __GMP_PROTO ((mpq_t));
 
 void
 check_monotonic (int argc, char **argv)

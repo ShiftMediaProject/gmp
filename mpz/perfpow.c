@@ -40,8 +40,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static unsigned long int gcd _PROTO ((unsigned long int a, unsigned long int b));
-static int isprime _PROTO ((unsigned long int t));
+static unsigned long int gcd __GMP_PROTO ((unsigned long int, unsigned long int));
+static int isprime __GMP_PROTO ((unsigned long int));
 
 static const unsigned short primes[] =
 {  2,  3,  5,  7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,

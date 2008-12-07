@@ -25,8 +25,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "fac_ui.h"
 
 
-static void odd_product _PROTO ((unsigned long low, unsigned long high, mpz_t * st));
-static void ap_product_small _PROTO ((mpz_t ret, mp_limb_t start, mp_limb_t step, unsigned long count, unsigned long nm));
+static void odd_product __GMP_PROTO ((unsigned long, unsigned long, mpz_t *));
+static void ap_product_small __GMP_PROTO ((mpz_t, mp_limb_t, mp_limb_t, unsigned long, unsigned long));
 
 
 /* must be >=2	*/

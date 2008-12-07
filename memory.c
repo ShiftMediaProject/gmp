@@ -24,10 +24,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-void *	(*__gmp_allocate_func) _PROTO ((size_t)) = __gmp_default_allocate;
-void *	(*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t))
+void *	(*__gmp_allocate_func) __GMP_PROTO ((size_t)) = __gmp_default_allocate;
+void *	(*__gmp_reallocate_func) __GMP_PROTO ((void *, size_t, size_t))
      = __gmp_default_reallocate;
-void	(*__gmp_free_func) _PROTO ((void *, size_t)) = __gmp_default_free;
+void	(*__gmp_free_func) __GMP_PROTO ((void *, size_t)) = __gmp_default_free;
 
 
 /* Default allocation functions.  In case of failure to allocate/reallocate

@@ -458,7 +458,7 @@ cycles_works_p (void)
 
 #ifdef SIGILL
   {
-    RETSIGTYPE (*old_handler) _PROTO ((int));
+    RETSIGTYPE (*old_handler) __GMP_PROTO ((int));
     unsigned  cycles[2];
 
     old_handler = signal (SIGILL, cycles_works_handler);

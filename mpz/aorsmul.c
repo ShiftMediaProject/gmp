@@ -34,7 +34,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    The sign of w is retained for the result, unless the absolute value
    submul underflows, in which case it flips.  */
 
-static void __gmpz_aorsmul _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub))) REGPARM_ATTR (1);
+static void __gmpz_aorsmul __GMP_PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub))) REGPARM_ATTR (1);
 #define mpz_aorsmul(w,x,y,sub)  __gmpz_aorsmul (REGPARM_3_1 (w, x, y, sub))
 
 REGPARM_ATTR (1) static void
