@@ -27,7 +27,7 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 /* Arithmetic right shift, requiring that the shifted out bits are zero. */
-void
+static inline void
 divexact_2exp (mp_ptr rp, mp_srcptr sp, mp_size_t n, unsigned shift)
 {
   mp_limb_t sign = LIMB_HIGHBIT_TO_MASK (rp[n-1]) << (GMP_LIMB_BITS - shift);
