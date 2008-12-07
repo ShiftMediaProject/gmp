@@ -121,7 +121,7 @@ double_cmp_ptr (const double *p, const double *q)
    s->r, -1.0 should be returned.  See the various base routines below.  */
 
 double
-speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
+speed_measure (double (*fun) __GMP_PROTO ((struct speed_params *s)),
                struct speed_params *s)
 {
 #define TOLERANCE    1.005  /* 0.5% */
@@ -2077,11 +2077,6 @@ double
 speed_mpn_bc_set_str (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_SET_STR_CALL (mpn_bc_set_str (wp, xp, s->size, base));
-}
-double
-speed_mpn_dc_set_str (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_SET_STR_CALL (mpn_dc_set_str (wp, xp, s->size, base));
 }
 
 double
