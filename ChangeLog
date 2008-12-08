@@ -1,5 +1,9 @@
 2008-12-08  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h: Additional cleanups.
+	(mpn_set_str_compute_powtab): New prototype.
+	(mpn_powm, mpn_powlo): New prototypes.
+
 	* mpz/pow_ui.c: Handle some small exponents locally.
 
 2008-12-07  Torbjorn Granlund  <tege@swox.com>
