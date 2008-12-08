@@ -1,3 +1,7 @@
+2008-12-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/pow_ui.c: Handle some small exponents locally.
+
 2008-12-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/set_str.c: Remove prototypes (they are in gmp-impl.h).
