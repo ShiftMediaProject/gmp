@@ -1,5 +1,7 @@
 2008-12-08  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc64/mode64/gmp-mparam.h: New file.
+
 	* gmp-impl.h: Additional cleanups.
 	(mpn_set_str_compute_powtab): New prototype.
 	(mpn_powm, mpn_powlo): New prototypes.
