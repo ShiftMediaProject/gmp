@@ -1,5 +1,8 @@
 2008-12-09  Torbjorn Granlund  <tege@swox.com>
 
+	From David Harvey:
+	* mpn/x86_64/mul_basecase.asm: Further tweaks for code size and speed.
+
 	* mpn/powerpc64/mode64/divrem_1.asm: Rewrite.
 
 	* mpn/powerpc64/mode64/mul_basecase.asm: New file.
