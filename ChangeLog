@@ -1,3 +1,10 @@
+2008-12-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/aorsmul_1.asm: New file (same code for mpn_addmul_1,
+	much improved for mpn_submul_1).
+	* mpn/alpha/ev6/addmul_1: File removed.
+	* mpn/alpha/ev6/submul_1: File removed.
+
 2008-12-09  Torbjorn Granlund  <tege@swox.com>
 
 	From David Harvey:
