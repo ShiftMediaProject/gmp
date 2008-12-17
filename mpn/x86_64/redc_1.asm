@@ -61,6 +61,7 @@ PROLOGUE(mpn_redc_1)
 	push	%r13
 	push	%r14
 	push	n
+	sub	$8, %rsp		C maintain ABI required rsp alignment
 
 	lea	(param_mp,n,8), mp	C mp += n
 	lea	(up,n,8), up		C up += n
@@ -308,7 +309,7 @@ C		    rdi rsi  rdx    rcx
 	lea	(up,nneg,8), up		C up -= n
 	lea	(up,nneg,8), %rdx	C rdx = up - n [up entry value]
 	mov	rp, nneg		C preserve rp over first call
-	mov	(%rsp), %rcx		C pass entry n
+	mov	8(%rsp), %rcx		C pass entry n
 C	mov	rp, %rdi
 	CALL(	mpn_add_n)
 	test	R32(%rax), R32(%rax)
@@ -319,10 +320,12 @@ C		 rdi rsi rdx rcx
 	mov	nneg, %rdi
 	mov	nneg, %rsi
 	mov	mp, %rdx
-	mov	(%rsp), %rcx		C pass entry n
+	mov	8(%rsp), %rcx		C pass entry n
 	CALL(	mpn_sub_n)
 
-L(ret):	pop	n			C just increment rsp
+L(ret):
+	add	$8, %rsp
+	pop	n			C just increment rsp
 	pop	%r14
 	pop	%r13
 	pop	%r12
