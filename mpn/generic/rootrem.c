@@ -1,8 +1,8 @@
 /* mpn_rootrem(rootp,remp,ap,an,nth) -- Compute the nth root of {ap,an}, and
    store the truncated integer part at rootp and the remainder at remp.
 
-   Contributed by Paul Zimmermann (algorithm and implementation).
-   Revised October 2005 to reduce memory usage.
+   Contributed by Paul Zimmermann (algorithm) and
+   Paul Zimmermann and Torbjorn Granlund (implementation).
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL, AND HAVE MUTABLE INTERFACES.  IT'S
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
