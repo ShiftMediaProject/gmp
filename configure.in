@@ -3027,6 +3027,10 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
         64)
           GMP_INCLUDE_MPN(x86_64/x86_64-defs.m4)
+	  case $host in
+	    *-*-darwin*)
+	      GMP_INCLUDE_MPN(x86_64/darwin.m4) ;;
+	  esac
           ;;
       esac
       ;;
