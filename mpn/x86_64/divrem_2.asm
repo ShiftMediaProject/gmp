@@ -115,39 +115,39 @@ ifdef(`NEW',`
 	neg	%rsi			C -d1
 	ALIGN(16)
 L(loop):
-	mov	%r9, %rax		C di
-	mul	%rbx
-	add	%r14, %rax
-	mov	%rax, %r10		C q0
-	adc	%rbx, %rdx
-	mov	%rdx, %rdi		C q
-	imul	%rsi, %rdx
-	mov	%r8, %rax
-	lea	(%rdx, %r14), %rbx	C n1 -= ...
-	mul	%rdi
-	xor	R32(%r14), R32(%r14)
-	cmp	%rcx, %r13
-	jg	L(19)
-	mov	(%r12), %r14
-	sub	$8, %r12
-L(19):	sub	%r8, %r14
-	sbb	%r11, %rbx
-	sub	%rax, %r14
-	sbb	%rdx, %rbx
-	inc	%rdi
-	xor	R32(%rdx), R32(%rdx)
-	cmp	%r10, %rbx
-	mov	%r8, %rax		C d1
-	adc	$-1, %rdx		C mask
-	add	%rdx, %rdi		C q--
-	and	%rdx, %rax		C d0 or 0
-	and	%r11, %rdx		C d1 or 0
-	add	%rax, %r14
-	adc	%rdx, %rbx
-	cmp	%r11, %rbx
-	jae	L(fix)
-L(bck):	mov	%rdi, (%rbp)
-	sub	$8, %rbp
+	mov	%r9, %rax		C di		ncp
+	mul	%rbx 			C 		0, 18
+	add	%r14, %rax		C		4
+	mov	%rax, %r10		C q0		5
+	adc	%rbx, %rdx		C 		5
+	mov	%rdx, %rdi		C q		6
+	imul	%rsi, %rdx		C 		6
+	mov	%r8, %rax		C		ncp
+	lea	(%rdx, %r14), %rbx	C n1 -= ...	7
+	mul	%rdi   	      		C    		7
+	xor	R32(%r14), R32(%r14)	C
+	cmp	%rcx, %r13 		C
+	jg	L(19) 			C
+	mov	(%r12), %r14		C
+	sub	$8, %r12		C
+L(19):	sub	%r8, %r14		C		ncp
+	sbb	%r11, %rbx		C		9
+	sub	%rax, %r14		C		11
+	sbb	%rdx, %rbx		C		12
+	inc	%rdi			C		7
+	xor	R32(%rdx), R32(%rdx)	C
+	cmp	%r10, %rbx 		C		13
+	mov	%r8, %rax		C d1		ncp
+	adc	$-1, %rdx		C mask		14
+	add	%rdx, %rdi		C q--		15
+	and	%rdx, %rax		C d0 or 0	15
+	and	%r11, %rdx		C d1 or 0	15
+	add	%rax, %r14		C    		16
+	adc	%rdx, %rbx		C		16
+	cmp	%r11, %rbx		C		17
+	jae	L(fix)			C
+L(bck):	mov	%rdi, (%rbp)		C
+	sub	$8, %rbp		C
 	dec	%rcx
 	jns	L(loop)
 
@@ -160,41 +160,41 @@ L(bck):	mov	%rdi, (%rbp)
 	mov	%r10, %rsi
 	ALIGN(16)
 L(loop):
-	mov	%rax, %r14
-	mul	%rdi
-	mov	%r11, %r9
-	add	%rsi, %rax
-	mov	%rax, %rbx		C q0
-	adc	%r14, %rdx		C q
-	lea	1(%rdx), %r10
-	mov	%rdx, %rax
-	imul	%rdx, %r9
-	sub	%r9, %rsi
-	xor	R32(%r9), R32(%r9)
-	mul	%r8
-	cmp	%rcx, %r13
-	jg	L(13)
-	mov	(%r12), %r9
-	sub	$8, %r12
-L(13):	sub	%r8, %r9
-	sbb	%r11, %rsi
-	sub	%rax, %r9
-	sbb	%rdx, %rsi
-	cmp	%rbx, %rsi
-	sbb	%rax, %rax
-	not	%rax
-	add	%rax, %r10
-	mov	%r8, %rbx
-	and	%rax, %rbx
-	and	%r11, %rax
-	add	%rbx, %r9
-	adc	%rsi, %rax
-	cmp	%rax, %r11
-	jbe	L(fix)
-L(bck):	mov	%r10, (%rbp)
-	sub	$8, %rbp
-	mov	%r9, %rsi
-	dec	%rcx
+	mov	%rax, %r14		C 		0, 19
+	mul	%rdi			C 		0
+	mov	%r11, %r9		C		1
+	add	%rsi, %rax		C 		4
+	mov	%rax, %rbx		C q0		5
+	adc	%r14, %rdx		C q		5
+	lea	1(%rdx), %r10		C 		6
+	mov	%rdx, %rax		C		6
+	imul	%rdx, %r9		C		6
+	sub	%r9, %rsi		C		10
+	xor	R32(%r9), R32(%r9)	C
+	mul	%r8	  		C		7
+	cmp	%rcx, %r13		C
+	jg	L(13) 			C
+	mov	(%r12), %r9		C
+	sub	$8, %r12		C
+L(13):	sub	%r8, %r9		C		ncp
+	sbb	%r11, %rsi		C		11
+	sub	%rax, %r9		C		11
+	sbb	%rdx, %rsi		C		12
+	cmp	%rbx, %rsi		C		13
+	sbb	%rax, %rax		C		14
+	not	%rax  			C		15
+	add	%rax, %r10		C		16
+	mov	%r8, %rbx		C		ncp
+	and	%rax, %rbx		C		16
+	and	%r11, %rax		C		16
+	add	%rbx, %r9		C		17
+	adc	%rsi, %rax		C		18
+	cmp	%rax, %r11		C		19
+	jbe	L(fix)			C
+L(bck):	mov	%r10, (%rbp)		C
+	sub	$8, %rbp		C
+	mov	%r9, %rsi		C		18
+	dec	%rcx 
 	jns	L(loop)
 
 	mov	%rsi, %r10
