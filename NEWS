@@ -20,6 +20,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 Changes between GMP version 4.2.X and 4.3.0
 
   Bugs:
+  * No bugs fixed since 4.2.4, but we might accidentally added some bugs
+    since there is a large amount of new code in this release.
 
   Speedups:
   * GCD and Extended GCD now use the best known sub-quadratic algorithms.
@@ -27,8 +29,8 @@ Changes between GMP version 4.2.X and 4.3.0
   * Improved schoolbook division by means of faster quotient application.
   * Multiplication of operands of different sizes now runs much faster.
   * Well-optimised assembly code for the x86_64 architecture for K8-K10,
-    Pentium 4 and "Core 2".
-  * Much better, but still far from optimal assembly code for Itanium.
+    Pentium 4 and "Core 2", resulting in around 75% better speed.
+  * Much improved, but still far from optimal assembly code for Itanium.
   * Well-optimised assembly for POWER4, POWER5, and PPC970.
   * Many assembly optimizations for other chips.
   * About 5% to 10% faster FFT multiply code.
@@ -36,6 +38,7 @@ Changes between GMP version 4.2.X and 4.3.0
   Features:
   * New mpn functions: XXX
   * The nails support has been generalised to handle more choices.
+  * Support for the 32-bit ABI under x86-apple-darwin.
 
   Misc:
   * Some internal fields and names have changed for better namespace
