@@ -2,6 +2,8 @@
 
 Copyright 1999, 2000, 2001, 2008 Free Software Foundation, Inc.
 
+Contributed to the GNU project by Niels Möller and Torbjörn Granlund.
+
 This file is part of the GNU MP Library.
 
 The GNU MP Library is free software; you can redistribute it and/or modify
@@ -98,7 +100,7 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
       difference = 0;
 
       /* Miller-Rabin test */
-      if (mpz_millerrabin (p, 5))
+      if (mpz_millerrabin (p, 10))
 	break;
     next:;
       incr += 2;
