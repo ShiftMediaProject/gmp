@@ -1,3 +1,23 @@
+2008-12-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/nextprime.c: Run 10 mpz_millerrabin tests (was 5).
+	Give credit to authors.
+
+	* mpn/x86_64/redc_1.asm: Align stack as mandated by ABI.
+
+	* mpn/x86_64/divrem_2.asm: Add some comments.
+
+	* mpn/x86_64/darwin.m4: New file.
+	* configure.in: Use x86_64/darwin.m4.
+
+2008-12-15  Torbjorn Granlund  <tege@swox.com>
+
+	* doc/projects.html: Remove GCD and division projects, update text on
+	multiplication.
+
+	* doc/tasks.html: Add a caution about that the file is somewhat
+	outdated.
+
 2008-12-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/ev6/aorsmul_1.asm: New file (same code for mpn_addmul_1,
