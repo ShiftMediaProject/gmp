@@ -110,6 +110,10 @@ mpn_sqrtrem1 (mp_ptr rp, mp_limb_t a0)
   ASSERT_ALWAYS (GMP_LIMB_BITS == 32 || GMP_LIMB_BITS == 64);
   ASSERT (a0 >= GMP_NUMB_HIGHBIT / 2);
 
+  /* Use Newton iterations for approximating 1/sqrt(a) instead of sqrt(a),
+     since we can do the former without division.  As part of the last
+     iteration convert from 1/sqrt(a) to sqrt(a).  */
+
   abits = a0 >> (GMP_LIMB_BITS - 1 - 8);	/* extract bits for table lookup */
   x0 = invsqrttab[abits - 0x80];		/* initial 1/sqrt(a) */
 
@@ -135,7 +139,7 @@ mpn_sqrtrem1 (mp_ptr rp, mp_limb_t a0)
   x0 >>= 16;
 #endif
 
-  /* x0 is now a full limb approximation of 1/sqrt(a0) */
+  /* x0 is now a full limb approximation of sqrt(a0) */
 
   x2 = x0 * x0;
   if (x2 + 2*x0 <= a0 - 1)
