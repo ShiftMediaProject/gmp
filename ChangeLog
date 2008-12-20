@@ -1,3 +1,10 @@
+2008-12-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/sqrtrem.c (mpn_sqrtrem1): Rewrite, improve interface.
+	(invsqrttab): New table, remove table approx_tab.
+	(mpn_sqrtrem2): Optimize, update mpn_sqrtrem1 call.
+	(mpn_sqrtrem): Update mpn_sqrtrem1 call.
+
 2008-12-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/nextprime.c: Run 10 mpz_millerrabin tests (was 5).
