@@ -1,3 +1,7 @@
+2008-12-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/nextprime.c: Add TMP_SDECL/MARK/FREE.
+
 2008-12-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/sqrtrem.c (mpn_sqrtrem1): Rewrite, improve interface.
@@ -298,6 +302,7 @@
 
 2008-10-21  Torbjorn Granlund  <tege@swox.com>
 
+	With Neils Möller:
 	* mpz/nextprime.c: Rewrite.
 
 	* tests/devel/try.c (main): Use strtol for 's' and 'S' optargs.
