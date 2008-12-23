@@ -946,6 +946,63 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
   } while (0)
 
 
+static inline mp_size_t
+mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
+  return 4 * n + 2;
+}
+
+static inline mp_size_t
+mpn_toom33_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  mp_size_t n = (an + 2) / (size_t) 3;
+/*  return 6 * n + 3; */
+  return 6 * n + 100;		/* FIXME */
+}
+
+static inline mp_size_t
+mpn_toom44_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = (an + 3) >> 2;
+/*  return 10 * n + 10; */
+  return 10 * n + 100;		/* FIXME */
+}
+
+static inline mp_size_t
+mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
+  return 4 * n + 2;
+}
+
+static inline mp_size_t
+mpn_toom42_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  mp_size_t n = an >= 2 * bn ? (an + 3) >> 2 : (bn + 1) >> 1;
+  return 6 * n + 3;
+}
+
+static inline mp_size_t
+mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (3 * an >= 5 * bn ? (an - 1) / (size_t) 5 : (bn - 1) / (size_t) 3);
+  return 10 * n + 10;
+}
+
+static inline mp_size_t
+mpn_toom4_sqr_itch (mp_size_t an)
+{
+  mp_size_t n = (an + 3) >> 2;
+/*  return 10 * n + 10; */
+  return 10 * n + 100;		/* FIXME */
+}
+
+
 /* kara uses n+1 limbs of temporary space and then recurses with the balance,
    so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ...  This can be solved to
    2n + o(n).  Since n is very limited, o(n) in practice could be around 15.
@@ -989,6 +1046,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM3_MUL_N_MINSIZE   17
 #define MPN_TOOM3_SQR_N_MINSIZE   17
 
+#define MPN_TOOM44_MUL_N_MINSIZE  30	/* ??? */
+#define MPN_TOOM4_SQR_N_MINSIZE   30	/* ??? */
+
 #define   mpn_sqr_diagonal __MPN(sqr_diagonal)
 void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
@@ -1011,26 +1071,29 @@ void      mpn_toom3_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
 #define   mpn_toom3_sqr_n __MPN(toom3_sqr_n)
 void      mpn_toom3_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom22 __MPN(mul_toom22)
-void      mpn_mul_toom22 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_toom22_mul __MPN(toom22_mul)
+void      mpn_toom22_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom33 __MPN(mul_toom33)
-void      mpn_mul_toom33 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom33_mul __MPN(toom33_mul)
+void      mpn_toom33_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom44 __MPN(mul_toom44)
-void      mpn_mul_toom44 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom44_mul __MPN(toom44_mul)
+void      mpn_toom44_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom32 __MPN(mul_toom32)
-void      mpn_mul_toom32 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom32_mul __MPN(toom32_mul)
+void      mpn_toom32_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom42 __MPN(mul_toom42)
-void      mpn_mul_toom42 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom42_mul __MPN(toom42_mul)
+void      mpn_toom42_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom53 __MPN(mul_toom53)
-void      mpn_mul_toom53 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom53_mul __MPN(toom53_mul)
+void      mpn_toom53_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_mul_toom62 __MPN(mul_toom62)
-void      mpn_mul_toom62 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#define   mpn_toom62_mul __MPN(toom62_mul)
+void      mpn_toom62_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom4_sqr __MPN(toom4_sqr)
+void      mpn_toom4_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_fft_best_k __MPN(fft_best_k)
 int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
@@ -1538,6 +1601,12 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define MUL_TOOM3_THRESHOLD 128
 #endif
 
+#define MUL_TOOM33_THRESHOLD MUL_TOOM3_THRESHOLD
+
+#ifndef MUL_TOOM44_THRESHOLD
+#define MUL_TOOM44_THRESHOLD 500
+#endif
+
 /* MUL_KARATSUBA_THRESHOLD_LIMIT is the maximum for MUL_KARATSUBA_THRESHOLD.
    In a normal build MUL_KARATSUBA_THRESHOLD is a constant and we use that.
    In a fat binary or tune program build MUL_KARATSUBA_THRESHOLD is a
@@ -1574,6 +1643,10 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 
 #ifndef SQR_TOOM3_THRESHOLD
 #define SQR_TOOM3_THRESHOLD 128
+#endif
+
+#ifndef SQR_TOOM4_THRESHOLD
+#define SQR_TOOM4_THRESHOLD 500
 #endif
 
 /* See comments above about MUL_TOOM3_THRESHOLD_LIMIT.  */
@@ -3895,6 +3968,17 @@ mpn_sub_nc (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_limb_t ci)
 }
 #endif
 
+static inline int
+mpn_zero_p (mp_srcptr ap, mp_size_t n)
+{
+  mp_size_t i;
+  for (i = n - 1; i >= 0; i--)
+    {
+      if (ap[i] != 0)
+	return 0;
+    }
+  return 1;
+}
 
 #if TUNE_PROGRAM_BUILD
 /* Some extras wanted when recompiling some .c files for use by the tune
@@ -3912,6 +3996,10 @@ extern mp_size_t                     mul_karatsuba_threshold;
 #undef  MUL_TOOM3_THRESHOLD
 #define MUL_TOOM3_THRESHOLD          mul_toom3_threshold
 extern mp_size_t                     mul_toom3_threshold;
+
+#undef  MUL_TOOM44_THRESHOLD
+#define MUL_TOOM44_THRESHOLD         mul_toom44_threshold
+extern mp_size_t                     mul_toom44_threshold;
 
 #undef  MUL_FFT_THRESHOLD
 #define MUL_FFT_THRESHOLD            mul_fft_threshold
@@ -3944,6 +4032,10 @@ extern mp_size_t                     sqr_karatsuba_threshold;
 #undef  SQR_TOOM3_THRESHOLD
 #define SQR_TOOM3_THRESHOLD          sqr_toom3_threshold
 extern mp_size_t                     sqr_toom3_threshold;
+
+#undef  SQR_TOOM4_THRESHOLD
+#define SQR_TOOM4_THRESHOLD          sqr_toom4_threshold
+extern mp_size_t                     sqr_toom4_threshold;
 
 #undef SQR_FFT_THRESHOLD
 #define SQR_FFT_THRESHOLD            sqr_fft_threshold
@@ -4057,8 +4149,10 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #define SQR_KARATSUBA_MAX_GENERIC       200
 #define MUL_KARATSUBA_THRESHOLD_LIMIT   700
 #define MUL_TOOM3_THRESHOLD_LIMIT       700
-#define MULLOW_BASECASE_THRESHOLD_LIMIT 200
 #define SQR_TOOM3_THRESHOLD_LIMIT       400
+#define MUL_TOOM44_THRESHOLD_LIMIT     1000
+#define SQR_TOOM4_THRESHOLD_LIMIT      1000
+#define MULLOW_BASECASE_THRESHOLD_LIMIT 200
 #define GET_STR_THRESHOLD_LIMIT         150
 
 /* "thresh" will normally be a variable when tuning, so use the cached
