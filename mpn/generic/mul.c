@@ -139,69 +139,81 @@ mpn_mul (mp_ptr prodp,
       return prodp[un + vn - 1];
     }
 
-  if (un >= 3 * vn)
-    {
-      mp_ptr ws;
-      mp_limb_t cy;
-      TMP_DECL;
+  {
+    mp_ptr ws;
+    mp_ptr scratch;
+    TMP_DECL;
+    TMP_MARK;
 
-      mpn_mul_toom42 (prodp, up, 2 * vn, vp, vn);
-      un -= 2 * vn;
-      up += 2 * vn;
-      prodp += 2 * vn;
+#define WSALL (4 * vn)
+    ws = TMP_SALLOC_LIMBS (WSALL + 1);
 
-      TMP_MARK;
-      ws = TMP_SALLOC_LIMBS (4 * vn);		/* FIXME */
+#define ITCH ((un + vn) * 4 + 100)
+    scratch = TMP_ALLOC_LIMBS (ITCH + 1);
+#if WANT_ASSERT
+    mp_ptr ssssp = scratch + ITCH;
+    ws[WSALL] = 0xbabecafe;
+    ssssp[0] = 0x0beef;
+#endif
 
-      while (un >= 3 * vn)
-	{
-	  mpn_mul_toom42 (ws, up, 2 * vn, vp, vn);
-	  un -= 2 * vn;
-	  up += 2 * vn;
-	  cy = mpn_add_n (prodp, prodp, ws, vn);
-	  MPN_COPY (prodp + vn, ws + vn, 2 * vn);
-	  mpn_incr_u (prodp + vn, cy);
-	  prodp += 2 * vn;
-	}
+    if (un >= 3 * vn)
+      {
+	mp_limb_t cy;
 
-      if (5 * un > 9 * vn)
-	{
-	  mpn_mul_toom42 (ws, up, un, vp, vn);
-	  cy = mpn_add_n (prodp, prodp, ws, vn);
-	  MPN_COPY (prodp + vn, ws + vn, un);
-	  mpn_incr_u (prodp + vn, cy);
-	}
-      else if (9 * un > 10 * vn)
-	{
-	  mpn_mul_toom32 (ws, up, un, vp, vn);
-	  cy = mpn_add_n (prodp, prodp, ws, vn);
-	  MPN_COPY (prodp + vn, ws + vn, un);
-	  mpn_incr_u (prodp + vn, cy);
-	}
-      else
-	{
-	  mp_ptr scratch = ws + (un + vn);
-	  mpn_mul_toom22 (ws, up, un, vp, vn, scratch);
-	  cy = mpn_add_n (prodp, prodp, ws, vn);
-	  MPN_COPY (prodp + vn, ws + vn, un);
-	  mpn_incr_u (prodp + vn, cy);
-	}
-      TMP_FREE;
-      return prodp[un + vn - 1];
-    }
+	mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
+	un -= 2 * vn;
+	up += 2 * vn;
+	prodp += 2 * vn;
 
-  if (un * 5 > vn * 9)
-    mpn_mul_toom42 (prodp, up, un, vp, vn);
-  else if (9 * un > 10 * vn)
-    mpn_mul_toom32 (prodp, up, un, vp, vn);
-  else
-    {
-      mp_ptr scratch;
-      TMP_DECL; TMP_MARK;
-      scratch = TMP_SALLOC_LIMBS (un + vn);
-      mpn_mul_toom22 (prodp, up, un, vp, vn, scratch);
-      TMP_FREE;
-    }
+	while (un >= 3 * vn)
+	  {
+	    mpn_toom42_mul (ws, up, 2 * vn, vp, vn, scratch);
+	    un -= 2 * vn;
+	    up += 2 * vn;
+	    cy = mpn_add_n (prodp, prodp, ws, vn);
+	    MPN_COPY (prodp + vn, ws + vn, 2 * vn);
+	    mpn_incr_u (prodp + vn, cy);
+	    prodp += 2 * vn;
+	  }
 
-  return prodp[un + vn - 1];
+	if (5 * un > 9 * vn)
+	  {
+	    mpn_toom42_mul (ws, up, un, vp, vn, scratch);
+	    cy = mpn_add_n (prodp, prodp, ws, vn);
+	    MPN_COPY (prodp + vn, ws + vn, un);
+	    mpn_incr_u (prodp + vn, cy);
+	  }
+	else if (9 * un > 10 * vn)
+	  {
+	    mpn_toom32_mul (ws, up, un, vp, vn, scratch);
+	    cy = mpn_add_n (prodp, prodp, ws, vn);
+	    MPN_COPY (prodp + vn, ws + vn, un);
+	    mpn_incr_u (prodp + vn, cy);
+	  }
+	else
+	  {
+	    mpn_toom22_mul (ws, up, un, vp, vn, scratch);
+	    cy = mpn_add_n (prodp, prodp, ws, vn);
+	    MPN_COPY (prodp + vn, ws + vn, un);
+	    mpn_incr_u (prodp + vn, cy);
+	  }
+
+	ASSERT (ws[WSALL] == 0xbabecafe);
+	ASSERT (ssssp[0] == 0x0beef);
+	TMP_FREE;
+	return prodp[un + vn - 1];
+      }
+
+    if (un * 5 > vn * 9)
+      mpn_toom42_mul (prodp, up, un, vp, vn, scratch);
+    else if (9 * un > 10 * vn)
+      mpn_toom32_mul (prodp, up, un, vp, vn, scratch);
+    else
+      mpn_toom22_mul (prodp, up, un, vp, vn, scratch);
+
+    ASSERT (ws[WSALL] == 0xbabecafe);
+    ASSERT (ssssp[0] == 0x0beef);
+    TMP_FREE;
+    return prodp[un + vn - 1];
+  }
 }
