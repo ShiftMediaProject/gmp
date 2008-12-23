@@ -22,18 +22,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static inline int
-mpn_zero_p (mp_srcptr ap, mp_size_t n)
-{
-  mp_size_t i;
-  for (i = n - 1; i >= 0; i--)
-    {
-      if (ap[i] != 0)
-	return 0;
-    }
-  return 1;
-}
-
 /* Uses the HGCD operation described in
 
      N. Möller, On Schönhage's algorithm and subquadratic integer gcd

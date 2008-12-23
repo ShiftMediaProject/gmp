@@ -25,18 +25,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static inline int
-mpn_zero_p (mp_srcptr ap, mp_size_t n)
-{
-  mp_size_t i;
-  for (i = n - 1; i >= 0; i--)
-    {
-      if (ap[i] != 0)
-	return 0;
-    }
-  return 1;
-}
-
 /* Used when mpn_hgcd or mpn_hgcd2 has failed. Then either one of a or
    b is small, or the difference is small. Perform one subtraction
    followed by one division. If the gcd is found, stores it in gp and

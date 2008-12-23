@@ -22,18 +22,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static inline int
-mpn_zero_p (mp_srcptr ap, mp_size_t n)
-{
-  mp_size_t i;
-  for (i = n - 1; i >= 0; i--)
-    {
-      if (ap[i] != 0)
-	return 0;
-    }
-  return 1;
-}
-
 /* Computes (r;b) = (a; b) M. Result is of size n + M->n +/- 1, and
    the size is returned (if inputs are non-normalized, result may be
    non-normalized too). Temporary space needed is M->n + n.
