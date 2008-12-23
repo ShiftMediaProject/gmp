@@ -148,12 +148,14 @@ int  allocdat = 0;
 
 mp_size_t  mul_karatsuba_threshold      = MP_SIZE_T_MAX;
 mp_size_t  mul_toom3_threshold          = MUL_TOOM3_THRESHOLD_LIMIT;
+mp_size_t  mul_toom44_threshold         = MUL_TOOM44_THRESHOLD_LIMIT;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_karatsuba_threshold
   = (TUNE_SQR_KARATSUBA_MAX == 0 ? MP_SIZE_T_MAX : TUNE_SQR_KARATSUBA_MAX);
 mp_size_t  sqr_toom3_threshold          = SQR_TOOM3_THRESHOLD_LIMIT;
+mp_size_t  sqr_toom4_threshold          = SQR_TOOM4_THRESHOLD_LIMIT;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mullow_basecase_threshold    = MP_SIZE_T_MAX;
@@ -756,7 +758,7 @@ fft (struct fft_param_t *p)
 
   size = p->first_size;
 
-  /* Declare an FFT faster than a plain toom3 etc multiplication found as
+  /* Declare an FFT faster than a plain toom4 etc multiplication found as
      soon as one faster measurement obtained.  A multiplication in the
      middle of the FFT step is tested.  */
   for (;;)
@@ -764,7 +766,7 @@ fft (struct fft_param_t *p)
       int     modf = (*p->p_modf_threshold == MP_SIZE_T_MAX);
       double  tk, tm;
 
-      /* k=7 should be the first FFT which can beat toom3 on a full
+      /* k=7 should be the first FFT which can beat toom4 on a full
          multiply, so jump to that threshold and save some probing after the
          modf threshold is found.  */
       if (!modf && size < mpn_fft_table[p->sqr][2])
@@ -835,6 +837,11 @@ tune_mul (void)
   param.min_size = MAX (mul_karatsuba_threshold, MPN_TOOM3_MUL_N_MINSIZE);
   param.max_size = MUL_TOOM3_THRESHOLD_LIMIT-1;
   one (&mul_toom3_threshold, &param);
+
+  param.name = "MUL_TOOM44_THRESHOLD";
+  param.min_size = MAX (mul_toom3_threshold, MPN_TOOM44_MUL_N_MINSIZE);
+  param.max_size = MUL_TOOM44_THRESHOLD_LIMIT-1;
+  one (&mul_toom44_threshold, &param);
 
   /* disabled until tuned */
   MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
@@ -934,12 +941,19 @@ tune_sqr (void)
 
   {
     static struct param_t  param;
-    param.name = "SQR_TOOM3_THRESHOLD";
+    mp_size_t toom3_start = MAX (sqr_karatsuba_threshold, sqr_basecase_threshold);
+
     param.function = speed_mpn_sqr_n;
-    param.min_size = MAX3 (MPN_TOOM3_SQR_N_MINSIZE,
-                           SQR_KARATSUBA_THRESHOLD, SQR_BASECASE_THRESHOLD);
+
+    param.name = "SQR_TOOM3_THRESHOLD";
+    param.min_size = MAX (toom3_start, MPN_TOOM3_SQR_N_MINSIZE);
     param.max_size = SQR_TOOM3_THRESHOLD_LIMIT-1;
     one (&sqr_toom3_threshold, &param);
+
+    param.name = "SQR_TOOM4_THRESHOLD";
+    param.min_size = MAX (sqr_toom3_threshold, MPN_TOOM4_SQR_N_MINSIZE);
+    param.max_size = SQR_TOOM4_THRESHOLD_LIMIT-1;
+    one (&sqr_toom4_threshold, &param);
   }
 }
 
