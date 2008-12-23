@@ -1,5 +1,8 @@
 2008-12-23  Torbjorn Granlund  <tege@swox.com>
 
+	* gcd.c gcd_subdiv_step.c gcdext.c gcdext_subdiv_step.c:
+	Remove private mpn_zero_p.
+	
 	* tune/tuneup.c	(tune_mul): Tune for MUL_TOOM44_THRESHOLD.
 	(tune_sqr): Tune for SQR_TOOM4_THRESHOLD.
 
