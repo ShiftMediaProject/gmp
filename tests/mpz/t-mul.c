@@ -300,11 +300,19 @@ void
 dump_abort (int i, char *s,
             mpz_t op1, mpz_t op2, mpz_t product, mpz_t ref_product)
 {
+  mp_size_t b, e;
   fprintf (stderr, "ERROR: %s in test %d\n", s, i);
   fprintf (stderr, "op1          = "); debug_mp (op1);
   fprintf (stderr, "op2          = "); debug_mp (op2);
   fprintf (stderr, "    product  = "); debug_mp (product);
   fprintf (stderr, "ref_product  = "); debug_mp (ref_product);
+  for (b = 0; b < ABSIZ(ref_product); b++)
+    if (PTR(ref_product)[b] != PTR(product)[b])
+      break;
+  for (e = ABSIZ(ref_product) - 1; e >= 0; e--)
+    if (PTR(ref_product)[e] != PTR(product)[e])
+      break;
+  printf ("ERRORS in %ld--%ld\n", b, e);
   abort();
 }
 
