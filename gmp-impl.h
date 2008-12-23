@@ -4080,7 +4080,7 @@ extern mp_size_t                     powm_threshold;
 extern mp_size_t                     matrix22_strassen_threshold;
 
 #undef  HGCD_THRESHOLD
-#define HGCD_THRESHOLD    	     hgcd_threshold
+#define HGCD_THRESHOLD               hgcd_threshold
 extern mp_size_t                     hgcd_threshold;
 
 #undef  GCD_ACCEL_THRESHOLD
