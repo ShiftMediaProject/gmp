@@ -1,3 +1,32 @@
+2008-12-23  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/tuneup.c	(tune_mul): Tune for MUL_TOOM44_THRESHOLD.
+	(tune_sqr): Tune for SQR_TOOM4_THRESHOLD.
+
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add toom44_mul.c and
+	toom4_sqr.c.
+
+	* configure.in (gmp_mpn_functions): Toom function updates.
+
+	* Rename mpn/mul_toomMN.c to mpn/toomMN_mul.c.  Function names changed
+	accordingly.
+
+	* mpn/toomMN_mul.c: Add scratch parameter.  Do recursive multiplies
+	properly.  Misc tuning.  Remove CHECK and TIMING code.
+
+	* mpn/toom2_sqr.c, mpn/toom3_sqr.c, mpn/toom4_sqr.c: New files.
+
+	* gmp-impl.h (mpn_toomMN_mul_itch): Several new functions.
+	(mpn_zero_p): New functions.
+	Add various TOOM4/TOOM44 related parameters.
+	Update mpn_toomMN_mul prototypes.
+
+	* mpn/generic/mul_n.c (mpn_mul_n): Call mpn_toom44_mul.  Use TMP_BALLOC
+	instead of malloc.
+	(mpn_sqr_n): Analogous changes.
+
+	* mpn/generic/mul.c: Update unbalanced toom code to pass scratch space.
+
 2008-12-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/nextprime.c: Add TMP_SDECL/MARK/FREE.
