@@ -1,5 +1,7 @@
 2008-12-23  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-mul.c (dump_abort): Improve error message.
+
 	* gcd.c gcd_subdiv_step.c gcdext.c gcdext_subdiv_step.c:
 	Remove private mpn_zero_p.
 	
