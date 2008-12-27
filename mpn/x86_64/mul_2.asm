@@ -26,7 +26,7 @@ C K10:		 2.275
 C P4:		 ?
 C P6-15:	 4.0
 
-C This code is the result of running a code generation and permutation tool
+C This code is the result of running a code generation and optimization tool
 C suite written by David Harvey and Torbjorn Granlund.
 
 C TODO

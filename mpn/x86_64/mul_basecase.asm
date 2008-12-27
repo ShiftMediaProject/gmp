@@ -28,7 +28,7 @@ C P4:		 ?
 C P6-15:	 4.45
 
 C The inner loops of this code are the result of running a code generation and
-C permutation tool suite written by David Harvey and Torbjorn Granlund.
+C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
 C TODO
 C  * Use fewer registers.  (how??? I can't see it -- david)

@@ -27,7 +27,7 @@ C P6-15 (Core2): 4.9
 C P6-28 (Atom):	 4
 
 C The inner loop of this code is the result of running a code generation and
-C permutation tool suite written by David Harvey and Torbjorn Granlund.
+C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

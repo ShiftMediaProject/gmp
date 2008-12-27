@@ -183,6 +183,4 @@ L(ret):	mov	%ebx, %eax
 	pop	%r12
 	pop	%rbx
 	ret
-
-
 EPILOGUE()

@@ -27,7 +27,7 @@ C P6-15 (Core2): 5.09
 C P6-28 (Atom):	21.3
 
 C The inner loop of this code is the result of running a code generation and
-C permutation tool suite written by David Harvey and Torbjorn Granlund.
+C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
 C TODO:
 C  * The inner loop is great, but the prologue and epilogue code was

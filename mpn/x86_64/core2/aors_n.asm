@@ -1,6 +1,6 @@
 dnl  Intel P6-15 mpn_add_n/mpn_sub_n -- mpn add or subtract.
 
-dnl  Copyright 2006 Free Software Foundation, Inc.
+dnl  Copyright 2006, 2007 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
