@@ -33,113 +33,110 @@ C alignments cause cache conflicts.
 C The speed is limited by decoding/issue bandwidth.  There are 26 instructions
 C in the loop, which corresponds to 26/3/4 = 2.167 c/l.
 
-C Each limb needs 5 instructions, which corresponds to 1.67 c/l.  8-way
-C unrolling could approach 1.917 c/l.
-
 C INPUT PARAMETERS
 define(`rp',`%rdi')
 define(`up',`%rsi')
 define(`vp',`%rdx')
-define(`n',`%rcx')
+define(`n', `%rcx')
 
 ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_sublsh1_n)
-	pushq	%rbx
-	pushq	%rbp
+	push	%rbx
+	push	%rbp
 
-	movq	(vp), %r8
-	movl	%ecx, %eax
-	leaq	(rp,n,8), rp
-	leaq	(up,n,8), up
-	leaq	(vp,n,8), vp
-	negq	n
-	xorl	%ebp, %ebp
-	andl	$3, %eax
+	mov	(vp), %r8
+	mov	R32(n), R32(%rax)
+	lea	(rp,n,8), rp
+	lea	(up,n,8), up
+	lea	(vp,n,8), vp
+	neg	n
+	xor	R32(%rbp), R32(%rbp)
+	and	$3, R32(%rax)
 	je	L(b00)
-	cmpl	$2, %eax
+	cmp	$2, R32(%rax)
 	jc	L(b01)
 	je	L(b10)
 
-L(b11):	addq	%r8, %r8
-	movq	8(vp,n,8), %r9
-	adcq	%r9, %r9
-	movq	16(vp,n,8), %r10
-	adcq	%r10, %r10
-	sbbl	%eax, %eax		C save scy
-	movq	(up,n,8), %rbp
-	movq	8(up,n,8), %rbx
-	subq	%r8, %rbp
-	sbbq	%r9, %rbx
-	movq	%rbp, (rp,n,8)
-	movq	%rbx, 8(rp,n,8)
-	movq	16(up,n,8), %rbp
-	sbbq	%r10, %rbp
-	movq	%rbp, 16(rp,n,8)
-	sbbl	%ebp, %ebp		C save acy
-	addq	$3, n
+L(b11):	add	%r8, %r8
+	mov	8(vp,n,8), %r9
+	adc	%r9, %r9
+	mov	16(vp,n,8), %r10
+	adc	%r10, %r10
+	sbb	R32(%rax), R32(%rax)	C save scy
+	mov	(up,n,8), %rbp
+	mov	8(up,n,8), %rbx
+	sub	%r8, %rbp
+	sbb	%r9, %rbx
+	mov	%rbp, (rp,n,8)
+	mov	%rbx, 8(rp,n,8)
+	mov	16(up,n,8), %rbp
+	sbb	%r10, %rbp
+	mov	%rbp, 16(rp,n,8)
+	sbb	R32(%rbp), R32(%rbp)	C save acy
+	add	$3, n
 	jmp	L(ent)
 
-L(b10):	addq	%r8, %r8
-	movq	8(vp,n,8), %r9
-	adcq	%r9, %r9
-	sbbl	%eax, %eax		C save scy
-	movq	(up,n,8), %rbp
-	movq	8(up,n,8), %rbx
-	subq	%r8, %rbp
-	sbbq	%r9, %rbx
-	movq	%rbp, (rp,n,8)
-	movq	%rbx, 8(rp,n,8)
-	sbbl	%ebp, %ebp		C save acy
-	addq	$2, n
+L(b10):	add	%r8, %r8
+	mov	8(vp,n,8), %r9
+	adc	%r9, %r9
+	sbb	R32(%rax), R32(%rax)	C save scy
+	mov	(up,n,8), %rbp
+	mov	8(up,n,8), %rbx
+	sub	%r8, %rbp
+	sbb	%r9, %rbx
+	mov	%rbp, (rp,n,8)
+	mov	%rbx, 8(rp,n,8)
+	sbb	R32(%rbp), R32(%rbp)	C save acy
+	add	$2, n
 	jmp	L(ent)
 
-L(b01):	addq	%r8, %r8
-	sbbl	%eax, %eax		C save scy
-	movq	(up,n,8), %rbp
-	subq	%r8, %rbp
-	movq	%rbp, (rp,n,8)
-	sbbl	%ebp, %ebp		C save acy
-	incq	n
-L(ent):	jns,pn	L(end)
+L(b01):	add	%r8, %r8
+	sbb	R32(%rax), R32(%rax)	C save scy
+	mov	(up,n,8), %rbp
+	sub	%r8, %rbp
+	mov	%rbp, (rp,n,8)
+	sbb	R32(%rbp), R32(%rbp)	C save acy
+	inc	n
+L(ent):	jns	L(end)
 
 	ALIGN(16)
-L(oop):	addl	%eax, %eax		C restore scy
+L(oop):	add	R32(%rax), R32(%rax)	C restore scy
 
-	movq	(vp,n,8), %r8
-L(b00):	adcq	%r8, %r8
-	movq	8(vp,n,8), %r9
-	adcq	%r9, %r9
-	movq	16(vp,n,8), %r10
-	adcq	%r10, %r10
-	movq	24(vp,n,8), %r11
-	adcq	%r11, %r11
+	mov	(vp,n,8), %r8
+L(b00):	adc	%r8, %r8
+	mov	8(vp,n,8), %r9
+	adc	%r9, %r9
+	mov	16(vp,n,8), %r10
+	adc	%r10, %r10
+	mov	24(vp,n,8), %r11
+	adc	%r11, %r11
 
-	sbbl	%eax, %eax		C save scy
-	addl	%ebp, %ebp		C restore acy
+	sbb	R32(%rax), R32(%rax)	C save scy
+	add	R32(%rbp), R32(%rbp)	C restore acy
 
-	movq	(up,n,8), %rbp
-	movq	8(up,n,8), %rbx
-	sbbq	%r8, %rbp
-	sbbq	%r9, %rbx
-	movq	%rbp, (rp,n,8)
-	movq	%rbx, 8(rp,n,8)
-	movq	16(up,n,8), %rbp
-	movq	24(up,n,8), %rbx
-	sbbq	%r10, %rbp
-	sbbq	%r11, %rbx
-	movq	%rbp, 16(rp,n,8)
-	movq	%rbx, 24(rp,n,8)
+	mov	(up,n,8), %rbp
+	mov	8(up,n,8), %rbx
+	sbb	%r8, %rbp
+	sbb	%r9, %rbx
+	mov	%rbp, (rp,n,8)
+	mov	%rbx, 8(rp,n,8)
+	mov	16(up,n,8), %rbp
+	mov	24(up,n,8), %rbx
+	sbb	%r10, %rbp
+	sbb	%r11, %rbx
+	mov	%rbp, 16(rp,n,8)
+	mov	%rbx, 24(rp,n,8)
 
-	sbbl	%ebp, %ebp		C save acy
-	addq	$4, n
-	js,pt	L(oop)
+	sbb	R32(%rbp), R32(%rbp)	C save acy
+	add	$4, n
+	js	L(oop)
 
-L(end):	addl	%ebp, %eax
-	negl	%eax
+L(end):	add	R32(%rbp), R32(%rax)
+	neg	R32(%rax)
 
-	popq	%rbp
-	popq	%rbx
+	pop	%rbp
+	pop	%rbx
 	ret
 EPILOGUE()
