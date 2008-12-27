@@ -22,13 +22,13 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C The inner loops of this code are the result of running a code generation and
-C permutation tool suite written by David Harvey and Torbjorn Granlund.
+C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
 C NOTES
 C   * This code only handles operands up to SQR_KARATSUBA_THRESHOLD_MAX.  That
 C     means we can safely use 32-bit operations for all sizes, unlike in e.g.,
 C     mpn_addmul_1.
-C   * The jump table could probably be optimized.
+C   * The jump table could probably be optimized, at least for non-pic.
 C   * Add special code for n = 4, modify jump table code to handle that.
 C   * The special code for n=1,2,3 was quickly written.  It is probably too
 C     large and unnecessarily slow.
@@ -58,7 +58,7 @@ define(`rp',	  `%rdi')
 define(`up',	  `%rsi')
 define(`n_param', `%rdx')
 
-define(`SQR_KARATSUBA_THRESHOLD_MAX', 200)
+define(`SQR_KARATSUBA_THRESHOLD_MAX', 100)
 define(`STACK_ALLOC', eval(8*2*SQR_KARATSUBA_THRESHOLD_MAX))
 
 define(`n',	`%r11')
@@ -71,6 +71,8 @@ define(`w0',	`%rbx')
 define(`w1',	`%rcx')
 define(`w2',	`%rbp')
 define(`w3',	`%r10')
+
+define(`SPECIAL_CODE_FOR_4',1)
 
 
 ASM_START()
@@ -90,24 +92,43 @@ PROLOGUE(mpn_sqr_basecase)
 	and	$3, R32(%rcx)
 	lea	4(%rcx), %rbx
 	cmp	$4, R32(n)
-	cmovge	%rbx, %rcx
+	cmovg	%rbx, %rcx
+ifelse(1,0,`
+	lea	L(jmptab)(%rip), %rdx
+	movslq	(%rdx,%rcx,4), %rcx
+	lea	0(%rip), %rax
+L(99):	add	%rax, %rcx
+	jmp	*%rcx
+	RODATA
+	ALIGN(8)
+L(jmptab):
+	.long	L(4)-L(99)
+	.long	L(1)-L(99)
+	.long	L(2)-L(99)
+	.long	L(3)-L(99)
+	.long	L(0m4)-L(99)
+	.long	L(1m4)-L(99)
+	.long	L(2m4)-L(99)
+	.long	L(3m4)-L(99)
+	TEXT
+',`
 	lea	L(jmptab)(%rip), %rdx
 	movslq	(%rdx,%rcx,4), %rcx
 	add	%rdx, %rcx
 	jmp	*%rcx
-
-	DATA
+	RODATA
 	ALIGN(8)
 L(jmptab):
-	.long	L(0)-L(jmptab)
+	.long	L(4)-L(jmptab)
 	.long	L(1)-L(jmptab)
 	.long	L(2)-L(jmptab)
 	.long	L(3)-L(jmptab)
-	.long	L(4)-L(jmptab)
-	.long	L(5)-L(jmptab)
-	.long	L(6)-L(jmptab)
-	.long	L(7)-L(jmptab)
+	.long	L(0m4)-L(jmptab)
+	.long	L(1m4)-L(jmptab)
+	.long	L(2m4)-L(jmptab)
+	.long	L(3m4)-L(jmptab)
 	TEXT
+')
 
 L(1):	mov	(up), %rax
 	mul	%rax
@@ -115,7 +136,7 @@ L(1):	mov	(up), %rax
 	mov	%rdx, 8(rp)
 	add	$40, %rsp
 	pop	%rbx
-L(0):	ret
+	ret
 
 L(2):	mov	(up), %rax
 	mul	%rax
@@ -153,6 +174,7 @@ L(3):	mov	(up), %rax
 	mul	%rax
 	mov	%rax, 32(rp)
 	mov	%rdx, 40(rp)
+
 	mov	(up), %rbx
 	mov	8(up), %rax
 	mul	%rbx
@@ -163,6 +185,7 @@ L(3):	mov	(up), %rax
 	xor	R32(%r10), R32(%r10)
 	add	%rax, %r9
 	adc	%rdx, %r10
+
 	mov	8(up), %rbx
 	mov	16(up), %rax
 	mul	%rbx
@@ -184,8 +207,81 @@ L(3):	mov	(up), %rax
 	pop	%rbx
 	ret
 
+ifdef(`SPECIAL_CODE_FOR_4',`
+L(4):	mov	(up), %rax
+	mul	%rax
+	mov	%rax, (rp)
+	mov	%rdx, 8(rp)
+	mov	8(up), %rax
+	mul	%rax
+	mov	%rax, 16(rp)
+	mov	%rdx, 24(rp)
+	mov	16(up), %rax
+	mul	%rax
+	mov	%rax, 32(rp)
+	mov	%rdx, 40(rp)
+	mov	24(up), %rax
+	mul	%rax
+	mov	%rax, 48(rp)
+	mov	%rdx, 56(rp)
 
-L(4):	add	$-STACK_ALLOC, %rsp
+	mov	(up), %rbx
+	mov	8(up), %rax
+	mul	%rbx
+	mov	%rax, %r8
+	mov	%rdx, %r9
+	mov	16(up), %rax
+	mul	%rbx
+	xor	R32(%r10), R32(%r10)
+	add	%rax, %r9
+	adc	%rdx, %r10
+	mov	24(up), %rax
+	mul	%rbx
+	xor	R32(%r11), R32(%r11)
+	add	%rax, %r10
+	adc	%rdx, %r11
+	mov	8(up), %rbx
+	mov	16(up), %rax
+	mul	%rbx
+	xor	R32(%r12), R32(%r12)
+	add	%rax, %r10
+	adc	%rdx, %r11
+	adc	$0, %r12
+	mov	24(up), %rax
+	mul	%rbx
+	add	%rax, %r11
+	adc	%rdx, %r12
+	mov	16(up), %rbx
+	mov	24(up), %rax
+	mul	%rbx
+	xor	R32(%rbp), R32(%rbp)
+	add	%rax, %r12
+	adc	%rdx, %rbp
+
+	add	%r8, %r8
+	adc	%r9, %r9
+	adc	%r10, %r10
+	adc	%r11, %r11
+	adc	%r12, %r12
+	mov	$0, R32(%rbx)
+	adc	%rbp, %rbp
+
+	adc	%rbx, %rbx
+	add	%r8, 8(rp)
+	adc	%r9, 16(rp)
+	adc	%r10, 24(rp)
+	adc	%r11, 32(rp)
+	adc	%r12, 40(rp)
+	adc	%rbp, 48(rp)
+	adc	%rbx, 56(rp)
+	add	$24, %rsp
+	pop	%r12
+	pop	%rbp
+	pop	%rbx
+	ret
+')
+
+L(0m4):	add	$-STACK_ALLOC, %rsp
 	lea	(%rsp,n,8), tp		C point tp in middle of result operand
 	lea	(up,n,8), up		C point up at end of input operand
 
@@ -240,11 +336,13 @@ L(L3):	xor	R32(w1), R32(w1)
 	mov	w2, 8(tp)
 	mov	w1, 16(tp)
 	lea	eval(24+2*8)(tp), tp	C tp += 2, undo offset FIXME
+ifdef(`SPECIAL_CODE_FOR_4',`',`
 	cmp	$3, R32(i)
 	je	L(last)
+')
 	jmp	L(dowhile)
 
-L(5):	add	$-STACK_ALLOC, %rsp
+L(1m4):	add	$-STACK_ALLOC, %rsp
 	lea	(%rsp,n,8), tp		C point tp in middle of result operand
 	lea	(up,n,8), up		C point up at end of input operand
 
@@ -328,7 +426,7 @@ L(m0):	mov	-16(up,j,8), %rax	C u2, u6 ...
 
 
 
-L(6):	add	$-STACK_ALLOC, %rsp
+L(2m4):	add	$-STACK_ALLOC, %rsp
 	lea	(%rsp,n,8), tp		C point tp in middle of result operand
 	lea	(up,n,8), up		C point up at end of input operand
 
@@ -387,7 +485,7 @@ L(L1):	xor	R32(w0), R32(w0)
 
 
 
-L(7):	add	$-STACK_ALLOC, %rsp
+L(3m4):	add	$-STACK_ALLOC, %rsp
 	lea	(%rsp,n,8), tp		C point tp in middle of result operand
 	lea	(up,n,8), up		C point up at end of input operand
 
