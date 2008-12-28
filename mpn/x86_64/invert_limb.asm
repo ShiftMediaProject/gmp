@@ -36,8 +36,12 @@ PROLOGUE(mpn_invert_limb)
 	mov	%rdi, %rax
 	shr	$55, %rax
 ifdef(`PIC',`
-	lea	-512+approx_tab(%rip), %r8
+ifdef(`DARWIN',`
+	mov	approx_tab@GOTPCREL(%rip), %r8
+	add	$-512, %r8
 ',`
+	lea	-512+approx_tab(%rip), %r8
+')',`
 	movabs	$-512+approx_tab, %r8
 ')
 	movzwl	(%r8,%rax,2), R32(%rcx)
@@ -79,9 +83,7 @@ ifdef(`PIC',`
 	ret
 EPILOGUE()
 
-	.section	.rodata
-	.type	approx_tab, @object
-	.size	approx_tab, 512
+	RODATA
 	ALIGN(2)
 approx_tab:
 	.value	0xffc0,0xfec0,0xfdc0,0xfcc0,0xfbc0,0xfac0,0xfa00,0xf900
@@ -116,3 +118,4 @@ approx_tab:
 	.value	0x8600,0x85c0,0x8580,0x8540,0x8500,0x84c0,0x8480,0x8440
 	.value	0x8400,0x8380,0x8340,0x8300,0x82c0,0x8280,0x8240,0x8200
 	.value	0x81c0,0x8180,0x8140,0x8100,0x80c0,0x8080,0x8040,0x8000
+ASM_END()
