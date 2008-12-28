@@ -10126,7 +10126,7 @@ conquer division code for GMP 4.3.
 
 David Harvey worked on the internal function @code{mpn_bdiv_dbm1},
 implementing division relevant to Toom multiplication.  He also worked on
-loopmix sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}.
+fast assembly sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}.
 
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
