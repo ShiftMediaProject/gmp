@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C TODO
-C  * Write own SSE2 code, using loopmix.  It should reach 3 c/l.
+C  * Write P6 specific SSE2 code.  It should reach 3 c/l.
 C    The Pentium4 code runs at 4.2 c/l.
 
 MULFUNC_PROLOGUE(mpn_mul_1)
