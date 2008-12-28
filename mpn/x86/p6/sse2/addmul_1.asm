@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C TODO
-C  * Write own SSE2 code, using loopmix, perhaps.
+C  * Write P6 specific SSE2 code.
 
 MULFUNC_PROLOGUE(mpn_addmul_1)
 include_mpn(`x86/pentium4/sse2/addmul_1.asm')
