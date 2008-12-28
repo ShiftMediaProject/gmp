@@ -34,7 +34,7 @@ C  * Work on feed-in and wind-down code.
 C  * Convert "mov $0" to "xor".
 C  * Adjust initial lea to save some bytes.
 C  * Perhaps adjust n from n_param&3 value?
-C  * Replace with 2.25 c/l loopmix sequence.
+C  * Replace with 2.25 c/l sequence.
 
 C INPUT PARAMETERS
 define(`rp',	 `%rdi')
