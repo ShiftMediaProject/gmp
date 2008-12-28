@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_add_n/mpn_sub_n optimized for Pentium 4.
 
-dnl  Copyright 2007 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2008 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -59,38 +59,37 @@ PROLOGUE(func)
 L(ent):	push	%rbx
 	push	%r12
 
-	mov	%ecx, %eax
-	and	$3, %eax
-	jne	L(n00)		C n = 0, 4, 8, ...
-	mov	%r8, %rbx
-	mov	(up), %r8
 	mov	(vp), %r9
+
+	mov	R32(n), R32(%rax)
+	and	$3, R32(%rax)
+	jne	L(n00)		C n = 0, 4, 8, ...
+	mov	R32(%r8), R32(%rbx)
+	mov	(up), %r8
 	mov	8(up), %r10
 	ADDSUB	%r9, %r8
 	mov	8(vp), %r9
-	setc	%al
+	setc	R8(%rax)
 	lea	-16(rp), rp
-	sub	$4, n
 	jmp	L(L00)
 
-L(n00):	cmp	$2, %eax
+L(n00):	cmp	$2, R32(%rax)
 	jnc	L(n01)		C n = 1, 5, 9, ...
 	mov	(up), %r11
-	mov	(vp), %r9
-	mov	%r8, %rax
-	xor	%ebx, %ebx
-	sub	$4, n
-	jnc	L(gt1)
+	mov	R32(%r8), R32(%rax)
+	xor	R32(%rbx), R32(%rbx)
+	dec	n
+	jnz	L(gt1)
 	ADDSUB	%r9, %r11
-	setc	%bl
+	setc	R8(%rbx)
 	ADDSUB	%rax, %r11
-	adc	$0, %ebx
+	adc	$0, R32(%rbx)
 	mov	%r11, (rp)
 	jmp	L(ret)
 L(gt1):	mov	8(up), %r8
 	ADDSUB	%r9, %r11
 	mov	8(vp), %r9
-	setc	%bl
+	setc	R8(%rbx)
 	lea	-8(rp), rp
 	lea	8(up), up
 	lea	8(vp), vp
@@ -98,63 +97,56 @@ L(gt1):	mov	8(up), %r8
 
 L(n01):	jne	L(n10)		C n = 2, 6, 10, ...
 	mov	(up), %r12
-	mov	(vp), %r9
-	mov	%r8, %rbx
+	mov	R32(%r8), R32(%rbx)
 	mov	8(up), %r11
 	ADDSUB	%r9, %r12
 	mov	8(vp), %r9
-	setc	%al
-	ADDSUB	%rbx, %r12
-	jc	L(c3a)
-L(rc3a):	lea	16(up), up
+	setc	R8(%rax)
+	lea	-32(rp), rp
+	lea	16(up), up
 	lea	16(vp), vp
-	sub	$4, n
-	jnc	L(top)
-	jmp	L(end)
+	jmp	L(L10)
 
 L(n10):	mov	(up), %r10	C n = 3, 7, 11, ...
-	mov	(vp), %r9
-	mov	%r8, %rax
-	xor	%ebx, %ebx
+	mov	R32(%r8), R32(%rax)
+	xor	R32(%rbx), R32(%rbx)
 	mov	8(up), %r12
 	ADDSUB	%r9, %r10
 	mov	8(vp), %r9
-	setc	%bl
+	setc	R8(%rbx)
 	lea	-24(rp), rp
 	lea	-8(up), up
 	lea	-8(vp), vp
 	jmp	L(L11)
 
-L(c3a):	mov	$1, %al
-	jmp	L(rc3a)
-L(c0):	mov	$1, %bl
+L(c0):	mov	$1, R8(%rbx)
 	jmp	L(rc0)
-L(c1):	mov	$1, %al
+L(c1):	mov	$1, R8(%rax)
 	jmp	L(rc1)
-L(c2):	mov	$1, %bl
+L(c2):	mov	$1, R8(%rbx)
 	jmp	L(rc2)
-L(c3):	mov	$1, %al
+L(c3):	mov	$1, R8(%rax)
 	jmp	L(rc3)
 
 	ALIGN(16)
 L(top):	mov	(up), %r8	C not on critical path
 	ADDSUB	%r9, %r11	C not on critical path
 	mov	(vp), %r9	C not on critical path
-	setc	%bl		C save carry out
+	setc	R8(%rbx)	C save carry out
 	mov	%r12, (rp)
 L(L01):	ADDSUB	%rax, %r11	C apply previous carry out
 	jc	L(c0)		C jump if ripple
 L(rc0):	mov	8(up), %r10
 	ADDSUB	%r9, %r8
 	mov	8(vp), %r9
-	setc	%al
+	setc	R8(%rax)
 	mov	%r11, 8(rp)
 L(L00):	ADDSUB	%rbx, %r8
 	jc	L(c1)
 L(rc1):	mov	16(up), %r12
 	ADDSUB	%r9, %r10
 	mov	16(vp), %r9
-	setc	%bl
+	setc	R8(%rbx)
 	mov	%r8, 16(rp)
 L(L11):	ADDSUB	%rax, %r10
 	jc	L(c2)
@@ -163,23 +155,23 @@ L(rc2):	mov	24(up), %r11
 	lea	32(up), up
 	mov	24(vp), %r9
 	lea	32(vp), vp
-	setc	%al
+	setc	R8(%rax)
 	mov	%r10, 24(rp)
 L(L10):	ADDSUB	%rbx, %r12
 	jc	L(c3)
 L(rc3):	lea	32(rp), rp
 	sub	$4, n
-	jnc	L(top)
+	ja	L(top)
 
 L(end):	ADDSUB	%r9, %r11
-	setc	%bl
+	setc	R8(%rbx)
 	mov	%r12, (rp)
 	ADDSUB	%rax, %r11
 	jnc	L(1)
-	mov	$1, %bl
+	mov	$1, R8(%rbx)
 L(1):	mov	%r11, 8(rp)
 
-L(ret):	mov	%ebx, %eax
+L(ret):	mov	R32(%rbx), R32(%rax)
 	pop	%r12
 	pop	%rbx
 	ret
