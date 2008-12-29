@@ -1,3 +1,8 @@
+2008-12-30  Niels Möller  <nisse@lysator.liu.se>
+
+	* doc/gmp.texi (Greatest Common Divisor Algorithms): Updated
+	section on GCD algorithms.
+
 2008-12-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/toom*.c: Use coherent MAYBE_ macros for trimming

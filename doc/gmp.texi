@@ -8258,18 +8258,16 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 @cindex Greatest common divisor algorithms
 @cindex GCD algorithms
 
-@strong{This section needs to be rewritten, it currently describes the
-algorithms used in GMP 4.}
-
 @menu
 * Binary GCD::
-* Accelerated GCD::
+* Lehmer's Algorithm::
+* Subquadratic GCD::
 * Extended GCD::
 * Jacobi Symbol::
 @end menu
 
 
-@node Binary GCD, Accelerated GCD, Greatest Common Divisor Algorithms, Greatest Common Divisor Algorithms
+@node Binary GCD, Lehmer's Algorithm, Greatest Common Divisor Algorithms, Greatest Common Divisor Algorithms
 @subsection Binary GCD
 
 At small sizes GMP uses an @math{O(N^2)} binary style GCD@.  This is described
@@ -8281,8 +8279,10 @@ consists of successively reducing odd operands @math{a} and @math{b} using
 strip factors of 2 from @math{a}
 @end quotation
 
-The Euclidean GCD algorithm, as per Knuth algorithms E and A, reduces using
-@math{a @bmod b} but this has so far been found to be slower everywhere.  One
+The Euclidean GCD algorithm, as per Knuth algorithms E and A, repeatedly
+computes the quotient @math{q = floor(a/b)} and replaces @math{a,b} by
+@math{v, u - q v}. The binary algorithm has so far been found to be faster
+than the Euclidean algorithm everywhere.  One
 reason the binary method does well is that the implied quotient at each step
 is usually small, so often only one or two subtractions are needed to get the
 same effect as a division.  Quotients 1, 2 and 3 for example occur 67.7% of
@@ -8326,73 +8326,134 @@ achieved, which is still not terribly fast with for instance a 64-bit GCD
 taking nearly 400 cycles.  It's this sort of time which means it's not usually
 advantageous to combine a set of divisibility tests into a GCD.
 
+Currently, the binary algorithm is used for GCD only when @math{N < 3}.
 
-@node Accelerated GCD, Extended GCD, Binary GCD, Greatest Common Divisor Algorithms
-@subsection Accelerated GCD
+@node Lehmer's Algorithm, Subquadratic GCD, Binary GCD, Greatest Common Divisor Algorithms
+@comment  node-name,  next,  previous,  up
+@subsection Lehmer's algorithm
 
-For sizes above @code{GCD_ACCEL_THRESHOLD}, GMP uses the Accelerated GCD
-algorithm described independently by Weber and Jebelean (the latter as the
-``Generalized Binary'' algorithm), @pxref{References}.  This algorithm is
-still @math{O(N^2)}, but is much faster than the binary algorithm since it
-does fewer multi-precision operations.  It consists of alternating the
-@math{k}-ary reduction by Sorenson, and a ``dmod'' exact remainder reduction.
+Lehmer's improvement of the Euclidean algorithms is based on the observation
+that the initial part of the quotient sequence depends only on the most
+significant parts of the inputs. The variant of Lehmer's algorithm used in GMP
+splits off the most significant two limbs, as suggested, e.g., in ``A
+Double-Digit Lehmer-Euclid Algorithm'' by Jebelean (@pxref{References}). The
+quotients of two double-limb inputs are collected as a 2 by 2 matrix with
+single-limb elements. This is done by the function @code{mpn_hgcd2}. The
+resulting matrix is applied to the inputs using @code{mpn_mul_1} and
+@code{mpn_submul_1}. Each iteration usually reduces the inputs by almost one
+limb. In the rare case of a large quotient, no progress can be made by
+examining just the most significant two limbs, and the quotient is computing
+using plain division.
 
-For operands @math{u} and @math{v} the @math{k}-ary reduction replaces
-@math{u} with @m{nv-du,n*v-d*u} where @math{n} and @math{d} are single limb
-values chosen to give two trailing zero limbs on that value, which can be
-stripped.  @math{n} and @math{d} are calculated using an algorithm similar to
-half of a two limb GCD (see @code{find_a} in @file{mpn/generic/gcd.c}).
+The resulting algorithm is asymptotically @math{O(N^2)}, just as the Euclidean
+algorithm and the binary algorithm. The quadratic part of the work are
+the calls to @code{mpn_mul_1} and @code{mpn_submul_1}. For small sizes, the
+linear work is also significant. There are roughly @math{N} calls to the
+@code{mpn_hgcd2} function. This function uses a couple of important
+optimizations:
 
-When @math{u} and @math{v} differ in size by more than a certain number of
-bits, a dmod is performed to zero out bits at the low end of the larger.  It
-consists of an exact remainder style division applied to an appropriate number
-of bits (@pxref{Exact Division}, and @pxref{Exact Remainder}).  This is faster
-than a @math{k}-ary reduction but useful only when the operands differ in
-size.  There's a dmod after each @math{k}-ary reduction, and if the dmod
-leaves the operands still differing in size then it's repeated.
+@itemize
+@item 
+It uses the same relaxed notion of correctness as @code{mpn_hgcd} (see next
+section). This means that when called with the most significant two limbs of
+two large numbers, the returned matrix does not always correspond exactly to
+the initial quotient sequence for the two large numbers; the final quotient
+may sometimes be one off.
 
-The @math{k}-ary reduction step can introduce spurious factors into the GCD
-calculated, and these are eliminated at the end by taking GCDs with the
-original inputs @math{@gcd{}(u,@gcd{}(v,g))} using the binary algorithm.
-Since @math{g} is almost always small this takes very little time.
+@item 
+It takes advantage of the fact the quotients are usually small. The division
+operator is not used, since the corresponding assembler instruction is very
+slow on most architectures. (This code could probably be improved further, it
+uses many branches that are unfriendly to prediction).
 
-At small sizes the algorithm needs a good implementation of @code{find_a}.  At
-larger sizes it's dominated by @code{mpn_addmul_1} applying @math{n} and
-@math{d}.
+@item 
+It switches from double-limb calculations to single-limb calculatiosn half-way
+through, when the input numbers have been reduced in size from two limbs to
+one and a half.
 
+@end itemize
 
-@node Extended GCD, Jacobi Symbol, Accelerated GCD, Greatest Common Divisor Algorithms
+@node Subquadratic GCD, Extended GCD, Lehmer's Algorithm, Greatest Common Divisor Algorithms
+@subsection Subquadratic GCD
+
+For inputs larger than @code{GCD_DC_THRESHOLD}, GCD is computed via the HGCD
+(Half GCD) function, as a generalization to Lehmer's algorithm.
+
+Let the inputs @math{a,b} be of size @math{N} limbs each. Put @math{S =
+floor(N/2) + 1}. Then HGCD(a,b) returns a transformation matrix @math{T} with
+non-negative elements, and reduced numbers @math{(c;d) = T^{-1} (a;b)}. The
+reduced numbers @math{c,d} must be larger than @math{S} limbs, while their
+difference @math{abs(c-d)} must fit in @math{S} limbs. The matrix elements
+will also be of size roughly @math{N/2}.
+
+The HGCD base case uses Lehmer's algorithm, but with the above stop condition
+that returns reduced numbers and the corresponding transformation matrix
+half-way through. For inputs larger than @code{HGCD_THRESHOLD}, HGCD is
+computed recursively, using the divide and conquer algorithm in ``On
+Sch@"onhage's algorithm and subquadratic integer GCD computation'' by M@"oller
+(@pxref{References}). The recursive algorithm consists of these main
+steps.
+
+@itemize
+
+@item
+Call HGCD recursively, on the most significant @math{N/2} limbs. Apply the
+resulting matrix @math{T_1} to the full numbers, reducing them to a size just
+above @math{3N/2}.
+
+@item
+Perform a small number of division or subtraction steps to reduce the numbers
+to size below @math{3N/2}. This is essential mainly for the unlikely case of
+large quotients.
+
+@item
+Call HGCD recursively, on the most significant @math{N/2} limbs of the reduced
+numbers. Apply the reusulting matrix @math{T_2} to the full numbers, reducing
+them to a size just above @math{N/2}.
+
+@item
+Compute @math{T = T_1 T_2}.
+
+@item
+Perform a small number of division and subtraction steps to satisfy the
+requirements, and return.
+@end itemize
+
+GCD is then implemented as a loop around HGCD, similarly to Lehmer's
+algorithm. Where Lehmer repetedly chops off the top two limbs, calls
+@code{mpn_hgcd2}, and applies the resulting matrix to the full numbers, the
+subquadratic GCD chops off the most significant third of the limbs (the
+proportion is a tuning parameter, and @math{1/3} seems to be more efficient
+than, e.g, @math{1/2}), calls @code{mpn_hgcd}, and applies the resulting
+matrix. Once the input numbers are reduced to size below
+@code{GCD_DC_THRESHOLD}, Lehmer's algorithm is used for the rest of the work.
+
+The asymptotic running time of both HGCD and GCD is @math{O(M(N) log(N))},
+where @math{M(N)} is the time for multiplying two @math{N}-limb numbers.
+
+@comment  node-name,  next,  previous,  up
+
+@node Extended GCD, Jacobi Symbol, Subquadratic GCD, Greatest Common Divisor Algorithms
 @subsection Extended GCD
 
-The extended GCD calculates @math{@gcd{}(a,b)} and also cofactors @math{x} and
-@math{y} satisfying @m{ax+by=\gcd(a@C{}b), a*x+b*y=gcd(a@C{}b)}.  Lehmer's
-multi-step improvement of the extended Euclidean algorithm is used.  See Knuth
-section 4.5.2 algorithm L, and @file{mpn/generic/gcdext.c}.  This is an
-@math{O(N^2)} algorithm.
+The extended GCD function, or GCDEXT, calculates @math{@gcd{}(a,b)} and also
+cofactors @math{x} and @math{y} satisfying @m{ax+by=\gcd(a@C{}b),
+a*x+b*y=gcd(a@C{}b)}. All the algorithms used for plain GCD are extended to
+handle this case. The binary algorithm is used only for single-limb GCDEXT.
+Lehmer's algorithm is used for sizes up to @code{GCDEXT_DC_THRESHOLD}. Above
+this threshold, GCDEXT is implemented as a loop around HGCD, but with more
+book-keeping to keep track of the cofactors. This gives the same asymptotic
+running time as for GCD and HGCD, @math{O(M(N) log(N))}
 
-The multipliers at each step are found using single limb calculations for
-sizes up to @code{GCDEXT_THRESHOLD}, or double limb calculations above that.
-The single limb code is faster but doesn't produce full-limb multipliers,
-hence not making full use of the @code{mpn_addmul_1} calls.
-
-When a CPU has a data-dependent multiplier, meaning one which is faster on
-operands with fewer bits, the extra work in the double-limb calculation might
-only save some looping overheads, leading to a large @code{GCDEXT_THRESHOLD}.
-
-Currently the single limb calculation doesn't optimize for the small quotients
-that often occur, and this can lead to unusually low values of
-@code{GCDEXT_THRESHOLD}, depending on the CPU.
-
-An analysis of double-limb calculations can be found in ``A Double-Digit
-Lehmer-Euclid Algorithm'' by Jebelean (@pxref{References}).  The code in GMP
-was developed independently.
-
-It should be noted that when a double limb calculation is used, it's used for
-the whole of that GCD, it doesn't fall back to single limb part way through.
-This is because as the algorithm proceeds, the inputs @math{a} and @math{b}
-are reduced, but the cofactors @math{x} and @math{y} grow, so the multipliers
-at each step are applied to a roughly constant total number of limbs.
-
+One difference to plain GCD is that while the inputs @math{a} and @math{b} are
+reduced as the algorithm proceeds, the cofactors @math{x} and @math{y} grow in
+size. This makes the tuning of the chopping-point more difficult. The current
+code chops off the most significant half of the inputs for the call to HGCD in
+the first iteration, and the most significant two thirds for the remaining
+calls. This strategy could surely be improved. Also the stop condition for the
+loop, where Lehmer's algorithm is invoked once the inputs are reduced below
+@code{GCDEXT_DC_THRESHOLD}, could maybe be improved by taking into account the
+current size of the cofactors.
 
 @node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
 @subsection Jacobi Symbol
@@ -10253,6 +10314,11 @@ Proceedings of the 13th Annual IEEE Symposium on Switching and Automata
 Theory, October 1972, pp.@: 90-96.  Reprinted as ``Fast Modular Transforms'',
 Journal of Computer and System Sciences, volume 8, number 3, June 1974,
 pp.@: 366-386.
+
+@item
+Niels M@"oller, ``On Sch@"onhage's algorithm and subquadratic integer GCD
+  computation'', in Mathematics of Computation, volume 77, January 2008, pp.@:
+  589-607.
 
 @item
 Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
