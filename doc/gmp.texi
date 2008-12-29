@@ -15,7 +15,7 @@ This manual describes how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
@@ -7287,7 +7287,7 @@ documented functions.
 @section Multiplication
 @cindex Multiplication algorithms
 
-N@cross{}N limb multiplications and squares are done using one of four
+N@cross{}N limb multiplications and squares are done using one of five
 algorithms, as the size N increases.
 
 @quotation
@@ -7295,7 +7295,8 @@ algorithms, as the size N increases.
 @item Algorithm @tab Threshold
 @item Basecase  @tab (none)
 @item Karatsuba @tab @code{MUL_KARATSUBA_THRESHOLD}
-@item Toom-3    @tab @code{MUL_TOOM3_THRESHOLD}
+@item Toom-3    @tab @code{MUL_TOOM33_THRESHOLD}
+@item Toom-4    @tab @code{MUL_TOOM44_THRESHOLD}
 @item FFT       @tab @code{MUL_FFT_THRESHOLD}
 @end multitable
 @end quotation
@@ -7303,17 +7304,18 @@ algorithms, as the size N increases.
 Similarly for squaring, with the @code{SQR} thresholds.
 
 N@cross{}M multiplications of operands with different sizes above
-@code{MUL_KARATSUBA_THRESHOLD} are currently done by splitting into M@cross{}M
-pieces.  The Karatsuba and Toom-3 routines then operate only on equal size
-operands.  This is not very efficient, and is slated for improvement in the
-future.
+@code{MUL_KARATSUBA_THRESHOLD} are currently done by special Toom-inspired
+algorithms or directly with FFT, depending on operand size (@pxref{Unbalanced
+Multiplication}).
 
 @menu
 * Basecase Multiplication::
 * Karatsuba Multiplication::
 * Toom 3-Way Multiplication::
+* Toom 4-Way Multiplication::
 * FFT Multiplication::
 * Other Multiplication::
+* Unbalanced Multiplication::
 @end menu
 
 
@@ -7568,7 +7570,7 @@ instance when adding an optimized @code{mpn_sqr_diagonal} to
 that sense the algorithm thresholds are merely of academic interest.
 
 
-@node Toom 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
+@node Toom 3-Way Multiplication, Toom 4-Way Multiplication, Karatsuba Multiplication, Multiplication Algorithms
 @subsection Toom 3-Way Multiplication
 @cindex Toom multiplication
 
@@ -7778,7 +7780,7 @@ interpolation and so it only realizes its advantage above a certain size.
 
 Near the crossover between Toom-3 and Karatsuba there's generally a range of
 sizes where the difference between the two is small.
-@code{MUL_TOOM3_THRESHOLD} is a somewhat arbitrary point in that range and
+@code{MUL_TOOM33_THRESHOLD} is a somewhat arbitrary point in that range and
 successive runs of the tune program can give different values due to small
 variations in measuring.  A graph of time versus size for the two shows the
 effect, see @file{tune/README}.
@@ -7805,7 +7807,50 @@ and for example with a bit of rearrangement just one division by 6 can be
 done.
 
 
-@node FFT Multiplication, Other Multiplication, Toom 3-Way Multiplication, Multiplication Algorithms
+@node Toom 4-Way Multiplication, FFT Multiplication, Toom 3-Way Multiplication, Multiplication Algorithms
+@subsection Toom 4-Way Multiplication
+@cindex Toom multiplication
+
+Karatsuba and Toom-3 split the operands into 2 and 3 coefficients,
+respectively.  Toom-4 analogously splits the operands into 4 coefficients.
+Using the notation from the section on Toom-3 multiplication, we form two
+polynomials:
+
+@display
+@group
+@m{X(t) = x_3t^3 + x_2t^2 + x_1t + x_0,
+   X(t) = x3*t^3 + x2*t^2 + x1*t + x0}
+@m{Y(t) = y_3t^3 + y_2t^2 + y_1t + y_0,
+   Y(t) = y3*t^3 + y2*t^2 + y1*t + y0}
+@end group
+@end display
+
+@math{X(t)} and @math{Y(t)} are evaluated and multiplied at 7 points, giving
+values of @math{W(t)} at those points.  In GMP the following points are used,
+
+@quotation
+@multitable {@m{t=-1/2,t=inf}M} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item Point              @tab Value
+@item @math{t=0}         @tab @m{x_0y_0,x0 * y0}, which gives @ms{w,0} immediately
+@item @math{t=1/2}       @tab @m{(x_3+2x_2+4x_1+8x_0)(y_3+2y_2+4y_1+8y_0),(x3+2*x2+4*x1+8*x0) * (y3+2*y2+4*y1+8*y0)}
+@item @math{t=-1/2}      @tab @m{(-x_3+2x_2-4x_1+8x_0)(-y_3+2y_2-4y_1+8y_0),(-x3+2*x2-4*x1+8*x0) * (-y3+2*y2-4*y1+8*y0)}
+@item @math{t=1}         @tab @m{(x_3+x_2+x_1+x_0)(y_3+y_2+y_1+y_0),(x3+x2+x1+x0) * (y3+y2+y1+y0)}
+@item @math{t=-1}        @tab @m{(-x_3+x_2-x_1+x_0)(-y_3+y_2-y_1+y_0),(-x3+x2-x1+x0) * (-y3+y2-y1+y0)}
+@item @math{t=2}         @tab @m{(8x_3+4x_2+2x_1+x_0)(8y_3+4y_2+2y_1+y_0),(8*x3+4*x2+2*x1+x0) * (8*y3+4*y2+2*y1+y0)}
+@item @m{t=\infty,t=inf} @tab @m{x_3y_3,x3 * y3}, which gives @ms{w,6} immediately
+@end multitable
+@end quotation
+
+The number of additions and subtractions for Toom-4 is much larger than for Toom-3.
+But several subexpressions occur multiple times, for example @m{x_2+x_0,x2+x0}, occurs
+for both @math{t=1} and @math{t=-1}.
+
+Toom-4 is asymptotically @math{O(N^@W{1.404})}, the exponent being
+@m{\log7/\log4,log(7)/log(4)}, representing 7 recursive multiplies of 1/4 the
+original size each.
+
+
+@node FFT Multiplication, Other Multiplication, Toom 4-Way Multiplication, Multiplication Algorithms
 @subsection FFT Multiplication
 @cindex FFT multiplication
 @cindex Fast Fourier Transform
@@ -7920,15 +7965,14 @@ more sophisticated for @code{MUL_FFT_TABLE} and @code{SQR_FFT_TABLE} will be
 needed.
 
 
-@node Other Multiplication,  , FFT Multiplication, Multiplication Algorithms
+@node Other Multiplication, Unbalanced Multiplication, FFT Multiplication, Multiplication Algorithms
 @subsection Other Multiplication
 @cindex Toom multiplication
 
-The 3-way Toom algorithm described above (@pxref{Toom 3-Way
-Multiplication}) generalizes to split into an arbitrary number of pieces, as
-per Knuth section 4.3.3 algorithm C@.  This is not currently used, though it's
-possible a Toom-4 might fit in between Toom-3 and the FFTs.  The notes here
-are merely for interest.
+The Toom algorithms described above (@pxref{Toom 3-Way Multiplication},
+@pxref{Toom 4-Way Multiplication}) generalizes to split into an arbitrary
+number of pieces, as per Knuth section 4.3.3 algorithm C@.  This is not
+currently used.  The notes here are merely for interest.
 
 In general a split into @math{r+1} pieces is made, and evaluations and
 pointwise multiplications done at @m{2r+1,2*r+1} points.  A 4-way split does 7
@@ -7965,12 +8009,28 @@ bits).  An occasional difference of 1 in the last bit might not matter to a
 typical signal processing algorithm, but is of course of vital importance to
 GMP.
 
+@node Unbalanced Multiplication,  , Other Multiplication, Multiplication Algorithms
+@subsection Unbalanced Multiplication
+@cindex Unbalanced multiplication
+
+Multiplication of operands with different sizes, both below
+@code{MUL_KARATSUBA_THRESHOLD} are done with plain schoolbook multiplication
+(@pxref{Basecase Multiplication}).
+
+For really large operands, we invoke FFT directly.
+
+For operands between these sizes, we use Toom inspired algorithms suggested by
+Alberto Zanoni and Marco Bodrato.  The idea is to split the operands into
+polynomials of different degree.  GMP currently splits the smaller operand
+onto 2 coefficients, i.e., a polynomial of degree 1, but the larger operand
+can be split into 2, 3, or 4 coefficients, i,e., a polynomial of degree 1 to
+3.
 
 @c FIXME: This is mighty ugly, but a cleaner @need triggers texinfo bugs that
 @c screws up layout here and there in the rest of the manual.
-@tex
-\goodbreak
-@end tex
+@c @tex
+@c \goodbreak
+@c @end tex
 @node Division Algorithms, Greatest Common Divisor Algorithms, Multiplication Algorithms, Algorithms
 @section Division Algorithms
 @cindex Division algorithms
@@ -8721,39 +8781,42 @@ speedup.
 @node Radix to Binary,  , Binary to Radix, Radix Conversion Algorithms
 @subsection Radix to Binary
 
+@strong{This section needs to be rewritten, it currently describes the
+algorithms used before GMP 4.3.}
+
 Conversions from a power-of-2 radix into binary use a simple and fast
 @math{O(N)} bitwise concatenation algorithm.
 
 Conversions from other radices use one of two algorithms.  Sizes below
-@code{SET_STR_THRESHOLD} use a basic @math{O(N^2)} method.  Groups of @math{n}
-digits are converted to limbs, where @math{n} is the biggest power of the base
-@math{b} which will fit in a limb, then those groups are accumulated into the
-result by multiplying by @math{b^n} and adding.  This saves multi-precision
-operations, as per Knuth section 4.4 part E (@pxref{References}).  Some
-special case code is provided for decimal, giving the compiler a chance to
-optimize multiplications by 10.
+@code{SET_STR_PRECOMPUTE_THRESHOLD} use a basic @math{O(N^2)} method.  Groups
+of @math{n} digits are converted to limbs, where @math{n} is the biggest
+power of the base @math{b} which will fit in a limb, then those groups are
+accumulated into the result by multiplying by @math{b^n} and adding.  This
+saves multi-precision operations, as per Knuth section 4.4 part E
+(@pxref{References}).  Some special case code is provided for decimal, giving
+the compiler a chance to optimize multiplications by 10.
 
-Above @code{SET_STR_THRESHOLD} a sub-quadratic algorithm is used.  First
-groups of @math{n} digits are converted into limbs.  Then adjacent limbs are
-combined into limb pairs with @m{xb^n+y,x*b^n+y}, where @math{x} and @math{y}
-are the limbs.  Adjacent limb pairs are combined into quads similarly with
-@m{xb^{2n}+y,x*b^(2n)+y}.  This continues until a single block remains, that
-being the result.
+Above @code{SET_STR_PRECOMPUTE_THRESHOLD} a sub-quadratic algorithm is used.
+First groups of @math{n} digits are converted into limbs.  Then adjacent
+limbs are combined into limb pairs with @m{xb^n+y,x*b^n+y}, where @math{x}
+and @math{y} are the limbs.  Adjacent limb pairs are combined into quads
+similarly with @m{xb^{2n}+y,x*b^(2n)+y}.  This continues until a single block
+remains, that being the result.
 
 The advantage of this method is that the multiplications for each @math{x} are
 big blocks, allowing Karatsuba and higher algorithms to be used.  But the cost
 of calculating the powers @m{b^{n2^i},b^(n*2^i)} must be overcome.
-@code{SET_STR_THRESHOLD} usually ends up quite big, around 5000 digits, and on
+@code{SET_STR_PRECOMPUTE_THRESHOLD} usually ends up quite big, around 5000 digits, and on
 some processors much bigger still.
 
-@code{SET_STR_THRESHOLD} is based on the input digits (and tuned for decimal),
-though it might be better based on a limb count, so as to be independent of
-the base.  But that sort of count isn't used by the base case and so would
-need some sort of initial calculation or estimate.
+@code{SET_STR_PRECOMPUTE_THRESHOLD} is based on the input digits (and tuned
+for decimal), though it might be better based on a limb count, so as to be
+independent of the base.  But that sort of count isn't used by the base case
+and so would need some sort of initial calculation or estimate.
 
-The main reason @code{SET_STR_THRESHOLD} is so much bigger than the
+The main reason @code{SET_STR_PRECOMPUTE_THRESHOLD} is so much bigger than the
 corresponding @code{GET_STR_PRECOMPUTE_THRESHOLD} is that @code{mpn_mul_1} is
-much faster than @code{mpn_divrem_1} (often by a factor of 10, or more).
+much faster than @code{mpn_divrem_1} (often by a factor of 5, or more).
 
 
 @need 1000
@@ -10050,9 +10113,8 @@ all subexpressions are evaluated to the precision of @code{f}.
 
 Torbj@"orn Granlund wrote the original GMP library and is still the main
 developer.  Code not explicitly attributed to others, was contributed by
-Torbj@"orn.  Several other individuals and organizations have contributed to
-code that is in version of GMP.  Here is a list in chronological order on
-first contribution:
+Torbj@"orn.  Several other individuals and organizations have contributed
+GMP.  Here is a list in chronological order on first contribution:
 
 Gunnar Sj@"odin and Hans Riesel helped with mathematical problems in early
 versions of the library.
@@ -10124,9 +10186,10 @@ Niels M@"oller wrote the sub-quadratic GCD and extended GCD code, the
 quadratic Hensel division code, and (with Torbj@"orn) the new divide and
 conquer division code for GMP 4.3.
 
-David Harvey worked on the internal function @code{mpn_bdiv_dbm1},
+David Harvey suggested the internal function @code{mpn_bdiv_dbm1},
 implementing division relevant to Toom multiplication.  He also worked on
-fast assembly sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}.
+fast assembly sequences, in particular on a fast AMD64
+@code{mpn_mul_basecase}.
 
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
