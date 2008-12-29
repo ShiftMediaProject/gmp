@@ -291,7 +291,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
        and u1 pointers for the relevant matrix elements. */
 
     struct hgcd_matrix M;
-    mp_size_t p = CHOOSE_P_1 (n); /* Same as for gcd. */
+    mp_size_t p = CHOOSE_P_1 (n);
     mp_size_t nn;
 
     mpn_hgcd_matrix_init (&M, n - p, tp);
