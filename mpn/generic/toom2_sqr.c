@@ -40,13 +40,20 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=      a1 *     b1   # A(inf)*B(inf)
 */
 
+#if TUNE_PROGRAM_BUILD
+#define MAYBE_sqr_toom2   1
+#else
+#define MAYBE_sqr_toom2							\
+  (SQR_TOOM3_THRESHOLD >= 2 * SQR_TOOM2_THRESHOLD)
+#endif
+
 #define TOOM2_SQR_N_REC(p, a, n, ws)					\
   do {									\
-    if (SQR_KARATSUBA_THRESHOLD * 2 >= SQR_TOOM3_THRESHOLD		\
-	|| (BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD)))		\
+    if (! MAYBE_sqr_toom2						\
+	|| BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))		\
       mpn_sqr_basecase (p, a, n);					\
     else								\
-      mpn_kara_sqr_n (p, a, n, ws);					\
+      mpn_toom2_sqr (p, a, n, ws);					\
   } while (0)
 
 void

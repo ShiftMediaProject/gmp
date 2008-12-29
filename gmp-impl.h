@@ -946,6 +946,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
   } while (0)
 
 
+/* FIXME: Make these itch functions less conservative.  Also consider making
+   them dependent on just 'an', and compute the allocation directly from 'an'
+   instead of via n.  */
 static inline mp_size_t
 mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
 {
@@ -959,16 +962,14 @@ mpn_toom33_mul_itch (mp_size_t an, mp_size_t bn)
   /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
      mpn_toom_interpolate_5pts only needs scratch otherwise.  */
   mp_size_t n = (an + 2) / (size_t) 3;
-/*  return 6 * n + 3; */
-  return 6 * n + 100;		/* FIXME */
+  return 6 * n + GMP_NUMB_BITS;
 }
 
 static inline mp_size_t
 mpn_toom44_mul_itch (mp_size_t an, mp_size_t bn)
 {
   mp_size_t n = (an + 3) >> 2;
-/*  return 10 * n + 10; */
-  return 10 * n + 100;		/* FIXME */
+  return 12 * n + GMP_NUMB_BITS;
 }
 
 static inline mp_size_t
@@ -995,11 +996,26 @@ mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
 }
 
 static inline mp_size_t
+mpn_toom2_sqr_itch (mp_size_t an)
+{
+  mp_size_t n = 1 + ((an - 1) >> 1);
+  return 4 * n + 2;
+}
+
+static inline mp_size_t
+mpn_toom3_sqr_itch (mp_size_t an)
+{
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  mp_size_t n = (an + 2) / (size_t) 3;
+  return 6 * n + GMP_NUMB_BITS;
+}
+
+static inline mp_size_t
 mpn_toom4_sqr_itch (mp_size_t an)
 {
   mp_size_t n = (an + 3) >> 2;
-/*  return 10 * n + 10; */
-  return 10 * n + 100;		/* FIXME */
+  return 12 * n + GMP_NUMB_BITS;
 }
 
 
@@ -1601,11 +1617,14 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define MUL_TOOM3_THRESHOLD 128
 #endif
 
-#define MUL_TOOM33_THRESHOLD MUL_TOOM3_THRESHOLD
-
 #ifndef MUL_TOOM44_THRESHOLD
 #define MUL_TOOM44_THRESHOLD 500
 #endif
+
+/* Source compatibility while source is in flux.  */
+#define MUL_TOOM22_THRESHOLD MUL_KARATSUBA_THRESHOLD
+#define MUL_TOOM33_THRESHOLD MUL_TOOM3_THRESHOLD
+#define SQR_TOOM2_THRESHOLD SQR_KARATSUBA_THRESHOLD
 
 /* MUL_KARATSUBA_THRESHOLD_LIMIT is the maximum for MUL_KARATSUBA_THRESHOLD.
    In a normal build MUL_KARATSUBA_THRESHOLD is a constant and we use that.

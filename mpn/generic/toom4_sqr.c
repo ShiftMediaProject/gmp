@@ -1,4 +1,4 @@
-/* mpn_toom44_sqr -- Square {ap,an}.
+/* mpn_toom4_sqr -- Square {ap,an}.
 
    Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
@@ -52,16 +52,32 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=               a3 *          b2      #  A(inf)*B(inf)
 */
 
+#if TUNE_PROGRAM_BUILD
+#define MAYBE_sqr_basecase 1
+#define MAYBE_sqr_toom2   1
+#define MAYBE_sqr_toom4   1
+#else
+#define MAYBE_sqr_basecase						\
+  (SQR_TOOM4_THRESHOLD < 4 * SQR_KARATSUBA_THRESHOLD)
+#define MAYBE_sqr_toom2							\
+  (SQR_TOOM4_THRESHOLD < 4 * SQR_TOOM3_THRESHOLD)
+#define MAYBE_sqr_toom4							\
+  (SQR_FFT_THRESHOLD >= 4 * SQR_TOOM4_THRESHOLD)
+#endif
+
 #define TOOM4_SQR_N_REC(p, a, n, ws)					\
   do {									\
-    if (SQR_TOOM4_THRESHOLD / 4 < SQR_KARATSUBA_THRESHOLD		\
+    if (MAYBE_sqr_basecase						\
 	&& BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))		\
       mpn_sqr_basecase (p, a, n);					\
-    else if (SQR_TOOM4_THRESHOLD / 4 < SQR_TOOM3_THRESHOLD		\
+    else if (MAYBE_sqr_toom2						\
 	     && BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))		\
       mpn_kara_sqr_n (p, a, n, ws);					\
-    else								\
+    else if (! MAYBE_sqr_toom4						\
+	     || BELOW_THRESHOLD (n, SQR_TOOM4_THRESHOLD))		\
       mpn_toom3_sqr_n (p, a, n, ws);					\
+    else								\
+      mpn_toom4_sqr (p, a, n, ws);					\
   } while (0)
 
 void

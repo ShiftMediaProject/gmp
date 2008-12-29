@@ -56,10 +56,17 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=              a3 *     b1  # A(inf)*B(inf)
 */
 
+#if TUNE_PROGRAM_BUILD
+#define MAYBE_mul_toom22   1
+#else
+#define MAYBE_mul_toom22						\
+  (MUL_TOOM33_THRESHOLD >= 2 * MUL_TOOM22_THRESHOLD)
+#endif
+
 #define TOOM22_MUL_N_REC(p, a, b, n, ws)				\
   do {									\
-    if (MUL_KARATSUBA_THRESHOLD * 2 >= MUL_TOOM3_THRESHOLD		\
-	|| (BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD)))		\
+    if (! MAYBE_mul_toom22						\
+	|| BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))		\
       mpn_mul_basecase (p, a, n, b, n);					\
     else								\
       mpn_toom22_mul (p, a, n, b, n, ws);				\

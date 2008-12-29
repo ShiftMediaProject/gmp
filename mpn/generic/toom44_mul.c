@@ -53,16 +53,32 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=               a3 *          b2      #  A(inf)*B(inf)
 */
 
+#if TUNE_PROGRAM_BUILD
+#define MAYBE_mul_basecase 1
+#define MAYBE_mul_toom22   1
+#define MAYBE_mul_toom44   1
+#else
+#define MAYBE_mul_basecase						\
+  (MUL_TOOM44_THRESHOLD < 4 * MUL_KARATSUBA_THRESHOLD)
+#define MAYBE_mul_toom22						\
+  (MUL_TOOM44_THRESHOLD < 4 * MUL_TOOM33_THRESHOLD)
+#define MAYBE_mul_toom44						\
+  (MUL_FFT_THRESHOLD >= 4 * MUL_TOOM44_THRESHOLD)
+#endif
+
 #define TOOM44_MUL_N_REC(p, a, b, n, ws)				\
   do {									\
-    if (MUL_TOOM44_THRESHOLD / 4 < MUL_KARATSUBA_THRESHOLD		\
+    if (MAYBE_mul_basecase						\
 	&& BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))		\
       mpn_mul_basecase (p, a, n, b, n);					\
-    else if (MUL_TOOM44_THRESHOLD / 4 < MUL_TOOM33_THRESHOLD		\
+    else if (MAYBE_mul_toom22						\
 	     && BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD))		\
       mpn_kara_mul_n (p, a, b, n, ws);					\
-    else								\
+    else if (! MAYBE_mul_toom44						\
+	     || BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD))		\
       mpn_toom3_mul_n (p, a, b, n, ws);					\
+    else								\
+      mpn_toom44_mul (p, a, n, b, n, ws);				\
   } while (0)
 
 void

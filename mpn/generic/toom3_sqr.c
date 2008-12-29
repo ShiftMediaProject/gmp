@@ -1,4 +1,4 @@
-/* mpn_toom33_sqr -- Square {ap,an}.
+/* mpn_toom3_sqr -- Square {ap,an}.
 
    Contributed to the GNU project by Torbjorn Granlund.
 
@@ -50,12 +50,23 @@ the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=          a2 *         b2  # A(inf)*B(inf)
 */
 
+#if TUNE_PROGRAM_BUILD
+#define MAYBE_sqr_basecase 1
+#define MAYBE_sqr_toom3   1
+#else
+#define MAYBE_sqr_basecase						\
+  (SQR_TOOM3_THRESHOLD < 3 * SQR_KARATSUBA_THRESHOLD)
+#define MAYBE_sqr_toom3							\
+  (SQR_TOOM4_THRESHOLD >= 3 * SQR_TOOM3_THRESHOLD)
+#endif
+
 #define TOOM3_SQR_N_REC(p, a, n, ws)					\
   do {									\
-    if (SQR_TOOM3_THRESHOLD / 3 < SQR_KARATSUBA_THRESHOLD		\
+    if (MAYBE_sqr_basecase						\
 	&& BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))		\
       mpn_sqr_basecase (p, a, n);					\
-    else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))			\
+    else if (! MAYBE_sqr_toom3						\
+	     || BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))		\
       mpn_kara_sqr_n (p, a, n, ws);					\
     else								\
       mpn_toom3_sqr_n (p, a, n, ws);					\
