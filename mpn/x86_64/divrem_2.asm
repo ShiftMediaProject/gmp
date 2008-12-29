@@ -116,18 +116,18 @@ ifdef(`NEW',`
 	ALIGN(16)
 L(loop):
 	mov	%r9, %rax		C di		ncp
-	mul	%rbx 			C 		0, 18
+	mul	%rbx			C		0, 18
 	add	%r14, %rax		C		4
 	mov	%rax, %r10		C q0		5
-	adc	%rbx, %rdx		C 		5
+	adc	%rbx, %rdx		C		5
 	mov	%rdx, %rdi		C q		6
-	imul	%rsi, %rdx		C 		6
+	imul	%rsi, %rdx		C		6
 	mov	%r8, %rax		C		ncp
 	lea	(%rdx, %r14), %rbx	C n1 -= ...	7
-	mul	%rdi   	      		C    		7
+	mul	%rdi			C		7
 	xor	R32(%r14), R32(%r14)	C
-	cmp	%rcx, %r13 		C
-	jg	L(19) 			C
+	cmp	%rcx, %r13		C
+	jg	L(19)			C
 	mov	(%r12), %r14		C
 	sub	$8, %r12		C
 L(19):	sub	%r8, %r14		C		ncp
@@ -136,13 +136,13 @@ L(19):	sub	%r8, %r14		C		ncp
 	sbb	%rdx, %rbx		C		12
 	inc	%rdi			C		7
 	xor	R32(%rdx), R32(%rdx)	C
-	cmp	%r10, %rbx 		C		13
+	cmp	%r10, %rbx		C		13
 	mov	%r8, %rax		C d1		ncp
 	adc	$-1, %rdx		C mask		14
 	add	%rdx, %rdi		C q--		15
 	and	%rdx, %rax		C d0 or 0	15
 	and	%r11, %rdx		C d1 or 0	15
-	add	%rax, %r14		C    		16
+	add	%rax, %r14		C		16
 	adc	%rdx, %rbx		C		16
 	cmp	%r11, %rbx		C		17
 	jae	L(fix)			C
@@ -160,20 +160,20 @@ L(bck):	mov	%rdi, (%rbp)		C
 	mov	%r10, %rsi
 	ALIGN(16)
 L(loop):
-	mov	%rax, %r14		C 		0, 19
-	mul	%rdi			C 		0
+	mov	%rax, %r14		C		0, 19
+	mul	%rdi			C		0
 	mov	%r11, %r9		C		1
-	add	%rsi, %rax		C 		4
+	add	%rsi, %rax		C		4
 	mov	%rax, %rbx		C q0		5
 	adc	%r14, %rdx		C q		5
-	lea	1(%rdx), %r10		C 		6
+	lea	1(%rdx), %r10		C		6
 	mov	%rdx, %rax		C		6
 	imul	%rdx, %r9		C		6
 	sub	%r9, %rsi		C		10
 	xor	R32(%r9), R32(%r9)	C
-	mul	%r8	  		C		7
+	mul	%r8			C		7
 	cmp	%rcx, %r13		C
-	jg	L(13) 			C
+	jg	L(13)			C
 	mov	(%r12), %r9		C
 	sub	$8, %r12		C
 L(13):	sub	%r8, %r9		C		ncp
@@ -182,7 +182,7 @@ L(13):	sub	%r8, %r9		C		ncp
 	sbb	%rdx, %rsi		C		12
 	cmp	%rbx, %rsi		C		13
 	sbb	%rax, %rax		C		14
-	not	%rax  			C		15
+	not	%rax			C		15
 	add	%rax, %r10		C		16
 	mov	%r8, %rbx		C		ncp
 	and	%rax, %rbx		C		16
@@ -194,7 +194,7 @@ L(13):	sub	%r8, %r9		C		ncp
 L(bck):	mov	%r10, (%rbp)		C
 	sub	$8, %rbp		C
 	mov	%r9, %rsi		C		18
-	dec	%rcx 
+	dec	%rcx
 	jns	L(loop)
 
 	mov	%rsi, %r10
