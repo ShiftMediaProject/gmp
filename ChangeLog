@@ -1,10 +1,42 @@
+2008-12-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/toom*.c: Use coherent MAYBE_ macros for trimming
+	unreachable recursive functions.
+	* gmp-impl.h: Update toom itch functions.
+
+	* mpn/x86_64/sqr_basecase.asm: Slightly increase stack allocation, to
+	placate tuneup.
+
+2008-12-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/pentium4/aors_n.asm: Tune prologue code.
+
+	* mpn/x86_64/pentium4/aorslsh1_n.asm: New file.
+
+	* mpn/x86_64/darwin.m4: Define symbol "DARWIN".
+	* mpn/x86_64/invert_limb.asm: Work around darwin quirks.
+
+	* mpn/x86_64/sqr_basecase.asm: Further optimize, support Darwin.
+
+	* mpn/x86_64/invert_limb.asm: New file.
+
+2008-12-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/core2/aorslsh1_n.asm: New file.
+
+2008-12-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/perfpow.c: Handle negative arguments properly.
+	* tests/mpz/t-perfpow.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-perfpow.
+
 2008-12-23  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-mul.c (dump_abort): Improve error message.
 
 	* gcd.c gcd_subdiv_step.c gcdext.c gcdext_subdiv_step.c:
 	Remove private mpn_zero_p.
-	
+
 	* tune/tuneup.c	(tune_mul): Tune for MUL_TOOM44_THRESHOLD.
 	(tune_sqr): Tune for SQR_TOOM4_THRESHOLD.
 
@@ -406,7 +438,7 @@
 
 2008-10-04  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/x86_64/aorsmul_1.asm: Replace with loopmix-optimized code.
+	* mpn/x86_64/aorsmul_1.asm: Replace with faster code.
 	* mpn/x86_64/mul_1.asm: Likewise.
 	* mpn/x86_64/addmul_2.asm: Likewise.
 	* mpn/x86_64/mul_2.asm: Likewise.
@@ -1903,6 +1935,9 @@
 	* mpz/root.c: Likewise.
 
 	* tests/mpz/reuse.c: Test mpz_rootrem.
+
+	With Paul Zimmermann:
+	* mpn/generic/rootrem.c: Complete rewrite.
 
 2005-10-31  Torbjorn Granlund  <tege@swox.com>
 
