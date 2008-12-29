@@ -58,7 +58,10 @@ define(`rp',	  `%rdi')
 define(`up',	  `%rsi')
 define(`n_param', `%rdx')
 
-define(`SQR_KARATSUBA_THRESHOLD_MAX', 100)
+C We should really trim this, for better spatial locality.  Alternatively,
+C we could grab the upper part of the stack area, leaving the lower part
+C instead of the upper part unused.
+define(`SQR_KARATSUBA_THRESHOLD_MAX', 120)
 define(`STACK_ALLOC', eval(8*2*SQR_KARATSUBA_THRESHOLD_MAX))
 
 define(`n',	`%r11')
