@@ -1,4 +1,4 @@
-dnl  x86-64 mpn_divrem_2 -- Divide an mpn number by a normalized 2-limb number.
+dnl  x86 mpn_divrem_2 -- Divide an mpn number by a normalized 2-limb number.
 
 dnl  Copyright 2007, 2008 Free Software Foundation, Inc.
 
@@ -20,8 +20,6 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 
-
-
 C		norm	frac
 C 486
 C P5
@@ -35,7 +33,7 @@ C P4-f2		*65
 C P4-f3
 C P4-f4		*72
 
-C A star means numbers not updated to the latest version of the code.
+C A star means numbers not updated for the latest version of the code.
 
 
 C TODO
@@ -54,7 +52,7 @@ C dp
 
 
 C eax ebx ecx edx esi edi ebp
-C         cnt         qp     
+C         cnt         qp
 
 ASM_START()
 	TEXT
