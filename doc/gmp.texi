@@ -8341,13 +8341,13 @@ strip factors of 2 from @math{a}
 @end quotation
 
 The Euclidean GCD algorithm, as per Knuth algorithms E and A, repeatedly
-computes the quotient @math{q = floor(a/b)} and replaces @math{a,b} by
-@math{v, u - q v}. The binary algorithm has so far been found to be faster
-than the Euclidean algorithm everywhere.  One
-reason the binary method does well is that the implied quotient at each step
-is usually small, so often only one or two subtractions are needed to get the
-same effect as a division.  Quotients 1, 2 and 3 for example occur 67.7% of
-the time, see Knuth section 4.5.3 Theorem E.
+computes the quotient @m{q = \lfloor a/b \rfloor, q = floor(1/b)} and replaces
+@math{a,b} by @math{v, u - q v}. The binary algorithm has so far been found to
+be faster than the Euclidean algorithm everywhere.  One reason the binary
+method does well is that the implied quotient at each step is usually small,
+so often only one or two subtractions are needed to get the same effect as a
+division.  Quotients 1, 2 and 3 for example occur 67.7% of the time, see Knuth
+section 4.5.3 Theorem E.
 
 When the implied quotient is large, meaning @math{b} is much smaller than
 @math{a}, then a division is worthwhile.  This is the basis for the initial
@@ -8440,12 +8440,12 @@ one and a half.
 For inputs larger than @code{GCD_DC_THRESHOLD}, GCD is computed via the HGCD
 (Half GCD) function, as a generalization to Lehmer's algorithm.
 
-Let the inputs @math{a,b} be of size @math{N} limbs each. Put @math{S =
-floor(N/2) + 1}. Then HGCD(a,b) returns a transformation matrix @math{T} with
-non-negative elements, and reduced numbers @math{(c;d) = T^{-1} (a;b)}. The
-reduced numbers @math{c,d} must be larger than @math{S} limbs, while their
-difference @math{abs(c-d)} must fit in @math{S} limbs. The matrix elements
-will also be of size roughly @math{N/2}.
+Let the inputs @math{a,b} be of size @math{N} limbs each. Put @m{S=\lfloor N/2
+\rfloor + 1, S = floor(N/2) + 1}. Then HGCD(a,b) returns a transformation
+matrix @math{T} with non-negative elements, and reduced numbers @math{(c;d) =
+T^{-1} (a;b)}. The reduced numbers @math{c,d} must be larger than @math{S}
+limbs, while their difference @math{abs(c-d)} must fit in @math{S} limbs. The
+matrix elements will also be of size roughly @math{N/2}.
 
 The HGCD base case uses Lehmer's algorithm, but with the above stop condition
 that returns reduced numbers and the corresponding transformation matrix
