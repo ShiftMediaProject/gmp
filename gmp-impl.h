@@ -1051,7 +1051,7 @@ mpn_toom4_sqr_itch (mp_size_t an)
 #define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
 #define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
 #endif
-#define MPN_TOOM3_MAX_N 285405
+#define MPN_TOOM44_MAX_N 285405
 #endif /* WANT_FFT */
 
 /* need 2 so that n2>=1 */
