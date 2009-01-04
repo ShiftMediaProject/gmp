@@ -1,5 +1,8 @@
 2009-01-04  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/and.c, mpz/ior.c, mpz/xor.c: Re-read only necessary source
+	pointers after reallocation.  Misc cleanup.
+
 	* gmp-impl.h (MPN_TOOM44_MAX_N): New define, replaces MPN_TOOM3_MAX_N.
 
 	* mpn/x86/fat/diveby3.c: New file.
