@@ -1,6 +1,6 @@
-dnl  IA-64 mpn_bdiv_dbm1, mpn_divexact_by3c.
+dnl  IA-64 mpn_bdiv_dbm1.
 
-dnl  Copyright 2008 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,9 +24,6 @@ C Itanium 2:  2.0
 
 C TODO
 C  * Optimize feed-in and wind-down code, both for speed and code size.
-C  * This works except that the mpn_divexact_by3c return value is not correct.
-C    The problem is that the needed xma.hi and its dependent instructions are
-C    not in the mpn_bdiv_dbm1.
 
 C INPUT PARAMETERS
 define(`rp', `r32')
