@@ -28,7 +28,7 @@ C TODO
 C  * Try less unrolling, 2-way should give the same performance.
 C  * Optimize feed-in and wind-down code, for speed, and perhaps further for
 C    code size.
-C  * This run optimally given the algorithm, r8 is on a 3 operation recurrency
+C  * This runs optimally given the algorithm, r8 is on a 3 operation recurrency
 C    path.  We have not tried very hard to find a better algorithm.  Perhaps
 C    it would be a good task for the GNU superoptimizer.
 
