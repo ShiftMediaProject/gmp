@@ -32,12 +32,12 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   TMP_DECL;
 
   TMP_MARK;
-  op1_size = op1->_mp_size;
-  op2_size = op2->_mp_size;
+  op1_size = SIZ(op1);
+  op2_size = SIZ(op2);
 
-  op1_ptr = op1->_mp_d;
-  op2_ptr = op2->_mp_d;
-  res_ptr = res->_mp_d;
+  op1_ptr = PTR(op1);
+  op2_ptr = PTR(op2);
+  res_ptr = PTR(res);
 
   if (op1_size >= 0)
     {
@@ -45,12 +45,12 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	{
 	  if (op1_size >= op2_size)
 	    {
-	      if (res->_mp_alloc < op1_size)
+	      if (ALLOC(res) < op1_size)
 		{
 		  _mpz_realloc (res, op1_size);
-		  op1_ptr = op1->_mp_d;
-		  op2_ptr = op2->_mp_d;
-		  res_ptr = res->_mp_d;
+		  /* No overlapping possible: op1_ptr = PTR(op1); */
+		  op2_ptr = PTR(op2);
+		  res_ptr = PTR(res);
 		}
 
 	      if (res_ptr != op1_ptr)
@@ -62,12 +62,12 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	    }
 	  else
 	    {
-	      if (res->_mp_alloc < op2_size)
+	      if (ALLOC(res) < op2_size)
 		{
 		  _mpz_realloc (res, op2_size);
-		  op1_ptr = op1->_mp_d;
-		  op2_ptr = op2->_mp_d;
-		  res_ptr = res->_mp_d;
+		  op1_ptr = PTR(op1);
+		  /* No overlapping possible: op2_ptr = PTR(op2); */
+		  res_ptr = PTR(res);
 		}
 
 	      if (res_ptr != op2_ptr)
@@ -78,7 +78,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      res_size = op2_size;
 	    }
 
-	  res->_mp_size = res_size;
+	  SIZ(res) = res_size;
 	  return;
 	}
       else /* op2_size < 0 */
@@ -105,21 +105,19 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  /* Possible optimization: Decrease mpn_sub precision,
 	     as we won't use the entire res of both.  */
-	  opx = (mp_ptr) TMP_ALLOC (res_size * BYTES_PER_MP_LIMB);
+	  opx = TMP_ALLOC_LIMBS (res_size);
 	  mpn_sub_1 (opx, op1_ptr, res_size, (mp_limb_t) 1);
 	  op1_ptr = opx;
 
-	  opx = (mp_ptr) TMP_ALLOC (res_size * BYTES_PER_MP_LIMB);
+	  opx = TMP_ALLOC_LIMBS (res_size);
 	  mpn_sub_1 (opx, op2_ptr, res_size, (mp_limb_t) 1);
 	  op2_ptr = opx;
 
-	  if (res->_mp_alloc < res_size)
+	  if (ALLOC(res) < res_size)
 	    {
 	      _mpz_realloc (res, res_size);
-	      res_ptr = res->_mp_d;
-	      /* Don't re-read OP1_PTR and OP2_PTR.  They point to
-		 temporary space--never to the space RES->_mp_d used
-		 to point to before reallocation.  */
+	      /* op1_ptr and op2_ptr point to temporary space.  */
+	      res_ptr = PTR(res);
 	    }
 
 	  /* First loop finds the size of the result.  */
@@ -147,7 +145,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      res_size = 1;
 	    }
 
-	  res->_mp_size = -res_size;
+	  SIZ(res) = -res_size;
 	  TMP_FREE;
 	  return;
 	}
@@ -175,18 +173,17 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
     res_alloc = op2_size;
 
-    opx = (mp_ptr) TMP_ALLOC (op2_size * BYTES_PER_MP_LIMB);
+    opx = TMP_ALLOC_LIMBS (op2_size);
     mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
     op2_ptr = opx;
     op2_size -= op2_ptr[op2_size - 1] == 0;
 
-    if (res->_mp_alloc < res_alloc)
+    if (ALLOC(res) < res_alloc)
       {
 	_mpz_realloc (res, res_alloc);
-	op1_ptr = op1->_mp_d;
-	res_ptr = res->_mp_d;
-	/* Don't re-read OP2_PTR.  It points to temporary space--never
-	   to the space RES->_mp_d used to point to before reallocation.  */
+	op1_ptr = PTR(op1);
+	/* op2_ptr points to temporary space.  */
+	res_ptr = PTR(res);
       }
 
     if (op1_size >= op2_size)
@@ -229,7 +226,7 @@ mpz_ior (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	res_size = 1;
       }
 
-    res->_mp_size = -res_size;
+    SIZ(res) = -res_size;
   }
   TMP_FREE;
 }

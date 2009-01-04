@@ -32,12 +32,12 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
   TMP_DECL;
 
   TMP_MARK;
-  op1_size = op1->_mp_size;
-  op2_size = op2->_mp_size;
+  op1_size = SIZ(op1);
+  op2_size = SIZ(op2);
 
-  op1_ptr = op1->_mp_d;
-  op2_ptr = op2->_mp_d;
-  res_ptr = res->_mp_d;
+  op1_ptr = PTR(op1);
+  op2_ptr = PTR(op2);
+  res_ptr = PTR(res);
 
   if (op1_size >= 0)
     {
@@ -52,15 +52,16 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  /* Handle allocation, now then we know exactly how much space is
 	     needed for the result.  */
-	  if (UNLIKELY (res->_mp_alloc < res_size))
+	  if (UNLIKELY (ALLOC(res) < res_size))
 	    {
 	      _mpz_realloc (res, res_size);
-	      op1_ptr = op1->_mp_d;
-	      op2_ptr = op2->_mp_d;
-	      res_ptr = res->_mp_d;
+	      res_ptr = PTR(res);
+	      /* Don't re-read op1_ptr and op2_ptr.  Since res_size <=
+		 MIN(op1_size, op2_size), we will not reach this code when op1
+		 is identical to res or op2 is identical to res.  */
 	    }
 
-	  res->_mp_size = res_size;
+	  SIZ(res) = res_size;
           if (LIKELY (res_size != 0))
             mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
 	  return;
@@ -93,21 +94,21 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  res_alloc = 1 + MAX (op1_size, op2_size);
 
-	  opx = (mp_ptr) TMP_ALLOC (op1_size * BYTES_PER_MP_LIMB);
+	  opx = TMP_ALLOC_LIMBS (op1_size);
 	  mpn_sub_1 (opx, op1_ptr, op1_size, (mp_limb_t) 1);
 	  op1_ptr = opx;
 
-	  opx = (mp_ptr) TMP_ALLOC (op2_size * BYTES_PER_MP_LIMB);
+	  opx = TMP_ALLOC_LIMBS (op2_size);
 	  mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
 	  op2_ptr = opx;
 
-	  if (res->_mp_alloc < res_alloc)
+	  if (ALLOC(res) < res_alloc)
 	    {
 	      _mpz_realloc (res, res_alloc);
-	      res_ptr = res->_mp_d;
-	      /* Don't re-read OP1_PTR and OP2_PTR.  They point to
-		 temporary space--never to the space RES->_mp_d used
-		 to point to before reallocation.  */
+	      res_ptr = PTR(res);
+	      /* Don't re-read OP1_PTR and OP2_PTR.  They point to temporary
+		 space--never to the space PTR(res) used to point to before
+		 reallocation.  */
 	    }
 
 	  if (op1_size >= op2_size)
@@ -134,7 +135,7 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      res_size++;
 	    }
 
-	  res->_mp_size = -res_size;
+	  SIZ(res) = -res_size;
 	  TMP_FREE;
 	  return;
 	}
@@ -197,7 +198,7 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	res_ptr[op2_lim] = op1_ptr[op2_lim] & -op2_ptr[op2_lim];
       }
 
-    res->_mp_size = res_size;
+    SIZ(res) = res_size;
 #else
 
     /* OP1 is positive and zero-extended,
@@ -208,7 +209,7 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
     mp_ptr opx;
 
     op2_size = -op2_size;
-    opx = (mp_ptr) TMP_ALLOC (op2_size * BYTES_PER_MP_LIMB);
+    opx = TMP_ALLOC_LIMBS (op2_size);
     mpn_sub_1 (opx, op2_ptr, op2_size, (mp_limb_t) 1);
     op2_ptr = opx;
 
@@ -220,21 +221,20 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	/* Handle allocation, now then we know exactly how much space is
 	   needed for the result.  */
-	if (res->_mp_alloc < res_size)
+	if (ALLOC(res) < res_size)
 	  {
 	    _mpz_realloc (res, res_size);
-	    res_ptr = res->_mp_d;
-	    op1_ptr = op1->_mp_d;
-	    /* Don't re-read OP2_PTR.  It points to temporary space--never
-	       to the space RES->_mp_d used to point to before reallocation.  */
+	    res_ptr = PTR(res);
+	    /* Don't re-read OP1_PTR or OP2_PTR.  Since res_size = op1_size,
+	       we will not reach this code when op1 is identical to res.
+	       OP2_PTR points to temporary space.  */
 	  }
 
-	MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size,
-		  res_size - op2_size);
+	MPN_COPY (res_ptr + op2_size, op1_ptr + op2_size, res_size - op2_size);
 	for (i = op2_size - 1; i >= 0; i--)
 	  res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
 
-	res->_mp_size = res_size;
+	SIZ(res) = res_size;
       }
     else
       {
@@ -247,19 +247,20 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	/* Handle allocation, now then we know exactly how much space is
 	   needed for the result.  */
-	if (res->_mp_alloc < res_size)
+	if (ALLOC(res) < res_size)
 	  {
 	    _mpz_realloc (res, res_size);
-	    res_ptr = res->_mp_d;
-	    op1_ptr = op1->_mp_d;
+	    res_ptr = PTR(res);
+	    /* Don't re-read OP1_PTR.  Since res_size <= op1_size, we will
+	       not reach this code when op1 is identical to res.  */
 	    /* Don't re-read OP2_PTR.  It points to temporary space--never
-	       to the space RES->_mp_d used to point to before reallocation.  */
+	       to the space PTR(res) used to point to before reallocation.  */
 	  }
 
 	for (i = res_size - 1; i >= 0; i--)
 	  res_ptr[i] = op1_ptr[i] & ~op2_ptr[i];
 
-	res->_mp_size = res_size;
+	SIZ(res) = res_size;
       }
 #endif
   }
