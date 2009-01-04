@@ -1,7 +1,7 @@
 /* Intel P6/sse2 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002, 2003, 2008 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002, 2003, 2008, 2009
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,18 +34,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_KARATSUBA_THRESHOLD          20
 #define MUL_TOOM3_THRESHOLD              77
+#define MUL_TOOM44_THRESHOLD            142
 
 #define SQR_BASECASE_THRESHOLD            0  /* always (native) */
 #define SQR_KARATSUBA_THRESHOLD          30
 #define SQR_TOOM3_THRESHOLD             101
+#define SQR_TOOM4_THRESHOLD             154
 
 #define MULLOW_BASECASE_THRESHOLD         4
 #define MULLOW_DC_THRESHOLD              38
-#define MULLOW_MUL_N_THRESHOLD          363
+#define MULLOW_MUL_N_THRESHOLD          234
 
 #define DIV_SB_PREINV_THRESHOLD           0  /* always */
-#define DIV_DC_THRESHOLD                 20
-#define POWM_THRESHOLD                  146
+#define DIV_DC_THRESHOLD                 24
+#define POWM_THRESHOLD                  150
 
 #define MATRIX22_STRASSEN_THRESHOLD      23
 #define HGCD_THRESHOLD                   95
@@ -55,19 +57,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define USE_PREINV_DIVREM_1               1  /* native */
 #define USE_PREINV_MOD_1                  1  /* native */
-#define DIVREM_2_THRESHOLD                0  /* always */
 #define DIVEXACT_1_THRESHOLD              0  /* always (native) */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always (native) */
 
 #define GET_STR_DC_THRESHOLD             14
 #define GET_STR_PRECOMPUTE_THRESHOLD     24
 #define SET_STR_DC_THRESHOLD            276
-#define SET_STR_PRECOMPUTE_THRESHOLD    846
+#define SET_STR_PRECOMPUTE_THRESHOLD   1078
 
-#define MUL_FFT_TABLE  { 464, 928, 1920, 3584, 10240, 40960, 163840, 393216, 0 }
-#define MUL_FFT_MODF_THRESHOLD          360
-#define MUL_FFT_THRESHOLD              2816
+#define MUL_FFT_TABLE  { 400, 928, 1664, 3584, 10240, 40960, 98304, 393216, 1572864, 0 }
+#define MUL_FFT_MODF_THRESHOLD          496
+#define MUL_FFT_THRESHOLD              7168
 
-#define SQR_FFT_TABLE  { 528, 1184, 1920, 4608, 14336, 40960, 163840, 393216, 0 }
-#define SQR_FFT_MODF_THRESHOLD          440
-#define SQR_FFT_THRESHOLD              2816
+#define SQR_FFT_TABLE  { 432, 928, 1664, 3584, 10240, 40960, 98304, 393216, 1572864, 0 }
+#define SQR_FFT_MODF_THRESHOLD          448
+#define SQR_FFT_THRESHOLD              3840
