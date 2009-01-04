@@ -1,3 +1,7 @@
+2009-01-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/fat/diveby3.c: New file.
+
 2008-12-30  Niels Möller  <nisse@lysator.liu.se>
 
 	* doc/gmp.texi (Greatest Common Divisor Algorithms): Updated
@@ -5,6 +9,11 @@
 
 2008-12-29  Torbjorn Granlund  <tege@swox.com>
 
+	* doc/gmp.texi (Multiplication Algorithms): Add descriptions of Toom-4
+	and unbalanced multiplication.
+	(Radix to Binary): Add warning that text is outdated,
+	(Contributors): Fix typos.
+	
 	* mpn/generic/toom*.c: Use coherent MAYBE_ macros for trimming
 	unreachable recursive functions.
 	* gmp-impl.h: Update toom itch functions.
