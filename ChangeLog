@@ -1,5 +1,7 @@
 2009-01-04  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h (MPN_TOOM44_MAX_N): New define, replaces MPN_TOOM3_MAX_N.
+
 	* mpn/x86/fat/diveby3.c: New file.
 
 2008-12-30  Niels Möller  <nisse@lysator.liu.se>
@@ -13,7 +15,7 @@
 	and unbalanced multiplication.
 	(Radix to Binary): Add warning that text is outdated,
 	(Contributors): Fix typos.
-	
+
 	* mpn/generic/toom*.c: Use coherent MAYBE_ macros for trimming
 	unreachable recursive functions.
 	* gmp-impl.h: Update toom itch functions.
