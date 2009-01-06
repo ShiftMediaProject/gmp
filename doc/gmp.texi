@@ -8341,7 +8341,7 @@ strip factors of 2 from @math{a}
 @end quotation
 
 The Euclidean GCD algorithm, as per Knuth algorithms E and A, repeatedly
-computes the quotient @m{q = \lfloor a/b \rfloor, q = floor(1/b)} and replaces
+computes the quotient @m{q = \lfloor a/b \rfloor, q = floor(a/b)} and replaces
 @math{a,b} by @math{v, u - q v}. The binary algorithm has so far been found to
 be faster than the Euclidean algorithm everywhere.  One reason the binary
 method does well is that the implied quotient at each step is usually small,
