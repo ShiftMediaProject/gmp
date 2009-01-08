@@ -1,5 +1,8 @@
 2009-01-08  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-nextprime.c: New test file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-nextprime.
+
 	From Niels Möller:
 	* mpz/nextprime.c: Handle large prime gaps by limiting incr.
 
