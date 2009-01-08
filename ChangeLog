@@ -1,3 +1,8 @@
+2009-01-08  Torbjorn Granlund  <tege@swox.com>
+
+	From Niels Möller:
+	* mpz/nextprime.c: Handle large prime gaps by limiting incr.
+
 2009-01-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/and.c, mpz/ior.c, mpz/xor.c: Re-read only necessary source
