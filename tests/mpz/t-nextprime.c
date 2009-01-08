@@ -22,7 +22,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "tests.h"
+
+void
+refmpz_nextprime (mpz_ptr p, mpz_srcptr t)
+{
+  mpz_add_ui (p, t, 1L);
+  while (! mpz_probab_prime_p (p, 10))
+    mpz_add_ui (p, p, 1L);
+}
 
 void
 run (char *start, int reps, char *end, short diffs[])
@@ -64,9 +73,16 @@ extern short diff4[];
 extern short diff5[];
 
 int
-main ()
+main (int argc, char **argv)
 {
+  int i;
+  int reps = 200;
+  gmp_randstate_ptr rands;
+  mpz_t bs, x, nxtp, ref_nxtp;
+  unsigned long bsi, size_range;
+
   tests_start();
+  rands = RANDS;
 
   run ("2", 5000, "0xbdeb", diff1);
 
@@ -80,6 +96,35 @@ main ()
 
   run ("0x1c2c26be55317530311facb648ea06b359b969715db83292ab8cf898d8b1b", 1000,
        "0x1c2c26be55317530311facb648ea06b359b969715db83292ab8cf89901519", diff5);
+
+  mpz_init (bs);
+  mpz_init (x);
+  mpz_init (nxtp);
+  mpz_init (ref_nxtp);
+
+  if (argc == 2)
+     reps = atoi (argv[1]);
+
+  for (i = 0; i < reps; i++)
+    {
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 9 + 2; /* 0..1024 bit operands */
+
+      mpz_urandomb (bs, rands, size_range);
+      mpz_rrandomb (x, rands, mpz_get_ui (bs));
+
+/*      gmp_printf ("%ld: %Zd\n", mpz_sizeinbase (x, 2), x); */
+
+      mpz_nextprime (nxtp, x);
+      refmpz_nextprime (ref_nxtp, x);
+      if (mpz_cmp (nxtp, ref_nxtp) != 0)
+	abort ();
+    }
+
+  mpz_clear (bs);
+  mpz_clear (x);
+  mpz_clear (nxtp);
+  mpz_clear (ref_nxtp);
 
   tests_end ();
   return 0;
