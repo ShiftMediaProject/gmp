@@ -1,6 +1,6 @@
 /* mpz_nextprime(p,t) - compute the next prime > t and store that in p.
 
-Copyright 1999, 2000, 2001, 2008 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2008, 2009 Free Software Foundation, Inc.
 
 Contributed to the GNU project by Niels Möller and Torbjörn Granlund.
 
@@ -73,41 +73,48 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
 
   /* Compute residues modulo small odd primes */
   moduli = TMP_SALLOC_TYPE (prime_limit * sizeof moduli[0], unsigned short);
-  /* FIXME: Compute lazily? */
-  prime = 3;
-  for (i = 0; i < prime_limit; i++)
-    {
-      moduli[i] = mpz_fdiv_ui (p, prime);
-      prime += primegap[i];
-    }
 
-  incr = 0;
-  for (difference = 0; ; difference += 2)
+  for (;;)
     {
-      /* First check residues */
+      /* FIXME: Compute lazily? */
       prime = 3;
       for (i = 0; i < prime_limit; i++)
 	{
-	  unsigned r;
-	  /* FIXME: Reduce moduli + incr and store back, to allow for
-	     division-free reductions.  Alternatively, table primes[]'s
-	     inverses (mod 2^16).  */
-	  r = (moduli[i] + incr) % prime;
+	  moduli[i] = mpz_fdiv_ui (p, prime);
 	  prime += primegap[i];
-
-	  if (r == 0)
-	    goto next;
 	}
 
+#define INCR_LIMIT 0x10000	/* deep science */
+
+      for (difference = incr = 0; incr < INCR_LIMIT; difference += 2)
+	{
+	  /* First check residues */
+	  prime = 3;
+	  for (i = 0; i < prime_limit; i++)
+	    {
+	      unsigned r;
+	      /* FIXME: Reduce moduli + incr and store back, to allow for
+		 division-free reductions.  Alternatively, table primes[]'s
+		 inverses (mod 2^16).  */
+	      r = (moduli[i] + incr) % prime;
+	      prime += primegap[i];
+
+	      if (r == 0)
+		goto next;
+	    }
+
+	  mpz_add_ui (p, p, difference);
+	  difference = 0;
+
+	  /* Miller-Rabin test */
+	  if (mpz_millerrabin (p, 10))
+	    goto done;
+	next:;
+	  incr += 2;
+	}
       mpz_add_ui (p, p, difference);
       difference = 0;
-
-      /* Miller-Rabin test */
-      if (mpz_millerrabin (p, 10))
-	break;
-    next:;
-      incr += 2;
     }
-
+ done:
   TMP_SFREE;
 }
