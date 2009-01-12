@@ -1,3 +1,7 @@
+2009-01-12  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/tuneup.c (tune_gcd_dc,tune_gcdext_dc): Lower step_factor to 0.1.
+
 2009-01-08  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-nextprime.c: New test file.
