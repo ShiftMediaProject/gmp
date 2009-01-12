@@ -1061,7 +1061,7 @@ tune_gcd_dc (void)
   param.function = speed_mpn_gcd;
   param.min_size = hgcd_threshold;
   param.max_size = 3000;
-  param.step_factor = 0.1;
+  param.step_factor = 0.02;
   one (&gcd_dc_threshold, &param);
 }
 
@@ -1073,7 +1073,7 @@ tune_gcdext_dc (void)
   param.function = speed_mpn_gcdext;
   param.min_size = hgcd_threshold;
   param.max_size = 3000;
-  param.step_factor = 0.1;
+  param.step_factor = 0.02;
   one (&gcdext_dc_threshold, &param);
 }
 
