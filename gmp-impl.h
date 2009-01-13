@@ -885,6 +885,27 @@ __GMP_DECLSPEC void mpn_redc_1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_
 __GMP_DECLSPEC void mpn_redc_2 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 
+#define mpn_mod_1s_1p_cps __MPN(mod_1s_1p_cps)
+__GMP_DECLSPEC void mpn_mod_1s_1p_cps __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+#define mpn_mod_1s_1p __MPN(mod_1s_1p)
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_1p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4]));
+
+#define mpn_mod_1s_2p_cps __MPN(mod_1s_2p_cps)
+__GMP_DECLSPEC void mpn_mod_1s_2p_cps __GMP_PROTO ((mp_limb_t [5], mp_limb_t));
+#define mpn_mod_1s_2p __MPN(mod_1s_2p)
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_2p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [5]));
+
+#define mpn_mod_1s_3p_cps __MPN(mod_1s_3p_cps)
+__GMP_DECLSPEC void mpn_mod_1s_3p_cps __GMP_PROTO ((mp_limb_t [6], mp_limb_t));
+#define mpn_mod_1s_3p __MPN(mod_1s_3p)
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_3p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [6]));
+
+#define mpn_mod_1s_4p_cps __MPN(mod_1s_4p_cps)
+__GMP_DECLSPEC void mpn_mod_1s_4p_cps __GMP_PROTO ((mp_limb_t [7], mp_limb_t));
+#define mpn_mod_1s_4p __MPN(mod_1s_4p)
+__GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [7]));
+
+
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
 typedef const __gmp_randstate_struct *gmp_randstate_srcptr;
 
@@ -2545,30 +2566,30 @@ mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (q) = _xh - _q1;							\
   } while (0)
 
-/*  udiv_qrnnd_preinv3 -- Based on work by Niels Möller.
+/* udiv_qrnnd_preinv3 -- Based on work by Niels Möller and Torbjörn Granlund.
 
-    We write things strangely below, to help gcc.  A more straightforward
-    version:
+   We write things strangely below, to help gcc.  A more straightforward
+   version:
 
-    _r = (nl) - _qh * (d);
-    _t = _r + (d);
-    if (_r >= _ql)
-      {
-        _qh--;
-        _r = _t;
-      }
+   _r = (nl) - _qh * (d);
+   _t = _r + (d);
+   if (_r >= _ql)
+     {
+       _qh--;
+       _r = _t;
+     }
 
-    For one operation shorter critical path, one may want to use this form:
+   For one operation shorter critical path, one may want to use this form:
 
-    _p = _qh * (d)
-    _s = (nl) + (d);
-    _r = (nl) - _p;
-    _t = _s - _p;
-    if (_r >= _ql)
-      {
-        _qh--;
-        _r = _t;
-      }
+   _p = _qh * (d)
+   _s = (nl) + (d);
+   _r = (nl) - _p;
+   _t = _s - _p;
+   if (_r >= _ql)
+     {
+       _qh--;
+       _r = _t;
+     }
 */
 #define udiv_qrnnd_preinv3(q, r, nh, nl, d, di)				\
   do {									\
@@ -2593,6 +2614,17 @@ mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (q) = _qh;								\
   } while (0)
 
+/* Compute r = nh*B mod d, where di is the inverse of d.  */
+#define udiv_rnd_preinv(r, nh, d, di)					\
+  do {									\
+    mp_limb_t _qh, _ql, _r;						\
+    umul_ppmm (_qh, _ql, (nh), (di));					\
+    _qh += (nh) + 1;							\
+    _r = - _qh * (d);							\
+    if (_r > _ql)							\
+      _r += (d);							\
+    (r) = _r;								\
+  } while (0)
 
 #ifndef mpn_preinv_divrem_1  /* if not done with cpuvec in a fat binary */
 #define   mpn_preinv_divrem_1 __MPN(preinv_divrem_1)
@@ -4129,6 +4161,22 @@ extern mp_size_t                     mod_1_norm_threshold;
 #undef MOD_1_UNNORM_THRESHOLD
 #define MOD_1_UNNORM_THRESHOLD       mod_1_unnorm_threshold
 extern mp_size_t                     mod_1_unnorm_threshold;
+
+#undef MOD_1_1_THRESHOLD
+#define MOD_1_1_THRESHOLD            mod_1_1_threshold
+extern mp_size_t                     mod_1_1_threshold;
+
+#undef MOD_1_2_THRESHOLD
+#define MOD_1_2_THRESHOLD            mod_1_2_threshold
+extern mp_size_t                     mod_1_2_threshold;
+
+#undef MOD_1_3_THRESHOLD
+#define MOD_1_3_THRESHOLD            mod_1_3_threshold
+extern mp_size_t                     mod_1_3_threshold;
+
+#undef MOD_1_4_THRESHOLD
+#define MOD_1_4_THRESHOLD            mod_1_4_threshold
+extern mp_size_t                     mod_1_4_threshold;
 
 #if ! UDIV_PREINV_ALWAYS
 #undef  DIVREM_2_THRESHOLD

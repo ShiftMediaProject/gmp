@@ -173,6 +173,10 @@ mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
 mp_size_t  mod_1_unnorm_threshold       = MP_SIZE_T_MAX;
+mp_size_t  mod_1_1_threshold            = MP_SIZE_T_MAX;
+mp_size_t  mod_1_2_threshold            = MP_SIZE_T_MAX;
+mp_size_t  mod_1_3_threshold            = MP_SIZE_T_MAX;
+mp_size_t  mod_1_4_threshold            = MP_SIZE_T_MAX;
 mp_size_t  divrem_2_threshold           = MP_SIZE_T_MAX;
 mp_size_t  get_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  get_str_precompute_threshold = MP_SIZE_T_MAX;
@@ -1197,6 +1201,31 @@ tune_mod_1 (void)
     s.r = randlimb_half ();
     param.function = speed_mpn_mod_1_tune;
     one (&mod_1_unnorm_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    mp_size_t save1, save2, save3, save4;
+
+    s.r = GMP_NUMB_MASK / 5;
+    param.function = speed_mpn_mod_1_tune;
+    param.min_size = 1;
+
+    param.name = "MOD_1_1_THRESHOLD";
+    one (&mod_1_1_threshold, &param);
+
+    param.name = "MOD_1_2_THRESHOLD";
+    param.min_size = mod_1_1_threshold + 1;
+    one (&mod_1_2_threshold, &param);
+
+#if 0
+    param.name = "MOD_1_3_THRESHOLD";
+    param.min_size = mod_1_2_threshold + 1;
+    one (&mod_1_3_threshold, &param);
+#endif
+
+    param.name = "MOD_1_4_THRESHOLD";
+    param.min_size = mod_1_2_threshold + 1;
+    one (&mod_1_4_threshold, &param);
   }
 }
 
