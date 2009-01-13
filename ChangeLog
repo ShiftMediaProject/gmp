@@ -1,3 +1,20 @@
+2009-01-13  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/tuneup.c (tune_mod_1): Tune for MOD_1_1_THRESHOLD,
+	MOD_1_2_THRESHOLD, and MOD_1_4_THRESHOLD.
+
+	* mpn/generic/mod_1.c: Rewrite.
+	* mpn/generic/mod_1_1.c: New file.
+	* mpn/generic/mod_1_2.c: New file.
+	* mpn/generic/mod_1_3.c: New file.
+	* mpn/generic/mod_1_4.c: New file.
+	* configure.in (gmp_mpn_functions): Add mod_1_*.
+	* mpn/asm-defs.m4 (define_mpn): Add mod_1_*.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Add mod_1_*.c.
+	* gmp-impl.h: Declare new mpn_mod_1s_* functions and associated
+	THRESHOLD macros.
+	(udiv_rnd_preinv): New macro.
+	
 2009-01-12  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/tuneup.c (tune_gcd_dc,tune_gcdext_dc): Lower step_factor to 0.1.
