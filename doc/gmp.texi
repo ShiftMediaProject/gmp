@@ -15,7 +15,7 @@ This manual describes how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+2003, 2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
@@ -2206,8 +2206,9 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 
 @deftypevr {Global Constant} {const char * const} gmp_version
 @findex gmp_version
-The GMP version number, as a null-terminated string, in the form ``i.j'' or
-``i.j.k''.  This release is @nicode{"@value{VERSION}"}.
+The GMP version number, as a null-terminated string, in the form ``i.j.k''.
+This release is @nicode{"@value{VERSION}"}.  Note that the format ``i.j'' was
+used when k was zero was used before version 4.3.0.
 @end deftypevr
 
 
@@ -3537,8 +3538,9 @@ is non-zero.
 Set @var{g} to the greatest common divisor of @var{a} and @var{b}, and in
 addition set @var{s} and @var{t} to coefficients satisfying
 @math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g}}.
-@var{g} is always positive, even if one or both of @var{a} and @var{b} are
-negative.
+The value in @var{g} is always positive, even if one or both of @var{a} and
+@var{b} are negative.  The values in @var{s} and @var{t} are chosen such that
+@math{@GMPabs{@var{s}} @le{} @GMPabs{@var{b}}} and @math{@GMPabs{@var{t}} @le{} @GMPabs{@var{a}}}.
 
 If @var{t} is @code{NULL} then that value is not computed.
 @end deftypefun
