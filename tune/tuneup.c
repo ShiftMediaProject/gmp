@@ -1181,30 +1181,30 @@ tune_mod_1 (void)
     {
       print_define ("MOD_1_NORM_THRESHOLD", 0L);
       print_define ("MOD_1_UNNORM_THRESHOLD", 0L);
-      return;
     }
+  else
+    {
+      tuned_speed_mpn_mod_1 = speed_mpn_mod_1_tune;
 
-  tuned_speed_mpn_mod_1 = speed_mpn_mod_1_tune;
-
+      {
+	static struct param_t  param;
+	param.name = "MOD_1_NORM_THRESHOLD";
+	DIV_1_PARAMS;
+	s.r = randlimb_norm ();
+	param.function = speed_mpn_mod_1_tune;
+	one (&mod_1_norm_threshold, &param);
+      }
+      {
+	static struct param_t  param;
+	param.name = "MOD_1_UNNORM_THRESHOLD";
+	DIV_1_PARAMS;
+	s.r = randlimb_half ();
+	param.function = speed_mpn_mod_1_tune;
+	one (&mod_1_unnorm_threshold, &param);
+      }
+    }
   {
     static struct param_t  param;
-    param.name = "MOD_1_NORM_THRESHOLD";
-    DIV_1_PARAMS;
-    s.r = randlimb_norm ();
-    param.function = speed_mpn_mod_1_tune;
-    one (&mod_1_norm_threshold, &param);
-  }
-  {
-    static struct param_t  param;
-    param.name = "MOD_1_UNNORM_THRESHOLD";
-    DIV_1_PARAMS;
-    s.r = randlimb_half ();
-    param.function = speed_mpn_mod_1_tune;
-    one (&mod_1_unnorm_threshold, &param);
-  }
-  {
-    static struct param_t  param;
-    mp_size_t save1, save2, save3, save4;
 
     s.r = GMP_NUMB_MASK / 5;
     param.function = speed_mpn_mod_1_tune;
