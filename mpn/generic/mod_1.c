@@ -209,7 +209,7 @@ mpn_mod_1 (mp_srcptr ap, mp_size_t n, mp_limb_t b)
   if (n == 0)
     return 0;
 
-  if (UNLIKELY (b >= GMP_NUMB_MASK / 2))
+  if (UNLIKELY ((b & GMP_NUMB_HIGHBIT) != 0))
     {
       /* The functions below do not handle this large divisor.  */
       return mpn_mod_1_norm (ap, n, b);
