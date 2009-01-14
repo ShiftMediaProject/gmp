@@ -1,5 +1,5 @@
-Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008
-Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,33 +20,40 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 Changes between GMP version 4.2.X and 4.3.0
 
   Bugs:
-  * No bugs fixed since 4.2.4, but we might accidentally added some bugs
-    since there is a large amount of new code in this release.
+  * Recognition of negative perfect powers that can be written both as an
+    even and odd power now work properly.
+  * We might accidentally have added bugs since there is a large amount of
+    new code in this release.
 
   Speedups:
   * GCD and Extended GCD now use the best known sub-quadratic algorithms.
-  * Division is now O(m(n)), losing a log(n) term.
-  * Improved schoolbook division by means of faster quotient application.
+  * Division is now O(M(n)), losing a log(n) term compared to GMP 4.2.
+  * Improved schoolbook division by means of faster quotient approximation.
   * Multiplication of operands of different sizes now runs much faster.
+  * About 5% to 10% faster FFT multiply code.
+  * 4-way toom multiply code added between 3-way toom and FFT.
   * Well-optimised assembly code for the x86_64 architecture for K8-K10,
     Pentium 4 and "Core 2", resulting in around 75% better speed.
   * Much improved, but still far from optimal assembly code for Itanium.
   * Well-optimised assembly for POWER4, POWER5, and PPC970.
   * Many assembly optimizations for other chips.
-  * About 5% to 10% faster FFT multiply code.
+  * Several new algoritms for division and mod by single limbs, giving
+    many-fold speedups.
+  * The mpz_nextprime function uses sieving.
+  * Vastly improved nth root code, slightly improved square root code.
+  * Countless minor tweaks.
 
   Features:
   * New mpn functions: XXX
-  * The nails support has been generalised to handle more choices.
   * Support for the 32-bit ABI under x86-apple-darwin.
+  * x86 CPU recognition code should now default better for future
+    processors.
+  * The experimental nails feature does not work in this release, but
+    it might be re-enabled in the future.
 
   Misc:
-  * Some internal fields and names have changed for better namespace
-    cleanliness, and to encourage applications to stay with documented
-    interfaces.  We hope we will get feedback from those depending on
-    internals on what shortcomings in GMP's interface made them use internal
-    interfaces.  (We intend to keep changing structure tags in every future
-    release.)
+  * The gmp_version variable now always contains three parts.  For this
+    relese, it is "4.3.0".
 
 
 Changes between GMP version 4.2.3 and 4.2.4
