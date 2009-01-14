@@ -1,5 +1,8 @@
 2009-01-14  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/tuneup.c (tune_mod_1): Run MOD_1_x_THRESHOLD tests also when
+	longlong.h specified UDIV_PREINV_ALWAYS.
+
 	* mpn/generic/mod_1.c (mpn_mod_1): Properly check for normalization
 	divisor.
 
