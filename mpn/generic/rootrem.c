@@ -402,6 +402,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
       /* 11: current buffers: {sp,sn}, {rp,rn}, {wp,wn} */
     }
 
+  TMP_FREE;
   return rn;
 }
 
