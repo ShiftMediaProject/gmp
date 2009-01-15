@@ -54,6 +54,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIVREM_1_UNNORM_THRESHOLD         0  /* always */
 #define MOD_1_NORM_THRESHOLD              0  /* always */
 #define MOD_1_UNNORM_THRESHOLD            0  /* always */
+#define MOD_1_1_THRESHOLD                13
+#define MOD_1_2_THRESHOLD                14
+#define MOD_1_4_THRESHOLD                40
 #define USE_PREINV_DIVREM_1               1  /* preinv always */
 #define USE_PREINV_MOD_1                  1  /* preinv always */
 #define DIVEXACT_1_THRESHOLD              0  /* always */
