@@ -176,7 +176,10 @@ mpz_perfect_power_p (mpz_srcptr u)
       unsigned long int nth;
 
       if (usize < 0 && POW2P(n2))
-	return 0;
+	{
+	  TMP_FREE;
+	  return 0;
+	}
 
       /* We found some factors above.  We just need to consider values of n
 	 that divides n2.  */
@@ -212,7 +215,10 @@ mpz_perfect_power_p (mpz_srcptr u)
 
 n2prime:
   if (usize < 0 && POW2P(n2))
-    return 0;
+    {
+      TMP_FREE;
+      return 0;
+    }
 
   exact = mpz_root (NULL, u2, n2);
   TMP_FREE;
