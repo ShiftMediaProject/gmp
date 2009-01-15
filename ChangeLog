@@ -1,3 +1,8 @@
+2009-01-15  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (gcc_cflags, gcc_64_cflags): Revert from -O3 to -O2,
+	the change was accidental and cause too much miscompilation.
+
 2009-01-14  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/tuneup.c (tune_mod_1): Run MOD_1_x_THRESHOLD tests also when
