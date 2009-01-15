@@ -1,5 +1,7 @@
 2009-01-15  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/rootrem.c	(mpn_rootrem_internal): Add a missing TMP_FREE.
+
 	* configure.in (gcc_cflags, gcc_64_cflags): Revert from -O3 to -O2,
 	the change was accidental and cause too much miscompilation.
 
