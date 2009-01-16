@@ -1,5 +1,6 @@
 /*
-Copyright 1996, 1998, 1999, 2000, 2001, 2004 Free Software Foundation, Inc.
+Copyright 1996, 1998, 1999, 2000, 2001, 2004, 2007, 2009 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -81,6 +82,7 @@ static void mpn_print (mp_ptr, mp_size_t);
 int CNT = 4;
 #endif
 
+int
 main (int argc, char **argv)
 {
   mp_ptr s1, dx, dy;
