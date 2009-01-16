@@ -1,5 +1,5 @@
 /*
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,30 +48,6 @@ cputime ()
 
 #define M * 1000000
 
-#ifndef CLOCK
-#if defined (__m88k__)
-#define CLOCK 20 M
-#elif defined (__i386__)
-#define CLOCK (16666667)
-#elif defined (__m68k__)
-#define CLOCK (20 M)
-#elif defined (_IBMR2)
-#define CLOCK (25 M)
-#elif defined (__sparc__)
-#define CLOCK (20 M)
-#elif defined (__sun__)
-#define CLOCK (20 M)
-#elif defined (__mips)
-#define CLOCK (40 M)
-#elif defined (__hppa__)
-#define CLOCK (50 M)
-#elif defined (__alpha)
-#define CLOCK (133 M)
-#else
-#error "Don't know CLOCK of your machine"
-#endif
-#endif
-
 #ifndef OPS
 #define OPS 10000000
 #endif
@@ -82,22 +58,9 @@ cputime ()
 #define TIMES OPS/(SIZE+1)
 #endif
 
+void mpn_print (mp_ptr, mp_size_t);
 
-mp_limb_t
-refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
-		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
-{
-  mp_ptr p;
-  mp_limb_t acy, scy;
-
-  p = malloc (n * BYTES_PER_MP_LIMB);
-  acy = mpn_add_n (p, s1p, s2p, n);
-  scy = mpn_sub_n (r2p, s1p, s2p, n);
-  MPN_COPY (r1p, p, n);
-  free (p);
-  return 2 * acy + scy;
-}
-
+int
 main (int argc, char **argv)
 {
   int test;
@@ -202,8 +165,11 @@ main (int argc, char **argv)
 	    }
 	}
     }
+
+  exit (0);
 }
 
+void
 mpn_print (mp_ptr p, mp_size_t size)
 {
   mp_size_t i;
