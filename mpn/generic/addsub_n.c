@@ -1,5 +1,9 @@
 /* mpn_addsub_n -- Add and Subtract two limb vectors of equal, non-zero length.
 
+   THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
+   SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT IT'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
+
 Copyright 1999, 2000, 2001, 2006 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
