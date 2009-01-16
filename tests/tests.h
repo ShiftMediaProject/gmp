@@ -246,6 +246,8 @@ mp_limb_t refmpn_divrem_1 __GMP_PROTO ((mp_ptr rp, mp_size_t xsize,
 mp_limb_t refmpn_divrem_1c __GMP_PROTO ((mp_ptr rp, mp_size_t xsize,
                                     mp_srcptr sp, mp_size_t size,
                                     mp_limb_t divisor, mp_limb_t carry));
+mp_limb_t refmpn_divrem_2 __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_size_t,
+					mp_srcptr));
 
 int refmpn_equal_anynail __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 
