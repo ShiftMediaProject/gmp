@@ -1,5 +1,6 @@
 /*
-Copyright 1996, 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 2000, 2001, 2007, 2009 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -17,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -61,6 +63,7 @@ cputime ()
 #define TIMES OPS/(SIZE+1)
 #endif
 
+int
 main ()
 {
   mp_limb_t nptr[2 * SIZE];
