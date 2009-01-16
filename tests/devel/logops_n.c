@@ -1,6 +1,6 @@
 /*
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
-Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2009 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,6 +21,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #ifdef OPERATION_and_n
 #define func __gmpn_and_n
@@ -113,6 +114,7 @@ static void mpn_print (mp_ptr, mp_size_t);
 #define TIMES OPS/(SIZE+1)
 #endif
 
+int
 main (int argc, char **argv)
 {
   mp_ptr s1, s2, dx, dy;
