@@ -56,7 +56,7 @@ PROLOGUE(func)
 
 	xor	R32(%rbx), R32(%rbx)
 
-	mov	R32(%rcx), R32(%rax)
+	mov	R32(n), R32(%rax)
 	and	$3, R32(%rax)
 	jne	L(n00)		C n = 0, 4, 8, ...
 
