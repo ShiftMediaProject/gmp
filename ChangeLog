@@ -1,8 +1,12 @@
+2009-01-16  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/tests.h: Declare refmpn_divrem_2.
+
 2009-01-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/perfpow.c: Add TMP_FREE before every return statement.
 
-	* mpn/generic/rootrem.c	(mpn_rootrem_internal): Add a missing TMP_FREE.
+	* mpn/generic/rootrem.c (mpn_rootrem_internal): Add a missing TMP_FREE.
 
 	* configure.in (gcc_cflags, gcc_64_cflags): Revert from -O3 to -O2,
 	the change was accidental and cause too much miscompilation.
@@ -102,7 +106,7 @@
 	* gcd.c gcd_subdiv_step.c gcdext.c gcdext_subdiv_step.c:
 	Remove private mpn_zero_p.
 
-	* tune/tuneup.c	(tune_mul): Tune for MUL_TOOM44_THRESHOLD.
+	* tune/tuneup.c (tune_mul): Tune for MUL_TOOM44_THRESHOLD.
 	(tune_sqr): Tune for SQR_TOOM4_THRESHOLD.
 
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add toom44_mul.c and
@@ -2402,7 +2406,7 @@
 2005-03-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext.c (gcdext_schoenhage): When calling gcdext_lehmer,
-	reuse all temporary limb storage, including the	storage used for the
+	reuse all temporary limb storage, including the storage used for the
 	qstack.
 
 2005-03-09  Torbjorn Granlund  <tege@swox.com>
@@ -3516,7 +3520,7 @@
 	(euclid_step): Insert removed functions here.
 	(hgcd_adjust): Simplify, don't handle d != 1.
 	(qstack_adjust): Corresponding changes.
-	(mpn_hgcd2_lehmer_step): Remove redundant tests	for bh against zero.
+	(mpn_hgcd2_lehmer_step): Remove redundant tests for bh against zero.
 	(hgcd_start_row_p): Tweak.
 	(hgcd_final): Shorten life of ralloc.
 
@@ -4945,7 +4949,7 @@
 
 2003-10-07  Kevin Ryde  <kevin@swox.se>
 
-	* tune/freq.c (freq_sysctl_hw_model): Correction to last sscanf	change.
+	* tune/freq.c (freq_sysctl_hw_model): Correction to last sscanf change.
 
 	* configure.in: Check for psp_iticksperclktick in struct pst_processor.
 	* tune/freq.c (freq_pstat_getprocessor): Use this.
@@ -5164,7 +5168,7 @@
 
 	* mpn/generic/mul.c (mpn_sqr_n): Move from here...
 	* mpn/generic/mul_n.c (mpn_sqr_n): ...to here.
-	(mpn_sqr_n): Allocate workspace for toom3 using	TMP_* mechanism except
+	(mpn_sqr_n): Allocate workspace for toom3 using TMP_* mechanism except
 	for very large operands when !WANT_FFT.
 
 	* mpn/generic/mul_n.c: Add a missing ";". Misc comment fixes.
@@ -7487,7 +7491,7 @@
 
 	* configure.in (AC_PREREQ): Bump to 2.53.
 
-	* mpn/powerpc32/powerpc-defs.m4	(ASSERT): New macro.
+	* mpn/powerpc32/powerpc-defs.m4 (ASSERT): New macro.
 	(PROLOGUE_cpu): New macro, giving ALIGN(4) not 8.
 
 2002-08-16  Torbjorn Granlund  <tege@swox.com>
@@ -8017,7 +8021,7 @@
 	double, fixes gcc 3.1 with -O4.  Reported by Michael Lee.
 	* configure.in (AC_C_VOLATILE): New macro.
 
-	* tests/misc/t-scanf.c:	(fromstring_gmp_fscanf): Add missing va_end.
+	* tests/misc/t-scanf.c: (fromstring_gmp_fscanf): Add missing va_end.
 	Don't mix varargs and fixed args functions, not good on x86_64.
 	Reported by Marcus Meissner.
 
@@ -10451,7 +10455,7 @@
 2001-11-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/powm.c (HANDLE_NEGATIVE_EXPONENT): #define to 1.
-	* tests/mpz/reuse.c (main): Use	mpz_invert to avoid undefined mpz_powm
+	* tests/mpz/reuse.c (main): Use mpz_invert to avoid undefined mpz_powm
 	cases.
 
 2001-11-14  Torbjorn Granlund  <tege@swox.com>
@@ -10495,7 +10499,7 @@
 	* mpn/x86/pentium/sqr_basecase.asm, mpn/x86/k7/mmx/mod_1.asm,
 	mpn/x86/k7/mmx/popham.asm: Remove some unnecessary "0" address offsets.
 
-	* mpq/set_si.c, mpq/set_ui.c: Set _mp_den._mp_size correctly if	den==0.
+	* mpq/set_si.c, mpq/set_ui.c: Set _mp_den._mp_size correctly if den==0.
 
 2001-11-07  Torbjorn Granlund  <tege@swox.com>
 
@@ -10663,7 +10667,7 @@
 
 2001-10-21  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/generic/perfsqr.c	(sq_res_0x100): Remove bogus final `,'.
+	* mpn/generic/perfsqr.c (sq_res_0x100): Remove bogus final `,'.
 	(mpn_perfect_square_p): Suppress superfluous `&1' in sq_res_0x100 test.
 	(mpn_perfect_square_p, O(n) test): Improve comments.  Combine remainder
 	tests for some small primes.  Don't share code for different limb
@@ -12168,7 +12172,7 @@
 	* configure.in (m68*-*-*): Oops, m683?2 is 68000, m68360 is cpu32.
 	* mpn/m68k/m68k-defs.m4 (scale_available_p): Ditto.
 
-	* configure.in (underscore, asm_align): Remove these variables,	unused.
+	* configure.in (underscore, asm_align): Remove these variables, unused.
 	(GMP_ASM_*): Sort by AC_REQUIREs, to avoid duplication.
 	* acinclude.m4 (GMP_ASM_UNDERSCORE, GMP_ASM_ALIGN_LOG): Remove support
 	for actions, no longer needed.
@@ -14350,7 +14354,7 @@
 	* mpz/powm.c (redc): Make global under WANT_REDC_GLOBAL.
 	* tune/powm_mod.c, tune/powm_redc.c: New files.
 	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
-	* tune/*: Add measuring of redc, mpz_mod, mpz_powm_mod,	mpz_powm_redc.
+	* tune/*: Add measuring of redc, mpz_mod, mpz_powm_mod, mpz_powm_redc.
 
 	* tune/tuneup.c (POWM_THRESHOLD): Determine from redc and mpz_mod.
 	* tune/Makefile.am (TUNE_MPZ_SRCS): Remove powm.
@@ -15471,7 +15475,7 @@
 
 	* tests/rand/Makefile.am (allprogs): Pseudo-target to build everything.
 	(CLEANFILES): Add EXTRA_PROGRAMS and EXTRA_LTLIBRARIES.
-	(manual-test, manual-bigtest): Add $(EXEEXT) to	dependencies.
+	(manual-test, manual-bigtest): Add $(EXEEXT) to dependencies.
 
 	* tests/rand/*/Makefile.in: Regenerate with patched automake that adds
 	$(EXEEXT) to EXTRA_PROGRAMS.
