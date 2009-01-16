@@ -1,6 +1,6 @@
 /*
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
-Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2009
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -102,12 +102,15 @@ static void mpn_print (mp_ptr, mp_size_t);
 #define TIMES OPS/(SIZE+1)
 #endif
 
+int
 main (int argc, char **argv)
 {
   mp_ptr s1, s2, dx, dy;
   mp_limb_t cyx, cyy;
   int i;
+#if TIMES != 1
   long t0, t;
+#endif
   unsigned int test;
   mp_size_t size;
   unsigned int ntests;
