@@ -1,5 +1,5 @@
 /*
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,6 +20,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
 #include <time.h>
@@ -48,30 +49,6 @@ cputime ()
 
 #define M * 1000000
 
-#ifndef CLOCK
-#if defined (__m88k__)
-#define CLOCK 20 M
-#elif defined (__i386__)
-#define CLOCK (16666667)
-#elif defined (__m68k__)
-#define CLOCK (20 M)
-#elif defined (_IBMR2)
-#define CLOCK (25 M)
-#elif defined (__sparc__)
-#define CLOCK (20 M)
-#elif defined (__sun__)
-#define CLOCK (20 M)
-#elif defined (__mips)
-#define CLOCK (40 M)
-#elif defined (__hppa__)
-#define CLOCK (50 M)
-#elif defined (__alpha)
-#define CLOCK (133 M)
-#else
-#error "Don't know CLOCK of your machine"
-#endif
-#endif
-
 #ifndef OPS
 #define OPS 10000000
 #endif
@@ -82,34 +59,10 @@ cputime ()
 #define TIMES OPS/SIZE
 #endif
 
+void mpn_print (mp_ptr, mp_size_t);
 
-mp_limb_t
-#if __STDC__
-refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
-		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
-#else
-refmpn_addsub_n (r1p, r2p, s1p, s2p, n)
-     register mp_ptr r1p;
-     register mp_ptr r2p;
-     register mp_srcptr s1p;
-     register mp_srcptr s2p;
-     mp_size_t n;
-#endif
-{
-  mp_ptr p;
-  mp_limb_t acy, scy;
-
-  p = malloc (n * BYTES_PER_MP_LIMB);
-  acy = mpn_add_n (p, s1p, s2p, n);
-  scy = mpn_sub_n (r2p, s1p, s2p, n);
-  MPN_COPY (r1p, p, n);
-  free (p);
-  return 2 * acy + scy;
-}
-
-main (argc, argv)
-     int argc;
-     char **argv;
+int
+main (int argc, char **argv)
 {
   mp_ptr mem;
   mp_ptr s1;
@@ -138,8 +91,6 @@ main (argc, argv)
   if (argc == 2)
     ntests = strtol (argv[1], 0, 0);
 
-  for (test = 1; test <= ntests; test++)
-    ;
   for (test = 1; test <= ntests; test++)
     {
 #if TIMES == 1 && ! defined (PRINT)
@@ -220,8 +171,11 @@ main (argc, argv)
 	}
 #endif
     }
+
+  exit (0);
 }
 
+void
 mpn_print (mp_ptr p, mp_size_t size)
 {
   mp_size_t i;
