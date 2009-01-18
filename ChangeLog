@@ -1,5 +1,7 @@
 2009-01-18  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz: Increase reps for many tests.
+
 	* mpn/generic/rootrem.c (mpn_rootrem_internal): Use MPN_DECR_U instead of
 	mpn_sub_1 (works around gcc 4.3 bugs and is also faster).
 
