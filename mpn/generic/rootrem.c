@@ -8,7 +8,7 @@
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT'S ALMOST
    GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2002, 2005 Free Software Foundation, Inc.
+Copyright 2002, 2005, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -296,7 +296,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  /* tp must have space for wn limbs.
 	     The quotient needs rn-wn+1 limbs, thus quotient+remainder
 	     need altogether rn+1 limbs. */
-	  tp = qp + rn - wn + 1; /* put remainder in Q buffer */
+	  tp = qp + qn + 1;	/* put remainder in Q buffer */
 	  mpn_tdiv_q (qp, tp, 0, rp, rn, wp, wn);
 	  qn += qp[qn] != 0;
 	}
@@ -318,7 +318,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 	  qn = b / GMP_NUMB_BITS + 1; /* b+1 bits */
 	  MPN_ZERO (qp, qn);
 	  qp[qn - 1] = (mp_limb_t) 1 << (b % GMP_NUMB_BITS);
-	  mpn_sub_1 (qp, qp, qn, (mp_limb_t) 1);
+	  MPN_DECR_U (qp, qn, 1);
 	  qn -= qp[qn - 1] == 0;
 	}
 
@@ -381,7 +381,7 @@ mpn_rootrem_internal (mp_ptr rootp, mp_ptr remp, mp_srcptr up, mp_size_t un,
 
 	  /* if S^k > floor(U/2^kk), the root approximation was too large */
 	  if (qn > rn || (qn == rn && mpn_cmp (qp, rp, rn) > 0))
-	    mpn_decr_u (sp, 1);
+	    MPN_DECR_U (sp, sn, 1);
 	  else
 	    break;
 	}
