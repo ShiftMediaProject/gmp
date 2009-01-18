@@ -184,7 +184,7 @@ int
 main (int argc, char **argv)
 {
   int i;
-  int pass, reps = 100;
+  int pass, reps = 1000;
   mpz_t in1, in2, in3;
   unsigned long int in2i;
   mp_size_t size;

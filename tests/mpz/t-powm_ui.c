@@ -36,7 +36,7 @@ main (int argc, char **argv)
   mp_size_t base_size, exp_size, mod_size;
   unsigned long int exp2;
   int i;
-  int reps = 200;
+  int reps = 1000;
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;

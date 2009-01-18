@@ -108,7 +108,7 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
-  int reps = 50;
+  int reps = 100;
 
   if (argc == 2)
      reps = atoi (argv[1]);

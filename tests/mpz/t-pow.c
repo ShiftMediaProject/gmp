@@ -196,7 +196,7 @@ check_random (int reps)
 int
 main (int argc, char **argv)
 {
-  int reps = 500;
+  int reps = 5000;
 
   /* dummy call to drag in refmpn.o for testing mpz/n_pow_ui.c with
      refmpn_mul_2 */

@@ -38,7 +38,7 @@ main (int argc, char **argv)
   mp_size_t dividend_size;
   unsigned long divisor;
   int i;
-  int reps = 10000;
+  int reps = 200000;
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;

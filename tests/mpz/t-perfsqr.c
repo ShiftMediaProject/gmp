@@ -139,7 +139,7 @@ check_sqrt (int reps)
 int
 main (int argc, char **argv)
 {
-  int reps = 100000;
+  int reps = 200000;
 
   tests_start ();
   mp_trace_base = -16;

@@ -29,7 +29,7 @@ void
 check_random (int argc, char *argv[])
 {
   gmp_randstate_ptr rands = RANDS;
-  int    reps = 5000;
+  int    reps = 500000;
   mpz_t  a, q, got;
   int    i, qneg;
   unsigned long  d;

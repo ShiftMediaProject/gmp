@@ -133,7 +133,7 @@ check_random (int argc, char *argv[])
   mpz_t   a, c, d, ra, rc;
   int     i;
   int     want;
-  int     reps = 2000;
+  int     reps = 50000;
 
   if (argc >= 2)
     reps = atoi (argv[1]);
