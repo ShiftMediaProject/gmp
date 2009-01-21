@@ -1,5 +1,8 @@
 2009-01-21  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/powm.c (redc): Remove.
+	(mpz_powm): Use mpn_redc_1 instead of redc.
+
 	* tests/mpz/t-powm.c: Rewrite reference code.
 
 2009-01-18  Torbjorn Granlund  <tege@swox.com>
