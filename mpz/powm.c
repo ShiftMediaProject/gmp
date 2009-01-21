@@ -1,7 +1,9 @@
 /* mpz_powm(res,base,exp,mod) -- Set RES to (base**exp) mod MOD.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2005 Free Software
-Foundation, Inc.  Contributed by Paul Zimmermann.
+   Contributed by Paul Zimmermann.
+
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2005, 2009
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,32 +27,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifdef BERKELEY_MP
 #include "mp.h"
 #endif
-
-
-/* Set cp[] <- tp[]/R^n mod mp[].  Clobber tp[].
-   mp[] is n limbs; tp[] is 2n limbs.  */
-#if ! WANT_REDC_GLOBAL
-static
-#endif
-void
-redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
-{
-  mp_limb_t cy;
-  mp_limb_t q;
-  mp_size_t j;
-
-  ASSERT_MPN (tp, 2*n);
-
-  for (j = 0; j < n; j++)
-    {
-      q = (tp[0] * Nprim) & GMP_NUMB_MASK;
-      tp[0] = mpn_addmul_1 (tp, mp, n, q);
-      tp++;
-    }
-  cy = mpn_add_n (cp, tp, tp - n, n);
-  if (cy != 0)
-    mpn_sub_n (cp, cp, mp, n);
-}
 
 /* Compute t = a mod m, a is defined by (ap,an), m is defined by (mp,mn), and
    t is defined by (tp,mn).  */
@@ -295,7 +271,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   xp = TMP_ALLOC_LIMBS (mn);
   mpn_sqr_n (tp, gp, mn);
   if (use_redc)
-    redc (xp, mp, mn, invm, tp);		/* xx = x^2*R^n */
+    mpn_redc_1 (xp, tp, mp, mn, invm);		/* xx = x^2*R^n */
   else
     mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
   this_gp = gp;
@@ -304,7 +280,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
       mpn_mul_n (tp, this_gp, xp, mn);
       this_gp += mn;
       if (use_redc)
-	redc (this_gp, mp, mn, invm, tp);	/* g[i] = x^(2i+1)*R^n */
+	mpn_redc_1 (this_gp, tp, mp, mn, invm);	/* g[i] = x^(2i+1)*R^n */
       else
 	mpn_tdiv_qr (qp, this_gp, 0L, tp, 2 * mn, mp, mn);
     }
@@ -336,7 +312,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     {
       mpn_sqr_n (tp, xp, mn);
       if (use_redc)
-	redc (xp, mp, mn, invm, tp);
+	mpn_redc_1 (xp, tp, mp, mn, invm);
       else
 	mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
     }
@@ -370,7 +346,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	{
 	  mpn_sqr_n (tp, xp, mn);
 	  if (use_redc)
-	    redc (xp, mp, mn, invm, tp);
+	    mpn_redc_1 (xp, tp, mp, mn, invm);
 	  else
 	    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	  if (sh != 0)
@@ -398,13 +374,13 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	    {
 	      mpn_sqr_n (tp, xp, mn);
 	      if (use_redc)
-		redc (xp, mp, mn, invm, tp);
+		mpn_redc_1 (xp, tp, mp, mn, invm);
 	      else
 		mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	    }
 	  mpn_mul_n (tp, xp, gp + mn * (c >> 1), mn);
 	  if (use_redc)
-	    redc (xp, mp, mn, invm, tp);
+	    mpn_redc_1 (xp, tp, mp, mn, invm);
 	  else
 	    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	}
@@ -414,7 +390,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	{
 	  mpn_sqr_n (tp, xp, mn);
 	  if (use_redc)
-	    redc (xp, mp, mn, invm, tp);
+	    mpn_redc_1 (xp, tp, mp, mn, invm);
 	  else
 	    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	}
@@ -425,7 +401,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
       /* Convert back xx to xx/R^n.  */
       MPN_COPY (tp, xp, mn);
       MPN_ZERO (tp + mn, mn);
-      redc (xp, mp, mn, invm, tp);
+      mpn_redc_1 (xp, tp, mp, mn, invm);
       if (mpn_cmp (xp, mp, mn) >= 0)
 	mpn_sub_n (xp, xp, mp, mn);
     }
