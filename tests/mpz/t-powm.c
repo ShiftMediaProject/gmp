@@ -1,7 +1,7 @@
 /* Test mpz_powm, mpz_mul. mpz_mod, mpz_mod_ui, mpz_div_ui.
 
-Copyright 1991, 1993, 1994, 1996, 1999, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 1999, 2000, 2001, 2009 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -91,21 +91,22 @@ main (int argc, char **argv)
       mpz_powm (r1, base, exp, mod);
 
       mpz_set_ui (r2, 1);
-      mpz_set (base2, base);
+      mpz_mod (base2, base, mod);
       mpz_set (exp2, exp);
+      mpz_mod (r2, r2, mod);
 
-      mpz_mod (r2, r2, mod);	/* needed when exp==0 and mod==1 */
-      while (mpz_cmp_ui (exp2, 0) != 0)
+      for (;;)
 	{
-	  mpz_mod_ui (t1, exp2, 2);
-	  if (mpz_cmp_ui (t1, 0) != 0)
+	  if (mpz_tstbit (exp2, 0))
 	    {
 	      mpz_mul (r2, r2, base2);
 	      mpz_mod (r2, r2, mod);
 	    }
+	  if  (mpz_cmp_ui (exp2, 1) <= 0)
+	    break;
 	  mpz_mul (base2, base2, base2);
 	  mpz_mod (base2, base2, mod);
-	  mpz_div_ui (exp2, exp2, 2);
+	  mpz_tdiv_q_2exp (exp2, exp2, 1);
 	}
 
       if (mpz_cmp (r1, r2) != 0)
