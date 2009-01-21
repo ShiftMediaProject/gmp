@@ -1,3 +1,7 @@
+2009-01-21  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-powm.c: Rewrite reference code.
+
 2009-01-18  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz: Increase reps for many tests.
