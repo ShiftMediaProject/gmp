@@ -1,3 +1,9 @@
+2009-02-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/redc_2.c: Remove code for testing and timing.  Update
+	to current FSF header.
+	* mpn/generic/redc_1.c: Update to current FSF header.
+
 2009-01-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/powm.c (redc): Remove.
