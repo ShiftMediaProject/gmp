@@ -1,3 +1,8 @@
+2009-03-01  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (mips, powerpc): Provide assembly-free umul_ppmm for newer
+	gcc.
+
 2009-02-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/redc_2.c: Remove code for testing and timing.  Update
