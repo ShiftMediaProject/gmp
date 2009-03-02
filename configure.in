@@ -1239,7 +1239,7 @@ case $host in
             # -fast is documented as miscompiling things for the sake of speed.
             #
             cclist_64="$cclist_64 cc"
-            cc_64_cflags="-O3 -xarch=v9"
+            cc_64_cflags="-xO3 -xarch=v9"
             cc_64_cflags_optlist="cpu"
             ;;
         esac
