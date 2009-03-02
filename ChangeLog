@@ -1,3 +1,8 @@
+2009-03-02  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (64-bit sparc/solaris): Pass -xO3, not -O3 to solaris
+	system compiler.
+
 2009-03-01  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (mips, powerpc): Provide assembly-free umul_ppmm for newer
