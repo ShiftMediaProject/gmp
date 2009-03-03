@@ -21,6 +21,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C           cycles/limb
+C Itanium:      2.0
 C Itanium 2:    1.0
 
 C This code is scheduled deeply since the plain shift instructions shr and shl

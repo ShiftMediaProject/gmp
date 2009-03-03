@@ -21,8 +21,8 @@ include(`../config.m4')
 
 
 C            cycles/limb
-C Itanium:      14?
-C Itanium 2:     8.0
+C Itanium:      15
+C Itanium 2:     8
 
 
 dnl  Usage: ABI32(`code')

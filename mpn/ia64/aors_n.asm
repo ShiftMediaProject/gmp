@@ -20,6 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C           cycles/limb
+C Itanium:      2.67
 C Itanium 2:    1.25
 
 C TODO

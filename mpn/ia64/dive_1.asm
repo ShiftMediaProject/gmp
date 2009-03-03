@@ -20,7 +20,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C            cycles/limb
-C Itanium 2:     8.0
+C Itanium:      16
+C Itanium 2:     8
 
 C INPUT PARAMETERS
 define(`rp', `r32')

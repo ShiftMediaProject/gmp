@@ -21,7 +21,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C         cycles/limb
-C Itanium:    ?
+C Itanium:    4.0
 C Itanium 2:  2.25 (alignment dependent, sometimes it seems to need 3 c/l)
 
 C TODO

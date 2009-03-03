@@ -21,7 +21,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C         cycles/limb
-C Itanium:    ?
+C Itanium:    3.15
 C Itanium 2:  1.625
 
 C Note that this is very similar to addmul_2.asm.  If you change this file,
