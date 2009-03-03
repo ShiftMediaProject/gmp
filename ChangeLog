@@ -1,3 +1,7 @@
+2009-03-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/bdiv_dbm1c.asm: Accept/return carry.
+
 2009-03-02  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (64-bit sparc/solaris): Pass -xO3, not -O3 to solaris
