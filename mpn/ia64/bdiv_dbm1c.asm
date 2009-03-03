@@ -20,7 +20,8 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C         cycles/limb
-C Itanium 2:  2.0
+C Itanium:    4
+C Itanium 2:  2
 
 C TODO
 C  * Optimize feed-in and wind-down code, both for speed and code size.
@@ -44,7 +45,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 ')
 {.mmb
-	mov		r15 = r0		C M I
+	mov		r15 = r36		C M I
 	ldf8		f9 = [up], 8		C M
 	nop.b		0			C B
 }
@@ -81,8 +82,10 @@ ifdef(`HAVE_ABI_32',
 .Lb01:	br.cloop.dptk	.grt1
 	;;
 	xma.l		f38 = f9, f6, f0
+	xma.hu		f39 = f9, f6, f0
 	;;
 	getf.sig	r26 = f38
+	getf.sig	r27 = f39
 	br		.Lcj1
 
 .grt1:	ldf8		f10 = [r33], 8
@@ -115,6 +118,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r22 = f34
 	xma.l		f38 = f13, f6, f0
+	xma.hu		f39 = f13, f6, f0
 	br		.Lcj5
 
 .grt5:	ldf8		f10 = [r33], 8
@@ -292,6 +296,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r22 = f34
 	xma.l		f38 = f13, f6, f0
+	xma.hu		f39 = f13, f6, f0
 	;;
 	getf.sig	r23 = f35
 	;;
@@ -486,10 +491,12 @@ C *** MAIN LOOP END ***
 	st8		[r32] = r18, 8
   (p7)	sub		r15 = r18, r25
 	;;
-.Lcj1:	sub		r19 = r15, r26
+.Lcj1:	cmp.ltu		p6, p7 = r15, r26
+	sub		r19 = r15, r26
 	;;
+  (p6)	sub		r8 = r19, r27, 1
 	st8		[r32] = r19
-	sub		r8 = r19, r27
+  (p7)	sub		r8 = r19, r27
 	mov ar.lc = r2
 	br.ret.sptk.many b0
 EPILOGUE()
