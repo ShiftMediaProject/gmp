@@ -91,7 +91,7 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @subtitle Edition @value{EDITION}
 @subtitle @value{UPDATED}
 
-@author by The GMP team
+@author by The GMP developers
 @c @email{tege@@swox.com}
 
 @c Include the Distribution inside the titlepage so
@@ -525,10 +525,10 @@ announcements, one for general questions and discussions about usage of the GMP
 library and one for bug reports.  For more information, see
 
 @display
-@uref{http://swox.com/mailman/listinfo/}.
+@uref{http://gmplib.org/mailman/listinfo/}.
 @end display
 
-The proper place for bug reports is @email{gmp-bugs@@swox.com}.  See
+The proper place for bug reports is @email{gmp-bugs@@gmplib.org}.  See
 @ref{Reporting Bugs} for information about reporting bugs.
 
 @sp 1
@@ -573,7 +573,7 @@ And you can install (under @file{/usr/local} by default) with
 make install
 @end example
 
-If you experience problems, please report them to @email{gmp-bugs@@swox.com}.
+If you experience problems, please report them to @email{gmp-bugs@@gmplib.org}.
 See @ref{Reporting Bugs}, for information on what to include in useful bug
 reports.
 
@@ -2926,7 +2926,7 @@ If your bug report is good, we will do our best to help you get a corrected
 version of the library; if the bug report is poor, we won't do anything about
 it (except maybe ask you to send a better report).
 
-Send your report to: @email{gmp-bugs@@swox.com}.
+Send your report to: @email{gmp-bugs@@gmplib.org}.
 
 If you think something in this manual is unclear, or downright incorrect, or if
 the language needs to be improved, please send a note to the same address.
@@ -3540,7 +3540,8 @@ addition set @var{s} and @var{t} to coefficients satisfying
 @math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g}}.
 The value in @var{g} is always positive, even if one or both of @var{a} and
 @var{b} are negative.  The values in @var{s} and @var{t} are chosen such that
-@math{@GMPabs{@var{s}} @le{} @GMPabs{@var{b}}} and @math{@GMPabs{@var{t}} @le{} @GMPabs{@var{a}}}.
+@math{@GMPabs{@var{s}} @le{} @GMPabs{@var{b}}} and @math{@GMPabs{@var{t}}
+@le{} @GMPabs{@var{a}}}.
 
 If @var{t} is @code{NULL} then that value is not computed.
 @end deftypefun
@@ -6759,7 +6760,7 @@ the future, maybe a preprocessor define, a global flag, or an @code{ios} flag
 pressed into service.  Or maybe, at the risk of inconsistency, the
 @code{mpq_class} @code{operator>>} could canonicalize and leave @code{mpq_t}
 @code{operator>>} not doing so, for use on those occasions when that's
-acceptable.  Send feedback or alternate ideas to @email{gmp-bugs@@swox.com}.
+acceptable.  Send feedback or alternate ideas to @email{gmp-bugs@@gmplib.org}.
 
 @item Subclassing
 Subclassing the GMP C++ classes works, but is not currently recommended.
@@ -10256,7 +10257,7 @@ fast assembly sequences, in particular on a fast AMD64
 @code{mpn_mul_basecase}.
 
 (This list is chronological, not ordered after significance.  If you have
-contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
+contributed to GMP but are not listed above, please tell @email{tege@@gmplib.org}
 about the omission!)
 
 The development of floating point functions of GNU MP 2, were supported in part
