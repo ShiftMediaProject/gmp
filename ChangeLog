@@ -1,3 +1,8 @@
+2009-03-05  Torbjorn Granlund  <tege@swox.com>
+
+	* ia64/gmp-mparam.h, arm/gmp-mparam.h, x86/p6/mmx/gmp-mparam.h,
+	pa32/hppa2_0/gmp-mparam.h sparc32/v9/gmp-mparam.h: Update.
+
 2009-03-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/bdiv_dbm1c.asm: Accept/return carry.
