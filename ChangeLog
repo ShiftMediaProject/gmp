@@ -1,3 +1,8 @@
+2009-03-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86_64/divrem_1.asm: Add a nop to save a cycle in unnormalized
+	case.
+
 2009-03-05  Torbjorn Granlund  <tege@swox.com>
 
 	* ia64/gmp-mparam.h, arm/gmp-mparam.h, x86/p6/mmx/gmp-mparam.h,
