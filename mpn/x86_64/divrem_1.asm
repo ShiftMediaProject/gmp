@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_divrem_1 -- mpn by limb division.
 
-dnl  Copyright 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -196,6 +196,7 @@ L(uent):
 
 	ALIGN(16)
 L(uloop):
+	nop
 	mov	(up,un,8), %r10
 	lea	1(%rax), %r11
 	shld	%cl, %r10, %rbp
