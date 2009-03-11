@@ -1,3 +1,8 @@
+2009-03-11  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (powerpc): Brave removing -Wa,-mppc64, in the hope that
+	GCC now passes the proper options.
+
 2009-03-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86_64/divrem_1.asm: Add a nop to save a cycle in unnormalized
