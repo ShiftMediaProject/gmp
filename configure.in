@@ -1012,7 +1012,7 @@ case $host in
 	    #
 	    abilist="mode64 mode32 $abilist"
 	    cclist_mode32="gcc"
-	    gcc_mode32_cflags="-mpowerpc64 -Wa,-mppc64"
+	    gcc_mode32_cflags="-mpowerpc64"
 	    gcc_mode32_cflags_optlist="cpu opt"
 	    gcc_mode32_cflags_opt="-O3 -O2 -O1"
 	    path_mode32="powerpc64/mode32 $vmx_path powerpc64"
