@@ -1467,6 +1467,14 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
         cyclecounter_size_64=2
 
+        case $host in
+          *-*-solaris*)
+            # Sun cc.
+            cclist_64="$cclist_64 cc"
+            cc_64_cflags="-xO3 -m64"
+            ;;
+        esac
+
 	case $host_cpu in
 	  athlon64 | x86_64)
 	    abilist="64 32"
@@ -1475,7 +1483,6 @@ case $host in
 	  pentium4)
 	    abilist="64 32"
 	    path_64="x86_64/pentium4 x86_64"
-	    cclist_64="gcc"
 	    ;;
 	  core2)
 	    abilist="64 32"
