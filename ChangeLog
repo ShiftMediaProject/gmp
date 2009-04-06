@@ -1,3 +1,9 @@
+2009-04-06  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Support Sun cc for x86_64.
+
+	* mpz/urandomm.c: Handle operand overlap.
+
 2009-03-11  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (powerpc): Brave removing -Wa,-mppc64, in the hope that
