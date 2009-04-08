@@ -60,12 +60,6 @@ mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
       return;
     }
 
-  /* Here the allocated size can be one too much if n is a power of
-     (2^GMP_NUMB_BITS) but it's convenient for using mpn_cmp below.  */
-  rp = MPZ_REALLOC (rop, size);
-  /* Clear last limb to prevent the case in which size is one too much.  */
-  rp[size - 1] = 0;
-
   TMP_MARK;
   np = PTR (n);
   if (rop == n)
@@ -75,6 +69,12 @@ mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
       MPN_COPY (tp, np, size);
       np = tp;
     }
+
+  /* Here the allocated size can be one too much if n is a power of
+     (2^GMP_NUMB_BITS) but it's convenient for using mpn_cmp below.  */
+  rp = MPZ_REALLOC (rop, size);
+  /* Clear last limb to prevent the case in which size is one too much.  */
+  rp[size - 1] = 0;
 
   count = MAX_URANDOMM_ITER;	/* Set iteration count limit.  */
   do
