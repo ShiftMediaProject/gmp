@@ -1,3 +1,7 @@
+2009-04-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/urandomm.c: Amend last fix.
+
 2009-04-06  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Support Sun cc for x86_64.
