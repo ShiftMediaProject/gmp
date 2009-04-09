@@ -1,3 +1,10 @@
+2009-04-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/powm.c: New file.
+	* mpn/generic/powlo.c: New file.
+	* mpn/generic/powm_sec.c: New file.
+	* configure.in (gmp_mpn_functions): List new functions.
+
 2009-04-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/urandomm.c: Amend last fix.
