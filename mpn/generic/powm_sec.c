@@ -100,7 +100,7 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
 #endif
 
 #include <stdlib.h>
-void mpn_redc_n () {abort();}
+static void mpn_redc_n () {abort();}
 
 static inline int
 win_size (unsigned long eb)
