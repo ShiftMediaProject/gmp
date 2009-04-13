@@ -1,80 +1,82 @@
-2009-04-13  Torbjorn Granlund  <tege@swox.com>
+2009-04-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Version 4.3.0 released.
 
 	* scanf/sscanffuns.c (scan): Rewrite to use stdarg.
 
 	* tests/mpz/t-root.c: Rewrite.  Add unconditional gcc 4.3.2 tests.
 
-2009-04-09  Torbjorn Granlund  <tege@swox.com>
+2009-04-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm.c: New file.
 	* mpn/generic/powlo.c: New file.
 	* mpn/generic/powm_sec.c: New file.
 	* configure.in (gmp_mpn_functions): List new functions.
 
-2009-04-08  Torbjorn Granlund  <tege@swox.com>
+2009-04-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/urandomm.c: Amend last fix.
 
-2009-04-06  Torbjorn Granlund  <tege@swox.com>
+2009-04-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Support Sun cc for x86_64.
 
 	* mpz/urandomm.c: Handle operand overlap.
 
-2009-03-11  Torbjorn Granlund  <tege@swox.com>
+2009-03-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (powerpc): Brave removing -Wa,-mppc64, in the hope that
 	GCC now passes the proper options.
 
-2009-03-09  Torbjorn Granlund  <tege@swox.com>
+2009-03-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/divrem_1.asm: Add a nop to save a cycle in unnormalized
 	case.
 
-2009-03-05  Torbjorn Granlund  <tege@swox.com>
+2009-03-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* ia64/gmp-mparam.h, arm/gmp-mparam.h, x86/p6/mmx/gmp-mparam.h,
 	pa32/hppa2_0/gmp-mparam.h sparc32/v9/gmp-mparam.h: Update.
 
-2009-03-03  Torbjorn Granlund  <tege@swox.com>
+2009-03-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/ia64/bdiv_dbm1c.asm: Accept/return carry.
 
-2009-03-02  Torbjorn Granlund  <tege@swox.com>
+2009-03-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (64-bit sparc/solaris): Pass -xO3, not -O3 to solaris
 	system compiler.
 
-2009-03-01  Torbjorn Granlund  <tege@swox.com>
+2009-03-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* longlong.h (mips, powerpc): Provide assembly-free umul_ppmm for newer
 	gcc.
 
-2009-02-04  Torbjorn Granlund  <tege@swox.com>
+2009-02-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/redc_2.c: Remove code for testing and timing.  Update
 	to current FSF header.
 	* mpn/generic/redc_1.c: Update to current FSF header.
 
-2009-01-21  Torbjorn Granlund  <tege@swox.com>
+2009-01-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/powm.c (redc): Remove.
 	(mpz_powm): Use mpn_redc_1 instead of redc.
 
 	* tests/mpz/t-powm.c: Rewrite reference code.
 
-2009-01-18  Torbjorn Granlund  <tege@swox.com>
+2009-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz: Increase reps for many tests.
 
 	* mpn/generic/rootrem.c (mpn_rootrem_internal): Use MPN_DECR_U instead of
 	mpn_sub_1 (works around gcc 4.3 bugs and is also faster).
 
-2009-01-16  Torbjorn Granlund  <tege@swox.com>
+2009-01-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/tests.h: Declare refmpn_divrem_2.
 
-2009-01-15  Torbjorn Granlund  <tege@swox.com>
+2009-01-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/perfpow.c: Add TMP_FREE before every return statement.
 
@@ -83,7 +85,7 @@
 	* configure.in (gcc_cflags, gcc_64_cflags): Revert from -O3 to -O2,
 	the change was accidental and cause too much miscompilation.
 
-2009-01-14  Torbjorn Granlund  <tege@swox.com>
+2009-01-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mod_1): Run MOD_1_x_THRESHOLD tests also when
 	longlong.h specified UDIV_PREINV_ALWAYS.
@@ -91,7 +93,7 @@
 	* mpn/generic/mod_1.c (mpn_mod_1): Properly check for normalization
 	divisor.
 
-2009-01-13  Torbjorn Granlund  <tege@swox.com>
+2009-01-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mod_1): Tune for MOD_1_1_THRESHOLD,
 	MOD_1_2_THRESHOLD, and MOD_1_4_THRESHOLD.
@@ -108,11 +110,11 @@
 	THRESHOLD macros.
 	(udiv_rnd_preinv): New macro.
 
-2009-01-12  Torbjorn Granlund  <tege@swox.com>
+2009-01-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_gcd_dc,tune_gcdext_dc): Lower step_factor to 0.1.
 
-2009-01-08  Torbjorn Granlund  <tege@swox.com>
+2009-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-nextprime.c: New test file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-nextprime.
@@ -120,7 +122,7 @@
 	From Niels Möller:
 	* mpz/nextprime.c: Handle large prime gaps by limiting incr.
 
-2009-01-04  Torbjorn Granlund  <tege@swox.com>
+2009-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/and.c, mpz/ior.c, mpz/xor.c: Re-read only necessary source
 	pointers after reallocation.  Misc cleanup.
@@ -134,7 +136,7 @@
 	* doc/gmp.texi (Greatest Common Divisor Algorithms): Updated
 	section on GCD algorithms.
 
-2008-12-29  Torbjorn Granlund  <tege@swox.com>
+2008-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Multiplication Algorithms): Add descriptions of Toom-4
 	and unbalanced multiplication.
@@ -148,7 +150,7 @@
 	* mpn/x86_64/sqr_basecase.asm: Slightly increase stack allocation, to
 	placate tuneup.
 
-2008-12-28  Torbjorn Granlund  <tege@swox.com>
+2008-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/pentium4/aors_n.asm: Tune prologue code.
 
@@ -161,17 +163,17 @@
 
 	* mpn/x86_64/invert_limb.asm: New file.
 
-2008-12-27  Torbjorn Granlund  <tege@swox.com>
+2008-12-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/aorslsh1_n.asm: New file.
 
-2008-12-26  Torbjorn Granlund  <tege@swox.com>
+2008-12-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/perfpow.c: Handle negative arguments properly.
 	* tests/mpz/t-perfpow.c: New file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-perfpow.
 
-2008-12-23  Torbjorn Granlund  <tege@swox.com>
+2008-12-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-mul.c (dump_abort): Improve error message.
 
@@ -205,18 +207,18 @@
 
 	* mpn/generic/mul.c: Update unbalanced toom code to pass scratch space.
 
-2008-12-21  Torbjorn Granlund  <tege@swox.com>
+2008-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/nextprime.c: Add TMP_SDECL/MARK/FREE.
 
-2008-12-20  Torbjorn Granlund  <tege@swox.com>
+2008-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/sqrtrem.c (mpn_sqrtrem1): Rewrite, improve interface.
 	(invsqrttab): New table, remove table approx_tab.
 	(mpn_sqrtrem2): Optimize, update mpn_sqrtrem1 call.
 	(mpn_sqrtrem): Update mpn_sqrtrem1 call.
 
-2008-12-18  Torbjorn Granlund  <tege@swox.com>
+2008-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/nextprime.c: Run 10 mpz_millerrabin tests (was 5).
 	Give credit to authors.
@@ -228,7 +230,7 @@
 	* mpn/x86_64/darwin.m4: New file.
 	* configure.in: Use x86_64/darwin.m4.
 
-2008-12-15  Torbjorn Granlund  <tege@swox.com>
+2008-12-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/projects.html: Remove GCD and division projects, update text on
 	multiplication.
@@ -236,14 +238,14 @@
 	* doc/tasks.html: Add a caution about that the file is somewhat
 	outdated.
 
-2008-12-14  Torbjorn Granlund  <tege@swox.com>
+2008-12-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/ev6/aorsmul_1.asm: New file (same code for mpn_addmul_1,
 	much improved for mpn_submul_1).
 	* mpn/alpha/ev6/addmul_1: File removed.
 	* mpn/alpha/ev6/submul_1: File removed.
 
-2008-12-09  Torbjorn Granlund  <tege@swox.com>
+2008-12-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	From David Harvey:
 	* mpn/x86_64/mul_basecase.asm: Further tweaks for code size and speed.
@@ -252,7 +254,7 @@
 
 	* mpn/powerpc64/mode64/mul_basecase.asm: New file.
 
-2008-12-08  Torbjorn Granlund  <tege@swox.com>
+2008-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/powerpc64/mode64/gmp-mparam.h: New file.
 
@@ -262,7 +264,7 @@
 
 	* mpz/pow_ui.c: Handle some small exponents locally.
 
-2008-12-07  Torbjorn Granlund  <tege@swox.com>
+2008-12-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/set_str.c: Remove prototypes (they are in gmp-impl.h).
 
@@ -284,7 +286,7 @@
 
 	* configure.in (gmp_mpn_functions): Add mul_toom33.  Reformat.
 
-2008-12-05  Torbjorn Granlund  <tege@swox.com>
+2008-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/redc_1.c: New file.
 	* mpn/generic/redc_2.c: New file.
@@ -298,32 +300,32 @@
 	Updated call.
 	* tune/tuneup.c (tune_powm): Update redc call.
 
-2008-12-04  Torbjorn Granlund  <tege@swox.com>
+2008-12-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/sqr_basecase.asm: Inline a combined diagonal product code
 	and addlsh1 loop.  Misc cleanup.
 
-2008-12-02  Torbjorn Granlund  <tege@swox.com>
+2008-12-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/sqr_basecase.asm: New file.
 
-2008-11-30  Torbjorn Granlund  <tege@swox.com>
+2008-11-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/sqr_basecase.c: Fix typo in mpn_addmul_2s variant.
 
-2008-11-28  Torbjorn Granlund  <tege@swox.com>
+2008-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/redc_1.asm: Rewrite.
 
-2008-11-27  Torbjorn Granlund  <tege@swox.com>
+2008-11-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/refmpn.c (refmpn_redc_1): New function.
 
-2008-11-25  Torbjorn Granlund  <tege@swox.com>
+2008-11-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/aorsmul_1.asm: Actually handle mpn_submul_1.
 
-2008-11-23  Torbjorn Granlund  <tege@swox.com>
+2008-11-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/divrem_1.asm: Rewrite.
 
@@ -334,14 +336,14 @@
 	* x86_64/divrem_2.asm: New file.
 	* tests/refmpn.c (refmpn_divrem_2): New function.
 
-2008-11-22  Torbjorn Granlund  <tege@swox.com>
+2008-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/mul_1.asm: Rewrite for smaller size and better speed.
 	* mpn/x86/k7/aorsmul_1.asm: Likewise.
 
 	* acinclude.m4 (GMP_VERSION): Include last component even when zero.
 
-2008-11-21  Torbjorn Granlund  <tege@swox.com>
+2008-11-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/README: Rewrite.
 
@@ -353,7 +355,7 @@
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
 	Bump version info.
 
-2008-11-20  Torbjorn Granlund  <tege@swox.com>
+2008-11-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h: Rename modlimb_invert to binvert_limb.
 	* tune/speed.h: Likewise.
@@ -391,7 +393,7 @@
 	* mpn/x86_64/aors_n.asm: Replace with slightly faster, more alignment
 	neutral loop.
 
-2008-11-18  Torbjorn Granlund  <tege@swox.com>
+2008-11-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Remove gcd_finda related declarations.
 	* gmp-impl.h (mpn_gcd_finda): Remove declaration.
@@ -415,24 +417,24 @@
 
 	* gmp-impl.h (mpn_jacobi_base): Remove parameter names.
 
-2008-11-11  Torbjorn Granlund  <tege@swox.com>
+2008-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpf/t-conv.c: Add some specific tests, supplementing the random
 	tests.
 
-2008-11-09  Torbjorn Granlund  <tege@swox.com>
+2008-11-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpf/set_str.c: Default 'base' before letting exp_base inherit it.
 
 	* tests/cxx/t-prec.cc: Use the right precision for all float constants.
 
-2008-11-08  Torbjorn Granlund  <tege@swox.com>
+2008-11-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Float Comparison): Update mpf_eq documentation.
 
 	* mpf/eq.c: Compare the right number of bits.
 
-2008-11-02  Torbjorn Granlund  <tege@swox.com>
+2008-11-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	Undo, it made testing too slow:
 	* tests/mpz/t-mul.c: Use slower geometric progression for operand
@@ -446,11 +448,11 @@
 	implementation)
 	(mpn_hgcd2): Use single precision for the second half of the work.
 
-2008-10-30  Torbjorn Granlund  <tege@swox.com>
+2008-10-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/p6/sse2/gmp-mparam.h: New file.
 
-2008-10-29  Torbjorn Granlund  <tege@swox.com>
+2008-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (x86 fat_path): Add "x86/p6/sse2".
 
@@ -467,12 +469,12 @@
 	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Handle "extended" fields for
 	model and family.
 
-2008-10-28  Torbjorn Granlund  <tege@swox.com>
+2008-10-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	From Mickael Gastineau:
 	* gmp-h.in (gmp_urandomm_ui, gmp_urandomb_ui): Add __GMP_DECLSPEC.
 
-2008-10-27  Torbjorn Granlund  <tege@swox.com>
+2008-10-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (mpn_gcdext_1): Remove bogus __GMP_ATTRIBUTE_PURE.
 
@@ -482,7 +484,7 @@
 	for each call to mpn_hgcd.
 	(speed_mpn_hgcd_lehmer): Likewise.
 
-2008-10-26  Torbjorn Granlund  <tege@swox.com>
+2008-10-26  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Point to p6/sse2 for pentiumm and core2.
 
@@ -492,7 +494,7 @@
 	* tune/common.c, tune/speed.c, tune/speed.h:
 	Add speed measurement of mpn_bdiv_dbm1c.
 
-2008-10-24  Torbjorn Granlund  <tege@swox.com>
+2008-10-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/gmp-mparam.h (MUL_FFT_TABLE2, SQR_FFT_TABLE2): Extend.
 
@@ -502,12 +504,12 @@
 
 	* gmp-impl.h (DECL_gcdext_1): Deleted.
 
-2008-10-22  Torbjorn Granlund  <tege@swox.com>
+2008-10-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/atom/aors_n.asm: New file.
 	* mpn/x86_64/atom/gmp-mparam.h: New file.
 
-2008-10-21  Torbjorn Granlund  <tege@swox.com>
+2008-10-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	With Neils Möller:
 	* mpz/nextprime.c: Rewrite.
@@ -527,23 +529,23 @@
 	qstack.c.
 	* mpn/generic/qstack.c: Deleted obsolete file.
 
-2008-10-20  Torbjorn Granlund  <tege@swox.com>
+2008-10-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/core2/aorsmul_1.asm: New file.
 
-2008-10-19  Torbjorn Granlund  <tege@swox.com>
+2008-10-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aors_n.asm: Remove redundant MULFUNC_PROLOGUE.
 
 	* gmp-impl.h (popc_limb): Remove redundant checks of GMP_LIMB_BITS
 	inside several of these macros.
 
-2008-10-17  Torbjorn Granlund  <tege@swox.com>
+2008-10-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-mul.c: Use slower geometric progression for operand
 	sizes.  Do every other tests for same size operands.
 
-2008-10-15  Torbjorn Granlund  <tege@swox.com>
+2008-10-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/mul_basecase.asm: Simplify addressing in epilogue.
 
@@ -552,15 +554,15 @@
 
 	* config.guess, config.sub, configure.in: Support Intel Atom processor.
 
-2008-10-10  Torbjorn Granlund  <tege@swox.com>
+2008-10-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpq/mul.c: Fix typo in last change.
 
-2008-10-09  Torbjorn Granlund  <tege@swox.com>
+2008-10-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/refmpn.c (refmpn_sb_divrem_mn): Work around a gcc bug.
 
-2008-10-08  Torbjorn Granlund  <tege@swox.com>
+2008-10-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpq/mul.c: Use TMP_ALLOC.  Cleanup.
 	* mpq/div.c: Likewise.
@@ -572,12 +574,12 @@
 
 	* mpn/x86/k7/gmp-mparam.h: Updated GCD-related values.
 
-2008-10-05  Torbjorn Granlund  <tege@swox.com>
+2008-10-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul_fft.c (mpn_mul_fft_internal): Do store
 	mpn_fft_norm_modF return value, if (rec).
 
-2008-10-04  Torbjorn Granlund  <tege@swox.com>
+2008-10-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aorsmul_1.asm: Replace with faster code.
 	* mpn/x86_64/mul_1.asm: Likewise.
@@ -585,7 +587,7 @@
 	* mpn/x86_64/mul_2.asm: Likewise.
 	* mpn/x86_64/mul_basecase.asm: Likewise.
 
-2008-10-02  Torbjorn Granlund  <tege@swox.com>
+2008-10-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/minithres/gmp-mparam.h: Update FFT values.
 
@@ -593,12 +595,12 @@
 
 	* hgcd.c (mpn_hgcd_matrix_mul): Fixed normalization bug.
 
-2008-09-24  Torbjorn Granlund  <tege@swox.com>
+2008-09-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Handle --enable-minithres.
 	* mpn/minithres/gmp-mparam.h: Update all values.
 
-2008-09-22  Torbjorn Granlund  <tege@swox.com>
+2008-09-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): New entry for mpn_mul.
 	* tune/speed.h (SPEED_ROUTINE_MPN_MUL): Renamed from
@@ -651,7 +653,7 @@
 	addaddmul_1msb0.
 	(HAVE_NATIVE): List addaddmul_1msb0.
 
-2008-09-21  Torbjorn Granlund  <tege@swox.com>
+2008-09-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/get_str.c (GET_STR_DC_THRESHOLD): Remove default.
 	(GET_STR_PRECOMPUTE_THRESHOLD): Likewise.
@@ -663,7 +665,7 @@
 	* mpn/generic/set_str.c:
 	(mpn_dc_set_str): Remove impossible case, replace by an ASSERT.
 
-2008-09-18  Torbjorn Granlund  <tege@swox.com>
+2008-09-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/alpha/ev6/gmp-mparam.h (DIVEXACT_BY3_METHOD): Define.
 
@@ -714,7 +716,7 @@
 	(mpn_gcd): Use CHOOSE_P, and generalized the calculation of
 	scratch space.
 
-2008-09-16  Torbjorn Granlund  <tege@swox.com>
+2008-09-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom_interpolate_7pts.c: Use new mpn_divexact_byN
 	functions.
@@ -848,7 +850,7 @@
 
 	* configure.in (gmp_mpn_functions): Added gcdext_subdiv_step.
 
-2008-09-10  Torbjorn Granlund  <tege@swox.com>
+2008-09-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/devel/anymul_1.c: Include <string.h>.
 
@@ -882,7 +884,7 @@
 	* */gmp-mparam.h: Renamed HGCD_SCHOENHAGE_THRESHOLD to
 	HGCD_THRESHOLD.
 
-2008-09-09  Torbjorn Granlund  <tege@swox.com>
+2008-09-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi: Fix a typo and clarify mpn_gcdext docs.
 
@@ -911,7 +913,7 @@
 	* gcd_subdiv_step.c (mpn_gcd_subdiv_step): Simplified function.
 	The special cancellation logic is not needed here.
 
-2008-09-08  Torbjorn Granlund  <tege@swox.com>
+2008-09-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/invert.c: Add working but slow code.
 
@@ -959,7 +961,7 @@
 
 	* configure.in (gmp_mpn_functions): Added gcdext_lehmer.
 
-2008-09-05  Torbjorn Granlund  <tege@swox.com>
+2008-09-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom_interpolate_7pts.c: Use mpn_divexact_by3c instead of
 	divexact_odd.
@@ -983,13 +985,13 @@
 	from repository. They're instead generated by automake and
 	autoconf before distribution.
 
-2008-08-25  Torbjorn Granlund  <tege@swox.com>
+2008-08-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpf/set_str.c: Allocate mantissa space based on mantissa size,
 	not on destination variable space.
 	* mpf/set_str.c: Accept unary plus before exponent.
 
-2008-08-06  Torbjorn Granlund  <tege@swox.com>
+2008-08-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul_toom22.c: Add statistics gathering functionality,
 	triggered by cpp predef STAT.
@@ -997,7 +999,7 @@
 	From David Harvey:
 	* mpn/generic/mul_toom22.c: Decrease scratch space usage.
 
-2008-08-02  Torbjorn Granlund  <tege@swox.com>
+2008-08-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/misc/t-scanf.c: Avoid negative arguments to _ui functions.
 	* tests/misc/t-printf.c: Likewise.
@@ -1006,7 +1008,7 @@
 
 	* acinclude.m4 (CL_AS_NOEXECSTACK): Avoid -q flag to grep.
 
-2008-08-01  Torbjorn Granlund  <tege@swox.com>
+2008-08-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* acinclude.m4 (CL_AS_NOEXECSTACK): New.
 	* configure.in: Use CL_AS_NOEXECSTACK.
@@ -1015,7 +1017,7 @@
 	* gmpxx.h (__GMP_DBL_LIMBS): Use DBL_MAX_EXP instead of
 	std::numeric_limits<double>::max_exponent for better portability.
 
-2008-07-29  Torbjorn Granlund  <tege@swox.com>
+2008-07-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmpxx.h (__GMP_DBL_LIMBS): New #define.
 	(__GMP_ULI_LIMBS): New #define.
@@ -1026,23 +1028,23 @@
 	(struct __gmp_binary_ior): Likewise.
 	(struct __gmp_binary_xor): Likewise.
 
-2008-07-28  Torbjorn Granlund  <tege@swox.com>
+2008-07-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/cxx/t-binary.cc: Add some tests for logical operations.
 
-2008-07-24  Torbjorn Granlund  <tege@swox.com>
+2008-07-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmpxx.h: Use __GMPZ_* instead of __GMPZZ_* for bitwise ops, remove
 	__GMPZZ_*.
 	Remove repeated #undefs.
 	(__gmp_alloc_cstring): Declare freefunc as extern "C".
 
-2008-07-23  Torbjorn Granlund  <tege@swox.com>
+2008-07-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (__GMP_CC): New define, undocumented for now.
 	(__GMP_CFLAGS): Likewise.
 
-2008-07-21  Torbjorn Granlund  <tege@swox.com>
+2008-07-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/amd64check.c: Fix a printf type clash.
 
@@ -1056,37 +1058,37 @@
 
 	* configure.in: Separate core2 and athlon64 flags handling.
 
-2008-06-19  Torbjorn Granlund  <tege@swox.com>
+2008-06-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* config.guess: Recognize pentiumm and AMD geode.
 	* config.sub: Likewise.
 	* configure.in: Likewise.
 
-2008-06-02  Torbjorn Granlund  <tege@swox.com>
+2008-06-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Disallow odd nails sizes.
 	* configure.in: Inherit default gcc_cflags/gcc_64_cflags everywhere.
 
-2008-05-23  Torbjorn Granlund  <tege@swox.com>
+2008-05-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/init2.c: Rewrite to avoid internal overflow and to detect mpz_t
 	overflow.
 	* mpz/realloc2.c: Likewise.
 	* mpz/realloc.c: Detect mpz_t overflow.
 
-2008-05-22  Torbjorn Granlund  <tege@swox.com>
+2008-05-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (sparc): Remove -fast, it causes documented
 	miscompilation.
 
 	* config.guess: Properly handle the "extended" variants of x86 cpuid.
 
-2008-05-09  Torbjorn Granlund  <tege@swox.com>
+2008-05-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_mul_fft): Now void.
 	(udiv_qrnnd_preinv3): Special case for constant (nl).
 
-2008-05-08  Torbjorn Granlund  <tege@swox.com>
+2008-05-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul_fft.c: Clean up types in TRACE (printf (...)).
 	(TRACE): Redefine to allow command line control.
@@ -1100,17 +1102,17 @@
 	(mpn_fft_sub_modF): Re-enable, now needed by mpn_fft_fft and
 	mpn_fft_fftinv.
 
-2008-03-10  Torbjorn Granlund  <tege@swox.com>
+2008-03-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-mul.c (main): Let GMP_CHECK_FFT mean largest allowed
 	power-of-2 of test operands.
 
-2008-02-28  Torbjorn Granlund  <tege@swox.com>
+2008-02-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/cxx/t-binary.cc (check_mpz): Expect floor rounding for right
 	shift.
 
-2008-02-27  Torbjorn Granlund  <tege@swox.com>
+2008-02-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpz/mul_i.h: Check sml's size (not the signed small_mult).
 
@@ -1129,18 +1131,18 @@
 	* config.guess: Likewise.
 	* acinclude.m4 (X86_PATTERN): Likewise.
 
-2008-02-10  Torbjorn Granlund  <tege@swox.com>
+2008-02-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/p6/aors_n.asm: Use Zdisp to work around GNU as bug.
 	* mpn/x86/x86-defs.m4 (Zdisp): Add more instructions.
 
-2008-02-08  Torbjorn Granlund  <tege@swox.com>
+2008-02-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aors_n.asm: New file.
 	* mpn/x86_64/add_n.asm: Delete.
 	* mpn/x86_64/sub_n.asm: Delete.
 
-2008-02-07  Torbjorn Granlund  <tege@swox.com>
+2008-02-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k6/mmx/dive_1.asm: Fix typo in last change.
 
