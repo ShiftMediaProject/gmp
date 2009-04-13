@@ -20,8 +20,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 Changes between GMP version 4.2.X and 4.3.0
 
   Bugs:
-  * Recognition of negative perfect powers that can be written both as an
-    even and odd power now work properly.
+  * Fixed bug in mpz_perfect_power_p with recognition of negative perfect
+    powers that can be written both as an even and odd power.
   * We might accidentally have added bugs since there is a large amount of
     new code in this release.
 
