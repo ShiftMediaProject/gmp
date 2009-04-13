@@ -85,9 +85,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
        efficient, and avoids some suspicious behaviour observed in various
        system libc's.  GLIBC 2.2.4 for instance returns 0 on
 
-           sscanf(" ", " x")
+	   sscanf(" ", " x")
        or
-           sscanf(" ", " x%d",&n)
+	   sscanf(" ", " x%d",&n)
 
        whereas we think they should return EOF, since end-of-string is
        reached when a match of "x" is required.
@@ -181,45 +181,45 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 struct gmp_doscan_params_t {
-  int   base;
-  int   ignore;
-  char  type;
-  int   width;
+  int	base;
+  int	ignore;
+  char	type;
+  int	width;
 };
 
 
-#define GET(c)                  \
-  do {                          \
-    ASSERT (chars <= width);    \
-    chars++;                    \
-    if (chars > width)          \
-      goto convert;             \
-    (c) = (*funs->get) (data);  \
+#define GET(c)			\
+  do {				\
+    ASSERT (chars <= width);	\
+    chars++;			\
+    if (chars > width)		\
+      goto convert;		\
+    (c) = (*funs->get) (data);	\
   } while (0)
 
 /* store into "s", extending if necessary */
-#define STORE(c)                                                        \
-  do {                                                                  \
-    ASSERT (s_upto <= s_alloc);                                         \
-    if (s_upto >= s_alloc)                                              \
-      {                                                                 \
-        size_t  s_alloc_new = s_alloc + S_ALLOC_STEP;                   \
-        s = __GMP_REALLOCATE_FUNC_TYPE (s, s_alloc, s_alloc_new, char); \
-        s_alloc = s_alloc_new;                                          \
-      }                                                                 \
-    s[s_upto++] = c;                                                    \
+#define STORE(c)							\
+  do {									\
+    ASSERT (s_upto <= s_alloc);						\
+    if (s_upto >= s_alloc)						\
+      {									\
+	size_t	s_alloc_new = s_alloc + S_ALLOC_STEP;			\
+	s = __GMP_REALLOCATE_FUNC_TYPE (s, s_alloc, s_alloc_new, char); \
+	s_alloc = s_alloc_new;						\
+      }									\
+    s[s_upto++] = c;							\
   } while (0)
 
 #define S_ALLOC_STEP  512
 
 static int
 gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
-         const struct gmp_doscan_params_t *p, void *dst)
+	 const struct gmp_doscan_params_t *p, void *dst)
 {
-  int     chars, c, base, first, width, seen_point, seen_digit, hexfloat;
+  int	  chars, c, base, first, width, seen_point, seen_digit, hexfloat;
   size_t  s_upto, s_alloc, hexexp;
-  char    *s;
-  int     invalid = 0;
+  char	  *s;
+  int	  invalid = 0;
 
   TRACE (printf ("gmpscan\n"));
 
@@ -256,42 +256,42 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
 
   if (base == 0)
     {
-      base = 10;                  /* decimal if no base indicator */
+      base = 10;		  /* decimal if no base indicator */
       if (c == '0')
-        {
-          seen_digit = 1;         /* 0 alone is a valid number */
-          if (p->type != 'F')
-            base = 8;             /* leading 0 is octal, for non-floats */
-          STORE (c);
-          GET (c);
-          if (c == 'x' || c == 'X')
-            {
-              base = 16;
-              seen_digit = 0;     /* must have digits after an 0x */
-              if (p->type == 'F') /* don't pass 'x' to mpf_set_str_point */
-                hexfloat = 1;
-              else
-                STORE (c);
-              GET (c);
-            }
-        }
+	{
+	  seen_digit = 1;	  /* 0 alone is a valid number */
+	  if (p->type != 'F')
+	    base = 8;		  /* leading 0 is octal, for non-floats */
+	  STORE (c);
+	  GET (c);
+	  if (c == 'x' || c == 'X')
+	    {
+	      base = 16;
+	      seen_digit = 0;	  /* must have digits after an 0x */
+	      if (p->type == 'F') /* don't pass 'x' to mpf_set_str_point */
+		hexfloat = 1;
+	      else
+		STORE (c);
+	      GET (c);
+	    }
+	}
     }
 
  digits:
   for (;;)
     {
       if (base == 16)
-        {
-          if (! isxdigit (c))
-            break;
-        }
+	{
+	  if (! isxdigit (c))
+	    break;
+	}
       else
-        {
-          if (! isdigit (c))
-            break;
-          if (base == 8 && (c == '8' || c == '9'))
-            break;
-        }
+	{
+	  if (! isdigit (c))
+	    break;
+	  if (base == 8 && (c == '8' || c == '9'))
+	    break;
+	}
 
       seen_digit = 1;
       STORE (c);
@@ -302,68 +302,68 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
     {
       /* decimal point */
       if (p->type == 'F' && ! seen_point)
-        {
-          /* For a multi-character decimal point, if the first character is
-             present then all of it must be, otherwise the input is
-             considered invalid.  */
-          const char  *point = GMP_DECIMAL_POINT;
-          int         pc = (unsigned char) *point++;
-          if (c == pc)
-            {
-              for (;;)
-                {
-                  STORE (c);
-                  GET (c);
-                  pc = (unsigned char) *point++;
-                  if (pc == '\0')
-                    break;
-                  if (c != pc)
-                    goto set_invalid;
-                }
-              seen_point = 1;
-              goto digits;
-            }
-        }
+	{
+	  /* For a multi-character decimal point, if the first character is
+	     present then all of it must be, otherwise the input is
+	     considered invalid.  */
+	  const char  *point = GMP_DECIMAL_POINT;
+	  int	      pc = (unsigned char) *point++;
+	  if (c == pc)
+	    {
+	      for (;;)
+		{
+		  STORE (c);
+		  GET (c);
+		  pc = (unsigned char) *point++;
+		  if (pc == '\0')
+		    break;
+		  if (c != pc)
+		    goto set_invalid;
+		}
+	      seen_point = 1;
+	      goto digits;
+	    }
+	}
 
       /* exponent */
       if (p->type == 'F')
-        {
-          if (hexfloat && (c == 'p' || c == 'P'))
-            {
-              hexexp = s_upto; /* exponent location */
-              base = 10;       /* exponent in decimal */
-              goto exponent;
-            }
-          else if (! hexfloat && (c == 'e' || c == 'E'))
-            {
-            exponent:
-              /* must have at least one digit in the mantissa, just an exponent
-                 is not good enough */
-              if (! seen_digit)
-                goto set_invalid;
+	{
+	  if (hexfloat && (c == 'p' || c == 'P'))
+	    {
+	      hexexp = s_upto; /* exponent location */
+	      base = 10;       /* exponent in decimal */
+	      goto exponent;
+	    }
+	  else if (! hexfloat && (c == 'e' || c == 'E'))
+	    {
+	    exponent:
+	      /* must have at least one digit in the mantissa, just an exponent
+		 is not good enough */
+	      if (! seen_digit)
+		goto set_invalid;
 
-            do_second:
-              first = 0;
-              STORE (c);
-              GET (c);
-              goto another;
-            }
-        }
+	    do_second:
+	      first = 0;
+	      STORE (c);
+	      GET (c);
+	      goto another;
+	    }
+	}
 
       /* denominator */
       if (p->type == 'Q' && c == '/')
-        {
-          /* must have at least one digit in the numerator */
-          if (! seen_digit)
-            goto set_invalid;
+	{
+	  /* must have at least one digit in the numerator */
+	  if (! seen_digit)
+	    goto set_invalid;
 
-          /* now look for at least one digit in the denominator */
-          seen_digit = 0;
+	  /* now look for at least one digit in the denominator */
+	  seen_digit = 0;
 
-          /* allow the base to be redetermined for "%i" */
-          base = p->base;
-          goto do_second;
-        }
+	  /* allow the base to be redetermined for "%i" */
+	  base = p->base;
+	  goto do_second;
+	}
     }
 
  convert:
@@ -377,39 +377,39 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
   if (! p->ignore)
     {
       STORE ('\0');
-      TRACE (printf ("  convert \"%s\"\n", s));
+      TRACE (printf ("	convert \"%s\"\n", s));
 
       /* We ought to have parsed out a valid string above, so just test
-         mpz_set_str etc with an ASSERT.  */
+	 mpz_set_str etc with an ASSERT.  */
       switch (p->type) {
       case 'F':
-        {
-          mpf_ptr  f = (mpf_ptr) dst;
-          if (hexexp != 0)
-            s[hexexp] = '\0';
-          ASSERT_NOCARRY (mpf_set_str (f, s, hexfloat ? 16 : 10));
-          if (hexexp != 0)
-            {
-              char *dummy;
-              long  exp;
-              exp = strtol (s + hexexp + 1, &dummy, 10);
-              if (exp >= 0)
-                mpf_mul_2exp (f, f, (unsigned long) exp);
-              else
-                mpf_div_2exp (f, f, - (unsigned long) exp);
-            }
-        }
-        break;
+	{
+	  mpf_ptr  f = (mpf_ptr) dst;
+	  if (hexexp != 0)
+	    s[hexexp] = '\0';
+	  ASSERT_NOCARRY (mpf_set_str (f, s, hexfloat ? 16 : 10));
+	  if (hexexp != 0)
+	    {
+	      char *dummy;
+	      long  exp;
+	      exp = strtol (s + hexexp + 1, &dummy, 10);
+	      if (exp >= 0)
+		mpf_mul_2exp (f, f, (unsigned long) exp);
+	      else
+		mpf_div_2exp (f, f, - (unsigned long) exp);
+	    }
+	}
+	break;
       case 'Q':
-        ASSERT_NOCARRY (mpq_set_str ((mpq_ptr) dst, s, p->base));
-        break;
+	ASSERT_NOCARRY (mpq_set_str ((mpq_ptr) dst, s, p->base));
+	break;
       case 'Z':
-        ASSERT_NOCARRY (mpz_set_str ((mpz_ptr) dst, s, p->base));
-        break;
+	ASSERT_NOCARRY (mpz_set_str ((mpz_ptr) dst, s, p->base));
+	break;
       default:
-        ASSERT (0);
-        /*FALLTHRU*/
-        break;
+	ASSERT (0);
+	/*FALLTHRU*/
+	break;
       }
     }
 
@@ -418,7 +418,7 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
   if (chars != width+1)
     {
       (*funs->unget) (c, data);
-      TRACE (printf ("  ungetc %d, to give %d chars\n", c, chars-1));
+      TRACE (printf ("	ungetc %d, to give %d chars\n", c, chars-1));
     }
   chars--;
 
@@ -426,7 +426,7 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
 
   if (invalid)
     {
-      TRACE (printf ("  invalid\n"));
+      TRACE (printf ("	invalid\n"));
       return -1;
     }
 
@@ -461,21 +461,21 @@ skip_white (const struct gmp_doscan_funs_t *funs, void *data)
 
 int
 __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
-              const char *orig_fmt, va_list orig_ap)
+	      const char *orig_fmt, va_list orig_ap)
 {
   struct gmp_doscan_params_t  param;
   va_list     ap;
-  char        *alloc_fmt;
+  char	      *alloc_fmt;
   const char  *fmt, *this_fmt, *end_fmt;
   size_t      orig_fmt_len, alloc_fmt_size, len;
-  int         new_fields, new_chars;
-  char        fchar;
-  int         fields = 0;
-  int         chars = 0;
+  int	      new_fields, new_chars;
+  char	      fchar;
+  int	      fields = 0;
+  int	      chars = 0;
 
   TRACE (printf ("__gmp_doscan \"%s\"\n", orig_fmt);
-         if (funs->scan == (gmp_doscan_scan_t) sscanf)
-           printf ("  s=\"%s\"\n", * (const char **) data));
+	 if (funs->scan == (gmp_doscan_scan_t) sscanf)
+	   printf ("  s=\"%s\"\n", * (const char **) data));
 
   /* Don't modify orig_ap, if va_list is actually an array and hence call by
      reference.  It could be argued that it'd be more efficient to leave
@@ -502,258 +502,258 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
       fchar = *fmt++;
 
       if (fchar == '\0')
-        break;
+	break;
 
       if (isspace (fchar))
-        {
-          chars += skip_white (funs, data);
-          continue;
-        }
+	{
+	  chars += skip_white (funs, data);
+	  continue;
+	}
 
       if (fchar != '%')
-        {
-          int  c;
-        literal:
-          c = (funs->get) (data);
-          if (c != fchar)
-            {
-              (funs->unget) (c, data);
-              if (c == EOF)
-                {
-                eof_no_match:
-                  if (fields == 0)
-                    fields = EOF;
-                }
-              goto done;
-            }
-          chars++;
-          continue;
-        }
+	{
+	  int  c;
+	literal:
+	  c = (funs->get) (data);
+	  if (c != fchar)
+	    {
+	      (funs->unget) (c, data);
+	      if (c == EOF)
+		{
+		eof_no_match:
+		  if (fields == 0)
+		    fields = EOF;
+		}
+	      goto done;
+	    }
+	  chars++;
+	  continue;
+	}
 
       param.type = '\0';
-      param.base = 0;    /* for e,f,g,i */
+      param.base = 0;	 /* for e,f,g,i */
       param.ignore = 0;
       param.width = 0;
 
       this_fmt = fmt-1;
-      TRACE (printf ("  this_fmt \"%s\"\n", this_fmt));
+      TRACE (printf ("	this_fmt \"%s\"\n", this_fmt));
 
       for (;;)
-        {
-          ASSERT (fmt <= end_fmt);
+	{
+	  ASSERT (fmt <= end_fmt);
 
-          fchar = *fmt++;
-          switch (fchar) {
+	  fchar = *fmt++;
+	  switch (fchar) {
 
-          case '\0':  /* unterminated % sequence */
-            ASSERT (0);
-            goto done;
+	  case '\0':  /* unterminated % sequence */
+	    ASSERT (0);
+	    goto done;
 
-          case '%':   /* literal % */
-            goto literal;
+	  case '%':   /* literal % */
+	    goto literal;
 
-          case '[':   /* character range */
-            fchar = *fmt++;
-            if (fchar == '^')
-              fchar = *fmt++;
-            /* ']' allowed as the first char (possibly after '^') */
-            if (fchar == ']')
-              fchar = *fmt++;
-            for (;;)
-              {
-                ASSERT (fmt <= end_fmt);
-                if (fchar == '\0')
-                  {
-                    /* unterminated % sequence */
-                    ASSERT (0);
-                    goto done;
-                  }
-                if (fchar == ']')
-                  break;
-                fchar = *fmt++;
-              }
-            /*FALLTHRU*/
-          case 'c':   /* characters */
-          case 's':   /* string of non-whitespace */
-          case 'p':   /* pointer */
-          libc_type:
-            len = fmt - this_fmt;
-            memcpy (alloc_fmt, this_fmt, len);
-            alloc_fmt[len++] = '%';
-            alloc_fmt[len++] = 'n';
-            alloc_fmt[len] = '\0';
+	  case '[':   /* character range */
+	    fchar = *fmt++;
+	    if (fchar == '^')
+	      fchar = *fmt++;
+	    /* ']' allowed as the first char (possibly after '^') */
+	    if (fchar == ']')
+	      fchar = *fmt++;
+	    for (;;)
+	      {
+		ASSERT (fmt <= end_fmt);
+		if (fchar == '\0')
+		  {
+		    /* unterminated % sequence */
+		    ASSERT (0);
+		    goto done;
+		  }
+		if (fchar == ']')
+		  break;
+		fchar = *fmt++;
+	      }
+	    /*FALLTHRU*/
+	  case 'c':   /* characters */
+	  case 's':   /* string of non-whitespace */
+	  case 'p':   /* pointer */
+	  libc_type:
+	    len = fmt - this_fmt;
+	    memcpy (alloc_fmt, this_fmt, len);
+	    alloc_fmt[len++] = '%';
+	    alloc_fmt[len++] = 'n';
+	    alloc_fmt[len] = '\0';
 
-            TRACE (printf ("  scan \"%s\"\n", alloc_fmt);
-                   if (funs->scan == (gmp_doscan_scan_t) sscanf)
-                     printf ("  s=\"%s\"\n", * (const char **) data));
+	    TRACE (printf ("  scan \"%s\"\n", alloc_fmt);
+		   if (funs->scan == (gmp_doscan_scan_t) sscanf)
+		     printf ("	s=\"%s\"\n", * (const char **) data));
 
-            new_chars = -1;
-            if (param.ignore)
-              {
-                new_fields = (*funs->scan) (data, alloc_fmt, &new_chars);
-                ASSERT (new_fields == 0 || new_fields == EOF);
-              }
-            else
-              {
-                new_fields = (*funs->scan) (data, alloc_fmt,
-                                            va_arg (ap, void *), &new_chars);
-                ASSERT (new_fields==0 || new_fields==1 || new_fields==EOF);
+	    new_chars = -1;
+	    if (param.ignore)
+	      {
+		new_fields = (*funs->scan) (data, alloc_fmt, &new_chars);
+		ASSERT (new_fields == 0 || new_fields == EOF);
+	      }
+	    else
+	      {
+		void *arg = va_arg (ap, void *);
+		new_fields = (*funs->scan) (data, alloc_fmt, arg, &new_chars);
+		ASSERT (new_fields==0 || new_fields==1 || new_fields==EOF);
 
-                if (new_fields == 0)
-                  goto done;  /* invalid input */
+		if (new_fields == 0)
+		  goto done;  /* invalid input */
 
-                if (new_fields == 1)
-                  ASSERT (new_chars != -1);
-              }
-            TRACE (printf ("  new_fields %d   new_chars %d\n",
-                           new_fields, new_chars));
+		if (new_fields == 1)
+		  ASSERT (new_chars != -1);
+	      }
+	    TRACE (printf ("  new_fields %d   new_chars %d\n",
+			   new_fields, new_chars));
 
-            if (new_fields == -1)
-              goto eof_no_match;  /* EOF before anything matched */
+	    if (new_fields == -1)
+	      goto eof_no_match;  /* EOF before anything matched */
 
-            /* Wnder param.ignore, when new_fields==0 we don't know if
-               it's a successful match or an invalid field.  new_chars
-               won't have been assigned if it was an invalid field.  */
-            if (new_chars == -1)
-              goto done;  /* invalid input */
+	    /* Under param.ignore, when new_fields==0 we don't know if
+	       it's a successful match or an invalid field.  new_chars
+	       won't have been assigned if it was an invalid field.  */
+	    if (new_chars == -1)
+	      goto done;  /* invalid input */
 
-            chars += new_chars;
-            (*funs->step) (data, new_chars);
+	    chars += new_chars;
+	    (*funs->step) (data, new_chars);
 
-          increment_fields:
-            if (! param.ignore)
-              fields++;
-            goto next;
+	  increment_fields:
+	    if (! param.ignore)
+	      fields++;
+	    goto next;
 
-          case 'd':   /* decimal */
-          case 'u':   /* decimal */
-            param.base = 10;
-            goto numeric;
+	  case 'd':   /* decimal */
+	  case 'u':   /* decimal */
+	    param.base = 10;
+	    goto numeric;
 
-          case 'e':   /* float */
-          case 'E':   /* float */
-          case 'f':   /* float */
-          case 'g':   /* float */
-          case 'G':   /* float */
-          case 'i':   /* integer with base marker */
-          numeric:
-            if (param.type != 'F' && param.type != 'Q' && param.type != 'Z')
-              goto libc_type;
+	  case 'e':   /* float */
+	  case 'E':   /* float */
+	  case 'f':   /* float */
+	  case 'g':   /* float */
+	  case 'G':   /* float */
+	  case 'i':   /* integer with base marker */
+	  numeric:
+	    if (param.type != 'F' && param.type != 'Q' && param.type != 'Z')
+	      goto libc_type;
 
-            chars += skip_white (funs, data);
+	    chars += skip_white (funs, data);
 
-            new_chars = gmpscan (funs, data, &param,
-                                 param.ignore ? NULL : va_arg (ap, void*));
-            if (new_chars == -2)
-              goto eof_no_match;
-            if (new_chars == -1)
-              goto done;
+	    new_chars = gmpscan (funs, data, &param,
+				 param.ignore ? NULL : va_arg (ap, void*));
+	    if (new_chars == -2)
+	      goto eof_no_match;
+	    if (new_chars == -1)
+	      goto done;
 
-            ASSERT (new_chars >= 0);
-            chars += new_chars;
-            goto increment_fields;
+	    ASSERT (new_chars >= 0);
+	    chars += new_chars;
+	    goto increment_fields;
 
-          case 'a':   /* glibc allocate string */
-          case '\'':  /* glibc digit groupings */
-            break;
+	  case 'a':   /* glibc allocate string */
+	  case '\'':  /* glibc digit groupings */
+	    break;
 
-          case 'F':   /* mpf_t */
-          case 'j':   /* intmax_t */
-          case 'L':   /* long long */
-          case 'q':   /* quad_t */
-          case 'Q':   /* mpq_t */
-          case 't':   /* ptrdiff_t */
-          case 'z':   /* size_t */
-          case 'Z':   /* mpz_t */
-          set_type:
-            param.type = fchar;
-            break;
+	  case 'F':   /* mpf_t */
+	  case 'j':   /* intmax_t */
+	  case 'L':   /* long long */
+	  case 'q':   /* quad_t */
+	  case 'Q':   /* mpq_t */
+	  case 't':   /* ptrdiff_t */
+	  case 'z':   /* size_t */
+	  case 'Z':   /* mpz_t */
+	  set_type:
+	    param.type = fchar;
+	    break;
 
-          case 'h':   /* short or char */
-            if (param.type != 'h')
-              goto set_type;
-            param.type = 'H';   /* internal code for "hh" */
-            break;
+	  case 'h':   /* short or char */
+	    if (param.type != 'h')
+	      goto set_type;
+	    param.type = 'H';	/* internal code for "hh" */
+	    break;
 
-            goto numeric;
+	    goto numeric;
 
-          case 'l':   /* long, long long, double or long double */
-            if (param.type != 'l')
-              goto set_type;
-            param.type = 'L';   /* "ll" means "L" */
-            break;
+	  case 'l':   /* long, long long, double or long double */
+	    if (param.type != 'l')
+	      goto set_type;
+	    param.type = 'L';	/* "ll" means "L" */
+	    break;
 
-          case 'n':
-            if (! param.ignore)
-              {
-                void  *p;
-                p = va_arg (ap, void *);
-                TRACE (printf ("  store %%n to %p\n", p));
-                switch (param.type) {
-                case '\0': * (int       *) p = chars; break;
-                case 'F':  mpf_set_si ((mpf_ptr) p, (long) chars); break;
-                case 'H':  * (char      *) p = chars; break;
-                case 'h':  * (short     *) p = chars; break;
+	  case 'n':
+	    if (! param.ignore)
+	      {
+		void  *p;
+		p = va_arg (ap, void *);
+		TRACE (printf ("  store %%n to %p\n", p));
+		switch (param.type) {
+		case '\0': * (int	*) p = chars; break;
+		case 'F':  mpf_set_si ((mpf_ptr) p, (long) chars); break;
+		case 'H':  * (char	*) p = chars; break;
+		case 'h':  * (short	*) p = chars; break;
 #if HAVE_INTMAX_T
-                case 'j':  * (intmax_t  *) p = chars; break;
+		case 'j':  * (intmax_t	*) p = chars; break;
 #else
-                case 'j':  ASSERT_FAIL (intmax_t not available); break;
+		case 'j':  ASSERT_FAIL (intmax_t not available); break;
 #endif
-                case 'l':  * (long      *) p = chars; break;
+		case 'l':  * (long	*) p = chars; break;
 #if HAVE_QUAD_T && HAVE_LONG_LONG
-                case 'q':
-                  ASSERT_ALWAYS (sizeof (quad_t) == sizeof (long long));
-                  /*FALLTHRU*/
+		case 'q':
+		  ASSERT_ALWAYS (sizeof (quad_t) == sizeof (long long));
+		  /*FALLTHRU*/
 #else
-                case 'q':  ASSERT_FAIL (quad_t not available); break;
+		case 'q':  ASSERT_FAIL (quad_t not available); break;
 #endif
 #if HAVE_LONG_LONG
-                case 'L':  * (long long *) p = chars; break;
+		case 'L':  * (long long *) p = chars; break;
 #else
-                case 'L':  ASSERT_FAIL (long long not available); break;
+		case 'L':  ASSERT_FAIL (long long not available); break;
 #endif
-                case 'Q':  mpq_set_si ((mpq_ptr) p, (long) chars, 1L); break;
+		case 'Q':  mpq_set_si ((mpq_ptr) p, (long) chars, 1L); break;
 #if HAVE_PTRDIFF_T
-                case 't':  * (ptrdiff_t *) p = chars; break;
+		case 't':  * (ptrdiff_t *) p = chars; break;
 #else
-                case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
+		case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
 #endif
-                case 'z':  * (size_t    *) p = chars; break;
-                case 'Z':  mpz_set_si ((mpz_ptr) p, (long) chars); break;
-                default: ASSERT (0); break;
-                }
-              }
-            goto next;
+		case 'z':  * (size_t	*) p = chars; break;
+		case 'Z':  mpz_set_si ((mpz_ptr) p, (long) chars); break;
+		default: ASSERT (0); break;
+		}
+	      }
+	    goto next;
 
-          case 'o':
-            param.base = 8;
-            goto numeric;
+	  case 'o':
+	    param.base = 8;
+	    goto numeric;
 
-          case 'x':
-          case 'X':
-            param.base = 16;
-            goto numeric;
+	  case 'x':
+	  case 'X':
+	    param.base = 16;
+	    goto numeric;
 
-          case '0': case '1': case '2': case '3': case '4':
-          case '5': case '6': case '7': case '8': case '9':
-            param.width = 0;
-            do {
-              param.width = param.width * 10 + (fchar-'0');
-              fchar = *fmt++;
-            } while (isdigit (fchar));
-            fmt--; /* unget the non-digit */
-            break;
+	  case '0': case '1': case '2': case '3': case '4':
+	  case '5': case '6': case '7': case '8': case '9':
+	    param.width = 0;
+	    do {
+	      param.width = param.width * 10 + (fchar-'0');
+	      fchar = *fmt++;
+	    } while (isdigit (fchar));
+	    fmt--; /* unget the non-digit */
+	    break;
 
-          case '*':
-            param.ignore = 1;
-            break;
+	  case '*':
+	    param.ignore = 1;
+	    break;
 
-          default:
-            /* something invalid in a % sequence */
-            ASSERT (0);
-            goto next;
-          }
-        }
+	  default:
+	    /* something invalid in a % sequence */
+	    ASSERT (0);
+	    goto next;
+	  }
+	}
     }
 
  done:

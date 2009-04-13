@@ -22,14 +22,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
 
 static int
-scan (const char **sp, const char *fmt, void *p1, void *p2)
+scan (const char **sp, const char *fmt, ...)
 {
-  return sscanf (*sp, fmt, p1, p2);
+  va_list ap;
+  void *p1, *p2;
+  int ret;
+
+  va_start (ap, fmt);
+  p1 = va_arg (ap, void *);
+  p2 = va_arg (ap, void *);
+
+  ret = sscanf (*sp, fmt, p1, p2);
+
+  va_end (ap);
+
+  return ret;
 }
 
 static void
