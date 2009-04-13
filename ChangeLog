@@ -1,3 +1,7 @@
+2009-04-13  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-root.c: Rewrite.  Add unconditional gcc 4.3.2 tests.
+
 2009-04-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/powm.c: New file.
