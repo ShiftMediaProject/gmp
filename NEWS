@@ -26,25 +26,26 @@ Changes between GMP version 4.2.X and 4.3.0
     new code in this release.
 
   Speedups:
-  * GCD and Extended GCD now use the best known sub-quadratic algorithms.
-  * Division is now O(M(n)), losing a log(n) term compared to GMP 4.2.
+  * Vastly improved assembly code for x86-64 processors from AMD and Intel.
+  * Major improvements also for many other processor families, such as
+    alpha, powerpc, and itanium.
+  * New sub-quadratic mpn_gcd and mpn_gcdext, as well as improved basecase
+    gcd code.
+  * The multiply FFT code has been slightly improved.
+  * Balanced multiplication now uses 4-way Toom in addition to schoolbook,
+    Karatsuba, 3-way Toom, and FFT.
+  * Unbalanced multiplication has been vastly improved.
   * Improved schoolbook division by means of faster quotient approximation.
-  * Multiplication of operands of different sizes now runs much faster.
-  * About 5% to 10% faster FFT multiply code.
-  * 4-way toom multiply code added between 3-way toom and FFT.
-  * Well-optimised assembly code for the x86_64 architecture for K8-K10,
-    Pentium 4 and "Core 2", resulting in around 75% better speed.
-  * Much improved, but still far from optimal assembly code for Itanium.
-  * Well-optimised assembly for POWER4, POWER5, and PPC970.
-  * Many assembly optimizations for other chips.
   * Several new algoritms for division and mod by single limbs, giving
     many-fold speedups.
-  * The mpz_nextprime function uses sieving.
-  * Vastly improved nth root code, slightly improved square root code.
+  * Improved nth root computations.
+  * The mpz_nextprime function uses sieving and is much faster.
   * Countless minor tweaks.
 
   Features:
-  * New mpn functions: XXX
+  * Updated support for fat binaries for x86_32 include current processors
+  * Lots of new mpn internal interfaces.  Some of them will become public
+    in a future GMP release.
   * Support for the 32-bit ABI under x86-apple-darwin.
   * x86 CPU recognition code should now default better for future
     processors.
