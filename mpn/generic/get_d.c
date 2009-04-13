@@ -191,7 +191,7 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
 	  nbits += GMP_NUMB_BITS;
 	}
     }
-  mhi = m >> 32 + 11;
+  mhi = m >> (32 + 11);
   mlo = m >> 11;
 #endif
 #if GMP_LIMB_BITS == 32

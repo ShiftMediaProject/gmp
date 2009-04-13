@@ -114,6 +114,6 @@ mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
 	return 0;
     }
 
-  diff = (up[0] ^ vp[0]) >> GMP_NUMB_BITS - 1 - (n_bits - 1) % GMP_NUMB_BITS;
+  diff = (up[0] ^ vp[0]) >> (GMP_NUMB_BITS - 1 - (n_bits - 1) % GMP_NUMB_BITS);
   return diff == 0;
 }

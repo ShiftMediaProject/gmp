@@ -79,7 +79,7 @@ main (int argc, char **argv)
   int reps = 20;
   gmp_randstate_ptr rands;
   mpz_t bs, x, nxtp, ref_nxtp;
-  unsigned long bsi, size_range;
+  unsigned long size_range;
 
   tests_start();
   rands = RANDS;

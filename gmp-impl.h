@@ -1111,8 +1111,14 @@ void      mpn_toom3_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 #define   mpn_toom22_mul __MPN(toom22_mul)
 void      mpn_toom22_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
+#define   mpn_toom2_sqr __MPN(toom2_sqr)
+void      mpn_toom2_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
 #define   mpn_toom33_mul __MPN(toom33_mul)
 void      mpn_toom33_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom3_sqr __MPN(toom3_sqr)
+void      mpn_toom3_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom44_mul __MPN(toom44_mul)
 void      mpn_toom44_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
@@ -1238,6 +1244,12 @@ void      mpn_powm __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_siz
 #define   mpn_powlo __MPN(powlo)
 void      mpn_powlo __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr));
 
+#define   mpn_powm_sec __MPN(powm_sec)
+void      mpn_powm_sec __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_subcnd_n __MPN(subcnd_n)
+mp_limb_t mpn_subcnd_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+#define   mpn_tabselect __MPN(tabselect)
+void      mpn_tabselect __GMP_PROTO ((volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t));
 
 #ifndef DIVEXACT_BY3_METHOD
 #if GMP_NUMB_BITS % 2 == 0 && ! defined (HAVE_NATIVE_mpn_divexact_by3c)
@@ -3539,12 +3551,12 @@ void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORETURN;
   } while (0)
 
 /* Matrix multiplication */
-#define mpn_matrix22_mul __MPN(matrix22_mul)
+#define   mpn_matrix22_mul __MPN(matrix22_mul)
+void      mpn_matrix22_mul __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_matrix22_mul_strassen __MPN(matrix22_mul_strassen)
+void      mpn_matrix22_mul_strassen __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_matrix22_mul_itch __MPN(matrix22_mul_itch)
 mp_size_t mpn_matrix22_mul_itch __GMP_PROTO ((mp_size_t, mp_size_t));
-#define mpn_matrix22_mul_strassen __MPN(matrix22_mul_strassen)
-void mpn_matrix22_mul __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
-#define mpn_matrix22_mul_itch __MPN(matrix22_mul_itch)
-void mpn_matrix22_mul_strassen __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #ifndef MATRIX22_STRASSEN_THRESHOLD
 #define MATRIX22_STRASSEN_THRESHOLD 30

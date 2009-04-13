@@ -89,7 +89,6 @@ mpn_toom4_sqr (mp_ptr pp,
   mp_limb_t cy;
   mp_ptr gp, hp;
   mp_ptr as1, asm1, as2, ash, asmh;
-  enum toom4_flags flags;
   TMP_DECL;
 
 #define a0  ap

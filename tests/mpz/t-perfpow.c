@@ -100,6 +100,7 @@ check_tests ()
   mpz_clear (x);
 }
 
+void
 check_random (int n_tests)
 {
   int test;

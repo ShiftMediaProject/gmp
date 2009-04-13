@@ -139,9 +139,6 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n)
   TMP_FREE;
 }
 
-void
-mpn_tabselect (volatile mp_limb_t *, volatile mp_limb_t *, mp_size_t, mp_size_t, mp_size_t);
-
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
    Requires that mp[n-1..0] is odd.
    Requires that ep[en-1..0] is > 1.

@@ -88,7 +88,7 @@ main (int argc, char **argv)
 	  fprintf (stderr, "op1=");                 debug_mp (op1, -16);
 	  fprintf (stderr, "op2=");                 debug_mp (op2, -16);
 	  fprintf (stderr, "expected: %d\n", hgcd_values[i].res);
-	  fprintf (stderr, "hgcd:     %d\n", res);
+	  fprintf (stderr, "hgcd:     %d\n", (int) res);
 	  abort ();
 	}
     }

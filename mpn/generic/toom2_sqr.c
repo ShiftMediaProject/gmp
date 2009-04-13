@@ -62,7 +62,6 @@ mpn_toom2_sqr (mp_ptr pp,
 	       mp_ptr scratch)
 {
   mp_size_t n, s;
-  int vm1_neg;
   mp_limb_t cy, cy2;
   mp_ptr asm1;
 
