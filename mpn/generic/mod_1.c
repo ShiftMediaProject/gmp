@@ -151,7 +151,7 @@ static mp_limb_t
 mpn_mod_1_norm (mp_srcptr up, mp_size_t un, mp_limb_t d)
 {
   mp_size_t  i;
-  mp_limb_t  n1, n0, r;
+  mp_limb_t  n0, r;
   mp_limb_t  dummy;
 
   ASSERT (un > 0);
@@ -197,10 +197,6 @@ mpn_mod_1_norm (mp_srcptr up, mp_size_t un, mp_limb_t d)
 mp_limb_t
 mpn_mod_1 (mp_srcptr ap, mp_size_t n, mp_limb_t b)
 {
-  mp_size_t  i;
-  mp_limb_t  n1, n0, r;
-  mp_limb_t  dummy;
-
   ASSERT (n >= 0);
   ASSERT (b != 0);
 
