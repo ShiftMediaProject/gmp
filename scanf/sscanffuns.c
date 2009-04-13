@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,6 +27,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
+#if 1
+static int
+scan (const char **sp, const char *fmt, ...)
+{
+    va_list ap;
+    int ret;
+
+    va_start(ap, fmt);
+    ret = vsscanf(*sp, fmt, ap);
+    va_end(ap);
+
+    return ret;
+}
+#else
 static int
 scan (const char **sp, const char *fmt, ...)
 {
@@ -44,6 +58,7 @@ scan (const char **sp, const char *fmt, ...)
 
   return ret;
 }
+#endif
 
 static void
 step (const char **sp, int n)
