@@ -28,7 +28,7 @@ Changes between GMP version 4.2.X and 4.3.0
   Speedups:
   * Vastly improved assembly code for x86-64 processors from AMD and Intel.
   * Major improvements also for many other processor families, such as
-    alpha, powerpc, and itanium.
+    Alpha, PowerPC, and Itanium.
   * New sub-quadratic mpn_gcd and mpn_gcdext, as well as improved basecase
     gcd code.
   * The multiply FFT code has been slightly improved.
@@ -36,7 +36,7 @@ Changes between GMP version 4.2.X and 4.3.0
     Karatsuba, 3-way Toom, and FFT.
   * Unbalanced multiplication has been vastly improved.
   * Improved schoolbook division by means of faster quotient approximation.
-  * Several new algoritms for division and mod by single limbs, giving
+  * Several new algorithms for division and mod by single limbs, giving
     many-fold speedups.
   * Improved nth root computations.
   * The mpz_nextprime function uses sieving and is much faster.
@@ -54,7 +54,7 @@ Changes between GMP version 4.2.X and 4.3.0
 
   Misc:
   * The gmp_version variable now always contains three parts.  For this
-    relese, it is "4.3.0".
+    release, it is "4.3.0".
 
 
 Changes between GMP version 4.2.3 and 4.2.4
