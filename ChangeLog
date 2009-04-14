@@ -1,3 +1,9 @@
+2009-04-14  Torbjorn Granlund  <tege@swox.com>
+
+	* scanf/doscan.c (__gmp_doscan): Pad 3-operand scanf call with dummy
+	argument.
+	* scanf/sscanffuns.c (scan): Disable vsscanf variant for now.
+
 2009-04-13  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 4.3.0 released.
