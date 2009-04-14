@@ -27,7 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-#if 1
+#if 0
 static int
 scan (const char **sp, const char *fmt, ...)
 {

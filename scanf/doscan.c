@@ -590,7 +590,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
 	    new_chars = -1;
 	    if (param.ignore)
 	      {
-		new_fields = (*funs->scan) (data, alloc_fmt, &new_chars);
+		new_fields = (*funs->scan) (data, alloc_fmt, &new_chars, NULL);
 		ASSERT (new_fields == 0 || new_fields == EOF);
 	      }
 	    else
