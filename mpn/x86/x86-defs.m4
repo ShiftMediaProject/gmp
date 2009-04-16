@@ -934,7 +934,7 @@ define(`EPILOGUE_cpu',
 L(movl_eip_`'substr($2,1)):
 	movl	(%esp), $2
 	ret_internal
-	SIZE(`$1',.-`$1')')
+	SIZE($'`1, .-$'`1)')
 
         call    L(movl_eip_`'substr($2,1))
         addl    $_GLOBAL_OFFSET_TABLE_, $2
