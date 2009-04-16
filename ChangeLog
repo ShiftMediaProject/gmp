@@ -1,3 +1,7 @@
+2009-04-16  Torbjorn Granlund  <tg@gmplib.org>
+
+	* mpn/x86/x86-defs.m4 (LEA): Get SIZE arguments right.
+
 2009-04-14  Torbjorn Granlund  <tege@swox.com>
 
 	* Version 4.3.0 released.
