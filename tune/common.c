@@ -1072,7 +1072,7 @@ speed_mpn_hgcd (struct speed_params *s)
   mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
   mp_ptr ap;
   mp_ptr bp;
-  mp_ptr tmp1, tmp2;
+  mp_ptr tmp1;
 
   struct hgcd_matrix hgcd;
   int res;
@@ -1117,7 +1117,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   mp_size_t hgcd_scratch = MPN_HGCD_LEHMER_ITCH (s->size);
   mp_ptr ap;
   mp_ptr bp;
-  mp_ptr tmp1, tmp2;
+  mp_ptr tmp1;
 
   struct hgcd_matrix hgcd;
   int res;
