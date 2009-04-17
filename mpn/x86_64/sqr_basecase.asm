@@ -94,44 +94,22 @@ PROLOGUE(mpn_sqr_basecase)
 	mov	R32(n_param), R32(%rcx)
 	and	$3, R32(%rcx)
 	lea	4(%rcx), %rbx
-	cmp	$4, R32(n)
+	cmp	$4, R32(n_param)
 	cmovg	%rbx, %rcx
-ifelse(1,0,`
-	lea	L(jmptab)(%rip), %rdx
-	movslq	(%rdx,%rcx,4), %rcx
-	lea	0(%rip), %rax
-L(99):	add	%rax, %rcx
-	jmp	*%rcx
-	RODATA
+	lea	L(jmptab)(%rip), %rax
+	jmp	*(%rax,%rcx,8)
+	JUMPTABSECT
 	ALIGN(8)
 L(jmptab):
-	.long	L(4)-L(99)
-	.long	L(1)-L(99)
-	.long	L(2)-L(99)
-	.long	L(3)-L(99)
-	.long	L(0m4)-L(99)
-	.long	L(1m4)-L(99)
-	.long	L(2m4)-L(99)
-	.long	L(3m4)-L(99)
+	.quad	L(4)
+	.quad	L(1)
+	.quad	L(2)
+	.quad	L(3)
+	.quad	L(0m4)
+	.quad	L(1m4)
+	.quad	L(2m4)
+	.quad	L(3m4)
 	TEXT
-',`
-	lea	L(jmptab)(%rip), %rdx
-	movslq	(%rdx,%rcx,4), %rcx
-	add	%rdx, %rcx
-	jmp	*%rcx
-	RODATA
-	ALIGN(8)
-L(jmptab):
-	.long	L(4)-L(jmptab)
-	.long	L(1)-L(jmptab)
-	.long	L(2)-L(jmptab)
-	.long	L(3)-L(jmptab)
-	.long	L(0m4)-L(jmptab)
-	.long	L(1m4)-L(jmptab)
-	.long	L(2m4)-L(jmptab)
-	.long	L(3m4)-L(jmptab)
-	TEXT
-')
 
 L(1):	mov	(up), %rax
 	mul	%rax

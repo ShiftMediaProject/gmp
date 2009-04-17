@@ -1,5 +1,9 @@
 2009-04-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/x86_64-defs.m4 (JUMPTABSECT): New define.
+	* mpn/x86_64/darwin.m4: Likewise.
+	* mpn/x86_64/sqr_basecase.asm: Rework switch code using JUMPTABSECT.
+
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer):
 	Remove an unused variable.
 
