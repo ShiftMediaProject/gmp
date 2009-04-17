@@ -1,11 +1,11 @@
-2009-04-16  Torbjorn Granlund  <tg@gmplib.org>
+2009-04-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer):
 	Remove an unused variable.
 
 	* mpn/x86/x86-defs.m4 (LEA): Get SIZE arguments right.
 
-2009-04-14  Torbjorn Granlund  <tege@swox.com>
+2009-04-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 4.3.0 released.
 
