@@ -99,8 +99,7 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
 #define REDC_2_THRESHOLD		4
 #endif
 
-#include <stdlib.h>
-static void mpn_redc_n () {abort();}
+static void mpn_redc_n () {ASSERT_ALWAYS(0);}
 
 static inline int
 win_size (unsigned long eb)

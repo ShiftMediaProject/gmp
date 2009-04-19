@@ -1,5 +1,8 @@
 2009-04-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/powm.c (mpn_redc_n): Use ASSERT_ALWAYS, not abort().
+	* mpn/generic/powm_sec.c: Likewise.
+
 	* mpn/powerpc64/aix.m4 (EXTERN_FUNC): New define.  Add dummy variants
 	for other m4 files.
 	* mpn/powerpc64/mode64/divrem_1.asm: Use EXTERN_FUNC.
