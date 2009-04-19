@@ -61,6 +61,10 @@ define(`EXTERN',
 m4_assert_numargs(1)
 `	.globl	$1')
 
+define(`EXTERN_FUNC',
+m4_assert_numargs(1)
+`	.globl	.$1')
+
 define(`DEF_OBJECT',
 m4_assert_numargs_range(1,2)
 `	.csect	[RO], 3

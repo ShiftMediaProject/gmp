@@ -40,6 +40,9 @@ C Add preinv entry point.
 
 
 ASM_START()
+
+EXTERN_FUNC(mpn_invert_limb)
+
 PROLOGUE(mpn_divrem_1)
 
 	mfcr	r12
