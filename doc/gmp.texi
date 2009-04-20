@@ -92,7 +92,7 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @subtitle @value{UPDATED}
 
 @author by The GMP developers
-@c @email{tege@@swox.com}
+@c @email{tege@@gmplib.org}
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.

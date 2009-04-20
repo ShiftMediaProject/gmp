@@ -91,7 +91,7 @@ You should first check the GNU MP web pages at http://gmplib.org/, under
 "Status of the current release".  There will be patches for all known serious
 bugs there.
 
-Report bugs to gmp-bugs@swox.com.  What information is needed in a useful bug
+Report bugs to gmp-bugs@gmplib.org.  What information is needed in a useful bug
 report is described in the manual.  The same address can be used for suggesting
 modifications and enhancements.
 

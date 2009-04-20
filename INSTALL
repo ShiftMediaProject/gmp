@@ -61,7 +61,7 @@ If you are new to GMP, it is a good idea you at least read the chapter "GMP
 Basics" in the manual.
 
 Some known build problems are noted in the "Installing GMP" chapter of
-the manual.  Please report other problems to gmp-bugs@swox.com.
+the manual.  Please report other problems to gmp-bugs@gmplib.org.
 
 The GMP web site is located here: http://gmplib.org/.
 
