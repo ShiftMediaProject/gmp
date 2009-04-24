@@ -86,6 +86,12 @@ define(`LIMBS_PER_2XMM', eval(32/GMP_LIMB_BYTES))
 undefine(`psadbw')			C override inherited m4 version
 
 ASM_START()
+
+C Make cnsts global to work around Apple relocation bug.
+ifdef(`DARWIN',`
+	define(`cnsts', MPN(popccnsts))
+	GLOBL	cnsts')
+
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_popcount)

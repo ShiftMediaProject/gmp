@@ -16,6 +16,7 @@ dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
+define(`DARWIN')
 
 dnl  Usage LEA(symbol,reg)
 dnl
