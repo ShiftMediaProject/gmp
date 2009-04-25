@@ -1,3 +1,8 @@
+2009-04-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/pentium4/sse2/popcount.asm: Work around Apple reloc bug.
+	* mpn/x86/darwin.m4: Define symbol "DARWIN".
+
 2009-04-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm.c (mpn_redc_n): Use ASSERT_ALWAYS, not abort().
