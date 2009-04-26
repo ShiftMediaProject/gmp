@@ -445,6 +445,15 @@ main ()
   /* This is waiting for a bit more info.
   case POWER_RS64II: puts ("powerpcrs64ii"); break;
   */
+#ifdef POWER_4
+  case POWER_4:    puts ("power4"); break;
+#endif
+#ifdef POWER_5
+  case POWER_5:    puts ("power5"); break;
+#endif
+#ifdef POWER_6
+  case POWER_6:    puts ("power6"); break;
+#endif
   default:
     if (_system_configuration.architecture == POWER_RS)
       puts ("power");

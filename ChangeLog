@@ -1,3 +1,7 @@
+2009-04-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Recognize more POWER processor types.
+
 2009-04-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium4/sse2/popcount.asm: Work around Apple reloc bug.
