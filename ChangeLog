@@ -1,5 +1,7 @@
 2009-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/Makefile.am (TARG_DIST): Add minithres.
+
 	* mpn/generic/bdiv_dbm1c.c: Handle nails.
 
 2009-04-26  Torbjorn Granlund  <tege@gmplib.org>
