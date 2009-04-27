@@ -22,10 +22,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_KARATSUBA_THRESHOLD           8
 #define MUL_TOOM3_THRESHOLD              20
+#define MUL_TOOM44_THRESHOLD             24
 
 #define SQR_BASECASE_THRESHOLD            0
 #define SQR_KARATSUBA_THRESHOLD           8
 #define SQR_TOOM3_THRESHOLD              20
+#define SQR_TOOM4_THRESHOLD              24
 
 #define MULLOW_BASECASE_THRESHOLD         0
 #define MULLOW_DC_THRESHOLD               2
@@ -36,7 +38,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define POWM_THRESHOLD                    4
 
 #define HGCD_THRESHOLD                   10
-#define GCD_ACCEL_THRESHOLD               2
 #define GCD_DC_THRESHOLD                 20
 #define GCDEXT_SCHOENHAGE_THRESHOLD      20
 #define JACOBI_BASE_METHOD                1
