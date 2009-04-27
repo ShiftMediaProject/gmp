@@ -61,7 +61,7 @@ win_size (unsigned long eb)
 }
 
 /* rp[n-1..0] = bp[n-1..0] ^ ep[en-1..0] mod R^n, R is the limb base.
-   Requires that that ep[en-1] is non-zero.
+   Requires that ep[en-1] is non-zero.
    Uses scratch space tp[3n-1..0], i.e., 3n words.  */
 void
 mpn_powlo (mp_ptr rp, mp_srcptr bp,
