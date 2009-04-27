@@ -325,7 +325,7 @@ mpn_toom44_mul (mp_ptr pp,
 
   TOOM44_MUL_N_REC (v0 , ap  , bp  , n    , scratch_out);	/* v0,  2n limbs */
 
-  mpn_toom_interpolate_7pts (pp, n, flags, vmh, vm1, v1, v2, s + t, scratch + 8 * n + 8);
+  mpn_toom_interpolate_7pts (pp, n, flags, vmh, vm1, v1, v2, s + t, scratch_out);
 
   TMP_FREE;
 }

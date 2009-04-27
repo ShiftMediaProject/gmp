@@ -217,7 +217,7 @@ mpn_toom4_sqr (mp_ptr pp,
 
   TOOM4_SQR_N_REC (v0 , ap  , n    , scratch_out);	/* v0,  2n limbs */
 
-  mpn_toom_interpolate_7pts (pp, n, 0, vmh, vm1, v1, v2, s + s, scratch + 8 * n + 8);
+  mpn_toom_interpolate_7pts (pp, n, 0, vmh, vm1, v1, v2, s + s, scratch_out);
 
   TMP_FREE;
 }
