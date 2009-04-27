@@ -5,7 +5,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008 Free Software Foundation, Inc.
+Copyright 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,9 +36,10 @@ mpn_bdiv_dbm1c (mp_ptr qp, mp_srcptr ap, mp_size_t n, mp_limb_t bd, mp_limb_t h)
   for (i = 0; i < n; i++)
     {
       a = ap[i];
-      umul_ppmm (p1, p0, a, bd);
+      umul_ppmm (p1, p0, a, bd << GMP_NAIL_BITS);
+      p0 >>= GMP_NAIL_BITS;
       cy = h < p0;
-      h = h - p0;
+      h = (h - p0) & GMP_NUMB_MASK;
       qp[i] = h;
       h = h - p1 - cy;
     }
