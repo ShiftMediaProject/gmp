@@ -391,7 +391,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   if (mpn_zero_p (ap, n))
     {
       MPN_COPY (gp, bp, n);
-      MPN_NORMALIZE (u0, un);
+      MPN_NORMALIZE_NOT_ZERO (u0, un);
       MPN_COPY (up, u0, un);
       *usizep = -un;
 
@@ -401,7 +401,7 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   else if (mpn_zero_p (bp, n))
     {
       MPN_COPY (gp, ap, n);
-      MPN_NORMALIZE (u1, un);
+      MPN_NORMALIZE_NOT_ZERO (u1, un);
       MPN_COPY (up, u1, un);
       *usizep = un;
 

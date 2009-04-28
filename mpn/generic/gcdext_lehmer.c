@@ -123,7 +123,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
     {
       gp[0] = bp[0];
 
-      MPN_NORMALIZE (u0, un);
+      MPN_NORMALIZE_NOT_ZERO (u0, un);
       MPN_COPY (up, u0, un);
 
       *usize = -un;
@@ -133,7 +133,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
     {
       gp[0] = ap[0];
 
-      MPN_NORMALIZE (u1, un);
+      MPN_NORMALIZE_NOT_ZERO (u1, un);
       MPN_COPY (up, u1, un);
 
       *usize = un;
@@ -159,6 +159,8 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  if (uh < vh)
 	    up[un++] = 1;
 	}
+
+      MPN_NORMALIZE_NOT_ZERO (up, un);
 
       *usize = un;
       return 1;

@@ -1,5 +1,10 @@
 2009-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/gcdext.c: Change some MPN_NORMALIZE to
+	MPN_NORMALIZE_NOT_ZERO.
+	* mpn/generic/gcdext_lehmer.c: Likewise.
+	Add a MPN_NORMALIZE_NOT_ZERO.
+
 	* mpn/generic/binvert.c: Remove own mpn_neg_n.
 
 	* tests/mpz/t-gcd.c: Add some MPZ_CHECK_FORMAT calls.
