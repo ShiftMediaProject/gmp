@@ -1,5 +1,7 @@
 2009-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom_interpolate_7pts.c (divexact_2exp): Nailify.
+
 	* mpn/generic/gcdext.c: Change some MPN_NORMALIZE to
 	MPN_NORMALIZE_NOT_ZERO.
 	* mpn/generic/gcdext_lehmer.c: Likewise.

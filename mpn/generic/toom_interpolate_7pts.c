@@ -6,7 +6,7 @@
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2006, 2007 Free Software Foundation, Inc.
+Copyright 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,9 +30,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 static inline void
 divexact_2exp (mp_ptr rp, mp_srcptr sp, mp_size_t n, unsigned shift)
 {
-  mp_limb_t sign = LIMB_HIGHBIT_TO_MASK (rp[n-1]) << (GMP_LIMB_BITS - shift);
+  mp_limb_t sign;
+  sign = LIMB_HIGHBIT_TO_MASK (sp[n-1] << GMP_NAIL_BITS) << (GMP_NUMB_BITS - shift);
   ASSERT_NOCARRY (mpn_rshift (rp, sp, n, shift));
-  rp[n-1] |= sign;
+  rp[n-1] |= sign & GMP_NUMB_MASK;
 }
 
 /* For odd divisors, mpn_divexact_1 works fine with two's complement. */
