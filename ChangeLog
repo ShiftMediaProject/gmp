@@ -1,3 +1,7 @@
+2009-04-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-gcd.c: Add some MPZ_CHECK_FORMAT calls.
+
 2009-04-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/Makefile.am (TARG_DIST): Add minithres.

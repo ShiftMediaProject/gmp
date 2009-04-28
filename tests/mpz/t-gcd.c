@@ -1,7 +1,7 @@
 /* Test mpz_gcd, mpz_gcdext, and mpz_gcd_ui.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005,
-2008 Free Software Foundation, Inc.
+2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -233,6 +233,8 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
   */
 
   mpz_gcdext (gcd1, s, NULL, op1, op2);
+  MPZ_CHECK_FORMAT (gcd1);
+  MPZ_CHECK_FORMAT (s);
 
   if (ref && mpz_cmp (ref, gcd1) != 0)
     {
@@ -257,6 +259,8 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
     }
 
   mpz_gcd (gcd2, op1, op2);
+  MPZ_CHECK_FORMAT (gcd2);
+
   if (mpz_cmp (gcd2, gcd1) != 0)
     {
       fprintf (stderr, "ERROR in test %d\n", i);
@@ -288,6 +292,10 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
     }
 
   mpz_gcdext (gcd2, temp1, temp2, op1, op2);
+  MPZ_CHECK_FORMAT (gcd2);
+  MPZ_CHECK_FORMAT (temp1);
+  MPZ_CHECK_FORMAT (temp2);
+
   mpz_mul (temp1, temp1, op1);
   mpz_mul (temp2, temp2, op2);
   mpz_add (temp1, temp1, temp2);
@@ -311,7 +319,7 @@ static int
 gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
 {
   /* It's not clear that gcd(0,0) is well defined, but we allow it and require that
-     allow gcd(0,0) = 0. */
+     gcd(0,0) = 0. */
   if (mpz_sgn (g) < 0)
     return 0;
 
