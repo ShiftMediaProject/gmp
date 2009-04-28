@@ -85,7 +85,7 @@ main (int argc, char **argv)
     fft_max_2exp = atoi (extra_fft);
 
   if (fft_max_2exp <= 1)	/* compat with old use of GMP_CHECK_FFT */
-    fft_max_2exp = 27;		/* default limit, good for any machine */
+    fft_max_2exp = 22;		/* default limit, good for any machine */
 
   mpz_init (bs);
   mpz_init (op1);
