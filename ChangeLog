@@ -1,5 +1,11 @@
 2009-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/neg_n.c: New file.
+	* configure.in (gmp_mpn_functions): Add neg_n.
+	* mpn/asm-defs.m4 (define_mpn): Add neg_n.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Add neg_n.c.
+	* gmp-h.in: Handle mpn_neg_n properly.
+	
 	* mpn/generic/toom_interpolate_7pts.c (divexact_2exp): Nailify.
 
 	* mpn/generic/gcdext.c: Change some MPN_NORMALIZE to

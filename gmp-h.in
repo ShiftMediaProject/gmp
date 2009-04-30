@@ -1533,7 +1533,9 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, m
 __GMP_DECLSPEC void mpn_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #define mpn_neg_n __MPN(neg_n)
+#if __GMP_INLINE_PROTOTYPES || defined (__GMP_FORCE_mpn_neg_n)
 __GMP_DECLSPEC mp_limb_t mpn_neg_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
 
 #define mpn_perfect_square_p __MPN(perfect_square_p)
 __GMP_DECLSPEC int mpn_perfect_square_p __GMP_PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
