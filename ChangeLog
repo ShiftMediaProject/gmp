@@ -1,3 +1,7 @@
+2009-05-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-h.in (__GMP_EXTERN_INLINE): Support for more systems.
+
 2009-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/neg_n.c: New file.

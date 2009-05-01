@@ -1,7 +1,7 @@
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -454,6 +454,17 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_EXTERN_INLINE  static inline
 #endif
 #endif
+
+/* Microsoft's C compiler accepts __inline */
+#ifdef _MSC_VER
+#define __GMP_EXTERN_INLINE  __inline
+#endif
+
+/* Recent enough Sun C compilers accept "static inline" */
+#if (defined (__SUNPRO_C) && __SUNPRO_C >= 0x540) || defined (__SUNPRO_CC)
+#define __GMP_EXTERN_INLINE  static inline
+#endif
+
 
 /* C++ always has "inline" and since it's a normal feature the linker should
    discard duplicate non-inlined copies, or if it doesn't then that's a
