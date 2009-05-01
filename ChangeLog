@@ -1,6 +1,7 @@
 2009-05-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (__GMP_EXTERN_INLINE): Support for more systems.
+	(gmp_randinit_set): Add missing __GMP_DECLSPEC.
 
 2009-04-28  Torbjorn Granlund  <tege@gmplib.org>
 
