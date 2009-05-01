@@ -142,6 +142,9 @@ mpn_mul (mp_ptr prodp,
   {
     mp_ptr ws;
     mp_ptr scratch;
+#if WANT_ASSERT
+    mp_ptr ssssp;
+#endif
     TMP_DECL;
     TMP_MARK;
 
@@ -151,9 +154,9 @@ mpn_mul (mp_ptr prodp,
 #define ITCH ((un + vn) * 4 + 100)
     scratch = TMP_ALLOC_LIMBS (ITCH + 1);
 #if WANT_ASSERT
-    mp_ptr ssssp = scratch + ITCH;
+    ssssp = scratch + ITCH;
     ws[WSALL] = 0xbabecafe;
-    ssssp[0] = 0x0beef;
+    ssssp[0] = 0xbeef;
 #endif
 
     if (un >= 3 * vn)
@@ -199,7 +202,7 @@ mpn_mul (mp_ptr prodp,
 	  }
 
 	ASSERT (ws[WSALL] == 0xbabecafe);
-	ASSERT (ssssp[0] == 0x0beef);
+	ASSERT (ssssp[0] == 0xbeef);
 	TMP_FREE;
 	return prodp[un + vn - 1];
       }
@@ -212,7 +215,7 @@ mpn_mul (mp_ptr prodp,
       mpn_toom22_mul (prodp, up, un, vp, vn, scratch);
 
     ASSERT (ws[WSALL] == 0xbabecafe);
-    ASSERT (ssssp[0] == 0x0beef);
+    ASSERT (ssssp[0] == 0xbeef);
     TMP_FREE;
     return prodp[un + vn - 1];
   }
