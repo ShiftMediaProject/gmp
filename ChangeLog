@@ -1,3 +1,7 @@
+2009-05-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-gcd.c: Generate operands that are multiple of each other.
+
 2009-05-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (__GMP_EXTERN_INLINE): Support for more systems.
@@ -10,7 +14,7 @@
 	* mpn/asm-defs.m4 (define_mpn): Add neg_n.
 	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Add neg_n.c.
 	* gmp-h.in: Handle mpn_neg_n properly.
-	
+
 	* mpn/generic/toom_interpolate_7pts.c (divexact_2exp): Nailify.
 
 	* mpn/generic/gcdext.c: Change some MPN_NORMALIZE to

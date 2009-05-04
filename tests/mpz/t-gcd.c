@@ -129,6 +129,12 @@ main (int argc, char **argv)
   mpz_init (s);
   mpz_init (t);
 
+#if 0
+  mpz_set_str (op1, "4da8e405e0d2f70d6d679d3de08a5100a81ec2cff40f97b313ae75e1183f1df2b244e194ebb02a4ece50d943640a301f0f6cc7f539117b783c3f3a3f91649f8a00d2e1444d52722810562bce02fccdbbc8fe3276646e306e723dd3b", 16);
+  mpz_set_str (op2, "76429e12e4fdd8929d89c21657097fbac09d1dc08cf7f1323a34e78ca34226e1a7a29b86fee0fa7fe2cc2a183d46d50df1fe7029590974ad7da77605f35f902cb8b9b8d22dd881eaae5919675d49a337145a029c3b33fc2b0", 16);
+  one_test (op1, op2, NULL, -1);
+#endif
+
   for (i = 0; i < reps; i++)
     {
       /* Generate plain operands with unknown gcd.  These types of operands
@@ -145,8 +151,14 @@ main (int argc, char **argv)
       mpz_urandomb (bs, rands, size_range);
       mpz_urandomb (op2, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
 
-      mpz_urandomb (bs, rands, 2);
+      mpz_urandomb (bs, rands, 8);
       bsi = mpz_get_ui (bs);
+
+      if ((bsi & 0x3c) == 4)
+	mpz_mul (op1, op1, op2);	/* make op1 a multiple of op2 */
+      else if ((bsi & 0x3c) == 8)
+	mpz_mul (op2, op1, op2);	/* make op2 a multiple of op1 */
+
       if ((bsi & 1) != 0)
 	mpz_neg (op1, op1);
       if ((bsi & 2) != 0)
