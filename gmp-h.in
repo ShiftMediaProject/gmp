@@ -460,8 +460,13 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_EXTERN_INLINE  __inline
 #endif
 
-/* Recent enough Sun C compilers accept "static inline" */
-#if (defined (__SUNPRO_C) && __SUNPRO_C >= 0x540) || defined (__SUNPRO_CC)
+/* Recent enough Sun C compilers accept "extern inline" */
+#if defined (__SUNPRO_C) && __SUNPRO_C >= 0x560
+#define __GMP_EXTERN_INLINE  extern inline
+#endif
+
+/* Somewhat older Sun C compilers accept "static inline" */
+#if defined (__SUNPRO_C) && __SUNPRO_C >= 0x540
 #define __GMP_EXTERN_INLINE  static inline
 #endif
 
