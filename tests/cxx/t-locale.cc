@@ -28,7 +28,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 using namespace std;
 
 
-char point_string[2];
+extern "C" {
+  char point_string[2];
+}
 
 #if HAVE_STD__LOCALE
 // Like std::numpunct, but with decimal_point coming from point_string[].

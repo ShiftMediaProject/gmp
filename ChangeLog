@@ -1,3 +1,8 @@
+2009-05-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/cxx/t-locale.cc (point_string): Declare as extern "C" to
+	placate compiler that mangle variable names.
+
 2009-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-gcd.c: Generate operands that are multiple of each other.
