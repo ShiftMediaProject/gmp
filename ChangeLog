@@ -1,7 +1,15 @@
 2009-05-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/p6/aors_n.asm: Use L() for labels.
+	* mpn/x86/pentium4/sse2/addmul_1.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mul_1.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mul_basecase.asm: Likewise.
+	* mpn/x86/pentium4/sse2/sqr_basecase.asm: Likewise.
+	* mpn/x86_64/lshift.asm: Likewise.
+	* mpn/x86_64/rshift.asm: Likewise.
+
 	* tests/cxx/t-locale.cc (point_string): Declare as extern "C" to
-	placate compiler that mangle variable names.
+	placate compilers that mangle variable names.
 
 2009-05-04  Torbjorn Granlund  <tege@gmplib.org>
 
