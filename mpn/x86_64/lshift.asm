@@ -114,12 +114,12 @@ L(gen):	neg	%ecx			C put rsh count in cl
 	shr	%cl, %rax		C function return value
 
 	neg	%ecx			C put lsh count in cl
-	lea	1(n), %r8d
-	and	$3, %r8d
-	je	.Lrolx			C jump for n = 3, 7, 11, ...
+	lea	1(n), R32(%r8)
+	and	$3, R32(%r8)
+	je	L(rlx)			C jump for n = 3, 7, 11, ...
 
-	dec	%r8d
-	jne	.L1
+	dec	R32(%r8)
+	jne	L(1)
 C	n = 4, 8, 12, ...
 	mov	-8(up,n,8), %r10
 	shl	%cl, %r10
@@ -129,10 +129,10 @@ C	n = 4, 8, 12, ...
 	or	%r8, %r10
 	mov	%r10, -8(rp,n,8)
 	dec	n
-	jmp	.Lroll
+	jmp	L(rll)
 
-.L1:	dec	%r8d
-	je	.L1x			C jump for n = 1, 5, 9, 13, ...
+L(1):	dec	R32(%r8)
+	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
 	mov	-8(up,n,8), %r10
 	shl	%cl, %r10
@@ -143,9 +143,9 @@ C	n = 2, 6, 10, 16, ...
 	mov	%r10, -8(rp,n,8)
 	dec	n
 	neg	%ecx			C put lsh count in cl
-.L1x:
+L(1x):
 	cmp	$1, n
-	je	.Last
+	je	L(ast)
 	mov	-8(up,n,8), %r10
 	shl	%cl, %r10
 	mov	-16(up,n,8), %r11
@@ -161,16 +161,16 @@ C	n = 2, 6, 10, 16, ...
 	mov	%r11, -16(rp,n,8)
 	sub	$2, n
 
-.Lroll:	neg	%ecx			C put lsh count in cl
-.Lrolx:	mov	-8(up,n,8), %r10
+L(rll):	neg	%ecx			C put lsh count in cl
+L(rlx):	mov	-8(up,n,8), %r10
 	shl	%cl, %r10
 	mov	-16(up,n,8), %r11
 	shl	%cl, %r11
 
 	sub	$4, n			C				      4
-	jb	.Lend			C				      2
+	jb	L(end)			C				      2
 	ALIGN(16)
-.Loop:
+L(top):
 	C finish stuff from lsh block
 	neg	%ecx			C put rsh count in cl
 	mov	16(up,n,8), %r8
@@ -204,8 +204,8 @@ C	n = 2, 6, 10, 16, ...
 	shl	%cl, %r11
 
 	sub	$4, n
-	jae	.Loop			C				      2
-.Lend:
+	jae	L(top)			C				      2
+L(end):
 	neg	%ecx			C put rsh count in cl
 	mov	16(up,n,8), %r8
 	shr	%cl, %r8
@@ -217,7 +217,7 @@ C	n = 2, 6, 10, 16, ...
 	mov	%r11, 16(rp,n,8)
 
 	neg	%ecx			C put lsh count in cl
-.Last:	mov	(up), %r10
+L(ast):	mov	(up), %r10
 	shl	%cl, %r10
 	mov	%r10, (rp)
 	ret

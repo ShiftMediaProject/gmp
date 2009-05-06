@@ -46,7 +46,7 @@ PROLOGUE(mpn_mul_1c)
 	mov	12(%esp), %ecx
 	movd	16(%esp), %mm7
 	movd	20(%esp), %mm6
-	jmp	.Lent
+	jmp	L(ent)
 EPILOGUE()
 	ALIGN(16)
 PROLOGUE(mpn_mul_1)
@@ -55,10 +55,10 @@ PROLOGUE(mpn_mul_1)
 	mov	12(%esp), %ecx
 	movd	16(%esp), %mm7
 	pxor	%mm6, %mm6
-.Lent:	cmp	$4, %ecx
-	jnc	.Large
+L(ent):	cmp	$4, %ecx
+	jnc	L(big)
 
-.Llp0:	movd	(%eax), %mm0
+L(lp0):	movd	(%eax), %mm0
 	lea	4(%eax), %eax
 	lea	4(%edx), %edx
 	pmuludq	%mm7, %mm0
@@ -66,19 +66,19 @@ PROLOGUE(mpn_mul_1)
 	movd	%mm6, -4(%edx)
 	psrlq	$32, %mm6
 	dec	%ecx
-	jnz	.Llp0
+	jnz	L(lp0)
 	movd	%mm6, %eax
 	emms
 	ret
 
-.Large:	and	$3, %ecx
-	je	.L0
+L(big):	and	$3, %ecx
+	je	L(0)
 	cmp	$2, %ecx
-	jc	.L1
-	je	.L2
-	jmp	.L3			C FIXME: one case should fall through
+	jc	L(1)
+	je	L(2)
+	jmp	L(3)			C FIXME: one case should fall through
 
-.L0:	movd	(%eax), %mm3
+L(0):	movd	(%eax), %mm3
 	sub	12(%esp), %ecx		C loop count
 	lea	-16(%eax), %eax
 	lea	-12(%edx), %edx
@@ -86,9 +86,9 @@ PROLOGUE(mpn_mul_1)
 	movd	20(%eax), %mm0
 	pmuludq	%mm7, %mm0
 	movd	24(%eax), %mm1
-	jmp	.L00
+	jmp	L(00)
 
-.L1:	movd	(%eax), %mm2
+L(1):	movd	(%eax), %mm2
 	sub	12(%esp), %ecx
 	lea	-12(%eax), %eax
 	lea	-8(%edx), %edx
@@ -96,9 +96,9 @@ PROLOGUE(mpn_mul_1)
 	movd	16(%eax), %mm3
 	pmuludq	%mm7, %mm3
 	movd	20(%eax), %mm0
-	jmp	.L01
+	jmp	L(01)
 
-.L2:	movd	(%eax), %mm1
+L(2):	movd	(%eax), %mm1
 	sub	12(%esp), %ecx
 	lea	-8(%eax), %eax
 	lea	-4(%edx), %edx
@@ -106,9 +106,9 @@ PROLOGUE(mpn_mul_1)
 	movd	12(%eax), %mm2
 	pmuludq	%mm7, %mm2
 	movd	16(%eax), %mm3
-	jmp	.L10
+	jmp	L(10)
 
-.L3:	movd	(%eax), %mm0
+L(3):	movd	(%eax), %mm0
 	sub	12(%esp), %ecx
 	lea	-4(%eax), %eax
 	pmuludq	%mm7, %mm0
@@ -117,22 +117,22 @@ PROLOGUE(mpn_mul_1)
 	movd	12(%eax), %mm2
 
 	ALIGN(16)
-.Loop:	pmuludq	%mm7, %mm2
+L(top):	pmuludq	%mm7, %mm2
 	paddq	%mm0, %mm6
 	movd	16(%eax), %mm3
 	movd	%mm6, 0(%edx)
 	psrlq	$32, %mm6
-.L10:	pmuludq	%mm7, %mm3
+L(10):	pmuludq	%mm7, %mm3
 	paddq	%mm1, %mm6
 	movd	20(%eax), %mm0
 	movd	%mm6, 4(%edx)
 	psrlq	$32, %mm6
-.L01:	pmuludq	%mm7, %mm0
+L(01):	pmuludq	%mm7, %mm0
 	paddq	%mm2, %mm6
 	movd	24(%eax), %mm1
 	movd	%mm6, 8(%edx)
 	psrlq	$32, %mm6
-.L00:	pmuludq	%mm7, %mm1
+L(00):	pmuludq	%mm7, %mm1
 	paddq	%mm3, %mm6
 	movd	28(%eax), %mm2
 	movd	%mm6, 12(%edx)
@@ -140,9 +140,9 @@ PROLOGUE(mpn_mul_1)
 	lea	16(%eax), %eax
 	lea	16(%edx), %edx
 	add	$4, %ecx
-	ja	.Loop
+	ja	L(top)
 
-.Lend:	pmuludq	%mm7, %mm2
+L(end):	pmuludq	%mm7, %mm2
 	paddq	%mm0, %mm6
 	movd	%mm6, 0(%edx)
 	psrlq	$32, %mm6

@@ -90,7 +90,7 @@ L(pic_calc):
 	ret_internal
 ')
 
-.Lend:
+L(end):
 	sbb	%eax, %eax
 	neg	%eax
 	pop	%ebx
@@ -99,8 +99,8 @@ L(pic_calc):
 	ret
 
 	ALIGN(16)
-.Loop:
-	jecxz	.Lend
+L(top):
+	jecxz	L(end)
 L(ent):
 Zdisp(	mov,	0,(up,n,4), %eax)
 Zdisp(	ADCSBB,	0,(vp,n,4), %eax)
@@ -135,7 +135,7 @@ Zdisp(	mov,	%eax, 0,(rp,n,4))
 	mov	%edx, 28(rp,n,4)
 
 	lea	8(n), n
-	jmp	.Loop
+	jmp	L(top)
 
 EPILOGUE()
 

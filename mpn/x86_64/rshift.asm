@@ -104,7 +104,7 @@ L(rlx):	mov	8(up,n,8), %r10
 	add	$4, n			C				      4
 	jb	L(end)			C				      2
 	ALIGN(16)
-L(oop):
+L(top):
 	C finish stuff from lsh block
 	neg	%ecx			C put rsh count in cl
 	mov	-16(up,n,8), %r8
@@ -138,7 +138,7 @@ L(oop):
 	shr	%cl, %r11
 
 	add	$4, n
-	jae	L(oop)			C				      2
+	jae	L(top)			C				      2
 L(end):
 	neg	%ecx			C put rsh count in cl
 	mov	-16(up,n,8), %r8

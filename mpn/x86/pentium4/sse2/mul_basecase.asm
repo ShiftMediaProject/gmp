@@ -61,20 +61,20 @@ PROLOGUE(mpn_mul_basecase)
 	mov	24(%esp), %esi		C vp
 	mov	28(%esp), %ebx		C vn
 	movd	(%esi), %mm7		C
-.Lent:	cmp	$3, %ecx
-	ja	.Large
+L(ent):	cmp	$3, %ecx
+	ja	L(big)
 	movd	(%eax), %mm6
 	pmuludq	%mm7, %mm6
-	jz	.Lun3
+	jz	L(un3)
 	cmp	$2, %ecx
-	jz	.Lun2
+	jz	L(un2)
 
-.Lun1:	movd	%mm6, (%edx)		C				un=1
+L(un1):	movd	%mm6, (%edx)		C				un=1
 	psrlq	$32, %mm6		C				un=1
 	movd	%mm6, 4(%edx)		C				un=1
-	jmp	.Lret			C				un=1
+	jmp	L(ret)			C				un=1
 
-.Lun2:	movd	4(%eax), %mm1		C				un=2
+L(un2):	movd	4(%eax), %mm1		C				un=2
 	pmuludq	%mm7, %mm1		C				un=2
 	movd	%mm6, (%edx)		C				un=2
 	psrlq	$32, %mm6		C				un=2
@@ -83,7 +83,7 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				un=2
 	movd	%mm6, 8(%edx)		C				un=2
       dec	%ebx			C				un=2
-      jz	.Lret			C				un=2
+      jz	L(ret)			C				un=2
 	movd	4(%esi), %mm7		C				un=2
 	movd	(%eax), %mm6		C				un=2
 	pmuludq	%mm7, %mm6		C				un=2
@@ -99,12 +99,12 @@ PROLOGUE(mpn_mul_basecase)
 	movd	%mm6, 8(%edx)		C				un=2
 	psrlq	$32, %mm6		C				un=2
 	movd	%mm6, 12(%edx)		C				un=2
-.Lret:	emms
+L(ret):	emms
 	pop	%ebx
 	pop	%esi
 	ret
 
-.Lun3:	movd	4(%eax), %mm1		C				un=3
+L(un3):	movd	4(%eax), %mm1		C				un=3
 	pmuludq	%mm7, %mm1		C				un=3
 	movd	8(%eax), %mm2		C				un=3
 	pmuludq	%mm7, %mm2		C				un=3
@@ -118,7 +118,7 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				un=3
 	movd	%mm6, 12(%edx)		C				un=3
       dec	%ebx			C				un=3
-      jz	.Lret			C				un=3
+      jz	L(ret)			C				un=3
 	movd	4(%esi), %mm7		C				un=3
 	movd	(%eax), %mm6		C				un=3
 	pmuludq	%mm7, %mm6		C				un=3
@@ -142,7 +142,7 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				un=3
 	movd	%mm6, 16(%edx)		C				un=3
       dec	%ebx			C				un=3
-      jz	.Lret			C				un=3
+      jz	L(ret)			C				un=3
 	movd	8(%esi), %mm7		C				un=3
 	movd	(%eax), %mm6		C				un=3
 	pmuludq	%mm7, %mm6		C				un=3
@@ -165,30 +165,31 @@ PROLOGUE(mpn_mul_basecase)
 	movd	%mm6, 16(%edx)		C				un=3
 	psrlq	$32, %mm6		C				un=3
 	movd	%mm6, 20(%edx)		C				un=3
-	jmp	.Lret
+	jmp	L(ret)
 
 
-.Large:	push	%edi
+L(big):	push	%edi
 	pxor	%mm6, %mm6
 	lea	4(%esi), %esi
 	and	$3, %ecx
-	jz	.L0
+	jz	L(0)
 	cmp	$2, %ecx
-	jc	.L1
-	jz	.L2
-	jmp	.L3			C FIXME: one case should fall through
+	jc	L(1)
+	jz	L(2)
+	jmp	L(3)			C FIXME: one case should fall through
 
 
-.L0:	movd	(%eax), %mm3		C				m 0
+L(0):	movd	(%eax), %mm3		C				m 0
 	sub	24(%esp), %ecx		C inner loop count		m 0
 	mov	%ecx, 24(%esp)		C update loop count for later	m 0
 	pmuludq	%mm7, %mm3		C				m 0
 	movd	4(%eax), %mm0		C				m 0
 	pmuludq	%mm7, %mm0		C				m 0
 	movd	8(%eax), %mm1		C				m 0
-	jmp	.Lm00			C				m 0
+	jmp	L(m00)			C				m 0
 	ALIGN(16)			C				m 0
-.Llpm0:	pmuludq	%mm7, %mm4		C				m 0
+L(lpm0):
+	pmuludq	%mm7, %mm4		C				m 0
 	paddq	%mm0, %mm6		C				m 0
 	movd	(%eax), %mm3		C				m 0
 	movd	%mm6, -12(%edx)		C				m 0
@@ -203,7 +204,7 @@ PROLOGUE(mpn_mul_basecase)
 	movd	8(%eax), %mm1		C				m 0
 	movd	%mm6, -4(%edx)		C				m 0
 	psrlq	$32, %mm6		C				m 0
-.Lm00:	pmuludq	%mm7, %mm1		C				m 0
+L(m00):	pmuludq	%mm7, %mm1		C				m 0
 	paddq	%mm3, %mm6		C				m 0
 	movd	12(%eax), %mm4		C				m 0
 	movd	%mm6, (%edx)		C				m 0
@@ -211,16 +212,17 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				m 0
 	lea	16(%edx), %edx		C				m 0
 	add	$4, %ecx		C				m 0
-	ja	.Llpm0			C				m 0
+	ja	L(lpm0)			C				m 0
 	pmuludq	%mm7, %mm4		C				m 0
 	paddq	%mm0, %mm6		C				m 0
 	movd	%mm6, -12(%edx)		C				m 0
 	psrlq	$32, %mm6		C				m 0
 	paddq	%mm1, %mm6		C				m 0
 	mov	16(%esp), %edi		C rp				  0
-	jmp	.Lx0
+	jmp	L(x0)
 
-.Lolp0:	lea	4(%edi), %edi		C				am 0
+L(olp0):
+	lea	4(%edi), %edi		C				am 0
 	movd	(%esi), %mm7		C				am 0
 	lea	4(%esi), %esi		C				am 0
 	mov	%edi, %edx		C rp				am 0
@@ -235,9 +237,10 @@ PROLOGUE(mpn_mul_basecase)
 	movd	8(%eax), %mm1		C				am 0
 	paddq	%mm3, %mm5		C				am 0
 	movd	4(%edx), %mm4		C				am 0
-	jmp	.Lam00			C				am 0
+	jmp	L(am00)			C				am 0
 	ALIGN(16)			C				mm 0
-.Llam0:	pmuludq	%mm7, %mm2		C				am 0
+L(lam0):
+	pmuludq	%mm7, %mm2		C				am 0
 	paddq	%mm4, %mm6		C				am 0
 	movd	(%eax), %mm3		C				am 0
 	paddq	%mm1, %mm5		C				am 0
@@ -258,7 +261,8 @@ PROLOGUE(mpn_mul_basecase)
 	movd	4(%edx), %mm4		C				am 0
 	movd	%mm6, -4(%edx)		C				am 0
 	psrlq	$32, %mm6		C				am 0
-.Lam00:	pmuludq	%mm7, %mm1		C				am 0
+L(am00):
+	pmuludq	%mm7, %mm1		C				am 0
 	paddq	%mm5, %mm6		C				am 0
 	movd	12(%eax), %mm2		C				am 0
 	paddq	%mm0, %mm4		C				am 0
@@ -268,7 +272,7 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				am 0
 	lea	16(%edx), %edx		C				am 0
 	add	$4, %ecx		C				am 0
-	jnz	.Llam0			C				am 0
+	jnz	L(lam0)			C				am 0
 	pmuludq	%mm7, %mm2		C				am 0
 	paddq	%mm4, %mm6		C				am 0
 	paddq	%mm1, %mm5		C				am 0
@@ -277,31 +281,33 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				am 0
 	paddq	%mm5, %mm6		C				am 0
 	paddq	%mm2, %mm4		C				am 0
-.Lx0:	movd	%mm6, -8(%edx)		C				am 0
+L(x0):	movd	%mm6, -8(%edx)		C				am 0
 	psrlq	$32, %mm6		C				am 0
 	paddq	%mm4, %mm6		C				am 0
 	movd	%mm6, -4(%edx)		C				am 0
 	psrlq	$32, %mm6		C				am 0
 	movd	%mm6, (%edx)		C				am 0
 	dec	%ebx			C				am 0
-	jnz	.Lolp0			C				am 0
-.Loel0:	emms				C				   0
+	jnz	L(olp0)			C				am 0
+L(oel0):
+	emms				C				   0
 	pop	%edi			C				   0
 	pop	%ebx			C				   0
 	pop	%esi			C				   0
 	ret				C				   0
 
 
-.L1:	movd	(%eax), %mm4		C				m 1
+L(1):	movd	(%eax), %mm4		C				m 1
 	sub	24(%esp), %ecx		C				m 1
 	mov	%ecx, 24(%esp)		C update loop count for later	m 1
 	pmuludq	%mm7, %mm4		C				m 1
 	movd	4(%eax), %mm3		C				m 1
 	pmuludq	%mm7, %mm3		C				m 1
 	movd	8(%eax), %mm0		C				m 1
-	jmp	.Lm01			C				m 1
+	jmp	L(m01)			C				m 1
 	ALIGN(16)			C				m 1
-.Llpm1:	pmuludq	%mm7, %mm4		C				m 1
+L(lpm1):
+	pmuludq	%mm7, %mm4		C				m 1
 	paddq	%mm0, %mm6		C				m 1
 	movd	4(%eax), %mm3		C				m 1
 	movd	%mm6, -8(%edx)		C				m 1
@@ -311,7 +317,7 @@ PROLOGUE(mpn_mul_basecase)
 	movd	8(%eax), %mm0		C				m 1
 	movd	%mm6, -4(%edx)		C				m 1
 	psrlq	$32, %mm6		C				m 1
-.Lm01:	pmuludq	%mm7, %mm0		C				m 1
+L(m01):	pmuludq	%mm7, %mm0		C				m 1
 	paddq	%mm4, %mm6		C				m 1
 	movd	12(%eax), %mm1		C				m 1
 	movd	%mm6, (%edx)		C				m 1
@@ -324,16 +330,17 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				m 1
 	lea	16(%edx), %edx		C				m 1
 	add	$4, %ecx		C				m 1
-	ja	.Llpm1			C				m 1
+	ja	L(lpm1)			C				m 1
 	pmuludq	%mm7, %mm4		C				m 1
 	paddq	%mm0, %mm6		C				m 1
 	movd	%mm6, -8(%edx)		C				m 1
 	psrlq	$32, %mm6		C				m 1
 	paddq	%mm1, %mm6		C				m 1
 	mov	16(%esp), %edi		C rp				  1
-	jmp	.Lx1
+	jmp	L(x1)
 
-.Lolp1:	lea	4(%edi), %edi		C				am 1
+L(olp1):
+	lea	4(%edi), %edi		C				am 1
 	movd	(%esi), %mm7		C				am 1
 	lea	4(%esi), %esi		C				am 1
 	mov	%edi, %edx		C rp				am 1
@@ -348,9 +355,10 @@ PROLOGUE(mpn_mul_basecase)
 	movd	8(%eax), %mm0		C				am 1
 	paddq	%mm2, %mm4		C				am 1
 	movd	4(%edx), %mm5		C				am 1
-	jmp	.Lam01			C				am 1
+	jmp	L(am01)			C				am 1
 	ALIGN(16)			C				am 1
-.Llam1:	pmuludq	%mm7, %mm2		C				am 1
+L(lam1):
+	pmuludq	%mm7, %mm2		C				am 1
 	paddq	%mm4, %mm6		C				am 1
 	movd	4(%eax), %mm3		C				am 1
 	paddq	%mm1, %mm5		C				am 1
@@ -364,7 +372,8 @@ PROLOGUE(mpn_mul_basecase)
 	movd	4(%edx), %mm5		C				am 1
 	movd	%mm6, -4(%edx)		C				am 1
 	psrlq	$32, %mm6		C				am 1
-.Lam01:	pmuludq	%mm7, %mm0		C				am 1
+L(am01):
+	pmuludq	%mm7, %mm0		C				am 1
 	paddq	%mm4, %mm6		C				am 1
 	movd	12(%eax), %mm1		C				am 1
 	paddq	%mm3, %mm5		C				am 1
@@ -381,7 +390,7 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				am 1
 	lea	16(%edx), %edx		C				am 1
 	add	$4, %ecx		C				am 1
-	jnz	.Llam1			C				am 1
+	jnz	L(lam1)			C				am 1
 	pmuludq	%mm7, %mm2		C				am 1
 	paddq	%mm4, %mm6		C				am 1
 	paddq	%mm1, %mm5		C				am 1
@@ -390,36 +399,38 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				am 1
 	paddq	%mm5, %mm6		C				am 1
 	paddq	%mm2, %mm4		C				am 1
-.Lx1:	movd	%mm6, -4(%edx)		C				am 1
+L(x1):	movd	%mm6, -4(%edx)		C				am 1
 	psrlq	$32, %mm6		C				am 1
 	paddq	%mm4, %mm6		C				am 1
 	movd	%mm6, (%edx)		C				am 1
 	psrlq	$32, %mm6		C				am 1
 	movd	%mm6, 4(%edx)		C				am 1
 	dec	%ebx			C				am 1
-	jnz	.Lolp1			C				am 1
-.Loel1:	emms				C				   1
+	jnz	L(olp1)			C				am 1
+L(oel1):
+	emms				C				   1
 	pop	%edi			C				   1
 	pop	%ebx			C				   1
 	pop	%esi			C				   1
 	ret				C				   1
 
 
-.L2:	movd	(%eax), %mm1		C				m 2
+L(2):	movd	(%eax), %mm1		C				m 2
 	sub	24(%esp), %ecx		C				m 2
 	mov	%ecx, 24(%esp)		C update loop count for later	m 2
 	pmuludq	%mm7, %mm1		C				m 2
 	movd	4(%eax), %mm4		C				m 2
 	pmuludq	%mm7, %mm4		C				m 2
 	movd	8(%eax), %mm3		C				m 2
-	jmp	.Lm10			C				m 2
+	jmp	L(m10)			C				m 2
 	ALIGN(16)			C				m 2
-.Llpm2:	pmuludq	%mm7, %mm4		C				m 2
+L(lpm2):
+	pmuludq	%mm7, %mm4		C				m 2
 	paddq	%mm0, %mm6		C				m 2
 	movd	8(%eax), %mm3		C				m 2
 	movd	%mm6, -4(%edx)		C				m 2
 	psrlq	$32, %mm6		C				m 2
-.Lm10:	pmuludq	%mm7, %mm3		C				m 2
+L(m10):	pmuludq	%mm7, %mm3		C				m 2
 	paddq	%mm1, %mm6		C				m 2
 	movd	12(%eax), %mm0		C				m 2
 	movd	%mm6, (%edx)		C				m 2
@@ -437,16 +448,17 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				m 2
 	lea	16(%edx), %edx		C				m 2
 	add	$4, %ecx		C				m 2
-	ja	.Llpm2			C				m 2
+	ja	L(lpm2)			C				m 2
 	pmuludq	%mm7, %mm4		C				m 2
 	paddq	%mm0, %mm6		C				m 2
 	movd	%mm6, -4(%edx)		C				m 2
 	psrlq	$32, %mm6		C				m 2
 	paddq	%mm1, %mm6		C				m 2
 	mov	16(%esp), %edi		C rp				  2
-	jmp	.Lx2
+	jmp	L(x2)
 
-.Lolp2:	lea	4(%edi), %edi		C				am 2
+L(olp2):
+	lea	4(%edi), %edi		C				am 2
 	movd	(%esi), %mm7		C				am 2
 	lea	4(%esi), %esi		C				am 2
 	mov	%edi, %edx		C rp				am 2
@@ -461,16 +473,18 @@ PROLOGUE(mpn_mul_basecase)
 	movd	8(%eax), %mm3		C				am 2
 	paddq	%mm1, %mm5		C				am 2
 	movd	4(%edx), %mm4		C				am 2
-	jmp	.Lam10			C				am 2
+	jmp	L(am10)			C				am 2
 	ALIGN(16)			C				am 2
-.Llam2:	pmuludq	%mm7, %mm2		C				am 2
+L(lam2):
+	pmuludq	%mm7, %mm2		C				am 2
 	paddq	%mm4, %mm6		C				am 2
 	movd	8(%eax), %mm3		C				am 2
 	paddq	%mm1, %mm5		C				am 2
 	movd	4(%edx), %mm4		C				am 2
 	movd	%mm6, -4(%edx)		C				am 2
 	psrlq	$32, %mm6		C				am 2
-.Lam10:	pmuludq	%mm7, %mm3		C				am 2
+L(am10):
+	pmuludq	%mm7, %mm3		C				am 2
 	paddq	%mm5, %mm6		C				am 2
 	movd	12(%eax), %mm0		C				am 2
 	paddq	%mm2, %mm4		C				am 2
@@ -494,7 +508,7 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				am 2
 	lea	16(%edx), %edx		C				am 2
 	add	$4, %ecx		C				am 2
-	jnz	.Llam2			C				am 2
+	jnz	L(lam2)			C				am 2
 	pmuludq	%mm7, %mm2		C				am 2
 	paddq	%mm4, %mm6		C				am 2
 	paddq	%mm1, %mm5		C				am 2
@@ -503,31 +517,33 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				am 2
 	paddq	%mm5, %mm6		C				am 2
 	paddq	%mm2, %mm4		C				am 2
-.Lx2:	movd	%mm6, (%edx)		C				am 2
+L(x2):	movd	%mm6, (%edx)		C				am 2
 	psrlq	$32, %mm6		C				am 2
 	paddq	%mm4, %mm6		C				am 2
 	movd	%mm6, 4(%edx)		C				am 2
 	psrlq	$32, %mm6		C				am 2
 	movd	%mm6, 8(%edx)		C				am 2
 	dec	%ebx			C				am 2
-	jnz	.Lolp2			C				am 2
-.Loel2:	emms				C				   2
+	jnz	L(olp2)			C				am 2
+L(oel2):
+	emms				C				   2
 	pop	%edi			C				   2
 	pop	%ebx			C				   2
 	pop	%esi			C				   2
 	ret				C				   2
 
 
-.L3:	movd	(%eax), %mm0		C				m 3
+L(3):	movd	(%eax), %mm0		C				m 3
 	sub	24(%esp), %ecx		C				m 3
 	mov	%ecx, 24(%esp)		C update loop count for later	m 3
 	pmuludq	%mm7, %mm0		C				m 3
 	movd	4(%eax), %mm1		C				m 3
 	pmuludq	%mm7, %mm1		C				m 3
 	movd	8(%eax), %mm4		C				m 3
-	jmp	.Llpm3			C				m 3
+	jmp	L(lpm3)			C				m 3
 	ALIGN(16)			C				m 3
-.Llpm3:	pmuludq	%mm7, %mm4		C				m 3
+L(lpm3):
+	pmuludq	%mm7, %mm4		C				m 3
 	paddq	%mm0, %mm6		C				m 3
 	movd	12(%eax), %mm3		C				m 3
 	movd	%mm6, (%edx)		C				m 3
@@ -550,16 +566,17 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				m 3
 	lea	16(%edx), %edx		C				m 3
 	add	$4, %ecx		C				m 3
-	ja	.Llpm3			C				m 3
+	ja	L(lpm3)			C				m 3
 	pmuludq	%mm7, %mm4		C				m 3
 	paddq	%mm0, %mm6		C				m 3
 	movd	%mm6, (%edx)		C				m 3
 	psrlq	$32, %mm6		C				m 3
 	paddq	%mm1, %mm6		C				m 3
 	mov	16(%esp), %edi		C rp				  3
-	jmp	.Lx3
+	jmp	L(x3)
 
-.Lolp3:	lea	4(%edi), %edi		C				am 3
+L(olp3):
+	lea	4(%edi), %edi		C				am 3
 	movd	(%esi), %mm7		C				am 3
 	lea	4(%esi), %esi		C				am 3
 	mov	%edi, %edx		C rp				am 3
@@ -574,9 +591,10 @@ PROLOGUE(mpn_mul_basecase)
 	movd	8(%eax), %mm2		C				am 3
 	paddq	%mm0, %mm4		C				am 3
 	movd	4(%edx), %mm5		C				am 3
-	jmp	.Llam3			C				am 3
+	jmp	L(lam3)			C				am 3
 	ALIGN(16)			C				am 3
-.Llam3:	pmuludq	%mm7, %mm2		C				am 3
+L(lam3):
+	pmuludq	%mm7, %mm2		C				am 3
 	paddq	%mm4, %mm6		C				am 3
 	movd	12(%eax), %mm3		C				am 3
 	paddq	%mm1, %mm5		C				am 3
@@ -607,7 +625,7 @@ PROLOGUE(mpn_mul_basecase)
 	lea	16(%eax), %eax		C				am 3
 	lea	16(%edx), %edx		C				am 3
 	add	$4, %ecx		C				am 3
-	jnz	.Llam3			C				am 3
+	jnz	L(lam3)			C				am 3
 	pmuludq	%mm7, %mm2		C				am 3
 	paddq	%mm4, %mm6		C				am 3
 	paddq	%mm1, %mm5		C				am 3
@@ -616,15 +634,16 @@ PROLOGUE(mpn_mul_basecase)
 	psrlq	$32, %mm6		C				am 3
 	paddq	%mm5, %mm6		C				am 3
 	paddq	%mm2, %mm4		C				am 3
-.Lx3:	movd	%mm6, 4(%edx)		C				am 3
+L(x3):	movd	%mm6, 4(%edx)		C				am 3
 	psrlq	$32, %mm6		C				am 3
 	paddq	%mm4, %mm6		C				am 3
 	movd	%mm6, 8(%edx)		C				am 3
 	psrlq	$32, %mm6		C				am 3
 	movd	%mm6, 12(%edx)		C				am 3
 	dec	%ebx			C				am 3
-	jnz	.Lolp3			C				am 3
-.Loel3:	emms				C				   3
+	jnz	L(olp3)			C				am 3
+L(oel3):
+	emms				C				   3
 	pop	%edi			C				   3
 	pop	%ebx			C				   3
 	pop	%esi			C				   3
