@@ -8027,7 +8027,7 @@ For operands between these sizes, we use Toom inspired algorithms suggested by
 Alberto Zanoni and Marco Bodrato.  The idea is to split the operands into
 polynomials of different degree.  GMP currently splits the smaller operand
 onto 2 coefficients, i.e., a polynomial of degree 1, but the larger operand
-can be split into 2, 3, or 4 coefficients, i,e., a polynomial of degree 1 to
+can be split into 2, 3, or 4 coefficients, i.e., a polynomial of degree 1 to
 3.
 
 @c FIXME: This is mighty ugly, but a cleaner @need triggers texinfo bugs that
