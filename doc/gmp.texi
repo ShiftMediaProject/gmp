@@ -5697,7 +5697,7 @@ int   n;
 gmp_printf ("fixed point mpf %.*Ff with %d digits\n", n, f, n);
 
 mp_limb_t l;
-gmp_printf ("limb %Mu\n", limb);
+gmp_printf ("limb %Mu\n", l);
 
 const mp_limb_t *ptr;
 mp_size_t       size;
