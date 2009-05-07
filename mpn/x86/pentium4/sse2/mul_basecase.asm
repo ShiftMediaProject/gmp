@@ -72,7 +72,7 @@ L(ent):	cmp	$3, %ecx
 L(un1):	movd	%mm6, (%edx)		C				un=1
 	psrlq	$32, %mm6		C				un=1
 	movd	%mm6, 4(%edx)		C				un=1
-	jmp	L(ret)			C				un=1
+	jmp	L(rtr)			C				un=1
 
 L(un2):	movd	4(%eax), %mm1		C				un=2
 	pmuludq	%mm7, %mm1		C				un=2
@@ -83,7 +83,7 @@ L(un2):	movd	4(%eax), %mm1		C				un=2
 	psrlq	$32, %mm6		C				un=2
 	movd	%mm6, 8(%edx)		C				un=2
       dec	%ebx			C				un=2
-      jz	L(ret)			C				un=2
+      jz	L(rtr)			C				un=2
 	movd	4(%esi), %mm7		C				un=2
 	movd	(%eax), %mm6		C				un=2
 	pmuludq	%mm7, %mm6		C				un=2
@@ -99,7 +99,7 @@ L(un2):	movd	4(%eax), %mm1		C				un=2
 	movd	%mm6, 8(%edx)		C				un=2
 	psrlq	$32, %mm6		C				un=2
 	movd	%mm6, 12(%edx)		C				un=2
-L(ret):	emms
+L(rtr):	emms
 	pop	%ebx
 	pop	%esi
 	ret
@@ -118,7 +118,7 @@ L(un3):	movd	4(%eax), %mm1		C				un=3
 	psrlq	$32, %mm6		C				un=3
 	movd	%mm6, 12(%edx)		C				un=3
       dec	%ebx			C				un=3
-      jz	L(ret)			C				un=3
+      jz	L(rtr)			C				un=3
 	movd	4(%esi), %mm7		C				un=3
 	movd	(%eax), %mm6		C				un=3
 	pmuludq	%mm7, %mm6		C				un=3
@@ -142,7 +142,7 @@ L(un3):	movd	4(%eax), %mm1		C				un=3
 	psrlq	$32, %mm6		C				un=3
 	movd	%mm6, 16(%edx)		C				un=3
       dec	%ebx			C				un=3
-      jz	L(ret)			C				un=3
+      jz	L(rtr)			C				un=3
 	movd	8(%esi), %mm7		C				un=3
 	movd	(%eax), %mm6		C				un=3
 	pmuludq	%mm7, %mm6		C				un=3
@@ -165,7 +165,7 @@ L(un3):	movd	4(%eax), %mm1		C				un=3
 	movd	%mm6, 16(%edx)		C				un=3
 	psrlq	$32, %mm6		C				un=3
 	movd	%mm6, 20(%edx)		C				un=3
-	jmp	L(ret)
+	jmp	L(rtr)
 
 
 L(big):	push	%edi

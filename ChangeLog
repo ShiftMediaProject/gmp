@@ -1,3 +1,8 @@
+2009-05-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86/pentium4/sse2/mul_basecase.asm: Avoid L(ret), "ret" is
+	defined in x86-defs.m4.
+
 2009-05-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/p6/aors_n.asm: Use L() for labels.
