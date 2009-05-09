@@ -57,6 +57,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 void
 mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
 {
+  ASSERT (n >= 1);
+  ASSERT (! MPN_OVERLAP_P (rp, 2 * n, xp, n));
+  ASSERT (! MPN_OVERLAP_P (rp, 2 * n, yp, n));
+
   if (BELOW_THRESHOLD (n, MULLOW_BASECASE_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */

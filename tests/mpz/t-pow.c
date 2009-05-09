@@ -32,6 +32,8 @@ check_one (mpz_srcptr want, mpz_srcptr base, unsigned long exp)
 
   mpz_init (got);
 
+  MPZ_CHECK_FORMAT (want);
+
   mpz_pow_ui (got, base, exp);
   if (mpz_cmp (got, want))
     {

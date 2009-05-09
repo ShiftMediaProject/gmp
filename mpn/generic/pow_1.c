@@ -34,6 +34,9 @@ mpn_pow_1 (mp_ptr rp, mp_srcptr bp, mp_size_t bn, mp_limb_t exp, mp_ptr tp)
   mp_size_t rn;
   int par;
 
+  ASSERT (bn >= 1);
+  /* FIXME: Add operand overlap criteria */
+
   if (exp <= 1)
     {
       if (exp == 0)

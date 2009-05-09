@@ -1,4 +1,4 @@
-/* Test mpz_powm, mpz_mul. mpz_mod, mpz_mod_ui, mpz_div_ui.
+/* Test mpz_powm, mpz_mul, mpz_mod, mpz_mod_ui, mpz_div_ui.
 
 Copyright 1991, 1993, 1994, 1996, 1999, 2000, 2001, 2009 Free Software
 Foundation, Inc.
@@ -89,6 +89,7 @@ main (int argc, char **argv)
       /* printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod)); */
 
       mpz_powm (r1, base, exp, mod);
+      MPZ_CHECK_FORMAT (r1);
 
       mpz_set_ui (r2, 1);
       mpz_mod (base2, base, mod);

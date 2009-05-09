@@ -67,6 +67,9 @@ main (int argc, char **argv)
       /* printf ("%ld\n", SIZ (x2)); */
 
       mpz_sqrtrem (x, rem, x2);
+      MPZ_CHECK_FORMAT (x);
+      MPZ_CHECK_FORMAT (rem);
+
       mpz_mul (temp, x, x);
 
       /* Is square of result > argument?  */

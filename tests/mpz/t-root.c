@@ -37,8 +37,15 @@ check_one (mpz_t root1, mpz_t x2, unsigned long nth, int i)
   mpz_init (temp);
   mpz_init (temp2);
 
+  MPZ_CHECK_FORMAT (root1);
+
   mpz_rootrem (root2, rem2, x2, nth);
+  MPZ_CHECK_FORMAT (root2);
+  MPZ_CHECK_FORMAT (rem2);
+
   mpz_pow_ui (temp, root1, nth);
+  MPZ_CHECK_FORMAT (temp);
+
   mpz_add (temp2, temp, rem2);
 
   /* Is power of result > argument?  */
@@ -65,6 +72,7 @@ check_one (mpz_t root1, mpz_t x2, unsigned long nth, int i)
     {
       mpz_add_ui (temp2, root1, 1L);
       mpz_pow_ui (temp2, temp2, nth);
+      MPZ_CHECK_FORMAT (temp2);
 
       /* Is square of (result + 1) <= argument?  */
       if (mpz_cmp (temp2, x2) <= 0)
