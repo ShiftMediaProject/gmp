@@ -8417,20 +8417,20 @@ linear work is also significant. There are roughly @math{N} calls to the
 optimizations:
 
 @itemize
-@item 
+@item
 It uses the same relaxed notion of correctness as @code{mpn_hgcd} (see next
 section). This means that when called with the most significant two limbs of
 two large numbers, the returned matrix does not always correspond exactly to
 the initial quotient sequence for the two large numbers; the final quotient
 may sometimes be one off.
 
-@item 
+@item
 It takes advantage of the fact the quotients are usually small. The division
 operator is not used, since the corresponding assembler instruction is very
 slow on most architectures. (This code could probably be improved further, it
 uses many branches that are unfriendly to prediction).
 
-@item 
+@item
 It switches from double-limb calculations to single-limb calculations half-way
 through, when the input numbers have been reduced in size from two limbs to
 one and a half.
