@@ -1,3 +1,11 @@
+2009-05-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Version 4.3.1 released.
+
+2009-05-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz: Add MPZ_CHECK_FORMAT to many tests.
+
 2009-05-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/pentium4/sse2/mul_basecase.asm: Avoid L(ret), "ret" is
