@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C	     cycles/limb
 C K8,K9:	 2.375
-C K10:		 ?
+C K10:		 2.375
 C P4:		 ?
 C P6-15:	 4.45
 
