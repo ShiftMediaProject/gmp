@@ -2,7 +2,7 @@ dnl  AMD64 mpn_sqr_basecase.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 
-dnl  Copyright 2008 Free Software Foundation, Inc.
+dnl  Copyright 2008, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -29,11 +29,10 @@ C   * This code only handles operands up to SQR_KARATSUBA_THRESHOLD_MAX.  That
 C     means we can safely use 32-bit operations for all sizes, unlike in e.g.,
 C     mpn_addmul_1.
 C   * The jump table could probably be optimized, at least for non-pic.
-C   * Add special code for n = 4, modify jump table code to handle that.
 C   * The special code for n=1,2,3 was quickly written.  It is probably too
 C     large and unnecessarily slow.
-C   *  Consider combining small cases code so that the n=k-1 code jumps into
-C      the middle of the n=k code.
+C   * Consider combining small cases code so that the n=k-1 code jumps into
+C     the middle of the n=k code.
 C   * Avoid saving registers for small cases code.
 C   * Needed variables:
 C    n   r11  input size
