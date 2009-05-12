@@ -17,6 +17,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
+Changes between GMP version 4.3.0 and 4.3.1
+
+  Bugs:
+  * Fixed bug in mpn_gcdext, affecting also mpz_gcdext and mpz_invert.
+    The bug could cause a cofactor to have a leading zero limb, which
+    could lead to crashes or miscomputation later on.
+  * Fixed some minor documentation issues.
+
+  Speedups:
+  * None.
+
+  Features:
+  * Workarounds for various issues with Mac OS X's build tools.
+  * Recognise more IBM "POWER" processor variants.
+
+
 Changes between GMP version 4.2.X and 4.3.0
 
   Bugs:
