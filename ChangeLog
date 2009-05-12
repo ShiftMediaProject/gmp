@@ -1,6 +1,13 @@
-2009-05-10  Torbjorn Granlund  <tege@gmplib.org>
+2009-05-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 4.3.1 released.
+
+2009-05-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-h.in (__GNU_MP_VERSION_MINOR): Bump.
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
+	Bump version info.
 
 2009-05-09  Torbjorn Granlund  <tege@gmplib.org>
 
