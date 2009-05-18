@@ -1,6 +1,6 @@
 2009-05-18  Torbjorn Granlund  <tege@gmplib.org>
 
-	* gmp-h.in (__GNU_MP_VERSION): Bump to 4.
+	* gmp-h.in (__GNU_MP_VERSION_MINOR): Bump to 4.
 	(__GNU_MP_VERSION_PATCHLEVEL): Set to -1.
 
 	* mpn/x86_64/mod_1_4.asm: New file.
