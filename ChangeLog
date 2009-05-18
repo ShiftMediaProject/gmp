@@ -1,3 +1,12 @@
+2009-05-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/asm-defs.m4: Correct names for mod_1_N functions.
+	Add defines for corresponding cps functions.
+
+	* mpn/generic/mod_1_2.c: Suppport any sizes > 1.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_4.c: Likewise.
+
 2009-05-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 4.3.1 released.
