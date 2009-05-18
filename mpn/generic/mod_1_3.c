@@ -65,17 +65,37 @@ mpn_mod_1s_3p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[6])
   mp_size_t i;
   int cnt;
 
+  ASSERT (n >= 1);
+
   B1modb = cps[2];
   B2modb = cps[3];
   B3modb = cps[4];
   B4modb = cps[5];
 
-  umul_ppmm (ph, pl, ap[n - 2], B1modb);
-  add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 3]);
-  umul_ppmm (ch, cl, ap[n - 1], B2modb);
-  add_ssaaaa (rh, rl, ph, pl, ch, cl);
+  /* We compute n mod 3 in a tricky way, which works except for when n is so
+     close to the maximum size that we don't need to support it.  */
+  switch ((mp_limb_t) n * MODLIMB_INVERSE_3 >> (GMP_NUMB_BITS - 2))
+    {
+    case 0:
+      umul_ppmm (ph, pl, ap[n - 2], B1modb);
+      add_ssaaaa (ph, pl, ph, pl, 0, ap[n - 3]);
+      umul_ppmm (rh, rl, ap[n - 1], B2modb);
+      add_ssaaaa (rh, rl, rh, rl, ph, pl);
+      n -= 3;
+      break;
+    case 2:	/* n mod 3 = 1 */
+      rh = 0;
+      rl = ap[n - 1];
+      n -= 1;
+      break;
+    case 1:	/* n mod 3 = 2 */
+      umul_ppmm (ph, pl, ap[n - 1], B1modb);
+      add_ssaaaa (rh, rl, ph, pl, 0, ap[n - 2]);
+      n -= 2;
+      break;
+    }
 
-  for (i = n - 6; i >= 0; i -= 3)
+  for (i = n - 3; i >= 0; i -= 3)
     {
       /* rr = ap[i]				< B
 	    + ap[i+1] * (B mod b)		<= (B-1)(b-1)
@@ -94,21 +114,6 @@ mpn_mod_1s_3p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[6])
 
       umul_ppmm (rh, rl, rh, B4modb);
       add_ssaaaa (rh, rl, rh, rl, ph, pl);
-    }
-
-  if (i >= -2)
-    {
-      umul_ppmm (ph, pl, rl, B1modb);
-      add_ssaaaa (ph, pl, ph, pl, 0, ap[i + 2]);
-      umul_ppmm (rh, rl, rh, B2modb);
-      add_ssaaaa (rh, rl, rh, rl, ph, pl);
-      if (i >= -1)
-	{
-	  umul_ppmm (ph, pl, rl, B1modb);
-	  add_ssaaaa (ph, pl, ph, pl, 0, ap[0]);
-	  umul_ppmm (rh, rl, rh, B2modb);
-	  add_ssaaaa (rh, rl, rh, rl, ph, pl);
-	}
     }
 
   bi = cps[0];
