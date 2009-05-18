@@ -64,6 +64,8 @@ mpn_mod_1s_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
   mp_size_t i;
   int cnt;
 
+  ASSERT (n >= 2);
+
   B1modb = bmodb[2];
   B2modb = bmodb[3];
 
