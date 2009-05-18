@@ -1,5 +1,7 @@
 2009-05-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/mod_1_4.asm: New file.
+
 	* mpn/asm-defs.m4: Correct names for mod_1_N functions.
 	Add defines for corresponding cps functions.
 
