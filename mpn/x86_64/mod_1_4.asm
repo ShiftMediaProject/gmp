@@ -45,10 +45,10 @@ PROLOGUE(mpn_mod_1s_4p)
 	mov	32(%rcx), %rbp
 	mov	40(%rcx), %r13
 	mov	48(%rcx), %r12
-	mov	%esi, %edx
-	and	$3, %edx
+	mov	R32(%rsi), R32(%rdx)
+	and	$3, R32(%rdx)
 	je	L(b0)
-	cmp	$2, %edx
+	cmp	$2, R32(%rdx)
 	jc	L(b1)
 	je	L(b2)
 
@@ -81,7 +81,7 @@ L(b0):	lea	-32(%rdi,%rsi,8), %rdi
 
 	ALIGN(8)
 L(b1):	lea	-8(%rdi,%rsi,8), %rdi
-	xor	%r8d, %r8d
+	xor	R32(%r8), R32(%r8)
 	mov	(%rdi), %r9
 	jmp	L(m1)
 
@@ -124,24 +124,24 @@ L(m0):	add	%rax, %r9
 L(m1):	sub	$4, %rsi
 	ja	L(top)
 
-L(end):	mov	8(%r15), %esi
+L(end):	mov	8(%r15), R32(%rsi)
 	mov	%r8, %rax
 	mul	%r11
 	mov	%rax, %r8
 	add	%r9, %r8
 	adc	$0, %rdx
-	mov	$64, %ecx
-	sub	%esi, %ecx
+	mov	$64, R32(%rcx)
+	sub	R32(%rsi), R32(%rcx)
 	mov	%r8, %rdi
-	shr	%cl, %rdi
-	mov	%esi, %ecx
-	sal	%cl, %rdx
+	shr	R8(%rcx), %rdi
+	mov	R32(%rsi), R32(%rcx)
+	sal	R8(%rcx), %rdx
 	or	%rdx, %rdi
 	mov	%rdi, %rax
 	mulq	(%r15)
 	mov	%rax, %r9
 	mov	%r8, %rax
-	sal	%cl, %rax
+	sal	R8(%rcx), %rax
 	inc	%rdi
 	mov	%r9, %rcx
 	add	%rax, %rcx
@@ -153,11 +153,10 @@ L(end):	mov	8(%r15), %esi
 	cmp	%rax, %rcx
 	cmovb	%rdx, %rax
 	mov	%rax, %rdx
-	sub	%rbx, %rdx
-	cmp	%rbx, %rax
-	cmovae	%rdx, %rax
-	mov	%esi, %ecx
-	shr	%cl, %rax
+	sub	%rbx, %rax
+	cmovb	%rdx, %rax
+	mov	R32(%rsi), R32(%rcx)
+	shr	R8(%rcx), %rax
 	pop	%rbx
 	pop	%rbp
 	pop	%r12
@@ -169,25 +168,25 @@ EPILOGUE()
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_4p_cps)
 	push	%r12
-	bsr	%rsi,%r12
+	bsr	%rsi, %rcx
 	push	%rbp
-	xor	$63, %r12d
+	xor	$63, R32(%rcx)
 	mov	%rsi, %rbp
-	mov	%r12d, %ecx
-	sal	%cl, %rbp
+	mov	R32(%rcx), R32(%r12)
+	sal	R8(%rcx), %rbp
 	push	%rbx
 	mov	%rdi, %rbx
 	mov	%rbp, %rdi
 	CALL(	mpn_invert_limb)
-	mov	%r12d, %ecx
-	mov	$1, %r10d
-	sal	%cl, %r10
-	mov	$64, %ecx
+	mov	R32(%r12), R32(%rcx)
+	mov	$1, R32(%r10)
+	sal	R8(%rcx), %r10
+	mov	$64, R32(%rcx)
 	mov	%rax, %r9
-	sub	%r12d, %ecx
+	sub	R32(%r12), R32(%rcx)
 	mov	%r9, (%rbx)
-	shr	%cl, %rax
-	mov	%r12d, %ecx
+	shr	R8(%rcx), %rax
+	mov	R32(%r12), R32(%rcx)
 	or	%rax, %r10
 	mov	%rbp, %rax
 	neg	%rax
@@ -223,13 +222,13 @@ PROLOGUE(mpn_mod_1s_4p_cps)
 	imul	%rbp, %rdx
 	cmp	%rdx, %rax
 	lea	(%rdx,%rbp), %rbp
-	movslq	%r12d,%rax
+	movslq	R32(%r12), %rax
 	cmovae	%rdx, %rbp
-	shr	%cl, %r10
-	shr	%cl, %r8
-	shr	%cl, %rbp
-	shr	%cl, %rdi
-	shr	%cl, %rsi
+	shr	R8(%rcx), %r10
+	shr	R8(%rcx), %r8
+	shr	R8(%rcx), %rbp
+	shr	R8(%rcx), %rdi
+	shr	R8(%rcx), %rsi
 	mov	%rbp, 48(%rbx)
 	mov	%rax, 8(%rbx)
 	mov	%r10, 16(%rbx)
