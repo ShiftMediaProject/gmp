@@ -168,95 +168,76 @@ EPILOGUE()
 
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_4p_cps)
-	mov	%rbx, -40(%rsp)
-	mov	%rbp, -32(%rsp)
-	mov	%r12, -24(%rsp)
-	mov	%r13, -16(%rsp)
-	mov	%r14, -8(%rsp)
-	sub	$40, %rsp
-	mov	%rdi, %rbx
-	bsr	%rsi, %rax
-	mov	%eax, %r12d
+	push	%r12
+	bsr	%rsi,%r12
+	push	%rbp
 	xor	$63, %r12d
 	mov	%rsi, %rbp
 	mov	%r12d, %ecx
 	sal	%cl, %rbp
+	push	%rbx
+	mov	%rdi, %rbx
 	mov	%rbp, %rdi
-	call	mpn_invert_limb
-	mov	%rax, %r14
-	mov	$64, %ecx
-	sub	%r12d, %ecx
-	mov	%rax, %rsi
-	shr	%cl, %rsi
-	mov	$1, %edx
+	CALL(	mpn_invert_limb)
 	mov	%r12d, %ecx
-	sal	%cl, %rdx
-	mov	%rsi, %rcx
-	or	%rdx, %rcx
-	mov	%rbp, %rdx
-	neg	%rdx
-	mov	%rcx, %r13
-	imul	%rdx, %r13
-	mov	%r13, %rax
-	mul	%r14
-	lea	1(%rdx,%r13), %rdx
-	neg	%rdx
-	mov	%rdx, %r9
-	imul	%rbp, %r9
-	lea	(%r9,%rbp), %rdx
-	cmp	%r9, %rax
-	cmovb	%rdx, %r9
-	mov	%r9, %rax
-	mul	%r14
-	lea	1(%rdx,%r9), %rdx
-	neg	%rdx
-	mov	%rdx, %r8
+	mov	$1, %r10d
+	sal	%cl, %r10
+	mov	$64, %ecx
+	mov	%rax, %r9
+	sub	%r12d, %ecx
+	mov	%r9, (%rbx)
+	shr	%cl, %rax
+	mov	%r12d, %ecx
+	or	%rax, %r10
+	mov	%rbp, %rax
+	neg	%rax
+	imul	%rax, %r10
+	mov	%r10, %rax
+	mul	%r9
+	lea	1(%r10,%rdx), %r8
+	neg	%r8
 	imul	%rbp, %r8
-	lea	(%r8,%rbp), %rdx
 	cmp	%r8, %rax
+	lea	(%r8,%rbp), %rdx
 	cmovb	%rdx, %r8
 	mov	%r8, %rax
-	mul	%r14
-	lea	1(%rdx,%r8), %rdx
-	neg	%rdx
-	mov	%rdx, %r11
-	imul	%rbp, %r11
-	lea	(%r11,%rbp), %rsi
-	cmp	%r11, %rax
-	cmovb	%rsi, %r11
-	mov	%r11, %rax
-	mul	%r14
-	lea	1(%rdx,%r11), %rdi
+	mul	%r9
+	lea	1(%r8,%rdx), %rdi
 	neg	%rdi
-	mov	%rdi, %r10
-	imul	%rbp, %r10
-	lea	(%r10,%rbp), %rdi
-	cmp	%r10, %rax
-	cmovb	%rdi, %r10
-	mov	%r14, (%rbx)
-	movslq	%r12d, %rax
+	imul	%rbp, %rdi
+	cmp	%rdi, %rax
+	lea	(%rdi,%rbp), %rdx
+	cmovb	%rdx, %rdi
+	mov	%rdi, %rax
+	mul	%r9
+	lea	1(%rdi,%rdx), %rsi
+	neg	%rsi
+	imul	%rbp, %rsi
+	cmp	%rsi, %rax
+	lea	(%rsi,%rbp), %rdx
+	cmovb	%rdx, %rsi
+	mov	%rsi, %rax
+	mul	%r9
+	lea	1(%rsi,%rdx), %rdx
+	neg	%rdx
+	imul	%rbp, %rdx
+	cmp	%rdx, %rax
+	lea	(%rdx,%rbp), %rbp
+	movslq	%r12d,%rax
+	cmovae	%rdx, %rbp
+	shr	%cl, %r10
+	shr	%cl, %r8
+	shr	%cl, %rbp
+	shr	%cl, %rdi
+	shr	%cl, %rsi
+	mov	%rbp, 48(%rbx)
 	mov	%rax, 8(%rbx)
-	mov	%r13, %rax
-	mov	%r12d, %ecx
-	shr	%cl, %rax
-	mov	%rax, 16(%rbx)
-	mov	%r9, %rax
-	shr	%cl, %rax
-	mov	%rax, 24(%rbx)
-	mov	%r8, %rax
-	shr	%cl, %rax
-	mov	%rax, 32(%rbx)
-	mov	%r11, %rdx
-	shr	%cl, %rdx
-	mov	%rdx, 40(%rbx)
-	mov	%r10, %rax
-	shr	%cl, %rax
-	mov	%rax, 48(%rbx)
-	mov	(%rsp), %rbx
-	mov	8(%rsp), %rbp
-	mov	16(%rsp), %r12
-	mov	24(%rsp), %r13
-	mov	32(%rsp), %r14
-	add	$40, %rsp
+	mov	%r10, 16(%rbx)
+	mov	%r8, 24(%rbx)
+	mov	%rdi, 32(%rbx)
+	mov	%rsi, 40(%rbx)
+	pop	%rbx
+	pop	%rbp
+	pop	%r12
 	ret
 EPILOGUE()
