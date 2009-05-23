@@ -514,17 +514,6 @@ one (mp_size_t *threshold, struct param_t *param)
     {
       double   ti, tiplus1, d;
 
-      /* If there's a size limit and it's reached then it should still
-         be sensible to analyze the data since we want the threshold put
-         either at or near the limit.  */
-      if (s.size >= param->max_size)
-        {
-          if (option_trace)
-            printf ("Reached maximum size (%ld) without otherwise stopping\n",
-                    (long) param->max_size);
-          break;
-        }
-
       /*
         FIXME: check minimum size requirements are met, possibly by just
         checking for the -1 returns from the speed functions.
@@ -1205,6 +1194,8 @@ tune_mod_1 (void)
     }
   {
     static struct param_t  param;
+
+    param.check_size = 256;
 
     s.r = GMP_NUMB_MASK / 5;
     param.function = speed_mpn_mod_1_tune;
