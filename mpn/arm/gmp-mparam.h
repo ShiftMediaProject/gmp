@@ -53,8 +53,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_NORM_THRESHOLD              0  /* always */
 #define MOD_1_UNNORM_THRESHOLD            0  /* always */
 #define MOD_1_1_THRESHOLD                10
-#define MOD_1_2_THRESHOLD               996
-#define MOD_1_4_THRESHOLD               997
+#define MOD_1_2_THRESHOLD             MP_SIZE_T_MAX
+#define MOD_1_4_THRESHOLD             MP_SIZE_T_MAX
 #define USE_PREINV_DIVREM_1               1  /* preinv always */
 #define USE_PREINV_MOD_1                  1  /* preinv always */
 #define DIVREM_2_THRESHOLD                0  /* preinv always */
