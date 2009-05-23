@@ -1,5 +1,8 @@
 2009-05-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (mpn_mod_1s_1p,mpn_mod_1s_2p,mpn_mod_1s_3p,mpn_mod_1s_4p):
+	Declare using __GMP_ATTRIBUTE_PURE.
+
 	* tune/tuneup.c (tune_mod_1): Specify check_size for measuring mod_1_N
 	functions.
 	(one): Remove redundant size loop exit condition.
