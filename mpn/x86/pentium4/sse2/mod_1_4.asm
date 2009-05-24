@@ -1,5 +1,7 @@
 dnl  mpn_mod_1_4 for Pentium 4 and P6 models with SSE2 (i.e., 9,D,E,F).
 
+dnl  Contributed to the GNU project by Torbjorn Granlund.
+
 dnl  Copyright 2009 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
@@ -17,16 +19,11 @@ dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
-
 include(`../config.m4')
 
 C TODO:
 C  * Optimize.  The present code was written quite straightforwardly.
-C  * Write a proper mpn_mod_1s_4p_cps.  The code below was compiler generated,
-C    with very minor hand optimization.  Newer GCC versions might actually beat
-C    our code.
 C  * Optimize post-loop reduction code.
-C  * Align loop?
 
 C                           cycles/limb
 C P6 model 0-8,10-12)           -
@@ -181,94 +178,82 @@ L(fix):	sub	%ebx, %eax
 EPILOGUE()
 
 PROLOGUE(mpn_mod_1s_4p_cps)
-	sub	$28, %esp
-	mov	%ebx, 12(%esp)
-	mov	%esi, 16(%esp)
-	mov	%edi, 20(%esp)
-	mov	%ebp, 24(%esp)
+	push	%ebp
+	push	%edi
+	push	%esi
+	push	%ebx
+	sub	$12, %esp
 	mov	36(%esp), %ebx
-	bsr	%ebx, %edi
-	xor	$31, %edi
-	mov	%edi, %ecx
+	bsr	%ebx, %ecx
+	xor	$31, %ecx
+	mov	%ecx, 4(%esp)
 	sal	%cl, %ebx
 	mov	%ebx, %edx
 	not	%edx
 	mov	$-1, %eax
 	div	%ebx
 	mov	%eax, %esi
-	mov	$32, %ecx
-	sub	%edi, %ecx
-	mov	%eax, %edx
-	shr	%cl, %edx
-	mov	$1, %eax
-	mov	%edi, %ecx
-	sal	%cl, %eax
-	or	%eax, %edx
+	mov	$1, %ebp
+	sal	%cl, %ebp
+	neg	%ecx
+	shr	%cl, %eax
+	or	%eax, %ebp
 	mov	%ebx, %eax
 	neg	%eax
-	imul	%eax, %edx
-	mov	%edx, 4(%esp)
-	mov	%edx, %eax
-	mul	%esi
-	mov	4(%esp), %ecx
-	lea	1(%edx,%ecx), %edx
-	neg	%edx
-	imul	%ebx, %edx
-	cmp	%edx, %eax
-	mov	%edx, 8(%esp)
-	jae	L(16)
-	add	%ebx, %edx
-	mov	%edx, 8(%esp)
-L(16):	mov	8(%esp), %eax
-	mul	%esi
-	mov	8(%esp), %ecx
-	lea	1(%edx,%ecx), %edx
-	neg	%edx
-	mov	%edx, %ebp
+	imul	%ebp, %eax
+	mov	%esi, %ecx
+	mov	%eax, 8(%esp)
+	mul	%ecx
+	mov	%edx, %esi
+	not	%esi
+	sub	8(%esp), %esi
+	imul	%ebx, %esi
+	lea	(%esi,%ebx), %edx
+	cmp	%esi, %eax
+	cmovb(	%edx, %esi)
+	mov	%esi, %eax
+	mul	%ecx
+	lea	(%esi,%edx), %edi
+	not	%edi
+	imul	%ebx, %edi
+	lea	(%edi,%ebx), %edx
+	cmp	%edi, %eax
+	cmovb(	%edx, %edi)
+	mov	%edi, %eax
+	mul	%ecx
+	lea	(%edi,%edx), %ebp
+	not	%ebp
 	imul	%ebx, %ebp
+	lea	(%ebp,%ebx), %edx
 	cmp	%ebp, %eax
-	jae	L(17)
-	add	%ebx, %ebp
-L(17):	mov	%ebp, %eax
-	mul	%esi
-	lea	1(%edx,%ebp), %edx
-	neg	%edx
+	cmovb(	%edx, %ebp)
+	mov	%ebp, %eax
+	mul	%ecx
+	add	%ebp, %edx
+	not	%edx
 	imul	%ebx, %edx
-	mov	%edx, (%esp)
+	add	%edx, %ebx
 	cmp	%edx, %eax
-	jae	L(18)
-	add	%ebx, %edx
-	mov	%edx, (%esp)
-L(18):	mov	(%esp), %eax
-	mul	%esi
-	mov	(%esp), %ecx
-	lea	1(%edx,%ecx), %edx
-	neg	%edx
-	imul	%ebx, %edx
-	cmp	%edx, %eax
-	jae	L(19)
-	add	%ebx, %edx
-L(19):	mov	32(%esp), %ebx
-	mov	%esi, (%ebx)
-	mov	%edi, 4(%ebx)
-	mov	4(%esp), %eax
-	mov	%edi, %ecx
-	shr	%cl, %eax
-	mov	%eax, 8(%ebx)
-	mov	8(%esp), %eax
-	shr	%cl, %eax
-	mov	%eax, 12(%ebx)
+	cmovb(	%ebx, %edx)
+	mov	32(%esp), %eax
+	mov	%ecx, (%eax)
+	mov	4(%esp), %ecx
+	mov	%ecx, 4(%eax)
+	mov	8(%esp), %ebx
+	shr	%cl, %ebx
+	mov	%ebx, 8(%eax)
+	shr	%cl, %esi
+	mov	%esi, 12(%eax)
+	shr	%cl, %edi
+	mov	%edi, 16(%eax)
 	shr	%cl, %ebp
-	mov	%ebp, 16(%ebx)
-	mov	(%esp), %eax
-	shr	%cl, %eax
-	mov	%eax, 20(%ebx)
+	mov	%ebp, 20(%eax)
 	shr	%cl, %edx
-	mov	%edx, 24(%ebx)
-	mov	12(%esp), %ebx
-	mov	16(%esp), %esi
-	mov	20(%esp), %edi
-	mov	24(%esp), %ebp
-	add	$28, %esp
+	mov	%edx, 24(%eax)
+	add	$12, %esp
+	pop	%ebx
+	pop	%esi
+	pop	%edi
+	pop	%ebp
 	ret
 EPILOGUE()
