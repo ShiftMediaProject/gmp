@@ -2184,7 +2184,7 @@ AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([for assembler local label prefix],
                gmp_cv_asm_lsym_prefix,
 [gmp_tmp_pre_appears=yes
-for gmp_tmp_pre in L .L $ L$; do
+for gmp_tmp_pre in L .L $L $ L$; do
   echo "Trying $gmp_tmp_pre" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
