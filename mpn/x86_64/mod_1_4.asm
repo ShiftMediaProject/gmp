@@ -32,14 +32,14 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_mod_1s_4p)
-	push	%r15
+	push	%r14
 	push	%r13
 	push	%r12
 	push	%rbp
 	push	%rbx
 	
 	mov	%rdx, -16(%rsp)
-	mov	%rcx, %r15
+	mov	%rcx, %r14
 	mov	16(%rcx), %r11
 	mov	24(%rcx), %rbx
 	mov	32(%rcx), %rbp
@@ -124,13 +124,13 @@ L(m0):	add	%rax, %r9
 L(m1):	sub	$4, %rsi
 	ja	L(top)
 
-L(end):	mov	8(%r15), R32(%rsi)
+L(end):	mov	8(%r14), R32(%rsi)
 	mov	%r8, %rax
 	mul	%r11
 	mov	%rax, %r8
 	add	%r9, %r8
 	adc	$0, %rdx
-	mov	$64, R32(%rcx)
+	xor	R32(%rcx), R32(%rcx)
 	sub	R32(%rsi), R32(%rcx)
 	mov	%r8, %rdi
 	shr	R8(%rcx), %rdi
@@ -138,30 +138,28 @@ L(end):	mov	8(%r15), R32(%rsi)
 	sal	R8(%rcx), %rdx
 	or	%rdx, %rdi
 	mov	%rdi, %rax
-	mulq	(%r15)
-	mov	%rax, %r9
-	mov	%r8, %rax
-	sal	R8(%rcx), %rax
-	inc	%rdi
-	mov	%r9, %rcx
-	add	%rax, %rcx
-	adc	%rdi, %rdx
-	imul	-16(%rsp), %rdx
-	sub	%rdx, %rax
+	mulq	(%r14)
 	mov	-16(%rsp), %rbx
-	lea	(%rax,%rbx), %rdx
-	cmp	%rax, %rcx
-	cmovb	%rdx, %rax
-	mov	%rax, %rdx
+	mov	%rax, %r9
+	sal	R8(%rcx), %r8
+	inc	%rdi
+	add	%r8, %r9
+	adc	%rdi, %rdx
+	imul	%rbx, %rdx
+	sub	%rdx, %r8
+	lea	(%r8,%rbx), %rax
+	cmp	%r8, %r9
+	cmovb	%rax, %r8
+	mov	%r8, %rax
 	sub	%rbx, %rax
-	cmovb	%rdx, %rax
+	cmovb	%r8, %rax
 	mov	R32(%rsi), R32(%rcx)
 	shr	R8(%rcx), %rax
 	pop	%rbx
 	pop	%rbp
 	pop	%r12
 	pop	%r13
-	pop	%r15
+	pop	%r14
 	ret
 EPILOGUE()
 
