@@ -1,3 +1,7 @@
+2009-05-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* acinclude.m4 (GMP_ASM_LSYM_PREFIX): Try "$L" too, before "$".
+
 2009-05-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_mod_1s_1p,mpn_mod_1s_2p,mpn_mod_1s_3p,mpn_mod_1s_4p):
