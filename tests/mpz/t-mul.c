@@ -183,7 +183,8 @@ ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
 
 static void mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
-#define TOOM3_THRESHOLD (MAX (MUL_TOOM3_THRESHOLD, SQR_TOOM3_THRESHOLD))
+#define TOOM3_THRESHOLD (MAX (MUL_TOOM33_THRESHOLD, SQR_TOOM3_THRESHOLD))
+#define TOOM4_THRESHOLD (MAX (MUL_TOOM44_THRESHOLD, SQR_TOOM4_THRESHOLD))
 #define FFT_THRESHOLD (MAX (MUL_FFT_THRESHOLD, SQR_FFT_THRESHOLD))
 
 static void
@@ -204,21 +205,26 @@ ref_mpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
       return;
     }
 
-  if (vn < FFT_THRESHOLD)
+  if (vn < TOOM4_THRESHOLD)
     {
-      /* In the mpn_toom3_mul_n range, use mpn_kara_mul_n.  */
-      tn = 2 * vn + MPN_KARA_MUL_N_TSIZE (vn);
+      /* In the mpn_toom33_mul range, use mpn_toom22_mul.  */
+      tn = 2 * vn + mpn_toom22_mul_itch (vn, vn);
       tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_kara_mul_n (tp, up, vp, vn, tp + 2 * vn);
+      mpn_toom22_mul (tp, up, vn, vp, vn, tp + 2 * vn);
+    }
+  else if (vn < FFT_THRESHOLD)
+    {
+      /* In the mpn_toom44_mul range, use mpn_toom33_mul.  */
+      tn = 2 * vn + mpn_toom33_mul_itch (vn, vn);
+      tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
+      mpn_toom33_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
   else
     {
-      /* Finally, for the largest operands, use mpn_toom3_mul_n.  */
-      /* The "- 63 + 255" tweaks the allocation to allow for huge operands.
-	 See the definition of this macro in gmp-impl.h to understand this.  */
-      tn = 2 * vn + MPN_TOOM3_MUL_N_TSIZE (vn) - 63 + 255;
+      /* Finally, for the largest operands, use mpn_toom44_mul.  */
+      tn = 2 * vn + mpn_toom44_mul_itch (vn, vn);
       tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_toom3_mul_n (tp, up, vp, vn, tp + 2 * vn);
+      mpn_toom44_mul (tp, up, vn, vp, vn, tp + 2 * vn);
     }
 
   if (un != vn)
