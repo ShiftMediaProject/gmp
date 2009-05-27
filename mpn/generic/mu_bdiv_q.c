@@ -49,11 +49,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    Requirements: N >= D
 		 D >= 1
-		 N mod D = 0
 		 D odd
 		 dn >= 2
 		 nn >= 2
-		 scratch space as determined by mpn_divexact_itch(nn,dn).
+		 scratch space as determined by mpn_mu_bdiv_q_itch(nn,dn).
 
    Write quotient to Q = {qp,nn}.
 
