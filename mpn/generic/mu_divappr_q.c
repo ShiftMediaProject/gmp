@@ -68,7 +68,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     to save with special code.
 
   * The itch/scratch scheme isn't perhaps such a good idea as it once seemed,
-    demonstrated by the fact that the mpn_inv function's scratch needs means
+    demonstrated by the fact that the mpn_invert function's scratch needs mean
     that we need to keep a large allocation long after it is needed.  Things
     are worse as mpn_mul_fft does not accept any scratch parameter, which means
     we'll have a large memory hole while in mpn_mul_fft.  In general, a peak
