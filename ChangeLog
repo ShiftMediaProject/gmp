@@ -1,5 +1,10 @@
 2009-05-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mod_1_1.c: Add proper ASSERT functionality cps function.
+	* mpn/generic/mod_1_2.c: Likewise.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_4.c: Likewise.
+
 	* tune: Add speed measuring of toom22, toom33, and toom44.
 
 	* mpn/generic/toom22_mul.c: Handle potentially unbalanced coefficient
