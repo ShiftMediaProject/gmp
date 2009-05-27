@@ -21,8 +21,8 @@ include(`../config.m4')
 
 
 C           cycles/bitpair (1x1 gcd)
-C itanium2:      6.3
-C itanium:      14 (approx)
+C Itanium:      14 (approx)
+C Itanium 2:     6.3
 
 
 C mpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y);

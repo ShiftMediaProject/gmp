@@ -23,7 +23,7 @@ C INPUT PARAMETERS
 C d = r32
 
 C           cycles
-C Itanium:    ?
+C Itanium:    74
 C Itanium 2:  50+6
 
 C It should be possible to avoid the xmpy.hu and the following tests by
