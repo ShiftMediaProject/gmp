@@ -150,8 +150,8 @@ mpn_toom22_mul (mp_ptr pp,
   /* vm1, 2n limbs */
   TOOM22_MUL_N_REC (vm1, asm1, bsm1, n, scratch_out);
 
-  /* vinf, s+t limbs */
-  mpn_mul (vinf, a1, s, b1, t);
+  if (s > t)  mpn_mul (vinf, a1, s, b1, t);
+  else        TOOM22_MUL_N_REC (vinf, a1, b1, s, scratch_out);
 
   /* v0, 2n limbs */
   TOOM22_MUL_N_REC (v0, ap, bp, n, scratch_out);
