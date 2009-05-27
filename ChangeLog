@@ -1,3 +1,15 @@
+2009-05-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune: Add speed measuring of toom22, toom33, and toom44.
+
+	* mpn/generic/toom22_mul.c: Handle potentially unbalanced coefficient
+	product better.
+
+2009-05-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/t-mul.c (ref_mpn_mul): Use mpn_toom44_mul in FFT range for
+	better huge-operands performance.
+
 2009-05-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* acinclude.m4 (GMP_ASM_LSYM_PREFIX): Try "$L" too, before "$".
