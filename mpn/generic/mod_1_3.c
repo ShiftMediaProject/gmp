@@ -36,7 +36,7 @@ mpn_mod_1s_3p_cps (mp_limb_t cps[6], mp_limb_t b)
   mp_limb_t B1modb, B2modb, B3modb, B4modb;
   int cnt;
 
-  ASSERT (b <= GMP_NUMB_MAX / 3);
+  ASSERT ((b & GMP_LIMB_HIGHBIT) == 0);
 
   count_leading_zeros (cnt, b);
 
@@ -55,6 +55,18 @@ mpn_mod_1s_3p_cps (mp_limb_t cps[6], mp_limb_t b)
   cps[3] = B2modb >> cnt;
   cps[4] = B3modb >> cnt;
   cps[5] = B4modb >> cnt;
+
+#if WANT_ASSERT
+  {
+    int i;
+    b = cps[2];
+    for (i = 3; i <= 5; i++)
+      {
+	b += cps[i];
+	ASSERT (b >= cps[i]);
+      }
+  }
+#endif
 }
 
 mp_limb_t

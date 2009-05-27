@@ -36,7 +36,7 @@ mpn_mod_1s_1p_cps (mp_limb_t cps[4], mp_limb_t b)
   mp_limb_t B1modb, B2modb;
   int cnt;
 
-  ASSERT (b <= GMP_NUMB_MAX / 2);
+  ASSERT ((b & GMP_LIMB_HIGHBIT) == 0);
 
   count_leading_zeros (cnt, b);
 
@@ -47,13 +47,22 @@ mpn_mod_1s_1p_cps (mp_limb_t cps[4], mp_limb_t b)
   ASSERT (B1modb <= b);		/* NB: not fully reduced mod b */
   udiv_rnd_preinv (B2modb, B1modb, b, bi);
 
-  B1modb >>= cnt;
-  B2modb >>= cnt;
-
   cps[0] = bi;
   cps[1] = cnt;
-  cps[2] = B1modb;
-  cps[3] = B2modb;
+  cps[2] = B1modb >> cnt;
+  cps[3] = B2modb >> cnt;
+
+#if WANT_ASSERT
+  {
+    int i;
+    b = cps[2];
+    for (i = 3; i <= 3; i++)
+      {
+	b += cps[i];
+	ASSERT (b >= cps[i]);
+      }
+  }
+#endif
 }
 
 mp_limb_t
