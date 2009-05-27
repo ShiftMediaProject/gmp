@@ -44,9 +44,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    * It makes the msb part 1 or 2 limbs larger than the lsb part, in spite of
      that the latter is faster.  We should at least reverse this, but perhaps
      we should make the lsb part considerably larger.  (How do we tune this?)
-
-   Perhaps we could somehow use 2-adic division for both parts, not as now
-   truncating division for the upper part and 2-adic for the lower part.
 */
 
 
