@@ -1,3 +1,10 @@
+2009-05-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (mpn_mu_bdiv_qr): Now returns mp_limb_t.
+	(mpn_toom2_sqr_itch): Simplify.
+
+	* mpn/generic/mu_bdiv_qr.c: Implement properly.
+
 2009-05-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mod_1_1.c: Add proper ASSERT functionality cps function.
