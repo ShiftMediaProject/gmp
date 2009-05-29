@@ -1,5 +1,7 @@
 2009-05-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/divis.c: Rewrite.
+
 	* gmp-impl.h (mpn_mu_bdiv_qr): Now returns mp_limb_t.
 	(mpn_toom2_sqr_itch): Simplify.
 
