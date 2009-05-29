@@ -104,11 +104,11 @@ mpn_toom4_sqr (mp_ptr pp,
 
   TMP_MARK;
 
-  as1  = TMP_SALLOC_LIMBS (n + 1);
-  asm1 = TMP_SALLOC_LIMBS (n + 1);
-  as2  = TMP_SALLOC_LIMBS (n + 1);
-  ash  = TMP_SALLOC_LIMBS (n + 1);
-  asmh = TMP_SALLOC_LIMBS (n + 1);
+  as1 = TMP_ALLOC_LIMBS (5 * n + 5);
+  asm1 = as1  + n + 1;
+  as2  = asm1 + n + 1;
+  ash  = as2  + n + 1;
+  asmh = ash  + n + 1;
 
   gp = pp;
   hp = pp + n + 1;
