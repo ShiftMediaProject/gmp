@@ -1,5 +1,13 @@
 2009-05-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/t-divis.c (check_random): Create huge test operands.
+
+	* mpn/generic/toom44_mul.c: Allocate temp space using one TMP_ALLOC
+	call, not multiple TMP_SALLOC.
+	* mpn/generic/toom4_sqr.c: Likewise.
+
+	* gmp-impl.h (mpn_toom22_mul_itch): Replace totally wrong code.
+
 	* mpn/generic/mullow_n.c: Relax overlap requirement implied by ASSERT.
 
 	* mpn/generic/divis.c: Rewrite.
