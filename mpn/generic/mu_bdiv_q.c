@@ -9,7 +9,7 @@
    ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
    RELEASE.
 
-Copyright 2005, 2006, 2007 Free Software Foundation, Inc.
+Copyright 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -116,6 +116,7 @@ mpn_mu_bdiv_q (mp_ptr qp,
       mpn_mullow_n (qp, rp, ip, in);
       qn -= in;
 
+#if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
 	  k = mpn_fft_best_k (dn, 0);
@@ -123,6 +124,7 @@ mpn_mu_bdiv_q (mp_ptr qp,
 	  wn = dn + in - m;			/* number of wrapped limbs */
 	  ASSERT_ALWAYS (wn >= 0);		/* could handle this below */
 	}
+#endif
 
       while (qn > in)
 	{
