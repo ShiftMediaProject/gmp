@@ -973,7 +973,7 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 static inline mp_size_t
 mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
+  mp_size_t n = an - (an >> 1);
   return 4 * n + 2;
 }
 
