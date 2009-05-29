@@ -1019,7 +1019,7 @@ mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom2_sqr_itch (mp_size_t an)
 {
-  mp_size_t n = 1 + ((an - 1) >> 1);
+  mp_size_t n = an - (an >> 1);
   return 4 * n + 2;
 }
 
