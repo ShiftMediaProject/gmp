@@ -1239,7 +1239,7 @@ __GMP_DECLSPEC mp_size_t mpn_dc_bdiv_q_n_itch __GMP_PROTO ((mp_size_t));
 __GMP_DECLSPEC void      mpn_dc_bdiv_q_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr));
 
 #define   mpn_mu_bdiv_qr __MPN(mu_bdiv_qr)
-__GMP_DECLSPEC void      mpn_mu_bdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_limb_t mpn_mu_bdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define   mpn_mu_bdiv_qr_itch __MPN(mu_bdiv_qr_itch)
 __GMP_DECLSPEC mp_size_t mpn_mu_bdiv_qr_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
