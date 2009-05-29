@@ -1,7 +1,6 @@
-/* test mpz_divisible_p and mpz_divisible_ui_p */
+/* test mpz_divisible_p and mpz_divisible_ui_p
 
-/*
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -125,8 +124,8 @@ check_random (int reps)
 
   for (i = 0; i < reps; i++)
     {
-      mpz_erandomb (a, rands, 512);
-      mpz_erandomb_nonzero (d, rands, 512);
+      mpz_erandomb (a, rands, 1 << 17);
+      mpz_erandomb_nonzero (d, rands, 1 << 17);
 
       mpz_fdiv_r (r, a, d);
 
