@@ -1,3 +1,7 @@
+2009-06-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mul.c: Rewrite.
+
 2009-05-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/t-divis.c (check_random): Create huge test operands.
