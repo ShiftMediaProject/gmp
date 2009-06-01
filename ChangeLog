@@ -1,5 +1,8 @@
 2009-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul.c: Loop to avoid excessive recursion in toom33 and
+	toom44 slicing code.
+
 	* mpz/remove.c: Correctly handle multiplicity that does not fit an int.
 
 	* Makefile.am (dist-hook): Check library version consistency.
