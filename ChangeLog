@@ -1,5 +1,7 @@
 2009-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Makefile.am (dist-hook): Check library version consistency.
+
 	* mpn/generic/mul.c: Rewrite.
 
 2009-05-29  Torbjorn Granlund  <tege@gmplib.org>
