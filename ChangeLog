@@ -1,5 +1,7 @@
 2009-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/remove.c: Correctly handle multiplicity that does not fit an int.
+
 	* Makefile.am (dist-hook): Check library version consistency.
 
 	* mpn/generic/mul.c: Rewrite.
