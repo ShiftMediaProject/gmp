@@ -28,6 +28,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_BASECASE_MAX_UN 500
 #endif
 
+#define TOOM33_OK(an,bn) (6 + 2 * an < 3 * bn)
+#define TOOM44_OK(an,bn) (12 + 3 * an < 4 * bn)
+
 /* Multiply the natural numbers u (pointed to by UP, with UN limbs) and v
    (pointed to by VP, with VN limbs), and store the result at PRODP.  The
    result is UN + VN limbs.  Return the most significant limb of the result.
@@ -128,7 +131,7 @@ mpn_mul (mp_ptr prodp,
   else if (BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD) ||
 	   /* Also do larger unbalanced here, up to a (somewhat arbitrarily)
 	      larger vn limit, unless toom33 can do this product directly.  */
-	   (3 * un >= 4 * vn && BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD * 3 / 2)))
+	   (!TOOM33_OK (un, vn) && BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD * 3 / 2)))
     {
       /* Loop over toom42, then choose toom42, toom32, or toom22 */
       mp_ptr ws;
@@ -201,7 +204,7 @@ mpn_mul (mp_ptr prodp,
   else if (BELOW_THRESHOLD (vn, MUL_TOOM44_THRESHOLD))
     {
       TMP_DECL; TMP_MARK;
-      if (3 * un < 4 * vn)
+      if (TOOM33_OK (un, vn))
 	{
 	  /* Apply toom33 directly, since operands are balanced enough.  */
 	  mp_ptr scratch;
@@ -212,19 +215,26 @@ mpn_mul (mp_ptr prodp,
 	{
 	  /* Apply toom33, recurse.  FUTURE: toom63, toom53, toom43, toom33 */
 	  mp_ptr scratch, pp;		/* FIXME: use same area for these */
+	  mp_limb_t cy;
 	  scratch = TMP_SALLOC_LIMBS (mpn_toom33_mul_itch (vn, vn));
 	  mpn_toom33_mul (prodp, up, vn, vp, vn, scratch);
 	  prodp += vn;
 	  up += vn;
 	  un -= vn;
+	  pp = TMP_SALLOC_LIMBS (2 * vn);
+	  while (un >= vn)
+	    {
+	      mpn_toom33_mul (pp, up, vn, vp, vn, scratch);
+	      cy = mpn_add_n (prodp, prodp, pp, vn);
+	      MPN_COPY (prodp + vn, pp + vn, vn);
+	      mpn_incr_u (prodp + vn, cy);
+	      prodp += vn;
+	      up += vn;
+	      un -= vn;
+	    }
 	  if (un != 0)
 	    {
-	      mp_limb_t cy;
-	      pp = TMP_SALLOC_LIMBS (un + vn);
-	      if (un > vn)
-		mpn_mul (pp, up, un, vp, vn);
-	      else
-		mpn_mul (pp, vp, vn, up, un);
+	      mpn_mul (pp, vp, vn, up, un);
 	      cy = mpn_add_n (prodp, prodp, pp, vn);
 	      MPN_COPY (prodp + vn, pp + vn, un);
 	      mpn_incr_u (prodp + vn, cy);
@@ -236,7 +246,7 @@ mpn_mul (mp_ptr prodp,
 	   BELOW_THRESHOLD (vn, MUL_FFT_THRESHOLD / 3)) /* FIXME */
     {
       TMP_DECL; TMP_MARK;
-      if (4 * un < 5 * vn)
+      if (TOOM44_OK (un, vn))
 	{
 	  /* Apply toom44 directly, since operands are balanced enough.  */
 	  mp_ptr scratch;
@@ -247,19 +257,26 @@ mpn_mul (mp_ptr prodp,
 	{
 	  /* Apply toom44, recurse.  FUTURE: toom84, toom74, toom64, toom54, toom44 */
 	  mp_ptr scratch, pp;		/* FIXME: use same area for these */
+	  mp_limb_t cy;
 	  scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (vn, vn));
 	  mpn_toom44_mul (prodp, up, vn, vp, vn, scratch);
 	  prodp += vn;
 	  up += vn;
 	  un -= vn;
+	  pp = TMP_SALLOC_LIMBS (2 * vn);
+	  while (un >= vn)
+	    {
+	      mpn_toom44_mul (pp, up, vn, vp, vn, scratch);
+	      cy = mpn_add_n (prodp, prodp, pp, vn);
+	      MPN_COPY (prodp + vn, pp + vn, vn);
+	      mpn_incr_u (prodp + vn, cy);
+	      prodp += vn;
+	      up += vn;
+	      un -= vn;
+	    }
 	  if (un != 0)
 	    {
-	      mp_limb_t cy;
-	      pp = TMP_ALLOC_LIMBS (un + vn);
-	      if (un > vn)
-		mpn_mul (pp, up, un, vp, vn);
-	      else
-		mpn_mul (pp, vp, vn, up, un);
+	      mpn_mul (pp, vp, vn, up, un);
 	      cy = mpn_add_n (prodp, prodp, pp, vn);
 	      MPN_COPY (prodp + vn, pp + vn, un);
 	      mpn_incr_u (prodp + vn, cy);
