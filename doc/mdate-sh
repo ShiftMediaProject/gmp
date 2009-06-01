@@ -58,6 +58,12 @@ export LC_ALL
 LC_TIME=C
 export LC_TIME
 
+# GNU ls changes its time format in response to the TIME_STYLE variable, but
+# we cannot unset it since the V7 shell did not have an "unset" command.
+# The documentation says that the default is "posix-long-iso".
+#
+test "${TIME_STYLE+set}" = set && TIME_STYLE=posix-long-iso
+
 save_arg1="$1"
 
 # Find out how to get the extended ls output of a file or directory.
