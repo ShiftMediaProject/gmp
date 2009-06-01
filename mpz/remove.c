@@ -80,7 +80,7 @@ mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
       mpz_tdiv_qr (x, rem, dest, fpow[p]);
       if (SIZ (rem) == 0)
 	{
-	  pwr += 1 << p;
+	  pwr += 1L << p;
 	  mpz_set (dest, x);
 	}
       mpz_clear (fpow[p]);
