@@ -1,3 +1,7 @@
+2009-06-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* demos/factorize.c: Add -q command line option.
+
 2009-06-02  Marco Bodrato  <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_7pts.c: Streamline, resulting in speed
