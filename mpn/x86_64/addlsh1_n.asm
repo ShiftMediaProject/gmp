@@ -31,7 +31,7 @@ C Sometimes speed degenerates, supposedly related to that some operand
 C alignments cause cache conflicts.
 
 C The speed is limited by decoding/issue bandwidth.  There are 22 instructions
-C in the loop, which corresponds to ceil(26/3)/4 = 2.0 c/l.
+C in the loop, which corresponds to ceil(22/3)/4 = 1.83 c/l.
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
