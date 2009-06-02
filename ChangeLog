@@ -1,3 +1,25 @@
+2009-06-02  Marco Bodrato  <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_7pts.c: Streamline, resulting in speed
+	improvements.
+
+	* mpn/generic/toom_interpolate_5pts.c: Likewise, but also completely
+	do away with explicit scratch space.
+
+	* mpn/generic/mul_n.c (mpn_toom3_sqr_n, mpn_toom3_mul_n):
+	Update toom_interpolate_5pts call without scratch space parameter.
+	* mpn/generic/toom3_sqr.c: Likewise.
+	* mpn/generic/toom42_mul.c: Likewise.
+	* mpn/generic/toom33_mul.c: Likewise.
+
+	* mpn/generic/toom33_mul.c: Rewrite to reduce local scratch space.
+	* mpn/generic/toom32_mul.c: Rewrite to not use local scratch space.
+
+2009-06-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom22_mul.c (TOOM22_MUL_MN_REC): New macro, use it for
+	oo point.
+
 2009-06-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul.c: Loop to avoid excessive recursion in toom33 and
