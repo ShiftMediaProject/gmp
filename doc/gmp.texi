@@ -2211,6 +2211,12 @@ This release is @nicode{"@value{VERSION}"}.  Note that the format ``i.j'' was
 used when k was zero was used before version 4.3.0.
 @end deftypevr
 
+@defmac __GMP_CC
+@defmacx __GMP_CFLAGS
+The compiler and compiler flags, respectively, used when compiling GMP, as
+strings.
+@end defmac
+
 
 @node Compatibility with older versions, Demonstration Programs, Useful Macros and Constants, GMP Basics
 @section Compatibility with older versions
