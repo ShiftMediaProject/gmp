@@ -5,6 +5,7 @@
 
 	* mpn/generic/toom_interpolate_5pts.c: Likewise, but also completely
 	do away with explicit scratch space.
+	* gmp-impl.h (mpn_toom_interpolate_5pts): Update prototype.
 
 	* mpn/generic/mul_n.c (mpn_toom3_sqr_n, mpn_toom3_mul_n):
 	Update toom_interpolate_5pts call without scratch space parameter.
