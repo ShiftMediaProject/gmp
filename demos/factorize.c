@@ -1,7 +1,7 @@
 /* Factoring with Pollard's rho method.
 
-Copyright 1995, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2005 Free Software
-Foundation, Inc.
+Copyright 1995, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2005, 2009
+Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -35,7 +35,7 @@ factor_using_division (mpz_t t, unsigned int limit)
   unsigned *addv = add;
   unsigned int failures;
 
-  if (flag_verbose)
+  if (flag_verbose > 0)
     {
       printf ("[trial division (%u)] ", limit);
       fflush (stdout);
@@ -109,7 +109,7 @@ factor_using_division_2kp (mpz_t t, unsigned int limit, unsigned long p)
   mpz_t f;
   unsigned int k;
 
-  if (flag_verbose)
+  if (flag_verbose > 0)
     {
       printf ("[trial division (%u)] ", limit);
       fflush (stdout);
@@ -145,7 +145,7 @@ factor_using_pollard_rho (mpz_t n, int a_int, unsigned long p)
   mpz_t t1, t2;
   int k, l, c, i;
 
-  if (flag_verbose)
+  if (flag_verbose > 0)
     {
       printf ("[pollard-rho (%d)] ", a_int);
       fflush (stdout);
@@ -238,7 +238,7 @@ S4:
 	    }
 	  while (a_int == -2 || a_int == 0);
 
-	  if (flag_verbose)
+	  if (flag_verbose > 0)
 	    {
 	      printf ("[composite factor--restarting pollard-rho] ");
 	      fflush (stdout);
@@ -295,7 +295,7 @@ factor (mpz_t t, unsigned long p)
 
   if (mpz_cmp_ui (t, 1) != 0)
     {
-      if (flag_verbose)
+      if (flag_verbose > 0)
 	{
 	  printf ("[is number prime?] ");
 	  fflush (stdout);
@@ -317,6 +317,12 @@ main (int argc, char *argv[])
   if (argc > 1 && !strcmp (argv[1], "-v"))
     {
       flag_verbose = 1;
+      argv++;
+      argc--;
+    }
+  if (argc > 1 && !strcmp (argv[1], "-q"))
+    {
+      flag_verbose = -1;
       argv++;
       argc--;
     }
@@ -360,7 +366,10 @@ main (int argc, char *argv[])
 	  mpz_inp_str (t, stdin, 0);
 	  if (feof (stdin))
 	    break;
-	  mpz_out_str (stdout, 10, t); printf (" = ");
+	  if (flag_verbose >= 0)
+	    {
+	      mpz_out_str (stdout, 10, t); printf (" = ");
+	    }
 	  factor (t, 0);
 	  puts ("");
 	}
