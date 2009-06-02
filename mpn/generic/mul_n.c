@@ -614,7 +614,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0       v1       vinf[1..]      vm1       v2               */
 
-  mpn_toom_interpolate_5pts (c, v2, t, k, 2*r, sa, vinf0, trec);
+  mpn_toom_interpolate_5pts (c, v2, t, k, 2*r, sa, vinf0);
 
 #undef v2
 }
@@ -685,7 +685,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   vinf0 = c4[0];
   c4[0] = saved;
 
-  mpn_toom_interpolate_5pts (c, v2, t, k, 2*r,  1, vinf0, trec);
+  mpn_toom_interpolate_5pts (c, v2, t, k, 2*r,  1, vinf0);
 
 #undef v2
 }

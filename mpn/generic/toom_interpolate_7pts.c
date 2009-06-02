@@ -1,6 +1,7 @@
 /* mpn_toom_interpolate_7pts -- Interpolate for toom44, 53, 62.
 
    Contributed to the GNU project by Niels Möller.
+   Improvements by Marco Bodrato.
 
    THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -86,22 +87,22 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   /* Using Marco Bodrato's formulas
 
      W5 = W5 + W2
+     W1 =(W1 + W2)/2
+     W2 = W2 - W6
+     W2 =(W2 - W1)/4 - W0*16
      W3 =(W3 + W4)/2
-     W1 = W1 + W2
-     W2 = W2 - W6 - W0*64
-     W2 =(W2*2 - W1)/8
      W4 = W4 - W3
 
      W5 = W5 - W4*65
      W4 = W4 - W6 - W0
-     W5 = W5 + W4*45
+     W5 =(W5 + W4*45)/2
      W2 =(W2 - W4)/3
      W4 = W4 - W2
 
      W1 = W1 - W5
-     W5 =(W5 - W3*16)/ 18
+     W5 =(W5 - W3*8)/ 9
      W3 = W3 - W5
-     W1 =(W1/30 + W5)/ 2
+     W1 =(W1/15 + W5)/ 2
      W5 = W5 - W1
 
      where W0 = f(0), W1 = 64 f(-1/2), W2 = 64 f(1/2), W3 = f(-1),
@@ -109,21 +110,48 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   */
 
   mpn_add_n (w5, w5, w2, m);
-  if (flags & toom4_w3_neg)
-    mpn_add_n (w3, w3, w4, m);
-  else
-    mpn_sub_n (w3, w4, w3, m);
-  divexact_2exp (w3, w3, m, 1);
   if (flags & toom4_w1_neg)
-    mpn_add_n (w1, w1, w2, m);
+    {
+#ifdef HAVE_NATIVE_mpn_rsh1add_n
+      mpn_rsh1add_n (w1, w1, w2, m);
+#else
+      mpn_add_n (w1, w1, w2, m);
+      mpn_rshift (w1, w1, m, 1);
+#endif
+    }
   else
-    mpn_sub_n (w1, w2, w1, m);
+    {
+#ifdef HAVE_NATIVE_mpn_rsh1sub_n
+      mpn_rsh1sub_n (w1, w2, w1, m);
+#else
+      mpn_sub_n (w1, w2, w1, m);
+      mpn_rshift (w1, w1, m, 1);
+#endif
+    }
   mpn_sub (w2, w2, m, w6, w6n);
-  tp[2*n] = mpn_lshift (tp, rp, 2*n, 6);
-  mpn_sub_n (w2, w2, tp, m);
-  mpn_lshift (w2, w2, m, 1);
   mpn_sub_n (w2, w2, w1, m);
-  divexact_2exp (w2, w2, m, 3);
+  mpn_rshift (w2, w2, m, 2); /* w2>=0 */
+  tp[2*n] = mpn_lshift (tp, rp, 2*n, 4);
+  mpn_sub_n (w2, w2, tp, m);
+
+  if (flags & toom4_w3_neg)
+    {
+#ifdef HAVE_NATIVE_mpn_rsh1add_n
+      mpn_rsh1add_n (w3, w3, w4, m);
+#else
+      mpn_add_n (w3, w3, w4, m);
+      mpn_rshift (w3, w3, m, 1);
+#endif
+    }
+  else
+    {
+#ifdef HAVE_NATIVE_mpn_rsh1sub_n
+      mpn_rsh1sub_n (w3, w4, w3, m);
+#else
+      mpn_sub_n (w3, w4, w3, m);
+      mpn_rshift (w3, w3, m, 1);
+#endif
+    }
   mpn_sub_n (w4, w4, w3, m);
 
   mpn_submul_1 (w5, w4, m, 65);
@@ -131,20 +159,20 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   mpn_sub (w4, w4, m, rp, 2*n);
   mpn_addmul_1 (w5, w4, m, 45);
   mpn_sub_n (w2, w2, w4, m);
-  /* Rely on divexact working with two's complement */
+
   mpn_divexact_by3 (w2, w2, m);
   mpn_sub_n (w4, w4, w2, m);
 
+  mpn_rshift (w5, w5, m, 1);
   mpn_sub_n (w1, w1, w5, m);
-  mpn_lshift (tp, w3, m, 4);
+  mpn_lshift (tp, w3, m, 3);
   mpn_sub_n (w5, w5, tp, m);
-  divexact_2exp (w5, w5, m, 1);
   mpn_divexact_by9 (w5, w5, m);
   mpn_sub_n (w3, w3, w5, m);
-  divexact_2exp (w1, w1, m, 1);
+
   mpn_divexact_by15 (w1, w1, m);
   mpn_add_n (w1, w1, w5, m);
-  divexact_2exp (w1, w1, m, 1);
+  mpn_rshift (w1, w1, m, 1); /* w1>=0 now */
   mpn_sub_n (w5, w5, w1, m);
 
   /* Two's complement coefficients must be non-negative at the end of
@@ -174,8 +202,8 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
    *        c7   c6   c5   c4   c3                 Carries to propagate
    */
 
-  cy = mpn_add_n (rp + n, rp + n, w1, 2*n);
-  MPN_INCR_U (w2 + n, n + 1, w1[2*n] + cy);
+  cy = mpn_add_n (rp + n, rp + n, w1, m);
+  MPN_INCR_U (w2 + n + 1, n , cy);
   cy = mpn_add_n (rp + 3*n, rp + 3*n, w3, n);
   MPN_INCR_U (w3 + n, n + 1, w2[2*n] + cy);
   cy = mpn_add_n (rp + 4*n, w3 + n, w4, n);
@@ -184,8 +212,8 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   MPN_INCR_U (w5 + n, n + 1, w4[2*n] + cy);
   if (w6n > n + 1)
     {
-      mp_limb_t c7 = mpn_add_n (rp + 6*n, rp + 6*n, w5 + n, n + 1);
-      MPN_INCR_U (rp + 7*n + 1, w6n - n - 1, c7);
+      cy = mpn_add_n (rp + 6*n, rp + 6*n, w5 + n, n + 1);
+      MPN_INCR_U (rp + 7*n + 1, w6n - n - 1, cy);
     }
   else
     {

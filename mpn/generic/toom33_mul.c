@@ -106,15 +106,15 @@ mpn_toom33_mul (mp_ptr pp,
 
   TMP_MARK;
 
-  as1 = TMP_SALLOC_LIMBS (n + 1);
-  asm1 = TMP_SALLOC_LIMBS (n + 1);
-  as2 = TMP_SALLOC_LIMBS (n + 1);
+  as1 = TMP_SALLOC_LIMBS (n + 1); /* Should be (pp + 4 * n + 4), but we need 5n+5<=4n+s+t i.e. s+t>n+4*/
+  asm1 = scratch + 2 * n + 2;
+  as2 = pp + n + 1;
 
-  bs1 = TMP_SALLOC_LIMBS (n + 1);
-  bsm1 = TMP_SALLOC_LIMBS (n + 1);
-  bs2 = TMP_SALLOC_LIMBS (n + 1);
+  bs1 = pp;
+  bsm1 = scratch + 3 * n + 3; /* we need 4n+4 <= 4n+s+t */
+  bs2 = pp + 2 * n + 2;
 
-  gp = pp;
+  gp = scratch;
 
   vm1_neg = 0;
 
@@ -156,12 +156,12 @@ mpn_toom33_mul (mp_ptr pp,
     cy = mpn_add_1 (as2 + s, a1 + s, n - s, cy);
   cy = 2 * cy + mpn_addlsh1_n (as2, a0, as2, n);
 #else
-  cy  = mpn_lshift (as2, a2, s, 1);
-  cy += mpn_add_n (as2, a1, as2, s);
+  cy = mpn_add_n (as2, a2, as1, s);
   if (s != n)
-    cy = mpn_add_1 (as2 + s, a1 + s, n - s, cy);
+    cy = mpn_add_1 (as2 + s, as1 + s, n - s, cy);
+  cy += as1[n];
   cy = 2 * cy + mpn_lshift (as2, as2, n, 1);
-  cy += mpn_add_n (as2, a0, as2, n);
+  cy -= mpn_sub_n (as2, as2, a0, n);
 #endif
   as2[n] = cy;
 
@@ -203,12 +203,12 @@ mpn_toom33_mul (mp_ptr pp,
     cy = mpn_add_1 (bs2 + t, b1 + t, n - t, cy);
   cy = 2 * cy + mpn_addlsh1_n (bs2, b0, bs2, n);
 #else
-  cy  = mpn_lshift (bs2, b2, t, 1);
-  cy += mpn_add_n (bs2, b1, bs2, t);
+  cy  = mpn_add_n (bs2, bs1, b2, t);
   if (t != n)
-    cy = mpn_add_1 (bs2 + t, b1 + t, n - t, cy);
+    cy = mpn_add_1 (bs2 + t, bs1 + t, n - t, cy);
+  cy += bs1[n];
   cy = 2 * cy + mpn_lshift (bs2, bs2, n, 1);
-  cy += mpn_add_n (bs2, b0, bs2, n);
+  cy -= mpn_sub_n (bs2, bs2, b0, n);
 #endif
   bs2[n] = cy;
 
@@ -285,7 +285,7 @@ mpn_toom33_mul (mp_ptr pp,
 
   TOOM33_MUL_N_REC (v0, ap, bp, n, scratch_out);	/* v0, 2n limbs */
 
-  mpn_toom_interpolate_5pts (pp, v2, vm1, n, s + t, 1^vm1_neg, vinf0, scratch_out);
+  mpn_toom_interpolate_5pts (pp, v2, vm1, n, s + t, 1^vm1_neg, vinf0);
 
   TMP_FREE;
 }
