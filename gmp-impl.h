@@ -1096,7 +1096,7 @@ __GMP_DECLSPEC void      mpn_kara_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcp
 __GMP_DECLSPEC void      mpn_kara_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom_interpolate_5pts __MPN(toom_interpolate_5pts)
-__GMP_DECLSPEC void      mpn_toom_interpolate_5pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t, mp_ptr));
+__GMP_DECLSPEC void      mpn_toom_interpolate_5pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t));
 
 enum toom4_flags { toom4_w1_neg = 1, toom4_w3_neg = 2 }; /* FIXME */
 #define   mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
