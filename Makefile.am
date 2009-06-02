@@ -63,7 +63,9 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 #        4.2.3    7:3:4    4:3:0   4:12:1
 #        4.2.4    7:4:4    4:4:0   4:13:1
 #        4.3.0    8:0:5    5:0:1   4:14:1
-#        4.3.1    8:1:5    5:1:1   4:15:1
+#        4.3.1    8:1:5    5:1:1   4:15:1	WRONG Really used same as 4.3.0
+#        4.3.2    8:2:5    5:2:1   4:16:1
+#        4.4.0    9:0:6    6:0:2   4:20:1	PRELIMINARY
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
@@ -76,16 +78,16 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 # it's still good to get the shared library filename (like
 # libgmpxx.so.3.0.4) incrementing, to make it clear which GMP it's from.
 
-LIBGMP_LT_CURRENT =  8
+LIBGMP_LT_CURRENT =  9
 LIBGMP_LT_REVISION = 0
-LIBGMP_LT_AGE =      5
+LIBGMP_LT_AGE =      6
 
-LIBGMPXX_LT_CURRENT =  5
+LIBGMPXX_LT_CURRENT =  6
 LIBGMPXX_LT_REVISION = 0
-LIBGMPXX_LT_AGE =      1
+LIBGMPXX_LT_AGE =      2
 
 LIBMP_LT_CURRENT =  4
-LIBMP_LT_REVISION = 14
+LIBMP_LT_REVISION = 20
 LIBMP_LT_AGE =      1
 
 
