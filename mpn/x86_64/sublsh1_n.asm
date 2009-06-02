@@ -102,7 +102,7 @@ L(b01):	add	%r8, %r8
 L(ent):	jns	L(end)
 
 	ALIGN(16)
-L(oop):	add	R32(%rax), R32(%rax)	C restore scy
+L(top):	add	R32(%rax), R32(%rax)	C restore scy
 
 	mov	(vp,n,8), %r8
 L(b00):	adc	%r8, %r8
@@ -131,7 +131,7 @@ L(b00):	adc	%r8, %r8
 
 	sbb	R32(%rbp), R32(%rbp)	C save acy
 	add	$4, n
-	js	L(oop)
+	js	L(top)
 
 L(end):	add	R32(%rbp), R32(%rax)
 	neg	R32(%rax)
