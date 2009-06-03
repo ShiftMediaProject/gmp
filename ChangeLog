@@ -1,3 +1,21 @@
+2009-06-03  Marco Bodrato  <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom43_mul.c: New file.
+	* mpn/generic/toom52_mul.c: New file.
+	* mpn/generic/toom_interpolate_6pts.c: New file.
+
+2009-06-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (gmp_mpn_functions): Add toom43_mul, toom52_mul, and
+	toom_interpolate_6pts, but also some previously forgotten functions.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Likesise.
+	* gmp-impl.h: Declare new functions. Sort toom function declarations.
+
+	* gmp-impl.h: Rename  toom4_* flags enum to toom7_*.  Relevant C files
+	updated.
+	
+	* mpn/generic/toom_interpolate_7pts (divexact_2exp): Remove.
+
 2009-06-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* demos/factorize.c: Add -q command line option.

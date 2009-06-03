@@ -25,14 +25,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-/*
-  Things to work on:
-
-  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
-     avoided by instead reusing the pp area and the scratch area.
-  2. Use new toom functions for the recursive calls.
-*/
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -92,7 +84,7 @@ mpn_toom44_mul (mp_ptr pp,
   mp_ptr gp, hp;
   mp_ptr as1, asm1, as2, ash, asmh;
   mp_ptr bs1, bsm1, bs2, bsh, bsmh;
-  enum toom4_flags flags;
+  enum toom7_flags flags;
   TMP_DECL;
 
 #define a0  ap
@@ -140,7 +132,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_addsub_n (as1, asm1, hp, gp, n + 1);
-      flags ^= toom4_w3_neg;
+      flags ^= toom7_w3_neg;
     }
   else
     {
@@ -151,7 +143,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_sub_n (asm1, hp, gp, n + 1);
-      flags ^= toom4_w3_neg;
+      flags ^= toom7_w3_neg;
     }
   else
     {
@@ -192,7 +184,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_addsub_n (ash, asmh, hp, gp, n + 1);
-      flags ^= toom4_w1_neg;
+      flags ^= toom7_w1_neg;
     }
   else
     {
@@ -203,7 +195,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_sub_n (asmh, hp, gp, n + 1);
-      flags ^= toom4_w1_neg;
+      flags ^= toom7_w1_neg;
     }
   else
     {
@@ -218,7 +210,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_addsub_n (bs1, bsm1, hp, gp, n + 1);
-      flags ^= toom4_w3_neg;
+      flags ^= toom7_w3_neg;
     }
   else
     {
@@ -229,7 +221,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_sub_n (bsm1, hp, gp, n + 1);
-      flags ^= toom4_w3_neg;
+      flags ^= toom7_w3_neg;
     }
   else
     {
@@ -270,7 +262,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_addsub_n (bsh, bsmh, hp, gp, n + 1);
-      flags ^= toom4_w1_neg;
+      flags ^= toom7_w1_neg;
     }
   else
     {
@@ -281,7 +273,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
       mpn_sub_n (bsmh, hp, gp, n + 1);
-      flags ^= toom4_w1_neg;
+      flags ^= toom7_w1_neg;
     }
   else
     {

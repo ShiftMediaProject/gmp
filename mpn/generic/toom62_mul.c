@@ -28,16 +28,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-/*
-  Things to work on:
-
-  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
-     avoided by instead reusing the pp area and the scratch allocation.
-*/
-
 #include "gmp.h"
 #include "gmp-impl.h"
-
 
 /* Evaluate in: -1, -1/2, 0, +1/2, +1, +2, +inf
 
@@ -68,7 +60,7 @@ mpn_toom62_mul (mp_ptr pp,
   mp_ptr a0_a2, a1_a3;
   mp_ptr as1, asm1, as2, ash, asmh;
   mp_ptr bs1, bsm1, bs2, bsh, bsmh;
-  enum toom4_flags flags;
+  enum toom7_flags flags;
   TMP_DECL;
 
 #define a0  ap
@@ -347,8 +339,8 @@ mpn_toom62_mul (mp_ptr pp,
 
   mpn_mul_n (v0, ap, bp, n);			/* v0, 2n limbs */
 
-  flags =  vm1_neg ? toom4_w3_neg : 0;
-  flags |= vmh_neg ? toom4_w1_neg : 0;
+  flags =  vm1_neg ? toom7_w3_neg : 0;
+  flags |= vmh_neg ? toom7_w1_neg : 0;
 
   mpn_toom_interpolate_7pts (pp, n, flags, vmh, vm1, v1, v2, s + t, scratch + 8 * n + 8);
 

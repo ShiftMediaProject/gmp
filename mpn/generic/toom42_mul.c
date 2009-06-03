@@ -29,15 +29,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-/*
-  Things to work on:
-
-  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
-     avoided by instead reusing the pp area and the scratch allocation.
-
-  2. Apply optimizations also to mul_toom32.c.
-*/
-
 #include "gmp.h"
 #include "gmp-impl.h"
 

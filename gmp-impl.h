@@ -1098,9 +1098,13 @@ __GMP_DECLSPEC void      mpn_kara_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size
 #define   mpn_toom_interpolate_5pts __MPN(toom_interpolate_5pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_5pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t));
 
-enum toom4_flags { toom4_w1_neg = 1, toom4_w3_neg = 2 }; /* FIXME */
+enum toom6_flags {toom6_all_pos = 0, toom6_vm1_neg = 1, toom6_vm2_neg = 2};
+#define   mpn_toom_interpolate_6pts __MPN(toom_interpolate_6pts)
+__GMP_DECLSPEC void      mpn_toom_interpolate_6pts __GMP_PROTO ((mp_ptr, mp_size_t, enum toom6_flags, mp_ptr, mp_ptr, mp_ptr, mp_size_t));
+
+enum toom7_flags { toom7_w1_neg = 1, toom7_w3_neg = 2 };
 #define   mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
-__GMP_DECLSPEC void      mpn_toom_interpolate_7pts __GMP_PROTO ((mp_ptr, mp_size_t, enum toom4_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC void      mpn_toom_interpolate_7pts __GMP_PROTO ((mp_ptr, mp_size_t, enum toom7_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom3_mul_n __MPN(toom3_mul_n)
 __GMP_DECLSPEC void      mpn_toom3_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
@@ -1111,29 +1115,35 @@ __GMP_DECLSPEC void      mpn_toom3_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_siz
 #define   mpn_toom22_mul __MPN(toom22_mul)
 __GMP_DECLSPEC void      mpn_toom22_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_toom2_sqr __MPN(toom2_sqr)
-__GMP_DECLSPEC void      mpn_toom2_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-
-#define   mpn_toom33_mul __MPN(toom33_mul)
-__GMP_DECLSPEC void      mpn_toom33_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-
-#define   mpn_toom3_sqr __MPN(toom3_sqr)
-__GMP_DECLSPEC void      mpn_toom3_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-
-#define   mpn_toom44_mul __MPN(toom44_mul)
-__GMP_DECLSPEC void      mpn_toom44_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-
 #define   mpn_toom32_mul __MPN(toom32_mul)
 __GMP_DECLSPEC void      mpn_toom32_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom42_mul __MPN(toom42_mul)
 __GMP_DECLSPEC void      mpn_toom42_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_toom53_mul __MPN(toom53_mul)
-__GMP_DECLSPEC void      mpn_toom53_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_toom52_mul __MPN(toom52_mul)
+__GMP_DECLSPEC void      mpn_toom52_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom62_mul __MPN(toom62_mul)
 __GMP_DECLSPEC void      mpn_toom62_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom2_sqr __MPN(toom2_sqr)
+__GMP_DECLSPEC void      mpn_toom2_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom33_mul __MPN(toom33_mul)
+__GMP_DECLSPEC void      mpn_toom33_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom43_mul __MPN(toom43_mul)
+__GMP_DECLSPEC void      mpn_toom43_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom53_mul __MPN(toom53_mul)
+__GMP_DECLSPEC void      mpn_toom53_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom3_sqr __MPN(toom3_sqr)
+__GMP_DECLSPEC void      mpn_toom3_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom44_mul __MPN(toom44_mul)
+__GMP_DECLSPEC void      mpn_toom44_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom4_sqr __MPN(toom4_sqr)
 __GMP_DECLSPEC void      mpn_toom4_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));

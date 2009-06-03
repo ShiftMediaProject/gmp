@@ -2436,10 +2436,12 @@ gmp_mpn_functions="$extra_functions					   \
   gcdext_lehmer gcdext_subdiv_step					   \
   tdiv_qr dc_divrem_n sb_divrem_mn jacbase get_d			   \
   matrix22_mul hgcd2 hgcd mullow_n mullow_basecase			   \
-  toom22_mul toom33_mul toom44_mul					   \
-  toom32_mul toom42_mul toom62_mul toom53_mul				   \
+  toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \
+  toom33_mul toom43_mul toom53_mul					   \
+  toom44_mul								   \
   toom2_sqr toom3_sqr toom4_sqr						   \
-  toom_interpolate_5pts toom_interpolate_7pts invert binvert		   \
+  toom_interpolate_5pts toom_interpolate_6pts toom_interpolate_7pts	   \
+  invert binvert							   \
   sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \
   mu_div_qr mu_divappr_q mu_div_q					   \
   sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
