@@ -755,7 +755,7 @@ int speed_routine_count_zeros_setup
     binvert_limb (dinv, s->r >> shift);					\
 									\
     SPEED_ROUTINE_MPN_UNARY_1_CALL (call);				\
-  }									\
+  }
 #define SPEED_ROUTINE_MPN_BDIV_Q_1_PI1(function)			\
   SPEED_ROUTINE_MPN_BDIV_Q_1_PI1_CALL					\
   ((*function) (wp, s->xp, s->size, s->r, dinv, shift))
