@@ -2445,6 +2445,7 @@ gmp_mpn_functions="$extra_functions					   \
   invert binvert							   \
   sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \
   mu_div_qr mu_divappr_q mu_div_q					   \
+  bdiv_q_1 bdiv_q_1_pi1							   \
   sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
   divexact bdiv_dbm1c redc_1 redc_2 powm powlo powm_sec subcnd_n	   \
   $gmp_mpn_functions_optional"

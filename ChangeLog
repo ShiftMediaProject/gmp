@@ -1,5 +1,18 @@
 2009-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (gmp_mpn_functions): Add bdiv_q_1 and bdiv_q_1_pi1.
+	* mpn/generic/bdiv_q_1.c: New file.
+	* mpn/generic/bdiv_q_1_pi1.c: New file.
+	* mpn/asm-defs.m4 (define_mpn): Add mpn_bdiv_q_1_pi1 and mpn_bdiv_q_1.
+	* gmp-impl.h (mpn_bdiv_q_1_pi1, mpn_bdiv_q_1): Declare.
+
+	* mpn/x86_64/lshift.asm: Cleanup.
+	* mpn/x86_64/rshift.asm: Cleanup.
+
+	* mpn/x86_64/addlsh1_n.asm: Removed.
+	* mpn/x86_64/aorrlsh1_n.asm: Generalized addlsh1_n.asm to handle
+	addlsh1_n and rsblsh1_n functionality.
+
 	* tests/refmpn.c (refmpn_rsblsh1_n): New function.
 	* tests/devel/try.c: Test mpn_rsblsh1_n.
 	* tests/tests.h: Declare refmpn_rsblsh1_n.
