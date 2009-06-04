@@ -807,6 +807,13 @@ speed_mpn_sublsh1_n (struct speed_params *s)
   SPEED_ROUTINE_MPN_BINARY_N (mpn_sublsh1_n);
 }
 #endif
+#if HAVE_NATIVE_mpn_rsblsh1_n
+double
+speed_mpn_rsblsh1_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N (mpn_rsblsh1_n);
+}
+#endif
 #if HAVE_NATIVE_mpn_rsh1add_n
 double
 speed_mpn_rsh1add_n (struct speed_params *s)

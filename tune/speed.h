@@ -236,6 +236,7 @@ double speed_mpn_preinv_divrem_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1f __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_rsblsh1_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rsh1add_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rsh1sub_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rshift __GMP_PROTO ((struct speed_params *s));

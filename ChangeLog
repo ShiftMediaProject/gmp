@@ -1,5 +1,17 @@
 2009-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/refmpn.c (refmpn_rsblsh1_n): New function.
+	* tests/devel/try.c: Test mpn_rsblsh1_n.
+	* tests/tests.h: Declare refmpn_rsblsh1_n.
+	* tune/common.c (speed_mpn_rsblsh1_n): New function.
+	* tune/speed.c (routine): Add mpn_rsblsh1_n.
+	* tune/speed.h (mpn_rsblsh1_n): Declare.
+
+	* configure.in (gmp_mpn_functions_optional): Add rsblsh1_n.
+	(GMP_MULFUNC_CHOICES): Handle rsblsh1_n defined with a mulfunc.
+	* mpn/asm-defs.m4 (define_mpn): Add rsblsh1_n.
+	* gmp-impl.h (mpn_rsblsh1_n): Declare.
+
 	* mpn/generic/toom32_mul.c: Consistently use TOOM22_MUL_N_REC.
 
 2009-06-03  Marco Bodrato  <bodrato@mail.dm.unipi.it>
@@ -17,7 +29,7 @@
 
 	* gmp-impl.h: Rename  toom4_* flags enum to toom7_*.  Relevant C files
 	updated.
-	
+
 	* mpn/generic/toom_interpolate_7pts (divexact_2exp): Remove.
 
 2009-06-02  Torbjorn Granlund  <tege@gmplib.org>

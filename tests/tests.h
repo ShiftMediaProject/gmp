@@ -371,6 +371,8 @@ mp_limb_t refmpn_submul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
 mp_limb_t refmpn_submul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                     mp_limb_t multiplier, mp_limb_t carry));
 
+mp_limb_t refmpn_rsblsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
 void refmpn_tdiv_qr __GMP_PROTO ((mp_ptr qp, mp_ptr rp, mp_size_t qxn,
                              mp_ptr np, mp_size_t nsize,
                              mp_srcptr dp, mp_size_t dsize));
