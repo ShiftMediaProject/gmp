@@ -33,7 +33,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Evaluate in: -1, -1/2, 0, +1/2, +1, +2, +inf
 
-  <-s-><--n--><--n--><--n-->
+  <-s-><--n--><--n--><--n--><--n--><--n-->
    ___ ______ ______ ______ ______ ______
   |a5_|___a4_|___a3_|___a2_|___a1_|___a0_|
 			     |_b1_|___b0_|
