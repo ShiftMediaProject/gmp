@@ -1079,6 +1079,7 @@ m4_not_for_expansion(`OPERATION_rshift')
 dnl  aorslsh1_n
 m4_not_for_expansion(`OPERATION_addlsh1_n')
 m4_not_for_expansion(`OPERATION_sublsh1_n')
+m4_not_for_expansion(`OPERATION_rsblsh1_n')
 
 dnl  rsh1aors_n
 m4_not_for_expansion(`OPERATION_rsh1add_n')
@@ -1376,6 +1377,7 @@ define_mpn(random)
 define_mpn(random2)
 define_mpn(redc_1)
 define_mpn(redc_2)
+define_mpn(rsblsh1_n)
 define_mpn(rsh1add_n)
 define_mpn(rsh1sub_n)
 define_mpn(rshift)

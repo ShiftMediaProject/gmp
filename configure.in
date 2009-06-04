@@ -2423,7 +2423,8 @@ gmp_mpn_functions_optional="umul udiv copyi copyd com_n
   invert_limb sqr_diagonal						\
   mul_2 mul_3 mul_4							\
   addmul_2 addmul_3 addmul_4 addmul_5 addmul_6 addmul_7 addmul_8	\
-  addlsh1_n sublsh1_n rsh1add_n rsh1sub_n addsub_n addaddmul_1msb0 lshiftc"
+  addlsh1_n sublsh1_n rsblsh1_n rsh1add_n rsh1sub_n			\
+  addsub_n addaddmul_1msb0 lshiftc"
 
 gmp_mpn_functions="$extra_functions					   \
   add add_1 add_n sub sub_1 sub_n neg_n mul_1 addmul_1			   \
@@ -2458,8 +2459,12 @@ case $tmp_fn in
   and_n|andn_n|nand_n | ior_n|iorn_n|nior_n | xor_n|xnor_n)
                      tmp_mulfunc="logops_n"  ;;
   lshift|rshift)     tmp_mulfunc="lorrshift";;
-  addlsh1_n|sublsh1_n)
-		     tmp_mulfunc="aorslsh1_n";;
+  addlsh1_n)
+		     tmp_mulfunc="aorslsh1_n aorrlsh1_n";;
+  sublsh1_n)
+		     tmp_mulfunc="aorslsh1_n sorrlsh1_n";;
+  rsblsh1_n)
+		     tmp_mulfunc="aorrlsh1_n sorrlsh1_n";;
   rsh1add_n|rsh1sub_n)
 		     tmp_mulfunc="rsh1aors_n";;
 esac
@@ -2924,6 +2929,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_preinv_mod_1
 #undef HAVE_NATIVE_mpn_redc_1
 #undef HAVE_NATIVE_mpn_redc_2
+#undef HAVE_NATIVE_mpn_rsblsh1_n
 #undef HAVE_NATIVE_mpn_rsh1add_n
 #undef HAVE_NATIVE_mpn_rsh1sub_n
 #undef HAVE_NATIVE_mpn_sqr_basecase
