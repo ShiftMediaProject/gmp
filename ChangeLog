@@ -9,7 +9,7 @@
 	* tune/speed.h (SPEED_ROUTINE_MPN_BDIV_Q_1_PI1): New #define.
 	(SPEED_ROUTINE_MPN_BDIV_Q_1): Mew #define.
 
-	* configure.in (gmp_mpn_functions): Add bdiv_q_1 and bdiv_q_1_pi1.
+	* configure.in (gmp_mpn_functions): Add bdiv_q_1.
 	* mpn/generic/bdiv_q_1.c: New file.
 	* mpn/asm-defs.m4 (define_mpn): Add mpn_bdiv_q_1 and mpn_bdiv_q_1_pi1.
 	* gmp-impl.h (mpn_bdiv_q_1, mpn_bdiv_q_1_pi1): Declare.
