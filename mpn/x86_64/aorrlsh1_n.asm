@@ -1,6 +1,7 @@
 dnl  AMD64 mpn_addlsh1_n -- rp[] = up[] + (vp[] << 1)
+dnl  AMD64 mpn_rsblsh1_n -- rp[] = (vp[] << 1) - up[]
 
-dnl  Copyright 2003, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -39,10 +40,21 @@ define(`up',`%rsi')
 define(`vp',`%rdx')
 define(`n', `%rcx')
 
+ifdef(`OPERATION_addlsh1_n', `
+	define(ADDSUB,	      add)
+	define(ADCSBB,	      adc)
+	define(func,	      mpn_addlsh1_n)')
+ifdef(`OPERATION_rsblsh1_n', `
+	define(ADDSUB,	      sub)
+	define(ADCSBB,	      sbb)
+	define(func,	      mpn_rsblsh1_n)')
+
+MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_rsblsh1_n)
+
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_addlsh1_n)
+PROLOGUE(func)
 	push	%rbp
 
 	mov	(vp), %r8
@@ -64,11 +76,11 @@ L(b11):	add	%r8, %r8
 	mov	16(vp,n,8), %r10
 	adc	%r10, %r10
 	sbb	R32(%rax), R32(%rax)	C save scy
-	add	(up,n,8), %r8
-	adc	8(up,n,8), %r9
+	ADDSUB	(up,n,8), %r8
+	ADCSBB	8(up,n,8), %r9
 	mov	%r8, (rp,n,8)
 	mov	%r9, 8(rp,n,8)
-	adc	16(up,n,8), %r10
+	ADCSBB	16(up,n,8), %r10
 	mov	%r10, 16(rp,n,8)
 	sbb	R32(%rbp), R32(%rbp)	C save acy
 	add	$3, n
@@ -78,8 +90,8 @@ L(b10):	add	%r8, %r8
 	mov	8(vp,n,8), %r9
 	adc	%r9, %r9
 	sbb	R32(%rax), R32(%rax)	C save scy
-	add	(up,n,8), %r8
-	adc	8(up,n,8), %r9
+	ADDSUB	(up,n,8), %r8
+	ADCSBB	8(up,n,8), %r9
 	mov	%r8, (rp,n,8)
 	mov	%r9, 8(rp,n,8)
 	sbb	R32(%rbp), R32(%rbp)	C save acy
@@ -88,7 +100,7 @@ L(b10):	add	%r8, %r8
 
 L(b01):	add	%r8, %r8
 	sbb	R32(%rax), R32(%rax)	C save scy
-	add	(up,n,8), %r8
+	ADDSUB	(up,n,8), %r8
 	mov	%r8, (rp,n,8)
 	sbb	R32(%rbp), R32(%rbp)	C save acy
 	inc	n
@@ -109,13 +121,13 @@ L(b00):	adc	%r8, %r8
 	sbb	R32(%rax), R32(%rax)	C save scy
 	add	R32(%rbp), R32(%rbp)	C restore acy
 
-	adc	(up,n,8), %r8
+	ADCSBB	(up,n,8), %r8
 	nop				C Hammer speedup!
-	adc	8(up,n,8), %r9
+	ADCSBB	8(up,n,8), %r9
 	mov	%r8, (rp,n,8)
 	mov	%r9, 8(rp,n,8)
-	adc	16(up,n,8), %r10
-	adc	24(up,n,8), %r11
+	ADCSBB	16(up,n,8), %r10
+	ADCSBB	24(up,n,8), %r11
 	mov	%r10, 16(rp,n,8)
 	mov	%r11, 24(rp,n,8)
 
@@ -123,9 +135,14 @@ L(b00):	adc	%r8, %r8
 	add	$4, n
 	js	L(top)
 
-L(end):	add	R32(%rbp), R32(%rax)
-	neg	R32(%rax)
-
+L(end):
+ifdef(`OPERATION_addlsh1_n',`
+	add	R32(%rbp), R32(%rax)
+	neg	R32(%rax)')
+ifdef(`OPERATION_rsblsh1_n',`
+	sub	R32(%rax), R32(%rbp)
+	movslq	R32(%rbp), %rax')
+	
 	pop	%rbp
 	ret
 EPILOGUE()
