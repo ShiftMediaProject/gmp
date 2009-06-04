@@ -1,6 +1,7 @@
 2009-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (HAVE_NATIVE): Add recently added functions.
+	(GMP_MULFUNC_CHOICES): Handle addlsh_n, sublsh_n, rsblsh_n.
 
 	* tune/common.c (speed_mpn_bdiv_q_1, speed_mpn_bdiv_q_1_pi1):
 	New functions.
