@@ -2903,6 +2903,8 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_and_n
 #undef HAVE_NATIVE_mpn_andn_n
 #undef HAVE_NATIVE_mpn_bdiv_dbm1c
+#undef HAVE_NATIVE_mpn_bdiv_q_1
+#undef HAVE_NATIVE_mpn_bdiv_q_1_pi1
 #undef HAVE_NATIVE_mpn_com_n
 #undef HAVE_NATIVE_mpn_copyd
 #undef HAVE_NATIVE_mpn_copyi
@@ -2930,6 +2932,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_preinv_mod_1
 #undef HAVE_NATIVE_mpn_redc_1
 #undef HAVE_NATIVE_mpn_redc_2
+#undef HAVE_NATIVE_mpn_rsblsh_n
 #undef HAVE_NATIVE_mpn_rsblsh1_n
 #undef HAVE_NATIVE_mpn_rsh1add_n
 #undef HAVE_NATIVE_mpn_rsh1sub_n
