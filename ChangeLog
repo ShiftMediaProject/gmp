@@ -11,7 +11,6 @@
 
 	* configure.in (gmp_mpn_functions): Add bdiv_q_1 and bdiv_q_1_pi1.
 	* mpn/generic/bdiv_q_1.c: New file.
-	* mpn/generic/bdiv_q_1_pi1.c: New file.
 	* mpn/asm-defs.m4 (define_mpn): Add mpn_bdiv_q_1 and mpn_bdiv_q_1_pi1.
 	* gmp-impl.h (mpn_bdiv_q_1, mpn_bdiv_q_1_pi1): Declare.
 
