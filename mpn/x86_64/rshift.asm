@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_rshift -- mpn left shift.
 
-dnl  Copyright 2003, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2005, 2009 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -38,10 +38,10 @@ ASM_START()
 	TEXT
 	ALIGN(32)
 PROLOGUE(mpn_rshift)
-	neg	%ecx			C put rsh count in cl
+	neg	R32(%rcx)		C put rsh count in cl
 	mov	(up), %rax
-	shl	%cl, %rax		C function return value
-	neg	%ecx			C put lsh count in cl
+	shl	R8(%rcx), %rax		C function return value
+	neg	R32(%rcx)		C put lsh count in cl
 
 	lea	1(n), R32(%r8)
 
@@ -56,10 +56,10 @@ PROLOGUE(mpn_rshift)
 	jne	L(1)
 C	n = 4, 8, 12, ...
 	mov	8(up,n,8), %r10
-	shr	%cl, %r10
-	neg	%ecx			C put rsh count in cl
+	shr	R8(%rcx), %r10
+	neg	R32(%rcx)		C put rsh count in cl
 	mov	16(up,n,8), %r8
-	shl	%cl, %r8
+	shl	R8(%rcx), %r8
 	or	%r8, %r10
 	mov	%r10, 8(rp,n,8)
 	inc	n
@@ -69,90 +69,90 @@ L(1):	dec	R32(%r8)
 	je	L(1x)			C jump for n = 1, 5, 9, 13, ...
 C	n = 2, 6, 10, 16, ...
 	mov	8(up,n,8), %r10
-	shr	%cl, %r10
-	neg	%ecx			C put rsh count in cl
+	shr	R8(%rcx), %r10
+	neg	R32(%rcx)		C put rsh count in cl
 	mov	16(up,n,8), %r8
-	shl	%cl, %r8
+	shl	R8(%rcx), %r8
 	or	%r8, %r10
 	mov	%r10, 8(rp,n,8)
 	inc	n
-	neg	%ecx			C put lsh count in cl
+	neg	R32(%rcx)		C put lsh count in cl
 L(1x):
 	cmp	$-1, n
 	je	L(ast)
 	mov	8(up,n,8), %r10
-	shr	%cl, %r10
+	shr	R8(%rcx), %r10
 	mov	16(up,n,8), %r11
-	shr	%cl, %r11
-	neg	%ecx			C put rsh count in cl
+	shr	R8(%rcx), %r11
+	neg	R32(%rcx)		C put rsh count in cl
 	mov	16(up,n,8), %r8
 	mov	24(up,n,8), %r9
-	shl	%cl, %r8
+	shl	R8(%rcx), %r8
 	or	%r8, %r10
-	shl	%cl, %r9
+	shl	R8(%rcx), %r9
 	or	%r9, %r11
 	mov	%r10, 8(rp,n,8)
 	mov	%r11, 16(rp,n,8)
 	add	$2, n
 
-L(rll):	neg	%ecx			C put lsh count in cl
+L(rll):	neg	R32(%rcx)		C put lsh count in cl
 L(rlx):	mov	8(up,n,8), %r10
-	shr	%cl, %r10
+	shr	R8(%rcx), %r10
 	mov	16(up,n,8), %r11
-	shr	%cl, %r11
+	shr	R8(%rcx), %r11
 
 	add	$4, n			C				      4
 	jb	L(end)			C				      2
 	ALIGN(16)
 L(top):
 	C finish stuff from lsh block
-	neg	%ecx			C put rsh count in cl
+	neg	R32(%rcx)		C put rsh count in cl
 	mov	-16(up,n,8), %r8
 	mov	-8(up,n,8), %r9
-	shl	%cl, %r8
+	shl	R8(%rcx), %r8
 	or	%r8, %r10
-	shl	%cl, %r9
+	shl	R8(%rcx), %r9
 	or	%r9, %r11
 	mov	%r10, -24(rp,n,8)
 	mov	%r11, -16(rp,n,8)
 	C start two new rsh
 	mov	(up,n,8), %r8
 	mov	8(up,n,8), %r9
-	shl	%cl, %r8
-	shl	%cl, %r9
+	shl	R8(%rcx), %r8
+	shl	R8(%rcx), %r9
 
 	C finish stuff from rsh block
-	neg	%ecx			C put lsh count in cl
+	neg	R32(%rcx)		C put lsh count in cl
 	mov	-8(up,n,8), %r10
 	mov	0(up,n,8), %r11
-	shr	%cl, %r10
+	shr	R8(%rcx), %r10
 	or	%r10, %r8
-	shr	%cl, %r11
+	shr	R8(%rcx), %r11
 	or	%r11, %r9
 	mov	%r8, -8(rp,n,8)
 	mov	%r9, 0(rp,n,8)
 	C start two new lsh
 	mov	8(up,n,8), %r10
 	mov	16(up,n,8), %r11
-	shr	%cl, %r10
-	shr	%cl, %r11
+	shr	R8(%rcx), %r10
+	shr	R8(%rcx), %r11
 
 	add	$4, n
 	jae	L(top)			C				      2
 L(end):
-	neg	%ecx			C put rsh count in cl
-	mov	-16(up,n,8), %r8
-	shl	%cl, %r8
+	neg	R32(%rcx)		C put rsh count in cl
+	mov	-8(up), %r8
+	shl	R8(%rcx), %r8
 	or	%r8, %r10
-	mov	-8(up,n,8), %r9
-	shl	%cl, %r9
+	mov	(up), %r9
+	shl	R8(%rcx), %r9
 	or	%r9, %r11
-	mov	%r10, -24(rp,n,8)
-	mov	%r11, -16(rp,n,8)
+	mov	%r10, -16(rp)
+	mov	%r11, -8(rp)
 
-	neg	%ecx			C put lsh count in cl
+	neg	R32(%rcx)		C put lsh count in cl
 L(ast):	mov	(up), %r10
-	shr	%cl, %r10
+	shr	R8(%rcx), %r10
 	mov	%r10, (rp)
 	ret
 EPILOGUE()
