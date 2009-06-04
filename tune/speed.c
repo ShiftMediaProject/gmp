@@ -219,6 +219,8 @@ const struct routine_t {
   { "mpn_divexact_1",    speed_mpn_divexact_1,    FLAG_R },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3          },
 
+  { "mpn_bdiv_q_1",      speed_mpn_bdiv_q_1,      FLAG_R_OPTIONAL },
+  { "mpn_bdiv_q_1_pi1",  speed_mpn_bdiv_q_1_pi1,  FLAG_R_OPTIONAL },
   { "mpn_bdiv_dbm1c",    speed_mpn_bdiv_dbm1c,    FLAG_R_OPTIONAL },
 
 #if HAVE_NATIVE_mpn_modexact_1_odd
