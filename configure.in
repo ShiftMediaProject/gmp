@@ -2466,6 +2466,12 @@ case $tmp_fn in
 		     tmp_mulfunc="aorslsh1_n sorrlsh1_n";;
   rsblsh1_n)
 		     tmp_mulfunc="aorrlsh1_n sorrlsh1_n";;
+  addlsh_n)
+		     tmp_mulfunc="aorslsh_n aorrlsh_n";;
+  sublsh_n)
+		     tmp_mulfunc="aorslsh_n sorrlsh_n";;
+  rsblsh_n)
+		     tmp_mulfunc="aorrlsh_n sorrlsh_n";;
   rsh1add_n|rsh1sub_n)
 		     tmp_mulfunc="rsh1aors_n";;
 esac
@@ -2889,6 +2895,7 @@ AH_VERBATIM([HAVE_NATIVE],
     implementation of the corresponding routine exists.  */
 #undef HAVE_NATIVE_mpn_add_n
 #undef HAVE_NATIVE_mpn_add_nc
+#undef HAVE_NATIVE_mpn_addlsh_n
 #undef HAVE_NATIVE_mpn_addlsh1_n
 #undef HAVE_NATIVE_mpn_addmul_1c
 #undef HAVE_NATIVE_mpn_addmul_2
@@ -2940,6 +2947,7 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_sqr_diagonal
 #undef HAVE_NATIVE_mpn_sub_n
 #undef HAVE_NATIVE_mpn_sub_nc
+#undef HAVE_NATIVE_mpn_sublsh_n
 #undef HAVE_NATIVE_mpn_sublsh1_n
 #undef HAVE_NATIVE_mpn_submul_1c
 #undef HAVE_NATIVE_mpn_umul_ppmm
