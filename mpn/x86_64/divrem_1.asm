@@ -276,4 +276,4 @@ L(ret):	pop	%rbx
 	pop	%r12
 	pop	%r13
 	ret
-EPILOGUE(mpn_divrem_1)
+EPILOGUE()
