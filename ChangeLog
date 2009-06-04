@@ -1,3 +1,8 @@
+2009-06-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom_interpolate_7pts.c: Fall back mpn_divexact_byN to
+	mpn_bdiv_q_1_pi1, if the latter is NATIVE.
+
 2009-06-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (HAVE_NATIVE): Add recently added functions.
