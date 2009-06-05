@@ -229,10 +229,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
   cy = mpn_add_n (rp + 5*n, w4 + n, w5, n);
   MPN_INCR_U (w5 + n, n + 1, w4[2*n] + cy);
   if (w6n > n + 1)
-    {
-      cy = mpn_add_n (rp + 6*n, rp + 6*n, w5 + n, n + 1);
-      MPN_INCR_U (rp + 7*n + 1, w6n - n - 1, cy);
-    }
+    ASSERT_NOCARRY (mpn_add (rp + 6*n, rp + 6*n, w6n, w5 + n, n + 1));
   else
     {
       ASSERT_NOCARRY (mpn_add_n (rp + 6*n, rp + 6*n, w5 + n, w6n));
