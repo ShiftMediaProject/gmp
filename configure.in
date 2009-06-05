@@ -2441,6 +2441,7 @@ gmp_mpn_functions="$extra_functions					   \
   toom33_mul toom43_mul toom53_mul					   \
   toom44_mul								   \
   toom2_sqr toom3_sqr toom4_sqr						   \
+  toom_eval_dgr3_pm1							   \
   toom_interpolate_5pts toom_interpolate_6pts toom_interpolate_7pts	   \
   invert binvert							   \
   sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \

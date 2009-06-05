@@ -1111,6 +1111,9 @@ enum toom7_flags { toom7_w1_neg = 1, toom7_w3_neg = 2 };
 #define   mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_7pts __GMP_PROTO ((mp_ptr, mp_size_t, enum toom7_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
+#define   mpn_toom_eval_dgr3_pm1 __MPN(toom_eval_dgr3_pm1)
+__GMP_DECLSPEC int mpn_toom_eval_dgr3_pm1 __GMP_PROTO ((mp_ptr xp1, mp_ptr xm1, mp_srcptr xp, mp_size_t n, mp_size_t x3n, mp_ptr tp));
+
 #define   mpn_toom3_mul_n __MPN(toom3_mul_n)
 __GMP_DECLSPEC void      mpn_toom3_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
 

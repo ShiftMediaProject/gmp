@@ -1,5 +1,10 @@
 2009-06-05  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom44_mul.c (mpn_toom44_mul): Use
+	mpn_toom_eval_dgr3_pm1.
+
+	* mpn/generic/toom_eval_dgr3_pm1.c: New file.
+
 	* mpn/generic/toom44_mul.c (mpn_toom44_mul): Reorganized, to
 	reduce the need for scratch space, and get rid of TMP_ALLOC.
 
