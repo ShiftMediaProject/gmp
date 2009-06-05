@@ -1,3 +1,10 @@
+2009-06-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mul_fft.c (FFT_TABLE2_SIZE): Default to 200.
+	(MUL_FFT_TABLE2_SIZE, SQR_FFT_TABLE2_SIZE): Let these decide
+	FFT_TABLE2_SIZE if they are defined.
+	(struct nk): Use bit field.
+
 2009-06-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom_interpolate_7pts.c (mpn_toom_interpolate_7pts):
