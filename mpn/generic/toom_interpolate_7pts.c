@@ -27,25 +27,43 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Arithmetic right shift, requiring that the shifted out bits are zero. */
-static inline void
-divexact_2exp (mp_ptr rp, mp_srcptr sp, mp_size_t n, unsigned shift)
-{
-  mp_limb_t sign;
-  sign = LIMB_HIGHBIT_TO_MASK (sp[n-1] << GMP_NAIL_BITS) << (GMP_NUMB_BITS - shift);
-  ASSERT_NOCARRY (mpn_rshift (rp, sp, n, shift));
-  rp[n-1] |= sign & GMP_NUMB_MASK;
-}
+#define BINVERT_3 MODLIMB_INVERSE_3
+
+#define BINVERT_9 \
+  ((((GMP_NUMB_MAX / 9) << (6 - GMP_NUMB_BITS % 6)) * 8 & GMP_NUMB_MAX) | 0x39)
+
+#define BINVERT_15 \
+  ((((GMP_NUMB_MAX >> (GMP_NUMB_BITS % 4)) / 15) * 14 * 16 & GMP_NUMB_MAX) + 15))
+
+/* For the various mpn_divexact_byN here, fall back to using either
+   mpn_bdiv_q_1_pi1 or mpn_divexact_1.  The former has less overhead and is
+   many faster if it is native.  For now, since mpn_divexact_1 is native on
+   several platforms where mpn_bdiv_q_1_pi1 does not yet exist, do not use
+   mpn_bdiv_q_1_pi1 unconditionally.  FIXME.  */
 
 /* For odd divisors, mpn_divexact_1 works fine with two's complement. */
 #ifndef mpn_divexact_by3
+#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
+#define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,BINVERT_3,0)
+#else
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
 #endif
+#endif
+
 #ifndef mpn_divexact_by9
+#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
+#define mpn_divexact_by9(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,9,BINVERT_9,0)
+#else
 #define mpn_divexact_by9(dst,src,size) mpn_divexact_1(dst,src,size,9)
 #endif
+#endif
+
 #ifndef mpn_divexact_by15
+#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
+#define mpn_divexact_by15(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,15,BINVERT_15,0)
+#else
 #define mpn_divexact_by15(dst,src,size) mpn_divexact_1(dst,src,size,15)
+#endif
 #endif
 
 /* Interpolation for toom4, using the evaluation points infinity, 2,
@@ -72,7 +90,7 @@ divexact_2exp (mp_ptr rp, mp_srcptr sp, mp_size_t n, unsigned shift)
 */
 
 void
-mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
+mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
 			   mp_ptr w1, mp_ptr w3, mp_ptr w4, mp_ptr w5,
 			   mp_size_t w6n, mp_ptr tp)
 {
@@ -110,7 +128,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   */
 
   mpn_add_n (w5, w5, w2, m);
-  if (flags & toom4_w1_neg)
+  if (flags & toom7_w1_neg)
     {
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
       mpn_rsh1add_n (w1, w1, w2, m);
@@ -134,7 +152,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom4_flags flags,
   tp[2*n] = mpn_lshift (tp, rp, 2*n, 4);
   mpn_sub_n (w2, w2, tp, m);
 
-  if (flags & toom4_w3_neg)
+  if (flags & toom7_w3_neg)
     {
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
       mpn_rsh1add_n (w3, w3, w4, m);

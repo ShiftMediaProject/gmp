@@ -693,6 +693,18 @@ speed_mpn_bdiv_dbm1c (struct speed_params *s)
   SPEED_ROUTINE_MPN_BDIV_DBM1C (mpn_bdiv_dbm1c);
 }
 
+double
+speed_mpn_bdiv_q_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BDIV_Q_1 (mpn_bdiv_q_1);
+}
+
+double
+speed_mpn_bdiv_q_1_pi1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BDIV_Q_1_PI1 (mpn_bdiv_q_1_pi1);
+}
+
 #if HAVE_NATIVE_mpn_modexact_1_odd
 double
 speed_mpn_modexact_1_odd (struct speed_params *s)
@@ -805,6 +817,13 @@ double
 speed_mpn_sublsh1_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINARY_N (mpn_sublsh1_n);
+}
+#endif
+#if HAVE_NATIVE_mpn_rsblsh1_n
+double
+speed_mpn_rsblsh1_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N (mpn_rsblsh1_n);
 }
 #endif
 #if HAVE_NATIVE_mpn_rsh1add_n

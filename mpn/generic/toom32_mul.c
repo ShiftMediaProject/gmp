@@ -205,11 +205,12 @@ mpn_toom32_mul (mp_ptr pp,
     cy += mpn_add_n (v1 + n, v1 + n, as1, n);
   v1[2 * n] = cy;
 
-  /* vinf, s+t limbs */
+  /* vinf, s+t limbs.  Use mpn_mul for now, to handle unbalanced operands */
   if (s > t)  mpn_mul (vinf, a2, s, b1, t);
   else        mpn_mul (vinf, b1, t, a2, s);
 
-  mpn_mul_n (v0, ap, bp, n);                    /* v0, 2n limbs */
+  /* v0, 2n limbs */
+  TOOM22_MUL_N_REC (v0, ap, bp, n, scratch_out);
 
   /* Interpolate */
 

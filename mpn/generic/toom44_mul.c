@@ -25,14 +25,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-/*
-  Things to work on:
-
-  1. Trim allocation.  The allocations for as1, asm1, bs1, and bsm1 could be
-     avoided by instead reusing the pp area and the scratch area.
-  2. Use new toom functions for the recursive calls.
-*/
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -86,20 +78,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       ___________________
      |vinf|____|_vh_|_v0_|
       s+t  2n-1 2n+1  2n
-   The other recursive products, v1, vm1, v2, vmh are stored int he
-   scratch area. When computing them, we can use the product area for
-   scratch (and we even have space for one or two more temporaries of
-   size n there).
 
-   Next, we compute vh. We can store the factors at v0 and at vh + 2n
-   + 2.
+   The other recursive products, v1, vm1, v2, vmh are stored in the
+   scratch area. When computing them, we use the product area for
+   intermediate values.
+
+   Next, we compute vh. We can store the intermediate factors at v0
+   and at vh + 2n + 2.
 
    Finally, for v0 and vinf, factors are parts of the input operands,
    and we need scratch space only for the recursive multiplication.
 
    In all, if S(an) is the scratch need, the needed space is bounded by
 
-     S(an) <= 4 (2*ceil(an/4) + 1) + S(ceil(an/4) + 1)
+     S(an) <= 4 (2*ceil(an/4) + 1) + 1 + S(ceil(an/4) + 1)
 
    which should give S(n) = 8 n/3 + c log(n) for some constant c.
 */
@@ -112,7 +104,7 @@ mpn_toom44_mul (mp_ptr pp,
 {
   mp_size_t n, s, t;
   mp_limb_t cy;
-  enum toom4_flags flags;
+  enum toom7_flags flags;
 
 #define a0  ap
 #define a1  (ap + n)
@@ -163,7 +155,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (apx, tp, n + 1) < 0)
     {
       mpn_addsub_n (apx, amx, tp, apx, n + 1);
-      flags = toom4_w3_neg;
+      flags = toom7_w3_neg;
     }
   else
     {
@@ -174,7 +166,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (apx, tp, n + 1) < 0)
     {
       mpn_sub_n (amx, tp, apx, n + 1);
-      flags = toom4_w3_neg;
+      flags = toom7_w3_neg;
     }
   else
     {
@@ -196,7 +188,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (bpx, tp, n + 1) < 0)
     {
       mpn_addsub_n (bpx, bmx, tp, bpx, n + 1);
-      flags ^= toom4_w3_neg;
+      flags ^= toom7_w3_neg;
     }
   else
     {
@@ -206,7 +198,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (bpx, tp, n + 1) < 0)
     {
       mpn_sub_n (bmx, tp, bpx, n + 1);
-      flags ^= toom4_w3_neg;
+      flags ^= toom7_w3_neg;
     }
   else
     {
@@ -280,7 +272,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (apx, tp, n + 1) < 0)
     {
       mpn_addsub_n (apx, amx, tp, apx, n + 1);
-      flags |= toom4_w1_neg;
+      flags |= toom7_w1_neg;
     }
   else
     {
@@ -290,7 +282,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (apx, tp, n + 1) < 0)
     {
       mpn_sub_n (amx, tp, apx, n + 1);
-      flags |= toom4_w1_neg;
+      flags |= toom7_w1_neg;
     }
   else
     {
@@ -316,7 +308,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (bpx, tp, n + 1) < 0)
     {
       mpn_addsub_n (bpx, bmx, tp, bpx, n + 1);
-      flags ^= toom4_w1_neg;
+      flags ^= toom7_w1_neg;
     }
   else
     {
@@ -326,7 +318,7 @@ mpn_toom44_mul (mp_ptr pp,
   if (mpn_cmp (bpx, tp, n + 1) < 0)
     {
       mpn_sub_n (bmx, tp, bpx, n + 1);
-      flags ^= toom4_w1_neg;
+      flags ^= toom7_w1_neg;
     }
   else
     {

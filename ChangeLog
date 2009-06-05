@@ -1,3 +1,63 @@
+2009-06-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom_interpolate_7pts.c: Fall back mpn_divexact_byN to
+	mpn_bdiv_q_1_pi1, if the latter is NATIVE.
+
+2009-06-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (HAVE_NATIVE): Add recently added functions.
+	(GMP_MULFUNC_CHOICES): Handle addlsh_n, sublsh_n, rsblsh_n.
+
+	* tune/common.c (speed_mpn_bdiv_q_1, speed_mpn_bdiv_q_1_pi1):
+	New functions.
+	* tune/speed.c (routine): Add mpn_bdiv_q_1 and mpn_bdiv_q_1_pi1.
+	* tune/speed.h (SPEED_ROUTINE_MPN_BDIV_Q_1_PI1): New #define.
+	(SPEED_ROUTINE_MPN_BDIV_Q_1): Mew #define.
+
+	* configure.in (gmp_mpn_functions): Add bdiv_q_1.
+	* mpn/generic/bdiv_q_1.c: New file.
+	* mpn/asm-defs.m4 (define_mpn): Add mpn_bdiv_q_1 and mpn_bdiv_q_1_pi1.
+	* gmp-impl.h (mpn_bdiv_q_1, mpn_bdiv_q_1_pi1): Declare.
+
+	* mpn/x86_64/lshift.asm: Cleanup.
+	* mpn/x86_64/rshift.asm: Cleanup.
+
+	* mpn/x86_64/addlsh1_n.asm: Removed.
+	* mpn/x86_64/aorrlsh1_n.asm: Generalized addlsh1_n.asm to handle
+	addlsh1_n and rsblsh1_n functionality.
+
+	* tests/refmpn.c (refmpn_rsblsh1_n): New function.
+	* tests/devel/try.c: Test mpn_rsblsh1_n.
+	* tests/tests.h: Declare refmpn_rsblsh1_n.
+	* tune/common.c (speed_mpn_rsblsh1_n): New function.
+	* tune/speed.c (routine): Add mpn_rsblsh1_n.
+	* tune/speed.h (mpn_rsblsh1_n): Declare.
+
+	* configure.in (gmp_mpn_functions_optional): Add rsblsh1_n.
+	(GMP_MULFUNC_CHOICES): Handle rsblsh1_n defined with a mulfunc.
+	* mpn/asm-defs.m4 (define_mpn): Add rsblsh1_n.
+	* gmp-impl.h (mpn_rsblsh1_n): Declare.
+
+	* mpn/generic/toom32_mul.c: Consistently use TOOM22_MUL_N_REC.
+
+2009-06-03  Marco Bodrato  <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom43_mul.c: New file.
+	* mpn/generic/toom52_mul.c: New file.
+	* mpn/generic/toom_interpolate_6pts.c: New file.
+
+2009-06-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (gmp_mpn_functions): Add toom43_mul, toom52_mul, and
+	toom_interpolate_6pts, but also some previously forgotten functions.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Likesise.
+	* gmp-impl.h: Declare new functions. Sort toom function declarations.
+
+	* gmp-impl.h: Rename  toom4_* flags enum to toom7_*.  Relevant C files
+	updated.
+
+	* mpn/generic/toom_interpolate_7pts (divexact_2exp): Remove.
+
 2009-06-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* demos/factorize.c: Add -q command line option.
