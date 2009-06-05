@@ -1,5 +1,8 @@
 2009-06-05  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom_interpolate_7pts.c (mpn_toom_interpolate_7pts):
+	Minor cleanup, use mpn_add rather than mpn_add_n + MPN_INCR_U.
+
 	* mpn/generic/toom44_mul.c (mpn_toom44_mul): Reorganized, to
 	reduce the need for scratch space, and get rid of TMP_ALLOC.
 
