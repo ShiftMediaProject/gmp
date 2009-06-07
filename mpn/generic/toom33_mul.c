@@ -2,6 +2,7 @@
    size.  Or more accurately, bn <= an < (3/2)bn.
 
    Contributed to the GNU project by Torbjorn Granlund.
+   Additional improvements by Marco Bodrato.
 
    THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -30,11 +31,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Evaluate in: -1, 0, +1, +2, +inf
 
-  <-s-><--n--><--n--><--n-->
-   ___ ______ ______ ______
-  |a3_|___a2_|___a1_|___a0_|
-	       |_b1_|___b0_|
-	       <-t--><--n-->
+  <-s--><--n--><--n--><--n-->
+   ____ ______ ______ ______
+  |_a3_|___a2_|___a1_|___a0_|
+   |b3_|___b2_|___b1_|___b0_|
+   <-t-><--n--><--n--><--n-->
 
   v0  =  a0         * b0          #   A(0)*B(0)
   v1  = (a0+ a1+ a2)*(b0+ b1+ b2) #   A(1)*B(1)      ah  <= 2  bh <= 2

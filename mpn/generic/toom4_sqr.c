@@ -32,16 +32,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   <-s--><--n--><--n--><--n-->
    ____ ______ ______ ______
   |_a3_|___a2_|___a1_|___a0_|
-   |b3_|___b2_|___b1_|___b0_|
-   <-t-><--n--><--n--><--n-->
 
-  v0  =   a0             *  b0              #    A(0)*B(0)
-  v1  = ( a0+ a1+ a2+ a3)*( b0+ b1+ b2+ b3) #    A(1)*B(1)      ah  <= 3   bh  <= 3
-  vm1 = ( a0- a1+ a2- a3)*( b0- b1+ b2- b3) #   A(-1)*B(-1)    |ah| <= 1  |bh| <= 1
-  v2  = ( a0+2a1+4a2+8a3)*( b0+2b1+4b2+8b3) #    A(2)*B(2)      ah  <= 14  bh  <= 14
-  vh  = (8a0+4a1+2a2+ a3)*(8b0+4b1+2b2+ b3) #  A(1/2)*B(1/2)    ah  <= 14  bh  <= 14
-  vmh = (8a0-4a1+2a2- a3)*(8b0-4b1+2b2- b3) # A(-1/2)*B(-1/2)  -4<=ah<=9  -4<=bh<=9
-  vinf=               a3 *          b2      #  A(inf)*B(inf)
+  v0  =   a0             ^2 #    A(0)^2
+  v1  = ( a0+ a1+ a2+ a3)^2 #    A(1)^2   ah  <= 3
+  vm1 = ( a0- a1+ a2- a3)^2 #   A(-1)^2  |ah| <= 1
+  v2  = ( a0+2a1+4a2+8a3)^2 #    A(2)^2   ah  <= 14
+  vh  = (8a0+4a1+2a2+ a3)^2 #  A(1/2)^2   ah  <= 14
+  vmh = (8a0-4a1+2a2- a3)^2 # A(-1/2)^2  -4<=ah<=9
+  vinf=               a3 ^2 #  A(inf)^2
 */
 
 #if TUNE_PROGRAM_BUILD

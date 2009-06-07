@@ -32,12 +32,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   <-s--><--n-->
    ____ ______
   |_a1_|___a0_|
-   |b1_|___b0_|
-   <-t-><--n-->
 
-  v0  =  a0     * b0       #   A(0)*B(0)
-  vm1 = (a0- a1)*(b0- b1)  #  A(-1)*B(-1)
-  vinf=      a1 *     b1   # A(inf)*B(inf)
+  v0  =  a0     ^2  #   A(0)^2
+  vm1 = (a0- a1)^2  #  A(-1)^2
+  vinf=      a1 ^2  # A(inf)^2
 */
 
 #if TUNE_PROGRAM_BUILD
