@@ -1,3 +1,9 @@
+2009-06-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom2_sqr.c: Make it actually work.
+
+	* mpn/generic/toom3_sqr.c: Reduce local scratch space.
+
 2009-06-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul_fft.c (FFT_TABLE2_SIZE): Default to 200.
@@ -92,7 +98,7 @@
 	* mpn/generic/toom42_mul.c: Likewise.
 	* mpn/generic/toom33_mul.c: Likewise.
 
-	* mpn/generic/toom33_mul.c: Rewrite to reduce local scratch space.
+	* mpn/generic/toom33_mul.c: Reduce local scratch space.
 	* mpn/generic/toom32_mul.c: Rewrite to not use local scratch space.
 
 2009-06-02  Torbjorn Granlund  <tege@gmplib.org>
