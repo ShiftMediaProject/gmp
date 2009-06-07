@@ -1,6 +1,7 @@
 /* mpn_toom3_sqr -- Square {ap,an}.
 
    Contributed to the GNU project by Torbjorn Granlund.
+   Additional improvements by Marco Bodrato.
 
    THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -29,17 +30,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Evaluate in: -1, 0, +1, +2, +inf
 
-  <-s-><--n--><--n--><--n-->
-   ___ ______ ______ ______
-  |a3_|___a2_|___a1_|___a0_|
-	       |_b1_|___b0_|
-	       <-t--><--n-->
+  <-s--><--n--><--n-->
+   ____ ______ ______
+  |_a2_|___a1_|___a0_|
 
-  v0  =  a0         * b0          #   A(0)*B(0)
-  v1  = (a0+ a1+ a2)*(b0+ b1+ b2) #   A(1)*B(1)      ah  <= 2  bh <= 2
-  vm1 = (a0- a1+ a2)*(b0- b1+ b2) #  A(-1)*B(-1)    |ah| <= 1  bh <= 1
-  v2  = (a0+2a1+4a2)*(b0+2b1+4b2) #   A(2)*B(2)      ah  <= 6  bh <= 6
-  vinf=          a2 *         b2  # A(inf)*B(inf)
+  v0  =  a0         ^2 #   A(0)^2
+  v1  = (a0+ a1+ a2)^2 #   A(1)^2    ah  <= 2
+  vm1 = (a0- a1+ a2)^2 #  A(-1)^2   |ah| <= 1
+  v2  = (a0+2a1+4a2)^2 #   A(2)^2    ah  <= 6
+  vinf=          a2 ^2 # A(inf)^2
 */
 
 #if TUNE_PROGRAM_BUILD
@@ -87,11 +86,11 @@ mpn_toom3_sqr (mp_ptr pp,
 
   TMP_MARK;
 
-  as1 = TMP_SALLOC_LIMBS (n + 1);
-  asm1 = TMP_SALLOC_LIMBS (n + 1);
-  as2 = TMP_SALLOC_LIMBS (n + 1);
+  as1 = TMP_SALLOC_LIMBS (n + 1); /* Should be (pp + 4 * n + 4), but we need 5n+5<=4n+s+t i.e. s+t>n+4*/
+  asm1 = scratch + 2 * n + 2;
+  as2 = pp + n + 1;
 
-  gp = pp;
+  gp = scratch;
 
   /* Compute as1 and asm1.  */
   cy = mpn_add (gp, a0, n, a2, s);
@@ -123,18 +122,18 @@ mpn_toom3_sqr (mp_ptr pp,
 #endif
 
   /* Compute as2.  */
-#if HAVE_NATIVE_mpn_addlsh1_n
+#if 0 && HAVE_NATIVE_mpn_addlsh1_n
   cy  = mpn_addlsh1_n (as2, a1, a2, s);
   if (s != n)
     cy = mpn_add_1 (as2 + s, a1 + s, n - s, cy);
   cy = 2 * cy + mpn_addlsh1_n (as2, a0, as2, n);
 #else
-  cy  = mpn_lshift (as2, a2, s, 1);
-  cy += mpn_add_n (as2, a1, as2, s);
+  cy = mpn_add_n (as2, a2, as1, s);
   if (s != n)
-    cy = mpn_add_1 (as2 + s, a1 + s, n - s, cy);
+    cy = mpn_add_1 (as2 + s, as1 + s, n - s, cy);
+  cy += as1[n];
   cy = 2 * cy + mpn_lshift (as2, as2, n, 1);
-  cy += mpn_add_n (as2, a0, as2, n);
+  cy -= mpn_sub_n (as2, as2, a0, n);
 #endif
   as2[n] = cy;
 
