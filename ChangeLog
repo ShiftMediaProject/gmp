@@ -1,3 +1,9 @@
+2009-06-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom4_sqr.c (mpn_toom4_sqr): Reorganized, to reduce
+	the need for scratch space, and get rid of TMP_ALLOC. Also use
+	mpn_toom_eval_dgr3_pm1.
+
 2009-06-05  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom44_mul.c (mpn_toom44_mult): Use
