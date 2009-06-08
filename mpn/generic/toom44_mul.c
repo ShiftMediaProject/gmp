@@ -148,68 +148,14 @@ mpn_toom44_mul (mp_ptr pp,
      gives roughly 32 n/3 + log term. */
 
   /* Compute apx = a0 + a1 + a2 + a3 and amx = a0 - a1 + a2 - a3.  */
-  apx[n] = mpn_add_n (apx, a0, a2, n);
-  tp[n] = mpn_add (tp, a1, n, a3, s);
-
-#if HAVE_NATIVE_mpn_addsub_n
-  if (mpn_cmp (apx, tp, n + 1) < 0)
-    {
-      mpn_addsub_n (apx, amx, tp, apx, n + 1);
-      flags = toom7_w3_neg;
-    }
+  if (mpn_toom_eval_dgr3_pm1 (apx, amx, ap, n, s, tp))
+    flags = toom7_w3_neg;
   else
-    {
-      mpn_addsub_n (apx, amx, apx, tp, n + 1);
-      flags = 0;
-    }
-#else
-  if (mpn_cmp (apx, tp, n + 1) < 0)
-    {
-      mpn_sub_n (amx, tp, apx, n + 1);
-      flags = toom7_w3_neg;
-    }
-  else
-    {
-      mpn_sub_n (amx, apx, tp, n + 1);
-      flags = 0;
-    }
-
-  mpn_add_n (apx, apx, tp, n + 1);
-#endif
-
-  ASSERT (apx[n] <= 3);
-  ASSERT (amx[n] <= 1);
+    flags = 0;
 
   /* Compute bpx = b0 + b1 + b2 + b3 bnd bmx = b0 - b1 + b2 - b3.  */
-  bpx[n] = mpn_add_n (bpx, b0, b2, n);
-  tp[n] = mpn_add (tp, b1, n, b3, t);
-
-#if HAVE_NATIVE_mpn_addsub_n
-  if (mpn_cmp (bpx, tp, n + 1) < 0)
-    {
-      mpn_addsub_n (bpx, bmx, tp, bpx, n + 1);
-      flags ^= toom7_w3_neg;
-    }
-  else
-    {
-      mpn_addsub_n (bpx, bmx, bpx, tp, n + 1);
-    }
-#else
-  if (mpn_cmp (bpx, tp, n + 1) < 0)
-    {
-      mpn_sub_n (bmx, tp, bpx, n + 1);
-      flags ^= toom7_w3_neg;
-    }
-  else
-    {
-      mpn_sub_n (bmx, bpx, tp, n + 1);
-    }
-
-  mpn_add_n (bpx, bpx, tp, n + 1);
-#endif
-
-  ASSERT (bpx[n] <= 3);
-  ASSERT (bmx[n] <= 1);
+  if (mpn_toom_eval_dgr3_pm1 (bpx, bmx, bp, n, t, tp))
+    flags ^= toom7_w3_neg;
 
   TOOM44_MUL_N_REC (v1, apx, bpx, n + 1, tp);	/* v1,  2n+1 limbs */
   TOOM44_MUL_N_REC (vm1, amx, bmx, n + 1, tp);	/* vm1,  2n+1 limbs */

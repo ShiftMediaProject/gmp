@@ -1,5 +1,9 @@
 2009-06-08  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom4_sqr.c (mpn_toom4_sqr): Reorganized, to reduce
+	the need for scratch space, and get rid of TMP_ALLOC. Also use
+	mpn_toom_eval_dgr3_pm1.
+
 	* mpn/generic/toom_interpolate_6pts.c (mpn_toom_interpolate_6pts):
 	Stricter ASSERTs based on maximum size of polynomial coefficients.
 	Improved comments on the signedness of intermediate values.
@@ -18,6 +22,11 @@
 	(struct nk): Use bit field.
 
 2009-06-05  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom44_mul.c (mpn_toom44_mult): Use
+	mpn_toom_eval_dgr3_pm1.
+
+	* mpn/generic/toom_eval_dgr3_pm1.c: New file.
 
 	* mpn/generic/toom_interpolate_7pts.c (mpn_toom_interpolate_7pts):
 	Minor cleanup, use mpn_add rather than mpn_add_n + MPN_INCR_U.
