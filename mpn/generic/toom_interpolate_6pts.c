@@ -31,27 +31,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
 #endif
 
-/* Interpolation for toom43, using 6 evaluation points, 0, 1, -1, 2,
-   -2, infinity. More precisely, we want to compute f(2^(GMP_NUMB_BITS
-   * n)) for a polynomial f of degree 5, given the six values
-
-     w0 = f(0),
-     w1 = f(1),
-     w2 = f(-1)
-     w3 = f(2)
-     w4 = f(-2)
-     w5 = limit at infinity of f(x) / x^5,
-
-   The result is 5*n + w5n limbs. At entry, w0 is stored at {rp, 2n},
-   w2 is stored at { rp + 2n, 2n+1 }, and w6 is stored at { rp + 5n,
-   w6n }. The other values are 2n + 1 limbs each (with most
-   significant limbs small). f(1) and f(-2) may be negative, signs
-   determined by the flag bits. All intermediate results are
-   represented in two's complement. Inputs are destroyed.
-
-   Needs (2*n + 1) limbs of temporary storage.
-*/
-
 /* Interpolation for Toom-3.5, using the evaluation points: infinity,
    1, -1, 2, -2. More precisely, we want to compute
    f(2^(GMP_NUMB_BITS * n)) for a polynomial f of degree 5, given the
