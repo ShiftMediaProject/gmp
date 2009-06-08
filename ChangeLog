@@ -1,3 +1,9 @@
+2009-06-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom_interpolate_6pts.c (mpn_toom_interpolate_6pts):
+	Stricter ASSERTs based on maximum size of polynomial coefficients.
+	Improved comments on the signedness of intermediate values.
+
 2009-06-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom2_sqr.c: Make it actually work.

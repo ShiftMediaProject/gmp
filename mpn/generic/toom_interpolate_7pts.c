@@ -83,8 +83,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    w2 is stored at { rp + 2n, 2n+1 }, and w6 is stored at { rp + 6n,
    w6n }. The other values are 2n + 1 limbs each (with most
    significant limbs small). f(-1) and f(-1/2) may be negative, signs
-   determined by the flag bits. All intermediate results are
-   represented in two's complement. Inputs are destroyed.
+   determined by the flag bits. Inputs are destroyed.
 
    Needs (2*n + 1) limbs of temporary storage.
 */
@@ -105,26 +104,32 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
   /* Using Marco Bodrato's formulas
 
      W5 = W5 + W2
-     W1 =(W1 + W2)/2
+     W1 =(W1 - W2)/2
      W2 = W2 - W6
      W2 =(W2 - W1)/4 - W0*16
-     W3 =(W3 + W4)/2
+     W3 =(W4 - W3)/2
      W4 = W4 - W3
 
-     W5 = W5 - W4*65
+     W5 = W5 - W4*65      May be negative.
      W4 = W4 - W6 - W0
-     W5 =(W5 + W4*45)/2
+     W5 =(W5 + W4*45)/2   Now >= 0 again.
      W2 =(W2 - W4)/3
      W4 = W4 - W2
 
-     W1 = W1 - W5
-     W5 =(W5 - W3*8)/ 9
+     W1 = W1 - W5         May be negative.
+     W5 =(W5 - W3*8)/9
      W3 = W3 - W5
-     W1 =(W1/15 + W5)/ 2
+     W1 =(W1/15 + W5)/2   Now >= 0 again.
      W5 = W5 - W1
 
      where W0 = f(0), W1 = 64 f(-1/2), W2 = 64 f(1/2), W3 = f(-1),
 	   W4 = f(1), W5 = f(2), W6 = f(oo),
+
+     Note that most intermediate results are positive; the ones that
+     may be negative are represented in two's complement. We must
+     never shift right a value that may be negative, since that would
+     invalidate the sign bit. On the other hand, divexact by odd
+     numbers work fine with two's complement.
   */
 
   mpn_add_n (w5, w5, w2, m);
@@ -193,13 +198,13 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
   mpn_rshift (w1, w1, m, 1); /* w1>=0 now */
   mpn_sub_n (w5, w5, w1, m);
 
-  /* Two's complement coefficients must be non-negative at the end of
-     this procedure. */
-  ASSERT ( !(w1[2*n] & GMP_LIMB_HIGHBIT));
-  ASSERT ( !(w2[2*n] & GMP_LIMB_HIGHBIT));
-  ASSERT ( !(w3[2*n] & GMP_LIMB_HIGHBIT));
-  ASSERT ( !(w4[2*n] & GMP_LIMB_HIGHBIT));
-  ASSERT ( !(w5[2*n] & GMP_LIMB_HIGHBIT));
+  /* These bounds are valid for the 4x4 polynomial product of toom44,
+   * and they are conservative for toom53 and toom42. */
+  ASSERT (w1[2*n] < 2);
+  ASSERT (w2[2*n] < 3);
+  ASSERT (w3[2*n] < 4);
+  ASSERT (w4[2*n] < 3);
+  ASSERT (w5[2*n] < 2);
 
   /* Addition chain. Note carries and the 2n'th limbs that need to be
    * added in.
