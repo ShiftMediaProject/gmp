@@ -32,12 +32,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   <-s--><--n-->
    ____ ______
   |_a1_|___a0_|
-   |b1_|___b0_|
-   <-t-><--n-->
 
-  v0  =  a0     * b0       #   A(0)*B(0)
-  vm1 = (a0- a1)*(b0- b1)  #  A(-1)*B(-1)
-  vinf=      a1 *     b1   # A(inf)*B(inf)
+  v0  =  a0     ^2  #   A(0)^2
+  vm1 = (a0- a1)^2  #  A(-1)^2
+  vinf=      a1 ^2  # A(inf)^2
 */
 
 #if TUNE_PROGRAM_BUILD
@@ -103,15 +101,16 @@ mpn_toom2_sqr (mp_ptr pp,
 #define v0	pp				/* 2n */
 #define vinf	(pp + 2 * n)			/* s+s */
 #define vm1	scratch				/* 2n */
+#define scratch_out	scratch + 2 * n
 
   /* vm1, 2n limbs */
-  TOOM2_SQR_N_REC (vm1, asm1, n, scratch);
+  TOOM2_SQR_N_REC (vm1, asm1, n, scratch_out);
 
   /* vinf, s+s limbs */
-  TOOM2_SQR_N_REC (vinf, a1, s, scratch);
+  TOOM2_SQR_N_REC (vinf, a1, s, scratch_out);
 
   /* v0, 2n limbs */
-  TOOM2_SQR_N_REC (v0, ap, n, scratch);
+  TOOM2_SQR_N_REC (v0, ap, n, scratch_out);
 
   /* H(v0) + L(vinf) */
   cy = mpn_add_n (pp + 2 * n, v0 + n, vinf, n);

@@ -75,7 +75,18 @@ __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_pt
    Don't declare it static since it is needed by tuneup.
 */
 #ifdef MUL_FFT_TABLE2
-#define MPN_FFT_TABLE2_SIZE 512
+
+#if defined (MUL_FFT_TABLE2_SIZE) && defined (SQR_FFT_TABLE2_SIZE)
+#if MUL_FFT_TABLE2_SIZE > SQR_FFT_TABLE2_SIZE
+#define FFT_TABLE2_SIZE MUL_FFT_TABLE2_SIZE
+#else
+#define FFT_TABLE2_SIZE SQR_FFT_TABLE2_SIZE
+#endif
+#endif
+
+#ifndef FFT_TABLE2_SIZE
+#define FFT_TABLE2_SIZE 200
+#endif
 
 /* FIXME: The format of this should change to need less space.
    Perhaps put n and k in the same 32-bit word, with n shifted-down
@@ -83,11 +94,11 @@ __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_pt
    n-1 is highly divisible.
    Alternatively, separate n and k out into separate arrays.  */
 struct nk {
-  mp_size_t n;
-  unsigned char k;
+  unsigned int n:27;
+  unsigned int k:5;
 };
 
-static struct nk mpn_fft_table2[2][MPN_FFT_TABLE2_SIZE] =
+static struct nk mpn_fft_table2[2][FFT_TABLE2_SIZE] =
 {
   MUL_FFT_TABLE2,
   SQR_FFT_TABLE2
