@@ -45,6 +45,7 @@ PROLOGUE(mpn_mod_1s_4p)
 	mov	32(%rcx), %rbp
 	mov	40(%rcx), %r13
 	mov	48(%rcx), %r12
+	xor	R32(%r8), R32(%r8)
 	mov	R32(%rsi), R32(%rdx)
 	and	$3, R32(%rdx)
 	je	L(b0)
@@ -55,10 +56,9 @@ PROLOGUE(mpn_mod_1s_4p)
 L(b3):	lea	-24(%rdi,%rsi,8), %rdi
 	mov	8(%rdi), %rax
 	mul	%r11
-	mov	%rax, %r9
-	mov	%rdx, %r8
-	add	(%rdi), %r9
-	adc	$0, %r8
+	mov	(%rdi), %r9
+	add	%rax, %r9
+	adc	%rdx, %r8
 	mov	16(%rdi), %rax
 	mul	%rbx
 	jmp	L(m0)
@@ -67,10 +67,9 @@ L(b3):	lea	-24(%rdi,%rsi,8), %rdi
 L(b0):	lea	-32(%rdi,%rsi,8), %rdi
 	mov	8(%rdi), %rax
 	mul	%r11
-	mov	%rax, %r9
-	mov	%rdx, %r8
-	add	(%rdi), %r9
-	adc	$0, %r8
+	mov	(%rdi), %r9
+	add	%rax, %r9
+	adc	%rdx, %r8
 	mov	16(%rdi), %rax
 	mul	%rbx
 	add	%rax, %r9
@@ -81,7 +80,6 @@ L(b0):	lea	-32(%rdi,%rsi,8), %rdi
 
 	ALIGN(8)
 L(b1):	lea	-8(%rdi,%rsi,8), %rdi
-	xor	R32(%r8), R32(%r8)
 	mov	(%rdi), %r9
 	jmp	L(m1)
 
@@ -89,11 +87,8 @@ L(b1):	lea	-8(%rdi,%rsi,8), %rdi
 L(b2):	lea	-16(%rdi,%rsi,8), %rdi
 	mov	8(%rdi), %rax
 	mul	%r11
-	mov	%rax, %r9
-	mov	%rdx, %r8
-	add	(%rdi), %r9
-	adc	$0, %r8
-	jmp	L(m1)
+	mov	(%rdi), %r9
+	jmp	L(m0)
 
 	ALIGN(16)
 L(top):	mov	-24(%rdi), %rax
@@ -153,7 +148,6 @@ L(end):	mov	8(%r14), R32(%rsi)
 	mov	%r8, %rax
 	sub	%rbx, %rax
 	cmovb	%r8, %rax
-	mov	R32(%rsi), R32(%rcx)
 	shr	R8(%rcx), %rax
 	pop	%rbx
 	pop	%rbp
