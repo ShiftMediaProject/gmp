@@ -1001,82 +1001,6 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
    ? BELOW_THRESHOLD (0, thresh)                        \
    : (cache))
 
-/* FIXME: Make these itch functions less conservative.  Also consider making
-   them dependent on just 'an', and compute the allocation directly from 'an'
-   instead of via n.  */
-static inline mp_size_t
-mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  /* 2*(an + log_2(an / KARATSUBA_MUL_THRESHOLD)) */
-  return 2*(an + GMP_NUMB_BITS);
-}
-
-static inline mp_size_t
-mpn_toom33_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
-  mp_size_t n = (an + 2) / (size_t) 3;
-  return 6 * n + GMP_NUMB_BITS;
-}
-
-static inline mp_size_t
-mpn_toom44_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  mp_size_t n = (an + 3) >> 2;
-  return 12 * n + GMP_NUMB_BITS;
-}
-
-static inline mp_size_t
-mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
-  mp_size_t itch = 4 * n + 2;
-  if (ABOVE_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
-    itch += mpn_toom22_mul_itch (n, n);
-
-  return itch;
-}
-
-static inline mp_size_t
-mpn_toom42_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
-  mp_size_t n = an >= 2 * bn ? (an + 3) >> 2 : (bn + 1) >> 1;
-  return 6 * n + 3;
-}
-
-static inline mp_size_t
-mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  mp_size_t n = 1 + (3 * an >= 5 * bn ? (an - 1) / (size_t) 5 : (bn - 1) / (size_t) 3);
-  return 10 * n + 10;
-}
-
-static inline mp_size_t
-mpn_toom2_sqr_itch (mp_size_t an)
-{
-  mp_size_t n = an - (an >> 1);
-  return 4 * n + 2;
-}
-
-static inline mp_size_t
-mpn_toom3_sqr_itch (mp_size_t an)
-{
-  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
-  mp_size_t n = (an + 2) / (size_t) 3;
-  return 6 * n + GMP_NUMB_BITS;
-}
-
-static inline mp_size_t
-mpn_toom4_sqr_itch (mp_size_t an)
-{
-  mp_size_t n = (an + 3) >> 2;
-  return 12 * n + GMP_NUMB_BITS;
-}
-
 
 /* kara uses n+1 limbs of temporary space and then recurses with the balance,
    so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ...  This can be solved to
@@ -4293,6 +4217,81 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 }
 #endif
 
+/* FIXME: Make these itch functions less conservative.  Also consider making
+   them dependent on just 'an', and compute the allocation directly from 'an'
+   instead of via n.  */
+static inline mp_size_t
+mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  /* 2*(an + log_2(an / MUL_KARATSUBA_THRESHOLD)) */
+  return 2*(an + GMP_NUMB_BITS);
+}
+
+static inline mp_size_t
+mpn_toom33_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  mp_size_t n = (an + 2) / (size_t) 3;
+  return 6 * n + GMP_NUMB_BITS;
+}
+
+static inline mp_size_t
+mpn_toom44_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = (an + 3) >> 2;
+  return 12 * n + GMP_NUMB_BITS;
+}
+
+static inline mp_size_t
+mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
+  mp_size_t itch = 4 * n + 2;
+  if (ABOVE_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
+    itch += mpn_toom22_mul_itch (n, n);
+
+  return itch;
+}
+
+static inline mp_size_t
+mpn_toom42_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  mp_size_t n = an >= 2 * bn ? (an + 3) >> 2 : (bn + 1) >> 1;
+  return 6 * n + 3;
+}
+
+static inline mp_size_t
+mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (3 * an >= 5 * bn ? (an - 1) / (size_t) 5 : (bn - 1) / (size_t) 3);
+  return 10 * n + 10;
+}
+
+static inline mp_size_t
+mpn_toom2_sqr_itch (mp_size_t an)
+{
+  mp_size_t n = an - (an >> 1);
+  return 4 * n + 2;
+}
+
+static inline mp_size_t
+mpn_toom3_sqr_itch (mp_size_t an)
+{
+  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
+     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  mp_size_t n = (an + 2) / (size_t) 3;
+  return 6 * n + GMP_NUMB_BITS;
+}
+
+static inline mp_size_t
+mpn_toom4_sqr_itch (mp_size_t an)
+{
+  mp_size_t n = (an + 3) >> 2;
+  return 12 * n + GMP_NUMB_BITS;
+}
 
 #ifdef __cplusplus
 
