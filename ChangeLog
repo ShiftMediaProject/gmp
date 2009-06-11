@@ -1,5 +1,10 @@
 2009-06-11  Niels Möller  <nisse@lysator.liu.se>
 
+	Support for mpn_toom32_mul in speed:
+	* tune/speed.c (routine): Added mpn_toom32_mul.
+	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM32_MUL): New macro.
+	* tune/common.c (speed_mpn_toom32_mul): New function.
+
 	* gmp-impl.h (mpn_toom32_mul_itch): Count scratch space needed
 	for the calls to mpn_toom22_mul.
 	(ABOVE_THRESHOLD): Moved this and related macros so it can be used

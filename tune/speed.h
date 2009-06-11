@@ -262,6 +262,7 @@ double speed_mpn_toom3_sqr_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom22_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom33_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom44_mul __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_toom32_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_udiv_qrnnd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_udiv_qrnnd_r __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_umul_ppmm __GMP_PROTO ((struct speed_params *s));
@@ -1041,6 +1042,12 @@ int speed_routine_count_zeros_setup
      mpn_toom44_mul_itch (s->size, s->size),				\
      MPN_TOOM44_MUL_MINSIZE)
 
+#define MPN_TOOM32_MUL_MINSIZE 10				/* FIXME */
+#define SPEED_ROUTINE_MPN_TOOM32_MUL(function)				\
+  SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
+    (function (wp, s->xp, s->size, s->yp, 2*s->size/3, tspace),		\
+     mpn_toom32_mul_itch (s->size, 2*s->size/3),			\
+     MPN_TOOM32_MUL_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_SQR_CALL(call)				\
   {									\

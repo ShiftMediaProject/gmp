@@ -964,6 +964,12 @@ speed_mpn_toom44_mul (struct speed_params *s)
 }
 
 double
+speed_mpn_toom32_mul (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_TOOM32_MUL (mpn_toom32_mul);
+}
+
+double
 speed_mpn_mul_fft_full (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MUL_N_CALL
