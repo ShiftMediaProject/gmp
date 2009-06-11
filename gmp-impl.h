@@ -1007,8 +1007,8 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 static inline mp_size_t
 mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  mp_size_t n = an - (an >> 1);
-  return 4 * n + 2;
+  /* 2*(an + log_2(an / KARATSUBA_MUL_THRESHOLD)) */
+  return 2*(an + GMP_NUMB_BITS);
 }
 
 static inline mp_size_t
@@ -1034,6 +1034,8 @@ mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
   mp_size_t itch = 4 * n + 2;
   if (ABOVE_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
     itch += mpn_toom22_mul_itch (n, n);
+
+  return itch;
 }
 
 static inline mp_size_t

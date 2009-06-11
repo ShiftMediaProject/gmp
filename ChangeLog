@@ -4,6 +4,7 @@
 	for the calls to mpn_toom22_mul.
 	(ABOVE_THRESHOLD): Moved this and related macros so it can be used
 	by mpn_toom32_mul_itch.
+	(mpn_toom22_mul_itch): Count scratch space for recursive calls.
 
 2009-06-11  Torbjorn Granlund  <tege@gmplib.org>
 
