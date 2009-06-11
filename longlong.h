@@ -506,6 +506,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define UDIV_TIME 200
 #endif /* LONGLONG_STANDALONE */
 #endif
+#if defined (__ARM_ARCH_5__)
+/* This actually requires arm 5 */
+#define count_leading_zeros(count, x) \
+  __asm__ ("clz\t%0, %1" : "=r" (count) : "r" (x))
+#define COUNT_LEADING_ZEROS_0 32
+#endif
 #endif /* __arm__ */
 
 #if defined (__clipper__) && W_TYPE_SIZE == 32
