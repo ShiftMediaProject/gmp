@@ -972,6 +972,35 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
   } while (0)
 
 
+/* For a threshold between algorithms A and B, size>=thresh is where B
+   should be used.  Special value MP_SIZE_T_MAX means only ever use A, or
+   value 0 means only ever use B.  The tests for these special values will
+   be compile-time constants, so the compiler should be able to eliminate
+   the code for the unwanted algorithm.  */
+
+#define ABOVE_THRESHOLD(size,thresh)    \
+  ((thresh) == 0                        \
+   || ((thresh) != MP_SIZE_T_MAX        \
+       && (size) >= (thresh)))
+#define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
+
+/* Usage: int  use_foo = BELOW_THRESHOLD (size, FOO_THRESHOLD);
+          ...
+          if (CACHED_BELOW_THRESHOLD (use_foo, size, FOO_THRESHOLD))
+
+   When "use_foo" is a constant (thresh is 0 or MP_SIZE_T), gcc prior to
+   version 3.3 doesn't optimize away a test "if (use_foo)" when within a
+   loop.  CACHED_BELOW_THRESHOLD helps it do so.  */
+
+#define CACHED_ABOVE_THRESHOLD(cache, thresh)           \
+  ((thresh) == 0 || (thresh) == MP_SIZE_T_MAX           \
+   ? ABOVE_THRESHOLD (0, thresh)                        \
+   : (cache))
+#define CACHED_BELOW_THRESHOLD(cache, thresh)           \
+  ((thresh) == 0 || (thresh) == MP_SIZE_T_MAX           \
+   ? BELOW_THRESHOLD (0, thresh)                        \
+   : (cache))
+
 /* FIXME: Make these itch functions less conservative.  Also consider making
    them dependent on just 'an', and compute the allocation directly from 'an'
    instead of via n.  */
@@ -1002,7 +1031,9 @@ static inline mp_size_t
 mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
 {
   mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
-  return 4 * n + 2;
+  mp_size_t itch = 4 * n + 2;
+  if (ABOVE_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
+    itch += mpn_toom22_mul_itch (n, n);
 }
 
 static inline mp_size_t
@@ -1650,36 +1681,6 @@ __GMP_DECLSPEC void mpn_copyd __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define FIB_TABLE(n)  (__gmp_fib_table[(n)+1])
-
-
-/* For a threshold between algorithms A and B, size>=thresh is where B
-   should be used.  Special value MP_SIZE_T_MAX means only ever use A, or
-   value 0 means only ever use B.  The tests for these special values will
-   be compile-time constants, so the compiler should be able to eliminate
-   the code for the unwanted algorithm.  */
-
-#define ABOVE_THRESHOLD(size,thresh)    \
-  ((thresh) == 0                        \
-   || ((thresh) != MP_SIZE_T_MAX        \
-       && (size) >= (thresh)))
-#define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
-
-/* Usage: int  use_foo = BELOW_THRESHOLD (size, FOO_THRESHOLD);
-          ...
-          if (CACHED_BELOW_THRESHOLD (use_foo, size, FOO_THRESHOLD))
-
-   When "use_foo" is a constant (thresh is 0 or MP_SIZE_T), gcc prior to
-   version 3.3 doesn't optimize away a test "if (use_foo)" when within a
-   loop.  CACHED_BELOW_THRESHOLD helps it do so.  */
-
-#define CACHED_ABOVE_THRESHOLD(cache, thresh)           \
-  ((thresh) == 0 || (thresh) == MP_SIZE_T_MAX           \
-   ? ABOVE_THRESHOLD (0, thresh)                        \
-   : (cache))
-#define CACHED_BELOW_THRESHOLD(cache, thresh)           \
-  ((thresh) == 0 || (thresh) == MP_SIZE_T_MAX           \
-   ? BELOW_THRESHOLD (0, thresh)                        \
-   : (cache))
 
 
 /* If MUL_KARATSUBA_THRESHOLD is not already defined, define it to a
