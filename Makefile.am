@@ -386,7 +386,7 @@ gen-bases_.c: gen-bases.c $(ANSI2KNR)
 
 
 trialdivtab.h: gen-trialdivtab$(EXEEXT_FOR_BUILD)
-	./gen-trialdivtab $(BITS_PER_MP_LIMB) 2000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
+	./gen-trialdivtab $(BITS_PER_MP_LIMB) 8000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
 BUILT_SOURCES += trialdivtab.h
 
 gen-trialdivtab$(EXEEXT_FOR_BUILD): gen-trialdivtab$(U_FOR_BUILD).c dumbmp.c
