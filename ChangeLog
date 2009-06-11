@@ -1,3 +1,8 @@
+2009-06-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* dumbmp.c (isprime): Replace with slightly less inefficient code.
+	(mpz_tdiv_r): New function.
+
 2009-06-11  Niels Möller  <nisse@lysator.liu.se>
 
 	Support for mpn_toom32_mul in speed:
