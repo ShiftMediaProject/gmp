@@ -384,6 +384,22 @@ gen-bases_.c: gen-bases.c $(ANSI2KNR)
 	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-bases.c; then echo $(srcdir)/gen-bases.c; else echo gen-bases.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-bases_.c || rm -f gen-bases_.c
 
 
+
+trialdivtab.h: gen-trialdivtab$(EXEEXT_FOR_BUILD)
+	./gen-trialdivtab $(BITS_PER_MP_LIMB) 2000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
+BUILT_SOURCES += trialdivtab.h
+
+gen-trialdivtab$(EXEEXT_FOR_BUILD): gen-trialdivtab$(U_FOR_BUILD).c dumbmp.c
+	$(CC_FOR_BUILD) `test -f 'gen-trialdivtab$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-trialdivtab$(U_FOR_BUILD).c -o gen-trialdivtab$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
+DISTCLEANFILES += gen-trialdivtab$(EXEEXT_FOR_BUILD)
+EXTRA_DIST += gen-trialdivtab.c
+
+gen-trialdivtab_.c: gen-trialdivtab.c $(ANSI2KNR)
+	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-trialdivtab.c; then echo $(srcdir)/gen-trialdivtab.c; else echo gen-trialdivtab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-trialdivtab_.c || rm -f gen-trialdivtab_.c
+
+
+
+
 mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
 	./gen-psqr $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
 BUILT_SOURCES += mpn/perfsqr.h

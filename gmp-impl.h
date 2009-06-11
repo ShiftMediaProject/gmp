@@ -2695,6 +2695,11 @@ __GMP_DECLSPEC mp_limb_t mpn_modexact_1_odd __GMP_PROTO ((mp_srcptr, mp_size_t, 
    ? mpn_modexact_1_odd (src, size, divisor)				\
    : mpn_mod_1 (src, size, divisor))
 
+#ifndef mpn_trialdiv  /* if not done with cpuvec in a fat binary */
+#define mpn_trialdiv __MPN(trialdiv)
+__GMP_DECLSPEC mp_limb_t mpn_trialdiv __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, int *));
+#endif
+
 
 /* binvert_limb() sets inv to the multiplicative inverse of n modulo
    2^GMP_NUMB_BITS, ie. satisfying inv*n == 1 mod 2^GMP_NUMB_BITS.
