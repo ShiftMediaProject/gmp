@@ -1,5 +1,10 @@
 2009-06-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* longlong.h (arm count_leading_zeros): Define for armv5.
+
+	* gmp-impl.h: Move down toom itch functions to after we've #defined
+	all THRESHOLDs.
+
 	* dumbmp.c (isprime): Replace with slightly less inefficient code.
 	(mpz_tdiv_r): New function.
 
