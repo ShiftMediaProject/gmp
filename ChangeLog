@@ -1,3 +1,10 @@
+2009-06-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* nextprime.c: New file.
+	* gmp-impl.h (gmp_primesieve_t, gmp_init_primesieve, gmp_nextprime):
+	Define.
+	* Makefile.am (libgmp_la_SOURCES): Add nextprime.c.
+
 2009-06-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/trialdiv.c: New file.

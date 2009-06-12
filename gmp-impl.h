@@ -1608,6 +1608,21 @@ __GMP_DECLSPEC void mpn_copyd __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define FIB_TABLE(n)  (__gmp_fib_table[(n)+1])
 
+#define SIEVESIZE 512		/* FIXME: Allow gmp_init_primesieve to choose */
+typedef struct
+{
+  unsigned long d;		   /* current index in s[] */
+  unsigned long s0;		   /* number corresponding to s[0] */
+  unsigned long sqrt_s0;	   /* misnomer for sqrt(s[SIEVESIZE-1]) */
+  unsigned char s[SIEVESIZE + 1];  /* sieve table */
+} gmp_primesieve_t;
+
+#define gmp_init_primesieve __gmp_init_primesieve
+__GMP_DECLSPEC void gmp_init_primesieve (gmp_primesieve_t *);
+
+#define gmp_nextprime __gmp_nextprime
+__GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
+
 
 /* If MUL_KARATSUBA_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */

@@ -251,7 +251,8 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h randmt.h			\
   assert.c compat.c errno.c extract-dbl.c invalid.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c \
   rand.c randclr.c randdef.c randiset.c randlc2s.c randlc2x.c randmt.c	\
-  randmts.c rands.c randsd.c randsdui.c randbui.c randmui.c version.c
+  randmts.c rands.c randsd.c randsdui.c randbui.c randmui.c version.c	\
+  nextprime.c
 EXTRA_libgmp_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPQ_OBJECTS)	\
