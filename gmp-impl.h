@@ -1226,15 +1226,23 @@ __GMP_DECLSPEC mp_size_t mpn_mu_bdiv_qr_itch __GMP_PROTO ((mp_size_t, mp_size_t)
 
 #define   mpn_mu_bdiv_q __MPN(mu_bdiv_q)
 __GMP_DECLSPEC void      mpn_mu_bdiv_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
-
 #define   mpn_mu_bdiv_q_itch __MPN(mu_bdiv_q_itch)
 __GMP_DECLSPEC mp_size_t mpn_mu_bdiv_q_itch __GMP_PROTO ((mp_size_t, mp_size_t));
+
+#define   mpn_bdiv_qr __MPN(bdiv_qr)
+__GMP_DECLSPEC mp_limb_t mpn_bdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_bdiv_qr_itch __MPN(bdiv_qr_itch)
+__GMP_DECLSPEC mp_size_t mpn_bdiv_qr_itch __GMP_PROTO ((mp_size_t, mp_size_t));
+
+#define   mpn_bdiv_q __MPN(bdiv_q)
+__GMP_DECLSPEC void      mpn_bdiv_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_bdiv_q_itch __MPN(bdiv_q_itch)
+__GMP_DECLSPEC mp_size_t mpn_bdiv_q_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
 #define   mpn_divexact __MPN(divexact)
 __GMP_DECLSPEC void      mpn_divexact __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define   mpn_divexact_itch __MPN(divexact_itch)
 __GMP_DECLSPEC mp_size_t mpn_divexact_itch __GMP_PROTO ((mp_size_t, mp_size_t));
-
 
 #define   mpn_bdiv_dbm1c __MPN(bdiv_dbm1c)
 __GMP_DECLSPEC mp_limb_t mpn_bdiv_dbm1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
@@ -1734,6 +1742,10 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef MU_BDIV_Q_THRESHOLD
 #define MU_BDIV_Q_THRESHOLD     2000
+#endif
+
+#ifndef MU_BDIV_QR_THRESHOLD
+#define MU_BDIV_QR_THRESHOLD    2000
 #endif
 
 /* First k to use for an FFT modF multiply.  A modF FFT is an order

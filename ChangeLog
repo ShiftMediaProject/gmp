@@ -1,8 +1,13 @@
 2009-06-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/bdiv_qr.c: New file.
+	* mpn/generic/bdiv_q.c: New file.
+	* configure.in (gmp_mpn_functions): Add bdiv_qr and bdiv_q.
+	* gmp-impl.h: Declare new functions.
+
 	* nextprime.c: New file.
 	* gmp-impl.h (gmp_primesieve_t, gmp_init_primesieve, gmp_nextprime):
-	Define.
+	Declare
 	* Makefile.am (libgmp_la_SOURCES): Add nextprime.c.
 
 2009-06-11  Torbjorn Granlund  <tege@gmplib.org>
