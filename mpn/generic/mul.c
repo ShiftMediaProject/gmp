@@ -142,7 +142,7 @@ mpn_mul (mp_ptr prodp,
       ws = TMP_SALLOC_LIMBS (WSALL + 1);
 
   #define ITCH ((un + vn) * 4 + 100)
-      scratch = TMP_SALLOC_LIMBS (ITCH + 1);
+      scratch = TMP_ALLOC_LIMBS (ITCH + 1);
 
       if (un >= 3 * vn)
 	{
