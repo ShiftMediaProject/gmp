@@ -1,4 +1,10 @@
-/* mpn_trialdiv
+/* mpn_trialdiv -- find small factors of an mpn number using trial division.
+
+   Contributed to the GNU project by Torbjörn Granlund.
+
+   THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
+   SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 Copyright 2009 Free Software Foundation, Inc.
 
