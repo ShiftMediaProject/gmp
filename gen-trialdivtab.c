@@ -1,5 +1,7 @@
 /* gen-trialdivtab.c
 
+   Contributed to the GNU project by Torbjörn Granlund.
+
 Copyright 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -240,7 +242,7 @@ mpn_mod_1s_4p_cps (mpz_t cps[7], mpz_t bparm)
   mpz_mul_2exp (t, t, limb_bits - cnt);
   mpz_sub (t, t, b);
   mpz_mul_2exp (t, t, limb_bits);
-  mpz_tdiv_q (bi, t, b);		/* bi = B^2/b */
+  mpz_tdiv_q (bi, t, b);		/* bi = B^2/b, except msb */
 
   mpz_set_ui (t, 1);
   mpz_mul_2exp (t, t, limb_bits);	/* t = B */
