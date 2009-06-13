@@ -2432,7 +2432,8 @@ gmp_mpn_functions="$extra_functions					   \
   fib2_ui mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump		   \
   mod_1_1 mod_1_2 mod_1_3 mod_1_4					   \
   mul mul_fft mul_n mul_basecase sqr_basecase random random2 pow_1	   \
-  rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
+  rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp	   \
+  perfsqr perfpow							   \
   bdivmod gcd_1 gcd gcdext_1 gcdext gcd_lehmer gcd_subdiv_step		   \
   gcdext_lehmer gcdext_subdiv_step					   \
   tdiv_qr dc_divrem_n sb_divrem_mn jacbase get_d			   \
@@ -2446,11 +2447,11 @@ gmp_mpn_functions="$extra_functions					   \
   invert binvert							   \
   sb_div_qr sb_divappr_q sb_div_q dc_div_qr dc_divappr_q dc_div_q	   \
   mu_div_qr mu_divappr_q mu_div_q					   \
-  bdiv_q_1 								   \
+  bdiv_q_1								   \
   sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
   bdiv_q bdiv_qr							   \
   divexact bdiv_dbm1c redc_1 redc_2 powm powlo powm_sec subcnd_n	   \
-  trialdiv	      	     	    	       				   \
+  trialdiv								   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,

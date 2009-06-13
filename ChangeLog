@@ -1,3 +1,14 @@
+2009-06-13  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-h.in (mpn_perfect_power_p): Declare.
+	* configure.in (gmp_mpn_functions): Add perfpow.
+	* mpz/perfpow.c: Now trivial, simply calls mpn_perfect_power_p.
+
+2009-06-13  Martin Boij  <mboij@kth.se>
+
+	* mpn/generic/perfpow.c: New file.
+	* tests/mpz/t-perfpow.c: Rewrite.
+
 2009-06-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_qr.c: New file.

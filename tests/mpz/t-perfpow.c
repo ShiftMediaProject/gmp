@@ -1,6 +1,8 @@
 /* Test mpz_perfect_power_p.
 
-Copyright 2008 Free Software Foundation, Inc.
+   Contributed to the GNU project by Torbjorn Granlund and Martin Boij.
+
+Copyright 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -100,44 +102,124 @@ check_tests ()
   mpz_clear (x);
 }
 
+#define NRP 15
+
 void
-check_random (int n_tests)
+check_random (int reps)
 {
-  int test;
-  mpz_t bs, op1, op2, x;
+  mpz_t n, np, temp, primes[NRP];
+  int i, j, k, unique, destroy, res;
+  unsigned long int nrprimes, primebits, g, exp[NRP], e;
   gmp_randstate_ptr rands;
-  unsigned long ex;
 
   rands = RANDS;
 
-  mpz_init (bs);
-  mpz_init (op1);
-  mpz_init (op2);
-  mpz_init (x);
+  mpz_init (n);
+  mpz_init (np);
+  mpz_init (temp);
 
-  for (test = 0; test < n_tests; test++)
+  for (i = 0; i < NRP; i++)
+    mpz_init (primes[i]);
+
+  for (i = 0; i < reps; i++)
     {
-      mpz_urandomb (bs, rands, 32);
-      mpz_rrandomb (op1, rands, mpz_get_ui (bs) % 32);
-      if (test & 1)
-	mpz_neg (op1, op1);
-      mpz_rrandomb (op2, rands, (mpz_get_ui (bs) >> 5) % 8);
+      mpz_urandomb (np, rands, 32);
+      nrprimes = mpz_get_ui (np) % NRP + 1; /* 1-NRP unique primes */
 
-      ex = mpz_get_ui (op2) + 2;
-      mpz_pow_ui (x, op1, ex);
+      mpz_urandomb (np, rands, 32);
+      g = mpz_get_ui (np) % 32 + 2; /* gcd 2-33 */
 
-      if (! mpz_perfect_power_p (x))
+      for (j = 0; j < nrprimes;)
 	{
-	  gmp_fprintf (stderr, "mpz_perfect_power_p rejects perfect power %Zd^%ld\n", op1, ex);
-	  gmp_fprintf (stderr, "fault operand: %Zx\n", x);
-	  abort ();
+	  mpz_urandomb (np, rands, 32);
+	  primebits = mpz_get_ui (np) % 100 + 3; /* 3-102 bit primes */
+	  mpz_urandomb (primes[j], rands, primebits);
+	  mpz_nextprime (primes[j], primes[j]);
+	  unique = 1;
+	  for (k = 0; k < j; k++)
+	    {
+	      if (mpz_cmp (primes[j], primes[k]) == 0)
+		{
+		  unique = 0;
+		  break;
+		}
+	    }
+	  if (unique)
+	    {
+	      mpz_urandomb (np, rands, 32);
+	      e = 371 / (10 * primebits) + mpz_get_ui (np) % 11 + 1; /* Magic constants */
+	      exp[j++] = g * e;
+	    }
+	}
+
+      if (nrprimes > 1)
+	{
+	  /* Destroy d exponents, d in [1, nrprimes - 1] */
+	  if (nrprimes == 2)
+	    {
+	      destroy = 1;
+	    }
+	  else
+	    {
+	      mpz_urandomb (np, rands, 32);
+	      destroy = mpz_get_ui (np) % (nrprimes - 2) + 1;
+	    }
+
+	  g = exp[destroy];
+	  for (k = destroy + 1; k < nrprimes; k++)
+	    g = mpn_gcd_1 (&g, 1, exp[k]);
+
+	  for (j = 0; j < destroy; j++)
+	    {
+	      mpz_urandomb (np, rands, 32);
+	      e = mpz_get_ui (np) % 50 + 1;
+	      while (mpn_gcd_1 (&g, 1, e) > 1)
+		e++;
+
+	      exp[j] = e;
+	    }
+	}
+
+      /* Compute n */
+      mpz_pow_ui (n, primes[0], exp[0]);
+      for (j = 1; j < nrprimes; j++)
+	{
+	  mpz_pow_ui (temp, primes[j], exp[j]);
+	  mpz_mul (n, n, temp);
+	}
+
+      res = mpz_perfect_power_p (n);
+
+      if (nrprimes == 1)
+	{
+	if (res == 0 && exp[0] > 1)
+	  {
+	    printf("n is a perfect power, perfpow_p disagrees\n");
+	    gmp_printf("n = %Zu\nprimes[0] = %Zu\nexp[0] = %lu\n", n, primes[0], exp[0]);
+	    abort ();
+	  }
+	else if (res == 1 && exp[0] == 1)
+	  {
+	    gmp_printf("n = %Zu\n", n);
+	    printf("n is now a prime number, but perfpow_p still believes n is a perfect power\n");
+	    abort ();
+	  }
+	}
+      else
+	{
+	  if (res == 1)
+	    {
+	      gmp_printf("n = %Zu\nn was destroyed, but perfpow_p still believes n is a perfect power\n", n);
+	      abort ();
+	    }
 	}
     }
 
-  mpz_clear (bs);
-  mpz_clear (op1);
-  mpz_clear (op2);
-  mpz_clear (x);
+  mpz_clear (n);
+  mpz_clear (np);
+  mpz_clear (temp);
+  for (i = 0; i < NRP; i++)
+    mpz_clear (primes[i]);
 }
 
 int
@@ -150,7 +232,7 @@ main (int argc, char **argv)
 
   check_tests ();
 
-  n_tests = 100000;
+  n_tests = 1000;
   if (argc == 2)
     n_tests = atoi (argv[1]);
   check_random (n_tests);
