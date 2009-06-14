@@ -1,5 +1,8 @@
 2009-06-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/bdiv_q_1.asm: Optimize away a mov insn.
+	* mpn/x86_64/dive_1.asm: Likewise.
+
 	* mpn/generic/perfpow.c (binv_root): Use mpn_bdiv_q_1, not
 	mpn_divexact_itch for 2-adic division.
 	(all functions): Micro optimize.
@@ -155,7 +158,7 @@
 
 	* configure.in (gmp_mpn_functions): Add toom43_mul, toom52_mul, and
 	toom_interpolate_6pts, but also some previously forgotten functions.
-	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Likesise.
+	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Likewise.
 	* gmp-impl.h: Declare new functions. Sort toom function declarations.
 
 	* gmp-impl.h: Rename  toom4_* flags enum to toom7_*.  Relevant C files
