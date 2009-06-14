@@ -287,7 +287,7 @@ MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 BUILT_SOURCES += mp.h
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
-  mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c
+  mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c nextprime.c
 libmp_la_DEPENDENCIES = $(srcdir)/libmp.sym				\
   @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJECTS) @mpn_objs_in_libmp@	\
   mpz/add$U.lo mpz/gcdext$U.lo mpz/invert$U.lo mpz/mul$U.lo		\
