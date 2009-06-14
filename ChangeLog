@@ -2,6 +2,7 @@
 
 	* mpn/generic/perfpow.c (binv_root): Use mpn_bdiv_q_1, not
 	mpn_divexact_itch for 2-adic division.
+	(all functions): Micro optimize.
 
 	* Makefile.am (libmp_la_SOURCES): Add nextprime.c.
 
