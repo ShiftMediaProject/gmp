@@ -98,7 +98,7 @@ main (int argc, char **argv)
   mpz_t root1;
   mp_size_t x2_size;
   int i;
-  int reps = 5000;
+  int reps = 20000;
   unsigned long nth;
   gmp_randstate_ptr rands;
   mpz_t bs;
