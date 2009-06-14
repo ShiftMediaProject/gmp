@@ -76,12 +76,11 @@ ifdef(`PIC',`
 	imul	R32(%rbx), R32(%rdx)	C inv*inv*d
 	sub	R32(%rdx), R32(%rax)	C inv = 2*inv - inv*inv*d, 32 bits
 
-	lea	(%rax,%rax), %rdx	C 2*inv
+	lea	(%rax,%rax), %r8	C 2*inv
 	imul	%rax, %rax		C inv*inv
 	imul	%rbx, %rax		C inv*inv*d
-	sub	%rax, %rdx		C inv = 2*inv - inv*inv*d, 64 bits
+	sub	%rax, %r8		C inv = 2*inv - inv*inv*d, 64 bits
 
-	mov	%rdx, %r8		C final inverse
 	jmp	L(com)
 
 L(evn):	bsf	%rax, %rcx

@@ -73,16 +73,15 @@ ifdef(`PIC',`
 	imul	R32(%rbx), R32(%rdx)	C inv*inv*d
 	sub	R32(%rdx), R32(%rax)	C inv = 2*inv - inv*inv*d, 32 bits
 
-	lea	(%rax,%rax), %rdx	C 2*inv
+	lea	(%rax,%rax), %r10	C 2*inv
 	imul	%rax, %rax		C inv*inv
 	imul	%rbx, %rax		C inv*inv*d
-	sub	%rax, %rdx		C inv = 2*inv - inv*inv*d, 64 bits
+	sub	%rax, %r10		C inv = 2*inv - inv*inv*d, 64 bits
 
 	lea	(%rsi,%r8,8), %rsi	C up end
 	lea	-8(%rdi,%r8,8), %rdi	C rp end
 	neg	%r8			C -n
 
-	mov	%rdx, %r10		C final inverse
 	mov	(%rsi,%r8,8), %rax	C up[0]
 
 	inc	%r8
@@ -108,6 +107,8 @@ L(top):
 	C rsi	up end
 	C rdi	rp end
 	C r8	counter, limbs, negative
+	C r10	d^(-1) mod 2^64
+	C r11	d, shifted down
 
 	mul	%r11			C carry limb in rdx
 	mov	-8(%rsi,%r8,8), %rax
