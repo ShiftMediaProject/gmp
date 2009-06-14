@@ -1,5 +1,8 @@
 2009-06-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/perfpow.c (binv_root): Use mpn_bdiv_q_1, not
+	mpn_divexact_itch for 2-adic division.
+
 	* Makefile.am (libmp_la_SOURCES): Add nextprime.c.
 
 2009-06-13  Torbjorn Granlund  <tege@gmplib.org>
