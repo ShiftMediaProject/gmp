@@ -45,6 +45,7 @@ pow_equals (mp_srcptr np, mp_size_t nn,
   mp_bitcnt_t y, z, count;
   mp_size_t i, bn;
   int ans;
+  mp_limb_t h, l;
   TMP_DECL;
 
   ASSERT (nn > 1 || (nn == 1 && np[0] > 1));
@@ -74,22 +75,18 @@ pow_equals (mp_srcptr np, mp_size_t nn,
 
   count_leading_zeros (count, xp[xn-1]);
   y = xn * GMP_LIMB_BITS - count - 1;  /* msb_index (xp, xn) */
-  tp[0] = y;
-  tp[1] = 0;
 
-  mpn_mul_1 (tp, tp, 2, k);
-  mpn_sub_1 (tp, tp, 2, 1); /* Lower bound for msb_index of {xp,xn}^k */
+  umul_ppmm (h, l, k, y);
+  h -= l == 0;  l--;	/* two-limb decrement */
 
   z = f - 1; /* msb_index (np, nn) */
-  if (tp[1] == 0 && tp[0] <= z)
+  if (h == 0 && l <= z)
     {
-      tp[0] = y + 1;
-      mpn_mul_1 (tp, tp, 2, k); /* Upper bound */
-      if (tp[1] != 0)
-	y = 2 + ~((mp_limb_t) 0) / GMP_LIMB_BITS;
-      else
-	y = 2 + tp[0] / GMP_LIMB_BITS;
+      mp_limb_t size;
+      size = l + k;
+      ASSERT_ALWAYS (size >= k);
 
+      y = 2 + size / GMP_LIMB_BITS;
       tp2 = TMP_ALLOC_LIMBS (y);
 
       i = mpn_pow_1 (tp, xp, xn, k, tp2);
@@ -123,7 +120,7 @@ binv_root (mp_ptr rp, mp_srcptr yp,
 
   ASSERT (bn > 0);
   ASSERT (b > 0);
-  ASSERT ((k & 1) == 1);
+  ASSERT ((k & 1) != 0);
 
   if (b == 1)
     {
@@ -131,7 +128,7 @@ binv_root (mp_ptr rp, mp_srcptr yp,
     }
   else
     {
-      bprim = ((b & 1) == 1) ? (b >> 1) + 1 : b >> 1;
+      bprim = ((b + 1) >> 1);
       binv_root (rp, yp, k, 1 + (bprim - 1) / GMP_LIMB_BITS, bprim, tp);
 
       k++;
@@ -165,24 +162,24 @@ binv_sqroot (mp_ptr rp, mp_srcptr yp,
 
   if (b <= 2)
     {
-    if (b == 2)
-      {
-	if ((yp[0] & 7) == 1)
-	  rp[0] = 1;
-	else
-	  return 0;
-      }
-    else
-      {
-	if ((yp[0] & 3) == 1)
-	  rp[0] = 1;
-	else
-	  return 0;
-      }
+      if (b == 2)
+	{
+	  if ((yp[0] & 7) == 1)
+	    rp[0] = 1;
+	  else
+	    return 0;
+	}
+      else
+	{
+	  if ((yp[0] & 3) == 1)
+	    rp[0] = 1;
+	  else
+	    return 0;
+	}
     }
   else
     {
-      bprim = (((b + 1) & 1) == 1) ? 1 + ((b + 1) >> 1) : (b + 1) >> 1;
+      bprim = ((b + 2) >> 1);
       k = 3;
 
       if (binv_sqroot (rp, yp, 1 + bprim / GMP_LIMB_BITS, bprim, tp) == 0)
@@ -196,7 +193,7 @@ binv_sqroot (mp_ptr rp, mp_srcptr yp,
       mpn_sub_n (tp2, tp, rp, bn);
       mpn_rshift (rp, tp2, bn, 1);
       if ((b % GMP_LIMB_BITS) == 0)
-	rp[bn - 1] = 0;
+       rp[bn - 1] = 0;
       else
 	rp[(b - 1) / GMP_LIMB_BITS] &= (((mp_limb_t) 1) << (b % GMP_LIMB_BITS)) - 1;
     }
@@ -217,12 +214,12 @@ is_kth_power (mp_ptr rp, mp_srcptr np,
   mp_size_t i, rn, xn;
 
   ASSERT (nn > 0);
-  ASSERT (((k & 1) == 1) || (k == 2));
-  ASSERT ((np[0] & 1) == 1);
+  ASSERT (((k & 1) != 0) || (k == 2));
+  ASSERT ((np[0] & 1) != 0);
 
   if (k == 2)
     {
-      b = ((f & 1) == 0) ? (f >> 1) : (f >> 1) + 1;
+      b = (f + 1) >> 1;
       rn = 1 + b / GMP_LIMB_BITS;
       if (binv_sqroot (rp, yp, rn, b, tp) != 0)
 	{
@@ -247,7 +244,7 @@ is_kth_power (mp_ptr rp, mp_srcptr np,
     }
   else
     {
-      b = ((f % k) == 0) ? f / k : f / k + 1;
+      b = 1 + (f - 1) / k;
       rn = 1 + (b - 1) / GMP_LIMB_BITS;
       binv_root (rp, yp, k, rn, b, tp);
       MPN_NORMALIZE (rp, rn);
@@ -271,12 +268,12 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
   TMP_DECL;
 
   ASSERT (nn > 0);
-  ASSERT ((np[0] & 1) == 1);
+  ASSERT ((np[0] & 1) != 0);
   ASSERT (ub > 0);
 
   TMP_MARK;
   gmp_init_primesieve (&ps);
-  b = ((f & 1) == 1) ? (f >> 1) + 2 : (f >> 1) + 1;
+  b = (f + 3) >> 1;
 
   yp = TMP_ALLOC_LIMBS (nn);
   tp = TMP_ALLOC_LIMBS (5 * nn);
@@ -369,9 +366,9 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 	  goto ret;
 	}
       s = twos / GMP_LIMB_BITS;
-      if (s + 1 == nn && (np[s] & (np[s] - 1)) == 0)
+      if (s + 1 == nn && POW2_P (np[s]))
 	{
-	  ans = ! (neg && (twos & (twos - 1)) == 0);
+	  ans = ! (neg && POW2_P (twos));
 	  goto ret;
 	}
       count = twos % GMP_LIMB_BITS;
@@ -492,7 +489,7 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 
 	  if (ncn == 1 && nc[0] == 1)
 	    {
-	      ans = ! (neg && (g & (g - 1)) == 0);
+	      ans = ! (neg && POW2_P (g));
 	      goto ret;
 	    }
 
