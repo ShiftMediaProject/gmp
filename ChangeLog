@@ -1,5 +1,9 @@
 2009-06-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/pa64/aors_n.asm: New file.
+	* mpn/pa64/add_n.asm: Remove.
+	* mpn/pa64/sub_n.asm: Remove.
+
 	* mpn/generic/perfpow.c (perfpow): Test exponents up to ub, inclusive.
 
 2009-06-14  Torbjorn Granlund  <tege@gmplib.org>
