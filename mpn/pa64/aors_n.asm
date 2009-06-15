@@ -1,7 +1,6 @@
-dnl  HP-PA 2.0 mpn_add_n -- Add two limb vectors of the same length > 0 and
-dnl  store sum in a third limb vector.
+dnl  HP-PA 2.0 mpn_add_n, mpn_sub_n
 
-dnl  Copyright 1997, 2000, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1997, 2000, 2002, 2003, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -32,52 +31,71 @@ define(`up',`%r25')
 define(`vp',`%r24')
 define(`n',`%r23')
 
+ifdef(`OPERATION_add_n', `
+	define(ADCSBC,	      `add,dc')
+	define(INITCY,	      `addi -1,%r22,%r0')
+	define(func,	      mpn_add_n)
+	define(func_nc,	      mpn_add_nc)')
+ifdef(`OPERATION_sub_n', `
+	define(ADCSBC,	      `sub,db')
+	define(INITCY,	      `subi 0,%r22,%r0')
+	define(func,	      mpn_sub_n)
+	define(func_nc,	      mpn_sub_nc)')
+
+MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
+
 ifdef(`HAVE_ABI_2_0w',
 `       .level  2.0w
 ',`     .level  2.0
 ')
-PROLOGUE(mpn_add_n)
-	sub		%r0, n, %r22
-	depw,z		%r22, 30, 3, %r28	C r28 = 2 * (-n & 7)
-	depw,z		%r22, 28, 3, %r22	C r22 = 8 * (-n & 7)
-	sub		up, %r22, up		C offset up
-	sub		vp, %r22, vp		C offset vp
-	sub		rp, %r22, rp		C offset rp
+PROLOGUE(func_nc)
+	b	L(com)
+	nop
+EPILOGUE()
+PROLOGUE(func)
+	ldi		0, %r22
+LDEF(com)
+	sub		%r0, n, %r21
+	depw,z		%r21, 30, 3, %r28	C r28 = 2 * (-n & 7)
+	depw,z		%r21, 28, 3, %r21	C r21 = 8 * (-n & 7)
+	sub		up, %r21, up		C offset up
+	sub		vp, %r21, vp		C offset vp
+	sub		rp, %r21, rp		C offset rp
 	blr		%r28, %r0		C branch into loop
-	add		%r0, %r0, %r0		C reset carry
+	INITCY
 
 LDEF(loop)
 	ldd		0(up), %r20
 	ldd		0(vp), %r31
-	add,dc		%r20, %r31, %r20
+	ADCSBC		%r20, %r31, %r20
 	std		%r20, 0(rp)
 LDEF(7)	ldd		8(up), %r21
 	ldd		8(vp), %r19
-	add,dc		%r21, %r19, %r21
+	ADCSBC		%r21, %r19, %r21
 	std		%r21, 8(rp)
 LDEF(6)	ldd		16(up), %r20
 	ldd		16(vp), %r31
-	add,dc		%r20, %r31, %r20
+	ADCSBC		%r20, %r31, %r20
 	std		%r20, 16(rp)
 LDEF(5)	ldd		24(up), %r21
 	ldd		24(vp), %r19
-	add,dc		%r21, %r19, %r21
+	ADCSBC		%r21, %r19, %r21
 	std		%r21, 24(rp)
 LDEF(4)	ldd		32(up), %r20
 	ldd		32(vp), %r31
-	add,dc		%r20, %r31, %r20
+	ADCSBC		%r20, %r31, %r20
 	std		%r20, 32(rp)
 LDEF(3)	ldd		40(up), %r21
 	ldd		40(vp), %r19
-	add,dc		%r21, %r19, %r21
+	ADCSBC		%r21, %r19, %r21
 	std		%r21, 40(rp)
 LDEF(2)	ldd		48(up), %r20
 	ldd		48(vp), %r31
-	add,dc		%r20, %r31, %r20
+	ADCSBC		%r20, %r31, %r20
 	std		%r20, 48(rp)
 LDEF(1)	ldd		56(up), %r21
 	ldd		56(vp), %r19
-	add,dc		%r21, %r19, %r21
+	ADCSBC		%r21, %r19, %r21
 	ldo		64(up), up
 	std		%r21, 56(rp)
 	ldo		64(vp), vp
@@ -85,9 +103,12 @@ LDEF(1)	ldd		56(up), %r21
 	ldo		64(rp), rp
 
 	add,dc		%r0, %r0, %r29
+ifdef(`OPERATION_sub_n',`
+	subi		1, %r29, %r29
+')
 	bve		(%r2)
 ifdef(`HAVE_ABI_2_0w',
 `	copy		%r29, %r28
 ',`	ldi		0, %r28
 ')
-EPILOGUE(mpn_add_n)
+EPILOGUE()
