@@ -1,3 +1,7 @@
+2009-06-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/perfpow.c (perfpow): Test exponents up to ub, inclusive.
+
 2009-06-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/bdiv_q_1.asm: Optimize away a mov insn.
