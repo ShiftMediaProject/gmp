@@ -1,3 +1,8 @@
+2009-06-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	Revert:
+	* mpn/generic/perfpow.c (perfpow): Test exponents up to ub, inclusive.
+
 2009-06-16  Martin Boij  <mboij@kth.se>
 
 	* mpn/generic/perfpow.c (logs): Use more conservative table.
