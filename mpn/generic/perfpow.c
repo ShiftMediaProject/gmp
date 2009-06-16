@@ -320,17 +320,10 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
 
 static const unsigned short nrtrial[] = { 100, 500, 1000 };
 
-/* Table of (log_{p_max} 2) values for the trial lengths in nrtrial[],
-   where p_max is the largest prime that is tried by mpn_trialdiv.
-   p_max depends on trialdivtab.h.
+/* Table of (log_{p_i} 2) values, where p_i is
+   the (nrtrial[i] + 1)'th prime.
 */
-#if GMP_LIMB_BITS == 32
-static const double logs[] = { 0.1092623336390804, 0.0846670279724685, 0.0771939797527463 };
-#endif
-#if GMP_LIMB_BITS == 64
-static const double logs[] = { 0.1092019344749634, 0.0846096591879456, 0.0771939797527463 };
-#endif
-
+static const double logs[] = { 0.1099457228193620, 0.0847016403115322, 0.0772048195144415 };
 
 int
 mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
