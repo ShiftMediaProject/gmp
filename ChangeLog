@@ -1,3 +1,7 @@
+2009-06-16  Martin Boij  <mboij@kth.se>
+
+	* mpn/generic/perfpow.c (logs): Use more conservative table.
+
 2009-06-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/pa64/aors_n.asm: New file.
