@@ -288,7 +288,7 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
   if (g > 0)
     {
       ub = MIN (ub, g + 1);
-      while ((k = gmp_nextprime (&ps)) <= ub)
+      while ((k = gmp_nextprime (&ps)) < ub)
 	{
 	  if ((g % k) == 0)
 	    {
@@ -303,7 +303,7 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
     }
   else
     {
-      while ((k = gmp_nextprime (&ps)) <= ub)
+      while ((k = gmp_nextprime (&ps)) < ub)
 	{
 	  if (is_kth_power (rp1, np, k, yp, nn, f, tp) != 0)
 	    {
