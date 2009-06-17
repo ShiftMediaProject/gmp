@@ -909,6 +909,9 @@ __GMP_DECLSPEC void mpz_init __GMP_PROTO ((mpz_ptr));
 #define mpz_init2 __gmpz_init2
 __GMP_DECLSPEC void mpz_init2 __GMP_PROTO ((mpz_ptr, unsigned long));
 
+#define mpz_inits __gmpz_inits
+__GMP_DECLSPEC void mpz_inits __GMP_PROTO ((mpz_ptr, ...));
+
 #define mpz_init_set __gmpz_init_set
 __GMP_DECLSPEC void mpz_init_set __GMP_PROTO ((mpz_ptr, mpz_srcptr));
 
