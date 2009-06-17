@@ -32,7 +32,7 @@ typedef unsigned long int      mp_bitcnt_t;
    Returns non-zero if {np,nn} == {xp,xn} ^ k.
    Algorithm:
        For s = 1, 2, 4, ..., s_max, compute the s least significant
-       limbs of {xp,xn}^k. Stop if they don't match the f least
+       limbs of {xp,xn}^k. Stop if they don't match the s least
        significant limbs of {np,nn}.
 */
 static int
@@ -49,23 +49,21 @@ pow_equals (mp_srcptr np, mp_size_t nn,
   TMP_DECL;
 
   ASSERT (nn > 1 || (nn == 1 && np[0] > 1));
-  ASSERT (np[nn-1] > 0);
+  ASSERT (np[nn - 1] > 0);
   ASSERT (xn > 0);
 
   if (xn == 1 && xp[0] == 1)
     return 0;
 
-  TMP_MARK;
   z = 1 + (nn >> 1);
   for (bn = 1; bn < z; bn <<= 1)
     {
       mpn_powlo (tp, xp, &k, 1, bn, tp + bn);
       if (mpn_cmp (tp, np, bn) != 0)
-	{
-	  ans = 0;
-	  goto ret;
-	}
+	return 0;
     }
+
+  TMP_MARK;
 
   /* Final check. Estimate the size of {xp,xn}^k before computing
      the power with full precision.
@@ -73,7 +71,7 @@ pow_equals (mp_srcptr np, mp_size_t nn,
      the logarithm of {xp,xn}, rather than using the index of the MSB.
   */
 
-  count_leading_zeros (count, xp[xn-1]);
+  count_leading_zeros (count, xp[xn - 1]);
   y = xn * GMP_LIMB_BITS - count - 1;  /* msb_index (xp, xn) */
 
   umul_ppmm (h, l, k, y);
@@ -107,38 +105,40 @@ pow_equals (mp_srcptr np, mp_size_t nn,
 /*
    Computes rp such that rp^k * yp = 1 (mod 2^b).
    Algorithm:
-       Apply Hensel lifting recursively to double
-       the number of known bits in rp.
+       Apply Hensel lifting repeatedly, each time
+       doubling (approx.) the number of known bits in rp.
 */
 static void
 binv_root (mp_ptr rp, mp_srcptr yp,
 	   mp_limb_t k, mp_size_t bn,
 	   mp_bitcnt_t b, mp_ptr tp)
 {
-  mp_limb_t *tp2 = tp + bn, *tp3 = tp + (bn << 1);
-  mp_bitcnt_t bprim;
+  mp_limb_t *tp2 = tp + bn, *tp3 = tp + 2 * bn, di, k2 = k + 1;
+  mp_bitcnt_t order[GMP_LIMB_BITS * 2];
+  int i, d = 0;
 
   ASSERT (bn > 0);
   ASSERT (b > 0);
   ASSERT ((k & 1) != 0);
 
-  if (b == 1)
-    {
-      rp[0] = 1;
-    }
-  else
-    {
-      bprim = ((b + 1) >> 1);
-      binv_root (rp, yp, k, 1 + (bprim - 1) / GMP_LIMB_BITS, bprim, tp);
+  binvert_limb (di, k);
 
-      k++;
-      mpn_mul_1 (tp, rp, bn, k);
+  rp[0] = 1;
+  for (; b != 1; b = (b + 1) >> 1)
+    order[d++] = b;
 
-      mpn_powlo (tp2, rp, &k, 1, bn, tp3);
+  for (i = d - 1; i >= 0; i--)
+    {
+      b = order[i];
+      bn = 1 + (b - 1) / GMP_LIMB_BITS;
+
+      mpn_mul_1 (tp, rp, bn, k2);
+
+      mpn_powlo (tp2, rp, &k2, 1, bn, tp3);
       mpn_mullow_n (rp, yp, tp2, bn);
 
       mpn_sub_n (tp2, tp, rp, bn);
-      mpn_bdiv_q_1 (rp, tp2, bn, k - 1);
+      mpn_bdiv_q_1_pi1 (rp, tp2, bn, k, di, 0);
       if ((b % GMP_LIMB_BITS) != 0)
 	rp[(b - 1) / GMP_LIMB_BITS] &= (((mp_limb_t) 1) << (b % GMP_LIMB_BITS)) - 1;
     }
@@ -147,55 +147,52 @@ binv_root (mp_ptr rp, mp_srcptr yp,
 
 /*
    Computes rp such that rp^2 * yp = 1 (mod 2^{b+1}).
-   Returns non-zero if there is such an integer rp.
+   Returns non-zero if such an integer rp exists.
 */
 static int
 binv_sqroot (mp_ptr rp, mp_srcptr yp,
 	     mp_size_t bn, mp_bitcnt_t b,
 	     mp_ptr tp)
 {
-  mp_limb_t k, *tp2 = tp + bn, *tp3 = tp + (bn << 1);
-  mp_bitcnt_t bprim;
+  mp_limb_t k = 3, *tp2 = tp + bn, *tp3 = tp + (bn << 1);
+  mp_bitcnt_t order[GMP_LIMB_BITS * 2];
+  int i, d = 0;
 
   ASSERT (bn > 0);
   ASSERT (b > 0);
 
-  if (b <= 2)
+  rp[0] = 1;
+  if (b == 1)
     {
-      if (b == 2)
-	{
-	  if ((yp[0] & 7) == 1)
-	    rp[0] = 1;
-	  else
-	    return 0;
-	}
-      else
-	{
-	  if ((yp[0] & 3) == 1)
-	    rp[0] = 1;
-	  else
-	    return 0;
-	}
+      if ((yp[0] & 3) != 1)
+	return 0;
     }
   else
     {
-      bprim = ((b + 2) >> 1);
-      k = 3;
-
-      if (binv_sqroot (rp, yp, 1 + bprim / GMP_LIMB_BITS, bprim, tp) == 0)
+      if ((yp[0] & 7) != 1)
 	return 0;
 
-      mpn_mul_1 (tp, rp, bn, k);
+      for (; b != 2; b = (b + 2) >> 1)
+	order[d++] = b;
 
-      mpn_powlo (tp2, rp, &k, 1, bn, tp3);
-      mpn_mullow_n (rp, yp, tp2, bn);
+      for (i = d - 1; i >= 0; i--)
+	{
+	  b = order[i];
+	  bn = 1 + b / GMP_LIMB_BITS;
 
-      mpn_sub_n (tp2, tp, rp, bn);
-      mpn_rshift (rp, tp2, bn, 1);
-      if ((b % GMP_LIMB_BITS) == 0)
-       rp[bn - 1] = 0;
-      else
-	rp[(b - 1) / GMP_LIMB_BITS] &= (((mp_limb_t) 1) << (b % GMP_LIMB_BITS)) - 1;
+	  mpn_mul_1 (tp, rp, bn, k);
+
+	  mpn_powlo (tp2, rp, &k, 1, bn, tp3);
+	  mpn_mullow_n (rp, yp, tp2, bn);
+
+#if HAVE_NATIVE_mpn_rsh1sub_n
+	  mpn_rsh1sub_n (rp, tp, rp, bn);
+#else
+	  mpn_sub_n (tp2, tp, rp, bn);
+	  mpn_rshift (rp, tp2, bn, 1);
+#endif
+	  rp[b / GMP_LIMB_BITS] &= (((mp_limb_t) 1) << (b % GMP_LIMB_BITS)) - 1;
+	}
     }
   return 1;
 }
@@ -256,14 +253,13 @@ is_kth_power (mp_ptr rp, mp_srcptr np,
 }
 
 static int
-perfpow (mp_ptr rp1, mp_ptr rp2,
-	 mp_srcptr np, mp_size_t nn,
+perfpow (mp_srcptr np, mp_size_t nn,
 	 mp_limb_t ub, mp_limb_t g,
 	 mp_bitcnt_t f, int neg)
 {
-  mp_limb_t *yp, *tp, k = 0;
-  mp_bitcnt_t b;
+  mp_limb_t *yp, *tp, k = 0, *rp1;
   int ans = 0;
+  mp_bitcnt_t b;
   gmp_primesieve_t ps;
   TMP_DECL;
 
@@ -276,7 +272,9 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
   b = (f + 3) >> 1;
 
   yp = TMP_ALLOC_LIMBS (nn);
+  rp1 = TMP_ALLOC_LIMBS (nn);
   tp = TMP_ALLOC_LIMBS (5 * nn);
+  MPN_ZERO (rp1, nn);
 
   mpn_binvert (yp, np, 1 + (b - 1) / GMP_LIMB_BITS, tp);
   if (b % GMP_LIMB_BITS)
@@ -294,7 +292,6 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
 	    {
 	      if (is_kth_power (rp1, np, k, yp, nn, f, tp) != 0)
 		{
-		  rp2[0] = k;
 		  ans = 1;
 		  goto ret;
 		}
@@ -307,7 +304,6 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
 	{
 	  if (is_kth_power (rp1, np, k, yp, nn, f, tp) != 0)
 	    {
-	      rp2[0] = k;
 	      ans = 1;
 	      goto ret;
 	    }
@@ -321,7 +317,7 @@ perfpow (mp_ptr rp1, mp_ptr rp2,
 static const unsigned short nrtrial[] = { 100, 500, 1000 };
 
 /* Table of (log_{p_i} 2) values, where p_i is
-   the (nrtrial[i] + 1)'th prime.
+   the (nrtrial[i] + 1)'th prime number.
 */
 static const double logs[] = { 0.1099457228193620, 0.0847016403115322, 0.0772048195144415 };
 
@@ -329,7 +325,7 @@ int
 mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 {
   mp_size_t ncn, s, pn, xn;
-  mp_limb_t *r1, r2, *nc, factor, g = 0;
+  mp_limb_t *nc, factor, g = 0;
   mp_limb_t exp, *prev, *next, d, l, r, c, *tp, cry;
   mp_bitcnt_t twos = 0, count;
   int ans, where = 0, neg = 0, trial;
@@ -349,7 +345,6 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
   TMP_MARK;
 
   ncn = nn;
-  r1 = TMP_ALLOC_LIMBS (ncn);
   twos = mpn_scan1 (np, 0);
   if (twos > 0)
     {
@@ -367,12 +362,14 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
       count = twos % GMP_LIMB_BITS;
       ncn = nn - s;
       nc = TMP_ALLOC_LIMBS (ncn);
-      MPN_COPY (nc, np + s, ncn);
       if (count > 0)
 	{
-	  mpn_rshift (nc, nc, ncn, count);
-	  if (nc[ncn - 1] == 0)
-	    ncn--;
+	  mpn_rshift (nc, np + s, ncn, count);
+	  ncn -= (nc[ncn - 1] == 0);
+	}
+      else
+	{
+	  MPN_COPY (nc, np + s, ncn);
 	}
       g = twos;
     }
@@ -384,43 +381,35 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
   else
     trial = 2;
 
-  factor = mpn_trialdiv (np, nn, nrtrial[trial], &where);
+  factor = mpn_trialdiv (nc, ncn, nrtrial[trial], &where);
 
-  if (factor == 0)
-    {
-      count_leading_zeros (count, nc[ncn-1]);
-      count = GMP_LIMB_BITS * ncn - count;   /* log (nc) + 1 */
-      d = (mp_limb_t) (count * logs[trial] + 1e-9) + 1;
-      MPN_ZERO (r1, ncn);
-      ans = perfpow (r1, &r2, nc, ncn, d, g, count, neg);
-    }
-  else
+  if (factor != 0)
     {
       if (twos == 0)
 	{
 	  nc = TMP_ALLOC_LIMBS (ncn);
-	  MPN_COPY (nc, np, nn);
+	  MPN_COPY (nc, np, ncn);
 	}
 
       /* Remove factors found by trialdiv.
 	 Optimization: Perhaps better to use
 	 the strategy in mpz_remove ().
       */
-      prev = TMP_ALLOC_LIMBS (2 * nn + 2);
-      next = TMP_ALLOC_LIMBS (2 * nn + 2);
-      tp = TMP_ALLOC_LIMBS (4 * nn);
+      prev = TMP_ALLOC_LIMBS (ncn + 2);
+      next = TMP_ALLOC_LIMBS (ncn + 2);
+      tp = TMP_ALLOC_LIMBS (4 * ncn);
 
-      while (factor != 0)
+      do
 	{
 	  binvert_limb (d, factor);
 	  prev[0] = d;
 	  pn = 1;
 	  exp = 1;
-	  while ((pn << 1) - 1 <= nn)
+	  while (2 * pn - 1 <= ncn)
 	    {
 	      mpn_sqr_n (next, prev, pn);
-	      xn = pn << 1;
-	      MPN_NORMALIZE (next, xn);
+	      xn = 2 * pn;
+	      xn -= (next[xn - 1] == 0);
 
 	      if (mpn_divisible_p (nc, ncn, next, xn) == 0)
 		break;
@@ -432,23 +421,28 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 
 	  /* Binary search for the exponent */
 	  l = exp + 1;
-	  r = (exp << 1) - 1;
+	  r = 2 * exp - 1;
 	  while (l <= r)
 	    {
 	      c = (l + r) >> 1;
 	      if (c - exp > 1)
 		{
 		  xn = mpn_pow_1 (tp, &d, 1, c - exp, next);
+		  if (pn + xn - 1 > ncn)
+		    {
+		      r = c - 1;
+		      continue;
+		    }
 		  mpn_mul (next, prev, pn, tp, xn);
 		  xn += pn;
-		  MPN_NORMALIZE (next, xn);
+		  xn -= (next[xn - 1] == 0);
 		}
-	      else {
-		cry = mpn_mul_1 (next, prev, pn, d);
-		xn = pn;
-		if (cry > 0)
-		  next[xn++] = cry;
-	      }
+	      else
+		{
+		  cry = mpn_mul_1 (next, prev, pn, d);
+		  next[pn] = cry;
+		  xn = pn + (cry != 0);
+		}
 
 	      if (mpn_divisible_p (nc, ncn, next, xn) == 0)
 		{
@@ -476,9 +470,9 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 
 	  /* divexact */
 	  mpn_bdiv_q (next, nc, ncn, prev, pn, tp);
-	  MP_PTR_SWAP (next, nc);
-	  ncn = ncn - pn + 1;
-	  MPN_NORMALIZE (nc, ncn);
+	  ncn = ncn - pn;
+	  ncn += next[ncn] != 0;
+	  MPN_COPY (nc, next, ncn);
 
 	  if (ncn == 1 && nc[0] == 1)
 	    {
@@ -488,13 +482,14 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 
 	  factor = mpn_trialdiv (nc, ncn, nrtrial[trial], &where);
 	}
-
-      count_leading_zeros (count, nc[ncn-1]);
-      count = GMP_LIMB_BITS * ncn - count;   /* log (nc) + 1 */
-      d = (mp_limb_t) (count * logs[trial] + 1e-9) + 1;
-      MPN_ZERO (r1, ncn);
-      ans = perfpow (r1, &r2, nc, ncn, d, g, count, neg);
+      while (factor != 0);
     }
+
+  count_leading_zeros (count, nc[ncn-1]);
+  count = GMP_LIMB_BITS * ncn - count;   /* log (nc) + 1 */
+  d = (mp_limb_t) (count * logs[trial] + 1e-9) + 1;
+  ans = perfpow (nc, ncn, d, g, count, neg);
+
  ret:
   TMP_FREE;
   return ans;
