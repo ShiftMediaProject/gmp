@@ -1,5 +1,9 @@
 2009-06-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/inits.c: New function.
+
+	* gen-trialdivtab.c: Wrap limb constants into CNST_LIMB.
+
 	With Martin Boij:
 	* mpn/generic/perfpow.c (binv_root, binv_sqroot): Change from being
 	recursive to being iterative.
