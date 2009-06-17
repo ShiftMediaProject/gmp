@@ -122,11 +122,11 @@ main (int argc, char *argv[])
 
 	      printf ("	 P(%d,", (int) p);
 	      mpz_invert_ui_2exp (inv, p, limb_bits);
-	      printf ("0x");  mpz_out_str (stdout, 16, inv);  printf (",");
+	      printf ("CNST_LIMB(0x");  mpz_out_str (stdout, 16, inv);  printf ("),");
 
 	      mpz_tdiv_q_ui (tmp, gmp_numb_max, p);
-	      printf ("0x");  mpz_out_str (stdout, 16, tmp);
-	      printf ("),\n");
+	      printf ("CNST_LIMB(0x");  mpz_out_str (stdout, 16, tmp);
+	      printf (")),\n");
 	    }
 	  mpz_set_ui (ppp, t);
 	  interval_start = t;
@@ -168,13 +168,14 @@ main (int argc, char *argv[])
 	{
 	  mpn_mod_1s_4p_cps (pre, ppp);
 	  printf ("%s", endtok);
-	  printf ("  {0x");  mpz_out_str (stdout, 16, ppp);
-	  printf (",{0x");  mpz_out_str (stdout, 16, pre[0]);
-	  printf (",%d", (int) PTR(pre[1])[0]);
+	  printf ("  {CNST_LIMB(0x");  mpz_out_str (stdout, 16, ppp);
+	  printf ("),{CNST_LIMB(0x");  mpz_out_str (stdout, 16, pre[0]);
+	  printf ("),%d", (int) PTR(pre[1])[0]);
 	  for (i = 0; i < 5; i++)
 	    {
 	      printf (",");
-	      printf ("0x");  mpz_out_str (stdout, 16, pre[2 + i]);
+	      printf ("CNST_LIMB(0x");  mpz_out_str (stdout, 16, pre[2 + i]);
+	      printf (")");
 	    }
 	  printf ("},");
 	  printf ("%d,", start_idx);
