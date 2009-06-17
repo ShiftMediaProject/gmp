@@ -1,5 +1,9 @@
 2009-06-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/rsh1aors_n.asm: New file.
+	* mpn/x86_64/rsh1add_n.asm: Remove.
+	* mpn/x86_64/rsh1sub_n.asm: Remove.
+
 	* mpz/inits.c: New function.
 
 	* gen-trialdivtab.c: Wrap limb constants into CNST_LIMB.
