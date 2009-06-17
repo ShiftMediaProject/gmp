@@ -1,3 +1,14 @@
+2009-06-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	With Martin Boij:
+	* mpn/generic/perfpow.c (binv_root, binv_sqroot): Change from being
+	recursive to being iterative.
+	(mpn_perfect_power_p): Reorganize temp memory usage to avoid a buffer
+	overun.  Trim allocation of next and prev.  Never create oversize
+	products in the multiplicity binary search.
+
+	* mpn/generic/dc_div_q.c: Add missing TMP_FREE.
+
 2009-06-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	Revert:
