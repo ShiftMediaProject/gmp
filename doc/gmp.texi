@@ -2998,6 +2998,11 @@ object is initialized.
 Initialize @var{integer}, and set its value to 0.
 @end deftypefun
 
+@deftypefun void mpz_inits (mpz_t @var{integer}, ...)
+Initialize a NULL-terminated list of @code{mpz_t} variables, staring with
+@var{integer}, and set all variables' values to 0.
+@end deftypefun
+
 @deftypefun void mpz_init2 (mpz_t @var{integer}, unsigned long @var{n})
 Initialize @var{integer}, with space for @var{n} bits, and set its value to 0.
 
