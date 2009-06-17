@@ -25,6 +25,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <varargs.h>
 #endif
 
+#include <stdio.h>		/* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 
