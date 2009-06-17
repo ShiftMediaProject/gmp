@@ -53,5 +53,6 @@ mpn_dc_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn)
   else
     MPN_COPY (qp, wp + 1, qn);
 
+  TMP_FREE;
   return qh;
 }
