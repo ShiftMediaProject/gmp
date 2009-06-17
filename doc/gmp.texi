@@ -10274,6 +10274,8 @@ implementing division relevant to Toom multiplication.  He also worked on
 fast assembly sequences, in particular on a fast AMD64
 @code{mpn_mul_basecase}.
 
+Martin Boij wrote @code{mpn_perfect_power_p}.
+
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell @email{tege@@gmplib.org}
 about the omission!)
