@@ -22,4 +22,5 @@ Niels Möller		mpn/generic/hgcd2.c, gcd.c, gcdext.c, matrix22_mul.c,
 			toom_interpolate_7pts, mpz/nextprime.c.
 Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			toom62_mul.c
-David Harvey		mpn/x86_64/mul_basecase.asm.
+David Harvey		mpn/x86_64/mul_basecase.asm
+Martin Boij		mpn/generic/perfpow.c
