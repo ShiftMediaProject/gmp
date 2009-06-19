@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_addmul_1 and mpn_submul_1, optimized for "Core 2".
 
-dnl  Copyright 2003, 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004, 2005, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,7 +23,7 @@ C	     cycles/limb
 C K8,K9:	 4
 C K10:		 4
 C P4:		 ?
-C P6-15:	 4.3-4.7 (fluctuating)
+C P6-15:	 4.3-4.5 (fluctuating)
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
@@ -46,98 +46,83 @@ ASM_START()
 	TEXT
 	ALIGN(16)
 PROLOGUE(func)
-	push	%r15
-	push	%r12
-	push	%r13
-	lea	(%rdx), %r15
-	neg	%r15
+	push	%rbx
+	push	%rbp
+	lea	(%rdx), %rbx
+	neg	%rbx
 
 	mov	(up), %rax
+	mov	(rp), %r10
 
-	bt	$0, %r15
+	lea	-16(rp,%rdx,8), rp
+	lea	(up,%rdx,8), up
+	mul	%rcx
+
+	bt	$0, R32(%rbx)
 	jc	L(odd)
 
-	lea	(rp,%rdx,8), rp
-	lea	(up,%rdx,8), up
-	mul	%rcx
-
 	lea	(%rax), %r11
-	mov	8(up,%r15,8), %rax
-	mov	(rp,%r15,8), %r13
-	lea	(%rdx), %r12
-
-	add	$2, %r15
+	mov	8(up,%rbx,8), %rax
+	lea	(%rdx), %rbp
+	mul	%rcx
+	add	$2, %rbx
 	jns	L(n2)
 
-	mul	%rcx
 	lea	(%rax), %r8
-	mov	(up,%r15,8), %rax
-	mov	-8(rp,%r15,8), %r10
+	mov	(up,%rbx,8), %rax
 	lea	(%rdx), %r9
-	jmp	L(m)
+	jmp	L(mid)
 
-L(odd):	lea	(rp,%rdx,8), rp
-	lea	(up,%rdx,8), up
-	mul	%rcx
-	add	$1, %r15
+L(odd):	add	$1, %rbx
 	jns	L(n1)
 
-L(gt1):	lea	(%rax), %r8
-	mov	(up,%r15,8), %rax
-	mov	-8(rp,%r15,8), %r10
+	lea	(%rax), %r8
+	mov	(up,%rbx,8), %rax
 	lea	(%rdx), %r9
 	mul	%rcx
 	lea	(%rax), %r11
-	mov	8(up,%r15,8), %rax
-	mov	(rp,%r15,8), %r13
-	lea	(%rdx), %r12
-	add	$2, %r15
-	jns	L(end)
+	mov	8(up,%rbx,8), %rax
+	lea	(%rdx), %rbp
+	jmp	L(e)
 
 	ALIGN(16)
 L(top):	mul	%rcx
 	ADDSUB	%r8, %r10
 	lea	(%rax), %r8
-	mov	0(up,%r15,8), %rax
+	mov	(up,%rbx,8), %rax
 	adc	%r9, %r11
-	mov	%r10, -24(rp,%r15,8)
-	mov	-8(rp,%r15,8), %r10
+	mov	%r10, -8(rp,%rbx,8)
+	mov	(rp,%rbx,8), %r10
 	lea	(%rdx), %r9
-	adc	$0, %r12
-L(m):	mul	%rcx
-	ADDSUB	%r11, %r13
+	adc	$0, %rbp
+L(mid):	mul	%rcx
+	ADDSUB	%r11, %r10
 	lea	(%rax), %r11
-	mov	8(up,%r15,8), %rax
-	adc	%r12, %r8
-	mov	%r13, -16(rp,%r15,8)
-	mov	0(rp,%r15,8), %r13
-	lea	(%rdx), %r12
+	mov	8(up,%rbx,8), %rax
+	adc	%rbp, %r8
+	mov	%r10, (rp,%rbx,8)
+	mov	8(rp,%rbx,8), %r10
+	lea	(%rdx), %rbp
 	adc	$0, %r9
-
-	add	$2, %r15
+L(e):	add	$2, %rbx
 	js	L(top)
 
-L(end):	mul	%rcx
+	mul	%rcx
 	ADDSUB	%r8, %r10
 	adc	%r9, %r11
-	mov	%r10, -24(rp,%r15,8)
-	mov	-8(rp,%r15,8), %r10
-	adc	$0, %r12
-L(r):	ADDSUB	%r11, %r13
-	adc	%r12, %rax
-	mov	%r13, -16(rp,%r15,8)
+	mov	%r10, -8(rp)
+	adc	$0, %rbp
+L(n2):	mov	(rp), %r10
+	ADDSUB	%r11, %r10
+	adc	%rbp, %rax
+	mov	%r10, (rp)
 	adc	$0, %rdx
-L(x):	ADDSUB	%rax, %r10
-	mov	%r10, -8(rp,%r15,8)
-	mov	$0, %eax
+L(n1):	mov	8(rp), %r10
+	ADDSUB	%rax, %r10
+	mov	%r10, 8(rp)
+	mov	R32(%rbx), R32(%rax)	C zero rax
 	adc	%rdx, %rax
-L(ret):	pop	%r13
-	pop	%r12
-	pop	%r15
+	pop	%rbp
+	pop	%rbx
 	ret
-L(n2):	mul	%rcx
-	mov	-8(rp,%r15,8), %r10
-	jmp	L(r)
-L(n1):	mov	-8(rp,%r15,8), %r10
-	jmp	L(x)
 EPILOGUE()
