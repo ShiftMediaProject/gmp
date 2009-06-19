@@ -1,3 +1,17 @@
+2009-06-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/remove.c: New file.
+	* configure.in (gmp_mpn_functions): Add remove.
+	* gmp-impl.h (mpn_remove): Declare.
+
+	* gmp-h.in (mp_bitcnt_t): New basic type.
+	* mpn/generic/perfpow.c (mp_bitcnt_t): Remove private definition.
+
+	* mpn/generic/bdiv_qr.c: Make it actually work.
+
+	* mpn/x86_64/core2/aorsmul_1.asm: Rewrite to use shorter pipeline and
+	to need fewer registers.
+
 2009-06-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/rsh1aors_n.asm: New file.
