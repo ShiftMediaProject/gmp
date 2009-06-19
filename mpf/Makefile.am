@@ -23,7 +23,7 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpf.la
 libmpf_la_SOURCES = \
-  init.c init2.c set.c set_ui.c set_si.c set_str.c set_d.c set_z.c \
+  init.c init2.c inits.c set.c set_ui.c set_si.c set_str.c set_d.c set_z.c \
   set_q.c iset.c iset_ui.c iset_si.c iset_str.c iset_d.c clear.c get_str.c \
   dump.c size.c eq.c reldiff.c sqrt.c random2.c inp_str.c out_str.c \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \

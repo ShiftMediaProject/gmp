@@ -1216,6 +1216,9 @@ __GMP_DECLSPEC char *mpq_get_str __GMP_PROTO ((char *, int, mpq_srcptr));
 #define mpq_init __gmpq_init
 __GMP_DECLSPEC void mpq_init __GMP_PROTO ((mpq_ptr));
 
+#define mpq_inits __gmpq_inits
+__GMP_DECLSPEC void mpq_inits __GMP_PROTO ((mpq_ptr, ...));
+
 #define mpq_inp_str __gmpq_inp_str
 #ifdef _GMP_H_HAVE_FILE
 __GMP_DECLSPEC size_t mpq_inp_str __GMP_PROTO ((mpq_ptr, FILE *, int));
@@ -1364,6 +1367,9 @@ __GMP_DECLSPEC void mpf_init __GMP_PROTO ((mpf_ptr));
 
 #define mpf_init2 __gmpf_init2
 __GMP_DECLSPEC void mpf_init2 __GMP_PROTO ((mpf_ptr, unsigned long int));
+
+#define mpf_inits __gmpf_inits
+__GMP_DECLSPEC void mpf_inits __GMP_PROTO ((mpf_ptr, ...));
 
 #define mpf_init_set __gmpf_init_set
 __GMP_DECLSPEC void mpf_init_set __GMP_PROTO ((mpf_ptr, mpf_srcptr));
