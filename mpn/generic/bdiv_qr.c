@@ -1,12 +1,11 @@
-/* mpn_bdiv_qq -- Hensel division with precomputed inverse, returning quotient
+/* mpn_bdiv_qr -- Hensel division with precomputed inverse, returning quotient
    and remainder.
 
    Contributed to the GNU project by Torbjörn Granlund.
 
-   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
-   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
-   ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
-   RELEASE.
+   THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
+   SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
 Copyright 2006, 2007, 2009 Free Software Foundation, Inc.
 
@@ -30,8 +29,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* Computes Q = N / D mod B^n,
-	    R = N - QD,
-	    destroys N.	 */
+	    R = N - QD.	 */
 
 mp_limb_t
 mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
@@ -42,26 +40,36 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
   mp_limb_t di;
   mp_limb_t rh;
   mp_size_t qn = nn - dn + 1;
+  TMP_DECL;
 
-  dn = MIN (qn, dn);
+  TMP_MARK;
+
   if (BELOW_THRESHOLD (dn, DC_BDIV_QR_THRESHOLD))
     {
-      if (np != rp)
-	MPN_COPY (rp, np, qn);
+      tp = TMP_SALLOC_LIMBS (nn + 1);
+      MPN_COPY (tp, np, nn);
+      tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
-      rh = mpn_sb_bdiv_qr (qp, rp, qn, dp, dn, di);
+      rh = mpn_sb_bdiv_qr (qp, tp, nn + 1, dp, dn, di);
+      MPN_COPY (rp, tp + nn + 1 - dn, dn);
     }
   else if (BELOW_THRESHOLD (dn, MU_BDIV_QR_THRESHOLD))
     {
-      if (np != rp)
-	MPN_COPY (rp, np, qn);
+      tp = TMP_SALLOC_LIMBS (nn + 1);
+      MPN_COPY (tp, np, nn);
+      tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
-      rh = mpn_dc_bdiv_qr (qp, rp, qn, dp, dn, di);
+      rh = mpn_dc_bdiv_qr (qp, tp, nn + 1, dp, dn, di);
+      MPN_COPY (rp, tp + nn + 1 - dn, dn);
     }
   else
     {
-      rh = mpn_mu_bdiv_qr (qp, rp, np, qn, dp, dn, tp);
+      tp = TMP_ALLOC_LIMBS (nn + 1);
+      MPN_COPY (tp, np, nn);
+      tp[nn] = 0;
+      rh = mpn_mu_bdiv_qr (qp, rp, tp, nn + 1, dp, dn, tp);
     }
+  TMP_FREE;
   return rh;
 }
 
