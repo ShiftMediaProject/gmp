@@ -1,5 +1,9 @@
 2009-06-19  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpq/inits.c: New file.
+	* mpf/inits.c: New file.
+	* gmp-h.in (mpz_inits, mpq_inits, mpf_inits): Declare .
+	
 	* mpn/generic/remove.c: New file.
 	* configure.in (gmp_mpn_functions): Add remove.
 	* gmp-impl.h (mpn_remove): Declare.
@@ -18,7 +22,7 @@
 	* mpn/x86_64/rsh1add_n.asm: Remove.
 	* mpn/x86_64/rsh1sub_n.asm: Remove.
 
-	* mpz/inits.c: New function.
+	* mpz/inits.c: New file.
 
 	* gen-trialdivtab.c: Wrap limb constants into CNST_LIMB.
 
