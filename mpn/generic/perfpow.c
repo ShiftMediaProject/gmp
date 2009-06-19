@@ -26,8 +26,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SMALL 20
 #define MEDIUM 100
 
-typedef unsigned long int      mp_bitcnt_t;
-
 /*
    Returns non-zero if {np,nn} == {xp,xn} ^ k.
    Algorithm:
