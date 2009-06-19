@@ -2451,7 +2451,7 @@ gmp_mpn_functions="$extra_functions					   \
   sb_bdiv_q sb_bdiv_qr dc_bdiv_q dc_bdiv_qr mu_bdiv_q mu_bdiv_qr	   \
   bdiv_q bdiv_qr							   \
   divexact bdiv_dbm1c redc_1 redc_2 powm powlo powm_sec subcnd_n	   \
-  trialdiv								   \
+  trialdiv remove							   \
   $gmp_mpn_functions_optional"
 
 define(GMP_MULFUNC_CHOICES,
