@@ -3,7 +3,7 @@
 	* mpq/inits.c: New file.
 	* mpf/inits.c: New file.
 	* gmp-h.in (mpz_inits, mpq_inits, mpf_inits): Declare .
-	
+
 	* mpn/generic/remove.c: New file.
 	* configure.in (gmp_mpn_functions): Add remove.
 	* gmp-impl.h (mpn_remove): Declare.
