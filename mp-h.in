@@ -106,6 +106,7 @@ typedef unsigned long int	mp_limb_t;
 typedef long int		mp_limb_signed_t;
 #endif
 #endif
+typedef unsigned long int	mp_bitcnt_t;
 
 typedef struct
 {
