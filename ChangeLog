@@ -1,3 +1,7 @@
+2009-06-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mp-h.in (mp_bitcnt_t): Declare here too.
+
 2009-06-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpq/inits.c: New file.
@@ -166,6 +170,8 @@
 	mpn_bdiv_q_1_pi1, if the latter is NATIVE.
 
 2009-06-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/bdiv_q_1.asm: New file.
 
 	* configure.in (HAVE_NATIVE): Add recently added functions.
 	(GMP_MULFUNC_CHOICES): Handle addlsh_n, sublsh_n, rsblsh_n.
