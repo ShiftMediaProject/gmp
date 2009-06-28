@@ -2994,36 +2994,43 @@ example,
 As you can see, you can store new values any number of times, once an
 object is initialized.
 
-@deftypefun void mpz_init (mpz_t @var{integer})
-Initialize @var{integer}, and set its value to 0.
+@deftypefun void mpz_init (mpz_t @var{x})
+Initialize @var{x}, and set its value to 0.
 @end deftypefun
 
-@deftypefun void mpz_inits (mpz_t @var{integer}, ...)
-Initialize a NULL-terminated list of @code{mpz_t} variables, staring with
-@var{integer}, and set all variables' values to 0.
+@deftypefun void mpz_inits (mpz_t @var{x}, ...)
+Initialize a NULL-terminated list of @code{mpz_t} variables, and set their
+values to 0.
 @end deftypefun
 
-@deftypefun void mpz_init2 (mpz_t @var{integer}, unsigned long @var{n})
-Initialize @var{integer}, with space for @var{n} bits, and set its value to 0.
+@deftypefun void mpz_init2 (mpz_t @var{x}, unsigned long @var{n})
+Initialize @var{x}, with space for @var{n} bit numbers, and set its value to 0.
+Calling this function instead of @code{mpz_init} or @code{mpz_inits} is never
+necessary; reallocation is handled automatically by GMP when needed.
 
-@var{n} is only the initial space, @var{integer} will grow automatically in
+@var{n} is only the initial space, @var{x} will grow automatically in
 the normal way, if necessary, for subsequent values stored.  @code{mpz_init2}
 makes it possible to avoid such reallocations if a maximum size is known in
 advance.
 @end deftypefun
 
-@deftypefun void mpz_clear (mpz_t @var{integer})
-Free the space occupied by @var{integer}.  Call this function for all
-@code{mpz_t} variables when you are done with them.
+@deftypefun void mpz_clear (mpz_t @var{x})
+Free the space occupied by @var{x}.  Call this function for all @code{mpz_t}
+variables when you are done with them.
 @end deftypefun
 
-@deftypefun void mpz_realloc2 (mpz_t @var{integer}, unsigned long @var{n})
-Change the space allocated for @var{integer} to @var{n} bits.  The value in
-@var{integer} is preserved if it fits, or is set to 0 if not.
+@deftypefun void mpz_clears (mpz_t @var{x}, ...)
+Free the space occupied by a NULL-terminated list of @code{mpz_t} variables.
+@end deftypefun
 
-This function can be used to increase the space for a variable in order to
-avoid repeated automatic reallocations, or to decrease it to give memory back
-to the heap.
+@deftypefun void mpz_realloc2 (mpz_t @var{x}, unsigned long @var{n})
+Change the space allocated for @var{x} to @var{n} bits.  The value in @var{x}
+is preserved if it fits, or is set to 0 if not.
+
+Calling this function is never necessary; reallocation is handled automatically
+by GMP when needed.  But this function can be used to increase the space for a
+variable in order to avoid repeated automatic reallocations, or to decrease it
+to give memory back to the heap.
 @end deftypefun
 
 
@@ -4177,15 +4184,24 @@ Remove any factors that are common to the numerator and denominator of
 @cindex Rational initialization functions
 @cindex Initialization functions
 
-@deftypefun void mpq_init (mpq_t @var{dest_rational})
-Initialize @var{dest_rational} and set it to 0/1.  Each variable should
-normally only be initialized once, or at least cleared out (using the function
-@code{mpq_clear}) between each initialization.
+@deftypefun void mpq_init (mpq_t @var{x})
+Initialize @var{x} and set it to 0/1.  Each variable should normally only be
+initialized once, or at least cleared out (using the function @code{mpq_clear})
+between each initialization.
 @end deftypefun
 
-@deftypefun void mpq_clear (mpq_t @var{rational_number})
-Free the space occupied by @var{rational_number}.  Make sure to call this
+@deftypefun void mpq_inits (mpq_t @var{x}, ...)
+Initialize a NULL-terminated list of @code{mpq_t} variables, and set their
+values to 0/1.
+@end deftypefun
+
+@deftypefun void mpq_clear (mpq_t @var{x})
+Free the space occupied by @var{x}.  Make sure to call this
 function for all @code{mpq_t} variables when you are done with them.
+@end deftypefun
+
+@deftypefun void mpq_clears (mpq_t @var{x}, ...)
+Free the space occupied by a NULL-terminated list of @code{mpq_t} variables.
 @end deftypefun
 
 @deftypefun void mpq_set (mpq_t @var{rop}, mpq_t @var{op})
@@ -4541,9 +4557,20 @@ Initialize @var{x} to 0 and set its precision to be @strong{at least}
 least be cleared, using @code{mpf_clear}, between initializations.
 @end deftypefun
 
+@deftypefun void mpf_inits (mpf_t @var{x}, ...)
+Initialize a NULL-terminated list of @code{mpf_t} variables, and set their
+values to 0.  The precision of the initialized variables is undefined unless a
+default precision has already been established by a call to
+@code{mpf_set_default_prec}.
+@end deftypefun
+
 @deftypefun void mpf_clear (mpf_t @var{x})
 Free the space occupied by @var{x}.  Make sure to call this function for all
 @code{mpf_t} variables when you are done with them.
+@end deftypefun
+
+@deftypefun void mpf_clears (mpf_t @var{x}, ...)
+Free the space occupied by a NULL-terminated list of @code{mpf_t} variables.
 @end deftypefun
 
 @need 2000

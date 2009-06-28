@@ -1,3 +1,15 @@
+2009-06-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/clears.c: New file.
+	* mpq/clears.c: New file.
+	* mpf/clears.c: New file.
+	* gmp-h.in (mpz_clears, mpq_clears, mpf_clears): Declare.
+	* mpz/Makefile.am: Add clears.c.
+	* mpq/Makefile.am: Add clears.c.
+	* mpf/Makefile.am: Add clears.c.
+	* Makefile.am: Add these also to respective OBJECTS variables.
+	* doc/gmp.texi: Document inits function and clears functions.
+
 2009-06-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mp-h.in (mp_bitcnt_t): Declare here too.
