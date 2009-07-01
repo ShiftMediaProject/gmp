@@ -1,5 +1,5 @@
 /* mpn_dc_divappr_q -- divide-and-conquer division, returning only approximate
-   quotient.  The quotient retuened is either correct, or unity too large.
+   quotient.  The quotient returned is either correct, or one too large.
 
    Contributed to the GNU project by Torbjörn Granlund.
 
