@@ -3951,7 +3951,7 @@ significant element first, and host byte order within each value.
 
 @example
 unsigned long  a[20];
-mpz_t          z;
+/* Initialize @var{z} and @var{a} */
 mpz_import (z, 20, 1, sizeof(a[0]), 0, 0, a);
 @end example
 
