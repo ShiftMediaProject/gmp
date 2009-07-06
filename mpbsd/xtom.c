@@ -76,7 +76,7 @@ xtom (const char *str)
 
   str_size = s - begs;
 
-  xsize = str_size / __mp_bases[16].chars_per_limb + 1;
+  xsize = str_size / mp_bases[16].chars_per_limb + 1;
   x->_mp_alloc = xsize;
   x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (xsize * BYTES_PER_MP_LIMB);
 

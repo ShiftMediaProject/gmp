@@ -2364,7 +2364,6 @@ struct bases
 };
 
 #define   mp_bases __MPN(bases)
-#define __mp_bases __MPN(bases)
 __GMP_DECLSPEC extern const struct bases mp_bases[257];
 
 

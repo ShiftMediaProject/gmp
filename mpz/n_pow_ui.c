@@ -55,7 +55,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    The initial powering for bsize==1 into blimb or blimb:blimb_low doesn't
    form the biggest possible power of b that fits, only the biggest power of
    2 power, ie. b^(2^n).  It'd be possible to choose a bigger power, perhaps
-   using __mp_bases[b].big_base for small b, and thereby get better value
+   using mp_bases[b].big_base for small b, and thereby get better value
    from mpn_mul_1 or mpn_mul_2 in the bignum powering.  It's felt that doing
    so would be more complicated than it's worth, and could well end up being
    a slowdown for small e.  For big e on the other hand the algorithm is

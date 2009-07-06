@@ -72,7 +72,7 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
 
   TMP_MARK;
   str_size = ((size_t) (x_size * BITS_PER_MP_LIMB
-			* __mp_bases[base].chars_per_bit_exactly)) + 3;
+			* mp_bases[base].chars_per_bit_exactly)) + 3;
   str = (unsigned char *) TMP_ALLOC (str_size);
 
   /* Move the number to convert into temporary space, since mpn_get_str

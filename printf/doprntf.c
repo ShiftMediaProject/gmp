@@ -91,7 +91,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
 	   digit and subtract that from prec.  In either case add 2 so the
 	   round to nearest can be applied accurately.  */
 	ndigits = prec + 2
-	  + EXP(f) * (__mp_bases[ABS(p->base)].chars_per_limb + (EXP(f)>=0));
+	  + EXP(f) * (mp_bases[ABS(p->base)].chars_per_limb + (EXP(f)>=0));
 	ndigits = MAX (ndigits, 1);
 	break;
 

@@ -1,9 +1,21 @@
+2009-07-06  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (__mp_bases): Remove this alias.
+
+	* mpf/get_str.c: Use less overflow prone expression for computing limb
+	allocation.
+	* mpz/inp_str.c: Likewise.
+	* mpf/set_str.c: Likewise.
+	* mpz/set_str.c: Likewise.
+
 2009-07-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcd_1.c (mpn_gcd_1): Use masking tricks to reduce
 	the number of branches in the loop.
 
 2009-06-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* demos/factorize.c (factor_using_pollard_rho): Rewrite.
 
 	* mpz/clears.c: New file.
 	* mpq/clears.c: New file.

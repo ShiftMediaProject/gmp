@@ -33,7 +33,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    The main reason for a separate shift==0 case is that not all CPUs give
    zero for "n0 >> BITS_PER_MP_LIMB" which would arise in the general case
-   code used on shift==0.  shift==0 is also reasonably common in __mp_bases
+   code used on shift==0.  shift==0 is also reasonably common in mp_bases
    big_base, for instance base==10 on a 64-bit limb.
 
    Under shift!=0 it would be possible to call mpn_lshift to adjust the

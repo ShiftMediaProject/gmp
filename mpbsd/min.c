@@ -77,7 +77,7 @@ min (MINT *dest)
 
   ungetc (c, stdin);
 
-  dest_size = str_size / __mp_bases[10].chars_per_limb + 1;
+  dest_size = str_size / mp_bases[10].chars_per_limb + 1;
   if (dest->_mp_alloc < dest_size)
     _mp_realloc (dest, dest_size);
 
