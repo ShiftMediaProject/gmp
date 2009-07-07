@@ -1789,7 +1789,7 @@ refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
 
   ASSERT (size >= 0);
   ASSERT (base >= 2);
-  ASSERT (base < numberof (__mp_bases));
+  ASSERT (base < numberof (mp_bases));
   ASSERT (size == 0 || src[size-1] != 0);
   ASSERT_MPN (src, size);
 
