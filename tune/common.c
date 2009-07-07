@@ -1780,7 +1780,7 @@ speed_mpn_umul_ppmm_r (struct speed_params *s)
     /* divisor from "r" parameter, or a default */      \
     d = s->r;                                           \
     if (d == 0)                                         \
-      d = __mp_bases[10].big_base;                      \
+      d = mp_bases[10].big_base;                        \
                                                         \
     if (normalize)                                      \
       {                                                 \
@@ -1950,7 +1950,7 @@ speed_operator_div (struct speed_params *s)
   /* divisor from "r" parameter, or a default */
   d = s->r;
   if (d == 0)
-    d = __mp_bases[10].big_base;
+    d = mp_bases[10].big_base;
 
   x = s->xp[0];
   q = 0;
@@ -1991,7 +1991,7 @@ speed_operator_mod (struct speed_params *s)
   /* divisor from "r" parameter, or a default */
   d = s->r;
   if (d == 0)
-    d = __mp_bases[10].big_base;
+    d = mp_bases[10].big_base;
 
   x = s->xp[0];
   r = 0;

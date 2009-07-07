@@ -1632,7 +1632,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
   for (i = 0; i < s->size; i++)
     str[i] = s->xp[i] % base;
 
-  wn = ((mp_size_t) (s->size / __mp_bases[base].chars_per_bit_exactly))
+  wn = ((mp_size_t) (s->size / mp_bases[base].chars_per_bit_exactly))
     / BITS_PER_MP_LIMB + 2;
   SPEED_TMP_ALLOC_LIMBS (wp, wn, s->align_wp);
 
@@ -1645,7 +1645,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
   speed_operand_dst (s, wp, wn);
   speed_cache_fill (s);
 
-  chars_per_limb = __mp_bases[base].chars_per_limb;
+  chars_per_limb = mp_bases[base].chars_per_limb;
   un = s->size / chars_per_limb + 1;
   powtab_mem = TMP_BALLOC_LIMBS (mpn_dc_set_str_powtab_alloc (un));
   mpn_set_str_compute_powtab (powtab, powtab_mem, un, base);
