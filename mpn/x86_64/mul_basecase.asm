@@ -33,7 +33,6 @@ C optimization tool suite written by David Harvey and Torbjorn Granlund.
 C TODO
 C  * Use fewer registers.  (how??? I can't see it -- david)
 C  * Avoid some "mov $0,r" and instead use "xor r,r".
-C  * Don't align loops to a 32-byte boundaries.
 C  * Can the top of each L(addmul_outer_n) prologue be folded into the
 C    mul_1/mul_2 prologues, saving a LEA (%rip)? It would slow down the
 C    case where vn = 1 or 2; is it worth it?
