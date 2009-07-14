@@ -103,9 +103,9 @@ main (int argc, char **argv)
 void
 insert_random_low_zero_limbs (mpf_t x, gmp_randstate_ptr rands)
 {
-  mpz_t ds; mpz_init (ds);
   mp_size_t max = PREC(x) - SIZ(x);
   mp_size_t s;
+  mpz_t ds; mpz_init (ds);
   mpz_urandomb (ds, rands, 32);
   s = mpz_get_ui (ds) % (max + 1);
   MPN_COPY_DECR (PTR(x) + s, PTR(x), SIZ(x));
