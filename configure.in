@@ -1462,7 +1462,7 @@ case $host in
       athlon64 | atom | core2 | pentium4 | x86_64)
         cclist_64="gcc"
         gcc_64_cflags="$gcc_64_cflags -m64"
-        gcc_64_cflags_optlist="cpu"
+        gcc_64_cflags_optlist="cpu arch"
         CALLING_CONVENTIONS_OBJS_64='amd64call.lo amd64check$U.lo'
         SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
         cyclecounter_size_64=2
