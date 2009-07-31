@@ -890,10 +890,10 @@ __GMP_DECLSPEC void mpn_redc_1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_
 __GMP_DECLSPEC void mpn_redc_2 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 
-#define mpn_mod_1s_1p_cps __MPN(mod_1s_1p_cps)
-__GMP_DECLSPEC void mpn_mod_1s_1p_cps __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
-#define mpn_mod_1s_1p __MPN(mod_1s_1p)
-__GMP_DECLSPEC mp_limb_t mpn_mod_1s_1p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4])) __GMP_ATTRIBUTE_PURE;
+#define mpn_mod_1_1p_cps __MPN(mod_1_1p_cps)
+__GMP_DECLSPEC void mpn_mod_1_1p_cps __GMP_PROTO ((mp_limb_t [4], mp_limb_t));
+#define mpn_mod_1_1p __MPN(mod_1_1p)
+__GMP_DECLSPEC mp_limb_t mpn_mod_1_1p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [4])) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_mod_1s_2p_cps __MPN(mod_1s_2p_cps)
 __GMP_DECLSPEC void mpn_mod_1s_2p_cps __GMP_PROTO ((mp_limb_t [5], mp_limb_t));

@@ -207,29 +207,40 @@ mpn_mod_1 (mp_srcptr ap, mp_size_t n, mp_limb_t b)
 
   if (UNLIKELY ((b & GMP_NUMB_HIGHBIT) != 0))
     {
-      /* The functions below do not handle this large divisor.  */
-      return mpn_mod_1_norm (ap, n, b);
-    }
-  else if (BELOW_THRESHOLD (n, MOD_1_1_THRESHOLD))
-    {
-      return mpn_mod_1_unnorm (ap, n, b);
-    }
-  else if (BELOW_THRESHOLD (n, MOD_1_2_THRESHOLD))
-    {
-      mp_limb_t pre[4];
-      mpn_mod_1s_1p_cps (pre, b);
-      return mpn_mod_1s_1p (ap, n, b << pre[1], pre);
-    }
-  else if (BELOW_THRESHOLD (n, MOD_1_4_THRESHOLD) || UNLIKELY (b > GMP_NUMB_MASK / 4))
-    {
-      mp_limb_t pre[5];
-      mpn_mod_1s_2p_cps (pre, b);
-      return mpn_mod_1s_2p (ap, n, b << pre[1], pre);
+      if (BELOW_THRESHOLD (n, MOD_1_1_THRESHOLD))
+	{
+	  return mpn_mod_1_norm (ap, n, b);
+	}
+      else
+	{
+	  mp_limb_t pre[4];
+	  mpn_mod_1_1p_cps (pre, b);
+	  return mpn_mod_1_1p (ap, n, b, pre);
+	}
     }
   else
     {
-      mp_limb_t pre[7];
-      mpn_mod_1s_4p_cps (pre, b);
-      return mpn_mod_1s_4p (ap, n, b << pre[1], pre);
+      if (BELOW_THRESHOLD (n, MOD_1_1_THRESHOLD))
+	{
+	  return mpn_mod_1_unnorm (ap, n, b);
+	}
+      else if (BELOW_THRESHOLD (n, MOD_1_2_THRESHOLD))
+	{
+	  mp_limb_t pre[4];
+	  mpn_mod_1_1p_cps (pre, b);
+	  return mpn_mod_1_1p (ap, n, b << pre[1], pre);
+	}
+      else if (BELOW_THRESHOLD (n, MOD_1_4_THRESHOLD) || UNLIKELY (b > GMP_NUMB_MASK / 4))
+	{
+	  mp_limb_t pre[5];
+	  mpn_mod_1s_2p_cps (pre, b);
+	  return mpn_mod_1s_2p (ap, n, b << pre[1], pre);
+	}
+      else
+	{
+	  mp_limb_t pre[7];
+	  mpn_mod_1s_4p_cps (pre, b);
+	  return mpn_mod_1s_4p (ap, n, b << pre[1], pre);
+	}
     }
 }
