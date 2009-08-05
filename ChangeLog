@@ -1,3 +1,7 @@
+2009-08-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpz/dive_ui.c (check_random): Avoid zero divisors.
+
 2009-07-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mod_1_1.c: Tweak to handle any modulus (possibility
