@@ -43,7 +43,9 @@ check_random (int argc, char *argv[])
 
   for (i = 0; i < reps; i++)
     {
-      d = (unsigned long) urandom();
+      do
+	d = (unsigned long) urandom();
+      while (d == 0);
       mpz_erandomb (q, rands, 512);
       mpz_mul_ui (a, q, d);
 
