@@ -237,7 +237,7 @@ loops, since that will allow us to do better load-use scheduling without too
 much unrolling.
 
 Depending on size or operand alignment, we get 1 c/l or 0.5 c/l on Itanium
-2, according to tests/devel/try.  Cache bank conflicts?
+2, according to tune/speed.  Cache bank conflicts?
 
 
 
@@ -268,10 +268,3 @@ Optimization, Intel document 251110-003, May 2004.
 All the above documents can be found online at
 
     http://developer.intel.com/design/itanium/manuals.htm
-
-
-----------------
-Local variables:
-mode: text
-fill-column: 76
-End:
