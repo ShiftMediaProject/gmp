@@ -52,18 +52,6 @@ mpn_mod_1_1p_cps (mp_limb_t cps[4], mp_limb_t b)
   cps[1] = cnt;
   cps[2] = B1modb >> cnt;
   cps[3] = B2modb >> cnt;
-
-#if WANT_ASSERT
-  {
-    int i;
-    b = cps[2];
-    for (i = 3; i <= 3; i++)
-      {
-	b += cps[i];
-	ASSERT (b >= cps[i]);
-      }
-  }
-#endif
 }
 
 mp_limb_t
