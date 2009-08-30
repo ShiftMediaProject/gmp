@@ -24,7 +24,8 @@ C	     cycles/limb
 C K8,K9:	 2.375
 C K10:		 2.375
 C P4:		 ?
-C P6-15:	 4.45
+C P6 core2:	 4.45
+C P6 corei7:	 4.35
 
 C This code is the result of running a code generation and optimization tool
 C suite written by David Harvey and Torbjorn Granlund.
@@ -108,49 +109,49 @@ L(am2p2):
 
 	ALIGN(32)
 L(top):
-	add	w3, (rp,n,8)
-	adc	%rax, w0
+	add	w3, (rp,n,8)		C 0 21
+	adc	%rax, w0		C 1 24
 	mov	8(up,n,8), %rax
-	adc	%rdx, w1
+	adc	%rdx, w1		C 3 26
 	mov	$0, R32(w2)
 	mul	v0
-	add	%rax, w0
+	add	%rax, w0		C 2 26
 	mov	8(up,n,8), %rax
-	adc	%rdx, w1
-	adc	$0, R32(w2)
+	adc	%rdx, w1		C 4 28
+	adc	$0, R32(w2)		C 6 30
 L(am0):	mul	v1
-	add	w0, 8(rp,n,8)
-	adc	%rax, w1
-	adc	%rdx, w2
+	add	w0, 8(rp,n,8)		C 3 27
+	adc	%rax, w1		C 6 30
+	adc	%rdx, w2		C 8 32
 	mov	16(up,n,8), %rax
 	mov	$0, R32(w3)
 	mul	v0
-	add	%rax, w1
+	add	%rax, w1		C 8
 	mov	16(up,n,8), %rax
-	adc	%rdx, w2
-	adc	$0, R32(w3)
+	adc	%rdx, w2		C 10
+	adc	$0, R32(w3)		C 12
 L(am3):	mul	v1
-	add	w1, 16(rp,n,8)
-	adc	%rax, w2
+	add	w1, 16(rp,n,8)		C 9
+	adc	%rax, w2		C 12
 	mov	24(up,n,8), %rax
-	adc	%rdx, w3
+	adc	%rdx, w3		C 14
 	mul	v0
 	mov	$0, R32(w0)
-	add	%rax, w2
-	adc	%rdx, w3
+	add	%rax, w2		C 14
+	adc	%rdx, w3		C 16
 	mov	$0, R32(w1)
 	mov	24(up,n,8), %rax
-	adc	$0, R32(w0)
+	adc	$0, R32(w0)		C 18
 L(am2):	mul	v1
-	add	w2, 24(rp,n,8)
-	adc	%rax, w3
-	adc	%rdx, w0
+	add	w2, 24(rp,n,8)		C 15
+	adc	%rax, w3		C 18
+	adc	%rdx, w0		C 20
 	mov	32(up,n,8), %rax
 	mul	v0
-	add	%rax, w3
+	add	%rax, w3		C 20
 	mov	32(up,n,8), %rax
-	adc	%rdx, w0
-	adc	$0, R32(w1)
+	adc	%rdx, w0		C 22
+	adc	$0, R32(w1)		C 24
 L(am1):	mul	v1
 	add	$4, n
 	js	L(top)

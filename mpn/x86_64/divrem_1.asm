@@ -23,8 +23,9 @@ include(`../config.m4')
 C		norm	unorm	frac
 C K8		13	13	12
 C P4		44.2	44.2	42.3
-C P6-15 (Core2)	24.5	24.5	19.3
-C P6-15 (Atom)	42	52	37
+C P6 core2	25	24.5	19.3
+C P6 corei7	21.5	20.7	18
+C P6 atom	42	52	37
 
 C TODO
 C  * Compute the inverse without relying on the div instruction.

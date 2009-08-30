@@ -1,6 +1,6 @@
 dnl  AMD64 mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 2004, 2007, 2008 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,10 +21,12 @@ include(`../config.m4')
 
 
 C	     cycles/limb (approx)	div
-C K8:		 40			 71
+C K8,K9:	 54			 71
+C K10:		 54			 77
 C P4:		141			161
-C P6-15 (Core2): 63			116
-C P6-28 (Atom): 130			191
+C P6 core2:	 72			116
+C P6 corei7:	 72			 89
+C P6 atom:	130			191
 
 C rax rcx rdx rdi rsi r8
 
@@ -32,9 +34,9 @@ C rax rcx rdx rdi rsi r8
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_invert_limb)
-	mov	%rdi, %rax
-	shr	$55, %rax
+PROLOGUE(mpn_invert_limb)					Kn	C2	Ci
+	mov	%rdi, %rax		C			 0	 0	 0
+	shr	$55, %rax		C			 1	 1	 1
 ifdef(`PIC',`
 ifdef(`DARWIN',`
 	mov	approx_tab@GOTPCREL(%rip), %r8
@@ -44,42 +46,42 @@ ifdef(`DARWIN',`
 ')',`
 	movabs	$-512+approx_tab, %r8
 ')
-	movzwl	(%r8,%rax,2), R32(%rcx)
-	mov	%rdi, %rsi
-	mov	R32(%rcx), R32(%rax)
-	imul	R32(%rcx), R32(%rcx)
-	shr	$32, %rsi
-	imul	%rsi, %rcx
-	shr	$31, %rcx
-	sal	$17, %rax
-	sub	%rcx, %rax
-	mov	%rax, %r8
-	imul	%rax, %rax
-	sal	$33, %r8
-	mul	%rdi
-	neg	%rdx
-	lea	(%r8,%rdx,2), %rax
-	mov	%rax, %r8
-	mul	%rax
-	mov	%rax, %rcx
-	mov	%rdx, %rax
-	mul	%rdi
-	mov	%rax, %rsi
-	mov	%rcx, %rax
-	mov	%rdx, %rcx
-	mul	%rdi
-	add	%rdx, %rsi
-	sbb	%rcx, %r8
-	shr	$62, %rsi
-	add	$1, %rsi
-	sal	$2, %r8
-	sub	%rsi, %r8
+	movzwl	(%r8,%rax,2), R32(%rcx)	C			 2	 2	 2
+	mov	%rdi, %rsi		C			 0	 0	 0
+	mov	R32(%rcx), R32(%rax)	C			 4	 5	 5
+	imul	R32(%rcx), R32(%rcx)	C			 4	 5	 5
+	shr	$32, %rsi		C			 1	 1	 1
+	imul	%rsi, %rcx		C			 8	10	 8
+	shr	$31, %rcx		C			12	15	11
+	sal	$17, %rax		C			 5	 6	 6
+	sub	%rcx, %rax		C			13	16	12
+	mov	%rax, %r8		C			14	17	13
+	imul	%rax, %rax		C			14	17	13
+	sal	$33, %r8		C			15	18	14
+	mul	%rdi			C			18	22	16
+	neg	%rdx			C			23	30	26
+	lea	(%r8,%rdx,2), %rax	C			24	31	27
+	mov	%rax, %r8		C			26	32	28
+	mul	%rax			C			26	32	28
+	mov	%rax, %rcx		C			30	37	31
+	mov	%rdx, %rax		C			31	40	38
+	mul	%rdi			C			32	41	39
+	mov	%rax, %rsi		C			36	46	42
+	mov	%rcx, %rax		C			31	38	32
+	mov	%rdx, %rcx		C			37	49	49
+	mul	%rdi			C			34	45	33?
+	add	%rdx, %rsi		C			39	53	43
+	sbb	%rcx, %r8		C			40	55	50
+	shr	$62, %rsi		C			40	54	44
+	add	$1, %rsi		C			41	55	45
+	sal	$2, %r8			C			41	56	51
+	sub	%rsi, %r8		C			42	57	52
 	mov	%rdi, %rax
-	mul	%r8
-	add	%rdi, %rax		C xl += d
-	adc	%rdi, %rdx		C xh += d
-	mov	%r8, %rax
-	sub	%rdx, %rax		C return zh - xh
+	mul	%r8			C			43	58	53
+	add	%rdi, %rax		C xl += d		47	63	56
+	adc	%rdi, %rdx		C xh += d		48	66	63
+	mov	%r8, %rax		C			43	58	57
+	sub	%rdx, %rax		C return zh - xh	49	67	64
 	ret
 EPILOGUE()
 

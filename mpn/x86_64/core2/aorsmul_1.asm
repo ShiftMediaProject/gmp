@@ -23,7 +23,8 @@ C	     cycles/limb
 C K8,K9:	 4
 C K10:		 4
 C P4:		 ?
-C P6-15:	 4.3-4.5 (fluctuating)
+C P6 core2:	 4.3-4.5 (fluctuating)
+C P6 corei7:	 5
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

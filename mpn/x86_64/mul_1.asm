@@ -23,9 +23,9 @@ C	     cycles/limb
 C K8,K9:	 2.5
 C K10:		 2.5
 C P4:		 12.3
-C P6-15:	 4.0
-C P6-15 (Core2): 4.0
-C P6-28 (Atom):	19.8
+C P6 core2:	 4.0
+C P6 corei7:	 3.8
+C Atom:		19.8
 
 C The inner loop of this code is the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjorn Granlund.

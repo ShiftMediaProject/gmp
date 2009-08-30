@@ -37,8 +37,8 @@ C mp_limb_t mpn_mod_34lsub1 (mp_srcptr up, mp_size_t n)
 
 C TODO
 C  * Apply the movzwl tricks to the x86/k7 code
-C  * Review feed-in and wind-down code.  In particular, try to avoid adcq and
-C    sbbq to placate Pentium4.
+C  * Review feed-in and wind-down code.  In particular, try to avoid adc and
+C    sbb to placate Pentium4.
 C  * More unrolling and/or index addressing could bring time to under 1 c/l
 C    for Athlon64, approaching 0.67 c/l seems possible.
 C  * There are recurrencies on the carry registers (r8, r9, r10) that might
@@ -47,14 +47,14 @@ C    registers would help.
 C  * For ultimate Athlon64 performance, a sequence like this might be best.
 C    It should reach 0.5 c/l (limited by L1 cache bandwidth).
 C
-C	addq	(%rdi), %rax
-C	adcq	8(%rdi), %rcx
-C	adcq	16(%rdi), %rdx
-C	adcq	$0, %r8
-C	addq	24(%rdi), %rax
-C	adcq	32(%rdi), %rcx
-C	adcq	40(%rdi), %rdx
-C	adcq	$0, %r8
+C	add	(%rdi), %rax
+C	adc	8(%rdi), %rcx
+C	adc	16(%rdi), %rdx
+C	adc	$0, %r8
+C	add	24(%rdi), %rax
+C	adc	32(%rdi), %rcx
+C	adc	40(%rdi), %rdx
+C	adc	$0, %r8
 C	...
 
 

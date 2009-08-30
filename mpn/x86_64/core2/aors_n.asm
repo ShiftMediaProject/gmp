@@ -24,7 +24,8 @@ C	     cycles/limb
 C K8,K9:	 2.25
 C K10:		 2
 C P4:		10
-C P6-15:	 2.05
+C P6 core2:	 2.05
+C P6 corei7:	 2.3
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')

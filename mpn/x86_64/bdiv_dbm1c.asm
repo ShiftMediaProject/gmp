@@ -23,8 +23,9 @@ C	     cycles/limb
 C K8,K9:	 2.25
 C K10:		  ?
 C P4:		12.5
-C P6-15 (Core2): 4.0
-C P6-28 (Atom): 20
+C P6 core2: 	 4.0
+C P6 corei7: 	 3.8
+C P6 atom:	20
 
 C TODO
 C  * Do proper 4-way feed-in instead of the current epilogue
