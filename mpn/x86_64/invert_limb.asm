@@ -34,7 +34,7 @@ C rax rcx rdx rdi rsi r8
 ASM_START()
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_invert_limb)					Kn	C2	Ci
+PROLOGUE(mpn_invert_limb)		C			Kn	C2	Ci
 	mov	%rdi, %rax		C			 0	 0	 0
 	shr	$55, %rax		C			 1	 1	 1
 ifdef(`PIC',`
