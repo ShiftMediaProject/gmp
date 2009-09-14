@@ -7,6 +7,16 @@
 	* tests/misc.c: Use gmp_intptr_t.
 	* tests/mpq/t-get_str.c: Print pointers using C90 "%p".
 
+2009-08-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mod_1_1.c (mpn_mod_1_1p_cps): Remove silly ASSERT code.
+
+	* mpn/asm-defs.m4 (define_mpn): Remove mod_1s_1p, add mod_1_1p.
+
+	* mpn/arm/invert_limb.asm: Complete rewrite.
+
+	* longlong.h: Document LONGLONG_STANDALONE and NO_ASM.
+
 2009-08-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/dive_ui.c (check_random): Avoid zero divisors.
