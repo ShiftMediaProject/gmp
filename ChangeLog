@@ -1,3 +1,12 @@
+2009-09-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Handle mingw64.
+	* gmp-impl.h (gmp_intptr_t): Declare.
+	* tests/amd64check.c (calling_conventions_values): Use CNST_LIMB.
+	* tests/memory.c: Use gmp_intptr_t; print pointers using C90 "%p".
+	* tests/misc.c: Use gmp_intptr_t.
+	* tests/mpq/t-get_str.c: Print pointers using C90 "%p".
+
 2009-08-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/dive_ui.c (check_random): Avoid zero divisors.

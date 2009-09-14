@@ -1467,14 +1467,6 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_64=x86_64.lo
         cyclecounter_size_64=2
 
-        case $host in
-          *-*-solaris*)
-            # Sun cc.
-            cclist_64="$cclist_64 cc"
-            cc_64_cflags="-xO3 -m64"
-            ;;
-        esac
-
 	case $host_cpu in
 	  athlon64 | x86_64)
 	    abilist="64 32"
@@ -1494,6 +1486,20 @@ case $host in
 	    path_64="x86_64/atom x86_64"
 	    ;;
 	esac
+
+        case $host in
+          *-*-solaris*)
+            # Sun cc.
+            cclist_64="$cclist_64 cc"
+            cc_64_cflags="-xO3 -m64"
+            ;;
+	  *-*-mingw*)
+    	    limb_64=longlong
+    	    path_64=""	# Windows amd64 calling conventions are *different*
+    	    # Silence many pedantic warnings for w64.  FIXME.
+    	    gcc_64_cflags="$gcc_64_cflags -std=gnu99"
+            ;;
+        esac
 	;;
     esac
     ;;
@@ -3123,6 +3129,8 @@ fi
 # of any sensible system.  In a generic C build, grepping LONG_BIT out of
 # <limits.h> might be an alternative, for maximum portability.
 #
+AC_CHECK_TYPES(intptr_t)
+AC_CHECK_SIZEOF(void *)
 AC_CHECK_SIZEOF(unsigned short)
 AC_CHECK_SIZEOF(unsigned)
 AC_CHECK_SIZEOF(unsigned long)

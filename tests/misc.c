@@ -132,8 +132,8 @@ mp_limb_t (*calling_conventions_function) __GMP_PROTO ((ANYARGS));
 void *
 align_pointer (void *p, size_t align)
 {
-  unsigned long  d;
-  d = ((unsigned long) p) & (align-1);
+  gmp_intptr_t d;
+  d = ((gmp_intptr_t) p) & (align-1);
   d = (d != 0 ? align-d : 0);
   return (void *) (((char *) p) + d);
 }

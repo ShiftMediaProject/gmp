@@ -198,6 +198,14 @@ typedef unsigned long       gmp_uint_least32_t;
 #endif
 
 
+/* gmp_intptr_t, for pointer to integer casts */
+#if HAVE_INTPTR_T
+typedef intptr_t            gmp_intptr_t;
+#else /* fallback */
+typedef size_t              gmp_intptr_t;
+#endif
+
+
 /* const and signed must match __gmp_const and __gmp_signed, so follow the
    decision made for those in gmp.h.    */
 #if ! __GMP_HAVE_CONST

@@ -25,18 +25,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Vector if constants and register values.  We use one vector to allow access
    via a base pointer, very beneficial for the PIC-enabled amd64call.asm.  */
-long calling_conventions_values[23] =
+mp_limb_t calling_conventions_values[23] =
 {
-  0x1234567887654321L,		/* want_rbx */
-  0x89ABCDEFFEDCBA98L,		/* want_rbp */
-  0xDEADBEEFBADECAFEL,		/* want_r12 */
-  0xFFEEDDCCBBAA9988L,		/* want_r13 */
-  0x0011223344556677L,		/* want_r14 */
-  0x1234432156788765L,		/* want_r15 */
+  CNST_LIMB(0x1234567887654321),	/* want_rbx */
+  CNST_LIMB(0x89ABCDEFFEDCBA98),	/* want_rbp */
+  CNST_LIMB(0xDEADBEEFBADECAFE),	/* want_r12 */
+  CNST_LIMB(0xFFEEDDCCBBAA9988),	/* want_r13 */
+  CNST_LIMB(0x0011223344556677),	/* want_r14 */
+  CNST_LIMB(0x1234432156788765),	/* want_r15 */
 
-  0xFEEDABBACAAFBEED,		/* JUNK_RAX */
-  0xAB78DE89FF5125BB,		/* JUNK_R10 */
-  0x1238901890189031		/* JUNK_R11 */
+  CNST_LIMB(0xFEEDABBACAAFBEED),	/* JUNK_RAX */
+  CNST_LIMB(0xAB78DE89FF5125BB),	/* JUNK_R10 */
+  CNST_LIMB(0x1238901890189031)		/* JUNK_R11 */
 
   /* rest of array used for dynamic values.  */
 };
