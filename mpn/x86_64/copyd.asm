@@ -24,7 +24,8 @@ C	    cycles/limb
 C K8,K9:	1
 C K10:		1
 C P4:		2.8
-C P6-15:	1.2
+C P6 core2:	1.2
+C P6 corei7:	1
 
 
 C INPUT PARAMETERS

@@ -25,8 +25,9 @@ C	     cycles/limb
 C K8,K9:	 3.0
 C K10:		 3.0
 C P4:		14.5
-C P6-15 (Core2): 5.0
-C P6-28 (Atom):	25.0
+C P6 core2:	 5.0
+C P6 corei7:	 4.3
+C P6 atom:	25.0
 
 ASM_START()
 	TEXT

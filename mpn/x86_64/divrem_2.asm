@@ -23,7 +23,8 @@ include(`../config.m4')
 C		norm	frac
 C K8		20	20
 C P4		73	73
-C P6-15		37	37
+C P6 core2	37	37
+C P6 corei7	33	33
 
 C TODO
 C  * Perhaps compute the inverse without relying on divq?  Could either use
@@ -137,7 +138,7 @@ L(19):	sub	%r8, %r14		C		ncp
 	inc	%rdi			C		7
 	xor	R32(%rdx), R32(%rdx)	C
 	cmp	%r10, %rbx		C		13
-	mov	%r8, %rax		C d1		ncp
+	mov	%r8, %rax		C d0		ncp
 	adc	$-1, %rdx		C mask		14
 	add	%rdx, %rdi		C q--		15
 	and	%rdx, %rax		C d0 or 0	15

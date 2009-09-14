@@ -24,8 +24,9 @@ C	     cycles/limb
 C K8,K9:	10
 C K10:		10
 C P4:		33
-C P6-15 (Core2):13.25
-C P6-28 (Atom):	42
+C P6 core2:	13.25
+C P6 corei7:	14
+C P6 atom:	42
 
 C A quick adoption of the 32-bit K7 code.
 
@@ -110,18 +111,18 @@ L(top):
 	C r10	d^(-1) mod 2^64
 	C r11	d, shifted down
 
-	mul	%r11			C carry limb in rdx
-	mov	-8(%rsi,%r8,8), %rax
-	mov	(%rsi,%r8,8), %r9
-	shrd	R8(%rcx), %r9, %rax
-	nop
+	mul	%r11			C carry limb in rdx	0 10
+	mov	-8(%rsi,%r8,8), %rax	C
+	mov	(%rsi,%r8,8), %r9	C
+	shrd	R8(%rcx), %r9, %rax	C
+	nop				C
 	sub	%rbx, %rax		C apply carry bit
-	setc	%bl
-	sub	%rdx, %rax		C apply carry limb
-	adc	$0, %rbx
-L(ent):	imul	%r10, %rax
-	mov	%rax, (%rdi,%r8,8)
-	inc	%r8
+	setc	%bl			C
+	sub	%rdx, %rax		C apply carry limb	5
+	adc	$0, %rbx		C			6
+L(ent):	imul	%r10, %rax		C			6
+	mov	%rax, (%rdi,%r8,8)	C
+	inc	%r8			C
 	jnz	L(top)
 
 	mul	%r11			C carry limb in rdx

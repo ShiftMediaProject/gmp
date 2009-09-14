@@ -37,7 +37,7 @@ C  * Write mpn_addsub_n computing R = A + B - C.  It should run at 2 c/l.
 C  * We could software pipeline the IMUL stuff, by putting it before the
 C    outer loops and before the end of the outer loops.  The last outer
 C    loop iteration would then compute an unneeded product, but it is at
-C    least not a stray read fro up[], since it is at up[n].
+C    least not a stray read from up[], since it is at up[n].
 C  * Can we combine both the add_n and sub_n into the loops, somehow?
 
 C INPUT PARAMETERS

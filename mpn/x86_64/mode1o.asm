@@ -25,8 +25,9 @@ C	     cycles/limb
 C K8,K9:	10
 C K10:		10
 C P4:		33
-C P6-15 (Core2):13
-C P6-28 (Atom):	35
+C P6 core2:	13
+C P6 corei7:	14.5
+C P6 Atom:	35
 
 
 C mp_limb_t mpn_modexact_1_odd (mp_srcptr src, mp_size_t size,
