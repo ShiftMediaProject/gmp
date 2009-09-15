@@ -1,3 +1,9 @@
+2009-09-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	Suggested by Uwe Mueller:
+	* printf/doprnt.c: Use "%ld" for exponent printing.
+	* printf/doprntf.c (__gmp_doprnt_mpf): Make expval "long".
+
 2009-09-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Handle mingw64.
