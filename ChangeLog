@@ -1,3 +1,14 @@
+2009-09-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom33_mul.c: Use new toom functions for all recursive
+	products.
+	* mpn/generic/toom3_sqr.c: Likewise.
+	* mpn/generic/toom44_mul.c: Likewise.
+	* mpn/generic/toom4_sqr.c: Likewise.
+
+	* mpn/generic/add_n.c: Relax operand overlap ASSERTs.
+	* mpn/generic/sub_n.c: Likewise.
+
 2009-09-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	Suggested by Uwe Mueller:
