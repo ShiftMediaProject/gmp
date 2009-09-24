@@ -61,9 +61,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       mpn_mul_basecase (p, a, n, b, n);					\
     else if (! MAYBE_mul_toom33						\
 	     || BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD))		\
-      mpn_kara_mul_n (p, a, b, n, ws);					\
+      mpn_toom22_mul (p, a, n, b, n, ws);					\
     else								\
-      mpn_toom3_mul_n (p, a, b, n, ws);					\
+      mpn_toom33_mul (p, a, n, b, n, ws);					\
   } while (0)
 
 void

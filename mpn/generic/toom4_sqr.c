@@ -62,10 +62,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       mpn_sqr_basecase (p, a, n);					\
     else if (MAYBE_sqr_toom2						\
 	     && BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))		\
-      mpn_kara_sqr_n (p, a, n, ws);					\
+      mpn_toom2_sqr (p, a, n, ws);					\
     else if (! MAYBE_sqr_toom4						\
 	     || BELOW_THRESHOLD (n, SQR_TOOM4_THRESHOLD))		\
-      mpn_toom3_sqr_n (p, a, n, ws);					\
+      mpn_toom3_sqr (p, a, n, ws);					\
     else								\
       mpn_toom4_sqr (p, a, n, ws);					\
   } while (0)
