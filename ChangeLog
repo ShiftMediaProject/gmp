@@ -1,3 +1,7 @@
+2009-09-25  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86/invert_limb.asm: New file.
+
 2009-08-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpz/dive_ui.c (check_random): Avoid zero divisors.
