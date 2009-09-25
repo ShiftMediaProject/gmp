@@ -1,3 +1,7 @@
+2009-09-25  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86/invert_limb.asm: New file.
+
 2009-09-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom33_mul.c: Use new toom functions for all recursive
