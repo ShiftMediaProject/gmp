@@ -56,25 +56,25 @@ ifdef(`PIC',`
 	imul	%eax, %eax
 	mov	%edi, %ebx
 	shr	$11, %ebx
-	add	$1, %ebx
+	inc	%ebx
 	mul	%ebx
 	mov	%edi, %ebp				C Prepare
-	shr	$1, %ebp
+	shr	%ebp
 	sbb	%eax, %eax
 	sub	%eax, %ebp				C %ebp = d_31, %eax = mask
 	shl	$4, %ecx
-	sub	$1, %ecx
+	dec	%ecx
 	sub	%edx, %ecx				C %ecx = v1
 
 	C v_2 = (v1 << 15) + ((v1 *(2^48 - v1 * d31 + (v1 >> 1) & mask)) >> 33)
 	imul	%ecx, %ebp
 	and	%ecx, %eax
-	shr	$1, %eax
+	shr	%eax
 	sub	%ebp, %eax
 	mul	%ecx
 	mov	%edi, %eax				C Prepare for next mul
 	shl	$15, %ecx
-	shr	$1, %edx
+	shr	%edx
 	add	%edx, %ecx				C %ecx = v2
 
 	mul	%ecx
