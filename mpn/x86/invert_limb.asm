@@ -1,4 +1,4 @@
-dnl  x86 mpn_invert_limb
+ dnl  x86 mpn_invert_limb
 
 dnl  Contributed to the GNU project by Niels Möller
 
@@ -22,14 +22,14 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C	     cycles (approx)	div
-C K7:		 43		53
+C K7:		 46		53
 
 C Register usage:
 
 C Input D in %edi
 C Current approximation is in %eax and/or %ecx
-C %ebx, %ebp, and %edx are temporaries.
-C %esi is unused.
+C %ebx and %edx are temporaries.
+C %esi and %ebp is unused.
 
 defframe(PARAM_DIVISOR,4)
 	
@@ -37,8 +37,12 @@ defframe(PARAM_DIVISOR,4)
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)
 deflit(`FRAME', 0)
+	C Adding the push of %ebp and the coresponding pop seems to
+	C reduce running time from 46 to 43 cycles on K7. Don't know
+	C if this is a benchmark artefact or some alignment issue.
+
 	push	%ebx	FRAME_pushl()
-	push	%ebp	FRAME_pushl()
+	C push	%ebp	FRAME_pushl()
 	push	%edi	FRAME_pushl()
 
 	mov	PARAM_DIVISOR, %edi
@@ -58,19 +62,19 @@ ifdef(`PIC',`
 	shr	$11, %ebx
 	inc	%ebx
 	mul	%ebx
-	mov	%edi, %ebp				C Prepare
-	shr	%ebp
+	mov	%edi, %ebx				C Prepare
+	shr	%ebx
 	sbb	%eax, %eax
-	sub	%eax, %ebp				C %ebp = d_31, %eax = mask
+	sub	%eax, %ebx				C %ebx = d_31, %eax = mask
 	shl	$4, %ecx
 	dec	%ecx
 	sub	%edx, %ecx				C %ecx = v1
 
 	C v_2 = (v1 << 15) + ((v1 *(2^48 - v1 * d31 + (v1 >> 1) & mask)) >> 33)
-	imul	%ecx, %ebp
+	imul	%ecx, %ebx
 	and	%ecx, %eax
 	shr	%eax
-	sub	%ebp, %eax
+	sub	%ebx, %eax
 	mul	%ecx
 	mov	%edi, %eax				C Prepare for next mul
 	shl	$15, %ecx
@@ -84,7 +88,7 @@ ifdef(`PIC',`
 	sub	%edx, %eax				C %eax = v3
 
 	pop	%edi
-	pop	%ebp
+	C pop	%ebp
 	pop	%ebx
 	
 	ret
