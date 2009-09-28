@@ -27,7 +27,7 @@ C K8,K9:	 48			 71
 C K10:		 48			 77
 C P4:	       (141)			161
 C P6 core2:	 69			116
-C P6 corei7:	(72)			 89
+C P6 corei7:	 55			 89
 C P6 atom:	129			191
 
 C rax rcx rdx rdi rsi r8
