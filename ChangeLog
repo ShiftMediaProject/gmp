@@ -1,3 +1,8 @@
+2009-09-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/x86_64/invert_limb.asm: Rewrite. Exploit cancellation in the
+	Newton iteration.
+
 2009-09-27  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86/invert_limb.asm: Reduce register usage. Eliminated $1
