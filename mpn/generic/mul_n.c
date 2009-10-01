@@ -706,7 +706,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       /* Allocate workspace of fixed size on stack: fast! */
       mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
       ASSERT (MUL_TOOM3_THRESHOLD <= MUL_TOOM3_THRESHOLD_LIMIT);
-      mpn_kara_mul_n (p, a, b, n, ws);
+      mpn_toom22_mul (p, a, n, b, n, ws);
     }
   else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD))
     {
@@ -714,7 +714,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       TMP_SDECL;
       TMP_SMARK;
       ws = TMP_SALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (n));
-      mpn_toom3_mul_n (p, a, b, n, ws);
+      mpn_toom33_mul (p, a, n, b, n, ws);
       TMP_SFREE;
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
