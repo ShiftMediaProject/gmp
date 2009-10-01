@@ -47,20 +47,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   vinf=              a3 *     b1  # A(inf)*B(inf)
 */
 
-#if TUNE_PROGRAM_BUILD
-#define MAYBE_mul_toom22   1
-#else
-#define MAYBE_mul_toom22						\
-  (MUL_TOOM33_THRESHOLD >= 2 * MUL_TOOM22_THRESHOLD)
-#endif
-
-#define TOOM22_MUL_N_REC(p, a, b, n, ws)				\
+#define TOOM42_MUL_N_REC(p, a, b, n, ws)				\
   do {									\
-    if (! MAYBE_mul_toom22						\
-	|| BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))		\
-      mpn_mul_basecase (p, a, n, b, n);					\
-    else								\
-      mpn_toom22_mul (p, a, n, b, n, ws);				\
+    mpn_mul_n (p, a, b, n);						\
   } while (0)
 
 void
@@ -214,13 +203,13 @@ mpn_toom42_mul (mp_ptr pp,
 #define scratch_out	scratch + 4 * n + 4
 
   /* vm1, 2n+1 limbs */
-  TOOM22_MUL_N_REC (vm1, asm1, bsm1, n, scratch_out);
+  TOOM42_MUL_N_REC (vm1, asm1, bsm1, n, scratch_out);
   cy = 0;
   if (asm1[n] != 0)
     cy = mpn_add_n (vm1 + n, vm1 + n, bsm1, n);
   vm1[2 * n] = cy;
 
-  TOOM22_MUL_N_REC (v2, as2, bs2, n + 1, scratch_out);	/* v2, 2n+1 limbs */
+  TOOM42_MUL_N_REC (v2, as2, bs2, n + 1, scratch_out);	/* v2, 2n+1 limbs */
 
   /* vinf, s+t limbs */
   if (s > t)  mpn_mul (vinf, a3, s, b1, t);
@@ -229,7 +218,7 @@ mpn_toom42_mul (mp_ptr pp,
   vinf0 = vinf[0];				/* v1 overlaps with this */
 
   /* v1, 2n+1 limbs */
-  TOOM22_MUL_N_REC (v1, as1, bs1, n, scratch_out);
+  TOOM42_MUL_N_REC (v1, as1, bs1, n, scratch_out);
   if (as1[n] == 1)
     {
       cy = bs1[n] + mpn_add_n (v1 + n, v1 + n, bs1, n);
@@ -252,7 +241,7 @@ mpn_toom42_mul (mp_ptr pp,
     cy += mpn_add_n (v1 + n, v1 + n, as1, n);
   v1[2 * n] = cy;
 
-  TOOM22_MUL_N_REC (v0, ap, bp, n, scratch_out);	/* v0, 2n limbs */
+  TOOM42_MUL_N_REC (v0, ap, bp, n, scratch_out);	/* v0, 2n limbs */
 
   mpn_toom_interpolate_5pts (pp, v2, vm1, n, s + t, 1^vm1_neg, vinf0);
 
