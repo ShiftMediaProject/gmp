@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
-  This file current as of 1 May 2009.  An up-to-date version is available at
+  This file current as of 17 Sep 2009.  An up-to-date version is available at
   <a href="http://gmplib.org/projects.html">http://gmplib.org/projects.html</a>.
   Please send comments about this page to gmp-devel<font>@</font>gmplib.org.
 
@@ -132,17 +132,17 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
   <p> Standard techniques for these routines are unrolling, software
       pipelining, and specialization for common operand values.  For machines
-      with poor integer multiplication, it is often possible to improve the
-      performance using floating-point operations, or SIMD operations such as
-      MMX or Sun's VIS.
+      with poor integer multiplication, it is sometimes possible to remedy the
+      situation using floating-point operations or SIMD operations such as MMX
+      (x86) (x86), SSE (x86), VMX (PowerPC), VIS (Sparc).
 
   <p> Using floating-point operations is interesting but somewhat tricky.
       Since IEEE double has 53 bit of mantissa, one has to split the operands
-      in small pieces, so that no result is greater than 2^53.  For 32-bit
-      computers, splitting one operand into 16-bit pieces works.  For 64-bit
-      machines, one operand can be split into 21-bit pieces and the other into
-      32-bit pieces.  (A 64-bit operand can be split into just three 21-bit
-      pieces if one allows the split operands to be negative!)
+      in small pieces, so that no intermediates are greater than 2^53.  For
+      32-bit computers, splitting one operand into 16-bit pieces works.  For
+      64-bit machines, one operand can be split into 21-bit pieces and the
+      other into 32-bit pieces.  (A 64-bit operand can be split into just three
+      21-bit pieces if one allows the split operands to be negative!)
 
 
 <li> <strong>Math functions for the mpf layer</strong>
@@ -152,12 +152,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
       functions are desirable: acos, acosh, asin, asinh, atan, atanh, atan2,
       cos, cosh, exp, log, log10, pow, sin, sinh, tan, tanh.
 
+  <p> Note that the <a href="http://mpfr.org">mpfr</a> fuctions already provide
+  these functions, and that we usually recommend new programs to use mpfr
+  instead of mpf.
+
 
 <li> <strong>Faster sqrt</strong>
 
   <p> The current code uses divisions, which are reasonably fast, but it'd be
       possible to use only multiplications by computing 1/sqrt(A) using this
-      formula:
+      iteration:
       <pre>
 				    2
 		   x   = x  (3 &minus; A x )/2
@@ -171,12 +175,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
       overall.
 
   <p> We should probably allow a special exponent-like parameter, to speed
-      computations of a precise square root of a small number in mpf.
+      computations of a precise square root of a small number in mpf and mpfr.
 
 
 <li> <strong>Nth root</strong>
 
-  <p> Improve mpn_rootrem.  The current code is not to bad, but its average
+  <p> Improve mpn_rootrem.  The current code is not too bad, but its average
       time complexity is a function of the input, while it is possible to
       make it a function of the output.
 
