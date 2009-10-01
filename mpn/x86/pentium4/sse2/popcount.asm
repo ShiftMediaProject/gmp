@@ -41,7 +41,8 @@ C                           cycles/limb     cycles/limb
 C P4 model 4 (Nocona):          8
 C K8:                           7.5
 C K10:				3.5
-C P6-15:			3.68
+C P6 core2:			3.68
+C P6 corei7:			3.15
 
 C TODO
 C  * Make a mpn_hamdist based on this.  Alignment could either be handled by
