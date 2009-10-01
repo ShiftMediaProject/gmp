@@ -1,3 +1,14 @@
+2009-10-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/tdiv_qr.c: Call mpn_divrem_1 and mpn_dc_div_qr instead of
+	old functions.
+
+	* mpn/generic/mul_n.c: Call toom22 and toom33 instead of old functions.
+
+	* mpn/generic/toom42_mul.c (TOOM42_MUL_N_REC): Renamed from
+	TOOM22_MUL_N_REC.  Unconditionally call the generic mpn_mul_n.
+	* mpn/generic/toom32_mul.c: Analogous changes.
+
 2009-09-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/x86_64/invert_limb.asm: Rewrite. Exploit cancellation in the
