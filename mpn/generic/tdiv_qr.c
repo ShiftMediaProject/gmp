@@ -58,7 +58,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 
     case 1:
       {
-	rp[0] = mpn_divmod_1 (qp, np, nn, dp[0]);
+	rp[0] = mpn_divrem_1 (qp, (mp_size_t) 0, np, nn, dp[0]);
 	return;
       }
 
@@ -138,40 +138,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    if (dn < DIV_DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
 	    else
-	      {
-		/* Divide 2*dn / dn limbs as long as the limbs in np last.  */
-		q2p = qp + nn - dn;
-		n2p += nn - dn;
-		do
-		  {
-		    q2p -= dn;  n2p -= dn;
-		    mpn_dc_divrem_n (q2p, n2p, d2p, dn);
-		    nn -= dn;
-		  }
-		while (nn >= 2 * dn);
-
-		if (nn != dn)
-		  {
-		    mp_limb_t ql;
-		    n2p -= nn - dn;
-
-		    /* We have now dn < nn - dn < 2dn.  Make a recursive call,
-		       since falling out to the code below isn't pretty.
-		       Unfortunately, mpn_tdiv_qr returns nn-dn+1 quotient
-		       limbs, which would overwrite one already generated
-		       quotient limbs.  Preserve it with an ugly hack.  */
-		    /* FIXME: This suggests that we should have an
-		       mpn_tdiv_qr_internal that instead returns the most
-		       significant quotient limb and move the meat of this
-		       function there.  */
-		    /* FIXME: Perhaps call mpn_sb_divrem_mn here for certain
-		       operand ranges, to decrease overhead for small
-		       operands?  */
-		    ql = qp[nn - dn]; /* preserve quotient limb... */
-		    mpn_tdiv_qr (qp, n2p, 0L, n2p, nn, d2p, dn);
-		    qp[nn - dn] = ql; /* ...restore it again */
-		  }
-	      }
+	      mpn_dc_div_qr (qp, n2p, nn, d2p, dn);
 
 
 	    if (cnt != 0)
@@ -298,7 +265,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    else if (qn < DIV_DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, 2 * qn, d2p, qn);
 	    else
-	      mpn_dc_divrem_n (qp, n2p, d2p, qn);
+	      mpn_dc_div_qr (qp, n2p, 2 * qn, d2p, qn);
 
 	    rn = qn;
 	    /* Multiply the first ignored divisor limb by the most significant
