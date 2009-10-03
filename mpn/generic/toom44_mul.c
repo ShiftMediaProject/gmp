@@ -214,15 +214,15 @@ mpn_toom44_mul (mp_ptr pp,
 #endif
   cy = mpn_lshift (tp, a1, n, 2);			/*  4a1             */
   tp[n] = cy + mpn_add (tp, tp, n, a3, s);		/*  4a1 +  a3       */
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (apx, tp, n + 1) < 0)
     {
-      mpn_addsub_n (apx, amx, tp, apx, n + 1);
+      mpn_add_n_sub_n (apx, amx, tp, apx, n + 1);
       flags |= toom7_w1_neg;
     }
   else
     {
-      mpn_addsub_n (apx, amx, apx, tp, n + 1);
+      mpn_add_n_sub_n (apx, amx, apx, tp, n + 1);
     }
 #else
   if (mpn_cmp (apx, tp, n + 1) < 0)
@@ -250,15 +250,15 @@ mpn_toom44_mul (mp_ptr pp,
 #endif
   cy = mpn_lshift (tp, b1, n, 2);			/*  4a1             */
   tp[n] = cy + mpn_add (tp, tp, n, b3, t);		/*  4a1 +  b3       */
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (bpx, tp, n + 1) < 0)
     {
-      mpn_addsub_n (bpx, bmx, tp, bpx, n + 1);
+      mpn_add_n_sub_n (bpx, bmx, tp, bpx, n + 1);
       flags ^= toom7_w1_neg;
     }
   else
     {
-      mpn_addsub_n (bpx, bmx, bpx, tp, n + 1);
+      mpn_add_n_sub_n (bpx, bmx, bpx, tp, n + 1);
     }
 #else
   if (mpn_cmp (bpx, tp, n + 1) < 0)

@@ -826,11 +826,11 @@ __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
 #define mpn_lshiftc __MPN(lshiftc)
 __GMP_DECLSPEC mp_limb_t mpn_lshiftc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 
-#define mpn_addsub_n __MPN(addsub_n)
-__GMP_DECLSPEC mp_limb_t mpn_addsub_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_add_n_sub_n __MPN(add_n_sub_n)
+__GMP_DECLSPEC mp_limb_t mpn_add_n_sub_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
-#define mpn_addsub_nc __MPN(addsub_nc)
-__GMP_DECLSPEC mp_limb_t mpn_addsub_nc __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+#define mpn_add_n_sub_nc __MPN(add_n_sub_nc)
+__GMP_DECLSPEC mp_limb_t mpn_add_n_sub_nc __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #define mpn_addaddmul_1msb0 __MPN(addaddmul_1msb0)
 __GMP_DECLSPEC mp_limb_t mpn_addaddmul_1msb0 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));

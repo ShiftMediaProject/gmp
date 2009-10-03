@@ -152,8 +152,8 @@ const struct routine_t {
   { "mpn_add_n",         speed_mpn_add_n,     FLAG_R_OPTIONAL },
   { "mpn_sub_n",         speed_mpn_sub_n,     FLAG_R_OPTIONAL },
 
-#if HAVE_NATIVE_mpn_addsub_n
-  { "mpn_addsub_n",      speed_mpn_addsub_n,     FLAG_R_OPTIONAL },
+#if HAVE_NATIVE_mpn_add_n_sub_n
+  { "mpn_add_n_sub_n",      speed_mpn_add_n_sub_n,     FLAG_R_OPTIONAL },
 #endif
 
   { "mpn_addmul_1",      speed_mpn_addmul_1,  FLAG_R },

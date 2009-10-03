@@ -60,8 +60,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 #ifdef WANT_ADDSUB
-#include "generic/addsub_n.c"
-#define HAVE_NATIVE_mpn_addsub_n 1
+#include "generic/add_n_sub_n.c"
+#define HAVE_NATIVE_mpn_add_n_sub_n 1
 #endif
 
 static void mpn_mul_fft_internal
@@ -387,8 +387,8 @@ mpn_fft_fft (mp_ptr *Ap, mp_size_t K, int **ll,
   if (K == 2)
     {
       mp_limb_t cy;
-#if HAVE_NATIVE_mpn_addsub_n
-      cy = mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1;
+#if HAVE_NATIVE_mpn_add_n_sub_n
+      cy = mpn_add_n_sub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1;
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[inc], n + 1);
@@ -562,8 +562,8 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
   if (K == 2)
     {
       mp_limb_t cy;
-#if HAVE_NATIVE_mpn_addsub_n
-      cy = mpn_addsub_n (Ap[0], Ap[1], Ap[0], Ap[1], n + 1) & 1;
+#if HAVE_NATIVE_mpn_add_n_sub_n
+      cy = mpn_add_n_sub_n (Ap[0], Ap[1], Ap[0], Ap[1], n + 1) & 1;
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[1], n + 1);
@@ -980,8 +980,8 @@ mpn_mul_fft_full (mp_ptr op,
   /* 0 <= cc <= 1 */
   /* now lambda-mu = {pad_op, pl2} - cc mod 2^(pl2*GMP_NUMB_BITS)+1 */
   oldcc = cc;
-#if HAVE_NATIVE_mpn_addsub_n
-  c2 = mpn_addsub_n (pad_op + l, pad_op, pad_op, pad_op + l, l);
+#if HAVE_NATIVE_mpn_add_n_sub_n
+  c2 = mpn_add_n_sub_n (pad_op + l, pad_op, pad_op, pad_op + l, l);
   /* c2 & 1 is the borrow, c2 & 2 is the carry */
   cc += c2 >> 1; /* carry out from high <- low + high */
   c2 = c2 & 1; /* borrow out from low <- low - high */

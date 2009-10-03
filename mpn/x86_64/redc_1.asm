@@ -33,7 +33,7 @@ C  * Handle certain sizes, e.g., 1, 2, 3, 4, 8, with single-loop code.
 C    The code for 1, 2, 3, 4 should perhaps be completely register based.
 C  * Perhaps align outer loops.
 C  * The sub_n at the end leaks side-channel data.  How do we fix that?
-C  * Write mpn_addsub_n computing R = A + B - C.  It should run at 2 c/l.
+C  * Write mpn_add_n_sub_n computing R = A + B - C.  It should run at 2 c/l.
 C  * We could software pipeline the IMUL stuff, by putting it before the
 C    outer loops and before the end of the outer loops.  The last outer
 C    loop iteration would then compute an unneeded product, but it is at

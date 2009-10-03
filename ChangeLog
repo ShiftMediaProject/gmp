@@ -1,3 +1,7 @@
+2009-10-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Rename mpn_addsub_n to mpn_add_n_sub_n.
+
 2009-10-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/tdiv_qr.c: Call mpn_divrem_1 and mpn_dc_div_qr instead of

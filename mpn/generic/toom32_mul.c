@@ -83,16 +83,16 @@ mpn_toom32_mul (mp_ptr pp,
 
   /* Compute as1 and asm1.  */
   asm1[n] = mpn_add (a0_a2, a0, n, a2, s);
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (asm1[n] == 0 && mpn_cmp (a0_a2, a1, n) < 0)
     {
-      cy = mpn_addsub_n (as1, asm1, a1, a0_a2, n);
+      cy = mpn_add_n_sub_n (as1, asm1, a1, a0_a2, n);
       as1[n] = cy >> 1;
       vm1_neg = 1;
     }
   else
     {
-      cy = mpn_addsub_n (as1, asm1, a0_a2, a1, n);
+      cy = mpn_add_n_sub_n (as1, asm1, a0_a2, a1, n);
       as1[n] = asm1[n] + (cy >> 1);
       asm1[n]-= cy & 1;
       vm1_neg = 0;
@@ -115,15 +115,15 @@ mpn_toom32_mul (mp_ptr pp,
   /* Compute bs1 and bsm1.  */
   if (t == n)
     {
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
       if (mpn_cmp (b0, b1, n) < 0)
 	{
-	  cy = mpn_addsub_n (bs1, bsm1, b1, b0, n);
+	  cy = mpn_add_n_sub_n (bs1, bsm1, b1, b0, n);
 	  vm1_neg ^= 1;
 	}
       else
 	{
-	  cy = mpn_addsub_n (bs1, bsm1, b0, b1, n);
+	  cy = mpn_add_n_sub_n (bs1, bsm1, b0, b1, n);
 	}
       bs1[n] = cy >> 1;
 #else

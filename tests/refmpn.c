@@ -953,7 +953,7 @@ refmpn_addmul_8 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
 }
 
 mp_limb_t
-refmpn_addsub_nc (mp_ptr r1p, mp_ptr r2p,
+refmpn_add_n_sub_nc (mp_ptr r1p, mp_ptr r2p,
 		  mp_srcptr s1p, mp_srcptr s2p, mp_size_t size,
 		  mp_limb_t carry)
 {
@@ -978,10 +978,10 @@ refmpn_addsub_nc (mp_ptr r1p, mp_ptr r2p,
 }
 
 mp_limb_t
-refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
+refmpn_add_n_sub_n (mp_ptr r1p, mp_ptr r2p,
 		 mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
-  return refmpn_addsub_nc (r1p, r2p, s1p, s2p, size, CNST_LIMB(0));
+  return refmpn_add_n_sub_nc (r1p, r2p, s1p, s2p, size, CNST_LIMB(0));
 }
 
 

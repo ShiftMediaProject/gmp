@@ -130,15 +130,15 @@ mpn_toom52_mul (mp_ptr pp,
   /* Compute bs1 and bsm1.  */
   if (t == n)
     {
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
       if (mpn_cmp (b0, b1, n) < 0)
 	{
-	  cy = mpn_addsub_n (bs1, bsm1, b1, b0, n);
+	  cy = mpn_add_n_sub_n (bs1, bsm1, b1, b0, n);
 	  flags ^= toom6_vm1_neg;
 	}
       else
 	{
-	  cy = mpn_addsub_n (bs1, bsm1, b0, b1, n);
+	  cy = mpn_add_n_sub_n (bs1, bsm1, b0, b1, n);
 	}
       bs1[n] = cy >> 1;
 #else
@@ -218,15 +218,15 @@ mpn_toom52_mul (mp_ptr pp,
   cy += mpn_add_n (a0a2, a0a2, asm2, s);		/* 16a4     +4a2      + a0 */
   MPN_INCR_U(a0a2 + s, n - s + 1, cy);
 
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (a0a2, a1a3, n+1) < 0)
     {
-      mpn_addsub_n (as2, asm2, a1a3, a0a2, n+1);
+      mpn_add_n_sub_n (as2, asm2, a1a3, a0a2, n+1);
       flags ^= toom6_vm1_neg;
     }
   else
     {
-      mpn_addsub_n (as2, asm2, a0a2, a1a3, n+1);
+      mpn_add_n_sub_n (as2, asm2, a0a2, a1a3, n+1);
     }
 #else
   mpn_add_n (as2, a0a2, a1a3, n+1);
@@ -245,15 +245,15 @@ mpn_toom52_mul (mp_ptr pp,
   cy = mpn_add (a0a2, a2, n, a4, s);
   a0a2[n] = cy + mpn_add_n (a0a2, a0, a0a2, n);
   asm1[n] = mpn_add_n (asm1, a1, a3, n);
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (a0a2, asm1, n+1) < 0)
     {
-      cy = mpn_addsub_n (as1, asm1, asm1, a0a2, n+1);
+      cy = mpn_add_n_sub_n (as1, asm1, asm1, a0a2, n+1);
       flags ^= toom6_vm1_neg;
     }
   else
     {
-      cy = mpn_addsub_n (as1, asm1, a0a2, asm1, n+1);
+      cy = mpn_add_n_sub_n (as1, asm1, a0a2, asm1, n+1);
     }
 #else
   mpn_add_n (as1, a0a2, asm1, n+1);

@@ -847,12 +847,12 @@ param_init (void)
   p->dst[1] = 1;
   p->src[0] = 1;
   p->src[1] = 1;
-  REFERENCE (refmpn_addsub_n);
+  REFERENCE (refmpn_add_n_sub_n);
 
   p = &param[TYPE_ADDSUB_NC];
   COPY (TYPE_ADDSUB_N);
   p->carry = CARRY_4;
-  REFERENCE (refmpn_addsub_nc);
+  REFERENCE (refmpn_add_n_sub_nc);
 
 
   p = &param[TYPE_COPY];
@@ -1329,11 +1329,11 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_sub_nc),    TYPE_SUB_NC },
 #endif
 
-#if HAVE_NATIVE_mpn_addsub_n
-  { TRY(mpn_addsub_n),  TYPE_ADDSUB_N  },
+#if HAVE_NATIVE_mpn_add_n_sub_n
+  { TRY(mpn_add_n_sub_n),  TYPE_ADDSUB_N  },
 #endif
-#if HAVE_NATIVE_mpn_addsub_nc
-  { TRY(mpn_addsub_nc), TYPE_ADDSUB_NC },
+#if HAVE_NATIVE_mpn_add_n_sub_nc
+  { TRY(mpn_add_n_sub_nc), TYPE_ADDSUB_NC },
 #endif
 
   { TRY(mpn_addmul_1),  TYPE_ADDMUL_1  },

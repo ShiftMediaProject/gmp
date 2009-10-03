@@ -151,8 +151,8 @@ main (int argc, char **argv)
 	  r2p[-1] = 0x87654321;
 	  r2p[n] = 0x12345678;
 
-	  refcy = refmpn_addsub_n (ref1p, ref2p, s1p, s2p, n);
-	  cy = mpn_addsub_n (r1p, r2p, s1p, s2p, n);
+	  refcy = refmpn_add_n_sub_n (ref1p, ref2p, s1p, s2p, n);
+	  cy = mpn_add_n_sub_n (r1p, r2p, s1p, s2p, n);
 
 	  if (refcy != cy
 	      || mpn_cmp (ref1p, r1p, n) != 0

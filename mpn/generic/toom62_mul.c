@@ -102,15 +102,15 @@ mpn_toom62_mul (mp_ptr pp,
   a0_a2[n] += mpn_add_n (a0_a2, a0_a2, a4, n);
   a1_a3[n]  = mpn_add_n (a1_a3, a1, a3, n);
   a1_a3[n] += mpn_add (a1_a3, a1_a3, n, a5, s);
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (a0_a2, a1_a3, n + 1) < 0)
     {
-      mpn_addsub_n (as1, asm1, a1_a3, a0_a2, n + 1);
+      mpn_add_n_sub_n (as1, asm1, a1_a3, a0_a2, n + 1);
       vm1_neg = 1;
     }
   else
     {
-      mpn_addsub_n (as1, asm1, a0_a2, a1_a3, n + 1);
+      mpn_add_n_sub_n (as1, asm1, a0_a2, a1_a3, n + 1);
       vm1_neg = 0;
     }
 #else
@@ -174,15 +174,15 @@ mpn_toom62_mul (mp_ptr pp,
   cy += mpn_add (a1_a3, a1_a3, n, a5, s);		/* 16a1 + 4a3 + a5  */
   a1_a3[n] = cy;
 #endif
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (a0_a2, a1_a3, n + 1) < 0)
     {
-      mpn_addsub_n (ash, asmh, a1_a3, a0_a2, n + 1);
+      mpn_add_n_sub_n (ash, asmh, a1_a3, a0_a2, n + 1);
       vmh_neg = 1;
     }
   else
     {
-      mpn_addsub_n (ash, asmh, a0_a2, a1_a3, n + 1);
+      mpn_add_n_sub_n (ash, asmh, a0_a2, a1_a3, n + 1);
       vmh_neg = 0;
     }
 #else
@@ -202,15 +202,15 @@ mpn_toom62_mul (mp_ptr pp,
   /* Compute bs1 and bsm1.  */
   if (t == n)
     {
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
       if (mpn_cmp (b0, b1, n) < 0)
 	{
-	  cy = mpn_addsub_n (bs1, bsm1, b1, b0, n);
+	  cy = mpn_add_n_sub_n (bs1, bsm1, b1, b0, n);
 	  bsm_neg = 1;
 	}
       else
 	{
-	  cy = mpn_addsub_n (bs1, bsm1, b0, b1, n);
+	  cy = mpn_add_n_sub_n (bs1, bsm1, b0, b1, n);
 	  bsm_neg = 0;
 	}
       bs1[n] = cy >> 1;

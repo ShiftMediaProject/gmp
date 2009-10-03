@@ -101,15 +101,15 @@ mpn_toom53_mul (mp_ptr pp,
   gp[n]  = mpn_add_n (gp, a0, a2, n);
   gp[n] += mpn_add   (gp, gp, n, a4, s);
   hp[n]  = mpn_add_n (hp, a1, a3, n);
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
-      mpn_addsub_n (as1, asm1, hp, gp, n + 1);
+      mpn_add_n_sub_n (as1, asm1, hp, gp, n + 1);
       vm1_neg = 1;
     }
   else
     {
-      mpn_addsub_n (as1, asm1, gp, hp, n + 1);
+      mpn_add_n_sub_n (as1, asm1, gp, hp, n + 1);
       vm1_neg = 0;
     }
 #else
@@ -166,15 +166,15 @@ mpn_toom53_mul (mp_ptr pp,
   cy += mpn_add_n (hp, ash, hp, n);			/*  8a1 + 2a3       */
   hp[n] = cy;
 #endif
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
-      mpn_addsub_n (ash, asmh, hp, gp, n + 1);
+      mpn_add_n_sub_n (ash, asmh, hp, gp, n + 1);
       vmh_neg = 1;
     }
   else
     {
-      mpn_addsub_n (ash, asmh, gp, hp, n + 1);
+      mpn_add_n_sub_n (ash, asmh, gp, hp, n + 1);
       vmh_neg = 0;
     }
 #else
@@ -193,16 +193,16 @@ mpn_toom53_mul (mp_ptr pp,
 
   /* Compute bs1 and bsm1.  */
   bs1[n] = mpn_add (bs1, b0, n, b2, t);		/* b0 + b2 */
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (bs1[n] == 0 && mpn_cmp (bs1, b1, n) < 0)
     {
-      bs1[n] = mpn_addsub_n (bs1, bsm1, b1, bs1, n) >> 1;
+      bs1[n] = mpn_add_n_sub_n (bs1, bsm1, b1, bs1, n) >> 1;
       bsm1[n] = 0;
       vm1_neg ^= 1;
     }
   else
     {
-      cy = mpn_addsub_n (bs1, bsm1, bs1, b1, n);
+      cy = mpn_add_n_sub_n (bs1, bsm1, bs1, b1, n);
       bsm1[n] = bs1[n] - (cy & 1);
       bs1[n] += (cy >> 1);
     }
@@ -241,14 +241,14 @@ mpn_toom53_mul (mp_ptr pp,
   cy = mpn_lshift (gp, b0, n, 2);			/* 4b0             */
   gp[n] = cy + mpn_add (gp, gp, n, b2, t);		/* 4b0 +        b2 */
 #endif
-#if HAVE_NATIVE_mpn_addsub_n
+#if HAVE_NATIVE_mpn_add_n_sub_n
   if (mpn_cmp (gp, hp, n + 1) < 0)
     {
-      mpn_addsub_n (bsh, bsmh, hp, gp, n + 1);
+      mpn_add_n_sub_n (bsh, bsmh, hp, gp, n + 1);
       vmh_neg^= 1;
     }
   else
-    mpn_addsub_n (bsh, bsmh, gp, hp, n + 1);
+    mpn_add_n_sub_n (bsh, bsmh, gp, hp, n + 1);
 #else
   mpn_add_n (bsh, gp, hp, n + 1);			/* 4b0 + 2b1 +  b2 */
   if (mpn_cmp (gp, hp, n + 1) < 0)

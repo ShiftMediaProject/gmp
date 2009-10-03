@@ -122,9 +122,9 @@ main (int argc, char **argv)
 
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	mpn_addsub_n (d1x+1, d2x+1, s1, s2, size);
+	mpn_add_n_sub_n (d1x+1, d2x+1, s1, s2, size);
       t = cputime() - t0;
-      printf ("   mpn_addsub_n:   %ldms (%.3f cycles/limb)\n",
+      printf ("   mpn_add_n_sub_n:   %ldms (%.3f cycles/limb)\n",
 	      t, ((double) t * CLOCK) / (TIMES * size * 1000.0));
 #endif
 
@@ -146,8 +146,8 @@ main (int argc, char **argv)
 	  d2y[i+1] = 0xdeaf;
 	}
 
-      cyx = refmpn_addsub_n (d1x+1, d2x+1, s1, s2, size);
-      cyy = mpn_addsub_n (d1y+1, d2y+1, s1, s2, size);
+      cyx = refmpn_add_n_sub_n (d1x+1, d2x+1, s1, s2, size);
+      cyy = mpn_add_n_sub_n (d1y+1, d2y+1, s1, s2, size);
 #ifdef PRINT
       printf ("%d ", cyx); mpn_print (d1x+1, size);
       printf ("%d ", cyx); mpn_print (d2x+1, size);
