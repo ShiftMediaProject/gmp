@@ -1,3 +1,8 @@
+2009-10-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/hgcd.c (mpn_hgcd_itch): Thanks to the new
+	mpn_matrix22_mul_strassen, the scratch need is reduced by 16%.
+
 2009-10-14  Marco Bodrato  <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/matrix22_mul.c (mpn_matrix22_mul_strassen): New
