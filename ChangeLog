@@ -1,3 +1,11 @@
+2009-10-14  Marco Bodrato  <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/matrix22_mul.c (mpn_matrix22_mul_strassen): New
+	Strassen-like algorithm, to reduce the amount of temporary
+	storage.
+	(mpn_matrix22_mul_itch): Updated to reflect the reduced storage
+	need.
+
 2009-10-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Rename mpn_addsub_n to mpn_add_n_sub_n.
