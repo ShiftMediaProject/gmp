@@ -22,7 +22,11 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-asmtype t-aors_1 t-divrem_1 t-fat t-get_d \
-  t-instrument t-iord_u t-mp_bases t-perfsqr t-scan t-hgcd t-matrix22
+  t-instrument t-iord_u t-mp_bases t-perfsqr t-scan \
+  t-toom22 \
+  t-hgcd t-matrix22
+
+EXTRA_DIST = toom-shared.h
 
 TESTS = $(check_PROGRAMS)
 

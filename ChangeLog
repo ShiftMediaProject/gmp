@@ -1,3 +1,10 @@
+2009-10-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom22.
+	* tests/mpn/t-toom22.c: New test file.
+	* tests/mpn/toom-shared.h: New file. Test framework for Toom
+	functions.
+
 2009-10-14  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_itch): Thanks to the new
