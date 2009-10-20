@@ -1,6 +1,12 @@
 2009-10-20  Niels Möller  <nisse@lysator.liu.se>
 
-	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom32.
+	* tests/mpn/toom-shared.h (MIN_BLOCK): New constant, which can be
+	overridden by users. Needed by t-toom42 and t-toom43.
+
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom32,
+	t-toom42 and t-toom43.
+	* tests/mpn/t-toom43.c: New test program.
+	* tests/mpn/t-toom42.c: New test program.
 	* tests/mpn/t-toom32.c: New test program.
 
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom22.

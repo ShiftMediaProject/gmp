@@ -38,6 +38,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define COUNT 5000
 #endif
 
+#ifndef MIN_BLOCK
+#define MIN_BLOCK 2
+#endif
+
 #define SIZE (1L << SIZE_LOG)
 
 #define AMAX ((M)*(SIZE))
@@ -79,14 +83,24 @@ main (int argc, char **argv)
     {
       mp_limb_t size_range, n;
 
+      /* We generate n in the range M <= n <= (1 << size_range).
+	 size_range >= 3 is good enough for all current toom
+	 functions. */
       mpn_random (&size_range, 1);
-      size_range = 1 + size_range % SIZE_LOG;
+      size_range = 3 + size_range % (SIZE_LOG - 2);
 
       mpn_random (&n, 1);
-      n = 2 + n % ((1L << size_range) - 1);
+      n = MIN_BLOCK + n % ((1L << size_range) + 1 - MIN_BLOCK);
 
       ASSERT_ALWAYS (n <= SIZE);
 
+      /* All toom variants require that
+
+  	   M*bn >= (N-1)*an + N*(M-1) + 1
+	   N*an >= (M-1)*bn + M*(N-1) + 1
+
+	 so we could try to test that earlier. However, some toom
+	 variants may have additional requirements. */
       do
 	{
 	  mp_limb_t r;
