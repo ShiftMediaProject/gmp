@@ -1,5 +1,8 @@
 2009-10-20  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom32.
+	* tests/mpn/t-toom32.c: New test program.
+
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-toom22.
 	* tests/mpn/t-toom22.c: New test file.
 	* tests/mpn/toom-shared.h: New file. Test framework for Toom
