@@ -3,7 +3,7 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008 Free Software
+Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -1069,6 +1069,11 @@ param_init (void)
   p->src[1] = 1;
   REFERENCE (refmpn_mul_n);
 
+  p = &param[TYPE_MUL_N];
+  COPY (TYPE_SQR);
+  p->dst_size[0] = 0;
+  REFERENCE (refmpn_mullow_n);
+
   p = &param[TYPE_MUL_MN];
   COPY (TYPE_MUL_N);
   p->size2 = 1;
@@ -1466,6 +1471,7 @@ const struct choice_t choice_array[] = {
 
 
   { TRY(mpn_mul_basecase), TYPE_MUL_MN },
+  { TRY(mpn_mullow_basecase), TYPE_MUL_N },
 #if SQR_KARATSUBA_THRESHOLD > 0
   { TRY(mpn_sqr_basecase), TYPE_SQR },
 #endif
