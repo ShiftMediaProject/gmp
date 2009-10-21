@@ -21,11 +21,9 @@
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-# FIXME: Add t-toom43. but it depends on mpn_toom43_itch which isn't
-# in the current tree.
 check_PROGRAMS = t-asmtype t-aors_1 t-divrem_1 t-fat t-get_d \
   t-instrument t-iord_u t-mp_bases t-perfsqr t-scan \
-  t-toom22 t-toom32 t-toom42 \
+  t-toom22 t-toom32 t-toom42 t-toom43 \
   t-hgcd t-matrix22
 
 EXTRA_DIST = toom-shared.h

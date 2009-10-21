@@ -55,10 +55,6 @@ mpn_toom43_mul (mp_ptr pp,
   mp_size_t n, s, t;
   enum toom6_flags flags = toom6_all_pos;
   mp_limb_t cy;
-  mp_ptr as1, as2;
-/*   mp_ptr as1, asm1, as2, asm2; */
-/*   mp_ptr bs1, bsm1, bs2, bsm2; */
-  TMP_DECL;
 
 #define a0  ap
 #define a1  (ap + n)
@@ -68,7 +64,7 @@ mpn_toom43_mul (mp_ptr pp,
 #define b1  (bp + n)
 #define b2  (bp + 2 * n)
 
-  n = 1 + (3 * an >= 4 * bn ? (an - 1) >> 2 : (bn - 1) / (unsigned long) 3);
+  n = 1 + (3 * an >= 4 * bn ? (an - 1) >> 2 : (bn - 1) / (size_t) 3);
 
   s = an - 3 * n;
   t = bn - 2 * n;
@@ -76,7 +72,10 @@ mpn_toom43_mul (mp_ptr pp,
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= n);
 
-  TMP_MARK;
+  /* This is true whenever an >= 25 or bn >= 19, I think. It
+     guarantees that we can fit 5 values of size n+1 in the product
+     area. */
+  ASSERT (s+t >= 5);
 
 #define v0    pp				/* 2n */
 #define vm1   (scratch)				/* 2n+1 */
@@ -90,35 +89,11 @@ mpn_toom43_mul (mp_ptr pp,
 #define asm2  (scratch + 4 * n + 4)		/* n+1 */
 #define bsm2  (pp + n + 1)			/* n+1 */
 #define bs2   (pp + 2 * n + 2)			/* n+1 */
+#define as2   (pp + 3 * n + 3)			/* n+1 */
+#define as1   (pp + 4 * n + 4)			/* n+1 */
 
- /* Alloc one more byte, because products will overwrite 2n+2
-    limbs. If n=1 asm2 reaches scratch+5n+5=scratch+10 and the last
-    byte is used anyway. */
-  scratch = TMP_SALLOC_LIMBS (6 * n + 3 + 1);
-
-  /* #define as2   (pp + 3 * n + 3)			/\* n+1 *\/ */
-  /* n+(n-2)<=n+(s+t), so the next test is always false if n>2.
-     Consider replacing it with the above define if threshold is big
-     enough.
-  */
-  if (n+s+t < 4)
-    as2 = TMP_SALLOC_LIMBS (n + 1);
-  else
-    as2 = (pp + 3 * n + 3);
-
-  /* #define as1   (pp + 4 * n + 4)			/\* n+1 *\/ */
-  /* (n-2)<=(s+t), so the next test is always false if n>6.
-     Consider replacing it with the above define if threshold is big
-     enough.
-  */
-  if (s+t < 5)
-    as1 = TMP_SALLOC_LIMBS (n + 1);
-  else
-    as1 = (pp + 4 * n + 4);
-
-/*   bsm1 = TMP_SALLOC_LIMBS (n + 1); */
-/*   bs2 = TMP_SALLOC_LIMBS (n + 1); */
-/*   bsm2 = TMP_SALLOC_LIMBS (n + 1); */
+  /* Total sccratch need is 6 * n + 3 + 1; we allocate one extra
+     limb, because products will overwrite 2n+2 limbs. */
 
 #define a0a2  scratch
 #define b0b2  scratch
@@ -296,6 +271,4 @@ mpn_toom43_mul (mp_ptr pp,
 #undef b0
 #undef b1
 #undef b2
-
-  TMP_FREE;
 }
