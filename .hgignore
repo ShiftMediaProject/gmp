@@ -1,8 +1,5 @@
 syntax: regexp
 
-# This file ignores the files demos/calc/calc-config.h and
-# demos/pexpr-config.h, which is desired, but I don't understand why.
-
 ^configure
 ^aclocal\.m4
 ^autom4te\.cache
@@ -26,9 +23,11 @@ Makefile
 ^gen-fac_ui
 ^gen-fib
 ^gen-psqr
-
+^gen-trialdivtab
 ^mp_bases\.h
 ^fib_table\.h
+^trialdivtab\.h
+
 ^mpn/perfsqr\.h
 ^mpz/fac_ui\.h
 
@@ -39,6 +38,20 @@ Makefile
 # All source files in mpn/ are either generated, or links
 ^mpn/[^/]*\.c
 ^mpn/[^/]*\.asm
+
+^demos/pexpr-config\.h$
+^demos/calc/calc-config\.h$
+
+^tests/t-[^.]*$
+^tests/[^/]*/t-[^.]*$
+^tests/mpf/reuse$
+^tests/mpz/bit$
+^tests/mpz/convert$
+^tests/mpz/dive$
+^tests/mpz/dive_ui$
+^tests/mpz/io$
+^tests/mpz/logic
+^tests/mpz/reuse$
 
 ^\.libs
 
