@@ -52,7 +52,6 @@ main (int argc, char **argv)
 {
   mp_size_t an, bn;
   mp_ptr ap, bp, refp, pp, scratch;
-  mp_limb_t keep;
   int count = COUNT;
   int test;
   gmp_randstate_ptr rands;
@@ -76,12 +75,14 @@ main (int argc, char **argv)
   ap = TMP_ALLOC_LIMBS (AMAX);
   bp = TMP_ALLOC_LIMBS (BMAX);
   refp = TMP_ALLOC_LIMBS (AMAX+BMAX);
-  pp = TMP_ALLOC_LIMBS (AMAX+BMAX+1);
-  scratch = TMP_ALLOC_LIMBS (mpn_toomMN_mul_itch (AMAX, BMAX));
+  pp = 1+TMP_ALLOC_LIMBS (AMAX+BMAX+2);
+  scratch = 1+TMP_ALLOC_LIMBS (mpn_toomMN_mul_itch (AMAX, BMAX) + 2);
 
   for (test = 0; test < count; test++)
     {
       mp_limb_t size_range, n;
+      mp_limb_t itch;
+      mp_limb_t p_before, p_after, s_before, s_after;
 
       /* We generate n in the range M <= n <= (1 << size_range).
 	 size_range >= 3 is good enough for all current toom
@@ -115,19 +116,43 @@ main (int argc, char **argv)
 
       mpn_random2 (ap, an);
       mpn_random2 (bp, bn);
-      mpn_random2 (pp, an + bn + 1);
-      keep = pp[an + bn];
+      mpn_random2 (pp-1, an + bn + 2);
+      p_before = pp[-1];
+      p_after = pp[an + bn];
+
+      itch = mpn_toomMN_mul_itch (an, bn);
+      ASSERT_ALWAYS (itch < mpn_toomMN_mul_itch (AMAX, BMAX));
+      mpn_random2 (scratch-1, itch+2);
+      s_before = scratch[-1];
+      s_after = scratch[itch];
 
       mpn_toomMN_mul (pp, ap, an, bp, bn, scratch);
       mpn_mul (refp, ap, an, bp, bn);
-      if (pp[an + bn] != keep || mpn_cmp (refp, pp, an + bn) != 0)
+      if (pp[-1] != p_before || pp[an + bn] != p_after
+	  || scratch[-1] != s_before || scratch[itch] != s_after
+	  || mpn_cmp (refp, pp, an + bn) != 0)
 	{
 	  printf ("ERROR in test %d, an = %d, bn = %d\n",
 		  test, (int) an, (int) bn);
-	  if (pp[an + bn] != keep)
+	  if (pp[-1] != p_before)
 	    {
-	      printf ("pp high:"); mpn_dump (pp + an + bn, 1);
-	      printf ("keep:   "); mpn_dump (&keep, 1);
+	      printf ("before pp:"); mpn_dump (pp -1, 1);
+	      printf ("keep:   "); mpn_dump (&p_before, 1);
+	    }
+	  if (pp[an + bn] != p_after)
+	    {
+	      printf ("after pp:"); mpn_dump (pp + an + bn, 1);
+	      printf ("keep:   "); mpn_dump (&p_after, 1);
+	    }
+	  if (scratch[-1] != s_before)
+	    {
+	      printf ("before scratch:"); mpn_dump (scratch-1, 1);
+	      printf ("keep:   "); mpn_dump (&s_before, 1);
+	    }
+	  if (scratch[itch] != s_after)
+	    {
+	      printf ("after scratch:"); mpn_dump (scratch + itch, 1);
+	      printf ("keep:   "); mpn_dump (&s_after, 1);
 	    }
 	  mpn_dump (ap, an);
 	  mpn_dump (bp, bn);

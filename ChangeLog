@@ -1,5 +1,8 @@
 2009-10-21  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/toom-shared.h (main): Check for writes outside of the
+	product or scratch area.
+
 	* gmp-impl.h (mpn_toom43_mul_itch): New function.
 
 	* mpn/generic/toom43_mul.c (mpn_toom43_mul): Use supplied scratch
