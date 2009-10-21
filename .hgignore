@@ -50,7 +50,7 @@ Makefile
 ^tests/mpz/dive$
 ^tests/mpz/dive_ui$
 ^tests/mpz/io$
-^tests/mpz/logic
+^tests/mpz/logic$
 ^tests/mpz/reuse$
 
 ^\.libs
