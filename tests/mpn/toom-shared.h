@@ -72,7 +72,7 @@ main (int argc, char **argv)
 
   tests_start ();
   rands = RANDS;
-  
+
   ap = TMP_ALLOC_LIMBS (AMAX);
   bp = TMP_ALLOC_LIMBS (BMAX);
   refp = TMP_ALLOC_LIMBS (AMAX+BMAX);
@@ -96,7 +96,7 @@ main (int argc, char **argv)
 
       /* All toom variants require that
 
-  	   M*bn >= (N-1)*an + N*(M-1) + 1
+	   M*bn >= (N-1)*an + N*(M-1) + 1
 	   N*an >= (M-1)*bn + M*(N-1) + 1
 
 	 so we could try to test that earlier. However, some toom
@@ -104,7 +104,7 @@ main (int argc, char **argv)
       do
 	{
 	  mp_limb_t r;
-	  
+
 	  mpn_random (&r, 1);
 	  an = r % (M*n) + 1;
 
@@ -138,4 +138,5 @@ main (int argc, char **argv)
 	}
     }
   TMP_FREE;
+  return 0;
 }
