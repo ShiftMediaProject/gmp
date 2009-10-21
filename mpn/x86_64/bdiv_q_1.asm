@@ -26,8 +26,9 @@ C	     cycles/limb
 C K8,K9:	10
 C K10:		10
 C P4:		33
-C P6-15 (Core2):13.25
-C P6-28 (Atom):	42
+C P6 core2:	13.25
+C P6 corei7:	14
+C P6 atom:	42
 
 
 C INPUT PARAMETERS
