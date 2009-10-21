@@ -1,3 +1,12 @@
+2009-10-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/asm-defs.m4 (define_mpn): Add mullow_basecase.
+
+	* tests/devel/try.c: Test mpn_mullow_n.
+
+	* tests/refmpn.c (refmpn_mullow_n): New function.
+	* tests/tests.h: Declare it.
+
 2009-10-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/toom-shared.h (main): Check for writes outside of the

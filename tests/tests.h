@@ -304,6 +304,8 @@ mp_limb_t refmpn_mul_4 __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size,
 void refmpn_mul_basecase __GMP_PROTO ((mp_ptr prodp,
                                   mp_srcptr up, mp_size_t usize,
                                   mp_srcptr vp, mp_size_t vsize));
+void refmpn_mullow_n __GMP_PROTO ((mp_ptr prodp,
+				   mp_srcptr up, mp_srcptr vp, mp_size_t vsize));
 void refmpn_mul_any __GMP_PROTO ((mp_ptr prodp,
                              mp_srcptr up, mp_size_t usize,
                              mp_srcptr vp, mp_size_t vsize));
