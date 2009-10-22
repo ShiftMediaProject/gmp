@@ -1,3 +1,7 @@
+2009-10-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/sqr_basecase.asm: Tune for speed and a 7% size decrease.
+
 2009-10-22  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-toom44.c: New test program.
