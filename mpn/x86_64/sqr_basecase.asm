@@ -74,8 +74,6 @@ define(`w1',	`%rcx')
 define(`w2',	`%rbp')
 define(`w3',	`%r10')
 
-define(`SPECIAL_CODE_FOR_4',1)
-
 
 ASM_START()
 	TEXT
@@ -187,7 +185,6 @@ L(3):	mov	(up), %rax
 	pop	%rbx
 	ret
 
-ifdef(`SPECIAL_CODE_FOR_4',`
 L(4):	mov	(up), %rax
 	mul	%rax
 	mov	%rax, (rp)
@@ -259,21 +256,19 @@ L(4):	mov	(up), %rax
 	pop	%rbp
 	pop	%rbx
 	ret
-')
+
 
 L(0m4):	add	$-STACK_ALLOC, %rsp
-	lea	(%rsp,n,8), tp		C point tp in middle of result operand
+	lea	-24(%rsp,n,8), tp		C point tp in middle of result operand
+	mov	(up), v0
+	mov	8(up), %rax
 	lea	(up,n,8), up		C point up at end of input operand
 
-	lea	-1(n), i
+	lea	-4(n), i
 C Function mpn_mul_1_m3(tp, up - i, i, up[-i - 1])
-	mov	$-1, j
-	sub	i, j
+	xor	R32(j), R32(j)
+	sub	n, j
 
-	lea	-24(tp), tp		C offset FIXME
-
-	mov	(up,j,8), v0
-	mov	8(up,j,8), %rax
 	mul	v0
 	xor	R32(w2), R32(w2)
 	mov	%rax, w0
@@ -315,31 +310,28 @@ L(L3):	xor	R32(w1), R32(w1)
 	adc	%rdx, w1
 	mov	w2, 8(tp)
 	mov	w1, 16(tp)
-	lea	eval(24+2*8)(tp), tp	C tp += 2, undo offset FIXME
-ifdef(`SPECIAL_CODE_FOR_4',`',`
-	cmp	$3, R32(i)
-	je	L(last)
-')
+	
+	lea	eval(2*8)(tp), tp	C tp += 2
+	lea	-8(up), up
 	jmp	L(dowhile)
+
 
 L(1m4):	add	$-STACK_ALLOC, %rsp
 	lea	(%rsp,n,8), tp		C point tp in middle of result operand
-	lea	(up,n,8), up		C point up at end of input operand
+	mov	(up), v0		C u0
+	mov	8(up), %rax		C u1
+	lea	8(up,n,8), up		C point up at end of input operand
 
-	lea	(n), i
+	lea	-3(n), i
 C Function mpn_mul_2s_m0(tp, up - i, i, up - i - 1)
-	mov	$3, R32(j)
-	sub	i, j
+	lea	-3(n), j
+	neg	j
 
-	lea	8(up), up		C offset FIXME
-
-	mov	-32(up,j,8), v0		C u0
-	mov	-24(up,j,8), v1		C u1
-	mov	-24(up,j,8), %rax	C u1
+	mov	%rax, v1		C u1
 	mul	v0			C u0 * u1
 	mov	%rdx, w1
 	xor	R32(w2), R32(w2)
-	mov	%rax, -24(tp,j,8)
+	mov	%rax, (%rsp)
 	jmp	L(m0)
 
 	ALIGN(16)
@@ -381,7 +373,7 @@ L(m0):	mov	-16(up,j,8), %rax	C u2, u6 ...
 	add	%rax, w3
 	mov	w2, -8(tp,j,8)
 	adc	%rdx, w0
-	mov	(up,j,8), %rax
+L(m2x):	mov	(up,j,8), %rax
 	mul	v0
 	add	%rax, w3
 	adc	%rdx, w0
@@ -397,28 +389,22 @@ L(m0):	mov	-16(up,j,8), %rax	C u2, u6 ...
 	mov	w0, -8(tp)
 	mov	w1, (tp)
 
-	lea	-8(up), up		C undo offset FIXME
-	lea	eval(3*8)(tp), tp	C tp += 3
-	add	$-2, R32(i)		C i -= 2
-	cmp	$3, R32(i)
-	je	L(last)
-	jmp	L(dowhile)
-
+	lea	-16(up), up
+	lea	eval(3*8-24)(tp), tp	C tp += 3
+	jmp	L(dowhile_end)
 
 
 L(2m4):	add	$-STACK_ALLOC, %rsp
-	lea	(%rsp,n,8), tp		C point tp in middle of result operand
+	lea	-24(%rsp,n,8), tp	C point tp in middle of result operand
+	mov	(up), v0
+	mov	8(up), %rax
 	lea	(up,n,8), up		C point up at end of input operand
 
-	lea	-1(n), i
+	lea	-4(n), i
 C Function mpn_mul_1_m1(tp, up - (i - 1), i - 1, up[-i])
-	mov	$1, R32(j)
-	sub	i, j
+	lea	-2(n), j
+	neg	j
 
-	lea	-24(tp), tp		C offset FIXME
-
-	mov	-16(up,j,8), v0
-	mov	-8(up,j,8), %rax
 	mul	v0
 	mov	%rax, w2
 	mov	(up,j,8), %rax
@@ -460,30 +446,28 @@ L(L1):	xor	R32(w0), R32(w0)
 	mov	w2, 8(tp)
 	mov	w1, 16(tp)
 
-	lea	eval(24+2*8)(tp), tp	C tp += 2, undo offset FIXME
+	lea	eval(2*8)(tp), tp	C tp += 2
+	lea	-8(up), up
 	jmp	L(dowhile_mid)
-
 
 
 L(3m4):	add	$-STACK_ALLOC, %rsp
 	lea	(%rsp,n,8), tp		C point tp in middle of result operand
-	lea	(up,n,8), up		C point up at end of input operand
+	mov	(up), v0		C u0
+	mov	8(up), %rax		C u1
+	lea	8(up,n,8), up		C point up at end of input operand
 
-	lea	(n), i
+	lea	-5(n), i
 C Function mpn_mul_2s_m2(tp, up - i + 1, i - 1, up - i)
-	mov	$1, R32(j)
-	sub	i, j
+	lea	-1(n), j
+	neg	j
 
-	lea	8(up), up		C offset FIXME
-
-	mov	-16(up,j,8), v0
-	mov	-8(up,j,8), v1
-	mov	-8(up,j,8), %rax
-	mul	v0			C v0 * u0
+	mov	%rax, v1		C u1
+	mul	v0			C u0 * u1
 	mov	%rdx, w3
 	xor	R32(w0), R32(w0)
 	xor	R32(w1), R32(w1)
-	mov	%rax, -8(tp,j,8)
+	mov	%rax, (%rsp)
 	jmp	L(m2)
 
 	ALIGN(16)
@@ -541,18 +525,13 @@ L(m2):	mov	(up,j,8), %rax
 	mov	w0, -8(tp)
 	mov	w1, (tp)
 
-	lea	-8(up), up		C undo offset FIXME
-	lea	eval(3*8)(tp), tp	C tp += 3
-	add	$-2, R32(i)		C i -= 2
+	lea	-16(up), up
 	jmp	L(dowhile_mid)
 
 L(dowhile):
 C Function mpn_addmul_2s_m2(tp, up - (i - 1), i - 1, up - i)
-	mov	$-1, j
-	sub	i, j
-
-	lea	-24(tp), tp		C offset FIXME
-	lea	-8(up), up		C offset FIXME
+	lea	4(i), j
+	neg	j
 
 	mov	16(up,j,8), v0
 	mov	24(up,j,8), v1
@@ -621,18 +600,13 @@ L(am2):	mov	32(up,j,8), %rax
 	mov	w1, 16(tp)
 
 	lea	eval(2*8)(tp), tp	C tp += 2
-	add	$-2, R32(i)		C i -= 2
 
-	lea	24(tp), tp		C undo offset FIXME
-	lea	8(up), up		C undo offset FIXME
+	add	$-2, R32(i)		C i -= 2
 
 L(dowhile_mid):
 C Function mpn_addmul_2s_m0(tp, up - (i - 1), i - 1, up - i)
-	mov	$1, R32(j)
-	sub	i, j
-
-	lea	-24(tp), tp		C offset FIXME
-	lea	-8(up), up		C offset FIXME
+	lea	2(i), j
+	neg	j
 
 	mov	(up,j,8), v0
 	mov	8(up,j,8), v1
@@ -699,74 +673,59 @@ L(20):	mov	16(up,j,8), %rax
 	mov	w0, 8(tp)
 	mov	w1, 16(tp)
 
-	lea	24(tp), tp		C undo offset FIXME
-	lea	8(up), up		C undo offset FIXME
-
 	lea	eval(2*8)(tp), tp	C tp += 2
-	add	$-2, R32(i)		C i -= 2
+L(dowhile_end):
 
-	cmp	$3, R32(i)
+	add	$-2, R32(i)		C i -= 2
 	jne	L(dowhile)
 
-L(last):
-
 C Function mpn_addmul_2s_2
-	mov	-24(up), v0
-	mov	-16(up), v1
-	mov	-16(up), %rax
+	mov	-16(up), v0
+	mov	-8(up), v1
+	mov	-8(up), %rax
 	mul	v0
 	xor	R32(w3), R32(w3)
-	add	%rax, -32(tp)
+	add	%rax, -8(tp)
 	adc	%rdx, w3
 	xor	R32(w0), R32(w0)
 	xor	R32(w1), R32(w1)
-	mov	-8(up), %rax
+	mov	(up), %rax
 	mul	v0
 	add	%rax, w3
-	mov	-8(up), %rax
+	mov	(up), %rax
 	adc	%rdx, w0
 	mul	v1
-	add	w3, -24(tp)
+	add	w3, (tp)
 	adc	%rax, w0
 	adc	%rdx, w1
-	mov	w0, -16(tp)
-	mov	w1, -8(tp)
+	mov	w0, 8(tp)
+	mov	w1, 16(tp)
 
 C Function mpn_sqr_diag_addlsh1
-	mov	R32(n), R32(j)
-	shl	$3, n
-	sub	n, up
+	lea	-4(n,n), j
 
 	mov	(%rsp), %r11
 
-	bt	$0, j
-	lea	-4(j,j),j
-	jc	L(odd)
-
-L(evn):	lea	(rp,j,8), rp
-	lea	(up,j,4), up
+	lea	(rp,j,8), rp
+	lea	-8(up), up
 	lea	8(%rsp,j,8), tp
 	neg	j
-
-	add	%r11, %r11
-	sbb	R32(%rbx), R32(%rbx)		C save CF
 	mov	(up,j,4), %rax
 	mul	%rax
+	test	$2, R8(j)
+	jnz	L(odd)
+
+L(evn):	add	%r11, %r11
+	sbb	R32(%rbx), R32(%rbx)		C save CF
 	add	%rdx, %r11
 	mov	%rax, (rp,j,8)
 	jmp	L(d0)
 
-L(odd):	lea	-16(rp,j,8), rp
-	lea	-8(up,j,4), up
-	lea	-8(%rsp,j,8), tp
-	neg	j
-
-	add	%r11, %r11
+L(odd):	add	%r11, %r11
 	sbb	R32(%rbp), R32(%rbp)		C save CF
-	mov	8(up,j,4), %rax
-	mul	%rax
 	add	%rdx, %r11
-	mov	%rax, 16(rp,j,8)
+	mov	%rax, (rp,j,8)
+	lea	-2(j), j
 	jmp	L(d1)
 
 	ALIGN(16)
@@ -798,24 +757,24 @@ L(d1):	mov	%r11, 24(rp,j,8)
 	add	$4, j
 	js	L(top)
 
-L(end):	mov	(up,j,4), %rax
+	mov	(up), %rax
 	mul	%rax
 	add	R32(%rbp), R32(%rbp)		C restore carry
 	adc	%rax, %r10
 	adc	%rdx, %r11
-	mov	%r10, (rp,j,8)
-	mov	%r11, 8(rp,j,8)
-	mov	(tp,j,8), %r10
+	mov	%r10, (rp)
+	mov	%r11, 8(rp)
+	mov	(tp), %r10
 	adc	%r10, %r10
 	sbb	R32(%rbp), R32(%rbp)		C save CF
 	neg	R32(%rbp)
-	mov	8(up,j,4), %rax
+	mov	8(up), %rax
 	mul	%rax
 	add	R32(%rbx), R32(%rbx)		C restore carry
 	adc	%rax, %r10
 	adc	%rbp, %rdx
-	mov	%r10, 16(rp,j,8)
-	mov	%rdx, 24(rp,j,8)
+	mov	%r10, 16(rp)
+	mov	%rdx, 24(rp)
 
 	add	$eval(8+STACK_ALLOC), %rsp
 	pop	%r14
