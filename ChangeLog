@@ -1,3 +1,12 @@
+2009-10-22  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-toom44.c: New test program.
+	* tests/mpn/t-toom33.c: New test program.
+
+	* tests/mpn/toom-shared.h (main): Reorganized input generation.
+	Users are now supposed to define macros MAX_AN, MIN_BN and MAX_BN.
+	Updated existing toom test programs.
+
 2009-10-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/asm-defs.m4 (define_mpn): Add mullow_basecase.

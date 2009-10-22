@@ -25,9 +25,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stdlib.h>
 #include <stdio.h>
 
-/* Main file is expected to define M, N, mpn_toomMN_mul,
- * mpn_toomMN_mul_itch, mpn_toomMN_mul_ok, and then include this
- * file. */
+/* Main file is expected to define mpn_toomMN_mul,
+ * mpn_toomMN_mul_itch, MIN_AN, MIN_BN(an), MAX_BN(an) and then
+ * include this file. */
 
 /* Sizes are up to 2^SIZE_LOG limbs */
 #ifndef SIZE_LOG
@@ -38,19 +38,22 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define COUNT 5000
 #endif
 
-#ifndef MIN_BLOCK
-#define MIN_BLOCK 2
+#define MAX_AN (1L << SIZE_LOG)
+
+#ifndef MAX_BN
+#define MAX_BN(an) (an)
 #endif
 
-#define SIZE (1L << SIZE_LOG)
-
-#define AMAX ((M)*(SIZE))
-#define BMAX ((N)*(SIZE))
+/* For general toomMN_mul, we need
+ *
+ * MIN_BN(an) = N + floor(((N-1)*an + M - N)/M)
+ *
+ * MAX_BN(an) = floor(N*(an-1)/(M-1)) - N + 1
+ */
 
 int
 main (int argc, char **argv)
 {
-  mp_size_t an, bn;
   mp_ptr ap, bp, refp, pp, scratch;
   int count = COUNT;
   int test;
@@ -72,47 +75,33 @@ main (int argc, char **argv)
   tests_start ();
   rands = RANDS;
 
-  ap = TMP_ALLOC_LIMBS (AMAX);
-  bp = TMP_ALLOC_LIMBS (BMAX);
-  refp = TMP_ALLOC_LIMBS (AMAX+BMAX);
-  pp = 1+TMP_ALLOC_LIMBS (AMAX+BMAX+2);
-  scratch = 1+TMP_ALLOC_LIMBS (mpn_toomMN_mul_itch (AMAX, BMAX) + 2);
+  ap = TMP_ALLOC_LIMBS (MAX_AN);
+  bp = TMP_ALLOC_LIMBS (MAX_BN(MAX_AN));
+  refp = TMP_ALLOC_LIMBS (MAX_AN + MAX_BN(MAX_AN));
+  pp = 1+TMP_ALLOC_LIMBS (MAX_AN + MAX_BN(MAX_AN)+2);
+  scratch
+    = 1+TMP_ALLOC_LIMBS (mpn_toomMN_mul_itch (MAX_AN, MAX_BN(MAX_AN))
+			 + 2);
 
   for (test = 0; test < count; test++)
     {
-      mp_limb_t size_range, n;
-      mp_limb_t itch;
+      unsigned size_min;
+      unsigned size_range;
+      mp_size_t an, bn;
+      mp_size_t itch;
       mp_limb_t p_before, p_after, s_before, s_after;
 
-      /* We generate n in the range M <= n <= (1 << size_range).
-	 size_range >= 3 is good enough for all current toom
-	 functions. */
-      mpn_random (&size_range, 1);
-      size_range = 3 + size_range % (SIZE_LOG - 2);
+      for (size_min = 1; (1L << size_min) < MIN_AN; size_min++)
+	;
 
-      mpn_random (&n, 1);
-      n = MIN_BLOCK + n % ((1L << size_range) + 1 - MIN_BLOCK);
+      /* We generate an in the MIN_AN <= an <= (1 << size_range). */
+      size_range = size_min
+	+ gmp_urandomm_ui (rands, SIZE_LOG + 1 - size_min);
 
-      ASSERT_ALWAYS (n <= SIZE);
-
-      /* All toom variants require that
-
-	   M*bn >= (N-1)*an + N*(M-1) + 1
-	   N*an >= (M-1)*bn + M*(N-1) + 1
-
-	 so we could try to test that earlier. However, some toom
-	 variants may have additional requirements. */
-      do
-	{
-	  mp_limb_t r;
-
-	  mpn_random (&r, 1);
-	  an = r % (M*n) + 1;
-
-	  mpn_random (&r, 1);
-	  bn = r % MIN(an, N*n) + 1;
-	}
-      while (!mpn_toomMN_mul_ok(an, bn));
+      an = MIN_AN
+	+ gmp_urandomm_ui (rands, (1L << size_range) + 1 - MIN_AN);
+      bn = MIN_BN(an)
+	+ gmp_urandomm_ui (rands, MAX_BN(an) + 1 - MIN_BN(an));
 
       mpn_random2 (ap, an);
       mpn_random2 (bp, bn);
@@ -121,7 +110,7 @@ main (int argc, char **argv)
       p_after = pp[an + bn];
 
       itch = mpn_toomMN_mul_itch (an, bn);
-      ASSERT_ALWAYS (itch < mpn_toomMN_mul_itch (AMAX, BMAX));
+      ASSERT_ALWAYS (itch <= mpn_toomMN_mul_itch (MAX_AN, MAX_BN(MAX_AN)));
       mpn_random2 (scratch-1, itch+2);
       s_before = scratch[-1];
       s_after = scratch[itch];
