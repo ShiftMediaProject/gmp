@@ -1,3 +1,7 @@
+2009-10-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/devel/try.c: Fix typos in last change.
+
 2009-10-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/asm-defs.m4 (define_mpn): Add mullow_basecase.
