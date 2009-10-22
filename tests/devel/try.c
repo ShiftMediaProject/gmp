@@ -637,6 +637,7 @@ validate_sqrtrem (void)
 #define TYPE_SQR              82
 #define TYPE_UMUL_PPMM        83
 #define TYPE_UMUL_PPMM_R      84
+#define TYPE_MULLOW_N         85
 
 #define TYPE_SB_DIVREM_MN     90
 #define TYPE_TDIV_QR          91
@@ -1069,8 +1070,8 @@ param_init (void)
   p->src[1] = 1;
   REFERENCE (refmpn_mul_n);
 
-  p = &param[TYPE_MUL_N];
-  COPY (TYPE_SQR);
+  p = &param[TYPE_MULLOW_N];
+  COPY (TYPE_MUL_N);
   p->dst_size[0] = 0;
   REFERENCE (refmpn_mullow_n);
 
