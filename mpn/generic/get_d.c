@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2003, 2004 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -124,10 +124,10 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
    Other:
 
    For reference, note that HPPA 8000, 8200, 8500 and 8600 trap FCNV,UDW,DBL
-   to the kernel for values >= 2^63.  This makes it slow, and worse the
-   Linux kernel (what versions?) apparently uses untested code in its trap
-   handling routines, and gets the sign wrong.  We don't use such a limb to
-   double cast, neither in the IEEE or generic code.  */
+   to the kernel for values >= 2^63.  This makes it slow, and worse the kernel
+   Linux (what versions?) apparently uses untested code in its trap handling
+   routines, and gets the sign wrong.  We don't use such a limb-to-double
+   cast, neither in the IEEE or generic code.  */
 
 
 double
@@ -271,30 +271,27 @@ mpn_get_d (mp_srcptr up, mp_size_t size, mp_size_t sign, long exp)
       }
     else if (UNLIKELY (exp <= CONST_NEG_1023))
       {
-	int rshift = GMP_LIMB_BITS - lshift;
+	int rshift;
 
 	if (LIKELY (exp <= CONST_NEG_1022_SUB_53))
 	  return 0.0;	 /* denorm underflows to zero */
 
 	rshift = -1022 - exp;
 	ASSERT (rshift > 0 && rshift < 53);
-	if (GMP_LIMB_BITS == 64)
+#if GMP_LIMB_BITS > 53
+	mlo >>= rshift;
+	mhi = mlo >> 32;
+#else
+	if (rshift >= 32)
 	  {
-	    mlo = (mlo >> rshift) | (mhi << lshift);
-	    mhi >>= rshift;
+	    mlo = mhi;
+	    mhi = 0;
+	    rshift -= 32;
 	  }
-	else
-	  {
-	    if (rshift >= 32)
-	      {
-		mlo = mhi;
-		mhi = 0;
-		rshift -= 32;
-	      }
-	    lshift = GMP_LIMB_BITS - rshift;
-	    mlo = (mlo >> rshift) | (rshift == 0 ? 0 : mhi << lshift);
-	    mhi >>= rshift;
-	  }
+	lshift = GMP_LIMB_BITS - rshift;
+	mlo = (mlo >> rshift) | (rshift == 0 ? 0 : mhi << lshift);
+	mhi >>= rshift;
+#endif
 	exp = -1023;
       }
   }
