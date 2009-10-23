@@ -4325,6 +4325,13 @@ mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
 }
 
 static inline mp_size_t
+mpn_toom62_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (an >= 3 * bn ? (an - 1) / (unsigned long) 6 : (bn - 1) >> 1);
+  return 10 * n + 10;
+}
+
+static inline mp_size_t
 mpn_toom2_sqr_itch (mp_size_t an)
 {
   mp_size_t n = an - (an >> 1);
