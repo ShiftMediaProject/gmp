@@ -1,6 +1,6 @@
 /* Test mpf_get_d and mpf_set_d.
 
-   Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
+   Copyright 1996, 1999, 2000, 2001, 2009 Free Software Foundation, Inc.
 
    This file is part of the GNU MP Library.
 
@@ -40,6 +40,32 @@
 #define HIGH_BOUND 1e300
 #endif
 
+void
+test_denorms (int prc)
+{
+#ifdef _GMP_IEEE_FLOATS
+  double d1, d2;
+  mpf_t f;
+  int i;
+
+  mpf_set_default_prec (prc);
+
+  mpf_init (f);
+
+  d1 = 1.9;
+  for (i = 0; i < 820; i++)
+    {
+      mpf_set_d (f, d1);
+      d2 = mpf_get_d (f);
+      if (d1 != d2)
+        abort ();
+      d1 *= 0.4;
+    }
+
+  mpf_clear (f);
+#endif
+}
+
 int
 main (int argc, char **argv)
 {
@@ -68,6 +94,12 @@ main (int argc, char **argv)
 
   mpf_clear (u);
   mpf_clear (v);
+
+  test_denorms (10);
+  test_denorms (32);
+  test_denorms (64);
+  test_denorms (100);
+  test_denorms (200);
 
   tests_end ();
   exit (0);
