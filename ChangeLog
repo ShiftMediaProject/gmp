@@ -1,5 +1,11 @@
 2009-10-23  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom52_mul.c (mpn_toom52_mul): Use supplied scratch
+	space, not TMP_ALLOC. Interface change, now requires input sizes
+	such that s + t >= 5.
+
+	* gmp-impl.h (mpn_toom52_mul_itch): New function.
+
 	* tests/mpn/t-toom52.c: New test program.
 
 2009-10-22  Torbjorn Granlund  <tege@gmplib.org>
