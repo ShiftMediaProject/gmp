@@ -1,3 +1,7 @@
+2009-10-23  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-toom52.c: New test program.
+
 2009-10-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/sqr_basecase.asm: Tune for speed and a 7% size decrease.
