@@ -4311,6 +4311,13 @@ mpn_toom43_mul_itch (mp_size_t an, mp_size_t bn)
 }
 
 static inline mp_size_t
+mpn_toom52_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (2 * an >= 5 * bn ? (an - 1) / (size_t) 5 : (bn - 1) >> 1);
+  return 6*n + 4;
+}
+
+static inline mp_size_t
 mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
 {
   mp_size_t n = 1 + (3 * an >= 5 * bn ? (an - 1) / (size_t) 5 : (bn - 1) / (size_t) 3);
