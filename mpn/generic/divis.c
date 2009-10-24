@@ -160,13 +160,13 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
       BELOW_THRESHOLD (an - dn, DC_BDIV_QR_THRESHOLD))
     {
       binvert_limb (di, dp[0]);
-      mpn_sb_bdiv_qr (qp, rp, an, dp, dn, -di);
+      mpn_sbpi1_bdiv_qr (qp, rp, an, dp, dn, -di);
       rp += an - dn;
     }
   else if (BELOW_THRESHOLD (dn, MU_BDIV_Q_THRESHOLD)) /* FIXME: QR */
     {
       binvert_limb (di, dp[0]);
-      mpn_dc_bdiv_qr (qp, rp, an, dp, dn, -di);
+      mpn_dcpi1_bdiv_qr (qp, rp, an, dp, dn, -di);
       rp += an - dn;
     }
   else

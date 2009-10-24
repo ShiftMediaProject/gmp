@@ -95,7 +95,7 @@ pow_equals (mp_srcptr np, mp_size_t nn,
     {
       ans = 0;
     }
- ret:
+
   TMP_FREE;
   return ans;
 }

@@ -1,4 +1,5 @@
-/* mpn_dc_div_q -- divide-and-conquer division, returning exact quotient only.
+/* mpn_dc_div_q -- divide-and-conquer division, returning exact quotient
+   only.
 
    Contributed to the GNU project by Torbjörn Granlund.
 
@@ -7,7 +8,7 @@
    ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
    RELEASE.
 
-Copyright 2006, 2007 Free Software Foundation, Inc.
+Copyright 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,7 +30,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 mp_limb_t
-mpn_dc_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn)
+mpn_dcpi1_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
+		 mp_srcptr dp, mp_size_t dn, gmp_pi1_t *dinv)
 {
   mp_ptr tp, wp;
   mp_limb_t qh;
@@ -45,11 +47,11 @@ mpn_dc_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn)
   qn = nn - dn;
   wp = TMP_SALLOC_LIMBS (qn + 1);
 
-  qh = mpn_dc_divappr_q (wp, tp, nn + 1, dp, dn);
+  qh = mpn_dcpi1_divappr_q (wp, tp, nn + 1, dp, dn, dinv);
 
   if (wp[0] == 0)
     /* FIXME: Should multiply and subtract here, not recompute from scratch.  */
-    qh = mpn_dc_div_qr (qp, np, nn, dp, dn);
+    qh = mpn_dcpi1_div_qr (qp, np, nn, dp, dn, dinv);
   else
     MPN_COPY (qp, wp + 1, qn);
 

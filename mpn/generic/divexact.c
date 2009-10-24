@@ -73,7 +73,8 @@ mpn_divexact (mp_ptr qp,
   int cnt;
   mp_ptr xdp;
   mp_limb_t di;
-  mp_limb_t dip[2], xp[2], cy;
+  mp_limb_t cy;
+  gmp_pi1_t dinv;
   TMP_DECL;
 
   TMP_MARK;
@@ -87,7 +88,7 @@ mpn_divexact (mp_ptr qp,
       MPN_COPY (tp, np, qn);
       binvert_limb (di, dp[0]);  di = -di;
       dn = MIN (dn, qn);
-      mpn_sb_bdiv_q (qp, tp, qn, dp, dn, di);
+      mpn_sbpi1_bdiv_q (qp, tp, qn, dp, dn, di);
       TMP_FREE;
       return;
     }
@@ -104,14 +105,14 @@ mpn_divexact (mp_ptr qp,
 	  MPN_COPY (tp, np, qn);
 	  binvert_limb (di, dp[0]);  di = -di;
 	  dn = MIN (dn, qn);
-	  mpn_sb_bdiv_q (qp, tp, qn, dp, dn, di);
+	  mpn_sbpi1_bdiv_q (qp, tp, qn, dp, dn, di);
 	}
       else if (BELOW_THRESHOLD (dn, MU_BDIV_Q_THRESHOLD))
 	{
 	  tp = scratch;
 	  MPN_COPY (tp, np, qn);
 	  binvert_limb (di, dp[0]);  di = -di;
-	  mpn_dc_bdiv_q (qp, tp, qn, dp, dn, di);
+	  mpn_dcpi1_bdiv_q (qp, tp, qn, dp, dn, di);
 	}
       else
 	{
@@ -177,23 +178,14 @@ mpn_divexact (mp_ptr qp,
       MPN_COPY (tp, np + nn - nn1, nn1);
     }
 
+  invert_pi1 (dinv, xdp[qn1 - 1], xdp[qn1 - 2]);
   if (BELOW_THRESHOLD (qn1, DC_DIVAPPR_Q_THRESHOLD))
     {
-      /* Compute divisor inverse.  */
-      cy = mpn_add_1 (xp, xdp + qn1 - 2, 2, 1);
-      if (cy != 0)
-	dip[0] = dip[1] = 0;
-      else
-	{
-	  mp_limb_t scratch[10];	/* FIXME */
-	  mpn_invert (dip, xp, 2, scratch);
-	}
-
-      qp[qn0 - 1 + nn1 - qn1] = mpn_sb_divappr_q (qp + qn0 - 1, tp, nn1, xdp, qn1, dip);
+      qp[qn0 - 1 + nn1 - qn1] = mpn_sbpi1_divappr_q (qp + qn0 - 1, tp, nn1, xdp, qn1, dinv.inv32);
     }
   else if (BELOW_THRESHOLD (qn1, MU_DIVAPPR_Q_THRESHOLD))
     {
-      qp[qn0 - 1 + nn1 - qn1] = mpn_dc_divappr_q (qp + qn0 - 1, tp, nn1, xdp, qn1);
+      qp[qn0 - 1 + nn1 - qn1] = mpn_dcpi1_divappr_q (qp + qn0 - 1, tp, nn1, xdp, qn1, &dinv);
     }
   else
     {
@@ -212,12 +204,12 @@ mpn_divexact (mp_ptr qp,
   if (BELOW_THRESHOLD (qn0, DC_BDIV_Q_THRESHOLD))
     {
       MPN_COPY (tp, np, qn0);
-      mpn_sb_bdiv_q (qp, tp, qn0, dp, qn0, di);
+      mpn_sbpi1_bdiv_q (qp, tp, qn0, dp, qn0, di);
     }
   else if (BELOW_THRESHOLD (qn0, MU_BDIV_Q_THRESHOLD))
     {
       MPN_COPY (tp, np, qn0);
-      mpn_dc_bdiv_q (qp, tp, qn0, dp, qn0, di);
+      mpn_dcpi1_bdiv_q (qp, tp, qn0, dp, qn0, di);
     }
   else
     {

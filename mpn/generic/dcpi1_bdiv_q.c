@@ -1,7 +1,7 @@
-/* mpn_dc_bdiv_q -- divide-and-conquer Hensel division with precomputed
+/* mpn_dcpi1_bdiv_q -- divide-and-conquer Hensel division with precomputed
    inverse, returning quotient.
 
-   Contributed to the GNU project by Niels Möller and Torbjörn Granlund.
+   Contributed to the GNU project by Niels Möller and Torbjorn Granlund.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
@@ -32,16 +32,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* Computes Q = N / D mod B^n, destroys N. */
 
 mp_size_t
-mpn_dc_bdiv_q_n_itch (mp_size_t n)
+mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
 {
   /* NOTE: Depends om mullow_n interface */
   return n;
 }
 
 void
-mpn_dc_bdiv_q_n (mp_ptr qp,
-		 mp_ptr np, mp_srcptr dp, mp_size_t n,
-		 mp_limb_t dinv, mp_ptr tp)
+mpn_dcpi1_bdiv_q_n (mp_ptr qp,
+		    mp_ptr np, mp_srcptr dp, mp_size_t n,
+		    mp_limb_t dinv, mp_ptr tp)
 {
   while (ABOVE_THRESHOLD (n, DC_BDIV_Q_THRESHOLD))
     {
@@ -51,7 +51,7 @@ mpn_dc_bdiv_q_n (mp_ptr qp,
       l = n >> 1;
       h = n - l;
 
-      cy = mpn_dc_bdiv_qr_n (qp, np, dp, l, dinv, tp);
+      cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, l, dinv, tp);
 
       mpn_mullow_n (tp, qp, dp + h, l);
       mpn_sub_n (np + h, np + h, tp, l);
@@ -65,14 +65,14 @@ mpn_dc_bdiv_q_n (mp_ptr qp,
       np += l;
       n -= l;
     }
-  mpn_sb_bdiv_q (qp, np, n, dp, n, dinv);
+  mpn_sbpi1_bdiv_q (qp, np, n, dp, n, dinv);
 }
 
 void
-mpn_dc_bdiv_q (mp_ptr qp,
-	       mp_ptr np, mp_size_t nn,
-	       mp_srcptr dp, mp_size_t dn,
-	       mp_limb_t dinv)
+mpn_dcpi1_bdiv_q (mp_ptr qp,
+		  mp_ptr np, mp_size_t nn,
+		  mp_srcptr dp, mp_size_t dn,
+		  mp_limb_t dinv)
 {
   mp_size_t qn;
   mp_limb_t cy;
@@ -94,9 +94,9 @@ mpn_dc_bdiv_q (mp_ptr qp,
 
       /* Perform the typically smaller block first.  */
       if (BELOW_THRESHOLD (qn, DC_BDIV_QR_THRESHOLD))
-	cy = mpn_sb_bdiv_qr (qp, np, 2 * qn, dp, qn, dinv);
+	cy = mpn_sbpi1_bdiv_qr (qp, np, 2 * qn, dp, qn, dinv);
       else
-	cy = mpn_dc_bdiv_qr_n (qp, np, dp, qn, dinv, tp);
+	cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, qn, dinv, tp);
 
       if (qn != dn)
 	{
@@ -117,21 +117,21 @@ mpn_dc_bdiv_q (mp_ptr qp,
       while (qn > dn)
 	{
 	  mpn_sub_1 (np + dn, np + dn, qn, cy);
-	  cy = mpn_dc_bdiv_qr_n (qp, np, dp, dn, dinv, tp);
+	  cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, dn, dinv, tp);
 	  qp += dn;
 	  np += dn;
 	  qn -= dn;
 	}
       mpn_sub_1 (np + dn, np + dn, qn, cy);
-      mpn_dc_bdiv_q_n (qp, np, dp, dn, dinv, tp);
+      mpn_dcpi1_bdiv_q_n (qp, np, dp, dn, dinv, tp);
       TMP_FREE;
       return;
     }
 
   if (BELOW_THRESHOLD (qn, DC_BDIV_Q_THRESHOLD))
-    mpn_sb_bdiv_q (qp, np, 2 * qn, dp, qn, dinv);
+    mpn_sbpi1_bdiv_q (qp, np, 2 * qn, dp, qn, dinv);
   else
-    mpn_dc_bdiv_q_n (qp, np, dp, qn, dinv, tp);
+    mpn_dcpi1_bdiv_q_n (qp, np, dp, qn, dinv, tp);
 
   TMP_FREE;
 }

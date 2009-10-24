@@ -1,7 +1,7 @@
-/* mpn_dc_div_qr -- recursive divide-and-conquer division for arbitrary size
-   operands.
+/* mpn_dcpi1_divappr_q -- divide-and-conquer division, returning approximate
+   quotient.  The quotient returned is either correct, or one too large.
 
-   Contributed to the GNU project by Torbjörn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
@@ -30,8 +30,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 mp_limb_t
-mpn_dc_div_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
-		 mp_srcptr dip, mp_ptr tp)
+mpn_dcpi1_divappr_q_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
+		       gmp_pi1_t *dinv, mp_ptr tp)
 {
   mp_size_t lo, hi;
   mp_limb_t cy, qh, ql;
@@ -40,9 +40,9 @@ mpn_dc_div_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
   hi = n - lo;			/* ceil(n/2) */
 
   if (BELOW_THRESHOLD (hi, DC_DIV_QR_THRESHOLD))
-    qh = mpn_sb_div_qr (qp + lo, np + 2 * lo, 2 * hi, dp + lo, hi, dip);
+    qh = mpn_sbpi1_div_qr (qp + lo, np + 2 * lo, 2 * hi, dp + lo, hi, dinv->inv32);
   else
-    qh = mpn_dc_div_qr_n (qp + lo, np + 2 * lo, dp + lo, hi, dip, tp);
+    qh = mpn_dcpi1_div_qr_n (qp + lo, np + 2 * lo, dp + lo, hi, dinv, tp);
 
   mpn_mul (tp, qp + lo, hi, dp, lo);
 
@@ -56,40 +56,33 @@ mpn_dc_div_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
       cy -= mpn_add_n (np + lo, np + lo, dp, n);
     }
 
-  if (BELOW_THRESHOLD (lo, DC_DIV_QR_THRESHOLD))
-    ql = mpn_sb_div_qr (qp, np + hi, 2 * lo, dp + hi, lo, dip);
+  if (BELOW_THRESHOLD (lo, DC_DIVAPPR_Q_THRESHOLD))
+    ql = mpn_sbpi1_divappr_q (qp, np + hi, 2 * lo, dp + hi, lo, dinv->inv32);
   else
-    ql = mpn_dc_div_qr_n (qp, np + hi, dp + hi, lo, dip, tp);
+    ql = mpn_dcpi1_divappr_q_n (qp, np + hi, dp + hi, lo, dinv, tp);
 
-  mpn_mul (tp, dp, hi, qp, lo);
-
-  cy = mpn_sub_n (np, np, tp, n);
-  if (ql != 0)
-    cy += mpn_sub_n (np + lo, np + lo, dp, hi);
-
-  while (cy != 0)
+  if (UNLIKELY (ql != 0))
     {
-      mpn_sub_1 (qp, qp, lo, 1);
-      cy -= mpn_add_n (np, np, dp, n);
+      mp_size_t i;
+      for (i = 0; i < lo; i++)
+	qp[i] = GMP_NUMB_MASK;
     }
 
   return qh;
 }
 
 mp_limb_t
-mpn_preinv_dc_div_qr (mp_ptr qp,
-		      mp_ptr np, mp_size_t nn,
-		      mp_srcptr dp, mp_size_t dn,
-		      mp_srcptr dip)
+mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
+		     mp_srcptr dp, mp_size_t dn, gmp_pi1_t *dinv)
 {
   mp_size_t qn;
-  mp_limb_t qh, cy;
+  mp_limb_t qh, cy, qsave;
   mp_ptr tp;
   TMP_DECL;
 
   TMP_MARK;
 
-  tp = TMP_SALLOC_LIMBS (dn);
+  tp = TMP_SALLOC_LIMBS (dn+1);
 
   qn = nn - dn;
   qp += qn;
@@ -98,6 +91,7 @@ mpn_preinv_dc_div_qr (mp_ptr qp,
 
   if (qn > dn)
     {
+      qn++;			/* pretend we'll need an extra limb */
       /* Reduce qn mod dn without division, optimizing small operations.  */
       do
 	qn -= dn;
@@ -108,9 +102,9 @@ mpn_preinv_dc_div_qr (mp_ptr qp,
 
       /* Perform the typically smaller block first.  */
       if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
-	qh = mpn_sb_div_qr (qp, np - qn, 2 * qn, dp - qn, qn, dip);
+	qh = mpn_sbpi1_div_qr (qp, np - qn, 2 * qn, dp - qn, qn, dinv->inv32);
       else
-	qh = mpn_dc_div_qr_n (qp, np - qn, dp - qn, qn, dip, tp);
+	qh = mpn_dcpi1_div_qr_n (qp, np - qn, dp - qn, qn, dinv, tp);
 
       if (qn != dn)
 	{
@@ -130,15 +124,25 @@ mpn_preinv_dc_div_qr (mp_ptr qp,
 	    }
 	}
 
-      qn = nn - dn - qn;
-      do
+      qn = nn - dn - qn + 1;
+      while (qn > dn)
 	{
 	  qp -= dn;
 	  np -= dn;
-	  mpn_dc_div_qr_n (qp, np - dn, dp - dn, dn, dip, tp);
+	  mpn_dcpi1_div_qr_n (qp, np - dn, dp - dn, dn, dinv, tp);
 	  qn -= dn;
 	}
-      while (qn > 0);
+
+      /* Since we pretended we'd need an extra quotient limb before, we now
+	 have made sure the code above left just dn-1=qn quotient limbs to
+	 develop.  Develop that plus a guard limb. */
+      qn--;
+      qp -= qn;
+      np -= dn;
+      qsave = qp[qn];
+      mpn_dcpi1_divappr_q_n (qp, np - dn, dp - dn, dn, dinv, tp);
+      MPN_COPY_INCR (qp, qp + 1, qn);
+      qp[qn] = qsave;
     }
   else
     {
@@ -154,50 +158,17 @@ mpn_preinv_dc_div_qr (mp_ptr qp,
       qp -= qn;			/* point at low limb of next quotient block */
       np -= qn;			/* point in the middle of partial remainder */
 
-      if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
-	qh = mpn_sb_div_qr (qp, np - qn, 2 * qn, dp - qn, qn, dip);
+      if (BELOW_THRESHOLD (qn, DC_DIVAPPR_Q_THRESHOLD))
+	 /* Full precision.  Optimal?  */
+	qh = mpn_sbpi1_divappr_q (qp, np - dn, nn, dp - dn, dn, dinv->inv32);
       else
-	qh = mpn_dc_div_qr_n (qp, np - qn, dp - qn, qn, dip, tp);
-
-      if (qn != dn)
 	{
-	  if (qn > dn - qn)
-	    mpn_mul (tp, qp, qn, dp - dn, dn - qn);
-	  else
-	    mpn_mul (tp, dp - dn, dn - qn, qp, qn);
-
-	  cy = mpn_sub_n (np - dn, np - dn, tp, dn);
-	  if (qh != 0)
-	    cy += mpn_sub_n (np - dn + qn, np - dn + qn, dp - dn, dn - qn);
-
-	  while (cy != 0)
-	    {
-	      qh -= mpn_sub_1 (qp, qp, qn, 1);
-	      cy -= mpn_add_n (np - dn, np - dn, dp - dn, dn);
-	    }
+	  /* Put quotient in tp, use qp as temporary, since qp lacks a limb.  */
+	  qh = mpn_dcpi1_divappr_q_n (tp, np - qn - 2, dp - (qn + 1), qn + 1, dinv, qp);
+	  MPN_COPY (qp, tp + 1, qn);
 	}
     }
 
   TMP_FREE;
   return qh;
-}
-
-mp_limb_t
-mpn_dc_div_qr (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn)
-{
-  mp_limb_t cy;
-  mp_limb_t xp[2], dip[2];
-
-  ASSERT (dn >= 2);
-
-  cy = mpn_add_1 (xp, dp + dn - 2, 2, 1);
-  if (cy != 0)
-    dip[0] = dip[1] = 0;
-  else
-    {
-      mp_limb_t scratch[10];	/* FIXME */
-      mpn_invert (dip, xp, 2, scratch);
-    }
-
-  return mpn_preinv_dc_div_qr (qp, np, nn, dp, dn, dip);
 }

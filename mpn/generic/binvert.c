@@ -83,9 +83,9 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
   xp[0] = 1;
   binvert_limb (di, up[0]);
   if (BELOW_THRESHOLD (rn, DC_BDIV_Q_THRESHOLD))
-    mpn_sb_bdiv_q (rp, xp, rn, up, rn, -di);
+    mpn_sbpi1_bdiv_q (rp, xp, rn, up, rn, -di);
   else
-    mpn_dc_bdiv_q (rp, xp, rn, up, rn, -di);
+    mpn_dcpi1_bdiv_q (rp, xp, rn, up, rn, -di);
 
   /* Use Newton iterations to get the desired precision.  */
   for (; rn < n; rn = newrn)

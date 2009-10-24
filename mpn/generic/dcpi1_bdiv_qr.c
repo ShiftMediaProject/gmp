@@ -1,4 +1,4 @@
-/* mpn_dc_bdiv_qr -- divide-and-conquer Hensel division with precomputed
+/* mpn_dcpi1_bdiv_qr -- divide-and-conquer Hensel division with precomputed
    inverse, returning quotient and remainder.
 
    Contributed to the GNU project by Niels Möller and Torbjörn Granlund.
@@ -49,8 +49,8 @@ mpn_dc_bdiv_qr_n_itch (mp_size_t n)
 }
 
 mp_limb_t
-mpn_dc_bdiv_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
-		  mp_limb_t dinv, mp_ptr tp)
+mpn_dcpi1_bdiv_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
+		     mp_limb_t dinv, mp_ptr tp)
 {
   mp_size_t lo, hi;
   mp_limb_t cy;
@@ -60,9 +60,9 @@ mpn_dc_bdiv_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
   hi = n - lo;			/* ceil(n/2) */
 
   if (BELOW_THRESHOLD (lo, DC_BDIV_QR_THRESHOLD))
-    cy = mpn_sb_bdiv_qr (qp, np, 2 * lo, dp, lo, dinv);
+    cy = mpn_sbpi1_bdiv_qr (qp, np, 2 * lo, dp, lo, dinv);
   else
-    cy = mpn_dc_bdiv_qr_n (qp, np, dp, lo, dinv, tp);
+    cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, lo, dinv, tp);
 
   mpn_mul (tp, dp + lo, hi, qp, lo);
 
@@ -70,9 +70,9 @@ mpn_dc_bdiv_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
   rh = mpn_sub (np + lo, np + lo, n + hi, tp, n);
 
   if (BELOW_THRESHOLD (hi, DC_BDIV_QR_THRESHOLD))
-    cy = mpn_sb_bdiv_qr (qp + lo, np + lo, 2 * hi, dp, hi, dinv);
+    cy = mpn_sbpi1_bdiv_qr (qp + lo, np + lo, 2 * hi, dp, hi, dinv);
   else
-    cy = mpn_dc_bdiv_qr_n (qp + lo, np + lo, dp, hi, dinv, tp);
+    cy = mpn_dcpi1_bdiv_qr_n (qp + lo, np + lo, dp, hi, dinv, tp);
 
   mpn_mul (tp, qp + lo, hi, dp + hi, lo);
 
@@ -83,8 +83,8 @@ mpn_dc_bdiv_qr_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n,
 }
 
 mp_limb_t
-mpn_dc_bdiv_qr (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
-		mp_limb_t dinv)
+mpn_dcpi1_bdiv_qr (mp_ptr qp, mp_ptr np, mp_size_t nn,
+		   mp_srcptr dp, mp_size_t dn, mp_limb_t dinv)
 {
   mp_size_t qn;
   mp_limb_t rr, cy;
@@ -106,9 +106,9 @@ mpn_dc_bdiv_qr (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
 
       /* Perform the typically smaller block first.  */
       if (BELOW_THRESHOLD (qn, DC_BDIV_QR_THRESHOLD))
-	cy = mpn_sb_bdiv_qr (qp, np, 2 * qn, dp, qn, dinv);
+	cy = mpn_sbpi1_bdiv_qr (qp, np, 2 * qn, dp, qn, dinv);
       else
-	cy = mpn_dc_bdiv_qr_n (qp, np, dp, qn, dinv, tp);
+	cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, qn, dinv, tp);
 
       rr = 0;
       if (qn != dn)
@@ -130,7 +130,7 @@ mpn_dc_bdiv_qr (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
       do
 	{
 	  rr += mpn_sub_1 (np + dn, np + dn, qn, cy);
-	  cy = mpn_dc_bdiv_qr_n (qp, np, dp, dn, dinv, tp);
+	  cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, dn, dinv, tp);
 	  qp += dn;
 	  np += dn;
 	  qn -= dn;
@@ -141,9 +141,9 @@ mpn_dc_bdiv_qr (mp_ptr qp, mp_ptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
     }
 
   if (BELOW_THRESHOLD (qn, DC_BDIV_QR_THRESHOLD))
-    cy = mpn_sb_bdiv_qr (qp, np, 2 * qn, dp, qn, dinv);
+    cy = mpn_sbpi1_bdiv_qr (qp, np, 2 * qn, dp, qn, dinv);
   else
-    cy = mpn_dc_bdiv_qr_n (qp, np, dp, qn, dinv, tp);
+    cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, qn, dinv, tp);
 
   rr = 0;
   if (qn != dn)

@@ -1,6 +1,6 @@
 /* mpn_bdiv_q -- Hensel division with precomputed inverse, returning quotient.
 
-   Contributed to the GNU project by Torbjörn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
@@ -45,13 +45,13 @@ mpn_bdiv_q (mp_ptr qp,
     {
       MPN_COPY (tp, np, qn);
       binvert_limb (di, dp[0]);  di = -di;
-      mpn_sb_bdiv_q (qp, tp, qn, dp, dn, di);
+      mpn_sbpi1_bdiv_q (qp, tp, qn, dp, dn, di);
     }
   else if (BELOW_THRESHOLD (dn, MU_BDIV_Q_THRESHOLD))
     {
       MPN_COPY (tp, np, qn);
       binvert_limb (di, dp[0]);  di = -di;
-      mpn_dc_bdiv_q (qp, tp, qn, dp, dn, di);
+      mpn_dcpi1_bdiv_q (qp, tp, qn, dp, dn, di);
     }
   else
     {
@@ -63,7 +63,5 @@ mpn_bdiv_q (mp_ptr qp,
 mp_size_t
 mpn_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
 {
-  mp_size_t qn;
-
   return mpn_mu_bdiv_q_itch (nn, dn);
 }

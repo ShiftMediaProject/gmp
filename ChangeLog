@@ -1,3 +1,40 @@
+2009-10-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/bdiv_q.c: Update to call new functions.
+	* mpn/generic/bdiv_qr.c: Likewise.
+	* mpn/generic/binvert.c: Likewise.
+	* mpn/generic/divexact.c: Likewise.
+	* mpn/generic/divis.c: Likewise.
+	* mpn/generic/perfpow.c: Likewise.
+	* mpn/generic/tdiv_qr.c: Likewise.
+	* mpn/generic/dcpi1_bdiv_q.c: New file.
+	* mpn/generic/dcpi1_bdiv_qr.c: New file.
+	* mpn/generic/dcpi1_div_q.c: New file.
+	* mpn/generic/dcpi1_div_qr.c: New file.
+	* mpn/generic/dcpi1_divappr_q.c: New file.
+	* mpn/generic/sbpi1_bdiv_q.c: New file.
+	* mpn/generic/sbpi1_bdiv_qr.c: New file.
+	* mpn/generic/sbpi1_div_q.c: New file.
+	* mpn/generic/sbpi1_div_qr.c: New file.
+	* mpn/generic/sbpi1_divappr_q.c: New file.
+	* mpn/generic/dc_bdiv_q.c: Removed.
+	* mpn/generic/dc_bdiv_qr.c: Removed.
+	* mpn/generic/dc_div_q.c: Removed.
+	* mpn/generic/dc_div_qr.c: Removed.
+	* mpn/generic/dc_divappr_q.c: Removed.
+	* mpn/generic/sb_bdiv_q.c: Removed.
+	* mpn/generic/sb_bdiv_qr.c: Removed.
+	* mpn/generic/sb_div_q.c: Removed.
+	* mpn/generic/sb_div_qr.c: Removed.
+
+	* configure.in (gmp_mpn_functions): Add new division functions, remove
+	obsolete division functions.
+
+	* gmp-impl.h: Add declarations of new division functions, remove
+	corresponding obsolete declarations.
+	(gmp_pi1_t, gmp_pi2_t): New types.
+	(invert_pi1): New macro for computing 2/1 and 3/2 inverses.
+
 2009-10-23  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (mpn_toom62_mul_itch): New function.

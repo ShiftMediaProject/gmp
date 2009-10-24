@@ -104,12 +104,13 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
     default:
       {
 	int adjust;
+	gmp_pi1_t dinv;
 	TMP_DECL;
 	TMP_MARK;
 	adjust = np[nn - 1] >= dp[dn - 1];	/* conservative tests for quotient size */
 	if (nn + adjust >= 2 * dn)
 	  {
-	    mp_ptr n2p, d2p, q2p;
+	    mp_ptr n2p, d2p;
 	    mp_limb_t cy;
 	    int cnt;
 
@@ -135,11 +136,11 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		nn += adjust;
 	      }
 
+	    invert_pi1 (dinv, d2p[dn - 1], d2p[dn - 2]);
 	    if (dn < DIV_DC_THRESHOLD)
-	      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
+	      mpn_sbpi1_div_qr (qp, n2p, nn, d2p, dn, dinv.inv32);
 	    else
-	      mpn_dc_div_qr (qp, n2p, nn, d2p, dn);
-
+	      mpn_dcpi1_div_qr (qp, n2p, nn, d2p, dn, &dinv);
 
 	    if (cnt != 0)
 	      mpn_rshift (rp, n2p, dn, cnt);
@@ -247,25 +248,21 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    if (qn == 1)
 	      {
 		mp_limb_t q0, r0;
-		mp_limb_t gcc272bug_n1, gcc272bug_n0, gcc272bug_d0;
-		/* Due to a gcc 2.7.2.3 reload pass bug, we have to use some
-		   temps here.  This doesn't hurt code quality on any machines
-		   so we do it unconditionally.  */
-		gcc272bug_n1 = n2p[1];
-		gcc272bug_n0 = n2p[0];
-		gcc272bug_d0 = d2p[0];
-		udiv_qrnnd (q0, r0, gcc272bug_n1, gcc272bug_n0 << GMP_NAIL_BITS,
-			    gcc272bug_d0 << GMP_NAIL_BITS);
-		r0 >>= GMP_NAIL_BITS;
-		n2p[0] = r0;
+		udiv_qrnnd (q0, r0, n2p[1], n2p[0] << GMP_NAIL_BITS, d2p[0] << GMP_NAIL_BITS);
+		n2p[0] = r0 >> GMP_NAIL_BITS;
 		qp[0] = q0;
 	      }
 	    else if (qn == 2)
-	      mpn_divrem_2 (qp, 0L, n2p, 4L, d2p);
-	    else if (qn < DIV_DC_THRESHOLD)
-	      mpn_sb_divrem_mn (qp, n2p, 2 * qn, d2p, qn);
+	      mpn_divrem_2 (qp, 0L, n2p, 4L, d2p); /* FIXME: obsolete function */
 	    else
-	      mpn_dc_div_qr (qp, n2p, 2 * qn, d2p, qn);
+	      {
+		gmp_pi1_t dinv;
+		invert_pi1 (dinv, d2p[qn - 1], d2p[qn - 2]);
+		if (qn < DIV_DC_THRESHOLD)
+		  mpn_sbpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, dinv.inv32);
+		else
+		  mpn_dcpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, &dinv);
+	      }
 
 	    rn = qn;
 	    /* Multiply the first ignored divisor limb by the most significant

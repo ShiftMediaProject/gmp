@@ -1,4 +1,4 @@
-/* mpn_sb_bdiv_q -- schoolbook Hensel division with precomputed inverse,
+/* mpn_sbpi1_bdiv_q -- schoolbook Hensel division with precomputed inverse,
    returning quotient only.
 
    Contributed to the GNU project by Niels Möller.
@@ -7,7 +7,7 @@
    IT IS ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
    ALMOST GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2005, 2006 Free Software Foundation, Inc.
+Copyright 2005, 2006, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,22 +45,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      qp[i] = (-D)^{-1} * np[i] (mod B)
      N += B^i * qp[i] * D
 
-   And then we flip the sign, -Q = (not Q) + 1.
-*/
+   And then we flip the sign, -Q = (not Q) + 1. */
 
 void
-mpn_sb_bdiv_q (mp_ptr qp,
-	       mp_ptr np, mp_size_t nn,
-	       mp_srcptr dp, mp_size_t dn,
-	       mp_limb_t dinv)
+mpn_sbpi1_bdiv_q (mp_ptr qp,
+		  mp_ptr np, mp_size_t nn,
+		  mp_srcptr dp, mp_size_t dn,
+		  mp_limb_t dinv)
 {
   mp_size_t i;
   mp_limb_t qh;
 
-  ASSERT (nn > 0);
   ASSERT (dn > 0);
   ASSERT (nn >= dn);
-  ASSERT (dp[0] & 1);
+  ASSERT ((dp[0] & 1) != 0);
 
   for (i = 0; i < nn - dn; i++)
     {
