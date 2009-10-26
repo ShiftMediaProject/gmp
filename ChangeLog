@@ -1,3 +1,7 @@
+2009-10-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (invert_pi1): Streamline, as suggested by Niels.
+
 2009-10-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_q.c: Update to call new functions.
