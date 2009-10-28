@@ -1,3 +1,9 @@
+2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (mpn_kara_mul_n, mpn_kara_sqr_n): Remove declarations.
+	* tune/common.c: Remove/rename kara functions.
+	* tune/speed.h: Likewise.
+
 2009-10-28  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/mul_n.c (mpn_kara_mul_n): Deleted old Karatsuba

@@ -927,25 +927,14 @@ speed_mpn_sqr_diagonal (struct speed_params *s)
 #endif
 
 double
-speed_mpn_kara_mul_n (struct speed_params *s)
+speed_mpn_toom2_sqr (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_KARA_MUL_N (mpn_kara_mul_n);
+  SPEED_ROUTINE_MPN_TOOM2_SQR (mpn_toom2_sqr);
 }
 double
-speed_mpn_kara_sqr_n (struct speed_params *s)
+speed_mpn_toom3_sqr (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_KARA_SQR_N (mpn_kara_sqr_n);
-}
-
-double
-speed_mpn_toom3_mul_n (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_TOOM3_MUL_N (mpn_toom3_mul_n);
-}
-double
-speed_mpn_toom3_sqr_n (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_TOOM3_SQR_N (mpn_toom3_sqr_n);
+  SPEED_ROUTINE_MPN_TOOM3_SQR (mpn_toom3_sqr);
 }
 double
 speed_mpn_toom22_mul (struct speed_params *s)

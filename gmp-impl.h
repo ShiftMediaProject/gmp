@@ -1040,12 +1040,6 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define   mpn_sqr_diagonal __MPN(sqr_diagonal)
 __GMP_DECLSPEC void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
-#define   mpn_kara_mul_n __MPN(kara_mul_n)
-__GMP_DECLSPEC void      mpn_kara_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
-
-#define   mpn_kara_sqr_n __MPN(kara_sqr_n)
-__GMP_DECLSPEC void      mpn_kara_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-
 #define   mpn_toom_interpolate_5pts __MPN(toom_interpolate_5pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_5pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_limb_t));
 

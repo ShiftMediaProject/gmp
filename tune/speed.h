@@ -206,8 +206,6 @@ double speed_mpn_jacobi_base __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_3 __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_kara_mul_n __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_kara_sqr_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_lshift __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1c __GMP_PROTO ((struct speed_params *s));
@@ -257,8 +255,9 @@ double speed_mpn_rootrem __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sub_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sublsh1_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_submul_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_toom2_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom3_mul_n __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_toom3_sqr_n __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_toom3_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom22_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom33_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom44_mul __GMP_PROTO ((struct speed_params *s));
@@ -1112,12 +1111,12 @@ int speed_routine_count_zeros_setup
     return t;								\
   }
 
-#define SPEED_ROUTINE_MPN_KARA_SQR_N(function)				\
+#define SPEED_ROUTINE_MPN_TOOM2_SQR(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
 				MPN_KARA_SQR_N_TSIZE (s->size),		\
 				MPN_KARA_SQR_N_MINSIZE)
 
-#define SPEED_ROUTINE_MPN_TOOM3_SQR_N(function)				\
+#define SPEED_ROUTINE_MPN_TOOM3_SQR(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
 				mpn_toom3_sqr_itch (s->size),		\
 				MPN_TOOM3_SQR_N_MINSIZE)
