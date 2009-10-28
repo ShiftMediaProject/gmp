@@ -1,3 +1,24 @@
+2009-10-28  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/mul_n.c (mpn_sqr_n): Use mpn_toom2_sqr and
+	mpn_toom3_sqr, not the old implementations.
+
+	* gmp-impl.h (MPN_TOOM3_MUL_N_TSIZE): Deleted, replaced by
+	mpn_toom33_mul_itch.
+	(MPN_TOOM3_SQR_N_TSIZE): Deleted, replaced by
+	mpn_toom3_sqr_itch.
+	(mpn_toom33_mul_itch): Needs more scratch.
+	(mpn_toom3_sqr_itch): Likewise.
+	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM3_MUL_N): Use
+	mpn_toom33_mul_itch.
+	(SPEED_ROUTINE_MPN_TOOM3_SQR_N): Use mpn_toom3_sqr_itch.
+	* mpn/generic/mul_n.c (mpn_mul_n): Use mpn_toom33_mul_itch.
+	(mpn_sqr_n): Use mpn_toom3_sqr_itch.
+
+	* mpn/generic/toom33_mul.c (mpn_toom33_mul): Avoid TMP_ALLOC. Needs
+	some more supplied scratch instead.
+	* mpn/generic/toom3_sqr.c (mpn_toom3_sqr): Likewise.
+
 2009-10-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_q.c: Update to call new functions.

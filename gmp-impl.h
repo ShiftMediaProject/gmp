@@ -1022,31 +1022,7 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_KARA_MUL_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
 #define MPN_KARA_SQR_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
 
-/* toom3 uses 2n + 2n/3 + o(n) limbs of temporary space if mpn_sublsh1_n is
-   unavailable, but just 2n + o(n) if mpn_sublsh1_n is available.  It is hard
-   to pin down the value of o(n), since it is a complex function of
-   MUL_TOOM3_THRESHOLD and n.  Normally toom3 is used between kara and fft; in
-   that case o(n) will be really limited.  If toom3 is used for arbitrarily
-   large operands, o(n) will be larger.  These definitions handle operands of
-   up to 8956264246117233 limbs.  A single multiplication using toom3 on the
-   fastest hardware currently (2008) would need 10 million years, which
-   suggests that these limits are acceptable.  */
 #if WANT_FFT
-#if HAVE_NATIVE_mpn_sublsh1_n
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 63)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 63)
-#else
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 63)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 63)
-#endif
-#else /* WANT_FFT */
-#if HAVE_NATIVE_mpn_sublsh1_n
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 255)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 255)
-#else
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
-#endif
 #define MPN_TOOM44_MAX_N 285405
 #endif /* WANT_FFT */
 
@@ -4300,10 +4276,9 @@ mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom33_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  /* Can probably be trimmed to 2 an + O(log an). */
   mp_size_t n = (an + 2) / (size_t) 3;
-  return 6 * n + GMP_NUMB_BITS;
+  return 15 * n / 2 + GMP_NUMB_BITS;
 }
 
 static inline mp_size_t
@@ -4372,10 +4347,10 @@ mpn_toom2_sqr_itch (mp_size_t an)
 static inline mp_size_t
 mpn_toom3_sqr_itch (mp_size_t an)
 {
-  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
+  /* Same as mpn_toom33_mul_itch. Can probably be trimmed to 2 an +
+     O(log an). */
   mp_size_t n = (an + 2) / (size_t) 3;
-  return 6 * n + GMP_NUMB_BITS;
+  return 15 * n / 2 + GMP_NUMB_BITS;
 }
 
 static inline mp_size_t

@@ -72,7 +72,6 @@ mpn_toom3_sqr (mp_ptr pp,
   mp_limb_t cy, vinf0;
   mp_ptr gp;
   mp_ptr as1, asm1, as2;
-  TMP_DECL;
 
 #define a0  ap
 #define a1  (ap + n)
@@ -84,9 +83,7 @@ mpn_toom3_sqr (mp_ptr pp,
 
   ASSERT (0 < s && s <= n);
 
-  TMP_MARK;
-
-  as1 = TMP_SALLOC_LIMBS (n + 1); /* Should be (pp + 4 * n + 4), but we need 5n+5<=4n+s+t i.e. s+t>n+4*/
+  as1 = scratch + 4 * n + 4;
   asm1 = scratch + 2 * n + 2;
   as2 = pp + n + 1;
 
@@ -145,7 +142,7 @@ mpn_toom3_sqr (mp_ptr pp,
 #define vinf  (pp + 4 * n)			/* s+s */
 #define vm1   scratch				/* 2n+1 */
 #define v2    (scratch + 2 * n + 1)		/* 2n+2 */
-#define scratch_out  (scratch + 4 * n + 4)
+#define scratch_out  (scratch + 5 * n + 5)
 
   /* vm1, 2n+1 limbs */
 #ifdef SMALLER_RECURSION
@@ -205,6 +202,4 @@ mpn_toom3_sqr (mp_ptr pp,
   TOOM3_SQR_N_REC (v0, ap, n, scratch_out);	/* v0, 2n limbs */
 
   mpn_toom_interpolate_5pts (pp, v2, vm1, n, s + s, 1, vinf0);
-
-  TMP_FREE;
 }

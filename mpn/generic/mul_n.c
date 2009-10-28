@@ -364,6 +364,10 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
     }
 }
 
+/* FIXME: This code should be deleted, but before doing that, review
+   use of scratch space in this old code and the new toom3 code, to
+   see if the latter can be optimized. */
+
 /******************************************************************************
  *                                                                            *
  *              Toom 3-way multiplication and squaring                        *
@@ -713,7 +717,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mp_ptr ws;
       TMP_SDECL;
       TMP_SMARK;
-      ws = TMP_SALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (n));
+      ws = TMP_SALLOC_LIMBS (mpn_toom33_mul_itch (n, n));
       mpn_toom33_mul (p, a, n, b, n, ws);
       TMP_SFREE;
     }
@@ -775,15 +779,15 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
       /* Allocate workspace of fixed size on stack: fast! */
       mp_limb_t ws[MPN_KARA_SQR_N_TSIZE (SQR_TOOM3_THRESHOLD_LIMIT-1)];
       ASSERT (SQR_TOOM3_THRESHOLD <= SQR_TOOM3_THRESHOLD_LIMIT);
-      mpn_kara_sqr_n (p, a, n, ws);
+      mpn_toom2_sqr (p, a, n, ws);
     }
   else if (BELOW_THRESHOLD (n, SQR_TOOM4_THRESHOLD))
     {
       mp_ptr ws;
       TMP_SDECL;
       TMP_SMARK;
-      ws = TMP_SALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (n));
-      mpn_toom3_sqr_n (p, a, n, ws);
+      ws = TMP_SALLOC_LIMBS (mpn_toom3_sqr_itch (n));
+      mpn_toom3_sqr (p, a, n, ws);
       TMP_SFREE;
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD

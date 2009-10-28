@@ -1018,7 +1018,7 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_TOOM3_MUL_N(function)				\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
     (function (wp, s->xp, s->yp, s->size, tspace),			\
-     MPN_TOOM3_MUL_N_TSIZE (s->size),					\
+     mpn_toom33_mul_itch (s->size, s->size),				\
      MPN_TOOM3_MUL_N_MINSIZE)
 
 #define MPN_TOOM22_MUL_MINSIZE MPN_KARA_MUL_N_MINSIZE		/* FIXME */
@@ -1119,7 +1119,7 @@ int speed_routine_count_zeros_setup
 
 #define SPEED_ROUTINE_MPN_TOOM3_SQR_N(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
-				MPN_TOOM3_SQR_N_TSIZE (s->size),	\
+				mpn_toom3_sqr_itch (s->size),		\
 				MPN_TOOM3_SQR_N_MINSIZE)
 
 
