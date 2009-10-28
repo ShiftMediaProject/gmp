@@ -1,5 +1,13 @@
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mulmod_bnm1.c: New file, by Niels Möller.
+	* configure.in (gmp_mpn_functions):  Add mulmod_bnm1.
+	* gmp-impl.h: Add related declarations.
+	* tune/tuneup.c: Tune MULMOD_BNM1_THRESHOLD.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1): New macro.
+	* tune/common.c (speed_mpn_mulmod_bnm1): New function.
+	* Makefile.am (TUNE_MPN_SRCS_BASIC): Add mulmod_bnm1.c.
+
 	* gmp-impl.h (mpn_kara_mul_n, mpn_kara_sqr_n): Remove declarations.
 	* tune/common.c: Remove/rename kara functions.
 	* tune/speed.h: Likewise.

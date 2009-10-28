@@ -161,6 +161,7 @@ mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mullow_basecase_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mullow_dc_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
+mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
@@ -190,7 +191,8 @@ struct param_t {
   const char        *name;
   speed_function_t  function;
   speed_function_t  function2;
-  double            step_factor;    /* how much to step sizes (rounded down) */
+  double            step_factor;    /* how much to step relatively */
+  int               step;           /* how much to step absolutely */
   double            function_fudge; /* multiplier for "function" speeds */
   int               stop_since_change;
   double            stop_factor;
@@ -455,6 +457,7 @@ one (mp_size_t *threshold, struct param_t *param)
   DEFAULT (param->function_fudge, 1.0);
   DEFAULT (param->function2, param->function);
   DEFAULT (param->step_factor, 0.01);  /* small steps by default */
+  DEFAULT (param->step, 1);            /* small steps by default */
   DEFAULT (param->stop_since_change, 80);
   DEFAULT (param->stop_factor, 1.2);
   DEFAULT (param->min_size, 10);
@@ -510,7 +513,7 @@ one (mp_size_t *threshold, struct param_t *param)
 
   for (s.size = param->min_size;
        s.size < param->max_size;
-       s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), 1))
+       s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), param->step))
     {
       double   ti, tiplus1, d;
 
@@ -867,6 +870,22 @@ tune_mullow (void)
   param.min_size = mullow_dc_threshold;
   param.max_size = 2000;
   one (&mullow_mul_n_threshold, &param);
+}
+
+void
+tune_mulmod_bnm1 (void)
+{
+  static struct param_t  param;
+
+  param.function = speed_mpn_mulmod_bnm1;
+
+  param.name = "MULMOD_BNM1_THRESHOLD";
+  param.min_size = 4;
+  param.step_factor = 0.0;
+  param.step = 4;
+  param.min_is_always = 1;
+  param.max_size = 100;
+  one (&mulmod_bnm1_threshold, &param);
 }
 
 
@@ -1809,6 +1828,9 @@ all (void)
   printf("\n");
 
   tune_mullow ();
+  printf("\n");
+
+  tune_mulmod_bnm1 ();
   printf("\n");
 
   tune_sb_preinv ();
