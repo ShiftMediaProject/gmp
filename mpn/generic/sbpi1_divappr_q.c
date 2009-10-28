@@ -44,7 +44,7 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
   mp_limb_t cy, cy1;
   mp_limb_t q, q0;
   mp_limb_t t1, t0;
-  mp_limb_t mask;
+  mp_limb_t mask, flag;
 
   ASSERT (dn > 2);
   ASSERT (nn >= dn);
@@ -112,9 +112,6 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
 
 	  cy = mpn_submul_1 (np - dn, dp, dn, q);
 
-	  // sub cy, n0
-	  // sbb $0, n1
-	  // jc fixup
 	  cy1 = n0 < cy;
 	  n0 = (n0 - cy) & GMP_NUMB_MASK;
 	  cy = n1 < cy1;
@@ -131,7 +128,7 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
       *--qp = q;
     }
 
-  mp_limb_t flag = ~CNST_LIMB(0);
+  flag = ~CNST_LIMB(0);
 
   if (dn >= 0)
     {

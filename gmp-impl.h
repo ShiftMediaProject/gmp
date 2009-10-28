@@ -2484,7 +2484,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 
 #define invert_pi1(dinv, d1, d0)				\
   do {								\
-    mp_limb_t v, p, t1, t0;					\
+    mp_limb_t v, p, t1, t0, mask;				\
     invert_limb (v, d1);					\
     (dinv).inv21 = v;						\
     p = d1 * v;							\
@@ -2492,19 +2492,17 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
     if (p < d0)							\
       {								\
 	v--;							\
-	if (p >= d1)						\
-	  {							\
-	    v--;						\
-	    p -= d1;						\
-	  }							\
+	mask = -(p >= d1);					\
 	p -= d1;						\
+	v += mask;						\
+	p -= mask & d1;						\
       }								\
     umul_ppmm (t1, t0, d0, v);					\
     p += t1;							\
     if (p < t1)							\
       {								\
         v--;							\
-	if (p >= d1)						\
+	if (UNLIKELY (p >= d1))					\
 	  {							\
 	    if (p > d1 || t0 >= d0)				\
 	      v--;						\

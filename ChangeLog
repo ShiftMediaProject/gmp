@@ -9,7 +9,7 @@
 	* mpn/generic/mul_n.c (mpn_kara_mul_n): Deleted old Karatsuba
 	implementation.
 	(mpn_kara_sqr_n): Likewise deleted.
-	
+
 	* mpn/generic/mul_n.c (mpn_sqr_n): Use mpn_toom2_sqr and
 	mpn_toom3_sqr, not the old implementations.
 
@@ -28,6 +28,10 @@
 	* mpn/generic/toom33_mul.c (mpn_toom33_mul): Avoid TMP_ALLOC. Needs
 	some more supplied scratch instead.
 	* mpn/generic/toom3_sqr.c (mpn_toom3_sqr): Likewise.
+
+2009-10-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (invert_pi1): Streamline, as suggested by Niels.
 
 2009-10-24  Torbjorn Granlund  <tege@gmplib.org>
 

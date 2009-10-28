@@ -104,9 +104,6 @@ mpn_sbpi1_div_qr (mp_ptr qp,
 
 	  cy = mpn_submul_1 (np - dn, dp, dn, q);
 
-	  // sub cy, n0
-	  // sbb $0, n1
-	  // jc fixup
 	  cy1 = n0 < cy;
 	  n0 = (n0 - cy) & GMP_NUMB_MASK;
 	  cy = n1 < cy1;
