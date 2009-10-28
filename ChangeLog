@@ -1,5 +1,9 @@
 2009-10-28  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/mul_n.c (mpn_kara_mul_n): Deleted old Karatsuba
+	implementation.
+	(mpn_kara_sqr_n): Likewise deleted.
+	
 	* mpn/generic/mul_n.c (mpn_sqr_n): Use mpn_toom2_sqr and
 	mpn_toom3_sqr, not the old implementations.
 
