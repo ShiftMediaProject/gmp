@@ -64,7 +64,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define HAVE_NATIVE_mpn_add_n_sub_n 1
 #endif
 
-static void mpn_mul_fft_internal
+static mp_limb_t mpn_mul_fft_internal
 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_ptr *,
 	      mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_size_t, int **, mp_ptr,
 	      int));
@@ -739,7 +739,7 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
    the out carry.
 */
 
-static void
+static mp_limb_t
 mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
 		      int k, int K,
 		      mp_ptr *Ap, mp_ptr *Bp,
@@ -838,6 +838,8 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
   i = mpn_fft_norm_modF (op, pl, p, pla);
   if (rec) /* store the carry out */
     op[pl] = i;
+
+  return i;
 }
 
 /* return the lcm of a and 2^k */
@@ -854,7 +856,8 @@ mpn_mul_fft_lcm (unsigned long int a, unsigned int k)
   return a << l;
 }
 
-void
+
+mp_limb_t
 mpn_mul_fft (mp_ptr op, mp_size_t pl,
 	     mp_srcptr n, mp_size_t nl,
 	     mp_srcptr m, mp_size_t ml,
@@ -865,6 +868,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   mp_ptr *Ap, *Bp, A, T, B;
   int **_fft_l;
   int sqr = (n == m && nl == ml);
+  mp_limb_t h;
   TMP_DECL;
 
   TRACE (printf ("\nmpn_mul_fft pl=%ld nl=%ld ml=%ld k=%d\n", pl, nl, ml, k));
@@ -921,10 +925,12 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   if (n != m)
     mpn_mul_fft_decompose (B, Bp, K, nprime, m, ml, l, Mp, T);
 
-  mpn_mul_fft_internal (op, n, m, pl, k, K, Ap, Bp, A, B, nprime, l, Mp, _fft_l, T, 0);
+  h = mpn_mul_fft_internal (op, n, m, pl, k, K, Ap, Bp, A, B, nprime, l, Mp, _fft_l, T, 0);
 
   TMP_FREE;
   __GMP_FREE_FUNC_LIMBS (A, 2 * K * (nprime + 1));
+
+  return h;
 }
 
 /* multiply {n, nl} by {m, ml}, and put the result in {op, nl+ml} */
