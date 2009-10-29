@@ -1,5 +1,7 @@
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/devel/try.c: Clean up usage of %p printf arguments.
+
 	* gmp-impl.h: Update MUL/SQR MINSIZE macros to reflect new function
 	names and limitations
 	* tune/tuneup.c: Use updated macro names.
