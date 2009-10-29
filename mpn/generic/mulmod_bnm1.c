@@ -66,7 +66,6 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
  *
  * S(n) <= 3*n + 4 + S(n/2) <= 6n + c log n
  */
-#define MUL_2NM1_DC_ITCH(n) (6*(n) + GMP_LIMB_BITS)
 
 void
 mpn_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t size, mp_ptr tp)
@@ -102,12 +101,14 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t size, mp_ptr t
       cy = mpn_add_n (am1, a0, a1, n);
       MPN_INCR_U (am1, n, cy);
       cy = mpn_sub_n (ap1, a0, a1, n);
-      ap1[n] = mpn_add_1 (ap1, ap1, n, cy);
+      ap1[n] = 0;
+      MPN_INCR_U (ap1, n + 1, cy);
 
       cy = mpn_add_n (bm1, b0, b1, n);
       MPN_INCR_U (bm1, n, cy);
       cy = mpn_sub_n (bp1, b0, b1, n);
-      bp1[n] = mpn_add_1 (bp1, bp1, n, cy);
+      bp1[n] = 0;
+      MPN_INCR_U (bp1, n + 1 , cy);
 
       mpn_mulmod_bnm1 (rp, am1, bm1, n, scratch_out);
 
@@ -129,7 +130,8 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t size, mp_ptr t
       else
 	{
 	  cy = mpn_sub_n (xp, rp, xp, n);
-	  hi = mpn_add_1 (xp, xp, n, cy);
+	  MPN_INCR_U (xp, n + 1 , cy);
+	  hi = xp[n];
 	}
       /* Multiply by -B^n/2, using
 
