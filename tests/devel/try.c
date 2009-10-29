@@ -1829,13 +1829,13 @@ print_each (const struct each_t *e)
 	    byte_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
 	  else
 	    mpn_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
-	  printf ("        located %p\n", e->d[i].p);
+	  printf ("        located %p\n", (void *) (e->d[i].p));
 	}
     }
 
   for (i = 0; i < NUM_SOURCES; i++)
     if (tr->src[i])
-      printf ("   s[%d] located %p\n", i, e->s[i].p);
+      printf ("   s[%d] located %p\n", i, (void *)  (e->s[i].p));
 }
 
 
@@ -2792,8 +2792,8 @@ Error, error, cannot get page size
       {
 	malloc_region (&s[i].region, 2*option_lastsize+ALIGNMENTS-1);
 	printf ("s[%d] %p to %p (0x%lX bytes)\n",
-		i, s[i].region.ptr,
-		s[i].region.ptr + s[i].region.size,
+		i, (void *) (s[i].region.ptr),
+		(void *) (s[i].region.ptr + s[i].region.size),
 		(long) s[i].region.size * BYTES_PER_MP_LIMB);
       }
 
@@ -2802,8 +2802,8 @@ Error, error, cannot get page size
       {                                                                 \
 	malloc_region (&e.d[i].region, 2*option_lastsize+ALIGNMENTS-1); \
 	printf ("%s d[%d] %p to %p (0x%lX bytes)\n",                    \
-		es, i, e.d[i].region.ptr,                               \
-		e.d[i].region.ptr + e.d[i].region.size,                 \
+		es, i, (void *) (e.d[i].region.ptr),			\
+		(void *)  (e.d[i].region.ptr + e.d[i].region.size),	\
 		(long) e.d[i].region.size * BYTES_PER_MP_LIMB);         \
       }
 
