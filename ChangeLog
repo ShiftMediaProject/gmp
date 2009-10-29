@@ -1,3 +1,16 @@
+2009-10-29  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/speed.c: Added support for mpn_toom4_sqr,
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM4_SQR): New macro.
+	(SPEED_ROUTINE_MPN_KARA_MUL_N): Deleted.
+	(SPEED_ROUTINE_MPN_TOOM3_MUL_N): Deleted.
+	(SPEED_ROUTINE_MPN_TOOM2_SQR): Use mpn_toom2_sqr_itch.
+
+	* gmp-impl.h (mpn_toom3_mul_n, mpn_toom3_sqr_n): Remove
+	declarations.
+	(mpn_toom2_sqr_itch): Add margin for recursive calls.
+
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_kara_mul_n, mpn_kara_sqr_n): Remove declarations.
