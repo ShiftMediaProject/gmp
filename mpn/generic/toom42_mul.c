@@ -95,32 +95,7 @@ mpn_toom42_mul (mp_ptr pp,
   a1_a3 = pp + n + 1;
 
   /* Compute as1 and asm1.  */
-  a0_a2[n] = mpn_add_n (a0_a2, a0, a2, n);
-  a1_a3[n] = mpn_add (a1_a3, a1, n, a3, s);
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (mpn_cmp (a0_a2, a1_a3, n + 1) < 0)
-    {
-      mpn_add_n_sub_n (as1, asm1, a1_a3, a0_a2, n + 1);
-      vm1_neg = 1;
-    }
-  else
-    {
-      mpn_add_n_sub_n (as1, asm1, a0_a2, a1_a3, n + 1);
-      vm1_neg = 0;
-    }
-#else
-  mpn_add_n (as1, a0_a2, a1_a3, n + 1);
-  if (mpn_cmp (a0_a2, a1_a3, n + 1) < 0)
-    {
-      mpn_sub_n (asm1, a1_a3, a0_a2, n + 1);
-      vm1_neg = 1;
-    }
-  else
-    {
-      mpn_sub_n (asm1, a0_a2, a1_a3, n + 1);
-      vm1_neg = 0;
-    }
-#endif
+  vm1_neg = mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0_a2);
 
   /* Compute as2.  */
 #if HAVE_NATIVE_mpn_addlsh1_n

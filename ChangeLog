@@ -1,3 +1,9 @@
+2009-10-29  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom43_mul.c (mpn_toom43_mul): Use
+	mpn_toom_eval_dgr3_pm1.
+	* mpn/generic/toom42_mul.c (mpn_toom42_mul): Likewise.
+
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mulmod_bnm1.c: Replace some add_1 by INCR.

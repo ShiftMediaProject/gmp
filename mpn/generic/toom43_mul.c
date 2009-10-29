@@ -163,30 +163,8 @@ mpn_toom43_mul (mp_ptr pp,
 #endif
 
   /* Compute as1 and asm1.  */
-  a0a2[n] = mpn_add_n (a0a2, a0, a2, n);
-  asm1[n] = mpn_add (asm1, a1, n, a3, s);
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (mpn_cmp (a0a2, asm1, n+1) < 0)
-    {
-      cy = mpn_add_n_sub_n (as1, asm1, asm1, a0a2, n+1);
-      flags ^= toom6_vm1_neg;
-    }
-  else
-    {
-      cy = mpn_add_n_sub_n (as1, asm1, a0a2, asm1, n+1);
-    }
-#else
-  mpn_add_n (as1, a0a2, asm1, n+1);
-  if (mpn_cmp (a0a2, asm1, n+1) < 0)
-    {
-      mpn_sub_n (asm1, asm1, a0a2, n+1);
-      flags ^= toom6_vm1_neg;
-    }
-  else
-    {
-      mpn_sub_n (asm1, a0a2, asm1, n+1);
-    }
-#endif
+  if (mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0a2))
+    flags ^= toom6_vm1_neg;
 
   /* Compute bs1 and bsm1.  */
   bsm1[n] = mpn_add (bsm1, b0, n, b2, t);
