@@ -256,8 +256,8 @@ double speed_mpn_sub_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sublsh1_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_submul_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom2_sqr __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_toom3_mul_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom3_sqr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_toom4_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom22_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom33_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom44_mul __GMP_PROTO ((struct speed_params *s));
@@ -1008,18 +1008,6 @@ int speed_routine_count_zeros_setup
     return t;								\
   }
 
-#define SPEED_ROUTINE_MPN_KARA_MUL_N(function)				\
-  SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->xp, s->size, tspace),			\
-     MPN_KARA_MUL_N_TSIZE (s->size),					\
-     MPN_KARA_MUL_N_MINSIZE)
-
-#define SPEED_ROUTINE_MPN_TOOM3_MUL_N(function)				\
-  SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->yp, s->size, tspace),			\
-     mpn_toom33_mul_itch (s->size, s->size),				\
-     MPN_TOOM3_MUL_N_MINSIZE)
-
 #define MPN_TOOM22_MUL_MINSIZE MPN_KARA_MUL_N_MINSIZE		/* FIXME */
 #define SPEED_ROUTINE_MPN_TOOM22_MUL_N(function)			\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
@@ -1113,7 +1101,7 @@ int speed_routine_count_zeros_setup
 
 #define SPEED_ROUTINE_MPN_TOOM2_SQR(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
-				MPN_KARA_SQR_N_TSIZE (s->size),		\
+				mpn_toom2_sqr_itch (s->size),		\
 				MPN_KARA_SQR_N_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_TOOM3_SQR(function)				\
@@ -1121,6 +1109,11 @@ int speed_routine_count_zeros_setup
 				mpn_toom3_sqr_itch (s->size),		\
 				MPN_TOOM3_SQR_N_MINSIZE)
 
+
+#define SPEED_ROUTINE_MPN_TOOM4_SQR(function)				\
+  SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
+				mpn_toom4_sqr_itch (s->size),		\
+				MPN_TOOM4_SQR_N_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_MOD_CALL(call)				\
   {									\
