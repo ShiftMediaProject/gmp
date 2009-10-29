@@ -1291,7 +1291,7 @@ mpn_toom3_sqr_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
   mp_ptr tspace;
   TMP_DECL;
   TMP_MARK;
-  tspace = TMP_ALLOC_LIMBS (mpn_toom2_sqr_itch (size));
+  tspace = TMP_ALLOC_LIMBS (mpn_toom3_sqr_itch (size));
   mpn_toom3_sqr (dst, src, size, tspace);
   TMP_FREE;
 }
@@ -1311,7 +1311,7 @@ mpn_toom4_sqr_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
   mp_ptr tspace;
   TMP_DECL;
   TMP_MARK;
-  tspace = TMP_ALLOC_LIMBS (mpn_toom2_sqr_itch (size));
+  tspace = TMP_ALLOC_LIMBS (mpn_toom4_sqr_itch (size));
   mpn_toom4_sqr (dst, src, size, tspace);
   TMP_FREE;
 }
