@@ -1,5 +1,7 @@
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (mpn_mulmod_bnm1_itch): New macro.
+
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Call mpn_mul_fft.
 	(mpn_mulmod_bnm1_next_size): Adopt to SS FFT.
 

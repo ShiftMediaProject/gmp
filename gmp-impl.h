@@ -927,7 +927,7 @@ __GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_li
 __GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_mulmod_bnm1_next_size __MPN(mulmod_bnm1_next_size)
 __GMP_DECLSPEC mp_size_t mpn_mulmod_bnm1_next_size __GMP_PROTO ((mp_size_t));
-
+#define mpn_mulmod_bnm1_itch(n) (6*(n) + GMP_LIMB_BITS)
 
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
@@ -4271,7 +4271,7 @@ mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
      ceil(an/2^k) < MUL_KARATSUBA_THRESHOLD.
 
      which implies that
-     
+
      k = bitsize of floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))
        = 1 + floor (log_2 (floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))))
   */
