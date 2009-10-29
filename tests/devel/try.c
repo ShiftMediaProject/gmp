@@ -1256,43 +1256,66 @@ mpn_modexact_1_odd_fun (mp_srcptr ptr, mp_size_t size, mp_limb_t divisor)
 }
 
 void
-mpn_kara_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
+mpn_toom22_mul_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
 {
   mp_ptr  tspace;
   TMP_DECL;
   TMP_MARK;
-  tspace = TMP_ALLOC_LIMBS (MPN_KARA_MUL_N_TSIZE (size));
-  mpn_kara_mul_n (dst, src1, src2, size, tspace);
+  tspace = TMP_ALLOC_LIMBS (mpn_toom22_mul_itch (size, size));
+  mpn_toom22_mul (dst, src1, size, src2, size, tspace);
+  TMP_FREE;
 }
 void
-mpn_kara_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
+mpn_toom2_sqr_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
   mp_ptr tspace;
   TMP_DECL;
   TMP_MARK;
-  tspace = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (size));
-  mpn_kara_sqr_n (dst, src, size, tspace);
+  tspace = TMP_ALLOC_LIMBS (mpn_toom2_sqr_itch (size));
+  mpn_toom2_sqr (dst, src, size, tspace);
   TMP_FREE;
 }
 void
-mpn_toom3_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
+mpn_toom33_mul_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
 {
   mp_ptr  tspace;
   TMP_DECL;
   TMP_MARK;
-  tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (size));
-  mpn_toom3_mul_n (dst, src1, src2, size, tspace);
+  tspace = TMP_ALLOC_LIMBS (mpn_toom33_mul_itch (size, size));
+  mpn_toom33_mul (dst, src1, size, src2, size, tspace);
+  TMP_FREE;
 }
 void
-mpn_toom3_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
+mpn_toom3_sqr_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
   mp_ptr tspace;
   TMP_DECL;
   TMP_MARK;
-  tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (size));
-  mpn_toom3_sqr_n (dst, src, size, tspace);
+  tspace = TMP_ALLOC_LIMBS (mpn_toom2_sqr_itch (size));
+  mpn_toom3_sqr (dst, src, size, tspace);
   TMP_FREE;
 }
+void
+mpn_toom44_mul_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
+{
+  mp_ptr  tspace;
+  TMP_DECL;
+  TMP_MARK;
+  tspace = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (size, size));
+  mpn_toom44_mul (dst, src1, size, src2, size, tspace);
+  TMP_FREE;
+}
+void
+mpn_toom4_sqr_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
+{
+  mp_ptr tspace;
+  TMP_DECL;
+  TMP_MARK;
+  tspace = TMP_ALLOC_LIMBS (mpn_toom2_sqr_itch (size));
+  mpn_toom4_sqr (dst, src, size, tspace);
+  TMP_FREE;
+}
+
 mp_limb_t
 umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
 {
@@ -1489,10 +1512,12 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_umul_ppmm_r),  TYPE_UMUL_PPMM_R, 2 },
 #endif
 
-  { TRY_FUNFUN(mpn_kara_mul_n),  TYPE_MUL_N, MPN_KARA_MUL_N_MINSIZE },
-  { TRY_FUNFUN(mpn_kara_sqr_n),  TYPE_SQR,   MPN_KARA_SQR_N_MINSIZE },
-  { TRY_FUNFUN(mpn_toom3_mul_n), TYPE_MUL_N, MPN_TOOM3_MUL_N_MINSIZE },
-  { TRY_FUNFUN(mpn_toom3_sqr_n), TYPE_SQR,   MPN_TOOM3_SQR_N_MINSIZE },
+  { TRY_FUNFUN(mpn_toom22_mul),  TYPE_MUL_N,  MPN_TOOM22_MUL_MINSIZE },
+  { TRY_FUNFUN(mpn_toom2_sqr),   TYPE_SQR,    MPN_TOOM2_SQR_MINSIZE },
+  { TRY_FUNFUN(mpn_toom33_mul),  TYPE_MUL_N,  MPN_TOOM33_MUL_MINSIZE },
+  { TRY_FUNFUN(mpn_toom3_sqr),   TYPE_SQR,    MPN_TOOM3_SQR_MINSIZE },
+  { TRY_FUNFUN(mpn_toom44_mul),  TYPE_MUL_N,  MPN_TOOM44_MUL_MINSIZE },
+  { TRY_FUNFUN(mpn_toom4_sqr),   TYPE_SQR,    MPN_TOOM4_SQR_MINSIZE },
 
   { TRY(mpn_gcd_1),        TYPE_GCD_1            },
   { TRY(mpn_gcd),          TYPE_GCD              },

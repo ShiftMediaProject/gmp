@@ -211,6 +211,8 @@ double speed_mpn_mod_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1c __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_div __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_inv __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_unnorm __GMP_PROTO ((struct speed_params *));
+double speed_mpn_mod_1_norm __GMP_PROTO ((struct speed_params *));
 double speed_mpn_mod_34lsub1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1_odd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1c_odd __GMP_PROTO ((struct speed_params *s));
@@ -1008,28 +1010,24 @@ int speed_routine_count_zeros_setup
     return t;								\
   }
 
-#define MPN_TOOM22_MUL_MINSIZE MPN_KARA_MUL_N_MINSIZE		/* FIXME */
 #define SPEED_ROUTINE_MPN_TOOM22_MUL_N(function)			\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
     (function (wp, s->xp, s->size, s->yp, s->size, tspace),		\
      mpn_toom22_mul_itch (s->size, s->size),				\
      MPN_TOOM22_MUL_MINSIZE)
 
-#define MPN_TOOM33_MUL_MINSIZE MPN_TOOM3_MUL_N_MINSIZE		/* FIXME */
 #define SPEED_ROUTINE_MPN_TOOM33_MUL_N(function)			\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
     (function (wp, s->xp, s->size, s->yp, s->size, tspace),		\
      mpn_toom33_mul_itch (s->size, s->size),				\
      MPN_TOOM33_MUL_MINSIZE)
 
-#define MPN_TOOM44_MUL_MINSIZE 30				/* FIXME */
 #define SPEED_ROUTINE_MPN_TOOM44_MUL_N(function)			\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
     (function (wp, s->xp, s->size, s->yp, s->size, tspace),		\
      mpn_toom44_mul_itch (s->size, s->size),				\
      MPN_TOOM44_MUL_MINSIZE)
 
-#define MPN_TOOM32_MUL_MINSIZE 10				/* FIXME */
 #define SPEED_ROUTINE_MPN_TOOM32_MUL(function)				\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
     (function (wp, s->xp, s->size, s->yp, 2*s->size/3, tspace),		\
@@ -1102,18 +1100,18 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_TOOM2_SQR(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
 				mpn_toom2_sqr_itch (s->size),		\
-				MPN_KARA_SQR_N_MINSIZE)
+				MPN_TOOM2_SQR_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_TOOM3_SQR(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
 				mpn_toom3_sqr_itch (s->size),		\
-				MPN_TOOM3_SQR_N_MINSIZE)
+				MPN_TOOM3_SQR_MINSIZE)
 
 
 #define SPEED_ROUTINE_MPN_TOOM4_SQR(function)				\
   SPEED_ROUTINE_MPN_SQR_TSPACE (function (wp, s->xp, s->size, tspace),	\
 				mpn_toom4_sqr_itch (s->size),		\
-				MPN_TOOM4_SQR_N_MINSIZE)
+				MPN_TOOM4_SQR_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_MOD_CALL(call)				\
   {									\

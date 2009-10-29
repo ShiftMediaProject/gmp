@@ -1026,16 +1026,16 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM44_MAX_N 285405
 #endif /* WANT_FFT */
 
-/* need 2 so that n2>=1 */
-#define MPN_KARA_MUL_N_MINSIZE    2
-#define MPN_KARA_SQR_N_MINSIZE    2
+#define MPN_TOOM22_MUL_MINSIZE    4
+#define MPN_TOOM2_SQR_MINSIZE     4
 
-/* Need l>=1, ls>=1, and 2*ls > l (the latter for the tD MPN_INCR_U) */
-#define MPN_TOOM3_MUL_N_MINSIZE   17
-#define MPN_TOOM3_SQR_N_MINSIZE   17
+#define MPN_TOOM33_MUL_MINSIZE   17
+#define MPN_TOOM3_SQR_MINSIZE    17
 
-#define MPN_TOOM44_MUL_N_MINSIZE  30	/* ??? */
-#define MPN_TOOM4_SQR_N_MINSIZE   30	/* ??? */
+#define MPN_TOOM44_MUL_MINSIZE   30
+#define MPN_TOOM4_SQR_MINSIZE    30
+
+#define MPN_TOOM32_MUL_MINSIZE   10
 
 #define   mpn_sqr_diagonal __MPN(sqr_diagonal)
 __GMP_DECLSPEC void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));

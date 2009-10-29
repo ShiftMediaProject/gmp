@@ -1,3 +1,11 @@
+2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h: Update MUL/SQR MINSIZE macros to reflect new function
+	names and limitations
+	* tune/tuneup.c: Use updated macro names.
+	* tune/speed.h: Likewise.
+	* tests/devel/try.c: Test new mul/sqr functions, remove old tests.
+
 2009-10-29  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.c: Added support for mpn_toom4_sqr,

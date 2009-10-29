@@ -822,17 +822,17 @@ tune_mul (void)
   param.function = speed_mpn_mul_n;
 
   param.name = "MUL_KARATSUBA_THRESHOLD";
-  param.min_size = MAX (4, MPN_KARA_MUL_N_MINSIZE);
+  param.min_size = MAX (4, MPN_TOOM22_MUL_MINSIZE);
   param.max_size = MUL_KARATSUBA_THRESHOLD_LIMIT-1;
   one (&mul_karatsuba_threshold, &param);
 
   param.name = "MUL_TOOM3_THRESHOLD";
-  param.min_size = MAX (mul_karatsuba_threshold, MPN_TOOM3_MUL_N_MINSIZE);
+  param.min_size = MAX (mul_karatsuba_threshold, MPN_TOOM33_MUL_MINSIZE);
   param.max_size = MUL_TOOM3_THRESHOLD_LIMIT-1;
   one (&mul_toom3_threshold, &param);
 
   param.name = "MUL_TOOM44_THRESHOLD";
-  param.min_size = MAX (mul_toom3_threshold, MPN_TOOM44_MUL_N_MINSIZE);
+  param.min_size = MAX (mul_toom3_threshold, MPN_TOOM44_MUL_MINSIZE);
   param.max_size = MUL_TOOM44_THRESHOLD_LIMIT-1;
   one (&mul_toom44_threshold, &param);
 
@@ -901,7 +901,7 @@ tune_sqr (void)
     static struct param_t  param;
     param.name = "SQR_KARATSUBA_THRESHOLD";
     param.function = speed_mpn_sqr_n;
-    param.min_size = MAX (4, MPN_KARA_SQR_N_MINSIZE);
+    param.min_size = MAX (4, MPN_TOOM2_SQR_MINSIZE);
     param.max_size = TUNE_SQR_KARATSUBA_MAX;
     param.noprint = 1;
     one (&sqr_karatsuba_threshold, &param);
@@ -939,12 +939,12 @@ tune_sqr (void)
     param.function = speed_mpn_sqr_n;
 
     param.name = "SQR_TOOM3_THRESHOLD";
-    param.min_size = MAX (toom3_start, MPN_TOOM3_SQR_N_MINSIZE);
+    param.min_size = MAX (toom3_start, MPN_TOOM3_SQR_MINSIZE);
     param.max_size = SQR_TOOM3_THRESHOLD_LIMIT-1;
     one (&sqr_toom3_threshold, &param);
 
     param.name = "SQR_TOOM4_THRESHOLD";
-    param.min_size = MAX (sqr_toom3_threshold, MPN_TOOM4_SQR_N_MINSIZE);
+    param.min_size = MAX (sqr_toom3_threshold, MPN_TOOM4_SQR_MINSIZE);
     param.max_size = SQR_TOOM4_THRESHOLD_LIMIT-1;
     one (&sqr_toom4_threshold, &param);
   }
