@@ -1,5 +1,11 @@
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Call mpn_mul_fft.
+	(mpn_mulmod_bnm1_next_size): Adopt to SS FFT.
+
+	* mpn/generic/mul_fft.c (mpn_mul_fft): Make it return high limb.
+	(mpn_mul_fft_internal): Likewise.
+
 	* mpn/generic/mulmod_bnm1.c: New file, by Niels Möller.
 	* configure.in (gmp_mpn_functions):  Add mulmod_bnm1.
 	* gmp-impl.h: Add related declarations.
