@@ -1100,7 +1100,7 @@ __GMP_DECLSPEC void      mpn_toom4_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_
 __GMP_DECLSPEC int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
 
 #define   mpn_mul_fft __MPN(mul_fft)
-__GMP_DECLSPEC void      mpn_mul_fft __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, int));
+__GMP_DECLSPEC mp_limb_t mpn_mul_fft __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, int));
 
 #define   mpn_mul_fft_full __MPN(mul_fft_full)
 __GMP_DECLSPEC void      mpn_mul_fft_full __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
