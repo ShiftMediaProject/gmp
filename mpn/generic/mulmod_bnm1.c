@@ -79,7 +79,7 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t size, mp_ptr t
       mp_limb_t cy;
       mp_limb_t hi;
 
-      n = size / 2;
+      n = size >> 1;
 
       /* Compute xm = a*b mod (B^n - 1), xp = a*b mod (B^n + 1)
 	 and crt together as
@@ -110,51 +110,17 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t size, mp_ptr t
       bp1[n] = mpn_add_1 (bp1, bp1, n, cy);
 
       mpn_mulmod_bnm1 (rp, am1, bm1, n, scratch_out);
-#if 0
-      if (ABOVE_THRESHOLD (n, MUL_FFT_MODF_THRESHOLD))
+
+      if (BELOW_THRESHOLD (n, MUL_FFT_MODF_THRESHOLD))
+	mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n);
+      else
 	{
 	  int k;
-	  mp_size_t m;
 	  k = mpn_fft_best_k (n, 0);
-	  m = mpn_fft_next_size (n, k);
+	  ASSERT_ALWAYS (n == mpn_fft_next_size (n, k));
 
-#if 1
-	  if (ap1[n] != 0)
-	    {
-	      MPN_DECR_U (ap1, n + 1, CNST_LIMB(1));
-	      if (ap1[n] == 0)
-		{
-		  MPN_ZERO (ap1, n);
-		  ap1[n] = 1;
-		}
-	      else
-		ap1[n] = 0;
-	    }
-
-	  if (bp1[n] != 0)
-	    {
-	      MPN_DECR_U (bp1, n + 1, CNST_LIMB(1));
-	      if (bp1[n] == 0)
-		{
-		  MPN_ZERO (bp1, n);
-		  bp1[n] = 1;
-		}
-	      else
-		bp1[n] = 0;
-	    }
-#endif
-
-	  if (m == n && ((ap1[n] | bp1[n]) == 0))
-	    {
-	      mpn_mul_fft (xp, m, ap1, n, bp1, n, k);
-	    }
-	  else
-	    mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n);
+	  xp[n] = mpn_mul_fft (xp, n, ap1, n + ap1[n], bp1 + bp1[n], n, k);
 	}
-      else
-#endif
-	mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n);
-
 
       /* xp = xm - xp mod (B^n + 1). Assumes normalised
 	 representation. Puts high bit in hi. */
@@ -196,7 +162,17 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t size, mp_ptr t
 }
 
 mp_size_t
-mpn_mulmod_bnm1_next_size (mp_size_t n)
+mpn_mulmod_bnm1_next_size (mp_size_t size)
 {
-  return n + (-n & 0xf);
+  mp_size_t n, new_n;
+  int k;
+
+  n = size >> 1;
+  if (BELOW_THRESHOLD (n, MUL_FFT_MODF_THRESHOLD))
+    return size + (-size & 0xf);
+
+  k = mpn_fft_best_k (n, 0);
+  new_n = mpn_fft_next_size (n, k);
+
+  return 2 * new_n;
 }
