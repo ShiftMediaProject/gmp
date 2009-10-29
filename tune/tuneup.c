@@ -87,7 +87,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    DIVREM_1_NORM_THRESHOLD.  An assembler mpn_divrem_1 is expected to be
    written and tuned all by hand.  Assembler routines that might have hard
    limits are recompiled though, to make them accept a bigger range of sizes
-   than normal, eg. mpn_sqr_basecase to compare against mpn_kara_sqr_n.
+   than normal, eg. mpn_sqr_basecase to compare against mpn_toom2_sqr.
 
    Limitations:
 
