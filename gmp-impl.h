@@ -1054,12 +1054,6 @@ __GMP_DECLSPEC void      mpn_toom_interpolate_7pts __GMP_PROTO ((mp_ptr, mp_size
 #define   mpn_toom_eval_dgr3_pm1 __MPN(toom_eval_dgr3_pm1)
 __GMP_DECLSPEC int mpn_toom_eval_dgr3_pm1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr));
 
-#define   mpn_toom3_mul_n __MPN(toom3_mul_n)
-__GMP_DECLSPEC void      mpn_toom3_mul_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
-
-#define   mpn_toom3_sqr_n __MPN(toom3_sqr_n)
-__GMP_DECLSPEC void      mpn_toom3_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-
 #define   mpn_toom22_mul __MPN(toom22_mul)
 __GMP_DECLSPEC void      mpn_toom22_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
@@ -1650,7 +1644,7 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
    always.  (Note that we certainly always want it if there's a native
    assembler mpn_sqr_basecase.)
 
-   If it turns out that mpn_kara_sqr_n becomes faster than mpn_mul_basecase
+   If it turns out that mpn_toom2_sqr becomes faster than mpn_mul_basecase
    before mpn_sqr_basecase does, then SQR_BASECASE_THRESHOLD is the
    karatsuba threshold and SQR_KARATSUBA_THRESHOLD is 0.  This oddity arises
    more or less because SQR_KARATSUBA_THRESHOLD represents the size up to
@@ -4261,7 +4255,16 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 static inline mp_size_t
 mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  /* 2*(an + log_2(an / MUL_KARATSUBA_THRESHOLD)) */
+  /* Scratch need is 2*(an + k), k is the recursion depth.
+     k is ths smallest k such that
+
+     ceil(an/2^k) < MUL_KARATSUBA_THRESHOLD.
+
+     which implies that
+     
+     k = bitsize of floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))
+       = 1 + floor (log_2 (floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))))
+  */
   return 2*(an + GMP_NUMB_BITS);
 }
 
@@ -4294,8 +4297,6 @@ mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom42_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  /* We could trim this to 4n+3 if HAVE_NATIVE_mpn_sublsh1_n, since
-     mpn_toom_interpolate_5pts only needs scratch otherwise.  */
   mp_size_t n = an >= 2 * bn ? (an + 3) >> 2 : (bn + 1) >> 1;
   return 6 * n + 3;
 }
@@ -4332,8 +4333,8 @@ mpn_toom62_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom2_sqr_itch (mp_size_t an)
 {
-  mp_size_t n = an - (an >> 1);
-  return 4 * n + 2;
+  /* 2*(an + log_2(an / MUL_KARATSUBA_THRESHOLD)) */
+  return 2*(an + GMP_NUMB_BITS);
 }
 
 static inline mp_size_t
