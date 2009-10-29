@@ -1432,7 +1432,7 @@ check_n (void)
 void
 check_misc (void)
 {
-  int  ret;
+  int  ret, cmp;
   {
     int  a=9, b=8, c=7, n=66;
     mpz_t  z;
