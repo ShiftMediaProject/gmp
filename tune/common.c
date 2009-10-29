@@ -937,6 +937,11 @@ speed_mpn_toom3_sqr (struct speed_params *s)
   SPEED_ROUTINE_MPN_TOOM3_SQR (mpn_toom3_sqr);
 }
 double
+speed_mpn_toom4_sqr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_TOOM4_SQR (mpn_toom4_sqr);
+}
+double
 speed_mpn_toom22_mul (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_TOOM22_MUL_N (mpn_toom22_mul);

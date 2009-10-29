@@ -299,6 +299,7 @@ const struct routine_t {
 
   { "mpn_toom2_sqr",     speed_mpn_toom2_sqr        },
   { "mpn_toom3_sqr",     speed_mpn_toom3_sqr        },
+  { "mpn_toom4_sqr",     speed_mpn_toom4_sqr        },
   { "mpn_toom22_mul",    speed_mpn_toom22_mul       },
   { "mpn_toom33_mul",    speed_mpn_toom33_mul       },
   { "mpn_toom44_mul",    speed_mpn_toom44_mul       },
