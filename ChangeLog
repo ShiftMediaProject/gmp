@@ -1,3 +1,7 @@
+2009-10-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add toom2* and toom3* files.
+
 2009-10-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_mulmod_bnm1_itch): New macro.
