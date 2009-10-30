@@ -124,8 +124,9 @@ DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c gcdext.c get_str.c \
-  set_str.c matrix22_mul.c hgcd.c mul_n.c toom44_mul.c toom4_sqr.c	\
-  mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c mulmod_bnm1.c
+  set_str.c matrix22_mul.c hgcd.c mul_n.c				\
+  mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c mulmod_bnm1.c	\
+  toom22_mul.c toom2_sqr.c toom33_mul.c toom3_sqr.c toom44_mul.c toom4_sqr.c
 
 $(TUNE_MPN_SRCS_BASIC):
 	for i in $(TUNE_MPN_SRCS_BASIC); do \

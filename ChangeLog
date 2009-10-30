@@ -1,3 +1,7 @@
+2009-10-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add toom2* and toom3* files.
+
 2009-10-30  Niels Möller  <nisse@lysator.liu.se>
 
 	* configure.in (gmp_mpn_functions): Added toom_eval_dgr3_pm2.
