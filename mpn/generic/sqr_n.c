@@ -1,4 +1,4 @@
-/* mpn_mul_n -- multiply natural numbers.
+/* mpn_sqr_n -- square natural numbers.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
 2005, 2008, 2009 Free Software Foundation, Inc.
@@ -23,35 +23,37 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 void
-mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
+mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
 {
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (p, 2 * n, a, n));
-  ASSERT (! MPN_OVERLAP_P (p, 2 * n, b, n));
 
-  if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
-    {
-      mpn_mul_basecase (p, a, n, b, n);
+  if (BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+    { /* mul_basecase is faster than sqr_basecase on small sizes sometimes */
+      mpn_mul_basecase (p, a, n, a, n);
     }
-  else if (BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))
+    {
+      mpn_sqr_basecase (p, a, n);
+    }
+  else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
-      mp_limb_t ws[mpn_toom22_mul_itch (MUL_TOOM33_THRESHOLD_LIMIT-1,
-					MUL_TOOM33_THRESHOLD_LIMIT-1)];
-      ASSERT (MUL_TOOM33_THRESHOLD <= MUL_TOOM33_THRESHOLD_LIMIT);
-      mpn_toom22_mul (p, a, n, b, n, ws);
+      mp_limb_t ws[mpn_toom2_sqr_itch (SQR_TOOM3_THRESHOLD_LIMIT-1)];
+      ASSERT (SQR_TOOM3_THRESHOLD <= SQR_TOOM3_THRESHOLD_LIMIT);
+      mpn_toom2_sqr (p, a, n, ws);
     }
-  else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, SQR_TOOM4_THRESHOLD))
     {
       mp_ptr ws;
       TMP_SDECL;
       TMP_SMARK;
-      ws = TMP_SALLOC_LIMBS (mpn_toom33_mul_itch (n, n));
-      mpn_toom33_mul (p, a, n, b, n, ws);
+      ws = TMP_SALLOC_LIMBS (mpn_toom3_sqr_itch (n));
+      mpn_toom3_sqr (p, a, n, ws);
       TMP_SFREE;
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (BELOW_THRESHOLD (n, MUL_FFT_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, SQR_FFT_THRESHOLD))
 #else
   else if (BELOW_THRESHOLD (n, MPN_TOOM44_MAX_N))
 #endif
@@ -59,8 +61,8 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mp_ptr ws;
       TMP_SDECL;
       TMP_SMARK;
-      ws = TMP_SALLOC_LIMBS (mpn_toom44_mul_itch (n, n));
-      mpn_toom44_mul (p, a, n, b, n, ws);
+      ws = TMP_SALLOC_LIMBS (mpn_toom4_sqr_itch (n));
+      mpn_toom4_sqr (p, a, n, ws);
       TMP_SFREE;
     }
   else
@@ -68,7 +70,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
     {
       /* The current FFT code allocates its own space.  That should probably
 	 change.  */
-      mpn_mul_fft_full (p, a, n, b, n);
+      mpn_mul_fft_full (p, a, n, a, n);
     }
 #else
     {
@@ -76,8 +78,8 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mp_ptr ws;
       TMP_DECL;
       TMP_MARK;
-      ws = TMP_BALLOC_LIMBS (mpn_toom44_mul_itch (n, n));
-      mpn_toom44_mul (p, a, n, b, n, ws);
+      ws = TMP_BALLOC_LIMBS (mpn_toom4_sqr_itch (n));
+      mpn_toom4_sqr (p, a, n, ws);
       TMP_FREE;
     }
 #endif

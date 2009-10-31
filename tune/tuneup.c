@@ -64,11 +64,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    instead.  #define TUNE_PROGRAM_BUILD does this, with help from code at
    the end of gmp-impl.h, and rules in tune/Makefile.am.
 
-   MUL_KARATSUBA_THRESHOLD for example uses a recompiled mpn_mul_n.  The
+   MUL_TOOM22_THRESHOLD for example uses a recompiled mpn_mul_n.  The
    threshold is set to "size+1" to avoid karatsuba, or to "size" to use one
    level, but recurse into the basecase.
 
-   MUL_TOOM3_THRESHOLD makes use of the tuned MUL_KARATSUBA_THRESHOLD value.
+   MUL_TOOM33_THRESHOLD makes use of the tuned MUL_TOOM22_THRESHOLD value.
    Other routines in turn will make use of both of those.  Naturally the
    dependants must be tuned first.
 
@@ -142,18 +142,18 @@ int  allocdat = 0;
 
 /* This is not defined if mpn_sqr_basecase doesn't declare a limit.  In that
    case use zero here, which for params.max_size means no limit.  */
-#ifndef TUNE_SQR_KARATSUBA_MAX
-#define TUNE_SQR_KARATSUBA_MAX  0
+#ifndef TUNE_SQR_TOOM2_MAX
+#define TUNE_SQR_TOOM2_MAX  0
 #endif
 
-mp_size_t  mul_karatsuba_threshold      = MP_SIZE_T_MAX;
-mp_size_t  mul_toom3_threshold          = MUL_TOOM3_THRESHOLD_LIMIT;
+mp_size_t  mul_toom22_threshold         = MP_SIZE_T_MAX;
+mp_size_t  mul_toom33_threshold         = MUL_TOOM33_THRESHOLD_LIMIT;
 mp_size_t  mul_toom44_threshold         = MUL_TOOM44_THRESHOLD_LIMIT;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
-mp_size_t  sqr_karatsuba_threshold
-  = (TUNE_SQR_KARATSUBA_MAX == 0 ? MP_SIZE_T_MAX : TUNE_SQR_KARATSUBA_MAX);
+mp_size_t  sqr_toom2_threshold
+  = (TUNE_SQR_TOOM2_MAX == 0 ? MP_SIZE_T_MAX : TUNE_SQR_TOOM2_MAX);
 mp_size_t  sqr_toom3_threshold          = SQR_TOOM3_THRESHOLD_LIMIT;
 mp_size_t  sqr_toom4_threshold          = SQR_TOOM4_THRESHOLD_LIMIT;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
@@ -824,18 +824,18 @@ tune_mul (void)
 
   param.function = speed_mpn_mul_n;
 
-  param.name = "MUL_KARATSUBA_THRESHOLD";
+  param.name = "MUL_TOOM22_THRESHOLD";
   param.min_size = MAX (4, MPN_TOOM22_MUL_MINSIZE);
-  param.max_size = MUL_KARATSUBA_THRESHOLD_LIMIT-1;
-  one (&mul_karatsuba_threshold, &param);
+  param.max_size = MUL_TOOM22_THRESHOLD_LIMIT-1;
+  one (&mul_toom22_threshold, &param);
 
-  param.name = "MUL_TOOM3_THRESHOLD";
-  param.min_size = MAX (mul_karatsuba_threshold, MPN_TOOM33_MUL_MINSIZE);
-  param.max_size = MUL_TOOM3_THRESHOLD_LIMIT-1;
-  one (&mul_toom3_threshold, &param);
+  param.name = "MUL_TOOM33_THRESHOLD";
+  param.min_size = MAX (mul_toom22_threshold, MPN_TOOM33_MUL_MINSIZE);
+  param.max_size = MUL_TOOM33_THRESHOLD_LIMIT-1;
+  one (&mul_toom33_threshold, &param);
 
   param.name = "MUL_TOOM44_THRESHOLD";
-  param.min_size = MAX (mul_toom3_threshold, MPN_TOOM44_MUL_MINSIZE);
+  param.min_size = MAX (mul_toom33_threshold, MPN_TOOM44_MUL_MINSIZE);
   param.max_size = MUL_TOOM44_THRESHOLD_LIMIT-1;
   one (&mul_toom44_threshold, &param);
 
@@ -862,7 +862,7 @@ tune_mullow (void)
   param.min_is_always = 0;	/* ??? */
 
   param.name = "MULLOW_DC_THRESHOLD";
-  param.min_size = mul_karatsuba_threshold;
+  param.min_size = mul_toom22_threshold;
   param.max_size = 1000;
   one (&mullow_dc_threshold, &param);
 
@@ -911,49 +911,49 @@ tune_sqr (void)
       param.function = speed_mpn_sqr_n;
       param.min_size = 3;
       param.min_is_always = 1;
-      param.max_size = TUNE_SQR_KARATSUBA_MAX;
+      param.max_size = TUNE_SQR_TOOM2_MAX;
       param.noprint = 1;
       one (&sqr_basecase_threshold, &param);
     }
 
   {
     static struct param_t  param;
-    param.name = "SQR_KARATSUBA_THRESHOLD";
+    param.name = "SQR_TOOM2_THRESHOLD";
     param.function = speed_mpn_sqr_n;
     param.min_size = MAX (4, MPN_TOOM2_SQR_MINSIZE);
-    param.max_size = TUNE_SQR_KARATSUBA_MAX;
+    param.max_size = TUNE_SQR_TOOM2_MAX;
     param.noprint = 1;
-    one (&sqr_karatsuba_threshold, &param);
+    one (&sqr_toom2_threshold, &param);
 
     if (! HAVE_NATIVE_mpn_sqr_basecase
-        && sqr_karatsuba_threshold < sqr_basecase_threshold)
+        && sqr_toom2_threshold < sqr_basecase_threshold)
       {
         /* Karatsuba becomes faster than mul_basecase before
            sqr_basecase does.  Arrange for the expression
-           "BELOW_THRESHOLD (un, SQR_KARATSUBA_THRESHOLD))" which
+           "BELOW_THRESHOLD (un, SQR_TOOM2_THRESHOLD))" which
            selects mpn_sqr_basecase in mpn_sqr_n to be false, by setting
-           SQR_KARATSUBA_THRESHOLD to zero, making
-           SQR_BASECASE_THRESHOLD the karatsuba threshold.  */
+           SQR_TOOM2_THRESHOLD to zero, making
+           SQR_BASECASE_THRESHOLD the toom2 threshold.  */
 
-        sqr_basecase_threshold = SQR_KARATSUBA_THRESHOLD;
-        SQR_KARATSUBA_THRESHOLD = 0;
+        sqr_basecase_threshold = SQR_TOOM2_THRESHOLD;
+        SQR_TOOM2_THRESHOLD = 0;
 
         print_define_remark ("SQR_BASECASE_THRESHOLD", sqr_basecase_threshold,
-                             "karatsuba");
-        print_define_remark ("SQR_KARATSUBA_THRESHOLD",SQR_KARATSUBA_THRESHOLD,
+                             "toom2");
+        print_define_remark ("SQR_TOOM2_THRESHOLD",SQR_TOOM2_THRESHOLD,
                              "never sqr_basecase");
       }
     else
       {
         if (! HAVE_NATIVE_mpn_sqr_basecase)
           print_define ("SQR_BASECASE_THRESHOLD", sqr_basecase_threshold);
-        print_define ("SQR_KARATSUBA_THRESHOLD", SQR_KARATSUBA_THRESHOLD);
+        print_define ("SQR_TOOM2_THRESHOLD", SQR_TOOM2_THRESHOLD);
       }
   }
 
   {
     static struct param_t  param;
-    mp_size_t toom3_start = MAX (sqr_karatsuba_threshold, sqr_basecase_threshold);
+    mp_size_t toom3_start = MAX (sqr_toom2_threshold, sqr_basecase_threshold);
 
     param.function = speed_mpn_sqr_n;
 
@@ -1724,7 +1724,7 @@ tune_fft_mul (void)
   param.p_threshold         = &mul_fft_threshold;
   param.modf_threshold_name = "MUL_FFT_MODF_THRESHOLD";
   param.p_modf_threshold    = &mul_fft_modf_threshold;
-  param.first_size          = MUL_TOOM3_THRESHOLD / 2;
+  param.first_size          = MUL_TOOM33_THRESHOLD / 2;
   param.max_size            = option_fft_max_size;
   param.function            = speed_mpn_mul_fft;
   param.mul_function        = speed_mpn_mul_n;

@@ -27,15 +27,15 @@ C     which is the Karatsuba recursing range).
 
 dnl  These are the same as in mpn/x86/k6/sqr_basecase.asm, see that file for
 dnl  a description.  The only difference here is that UNROLL_COUNT can go up
-dnl  to 64 (not 63) making SQR_KARATSUBA_THRESHOLD_MAX 67.
+dnl  to 64 (not 63) making SQR_TOOM2_THRESHOLD_MAX 67.
 
-deflit(SQR_KARATSUBA_THRESHOLD_MAX, 67)
+deflit(SQR_TOOM2_THRESHOLD_MAX, 67)
 
-ifdef(`SQR_KARATSUBA_THRESHOLD_OVERRIDE',
-`define(`SQR_KARATSUBA_THRESHOLD',SQR_KARATSUBA_THRESHOLD_OVERRIDE)')
+ifdef(`SQR_TOOM2_THRESHOLD_OVERRIDE',
+`define(`SQR_TOOM2_THRESHOLD',SQR_TOOM2_THRESHOLD_OVERRIDE)')
 
-m4_config_gmp_mparam(`SQR_KARATSUBA_THRESHOLD')
-deflit(UNROLL_COUNT, eval(SQR_KARATSUBA_THRESHOLD-3))
+m4_config_gmp_mparam(`SQR_TOOM2_THRESHOLD')
+deflit(UNROLL_COUNT, eval(SQR_TOOM2_THRESHOLD-3))
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);

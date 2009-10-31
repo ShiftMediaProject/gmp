@@ -23,12 +23,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Average of several core 2 and core iX systems */
 
-#define MUL_KARATSUBA_THRESHOLD          18
-#define MUL_TOOM3_THRESHOLD              65
+#define MUL_TOOM22_THRESHOLD             18
+#define MUL_TOOM33_THRESHOLD             65
 #define MUL_TOOM44_THRESHOLD            166
 
 #define SQR_BASECASE_THRESHOLD            0  /* always (native) */
-#define SQR_KARATSUBA_THRESHOLD          32
+#define SQR_TOOM2_THRESHOLD              32
 #define SQR_TOOM3_THRESHOLD              97
 #define SQR_TOOM4_THRESHOLD             163
 

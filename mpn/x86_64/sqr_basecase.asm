@@ -25,7 +25,7 @@ C The inner loops of this code are the result of running a code generation and
 C optimization tool suite written by David Harvey and Torbjorn Granlund.
 
 C NOTES
-C   * This code only handles operands up to SQR_KARATSUBA_THRESHOLD_MAX.  That
+C   * This code only handles operands up to SQR_TOOM2_THRESHOLD_MAX.  That
 C     means we can safely use 32-bit operations for all sizes, unlike in e.g.,
 C     mpn_addmul_1.
 C   * The jump table could probably be optimized, at least for non-pic.
@@ -60,8 +60,8 @@ define(`n_param', `%rdx')
 C We should really trim this, for better spatial locality.  Alternatively,
 C we could grab the upper part of the stack area, leaving the lower part
 C instead of the upper part unused.
-define(`SQR_KARATSUBA_THRESHOLD_MAX', 120)
-define(`STACK_ALLOC', eval(8*2*SQR_KARATSUBA_THRESHOLD_MAX))
+define(`SQR_TOOM2_THRESHOLD_MAX', 120)
+define(`STACK_ALLOC', eval(8*2*SQR_TOOM2_THRESHOLD_MAX))
 
 define(`n',	`%r11')
 define(`tp',	`%r12')

@@ -20,12 +20,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* The values in this file are not currently minimal.
    Trimming them further would be good.  */
 
-#define MUL_KARATSUBA_THRESHOLD           8
-#define MUL_TOOM3_THRESHOLD              20
+#define MUL_TOOM22_THRESHOLD              8
+#define MUL_TOOM33_THRESHOLD             20
 #define MUL_TOOM44_THRESHOLD             24
 
 #define SQR_BASECASE_THRESHOLD            0
-#define SQR_KARATSUBA_THRESHOLD           8
+#define SQR_TOOM2_THRESHOLD               8
 #define SQR_TOOM3_THRESHOLD              20
 #define SQR_TOOM4_THRESHOLD              24
 
