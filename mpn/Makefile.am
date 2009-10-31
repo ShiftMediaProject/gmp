@@ -44,10 +44,11 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   matrix22_mul.c mod_1.c mod_34lsub1.c mode1o.c	    \
   mod_1_1.c mod_1_2.c mod_1_3.c mod_1_4.c				    \
   mul.c mul_1.c mul_2.c mul_3.c mul_4.c mul_fft.c mul_n.c mul_basecase.c    \
-  mul_toom22.c mul_toom32.c mul_toom42.c mul_toom52.c mul_toom62.c	    \
-  mul_toom33.c mul_toom43.c mul_toom53.c				    \
-  mul_toom44.c								    \
+  toom22_mul.c toom32_mul.c toom42_mul.c toom52_mul.c toom62_mul.c	    \
+  toom33_mul.c toom43_mul.c toom53_mul.c				    \
+  toom44_mul.c								    \
   sqr_toom2.c sqr_toom3.c sqr_toom4.c					    \
+  toom_eval_dgr3_pm1.c toom_eval_dgr3_pm2.c toom_eval_pm1.c toom_eval_pm2exp.c \
   toom_interpolate_5pts.c toom_interpolate_6pts.c toom_interpolate_7pts.c   \
   mullow_n.c mullow_basecase.c nand_n.c neg_n.c nior_n.c perfsqr.c	    \
   popcount.c pre_divrem_1.c pre_mod_1.c pow_1.c random.c random2.c rshift.c \
