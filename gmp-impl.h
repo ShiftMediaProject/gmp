@@ -1021,13 +1021,6 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
    : (cache))
 
 
-/* kara uses n+1 limbs of temporary space and then recurses with the balance,
-   so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ...  This can be solved to
-   2n + o(n).  Since n is very limited, o(n) in practice could be around 15.
-   For now, assume n is arbitrarily large.  */
-#define MPN_KARA_MUL_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
-#define MPN_KARA_SQR_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
-
 #if WANT_FFT
 #define MPN_TOOM44_MAX_N 285405
 #endif /* WANT_FFT */
@@ -4260,36 +4253,29 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 /* FIXME: Make these itch functions less conservative.  Also consider making
    them dependent on just 'an', and compute the allocation directly from 'an'
    instead of via n.  */
-static inline mp_size_t
-mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  /* Scratch need is 2*(an + k), k is the recursion depth.
-     k is ths smallest k such that
 
-     ceil(an/2^k) < MUL_TOOM22_THRESHOLD.
+/* toom22/toom2: Scratch need is 2*(an + k), k is the recursion depth.
+   k is ths smallest k such that
+     ceil(an/2^k) < MUL_KARATSUBA_THRESHOLD.
+   which implies that
+     k = bitsize of floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))
+       = 1 + floor (log_2 (floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))))
+*/
+#define mpn_toom22_mul_itch(an, bn) \
+  (2 * ((an) + GMP_NUMB_BITS))
+#define mpn_toom2_sqr_itch(an) \
+  (2 * ((an) + GMP_NUMB_BITS))
 
-     which implies that
+/* Can probably be trimmed to 2 an + O(log an). */
+#define mpn_toom33_mul_itch(an, bn) \
+  ((5 * (an) >> 1) + GMP_NUMB_BITS)
+#define mpn_toom3_sqr_itch(an) \
+  ((5 * (an) >> 1) + GMP_NUMB_BITS)
 
-     k = bitsize of floor ((an-1)/(MUL_TOOM22_THRESHOLD-1))
-       = 1 + floor (log_2 (floor ((an-1)/(MUL_TOOM22_THRESHOLD-1))))
-  */
-  return 2*(an + GMP_NUMB_BITS);
-}
-
-static inline mp_size_t
-mpn_toom33_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  /* Can probably be trimmed to 2 an + O(log an). */
-  mp_size_t n = (an + 2) / (size_t) 3;
-  return 15 * n / 2 + GMP_NUMB_BITS;
-}
-
-static inline mp_size_t
-mpn_toom44_mul_itch (mp_size_t an, mp_size_t bn)
-{
-  mp_size_t n = (an + 3) >> 2;
-  return 12 * n + GMP_NUMB_BITS;
-}
+#define mpn_toom44_mul_itch(an, bn) \
+  (3 * (an) + GMP_NUMB_BITS)
+#define mpn_toom4_sqr_itch(an) \
+  (3 * (an) + GMP_NUMB_BITS)
 
 static inline mp_size_t
 mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
@@ -4334,31 +4320,8 @@ mpn_toom53_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom62_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  mp_size_t n = 1 + (an >= 3 * bn ? (an - 1) / (unsigned long) 6 : (bn - 1) >> 1);
+  mp_size_t n = 1 + (an >= 3 * bn ? (an - 1) / (size_t) 6 : (bn - 1) >> 1);
   return 10 * n + 10;
-}
-
-static inline mp_size_t
-mpn_toom2_sqr_itch (mp_size_t an)
-{
-  /* 2*(an + log_2(an / MUL_TOOM22_THRESHOLD)) */
-  return 2*(an + GMP_NUMB_BITS);
-}
-
-static inline mp_size_t
-mpn_toom3_sqr_itch (mp_size_t an)
-{
-  /* Same as mpn_toom33_mul_itch. Can probably be trimmed to 2 an +
-     O(log an). */
-  mp_size_t n = (an + 2) / (size_t) 3;
-  return 15 * n / 2 + GMP_NUMB_BITS;
-}
-
-static inline mp_size_t
-mpn_toom4_sqr_itch (mp_size_t an)
-{
-  mp_size_t n = (an + 3) >> 2;
-  return 12 * n + GMP_NUMB_BITS;
 }
 
 #ifdef __cplusplus

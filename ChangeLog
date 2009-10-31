@@ -1,5 +1,12 @@
 2009-10-31  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (toom itch functions): Simplify, make some into macros.
+	(MPN_KARA_MUL_N_TSIZE, MPN_KARA_SQR_N_TSIZE): Remove.
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Remove.
+	* mpn/generic/mul_n.c (mpn_sqr_n): Move from here...
+	* mpn/generic/sqr_n.c: ...to this new file.
+	* configure.in (gmp_mpn_functions): Add sqr_n.
+
 	* Globally change
 	  MUL_TOOM3_THRESHOLD => MUL_TOOM33_THRESHOLD,
 	  MUL_KARATSUBA_THRESHOLD => MUL_TOOM22_THRESHOLD,
