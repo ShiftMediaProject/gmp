@@ -101,35 +101,8 @@ mpn_toom43_mul (mp_ptr pp,
 #define b1d   bsm1
 
   /* Compute as2 and asm2.  */
-  cy = mpn_lshift (asm2, a3, s, 3);			/* 8a3                */
-  a1a3[n] = mpn_lshift (a1a3, a1, n, 1);		/*           2a1      */
-  cy += mpn_add_n (a1a3, a1a3, asm2, s);		/* 8a3      +2a1      */
-  MPN_INCR_U(a1a3 + s, n - s + 1, cy);
-  cy = mpn_lshift (asm2, a2, n, 2);			/*      4a2           */
-  a0a2[n] = cy + mpn_add_n (a0a2, a0, asm2, n);		/*      4a2      + a0 */
-
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (mpn_cmp (a0a2, a1a3, n+1) < 0)
-    {
-      mpn_add_n_sub_n (as2, asm2, a1a3, a0a2, n+1);
-      flags ^= toom6_vm2_neg;
-    }
-  else
-    {
-      mpn_add_n_sub_n (as2, asm2, a0a2, a1a3, n+1);
-    }
-#else
-  mpn_add_n (as2, a0a2, a1a3, n+1);
-  if (mpn_cmp (a0a2, a1a3, n+1) < 0)
-    {
-      mpn_sub_n (asm2, a1a3, a0a2, n+1);
-      flags ^= toom6_vm2_neg;
-    }
-  else
-    {
-      mpn_sub_n (asm2, a0a2, a1a3, n+1);
-    }
-#endif
+  if (mpn_toom_eval_dgr3_pm2 (as2, asm2, ap, n, s, a1a3))
+    flags ^= toom6_vm2_neg;    
 
   /* Compute bs2 and bsm2.  */
   b1d[n] = mpn_lshift (b1d, b1, n, 1);			/*       2b1      */
