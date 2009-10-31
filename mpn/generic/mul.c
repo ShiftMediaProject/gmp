@@ -138,10 +138,10 @@ mpn_mul (mp_ptr prodp,
       mp_ptr scratch;
       TMP_DECL; TMP_MARK;
 
-  #define WSALL (4 * vn)
+#define WSALL (4 * vn)
       ws = TMP_SALLOC_LIMBS (WSALL + 1);
 
-  #define ITCH ((un + vn) * 4 + 100)
+#define ITCH ((un + vn) * 4 + 100)
       scratch = TMP_ALLOC_LIMBS (ITCH + 1);
 
       if (un >= 3 * vn)
