@@ -1063,6 +1063,12 @@ __GMP_DECLSPEC int mpn_toom_eval_dgr3_pm1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcpt
 #define   mpn_toom_eval_dgr3_pm2 __MPN(toom_eval_dgr3_pm2)
 __GMP_DECLSPEC int mpn_toom_eval_dgr3_pm2 __GMP_PROTO ((mp_ptr xp1, mp_ptr xm1, mp_srcptr xp, mp_size_t n, mp_size_t x3n, mp_ptr tp));
 
+#define   mpn_toom_eval_pm1 __MPN(toom_eval_pm1)
+__GMP_DECLSPEC int mpn_toom_eval_pm1 __GMP_PROTO ((mp_ptr, mp_ptr, unsigned, mp_srcptr, mp_size_t, mp_size_t, mp_ptr));
+
+#define   mpn_toom_eval_pm2exp __MPN(toom_eval_pm2exp)
+__GMP_DECLSPEC int mpn_toom_eval_pm2exp __GMP_PROTO ((mp_ptr xp1, mp_ptr xm1, unsigned, mp_srcptr xp, mp_size_t n, mp_size_t x3n, unsigned, mp_ptr tp));
+
 #define   mpn_toom22_mul __MPN(toom22_mul)
 __GMP_DECLSPEC void      mpn_toom22_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 

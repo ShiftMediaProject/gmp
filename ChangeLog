@@ -1,5 +1,8 @@
 2009-10-31  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom_eval_pm2exp.c: New file.
+	* mpn/generic/toom_eval_pm1.c: New file.
+
 	* mpn/generic/toom43_mul.c (mpn_toom43_mul): Use
 	mpn_toom_eval_dgr3_pm2.
 
