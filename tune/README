@@ -85,7 +85,7 @@ Low resolution timebase
 PARAMETER TUNING
 
 The "tuneup" program runs some tests designed to find the best settings for
-various thresholds, like MUL_KARATSUBA_THRESHOLD.  Its output can be put
+various thresholds, like MUL_TOOM22_THRESHOLD.  Its output can be put
 into gmp-mparam.h.  The program is built and run with
 
         make tune
@@ -281,7 +281,7 @@ up to twice as fast as mul_basecase.  In practice loop overheads and the
 products on the diagonal mean it falls short of this.  Here's an example
 running the two and showing by what factor an NxN mul_basecase is slower
 than an NxN sqr_basecase.  (Some versions of sqr_basecase only allow sizes
-below SQR_KARATSUBA_THRESHOLD, so if it crashes at that point don't worry.)
+below SQR_TOOM2_THRESHOLD, so if it crashes at that point don't worry.)
 
         ./speed -s 1-20 -r mpn_sqr_basecase mpn_mul_basecase
 
@@ -427,12 +427,12 @@ normal libgmp.la.
 Note further that the various routines may recurse into themselves on sizes
 far enough above applicable thresholds.  For example, mpn_kara_mul_n will
 recurse into itself on sizes greater than twice the compiled-in
-MUL_KARATSUBA_THRESHOLD.
+MUL_TOOM22_THRESHOLD.
 
 When doing the above comparison between mul_basecase and kara_mul_n what's
 probably of interest is mul_basecase versus a kara_mul_n that does one level
 of Karatsuba then calls to mul_basecase, but this only happens on sizes less
-than twice the compiled MUL_KARATSUBA_THRESHOLD.  A larger value for that
+than twice the compiled MUL_TOOM22_THRESHOLD.  A larger value for that
 setting can be compiled-in to avoid the problem if necessary.  The same
 applies to toom3 and DC, though in a trickier fashion.
 

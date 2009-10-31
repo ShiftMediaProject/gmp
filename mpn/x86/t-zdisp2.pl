@@ -71,7 +71,7 @@ sub process {
   }
 }
 
-# Ensure we're using the right SQR_KARATSUBA_THRESHOLD for the part of the
+# Ensure we're using the right SQR_TOOM2_THRESHOLD for the part of the
 # tree being processed.
 sub process_mparam {
   my $file = "$File::Find::dir/gmp-mparam.h";
@@ -79,10 +79,10 @@ sub process_mparam {
     print "$file\n" if $opt{'t'};
     open MPARAM, "<$file" or die;
     while (<MPARAM>) {
-      if (/^#define SQR_KARATSUBA_THRESHOLD[ \t]*([0-9][0-9]*)/) {
+      if (/^#define SQR_TOOM2_THRESHOLD[ \t]*([0-9][0-9]*)/) {
         open KARA, ">$tempfile" or die;
-        print KARA "define(\`SQR_KARATSUBA_THRESHOLD',$1)\n\n";
-        print "define(\`SQR_KARATSUBA_THRESHOLD',$1)\n" if $opt{'t'};
+        print KARA "define(\`SQR_TOOM2_THRESHOLD',$1)\n\n";
+        print "define(\`SQR_TOOM2_THRESHOLD',$1)\n" if $opt{'t'};
         close KARA or die;
         last;
       }

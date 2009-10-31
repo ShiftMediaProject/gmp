@@ -57,7 +57,7 @@ mpn_mul (mp_ptr prodp,
     {
       mpn_sqr_n (prodp, up, un);
     }
-  else if (vn < MUL_KARATSUBA_THRESHOLD)
+  else if (vn < MUL_TOOM22_THRESHOLD)
     { /* plain schoolbook multiplication */
 
       /* Unless un is very large, or else if have an applicable mpn_mul_N,
@@ -96,9 +96,9 @@ mpn_mul (mp_ptr prodp,
 	    The parts marked with X are the parts whose sums are copied into
 	    the temporary buffer.  */
 
-	  mp_limb_t tp[MUL_KARATSUBA_THRESHOLD_LIMIT];
+	  mp_limb_t tp[MUL_TOOM22_THRESHOLD_LIMIT];
 	  mp_limb_t cy;
-          ASSERT (MUL_KARATSUBA_THRESHOLD <= MUL_KARATSUBA_THRESHOLD_LIMIT);
+          ASSERT (MUL_TOOM22_THRESHOLD <= MUL_TOOM22_THRESHOLD_LIMIT);
 
 	  mpn_mul_basecase (prodp, up, MUL_BASECASE_MAX_UN, vp, vn);
 	  prodp += MUL_BASECASE_MAX_UN;

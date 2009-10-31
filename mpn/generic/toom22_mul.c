@@ -51,7 +51,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define TOOM22_MUL_N_REC(p, a, b, n, ws)				\
   do {									\
     if (! MAYBE_mul_toom22						\
-	|| BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))		\
+	|| BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))			\
       mpn_mul_basecase (p, a, n, b, n);					\
     else								\
       mpn_toom22_mul (p, a, n, b, n, ws);				\
@@ -60,7 +60,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define TOOM22_MUL_MN_REC(p, a, an, b, bn, ws)				\
   do {									\
     if (! MAYBE_mul_toom22						\
-	|| BELOW_THRESHOLD (bn, MUL_KARATSUBA_THRESHOLD))		\
+	|| BELOW_THRESHOLD (bn, MUL_TOOM22_THRESHOLD))			\
       mpn_mul_basecase (p, a, an, b, bn);				\
     else								\
       mpn_toom22_mul (p, a, an, b, bn, ws);				\

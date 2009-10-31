@@ -51,7 +51,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_mul_toom44   1
 #else
 #define MAYBE_mul_basecase						\
-  (MUL_TOOM44_THRESHOLD < 4 * MUL_KARATSUBA_THRESHOLD)
+  (MUL_TOOM44_THRESHOLD < 4 * MUL_TOOM22_THRESHOLD)
 #define MAYBE_mul_toom22						\
   (MUL_TOOM44_THRESHOLD < 4 * MUL_TOOM33_THRESHOLD)
 #define MAYBE_mul_toom44						\
@@ -61,7 +61,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define TOOM44_MUL_N_REC(p, a, b, n, ws)				\
   do {									\
     if (MAYBE_mul_basecase						\
-	&& BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))		\
+	&& BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))			\
       mpn_mul_basecase (p, a, n, b, n);					\
     else if (MAYBE_mul_toom22						\
 	     && BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD))		\

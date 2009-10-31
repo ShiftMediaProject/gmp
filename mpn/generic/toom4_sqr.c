@@ -48,7 +48,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_sqr_toom4   1
 #else
 #define MAYBE_sqr_basecase						\
-  (SQR_TOOM4_THRESHOLD < 4 * SQR_KARATSUBA_THRESHOLD)
+  (SQR_TOOM4_THRESHOLD < 4 * SQR_TOOM2_THRESHOLD)
 #define MAYBE_sqr_toom2							\
   (SQR_TOOM4_THRESHOLD < 4 * SQR_TOOM3_THRESHOLD)
 #define MAYBE_sqr_toom4							\
@@ -58,7 +58,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define TOOM4_SQR_N_REC(p, a, n, ws)					\
   do {									\
     if (MAYBE_sqr_basecase						\
-	&& BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))		\
+	&& BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))			\
       mpn_sqr_basecase (p, a, n);					\
     else if (MAYBE_sqr_toom2						\
 	     && BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))		\

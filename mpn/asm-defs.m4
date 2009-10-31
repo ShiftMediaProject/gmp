@@ -1092,7 +1092,7 @@ dnl  Check that `symbol' is defined.  If it isn't, issue an error and
 dnl  terminate immediately.  The error message explains that the symbol
 dnl  should be in config.m4, copied from gmp-mparam.h.
 dnl
-dnl  Termination is immediate since missing say SQR_KARATSUBA_THRESHOLD can
+dnl  Termination is immediate since missing say SQR_TOOM2_THRESHOLD can
 dnl  lead to infinite loops and endless error messages.
 
 define(m4_config_gmp_mparam,

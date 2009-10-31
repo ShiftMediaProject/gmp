@@ -1612,37 +1612,32 @@ __GMP_DECLSPEC void gmp_init_primesieve (gmp_primesieve_t *);
 __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 
-/* If MUL_KARATSUBA_THRESHOLD is not already defined, define it to a
+/* If MUL_TOOM22_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
-#ifndef MUL_KARATSUBA_THRESHOLD
-#define MUL_KARATSUBA_THRESHOLD 32
+#ifndef MUL_TOOM22_THRESHOLD
+#define MUL_TOOM22_THRESHOLD 32
 #endif
 
-/* If MUL_TOOM3_THRESHOLD is not already defined, define it to a
+/* If MUL_TOOM33_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
-#ifndef MUL_TOOM3_THRESHOLD
-#define MUL_TOOM3_THRESHOLD 128
+#ifndef MUL_TOOM33_THRESHOLD
+#define MUL_TOOM33_THRESHOLD 128
 #endif
 
 #ifndef MUL_TOOM44_THRESHOLD
 #define MUL_TOOM44_THRESHOLD 500
 #endif
 
-/* Source compatibility while source is in flux.  */
-#define MUL_TOOM22_THRESHOLD MUL_KARATSUBA_THRESHOLD
-#define MUL_TOOM33_THRESHOLD MUL_TOOM3_THRESHOLD
-#define SQR_TOOM2_THRESHOLD SQR_KARATSUBA_THRESHOLD
-
-/* MUL_KARATSUBA_THRESHOLD_LIMIT is the maximum for MUL_KARATSUBA_THRESHOLD.
-   In a normal build MUL_KARATSUBA_THRESHOLD is a constant and we use that.
-   In a fat binary or tune program build MUL_KARATSUBA_THRESHOLD is a
+/* MUL_TOOM22_THRESHOLD_LIMIT is the maximum for MUL_TOOM22_THRESHOLD.
+   In a normal build MUL_TOOM22_THRESHOLD is a constant and we use that.
+   In a fat binary or tune program build MUL_TOOM22_THRESHOLD is a
    variable and a separate hard limit will have been defined.  Similarly for
    TOOM3.  */
-#ifndef MUL_KARATSUBA_THRESHOLD_LIMIT
-#define MUL_KARATSUBA_THRESHOLD_LIMIT  MUL_KARATSUBA_THRESHOLD
+#ifndef MUL_TOOM22_THRESHOLD_LIMIT
+#define MUL_TOOM22_THRESHOLD_LIMIT  MUL_TOOM22_THRESHOLD
 #endif
-#ifndef MUL_TOOM3_THRESHOLD_LIMIT
-#define MUL_TOOM3_THRESHOLD_LIMIT  MUL_TOOM3_THRESHOLD
+#ifndef MUL_TOOM33_THRESHOLD_LIMIT
+#define MUL_TOOM33_THRESHOLD_LIMIT  MUL_TOOM33_THRESHOLD
 #endif
 #ifndef MULLOW_BASECASE_THRESHOLD_LIMIT
 #define MULLOW_BASECASE_THRESHOLD_LIMIT  MULLOW_BASECASE_THRESHOLD
@@ -1655,16 +1650,16 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
    If it turns out that mpn_toom2_sqr becomes faster than mpn_mul_basecase
    before mpn_sqr_basecase does, then SQR_BASECASE_THRESHOLD is the
-   karatsuba threshold and SQR_KARATSUBA_THRESHOLD is 0.  This oddity arises
-   more or less because SQR_KARATSUBA_THRESHOLD represents the size up to
+   toom2 threshold and SQR_TOOM2_THRESHOLD is 0.  This oddity arises
+   more or less because SQR_TOOM2_THRESHOLD represents the size up to
    which mpn_sqr_basecase should be used, and that may be never.  */
 
 #ifndef SQR_BASECASE_THRESHOLD
 #define SQR_BASECASE_THRESHOLD 0
 #endif
 
-#ifndef SQR_KARATSUBA_THRESHOLD
-#define SQR_KARATSUBA_THRESHOLD (2*MUL_KARATSUBA_THRESHOLD)
+#ifndef SQR_TOOM2_THRESHOLD
+#define SQR_TOOM2_THRESHOLD (2*MUL_TOOM22_THRESHOLD)
 #endif
 
 #ifndef SQR_TOOM3_THRESHOLD
@@ -1675,7 +1670,7 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define SQR_TOOM4_THRESHOLD 500
 #endif
 
-/* See comments above about MUL_TOOM3_THRESHOLD_LIMIT.  */
+/* See comments above about MUL_TOOM33_THRESHOLD_LIMIT.  */
 #ifndef SQR_TOOM3_THRESHOLD_LIMIT
 #define SQR_TOOM3_THRESHOLD_LIMIT  SQR_TOOM3_THRESHOLD
 #endif
@@ -1735,7 +1730,7 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 /* Threshold at which FFT should be used to do a modF NxN -> N multiply. */
 #ifndef MUL_FFT_MODF_THRESHOLD
-#define MUL_FFT_MODF_THRESHOLD   (MUL_TOOM3_THRESHOLD * 3)
+#define MUL_FFT_MODF_THRESHOLD   (MUL_TOOM33_THRESHOLD * 3)
 #endif
 #ifndef SQR_FFT_MODF_THRESHOLD
 #define SQR_FFT_MODF_THRESHOLD   (SQR_TOOM3_THRESHOLD * 3)
@@ -1758,12 +1753,12 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
    etc.  See mpn_fft_best_k(). */
 #ifndef MUL_FFT_TABLE
 #define MUL_FFT_TABLE                           \
-  { MUL_TOOM3_THRESHOLD * 4,   /* k=5 */        \
-    MUL_TOOM3_THRESHOLD * 8,   /* k=6 */        \
-    MUL_TOOM3_THRESHOLD * 16,  /* k=7 */        \
-    MUL_TOOM3_THRESHOLD * 32,  /* k=8 */        \
-    MUL_TOOM3_THRESHOLD * 96,  /* k=9 */        \
-    MUL_TOOM3_THRESHOLD * 288, /* k=10 */       \
+  { MUL_TOOM33_THRESHOLD * 4,   /* k=5 */        \
+    MUL_TOOM33_THRESHOLD * 8,   /* k=6 */        \
+    MUL_TOOM33_THRESHOLD * 16,  /* k=7 */        \
+    MUL_TOOM33_THRESHOLD * 32,  /* k=8 */        \
+    MUL_TOOM33_THRESHOLD * 96,  /* k=9 */        \
+    MUL_TOOM33_THRESHOLD * 288, /* k=10 */       \
     0 }
 #endif
 #ifndef SQR_FFT_TABLE
@@ -1786,13 +1781,13 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 /* mpn_dc_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
    div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
-   i.e. n/2 >= MUL_KARATSUBA_THRESHOLD
+   i.e. n/2 >= MUL_TOOM22_THRESHOLD
 
-   Measured values are between 2 and 4 times MUL_KARATSUBA_THRESHOLD, so go
+   Measured values are between 2 and 4 times MUL_TOOM22_THRESHOLD, so go
    for 3 as an average.  */
 
 #ifndef DIV_DC_THRESHOLD
-#define DIV_DC_THRESHOLD    (3 * MUL_KARATSUBA_THRESHOLD)
+#define DIV_DC_THRESHOLD    (3 * MUL_TOOM22_THRESHOLD)
 #endif
 
 #ifndef GET_STR_DC_THRESHOLD
@@ -3996,9 +3991,9 @@ struct cpuvec_t {
   DECL_sub_n           ((*sub_n));
   DECL_submul_1        ((*submul_1));
   int                  initialized;
-  mp_size_t            mul_karatsuba_threshold;
-  mp_size_t            mul_toom3_threshold;
-  mp_size_t            sqr_karatsuba_threshold;
+  mp_size_t            mul_toom22_threshold;
+  mp_size_t            mul_toom33_threshold;
+  mp_size_t            sqr_toom2_threshold;
   mp_size_t            sqr_toom3_threshold;
 };
 __GMP_DECLSPEC extern struct cpuvec_t __gmpn_cpuvec;
@@ -4063,13 +4058,13 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
    on #ifdef in the .c files.  For some this is not so (the defaults are
    instead established above), but all are done this way for consistency. */
 
-#undef  MUL_KARATSUBA_THRESHOLD
-#define MUL_KARATSUBA_THRESHOLD      mul_karatsuba_threshold
-extern mp_size_t                     mul_karatsuba_threshold;
+#undef  MUL_TOOM22_THRESHOLD
+#define MUL_TOOM22_THRESHOLD         mul_toom22_threshold
+extern mp_size_t                     mul_toom22_threshold;
 
-#undef  MUL_TOOM3_THRESHOLD
-#define MUL_TOOM3_THRESHOLD          mul_toom3_threshold
-extern mp_size_t                     mul_toom3_threshold;
+#undef  MUL_TOOM33_THRESHOLD
+#define MUL_TOOM33_THRESHOLD         mul_toom33_threshold
+extern mp_size_t                     mul_toom33_threshold;
 
 #undef  MUL_TOOM44_THRESHOLD
 #define MUL_TOOM44_THRESHOLD         mul_toom44_threshold
@@ -4095,12 +4090,12 @@ extern mp_size_t                     sqr_basecase_threshold;
 #endif
 
 #if TUNE_PROGRAM_BUILD_SQR
-#undef  SQR_KARATSUBA_THRESHOLD
-#define SQR_KARATSUBA_THRESHOLD      SQR_KARATSUBA_MAX_GENERIC
+#undef  SQR_TOOM2_THRESHOLD
+#define SQR_TOOM2_THRESHOLD          SQR_TOOM2_MAX_GENERIC
 #else
-#undef  SQR_KARATSUBA_THRESHOLD
-#define SQR_KARATSUBA_THRESHOLD      sqr_karatsuba_threshold
-extern mp_size_t                     sqr_karatsuba_threshold;
+#undef  SQR_TOOM2_THRESHOLD
+#define SQR_TOOM2_THRESHOLD          sqr_toom2_threshold
+extern mp_size_t                     sqr_toom2_threshold;
 #endif
 
 #undef  SQR_TOOM3_THRESHOLD
@@ -4236,13 +4231,13 @@ extern mp_size_t                     SET_STR_THRESHOLD;
 extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
-#undef MUL_KARATSUBA_THRESHOLD_LIMIT
-#undef MUL_TOOM3_THRESHOLD_LIMIT
+#undef MUL_TOOM22_THRESHOLD_LIMIT
+#undef MUL_TOOM33_THRESHOLD_LIMIT
 #undef MULLOW_BASECASE_THRESHOLD_LIMIT
 #undef SQR_TOOM3_THRESHOLD_LIMIT
-#define SQR_KARATSUBA_MAX_GENERIC       200
-#define MUL_KARATSUBA_THRESHOLD_LIMIT   700
-#define MUL_TOOM3_THRESHOLD_LIMIT       700
+#define SQR_TOOM2_MAX_GENERIC           200
+#define MUL_TOOM22_THRESHOLD_LIMIT      700
+#define MUL_TOOM33_THRESHOLD_LIMIT      700
 #define SQR_TOOM3_THRESHOLD_LIMIT       400
 #define MUL_TOOM44_THRESHOLD_LIMIT     1000
 #define SQR_TOOM4_THRESHOLD_LIMIT      1000
@@ -4271,12 +4266,12 @@ mpn_toom22_mul_itch (mp_size_t an, mp_size_t bn)
   /* Scratch need is 2*(an + k), k is the recursion depth.
      k is ths smallest k such that
 
-     ceil(an/2^k) < MUL_KARATSUBA_THRESHOLD.
+     ceil(an/2^k) < MUL_TOOM22_THRESHOLD.
 
      which implies that
 
-     k = bitsize of floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))
-       = 1 + floor (log_2 (floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))))
+     k = bitsize of floor ((an-1)/(MUL_TOOM22_THRESHOLD-1))
+       = 1 + floor (log_2 (floor ((an-1)/(MUL_TOOM22_THRESHOLD-1))))
   */
   return 2*(an + GMP_NUMB_BITS);
 }
@@ -4301,7 +4296,7 @@ mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
 {
   mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
   mp_size_t itch = 4 * n + 2;
-  if (ABOVE_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
+  if (ABOVE_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
     itch += mpn_toom22_mul_itch (n, n);
 
   return itch;
@@ -4346,7 +4341,7 @@ mpn_toom62_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom2_sqr_itch (mp_size_t an)
 {
-  /* 2*(an + log_2(an / MUL_KARATSUBA_THRESHOLD)) */
+  /* 2*(an + log_2(an / MUL_TOOM22_THRESHOLD)) */
   return 2*(an + GMP_NUMB_BITS);
 }
 

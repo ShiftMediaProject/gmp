@@ -7335,7 +7335,7 @@ algorithms, as the size N increases.
 @multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item Algorithm @tab Threshold
 @item Basecase  @tab (none)
-@item Karatsuba @tab @code{MUL_KARATSUBA_THRESHOLD}
+@item Karatsuba @tab @code{MUL_TOOM22_THRESHOLD}
 @item Toom-3    @tab @code{MUL_TOOM33_THRESHOLD}
 @item Toom-4    @tab @code{MUL_TOOM44_THRESHOLD}
 @item FFT       @tab @code{MUL_FFT_THRESHOLD}
@@ -7345,7 +7345,7 @@ algorithms, as the size N increases.
 Similarly for squaring, with the @code{SQR} thresholds.
 
 N@cross{}M multiplications of operands with different sizes above
-@code{MUL_KARATSUBA_THRESHOLD} are currently done by special Toom-inspired
+@code{MUL_TOOM22_THRESHOLD} are currently done by special Toom-inspired
 algorithms or directly with FFT, depending on operand size (@pxref{Unbalanced
 Multiplication}).
 
@@ -7594,7 +7594,7 @@ Karatsuba multiplication is asymptotically an @math{O(N^@W{1.585})} algorithm,
 the exponent being @m{\log3/\log2,log(3)/log(2)}, representing 3 multiplies
 each @math{1/2} the size of the inputs.  This is a big improvement over the
 basecase multiply at @math{O(N^2)} and the advantage soon overcomes the extra
-additions Karatsuba performs.  @code{MUL_KARATSUBA_THRESHOLD} can be as little
+additions Karatsuba performs.  @code{MUL_TOOM22_THRESHOLD} can be as little
 as 10 limbs.  The @code{SQR} threshold is usually about twice the @code{MUL}.
 
 The basecase algorithm will take a time of the form @m{M(N) = aN^2 + bN + c,
@@ -8056,7 +8056,7 @@ GMP.
 @cindex Unbalanced multiplication
 
 Multiplication of operands with different sizes, both below
-@code{MUL_KARATSUBA_THRESHOLD} are done with plain schoolbook multiplication
+@code{MUL_TOOM22_THRESHOLD} are done with plain schoolbook multiplication
 (@pxref{Basecase Multiplication}).
 
 For really large operands, we invoke FFT directly.
@@ -8180,10 +8180,10 @@ If the (N/2)@cross{}(N/2) multiplies are done with a basecase multiplication
 then the work is about the same as a basecase division, but with more function
 call overheads and with some subtractions separated from the multiplies.
 These overheads mean that it's only when N/2 is above
-@code{MUL_KARATSUBA_THRESHOLD} that divide and conquer is of use.
+@code{MUL_TOOM22_THRESHOLD} that divide and conquer is of use.
 
 @code{DIV_DC_THRESHOLD} is based on the divisor size N, so it will be somewhere
-above twice @code{MUL_KARATSUBA_THRESHOLD}, but how much above depends on the
+above twice @code{MUL_TOOM22_THRESHOLD}, but how much above depends on the
 CPU@.  An optimized @code{mpn_mul_basecase} can lower @code{DIV_DC_THRESHOLD} a
 little by offering a ready-made advantage over repeated @code{mpn_submul_1}
 calls.

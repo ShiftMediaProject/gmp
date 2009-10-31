@@ -28,18 +28,18 @@ C     roughly the Karatsuba recursing range).
 dnl  These are the same as mpn/x86/k6/sqr_basecase.asm, see that code for
 dnl  some comments.
 
-deflit(SQR_KARATSUBA_THRESHOLD_MAX, 66)
+deflit(SQR_TOOM2_THRESHOLD_MAX, 66)
 
-ifdef(`SQR_KARATSUBA_THRESHOLD_OVERRIDE',
-`define(`SQR_KARATSUBA_THRESHOLD',SQR_KARATSUBA_THRESHOLD_OVERRIDE)')
+ifdef(`SQR_TOOM2_THRESHOLD_OVERRIDE',
+`define(`SQR_TOOM2_THRESHOLD',SQR_TOOM2_THRESHOLD_OVERRIDE)')
 
-m4_config_gmp_mparam(`SQR_KARATSUBA_THRESHOLD')
-deflit(UNROLL_COUNT, eval(SQR_KARATSUBA_THRESHOLD-3))
+m4_config_gmp_mparam(`SQR_TOOM2_THRESHOLD')
+deflit(UNROLL_COUNT, eval(SQR_TOOM2_THRESHOLD-3))
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
-C With a SQR_KARATSUBA_THRESHOLD around 50 this code is about 1500 bytes,
+C With a SQR_TOOM2_THRESHOLD around 50 this code is about 1500 bytes,
 C which is quite a bit, but is considered good value since squares big
 C enough to use most of the code will be spending quite a few cycles in it.
 

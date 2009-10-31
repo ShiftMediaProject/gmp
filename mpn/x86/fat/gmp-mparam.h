@@ -40,9 +40,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Sensible fallbacks for these, when not taken from a cpu-specific
    gmp-mparam.h.  */
-#define MUL_KARATSUBA_THRESHOLD   20
-#define MUL_TOOM3_THRESHOLD      130
-#define SQR_KARATSUBA_THRESHOLD   30
+#define MUL_TOOM22_THRESHOLD      20
+#define MUL_TOOM33_THRESHOLD     130
+#define SQR_TOOM2_THRESHOLD       30
 #define SQR_TOOM3_THRESHOLD      200
 
 /* These are values more or less in the middle of what the typical x86 chips

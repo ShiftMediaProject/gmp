@@ -82,10 +82,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define TOOM3_MUL_REC(p, a, b, n, ws) \
   do {								\
-    if (MUL_TOOM3_THRESHOLD / 3 < MUL_KARATSUBA_THRESHOLD	\
-	&& BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))	\
+    if (MUL_TOOM33_THRESHOLD / 3 < MUL_TOOM22_THRESHOLD		\
+	&& BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))		\
       mpn_mul_basecase (p, a, n, b, n);				\
-    else if (BELOW_THRESHOLD (n, MUL_TOOM3_THRESHOLD))		\
+    else if (BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD))		\
       mpn_kara_mul_n (p, a, b, n, ws);				\
     else							\
       mpn_toom3_mul_n (p, a, b, n, ws);				\
@@ -96,8 +96,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     if (SQR_TOOM3_THRESHOLD / 3 < SQR_BASECASE_THRESHOLD	\
 	&& BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))		\
       mpn_mul_basecase (p, a, n, a, n);				\
-    else if (SQR_TOOM3_THRESHOLD / 3 < SQR_KARATSUBA_THRESHOLD	\
-	&& BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))	\
+    else if (SQR_TOOM3_THRESHOLD / 3 < SQR_TOOM2_THRESHOLD	\
+	&& BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))		\
       mpn_sqr_basecase (p, a, n);				\
     else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))		\
       mpn_kara_sqr_n (p, a, n, ws);				\
@@ -367,15 +367,15 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
   ASSERT (! MPN_OVERLAP_P (p, 2 * n, a, n));
   ASSERT (! MPN_OVERLAP_P (p, 2 * n, b, n));
 
-  if (BELOW_THRESHOLD (n, MUL_KARATSUBA_THRESHOLD))
+  if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
     {
       mpn_mul_basecase (p, a, n, b, n);
     }
-  else if (BELOW_THRESHOLD (n, MUL_TOOM3_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
-      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
-      ASSERT (MUL_TOOM3_THRESHOLD <= MUL_TOOM3_THRESHOLD_LIMIT);
+      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM33_THRESHOLD_LIMIT-1)];
+      ASSERT (MUL_TOOM33_THRESHOLD <= MUL_TOOM33_THRESHOLD_LIMIT);
       mpn_toom22_mul (p, a, n, b, n, ws);
     }
   else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD))
@@ -436,7 +436,7 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
     { /* mul_basecase is faster than sqr_basecase on small sizes sometimes */
       mpn_mul_basecase (p, a, n, a, n);
     }
-  else if (BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))
     {
       mpn_sqr_basecase (p, a, n);
     }

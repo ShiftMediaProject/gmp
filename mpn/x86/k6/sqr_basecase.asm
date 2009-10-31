@@ -25,35 +25,35 @@ C     product (measured on the speed difference between 17 and 33 limbs,
 C     which is roughly the Karatsuba recursing range).
 
 
-dnl  SQR_KARATSUBA_THRESHOLD_MAX is the maximum SQR_KARATSUBA_THRESHOLD this
+dnl  SQR_TOOM2_THRESHOLD_MAX is the maximum SQR_TOOM2_THRESHOLD this
 dnl  code supports.  This value is used only by the tune program to know
 dnl  what it can go up to.  (An attempt to compile with a bigger value will
 dnl  trigger some m4_assert()s in the code, making the build fail.)
 dnl
 dnl  The value is determined by requiring the displacements in the unrolled
 dnl  addmul to fit in single bytes.  This means a maximum UNROLL_COUNT of
-dnl  63, giving a maximum SQR_KARATSUBA_THRESHOLD of 66.
+dnl  63, giving a maximum SQR_TOOM2_THRESHOLD of 66.
 
-deflit(SQR_KARATSUBA_THRESHOLD_MAX, 66)
+deflit(SQR_TOOM2_THRESHOLD_MAX, 66)
 
 
 dnl  Allow a value from the tune program to override config.m4.
 
-ifdef(`SQR_KARATSUBA_THRESHOLD_OVERRIDE',
-`define(`SQR_KARATSUBA_THRESHOLD',SQR_KARATSUBA_THRESHOLD_OVERRIDE)')
+ifdef(`SQR_TOOM2_THRESHOLD_OVERRIDE',
+`define(`SQR_TOOM2_THRESHOLD',SQR_TOOM2_THRESHOLD_OVERRIDE)')
 
 
 dnl  UNROLL_COUNT is the number of code chunks in the unrolled addmul.  The
-dnl  number required is determined by SQR_KARATSUBA_THRESHOLD, since
-dnl  mpn_sqr_basecase only needs to handle sizes < SQR_KARATSUBA_THRESHOLD.
+dnl  number required is determined by SQR_TOOM2_THRESHOLD, since
+dnl  mpn_sqr_basecase only needs to handle sizes < SQR_TOOM2_THRESHOLD.
 dnl
 dnl  The first addmul is the biggest, and this takes the second least
 dnl  significant limb and multiplies it by the third least significant and
-dnl  up.  Hence for a maximum operand size of SQR_KARATSUBA_THRESHOLD-1
-dnl  limbs, UNROLL_COUNT needs to be SQR_KARATSUBA_THRESHOLD-3.
+dnl  up.  Hence for a maximum operand size of SQR_TOOM2_THRESHOLD-1
+dnl  limbs, UNROLL_COUNT needs to be SQR_TOOM2_THRESHOLD-3.
 
-m4_config_gmp_mparam(`SQR_KARATSUBA_THRESHOLD')
-deflit(UNROLL_COUNT, eval(SQR_KARATSUBA_THRESHOLD-3))
+m4_config_gmp_mparam(`SQR_TOOM2_THRESHOLD')
+deflit(UNROLL_COUNT, eval(SQR_TOOM2_THRESHOLD-3))
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);

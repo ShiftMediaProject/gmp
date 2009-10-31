@@ -31,7 +31,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef MULLOW_DC_THRESHOLD
-#define MULLOW_DC_THRESHOLD 3*MUL_KARATSUBA_THRESHOLD
+#define MULLOW_DC_THRESHOLD 3*MUL_TOOM22_THRESHOLD
 #endif
 
 #ifndef MULLOW_MUL_N_THRESHOLD

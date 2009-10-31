@@ -1,3 +1,11 @@
+2009-10-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Globally change
+	  MUL_TOOM3_THRESHOLD => MUL_TOOM33_THRESHOLD,
+	  MUL_KARATSUBA_THRESHOLD => MUL_TOOM22_THRESHOLD,
+	  SQR_KARATSUBA_THRESHOLD => SQR_TOOM2_THRESHOLD,
+	and associated names analogously.
+
 2009-10-31  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom43_mul.c (mpn_toom43_mul): Use

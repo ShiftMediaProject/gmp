@@ -20,11 +20,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* These numbers were measured manually using the tune/speed program.
    The standard tune/tunup takes too long.  (VAX 8800) */
 
-#define MUL_KARATSUBA_THRESHOLD          14
-#define MUL_TOOM3_THRESHOLD             110
+#define MUL_TOOM22_THRESHOLD             14
+#define MUL_TOOM33_THRESHOLD            110
 
 #define SQR_BASECASE_THRESHOLD            6
-#define SQR_KARATSUBA_THRESHOLD          42
+#define SQR_TOOM2_THRESHOLD              42
 #define SQR_TOOM3_THRESHOLD             250
 
 /* #define DIV_SB_PREINV_THRESHOLD         */
