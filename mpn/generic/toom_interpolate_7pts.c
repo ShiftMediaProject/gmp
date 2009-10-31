@@ -66,17 +66,17 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 #endif
 
-/* Interpolation for toom4, using the evaluation points infinity, 2,
-   1, -1, 1/2, -1/2. More precisely, we want to compute
+/* Interpolation for toom4, using the evaluation points 0, infinity,
+   1, -1, 2, -2, 1/2. More precisely, we want to compute
    f(2^(GMP_NUMB_BITS * n)) for a polynomial f of degree 6, given the
    seven values
 
      w0 = f(0),
-     w1 = 64 f(-1/2),
-     w2 = 64 f(1/2),
+     w1 = f(-2),
+     w2 = f(1),
      w3 = f(-1),
-     w4 = f(1)
-     w5 = f(2)
+     w4 = f(2)
+     w5 = 64 * f(1/2)
      w6 = limit at infinity of f(x) / x^6,
 
    The result is 6*n + w6n limbs. At entry, w0 is stored at {rp, 2n },
@@ -94,36 +94,38 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
 			   mp_size_t w6n, mp_ptr tp)
 {
   mp_size_t m = 2*n + 1;
-  mp_ptr w2 = rp + 2*n;
-  mp_ptr w6 = rp + 6*n;
   mp_limb_t cy;
 
+#define w0 rp
+#define w2 (rp + 2*n)
+#define w6 (rp + 6*n)
+  
   ASSERT (w6n > 0);
   ASSERT (w6n <= 2*n);
 
-  /* Using Marco Bodrato's formulas
+  /* Using formulas similar to Marco Bodrato's
 
-     W5 = W5 + W2
-     W1 =(W1 - W2)/2
-     W2 = W2 - W6
-     W2 =(W2 - W1)/4 - W0*16
-     W3 =(W4 - W3)/2
-     W4 = W4 - W3
+     W5 = W5 + W4
+     W1 =(W4 - W1)/2
+     W4 = W4 - W0
+     W4 =(W4 - W1)/4 - W6*16
+     W3 =(W2 - W3)/2
+     W2 = W2 - W3
 
-     W5 = W5 - W4*65      May be negative.
-     W4 = W4 - W6 - W0
-     W5 =(W5 + W4*45)/2   Now >= 0 again.
-     W2 =(W2 - W4)/3
-     W4 = W4 - W2
+     W5 = W5 - W2*65      May be negative.
+     W2 = W2 - W6 - W0
+     W5 =(W5 + W2*45)/2   Now >= 0 again.
+     W4 =(W4 - W2)/3
+     W2 = W2 - W4
 
-     W1 = W1 - W5         May be negative.
+     W1 = W5 - W1         May be negative.
      W5 =(W5 - W3*8)/9
      W3 = W3 - W5
      W1 =(W1/15 + W5)/2   Now >= 0 again.
      W5 = W5 - W1
 
-     where W0 = f(0), W1 = 64 f(-1/2), W2 = 64 f(1/2), W3 = f(-1),
-	   W4 = f(1), W5 = f(2), W6 = f(oo),
+     where W0 = f(0), W1 = f(-2), W2 = f(1), W3 = f(-1),
+	   W4 = f(2), W5 = f(1/2), W6 = f(oo),
 
      Note that most intermediate results are positive; the ones that
      may be negative are represented in two's complement. We must
@@ -132,74 +134,77 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
      numbers work fine with two's complement.
   */
 
-  mpn_add_n (w5, w5, w2, m);
+  mpn_add_n (w5, w5, w4, m);
   if (flags & toom7_w1_neg)
     {
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
-      mpn_rsh1add_n (w1, w1, w2, m);
+      mpn_rsh1add_n (w1, w1, w4, m);
 #else
-      mpn_add_n (w1, w1, w2, m);
+      mpn_add_n (w1, w1, w4, m);  ASSERT (!(w1[0] & 1));
       mpn_rshift (w1, w1, m, 1);
 #endif
     }
   else
     {
 #ifdef HAVE_NATIVE_mpn_rsh1sub_n
-      mpn_rsh1sub_n (w1, w2, w1, m);
+      mpn_rsh1sub_n (w1, w4, w1, m);
 #else
-      mpn_sub_n (w1, w2, w1, m);
+      mpn_sub_n (w1, w4, w1, m);  ASSERT (!(w1[0] & 1));
       mpn_rshift (w1, w1, m, 1);
 #endif
     }
-  mpn_sub (w2, w2, m, w6, w6n);
-  mpn_sub_n (w2, w2, w1, m);
-  mpn_rshift (w2, w2, m, 2); /* w2>=0 */
-  tp[2*n] = mpn_lshift (tp, rp, 2*n, 4);
-  mpn_sub_n (w2, w2, tp, m);
+  mpn_sub (w4, w4, m, w0, 2*n);
+  mpn_sub_n (w4, w4, w1, m);  ASSERT (!(w4[0] & 3));
+  mpn_rshift (w4, w4, m, 2); /* w4>=0 */
+  
+  tp[w6n] = mpn_lshift (tp, w6, w6n, 4);
+  mpn_sub (w4, w4, m, tp, w6n+1);
 
   if (flags & toom7_w3_neg)
     {
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
-      mpn_rsh1add_n (w3, w3, w4, m);
+      mpn_rsh1add_n (w3, w3, w2, m);
 #else
-      mpn_add_n (w3, w3, w4, m);
+      mpn_add_n (w3, w3, w2, m);  ASSERT (!(w3[0] & 1));
       mpn_rshift (w3, w3, m, 1);
 #endif
     }
   else
     {
 #ifdef HAVE_NATIVE_mpn_rsh1sub_n
-      mpn_rsh1sub_n (w3, w4, w3, m);
+      mpn_rsh1sub_n (w3, w2, w3, m);
 #else
-      mpn_sub_n (w3, w4, w3, m);
+      mpn_sub_n (w3, w2, w3, m);  ASSERT (!(w3[0] & 1));
       mpn_rshift (w3, w3, m, 1);
 #endif
     }
-  mpn_sub_n (w4, w4, w3, m);
+  
+  mpn_sub_n (w2, w2, w3, m);
 
-  mpn_submul_1 (w5, w4, m, 65);
-  mpn_sub (w4, w4, m, w6, w6n);
-  mpn_sub (w4, w4, m, rp, 2*n);
-  mpn_addmul_1 (w5, w4, m, 45);
-  mpn_sub_n (w2, w2, w4, m);
-
-  mpn_divexact_by3 (w2, w2, m);
+  mpn_submul_1 (w5, w2, m, 65);
+  mpn_sub (w2, w2, m, w6, w6n);
+  mpn_sub (w2, w2, m, w0, 2*n);
+  
+  mpn_addmul_1 (w5, w2, m, 45);  ASSERT (!(w5[0] & 1));
+  mpn_rshift (w5, w5, m, 1);
   mpn_sub_n (w4, w4, w2, m);
 
-  mpn_rshift (w5, w5, m, 1);
-  mpn_sub_n (w1, w1, w5, m);
+  mpn_divexact_by3 (w4, w4, m);
+  mpn_sub_n (w2, w2, w4, m);
+
+  mpn_sub_n (w1, w5, w1, m);
   mpn_lshift (tp, w3, m, 3);
   mpn_sub_n (w5, w5, tp, m);
   mpn_divexact_by9 (w5, w5, m);
   mpn_sub_n (w3, w3, w5, m);
 
   mpn_divexact_by15 (w1, w1, m);
-  mpn_add_n (w1, w1, w5, m);
+  mpn_add_n (w1, w1, w5, m);  ASSERT (!(w1[0] & 1));
   mpn_rshift (w1, w1, m, 1); /* w1>=0 now */
   mpn_sub_n (w5, w5, w1, m);
 
   /* These bounds are valid for the 4x4 polynomial product of toom44,
-   * and they are conservative for toom53 and toom42. */
+   * and they are conservative for toom53 and toom62. */
   ASSERT (w1[2*n] < 2);
   ASSERT (w2[2*n] < 3);
   ASSERT (w3[2*n] < 4);

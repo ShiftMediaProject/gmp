@@ -1,5 +1,15 @@
 2009-10-31  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom_interpolate_7pts.c: Changed evaluation points,
+	replacing -1/2 by -2.
+	* mpn/generic/toom44_mul.c: Updated to use new evaluation points,
+	and use mpn_toom_eval_dgr3_pm2.
+	* mpn/generic/toom4_sqr.c (mpn_toom4_sqr): Likewise.
+	* mpn/generic/toom53_mul.c (mpn_toom53_mul): Updated to use new
+	evaluation points, and use mpn_toom_eval_pm1 and
+	mpn_toom_eval_pm2exp.
+	* mpn/generic/toom62_mul.c (mpn_toom62_mul): Likewise.
+
 	* mpn/generic/toom_eval_pm2exp.c: New file.
 	* mpn/generic/toom_eval_pm1.c: New file.
 

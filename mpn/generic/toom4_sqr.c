@@ -89,24 +89,55 @@ mpn_toom4_sqr (mp_ptr pp,
 
   ASSERT (0 < s && s <= n);
 
-  /* NOTE: The multiplications to v1, vm1, v2 and vmh overwrites the
+  /* NOTE: The multiplications to v2, vm2, vh and vm1 overwrites the
    * following limb, so these must be computed in order, and we need a
    * one limb gap to tp. */
 #define v0    pp				/* 2n */
-#define v1    scratch				/* 2n+1 */
-#define vm1   (scratch + 2 * n + 1)		/* 2n+1 */
-#define v2    (scratch + 4 * n + 2)		/* 2n+1 */
-#define vh    (pp + 2 * n)			/* 2n+1 */
-#define vmh   (scratch + 6 * n + 3)		/* 2n+1 */
+#define v1    (pp + 2 * n)			/* 2n+1 */
 #define vinf  (pp + 6 * n)			/* s+t */
+#define v2    scratch				/* 2n+1 */
+#define vm2   (scratch + 2 * n + 1)		/* 2n+1 */
+#define vh    (scratch + 4 * n + 2)		/* 2n+1 */
+#define vm1   (scratch + 6 * n + 3)		/* 2n+1 */
 #define tp (scratch + 8*n + 5)
 
-  /* apx must not overlap with vh */
+  /* No overlap with v1 */
 #define apx   pp				/* n+1 */
-#define amx   (pp + n + 1)			/* n+1 */
+#define amx   (pp + 4*n + 2)			/* n+1 */
 
   /* Total scratch need: 8*n + 5 + scratch for recursive calls. This
      gives roughly 32 n/3 + log term. */
+
+  /* Compute apx = a0 + 2 a1 + 4 a2 + 8 a3 and amx = a0 - 2 a1 + 4 a2 - 8 a3.  */
+  mpn_toom_eval_dgr3_pm2 (apx, amx, ap, n, s, tp);
+
+  TOOM4_SQR_N_REC (v2, apx, n + 1, tp);	/* v2,  2n+1 limbs */
+  TOOM4_SQR_N_REC (vm2, amx, n + 1, tp);	/* vm2,  2n+1 limbs */
+
+  /* Compute apx = 8 a0 + 4 a1 + 2 a2 + a3 = (((2*a0 + a1) * 2 + a2) * 2 + a3 */
+#if HAVE_NATIVE_mpn_addlsh1_n
+  cy = mpn_addlsh1_n (apx, a1, a0, n);
+  cy = 2*cy + mpn_addlsh1_n (apx, a2, apx, n);
+  if (s < n)
+    {
+      mp_limb_t cy2 = mpn_addlsh1_n (apx, a3, apx, s);
+      apx[n] = 2*cy + mpn_lshift (apx + s, apx + s, n - s, 1);
+      MPN_INCR_U (apx + s, n+1-s, cy2);
+    }
+  else
+    apx[n] = 2*cy + mpn_addlsh1_n (apx, a3, apx, n);
+#else
+  cy = mpn_lshift (apx, a0, n, 1);
+  cy += mpn_add_n (apx, apx, a1, n);
+  cy = 2*cy + mpn_lshift (apx, apx, n, 1);
+  cy += mpn_add_n (apx, apx, a2, n);
+  cy = 2*cy + mpn_lshift (apx, apx, n, 1);
+  apx[n] = cy + mpn_add (apx, apx, n, a3, s);
+#endif
+
+  ASSERT (apx[n] < 15);
+
+  TOOM4_SQR_N_REC (vh, apx, n + 1, tp);	/* vh,  2n+1 limbs */
 
   /* Compute apx = a0 + a1 + a2 + a3 and amx = a0 - a1 + a2 - a3.  */
   mpn_toom_eval_dgr3_pm1 (apx, amx, ap, n, s, tp);
@@ -114,61 +145,8 @@ mpn_toom4_sqr (mp_ptr pp,
   TOOM4_SQR_N_REC (v1, apx, n + 1, tp);	/* v1,  2n+1 limbs */
   TOOM4_SQR_N_REC (vm1, amx, n + 1, tp);	/* vm1,  2n+1 limbs */
 
-  /* Compute apx = a0 + 2 a1 + 4 a2 + 8 a3 = a0 + 2 (a1 + 2 (a2 + 2 a3))  */
-#if HAVE_NATIVE_mpn_addlsh1_n
-  cy  = mpn_addlsh1_n (apx, a2, a3, s);
-  if (s != n)
-    cy = mpn_add_1 (apx + s, a2 + s, n - s, cy);
-  cy = 2 * cy + mpn_addlsh1_n (apx, a1, apx, n);
-  cy = 2 * cy + mpn_addlsh1_n (apx, a0, apx, n);
-#else
-  cy  = mpn_lshift (apx, a3, s, 1);
-  cy += mpn_add_n (apx, a2, apx, s);
-  if (s != n)
-    cy = mpn_add_1 (apx + s, a2 + s, n - s, cy);
-  cy = 2 * cy + mpn_lshift (apx, apx, n, 1);
-  cy += mpn_add_n (apx, a1, apx, n);
-  cy = 2 * cy + mpn_lshift (apx, apx, n, 1);
-  cy += mpn_add_n (apx, a0, apx, n);
-#endif
-  apx[n] = cy;
-
-  ASSERT (apx[n] <= 14);
-  
-  TOOM4_SQR_N_REC (v2, apx, n + 1, tp);	/* v2,  2n+1 limbs */
-
-  /* Compute apx = 8 a0 + 4 a1 + 2 a2 + a3 and amx = 8 a0 - 4 a1 + 2 a2 - a3 */
-  cy  = mpn_lshift (apx, a0, n, 3);			/*  8a0             */
-#if HAVE_NATIVE_mpn_addlsh1_n
-  apx[n] = cy + mpn_addlsh1_n (apx, apx, a2, n);		/*  8a0 + 2a2       */
-#else
-  cy += mpn_lshift (tp, a2, n, 1);			/*        2a2       */
-  apx[n] = cy + mpn_add_n (apx, apx, tp, n);		/*  8a0 + 2a2       */
-#endif
-  cy = mpn_lshift (tp, a1, n, 2);			/*  4a1             */
-  tp[n] = cy + mpn_add (tp, tp, n, a3, s);		/*  4a1 +  a3       */
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (mpn_cmp (apx, tp, n + 1) < 0)
-    mpn_add_n_sub_n (apx, amx, tp, apx, n + 1);
-  else
-    mpn_add_n_sub_n (apx, amx, apx, tp, n + 1);
-#else
-  if (mpn_cmp (apx, tp, n + 1) < 0)
-    mpn_sub_n (amx, tp, apx, n + 1);
-  else
-    mpn_sub_n (amx, apx, tp, n + 1);
-
-  mpn_add_n (apx, apx, tp, n + 1);
-#endif
-
-  ASSERT (apx[n] <= 14);
-  ASSERT (amx[n] <= 9);
-
-  TOOM4_SQR_N_REC (vmh, amx, n + 1, tp);	/* vmh,  2n+1 limbs */
-  TOOM4_SQR_N_REC (vh, apx, n + 1, tp);	/* vh,  2n+1 limbs */
-
   TOOM4_SQR_N_REC (v0, a0, n, tp);
   TOOM4_SQR_N_REC (vinf, a3, s, tp);	/* vinf, 2s limbs */
 
-  mpn_toom_interpolate_7pts (pp, n, 0, vmh, vm1, v1, v2, 2*s, tp);
+  mpn_toom_interpolate_7pts (pp, n, 0, vm2, vm1, v2, vh, 2*s, tp);
 }
