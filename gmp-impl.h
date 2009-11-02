@@ -575,10 +575,10 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free  __GMP_PROTO ((const char *, int, int,
    code that has not yet been qualified.  */
 
 #undef DIV_SB_PREINV_THRESHOLD
-#undef DIV_DC_THRESHOLD
+#undef DC_DIV_QR_THRESHOLD
 #undef POWM_THRESHOLD
 #define DIV_SB_PREINV_THRESHOLD           MP_SIZE_T_MAX
-#define DIV_DC_THRESHOLD                 50
+#define DC_DIV_QR_THRESHOLD              50
 #define POWM_THRESHOLD                    0
 
 #undef GCD_ACCEL_THRESHOLD
@@ -1100,12 +1100,6 @@ __GMP_DECLSPEC void      mpn_mul_fft_full __GMP_PROTO ((mp_ptr, mp_srcptr, mp_si
 
 #define   mpn_fft_next_size __MPN(fft_next_size)
 __GMP_DECLSPEC mp_size_t mpn_fft_next_size __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
-
-#define   mpn_sb_divrem_mn __MPN(sb_divrem_mn)
-__GMP_DECLSPEC mp_limb_t mpn_sb_divrem_mn __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
-
-#define   mpn_dc_divrem_n __MPN(dc_divrem_n)
-__GMP_DECLSPEC mp_limb_t mpn_dc_divrem_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 
 #define   mpn_sbpi1_div_qr __MPN(sbpi1_div_qr)
 __GMP_DECLSPEC mp_limb_t mpn_sbpi1_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
@@ -1665,10 +1659,6 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define SQR_TOOM3_THRESHOLD_LIMIT  SQR_TOOM3_THRESHOLD
 #endif
 
-#ifndef DC_DIV_QR_THRESHOLD
-#define DC_DIV_QR_THRESHOLD       43
-#endif
-
 #ifndef DC_DIVAPPR_Q_THRESHOLD
 #define DC_DIVAPPR_Q_THRESHOLD   208
 #endif
@@ -1769,15 +1759,8 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define MPN_FFT_TABLE_SIZE  16
 
 
-/* mpn_dc_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
-   div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
-   i.e. n/2 >= MUL_TOOM22_THRESHOLD
-
-   Measured values are between 2 and 4 times MUL_TOOM22_THRESHOLD, so go
-   for 3 as an average.  */
-
-#ifndef DIV_DC_THRESHOLD
-#define DIV_DC_THRESHOLD    (3 * MUL_TOOM22_THRESHOLD)
+#ifndef DC_DIV_QR_THRESHOLD
+#define DC_DIV_QR_THRESHOLD    (3 * MUL_TOOM22_THRESHOLD)
 #endif
 
 #ifndef GET_STR_DC_THRESHOLD
@@ -4126,9 +4109,9 @@ extern mp_size_t                     mullow_mul_n_threshold;
 extern mp_size_t                     div_sb_preinv_threshold;
 #endif
 
-#undef  DIV_DC_THRESHOLD
-#define DIV_DC_THRESHOLD             div_dc_threshold
-extern mp_size_t                     div_dc_threshold;
+#undef  DC_DIV_QR_THRESHOLD
+#define DC_DIV_QR_THRESHOLD          dc_div_qr_threshold
+extern mp_size_t                     dc_div_qr_threshold;
 
 #undef  POWM_THRESHOLD
 #define POWM_THRESHOLD               powm_threshold
@@ -4235,7 +4218,7 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #define GET_STR_THRESHOLD_LIMIT         150
 
 /* "thresh" will normally be a variable when tuning, so use the cached
-   result.  This helps mpn_sb_divrem_mn for instance.  */
+   result.  This helped mpn_sb_divrem_mn for instance.  */
 #undef  CACHED_ABOVE_THRESHOLD
 #define CACHED_ABOVE_THRESHOLD(cache, thresh)  (cache)
 #undef  CACHED_BELOW_THRESHOLD

@@ -46,8 +46,7 @@ libspeed_la_SOURCES =							\
   jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c					\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
-  set_strb.c set_strs.c set_strp.c time.c						\
-  sb_div.c sb_inv.c
+  set_strb.c set_strs.c set_strp.c time.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
   $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
@@ -123,9 +122,9 @@ DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 # recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
-TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c gcdext.c get_str.c \
+TUNE_MPN_SRCS_BASIC = dcpi1_div_qr.c divrem_2.c gcd.c gcdext.c get_str.c \
   set_str.c matrix22_mul.c hgcd.c mul_n.c				\
-  mullow_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c mulmod_bnm1.c	\
+  mullow_n.c mul_fft.c mul.c tdiv_qr.c mulmod_bnm1.c			\
   toom22_mul.c toom2_sqr.c toom33_mul.c toom3_sqr.c toom44_mul.c toom4_sqr.c
 
 $(TUNE_MPN_SRCS_BASIC):
@@ -173,9 +172,6 @@ st:
 	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
-
-dc:
-	./speed -s 5-40 -c mpn_dc_divrem_sb mpn_dc_divrem_n mpn_dc_tdiv_qr
 
 fib:
 	./speed -s 40-60 -c mpz_fib_ui

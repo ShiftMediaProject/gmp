@@ -639,7 +639,7 @@ validate_sqrtrem (void)
 #define TYPE_UMUL_PPMM_R      84
 #define TYPE_MULLOW_N         85
 
-#define TYPE_SB_DIVREM_MN     90
+#define TYPE_SBPI1_DIV_QR     90
 #define TYPE_TDIV_QR          91
 
 #define TYPE_SQRTREM          100
@@ -1118,7 +1118,7 @@ param_init (void)
   REFERENCE (refmpn_hamdist);
 
 
-  p = &param[TYPE_SB_DIVREM_MN];
+  p = &param[TYPE_SBPI1_DIV_QR];
   p->retval = 1;
   p->dst[0] = 1;
   p->dst[1] = 1;
@@ -1128,7 +1128,7 @@ param_init (void)
   p->size2 = 1;
   p->dst_size[0] = SIZE_DIFF;
   p->overlap = OVERLAP_NONE;
-  REFERENCE (refmpn_sb_divrem_mn);
+  REFERENCE (refmpn_sb_div_qr);
 
   p = &param[TYPE_TDIV_QR];
   p->dst[0] = 1;
@@ -1473,7 +1473,7 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_modexact_1c_odd),       TYPE_MODEXACT_1C_ODD },
 
 
-  { TRY(mpn_sb_divrem_mn), TYPE_SB_DIVREM_MN, 3},
+  { TRY(mpn_sbpi1_div_qr), TYPE_SBPI1_DIV_QR, 3},
   { TRY(mpn_tdiv_qr),      TYPE_TDIV_QR },
 
   { TRY(mpn_mul_1),      TYPE_MUL_1 },
@@ -2121,13 +2121,18 @@ call (struct each_t *e, tryfun_t function)
       (e->s[0].p[1], e->s[0].p[0], divisor, e->d[0].p);
     break;
 
-  case TYPE_SB_DIVREM_MN:
-    refmpn_copyi (e->d[1].p, e->s[0].p, size);        /* dividend */
-    refmpn_fill (e->d[0].p, size-size2, 0x98765432);  /* quotient */
-    e->retval = CALLING_CONVENTIONS (function)
-      (e->d[0].p, e->d[1].p, size, e->s[1].p, size2);
-    refmpn_zero (e->d[1].p+size2, size-size2);    /* excess over remainder */
+  case TYPE_SBPI1_DIV_QR:
+    {
+      gmp_pi1_t dinv;
+      invert_pi1 (dinv, e->s[1].p[size2-1], e->s[1].p[size2-2]); /* FIXME: use refinvert_pi1 */
+      refmpn_copyi (e->d[1].p, e->s[0].p, size);        /* dividend */
+      refmpn_fill (e->d[0].p, size-size2, 0x98765432);  /* quotient */
+      e->retval = CALLING_CONVENTIONS (function)
+	(e->d[0].p, e->d[1].p, size, e->s[1].p, size2, dinv.inv32);
+      refmpn_zero (e->d[1].p+size2, size-size2);    /* excess over remainder */
+    }
     break;
+
   case TYPE_TDIV_QR:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->d[1].p, 0,
 				    e->s[0].p, size, e->s[1].p, size2);

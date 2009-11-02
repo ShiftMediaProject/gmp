@@ -1281,7 +1281,7 @@ refmpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
   tp = refmpn_malloc_limbs (nn + qxn);
   refmpn_zero (tp, qxn);
   refmpn_copyi (tp + qxn, np, nn);
-  qh = refmpn_sb_divrem_mn (qp, tp, nn + qxn, dp, 2);
+  qh = refmpn_sb_div_qr (qp, tp, nn + qxn, dp, 2);
   refmpn_copyi (np, tp, 2);
   free (tp);
   return qh;
@@ -1654,12 +1654,12 @@ refmpn_mod2 (mp_limb_t r[2], const mp_limb_t a[2], const mp_limb_t d[2])
 
 
 
-/* Similar to mpn/generic/sb_divrem_mn.c, but somewhat simplified, in
+/* Similar to the old mpn/generic/sb_divrem_mn.c, but somewhat simplified, in
    particular the trial quotient is allowed to be 2 too big. */
 mp_limb_t
-refmpn_sb_divrem_mn (mp_ptr qp,
-		     mp_ptr np, mp_size_t nsize,
-		     mp_srcptr dp, mp_size_t dsize)
+refmpn_sb_div_qr (mp_ptr qp,
+		  mp_ptr np, mp_size_t nsize,
+		  mp_srcptr dp, mp_size_t dsize)
 {
   mp_limb_t  retval = 0;
   mp_size_t  i;
@@ -1732,7 +1732,7 @@ refmpn_sb_divrem_mn (mp_ptr qp,
   return retval;
 }
 
-/* Similar to mpn/generic/sb_divrem_mn.c, but somewhat simplified, in
+/* Similar to the old mpn/generic/sb_divrem_mn.c, but somewhat simplified, in
    particular the trial quotient is allowed to be 2 too big. */
 void
 refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
@@ -1759,7 +1759,7 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
       n2p[nsize] = refmpn_lshift_or_copy (n2p, np, nsize, norm);
       ASSERT_NOCARRY (refmpn_lshift_or_copy (d2p, dp, dsize, norm));
 
-      refmpn_sb_divrem_mn (qp, n2p, nsize+1, d2p, dsize);
+      refmpn_sb_div_qr (qp, n2p, nsize+1, d2p, dsize);
       refmpn_rshift_or_copy (rp, n2p, dsize, norm);
 
       /* ASSERT (refmpn_zero_p (tp+dsize, nsize-dsize)); */

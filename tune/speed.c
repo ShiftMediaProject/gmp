@@ -1,6 +1,7 @@
 /* Speed measuring program.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -233,14 +234,7 @@ const struct routine_t {
 #endif
 
   { "mpn_dc_tdiv_qr",       speed_mpn_dc_tdiv_qr       },
-  { "mpn_dc_divrem_n",      speed_mpn_dc_divrem_n      },
-  { "mpn_dc_divrem_sb",     speed_mpn_dc_divrem_sb     },
-  { "mpn_dc_divrem_sb_div", speed_mpn_dc_divrem_sb_div },
-  { "mpn_dc_divrem_sb_inv", speed_mpn_dc_divrem_sb_inv },
-
-  { "mpn_sb_divrem_m3",     speed_mpn_sb_divrem_m3     },
-  { "mpn_sb_divrem_m3_div", speed_mpn_sb_divrem_m3_div },
-  { "mpn_sb_divrem_m3_inv", speed_mpn_sb_divrem_m3_inv },
+  { "mpn_dc_div_qr_n",      speed_mpn_dcpi1_div_qr_n   },
 
   { "mpn_lshift",        speed_mpn_lshift, FLAG_R   },
   { "mpn_rshift",        speed_mpn_rshift, FLAG_R   },

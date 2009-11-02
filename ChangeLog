@@ -1,3 +1,32 @@
+2009-11-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (gmp_mpn_functions): Remove obsolete functions
+	dc_divrem_n and sb_divrem_mn.
+	* gmp-impl.h: Misc cleanup.
+	(mpn_sb_divrem_mn, mpn_dc_divrem_n): Remove.
+	(DIV_DC_THRESHOLD): Remove.
+	* mpn/generic/dc_divrem_n.c: Remove.
+	* mpn/generic/sb_divrem_mn.c: Remove.
+	* mpn/generic/tdiv_qr.c: Use DC_DIV_QR_THRESHOLD, not DIV_DC_THRESHOLD.
+
+	* tests/devel/try.c: Replace mpn_sb_divrem_mn by mpn_sbpi1_div_qr.
+	* tests/refmpn.c (refmpn_sb_div_qr): New name for refmpn_sb_divrem_mn.
+
+	* tune/Makefile.am (libspeed_la_SOURCES): Remove sb_div.c and sb_inv.c.
+	(TUNE_MPN_SRCS_BASIC): Remove sb_divrem_mn.c.
+	* tune/common.c (speed_mpn_dcpi1_div_qr_n): New function.
+	 Remove mpn_sb_divrem_mn related functions.
+	* tune/speed.c (routine): Remove entries related to mpn_dc_divrem and
+	mpn_sb_divrem.
+	(routine): New entry for mpn_dc_div_qr_n.
+	* tune/speed.h (SPEED_ROUTINE_MPN_DC_DIVREM_CALL): Compute inverse
+	needed by pi1 calls.
+	(SPEED_ROUTINE_MPN_SB_DIVREM_M3): Remove.
+	* tune/tuneup.c (tune_sb_preinv): Remove.
+	(tune_dc): Update to measure DC_DIV_QR_THRESHOLD.
+
+	* mpn/generic/sb_divappr_q.c: Remove.
+
 2009-10-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (toom itch functions): Simplify, make some into macros.

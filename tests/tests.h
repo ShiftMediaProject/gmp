@@ -345,9 +345,9 @@ mp_limb_t refmpn_rshift_or_copy_any __GMP_PROTO ((mp_ptr wp,
                                                   mp_srcptr xp, mp_size_t size,
                                                   unsigned shift));
 
-mp_limb_t refmpn_sb_divrem_mn __GMP_PROTO ((mp_ptr qp,
-                                       mp_ptr np, mp_size_t nsize,
-                                       mp_srcptr dp, mp_size_t dsize));
+mp_limb_t refmpn_sb_div_qr __GMP_PROTO ((mp_ptr,
+					 mp_ptr, mp_size_t,
+					 mp_srcptr, mp_size_t));
 unsigned long refmpn_scan0 __GMP_PROTO ((mp_srcptr, unsigned long));
 unsigned long refmpn_scan1 __GMP_PROTO ((mp_srcptr, unsigned long));
 void refmpn_setbit __GMP_PROTO ((mp_ptr, unsigned long));

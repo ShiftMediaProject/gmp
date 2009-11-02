@@ -1,7 +1,7 @@
 /* Shared speed subroutines.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software
-Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -726,40 +726,9 @@ speed_mpn_dc_tdiv_qr (struct speed_params *s)
   SPEED_ROUTINE_MPN_DC_TDIV_QR (mpn_tdiv_qr);
 }
 double
-speed_mpn_dc_divrem_n (struct speed_params *s)
+speed_mpn_dcpi1_div_qr_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_DC_DIVREM_N (mpn_dc_divrem_n);
-}
-double
-speed_mpn_dc_divrem_sb (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn);
-}
-double
-speed_mpn_dc_divrem_sb_div (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn_div);
-}
-double
-speed_mpn_dc_divrem_sb_inv (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn_inv);
-}
-
-double
-speed_mpn_sb_divrem_m3 (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_SB_DIVREM_M3 (mpn_sb_divrem_mn);
-}
-double
-speed_mpn_sb_divrem_m3_div (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_SB_DIVREM_M3 (mpn_sb_divrem_mn_div);
-}
-double
-speed_mpn_sb_divrem_m3_inv (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_SB_DIVREM_M3 (mpn_sb_divrem_mn_inv);
+  SPEED_ROUTINE_MPN_DC_DIVREM_N (mpn_dcpi1_div_qr_n);
 }
 
 double

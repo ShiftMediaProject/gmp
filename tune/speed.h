@@ -1,7 +1,7 @@
 /* Header for speed and threshold things.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006 Free Software Foundation,
-Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -160,10 +160,7 @@ double speed_mpn_addmul_8 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_com_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_copyd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_copyi __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_dc_divrem_n __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_dc_divrem_sb __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_dc_divrem_sb_div __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_dc_divrem_sb_inv __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_dcpi1_div_qr_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dc_tdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY_DECR __GMP_PROTO ((struct speed_params *s));
@@ -405,6 +402,7 @@ mp_limb_t mpn_sb_divrem_mn_div __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcpt
 mp_limb_t mpn_sb_divrem_mn_inv __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 
 mp_size_t mpn_set_str_basecase __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, int));
+void mpn_pre_set_str __GMP_PROTO ((mp_ptr, unsigned char *, size_t, powers_t *, mp_ptr));
 
 void mpn_toom3_mul_n_open __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 void mpn_toom3_sqr_n_open __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -1206,6 +1204,7 @@ int speed_routine_count_zeros_setup
     unsigned  i;							\
     mp_ptr    a, d, q, r;						\
     double    t;							\
+    gmp_pi1_t dinv;							\
     TMP_DECL;								\
 									\
     SPEED_RESTRICT_COND (s->size >= 1);					\
@@ -1225,6 +1224,8 @@ int speed_routine_count_zeros_setup
     d[s->size-1] |= GMP_NUMB_HIGHBIT;					\
     a[2*s->size-1] = d[s->size-1] - 1;					\
 									\
+    invert_pi1 (dinv, d[s->size-1], d[s->size-2]);			\
+									\
     speed_operand_src (s, a, 2*s->size);				\
     speed_operand_src (s, d, s->size);					\
     speed_operand_dst (s, q, s->size+1);				\
@@ -1243,7 +1244,7 @@ int speed_routine_count_zeros_setup
   }
 
 #define SPEED_ROUTINE_MPN_DC_DIVREM_N(function)				\
-  SPEED_ROUTINE_MPN_DC_DIVREM_CALL((*function) (q, a, d, s->size))
+  SPEED_ROUTINE_MPN_DC_DIVREM_CALL((*function) (q, a, d, s->size, &dinv, r))
 
 #define SPEED_ROUTINE_MPN_DC_DIVREM_SB(function)			\
   SPEED_ROUTINE_MPN_DC_DIVREM_CALL					\
@@ -1253,47 +1254,6 @@ int speed_routine_count_zeros_setup
   SPEED_ROUTINE_MPN_DC_DIVREM_CALL					\
     ((*function) (q, r, 0, a, 2*s->size, d, s->size))
 
-
-/* A division of s->size by 3 limbs */
-
-#define SPEED_ROUTINE_MPN_SB_DIVREM_M3(function)			\
-  {									\
-    unsigned   i;							\
-    mp_ptr     a, d, q;							\
-    mp_size_t  qsize;							\
-    double     t;							\
-    TMP_DECL;								\
-									\
-    SPEED_RESTRICT_COND (s->size >= 3);					\
-									\
-    TMP_MARK;								\
-    SPEED_TMP_ALLOC_LIMBS (a, s->size, s->align_xp);			\
-									\
-    SPEED_TMP_ALLOC_LIMBS (d, 3, s->align_yp);				\
-    MPN_COPY (d, s->yp, 3);						\
-    d[2] |= GMP_NUMB_HIGHBIT;						\
-									\
-    qsize = s->size - 3;						\
-    SPEED_TMP_ALLOC_LIMBS (q, qsize, s->align_wp);			\
-									\
-    speed_operand_dst (s, a, s->size);					\
-    speed_operand_src (s, d, 3);					\
-    speed_operand_dst (s, q, qsize);					\
-    speed_cache_fill (s);						\
-									\
-    speed_starttime ();							\
-    i = s->reps;							\
-    do									\
-      {									\
-	MPN_COPY (a, s->xp, s->size);					\
-	function (q, a, s->size, d, 3);					\
-      }									\
-    while (--i != 0);							\
-    t = speed_endtime ();						\
-									\
-    TMP_FREE;								\
-    return t;								\
-  }
 
 /* A remainder 2*s->size by s->size limbs */
 

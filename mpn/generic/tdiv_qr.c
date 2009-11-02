@@ -137,7 +137,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      }
 
 	    invert_pi1 (dinv, d2p[dn - 1], d2p[dn - 2]);
-	    if (dn < DIV_DC_THRESHOLD)
+	    if (dn < DC_DIV_QR_THRESHOLD)
 	      mpn_sbpi1_div_qr (qp, n2p, nn, d2p, dn, dinv.inv32);
 	    else
 	      mpn_dcpi1_div_qr (qp, n2p, nn, d2p, dn, &dinv);
@@ -258,7 +258,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      {
 		gmp_pi1_t dinv;
 		invert_pi1 (dinv, d2p[qn - 1], d2p[qn - 2]);
-		if (qn < DIV_DC_THRESHOLD)
+		if (qn < DC_DIV_QR_THRESHOLD)
 		  mpn_sbpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, dinv.inv32);
 		else
 		  mpn_dcpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, &dinv);

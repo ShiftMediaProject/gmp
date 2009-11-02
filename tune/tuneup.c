@@ -1,6 +1,7 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2005 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2005, 2006, 2008, 2009 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -163,7 +164,7 @@ mp_size_t  mullow_dc_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
-mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
+mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
@@ -416,6 +417,7 @@ print_define_end_remark (const char *name, mp_size_t value, const char *remark)
   if (remark != NULL)
     printf ("  /* %s */", remark);
   printf ("\n");
+  fflush (stdout);
 }
 
 void
@@ -971,43 +973,13 @@ tune_sqr (void)
 
 
 void
-tune_sb_preinv (void)
-{
-  static struct param_t  param;
-
-  if (GMP_NAIL_BITS != 0)
-    {
-      DIV_SB_PREINV_THRESHOLD = MP_SIZE_T_MAX;
-      print_define_remark ("DIV_SB_PREINV_THRESHOLD", MP_SIZE_T_MAX,
-                           "no preinv with nails");
-      return;
-    }
-
-  if (UDIV_PREINV_ALWAYS)
-    {
-      print_define_remark ("DIV_SB_PREINV_THRESHOLD", 0L, "preinv always");
-      return;
-    }
-
-  param.check_size = 256;
-  param.min_size = 3;
-  param.min_is_always = 1;
-  param.size_extra = 3;
-  param.stop_factor = 2.0;
-  param.name = "DIV_SB_PREINV_THRESHOLD";
-  param.function = speed_mpn_sb_divrem_m3;
-  one (&div_sb_preinv_threshold, &param);
-}
-
-
-void
 tune_dc (void)
 {
   static struct param_t  param;
-  param.name = "DIV_DC_THRESHOLD";
+  param.name = "DC_DIV_QR_THRESHOLD";
   param.function = speed_mpn_dc_tdiv_qr;
   param.step_factor = 0.02;
-  one (&div_dc_threshold, &param);
+  one (&dc_div_qr_threshold, &param);
 }
 
 
@@ -1833,7 +1805,6 @@ all (void)
   tune_mulmod_bnm1 ();
   printf("\n");
 
-  tune_sb_preinv ();
   tune_dc ();
   tune_powm ();
   printf("\n");
