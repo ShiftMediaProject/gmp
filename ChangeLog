@@ -27,6 +27,10 @@
 
 	* mpn/generic/sb_divappr_q.c: Remove.
 
+2009-11-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h: Misc minor cleanups.
+
 2009-10-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (toom itch functions): Simplify, make some into macros.
