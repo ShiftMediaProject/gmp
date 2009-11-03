@@ -28,7 +28,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* For odd divisors, mpn_divexact_1 works fine with two's complement. */
 #ifndef mpn_divexact_by3
+#if HAVE_NATIVE_mpn_bdiv_q_1_pi1 && MODLIMB_INVERSE_3
+#define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,MODLIMB_INVERSE_3,0)
+#else
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
+#endif
 #endif
 
 /* Interpolation for Toom-3.5, using the evaluation points: infinity,
@@ -65,6 +69,9 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   mp_limb_t cy;
   /* cy6 can be stored in w1[2*n], cy4 in w4[0], embankment in w2[0] */
   mp_limb_t cy4, cy6, embankment;
+
+  ASSERT( n > 0 );
+  ASSERT( 2*n >= w0n && w0n > 0 );
 
 #define w5  pp					/* 2n   */
 #define w3  (pp + 2 * n)			/* 2n+1 */
@@ -126,8 +133,12 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   /* W2 =(W2 - W4)/3 - W0<<2 */
   mpn_sub_n (w2, w2, w4, 2 * n + 1);
   mpn_divexact_by3 (w2, w2, 2 * n + 1);
-  cy = mpn_submul_1 (w2, w0, w0n, 4);
+#if HAVE_NATIVE_mpn_sublsh_n
+  cy = mpn_sublsh_n(w2, w0, w0n, 2);
   MPN_DECR_U (w2 + w0n, 2 * n + 1 - w0n, cy);
+#else
+  /* the "- W0<<2" will be delayed */
+#endif
 
   /* W3 = W3 - W4 - W5 */
   mpn_sub_n (w3, w3, w4, 2 * n + 1);
@@ -158,17 +169,27 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 		     |-H w0  |-L w0 ||-H w2  |-L w2  |
   */
   cy = mpn_add_n (pp + n, pp + n, w4, 2 * n + 1);
-  MPN_INCR_U (pp + 3 * n + 1, n, cy);
+  if(cy) MPN_INCR_U (pp + 3 * n + 1, n, 1);
+
+  /* W2 -= W0<<2 */
+#if HAVE_NATIVE_mpn_sublsh_n
+  /* Computed earlier */
+#else
+  /* {W4,2*n+1} is now free and can be overwritten. */
+  cy = mpn_lshift(w4, w0, w0n, 2);
+  cy+= mpn_sub_n(w2, w2, w4, w0n);
+  MPN_DECR_U (w2 + w0n, 2 * n + 1 - w0n, cy);
+#endif
 
   /* W4L = W4L - W2L */
   cy = mpn_sub_n (pp + n, pp + n, w2, n);
-  MPN_DECR_U (w3, 2 * n + 1, cy);
+  if(cy) MPN_DECR_U (w3, 2 * n + 1, 1);
 
   /* W3H = W3H + W2L */
   cy4 = w3[2 * n] + mpn_add_n (pp + 3 * n, pp + 3 * n, w2, n);
   /* W1L + W2H */
-  cy = mpn_add_n (pp + 4 * n, w1, w2 + n, n);
-  MPN_INCR_U (w1 + n, n + 1, w2[2 * n] + cy);
+  cy = w2[2 * n] + mpn_add_n (pp + 4 * n, w1, w2 + n, n);
+  MPN_INCR_U (w1 + n, n + 1, cy);
 
   /* W0 = W0 + W1H */
   if (LIKELY (w0n > n))
@@ -194,7 +215,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
       MPN_INCR_U (pp + 4 * n, w0n + n, cy4 - cy6);
     else
       MPN_DECR_U (pp + 4 * n, w0n + n, cy6 - cy4);
-    MPN_DECR_U (pp + 3 * n + w0n, 2 * n, cy);
+    if(cy) MPN_DECR_U (pp + 3 * n + w0n, 2 * n, 1);
     MPN_INCR_U (w0 + n, w0n - n, cy6);
   } else {
     MPN_INCR_U (pp + 4 * n, w0n + n, cy4);
