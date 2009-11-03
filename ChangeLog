@@ -1,3 +1,7 @@
+2009-11-03  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_6pts.c: removed an addmul_1 and cleanup.
+
 2009-11-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in (gmp_mpn_functions): Remove obsolete functions
