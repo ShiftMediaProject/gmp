@@ -169,7 +169,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 		     |-H w0  |-L w0 ||-H w2  |-L w2  |
   */
   cy = mpn_add_n (pp + n, pp + n, w4, 2 * n + 1);
-  if(cy) MPN_INCR_U (pp + 3 * n + 1, n, 1);
+  MPN_INCR_U (pp + 3 * n + 1, n, cy);
 
   /* W2 -= W0<<2 */
 #if HAVE_NATIVE_mpn_sublsh_n
@@ -183,7 +183,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 
   /* W4L = W4L - W2L */
   cy = mpn_sub_n (pp + n, pp + n, w2, n);
-  if(cy) MPN_DECR_U (w3, 2 * n + 1, 1);
+  MPN_DECR_U (w3, 2 * n + 1, cy);
 
   /* W3H = W3H + W2L */
   cy4 = w3[2 * n] + mpn_add_n (pp + 3 * n, pp + 3 * n, w2, n);
@@ -215,7 +215,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
       MPN_INCR_U (pp + 4 * n, w0n + n, cy4 - cy6);
     else
       MPN_DECR_U (pp + 4 * n, w0n + n, cy6 - cy4);
-    if(cy) MPN_DECR_U (pp + 3 * n + w0n, 2 * n, 1);
+    MPN_DECR_U (pp + 3 * n + w0n, 2 * n, cy);
     MPN_INCR_U (w0 + n, w0n - n, cy6);
   } else {
     MPN_INCR_U (pp + 4 * n, w0n + n, cy4);
