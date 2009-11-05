@@ -1,5 +1,8 @@
 2009-11-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/k7/gcd_1.asm: Actually use div-reduced value.
+	Mnemonic cleanup.
+
 	* mpn/x86_64/gcd_1.asm: New file.
 
 2009-11-03  Torbjorn Granlund  <tege@gmplib.org>
