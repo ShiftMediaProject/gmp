@@ -200,7 +200,7 @@ mpn_toom53_mul (mp_ptr pp,
   /* Compute bsh = 4 b0 + 2 b1 + b0 = 2*(2*b0 + b1)+b0.  */
 #if HAVE_NATIVE_mpn_addlsh1_n
   cy = mpn_addlsh1_n (bsh, b1, b0, n);
-  if (s < n)
+  if (t < n)
   {
       mp_limb_t cy2 = mpn_addlsh1_n (bsh, b2, bsh, t);
       bsh[n] = 2*cy + mpn_lshift (bsh + t, bsh + t, n - t, 1);
