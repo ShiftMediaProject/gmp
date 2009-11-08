@@ -92,7 +92,7 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @subtitle @value{UPDATED}
 
 @author by the GMP developers
-@c @email{tege@@gmplib.org}
+@c @email{tg@@gmplib.org}
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -10330,23 +10330,24 @@ improvements.
 Niels M@"oller wrote the sub-quadratic GCD and extended GCD code, the
 quadratic Hensel division code, and (with Torbj@"orn) the new divide and
 conquer division code for GMP 4.3.  Niels also helped implement the new Toom
-multiply code for GMP 4.3.
+multiply code for GMP 4.3.  He wrote the original version of mpn_mulmod_bnm1.
 
 Alberto Zanoni and Marco Bodrato suggested the unbalanced multiply strategy,
 and found the optimal strategies for evaluation and interpolation in Toom
-multiplication.  Marco also helped implement the new Toom multiply code for
-GMP 4.3.
+multiplication.
 
-David Harvey suggested the internal function @code{mpn_bdiv_dbm1},
-implementing division relevant to Toom multiplication.  He also worked on
-fast assembly sequences, in particular on a fast AMD64
-@code{mpn_mul_basecase}.
+Marco Bodrato helped implement the new Toom multiply code for GMP 4.3 and 4.4.
+He also helped write mpn_mulmod_bnm1.
+
+David Harvey suggested the internal function @code{mpn_bdiv_dbm1}, implementing
+division relevant to Toom multiplication.  He also worked on fast assembly
+sequences, in particular on a fast AMD64 @code{mpn_mul_basecase}.
 
 Martin Boij wrote @code{mpn_perfect_power_p}.
 
 (This list is chronological, not ordered after significance.  If you have
-contributed to GMP but are not listed above, please tell @email{tege@@gmplib.org}
-about the omission!)
+contributed to GMP but are not listed above, please tell
+@email{gmp-devel@@gmplib.org} about the omission!)
 
 The development of floating point functions of GNU MP 2, were supported in part
 by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
