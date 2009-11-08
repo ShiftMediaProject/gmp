@@ -18,7 +18,7 @@ Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
 2003, 2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
-the terms of the GNU Free Documentation License, Version 1.2 or any later
+the terms of the GNU Free Documentation License, Version 1.3 or any later
 version published by the Free Software Foundation; with no Invariant Sections,
 with the Front-Cover Texts being ``A GNU Manual'', and with the Back-Cover
 Texts being ``You have freedom to copy and modify this GNU Manual, like GNU
@@ -91,7 +91,7 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @subtitle Edition @value{EDITION}
 @subtitle @value{UPDATED}
 
-@author by The GMP developers
+@author by the GMP developers
 @c @email{tege@@gmplib.org}
 
 @c Include the Distribution inside the titlepage so
@@ -5480,6 +5480,47 @@ different bit values.
 Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @end deftypefun
 
+@deftypefun void mpn_and_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical and of @{@var{s1p}, @var{n}@} and @{@var{s2p},
+@var{n}@}, and write the result to @{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_ior_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical inclusive or of @{@var{s1p}, @var{n}@} and
+@{@var{s2p}, @var{n}@}, and write the result to @{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_xor_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical exclusive or of @{@var{s1p}, @var{n}@} and
+@{@var{s2p}, @var{n}@}, and write the result to @{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_andn_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical and of @{@var{s1p}, @var{n}@} and the bitwise
+complement of @{@var{s2p}, @var{n}@}, and write the result to @{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_iorn_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical inclusive or of @{@var{s1p}, @var{n}@} and the bitwise
+complement of @{@var{s2p}, @var{n}@}, and write the result to @{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_nand_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical and of @{@var{s1p}, @var{n}@} and @{@var{s2p},
+@var{n}@}, and write the bitwise complement of the result to @{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_nior_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical inclusive or of @{@var{s1p}, @var{n}@} and
+@{@var{s2p}, @var{n}@}, and write the bitwise complement of the result to
+@{@var{rp}, @var{n}@}.
+@end deftypefun
+
+@deftypefun void mpn_xnor_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Perform the bitwise logical exclusive or of @{@var{s1p}, @var{n}@} and
+@{@var{s2p}, @var{n}@}, and write the bitwise complement of the result to
+@{@var{rp}, @var{n}@}.
+@end deftypefun
 
 @sp 1
 @section Nails
@@ -10469,7 +10510,7 @@ volume 43, number 8, August 1994, pp.@: 899-908.
 @cindex GNU Free Documentation License
 @cindex Free Documentation License
 @cindex Documentation license
-@include fdl.texi
+@include fdl-1.3.texi
 
 
 @node Concept Index, Function Index, GNU Free Documentation License, Top

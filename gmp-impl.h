@@ -1978,82 +1978,90 @@ __GMP_DECLSPEC void    mpn_com_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-#define MPN_LOGOPS_N_INLINE(d, s1, s2, n, operation)    \
-  do {                                                  \
-    mp_ptr	 __d = (d);                             \
-    mp_srcptr	 __s1 = (s1);                           \
-    mp_srcptr	 __s2 = (s2);                           \
-    mp_size_t	 __n = (n);                             \
-    ASSERT (__n >= 1);                                  \
-    ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s1, __n));   \
-    ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s2, __n));   \
-    do                                                  \
-      operation;                                        \
-    while (--__n);                                      \
+#define MPN_LOGOPS_N_INLINE(rp, up, vp, n, operation)			\
+  do {									\
+    mp_srcptr	__up = (up);						\
+    mp_srcptr	__vp = (vp);						\
+    mp_ptr	__rp = (rp);						\
+    mp_size_t	__n = (n);						\
+    mp_limb_t __a, __b;							\
+    ASSERT (__n > 0);							\
+    ASSERT (MPN_SAME_OR_SEPARATE_P (__rp, __up, __n));			\
+    ASSERT (MPN_SAME_OR_SEPARATE_P (__rp, __vp, __n));			\
+    __up += __n;							\
+    __vp += __n;							\
+    __rp += __n;							\
+    __n = -__n;								\
+    do {								\
+      __a = __up[__n];							\
+      __b = __vp[__n];							\
+      __rp[__n] = operation;						\
+    } while (++__n);							\
   } while (0)
+
 
 #if HAVE_NATIVE_mpn_and_n
 #define mpn_and_n __MPN(and_n)
 __GMP_DECLSPEC void    mpn_and_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_and_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ & *__s2++)
+#define mpn_and_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, __a & __b)
 #endif
 
 #if HAVE_NATIVE_mpn_andn_n
 #define mpn_andn_n __MPN(andn_n)
 __GMP_DECLSPEC void    mpn_andn_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_andn_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ & ~*__s2++)
+#define mpn_andn_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, __a & ~__b)
 #endif
 
 #if HAVE_NATIVE_mpn_nand_n
 #define mpn_nand_n __MPN(nand_n)
 __GMP_DECLSPEC void    mpn_nand_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_nand_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ & *__s2++) & GMP_NUMB_MASK)
+#define mpn_nand_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, ~(__a & __b) & GMP_NUMB_MASK)
 #endif
 
 #if HAVE_NATIVE_mpn_ior_n
 #define mpn_ior_n __MPN(ior_n)
 __GMP_DECLSPEC void    mpn_ior_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_ior_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ | *__s2++)
+#define mpn_ior_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, __a | __b)
 #endif
 
 #if HAVE_NATIVE_mpn_iorn_n
 #define mpn_iorn_n __MPN(iorn_n)
 __GMP_DECLSPEC void    mpn_iorn_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_iorn_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = (*__s1++ | ~*__s2++) & GMP_NUMB_MASK)
+#define mpn_iorn_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, (__a | ~__b) & GMP_NUMB_MASK)
 #endif
 
 #if HAVE_NATIVE_mpn_nior_n
 #define mpn_nior_n __MPN(nior_n)
 __GMP_DECLSPEC void    mpn_nior_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_nior_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ | *__s2++) & GMP_NUMB_MASK)
+#define mpn_nior_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, ~(__a | __b) & GMP_NUMB_MASK)
 #endif
 
 #if HAVE_NATIVE_mpn_xor_n
 #define mpn_xor_n __MPN(xor_n)
 __GMP_DECLSPEC void    mpn_xor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_xor_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ ^ *__s2++)
+#define mpn_xor_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, __a ^ __b)
 #endif
 
 #if HAVE_NATIVE_mpn_xnor_n
 #define mpn_xnor_n __MPN(xnor_n)
 __GMP_DECLSPEC void    mpn_xnor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_xnor_n(d, s1, s2, n) \
-  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~(*__s1++ ^ *__s2++) & GMP_NUMB_MASK)
+#define mpn_xnor_n(rp, up, vp, n) \
+  MPN_LOGOPS_N_INLINE (rp, up, vp, n, ~(__a ^ __b) & GMP_NUMB_MASK)
 #endif
 
 #define mpn_trialdiv __MPN(trialdiv)

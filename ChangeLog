@@ -1,7 +1,14 @@
+2009-11-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (MPN_LOGOPS_N_INLINE): Rewrite, update interface.  Callers
+	updated.
+	* mpn/generic/logops_n.c: New file.
+	* doc/gmp.texi (Low-level Functions): Document logical mpn functions.
+
 2009-11-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1): Adapt to new
-        mpn_mulmod_bnm1 interface.
+	mpn_mulmod_bnm1 interface.
 
 2009-11-07  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
