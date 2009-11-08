@@ -1,3 +1,14 @@
+2009-11-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1): Adapt to new
+        mpn_mulmod_bnm1 interface.
+
+2009-11-07  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c: New interface, with size
+	specified for all operands in mpn_mulmod_bnm1.
+	* gmp-impl.h: Changed mpn_mulmod_bnm1 prototype.
+
 2009-11-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/gcd_1.asm: Actually use div-reduced value.

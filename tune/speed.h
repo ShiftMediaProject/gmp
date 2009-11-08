@@ -995,13 +995,13 @@ int speed_routine_count_zeros_setup
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_src (s, s->yp, s->size);				\
     speed_operand_dst (s, wp, 2 * s->size);				\
-    speed_operand_dst (s, tp, 20 * s->size + 100); /* FIXME: Use itch function */ \
+    speed_operand_dst (s, tp, 3 * s->size + 100); /* FIXME: Use itch function */ \
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, s->xp, s->yp, s->size, tp);				\
+      function (wp, s->size, s->xp, s->size, s->yp, s->size, tp);	\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

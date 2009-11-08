@@ -921,10 +921,10 @@ __GMP_DECLSPEC void mpn_mod_1s_4p_cps __GMP_PROTO ((mp_limb_t [7], mp_limb_t));
 __GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [7])) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_mulmod_bnm1 __MPN(mulmod_bnm1)
-__GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_mulmod_bnm1_next_size __MPN(mulmod_bnm1_next_size)
 __GMP_DECLSPEC mp_size_t mpn_mulmod_bnm1_next_size __GMP_PROTO ((mp_size_t));
-#define mpn_mulmod_bnm1_itch(n) (6*(n) + GMP_LIMB_BITS)
+#define mpn_mulmod_bnm1_itch(n) (2*(n) + 2*GMP_LIMB_BITS +2)
 
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
