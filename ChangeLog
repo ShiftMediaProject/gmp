@@ -1,3 +1,7 @@
+2009-11-09  Torbjorn Granlund  <tege@gmplib.org>
+
+	* acinclude.m4 (GMP_C_FOR_BUILD_ANSI): Avoid poor quoting.
+
 2009-11-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (MPN_LOGOPS_N_INLINE): Rewrite, update interface.  Callers
