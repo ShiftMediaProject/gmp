@@ -22,4 +22,4 @@
 EXTRA_DIST = configuration isa_abi_headache projects.html tasks.html
 
 info_TEXINFOS = gmp.texi
-gmp_TEXINFOS = fdl.texi
+gmp_TEXINFOS = fdl-1.3.texi
