@@ -3800,6 +3800,8 @@ dnl  GMP_C_FOR_BUILD_ANSI
 dnl  --------------------
 dnl  Determine whether CC_FOR_BUILD is ANSI, and establish U_FOR_BUILD
 dnl  accordingly.
+dnl
+dnl  FIXME: Use AC_PROG_CC sets ac_cv_prog_cc_c89 which could be used instead
 
 AC_DEFUN([GMP_C_FOR_BUILD_ANSI],
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
@@ -3807,7 +3809,7 @@ AC_CACHE_CHECK([whether build system compiler is ANSI],
                gmp_cv_c_for_build_ansi,
 [cat >conftest.c <<EOF
 int
-main (int argc, char *argv[])
+main (int argc, char **argv)
 {
   exit(0);
 }
