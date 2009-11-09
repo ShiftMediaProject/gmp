@@ -1,5 +1,7 @@
 2009-11-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86/fat/mod_1.c: New file.
+
 	* acinclude.m4 (GMP_C_FOR_BUILD_ANSI): Avoid poor quoting.
 
 2009-11-08  Torbjorn Granlund  <tege@gmplib.org>
