@@ -1,5 +1,7 @@
 2009-11-10  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Supply compiler options for atom in 32-bit mode.
+
 	* acinclude.m4 (X86_64_PATTERN): New.
 	* configure.in: Setup and use X86_64_PATTERN.
 
