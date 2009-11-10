@@ -1,3 +1,16 @@
+2009-11-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* acinclude.m4 (X86_64_PATTERN): New.
+	* configure.in: Setup and use X86_64_PATTERN.
+
+	* mpn/x86_64/fat/fat.c: New file.
+	* mpn/x86_64/fat/fat_entry.asm: New file.
+	* mpn/x86_64/fat: Copy C placeholder files from mpn/x86/fat.
+	* mpn/x86_64/x86_64-defs.m4 (CPUVEC_FUNCS_LIST): New, copied from
+	mpn/x86/x86-defs.m4.
+	* configure.in: Move down x86 fat setup code until after ABI has been
+	determined; generalize to handle x86_64.
+
 2009-11-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/fat/mod_1.c: New file.

@@ -2,8 +2,8 @@ divert(-1)
 
 dnl  m4 macros for amd64 assembler.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005 Free Software
-dnl  Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009 Free
+dnl  Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -21,11 +21,32 @@ dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
-dnl  Notes:
+dnl  Usage: CPUVEC_FUNCS_LIST
 dnl
-dnl  The 32-bit mode x86/x86-defs.m4 has various 32bit-isms, like the
-dnl  profiling calls, so it seems cleanest to start a fresh set of defines
-dnl  for 64-bit mode.
+dnl  A list of the functions from gmp-impl.h x86 struct cpuvec_t, in the
+dnl  order they appear in that structure.
+
+define(CPUVEC_FUNCS_LIST,
+``add_n',
+`addmul_1',
+`copyd',
+`copyi',
+`divexact_1',
+`divexact_by3c',
+`divrem_1',
+`gcd_1',
+`lshift',
+`mod_1',
+`mod_34lsub1',
+`modexact_1c_odd',
+`mul_1',
+`mul_basecase',
+`preinv_divrem_1',
+`preinv_mod_1',
+`rshift',
+`sqr_basecase',
+`sub_n',
+`submul_1'')
 
 
 dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)

@@ -4,7 +4,7 @@ dnl  Process this file with autoconf to produce a configure script.
 define(GMP_COPYRIGHT,[[
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007 Free Software Foundation, Inc.
+2007, 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -250,6 +250,7 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #undef HAVE_HOST_CPU_FAMILY_power
 #undef HAVE_HOST_CPU_FAMILY_powerpc
 #undef HAVE_HOST_CPU_FAMILY_x86
+#undef HAVE_HOST_CPU_FAMILY_x86_64
 
 /* Define one of the following to 1 for the host CPU, as per the output of
    ./config.guess.  If your CPU is not listed here, leave all undefined.  */
@@ -1281,7 +1282,7 @@ case $host in
   # mode, in case -m32 has failed not because it's an old gcc, but because
   # it's a dual 32/64-bit gcc without a 32-bit libc, or whatever.
   #
-  X86_PATTERN | athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*)
+  X86_PATTERN | X86_64_PATTERN)
     abilist="32"
     cclist="gcc icc cc"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
@@ -1436,27 +1437,6 @@ case $host in
       viac3*)               path="x86/pentium/mmx x86/pentium x86";;
       *)                    path="x86" ;;
     esac
-
-    # If the user asked for a fat build, override the path and flags set above
-    if test $enable_fat = yes; then
-      gcc_cflags_cpu=""
-      gcc_cflags_arch=""
-      extra_functions="$extra_functions fat fat_entry"
-      path="x86/fat x86"
-      fat_path="x86 x86/fat x86/i486
-		x86/k6 x86/k6/mmx x86/k6/k62mmx
-		x86/k7 x86/k7/mmx
-		x86/pentium x86/pentium/mmx
-		x86/p6 x86/p6/mmx x86/p6/p3mmx x86/p6/sse2
-		x86/pentium4 x86/pentium4/mmx x86/pentium4/sse2"
-      fat_functions="add_n addmul_1 copyd copyi
-		     dive_1 diveby3 divrem_1 gcd_1 lshift
-		     mod_1 mod_34lsub1 mode1o mul_1 mul_basecase
-		     pre_divrem_1 pre_mod_1 rshift
-		     sqr_basecase sub_n submul_1"
-      fat_thresholds="MUL_TOOM22_THRESHOLD MUL_TOOM33_THRESHOLD
-		      SQR_TOOM2_THRESHOLD SQR_TOOM3_THRESHOLD"
-    fi
 
     case $host_cpu in
       athlon64 | atom | core2 | pentium4 | x86_64)
@@ -1776,6 +1756,42 @@ if test $found_compiler = no && test -n "$path"; then
   AC_MSG_ERROR([could not find a working compiler, see config.log for details])
 fi
 
+case $host in
+  X86_PATTERN | X86_64_PATTERN)
+    # If the user asked for a fat build, override the path and flags set above
+    if test $enable_fat = yes; then
+      gcc_cflags_cpu=""
+      gcc_cflags_arch=""
+
+      if test "$abi" = 32; then
+	extra_functions="$extra_functions fat fat_entry"
+	path="x86/fat x86"
+	fat_path="x86 x86/fat x86/i486
+		  x86/k6 x86/k6/mmx x86/k6/k62mmx
+		  x86/k7 x86/k7/mmx
+		  x86/pentium x86/pentium/mmx
+		  x86/p6 x86/p6/mmx x86/p6/p3mmx x86/p6/sse2
+		  x86/pentium4 x86/pentium4/mmx x86/pentium4/sse2"
+      fi
+
+      if test "$abi" = 64; then
+	gcc_64_cflags=""
+	extra_functions_64="$extra_functions_64 fat fat_entry"
+	path_64="x86_64/fat x86_64"
+	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/atom"
+      fi
+
+      fat_functions="add_n addmul_1 copyd copyi
+		     dive_1 diveby3 divrem_1 gcd_1 lshift
+		     mod_1 mod_34lsub1 mode1o mul_1 mul_basecase
+		     pre_divrem_1 pre_mod_1 rshift
+		     sqr_basecase sub_n submul_1"
+      fat_thresholds="MUL_TOOM22_THRESHOLD MUL_TOOM33_THRESHOLD
+		      SQR_TOOM2_THRESHOLD SQR_TOOM3_THRESHOLD"
+    fi
+    ;;
+esac
+
 
 if test $found_compiler = yes; then
 
@@ -2043,7 +2059,7 @@ done
 # enough assembler.
 #
 case $host in
-  X86_PATTERN | athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*)
+  X86_PATTERN | X86_64_PATTERN)
     if test "$ABI" = 32; then
       case "$path $fat_path" in
         *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
@@ -3050,7 +3066,7 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
       esac
       ;;
-    X86_PATTERN | athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*)
+    X86_PATTERN | X86_64_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
       case $ABI in
         32)
@@ -3069,6 +3085,7 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
         64)
           GMP_INCLUDE_MPN(x86_64/x86_64-defs.m4)
+          AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86_64)
 	  case $host in
 	    *-*-darwin*)
 	      GMP_INCLUDE_MPN(x86_64/darwin.m4) ;;

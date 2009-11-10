@@ -4,7 +4,7 @@
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -3953,7 +3953,7 @@ __GMP_DECLSPEC int __gmp_doscan __GMP_PROTO ((const struct gmp_doscan_funs_t *, 
    difference to the gmp code, since hopefully we arrange calls so there's
    no great need for the compiler to move things around.  */
 
-#if WANT_FAT_BINARY && HAVE_HOST_CPU_FAMILY_x86
+#if WANT_FAT_BINARY && (HAVE_HOST_CPU_FAMILY_x86 || HAVE_HOST_CPU_FAMILY_x86_64)
 /* NOTE: The function pointers in this struct are also in CPUVEC_FUNCS_LIST
    in mpn/x86/x86-defs.m4.  Be sure to update that when changing here.  */
 struct cpuvec_t {

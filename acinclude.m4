@@ -1,7 +1,7 @@
 dnl  GMP specific autoconf macros
 
 
-dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software
+dnl  Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009 Free Software
 dnl  Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
@@ -46,6 +46,8 @@ define(POWERPC64_PATTERN,
 define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-* | geode*-*-*]])
 
+define(X86_64_PATTERN,
+[[athlon64-*-* | atom-*-* | core2-*-* | x86_64-*-*]])
 
 dnl  GMP_FAT_SUFFIX(DSTVAR, DIRECTORY)
 dnl  ---------------------------------
