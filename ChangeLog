@@ -1,5 +1,7 @@
 2009-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/binvert.c: Simplify, fix comments.
+
 	* tests/devel/try.c: Test mpn_invert and mpn_binvert.
 
 	* tests/refmpn.c (refmpn_invert, refmpn_binvert): New functions.

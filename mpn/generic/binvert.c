@@ -76,9 +76,7 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
 
   xp = scratch;
 
-  /* Compute a base value using a low-overhead O(n^2) algorithm.  FIXME: We
-     should call some divide-and-conquer lsb division function here for an
-     operand subrange.  */
+  /* Compute a base value of rn limbs.  */
   MPN_ZERO (xp, rn);
   xp[0] = 1;
   binvert_limb (di, up[0]);
@@ -92,6 +90,7 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
     {
       newrn = *--sizp;
 
+      /* X <- UR.  We actually want a mulmid */
 #if WANT_FFT
       if (ABOVE_THRESHOLD (newrn, 2 * MUL_FFT_MODF_THRESHOLD))
 	{
@@ -101,10 +100,10 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
 	  k = mpn_fft_best_k (newrn, 0);
 	  m = mpn_fft_next_size (newrn, k);
 	  mpn_mul_fft (xp, m, up, newrn, rp, rn, k);
-	  for (i = rn - 1; i >= 0; i--)
-	    if (xp[i] > (i == 0))
+
+	  if (xp[0] > 1 || !mpn_zero_p (xp + 1, rn - 1))
 	      {
-		mpn_add_1 (xp + rn, xp + rn, newrn - rn, 1);
+		MPN_INCR_U (xp + rn, newrn - rn, 1);
 		break;
 	      }
 	}
