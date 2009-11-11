@@ -104,25 +104,25 @@ L(strip_x):
 
 	ALIGN(16)
 L(top):
-	cmovc	%r10, %rcx		C if x-y gave carry, use x and y-x
-	cmovc	%rax, %rdx
+	cmovc	%r10, %rcx		C if x-y gave carry, use x,y-x	0
+	cmovc	%rax, %rdx		C				0
 
 L(strip_x_top):
-	mov	%rcx, %rax
-	and	$MASK, R32(%rcx)
+	mov	%rcx, %rax		C				1
+	and	$MASK, R32(%rcx)	C				1
 
-	movb	(%r9,%rcx), R8(%rcx)
+	mov	(%r9,%rcx), R8(%rcx)	C				1
 
-	shr	R8(%rcx), %rax
-	cmpb	$MAXSHIFT, R8(%rcx)
+	shr	R8(%rcx), %rax		C				4
+	cmp	$MAXSHIFT, R8(%rcx)	C				4
 
-	mov	%rax, %rcx
-	mov	%rdx, %r10
-	je	L(strip_x_top)
+	mov	%rax, %rcx		C				5
+	mov	%rdx, %r10		C				5
+	je	L(strip_x_top)		C				5
 
-	sub	%rax, %r10
-	sub	%rdx, %rcx
-	jnz	L(top)
+	sub	%rax, %r10		C				6
+	sub	%rdx, %rcx		C				6
+	jnz	L(top)			C				6
 
 L(done):
 	mov	%r8, %rcx
