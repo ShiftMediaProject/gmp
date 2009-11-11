@@ -1,5 +1,10 @@
 2009-11-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/devel/try.c: Test mpn_invert and mpn_binvert.
+
+	* tests/refmpn.c (refmpn_invert, refmpn_binvert): New functions.
+	* tests/tests.h: Declare new functions.
+
 	* mpn/generic/dcpi1_bdiv_q.c: Get final mpn_sbpi1_bdiv_q call right.
 
 2009-11-10  Torbjorn Granlund  <tege@gmplib.org>

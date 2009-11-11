@@ -1,6 +1,7 @@
 /* Tests support prototypes etc.
 
-Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2004, 2008, 2009 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -393,6 +394,9 @@ void refmpn_xor_n  __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void refmpn_zero __GMP_PROTO ((mp_ptr p, mp_size_t s));
 void refmpn_zero_extend __GMP_PROTO ((mp_ptr, mp_size_t, mp_size_t));
 int refmpn_zero_p __GMP_PROTO ((mp_srcptr ptr, mp_size_t size));
+
+void refmpn_binvert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+void refmpn_invert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 
 void refmpq_add __GMP_PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));

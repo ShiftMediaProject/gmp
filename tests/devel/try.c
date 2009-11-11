@@ -351,10 +351,12 @@ struct try_t {
 
 #define DATA_NON_ZERO         1
 #define DATA_GCD              2
-#define DATA_SRC1_ODD         3
-#define DATA_SRC1_HIGHBIT     4
-#define DATA_MULTIPLE_DIVISOR 5
-#define DATA_UDIV_QRNND       6
+#define DATA_SRC0_ODD         3
+#define DATA_SRC0_HIGHBIT     4
+#define DATA_SRC1_ODD         5
+#define DATA_SRC1_HIGHBIT     6
+#define DATA_MULTIPLE_DIVISOR 7
+#define DATA_UDIV_QRNND       8
   char  data;
 
 /* Default is allow full overlap. */
@@ -612,6 +614,9 @@ validate_sqrtrem (void)
 #define TYPE_DIVEXACT_BY3C    52
 #define TYPE_MODEXACT_1_ODD   53
 #define TYPE_MODEXACT_1C_ODD  54
+
+#define TYPE_INVERT           55
+#define TYPE_BINVERT          56
 
 #define TYPE_GCD              60
 #define TYPE_GCD_1            61
@@ -1168,6 +1173,20 @@ param_init (void)
   p->overlap = OVERLAP_NONE;
   REFERENCE (refmpn_get_str);
 
+  p = &param[TYPE_BINVERT];
+  p->dst[0] = 1;
+  p->src[0] = 1;
+  p->data = DATA_SRC0_ODD;
+  p->overlap = OVERLAP_NONE;
+  REFERENCE (refmpn_binvert);
+
+  p = &param[TYPE_INVERT];
+  p->dst[0] = 1;
+  p->src[0] = 1;
+  p->data = DATA_SRC0_HIGHBIT;
+  p->overlap = OVERLAP_NONE;
+  REFERENCE (refmpn_invert);
+
 #ifdef EXTRA_PARAM_INIT
   EXTRA_PARAM_INIT
 #endif
@@ -1535,6 +1554,9 @@ const struct choice_t choice_array[] = {
   { TRY_FUNFUN(MPN_ZERO), TYPE_ZERO },
 
   { TRY(mpn_get_str),    TYPE_GET_STR },
+
+  { TRY(mpn_binvert),    TYPE_BINVERT },
+  { TRY(mpn_invert),     TYPE_INVERT  },
 
 #ifdef EXTRA_ROUTINES
   EXTRA_ROUTINES
@@ -2295,6 +2317,27 @@ call (struct each_t *e, tryfun_t function)
     }
     break;
 
+ case TYPE_INVERT:
+    {
+      mp_ptr scratch;
+      TMP_DECL;
+      TMP_MARK;
+      scratch = TMP_ALLOC_LIMBS (mpn_invert_itch (size));
+      CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size, scratch);
+      TMP_FREE;
+    }
+    break;
+  case TYPE_BINVERT:
+    {
+      mp_ptr scratch;
+      TMP_DECL;
+      TMP_MARK;
+      scratch = TMP_ALLOC_LIMBS (mpn_binvert_itch (size));
+      CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size, scratch);
+      TMP_FREE;
+    }
+    break;
+
 #ifdef EXTRA_CALL
     EXTRA_CALL
 #endif
@@ -2521,6 +2564,11 @@ try_one (void)
 
 	/* odd */
 	s[i].p[0] |= 1;
+	break;
+
+      case DATA_SRC0_ODD:
+	if (i == 0)
+	  s[i].p[0] |= 1;
 	break;
 
       case DATA_SRC1_ODD:

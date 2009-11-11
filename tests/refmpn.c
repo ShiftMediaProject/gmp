@@ -2,7 +2,7 @@
    of the normal gmp code.  Speed isn't a consideration.
 
 Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-2007, 2008 Free Software Foundation, Inc.
+2007, 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1299,6 +1299,49 @@ refmpn_invert_limb (mp_limb_t d)
   return refmpn_udiv_qrnnd (&r, -d-1, MP_LIMB_T_MAX, d);
 }
 
+void
+refmpn_invert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
+{
+  mp_ptr qp, tp;
+  mp_limb_t inv;
+  TMP_DECL;
+  TMP_MARK;
+
+  tp = TMP_ALLOC_LIMBS (2 * n);
+  qp = TMP_ALLOC_LIMBS (n + 1);
+
+  MPN_ZERO (tp, 2 * n);  mpn_sub_1 (tp, tp, 2 * n, 1);
+
+  refmpn_tdiv_qr (qp, rp, 0, tp, 2 * n, up, n);
+  refmpn_copyi (rp, qp, n);
+
+  TMP_FREE;
+}
+
+void
+refmpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
+{
+  mp_ptr tp;
+  mp_limb_t binv;
+  TMP_DECL;
+  TMP_MARK;
+
+  /* We use the library mpn_sbpi1_bdiv_q here, which isn't kosher in testing
+     code.  To make up for it, we check that the inverse is correct using a
+     multiply.  */
+
+  tp = TMP_ALLOC_LIMBS (2 * n);
+
+  MPN_ZERO (tp, n);
+  tp[0] = 1;
+  binvert_limb (binv, up[0]);
+  mpn_sbpi1_bdiv_q (rp, tp, n, up, n, -binv);
+
+  refmpn_mul_n (tp, rp, up, n);
+  ASSERT_ALWAYS (tp[0] == 1 && mpn_zero_p (tp + 1, n - 1));
+
+  TMP_FREE;
+}
 
 /* The aim is to produce a dst quotient and return a remainder c, satisfying
    c*b^n + src-i == 3*dst, where i is the incoming carry.
