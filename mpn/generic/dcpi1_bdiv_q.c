@@ -8,7 +8,7 @@
    ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
    RELEASE.
 
-Copyright 2006, 2007 Free Software Foundation, Inc.
+Copyright 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -129,7 +129,7 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
     }
 
   if (BELOW_THRESHOLD (qn, DC_BDIV_Q_THRESHOLD))
-    mpn_sbpi1_bdiv_q (qp, np, 2 * qn, dp, qn, dinv);
+    mpn_sbpi1_bdiv_q (qp, np, qn, dp, qn, dinv);
   else
     mpn_dcpi1_bdiv_q_n (qp, np, dp, qn, dinv, tp);
 

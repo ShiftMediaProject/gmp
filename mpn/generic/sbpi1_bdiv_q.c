@@ -29,7 +29,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* Computes Q = N / D mod B^nn, destroys N.
-   Clobbers N.
 
    D must be odd. dinv is (-D)^-1 mod B.
 
