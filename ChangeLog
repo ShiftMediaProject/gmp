@@ -595,6 +595,12 @@
 
 	* mpn/x86_64/mod_1_4.asm: Minor size reducing tweaks.
 
+	* mpn/x86/mod_1.asm: Remove obsolete file.
+	* mpn/x86/k7/mmx/mod_1.asm: Likewise.
+	* mpn/x86/pentium4/sse2/mod_1.asm: Likewise.
+	* mpn/x86/p6/mod_1.asm: Likewise.
+	* mpn/x86/pentium/mod_1.asm: Likewise.
+
 2009-06-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom4_sqr.c (mpn_toom4_sqr): Reorganized, to reduce
