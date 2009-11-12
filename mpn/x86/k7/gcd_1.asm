@@ -44,7 +44,7 @@ C Actually, there doesn't seem to be a measurable difference between this in
 C it's own cache line or plonked in the middle of the code.  Presumably
 C since TEXT is read-only there's no worries about coherency.
 
-deflit(MASK, 63)
+deflit(MAXSHIFT, 6)
 deflit(MASK, eval((1<<MAXSHIFT)-1))
 
 	TEXT
