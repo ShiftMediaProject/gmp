@@ -7,8 +7,6 @@
 	* tests/refmpn.c (refmpn_invert, refmpn_binvert): New functions.
 	* tests/tests.h: Declare new functions.
 
-	* mpn/generic/dcpi1_bdiv_q.c: Get final mpn_sbpi1_bdiv_q call right.
-
 2009-11-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Supply compiler options for atom in 32-bit mode.
