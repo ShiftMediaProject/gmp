@@ -78,7 +78,7 @@ mpn_toom52_mul (mp_ptr pp,
 
   /* Ensures that 5 values of n+1 limbs each fits in the product area.
      Borderline cases are an = 32, bn = 8, n = 7, and an = 36, bn = 9,
-     n = 8. */     
+     n = 8. */
   ASSERT (s+t >= 5);
 
 #define v0    pp				/* 2n */
@@ -146,7 +146,7 @@ mpn_toom52_mul (mp_ptr pp,
 
   /* Compute bs2 and bsm2, recycling bs1 and bsm1. bs2=bs1+b1; bsm2=bsm1-b1  */
   mpn_add (bs2, bs1, n+1, b1, t);
-  if ( flags & toom6_vm1_neg )
+  if (flags & toom6_vm1_neg )
     {
       bsm2[n] = mpn_add (bsm2, bsm1, n, b1, t);
       flags ^= toom6_vm2_neg;
@@ -197,7 +197,7 @@ mpn_toom52_mul (mp_ptr pp,
   if (mpn_cmp (a0a2, a1a3, n+1) < 0)
     {
       mpn_add_n_sub_n (as2, asm2, a1a3, a0a2, n+1);
-      flags ^= toom6_vm1_neg;
+      flags ^= toom6_vm2_neg;
     }
   else
     {
