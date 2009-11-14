@@ -2068,7 +2068,7 @@ __GMP_DECLSPEC void    mpn_xnor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp
 __GMP_DECLSPEC mp_limb_t mpn_trialdiv __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, int *));
 
 #define mpn_remove __MPN(remove)
-__GMP_DECLSPEC mp_bitcnt_t mpn_remove __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
+__GMP_DECLSPEC mp_bitcnt_t mpn_remove __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_bitcnt_t));
 
 
 /* ADDC_LIMB sets w=x+y and cout to 0 or 1 for a carry from that addition. */

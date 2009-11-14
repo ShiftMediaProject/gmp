@@ -1,5 +1,7 @@
 2009-11-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/remove.c: Major overhaul.  Add parameter 'cap'.
+
 	* mpn/generic/binvert.c: Fix typo in last change.
 
 	* mpn/generic/bdiv_qr.c: Make it actually work.  Also use passed-in

@@ -1,7 +1,7 @@
 /* mpn_remove -- divide out all multiples of odd mpn number from another mpn
    number.
 
-   Contributed to the GNU project by Torbjörn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund.
 
    THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -33,9 +33,24 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define LOG GMP_LIMB_BITS
 #endif
 
+
+/* Input: U = {up,un}, V = {vp,vn} must be odd, cap
+   Ouput  W = {wp,*wn} allocation need is exactly *wn
+
+   Set W = U / V^k, where k is the largest integer <= cap such that the
+   division yields an integer.
+
+   FIXME: We currently allow any operand overlap.  This is quite non mpn-ish
+   and might be changed, since it cost significant temporary space.
+   * If we require W to have space for un limbs, we could save qp or qp2 (but
+     we will still need to copy things into wp 50% of the time).
+   * If we allow ourselves to clobber U, we could save the other of qp and qp2.
+*/
+
 mp_bitcnt_t
 mpn_remove (mp_ptr wp, mp_size_t *wn,
-	    mp_ptr up, mp_size_t un, mp_ptr vp, mp_size_t vn)
+	    mp_ptr up, mp_size_t un, mp_ptr vp, mp_size_t vn,
+	    mp_bitcnt_t cap)
 {
   mp_ptr    pwpsp[LOG];
   mp_size_t pwpsn[LOG];
@@ -52,14 +67,17 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
 
   TMP_MARK;
 
-  tp = TMP_ALLOC_LIMBS (un);
-  qp = TMP_ALLOC_LIMBS (un);
-  qp2 = TMP_ALLOC_LIMBS (un);
-  np = TMP_ALLOC_LIMBS (un + LOG);
+  tp = TMP_ALLOC_LIMBS ((un + vn) / 2); /* remainder */
+  qp = TMP_ALLOC_LIMBS (un);		/* quotient, alternating */
+  qp2 = TMP_ALLOC_LIMBS (un);		/* quotient, alternating */
+  np = TMP_ALLOC_LIMBS (un + LOG);	/* powers of V */
   pp = vp;
   pn = vn;
 
-  scratch_out = TMP_ALLOC_LIMBS (mpn_bdiv_qr_itch (un, un>>1)); /* FIXME */
+  /* FIXME: This allocation need indicate a flaw in the current itch mechanism:
+     Which operands not greater than un,un will incur the worst itch?  We need
+     a parallel foo_maxitch set of functions.  */
+  scratch_out = TMP_ALLOC_LIMBS (mpn_bdiv_qr_itch (un, un >> 1));
 
   MPN_COPY (qp, up, un);
   qn = un;
@@ -69,16 +87,18 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
     {
       mpn_bdiv_qr (qp2, tp, qp, qn, pp, pn, scratch_out);
       if (!mpn_zero_p (tp, pn))
-	break;			/* could not divide by pp */
+	break;			/* could not divide by V^npowers */
 
       MP_PTR_SWAP (qp, qp2);
-
       qn = qn - pn;
       qn += qp[qn] != 0;
 
       pwpsp[npowers] = pp;
       pwpsn[npowers] = pn;
       npowers++;
+
+      if (((mp_bitcnt_t) 2 << npowers) - 1 > cap)
+	break;
 
       nn = 2 * pn - 1;		/* next power will be at least this many limbs */
       if (nn > qn)
@@ -97,23 +117,27 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
     {
       pp = pwpsp[i];
       pn = pwpsn[i];
-      if (qn >= pn)
-	{
-	  mpn_bdiv_qr (qp2, tp, qp, qn, pp, pn, scratch_out);
-	  if (mpn_zero_p (tp, pn))
-	    {
-	      pwr += (mp_bitcnt_t) 1 << i;
-	      MP_PTR_SWAP (qp, qp2);
+      if (qn < pn)
+	continue;
 
-	      qn = qn - pn;
-	      qn += qp[qn] != 0;
-	    }
-	}
+      if (pwr + ((mp_bitcnt_t) 1 << i) > cap)
+	continue;		/* V^i would bring us past cap */
+
+      mpn_bdiv_qr (qp2, tp, qp, qn, pp, pn, scratch_out);
+      if (!mpn_zero_p (tp, pn))
+	continue;		/* could not divide by V^i */
+
+      MP_PTR_SWAP (qp, qp2);
+      qn = qn - pn;
+      qn += qp[qn] != 0;
+
+      pwr += (mp_bitcnt_t) 1 << i;
     }
 
   MPN_COPY (wp, qp, qn);
   *wn = qn;
 
   TMP_FREE;
+
   return pwr;
 }
