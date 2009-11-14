@@ -1,13 +1,12 @@
-/* Compute {up,n}^(-1) mod 2(n*GMP_NUMB_BITS).
+/* Compute {up,n}^(-1) mod B^n.
 
    Contributed to the GNU project by Torbjorn Granlund.
 
-   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
-   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
-   ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
-   RELEASE.
+   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
+   SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright (C) 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+Copyright (C) 2004, 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -95,17 +94,14 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
       if (ABOVE_THRESHOLD (newrn, 2 * MUL_FFT_MODF_THRESHOLD))
 	{
 	  int k;
-	  mp_size_t m, i;
+	  mp_size_t m;
 
 	  k = mpn_fft_best_k (newrn, 0);
 	  m = mpn_fft_next_size (newrn, k);
 	  mpn_mul_fft (xp, m, up, newrn, rp, rn, k);
 
-	  if (xp[0] > 1 || !mpn_zero_p (xp + 1, rn - 1))
-	      {
-		MPN_INCR_U (xp + rn, newrn - rn, 1);
-		break;
-	      }
+	  if (xp[0] != 1 || !mpn_zero_p (xp + 1, rn - 1))
+	    MPN_INCR_U (xp + rn, newrn - rn, 1);
 	}
       else
 #endif
