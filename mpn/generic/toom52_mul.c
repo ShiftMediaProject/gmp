@@ -183,8 +183,12 @@ mpn_toom52_mul (mp_ptr pp,
 
   /* Compute as2 and asm2.  */
   cy = mpn_lshift (asm2, a3, n, 3);			/* 8a3                */
+#if HAVE_NATIVE_mpn_addlsh1_n
+  cy += mpn_addlsh1_n (a1a3, asm2, a1, n);		/* 8a3      +2a1      */
+#else
   cy += mpn_lshift (a1a3, a1, n, 1);		        /*           2a1      */
   cy += mpn_add_n (a1a3, a1a3, asm2, n);		/* 8a3      +2a1      */
+#endif
   a1a3[n] = cy;
 
   cy = mpn_lshift (a0a2, a2, n, 2);			/*           4a2           */
