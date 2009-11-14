@@ -1,6 +1,6 @@
 /* gen-trialdivtab.c
 
-   Contributed to the GNU project by Torbjörn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund.
 
 Copyright 2009 Free Software Foundation, Inc.
 

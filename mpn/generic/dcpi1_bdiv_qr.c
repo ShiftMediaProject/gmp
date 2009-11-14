@@ -1,12 +1,11 @@
 /* mpn_dcpi1_bdiv_qr -- divide-and-conquer Hensel division with precomputed
    inverse, returning quotient and remainder.
 
-   Contributed to the GNU project by Niels Möller and Torbjörn Granlund.
+   Contributed to the GNU project by Niels Möller and Torbjorn Granlund.
 
-   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
-   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
-   ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
-   RELEASE.
+   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
+   SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
 Copyright 2006, 2007 Free Software Foundation, Inc.
 

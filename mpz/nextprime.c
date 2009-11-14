@@ -2,7 +2,7 @@
 
 Copyright 1999, 2000, 2001, 2008, 2009 Free Software Foundation, Inc.
 
-Contributed to the GNU project by Niels Möller and Torbjörn Granlund.
+Contributed to the GNU project by Niels Möller and Torbjorn Granlund.
 
 This file is part of the GNU MP Library.
 

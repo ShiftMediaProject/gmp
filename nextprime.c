@@ -1,7 +1,7 @@
 /* gmp_nextprime -- generate small primes reasonably efficiently for internal
    GMP needs.
 
-   Contributed to the GNU project by Torbjörn Granlund.  Miscellaneous
+   Contributed to the GNU project by Torbjorn Granlund.  Miscellaneous
    improvements by Martin Boij.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
