@@ -1,5 +1,7 @@
 2009-11-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/t-remove.c: New file.
+
 	* mpn/generic/remove.c: Major overhaul.  Add parameter 'cap'.
 
 	* mpn/generic/binvert.c: Fix typo in last change.
