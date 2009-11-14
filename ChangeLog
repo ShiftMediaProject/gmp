@@ -1,5 +1,7 @@
 2009-11-14  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom52_mul.c: Use mpn_addlsh1_n.
+
 	* mpn/generic/toom52_mul.c: Toggle the right flag bit in an
 	HAVE_NATIVE_mpn_add_n_sub_n arm.
 
