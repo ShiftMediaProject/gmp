@@ -102,7 +102,7 @@ mpn_toom43_mul (mp_ptr pp,
 
   /* Compute as2 and asm2.  */
   if (mpn_toom_eval_dgr3_pm2 (as2, asm2, ap, n, s, a1a3))
-    flags ^= toom6_vm2_neg;    
+    flags ^= toom6_vm2_neg;
 
   /* Compute bs2 and bsm2.  */
   b1d[n] = mpn_lshift (b1d, b1, n, 1);			/*       2b1      */

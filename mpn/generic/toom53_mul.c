@@ -129,7 +129,7 @@ mpn_toom53_mul (mp_ptr pp,
   cy = 2*cy + mpn_lshift (ash, ash, n, 1);
   ash[n] = cy + mpn_add (ash, ash, n, a4, s);
 #endif
-  
+
   /* Compute bs1 and bsm1.  */
   bs1[n] = mpn_add (bs1, b0, n, b2, t);		/* b0 + b2 */
 #if HAVE_NATIVE_mpn_add_n_sub_n
@@ -163,7 +163,7 @@ mpn_toom53_mul (mp_ptr pp,
 #if HAVE_NATIVE_mpn_addlsh_n
   cy = mpn_addlsh_n (bs2, b0, b2, t, 2);
   if (t < n)
-    bs2[n] = mpn_add_1 (bs2, b0 + t, n - t, cy); 
+    bs2[n] = mpn_add_1 (bs2, b0 + t, n - t, cy);
   else
     bs2[n] = cy;
 #else

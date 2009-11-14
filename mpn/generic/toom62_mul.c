@@ -101,7 +101,7 @@ mpn_toom62_mul (mp_ptr pp,
     aflags = toom7_w3_neg;
   else
     aflags = 0;
-  
+
   /* Compute as2 and asm2. */
   if (mpn_toom_eval_pm2exp (as2, asm2, 5, ap, n, s, 1, gp))
     aflags |= toom7_w1_neg;
