@@ -1,3 +1,7 @@
+2009-11-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mu_bdiv_qr.c: Reset FFT parameters for each call.
+
 2009-11-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86/k7/gcd_1.asm (MASK): Compute from MAXSHIFT.

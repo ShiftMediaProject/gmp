@@ -4,10 +4,9 @@
 
    Contributed to the GNU project by Torbjorn Granlund.
 
-   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH A MUTABLE INTERFACE.  IT IS
-   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
-   ALMOST GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP
-   RELEASE.
+   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
+   SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
 Copyright 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
 
@@ -107,14 +106,6 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 
       mpn_binvert (ip, dp, in, scratch);
 
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	{
-	  k = mpn_fft_best_k (dn, 0);
-	  m = mpn_fft_next_size (dn, k);
-	}
-#endif
-
       MPN_COPY (rp, np, dn);
       np += dn;
       cy = 0;
@@ -134,6 +125,8 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 		 of tp, will be subtracted from the low part of the partial
 		 remainder; we undo that operation with another subtraction. */
 
+	      k = mpn_fft_best_k (dn, 0);
+	      m = mpn_fft_next_size (dn, k);
 	      mpn_mul_fft (tp, m, dp, dn, qp, in, k);
 	      wn = dn + in - m;			/* number of wrapped limbs */
 	      if (wn > 0)
@@ -171,6 +164,8 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
+	  k = mpn_fft_best_k (dn, 0);
+	  m = mpn_fft_next_size (dn, k);
 	  mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
 	  wn = dn + qn - m;			/* number of wrapped limbs */
 	  if (wn > 0)
@@ -216,18 +211,12 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 
       mpn_binvert (ip, dp, in, scratch);
 
+      mpn_mullow_n (qp, np, ip, in);		/* low `in' quotient limbs */
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	}
-#endif
-
-      mpn_mullow_n (qp, np, ip, in);		/* low `in' quotient limbs */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	{
 	  mpn_mul_fft (tp, m, dp, dn, qp, in, k);
 	  wn = dn + in - m;
 	  if (wn > 0)
@@ -249,6 +238,8 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
+	  k = mpn_fft_best_k (dn, 0);
+	  m = mpn_fft_next_size (dn, k);
 	  mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
 	  wn = dn + qn - m;
 	  if (wn > 0)
