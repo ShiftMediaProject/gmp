@@ -1,11 +1,11 @@
 /* mpn_bdiv_qr -- Hensel division with precomputed inverse, returning quotient
    and remainder.
 
-   Contributed to the GNU project by Torbjörn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund.
 
-   THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
-   SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
-   GUARANTEED THAT IT WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
+   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
+   SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
 Copyright 2006, 2007, 2009 Free Software Foundation, Inc.
 
@@ -39,13 +39,10 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
 {
   mp_limb_t di;
   mp_limb_t rh;
-  TMP_DECL;
 
-  TMP_MARK;
-
-  if (BELOW_THRESHOLD (dn, DC_BDIV_QR_THRESHOLD))
+  if (BELOW_THRESHOLD (dn, DC_BDIV_QR_THRESHOLD) ||
+      BELOW_THRESHOLD (nn - dn, DC_BDIV_QR_THRESHOLD))
     {
-      tp = TMP_SALLOC_LIMBS (nn + 1);
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
@@ -54,7 +51,6 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
     }
   else if (BELOW_THRESHOLD (dn, MU_BDIV_QR_THRESHOLD))
     {
-      tp = TMP_SALLOC_LIMBS (nn + 1);
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
@@ -63,17 +59,25 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
     }
   else
     {
-      tp = TMP_ALLOC_LIMBS (nn + 1);
+      mp_size_t itch;
+      TMP_DECL;
+      TMP_MARK;
+      itch = mpn_mu_bdiv_qr_itch (nn + 1, dn);
+      mp_ptr scratch_out = TMP_BALLOC_LIMBS (itch);
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
-      rh = mpn_mu_bdiv_qr (qp, rp, tp, nn + 1, dp, dn, tp);
+      rh = mpn_mu_bdiv_qr (qp, rp, tp, nn + 1, dp, dn, scratch_out);
+      TMP_FREE;
     }
-  TMP_FREE;
+
   return rh;
 }
 
 mp_size_t
 mpn_bdiv_qr_itch (mp_size_t nn, mp_size_t dn)
 {
-  return mpn_mu_bdiv_qr_itch (nn, dn);
+  mp_size_t itch;
+  itch = mpn_mu_bdiv_qr_itch (nn, dn);
+  itch = MAX (itch, nn + 1);
+  return itch;
 }
