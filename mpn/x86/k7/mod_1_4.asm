@@ -1,4 +1,4 @@
-dnl  x86-32 mpn_mod_1s_4p, requring cmov.
+dnl  x86-32 mpn_mod_1s_4p, requiring cmov.
 
 dnl  Contributed to the GNU project by Torbjorn Granlund.
 

@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
-  This file current as of 1 May 2009.  An up-to-date version is available at
+  This file current as of 15 Nov 2009.  An up-to-date version is available at
   <a href="http://gmplib.org/tasks.html">http://gmplib.org/tasks.html</a>.
   Please send comments about this page to gmp-devel<font>@</font>gmplib.org.
 
@@ -217,7 +217,7 @@ either already been taken care of, or have become irrelevant.
      an in-place there.
 <li> <code>mpf_div_ui</code>: Whether the high quotient limb is zero can be
      determined by testing the dividend for high&lt;divisor.  When non-zero, the
-     divison can be done on prec dividend limbs instead of prec+1.  The result
+     division can be done on prec dividend limbs instead of prec+1.  The result
      size is also known before the division, so that can be a tail call (once
      the <code>TMP_ALLOC</code> is eliminated).
 <li> <code>mpn_divrem_2</code> could usefully accept unnormalized divisors and
@@ -323,7 +323,7 @@ either already been taken care of, or have become irrelevant.
      <code>__builtin_clzl</code> and <code>__builtin_popcountl</code> using
      the corresponding CIX <code>ct</code> instructions, and
      <code>__builtin_alpha_cmpbge</code>.  These should give GCC more
-     information about sheduling etc than the <code>asm</code> blocks
+     information about scheduling etc than the <code>asm</code> blocks
      currently used in longlong.h and gmp-impl.h.
 <li> Alpha Unicos: Apparently there's no <code>alloca</code> on this system,
      making <code>configure</code> choose the slower

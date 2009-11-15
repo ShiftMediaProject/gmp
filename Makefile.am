@@ -106,7 +106,7 @@ EXTRA_DIST += gmpxx.h
 #
 # $exec_prefix/include is not in the default include path for gcc built to
 # the same $prefix and $exec_prefix, which might mean gmp.h is not found,
-# but anyone knowledgable enough to be playing with exec_prefix will be able
+# but anyone knowledgeable enough to be playing with exec_prefix will be able
 # to address that.
 #
 includeexecdir = $(exec_prefix)/include

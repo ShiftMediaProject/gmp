@@ -37,7 +37,7 @@ defframe(PARAM_DIVISOR,4)
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)
 deflit(`FRAME', 0)
-	C Adding the push of %ebp and the coresponding pop seems to
+	C Adding the push of %ebp and the corresponding pop seems to
 	C reduce running time from 46 to 43 cycles on K7. Don't know
 	C if this is a benchmark artefact or some alignment issue.
 

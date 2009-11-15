@@ -219,7 +219,7 @@ undefine(`m4_dollarhash_1_if_noparen_test')
 
 dnl  Usage: m4wrap_prepend(string)
 dnl
-dnl  Prepend the given string to what will be exapanded under m4wrap at the
+dnl  Prepend the given string to what will be expanded under m4wrap at the
 dnl  end of input.
 dnl
 dnl  This macro exists to work around variations in m4wrap() behaviour in

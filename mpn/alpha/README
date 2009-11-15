@@ -60,7 +60,7 @@ RELEVANT OPTIMIZATION ISSUES
 EV4
 
 1. This chip has very limited store bandwidth.  The on-chip L1 cache is write-
-   through, and a cache line is transfered from the store buffer to the off-
+   through, and a cache line is transferred from the store buffer to the off-
    chip L2 in as much 15 cycles on most systems.  This delay hurts mpn_add_n,
    mpn_sub_n, mpn_lshift, and mpn_rshift.
 

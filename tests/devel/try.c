@@ -96,7 +96,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    stuff common to all functions, but the exceptions get messy.
 
    When there's no overlap, run with both src>dst and src<dst.  A subtle
-   calling-conventions violation occured in a P6 copy which depended on the
+   calling-conventions violation occurred in a P6 copy which depended on the
    relative location of src and dst.
 
    multiplier_N is more or less a third source region for the addmul_N
@@ -2313,7 +2313,7 @@ call (struct each_t *e, tryfun_t function)
 	  e->retval = CALLING_CONVENTIONS (function) (dst, base,
 						      e->d[1].p, size);
 	}
-      refmpn_zero (e->d[1].p, size);  /* cloberred or unused */
+      refmpn_zero (e->d[1].p, size);  /* clobbered or unused */
     }
     break;
 

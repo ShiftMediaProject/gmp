@@ -70,7 +70,7 @@ define(GMP_FAT_SUFFIX,
 
 dnl  GMP_REMOVE_FROM_LIST(listvar,item)
 dnl  ----------------------------------
-dnl  Emit code to remove any occurance of ITEM from $LISTVAR.  ITEM can be a
+dnl  Emit code to remove any occurrence of ITEM from $LISTVAR.  ITEM can be a
 dnl  shell expression like $foo if desired.
 
 define(GMP_REMOVE_FROM_LIST,

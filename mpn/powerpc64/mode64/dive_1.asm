@@ -25,7 +25,7 @@ C POWER4/PPC970:     16
 C POWER5:	     16
 
 C TODO
-C  * Check if n=1 code is really an improvment.  It probably isn't.
+C  * Check if n=1 code is really an improvement.  It probably isn't.
 C  * Perhaps remove L(norm) code, it is currently unreachable.
 C  * Make more similar to mode1o.asm.
 

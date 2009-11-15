@@ -25,7 +25,7 @@ C POWER4/PPC970:     16
 C POWER5:            16
 
 C TODO
-C  * Check if n=1 code is really an improvment.  It probably isn't.
+C  * Check if n=1 code is really an improvement.  It probably isn't.
 C  * Make more similar to dive_1.asm.
 
 C INPUT PARAMETERS

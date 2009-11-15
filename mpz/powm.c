@@ -241,7 +241,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	{
 	  reduce (tp + mn, bp, bn, mp, mn);	/* b mod m */
 	  MPN_ZERO (tp, mn);
-	  mpn_tdiv_qr (qp, gp, 0L, tp, 2 * mn, mp, mn); /* unnormnalized! */
+	  mpn_tdiv_qr (qp, gp, 0L, tp, 2 * mn, mp, mn); /* unnormalized! */
 	}
       else
 	{

@@ -5685,7 +5685,7 @@
 
 2003-10-21  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/ia64/submul_1.asm: Slightly reschedule loop to accomodate
+	* mpn/ia64/submul_1.asm: Slightly reschedule loop to accommodate
 	Itanium 2 getf.sig latency.
 
 2003-10-21  Kevin Ryde  <kevin@swox.se>
@@ -8306,7 +8306,7 @@
 	* tune/tuneup.c (sqr_karatsuba_threshold): Initialize to
 	TUNE_SQR_KARATSUBA_MAX so mpn_sqr_n works for randmt initialization.
 
-	* gmp.texi (Integer Comparisons): Remove mention of non-existant
+	* gmp.texi (Integer Comparisons): Remove mention of non-existent
 	mpz_cmpabs_si, reported by Conrad Curry.
 
 	* tune/speed.c, tune/speed.h, tune/common.c: Add gmp_randseed,
@@ -16158,7 +16158,7 @@
 
 	* mp.h (mp_set_memory_functions): Add missing #define.
 	* mpbsd/tests/allfuns.c (mp_set_memory_functions): Verify its
-	existance.
+	existence.
 
 	* mpf/tests/t-misc.c (check_mpf_getset_prec): New test, verifying
 	reverted behaviour of mpf_get_prec.
@@ -18271,7 +18271,7 @@
 
 	* randraw.c (gmp_rand_getraw): Handle the case where (1) the LC
 	scheme doesn't generate even limbs and (2) more than one LC
-	invokation is necessary to produce the requested number of bits.
+	invocation is necessary to produce the requested number of bits.
 
 2000-04-05  Torbjorn Granlund  <tege@swox.com>
 
@@ -20647,7 +20647,7 @@ Fri Oct 18 03:13:54 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 	* mpn/x86/pentium/[lr]shift.S: Likewise.
 	* mpn/config/t-oldgas (SFLAGS): Pass -DOLD_GAS.
 
-	* gmp-impl.h: In code for determining endianess, test also
+	* gmp-impl.h: In code for determining endianness, test also
 	__BIG_ENDIAN__ and __hppa__.  Remove test of __NeXT__.
 
 Wed Oct 16 03:50:34 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>

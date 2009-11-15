@@ -1,4 +1,4 @@
-/* mpn_mullow_n -- multiply two n-limb nunbers and return the low n limbs
+/* mpn_mullow_n -- multiply two n-limb numbers and return the low n limbs
    of their products.
 
    THIS IS (FOR NOW) AN INTERNAL FUNCTION.  IT IS ONLY SAFE TO REACH THIS

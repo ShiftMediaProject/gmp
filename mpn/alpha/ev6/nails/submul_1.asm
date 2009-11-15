@@ -25,7 +25,7 @@ C EV5:    18
 C EV6:     4
 
 C TODO
-C  * Reroll loop for 3.75 c/l with current 4-way unrulling.
+C  * Reroll loop for 3.75 c/l with current 4-way unrolling.
 C  * The loop is overscheduled wrt loads and wrt multiplies, in particular
 C    umulh.
 C  * Use FP loop count and multiple exit points, that would simplify feed-in lp0

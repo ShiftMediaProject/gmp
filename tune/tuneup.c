@@ -578,7 +578,7 @@ one (mp_size_t *threshold, struct param_t *param)
         }
 
       /* Stop if the threshold implied hasn't changed in a certain
-         number of measurements.  (It's this condition that ususally
+         number of measurements.  (It's this condition that usually
          stops the loop.) */
       if (thresh_idx != new_thresh_idx)
         since_thresh_change = 0, thresh_idx = new_thresh_idx;

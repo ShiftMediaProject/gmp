@@ -283,7 +283,7 @@ sieve_region (unsigned char *s, mpz_t fr, unsigned long rsize)
 	    {
 	      start = (prime - mpz_tdiv_ui (fr, prime)) % prime;
 	      if (start % 2 != 0)
-		start += prime;		/* adjust if even divisable */
+		start += prime;		/* adjust if even divisible */
 	    }
 	  start2 = start / 2;
 	}

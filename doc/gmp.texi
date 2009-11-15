@@ -9555,7 +9555,7 @@ two 32-bit parts.
 likewise @math{p48} and @math{r48}.  @math{p00} and @math{p16} can be summed
 with @math{r64} and @math{r80} from the previous iteration.
 
-For each loop then, four 49-bit quantities are transfered to the integer unit,
+For each loop then, four 49-bit quantities are transferred to the integer unit,
 aligned as follows,
 
 @tex
