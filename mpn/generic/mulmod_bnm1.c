@@ -238,7 +238,7 @@ mpn_mulmod_bnm1_next_size (mp_size_t size)
   mp_size_t n, new_n;
   int k;
 
-  n = size >> 1;
+  n = (size + 1) >> 1;
   if (BELOW_THRESHOLD (n, MUL_FFT_MODF_THRESHOLD))
     return size + (-size & 0xf);
 

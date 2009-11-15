@@ -1,3 +1,7 @@
+2009-11-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): fix typo
+
 2009-11-14  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/toom52_mul.c: Use mpn_addlsh1_n.
