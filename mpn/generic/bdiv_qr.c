@@ -60,10 +60,11 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
   else
     {
       mp_size_t itch;
+      mp_ptr scratch_out;
       TMP_DECL;
       TMP_MARK;
       itch = mpn_mu_bdiv_qr_itch (nn + 1, dn);
-      mp_ptr scratch_out = TMP_BALLOC_LIMBS (itch);
+      scratch_out = TMP_BALLOC_LIMBS (itch);
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
       rh = mpn_mu_bdiv_qr (qp, rp, tp, nn + 1, dp, dn, scratch_out);
