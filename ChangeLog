@@ -1,5 +1,10 @@
 2009-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/aorrlsh2_n.asm: New file.
+	* configure.in: Add support for addlsh2_n, sublsh2_n, and rsblsh2_n,
+	including mulfuncs.
+	* gmp-impl.h (mpn_addlsh2_n, mpn_sublsh2_n, mpn_rsblsh2_n): Declare.
+
 	* mpn/generic/copyi.c: New file.
 	* mpn/generic/copyd.c: Likewise.
 	* mpn/generic/zero.c: Likewise.
