@@ -4,6 +4,7 @@
 	* configure.in: Add support for addlsh2_n, sublsh2_n, and rsblsh2_n,
 	including mulfuncs.
 	* gmp-impl.h (mpn_addlsh2_n, mpn_sublsh2_n, mpn_rsblsh2_n): Declare.
+	* mpn/asm-defs.m4: Likewise.
 
 	* mpn/generic/copyi.c: New file.
 	* mpn/generic/copyd.c: Likewise.
