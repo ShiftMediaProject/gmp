@@ -131,7 +131,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
   vlimb >>= 1;
 
   while (ulimb != vlimb)
-    {      
+    {
       int c;
       mp_limb_t t = ulimb - vlimb;
       mp_limb_t vgtu = LIMB_HIGHBIT_TO_MASK (t);
@@ -144,7 +144,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
 
 #if USE_ZEROTAB
       /* Number of trailing zeros is the same no matter if we look at
-       * t or ulimb, but using t gives more parallellism. */
+       * t or ulimb, but using t gives more parallelism. */
       c = zerotab[t & 15];
 
       while (UNLIKELY (c == 4))

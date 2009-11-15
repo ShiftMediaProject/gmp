@@ -174,7 +174,7 @@ mpn_toom62_mul (mp_ptr pp,
 	  bflags = toom7_w3_neg;
 	}
       else
-	{	  
+	{
 	  mpn_sub (bsm1, b0, n, b1, t);
 	  bflags = 0;
 	}
@@ -248,7 +248,7 @@ mpn_toom62_mul (mp_ptr pp,
   mpn_mul_n (v2, as2, bs2, n + 1);		/* v2, 2n+1 limbs */
   mpn_mul_n (vm2, asm2, bsm2, n + 1);		/* vm2, 2n+1 limbs */
   mpn_mul_n (vh, ash, bsh, n + 1);		/* vh, 2n+1 limbs */
-  
+
   /* vm1, 2n+1 limbs */
   mpn_mul_n (vm1, asm1, bsm1, n);
   cy = 0;

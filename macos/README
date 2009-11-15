@@ -140,7 +140,7 @@ MACPERL MPW INSTALLATION
 Drag these archives to the "StuffIt Expander" icon to unpack them.
 The result is two installation programs. Run the "Mac_Perl_520r4_appl"
 installer and let it install Perl into the default location, then run
-the "Mac_Perl_520r4_tool" insaller.
+the "Mac_Perl_520r4_tool" installer.
 
 To enable MPW to use MacPerl follow the instructions in the first
 comment in the file "Install.MPW_Perl". For MacPerl 520r4 this is

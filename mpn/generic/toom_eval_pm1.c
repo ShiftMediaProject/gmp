@@ -42,7 +42,7 @@ mpn_toom_eval_pm1 (mp_ptr xp1, mp_ptr xm1, unsigned k,
 
   /* The degree k is also the number of full-size coefficients, so
    * that last coefficient, of size hn, starts at xp + k*n. */
-  
+
   xp1[n] = mpn_add_n (xp1, xp, xp + 2*n, n);
   for (i = 4; i < k; i += 2)
     ASSERT_NOCARRY (mpn_add (xp1, xp1, n+1, xp+i*n, n));

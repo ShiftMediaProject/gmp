@@ -36,7 +36,7 @@ Cray T3 code is very very different...
 them to "$6" or "$f6" where necessary.
 
 "0x" introduces a hex constant in gas and DEC as, but on Unicos "^X" is
-required.  The X() macro accomodates this difference.
+required.  The X() macro accommodates this difference.
 
 "cvttqc" is required by DEC as, "cvttq/c" is required by Unicos, and gas will
 accept either.  We use cvttqc and have an m4 define expand to cvttq/c where

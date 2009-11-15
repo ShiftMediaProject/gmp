@@ -2147,7 +2147,7 @@
 
 	* mpn/x86/p6/aors_n.asm: Table cycle counts.
 
-	* mpn/x86/k7/mod_34lsub1.asm: Fix over-optimisitc cycle count claims.
+	* mpn/x86/k7/mod_34lsub1.asm: Fix over-optimistic cycle count claims.
 
 	* mpn/x86/x86-defs.m4 (DEF_OBJECT, END_OBJECT): New define's.
 
@@ -4044,7 +4044,7 @@
 	(what_objects): Only demand 9 object files, as for instance occurs in
 	the scanf directory.
 	(asm files): Transform labels L(foo) -> Lfoo.  Take func name from
-	PROLOGUE to support empty "EPILOGUE()".  Recognise and subsitute
+	PROLOGUE to support empty "EPILOGUE()".  Recognise and substitute
 	register name "define()"s.
 	* macos/Makefile.in (CmnObjs): Add tal-notreent.o.
 
@@ -4467,7 +4467,7 @@
 	* tests/mpn/t-hgcd.c: Remove unused variables.
 
 	* mpn/ia64/hamdist.asm: Remove bundling incompatible with HP-UX
-	assember.  Misc HP-UX changes.
+	assembler.  Misc HP-UX changes.
 	* mpn/ia64/gcd_1.asm: Add some syntax to placid the HP-UX assembler.
 
 2004-02-11  Kevin Ryde  <kevin@swox.se>
@@ -20323,7 +20323,7 @@ Wed Mar  4 19:29:16 1998  Torbjorn Granlund  <tege@matematik.su.se>
 	* configure.in (i[3456]86* etc): Check if using gcc before
 	choosing mt-x86.
 
-	* configure.in (m68*-*-*): New alterantive.
+	* configure.in (m68*-*-*): New alternative.
 	* config/mt-m68k: New file.
 
 	* mpn/alpha/invert-limb.s: Put tables in text segment,
@@ -23923,7 +23923,7 @@ Thu Jul 11 10:08:21 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 	* dist-Makefile: Go via tmp- files for cre* redirection.
 	* dist-Makefile: Add tmp* to "clean" target.
 
-	* dist-Makefile: Use LOCAL_CC for cre*, to simplyfy cross
+	* dist-Makefile: Use LOCAL_CC for cre*, to simplify cross
 	  compilation.
 
 	* gmp.h, mp.h: Don't define NULL here.
@@ -24161,7 +24161,7 @@ Sun Apr 28 20:21:04 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
 Sat Apr 27 21:03:11 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
-	* Install multplication using Karatsuba's algorithm as default.
+	* Install multiplication using Karatsuba's algorithm as default.
 
 Fri Apr 26 01:03:57 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
@@ -24179,7 +24179,7 @@ Wed Apr 24 21:39:22 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
 Mon Apr 22 01:31:57 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
-	* karatsuba.c: New file for Karatsuba's multplication algorithm.
+	* karatsuba.c: New file for Karatsuba's multiplication algorithm.
 
 	* mpz_random, mpz_init, mpz_mod_2exp: New files and functions.
 
@@ -24274,7 +24274,7 @@ Fri Mar 15 00:26:29 1991  Torbjorn Granlund  (tege@musta.nada.kth.se)
 
 Thu Mar 14 18:45:28 1991  Torbjorn Granlund  (tege@musta.nada.kth.se)
 
-	* mpq_mul.c: New file for rational multplication.
+	* mpq_mul.c: New file for rational multiplication.
 
 	* gmp.h: Add definitions for rational arithmetics.
 

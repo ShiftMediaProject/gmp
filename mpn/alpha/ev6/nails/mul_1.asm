@@ -28,7 +28,7 @@ C TODO
 C  * Reroll loop for 3.0 c/l with current 4-way unrulling.
 C  * The loop is overscheduled wrt loads and wrt multiplies, in particular
 C    umulh.
-C  * Use FP loop count and multiple exit points, that would simpily feed-in lp0
+C  * Use FP loop count and multiple exit points, that would simplify feed-in lp0
 C    and would work since the loop structure is really regular.
 
 C  INPUT PARAMETERS

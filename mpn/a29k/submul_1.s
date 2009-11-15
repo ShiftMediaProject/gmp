@@ -82,7 +82,7 @@ Loop:	mtsrim	cr,(8-1)
 	subc	gr102,gr102,gr110
 	subc	gr103,gr103,gr111
 
-	add	gr104,gr103,gr111	; invert carry from previus sub
+	add	gr104,gr103,gr111	; invert carry from previous sub
 	addc	gr120,gr120,0
 
 	mtsrim	cr,(8-1)
@@ -105,7 +105,7 @@ Loop2:	load	0,0,gr116,lr3
 	add	gr117,gr117,gr120
 	addc	gr118,gr118,0
 	sub	gr119,gr119,gr117
-	add	gr104,gr119,gr117	; invert carry from previus sub
+	add	gr104,gr119,gr117	; invert carry from previous sub
 	store	0,0,gr119,lr2
 	jmpfdec	lr4,Loop2
 	 addc	gr120,gr118,0

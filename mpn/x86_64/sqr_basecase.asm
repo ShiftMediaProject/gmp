@@ -310,7 +310,7 @@ L(L3):	xor	R32(w1), R32(w1)
 	adc	%rdx, w1
 	mov	w2, 8(tp)
 	mov	w1, 16(tp)
-	
+
 	lea	eval(2*8)(tp), tp	C tp += 2
 	lea	-8(up), up
 	jmp	L(dowhile)

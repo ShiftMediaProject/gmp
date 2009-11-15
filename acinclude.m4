@@ -191,7 +191,7 @@ esac
 dnl  GMP_COMPARE_GE(A1,B1, A2,B2, ...)
 dnl  ---------------------------------
 dnl  Compare two version numbers A1.A2.etc and B1.B2.etc.  Set
-dnl  $gmp_compare_ge to yes or no accoring to the result.  The A parts
+dnl  $gmp_compare_ge to yes or no according to the result.  The A parts
 dnl  should be variables, the B parts fixed numbers.  As many parts as
 dnl  desired can be included.  An empty string in an A part is taken to be
 dnl  zero, the B parts should be non-empty and non-zero.
@@ -254,7 +254,7 @@ dnl  For reference, $ARFLAGS is used by automake (1.8) for its ".a" archive
 dnl  file rules.  This doesn't get used by the piecewise linking, so we
 dnl  leave it at the default "cru".
 dnl
-dnl  FIXME: Libtool 1.5.2 has its own arrangments for "cq", but that version
+dnl  FIXME: Libtool 1.5.2 has its own arrangements for "cq", but that version
 dnl  is broken in other ways.  When we can upgrade, remove the forcible
 dnl  AR_FLAGS=cq.
 
@@ -1813,7 +1813,7 @@ dnl  Note that both solaris "as"s only care about ",0x90" if they actually
 dnl  have to use it to fill something, hence the .byte in the test.  It's
 dnl  the second .align which provokes the error or warning.
 dnl
-dnl  The warning from solaris 2.8 is supressed to stop anyone worrying that
+dnl  The warning from solaris 2.8 is suppressed to stop anyone worrying that
 dnl  something might be wrong.
 
 AC_DEFUN([GMP_ASM_ALIGN_FILL_0x90],

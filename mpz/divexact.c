@@ -20,10 +20,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /*  Ken Weber (kweber@mat.ufrgs.br, kweber@mcs.kent.edu)
 
-    Funding for this work has been partially provided by Conselho Nacional
-    de Desenvolvimento Cienti'fico e Tecnolo'gico (CNPq) do Brazil, Grant
-    301314194-2, and was done while I was a visiting reseacher in the Instituto
-    de Matema'tica at Universidade Federal do Rio Grande do Sul (UFRGS).
+    Funding for this work has been partially provided by Conselho Nacional de
+    Desenvolvimento Cienti'fico e Tecnolo'gico (CNPq) do Brazil, Grant
+    301314194-2, and was done while I was a visiting researcher in the
+    Instituto de Matema'tica at Universidade Federal do Rio Grande do Sul
+    (UFRGS).
 
     References:
 	T. Jebelean, An algorithm for exact division, Journal of Symbolic

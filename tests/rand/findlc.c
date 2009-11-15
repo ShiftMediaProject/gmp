@@ -47,7 +47,7 @@ sh_status (int sig)
     signal (SIGSEGV, SIG_DFL);
 }
 
-/* Input is a modulus (m).  We shall find multiplyer (a) and adder (c)
+/* Input is a modulus (m).  We shall find multiplier (a) and adder (c)
    conforming to the rules found in the first comment block in file
    mpz/urandom.c.
 

@@ -1,7 +1,7 @@
 /* mpn_tdiv_qr -- Divide the numerator (np,nn) by the denominator (dp,dn) and
    write the nn-dn+1 quotient limbs at qp and the dn remainder limbs at rp.  If
    qxn is non-zero, generate that many fraction limbs and append them after the
-   other quotient limbs, and update the remainder accordningly.  The input
+   other quotient limbs, and update the remainder accordingly.  The input
    operands are unaffected.
 
    Preconditions:

@@ -56,7 +56,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    Interpolation sequence was taken from the paper: "Integer and
    Polynomial Multiplication: Towards Optimal Toom-Cook Matrices".
-   Some slight variations were introduced: adaptatation to "gmp
+   Some slight variations were introduced: adaptation to "gmp
    instruction set", and a final saving of an operation by interlacing
    interpolation and recomposition phases.
 */

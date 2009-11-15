@@ -36,7 +36,7 @@ C K7:
 C K8:
 
 
-dnl  K6:           large multpliers  small multpliers
+dnl  K6:           large multipliers  small multipliers
 dnl  UNROLL_COUNT    cycles/limb       cycles/limb
 dnl        4             9.5              7.78
 dnl        8             9.0              7.78
@@ -247,7 +247,7 @@ C registers at the point of doing the mul for the initial two carry limbs.
 C
 C The add/adc for the initial carry in %esi is necessary only for the
 C mpn_addmul/submul_1c entry points.  Duplicating the startup code to
-C eliminiate this for the plain mpn_add/submul_1 doesn't seem like a good
+C eliminate this for the plain mpn_add/submul_1 doesn't seem like a good
 C idea.
 
 dnl  overlapping with parameters already fetched

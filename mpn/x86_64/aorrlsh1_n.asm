@@ -142,7 +142,7 @@ ifdef(`OPERATION_addlsh1_n',`
 ifdef(`OPERATION_rsblsh1_n',`
 	sub	R32(%rax), R32(%rbp)
 	movslq	R32(%rbp), %rax')
-	
+
 	pop	%rbp
 	ret
 EPILOGUE()

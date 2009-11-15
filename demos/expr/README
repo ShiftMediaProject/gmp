@@ -474,7 +474,7 @@ Assignment could be an operator attribute, making it expect an lvalue.
 There would want to be a standard table without assignments available
 though, so user input could be safely parsed.
 
-The closing parethesis table entry could specify the type of open paren it
+The closing parenthesis table entry could specify the type of open paren it
 expects, so that "(" and ")" could match and "[" and "]" match but not a
 mixture of the two.  Currently "[" and "]" can be added, but there's no
 error on writing a mixed expression like "2*(3+4]".  Maybe also there could

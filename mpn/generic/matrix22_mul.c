@@ -155,7 +155,7 @@ mpn_matrix22_mul_strassen (mp_ptr r0, mp_ptr r1, mp_ptr r2, mp_ptr r3, mp_size_t
     {
       s0s = abs_sub_n (s0, r0, r1, rn);
       s0[rn] = 0;
-    }  
+    }
   MUL (u1, r0, rn, m0, mn);		/* u0 = s0 * t0 */
   r0[rn+mn] = mpn_add_n (r0, u0, u1, rn + mn);
   ASSERT (r0[rn+mn] < 2);		/* u0 + u5 */

@@ -49,7 +49,7 @@ C   r20,r29,r13-r15  scramble
 C
 C   We're doing 7 of the 8 carry propagations with a br fixup code and 1 with a
 C   put-the-carry-into-hi.  The idea is that these branches are very rarely
-C   taken, and since a non-taken branch consumes no resurces, that is better
+C   taken, and since a non-taken branch consumes no resources, that is better
 C   than an addq.
 C
 C   Software pipeline: a load in cycle #09, feeds a mul in cycle #16, feeds an

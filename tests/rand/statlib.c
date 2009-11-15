@@ -298,7 +298,7 @@ Pzf (mpf_t p, unsigned long int s, void *x)
 
    X[] must not contain numbers outside the range 0 <= X <= IMAX.
 
-   Return value is number of observations actally used, after
+   Return value is number of observations actually used, after
    discarding entries out of range.
 
    Since X[] contains integers between zero and IMAX, inclusive, we

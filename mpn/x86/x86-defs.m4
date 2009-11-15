@@ -895,7 +895,7 @@ dnl         movl_code_address(L(foo),%eax)
 dnl
 dnl  This macro is only meant for use in ASSERT()s or when testing, since
 dnl  the PIC sequence it generates will want to be done with a ret balancing
-dnl  the call on CPUs with return address branch predition.
+dnl  the call on CPUs with return address branch prediction.
 dnl
 dnl  The addl generated here has a backward reference to the label, and so
 dnl  won't suffer from the two forwards references bug in old gas (described

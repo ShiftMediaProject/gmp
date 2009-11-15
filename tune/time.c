@@ -1289,7 +1289,7 @@ speed_mftb_diff (const unsigned end[2], const unsigned start[2])
    psecs might overflow.  2^32 microseconds is only a bit over an hour, or
    2^32 nanoseconds only about 4 seconds.
 
-   The casts to "long" are for the beneifit of timebasestruct_t, where the
+   The casts to "long" are for the benefit of timebasestruct_t, where the
    fields are only "unsigned int", but we want a signed difference.  */
 
 #define DIFF_SECS_ROUTINE(sec, psec, punit)                     \

@@ -209,7 +209,7 @@ and must be a multiple of $size bytes.  C<mpz_export> conversely returns a
 string of byte data, which will be a multiple of $size bytes.
 
 C<invert> returns the inverse, or undef if it doesn't exist.  C<remove>
-returns a remainder/multiplicty pair.  C<root> returns the nth root, and
+returns a remainder/multiplicity pair.  C<root> returns the nth root, and
 C<roote> returns a root/bool pair, the bool indicating whether the root is
 exact.  C<sqrtrem> and C<rootrem> return a root/remainder pair.
 
@@ -477,7 +477,7 @@ corresponding GMP function.  For example,
 Arguments to operators and functions are converted as necessary to the
 appropriate type.  For instance C<**> requires an unsigned integer exponent,
 and an mpq argument will be converted, so long as it's an integer in the
-apropriate range.
+appropriate range.
 
     use GMP::Mpz (mpz);
     use GMP::Mpq (mpq);

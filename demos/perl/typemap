@@ -73,7 +73,7 @@ ULONG_COERCE
 ORDER_NOSWAP
 	assert ($arg != &PL_sv_yes);
 DUMMY
-	/* dummy $var */	
+	/* dummy $var */
 CONST_STRING_ASSUME
         /* No need to check for SvPOKp and use SvPV, this mapping is
            only used for overload_constant, which always gets literal

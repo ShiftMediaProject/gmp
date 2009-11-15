@@ -968,7 +968,7 @@ case $host in
             # longlong.h macros expect limb operands in a single 64-bit
             # register, not two 32-bit registers as would be given for a
             # long long without -mpowerpc64.  In theory we could detect and
-            # accomodate both styles, but the proper 64-bit registers will
+            # accommodate both styles, but the proper 64-bit registers will
             # be fastest and are what we really want to use.
             #
 	    # One would think -mpowerpc64 would set the assembler in the right
@@ -1682,10 +1682,10 @@ for abi in $abilist; do
           cflags="$cflags_maybe $cflags"
         fi
 
-        # Any user CFLAGS, even an empty string, takes precendence
+        # Any user CFLAGS, even an empty string, takes precedence
         if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
 
-        # Any user CPPFLAGS, even an empty string, takes precendence
+        # Any user CPPFLAGS, even an empty string, takes precedence
                                eval cppflags=\"\$${ccbase}${abi1}_cppflags\"
         test -n "$cppflags" || eval cppflags=\"\$${ccbase}${abi2}_cppflags\"
         if test "$test_CPPFLAGS" = set; then cppflags=$CPPFLAGS; fi
@@ -2561,7 +2561,7 @@ esac
 # setup that structure, on a per-directory basis ready for
 # mpn/<cpu>/fat/fat.c.
 #
-# fat.h includes thesholds listed in $fat_thresholds, extracted from
+# fat.h includes thresholds listed in $fat_thresholds, extracted from
 # gmp-mparam.h in each directory.  An overall maximum for each threshold is
 # established, for use in making fixed size arrays of temporary space.
 # (Eg. MUL_TOOM33_THRESHOLD_LIMIT used by mpn/generic/mul.c.)
@@ -2612,7 +2612,7 @@ DECL_$tmp_fbase (__MPN(${tmp_fbase}_init));" >>fat.h
   echo "
 /* Copy all fields into __gmpn_cpuvec.
    memcpy is not used because it might operate byte-wise (depending on its
-   implemenation), and we need the function pointer writes to be atomic.
+   implementation), and we need the function pointer writes to be atomic.
    "volatile" discourages the compiler from trying to optimize this.  */
 #define CPUVEC_INSTALL(vec) \\
   do { \\
@@ -2674,7 +2674,7 @@ DECL_$tmp_fbase (__MPN(${tmp_fbase}_init));" >>fat.h
     esac
 
     # Extract desired thresholds from gmp-mparam.h file in this directory,
-    # if prsent.
+    # if present.
     tmp_mparam=$srcdir/mpn/$tmp_dir/gmp-mparam.h
     if test -f $tmp_mparam; then
       for tmp_tn in $fat_thresholds; do
@@ -3149,7 +3149,7 @@ fi
 # Sizes of some types, needed at preprocessing time.
 #
 # FIXME: The assumption that BITS_PER_MP_LIMB is 8*sizeof(mp_limb_t) might
-# be slightly rash, but it's true everwhere we know of and ought to be true
+# be slightly rash, but it's true everywhere we know of and ought to be true
 # of any sensible system.  In a generic C build, grepping LONG_BIT out of
 # <limits.h> might be an alternative, for maximum portability.
 #

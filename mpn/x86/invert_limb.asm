@@ -32,7 +32,7 @@ C %ebx and %edx are temporaries.
 C %esi and %ebp is unused.
 
 defframe(PARAM_DIVISOR,4)
-	
+
 	TEXT
 	ALIGN(16)
 PROLOGUE(mpn_invert_limb)
@@ -90,7 +90,7 @@ ifdef(`PIC',`
 	pop	%edi
 	C pop	%ebp
 	pop	%ebx
-	
+
 	ret
 
 EPILOGUE()

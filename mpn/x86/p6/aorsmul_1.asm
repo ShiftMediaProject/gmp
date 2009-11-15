@@ -170,7 +170,7 @@ C registers when doing the mul for the initial two carry limbs.
 C
 C The add/adc for the initial carry in %ebx is necessary only for the
 C mpn_add/submul_1c entry points.  Duplicating the startup code to
-C eliminiate this for the plain mpn_add/submul_1 doesn't seem like a good
+C eliminate this for the plain mpn_add/submul_1 doesn't seem like a good
 C idea.
 
 dnl  overlapping with parameters already fetched

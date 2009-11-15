@@ -49,7 +49,7 @@ dnl
 dnl  But note that when a quoted string is being read, a # isn't special, so
 dnl  apostrophes in comments in quoted strings must be avoided or they'll be
 dnl  interpreted as a closing quote mark.  But when the quoted text is
-dnl  re-read # will still act like a normal comment, supressing macro
+dnl  re-read # will still act like a normal comment, suppressing macro
 dnl  expansion.
 dnl
 dnl  For example,

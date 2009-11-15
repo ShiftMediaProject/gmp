@@ -1482,7 +1482,7 @@ speed_mpf_init_clear (struct speed_params *s)
 
 
 /* Compare this to mpn_add_n to see how much overhead mpz_add adds.  Note
-   that repeatedly calling mpz_add with the same data gives branch predition
+   that repeatedly calling mpz_add with the same data gives branch prediction
    in it an advantage.  */
 
 double

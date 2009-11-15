@@ -75,7 +75,7 @@ dnl
 dnl  Emit a ".align" directive.  "bytes" is eval()ed, so can be an
 dnl  expression.
 dnl
-dnl  This version overrides the definition in mpn/asm-defs.m4.  We supress
+dnl  This version overrides the definition in mpn/asm-defs.m4.  We suppress
 dnl  any .align if the gas byte-swapped-nops bug was detected by configure
 dnl  GMP_ASM_IA64_ALIGN_OK.
 

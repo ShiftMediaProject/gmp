@@ -99,7 +99,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
 #define w0 rp
 #define w2 (rp + 2*n)
 #define w6 (rp + 6*n)
-  
+
   ASSERT (w6n > 0);
   ASSERT (w6n <= 2*n);
 
@@ -156,7 +156,7 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
   mpn_sub (w4, w4, m, w0, 2*n);
   mpn_sub_n (w4, w4, w1, m);  ASSERT (!(w4[0] & 3));
   mpn_rshift (w4, w4, m, 2); /* w4>=0 */
-  
+
   tp[w6n] = mpn_lshift (tp, w6, w6n, 4);
   mpn_sub (w4, w4, m, tp, w6n+1);
 
@@ -178,13 +178,13 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
       mpn_rshift (w3, w3, m, 1);
 #endif
     }
-  
+
   mpn_sub_n (w2, w2, w3, m);
 
   mpn_submul_1 (w5, w2, m, 65);
   mpn_sub (w2, w2, m, w6, w6n);
   mpn_sub (w2, w2, m, w0, 2*n);
-  
+
   mpn_addmul_1 (w5, w2, m, 45);  ASSERT (!(w5[0] & 1));
   mpn_rshift (w5, w5, m, 1);
   mpn_sub_n (w4, w4, w2, m);

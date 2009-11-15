@@ -20,7 +20,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C TODO:
-C  * Avoid indexed adressing, it makes us stall on the two-ported register
+C  * Avoid indexed addressing, it makes us stall on the two-ported register
 C    file.
 
 C                           cycles/limb

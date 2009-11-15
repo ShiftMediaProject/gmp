@@ -22,7 +22,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 dnl  hppa assembler comments are introduced with ";".
 dnl
-dnl  For cooperation with cpp, aparently lines "# 123" set the line number,
+dnl  For cooperation with cpp, apparently lines "# 123" set the line number,
 dnl  and other lines starting with a "#" are ignored.
 
 changecom(;)

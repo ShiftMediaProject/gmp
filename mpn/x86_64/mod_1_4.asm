@@ -38,7 +38,7 @@ PROLOGUE(mpn_mod_1s_4p)
 	push	%r12
 	push	%rbp
 	push	%rbx
-	
+
 	mov	%rdx, -16(%rsp)
 	mov	%rcx, %r14
 	mov	16(%rcx), %r11
