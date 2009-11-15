@@ -1,3 +1,11 @@
+2009-11-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/copyi.c: New file.
+	* mpn/generic/copyd.c: Likewise.
+	* mpn/generic/zero.c: Likewise.
+	* gmp-h.in: Declare new functions.
+	* configure.in (gmp_mpn_functions): Add new functions.
+
 2009-11-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): fix typo

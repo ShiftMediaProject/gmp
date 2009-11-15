@@ -1630,6 +1630,29 @@ __GMP_DECLSPEC mp_limb_t mpn_submul_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t
 #define mpn_tdiv_qr __MPN(tdiv_qr)
 __GMP_DECLSPEC void mpn_tdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
+#define mpn_and_n __MPN(and_n)
+__GMP_DECLSPEC void mpn_and_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_andn_n __MPN(andn_n)
+__GMP_DECLSPEC void mpn_andn_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_nand_n __MPN(nand_n)
+__GMP_DECLSPEC void mpn_nand_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_ior_n __MPN(ior_n)
+__GMP_DECLSPEC void mpn_ior_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_iorn_n __MPN(iorn_n)
+__GMP_DECLSPEC void mpn_iorn_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_nior_n __MPN(nior_n)
+__GMP_DECLSPEC void mpn_nior_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_xor_n __MPN(xor_n)
+__GMP_DECLSPEC void mpn_xor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_xnor_n __MPN(xnor_n)
+__GMP_DECLSPEC void mpn_xnor_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
+#define mpn_copyi __MPN(copyi)
+__GMP_DECLSPEC void mpn_copyi __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#define mpn_copyd __MPN(copyd)
+__GMP_DECLSPEC void mpn_copyd __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#define mpn_zero __MPN(zero)
+__GMP_DECLSPEC void mpn_zero __GMP_PROTO ((mp_ptr, mp_size_t));
 
 /**************** mpz inlines ****************/
 

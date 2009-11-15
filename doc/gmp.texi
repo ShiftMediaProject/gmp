@@ -5522,6 +5522,18 @@ Perform the bitwise logical exclusive or of @{@var{s1p}, @var{n}@} and
 @{@var{rp}, @var{n}@}.
 @end deftypefun
 
+@deftypefun void mpn_copyi (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n})
+Copy from @{@var{s1p}, @var{n}@} to @{@var{rp}, @var{n}@}, increasingly.
+@end deftypefun
+
+@deftypefun void mpn_copyd (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n})
+Copy from @{@var{s1p}, @var{n}@} to @{@var{rp}, @var{n}@}, decreasingly.
+@end deftypefun
+
+@deftypefun void mpn_zero (mp_limb_t *@var{rp}, mp_size_t @var{n})
+Zero @{@var{rp}, @var{n}@}.
+@end deftypefun
+
 @sp 1
 @section Nails
 @cindex Nails
