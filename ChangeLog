@@ -1,5 +1,7 @@
 2009-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (gmp_mpn_functions_optional): Add *lsh_n functions.
+
 	* mpn/generic/toom_eval_pm2exp.c: Make HAVE_NATIVE_mpn_addlsh_n code
 	work.
 
