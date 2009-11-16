@@ -2444,8 +2444,7 @@ fi
 #       can optionally provide the latter as an extra entrypoint.  Likewise
 #       divrem_1 and pre_divrem_1.
 
-gmp_mpn_functions_optional="umul udiv copyi copyd com_n
-  and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			\
+gmp_mpn_functions_optional="umul udiv com_n				
   invert_limb sqr_diagonal						\
   mul_2 mul_3 mul_4							\
   addmul_2 addmul_3 addmul_4 addmul_5 addmul_6 addmul_7 addmul_8	\
@@ -2482,6 +2481,7 @@ gmp_mpn_functions="$extra_functions					   \
   bdiv_q bdiv_qr							   \
   divexact bdiv_dbm1c redc_1 redc_2 powm powlo powm_sec subcnd_n	   \
   trialdiv remove							   \
+  and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			   \
   copyi copyd zero							   \
   $gmp_mpn_functions_optional"
 

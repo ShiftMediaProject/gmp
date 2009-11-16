@@ -1,3 +1,8 @@
+2009-11-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (gmp_mpn_functions_optional): Remove copyi,copyd, they
+	are now in gmp_mpn_functions.  Analogously move logical functions.
+
 2009-11-16  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom53_mul.c: Use addlsh2 for evaluation.(and fix typo)
