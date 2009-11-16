@@ -65,7 +65,7 @@ main (int argc, char *argv[])
           abort ();
         }
 
-      mpz_mul_ui (f, f, n+1);  /* (n+1)! = n! * n */
+      mpz_mul_ui (f, f, n+1);  /* (n+1)! = n! * (n+1) */
     }
 
   mpz_clear (f);

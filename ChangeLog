@@ -3,6 +3,10 @@
 	* mpn/generic/toom53_mul.c: Use addlsh2 for evaluation.(and fix typo)
 	* mpn/generic/toom_eval_dgr3_pm2.c: Likewise (affects toom44 and 43).
 
+	* mpn/asm-defs.m4: Fix comments for op_lsh2 new functions.
+	* gmp-impl.h: Likewise.
+	* tests/mpz/t-fac_ui.c: Fix a comment.
+
 2009-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aorrlsh2_n.asm: New file.

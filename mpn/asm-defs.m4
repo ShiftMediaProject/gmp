@@ -1081,7 +1081,7 @@ m4_not_for_expansion(`OPERATION_addlsh1_n')
 m4_not_for_expansion(`OPERATION_sublsh1_n')
 m4_not_for_expansion(`OPERATION_rsblsh1_n')
 
-dnl  aorslsh1_n
+dnl  aorslsh2_n
 m4_not_for_expansion(`OPERATION_addlsh2_n')
 m4_not_for_expansion(`OPERATION_sublsh2_n')
 m4_not_for_expansion(`OPERATION_rsblsh2_n')
