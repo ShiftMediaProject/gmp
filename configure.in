@@ -2444,7 +2444,7 @@ fi
 #       can optionally provide the latter as an extra entrypoint.  Likewise
 #       divrem_1 and pre_divrem_1.
 
-gmp_mpn_functions_optional="umul udiv com_n				
+gmp_mpn_functions_optional="umul udiv com_n				\
   invert_limb sqr_diagonal						\
   mul_2 mul_3 mul_4							\
   addmul_2 addmul_3 addmul_4 addmul_5 addmul_6 addmul_7 addmul_8	\
