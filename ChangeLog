@@ -1,3 +1,8 @@
+2009-11-16  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom53_mul.c: Use addlsh2 for evaluation.(and fix typo)
+	* mpn/generic/toom_eval_dgr3_pm2.c: Likewise (affects toom44 and 43).
+
 2009-11-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/aorrlsh2_n.asm: New file.

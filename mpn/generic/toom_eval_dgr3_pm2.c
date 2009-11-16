@@ -39,12 +39,18 @@ mpn_toom_eval_dgr3_pm2 (mp_ptr xp2, mp_ptr xm2,
   ASSERT (x3n <= n);
 
   /* (x0 + 4 * x2) +/- (2 x1 + 8 x_3) */
-#if HAVE_NATIVE_mpn_addlsh_n
+#if HAVE_NATIVE_mpn_addlsh_n || HAVE_NATIVE_mpn_addlsh2_n
+#if HAVE_NATIVE_mpn_addlsh2_n
+  xp2[n] = mpn_addlsh2_n (xp2, xp, xp + 2*n, n);
+
+  cy = mpn_addlsh2_n (tp, xp + n, xp + 3*n, x3n);
+#else /* HAVE_NATIVE_mpn_addlsh_n */
   xp2[n] = mpn_addlsh_n (xp2, xp, xp + 2*n, n, 2);
 
   cy = mpn_addlsh_n (tp, xp + n, xp + 3*n, x3n, 2);
+#endif
   if (x3n < n)
-    cy = mpn_add_1 (tp + x3n, xp + 3*n + x3n, n - x3n, cy);
+    cy = mpn_add_1 (tp + x3n, xp + n + x3n, n - x3n, cy);
   tp[n] = cy;
 #else
   cy = mpn_lshift (tp, xp + 2*n, n, 2);
