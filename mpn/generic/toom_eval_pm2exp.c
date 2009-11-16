@@ -35,6 +35,9 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
 {
   unsigned i;
   int neg;
+#if HAVE_NATIVE_mpn_addlsh_n
+  mp_limb_t cy;
+#endif
 
   ASSERT (k >= 4);
 
@@ -47,7 +50,7 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
 #if HAVE_NATIVE_mpn_addlsh_n
   xp2[n] = mpn_addlsh_n (xp2, xp, xp + 2*n, n, 2*shift);
   for (i = 4; i < k; i += 2)
-    xp[2] += mpn_addlsh_n (xp2, xp, xp + i*n, n, i*shift);
+    xp2[n] += mpn_addlsh_n (xp2, xp2, xp + i*n, n, i*shift);
 
   tp[n] = mpn_lshift (tp, xp+n, n, shift);
   for (i = 3; i < k; i+= 2)

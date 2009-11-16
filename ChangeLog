@@ -1,5 +1,8 @@
 2009-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom_eval_pm2exp.c: Make HAVE_NATIVE_mpn_addlsh_n code
+	work.
+
 	* mpn/x86_64/aorrlsh2_n.asm: Optimize inner loop.
 
 	* configure.in (gmp_mpn_functions_optional): Remove copyi,copyd, they
