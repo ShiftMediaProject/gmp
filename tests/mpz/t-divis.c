@@ -124,8 +124,8 @@ check_random (int reps)
 
   for (i = 0; i < reps; i++)
     {
-      mpz_erandomb (a, rands, 1 << 17);
-      mpz_erandomb_nonzero (d, rands, 1 << 17);
+      mpz_erandomb (a, rands, 1 << 19);
+      mpz_erandomb_nonzero (d, rands, 1 << 18);
 
       mpz_fdiv_r (r, a, d);
 
@@ -151,7 +151,7 @@ check_random (int reps)
 int
 main (int argc, char *argv[])
 {
-  int  reps = 1000;
+  int  reps = 100;
 
   tests_start ();
 
