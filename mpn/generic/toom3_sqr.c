@@ -119,7 +119,14 @@ mpn_toom3_sqr (mp_ptr pp,
 #endif
 
   /* Compute as2.  */
-#if 0 && HAVE_NATIVE_mpn_addlsh1_n
+#if HAVE_NATIVE_mpn_rsblsh1_n
+  cy = mpn_add_n (as2, a2, as1, s);
+  if (s != n)
+    cy = mpn_add_1 (as2 + s, as1 + s, n - s, cy);
+  cy += as1[n];
+  cy = 2 * cy + mpn_rsblsh1_n (as2, a0, as2, n);
+#else
+#if HAVE_NATIVE_mpn_addlsh1_n
   cy  = mpn_addlsh1_n (as2, a1, a2, s);
   if (s != n)
     cy = mpn_add_1 (as2 + s, a1 + s, n - s, cy);
@@ -131,6 +138,7 @@ mpn_toom3_sqr (mp_ptr pp,
   cy += as1[n];
   cy = 2 * cy + mpn_lshift (as2, as2, n, 1);
   cy -= mpn_sub_n (as2, as2, a0, n);
+#endif
 #endif
   as2[n] = cy;
 

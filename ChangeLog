@@ -17,6 +17,7 @@
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): fix typo
 
 	* mpn/generic/toom33_mul.c: Use rsblsh1 for evaluation.
+	* mpn/generic/toom3_sqr.c: Likewise.
 
 2009-11-14  Torbjorn Granlund  <tege@gmplib.org>
 
