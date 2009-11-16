@@ -1,5 +1,9 @@
 2009-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.c (routine): Add measurement of mpn_addlsh2_n,
+	mpn_sublsh2_n, mpn_rsblsh2_n.
+	* tune/common.c: Add speed routines for lsh2 functions.
+
 	* mpn/generic/divis.c: Use MU_BDIV_QR_THRESHOLD.
 
 	* configure.in (gmp_mpn_functions_optional): Add *lsh_n functions.
