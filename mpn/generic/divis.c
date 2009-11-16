@@ -163,7 +163,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
       mpn_sbpi1_bdiv_qr (qp, rp, an, dp, dn, -di);
       rp += an - dn;
     }
-  else if (BELOW_THRESHOLD (dn, MU_BDIV_Q_THRESHOLD)) /* FIXME: QR */
+  else if (BELOW_THRESHOLD (dn, MU_BDIV_QR_THRESHOLD))
     {
       binvert_limb (di, dp[0]);
       mpn_dcpi1_bdiv_qr (qp, rp, an, dp, dn, -di);
