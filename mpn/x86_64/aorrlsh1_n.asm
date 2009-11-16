@@ -24,8 +24,10 @@ include(`../config.m4')
 C	     cycles/limb
 C K8,K9:	 2
 C K10:		 2
-C P4:		13
-C P6-15:	 3.45
+C P4:		 13
+C P6 core2: 	 3.45
+C P6 corei7:	 3.45
+C P6 atom:	 ?
 
 
 C Sometimes speed degenerates, supposedly related to that some operand

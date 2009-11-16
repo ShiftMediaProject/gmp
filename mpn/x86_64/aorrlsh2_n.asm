@@ -23,14 +23,12 @@ include(`../config.m4')
 
 
 C	     cycles/limb
-C K8,K9:	 2.5
-C K10:		 2.5
+C K8,K9:	 2
+C K10:		 2
 C P4:		 ?
 C P6 core2: 	 3
-C P6 corei7:	 3
+C P6 corei7:	 2.75
 C P6 atom:	 ?
-
-C This was a quick hack.  It surely can be improved.
 
 C INPUT PARAMETERS
 define(`rp',	`%rdi')
@@ -40,14 +38,12 @@ define(`n',	`%rcx')
 
 ifdef(`OPERATION_addlsh2_n',`
   define(ADDSUB,        `add')
-  define(ADDSUBC,       `adc')
-  define(func, mpn_addlsh2_n)
-')
+  define(ADCSBB,       `adc')
+  define(func, mpn_addlsh2_n)')
 ifdef(`OPERATION_rsblsh2_n',`
   define(ADDSUB,        `sub')
-  define(ADDSUBC,       `sbb')
-  define(func, mpn_rsblsh2_n)
-')
+  define(ADCSBB,       `sbb')
+  define(func, mpn_rsblsh2_n)')
 
 MULFUNC_PROLOGUE(mpn_addlsh2_n mpn_rsblsh2_n)
 
@@ -60,10 +56,14 @@ PROLOGUE(func)
 	push	%r14
 	push	%r15
 
+	mov	(vp), %r8
+	lea	(,%r8,4), %r12
+	shr	$62, %r8
+
+	mov	R32(n), R32(%rax)
 	lea	(rp,n,8), rp
 	lea	(up,n,8), up
 	lea	(vp,n,8), vp
-	mov	R32(n), R32(%rax)
 	neg	n
 	and	$3, R8(%rax)
 	je	L(b00)
@@ -71,88 +71,80 @@ PROLOGUE(func)
 	jc	L(b01)
 	je	L(b10)
 
-L(b11):	mov	(vp,n,8), %r9
-	lea	(,%r9,4), %r13
-	shr	$62, %r9
-	mov	8(vp,n,8), %r10
-	lea	(%r9,%r10,4), %r14
+L(b11):	mov	8(vp,n,8), %r10
+	lea	(%r8,%r10,4), %r14
 	shr	$62, %r10
 	mov	16(vp,n,8), %r11
 	lea	(%r10,%r11,4), %r15
 	shr	$62, %r11
-	ADDSUB	(up,n,8), %r13
-	ADDSUBC	8(up,n,8), %r14
-	ADDSUBC	16(up,n,8), %r15
+	ADDSUB	(up,n,8), %r12
+	ADCSBB	8(up,n,8), %r14
+	ADCSBB	16(up,n,8), %r15
 	sbb	R32(%rax), R32(%rax)		  C save carry for next
-	mov	%r13, (rp,n,8)
+	mov	%r12, (rp,n,8)
 	mov	%r14, 8(rp,n,8)
 	mov	%r15, 16(rp,n,8)
 	add	$3, n
 	js	L(top)
 	jmp	L(end)
 
-L(b01):	mov	(vp,n,8), %r11
-	lea	(,%r11,4), %r15
-	shr	$62, %r11
-	ADDSUB	(up,n,8), %r15
+L(b01):	mov	%r8, %r11
+	ADDSUB	(up,n,8), %r12
 	sbb	R32(%rax), R32(%rax)		  C save carry for next
-	mov	%r15, (rp,n,8)
+	mov	%r12, (rp,n,8)
 	add	$1, n
 	js	L(top)
 	jmp	L(end)
 
-L(b10):	mov	(vp,n,8), %r10
-	lea	(,%r10,4), %r14
-	shr	$62, %r10
-	mov	8(vp,n,8), %r11
-	lea	(%r10,%r11,4), %r15
+L(b10):	mov	8(vp,n,8), %r11
+	lea	(%r8,%r11,4), %r15
 	shr	$62, %r11
-	ADDSUB	(up,n,8), %r14
-	ADDSUBC	8(up,n,8), %r15
+	ADDSUB	(up,n,8), %r12
+	ADCSBB	8(up,n,8), %r15
 	sbb	R32(%rax), R32(%rax)		  C save carry for next
-	mov	%r14, (rp,n,8)
+	mov	%r12, (rp,n,8)
 	mov	%r15, 8(rp,n,8)
 	add	$2, n
 	js	L(top)
 	jmp	L(end)
 
-L(b00):	xor	R32(%r11), R32(%r11)
-	jmp	L(top)
+L(b00):	mov	8(vp,n,8), %r9
+	mov	16(vp,n,8), %r10
+	jmp	L(e00)
 
 	ALIGN(16)
-L(top):	mov	(vp,n,8), %r8
+L(top):	mov	16(vp,n,8), %r10
+	mov	(vp,n,8), %r8
+	mov	8(vp,n,8), %r9
 	lea	(%r11,%r8,4), %r12
 	shr	$62, %r8
-	mov	8(vp,n,8), %r9
-	lea	(%r8,%r9,4), %r13
+L(e00):	lea	(%r8,%r9,4), %r13
 	shr	$62, %r9
-	mov	16(vp,n,8), %r10
+	mov	24(vp,n,8), %r11
 	lea	(%r9,%r10,4), %r14
 	shr	$62, %r10
-	mov	24(vp,n,8), %r11
 	lea	(%r10,%r11,4), %r15
 	shr	$62, %r11
 	add	R32(%rax), R32(%rax)		  C restore carry
-	ADDSUBC	(up,n,8), %r12
-	ADDSUBC	8(up,n,8), %r13
-	ADDSUBC	16(up,n,8), %r14
-	ADDSUBC	24(up,n,8), %r15
-	sbb	R32(%rax), R32(%rax)		  C save carry for next
+	ADCSBB	(up,n,8), %r12
+	ADCSBB	8(up,n,8), %r13
+	ADCSBB	16(up,n,8), %r14
+	ADCSBB	24(up,n,8), %r15
 	mov	%r12, (rp,n,8)
 	mov	%r13, 8(rp,n,8)
 	mov	%r14, 16(rp,n,8)
+	sbb	R32(%rax), R32(%rax)		  C save carry for next
 	mov	%r15, 24(rp,n,8)
 	add	$4, n
 	js	L(top)
-
 L(end):
 
 ifdef(`OPERATION_addlsh2_n',`
 	sub	R32(%r11), R32(%rax)
 	neg	R32(%rax)')
 ifdef(`OPERATION_rsblsh2_n',`
-	sub	R32(%r11), R32(%rax)
-	neg	%rax')
+	add	R32(%r11), R32(%rax)
+	movslq	R32(%rax), %rax')
 
 	pop	%r15
 	pop	%r14
