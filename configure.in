@@ -2450,6 +2450,7 @@ gmp_mpn_functions_optional="umul udiv com_n				\
   addmul_2 addmul_3 addmul_4 addmul_5 addmul_6 addmul_7 addmul_8	\
   addlsh1_n sublsh1_n rsblsh1_n rsh1add_n rsh1sub_n			\
   addlsh2_n sublsh2_n rsblsh2_n						\
+  addlsh_n sublsh_n rsblsh_n						\
   add_n_sub_n addaddmul_1msb0 lshiftc"
 
 gmp_mpn_functions="$extra_functions					   \
