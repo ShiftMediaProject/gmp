@@ -1,5 +1,7 @@
 2009-11-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (mpn_and_n, etc): Adapt to now-public logic functions.
+
 	* config.guess: Recognise VIA nano.
 	* config.sub: Likewise.
 	* configure.in: Generalise x86_64 support; recognise VIA nano.
