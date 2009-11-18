@@ -1,3 +1,9 @@
+2009-11-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* config.guess: Recognise VIA nano.
+	* config.sub: Likewise.
+	* configure.in: Generalise x86_64 support; recognise VIA nano.
+
 2009-11-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Add measurement of mpn_addlsh2_n,
@@ -11,7 +17,7 @@
 	* mpn/generic/toom_eval_pm2exp.c: Make HAVE_NATIVE_mpn_addlsh_n code
 	work.
 
-	* mpn/x86_64/aorrlsh2_n.asm: Optimize inner loop.
+	* mpn/x86_64/aorrlsh2_n.asm: Optimise inner loop.
 
 	* configure.in (gmp_mpn_functions_optional): Remove copyi,copyd, they
 	are now in gmp_mpn_functions.  Analogously move logical functions.

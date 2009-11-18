@@ -775,7 +775,8 @@ main ()
 	{
 	case 6:
 	  if (model < 9)	modelstr = "viac3";
-	  else			modelstr = "viac32";
+	  else if (model < 15)	modelstr = "viac32";
+	  else			modelstr = "nano";
 	  break;
 	}
     }

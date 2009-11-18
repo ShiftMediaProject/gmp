@@ -47,7 +47,7 @@ define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-* | geode*-*-* | atom-*-*]])
 
 define(X86_64_PATTERN,
-[[athlon64-*-* | pentium4-*-* | atom-*-* | core2-*-* | x86_64-*-*]])
+[[athlon64-*-* | pentium4-*-* | atom-*-* | core2-*-* | x86_64-*-* | nano-*-*]])
 
 dnl  GMP_FAT_SUFFIX(DSTVAR, DIRECTORY)
 dnl  ---------------------------------
