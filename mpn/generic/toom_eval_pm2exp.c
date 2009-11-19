@@ -96,7 +96,7 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
   if (neg)
     mpn_add_n_sub_n (xp2, xm2, tp, xp2, n + 1);
   else
-    mpn_add_n_sub_n (xp2, xm2, xp1, tp, n + 1);
+    mpn_add_n_sub_n (xp2, xm2, xp2, tp, n + 1);
 #else /* !HAVE_NATIVE_mpn_add_n_sub_n */
   if (neg)
     mpn_sub_n (xm2, tp, xp2, n + 1);
