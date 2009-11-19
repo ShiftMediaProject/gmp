@@ -1,3 +1,10 @@
+2009-11-19  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom_eval_pm2.c (mpn_toom_eval_pm2): New file.
+	* mpn/generic/toom53_mul.c (mpn_toom53_mul): Use mpn_toom_eval_pm2.
+	* mpn/generic/toom62_mul.c (mpn_toom62_mul): Likewise.
+	* configure.in (gmp_mpn_functions): Added toom_eval_dgr3_pm2.
+
 2009-11-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_and_n, etc): Adapt to now-public logic functions.

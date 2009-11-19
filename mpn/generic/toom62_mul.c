@@ -103,7 +103,7 @@ mpn_toom62_mul (mp_ptr pp,
     aflags = 0;
 
   /* Compute as2 and asm2. */
-  if (mpn_toom_eval_pm2exp (as2, asm2, 5, ap, n, s, 1, gp))
+  if (mpn_toom_eval_pm2 (as2, asm2, 5, ap, n, s, gp))
     aflags |= toom7_w1_neg;
 
   /* Compute ash = 32 a0 + 16 a1 + 8 a2 + 4 a3 + 2 a4 + a5
