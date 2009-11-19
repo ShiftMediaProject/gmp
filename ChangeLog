@@ -1,5 +1,8 @@
 2009-11-19  Niels Möller <nisse@lysator.liu.se>  <nisse@shell.gmplib.org>
 
+	* mpn/generic/toom_eval_pm2.c (mpn_toom_eval_pm2) [HAVE_NATIVE_mpn_addlsh_n]:
+	Fixed missing declaration.
+
 	* mpn/asm-defs.m4 (define_mpn): Add addlsh_n.
 	* gmp-impl.h (mpn_addlsh_n): Added prototype and name-mangling.
 

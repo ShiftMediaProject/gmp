@@ -34,6 +34,9 @@ mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
 {
   unsigned i;
   int neg;
+#if HAVE_NATIVE_mpn_addlsh_n
+  mp_limb_t cy;
+#endif
 
   ASSERT (k >= 4);
 
