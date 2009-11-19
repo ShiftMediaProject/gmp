@@ -1,7 +1,8 @@
 2009-11-19  Niels Möller <nisse@lysator.liu.se>  <nisse@shell.gmplib.org>
 
-	* mpn/generic/toom_eval_dgr3_pm2.c (mpn_toom_eval_dgr3_pm2) [HAVE_NATIVE_mpn_add_n_sub_n]:
-	Fixed type in mpn_add_n_sub_n call (spotted by Marco Bodrato).
+	* mpn/generic/toom_eval_dgr3_pm2.c (mpn_toom_eval_dgr3_pm2)
+	[HAVE_NATIVE_mpn_add_n_sub_n]: Fixed typo in mpn_add_n_sub_n call
+	(spotted by Marco Bodrato).
 	* mpn/generic/toom_eval_pm2.c (mpn_toom_eval_pm2): Likewise.
 	* mpn/generic/toom_eval_pm2exp.c (mpn_toom_eval_pm2exp): Likewise.
 
