@@ -806,6 +806,16 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_8 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t
 #define mpn_addlsh1_n __MPN(addlsh1_n)
 __GMP_DECLSPEC mp_limb_t mpn_addlsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
+/* mpn_addlsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+4*{b,n}, and
+   returns the carry out (0, ..., 4).  */
+#define mpn_addlsh2_n __MPN(addlsh2_n)
+__GMP_DECLSPEC mp_limb_t mpn_addlsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
+/* mpn_addlsh_n(c,a,b,n,k), when it exists, sets {c,n} to {a,n}+2^k*{b,n}, and
+   returns the carry out (0, ..., 2^k).  */
+#define mpn_addlsh_n __MPN(addlsh_n)
+  __GMP_DECLSPEC mp_limb_t mpn_addlsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
+
 /* mpn_sublsh1_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-2*{b,n}, and
    returns the borrow out (0, 1 or 2).  */
 #define mpn_sublsh1_n __MPN(sublsh1_n)
@@ -815,11 +825,6 @@ __GMP_DECLSPEC mp_limb_t mpn_sublsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
    returns the carry out (-1, 0, 1).  */
 #define mpn_rsblsh1_n __MPN(rsblsh1_n)
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-
-/* mpn_addlsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}+4*{b,n}, and
-   returns the carry out (0, ..., 4).  */
-#define mpn_addlsh2_n __MPN(addlsh2_n)
-__GMP_DECLSPEC mp_limb_t mpn_addlsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 /* mpn_sublsh2_n(c,a,b,n), when it exists, sets {c,n} to {a,n}-4*{b,n}, and
    returns the borrow out (FIXME 0, 1, 2 or 3).  */
