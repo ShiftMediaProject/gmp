@@ -307,6 +307,8 @@ const struct routine_t {
   { "mpn_mullow_n",      speed_mpn_mullow_n         },
   { "mpn_mullow_basecase", speed_mpn_mullow_basecase},
 
+  { "mpn_mulmod_bnm1",   speed_mpn_mulmod_bnm1      },
+
   { "mpn_get_str",       speed_mpn_get_str,  FLAG_R_OPTIONAL },
 
   { "mpn_set_str",         speed_mpn_set_str,     FLAG_R_OPTIONAL },
