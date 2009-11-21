@@ -87,9 +87,9 @@ contfracpnqn(contfrac(1-mul(log(2*2-1)/log(2),1,1/2),5))
 contfracpnqn(contfrac(1-mul(log(3*2-1)/log(3),1,1/2),5))
 contfracpnqn(contfrac(1-mul(log(4*2-1)/log(4),1,1/2),5))
        */
-      if (BELOW_THRESHOLD (n, 3*MUL_TOOM33_THRESHOLD*36/(36-11)))
+      if (BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD*36/(36-11)))
 	n1 = n * 11 / (size_t) 36;	/* n1 ~= n*(1-.694...) */
-      else if (BELOW_THRESHOLD (n, 4*MUL_TOOM44_THRESHOLD*40/(40-9)))
+      else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD*40/(40-9)))
 	n1 = n * 9 / (size_t) 40;	/* n1 ~= n*(1-.775...) */
       else
 	n1 = n * 7 / (size_t) 39;	/* n1 ~= n*(1-.821...) */
