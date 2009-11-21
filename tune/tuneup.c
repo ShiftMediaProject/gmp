@@ -846,8 +846,6 @@ tune_mul (void)
 }
 
 
-/* This was written by the tuneup challenged tege.  Kevin, please delete
-   this comment when you've reviewed/rewritten this.  :-) */
 void
 tune_mullow (void)
 {
@@ -857,21 +855,33 @@ tune_mullow (void)
 
   param.name = "MULLOW_BASECASE_THRESHOLD";
   param.min_size = 3;
-  param.min_is_always = 1;
   param.max_size = MULLOW_BASECASE_THRESHOLD_LIMIT-1;
+  param.stop_factor = 1.5;
+  param.noprint = 1;
   one (&mullow_basecase_threshold, &param);
 
-  param.min_is_always = 0;	/* ??? */
-
   param.name = "MULLOW_DC_THRESHOLD";
-  param.min_size = mul_toom22_threshold;
+  param.min_size = 8;
   param.max_size = 1000;
   one (&mullow_dc_threshold, &param);
+
+  if (mullow_basecase_threshold >= mullow_dc_threshold)
+    {
+      print_define ("MULLOW_BASECASE_THRESHOLD", mullow_dc_threshold);
+      print_define_remark ("MULLOW_DC_THRESHOLD", 0, "never mpn_mullow_basecase");
+    }
+  else
+    {
+      print_define ("MULLOW_BASECASE_THRESHOLD", mullow_basecase_threshold);
+      print_define ("MULLOW_DC_THRESHOLD", mullow_dc_threshold);
+    }
 
 #if WANT_FFT
   param.name = "MULLOW_MUL_N_THRESHOLD";
   param.min_size = mullow_dc_threshold;
   param.max_size = 2 * mul_fft_threshold;
+  param.noprint = 0;
+  param.step_factor = 0.02;
   one (&mullow_mul_n_threshold, &param);
 #else
   print_define_remark ("MULLOW_MUL_N_THRESHOLD", MP_SIZE_T_MAX,

@@ -1,3 +1,7 @@
+2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_mullow): Rewrite.
+
 2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h: Removed unused macros (CACHED_ABOVE_THRESHOLD and
