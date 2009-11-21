@@ -1,3 +1,8 @@
+2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+       * gmp-impl.h: Removed unused macros (CACHED_ABOVE_THRESHOLD and
+       CACHED_BELOW_THRESHOLD).
+
 2009-11-19  Niels Möller <nisse@lysator.liu.se>  <nisse@shell.gmplib.org>
 
 	* mpn/generic/toom_eval_dgr3_pm2.c (mpn_toom_eval_dgr3_pm2)
