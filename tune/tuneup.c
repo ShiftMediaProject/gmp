@@ -868,10 +868,15 @@ tune_mullow (void)
   param.max_size = 1000;
   one (&mullow_dc_threshold, &param);
 
+#if WANT_FFT
   param.name = "MULLOW_MUL_N_THRESHOLD";
   param.min_size = mullow_dc_threshold;
-  param.max_size = 2000;
+  param.max_size = 2 * mul_fft_threshold;
   one (&mullow_mul_n_threshold, &param);
+#else
+  print_define_remark ("MULLOW_MUL_N_THRESHOLD", MP_SIZE_T_MAX,
+                           "without FFT use mullow forever");
+#endif
 }
 
 void
@@ -1799,6 +1804,12 @@ all (void)
   tune_sqr ();
   printf("\n");
 
+  tune_fft_mul ();
+  printf("\n");
+
+  tune_fft_sqr ();
+  printf ("\n");
+
   tune_mullow ();
   printf("\n");
 
@@ -1831,12 +1842,6 @@ all (void)
   tune_get_str ();
   tune_set_str ();
   printf("\n");
-
-  tune_fft_mul ();
-  printf("\n");
-
-  tune_fft_sqr ();
-  printf ("\n");
 
   time (&end_time);
   printf ("/* Tuneup completed successfully, took %ld seconds */\n",
