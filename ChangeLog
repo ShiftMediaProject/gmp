@@ -2,6 +2,7 @@
 
        * gmp-impl.h: Removed unused macros (CACHED_ABOVE_THRESHOLD and
        CACHED_BELOW_THRESHOLD).
+       * mpn/generic/mullow_n.c: Use Mulder's trick.
        * tune/speed.c (routine): Add entry related to mpn_mulmod_bnm1.
 
 2009-11-19  Niels Möller <nisse@lysator.liu.se>  <nisse@shell.gmplib.org>

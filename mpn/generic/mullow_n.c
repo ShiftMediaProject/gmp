@@ -44,14 +44,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /*
   FIXME: This function should accept a temporary area.
-  FIXME: Perhaps call mpn_kara_mul_n instead of mpn_mul_n?
   THINK: If mpn_mul_basecase is always faster than mpn_mullow_basecase
          (typically thanks to mpn_addmul_2) should we unconditionally use
          mpn_mul_n?
-  FIXME: The recursive calls to mpn_mullow_n use sizes n/2 (one uses floor(n/2)
-         and the other ceil(n/2)).  Depending on the values of the various
-         _THRESHOLDs, this may never trigger MULLOW_BASECASE_THRESHOLD.
-	 Should we worry about this overhead?
+  THINK: The DC strategy uses different constatnts in different Toom's
+	 ranges. Something smoother?
 */
 
 void
@@ -75,24 +72,43 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
   else if (BELOW_THRESHOLD (n, MULLOW_MUL_N_THRESHOLD))
     {
       /* Divide-and-conquer */
-      mp_size_t n2 = n >> 1;		/* floor(n/2) */
-      mp_size_t n1 = n - n2;		/* ceil(n/2) */
+      mp_size_t n2, n1;
       mp_ptr tp;
       TMP_SDECL;
       TMP_SMARK;
-      tp = TMP_SALLOC_LIMBS (n1);
+      /* We need fractional approximation of the value 1/2< b <1
+	 giving the minimum in the function b^a/(1-2*(1-b)^a) .
 
-      /* Split as x = x1 2^(n1 GMP_NUMB_BITS) + x0,
+	 Constants obtained with the following gp-pari commands:
+
+fun(a,b)=b^a/(1-2*(1-b)^a)
+mul(a,b,c)={local(m,x,p);if(b-c<1/10000,(b+c)/2,m=1;x=b;forstep(p=c,b,(b-c)/8,if(fun(a,p)<m,m=fun(a,p);x=p));mul(a,(b+x)/2,(c+x)/2))}
+contfracpnqn(contfrac(1-mul(log(2*2-1)/log(2),1,1/2),5))
+contfracpnqn(contfrac(1-mul(log(3*2-1)/log(3),1,1/2),5))
+contfracpnqn(contfrac(1-mul(log(4*2-1)/log(4),1,1/2),5))
+       */
+      if (BELOW_THRESHOLD (n, 3*MUL_TOOM33_THRESHOLD*36/(36-11)))
+	n1 = n * 11 / (size_t) 36;	/* n1 ~= n*(1-.694...) */
+      else if (BELOW_THRESHOLD (n, 4*MUL_TOOM44_THRESHOLD*40/(40-9)))
+	n1 = n * 9 / (size_t) 40;	/* n1 ~= n*(1-.775...) */
+      else
+	n1 = n * 7 / (size_t) 39;	/* n1 ~= n*(1-.821...) */
+      /* n1 = n * 4 / (size_t) 31;	// n1 ~= n*(1-.871...) [TOOM66] */
+      /* n1 = n / (size_t) 10;		// n1 ~= n*(1-.899...) [TOOM88] */
+      n2 = n - n1;
+      ASSERT (n1 < 2 * n2);
+      tp = TMP_SALLOC_LIMBS (2 * n2);
+
+      /* Split as x = x1 2^(n2 GMP_NUMB_BITS) + x0,
                   y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
 
       /* x0 * y0 */
-      mpn_mul_n (rp, xp, yp, n2);
-      if (n1 != n2)
-	rp[2 * n2] = mpn_addmul_1 (rp + n2, yp, n2, xp[n2]);
+      mpn_mul_n (tp, xp, yp, n2);
+      MPN_COPY (rp, tp, n2);
 
-      /* x1 * y0 * 2^(n1 GMP_NUMB_BITS) */
-      mpn_mullow_n (tp, xp + n1, yp, n2);
-      mpn_add_n (rp + n1, rp + n1, tp, n2);
+      /* x1 * y0 * 2^(n2 GMP_NUMB_BITS) */
+      mpn_mullow_n (rp + n2, xp + n2, yp, n1);
+      mpn_add_n (rp + n2, rp + n2, tp + n2, n1);
 
       /* x0 * y1 * 2^(n2 GMP_NUMB_BITS) */
       mpn_mullow_n (tp, yp + n2, xp, n1);
@@ -100,7 +116,7 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
       TMP_SFREE;
     }
   else
-    {
+    { /* FIXME: directly call mpn_mul_fft_full */
       /* For really large operands, use plain mpn_mul_n but throw away upper n
 	 limbs of result.  */
       mp_ptr tp;
