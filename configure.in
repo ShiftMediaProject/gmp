@@ -569,7 +569,6 @@ case $host in
     # checking sizeof(long), either 4 or 8 bytes respectively.  Do this in
     # ABI=1.0 too, in case someone tries to build that with a 2.0w gcc.
     #
-    gcc_cflags="-O2"
     gcc_cflags_optlist="arch"
     gcc_testlist="sizeof-long-4"
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
