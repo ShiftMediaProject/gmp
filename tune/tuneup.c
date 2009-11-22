@@ -856,7 +856,8 @@ tune_mullow (void)
   param.function = speed_mpn_mullow_n;
 
   param.name = "MULLOW_BASECASE_THRESHOLD";
-  param.min_size = 3;
+  param.min_size = 1;
+  param.min_is_always = 1;
   param.max_size = MULLOW_BASECASE_THRESHOLD_LIMIT-1;
   param.stop_factor = 1.5;
   param.noprint = 1;
@@ -864,6 +865,7 @@ tune_mullow (void)
 
   param.name = "MULLOW_DC_THRESHOLD";
   param.min_size = 8;
+  param.min_is_always = 0;
   param.max_size = 1000;
   one (&mullow_dc_threshold, &param);
 

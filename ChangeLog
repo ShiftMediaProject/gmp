@@ -1,5 +1,7 @@
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mullow): Set min_size to 1.
+
 	* mpn/generic/powm_sec.c: Use just mpn_mul_basecase and
 	mpn_sqr_basecase for multiplication and squaring.
 
