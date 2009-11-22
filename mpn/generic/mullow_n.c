@@ -128,7 +128,7 @@ contfracpnqn(contfrac(1-mul(log(4*2-1)/log(4),1,1/2),5))
       TMP_SFREE;
     }
   else
-    { /* FIXME: directly call mpn_mul_fft_full */
+    {
       /* For really large operands, use plain mpn_mul_n but throw away upper n
 	 limbs of result.  */
       mp_ptr tp;
@@ -136,7 +136,11 @@ contfracpnqn(contfrac(1-mul(log(4*2-1)/log(4),1,1/2),5))
       TMP_MARK;
       tp = TMP_ALLOC_LIMBS (2 * n);
 
+#if !TUNE_PROGRAM_BUILD && WANT_FFT && (MULLOW_MUL_N_THRESHOLD >= MUL_FFT_THRESHOLD)
+      mpn_mul_fft_full (tp, xp, n, yp, n);
+#else
       mpn_mul_n (tp, xp, yp, n);
+#endif
       MPN_COPY (rp, tp, n);
       TMP_FREE;
     }

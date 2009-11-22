@@ -1,3 +1,8 @@
+2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mullow_n.c: Disable Mulder's trick for small operands,
+        use fft for bigger ones.
+
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mullow): Rewrite.
