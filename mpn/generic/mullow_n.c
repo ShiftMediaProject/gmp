@@ -43,9 +43,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_range_toom22   1
 #else
 #define MAYBE_range_basecase                                           \
-  (MULLOW_DC_THRESHOLD < 2 * MUL_TOOM22_THRESHOLD)
+  ((MULLOW_DC_THRESHOLD == 0 ? MULLOW_BASECASE_THRESHOLD : MULLOW_DC_THRESHOLD) < 2 * MUL_TOOM22_THRESHOLD)
 #define MAYBE_range_toom22                                             \
-  (MULLOW_DC_THRESHOLD < MUL_TOOM33_THRESHOLD*36/(36-11) )
+  ((MULLOW_DC_THRESHOLD == 0 ? MULLOW_BASECASE_THRESHOLD : MULLOW_DC_THRESHOLD) < MUL_TOOM33_THRESHOLD*36/(36-11) )
 #endif
 
 /* Avoid zero allocations when MULLOW_BASECASE_THRESHOLD is 0.  */
