@@ -1,5 +1,11 @@
 /* mpn_powm -- Compute R = U^E mod M.
 
+   Contributed to the GNU project by Torbjorn Granlund.
+
+   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
+   SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
+
 Copyright 2007, 2008, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -19,19 +25,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /*
-  BASIC ALGORITHM, Compute b^e mod n, where n is odd.
+  BASIC ALGORITHM, Compute U^E mod M, where M < B^n is odd.
 
-  1. w <- b
+  1. W <- U
 
-  2. While w^2 < n (and there are more bits in e)
-       w <- power left-to-right base-2 without reduction
+  2. While W^2 < M (and there are more bits in E)
+       W <- power left-to-right base-2 without reduction
 
-  3. t <- (B^n * b) / n                Convert to REDC form
+  3. T <- (B^n * U) mod M                Convert to REDC form
 
-  4. Compute power table of e-dependent size
+  4. Compute power table of E-dependent size
 
-  5. While there are more bits in e
-       w <- power left-to-right base-k with reduction
+  5. While there are more bits in E
+       W <- power left-to-right base-k
 
 
   TODO:
@@ -46,26 +52,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    * How do we handle small bases?
 
-   * This is slower than old mpz code, in particular if we base it on redc_1
-     (use: #undef HAVE_NATIVE_mpn_addmul_2).  Why?
-
-   * Make it sub-quadratic.
-
    * Call new division functions, not mpn_tdiv_qr.
 
-   * Is redc obsolete with improved SB division?
-
    * Consider special code for one-limb M.
-
-   * CRT for N = odd*2^t:
-      Using Newton's method and 2-adic arithmetic:
-        m1_inv_m2 = 1/odd mod 2^t
-      Plain 2-adic (REDC) modexp:
-        r1 = a ^ b mod odd
-      Mullo+sqrlo-based modexp:
-        r2 = a ^ b mod 2^t
-      mullo, mul, add:
-        r = ((r2 - r1) * m1_i_m2 mod 2^t) * odd + r1
 
    * How should we handle the redc1/redc2/redc2/redc4/redc_subquad choice?
      - redc1: T(binvert_1limb)  + e * (n)   * (T(mullo1x1) + n*T(addmul_1))
@@ -73,6 +62,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      - redc3: T(binvert_3limbs) + e * (n/3) * (T(mullo3x3) + n*T(addmul_3))
      This disregards the addmul_N constant term, but we could think of
      that as part of the respective mulloNxN.
+
+   * Strategies from smaller to larger modulus operand:
+    #if HAVE_NATIVE_mpn_addmul_2
+     1. mul_basecase/sqr_basecase/redc_1  REDC_2
+     2. mul_basecase/sqr_basecase/redc_2  FASTMUL_AND_REDC_2
+     3. mul_n/sqr_n/redc_2		  REDC_N
+     4. mul_n/sqr_n/redc_n
+    #else
+     1. mul_basecase/sqr_basecase/redc_1  FASTMUL_AND_REDC_1
+     2. mul_n/sqr_n/redc_1		  REDC_N
+     3. mul_n/sqr_n/redc_n
+    #endif
 */
 
 #include "gmp.h"
@@ -97,27 +98,23 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
   else
     {
       bi -= nbits;			/* bit index of low bit to extract */
-      i = bi / GMP_LIMB_BITS;		/* word index of low bit to extract */
-      bi %= GMP_LIMB_BITS;		/* bit index in low word */
+      i = bi / GMP_NUMB_BITS;		/* word index of low bit to extract */
+      bi %= GMP_NUMB_BITS;		/* bit index in low word */
       r = p[i] >> bi;			/* extract (low) bits */
-      nbits_in_r = GMP_LIMB_BITS - bi;	/* number of bits now in r */
+      nbits_in_r = GMP_NUMB_BITS - bi;	/* number of bits now in r */
       if (nbits_in_r < nbits)		/* did we get enough bits? */
 	r += p[i + 1] << nbits_in_r;	/* prepend bits from higher word */
       return r & (((mp_limb_t ) 1 << nbits) - 1);
     }
 }
 
-#undef HAVE_NATIVE_mpn_addmul_2
-
-#ifndef HAVE_NATIVE_mpn_addmul_2
-#define REDC_2_THRESHOLD		MP_SIZE_T_MAX
+#if ! HAVE_NATIVE_mpn_addmul_2 && ! HAVE_NATIVE_mpn_redc_2
+#undef REDC_2_THRESHOLD
+#undef REDC_N_THRESHOLD
+#define REDC_2_THRESHOLD		REDC_N_THRESHOLD
+#define REDC_N_THRESHOLD		0
 #endif
 
-#ifndef REDC_2_THRESHOLD
-#define REDC_2_THRESHOLD		4
-#endif
-
-static void mpn_redc_n () {ASSERT_ALWAYS(0);}
 
 static inline int
 win_size (unsigned long eb)
@@ -128,16 +125,6 @@ win_size (unsigned long eb)
     ;
   return k;
 }
-
-#define MPN_REDC_X(rp, tp, mp, n, mip)					\
-  do {									\
-    if (redc_x == 1)							\
-      mpn_redc_1 (rp, tp, mp, n, mip[0]);				\
-    else if (redc_x == 2)						\
-      mpn_redc_2 (rp, tp, mp, n, mip);					\
-    else								\
-      mpn_redc_n (rp, tp, mp, n, mip);					\
-  } while (0)
 
   /* Convert U to REDC form, U_r = B^n * U mod M */
 static void
@@ -165,15 +152,14 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	  mp_srcptr ep, mp_size_t en,
 	  mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
-  mp_limb_t mip[2];
+  mp_limb_t ip[2], *mip;
   int cnt;
   long ebi;
   int windowsize, this_windowsize;
   mp_limb_t expbits;
-  mp_ptr pp, this_pp, last_pp;
+  mp_ptr pp, this_pp;
   mp_ptr b2p;
   long i;
-  int redc_x;
   TMP_DECL;
 
   ASSERT (en > 1 || (en == 1 && ep[0] > 1));
@@ -204,22 +190,21 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
     {
+      mip = ip;
       binvert_limb (mip[0], mp[0]);
       mip[0] = -mip[0];
-      redc_x = 1;
     }
-#if defined (HAVE_NATIVE_mpn_addmul_2)
-  else
+  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
     {
+      mip = ip;
       mpn_binvert (mip, mp, 2, tp);
       mip[0] = -mip[0]; mip[1] = ~mip[1];
-      redc_x = 2;
     }
-#endif
-#if 0
-  mpn_binvert (mip, mp, n, tp);
-  redc_x = 0;
-#endif
+  else
+    {
+      mip = TMP_ALLOC_LIMBS (n);
+      mpn_binvert (mip, mp, n, tp);
+    }
 
   pp = TMP_ALLOC_LIMBS (n << (windowsize - 1));
 
@@ -230,15 +215,24 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   /* Store b^2 in b2.  */
   mpn_sqr_n (tp, this_pp, n);
-  MPN_REDC_X (b2p, tp, mp, n, mip);
+  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+    mpn_redc_1 (b2p, tp, mp, n, mip[0]);
+  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+    mpn_redc_2 (b2p, tp, mp, n, mip);
+  else
+    mpn_redc_n (b2p, tp, mp, n, mip);
 
   /* Precompute odd powers of b and put them in the temporary area at pp.  */
   for (i = (1 << (windowsize - 1)) - 1; i > 0; i--)
     {
-      last_pp = this_pp;
+      mpn_mul_n (tp, this_pp, b2p, n);
       this_pp += n;
-      mpn_mul_n (tp, last_pp, b2p, n);
-      MPN_REDC_X (this_pp, tp, mp, n, mip);
+      if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+	mpn_redc_1 (this_pp, tp, mp, n, mip[0]);
+      else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+	mpn_redc_2 (this_pp, tp, mp, n, mip);
+      else
+	mpn_redc_n (this_pp, tp, mp, n, mip);
     }
 
   expbits = getbits (ep, ebi, windowsize);
@@ -252,51 +246,153 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   MPN_COPY (rp, pp + n * (expbits >> 1), n);
 
-  while (ebi != 0)
-    {
-      while (getbit (ep, ebi) == 0)
-	{
-	  mpn_sqr_n (tp, rp, n);
-	  MPN_REDC_X (rp, tp, mp, n, mip);
-	  ebi--;
-	  if (ebi == 0)
-	    goto done;
-	}
-
-      /* The next bit of the exponent is 1.  Now extract the largest block of
-	 bits <= windowsize, and such that the least significant bit is 1.  */
-
-      expbits = getbits (ep, ebi, windowsize);
-      ebi -= windowsize;
-      this_windowsize = windowsize;
-      if (ebi < 0)
-	{
-	  this_windowsize += ebi;
-	  ebi = 0;
-	}
-
-      count_trailing_zeros (cnt, expbits);
-      this_windowsize -= cnt;
-      ebi += cnt;
-      expbits >>= cnt;
-
-      do
-	{
-	  mpn_sqr_n (tp, rp, n);
-	  MPN_REDC_X (rp, tp, mp, n, mip);
-	  this_windowsize--;
-	}
-      while (this_windowsize != 0);
-
-      mpn_mul_n (tp, rp, pp + n * (expbits >> 1), n);
-      MPN_REDC_X (rp, tp, mp, n, mip);
+#define INNERLOOP							\
+  while (ebi != 0)							\
+    {									\
+      while (getbit (ep, ebi) == 0)					\
+	{								\
+	  MPN_SQR_N (tp, rp, n);					\
+	  MPN_REDUCE (rp, tp, mp, n, mip);				\
+	  ebi--;							\
+	  if (ebi == 0)							\
+	    goto done;							\
+	}								\
+									\
+      /* The next bit of the exponent is 1.  Now extract the largest	\
+	 block of bits <= windowsize, and such that the least		\
+	 significant bit is 1.  */					\
+									\
+      expbits = getbits (ep, ebi, windowsize);				\
+      ebi -= windowsize;						\
+      this_windowsize = windowsize;					\
+      if (ebi < 0)							\
+	{								\
+	  this_windowsize += ebi;					\
+	  ebi = 0;							\
+	}								\
+									\
+      count_trailing_zeros (cnt, expbits);				\
+      this_windowsize -= cnt;						\
+      ebi += cnt;							\
+      expbits >>= cnt;							\
+									\
+      do								\
+	{								\
+	  MPN_SQR_N (tp, rp, n);					\
+	  MPN_REDUCE (rp, tp, mp, n, mip);				\
+	  this_windowsize--;						\
+	}								\
+      while (this_windowsize != 0);					\
+									\
+      MPN_MUL_N (tp, rp, pp + n * (expbits >> 1), n);			\
+      MPN_REDUCE (rp, tp, mp, n, mip);					\
     }
 
+
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
+
+  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+#if REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD
+  else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
+      INNERLOOP;
+    }
+#else
+  else if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_n (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+#endif
+  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_n (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
+      INNERLOOP;
+    }
+  else
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_n (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
+      INNERLOOP;
+    }
+
+#else
+
+  if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_n (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+  else
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_n (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
+      INNERLOOP;
+    }
+#endif
+
  done:
+
   MPN_COPY (tp, rp, n);
   MPN_ZERO (tp + n, n);
-  MPN_REDC_X (rp, tp, mp, n, mip);
+
+  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+    mpn_redc_1 (rp, tp, mp, n, mip[0]);
+  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+    mpn_redc_2 (rp, tp, mp, n, mip);
+  else
+    mpn_redc_n (rp, tp, mp, n, mip);
+
   if (mpn_cmp (rp, mp, n) >= 0)
     mpn_sub_n (rp, rp, mp, n);
+
   TMP_FREE;
 }

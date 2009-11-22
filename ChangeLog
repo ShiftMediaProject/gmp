@@ -1,3 +1,12 @@
+2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpz/powm.c: Complete rewrite.  Use mpn_powm and mpn_powlo.
+	* mpn/generic/powm.c: Rewrite.
+	* mpn/generic/redc_n.c: New file.
+	* configure.in (gmp_mpn_functions): Add redc_n.
+	* gmp-impl.h (REDC_2_THRESHOLD, REDC_N_THRESHOLD): Default, and define
+	for tuneup.
+
 2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mullow_n.c: Disable Mulder's trick for small operands,
