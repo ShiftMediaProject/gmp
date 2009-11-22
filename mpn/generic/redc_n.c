@@ -1,4 +1,4 @@
-o/* mpn_redc_n.  Set cp[] <- up[]/R^n mod mp[].  Clobber up[].
+/* mpn_redc_n.  Set cp[] <- up[]/R^n mod mp[].  Clobber up[].
    mp[] is n limbs; up[] is 2n limbs, the inverse ip[] is n limbs.
 
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY

@@ -126,7 +126,7 @@ win_size (unsigned long eb)
   return k;
 }
 
-  /* Convert U to REDC form, U_r = B^n * U mod M */
+/* Convert U to REDC form, U_r = B^n * U mod M */
 static void
 redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n)
 {
