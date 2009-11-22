@@ -1,5 +1,8 @@
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/powm_sec.c: Use just mpn_mul_basecase and
+	mpn_sqr_basecase for multiplication and squaring.
+
 	* tune/tuneup.c: Tune REDC_2_THRESHOLD and REDC_N_THRESHOLD.
 	(tune_redc): New function.
 	(tune_powm): Remove function.
