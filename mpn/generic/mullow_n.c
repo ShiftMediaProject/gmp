@@ -38,6 +38,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULLOW_MUL_N_THRESHOLD 10*MULLOW_DC_THRESHOLD
 #endif
 
+#if TUNE_PROGRAM_BUILD
+#define MAYBE_range_basecase 1
+#define MAYBE_range_toom22   1
+#else
+#define MAYBE_range_basecase                                           \
+  (MULLOW_DC_THRESHOLD < 2 * MUL_TOOM22_THRESHOLD)
+#define MAYBE_range_toom22                                             \
+  (MULLOW_DC_THRESHOLD < MUL_TOOM33_THRESHOLD*36/(36-11) )
+#endif
+
 /* Avoid zero allocations when MULLOW_BASECASE_THRESHOLD is 0.  */
 #define MUL_BASECASE_ALLOC \
  (MULLOW_BASECASE_THRESHOLD_LIMIT == 0 ? 1 : 2*MULLOW_BASECASE_THRESHOLD_LIMIT)
@@ -87,7 +97,9 @@ contfracpnqn(contfrac(1-mul(log(2*2-1)/log(2),1,1/2),5))
 contfracpnqn(contfrac(1-mul(log(3*2-1)/log(3),1,1/2),5))
 contfracpnqn(contfrac(1-mul(log(4*2-1)/log(4),1,1/2),5))
        */
-      if (BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD*36/(36-11)))
+      if (MAYBE_range_basecase && BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD*2) )
+	n1 = n >> 1;
+      else if (MAYBE_range_toom22 && BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD*36/(36-11)))
 	n1 = n * 11 / (size_t) 36;	/* n1 ~= n*(1-.694...) */
       else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD*40/(40-9)))
 	n1 = n * 9 / (size_t) 40;	/* n1 ~= n*(1-.775...) */
