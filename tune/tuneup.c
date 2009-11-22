@@ -165,6 +165,8 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
+mp_size_t  redc_2_threshold             = MP_SIZE_T_MAX;
+mp_size_t  redc_n_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
@@ -998,27 +1000,40 @@ tune_dc (void)
 }
 
 
-/* This is an indirect determination, based on a comparison between redc and
-   mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
-   additional overheads it gets in mpz_powm.
-
-   stop_factor is 1.1 to hopefully help cray vector systems, where otherwise
-   currently it hits the 1000 limb limit with only a factor of about 1.18
-   (threshold should be around 650).  */
-
+#define TUNE_REDC_2_MAX 100
 void
-tune_powm (void)
+tune_redc (void)
 {
-  static struct param_t  param;
-  param.name = "POWM_THRESHOLD";
-  param.function = speed_mpn_redc_1;
-  param.function2 = speed_mpz_mod;
-  param.step_factor = 0.03;
-  param.stop_factor = 1.1;
-  param.function_fudge = 1.04;
-  one (&powm_threshold, &param);
-}
+  {
+    static struct param_t  param;
+    param.name = "REDC_2_THRESHOLD";
+    param.function = speed_mpn_redc_1;
+    param.function2 = speed_mpn_redc_2;
+    param.max_size = TUNE_REDC_2_MAX;
+    param.noprint = 1;
+    one (&redc_2_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "REDC_N_THRESHOLD";
+    param.function = speed_mpn_redc_2;
+    param.function2 = speed_mpn_redc_n;
+    param.noprint = 1;
+    one (&redc_n_threshold, &param);
+  }
 
+  if (redc_2_threshold >= TUNE_REDC_2_MAX - 1)
+    {
+      REDC_2_THRESHOLD = MP_SIZE_T_MAX;
+      print_define ("REDC_2_THRESHOLD", REDC_N_THRESHOLD);
+      print_define_remark ("REDC_N_THRESHOLD", 0, "never REDC_2");
+    }
+  else
+    {
+      print_define ("REDC_2_THRESHOLD", REDC_2_THRESHOLD);
+      print_define ("REDC_N_THRESHOLD", REDC_N_THRESHOLD);
+    }
+}
 
 void
 tune_matrix22_mul (void)
@@ -1827,7 +1842,7 @@ all (void)
   printf("\n");
 
   tune_dc ();
-  tune_powm ();
+  tune_redc ();
   printf("\n");
 
   tune_matrix22_mul ();

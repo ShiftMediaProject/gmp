@@ -741,6 +741,16 @@ speed_mpn_redc_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_REDC_1 (mpn_redc_1);
 }
+double
+speed_mpn_redc_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_REDC_2 (mpn_redc_2);
+}
+double
+speed_mpn_redc_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_REDC_N (mpn_redc_n);
+}
 
 
 double

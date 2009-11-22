@@ -236,6 +236,8 @@ double speed_mpn_preinv_divrem_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1f __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_redc_2 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_redc_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rsblsh1_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rsblsh2_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rsh1add_n __GMP_PROTO ((struct speed_params *s));
@@ -1294,7 +1296,7 @@ int speed_routine_count_zeros_setup
   {									\
     unsigned   i;							\
     mp_ptr     cp, mp, tp, ap;						\
-    mp_limb_t  Nprim;							\
+    mp_limb_t  inv;							\
     double     t;							\
     TMP_DECL;								\
 									\
@@ -1312,7 +1314,7 @@ int speed_routine_count_zeros_setup
     /* modulus must be odd */						\
     MPN_COPY (mp, s->yp, s->size);					\
     mp[0] |= 1;								\
-    binvert_limb (Nprim, mp[0]);					\
+    binvert_limb (inv, mp[0]);						\
 									\
     speed_operand_src (s, ap, 2*s->size+1);				\
     speed_operand_dst (s, tp, 2*s->size+1);				\
@@ -1324,7 +1326,89 @@ int speed_routine_count_zeros_setup
     i = s->reps;							\
     do {								\
       MPN_COPY (tp, ap, 2*s->size);					\
-      function (cp, tp, mp, s->size, Nprim);				\
+      function (cp, tp, mp, s->size, inv);				\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_REDC_2(function)					\
+  {									\
+    unsigned   i;							\
+    mp_ptr     cp, mp, tp, ap;						\
+    mp_limb_t  invp[2];							\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size+1, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (mp, s->size,     s->align_yp);		\
+    SPEED_TMP_ALLOC_LIMBS (cp, s->size,     s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size+1, s->align_wp2);		\
+									\
+    MPN_COPY (ap,         s->xp, s->size);				\
+    MPN_COPY (ap+s->size, s->xp, s->size);				\
+									\
+    /* modulus must be odd */						\
+    MPN_COPY (mp, s->yp, s->size);					\
+    mp[0] |= 1;								\
+    mpn_binvert (invp, mp, 2, tp);					\
+									\
+    speed_operand_src (s, ap, 2*s->size+1);				\
+    speed_operand_dst (s, tp, 2*s->size+1);				\
+    speed_operand_src (s, mp, s->size);					\
+    speed_operand_dst (s, cp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      MPN_COPY (tp, ap, 2*s->size);					\
+      function (cp, tp, mp, s->size, invp);				\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_REDC_N(function)					\
+  {									\
+    unsigned   i;							\
+    mp_ptr     cp, mp, tp, ap, invp;					\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size+1, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (mp, s->size,     s->align_yp);		\
+    SPEED_TMP_ALLOC_LIMBS (cp, s->size,     s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size+1, s->align_wp2);		\
+    SPEED_TMP_ALLOC_LIMBS (invp, s->size,   s->align_wp2); /* align? */	\
+									\
+    MPN_COPY (ap,         s->xp, s->size);				\
+    MPN_COPY (ap+s->size, s->xp, s->size);				\
+									\
+    /* modulus must be odd */						\
+    MPN_COPY (mp, s->yp, s->size);					\
+    mp[0] |= 1;								\
+    mpn_binvert (invp, mp, s->size, tp);				\
+									\
+    speed_operand_src (s, ap, 2*s->size+1);				\
+    speed_operand_dst (s, tp, 2*s->size+1);				\
+    speed_operand_src (s, mp, s->size);					\
+    speed_operand_dst (s, cp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      MPN_COPY (tp, ap, 2*s->size);					\
+      function (cp, tp, mp, s->size, invp);				\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\
