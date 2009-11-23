@@ -362,7 +362,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #undef MPN_MUL_N
 #undef MPN_SQR_N
 #undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,n,b,n)
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR_N(r,a,n)		mpn_sqr_n (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
       INNERLOOP;

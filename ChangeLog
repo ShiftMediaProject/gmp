@@ -1,3 +1,7 @@
+2009-11-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm.c: Fix typo.
+
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mullow): Set min_size to 1.
