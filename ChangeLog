@@ -1,7 +1,8 @@
 2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpn/generic/mullow_n.c: Disable Mulder's trick for small operands,
+	* mpn/generic/mullow_n.c: Disable Mulders' trick for small operands,
         use fft for bigger ones.
+	* tests/mpn/t-mullo.c: New test file.
 
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -12,7 +13,7 @@
 	* gmp-impl.h: Removed unused macros (CACHED_ABOVE_THRESHOLD and
 	CACHED_BELOW_THRESHOLD).
 
-	* mpn/generic/mullow_n.c: Use Mulder's trick.
+	* mpn/generic/mullow_n.c: Use Mulders' trick.
 	* tune/tuneup.c (tune_mullow): MULLOW_MUL_N_THRESHOLD range of
 	search depends on FFT tuning;
 	(all): Anticipate tune_fft_{mul,sqr}.
