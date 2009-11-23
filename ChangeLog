@@ -46,7 +46,7 @@
 
 	* tune/speed.c (routine): Add entry related to mpn_mulmod_bnm1.
 
-2009-11-19  Niels Möller <nisse@lysator.liu.se>  <nisse@shell.gmplib.org>
+2009-11-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/toom_eval_dgr3_pm2.c (mpn_toom_eval_dgr3_pm2)
 	[HAVE_NATIVE_mpn_add_n_sub_n]: Fixed typo in mpn_add_n_sub_n call
