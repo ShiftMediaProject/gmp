@@ -108,11 +108,15 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
     }
 }
 
+/* If we don't have redc_2, disable the code for it below, and interpret
+   REDC_N_THRESHOLD as the threshold between redc_1 and redc_n.  We need
+   LOCAL_REDC_N_THRESHOLD since macro binding happens at invokation in C.  */
 #if ! HAVE_NATIVE_mpn_addmul_2 && ! HAVE_NATIVE_mpn_redc_2
 #undef REDC_2_THRESHOLD
-#undef REDC_N_THRESHOLD
 #define REDC_2_THRESHOLD		REDC_N_THRESHOLD
-#define REDC_N_THRESHOLD		0
+#define LOCAL_REDC_N_THRESHOLD		0
+#else
+#define LOCAL_REDC_N_THRESHOLD		REDC_N_THRESHOLD
 #endif
 
 
@@ -194,7 +198,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       binvert_limb (mip[0], mp[0]);
       mip[0] = -mip[0];
     }
-  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
     {
       mip = ip;
       mpn_binvert (mip, mp, 2, tp);
@@ -217,7 +221,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   mpn_sqr_n (tp, this_pp, n);
   if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
     mpn_redc_1 (b2p, tp, mp, n, mip[0]);
-  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
     mpn_redc_2 (b2p, tp, mp, n, mip);
   else
     mpn_redc_n (b2p, tp, mp, n, mip);
@@ -229,7 +233,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       this_pp += n;
       if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
 	mpn_redc_1 (this_pp, tp, mp, n, mip[0]);
-      else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+      else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
 	mpn_redc_2 (this_pp, tp, mp, n, mip);
       else
 	mpn_redc_n (this_pp, tp, mp, n, mip);
@@ -324,7 +328,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       INNERLOOP;
     }
 #endif
-  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
     {
 #undef MPN_MUL_N
 #undef MPN_SQR_N
@@ -386,7 +390,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
     mpn_redc_1 (rp, tp, mp, n, mip[0]);
-  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
     mpn_redc_2 (rp, tp, mp, n, mip);
   else
     mpn_redc_n (rp, tp, mp, n, mip);

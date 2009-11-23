@@ -1,6 +1,8 @@
 2009-11-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm.c: Fix typo.
+	Define LOCAL_REDC_N_THRESHOLD, use in REDC_2_THRESHOLD...
+	REDC_N_THRESHOLD chain.
 
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
 
