@@ -1,3 +1,27 @@
+2009-11-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm.c: Fix typo.
+
+2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_mullow): Set min_size to 1.
+
+	* mpn/generic/powm_sec.c: Use just mpn_mul_basecase and
+	mpn_sqr_basecase for multiplication and squaring.
+
+	* tune/tuneup.c: Tune REDC_2_THRESHOLD and REDC_N_THRESHOLD.
+	(tune_redc): New function.
+	(tune_powm): Remove function.
+	* tune/speed.h (SPEED_ROUTINE_REDC_2, SPEED_ROUTINE_REDC_N): New.
+	* tune/common.c (speed_mpn_redc_2, speed_mpn_redc_n): New.
+
+	* mpz/powm.c: Complete rewrite.  Use mpn_powm and mpn_powlo.
+	* mpn/generic/powm.c: Rewrite.
+	* mpn/generic/redc_n.c: New file.
+	* configure.in (gmp_mpn_functions): Add redc_n.
+	* gmp-impl.h (REDC_2_THRESHOLD, REDC_N_THRESHOLD): Default, and define
+	for tuneup.
+
 2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mullow_n.c: Disable Mulders' trick for small operands,

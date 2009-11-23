@@ -918,6 +918,8 @@ __GMP_DECLSPEC void mpn_redc_1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_
 
 #define mpn_redc_2 __MPN(redc_2)
 __GMP_DECLSPEC void mpn_redc_2 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+#define mpn_redc_n __MPN(redc_n)
+__GMP_DECLSPEC void mpn_redc_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
 
 #define mpn_mod_1_1p_cps __MPN(mod_1_1p_cps)
@@ -1712,6 +1714,14 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef MU_BDIV_QR_THRESHOLD
 #define MU_BDIV_QR_THRESHOLD    2000
+#endif
+
+#ifndef REDC_2_THRESHOLD
+#define REDC_2_THRESHOLD          10
+#endif
+
+#ifndef REDC_N_THRESHOLD
+#define REDC_N_THRESHOLD         100
 #endif
 
 /* First k to use for an FFT modF multiply.  A modF FFT is an order
@@ -4115,6 +4125,14 @@ extern mp_size_t                     div_sb_preinv_threshold;
 #undef  DC_DIV_QR_THRESHOLD
 #define DC_DIV_QR_THRESHOLD          dc_div_qr_threshold
 extern mp_size_t                     dc_div_qr_threshold;
+
+#undef  REDC_2_THRESHOLD
+#define REDC_2_THRESHOLD             redc_2_threshold
+extern mp_size_t                     redc_2_threshold;
+
+#undef  REDC_N_THRESHOLD
+#define REDC_N_THRESHOLD             redc_n_threshold
+extern mp_size_t                     redc_n_threshold;
 
 #undef  POWM_THRESHOLD
 #define POWM_THRESHOLD               powm_threshold
