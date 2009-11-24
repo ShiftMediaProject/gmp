@@ -1,3 +1,12 @@
+2009-11-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_redc): Rewrite.
+	* mpn/generic/powm.c: Use REDC_1_TO_REDC_2_THRESHOLD,
+	REDC_1_TO_REDC_N_THRESHOLD, and REDC_2_TO_REDC_N_THRESHOLD.
+	Get rid of previous REDC params, including LOCAL_REDC_N_THRESHOLD.
+	(WANT_REDC_2): Define.
+	* gmp-impl.h: Corresponding changes.
+
 2009-11-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm.c: Fix typo.

@@ -80,6 +80,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
+#define WANT_REDC_2 1
+#endif
 
 #define getbit(p,bi) \
   ((p[(bi - 1) / GMP_LIMB_BITS] >> (bi - 1) % GMP_LIMB_BITS) & 1)
@@ -107,18 +110,6 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
       return r & (((mp_limb_t ) 1 << nbits) - 1);
     }
 }
-
-/* If we don't have redc_2, disable the code for it below, and interpret
-   REDC_N_THRESHOLD as the threshold between redc_1 and redc_n.  We need
-   LOCAL_REDC_N_THRESHOLD since macro binding happens at invokation in C.  */
-#if ! HAVE_NATIVE_mpn_addmul_2 && ! HAVE_NATIVE_mpn_redc_2
-#undef REDC_2_THRESHOLD
-#define REDC_2_THRESHOLD		REDC_N_THRESHOLD
-#define LOCAL_REDC_N_THRESHOLD		0
-#else
-#define LOCAL_REDC_N_THRESHOLD		REDC_N_THRESHOLD
-#endif
-
 
 static inline int
 win_size (unsigned long eb)
@@ -192,18 +183,27 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   windowsize = win_size (ebi);
 
-  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+#if WANT_REDC_2
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
       mip = ip;
       binvert_limb (mip[0], mp[0]);
       mip[0] = -mip[0];
     }
-  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
     {
       mip = ip;
       mpn_binvert (mip, mp, 2, tp);
       mip[0] = -mip[0]; mip[1] = ~mip[1];
     }
+#else
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+    {
+      mip = ip;
+      binvert_limb (mip[0], mp[0]);
+      mip[0] = -mip[0];
+    }
+#endif
   else
     {
       mip = TMP_ALLOC_LIMBS (n);
@@ -219,10 +219,15 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
   /* Store b^2 in b2.  */
   mpn_sqr_n (tp, this_pp, n);
-  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+#if WANT_REDC_2
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     mpn_redc_1 (b2p, tp, mp, n, mip[0]);
-  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
     mpn_redc_2 (b2p, tp, mp, n, mip);
+#else
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+    mpn_redc_1 (b2p, tp, mp, n, mip[0]);
+#endif
   else
     mpn_redc_n (b2p, tp, mp, n, mip);
 
@@ -231,10 +236,15 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       mpn_mul_n (tp, this_pp, b2p, n);
       this_pp += n;
-      if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+#if WANT_REDC_2
+      if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
 	mpn_redc_1 (this_pp, tp, mp, n, mip[0]);
-      else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
+      else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
 	mpn_redc_2 (this_pp, tp, mp, n, mip);
+#else
+      if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+	mpn_redc_1 (this_pp, tp, mp, n, mip[0]);
+#endif
       else
 	mpn_redc_n (this_pp, tp, mp, n, mip);
     }
@@ -293,9 +303,9 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     }
 
 
-#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
-
-  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+#if WANT_REDC_2
+#if REDC_1_TO_REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
 #undef MPN_MUL_N
 #undef MPN_SQR_N
@@ -305,7 +315,6 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
       INNERLOOP;
     }
-#if REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD
   else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
     {
 #undef MPN_MUL_N
@@ -317,7 +326,17 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       INNERLOOP;
     }
 #else
-  else if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+  if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+  else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     {
 #undef MPN_MUL_N
 #undef MPN_SQR_N
@@ -327,8 +346,8 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
       INNERLOOP;
     }
-#endif
-  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
+#endif  /* REDC_1_TO_REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD */
+  else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
     {
 #undef MPN_MUL_N
 #undef MPN_SQR_N
@@ -349,7 +368,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
       INNERLOOP;
     }
 
-#else
+#else  /* WANT_REDC_2 */
 
   if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
     {
@@ -361,7 +380,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
       INNERLOOP;
     }
-  else if (BELOW_THRESHOLD (n, REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
     {
 #undef MPN_MUL_N
 #undef MPN_SQR_N
@@ -381,17 +400,22 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
       INNERLOOP;
     }
-#endif
+#endif  /* WANT_REDC_2 */
 
  done:
 
   MPN_COPY (tp, rp, n);
   MPN_ZERO (tp + n, n);
 
-  if (BELOW_THRESHOLD (n, REDC_2_THRESHOLD))
+#if WANT_REDC_2
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
     mpn_redc_1 (rp, tp, mp, n, mip[0]);
-  else if (BELOW_THRESHOLD (n, LOCAL_REDC_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
     mpn_redc_2 (rp, tp, mp, n, mip);
+#else
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+    mpn_redc_1 (rp, tp, mp, n, mip[0]);
+#endif
   else
     mpn_redc_n (rp, tp, mp, n, mip);
 

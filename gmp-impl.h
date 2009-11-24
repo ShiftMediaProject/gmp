@@ -1716,13 +1716,23 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define MU_BDIV_QR_THRESHOLD    2000
 #endif
 
-#ifndef REDC_2_THRESHOLD
-#define REDC_2_THRESHOLD          10
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
+
+#ifndef REDC_1_TO_REDC_2_THRESHOLD
+#define REDC_1_TO_REDC_2_THRESHOLD          10
+#endif
+#ifndef REDC_2_TO_REDC_N_THRESHOLD
+#define REDC_2_TO_REDC_N_THRESHOLD         100
 #endif
 
-#ifndef REDC_N_THRESHOLD
-#define REDC_N_THRESHOLD         100
+#else
+
+#ifndef REDC_1_TO_REDC_N_THRESHOLD
+#define REDC_1_TO_REDC_N_THRESHOLD         100
 #endif
+
+#endif /* HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2 */
+
 
 /* First k to use for an FFT modF multiply.  A modF FFT is an order
    log(2^k)/log(2^(k-1)) algorithm, so k=3 is merely 1.5 like karatsuba,
@@ -4126,13 +4136,17 @@ extern mp_size_t                     div_sb_preinv_threshold;
 #define DC_DIV_QR_THRESHOLD          dc_div_qr_threshold
 extern mp_size_t                     dc_div_qr_threshold;
 
-#undef  REDC_2_THRESHOLD
-#define REDC_2_THRESHOLD             redc_2_threshold
-extern mp_size_t                     redc_2_threshold;
+#undef  REDC_1_TO_REDC_2_THRESHOLD
+#define REDC_1_TO_REDC_2_THRESHOLD   redc_1_to_redc_2_threshold
+extern mp_size_t                     redc_1_to_redc_2_threshold;
 
-#undef  REDC_N_THRESHOLD
-#define REDC_N_THRESHOLD             redc_n_threshold
-extern mp_size_t                     redc_n_threshold;
+#undef  REDC_2_TO_REDC_N_THRESHOLD
+#define REDC_2_TO_REDC_N_THRESHOLD   redc_2_to_redc_n_threshold
+extern mp_size_t                     redc_2_to_redc_n_threshold;
+
+#undef  REDC_1_TO_REDC_N_THRESHOLD
+#define REDC_1_TO_REDC_N_THRESHOLD   redc_1_to_redc_n_threshold
+extern mp_size_t                     redc_1_to_redc_n_threshold;
 
 #undef  POWM_THRESHOLD
 #define POWM_THRESHOLD               powm_threshold

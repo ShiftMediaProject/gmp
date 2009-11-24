@@ -165,8 +165,9 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
-mp_size_t  redc_2_threshold             = MP_SIZE_T_MAX;
-mp_size_t  redc_n_threshold             = MP_SIZE_T_MAX;
+mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
+mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
+mp_size_t  redc_2_to_redc_n_threshold   = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  matrix22_strassen_threshold  = MP_SIZE_T_MAX;
 mp_size_t  hgcd_threshold               = MP_SIZE_T_MAX;
@@ -1003,38 +1004,52 @@ tune_dc (void)
 
 
 #define TUNE_REDC_2_MAX 100
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
+#define WANT_REDC_2 1
+#endif
+
 void
 tune_redc (void)
 {
+#if WANT_REDC_2
   {
     static struct param_t  param;
-    param.name = "REDC_2_THRESHOLD";
+    param.name = "REDC_1_TO_REDC_2_THRESHOLD";
     param.function = speed_mpn_redc_1;
     param.function2 = speed_mpn_redc_2;
     param.max_size = TUNE_REDC_2_MAX;
     param.noprint = 1;
-    one (&redc_2_threshold, &param);
+    one (&redc_1_to_redc_2_threshold, &param);
   }
   {
     static struct param_t  param;
-    param.name = "REDC_N_THRESHOLD";
+    param.name = "REDC_2_TO_REDC_N_THRESHOLD";
     param.function = speed_mpn_redc_2;
     param.function2 = speed_mpn_redc_n;
     param.noprint = 1;
-    one (&redc_n_threshold, &param);
+    one (&redc_2_to_redc_n_threshold, &param);
   }
-
-  if (redc_2_threshold >= TUNE_REDC_2_MAX - 1)
+  if (redc_1_to_redc_2_threshold >= TUNE_REDC_2_MAX - 1)
     {
-      REDC_2_THRESHOLD = MP_SIZE_T_MAX;
-      print_define ("REDC_2_THRESHOLD", REDC_N_THRESHOLD);
-      print_define_remark ("REDC_N_THRESHOLD", 0, "never REDC_2");
+      /* Disable REDC_2.  This is not supposed to happen.  */
+      print_define ("REDC_1_TO_REDC_2_THRESHOLD", REDC_2_TO_REDC_N_THRESHOLD);
+      print_define_remark ("REDC_2_TO_REDC_N_THRESHOLD", 0, "anomaly: never REDC_2");
     }
   else
     {
-      print_define ("REDC_2_THRESHOLD", REDC_2_THRESHOLD);
-      print_define ("REDC_N_THRESHOLD", REDC_N_THRESHOLD);
+      print_define ("REDC_1_TO_REDC_2_THRESHOLD", REDC_1_TO_REDC_2_THRESHOLD);
+      print_define ("REDC_2_TO_REDC_N_THRESHOLD", REDC_2_TO_REDC_N_THRESHOLD);
     }
+#else
+  {
+    static struct param_t  param;
+    param.name = "REDC_1_TO_REDC_N_THRESHOLD";
+    param.function = speed_mpn_redc_1;
+    param.function2 = speed_mpn_redc_n;
+    one (&redc_1_to_redc_n_threshold, &param);
+  }
+#endif
+
 }
 
 void
