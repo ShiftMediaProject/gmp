@@ -1514,7 +1514,7 @@ const struct choice_t choice_array[] = {
 
 
   { TRY(mpn_mul_basecase), TYPE_MUL_MN },
-  { TRY(mpn_mullow_basecase), TYPE_MUL_N },
+  { TRY(mpn_mullow_basecase), TYPE_MULLOW_N },
 #if SQR_TOOM2_THRESHOLD > 0
   { TRY(mpn_sqr_basecase), TYPE_SQR },
 #endif
@@ -2246,6 +2246,7 @@ call (struct each_t *e, tryfun_t function)
       (e->d[0].p, e->s[0].p, size, e->s[1].p, size2);
     break;
   case TYPE_MUL_N:
+  case TYPE_MULLOW_N:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, e->s[1].p, size);
     break;
   case TYPE_SQR:
