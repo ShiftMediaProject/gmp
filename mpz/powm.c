@@ -45,14 +45,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   b   e     m    b^e mod m
 */
 
-#ifndef POWM_THRESHOLD
-#define POWM_THRESHOLD  ((8 * SQR_KARATSUBA_THRESHOLD) / 3)
-#endif
-
 #define HANDLE_NEGATIVE_EXPONENT 1
-
-void mpn_powm (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
-void mpn_powlo  (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr);
 
 void
 #ifndef BERKELEY_MP
