@@ -56,24 +56,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    * Consider special code for one-limb M.
 
-   * How should we handle the redc1/redc2/redc2/redc4/redc_subquad choice?
-     - redc1: T(binvert_1limb)  + e * (n)   * (T(mullo1x1) + n*T(addmul_1))
-     - redc2: T(binvert_2limbs) + e * (n/2) * (T(mullo2x2) + n*T(addmul_2))
-     - redc3: T(binvert_3limbs) + e * (n/3) * (T(mullo3x3) + n*T(addmul_3))
+   * How should we handle the redc1/redc2/redc_n choice?
+     - redc1:  T(binvert_1limb)  + e * (n)   * (T(mullo-1x1) + n*T(addmul_1))
+     - redc2:  T(binvert_2limbs) + e * (n/2) * (T(mullo-2x2) + n*T(addmul_2))
+     - redc_n: T(binvert_nlimbs) + e * (T(mullo-nxn) + T(M(n)))
      This disregards the addmul_N constant term, but we could think of
-     that as part of the respective mulloNxN.
+     that as part of the respective mullo.
 
-   * Strategies from smaller to larger modulus operand:
-    #if HAVE_NATIVE_mpn_addmul_2
-     1. mul_basecase/sqr_basecase/redc_1  REDC_2
-     2. mul_basecase/sqr_basecase/redc_2  FASTMUL_AND_REDC_2
-     3. mul_n/sqr_n/redc_2		  REDC_N
-     4. mul_n/sqr_n/redc_n
-    #else
-     1. mul_basecase/sqr_basecase/redc_1  FASTMUL_AND_REDC_1
-     2. mul_n/sqr_n/redc_1		  REDC_N
-     3. mul_n/sqr_n/redc_n
-    #endif
+   * When U (the base) is small, we should start the exponentiation with plain
+     operations, then convert that partial result to REDC form.
+
+   * But when U is just one limb, should be treated without the k-ary tricks.
+     We should keep a factor of B^n in W, but use U' = BU as base.  After
+     multiplying by this (pseudo two-limb) number, we need to multiply by 1/B
+     mod M.
 */
 
 #include "gmp.h"
