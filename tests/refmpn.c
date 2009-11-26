@@ -1303,7 +1303,6 @@ void
 refmpn_invert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
 {
   mp_ptr qp, tp;
-  mp_limb_t inv;
   TMP_DECL;
   TMP_MARK;
 
