@@ -851,6 +851,7 @@ case $host in
     gcc_cflags_subtype="-force_cpusubtype_ALL"	# for vmx on darwin
     gcc_cflags_asm=""
     gcc_cflags_cpu=""
+    vmx_path=""
 
     # grab this object, though it's not a true cycle counter routine
     SPEED_CYCLECOUNTER_OBJ=powerpc.lo
@@ -892,7 +893,8 @@ case $host in
       powerpc604)   gcc_cflags_cpu="-mcpu=604" ;;
       powerpc604e)  gcc_cflags_cpu="-mcpu=604e -mcpu=604" ;;
       powerpc620)   gcc_cflags_cpu="-mcpu=620" ;;
-      powerpc630)   gcc_cflags_cpu="-mcpu=630" ;;
+      powerpc630)   gcc_cflags_cpu="-mcpu=630"
+		    cpu_path="p3" ;;
       powerpc740)   gcc_cflags_cpu="-mcpu=740" ;;
       powerpc7400 | powerpc7410)
 		    gcc_cflags_asm="-Wa,-maltivec"
@@ -905,7 +907,15 @@ case $host in
       powerpc821)   gcc_cflags_cpu="-mcpu=821" ;;
       powerpc823)   gcc_cflags_cpu="-mcpu=823" ;;
       powerpc860)   gcc_cflags_cpu="-mcpu=860" ;;
-      powerpc970)   gcc_cflags_cpu="-mcpu=970" ;;
+      powerpc970)   gcc_cflags_cpu="-mtune=970"
+		    vmx_path="powerpc64/vmx
+		    cpu_path="p4" ;;
+      power4)	    gcc_cflags_cpu="-mtune=power4"
+		    cpu_path="p4" ;;
+      power5)	    gcc_cflags_cpu="-mtune=power5 -mtune=power4"
+		    cpu_path="p5 p4" ;;
+      power6)	    gcc_cflags_cpu="-mtune=power6"
+		    cpu_path="p6" ;;
     esac
 
     case $host in
@@ -934,10 +944,6 @@ case $host in
 
     case $host in
       POWERPC64_PATTERN)
-        case $host_cpu in
-	  powerpc970)		vmx_path="powerpc64/vmx" ;;
-	  *)			vmx_path="" ;;
-	esac
         case $host in
           *-*-aix*)
             # On AIX a true 64-bit ABI is available.
@@ -952,7 +958,9 @@ case $host in
             # Must indicate object type to ar and nm
 	    ar_aix64_flags="-X64"
 	    nm_aix64_flags="-X64"
-            path_aix64="powerpc64/mode64 $vmx_path powerpc64"
+	    path_aix64=""
+	    for i in $cpu_path; do path_aix64="${path_aix64}powerpc64/mode64/$i "; done
+            path_aix64="${path_aix64}powerpc64/mode64 $vmx_path powerpc64"
             # grab this object, though it's not a true cycle counter routine
             SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
             cyclecounter_size_aix64=0
@@ -990,7 +998,9 @@ case $host in
 	    gcc_mode64_cflags="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
-	    path_mode64="powerpc64/mode64 $vmx_path powerpc64"
+	    path_mode64=""
+	    for i in $cpu_path; do path_mode64="${path_mode64}powerpc64/mode64/$i "; done
+	    path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
@@ -1021,7 +1031,9 @@ case $host in
 	    gcc_mode64_cflags_maybe="-m64"
 	    gcc_mode64_cflags_optlist="cpu opt"
 	    gcc_mode64_cflags_opt="-O3 -O2 -O1"
-	    path_mode64="powerpc64/mode64 $vmx_path powerpc64"
+	    path_mode64=""
+	    for i in $cpu_path; do path_mode64="${path_mode64}powerpc64/mode64/$i "; done
+	    path_mode64="${path_mode64}powerpc64/mode64 $vmx_path powerpc64"
             SPEED_CYCLECOUNTER_OBJ_mode64=powerpc64.lo
             cyclecounter_size_mode64=0
 	    any_mode64_testlist="sizeof-long-8"
@@ -1405,7 +1417,7 @@ case $host in
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
         ;;
-      core2)
+      core2 | corei)
         gcc_cflags_cpu="-mtune=core2 -mtune=k8"
         gcc_cflags_arch="-march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
         ;;
@@ -1427,7 +1439,8 @@ case $host in
       i686 | pentiumpro)    path="x86/p6 x86" ;;
       pentium2)             path="x86/p6/mmx x86/p6 x86" ;;
       pentium3)             path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
-      pentiumm | core2)     path="x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+      pentiumm | core2 | corei)
+                            path="x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
       [k6[23]])             path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6)                   path="x86/k6/mmx x86/k6 x86" ;;
       geode)                path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
@@ -1463,6 +1476,9 @@ case $host in
 	    ;;
 	  core2)
 	    path_64="x86_64/core2 $path_64"
+	    ;;
+	  corei)
+	    path_64="x86_64/corei x86_64/core2 $path_64"
 	    ;;
 	  atom)
 	    path_64="x86_64/atom $path_64"
@@ -1783,7 +1799,7 @@ case $host in
 	gcc_64_cflags=""
 	extra_functions_64="$extra_functions_64 fat fat_entry"
 	path_64="x86_64/fat x86_64"
-	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/atom"
+	fat_path="x86_64 x86_64/fat x86_64/pentium4 x86_64/core2 x86_64/corei x86_64/atom x86_64/nano"
       fi
 
       fat_functions="add_n addmul_1 copyd copyi
