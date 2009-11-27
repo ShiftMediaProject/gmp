@@ -61,6 +61,77 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 	 ranges. Something smoother?
 */
 
+/*
+  Compute the least significant half of the product {xy,n}*{yp,n}, or
+  formally {rp,n} = {xy,n}*{yp,n} Mod (B^n).
+
+  Above the given threshold, the Divide and Conquer strategy is used.
+  The operands are split in two, and a full product plus two mullow
+  are used to obtain the final result. The more natural stategy is to
+  split in two halves, but this is far from optimal when a
+  sebquadratic multiplication is used.
+
+  Mulders suggests an unbalanced split in favour of the full product,
+  split n = n1 + n2, where an = n1 <= n2 = (1-a)n; i.e. 0 < a <= 1/2.
+
+  To compute the value of a, we assume that the cost of mullow for a
+  given size ML(n) is a fraction of the cost of a full product with
+  same size M(n), and the cost M(n)=n^e for some exponent 1 < e <= 2;
+  then we can write:
+
+  ML(n) = 2*ML(an) + M((1-a)n) => k*M(n) = 2*k*M(n)*a^e + M(n)*(1-a)^e
+
+  Given a value for e, want to minimise the value of k, i.e. the
+  function k=(1-a)^e/(1-2*a^e).
+
+  With e=2, the exponent for schoolbook multiplication, the minimum is
+  given by the values a=1-a=1/2.
+
+  With e=log(3)/log(2), the exponent for Karatsuba (aka toom22),
+  Mulders compute (1-a) = 0.694... and we approximate a with 11/36.
+
+  Other possible approximations follow:
+  e=log(5)/log(3) [Toom-3] -> a ~= 9/40
+  e=log(7)/log(4) [Toom-4] -> a ~= 7/39
+  e=log(11)/log(6) [Toom-6] -> a ~= 1/8
+  e=log(15)/log(8) [Toom-8] -> a ~= 1/10
+
+  The values above where obtained with the following trivial commands
+  in the gp-pari shell:
+
+fun(e,a)=(1-a)^e/(1-2*a^e)
+mul(a,b,c)={local(m,x,p);if(b-c<1/10000,(b+c)/2,m=1;x=b;forstep(p=c,b,(b-c)/8,if(fun(a,p)<m,m=fun(a,p);x=p));mul(a,(b+x)/2,(c+x)/2))}
+contfracpnqn(contfrac(mul(log(2*2-1)/log(2),1/2,0),5))
+contfracpnqn(contfrac(mul(log(3*2-1)/log(3),1/2,0),5))
+contfracpnqn(contfrac(mul(log(4*2-1)/log(4),1/2,0),5))
+contfracpnqn(contfrac(mul(log(6*2-1)/log(6),1/2,0),3))
+contfracpnqn(contfrac(mul(log(8*2-1)/log(8),1/2,0),3))
+
+  ,
+  |\
+  | \
+  +----,
+  |    |
+  |    |
+  |    |\
+  |    | \
+  +----+--`
+  ^ n2 ^n1^
+
+  For an actual impementation, the assumption that M(n)=n^e is
+  incorrect, as a consequence also the assumption that ML(n)=k*M(n)
+  with a constant k is wrong.
+
+  But theory suggest us two things:
+  - the best the multiplication product is (lower e), the more k
+    approaches 1, and a approaches 0.
+
+  - A value for a smaller than optimal is probably less bad than a
+    bigger one: e.g. let e=log(3)/log(2), a=0.3058_ the optimal
+    value, and k(a)=0.808_ the mul/mullow speed ratio. We get
+    k(a+1/6)=0.929_ but k(a-1/6)=0.865_.
+*/
+
 void
 mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
 {
@@ -91,11 +162,6 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
 
 	 Constants obtained with the following gp-pari commands:
 
-fun(a,b)=b^a/(1-2*(1-b)^a)
-mul(a,b,c)={local(m,x,p);if(b-c<1/10000,(b+c)/2,m=1;x=b;forstep(p=c,b,(b-c)/8,if(fun(a,p)<m,m=fun(a,p);x=p));mul(a,(b+x)/2,(c+x)/2))}
-contfracpnqn(contfrac(1-mul(log(2*2-1)/log(2),1,1/2),5))
-contfracpnqn(contfrac(1-mul(log(3*2-1)/log(3),1,1/2),5))
-contfracpnqn(contfrac(1-mul(log(4*2-1)/log(4),1,1/2),5))
        */
       if (MAYBE_range_basecase && BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD*2) )
 	n1 = n >> 1;

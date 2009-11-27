@@ -2,6 +2,8 @@
 
 	* tests/mpn/t-mulmod_bnm1.c: New test file.
 
+	* mpn/generic/mullow_n.c: Comments on Mulders' trick implementation.
+
 2009-11-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_redc): Rewrite.
