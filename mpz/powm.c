@@ -1,4 +1,4 @@
-/* mpz_powm(res,base,exp,mod) -- Set RES to (base**exp) mod MOD.
+/* mpz_powm(res,base,exp,mod) -- Set R to (U^E) mod M.
 
    Contributed to the GNU project by Torbjorn Granlund.
 
@@ -30,8 +30,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
 /* TODO
- * Improve handling of buffers.
- */
+
+ * Improve handling of buffers.  It is pretty ugly now.
+
+ * For even moduli, we compute an binvert of its odd part both here and in
+   mpn_powm.  How can we avoid this recomputation?
+*/
 
 /*
   b ^ e mod m   res
@@ -70,7 +74,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   TMP_MARK;
 
   es = SIZ(e);
-  if (es <= 0)
+  if (UNLIKELY (es <= 0))
     {
       mpz_t new_b;
       if (es == 0)
@@ -95,10 +99,9 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     }
   en = es;
 
-  bp = PTR(b);
   bn = ABSIZ(b);
 
-  if (bn == 0)
+  if (UNLIKELY (bn == 0))
     {
       SIZ(r) = 0;
       TMP_FREE;
@@ -108,10 +111,10 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   ep = PTR(e);
 
   /* Handle (b^1 mod m) early, since mpn_pow* do not handle that case.  */
-  if (en == 1 && ep[0] == 1)
+  if (UNLIKELY (en == 1 && ep[0] == 1))
     {
-      MPZ_REALLOC (r, n);
-      rp = PTR(r);
+      rp = TMP_ALLOC_LIMBS (n);
+      bp = PTR(b);
       if (bn >= n)
 	{
 	  mp_ptr qp = TMP_ALLOC_LIMBS (bn - n + 1);
@@ -140,15 +143,13 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	      rn = bn;
 	    }
 	}
-      SIZ(r) = rn;
-      TMP_FREE;
-      return;
+      goto ret;
     }
 
   /* Remove low zero limbs from M.  This loop will terminate for correctly
      represented mpz numbers.  */
   ncnt = 0;
-  while (mp[0] == 0)
+  while (UNLIKELY (mp[0] == 0))
     {
       mp++;
       ncnt++;
@@ -167,8 +168,8 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
   rp = TMP_ALLOC_LIMBS (n + 1);
 
-  tp = TMP_ALLOC_LIMBS (4 * n + 1);
-  tp[3 * n] = 0xfafa;
+  tp = TMP_ALLOC_LIMBS (4 * n + 1);	/* this much is needed for powlo */
+  bp = PTR(b);
   mpn_powm (rp, bp, bn, ep, en, mp, nodd, tp);
 
   rn = n;
@@ -249,11 +250,12 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
   if ((ep[0] & 1) && SIZ(b) < 0 && rn != 0)
     {
-      mpn_sub (rp, PTR(m), ABSIZ(m), rp, rn);
+      mpn_sub (rp, PTR(m), n, rp, rn);
       rn = n;
       MPN_NORMALIZE (rp, rn);
     }
 
+ ret:
   MPZ_REALLOC (r, rn);
   SIZ(r) = rn;
   MPN_COPY (PTR(r), rp, rn);
