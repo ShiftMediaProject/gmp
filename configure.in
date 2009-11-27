@@ -908,7 +908,7 @@ case $host in
       powerpc823)   gcc_cflags_cpu="-mcpu=823" ;;
       powerpc860)   gcc_cflags_cpu="-mcpu=860" ;;
       powerpc970)   gcc_cflags_cpu="-mtune=970"
-		    vmx_path="powerpc64/vmx
+		    vmx_path="powerpc64/vmx"
 		    cpu_path="p4" ;;
       power4)	    gcc_cflags_cpu="-mtune=power4"
 		    cpu_path="p4" ;;
