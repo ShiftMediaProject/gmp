@@ -1,3 +1,8 @@
+2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/sqr_basecase.asm (SQR_TOOM2_THRESHOLD_MAX): Avoid quoting
+	to allow configure.in parse it more easily.  Trim from 120 to 80.
+
 2009-11-28  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mulmod_bnm1.c: Basecases made simpler,
