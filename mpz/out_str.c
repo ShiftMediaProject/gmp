@@ -77,7 +77,7 @@ mpz_out_str (FILE *stream, int base, mpz_srcptr x)
 
   /* Move the number to convert into temporary space, since mpn_get_str
      clobbers its argument + needs one extra high limb....  */
-  xp = (mp_ptr) TMP_ALLOC ((x_size + 1) * BYTES_PER_MP_LIMB);
+  xp = TMP_ALLOC_LIMBS (x_size + 1);
   MPN_COPY (xp, x->_mp_d, x_size);
 
   str_size = mpn_get_str (str, base, xp, x_size);

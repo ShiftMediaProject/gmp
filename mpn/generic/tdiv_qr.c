@@ -77,7 +77,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    d2p = dtmp;
 	    d2p[1] = (dp[1] << cnt) | (dp[0] >> (GMP_NUMB_BITS - cnt));
 	    d2p[0] = (dp[0] << cnt) & GMP_NUMB_MASK;
-	    n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
+	    n2p = TMP_ALLOC_LIMBS (nn + 1);
 	    cy = mpn_lshift (n2p, np, nn, cnt);
 	    n2p[nn] = cy;
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn + (cy != 0), d2p);
@@ -90,7 +90,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	else
 	  {
 	    d2p = (mp_ptr) dp;
-	    n2p = (mp_ptr) TMP_ALLOC (nn * BYTES_PER_MP_LIMB);
+	    n2p = TMP_ALLOC_LIMBS (nn);
 	    MPN_COPY (n2p, np, nn);
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
 	    qp[nn - 2] = qhl;	/* always store nn-2+1 quotient limbs */
@@ -119,9 +119,9 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      {
 		count_leading_zeros (cnt, dp[dn - 1]);
 		cnt -= GMP_NAIL_BITS;
-		d2p = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
+		d2p = TMP_ALLOC_LIMBS (dn);
 		mpn_lshift (d2p, dp, dn, cnt);
-		n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
+		n2p = TMP_ALLOC_LIMBS (nn + 1);
 		cy = mpn_lshift (n2p, np, nn, cnt);
 		n2p[nn] = cy;
 		nn += adjust;
@@ -130,7 +130,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      {
 		cnt = 0;
 		d2p = (mp_ptr) dp;
-		n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
+		n2p = TMP_ALLOC_LIMBS (nn + 1);
 		MPN_COPY (n2p, np, nn);
 		n2p[nn] = 0;
 		nn += adjust;
@@ -214,11 +214,11 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		count_leading_zeros (cnt, dp[dn - 1]);
 		cnt -= GMP_NAIL_BITS;
 
-		d2p = (mp_ptr) TMP_ALLOC (qn * BYTES_PER_MP_LIMB);
+		d2p = TMP_ALLOC_LIMBS (qn);
 		mpn_lshift (d2p, dp + in, qn, cnt);
 		d2p[0] |= dp[in - 1] >> (GMP_NUMB_BITS - cnt);
 
-		n2p = (mp_ptr) TMP_ALLOC ((2 * qn + 1) * BYTES_PER_MP_LIMB);
+		n2p = TMP_ALLOC_LIMBS (2 * qn + 1);
 		cy = mpn_lshift (n2p, np + nn - 2 * qn, 2 * qn, cnt);
 		if (adjust)
 		  {
@@ -235,7 +235,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		cnt = 0;
 		d2p = (mp_ptr) dp + in;
 
-		n2p = (mp_ptr) TMP_ALLOC ((2 * qn + 1) * BYTES_PER_MP_LIMB);
+		n2p = TMP_ALLOC_LIMBS (2 * qn + 1);
 		MPN_COPY (n2p, np + nn - 2 * qn, 2 * qn);
 		if (adjust)
 		  {
@@ -330,7 +330,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      }
 	    /* True: partial remainder now is neutral, i.e., it is not shifted up.  */
 
-	    tp = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
+	    tp = TMP_ALLOC_LIMBS (dn);
 
 	    if (in < qn)
 	      {

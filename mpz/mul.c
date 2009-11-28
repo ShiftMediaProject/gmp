@@ -118,7 +118,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
       if (wp == up)
 	{
 	  /* W and U are identical.  Allocate temporary space for U.  */
-	  up = (mp_ptr) TMP_ALLOC (usize * BYTES_PER_MP_LIMB);
+	  up = TMP_ALLOC_LIMBS (usize);
 	  /* Is V identical too?  Keep it identical with U.  */
 	  if (wp == vp)
 	    vp = up;
@@ -128,7 +128,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
       else if (wp == vp)
 	{
 	  /* W and V are identical.  Allocate temporary space for V.  */
-	  vp = (mp_ptr) TMP_ALLOC (vsize * BYTES_PER_MP_LIMB);
+	  vp = TMP_ALLOC_LIMBS (vsize);
 	  /* Copy to the temporary space.  */
 	  MPN_COPY (vp, wp, vsize);
 	}

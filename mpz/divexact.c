@@ -104,7 +104,7 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
     {
       if (quot == den)		/*  QUOT and DEN overlap.  */
 	{
-	  tp = (mp_ptr) TMP_ALLOC (tsize * BYTES_PER_MP_LIMB);
+	  tp = TMP_ALLOC_LIMBS (tsize);
 	  MPN_COPY (tp, dp, tsize);
 	}
       else
@@ -115,7 +115,7 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
   else
     {
       unsigned int r;
-      tp = (mp_ptr) TMP_ALLOC (tsize * BYTES_PER_MP_LIMB);
+      tp = TMP_ALLOC_LIMBS (tsize);
       count_trailing_zeros (r, dp[0]);
       mpn_rshift (tp, dp, tsize, r);
       if (dsize > tsize)

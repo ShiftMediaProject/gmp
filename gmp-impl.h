@@ -1549,7 +1549,7 @@ __GMP_DECLSPEC void mpn_copyd __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
     mpz_ptr __x = (X);                                                  \
     ASSERT ((NLIMBS) >= 1);                                             \
     __x->_mp_alloc = (NLIMBS);                                          \
-    __x->_mp_d = (mp_ptr) TMP_ALLOC ((NLIMBS) * BYTES_PER_MP_LIMB);     \
+    __x->_mp_d = TMP_ALLOC_LIMBS (NLIMBS);				\
   } while (0)
 
 /* Realloc for an mpz_t WHAT if it has less than NEEDED limbs.  */
