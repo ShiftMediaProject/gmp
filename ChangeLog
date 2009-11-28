@@ -1,5 +1,8 @@
 2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Handle atom also in 32-bit mode.
+	* mpn/x86/atom/gmp-mparam.h: New file.
+
 	* gmp-impl.h (MULMOD_BNM1_THRESHOLD): Default.
 
 2009-11-28  Marco Bodrato <bodrato@mail.dm.unipi.it>
