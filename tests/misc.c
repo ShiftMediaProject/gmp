@@ -370,11 +370,11 @@ urandom (void)
 {
 #if GMP_NAIL_BITS == 0
   mp_limb_t  n;
-  _gmp_rand (&n, RANDS, BITS_PER_MP_LIMB);
+  _gmp_rand (&n, RANDS, GMP_LIMB_BITS);
   return n;
 #else
   mp_limb_t n[2];
-  _gmp_rand (n, RANDS, BITS_PER_MP_LIMB);
+  _gmp_rand (n, RANDS, GMP_LIMB_BITS);
   return n[0] + (n[1] << GMP_NUMB_BITS);
 #endif
 }

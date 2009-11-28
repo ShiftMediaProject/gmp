@@ -2025,7 +2025,7 @@ speed_operator_mod (struct speed_params *s)
    be typical for count_trailing_zeros in a GCD etc.
 
    r==1 measures on data with the resultant count uniformly distributed
-   between 0 and BITS_PER_MP_LIMB-1.  This is probably sensible for
+   between 0 and GMP_LIMB_BITS-1.  This is probably sensible for
    count_leading_zeros on the high limbs of divisors.  */
 
 int
@@ -2052,7 +2052,7 @@ speed_routine_count_zeros_setup (struct speed_params *s,
          rest below.  */
       for (i = 0; i < SPEED_BLOCK_SIZE; i++)
         {
-          mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % BITS_PER_MP_LIMB);
+          mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % GMP_LIMB_BITS);
           mp_limb_t  keep_below = set-1;
           mp_limb_t  keep_above = MP_LIMB_T_MAX ^ keep_below;
           mp_limb_t  keep = (leading ? keep_below : keep_above);

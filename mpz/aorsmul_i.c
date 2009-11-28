@@ -53,7 +53,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    a chance of being faster since it involves only one set of carry
    propagations, not two.  Note that doing an addmul_1 with a
    twos-complement negative y doesn't work, because it effectively adds an
-   extra x * 2^BITS_PER_MP_LIMB.  */
+   extra x * 2^GMP_LIMB_BITS.  */
 
 REGPARM_ATTR(1) void
 mpz_aorsmul_1 (mpz_ptr w, mpz_srcptr x, mp_limb_t y, mp_size_t sub)

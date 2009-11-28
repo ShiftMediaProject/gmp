@@ -82,8 +82,8 @@ mean_calls (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size)
   ASSERT (size >= 1);
 
   c = mpn_add_n (wp, xp, yp, size);
-  ret = mpn_rshift (wp, wp, size, 1) >> (BITS_PER_MP_LIMB-1);
-  wp[size-1] |= (c << (BITS_PER_MP_LIMB-1));
+  ret = mpn_rshift (wp, wp, size, 1) >> (GMP_LIMB_BITS-1);
+  wp[size-1] |= (c << (GMP_LIMB_BITS-1));
   return ret;
 }
 
@@ -107,7 +107,7 @@ mean_open (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size)
   c = (wprev < x);
   ret = (wprev & 1);
 
-#define RSHIFT(hi,lo)   (((lo) >> 1) | ((hi) << (BITS_PER_MP_LIMB-1)))
+#define RSHIFT(hi,lo)   (((lo) >> 1) | ((hi) << (GMP_LIMB_BITS-1)))
 
   for (i = 1; i < size; i++)
     {

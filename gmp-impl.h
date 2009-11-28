@@ -175,8 +175,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifndef BYTES_PER_MP_LIMB
 #define BYTES_PER_MP_LIMB  SIZEOF_MP_LIMB_T
 #endif
-#ifndef BITS_PER_MP_LIMB
-#define BITS_PER_MP_LIMB  (8 * SIZEOF_MP_LIMB_T)
+#ifndef GMP_LIMB_BITS
+#define GMP_LIMB_BITS  (8 * SIZEOF_MP_LIMB_T)
 #endif
 
 #define BITS_PER_ULONG  (8 * SIZEOF_UNSIGNED_LONG)
@@ -2139,7 +2139,7 @@ __GMP_DECLSPEC mp_bitcnt_t mpn_remove __GMP_PROTO ((mp_ptr, mp_size_t *, mp_ptr,
    for the benefit of assertion checking.  */
 
 #if defined (__GNUC__) && HAVE_HOST_CPU_FAMILY_x86 && GMP_NAIL_BITS == 0      \
-  && BITS_PER_MP_LIMB == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
+  && GMP_LIMB_BITS == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
 /* Better flags handling than the generic C gives on i386, saving a few
    bytes of code and maybe a cycle or two.  */
 
@@ -2328,7 +2328,7 @@ struct bases
      i.e. the number of bits used to represent each digit in the base.  */
   mp_limb_t big_base;
 
-  /* A BITS_PER_MP_LIMB bit approximation to 1/big_base, represented as a
+  /* A GMP_LIMB_BITS bit approximation to 1/big_base, represented as a
      fixed-point number.  Instead of dividing by big_base an application can
      choose to multiply by big_base_inverted.  */
   mp_limb_t big_base_inverted;
@@ -2511,7 +2511,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 #endif
 
 /* Divide the two-limb number in (NH,,NL) by D, with DI being the largest
-   limb not larger than (2**(2*BITS_PER_MP_LIMB))/D - (2**BITS_PER_MP_LIMB).
+   limb not larger than (2**(2*GMP_LIMB_BITS))/D - (2**GMP_LIMB_BITS).
    If this would yield overflow, DI should be the largest possible number
    (i.e., only ones).  For correct operation, the most significant bit of D
    has to be set.  Put the quotient in Q and the remainder in R.  */
@@ -2568,8 +2568,8 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
   do {									\
     mp_limb_t _n2, _n10, _nmask, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
-    _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
+    _n2 = ((nh) << (GMP_LIMB_BITS - (lgup))) + ((nl) >> 1 >> (l - 1));	\
+    _n10 = (nl) << (GMP_LIMB_BITS - (lgup));				\
     _nmask = LIMB_HIGHBIT_TO_MASK (_n10);				\
     _nadj = _n10 + (_nmask & (dnorm));					\
     umul_ppmm (_xh, _xl, di, _n2 - _nmask);				\
@@ -2899,7 +2899,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
    version 3.1 at least) doesn't seem to know how to generate rlwimi for
    anything other than bit-fields, so use "asm".  */
 #if defined (__GNUC__) && ! defined (NO_ASM)                    \
-  && HAVE_HOST_CPU_FAMILY_powerpc && BITS_PER_MP_LIMB == 32
+  && HAVE_HOST_CPU_FAMILY_powerpc && GMP_LIMB_BITS == 32
 #define BSWAP_LIMB(dst, src)						\
   do {									\
     mp_limb_t  __bswapl_src = (src);					\
@@ -2920,7 +2920,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
    partial register stalls on P6 chips.  */
 #if defined (__GNUC__) && ! defined (NO_ASM)            \
   && HAVE_HOST_CPU_FAMILY_x86 && ! HAVE_HOST_CPU_i386   \
-  && BITS_PER_MP_LIMB == 32
+  && GMP_LIMB_BITS == 32
 #define BSWAP_LIMB(dst, src)						\
   do {									\
     __asm__ ("bswap %0" : "=r" (dst) : "0" (src));			\
@@ -2928,7 +2928,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 #endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM)            \
-  && defined (__amd64__) && BITS_PER_MP_LIMB == 64
+  && defined (__amd64__) && GMP_LIMB_BITS == 64
 #define BSWAP_LIMB(dst, src)						\
   do {									\
     __asm__ ("bswap %q0" : "=r" (dst) : "0" (src));			\
@@ -2945,7 +2945,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 
 /* As per glibc. */
 #if defined (__GNUC__) && ! defined (NO_ASM)                    \
-  && HAVE_HOST_CPU_FAMILY_m68k && BITS_PER_MP_LIMB == 32
+  && HAVE_HOST_CPU_FAMILY_m68k && GMP_LIMB_BITS == 32
 #define BSWAP_LIMB(dst, src)						\
   do {									\
     mp_limb_t  __bswapl_src = (src);					\
@@ -2958,17 +2958,17 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 #endif
 
 #if ! defined (BSWAP_LIMB)
-#if BITS_PER_MP_LIMB == 8
+#if GMP_LIMB_BITS == 8
 #define BSWAP_LIMB(dst, src)            \
   do { (dst) = (src); } while (0)
 #endif
-#if BITS_PER_MP_LIMB == 16
+#if GMP_LIMB_BITS == 16
 #define BSWAP_LIMB(dst, src)                    \
   do {                                          \
     (dst) = ((src) << 8) + ((src) >> 8);        \
   } while (0)
 #endif
-#if BITS_PER_MP_LIMB == 32
+#if GMP_LIMB_BITS == 32
 #define BSWAP_LIMB(dst, src)    \
   do {                          \
     (dst) =                     \
@@ -2978,7 +2978,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
       + ((src) >> 24);          \
   } while (0)
 #endif
-#if BITS_PER_MP_LIMB == 64
+#if GMP_LIMB_BITS == 64
 #define BSWAP_LIMB(dst, src)            \
   do {                                  \
     (dst) =                             \
@@ -3013,7 +3013,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 /* Apparently lwbrx might be slow on some PowerPC chips, so restrict it to
    those we know are fast.  */
 #if defined (__GNUC__) && ! defined (NO_ASM)                            \
-  && BITS_PER_MP_LIMB == 32 && HAVE_LIMB_BIG_ENDIAN                     \
+  && GMP_LIMB_BITS == 32 && HAVE_LIMB_BIG_ENDIAN                        \
   && (HAVE_HOST_CPU_powerpc604                                          \
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
@@ -3038,7 +3038,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 /* On the same basis that lwbrx might be slow, restrict stwbrx to those we
    know are fast.  FIXME: Is this necessary?  */
 #if defined (__GNUC__) && ! defined (NO_ASM)                            \
-  && BITS_PER_MP_LIMB == 32 && HAVE_LIMB_BIG_ENDIAN                     \
+  && GMP_LIMB_BITS == 32 && HAVE_LIMB_BIG_ENDIAN                        \
   && (HAVE_HOST_CPU_powerpc604                                          \
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
@@ -3099,7 +3099,7 @@ __GMP_DECLSPEC extern const unsigned char  binvert_limb_table[128];
 /* No processor claiming to be SPARC v9 compliant seems to
    implement the POPC instruction.  Disable pattern for now.  */
 #if 0
-#if defined __GNUC__ && defined __sparc_v9__ && BITS_PER_MP_LIMB == 64
+#if defined __GNUC__ && defined __sparc_v9__ && GMP_LIMB_BITS == 64
 #define popc_limb(result, input)					\
   do {									\
     DItype __res;							\
@@ -3213,7 +3213,7 @@ typedef unsigned long int UDItype;
 
 typedef mp_limb_t UWtype;
 typedef unsigned int UHWtype;
-#define W_TYPE_SIZE BITS_PER_MP_LIMB
+#define W_TYPE_SIZE GMP_LIMB_BITS
 
 /* Define ieee_double_extract and _GMP_IEEE_FLOATS.
 
@@ -3712,7 +3712,7 @@ __GMP_DECLSPEC extern mp_size_t __gmp_default_fp_limb_precision;
    further +1 is because the limbs usually won't fall on digit boundaries.
 
    FIXME: If base is a power of 2 and the bits per digit divides
-   BITS_PER_MP_LIMB then the +2 is unnecessary.  This happens always for
+   GMP_LIMB_BITS then the +2 is unnecessary.  This happens always for
    base==2, and in base==16 with the current 32 or 64 bit limb sizes. */
 
 #define MPF_SIGNIFICANT_DIGITS(n, base, prec)                           \

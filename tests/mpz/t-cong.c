@@ -146,11 +146,11 @@ check_random (int argc, char *argv[])
 
   for (i = 0; i < reps; i++)
     {
-      mpz_errandomb (a, rands, 8*BITS_PER_MP_LIMB);
+      mpz_errandomb (a, rands, 8*GMP_LIMB_BITS);
       MPZ_CHECK_FORMAT (a);
-      mpz_errandomb (c, rands, 8*BITS_PER_MP_LIMB);
+      mpz_errandomb (c, rands, 8*GMP_LIMB_BITS);
       MPZ_CHECK_FORMAT (c);
-      mpz_errandomb_nonzero (d, rands, 8*BITS_PER_MP_LIMB);
+      mpz_errandomb_nonzero (d, rands, 8*GMP_LIMB_BITS);
 
       mpz_negrandom (a, rands);
       MPZ_CHECK_FORMAT (a);
@@ -171,7 +171,7 @@ check_random (int argc, char *argv[])
 
       if (! mpz_pow2abs_p (d))
         {
-          refmpz_combit (a, urandom() % (8*BITS_PER_MP_LIMB));
+          refmpz_combit (a, urandom() % (8*GMP_LIMB_BITS));
           check_one (a, c, d, 0);
         }
     }

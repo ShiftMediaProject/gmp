@@ -220,7 +220,7 @@ mp_size_t  pagesize;
 
 #define MAX3(x,y,z)   (MAX (x, MAX (y, z)))
 
-#if BITS_PER_MP_LIMB == 32
+#if GMP_LIMB_BITS == 32
 #define DEADVAL  CNST_LIMB(0xDEADBEEF)
 #else
 #define DEADVAL  CNST_LIMB(0xDEADBEEFBADDCAFE)

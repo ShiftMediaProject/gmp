@@ -20,16 +20,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* q_high = mpn_bdivmod (qp, up, usize, vp, vsize, d).
 
-   Puts the low d/BITS_PER_MP_LIMB limbs of Q = U / V mod 2^d at qp, and
-   returns the high d%BITS_PER_MP_LIMB bits of Q as the result.
+   Puts the low d/GMP_LIMB_BITS limbs of Q = U / V mod 2^d at qp, and
+   returns the high d%GMP_LIMB_BITS bits of Q as the result.
 
-   Also, U - Q * V mod 2^(usize*BITS_PER_MP_LIMB) is placed at up.  Since the
-   low d/BITS_PER_MP_LIMB limbs of this difference are zero, the code allows
+   Also, U - Q * V mod 2^(usize*GMP_LIMB_BITS) is placed at up.  Since the
+   low d/GMP_LIMB_BITS limbs of this difference are zero, the code allows
    the limb vectors at qp to overwrite the low limbs at up, provided qp <= up.
 
    Preconditions:
    1.  V is odd.
-   2.  usize * BITS_PER_MP_LIMB >= d.
+   2.  usize * GMP_LIMB_BITS >= d.
    3.  If Q and U overlap, qp <= up.
 
    Ken Weber (kweber@mat.ufrgs.br, kweber@mcs.kent.edu)

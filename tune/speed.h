@@ -31,9 +31,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   } while (0)
 
 /* A mask of the least significant n bits.  Note 1<<32 doesn't give zero on
-   x86 family CPUs, hence the separate case for BITS_PER_MP_LIMB. */
+   x86 family CPUs, hence the separate case for GMP_LIMB_BITS. */
 #define MP_LIMB_T_LOWBITMASK(n)	\
-  ((n) == BITS_PER_MP_LIMB ? MP_LIMB_T_MAX : ((mp_limb_t) 1 << (n)) - 1)
+  ((n) == GMP_LIMB_BITS ? MP_LIMB_T_MAX : ((mp_limb_t) 1 << (n)) - 1)
 
 
 /* align must be a power of 2 here, usually CACHE_LINE_SIZE is a good choice */
@@ -1274,7 +1274,7 @@ int speed_routine_count_zeros_setup
     /* high part less than d, low part a duplicate copied in */		\
     mpz_init_set_n (a, s->xp, s->size);					\
     mpz_mod (a, a, d);							\
-    mpz_mul_2exp (a, a, BITS_PER_MP_LIMB * s->size);			\
+    mpz_mul_2exp (a, a, GMP_LIMB_BITS * s->size);			\
     MPN_COPY (PTR(a), s->xp, s->size);					\
 									\
     mpz_init (r);							\
@@ -2188,7 +2188,7 @@ int speed_routine_count_zeros_setup
       xp[i] = s->xp[i] % base;						\
 									\
     wn = ((mp_size_t) (s->size / mp_bases[base].chars_per_bit_exactly)) \
-      / BITS_PER_MP_LIMB + 2;						\
+      / GMP_LIMB_BITS + 2;						\
     SPEED_TMP_ALLOC_LIMBS (wp, wn, s->align_wp);			\
 									\
     /* use this during development to check wn is big enough */		\

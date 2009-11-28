@@ -45,7 +45,7 @@ mpn_sizeinbase (mp_srcptr xp, mp_size_t xsize, int base)
 
   /* Calculate the total number of significant bits of X.  */
   count_leading_zeros (cnt, xp[xsize-1]);
-  totbits = xsize * BITS_PER_MP_LIMB - cnt;
+  totbits = xsize * GMP_LIMB_BITS - cnt;
 
   if (POW2_P (base))
     {

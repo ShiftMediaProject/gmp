@@ -280,7 +280,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		dl = dp[in - 2];
 
 #if GMP_NAIL_BITS == 0
-	      x = (dp[in - 1] << cnt) | ((dl >> 1) >> ((~cnt) % BITS_PER_MP_LIMB));
+	      x = (dp[in - 1] << cnt) | ((dl >> 1) >> ((~cnt) % GMP_LIMB_BITS));
 #else
 	      x = (dp[in - 1] << cnt) & GMP_NUMB_MASK;
 	      if (cnt != 0)

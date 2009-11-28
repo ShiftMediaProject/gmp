@@ -62,7 +62,7 @@ __gmp_doprnt_mpf (const struct doprnt_funs_t *funs,
   int         fraczeros, fraclen, preczeros;
   char        *s, *free_ptr;
   mp_exp_t    exp;
-  char        exponent[BITS_PER_MP_LIMB + 10];
+  char        exponent[GMP_LIMB_BITS + 10];
   const char  *showbase;
   int         retval = 0;
 

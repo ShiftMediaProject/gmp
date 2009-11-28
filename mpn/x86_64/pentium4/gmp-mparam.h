@@ -18,7 +18,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#define BITS_PER_MP_LIMB 64
+#define GMP_LIMB_BITS 64
 #define BYTES_PER_MP_LIMB 8
 
 /* These routines exists for all x86_64 chips, but they are slower on Pentium4

@@ -73,7 +73,7 @@ int
 main (int argc, char *argv[])
 {
   unsigned long  n;
-  unsigned long  limit = 100 * BITS_PER_MP_LIMB;
+  unsigned long  limit = 100 * GMP_LIMB_BITS;
   mpz_t          want_fn, want_fn1, got_fn, got_fn1;
 
   tests_start ();

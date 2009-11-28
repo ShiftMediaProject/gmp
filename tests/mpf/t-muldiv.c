@@ -36,7 +36,7 @@ main (int argc, char **argv)
   int reps = 10000;
   int i;
   mpf_t u, v, w, x;
-  mp_size_t bprec = SIZE * BITS_PER_MP_LIMB;
+  mp_size_t bprec = SIZE * GMP_LIMB_BITS;
   mpf_t rerr, limit_rerr;
   unsigned long ulimb, vlimb;
   int single_flag;

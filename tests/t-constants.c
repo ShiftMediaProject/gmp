@@ -209,10 +209,9 @@ main (int argc, char *argv[])
   int  error = 0;
 
   CHECK_INT (BYTES_PER_MP_LIMB, (int) sizeof(mp_limb_t));
-  CHECK_INT (mp_bits_per_limb, BITS_PER_MP_LIMB);
-  CHECK_INT (__GMP_BITS_PER_MP_LIMB, BITS_PER_MP_LIMB);
+  CHECK_INT (mp_bits_per_limb, GMP_LIMB_BITS);
 
-  CHECK_BITS (BITS_PER_MP_LIMB, mp_limb_t);
+  CHECK_BITS (GMP_LIMB_BITS, mp_limb_t);
   CHECK_BITS (BITS_PER_ULONG, unsigned long);
 
   CHECK_HIGHBIT (GMP_LIMB_HIGHBIT, mp_limb_t,      LL("0x%lX","0x%llX"));

@@ -339,7 +339,7 @@ install-data-hook:
 EXTRA_DIST += dumbmp.c
 
 mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
-	./gen-fac_ui $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpz/fac_ui.h || (rm -f mpz/fac_ui.h; exit 1)
+	./gen-fac_ui $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpz/fac_ui.h || (rm -f mpz/fac_ui.h; exit 1)
 BUILT_SOURCES += mpz/fac_ui.h
 
 gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
@@ -352,11 +352,11 @@ gen-fac_ui_.c: gen-fac_ui.c $(ANSI2KNR)
 
 
 fib_table.h: gen-fib$(EXEEXT_FOR_BUILD)
-	./gen-fib header $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >fib_table.h || (rm -f fib_table.h; exit 1)
+	./gen-fib header $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >fib_table.h || (rm -f fib_table.h; exit 1)
 BUILT_SOURCES += fib_table.h
 
 mpn/fib_table.c: gen-fib$(EXEEXT_FOR_BUILD)
-	./gen-fib table $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpn/fib_table.c || (rm -f mpn/fib_table.c; exit 1)
+	./gen-fib table $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/fib_table.c || (rm -f mpn/fib_table.c; exit 1)
 BUILT_SOURCES += mpn/fib_table.c
 
 gen-fib$(EXEEXT_FOR_BUILD): gen-fib$(U_FOR_BUILD).c dumbmp.c
@@ -369,11 +369,11 @@ gen-fib_.c: gen-fib.c $(ANSI2KNR)
 
 
 mp_bases.h: gen-bases$(EXEEXT_FOR_BUILD)
-	./gen-bases header $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mp_bases.h || (rm -f mp_bases.h; exit 1)
+	./gen-bases header $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mp_bases.h || (rm -f mp_bases.h; exit 1)
 BUILT_SOURCES += mp_bases.h
 
 mpn/mp_bases.c: gen-bases$(EXEEXT_FOR_BUILD)
-	./gen-bases table $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpn/mp_bases.c || (rm -f mpn/mp_bases.c; exit 1)
+	./gen-bases table $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/mp_bases.c || (rm -f mpn/mp_bases.c; exit 1)
 BUILT_SOURCES += mpn/mp_bases.c
 
 gen-bases$(EXEEXT_FOR_BUILD): gen-bases$(U_FOR_BUILD).c dumbmp.c
@@ -387,7 +387,7 @@ gen-bases_.c: gen-bases.c $(ANSI2KNR)
 
 
 trialdivtab.h: gen-trialdivtab$(EXEEXT_FOR_BUILD)
-	./gen-trialdivtab $(BITS_PER_MP_LIMB) 8000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
+	./gen-trialdivtab $(GMP_LIMB_BITS) 8000 >trialdivtab.h || (rm -f trialdivtab.h; exit 1)
 BUILT_SOURCES += trialdivtab.h
 
 gen-trialdivtab$(EXEEXT_FOR_BUILD): gen-trialdivtab$(U_FOR_BUILD).c dumbmp.c
@@ -402,7 +402,7 @@ gen-trialdivtab_.c: gen-trialdivtab.c $(ANSI2KNR)
 
 
 mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
-	./gen-psqr $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
+	./gen-psqr $(GMP_LIMB_BITS) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
 BUILT_SOURCES += mpn/perfsqr.h
 
 gen-psqr$(EXEEXT_FOR_BUILD): gen-psqr$(U_FOR_BUILD).c dumbmp.c

@@ -38,7 +38,7 @@ check_random (void)
 
   for (i = 0; i < 1000; i++)
     {
-      mpz_erandomb (z, rands, 6 * BITS_PER_MP_LIMB);
+      mpz_erandomb (z, rands, 6 * GMP_LIMB_BITS);
       got = mtox (z);
       want = mpz_get_str (NULL, 16, z);
       if (strcmp (got, want) != 0)

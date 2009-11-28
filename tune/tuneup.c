@@ -670,7 +670,7 @@ fft_step_size (int k)
 {
   mp_size_t  step;
 
-  step = MAX ((mp_size_t) 1 << (k-1), BITS_PER_MP_LIMB) / BITS_PER_MP_LIMB;
+  step = MAX ((mp_size_t) 1 << (k-1), GMP_LIMB_BITS) / GMP_LIMB_BITS;
   step *= (mp_size_t) 1 << k;
 
   if (step <= 0)
@@ -1586,7 +1586,7 @@ tune_jacobi_base (void)
   double   t1, t2, t3;
   int      method;
 
-  s.size = BITS_PER_MP_LIMB * 3 / 4;
+  s.size = GMP_LIMB_BITS * 3 / 4;
 
   t1 = tuneup_measure (speed_mpn_jacobi_base_1, &param, &s);
   if (option_trace >= 1)
@@ -1671,7 +1671,7 @@ speed_mpn_pre_set_str (struct speed_params *s)
     str[i] = s->xp[i] % base;
 
   wn = ((mp_size_t) (s->size / mp_bases[base].chars_per_bit_exactly))
-    / BITS_PER_MP_LIMB + 2;
+    / GMP_LIMB_BITS + 2;
   SPEED_TMP_ALLOC_LIMBS (wp, wn, s->align_wp);
 
   /* use this during development to check wn is big enough */

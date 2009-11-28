@@ -45,7 +45,7 @@ main (int argc, char **argv)
   mp_exp_t bexp;
   long size, exp;
   int base;
-  char buf[SIZE * BITS_PER_MP_LIMB + 5];
+  char buf[SIZE * GMP_LIMB_BITS + 5];
 
   tests_start ();
 

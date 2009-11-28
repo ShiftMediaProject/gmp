@@ -73,14 +73,14 @@ mpn_invert_limb (mp_limb_t d)
   mp_limb_t xh, xl;
   mp_limb_t zh, zl;
 
-#if BITS_PER_MP_LIMB == 32
+#if GMP_LIMB_BITS == 32
   z = approx_tab[(d >> 23) - 0x100] << 6;	/* z < 2^16 */
 
   z2l = z * z;					/* z2l < 2^32 */
   umul_ppmm (th, tl, z2l, d);
   z = (z << 17) - (th << 1);
 #endif
-#if BITS_PER_MP_LIMB == 64
+#if GMP_LIMB_BITS == 64
   z = approx_tab[(d >> 55) - 0x100] << 6;	/* z < 2^16 */
 
   z2l = z * z;					/* z2l < 2^32 */
@@ -97,7 +97,7 @@ mpn_invert_limb (mp_limb_t d)
   umul_ppmm (xh, xl, z2l, d);
   tl += xh;
   th += tl < xh;
-  th = (th << 2) | (tl >> BITS_PER_MP_LIMB - 2);
+  th = (th << 2) | (tl >> GMP_LIMB_BITS - 2);
   tl = tl << 2;
   sub_ddmmss (zh, zl, z << 2, 0, th, tl);
 

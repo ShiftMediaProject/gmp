@@ -277,7 +277,7 @@ int main (argc, argv)
     case RFUNC_mpf_urandomb:
 #if 0
       /* Don't init a too small generator.  */
-      size = PREC (f1) * BITS_PER_MP_LIMB;
+      size = PREC (f1) * GMP_LIMB_BITS;
       /* Fall through.  */
 #endif
     case RFUNC_mpz_urandomb:

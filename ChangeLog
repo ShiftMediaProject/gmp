@@ -1,5 +1,7 @@
 2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Finish renaming BITS_PER_MP_LIMB to GMP_LIMB_BITS.
+
 	* macos: Remove entire directory.
 
 2009-11-27  Torbjorn Granlund  <tege@gmplib.org>
