@@ -1,3 +1,7 @@
+2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (MULMOD_BNM1_THRESHOLD): Default.
+
 2009-11-28  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mulmod_bnm1.c: Basecases made simpler,

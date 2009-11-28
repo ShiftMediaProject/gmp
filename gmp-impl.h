@@ -1716,6 +1716,10 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define MU_BDIV_QR_THRESHOLD    2000
 #endif
 
+#ifndef MULMOD_BNM1_THRESHOLD
+#define MULMOD_BNM1_THRESHOLD    16
+#endif
+
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 
 #ifndef REDC_1_TO_REDC_2_THRESHOLD
