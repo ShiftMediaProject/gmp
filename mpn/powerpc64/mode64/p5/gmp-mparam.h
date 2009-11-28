@@ -18,8 +18,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#define BITS_PER_MP_LIMB 32
-#define BYTES_PER_MP_LIMB 4
+#define BITS_PER_MP_LIMB 64
+#define BYTES_PER_MP_LIMB 8
 
 /* POWER5 (friggms.hpc.ntnu.no) */
 
