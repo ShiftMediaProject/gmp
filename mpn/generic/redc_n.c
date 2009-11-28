@@ -4,7 +4,7 @@
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
-Copyright (C) 2000, 2001, 2002, 2004, 2008 Free Software Foundation, Inc.
+Copyright (C) 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,11 +24,28 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+/*
+  TODO
+
+  * We assume mpn_mulmod_bnm1 is always faster than plain mpn_mul_n (or a
+    future mpn_mulhi) for the range we will be called.  Follow up that
+    assumption.
+
+  * Call mpn_mul_fft directly for large-enough operands.  It computes mod B^n+1
+    (while mpn_mulmod_bnm1 of course computed mod B^n-1), so the "unwrap" code
+    will be very similar to the current unwrap code.
+
+  * Decrease scratch usage.
+
+  * Call mpn_mulmod_bnm1_itch.
+*/
+
 void
 mpn_redc_n (mp_ptr rp, mp_ptr tp, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
 {
-  mp_ptr xp, yp;
+  mp_ptr xp, yp, scratch_out;
   mp_limb_t cy;
+  mp_size_t rn;
   TMP_DECL;
   TMP_MARK;
 
@@ -36,7 +53,15 @@ mpn_redc_n (mp_ptr rp, mp_ptr tp, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
   yp = xp + n;
 
   mpn_mullow_n (xp, tp, ip, n);
-  mpn_mul_n (yp, xp, mp, n);
+
+  rn = mpn_mulmod_bnm1_next_size (n);
+  scratch_out = TMP_ALLOC_LIMBS (2 * rn + 100);		/* FIXME */
+
+  mpn_mulmod_bnm1 (yp, rn, xp, n, mp, n, scratch_out);
+
+  cy = mpn_sub_n (yp + rn, yp, tp, 2*n - rn);		/* undo wrap around */
+  MPN_DECR_U (yp + 2*n - rn, rn, cy);
+
   cy = mpn_sub_n (rp, tp + n, yp + n, n);
   if (cy != 0)
     mpn_add_n (rp, rp, mp, n);
