@@ -1026,6 +1026,7 @@ tune_redc (void)
     param.name = "REDC_2_TO_REDC_N_THRESHOLD";
     param.function = speed_mpn_redc_2;
     param.function2 = speed_mpn_redc_n;
+    param.min_size = 16;
     param.noprint = 1;
     one (&redc_2_to_redc_n_threshold, &param);
   }
@@ -1046,6 +1047,7 @@ tune_redc (void)
     param.name = "REDC_1_TO_REDC_N_THRESHOLD";
     param.function = speed_mpn_redc_1;
     param.function2 = speed_mpn_redc_n;
+    param.min_size = 16;
     one (&redc_1_to_redc_n_threshold, &param);
   }
 #endif

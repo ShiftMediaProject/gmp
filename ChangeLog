@@ -1,5 +1,7 @@
 2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_redc): Set min_size to 16 for redc_n tuning.
+
 	* mpn/x86_64/sqr_basecase.asm (SQR_TOOM2_THRESHOLD_MAX): Avoid quoting
 	to allow configure.in parse it more easily.  Trim from 120 to 80.
 

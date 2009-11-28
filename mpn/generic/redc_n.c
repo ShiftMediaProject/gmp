@@ -59,6 +59,8 @@ mpn_redc_n (mp_ptr rp, mp_ptr tp, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
 
   mpn_mulmod_bnm1 (yp, rn, xp, n, mp, n, scratch_out);
 
+  ASSERT_ALWAYS (2 * n > rn);				/* could handle this */
+
   cy = mpn_sub_n (yp + rn, yp, tp, 2*n - rn);		/* undo wrap around */
   MPN_DECR_U (yp + 2*n - rn, rn, cy);
 
