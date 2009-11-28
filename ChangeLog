@@ -1,3 +1,8 @@
+2009-11-28  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c: Basecases made simpler,
+	  this also corrects a bug affecting previous version.
+
 2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Use TMP_ALLOC_LIMBS consistently.

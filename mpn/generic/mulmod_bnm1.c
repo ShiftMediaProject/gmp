@@ -32,66 +32,58 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULMOD_BNM1_THRESHOLD 16
 #endif
 
-/* Inputs are {ap,an} and {bp,bn}; output is {rp,rn}, computation is
+/* Inputs are {ap,rn} and {bp,rn}; output is {rp,rn}, computation is
    mod B^rn - 1, and values are semi-normalised; zero is represented
    as either 0 or B^n - 1.  Needs 2rn limbs at rp. */
 static void
-mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn)
+mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
 {
   mp_limb_t cy;
 
-  ASSERT (0 < an && an <= rn);
-  ASSERT (0 < bn && bn <= rn);
   ASSERT (0 < rn);
 
-  mpn_mul (rp, ap, an, bp, bn);
-  an += bn;
-  if( UNLIKELY(an <= rn) )
-    MPN_ZERO (rp + an, rn - an);
-  else {
-    cy = mpn_add (rp, rp, rn, rp + rn, an - rn);
-    /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
-     * be no overflow when adding in the carry. */
-    MPN_INCR_U (rp, rn, cy);
-  }
+  mpn_mul_n (rp, ap, bp, rn);
+  cy = mpn_add (rp, rp, rn, rp + rn, rn);
+  /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
+   * be no overflow when adding in the carry. */
+  MPN_INCR_U (rp, rn, cy);
 }
 
 
-/* Inputs are {ap,an} and {bp,bn}; output is {rp,rn+1}, in
+/* Inputs are {ap,rn+1} and {bp,rn+1}; output is {rp,rn+1}, in
    semi-normalised representation, computation is mod B^rn + 1. Needs
    2rn + 2 limbs at rp. Output is normalised. */
 static void
-mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn)
+mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
 {
   mp_limb_t cy;
 
-  ASSERT (0 < an && an <= rn + 1);
-  ASSERT (0 < bn && bn <= rn + 1);
   ASSERT (0 < rn);
 
-  mpn_mul (rp, ap, an, bp, bn);
-  an += bn;
-  ASSERT( an <= 2*rn + 1 || rp[2*rn+1] == 0);
-  ASSERT( an <= 2*rn || rp[2*rn] < GMP_NUMB_MAX);
-  if( UNLIKELY(an < rn) )
-    MPN_ZERO (rp + an, rn + 1 - an);
-  else {
-    if( LIKELY(an > 2*rn) )
-      cy = rp[2*rn] + mpn_sub_n (rp, rp, rp+rn, rn);
-    else
-      cy = mpn_sub (rp, rp, rn, rp+rn, an-rn);
-    rp[rn] = 0;
-    MPN_INCR_U (rp, rn+1, cy );
-  }
+  mpn_mul_n (rp, ap, bp, rn + 1);
+  ASSERT( rp[2*rn+1] == 0);
+  ASSERT( rp[2*rn] < GMP_NUMB_MAX);
+  cy = rp[2*rn] + mpn_sub_n (rp, rp, rp+rn, rn);
+  rp[rn] = 0;
+  MPN_INCR_U (rp, rn+1, cy );
 }
 
 
 /* Computes {rp,rn} <- {ap,an}*{bp,bn} Mod(B^rn-1)
+ * Requires both an and bn <= rn
  * Scratch need: rn + 2 + (need for recursive call OR rn + 2). This gives
  *
- * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2n + 2 log2 n + 2
+ * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2rn + 2 log2 rn + 2
  */
-
+#define ALLOW_MISUSE 1
+/* If we do not allow misuse, we assume two possible uses:
+ * - rn, an, and bn are almost equal: more precisely an > rn/2 and
+ *   bn > rn/2
+ * - rn = mpn_mulmod_bnm1_next_size(an+bn) > MUL_FFT_MODF_THRESHOLD
+ *   and an >= bn
+ * Whitin this allowed uses we will never have an<rn when basecases
+ * are needed.
+ */
 void
 mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn, mp_ptr tp)
 {
@@ -100,7 +92,23 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
   ASSERT (0 < rn);
 
   if ((rn & 1) != 0 || BELOW_THRESHOLD (rn, MULMOD_BNM1_THRESHOLD))
-    mpn_bc_mulmod_bnm1 (rp, rn, ap, an, bp, bn);
+    {
+      if ( UNLIKELY(bn < rn) ) /* May hapen only for misuse or _very_
+				  unbalanced operands */
+	{
+	  MPN_COPY(tp, bp, bn);
+	  MPN_ZERO(tp + bn, rn - bn);
+	  bp = tp;
+	}
+      ASSERT ( ALLOW_MISUSE || (an >= rn) );
+      if ( ALLOW_MISUSE && UNLIKELY(an < rn) )
+	{
+	  MPN_COPY(tp + rn, ap, an);
+	  MPN_ZERO(tp + rn + an, rn - an);
+	  ap = tp + rn;
+	}
+      mpn_bc_mulmod_bnm1 (rp, ap, bp, rn);
+    }
   else
     {
       mp_size_t n;
@@ -132,9 +140,9 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	mp_size_t anm, bnm;
 
 	if( an > n ) {
+	  am1 = xp;
 	  cy = mpn_add (xp, a0, n, a1, an - n);
 	  MPN_INCR_U (xp, n, cy);
-	  am1 = xp;
 	  anm = n;
 	} else {
 	  am1 = a0;
@@ -160,10 +168,10 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	mp_size_t anp, bnp;
 
 	if( an > n ) {
+	  ap1 = so;
 	  cy = mpn_sub (so, a0, n, a1, an - n);
 	  so[n] = 0;
 	  MPN_INCR_U (so, n + 1, cy);
-	  ap1 = so;
 	  anp = n + ap1[n];
 	} else {
 	  ap1 = a0;
@@ -193,7 +201,20 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	if (k >= FFT_FIRST_K)
 	  xp[n] = mpn_mul_fft (xp, n, ap1, anp, bp1, bnp, k);
 	else
-	  mpn_bc_mulmod_bnp1 (xp, n, ap1, anp, bp1, bnp);
+	  {
+	    if ( UNLIKELY(bp1 == b0) ) {
+	      bp1 = so + n + 1;
+	      MPN_COPY(so + n + 1, b0, bnp);
+	      MPN_ZERO(so + n + 1 + bnp, n + 1 - bnp);
+	    }
+	    ASSERT ( ALLOW_MISUSE || ((an >= rn) && (ap1 != a0)) );
+	    if ( ALLOW_MISUSE && UNLIKELY(ap1 == a0) ) {
+	      ap1 = so;
+	      MPN_COPY(so, a0, anp);
+	      MPN_ZERO(so + anp, n + 1 - anp);
+	    }
+	    mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n);
+	  }
       }
 
       /* xp = xm - xp mod (B^n + 1). Assumes normalised
