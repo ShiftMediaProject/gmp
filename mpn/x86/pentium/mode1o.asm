@@ -122,7 +122,7 @@ dnl non-PIC
 	subl	%eax, %ecx		C inv = 2*inv - inv*inv*d
 	pushl	%esi		FRAME_pushl()
 
-	ASSERT(e,`	C d*inv == 1 mod 2^BITS_PER_MP_LIMB
+	ASSERT(e,`	C d*inv == 1 mod 2^GMP_LIMB_BITS
 	movl	%ecx, %eax
 	imull	PARAM_DIVISOR, %eax
 	cmpl	$1, %eax')

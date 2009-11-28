@@ -124,12 +124,12 @@ check_random (int argc, char *argv[])
 
   for (i = 0; i < reps; i++)
     {
-      mpz_errandomb (a, rands, 8*BITS_PER_MP_LIMB);
-      mpz_errandomb (c, rands, 8*BITS_PER_MP_LIMB);
-      d = urandom() % (8*BITS_PER_MP_LIMB);
+      mpz_errandomb (a, rands, 8*GMP_LIMB_BITS);
+      mpz_errandomb (c, rands, 8*GMP_LIMB_BITS);
+      d = urandom() % (8*GMP_LIMB_BITS);
 
-      mpz_mul_2exp (a, a, urandom() % (2*BITS_PER_MP_LIMB));
-      mpz_mul_2exp (c, c, urandom() % (2*BITS_PER_MP_LIMB));
+      mpz_mul_2exp (a, a, urandom() % (2*GMP_LIMB_BITS));
+      mpz_mul_2exp (c, c, urandom() % (2*GMP_LIMB_BITS));
 
       mpz_negrandom (a, rands);
       mpz_negrandom (c, rands);

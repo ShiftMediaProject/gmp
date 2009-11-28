@@ -63,9 +63,9 @@ check_various (void)
   check_clz (COUNT_LEADING_ZEROS_0, CNST_LIMB(0));
 #endif
 
-  for (i=0; i < BITS_PER_MP_LIMB; i++)
+  for (i=0; i < GMP_LIMB_BITS; i++)
     {
-      check_clz (i, CNST_LIMB(1) << (BITS_PER_MP_LIMB-1-i));
+      check_clz (i, CNST_LIMB(1) << (GMP_LIMB_BITS-1-i));
       check_ctz (i, CNST_LIMB(1) << i);
 
       check_ctz (i, MP_LIMB_T_MAX << i);

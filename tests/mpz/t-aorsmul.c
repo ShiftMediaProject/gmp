@@ -388,14 +388,14 @@ check_random (int argc, char *argv[])
 
   for (i = 0; i < reps; i++)
     {
-      mpz_errandomb (w, rands, 5*BITS_PER_MP_LIMB);
-      mpz_errandomb (x, rands, 5*BITS_PER_MP_LIMB);
-      mpz_errandomb (y, rands, 5*BITS_PER_MP_LIMB);
+      mpz_errandomb (w, rands, 5*GMP_LIMB_BITS);
+      mpz_errandomb (x, rands, 5*GMP_LIMB_BITS);
+      mpz_errandomb (y, rands, 5*GMP_LIMB_BITS);
       check_all (w, x, y);
       check_all_inplace (w, y);
 
-      mpz_errandomb (w, rands, 5*BITS_PER_MP_LIMB);
-      mpz_errandomb (x, rands, 5*BITS_PER_MP_LIMB);
+      mpz_errandomb (w, rands, 5*GMP_LIMB_BITS);
+      mpz_errandomb (x, rands, 5*GMP_LIMB_BITS);
       mpz_errandomb (y, rands, BITS_PER_ULONG);
       check_all (w, x, y);
       check_all_inplace (w, y);

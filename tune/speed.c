@@ -90,10 +90,10 @@ SPEED_EXTRA_PROTOS2
   } while (0)
 
 
-#if BITS_PER_MP_LIMB == 32
+#if GMP_LIMB_BITS == 32
 #define GMP_NUMB_0xAA  (CNST_LIMB(0xAAAAAAAA) & GMP_NUMB_MASK)
 #endif
-#if BITS_PER_MP_LIMB == 64
+#if GMP_LIMB_BITS == 64
 #define GMP_NUMB_0xAA  (CNST_LIMB(0xAAAAAAAAAAAAAAAA) & GMP_NUMB_MASK)
 #endif
 
@@ -792,7 +792,7 @@ run_gnuplot (int argc, char *argv[])
 /* Return a limb with n many one bits (starting from the least significant) */
 
 #define LIMB_ONES(n) \
-  ((n) == BITS_PER_MP_LIMB ? MP_LIMB_T_MAX      \
+  ((n) == GMP_LIMB_BITS ? MP_LIMB_T_MAX      \
     : (n) == 0 ? CNST_LIMB(0)                   \
     : (CNST_LIMB(1) << (n)) - 1)
 
@@ -819,7 +819,7 @@ r_string (const char *s)
       {
         if (siz > 1 || siz < -1)
           printf ("Warning, r parameter %s truncated to %d bits\n",
-                  s_orig, BITS_PER_MP_LIMB);
+                  s_orig, GMP_LIMB_BITS);
         return l;
       }
   }
@@ -832,10 +832,10 @@ r_string (const char *s)
   if (strcmp (s, "bits") == 0)
     {
       mp_limb_t  l;
-      if (n > BITS_PER_MP_LIMB)
+      if (n > GMP_LIMB_BITS)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n",
-                   n, BITS_PER_MP_LIMB);
+                   n, GMP_LIMB_BITS);
           exit (1);
         }
       mpn_random (&l, 1);
@@ -843,10 +843,10 @@ r_string (const char *s)
     }
   else  if (strcmp (s, "ones") == 0)
     {
-      if (n > BITS_PER_MP_LIMB)
+      if (n > GMP_LIMB_BITS)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n",
-                   n, BITS_PER_MP_LIMB);
+                   n, GMP_LIMB_BITS);
           exit (1);
         }
       return LIMB_ONES (n);

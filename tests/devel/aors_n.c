@@ -214,7 +214,7 @@ mpn_print (mp_ptr p, mp_size_t size)
     {
 #ifdef _LONG_LONG_LIMB
       printf ("%0*lX%0*lX", (int) (sizeof(mp_limb_t)),
-	      (unsigned long) (p[i] >> (BITS_PER_MP_LIMB/2)),
+	      (unsigned long) (p[i] >> (GMP_LIMB_BITS/2)),
               (int) (sizeof(mp_limb_t)), (unsigned long) (p[i]));
 #else
       printf ("%0*lX", (int) (2 * sizeof(mp_limb_t)), p[i]);

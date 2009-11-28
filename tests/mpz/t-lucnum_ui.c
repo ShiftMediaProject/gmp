@@ -35,7 +35,7 @@ void
 check_sequence (int argc, char *argv[])
 {
   unsigned long  n;
-  unsigned long  limit = 100 * BITS_PER_MP_LIMB;
+  unsigned long  limit = 100 * GMP_LIMB_BITS;
   mpz_t          want_ln, want_ln1, got_ln, got_ln1;
 
   if (argc > 1 && argv[1][0] == 'x')

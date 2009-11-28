@@ -88,7 +88,7 @@ main ()
 
       mpn_random2 (nptr, nsize);
       mpn_random2 (dptr, dsize);
-      dptr[dsize - 1] |= (mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1);
+      dptr[dsize - 1] |= (mp_limb_t) 1 << (GMP_LIMB_BITS - 1);
 
       MPN_COPY (rptr, nptr, nsize);
       qlimb = mpn_divrem (qptr, (mp_size_t) 0, rptr, nsize, dptr, dsize);

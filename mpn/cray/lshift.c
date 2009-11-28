@@ -29,7 +29,7 @@ mpn_lshift (mp_ptr wp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   mp_limb_t retval;
 
   sh_1 = cnt;
-  sh_2 = BITS_PER_MP_LIMB - sh_1;
+  sh_2 = GMP_LIMB_BITS - sh_1;
   retval = up[n - 1] >> sh_2;
 
 #pragma _CRI ivdep

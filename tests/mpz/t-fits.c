@@ -84,7 +84,7 @@ main (void)
   EXPECT (mpz_fits_sshort_p, 1);
 
   mpz_set_ui (z, 1L);
-  mpz_mul_2exp (z, z, 5L*BITS_PER_MP_LIMB);
+  mpz_mul_2exp (z, z, 5L*GMP_LIMB_BITS);
   expr = "2^(5*BPML)";
   EXPECT (mpz_fits_ulong_p, 0);
   EXPECT (mpz_fits_uint_p, 0);

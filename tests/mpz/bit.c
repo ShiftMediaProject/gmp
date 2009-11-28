@@ -207,7 +207,7 @@ check_single (void)
 	    {
 	      mpz_set_si (x, (long) initial);
 
-	      bit = (unsigned long) limb*BITS_PER_MP_LIMB + offset;
+	      bit = (unsigned long) limb*GMP_LIMB_BITS + offset;
 
 	      mpz_clrbit (x, bit);
 	      MPZ_CHECK_FORMAT (x);

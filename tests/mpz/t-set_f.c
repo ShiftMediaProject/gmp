@@ -28,7 +28,7 @@ void
 check_one (mpz_srcptr z)
 {
   static const int shift[] = {
-    0, 1, BITS_PER_MP_LIMB, 2*BITS_PER_MP_LIMB, 5*BITS_PER_MP_LIMB
+    0, 1, GMP_LIMB_BITS, 2*GMP_LIMB_BITS, 5*GMP_LIMB_BITS
   };
 
   int    sh, shneg, neg;
@@ -101,10 +101,10 @@ check_various (void)
   mpz_set_si (z, 123L);
   check_one (z);
 
-  mpz_rrandomb (z, RANDS, 2*BITS_PER_MP_LIMB);
+  mpz_rrandomb (z, RANDS, 2*GMP_LIMB_BITS);
   check_one (z);
 
-  mpz_rrandomb (z, RANDS, 5*BITS_PER_MP_LIMB);
+  mpz_rrandomb (z, RANDS, 5*GMP_LIMB_BITS);
   check_one (z);
 
   mpz_clear (z);

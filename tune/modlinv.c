@@ -30,7 +30,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    dependent chain, whereas the "2*" in the standard version isn't.
    Depending on the CPU this should be the same or a touch slower.  */
 
-#if BITS_PER_MP_LIMB <= 32
+#if GMP_LIMB_BITS <= 32
 #define binvert_limb_mul1(inv,n)                                \
   do {                                                          \
     mp_limb_t  __n = (n);                                       \
@@ -44,7 +44,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   } while (0)
 #endif
 
-#if BITS_PER_MP_LIMB > 32 && BITS_PER_MP_LIMB <= 64
+#if GMP_LIMB_BITS > 32 && GMP_LIMB_BITS <= 64
 #define binvert_limb_mul1(inv,n)                                \
   do {                                                          \
     mp_limb_t  __n = (n);                                       \
@@ -100,7 +100,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
                                                 \
     ASSERT ((__n & 1) == 1);                    \
                                                 \
-    __count = BITS_PER_MP_LIMB-1;               \
+    __count = GMP_LIMB_BITS-1;               \
     do                                          \
       {                                         \
         __inv >>= 1;                            \
@@ -131,11 +131,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
                                                                         \
     ASSERT ((__n & 1) == 1);                                            \
                                                                         \
-    __count = BITS_PER_MP_LIMB-1;                                       \
+    __count = GMP_LIMB_BITS-1;                                       \
     do                                                                  \
       {                                                                 \
         __lowbit = __rem & 1;                                           \
-        __inv = (__inv >> 1) | (__lowbit << (BITS_PER_MP_LIMB-1));      \
+        __inv = (__inv >> 1) | (__lowbit << (GMP_LIMB_BITS-1));      \
         __rem = (__rem - (__n & -__lowbit)) >> 1;                       \
       }                                                                 \
     while (-- __count);                                                 \

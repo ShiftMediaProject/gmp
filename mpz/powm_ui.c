@@ -109,7 +109,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
   e = el;
   count_leading_zeros (c, e);
   e = (e << c) << 1;		/* shift the exp bits to the left, lose msb */
-  c = BITS_PER_MP_LIMB - 1 - c;
+  c = GMP_LIMB_BITS - 1 - c;
 
   /* Main loop. */
 

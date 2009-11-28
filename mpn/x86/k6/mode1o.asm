@@ -103,7 +103,7 @@ Zdisp(	movzbl,	0,(%ecx,%edi), %edi)		C inv 8 bits
 
 	subl	%ecx, %edi		C inv = 2*inv - inv*inv*d
 
-	ASSERT(e,`	C d*inv == 1 mod 2^BITS_PER_MP_LIMB
+	ASSERT(e,`	C d*inv == 1 mod 2^GMP_LIMB_BITS
 	pushl	%eax
 	movl	%esi, %eax
 	imull	%edi, %eax

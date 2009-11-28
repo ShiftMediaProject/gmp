@@ -101,7 +101,7 @@ ifdef(`PIC',`
 
 	psubd	%mm0, %mm6		C inv = 2*inv - inv*inv*d
 
-	ASSERT(e,`	C expect d*inv == 1 mod 2^BITS_PER_MP_LIMB
+	ASSERT(e,`	C expect d*inv == 1 mod 2^GMP_LIMB_BITS
 	pushl	%eax	FRAME_pushl()
 	movd	%mm6, %eax
 	imul	PARAM_DIVISOR, %eax

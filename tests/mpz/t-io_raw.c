@@ -233,7 +233,7 @@ check_rand (void)
 
   for (i = 0; i < 500; i++)
     {
-      mpz_erandomb (want, rands, 10*BITS_PER_MP_LIMB);
+      mpz_erandomb (want, rands, 10*GMP_LIMB_BITS);
       mpz_negrandom (want, rands);
 
       fp = fopen_wplusb_or_die (FILENAME);

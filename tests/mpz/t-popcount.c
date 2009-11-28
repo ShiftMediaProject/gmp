@@ -32,7 +32,7 @@ check_onebit (void)
   unsigned long  i, got;
 
   mpz_init (n);
-  for (i = 0; i < 5 * BITS_PER_MP_LIMB; i++)
+  for (i = 0; i < 5 * GMP_LIMB_BITS; i++)
     {
       mpz_setbit (n, i);
       got = mpz_popcount (n);

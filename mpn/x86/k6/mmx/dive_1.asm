@@ -117,7 +117,7 @@ Zdisp(	movzbl,	0,(%eax,%ebp), %eax)
 	subl	%ebp, %eax		C inv = 2*inv - inv*inv*d
 	subl	$1, %edx		C shift amount, and clear carry
 
-	ASSERT(e,`	C expect d*inv == 1 mod 2^BITS_PER_MP_LIMB
+	ASSERT(e,`	C expect d*inv == 1 mod 2^GMP_LIMB_BITS
 	pushl	%eax	FRAME_pushl()
 	imull	PARAM_DIVISOR, %eax
 	cmpl	$1, %eax

@@ -184,7 +184,7 @@ refmpn_normalize (mp_srcptr ptr, mp_size_t size)
 mp_limb_t
 refmpn_msbone (mp_limb_t x)
 {
-  mp_limb_t  n = (mp_limb_t) 1 << (BITS_PER_MP_LIMB-1);
+  mp_limb_t  n = (mp_limb_t) 1 << (GMP_LIMB_BITS-1);
 
   while (n != 0)
     {
@@ -735,10 +735,10 @@ refmpn_sub (mp_ptr rp,
 }
 
 
-#define SHIFTHIGH(x) ((x) << BITS_PER_MP_LIMB/2)
-#define SHIFTLOW(x)  ((x) >> BITS_PER_MP_LIMB/2)
+#define SHIFTHIGH(x) ((x) << GMP_LIMB_BITS/2)
+#define SHIFTLOW(x)  ((x) >> GMP_LIMB_BITS/2)
 
-#define LOWMASK   (((mp_limb_t) 1 << BITS_PER_MP_LIMB/2)-1)
+#define LOWMASK   (((mp_limb_t) 1 << GMP_LIMB_BITS/2)-1)
 #define HIGHMASK  SHIFTHIGH(LOWMASK)
 
 #define LOWPART(x)   ((x) & LOWMASK)
@@ -986,7 +986,7 @@ refmpn_add_n_sub_n (mp_ptr r1p, mp_ptr r2p,
 
 
 /* Right shift hi,lo and return the low limb of the result.
-   Note a shift by BITS_PER_MP_LIMB isn't assumed to work (doesn't on x86). */
+   Note a shift by GMP_LIMB_BITS isn't assumed to work (doesn't on x86). */
 mp_limb_t
 rshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 {
@@ -998,7 +998,7 @@ rshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 }
 
 /* Left shift hi,lo and return the high limb of the result.
-   Note a shift by BITS_PER_MP_LIMB isn't assumed to work (doesn't on x86). */
+   Note a shift by GMP_LIMB_BITS isn't assumed to work (doesn't on x86). */
 mp_limb_t
 lshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 {
@@ -1288,7 +1288,7 @@ refmpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
 }
 
 /* Inverse is floor((b*(b-d)-1) / d), per division by invariant integers
-   paper, figure 8.1 m', where b=2^BITS_PER_MP_LIMB.  Note that -d-1 < d
+   paper, figure 8.1 m', where b=2^GMP_LIMB_BITS.  Note that -d-1 < d
    since d has the high bit set. */
 
 mp_limb_t
@@ -1905,10 +1905,10 @@ ref_bswap_limb (mp_limb_t src)
    can probably be removed when those normal routines are reliable, though
    perhaps something independent would still be useful at times.  */
 
-#if BITS_PER_MP_LIMB == 32
+#if GMP_LIMB_BITS == 32
 #define RAND_A  CNST_LIMB(0x29CF535)
 #endif
-#if BITS_PER_MP_LIMB == 64
+#if GMP_LIMB_BITS == 64
 #define RAND_A  CNST_LIMB(0xBAECD515DAF0B49D)
 #endif
 
@@ -1918,13 +1918,13 @@ mp_limb_t
 refmpn_random_half (void)
 {
   refmpn_random_seed = refmpn_random_seed * RAND_A + 1;
-  return (refmpn_random_seed >> BITS_PER_MP_LIMB/2);
+  return (refmpn_random_seed >> GMP_LIMB_BITS/2);
 }
 
 mp_limb_t
 refmpn_random_limb (void)
 {
-  return ((refmpn_random_half () << (BITS_PER_MP_LIMB/2))
+  return ((refmpn_random_half () << (GMP_LIMB_BITS/2))
 	   | refmpn_random_half ()) & GMP_NUMB_MASK;
 }
 

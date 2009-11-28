@@ -135,7 +135,7 @@ gcd (mpz_srcptr u, mpz_srcptr v, mpz_ptr g)
     ? mpn_gcd (vp, vp, vsize, up, usize)
     : mpn_gcd (vp, up, usize, vp, vsize);
 
-  /*  Here G <-- V << (g_zero_limbs*BITS_PER_MP_LIMB + g_zero_bits).  */
+  /*  Here G <-- V << (g_zero_limbs*GMP_LIMB_BITS + g_zero_bits).  */
   gsize = vsize + g_zero_limbs;
   if (g_zero_bits != 0)
     {
