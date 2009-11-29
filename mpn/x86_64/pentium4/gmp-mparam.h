@@ -23,8 +23,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* These routines exists for all x86_64 chips, but they are slower on Pentium4
    than separate add/sub and shift.  Make sure they are not really used.  */
-#undef HAVE_NATIVE_mpn_addlsh1_n
-#undef HAVE_NATIVE_mpn_sublsh1_n
 #undef HAVE_NATIVE_mpn_rsh1add_n
 #undef HAVE_NATIVE_mpn_rsh1sub_n
 
