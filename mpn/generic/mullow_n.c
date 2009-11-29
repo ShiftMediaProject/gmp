@@ -1,11 +1,13 @@
 /* mpn_mullow_n -- multiply two n-limb numbers and return the low n limbs
    of their products.
 
+   Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
+
    THIS IS (FOR NOW) AN INTERNAL FUNCTION.  IT IS ONLY SAFE TO REACH THIS
    FUNCTION THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST GUARANTEED
    THAT IT'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2004, 2005 Free Software Foundation, Inc.
+Copyright 2004, 2005, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
