@@ -23,9 +23,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BYTES_PER_MP_LIMB 4
 
 
-/* NOTE: In a fat binary build SQR_TOOM2_THRESHOLD     here cannot be more
-   than the value in mpn/x86/p6/gmp-mparam.h.  The latter is used as a hard
-   limit in mpn/x86/p6/sqr_basecase.asm.  */
+/* NOTE: In a fat binary build SQR_TOOM2_THRESHOLD here cannot be more than the
+   value in mpn/x86/p6/gmp-mparam.h.  The latter is used as a hard limit in
+   mpn/x86/p6/sqr_basecase.asm.  */
 
 
 /* 1867 MHz P6 model 13 */

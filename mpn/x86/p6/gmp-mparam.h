@@ -23,10 +23,10 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BYTES_PER_MP_LIMB 4
 
 
-/* NOTE: In a fat binary build SQR_TOOM2_THRESHOLD     here cannot be
-   smaller than the value in mpn/x86/p6/mmx/gmp-mparam.h.  The former is
-   used as a hard limit in mpn/x86/p6/sqr_basecase.asm, and that file will
-   be run by the p6/mmx cpus (pentium2, pentium3).  */
+/* NOTE: In a fat binary build SQR_TOOM2_THRESHOLD here cannot be smaller than
+   the value in mpn/x86/p6/mmx/gmp-mparam.h.  The former is used as a hard
+   limit in mpn/x86/p6/sqr_basecase.asm, and that file will be run by the
+   p6/mmx cpus (pentium2, pentium3).  */
 
 
 /* 200MHz Pentium Pro */
