@@ -1,3 +1,7 @@
+2009-11-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Makefile.am (EXTRA_DIST): Remove macos.
+
 2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_redc): Set min_size to 16 for redc_n tuning.

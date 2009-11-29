@@ -2451,13 +2451,6 @@ fi
 # can provide some functions too.  (mpn/Makefile.am passes
 # -DOPERATION_<func> to get them to generate the right code.)
 
-# Note: The following lines defining $gmp_mpn_functions_optional
-#       and $gmp_mpn_functions are parsed by the "macos/configure"
-#       Perl script. So if you change the lines in a major way
-#       make sure to run and examine the output from
-#
-#           % (cd macos; perl configure)
-#
 # Note: $gmp_mpn_functions must have mod_1 before pre_mod_1 so the former
 #       can optionally provide the latter as an extra entrypoint.  Likewise
 #       divrem_1 and pre_divrem_1.
