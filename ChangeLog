@@ -1,3 +1,7 @@
+2009-11-30  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/fib2_ui.c: Use mpn_rsblsh2_n.
+
 2009-11-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/pentium4/gmp-mparam.h
