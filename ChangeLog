@@ -2,6 +2,8 @@
 
 	* mpn/generic/toom53_mul.c: Removed double computation of vinf.
 
+	* mpn/generic/fib2_ui.c: Reduce the amount of temporary storage.
+
 2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/dcpi1_bdiv_qr.c (mpn_dcpi1_bdiv_qr_n_itch): Add pi1 also
