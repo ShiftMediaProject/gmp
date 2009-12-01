@@ -270,10 +270,6 @@ mpn_toom53_mul (mp_ptr pp,
   mpn_mul_n (vm1, asm1, bsm1, n + ((asm1[n] | bsm1[n]) != 0));
 #endif /* SMALLER_RECURSION */
 
-  /* vinf, s+t limbs */
-  if (s > t)  mpn_mul (vinf, a4, s, b2, t);
-  else        mpn_mul (vinf, b2, t, a4, s);
-
   /* v1, 2n+1 limbs */
 #ifdef SMALLER_RECURSION
   mpn_mul_n (v1, as1, bs1, n);

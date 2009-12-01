@@ -1,3 +1,7 @@
+2009-12-01  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom53_mul.c: Removed double computation of vinf.
+
 2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Fix typo in last change.
