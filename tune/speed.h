@@ -1388,7 +1388,7 @@ int speed_routine_count_zeros_setup
     double     t;							\
     TMP_DECL;								\
 									\
-    SPEED_RESTRICT_COND (s->size >= 1);					\
+    SPEED_RESTRICT_COND (s->size > 8);					\
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size+1, s->align_xp);		\

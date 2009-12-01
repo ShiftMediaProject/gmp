@@ -1,3 +1,8 @@
+2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.c: Fix typo in last change.
+	* tune/speed.h (SPEED_ROUTINE_REDC_N): Set min size properly.
+
 2009-12-01  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.c (routine): Added mpn_toom42_mul and mpn_redc_n.
