@@ -41,30 +41,30 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 */
 
 void
-mpn_redc_n (mp_ptr rp, mp_ptr tp, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
+mpn_redc_n (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
 {
-  mp_ptr xp, yp, scratch_out;
+  mp_ptr xp, yp, scratch;
   mp_limb_t cy;
   mp_size_t rn;
   TMP_DECL;
   TMP_MARK;
 
-  xp = TMP_ALLOC_LIMBS (3 * n);
-  yp = xp + n;
-
-  mpn_mullow_n (xp, tp, ip, n);
-
   rn = mpn_mulmod_bnm1_next_size (n);
-  scratch_out = TMP_ALLOC_LIMBS (2 * rn + 100);		/* FIXME */
 
-  mpn_mulmod_bnm1 (yp, rn, xp, n, mp, n, scratch_out);
+  scratch = TMP_ALLOC_LIMBS (n + 3 * rn + 100);
+
+  xp = scratch;
+  mpn_mullow_n (xp, up, ip, n);
+
+  yp = scratch + n;
+  mpn_mulmod_bnm1 (yp, rn, xp, n, mp, n, scratch + n + rn);
 
   ASSERT_ALWAYS (2 * n > rn);				/* could handle this */
 
-  cy = mpn_sub_n (yp + rn, yp, tp, 2*n - rn);		/* undo wrap around */
+  cy = mpn_sub_n (yp + rn, yp, up, 2*n - rn);		/* undo wrap around */
   MPN_DECR_U (yp + 2*n - rn, rn, cy);
 
-  cy = mpn_sub_n (rp, tp + n, yp + n, n);
+  cy = mpn_sub_n (rp, up + n, yp + n, n);
   if (cy != 0)
     mpn_add_n (rp, rp, mp, n);
 

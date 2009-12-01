@@ -11,6 +11,8 @@
 
 2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/redc_n.c: Rework temp allocation.
+
 	* mpn/generic/dcpi1_bdiv_qr.c (mpn_dcpi1_bdiv_qr_n_itch): Add pi1 also
 	to this function.
 
