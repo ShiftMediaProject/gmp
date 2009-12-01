@@ -42,7 +42,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    d must be odd. dinv is (-d)^-1 mod 2^GMP_NUMB_BITS. */
 
 mp_size_t
-mpn_dc_bdiv_qr_n_itch (mp_size_t n)
+mpn_dcpi1_bdiv_qr_n_itch (mp_size_t n)
 {
   return n;
 }

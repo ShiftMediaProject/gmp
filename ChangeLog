@@ -4,6 +4,9 @@
 
 2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dcpi1_bdiv_qr.c (mpn_dcpi1_bdiv_qr_n_itch): Add pi1 also
+	to this function.
+
 	* mpn/generic/dcpi1_bdiv_q.c: Get the mpn_sbpi1_bdiv_q call right.
 	Misc cleanups.
 
