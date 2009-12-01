@@ -298,6 +298,7 @@ const struct routine_t {
   { "mpn_toom33_mul",    speed_mpn_toom33_mul       },
   { "mpn_toom44_mul",    speed_mpn_toom44_mul       },
   { "mpn_toom32_mul",    speed_mpn_toom32_mul       },
+  { "mpn_toom42_mul",    speed_mpn_toom42_mul       },
   { "mpn_mul_fft_full",      speed_mpn_mul_fft_full      },
   { "mpn_mul_fft_full_sqr",  speed_mpn_mul_fft_full_sqr  },
 
@@ -333,6 +334,7 @@ const struct routine_t {
 
   { "mpz_mod",           speed_mpz_mod              },
   { "mpn_redc_1",        speed_mpn_redc_1           },
+  { "mpn_redc_n",        speed_mpn_redc_2           },
 
   { "MPN_COPY",          speed_MPN_COPY             },
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },

@@ -1,3 +1,11 @@
+2009-12-01  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/speed.c (routine): Added mpn_toom42_mul and mpn_redc_n.
+	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM42_MUL): New macro.
+	(speed_mpn_toom42_mul): Declare function.
+	* tune/common.c (speed_mpn_toom42_mul): New function.
+	* gmp-impl.h (MPN_TOOM42_MUL_MINSIZE): New constant.
+
 2009-11-30  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/fib2_ui.c: Use mpn_rsblsh2_n.
