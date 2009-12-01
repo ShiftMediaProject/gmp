@@ -4,7 +4,8 @@
 
 2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/generic/dcpi1_bdiv_q.c: Get final mpn_sbpi1_bdiv_q call right.
+	* mpn/generic/dcpi1_bdiv_q.c: Get the mpn_sbpi1_bdiv_q call right.
+	Misc cleanups.
 
 	* tune/speed.c (routine): Fix typo in last change.
 	Add mpn_redc_2.

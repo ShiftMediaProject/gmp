@@ -28,7 +28,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-/* Computes Q = N / D mod B^n, destroys N. */
 
 mp_size_t
 mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
@@ -37,6 +36,12 @@ mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
   return n;
 }
 
+/* Computes Q = N / D mod B^n, destroys N.
+
+   N = {np,n}
+   D = {dp,n}
+*/
+
 void
 mpn_dcpi1_bdiv_q_n (mp_ptr qp,
 		    mp_ptr np, mp_srcptr dp, mp_size_t n,
@@ -44,28 +49,34 @@ mpn_dcpi1_bdiv_q_n (mp_ptr qp,
 {
   while (ABOVE_THRESHOLD (n, DC_BDIV_Q_THRESHOLD))
     {
-      mp_limb_t l, h;
+      mp_size_t lo, hi;
       mp_limb_t cy;
 
-      l = n >> 1;
-      h = n - l;
+      lo = n >> 1;			/* floor(n/2) */
+      hi = n - lo;			/* ceil(n/2) */
 
-      cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, l, dinv, tp);
+      cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, lo, dinv, tp);
 
-      mpn_mullow_n (tp, qp, dp + h, l);
-      mpn_sub_n (np + h, np + h, tp, l);
+      mpn_mullow_n (tp, qp, dp + hi, lo);
+      mpn_sub_n (np + hi, np + hi, tp, lo);
 
-      if (l < h)
+      if (lo < hi)
 	{
-	  cy += mpn_submul_1 (np + l, qp, l, dp[l]);
+	  cy += mpn_submul_1 (np + lo, qp, lo, dp[lo]);
 	  np[n - 1] -= cy;
 	}
-      qp += l;
-      np += l;
-      n -= l;
+      qp += lo;
+      np += lo;
+      n -= lo;
     }
   mpn_sbpi1_bdiv_q (qp, np, n, dp, n, dinv);
 }
+
+/* Computes Q = N / D mod B^nn, destroys N.
+
+   N = {np,nn}
+   D = {dp,dn}
+*/
 
 void
 mpn_dcpi1_bdiv_q (mp_ptr qp,
@@ -79,6 +90,9 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
   TMP_DECL;
 
   TMP_MARK;
+
+  ASSERT (nn >= dn);
+  ASSERT (dn > 0);
 
   tp = TMP_SALLOC_LIMBS (dn);
 
@@ -123,14 +137,14 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
 	}
       mpn_sub_1 (np + dn, np + dn, qn, cy);
       mpn_dcpi1_bdiv_q_n (qp, np, dp, dn, dinv, tp);
-      TMP_FREE;
-      return;
     }
-
-  if (BELOW_THRESHOLD (qn, DC_BDIV_Q_THRESHOLD))
-    mpn_sbpi1_bdiv_q (qp, np, qn, dp, qn, dinv);
   else
-    mpn_dcpi1_bdiv_q_n (qp, np, dp, qn, dinv, tp);
+    {
+      if (BELOW_THRESHOLD (qn, DC_BDIV_Q_THRESHOLD))
+	mpn_sbpi1_bdiv_q (qp, np, qn, dp, qn, dinv);
+      else
+	mpn_dcpi1_bdiv_q_n (qp, np, dp, qn, dinv, tp);
+    }
 
   TMP_FREE;
 }
