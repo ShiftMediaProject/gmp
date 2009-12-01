@@ -2,7 +2,12 @@
 
 	* mpn/generic/toom53_mul.c: Removed double computation of vinf.
 
+	* mpn/x86_64/aorrlsh_n.asm: Correct return value for rsblsh_n.
+	* mpn/asm-defs.m4 (define_mpn): Add rsblsh_n.
+	* gmp-impl.h (mpn_rsblsh_n): Added prototype and name-mangling.
+
 	* mpn/generic/fib2_ui.c: Reduce the amount of temporary storage.
+	Use mpn_rsblsh_n.
 
 2009-12-01  Torbjorn Granlund  <tege@gmplib.org>
 

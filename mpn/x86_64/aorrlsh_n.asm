@@ -149,7 +149,7 @@ L(oop):
 	jnc	L(oop)
 L(end):
 	add	%ebx, %ebx
-	adc	$0, %r15
+	ADDSUBC	$0, %r15
 	mov	%r15, %rax
 	pop	%rbx
 	pop	%r15

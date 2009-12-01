@@ -832,9 +832,14 @@ __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, m
 __GMP_DECLSPEC mp_limb_t mpn_sublsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 /* mpn_rsblsh2_n(c,a,b,n), when it exists, sets {c,n} to 4*{b,n}-{a,n}, and
-   returns the carry out (FIXME -1, ..., 3).  */
+   returns the carry out (-1, ..., 3).  */
 #define mpn_rsblsh2_n __MPN(rsblsh2_n)
 __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh2_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
+/* mpn_rsblsh_n(c,a,b,n,k), when it exists, sets {c,n} to 2^k*{b,n}-{a,n}, and
+   returns the carry out (-1, 0, ..., 2^k-1).  */
+#define mpn_rsblsh_n __MPN(rsblsh_n)
+__GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, unsigned int));
 
 /* mpn_rsh1add_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} + {b,n}) >> 1,
    and returns the bit rshifted out (0 or 1).  */
