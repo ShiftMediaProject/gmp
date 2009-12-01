@@ -128,7 +128,7 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
     }
 
   if (BELOW_THRESHOLD (qn, DC_BDIV_Q_THRESHOLD))
-    mpn_sbpi1_bdiv_q (qp, np, 2 * qn, dp, qn, dinv);
+    mpn_sbpi1_bdiv_q (qp, np, qn, dp, qn, dinv);
   else
     mpn_dcpi1_bdiv_q_n (qp, np, dp, qn, dinv, tp);
 
