@@ -131,7 +131,7 @@ mpn_fib2_ui (mp_ptr fp, mp_ptr f1p, unsigned long int n)
 	    MPN_INCR_U(fp, size + 1, 2);	/* possible +2 */
 	  else
 	  {
-	    ASSERT (fp[0] <= 2);
+	    ASSERT (fp[0] >= 2);
 	    fp[0] -= 2;				/* possible -2 */
 	  }
 #else
