@@ -1,5 +1,7 @@
 2009-12-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.c (routine): Add mpn_binvert.
+
 	* tune/tuneup.c: Tune BINV_NEWTON_THRESHOLD.
 	(tune_binvert): New function.
 	* tune/speed.h (SPEED_ROUTINE_MPN_BINVERT): New macros.

@@ -310,6 +310,8 @@ const struct routine_t {
 
   { "mpn_mulmod_bnm1",   speed_mpn_mulmod_bnm1      },
 
+  { "mpn_binvert",       speed_mpn_binvert          },
+
   { "mpn_get_str",       speed_mpn_get_str,  FLAG_R_OPTIONAL },
 
   { "mpn_set_str",         speed_mpn_set_str,     FLAG_R_OPTIONAL },
