@@ -1,3 +1,11 @@
+2009-12-02  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-h.in (mpn_gcdext_1): Updated prototype.
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Updated for
+	signed cofactors from gcdext_1.
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1): Use Euclid's algorithm,
+	and return signed cofactors.
+
 2009-12-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Add mpn_binvert.
@@ -8,7 +16,7 @@
 	* tune/common.c (speed_mpn_binvert): New function.
 	* gmp-impl.h: Provide declarations for corresponding threshold vars.
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add binvert.c.
-	
+
 	* tune/tuneup.c: Tune DC_BDIV_QR_THRESHOLD and DC_BDIV_Q_THRESHOLD.
 	(tune_dc_bdiv): New function.
 	(tune_dc_div): New name for tune_dc.
@@ -19,7 +27,7 @@
 	* gmp-impl.h: Provide declarations for corresponding threshold vars.
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add dcpi1_bdiv_qr.c and
 	dcpi1_bdiv_q.c.
-	
+
 2009-12-01  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom53_mul.c: Removed double computation of vinf.

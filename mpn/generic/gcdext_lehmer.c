@@ -123,6 +123,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
     {
       gp[0] = bp[0];
 
+      /* FIXME: Can u0 be zero here? */
       MPN_NORMALIZE_NOT_ZERO (u0, un);
       MPN_COPY (up, u0, un);
 
@@ -142,13 +143,37 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   else
     {
       mp_limb_t uh, vh;
-      mp_limb_t u;
-      mp_limb_t v;
+      mp_limb_signed_t u;
+      mp_limb_signed_t v;
+      int negate;
 
       gp[0] = mpn_gcdext_1 (&u, &v, ap[0], bp[0]);
-
-      /* Set up = u u1 + v u0. Keep track of size, un grows by one or
+      
+      /* Set up = u u1 - v u0. Keep track of size, un grows by one or
 	 two limbs. */
+
+      if (u == 0)
+	{
+	  ASSERT (v == 1);
+	  MPN_NORMALIZE (u0, un);
+	  MPN_COPY (up, u0, un);
+	  *usize = -un;
+	  return 1;
+	}
+
+      else if (u > 0)
+	{
+	  negate = 0;
+	  ASSERT (v < 0);
+	  v= -v;
+	}
+      else
+	{
+	  negate = 1;
+	  ASSERT (v > 0);
+	  u = -u;
+	}
+
       uh = mpn_mul_1 (up, u1, un, u);
       vh = mpn_addmul_1 (up, u0, un, v);
 
@@ -162,7 +187,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
       MPN_NORMALIZE_NOT_ZERO (up, un);
 
-      *usize = un;
+      *usize = negate ? -un : un;
       return 1;
     }
 }
