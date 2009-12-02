@@ -1,10 +1,17 @@
 2009-12-02  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c: Tune BINV_NEWTON_THRESHOLD.
+	(tune_binvert): New function.
+	* tune/speed.h (SPEED_ROUTINE_MPN_BINVERT): New macros.
+	* tune/common.c (speed_mpn_binvert): New function.
+	* gmp-impl.h: Provide declarations for corresponding threshold vars.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add binvert.c.
+	
 	* tune/tuneup.c: Tune DC_BDIV_QR_THRESHOLD and DC_BDIV_Q_THRESHOLD.
 	(tune_dc_bdiv): New function.
 	(tune_dc_div): New name for tune_dc.
-	* tune/speed.h (SPEED_ROUTINE_PI1_BDIV_QR, SPEED_ROUTINE_PI1_BDIV_Q):
-	New macros.
+	* tune/speed.h (SPEED_ROUTINE_MPN_PI1_BDIV_QR,
+	SPEED_ROUTINE_MPN_PI1_BDIV_Q): New macros.
 	* tune/common.c (speed_mpn_sbpi1_bdiv_qr, speed_mpn_dcpi1_bdiv_qr,
 	speed_mpn_sbpi1_bdiv_q, speed_mpn_dcpi1_bdiv_q): New functions.
 	* gmp-impl.h: Provide declarations for corresponding threshold vars.

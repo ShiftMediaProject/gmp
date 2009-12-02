@@ -740,22 +740,27 @@ speed_mpz_mod (struct speed_params *s)
 double
 speed_mpn_sbpi1_bdiv_qr (struct speed_params *s)
 {
-  SPEED_ROUTINE_PI1_BDIV_QR (mpn_sbpi1_bdiv_qr);
+  SPEED_ROUTINE_MPN_PI1_BDIV_QR (mpn_sbpi1_bdiv_qr);
 }
 double
 speed_mpn_dcpi1_bdiv_qr (struct speed_params *s)
 {
-  SPEED_ROUTINE_PI1_BDIV_QR (mpn_dcpi1_bdiv_qr);
+  SPEED_ROUTINE_MPN_PI1_BDIV_QR (mpn_dcpi1_bdiv_qr);
 }
 double
 speed_mpn_sbpi1_bdiv_q (struct speed_params *s)
 {
-  SPEED_ROUTINE_PI1_BDIV_Q (mpn_sbpi1_bdiv_q);
+  SPEED_ROUTINE_MPN_PI1_BDIV_Q (mpn_sbpi1_bdiv_q);
 }
 double
 speed_mpn_dcpi1_bdiv_q (struct speed_params *s)
 {
-  SPEED_ROUTINE_PI1_BDIV_Q (mpn_dcpi1_bdiv_q);
+  SPEED_ROUTINE_MPN_PI1_BDIV_Q (mpn_dcpi1_bdiv_q);
+}
+double
+speed_mpn_binvert (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINVERT (mpn_binvert, mpn_binvert_itch);
 }
 
 double

@@ -4154,6 +4154,10 @@ extern mp_size_t                     dc_bdiv_q_threshold;
 #define DC_BDIV_QR_THRESHOLD         dc_bdiv_qr_threshold
 extern mp_size_t                     dc_bdiv_qr_threshold;
 
+#undef  BINV_NEWTON_THRESHOLD
+#define BINV_NEWTON_THRESHOLD        binv_newton_threshold
+extern mp_size_t                     binv_newton_threshold;
+
 #undef  REDC_1_TO_REDC_2_THRESHOLD
 #define REDC_1_TO_REDC_2_THRESHOLD   redc_1_to_redc_2_threshold
 extern mp_size_t                     redc_1_to_redc_2_threshold;

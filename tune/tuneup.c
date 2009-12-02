@@ -167,6 +167,7 @@ mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
+mp_size_t  binv_newton_threshold        = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_2_to_redc_n_threshold   = MP_SIZE_T_MAX;
@@ -1018,7 +1019,7 @@ tune_dc_bdiv (void)
     param.name = "DC_BDIV_QR_THRESHOLD";
     param.function = speed_mpn_sbpi1_bdiv_qr;
     param.function2 = speed_mpn_dcpi1_bdiv_qr;
-    param.min_size = 2;
+    param.min_size = 4;
     one (&dc_bdiv_qr_threshold, &param);
   }
   {
@@ -1028,6 +1029,18 @@ tune_dc_bdiv (void)
     param.function2 = speed_mpn_dcpi1_bdiv_q;
     param.min_size = 4;
     one (&dc_bdiv_q_threshold, &param);
+  }
+}
+
+void
+tune_binvert (void)
+{
+  {
+    static struct param_t  param;
+    param.name = "BINV_NEWTON_THRESHOLD";
+    param.function = speed_mpn_binvert;
+    param.step_factor = 0.02;
+    one (&binv_newton_threshold, &param);
   }
 }
 
@@ -1884,6 +1897,7 @@ all (void)
 
   tune_dc_div ();
   tune_dc_bdiv ();
+  tune_binvert ();
   tune_redc ();
   printf("\n");
 
