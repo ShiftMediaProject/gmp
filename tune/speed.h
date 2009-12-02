@@ -235,6 +235,10 @@ double speed_mpn_popcount __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1f __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sbpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_dcpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sbpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_dcpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_n __GMP_PROTO ((struct speed_params *s));
@@ -1298,6 +1302,84 @@ int speed_routine_count_zeros_setup
     return speed_endtime ();						\
   }
 
+#define SPEED_ROUTINE_PI1_BDIV_QR(function)				\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, ap, qp;						\
+    mp_limb_t  inv;							\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size, s->align_xp);			\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size, s->align_wp2);		\
+									\
+    MPN_COPY (ap,         s->xp, s->size);				\
+    MPN_COPY (ap+s->size, s->xp, s->size);				\
+									\
+    /* divisor must be odd */						\
+    MPN_COPY (dp, s->yp, s->size);					\
+    dp[0] |= 1;								\
+    binvert_limb (inv, dp[0]);						\
+									\
+    speed_operand_src (s, ap, 2*s->size);				\
+    speed_operand_dst (s, tp, 2*s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      MPN_COPY (tp, ap, 2*s->size);					\
+      function (qp, tp, 2*s->size, dp, s->size, inv);			\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_PI1_BDIV_Q(function)				\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, qp;						\
+    mp_limb_t  inv;							\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, s->size, s->align_wp2);			\
+									\
+    /* divisor must be odd */						\
+    MPN_COPY (dp, s->yp, s->size);					\
+    dp[0] |= 1;								\
+    binvert_limb (inv, dp[0]);						\
+									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_dst (s, tp, s->size);					\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      MPN_COPY (tp, s->xp, s->size);					\
+      function (qp, tp, s->size, dp, s->size, inv);			\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
 
 #define SPEED_ROUTINE_REDC_1(function)					\
   {									\

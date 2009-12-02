@@ -165,6 +165,8 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
+mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
+mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_2_to_redc_n_threshold   = MP_SIZE_T_MAX;
@@ -993,7 +995,7 @@ tune_sqr (void)
 
 
 void
-tune_dc (void)
+tune_dc_div (void)
 {
   static struct param_t  param;
   param.name = "DC_DIV_QR_THRESHOLD";
@@ -1007,6 +1009,27 @@ tune_dc (void)
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 #define WANT_REDC_2 1
 #endif
+
+void
+tune_dc_bdiv (void)
+{
+  {
+    static struct param_t  param;
+    param.name = "DC_BDIV_QR_THRESHOLD";
+    param.function = speed_mpn_sbpi1_bdiv_qr;
+    param.function2 = speed_mpn_dcpi1_bdiv_qr;
+    param.min_size = 2;
+    one (&dc_bdiv_qr_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "DC_BDIV_Q_THRESHOLD";
+    param.function = speed_mpn_sbpi1_bdiv_q;
+    param.function2 = speed_mpn_dcpi1_bdiv_q;
+    param.min_size = 4;
+    one (&dc_bdiv_q_threshold, &param);
+  }
+}
 
 void
 tune_redc (void)
@@ -1051,7 +1074,6 @@ tune_redc (void)
     one (&redc_1_to_redc_n_threshold, &param);
   }
 #endif
-
 }
 
 void
@@ -1860,7 +1882,8 @@ all (void)
   tune_mulmod_bnm1 ();
   printf("\n");
 
-  tune_dc ();
+  tune_dc_div ();
+  tune_dc_bdiv ();
   tune_redc ();
   printf("\n");
 
