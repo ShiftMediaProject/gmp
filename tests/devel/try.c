@@ -594,6 +594,8 @@ validate_sqrtrem (void)
 #define TYPE_ADDLSH1_N        30
 #define TYPE_SUBLSH1_N        31
 #define TYPE_RSBLSH1_N        34
+#define TYPE_RSBLSH2_N        46
+#define TYPE_RSBLSH_N         47
 #define TYPE_RSH1ADD_N        32
 #define TYPE_RSH1SUB_N        33
 
@@ -899,6 +901,14 @@ param_init (void)
   p = &param[TYPE_RSBLSH1_N];
   COPY (TYPE_ADD_N);
   REFERENCE (refmpn_rsblsh1_n);
+
+  p = &param[TYPE_RSBLSH2_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_rsblsh2_n);
+
+  p = &param[TYPE_RSBLSH_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_rsblsh_n);
 
   p = &param[TYPE_RSH1ADD_N];
   COPY (TYPE_ADD_N);
@@ -1441,6 +1451,12 @@ const struct choice_t choice_array[] = {
 #endif
 #if HAVE_NATIVE_mpn_rsblsh1_n
   { TRY(mpn_rsblsh1_n), TYPE_RSBLSH1_N },
+#endif
+#if HAVE_NATIVE_mpn_rsblsh2_n
+  { TRY(mpn_rsblsh2_n), TYPE_RSBLSH2_N },
+#endif
+#if HAVE_NATIVE_mpn_rsblsh_n
+  { TRY(mpn_rsblsh_n), TYPE_RSBLSH_N },
 #endif
 #if HAVE_NATIVE_mpn_rsh1add_n
   { TRY(mpn_rsh1add_n), TYPE_RSH1ADD_N },
@@ -2006,10 +2022,15 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_ADDLSH1_N:
   case TYPE_SUBLSH1_N:
   case TYPE_RSBLSH1_N:
+  case TYPE_RSBLSH2_N:
   case TYPE_RSH1ADD_N:
   case TYPE_RSH1SUB_N:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, e->s[1].p, size);
+    break;
+  case TYPE_RSBLSH_N:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, e->s[1].p, size, shift);
     break;
   case TYPE_ADD_NC:
   case TYPE_SUB_NC:
