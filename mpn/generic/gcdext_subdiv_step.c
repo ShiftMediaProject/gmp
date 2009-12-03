@@ -115,7 +115,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
 	  else
 	    {
 	      MPN_NORMALIZE_NOT_ZERO (u1, un);
-	      MPN_COPY (up, u1, un);	      
+	      MPN_COPY (up, u1, un);
 	    }
 
 	  *usizep = swapped ? -un : un;

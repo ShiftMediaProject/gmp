@@ -1,3 +1,7 @@
+2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/gcdext.c: Add a TMP_FREE.
+
 2009-12-03  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]:

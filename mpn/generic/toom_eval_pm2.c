@@ -29,7 +29,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Evaluates a polynomial of degree k > 3, in the points +2 and -2. */
 int
-mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k, 
+mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
 		   mp_srcptr xp, mp_size_t n, mp_size_t hn, mp_ptr tp)
 {
   unsigned i;
