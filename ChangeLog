@@ -18,6 +18,24 @@
 	(refmpn_rsblsh1_n): Use generic refmpn_rsblsh_n.
         * tests/tests.h: Declare new functions.
 
+2009-12-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_subdiv_step.c (mpn_gcdext_subdiv_step):
+	Select the right cofactor in the cases A == B or A == 2B.
+
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Deleted
+	handling of ap[0] == 0 and bp[0] == 0; these cases don't happen.
+	Select the right cofactor in the case ap[0] == bp[0].
+	* mpn/generic/gcdext.c (mpn_gcdext): Analogous changes.
+
+2009-12-02  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-h.in (mpn_gcdext_1): Updated prototype.
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Updated for
+	signed cofactors from gcdext_1.
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1): Use Euclid's algorithm,
+	and return signed cofactors.
+
 2009-12-02  Torbjorn Granlund  <tege@gmplib.org>
 
 	* doc/gmp.texi (Low-level Functions): Document mpn_sqr_n.
