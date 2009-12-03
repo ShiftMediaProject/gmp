@@ -2336,7 +2336,8 @@ AC_TYPE_SIGNAL
 #
 # the default includes are sufficient for all these types
 #
-AC_CHECK_TYPES([intmax_t, long double, long long, ptrdiff_t, quad_t, uint_least32_t])
+AC_CHECK_TYPES([intmax_t, long double, long long, ptrdiff_t, quad_t,
+		uint_least32_t, intptr_t])
 
 AC_C_STRINGIZE
 
@@ -3177,7 +3178,6 @@ fi
 # of any sensible system.  In a generic C build, grepping LONG_BIT out of
 # <limits.h> might be an alternative, for maximum portability.
 #
-AC_CHECK_TYPES(intptr_t)
 AC_CHECK_SIZEOF(void *)
 AC_CHECK_SIZEOF(unsigned short)
 AC_CHECK_SIZEOF(unsigned)

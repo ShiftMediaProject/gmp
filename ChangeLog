@@ -1,5 +1,7 @@
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
+
 	* acinclude.m4 ([long long reliability test 1]): Add a "static" for C99
 	inline semantics compatibility.
 
