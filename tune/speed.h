@@ -235,6 +235,10 @@ double speed_mpn_popcount __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_divrem_1f __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sbpi1_div_qr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_dcpi1_div_qr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sbpi1_divappr_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_dcpi1_divappr_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
@@ -1077,7 +1081,7 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_TOOM42_MUL(function)				\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
     (function (wp, s->xp, s->size, s->yp, s->size/2, tspace),		\
-     mpn_toom42_mul_itch (s->size, s->size/2),			\
+     mpn_toom42_mul_itch (s->size, s->size/2),				\
      MPN_TOOM42_MUL_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_SQR_CALL(call)				\
@@ -1301,6 +1305,49 @@ int speed_routine_count_zeros_setup
       function (r, a, d);						\
     while (--i != 0);							\
     return speed_endtime ();						\
+  }
+
+#define SPEED_ROUTINE_MPN_PI1_DIV(function, INV)			\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, ap, qp;						\
+    gmp_pi1_t  inv;							\
+    double     t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size, s->align_xp);			\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size, s->align_wp2);		\
+									\
+    MPN_COPY (ap,         s->xp, s->size);				\
+    MPN_COPY (ap+s->size, s->xp, s->size);				\
+									\
+    /* normalize the data */						\
+    dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
+    ap[2*s->size-1] = dp[s->size-1] - 1;				\
+									\
+    invert_pi1 (inv, dp[s->size-1], dp[s->size-2]);			\
+									\
+    speed_operand_src (s, ap, 2*s->size);				\
+    speed_operand_dst (s, tp, 2*s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      MPN_COPY (tp, ap, 2*s->size);					\
+      function (qp, tp, 2*s->size, dp, s->size, INV);			\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
   }
 
 #define SPEED_ROUTINE_MPN_PI1_BDIV_QR(function)				\

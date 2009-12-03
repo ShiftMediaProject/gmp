@@ -4146,6 +4146,14 @@ extern mp_size_t                     div_sb_preinv_threshold;
 #define DC_DIV_QR_THRESHOLD          dc_div_qr_threshold
 extern mp_size_t                     dc_div_qr_threshold;
 
+#undef  DC_DIVAPPR_Q_THRESHOLD
+#define DC_DIVAPPR_Q_THRESHOLD       dc_divappr_q_threshold
+extern mp_size_t                     dc_divappr_q_threshold;
+
+#undef  DC_DIV_Q_THRESHOLD
+#define DC_DIV_Q_THRESHOLD           dc_div_q_threshold
+extern mp_size_t                     dc_div_q_threshold;
+
 #undef  DC_BDIV_Q_THRESHOLD
 #define DC_BDIV_Q_THRESHOLD          dc_bdiv_q_threshold
 extern mp_size_t                     dc_bdiv_q_threshold;

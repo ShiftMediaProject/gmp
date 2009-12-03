@@ -165,8 +165,9 @@ mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
-mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
+mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
+mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
 mp_size_t  binv_newton_threshold        = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
@@ -998,18 +999,23 @@ tune_sqr (void)
 void
 tune_dc_div (void)
 {
-  static struct param_t  param;
-  param.name = "DC_DIV_QR_THRESHOLD";
-  param.function = speed_mpn_dc_tdiv_qr;
-  param.step_factor = 0.02;
-  one (&dc_div_qr_threshold, &param);
+  {
+    static struct param_t  param;
+    param.name = "DC_DIV_QR_THRESHOLD";
+    param.function = speed_mpn_sbpi1_div_qr;
+    param.function2 = speed_mpn_dcpi1_div_qr;
+    param.min_size = 4;
+    one (&dc_div_qr_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "DC_DIVAPPR_Q_THRESHOLD";
+    param.function = speed_mpn_sbpi1_divappr_q;
+    param.function2 = speed_mpn_dcpi1_divappr_q;
+    param.min_size = 4;
+    one (&dc_divappr_q_threshold, &param);
+  }
 }
-
-
-#define TUNE_REDC_2_MAX 100
-#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
-#define WANT_REDC_2 1
-#endif
 
 void
 tune_dc_bdiv (void)
@@ -1048,6 +1054,11 @@ tune_binvert (void)
 void
 tune_redc (void)
 {
+#define TUNE_REDC_2_MAX 100
+#if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
+#define WANT_REDC_2 1
+#endif
+
 #if WANT_REDC_2
   {
     static struct param_t  param;

@@ -1,5 +1,14 @@
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c: Tune DC_DIVAPPR_Q_THRESHOLD.  Rewrite
+	DC_DIV_QR_THRESHOLD tuning code.
+	(tune_dc_div): Rewrite.
+	* tune/speed.h (SPEED_ROUTINE_MPN_PI1_DIV): New macro.
+	* tune/common.c (speed_mpn_sbpi1_div_qr, speed_mpn_dcpi1_div_qr,
+	speed_mpn_sbpi1_divappr_q, speed_mpn_sbpi1_bdiv_qr): New functions.
+	* gmp-impl.h: Provide declarations for corresponding threshold vars.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add dcpi1_divappr_q.c.
+
 	* tune/tuneup.c (tune_binvert): Up max_size.
 
 2009-12-02  Marco Bodrato <bodrato@mail.dm.unipi.it>
@@ -17,7 +26,7 @@
 
 	* tune/tuneup.c: Tune BINV_NEWTON_THRESHOLD.
 	(tune_binvert): New function.
-	* tune/speed.h (SPEED_ROUTINE_MPN_BINVERT): New macros.
+	* tune/speed.h (SPEED_ROUTINE_MPN_BINVERT): New macro.
 	* tune/common.c (speed_mpn_binvert): New function.
 	* gmp-impl.h: Provide declarations for corresponding threshold vars.
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add binvert.c.
