@@ -6,6 +6,7 @@
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Deleted
 	handling of ap[0] == 0 and bp[0] == 0; these cases don't happen.
 	Select the right cofactor in the case ap[0] == bp[0].
+	* mpn/generic/gcdext.c (mpn_gcdext): Analogous changes.
 
 2009-12-02  Niels Möller  <nisse@lysator.liu.se>
 
