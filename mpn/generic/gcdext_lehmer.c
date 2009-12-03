@@ -157,7 +157,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       int negate;
 
       gp[0] = mpn_gcdext_1 (&u, &v, ap[0], bp[0]);
-      
+
       /* Set up = u u1 - v u0. Keep track of size, un grows by one or
 	 two limbs. */
 
