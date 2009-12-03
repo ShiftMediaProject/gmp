@@ -18,9 +18,112 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+#include <stdio.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+
+#ifndef GCDEXT_1_USE_BINARY
+#define GCDEXT_1_USE_BINARY 0
+#endif
+
+#if GCDEXT_1_USE_BINARY
+
+mp_limb_t
+mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
+	      mp_limb_t u, mp_limb_t v)
+{
+  mp_limb_t s0 = 1;
+  mp_limb_t t0 = 0;
+  mp_limb_t s1 = 0;
+  mp_limb_t t1 = 1;
+  mp_limb_t g;
+  mp_limb_t ug;
+  mp_limb_t vg;
+  unsigned zero_bits;
+  unsigned shift;
+  unsigned i;
+  ASSERT (u > 0);
+  ASSERT (v > 0);
+  
+  count_trailing_zeros (zero_bits, u | v);
+  u >>= zero_bits;
+  v >>= zero_bits;
+
+  if ((u & 1) == 0)
+    {
+      count_trailing_zeros (shift, u);
+      u >>= shift;
+      t1 <<= shift;
+    }
+  else if ((v & 1) == 0)
+    {
+      count_trailing_zeros (shift, v);
+      v >>= shift;
+      s0 <<= shift;
+    }
+  else
+    shift = 0;
+
+  while (u != v)
+    {
+      unsigned count;
+      
+      if (u > v)
+	{
+	  u -= v;
+	  count_trailing_zeros (count, u);
+	  u >>= count;
+	  t0 += t1; t1 <<= count;
+	  s0 += s1; s1 <<= count;
+	}
+      else
+	{
+	  v -= u;
+	  count_trailing_zeros (count, v);
+	  v >>= count;
+	  t1 += t0; t0 <<= count;
+	  s1 += s0; s0 <<= count;
+	}
+      shift += count;
+    }
+
+  /* Now u = v = g = gcd (u,v). Compute U/g and V/g */
+  ug = t0 + t1; 
+  vg = s0 + s1;
+
+  /* Now 2^{shift} g = s0 U - t0 V. Get rid of the power of two, using
+     s0 U - t0 V = (s0 + V/g) U - (t0 + U/g) V. */ 
+  for (i = 0; i < shift; i++)
+    {
+      if ( (s0 | t0) & 1)
+	{
+	  s0 = s0/2 + vg/2 + (vg & 1);
+	  t0 = t0/2 + ug/2 + (ug & 1);
+	}
+      else
+	{
+	  s0 /= 2;
+	  t0 /= 2;
+	}
+    }
+  /* FIXME: Try simplifying this condition. */
+  if ( (s0 > 1 && 2*s0 >= vg) || (t0 > 1 && 2*t0 >= ug) )
+    {
+      *sp = s0 - vg;
+      *tp = ug - t0;
+    }
+  else
+    {
+      *sp = s0;
+      *tp = -t0;
+    }
+  return u << zero_bits;
+}
+
+#else /* !GCDEXT_1_USE_BINARY */
+
 
 /* FIXME: Takes two single-word limbs. It could be extended to a
  * function that accepts a bignum for the first input, and only
@@ -78,3 +181,4 @@ mpn_gcdext_1 (mp_limb_signed_t *up, mp_limb_signed_t *vp,
       v1 -= q * v0;
     }
 }
+#endif /* !GCDEXT_1_USE_BINARY */
