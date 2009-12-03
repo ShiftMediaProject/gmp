@@ -1040,6 +1040,7 @@ tune_binvert (void)
     param.name = "BINV_NEWTON_THRESHOLD";
     param.function = speed_mpn_binvert;
     param.step_factor = 0.02;
+    param.max_size = 5000;
     one (&binv_newton_threshold, &param);
   }
 }

@@ -1,3 +1,7 @@
+2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_binvert): Up max_size.
+
 2009-12-02  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/try.c: Test mpn_rsblsh2_n and mpn_rsblsh_n.
