@@ -18,8 +18,6 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#include <stdio.h>
-
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -28,22 +26,40 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GCDEXT_1_USE_BINARY 0
 #endif
 
+#ifndef GCDEXT_1_BINARY_METHOD
+#define GCDEXT_1_BINARY_METHOD 1
+#endif
+
+
 #if GCDEXT_1_USE_BINARY
 
 mp_limb_t
 mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
 	      mp_limb_t u, mp_limb_t v)
 {
+  /* Maintain
+
+     U = t1 u + t0 v
+     V = s1 u + s0 v
+
+     where U, V are the inputs (without any shared power of two),
+     and the matris has determinant ± 2^{shift}.
+  */
   mp_limb_t s0 = 1;
   mp_limb_t t0 = 0;
   mp_limb_t s1 = 0;
   mp_limb_t t1 = 1;
-  mp_limb_t g;
   mp_limb_t ug;
   mp_limb_t vg;
+  mp_limb_t ugh;
+  mp_limb_t vgh;
   unsigned zero_bits;
   unsigned shift;
   unsigned i;
+#if GCDEXT_1_BINARY_METHOD == 2
+  mp_limb_t det_sign;
+#endif
+  
   ASSERT (u > 0);
   ASSERT (v > 0);
   
@@ -66,59 +82,114 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
   else
     shift = 0;
 
+#if GCDEXT_1_BINARY_METHOD == 1
   while (u != v)
     {
       unsigned count;
       
       if (u > v)
-	{
-	  u -= v;
-	  count_trailing_zeros (count, u);
-	  u >>= count;
-	  t0 += t1; t1 <<= count;
-	  s0 += s1; s1 <<= count;
-	}
+        {
+          u -= v;
+          count_trailing_zeros (count, u);
+          u >>= count;
+          t0 += t1; t1 <<= count;
+          s0 += s1; s1 <<= count;
+        }
       else
-	{
-	  v -= u;
-	  count_trailing_zeros (count, v);
-	  v >>= count;
-	  t1 += t0; t0 <<= count;
-	  s1 += s0; s0 <<= count;
-	}
+        {
+          v -= u;
+          count_trailing_zeros (count, v);
+          v >>= count;
+          t1 += t0; t0 <<= count;
+          s1 += s0; s0 <<= count;
+        }
       shift += count;
     }
+#else
+# if GCDEXT_1_BINARY_METHOD == 2
+  u >>= 1;
+  v >>= 1;
+
+  det_sign = 0;
+
+  while (u != v)
+    {
+      unsigned count;
+      mp_limb_t d =  u - v;
+      mp_limb_t vgtu = LIMB_HIGHBIT_TO_MASK (d);
+      mp_limb_t x;
+
+      /* When v <= u (vgtu == 0), the updates are:
+
+	   (u; v)   <-- ( (u - v) >> count; v)    (det = +(1<<count) for corr. M factor)
+	   (t1, t0) <-- (t1 << count, t0 + t1)
+
+	 and when v > 0, the updates are
+
+	   (u; v)   <-- ( (v - u) >> count; u)    (det = -(1<<count))
+	   (t1, t0) <-- (t0 << count, t0 + t1)
+
+	 and similarly for s1, s0
+      */
+
+      /* v <-- min (u, v) */
+      v += (vgtu & d);
+
+      /* u <-- |u - v| */
+      u = (d ^ vgtu) - vgtu;
+
+      /* Number of trailing zeros is the same no matter if we look at
+       * d or u, but using d gives more parallelism. */
+      count_trailing_zeros (count, d);
+      count++;
+      u >>= count;
+
+      x = vgtu & t0; t0 += t1; t1 &= ~vgtu; t1 |= x;
+      x = vgtu & s0; s0 += s1; s1 &= ~vgtu; s1 |= x;
+      
+      t1 <<= count;
+      s1 <<= count;
+      det_sign ^= vgtu;
+      shift += count;
+    }
+  u = (u << 1) + 1;
+# else /* GCDEXT_1_BINARY_METHOD == 2 */
+#  error Unknown GCDEXT_1_BINARY_METHOD
+# endif
+#endif
 
   /* Now u = v = g = gcd (u,v). Compute U/g and V/g */
   ug = t0 + t1; 
   vg = s0 + s1;
 
-  /* Now 2^{shift} g = s0 U - t0 V. Get rid of the power of two, using
+  ugh = ug/2 + (ug & 1);
+  vgh = vg/2 + (vg & 1);
+
+  /* Now ±2^{shift} g = s0 U - t0 V. Get rid of the power of two, using
      s0 U - t0 V = (s0 + V/g) U - (t0 + U/g) V. */ 
   for (i = 0; i < shift; i++)
     {
-      if ( (s0 | t0) & 1)
-	{
-	  s0 = s0/2 + vg/2 + (vg & 1);
-	  t0 = t0/2 + ug/2 + (ug & 1);
-	}
-      else
-	{
-	  s0 /= 2;
-	  t0 /= 2;
-	}
+      mp_limb_t mask = - ( (s0 | t0) & 1);
+
+      s0 /= 2;
+      t0 /= 2;
+      s0 += mask & vgh;
+      t0 += mask & ugh;
     }
   /* FIXME: Try simplifying this condition. */
   if ( (s0 > 1 && 2*s0 >= vg) || (t0 > 1 && 2*t0 >= ug) )
     {
-      *sp = s0 - vg;
-      *tp = ug - t0;
+      s0 -= vg;
+      t0 -= ug;
     }
-  else
-    {
-      *sp = s0;
-      *tp = -t0;
-    }
+#if GCDEXT_1_BINARY_METHOD == 2
+  /* Conditional negation. */
+  s0 = (s0 ^ det_sign) - det_sign;
+  t0 = (t0 ^ det_sign) - det_sign;
+#endif
+  *sp = s0;
+  *tp = -t0;
+
   return u << zero_bits;
 }
 
