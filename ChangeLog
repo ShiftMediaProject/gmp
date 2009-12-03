@@ -1,3 +1,12 @@
+2009-12-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_subdiv_step.c (mpn_gcdext_subdiv_step):
+	Select the right cofactor in the cases A == B or A == 2B.
+
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Deleted
+	handling of ap[0] == 0 and bp[0] == 0; these cases don't happen.
+	Select the right cofactor in the case ap[0] == bp[0].
+
 2009-12-02  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-h.in (mpn_gcdext_1): Updated prototype.

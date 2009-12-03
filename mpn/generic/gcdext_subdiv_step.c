@@ -74,7 +74,6 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
     }
   else if (UNLIKELY (bn == 0))
     {
-    return_a:
       MPN_COPY (gp, ap, an);
       *gn = an;
 
@@ -99,7 +98,29 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
       int c;
       MPN_CMP (c, ap, bp, an);
       if (UNLIKELY (c == 0))
-	goto return_a;
+	{
+	  MPN_COPY (gp, ap, an);
+	  *gn = an;
+
+	  /* Must return the smallest cofactor, +u1 or -u0 */
+	  MPN_CMP (c, u0, u1, un);
+	  ASSERT (c != 0);
+
+	  if (c < 0)
+	    {
+	      MPN_NORMALIZE (u0, un);
+	      MPN_COPY (up, u0, un);
+	      swapped ^= 1;
+	    }
+	  else
+	    {
+	      MPN_NORMALIZE_NOT_ZERO (u1, un);
+	      MPN_COPY (up, u1, un);	      
+	    }
+
+	  *usizep = swapped ? -un : un;
+	  return 0;
+	}
       else if (c < 0)
 	{
 	  MP_PTR_SWAP (ap, bp);
@@ -127,7 +148,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
       int c;
       MPN_CMP (c, ap, bp, an);
       if (UNLIKELY (c == 0))
-	goto return_a;
+	goto return_b;
       else if (c < 0)
 	{
 	  MP_PTR_SWAP (ap, bp);

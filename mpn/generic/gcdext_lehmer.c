@@ -119,25 +119,34 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  un = updated_un;
 	}
     }
-  if (ap[0] == 0)
-    {
-      gp[0] = bp[0];
+  ASSERT_ALWAYS (ap[0] > 0);
+  ASSERT_ALWAYS (bp[0] > 0);
 
-      /* FIXME: Can u0 be zero here? */
-      MPN_NORMALIZE_NOT_ZERO (u0, un);
-      MPN_COPY (up, u0, un);
-
-      *usize = -un;
-      return 1;
-    }
-  else if (bp[0] == 0)
+  if (ap[0] == bp[0])
     {
+      int c;
+
+      /* Which cofactor to return now? Candidates are +u1 and -u0,
+	 depending on which of a and b was most recently reduced,
+	 which we don't keep track of. So compare and get the smallest
+	 one. */
+
       gp[0] = ap[0];
 
-      MPN_NORMALIZE_NOT_ZERO (u1, un);
-      MPN_COPY (up, u1, un);
-
-      *usize = un;
+      MPN_CMP (c, u0, u1, un);
+      ASSERT (c != 0);
+      if (c < 0)
+	{
+	  MPN_NORMALIZE (u0, un);
+	  MPN_COPY (up, u0, un);
+	  *usize = -un;
+	}
+      else
+	{
+	  MPN_NORMALIZE_NOT_ZERO (u1, un);
+	  MPN_COPY (up, u1, un);
+	  *usize = un;
+	}
       return 1;
     }
   else
