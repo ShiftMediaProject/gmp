@@ -1,5 +1,8 @@
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* acinclude.m4 ([long long reliability test 1]): Add a "static" for C99
+	inline semantics compatibility.
+
 	* mpn/generic/gcdext.c: Add a TMP_FREE.
 
 2009-12-03  Niels Möller  <nisse@lysator.liu.se>
