@@ -1,3 +1,10 @@
+2009-12-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Handle v == 0
+	from mpn_gcdext_1.
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1): Allow inputs with a < b,
+	assertions fixed accordingly.
+
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c: Tune DC_DIVAPPR_Q_THRESHOLD.  Rewrite

@@ -42,10 +42,12 @@ mpn_gcdext_1 (mp_limb_signed_t *up, mp_limb_signed_t *vp,
   mp_limb_signed_t u1 = 0;
   mp_limb_signed_t v1 = 1;
 
-  ASSERT (a >= b);
+  ASSERT (a > 0);
   ASSERT (b > 0);
 
-  /* FIXME: Use div1. */
+  if (a < b)
+    goto divide_by_b;
+
   for (;;)
     {
       mp_limb_t q;
@@ -62,6 +64,7 @@ mpn_gcdext_1 (mp_limb_signed_t *up, mp_limb_signed_t *vp,
       u0 -= q * u1;
       v0 -= q * v1;
 
+    divide_by_b:
       q = b / a;
       b -= q * a;
 

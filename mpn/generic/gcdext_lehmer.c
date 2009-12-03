@@ -169,12 +169,19 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 	  *usize = -un;
 	  return 1;
 	}
-
+      else if (v == 0)
+	{
+	  ASSERT (u == 1);
+	  MPN_NORMALIZE (u1, un);
+	  MPN_COPY (up, u1, un);
+	  *usize = un;
+	  return 1;
+	}
       else if (u > 0)
 	{
 	  negate = 0;
 	  ASSERT (v < 0);
-	  v= -v;
+	  v = -v;
 	}
       else
 	{
