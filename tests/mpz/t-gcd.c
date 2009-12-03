@@ -327,11 +327,8 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
     }
 }
 
-/* XXX A useful testcase, with --enable-minithres, is
-   GMP_CHECK_RANDOMIZE=1931147434. */
-
 /* Called when g is supposed to be gcd(a,b), and g = s a + t b, for some t.
-   Uses temp1 and temp2 */
+   Uses temp1, temp2 and temp3. */
 static int
 gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
 {
