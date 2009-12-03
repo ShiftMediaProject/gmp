@@ -5177,9 +5177,9 @@ This function requires that @var{s1n} is greater than or equal to
 Compute the square of @{@var{s1p}, @var{n}@} and write the 2*@var{n}-limb
 result to @var{rp}.
 
-The destination has to have space for 2*@var{n} limbs, even if the product's
+The destination has to have space for 2*@var{n} limbs, even if the result's
 most significant limb is zero.  No overlap is permitted between the
-destination and either source.
+destination and the source.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_mul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
