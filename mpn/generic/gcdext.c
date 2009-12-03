@@ -410,7 +410,8 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  *usizep = un;
 	}
 
-      return n;      
+      TMP_FREE;
+      return n;
     }
   else if (mpn_zero_p (u0, un))
     {
