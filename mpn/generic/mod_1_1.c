@@ -63,7 +63,7 @@ mpn_mod_1_1p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t bmodb[4])
   int cnt;
   mp_limb_t mask;
 
-  ASSERT (n >= 2);
+  ASSERT (n >= 2);		/* fix tuneup.c if this is changed */
 
   B1modb = bmodb[2];
   B2modb = bmodb[3];
