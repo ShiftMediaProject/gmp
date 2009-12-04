@@ -56,7 +56,7 @@ mpn_toom_eval_pm1 (mp_ptr xp1, mp_ptr xm1, unsigned k,
   else
     ASSERT_NOCARRY (mpn_add (xp1, xp1, n+1, xp+k*n, hn));
 
-  neg = (mpn_cmp (xp1, tp, n + 1) < 0);
+  neg = (mpn_cmp (xp1, tp, n + 1) < 0) ? ~0 : 0;
 
 #if HAVE_NATIVE_mpn_add_n_sub_n
   if (neg)

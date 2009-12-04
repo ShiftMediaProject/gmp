@@ -39,7 +39,8 @@ mpn_toom_eval_dgr3_pm1 (mp_ptr xp1, mp_ptr xm1,
   xp1[n] = mpn_add_n (xp1, xp, xp + 2*n, n);
   tp[n] = mpn_add (tp, xp + n, n, xp + 3*n, x3n);
 
-  neg = (mpn_cmp (xp1, tp, n + 1) < 0);
+  neg = (mpn_cmp (xp1, tp, n + 1) < 0) ? ~0 : 0;
+
 #if HAVE_NATIVE_mpn_add_n_sub_n
   if (neg)
     mpn_add_n_sub_n (xp1, xm1, tp, xp1, n + 1);

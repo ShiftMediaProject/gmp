@@ -64,7 +64,8 @@ mpn_toom_eval_dgr3_pm2 (mp_ptr xp2, mp_ptr xm2,
 #endif
   mpn_lshift (tp, tp, n+1, 1);
 
-  neg = (mpn_cmp (xp2, tp, n + 1) < 0);
+  neg = (mpn_cmp (xp2, tp, n + 1) < 0) ? ~0 : 0;
+
 #if HAVE_NATIVE_mpn_add_n_sub_n
   if (neg)
     mpn_add_n_sub_n (xp2, xm2, tp, xp2, n + 1);

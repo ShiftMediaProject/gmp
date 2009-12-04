@@ -1,3 +1,12 @@
+2009-12-04  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_eval_dgr3_pm1.c: Change return value: 0 or ~0.
+	* mpn/generic/toom_eval_dgr3_pm2.c: Likewise.
+	* mpn/generic/toom_eval_pm1.c: Likewise.
+	* mpn/generic/toom_eval_pm2.c: Likewise.
+	* mpn/generic/toom_eval_pm2exp.c: Likewise.
+	* mpn/generic/toom42_mul.c: Use the new return value.
+
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
@@ -30,9 +39,9 @@
 2009-12-02  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/try.c: Test mpn_rsblsh2_n and mpn_rsblsh_n.
-        * tests/refmpn.c (refmpn_rsblsh_n, refmpn_rsblsh2_n): New functions.
+	* tests/refmpn.c (refmpn_rsblsh_n, refmpn_rsblsh2_n): New functions.
 	(refmpn_rsblsh1_n): Use generic refmpn_rsblsh_n.
-        * tests/tests.h: Declare new functions.
+	* tests/tests.h: Declare new functions.
 
 2009-12-03  Niels Möller  <nisse@lysator.liu.se>
 

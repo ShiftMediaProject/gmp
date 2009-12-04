@@ -95,7 +95,7 @@ mpn_toom42_mul (mp_ptr pp,
   a1_a3 = pp + n + 1;
 
   /* Compute as1 and asm1.  */
-  vm1_neg = mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0_a2);
+  vm1_neg = mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0_a2) & 1;
 
   /* Compute as2.  */
 #if HAVE_NATIVE_mpn_addlsh1_n
