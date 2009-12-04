@@ -1,5 +1,7 @@
 2009-12-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.h: Negate "binvert"-type inverses, as required.
+
 	* mpn/generic/redc_1.c: Add ASSERTs.
 	* mpn/generic/redc_2.c: Likewise.
 
