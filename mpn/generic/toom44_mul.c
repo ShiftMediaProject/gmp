@@ -162,7 +162,8 @@ mpn_toom44_mul (mp_ptr pp,
   cy = 2*cy + mpn_addlsh1_n (apx, a2, apx, n);
   if (s < n)
     {
-      mp_limb_t cy2 = mpn_addlsh1_n (apx, a3, apx, s);
+      mp_limb_t cy2;
+      cy2 = mpn_addlsh1_n (apx, a3, apx, s);
       apx[n] = 2*cy + mpn_lshift (apx + s, apx + s, n - s, 1);
       MPN_INCR_U (apx + s, n+1-s, cy2);
     }
@@ -183,7 +184,8 @@ mpn_toom44_mul (mp_ptr pp,
   cy = 2*cy + mpn_addlsh1_n (bpx, b2, bpx, n);
   if (t < n)
     {
-      mp_limb_t cy2 = mpn_addlsh1_n (bpx, b3, bpx, t);
+      mp_limb_t cy2;
+      cy2 = mpn_addlsh1_n (bpx, b3, bpx, t);
       bpx[n] = 2*cy + mpn_lshift (bpx + t, bpx + t, n - t, 1);
       MPN_INCR_U (bpx + t, n+1-t, cy2);
     }

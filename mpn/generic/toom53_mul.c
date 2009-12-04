@@ -108,8 +108,9 @@ mpn_toom53_mul (mp_ptr pp,
   cy = 2*cy + mpn_addlsh1_n (ash, a2, ash, n);
   cy = 2*cy + mpn_addlsh1_n (ash, a3, ash, n);
   if (s < n)
-  {
-      mp_limb_t cy2 = mpn_addlsh1_n (ash, a4, ash, s);
+    {
+      mp_limb_t cy2;
+      cy2 = mpn_addlsh1_n (ash, a4, ash, s);
       ash[n] = 2*cy + mpn_lshift (ash + s, ash + s, n - s, 1);
       MPN_INCR_U (ash + s, n+1-s, cy2);
     }
@@ -200,8 +201,9 @@ mpn_toom53_mul (mp_ptr pp,
 #if HAVE_NATIVE_mpn_addlsh1_n
   cy = mpn_addlsh1_n (bsh, b1, b0, n);
   if (t < n)
-  {
-      mp_limb_t cy2 = mpn_addlsh1_n (bsh, b2, bsh, t);
+    {
+      mp_limb_t cy2;
+      cy2 = mpn_addlsh1_n (bsh, b2, bsh, t);
       bsh[n] = 2*cy + mpn_lshift (bsh + t, bsh + t, n - t, 1);
       MPN_INCR_U (bsh + t, n+1-t, cy2);
     }

@@ -11,10 +11,12 @@
 	* mpn/generic/toom33_mul.c: Adapt to changes above.
 	* mpn/generic/toom3_sqr.c: Likewise.
 	* mpn/generic/toom42_mul.c: Likewise.
-	* mpn/generic/toom43_mul.c: Likewise.
+	* mpn/generic/toom43_mul.c: Reduce branches.
 	* mpn/generic/toom44_mul.c: Likewise.
 	* mpn/generic/toom53_mul.c: Likewise.
 	* mpn/generic/toom62_mul.c: Likewise.
+
+	* mpn/generic/toom52_mul.c: Use toom_eval_ functions.
 
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 

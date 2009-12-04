@@ -57,7 +57,7 @@ mpn_toom52_mul (mp_ptr pp,
 		mp_srcptr bp, mp_size_t bn, mp_ptr scratch)
 {
   mp_size_t n, s, t;
-  enum toom6_flags flags = toom6_all_pos;
+  enum toom6_flags flags;
   mp_limb_t cy;
 
 #define a0  ap
@@ -101,6 +101,9 @@ mpn_toom52_mul (mp_ptr pp,
 
 #define a0a2  scratch
 #define a1a3  asm1
+
+  /* Compute as2 and asm2.  */
+  flags = toom6_vm2_neg & mpn_toom_eval_pm2 (as2, asm2, 4, ap, n, s, a1a3);
 
   /* Compute bs1 and bsm1.  */
   if (t == n)
@@ -181,71 +184,8 @@ mpn_toom52_mul (mp_ptr pp,
 	}
     }
 
-  /* Compute as2 and asm2.  */
-  cy = mpn_lshift (asm2, a3, n, 3);			/* 8a3                */
-#if HAVE_NATIVE_mpn_addlsh1_n
-  cy += mpn_addlsh1_n (a1a3, asm2, a1, n);		/* 8a3      +2a1      */
-#else
-  cy += mpn_lshift (a1a3, a1, n, 1);		        /*           2a1      */
-  cy += mpn_add_n (a1a3, a1a3, asm2, n);		/* 8a3      +2a1      */
-#endif
-  a1a3[n] = cy;
-
-  cy = mpn_lshift (a0a2, a2, n, 2);			/*           4a2           */
-  a0a2[n] = cy + mpn_add_n (a0a2, a0, a0a2, n);		/*           4a2      + a0 */
-  cy  = mpn_lshift (asm2, a4, s, 4);			/* 16a4                    */
-  cy += mpn_add_n (a0a2, a0a2, asm2, s);		/* 16a4     +4a2      + a0 */
-  MPN_INCR_U(a0a2 + s, n - s + 1, cy);
-
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (mpn_cmp (a0a2, a1a3, n+1) < 0)
-    {
-      mpn_add_n_sub_n (as2, asm2, a1a3, a0a2, n+1);
-      flags ^= toom6_vm2_neg;
-    }
-  else
-    {
-      mpn_add_n_sub_n (as2, asm2, a0a2, a1a3, n+1);
-    }
-#else
-  mpn_add_n (as2, a0a2, a1a3, n+1);
-  if (mpn_cmp (a0a2, a1a3, n+1) < 0)
-    {
-      mpn_sub_n (asm2, a1a3, a0a2, n+1);
-      flags ^= toom6_vm2_neg;
-    }
-  else
-    {
-      mpn_sub_n (asm2, a0a2, a1a3, n+1);
-    }
-#endif
-
   /* Compute as1 and asm1.  */
-  cy = mpn_add (a0a2, a2, n, a4, s);
-  a0a2[n] = cy + mpn_add_n (a0a2, a0, a0a2, n);
-  asm1[n] = mpn_add_n (asm1, a1, a3, n);
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (mpn_cmp (a0a2, asm1, n+1) < 0)
-    {
-      cy = mpn_add_n_sub_n (as1, asm1, asm1, a0a2, n+1);
-      flags ^= toom6_vm1_neg;
-    }
-  else
-    {
-      cy = mpn_add_n_sub_n (as1, asm1, a0a2, asm1, n+1);
-    }
-#else
-  mpn_add_n (as1, a0a2, asm1, n+1);
-  if (mpn_cmp (a0a2, asm1, n+1) < 0)
-    {
-      mpn_sub_n (asm1, asm1, a0a2, n+1);
-      flags ^= toom6_vm1_neg;
-    }
-  else
-    {
-      mpn_sub_n (asm1, a0a2, asm1, n+1);
-    }
-#endif
+  flags ^= toom6_vm1_neg & mpn_toom_eval_pm1 (as1, asm1, 4, ap, n, s, a0a2);
 
   ASSERT (as1[n] <= 4);
   ASSERT (bs1[n] <= 1);
