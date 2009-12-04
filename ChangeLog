@@ -1,5 +1,8 @@
 2009-12-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/redc_1.c: Add ASSERTs.
+	* mpn/generic/redc_2.c: Likewise.
+
 	* mpn/generic/sbpi1_bdiv_q.c: Simplify loops, indexing.
 
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
