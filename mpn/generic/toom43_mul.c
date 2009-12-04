@@ -53,7 +53,7 @@ mpn_toom43_mul (mp_ptr pp,
 		mp_srcptr bp, mp_size_t bn, mp_ptr scratch)
 {
   mp_size_t n, s, t;
-  enum toom6_flags flags = toom6_all_pos;
+  enum toom6_flags flags;
   mp_limb_t cy;
 
 #define a0  ap
@@ -101,8 +101,7 @@ mpn_toom43_mul (mp_ptr pp,
 #define b1d   bsm1
 
   /* Compute as2 and asm2.  */
-  if (mpn_toom_eval_dgr3_pm2 (as2, asm2, ap, n, s, a1a3))
-    flags ^= toom6_vm2_neg;
+  flags = toom6_vm2_neg & mpn_toom_eval_dgr3_pm2 (as2, asm2, ap, n, s, a1a3);
 
   /* Compute bs2 and bsm2.  */
   b1d[n] = mpn_lshift (b1d, b1, n, 1);			/*       2b1      */
@@ -136,8 +135,7 @@ mpn_toom43_mul (mp_ptr pp,
 #endif
 
   /* Compute as1 and asm1.  */
-  if (mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0a2))
-    flags ^= toom6_vm1_neg;
+  flags ^= toom6_vm1_neg & mpn_toom_eval_dgr3_pm1 (as1, asm1, ap, n, s, a0a2);
 
   /* Compute bs1 and bsm1.  */
   bsm1[n] = mpn_add (bsm1, b0, n, b2, t);
