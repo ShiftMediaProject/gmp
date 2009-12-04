@@ -34,9 +34,12 @@ mpn_toom_interpolate_5pts (mp_ptr c, mp_ptr v2, mp_ptr vm1,
 			   mp_limb_t vinf0)
 {
   mp_limb_t cy, saved;
-  mp_size_t twok = k + k;
-  mp_size_t kk1 = twok + 1;
+  mp_size_t twok;
+  mp_size_t kk1;
   mp_ptr c1, v1, c3, vinf;
+
+  twok = k + k;
+  kk1 = twok + 1;
 
   c1 = c  + k;
   v1 = c1 + k;
@@ -47,7 +50,7 @@ mpn_toom_interpolate_5pts (mp_ptr c, mp_ptr v2, mp_ptr vm1,
   /* (1) v2 <- v2-vm1 < v2+|vm1|,       (16 8 4 2 1) - (1 -1 1 -1  1) =
      thus 0 <= v2 < 50*B^(2k) < 2^6*B^(2k)             (15 9 3  3  0)
   */
-  if (sa <= 0)
+  if (sa)
     ASSERT_NOCARRY (mpn_add_n (v2, v2, vm1, kk1));
   else
     ASSERT_NOCARRY (mpn_sub_n (v2, v2, vm1, kk1));
@@ -61,11 +64,12 @@ mpn_toom_interpolate_5pts (mp_ptr c, mp_ptr v2, mp_ptr vm1,
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0       v1      hi(vinf)       |vm1|     (v2-vm1)/3    EMPTY */
 
-  /* (2) vm1 <- tm1 := (v1 - sa*vm1) / 2  [(1 1 1 1 1) - (1 -1 1 -1 1)] / 2 =
-     tm1 >= 0                                            (0  1 0  1 0)
+  /* (2) vm1 <- tm1 := (v1 - vm1) / 2  [(1 1 1 1 1) - (1 -1 1 -1 1)] / 2 =
+     tm1 >= 0                                         (0  1 0  1 0)
      No carry comes out from {v1, kk1} +/- {vm1, kk1},
-     and the division by two is exact */
-  if (sa <= 0)
+     and the division by two is exact.
+     If (sa!=0) the sign of vm1 is negative */
+  if (sa)
     {
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
       mpn_rsh1add_n (vm1, v1, vm1, kk1);

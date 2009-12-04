@@ -5,7 +5,12 @@
 	* mpn/generic/toom_eval_pm1.c: Likewise.
 	* mpn/generic/toom_eval_pm2.c: Likewise.
 	* mpn/generic/toom_eval_pm2exp.c: Likewise.
-	* mpn/generic/toom42_mul.c: Use the new return value.
+
+	* mpn/generic/toom_interpolate_5pts.c: Param sa is a flag, not a sign.
+
+	* mpn/generic/toom33_mul.c: Adapt to changes above.
+	* mpn/generic/toom3_sqr.c: Likewise.
+	* mpn/generic/toom42_mul.c: Likewise.
 
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
