@@ -93,9 +93,10 @@ mpn_toom_interpolate_7pts (mp_ptr rp, mp_size_t n, enum toom7_flags flags,
 			   mp_ptr w1, mp_ptr w3, mp_ptr w4, mp_ptr w5,
 			   mp_size_t w6n, mp_ptr tp)
 {
-  mp_size_t m = 2*n + 1;
+  mp_size_t m;
   mp_limb_t cy;
 
+  m = 2*n + 1;
 #define w0 rp
 #define w2 (rp + 2*n)
 #define w6 (rp + 6*n)

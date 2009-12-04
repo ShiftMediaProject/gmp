@@ -96,7 +96,7 @@ mpn_toom33_mul (mp_ptr pp,
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= n);
 
-  as1 = scratch + 4*n + 4;
+  as1  = scratch + 4 * n + 4;
   asm1 = scratch + 2 * n + 2;
   as2 = pp + n + 1;
 

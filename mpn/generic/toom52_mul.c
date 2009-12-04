@@ -83,7 +83,7 @@ mpn_toom52_mul (mp_ptr pp,
 
 #define v0    pp				/* 2n */
 #define vm1   (scratch)				/* 2n+1 */
-#define v1    (pp + 2*n)			/* 2n+1 */
+#define v1    (pp + 2 * n)			/* 2n+1 */
 #define vm2   (scratch + 2 * n + 1)		/* 2n+1 */
 #define v2    (scratch + 4 * n + 2)		/* 2n+1 */
 #define vinf  (pp + 5 * n)			/* s+t */

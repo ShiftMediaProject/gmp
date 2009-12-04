@@ -120,7 +120,8 @@ mpn_toom4_sqr (mp_ptr pp,
   cy = 2*cy + mpn_addlsh1_n (apx, a2, apx, n);
   if (s < n)
     {
-      mp_limb_t cy2 = mpn_addlsh1_n (apx, a3, apx, s);
+      mp_limb_t cy2;
+      cy2 = mpn_addlsh1_n (apx, a3, apx, s);
       apx[n] = 2*cy + mpn_lshift (apx + s, apx + s, n - s, 1);
       MPN_INCR_U (apx + s, n+1-s, cy2);
     }

@@ -18,6 +18,9 @@
 
 	* mpn/generic/toom52_mul.c: Use toom_eval_ functions.
 
+	* mpn/generic/toom4_sqr.c: Avoid C99 construct.
+	* mpn/generic/toom_interpolate_7pts.c: Likewise.
+
 2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
