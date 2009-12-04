@@ -53,36 +53,35 @@ mpn_sbpi1_bdiv_q (mp_ptr qp,
 		  mp_limb_t dinv)
 {
   mp_size_t i;
-  mp_limb_t qh;
+  mp_limb_t cy, q;
 
   ASSERT (dn > 0);
   ASSERT (nn >= dn);
   ASSERT ((dp[0] & 1) != 0);
 
-  for (i = 0; i < nn - dn; i++)
+  for (i = nn - dn; i > 0; i--)
     {
-      mp_limb_t cy;
-      mp_limb_t q;
-
-      q = dinv * np[i];
-      qp[i] = ~q;
-      cy = mpn_addmul_1 (np + i, dp, dn, q);
-      mpn_add_1 (np + i + dn, np + i + dn, nn - i - dn, cy);
-      ASSERT (np[i] == 0);
+      q = dinv * np[0];
+      qp[0] = ~q;
+      qp++;
+      cy = mpn_addmul_1 (np, dp, dn, q);
+      mpn_add_1 (np + dn, np + dn, i, cy);
+      ASSERT (np[0] == 0);
+      np++;
     }
 
-  for (; i < nn - 1; i++)
+  for (i = dn; i > 1; i--)
     {
-      mp_limb_t q;
-
-      q = dinv * np[i];
-      qp[i] = ~q;
-      mpn_addmul_1 (np + i, dp, nn - i, q);
-
-      ASSERT (np[i] == 0);
+      q = dinv * np[0];
+      qp[0] = ~q;
+      qp++;
+      mpn_addmul_1 (np, dp, i, q);
+      ASSERT (np[0] == 0);
+      np++;
     }
 
   /* Final limb */
-  qp[nn - 1] = ~(dinv * np[nn - 1]);
-  qh = mpn_add_1 (qp, qp, nn, 1); /* FIXME: can we get carry? */
+  q = dinv * np[0];
+  qp[0] = ~q;
+  mpn_add_1 (qp - nn + 1, qp - nn + 1, nn, 1);
 }
