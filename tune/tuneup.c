@@ -1004,7 +1004,7 @@ tune_dc_div (void)
     param.name = "DC_DIV_QR_THRESHOLD";
     param.function = speed_mpn_sbpi1_div_qr;
     param.function2 = speed_mpn_dcpi1_div_qr;
-    param.min_size = 4;
+    param.min_size = 6;
     one (&dc_div_qr_threshold, &param);
   }
   {
@@ -1012,7 +1012,7 @@ tune_dc_div (void)
     param.name = "DC_DIVAPPR_Q_THRESHOLD";
     param.function = speed_mpn_sbpi1_divappr_q;
     param.function2 = speed_mpn_dcpi1_divappr_q;
-    param.min_size = 4;
+    param.min_size = 6;
     one (&dc_divappr_q_threshold, &param);
   }
 }
@@ -1286,9 +1286,9 @@ tune_mod_1 (void)
 
     s.r = GMP_NUMB_MASK / 5;
     param.function = speed_mpn_mod_1_tune;
-    param.min_size = 1;
 
     param.name = "MOD_1_1_THRESHOLD";
+    param.min_size = 2;
     one (&mod_1_1_threshold, &param);
 
     param.name = "MOD_1_2_THRESHOLD";

@@ -1,5 +1,8 @@
 2009-12-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_dc_div): Up min_size to 6.
+	(tune_mod_1): Set MOD_1_1_THRESHOLD min_size to 2.
+
 	* tune/speed.h: Negate "binvert"-type inverses, as required.
 
 	* mpn/generic/redc_1.c: Add ASSERTs.
