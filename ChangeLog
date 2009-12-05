@@ -1,5 +1,11 @@
 2009-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/redc_1_sec.c: New file.
+	* mpn/generic/powm_sec.c: Use redc_1_sec.  Use dummy full subtract
+	instead of mpn_cmp since the latter leaks to the side channel.
+	(mpn_local_sqr_n): New function, with associated macros.
+	(mpn_powm_sec): Use mpn_local_sqr_n.
+
 	* configure.in (HAVE_NATIVE): Add missing functions, then sort.
 
 2009-12-04  Torbjorn Granlund  <tege@gmplib.org>
