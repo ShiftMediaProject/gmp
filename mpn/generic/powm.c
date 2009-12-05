@@ -29,14 +29,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
   1. W <- U
 
-  2. While W^2 < M (and there are more bits in E)
-       W <- power left-to-right base-2 without reduction
+  2. T <- (B^n * U) mod M                Convert to REDC form
 
-  3. T <- (B^n * U) mod M                Convert to REDC form
+  3. Compute table U^1, U^3, U^5... of E-dependent size
 
-  4. Compute power table of E-dependent size
-
-  5. While there are more bits in E
+  4. While there are more bits in E
        W <- power left-to-right base-k
 
 
@@ -50,7 +47,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
    * Choose window size without looping.  (Superoptimize or think(tm).)
 
-   * How do we handle small bases?
+   * Handle small bases with initial, reduction-free exponentiation.
 
    * Call new division functions, not mpn_tdiv_qr.
 
@@ -66,8 +63,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    * When U (the base) is small, we should start the exponentiation with plain
      operations, then convert that partial result to REDC form.
 
-   * But when U is just one limb, should be treated without the k-ary tricks.
-     We should keep a factor of B^n in W, but use U' = BU as base.  After
+   * When U is just one limb, should it be handled without the k-ary tricks?
+     We could keep a factor of B^n in W, but use U' = BU as base.  After
      multiplying by this (pseudo two-limb) number, we need to multiply by 1/B
      mod M.
 */
