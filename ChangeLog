@@ -3,8 +3,8 @@
 	* mpn/generic/toom_eval_dgr3_pm1.c: Change return value: 0 or ~0.
 	* mpn/generic/toom_eval_dgr3_pm2.c: Likewise.
 	* mpn/generic/toom_eval_pm1.c: Likewise.
-	* mpn/generic/toom_eval_pm2.c: Likewise.
 	* mpn/generic/toom_eval_pm2exp.c: Likewise.
+	* mpn/generic/toom_eval_pm2.c: Rewrite to use mpn_addlsh2_n.
 
 	* mpn/generic/toom_interpolate_5pts.c: Param sa is a flag, not a sign.
 

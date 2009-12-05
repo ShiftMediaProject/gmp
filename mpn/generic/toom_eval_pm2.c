@@ -23,22 +23,44 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-
 #include "gmp.h"
 #include "gmp-impl.h"
+
+#if HAVE_NATIVE_mpn_addlsh2_n
+#define DO_addlsh2(d, a, b, n, cy)	\
+do {					\
+  (cy) <<= 2;				\
+  (cy) += mpn_addlsh2_n(d, a, b, n);	\
+} while (0)
+#else
+#if HAVE_NATIVE_mpn_addlsh_n
+#define DO_addlsh2(d, a, b, n, cy)	\
+do {					\
+  (cy) <<= 2;				\
+  (cy) += mpn_addlsh_n(d, a, b, n, 2);	\
+} while (0)
+#else
+/* The following is not a general substitute for addlsh2.
+   It is correct if d == b, but it is not if d == a.	*/
+#define DO_addlsh2(d, a, b, n, cy)	\
+do {					\
+  (cy) <<= 2;				\
+  (cy) += mpn_lshift(d, b, n, 2);	\
+  (cy) += mpn_add_n(d, d, a, n);	\
+} while (0)
+#endif
+#endif
 
 /* Evaluates a polynomial of degree k > 3, in the points +2 and -2. */
 int
 mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
 		   mp_srcptr xp, mp_size_t n, mp_size_t hn, mp_ptr tp)
 {
-  unsigned i;
+  int i;
   int neg;
-#if HAVE_NATIVE_mpn_addlsh_n
   mp_limb_t cy;
-#endif
 
-  ASSERT (k >= 4);
+  ASSERT (k >= 3);
 
   ASSERT (hn > 0);
   ASSERT (hn <= n);
@@ -46,48 +68,26 @@ mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
   /* The degree k is also the number of full-size coefficients, so
    * that last coefficient, of size hn, starts at xp + k*n. */
 
-#if HAVE_NATIVE_mpn_addlsh_n
-  xp2[n] = mpn_addlsh_n (xp2, xp, xp + 2*n, n, 2);
-  for (i = 4; i < k; i += 2)
-    xp2[n] += mpn_addlsh_n (xp2, xp2, xp + i*n, n, i);
+  cy = 0;
+  DO_addlsh2 (xp2, xp + (k-2) * n, xp + k * n, hn, cy);
+  if (hn != n)
+    cy = mpn_add_1 (xp2 + hn, xp + (k-2) * n + hn, n - hn, cy);
+  for (i = k - 4; i >= 0; i -= 2)
+    DO_addlsh2 (xp2, xp + i * n, xp2, n, cy);
+  xp2[n] = cy;
 
-  tp[n] = mpn_lshift (tp, xp+n, n, 1);
-  for (i = 3; i < k; i+= 2)
-    tp[n] += mpn_addlsh_n (tp, tp, xp+i*n, n, i);
+  k--;
+
+  cy = 0;
+  DO_addlsh2 (tp, xp + (k-2) * n, xp + k * n, n, cy);
+  for (i = k - 4; i >= 0; i -= 2)
+    DO_addlsh2 (tp, xp + i * n, tp, n, cy);
+  tp[n] = cy;
 
   if (k & 1)
-    {
-      cy = mpn_addlsh_n (tp, tp, xp+k*n, hn, k);
-      MPN_INCR_U (tp + hn, n+1 - hn, cy);
-    }
+    mpn_lshift (tp, tp, n + 1, 1);
   else
-    {
-      cy = mpn_addlsh_n (xp2, xp2, xp+k*n, hn, k);
-      MPN_INCR_U (xp2 + hn, n+1 - hn, cy);
-    }
-
-#else /* !HAVE_NATIVE_mpn_addlsh_n */
-  xp2[n] = mpn_lshift (tp, xp+2*n, n, 2);
-  xp2[n] += mpn_add_n (xp2, xp, tp, n);
-  for (i = 4; i < k; i += 2)
-    {
-      xp2[n] += mpn_lshift (tp, xp + i*n, n, i);
-      xp2[n] += mpn_add_n (xp2, xp2, tp, n);
-    }
-
-  tp[n] = mpn_lshift (tp, xp+n, n, 1);
-  for (i = 3; i < k; i+= 2)
-    {
-      tp[n] += mpn_lshift (xm2, xp + i*n, n, i);
-      tp[n] += mpn_add_n (tp, tp, xm2, n);
-    }
-
-  xm2[hn] = mpn_lshift (xm2, xp + k*n, hn, k);
-  if (k & 1)
-    mpn_add (tp, tp, n+1, xm2, hn+1);
-  else
-    mpn_add (xp2, xp2, n+1, xm2, hn+1);
-#endif /* !HAVE_NATIVE_mpn_addlsh_n */
+    mpn_lshift (xp2, xp2, n + 1, 1);
 
   neg = (mpn_cmp (xp2, tp, n + 1) < 0) ? ~0 : 0;
 
@@ -105,8 +105,12 @@ mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
   mpn_add_n (xp2, xp2, tp, n + 1);
 #endif /* !HAVE_NATIVE_mpn_add_n_sub_n */
 
-  ASSERT (xp2[n] < (1<<(k+1))-1);
-  ASSERT (xm2[n] < ((1<<(k+2))-1 - (k & 1))/3);
+  ASSERT (xp2[n] < (1<<(k+2))-1);
+  ASSERT (xm2[n] < ((1<<(k+3))-1 - (1^k&1))/3);
+
+  neg ^= ((k & 1) - 1);
 
   return neg;
 }
+
+#undef DO_addlsh2
