@@ -20,12 +20,14 @@
 
 	* mpn/generic/sbpi1_bdiv_q.c: Simplify loops, indexing.
 
-2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
-
-	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
+2009-12-03  Yann Droneaud  <yann@droneaud.fr>
 
 	* acinclude.m4 ([long long reliability test 1]): Add a "static" for C99
 	inline semantics compatibility.
+
+2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
 
 	* mpn/generic/gcdext.c: Add a TMP_FREE.
 
