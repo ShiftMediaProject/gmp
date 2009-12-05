@@ -1,3 +1,7 @@
+2009-12-05  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in (HAVE_NATIVE): Add missing functions, then sort.
+
 2009-12-04  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_dc_div): Up min_size to 6.
