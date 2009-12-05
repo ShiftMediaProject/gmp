@@ -51,7 +51,8 @@ do {					\
 #endif
 #endif
 
-/* Evaluates a polynomial of degree k > 3, in the points +2 and -2. */
+/* Evaluates a polynomial of degree 2 < k < GMP_NUMB_BITS, in the
+   points +2 and -2. */
 int
 mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
 		   mp_srcptr xp, mp_size_t n, mp_size_t hn, mp_ptr tp)
@@ -61,6 +62,7 @@ mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
   mp_limb_t cy;
 
   ASSERT (k >= 3);
+  ASSERT (k < GMP_NUMB_BITS);
 
   ASSERT (hn > 0);
   ASSERT (hn <= n);
@@ -85,9 +87,9 @@ mpn_toom_eval_pm2 (mp_ptr xp2, mp_ptr xm2, unsigned k,
   tp[n] = cy;
 
   if (k & 1)
-    mpn_lshift (tp, tp, n + 1, 1);
+    ASSERT_NOCARRY(mpn_lshift (tp , tp , n + 1, 1));
   else
-    mpn_lshift (xp2, xp2, n + 1, 1);
+    ASSERT_NOCARRY(mpn_lshift (xp2, xp2, n + 1, 1));
 
   neg = (mpn_cmp (xp2, tp, n + 1) < 0) ? ~0 : 0;
 
