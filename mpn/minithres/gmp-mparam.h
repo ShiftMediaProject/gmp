@@ -1,6 +1,7 @@
 /* Minimal values gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 2000, 2006, 2008 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2006, 2008, 2009 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,14 +30,28 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM3_THRESHOLD              20
 #define SQR_TOOM4_THRESHOLD              24
 
+#define MUL_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
+#define MUL_FFT_MODF_THRESHOLD  65
+#define MUL_FFT_THRESHOLD      200
+
+#define SQR_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
+#define SQR_FFT_MODF_THRESHOLD  65
+#define SQR_FFT_THRESHOLD      200
+
 #define MULLO_BASECASE_THRESHOLD          0
 #define MULLO_DC_THRESHOLD                2
 #define MULLO_MUL_N_THRESHOLD             4
 
-#define DIV_SB_PREINV_THRESHOLD           0  /* always */
-#define DIV_DC_THRESHOLD                  6
-#define POWM_THRESHOLD                    4
+#define MULMOD_BNM1_THRESHOLD            10
 
+#define DC_DIV_QR_THRESHOLD               6
+#define DC_DIVAPPR_Q_THRESHOLD            6
+#define DC_BDIV_QR_THRESHOLD              4
+#define DC_BDIV_Q_THRESHOLD               4
+#define BINV_NEWTON_THRESHOLD             6
+#define REDC_1_TO_REDC_N_THRESHOLD        4
+
+#define MATRIX22_STRASSEN_THRESHOLD       2
 #define HGCD_THRESHOLD                   10
 #define GCD_DC_THRESHOLD                 20
 #define GCDEXT_SCHOENHAGE_THRESHOLD      20
@@ -44,6 +59,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MOD_1_NORM_THRESHOLD              0  /* always */
 #define MOD_1_UNNORM_THRESHOLD            0  /* always */
+#define MOD_1_1_THRESHOLD                 2
+#define MOD_1_2_THRESHOLD                 3
+#define MOD_1_4_THRESHOLD                 4
 #define USE_PREINV_DIVREM_1               1  /* native */
 #define USE_PREINV_MOD_1                  1
 #define DIVREM_2_THRESHOLD                0  /* always */
@@ -54,11 +72,3 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GET_STR_PRECOMPUTE_THRESHOLD     10
 #define SET_STR_THRESHOLD                64
 #define SET_STR_PRECOMPUTE_THRESHOLD    100
-
-#define MUL_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
-#define MUL_FFT_MODF_THRESHOLD  65
-#define MUL_FFT_THRESHOLD      200
-
-#define SQR_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
-#define SQR_FFT_MODF_THRESHOLD  65
-#define SQR_FFT_THRESHOLD      200
