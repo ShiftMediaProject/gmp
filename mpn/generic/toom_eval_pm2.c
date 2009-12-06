@@ -1,6 +1,6 @@
 /* mpn_toom_eval_pm2 -- Evaluate a polynomial in +2 and -2
 
-   Contributed to the GNU project by Niels Möller
+   Contributed to the GNU project by Niels Möller and Marco Bodrato
 
    THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -26,6 +26,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+/* DO_addlsh2(d,a,b,n,cy) computes cy,{d,n} <- {a,n} + 4*(cy,{b,n}), it
+   can be used as DO_addlsh2(d,a,d,n,d[n]), for accumulation on {d,n+1}. */
 #if HAVE_NATIVE_mpn_addlsh2_n
 #define DO_addlsh2(d, a, b, n, cy)	\
 do {					\

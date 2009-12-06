@@ -1,4 +1,4 @@
-2009-12-04  Marco Bodrato <bodrato@mail.dm.unipi.it>
+2009-12-05  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_eval_dgr3_pm1.c: Change return value: 0 or ~0.
 	* mpn/generic/toom_eval_dgr3_pm2.c: Likewise.
