@@ -2608,6 +2608,13 @@ try_one (void)
 	  }
 	break;
 
+      case DATA_SRC0_HIGHBIT:
+       if (i == 0)
+         {
+           s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
+         }
+       break;
+
       case DATA_UDIV_QRNND:
 	s[i].p[1] %= divisor;
 	break;

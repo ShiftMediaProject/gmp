@@ -1,3 +1,7 @@
+2009-12-06  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/devel/try.c(try_one): DATA_SRC0_HIGHBIT sets the high bit.
+
 2009-12-05  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_eval_dgr3_pm1.c: Change return value: 0 or ~0.
