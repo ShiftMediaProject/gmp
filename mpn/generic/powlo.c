@@ -86,7 +86,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
 
   windowsize = win_size (ebi);
 
-  pp = TMP_ALLOC_LIMBS ((n << (windowsize - 1)) + n); /* + n is for mullow ign part */
+  pp = TMP_ALLOC_LIMBS ((n << (windowsize - 1)) + n); /* + n is for mullo ign part */
 
   this_pp = pp;
 
@@ -103,7 +103,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
     {
       last_pp = this_pp;
       this_pp += n;
-      mpn_mullow_n (this_pp, last_pp, b2p, n);
+      mpn_mullo_n (this_pp, last_pp, b2p, n);
     }
 
   expbits = getbits (ep, ebi, windowsize);
@@ -153,7 +153,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
 	}
       while (this_windowsize != 0);
 
-      mpn_mullow_n (tp, rp, pp + n * (expbits >> 1), n);
+      mpn_mullo_n (tp, rp, pp + n * (expbits >> 1), n);
       MPN_COPY (rp, tp, n);
     }
 

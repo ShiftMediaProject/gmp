@@ -54,7 +54,7 @@ mpn_redc_n (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
   scratch = TMP_ALLOC_LIMBS (n + 3 * rn + 100);
 
   xp = scratch;
-  mpn_mullow_n (xp, up, ip, n);
+  mpn_mullo_n (xp, up, ip, n);
 
   yp = scratch + n;
   mpn_mulmod_bnm1 (yp, rn, xp, n, mp, n, scratch + n + rn);

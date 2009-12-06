@@ -2479,7 +2479,7 @@ gmp_mpn_functions="$extra_functions					   \
   bdivmod gcd_1 gcd gcdext_1 gcdext gcd_lehmer gcd_subdiv_step		   \
   gcdext_lehmer gcdext_subdiv_step					   \
   tdiv_qr jacbase get_d							   \
-  matrix22_mul hgcd2 hgcd mullow_n mullow_basecase			   \
+  matrix22_mul hgcd2 hgcd mullo_n mullo_basecase			   \
   toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \
   toom33_mul toom43_mul toom53_mul					   \
   toom44_mul								   \

@@ -1087,14 +1087,14 @@ speed_mpn_mul_fft_sqr (struct speed_params *s)
 }
 
 double
-speed_mpn_mullow_n (struct speed_params *s)
+speed_mpn_mullo_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MULLOW_N (mpn_mullow_n);
+  SPEED_ROUTINE_MPN_MULLO_N (mpn_mullo_n);
 }
 double
-speed_mpn_mullow_basecase (struct speed_params *s)
+speed_mpn_mullo_basecase (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MULLOW_BASECASE (mpn_mullow_basecase);
+  SPEED_ROUTINE_MPN_MULLO_BASECASE (mpn_mullo_basecase);
 }
 
 double

@@ -40,9 +40,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM3_THRESHOLD              77
 #define SQR_TOOM4_THRESHOLD             168
 
-#define MULLOW_BASECASE_THRESHOLD         0  /* always */
-#define MULLOW_DC_THRESHOLD              40
-#define MULLOW_MUL_N_THRESHOLD          266
+#define MULLO_BASECASE_THRESHOLD          0  /* always */
+#define MULLO_DC_THRESHOLD               40
+#define MULLO_MUL_N_THRESHOLD           266
 
 #define DIV_SB_PREINV_THRESHOLD           4
 #define DIV_DC_THRESHOLD                 43

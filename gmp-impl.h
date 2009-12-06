@@ -901,11 +901,11 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_4 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, m
 __GMP_DECLSPEC void mpn_mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 #endif
 
-#define mpn_mullow_n __MPN(mullow_n)
-__GMP_DECLSPEC void mpn_mullow_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_mullo_n __MPN(mullo_n)
+__GMP_DECLSPEC void mpn_mullo_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
-#define mpn_mullow_basecase __MPN(mullow_basecase)
-__GMP_DECLSPEC void mpn_mullow_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#define mpn_mullo_basecase __MPN(mullo_basecase)
+__GMP_DECLSPEC void mpn_mullo_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #define mpn_sqr_n __MPN(sqr_n)
 __GMP_DECLSPEC void mpn_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
@@ -1644,8 +1644,8 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #ifndef MUL_TOOM33_THRESHOLD_LIMIT
 #define MUL_TOOM33_THRESHOLD_LIMIT  MUL_TOOM33_THRESHOLD
 #endif
-#ifndef MULLOW_BASECASE_THRESHOLD_LIMIT
-#define MULLOW_BASECASE_THRESHOLD_LIMIT  MULLOW_BASECASE_THRESHOLD
+#ifndef MULLO_BASECASE_THRESHOLD_LIMIT
+#define MULLO_BASECASE_THRESHOLD_LIMIT  MULLO_BASECASE_THRESHOLD
 #endif
 
 /* SQR_BASECASE_THRESHOLD is where mpn_sqr_basecase should take over from
@@ -4125,17 +4125,17 @@ extern mp_size_t                     sqr_fft_modf_threshold;
 #undef  SQR_FFT_TABLE
 #define SQR_FFT_TABLE                { 0 }
 
-#undef  MULLOW_BASECASE_THRESHOLD
-#define MULLOW_BASECASE_THRESHOLD    mullow_basecase_threshold
-extern mp_size_t                     mullow_basecase_threshold;
+#undef  MULLO_BASECASE_THRESHOLD
+#define MULLO_BASECASE_THRESHOLD     mullo_basecase_threshold
+extern mp_size_t                     mullo_basecase_threshold;
 
-#undef  MULLOW_DC_THRESHOLD
-#define MULLOW_DC_THRESHOLD          mullow_dc_threshold
-extern mp_size_t                     mullow_dc_threshold;
+#undef  MULLO_DC_THRESHOLD
+#define MULLO_DC_THRESHOLD           mullo_dc_threshold
+extern mp_size_t                     mullo_dc_threshold;
 
-#undef  MULLOW_MUL_N_THRESHOLD
-#define MULLOW_MUL_N_THRESHOLD       mullow_mul_n_threshold
-extern mp_size_t                     mullow_mul_n_threshold;
+#undef  MULLO_MUL_N_THRESHOLD
+#define MULLO_MUL_N_THRESHOLD        mullo_mul_n_threshold
+extern mp_size_t                     mullo_mul_n_threshold;
 
 
 #if ! UDIV_PREINV_ALWAYS
@@ -4273,7 +4273,7 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #undef MUL_TOOM22_THRESHOLD_LIMIT
 #undef MUL_TOOM33_THRESHOLD_LIMIT
-#undef MULLOW_BASECASE_THRESHOLD_LIMIT
+#undef MULLO_BASECASE_THRESHOLD_LIMIT
 #undef SQR_TOOM3_THRESHOLD_LIMIT
 #define SQR_TOOM2_MAX_GENERIC           200
 #define MUL_TOOM22_THRESHOLD_LIMIT      700
@@ -4281,7 +4281,7 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #define SQR_TOOM3_THRESHOLD_LIMIT       400
 #define MUL_TOOM44_THRESHOLD_LIMIT     1000
 #define SQR_TOOM4_THRESHOLD_LIMIT      1000
-#define MULLOW_BASECASE_THRESHOLD_LIMIT 200
+#define MULLO_BASECASE_THRESHOLD_LIMIT  200
 #define GET_STR_THRESHOLD_LIMIT         150
 
 #endif /* TUNE_PROGRAM_BUILD */

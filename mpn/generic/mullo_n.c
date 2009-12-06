@@ -1,4 +1,4 @@
-/* mpn_mullow_n -- multiply two n-limb numbers and return the low n limbs
+/* mpn_mullo_n -- multiply two n-limb numbers and return the low n limbs
    of their products.
 
    Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
@@ -28,16 +28,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-#ifndef MULLOW_BASECASE_THRESHOLD
-#define MULLOW_BASECASE_THRESHOLD 0	/* never use mpn_mul_basecase */
+#ifndef MULLO_BASECASE_THRESHOLD
+#define MULLO_BASECASE_THRESHOLD 0	/* never use mpn_mul_basecase */
 #endif
 
-#ifndef MULLOW_DC_THRESHOLD
-#define MULLOW_DC_THRESHOLD 3*MUL_TOOM22_THRESHOLD
+#ifndef MULLO_DC_THRESHOLD
+#define MULLO_DC_THRESHOLD 3*MUL_TOOM22_THRESHOLD
 #endif
 
-#ifndef MULLOW_MUL_N_THRESHOLD
-#define MULLOW_MUL_N_THRESHOLD 10*MULLOW_DC_THRESHOLD
+#ifndef MULLO_MUL_N_THRESHOLD
+#define MULLO_MUL_N_THRESHOLD 10*MULLO_DC_THRESHOLD
 #endif
 
 #if TUNE_PROGRAM_BUILD
@@ -45,18 +45,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_range_toom22   1
 #else
 #define MAYBE_range_basecase                                           \
-  ((MULLOW_DC_THRESHOLD == 0 ? MULLOW_BASECASE_THRESHOLD : MULLOW_DC_THRESHOLD) < 2 * MUL_TOOM22_THRESHOLD)
+  ((MULLO_DC_THRESHOLD == 0 ? MULLO_BASECASE_THRESHOLD : MULLO_DC_THRESHOLD) < 2 * MUL_TOOM22_THRESHOLD)
 #define MAYBE_range_toom22                                             \
-  ((MULLOW_DC_THRESHOLD == 0 ? MULLOW_BASECASE_THRESHOLD : MULLOW_DC_THRESHOLD) < MUL_TOOM33_THRESHOLD*36/(36-11) )
+  ((MULLO_DC_THRESHOLD == 0 ? MULLO_BASECASE_THRESHOLD : MULLO_DC_THRESHOLD) < MUL_TOOM33_THRESHOLD*36/(36-11) )
 #endif
 
-/* Avoid zero allocations when MULLOW_BASECASE_THRESHOLD is 0.  */
+/* Avoid zero allocations when MULLO_BASECASE_THRESHOLD is 0.  */
 #define MUL_BASECASE_ALLOC \
- (MULLOW_BASECASE_THRESHOLD_LIMIT == 0 ? 1 : 2*MULLOW_BASECASE_THRESHOLD_LIMIT)
+ (MULLO_BASECASE_THRESHOLD_LIMIT == 0 ? 1 : 2*MULLO_BASECASE_THRESHOLD_LIMIT)
 
 /*
   FIXME: This function should accept a temporary area.
-  THINK: If mpn_mul_basecase is always faster than mpn_mullow_basecase
+  THINK: If mpn_mul_basecase is always faster than mpn_mullo_basecase
          (typically thanks to mpn_addmul_2) should we unconditionally use
          mpn_mul_n?
   THINK: The DC strategy uses different constatnts in different Toom's
@@ -68,7 +68,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   formally {rp,n} = {xy,n}*{yp,n} Mod (B^n).
 
   Above the given threshold, the Divide and Conquer strategy is used.
-  The operands are split in two, and a full product plus two mullow
+  The operands are split in two, and a full product plus two mullo
   are used to obtain the final result. The more natural stategy is to
   split in two halves, but this is far from optimal when a
   sebquadratic multiplication is used.
@@ -76,7 +76,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   Mulders suggests an unbalanced split in favour of the full product,
   split n = n1 + n2, where an = n1 <= n2 = (1-a)n; i.e. 0 < a <= 1/2.
 
-  To compute the value of a, we assume that the cost of mullow for a
+  To compute the value of a, we assume that the cost of mullo for a
   given size ML(n) is a fraction of the cost of a full product with
   same size M(n), and the cost M(n)=n^e for some exponent 1 < e <= 2;
   then we can write:
@@ -130,29 +130,29 @@ contfracpnqn(contfrac(mul(log(8*2-1)/log(8),1/2,0),3))
 
   - A value for a smaller than optimal is probably less bad than a
     bigger one: e.g. let e=log(3)/log(2), a=0.3058_ the optimal
-    value, and k(a)=0.808_ the mul/mullow speed ratio. We get
+    value, and k(a)=0.808_ the mul/mullo speed ratio. We get
     k(a+1/6)=0.929_ but k(a-1/6)=0.865_.
 */
 
 void
-mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
+mpn_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
 {
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (rp, n, xp, n));
   ASSERT (! MPN_OVERLAP_P (rp, n, yp, n));
 
-  if (BELOW_THRESHOLD (n, MULLOW_BASECASE_THRESHOLD))
+  if (BELOW_THRESHOLD (n, MULLO_BASECASE_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
       mp_limb_t ws[MUL_BASECASE_ALLOC];
       mpn_mul_basecase (ws, xp, n, yp, n);
       MPN_COPY (rp, ws, n);
     }
-  else if (BELOW_THRESHOLD (n, MULLOW_DC_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, MULLO_DC_THRESHOLD))
     {
-      mpn_mullow_basecase (rp, xp, yp, n);
+      mpn_mullo_basecase (rp, xp, yp, n);
     }
-  else if (BELOW_THRESHOLD (n, MULLOW_MUL_N_THRESHOLD))
+  else if (BELOW_THRESHOLD (n, MULLO_MUL_N_THRESHOLD))
     {
       /* Divide-and-conquer */
       mp_size_t n2, n1;
@@ -187,11 +187,11 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
       MPN_COPY (rp, tp, n2);
 
       /* x1 * y0 * 2^(n2 GMP_NUMB_BITS) */
-      mpn_mullow_n (rp + n2, xp + n2, yp, n1);
+      mpn_mullo_n (rp + n2, xp + n2, yp, n1);
       mpn_add_n (rp + n2, rp + n2, tp + n2, n1);
 
       /* x0 * y1 * 2^(n2 GMP_NUMB_BITS) */
-      mpn_mullow_n (tp, yp + n2, xp, n1);
+      mpn_mullo_n (tp, yp + n2, xp, n1);
       mpn_add_n (rp + n2, rp + n2, tp, n1);
       TMP_SFREE;
     }
@@ -204,7 +204,7 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
       TMP_MARK;
       tp = TMP_ALLOC_LIMBS (2 * n);
 
-#if !TUNE_PROGRAM_BUILD && WANT_FFT && (MULLOW_MUL_N_THRESHOLD >= MUL_FFT_THRESHOLD)
+#if !TUNE_PROGRAM_BUILD && WANT_FFT && (MULLO_MUL_N_THRESHOLD >= MUL_FFT_THRESHOLD)
       mpn_mul_fft_full (tp, xp, n, yp, n);
 #else
       mpn_mul_n (tp, xp, yp, n);

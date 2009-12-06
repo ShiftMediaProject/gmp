@@ -42,9 +42,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_FFT_MODF_THRESHOLD          608
 #define SQR_FFT_THRESHOLD              4992
 
-#define MULLOW_BASECASE_THRESHOLD        17
-#define MULLOW_DC_THRESHOLD              88
-#define MULLOW_MUL_N_THRESHOLD        15280
+#define MULLO_BASECASE_THRESHOLD         17
+#define MULLO_DC_THRESHOLD               88
+#define MULLO_MUL_N_THRESHOLD         15280
 
 #define MULMOD_BNM1_THRESHOLD            24
 

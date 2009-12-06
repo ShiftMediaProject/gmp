@@ -94,7 +94,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 
       /* Some notes on allocation:
 
-	 When in = dn, R dies when mpn_mullow returns, if in < dn the low in
+	 When in = dn, R dies when mpn_mullo returns, if in < dn the low in
 	 limbs of R dies at that point.  We could save memory by letting T live
 	 just under R, and let the upper part of T expand into R. These changes
 	 should reduce itch to perhaps 3dn.
@@ -112,7 +112,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 
       while (qn > in)
 	{
-	  mpn_mullow_n (qp, rp, ip, in);
+	  mpn_mullo_n (qp, rp, ip, in);
 
 #if WANT_FFT
 	  if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
@@ -159,7 +159,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	}
 
       /* Generate last qn limbs.  */
-      mpn_mullow_n (qp, rp, ip, qn);
+      mpn_mullo_n (qp, rp, ip, qn);
 
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
@@ -211,7 +211,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 
       mpn_binvert (ip, dp, in, scratch);
 
-      mpn_mullow_n (qp, np, ip, in);		/* low `in' quotient limbs */
+      mpn_mullo_n (qp, np, ip, in);		/* low `in' quotient limbs */
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
@@ -234,7 +234,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
       qn -= in;
 
       cy = mpn_sub_n (rp, np + in, tp + in, dn);
-      mpn_mullow_n (qp, rp, ip, qn);		/* high qn quotient limbs */
+      mpn_mullo_n (qp, rp, ip, qn);		/* high qn quotient limbs */
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{

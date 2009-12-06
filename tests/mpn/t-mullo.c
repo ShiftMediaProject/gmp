@@ -1,4 +1,4 @@
-/* Test for mullow function.
+/* Test for mullo function.
 
 Copyright 2009 Free Software Foundation, Inc.
 
@@ -61,14 +61,14 @@ main (int argc, char **argv)
   tests_start ();
   rands = RANDS;
 
-#define mpn_mullow_itch(n) (0)
+#define mpn_mullo_itch(n) (0)
 
   ap = TMP_ALLOC_LIMBS (MAX_N);
   bp = TMP_ALLOC_LIMBS (MAX_N);
   refp = TMP_ALLOC_LIMBS (MAX_N * 2);
   pp = 1+TMP_ALLOC_LIMBS (MAX_N + 2);
   scratch
-    = 1+TMP_ALLOC_LIMBS (mpn_mullow_itch (MAX_N) + 2);
+    = 1+TMP_ALLOC_LIMBS (mpn_mullo_itch (MAX_N) + 2);
 
   for (test = 0; test < count; test++)
     {
@@ -94,13 +94,13 @@ main (int argc, char **argv)
       p_before = pp[-1];
       p_after = pp[n];
 
-      itch = mpn_mullow_itch (n);
-      ASSERT_ALWAYS (itch <= mpn_mullow_itch (MAX_N));
+      itch = mpn_mullo_itch (n);
+      ASSERT_ALWAYS (itch <= mpn_mullo_itch (MAX_N));
       mpn_random2 (scratch-1, itch+2);
       s_before = scratch[-1];
       s_after = scratch[itch];
 
-      mpn_mullow_n (pp, ap, bp, n);
+      mpn_mullo_n (pp, ap, bp, n);
       mpn_mul_n (refp, ap, bp, n);
       if (pp[-1] != p_before || pp[n] != p_after
 	  || scratch[-1] != s_before || scratch[itch] != s_after

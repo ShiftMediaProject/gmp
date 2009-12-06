@@ -227,8 +227,8 @@ double speed_mpn_mul_fft_full __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_full_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_n_sqr __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_mullow_n __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_mullow_basecase __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mullo_n __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mullo_basecase __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_nand_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_nior_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_popcount __GMP_PROTO ((struct speed_params *s));
@@ -934,7 +934,7 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_MUL_N(function)				\
   SPEED_ROUTINE_MPN_MUL_N_CALL (function (wp, s->xp, s->yp, s->size));
 
-#define SPEED_ROUTINE_MPN_MULLOW_N_CALL(call)				\
+#define SPEED_ROUTINE_MPN_MULLO_N_CALL(call)				\
   {									\
     mp_ptr    wp;							\
     unsigned  i;							\
@@ -962,11 +962,11 @@ int speed_routine_count_zeros_setup
     return t;								\
   }
 
-#define SPEED_ROUTINE_MPN_MULLOW_N(function)				\
-  SPEED_ROUTINE_MPN_MULLOW_N_CALL (function (wp, s->xp, s->yp, s->size));
+#define SPEED_ROUTINE_MPN_MULLO_N(function)				\
+  SPEED_ROUTINE_MPN_MULLO_N_CALL (function (wp, s->xp, s->yp, s->size));
 
 /* For mpn_mul_basecase, xsize=r, ysize=s->size. */
-#define SPEED_ROUTINE_MPN_MULLOW_BASECASE(function)			\
+#define SPEED_ROUTINE_MPN_MULLO_BASECASE(function)			\
   {									\
     mp_ptr    wp;							\
     unsigned  i;							\

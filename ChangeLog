@@ -1,5 +1,7 @@
 2009-12-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Globally: Rename *mullow* to *mullo*, *MULLOW* to *MULLO*.
+
 	* configure.in: Don't include ev5 directory for ev6* and ev7.  Misc
 	alpha path cleanups.
 	* mpn/alpha/add_n.asm: Replaced by mpn/alpha/ev5/add_n.asm.

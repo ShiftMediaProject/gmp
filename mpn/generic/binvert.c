@@ -106,7 +106,7 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
       else
 #endif
 	mpn_mul (xp, up, newrn, rp, rn);
-      mpn_mullow_n (rp + rn, rp, xp + rn, newrn - rn);
+      mpn_mullo_n (rp + rn, rp, xp + rn, newrn - rn);
       mpn_neg_n (rp + rn, rp + rn, newrn - rn);
     }
 }

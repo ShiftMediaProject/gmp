@@ -133,7 +133,7 @@ binv_root (mp_ptr rp, mp_srcptr yp,
       mpn_mul_1 (tp, rp, bn, k2);
 
       mpn_powlo (tp2, rp, &k2, 1, bn, tp3);
-      mpn_mullow_n (rp, yp, tp2, bn);
+      mpn_mullo_n (rp, yp, tp2, bn);
 
       mpn_sub_n (tp2, tp, rp, bn);
       mpn_bdiv_q_1_pi1 (rp, tp2, bn, k, di, 0);
@@ -181,7 +181,7 @@ binv_sqroot (mp_ptr rp, mp_srcptr yp,
 	  mpn_mul_1 (tp, rp, bn, k);
 
 	  mpn_powlo (tp2, rp, &k, 1, bn, tp3);
-	  mpn_mullow_n (rp, yp, tp2, bn);
+	  mpn_mullo_n (rp, yp, tp2, bn);
 
 #if HAVE_NATIVE_mpn_rsh1sub_n
 	  mpn_rsh1sub_n (rp, tp, rp, bn);

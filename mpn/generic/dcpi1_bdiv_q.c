@@ -32,7 +32,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 mp_size_t
 mpn_dcpi1_bdiv_q_n_itch (mp_size_t n)
 {
-  /* NOTE: Depends om mullow_n interface */
+  /* NOTE: Depends om mullo_n interface */
   return n;
 }
 
@@ -57,7 +57,7 @@ mpn_dcpi1_bdiv_q_n (mp_ptr qp,
 
       cy = mpn_dcpi1_bdiv_qr_n (qp, np, dp, lo, dinv, tp);
 
-      mpn_mullow_n (tp, qp, dp + hi, lo);
+      mpn_mullo_n (tp, qp, dp + hi, lo);
       mpn_sub_n (np + hi, np + hi, tp, lo);
 
       if (lo < hi)

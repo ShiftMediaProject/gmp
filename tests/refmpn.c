@@ -1439,7 +1439,7 @@ refmpn_mul_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
 }
 
 void
-refmpn_mullow_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
+refmpn_mullo_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
 {
   mp_ptr tp = refmpn_malloc_limbs (2*size);
   refmpn_mul_basecase (tp, up, size, vp, size);

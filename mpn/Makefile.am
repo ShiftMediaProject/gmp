@@ -51,7 +51,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   toom_eval_dgr3_pm1.c toom_eval_dgr3_pm2.c 				    \
   toom_eval_pm1.c toom_eval_pm1.c toom_eval_pm2exp.c 			    \
   toom_interpolate_5pts.c toom_interpolate_6pts.c toom_interpolate_7pts.c   \
-  mullow_n.c mullow_basecase.c nand_n.c neg_n.c nior_n.c perfsqr.c	    \
+  mullo_n.c mullo_basecase.c nand_n.c neg_n.c nior_n.c perfsqr.c	    \
   popcount.c pre_divrem_1.c pre_mod_1.c pow_1.c random.c random2.c rshift.c \
   rootrem.c sb_divrem_mn.c scan0.c scan1.c set_str.c			    \
   sqr_basecase.c sqr_diagonal.c						    \

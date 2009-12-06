@@ -1,4 +1,4 @@
-/* mpn_mullow_basecase -- Internal routine to multiply two natural
+/* mpn_mullo_basecase -- Internal routine to multiply two natural
    numbers of length m and n and return the low part.
 
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
@@ -30,7 +30,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 */
 
 void
-mpn_mullow_basecase (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+mpn_mullo_basecase (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   mp_size_t i;
 
