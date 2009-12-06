@@ -81,12 +81,22 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if ! HAVE_NATIVE_mpn_sqr_basecase
 /* The limit of the generic code is SQR_TOOM2_THRESHOLD.  */
-#define SQR_TOOM2_THRESHOLD_MAX SQR_TOOM2_THRESHOLD
+#define SQR_BASECASE_MAX  SQR_TOOM2_THRESHOLD
 #endif
 
-#ifndef SQR_TOOM2_THRESHOLD_MAX
-/* If SQR_TOOM2_THRESHOLD_MAX is not defined, use mpn_sqr_basecase for any
-   operand size.  */
+#if HAVE_NATIVE_mpn_sqr_basecase
+#ifdef TUNE_SQR_TOOM2_MAX
+/* We slightly abuse TUNE_SQR_TOOM2_MAX here.  If it is set for an assembly
+   mpn_sqr_basecase, it comes from SQR_TOOM2_THRESHOLD_MAX in the assembly
+   file.  Assembly mpn_sqr_basecase that do not define it, should allow any
+   size.  */
+#define SQR_BASECASE_MAX  TUNE_SQR_TOOM2_MAX
+#endif
+#endif
+
+#ifndef SQR_BASECASE_MAX
+/* If SQR_BASECASE_MAX is now not defined, use mpn_sqr_basecase for any operand
+   size.  */
 #define mpn_local_sqr_n mpn_sqr_basecase
 #else
 /* Define our own squaring function, which uses mpn_sqr_basecase for its
@@ -99,7 +109,7 @@ mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (rp, 2*n, up, n));
 
-  if (n < SQR_TOOM2_THRESHOLD_MAX)
+  if (n < SQR_BASECASE_MAX)
     {
       mpn_sqr_basecase (rp, up, n);
       return;
