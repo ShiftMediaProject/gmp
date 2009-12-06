@@ -1,7 +1,7 @@
 dnl  Alpha mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 1995, 2000, 2002, 2005 Free Software Foundation, Inc.
+dnl  Copyright 1995, 1999, 2000, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,97 +21,126 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 include(`../config.m4')
 
 C      cycles/limb
-C EV4:     7.75
-C EV5:     5.75
-C EV6:     4
+C EV4:     ?
+C EV5:     4.75
+C EV6:     3
 
-C  INPUT PARAMETERS
-C  rp	r16
-C  up	r17
-C  vp	r18
-C  n	r19
+dnl  INPUT PARAMETERS
+dnl  res_ptr	r16
+dnl  s1_ptr	r17
+dnl  s2_ptr	r18
+dnl  size	r19
 
 ASM_START()
 PROLOGUE(mpn_add_n)
-	ldq	r3,0(r17)
-	ldq	r4,0(r18)
-
+	bis	r31,r31,r25		C clear cy
+	subq	r19,4,r19		C decr loop cnt
+	blt	r19,$Lend2		C if less than 4 limbs, goto 2nd loop
+C Start software pipeline for 1st loop
+	ldq	r0,0(r18)
+	ldq	r4,0(r17)
+	ldq	r1,8(r18)
+	ldq	r5,8(r17)
+	addq	r17,32,r17		C update s1_ptr
+	ldq	r2,16(r18)
+	addq	r0,r4,r20		C 1st main add
+	ldq	r3,24(r18)
+	subq	r19,4,r19		C decr loop cnt
+	ldq	r6,-16(r17)
+	cmpult	r20,r0,r25		C compute cy from last add
+	ldq	r7,-8(r17)
+	addq	r1,r5,r28		C 2nd main add
+	addq	r18,32,r18		C update s2_ptr
+	addq	r28,r25,r21		C 2nd carry add
+	cmpult	r28,r5,r8		C compute cy from last add
+	blt	r19,$Lend1		C if less than 4 limbs remain, jump
+C 1st loop handles groups of 4 limbs in a software pipeline
+	ALIGN(16)
+$Loop:	cmpult	r21,r28,r25		C compute cy from last add
+	ldq	r0,0(r18)
+	bis	r8,r25,r25		C combine cy from the two adds
+	ldq	r1,8(r18)
+	addq	r2,r6,r28		C 3rd main add
+	ldq	r4,0(r17)
+	addq	r28,r25,r22		C 3rd carry add
+	ldq	r5,8(r17)
+	cmpult	r28,r6,r8		C compute cy from last add
+	cmpult	r22,r28,r25		C compute cy from last add
+	stq	r20,0(r16)
+	bis	r8,r25,r25		C combine cy from the two adds
+	stq	r21,8(r16)
+	addq	r3,r7,r28		C 4th main add
+	addq	r28,r25,r23		C 4th carry add
+	cmpult	r28,r7,r8		C compute cy from last add
+	cmpult	r23,r28,r25		C compute cy from last add
+		addq	r17,32,r17		C update s1_ptr
+	bis	r8,r25,r25		C combine cy from the two adds
+		addq	r16,32,r16		C update res_ptr
+	addq	r0,r4,r28		C 1st main add
+	ldq	r2,16(r18)
+	addq	r25,r28,r20		C 1st carry add
+	ldq	r3,24(r18)
+	cmpult	r28,r4,r8		C compute cy from last add
+	ldq	r6,-16(r17)
+	cmpult	r20,r28,r25		C compute cy from last add
+	ldq	r7,-8(r17)
+	bis	r8,r25,r25		C combine cy from the two adds
+	subq	r19,4,r19		C decr loop cnt
+	stq	r22,-16(r16)
+	addq	r1,r5,r28		C 2nd main add
+	stq	r23,-8(r16)
+	addq	r25,r28,r21		C 2nd carry add
+		addq	r18,32,r18		C update s2_ptr
+	cmpult	r28,r5,r8		C compute cy from last add
+	bge	r19,$Loop
+C Finish software pipeline for 1st loop
+$Lend1:	cmpult	r21,r28,r25		C compute cy from last add
+	bis	r8,r25,r25		C combine cy from the two adds
+	addq	r2,r6,r28		C 3rd main add
+	addq	r28,r25,r22		C 3rd carry add
+	cmpult	r28,r6,r8		C compute cy from last add
+	cmpult	r22,r28,r25		C compute cy from last add
+	stq	r20,0(r16)
+	bis	r8,r25,r25		C combine cy from the two adds
+	stq	r21,8(r16)
+	addq	r3,r7,r28		C 4th main add
+	addq	r28,r25,r23		C 4th carry add
+	cmpult	r28,r7,r8		C compute cy from last add
+	cmpult	r23,r28,r25		C compute cy from last add
+	bis	r8,r25,r25		C combine cy from the two adds
+	addq	r16,32,r16		C update res_ptr
+	stq	r22,-16(r16)
+	stq	r23,-8(r16)
+$Lend2:	addq	r19,4,r19		C restore loop cnt
+	beq	r19,$Lret
+C Start software pipeline for 2nd loop
+	ldq	r0,0(r18)
+	ldq	r4,0(r17)
 	subq	r19,1,r19
-	and	r19,4-1,r2	C number of limbs in first loop
-	bis	r31,r31,r0
-	beq	r2,$L0		C if multiple of 4 limbs, skip first loop
-
-	subq	r19,r2,r19
-
-$Loop0:	subq	r2,1,r2
-	ldq	r5,8(r17)
-	addq	r4,r0,r4
-	ldq	r6,8(r18)
-	cmpult	r4,r0,r1
-	addq	r3,r4,r4
-	cmpult	r4,r3,r0
-	stq	r4,0(r16)
-	bis	r0,r1,r0
-
-	addq	r17,8,r17
+	beq	r19,$Lend0
+C 2nd loop handles remaining 1-3 limbs
+	ALIGN(16)
+$Loop0:	addq	r0,r4,r28		C main add
+	ldq	r0,8(r18)
+	cmpult	r28,r4,r8		C compute cy from last add
+	ldq	r4,8(r17)
+	addq	r28,r25,r20		C carry add
 	addq	r18,8,r18
-	bis	r5,r5,r3
-	bis	r6,r6,r4
+	addq	r17,8,r17
+	stq	r20,0(r16)
+	cmpult	r20,r28,r25		C compute cy from last add
+	subq	r19,1,r19		C decr loop cnt
+	bis	r8,r25,r25		C combine cy from the two adds
 	addq	r16,8,r16
-	bne	r2,$Loop0
+	bne	r19,$Loop0
+$Lend0:	addq	r0,r4,r28		C main add
+	addq	r28,r25,r20		C carry add
+	cmpult	r28,r4,r8		C compute cy from last add
+	cmpult	r20,r28,r25		C compute cy from last add
+	stq	r20,0(r16)
+	bis	r8,r25,r25		C combine cy from the two adds
 
-$L0:	beq	r19,$Lend
-
-	ALIGN(8)
-$Loop:	subq	r19,4,r19
-
-	ldq	r5,8(r17)
-	addq	r4,r0,r4
-	ldq	r6,8(r18)
-	cmpult	r4,r0,r1
-	addq	r3,r4,r4
-	cmpult	r4,r3,r0
-	stq	r4,0(r16)
-	bis	r0,r1,r0
-
-	ldq	r3,16(r17)
-	addq	r6,r0,r6
-	ldq	r4,16(r18)
-	cmpult	r6,r0,r1
-	addq	r5,r6,r6
-	cmpult	r6,r5,r0
-	stq	r6,8(r16)
-	bis	r0,r1,r0
-
-	ldq	r5,24(r17)
-	addq	r4,r0,r4
-	ldq	r6,24(r18)
-	cmpult	r4,r0,r1
-	addq	r3,r4,r4
-	cmpult	r4,r3,r0
-	stq	r4,16(r16)
-	bis	r0,r1,r0
-
-	ldq	r3,32(r17)
-	addq	r6,r0,r6
-	ldq	r4,32(r18)
-	cmpult	r6,r0,r1
-	addq	r5,r6,r6
-	cmpult	r6,r5,r0
-	stq	r6,24(r16)
-	bis	r0,r1,r0
-
-	addq	r17,32,r17
-	addq	r18,32,r18
-	addq	r16,32,r16
-	bne	r19,$Loop
-
-$Lend:	addq	r4,r0,r4
-	cmpult	r4,r0,r1
-	addq	r3,r4,r4
-	cmpult	r4,r3,r0
-	stq	r4,0(r16)
-	bis	r0,r1,r0
+$Lret:	bis	r25,r31,r0		C return cy
 	ret	r31,(r26),1
 EPILOGUE(mpn_add_n)
 ASM_END()

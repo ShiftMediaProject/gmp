@@ -1,4 +1,4 @@
-dnl  Alpha EV5 mpn_com_n -- mpn one's complement.
+dnl  Alpha mpn_com_n -- mpn one's complement.
 
 dnl  Copyright 2003 Free Software Foundation, Inc.
 dnl

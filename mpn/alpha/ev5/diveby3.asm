@@ -1,6 +1,6 @@
 dnl  Alpha mpn_divexact_by3c -- mpn division by 3, expecting no remainder.
 
-dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005, 2009 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,11 +22,10 @@ include(`../config.m4')
 C      cycles/limb
 C EV4:    22
 C EV5:    11.5
-C EV6:     6.3
+C EV6:     6.3		Note that mpn_bdiv_dbm1c is faster
 
 C TODO
-C  * Trim this to 6.0 c/l for ev6.
-C  * Write special ev5 version, should reach 9 c/l, and could be smaller.
+C  * Remove the unops, they benefit just ev6, which no longer uses this file.
 C  * Try prefetch for destination, using lds.
 C  * Improve feed-in code, by moving initial mulq earlier; make initial load
 C    to u0/u0 to save some copying.
