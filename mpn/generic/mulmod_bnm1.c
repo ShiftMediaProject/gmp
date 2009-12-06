@@ -81,7 +81,7 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
  *   bn > rn/2
  * - rn = mpn_mulmod_bnm1_next_size(an+bn) > MUL_FFT_MODF_THRESHOLD
  *   and an >= bn
- * Whitin this allowed uses we will never have an<rn when basecases
+ * Within this allowed uses we will never have an<rn when basecases
  * are needed.
  */
 void
@@ -93,7 +93,7 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 
   if ((rn & 1) != 0 || BELOW_THRESHOLD (rn, MULMOD_BNM1_THRESHOLD))
     {
-      if ( UNLIKELY(bn < rn) ) /* May hapen only for misuse or _very_
+      if ( UNLIKELY(bn < rn) ) /* May happen only for misuse or _very_
 				  unbalanced operands */
 	{
 	  MPN_COPY(tp, bp, bn);
