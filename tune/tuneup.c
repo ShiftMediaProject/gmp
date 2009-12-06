@@ -906,7 +906,7 @@ tune_mulmod_bnm1 (void)
   param.function = speed_mpn_mulmod_bnm1;
 
   param.name = "MULMOD_BNM1_THRESHOLD";
-  param.min_size = 4;
+  param.min_size = 12;
   param.step_factor = 0.0;
   param.step = 4;
   param.min_is_always = 1;

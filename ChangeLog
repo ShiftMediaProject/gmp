@@ -1,5 +1,7 @@
 2009-12-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mulmod_bnm1): Up min_size to 12.
+
 	* Globally: Rename *mullow* to *mullo*, *MULLOW* to *MULLO*.
 
 	* configure.in: Don't include ev5 directory for ev6* and ev7.  Misc
