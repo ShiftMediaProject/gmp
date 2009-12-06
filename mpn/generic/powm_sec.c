@@ -1,5 +1,11 @@
-/* mpn_powm_sec -- Compute R = U^E mod M.  Sacure variant, side-channel silent
-   under the assupmtion that the multiply instruction is side channel silent.
+/* mpn_powm_sec -- Compute R = U^E mod M.  Secure variant, side-channel silent
+   under the assumption that the multiply instruction is side channel silent.
+
+   Contributed to the GNU project by Torbjorn Granlund.
+
+   THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
+   SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
+   GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 Copyright 2007, 2008, 2009 Free Software Foundation, Inc.
 
@@ -72,12 +78,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   } while (0)
 #endif
 
-#if HAVE_NATIVE_mpn_sqr_basecase
-#define BASECASE_LIMIT TUNE_SQR_TOOM2_MAX
-#else
-#define BASECASE_LIMIT SQR_TOOM2_THRESHOLD
+
+#if ! HAVE_NATIVE_mpn_sqr_basecase
+/* The limit of the generic code is SQR_TOOM2_THRESHOLD.  */
+#define SQR_TOOM2_THRESHOLD_MAX SQR_TOOM2_THRESHOLD
 #endif
 
+#ifndef SQR_TOOM2_THRESHOLD_MAX
+/* If SQR_TOOM2_THRESHOLD_MAX is not defined, use mpn_sqr_basecase for any
+   operand size.  */
+#define mpn_local_sqr_n mpn_sqr_basecase
+#else
+/* Define our own squaring function, which uses mpn_sqr_basecase for its
+   allowed sizes, but its own code for larger sizes.  */
 static void
 mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
 {
@@ -86,7 +99,7 @@ mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (rp, 2*n, up, n));
 
-  if (n < BASECASE_LIMIT)
+  if (n < SQR_TOOM2_THRESHOLD_MAX)
     {
       mpn_sqr_basecase (rp, up, n);
       return;
@@ -131,7 +144,7 @@ mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
       TMP_FREE;
     }
 }
-
+#endif
 
 #define getbit(p,bi) \
   ((p[(bi - 1) / GMP_LIMB_BITS] >> (bi - 1) % GMP_LIMB_BITS) & 1)

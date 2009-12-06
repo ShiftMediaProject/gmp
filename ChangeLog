@@ -1,5 +1,7 @@
 2009-12-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/powm_sec.c: Rework logic for mpn_sqr_basecase size limit.
+
 	* gmp-impl.h (mpn_redc_1_sec): Declare.
 	* configure.in (gmp_mpn_functions): Add redc_1_sec.
 
@@ -186,8 +188,8 @@
 
 2009-11-28  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpn/generic/mulmod_bnm1.c: Basecases made simpler,
-	  this also corrects a bug affecting previous version.
+	* mpn/generic/mulmod_bnm1.c: Basecases made simpler, this also corrects
+	a bug affecting previous version.
 
 2009-11-28  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -274,7 +276,7 @@
 2009-11-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mullow_n.c: Disable Mulders' trick for small operands,
-        use fft for bigger ones.
+	use fft for bigger ones.
 	* tests/mpn/t-mullo.c: New test file.
 
 2009-11-22  Torbjorn Granlund  <tege@gmplib.org>
@@ -414,7 +416,7 @@
 	* mpn/x86_64/x86_64-defs.m4 (CPUVEC_FUNCS_LIST): New, copied from
 	mpn/x86/x86-defs.m4.
 	* configure.in: Move down x86 fat setup code until after ABI has been
-	determined; generalize to handle x86_64.
+	determined; generalise to handle x86_64.
 
 2009-11-09  Torbjorn Granlund  <tege@gmplib.org>
 
