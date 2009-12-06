@@ -74,6 +74,7 @@ mpn_redc_2 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_srcptr mip)
   mp_limb_t upn;
   mp_limb_t cy;
 
+  ASSERT (n > 0);
   ASSERT_MPN (up, 2*n);
 
   if ((n & 1) != 0)

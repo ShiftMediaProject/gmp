@@ -1,4 +1,4 @@
-/* mpn_redc_1.  Set cp[] <- up[]/R^n mod mp[].  Clobber up[].
+/* mpn_redc_1_sec.  Set cp[] <- up[]/R^n mod mp[].  Clobber up[].
    mp[] is n limbs; up[] is 2n limbs.
 
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
@@ -25,7 +25,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 void
-mpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
+mpn_redc_1_sec (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
 {
   mp_size_t j;
   mp_limb_t cy;
@@ -41,6 +41,5 @@ mpn_redc_1 (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_limb_t invm)
       up++;
     }
   cy = mpn_add_n (rp, up, up - n, n);
-  if (cy != 0)
-    mpn_sub_n (rp, rp, mp, n);
+  mpn_subcnd_n (rp, rp, mp, n, cy);
 }

@@ -1373,6 +1373,7 @@ int speed_routine_count_zeros_setup
     MPN_COPY (dp, s->yp, s->size);					\
     dp[0] |= 1;								\
     binvert_limb (inv, dp[0]);						\
+    inv = -inv;								\
 									\
     speed_operand_src (s, ap, 2*s->size);				\
     speed_operand_dst (s, tp, 2*s->size);				\
@@ -1410,6 +1411,7 @@ int speed_routine_count_zeros_setup
     MPN_COPY (dp, s->yp, s->size);					\
     dp[0] |= 1;								\
     binvert_limb (inv, dp[0]);						\
+    inv = -inv;								\
 									\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_dst (s, tp, s->size);					\
@@ -1487,6 +1489,7 @@ int speed_routine_count_zeros_setup
     MPN_COPY (mp, s->yp, s->size);					\
     mp[0] |= 1;								\
     binvert_limb (inv, mp[0]);						\
+    inv = -inv;								\
 									\
     speed_operand_src (s, ap, 2*s->size+1);				\
     speed_operand_dst (s, tp, 2*s->size+1);				\
@@ -1528,6 +1531,7 @@ int speed_routine_count_zeros_setup
     MPN_COPY (mp, s->yp, s->size);					\
     mp[0] |= 1;								\
     mpn_binvert (invp, mp, 2, tp);					\
+    invp[0] = -invp[0]; invp[1] = ~invp[1];				\
 									\
     speed_operand_src (s, ap, 2*s->size+1);				\
     speed_operand_dst (s, tp, 2*s->size+1);				\

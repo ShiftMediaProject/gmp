@@ -21,12 +21,36 @@
 	* mpn/generic/toom4_sqr.c: Avoid C99 construct.
 	* mpn/generic/toom_interpolate_7pts.c: Likewise.
 
-2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
+2009-12-05  Torbjorn Granlund  <tege@gmplib.org>
 
-	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
+	* mpn/generic/redc_1_sec.c: New file.
+	* mpn/generic/powm_sec.c: Use redc_1_sec.  Use dummy full subtract
+	instead of mpn_cmp since the latter leaks to the side channel.
+	(mpn_local_sqr_n): New function, with associated macros.
+	(mpn_powm_sec): Use mpn_local_sqr_n.
+
+	* configure.in (HAVE_NATIVE): Add missing functions, then sort.
+
+2009-12-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_dc_div): Up min_size to 6.
+	(tune_mod_1): Set MOD_1_1_THRESHOLD min_size to 2.
+
+	* tune/speed.h: Negate "binvert"-type inverses, as required.
+
+	* mpn/generic/redc_1.c: Add ASSERTs.
+	* mpn/generic/redc_2.c: Likewise.
+
+	* mpn/generic/sbpi1_bdiv_q.c: Simplify loops, indexing.
+
+2009-12-03  Yann Droneaud  <yann@droneaud.fr>
 
 	* acinclude.m4 ([long long reliability test 1]): Add a "static" for C99
 	inline semantics compatibility.
+
+2009-12-03  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Move intptr_t test into common AC_CHECK_TYPES.
 
 	* mpn/generic/gcdext.c: Add a TMP_FREE.
 
