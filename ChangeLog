@@ -1,6 +1,6 @@
 2009-12-06  Torbjorn Granlund  <tege@gmplib.org>
 
-	* configure.in: Don't include ev5 directory for ev6* abd ev7.  Misc
+	* configure.in: Don't include ev5 directory for ev6* and ev7.  Misc
 	alpha path cleanups.
 	* mpn/alpha/add_n.asm: Replaced by mpn/alpha/ev5/add_n.asm.
 	* mpn/alpha/sub_n.asm: Replaced by mpn/alpha/ev5/sub_n.asm.
@@ -9,8 +9,8 @@
 	* mpn/alpha/com_n.asm: New, moved from mpn/alpha/ev5/rshift.asm.
 	* mpn/alpha/ev5/diveby3.asm: New, moved from mpn/alpha/diveby3.asm.
 
-	* mpn/powerpc64/mode64/diveby3.asm: Remove, slower than mpn_bdiv_dbm1c
-	on all hardware.
+	* mpn/powerpc64/mode64/diveby3.asm: Remove, it is slower than
+	mpn_bdiv_dbm1c on all hardware.
 
 	* mpn/generic/powm_sec.c: Rework logic for mpn_sqr_basecase size limit.
 
