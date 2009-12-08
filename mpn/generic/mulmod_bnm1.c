@@ -43,7 +43,7 @@ mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
   ASSERT (0 < rn);
 
   mpn_mul_n (rp, ap, bp, rn);
-  cy = mpn_add (rp, rp, rn, rp + rn, rn);
+  cy = mpn_add_n (rp, rp, rp + rn, rn);
   /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
    * be no overflow when adding in the carry. */
   MPN_INCR_U (rp, rn, cy);
@@ -254,17 +254,20 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 }
 
 mp_size_t
-mpn_mulmod_bnm1_next_size (mp_size_t size)
+mpn_mulmod_bnm1_next_size (mp_size_t n)
 {
-  mp_size_t n, new_n;
-  int k;
+  if (BELOW_THRESHOLD (n,     MULMOD_BNM1_THRESHOLD))
+    return n;
+  if (BELOW_THRESHOLD (n, 2 * MULMOD_BNM1_THRESHOLD))
+    return (n + (2-1)) & (-2);
+  if (BELOW_THRESHOLD (n, 4 * MULMOD_BNM1_THRESHOLD))
+    return (n + (4-1)) & (-4);
+  if (BELOW_THRESHOLD (n, 8 * MULMOD_BNM1_THRESHOLD))
+    return (n + (8-1)) & (-8);
 
-  n = (size + 1) >> 1;
   if (BELOW_THRESHOLD (n, MUL_FFT_MODF_THRESHOLD))
-    return size + (-size & 0xf);
+    return (n + (16-1)) & (-16);
 
-  k = mpn_fft_best_k (n, 0);
-  new_n = mpn_fft_next_size (n, k);
-
-  return 2 * new_n;
+  n = (n + 1) >> 1;
+  return 2 * mpn_fft_next_size (n, mpn_fft_best_k (n, 0));
 }

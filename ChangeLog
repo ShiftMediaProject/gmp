@@ -1,5 +1,8 @@
 2009-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): Rewrite.
+	(mpn_bc_mulmod_bnm1): Use mpn_add_n instead of mpn_add.
+
 	* tune/speed.c (routine): Add mpn_invert.
 
 	* tune/tuneup.c	(tune_invert): New function.
