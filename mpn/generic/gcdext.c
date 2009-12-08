@@ -85,6 +85,65 @@ hgcd_mul_matrix_vector (struct hgcd_matrix *M,
   return n;
 }
 
+static void
+divexact (mp_ptr qp,
+	  mp_srcptr np, mp_size_t nn,
+	  mp_srcptr dp, mp_size_t dn)
+{
+  unsigned shift;
+  mp_size_t qn;
+  mp_ptr tp;
+  TMP_DECL;
+
+  ASSERT (dn > 0);
+  ASSERT (nn >= dn);
+  ASSERT (dp[dn-1] > 0);
+  ASSERT (np[nn-1] > 0);
+
+  qn = nn + 1 - dn;
+
+  while (dp[0] == 0)
+    {
+      ASSERT (np[0] == 0);
+      dp++;
+      np++;
+      dn--;
+      nn--;
+    }
+  count_trailing_zeros (shift, dp[0]);
+
+  TMP_MARK;
+  if (shift > 0)
+    {
+      tp = TMP_ALLOC_LIMBS (dn);
+      mpn_rshift (tp, dp, dn, shift);
+      dp = tp;
+
+      /* FIXME: It's sufficient to get the qn least significant
+	 limbs. */
+      tp = TMP_ALLOC_LIMBS (nn);
+      mpn_rshift (tp, np, nn, shift);
+      np = tp;
+    }
+  else
+    {
+      mp_ptr tp = TMP_ALLOC_LIMBS (qn);
+      MPN_COPY (tp, np, qn);
+      np = tp;
+    }
+  if (nn > qn)
+    nn = qn;
+  if (dn > qn)
+    dn = qn;
+
+  if (qn > nn)
+    MPN_ZERO (qp + nn, qn - nn);
+
+  tp = TMP_ALLOC_LIMBS (mpn_bdiv_q_itch (nn, dn));
+  mpn_bdiv_q (qp, np, nn, dp, dn, tp);
+  TMP_FREE;  
+}
+
 #define COMPUTE_V_ITCH(n) (2*(n) + 1)
 
 /* Computes |v| = |(g - u a)| / b, where u may be positive or
@@ -146,19 +205,36 @@ compute_v (mp_ptr vp,
   vn = size + 1 - bn;
   ASSERT (vn <= n + 1);
 
-  /* FIXME: Use divexact. Or do the entire calculation mod 2^{n *
-     GMP_NUMB_BITS}. */
-  mpn_tdiv_qr (vp, tp, 0, tp, size, bp, bn);
+  divexact (vp, tp, size, bp, bn);
   vn -= (vp[vn-1] == 0);
 
-  /* Remainder must be zero */
-#if WANT_ASSERT
+#if 0
   {
-    mp_size_t i;
-    for (i = 0; i < bn; i++)
+    mp_ptr ref_qp;
+    mp_ptr ref_rp;
+    TMP_DECL;
+    
+    TMP_MARK;
+    ref_qp = TMP_ALLOC_LIMBS (size + 1 - bn);
+    ref_rp = TMP_ALLOC_LIMBS (bn);
+    mpn_tdiv_qr (ref_qp, ref_rp, 0, tp, size, bp, bn);
+
+    ASSERT_ALWAYS (mpn_zero_p (ref_rp, bn));
+    if (mpn_cmp (ref_qp, vp, size + 1 - bn) != 0)
       {
-	ASSERT (tp[i] == 0);
+	gmp_fprintf (stderr, "Bad result from divexact: size = %d, bn = %d\n"
+		     "t = %Nx\n"
+		     "b = %Nx\n"
+		     "v = %Nx\n"
+		     "q = %Nx (expected)\n",
+		     size, bn, tp, size, bp, bn,
+		     vp, size + 1 - bn,
+		     ref_qp, size + 1 - bn);
+	abort();
       }
+      
+      
+    TMP_FREE;
   }
 #endif
   return vn;
@@ -181,7 +257,8 @@ compute_v (mp_ptr vp,
    For the lehmer call after the loop, Let T denote
    GCDEXT_DC_THRESHOLD. For the gcdext_lehmer call, we need T each for
    u, a and b, and 4T+3 scratch space. Next, for compute_v, we need T
-   + 1 for v and 2T + 1 scratch space. In all, 7T + 3 is sufficient.
+   for u, T+1 for v and 2T + 1 scratch space. In all, 7T + 3 is
+   sufficient for both operations.
 
 */
 

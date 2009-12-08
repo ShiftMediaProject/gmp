@@ -1,5 +1,13 @@
 2009-12-08  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Use
+	table lookup for count_trailing_zeros. Binary algorithm still
+	disabled by default.
+
+	* mpn/generic/gcdext.c (divexact): Local definition of divexact,
+	using mpn_bdiv_q.
+	(compute_v): Use it.
+
 	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-bdiv.
 
 	* tests/mpn/t-bdiv.c: New file.
