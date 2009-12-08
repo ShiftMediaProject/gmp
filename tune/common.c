@@ -786,6 +786,12 @@ speed_mpn_binvert (struct speed_params *s)
 }
 
 double
+speed_mpn_invert (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_INVERT (mpn_invert, mpn_invert_itch);
+}
+
+double
 speed_mpn_redc_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_REDC_1 (mpn_redc_1);
@@ -1253,19 +1259,6 @@ speed_mpn_gcd (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd);
 }
-#if 0
-double
-speed_mpn_gcd_binary (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_GCD (mpn_gcd_binary);
-}
-double
-speed_mpn_gcd_accel (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_GCD (mpn_gcd_accel);
-}
-#endif
-
 
 double
 speed_mpn_gcdext (struct speed_params *s)

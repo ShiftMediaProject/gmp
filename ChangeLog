@@ -1,3 +1,13 @@
+2009-12-08  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.c (routine): Add mpn_invert.
+
+	* tune/tuneup.c	(tune_invert): New function.
+	* tune/speed.h (SPEED_ROUTINE_MPN_INVERT): New macro.
+	* tune/common.c (speed_mpn_invert): New function.
+	* gmp-impl.h: Provide declarations for corresponding threshold var.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add invert.c.
+
 2009-12-08  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/devel/try.c: Test mpn_addlsh2_n and mpn_{add,sub}lsh_n;
@@ -146,7 +156,7 @@
 	(tune_binvert): New function.
 	* tune/speed.h (SPEED_ROUTINE_MPN_BINVERT): New macro.
 	* tune/common.c (speed_mpn_binvert): New function.
-	* gmp-impl.h: Provide declarations for corresponding threshold vars.
+	* gmp-impl.h: Provide declarations for corresponding threshold var.
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add binvert.c.
 
 	* tune/tuneup.c: Tune DC_BDIV_QR_THRESHOLD and DC_BDIV_Q_THRESHOLD.

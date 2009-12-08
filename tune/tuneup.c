@@ -168,6 +168,7 @@ mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
+mp_size_t  inv_newton_threshold         = MP_SIZE_T_MAX;
 mp_size_t  binv_newton_threshold        = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
@@ -1039,6 +1040,19 @@ tune_dc_bdiv (void)
 }
 
 void
+tune_invert (void)
+{
+  {
+    static struct param_t  param;
+    param.name = "INV_NEWTON_THRESHOLD";
+    param.function = speed_mpn_invert;
+    param.step_factor = 0.02;
+    param.max_size = 5000;
+    one (&inv_newton_threshold, &param);
+  }
+}
+
+void
 tune_binvert (void)
 {
   {
@@ -1122,17 +1136,6 @@ tune_hgcd (void)
   one (&hgcd_threshold, &param);
 }
 
-#if 0
-void
-tune_gcd_accel (void)
-{
-  static struct param_t  param;
-  param.name = "GCD_ACCEL_THRESHOLD";
-  param.function = speed_mpn_gcd;
-  param.min_size = 1;
-  one (&gcd_accel_threshold, &param);
-}
-#endif
 void
 tune_gcd_dc (void)
 {
@@ -1909,6 +1912,9 @@ all (void)
 
   tune_dc_div ();
   tune_dc_bdiv ();
+#if 0
+  tune_invert ();
+#endif
   tune_binvert ();
   tune_redc ();
   printf("\n");
@@ -1917,9 +1923,6 @@ all (void)
   tune_hgcd ();
   tune_gcd_dc ();
   tune_gcdext_dc ();
-#if 0
-  tune_gcd_accel ();
-#endif
   tune_jacobi_base ();
   printf("\n");
 
