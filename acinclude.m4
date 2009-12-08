@@ -112,7 +112,7 @@ dnl  Expand to the right way to #include gmp-h.in.  This must be used
 dnl  instead of gmp.h, since that file isn't generated until the end of the
 dnl  configure.
 dnl
-dnl  Dummy values for GMP_LIMB_BITS and GMP_LIMB_BITS are enough
+dnl  Dummy value for GMP_LIMB_BITS is enough
 dnl  for all current configure-time uses of gmp.h.
 
 define(GMP_INCLUDE_GMP_H,

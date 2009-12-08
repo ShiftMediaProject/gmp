@@ -1,3 +1,13 @@
+2009-12-08  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/devel/try.c: Test mpn_addlsh2_n and mpn_{add,sub}lsh_n;
+	mpn_rsblsh_n now tests all shift values.
+	* tests/refmpn.c (refmpn_addlsh_n, refmpn_sublsh_n): New functions.
+	(refmpn_addlsh1_n): Use generic refmpn_addlsh_n.
+	(refmpn_sublsh1_n): Use generic refmpn_sublsh_n.
+	(refmpn_addlsh2_n): New function.
+	* tests/tests.h: Declare new functions.
+
 2009-12-06  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mulmod_bnm1): Up min_size to 12.

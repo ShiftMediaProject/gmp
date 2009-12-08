@@ -183,6 +183,10 @@ mp_limb_t refmpn_add_nc __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                  mp_size_t size, mp_limb_t carry));
 mp_limb_t refmpn_addlsh1_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
+mp_limb_t refmpn_addlsh2_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+                                mp_size_t size));
+mp_limb_t refmpn_addlsh_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+                                mp_size_t size, unsigned int));
 mp_limb_t refmpn_addmul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                    mp_limb_t multiplier));
 mp_limb_t refmpn_addmul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
@@ -369,6 +373,8 @@ mp_limb_t refmpn_sub_nc __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                  mp_size_t size, mp_limb_t carry));
 mp_limb_t refmpn_sublsh1_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                                 mp_size_t size));
+mp_limb_t refmpn_sublsh_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
+                                mp_size_t size, unsigned int));
 mp_limb_t refmpn_submul_1 __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                    mp_limb_t multiplier));
 mp_limb_t refmpn_submul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,

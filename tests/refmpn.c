@@ -611,43 +611,63 @@ refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 }
 
 mp_limb_t
-refmpn_addlsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+refmpn_addlsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+		 mp_size_t n, unsigned int s)
 {
   mp_limb_t cy;
   mp_ptr tp;
 
   ASSERT (refmpn_overlap_fullonly_two_p (rp, up, vp, n));
   ASSERT (n >= 1);
+  ASSERT (0 < s && s < GMP_NUMB_BITS);
   ASSERT_MPN (up, n);
   ASSERT_MPN (vp, n);
 
   tp = refmpn_malloc_limbs (n);
-  cy  = refmpn_lshift (tp, vp, n, 1);
+  cy  = refmpn_lshift (tp, vp, n, s);
   cy += refmpn_add_n (rp, up, tp, n);
+  free (tp);
+  return cy;
+}
+mp_limb_t
+refmpn_addlsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_addlsh_n (rp, up, vp, n, 1);
+}
+mp_limb_t
+refmpn_addlsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  return refmpn_addlsh_n (rp, up, vp, n, 2);
+}
+
+mp_limb_t
+refmpn_sublsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
+		 mp_size_t n, unsigned int s)
+{
+  mp_limb_t cy;
+  mp_ptr tp;
+
+  ASSERT (refmpn_overlap_fullonly_two_p (rp, up, vp, n));
+  ASSERT (n >= 1);
+  ASSERT (0 < s && s < GMP_NUMB_BITS);
+  ASSERT_MPN (up, n);
+  ASSERT_MPN (vp, n);
+
+  tp = refmpn_malloc_limbs (n);
+  cy  = mpn_lshift (tp, vp, n, s);
+  cy += mpn_sub_n (rp, up, tp, n);
   free (tp);
   return cy;
 }
 mp_limb_t
 refmpn_sublsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
-  mp_limb_t cy;
-  mp_ptr tp;
-
-  ASSERT (refmpn_overlap_fullonly_two_p (rp, up, vp, n));
-  ASSERT (n >= 1);
-  ASSERT_MPN (up, n);
-  ASSERT_MPN (vp, n);
-
-  tp = refmpn_malloc_limbs (n);
-  cy  = mpn_lshift (tp, vp, n, 1);
-  cy += mpn_sub_n (rp, up, tp, n);
-  free (tp);
-  return cy;
+  return refmpn_sublsh_n (rp, up, vp, n, 1);
 }
 
 mp_limb_signed_t
 refmpn_rsblsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
-		  mp_size_t n, unsigned int s)
+		 mp_size_t n, unsigned int s)
 {
   mp_limb_signed_t cy;
   mp_ptr tp;
@@ -664,13 +684,11 @@ refmpn_rsblsh_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp,
   free (tp);
   return cy;
 }
-
 mp_limb_signed_t
 refmpn_rsblsh1_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
   return refmpn_rsblsh_n (rp, up, vp, n, 1);
 }
-
 mp_limb_signed_t
 refmpn_rsblsh2_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
