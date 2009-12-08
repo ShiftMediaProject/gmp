@@ -208,35 +208,6 @@ compute_v (mp_ptr vp,
   divexact (vp, tp, size, bp, bn);
   vn -= (vp[vn-1] == 0);
 
-#if 0
-  {
-    mp_ptr ref_qp;
-    mp_ptr ref_rp;
-    TMP_DECL;
-    
-    TMP_MARK;
-    ref_qp = TMP_ALLOC_LIMBS (size + 1 - bn);
-    ref_rp = TMP_ALLOC_LIMBS (bn);
-    mpn_tdiv_qr (ref_qp, ref_rp, 0, tp, size, bp, bn);
-
-    ASSERT_ALWAYS (mpn_zero_p (ref_rp, bn));
-    if (mpn_cmp (ref_qp, vp, size + 1 - bn) != 0)
-      {
-	gmp_fprintf (stderr, "Bad result from divexact: size = %d, bn = %d\n"
-		     "t = %Nx\n"
-		     "b = %Nx\n"
-		     "v = %Nx\n"
-		     "q = %Nx (expected)\n",
-		     size, bn, tp, size, bp, bn,
-		     vp, size + 1 - bn,
-		     ref_qp, size + 1 - bn);
-	abort();
-      }
-      
-      
-    TMP_FREE;
-  }
-#endif
   return vn;
 }
 
