@@ -37,24 +37,22 @@ mpn_bdiv_q (mp_ptr qp,
 	    mp_ptr tp)
 {
   mp_limb_t di;
-  mp_size_t qn = nn - dn + 1;
 
-  dn = MIN (qn, dn);
   if (BELOW_THRESHOLD (dn, DC_BDIV_Q_THRESHOLD))
     {
-      MPN_COPY (tp, np, qn);
+      MPN_COPY (tp, np, nn);
       binvert_limb (di, dp[0]);  di = -di;
-      mpn_sbpi1_bdiv_q (qp, tp, qn, dp, dn, di);
+      mpn_sbpi1_bdiv_q (qp, tp, nn, dp, dn, di);
     }
   else if (BELOW_THRESHOLD (dn, MU_BDIV_Q_THRESHOLD))
     {
-      MPN_COPY (tp, np, qn);
+      MPN_COPY (tp, np, nn);
       binvert_limb (di, dp[0]);  di = -di;
-      mpn_dcpi1_bdiv_q (qp, tp, qn, dp, dn, di);
+      mpn_dcpi1_bdiv_q (qp, tp, nn, dp, dn, di);
     }
   else
     {
-      mpn_mu_bdiv_q (qp, np, qn, dp, dn, tp);
+      mpn_mu_bdiv_q (qp, np, nn, dp, dn, tp);
     }
   return;
 }

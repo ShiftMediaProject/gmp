@@ -1,3 +1,15 @@
+2009-12-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-bdiv.
+
+	* tests/mpn/t-bdiv.c: New file.
+
+	* mpn/generic/bdiv_q.c (mpn_bdiv_q): Fixed bad quotient length,
+	should have qn == nn.
+
+	* mpn/generic/bdiv_qr.c (mpn_bdiv_qr): Pass correct nn length to
+	the lower-level functions.
+
 2009-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Add mpn_invert.

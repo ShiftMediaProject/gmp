@@ -46,16 +46,16 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
-      rh = mpn_sbpi1_bdiv_qr (qp, tp, nn + 1, dp, dn, di);
-      MPN_COPY (rp, tp + nn + 1 - dn, dn);
+      rh = mpn_sbpi1_bdiv_qr (qp, tp, nn, dp, dn, di);
+      MPN_COPY (rp, tp + nn - dn, dn);
     }
   else if (BELOW_THRESHOLD (dn, MU_BDIV_QR_THRESHOLD))
     {
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
-      rh = mpn_dcpi1_bdiv_qr (qp, tp, nn + 1, dp, dn, di);
-      MPN_COPY (rp, tp + nn + 1 - dn, dn);
+      rh = mpn_dcpi1_bdiv_qr (qp, tp, nn, dp, dn, di);
+      MPN_COPY (rp, tp + nn - dn, dn);
     }
   else
     {
@@ -63,11 +63,11 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
       mp_ptr scratch_out;
       TMP_DECL;
       TMP_MARK;
-      itch = mpn_mu_bdiv_qr_itch (nn + 1, dn);
+      itch = mpn_mu_bdiv_qr_itch (nn, dn);
       scratch_out = TMP_BALLOC_LIMBS (itch);
       MPN_COPY (tp, np, nn);
       tp[nn] = 0;
-      rh = mpn_mu_bdiv_qr (qp, rp, tp, nn + 1, dp, dn, scratch_out);
+      rh = mpn_mu_bdiv_qr (qp, rp, tp, nn, dp, dn, scratch_out);
       TMP_FREE;
     }
 
