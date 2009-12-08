@@ -1,3 +1,23 @@
+2009-12-08  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Use
+	table lookup for count_trailing_zeros. Binary algorithm still
+	disabled by default.
+
+	* mpn/generic/gcdext.c (divexact): Local definition of divexact,
+	using mpn_bdiv_q.
+	(compute_v): Use it.
+
+	* tests/mpn/Makefile.am (check_PROGRAMS): Added t-bdiv.
+
+	* tests/mpn/t-bdiv.c: New file.
+
+	* mpn/generic/bdiv_q.c (mpn_bdiv_q): Fixed bad quotient length,
+	should have qn == nn.
+
+	* mpn/generic/bdiv_qr.c (mpn_bdiv_qr): Pass correct nn length to
+	the lower-level functions.
+
 2009-12-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED): New define.
@@ -110,6 +130,12 @@
 	* mpn/generic/gcdext.c: Add a TMP_FREE.
 
 2009-12-03  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]:
+	Added various masking tricks.
+
+	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]:
+	Reimplemented binary gcdext, with proper canonicalization.	
 
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Handle v == 0
 	from mpn_gcdext_1.
