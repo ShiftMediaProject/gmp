@@ -1110,6 +1110,12 @@ speed_mpn_mulmod_bnm1 (struct speed_params *s)
 }
 
 double
+speed_mpn_mulmod_bnm1_rounded (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED (mpn_mulmod_bnm1);
+}
+
+double
 speed_mpn_matrix22_mul (struct speed_params *s)
 {
   /* Speed params only includes 2 inputs, so we have to invent the

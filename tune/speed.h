@@ -276,6 +276,7 @@ double speed_mpn_toom44_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom32_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_toom42_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mulmod_bnm1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mulmod_bnm1_rounded __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_udiv_qrnnd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_udiv_qrnnd_r __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_umul_ppmm __GMP_PROTO ((struct speed_params *s));
@@ -1004,7 +1005,7 @@ int speed_routine_count_zeros_setup
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, 2 * s->size, s->align_wp);		\
-    SPEED_TMP_ALLOC_LIMBS (tp, 20 * s->size + 100, s->align_wp2);	\
+    SPEED_TMP_ALLOC_LIMBS (tp, 3 * s->size + 100, s->align_wp2);	\
 									\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_src (s, s->yp, s->size);				\
@@ -1016,6 +1017,38 @@ int speed_routine_count_zeros_setup
     i = s->reps;							\
     do									\
       function (wp, s->size, s->xp, s->size, s->yp, s->size, tp);	\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED(function)			\
+  {									\
+    mp_ptr    wp, tp;							\
+    unsigned  i;							\
+    double    t;							\
+    mp_size_t size;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    size = mpn_mulmod_bnm1_next_size (s->size);				\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (wp, 2*size, s->align_wp); /* FIXME 2* */	\
+    SPEED_TMP_ALLOC_LIMBS (tp, 3 * size + 100, s->align_wp2);		\
+									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, s->yp, s->size);				\
+    speed_operand_dst (s, wp, 2 * size);				\
+    speed_operand_dst (s, tp, 3 * size + 100); /* FIXME: Use itch function */ \
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      function (wp, size, s->xp, s->size, s->yp, s->size, tp);	\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

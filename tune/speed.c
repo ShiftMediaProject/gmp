@@ -309,6 +309,7 @@ const struct routine_t {
   { "mpn_mullo_basecase", speed_mpn_mullo_basecase  },
 
   { "mpn_mulmod_bnm1",   speed_mpn_mulmod_bnm1      },
+  { "mpn_mulmod_bnm1_rounded", speed_mpn_mulmod_bnm1_rounded      },
 
   { "mpn_invert",        speed_mpn_invert           },
   { "mpn_binvert",       speed_mpn_binvert          },
