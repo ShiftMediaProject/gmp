@@ -1,3 +1,10 @@
+2009-12-08  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c (mpn_bc_mulmod_bnm1,
+	mpn_bc_mulmod_bnp1): Added a parameter for scratch area, possibly
+	same as result area (as suggested by Niels Möller).
+	(mpn_mulmod_bnm1): Calls changed accordingly.
+
 2009-12-08  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]: Use

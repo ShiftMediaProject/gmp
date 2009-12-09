@@ -34,16 +34,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Inputs are {ap,rn} and {bp,rn}; output is {rp,rn}, computation is
    mod B^rn - 1, and values are semi-normalised; zero is represented
-   as either 0 or B^n - 1.  Needs 2rn limbs at rp. */
+   as either 0 or B^n - 1.  Needs a scratch of 2rn limbs at tp.
+   tp==rp is allowed. */
 static void
-mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
+mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
+		    mp_ptr tp)
 {
   mp_limb_t cy;
 
   ASSERT (0 < rn);
 
-  mpn_mul_n (rp, ap, bp, rn);
-  cy = mpn_add_n (rp, rp, rp + rn, rn);
+  mpn_mul_n (tp, ap, bp, rn);
+  cy = mpn_add_n (rp, tp, tp + rn, rn);
   /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
    * be no overflow when adding in the carry. */
   MPN_INCR_U (rp, rn, cy);
@@ -52,18 +54,20 @@ mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
 
 /* Inputs are {ap,rn+1} and {bp,rn+1}; output is {rp,rn+1}, in
    semi-normalised representation, computation is mod B^rn + 1. Needs
-   2rn + 2 limbs at rp. Output is normalised. */
+   a scratch area of 2rn + 2 limbs at tp; tp == rp is allowed.
+   Output is normalised. */
 static void
-mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn)
+mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
+		    mp_ptr tp)
 {
   mp_limb_t cy;
 
   ASSERT (0 < rn);
 
-  mpn_mul_n (rp, ap, bp, rn + 1);
-  ASSERT( rp[2*rn+1] == 0);
-  ASSERT( rp[2*rn] < GMP_NUMB_MAX);
-  cy = rp[2*rn] + mpn_sub_n (rp, rp, rp+rn, rn);
+  mpn_mul_n (tp, ap, bp, rn + 1);
+  ASSERT (tp[2*rn+1] == 0);
+  ASSERT (tp[2*rn] < GMP_NUMB_MAX);
+  cy = tp[2*rn] + mpn_sub_n (rp, tp, tp+rn, rn);
   rp[rn] = 0;
   MPN_INCR_U (rp, rn+1, cy );
 }
@@ -93,21 +97,21 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 
   if ((rn & 1) != 0 || BELOW_THRESHOLD (rn, MULMOD_BNM1_THRESHOLD))
     {
-      if ( UNLIKELY(bn < rn) ) /* May happen only for misuse or _very_
-				  unbalanced operands */
+      if (UNLIKELY (bn < rn)) /* May happen only for misuse or _very_
+				 unbalanced operands */
 	{
-	  MPN_COPY(tp, bp, bn);
-	  MPN_ZERO(tp + bn, rn - bn);
+	  MPN_COPY (tp, bp, bn);
+	  MPN_ZERO (tp + bn, rn - bn);
 	  bp = tp;
 	}
-      ASSERT ( ALLOW_MISUSE || (an >= rn) );
-      if ( ALLOW_MISUSE && UNLIKELY(an < rn) )
+      ASSERT (ALLOW_MISUSE || (an >= rn) );
+      if (ALLOW_MISUSE && UNLIKELY (an < rn) )
 	{
-	  MPN_COPY(tp + rn, ap, an);
-	  MPN_ZERO(tp + rn + an, rn - an);
+	  MPN_COPY (tp + rn, ap, an);
+	  MPN_ZERO (tp + rn + an, rn - an);
 	  ap = tp + rn;
 	}
-      mpn_bc_mulmod_bnm1 (rp, ap, bp, rn);
+      mpn_bc_mulmod_bnm1 (rp, ap, bp, rn, rp);
     }
   else
     {
@@ -202,18 +206,18 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	  xp[n] = mpn_mul_fft (xp, n, ap1, anp, bp1, bnp, k);
 	else
 	  {
-	    if ( UNLIKELY(bp1 == b0) ) {
+	    if (UNLIKELY (bp1 == b0)) {
 	      bp1 = so + n + 1;
-	      MPN_COPY(so + n + 1, b0, bnp);
-	      MPN_ZERO(so + n + 1 + bnp, n + 1 - bnp);
+	      MPN_COPY (so + n + 1, b0, bnp);
+	      MPN_ZERO (so + n + 1 + bnp, n + 1 - bnp);
 	    }
-	    ASSERT ( ALLOW_MISUSE || ((an >= rn) && (ap1 != a0)) );
-	    if ( ALLOW_MISUSE && UNLIKELY(ap1 == a0) ) {
+	    ASSERT (ALLOW_MISUSE || ((an >= rn) && (ap1 != a0)) );
+	    if (ALLOW_MISUSE && UNLIKELY (ap1 == a0)) {
 	      ap1 = so;
-	      MPN_COPY(so, a0, anp);
-	      MPN_ZERO(so + anp, n + 1 - anp);
+	      MPN_COPY (so, a0, anp);
+	      MPN_ZERO (so + anp, n + 1 - anp);
 	    }
-	    mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n);
+	    mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n, xp);
 	  }
       }
 
