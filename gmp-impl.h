@@ -947,6 +947,8 @@ __GMP_DECLSPEC void mpn_mod_1s_4p_cps __GMP_PROTO ((mp_limb_t [7], mp_limb_t));
 #define mpn_mod_1s_4p __MPN(mod_1s_4p)
 __GMP_DECLSPEC mp_limb_t mpn_mod_1s_4p __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t [7])) __GMP_ATTRIBUTE_PURE;
 
+#define mpn_bc_mulmod_bnm1 __MPN(bc_mulmod_bnm1)
+__GMP_DECLSPEC void mpn_bc_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_mulmod_bnm1 __MPN(mulmod_bnm1)
 __GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_mulmod_bnm1_next_size __MPN(mulmod_bnm1_next_size)

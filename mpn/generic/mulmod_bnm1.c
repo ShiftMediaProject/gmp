@@ -32,7 +32,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    mod B^rn - 1, and values are semi-normalised; zero is represented
    as either 0 or B^n - 1.  Needs a scratch of 2rn limbs at tp.
    tp==rp is allowed. */
-static void
+void
 mpn_bc_mulmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
 		    mp_ptr tp)
 {

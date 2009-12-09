@@ -1,5 +1,11 @@
 2009-12-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL): New macro, made
+	from now deleted SPEED_ROUTINE_MPN_MULMOD_BNM1.
+	* tune/common.c (speed_mpn_bc_mulmod_bnm1): New function.
+	(speed_mpn_mulmod_bnm1): Use SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL.
+	* tune/speed.c (routine): Add mpn_bc_mulmod_bnm1.
+
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): Rewrite.
 
 	* tune/tuneup.c (tune_mulmod_bnm1): Rewrite.

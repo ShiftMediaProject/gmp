@@ -1106,7 +1106,13 @@ speed_mpn_mullo_basecase (struct speed_params *s)
 double
 speed_mpn_mulmod_bnm1 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MULMOD_BNM1 (mpn_mulmod_bnm1);
+  SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL (mpn_mulmod_bnm1 (wp, s->size, s->xp, s->size, s->yp, s->size, tp));
+}
+
+double
+speed_mpn_bc_mulmod_bnm1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL (mpn_bc_mulmod_bnm1 (wp, s->xp, s->yp, s->size, tp));
 }
 
 double
