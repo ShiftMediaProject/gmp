@@ -28,10 +28,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#ifndef MULMOD_BNM1_THRESHOLD
-#define MULMOD_BNM1_THRESHOLD 16
-#endif
-
 /* Inputs are {ap,rn} and {bp,rn}; output is {rp,rn}, computation is
    mod B^rn - 1, and values are semi-normalised; zero is represented
    as either 0 or B^n - 1.  Needs a scratch of 2rn limbs at tp.
@@ -260,18 +256,19 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 mp_size_t
 mpn_mulmod_bnm1_next_size (mp_size_t n)
 {
+  mp_size_t nh;
+
   if (BELOW_THRESHOLD (n,     MULMOD_BNM1_THRESHOLD))
     return n;
-  if (BELOW_THRESHOLD (n, 2 * MULMOD_BNM1_THRESHOLD))
+  if (BELOW_THRESHOLD (n, 4 * (MULMOD_BNM1_THRESHOLD - 1) + 1))
     return (n + (2-1)) & (-2);
-  if (BELOW_THRESHOLD (n, 4 * MULMOD_BNM1_THRESHOLD))
+  if (BELOW_THRESHOLD (n, 8 * (MULMOD_BNM1_THRESHOLD - 1) + 1))
     return (n + (4-1)) & (-4);
-  if (BELOW_THRESHOLD (n, 8 * MULMOD_BNM1_THRESHOLD))
+
+  nh = (n + 1) >> 1;
+
+  if (BELOW_THRESHOLD (nh, MUL_FFT_MODF_THRESHOLD))
     return (n + (8-1)) & (-8);
 
-  if (BELOW_THRESHOLD (n, MUL_FFT_MODF_THRESHOLD))
-    return (n + (16-1)) & (-16);
-
-  n = (n + 1) >> 1;
-  return 2 * mpn_fft_next_size (n, mpn_fft_best_k (n, 0));
+  return 2 * mpn_fft_next_size (nh, mpn_fft_best_k (nh, 0));
 }

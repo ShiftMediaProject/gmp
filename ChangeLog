@@ -1,5 +1,7 @@
 2009-12-09  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): Rewrite.
+
 	* tune/tuneup.c (tune_mulmod_bnm1): Rewrite.
 
 2009-12-08  Marco Bodrato <bodrato@mail.dm.unipi.it>
