@@ -904,13 +904,9 @@ tune_mulmod_bnm1 (void)
 {
   static struct param_t  param;
 
-  param.function = speed_mpn_mulmod_bnm1;
-
   param.name = "MULMOD_BNM1_THRESHOLD";
-  param.min_size = 12;
-  param.step_factor = 0.0;
-  param.step = 4;
-  param.min_is_always = 1;
+  param.function = speed_mpn_mulmod_bnm1;
+  param.min_size = 4;
   param.max_size = 100;
   one (&mulmod_bnm1_threshold, &param);
 }
