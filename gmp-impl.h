@@ -1225,7 +1225,7 @@ __GMP_DECLSPEC void      mpn_bdiv_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, 
 __GMP_DECLSPEC mp_size_t mpn_bdiv_q_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
 #define   mpn_divexact __MPN(divexact)
-__GMP_DECLSPEC void      mpn_divexact __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC void      mpn_divexact __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 #define   mpn_divexact_itch __MPN(divexact_itch)
 __GMP_DECLSPEC mp_size_t mpn_divexact_itch __GMP_PROTO ((mp_size_t, mp_size_t));
 
