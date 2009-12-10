@@ -175,7 +175,7 @@ mpn_toom42_mul (mp_ptr pp,
 #define vinf  (pp + 4 * n)			/* s+t */
 #define vm1   scratch				/* 2n+1 */
 #define v2    (scratch + 2 * n + 1)		/* 2n+2 */
-#define scratch_out	scratch + 4 * n + 4
+#define scratch_out	scratch + 4 * n + 4	/* Currently unused. */
 
   /* vm1, 2n+1 limbs */
   TOOM42_MUL_N_REC (vm1, asm1, bsm1, n, scratch_out);
