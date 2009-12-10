@@ -1,3 +1,9 @@
+2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* configure.in: Set up different paths for different 64-bit sparc
+	processors.
+	* mpn/sparc64/ultrasparc34/gmp-mparam.h: New file.
+
 2009-12-10  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/*/gmp-mparam.h: Regenerate many of these files.

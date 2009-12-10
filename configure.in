@@ -1226,7 +1226,15 @@ case $host in
           *) abilist="64 32" ;;
         esac
 
-        path_64="sparc64"
+	case $host_cpu in
+	  ultrasparc | ultrasparc2 | ultrasparc2i)
+	    path_64="sparc64/ultrasparc12 sparc64" ;;
+	  ultrasparc3)
+	    path_64="sparc64/ultrasparc34 sparc64/ultrasparc12 sparc64" ;;
+	  *)
+	    path_64="sparc64"
+	esac
+
         cclist_64="gcc"
         any_64_testlist="sizeof-long-8"
 
