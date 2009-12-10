@@ -8,7 +8,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2006, 2007 Free Software Foundation, Inc.
+Copyright 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,6 +25,72 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+
+#include "gmp.h"
+#include "gmp-impl.h"
+#include "longlong.h"
+
+#if 1
+void
+mpn_divexact (mp_ptr qp,
+	      mp_srcptr np, mp_size_t nn,
+	      mp_srcptr dp, mp_size_t dn)
+{
+  unsigned shift;
+  mp_size_t qn;
+  mp_ptr tp;
+  TMP_DECL;
+
+  ASSERT (dn > 0);
+  ASSERT (nn >= dn);
+  ASSERT (dp[dn-1] > 0);
+  ASSERT (np[nn-1] > 0);
+
+  qn = nn + 1 - dn;
+
+  while (dp[0] == 0)
+    {
+      ASSERT (np[0] == 0);
+      dp++;
+      np++;
+      dn--;
+      nn--;
+    }
+  count_trailing_zeros (shift, dp[0]);
+
+  TMP_MARK;
+  if (shift > 0)
+    {
+      tp = TMP_ALLOC_LIMBS (dn);
+      mpn_rshift (tp, dp, dn, shift);
+      dp = tp;
+
+      /* FIXME: It's sufficient to get the qn least significant
+	 limbs. */
+      tp = TMP_ALLOC_LIMBS (nn);
+      mpn_rshift (tp, np, nn, shift);
+      np = tp;
+    }
+  else
+    {
+      mp_ptr tp = TMP_ALLOC_LIMBS (qn);
+      MPN_COPY (tp, np, qn);
+      np = tp;
+    }
+  if (nn > qn)
+    nn = qn;
+  if (dn > qn)
+    dn = qn;
+
+  if (qn > nn)
+    MPN_ZERO (qp + nn, qn - nn);
+
+  tp = TMP_ALLOC_LIMBS (mpn_bdiv_q_itch (nn, dn));
+  mpn_bdiv_q (qp, np, nn, dp, dn, tp);
+  TMP_FREE;  
+}
+
+#else
 
 /* We use the Jebelean's bidirectional exact division algorithm.  This is
    somewhat naively implemented, with equal quotient parts done by 2-adic
@@ -44,12 +110,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      that the latter is faster.  We should at least reverse this, but perhaps
      we should make the lsb part considerably larger.  (How do we tune this?)
 */
-
-
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "longlong.h"
-
 
 mp_size_t
 mpn_divexact_itch (mp_size_t nn, mp_size_t dn)
@@ -220,3 +280,4 @@ mpn_divexact (mp_ptr qp,
 
   TMP_FREE;
 }
+#endif

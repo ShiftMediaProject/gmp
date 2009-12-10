@@ -1,5 +1,13 @@
 2009-12-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* gmp-impl.h (mpn_divexact): Removed scratch pointer from
+	prototype.
+	* mpn/generic/gcdext.c (divexact): Deleted, moved to...
+	* mpn/generic/divexact.c (mpn_divexact): New implementation (moved
+	from gcdext.c). The bidirectional divexact is kept but #if:ed out.
+	Interface change, since the new code doesn't take a scratch
+	argument.
+
 	* tests/mpn/t-mulmod_bnm1.c (main): Ensure thatn an >= bn. Lowered
 	MIN_N to 1. Various fixes to handle n == 1 properly.
 
@@ -52,9 +60,9 @@
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED): New define.
 	* tune/common.c (speed_mpn_mulmod_bnm1_rounded): New function.
-	* tune/speed.c (routine): Add mpn_mulmod_bnm1_rounded for measuring 
+	* tune/speed.c (routine): Add mpn_mulmod_bnm1_rounded for measuring
 	mpn_mulmod_bnm1 at recommended sizes.
-	
+
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1_next_size): Rewrite.
 	(mpn_bc_mulmod_bnm1): Use mpn_add_n instead of mpn_add.
 
@@ -165,7 +173,7 @@
 	Added various masking tricks.
 
 	* mpn/generic/gcdext_1.c (mpn_gcdext_1) [GCDEXT_1_USE_BINARY]:
-	Reimplemented binary gcdext, with proper canonicalization.	
+	Reimplemented binary gcdext, with proper canonicalization.
 
 	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Handle v == 0
 	from mpn_gcdext_1.

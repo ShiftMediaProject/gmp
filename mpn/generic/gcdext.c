@@ -85,65 +85,6 @@ hgcd_mul_matrix_vector (struct hgcd_matrix *M,
   return n;
 }
 
-static void
-divexact (mp_ptr qp,
-	  mp_srcptr np, mp_size_t nn,
-	  mp_srcptr dp, mp_size_t dn)
-{
-  unsigned shift;
-  mp_size_t qn;
-  mp_ptr tp;
-  TMP_DECL;
-
-  ASSERT (dn > 0);
-  ASSERT (nn >= dn);
-  ASSERT (dp[dn-1] > 0);
-  ASSERT (np[nn-1] > 0);
-
-  qn = nn + 1 - dn;
-
-  while (dp[0] == 0)
-    {
-      ASSERT (np[0] == 0);
-      dp++;
-      np++;
-      dn--;
-      nn--;
-    }
-  count_trailing_zeros (shift, dp[0]);
-
-  TMP_MARK;
-  if (shift > 0)
-    {
-      tp = TMP_ALLOC_LIMBS (dn);
-      mpn_rshift (tp, dp, dn, shift);
-      dp = tp;
-
-      /* FIXME: It's sufficient to get the qn least significant
-	 limbs. */
-      tp = TMP_ALLOC_LIMBS (nn);
-      mpn_rshift (tp, np, nn, shift);
-      np = tp;
-    }
-  else
-    {
-      mp_ptr tp = TMP_ALLOC_LIMBS (qn);
-      MPN_COPY (tp, np, qn);
-      np = tp;
-    }
-  if (nn > qn)
-    nn = qn;
-  if (dn > qn)
-    dn = qn;
-
-  if (qn > nn)
-    MPN_ZERO (qp + nn, qn - nn);
-
-  tp = TMP_ALLOC_LIMBS (mpn_bdiv_q_itch (nn, dn));
-  mpn_bdiv_q (qp, np, nn, dp, dn, tp);
-  TMP_FREE;  
-}
-
 #define COMPUTE_V_ITCH(n) (2*(n) + 1)
 
 /* Computes |v| = |(g - u a)| / b, where u may be positive or
@@ -205,7 +146,7 @@ compute_v (mp_ptr vp,
   vn = size + 1 - bn;
   ASSERT (vn <= n + 1);
 
-  divexact (vp, tp, size, bp, bn);
+  mpn_divexact (vp, tp, size, bp, bn);
   vn -= (vp[vn-1] == 0);
 
   return vn;
