@@ -1753,8 +1753,6 @@ speed_mpn_pre_set_str (struct speed_params *s)
 void
 tune_set_str (void)
 {
-  static struct param_t  param;
-
   s.r = 10;  /* decimal */
   {
     static struct param_t  param;
