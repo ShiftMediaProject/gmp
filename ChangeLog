@@ -1,3 +1,7 @@
+2009-12-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/*/gmp-mparam.h: Regenerate many of these files.
+
 2009-12-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (mpn_divexact): Removed scratch pointer from
