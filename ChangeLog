@@ -1,3 +1,8 @@
+2009-12-10  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Fixed non-recursive
+	case to not write beyond end of result area.
+
 2009-12-09  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL): New macro, made

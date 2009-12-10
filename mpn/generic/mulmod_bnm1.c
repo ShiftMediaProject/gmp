@@ -93,21 +93,26 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 
   if ((rn & 1) != 0 || BELOW_THRESHOLD (rn, MULMOD_BNM1_THRESHOLD))
     {
-      if (UNLIKELY (bn < rn)) /* May happen only for misuse or _very_
-				 unbalanced operands */
+      /* FIXME: We depend on an >= bn, this should be an official
+	 requirement. */
+      ASSERT (bn <= an);
+      if (UNLIKELY (bn < rn))
 	{
-	  MPN_COPY (tp, bp, bn);
-	  MPN_ZERO (tp + bn, rn - bn);
-	  bp = tp;
+	  if (UNLIKELY (an + bn <= rn))
+	    {
+	      mpn_mul (rp, ap, an, bp, bn);
+	      MPN_ZERO (rp + an + bn, rn - (an + bn));
+	    }
+	  else
+	    {
+	      mp_limb_t cy;
+	      mpn_mul (tp, ap, an, bp, bn);
+	      cy = mpn_add (rp, tp, rn, tp + rn, an + bn - rn);
+	      MPN_INCR_U (rp, rn, cy);
+	    }
 	}
-      ASSERT (ALLOW_MISUSE || (an >= rn) );
-      if (ALLOW_MISUSE && UNLIKELY (an < rn) )
-	{
-	  MPN_COPY (tp + rn, ap, an);
-	  MPN_ZERO (tp + rn + an, rn - an);
-	  ap = tp + rn;
-	}
-      mpn_bc_mulmod_bnm1 (rp, ap, bp, rn, rp);
+      else
+	mpn_bc_mulmod_bnm1 (rp, ap, bp, rn, tp);
     }
   else
     {
