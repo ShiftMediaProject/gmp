@@ -70,7 +70,7 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
 
 
 /* Computes {rp,rn} <- {ap,an}*{bp,bn} Mod(B^rn-1)
- * Requires both an and bn <= rn
+ * Requires both 0 < bn <= an <= rn
  * Scratch need: rn + 2 + (need for recursive call OR rn + 2). This gives
  *
  * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2rn + 2 log2 rn + 2
@@ -87,15 +87,12 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
 void
 mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn, mp_ptr tp)
 {
-  ASSERT (0 < an && an <= rn);
-  ASSERT (0 < bn && bn <= rn);
-  ASSERT (0 < rn);
+  ASSERT (0 < bn);
+  ASSERT (bn <= an);
+  ASSERT (an <= rn);
 
   if ((rn & 1) != 0 || BELOW_THRESHOLD (rn, MULMOD_BNM1_THRESHOLD))
     {
-      /* FIXME: We depend on an >= bn, this should be an official
-	 requirement. */
-      ASSERT (bn <= an);
       if (UNLIKELY (bn < rn))
 	{
 	  if (UNLIKELY (an + bn <= rn))

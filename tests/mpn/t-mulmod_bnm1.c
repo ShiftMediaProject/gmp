@@ -35,7 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #define MAX_N (1L << SIZE_LOG)
-#define MIN_N MULMOD_BNM1_THRESHOLD
+#define MIN_N 1
 
 /*
   Reference function for multiplication modulo B^rn-1.
@@ -82,7 +82,7 @@ ref_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 int
 main (int argc, char **argv)
 {
-  mp_ptr ap, ac, bp, bc, refp, pp, scratch;
+  mp_ptr ap, bp, refp, pp, scratch;
   int count = COUNT;
   int test;
   gmp_randstate_ptr rands;
@@ -134,15 +134,19 @@ main (int argc, char **argv)
       if (test & 1) {
 	/* Half of the tests are done with the main scenario in mind:
 	   both an and bn >= rn/2 */
-	an = (n >> 1) + gmp_urandomm_ui (rands, n >> 1);
-	bn = (n >> 1) + gmp_urandomm_ui (rands, n >> 1);
+	an = ((n+1) >> 1) + gmp_urandomm_ui (rands, (n+1) >> 1);
+	bn = ((n+1) >> 1) + gmp_urandomm_ui (rands, (n+1) >> 1);
       } else {
 	/* Second half of the tests are done using mulmod to compute a
 	   full product and an >= bn > 0; recursion make it eventually
 	   fall in the case above. */
-	an = (n >> 2) + gmp_urandomm_ui (rands, n - (n >> 2));
-	bn = 1 + gmp_urandomm_ui (rands, an - 1);
+	an = ((n+3) >> 2) + gmp_urandomm_ui (rands, n - (n >> 2));	
+	bn = 1 + ((an == 1) ? 0 : gmp_urandomm_ui (rands, an - 1));
       }
+
+      /* Make sure an >= bn */
+      if (an < bn)
+	MP_SIZE_T_SWAP (an, bn);
 
       mpn_random2 (ap, an);
       mpn_random2 (bp, bn);
@@ -154,7 +158,7 @@ main (int argc, char **argv)
 	MPN_ZERO (ap + an - (n >> 1) , n - an);
 	MPN_COPY (bp, bp + (n >> 1), bn - (n >> 1));
 	MPN_ZERO (bp + bn - (n >> 1) , n - bn);
-	x = gmp_urandomm_ui (rands, n - an);
+	x = (n == an) ? 0 : gmp_urandomm_ui (rands, n - an);
 	ap[x] += gmp_urandomm_ui (rands, 3) - 1;
 	x = (n >> 1) - x % (n >> 1);
 	bp[x] += gmp_urandomm_ui (rands, 3) - 1;

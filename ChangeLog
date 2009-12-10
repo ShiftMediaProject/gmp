@@ -1,5 +1,11 @@
 2009-12-10  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/t-mulmod_bnm1.c (main): Ensure thatn an >= bn. Lowered
+	MIN_N to 1. Various fixes to handle n == 1 properly.
+
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Small interface
+	change, require an >= bn.
+
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Fixed non-recursive
 	case to not write beyond end of result area.
 
