@@ -1,3 +1,7 @@
+2009-12-10  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/*/gmp-mparam.h: Regenerate many of these files.
+
 2009-12-10  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-mulmod_bnm1.c (main): Ensure thatn an >= bn. Lowered

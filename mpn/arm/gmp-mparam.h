@@ -46,15 +46,19 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULLO_DC_THRESHOLD              120
 #define MULLO_MUL_N_THRESHOLD         11138
 
-#define MULMOD_BNM1_THRESHOLD            20
+#define MULMOD_BNM1_THRESHOLD            19
 
-#define DC_DIV_QR_THRESHOLD             132
-#define REDC_1_TO_REDC_N_THRESHOLD      123
+#define DC_DIV_QR_THRESHOLD             128
+#define DC_DIVAPPR_Q_THRESHOLD          430
+#define DC_BDIV_QR_THRESHOLD            127
+#define DC_BDIV_Q_THRESHOLD             296
+#define BINV_NEWTON_THRESHOLD          1442
+#define REDC_1_TO_REDC_N_THRESHOLD      115
 
 #define MATRIX22_STRASSEN_THRESHOLD      19
-#define HGCD_THRESHOLD                  106
-#define GCD_DC_THRESHOLD                706
-#define GCDEXT_DC_THRESHOLD             630
+#define HGCD_THRESHOLD                  110
+#define GCD_DC_THRESHOLD                562
+#define GCDEXT_DC_THRESHOLD             345
 #define JACOBI_BASE_METHOD                2
 
 #define DIVREM_1_NORM_THRESHOLD           0  /* preinv always */
