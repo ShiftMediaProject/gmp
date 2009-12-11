@@ -71,10 +71,10 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
 #if GCDEXT_1_BINARY_METHOD == 2
   mp_limb_t det_sign;
 #endif
-  
+
   ASSERT (u > 0);
   ASSERT (v > 0);
-  
+
   count_trailing_zeros (zero_bits, u | v);
   u >>= zero_bits;
   v >>= zero_bits;
@@ -99,8 +99,8 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
     {
       unsigned count;
       if (u > v)
-        {
-          u -= v;
+	{
+	  u -= v;
 #if USE_ZEROTAB
 	  count = zerotab [u & 0x3f];
 	  u >>= count;
@@ -116,15 +116,15 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
 	      while (c == 6);
 	    }
 #else
-          count_trailing_zeros (count, u);
-          u >>= count;
+	  count_trailing_zeros (count, u);
+	  u >>= count;
 #endif
-          t0 += t1; t1 <<= count;
-          s0 += s1; s1 <<= count;
-        }
+	  t0 += t1; t1 <<= count;
+	  s0 += s1; s1 <<= count;
+	}
       else
-        {
-          v -= u;
+	{
+	  v -= u;
 #if USE_ZEROTAB
 	  count = zerotab [v & 0x3f];
 	  v >>= count;
@@ -140,12 +140,12 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
 	      while (c == 6);
 	    }
 #else
-          count_trailing_zeros (count, v);
-          v >>= count;
+	  count_trailing_zeros (count, v);
+	  v >>= count;
 #endif
-          t1 += t0; t0 <<= count;
-          s1 += s0; s0 <<= count;
-        }
+	  t1 += t0; t0 <<= count;
+	  s1 += s0; s0 <<= count;
+	}
       shift += count;
     }
 #else
@@ -203,8 +203,8 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
       det_sign ^= vgtu;
 
       tx = vgtu & (t0 - t1);
-      sx = vgtu & (s0 - s1); 
-      t0 += t1; 
+      sx = vgtu & (s0 - s1);
+      t0 += t1;
       s0 += s1;
       t1 += tx;
       s1 += sx;
@@ -222,14 +222,14 @@ mpn_gcdext_1 (mp_limb_signed_t *sp, mp_limb_signed_t *tp,
 #endif
 
   /* Now u = v = g = gcd (u,v). Compute U/g and V/g */
-  ug = t0 + t1; 
+  ug = t0 + t1;
   vg = s0 + s1;
 
   ugh = ug/2 + (ug & 1);
   vgh = vg/2 + (vg & 1);
 
   /* Now ±2^{shift} g = s0 U - t0 V. Get rid of the power of two, using
-     s0 U - t0 V = (s0 + V/g) U - (t0 + U/g) V. */ 
+     s0 U - t0 V = (s0 + V/g) U - (t0 + U/g) V. */
   for (i = 0; i < shift; i++)
     {
       mp_limb_t mask = - ( (s0 | t0) & 1);
