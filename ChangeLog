@@ -1,5 +1,8 @@
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/binvert.c: Use mpn_mulmod_bnm1 instead of FFT wrapping.
+	Old, evidently broken wrapping code removed.
+
 	* tests/mpn/t-bdiv.c (COUNT): Decrease to keep run time reasonable.
 
 	* tune/tuneup.c (tune_invert): Tune INV_MULMOD_BNM1_THRESHOLD.

@@ -44,6 +44,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)))
 #else
+#ifndef BINV_MULMOD_BNM1_THRESHOLD
+#define BINV_MULMOD_BNM1_THRESHOLD 0 /* presumably always 0 */
+#endif
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)) - LOG2C (BINV_NEWTON_THRESHOLD))
 #endif
@@ -51,18 +54,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 mp_size_t
 mpn_binvert_itch (mp_size_t n)
 {
-#if WANT_FFT
-  if (ABOVE_THRESHOLD (n, 2 * MUL_FFT_MODF_THRESHOLD))
-    return mpn_fft_next_size (n, mpn_fft_best_k (n, 0));
-  else
-#endif
-    return 3 * (n - (n >> 1));
+  mp_size_t itch_local = mpn_mulmod_bnm1_next_size (n);
+  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local);
+  return itch_local + itch_out;
 }
 
 void
 mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
 {
-  mp_ptr xp;
+  mp_ptr xp, tp;
   mp_size_t rn, newrn;
   mp_size_t sizes[NPOWS], *sizp;
   mp_limb_t di;
@@ -89,23 +89,19 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
     {
       newrn = *--sizp;
 
-      /* X <- UR.  We actually want a mulmid */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (newrn, 2 * MUL_FFT_MODF_THRESHOLD))
+      /* X <- UR. */
+      if (ABOVE_THRESHOLD (newrn, BINV_MULMOD_BNM1_THRESHOLD))
 	{
-	  int k;
 	  mp_size_t m;
-
-	  k = mpn_fft_best_k (newrn, 0);
-	  m = mpn_fft_next_size (newrn, k);
-	  mpn_mul_fft (xp, m, up, newrn, rp, rn, k);
-
-	  if (xp[0] != 1 || !mpn_zero_p (xp + 1, rn - 1))
-	    MPN_INCR_U (xp + rn, newrn - rn, 1);
+	  m = mpn_mulmod_bnm1_next_size (newrn);
+	  mpn_mulmod_bnm1 (xp, m, up, newrn, rp, rn, xp + m);
+	  mpn_sub_1 (xp + m, xp, rn - (m - newrn), 1);
 	}
       else
-#endif
-	mpn_mul (xp, up, newrn, rp, rn);
+	{
+	  mpn_mul (xp, up, newrn, rp, rn);
+	}
+      /* R = R(X/B^rn) */
       mpn_mullo_n (rp + rn, rp, xp + rn, newrn - rn);
       mpn_neg_n (rp + rn, rp + rn, newrn - rn);
     }
