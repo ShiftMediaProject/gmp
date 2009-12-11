@@ -952,7 +952,7 @@ __GMP_DECLSPEC void mpn_bc_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
 #define mpn_mulmod_bnm1 __MPN(mulmod_bnm1)
 __GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_mulmod_bnm1_next_size __MPN(mulmod_bnm1_next_size)
-__GMP_DECLSPEC mp_size_t mpn_mulmod_bnm1_next_size __GMP_PROTO ((mp_size_t));
+__GMP_DECLSPEC mp_size_t mpn_mulmod_bnm1_next_size __GMP_PROTO ((mp_size_t)) ATTRIBUTE_CONST;
 #define mpn_mulmod_bnm1_itch(n) (2*(n) + 2*GMP_LIMB_BITS +2)
 
 
@@ -4173,6 +4173,10 @@ extern mp_size_t                     inv_mulmod_bnm1_threshold;
 #undef  INV_NEWTON_THRESHOLD
 #define INV_NEWTON_THRESHOLD         inv_newton_threshold
 extern mp_size_t                     inv_newton_threshold;
+
+#undef  BINV_MULMOD_BNM1_THRESHOLD
+#define BINV_MULMOD_BNM1_THRESHOLD   binv_mulmod_bnm1_threshold
+extern mp_size_t                     binv_mulmod_bnm1_threshold;
 
 #undef  BINV_NEWTON_THRESHOLD
 #define BINV_NEWTON_THRESHOLD        binv_newton_threshold

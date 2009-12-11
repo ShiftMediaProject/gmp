@@ -170,6 +170,7 @@ mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
 mp_size_t  inv_mulmod_bnm1_threshold    = MP_SIZE_T_MAX;
 mp_size_t  inv_newton_threshold         = MP_SIZE_T_MAX;
+mp_size_t  binv_mulmod_bnm1_threshold   = MP_SIZE_T_MAX;
 mp_size_t  binv_newton_threshold        = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_2_threshold   = MP_SIZE_T_MAX;
 mp_size_t  redc_1_to_redc_n_threshold   = MP_SIZE_T_MAX;
@@ -1056,11 +1057,17 @@ void
 tune_binvert (void)
 {
   static struct param_t  param;
-  param.name = "BINV_NEWTON_THRESHOLD";
   param.function = speed_mpn_binvert;
-  param.step_factor = 0.02;
+
+  param.name = "BINV_NEWTON_THRESHOLD";
   param.max_size = 5000;
   one (&binv_newton_threshold, &param);
+
+  param.name = "BINV_MULMOD_BNM1_THRESHOLD";
+  param.min_is_always = 1;	/* we actually expect this to be "always" */
+  param.min_size = binv_newton_threshold;
+  param.max_size = 500;
+  one (&binv_mulmod_bnm1_threshold, &param);
 }
 
 void
