@@ -1064,10 +1064,14 @@ tune_binvert (void)
   one (&binv_newton_threshold, &param);
 
   param.name = "BINV_MULMOD_BNM1_THRESHOLD";
-  param.min_is_always = 1;	/* we actually expect this to be "always" */
+  param.noprint = 1;
   param.min_size = binv_newton_threshold;
   param.max_size = 500;
   one (&binv_mulmod_bnm1_threshold, &param);
+  if (binv_mulmod_bnm1_threshold <= binv_newton_threshold)
+    print_define_remark (param.name, 0, "always when newton");
+  else
+    print_define (param.name, binv_mulmod_bnm1_threshold);
 }
 
 void
