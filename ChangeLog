@@ -1,5 +1,7 @@
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-bdiv.c (COUNT): Decrease to keep run time reasonable.
+
 	* tune/tuneup.c (tune_invert): Tune INV_MULMOD_BNM1_THRESHOLD.
 	* gmp-impl.h: Provide declarations for corresponding threshold var.
 

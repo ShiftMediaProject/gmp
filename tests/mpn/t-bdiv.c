@@ -78,7 +78,7 @@ bdiv_qr_valid_p (mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
-#define COUNT 1000
+#define COUNT 100
 int
 main (int argc, char **argv)
 {
