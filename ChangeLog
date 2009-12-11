@@ -2,6 +2,8 @@
 
 	* mpn/generic/binvert.c: Use mpn_mulmod_bnm1 instead of FFT wrapping.
 	Old, evidently broken wrapping code removed.
+	* tune/tuneup.c (tune_binvert): Tune BINV_MULMOD_BNM1_THRESHOLD.
+	* gmp-impl.h: Provide declarations for corresponding threshold var.
 
 	* tests/mpn/t-bdiv.c (COUNT): Decrease to keep run time reasonable.
 
