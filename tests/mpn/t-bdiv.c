@@ -113,7 +113,7 @@ main (int argc, char **argv)
      FIXME: This probably isn't the right way. */
   itch = mpn_bdiv_qr_itch (MAX_NN + MAX_DN, MAX_DN);
   scratch = TMP_ALLOC_LIMBS (itch);
-			     
+
   for (test = 0; test < count; test++)
     {
       unsigned size_range;

@@ -87,7 +87,7 @@ mpn_divexact (mp_ptr qp,
 
   tp = TMP_ALLOC_LIMBS (mpn_bdiv_q_itch (nn, dn));
   mpn_bdiv_q (qp, np, nn, dp, dn, tp);
-  TMP_FREE;  
+  TMP_FREE;
 }
 
 #else
