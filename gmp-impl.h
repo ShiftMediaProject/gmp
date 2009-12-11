@@ -4166,6 +4166,10 @@ extern mp_size_t                     dc_bdiv_q_threshold;
 #define DC_BDIV_QR_THRESHOLD         dc_bdiv_qr_threshold
 extern mp_size_t                     dc_bdiv_qr_threshold;
 
+#undef  INV_MULMOD_BNM1_THRESHOLD
+#define INV_MULMOD_BNM1_THRESHOLD    inv_mulmod_bnm1_threshold
+extern mp_size_t                     inv_mulmod_bnm1_threshold;
+
 #undef  INV_NEWTON_THRESHOLD
 #define INV_NEWTON_THRESHOLD         inv_newton_threshold
 extern mp_size_t                     inv_newton_threshold;

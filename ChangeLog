@@ -1,5 +1,8 @@
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_invert): Tune INV_MULMOD_BNM1_THRESHOLD.
+	* gmp-impl.h: Provide declarations for corresponding threshold var.
+
 	* tests/mpn/t-mulmod_bnm1.c: Avoid a division by zero.
 
 	* configure.in: Set up different paths for different 64-bit sparc
