@@ -1,5 +1,7 @@
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-mulmod_bnm1.c: Avoid a division by zero.
+
 	* configure.in: Set up different paths for different 64-bit sparc
 	processors.
 	* mpn/sparc64/ultrasparc34/gmp-mparam.h: New file.
@@ -78,7 +80,7 @@
 
 	* tune/speed.c (routine): Add mpn_invert.
 
-	* tune/tuneup.c	(tune_invert): New function.
+	* tune/tuneup.c (tune_invert): New function.
 	* tune/speed.h (SPEED_ROUTINE_MPN_INVERT): New macro.
 	* tune/common.c (speed_mpn_invert): New function.
 	* gmp-impl.h: Provide declarations for corresponding threshold var.
@@ -17957,7 +17959,7 @@
 	* mpn/powerpc32: Use dnl/C instead of `#' for comments.
 
 	* config.guess: Get "model" limit between pentium 2 and pentium3 right.
-	Get rid of code determining `_' prefix;	use double labels instead.
+	Get rid of code determining `_' prefix; use double labels instead.
 	* config.guess: Partially merge with FSF version of April 22.
 	(Don't bring over NetBSD changes for now.)
 

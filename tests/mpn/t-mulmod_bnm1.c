@@ -140,7 +140,7 @@ main (int argc, char **argv)
 	/* Second half of the tests are done using mulmod to compute a
 	   full product and an >= bn > 0; recursion make it eventually
 	   fall in the case above. */
-	an = ((n+3) >> 2) + gmp_urandomm_ui (rands, n - (n >> 2));	
+	an = ((n+3) >> 2) + gmp_urandomm_ui (rands, n - (n >> 2));
 	bn = 1 + ((an == 1) ? 0 : gmp_urandomm_ui (rands, an - 1));
       }
 
@@ -152,7 +152,7 @@ main (int argc, char **argv)
       mpn_random2 (bp, bn);
 
       /* Sometime trigger the an = -1 or bn = -1 or an*bn == -1 Mod(B^{n/2}+1) */
-      if ((test & 0x1f) == 1) {
+      if ((test & 0x1f) == 1 && n > 1) {
 	mp_size_t x;
 	MPN_COPY (ap, ap + (n >> 1), an - (n >> 1));
 	MPN_ZERO (ap + an - (n >> 1) , n - an);
