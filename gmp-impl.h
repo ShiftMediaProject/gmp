@@ -1703,7 +1703,7 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #endif
 
 #ifndef INV_NEWTON_THRESHOLD
-#define INV_NEWTON_THRESHOLD     654
+#define INV_NEWTON_THRESHOLD      30
 #endif
 
 #ifndef BINV_NEWTON_THRESHOLD

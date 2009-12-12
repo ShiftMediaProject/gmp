@@ -2,6 +2,14 @@
 
 	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Rewrite.
 
+2009-12-12  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpn/t-mulmod_bnm1.c (main): Disable B^n+1 stressing test
+	for odd sizes.
+
+	* mpn/generic/invert.c: Complete rewrite. Uses Newton iterations.
+	* gmp-impl.h: Default INV_NEWTON_THRESHOLD decreased to 30.
+
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/binvert.c: Use mpn_mulmod_bnm1 instead of FFT wrapping.
@@ -34,7 +42,7 @@
 	Interface change, since the new code doesn't take a scratch
 	argument.
 
-	* tests/mpn/t-mulmod_bnm1.c (main): Ensure thatn an >= bn. Lowered
+	* tests/mpn/t-mulmod_bnm1.c (main): Ensure that an >= bn. Lowered
 	MIN_N to 1. Various fixes to handle n == 1 properly.
 
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Small interface
