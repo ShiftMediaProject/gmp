@@ -1,3 +1,7 @@
+2009-12-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Rewrite.
+
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/binvert.c: Use mpn_mulmod_bnm1 instead of FFT wrapping.
