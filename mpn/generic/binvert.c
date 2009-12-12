@@ -62,7 +62,7 @@ mpn_binvert_itch (mp_size_t n)
 void
 mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
 {
-  mp_ptr xp, tp;
+  mp_ptr xp;
   mp_size_t rn, newrn;
   mp_size_t sizes[NPOWS], *sizp;
   mp_limb_t di;
