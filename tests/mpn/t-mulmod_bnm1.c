@@ -151,8 +151,10 @@ main (int argc, char **argv)
       mpn_random2 (ap, an);
       mpn_random2 (bp, bn);
 
-      /* Sometime trigger the an = -1 or bn = -1 or an*bn == -1 Mod(B^{n/2}+1) */
-      if ((test & 0x1f) == 1 && n > 1) {
+      /* Sometime trigger the borderline conditions
+	 A = -1,0,+1 or B = -1,0,+1 or A*B == -1,0,1 Mod(B^{n/2}+1).
+	 This only makes sense if there is at least a split, i.e. n is even. */
+      if ((test & 0x1f) == 1 && (n & 1) == 0) {
 	mp_size_t x;
 	MPN_COPY (ap, ap + (n >> 1), an - (n >> 1));
 	MPN_ZERO (ap + an - (n >> 1) , n - an);
