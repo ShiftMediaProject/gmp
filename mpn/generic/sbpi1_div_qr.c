@@ -40,9 +40,7 @@ mpn_sbpi1_div_qr (mp_ptr qp,
   mp_limb_t n1, n0;
   mp_limb_t d1, d0;
   mp_limb_t cy, cy1;
-  mp_limb_t q, q0;
-  mp_limb_t t1, t0;
-  mp_limb_t mask;
+  mp_limb_t q;
 
   ASSERT (dn > 2);
   ASSERT (nn >= dn);
@@ -76,30 +74,7 @@ mpn_sbpi1_div_qr (mp_ptr qp,
 	}
       else
 	{
-	  umul_ppmm (q, q0, n1, dinv);
-	  add_ssaaaa (q, q0, q, q0, n1, np[1]);
-
-	  /* Compute the two most significant limbs of n - q'd */
-	  n1 = np[1] - d1 * q;
-	  n0 = np[0];
-	  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-	  umul_ppmm (t1, t0, d0, q);
-	  sub_ddmmss (n1, n0, n1, n0, t1, t0);
-	  q++;
-
-	  /* Conditionally adjust q and the remainders */
-	  mask = - (mp_limb_t) (n1 >= q0);
-	  q += mask;
-	  add_ssaaaa (n1, n0, n1, n0, mask & d1, mask & d0);
-
-	  if (UNLIKELY (n1 >= d1))
-	    {
-	      if (n1 > d1 || n0 >= d0)
-		{
-		  q++;
-		  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-		}
-	    }
+	  udiv_qr_3by2 (q, n1, n0, n1, np[1], np[0], d1, d0, dinv);
 
 	  cy = mpn_submul_1 (np - dn, dp, dn, q);
 
