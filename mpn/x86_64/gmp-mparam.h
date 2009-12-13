@@ -31,7 +31,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define SQR_BASECASE_THRESHOLD            0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD              40
-#define SQR_TOOM3_THRESHOLD              77
+#define SQR_TOOM3_THRESHOLD             121
 #define SQR_TOOM4_THRESHOLD             532
 
 #define MUL_FFT_TABLE  { 464, 1056, 1856, 3840, 11264, 36864, 114688, 458752, 0 }
@@ -75,7 +75,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GET_STR_DC_THRESHOLD             17
 #define GET_STR_PRECOMPUTE_THRESHOLD     32
 #define SET_STR_DC_THRESHOLD            266
-#define SET_STR_PRECOMPUTE_THRESHOLD   2105
+#define SET_STR_PRECOMPUTE_THRESHOLD   1787
 
 /* These tables are older than the thresholds above.  */
 
