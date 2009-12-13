@@ -1,5 +1,9 @@
 2009-12-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul_fft.c (mpn_mul_fft_full): Handle carry-out from 2nd
+	mpn_mul_fft, add an ASSERT for the 1sd mpn_mul_fft.  Replace some
+	comments on cc's range with ASSERTs.
+
 	* mpn/generic/gcdext.c (compute_v): Normalize tp[] after mpn_mul.
 
 	* mpz/powm.c: Rework buffer handling.
