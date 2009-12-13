@@ -8,7 +8,16 @@
 	for odd sizes.
 
 	* mpn/generic/invert.c: Complete rewrite. Uses Newton iterations.
-	* gmp-impl.h: Default INV_NEWTON_THRESHOLD decreased to 30.
+	* gmp-impl.h (mpn_invertappr): Added prototype and name-mangling.
+	(mpn_invertappr_itch): Added prototype and name-mangling.
+	(INV_APPR_THRESHOLD): Support for a new tunable const.
+	* tune/speed.h (SPEED_ROUTINE_MPN_INVERTAPPR): New macro.
+	(speed_mpn_invertappr): New function.
+	* tune/common.c (speed_mpn_invertappr): New function.
+	* tune/speed.c (routine): Add speed_mpn_invertappr.
+	* tune/tuneup.c (tune_invertappr): New function: was tune_invert.
+	(tune_invert): Now tune only INV_APPR_THRESHOLD.
+	(all): Enable call to tune_invert and tune_invertappr.
 
 2009-12-11  Torbjorn Granlund  <tege@gmplib.org>
 
