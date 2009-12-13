@@ -1919,9 +1919,7 @@ all (void)
 
   tune_dc_div ();
   tune_dc_bdiv ();
-#if 0				/* enable with new invert.c */
   tune_invert ();
-#endif
   tune_binvert ();
   tune_redc ();
   printf("\n");
