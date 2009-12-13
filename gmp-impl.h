@@ -2656,6 +2656,39 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
     (r) = _r;								\
   } while (0)
 
+/* Compute quotient the quotient and remainder for n / d. Requires d
+   >= B^2 / 2 and n < d B. di is the inverse
+
+     floor ((B^3 - 1) / (d0 + d1 B)) - B.
+*/
+#define udiv_qr_3by2(q, r1, r0, n2, n1, n0, d1, d0, di)			\
+  do {									\
+    mp_limb_t _q1, _q0, _r1, _r0, _t1, _t0, _mask;			\
+    umul_ppmm (_q1, _q0, (n2), (dinv));					\
+    add_ssaaaa (_q1, _q0, _q1, _q0, (n2), (n1));			\
+									\
+    /* Compute the two most significant limbs of n - q'd */		\
+    _r1 = (n1) - _q1 * (d1);						\
+    sub_ddmmss (_r1, _r0, _r1, (n0), (d1), (d0));			\
+    umul_ppmm (_t1, _t0, _q1, (d0));					\
+    sub_ddmmss (_r1, _r0, _r1, _r0, _t1, _t0);				\
+    _q1++;								\
+									\
+    /* Conditionally adjust q and the remainders */			\
+    _mask = - (mp_limb_t) (_r1 >= _q0);					\
+    _q1 += _mask;							\
+    add_ssaaaa (_r1, _r0, _r1, _r0, _mask & (d1), _mask & (d0));	\
+    if (UNLIKELY (_r1 >= (d1)))						\
+      {									\
+	if (_r1 > (d1) || _r0 >= (d0))					\
+	  {								\
+	    _q1++;							\
+	    sub_ddmmss (_r1, _r0, _r1, _r0, (d1), (d0));		\
+	  }								\
+      }									\
+    (q) = _q1; (r1) = _r1; (r0) = _r0;					\
+  } while (0)
+
 #ifndef mpn_preinv_divrem_1  /* if not done with cpuvec in a fat binary */
 #define   mpn_preinv_divrem_1 __MPN(preinv_divrem_1)
 __GMP_DECLSPEC mp_limb_t mpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
