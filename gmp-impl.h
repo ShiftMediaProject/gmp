@@ -4179,6 +4179,10 @@ extern mp_size_t                     inv_mulmod_bnm1_threshold;
 #define INV_NEWTON_THRESHOLD         inv_newton_threshold
 extern mp_size_t                     inv_newton_threshold;
 
+#undef  INV_APPR_THRESHOLD
+#define INV_APPR_THRESHOLD           inv_appr_threshold
+extern mp_size_t                     inv_appr_threshold;
+
 #undef  BINV_MULMOD_BNM1_THRESHOLD
 #define BINV_MULMOD_BNM1_THRESHOLD   binv_mulmod_bnm1_threshold
 extern mp_size_t                     binv_mulmod_bnm1_threshold;
