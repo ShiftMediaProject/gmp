@@ -2,6 +2,12 @@
 
 	* mpz/powm.c: Rework buffer handling.
 
+2009-12-13  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/toom-shared.h (main): Use refmpn_mul_basecase to check
+	results (slow!). Iteration counts of all toom tests reduced
+	considerably.
+
 2009-12-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Rewrite.

@@ -5,6 +5,4 @@
 #define MIN_BN(an) (1 + 2*(((an)+3) >> 2))
 #define MAX_BN(an) ((an)-3)
 
-#define COUNT 2000
-
 #include "toom-shared.h"

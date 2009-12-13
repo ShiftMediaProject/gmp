@@ -5,6 +5,4 @@
 #define MIN_BN(an) (((an) + 7) >> 2)
 #define MAX_BN(an) ((2*(an)-5) / (size_t) 3)
 
-#define COUNT 2000
-
 #include "toom-shared.h"

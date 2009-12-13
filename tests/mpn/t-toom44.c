@@ -4,6 +4,6 @@
 #define MIN_AN MUL_TOOM44_THRESHOLD
 #define MIN_BN(an) (1 + 3*(((an)+3)>>2))
 
-#define COUNT 2000
+#define COUNT 100
 
 #include "toom-shared.h"
