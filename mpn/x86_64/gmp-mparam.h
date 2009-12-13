@@ -48,7 +48,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULMOD_BNM1_THRESHOLD            17
 
-#define DC_DIV_QR_THRESHOLD              52
+#define DC_DIV_QR_THRESHOLD              43
 #define DC_DIVAPPR_Q_THRESHOLD          250
 #define DC_BDIV_QR_THRESHOLD             50
 #define DC_BDIV_Q_THRESHOLD             150
