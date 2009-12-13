@@ -72,8 +72,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DIVEXACT_1_THRESHOLD              0  /* always (native) */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always (native) */
 
-#define GET_STR_DC_THRESHOLD             22
-#define GET_STR_PRECOMPUTE_THRESHOLD     37
+#define GET_STR_DC_THRESHOLD             15
+#define GET_STR_PRECOMPUTE_THRESHOLD     32
 #define SET_STR_DC_THRESHOLD            537
 #define SET_STR_PRECOMPUTE_THRESHOLD   1576
 

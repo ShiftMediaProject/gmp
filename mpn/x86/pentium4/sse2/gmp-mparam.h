@@ -53,7 +53,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_DIVAPPR_Q_THRESHOLD           73
 #define DC_BDIV_QR_THRESHOLD             54
 #define DC_BDIV_Q_THRESHOLD              88
-#define BINV_NEWTON_THRESHOLD          1442
+#define BINV_NEWTON_THRESHOLD           915
 #define REDC_1_TO_REDC_N_THRESHOLD       65
 
 #define MATRIX22_STRASSEN_THRESHOLD      21
