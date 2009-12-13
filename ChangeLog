@@ -4,9 +4,16 @@
 	(mpn_bc_invertapp): New function, the basecase.
 	(mpn_ni_invertapp): New function, Newton iteration.
 	(mpn_invert): Use mpn_ni_invertapp.
-
 	* tune/tuneup.c (tune_invert): Min for INV_APPR_THRESHOLD.
 	(tune_invertappr): Min for INV_NEWTON_THRESHOLD.
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_NI_INVERTAPPR): New macro.
+	(speed_mpn_ni_invertappr): New function.
+	* tune/common.c (speed_mpn_ni_invertappr): New function.
+	* tune/speed.c (routine): Add speed_mpn_ni_invertappr.
+
+	* tune/tuneup.c (tune_invertappr): Use speed_mpn_ni_invertappr to
+	tune INV_MULMOD_BNM1_THRESHOLD.
 
 2009-12-12  Torbjorn Granlund  <tege@gmplib.org>
 

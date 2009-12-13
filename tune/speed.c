@@ -314,6 +314,7 @@ const struct routine_t {
 
   { "mpn_invert",        speed_mpn_invert           },
   { "mpn_invertappr",    speed_mpn_invertappr       },
+  { "mpn_ni_invertappr", speed_mpn_ni_invertappr    },
   { "mpn_binvert",       speed_mpn_binvert          },
 
   { "mpn_get_str",          speed_mpn_get_str,     FLAG_R_OPTIONAL },
