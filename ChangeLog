@@ -1,5 +1,7 @@
 2009-12-13  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/gcdext.c (compute_v): Normalize tp[] after mpn_mul.
+
 	* mpz/powm.c: Rework buffer handling.
 
 2009-12-13  Niels Möller  <nisse@lysator.liu.se>

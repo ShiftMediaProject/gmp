@@ -118,6 +118,7 @@ compute_v (mp_ptr vp,
     mpn_mul (tp, up, size, ap, an);
 
   size += an;
+  size -= tp[size - 1] == 0;
 
   ASSERT (gn <= size);
 
