@@ -48,7 +48,7 @@ int count = 0, cc = 0 ;
 #endif
 
 #ifndef INV_APPR_THRESHOLD
-#define INV_APPR_THRESHOLD (0*INV_NEWTON_THRESHOLD)
+#define INV_APPR_THRESHOLD (INV_NEWTON_THRESHOLD)
 #endif
 
 #if TUNE_PROGRAM_BUILD
@@ -109,164 +109,195 @@ mpn_invertappr_itch (mp_size_t n)
 #define USE_MUL_N 1
 #define WRAP_MOD_BNM1 1
 
+/* Maximum scratch needed by this branch (at tp): 3*n + 2 */
+static mp_limb_t
+mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
+{
+  mp_ptr xp;
+
+  ASSERT (n > 0);
+  ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
+  ASSERT (! MPN_OVERLAP_P (ip, n, tp, mpn_invertappr_itch(n)));
+  ASSERT (! MPN_OVERLAP_P (dp, n, tp, mpn_invertappr_itch(n)));
+
+  /* Compute a base value of r limbs. */
+  if (n == 1)
+    invert_limb (*(ip),*(dp));
+  else {
+    mp_size_t i;
+    xp = tp + n + 2;				/* 2 * n limbs */
+    for (i = n - 1; i >= 0; i--)
+      xp[i] = ~CNST_LIMB(0);
+    mpn_com_n (xp + n, dp, n);
+    if (n == 2) {
+      mpn_tdiv_qr (tp, ip, 0, xp, 2 * n, dp, n);
+      MPN_COPY (ip, tp, n);
+    } else {
+      gmp_pi1_t inv;
+      invert_pi1 (inv, dp[n-1], dp[n-2]);
+      /* FIXME: mpn_dcpi1_divappr_q is disabled, because of segfaults. */
+      if (1 || BELOW_THRESHOLD (n, DC_DIVAPPR_Q_THRESHOLD))
+	mpn_sbpi1_divappr_q (ip, xp, 2 * n, dp, n, inv.inv32);
+      else
+	mpn_dcpi1_divappr_q (ip, xp, 2 * n, dp, n, &inv);
+      MPN_DECR_U(ip, n, 1);
+      return 1;
+    }
+  }
+  return 0;
+}
+
 mp_limb_t
-mpn_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
+mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
   mp_limb_t cy;
   mp_ptr xp;
   mp_size_t rn, mn;
   mp_size_t sizes[NPOWS], *sizp;
+  mp_ptr tp;
+  TMP_DECL;
 #define rp scratch
 
+  ASSERT (n > 2);
+  ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
+  ASSERT (! MPN_OVERLAP_P (ip, n, scratch, mpn_invertappr_itch(n)));
+  ASSERT (! MPN_OVERLAP_P (dp, n, scratch, mpn_invertappr_itch(n)));
+
+  /* Compute the computation precisions from highest to lowest, leaving the
+     base case size in 'rn'.  */
+  sizp = sizes;
+  rn = n;
+  do {
+    *sizp = rn;
+    rn = ((rn) >> 1) + 1;
+    sizp ++;
+  } while (ABOVE_THRESHOLD (rn, INV_NEWTON_THRESHOLD));
+
+  /* We search the inverse of 0.{dp,n}, we compute it as 1.{ip,n} */
+  dp += n;
+  ip += n;
+
+  /* Compute a base value of rn limbs. */
+  mpn_bc_invertappr (ip - rn, dp - rn, rn, scratch);
+
+  TMP_MARK;
+
+  if (WRAP_MOD_BNM1 && ABOVE_THRESHOLD (n, INV_MULMOD_BNM1_THRESHOLD)) 
+    tp = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (mpn_mulmod_bnm1_next_size (n + 1)));
+
+  /* Use Newton's iterations to get the desired precision.*/
+
+  /* define rp scratch; 2rn + 1 limbs <= 2(n>>1 + 1) + 1 <= n + 3  limbs */
+  /* Maximum scratch needed by this branch <= 3*n + 2	*/
+  xp = scratch + n + 3;				/*  n + rn limbs */
+  while (1) {
+    mp_limb_t method;
+
+    n = *--sizp;
+    /*
+      v    n  v
+      +----+--+
+      ^ rn ^
+    */
+
+    /* Compute i_jd . */
+    if (!WRAP_MOD_BNM1 || BELOW_THRESHOLD (n, INV_MULMOD_BNM1_THRESHOLD)
+	|| ((mn = mpn_mulmod_bnm1_next_size (n + 1)) > (n + rn))) {
+      /* FIXME: We do only need {xp,n+1}*/
+      mpn_mul (xp, dp - n, n, ip - rn, rn);
+      mpn_add_n (xp + rn, xp + rn, dp - n, n - rn + 1);
+      method = 1; /* Remember we used (truncated) product */
+      /* We computed cy.{xp,rn+n} <- 1.{ip,rn} * 0.{dp,n} */
+    } else { /* Use B^n-1 wraparound */
+      mpn_mulmod_bnm1 (xp, mn, dp - n, n, ip - rn, rn, tp);
+      /* We computed {xp,mn} <- {ip,rn} * {dp,n} mod (B^mn-1) */
+      /* We know that 2*|ip*dp + dp*B^rn - B^{rn+n}| < B^mn-1 */
+      /* Add dp*B^rn mod (B^mn-1) */
+      ASSERT (n >= mn - rn);
+      xp[mn] = 1 + mpn_add_n (xp + rn, xp + rn, dp - n, mn - rn);
+      cy = mpn_add_n (xp, xp, dp - (n - (mn - rn)), n - (mn - rn));
+      MPN_INCR_U (xp + n - (mn - rn), mn + 1 - n + (mn - rn), cy);
+      ASSERT (n + rn >=  mn);
+      /* Subtract B^{rn+n}	*/
+      MPN_DECR_U (xp + rn + n - mn, 2*mn + 1 - rn - n, 1);
+      if (xp[mn])
+	MPN_INCR_U (xp, mn, xp[mn] - 1);
+      else
+	MPN_DECR_U (xp, mn, 1);
+      method = 0; /* Remember we are working Mod B^m-1 */
+    }
+#if WRAP_MOD_BNP1 && WANT_FFT && 0
+    /* else */
+    {
+      ASSERT_ALWAYS(0); /* NOT IMPLEMENTED */
+      /* Condition {xp,mn} = -1 Mod B^m+1 needs special handling...*/
+      method = 2; /* Remember we are working Mod B^m+1 */
+    }
+#endif
+
+    if (xp[n] < 2) { /* "positive" residue class */
+      cy = 1;
+      while (xp[n] || mpn_cmp (xp, dp - n, n)>0) {
+	xp[n] -= mpn_sub_n (xp, xp, dp - n, n);
+	cy ++;
+      }
+      MPN_DECR_U(ip - rn, rn, cy);
+      ASSERT (cy <= 4); /* at most 3 cycles for the while above */
+      ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
+      ASSERT (xp[n] == 0);
+    } else { /* "negative" residue class */
+      mpn_com_n (xp, xp, n + 1);
+      MPN_INCR_U(xp, n + 1, method);
+      ASSERT (xp[n] <= 1);
+#if USE_MUL_N
+      if (xp[n]) {
+	MPN_INCR_U(ip - rn, rn, 1);
+	ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
+      }
+#endif
+    }
+
+    /* Compute x_ju_j. FIXME:We need {rp+rn,rn}, mulhi? */
+#if USE_MUL_N
+    mpn_mul_n (rp, xp + n - rn, ip - rn, rn);
+#else
+    rp[2*rn] = 0;
+    mpn_mul (rp, xp + n - rn, rn + xp[n], ip - rn, rn);
+#endif
+    /* We need _only_ the carry from the next addition  */
+    /* Anyway 2rn-n <= 2... we don't need to optimise.  */
+    cy = mpn_add_n (rp + rn, rp + rn, xp + n - rn, 2*rn - n);
+    cy = mpn_add_nc (ip - n, rp + 3*rn - n, xp + rn, n - rn, cy);
+    MPN_INCR_U (ip - rn, rn, cy + (1-USE_MUL_N)*(rp[2*rn] + xp[n]));
+    if (sizp == sizes) { /* Get out of the cycle */
+      /* Check for possible carry propagation from below. */
+      cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - 7; /* Be conservative. */
+/*    cy = mpn_add_1 (rp + rn, rp + rn, 2*rn - n, 6); */
+      break;
+    }
+    rn = n;
+  }
+  TMP_FREE;
+
+  return (cy);
+#undef rp
+}
+
+mp_limb_t
+mpn_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
+{
   ASSERT (n > 0);
   ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
   ASSERT (! MPN_OVERLAP_P (ip, n, scratch, mpn_invertappr_itch(n)));
   ASSERT (! MPN_OVERLAP_P (dp, n, scratch, mpn_invertappr_itch(n)));
 
-  /* We search the inverse of 0.{dp,n}, we compute it as 1.{ip,n} */
-  dp += n;
-  ip += n;
-
-  /* Compute the computation precisions from highest to lowest, leaving the
-     base case size in 'rn'.  */
-  sizp = sizes;
-  rn = n;
-  while (ABOVE_THRESHOLD (rn, INV_NEWTON_THRESHOLD)) {
-    *sizp = rn;
-    rn = ((rn) >> 1) + 1;
-    sizp ++;
-  }
-
-  cy = 0;
-  /* Compute a base value of rn limbs. */
-  if (rn == 1)
-    invert_limb (*(ip - 1),*(dp - 1));
-  else { /* Maximum scratch needed by this branch: 3*n + 2 */
-    mp_size_t i;
-    xp = scratch + rn + 2;				/* 2 * rn limbs */
-    for (i = rn - 1; i >= 0; i--)
-      xp[i] = ~CNST_LIMB(0);
-    mpn_com_n (xp + rn, dp - rn, rn);
-    if (rn == 2) {
-      mpn_tdiv_qr (rp, ip - rn, 0, xp, 2 * rn, dp - rn, rn);
-      MPN_COPY (ip - rn, rp, rn);
-    } else {
-      gmp_pi1_t inv;
-      invert_pi1 (inv, dp[-1], dp[-2]);
-      if (BELOW_THRESHOLD (rn, DC_DIVAPPR_Q_THRESHOLD))
-	mpn_sbpi1_divappr_q (ip - rn, xp, 2 * rn, dp - rn, rn, inv.inv32);
-      else
-	mpn_dcpi1_divappr_q (ip - rn, xp, 2 * rn, dp - rn, rn, &inv);
-      MPN_DECR_U(ip - rn, rn, 1);
-      cy = 1;
-    }
-  }
-
-  /* Use Newton's iterations to get the desired precision.*/
-  if (rn != n) {
-    mp_ptr tp;
-    TMP_DECL;
-    TMP_MARK;
-
-    if (WRAP_MOD_BNM1 && ABOVE_THRESHOLD (n, INV_MULMOD_BNM1_THRESHOLD)) 
-      tp = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (mpn_mulmod_bnm1_next_size (n + 1)));
-
-    /* define rp scratch; 2rn + 1 limbs <= 2(n>>1 + 1) + 1 <= n + 3  limbs */
-    /* Maximum scratch needed by this branch <= 3*n + 2	*/
-    xp = scratch + n + 3;				/*  n + rn limbs */
-    while (1) {
-      mp_limb_t method;
-
-      n = *--sizp;
-      /*
-	 v    n  v
-	 +----+--+
-	 ^ rn ^
-      */
-
-      /* Compute i_jd . */
-      if (!WRAP_MOD_BNM1 || BELOW_THRESHOLD (n, INV_MULMOD_BNM1_THRESHOLD)
-	  || ((mn = mpn_mulmod_bnm1_next_size (n + 1)) > (n + rn))) {
-	/* FIXME: We do only need {xp,n+1}*/
-	mpn_mul (xp, dp - n, n, ip - rn, rn);
-	mpn_add_n (xp + rn, xp + rn, dp - n, n - rn + 1);
-	method = 1; /* Remember we used (truncated) product */
-	/* We computed cy.{xp,rn+n} <- 1.{ip,rn} * 0.{dp,n} */
-      } else { /* Use B^n-1 wraparound */
-	mpn_mulmod_bnm1 (xp, mn, dp - n, n, ip - rn, rn, tp);
-	/* We computed {xp,mn} <- {ip,rn} * {dp,n} mod (B^mn-1) */
-	/* We know that 2*|ip*dp + dp*B^rn - B^{rn+n}| < B^mn-1 */
-	/* Add dp*B^rn mod (B^mn-1) */
-	ASSERT (n >= mn - rn);
-	xp[mn] = 1 + mpn_add_n (xp + rn, xp + rn, dp - n, mn - rn);
-	cy = mpn_add_n (xp, xp, dp - (n - (mn - rn)), n - (mn - rn));
-	MPN_INCR_U (xp + n - (mn - rn), mn + 1 - n + (mn - rn), cy);
-	ASSERT (n + rn >=  mn);
-	/* Subtract B^{rn+n}	*/
-	MPN_DECR_U (xp + rn + n - mn, 2*mn + 1 - rn - n, 1);
-	if (xp[mn])
-	  MPN_INCR_U (xp, mn, xp[mn] - 1);
-	else
-	  MPN_DECR_U (xp, mn, 1);
-	method = 0; /* Remember we are working Mod B^m-1 */
-      }
-#if WRAP_MOD_BNP1 && WANT_FFT && 0
-      /* else */
-      {
-	ASSERT_ALWAYS(0); /* NOT IMPLEMENTED */
-	/* Condition {xp,mn} = -1 Mod B^m+1 needs special handling...*/
-	method = 2; /* Remember we are working Mod B^m+1 */
-      }
-#endif
-
-      if (xp[n] < 2) { /* "positive" residue class */
-	cy = 1;
-	while (xp[n] || mpn_cmp (xp, dp - n, n)>0) {
-	  xp[n] -= mpn_sub_n (xp, xp, dp - n, n);
-	  cy ++;
-	}
-	MPN_DECR_U(ip - rn, rn, cy);
-	ASSERT (cy <= 4); /* at most 3 cycles for the while above */
-	ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
-	ASSERT (xp[n] == 0);
-      } else { /* "negative" residue class */
-	mpn_com_n (xp, xp, n + 1);
-	MPN_INCR_U(xp, n + 1, method);
-	ASSERT (xp[n] <= 1);
-#if USE_MUL_N
-	if (xp[n]) {
-	  MPN_INCR_U(ip - rn, rn, 1);
-	  ASSERT_CARRY (mpn_sub_n (xp, xp, dp - n, n));
-	}
-#endif
-      }
-
-      /* Compute x_ju_j. FIXME:We need {rp+rn,rn}, mulhi? */
-#if USE_MUL_N
-      mpn_mul_n (rp, xp + n - rn, ip - rn, rn);
-#else
-      rp[2*rn] = 0;
-      mpn_mul (rp, xp + n - rn, rn + xp[n], ip - rn, rn);
-#endif
-      /* We need _only_ the carry from the next addition  */
-      /* Anyway 2rn-n <= 2... we don't need to optimise.  */
-      cy = mpn_add_n (rp + rn, rp + rn, xp + n - rn, 2*rn - n);
-      cy = mpn_add_nc (ip - n, rp + 3*rn - n, xp + rn, n - rn, cy);
-      MPN_INCR_U (ip - rn, rn, cy + (1-USE_MUL_N)*(rp[2*rn] + xp[n]));
-      if (sizp == sizes) { /* Get out of the cycle */
-	/* Check for possible carry propagation from below. */
-	cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - 7;
-/* 	cy = mpn_add_1 (rp + rn, rp + rn, 2*rn - n, 6); */
-	break;
-      }
-      rn = n;
-    }
-    TMP_FREE;
-  }
-
-  return (cy);
-#undef rp
+  if (BELOW_THRESHOLD (n, INV_NEWTON_THRESHOLD))
+    return mpn_bc_invertappr (ip, dp, n, scratch);
+  else
+    return mpn_ni_invertappr (ip, dp, n, scratch);
 }
 
 mp_size_t
@@ -305,7 +336,7 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     } else { /* Use approximated inverse; correct the result if needed. */
       mp_limb_t cy;
 
-      cy = mpn_invertappr (ip, dp, n, scratch);
+      cy = mpn_ni_invertappr (ip, dp, n, scratch);
 
       if (cy) {
 	/* Code to detects and correct the "off by one" approximation. */

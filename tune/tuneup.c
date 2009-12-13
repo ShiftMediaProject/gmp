@@ -1045,6 +1045,7 @@ tune_invertappr (void)
   param.function = speed_mpn_invertappr;
 
   param.name = "INV_NEWTON_THRESHOLD";
+  param.min_size = 3;
   param.max_size = 5000;
   one (&inv_newton_threshold, &param);
 
@@ -1066,7 +1067,7 @@ tune_invert (void)
   param.function = speed_mpn_invert;
 
   param.name = "INV_APPR_THRESHOLD";
-  param.min_size = inv_newton_threshold;
+  param.min_size = 3;
   param.max_size = 5000;
   one (&inv_appr_threshold, &param);
 }

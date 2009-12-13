@@ -1,3 +1,13 @@
+2009-12-13  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/invert.c (mpn_invertapp): Split in _bc and _ni.
+	(mpn_bc_invertapp): New function, the basecase.
+	(mpn_ni_invertapp): New function, Newton iteration.
+	(mpn_invert): Use mpn_ni_invertapp.
+
+	* tune/tuneup.c (tune_invert): Min for INV_APPR_THRESHOLD.
+	(tune_invertappr): Min for INV_NEWTON_THRESHOLD.
+
 2009-12-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Rewrite.
