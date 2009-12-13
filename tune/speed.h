@@ -242,6 +242,7 @@ double speed_mpn_dcpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_invert __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_invertappr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_binvert __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_redc_2 __GMP_PROTO ((struct speed_params *s));
@@ -1479,6 +1480,41 @@ int speed_routine_count_zeros_setup
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (ip, s->size, s->align_xp);			\
     SPEED_TMP_ALLOC_LIMBS (up, s->size,   s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, itchfn (s->size), s->align_wp);		\
+									\
+    MPN_COPY (up, s->xp, s->size);					\
+									\
+    /* normalize the data */						\
+    up[s->size-1] |= GMP_NUMB_HIGHBIT;					\
+									\
+    speed_operand_src (s, up, s->size);					\
+    speed_operand_dst (s, tp, s->size);					\
+    speed_operand_dst (s, ip, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      function (ip, up, s->size, tp);					\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+
+#define SPEED_ROUTINE_MPN_INVERTAPPR(function,itchfn)			\
+  {									\
+    long  i;								\
+    mp_ptr    up, tp, ip;						\
+    double    t;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (ip, s->size, s->align_xp);			\
+    SPEED_TMP_ALLOC_LIMBS (up, s->size, s->align_yp);			\
     SPEED_TMP_ALLOC_LIMBS (tp, itchfn (s->size), s->align_wp);		\
 									\
     MPN_COPY (up, s->xp, s->size);					\

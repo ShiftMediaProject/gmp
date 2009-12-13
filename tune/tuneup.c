@@ -1038,19 +1038,24 @@ tune_dc_bdiv (void)
 }
 
 void
-tune_invert (void)
+tune_invertappr (void)
 {
   static struct param_t  param;
-  param.function = speed_mpn_invert;
+  param.function = speed_mpn_invertappr;
 
   param.name = "INV_NEWTON_THRESHOLD";
-  param.max_size = 500;
+  param.max_size = 5000;
   one (&inv_newton_threshold, &param);
 
   param.name = "INV_MULMOD_BNM1_THRESHOLD";
+  param.noprint = 1;
   param.min_size = inv_newton_threshold;
-  param.max_size = 500;
+  param.max_size = 5000;
   one (&inv_mulmod_bnm1_threshold, &param);
+  if (inv_mulmod_bnm1_threshold <= inv_newton_threshold)
+    print_define_remark (param.name, 0, "always when newton");
+  else
+    print_define (param.name, inv_mulmod_bnm1_threshold);
 }
 
 void
@@ -1919,7 +1924,7 @@ all (void)
 
   tune_dc_div ();
   tune_dc_bdiv ();
-  tune_invert ();
+  tune_invertappr ();
   tune_binvert ();
   tune_redc ();
   printf("\n");

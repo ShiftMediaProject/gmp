@@ -792,6 +792,12 @@ speed_mpn_invert (struct speed_params *s)
 }
 
 double
+speed_mpn_invertappr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_INVERTAPPR (mpn_invertappr, mpn_invertappr_itch);
+}
+
+double
 speed_mpn_redc_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_REDC_1 (mpn_redc_1);
