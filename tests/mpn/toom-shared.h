@@ -35,7 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef COUNT
-#define COUNT 5000
+#define COUNT 300
 #endif
 
 #define MAX_AN (1L << SIZE_LOG)
@@ -116,7 +116,7 @@ main (int argc, char **argv)
       s_after = scratch[itch];
 
       mpn_toomMN_mul (pp, ap, an, bp, bn, scratch);
-      mpn_mul (refp, ap, an, bp, bn);
+      refmpn_mul_basecase (refp, ap, an, bp, bn);
       if (pp[-1] != p_before || pp[an + bn] != p_after
 	  || scratch[-1] != s_before || scratch[itch] != s_after
 	  || mpn_cmp (refp, pp, an + bn) != 0)
