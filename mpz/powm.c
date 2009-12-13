@@ -62,7 +62,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   int cnt;
   mp_ptr rp, tp;
   mp_srcptr bp, ep, mp;
-  mp_size_t rn, bn, es, en;
+  mp_size_t rn, bn, es, en, itch;
   TMP_DECL;
 
   n = ABSIZ(m);
@@ -166,9 +166,22 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
       ncnt++;
     }
 
-  rp = TMP_ALLOC_LIMBS (n + 1);
+  if (ncnt != 0)
+    {
+      /* rp needs n, mpn_powlo needs 4n, the 2 mpn_binvert might need more */
+      mp_size_t n_largest_binvert = MAX (ncnt, nodd);
+      mp_size_t itch_binvert = mpn_binvert_itch (n_largest_binvert);
+      itch = 3 * n + MAX (itch_binvert, 2 * n);
+    }
+  else
+    {
+      mp_size_t itch_binvert = mpn_binvert_itch (nodd);
+      itch = n + MAX (itch_binvert, 2 * n);
+    }
+  tp = TMP_ALLOC_LIMBS (itch);
 
-  tp = TMP_ALLOC_LIMBS (4 * n + 1);	/* this much is needed for powlo */
+  rp = tp;  tp += n;
+
   bp = PTR(b);
   mpn_powm (rp, bp, bn, ep, en, mp, nodd, tp);
 
