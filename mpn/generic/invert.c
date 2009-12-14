@@ -85,9 +85,6 @@ mpn_invertappr_itch (mp_size_t n)
 
  The iterative structure is copied from T.Granlund's binvert.c.
 
- FIXME: the scratch for mulmod_bnm1 does not currently fit in the
- scratch, it is allocated apart.
-
  With USE_MUL_N = 0 and WRAP_MOD_BNM1 = 0, the iteration is conformant
  to the algorithm described in the book.
  
@@ -103,7 +100,11 @@ mpn_invertappr_itch (mp_size_t n)
  i.e. AX_h = B^{n+h} - A, then we get into the "negative" branch,
  where X_h is not incremented (because A < B^n).
 
- Acknowledgements: Thanks to P. Zimmermann for many valuable suggestions.
+ FIXME: the scratch for mulmod_bnm1 does not currently fit in the
+ scratch, it is allocated apart.
+
+ Acknowledgements: Thanks to Paul Zimmermann for his very valuable
+ suggestions on the theoretical aspects.
 */
 
 #define USE_MUL_N 1
@@ -136,8 +137,7 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
     } else {
       gmp_pi1_t inv;
       invert_pi1 (inv, dp[n-1], dp[n-2]);
-      /* FIXME: mpn_dcpi1_divappr_q is disabled, because of segfaults. */
-      if (1 || BELOW_THRESHOLD (n, DC_DIVAPPR_Q_THRESHOLD))
+      if (BELOW_THRESHOLD (n, DC_DIVAPPR_Q_THRESHOLD))
 	mpn_sbpi1_divappr_q (ip, xp, 2 * n, dp, n, inv.inv32);
       else
 	mpn_dcpi1_divappr_q (ip, xp, 2 * n, dp, n, &inv);

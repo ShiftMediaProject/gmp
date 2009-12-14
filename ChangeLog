@@ -1,3 +1,8 @@
+2009-12-13  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/invert.c (mpn_bc_invertapp): Re-enable the now
+	working mpn_dcpi1_divappr_q.
+
 2009-12-13  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (udiv_qr_3by2): New macro.
