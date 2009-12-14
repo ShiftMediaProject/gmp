@@ -84,30 +84,7 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
 	}
       else
 	{
-	  umul_ppmm (q, q0, n1, dinv);
-	  add_ssaaaa (q, q0, q, q0, n1, np[1]);
-
-	  /* Compute the two most significant limbs of n - q'd */
-	  n1 = np[1] - d1 * q;
-	  n0 = np[0];
-	  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-	  umul_ppmm (t1, t0, d0, q);
-	  sub_ddmmss (n1, n0, n1, n0, t1, t0);
-	  q++;
-
-	  /* Conditionally adjust q and the remainders */
-	  mask = - (mp_limb_t) (n1 >= q0);
-	  q += mask;
-	  add_ssaaaa (n1, n0, n1, n0, mask & d1, mask & d0);
-
-	  if (UNLIKELY (n1 >= d1))
-	    {
-	      if (n1 > d1 || n0 >= d0)
-		{
-		  q++;
-		  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-		}
-	    }
+	  udiv_qr_3by2 (q, n1, n0, n1, np[1], np[0], d1, d0, dinv);
 
 	  cy = mpn_submul_1 (np - dn, dp, dn, q);
 
@@ -153,30 +130,7 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
 	    }
 	  else
 	    {
-	      umul_ppmm (q, q0, n1, dinv);
-	      add_ssaaaa (q, q0, q, q0, n1, np[1]);
-
-	      /* Compute the two most significant limbs of n - q'd */
-	      n1 = np[1] - d1 * q;
-	      n0 = np[0];
-	      sub_ddmmss (n1, n0, n1, n0, d1, d0);
-	      umul_ppmm (t1, t0, d0, q);
-	      sub_ddmmss (n1, n0, n1, n0, t1, t0);
-	      q++;
-
-	      /* Conditionally adjust q and the remainders */
-	      mask = - (mp_limb_t) (n1 >= q0);
-	      q += mask;
-	      add_ssaaaa (n1, n0, n1, n0, mask & d1, mask & d0);
-
-	      if (UNLIKELY (n1 >= d1))
-		{
-		  if (n1 > d1 || n0 >= d0)
-		    {
-		      q++;
-		      sub_ddmmss (n1, n0, n1, n0, d1, d0);
-		    }
-		}
+	      udiv_qr_3by2 (q, n1, n0, n1, np[1], np[0], d1, d0, dinv);
 
 	      cy = mpn_submul_1 (np - dn, dp, dn, q);
 
@@ -220,39 +174,11 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
 	}
       else
 	{
-	  umul_ppmm (q, q0, n1, dinv);
-	  add_ssaaaa (q, q0, q, q0, n1, np[1]);
-
-	  /* Compute the two most significant limbs of n - q'd */
-	  n1 = np[1] - d1 * q;
-	  n0 = np[0];
-	  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-	  umul_ppmm (t1, t0, d0, q);
-	  sub_ddmmss (n1, n0, n1, n0, t1, t0);
-	  q++;
-
-	  /* Conditionally adjust q and the remainders */
-	  mask = - (mp_limb_t) (n1 >= q0);
-	  q += mask;
-	  add_ssaaaa (n1, n0, n1, n0, mask & d1, mask & d0);
-
-	  if (UNLIKELY (n1 >= d1))
-	    {
-	      if (n1 > d1 || n0 >= d0)
-		{
-		  q++;
-		  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-		}
-	    }
-
-	  np[0] = n0;
-	  np[1] = n1;
+	  udiv_qr_3by2 (q, np[1], np[0], n1, np[1], np[0], d1, d0, dinv);
 	}
 
       *--qp = q;
     }
-  ASSERT_ALWAYS (np[1] == n1);
-  np += 2;
 
   return qh;
 }
