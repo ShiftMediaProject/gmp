@@ -73,7 +73,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always (native) */
 
 #define GET_STR_DC_THRESHOLD             17
-#define GET_STR_PRECOMPUTE_THRESHOLD     32
+#define GET_STR_PRECOMPUTE_THRESHOLD     28
 #define SET_STR_DC_THRESHOLD            266
 #define SET_STR_PRECOMPUTE_THRESHOLD   1787
 
