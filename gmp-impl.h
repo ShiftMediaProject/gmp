@@ -2661,7 +2661,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 
      floor ((B^3 - 1) / (d0 + d1 B)) - B.
 */
-#define udiv_qr_3by2(q, r1, r0, n2, n1, n0, d1, d0, di)			\
+#define udiv_qr_3by2(q, r1, r0, n2, n1, n0, d1, d0, dinv)		\
   do {									\
     mp_limb_t _q1, _q0, _r1, _r0, _t1, _t0, _mask;			\
     umul_ppmm (_q1, _q0, (n2), (dinv));					\

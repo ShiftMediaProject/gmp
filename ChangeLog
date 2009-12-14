@@ -1,3 +1,7 @@
+2009-12-14  Niels Möller  <nisse@lysator.liu.se>
+
+	* gmp-impl.h (udiv_qr_3by2): Fix typo in argument list.
+
 2009-12-13  Niels Möller  <nisse@lysator.liu.se>
 
 	* gmp-impl.h (udiv_qr_3by2): New macro.
