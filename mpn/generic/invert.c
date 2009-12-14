@@ -59,9 +59,12 @@ int count = 0, cc = 0 ;
 #if TUNE_PROGRAM_BUILD
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)))
+#define MAYBE_dcpi1_divappr   1
 #else
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)) - LOG2C (INV_NEWTON_THRESHOLD))
+#define MAYBE_dcpi1_divappr \
+  (INV_NEWTON_THRESHOLD < 2 * DC_DIVAPPR_Q_THRESHOLD)
 #endif
 
 mp_size_t
@@ -76,8 +79,8 @@ mpn_invertappr_itch (mp_size_t n)
  must be set) as an input, and compute {ip,n}: the approximate
  reciprocal of {dp,n}.
 
- Let e = mpn*_invertappr (ip, dp, n, scratch), the following conditions
- are satisfied by the output:
+ Let e = mpn*_invertappr (ip, dp, n, scratch) be the returned value; the
+ following conditions are satisfied by the output:
    0 <= e <= 1;
    {dp,n}*(B^n+{ip,n}) < B^{2n} <= {dp,n}*(B^n+{ip,n}+1+e) .
  I.e. e=0 means that the result {ip,n} equals the one given by mpn_invert.
@@ -119,7 +122,8 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
     } else {
       gmp_pi1_t inv;
       invert_pi1 (inv, dp[n-1], dp[n-2]);
-      if (BELOW_THRESHOLD (n, DC_DIVAPPR_Q_THRESHOLD))
+      if (! MAYBE_dcpi1_divappr
+	  || BELOW_THRESHOLD (n, DC_DIVAPPR_Q_THRESHOLD))
 	mpn_sbpi1_divappr_q (ip, xp, 2 * n, dp, n, inv.inv32);
       else
 	mpn_dcpi1_divappr_q (ip, xp, 2 * n, dp, n, &inv);
