@@ -35,14 +35,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 int count = 0, cc = 0 ;
 #endif
 
-/* This is intended for constant THRESHOLDs only, where the compiler can
-   completely fold the result.  */
-#define LOG2C(n) \
- (((n) >=    0x1) + ((n) >=    0x2) + ((n) >=    0x4) + ((n) >=    0x8) + \
-  ((n) >=   0x10) + ((n) >=   0x20) + ((n) >=   0x40) + ((n) >=   0x80) + \
-  ((n) >=  0x100) + ((n) >=  0x200) + ((n) >=  0x400) + ((n) >=  0x800) + \
-  ((n) >= 0x1000) + ((n) >= 0x2000) + ((n) >= 0x4000) + ((n) >= 0x8000))
-
 #ifndef INV_MULMOD_BNM1_THRESHOLD
 #define INV_MULMOD_BNM1_THRESHOLD (5*MULMOD_BNM1_THRESHOLD)
 #endif
@@ -50,6 +42,19 @@ int count = 0, cc = 0 ;
 #ifndef INV_APPR_THRESHOLD
 #define INV_APPR_THRESHOLD (INV_NEWTON_THRESHOLD)
 #endif
+
+/* FIXME: The iterative version splits the operand in two slighty
+   unbalanced parts, the use of log_2 (or counting the bits)
+   underestimate the maximum number of iterations.
+*/
+
+/* This is intended for constant THRESHOLDs only, where the compiler
+   can completely fold the result.  */
+#define LOG2C(n) \
+ (((n) >=    0x1) + ((n) >=    0x2) + ((n) >=    0x4) + ((n) >=    0x8) + \
+  ((n) >=   0x10) + ((n) >=   0x20) + ((n) >=   0x40) + ((n) >=   0x80) + \
+  ((n) >=  0x100) + ((n) >=  0x200) + ((n) >=  0x400) + ((n) >=  0x800) + \
+  ((n) >= 0x1000) + ((n) >= 0x2000) + ((n) >= 0x4000) + ((n) >= 0x8000))
 
 #if TUNE_PROGRAM_BUILD
 #define NPOWS \
@@ -65,50 +70,27 @@ mpn_invertappr_itch (mp_size_t n)
   return 3 * n + 2;
 }
 
-/* 
- Compute {ip,n}, the approximate reciprocal of the strictly normalised
- value {dp,n}, i.e. most significant bit must be set.
+/*
+ All the three functions mpn{,_bc,_ni}_invertappr (ip, dp, n, scratch),
+ take the strictly normalised value {dp,n} (i.e. most significant bit
+ must be set) as an input, and compute {ip,n}: the approximate
+ reciprocal of {dp,n}.
 
- Let e = mpn_invertappr (ip, dp, n, scratch), the following conditions
+ Let e = mpn*_invertappr (ip, dp, n, scratch), the following conditions
  are satisfied by the output:
    0 <= e <= 1;
-   {dp,n}*(B^n+{ip,n}) < B^{2n} < {dp,n}*(B^n+{ip,n}+1+e).
+   {dp,n}*(B^n+{ip,n}) < B^{2n} <= {dp,n}*(B^n+{ip,n}+1+e) .
  I.e. e=0 means that the result {ip,n} equals the one given by mpn_invert.
-      e=1 means that the result may be one less than expected.
+      e=1 means that the result _may_ be one less than expected.
 
- Inspired by Algorithm "ApproximateReciprocal", published in
- "Modern Computer Arithmetic" by Richard P. Brent and Paul Zimmermann,
- algorithm 3.5, page 121 in version 0.4 of the book.
+ The _bc version returns e=1 most of the times.
+ The _ni version should return e=0 most of the time; only 1% of
+ possible random input should give e=1.
 
- Some adaptation were introduced, to allow product mod B^m-1 and
- return the value e.
-
- The iterative structure is copied from T.Granlund's binvert.c.
-
- With USE_MUL_N = 0 and WRAP_MOD_BNM1 = 0, the iteration is conformant
- to the algorithm described in the book.
- 
- USE_MUL_N = 1 introduce a correction in such a way that "the value of
- B^{n+h}-T computed at step 8 cannot exceed B^n-1" (the book reads
- "2B^n-1"). This correction should not require to modify the proof.
-
- WRAP_MOD_BNM1 = 1 enables the wrapped product modulo B^m-1.
- NOTE: is there any normalisation problem for the [0] class?
- It shouldn't: we compute 2*|A*X_h - B^{n+h}| < B^m-1.
- We may get [0] if and only if we get AX_h = B^{n+h}.
- This can happen only if A=B^{n}/2, but this implies X_h = B^{h}*2-1
- i.e. AX_h = B^{n+h} - A, then we get into the "negative" branch,
- where X_h is not incremented (because A < B^n).
-
- FIXME: the scratch for mulmod_bnm1 does not currently fit in the
- scratch, it is allocated apart.
-
- Acknowledgements: Thanks to Paul Zimmermann for his very valuable
- suggestions on the theoretical aspects.
+ When the exact approximation is needed, i.e. e=0 in the relation above:
+   {dp,n}*(B^n+{ip,n}) < B^{2n} <= {dp,n}*(B^n+{ip,n}+1) ;
+ the function mpn_invert (ip, dp, n, scratch) should be used instead.
 */
-
-#define USE_MUL_N 1
-#define WRAP_MOD_BNM1 1
 
 /* Maximum scratch needed by this branch (at tp): 3*n + 2 */
 static mp_limb_t
@@ -147,6 +129,44 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
   }
   return 0;
 }
+
+/*
+ mpn_ni_invertappr: computes the approximate reciprocal using Newton's
+ iterations (at least one).
+
+ Inspired by Algorithm "ApproximateReciprocal", published in
+ "Modern Computer Arithmetic" by Richard P. Brent and Paul Zimmermann,
+ algorithm 3.5, page 121 in version 0.4 of the book.
+
+ Some adaptation were introduced, to allow product mod B^m-1 and
+ return the value e.
+
+ The iterative structure is copied from T.Granlund's binvert.c.
+
+ With USE_MUL_N = 0 and WRAP_MOD_BNM1 = 0, the iteration is conformant
+ to the algorithm described in the book.
+ 
+ USE_MUL_N = 1 introduce a correction in such a way that "the value of
+ B^{n+h}-T computed at step 8 cannot exceed B^n-1" (the book reads
+ "2B^n-1"). This correction should not require to modify the proof.
+
+ WRAP_MOD_BNM1 = 1 enables the wrapped product modulo B^m-1.
+ NOTE: is there any normalisation problem for the [0] class?
+ It shouldn't: we compute 2*|A*X_h - B^{n+h}| < B^m-1.
+ We may get [0] if and only if we get AX_h = B^{n+h}.
+ This can happen only if A=B^{n}/2, but this implies X_h = B^{h}*2-1
+ i.e. AX_h = B^{n+h} - A, then we get into the "negative" branch,
+ where X_h is not incremented (because A < B^n).
+
+ FIXME: the scratch for mulmod_bnm1 does not currently fit in the
+ scratch, it is allocated apart.
+
+ Acknowledgements: Thanks to Paul Zimmermann for his very valuable
+ suggestions on all the theoretical aspects.
+*/
+
+#define USE_MUL_N 1
+#define WRAP_MOD_BNM1 1
 
 mp_limb_t
 mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
@@ -319,9 +339,11 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     invert_limb (*(ip),*(dp));
   else {
     TMP_DECL;
+
     TMP_MARK;
     if (scratch == NULL)
       scratch = TMP_ALLOC_LIMBS (mpn_invert_itch (n));
+
     if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD)) {
       /* Maximum scratch needed by this branch: 3*n + 2 */
       mp_size_t i;
