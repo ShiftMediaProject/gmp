@@ -1,3 +1,10 @@
+2009-12-14  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_binvert): Remove BINV_MULMOD_BNM1_THRESHOLD
+	tuning, it was always zero and caused BINV_NEWTON_THRESHOLD to be
+	wrong (as pointed out by Marco).
+	* (BINV_MULMOD_BNM1_THRESHOLD): Clean from other files too.
+
 2009-12-14  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Improved comments.

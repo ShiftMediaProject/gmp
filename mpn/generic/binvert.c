@@ -44,9 +44,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)))
 #else
-#ifndef BINV_MULMOD_BNM1_THRESHOLD
-#define BINV_MULMOD_BNM1_THRESHOLD 0 /* presumably always 0 */
-#endif
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)) - LOG2C (BINV_NEWTON_THRESHOLD))
 #endif
@@ -87,20 +84,14 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
   /* Use Newton iterations to get the desired precision.  */
   for (; rn < n; rn = newrn)
     {
+      mp_size_t m;
       newrn = *--sizp;
 
       /* X <- UR. */
-      if (ABOVE_THRESHOLD (newrn, BINV_MULMOD_BNM1_THRESHOLD))
-	{
-	  mp_size_t m;
-	  m = mpn_mulmod_bnm1_next_size (newrn);
-	  mpn_mulmod_bnm1 (xp, m, up, newrn, rp, rn, xp + m);
-	  mpn_sub_1 (xp + m, xp, rn - (m - newrn), 1);
-	}
-      else
-	{
-	  mpn_mul (xp, up, newrn, rp, rn);
-	}
+      m = mpn_mulmod_bnm1_next_size (newrn);
+      mpn_mulmod_bnm1 (xp, m, up, newrn, rp, rn, xp + m);
+      mpn_sub_1 (xp + m, xp, rn - (m - newrn), 1);
+
       /* R = R(X/B^rn) */
       mpn_mullo_n (rp + rn, rp, xp + rn, newrn - rn);
       mpn_neg_n (rp + rn, rp + rn, newrn - rn);
