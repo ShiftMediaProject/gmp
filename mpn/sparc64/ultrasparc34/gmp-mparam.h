@@ -46,13 +46,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULLO_DC_THRESHOLD                0  /* never mpn_mullo_basecase */
 #define MULLO_MUL_N_THRESHOLD          2350
 
-#define MULMOD_BNM1_THRESHOLD            16
+#define MULMOD_BNM1_THRESHOLD            13
 
 #define DC_DIV_QR_THRESHOLD              16
 #define DC_DIVAPPR_Q_THRESHOLD           58
 #define DC_BDIV_QR_THRESHOLD             29
 #define DC_BDIV_Q_THRESHOLD             106
-#define BINV_NEWTON_THRESHOLD           448
+#define BINV_NEWTON_THRESHOLD           348
+#define BINV_MULMOD_BNM1_THRESHOLD        0  /* always when newton */
 #define REDC_1_TO_REDC_2_THRESHOLD       10
 #define REDC_2_TO_REDC_N_THRESHOLD      117
 

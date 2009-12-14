@@ -973,17 +973,20 @@ mpn_mul_fft_full (mp_ptr op,
 		 nl, ml, pl2, pl3, k2));
 
   ASSERT_ALWAYS(pl3 <= pl);
-  mpn_mul_fft (op, pl3, n, nl, m, ml, k3);     /* mu */
+  cc = mpn_mul_fft (op, pl3, n, nl, m, ml, k3);     /* mu */
+  ASSERT(cc == 0);
   pad_op = __GMP_ALLOCATE_FUNC_LIMBS (pl2);
-  mpn_mul_fft (pad_op, pl2, n, nl, m, ml, k2); /* lambda */
-  cc = mpn_sub_n (pad_op, pad_op, op, pl2);    /* lambda - low(mu) */
+  cc = mpn_mul_fft (pad_op, pl2, n, nl, m, ml, k2); /* lambda */
+  cc = -cc + mpn_sub_n (pad_op, pad_op, op, pl2);    /* lambda - low(mu) */
   /* 0 <= cc <= 1 */
+  ASSERT(0 <= cc && cc <= 1);
   l = pl3 - pl2; /* l = pl2 / 2 since pl3 = 3/2 * pl2 */
   c2 = mpn_add_n (pad_op, pad_op, op + pl2, l);
-  cc = mpn_add_1 (pad_op + l, pad_op + l, l, (mp_limb_t) c2) - cc; /* -1 <= cc <= 1 */
+  cc = mpn_add_1 (pad_op + l, pad_op + l, l, (mp_limb_t) c2) - cc;
+  ASSERT(-1 <= cc && cc <= 1);
   if (cc < 0)
     cc = mpn_add_1 (pad_op, pad_op, pl2, (mp_limb_t) -cc);
-  /* 0 <= cc <= 1 */
+  ASSERT(0 <= cc && cc <= 1);
   /* now lambda-mu = {pad_op, pl2} - cc mod 2^(pl2*GMP_NUMB_BITS)+1 */
   oldcc = cc;
 #if HAVE_NATIVE_mpn_add_n_sub_n

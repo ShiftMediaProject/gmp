@@ -162,9 +162,11 @@ mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
 	qh = mpn_sbpi1_divappr_q (qp, np - dn, nn, dp - dn, dn, dinv->inv32);
       else
 	{
-	  /* Put quotient in tp, use qp as temporary, since qp lacks a limb.  */
-	  qh = mpn_dcpi1_divappr_q_n (tp, np - qn - 2, dp - (qn + 1), qn + 1, dinv, qp);
-	  MPN_COPY (qp, tp + 1, qn);
+	  /* It is tempting to use qp for recursive scratch and put quotient in
+	     tp, but the recursive scratch needs one limb too many.  */
+	  mp_ptr qp2 = TMP_SALLOC_LIMBS (qn + 1);
+	  qh = mpn_dcpi1_divappr_q_n (qp2, np - qn - 2, dp - (qn + 1), qn + 1, dinv, tp);
+	  MPN_COPY (qp, qp2 + 1, qn);
 	}
     }
 
