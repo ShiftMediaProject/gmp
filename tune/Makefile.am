@@ -41,7 +41,7 @@ EXTRA_LTLIBRARIES = libspeed.la
 
 libspeed_la_SOURCES =							\
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
-  freq.c					\
+  freq.c								\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c					\

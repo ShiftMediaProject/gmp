@@ -1,3 +1,7 @@
+2009-12-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/gcdext_subdiv_step.c: Get an ASSERT right.
+
 2009-12-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/sbpi1_div_qr.c (mpn_sbpi1_div_qr): A very small step

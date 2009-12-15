@@ -104,7 +104,7 @@ mpn_gcdext_subdiv_step (mp_ptr gp, mp_size_t *gn, mp_ptr up, mp_size_t *usizep,
 
 	  /* Must return the smallest cofactor, +u1 or -u0 */
 	  MPN_CMP (c, u0, u1, un);
-	  ASSERT (c != 0);
+	  ASSERT (c != 0 || (un == 1 && u0[0] == 1 && u1[0] == 1));
 
 	  if (c < 0)
 	    {
