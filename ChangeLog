@@ -1,3 +1,7 @@
+2009-12-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/gcdext_subdiv_step.c: Get an ASSERT right.
+
 2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (mpn_ni_invertappr): Added prototype and name-mangling.
