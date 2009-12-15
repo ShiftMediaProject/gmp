@@ -1,6 +1,7 @@
 2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* gmp-impl.h (mpn_ni_invertappr): Added prototype and name-mangling.
+	* mpn/generic/mulmod_bnm1.c: Comment representation of class [0].
 
 2009-12-14  Niels Möller  <nisse@lysator.liu.se>
 

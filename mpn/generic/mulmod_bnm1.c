@@ -70,6 +70,16 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
 
 
 /* Computes {rp,rn} <- {ap,an}*{bp,bn} Mod(B^rn-1)
+ *
+ * The result is expected to be ZERO if and only if one of the operand
+ * already is. Otherwise the class [0] Mod(B^rn-1) is represented by
+ * B^rn-1. This should not be a problem if mulmod_bnm1 is used to
+ * combine results and obtain a natural number when one knows in
+ * advance that the final value is less than (B^rn-1).
+ * Moreover it should not be a problem if mulmod_bnm1 is used to
+ * compute the full product with an+bn <= rn, because this condition
+ * implies (B^an-1)(B^bn-1) < (B^rn-1) .
+ *
  * Requires both 0 < bn <= an <= rn
  * Scratch need: rn + 2 + (need for recursive call OR rn + 2). This gives
  *
