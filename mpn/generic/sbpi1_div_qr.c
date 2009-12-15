@@ -81,7 +81,7 @@ mpn_sbpi1_div_qr (mp_ptr qp,
 	  cy1 = n0 < cy;
 	  n0 = (n0 - cy) & GMP_NUMB_MASK;
 	  cy = n1 < cy1;
-	  n1 -= cy1;
+	  n1 = (n1 - cy1) & GMP_NUMB_MASK;
 	  np[0] = n0;
 
 	  if (UNLIKELY (cy != 0))
