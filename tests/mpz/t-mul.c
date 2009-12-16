@@ -27,8 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "tests.h"
 
 void debug_mp __GMP_PROTO ((mpz_t));
-static void ref_mpn_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
-static void ref_mpz_mul __GMP_PROTO ((mpz_t, const mpz_t, const mpz_t));
+static void refmpz_mul __GMP_PROTO ((mpz_t, const mpz_t, const mpz_t));
 void dump_abort __GMP_PROTO ((int, char *, mpz_t, mpz_t, mpz_t, mpz_t));
 
 #define FFT_MIN_BITSIZE 100000
@@ -39,15 +38,13 @@ void
 one (int i, mpz_t multiplicand, mpz_t multiplier)
 {
   mpz_t product, ref_product;
-  mpz_t quotient;
 
   mpz_init (product);
   mpz_init (ref_product);
-  mpz_init (quotient);
 
   /* Test plain multiplication comparing results against reference code.  */
   mpz_mul (product, multiplier, multiplicand);
-  ref_mpz_mul (ref_product, multiplier, multiplicand);
+  refmpz_mul (ref_product, multiplier, multiplicand);
   if (mpz_cmp (product, ref_product))
     dump_abort (i, "incorrect plain product",
 		multiplier, multiplicand, product, ref_product);
@@ -62,7 +59,6 @@ one (int i, mpz_t multiplicand, mpz_t multiplier)
 
   mpz_clear (product);
   mpz_clear (ref_product);
-  mpz_clear (quotient);
 }
 
 int
@@ -141,7 +137,7 @@ main (int argc, char **argv)
 }
 
 static void
-ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
+refmpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
 {
   mp_size_t usize = u->_mp_size;
   mp_size_t vsize = v->_mp_size;
@@ -169,9 +165,9 @@ ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
   wp = __GMP_ALLOCATE_FUNC_LIMBS (talloc);
 
   if (usize > vsize)
-    ref_mpn_mul (wp, up, usize, vp, vsize);
+    refmpn_mul (wp, up, usize, vp, vsize);
   else
-    ref_mpn_mul (wp, vp, vsize, up, usize);
+    refmpn_mul (wp, vp, vsize, up, usize);
   wsize = usize + vsize;
   wsize -= wp[wsize - 1] == 0;
   MPZ_REALLOC (w, wsize);
@@ -179,127 +175,6 @@ ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
 
   SIZ(w) = sign_product < 0 ? -wsize : wsize;
   __GMP_FREE_FUNC_LIMBS (wp, talloc);
-}
-
-static void mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
-
-#define TOOM3_THRESHOLD (MAX (MUL_TOOM33_THRESHOLD, SQR_TOOM3_THRESHOLD))
-#define TOOM4_THRESHOLD (MAX (MUL_TOOM44_THRESHOLD, SQR_TOOM4_THRESHOLD))
-#define FFT_THRESHOLD (MAX (MUL_FFT_THRESHOLD, SQR_FFT_THRESHOLD))
-
-static void
-ref_mpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
-{
-  mp_ptr tp;
-  mp_size_t tn;
-  mp_limb_t cy;
-
-  if (vn < TOOM3_THRESHOLD)
-    {
-      /* In the mpn_mul_basecase and mpn_kara_mul_n range, use our own
-	 mul_basecase.  */
-      if (vn != 0)
-	mul_basecase (wp, up, un, vp, vn);
-      else
-	MPN_ZERO (wp, un);
-      return;
-    }
-
-  if (vn < TOOM4_THRESHOLD)
-    {
-      /* In the mpn_toom33_mul range, use mpn_toom22_mul.  */
-      tn = 2 * vn + mpn_toom22_mul_itch (vn, vn);
-      tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_toom22_mul (tp, up, vn, vp, vn, tp + 2 * vn);
-    }
-  else if (vn < FFT_THRESHOLD)
-    {
-      /* In the mpn_toom44_mul range, use mpn_toom33_mul.  */
-      tn = 2 * vn + mpn_toom33_mul_itch (vn, vn);
-      tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_toom33_mul (tp, up, vn, vp, vn, tp + 2 * vn);
-    }
-  else
-    {
-      /* Finally, for the largest operands, use mpn_toom44_mul.  */
-      tn = 2 * vn + mpn_toom44_mul_itch (vn, vn);
-      tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
-      mpn_toom44_mul (tp, up, vn, vp, vn, tp + 2 * vn);
-    }
-
-  if (un != vn)
-    {
-      if (un - vn < vn)
-	ref_mpn_mul (wp + vn, vp, vn, up + vn, un - vn);
-      else
-	ref_mpn_mul (wp + vn, up + vn, un - vn, vp, vn);
-
-      MPN_COPY (wp, tp, vn);
-      cy = mpn_add_n (wp + vn, wp + vn, tp + vn, vn);
-      mpn_incr_u (wp + 2 * vn, cy);
-    }
-  else
-    {
-      MPN_COPY (wp, tp, 2 * vn);
-    }
-
-  __GMP_FREE_FUNC_LIMBS (tp, tn);
-}
-
-static void
-mul_basecase (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
-{
-  mp_size_t i, j;
-  mp_limb_t prod_low, prod_high;
-  mp_limb_t cy_dig;
-  mp_limb_t v_limb;
-
-  /* Multiply by the first limb in V separately, as the result can
-     be stored (not added) to PROD.  We also avoid a loop for zeroing.  */
-  v_limb = vp[0];
-  cy_dig = 0;
-  for (j = un; j > 0; j--)
-    {
-      mp_limb_t u_limb, w_limb;
-      u_limb = *up++;
-      umul_ppmm (prod_high, prod_low, u_limb, v_limb << GMP_NAIL_BITS);
-      add_ssaaaa (cy_dig, w_limb, prod_high, prod_low, 0, cy_dig << GMP_NAIL_BITS);
-      *wp++ = w_limb >> GMP_NAIL_BITS;
-    }
-
-  *wp++ = cy_dig;
-  wp -= un;
-  up -= un;
-
-  /* For each iteration in the outer loop, multiply one limb from
-     U with one limb from V, and add it to PROD.  */
-  for (i = 1; i < vn; i++)
-    {
-      v_limb = vp[i];
-      cy_dig = 0;
-
-      for (j = un; j > 0; j--)
-	{
-	  mp_limb_t u_limb, w_limb;
-	  u_limb = *up++;
-	  umul_ppmm (prod_high, prod_low, u_limb, v_limb << GMP_NAIL_BITS);
-	  w_limb = *wp;
-	  add_ssaaaa (prod_high, prod_low, prod_high, prod_low, 0, w_limb << GMP_NAIL_BITS);
-	  prod_low >>= GMP_NAIL_BITS;
-	  prod_low += cy_dig;
-#if GMP_NAIL_BITS == 0
-	  cy_dig = prod_high + (prod_low < cy_dig);
-#else
-	  cy_dig = prod_high;
-	  cy_dig += prod_low >> GMP_NUMB_BITS;
-#endif
-	  *wp++ = prod_low & GMP_NUMB_MASK;
-	}
-
-      *wp++ = cy_dig;
-      wp -= un;
-      up -= un;
-    }
 }
 
 void

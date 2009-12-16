@@ -1450,10 +1450,76 @@ refmpn_mul_basecase (mp_ptr prodp,
     prodp[usize+i] = refmpn_addmul_1 (prodp+i, up, usize, vp[i]);
 }
 
+#define TOOM3_THRESHOLD (MAX (MUL_TOOM33_THRESHOLD, SQR_TOOM3_THRESHOLD))
+#define TOOM4_THRESHOLD (MAX (MUL_TOOM44_THRESHOLD, SQR_TOOM4_THRESHOLD))
+#if WANT_FFT
+#define FFT_THRESHOLD (MAX (MUL_FFT_THRESHOLD, SQR_FFT_THRESHOLD))
+#else
+#define FFT_THRESHOLD MP_SIZE_T_MAX /* don't use toom44 here */
+#endif
+
+void
+refmpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
+{
+  mp_ptr tp;
+  mp_size_t tn;
+  mp_limb_t cy;
+
+  if (vn < TOOM3_THRESHOLD)
+    {
+      /* In the mpn_mul_basecase and mpn_kara_mul_n range, use our own
+	 mul_basecase.  */
+      if (vn != 0)
+	refmpn_mul_basecase (wp, up, un, vp, vn);
+      else
+	MPN_ZERO (wp, un);
+      return;
+    }
+
+  if (vn < TOOM4_THRESHOLD)
+    {
+      /* In the mpn_toom33_mul range, use mpn_toom22_mul.  */
+      tn = 2 * vn + mpn_toom22_mul_itch (vn, vn);
+      tp = refmpn_malloc_limbs (tn);
+      mpn_toom22_mul (tp, up, vn, vp, vn, tp + 2 * vn);
+    }
+  else if (vn < FFT_THRESHOLD)
+    {
+      /* In the mpn_toom44_mul range, use mpn_toom33_mul.  */
+      tn = 2 * vn + mpn_toom33_mul_itch (vn, vn);
+      tp = refmpn_malloc_limbs (tn);
+      mpn_toom33_mul (tp, up, vn, vp, vn, tp + 2 * vn);
+    }
+  else
+    {
+      /* Finally, for the largest operands, use mpn_toom44_mul.  */
+      tn = 2 * vn + mpn_toom44_mul_itch (vn, vn);
+      tp = refmpn_malloc_limbs (tn);
+      mpn_toom44_mul (tp, up, vn, vp, vn, tp + 2 * vn);
+    }
+
+  if (un != vn)
+    {
+      if (un - vn < vn)
+	refmpn_mul (wp + vn, vp, vn, up + vn, un - vn);
+      else
+	refmpn_mul (wp + vn, up + vn, un - vn, vp, vn);
+
+      MPN_COPY (wp, tp, vn);
+      cy = refmpn_add (wp + vn, wp + vn, un, tp + vn, vn);
+    }
+  else
+    {
+      MPN_COPY (wp, tp, 2 * vn);
+    }
+
+  free (tp);
+}
+
 void
 refmpn_mul_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
 {
-  refmpn_mul_basecase (prodp, up, size, vp, size);
+  refmpn_mul (prodp, up, size, vp, size);
 }
 
 void
@@ -1462,6 +1528,7 @@ refmpn_mullo_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
   mp_ptr tp = refmpn_malloc_limbs (2*size);
   refmpn_mul_basecase (tp, up, size, vp, size);
   refmpn_copyi (prodp, tp, size);
+  free (tp);
 }
 
 void

@@ -8,6 +8,13 @@
 
 2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/t-mul.c: Misc cleanups.
+	(mul_basecase): Remove.
+	(ref_mpn_mul): Remove.
+	* tests/refmpn.c (refmpn_mul): New function, mainly from t-mul.c's
+	ref_mpn_mul.
+	(refmpn_mullo_n): Add a missing free.
+
 	* tune/speed.c (routine): Measure speed_mpn_{sb,dc}pi1_div_qr,
 	mpn_{sb,dc}pi1_divappr_q, mpn_{sb,dc}pi1_bdiv_qr, and
 	mpn_{sb,dc}pi1_bdiv_q.

@@ -316,6 +316,7 @@ void refmpn_mul_any __GMP_PROTO ((mp_ptr prodp,
                              mp_srcptr vp, mp_size_t vsize));
 void refmpn_mul_n __GMP_PROTO ((mp_ptr prodp, mp_srcptr up, mp_srcptr vp,
                            mp_size_t size));
+void refmpn_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
 void refmpn_nand_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
