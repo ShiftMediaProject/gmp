@@ -1,5 +1,9 @@
 2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.c (routine): Measure speed_mpn_{sb,dc}pi1_div_qr,
+	mpn_{sb,dc}pi1_divappr_q, mpn_{sb,dc}pi1_bdiv_qr, and
+	mpn_{sb,dc}pi1_bdiv_q.
+
 	* mpn/generic/invertappr.c: New file, meat from invert.c.
 	* mpn/generic/invert.c: Leave just mpn_invert.c.
 	* configure.in (gmp_mpn_functions): Add invertappr.
@@ -52,7 +56,7 @@
 	overrun.
 
 	* mpn/generic/mul_fft.c (mpn_mul_fft_full): Handle carry-out from 2nd
-	mpn_mul_fft, add an ASSERT for the 1sd mpn_mul_fft.  Replace some
+	mpn_mul_fft, add an ASSERT for the 1st mpn_mul_fft.  Replace some
 	comments on cc's range with ASSERTs.
 
 	* mpn/generic/gcdext.c (compute_v): Normalize tp[] after mpn_mul.

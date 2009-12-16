@@ -312,10 +312,20 @@ const struct routine_t {
   { "mpn_mulmod_bnm1",         speed_mpn_mulmod_bnm1         },
   { "mpn_mulmod_bnm1_rounded", speed_mpn_mulmod_bnm1_rounded },
 
-  { "mpn_invert",        speed_mpn_invert           },
-  { "mpn_invertappr",    speed_mpn_invertappr       },
-  { "mpn_ni_invertappr", speed_mpn_ni_invertappr    },
-  { "mpn_binvert",       speed_mpn_binvert          },
+  { "mpn_invert",              speed_mpn_invert              },
+  { "mpn_invertappr",          speed_mpn_invertappr          },
+  { "mpn_ni_invertappr",       speed_mpn_ni_invertappr       },
+  { "mpn_binvert",             speed_mpn_binvert             },
+
+  { "mpn_sbpi1_div_qr",        speed_mpn_sbpi1_div_qr        },
+  { "mpn_dcpi1_div_qr",        speed_mpn_dcpi1_div_qr        },
+  { "mpn_sbpi1_divappr_q",     speed_mpn_sbpi1_divappr_q     },
+  { "mpn_dcpi1_divappr_q",     speed_mpn_dcpi1_divappr_q     },
+
+  { "mpn_sbpi1_bdiv_qr",       speed_mpn_sbpi1_bdiv_qr       },
+  { "mpn_dcpi1_bdiv_qr",       speed_mpn_dcpi1_bdiv_qr       },
+  { "mpn_sbpi1_bdiv_q",        speed_mpn_sbpi1_bdiv_q        },
+  { "mpn_dcpi1_bdiv_q",        speed_mpn_dcpi1_bdiv_q        },
 
   { "mpn_get_str",          speed_mpn_get_str,     FLAG_R_OPTIONAL },
   { "mpn_set_str",          speed_mpn_set_str,     FLAG_R_OPTIONAL },
