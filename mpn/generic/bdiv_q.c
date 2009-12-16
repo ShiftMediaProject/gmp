@@ -27,8 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-/* Computes Q = N / D mod B^n,
-	    destroys N.  */
+/* Computes Q = N / D mod B^n. */
 
 void
 mpn_bdiv_q (mp_ptr qp,
@@ -60,5 +59,8 @@ mpn_bdiv_q (mp_ptr qp,
 mp_size_t
 mpn_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
 {
-  return mpn_mu_bdiv_q_itch (nn, dn);
+  if (BELOW_THRESHOLD (dn, MU_BDIV_Q_THRESHOLD))
+    return nn;
+  else
+    return mpn_mu_bdiv_q_itch (nn, dn);
 }
