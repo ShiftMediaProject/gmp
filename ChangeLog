@@ -1,3 +1,10 @@
+2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm.c: Use mp_bitcnt_t for bit counts.
+	Handle REDC_1_TO_REDC_N_THRESHOLD < MUL_TOOM22_THRESHOLD in
+	non-WANT_REDC_2 INNERLOOP expansion code.
+	* mpn/generic/powm_sec.c: Use mp_bitcnt_t for bit counts.
+
 2009-12-16  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpz/t-gcd.c (main): Added test case to exercise the

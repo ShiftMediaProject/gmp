@@ -81,7 +81,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   ((p[(bi - 1) / GMP_LIMB_BITS] >> (bi - 1) % GMP_LIMB_BITS) & 1)
 
 static inline mp_limb_t
-getbits (const mp_limb_t *p, unsigned long bi, int nbits)
+getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
 {
   int nbits_in_r;
   mp_limb_t r;
@@ -105,10 +105,10 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
 }
 
 static inline int
-win_size (unsigned long eb)
+win_size (mp_bitcnt_t eb)
 {
   int k;
-  static unsigned long x[] = {1,7,25,81,241,673,1793,4609,11521,28161,~0ul};
+  static mp_bitcnt_t x[] = {1,7,25,81,241,673,1793,4609,11521,28161,~0ul};
   for (k = 0; eb > x[k]; k++)
     ;
   return k;
@@ -142,7 +142,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 {
   mp_limb_t ip[2], *mip;
   int cnt;
-  long ebi;
+  mp_bitcnt_t ebi;
   int windowsize, this_windowsize;
   mp_limb_t expbits;
   mp_ptr pp, this_pp;
@@ -156,7 +156,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   TMP_MARK;
 
   count_leading_zeros (cnt, ep[en - 1]);
-  ebi = en * GMP_LIMB_BITS - cnt;
+  ebi = (mp_bitcnt_t) en * GMP_LIMB_BITS - cnt;
 
 #if 0
   if (bn < n)
@@ -243,9 +243,10 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     }
 
   expbits = getbits (ep, ebi, windowsize);
-  ebi -= windowsize;
-  if (ebi < 0)
+  if (ebi < windowsize)
     ebi = 0;
+  else
+    ebi -= windowsize;
 
   count_trailing_zeros (cnt, expbits);
   ebi += cnt;
@@ -270,13 +271,14 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	 significant bit is 1.  */					\
 									\
       expbits = getbits (ep, ebi, windowsize);				\
-      ebi -= windowsize;						\
       this_windowsize = windowsize;					\
-      if (ebi < 0)							\
+      if (ebi < windowsize)						\
 	{								\
-	  this_windowsize += ebi;					\
+	  this_windowsize -= windowsize - ebi;				\
 	  ebi = 0;							\
 	}								\
+      else								\
+        ebi -= windowsize;						\
 									\
       count_trailing_zeros (cnt, expbits);				\
       this_windowsize -= cnt;						\
@@ -362,7 +364,28 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     }
 
 #else  /* WANT_REDC_2 */
-
+#if REDC_1_TO_REDC_N_THRESHOLD < MUL_TOOM22_THRESHOLD
+  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+      INNERLOOP;
+    }
+  else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+    {
+#undef MPN_MUL_N
+#undef MPN_SQR_N
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR_N(r,a,n)		mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
+      INNERLOOP;
+    }
+#else
   if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
     {
 #undef MPN_MUL_N
@@ -383,6 +406,7 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
       INNERLOOP;
     }
+#endif
   else
     {
 #undef MPN_MUL_N

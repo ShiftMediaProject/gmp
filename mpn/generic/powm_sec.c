@@ -160,7 +160,7 @@ mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
   ((p[(bi - 1) / GMP_LIMB_BITS] >> (bi - 1) % GMP_LIMB_BITS) & 1)
 
 static inline mp_limb_t
-getbits (const mp_limb_t *p, unsigned long bi, int nbits)
+getbits (const mp_limb_t *p, mp_bitcnt_t bi, int nbits)
 {
   int nbits_in_r;
   mp_limb_t r;
@@ -184,10 +184,10 @@ getbits (const mp_limb_t *p, unsigned long bi, int nbits)
 }
 
 static inline int
-win_size (unsigned long eb)
+win_size (mp_bitcnt_t eb)
 {
   int k;
-  static unsigned long x[] = {1,4,27,100,325,1026,2905,7848,20457,51670,~0ul};
+  static mp_bitcnt_t x[] = {1,4,27,100,325,1026,2905,7848,20457,51670,~0ul};
   for (k = 0; eb > x[k]; k++)
     ;
   return k;
@@ -221,7 +221,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 {
   mp_limb_t minv;
   int cnt;
-  long ebi;
+  mp_bitcnt_t ebi;
   int windowsize, this_windowsize;
   mp_limb_t expbits;
   mp_ptr pp, this_pp;
@@ -235,7 +235,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   TMP_MARK;
 
   count_leading_zeros (cnt, ep[en - 1]);
-  ebi = en * GMP_LIMB_BITS - cnt;
+  ebi = (mp_bitcnt_t) en * GMP_LIMB_BITS - cnt;
 
   windowsize = win_size (ebi);
 
@@ -259,22 +259,24 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     }
 
   expbits = getbits (ep, ebi, windowsize);
-  ebi -= windowsize;
-  if (ebi < 0)
+  if (ebi < windowsize)
     ebi = 0;
+  else
+    ebi -= windowsize;
 
   MPN_COPY (rp, pp + n * expbits, n);
 
   while (ebi != 0)
     {
       expbits = getbits (ep, ebi, windowsize);
-      ebi -= windowsize;
       this_windowsize = windowsize;
-      if (ebi < 0)
+      if (ebi < windowsize)
 	{
-	  this_windowsize += ebi;
+	  this_windowsize -= windowsize - ebi;
 	  ebi = 0;
 	}
+      else
+	ebi -= windowsize;
 
       do
 	{
