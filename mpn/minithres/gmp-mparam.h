@@ -30,11 +30,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM3_THRESHOLD              20
 #define SQR_TOOM4_THRESHOLD              24
 
-#define MUL_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
+#define MUL_FFT_TABLE  {64, 256, 1024, 4096, 8192, 65536, 0}
 #define MUL_FFT_MODF_THRESHOLD  65
 #define MUL_FFT_THRESHOLD      200
 
-#define SQR_FFT_TABLE  {64-1, 256-1, 1024-1, 4096-1, 8192-1, 65536-1, 0}
+#define SQR_FFT_TABLE  {64, 256, 1024, 4096, 8192, 65536, 0}
 #define SQR_FFT_MODF_THRESHOLD  65
 #define SQR_FFT_THRESHOLD      200
 
@@ -49,6 +49,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_QR_THRESHOLD              4
 #define DC_BDIV_Q_THRESHOLD               4
 #define BINV_NEWTON_THRESHOLD             6
+#define INV_MULMOD_BNM1_THRESHOLD         2
+#define INV_NEWTON_THRESHOLD              6
+#define INV_APPR_THRESHOLD                4
 #define REDC_1_TO_REDC_N_THRESHOLD        4
 
 #define MATRIX22_STRASSEN_THRESHOLD       2

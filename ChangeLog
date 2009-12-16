@@ -1,5 +1,7 @@
 2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* minithres/gmp-mparam.h: Add new thresholds, trim old values.
+
 	* mpn/generic/powm.c: Use mp_bitcnt_t for bit counts.
 	Handle REDC_1_TO_REDC_N_THRESHOLD < MUL_TOOM22_THRESHOLD in
 	non-WANT_REDC_2 INNERLOOP expansion code.
