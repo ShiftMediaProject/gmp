@@ -134,7 +134,7 @@ mpn_gcdext_lehmer_n (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       gp[0] = ap[0];
 
       MPN_CMP (c, u0, u1, un);
-      ASSERT (c != 0);
+      ASSERT (c != 0 || (un == 1 && u0[0] == 1 && u1[0] == 1));
       if (c < 0)
 	{
 	  MPN_NORMALIZE (u0, un);

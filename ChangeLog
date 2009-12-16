@@ -1,3 +1,11 @@
+2009-12-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpz/t-gcd.c (main): Added test case to exercise the
+	unlikely u0 == u1 case in mpn_gcdext_lehmer_n.
+
+	* mpn/generic/gcdext_lehmer.c (mpn_gcdext_lehmer_n): Get ASSERT
+	right.
+
 2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Measure speed_mpn_{sb,dc}pi1_div_qr,
