@@ -116,7 +116,7 @@ main (int argc, char **argv)
       s_after = scratch[itch];
 
       mpn_toomMN_mul (pp, ap, an, bp, bn, scratch);
-      refmpn_mul_basecase (refp, ap, an, bp, bn);
+      refmpn_mul (refp, ap, an, bp, bn);
       if (pp[-1] != p_before || pp[an + bn] != p_after
 	  || scratch[-1] != s_before || scratch[itch] != s_after
 	  || mpn_cmp (refp, pp, an + bn) != 0)

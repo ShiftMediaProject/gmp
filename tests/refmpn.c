@@ -1526,7 +1526,7 @@ void
 refmpn_mullo_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
 {
   mp_ptr tp = refmpn_malloc_limbs (2*size);
-  refmpn_mul_basecase (tp, up, size, vp, size);
+  refmpn_mul (tp, up, size, vp, size);
   refmpn_copyi (prodp, tp, size);
   free (tp);
 }
@@ -1534,7 +1534,7 @@ refmpn_mullo_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t size)
 void
 refmpn_sqr (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
-  refmpn_mul_basecase (dst, src, size, src, size);
+  refmpn_mul (dst, src, size, src, size);
 }
 
 /* Allowing usize<vsize, usize==0 or vsize==0. */
@@ -1563,9 +1563,9 @@ refmpn_mul_any (mp_ptr prodp,
     }
 
   if (usize >= vsize)
-    refmpn_mul_basecase (prodp, up, usize, vp, vsize);
+    refmpn_mul (prodp, up, usize, vp, vsize);
   else
-    refmpn_mul_basecase (prodp, vp, vsize, up, usize);
+    refmpn_mul (prodp, vp, vsize, up, usize);
 }
 
 

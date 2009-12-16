@@ -34,7 +34,7 @@ bdiv_q_valid_p (mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
 
   TMP_MARK;
   tp = TMP_ALLOC_LIMBS (dn + nn);
-  refmpn_mul_basecase (tp, qp, nn, dp, dn);
+  refmpn_mul (tp, qp, nn, dp, dn);
   MPN_CMP (c, tp, np, nn);
   TMP_FREE;
 
@@ -56,9 +56,9 @@ bdiv_qr_valid_p (mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
   tp = TMP_ALLOC_LIMBS (nn);
 
   if (qn >= dn)
-    refmpn_mul_basecase (tp, qp, qn, dp, dn);
+    refmpn_mul (tp, qp, qn, dp, dn);
   else
-    refmpn_mul_basecase (tp, dp, dn, qp, qn);
+    refmpn_mul (tp, dp, dn, qp, qn);
 
   MPN_CMP (c, tp, np, qn);
   if (c)

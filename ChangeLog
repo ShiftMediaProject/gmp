@@ -1,5 +1,10 @@
 2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-bdiv.c (bdiv_q_valid_p, bdiv_qr_valid_p): Call refmpn_mul
+	instead of refmpn_mul_basecase.
+	* tests/mpn/toom-shared.h: Likewise.
+	* tests/refmpn.c (refmpn_mullo_n,refmpn_sqr,refmpn_mul_any): Likewise.
+
 	* minithres/gmp-mparam.h: Add new thresholds, trim old values.
 
 	* mpn/generic/powm.c: Use mp_bitcnt_t for bit counts.
