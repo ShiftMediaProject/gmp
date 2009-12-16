@@ -32,11 +32,14 @@ Jason Moxham		mpz/fac_ui.c and gen-fac_ui.c
 Niels Möller		mpn/generic/hgcd2.c, gcd.c, gcdext.c, matrix22_mul.c,
 			hgcd.c, gcdext_1.c, gcd_subdiv_step.c, gcd_lehmer.c,
 			gcdext_subdiv_step.c, gcdext_lehmer.c,
-			toom_interpolate_7pts, mulmod_bnm1.c, mpz/nextprime.c.
+			toom_interpolate_7pts, mulmod_bnm1.c, dcpi1_bdiv_qr.c,
+			dcpi1_bdiv_q.c, sbpi1_bdiv_qr.c, sbpi1_bdiv_q.c,
+			mpz/nextprime.c.
 
 Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			toom62_mul.c, toom43_mul.c, toom52_mul.c,
-			toom_interpolate_6pts.c, mulmod_bnm1.c.
+			toom_interpolate_6pts.c, mulmod_bnm1.c, invert.c,
+			invertappr.c.
 
 David Harvey		mpn/x86_64/mul_basecase.asm
 
