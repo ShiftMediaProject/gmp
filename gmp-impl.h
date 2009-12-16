@@ -1169,15 +1169,13 @@ __GMP_DECLSPEC mp_limb_t mpn_mu_div_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, m
 
 #define   mpn_invert __MPN(invert)
 __GMP_DECLSPEC void      mpn_invert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-#define   mpn_invert_itch __MPN(invert_itch)
-__GMP_DECLSPEC mp_size_t mpn_invert_itch __GMP_PROTO ((mp_size_t));
+#define mpn_invert_itch(n)  mpn_invertappr_itch(n)
 
 #define   mpn_ni_invertappr __MPN(ni_invertappr)
 __GMP_DECLSPEC mp_limb_t mpn_ni_invertappr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 #define   mpn_invertappr __MPN(invertappr)
 __GMP_DECLSPEC mp_limb_t mpn_invertappr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-#define   mpn_invertappr_itch __MPN(invertappr_itch)
-__GMP_DECLSPEC mp_size_t mpn_invertappr_itch __GMP_PROTO ((mp_size_t));
+#define mpn_invertappr_itch(n)  (3 * (n) + 2)
 
 #define   mpn_binvert __MPN(binvert)
 __GMP_DECLSPEC void      mpn_binvert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));

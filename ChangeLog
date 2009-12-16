@@ -1,3 +1,11 @@
+2009-12-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/invertappr.c: New file, meat from invert.c.
+	* mpn/generic/invert.c: Leave just mpn_invert.c.
+	* configure.in (gmp_mpn_functions): Add invertappr.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add invertappr.c.
+	* gmp-impl.h (mpn_invert_itch, mpn_invertappr_itch): New macros.
+
 2009-12-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/gcdext_subdiv_step.c: Get an ASSERT right.
