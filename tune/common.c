@@ -1036,6 +1036,13 @@ speed_mpn_toom42_mul (struct speed_params *s)
 }
 
 double
+speed_mpn_nussbaumer_mul (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_N_CALL
+    (mpn_nussbaumer_mul (wp, s->xp, s->size, s->yp, s->size));
+}
+
+double
 speed_mpn_mul_fft_full (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MUL_N_CALL

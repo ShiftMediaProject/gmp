@@ -126,7 +126,7 @@ TUNE_MPN_SRCS_BASIC =							\
   dcpi1_div_qr.c dcpi1_divappr_q.c dcpi1_bdiv_qr.c dcpi1_bdiv_q.c	\
   invertappr.c invert.c binvert.c divrem_2.c gcd.c gcdext.c		\
   get_str.c set_str.c matrix22_mul.c hgcd.c mul_n.c sqr_n.c		\
-  mullo_n.c mul_fft.c mul.c tdiv_qr.c mulmod_bnm1.c			\
+  mullo_n.c mul_fft.c mul.c tdiv_qr.c mulmod_bnm1.c nussbaumer_mul.c	\
   toom22_mul.c toom2_sqr.c toom33_mul.c toom3_sqr.c toom44_mul.c toom4_sqr.c
 
 $(TUNE_MPN_SRCS_BASIC):

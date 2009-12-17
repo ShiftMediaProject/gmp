@@ -5,12 +5,28 @@
 
 	* gmp-impl.h: Renew default values for all THRESHOLDs.
 
+2009-12-17  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/dcpi1_div_qr.c (mpn_dcpi1_div_qr): Added some input
+	asserts.
+
+	* mpn/generic/dcpi1_div_qr.c (mpn_dcpi1_div_qr): In the case that
+	the initial quotient block is a single limb, use 3/2 division,
+	thereby eliminating the only use of gmp_pi1_t->inv21.
+
 2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Added some comment.
 	* mpn/generic/invertappr.c: Slightly better threshold handling.
-
 	* gmp-impl.h (INV_NEWTON_THRESHOLD): Default to 200.
+
+	* mpn/generic/nussbaumer_mul.c: New file.
+	* configure.in (gmp_mpn_functions): Add nussbaumer_mul.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add nussbaumer_mul.
+	* gmp-impl.h (mpn_nussbaumer_mul): Added prototype and name-mangling.
+	* tune/speed.h (speed_mpn_nussbaumer_mul): Declare function.
+	* tune/common.c (speed_mpn_nussbaumer_mul): New function.
+	* tune/speed.c (routine): Add speed_mpn_nussbaumer_mul.
 
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -126,7 +142,7 @@
 	(tune_invertappr): Min for INV_NEWTON_THRESHOLD.
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_NI_INVERTAPPR): New macro.
-	(speed_mpn_ni_invertappr): New function.
+	(speed_mpn_ni_invertappr): Declare function.
 	* tune/common.c (speed_mpn_ni_invertappr): New function.
 	* tune/speed.c (routine): Add speed_mpn_ni_invertappr.
 
@@ -147,7 +163,7 @@
 	(mpn_invertappr_itch): Added prototype and name-mangling.
 	(INV_APPR_THRESHOLD): Support for a new tunable const.
 	* tune/speed.h (SPEED_ROUTINE_MPN_INVERTAPPR): New macro.
-	(speed_mpn_invertappr): New function.
+	(speed_mpn_invertappr): Declare function.
 	* tune/common.c (speed_mpn_invertappr): New function.
 	* tune/speed.c (routine): Add speed_mpn_invertappr.
 	* tune/tuneup.c (tune_invertappr): New function: was tune_invert.

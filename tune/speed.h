@@ -223,6 +223,7 @@ double speed_mpn_mul_fft __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_full __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_full_sqr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_nussbaumer_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_n __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_n_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mullo_n __GMP_PROTO ((struct speed_params *s));

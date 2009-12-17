@@ -1119,6 +1119,9 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_fft __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr,
 #define   mpn_mul_fft_full __MPN(mul_fft_full)
 __GMP_DECLSPEC void      mpn_mul_fft_full __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
+#define   mpn_nussbaumer_mul __MPN(nussbaumer_mul)
+__GMP_DECLSPEC void      mpn_nussbaumer_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+
 #define   mpn_fft_next_size __MPN(fft_next_size)
 __GMP_DECLSPEC mp_size_t mpn_fft_next_size __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
 
