@@ -38,15 +38,12 @@ mpn_divexact (mp_ptr qp,
 {
   unsigned shift;
   mp_size_t qn;
-  mp_ptr tp;
+  mp_ptr tp, wp;
   TMP_DECL;
 
   ASSERT (dn > 0);
   ASSERT (nn >= dn);
   ASSERT (dp[dn-1] > 0);
-  ASSERT (np[nn-1] > 0);
-
-  qn = nn + 1 - dn;
 
   while (dp[0] == 0)
     {
@@ -56,37 +53,42 @@ mpn_divexact (mp_ptr qp,
       dn--;
       nn--;
     }
-  count_trailing_zeros (shift, dp[0]);
+
+  if (dn == 1)
+    {
+      MPN_DIVREM_OR_DIVEXACT_1 (qp, np, nn, dp[0]);
+      return;
+    }
 
   TMP_MARK;
+
+  qn = nn + 1 - dn;
+  count_trailing_zeros (shift, dp[0]);
+
   if (shift > 0)
     {
-      tp = TMP_ALLOC_LIMBS (dn);
-      mpn_rshift (tp, dp, dn, shift);
+      mp_size_t ss = (dn > qn) ? qn + 1 : dn;
+
+      tp = TMP_ALLOC_LIMBS (ss);
+      mpn_rshift (tp, dp, ss, shift);
       dp = tp;
 
-      /* FIXME: It's sufficient to get the qn least significant
-	 limbs. */
-      tp = TMP_ALLOC_LIMBS (nn);
-      mpn_rshift (tp, np, nn, shift);
-      np = tp;
+      /* Since we have excluded dn == 1, we have nn > qn, and we need
+	 to shift one limb beyond qn. */
+      wp = TMP_ALLOC_LIMBS (qn + 1);
+      mpn_rshift (wp, np, qn + 1, shift);
     }
   else
     {
-      mp_ptr tp = TMP_ALLOC_LIMBS (qn);
-      MPN_COPY (tp, np, qn);
-      np = tp;
+      wp = TMP_ALLOC_LIMBS (qn);
+      MPN_COPY (wp, np, qn);
     }
-  if (nn > qn)
-    nn = qn;
+
   if (dn > qn)
     dn = qn;
 
-  if (qn > nn)
-    MPN_ZERO (qp + nn, qn - nn);
-
-  tp = TMP_ALLOC_LIMBS (mpn_bdiv_q_itch (nn, dn));
-  mpn_bdiv_q (qp, np, nn, dp, dn, tp);
+  tp = TMP_ALLOC_LIMBS (mpn_bdiv_q_itch (qn, dn));
+  mpn_bdiv_q (qp, wp, qn, dp, dn, tp);
   TMP_FREE;
 }
 

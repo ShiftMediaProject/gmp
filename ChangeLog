@@ -13,6 +13,11 @@
 
 2009-12-17  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/divexact.c (mpn_divexact): Don't require that the
+	dividend is normalized. Use MPN_DIVREM_OR_PREINV_DIVREM_1. When
+	shifting, allocate and process only the low qn+1 limbs. Eliminated
+	code for the impossible case nn < qn.
+
 	* mpn/generic/dcpi1_div_qr.c (mpn_dcpi1_div_qr): Added some input
 	asserts.
 
