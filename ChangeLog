@@ -1,3 +1,8 @@
+2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/invert.c: Added some comment.
+	* mpn/generic/invertappr.c: Slightly better threshold handling.
+
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_q.c (mpn_bdiv_q_itch): Rewrite.

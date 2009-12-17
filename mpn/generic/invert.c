@@ -23,6 +23,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+/* FIXME: Remove NULL and TMP_*, as soon as all the callers properly
+   allocate and pass the scratch to the function. */
 #include <stdlib.h>		/* for NULL */
 
 #include "gmp.h"
@@ -32,7 +34,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifndef INV_APPR_THRESHOLD
 #define INV_APPR_THRESHOLD (INV_NEWTON_THRESHOLD)
 #endif
-
 
 void
 mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
@@ -64,17 +65,17 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       mpn_tdiv_qr (scratch, ip, 0, xp, 2 * n, dp, n);
       MPN_COPY (ip, scratch, n);
     } else { /* Use approximated inverse; correct the result if needed. */
-      mp_limb_t cy;
+      mp_limb_t e; /* The possible error in the approximate inverse */
 
-      cy = mpn_ni_invertappr (ip, dp, n, scratch);
+      ASSERT ( mpn_invert_itch (n) >= mpn_invertappr_itch (n) )
+      e = mpn_ni_invertappr (ip, dp, n, scratch);
 
-      if (cy) {
+      if (e) { /* Assume the error can only be "0" (no error) or "1". */
 	/* Code to detect and correct the "off by one" approximation. */
 	mpn_mul_n (scratch, ip, dp, n);
 	ASSERT_NOCARRY (mpn_add_n (scratch + n, scratch + n, dp, n));
-	if ( ! mpn_add (scratch, scratch, 2*n, dp, n)) {
-	  MPN_INCR_U (ip, n, 1);
-	}
+	if (! mpn_add (scratch, scratch, 2*n, dp, n))
+	  MPN_INCR_U (ip, n, 1); /* The value was wrong, correct it.  */
       }
     }
     TMP_FREE;

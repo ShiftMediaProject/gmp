@@ -57,7 +57,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define NPOWS \
  ((sizeof(mp_size_t) > 6 ? 48 : 8*sizeof(mp_size_t)) - LOG2C (INV_NEWTON_THRESHOLD))
 #define MAYBE_dcpi1_divappr \
-  (INV_NEWTON_THRESHOLD < 2 * DC_DIVAPPR_Q_THRESHOLD)
+  (INV_NEWTON_THRESHOLD < DC_DIVAPPR_Q_THRESHOLD)
+#if (INV_NEWTON_THRESHOLD > INV_MULMOD_BNM1_THRESHOLD) && \
+    (INV_APPR_THRESHOLD > INV_MULMOD_BNM1_THRESHOLD)
+#undef  INV_MULMOD_BNM1_THRESHOLD
+#define INV_MULMOD_BNM1_THRESHOLD 0 /* always when Newton */
+#endif
 #endif
 
 /* All the three functions mpn{,_bc,_ni}_invertappr (ip, dp, n, scratch), take
@@ -93,13 +98,18 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
 
   /* Compute a base value of r limbs. */
   if (n == 1)
-    invert_limb (*(ip),*(dp));
+    invert_limb (*ip, *dp);
   else {
     mp_size_t i;
     xp = tp + n + 2;				/* 2 * n limbs */
+
     for (i = n - 1; i >= 0; i--)
       xp[i] = ~CNST_LIMB(0);
     mpn_com_n (xp + n, dp, n);
+
+    /* Now xp contains B^2n - {dp,n}*B^n - 1 */
+
+    /* FIXME: if mpn_*pi1_divappr_q handles n==2, use it! */
     if (n == 2) {
       mpn_tdiv_qr (tp, ip, 0, xp, 2 * n, dp, n);
       MPN_COPY (ip, tp, n);
