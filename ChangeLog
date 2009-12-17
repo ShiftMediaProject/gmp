@@ -1,5 +1,8 @@
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* doc/gmp.texi: Update References section.  Update Contributors
+	section.  Misc updates.
+
 	* gmp-impl.h: Renew default values for all THRESHOLDs.
 
 2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>

@@ -2998,7 +2998,7 @@ values to 0.
 @end deftypefun
 
 @deftypefun void mpz_init2 (mpz_t @var{x}, unsigned long @var{n})
-Initialize @var{x}, with space for @var{n} bit numbers, and set its value to 0.
+Initialize @var{x}, with space for @var{n}-bit numbers, and set its value to 0.
 Calling this function instead of @code{mpz_init} or @code{mpz_inits} is never
 necessary; reallocation is handled automatically by GMP when needed.
 
@@ -4190,8 +4190,8 @@ values to 0/1.
 @end deftypefun
 
 @deftypefun void mpq_clear (mpq_t @var{x})
-Free the space occupied by @var{x}.  Make sure to call this
-function for all @code{mpq_t} variables when you are done with them.
+Free the space occupied by @var{x}.  Make sure to call this function for all
+@code{mpq_t} variables when you are done with them.
 @end deftypefun
 
 @deftypefun void mpq_clears (mpq_t @var{x}, ...)
@@ -5169,8 +5169,7 @@ The destination has to have space for @var{s1n} + @var{s2n} limbs, even if the
 product's most significant limb is zero.  No overlap is permitted between the
 destination and either source.
 
-This function requires that @var{s1n} is greater than or equal to
-@var{s2n}.
+This function requires that @var{s1n} is greater than or equal to @var{s2n}.
 @end deftypefun
 
 @deftypefun void mpn_sqr_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n})
@@ -8154,14 +8153,14 @@ N@cross{}1 division is implemented using repeated 2@cross{}1 divisions from
 high to low, either with a hardware divide instruction or a multiplication by
 inverse, whichever is best on a given CPU.
 
-The multiply by inverse follows section 8 of ``Division by Invariant Integers
-using Multiplication'' by Granlund and Montgomery (@pxref{References}) and is
-implemented as @code{udiv_qrnnd_preinv} in @file{gmp-impl.h}.  The idea is to
-have a fixed-point approximation to @math{1/d} (see @code{invert_limb}) and
-then multiply by the high limb (plus one bit) of the dividend to get a
-quotient @math{q}.  With @math{d} normalized (high bit set), @math{q} is no
-more than 1 too small.  Subtracting @m{qd,q*d} from the dividend gives a
-remainder, and reveals whether @math{q} or @math{q-1} is correct.
+The multiply by inverse follows ``Improved division by invariant integers'' by
+M@"oller and Granlund (@pxref{References}) and is implemented as
+@code{udiv_qrnnd_preinv} in @file{gmp-impl.h}.  The idea is to have a
+fixed-point approximation to @math{1/d} (see @code{invert_limb}) and then
+multiply by the high limb (plus one bit) of the dividend to get a quotient
+@math{q}.  With @math{d} normalized (high bit set), @math{q} is no more than 1
+too small.  Subtracting @m{qd,q*d} from the dividend gives a remainder, and
+reveals whether @math{q} or @math{q-1} is correct.
 
 The result is a division done with two multiplications and four or five
 arithmetic operations.  On CPUs with low latency multipliers this can be much
@@ -10399,6 +10398,11 @@ Jonathan M. Borwein and Peter B. Borwein, ``Pi and the AGM: A Study in
 Analytic Number Theory and Computational Complexity'', Wiley, 1998.
 
 @item
+Richard Crandall and Carl Pomerance, ``Prime Numbers: A Computational
+Perspective'', 2nd edition, Springer-Verlag, 2005.
+@texlinebreak{} @uref{http://math.dartmouth.edu/~carlp/}
+
+@item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.
 @texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen/}
@@ -10417,9 +10421,10 @@ Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, ``Handbook of
 Applied Cryptography'', @uref{http://www.cacr.math.uwaterloo.ca/hac/}
 
 @item
-Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
-available online @uref{http://gcc.gnu.org/onlinedocs/}, and in
-the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
+Richard M. Stallman and the GCC Developer Community, ``Using the GNU Compiler
+Collection'', Free Software Foundation, 2008, available online
+@uref{http://gcc.gnu.org/onlinedocs/}, and in the GCC package
+@uref{ftp://ftp.gnu.org/gnu/gcc/}
 @end itemize
 
 @section Papers
@@ -10441,6 +10446,14 @@ Torbj@"orn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
 using Multiplication'', in Proceedings of the SIGPLAN PLDI'94 Conference, June
 1994.  Also available @uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz}
 (and .psl.gz).
+
+@item
+Niels M"oller and Torbj@"orn Granlund, ``Improved division by invariant
+integers'', to appear.
+
+@item
+Torbj@"orn Granlund and Niels M"oller, ``Division of integers large and
+small'', to appear.
 
 @item
 Tudor Jebelean,
