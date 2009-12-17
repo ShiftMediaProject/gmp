@@ -46,7 +46,10 @@ mpn_nussbaumer_mul (mp_ptr pp,
   TMP_MARK;
   TMP_ALLOC_LIMBS_2(rp, rn, tp, mpn_mulmod_bnm1_itch (rn));
 
-  mpn_mulmod_bnm1 (rp, rn, ap, an, bp, bn, tp);
+  if ((ap == bp) && (an == bn))
+    mpn_sqrmod_bnm1 (rp, rn, ap, an, tp);
+  else
+    mpn_mulmod_bnm1 (rp, rn, ap, an, bp, bn, tp);
 
   MPN_COPY (pp, rp, an + bn);
   TMP_FREE;

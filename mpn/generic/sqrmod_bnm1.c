@@ -167,7 +167,7 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	else
 	  {
 	    int mask;
-	    k = mpn_fft_best_k (n, 0);
+	    k = mpn_fft_best_k (n, 1);
 	    mask = (1<<k) -1;
 	    while (n & mask) {k--; mask >>=1;};
 	  }

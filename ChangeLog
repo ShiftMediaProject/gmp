@@ -53,6 +53,12 @@
 
 	* tune/tuneup.c: Tune SQRMOD_BNM1_THRESHOLD.
 
+	* mpn/generic/nussbaumer_mul.c (mpn_nusbaumer_mul): Mimic fft_mul,
+	use squaring if operands coincide.
+	* tune/speed.h (speed_mpn_nussbaumer_mul_sqr): Declare function.
+	* tune/common.c (speed_mpn_nussbaumer_mul_sqr): New function.
+	* tune/speed.c (routine): Add speed_mpn_nussbaumer_mul_sqr.
+
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_q.c (mpn_bdiv_q_itch): Rewrite.
