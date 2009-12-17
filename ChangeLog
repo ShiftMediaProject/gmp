@@ -3,6 +3,8 @@
 	* mpn/generic/invert.c: Added some comment.
 	* mpn/generic/invertappr.c: Slightly better threshold handling.
 
+	* gmp-impl.h (INV_NEWTON_THRESHOLD): Default to 200.
+
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_q.c (mpn_bdiv_q_itch): Rewrite.
