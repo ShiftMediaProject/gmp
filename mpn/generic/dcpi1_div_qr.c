@@ -89,6 +89,10 @@ mpn_dcpi1_div_qr (mp_ptr qp,
 
   TMP_MARK;
 
+  ASSERT (dn >= 2);
+  ASSERT (nn > dn);
+  ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
+
   tp = TMP_SALLOC_LIMBS (dn);
 
   qn = nn - dn;
@@ -109,38 +113,85 @@ mpn_dcpi1_div_qr (mp_ptr qp,
       /* Perform the typically smaller block first.  */
       if (qn == 1)
 	{
-	  mp_limb_t q, r, n1, n0, d;
-	  d = (dp - qn)[0];
-	  n1 = (np - qn)[1];
-	  n0 = (np - qn)[0];
-	  qh = (n1 >= d);
-	  n1 -= d & -(mp_limb_t) qh;
-	  udiv_qrnnd_preinv (q, r, n1, n0, d, dinv->inv21);
-	  qp[0] = q;
-	  (np - qn)[0] = r;
-	}
-      else if (qn == 2)
-	qh = mpn_divrem_2 (qp, 0L, np - qn, 4, dp - qn); /* FIXME: obsolete function */
-      else if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
-	qh = mpn_sbpi1_div_qr (qp, np - qn, 2 * qn, dp - qn, qn, dinv->inv32);
-      else
-	qh = mpn_dcpi1_div_qr_n (qp, np - qn, dp - qn, qn, dinv, tp);
+	  mp_limb_t q, n2, n1, n0, d1, d0;
 
-      if (qn != dn)
-	{
-	  if (qn > dn - qn)
-	    mpn_mul (tp, qp, qn, dp - dn, dn - qn);
-	  else
-	    mpn_mul (tp, dp - dn, dn - qn, qp, qn);
+	  /* Handle qh up front, for simplicity. */
+	  qh = mpn_cmp (np - dn + 1, dp - dn, dn) >= 0;
+	  if (qh)
+	    ASSERT_NOCARRY (mpn_sub_n (np - dn + 1, np - dn + 1, dp - dn, dn));
 
-	  cy = mpn_sub_n (np - dn, np - dn, tp, dn);
-	  if (qh != 0)
-	    cy += mpn_sub_n (np - dn + qn, np - dn + qn, dp - dn, dn - qn);
+	  /* A single iteration of schoolbook: One 3/2 division,
+	     followed by the bignum update and adjustment. */
+	  n2 = np[0];
+	  n1 = np[-1];
+	  n0 = np[-2];
+	  d1 = dp[-1];
+	  d0 = dp[-2];
 
-	  while (cy != 0)
+	  ASSERT (n2 < d1 || (n2 == d1 && n1 <= d0));
+
+	  if (UNLIKELY (n2 == d1) && n1 == d0)
 	    {
-	      qh -= mpn_sub_1 (qp, qp, qn, 1);
-	      cy -= mpn_add_n (np - dn, np - dn, dp - dn, dn);
+	      q = GMP_NUMB_MAX;
+	      cy = mpn_submul_1 (np - dn, dp, dn, q);
+	      ASSERT (cy == n1);
+	      ASSERT (np[-1] <= d1);
+	    }
+	  else
+	    {
+	      udiv_qr_3by2 (q, n1, n0, n2, n1, n0, d1, d0, dinv->inv32);
+
+	      if (dn > 2)
+		{
+		  mp_limb_t cy, cy1;
+		  cy = mpn_submul_1 (np - dn, dp - dn, dn - 2, q);
+
+		  cy1 = n0 < cy;
+		  n0 = (n0 - cy) & GMP_NUMB_MASK;
+		  cy = n1 < cy1;
+		  n1 = (n1 - cy1) & GMP_NUMB_MASK;
+		  np[-2] = n0;
+
+		  if (UNLIKELY (cy != 0))
+		    {
+		      n1 += d1 + mpn_add_n (np - dn, np - dn, dp - dn, dn - 1);
+		      qh -= (q == 0);
+		      q = (q - 1) & GMP_NUMB_MASK;
+		    }
+		}
+	      else
+		np[-2] = n0;
+
+	      np[-1] = n1;
+	    }
+	  qp[0] = q;
+	}
+      else
+	{
+	  /* Do a 2qn / qn division */
+	  if (qn == 2)
+	    qh = mpn_divrem_2 (qp, 0L, np - qn, 4, dp - qn); /* FIXME: obsolete function. Use 5/3 division? */
+	  else if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
+	    qh = mpn_sbpi1_div_qr (qp, np - qn, 2 * qn, dp - qn, qn, dinv->inv32);
+	  else
+	    qh = mpn_dcpi1_div_qr_n (qp, np - qn, dp - qn, qn, dinv, tp);
+
+	  if (qn != dn)
+	    {
+	      if (qn > dn - qn)
+		mpn_mul (tp, qp, qn, dp - dn, dn - qn);
+	      else
+		mpn_mul (tp, dp - dn, dn - qn, qp, qn);
+
+	      cy = mpn_sub_n (np - dn, np - dn, tp, dn);
+	      if (qh != 0)
+		cy += mpn_sub_n (np - dn + qn, np - dn + qn, dp - dn, dn - qn);
+
+	      while (cy != 0)
+		{
+		  qh -= mpn_sub_1 (qp, qp, qn, 1);
+		  cy -= mpn_add_n (np - dn, np - dn, dp - dn, dn);
+		}
 	    }
 	}
 

@@ -1,3 +1,12 @@
+2009-12-17  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/dcpi1_div_qr.c (mpn_dcpi1_div_qr): Added some input
+	asserts.
+
+	* mpn/generic/dcpi1_div_qr.c (mpn_dcpi1_div_qr): In the case that
+	the initial quotient block is a single limb, use 3/2 division,
+	thereby eliminating the only use of gmp_pi1_t->inv21.
+
 2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Added some comment.
