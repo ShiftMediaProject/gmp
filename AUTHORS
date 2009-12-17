@@ -34,12 +34,14 @@ Niels Möller		mpn/generic/hgcd2.c, gcd.c, gcdext.c, matrix22_mul.c,
 			gcdext_subdiv_step.c, gcdext_lehmer.c,
 			toom_interpolate_7pts, mulmod_bnm1.c, dcpi1_bdiv_qr.c,
 			dcpi1_bdiv_q.c, sbpi1_bdiv_qr.c, sbpi1_bdiv_q.c,
-			mpz/nextprime.c.
+			toom_eval_dgr3_pm1.c, toom_eval_dgr3_pm2.c,
+			toom_eval_pm1.c, toom_eval_pm2.c, toom_eval_pm2exp.c,
+			divexact.c, mpz/nextprime.c.
 
 Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			toom62_mul.c, toom43_mul.c, toom52_mul.c,
-			toom_interpolate_6pts.c, mulmod_bnm1.c, invert.c,
-			invertappr.c.
+			toom_interpolate_6pts.c, mulmod_bnm1.c,
+			toom_eval_pm2.c, invert.c, invertappr.c.
 
 David Harvey		mpn/x86_64/mul_basecase.asm
 
