@@ -299,6 +299,7 @@ const struct routine_t {
   { "mpn_toom44_mul",    speed_mpn_toom44_mul       },
   { "mpn_toom32_mul",    speed_mpn_toom32_mul       },
   { "mpn_toom42_mul",    speed_mpn_toom42_mul       },
+  { "mpn_nussbaumer_mul",    speed_mpn_nussbaumer_mul    },
   { "mpn_mul_fft_full",      speed_mpn_mul_fft_full      },
   { "mpn_mul_fft_full_sqr",  speed_mpn_mul_fft_full_sqr  },
 
