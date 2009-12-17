@@ -281,6 +281,7 @@ double speed_mpn_toom42_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mulmod_bnm1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_bc_mulmod_bnm1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mulmod_bnm1_rounded __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sqrmod_bnm1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_udiv_qrnnd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_udiv_qrnnd_r __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_umul_ppmm __GMP_PROTO ((struct speed_params *s));

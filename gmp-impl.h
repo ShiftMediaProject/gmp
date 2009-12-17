@@ -955,6 +955,8 @@ __GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, 
 __GMP_DECLSPEC mp_size_t mpn_mulmod_bnm1_next_size __GMP_PROTO ((mp_size_t)) ATTRIBUTE_CONST;
 #define mpn_mulmod_bnm1_itch(n) (2*(n) + 2*GMP_LIMB_BITS +2)
 
+#define mpn_sqrmod_bnm1 __MPN(sqrmod_bnm1)
+__GMP_DECLSPEC void mpn_sqrmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
 typedef const __gmp_randstate_struct *gmp_randstate_srcptr;
@@ -1734,6 +1736,10 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef MULMOD_BNM1_THRESHOLD
 #define MULMOD_BNM1_THRESHOLD            16
+#endif
+
+#ifndef SQRMOD_BNM1_THRESHOLD
+#define SQRMOD_BNM1_THRESHOLD    16
 #endif
 
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
@@ -4295,9 +4301,13 @@ extern mp_size_t                     mod_1_4_threshold;
 extern mp_size_t                     divrem_2_threshold;
 #endif
 
-#undef MULMOD_BNM1_THRESHOLD
+#undef  MULMOD_BNM1_THRESHOLD
 #define MULMOD_BNM1_THRESHOLD        mulmod_bnm1_threshold
 extern mp_size_t                     mulmod_bnm1_threshold;
+
+#undef  SQRMOD_BNM1_THRESHOLD
+#define SQRMOD_BNM1_THRESHOLD        sqrmod_bnm1_threshold
+extern mp_size_t                     sqrmod_bnm1_threshold;
 
 #undef  GET_STR_DC_THRESHOLD
 #define GET_STR_DC_THRESHOLD         get_str_dc_threshold

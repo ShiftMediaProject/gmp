@@ -14,7 +14,7 @@
 	the initial quotient block is a single limb, use 3/2 division,
 	thereby eliminating the only use of gmp_pi1_t->inv21.
 
-2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
+2009-12-17  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Added some comment.
 	* mpn/generic/invertappr.c: Slightly better threshold handling.
@@ -27,6 +27,18 @@
 	* tune/speed.h (speed_mpn_nussbaumer_mul): Declare function.
 	* tune/common.c (speed_mpn_nussbaumer_mul): New function.
 	* tune/speed.c (routine): Add speed_mpn_nussbaumer_mul.
+
+	* mpn/generic/sqrmod_bnm1.c: New file.
+	* configure.in (gmp_mpn_functions): Add sqrmod_bnm1.
+	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add sqrmod_bnm1.
+	* gmp-impl.h (mpn_sqrmod_bnm1): Added prototype and name-mangling.
+	(SQRMOD_BNM1_THRESHOLD): support for the new threshold.
+	* tune/speed.h (speed_mpn_sqrmod_bnm1): Declare function.
+	* tune/common.c (speed_mpn_sqrmod_bnm1): New function.
+	* tune/speed.c (routine): Add speed_mpn_sqrmod_bnm1.
+	* tests/mpn/t-mulmod_bnm1.c: Attribution.
+	* tests/mpn/t-sqrmod_bnm1.c: New test file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-sqrmod_bnm1.
 
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -527,6 +539,7 @@
 2009-11-26  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpn/t-mulmod_bnm1.c: New test file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-mulmod_bnm1.
 
 	* mpn/generic/mullow_n.c: Comments on Mulders' trick implementation.
 

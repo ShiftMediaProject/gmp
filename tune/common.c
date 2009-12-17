@@ -1141,6 +1141,12 @@ speed_mpn_mulmod_bnm1_rounded (struct speed_params *s)
 }
 
 double
+speed_mpn_sqrmod_bnm1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL (mpn_sqrmod_bnm1 (wp, s->size, s->xp, s->size, tp));
+}
+
+double
 speed_mpn_matrix22_mul (struct speed_params *s)
 {
   /* Speed params only includes 2 inputs, so we have to invent the
