@@ -40,6 +40,8 @@
 	* tests/mpn/t-sqrmod_bnm1.c: New test file.
 	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-sqrmod_bnm1.
 
+	* tune/tuneup.c: Tune SQRMOD_BNM1_THRESHOLD.
+
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/bdiv_q.c (mpn_bdiv_q_itch): Rewrite.

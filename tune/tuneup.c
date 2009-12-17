@@ -163,6 +163,7 @@ mp_size_t  mullo_basecase_threshold     = MP_SIZE_T_MAX;
 mp_size_t  mullo_dc_threshold           = MP_SIZE_T_MAX;
 mp_size_t  mullo_mul_n_threshold        = MP_SIZE_T_MAX;
 mp_size_t  mulmod_bnm1_threshold        = MP_SIZE_T_MAX;
+mp_size_t  sqrmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
@@ -911,6 +912,18 @@ tune_mulmod_bnm1 (void)
   param.min_size = 4;
   param.max_size = 100;
   one (&mulmod_bnm1_threshold, &param);
+}
+
+void
+tune_sqrmod_bnm1 (void)
+{
+  static struct param_t  param;
+
+  param.name = "SQRMOD_BNM1_THRESHOLD";
+  param.function = speed_mpn_sqrmod_bnm1;
+  param.min_size = 4;
+  param.max_size = 100;
+  one (&sqrmod_bnm1_threshold, &param);
 }
 
 
@@ -1920,6 +1933,7 @@ all (void)
   printf("\n");
 
   tune_mulmod_bnm1 ();
+  tune_sqrmod_bnm1 ();
   printf("\n");
 
   tune_dc_div ();
