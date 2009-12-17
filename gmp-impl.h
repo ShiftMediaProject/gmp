@@ -1624,27 +1624,22 @@ __GMP_DECLSPEC void gmp_init_primesieve (gmp_primesieve_t *);
 __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 
-/* If MUL_TOOM22_THRESHOLD is not already defined, define it to a
-   value which is good on most machines.  */
 #ifndef MUL_TOOM22_THRESHOLD
-#define MUL_TOOM22_THRESHOLD 32
+#define MUL_TOOM22_THRESHOLD             30
 #endif
 
-/* If MUL_TOOM33_THRESHOLD is not already defined, define it to a
-   value which is good on most machines.  */
 #ifndef MUL_TOOM33_THRESHOLD
-#define MUL_TOOM33_THRESHOLD 128
+#define MUL_TOOM33_THRESHOLD            100
 #endif
 
 #ifndef MUL_TOOM44_THRESHOLD
-#define MUL_TOOM44_THRESHOLD 500
+#define MUL_TOOM44_THRESHOLD            300
 #endif
 
-/* MUL_TOOM22_THRESHOLD_LIMIT is the maximum for MUL_TOOM22_THRESHOLD.
-   In a normal build MUL_TOOM22_THRESHOLD is a constant and we use that.
-   In a fat binary or tune program build MUL_TOOM22_THRESHOLD is a
-   variable and a separate hard limit will have been defined.  Similarly for
-   TOOM3.  */
+/* MUL_TOOM22_THRESHOLD_LIMIT is the maximum for MUL_TOOM22_THRESHOLD.  In a
+   normal build MUL_TOOM22_THRESHOLD is a constant and we use that.  In a fat
+   binary or tune program build MUL_TOOM22_THRESHOLD is a variable and a
+   separate hard limit will have been defined.  Similarly for TOOM3.  */
 #ifndef MUL_TOOM22_THRESHOLD_LIMIT
 #define MUL_TOOM22_THRESHOLD_LIMIT  MUL_TOOM22_THRESHOLD
 #endif
@@ -1656,30 +1651,29 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #endif
 
 /* SQR_BASECASE_THRESHOLD is where mpn_sqr_basecase should take over from
-   mpn_mul_basecase in mpn_sqr_n.  Default is to use mpn_sqr_basecase
-   always.  (Note that we certainly always want it if there's a native
-   assembler mpn_sqr_basecase.)
+   mpn_mul_basecase.  Default is to use mpn_sqr_basecase from 0.  (Note that we
+   certainly always want it if there's a native assembler mpn_sqr_basecase.)
 
    If it turns out that mpn_toom2_sqr becomes faster than mpn_mul_basecase
-   before mpn_sqr_basecase does, then SQR_BASECASE_THRESHOLD is the
-   toom2 threshold and SQR_TOOM2_THRESHOLD is 0.  This oddity arises
-   more or less because SQR_TOOM2_THRESHOLD represents the size up to
-   which mpn_sqr_basecase should be used, and that may be never.  */
+   before mpn_sqr_basecase does, then SQR_BASECASE_THRESHOLD is the toom2
+   threshold and SQR_TOOM2_THRESHOLD is 0.  This oddity arises more or less
+   because SQR_TOOM2_THRESHOLD represents the size up to which mpn_sqr_basecase
+   should be used, and that may be never.  */
 
 #ifndef SQR_BASECASE_THRESHOLD
-#define SQR_BASECASE_THRESHOLD 0
+#define SQR_BASECASE_THRESHOLD            0
 #endif
 
 #ifndef SQR_TOOM2_THRESHOLD
-#define SQR_TOOM2_THRESHOLD (2*MUL_TOOM22_THRESHOLD)
+#define SQR_TOOM2_THRESHOLD              50
 #endif
 
 #ifndef SQR_TOOM3_THRESHOLD
-#define SQR_TOOM3_THRESHOLD 128
+#define SQR_TOOM3_THRESHOLD             120
 #endif
 
 #ifndef SQR_TOOM4_THRESHOLD
-#define SQR_TOOM4_THRESHOLD 500
+#define SQR_TOOM4_THRESHOLD             400
 #endif
 
 /* See comments above about MUL_TOOM33_THRESHOLD_LIMIT.  */
@@ -1688,66 +1682,70 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #endif
 
 #ifndef DC_DIVAPPR_Q_THRESHOLD
-#define DC_DIVAPPR_Q_THRESHOLD   208
+#define DC_DIVAPPR_Q_THRESHOLD          200
+#endif
+
+#ifndef DC_DIV_QR_THRESHOLD
+#define DC_DIV_QR_THRESHOLD              50
 #endif
 
 #ifndef DC_DIV_Q_THRESHOLD
-#define DC_DIV_Q_THRESHOLD       228
+#define DC_DIV_Q_THRESHOLD              228
 #endif
 
 #ifndef DC_BDIV_QR_THRESHOLD
-#define DC_BDIV_QR_THRESHOLD      52
+#define DC_BDIV_QR_THRESHOLD             50
 #endif
 
 #ifndef DC_BDIV_Q_THRESHOLD
-#define DC_BDIV_Q_THRESHOLD      224
+#define DC_BDIV_Q_THRESHOLD             180
 #endif
 
 #ifndef DIVEXACT_JEB_THRESHOLD
-#define DIVEXACT_JEB_THRESHOLD    25
+#define DIVEXACT_JEB_THRESHOLD           25
 #endif
 
 #ifndef INV_NEWTON_THRESHOLD
-#define INV_NEWTON_THRESHOLD     200
+#define INV_NEWTON_THRESHOLD            200
 #endif
 
 #ifndef BINV_NEWTON_THRESHOLD
-#define BINV_NEWTON_THRESHOLD    807
+#define BINV_NEWTON_THRESHOLD           300
 #endif
 
 #ifndef MU_DIVAPPR_Q_THRESHOLD
-#define MU_DIVAPPR_Q_THRESHOLD  4000
+#define MU_DIVAPPR_Q_THRESHOLD         4000
 #endif
 
 #ifndef MU_DIV_Q_THRESHOLD
-#define MU_DIV_Q_THRESHOLD      4000
+#define MU_DIV_Q_THRESHOLD             4000
 #endif
 
 #ifndef MU_BDIV_Q_THRESHOLD
-#define MU_BDIV_Q_THRESHOLD     2000
+#define MU_BDIV_Q_THRESHOLD            2000
 #endif
 
 #ifndef MU_BDIV_QR_THRESHOLD
-#define MU_BDIV_QR_THRESHOLD    2000
+#define MU_BDIV_QR_THRESHOLD           2000
 #endif
 
 #ifndef MULMOD_BNM1_THRESHOLD
-#define MULMOD_BNM1_THRESHOLD    16
+#define MULMOD_BNM1_THRESHOLD            16
 #endif
 
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 
 #ifndef REDC_1_TO_REDC_2_THRESHOLD
-#define REDC_1_TO_REDC_2_THRESHOLD          10
+#define REDC_1_TO_REDC_2_THRESHOLD       15
 #endif
 #ifndef REDC_2_TO_REDC_N_THRESHOLD
-#define REDC_2_TO_REDC_N_THRESHOLD         100
+#define REDC_2_TO_REDC_N_THRESHOLD      100
 #endif
 
 #else
 
 #ifndef REDC_1_TO_REDC_N_THRESHOLD
-#define REDC_1_TO_REDC_N_THRESHOLD         100
+#define REDC_1_TO_REDC_N_THRESHOLD      100
 #endif
 
 #endif /* HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2 */

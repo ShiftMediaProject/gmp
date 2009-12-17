@@ -1,3 +1,7 @@
+2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h: Renew default values for all THRESHOLDs.
+
 2009-12-15  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Added some comment.
@@ -280,7 +284,7 @@
 
 2009-12-06  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* tests/devel/try.c(try_one): DATA_SRC0_HIGHBIT sets the high bit.
+	* tests/devel/try.c (try_one): DATA_SRC0_HIGHBIT sets the high bit.
 
 2009-12-05  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
