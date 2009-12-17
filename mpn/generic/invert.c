@@ -67,7 +67,7 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     } else { /* Use approximated inverse; correct the result if needed. */
       mp_limb_t e; /* The possible error in the approximate inverse */
 
-      ASSERT ( mpn_invert_itch (n) >= mpn_invertappr_itch (n) )
+      ASSERT ( mpn_invert_itch (n) >= mpn_invertappr_itch (n) );
       e = mpn_ni_invertappr (ip, dp, n, scratch);
 
       if (e) { /* Assume the error can only be "0" (no error) or "1". */
