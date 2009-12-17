@@ -57,13 +57,21 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
       mpn_toom22_mul (p, a, n, b, n, ws);				\
   } while (0)
 
+/* Normally, this calls mul_basecase or toom22_mul.  But when when the fraction
+   MUL_TOOM33_THRESHOLD / MUL_TOOM22_THRESHOLD is large, an initially small
+   relative unbalance will become a larger and larger relative unbalance with
+   each recursion (the difference s-t will be invariant over recursive calls).
+   Therefore, we need to call toom32_mul.  FIXME: Suppress depending on
+   MUL_TOOM33_THRESHOLD / MUL_TOOM22_THRESHOLD and on MUL_TOOM22_THRESHOLD.  */
 #define TOOM22_MUL_MN_REC(p, a, an, b, bn, ws)				\
   do {									\
     if (! MAYBE_mul_toom22						\
 	|| BELOW_THRESHOLD (bn, MUL_TOOM22_THRESHOLD))			\
       mpn_mul_basecase (p, a, an, b, bn);				\
-    else								\
+    else if (4 * an < 5 * bn)						\
       mpn_toom22_mul (p, a, an, b, bn, ws);				\
+    else								\
+      mpn_toom32_mul (p, a, an, b, bn, ws);				\
   } while (0)
 
 void

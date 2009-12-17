@@ -134,12 +134,9 @@ mpn_mul (mp_ptr prodp,
 	   (!TOOM33_OK (un, vn) && BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD * 3 / 2)))
     {
       /* Loop over toom42, then choose toom42, toom32, or toom22 */
-      mp_ptr ws;
       mp_ptr scratch;
       TMP_DECL; TMP_MARK;
 
-#define WSALL (4 * vn)
-      ws = TMP_SALLOC_LIMBS (WSALL + 1);
 
 #define ITCH ((un + vn) * 4 + 100)
       scratch = TMP_ALLOC_LIMBS (ITCH + 1);
@@ -147,6 +144,9 @@ mpn_mul (mp_ptr prodp,
       if (un >= 3 * vn)
 	{
 	  mp_limb_t cy;
+	  mp_ptr ws;
+#define WSALL (4 * vn)
+	  ws = TMP_SALLOC_LIMBS (WSALL + 1);
 
 	  mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
 	  un -= 2 * vn;
@@ -164,40 +164,25 @@ mpn_mul (mp_ptr prodp,
 	      prodp += 2 * vn;
 	    }
 
-	  /* FIXME: Test these in opposite order, following the philosophy of
-	     minimizing the relative overhead.  */
-	  if (5 * un > 9 * vn)
-	    {
-	      mpn_toom42_mul (ws, up, un, vp, vn, scratch);
-	      cy = mpn_add_n (prodp, prodp, ws, vn);
-	      MPN_COPY (prodp + vn, ws + vn, un);
-	      mpn_incr_u (prodp + vn, cy);
-	    }
-	  else if (9 * un > 10 * vn)
-	    {
-	      mpn_toom32_mul (ws, up, un, vp, vn, scratch);
-	      cy = mpn_add_n (prodp, prodp, ws, vn);
-	      MPN_COPY (prodp + vn, ws + vn, un);
-	      mpn_incr_u (prodp + vn, cy);
-	    }
+	  if (4 * un < 5 * vn)
+	    mpn_toom22_mul (ws, up, un, vp, vn, scratch);
+	  else if (4 * un < 7 * vn)
+	    mpn_toom32_mul (ws, up, un, vp, vn, scratch);
 	  else
-	    {
-	      mpn_toom22_mul (ws, up, un, vp, vn, scratch);
-	      cy = mpn_add_n (prodp, prodp, ws, vn);
-	      MPN_COPY (prodp + vn, ws + vn, un);
-	      mpn_incr_u (prodp + vn, cy);
-	    }
+	    mpn_toom42_mul (ws, up, un, vp, vn, scratch);
+
+	  cy = mpn_add_n (prodp, prodp, ws, vn);
+	  MPN_COPY (prodp + vn, ws + vn, un);
+	  mpn_incr_u (prodp + vn, cy);
 	}
       else
 	{
-	  /* FIXME: Test these in opposite order, following the philosophy of
-	     minimizing the relative overhead.  */
-	  if (5 * un > 9 * vn)
-	    mpn_toom42_mul (prodp, up, un, vp, vn, scratch);
-	  else if (9 * un > 10 * vn)
+	  if (4 * un < 5 * vn)
+	    mpn_toom22_mul (prodp, up, un, vp, vn, scratch);
+	  else if (4 * un < 7 * vn)
 	    mpn_toom32_mul (prodp, up, un, vp, vn, scratch);
 	  else
-	    mpn_toom22_mul (prodp, up, un, vp, vn, scratch);
+	    mpn_toom42_mul (prodp, up, un, vp, vn, scratch);
 	}
       TMP_FREE;
     }
