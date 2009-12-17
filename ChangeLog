@@ -1,5 +1,11 @@
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul.c: Move allocation of ws to where it is used.
+	Identify toom22, 32, 42, in that order (in two places).  Use midline
+	between toom22, 32, 42.
+	* mpn/generic/toom22_mul.c (TOOM22_MUL_MN_REC): Call also
+	mpn_toom32_mul.
+
 	* doc/gmp.texi: Update References section.  Update Contributors
 	section.  Misc updates.
 
