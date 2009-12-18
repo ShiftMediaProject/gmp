@@ -49,7 +49,8 @@ DO_mpn_sublsh_n (mp_ptr dst, mp_srcptr src, mp_size_t n, unsigned int s, mp_ptr 
 #if USE_MUL_1
   return mpn_submul_1(dst,src,n,CNST_LIMB(1) <<(s));
 #else
-  mp_limb_t __cy = mpn_lshift (ws,src,n,s);
+  mp_limb_t __cy;
+  __cy = mpn_lshift (ws,src,n,s);
   return    __cy + mpn_sub_n (dst,dst,ws,n);
 #endif
 }
@@ -101,8 +102,8 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
 			   mp_ptr r3, mp_ptr r7,
 			   mp_size_t spt, mp_ptr ws)
 {
-  mp_limb_t cy, bw;
-  mp_ptr    r5, r1;
+  mp_limb_signed_t cy;
+  mp_ptr r5, r1;
   r5 = (pp + 3 * n);			/* 3n+1 */
   r1 = (pp + 7 * n);			/* spt */
 
@@ -150,22 +151,24 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
 				  ||-H*r5|-M_r5|-L_r5|
   */
 
-  bw = mpn_sub_n (r7, r7, r5, n);
   cy = mpn_add_n (pp + n, pp + n, r7, n); /* Hr8+Lr7-Lr5 */
-  if (bw != cy) {
-    if (bw > cy) MPN_DECR_U (r7 + n, 2*n + 1, 1);
-    else         MPN_INCR_U (r7 + n, 2*n + 1, 1);
-  }
-  bw = mpn_sub_n (pp + 2*n, r7 + n, r5 + n, n); /* Mr7-Mr5 */
-  MPN_DECR_U (r7 + 2*n, n + 1, bw);
+  cy-= mpn_sub_n (pp + n, pp + n, r5, n);
+  if (0 > cy)
+    MPN_DECR_U (r7 + n, 2*n + 1, 1);
+  else
+    MPN_INCR_U (r7 + n, 2*n + 1, cy);
+
+  cy = mpn_sub_n (pp + 2*n, r7 + n, r5 + n, n); /* Mr7-Mr5 */
+  MPN_DECR_U (r7 + 2*n, n + 1, cy);
 
   cy = mpn_add_n (pp + 3*n, r5, r7+ 2*n, n+1); /* Hr7+Lr5 */
   r5[3*n]+= mpn_add_n (r5 + 2*n, r5 + 2*n, r3, n); /* Hr5+Lr3 */
-  bw = mpn_sub_n (pp + 3*n, pp + 3*n, r5 + 2*n, n+1); /* Hr7-Hr5+Lr5-Lr3 */
-  if (bw != cy) {
-    if (UNLIKELY(bw > cy)) MPN_DECR_U (r5 + n + 1, 2*n, 1);
-    else                   MPN_INCR_U (r5 + n + 1, 2*n, 1);
-  }
+  cy-= mpn_sub_n (pp + 3*n, pp + 3*n, r5 + 2*n, n+1); /* Hr7-Hr5+Lr5-Lr3 */
+  if (UNLIKELY(0 > cy))
+    MPN_DECR_U (r5 + n + 1, 2*n, 1);
+  else
+    MPN_INCR_U (r5 + n + 1, 2*n, cy);
+
   ASSERT_NOCARRY(mpn_sub_n(pp + 4*n, r5 + n, r3 + n, 2*n +1)); /* Mr5-Mr3,Hr5-Hr3 */
 
   cy = mpn_add_1 (pp + 6*n, r3 + n, n, pp[6*n]);
