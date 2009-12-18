@@ -93,8 +93,6 @@ mpn_bdiv_q_1_pi1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d,
 mp_limb_t
 mpn_bdiv_q_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d)
 {
-  mp_size_t  i;
-  mp_limb_t  c, h, l, u, u_next, dummy;
   mp_limb_t di;
   int shift;
 

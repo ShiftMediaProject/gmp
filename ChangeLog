@@ -1,5 +1,8 @@
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/bdiv_q_1.c (mpn_bdiv_q_1): Deleted some unused
+	variables.
+
 	* mpn/generic/toom52_mul.c (mpn_toom52_mul)
 	[HAVE_NATIVE_mpn_add_n_sub_n]: Moved declaration of cy to avoid a
 	compiler warning.
