@@ -23,24 +23,13 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+/* FIXME: Write an _itch function, then remove NULL and TMP_*, as soon
+   as all the callers properly allocate and pass the scratch to the
+   function. */
+#include <stdlib.h>		/* for NULL */
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-#if HAVE_NATIVE_mpn_addlsh_n
-#define DO_mpn_addlsh_n(dst,src,n,s,ws) mpn_addlsh_n (dst,dst,src,n,s)
-#else
-static mp_limb_t
-DO_mpn_addlsh_n (mp_ptr dst, mp_srcptr src, mp_size_t n, unsigned int s, mp_ptr ws)
-{
-#if USE_MUL_1
-  return mpn_addmul_1(dst,src,n,CNST_LIMB(1) <<(s));
-#else
-  mp_limb_t __cy = mpn_lshift (ws,src,n,s);
-  return    __cy + mpn_add_n (dst,dst,ws,n);
-#endif
-}
-#endif
-
 
 /* Stores |{ap,n}-{bp,n}| in {rp,n}, returns the sign. */
 static int
@@ -175,7 +164,7 @@ mpn_toom63_mul (mp_ptr pp,
 
   /* Alloc also 3n+1 limbs for ws... mpn_toom_interpolate_8pts may
      need all of them, when DO_mpn_sublsh_n usea a scratch  */
-  if (!scratch) scratch = TMP_SALLOC_LIMBS (9 * n + 3);
+  if (scratch == NULL) scratch = TMP_SALLOC_LIMBS (9 * n + 3);
 
   /********************** evaluation and recursive calls *********************/
   /* $\pm4$ */
