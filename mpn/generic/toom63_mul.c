@@ -96,7 +96,8 @@ toom_couple_handling (mp_ptr pp, mp_size_t n, mp_ptr np, int nsign, mp_size_t of
 
 static int
 abs_sub_add_n (mp_ptr rm, mp_ptr rp, mp_srcptr rs, mp_size_t n) {
-  int result = abs_sub_n (rm, rp, rs, n);
+  int result;
+  result = abs_sub_n (rm, rp, rs, n);
   ASSERT_NOCARRY(mpn_add_n (rp, rp, rs, n));
   return result;
 }
@@ -170,6 +171,7 @@ mpn_toom63_mul (mp_ptr pp,
   /* $\pm4$ */
   sign = mpn_toom_eval_pm2exp (v2, v0, 5, ap, n, s, 2, pp);
   pp[n] = mpn_lshift (pp, b1, n, 2); /* 4b1 */
+  /* FIXME: use addlsh */
   v3[t] = mpn_lshift (v3, b2, t, 4);/* 16b2 */
   if ( n == t )
     v3[n]+= mpn_add_n (v3, v3, b0, n); /* 16b2+b0 */
@@ -220,6 +222,7 @@ mpn_toom63_mul (mp_ptr pp,
   /* $\pm2$ */
   sign = mpn_toom_eval_pm2 (v2, v0, 5, ap, n, s, pp);
   pp[n] = mpn_lshift (pp, b1, n, 1); /* 2b1 */
+  /* FIXME: use addlsh or addlsh2 */
   v3[t] = mpn_lshift (v3, b2, t, 2);/* 4b2 */
   if ( n == t )
     v3[n]+= mpn_add_n (v3, v3, b0, n); /* 4b2+b0 */

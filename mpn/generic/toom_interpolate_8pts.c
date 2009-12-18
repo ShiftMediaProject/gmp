@@ -28,6 +28,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define BINVERT_3 MODLIMB_INVERSE_3
 
+#define BINVERT_15 \
+  ((((GMP_NUMB_MAX >> (GMP_NUMB_BITS % 4)) / 15) * 14 * 16 & GMP_NUMB_MAX) + 15)
+
+#define BINVERT_45 (BINVERT_15 * BINVERT_3)
+
 #ifndef mpn_divexact_by3
 #if HAVE_NATIVE_mpn_bdiv_q_1_pi1
 #define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,BINVERT_3,0)
@@ -37,7 +42,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef mpn_divexact_by45
+#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
+#define mpn_divexact_by45(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,45,BINVERT_45,0)
+#else
 #define mpn_divexact_by45(dst,src,size) mpn_divexact_1(dst,src,size,45)
+#endif
 #endif
 
 #if HAVE_NATIVE_mpn_sublsh_n
