@@ -25,6 +25,8 @@
 
 2009-12-18  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* tests/mpn/t-invert.c: New test program.
+
 	* mpn/generic/toom63_mul.c: New file.
 	* mpn/generic/toom_interpolate_8pts.c: New file.
 	* gmp-impl.h: Provide corresponding declarations.
