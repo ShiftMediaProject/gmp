@@ -62,7 +62,7 @@ abs_sub_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
 	  else
 	    {
 	      mpn_sub_n (rp, bp, ap, n);
-	      return 1;
+	      return ~0;
 	    }
 	}
       rp[n] = 0;
@@ -111,113 +111,6 @@ abs_sub_add_n (mp_ptr rm, mp_ptr rp, mp_srcptr rs, mp_size_t n) {
   ASSERT_NOCARRY(mpn_add_n (rp, rp, rs, n));
   return result;
 }
-
-static int
-mpn_toom_ev_pm1(mp_ptr rp, mp_ptr rm,
-		mp_srcptr ap, unsigned int q, mp_size_t n, mp_size_t t,
-		mp_ptr ws)
-{
-  /* {ap,q*n+t} -> {rp,n+1} {rm,n+1} , with {ws, n+1}*/
-  ASSERT( n >= t );
-  ASSERT( q > 2 );
-  if ( (q & 1) == 0) {
-    rp[n] = mpn_add (rp, ap+n*(q-2), n, ap+n*q, t);
-    q--;
-    ws[n] = mpn_add_n (ws, ap+n*(q-2), ap+n*q, n);
-    q-=3;
-    rp[n]+= mpn_add_n (rp, rp, ap+n*q, n);
-  } else {
-    ws[n] = mpn_add (ws, ap+n*(q-2), n, ap+n*q, t);
-    q-=3;
-    rp[n] = mpn_add_n (rp, ap+n*q, ap+n*(q+2), n);
-  }
-  while (q) {
-    q--;
-    ws[n] += mpn_add_n (ws, ws, ap+n*q, n);
-    q--;
-    rp[n] += mpn_add_n (rp, rp, ap+n*q, n);
-  }
-  return abs_sub_add_n (rm, rp, ws, n + 1);
-}
-
-static int
-mpn_toom_ev_lsh (mp_ptr rp, mp_ptr rm,
-		 mp_srcptr ap, unsigned int q, mp_size_t n, mp_size_t t,
-		 unsigned int s, mp_ptr ws, mp_ptr scratch)
-{
-  /* {ap,q*n+t} -> {rp,n+1} {rm,n+1} , with {ws, n+1}*/
-  ASSERT( n >= t );
-  ASSERT( s != 0 ); /* or _ev_pm1 should be used */
-  ASSERT( q > 2 );
-  ASSERT( s*q < GMP_NUMB_BITS );
-  if ((q & 1) == 0) {
-    rp[t] = mpn_lshift (rp, ap+n*q, t, s*q);
-    MPN_ZERO (rp + t + 1, n - t);
-    q--;
-    ws[n] = mpn_lshift (ws, ap+n*q, n, s*q);
-    q--;
-    rp[n] += DO_mpn_addlsh_n (rp, ap+n*q, n, s*q, scratch);
-  } else {
-    ws[t] = mpn_lshift (ws, ap+n*q, t, s*q);
-    MPN_ZERO(ws + t + 1, n - t);
-    q--;
-    rp[n] = mpn_lshift (rp, ap+n*q, n, s*q);
-  }
-  do {
-    q--;
-    ws[n] += DO_mpn_addlsh_n (ws, ap+n*q, n, s*q, scratch);
-    q--;
-    if (q != 0)
-      rp[n] += DO_mpn_addlsh_n (rp, ap+n*q, n, s*q, scratch);
-    else {
-      rp[n] += mpn_add_n (rp, rp, ap, n);
-      break;
-    }
-  } while (1);
-  return abs_sub_add_n (rm, rp, ws, n + 1);
-}
-
-#ifdef WANT_TOOM_EV_MUL
-static int
-mpn_toom_ev_mul (mp_ptr rp, mp_ptr rm,
-		 mp_srcptr ap, unsigned int q, mp_size_t n, mp_size_t t,
-		 unsigned int s, mp_ptr ws)
-{
-  unsigned int m = s;
-  ASSERT( n >= t );
-  ASSERT( s > 2 );
-  ASSERT( q > 2 );
-  /* {ap,q*n+t} -> {rp,n+1} {rm,n+1} , with {ws, n+1}*/
-  ap += n*q;
-  {unsigned int i; for (i=q; --i; ) {m *= s;}; };
-  ASSERT( (m*s-1)/(s-1) <= GMP_NUMB_MAX );
-  if ((q & 1) == 0) {
-    rp[t] = mpn_mul_1(rp, ap, t, m);
-    MPN_ZERO (rp + t + 1, n - t);
-    ap-=n;m/=s;
-    ws[n] = mpn_mul_1(ws, ap, n, m);
-    ap-=n;m/=s;
-    rp[n] += mpn_addmul_1 (rp, ap, n, m);
-  } else {
-    ws[t] = mpn_mul_1(ws, ap, t, m);
-    MPN_ZERO(ws + t + 1, n - t);
-    ap-=n;m/=s;
-    rp[n] = mpn_mul_1(rp, ap, n, m);
-  }
-  do {
-    ap-=n;m/=s;
-    ws[n] += mpn_addmul_1 (ws, ap, n, m);
-    ap-=n;m/=s;
-    if (m != 1)
-      rp[n] += mpn_addmul_1 (rp, ap, n, m);
-    else {
-      rp[n] += mpn_add_n (rp, rp, ap, n);
-      break;
-    }
-  } while (1);
-  return abs_sub_add_n (rm, rp, ws, n + 1);
-}
-#endif
 
 
 /* Toom-4.5, the splitting 6x3 unbalanced version.
@@ -286,7 +179,7 @@ mpn_toom63_mul (mp_ptr pp,
 
   /********************** evaluation and recursive calls *********************/
   /* $\pm4$ */
-  sign = mpn_toom_ev_lsh (v2, v0, ap, 5, n, s, 2, pp, ws);
+  sign = mpn_toom_eval_pm2exp (v2, v0, 5, ap, n, s, 2, pp);
   pp[n] = mpn_lshift (pp, b1, n, 2); /* 4b1 */
   v3[t] = mpn_lshift (v3, b2, t, 4);/* 16b2 */
   if ( n == t )
@@ -299,7 +192,7 @@ mpn_toom63_mul (mp_ptr pp,
   toom_couple_handling (r3, 2*n+1, pp, sign, n, 2, 4);
 
   /* $\pm1$ */
-  sign = mpn_toom_ev_pm1 (v2, v0, ap, 5, n, s,    pp);
+  sign = mpn_toom_eval_pm1 (v2, v0, 5, ap, n, s,    pp);
   /* Compute bs1 and bsm1. Code taken from toom33 */
   cy = mpn_add (ws, b0, n, b2, t);
 #if HAVE_NATIVE_mpn_add_n_sub_n
@@ -308,7 +201,7 @@ mpn_toom63_mul (mp_ptr pp,
       cy = mpn_add_n_sub_n (v3, v1, b1, ws, n);
       v3[n] = 0;
       v1[n] = 0;
-      sign ^= 1;
+      sign = ~sign;
     }
   else
     {
@@ -323,7 +216,7 @@ mpn_toom63_mul (mp_ptr pp,
     {
       mpn_sub_n (v1, b1, ws, n);
       v1[n] = 0;
-      sign ^= 1;
+      sign = ~sign;
     }
   else
     {
@@ -336,7 +229,7 @@ mpn_toom63_mul (mp_ptr pp,
   toom_couple_handling (r7, 2*n+1, pp, sign, n, 0, 0);
 
   /* $\pm2$ */
-  sign = mpn_toom_ev_lsh (v2, v0, ap, 5, n, s, 1, pp, ws);
+  sign = mpn_toom_eval_pm2 (v2, v0, 5, ap, n, s, pp);
   pp[n] = mpn_lshift (pp, b1, n, 1); /* 2b1 */
   v3[t] = mpn_lshift (v3, b2, t, 2);/* 4b2 */
   if ( n == t )
