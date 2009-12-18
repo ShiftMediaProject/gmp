@@ -106,8 +106,8 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
   mpn_add_n (xp2, xp2, tp, n + 1);
 #endif /* !HAVE_NATIVE_mpn_add_n_sub_n */
 
-  ASSERT (xp2[n] < (1<<(k+1))-1);
-  ASSERT (xm2[n] < ((1<<(k+2))-1 - (k & 1))/3);
+  ASSERT (xp2[n] < ((1<<((k+1)*shift))-1)/((1<<shift)-1));
+  ASSERT (xm2[n] < ((1<<((k+2)*shift))-((k&1)?(1<<shift):1))/((1<<(2*shift))-1));
 
   return neg;
 }

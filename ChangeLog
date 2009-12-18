@@ -1,3 +1,8 @@
+2009-12-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom_eval_pm2exp.c (mpn_toom_eval_pm2exp): Fixed
+	output asserts.
+
 2009-12-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-toom63.c: New test program.
