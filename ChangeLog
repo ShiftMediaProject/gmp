@@ -1,5 +1,7 @@
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpz/divexact.c: Rewrite to use mpn_divexact.
+
 	* mpn/generic/bdiv_q_1.c (mpn_bdiv_q_1): Deleted some unused
 	variables.
 
