@@ -207,7 +207,7 @@ typedef size_t              gmp_intptr_t;
 
 
 /* pre-inverse types for truncating division and modulo */
-typedef struct {mp_limb_t inv21, inv32;} gmp_pi1_t;
+typedef struct {mp_limb_t inv32;} gmp_pi1_t;
 typedef struct {mp_limb_t inv21, inv32, inv53;} gmp_pi2_t;
 
 
@@ -2512,7 +2512,6 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
   do {								\
     mp_limb_t v, p, t1, t0, mask;				\
     invert_limb (v, d1);					\
-    (dinv).inv21 = v;						\
     p = d1 * v;							\
     p += d0;							\
     if (p < d0)							\
@@ -4436,7 +4435,7 @@ mpn_toom62_mul_itch (mp_size_t an, mp_size_t bn)
 static inline mp_size_t
 mpn_toom63_mul_itch (mp_size_t an, mp_size_t bn)
 {
-  mp_size_t n = 1 + (3 * an >= 6 * bn ? (an - 1) / (size_t) 6 : (bn - 1) / (size_t) 3);
+  mp_size_t n = 1 + (an >= 2 * bn ? (an - 1) / (size_t) 6 : (bn - 1) / (size_t) 3);
   return 9 * n + 3;
 }
 

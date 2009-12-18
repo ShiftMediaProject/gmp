@@ -1,7 +1,11 @@
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* gmp-impl.h (gmp_pi1_t): Eliminated inv21 member.
+	(invert_pi1): ...and don't store it here.
+
 	* mpn/generic/toom63_mul.c (mpn_toom63_mul): Simplified
 	calculation of block size n.
+	* gmp-impl.h (mpn_toom63_mul_itch): Likewise.
 
 	* mpn/generic/toom_eval_pm2exp.c (mpn_toom_eval_pm2exp): Fixed
 	output asserts.
