@@ -26,8 +26,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#define BINVERT_3 MODLIMB_INVERSE_3
+
 #ifndef mpn_divexact_by3
+#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
+#define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,BINVERT_3,0)
+#else
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
+#endif
 #endif
 
 #ifndef mpn_divexact_by45
@@ -95,10 +101,10 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
 			   mp_ptr r3, mp_ptr r7,
 			   mp_size_t spt, mp_ptr ws)
 {
-  mp_limb_t cy;
-
-  mp_ptr    r5 = (pp + 3 * n);			/* 3n+1 */
-  mp_ptr    r1 = (pp + 7 * n);			/* spt */
+  mp_limb_t cy, bw;
+  mp_ptr    r5, r1;
+  r5 = (pp + 3 * n);			/* 3n+1 */
+  r1 = (pp + 7 * n);			/* spt */
 
   /******************************* interpolation *****************************/
 
@@ -144,7 +150,6 @@ mpn_toom_interpolate_8pts (mp_ptr pp, mp_size_t n,
 				  ||-H*r5|-M_r5|-L_r5|
   */
 
-  mp_limb_t bw;
   bw = mpn_sub_n (r7, r7, r5, n);
   cy = mpn_add_n (pp + n, pp + n, r7, n); /* Hr8+Lr7-Lr5 */
   if (bw != cy) {
