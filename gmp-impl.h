@@ -1061,6 +1061,9 @@ enum toom7_flags { toom7_w1_neg = 1, toom7_w3_neg = 2 };
 #define   mpn_toom_interpolate_7pts __MPN(toom_interpolate_7pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_7pts __GMP_PROTO ((mp_ptr, mp_size_t, enum toom7_flags, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
+#define mpn_toom_interpolate_8pts __MPN(toom_interpolate_8pts)
+__GMP_DECLSPEC void      mpn_toom_interpolate_8pts __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
+
 #define   mpn_toom_eval_dgr3_pm1 __MPN(toom_eval_dgr3_pm1)
 __GMP_DECLSPEC int mpn_toom_eval_dgr3_pm1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr));
 
@@ -1102,6 +1105,9 @@ __GMP_DECLSPEC void      mpn_toom43_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size
 
 #define   mpn_toom53_mul __MPN(toom53_mul)
 __GMP_DECLSPEC void      mpn_toom53_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom63_mul __MPN(toom63_mul)
+__GMP_DECLSPEC void      mpn_toom63_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_toom3_sqr __MPN(toom3_sqr)
 __GMP_DECLSPEC void      mpn_toom3_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -1739,7 +1745,7 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #endif
 
 #ifndef SQRMOD_BNM1_THRESHOLD
-#define SQRMOD_BNM1_THRESHOLD    16
+#define SQRMOD_BNM1_THRESHOLD            16
 #endif
 
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
@@ -4425,6 +4431,13 @@ mpn_toom62_mul_itch (mp_size_t an, mp_size_t bn)
 {
   mp_size_t n = 1 + (an >= 3 * bn ? (an - 1) / (size_t) 6 : (bn - 1) >> 1);
   return 10 * n + 10;
+}
+
+static inline mp_size_t
+mpn_toom63_mul_itch (mp_size_t an, mp_size_t bn)
+{
+  mp_size_t n = 1 + (3 * an >= 6 * bn ? (an - 1) / (size_t) 6 : (bn - 1) / (size_t) 3);
+  return 9 * n + 3;
 }
 
 #ifdef __cplusplus

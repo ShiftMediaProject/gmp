@@ -1,3 +1,15 @@
+2009-12-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-toom63.c: New test program.
+
+2009-12-18  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom63_mul.c: New file.
+	* mpn/generic/toom_interpolate_8pts.c: New file.
+	* gmp-impl.h: Provide corresponding declarations.
+	* configure.in (gmp_mpn_functions): List toom_interpolate_8pts and
+	toom63_mul.
+
 2009-12-17  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul.c: Move allocation of ws to where it is used.

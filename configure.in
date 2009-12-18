@@ -2490,12 +2490,13 @@ gmp_mpn_functions="$extra_functions					   \
   tdiv_qr jacbase get_d							   \
   matrix22_mul hgcd2 hgcd mullo_n mullo_basecase			   \
   toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \
-  toom33_mul toom43_mul toom53_mul					   \
+  toom33_mul toom43_mul toom53_mul toom63_mul				   \
   toom44_mul								   \
   toom2_sqr toom3_sqr toom4_sqr						   \
   toom_eval_dgr3_pm1 toom_eval_dgr3_pm2 				   \
   toom_eval_pm1 toom_eval_pm2 toom_eval_pm2exp	   			   \
   toom_interpolate_5pts toom_interpolate_6pts toom_interpolate_7pts	   \
+  toom_interpolate_8pts							   \
   invertappr invert binvert mulmod_bnm1 sqrmod_bnm1			   \
   sbpi1_div_q sbpi1_div_qr sbpi1_divappr_q				   \
   dcpi1_div_q dcpi1_div_qr dcpi1_divappr_q				   \
