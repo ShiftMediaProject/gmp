@@ -58,7 +58,6 @@ mpn_toom52_mul (mp_ptr pp,
 {
   mp_size_t n, s, t;
   enum toom6_flags flags;
-  mp_limb_t cy;
 
 #define a0  ap
 #define a1  (ap + n)
@@ -109,6 +108,8 @@ mpn_toom52_mul (mp_ptr pp,
   if (t == n)
     {
 #if HAVE_NATIVE_mpn_add_n_sub_n
+      mp_limb_t cy;
+
       if (mpn_cmp (b0, b1, n) < 0)
 	{
 	  cy = mpn_add_n_sub_n (bs1, bsm1, b1, b0, n);

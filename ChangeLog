@@ -1,5 +1,9 @@
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom52_mul.c (mpn_toom52_mul)
+	[HAVE_NATIVE_mpn_add_n_sub_n]: Moved declaration of cy to avoid a
+	compiler warning.
+
 	* gmp-impl.h (gmp_pi1_t): Eliminated inv21 member.
 	(invert_pi1): ...and don't store it here.
 
