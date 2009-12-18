@@ -137,7 +137,7 @@ mpn_toom63_mul (mp_ptr pp,
 #define b2  (bp + 2 * n)
 
   ASSERT (an >= bn);
-  n = 1 + (3 * an >= 6 * bn ? (an - 1) / (size_t) 6 : (bn - 1) / (size_t) 3);
+  n = 1 + (an >= 2 * bn ? (an - 1) / (size_t) 6 : (bn - 1) / (size_t) 3);
 
   s = an - 5 * n;
   t = bn - 2 * n;

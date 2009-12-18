@@ -1,5 +1,8 @@
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/toom63_mul.c (mpn_toom63_mul): Simplified
+	calculation of block size n.
+
 	* mpn/generic/toom_eval_pm2exp.c (mpn_toom_eval_pm2exp): Fixed
 	output asserts.
 
