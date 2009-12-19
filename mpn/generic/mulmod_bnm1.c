@@ -246,7 +246,7 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 
       cy = mpn_rshift (rp+n, xp, n, 1);
       if (hi != cy)
-	rp[2*n-1] |= GMP_LIMB_HIGHBIT;
+	rp[2*n-1] |= GMP_NUMB_HIGHBIT;
       if (hi < cy)
 	/* Underflow */
 	hi = mpn_add_1 (rp+n, rp+n, n, 1);

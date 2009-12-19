@@ -25,6 +25,11 @@
 
 2009-12-18  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/invert.c: Nailify.
+	* mpn/generic/invertappr.c: Nailify.
+	* mpn/generic/mulmod_bnm1.c: Nailify.
+	* mpn/generic/sqrmod_bnm1.c: Nailify.
+
 	* tests/mpn/t-invert.c: New test program.
 
 	* mpn/generic/toom63_mul.c: New file.

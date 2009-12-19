@@ -1,5 +1,5 @@
 /* mpn_invertappr and helper functions.  Compute I such that
-   floor((B^{2n}-1)/U - 1 <= I <= floor((B^{2n}-1)/U.
+   floor((B^{2n}-1)/U - 1 <= I + B^n <= floor((B^{2n}-1)/U.
 
    Contributed to the GNU project by Marco Bodrato.
 
@@ -91,7 +91,7 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
   mp_ptr xp;
 
   ASSERT (n > 0);
-  ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
   ASSERT (! MPN_OVERLAP_P (ip, n, tp, mpn_invertappr_itch(n)));
   ASSERT (! MPN_OVERLAP_P (dp, n, tp, mpn_invertappr_itch(n)));
@@ -104,7 +104,7 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
     xp = tp + n + 2;				/* 2 * n limbs */
 
     for (i = n - 1; i >= 0; i--)
-      xp[i] = ~CNST_LIMB(0);
+      xp[i] = GMP_NUMB_MAX;
     mpn_com_n (xp + n, dp, n);
 
     /* Now xp contains B^2n - {dp,n}*B^n - 1 */
@@ -166,7 +166,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 #define rp scratch
 
   ASSERT (n > 2);
-  ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
   ASSERT (! MPN_OVERLAP_P (ip, n, scratch, mpn_invertappr_itch(n)));
   ASSERT (! MPN_OVERLAP_P (dp, n, scratch, mpn_invertappr_itch(n)));
@@ -272,7 +272,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     if (sizp == sizes) { /* Get out of the cycle */
       /* Check for possible carry propagation from below. */
       cy = rp[3*rn - n - 1] > GMP_NUMB_MAX - 7; /* Be conservative. */
-/*    cy = mpn_add_1 (rp + rn, rp + rn, 2*rn - n, 6); */
+/*    cy = mpn_add_1 (rp + rn, rp + rn, 2*rn - n, 4); */
       break;
     }
     rn = n;
@@ -287,7 +287,7 @@ mp_limb_t
 mpn_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
   ASSERT (n > 0);
-  ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
   ASSERT (! MPN_OVERLAP_P (ip, n, scratch, mpn_invertappr_itch(n)));
   ASSERT (! MPN_OVERLAP_P (dp, n, scratch, mpn_invertappr_itch(n)));

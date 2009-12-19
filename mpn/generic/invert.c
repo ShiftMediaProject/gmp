@@ -39,7 +39,7 @@ void
 mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
   ASSERT (n > 0);
-  ASSERT (dp[n-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
   ASSERT (! MPN_OVERLAP_P (ip, n, scratch, mpn_invertappr_itch(n)));
   ASSERT (! MPN_OVERLAP_P (dp, n, scratch, mpn_invertappr_itch(n)));
@@ -60,7 +60,7 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 
       xp = scratch + n + 2;				/* 2 * n limbs */
       for (i = n - 1; i >= 0; i--)
-	xp[i] = ~CNST_LIMB(0);
+	xp[i] = GMP_NUMB_MAX;
       mpn_com_n (xp + n, dp, n);
       mpn_tdiv_qr (scratch, ip, 0, xp, 2 * n, dp, n);
       MPN_COPY (ip, scratch, n);
