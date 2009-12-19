@@ -1,3 +1,7 @@
+2009-12-19  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_8pts.c: Nailify.
+
 2009-12-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_rsh1add_nc, mpn_rsh1sub_nc): Declare.
