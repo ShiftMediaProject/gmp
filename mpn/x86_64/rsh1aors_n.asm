@@ -58,6 +58,7 @@ PROLOGUE(func_nc)
 	push	%rbx
 
 	xor	%eax, %eax
+	neg	%r8			C set C flag from parameter
 	mov	(up), %rbx
 	ADCSBB	(vp), %rbx
 	jmp	L(ent)
