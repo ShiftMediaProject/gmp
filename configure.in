@@ -3022,7 +3022,9 @@ AH_VERBATIM([HAVE_NATIVE],
 #undef HAVE_NATIVE_mpn_rsblsh2_n
 #undef HAVE_NATIVE_mpn_rsblsh_n
 #undef HAVE_NATIVE_mpn_rsh1add_n
+#undef HAVE_NATIVE_mpn_rsh1add_nc
 #undef HAVE_NATIVE_mpn_rsh1sub_n
+#undef HAVE_NATIVE_mpn_rsh1sub_nc
 #undef HAVE_NATIVE_mpn_rshift
 #undef HAVE_NATIVE_mpn_sqr_basecase
 #undef HAVE_NATIVE_mpn_sqr_diagonal

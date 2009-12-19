@@ -40,24 +40,37 @@ define(`n32',`%ecx')
 ifdef(`OPERATION_rsh1add_n', `
 	define(ADDSUB,	      add)
 	define(ADCSBB,	      adc)
-	define(func,	      mpn_rsh1add_n)')
+	define(func_n,	      mpn_rsh1add_n)
+	define(func_nc,	      mpn_rsh1add_nc)')
 ifdef(`OPERATION_rsh1sub_n', `
 	define(ADDSUB,	      sub)
 	define(ADCSBB,	      sbb)
-	define(func,	      mpn_rsh1sub_n)')
+	define(func_n,	      mpn_rsh1sub_n)
+	define(func_nc,	      mpn_rsh1sub_nc)')
 
-MULFUNC_PROLOGUE(mpn_rsh1add_n mpn_rsh1sub_n)
+MULFUNC_PROLOGUE(mpn_rsh1add_n mpn_rsh1add_nc mpn_rsh1sub_n mpn_rsh1sub_nc)
 
 ASM_START()
 	TEXT
+
 	ALIGN(16)
-PROLOGUE(func)
-	push	%rbx			C				1
+PROLOGUE(func_nc)
+	push	%rbx
+
+	xor	%eax, %eax
+	mov	(up), %rbx
+	ADCSBB	(vp), %rbx
+	jmp	L(ent)
+EPILOGUE()
+
+	ALIGN(16)
+PROLOGUE(func_n)
+	push	%rbx
 
 	xor	%eax, %eax
 	mov	(up), %rbx
 	ADDSUB	(vp), %rbx
-
+L(ent):
 	rcr	%rbx			C rotate, save acy
 	adc	%eax, %eax		C return value
 

@@ -1,3 +1,10 @@
+2009-12-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (mpn_rsh1add_nc, mpn_rsh1sub_nc): Declare.
+	* mpn/asm-defs.m4: Likewise.
+	* configure.in: Add corresponding HAVE_NATIVEs.
+	* mpn/x86_64/rsh1aors_n.asm: Add _nc entry point.
+
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpz/divexact.c: Rewrite to use mpn_divexact.
