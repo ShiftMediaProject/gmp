@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_rshift -- mpn left shift.
+dnl  AMD64 mpn_rshift -- mpn right shift.
 
 dnl  Copyright 2003, 2005, 2009 Free Software Foundation, Inc.
 dnl
