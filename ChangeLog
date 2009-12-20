@@ -1,5 +1,11 @@
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h: Define mpn_fft_mul as an alias for mpn_nussbaumer_mul.
+	* mpn/generic/mul.c: Refer Call_fft_mul.
+	* mpn/generic/mul_n.c: Likewise.
+	* mpn/generic/sqr_n.c: Likewise.
+	* mpn/generic/mullo_n.c: Likewise.
+
 	* mpn/generic/mul.c: Loop also over mpn_nussbaumer_mul, as suggested by
 	Marco.  Use TMP_SALLOC_LIMBS in more places.  Clean up ws allocation.
 

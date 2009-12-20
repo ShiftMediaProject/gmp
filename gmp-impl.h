@@ -4478,6 +4478,12 @@ mpn_toom63_mul_itch (mp_size_t an, mp_size_t bn)
   return 9 * n + 3;
 }
 
+#if 0
+#define mpn_fft_mul mpn_mul_fft_full
+#else
+#define mpn_fft_mul mpn_nussbaumer_mul
+#endif
+
 #ifdef __cplusplus
 
 /* A little helper for a null-terminated __gmp_allocate_func string.

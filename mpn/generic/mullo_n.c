@@ -205,7 +205,7 @@ mpn_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
       tp = TMP_ALLOC_LIMBS (2 * n);
 
 #if !TUNE_PROGRAM_BUILD && WANT_FFT && (MULLO_MUL_N_THRESHOLD >= MUL_FFT_THRESHOLD)
-      mpn_mul_fft_full (tp, xp, n, yp, n);
+      mpn_fft_mul (tp, xp, n, yp, n);
 #else
       mpn_mul_n (tp, xp, yp, n);
 #endif

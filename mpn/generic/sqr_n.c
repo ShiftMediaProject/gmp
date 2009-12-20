@@ -70,7 +70,7 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
     {
       /* The current FFT code allocates its own space.  That should probably
 	 change.  */
-      mpn_mul_fft_full (p, a, n, a, n);
+      mpn_fft_mul (p, a, n, a, n);
     }
 #else
     {

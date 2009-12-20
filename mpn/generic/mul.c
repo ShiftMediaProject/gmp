@@ -63,8 +63,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     mul_basecase for slightly larger operands for toom32 than for toom22, and
     even larger for toom42.
 
-  * That problem is even more prevalent for toomX3.  We therefore have a
-    special THRESHOLD variables there.
+  * That problem is even more prevalent for toomX3.  We therefore use special
+    THRESHOLD variables there.
 
   * Is our ITCH allocation correct?
 */
@@ -126,7 +126,7 @@ mpn_mul (mp_ptr prodp,
 
 	  mp_limb_t tp[MUL_TOOM22_THRESHOLD_LIMIT];
 	  mp_limb_t cy;
-          ASSERT (MUL_TOOM22_THRESHOLD <= MUL_TOOM22_THRESHOLD_LIMIT);
+	  ASSERT (MUL_TOOM22_THRESHOLD <= MUL_TOOM22_THRESHOLD_LIMIT);
 
 	  mpn_mul_basecase (prodp, up, MUL_BASECASE_MAX_UN, vp, vn);
 	  prodp += MUL_BASECASE_MAX_UN;
@@ -331,14 +331,14 @@ mpn_mul (mp_ptr prodp,
 	  /* The maximum ws usage is for the mpn_mul result.  */
 	  ws = TMP_BALLOC_LIMBS (9 * vn >> 1);
 
-	  mpn_nussbaumer_mul (prodp, up, 3 * vn, vp, vn);
+	  mpn_fft_mul (prodp, up, 3 * vn, vp, vn);
 	  un -= 3 * vn;
 	  up += 3 * vn;
 	  prodp += 3 * vn;
 
 	  while (2 * un >= 7 * vn)	/* un >= 3.5vn  */
 	    {
-	      mpn_nussbaumer_mul (ws, up, 3 * vn, vp, vn);
+	      mpn_fft_mul (ws, up, 3 * vn, vp, vn);
 	      un -= 3 * vn;
 	      up += 3 * vn;
 	      cy = mpn_add_n (prodp, prodp, ws, vn);
@@ -361,7 +361,7 @@ mpn_mul (mp_ptr prodp,
 	  TMP_FREE;
 	}
       else
-	mpn_nussbaumer_mul (prodp, up, un, vp, vn);
+	mpn_fft_mul (prodp, up, un, vp, vn);
     }
 
   return prodp[un + vn - 1];	/* historic */
