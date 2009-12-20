@@ -1,5 +1,14 @@
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul.c: Loop also over mpn_nussbaumer_mul.
+	Use TMP_SALLOC_LIMBS in more places.  Clean up ws allocation.
+
+2009-12-19  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_8pts.c: Nailify.
+
+2009-12-19  Torbjorn Granlund  <tege@gmplib.org>
+
 	* mpn/generic/mul.c: Major rewrite.  Use toom43, toom53, toom63.
 	Call mpn_nussbaumer_mul for largest operands.
 
@@ -20,12 +29,6 @@
 	(tune_sqr_n): New name for old tune_sqr.
 	(tune_mul): New function, for unbalanced multiplication.
 	* gmp-impl.h: Provide declarations for corresponding threshold vars.
-
-2009-12-19  Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mpn/generic/toom_interpolate_8pts.c: Nailify.
-
-2009-12-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (mpn_rsh1add_nc, mpn_rsh1sub_nc): Declare.
 	* mpn/asm-defs.m4: Likewise.

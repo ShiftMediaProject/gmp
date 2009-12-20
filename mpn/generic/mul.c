@@ -64,15 +64,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     even larger for toom42.
 
   * That problem is even more prevalent for toomX3.  We therefore have a
-    special fix for avoiding toom63; we call toom42 sometimes in the X3 code.
-    We have an uglier fix for toom53, but here we need to choose toom32 or
-    toom42...
+    special THRESHOLD variables there.
 
   * Is our ITCH allocation correct?
 */
 
 #define ITCH (16*vn + 100)
-#define WSALLOC (4 * vn)
 
 mp_limb_t
 mpn_mul (mp_ptr prodp,
@@ -163,9 +160,9 @@ mpn_mul (mp_ptr prodp,
     {
       /* Use ToomX2 variants */
       mp_ptr scratch;
-      TMP_DECL; TMP_MARK;
+      TMP_SDECL; TMP_SMARK;
 
-      scratch = TMP_ALLOC_LIMBS (ITCH);
+      scratch = TMP_SALLOC_LIMBS (ITCH);
 
       /* FIXME: This condition (repeated in the loop below) leaves from a vn*vn
 	 square to a (3vn-1)*vn rectangle.  Leaving such a rectangle is hardly
@@ -176,7 +173,8 @@ mpn_mul (mp_ptr prodp,
 	  mp_limb_t cy;
 	  mp_ptr ws;
 
-	  ws = TMP_SALLOC_LIMBS (WSALLOC + 1);
+	  /* The maximum ws usage is for the mpn_mul result.  */
+	  ws = TMP_SALLOC_LIMBS (4 * vn);
 
 	  mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
 	  un -= 2 * vn;
@@ -193,6 +191,8 @@ mpn_mul (mp_ptr prodp,
 	      mpn_incr_u (prodp + vn, cy);
 	      prodp += 2 * vn;
 	    }
+
+	  /* vn <= un < 3vn */
 
 	  if (4 * un < 5 * vn)
 	    mpn_toom22_mul (ws, up, un, vp, vn, scratch);
@@ -214,29 +214,30 @@ mpn_mul (mp_ptr prodp,
 	  else
 	    mpn_toom42_mul (prodp, up, un, vp, vn, scratch);
 	}
-      TMP_FREE;
+      TMP_SFREE;
     }
-  else if (BELOW_THRESHOLD ((un + vn) >> 1, MUL_FFT_THRESHOLD) || un > 8 * vn)
+  else if (BELOW_THRESHOLD ((un + vn) >> 1, MUL_FFT_THRESHOLD) ||
+	   BELOW_THRESHOLD (3 * vn, MUL_FFT_THRESHOLD))
     {
       /* Handle the largest operands that are not in the FFT range.  The 2nd
 	 condition makes very unbalanced operands avoid the FFT code (except
 	 perhaps as coefficient products of the Toom code.  */
 
-      TMP_DECL; TMP_MARK;
-
       if (BELOW_THRESHOLD (vn, MUL_TOOM44_THRESHOLD) || !TOOM44_OK (un, vn))
 	{
 	  /* Use ToomX3 variants */
 	  mp_ptr scratch;
+	  TMP_SDECL; TMP_SMARK;
 
-	  scratch = TMP_ALLOC_LIMBS (ITCH);
+	  scratch = TMP_SALLOC_LIMBS (ITCH);
 
 	  if (2 * un >= 5 * vn)
 	    {
 	      mp_limb_t cy;
 	      mp_ptr ws;
 
-	      ws = TMP_SALLOC_LIMBS (WSALLOC + 1);
+	      /* The maximum ws usage is for the mpn_mul result.  */
+	      ws = TMP_SALLOC_LIMBS (7 * vn >> 1);
 
 	      if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM63_THRESHOLD))
 		mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
@@ -246,7 +247,7 @@ mpn_mul (mp_ptr prodp,
 	      up += 2 * vn;
 	      prodp += 2 * vn;
 
-	      while (2 * un >= 5 * vn)
+	      while (2 * un >= 5 * vn)	/* un >= 2.5vn */
 		{
 		  if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM63_THRESHOLD))
 		    mpn_toom42_mul (ws, up, 2 * vn, vp, vn, scratch);
@@ -259,6 +260,8 @@ mpn_mul (mp_ptr prodp,
 		  mpn_incr_u (prodp + vn, cy);
 		  prodp += 2 * vn;
 		}
+
+	      /* vn / 2 <= un < 2.5vn */
 
 	      if (un < vn)
 		mpn_mul (ws, vp, vn, up, un);
@@ -305,21 +308,60 @@ mpn_mul (mp_ptr prodp,
 		    mpn_toom63_mul (prodp, up, un, vp, vn, scratch);
 		}
 	    }
+	  TMP_SFREE;
 	}
       else
 	{
 	  mp_ptr scratch;
-
-	  ASSERT (TOOM44_OK (un, vn));
+	  TMP_DECL; TMP_MARK;
 
 	  scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (un, vn));
 	  mpn_toom44_mul (prodp, up, un, vp, vn, scratch);
+	  TMP_FREE;
 	}
-      TMP_FREE;
     }
   else
     {
-      mpn_nussbaumer_mul (prodp, up, un, vp, vn);
+      if (un >= 8 * vn)
+	{
+	  mp_limb_t cy;
+	  mp_ptr ws;
+	  TMP_DECL; TMP_MARK;
+
+	  /* The maximum ws usage is for the mpn_mul result.  */
+	  ws = TMP_BALLOC_LIMBS (9 * vn >> 1);
+
+	  mpn_nussbaumer_mul (prodp, up, 3 * vn, vp, vn);
+	  un -= 3 * vn;
+	  up += 3 * vn;
+	  prodp += 3 * vn;
+
+	  while (2 * un >= 7 * vn)	/* un >= 3.5vn  */
+	    {
+	      mpn_nussbaumer_mul (ws, up, 3 * vn, vp, vn);
+	      un -= 3 * vn;
+	      up += 3 * vn;
+	      cy = mpn_add_n (prodp, prodp, ws, vn);
+	      MPN_COPY (prodp + vn, ws + vn, 3 * vn);
+	      mpn_incr_u (prodp + vn, cy);
+	      prodp += 3 * vn;
+	    }
+
+	  /* vn / 2 <= un < 3.5vn */
+
+	  if (un < vn)
+	    mpn_mul (ws, vp, vn, up, un);
+	  else
+	    mpn_mul (ws, up, un, vp, vn);
+
+	  cy = mpn_add_n (prodp, prodp, ws, vn);
+	  MPN_COPY (prodp + vn, ws + vn, un);
+	  mpn_incr_u (prodp + vn, cy);
+
+	  TMP_FREE;
+	}
+      else
+	mpn_nussbaumer_mul (prodp, up, un, vp, vn);
     }
 
   return prodp[un + vn - 1];	/* historic */
