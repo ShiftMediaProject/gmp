@@ -933,6 +933,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   return h;
 }
 
+#if 0
 /* multiply {n, nl} by {m, ml}, and put the result in {op, nl+ml} */
 void
 mpn_mul_fft_full (mp_ptr op,
@@ -1036,3 +1037,4 @@ mpn_mul_fft_full (mp_ptr op,
   /* since the final result has at most pl limbs, no carry out below */
   mpn_add_1 (op + pl2, op + pl2, pl - pl2, (mp_limb_t) c2);
 }
+#endif
