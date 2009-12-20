@@ -1,3 +1,8 @@
+2009-12-20  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): New CRT.
+	* mpn/generic/sqrmod_bnm1.c (mpn_sqrmod_bnm1): Likewise.
+
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Change all bit counts for bignums to use mp_bitcnt_t.

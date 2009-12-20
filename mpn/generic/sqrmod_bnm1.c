@@ -27,6 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 /* Input is {ap,rn}; output is {rp,rn}, computation is
    mod B^rn - 1, and values are semi-normalised; zero is represented
@@ -118,7 +119,7 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
       /* Compute xm = a^2 mod (B^n - 1), xp = a^2 mod (B^n + 1)
 	 and crt together as
 
-	 x = xm + (B^n - 1) * [B^n/2 (xp - xm) mod (B^n+1)]
+         x = -xp * B^n + (B^n + 1) * [ (xp + xm)/2 mod (B^n-1)]
       */
 
 #define a0 ap
@@ -184,33 +185,61 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	  }
       }
 
-      /* xp = xm - xp mod (B^n + 1). Assumes normalised
-	 representation. Puts high bit in hi. */
-      if (UNLIKELY (xp[n]))
-	hi = mpn_add_1 (xp, rp, n, 1);
-      else
-	{
-	  cy = mpn_sub_n (xp, rp, xp, n);
-	  MPN_INCR_U (xp, n + 1 , cy);
-	  hi = xp[n];
-	}
-      /* Multiply by -B^n/2, using
+      /* Here the CRT recomposition begins.
 
-	 -B^n/2 * (2 x1 + x0) = x1 - B^n/2 x0 (mod (B^n + 1))
+	 xm <- (xp + xm)/2 = (xp + xm)B^n/2 mod (B^n-1)
+	 Division by 2 is a bitwise rotation.
+
+	 Assumes xp normalised mod (B^n+1).
+
+	 The residue class [0] is represented by [B^n-1]; except when
+	 both input are ZERO.
       */
 
-      cy = mpn_rshift (rp+n, xp, n, 1);
-      if (hi != cy)
-	rp[2*n-1] |= GMP_NUMB_HIGHBIT;
-      if (hi < cy)
-	/* Underflow */
-	hi = mpn_add_1 (rp+n, rp+n, n, 1);
-      else
-	hi = 0;
+#if HAVE_NATIVE_mpn_rsh1add_n || HAVE_NATIVE_mpn_rsh1add_nc
+#if HAVE_NATIVE_mpn_rsh1add_nc
+      cy = mpn_rsh1add_nc(rp, rp, xp, n, xp[n]); /* B^n = 1 */
+      hi = cy << (GMP_NUMB_BITS - 1);
+      cy = 0;
+      /* next add_ssaaaa will set cy = 1 only if rp[n-1]+=hi overflows,
+	 i.e. a further increment will not overflow again. */
+#else /* ! _nc */
+      cy = xp[n] + mpn_rsh1add_n(rp, rp, xp, n); /* B^n = 1 */
+      hi = (cy<<(GMP_NUMB_BITS-1))&GMP_NUMB_MASK; /* (cy&1) << ... */
+      cy >>= 1;
+      /* cy = 1 only if xp[n] = 1 i.e. {xp,n} = ZERO, this implies that
+	 the rsh1add was a simple rshift: the top bit is 0. cy=1 => hi=0. */
+#endif
+      add_ssaaaa(cy, rp[n-1], cy, rp[n-1], 0, hi);
+#else /* ! HAVE_NATIVE_mpn_rsh1add_n */
+#if HAVE_NATIVE_mpn_add_nc
+      cy = mpn_add_nc(rp, rp, xp, n, xp[n]);
+#else /* ! _nc */
+      cy = xp[n] + mpn_add_n(rp, rp, xp, n); /* xp[n] == 1 implies {xp,n} == ZERO */
+#endif
+      cy += (rp[0]&1);
+      mpn_rshift(rp, rp, n, 1);
+      ASSERT (cy <= 2);
+      hi = (cy<<(GMP_NUMB_BITS-1))&GMP_NUMB_MASK; /* (cy&1) << ... */
+      cy >>= 1;
+      /* We can have cy != 0 only if hi = 0... */
+      ASSERT ((rp[n-1] & GMP_NUMB_HIGHBIT) == 0);
+      rp[n-1] |= hi;
+      /* ... rp[n-1] + cy can not overflow, the following INCR is correct. */
+#endif
+      ASSERT (cy <= 1);
+      /* Next increment can not overflow, read the previous comments about cy. */
+      ASSERT ((cy == 0) || ((rp[n-1] & GMP_NUMB_HIGHBIT) == 0));
+      MPN_INCR_U(rp, n, cy);
 
-      cy = mpn_sub_n (rp, rp, rp+n, n);
-      cy = mpn_sub_1 (rp+n, rp+n, n, cy + hi);
-      ASSERT (cy == hi);
+      /* Compute the highest half:
+         ([(xp + xm)/2 mod (B^n-1)] - xp ) * B^n 
+       */
+      cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);
+      /* cy = 1 only if {xp,n+1} is not ZERO, i.e. {rp,n} is not ZERO.
+         DECR will affect _at most_ the lowest n limbs. */
+      MPN_DECR_U (rp, 2*n, cy);
+
 #undef a0
 #undef a1
 #undef xp
