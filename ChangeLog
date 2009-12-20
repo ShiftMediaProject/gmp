@@ -1,5 +1,7 @@
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/bdivmod.c: File removed.  All references purged.
+
 	* mpn/generic/mul_fft.c (mpn_mul_fft_full): Disable.
 
 	* gmp-impl.h: Define mpn_fft_mul as an alias for mpn_nussbaumer_mul.

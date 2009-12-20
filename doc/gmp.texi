@@ -5304,27 +5304,6 @@ Divide @{@var{s1p}, @var{s1n}@} by @var{s2limb}, and return the remainder.
 @var{s1n} can be zero.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n}, unsigned long int @var{d})
-This function puts the low
-@math{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of @var{q} =
-@{@var{s1p}, @var{s1n}@}/@{@var{s2p}, @var{s2n}@} mod @m{2^d,2^@var{d}} at
-@var{rp}, and returns the high @var{d} mod @code{mp_bits_per_limb} bits of
-@var{q}.
-
-@{@var{s1p}, @var{s1n}@} - @var{q} * @{@var{s2p}, @var{s2n}@} mod @m{2
-\GMPraise{@var{s1n}*@code{mp\_bits\_per\_limb}},
-2^(@var{s1n}*@nicode{mp\_bits\_per\_limb})} is placed at @var{s1p}.  Since the
-low @math{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of this
-difference are zero, it is possible to overwrite the low limbs at @var{s1p}
-with this difference, provided @math{@var{rp} @le{} @var{s1p}}.
-
-This function requires that @math{@var{s1n} * @nicode{mp\_bits\_per\_limb}
-@ge{} @var{D}}, and that @{@var{s2p}, @var{s2n}@} is odd.
-
-@strong{This interface is preliminary.  It might change incompatibly in future
-revisions.}
-@end deftypefun
-
 @deftypefun mp_limb_t mpn_lshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
 Shift @{@var{sp}, @var{n}@} left by @var{count} bits, and write the result to
 @{@var{rp}, @var{n}@}.  The bits shifted out at the left are returned in the
@@ -8352,10 +8331,9 @@ products must be done as a normal division, but there's still some single limb
 divisions saved.  When @math{d} is a single limb some simplifications arise,
 providing good speedups on a number of processors.
 
-@code{mpn_bdivmod}, @code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the
-@code{redc} function in @code{mpz_powm} differ subtly in how they return
-@math{r}, leading to some negations in the above formula, but all are
-essentially the same.
+@code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the @code{mpn_redc_X}
+functions differ subtly in how they return @math{r}, leading to some negations
+in the above formula, but all are essentially the same.
 
 @cindex Divisibility algorithm
 @cindex Congruence algorithm
@@ -8364,9 +8342,8 @@ leads to divisibility or congruence tests which are potentially more efficient
 than a normal division.
 
 The factor of @math{b^n} on @math{r} can be ignored in a GCD when @math{d} is
-odd, hence the use of @code{mpn_bdivmod} in @code{mpn_gcd}, and the use of
-@code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and @code{mpz_kronecker_ui} etc
-(@pxref{Greatest Common Divisor Algorithms}).
+odd, hencethe use of @code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and
+@code{mpz_kronecker_ui} etc (@pxref{Greatest Common Divisor Algorithms}).
 
 Montgomery's REDC method for modular multiplications uses operands of the form
 of @m{xb^{-n}, x*b^-n} and @m{yb^{-n}, y*b^-n} and on calculating @m{(xb^{-n})
@@ -10298,8 +10275,9 @@ was a driving force behind many of the optimizations in GMP 3.  Paul also
 wrote the new GMP 4.3 nth root code (with Torbj@"orn).
 
 Ken Weber (Kent State University, Universidade Federal do Rio Grande do Sul)
-contributed @code{mpz_gcd}, @code{mpz_divexact}, @code{mpn_gcd}, and
-@code{mpn_bdivmod}, partially supported by CNPq (Brazil) grant 301314194-2.
+contributed now defunct versions of @code{mpz_gcd}, @code{mpz_divexact},
+@code{mpn_gcd}, and @code{mpn_bdivmod}, partially supported by CNPq (Brazil)
+grant 301314194-2.
 
 Per Bothner of Cygnus Support helped to set up GMP to use Cygnus' configure.
 He has also made valuable suggestions and tested numerous intermediary
