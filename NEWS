@@ -17,6 +17,58 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 
+Changes between GMP version 4.3.X and 4.4.0
+
+  Bugs:
+  * None.
+
+  Speedups:
+  * Multiplication has been overhauled, and the speed has been substantially
+    improved for most operand sizes.
+  * A new algorithm makes mpz_perfect_power_p asymptotically faster.
+  * The function mpz_powm is now faster for all sizes.  Its complexity has
+    gone from O(M(n)log(n)m) to O(M(n)m) where n is the size of the modulo
+    argument and m is the size of the exponent.  It is also radically
+    faster for even modulus, since it now partially factors such modulus
+    and performs two smaller expod operations, then CRT.
+  * The internal support for multiplication yielding just the lower n limbs
+    has been improved by using Mulder's algorithm.
+  * Division N/D where both the quotient and remainder is needed now runs
+    in time O(M(log(N))).  This is asymptotically optimal, as far as it is
+    known.
+  * Division where just the quotient is asked for is now O(M(log(Q))) on
+    average, where Q is the quotient.
+
+  Features:
+  * New mpn functions: mpn_sqr_n, mpn_and_n, mpn_ior_n, mpn_xor_n,
+    mpn_nand_n, mpn_nior_n, mpn_xnor_n, mpn_andn_n, mpn_iorn_n.
+  * Support for fat binaries for 64-bit x86 processors.
+  * New type, mp_bitcnt_t for bignum bit counts.
+  * The cofactors of mpz_gcdext and mpn_gcdext are now more strictly
+    normalised, returning to how GMP 4.2 worked.
+
+  Misc:
+  * The mpn_bdivmod function has been removed.  We do not consider this an
+    incompatible change, since the function was marked as preliminary.
+
+Changes between GMP version 4.3.1 and 4.3.2
+
+  Bugs:
+  * Fixed bug in mpf_eq.
+  * Fixed overflow issues in mpz_set_str, mpz_inp_str, mpf_set_str, and
+    mpf_get_str.
+  * Avoid unbounded stack allocation for unbalanced multiplication.
+  * Fixed bug in FFT multiplication.
+
+  Speedups:
+  * None, except that proper processor recognition helps affected processors.
+
+  Features:
+  * Recognise more "Core 2" processor variants.
+  * The cofactors of mpz_gcdext and mpn_gcdext are now more strictly
+    normalised, returning to how GMP 4.2 worked.
+
+
 Changes between GMP version 4.3.0 and 4.3.1
 
   Bugs:
