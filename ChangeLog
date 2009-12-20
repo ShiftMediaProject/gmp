@@ -1,7 +1,7 @@
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/generic/mul.c: Loop also over mpn_nussbaumer_mul.
-	Use TMP_SALLOC_LIMBS in more places.  Clean up ws allocation.
+	* mpn/generic/mul.c: Loop also over mpn_nussbaumer_mul, as suggested by
+	Marco.  Use TMP_SALLOC_LIMBS in more places.  Clean up ws allocation.
 
 2009-12-19  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
