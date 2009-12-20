@@ -1,5 +1,8 @@
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul.c: Major rewrite.  Use toom43, toom53, toom63.
+	Call mpn_nussbaumer_mul for largest operands.
+
 	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM32_FOR_TOOM43_MUL): New macro.
 	(SPEED_ROUTINE_MPN_TOOM43_FOR_TOOM32_MUL): New macro.
 	(SPEED_ROUTINE_MPN_TOOM32_FOR_TOOM53_MUL): New macro.

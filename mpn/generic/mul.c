@@ -43,6 +43,37 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    2. PRODP != UP and PRODP != VP, i.e. the destination must be distinct from
       the multiplier and the multiplicand.  */
 
+/*
+  * The cutoff lines in the toomX2 and toomX3 code are now exactly between the
+    ideal lines of the surrounding algorithms.  Is that optimal?
+
+  * The toomX3 code now uses a structure similar to the one of toomX2, except
+    that it loops longer in the unbalanced case.  The result is that the
+    remaining area might have un < vn.  Should we fix the toomX2 code in a
+    similar way?
+
+  * The toomX3 code is used for the largest non-FFT unbalanced operands.  It
+    therefore calls mpn_mul recursively for certain cases.
+
+  * Allocate static temp space using THRESHOLD variables (except for toom44
+    when !WANT_FFT).  That way, we can typically have no TMP_ALLOC at all.
+
+  * We sort ToomX2 algorithms together, assuming the toom22, toom32, toom42
+    have the same vn threshold.  This is not true, we should actually use
+    mul_basecase for slightly larger operands for toom32 than for toom22, and
+    even larger for toom42.
+
+  * That problem is even more prevalent for toomX3.  We therefore have a
+    special fix for avoiding toom63; we call toom42 sometimes in the X3 code.
+    We have an uglier fix for toom53, but here we need to choose toom32 or
+    toom42...
+
+  * Is our ITCH allocation correct?
+*/
+
+#define ITCH (16*vn + 100)
+#define WSALLOC (4 * vn)
+
 mp_limb_t
 mpn_mul (mp_ptr prodp,
 	 mp_srcptr up, mp_size_t un,
@@ -121,32 +152,31 @@ mpn_mul (mp_ptr prodp,
 	    }
 	  else
 	    {
-	      ASSERT_ALWAYS (un > 0);
+	      ASSERT (un > 0);
 	      mpn_mul_basecase (prodp, vp, vn, up, un);
 	    }
 	  cy = mpn_add_n (prodp, prodp, tp, vn); /* add back preserved triangle */
 	  mpn_incr_u (prodp + vn, cy);
 	}
     }
-  else if (BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD) ||
-	   /* Also do larger unbalanced here, up to a (somewhat arbitrarily)
-	      larger vn limit, unless toom33 can do this product directly.  */
-	   (!TOOM33_OK (un, vn) && BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD * 3 / 2)))
+  else if (BELOW_THRESHOLD (vn, MUL_TOOM33_THRESHOLD))
     {
-      /* Loop over toom42, then choose toom42, toom32, or toom22 */
+      /* Use ToomX2 variants */
       mp_ptr scratch;
       TMP_DECL; TMP_MARK;
 
+      scratch = TMP_ALLOC_LIMBS (ITCH);
 
-#define ITCH ((un + vn) * 4 + 100)
-      scratch = TMP_ALLOC_LIMBS (ITCH + 1);
-
+      /* FIXME: This condition (repeated in the loop below) leaves from a vn*vn
+	 square to a (3vn-1)*vn rectangle.  Leaving such a rectangle is hardly
+	 wise; we would get better balance by slightly moving the bound.  We
+	 will sometimes end up with un < vn, like the the X3 arm below.  */
       if (un >= 3 * vn)
 	{
 	  mp_limb_t cy;
 	  mp_ptr ws;
-#define WSALL (4 * vn)
-	  ws = TMP_SALLOC_LIMBS (WSALL + 1);
+
+	  ws = TMP_SALLOC_LIMBS (WSALLOC + 1);
 
 	  mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
 	  un -= 2 * vn;
@@ -186,92 +216,111 @@ mpn_mul (mp_ptr prodp,
 	}
       TMP_FREE;
     }
-  else if (BELOW_THRESHOLD (vn, MUL_TOOM44_THRESHOLD))
+  else if (BELOW_THRESHOLD ((un + vn) >> 1, MUL_FFT_THRESHOLD) || un > 8 * vn)
     {
+      /* Handle the largest operands that are not in the FFT range.  The 2nd
+	 condition makes very unbalanced operands avoid the FFT code (except
+	 perhaps as coefficient products of the Toom code.  */
+
       TMP_DECL; TMP_MARK;
-      if (TOOM33_OK (un, vn))
+
+      if (BELOW_THRESHOLD (vn, MUL_TOOM44_THRESHOLD) || !TOOM44_OK (un, vn))
 	{
-	  /* Apply toom33 directly, since operands are balanced enough.  */
+	  /* Use ToomX3 variants */
 	  mp_ptr scratch;
-	  scratch = TMP_SALLOC_LIMBS (mpn_toom33_mul_itch (un, vn));
-	  mpn_toom33_mul (prodp, up, un, vp, vn, scratch);
+
+	  scratch = TMP_ALLOC_LIMBS (ITCH);
+
+	  if (2 * un >= 5 * vn)
+	    {
+	      mp_limb_t cy;
+	      mp_ptr ws;
+
+	      ws = TMP_SALLOC_LIMBS (WSALLOC + 1);
+
+	      if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM63_THRESHOLD))
+		mpn_toom42_mul (prodp, up, 2 * vn, vp, vn, scratch);
+	      else
+		mpn_toom63_mul (prodp, up, 2 * vn, vp, vn, scratch);
+	      un -= 2 * vn;
+	      up += 2 * vn;
+	      prodp += 2 * vn;
+
+	      while (2 * un >= 5 * vn)
+		{
+		  if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM63_THRESHOLD))
+		    mpn_toom42_mul (ws, up, 2 * vn, vp, vn, scratch);
+		  else
+		    mpn_toom63_mul (ws, up, 2 * vn, vp, vn, scratch);
+		  un -= 2 * vn;
+		  up += 2 * vn;
+		  cy = mpn_add_n (prodp, prodp, ws, vn);
+		  MPN_COPY (prodp + vn, ws + vn, 2 * vn);
+		  mpn_incr_u (prodp + vn, cy);
+		  prodp += 2 * vn;
+		}
+
+	      if (un < vn)
+		mpn_mul (ws, vp, vn, up, un);
+	      else
+		mpn_mul (ws, up, un, vp, vn);
+
+	      cy = mpn_add_n (prodp, prodp, ws, vn);
+	      MPN_COPY (prodp + vn, ws + vn, un);
+	      mpn_incr_u (prodp + vn, cy);
+	    }
+	  else
+	    {
+	      if (6 * un < 7 * vn)
+		mpn_toom33_mul (prodp, up, un, vp, vn, scratch);
+	      else if (6 * un < 9 * vn)
+		{
+		  if (BELOW_THRESHOLD (vn, MUL_TOOM32_TO_TOOM43_THRESHOLD))
+		    mpn_toom32_mul (prodp, up, un, vp, vn, scratch);
+		  else
+		    mpn_toom43_mul (prodp, up, un, vp, vn, scratch);
+		}
+	      else if (6 * un < 11 * vn)
+		{
+		  if (4 * un < 7 * vn)
+		    {
+		      if (BELOW_THRESHOLD (vn, MUL_TOOM32_TO_TOOM53_THRESHOLD))
+			mpn_toom32_mul (prodp, up, un, vp, vn, scratch);
+		      else
+			mpn_toom53_mul (prodp, up, un, vp, vn, scratch);
+		    }
+		  else
+		    {
+		      if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM53_THRESHOLD))
+			mpn_toom42_mul (prodp, up, un, vp, vn, scratch);
+		      else
+			mpn_toom53_mul (prodp, up, un, vp, vn, scratch);
+		    }
+		}
+	      else
+		{
+		  if (BELOW_THRESHOLD (vn, MUL_TOOM42_TO_TOOM63_THRESHOLD))
+		    mpn_toom42_mul (prodp, up, un, vp, vn, scratch);
+		  else
+		    mpn_toom63_mul (prodp, up, un, vp, vn, scratch);
+		}
+	    }
 	}
       else
 	{
-	  /* Apply toom33, recurse.  FUTURE: toom63, toom53, toom43, toom33 */
-	  mp_ptr scratch, pp;		/* FIXME: use same area for these */
-	  mp_limb_t cy;
-	  scratch = TMP_SALLOC_LIMBS (mpn_toom33_mul_itch (vn, vn));
-	  mpn_toom33_mul (prodp, up, vn, vp, vn, scratch);
-	  prodp += vn;
-	  up += vn;
-	  un -= vn;
-	  pp = TMP_SALLOC_LIMBS (2 * vn);
-	  while (un >= vn)
-	    {
-	      mpn_toom33_mul (pp, up, vn, vp, vn, scratch);
-	      cy = mpn_add_n (prodp, prodp, pp, vn);
-	      MPN_COPY (prodp + vn, pp + vn, vn);
-	      mpn_incr_u (prodp + vn, cy);
-	      prodp += vn;
-	      up += vn;
-	      un -= vn;
-	    }
-	  if (un != 0)
-	    {
-	      mpn_mul (pp, vp, vn, up, un);
-	      cy = mpn_add_n (prodp, prodp, pp, vn);
-	      MPN_COPY (prodp + vn, pp + vn, un);
-	      mpn_incr_u (prodp + vn, cy);
-	    }
-	}
-      TMP_FREE;
-    }
-  else if (BELOW_THRESHOLD ((un + vn) >> 1, MUL_FFT_THRESHOLD) ||
-	   BELOW_THRESHOLD (vn, MUL_FFT_THRESHOLD / 3)) /* FIXME */
-    {
-      TMP_DECL; TMP_MARK;
-      if (TOOM44_OK (un, vn))
-	{
-	  /* Apply toom44 directly, since operands are balanced enough.  */
 	  mp_ptr scratch;
+
+	  ASSERT (TOOM44_OK (un, vn));
+
 	  scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (un, vn));
 	  mpn_toom44_mul (prodp, up, un, vp, vn, scratch);
-	}
-      else
-	{
-	  /* Apply toom44, recurse.  FUTURE: toom84, toom74, toom64, toom54, toom44 */
-	  mp_ptr scratch, pp;		/* FIXME: use same area for these */
-	  mp_limb_t cy;
-	  scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (vn, vn));
-	  mpn_toom44_mul (prodp, up, vn, vp, vn, scratch);
-	  prodp += vn;
-	  up += vn;
-	  un -= vn;
-	  pp = TMP_SALLOC_LIMBS (2 * vn);
-	  while (un >= vn)
-	    {
-	      mpn_toom44_mul (pp, up, vn, vp, vn, scratch);
-	      cy = mpn_add_n (prodp, prodp, pp, vn);
-	      MPN_COPY (prodp + vn, pp + vn, vn);
-	      mpn_incr_u (prodp + vn, cy);
-	      prodp += vn;
-	      up += vn;
-	      un -= vn;
-	    }
-	  if (un != 0)
-	    {
-	      mpn_mul (pp, vp, vn, up, un);
-	      cy = mpn_add_n (prodp, prodp, pp, vn);
-	      MPN_COPY (prodp + vn, pp + vn, un);
-	      mpn_incr_u (prodp + vn, cy);
-	    }
 	}
       TMP_FREE;
     }
   else
     {
-      mpn_mul_fft_full (prodp, up, un, vp, vn);
+      mpn_nussbaumer_mul (prodp, up, un, vp, vn);
     }
-  return prodp[un + vn - 1];
+
+  return prodp[un + vn - 1];	/* historic */
 }
