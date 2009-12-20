@@ -76,6 +76,6 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
 
   if (qp != PTR(quot))
     MPN_COPY (PTR(quot), qp, qn);
-  
+
   TMP_FREE;
 }

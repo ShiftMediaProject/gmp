@@ -45,7 +45,7 @@ mpz_nextprime (mpz_ptr p, mpz_srcptr n)
   unsigned long prime;
   int cnt;
   mp_size_t pn;
-  unsigned long nbits;
+  mp_bitcnt_t nbits;
   unsigned incr;
   TMP_SDECL;
 

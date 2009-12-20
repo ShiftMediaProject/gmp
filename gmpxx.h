@@ -1342,7 +1342,7 @@ struct __gmp_rand_function
   { mpz_urandomb(z, s, l); }
   static void eval(mpz_ptr z, gmp_randstate_t s, mpz_srcptr w)
   { mpz_urandomm(z, s, w); }
-  static void eval(mpf_ptr f, gmp_randstate_t s, unsigned long int prec)
+  static void eval(mpf_ptr f, gmp_randstate_t s, mp_bitcnt_t prec)
   { mpf_urandomb(f, s, prec); }
 };
 
@@ -1537,7 +1537,7 @@ private:
   typedef mpz_t value_type;
   value_type mp;
 public:
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
 
   // constructors and destructor
   __gmp_expr() { mpz_init(mp); }
@@ -1704,7 +1704,7 @@ private:
   typedef mpq_t value_type;
   value_type mp;
 public:
-  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+  mp_bitcnt_t get_prec() const { return mpf_get_default_prec(); }
   void canonicalize() { mpq_canonicalize(mp); }
 
   // constructors and destructor
@@ -1884,61 +1884,61 @@ private:
   typedef mpf_t value_type;
   value_type mp;
 public:
-  unsigned long int get_prec() const { return mpf_get_prec(mp); }
+  mp_bitcnt_t get_prec() const { return mpf_get_prec(mp); }
 
-  void set_prec(unsigned long int prec) { mpf_set_prec(mp, prec); }
-  void set_prec_raw(unsigned long int prec) { mpf_set_prec_raw(mp, prec); }
+  void set_prec(mp_bitcnt_t prec) { mpf_set_prec(mp, prec); }
+  void set_prec_raw(mp_bitcnt_t prec) { mpf_set_prec_raw(mp, prec); }
 
   // constructors and destructor
   __gmp_expr() { mpf_init(mp); }
 
   __gmp_expr(const __gmp_expr &f)
   { mpf_init2(mp, f.get_prec()); mpf_set(mp, f.mp); }
-  __gmp_expr(const __gmp_expr &f, unsigned long int prec)
+  __gmp_expr(const __gmp_expr &f, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set(mp, f.mp); }
   template <class T, class U>
   __gmp_expr(const __gmp_expr<T, U> &expr)
   { mpf_init2(mp, expr.get_prec()); __gmp_set_expr(mp, expr); }
   template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int prec)
+  __gmp_expr(const __gmp_expr<T, U> &expr, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); __gmp_set_expr(mp, expr); }
 
   __gmp_expr(signed char c) { mpf_init_set_si(mp, c); }
-  __gmp_expr(signed char c, unsigned long int prec)
+  __gmp_expr(signed char c, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, c); }
   __gmp_expr(unsigned char c) { mpf_init_set_ui(mp, c); }
-  __gmp_expr(unsigned char c, unsigned long int prec)
+  __gmp_expr(unsigned char c, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, c); }
 
   __gmp_expr(signed int i) { mpf_init_set_si(mp, i); }
-  __gmp_expr(signed int i, unsigned long int prec)
+  __gmp_expr(signed int i, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, i); }
   __gmp_expr(unsigned int i) { mpf_init_set_ui(mp, i); }
-  __gmp_expr(unsigned int i, unsigned long int prec)
+  __gmp_expr(unsigned int i, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, i); }
 
   __gmp_expr(signed short int s) { mpf_init_set_si(mp, s); }
-  __gmp_expr(signed short int s, unsigned long int prec)
+  __gmp_expr(signed short int s, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, s); }
   __gmp_expr(unsigned short int s) { mpf_init_set_ui(mp, s); }
-  __gmp_expr(unsigned short int s, unsigned long int prec)
+  __gmp_expr(unsigned short int s, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, s); }
 
   __gmp_expr(signed long int l) { mpf_init_set_si(mp, l); }
-  __gmp_expr(signed long int l, unsigned long int prec)
+  __gmp_expr(signed long int l, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_si(mp, l); }
   __gmp_expr(unsigned long int l) { mpf_init_set_ui(mp, l); }
-  __gmp_expr(unsigned long int l, unsigned long int prec)
+  __gmp_expr(unsigned long int l, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_ui(mp, l); }
 
   __gmp_expr(float f) { mpf_init_set_d(mp, f); }
-  __gmp_expr(float f, unsigned long int prec)
+  __gmp_expr(float f, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_d(mp, f); }
   __gmp_expr(double d) { mpf_init_set_d(mp, d); }
-  __gmp_expr(double d, unsigned long int prec)
+  __gmp_expr(double d, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set_d(mp, d); }
   // __gmp_expr(long double ld) { mpf_init_set_d(mp, ld); }
-  // __gmp_expr(long double ld, unsigned long int prec)
+  // __gmp_expr(long double ld, mp_bitcnt_t prec)
   // { mpf_init2(mp, prec); mpf_set_d(mp, ld); }
 
   explicit __gmp_expr(const char *s)
@@ -1949,7 +1949,7 @@ public:
         throw std::invalid_argument ("mpf_set_str");
       }
   }
-  __gmp_expr(const char *s, unsigned long int prec, int base = 0)
+  __gmp_expr(const char *s, mp_bitcnt_t prec, int base = 0)
   {
     mpf_init2(mp, prec);
     if (mpf_set_str(mp, s, base) != 0)
@@ -1966,7 +1966,7 @@ public:
         throw std::invalid_argument ("mpf_set_str");
       }
   }
-  __gmp_expr(const std::string &s, unsigned long int prec, int base = 0)
+  __gmp_expr(const std::string &s, mp_bitcnt_t prec, int base = 0)
   {
     mpf_init2(mp, prec);
     if (mpf_set_str(mp, s.c_str(), base) != 0)
@@ -1978,7 +1978,7 @@ public:
 
   explicit __gmp_expr(mpf_srcptr f)
   { mpf_init2(mp, mpf_get_prec(f)); mpf_set(mp, f); }
-  __gmp_expr(mpf_srcptr f, unsigned long int prec)
+  __gmp_expr(mpf_srcptr f, mp_bitcnt_t prec)
   { mpf_init2(mp, prec); mpf_set(mp, f); }
 
   ~__gmp_expr() { mpf_clear(mp); }
@@ -2275,7 +2275,7 @@ public:
   void eval(typename __gmp_resolve_expr<T>::ptr_type p) const
   { __gmp_expr<T, T> temp(expr.val); Op::eval(p, temp.__get_mp()); }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   { __gmp_expr<T, T> temp(expr.val, prec); Op::eval(p, temp.__get_mp()); }
   const val_type & get_val() const { return expr.val; }
   unsigned long int get_prec() const { return expr.val.get_prec(); }
@@ -2313,7 +2313,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2381,7 +2381,7 @@ public:
     Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp(expr.val2, prec);
     Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
@@ -2390,7 +2390,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2414,7 +2414,7 @@ public:
     Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp(expr.val1, prec);
     Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
@@ -2423,7 +2423,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2447,7 +2447,7 @@ public:
     Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp(expr.val2, prec);
     Op::eval(p, expr.val1.__get_mp(), temp.__get_mp());
@@ -2456,7 +2456,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2480,7 +2480,7 @@ public:
     Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp(expr.val1, prec);
     Op::eval(p, temp.__get_mp(), expr.val2.__get_mp());
@@ -2489,7 +2489,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2515,7 +2515,7 @@ public:
     Op::eval(p, temp.__get_mp(), expr.val2);
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp(expr.val1, prec);
     Op::eval(p, temp.__get_mp(), expr.val2);
@@ -2542,7 +2542,7 @@ public:
     Op::eval(p, expr.val1, temp.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp(expr.val2, prec);
     Op::eval(p, expr.val1, temp.__get_mp());
@@ -2573,7 +2573,7 @@ public:
     Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp1(expr.val1, prec), temp2(expr.val2, prec);
     Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
@@ -2582,7 +2582,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2606,7 +2606,7 @@ public:
     Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp1(expr.val1, prec), temp2(expr.val2, prec);
     Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
@@ -2615,7 +2615,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -2639,7 +2639,7 @@ public:
     Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
   }
   void eval(typename __gmp_resolve_expr<T>::ptr_type p,
-	    unsigned long int prec) const
+	    mp_bitcnt_t prec) const
   {
     __gmp_expr<T, T> temp1(expr.val1, prec), temp2(expr.val2, prec);
     Op::eval(p, temp1.__get_mp(), temp2.__get_mp());
@@ -2648,7 +2648,7 @@ public:
   const val2_type & get_val2() const { return expr.val2; }
   unsigned long int get_prec() const
   {
-    unsigned long int prec1 = expr.val1.get_prec(),
+    mp_bitcnt_t prec1 = expr.val1.get_prec(),
       prec2 = expr.val2.get_prec();
     return (prec1 > prec2) ? prec1 : prec2;
   }
@@ -3247,7 +3247,7 @@ private:
   unsigned long int bits;
 public:
   __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
-  void eval(mpf_ptr f, unsigned long int prec) const
+  void eval(mpf_ptr f, mp_bitcnt_t prec) const
   { __gmp_rand_function::eval(f, state, (bits>0) ? get_prec() : prec); }
   unsigned long int get_prec() const
   {
@@ -3317,7 +3317,7 @@ public:
   __gmp_expr<mpz_t, __gmp_urandomm_value> get_z_range(const mpz_class &z)
   { return __gmp_expr<mpz_t, __gmp_urandomm_value>(state, z); }
 
-  __gmp_expr<mpf_t, __gmp_urandomb_value> get_f(unsigned long int prec = 0)
+  __gmp_expr<mpf_t, __gmp_urandomb_value> get_f(mp_bitcnt_t prec = 0)
   { return __gmp_expr<mpf_t, __gmp_urandomb_value>(state, prec); }
 };
 

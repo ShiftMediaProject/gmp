@@ -108,7 +108,7 @@ static inline int
 win_size (mp_bitcnt_t eb)
 {
   int k;
-  static mp_bitcnt_t x[] = {1,7,25,81,241,673,1793,4609,11521,28161,~0ul};
+  static mp_bitcnt_t x[] = {1,7,25,81,241,673,1793,4609,11521,28161,~(mp_bitcnt_t)0};
   for (k = 0; eb > x[k]; k++)
     ;
   return k;

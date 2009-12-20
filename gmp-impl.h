@@ -3785,7 +3785,7 @@ __GMP_DECLSPEC void      mpn_set_str_compute_powtab __GMP_PROTO ((powers_t *, mp
 #define __GMPF_BITS_TO_PREC(n)						\
   ((mp_size_t) ((__GMP_MAX (53, n) + 2 * GMP_NUMB_BITS - 1) / GMP_NUMB_BITS))
 #define __GMPF_PREC_TO_BITS(n) \
-  ((unsigned long) (n) * GMP_NUMB_BITS - GMP_NUMB_BITS)
+  ((mp_bitcnt_t) (n) * GMP_NUMB_BITS - GMP_NUMB_BITS)
 
 __GMP_DECLSPEC extern mp_size_t __gmp_default_fp_limb_precision;
 

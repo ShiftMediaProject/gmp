@@ -1,5 +1,7 @@
 2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Change all bit counts for bignums to use mp_bitcnt_t.
+
 	* mpn/generic/bdivmod.c: File removed.  All references purged.
 
 	* mpn/generic/mul_fft.c (mpn_mul_fft_full): Disable.

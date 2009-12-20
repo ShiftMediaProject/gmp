@@ -23,7 +23,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 int
-mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
+mpf_eq (mpf_srcptr u, mpf_srcptr v, mp_bitcnt_t n_bits)
 {
   mp_srcptr up, vp, p;
   mp_size_t usize, vsize, minsize, maxsize, n_limbs, i, size;
