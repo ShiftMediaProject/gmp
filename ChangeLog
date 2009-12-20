@@ -1,3 +1,23 @@
+2009-12-20  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_TOOM32_FOR_TOOM43_MUL): New macro.
+	(SPEED_ROUTINE_MPN_TOOM43_FOR_TOOM32_MUL): New macro.
+	(SPEED_ROUTINE_MPN_TOOM32_FOR_TOOM53_MUL): New macro.
+	(SPEED_ROUTINE_MPN_TOOM53_FOR_TOOM32_MUL): New macro.
+	(SPEED_ROUTINE_MPN_TOOM42_FOR_TOOM53_MUL): New macro.
+	(SPEED_ROUTINE_MPN_TOOM53_FOR_TOOM42_MUL): New macro.
+	* tune/common.c (speed_mpn_toom63_mul): New function.
+	(speed_mpn_toom32_for_toom43_mul): New function.
+	(speed_mpn_toom43_for_toom32_mul): New function.
+	(speed_mpn_toom32_for_toom53_mul): New function.
+	(speed_mpn_toom53_for_toom32_mul): New function.
+	(speed_mpn_toom42_for_toom53_mul): New function.
+	(speed_mpn_toom53_for_toom42_mul): New function.
+	* tune/tuneup.c (tune_mul_n): New name for old tune_mul.
+	(tune_sqr_n): New name for old tune_sqr.
+	(tune_mul): New function, for unbalanced multiplication.
+	* gmp-impl.h: Provide declarations for corresponding threshold vars.
+
 2009-12-19  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom_interpolate_8pts.c: Nailify.

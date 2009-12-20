@@ -1050,6 +1050,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 
 #define MPN_TOOM32_MUL_MINSIZE   10
 #define MPN_TOOM42_MUL_MINSIZE   10
+#define MPN_TOOM43_MUL_MINSIZE   49 /* ??? */
+#define MPN_TOOM53_MUL_MINSIZE   49 /* ??? */
+#define MPN_TOOM63_MUL_MINSIZE   49
 
 #define   mpn_sqr_diagonal __MPN(sqr_diagonal)
 __GMP_DECLSPEC void      mpn_sqr_diagonal __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
@@ -1649,6 +1652,22 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef MUL_TOOM44_THRESHOLD
 #define MUL_TOOM44_THRESHOLD            300
+#endif
+
+#ifndef MUL_TOOM32_TO_TOOM43_THRESHOLD
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD  140
+#endif
+
+#ifndef MUL_TOOM32_TO_TOOM53_THRESHOLD
+#define MUL_TOOM32_TO_TOOM53_THRESHOLD  170
+#endif
+
+#ifndef MUL_TOOM42_TO_TOOM53_THRESHOLD
+#define MUL_TOOM42_TO_TOOM53_THRESHOLD  190
+#endif
+
+#ifndef MUL_TOOM42_TO_TOOM63_THRESHOLD
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD  230
 #endif
 
 /* MUL_TOOM22_THRESHOLD_LIMIT is the maximum for MUL_TOOM22_THRESHOLD.  In a
@@ -4133,6 +4152,22 @@ extern mp_size_t                     mul_toom33_threshold;
 #undef  MUL_TOOM44_THRESHOLD
 #define MUL_TOOM44_THRESHOLD         mul_toom44_threshold
 extern mp_size_t                     mul_toom44_threshold;
+
+#undef  MUL_TOOM32_TO_TOOM43_THRESHOLD
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD mul_toom32_to_toom43_threshold
+extern mp_size_t                       mul_toom32_to_toom43_threshold;
+
+#undef  MUL_TOOM32_TO_TOOM53_THRESHOLD
+#define MUL_TOOM32_TO_TOOM53_THRESHOLD mul_toom32_to_toom53_threshold
+extern mp_size_t                       mul_toom32_to_toom53_threshold;
+
+#undef  MUL_TOOM42_TO_TOOM53_THRESHOLD
+#define MUL_TOOM42_TO_TOOM53_THRESHOLD mul_toom42_to_toom53_threshold
+extern mp_size_t                       mul_toom42_to_toom53_threshold;
+
+#undef  MUL_TOOM42_TO_TOOM63_THRESHOLD
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD mul_toom42_to_toom63_threshold
+extern mp_size_t                       mul_toom42_to_toom63_threshold;
 
 #undef  MUL_FFT_THRESHOLD
 #define MUL_FFT_THRESHOLD            mul_fft_threshold

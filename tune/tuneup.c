@@ -150,6 +150,10 @@ int  allocdat = 0;
 mp_size_t  mul_toom22_threshold         = MP_SIZE_T_MAX;
 mp_size_t  mul_toom33_threshold         = MUL_TOOM33_THRESHOLD_LIMIT;
 mp_size_t  mul_toom44_threshold         = MUL_TOOM44_THRESHOLD_LIMIT;
+mp_size_t  mul_toom32_to_toom43_threshold = MP_SIZE_T_MAX;
+mp_size_t  mul_toom32_to_toom53_threshold = MP_SIZE_T_MAX;
+mp_size_t  mul_toom42_to_toom53_threshold = MP_SIZE_T_MAX;
+mp_size_t  mul_toom42_to_toom63_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
@@ -404,7 +408,7 @@ tuneup_measure (speed_function_t fun,
 }
 
 
-#define PRINT_WIDTH  28
+#define PRINT_WIDTH  30
 
 void
 print_define_start (const char *name)
@@ -831,7 +835,7 @@ fft (struct fft_param_t *p)
 /* Start karatsuba from 4, since the Cray t90 ieee code is much faster at 2,
    giving wrong results.  */
 void
-tune_mul (void)
+tune_mul_n (void)
 {
   static struct param_t  param;
 
@@ -854,6 +858,37 @@ tune_mul (void)
 
   /* disabled until tuned */
   MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
+}
+
+void
+tune_mul (void)
+{
+  static struct param_t  param;
+
+  param.function = speed_mpn_toom32_for_toom43_mul;
+  param.function2 = speed_mpn_toom43_for_toom32_mul;
+  param.name = "MUL_TOOM32_TO_TOOM43_THRESHOLD";
+  param.min_size = MPN_TOOM43_MUL_MINSIZE;
+  one (&mul_toom32_to_toom43_threshold, &param);
+
+  param.function = speed_mpn_toom32_for_toom53_mul;
+  param.function2 = speed_mpn_toom53_for_toom32_mul;
+  param.name = "MUL_TOOM32_TO_TOOM53_THRESHOLD";
+  param.min_size = MPN_TOOM53_MUL_MINSIZE;
+  one (&mul_toom32_to_toom53_threshold, &param);
+
+  param.function = speed_mpn_toom42_for_toom53_mul;
+  param.function2 = speed_mpn_toom53_for_toom42_mul;
+  param.name = "MUL_TOOM42_TO_TOOM53_THRESHOLD";
+  param.min_size = MPN_TOOM53_MUL_MINSIZE;
+  one (&mul_toom42_to_toom53_threshold, &param);
+
+  param.function = speed_mpn_toom42_mul;
+  param.function2 = speed_mpn_toom63_mul;
+  param.name = "MUL_TOOM42_TO_TOOM63_THRESHOLD";
+  param.min_size = MPN_TOOM63_MUL_MINSIZE;
+  one (&mul_toom42_to_toom63_threshold, &param);
+
 }
 
 
@@ -932,7 +967,7 @@ tune_sqrmod_bnm1 (void)
    just for that.  Start karatsuba from 4 same as MUL above.  */
 
 void
-tune_sqr (void)
+tune_sqr_n (void)
 {
   /* disabled until tuned */
   SQR_FFT_THRESHOLD = MP_SIZE_T_MAX;
@@ -1917,10 +1952,13 @@ all (void)
   }
   printf ("\n");
 
+  tune_mul_n ();
+  printf("\n");
+
   tune_mul ();
   printf("\n");
 
-  tune_sqr ();
+  tune_sqr_n ();
   printf("\n");
 
   tune_fft_mul ();
@@ -1938,8 +1976,12 @@ all (void)
 
   tune_dc_div ();
   tune_dc_bdiv ();
+
+  printf("\n");
   tune_invertappr ();
   tune_invert ();
+  printf("\n");
+
   tune_binvert ();
   tune_redc ();
   printf("\n");
