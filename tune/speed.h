@@ -1140,35 +1140,35 @@ int speed_routine_count_zeros_setup
 
 #define SPEED_ROUTINE_MPN_TOOM32_FOR_TOOM43_MUL(function)		\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->size, s->yp, 17*s->size/24, tspace),		\
-     mpn_toom32_mul_itch (s->size, 17*s->size/24),				\
+    (function (wp, s->xp, s->size, s->yp, 17*s->size/24, tspace),	\
+     mpn_toom32_mul_itch (s->size, 17*s->size/24),			\
      MPN_TOOM32_MUL_MINSIZE)
 #define SPEED_ROUTINE_MPN_TOOM43_FOR_TOOM32_MUL(function)		\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->size, s->yp, 17*s->size/24, tspace),		\
-     mpn_toom43_mul_itch (s->size, 17*s->size/24),				\
+    (function (wp, s->xp, s->size, s->yp, 17*s->size/24, tspace),	\
+     mpn_toom43_mul_itch (s->size, 17*s->size/24),			\
      MPN_TOOM43_MUL_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_TOOM32_FOR_TOOM53_MUL(function)		\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->size, s->yp, 19*s->size/30, tspace),		\
-     mpn_toom32_mul_itch (s->size, 19*s->size/30),				\
+    (function (wp, s->xp, s->size, s->yp, 19*s->size/30, tspace),	\
+     mpn_toom32_mul_itch (s->size, 19*s->size/30),			\
      MPN_TOOM32_MUL_MINSIZE)
 #define SPEED_ROUTINE_MPN_TOOM53_FOR_TOOM32_MUL(function)		\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->size, s->yp, 19*s->size/30, tspace),		\
-     mpn_toom53_mul_itch (s->size, 19*s->size/30),				\
+    (function (wp, s->xp, s->size, s->yp, 19*s->size/30, tspace),	\
+     mpn_toom53_mul_itch (s->size, 19*s->size/30),			\
      MPN_TOOM53_MUL_MINSIZE)
 
 #define SPEED_ROUTINE_MPN_TOOM42_FOR_TOOM53_MUL(function)		\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->size, s->yp, 11*s->size/20, tspace),		\
-     mpn_toom42_mul_itch (s->size, 11*s->size/20),				\
+    (function (wp, s->xp, s->size, s->yp, 11*s->size/20, tspace),	\
+     mpn_toom42_mul_itch (s->size, 11*s->size/20),			\
      MPN_TOOM42_MUL_MINSIZE)
 #define SPEED_ROUTINE_MPN_TOOM53_FOR_TOOM42_MUL(function)		\
   SPEED_ROUTINE_MPN_MUL_N_TSPACE					\
-    (function (wp, s->xp, s->size, s->yp, 11*s->size/20, tspace),		\
-     mpn_toom53_mul_itch (s->size, 11*s->size/20),				\
+    (function (wp, s->xp, s->size, s->yp, 11*s->size/20, tspace),	\
+     mpn_toom53_mul_itch (s->size, 11*s->size/20),			\
      MPN_TOOM53_MUL_MINSIZE)
 
 
