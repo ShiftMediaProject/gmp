@@ -886,7 +886,7 @@ tune_mul (void)
   param.name = "MUL_TOOM42_TO_TOOM53_THRESHOLD";
   param.min_size = MPN_TOOM53_MUL_MINSIZE;
   one (&mul_toom42_to_toom53_threshold, &param);
-  print_define ("MUL_TOOM32_TO_TOOM53_THRESHOLD", 11*mul_toom42_to_toom53_threshold/20);
+  print_define ("MUL_TOOM42_TO_TOOM53_THRESHOLD", 11*mul_toom42_to_toom53_threshold/20);
 
   param.function = speed_mpn_toom42_mul;
   param.function2 = speed_mpn_toom63_mul;
