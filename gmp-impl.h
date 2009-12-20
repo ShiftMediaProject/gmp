@@ -846,7 +846,7 @@ __GMP_DECLSPEC mp_limb_signed_t mpn_rsblsh_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp
 #define mpn_rsh1add_n __MPN(rsh1add_n)
 __GMP_DECLSPEC mp_limb_t mpn_rsh1add_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #define mpn_rsh1add_nc __MPN(rsh1add_nc)
-__GMP_DECLSPEC mp_limb_t mpn_rsh1add_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+__GMP_DECLSPEC mp_limb_t mpn_rsh1add_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 /* mpn_rsh1sub_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} - {b,n}) >> 1,
    and returns the bit rshifted out (0 or 1).  If there's a borrow from the
@@ -855,7 +855,7 @@ __GMP_DECLSPEC mp_limb_t mpn_rsh1add_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcp
 #define mpn_rsh1sub_n __MPN(rsh1sub_n)
 __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #define mpn_rsh1sub_nc __MPN(rsh1sub_nc)
-__GMP_DECLSPEC mp_limb_t mpn_rsh1sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+__GMP_DECLSPEC mp_limb_t mpn_rsh1sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #define mpn_lshiftc __MPN(lshiftc)
 __GMP_DECLSPEC mp_limb_t mpn_lshiftc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
