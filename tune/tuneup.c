@@ -1966,15 +1966,15 @@ all (void)
   tune_sqr_n ();
   printf("\n");
 
+  tune_mulmod_bnm1 ();
+  tune_sqrmod_bnm1 ();
+  printf("\n");
+
   tune_fft_mul ();
   printf("\n");
 
   tune_fft_sqr ();
   printf ("\n");
-
-  tune_mulmod_bnm1 ();
-  tune_sqrmod_bnm1 ();
-  printf("\n");
 
   tune_mullo ();
   printf("\n");
