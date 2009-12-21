@@ -1,5 +1,7 @@
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul.c: Put back call to mpn_mul_n.
+
 	* tune/tuneup.c (all): Call tune_mulmod_bnm1 before tuning fft due to
 	dependency on mulmod_bnm1 from both mul_fft_mul and from mullo_n.
 
