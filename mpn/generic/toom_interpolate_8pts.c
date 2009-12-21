@@ -34,8 +34,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BINVERT_45 ((BINVERT_15 * BINVERT_3) & GMP_NUMB_MASK)
 
 #ifndef mpn_divexact_by3
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
-#define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,BINVERT_3,0)
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#define mpn_divexact_by3(dst,src,size) mpn_pi1_bdiv_q_1(dst,src,size,3,BINVERT_3,0)
 #else
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
 #endif
@@ -46,8 +46,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define mpn_divexact_by45(dst,src,size) \
   (63 & 19 * mpn_bdiv_dbm1 (dst, src, size, __GMP_CAST (mp_limb_t, GMP_NUMB_MASK / 45)))
 #else
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
-#define mpn_divexact_by45(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,45,BINVERT_45,0)
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#define mpn_divexact_by45(dst,src,size) mpn_pi1_bdiv_q_1(dst,src,size,45,BINVERT_45,0)
 #else
 #define mpn_divexact_by45(dst,src,size) mpn_divexact_1(dst,src,size,45)
 #endif

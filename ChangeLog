@@ -1,5 +1,9 @@
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/bdiv_q_1.c (mpn_pi1_bdiv_q_1): Renamed from
+	mpn_bdiv_q_1_pi1.
+	* All references changed.
+
 	* configure.in: Add --enable-old-fft-full.
 	* tune/speed.c (routine): Conditionalise mpn_mul_fft_full references on
 	WANT_OLD_FFT_FULL.

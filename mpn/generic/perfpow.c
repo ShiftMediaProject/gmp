@@ -136,7 +136,7 @@ binv_root (mp_ptr rp, mp_srcptr yp,
       mpn_mullo_n (rp, yp, tp2, bn);
 
       mpn_sub_n (tp2, tp, rp, bn);
-      mpn_bdiv_q_1_pi1 (rp, tp2, bn, k, di, 0);
+      mpn_pi1_bdiv_q_1 (rp, tp2, bn, k, di, 0);
       if ((b % GMP_LIMB_BITS) != 0)
 	rp[(b - 1) / GMP_LIMB_BITS] &= (((mp_limb_t) 1) << (b % GMP_LIMB_BITS)) - 1;
     }

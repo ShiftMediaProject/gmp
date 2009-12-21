@@ -1203,8 +1203,8 @@ __GMP_DECLSPEC mp_size_t mpn_binvert_itch __GMP_PROTO ((mp_size_t));
 #define mpn_bdiv_q_1 __MPN(bdiv_q_1)
 __GMP_DECLSPEC mp_limb_t mpn_bdiv_q_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
-#define mpn_bdiv_q_1_pi1 __MPN(bdiv_q_1_pi1)
-__GMP_DECLSPEC mp_limb_t mpn_bdiv_q_1_pi1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
+#define mpn_pi1_bdiv_q_1 __MPN(pi1_bdiv_q_1)
+__GMP_DECLSPEC mp_limb_t mpn_pi1_bdiv_q_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
 
 #define   mpn_sbpi1_bdiv_qr __MPN(sbpi1_bdiv_qr)
 __GMP_DECLSPEC mp_limb_t mpn_sbpi1_bdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));

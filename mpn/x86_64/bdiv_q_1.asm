@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_bdiv_q_1, mpn_bdiv_q_1_pi1 -- schoolbook Hensel division by
+dnl  AMD64 mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- schoolbook Hensel division by
 dnl  1-limb divisor, returning quotient only.
 
 dnl  Copyright 2001, 2002, 2004, 2005, 2006, 2009 Free Software Foundation,
@@ -36,8 +36,8 @@ C rp		rdi
 C up		rsi
 C n		rdx
 C d		rcx
-C di		r8	just mpn_bdiv_q_1_pi1
-C shift		r9	just mpn_bdiv_q_1_pi1
+C di		r8	just mpn_pi1_bdiv_q_1
+C shift		r9	just mpn_pi1_bdiv_q_1
 
 
 ASM_START()
@@ -89,7 +89,7 @@ L(evn):	bsf	%rax, %rcx
 	jmp	L(odd)
 EPILOGUE()
 
-PROLOGUE(mpn_bdiv_q_1_pi1)
+PROLOGUE(mpn_pi1_bdiv_q_1)
 	push	%rbx
 
 	mov	%rcx, %r11		C d

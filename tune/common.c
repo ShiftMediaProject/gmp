@@ -700,9 +700,9 @@ speed_mpn_bdiv_q_1 (struct speed_params *s)
 }
 
 double
-speed_mpn_bdiv_q_1_pi1 (struct speed_params *s)
+speed_mpn_pi1_bdiv_q_1 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BDIV_Q_1_PI1 (mpn_bdiv_q_1_pi1);
+  SPEED_ROUTINE_MPN_PI1_BDIV_Q_1 (mpn_pi1_bdiv_q_1);
 }
 
 #if HAVE_NATIVE_mpn_modexact_1_odd

@@ -36,31 +36,31 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   ((((GMP_NUMB_MAX >> (GMP_NUMB_BITS % 4)) / 15) * 14 * 16 & GMP_NUMB_MAX) + 15))
 
 /* For the various mpn_divexact_byN here, fall back to using either
-   mpn_bdiv_q_1_pi1 or mpn_divexact_1.  The former has less overhead and is
+   mpn_pi1_bdiv_q_1 or mpn_divexact_1.  The former has less overhead and is
    many faster if it is native.  For now, since mpn_divexact_1 is native on
-   several platforms where mpn_bdiv_q_1_pi1 does not yet exist, do not use
-   mpn_bdiv_q_1_pi1 unconditionally.  FIXME.  */
+   several platforms where mpn_pi1_bdiv_q_1 does not yet exist, do not use
+   mpn_pi1_bdiv_q_1 unconditionally.  FIXME.  */
 
 /* For odd divisors, mpn_divexact_1 works fine with two's complement. */
 #ifndef mpn_divexact_by3
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
-#define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,BINVERT_3,0)
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#define mpn_divexact_by3(dst,src,size) mpn_pi1_bdiv_q_1(dst,src,size,3,BINVERT_3,0)
 #else
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
 #endif
 #endif
 
 #ifndef mpn_divexact_by9
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
-#define mpn_divexact_by9(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,9,BINVERT_9,0)
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#define mpn_divexact_by9(dst,src,size) mpn_pi1_bdiv_q_1(dst,src,size,9,BINVERT_9,0)
 #else
 #define mpn_divexact_by9(dst,src,size) mpn_divexact_1(dst,src,size,9)
 #endif
 #endif
 
 #ifndef mpn_divexact_by15
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi1
-#define mpn_divexact_by15(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,15,BINVERT_15,0)
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1
+#define mpn_divexact_by15(dst,src,size) mpn_pi1_bdiv_q_1(dst,src,size,15,BINVERT_15,0)
 #else
 #define mpn_divexact_by15(dst,src,size) mpn_divexact_1(dst,src,size,15)
 #endif

@@ -28,8 +28,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* For odd divisors, mpn_divexact_1 works fine with two's complement. */
 #ifndef mpn_divexact_by3
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi1 && MODLIMB_INVERSE_3
-#define mpn_divexact_by3(dst,src,size) mpn_bdiv_q_1_pi1(dst,src,size,3,MODLIMB_INVERSE_3,0)
+#if HAVE_NATIVE_mpn_pi1_bdiv_q_1 && MODLIMB_INVERSE_3
+#define mpn_divexact_by3(dst,src,size) mpn_pi1_bdiv_q_1(dst,src,size,3,MODLIMB_INVERSE_3,0)
 #else
 #define mpn_divexact_by3(dst,src,size) mpn_divexact_1(dst,src,size,3)
 #endif

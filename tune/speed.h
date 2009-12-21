@@ -169,7 +169,7 @@ double speed_MPN_COPY_INCR __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_divexact_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_divexact_by3 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_bdiv_q_1 __GMP_PROTO ((struct speed_params *));
-double speed_mpn_bdiv_q_1_pi1 __GMP_PROTO ((struct speed_params *));
+double speed_mpn_pi1_bdiv_q_1 __GMP_PROTO ((struct speed_params *));
 double speed_mpn_bdiv_dbm1c __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1f __GMP_PROTO ((struct speed_params *s));
@@ -774,7 +774,7 @@ int speed_routine_count_zeros_setup
 #define SPEED_ROUTINE_MPN_BDIV_Q_1(function)				\
     SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->xp, s->size, s->r))
 
-#define SPEED_ROUTINE_MPN_BDIV_Q_1_PI1_CALL(call)			\
+#define SPEED_ROUTINE_MPN_PI1_BDIV_Q_1_CALL(call)			\
   {									\
     unsigned   shift;							\
     mp_limb_t  dinv;							\
@@ -787,8 +787,8 @@ int speed_routine_count_zeros_setup
 									\
     SPEED_ROUTINE_MPN_UNARY_1_CALL (call);				\
   }
-#define SPEED_ROUTINE_MPN_BDIV_Q_1_PI1(function)			\
-  SPEED_ROUTINE_MPN_BDIV_Q_1_PI1_CALL					\
+#define SPEED_ROUTINE_MPN_PI1_BDIV_Q_1(function)			\
+  SPEED_ROUTINE_MPN_PI1_BDIV_Q_1_CALL					\
   ((*function) (wp, s->xp, s->size, s->r, dinv, shift))
 
 #define SPEED_ROUTINE_MPN_BDIV_DBM1C(function)				\

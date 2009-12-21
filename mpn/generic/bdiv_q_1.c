@@ -1,4 +1,4 @@
-/* mpn_bdiv_q_1, mpn_bdiv_q_1_pi1 -- schoolbook Hensel division by 1-limb
+/* mpn_bdiv_q_1, mpn_pi1_bdiv_q_1 -- schoolbook Hensel division by 1-limb
    divisor, returning quotient only.
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
@@ -27,7 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 mp_limb_t
-mpn_bdiv_q_1_pi1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d,
+mpn_pi1_bdiv_q_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d,
 		  mp_limb_t di, int shift)
 {
   mp_size_t  i;
@@ -111,5 +111,5 @@ mpn_bdiv_q_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t d)
     shift = 0;
 
   binvert_limb (di, d);
-  return mpn_bdiv_q_1_pi1 (rp, up, n, d, di, shift);
+  return mpn_pi1_bdiv_q_1 (rp, up, n, d, di, shift);
 }
