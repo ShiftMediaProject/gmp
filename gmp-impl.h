@@ -1048,6 +1048,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM44_MUL_MINSIZE   30
 #define MPN_TOOM4_SQR_MINSIZE    30
 
+#define MPN_TOOM6H_MUL_MINSIZE   46
+#define MPN_TOOM6_SQR_MINSIZE    46
+
 #define MPN_TOOM32_MUL_MINSIZE   10
 #define MPN_TOOM42_MUL_MINSIZE   10
 #define MPN_TOOM43_MUL_MINSIZE   49 /* ??? */
@@ -1137,8 +1140,8 @@ __GMP_DECLSPEC void      mpn_toom4_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_
 #define   mpn_toom6h_mul __MPN(toom6h_mul)
 __GMP_DECLSPEC void      mpn_toom6h_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
-#define   mpn_toom6h_sqr __MPN(toom6h_sqr)
-__GMP_DECLSPEC void      mpn_toom6h_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_toom6_sqr __MPN(toom6_sqr)
+__GMP_DECLSPEC void      mpn_toom6_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_fft_best_k __MPN(fft_best_k)
 __GMP_DECLSPEC int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
@@ -1667,6 +1670,14 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef MUL_TOOM44_THRESHOLD
 #define MUL_TOOM44_THRESHOLD            300
+#endif
+
+#ifndef MUL_TOOM6H_THRESHOLD
+#define MUL_TOOM6H_THRESHOLD            350
+#endif
+
+#ifndef SQR_TOOM6_THRESHOLD
+#define SQR_TOOM6_THRESHOLD MUL_TOOM6H_THRESHOLD
 #endif
 
 #ifndef MUL_TOOM32_TO_TOOM43_THRESHOLD
@@ -4438,6 +4449,18 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
   (3 * (an) + GMP_NUMB_BITS)
 #define mpn_toom4_sqr_itch(an) \
   (3 * (an) + GMP_NUMB_BITS)
+
+#define mpn_toom6_sqr_itch(n)					\
+( ((n) - MUL_TOOM6H_THRESHOLD)*2 +					\
+   MAX(MUL_TOOM6H_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
+       mpn_toom44_mul_itch(MUL_TOOM6H_THRESHOLD,MUL_TOOM6H_THRESHOLD)) )
+
+static inline mp_size_t
+mpn_toom6h_mul_itch (mp_size_t an, mp_size_t bn) {
+  mp_size_t estimatedN;
+  estimatedN = (an + bn) / (size_t) 10 + 1;
+  return mpn_toom6_sqr_itch( estimatedN * 6 );
+}
 
 static inline mp_size_t
 mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)

@@ -31,6 +31,13 @@
 
 2009-12-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* gmp-impl.h (mpn_toom6h_mul_itch): New inline function.
+	(MUL_TOOM6H_THRESHOLD): Default value.
+	(SQR_TOOM6_THRESHOLD): Default value.
+	* mpn/generic/toom6h_mul.c: Remove definitions moved to gmp-impl.h.
+	* tune/common.c, tune/speed.c, tune/speed.h: Support for measuring
+	mpn_toom6h_mul and mpn_toom6_sqr speed.
+
 	* mpn/generic/toom63_mul.c: Remove unused TMP_*.
 
 	* mpn/generic/toom_eval_pm2rexp.c: New file.

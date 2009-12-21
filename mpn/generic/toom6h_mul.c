@@ -76,27 +76,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   do {	mpn_mul (p, a, na, b, nb);			\
   } while (0)
 
-/* S(n) <= (n+5)\6*10+4+MAX(S((n+5)\6),1+2*(n+5)\6),
-   since n>42; S(n) <= ceil(log(n)/log(6))*(10+4)+n*12\6 < n*2 + lg2(n)*6
- */
-#define mpn_toom6h_mul_n_itch(n)					\
-( ((n) - MUL_TOOM6H_THRESHOLD)*2 +					\
-   MAX(MUL_TOOM6H_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
-       mpn_toom44_mul_itch(MUL_TOOM6H_THRESHOLD,MUL_TOOM6H_THRESHOLD)) )
-
-mp_size_t
-mpn_toom6h_mul_itch (mp_size_t an, mp_size_t bn) {
-  mp_size_t estimatedN;
-  estimatedN = (an + bn) / (size_t) 10 + 1;
-  return mpn_toom6h_mul_n_itch( estimatedN * 6 );
-}
-
 /* Toom-6.5 , compute the product {pp,an+bn} <- {ap,an} * {bp,bn}
    With: an >= bn >= 46, an*6 <  bn * 17.
    It _may_ work with bn<=46 and bn*17 < an*6 < bn*18
 
    Evaluate in: infinity, +4, -4, +2, -2, +1, -1, +1/2, -1/2, +1/4, -1/4, 0.
 */
+/* Estimate on needed scratch:
+   S(n) <= (n+5)\6*10+4+MAX(S((n+5)\6),1+2*(n+5)\6),
+   since n>42; S(n) <= ceil(log(n)/log(6))*(10+4)+n*12\6 < n*2 + lg2(n)*6
+ */
 
 void
 mpn_toom6h_mul   (mp_ptr pp,
@@ -250,9 +239,6 @@ mpn_toom6h_mul   (mp_ptr pp,
 
 
 
-#ifndef SQR_TOOM6_THRESHOLD
-#define SQR_TOOM6_THRESHOLD MUL_TOOM6H_THRESHOLD
-#endif
 
 #ifdef  SQR_TOOM8_THRESHOLD
 #define SQR_TOOM6_MAX (SQR_TOOM8_THRESHOLD+6*2-1)
