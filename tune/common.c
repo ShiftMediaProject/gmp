@@ -1083,6 +1083,7 @@ speed_mpn_nussbaumer_mul_sqr (struct speed_params *s)
     (mpn_nussbaumer_mul (wp, s->xp, s->size, s->xp, s->size));
 }
 
+#if WANT_OLD_FFT_FULL
 double
 speed_mpn_mul_fft_full (struct speed_params *s)
 {
@@ -1095,7 +1096,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
   SPEED_ROUTINE_MPN_SQR_CALL
     (mpn_mul_fft_full (wp, s->xp, s->size, s->xp, s->size));
 }
-
+#endif
 
 /* These are mod 2^N+1 multiplies and squares.  If s->r is supplied it's
    used as k, otherwise the best k for the size is used.  If s->size isn't a

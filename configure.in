@@ -136,6 +136,20 @@ if test "$enable_fft" = "yes"; then
 fi
 
 
+AC_ARG_ENABLE(old-fft-full,
+AC_HELP_STRING([--enable-old-fft-full],[enable old mpn_mul_fft_full for multiplication [[default=no]]]),
+[case $enableval in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-old-fft-full, need yes or no]) ;;
+esac],
+[enable_old_fft_full=no])
+
+if test "$enable_old_fft_full" = "yes"; then
+  AC_DEFINE(WANT_OLD_FFT_FULL,1,
+  [Define to 1 to enable old mpn_mul_fft_full for multiplication, per --enable-old-fft-full])
+fi
+
+
 AC_ARG_ENABLE(mpbsd,
 AC_HELP_STRING([--enable-mpbsd],
                [build Berkeley MP compatibility library [[default=no]]]),

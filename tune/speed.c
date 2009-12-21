@@ -301,9 +301,10 @@ const struct routine_t {
   { "mpn_toom42_mul",    speed_mpn_toom42_mul       },
   { "mpn_nussbaumer_mul",    speed_mpn_nussbaumer_mul    },
   { "mpn_nussbaumer_mul_sqr",speed_mpn_nussbaumer_mul_sqr},
+#if WANT_OLD_FFT_FULL
   { "mpn_mul_fft_full",      speed_mpn_mul_fft_full      },
   { "mpn_mul_fft_full_sqr",  speed_mpn_mul_fft_full_sqr  },
-
+#endif
   { "mpn_mul_fft",       speed_mpn_mul_fft,     FLAG_R_OPTIONAL },
   { "mpn_mul_fft_sqr",   speed_mpn_mul_fft_sqr, FLAG_R_OPTIONAL },
 

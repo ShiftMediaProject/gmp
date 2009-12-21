@@ -933,7 +933,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   return h;
 }
 
-#if 0
+#if WANT_OLD_FFT_FULL
 /* multiply {n, nl} by {m, ml}, and put the result in {op, nl+ml} */
 void
 mpn_mul_fft_full (mp_ptr op,
