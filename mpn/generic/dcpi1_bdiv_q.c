@@ -135,7 +135,6 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
 	  np += dn;
 	  qn -= dn;
 	}
-      mpn_sub_1 (np + dn, np + dn, qn, cy);
       mpn_dcpi1_bdiv_q_n (qp, np, dp, dn, dinv, tp);
     }
   else

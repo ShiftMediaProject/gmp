@@ -1,5 +1,7 @@
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dcpi1_bdiv_q.c: Remove a spurious mpn_sub_1.
+
 	* mpn/generic/mul.c: Put back call to mpn_mul_n.
 
 	* tune/tuneup.c (all): Call tune_mulmod_bnm1 before tuning fft due to
