@@ -102,83 +102,12 @@ abs_sub_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
   return 0;
 }
 
-/* Gets {pp,n} and (sign?-1:1)*{np,n}. Computes at once: 
-     {pp,n} <- ({pp,n}+{np,n})/2^{ps+1}
-     {pn,n} <- ({pp,n}-{np,n})/2^{ns+1}
-   Finally recompose them obtaining:
-     {pp,n+off} <- {pp,n}+{np,n}*2^{off*GMP_NUMB_BITS}
-*/
-static void
-toom_couple_handling (mp_ptr pp, mp_size_t n, mp_ptr np,
-		      int nsign, mp_size_t off, int ps, int ns)
-{
-  if (nsign) {
-#ifdef HAVE_NATIVE_mpn_rsh1sub_n
-    mpn_rsh1sub_n (np, pp, np, n);
-#else
-    mpn_sub_n (np, pp, np, n);
-    mpn_rshift (np, np, n, 1);
-#endif
-  } else {
-#ifdef HAVE_NATIVE_mpn_rsh1add_n
-    mpn_rsh1add_n (np, pp, np, n);
-#else
-    mpn_add_n (np, pp, np, n);
-    mpn_rshift (np, np, n, 1);
-#endif
-  }
-
-#ifdef HAVE_NATIVE_mpn_rsh1sub_n
-  if (ps == 1)
-    mpn_rsh1sub_n (pp, pp, np, n);
-  else
-#endif
-  {
-    mpn_sub_n (pp, pp, np, n);
-    if (ps > 0)
-      mpn_rshift (pp, pp, n, ps);
-  }
-  if (ns > 0)
-    mpn_rshift (np, np, n, ns);
-  pp[n] = mpn_add_n (pp+off, pp+off, np, n-off);
-  ASSERT_NOCARRY (mpn_add_1(pp+n, np+n-off, off, pp[n]) );
-}
-
 static int
 abs_sub_add_n (mp_ptr rm, mp_ptr rp, mp_srcptr rs, mp_size_t n) {
   int result;
   result = abs_sub_n (rm, rp, rs, n);
   ASSERT_NOCARRY(mpn_add_n (rp, rp, rs, n));
   return result;
-}
-
-static int
-mpn_toom_ev_pm1(mp_ptr rp, mp_ptr rm,
-		mp_srcptr ap, unsigned int q, mp_size_t n, mp_size_t t,
-		mp_ptr ws)
-{
-  /* {ap,q*n+t} -> {rp,n+1} {rm,n+1} , with {ws, n+1}*/
-  ASSERT( n >= t );
-  ASSERT( t > 0 );
-  ASSERT( q > 2 );
-  if( (q & 1) == 0) {
-    rp[n] = mpn_add(rp, ap+n*(q-2), n, ap+n*q, t);
-    q--;
-    ws[n] = mpn_add_n(ws, ap+n*(q-2), ap+n*q, n);
-    q-=3;
-    rp[n]+= mpn_add_n(rp, rp, ap+n*q, n);
-  } else {
-    ws[n] = mpn_add(ws, ap+n*(q-2), n, ap+n*q, t);
-    q-=3;
-    rp[n] = mpn_add_n(rp, ap+n*q, ap+n*(q+2), n);
-  }
-  while(q) {
-    q--;
-    ws[n] += mpn_add_n(ws, ws, ap+n*q, n);
-    q--;
-    rp[n] += mpn_add_n(rp, rp, ap+n*q, n);
-  }
-  return abs_sub_add_n (rm, rp, ws, n + 1);
 }
 
 static int

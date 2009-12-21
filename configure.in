@@ -2507,6 +2507,7 @@ gmp_mpn_functions="$extra_functions					   \
   toom33_mul toom43_mul toom53_mul toom63_mul				   \
   toom44_mul								   \
   toom6h_mul								   \
+  toom_couple_handling							   \
   toom2_sqr toom3_sqr toom4_sqr						   \
   toom_eval_dgr3_pm1 toom_eval_dgr3_pm2 				   \
   toom_eval_pm1 toom_eval_pm2 toom_eval_pm2exp	   			   \
