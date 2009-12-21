@@ -21,6 +21,8 @@
 
 2009-12-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/toom63_mul.c: Remove unused TMP_*.
+
 	* mpn/generic/toom_eval_pm2rexp.c: New file.
 	* gmp-impl.h: Provide corresponding declaration.
 	* configure.in (gmp_mpn_functions): List toom_eval_pm2rexp.

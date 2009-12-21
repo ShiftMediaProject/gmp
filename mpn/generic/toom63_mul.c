@@ -23,10 +23,6 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-/* FIXME: Write an _itch function, then remove NULL and TMP_*, as soon
-   as all the callers properly allocate and pass the scratch to the
-   function. */
-#include <stdlib.h>		/* for NULL */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -94,7 +90,6 @@ mpn_toom63_mul (mp_ptr pp,
   mp_size_t n, s, t;
   mp_limb_t cy;
   int sign;
-  TMP_DECL;
 
   /***************************** decomposition *******************************/
 #define a5  (ap + 5 * n)
@@ -116,7 +111,6 @@ mpn_toom63_mul (mp_ptr pp,
   /* WARNING! it assumes n>1 */
   ASSERT ( n > 2);
 
-  TMP_MARK;
 #define   r8    pp				/* 2n   */
 #define   r7    scratch				/* 3n+1 */
 #define   r5    (pp + 3*n)			/* 3n+1 */
@@ -130,7 +124,7 @@ mpn_toom63_mul (mp_ptr pp,
 
   /* Alloc also 3n+1 limbs for ws... mpn_toom_interpolate_8pts may
      need all of them, when DO_mpn_sublsh_n usea a scratch  */
-  if (scratch == NULL) scratch = TMP_SALLOC_LIMBS (9 * n + 3);
+/*   if (scratch == NULL) scratch = TMP_SALLOC_LIMBS (9 * n + 3); */
 
   /********************** evaluation and recursive calls *********************/
   /* $\pm4$ */
@@ -224,5 +218,4 @@ mpn_toom63_mul (mp_ptr pp,
 #undef r7
 #undef r8
 #undef ws
-  TMP_FREE;
 }
