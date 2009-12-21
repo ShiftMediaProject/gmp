@@ -81,9 +81,12 @@ mpn_mul (mp_ptr prodp,
   ASSERT (! MPN_OVERLAP_P (prodp, un+vn, up, un));
   ASSERT (! MPN_OVERLAP_P (prodp, un+vn, vp, vn));
 
-  if (up == vp && un == vn)
+  if (un == vn)
     {
-      mpn_sqr_n (prodp, up, un);
+      if (up == vp)
+	mpn_sqr_n (prodp, up, un);
+      else
+	mpn_mul_n (prodp, up, vp, un);
     }
   else if (vn < MUL_TOOM22_THRESHOLD)
     { /* plain schoolbook multiplication */
