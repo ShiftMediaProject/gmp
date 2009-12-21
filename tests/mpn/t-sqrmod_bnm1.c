@@ -33,7 +33,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef COUNT
-#define COUNT 5000
+#define COUNT 3000
 #endif
 
 #define MAX_N (1L << SIZE_LOG)
@@ -47,10 +47,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   B^rn-1. This should not be a problem if sqrmod_bnm1 is used to
   combine results and obtain a natural number when one knows in
   advance that the final value is less than (B^rn-1).
-
-  WARNING: This function uses mpn_mul internally. If a release of GMP
-  will ever use mpn_sqrmod_bnm1 to obtain full products, then this
-  reference must be changed.
 */
 
 static void
@@ -60,7 +56,7 @@ ref_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an)
 
   ASSERT (0 < an && an <= rn);
 
-  mpn_sqr_n (rp, ap, an);
+  refmpn_mul (rp, ap, an, ap, an);
   an *= 2;
   if( UNLIKELY(an <= rn) )
     MPN_ZERO (rp + an, rn - an);

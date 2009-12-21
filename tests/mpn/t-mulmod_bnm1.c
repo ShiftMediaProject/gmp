@@ -29,7 +29,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* Sizes are up to 2^SIZE_LOG limbs */
 #ifndef SIZE_LOG
-#define SIZE_LOG 12
+#define SIZE_LOG 11
 #endif
 
 #ifndef COUNT
@@ -47,10 +47,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   B^rn-1. This should not be a problem if mulmod_bnm1 is used to
   combine results and obtain a natural number when one knows in
   advance that the final value is less than (B^rn-1).
-
-  WARNING: This function uses mpn_mul internally. If a release of GMP
-  will ever use mpn_mulmod_bnm1 to obtain full products, then this
-  reference must be changed.
 */
 
 static void
@@ -62,9 +58,9 @@ ref_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
   ASSERT (0 < bn && bn <= rn);
 
   if (an >= bn)
-    mpn_mul (rp, ap, an, bp, bn);
+    refmpn_mul (rp, ap, an, bp, bn);
   else
-    mpn_mul (rp, bp, bn, ap, an);
+    refmpn_mul (rp, bp, bn, ap, an);
   an += bn;
   if( UNLIKELY(an <= rn) )
     MPN_ZERO (rp + an, rn - an);

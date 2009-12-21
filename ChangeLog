@@ -1,3 +1,8 @@
+2009-12-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpn/t-mulmod_bnm1.c (ref_mulmod_bnm1): Use ref_mul.
+	* tests/mpn/t-sqrmod_bnm1.c (ref_sqrmod_bnm1): Likewise.
+
 2009-12-20  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): New CRT.
