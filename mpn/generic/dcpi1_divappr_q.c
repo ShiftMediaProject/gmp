@@ -81,6 +81,10 @@ mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   TMP_MARK;
 
+  ASSERT (dn >= 4);
+  ASSERT (nn > dn);
+  ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
+
   tp = TMP_SALLOC_LIMBS (dn+1);
 
   qn = nn - dn;

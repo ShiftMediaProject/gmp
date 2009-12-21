@@ -1,5 +1,9 @@
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dcpi1_divappr_q.c: Add parameter ASSERTs.
+	* mpn/generic/dcpi1_div_q.c: Likewise.
+	* mpn/generic/dcpi1_div_qr.c: Change ASSERT to enforce dn >= 4.
+
 	* mpn/generic/bdiv_q_1.c (mpn_pi1_bdiv_q_1): Renamed from
 	mpn_bdiv_q_1_pi1.
 	* All references changed.

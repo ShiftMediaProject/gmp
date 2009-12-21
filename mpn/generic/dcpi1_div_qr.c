@@ -89,7 +89,7 @@ mpn_dcpi1_div_qr (mp_ptr qp,
 
   TMP_MARK;
 
-  ASSERT (dn >= 2);
+  ASSERT (dn >= 4);
   ASSERT (nn > dn);
   ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
 

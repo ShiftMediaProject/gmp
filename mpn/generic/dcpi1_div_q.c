@@ -39,6 +39,10 @@ mpn_dcpi1_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   TMP_MARK;
 
+  ASSERT (dn >= 4);
+  ASSERT (nn > dn);
+  ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
+
   tp = TMP_SALLOC_LIMBS (nn + 1);
   MPN_COPY (tp + 1, np, nn);
   tp[0] = 0;
