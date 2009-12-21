@@ -1972,11 +1972,11 @@ all (void)
   tune_fft_sqr ();
   printf ("\n");
 
-  tune_mullo ();
-  printf("\n");
-
   tune_mulmod_bnm1 ();
   tune_sqrmod_bnm1 ();
+  printf("\n");
+
+  tune_mullo ();
   printf("\n");
 
   tune_dc_div ();
