@@ -28,117 +28,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-#if HAVE_NATIVE_mpn_sublsh_n
-#define DO_mpn_sublsh_n(dst,src,n,s,ws) mpn_sublsh_n(dst,dst,src,n,s)
-#else
-static mp_limb_t
-DO_mpn_sublsh_n(mp_ptr dst, mp_srcptr src, mp_size_t n, unsigned int s, mp_ptr ws)
-{
-#if USE_MUL_1 && 0
-  return mpn_submul_1(dst,src,n,CNST_LIMB(1) <<(s));
-#else
-  mp_limb_t __cy;
-  __cy = mpn_lshift(ws,src,n,s);
-  return    __cy + mpn_sub_n(dst,dst,ws,n);
-#endif
-}
-#endif
-
-#if HAVE_NATIVE_mpn_addlsh_n
-#define DO_mpn_addlsh_n(dst,src,n,s,ws) mpn_addlsh_n(dst,dst,src,n,s)
-#else
-static mp_limb_t
-DO_mpn_addlsh_n(mp_ptr dst, mp_srcptr src, mp_size_t n, unsigned int s, mp_ptr ws)
-{
-#if USE_MUL_1 && 0
-  return mpn_addmul_1(dst,src,n,CNST_LIMB(1) <<(s));
-#else
-  mp_limb_t __cy;
-  __cy = mpn_lshift(ws,src,n,s);
-  return    __cy + mpn_add_n(dst,dst,ws,n);
-#endif
-}
-#endif
-
-#if HAVE_NATIVE_mpn_subrsh
-#define DO_mpn_subrsh(dst,nd,src,ns,s,ws) mpn_subrsh(dst,nd,src,ns,s)
-#else
-/* FIXME: This is not a correct definition, it assumes no carry */
-#define DO_mpn_subrsh(dst,nd,src,ns,s,ws)				\
-do {									\
-  mp_limb_t __cy;							\
-  MPN_DECR_U (dst, nd, src[0] >> s);					\
-  __cy = DO_mpn_sublsh_n (dst, src + 1, ns - 1, GMP_NUMB_BITS - s, ws);	\
-  MPN_DECR_U (dst + ns - 1, nd - ns + 1, __cy);				\
-} while (0)
-#endif
-
-
-/* Stores |{ap,n}-{bp,n}| in {rp,n}, returns the sign. */
-static int
-abs_sub_n (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n)
-{
-  mp_limb_t  x, y;
-  while (--n >= 0)
-    {
-      x = ap[n];
-      y = bp[n];
-      if (x != y)
-	{
-	  n++;
-	  if (x > y)
-	    {
-	      mpn_sub_n (rp, ap, bp, n);
-	      return 0;
-	    }
-	  else
-	    {
-	      mpn_sub_n (rp, bp, ap, n);
-	      return 1;
-	    }
-	}
-      rp[n] = 0;
-    }
-  return 0;
-}
-
-static int
-abs_sub_add_n (mp_ptr rm, mp_ptr rp, mp_srcptr rs, mp_size_t n) {
-  int result;
-  result = abs_sub_n (rm, rp, rs, n);
-  ASSERT_NOCARRY(mpn_add_n (rp, rp, rs, n));
-  return result;
-}
-
-static int
-mpn_toom_ev_rsh(mp_ptr rp, mp_ptr rm,
-		mp_srcptr ap, unsigned int q, mp_size_t n, mp_size_t t,
-		unsigned int s, mp_ptr ws, mp_ptr scratch)
-{
-  unsigned int i;
-  /* {ap,q*n+t} -> {rp,n+1} {rm,n+1} , with {ws, n+1}*/
-  ASSERT( n >= t );
-  ASSERT( s != 0 ); /* or _ev_pm1 should be used */
-  ASSERT( q > 1 );
-  ASSERT( s*q < GMP_NUMB_BITS );
-  rp[n] = mpn_lshift(rp, ap, n, s*q);
-  ws[n] = mpn_lshift(ws, ap+n, n, s*(q-1));
-  if( (q & 1) != 0) {
-    ASSERT_NOCARRY(mpn_add(ws,ws,n+1,ap+n*q,t));
-    rp[n] += DO_mpn_addlsh_n(rp, ap+n*(q-1), n, s, scratch);
-  } else {
-    ASSERT_NOCARRY(mpn_add(rp,rp,n+1,ap+n*q,t));
-  }
-  for(i=2; i<q-1; i++)
-  {
-    rp[n] += DO_mpn_addlsh_n(rp, ap+n*i, n, s*(q-i), scratch);
-    i++;
-    ws[n] += DO_mpn_addlsh_n(ws, ap+n*i, n, s*(q-i), scratch);
-  };
-  return abs_sub_add_n (rm, rp, ws, n + 1);
-}
-
-
 #if GMP_NUMB_BITS < 21
 #error Not implemented.
 #endif
@@ -286,8 +175,8 @@ mpn_toom6h_mul   (mp_ptr pp,
 
   /********************** evaluation and recursive calls *********************/
   /* $\pm1/2$ */
-  sign = mpn_toom_ev_rsh (v2, v0, ap, p, n, s, 1, pp, wse) ^
-	 mpn_toom_ev_rsh (v3, v1, bp, q, n, t, 1, pp, wse);
+  sign = mpn_toom_eval_pm2rexp (v2, v0, p, ap, n, s, 1, pp) ^
+	 mpn_toom_eval_pm2rexp (v3, v1, q, bp, n, t, 1, pp);
   TOOM6H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1/2)*B(-1/2)*2^. */
   TOOM6H_MUL_N_REC(r5, v2, v3, n + 1, wse); /* A(+1/2)*B(+1/2)*2^. */
   toom_couple_handling(r5, 2 * n + 1, pp, sign, n, 1+half , half);
@@ -310,8 +199,8 @@ mpn_toom6h_mul   (mp_ptr pp,
   toom_couple_handling(r1, 2 * n + 1, pp, sign, n, 2, 4);
 
   /* $\pm1/4$ */
-  sign = mpn_toom_ev_rsh (v2, v0, ap, p, n, s, 2, pp, wse) ^
-	 mpn_toom_ev_rsh (v3, v1, bp, q, n, t, 2, pp, wse);
+  sign = mpn_toom_eval_pm2rexp (v2, v0, p, ap, n, s, 2, pp) ^
+	 mpn_toom_eval_pm2rexp (v3, v1, q, bp, n, t, 2, pp);
   TOOM6H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1/4)*B(-1/4)*4^. */
   TOOM6H_MUL_N_REC(r4, v2, v3, n + 1, wse); /* A(+1/4)*B(+1/4)*4^. */
   toom_couple_handling(r4, 2 * n + 1, pp, sign, n, 2*(1+half), 2*(half));
@@ -446,7 +335,7 @@ mpn_toom6_sqr  (mp_ptr pp, mp_srcptr ap, mp_size_t an, mp_ptr scratch)
 
   /********************** evaluation and recursive calls *********************/
   /* $\pm1/2$ */
-  mpn_toom_ev_rsh (v2, v0, ap, 5, n, s, 1, pp, wse);
+  mpn_toom_eval_pm2rexp (v2, v0, 5, ap, n, s, 1, pp);
   TOOM6_SQR_REC(pp, v0, n + 1, wse); /* A(-1/2)*B(-1/2)*2^. */
   TOOM6_SQR_REC(r5, v2, n + 1, wse); /* A(+1/2)*B(+1/2)*2^. */
   toom_couple_handling(r5, 2 * n + 1, pp, 0, n, 1, 0);
@@ -464,7 +353,7 @@ mpn_toom6_sqr  (mp_ptr pp, mp_srcptr ap, mp_size_t an, mp_ptr scratch)
   toom_couple_handling(r1, 2 * n + 1, pp, 0, n, 2, 4);
 
   /* $\pm1/4$ */
-  mpn_toom_ev_rsh (v2, v0, ap, 5, n, s, 2, pp, wse);
+  mpn_toom_eval_pm2rexp (v2, v0, 5, ap, n, s, 2, pp);
   TOOM6_SQR_REC(pp, v0, n + 1, wse); /* A(-1/4)*B(-1/4)*4^. */
   TOOM6_SQR_REC(r4, v2, n + 1, wse); /* A(+1/4)*B(+1/4)*4^. */
   toom_couple_handling(r4, 2 * n + 1, pp, 0, n, 2, 0);

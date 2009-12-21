@@ -21,6 +21,11 @@
 
 2009-12-21  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/toom_eval_pm2rexp.c: New file.
+	* gmp-impl.h: Provide corresponding declaration.
+	* configure.in (gmp_mpn_functions): List toom_eval_pm2rexp.
+	* mpn/generic/toom6h_mul.c: Use shared toom_eval_pm2rexp.
+
 	* mpn/generic/toom_couple_handling.c: New file, helper function
 	for high degree Toom.
 	* gmp-impl.h: Provide corresponding declaration.

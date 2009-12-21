@@ -1092,6 +1092,9 @@ __GMP_DECLSPEC int mpn_toom_eval_pm2 __GMP_PROTO ((mp_ptr, mp_ptr, unsigned, mp_
 #define   mpn_toom_eval_pm2exp __MPN(toom_eval_pm2exp)
 __GMP_DECLSPEC int mpn_toom_eval_pm2exp __GMP_PROTO ((mp_ptr, mp_ptr, unsigned, mp_srcptr, mp_size_t, mp_size_t, unsigned, mp_ptr));
 
+#define   mpn_toom_eval_pm2rexp __MPN(toom_eval_pm2rexp)
+__GMP_DECLSPEC int mpn_toom_eval_pm2rexp __GMP_PROTO ((mp_ptr, mp_ptr, unsigned, mp_srcptr, mp_size_t, mp_size_t, unsigned, mp_ptr));
+
 #define   mpn_toom22_mul __MPN(toom22_mul)
 __GMP_DECLSPEC void      mpn_toom22_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
