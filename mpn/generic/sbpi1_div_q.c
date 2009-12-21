@@ -320,9 +320,6 @@ mpn_sbpi1_div_q (mp_ptr qp,
 	{
 	  /* Compensate for ignored dividend and divisor tails.  */
 
-	  if (qn == 0)
-	    return qh;
-
 	  dp = dp_orig;
 	  np = np_orig;
 
@@ -333,12 +330,16 @@ mpn_sbpi1_div_q (mp_ptr qp,
 		{
 		  if (x == 0)
 		    {
-		      cy = mpn_sub_1 (qp, qp, qn, 1);
+		      if (qn != 0)
+			cy = mpn_sub_1 (qp, qp, qn, 1);
 		      return qh - cy;
 		    }
 		  x--;
 		}
 	    }
+
+	  if (qn == 0)
+	    return qh;
 
 	  for (i = dn - qn - 2; i >= 0; i--)
 	    {
@@ -349,8 +350,7 @@ mpn_sbpi1_div_q (mp_ptr qp,
 		  if (x == 0)
 		    {
 		      cy = mpn_sub_1 (qp, qp, qn, 1);
-		      ASSERT_ALWAYS (cy == 0);
-		      return qh - cy;
+		      return qh;
 		    }
 		  x--;
 		}

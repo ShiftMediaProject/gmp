@@ -1,5 +1,7 @@
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/sbpi1_div_q.c: Fix fixup code for to work for qn = 0.
+
 	* mpn/generic/dcpi1_divappr_q.c: Handle qn = 1 and qn = 2 for initial
 	quotient block (code block copied from dcpi1_div_qr.c).
 
