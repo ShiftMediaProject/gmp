@@ -39,8 +39,8 @@ mpn_dcpi1_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   TMP_MARK;
 
-  ASSERT (dn >= 4);
-  ASSERT (nn > dn);
+  ASSERT (dn >= 6);
+  ASSERT (nn - dn >= 3);
   ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
 
   tp = TMP_SALLOC_LIMBS (nn + 1);

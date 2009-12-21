@@ -1,5 +1,11 @@
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dcpi1_divappr_q.c: Handle qn = 1 and qn = 2 for initial
+	quotient block (code block copied from dcpi1_div_qr.c).
+
+	* mpn/generic/dcpi1_div_qr.c: Rewrite singular case giving q limb of
+	GMP_NUMB_MAX.  Remove an impossible qn = 0 case.
+
 	* mpn/generic/dcpi1_bdiv_q.c: Remove a spurious mpn_sub_1.
 
 	* mpn/generic/mul.c: Put back call to mpn_mul_n.
@@ -7,9 +13,9 @@
 	* tune/tuneup.c (all): Call tune_mulmod_bnm1 before tuning fft due to
 	dependency on mulmod_bnm1 from both mul_fft_mul and from mullo_n.
 
-	* mpn/generic/dcpi1_divappr_q.c: Add parameter ASSERTs.
-	* mpn/generic/dcpi1_div_q.c: Likewise.
-	* mpn/generic/dcpi1_div_qr.c: Change ASSERT to enforce dn >= 4.
+	* mpn/generic/dcpi1_divappr_q.c: ASSERT that dn >= 6 and nn > dn.
+	* mpn/generic/dcpi1_div_q.c: ASSERT that dn >= 6 and nn-dn >= 3.
+	* mpn/generic/dcpi1_div_qr.c: ASSERT that dn >= 6 and nn-dn >= 3.
 
 	* mpn/generic/bdiv_q_1.c (mpn_pi1_bdiv_q_1): Renamed from
 	mpn_bdiv_q_1_pi1.

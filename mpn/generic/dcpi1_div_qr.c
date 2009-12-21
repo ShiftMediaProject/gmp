@@ -89,8 +89,8 @@ mpn_dcpi1_div_qr (mp_ptr qp,
 
   TMP_MARK;
 
-  ASSERT (dn >= 4);
-  ASSERT (nn > dn);
+  ASSERT (dn >= 6);		/* to adhere to mpn_sbpi1_div_qr's limits */
+  ASSERT (nn - dn >= 3);	/* to adhere to mpn_sbpi1_div_qr's limits */
   ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
 
   tp = TMP_SALLOC_LIMBS (dn);
@@ -132,10 +132,9 @@ mpn_dcpi1_div_qr (mp_ptr qp,
 
 	  if (UNLIKELY (n2 == d1) && n1 == d0)
 	    {
-	      q = GMP_NUMB_MAX;
-	      cy = mpn_submul_1 (np - dn, dp, dn, q);
-	      ASSERT (cy == n1);
-	      ASSERT (np[-1] <= d1);
+	      q = GMP_NUMB_MASK;
+	      cy = mpn_submul_1 (np - dn, dp - dn, dn, q);
+	      ASSERT (cy == n2);
 	    }
 	  else
 	    {
@@ -170,7 +169,7 @@ mpn_dcpi1_div_qr (mp_ptr qp,
 	{
 	  /* Do a 2qn / qn division */
 	  if (qn == 2)
-	    qh = mpn_divrem_2 (qp, 0L, np - qn, 4, dp - qn); /* FIXME: obsolete function. Use 5/3 division? */
+	    qh = mpn_divrem_2 (qp, 0L, np - 2, 4, dp - 2); /* FIXME: obsolete function. Use 5/3 division? */
 	  else if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
 	    qh = mpn_sbpi1_div_qr (qp, np - qn, 2 * qn, dp - qn, qn, dinv->inv32);
 	  else
@@ -207,15 +206,6 @@ mpn_dcpi1_div_qr (mp_ptr qp,
     }
   else
     {
-      if (qn == 0)
-	{
-	  qh = mpn_cmp (np - dn, dp - dn, dn) >= 0;
-	  if (qh)
-	    mpn_sub_n (np - dn, np - dn, dp - dn, dn);
-	  TMP_FREE;
-	  return qh;
-	}
-
       qp -= qn;			/* point at low limb of next quotient block */
       np -= qn;			/* point in the middle of partial remainder */
 
