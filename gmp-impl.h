@@ -1071,6 +1071,9 @@ __GMP_DECLSPEC void      mpn_toom_interpolate_7pts __GMP_PROTO ((mp_ptr, mp_size
 #define mpn_toom_interpolate_8pts __MPN(toom_interpolate_8pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_8pts __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, mp_ptr, mp_size_t, mp_ptr));
 
+#define mpn_toom_interpolate_12pts __MPN(toom_interpolate_12pts)
+__GMP_DECLSPEC void      mpn_toom_interpolate_12pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_ptr));
+
 #define   mpn_toom_eval_dgr3_pm1 __MPN(toom_eval_dgr3_pm1)
 __GMP_DECLSPEC int mpn_toom_eval_dgr3_pm1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr));
 
@@ -1124,6 +1127,12 @@ __GMP_DECLSPEC void      mpn_toom44_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size
 
 #define   mpn_toom4_sqr __MPN(toom4_sqr)
 __GMP_DECLSPEC void      mpn_toom4_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom6h_mul __MPN(toom6h_mul)
+__GMP_DECLSPEC void      mpn_toom6h_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom6h_sqr __MPN(toom6h_sqr)
+__GMP_DECLSPEC void      mpn_toom6h_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_fft_best_k __MPN(fft_best_k)
 __GMP_DECLSPEC int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
