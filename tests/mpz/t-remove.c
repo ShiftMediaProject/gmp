@@ -92,6 +92,7 @@ main (int argc, char **argv)
 	}
     }
 
+  tests_end ();
   exit (0);
 }
 

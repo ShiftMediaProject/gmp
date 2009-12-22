@@ -162,6 +162,13 @@ main (int argc, char **argv)
 	one_test (op1, op2, i);
     }
 
+  mpz_clear (bs);
+  mpz_clear (op1);
+  mpz_clear (op2);
+  mpz_clear (temp1);
+  mpz_clear (temp2);
+
+  tests_end ();
   exit (0);
 }
 

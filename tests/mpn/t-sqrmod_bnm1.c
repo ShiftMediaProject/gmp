@@ -184,5 +184,6 @@ main (int argc, char **argv)
 	}
     }
   TMP_FREE;
+  tests_end ();
   return 0;
 }

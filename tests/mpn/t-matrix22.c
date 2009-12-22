@@ -202,5 +202,6 @@ main (int argc, char **argv)
   matrix_clear (&A);
   matrix_clear (&B);
 
+  tests_end ();
   return 0;
 }
