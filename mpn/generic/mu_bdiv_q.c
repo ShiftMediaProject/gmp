@@ -101,12 +101,11 @@ mpn_mu_bdiv_q (mp_ptr qp,
 	 should reduce itch to perhaps 3dn.
        */
 
-      ip = scratch;			/* in limbs */
-      rp = scratch + in;		/* dn limbs */
-      tp = scratch + in + dn;		/* dn + in limbs FIXME: mpn_fft_next_size */
-      scratch += in;			/* Roughly 2in+1 limbs */
+      ip = scratch;		/* in limbs */
+      rp = scratch + in;	/* MAX(binvert_itch(in),dn) limbs */
+      tp = scratch + in + dn;	/* MAX(next_size(dn,k),dn+in) limbs */
 
-      mpn_binvert (ip, dp, in, scratch);
+      mpn_binvert (ip, dp, in, rp);
 
       cy = 0;
 
@@ -209,11 +208,10 @@ mpn_mu_bdiv_q (mp_ptr qp,
       /* Compute half-sized inverse.  */
       in = qn - (qn >> 1);
 
-      ip = scratch;			/* ceil(qn/2) limbs */
-      rp = scratch + in;		/* ceil(qn/2)+qn limbs */
-      scratch += in;			/* 2*ceil(qn/2)+2 */
+      ip = scratch;		/* in limbs */
+      rp = scratch + in;	/* MAX(binvert_itch(in),next_size(qn,k),qn+in) limbs */
 
-      mpn_binvert (ip, dp, in, scratch);
+      mpn_binvert (ip, dp, in, rp);
 
       mpn_mullo_n (qp, np, ip, in);		/* low `in' quotient limbs */
 #if WANT_FFT
@@ -240,16 +238,40 @@ mpn_mu_bdiv_q (mp_ptr qp,
 mp_size_t
 mpn_mu_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
 {
-  mp_size_t qn;
+  mp_size_t qn, in, m, itch_invert;
+  mp_size_t b;
 
   qn = nn;
 
   if (qn > dn)
     {
-      return 4 * dn;		/* FIXME FIXME FIXME need mpn_fft_next_size */
+      b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
+      in = (qn - 1) / b + 1;	/* ceil(qn/b) = ceil(qn / ceil(qn/dn)) */
+#if WANT_FFT
+      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
+        {
+          m = mpn_fft_next_size (dn, mpn_fft_best_k (dn, 0));
+          m = MAX (dn + in, m);
+        }
+      else
+#endif
+	m = dn + in;
+      itch_invert = mpn_binvert_itch (in);
+      return in + MAX (itch_invert, dn + m);
     }
   else
     {
-      return 2 * qn + 1 + 2;	/* FIXME FIXME FIXME need mpn_fft_next_size */
+      in = qn - (qn >> 1);
+#if WANT_FFT
+      if (ABOVE_THRESHOLD (qn, MUL_FFT_MODF_THRESHOLD))
+        {
+          m = mpn_fft_next_size (qn, mpn_fft_best_k (qn, 0));
+          m = MAX (qn + in, m);
+        }
+      else
+#endif
+        m = qn + in;
+      itch_invert = mpn_binvert_itch (in);
+      return in + MAX (itch_invert, m);
     }
 }
