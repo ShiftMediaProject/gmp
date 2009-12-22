@@ -33,7 +33,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef COUNT
-#define COUNT 300
+#define COUNT 1000
 #endif
 
 #define MAX_N (1L << SIZE_LOG)

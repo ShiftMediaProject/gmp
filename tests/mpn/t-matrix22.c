@@ -185,7 +185,7 @@ main (int argc, char **argv)
   matrix_init (&B, MAX_SIZE);
   mpz_init (bs);
 
-  for (i = 0; i < 17; i++)
+  for (i = 0; i < 1000; i++)
     {
       mp_size_t an, bn;
       mpz_urandomb (bs, rands, 32);
