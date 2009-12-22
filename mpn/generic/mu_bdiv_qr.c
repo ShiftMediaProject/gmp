@@ -165,9 +165,9 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
+	  int c0;
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	  int c0;
 
 	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
 	  ASSERT_ALWAYS (c0 == 0);
@@ -220,9 +220,9 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	 is not efficient.  */
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
+	  int c0;
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	  int c0;
 
 	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
 	  ASSERT_ALWAYS (c0 == 0);
@@ -246,9 +246,9 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 #if WANT_FFT
       if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	{
+	  int c0;
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	  int c0;
 
           c0 = mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
 	  ASSERT_ALWAYS (c0 == 0);
