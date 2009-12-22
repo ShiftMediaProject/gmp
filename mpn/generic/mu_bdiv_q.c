@@ -138,7 +138,8 @@ mpn_mu_bdiv_q (mp_ptr qp,
 		 remainder; we undo that operation with another subtraction. */
 	      int c0;
 
-	      mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	      c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	      ASSERT_ALWAYS (c0 == 0);
 
 	      c0 = mpn_sub_n (tp + m, rp, tp, wn);
 
@@ -175,7 +176,8 @@ mpn_mu_bdiv_q (mp_ptr qp,
 	{
 	  int c0;
 
-	  mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	  ASSERT_ALWAYS (c0 == 0);
 
 	  c0 = mpn_sub_n (tp + m, rp, tp, wn);
 
@@ -219,10 +221,12 @@ mpn_mu_bdiv_q (mp_ptr qp,
 	{
 	  int k;
 	  mp_size_t m;
+	  int c0;
 
 	  k = mpn_fft_best_k (qn, 0);
 	  m = mpn_fft_next_size (qn, k);
-	  mpn_mul_fft (rp, m, dp, qn, qp, in, k);
+	  c0 = mpn_mul_fft (rp, m, dp, qn, qp, in, k);
+	  ASSERT_ALWAYS (c0 == 0);
 	  if (mpn_cmp (np, rp, in) < 0)
 	    mpn_incr_u (rp + in, 1);
 	}

@@ -286,7 +286,8 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 	  m = mpn_fft_next_size (dn + 1, k);
 	  wn = dn + in - m;			/* number of wrapped limbs */
 
-	  mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	  cy = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	  ASSERT_ALWAYS (cy == 0);
 
 	  if (wn > 0)
 	    {

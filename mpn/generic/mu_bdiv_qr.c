@@ -116,6 +116,7 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 #if WANT_FFT
 	  if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
 	    {
+	      int c0;
 	      /* The two multiplicands are dn and 'in' limbs, with dn >= in.
 		 The relevant part of the result will typically partially wrap,
 		 and that part will come out as subtracted to the right.  The
@@ -126,11 +127,12 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 
 	      k = mpn_fft_best_k (dn, 0);
 	      m = mpn_fft_next_size (dn, k);
-	      mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	      c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	      ASSERT_ALWAYS (c0 == 0);
 	      wn = dn + in - m;			/* number of wrapped limbs */
 	      if (wn > 0)
 		{
-		  int c0 = mpn_sub_n (tp + m, rp, tp, wn);
+		  c0 = mpn_sub_n (tp + m, rp, tp, wn);
 		  for (i = wn; c0 != 0 && i < in; i++)
 		    c0 = tp[i] == GMP_NUMB_MASK;
 		  mpn_incr_u (tp + in, c0);
@@ -165,11 +167,14 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	{
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	  mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
+	  int c0;
+
+	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
+	  ASSERT_ALWAYS (c0 == 0);
 	  wn = dn + qn - m;			/* number of wrapped limbs */
 	  if (wn > 0)
 	    {
-	      int c0 = mpn_sub_n (tp + m, rp, tp, wn);
+	      c0 = mpn_sub_n (tp + m, rp, tp, wn);
 	      for (i = wn; c0 != 0 && i < qn; i++)
 		c0 = tp[i] == GMP_NUMB_MASK;
 	      mpn_incr_u (tp + qn, c0);
@@ -217,7 +222,10 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	{
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	  mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	  int c0;
+
+	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
+	  ASSERT_ALWAYS (c0 == 0);
 	  wn = dn + in - m;
 	  if (wn > 0)
 	    {
@@ -240,7 +248,10 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	{
 	  k = mpn_fft_best_k (dn, 0);
 	  m = mpn_fft_next_size (dn, k);
-	  mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
+	  int c0;
+
+          c0 = mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
+	  ASSERT_ALWAYS (c0 == 0);
 	  wn = dn + qn - m;
 	  if (wn > 0)
 	    {
