@@ -59,7 +59,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define REDC_1_TO_REDC_2_THRESHOLD       34
 #define REDC_2_TO_REDC_N_THRESHOLD       99
 
-#define MATRIX22_STRASSEN_THRESHOLD      33
+#define MATRIX22_STRASSEN_THRESHOLD      20
 #define HGCD_THRESHOLD                  144
 #define GCD_DC_THRESHOLD                501
 #define GCDEXT_DC_THRESHOLD             521
