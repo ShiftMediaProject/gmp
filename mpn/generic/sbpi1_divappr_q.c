@@ -174,11 +174,16 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
 	}
       else
 	{
-	  udiv_qr_3by2 (q, np[1], np[0], n1, np[1], np[0], d1, d0, dinv);
+	  udiv_qr_3by2 (q, n1, n0, n1, np[1], np[0], d1, d0, dinv);
+
+	  np[1] = n1;
+	  np[0] = n0;
 	}
 
       *--qp = q;
     }
+
+  ASSERT_ALWAYS (np[1] == n1);
 
   return qh;
 }

@@ -2726,33 +2726,37 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
    >= B^2 / 2 and n < d B. di is the inverse
 
      floor ((B^3 - 1) / (d0 + d1 B)) - B.
+
+
+   NOTE: Output variables are updated multiple times. Only some inputs
+   and outputs may overlap.                                              
 */
 #define udiv_qr_3by2(q, r1, r0, n2, n1, n0, d1, d0, dinv)		\
   do {									\
-    mp_limb_t _q1, _q0, _r1, _r0, _t1, _t0, _mask;			\
-    umul_ppmm (_q1, _q0, (n2), (dinv));					\
-    add_ssaaaa (_q1, _q0, _q1, _q0, (n2), (n1));			\
+    mp_limb_t _q0, _t1, _t0, _mask;					\
+    umul_ppmm ((q), _q0, (n2), (dinv));					\
+    add_ssaaaa ((q), _q0, (q), _q0, (n2), (n1));			\
 									\
     /* Compute the two most significant limbs of n - q'd */		\
-    _r1 = (n1) - _q1 * (d1);						\
-    sub_ddmmss (_r1, _r0, _r1, (n0), (d1), (d0));			\
-    umul_ppmm (_t1, _t0, _q1, (d0));					\
-    sub_ddmmss (_r1, _r0, _r1, _r0, _t1, _t0);				\
-    _q1++;								\
+    (r1) = (n1) - (d1) * (q);						\
+    (r0) = (n0);							\
+    sub_ddmmss ((r1), (r0), (r1), (r0), (d1), (d0));			\
+    umul_ppmm (_t1, _t0, (d0), (q));					\
+    sub_ddmmss ((r1), (r0), (r1), (r0), _t1, _t0);			\
+    (q)++;								\
 									\
     /* Conditionally adjust q and the remainders */			\
-    _mask = - (mp_limb_t) (_r1 >= _q0);					\
-    _q1 += _mask;							\
-    add_ssaaaa (_r1, _r0, _r1, _r0, _mask & (d1), _mask & (d0));	\
-    if (UNLIKELY (_r1 >= (d1)))						\
+    _mask = - (mp_limb_t) ((r1) >= _q0);				\
+    (q) += _mask;							\
+    add_ssaaaa ((r1), (r0), (r1), (r0), _mask & (d1), _mask & (d0));	\
+    if (UNLIKELY ((r1) >= (d1)))					\
       {									\
-	if (_r1 > (d1) || _r0 >= (d0))					\
+	if ((r1) > (d1) || (r0) >= (d0))				\
 	  {								\
-	    _q1++;							\
-	    sub_ddmmss (_r1, _r0, _r1, _r0, (d1), (d0));		\
+	    (q)++;							\
+	    sub_ddmmss ((r1), (r0), (r1), (r0), (d1), (d0));		\
 	  }								\
       }									\
-    (q) = _q1; (r1) = _r1; (r0) = _r0;					\
   } while (0)
 
 #ifndef mpn_preinv_divrem_1  /* if not done with cpuvec in a fat binary */

@@ -1,3 +1,17 @@
+2009-12-22  Niels Möller  <<nisse@lysator.liu.se>>
+
+	* mpn/generic/sbpi1_div_q.c (mpn_sbpi1_div_q): Use udiv_qr_3by2.
+	Intended to change nothing after preprocessing.
+
+	* mpn/generic/sbpi1_divappr_q.c (mpn_sbpi1_divappr_q): For the
+	last call to udiv_qr_3by2, avoid using memory locations as output
+	parameters, and revert to explicitly copying n1 and n0 to memory.
+
+	* gmp-impl.h (udiv_qr_3by2): Tweaked to expand to precisely the
+	same code as was used before the introduction of this mamcro.
+	Eliminated some local variables, instead do multiple updates to
+	the output paramaters.
+
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-bdiv.c: Get itch function calls right.
