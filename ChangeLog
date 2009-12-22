@@ -14,6 +14,9 @@
 
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-toom6h.c (MIN_AN): Set to MUL_TOOM6H_THRESHOLD to avoid
+	invalid recursive sizes.
+
 	* tests/mpn/t-bdiv.c: Get itch function calls right.
 
 	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q_itch): Rewrite.
