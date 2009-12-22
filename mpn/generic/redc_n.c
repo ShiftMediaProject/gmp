@@ -31,10 +31,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     future mpn_mulhi) for the range we will be called.  Follow up that
     assumption.
 
-  * Call mpn_mul_fft directly for large-enough operands.  It computes mod B^n+1
-    (while mpn_mulmod_bnm1 of course computed mod B^n-1), so the "unwrap" code
-    will be very similar to the current unwrap code.
-
   * Decrease scratch usage.
 
   * Call mpn_mulmod_bnm1_itch.
