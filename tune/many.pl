@@ -376,15 +376,6 @@ my @table =
      },
 
      {
-       'regexp'=> 'bdivmod',
-       'ret'   => 'mp_limb_t',
-       'args'  => 'mp_ptr qp, mp_ptr up, mp_size_t usize, mp_srcptr vp, mp_size_t vsize, unsigned long int d',
-       'carrys'=> [''],
-       'try'   => 'none',
-       'speed' => 'none',
-     },
-
-     {
        'regexp'=> 'com_n|copyi|copyd',
        'ret'   => 'void',
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size',
