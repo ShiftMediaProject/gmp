@@ -1,3 +1,8 @@
+2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/bdiv_qr.c (mpn_bdiv_qr): Simplify, don't allocate.
+	(mpn_bdiv_qr_itch): Conditionalise on MU_BDIV_QR_THRESHOLD.
+
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/sbpi1_div_q.c: Fix fixup code for to work for qn = 0.

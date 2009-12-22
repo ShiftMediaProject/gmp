@@ -44,7 +44,6 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
       BELOW_THRESHOLD (nn - dn, DC_BDIV_QR_THRESHOLD))
     {
       MPN_COPY (tp, np, nn);
-      tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
       rh = mpn_sbpi1_bdiv_qr (qp, tp, nn, dp, dn, di);
       MPN_COPY (rp, tp + nn - dn, dn);
@@ -52,23 +51,13 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
   else if (BELOW_THRESHOLD (dn, MU_BDIV_QR_THRESHOLD))
     {
       MPN_COPY (tp, np, nn);
-      tp[nn] = 0;
       binvert_limb (di, dp[0]);  di = -di;
       rh = mpn_dcpi1_bdiv_qr (qp, tp, nn, dp, dn, di);
       MPN_COPY (rp, tp + nn - dn, dn);
     }
   else
     {
-      mp_size_t itch;
-      mp_ptr scratch_out;
-      TMP_DECL;
-      TMP_MARK;
-      itch = mpn_mu_bdiv_qr_itch (nn, dn);
-      scratch_out = TMP_BALLOC_LIMBS (itch);
-      MPN_COPY (tp, np, nn);
-      tp[nn] = 0;
-      rh = mpn_mu_bdiv_qr (qp, rp, tp, nn, dp, dn, scratch_out);
-      TMP_FREE;
+      rh = mpn_mu_bdiv_qr (qp, rp, np, nn, dp, dn, tp);
     }
 
   return rh;
@@ -77,8 +66,8 @@ mpn_bdiv_qr (mp_ptr qp, mp_ptr rp,
 mp_size_t
 mpn_bdiv_qr_itch (mp_size_t nn, mp_size_t dn)
 {
-  mp_size_t itch;
-  itch = mpn_mu_bdiv_qr_itch (nn, dn);
-  itch = MAX (itch, nn + 1);
-  return itch;
+  if (BELOW_THRESHOLD (dn, MU_BDIV_QR_THRESHOLD))
+    return nn;
+  else
+    return  mpn_mu_bdiv_qr_itch (nn, dn);
 }
