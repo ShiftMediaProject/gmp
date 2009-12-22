@@ -1202,6 +1202,8 @@ __GMP_DECLSPEC void      mpn_preinv_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, m
 
 #define   mpn_mu_div_q __MPN(mu_div_q)
 __GMP_DECLSPEC mp_limb_t mpn_mu_div_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define   mpn_mu_div_q_itch __MPN(mu_div_q_itch)
+__GMP_DECLSPEC mp_size_t mpn_mu_div_q_itch __GMP_PROTO ((mp_size_t, mp_size_t, int));
 
 #define   mpn_invert __MPN(invert)
 __GMP_DECLSPEC void      mpn_invert __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));

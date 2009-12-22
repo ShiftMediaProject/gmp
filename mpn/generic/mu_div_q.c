@@ -154,3 +154,13 @@ mpn_mu_div_q (mp_ptr qp,
   TMP_FREE;
   return 0;
 }
+
+mp_size_t
+mpn_mu_div_q_itch (mp_size_t nn, mp_size_t dn, int mua_k)
+{
+  mp_size_t itch1, itch2;
+
+  itch1 = mpn_mu_divappr_q_itch (nn, dn, mua_k);
+  itch2 = mpn_mu_div_qr_itch (nn, dn, mua_k);
+  return MAX (itch1, itch2);
+}
