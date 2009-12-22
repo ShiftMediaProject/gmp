@@ -1,10 +1,16 @@
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-bdiv.c: Get itch function calls right.
+
 	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q_itch): Rewrite.
 	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Simplify.
 
 	* mpn/generic/bdiv_qr.c (mpn_bdiv_qr): Simplify, don't allocate.
 	(mpn_bdiv_qr_itch): Conditionalise on MU_BDIV_QR_THRESHOLD.
+
+2009-12-18  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-bdiv.c: Add redzones.
 
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 

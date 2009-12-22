@@ -74,16 +74,16 @@ bdiv_qr_valid_p (mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
   return cy == rh && c == 0;
 }
 
-#define SIZE_LOG 10
+#define SIZE_LOG 11
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
-#define COUNT 100
+#define COUNT 500
 int
 main (int argc, char **argv)
 {
   mp_ptr np, dp, qp, rp, scratch;
-  mp_size_t itch;
+  mp_size_t max_qr_itch, max_q_itch, max_itch;
   int count = COUNT;
   int test;
   gmp_randstate_ptr rands;
@@ -111,14 +111,19 @@ main (int argc, char **argv)
 
   /* Claim larger nn that we'll use, to allow for a large quotient.
      FIXME: This probably isn't the right way. */
-  itch = mpn_bdiv_qr_itch (MAX_NN + MAX_DN, MAX_DN);
-  scratch = TMP_ALLOC_LIMBS (itch);
+  max_qr_itch = mpn_bdiv_qr_itch (MAX_NN + MAX_DN, MAX_DN);
+  max_q_itch = mpn_bdiv_q_itch (MAX_NN + MAX_DN, MAX_DN);
+  max_itch = MAX (max_qr_itch, max_q_itch);
+  scratch = 1 + TMP_ALLOC_LIMBS (max_itch + 2);
 
   for (test = 0; test < count; test++)
     {
       unsigned size_range;
       mp_size_t nn, dn;
+      mp_size_t itch;
       mp_limb_t rh;
+      mp_limb_t s_before;
+      mp_limb_t s_after;
 
       /* We generate dn in the range 1 <= dn <= (1 << size_range). */
       size_range = 1
@@ -132,10 +137,17 @@ main (int argc, char **argv)
       mpn_random2 (np, nn);
       dp[0] |= 1;
 
-      ASSERT_ALWAYS (mpn_bdiv_q_itch (nn, dn) <= itch);
+      itch = mpn_bdiv_q_itch (nn, dn);
+      ASSERT_ALWAYS (itch <= max_itch);
+
+      mpn_random (scratch - 1, itch + 2);
+      s_before = scratch[-1];
+      s_after = scratch[itch];
 
       mpn_bdiv_q (qp, np, nn, dp, dn, scratch);
-      if (!bdiv_q_valid_p (np, nn, dp, dn, qp))
+      if (!bdiv_q_valid_p (np, nn, dp, dn, qp)
+	  || s_before != scratch[-1]
+	  || s_after != scratch[itch])
 	{
 	  gmp_printf ("bdiv_q test %d failed, nn = %d, dn = %d:\n"
 		      "n = %Nx\n"
@@ -143,13 +155,31 @@ main (int argc, char **argv)
 		      "q = %Nx\n",
 		      test, nn, dn,
 		      np, nn, dp, dn, qp, nn);
+	  if (scratch[-1] != s_before)
+	    {
+	      printf ("before scratch:"); mpn_dump (scratch-1, 1);
+	      printf ("keep:   "); mpn_dump (&s_before, 1);
+	    }
+	  if (scratch[itch] != s_after)
+	    {
+	      printf ("after scratch:"); mpn_dump (scratch + itch, 1);
+	      printf ("keep:   "); mpn_dump (&s_after, 1);
+	    }
+
 	  abort();
 	}
 
-      ASSERT_ALWAYS (mpn_bdiv_qr_itch (nn, dn) <= itch);
+      itch = mpn_bdiv_qr_itch (nn, dn);
+      ASSERT_ALWAYS (itch <= max_itch);
+
+      mpn_random (scratch - 1, itch + 2);
+      s_before = scratch[-1];
+      s_after = scratch[itch];
 
       rh = mpn_bdiv_qr (qp, rp, np, nn, dp, dn, scratch);
-      if (!bdiv_qr_valid_p (np,nn, dp, dn, qp, rp, rh))
+      if (!bdiv_qr_valid_p (np,nn, dp, dn, qp, rp, rh)
+	  || s_before != scratch[-1]
+	  || s_after != scratch[itch])
 	{
 	  gmp_printf ("bdiv_qr test %d failed, nn = %d, dn = %d:\n"
 		      "n = %Nx\n"
@@ -159,6 +189,17 @@ main (int argc, char **argv)
 		      test, nn, dn,
 		      np, nn, dp, dn, qp, nn - dn,
 		      rh, rp, dn);
+
+	  if (scratch[-1] != s_before)
+	    {
+	      printf ("before scratch:"); mpn_dump (scratch-1, 1);
+	      printf ("keep:   "); mpn_dump (&s_before, 1);
+	    }
+	  if (scratch[itch] != s_after)
+	    {
+	      printf ("after scratch:"); mpn_dump (scratch + itch, 1);
+	      printf ("keep:   "); mpn_dump (&s_after, 1);
+	    }
 	  abort();
 	}
     }
