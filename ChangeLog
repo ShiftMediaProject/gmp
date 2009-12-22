@@ -1,5 +1,7 @@
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mu_divappr_q.c: Handle quotient overflow.
+
 	* mpn/generic/mu_div_q.c (mpn_mu_div_q_itch): New function.
 
 2009-12-22  Niels Möller  <<nisse@lysator.liu.se>>

@@ -11,7 +11,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2005, 2006, 2007 Free Software Foundation, Inc.
+Copyright 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -256,7 +256,7 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 			 mp_ptr scratch)
 {
   mp_ptr rp;
-  mp_size_t qn;
+  mp_size_t qn, qnown;
   mp_limb_t cy;
   mp_ptr tp;
   mp_limb_t r;
@@ -274,6 +274,7 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 
   MPN_COPY (rp, np, dn);
 
+  qnown = 0;			/* how many limbs we've developed thus far */
   while (qn > 0)
     {
       if (qn < in)
@@ -291,6 +292,7 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
       ASSERT_ALWAYS (cy == 0);			/* FIXME */
 
       qn -= in;
+      qnown += in;
       if (qn == 0)
 	break;
 
@@ -349,16 +351,16 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 	  /* We loop 0 times with about 69% probability, 1 time with about 31%
 	     probability, 2 times with about 0.6% probability, if inverse is
 	     computed as recommended.  */
-	  mpn_incr_u (qp, 1);
 	  cy = mpn_sub_n (rp, rp, dp, dn);
 	  r -= cy;
+	  cy = mpn_add_1 (qp, qp, qnown, 1);
 	  STAT (err++);
 	}
       if (mpn_cmp (rp, dp, dn) >= 0)
 	{
 	  /* This is executed with about 76% probability.  */
-	  mpn_incr_u (qp, 1);
-	  cy = mpn_sub_n (rp, rp, dp, dn);
+	  mpn_sub_n (rp, rp, dp, dn);
+	  cy = mpn_add_1 (qp, qp, qnown, 1);
 	  STAT (err++);
 	}
 
@@ -380,7 +382,7 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
      quotient.  For now, just make sure the returned quotient is >= the real
      quotient.  */
   qn = nn - dn;
-  cy = mpn_add_1 (qp, qp, qn, 3);
+  cy += mpn_add_1 (qp, qp, qn, 3);
   if (cy != 0)
     {
       MPN_ZERO (qp, qn);
