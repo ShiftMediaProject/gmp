@@ -26,7 +26,7 @@ check_PROGRAMS = t-asmtype t-aors_1 t-divrem_1 t-fat t-get_d	\
   t-toom22 t-toom32 t-toom33 t-toom42 t-toom43 t-toom44 	\
   t-toom52 t-toom53 t-toom62 t-toom63 t-toom6h			\
   t-bdiv t-hgcd t-matrix22 t-mullo t-mulmod_bnm1 t-sqrmod_bnm1	\
-  t-invert
+  t-invert t-div
 
 EXTRA_DIST = toom-shared.h
 
