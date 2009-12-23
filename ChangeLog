@@ -1,17 +1,21 @@
 2009-12-23  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* mpn/generic/mullo_n.c: Split dc_mullo_n function; ALLOC memory at once.
+	* mpn/generic/mulmod_bnm1.c: Nailify CRT.
+	* mpn/generic/sqrmod_bnm1.c: Likewise.
+
+	* mpn/generic/mullo_n.c: Split dc_mullo_n function;
+	ALLOC memory at once.
 
 	* mpn/Makefile.am (nodist_EXTRA_libmpn_la_SOURCES): Update.
 
 	* mpn/generic/toom6h_mul.c: Add prefix to toom_interpolate_12pts.
 	* mpn/generic/toom_interpolate_12pts.c: Likewise.
 
-	* mpn/generic/invertappr.c (mpn_bc_invertappr): If n=2, mpn_divrem_2.
+	* mpn/generic/invertappr.c (mpn_bc_invertappr): Use mpn_divrem_2.
 	* mpn/generic/invert.c: Faster basecase, use mpn_sbpi1_div_q.
 
 	* mpn/generic/toom_eval_pm2exp.c: Assert support for degree 3.
-	* mpn/generic/toom6h_mul.c: Do not use obsolete _itch function any more.
+	* mpn/generic/toom6h_mul.c: Avoid obsolete _itch function.
 
 2009-12-23  Torbjorn Granlund  <tege@gmplib.org>
 

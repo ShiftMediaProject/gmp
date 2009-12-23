@@ -201,8 +201,8 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
       cy = mpn_rsh1add_nc(rp, rp, xp, n, xp[n]); /* B^n = 1 */
       hi = cy << (GMP_NUMB_BITS - 1);
       cy = 0;
-      /* next add_ssaaaa will set cy = 1 only if rp[n-1]+=hi overflows,
-	 i.e. a further increment will not overflow again. */
+      /* next update of rp[n-1] will set cy = 1 only if rp[n-1]+=hi
+	 overflows, i.e. a further increment will not overflow again. */
 #else /* ! _nc */
       cy = xp[n] + mpn_rsh1add_n(rp, rp, xp, n); /* B^n = 1 */
       hi = (cy<<(GMP_NUMB_BITS-1))&GMP_NUMB_MASK; /* (cy&1) << ... */
@@ -210,7 +210,12 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
       /* cy = 1 only if xp[n] = 1 i.e. {xp,n} = ZERO, this implies that
 	 the rsh1add was a simple rshift: the top bit is 0. cy=1 => hi=0. */
 #endif
+#if GMP_NAIL_BITS == 0
       add_ssaaaa(cy, rp[n-1], cy, rp[n-1], 0, hi);
+#else
+      cy += (hi & rp[n-1]) >> (GMP_NUMB_BITS-1);
+      rp[n-1] ^= hi;
+#endif
 #else /* ! HAVE_NATIVE_mpn_rsh1add_n */
 #if HAVE_NATIVE_mpn_add_nc
       cy = mpn_add_nc(rp, rp, xp, n, xp[n]);
