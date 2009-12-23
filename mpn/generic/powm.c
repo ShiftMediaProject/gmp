@@ -43,7 +43,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      That will simplify the code using getbits.  (Perhaps make getbits' sibling
      getbit then have similar form, for symmetry.)
 
-   * Write an itch function.
+   * Write an itch function.  Or perhaps get rid of tp parameter since the huge
+     pp area is allocated locally anyway?
 
    * Choose window size without looping.  (Superoptimize or think(tm).)
 
@@ -108,8 +109,8 @@ static inline int
 win_size (mp_bitcnt_t eb)
 {
   int k;
-  static mp_bitcnt_t x[] = {1,7,25,81,241,673,1793,4609,11521,28161,~(mp_bitcnt_t)0};
-  for (k = 0; eb > x[k]; k++)
+  static mp_bitcnt_t x[] = {0,7,25,81,241,673,1793,4609,11521,28161,~(mp_bitcnt_t)0};
+  for (k = 1; eb > x[k]; k++)
     ;
   return k;
 }
@@ -134,7 +135,7 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n)
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
    Requires that mp[n-1..0] is odd.
    Requires that ep[en-1..0] is > 1.
-   Uses scratch space tp[3n..0], i.e., 3n+1 words.  */
+   Uses scratch space at tp of MAX(mpn_binvert_itch(n),3n+1) limbs.  */
 void
 mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	  mp_srcptr ep, mp_size_t en,

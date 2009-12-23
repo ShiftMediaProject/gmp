@@ -168,6 +168,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
   if (ncnt != 0)
     {
+      /* We will call both mpn_powm and mpn_powlo.  */
       /* rp needs n, mpn_powlo needs 4n, the 2 mpn_binvert might need more */
       mp_size_t n_largest_binvert = MAX (ncnt, nodd);
       mp_size_t itch_binvert = mpn_binvert_itch (n_largest_binvert);
@@ -175,6 +176,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     }
   else
     {
+      /* We will call just mpn_powm.  */
       mp_size_t itch_binvert = mpn_binvert_itch (nodd);
       itch = n + MAX (itch_binvert, 2 * n);
     }
