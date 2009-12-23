@@ -209,6 +209,10 @@ double speed_mpn_mod_1_div __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_inv __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_unnorm __GMP_PROTO ((struct speed_params *));
 double speed_mpn_mod_1_norm __GMP_PROTO ((struct speed_params *));
+double speed_mpn_mod_1_1 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_2 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_3 __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_4 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_34lsub1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1_odd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1c_odd __GMP_PROTO ((struct speed_params *s));
@@ -1330,6 +1334,47 @@ int speed_routine_count_zeros_setup
     do									\
       (*function) (s->xp, s->size, s->r, inv);				\
     while (--i != 0);							\
+									\
+    return speed_endtime ();						\
+  }
+
+#define SPEED_ROUTINE_MPN_MOD_1_1(function,pfunc)			\
+  {									\
+    unsigned   i;							\
+    mp_limb_t  inv[4];							\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+									\
+    mpn_mod_1_1p_cps (inv, s->r);					\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      pfunc (inv, s->r);						\
+      function (s->xp, s->size, s->r, inv);				\
+    } while (--i != 0);							\
+									\
+    return speed_endtime ();						\
+  }
+#define SPEED_ROUTINE_MPN_MOD_1_N(function,pfunc,N)			\
+  {									\
+    unsigned   i;							\
+    mp_limb_t  inv[N+3];						\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+    SPEED_RESTRICT_COND (s->r <= ~(mp_limb_t)0 / N);			\
+									\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      pfunc (inv, s->r);						\
+      function (s->xp, s->size, s->r, inv);				\
+    } while (--i != 0);							\
 									\
     return speed_endtime ();						\
   }

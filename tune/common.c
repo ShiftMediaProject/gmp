@@ -674,6 +674,26 @@ speed_mpn_preinv_mod_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_PREINV_MOD_1 (mpn_preinv_mod_1);
 }
+double
+speed_mpn_mod_1_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1_1 (mpn_mod_1_1p,mpn_mod_1_1p_cps);
+}
+double
+speed_mpn_mod_1_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1_N (mpn_mod_1s_2p,mpn_mod_1s_2p_cps,2);
+}
+double
+speed_mpn_mod_1_3 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1_N (mpn_mod_1s_3p,mpn_mod_1s_3p_cps,3);
+}
+double
+speed_mpn_mod_1_4 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1_N (mpn_mod_1s_4p,mpn_mod_1s_4p_cps,4);
+}
 
 double
 speed_mpn_divexact_1 (struct speed_params *s)

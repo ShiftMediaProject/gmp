@@ -35,6 +35,9 @@
 
 2009-12-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/common.c, tune/speed.c, tune/speed.h: Support for measuring
+	mpn_mod_1_1p, mpn_mod_1s_2p, mpn_mod_1s_3p, mpn_mod_1s_4p.
+
 	* tests/mpz/t-powm.c: Test mpz_powm_sec.
 
 	* mpz/powm_sec.c: New file.
@@ -60,17 +63,17 @@
 
 2009-12-22  Niels Möller  <<nisse@lysator.liu.se>>
 
-	* mpn/generic/sbpi1_div_q.c (mpn_sbpi1_div_q): Use udiv_qr_3by2.
-	Intended to change nothing after preprocessing.
+	* mpn/generic/sbpi1_div_q.c: Use udiv_qr_3by2.  Intended to change
+	nothing after preprocessing.
 
-	* mpn/generic/sbpi1_divappr_q.c (mpn_sbpi1_divappr_q): For the
-	last call to udiv_qr_3by2, avoid using memory locations as output
-	parameters, and revert to explicitly copying n1 and n0 to memory.
+	* mpn/generic/sbpi1_divappr_q.c: For the last call to udiv_qr_3by2,
+	avoid using memory locations as output parameters, and revert to
+	explicitly copying n1 and n0 to memory.
 
 	* gmp-impl.h (udiv_qr_3by2): Tweaked to expand to precisely the
-	same code as was used before the introduction of this mamcro.
+	same code as was used before the introduction of this macro.
 	Eliminated some local variables, instead do multiple updates to
-	the output paramaters.
+	the output parameters.
 
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -87,11 +90,11 @@
 
 2009-12-18  Niels Möller  <nisse@lysator.liu.se>
 
-	* tests/mpn/t-bdiv.c: Add redzones.
+	* tests/mpn/t-bdiv.c: Add red-zones.
 
 2009-12-21  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/generic/sbpi1_div_q.c: Fix fixup code for to work for qn = 0.
+	* mpn/generic/sbpi1_div_q.c: Fix fixup code to work for qn = 0.
 
 	* mpn/generic/dcpi1_divappr_q.c: Handle qn = 1 and qn = 2 for initial
 	quotient block (code block copied from dcpi1_div_qr.c).
@@ -304,7 +307,7 @@
 
 	* tune/tuneup.c: Tune SQRMOD_BNM1_THRESHOLD.
 
-	* mpn/generic/nussbaumer_mul.c (mpn_nusbaumer_mul): Mimic fft_mul,
+	* mpn/generic/nussbaumer_mul.c (mpn_nussbaumer_mul): Mimic fft_mul,
 	use squaring if operands coincide.
 	* tune/speed.h (speed_mpn_nussbaumer_mul_sqr): Declare function.
 	* tune/common.c (speed_mpn_nussbaumer_mul_sqr): New function.
@@ -384,7 +387,7 @@
 2009-12-14  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c: Improved comments.
-	(mpn_bc_invertapp): Conditionally re-enable mpn_dcpi1_divappr_q.
+	(mpn_bc_invertappr): Conditionally re-enable mpn_dcpi1_divappr_q.
 
 2009-12-14  Niels Möller  <nisse@lysator.liu.se>
 
@@ -404,7 +407,7 @@
 	mpn_mul_fft, add an ASSERT for the 1st mpn_mul_fft.  Replace some
 	comments on cc's range with ASSERTs.
 
-	* mpn/generic/gcdext.c (compute_v): Normalize tp[] after mpn_mul.
+	* mpn/generic/gcdext.c (compute_v): Normalise tp[] after mpn_mul.
 
 	* mpz/powm.c: Rework buffer handling.
 
@@ -417,7 +420,7 @@
 2009-12-13  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/invert.c (mpn_invertapp): Split in _bc and _ni.
-	(mpn_bc_invertapp): New function, the basecase.
+	(mpn_bc_invertappr): New function, the basecase.
 	(mpn_ni_invertapp): New function, Newton iteration.
 	(mpn_invert): Use mpn_ni_invertapp.
 	* tune/tuneup.c (tune_invert): Min for INV_APPR_THRESHOLD.
@@ -1407,7 +1410,7 @@
 
 2009-07-26  Torbjorn Granlund  <tege@swox.com>
 
-	* config.guess (_cpuid): Recognize more Intel "Core" processors.
+	* config.guess (_cpuid): Recognise more Intel "Core" processors.
 
 2009-07-13  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -1479,8 +1482,8 @@
 	With Martin Boij:
 	* mpn/generic/perfpow.c (binv_root, binv_sqroot): Change from being
 	recursive to being iterative.
-	(mpn_perfect_power_p): Reorganize temp memory usage to avoid a buffer
-	overun.  Trim allocation of next and prev.  Never create oversize
+	(mpn_perfect_power_p): Reorganise temp memory usage to avoid a buffer
+	overrun.  Trim allocation of next and prev.  Never create oversize
 	products in the multiplicity binary search.
 
 	* mpn/generic/dc_div_q.c: Add missing TMP_FREE.
@@ -1504,12 +1507,12 @@
 
 2009-06-14  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/x86_64/bdiv_q_1.asm: Optimize away a mov insn.
+	* mpn/x86_64/bdiv_q_1.asm: Optimise away a mov insn.
 	* mpn/x86_64/dive_1.asm: Likewise.
 
 	* mpn/generic/perfpow.c (binv_root): Use mpn_bdiv_q_1, not
 	mpn_divexact_itch for 2-adic division.
-	(all functions): Micro optimize.
+	(all functions): Micro optimise.
 
 	* Makefile.am (libmp_la_SOURCES): Add nextprime.c.
 
@@ -1643,7 +1646,7 @@
 	* mpn/x86_64/rshift.asm: Cleanup.
 
 	* mpn/x86_64/addlsh1_n.asm: Removed.
-	* mpn/x86_64/aorrlsh1_n.asm: Generalized addlsh1_n.asm to handle
+	* mpn/x86_64/aorrlsh1_n.asm: Generalised addlsh1_n.asm to handle
 	addlsh1_n and rsblsh1_n functionality.
 
 	* tests/refmpn.c (refmpn_rsblsh1_n): New function.
@@ -1780,7 +1783,7 @@
 	* mpn/asm-defs.m4: Correct names for mod_1_N functions.
 	Add defines for corresponding cps functions.
 
-	* mpn/generic/mod_1_2.c: Suppport any sizes > 1.
+	* mpn/generic/mod_1_2.c: Support any sizes > 1.
 	* mpn/generic/mod_1_3.c: Likewise.
 	* mpn/generic/mod_1_4.c: Likewise.
 
@@ -1853,7 +1856,7 @@
 
 2009-04-26  Torbjorn Granlund  <tege@gmplib.org>
 
-	* config.guess: Recognize more POWER processor types.
+	* config.guess: Recognise more POWER processor types.
 
 2009-04-25  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -1919,7 +1922,7 @@
 
 2009-03-09  Torbjorn Granlund  <tege@gmplib.org>
 
-	* mpn/x86_64/divrem_1.asm: Add a nop to save a cycle in unnormalized
+	* mpn/x86_64/divrem_1.asm: Add a nop to save a cycle in unnormalised
 	case.
 
 2009-03-05  Torbjorn Granlund  <tege@gmplib.org>
@@ -1979,7 +1982,7 @@
 	* tune/tuneup.c (tune_mod_1): Run MOD_1_x_THRESHOLD tests also when
 	longlong.h specified UDIV_PREINV_ALWAYS.
 
-	* mpn/generic/mod_1.c (mpn_mod_1): Properly check for normalization
+	* mpn/generic/mod_1.c (mpn_mod_1): Properly check for normalisation
 	divisor.
 
 2009-01-13  Torbjorn Granlund  <tege@gmplib.org>
