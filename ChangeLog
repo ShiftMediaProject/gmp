@@ -1,5 +1,8 @@
 2009-12-23  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/toom6_sqr.c: New file, was part of toom6h_mul.
+	* mpn/generic/toom6h_mul.c: Removed _sqr.
+
 	* mpn/generic/mulmod_bnm1.c: Nailify CRT.
 	* mpn/generic/sqrmod_bnm1.c: Likewise.
 

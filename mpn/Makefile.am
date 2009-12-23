@@ -48,7 +48,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   toom22_mul.c toom32_mul.c toom42_mul.c toom52_mul.c toom62_mul.c	    \
   toom33_mul.c toom43_mul.c toom53_mul.c toom63_mul.c			    \
   toom44_mul.c								    \
-  toom6h_mul.c								    \
+  toom6h_mul.c toom6_sqr.c						    \
   toom_couple_handling.c						    \
   sqr_toom2.c sqr_toom3.c sqr_toom4.c					    \
   toom_eval_dgr3_pm1.c toom_eval_dgr3_pm2.c				    \
