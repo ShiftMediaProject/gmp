@@ -3424,6 +3424,19 @@ Negative @var{exp} is supported if an inverse @math{@var{base}^@W{-1} @bmod
 If an inverse doesn't exist then a divide by zero is raised.
 @end deftypefun
 
+@deftypefun void mpz_powm_sec (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
+Set @var{rop} to @m{base^{exp} \bmod mod, (@var{base} raised to @var{exp})
+modulo @var{mod}}.
+
+It is required that @math{@var{exp} > 0} and that @var{mod} is odd.
+
+This function is designed to take the same time and have the same cache access
+patterns for any two same-size arguments, assuming that function arguments are
+placed at the same position and that the machine state is identical upon
+function entry.  This function is intended for cryptographic purposes, where
+resilience to side-channel attacks is desired.
+@end deftypefun
+
 @deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
 @deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
 Set @var{rop} to @m{base^{exp}, @var{base} raised to @var{exp}}.  The case

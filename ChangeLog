@@ -1,8 +1,14 @@
 2009-12-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/powm_sec.c: New file.
+	* gmp-h.in: Declare it.
+	* Makefile.am, mpz/Makefile.am: Compile it.
+	* doc/gmp.texi: Document it.
+
 	* mpn/generic/powm_sec.c (mpn_powm_sec_itch): New function.
 	(mpn_powm_sec): Use passed scratch, no local allocation.
 	Allow exp argument = 1.
+	(win_size): Start loop from 1.
 
 	* mpn/generic/powm.c (win_size): Start loop from 1.
 

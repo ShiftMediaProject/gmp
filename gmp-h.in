@@ -1034,6 +1034,9 @@ __GMP_DECLSPEC void mpz_pow_ui __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long 
 #define mpz_powm __gmpz_powm
 __GMP_DECLSPEC void mpz_powm __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr, mpz_srcptr));
 
+#define mpz_powm_sec __gmpz_powm_sec
+__GMP_DECLSPEC void mpz_powm_sec __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr, mpz_srcptr));
+
 #define mpz_powm_ui __gmpz_powm_ui
 __GMP_DECLSPEC void mpz_powm_ui __GMP_PROTO ((mpz_ptr, mpz_srcptr, unsigned long int, mpz_srcptr));
 
