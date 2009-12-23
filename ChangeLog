@@ -1,3 +1,7 @@
+2009-12-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm.c (win_size): Start loop from 1.
+
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tests/mpn/t-div.c: New file.
