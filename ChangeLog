@@ -1,5 +1,9 @@
 2009-12-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/powm_sec.c (mpn_powm_sec_itch): New function.
+	(mpn_powm_sec): Use passed scratch, no local allocation.
+	Allow exp argument = 1.
+
 	* mpn/generic/powm.c (win_size): Start loop from 1.
 
 2009-12-22  Torbjorn Granlund  <tege@gmplib.org>

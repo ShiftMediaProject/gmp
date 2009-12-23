@@ -42,7 +42,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      That will simplify the code using getbits.  (Perhaps make getbits' sibling
      getbit then have similar form, for symmetry.)
 
-   * Write an itch function.
+   * Write an itch function.  Or perhaps get rid of tp parameter since the huge
+     pp area is allocated locally anyway?
 
    * Choose window size without looping.  (Superoptimize or think(tm).)
 
@@ -102,7 +103,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 /* Define our own squaring function, which uses mpn_sqr_basecase for its
    allowed sizes, but its own code for larger sizes.  */
 static void
-mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
+mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
 {
   mp_size_t i;
 
@@ -123,12 +124,9 @@ mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n)
   }
   if (n > 1)
     {
-      mp_ptr tp;
       mp_limb_t cy;
       TMP_DECL;
       TMP_MARK;
-
-      tp = TMP_ALLOC_LIMBS (2 * n);
 
       cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]);
       tp[n - 1] = cy;
@@ -187,22 +185,21 @@ static inline int
 win_size (mp_bitcnt_t eb)
 {
   int k;
-  static mp_bitcnt_t x[] = {1,4,27,100,325,1026,2905,7848,20457,51670,~(mp_bitcnt_t)0};
-  for (k = 0; eb > x[k]; k++)
+  static mp_bitcnt_t x[] = {0,4,27,100,325,1026,2905,7848,20457,51670,~(mp_bitcnt_t)0};
+  for (k = 1; eb > x[k]; k++)
     ;
   return k;
 }
 
 /* Convert U to REDC form, U_r = B^n * U mod M */
 static void
-redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n)
+redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n, mp_ptr tp)
 {
-  mp_ptr tp, qp;
+  mp_ptr qp;
   TMP_DECL;
   TMP_MARK;
 
-  tp = TMP_ALLOC_LIMBS (un + n);
-  qp = TMP_ALLOC_LIMBS (un + 1);	/* FIXME: Put at tp+? */
+  qp = tp + un + n;
 
   MPN_ZERO (tp, n);
   MPN_COPY (tp + n, up, un);
@@ -211,9 +208,9 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n)
 }
 
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
-   Requires that mp[n-1..0] is odd.
+   Requires that mp[n-1..0] is odd.  FIXME: is this true?
    Requires that ep[en-1..0] is > 1.
-   Uses scratch space tp[3n..0], i.e., 3n+1 words.  */
+   Uses scratch space at tp of 3n+1 limbs.  */
 void
 mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	      mp_srcptr ep, mp_size_t en,
@@ -229,7 +226,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   int cnd;
   TMP_DECL;
 
-  ASSERT (en > 1 || (en == 1 && ep[0] > 1));
+  ASSERT (en > 1 || (en == 1 && ep[0] > 0));
   ASSERT (n >= 1 && ((mp[0] & 1) != 0));
 
   TMP_MARK;
@@ -242,13 +239,13 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   binvert_limb (minv, mp[0]);
   minv = -minv;
 
-  pp = TMP_ALLOC_LIMBS (n << windowsize);
+  pp = tp + 4 * n;
 
   this_pp = pp;
   this_pp[n] = 1;
-  redcify (this_pp, this_pp + n, 1, mp, n);
+  redcify (this_pp, this_pp + n, 1, mp, n, tp + 6 * n);
   this_pp += n;
-  redcify (this_pp, bp, bn, mp, n);
+  redcify (this_pp, bp, bn, mp, n, tp + 6 * n);
 
   /* Precompute powers of b and put them in the temporary area at pp.  */
   for (i = (1 << windowsize) - 2; i > 0; i--)
@@ -280,7 +277,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
       do
 	{
-	  mpn_local_sqr_n (tp, rp, n);
+	  mpn_local_sqr_n (tp, rp, n, tp + 2 * n);
 	  mpn_redc_1_sec (rp, tp, mp, n, minv);
 	  this_windowsize--;
 	}
@@ -306,8 +303,8 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 #if ! HAVE_NATIVE_mpn_tabselect
 /* Select entry `which' from table `tab', which has nents entries, each `n'
    limbs.  Store the selected entry at rp.  Reads entire table to avoid
-   sideband information leaks.  O(n*nents).  */
-
+   side-channel information leaks.  O(n*nents).
+   FIXME: Move to its own file.  */
 void
 mpn_tabselect (volatile mp_limb_t *rp, volatile mp_limb_t *tab, mp_size_t n,
 	       mp_size_t nents, mp_size_t which)
@@ -327,3 +324,17 @@ mpn_tabselect (volatile mp_limb_t *rp, volatile mp_limb_t *tab, mp_size_t n,
     }
 }
 #endif
+
+mp_size_t
+mpn_powm_sec_itch (mp_size_t bn, mp_size_t en, mp_size_t n)
+{
+  int windowsize;
+  mp_size_t redcify_itch, itch;
+
+  windowsize = win_size (en * GMP_NUMB_BITS); /* slight over-estimate of exp */
+  itch = 4 * n + (n << windowsize);
+  redcify_itch = 2 * bn + n + 1;
+  /* The 6n is due to the placement of reduce scratch 6n into the start of the
+     scratch area.  */
+  return MAX (itch, redcify_itch + 6 * n);
+}
