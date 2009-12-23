@@ -1,4 +1,4 @@
-/* invert.c -- Compute floor((B^{2n}-1)/U).
+/* invert.c -- Compute floor((B^{2n}-1)/U) - B^n.
 
    Contributed to the GNU project by Marco Bodrato.
 
@@ -54,16 +54,26 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       scratch = TMP_ALLOC_LIMBS (mpn_invert_itch (n));
 
     if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD)) {
-      /* Maximum scratch needed by this branch: 3*n + 2 */
-      mp_size_t i;
-      mp_ptr xp;
+      if (n == 1)
+	invert_limb (*ip, *dp);
+      else {
+	/* Maximum scratch needed by this branch: 2*n */
+	mp_size_t i;
+	mp_ptr xp;
 
-      xp = scratch + n + 2;				/* 2 * n limbs */
-      for (i = n - 1; i >= 0; i--)
-	xp[i] = GMP_NUMB_MAX;
-      mpn_com_n (xp + n, dp, n);
-      mpn_tdiv_qr (scratch, ip, 0, xp, 2 * n, dp, n);
-      MPN_COPY (ip, scratch, n);
+	xp = scratch;				/* 2 * n limbs */
+	for (i = n - 1; i >= 0; i--)
+	  xp[i] = GMP_NUMB_MAX;
+	mpn_com_n (xp + n, dp, n);
+	if (n == 2) {
+	  mpn_divrem_2 (ip, 0, xp, 4, dp);
+	} else {
+	  gmp_pi1_t inv;
+	  invert_pi1 (inv, dp[n-1], dp[n-2]);
+	  /* FIXME: should we use dcpi1_div_q, for big sizes? */
+	  mpn_sbpi1_div_q (ip, xp, 2 * n, dp, n, inv.inv32);
+	}
+      }
     } else { /* Use approximated inverse; correct the result if needed. */
       mp_limb_t e; /* The possible error in the approximate inverse */
 

@@ -111,8 +111,7 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
 
     /* FIXME: if mpn_*pi1_divappr_q handles n==2, use it! */
     if (n == 2) {
-      mpn_tdiv_qr (tp, ip, 0, xp, 2 * n, dp, n);
-      MPN_COPY (ip, tp, n);
+      mpn_divrem_2 (ip, 0, xp, 4, dp);
     } else {
       gmp_pi1_t inv;
       invert_pi1 (inv, dp[n-1], dp[n-2]);
