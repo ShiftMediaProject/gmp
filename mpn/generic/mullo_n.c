@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 #ifndef MULLO_MUL_N_THRESHOLD
-#define MULLO_MUL_N_THRESHOLD 10*MULLO_DC_THRESHOLD
+#define MULLO_MUL_N_THRESHOLD MUL_FFT_THRESHOLD
 #endif
 
 #if TUNE_PROGRAM_BUILD
@@ -45,21 +45,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_range_toom22   1
 #else
 #define MAYBE_range_basecase                                           \
-  ((MULLO_DC_THRESHOLD == 0 ? MULLO_BASECASE_THRESHOLD : MULLO_DC_THRESHOLD) < 2 * MUL_TOOM22_THRESHOLD)
+  ((MULLO_DC_THRESHOLD == 0 ? MULLO_BASECASE_THRESHOLD : MULLO_DC_THRESHOLD) < MUL_TOOM22_THRESHOLD*36/(36-11))
 #define MAYBE_range_toom22                                             \
   ((MULLO_DC_THRESHOLD == 0 ? MULLO_BASECASE_THRESHOLD : MULLO_DC_THRESHOLD) < MUL_TOOM33_THRESHOLD*36/(36-11) )
 #endif
 
-/* Avoid zero allocations when MULLO_BASECASE_THRESHOLD is 0.  */
-#define MUL_BASECASE_ALLOC \
- (MULLO_BASECASE_THRESHOLD_LIMIT == 0 ? 1 : 2*MULLO_BASECASE_THRESHOLD_LIMIT)
-
-/*
-  FIXME: This function should accept a temporary area.
-  THINK: If mpn_mul_basecase is always faster than mpn_mullo_basecase
-         (typically thanks to mpn_addmul_2) should we unconditionally use
-         mpn_mul_n?
-  THINK: The DC strategy uses different constatnts in different Toom's
+/*  THINK: The DC strategy uses different constants in different Toom's
 	 ranges. Something smoother?
 */
 
@@ -69,9 +60,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
   Above the given threshold, the Divide and Conquer strategy is used.
   The operands are split in two, and a full product plus two mullo
-  are used to obtain the final result. The more natural stategy is to
+  are used to obtain the final result. The more natural strategy is to
   split in two halves, but this is far from optimal when a
-  sebquadratic multiplication is used.
+  sub-quadratic multiplication is used.
 
   Mulders suggests an unbalanced split in favour of the full product,
   split n = n1 + n2, where an = n1 <= n2 = (1-a)n; i.e. 0 < a <= 1/2.
@@ -120,7 +111,7 @@ contfracpnqn(contfrac(mul(log(8*2-1)/log(8),1/2,0),3))
   +----+--`
   ^ n2 ^n1^
 
-  For an actual impementation, the assumption that M(n)=n^e is
+  For an actual implementation, the assumption that M(n)=n^e is
   incorrect, as a consequence also the assumption that ML(n)=k*M(n)
   with a constant k is wrong.
 
@@ -134,6 +125,80 @@ contfracpnqn(contfrac(mul(log(8*2-1)/log(8),1/2,0),3))
     k(a+1/6)=0.929_ but k(a-1/6)=0.865_.
 */
 
+static mp_size_t
+mpn_mullo_n_itch (mp_size_t n)
+{
+  return 2*n;
+}
+
+/*
+    mpn_dc_mullo_n requires a scratch space of 2*n limbs at tp.
+    It accepts tp == rp.
+*/
+static void
+mpn_dc_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n, mp_ptr tp)
+{
+  mp_size_t n2, n1;
+  ASSERT (n >= 2);
+  ASSERT (! MPN_OVERLAP_P (rp, n, xp, n));
+  ASSERT (! MPN_OVERLAP_P (rp, n, yp, n));
+  ASSERT (MPN_SAME_OR_SEPARATE2_P(rp, n, tp, 2*n));
+
+  /* Divide-and-conquer */
+  
+  /* We need fractional approximation of the value 0 < a <= 1/2
+     giving the minimum in the function k=(1-a)^e/(1-2*a^e).
+  */
+  if (MAYBE_range_basecase && BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD*36/(36-11)))
+    n1 = n >> 1;
+  else if (MAYBE_range_toom22 && BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD*36/(36-11)))
+    n1 = n * 11 / (size_t) 36;	/* n1 ~= n*(1-.694...) */
+  else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD*40/(40-9)))
+    n1 = n * 9 / (size_t) 40;	/* n1 ~= n*(1-.775...) */
+  else
+    n1 = n * 7 / (size_t) 39;	/* n1 ~= n*(1-.821...) */
+  /* n1 = n * 4 / (size_t) 31;	// n1 ~= n*(1-.871...) [TOOM66] */
+  /* n1 = n / (size_t) 10;		// n1 ~= n*(1-.899...) [TOOM88] */
+  n2 = n - n1;
+
+  /* Split as x = x1 2^(n2 GMP_NUMB_BITS) + x0,
+              y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
+
+  /* x0 * y0 */
+  mpn_mul_n (tp, xp, yp, n2);
+  MPN_COPY (rp, tp, n2);
+
+  /* x1 * y0 * 2^(n2 GMP_NUMB_BITS) */
+  if (BELOW_THRESHOLD (n1, MULLO_BASECASE_THRESHOLD))
+    mpn_mul_basecase (tp + n, xp + n2, n1, yp, n1);
+  else if (BELOW_THRESHOLD (n1, MULLO_DC_THRESHOLD))
+    mpn_mullo_basecase (tp + n, xp + n2, yp, n1);
+  else
+    mpn_dc_mullo_n (tp + n, xp + n2, yp, n1, tp + n);
+  mpn_add_n (rp + n2, tp + n2, tp + n, n1);
+
+  /* x0 * y1 * 2^(n2 GMP_NUMB_BITS) */
+  if (BELOW_THRESHOLD (n1, MULLO_BASECASE_THRESHOLD))
+    mpn_mul_basecase (tp + n, xp, n1, yp + n2, n1);
+  else if (BELOW_THRESHOLD (n1, MULLO_DC_THRESHOLD))
+    mpn_mullo_basecase (tp + n, xp, yp + n2, n1);
+  else
+    mpn_dc_mullo_n (tp + n, xp, yp + n2, n1, tp + n);
+  mpn_add_n (rp + n2, rp + n2, tp + n, n1);
+}
+
+/* Avoid zero allocations when MULLO_BASECASE_THRESHOLD is 0.  */
+#define MUL_BASECASE_ALLOC \
+ (MULLO_BASECASE_THRESHOLD_LIMIT == 0 ? 1 : 2*MULLO_BASECASE_THRESHOLD_LIMIT)
+
+/* FIXME: This function should accept a temporary area; dc_mullow_n
+   accepts a pointer tp, and handle the case tp == rp, do the same here.
+   Maybe recombine the two functions.
+   THINK: If mpn_mul_basecase is always faster than mpn_mullo_basecase
+	  (typically thanks to mpn_addmul_2) should we unconditionally use
+	  mpn_mul_n?
+*/
+
 void
 mpn_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
 {
@@ -144,72 +209,35 @@ mpn_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
   if (BELOW_THRESHOLD (n, MULLO_BASECASE_THRESHOLD))
     {
       /* Allocate workspace of fixed size on stack: fast! */
-      mp_limb_t ws[MUL_BASECASE_ALLOC];
-      mpn_mul_basecase (ws, xp, n, yp, n);
-      MPN_COPY (rp, ws, n);
+      mp_limb_t tp[MUL_BASECASE_ALLOC];
+      mpn_mul_basecase (tp, xp, n, yp, n);
+      MPN_COPY (rp, tp, n);
     }
   else if (BELOW_THRESHOLD (n, MULLO_DC_THRESHOLD))
     {
       mpn_mullo_basecase (rp, xp, yp, n);
     }
-  else if (BELOW_THRESHOLD (n, MULLO_MUL_N_THRESHOLD))
-    {
-      /* Divide-and-conquer */
-      mp_size_t n2, n1;
-      mp_ptr tp;
-      TMP_SDECL;
-      TMP_SMARK;
-      /* We need fractional approximation of the value 1/2< b <1
-	 giving the minimum in the function b^a/(1-2*(1-b)^a) .
-
-	 Constants obtained with the following gp-pari commands:
-
-       */
-      if (MAYBE_range_basecase && BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD*2) )
-	n1 = n >> 1;
-      else if (MAYBE_range_toom22 && BELOW_THRESHOLD (n, MUL_TOOM33_THRESHOLD*36/(36-11)))
-	n1 = n * 11 / (size_t) 36;	/* n1 ~= n*(1-.694...) */
-      else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD*40/(40-9)))
-	n1 = n * 9 / (size_t) 40;	/* n1 ~= n*(1-.775...) */
-      else
-	n1 = n * 7 / (size_t) 39;	/* n1 ~= n*(1-.821...) */
-      /* n1 = n * 4 / (size_t) 31;	// n1 ~= n*(1-.871...) [TOOM66] */
-      /* n1 = n / (size_t) 10;		// n1 ~= n*(1-.899...) [TOOM88] */
-      n2 = n - n1;
-      ASSERT (n1 < 2 * n2);
-      tp = TMP_SALLOC_LIMBS (2 * n2);
-
-      /* Split as x = x1 2^(n2 GMP_NUMB_BITS) + x0,
-                  y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
-
-      /* x0 * y0 */
-      mpn_mul_n (tp, xp, yp, n2);
-      MPN_COPY (rp, tp, n2);
-
-      /* x1 * y0 * 2^(n2 GMP_NUMB_BITS) */
-      mpn_mullo_n (rp + n2, xp + n2, yp, n1);
-      mpn_add_n (rp + n2, rp + n2, tp + n2, n1);
-
-      /* x0 * y1 * 2^(n2 GMP_NUMB_BITS) */
-      mpn_mullo_n (tp, yp + n2, xp, n1);
-      mpn_add_n (rp + n2, rp + n2, tp, n1);
-      TMP_SFREE;
-    }
   else
     {
-      /* For really large operands, use plain mpn_mul_n but throw away upper n
-	 limbs of result.  */
       mp_ptr tp;
       TMP_DECL;
       TMP_MARK;
-      tp = TMP_ALLOC_LIMBS (2 * n);
-
-#if !TUNE_PROGRAM_BUILD && WANT_FFT && (MULLO_MUL_N_THRESHOLD >= MUL_FFT_THRESHOLD)
-      mpn_fft_mul (tp, xp, n, yp, n);
+      tp = TMP_ALLOC_LIMBS (mpn_mullo_n_itch (n));
+      if (BELOW_THRESHOLD (n, MULLO_MUL_N_THRESHOLD))
+	{
+	  mpn_dc_mullo_n (rp, xp, yp, n, tp);
+	}
+      else
+	{
+	  /* For really large operands, use plain mpn_mul_n but throw away upper n
+	     limbs of result.  */
+#if !TUNE_PROGRAM_BUILD && (MULLO_MUL_N_THRESHOLD > MUL_FFT_THRESHOLD)
+	  mpn_fft_mul (tp, xp, n, yp, n);
 #else
-      mpn_mul_n (tp, xp, yp, n);
+	  mpn_mul_n (tp, xp, yp, n);
 #endif
-      MPN_COPY (rp, tp, n);
+	  MPN_COPY (rp, tp, n);
+	}
       TMP_FREE;
     }
 }
