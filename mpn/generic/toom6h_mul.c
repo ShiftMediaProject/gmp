@@ -158,9 +158,9 @@ mpn_toom6h_mul   (mp_ptr pp,
   /* Alloc also 3n+1 limbs for wsi... toom_interpolate_12pts may
      need all of them  */
 /*   if (scratch == NULL) */
-/*     scratch = TMP_SALLOC_LIMBS(mpn_toom6h_mul_n_itch(n * 6)); */
+/*     scratch = TMP_SALLOC_LIMBS(mpn_toom6_sqr_itch(n * 6)); */
   ASSERT (12 * n + 6 <= mpn_toom6h_mul_itch(an,bn));
-  ASSERT (12 * n + 6 <= mpn_toom6h_mul_n_itch(n * 6));
+  ASSERT (12 * n + 6 <= mpn_toom6_sqr_itch(n * 6));
 
   /********************** evaluation and recursive calls *********************/
   /* $\pm1/2$ */

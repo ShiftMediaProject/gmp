@@ -27,7 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Evaluates a polynomial of degree k > 3, in the points +2 and -2. */
+/* Evaluates a polynomial of degree k > 2, in the points +2^shift and -2^shift. */
 int
 mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
 		      mp_srcptr xp, mp_size_t n, mp_size_t hn, unsigned shift,
@@ -39,7 +39,7 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
   mp_limb_t cy;
 #endif
 
-  ASSERT (k >= 4);
+  ASSERT (k >= 3);
 
   ASSERT (hn > 0);
   ASSERT (hn <= n);
