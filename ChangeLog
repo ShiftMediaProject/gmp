@@ -1,5 +1,7 @@
 2009-12-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/t-powm.c: Test mpz_powm_sec.
+
 	* mpz/powm_sec.c: New file.
 	* gmp-h.in: Declare it.
 	* Makefile.am, mpz/Makefile.am: Compile it.

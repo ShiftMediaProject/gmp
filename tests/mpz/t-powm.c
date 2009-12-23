@@ -88,9 +88,6 @@ main (int argc, char **argv)
 
       /* printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod)); */
 
-      mpz_powm (r1, base, exp, mod);
-      MPZ_CHECK_FORMAT (r1);
-
       mpz_set_ui (r2, 1);
       mpz_mod (base2, base, mod);
       mpz_set (exp2, exp);
@@ -110,6 +107,9 @@ main (int argc, char **argv)
 	  mpz_tdiv_q_2exp (exp2, exp2, 1);
 	}
 
+      mpz_powm (r1, base, exp, mod);
+      MPZ_CHECK_FORMAT (r1);
+
       if (mpz_cmp (r1, r2) != 0)
 	{
 	  fprintf (stderr, "\nIncorrect results in test %d for operands:\n", i);
@@ -117,6 +117,25 @@ main (int argc, char **argv)
 	  debug_mp (exp, -16);
 	  debug_mp (mod, -16);
 	  fprintf (stderr, "mpz_powm result:\n");
+	  debug_mp (r1, -16);
+	  fprintf (stderr, "reference result:\n");
+	  debug_mp (r2, -16);
+	  abort ();
+	}
+
+      if (mpz_tdiv_ui (mod, 2) == 0)
+	continue;
+
+      mpz_powm_sec (r1, base, exp, mod);
+      MPZ_CHECK_FORMAT (r1);
+
+      if (mpz_cmp (r1, r2) != 0)
+	{
+	  fprintf (stderr, "\nIncorrect results in test %d for operands:\n", i);
+	  debug_mp (base, -16);
+	  debug_mp (exp, -16);
+	  debug_mp (mod, -16);
+	  fprintf (stderr, "mpz_powm_sec result:\n");
 	  debug_mp (r1, -16);
 	  fprintf (stderr, "reference result:\n");
 	  debug_mp (r2, -16);
