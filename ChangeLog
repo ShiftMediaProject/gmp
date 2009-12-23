@@ -1,5 +1,7 @@
 2009-12-23  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/toom_eval_pm2exp.c: Fix ASSERTs.
+
 	* mpn/generic/toom8h_mul.c: New file.
 	* mpn/generic/toom8_sqr.c: New file.
 	* mpn/generic/toom_interpolate_16pts.c: New file.

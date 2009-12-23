@@ -40,6 +40,7 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
 #endif
 
   ASSERT (k >= 3);
+  ASSERT (shift*k < GMP_NUMB_BITS);
 
   ASSERT (hn > 0);
   ASSERT (hn <= n);
@@ -106,8 +107,11 @@ mpn_toom_eval_pm2exp (mp_ptr xp2, mp_ptr xm2, unsigned k,
   mpn_add_n (xp2, xp2, tp, n + 1);
 #endif /* !HAVE_NATIVE_mpn_add_n_sub_n */
 
-  ASSERT (xp2[n] < ((1<<((k+1)*shift))-1)/((1<<shift)-1));
-  ASSERT (xm2[n] < ((1<<((k+2)*shift))-((k&1)?(1<<shift):1))/((1<<(2*shift))-1));
+  /* FIXME: the following asserts are useless if (k+1)*shift >= GMP_LIMB_BITS */
+  ASSERT ((k+1)*shift >= GMP_LIMB_BITS ||
+	  xp2[n] < ((CNST_LIMB(1)<<((k+1)*shift))-1)/((CNST_LIMB(1)<<shift)-1));
+  ASSERT ((k+2)*shift >= GMP_LIMB_BITS ||
+	  xm2[n] < ((CNST_LIMB(1)<<((k+2)*shift))-((k&1)?(CNST_LIMB(1)<<shift):1))/((CNST_LIMB(1)<<(2*shift))-1));
 
   return neg;
 }
