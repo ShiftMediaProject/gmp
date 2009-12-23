@@ -183,7 +183,7 @@ do {									\
 */
 
 void
-toom_interpolate_12pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5,
+mpn_toom_interpolate_12pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5,
 			mp_size_t n, mp_size_t spt, int half, mp_ptr wsi)
 {
   mp_limb_t cy;

@@ -1,5 +1,8 @@
 2009-12-23  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/toom6h_mul.c: Add prefix to toom_interpolate_12pts.
+	* mpn/generic/toom_interpolate_12pts.c: Likewise.
+
 	* mpn/generic/invertappr.c (mpn_bc_invertappr): If n=2, mpn_divrem_2.
 	* mpn/generic/invert.c: Faster basecase, use mpn_sbpi1_div_q.
 

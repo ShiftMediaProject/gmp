@@ -219,7 +219,7 @@ mpn_toom6h_mul   (mp_ptr pp,
     };
   };
 
-  toom_interpolate_12pts (pp, r1, r3, r5, n, s+t, half, wsi);
+  mpn_toom_interpolate_12pts (pp, r1, r3, r5, n, s+t, half, wsi);
 
 #undef r0
 #undef r1
@@ -356,7 +356,7 @@ mpn_toom6_sqr  (mp_ptr pp, mp_srcptr ap, mp_size_t an, mp_ptr scratch)
   /* A(0)*B(0) */
   TOOM6_SQR_REC(pp, ap, n, wse);
 
-  toom_interpolate_12pts (pp, r1, r3, r5, n, 2 * s, 0, wse);
+  mpn_toom_interpolate_12pts (pp, r1, r3, r5, n, 2 * s, 0, wse);
 
 #undef r0
 #undef r1
