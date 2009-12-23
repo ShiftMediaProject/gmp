@@ -26,6 +26,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM22_THRESHOLD               18
 #define MUL_TOOM33_THRESHOLD               65
 #define MUL_TOOM44_THRESHOLD              166
+#define MUL_TOOM6H_THRESHOLD              253
+#define MUL_TOOM8H_THRESHOLD              331
 
 #define MUL_TOOM32_TO_TOOM43_THRESHOLD     97
 #define MUL_TOOM32_TO_TOOM53_THRESHOLD    107
@@ -36,6 +38,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM2_THRESHOLD                30
 #define SQR_TOOM3_THRESHOLD               101
 #define SQR_TOOM4_THRESHOLD               262
+#define SQR_TOOM6_THRESHOLD               341
+#define SQR_TOOM8_THRESHOLD               403
 
 #define MULMOD_BNM1_THRESHOLD              11
 #define SQRMOD_BNM1_THRESHOLD              13
