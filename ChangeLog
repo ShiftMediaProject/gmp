@@ -1,5 +1,13 @@
 2009-12-23  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/toom8h_mul.c: New file.
+	* mpn/generic/toom8_sqr.c: New file.
+	* mpn/generic/toom_interpolate_16pts.c: New file.
+	* gmp-impl.h: Provide corresponding declarations.
+	* configure.in (gmp_mpn_functions): List toom_interpolate_16pts,
+	toom8h_mul, and toom8h_sqr.
+	* tests/mpn/t-toom8h.c: New test program.
+
 	* mpn/generic/toom6_sqr.c: New file, was part of toom6h_mul.
 	* mpn/generic/toom6h_mul.c: Removed _sqr.
 

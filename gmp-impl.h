@@ -1051,6 +1051,9 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM6H_MUL_MINSIZE   46
 #define MPN_TOOM6_SQR_MINSIZE    46
 
+#define MPN_TOOM8H_MUL_MINSIZE   86
+#define MPN_TOOM8_SQR_MINSIZE    86
+
 #define MPN_TOOM32_MUL_MINSIZE   10
 #define MPN_TOOM42_MUL_MINSIZE   10
 #define MPN_TOOM43_MUL_MINSIZE   49 /* ??? */
@@ -1076,6 +1079,9 @@ __GMP_DECLSPEC void      mpn_toom_interpolate_8pts __GMP_PROTO ((mp_ptr, mp_size
 
 #define mpn_toom_interpolate_12pts __MPN(toom_interpolate_12pts)
 __GMP_DECLSPEC void      mpn_toom_interpolate_12pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_ptr));
+
+#define mpn_toom_interpolate_16pts __MPN(toom_interpolate_16pts)
+__GMP_DECLSPEC void      mpn_toom_interpolate_16pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_ptr));
 
 #define   mpn_toom_couple_handling __MPN(toom_couple_handling)
 __GMP_DECLSPEC void      toom_couple_handling __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, int, mp_size_t, int, int));
@@ -1142,6 +1148,12 @@ __GMP_DECLSPEC void      mpn_toom6h_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size
 
 #define   mpn_toom6_sqr __MPN(toom6_sqr)
 __GMP_DECLSPEC void      mpn_toom6_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom8h_mul __MPN(toom8h_mul)
+__GMP_DECLSPEC void      mpn_toom8h_mul __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+
+#define   mpn_toom8_sqr __MPN(toom8_sqr)
+__GMP_DECLSPEC void      mpn_toom8_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_fft_best_k __MPN(fft_best_k)
 __GMP_DECLSPEC int       mpn_fft_best_k __GMP_PROTO ((mp_size_t, int)) ATTRIBUTE_CONST;
@@ -1682,6 +1694,14 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 
 #ifndef SQR_TOOM6_THRESHOLD
 #define SQR_TOOM6_THRESHOLD MUL_TOOM6H_THRESHOLD
+#endif
+
+#ifndef MUL_TOOM8H_THRESHOLD
+#define MUL_TOOM8H_THRESHOLD            450
+#endif
+
+#ifndef SQR_TOOM8_THRESHOLD
+#define SQR_TOOM8_THRESHOLD MUL_TOOM8H_THRESHOLD
 #endif
 
 #ifndef MUL_TOOM32_TO_TOOM43_THRESHOLD
@@ -4467,7 +4487,19 @@ static inline mp_size_t
 mpn_toom6h_mul_itch (mp_size_t an, mp_size_t bn) {
   mp_size_t estimatedN;
   estimatedN = (an + bn) / (size_t) 10 + 1;
-  return mpn_toom6_sqr_itch( estimatedN * 6 );
+  return mpn_toom6_sqr_itch (estimatedN * 6);
+}
+
+#define mpn_toom8_sqr_itch(n)						\
+( (((n)*15)>>3) - ((MUL_TOOM8H_THRESHOLD*15)>>3) +			\
+   MAX(((MUL_TOOM8H_THRESHOLD*15)>>3) + GMP_NUMB_BITS*6,		\
+       mpn_toom6_sqr_itch(MUL_TOOM8H_THRESHOLD)) )
+
+static inline mp_size_t
+mpn_toom8h_mul_itch (mp_size_t an, mp_size_t bn) {
+  mp_size_t estimatedN;
+  estimatedN = (an + bn) / (size_t) 14 + 1;
+  return mpn_toom8_sqr_itch (estimatedN * 8);
 }
 
 static inline mp_size_t

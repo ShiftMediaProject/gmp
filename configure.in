@@ -2506,13 +2506,13 @@ gmp_mpn_functions="$extra_functions					   \
   toom22_mul toom32_mul toom42_mul toom52_mul toom62_mul		   \
   toom33_mul toom43_mul toom53_mul toom63_mul				   \
   toom44_mul								   \
-  toom6h_mul toom6_sqr							   \
+  toom6h_mul toom6_sqr toom8h_mul toom8_sqr				   \
   toom_couple_handling							   \
   toom2_sqr toom3_sqr toom4_sqr						   \
   toom_eval_dgr3_pm1 toom_eval_dgr3_pm2 				   \
   toom_eval_pm1 toom_eval_pm2 toom_eval_pm2exp toom_eval_pm2rexp	   \
   toom_interpolate_5pts toom_interpolate_6pts toom_interpolate_7pts	   \
-  toom_interpolate_8pts toom_interpolate_12pts				   \
+  toom_interpolate_8pts toom_interpolate_12pts toom_interpolate_16pts	   \
   invertappr invert binvert mulmod_bnm1 sqrmod_bnm1			   \
   sbpi1_div_q sbpi1_div_qr sbpi1_divappr_q				   \
   dcpi1_div_q dcpi1_div_qr dcpi1_divappr_q				   \

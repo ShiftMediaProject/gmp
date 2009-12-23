@@ -1,4 +1,4 @@
-/* Implementation of the algorithm for Toom-Cook 6.5-way.
+/* Implementation of the multiplication algorithm for Toom-Cook 6.5-way.
 
    Contributed to the GNU project by Marco Bodrato.
 
@@ -30,12 +30,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #if GMP_NUMB_BITS < 21
 #error Not implemented.
-#endif
-
-
-/* FIXME: tuneup should decide the threshold */
-#ifndef MUL_TOOM6H_THRESHOLD
-#define MUL_TOOM6H_THRESHOLD 256
 #endif
 
 #if TUNE_PROGRAM_BUILD
