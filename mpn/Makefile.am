@@ -36,7 +36,11 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   addmul_7.c addmul_8.c							    \
   and_n.c andn_n.c							    \
   cmp.c com_n.c copyd.c copyi.c						    \
-  dc_divrem_n.c dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c   \
+  dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
+  sbpi1_bdiv_qr.c sbpi1_bdiv_q.c					    \
+  sbpi1_div_qr.c sbpi1_div_q.c sbpi1_divappr_q.c			    \
+  dcpi1_bdiv_qr.c dcpi1_bdiv_q.c					    \
+  dcpi1_div_qr.c dcpi1_div_q.c dcpi1_divappr_q.c			    \
   dump.c fib2_ui.c gcd.c						    \
   gcd_1.c gcdext.c get_d.c get_str.c					    \
   hamdist.c hgcd2.c hgcd.c invert_limb.c				    \
@@ -50,7 +54,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   toom44_mul.c								    \
   toom6h_mul.c toom6_sqr.c toom8h_mul.c toom8_sqr.c			    \
   toom_couple_handling.c						    \
-  sqr_toom2.c sqr_toom3.c sqr_toom4.c					    \
+  toom2_sqr.c toom3_sqr.c toom4_sqr.c					    \
   toom_eval_dgr3_pm1.c toom_eval_dgr3_pm2.c				    \
   toom_eval_pm1.c toom_eval_pm1.c toom_eval_pm2exp.c toom_eval_pm2rexp.c    \
   toom_interpolate_5pts.c toom_interpolate_6pts.c toom_interpolate_7pts.c   \
@@ -58,7 +62,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   invertappr.c invert.c binvert.c mulmod_bnm1.c sqrmod_bnm1.c		    \
   mullo_n.c mullo_basecase.c nand_n.c neg_n.c nior_n.c perfsqr.c	    \
   popcount.c pre_divrem_1.c pre_mod_1.c pow_1.c random.c random2.c rshift.c \
-  rootrem.c sb_divrem_mn.c scan0.c scan1.c set_str.c			    \
+  rootrem.c scan0.c scan1.c set_str.c			    \
   sqr_basecase.c sqr_diagonal.c						    \
   sqrtrem.c sub.c sub_1.c sub_n.c submul_1.c				    \
   tdiv_qr.c udiv_qrnnd.c udiv_w_sdiv.c xor_n.c xnor_n.c
