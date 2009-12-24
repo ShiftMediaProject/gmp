@@ -1,5 +1,9 @@
 2009-12-24  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mod_1_4.c: Get ASSERT right.
+	* mpn/generic/mod_1_3.c: Likewise.
+	* mpn/generic/mod_1_2.c: Likewise.
+
 	* mpn/generic/powm_sec.c: Use SQR_TOOM2_THRESHOLD as limit for a native
 	mpn_sqr_basecase, not TUNE_SQR_TOOM2_MAX.
 

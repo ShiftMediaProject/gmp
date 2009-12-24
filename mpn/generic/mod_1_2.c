@@ -36,7 +36,7 @@ mpn_mod_1s_2p_cps (mp_limb_t cps[5], mp_limb_t b)
   mp_limb_t B1modb, B2modb, B3modb;
   int cnt;
 
-  ASSERT ((b & GMP_LIMB_HIGHBIT) == 0);
+  ASSERT (b <= GMP_LIMB_MAX / 2);
 
   count_leading_zeros (cnt, b);
 
