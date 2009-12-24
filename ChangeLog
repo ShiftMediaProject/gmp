@@ -1,3 +1,8 @@
+2009-12-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm_sec.c: Use SQR_TOOM2_THRESHOLD as limit for a native
+	mpn_sqr_basecase, not TUNE_SQR_TOOM2_MAX.
+
 2009-12-23  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/common.c, tune/speed.c, tune/speed.h: Support for measuring

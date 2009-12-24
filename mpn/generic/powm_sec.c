@@ -89,9 +89,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifdef TUNE_SQR_TOOM2_MAX
 /* We slightly abuse TUNE_SQR_TOOM2_MAX here.  If it is set for an assembly
    mpn_sqr_basecase, it comes from SQR_TOOM2_THRESHOLD_MAX in the assembly
-   file.  Assembly mpn_sqr_basecase that do not define it, should allow any
-   size.  */
-#define SQR_BASECASE_MAX  TUNE_SQR_TOOM2_MAX
+   file.  An assembly mpn_sqr_basecase that does not define it, should allow
+   any size.  */
+#define SQR_BASECASE_MAX  SQR_TOOM2_THRESHOLD
 #endif
 #endif
 
