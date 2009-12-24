@@ -1,3 +1,23 @@
+2009-12-24  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/mod_1_div.c (MOD_1N_TO_MOD_1_1_THRESHOLD,
+	(MOD_1U_TO_MOD_1_1_THRESHOLD): Set.
+	* tune/mod_1_inv.c (MOD_1N_TO_MOD_1_1_THRESHOLD,
+	(MOD_1U_TO_MOD_1_1_THRESHOLD): Set.
+
+	* gmp-impl.h (USE_PREINV_MOD_1): Remove.
+	(MPN_MOD_OR_PREINV_MOD_1): Define to choose functions dynamically in
+	terms of PREINV_MOD_1_TO_MOD_1_THRESHOLD (used to choose statically
+	using USE_PREINV_MOD_1).
+	* mpn/generic/perfsqr.c (PERFSQR_MOD_PP): Corresponding updates.
+
+	* tune/tuneup.c (tune_mod_1): Rewrite.
+	* gmp-impl.h (MOD_1N_TO_MOD_1_1_THRESHOLD): New.
+	(MOD_1U_TO_MOD_1_1_THRESHOLD): New name for MOD_1_1_THRESHOLD.
+	(MOD_1_1_TO_MOD_1_2_THRESHOLD): Mew name for MOD_1_2_THRESHOLD.
+	(MOD_1_2_TO_MOD_1_4_THRESHOLD): New name for MOD_1_4_THRESHOLD.
+	* mpn/generic/mod_1.c: Corresponding updates.
+
 2009-12-24  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mul_n.c: Use also toom6h and toom8h.

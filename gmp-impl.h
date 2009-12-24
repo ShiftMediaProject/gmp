@@ -589,7 +589,6 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free  __GMP_PROTO ((const char *, int, int,
 #undef MOD_1_NORM_THRESHOLD
 #undef MOD_1_UNNORM_THRESHOLD
 #undef USE_PREINV_DIVREM_1
-#undef USE_PREINV_MOD_1
 #undef DIVREM_2_THRESHOLD
 #undef DIVEXACT_1_THRESHOLD
 #undef MODEXACT_1_ODD_THRESHOLD
@@ -598,7 +597,6 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free  __GMP_PROTO ((const char *, int, int,
 #define MOD_1_NORM_THRESHOLD              MP_SIZE_T_MAX  /* no preinv */
 #define MOD_1_UNNORM_THRESHOLD            MP_SIZE_T_MAX  /* no preinv */
 #define USE_PREINV_DIVREM_1               0  /* no preinv */
-#define USE_PREINV_MOD_1                  0  /* no preinv */
 #define DIVREM_2_THRESHOLD                MP_SIZE_T_MAX  /* no preinv */
 
 /* mpn/generic/mul_fft.c is not nails-capable. */
@@ -2749,7 +2747,7 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 
 
    NOTE: Output variables are updated multiple times. Only some inputs
-   and outputs may overlap.                                              
+   and outputs may overlap.
 */
 #define udiv_qr_3by2(q, r1, r0, n2, n1, n0, d1, d0, dinv)		\
   do {									\
@@ -2785,15 +2783,11 @@ __GMP_DECLSPEC mp_limb_t mpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr, mp_size_t, mp
 #endif
 
 
-/* USE_PREINV_DIVREM_1 is whether to use mpn_preinv_divrem_1, as opposed to
-   the plain mpn_divrem_1.  Likewise USE_PREINV_MOD_1 chooses between
-   mpn_preinv_mod_1 and plain mpn_mod_1.  The default for both is yes, since
-   the few CISC chips where preinv is not good have defines saying so.  */
+/* USE_PREINV_DIVREM_1 is whether to use mpn_preinv_divrem_1, as opposed to the
+   plain mpn_divrem_1.  The default is yes, since the few CISC chips where
+   preinv is not good have defines saying so.  */
 #ifndef USE_PREINV_DIVREM_1
 #define USE_PREINV_DIVREM_1   1
-#endif
-#ifndef USE_PREINV_MOD_1
-#define USE_PREINV_MOD_1   1
 #endif
 
 #if USE_PREINV_DIVREM_1
@@ -2804,13 +2798,16 @@ __GMP_DECLSPEC mp_limb_t mpn_preinv_divrem_1 __GMP_PROTO ((mp_ptr, mp_size_t, mp
   mpn_divrem_1 (qp, xsize, ap, size, d)
 #endif
 
-#if USE_PREINV_MOD_1
-#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       \
-  mpn_preinv_mod_1 (src, size, divisor, inverse)
-#else
-#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       \
-  mpn_mod_1 (src, size, divisor)
+#ifndef PREINV_MOD_1_TO_MOD_1_THRESHOLD
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD 10
 #endif
+
+/* This selection may seem backwards.  The reason mpn_mod_1 typically takes
+   over for larger sizes is that it uses the mod_1_1 function.  */
+#define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       	\
+  (BELOW_THRESHOLD (size, PREINV_MOD_1_TO_MOD_1_THRESHOLD)		\
+   ? mpn_preinv_mod_1 (src, size, divisor, inverse)			\
+   : mpn_mod_1 (src, size, divisor))
 
 
 #ifndef mpn_mod_34lsub1  /* if not done with cpuvec in a fat binary */
@@ -4381,29 +4378,29 @@ extern mp_size_t                     divrem_1_norm_threshold;
 #define DIVREM_1_UNNORM_THRESHOLD    divrem_1_unnorm_threshold
 extern mp_size_t                     divrem_1_unnorm_threshold;
 
-#undef MOD_1_NORM_THRESHOLD
+#undef  MOD_1_NORM_THRESHOLD
 #define MOD_1_NORM_THRESHOLD         mod_1_norm_threshold
 extern mp_size_t                     mod_1_norm_threshold;
 
-#undef MOD_1_UNNORM_THRESHOLD
+#undef  MOD_1_UNNORM_THRESHOLD
 #define MOD_1_UNNORM_THRESHOLD       mod_1_unnorm_threshold
 extern mp_size_t                     mod_1_unnorm_threshold;
 
-#undef MOD_1_1_THRESHOLD
-#define MOD_1_1_THRESHOLD            mod_1_1_threshold
-extern mp_size_t                     mod_1_1_threshold;
+#undef  MOD_1N_TO_MOD_1_1_THRESHOLD
+#define MOD_1N_TO_MOD_1_1_THRESHOLD  mod_1n_to_mod_1_1_threshold
+extern mp_size_t                     mod_1n_to_mod_1_1_threshold;
 
-#undef MOD_1_2_THRESHOLD
-#define MOD_1_2_THRESHOLD            mod_1_2_threshold
-extern mp_size_t                     mod_1_2_threshold;
+#undef  MOD_1U_TO_MOD_1_1_THRESHOLD
+#define MOD_1U_TO_MOD_1_1_THRESHOLD  mod_1u_to_mod_1_1_threshold
+extern mp_size_t                     mod_1u_to_mod_1_1_threshold;
 
-#undef MOD_1_3_THRESHOLD
-#define MOD_1_3_THRESHOLD            mod_1_3_threshold
-extern mp_size_t                     mod_1_3_threshold;
+#undef  MOD_1_1_TO_MOD_1_2_THRESHOLD
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD mod_1_1_to_mod_1_2_threshold
+extern mp_size_t                     mod_1_1_to_mod_1_2_threshold;
 
-#undef MOD_1_4_THRESHOLD
-#define MOD_1_4_THRESHOLD            mod_1_4_threshold
-extern mp_size_t                     mod_1_4_threshold;
+#undef  MOD_1_2_TO_MOD_1_4_THRESHOLD
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD mod_1_2_to_mod_1_4_threshold
+extern mp_size_t                     mod_1_2_to_mod_1_4_threshold;
 
 #if ! UDIV_PREINV_ALWAYS
 #undef  DIVREM_2_THRESHOLD

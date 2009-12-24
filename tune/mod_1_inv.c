@@ -24,8 +24,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #undef MOD_1_NORM_THRESHOLD
 #undef MOD_1_UNNORM_THRESHOLD
+#undef MOD_1N_TO_MOD_1_1_THRESHOLD
+#undef MOD_1U_TO_MOD_1_1_THRESHOLD
 #define MOD_1_NORM_THRESHOLD    0
 #define MOD_1_UNNORM_THRESHOLD  0
+#define MOD_1N_TO_MOD_1_1_THRESHOLD MP_SIZE_T_MAX
+#define MOD_1U_TO_MOD_1_1_THRESHOLD MP_SIZE_T_MAX
 #define __gmpn_mod_1  mpn_mod_1_inv
 
 #include "mpn/generic/mod_1.c"

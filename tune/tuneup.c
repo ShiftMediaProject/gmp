@@ -194,10 +194,11 @@ mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
 mp_size_t  mod_1_unnorm_threshold       = MP_SIZE_T_MAX;
-mp_size_t  mod_1_1_threshold            = MP_SIZE_T_MAX;
-mp_size_t  mod_1_2_threshold            = MP_SIZE_T_MAX;
-mp_size_t  mod_1_3_threshold            = MP_SIZE_T_MAX;
-mp_size_t  mod_1_4_threshold            = MP_SIZE_T_MAX;
+mp_size_t  mod_1n_to_mod_1_1_threshold  = MP_SIZE_T_MAX;
+mp_size_t  mod_1u_to_mod_1_1_threshold  = MP_SIZE_T_MAX;
+mp_size_t  mod_1_1_to_mod_1_2_threshold = MP_SIZE_T_MAX;
+mp_size_t  mod_1_2_to_mod_1_4_threshold = MP_SIZE_T_MAX;
+mp_size_t  preinv_mod_1_to_mod_1_threshold = MP_SIZE_T_MAX;
 mp_size_t  divrem_2_threshold           = MP_SIZE_T_MAX;
 mp_size_t  get_str_dc_threshold         = MP_SIZE_T_MAX;
 mp_size_t  get_str_precompute_threshold = MP_SIZE_T_MAX;
@@ -412,7 +413,7 @@ tuneup_measure (speed_function_t fun,
 }
 
 
-#define PRINT_WIDTH  30
+#define PRINT_WIDTH  31
 
 void
 print_define_start (const char *name)
@@ -1378,26 +1379,66 @@ tune_mod_1 (void)
 
     param.check_size = 256;
 
-    s.r = GMP_NUMB_MASK / 5;
+    s.r = randlimb_norm ();
     param.function = speed_mpn_mod_1_tune;
 
-    param.name = "MOD_1_1_THRESHOLD";
+    param.name = "MOD_1N_TO_MOD_1_1_THRESHOLD";
     param.min_size = 2;
-    one (&mod_1_1_threshold, &param);
+    one (&mod_1n_to_mod_1_1_threshold, &param);
+  }
+  {
+    static struct param_t  param;
 
-    param.name = "MOD_1_2_THRESHOLD";
-    param.min_size = mod_1_1_threshold + 1;
-    one (&mod_1_2_threshold, &param);
+    param.check_size = 256;
 
-#if 0
-    param.name = "MOD_1_3_THRESHOLD";
-    param.min_size = mod_1_2_threshold + 1;
-    one (&mod_1_3_threshold, &param);
-#endif
+    s.r = randlimb_norm () / 5;
+    param.function = speed_mpn_mod_1_tune;
+    param.noprint = 1;
 
-    param.name = "MOD_1_4_THRESHOLD";
-    param.min_size = mod_1_2_threshold + 1;
-    one (&mod_1_4_threshold, &param);
+    param.name = "MOD_1U_TO_MOD_1_1_THRESHOLD";
+    param.min_size = 2;
+    one (&mod_1u_to_mod_1_1_threshold, &param);
+
+    param.name = "MOD_1_1_TO_MOD_1_2_THRESHOLD";
+    param.min_size = mod_1u_to_mod_1_1_threshold;
+    one (&mod_1_1_to_mod_1_2_threshold, &param);
+
+    if (mod_1u_to_mod_1_1_threshold + 2 >= mod_1_1_to_mod_1_2_threshold)
+      {
+	/* Disable mod_1_1 for these smaller moduli, mod_1_2 is always faster.
+	   Measure when to switch (from mod_1_unnorm) to mod_1_2.  */
+	mod_1u_to_mod_1_1_threshold = 0;
+
+	param.min_size = 1;
+	one (&mod_1_1_to_mod_1_2_threshold, &param);
+      }
+    print_define ("MOD_1U_TO_MOD_1_1_THRESHOLD", mod_1u_to_mod_1_1_threshold);
+
+    param.name = "MOD_1_2_TO_MOD_1_4_THRESHOLD";
+    param.min_size = mod_1_1_to_mod_1_2_threshold;
+    one (&mod_1_2_to_mod_1_4_threshold, &param);
+
+    if (mod_1_1_to_mod_1_2_threshold + 2 >= mod_1_2_to_mod_1_4_threshold)
+      {
+	/* Disable mod_1_2 for these smaller moduli, mod_1_4 is always faster.
+	   Measure when to switch (from mod_1_unnorm or mod_1_1) to mod_1_4.  */
+	mod_1_1_to_mod_1_2_threshold = 0;
+
+	param.min_size = 1;
+	one (&mod_1_2_to_mod_1_4_threshold, &param);
+      }
+    print_define ("MOD_1_1_TO_MOD_1_2_THRESHOLD", mod_1_1_to_mod_1_2_threshold);
+    print_define ("MOD_1_2_TO_MOD_1_4_THRESHOLD", mod_1_2_to_mod_1_4_threshold);
+  }
+
+  {
+    static struct param_t  param;
+
+    param.name = "PREINV_MOD_1_TO_MOD_1_THRESHOLD";
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_preinv_mod_1;
+    param.function2 = speed_mpn_mod_1;
+    one (&preinv_mod_1_to_mod_1_threshold, &param);
   }
 }
 
