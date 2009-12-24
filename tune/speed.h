@@ -207,8 +207,6 @@ double speed_mpn_mod_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1c __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_div __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_inv __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_mod_1_unnorm __GMP_PROTO ((struct speed_params *));
-double speed_mpn_mod_1_norm __GMP_PROTO ((struct speed_params *));
 double speed_mpn_mod_1_1 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_2 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_3 __GMP_PROTO ((struct speed_params *s));
