@@ -1,3 +1,8 @@
+2009-12-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (tune_mod_1): Add a check_size for
+	PREINV_MOD_1_TO_MOD_1_THRESHOLD.
+
 2009-12-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/mod_1_div.c (MOD_1N_TO_MOD_1_1_THRESHOLD,

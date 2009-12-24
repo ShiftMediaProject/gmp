@@ -1434,6 +1434,8 @@ tune_mod_1 (void)
   {
     static struct param_t  param;
 
+    param.check_size = 256;
+
     param.name = "PREINV_MOD_1_TO_MOD_1_THRESHOLD";
     s.r = randlimb_norm ();
     param.function = speed_mpn_preinv_mod_1;
