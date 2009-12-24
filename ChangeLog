@@ -1,3 +1,10 @@
+2009-12-24  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mul_n.c: Use also toom6h and toom8h.
+	* mpn/generic/sqr_n.c: Use also toom6 and toom8.
+	* gmp-impl.h: Initial support for tuning of Toom-6half and Toom-8half.
+	* tune/tuneup.c: Tune Toom-6half and Toom-8half thresholds.
+
 2009-12-24  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/powm_sec.c: Use SQR_TOOM2_THRESHOLD as limit for a native

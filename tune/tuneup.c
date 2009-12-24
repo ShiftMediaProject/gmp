@@ -150,6 +150,8 @@ int  allocdat = 0;
 mp_size_t  mul_toom22_threshold         = MP_SIZE_T_MAX;
 mp_size_t  mul_toom33_threshold         = MUL_TOOM33_THRESHOLD_LIMIT;
 mp_size_t  mul_toom44_threshold         = MUL_TOOM44_THRESHOLD_LIMIT;
+mp_size_t  mul_toom6h_threshold         = MUL_TOOM6H_THRESHOLD_LIMIT;
+mp_size_t  mul_toom8h_threshold         = MUL_TOOM8H_THRESHOLD_LIMIT;
 mp_size_t  mul_toom32_to_toom43_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_toom32_to_toom53_threshold = MP_SIZE_T_MAX;
 mp_size_t  mul_toom42_to_toom53_threshold = MP_SIZE_T_MAX;
@@ -161,6 +163,8 @@ mp_size_t  sqr_toom2_threshold
   = (TUNE_SQR_TOOM2_MAX == 0 ? MP_SIZE_T_MAX : TUNE_SQR_TOOM2_MAX);
 mp_size_t  sqr_toom3_threshold          = SQR_TOOM3_THRESHOLD_LIMIT;
 mp_size_t  sqr_toom4_threshold          = SQR_TOOM4_THRESHOLD_LIMIT;
+mp_size_t  sqr_toom6_threshold          = SQR_TOOM6_THRESHOLD_LIMIT;
+mp_size_t  sqr_toom8_threshold          = SQR_TOOM8_THRESHOLD_LIMIT;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mullo_basecase_threshold     = MP_SIZE_T_MAX;
@@ -856,6 +860,16 @@ tune_mul_n (void)
   param.max_size = MUL_TOOM44_THRESHOLD_LIMIT-1;
   one (&mul_toom44_threshold, &param);
 
+  param.name = "MUL_TOOM6H_THRESHOLD";
+  param.min_size = MAX (mul_toom44_threshold, MPN_TOOM6H_MUL_MINSIZE);
+  param.max_size = MUL_TOOM6H_THRESHOLD_LIMIT-1;
+  one (&mul_toom6h_threshold, &param);
+
+  param.name = "MUL_TOOM8H_THRESHOLD";
+  param.min_size = MAX (mul_toom6h_threshold, MPN_TOOM8H_MUL_MINSIZE);
+  param.max_size = MUL_TOOM8H_THRESHOLD_LIMIT-1;
+  one (&mul_toom8h_threshold, &param);
+
   /* disabled until tuned */
   MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
 }
@@ -1044,6 +1058,16 @@ tune_sqr_n (void)
     param.min_size = MAX (sqr_toom3_threshold, MPN_TOOM4_SQR_MINSIZE);
     param.max_size = SQR_TOOM4_THRESHOLD_LIMIT-1;
     one (&sqr_toom4_threshold, &param);
+
+    param.name = "SQR_TOOM6_THRESHOLD";
+    param.min_size = MAX (sqr_toom4_threshold, MPN_TOOM6_SQR_MINSIZE);
+    param.max_size = SQR_TOOM6_THRESHOLD_LIMIT-1;
+    one (&sqr_toom6_threshold, &param);
+
+    param.name = "SQR_TOOM8_THRESHOLD";
+    param.min_size = MAX (sqr_toom6_threshold, MPN_TOOM8_SQR_MINSIZE);
+    param.max_size = SQR_TOOM8_THRESHOLD_LIMIT-1;
+    one (&sqr_toom8_threshold, &param);
   }
 }
 

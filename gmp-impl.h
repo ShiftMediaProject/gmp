@@ -1035,10 +1035,6 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
        && (size) >= (thresh)))
 #define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
 
-#if WANT_FFT
-#define MPN_TOOM44_MAX_N 285405
-#endif /* WANT_FFT */
-
 #define MPN_TOOM22_MUL_MINSIZE    4
 #define MPN_TOOM2_SQR_MINSIZE     4
 
@@ -4207,6 +4203,14 @@ extern mp_size_t                     mul_toom33_threshold;
 #define MUL_TOOM44_THRESHOLD         mul_toom44_threshold
 extern mp_size_t                     mul_toom44_threshold;
 
+#undef  MUL_TOOM6H_THRESHOLD
+#define MUL_TOOM6H_THRESHOLD         mul_toom6h_threshold
+extern mp_size_t                     mul_toom6h_threshold;
+
+#undef  MUL_TOOM8H_THRESHOLD
+#define MUL_TOOM8H_THRESHOLD         mul_toom8h_threshold
+extern mp_size_t                     mul_toom8h_threshold;
+
 #undef  MUL_TOOM32_TO_TOOM43_THRESHOLD
 #define MUL_TOOM32_TO_TOOM43_THRESHOLD mul_toom32_to_toom43_threshold
 extern mp_size_t                       mul_toom32_to_toom43_threshold;
@@ -4258,6 +4262,14 @@ extern mp_size_t                     sqr_toom3_threshold;
 #undef  SQR_TOOM4_THRESHOLD
 #define SQR_TOOM4_THRESHOLD          sqr_toom4_threshold
 extern mp_size_t                     sqr_toom4_threshold;
+
+#undef  SQR_TOOM6_THRESHOLD
+#define SQR_TOOM6_THRESHOLD          sqr_toom6_threshold
+extern mp_size_t                     sqr_toom6_threshold;
+
+#undef  SQR_TOOM8_THRESHOLD
+#define SQR_TOOM8_THRESHOLD          sqr_toom8_threshold
+extern mp_size_t                     sqr_toom8_threshold;
 
 #undef SQR_FFT_THRESHOLD
 #define SQR_FFT_THRESHOLD            sqr_fft_threshold
@@ -4442,6 +4454,10 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #define SQR_TOOM3_THRESHOLD_LIMIT       400
 #define MUL_TOOM44_THRESHOLD_LIMIT     1000
 #define SQR_TOOM4_THRESHOLD_LIMIT      1000
+#define MUL_TOOM6H_THRESHOLD_LIMIT     1100
+#define SQR_TOOM6_THRESHOLD_LIMIT      1100
+#define MUL_TOOM8H_THRESHOLD_LIMIT     1200
+#define SQR_TOOM8_THRESHOLD_LIMIT      1200
 #define MULLO_BASECASE_THRESHOLD_LIMIT  200
 #define GET_STR_THRESHOLD_LIMIT         150
 
@@ -4478,7 +4494,7 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #define mpn_toom4_sqr_itch(an) \
   (3 * (an) + GMP_NUMB_BITS)
 
-#define mpn_toom6_sqr_itch(n)					\
+#define mpn_toom6_sqr_itch(n)						\
 ( ((n) - MUL_TOOM6H_THRESHOLD)*2 +					\
    MAX(MUL_TOOM6H_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
        mpn_toom44_mul_itch(MUL_TOOM6H_THRESHOLD,MUL_TOOM6H_THRESHOLD)) )

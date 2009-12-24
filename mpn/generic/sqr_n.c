@@ -52,11 +52,7 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
       mpn_toom3_sqr (p, a, n, ws);
       TMP_SFREE;
     }
-#if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (BELOW_THRESHOLD (n, SQR_FFT_THRESHOLD))
-#else
-  else if (BELOW_THRESHOLD (n, MPN_TOOM44_MAX_N))
-#endif
+  else if (BELOW_THRESHOLD (n, SQR_TOOM6_THRESHOLD))
     {
       mp_ptr ws;
       TMP_SDECL;
@@ -65,22 +61,28 @@ mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
       mpn_toom4_sqr (p, a, n, ws);
       TMP_SFREE;
     }
+  else if (BELOW_THRESHOLD (n, SQR_TOOM8_THRESHOLD))
+    {
+      mp_ptr ws;
+      TMP_SDECL;
+      TMP_SMARK;
+      ws = TMP_SALLOC_LIMBS (mpn_toom6_sqr_itch (n));
+      mpn_toom6_sqr (p, a, n, ws);
+      TMP_SFREE;
+    }
+  else if (BELOW_THRESHOLD (n, SQR_FFT_THRESHOLD))
+    {
+      mp_ptr ws;
+      TMP_DECL;
+      TMP_MARK;
+      ws = TMP_ALLOC_LIMBS (mpn_toom8_sqr_itch (n));
+      mpn_toom8_sqr (p, a, n, ws);
+      TMP_FREE;
+    }
   else
-#if WANT_FFT || TUNE_PROGRAM_BUILD
     {
       /* The current FFT code allocates its own space.  That should probably
 	 change.  */
       mpn_fft_mul (p, a, n, a, n);
     }
-#else
-    {
-      /* Toom4 for large operands.  */
-      mp_ptr ws;
-      TMP_DECL;
-      TMP_MARK;
-      ws = TMP_BALLOC_LIMBS (mpn_toom4_sqr_itch (n));
-      mpn_toom4_sqr (p, a, n, ws);
-      TMP_FREE;
-    }
-#endif
 }
