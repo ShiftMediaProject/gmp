@@ -2745,7 +2745,6 @@ __GMP_DECLSPEC mp_limb_t mpn_invert_limb __GMP_PROTO ((mp_limb_t)) ATTRIBUTE_CON
 
      floor ((B^3 - 1) / (d0 + d1 B)) - B.
 
-
    NOTE: Output variables are updated multiple times. Only some inputs
    and outputs may overlap.
 */
@@ -4519,9 +4518,7 @@ static inline mp_size_t
 mpn_toom32_mul_itch (mp_size_t an, mp_size_t bn)
 {
   mp_size_t n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
-  mp_size_t itch = 4 * n + 2;
-  if (ABOVE_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
-    itch += mpn_toom22_mul_itch (n, n);
+  mp_size_t itch = 2 * n + 1;
 
   return itch;
 }

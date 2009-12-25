@@ -1,3 +1,13 @@
+2009-12-25  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-toom32.c (MIN_AN, MIN_BN, MAX_BN): Tightened requirements.
+	* gmp-impl.h (mpn_toom32_mul_itch): Updated. Less scratch needed
+	by toom32 itself, and also the pointwise multiplications are
+	currently mpn_mul_n with no supplied scratch.
+	* mpn/generic/toom32_mul.c (mpn_toom32_mul): Reorganized
+	interpolation to use less scratch space. No longer supports the
+	most extreme size ratios.
+
 2009-12-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_preinv_mod_1): Purge.

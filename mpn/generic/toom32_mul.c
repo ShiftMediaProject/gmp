@@ -2,7 +2,7 @@
    times as large as bn.  Or more accurately, bn < an < 3bn.
 
    Contributed to the GNU project by Torbjorn Granlund.
-   Improvements by Marco Bodrato.
+   Improvements by Marco Bodrato and Niels Möller.
 
    The idea of applying toom to unbalanced multiplication is due to Marco
    Bodrato and Alberto Zanoni.
@@ -60,12 +60,22 @@ mpn_toom32_mul (mp_ptr pp,
   mp_size_t n, s, t;
   int vm1_neg;
   mp_limb_t cy;
+  int hi;
 
 #define a0  ap
 #define a1  (ap + n)
 #define a2  (ap + 2 * n)
 #define b0  bp
 #define b1  (bp + n)
+
+  /* Required, to guarantee that s + t >= n + 2.
+
+     Also implies that bn >= 9
+
+     FIXME: Too strict? E.g., an = 15, bn = 9, ==> n = 5, s = 5, t = 4
+     seem to be ok. */
+  
+  ASSERT (bn + 4 <= an && an + 14 <= 3*bn);
 
   n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
 
@@ -74,208 +84,225 @@ mpn_toom32_mul (mp_ptr pp,
 
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= n);
+  ASSERT (s + t >= n + 2);
 
-#define as1   (pp + n + 1)			/* n+1 */
-#define asm1  (scratch + n)			/* n+1 */
-#define bs1   (pp)				/* n+1 */
-#define bsm1  (scratch)			/* n */
-#define a0_a2 (scratch)				/* n */
+  /* Product area of size an + bn = 3*n + s + t >= 4*n + 2. */
+#define ap1 (pp)		/* n + 1 */
+#define bp1 (pp + n + 1)	/* n + 1 */
+#define am1 (pp + 2*n + 2)	/* n, most significant bit stored elsewhere */
+#define bm1 (pp + 3*n + 2)	/* n */
+#define v1 (scratch)		/* 2n + 1 */
+#define vm1 (pp)		/* 2n + 1 */
+#define scratch_out (scratch + 2*n + 1) /* Currently unused. *(
 
-  /* Compute as1 and asm1.  */
-  asm1[n] = mpn_add (a0_a2, a0, n, a2, s);
-#if HAVE_NATIVE_mpn_add_n_sub_n
-  if (asm1[n] == 0 && mpn_cmp (a0_a2, a1, n) < 0)
+  /* Scratch need: 2*n + 1 + scratch for the recursive multiplications. */
+
+  /* FIXME: Keep ap1[n] and bp1[n] in scalar variables. */
+
+  /* Compute ap1 = a0 + a1 + a3, am1 = a0 - a1 + a3 */
+  ap1[n] = mpn_add (ap1, a0, n, a2, s);
+#if HAVE_NATIVE_mpn_addsub_n
+  if (ap1[n] == 0 && mpn_cmp (ap1, a1, n) < 0)
     {
-      cy = mpn_add_n_sub_n (as1, asm1, a1, a0_a2, n);
-      as1[n] = cy >> 1;
+      ap1[n] = mpn_addsub_n (ap1, am1, a1, ap1, n) >> 1;
+      hi = 0;
       vm1_neg = 1;
     }
   else
     {
-      cy = mpn_add_n_sub_n (as1, asm1, a0_a2, a1, n);
-      as1[n] = asm1[n] + (cy >> 1);
-      asm1[n]-= cy & 1;
+      cy = mpn_addsub_n (ap1, am1, ap1, a1, n);
+      hi = ap1[n] - (cy & 1);
+      ap1[n] += (cy >> 1);
       vm1_neg = 0;
     }
 #else
-  as1[n] = asm1[n] + mpn_add_n (as1, a0_a2, a1, n);
-  if (asm1[n] == 0 && mpn_cmp (a0_a2, a1, n) < 0)
+  if (ap1[n] == 0 && mpn_cmp (ap1, a1, n) < 0)
     {
-      mpn_sub_n (asm1, a1, a0_a2, n);
+      ASSERT_NOCARRY (mpn_sub_n (am1, a1, ap1, n));
+      hi = 0;
       vm1_neg = 1;
     }
   else
     {
-      cy = mpn_sub_n (asm1, a0_a2, a1, n);
-      asm1[n]-= cy;
+      hi = ap1[n] - mpn_sub_n (am1, ap1, a1, n);
       vm1_neg = 0;
     }
+  ap1[n] += mpn_add_n (ap1, ap1, a1, n);
 #endif
 
-  /* Compute bs1 and bsm1.  */
+  /* Compute bp1 = b0 + b1 and bm1 = b0 - b1. */
   if (t == n)
     {
-#if HAVE_NATIVE_mpn_add_n_sub_n
+#if HAVE_NATIVE_mpn_addsub_n
       if (mpn_cmp (b0, b1, n) < 0)
 	{
-	  cy = mpn_add_n_sub_n (bs1, bsm1, b1, b0, n);
+	  cy = mpn_addsub_n (bp1, bm1, b1, b0, n);
 	  vm1_neg ^= 1;
 	}
       else
 	{
-	  cy = mpn_add_n_sub_n (bs1, bsm1, b0, b1, n);
+	  cy = mpn_addsub_n (bp1, bm1, b0, b1, n);
 	}
-      bs1[n] = cy >> 1;
+      bp1[n] = cy >> 1;
 #else
-      bs1[n] = mpn_add_n (bs1, b0, b1, n);
+      bp1[n] = mpn_add_n (bp1, b0, b1, n);
 
       if (mpn_cmp (b0, b1, n) < 0)
 	{
-	  mpn_sub_n (bsm1, b1, b0, n);
+	  ASSERT_NOCARRY (mpn_sub_n (bm1, b1, b0, n));
 	  vm1_neg ^= 1;
 	}
       else
 	{
-	  mpn_sub_n (bsm1, b0, b1, n);
+	  ASSERT_NOCARRY (mpn_sub_n (bm1, b0, b1, n));
 	}
 #endif
     }
   else
     {
-      bs1[n] = mpn_add (bs1, b0, n, b1, t);
+      /* FIXME: Should still use addsub for the main part. */
+      bp1[n] = mpn_add (bp1, b0, n, b1, t);
 
       if (mpn_zero_p (b0 + t, n - t) && mpn_cmp (b0, b1, t) < 0)
 	{
-	  mpn_sub_n (bsm1, b1, b0, t);
-	  MPN_ZERO (bsm1 + t, n - t);
+	  ASSERT_NOCARRY (mpn_sub_n (bm1, b1, b0, t));
+	  MPN_ZERO (bm1 + t, n - t);
 	  vm1_neg ^= 1;
 	}
       else
 	{
-	  mpn_sub (bsm1, b0, n, b1, t);
+	  ASSERT_NOCARRY (mpn_sub (bm1, b0, n, b1, t));
 	}
     }
 
-  ASSERT (as1[n] <= 2);
-  ASSERT (bs1[n] <= 1);
-  ASSERT (asm1[n] <= 1);
-/*ASSERT (bsm1[n] == 0); */
-
-#define v0    pp				/* 2n */
-#define v1    (scratch)				/* 2n+1 */
-#define vinf  (pp + 3 * n)			/* s+t */
-#define vm1   (scratch + 2 * n + 1)		/* 2n+1 */
-#define scratch_out	scratch + 4 * n + 2
-
-  /* vm1, 2n+1 limbs */
-  TOOM32_MUL_N_REC (vm1, asm1, bsm1, n, scratch_out);
-  cy = 0;
-  if (asm1[n] != 0)
-    cy = mpn_add_n (vm1 + n, vm1 + n, bsm1, n);
-  vm1[2 * n] = cy;
-
-  /* v1, 2n+1 limbs */
-  TOOM32_MUL_N_REC (v1, as1, bs1, n, scratch_out);
-  if (as1[n] == 1)
+  TOOM32_MUL_N_REC (v1, ap1, bp1, n, scratch_out);
+  if (ap1[n] == 1)
     {
-      cy = bs1[n] + mpn_add_n (v1 + n, v1 + n, bs1, n);
+      cy = bp1[n] + mpn_add_n (v1 + n, v1 + n, bp1, n);
     }
-  else if (as1[n] == 2)
+  else if (ap1[n] == 2)
     {
 #if HAVE_NATIVE_mpn_addlsh1_n
-      cy = 2 * bs1[n] + mpn_addlsh1_n (v1 + n, v1 + n, bs1, n);
+      cy = 2 * bp1[n] + mpn_addlsh1_n (v1 + n, v1 + n, bp1, n);
 #else
-      cy = 2 * bs1[n] + mpn_addmul_1 (v1 + n, bs1, n, CNST_LIMB(2));
+      cy = 2 * bp1[n] + mpn_addmul_1 (v1 + n, bp1, n, CNST_LIMB(2));
 #endif
     }
   else
     cy = 0;
-  if (bs1[n] != 0)
-    cy += mpn_add_n (v1 + n, v1 + n, as1, n);
+  if (bp1[n] != 0)
+    cy += mpn_add_n (v1 + n, v1 + n, ap1, n);
   v1[2 * n] = cy;
+  
+  TOOM32_MUL_N_REC (vm1, am1, bm1, n, scratch_out);
+  if (hi)
+    hi = mpn_add_n (vm1+n, vm1+n, bm1, n);
 
-  /* vinf, s+t limbs.  Use mpn_mul for now, to handle unbalanced operands */
-  if (s > t)  mpn_mul (vinf, a2, s, b1, t);
-  else        mpn_mul (vinf, b1, t, a2, s);
+  vm1[2*n] = hi;
 
-  /* v0, 2n limbs */
-  TOOM32_MUL_N_REC (v0, ap, bp, n, scratch_out);
-
-  /* Interpolate */
-
+  /* v1 <-- (v1 + vm1) / 2 = x0 + x2 */
   if (vm1_neg)
     {
-#if HAVE_NATIVE_mpn_rsh1add_n
-      mpn_rsh1add_n (vm1, v1, vm1, 2 * n + 1);
+#if HAVE_NATIVE_mpn_rsh1sub_n
+      mpn_rsh1sub_n (v1, v1, vm1, 2*n+1);
 #else
-      mpn_add_n (vm1, v1, vm1, 2 * n + 1);
-      mpn_rshift (vm1, vm1, 2 * n + 1, 1);
+      mpn_sub_n (v1, v1, vm1, 2*n+1);
+      ASSERT_NOCARRY (mpn_rshift (v1, v1, 2*n+1, 1));
 #endif
     }
   else
     {
-#if HAVE_NATIVE_mpn_rsh1sub_n
-      mpn_rsh1sub_n (vm1, v1, vm1, 2 * n + 1);
+#if HAVE_NATIVE_mpn_rsh1add_n
+      mpn_rsh1add_n (v1, v1, vm1, 2*n+1);
 #else
-      mpn_sub_n (vm1, v1, vm1, 2 * n + 1);
-      mpn_rshift (vm1, vm1, 2 * n + 1, 1);
+      mpn_add_n (v1, v1, vm1, 2*n+1);
+      ASSERT_NOCARRY (mpn_rshift (v1, v1, 2*n+1, 1));
 #endif
     }
 
-  t += s;   /* limbs in vinf */
-  if (LIKELY(t>=n)) /* We should consider this branch only, even better t>n */
-    s = n;  /* limbs in Lvinf */
-  else {
-    s = t;  /* limbs in Lvinf */
-    v1[2 * n]=0;
-  }
+  /* We get x1 + x3 = (x0 + x2) - (x0 - x1 + x2 - x3), and hence
 
-  mpn_sub_n (v1, v1, vm1, s + n + 1);
+     y = x1 + x3 + (x0 + x2) * B
+       = (x0 + x2) * B + (x0 + x2) - vm1.
 
-  /*
-    pp[] prior to operations:
-     |_H vinf|_L vinf|_______|_H v0__|_L v0__|
+     y is 3*n + 1 limbs, y = y0 + y1 B + y2 B^2. We store them as
+     follows: y0 at scratch, y1 at pp + 2*n, and y2 at scratch + n
+     (already in place, except for carry propagation).
 
-    summation scheme for remaining operations:
-     |______4|n_____3|n_____2|n______|n______|pp
-     |_Hvinf_|_L*vinf|       |_H*v0__|_L v0__|
-		    || H vm1 | L vm1 |
-		     |-H vinf|-L*vinf|
-	    || H v1  | L v1  |
-	     |-H*v0  |-L v0  |
+     We thus add
 
-    We will avoid double computation of Hv0-Lvinf. Be careful! This
-    operation can give a negative result!
+   B^3  B^2   B    1
+    |    |    |    |
+   +-----+----+
+ + |  x0 + x2 |
+   +----+-----+----+
+ +      |  x0 + x2 |
+	+----------+
+ -      |  vm1     |
+ --+----++----+----+-
+   | y2  | y1 | y0 |
+   +-----+----+----+
+
+  Since we store y0 at the same location as the low half of x0 + x2, we
+  need to do the middle sum first. */
+
+  hi = vm1[2*n];
+  cy = mpn_add_n (pp + 2*n, v1, v1 + n, n);
+  MPN_INCR_U (v1 + n, n + 1, cy + v1[2*n]);
+
+  if (vm1_neg)
+    {
+      cy = mpn_add_n (v1, v1, vm1, n);
+      hi += mpn_add_nc (pp + 2*n, pp + 2*n, vm1 + n, n, cy);
+      MPN_INCR_U (v1 + n, n+1, hi);
+    }
+  else
+    {
+      cy = mpn_sub_n (v1, v1, vm1, n);
+      hi += mpn_sub_nc (pp + 2*n, pp + 2*n, vm1 + n, n, cy);
+      MPN_DECR_U (v1 + n, n+1, hi);
+    }
+
+  TOOM32_MUL_N_REC (pp, a0, b0, n, scratch_out);
+  /* vinf, s+t limbs.  Use mpn_mul for now, to handle unbalanced operands */
+  if (s > t)  mpn_mul (pp+3*n, a2, s, b1, t);
+  else        mpn_mul (pp+3*n, b1, t, a2, s);
+
+  /* Remaining interpolation.
+
+     y * B + x0 + x3 B^3 - x0 B^2 - x3 B
+     = (x1 + x3) B + (x0 + x2) B^2 + x0 + x3 B^3 - x0 B^2 - x3 B
+     = y0 B + y1 B^2 + y3 B^3 + Lx0 + H x0 B
+       + L x3 B^3 + H x3 B^4 - Lx0 B^2 - H x0 B^3 - L x3 B - H x3 B^2
+     = L x0 + (y0 + H x0 - L x3) B + (y1 - L x0 - H x3) B^2
+       + (y2 - (H x0 - L x3)) B^3 + H x3 B^4
+
+	  B^4       B^3       B^2        B         1
+ |         |         |         |         |         |
+   +-------+                   +---------+---------+
+   |  Hx3  |                   | Hx0-Lx3 |    Lx0  |
+   +------+----------+---------+---------+---------+
+	  |    y2    |  y1     |   y0    |
+	  ++---------+---------+---------+
+	  -| Hx0-Lx3 | - Lx0   |
+	   +---------+---------+
+		      | - Hx3  |
+		      +--------+
+
+    We must take into account the carry from Hx0 - Lx3.
   */
 
-  cy = mpn_sub_n (v0 + n, v0 + n, vinf, s); /* Hv0-Lvinf*/
-  v1[ n + s ] += cy - mpn_sub_n(pp + 2 * n, v1, v0, n + s); /* v1-v0+Lvinf */
-  cy -= mpn_add_n (pp + n, pp + n, vm1, s); /* (Hv0-Lvinf)+Lvm1 */
-  if (cy != 0) { /* carry and borrow did not cancel one another, apply the right one */
-    if (cy == 1)
-      MPN_DECR_U (vm1 + s, 2 * n + 1 - s, 1);
-    else /* (cy == -1) */
-      MPN_INCR_U (vm1 + s, 2 * n + 1 - s, 1);
-  }
-  if (LIKELY(t>n)) { /* It works also without this "if", t<=n implies t-s==0,v1[2*n]==0 */
-    mpn_sub (vm1 + n, vm1 + n, n + 1, vinf + n, t - s); /* Hvm1-Hvinf */
-    MPN_INCR_U (vinf + s, t - s, v1[2 * n]);
-  }
-  cy = mpn_add_n (pp + n + s, pp + n + s, vm1 + s, 2 * n + 1 - s);
-  MPN_INCR_U (vinf + 1, t - 1, cy);
+  cy = mpn_sub_n (pp + n, pp + n, pp+3*n, n);
+  hi = scratch[2*n] + cy;
 
-#undef a0
-#undef a1
-#undef a2
-#undef b0
-#undef b1
-#undef v0
-#undef v1
-#undef vinf
-#undef vm1
-#undef a0_a2
-#undef bsm1
-#undef asm1
-#undef bs1
-#undef as1
+  cy = mpn_sub_nc (pp + 2*n, pp + 2*n, pp, n, cy);
+  hi -= mpn_sub_nc (pp + 3*n, scratch + n, pp + n, n, cy);
+
+  hi += mpn_add (pp + n, pp + n, 3*n, scratch, n);
+  hi -= mpn_sub (pp + 2*n, pp + 2*n, 2*n, pp + 4*n, s+t-n);
+
+  if (hi < 0)
+    MPN_DECR_U (pp + 4*n, s+t-n, -hi);
+  else
+    MPN_INCR_U (pp + 4*n, s+t-n, hi);
 }
