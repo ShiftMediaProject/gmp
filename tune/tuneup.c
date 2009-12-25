@@ -1439,7 +1439,7 @@ tune_mod_1 (void)
     param.name = "PREINV_MOD_1_TO_MOD_1_THRESHOLD";
     s.r = randlimb_norm ();
     param.function = speed_mpn_preinv_mod_1;
-    param.function2 = speed_mpn_mod_1;
+    param.function2 = speed_mpn_mod_1_tune;
     one (&preinv_mod_1_to_mod_1_threshold, &param);
   }
 }
@@ -1516,72 +1516,6 @@ tune_preinv_divrem_1 (void)
   print_define_remark ("USE_PREINV_DIVREM_1", (mp_size_t) (t1 < t2), NULL);
 }
 
-
-/* A non-zero MOD_1_UNNORM_THRESHOLD (or MOD_1_NORM_THRESHOLD) would imply
-   that udiv_qrnnd_preinv is worth using, but it seems most straightforward
-   to compare mpn_preinv_mod_1 and mpn_mod_1_div directly.  */
-
-void
-tune_preinv_mod_1 (void)
-{
-  static struct param_t  param;
-  speed_function_t  mod_1;
-  const char        *mod_1_name;
-  double            t1, t2;
-
-  /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
-     faster than mpn_mod_1.  */
-  if (HAVE_NATIVE_mpn_preinv_mod_1)
-    {
-      print_define_remark ("USE_PREINV_MOD_1", 1, "native");
-      return;
-    }
-
-  if (GMP_NAIL_BITS != 0)
-    {
-      print_define_remark ("USE_PREINV_MOD_1", 0, "no preinv with nails");
-      return;
-    }
-
-  /* If udiv_qrnnd_preinv is the only division method then of course
-     mpn_preinv_mod_1 should be used.  */
-  if (UDIV_PREINV_ALWAYS)
-    {
-      print_define_remark ("USE_PREINV_MOD_1", 1, "preinv always");
-      return;
-    }
-
-  /* If we've got an assembler version of mpn_mod_1, then compare against
-     that, not the mpn_mod_1_div generic C.  */
-  if (HAVE_NATIVE_mpn_mod_1)
-    {
-      mod_1 = speed_mpn_mod_1;
-      mod_1_name = "mpn_mod_1";
-    }
-  else
-    {
-      mod_1 = speed_mpn_mod_1_div;
-      mod_1_name = "mpn_mod_1_div";
-    }
-
-  param.data_high = DATA_HIGH_LT_R; /* let mpn_mod_1 skip one division */
-  s.size = 200;                     /* generous but not too big */
-  s.r = randlimb_norm();            /* divisor */
-
-  t1 = tuneup_measure (speed_mpn_preinv_mod_1, &param, &s);
-  t2 = tuneup_measure (mod_1, &param, &s);
-  if (t1 == -1.0 || t2 == -1.0)
-    {
-      printf ("Oops, can't measure mpn_preinv_mod_1 and %s at %ld\n",
-              mod_1_name, (long) s.size);
-      abort ();
-    }
-  if (option_trace >= 1)
-    printf ("size=%ld, mpn_preinv_mod_1 %.9f, %s %.9f\n",
-            (long) s.size, t1, mod_1_name, t2);
-
-  print_define_remark ("USE_PREINV_MOD_1", (mp_size_t) (t1 < t2), NULL);
-}
 
 
 void
@@ -2068,7 +2002,6 @@ all (void)
   tune_divrem_1 ();
   tune_mod_1 ();
   tune_preinv_divrem_1 ();
-  tune_preinv_mod_1 ();
   tune_divrem_2 ();
   tune_divexact_1 ();
   tune_modexact_1_odd ();

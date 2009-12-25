@@ -1,5 +1,9 @@
 2009-12-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_preinv_mod_1): Purge.
+	(tune_mod_1): Use speed_mpn_mod_1_tune for
+	PREINV_MOD_1_TO_MOD_1_THRESHOLD
+
 	* mpn/generic/dcpi1_divappr_q.c: Handle 2n/n properly.  Don't use full
 	precision in mpn_sbpi1_divappr_q call.  Misc cleanup.
 
