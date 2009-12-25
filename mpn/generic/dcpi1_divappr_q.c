@@ -86,14 +86,12 @@ mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
   ASSERT (nn > dn);
   ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
 
-  tp = TMP_SALLOC_LIMBS (dn+1);
-
   qn = nn - dn;
   qp += qn;
   np += nn;
   dp += dn;
 
-  if (qn > dn)
+  if (qn >= dn)
     {
       qn++;			/* pretend we'll need an extra limb */
       /* Reduce qn mod dn without division, optimizing small operations.  */
@@ -103,6 +101,8 @@ mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
       qp -= qn;			/* point at low limb of next quotient block */
       np -= qn;			/* point in the middle of partial remainder */
+
+      tp = TMP_SALLOC_LIMBS (dn);
 
       /* Perform the typically smaller block first.  */
       if (qn == 1)
@@ -206,8 +206,10 @@ mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
       MPN_COPY_INCR (qp, qp + 1, qn);
       qp[qn] = qsave;
     }
-  else
+  else    /* (qn < dn) */
     {
+      mp_ptr q2p;
+#if 0				/* not possible since we demand nn > dn */
       if (qn == 0)
 	{
 	  qh = mpn_cmp (np - dn, dp - dn, dn) >= 0;
@@ -216,21 +218,27 @@ mpn_dcpi1_divappr_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
 	  TMP_FREE;
 	  return qh;
 	}
+#endif
 
       qp -= qn;			/* point at low limb of next quotient block */
       np -= qn;			/* point in the middle of partial remainder */
 
+      q2p = TMP_SALLOC_LIMBS (qn + 1);
+      /* Should we at all check DC_DIVAPPR_Q_THRESHOLD here, or reply on
+	 callers not to be silly?  */
       if (BELOW_THRESHOLD (qn, DC_DIVAPPR_Q_THRESHOLD))
-	 /* Full precision.  Optimal?  */
-	qh = mpn_sbpi1_divappr_q (qp, np - dn, nn, dp - dn, dn, dinv->inv32);
+	{
+	  qh = mpn_sbpi1_divappr_q (q2p, np - qn - 2, 2 * (qn + 1),
+				    dp - (qn + 1), qn + 1, dinv->inv32);
+	}
       else
 	{
 	  /* It is tempting to use qp for recursive scratch and put quotient in
 	     tp, but the recursive scratch needs one limb too many.  */
-	  mp_ptr qp2 = TMP_SALLOC_LIMBS (qn + 1);
-	  qh = mpn_dcpi1_divappr_q_n (qp2, np - qn - 2, dp - (qn + 1), qn + 1, dinv, tp);
-	  MPN_COPY (qp, qp2 + 1, qn);
+	  tp = TMP_SALLOC_LIMBS (qn + 1);
+	  qh = mpn_dcpi1_divappr_q_n (q2p, np - qn - 2, dp - (qn + 1), qn + 1, dinv, tp);
 	}
+      MPN_COPY (qp, q2p + 1, qn);
     }
 
   TMP_FREE;

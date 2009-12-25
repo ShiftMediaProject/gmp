@@ -1,5 +1,8 @@
 2009-12-25  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dcpi1_divappr_q.c: Handle 2n/n properly.  Don't use full
+	precision in mpn_sbpi1_divappr_q call.  Misc cleanup.
+
 	* tune/tuneup.c (tune_mod_1): Add a check_size for
 	PREINV_MOD_1_TO_MOD_1_THRESHOLD.
 
