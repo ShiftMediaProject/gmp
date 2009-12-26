@@ -64,7 +64,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mp_ptr ws;
       TMP_SDECL;
       TMP_SMARK;
-      ws = TMP_SALLOC_LIMBS (mpn_toom6_sqr_itch (n));
+      ws = TMP_SALLOC_LIMBS (mpn_toom6_mul_n_itch (n));
       mpn_toom6h_mul (p, a, n, b, n, ws);
       TMP_SFREE;
     }
@@ -73,7 +73,7 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mp_ptr ws;
       TMP_DECL;
       TMP_MARK;
-      ws = TMP_ALLOC_LIMBS (mpn_toom8_sqr_itch (n));
+      ws = TMP_ALLOC_LIMBS (mpn_toom8_mul_n_itch (n));
       mpn_toom8h_mul (p, a, n, b, n, ws);
       TMP_FREE;
     }

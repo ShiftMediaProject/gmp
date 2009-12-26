@@ -4491,6 +4491,11 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
   (3 * (an) + GMP_NUMB_BITS)
 
 #define mpn_toom6_sqr_itch(n)						\
+( ((n) - SQR_TOOM6_THRESHOLD)*2 +					\
+   MAX(SQR_TOOM6_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
+       mpn_toom4_sqr_itch(SQR_TOOM6_THRESHOLD)) )
+
+#define mpn_toom6_mul_n_itch(n)						\
 ( ((n) - MUL_TOOM6H_THRESHOLD)*2 +					\
    MAX(MUL_TOOM6H_THRESHOLD*2 + GMP_NUMB_BITS*6,			\
        mpn_toom44_mul_itch(MUL_TOOM6H_THRESHOLD,MUL_TOOM6H_THRESHOLD)) )
@@ -4499,19 +4504,24 @@ static inline mp_size_t
 mpn_toom6h_mul_itch (mp_size_t an, mp_size_t bn) {
   mp_size_t estimatedN;
   estimatedN = (an + bn) / (size_t) 10 + 1;
-  return mpn_toom6_sqr_itch (estimatedN * 6);
+  return mpn_toom6_mul_n_itch (estimatedN * 6);
 }
 
 #define mpn_toom8_sqr_itch(n)						\
+( (((n)*15)>>3) - ((SQR_TOOM8_THRESHOLD*15)>>3) +			\
+   MAX(((SQR_TOOM8_THRESHOLD*15)>>3) + GMP_NUMB_BITS*6,		\
+       mpn_toom6_sqr_itch(SQR_TOOM8_THRESHOLD)) )
+
+#define mpn_toom8_mul_n_itch(n)						\
 ( (((n)*15)>>3) - ((MUL_TOOM8H_THRESHOLD*15)>>3) +			\
    MAX(((MUL_TOOM8H_THRESHOLD*15)>>3) + GMP_NUMB_BITS*6,		\
-       mpn_toom6_sqr_itch(MUL_TOOM8H_THRESHOLD)) )
+       mpn_toom6_mul_n_itch(MUL_TOOM8H_THRESHOLD)) )
 
 static inline mp_size_t
 mpn_toom8h_mul_itch (mp_size_t an, mp_size_t bn) {
   mp_size_t estimatedN;
   estimatedN = (an + bn) / (size_t) 14 + 1;
-  return mpn_toom8_sqr_itch (estimatedN * 8);
+  return mpn_toom8_mul_n_itch (estimatedN * 8);
 }
 
 static inline mp_size_t

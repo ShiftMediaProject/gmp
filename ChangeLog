@@ -1,3 +1,9 @@
+2009-12-26  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (mpn_toom6_sqr_itch): Rename to mpn_toom6_mul_n_itch and redefine.
+	(mpn_toom8_sqr_itch): Rename to mpn_toom8_mul_n_itch and redefine.
+	* mpn/generic/mul_n.c: Use renamed _itch macros.
+
 2009-12-25  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-toom32.c (MIN_AN, MIN_BN, MAX_BN): Tightened requirements.
