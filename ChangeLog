@@ -1,5 +1,8 @@
 2009-12-26  Niels Möller  <nisse@lysator.liu.se>
 
+	* mpn/generic/sbpi1_divappr_q.c (mpn_sbpi1_divappr_q): Remove
+	unused variables.
+
 	* mpn/generic/toom32_mul.c (mpn_toom32_mul): Fixed left-over use
 	of mpn_addsub_n which should be mpn_add_n_sub_n.
 
