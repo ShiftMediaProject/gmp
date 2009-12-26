@@ -155,10 +155,16 @@ mpn_dc_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n, mp_ptr tp)
     n1 = n * 11 / (size_t) 36;	/* n1 ~= n*(1-.694...) */
   else if (BELOW_THRESHOLD (n, MUL_TOOM44_THRESHOLD*40/(40-9)))
     n1 = n * 9 / (size_t) 40;	/* n1 ~= n*(1-.775...) */
+#if 1
   else
     n1 = n * 7 / (size_t) 39;	/* n1 ~= n*(1-.821...) */
+#else /* Enable this branch after debugging high-degree-Toom-related crashes. */
+  else if (BELOW_THRESHOLD (n, MUL_TOOM8H_THRESHOLD*10/9))
+    n1 = n * 7 / (size_t) 39;	/* n1 ~= n*(1-.821...) */
   /* n1 = n * 4 / (size_t) 31;	// n1 ~= n*(1-.871...) [TOOM66] */
-  /* n1 = n / (size_t) 10;		// n1 ~= n*(1-.899...) [TOOM88] */
+  else
+    n1 = n / (size_t) 10;		/* n1 ~= n*(1-.899...) [TOOM88] */
+#endif
   n2 = n - n1;
 
   /* Split as x = x1 2^(n2 GMP_NUMB_BITS) + x0,
