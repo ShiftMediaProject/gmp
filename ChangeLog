@@ -1,5 +1,14 @@
-2009-12-26  Torbjorn Granlund  <tege@gmplib.org>
+2009-12-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (MODEXACT_1_ODD_THRESHOLD): Remove.
+	(BMOD_1_TO_MOD_1_THRESHOLD): New parameter, with the reverse meaning of
+	MODEXACT_1_ODD_THRESHOLD.
+	(MPN_MOD_OR_MODEXACT_1_ODD): Use BMOD_1_TO_MOD_1_THRESHOLD.
+	* mpn/generic/divis.c, mpz/{cong.c,cong_ui.c,divis_ui.c}: Likewise.
+	* tune/tuneup.c (tune_modexact_1_odd): Tune BMOD_1_TO_MOD_1_THRESHOLD;
+	Do not assume native mpn_modexact_1_odd is faster than mpn_mod_1.
+	(tuned_speed_mpn_mod_1): Remove variable.
+	
 	* mpn/generic/toom22_mul.c (TOOM22_MUL_REC): New name for
 	TOOM22_MUL_MN_REC.
 

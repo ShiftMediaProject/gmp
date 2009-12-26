@@ -1325,14 +1325,9 @@ tune_divrem_1 (void)
 }
 
 
-double (*tuned_speed_mpn_mod_1) __GMP_PROTO ((struct speed_params *));
-
 void
 tune_mod_1 (void)
 {
-  /* plain version by default */
-  tuned_speed_mpn_mod_1 = speed_mpn_mod_1;
-
   /* No support for tuning native assembler code, do that by hand and put
      the results in the .asm file, there's no need for such thresholds to
      appear in gmp-mparam.h.  */
@@ -1355,8 +1350,6 @@ tune_mod_1 (void)
     }
   else
     {
-      tuned_speed_mpn_mod_1 = speed_mpn_mod_1_tune;
-
       {
 	static struct param_t  param;
 	param.name = "MOD_1_NORM_THRESHOLD";
@@ -1653,22 +1646,22 @@ tune_modexact_1_odd (void)
   static struct param_t  param;
   mp_size_t  thresh_lt, thresh_ge, average;
 
+#if 0
   /* Any native mpn_modexact_1_odd is assumed to incorporate all the speed
      of a full mpn_mod_1.  */
   if (HAVE_NATIVE_mpn_modexact_1_odd)
     {
-      print_define_remark ("MODEXACT_1_ODD_THRESHOLD", 0, "always (native)");
+      print_define_remark ("BMOD_1_TO_MOD_1_THRESHOLD", MP_SIZE_T_MAX, "always bmod_1");
       return;
     }
+#endif
 
-  ASSERT_ALWAYS (tuned_speed_mpn_mod_1 != NULL);
-
-  param.name = "MODEXACT_1_ODD_THRESHOLD";
+  param.name = "BMOD_1_TO_MOD_1_THRESHOLD";
   param.check_size = 256;
   param.min_size = 2;
   param.stop_factor = 1.5;
-  param.function  = tuned_speed_mpn_mod_1;
-  param.function2 = speed_mpn_modexact_1c_odd;
+  param.function  = speed_mpn_modexact_1c_odd;
+  param.function2 = speed_mpn_mod_1_tune;
   param.noprint = 1;
   s.r = randlimb_half () | 1;
 

@@ -591,7 +591,6 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free  __GMP_PROTO ((const char *, int, int,
 #undef USE_PREINV_DIVREM_1
 #undef DIVREM_2_THRESHOLD
 #undef DIVEXACT_1_THRESHOLD
-#undef MODEXACT_1_ODD_THRESHOLD
 #define DIVREM_1_NORM_THRESHOLD           MP_SIZE_T_MAX  /* no preinv */
 #define DIVREM_1_UNNORM_THRESHOLD         MP_SIZE_T_MAX  /* no preinv */
 #define MOD_1_NORM_THRESHOLD              MP_SIZE_T_MAX  /* no preinv */
@@ -2816,15 +2815,15 @@ __GMP_DECLSPEC mp_limb_t mpn_mod_34lsub1 __GMP_PROTO ((mp_srcptr, mp_size_t)) __
 
 
 /* DIVEXACT_1_THRESHOLD is at what size to use mpn_divexact_1, as opposed to
-   plain mpn_divrem_1.  Likewise MODEXACT_1_ODD_THRESHOLD for
+   plain mpn_divrem_1.  Likewise BMOD_1_TO_MOD_1_THRESHOLD for
    mpn_modexact_1_odd against plain mpn_mod_1.  On most CPUs divexact and
    modexact are faster at all sizes, so the defaults are 0.  Those CPUs
    where this is not right have a tuned threshold.  */
 #ifndef DIVEXACT_1_THRESHOLD
 #define DIVEXACT_1_THRESHOLD  0
 #endif
-#ifndef MODEXACT_1_ODD_THRESHOLD
-#define MODEXACT_1_ODD_THRESHOLD  0
+#ifndef BMOD_1_TO_MOD_1_THRESHOLD
+#define BMOD_1_TO_MOD_1_THRESHOLD  10
 #endif
 
 #ifndef mpn_divexact_1  /* if not done with cpuvec in a fat binary */
@@ -2857,7 +2856,7 @@ __GMP_DECLSPEC mp_limb_t mpn_modexact_1_odd __GMP_PROTO ((mp_srcptr, mp_size_t, 
 #endif
 
 #define MPN_MOD_OR_MODEXACT_1_ODD(src,size,divisor)			\
-  (ABOVE_THRESHOLD (size, MODEXACT_1_ODD_THRESHOLD)			\
+  (BELOW_THRESHOLD (size, BMOD_1_TO_MOD_1_THRESHOLD)			\
    ? mpn_modexact_1_odd (src, size, divisor)				\
    : mpn_mod_1 (src, size, divisor))
 
@@ -3675,7 +3674,7 @@ __GMP_DECLSPEC void __gmp_invalid_operation __GMP_PROTO ((void)) ATTRIBUTE_NORET
     ASSERT (__b & 1);                                                      \
                                                                            \
     if ((GMP_NUMB_BITS % 2) != 0                                           \
-        || BELOW_THRESHOLD (__a_size, MODEXACT_1_ODD_THRESHOLD))           \
+        || ABOVE_THRESHOLD (__a_size, BMOD_1_TO_MOD_1_THRESHOLD))          \
       {                                                                    \
         (a_rem) = mpn_mod_1 (__a_ptr, __a_size, __b);                      \
       }                                                                    \

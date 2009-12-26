@@ -96,7 +96,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t an,
 
   if (dn == 1)
     {
-      if (BELOW_THRESHOLD (an, MODEXACT_1_ODD_THRESHOLD))
+      if (ABOVE_THRESHOLD (an, BMOD_1_TO_MOD_1_THRESHOLD))
 	return mpn_mod_1 (ap, an, dlow) == 0;
 
       count_trailing_zeros (twos, dlow);
