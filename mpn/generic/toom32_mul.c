@@ -61,6 +61,7 @@ mpn_toom32_mul (mp_ptr pp,
   int vm1_neg;
   mp_limb_t cy;
   int hi;
+  mp_limb_t ap1_hi, bp1_hi;
 
 #define a0  ap
 #define a1  (ap + n)
@@ -68,14 +69,8 @@ mpn_toom32_mul (mp_ptr pp,
 #define b0  bp
 #define b1  (bp + n)
 
-  /* Required, to guarantee that s + t >= n + 2.
-
-     Also implies that bn >= 9
-
-     FIXME: Too strict? E.g., an = 15, bn = 9, ==> n = 5, s = 5, t = 4
-     seem to be ok. */
-  
-  ASSERT (bn + 4 <= an && an + 14 <= 3*bn);
+  /* Required, to ensure that s + t >= n. */
+  ASSERT (bn + 2 <= an && an + 6 <= 3*bn);
 
   n = 1 + (2 * an >= 3 * bn ? (an - 1) / (size_t) 3 : (bn - 1) >> 1);
 
@@ -84,39 +79,39 @@ mpn_toom32_mul (mp_ptr pp,
 
   ASSERT (0 < s && s <= n);
   ASSERT (0 < t && t <= n);
-  ASSERT (s + t >= n + 2);
+  ASSERT (s + t >= n);
 
   /* Product area of size an + bn = 3*n + s + t >= 4*n + 2. */
-#define ap1 (pp)		/* n + 1 */
-#define bp1 (pp + n + 1)	/* n + 1 */
-#define am1 (pp + 2*n + 2)	/* n, most significant bit stored elsewhere */
-#define bm1 (pp + 3*n + 2)	/* n */
+#define ap1 (pp)		/* n, most significant limb in ap1_hi */
+#define bp1 (pp + n)		/* n, most significant bit in bp1_hi */
+#define am1 (pp + 2*n)		/* n, most significant bit in hi */
+#define bm1 (pp + 3*n)		/* n */
 #define v1 (scratch)		/* 2n + 1 */
 #define vm1 (pp)		/* 2n + 1 */
-#define scratch_out (scratch + 2*n + 1) /* Currently unused. *(
+#define scratch_out (scratch + 2*n + 1) /* Currently unused. */
 
   /* Scratch need: 2*n + 1 + scratch for the recursive multiplications. */
 
-  /* FIXME: Keep ap1[n] and bp1[n] in scalar variables. */
+  /* FIXME: Keep v1[2*n] and vm1[2*n] in scalar variables? */
 
   /* Compute ap1 = a0 + a1 + a3, am1 = a0 - a1 + a3 */
-  ap1[n] = mpn_add (ap1, a0, n, a2, s);
+  ap1_hi = mpn_add (ap1, a0, n, a2, s);
 #if HAVE_NATIVE_mpn_add_n_sub_n
-  if (ap1[n] == 0 && mpn_cmp (ap1, a1, n) < 0)
+  if (ap1_hi == 0 && mpn_cmp (ap1, a1, n) < 0)
     {
-      ap1[n] = mpn_add_n_sub_n (ap1, am1, a1, ap1, n) >> 1;
+      ap1_hi = mpn_add_n_sub_n (ap1, am1, a1, ap1, n) >> 1;
       hi = 0;
       vm1_neg = 1;
     }
   else
     {
       cy = mpn_add_n_sub_n (ap1, am1, ap1, a1, n);
-      hi = ap1[n] - (cy & 1);
-      ap1[n] += (cy >> 1);
+      hi = ap1_hi - (cy & 1);
+      ap1_hi += (cy >> 1);
       vm1_neg = 0;
     }
 #else
-  if (ap1[n] == 0 && mpn_cmp (ap1, a1, n) < 0)
+  if (ap1_hi == 0 && mpn_cmp (ap1, a1, n) < 0)
     {
       ASSERT_NOCARRY (mpn_sub_n (am1, a1, ap1, n));
       hi = 0;
@@ -124,10 +119,10 @@ mpn_toom32_mul (mp_ptr pp,
     }
   else
     {
-      hi = ap1[n] - mpn_sub_n (am1, ap1, a1, n);
+      hi = ap1_hi - mpn_sub_n (am1, ap1, a1, n);
       vm1_neg = 0;
     }
-  ap1[n] += mpn_add_n (ap1, ap1, a1, n);
+  ap1_hi += mpn_add_n (ap1, ap1, a1, n);
 #endif
 
   /* Compute bp1 = b0 + b1 and bm1 = b0 - b1. */
@@ -143,9 +138,9 @@ mpn_toom32_mul (mp_ptr pp,
 	{
 	  cy = mpn_add_n_sub_n (bp1, bm1, b0, b1, n);
 	}
-      bp1[n] = cy >> 1;
+      bp1_hi = cy >> 1;
 #else
-      bp1[n] = mpn_add_n (bp1, b0, b1, n);
+      bp1_hi = mpn_add_n (bp1, b0, b1, n);
 
       if (mpn_cmp (b0, b1, n) < 0)
 	{
@@ -160,8 +155,8 @@ mpn_toom32_mul (mp_ptr pp,
     }
   else
     {
-      /* FIXME: Should still use addsub for the main part. */
-      bp1[n] = mpn_add (bp1, b0, n, b1, t);
+      /* FIXME: Should still use mpn_add_n_sub_n for the main part. */
+      bp1_hi = mpn_add (bp1, b0, n, b1, t);
 
       if (mpn_zero_p (b0 + t, n - t) && mpn_cmp (b0, b1, t) < 0)
 	{
@@ -176,21 +171,21 @@ mpn_toom32_mul (mp_ptr pp,
     }
 
   TOOM32_MUL_N_REC (v1, ap1, bp1, n, scratch_out);
-  if (ap1[n] == 1)
+  if (ap1_hi == 1)
     {
-      cy = bp1[n] + mpn_add_n (v1 + n, v1 + n, bp1, n);
+      cy = bp1_hi + mpn_add_n (v1 + n, v1 + n, bp1, n);
     }
-  else if (ap1[n] == 2)
+  else if (ap1_hi == 2)
     {
 #if HAVE_NATIVE_mpn_addlsh1_n
-      cy = 2 * bp1[n] + mpn_addlsh1_n (v1 + n, v1 + n, bp1, n);
+      cy = 2 * bp1_hi + mpn_addlsh1_n (v1 + n, v1 + n, bp1, n);
 #else
-      cy = 2 * bp1[n] + mpn_addmul_1 (v1 + n, bp1, n, CNST_LIMB(2));
+      cy = 2 * bp1_hi + mpn_addmul_1 (v1 + n, bp1, n, CNST_LIMB(2));
 #endif
     }
   else
     cy = 0;
-  if (bp1[n] != 0)
+  if (bp1_hi != 0)
     cy += mpn_add_n (v1 + n, v1 + n, ap1, n);
   v1[2 * n] = cy;
   
@@ -250,6 +245,8 @@ mpn_toom32_mul (mp_ptr pp,
   cy = mpn_add_n (pp + 2*n, v1, v1 + n, n);
   MPN_INCR_U (v1 + n, n + 1, cy + v1[2*n]);
 
+  /* FIXME: Can we get rid of this second vm1_neg conditional by
+     swapping the location of +1 and -1 values? */
   if (vm1_neg)
     {
       cy = mpn_add_n (v1, v1, vm1, n);
@@ -299,10 +296,17 @@ mpn_toom32_mul (mp_ptr pp,
   hi -= mpn_sub_nc (pp + 3*n, scratch + n, pp + n, n, cy);
 
   hi += mpn_add (pp + n, pp + n, 3*n, scratch, n);
-  hi -= mpn_sub (pp + 2*n, pp + 2*n, 2*n, pp + 4*n, s+t-n);
 
-  if (hi < 0)
-    MPN_DECR_U (pp + 4*n, s+t-n, -hi);
+  /* FIXME: Is support for s + t == n needed? */
+  if (LIKELY (s + t > n))
+    {
+      hi -= mpn_sub (pp + 2*n, pp + 2*n, 2*n, pp + 4*n, s+t-n);
+
+      if (hi < 0)
+	MPN_DECR_U (pp + 4*n, s+t-n, -hi);
+      else
+	MPN_INCR_U (pp + 4*n, s+t-n, hi);
+    }
   else
-    MPN_INCR_U (pp + 4*n, s+t-n, hi);
+    ASSERT (hi == 0);
 }

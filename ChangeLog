@@ -1,5 +1,12 @@
 2009-12-26  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/t-toom32.c (MIN_AN, MIN_BN, MAX_BN): Relax
+	requirements a bit.
+
+	* mpn/generic/toom32_mul.c (mpn_toom32_mul): Relax requirement on
+	input sizes, to support s+t>=n (used to be s+t>=n+2). Keep high
+	limbs of the evaluated values in scalar variables.
+
 	* mpn/generic/sbpi1_divappr_q.c (mpn_sbpi1_divappr_q): Remove
 	unused variables.
 
