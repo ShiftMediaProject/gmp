@@ -1,3 +1,8 @@
+2009-12-26  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/toom22_mul.c (TOOM22_MUL_REC): New name for
+	TOOM22_MUL_MN_REC.
+
 2009-12-26  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add new toom files (spotted by Torbjorn).

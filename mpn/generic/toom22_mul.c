@@ -63,7 +63,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    each recursion (the difference s-t will be invariant over recursive calls).
    Therefore, we need to call toom32_mul.  FIXME: Suppress depending on
    MUL_TOOM33_THRESHOLD / MUL_TOOM22_THRESHOLD and on MUL_TOOM22_THRESHOLD.  */
-#define TOOM22_MUL_MN_REC(p, a, an, b, bn, ws)				\
+#define TOOM22_MUL_REC(p, a, an, b, bn, ws)				\
   do {									\
     if (! MAYBE_mul_toom22						\
 	|| BELOW_THRESHOLD (bn, MUL_TOOM22_THRESHOLD))			\
@@ -167,7 +167,7 @@ mpn_toom22_mul (mp_ptr pp,
   /* vm1, 2n limbs */
   TOOM22_MUL_N_REC (vm1, asm1, bsm1, n, scratch_out);
 
-  if (s > t)  TOOM22_MUL_MN_REC (vinf, a1, s, b1, t, scratch_out);
+  if (s > t)  TOOM22_MUL_REC (vinf, a1, s, b1, t, scratch_out);
   else        TOOM22_MUL_N_REC (vinf, a1, b1, s, scratch_out);
 
   /* v0, 2n limbs */
