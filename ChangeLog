@@ -8,9 +8,24 @@
 	* tune/tuneup.c (tune_modexact_1_odd): Tune BMOD_1_TO_MOD_1_THRESHOLD;
 	Do not assume native mpn_modexact_1_odd is faster than mpn_mod_1.
 	(tuned_speed_mpn_mod_1): Remove variable.
-	
+
 	* mpn/generic/toom22_mul.c (TOOM22_MUL_REC): New name for
 	TOOM22_MUL_MN_REC.
+
+2009-12-26  Niels Möller  <nisse@lysator.liu.se>
+
+	* tests/mpn/t-toom32.c (MIN_AN, MIN_BN, MAX_BN): Relax
+	requirements a bit.
+
+	* mpn/generic/toom32_mul.c (mpn_toom32_mul): Relax requirement on
+	input sizes, to support s+t>=n (used to be s+t>=n+2). Keep high
+	limbs of the evaluated values in scalar variables.
+
+	* mpn/generic/sbpi1_divappr_q.c (mpn_sbpi1_divappr_q): Remove
+	unused variables.
+
+	* mpn/generic/toom32_mul.c (mpn_toom32_mul): Fixed left-over use
+	of mpn_addsub_n which should be mpn_add_n_sub_n.
 
 2009-12-26  Marco Bodrato <bodrato@mail.dm.unipi.it>
 

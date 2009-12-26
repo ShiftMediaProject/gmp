@@ -41,9 +41,8 @@ mpn_sbpi1_divappr_q (mp_ptr qp,
   mp_limb_t n1, n0;
   mp_limb_t d1, d0;
   mp_limb_t cy, cy1;
-  mp_limb_t q, q0;
-  mp_limb_t t1, t0;
-  mp_limb_t mask, flag;
+  mp_limb_t q;
+  mp_limb_t flag;
 
   ASSERT (dn > 2);
   ASSERT (nn >= dn);

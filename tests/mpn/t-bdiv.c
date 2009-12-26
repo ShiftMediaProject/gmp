@@ -109,7 +109,7 @@ main (int argc, char **argv)
   qp = TMP_ALLOC_LIMBS (MAX_NN + 1);
   rp = TMP_ALLOC_LIMBS (MAX_DN + 1);
 
-  /* Claim larger nn that we'll use, to allow for a large quotient.
+  /* Claim larger nn than we'll use, to allow for a large quotient.
      FIXME: This probably isn't the right way. */
   max_qr_itch = mpn_bdiv_qr_itch (MAX_NN + MAX_DN, MAX_DN);
   max_q_itch = mpn_bdiv_q_itch (MAX_NN + MAX_DN, MAX_DN);
