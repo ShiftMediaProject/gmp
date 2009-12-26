@@ -1,3 +1,8 @@
+2009-12-26  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/toom32_mul.c (mpn_toom32_mul): Fixed left-over use
+	of mpn_addsub_n which should be mpn_add_n_sub_n.
+
 2009-12-26  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/Makefile.am (TUNE_MPN_SRCS_BASIC): Add new toom files (spotted by Torbjorn).
