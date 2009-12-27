@@ -243,10 +243,15 @@ double speed_mpn_sbpi1_div_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_div_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_divappr_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_divappr_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mu_div_qr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mu_divappr_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mu_div_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_bdiv_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mu_bdiv_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mu_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_invert __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_invertappr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_ni_invertappr __GMP_PROTO ((struct speed_params *s));
@@ -1509,6 +1514,88 @@ int speed_routine_count_zeros_setup
     TMP_FREE;								\
     return t;								\
   }
+#define SPEED_ROUTINE_MPN_MU_DIV_Q(function,itchfn)			\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, qp, scratch;					\
+    double     t;							\
+    mp_size_t itch;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+									\
+    itch = itchfn (2 * s->size, s->size, 0);				\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
+									\
+    MPN_COPY (tp,         s->xp, s->size);				\
+    MPN_COPY (tp+s->size, s->xp, s->size);				\
+									\
+    /* normalize the data */						\
+    dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
+    tp[2*s->size-1] = dp[s->size-1] - 1;				\
+									\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, scratch, itch);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      function (qp, tp, 2 * s->size, dp, s->size, scratch);		\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_MPN_MU_DIV_QR(function,itchfn)			\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, qp, rp, scratch;					\
+    double     t;							\
+    mp_size_t itch;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+									\
+    itch = itchfn (2 * s->size, s->size, 0);				\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
+    SPEED_TMP_ALLOC_LIMBS (rp, s->size, s->align_wp2); /* alignment? */	\
+									\
+    MPN_COPY (tp,         s->xp, s->size);				\
+    MPN_COPY (tp+s->size, s->xp, s->size);				\
+									\
+    /* normalize the data */						\
+    dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
+    tp[2*s->size-1] = dp[s->size-1] - 1;				\
+									\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_dst (s, rp, s->size);					\
+    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, scratch, itch);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      function (qp, rp, tp, 2 * s->size, dp, s->size, scratch);		\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
 
 #define SPEED_ROUTINE_MPN_PI1_BDIV_QR(function)				\
   {									\
@@ -1584,6 +1671,84 @@ int speed_routine_count_zeros_setup
     do {								\
       MPN_COPY (tp, s->xp, s->size);					\
       function (qp, tp, s->size, dp, s->size, inv);			\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_MPN_MU_BDIV_Q(function,itchfn)			\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, qp, scratch;						\
+    double     t;							\
+    mp_size_t itch;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+									\
+    itch = itchfn (s->size, s->size);					\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
+									\
+    /* divisor must be odd */						\
+    MPN_COPY (dp, s->yp, s->size);					\
+    dp[0] |= 1;								\
+									\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_src (s, s->xp, s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, scratch, itch);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      function (qp, s->xp, s->size, dp, s->size, scratch);		\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_MPN_MU_BDIV_QR(function,itchfn)			\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, qp, rp, scratch;					\
+    double     t;							\
+    mp_size_t itch;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+									\
+    itch = itchfn (2 * s->size, s->size);				\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
+    SPEED_TMP_ALLOC_LIMBS (rp, s->size, s->align_wp2); /* alignment? */	\
+									\
+    MPN_COPY (tp,         s->xp, s->size);				\
+    MPN_COPY (tp+s->size, s->xp, s->size);				\
+									\
+    /* divisor must be odd */						\
+    MPN_COPY (dp, s->yp, s->size);					\
+    dp[0] |= 1;								\
+									\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_dst (s, rp, s->size);					\
+    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_dst (s, scratch, itch);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      function (qp, rp, tp, 2 * s->size, dp, s->size, scratch);		\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\

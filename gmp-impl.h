@@ -1799,11 +1799,11 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #endif
 
 #ifndef MU_BDIV_Q_THRESHOLD
-#define MU_BDIV_Q_THRESHOLD            1000
+#define MU_BDIV_Q_THRESHOLD            2000
 #endif
 
 #ifndef MU_BDIV_QR_THRESHOLD
-#define MU_BDIV_QR_THRESHOLD           1000
+#define MU_BDIV_QR_THRESHOLD           2000
 #endif
 
 #ifndef MULMOD_BNM1_THRESHOLD

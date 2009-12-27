@@ -175,8 +175,12 @@ mp_size_t  sqrmod_bnm1_threshold        = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
+mp_size_t  mu_div_qr_threshold          = MP_SIZE_T_MAX;
+mp_size_t  mu_divappr_q_threshold       = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
+mp_size_t  mu_bdiv_qr_threshold         = MP_SIZE_T_MAX;
+mp_size_t  mu_bdiv_q_threshold          = MP_SIZE_T_MAX;
 mp_size_t  inv_mulmod_bnm1_threshold    = MP_SIZE_T_MAX;
 mp_size_t  inv_newton_threshold         = MP_SIZE_T_MAX;
 mp_size_t  inv_appr_threshold           = MP_SIZE_T_MAX;
@@ -1095,6 +1099,29 @@ tune_dc_div (void)
 }
 
 void
+tune_mu_div (void)
+{
+  {
+    static struct param_t  param;
+    param.name = "MU_DIV_QR_THRESHOLD";
+    param.function = speed_mpn_dcpi1_div_qr;
+    param.function2 = speed_mpn_mu_div_qr;
+    param.min_size = 4;
+    param.max_size = 5000;
+    one (&mu_div_qr_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "MU_DIVAPPR_Q_THRESHOLD";
+    param.function = speed_mpn_dcpi1_divappr_q;
+    param.function2 = speed_mpn_mu_divappr_q;
+    param.min_size = 100;
+    param.max_size = 5000;
+    one (&mu_divappr_q_threshold, &param);
+  }
+}
+
+void
 tune_dc_bdiv (void)
 {
   {
@@ -1112,6 +1139,29 @@ tune_dc_bdiv (void)
     param.function2 = speed_mpn_dcpi1_bdiv_q;
     param.min_size = 4;
     one (&dc_bdiv_q_threshold, &param);
+  }
+}
+
+void
+tune_mu_bdiv (void)
+{
+  {
+    static struct param_t  param;
+    param.name = "MU_BDIV_QR_THRESHOLD";
+    param.function = speed_mpn_dcpi1_bdiv_qr;
+    param.function2 = speed_mpn_mu_bdiv_qr;
+    param.min_size = 4;
+    param.max_size = 5000;
+    one (&mu_bdiv_qr_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "MU_BDIV_Q_THRESHOLD";
+    param.function = speed_mpn_dcpi1_bdiv_q;
+    param.function2 = speed_mpn_mu_bdiv_q;
+    param.min_size = 4;
+    param.max_size = 5000;
+    one (&mu_bdiv_q_threshold, &param);
   }
 }
 
@@ -1992,6 +2042,10 @@ all (void)
 
   tune_binvert ();
   tune_redc ();
+  printf("\n");
+
+  tune_mu_div ();
+  tune_mu_bdiv ();
   printf("\n");
 
   tune_matrix22_mul ();

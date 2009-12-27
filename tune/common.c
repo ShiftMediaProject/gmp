@@ -777,6 +777,21 @@ speed_mpn_dcpi1_divappr_q (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_PI1_DIV (mpn_dcpi1_divappr_q, &inv);
 }
+double
+speed_mpn_mu_div_qr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MU_DIV_QR (mpn_mu_div_qr, mpn_mu_div_qr_itch);
+}
+double
+speed_mpn_mu_divappr_q (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MU_DIV_Q (mpn_mu_divappr_q, mpn_mu_divappr_q_itch);
+}
+double
+speed_mpn_mu_div_q (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MU_DIV_Q (mpn_mu_div_q, mpn_mu_div_q_itch);
+}
 
 double
 speed_mpn_sbpi1_bdiv_qr (struct speed_params *s)
@@ -797,6 +812,16 @@ double
 speed_mpn_dcpi1_bdiv_q (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_PI1_BDIV_Q (mpn_dcpi1_bdiv_q);
+}
+double
+speed_mpn_mu_bdiv_q (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MU_BDIV_Q (mpn_mu_bdiv_q, mpn_mu_bdiv_q_itch);
+}
+double
+speed_mpn_mu_bdiv_qr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MU_BDIV_QR (mpn_mu_bdiv_qr, mpn_mu_bdiv_qr_itch);
 }
 
 double
