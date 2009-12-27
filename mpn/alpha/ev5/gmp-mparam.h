@@ -82,8 +82,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1_NORM_THRESHOLD                 0  /* always */
 #define MOD_1_UNNORM_THRESHOLD               0  /* always */
 #define MOD_1N_TO_MOD_1_1_THRESHOLD         33
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          0  /* always */
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         5
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          5
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD        16
 #define PREINV_MOD_1_TO_MOD_1_THRESHOLD     76
 #define USE_PREINV_DIVREM_1                  1  /* preinv always */

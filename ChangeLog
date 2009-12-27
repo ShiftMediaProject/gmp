@@ -1,5 +1,8 @@
 2009-12-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/*/gmp-mparam.h: Fix incorrect MOD_1U_TO_MOD_1_1_THRESHOLD 0
+	values.
+
 	* gmp-impl.h (MODEXACT_1_ODD_THRESHOLD): Remove.
 	(BMOD_1_TO_MOD_1_THRESHOLD): New parameter, with the reverse meaning of
 	MODEXACT_1_ODD_THRESHOLD.
