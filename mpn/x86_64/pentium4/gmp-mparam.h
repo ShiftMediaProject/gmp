@@ -28,68 +28,75 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* 3200 MHz Pentium / 2048 Kibyte cache / socket 775 */
 
-#define MUL_TOOM22_THRESHOLD               12
-#define MUL_TOOM33_THRESHOLD               81
-#define MUL_TOOM44_THRESHOLD              121
+#define MUL_TOOM22_THRESHOLD                12
+#define MUL_TOOM33_THRESHOLD                81
+#define MUL_TOOM44_THRESHOLD               121
+#define MUL_TOOM6H_THRESHOLD               321
+#define MUL_TOOM8H_THRESHOLD               482
 
-#define MUL_TOOM32_TO_TOOM43_THRESHOLD     81
-#define MUL_TOOM32_TO_TOOM53_THRESHOLD    154
-#define MUL_TOOM42_TO_TOOM53_THRESHOLD     83
-#define MUL_TOOM42_TO_TOOM63_THRESHOLD     90
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD      81
+#define MUL_TOOM32_TO_TOOM53_THRESHOLD     154
+#define MUL_TOOM42_TO_TOOM53_THRESHOLD     145
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD      96
 
-#define SQR_BASECASE_THRESHOLD              0  /* always (native) */
-#define SQR_TOOM2_THRESHOLD                22
-#define SQR_TOOM3_THRESHOLD                89
-#define SQR_TOOM4_THRESHOLD               226
+#define SQR_BASECASE_THRESHOLD               0  /* always (native) */
+#define SQR_TOOM2_THRESHOLD                 22
+#define SQR_TOOM3_THRESHOLD                 89
+#define SQR_TOOM4_THRESHOLD                244
+#define SQR_TOOM6_THRESHOLD                327
+#define SQR_TOOM8_THRESHOLD                502
 
-#define MULMOD_BNM1_THRESHOLD              10
-#define SQRMOD_BNM1_THRESHOLD              11
+#define MULMOD_BNM1_THRESHOLD                9
+#define SQRMOD_BNM1_THRESHOLD               14
 
 #define MUL_FFT_TABLE  { 240, 544, 1600, 2816, 7168, 20480, 49152, 196608, 786432, 0 }
-#define MUL_FFT_MODF_THRESHOLD            272
-#define MUL_FFT_THRESHOLD                2432
+#define MUL_FFT_MODF_THRESHOLD             272
+#define MUL_FFT_THRESHOLD                 4864
 
-#define SQR_FFT_TABLE  { 240, 544, 1472, 2816, 7168, 20480, 49152, 196608, 786432, 0 }
-#define SQR_FFT_MODF_THRESHOLD            272
-#define SQR_FFT_THRESHOLD                1920
+#define SQR_FFT_TABLE  { 240, 480, 1472, 2816, 7168, 20480, 49152, 196608, 0 }
+#define SQR_FFT_MODF_THRESHOLD             272
+#define SQR_FFT_THRESHOLD                 4224
 
-#define MULLO_BASECASE_THRESHOLD            0  /* always */
-#define MULLO_DC_THRESHOLD                 28
-#define MULLO_MUL_N_THRESHOLD            3478
+#define MULLO_BASECASE_THRESHOLD             0  /* always */
+#define MULLO_DC_THRESHOLD                  28
+#define MULLO_MUL_N_THRESHOLD             4957
 
-#define DC_DIV_QR_THRESHOLD                31
-#define DC_DIVAPPR_Q_THRESHOLD             67
-#define DC_BDIV_QR_THRESHOLD               32
-#define DC_BDIV_Q_THRESHOLD                54
+#define DC_DIV_QR_THRESHOLD                 31
+#define DC_DIVAPPR_Q_THRESHOLD              63
+#define DC_BDIV_QR_THRESHOLD                31
+#define DC_BDIV_Q_THRESHOLD                 48
 
-#define INV_MULMOD_BNM1_THRESHOLD          24
-#define INV_NEWTON_THRESHOLD              226
-#define INV_APPR_THRESHOLD                 11
+#define INV_MULMOD_BNM1_THRESHOLD          115
+#define INV_NEWTON_THRESHOLD               260
+#define INV_APPR_THRESHOLD                 108
 
-#define BINV_NEWTON_THRESHOLD             262
-#define REDC_1_TO_REDC_2_THRESHOLD         17
-#define REDC_2_TO_REDC_N_THRESHOLD         48
+#define BINV_NEWTON_THRESHOLD              264
+#define REDC_1_TO_REDC_2_THRESHOLD          15
+#define REDC_2_TO_REDC_N_THRESHOLD          46
 
-#define MATRIX22_STRASSEN_THRESHOLD        19
-#define HGCD_THRESHOLD                    100
-#define GCD_DC_THRESHOLD                  241
-#define GCDEXT_DC_THRESHOLD               237
-#define JACOBI_BASE_METHOD                  1
+#define MATRIX22_STRASSEN_THRESHOLD         19
+#define HGCD_THRESHOLD                     104
+#define GCD_DC_THRESHOLD                   241
+#define GCDEXT_DC_THRESHOLD                233
+#define JACOBI_BASE_METHOD                   1
 
-#define MOD_1_NORM_THRESHOLD                0  /* always */
-#define MOD_1_UNNORM_THRESHOLD              0  /* always */
-#define MOD_1_1_THRESHOLD                   4
-#define MOD_1_2_THRESHOLD                   9
-#define MOD_1_4_THRESHOLD                  22
-#define USE_PREINV_DIVREM_1                 1  /* native */
-#define USE_PREINV_MOD_1                    0
-#define DIVEXACT_1_THRESHOLD                0  /* always (native) */
-#define MODEXACT_1_ODD_THRESHOLD            0  /* always (native) */
+#define MOD_1_NORM_THRESHOLD                 0  /* always */
+#define MOD_1_UNNORM_THRESHOLD               0  /* always */
+#define MOD_1N_TO_MOD_1_1_THRESHOLD          6
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          4
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD         8
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        22
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     10
+#define USE_PREINV_DIVREM_1                  1  /* native */
+#define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
+#define BMOD_1_TO_MOD_1_THRESHOLD           20
 
-#define GET_STR_DC_THRESHOLD               12
-#define GET_STR_PRECOMPUTE_THRESHOLD       24
-#define SET_STR_DC_THRESHOLD              442
-#define SET_STR_PRECOMPUTE_THRESHOLD     1366
+#define GET_STR_DC_THRESHOLD                12
+#define GET_STR_PRECOMPUTE_THRESHOLD        24
+#define SET_STR_DC_THRESHOLD               532
+#define SET_STR_PRECOMPUTE_THRESHOLD      1561
+
+/* These tables need updating.  */
 
 #define MUL_FFT_TABLE2 {{1,4}, {145,5}, {353,6}, {961,7}, {2689,8}, {6913,10}, {7169,9}, {7681,8}, {8449,9}, {13825,10}, {15361,9}, {19969,10}, {23553,9}, {26113,11}, {30721,10}, {31745,9}, {34561,10}, {48129,11}, {63489,10}, {81921,11}, {96257,10}, {97793,12}, {126977,11}, {133121,10}, {135169,11}, {137217,10}, {139777,9}, {141313,10}, {145409,11}, {161793,10}, {163841,11}, {165889,10}, {169985,11}, {172033,10}, {177153,11}, {206849,12}, {212993,11}, {217089,12}, {258049,11}, {358401,12}, {389121,11}, {391169,10}, {397313,11}, {410625,10}, {421889,11}, {450561,13}, {516097,12}, {520193,11}, {587777,12}, {651265,11}, {718849,12}, {790529,11}, {800769,12}, {815105,11}, {821249,12}, {833537,11}, {845825,12}, {915457,13}, {1040385,12}, {1437697,13}, {1564673,12}, {1830913,14}, {2088961,12}, {2355201,13}, {2613249,12}, {2879489,13}, {3137537,12}, {3405825,13}, {3661825,14}, {4186113,12}, {4454401,13}, {4714497,11}, {4979713,13}, {MP_SIZE_T_MAX, 0}}
 #define MUL_FFT_TABLE2_SIZE 73
