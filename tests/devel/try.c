@@ -1562,7 +1562,7 @@ const struct choice_t choice_array[] = {
 
   { TRY(mpn_mul),    TYPE_MUL_MN },
   { TRY(mpn_mul_n),  TYPE_MUL_N },
-  { TRY(mpn_sqr_n),  TYPE_SQR },
+  { TRY(mpn_sqr),    TYPE_SQR },
 
   { TRY_FUNFUN(umul_ppmm), TYPE_UMUL_PPMM, 2 },
 #if HAVE_NATIVE_mpn_umul_ppmm

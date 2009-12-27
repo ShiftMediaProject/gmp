@@ -1,4 +1,4 @@
-/* mpn_sqr_n -- square natural numbers.
+/* mpn_sqr -- square natural numbers.
 
 Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
 2005, 2008, 2009 Free Software Foundation, Inc.
@@ -23,7 +23,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 void
-mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
+mpn_sqr (mp_ptr p, mp_srcptr a, mp_size_t n)
 {
   ASSERT (n >= 1);
   ASSERT (! MPN_OVERLAP_P (p, 2 * n, a, n));

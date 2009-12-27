@@ -55,7 +55,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   (SQR_FFT_THRESHOLD >= 4 * SQR_TOOM4_THRESHOLD)
 #endif
 
-#define TOOM4_SQR_N_REC(p, a, n, ws)					\
+#define TOOM4_SQR_REC(p, a, n, ws)					\
   do {									\
     if (MAYBE_sqr_basecase						\
 	&& BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))			\
@@ -111,8 +111,8 @@ mpn_toom4_sqr (mp_ptr pp,
   /* Compute apx = a0 + 2 a1 + 4 a2 + 8 a3 and amx = a0 - 2 a1 + 4 a2 - 8 a3.  */
   mpn_toom_eval_dgr3_pm2 (apx, amx, ap, n, s, tp);
 
-  TOOM4_SQR_N_REC (v2, apx, n + 1, tp);	/* v2,  2n+1 limbs */
-  TOOM4_SQR_N_REC (vm2, amx, n + 1, tp);	/* vm2,  2n+1 limbs */
+  TOOM4_SQR_REC (v2, apx, n + 1, tp);	/* v2,  2n+1 limbs */
+  TOOM4_SQR_REC (vm2, amx, n + 1, tp);	/* vm2,  2n+1 limbs */
 
   /* Compute apx = 8 a0 + 4 a1 + 2 a2 + a3 = (((2*a0 + a1) * 2 + a2) * 2 + a3 */
 #if HAVE_NATIVE_mpn_addlsh1_n
@@ -138,16 +138,16 @@ mpn_toom4_sqr (mp_ptr pp,
 
   ASSERT (apx[n] < 15);
 
-  TOOM4_SQR_N_REC (vh, apx, n + 1, tp);	/* vh,  2n+1 limbs */
+  TOOM4_SQR_REC (vh, apx, n + 1, tp);	/* vh,  2n+1 limbs */
 
   /* Compute apx = a0 + a1 + a2 + a3 and amx = a0 - a1 + a2 - a3.  */
   mpn_toom_eval_dgr3_pm1 (apx, amx, ap, n, s, tp);
 
-  TOOM4_SQR_N_REC (v1, apx, n + 1, tp);	/* v1,  2n+1 limbs */
-  TOOM4_SQR_N_REC (vm1, amx, n + 1, tp);	/* vm1,  2n+1 limbs */
+  TOOM4_SQR_REC (v1, apx, n + 1, tp);	/* v1,  2n+1 limbs */
+  TOOM4_SQR_REC (vm1, amx, n + 1, tp);	/* vm1,  2n+1 limbs */
 
-  TOOM4_SQR_N_REC (v0, a0, n, tp);
-  TOOM4_SQR_N_REC (vinf, a3, s, tp);	/* vinf, 2s limbs */
+  TOOM4_SQR_REC (v0, a0, n, tp);
+  TOOM4_SQR_REC (vinf, a3, s, tp);	/* vinf, 2s limbs */
 
   mpn_toom_interpolate_7pts (pp, n, 0, vm2, vm1, v2, vh, 2*s, tp);
 }

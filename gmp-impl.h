@@ -908,8 +908,8 @@ __GMP_DECLSPEC void mpn_mullo_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_s
 #define mpn_mullo_basecase __MPN(mullo_basecase)
 __GMP_DECLSPEC void mpn_mullo_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
-#define mpn_sqr_n __MPN(sqr_n)
-__GMP_DECLSPEC void mpn_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#define mpn_sqr __MPN(sqr)
+__GMP_DECLSPEC void mpn_sqr __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 #ifndef mpn_sqr_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_sqr_basecase __MPN(sqr_basecase)

@@ -992,7 +992,7 @@ tune_sqrmod_bnm1 (void)
    just for that.  Start karatsuba from 4 same as MUL above.  */
 
 void
-tune_sqr_n (void)
+tune_sqr (void)
 {
   /* disabled until tuned */
   SQR_FFT_THRESHOLD = MP_SIZE_T_MAX;
@@ -1006,7 +1006,7 @@ tune_sqr_n (void)
     {
       static struct param_t  param;
       param.name = "SQR_BASECASE_THRESHOLD";
-      param.function = speed_mpn_sqr_n;
+      param.function = speed_mpn_sqr;
       param.min_size = 3;
       param.min_is_always = 1;
       param.max_size = TUNE_SQR_TOOM2_MAX;
@@ -1017,7 +1017,7 @@ tune_sqr_n (void)
   {
     static struct param_t  param;
     param.name = "SQR_TOOM2_THRESHOLD";
-    param.function = speed_mpn_sqr_n;
+    param.function = speed_mpn_sqr;
     param.min_size = MAX (4, MPN_TOOM2_SQR_MINSIZE);
     param.max_size = TUNE_SQR_TOOM2_MAX;
     param.noprint = 1;
@@ -1029,7 +1029,7 @@ tune_sqr_n (void)
         /* Karatsuba becomes faster than mul_basecase before
            sqr_basecase does.  Arrange for the expression
            "BELOW_THRESHOLD (un, SQR_TOOM2_THRESHOLD))" which
-           selects mpn_sqr_basecase in mpn_sqr_n to be false, by setting
+           selects mpn_sqr_basecase in mpn_sqr to be false, by setting
            SQR_TOOM2_THRESHOLD to zero, making
            SQR_BASECASE_THRESHOLD the toom2 threshold.  */
 
@@ -1053,7 +1053,7 @@ tune_sqr_n (void)
     static struct param_t  param;
     mp_size_t toom3_start = MAX (sqr_toom2_threshold, sqr_basecase_threshold);
 
-    param.function = speed_mpn_sqr_n;
+    param.function = speed_mpn_sqr;
 
     param.name = "SQR_TOOM3_THRESHOLD";
     param.min_size = MAX (toom3_start, MPN_TOOM3_SQR_MINSIZE);
@@ -1927,7 +1927,7 @@ tune_fft_sqr (void)
   param.first_size          = SQR_TOOM3_THRESHOLD / 2;
   param.max_size            = option_fft_max_size;
   param.function            = speed_mpn_mul_fft_sqr;
-  param.mul_function        = speed_mpn_sqr_n;
+  param.mul_function        = speed_mpn_sqr;
   param.sqr = 0;
   fft (&param);
 }
@@ -2012,7 +2012,7 @@ all (void)
   tune_mul ();
   printf("\n");
 
-  tune_sqr_n ();
+  tune_sqr ();
   printf("\n");
 
   tune_mulmod_bnm1 ();

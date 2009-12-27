@@ -125,7 +125,7 @@ TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = bdiv_q.c bdiv_qr.c				\
   dcpi1_div_qr.c dcpi1_divappr_q.c dcpi1_bdiv_qr.c dcpi1_bdiv_q.c	\
   invertappr.c invert.c binvert.c divrem_2.c gcd.c gcdext.c		\
-  get_str.c set_str.c matrix22_mul.c hgcd.c mul_n.c sqr_n.c		\
+  get_str.c set_str.c matrix22_mul.c hgcd.c mul_n.c sqr.c		\
   mullo_n.c mul_fft.c mul.c tdiv_qr.c mulmod_bnm1.c sqrmod_bnm1.c	\
   nussbaumer_mul.c toom6h_mul.c toom8h_mul.c toom6_sqr.c toom8_sqr.c	\
   toom22_mul.c toom2_sqr.c toom33_mul.c toom3_sqr.c toom44_mul.c toom4_sqr.c
@@ -152,52 +152,3 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 
 
 include ../mpn/Makeasm.am
-
-
-# "mk" is multiplication in the karatsuba range
-# "st" is squaring in the toom-cook range, etc
-# "g" forms produce graphs
-
-mk:
-	./speed -s 5-40 -c mpn_mul_basecase mpn_kara_mul_n
-
-MTS = -s 50-150 -c
-mt:
-	./speed $(MTS) mpn_kara_mul_n mpn_toom3_mul_n
-mtg:
-	./speed $(MTS) -P mtg mpn_kara_mul_n mpn_toom3_mul_n
-
-sk:
-	./speed -s 5-40 -c mpn_sqr_basecase mpn_kara_sqr_n
-
-STS = -s 50-150 -c
-st:
-	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n
-stg:
-	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
-
-fib:
-	./speed -s 40-60 -c mpz_fib_ui
-fibg:
-	./speed -s 10-300 -P fibg mpz_fib_ui
-
-
-gcd:
-	./speed -s 1-20 -c mpn_gcd
-
-udiv:
-	./speed -s 1 -c udiv_qrnnd udiv_qrnnd_preinv udiv_qrnnd_preinv2norm invert_limb udiv_qrnnd_c
-
-divn:
-	./speed -s 1-30 -c mpn_divrem_1_div.-1 mpn_divrem_1_inv.-1
-divun:
-	./speed -s 1-30 -c mpn_divrem_1_div.12345 mpn_divrem_1_inv.12345
-modn:
-	./speed -s 1-30 -c mpn_mod_1_div.-1 mpn_mod_1_inv.-1
-modun:
-	./speed -s 1-30 -c mpn_mod_1_div.12345 mpn_mod_1_inv.12345
-
-
-graph:
-	./speed -s 1-5000 -f 1.02 -P graph mpn_mul_n mpn_sqr
-	gnuplot graph.gnuplot

@@ -104,7 +104,7 @@ mpn_remove (mp_ptr wp, mp_size_t *wn,
       if (nn > qn)
 	break;			/* next power would be overlarge */
 
-      mpn_sqr_n (np, pp, pn);
+      mpn_sqr (np, pp, pn);
       nn += np[nn] != 0;
       pp = np;
       pn = nn;

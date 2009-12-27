@@ -35,7 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define USE_PREINV_DIVREM_1   1
 
 /* mpn_sqr_basecase is faster than mpn_mul_basecase at all sizes, no need
-   for mpn_sqr_n to call the latter.  */
+   for mpn_sqr to call the latter.  */
 #define SQR_BASECASE_THRESHOLD 0
 
 /* Sensible fallbacks for these, when not taken from a cpu-specific

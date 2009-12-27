@@ -40,7 +40,7 @@ mpn_bc_sqrmod_bnm1 (mp_ptr rp, mp_srcptr ap, mp_size_t rn, mp_ptr tp)
 
   ASSERT (0 < rn);
 
-  mpn_sqr_n (tp, ap, rn);
+  mpn_sqr (tp, ap, rn);
   cy = mpn_add_n (rp, tp, tp + rn, rn);
   /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
    * be no overflow when adding in the carry. */
@@ -59,7 +59,7 @@ mpn_bc_sqrmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_size_t rn, mp_ptr tp)
 
   ASSERT (0 < rn);
 
-  mpn_sqr_n (tp, ap, rn + 1);
+  mpn_sqr (tp, ap, rn + 1);
   ASSERT (tp[2*rn+1] == 0);
   ASSERT (tp[2*rn] < GMP_NUMB_MAX);
   cy = tp[2*rn] + mpn_sub_n (rp, tp, tp+rn, rn);
@@ -94,13 +94,13 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	{
 	  if (UNLIKELY (2*an <= rn))
 	    {
-	      mpn_sqr_n (rp, ap, an);
+	      mpn_sqr (rp, ap, an);
 	      MPN_ZERO (rp + 2*an, rn - 2*an);
 	    }
 	  else
 	    {
 	      mp_limb_t cy;
-	      mpn_sqr_n (tp, ap, an);
+	      mpn_sqr (tp, ap, an);
 	      cy = mpn_add (rp, tp, rn, tp + rn, 2*an - rn);
 	      MPN_INCR_U (rp, rn, cy);
 	    }

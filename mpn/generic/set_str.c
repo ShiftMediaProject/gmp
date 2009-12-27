@@ -169,7 +169,7 @@ mpn_set_str_compute_powtab (powers_t *powtab, mp_ptr powtab_mem, mp_size_t un, i
 
       ASSERT_ALWAYS (powtab_mem_ptr < powtab_mem + mpn_dc_set_str_powtab_alloc (un));
 
-      mpn_sqr_n (t, p, n);
+      mpn_sqr (t, p, n);
       n = 2 * n - 1; n += t[n] != 0;
       digits_in_base *= 2;
 #if 1

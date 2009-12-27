@@ -273,7 +273,7 @@ double speed_mpn_dc_set_str __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_set_str_pre __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqr_diagonal __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_sqr_n __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_sqr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sqrtrem __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_rootrem __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sub_n __GMP_PROTO ((struct speed_params *s));
@@ -444,11 +444,6 @@ mp_limb_t mpn_sb_divrem_mn_inv __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcpt
 
 mp_size_t mpn_set_str_basecase __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, int));
 void mpn_pre_set_str __GMP_PROTO ((mp_ptr, unsigned char *, size_t, powers_t *, mp_ptr));
-
-void mpn_toom3_mul_n_open __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
-void mpn_toom3_sqr_n_open __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
-void mpn_toom3_mul_n_mpn __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
-void mpn_toom3_sqr_n_mpn __GMP_PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 void mpz_powm_mod __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr, mpz_srcptr));
 void mpz_powm_redc __GMP_PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr, mpz_srcptr));

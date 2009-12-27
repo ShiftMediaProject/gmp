@@ -405,7 +405,7 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 	  exp = 1;
 	  while (2 * pn - 1 <= ncn)
 	    {
-	      mpn_sqr_n (next, prev, pn);
+	      mpn_sqr (next, prev, pn);
 	      xn = 2 * pn;
 	      xn -= (next[xn - 1] == 0);
 

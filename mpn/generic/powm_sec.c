@@ -98,12 +98,12 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifndef SQR_BASECASE_MAX
 /* If SQR_BASECASE_MAX is now not defined, use mpn_sqr_basecase for any operand
    size.  */
-#define mpn_local_sqr_n(rp,up,n,tp) mpn_sqr_basecase(rp,up,n)
+#define mpn_local_sqr(rp,up,n,tp) mpn_sqr_basecase(rp,up,n)
 #else
 /* Define our own squaring function, which uses mpn_sqr_basecase for its
    allowed sizes, but its own code for larger sizes.  */
 static void
-mpn_local_sqr_n (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
+mpn_local_sqr (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr tp)
 {
   mp_size_t i;
 
@@ -277,7 +277,7 @@ mpn_powm_sec (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
       do
 	{
-	  mpn_local_sqr_n (tp, rp, n, tp + 2 * n);
+	  mpn_local_sqr (tp, rp, n, tp + 2 * n);
 	  mpn_redc_1_sec (rp, tp, mp, n, minv);
 	  this_windowsize--;
 	}

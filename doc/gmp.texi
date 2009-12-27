@@ -5175,7 +5175,7 @@ The destination has to have space for 2*@var{n} limbs, even if the product's
 most significant limb is zero.  No overlap is permitted between the
 destination and either source.
 
-If the two input operands are the same, use @code{mpn_sqr_n}.
+If the two input operands are the same, use @code{mpn_sqr}.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
@@ -5190,7 +5190,7 @@ destination and either source.
 This function requires that @var{s1n} is greater than or equal to @var{s2n}.
 @end deftypefun
 
-@deftypefun void mpn_sqr_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n})
+@deftypefun void mpn_sqr (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n})
 Compute the square of @{@var{s1p}, @var{n}@} and write the 2*@var{n}-limb
 result to @var{rp}.
 

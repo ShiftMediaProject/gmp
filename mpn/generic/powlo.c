@@ -95,7 +95,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
   b2p = tp + 2*n;
 
   /* Store b^2 in b2.  */
-  mpn_sqr_n (tp, bp, n);	/* FIXME: Use "mpn_sqrlo" */
+  mpn_sqr (tp, bp, n);	/* FIXME: Use "mpn_sqrlo" */
   MPN_COPY (b2p, tp, n);
 
   /* Precompute odd powers of b and put them in the temporary area at pp.  */
@@ -122,7 +122,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
     {
       while (getbit (ep, ebi) == 0)
 	{
-	  mpn_sqr_n (tp, rp, n);	/* FIXME: Use "mpn_sqrlo" */
+	  mpn_sqr (tp, rp, n);	/* FIXME: Use "mpn_sqrlo" */
 	  MPN_COPY (rp, tp, n);
 	  ebi--;
 	  if (ebi == 0)
@@ -149,7 +149,7 @@ mpn_powlo (mp_ptr rp, mp_srcptr bp,
 
       do
 	{
-	  mpn_sqr_n (tp, rp, n);
+	  mpn_sqr (tp, rp, n);
 	  MPN_COPY (rp, tp, n);
 	  this_windowsize--;
 	}

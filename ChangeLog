@@ -6,6 +6,8 @@
 
 2009-12-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* (mpn_sqr): New name for mpn_sqr_n.  Many files affected.
+
 	* tune/tuneup.c (tune_mullo): Up step_factor for MULLO_MUL_N_THRESHOLD.
 	(tune_invertappr, tune_invert, tune_binvert): Let max_size default.
 

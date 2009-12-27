@@ -473,7 +473,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
 	ASSERT_ALWAYS (powtab_mem_ptr < powtab_mem + mpn_dc_get_str_powtab_alloc (un));
 
-	mpn_sqr_n (t, p, n);
+	mpn_sqr (t, p, n);
 
 	digits_in_base *= 2;
 	n *= 2;  n -= t[n - 1] == 0;

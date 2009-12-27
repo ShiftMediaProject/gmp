@@ -40,7 +40,7 @@ Changes between GMP version 4.3.X and 4.4.0
     average, where Q is the quotient.
 
   Features:
-  * New mpn functions: mpn_sqr_n, mpn_and_n, mpn_ior_n, mpn_xor_n,
+  * New mpn functions: mpn_sqr, mpn_and_n, mpn_ior_n, mpn_xor_n,
     mpn_nand_n, mpn_nior_n, mpn_xnor_n, mpn_andn_n, mpn_iorn_n.
   * Support for fat binaries for 64-bit x86 processors.
   * New type, mp_bitcnt_t for bignum bit counts.

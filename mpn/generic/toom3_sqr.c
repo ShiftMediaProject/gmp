@@ -51,7 +51,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   (SQR_TOOM4_THRESHOLD >= 3 * SQR_TOOM3_THRESHOLD)
 #endif
 
-#define TOOM3_SQR_N_REC(p, a, n, ws)					\
+#define TOOM3_SQR_REC(p, a, n, ws)					\
   do {									\
     if (MAYBE_sqr_basecase						\
 	&& BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))			\
@@ -154,7 +154,7 @@ mpn_toom3_sqr (mp_ptr pp,
 
   /* vm1, 2n+1 limbs */
 #ifdef SMALLER_RECURSION
-  TOOM3_SQR_N_REC (vm1, asm1, n, scratch_out);
+  TOOM3_SQR_REC (vm1, asm1, n, scratch_out);
   cy = 0;
   if (asm1[n] != 0)
     cy = asm1[n] + mpn_add_n (vm1 + n, vm1 + n, asm1, n);
@@ -162,18 +162,18 @@ mpn_toom3_sqr (mp_ptr pp,
     cy += mpn_add_n (vm1 + n, vm1 + n, asm1, n);
   vm1[2 * n] = cy;
 #else
-  TOOM3_SQR_N_REC (vm1, asm1, n + 1, scratch_out);
+  TOOM3_SQR_REC (vm1, asm1, n + 1, scratch_out);
 #endif
 
-  TOOM3_SQR_N_REC (v2, as2, n + 1, scratch_out);	/* v2, 2n+1 limbs */
+  TOOM3_SQR_REC (v2, as2, n + 1, scratch_out);	/* v2, 2n+1 limbs */
 
-  TOOM3_SQR_N_REC (vinf, a2, s, scratch_out);		/* vinf, s+s limbs */
+  TOOM3_SQR_REC (vinf, a2, s, scratch_out);	/* vinf, s+s limbs */
 
   vinf0 = vinf[0];				/* v1 overlaps with this */
 
 #ifdef SMALLER_RECURSION
   /* v1, 2n+1 limbs */
-  TOOM3_SQR_N_REC (v1, as1, n, scratch_out);
+  TOOM3_SQR_REC (v1, as1, n, scratch_out);
   if (as1[n] == 1)
     {
       cy = as1[n] + mpn_add_n (v1 + n, v1 + n, as1, n);
@@ -203,11 +203,11 @@ mpn_toom3_sqr (mp_ptr pp,
   v1[2 * n] = cy;
 #else
   cy = vinf[1];
-  TOOM3_SQR_N_REC (v1, as1, n + 1, scratch_out);
+  TOOM3_SQR_REC (v1, as1, n + 1, scratch_out);
   vinf[1] = cy;
 #endif
 
-  TOOM3_SQR_N_REC (v0, ap, n, scratch_out);	/* v0, 2n limbs */
+  TOOM3_SQR_REC (v0, ap, n, scratch_out);	/* v0, 2n limbs */
 
   mpn_toom_interpolate_5pts (pp, v2, vm1, n, s + s, 0, vinf0);
 }

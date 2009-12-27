@@ -45,7 +45,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
   (SQR_TOOM3_THRESHOLD >= 2 * SQR_TOOM2_THRESHOLD)
 #endif
 
-#define TOOM2_SQR_N_REC(p, a, n, ws)					\
+#define TOOM2_SQR_REC(p, a, n, ws)					\
   do {									\
     if (! MAYBE_sqr_toom2						\
 	|| BELOW_THRESHOLD (n, SQR_TOOM2_THRESHOLD))			\
@@ -104,13 +104,13 @@ mpn_toom2_sqr (mp_ptr pp,
 #define scratch_out	scratch + 2 * n
 
   /* vm1, 2n limbs */
-  TOOM2_SQR_N_REC (vm1, asm1, n, scratch_out);
+  TOOM2_SQR_REC (vm1, asm1, n, scratch_out);
 
   /* vinf, s+s limbs */
-  TOOM2_SQR_N_REC (vinf, a1, s, scratch_out);
+  TOOM2_SQR_REC (vinf, a1, s, scratch_out);
 
   /* v0, 2n limbs */
-  TOOM2_SQR_N_REC (v0, ap, n, scratch_out);
+  TOOM2_SQR_REC (v0, ap, n, scratch_out);
 
   /* H(v0) + L(vinf) */
   cy = mpn_add_n (pp + 2 * n, v0 + n, vinf, n);

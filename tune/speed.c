@@ -294,7 +294,7 @@ const struct routine_t {
 #endif
 
   { "mpn_mul_n",         speed_mpn_mul_n            },
-  { "mpn_sqr_n",         speed_mpn_sqr_n            },
+  { "mpn_sqr",           speed_mpn_sqr              },
 
   { "mpn_toom2_sqr",     speed_mpn_toom2_sqr        },
   { "mpn_toom3_sqr",     speed_mpn_toom3_sqr        },
