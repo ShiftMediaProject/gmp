@@ -177,6 +177,7 @@ mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mu_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mu_divappr_q_threshold       = MP_SIZE_T_MAX;
+mp_size_t  mu_div_q_threshold           = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mu_bdiv_qr_threshold         = MP_SIZE_T_MAX;
@@ -953,7 +954,7 @@ tune_mullo (void)
   param.min_size = mullo_dc_threshold;
   param.max_size = 2 * mul_fft_threshold;
   param.noprint = 0;
-  param.step_factor = 0.02;
+  param.step_factor = 0.03;
   one (&mullo_mul_n_threshold, &param);
 #else
   print_define_remark ("MULLO_MUL_N_THRESHOLD", MP_SIZE_T_MAX,
@@ -1173,13 +1174,11 @@ tune_invertappr (void)
   param.function = speed_mpn_ni_invertappr;
   param.name = "INV_MULMOD_BNM1_THRESHOLD";
   param.min_size = 4;
-  param.max_size = 5000;
   one (&inv_mulmod_bnm1_threshold, &param);
 
   param.function = speed_mpn_invertappr;
   param.name = "INV_NEWTON_THRESHOLD";
   param.min_size = 3;
-  param.max_size = 5000;
   one (&inv_newton_threshold, &param);
 }
 
@@ -1191,7 +1190,6 @@ tune_invert (void)
   param.function = speed_mpn_invert;
   param.name = "INV_APPR_THRESHOLD";
   param.min_size = 3;
-  param.max_size = 5000;
   one (&inv_appr_threshold, &param);
 }
 
@@ -1203,7 +1201,6 @@ tune_binvert (void)
   param.function = speed_mpn_binvert;
   param.name = "BINV_NEWTON_THRESHOLD";
   param.min_size = 8;		/* pointless with smaller operands */
-  param.max_size = 5000;
   one (&binv_newton_threshold, &param);
 }
 
@@ -1934,7 +1931,6 @@ tune_fft_sqr (void)
   param.sqr = 0;
   fft (&param);
 }
-
 
 void
 all (void)

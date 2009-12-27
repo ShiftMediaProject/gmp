@@ -6,6 +6,9 @@
 
 2009-12-27  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mullo): Up step_factor for MULLO_MUL_N_THRESHOLD.
+	(tune_invertappr, tune_invert, tune_binvert): Let max_size default.
+
 	* tune/tuneup.c (tune_mu_div, tune_mu_bdiv) New functions.
 	* tune/speed.h (SPEED_ROUTINE_MPN_MU_DIV_Q): New macro.
 	(SPEED_ROUTINE_MPN_MU_DIV_QR): Likewise.
@@ -17,7 +20,7 @@
 	(speed_mpn_mu_div_q): Likewise.
 	(speed_mpn_mu_bdiv_q): Likewise.
 	(speed_mpn_mu_bdiv_qr): Likewise.
-	
+
 	* mpn/*/gmp-mparam.h: Fix incorrect MOD_1U_TO_MOD_1_1_THRESHOLD 0
 	values.
 
