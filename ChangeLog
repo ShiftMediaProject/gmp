@@ -8,6 +8,9 @@
 	* tune/tuneup.c (tune_modexact_1_odd): Tune BMOD_1_TO_MOD_1_THRESHOLD;
 	Do not assume native mpn_modexact_1_odd is faster than mpn_mod_1.
 	(tuned_speed_mpn_mod_1): Remove variable.
+	(tune_mod_1): Fix thinkos.  Suppress printing of "always" etc.
+	(all): Measure for divrem_1, mod_1, divexact_1, etc first, since Toom
+	depends on some of them.
 
 	* mpn/generic/toom22_mul.c (TOOM22_MUL_REC): New name for
 	TOOM22_MUL_MN_REC.

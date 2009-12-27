@@ -1398,14 +1398,15 @@ tune_mod_1 (void)
 
     if (mod_1u_to_mod_1_1_threshold + 2 >= mod_1_1_to_mod_1_2_threshold)
       {
-	/* Disable mod_1_1 for these smaller moduli, mod_1_2 is always faster.
-	   Measure when to switch (from mod_1_unnorm) to mod_1_2.  */
-	mod_1u_to_mod_1_1_threshold = 0;
+	/* Disable mod_1_1, mod_1_2 is always faster.  Measure when to switch
+	   (from mod_1_unnorm) to mod_1_2.  */
+	mod_1_1_to_mod_1_2_threshold = 0;
 
+	/* This really measures mod_1u -> mod_1_2 */
 	param.min_size = 1;
-	one (&mod_1_1_to_mod_1_2_threshold, &param);
+	one (&mod_1u_to_mod_1_1_threshold, &param);
       }
-    print_define ("MOD_1U_TO_MOD_1_1_THRESHOLD", mod_1u_to_mod_1_1_threshold);
+    print_define_remark ("MOD_1U_TO_MOD_1_1_THRESHOLD", mod_1u_to_mod_1_1_threshold, NULL);
 
     param.name = "MOD_1_2_TO_MOD_1_4_THRESHOLD";
     param.min_size = mod_1_1_to_mod_1_2_threshold;
@@ -1413,15 +1414,15 @@ tune_mod_1 (void)
 
     if (mod_1_1_to_mod_1_2_threshold + 2 >= mod_1_2_to_mod_1_4_threshold)
       {
-	/* Disable mod_1_2 for these smaller moduli, mod_1_4 is always faster.
-	   Measure when to switch (from mod_1_unnorm or mod_1_1) to mod_1_4.  */
-	mod_1_1_to_mod_1_2_threshold = 0;
+	/* Disable mod_1_2, mod_1_4 is always faster.  Measure when to switch
+	   (from mod_1_unnorm or mod_1_1) to mod_1_4.  */
+	mod_1_2_to_mod_1_4_threshold = 0;
 
 	param.min_size = 1;
-	one (&mod_1_2_to_mod_1_4_threshold, &param);
+	one (&mod_1_1_to_mod_1_2_threshold, &param);
       }
-    print_define ("MOD_1_1_TO_MOD_1_2_THRESHOLD", mod_1_1_to_mod_1_2_threshold);
-    print_define ("MOD_1_2_TO_MOD_1_4_THRESHOLD", mod_1_2_to_mod_1_4_threshold);
+    print_define_remark ("MOD_1_1_TO_MOD_1_2_THRESHOLD", mod_1_1_to_mod_1_2_threshold, NULL);
+    print_define_remark ("MOD_1_2_TO_MOD_1_4_THRESHOLD", mod_1_2_to_mod_1_4_threshold, NULL);
   }
 
   {
@@ -1951,6 +1952,14 @@ all (void)
   }
   printf ("\n");
 
+  tune_divrem_1 ();
+  tune_mod_1 ();
+  tune_preinv_divrem_1 ();
+  tune_divrem_2 ();
+  tune_divexact_1 ();
+  tune_modexact_1_odd ();
+  printf("\n");
+
   tune_mul_n ();
   printf("\n");
 
@@ -1990,14 +1999,6 @@ all (void)
   tune_gcd_dc ();
   tune_gcdext_dc ();
   tune_jacobi_base ();
-  printf("\n");
-
-  tune_divrem_1 ();
-  tune_mod_1 ();
-  tune_preinv_divrem_1 ();
-  tune_divrem_2 ();
-  tune_divexact_1 ();
-  tune_modexact_1_odd ();
   printf("\n");
 
   tune_get_str ();
