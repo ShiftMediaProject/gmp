@@ -1,5 +1,7 @@
 2009-12-27  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/mul.c: Use toom6h and toom8h for almost balanced.
+
 	* mpn/generic/mullo_n.c (mpn_dc_mullo_n): New ratio, to be used in Toom-8 range.
 
 2009-12-27  Torbjorn Granlund  <tege@gmplib.org>

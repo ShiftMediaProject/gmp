@@ -318,8 +318,21 @@ mpn_mul (mp_ptr prodp,
 	  mp_ptr scratch;
 	  TMP_DECL; TMP_MARK;
 
-	  scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (un, vn));
-	  mpn_toom44_mul (prodp, up, un, vp, vn, scratch);
+	  if (BELOW_THRESHOLD (vn, MUL_TOOM6H_THRESHOLD))
+	    {
+	      scratch = TMP_ALLOC_LIMBS (mpn_toom44_mul_itch (un, vn));
+	      mpn_toom44_mul (prodp, up, un, vp, vn, scratch);
+	    }
+	  else if (BELOW_THRESHOLD (vn, MUL_TOOM8H_THRESHOLD))
+	    {
+	      scratch = TMP_ALLOC_LIMBS (mpn_toom6h_mul_itch (un, vn));
+	      mpn_toom6h_mul (prodp, up, un, vp, vn, scratch);
+	    }
+	  else
+	    {
+	      scratch = TMP_ALLOC_LIMBS (mpn_toom8h_mul_itch (un, vn));
+	      mpn_toom8h_mul (prodp, up, un, vp, vn, scratch);
+	    }
 	  TMP_FREE;
 	}
     }
