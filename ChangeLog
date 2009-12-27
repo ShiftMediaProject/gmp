@@ -1,3 +1,7 @@
+2009-12-27  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mullo_n.c (mpn_dc_mullo_n): New ratio, to be used in Toom-8 range.
+
 2009-12-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/*/gmp-mparam.h: Fix incorrect MOD_1U_TO_MOD_1_1_THRESHOLD 0
