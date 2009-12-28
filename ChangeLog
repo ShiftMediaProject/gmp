@@ -1,5 +1,9 @@
 2009-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/devel/try.c: Test mpn_lshiftc.
+	* tests/refmpn.c (refmpn_com): New function.
+	(refmpn_lshiftc): Likewise.
+
 	* configure.in (gmp_mpn_functions_optional) Move lshiftc from here...
 	(gmp_mpn_functions): ...to here.
 	* mpn/generic/lshiftc.c: New file.

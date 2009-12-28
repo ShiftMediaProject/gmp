@@ -273,14 +273,11 @@ void refmpn_ior_n  __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void refmpn_iorn_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
-mp_limb_t refmpn_lshift __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
-                                 unsigned shift));
-mp_limb_t refmpn_lshift_or_copy __GMP_PROTO ((mp_ptr wp,
-                                         mp_srcptr xp, mp_size_t size,
-                                         unsigned shift));
-mp_limb_t refmpn_lshift_or_copy_any __GMP_PROTO ((mp_ptr wp,
-                                                  mp_srcptr xp, mp_size_t size,
-                                                  unsigned shift));
+mp_limb_t refmpn_lshift __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned));
+mp_limb_t refmpn_lshift_or_copy __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned));
+mp_limb_t refmpn_lshift_or_copy_any __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned));
+mp_limb_t refmpn_lshiftc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned));
+void refmpn_com __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 mp_ptr refmpn_malloc_limbs __GMP_PROTO ((mp_size_t size));
 mp_ptr refmpn_malloc_limbs_aligned __GMP_PROTO ((mp_size_t n, size_t m));

@@ -1084,6 +1084,29 @@ refmpn_lshift (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
   return ret;
 }
 
+void
+refmpn_com (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{
+  mp_size_t i;
+
+  /* We work downwards since mpn_lshiftc needs that. */
+  ASSERT (refmpn_overlap_high_to_low_p (rp, sp, size));
+
+  for (i = size - 1; i >= 0; i--)
+    rp[i] = (~sp[i]) & GMP_NUMB_MASK;
+}
+
+mp_limb_t
+refmpn_lshiftc (mp_ptr rp, mp_srcptr sp, mp_size_t size, unsigned shift)
+{
+  mp_limb_t res;
+
+  /* No asserts here, refmpn_lshift will assert what we need. */
+
+  res = refmpn_lshift (rp, sp, size, shift);
+  refmpn_com (rp, rp, size);
+  return res;
+}
 
 /* accepting shift==0 and doing a plain copyi or copyd in that case */
 mp_limb_t

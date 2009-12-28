@@ -585,11 +585,12 @@ validate_sqrtrem (void)
 
 #define TYPE_RSHIFT           23
 #define TYPE_LSHIFT           24
+#define TYPE_LSHIFTC          25
 
-#define TYPE_COPY             25
-#define TYPE_COPYI            26
-#define TYPE_COPYD            27
-#define TYPE_COM_N            28
+#define TYPE_COPY             26
+#define TYPE_COPYI            27
+#define TYPE_COPYD            28
+#define TYPE_COM_N            29
 
 #define TYPE_ADDLSH1_N        30
 #define TYPE_ADDLSH2_N        48
@@ -1137,6 +1138,11 @@ param_init (void)
   p->overlap = OVERLAP_HIGH_TO_LOW;
   REFERENCE (refmpn_lshift);
 
+  p = &param[TYPE_LSHIFTC];
+  COPY (TYPE_RSHIFT);
+  p->overlap = OVERLAP_HIGH_TO_LOW;
+  REFERENCE (refmpn_lshiftc);
+
 
   p = &param[TYPE_POPCOUNT];
   p->retval = 1;
@@ -1552,6 +1558,7 @@ const struct choice_t choice_array[] = {
 
   { TRY(mpn_rshift),     TYPE_RSHIFT },
   { TRY(mpn_lshift),     TYPE_LSHIFT },
+  { TRY(mpn_lshiftc),    TYPE_LSHIFTC },
 
 
   { TRY(mpn_mul_basecase), TYPE_MUL_MN },
@@ -2312,6 +2319,7 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_LSHIFT:
+  case TYPE_LSHIFTC:
   case TYPE_RSHIFT:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, shift);
