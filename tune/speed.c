@@ -242,6 +242,7 @@ const struct routine_t {
   { "mpn_dc_div_qr_n",      speed_mpn_dcpi1_div_qr_n   },
 
   { "mpn_lshift",        speed_mpn_lshift, FLAG_R   },
+  { "mpn_lshiftc",       speed_mpn_lshiftc, FLAG_R   },
   { "mpn_rshift",        speed_mpn_rshift, FLAG_R   },
 
   { "mpn_and_n",         speed_mpn_and_n,  FLAG_R_OPTIONAL },
