@@ -1,6 +1,6 @@
 dnl  x86-64 mpn_lshift optimized for "Core 2".
 
-dnl  Copyright 2007 Free Software Foundation, Inc.
+dnl  Copyright 2007, 2009 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -25,7 +25,7 @@ C K8,K9:	 4.25
 C K10:		 4.25
 C P4:		14.7
 C P6 core2:	 1.27
-C P6 corei7:	 1.75
+C P6 corei7:	 1.5
 
 
 C INPUT PARAMETERS
@@ -112,8 +112,8 @@ L(01):	shld	%cl, %r10, %r9
 	mov	%r9, -16(rp)
 L(00):	shld	%cl, %r11, %r10
 	mov	-24(up), %r9
-	lea	-32(up), up
 	mov	%r10, -24(rp)
+	add	$-32, up
 	lea	-32(rp), rp
 	sub	$4, n
 	jnc	L(top)

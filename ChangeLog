@@ -1,3 +1,8 @@
+2009-12-28  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/core2/lshift.asm: Tweak for better Core iN performance.
+	* mpn/x86_64/core2/rshift.asm: Likewise.
+
 2009-12-27  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mul.c: Use toom6h and toom8h for almost balanced.
