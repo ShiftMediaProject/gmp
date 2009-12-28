@@ -180,44 +180,6 @@ mpn_fft_initl (int **l, int k)
     }
 }
 
-/* Shift {up, n} of cnt bits to the left, store the complemented result
-   in {rp, n}, and output the shifted bits (not complemented).
-   Same as:
-     cc = mpn_lshift (rp, up, n, cnt);
-     mpn_com_n (rp, rp, n);
-     return cc;
-
-   Assumes n >= 1, 1 < cnt < GMP_NUMB_BITS, rp >= up.
-*/
-#ifndef HAVE_NATIVE_mpn_lshiftc
-#undef mpn_lshiftc
-static mp_limb_t
-mpn_lshiftc (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
-{
-  mp_limb_t high_limb, low_limb;
-  unsigned int tnc;
-  mp_size_t i;
-  mp_limb_t retval;
-
-  up += n;
-  rp += n;
-
-  tnc = GMP_NUMB_BITS - cnt;
-  low_limb = *--up;
-  retval = low_limb >> tnc;
-  high_limb = (low_limb << cnt);
-
-  for (i = n - 1; i != 0; i--)
-    {
-      low_limb = *--up;
-      *--rp = (~(high_limb | (low_limb >> tnc))) & GMP_NUMB_MASK;
-      high_limb = low_limb << cnt;
-    }
-  *--rp = (~high_limb) & GMP_NUMB_MASK;
-
-  return retval;
-}
-#endif
 
 /* r <- a*2^e mod 2^(n*GMP_NUMB_BITS)+1 with a = {a, n+1}
    Assumes a is semi-normalized, i.e. a[n] <= 1.

@@ -2488,13 +2488,13 @@ gmp_mpn_functions_optional="umul udiv com_n				\
   addlsh1_n sublsh1_n rsblsh1_n rsh1add_n rsh1sub_n			\
   addlsh2_n sublsh2_n rsblsh2_n						\
   addlsh_n sublsh_n rsblsh_n						\
-  add_n_sub_n addaddmul_1msb0 lshiftc"
+  add_n_sub_n addaddmul_1msb0"
 
 gmp_mpn_functions="$extra_functions					   \
   add add_1 add_n sub sub_1 sub_n neg_n mul_1 addmul_1			   \
   submul_1 lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2     \
   fib2_ui mod_1 mod_34lsub1 mode1o pre_divrem_1 pre_mod_1 dump		   \
-  mod_1_1 mod_1_2 mod_1_3 mod_1_4					   \
+  mod_1_1 mod_1_2 mod_1_3 mod_1_4 lshiftc				   \
   mul mul_fft mul_n sqr mul_basecase sqr_basecase nussbaumer_mul	   \
   random random2 pow_1							   \
   rootrem sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp	   \
