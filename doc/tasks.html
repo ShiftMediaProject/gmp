@@ -37,7 +37,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
-  This file current as of 28 Nov 2009.  An up-to-date version is available at
+  This file current as of 28 Dec 2009.  An up-to-date version is available at
   <a href="http://gmplib.org/tasks.html">http://gmplib.org/tasks.html</a>.
   Please send comments about this page to gmp-devel<font>@</font>gmplib.org.
 
@@ -436,7 +436,7 @@ either already been taken care of, or have become irrelevant.
      <code>mpn_rshift</code> already provided.
 <li> Cray T3E: Experiment with optimization options.  In particular,
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
-<li> Cray: <code>mpn_com_n</code> and <code>mpn_and_n</code> etc very probably
+<li> Cray: <code>mpn_com</code> and <code>mpn_and_n</code> etc very probably
      wants a pragma like <code>MPN_COPY_INCR</code>.
 <li> Cray vector systems: <code>mpn_lshift</code>, <code>mpn_rshift</code>,
      <code>mpn_popcount</code> and <code>mpn_hamdist</code> are nice and small

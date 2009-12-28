@@ -1,4 +1,4 @@
-dnl  PowerPC-64 mpn_com_n.
+dnl  PowerPC-64 mpn_com.
 
 dnl  Copyright 2003, 2004, 2005 Free Software Foundation, Inc.
 
@@ -32,7 +32,7 @@ C up	r4
 C n	r5
 
 ASM_START()
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com)
 	rldic.	r0, r5, 3, 59	C r0 = (r5 & 3) << 3; cr0 = (n == 4t)?
 	cmpldi	cr6, r0, 16	C cr6 = (n cmp 4t + 2)?
 

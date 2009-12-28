@@ -376,7 +376,7 @@ my @table =
      },
 
      {
-       'regexp'=> 'com_n|copyi|copyd',
+       'regexp'=> 'com|copyi|copyd',
        'ret'   => 'void',
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size',
        'speed' => 'SPEED_ROUTINE_MPN_COPY',

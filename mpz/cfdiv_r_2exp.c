@@ -109,7 +109,7 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, mp_bitcnt_t cnt, int dir)
 
       /* Ones complement */
       i = MIN (abs_usize, limb_cnt+1);
-      mpn_com_n (wp, up, i);
+      mpn_com (wp, up, i);
       for ( ; i <= limb_cnt; i++)
         wp[i] = GMP_NUMB_MAX;
 

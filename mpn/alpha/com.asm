@@ -1,4 +1,4 @@
-dnl  Alpha mpn_com_n -- mpn one's complement.
+dnl  Alpha mpn_com -- mpn one's complement.
 
 dnl  Copyright 2003 Free Software Foundation, Inc.
 dnl
@@ -26,7 +26,7 @@ C EV5:    2.0
 C EV6:    1.5
 
 
-C mp_limb_t mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C mp_limb_t mpn_com (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C For ev5 the main loop is 7 cycles plus 1 taken branch bubble, for a total
 C 2.0 c/l.  In general, a pattern like this unrolled to N limbs per loop
@@ -60,7 +60,7 @@ FLOAT64(L(dat), 2.0)
 
 	ALIGN(16)
 
-PROLOGUE(mpn_com_n,gp)
+PROLOGUE(mpn_com,gp)
 
 	C r16	dst
 	C r17	src

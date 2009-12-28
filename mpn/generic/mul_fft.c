@@ -212,7 +212,7 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, unsigned int d, mp_size_t n)
 	{
 	  MPN_COPY (r, a + n - d, d);
 	  rd = a[n];
-	  mpn_com_n (r + d, a, n - d);
+	  mpn_com (r + d, a, n - d);
 	  cc = 0;
 	}
 
@@ -249,7 +249,7 @@ mpn_fft_mul_2exp_modF (mp_ptr r, mp_srcptr a, unsigned int d, mp_size_t n)
   else
     {
       /* r[d] is not used below, but we save a test for d=0 */
-      mpn_com_n (r, a + n - d, d + 1);
+      mpn_com (r, a + n - d, d + 1);
       rd = a[n];
       MPN_COPY (r + d, a, n - d);
       cc = 0;

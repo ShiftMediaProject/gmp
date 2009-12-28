@@ -35,7 +35,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   addmul_1.c addmul_2.c addmul_3.c addmul_4.c addmul_5.c addmul_6.c	    \
   addmul_7.c addmul_8.c							    \
   and_n.c andn_n.c							    \
-  cmp.c com_n.c copyd.c copyi.c						    \
+  cmp.c com.c copyd.c copyi.c						    \
   dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
   sbpi1_bdiv_qr.c sbpi1_bdiv_q.c					    \
   sbpi1_div_qr.c sbpi1_div_q.c sbpi1_divappr_q.c			    \
@@ -60,7 +60,7 @@ nodist_EXTRA_libmpn_la_SOURCES =					    \
   toom_interpolate_5pts.c toom_interpolate_6pts.c toom_interpolate_7pts.c   \
   toom_interpolate_8pts.c toom_interpolate_12pts.c toom_interpolate_16pts.c \
   invertappr.c invert.c binvert.c mulmod_bnm1.c sqrmod_bnm1.c		    \
-  mullo_n.c mullo_basecase.c nand_n.c neg_n.c nior_n.c perfsqr.c	    \
+  mullo_n.c mullo_basecase.c nand_n.c neg.c nior_n.c perfsqr.c	    \
   popcount.c pre_divrem_1.c pre_mod_1.c pow_1.c random.c random2.c rshift.c \
   rootrem.c scan0.c scan1.c set_str.c			    \
   sqr_basecase.c sqr_diagonal.c						    \

@@ -590,7 +590,7 @@ validate_sqrtrem (void)
 #define TYPE_COPY             26
 #define TYPE_COPYI            27
 #define TYPE_COPYD            28
-#define TYPE_COM_N            29
+#define TYPE_COM              29
 
 #define TYPE_ADDLSH1_N        30
 #define TYPE_ADDLSH2_N        48
@@ -888,10 +888,10 @@ param_init (void)
   p->size = SIZE_ALLOW_ZERO;
   REFERENCE (refmpn_copyd);
 
-  p = &param[TYPE_COM_N];
+  p = &param[TYPE_COM];
   p->dst[0] = 1;
   p->src[0] = 1;
-  REFERENCE (refmpn_com_n);
+  REFERENCE (refmpn_com);
 
 
   p = &param[TYPE_ADDLSH1_N];
@@ -1251,8 +1251,8 @@ __GMPN_COPY_INCR_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 #endif
 
 void
-mpn_com_n_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
-{ mpn_com_n (rp, sp, size); }
+mpn_com_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{ mpn_com (rp, sp, size); }
 
 void
 mpn_and_n_fun (mp_ptr rp, mp_srcptr s1, mp_srcptr s2, mp_size_t size)
@@ -1447,7 +1447,7 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_addmul_8), TYPE_ADDMUL_8, 8 },
 #endif
 
-  { TRY_FUNFUN(mpn_com_n),  TYPE_COM_N },
+  { TRY_FUNFUN(mpn_com),  TYPE_COM },
 
   { TRY_FUNFUN(MPN_COPY),      TYPE_COPY },
   { TRY_FUNFUN(MPN_COPY_INCR), TYPE_COPYI },
@@ -2131,7 +2131,7 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_COPY:
   case TYPE_COPYI:
   case TYPE_COPYD:
-  case TYPE_COM_N:
+  case TYPE_COM:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size);
     break;
 

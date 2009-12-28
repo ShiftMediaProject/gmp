@@ -176,9 +176,9 @@ check (void)
   post ();
 #endif
 
-#if HAVE_NATIVE_mpn_com_n
-  pre ("mpn_com_n");
-  mpn_com_n (wp, xp, size);
+#if HAVE_NATIVE_mpn_com
+  pre ("mpn_com");
+  mpn_com (wp, xp, size);
   post ();
 #endif
 

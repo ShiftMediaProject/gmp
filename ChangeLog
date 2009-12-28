@@ -1,5 +1,11 @@
 2009-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in (gmp_mpn_functions_optional) Move "com" from here...
+	(gmp_mpn_functions): ...to here.
+	* mpn/generic/com.c: New file.
+	* (mpn_com): New name for mpn_com_n.  Make public.
+	* (mpn_neg): Analogous changes.
+
 	* tune/tuneup.c (tune_mu_div, tune_mu_bdiv): Set step_factor.
 
 	* tune/common.c, tune/speed.c, tune/speed.h: Support measuring

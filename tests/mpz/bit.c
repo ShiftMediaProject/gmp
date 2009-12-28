@@ -165,7 +165,7 @@ check_tstbit (void)
 	  if (low1)
 	    pos[0] |= 1;
 
-	  refmpn_neg_n (neg, pos, (mp_size_t) numberof(neg));
+	  refmpn_neg (neg, pos, (mp_size_t) numberof(neg));
 	  mpz_set_n (z, neg, (mp_size_t) numberof(neg));
 	  mpz_neg (z, z);
 

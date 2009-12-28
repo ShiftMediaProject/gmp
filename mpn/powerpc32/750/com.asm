@@ -1,4 +1,4 @@
-dnl  PowerPC 750 mpn_com_n -- mpn bitwise one's complement
+dnl  PowerPC 750 mpn_com -- mpn bitwise one's complement
 
 dnl  Copyright 2002, 2003 Free Software Foundation, Inc.
 dnl
@@ -27,12 +27,12 @@ C 75x (G3):        2.0
 C 7400,7410 (G4):  2.0
 C 744x,745x (G4+): 3.0
 
-C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C void mpn_com (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C This loop form is necessary for the claimed speed.
 
 ASM_START()
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com)
 
 	C r3	dst
 	C r4	src

@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_com_n.
+dnl  AMD64 mpn_com.
 
 dnl  Copyright 2004, 2005, 2006 Free Software Foundation, Inc.
 
@@ -35,7 +35,7 @@ define(`n',`%rdx')
 ASM_START()
 	TEXT
 	ALIGN(32)
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com)
 	movq	(up), %r8
 	movl	%edx, %eax
 	leaq	(up,n,8), up

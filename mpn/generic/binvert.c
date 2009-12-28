@@ -94,6 +94,6 @@ mpn_binvert (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_ptr scratch)
 
       /* R = R(X/B^rn) */
       mpn_mullo_n (rp + rn, rp, xp + rn, newrn - rn);
-      mpn_neg_n (rp + rn, rp + rn, newrn - rn);
+      mpn_neg (rp + rn, rp + rn, newrn - rn);
     }
 }

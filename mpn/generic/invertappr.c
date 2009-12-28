@@ -105,7 +105,7 @@ mpn_bc_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr tp)
 
     for (i = n - 1; i >= 0; i--)
       xp[i] = GMP_NUMB_MAX;
-    mpn_com_n (xp + n, dp, n);
+    mpn_com (xp + n, dp, n);
 
     /* Now xp contains B^2n - {dp,n}*B^n - 1 */
 
@@ -245,7 +245,7 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
       ASSERT_NOCARRY (mpn_sub_n (xp, dp - n, xp, n));
       ASSERT (xp[n] == 0);
     } else { /* "negative" residue class */
-      mpn_com_n (xp, xp, n + 1);
+      mpn_com (xp, xp, n + 1);
       MPN_INCR_U(xp, n + 1, method);
       ASSERT (xp[n] <= 1);
 #if USE_MUL_N

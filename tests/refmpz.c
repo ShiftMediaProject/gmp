@@ -67,10 +67,10 @@ refmpz_hamdist (mpz_srcptr x, mpz_srcptr y)
   refmpn_copy (yp, PTR(y), ysize);
 
   if (SIZ(x) < 0)
-    refmpn_neg_n (xp, xp, tsize);
+    refmpn_neg (xp, xp, tsize);
 
   if (SIZ(x) < 0)
-    refmpn_neg_n (yp, yp, tsize);
+    refmpn_neg (yp, yp, tsize);
 
   ret = refmpn_hamdist (xp, yp, tsize);
 

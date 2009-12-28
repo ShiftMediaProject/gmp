@@ -337,20 +337,6 @@ refmpn_copy_extend (mp_ptr wp, mp_size_t wsize, mp_srcptr xp, mp_size_t xsize)
   refmpn_zero (wp, wsize-xsize);
 }
 
-void
-refmpn_com_n (mp_ptr rp, mp_srcptr sp, mp_size_t size)
-{
-  mp_size_t i;
-
-  ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));
-  ASSERT (size >= 1);
-  ASSERT_MPN (sp, size);
-
-  for (i = 0; i < size; i++)
-    rp[i] = sp[i] ^ GMP_NUMB_MASK;
-}
-
-
 int
 refmpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
 {
@@ -728,7 +714,7 @@ refmpn_rsh1sub_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 
 /* Twos complement, return borrow. */
 mp_limb_t
-refmpn_neg_n (mp_ptr dst, mp_srcptr src, mp_size_t size)
+refmpn_neg (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
   mp_ptr     zeros;
   mp_limb_t  ret;

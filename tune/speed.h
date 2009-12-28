@@ -158,7 +158,7 @@ double speed_mpn_addmul_5 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_addmul_6 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_addmul_7 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_addmul_8 __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_com_n __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_com __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_copyd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_copyi __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_div_qr_n __GMP_PROTO ((struct speed_params *s));

@@ -1,4 +1,4 @@
-dnl  AMD Athlon mpn_com_n -- mpn bitwise one's complement.
+dnl  AMD Athlon mpn_com -- mpn bitwise one's complement.
 
 dnl  Copyright 2002 Free Software Foundation, Inc.
 dnl
@@ -23,7 +23,7 @@ include(`../config.m4')
 C K7: 1.0 cycles/limb
 
 
-C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C void mpn_com (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C The loop form below is necessary for the claimed speed.  It needs to be
 C aligned to a 16 byte boundary and only 16 bytes long.  Maybe that's so it
@@ -51,7 +51,7 @@ defframe(PARAM_DST, 4)
 	TEXT
 	ALIGN(16)
 
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com)
 deflit(`FRAME',0)
 
 	movl	PARAM_DST, %edx

@@ -1,4 +1,4 @@
-dnl  AMD K6-2 mpn_com_n -- mpn bitwise one's complement.
+dnl  AMD K6-2 mpn_com -- mpn bitwise one's complement.
 
 dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl
@@ -28,7 +28,7 @@ C K6-2  1.0   1.18  1.18  1.18  cycles/limb
 C K6    1.5   1.85  1.75  1.85
 
 
-C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C void mpn_com (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C Take the bitwise ones-complement of src,size and write it to dst,size.
 
@@ -38,7 +38,7 @@ defframe(PARAM_DST, 4)
 
 	TEXT
 	ALIGN(16)
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx

@@ -1,4 +1,4 @@
-/* mpn_neg_n - negate an mpn.
+/* mpn_neg - negate an mpn.
 
 Copyright 2001, 2009 Free Software Foundation, Inc.
 
@@ -17,7 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
-#define __GMP_FORCE_mpn_neg_n 1
+#define __GMP_FORCE_mpn_neg 1
 
 #include "gmp.h"
 #include "gmp-impl.h"

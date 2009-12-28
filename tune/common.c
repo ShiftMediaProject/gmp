@@ -452,9 +452,9 @@ speed_memcpy (struct speed_params *s)
   SPEED_ROUTINE_MPN_COPY_BYTES (memcpy);
 }
 double
-speed_mpn_com_n (struct speed_params *s)
+speed_mpn_com (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY (mpn_com_n);
+  SPEED_ROUTINE_MPN_COPY (mpn_com);
 }
 
 

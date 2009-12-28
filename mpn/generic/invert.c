@@ -64,7 +64,7 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	xp = scratch;				/* 2 * n limbs */
 	for (i = n - 1; i >= 0; i--)
 	  xp[i] = GMP_NUMB_MAX;
-	mpn_com_n (xp + n, dp, n);
+	mpn_com (xp + n, dp, n);
 	if (n == 2) {
 	  mpn_divrem_2 (ip, 0, xp, 4, dp);
 	} else {

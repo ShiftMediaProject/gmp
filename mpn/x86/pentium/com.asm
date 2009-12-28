@@ -1,4 +1,4 @@
-dnl  Intel Pentium mpn_com_n -- mpn ones complement.
+dnl  Intel Pentium mpn_com -- mpn ones complement.
 
 dnl  Copyright 1996, 2001, 2002, 2006 Free Software Foundation, Inc.
 dnl
@@ -26,7 +26,7 @@ C P5: 1.75 cycles/limb
 NAILS_SUPPORT(0-31)
 
 
-C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C void mpn_com (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C This code is similar to mpn_copyi, basically there's just some "xorl
 C $GMP_NUMB_MASK"s inserted.
@@ -44,7 +44,7 @@ defframe(PARAM_DST, 4)
 
 	TEXT
 	ALIGN(8)
-PROLOGUE(mpn_com_n)
+PROLOGUE(mpn_com)
 deflit(`FRAME',0)
 
 	movl	PARAM_SRC, %eax
