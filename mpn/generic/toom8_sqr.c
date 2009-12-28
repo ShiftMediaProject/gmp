@@ -139,43 +139,43 @@ mpn_toom8_sqr  (mp_ptr pp, mp_srcptr ap, mp_size_t an, mp_ptr scratch)
   mpn_toom_eval_pm2rexp (v2, v0, 7, ap, n, s, 3, pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-1/8)*B(-1/8)*8^. */
   TOOM8_SQR_REC(r7, v2, n + 1, wse); /* A(+1/8)*B(+1/8)*8^. */
-  toom_couple_handling(r7, 2 * n + 1 + BIT_CORRECTION, pp, 0, n, 3, 0);
+  mpn_toom_couple_handling (r7, 2 * n + 1 + BIT_CORRECTION, pp, 0, n, 3, 0);
 
   /* $\pm1/4$ */
   mpn_toom_eval_pm2rexp (v2, v0, 7, ap, n, s, 2, pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-1/4)*B(-1/4)*4^. */
   TOOM8_SQR_REC(r5, v2, n + 1, wse); /* A(+1/4)*B(+1/4)*4^. */
-  toom_couple_handling(r5, 2 * n + 1, pp, 0, n, 2, 0);
+  mpn_toom_couple_handling (r5, 2 * n + 1, pp, 0, n, 2, 0);
 
   /* $\pm2$ */
   mpn_toom_eval_pm2 (v2, v0, 7, ap, n, s, pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-2)*B(-2) */
   TOOM8_SQR_REC(r3, v2, n + 1, wse); /* A(+2)*B(+2) */
-  toom_couple_handling(r3, 2 * n + 1, pp, 0, n, 1, 2);
+  mpn_toom_couple_handling (r3, 2 * n + 1, pp, 0, n, 1, 2);
 
   /* $\pm8$ */
   mpn_toom_eval_pm2exp (v2, v0, 7, ap, n, s, 3, pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-8)*B(-8) */
   TOOM8_SQR_REC(r1, v2, n + 1, wse); /* A(+8)*B(+8) */
-  toom_couple_handling(r1, 2 * n + 1 + BIT_CORRECTION, pp, 0, n, 3, 6);
+  mpn_toom_couple_handling (r1, 2 * n + 1 + BIT_CORRECTION, pp, 0, n, 3, 6);
 
   /* $\pm1/2$ */
   mpn_toom_eval_pm2rexp (v2, v0, 7, ap, n, s, 1, pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-1/2)*B(-1/2)*2^. */
   TOOM8_SQR_REC(r6, v2, n + 1, wse); /* A(+1/2)*B(+1/2)*2^. */
-  toom_couple_handling(r6, 2 * n + 1, pp, 0, n, 1, 0);
+  mpn_toom_couple_handling (r6, 2 * n + 1, pp, 0, n, 1, 0);
 
   /* $\pm1$ */
   mpn_toom_eval_pm1 (v2, v0, 7, ap, n, s,    pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-1)*B(-1) */
   TOOM8_SQR_REC(r4, v2, n + 1, wse); /* A(1)*B(1) */
-  toom_couple_handling(r4, 2 * n + 1, pp, 0, n, 0, 0);
+  mpn_toom_couple_handling (r4, 2 * n + 1, pp, 0, n, 0, 0);
 
   /* $\pm4$ */
   mpn_toom_eval_pm2exp (v2, v0, 7, ap, n, s, 2, pp);
   TOOM8_SQR_REC(pp, v0, n + 1, wse); /* A(-4)*B(-4) */
   TOOM8_SQR_REC(r2, v2, n + 1, wse); /* A(+4)*B(+4) */
-  toom_couple_handling(r2, 2 * n + 1, pp, 0, n, 2, 4);
+  mpn_toom_couple_handling (r2, 2 * n + 1, pp, 0, n, 2, 4);
 
 #undef v0
 #undef v2

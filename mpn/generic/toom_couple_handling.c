@@ -34,8 +34,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      {pp,n+off} <- {pp,n}+{np,n}*2^{off*GMP_NUMB_BITS}
 */
 void
-toom_couple_handling (mp_ptr pp, mp_size_t n, mp_ptr np,
-		      int nsign, mp_size_t off, int ps, int ns)
+mpn_toom_couple_handling (mp_ptr pp, mp_size_t n, mp_ptr np,
+			  int nsign, mp_size_t off, int ps, int ns)
 {
   if (nsign) {
 #ifdef HAVE_NATIVE_mpn_rsh1sub_n

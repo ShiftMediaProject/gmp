@@ -139,7 +139,7 @@ mpn_toom63_mul (mp_ptr pp,
   sign ^= abs_sub_add_n (v1, v3, pp, n + 1);
   TOOM_63_MUL_N_REC(pp, v0, v1, n + 1, ws); /* A(-4)*B(-4) */
   TOOM_63_MUL_N_REC(r3, v2, v3, n + 1, ws); /* A(+4)*B(+4) */
-  toom_couple_handling (r3, 2*n+1, pp, sign, n, 2, 4);
+  mpn_toom_couple_handling (r3, 2*n+1, pp, sign, n, 2, 4);
 
   /* $\pm1$ */
   sign = mpn_toom_eval_pm1 (v2, v0, 5, ap, n, s,    pp);
@@ -176,7 +176,7 @@ mpn_toom63_mul (mp_ptr pp,
 #endif
   TOOM_63_MUL_N_REC(pp, v0, v1, n + 1, ws); /* A(-1)*B(-1) */
   TOOM_63_MUL_N_REC(r7, v2, v3, n + 1, ws); /* A(1)*B(1) */
-  toom_couple_handling (r7, 2*n+1, pp, sign, n, 0, 0);
+  mpn_toom_couple_handling (r7, 2*n+1, pp, sign, n, 0, 0);
 
   /* $\pm2$ */
   sign = mpn_toom_eval_pm2 (v2, v0, 5, ap, n, s, pp);
@@ -190,7 +190,7 @@ mpn_toom63_mul (mp_ptr pp,
   sign ^= abs_sub_add_n (v1, v3, pp, n + 1);
   TOOM_63_MUL_N_REC(pp, v0, v1, n + 1, ws); /* A(-2)*B(-2) */
   TOOM_63_MUL_N_REC(r5, v2, v3, n + 1, ws); /* A(+2)*B(+2) */
-  toom_couple_handling (r5, 2*n+1, pp, sign, n, 1, 2);
+  mpn_toom_couple_handling (r5, 2*n+1, pp, sign, n, 1, 2);
 
   /* A(0)*B(0) */
   TOOM_63_MUL_N_REC(pp, ap, bp, n, ws);

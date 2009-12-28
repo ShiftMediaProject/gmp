@@ -1077,7 +1077,7 @@ __GMP_DECLSPEC void      mpn_toom_interpolate_12pts __GMP_PROTO ((mp_ptr, mp_ptr
 __GMP_DECLSPEC void      mpn_toom_interpolate_16pts __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t, int, mp_ptr));
 
 #define   mpn_toom_couple_handling __MPN(toom_couple_handling)
-__GMP_DECLSPEC void      toom_couple_handling __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, int, mp_size_t, int, int));
+__GMP_DECLSPEC void mpn_toom_couple_handling __GMP_PROTO ((mp_ptr, mp_size_t, mp_ptr, int, mp_size_t, int, int));
 
 #define   mpn_toom_eval_dgr3_pm1 __MPN(toom_eval_dgr3_pm1)
 __GMP_DECLSPEC int mpn_toom_eval_dgr3_pm1 __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_size_t, mp_ptr));

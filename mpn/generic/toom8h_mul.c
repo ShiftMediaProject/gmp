@@ -201,35 +201,35 @@ mpn_toom8h_mul   (mp_ptr pp,
 	 mpn_toom_eval_pm2rexp (v3, v1, q, bp, n, t, 3, pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1/8)*B(-1/8)*8^. */
   TOOM8H_MUL_N_REC(r7, v2, v3, n + 1, wse); /* A(+1/8)*B(+1/8)*8^. */
-  toom_couple_handling(r7, 2 * n + 1 + BIT_CORRECTION, pp, sign, n, 3*(1+half), 3*(half));
+  mpn_toom_couple_handling (r7, 2 * n + 1 + BIT_CORRECTION, pp, sign, n, 3*(1+half), 3*(half));
 
   /* $\pm1/4$ */
   sign = mpn_toom_eval_pm2rexp (v2, v0, p, ap, n, s, 2, pp) ^
 	 mpn_toom_eval_pm2rexp (v3, v1, q, bp, n, t, 2, pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1/4)*B(-1/4)*4^. */
   TOOM8H_MUL_N_REC(r5, v2, v3, n + 1, wse); /* A(+1/4)*B(+1/4)*4^. */
-  toom_couple_handling(r5, 2 * n + 1, pp, sign, n, 2*(1+half), 2*(half));
+  mpn_toom_couple_handling (r5, 2 * n + 1, pp, sign, n, 2*(1+half), 2*(half));
 
   /* $\pm2$ */
   sign = mpn_toom_eval_pm2 (v2, v0, p, ap, n, s, pp) ^
 	 mpn_toom_eval_pm2 (v3, v1, q, bp, n, t, pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-2)*B(-2) */
   TOOM8H_MUL_N_REC(r3, v2, v3, n + 1, wse); /* A(+2)*B(+2) */
-  toom_couple_handling(r3, 2 * n + 1, pp, sign, n, 1, 2);
+  mpn_toom_couple_handling (r3, 2 * n + 1, pp, sign, n, 1, 2);
 
   /* $\pm8$ */
   sign = mpn_toom_eval_pm2exp (v2, v0, p, ap, n, s, 3, pp) ^
 	 mpn_toom_eval_pm2exp (v3, v1, q, bp, n, t, 3, pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-8)*B(-8) */
   TOOM8H_MUL_N_REC(r1, v2, v3, n + 1, wse); /* A(+8)*B(+8) */
-  toom_couple_handling(r1, 2 * n + 1 + BIT_CORRECTION, pp, sign, n, 3, 6);
+  mpn_toom_couple_handling (r1, 2 * n + 1 + BIT_CORRECTION, pp, sign, n, 3, 6);
 
   /* $\pm1/2$ */
   sign = mpn_toom_eval_pm2rexp (v2, v0, p, ap, n, s, 1, pp) ^
 	 mpn_toom_eval_pm2rexp (v3, v1, q, bp, n, t, 1, pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1/2)*B(-1/2)*2^. */
   TOOM8H_MUL_N_REC(r6, v2, v3, n + 1, wse); /* A(+1/2)*B(+1/2)*2^. */
-  toom_couple_handling(r6, 2 * n + 1, pp, sign, n, 1+half, half);
+  mpn_toom_couple_handling (r6, 2 * n + 1, pp, sign, n, 1+half, half);
 
   /* $\pm1$ */
   sign = mpn_toom_eval_pm1 (v2, v0, p, ap, n, s,    pp);
@@ -239,14 +239,14 @@ mpn_toom8h_mul   (mp_ptr pp,
     sign ^= mpn_toom_eval_pm1 (v3, v1, q, bp, n, t,    pp); 
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1)*B(-1) */
   TOOM8H_MUL_N_REC(r4, v2, v3, n + 1, wse); /* A(1)*B(1) */
-  toom_couple_handling(r4, 2 * n + 1, pp, sign, n, 0, 0);
+  mpn_toom_couple_handling (r4, 2 * n + 1, pp, sign, n, 0, 0);
 
   /* $\pm4$ */
   sign = mpn_toom_eval_pm2exp (v2, v0, p, ap, n, s, 2, pp) ^
 	 mpn_toom_eval_pm2exp (v3, v1, q, bp, n, t, 2, pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-4)*B(-4) */
   TOOM8H_MUL_N_REC(r2, v2, v3, n + 1, wse); /* A(+4)*B(+4) */
-  toom_couple_handling(r2, 2 * n + 1, pp, sign, n, 2, 4);
+  mpn_toom_couple_handling (r2, 2 * n + 1, pp, sign, n, 2, 4);
 
 #undef v0
 #undef v1

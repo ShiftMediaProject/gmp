@@ -1,5 +1,13 @@
 2009-12-28  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/toom_couple_handling.c: Prefix name with mpn_.
+	* gmp-impl.h: Likewise.
+	* mpn/generic/toom63_mul.c: Likewise.
+	* mpn/generic/toom6_sqr.c: Likewise.
+	* mpn/generic/toom6h_mul.c: Likewise.
+	* mpn/generic/toom8_sqr.c: Likewise.
+	* mpn/generic/toom8h_mul.c: Likewise.
+
 	* configure.in (gmp_mpn_functions_optional) Move "com" from here...
 	(gmp_mpn_functions): ...to here.
 	* mpn/generic/com.c: New file.
