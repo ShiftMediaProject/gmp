@@ -177,6 +177,7 @@ mp_size_t  dc_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  dc_divappr_q_threshold       = MP_SIZE_T_MAX;
 mp_size_t  mu_div_qr_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mu_divappr_q_threshold       = MP_SIZE_T_MAX;
+mp_size_t  mupi_div_qr_threshold        = MP_SIZE_T_MAX;
 mp_size_t  mu_div_q_threshold           = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_qr_threshold         = MP_SIZE_T_MAX;
 mp_size_t  dc_bdiv_q_threshold          = MP_SIZE_T_MAX;
@@ -1121,6 +1122,16 @@ tune_mu_div (void)
     param.max_size = 5000;
     param.step_factor = 0.02;
     one (&mu_divappr_q_threshold, &param);
+  }
+  {
+    static struct param_t  param;
+    param.name = "MUPI_DIV_QR_THRESHOLD";
+    param.function = speed_mpn_dcpi1_div_qr;
+    param.function2 = speed_mpn_mupi_div_qr;
+    param.min_size = 6;
+    param.max_size = 1000;
+    param.step_factor = 0.02;
+    one (&mupi_div_qr_threshold, &param);
   }
 }
 

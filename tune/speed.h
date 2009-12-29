@@ -117,7 +117,7 @@ struct speed_params {
   struct {
     mp_ptr    ptr;
     mp_size_t size;
-  } src[2], dst[3];
+  } src[3], dst[3];
 };
 
 typedef double (*speed_function_t) __GMP_PROTO ((struct speed_params *s));
@@ -246,6 +246,7 @@ double speed_mpn_sbpi1_divappr_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_divappr_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mu_div_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mu_divappr_q __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_mupi_div_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mu_div_q __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_sbpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_dcpi1_bdiv_qr __GMP_PROTO ((struct speed_params *s));
@@ -1586,6 +1587,52 @@ int speed_routine_count_zeros_setup
     i = s->reps;							\
     do {								\
       function (qp, rp, tp, 2 * s->size, dp, s->size, scratch);		\
+    } while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE;								\
+    return t;								\
+  }
+#define SPEED_ROUTINE_MPN_MUPI_DIV_QR(function,itchfn)			\
+  {									\
+    unsigned   i;							\
+    mp_ptr     dp, tp, qp, rp, ip, scratch;				\
+    double     t;							\
+    mp_size_t itch;							\
+    TMP_DECL;								\
+									\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+									\
+    itch = itchfn (2 * s->size, s->size, 0);				\
+    TMP_MARK;								\
+    SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
+    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
+    SPEED_TMP_ALLOC_LIMBS (rp, s->size, s->align_wp2); /* alignment? */	\
+    SPEED_TMP_ALLOC_LIMBS (ip, s->size, s->align_wp2); /* alignment? */	\
+									\
+    MPN_COPY (tp,         s->xp, s->size);				\
+    MPN_COPY (tp+s->size, s->xp, s->size);				\
+									\
+    /* normalize the data */						\
+    dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
+    tp[2*s->size-1] = dp[s->size-1] - 1;				\
+									\
+    mpn_invert (ip, dp, s->size, NULL);					\
+									\
+    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_dst (s, rp, s->size);					\
+    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_src (s, dp, s->size);					\
+    speed_operand_src (s, ip, s->size);					\
+    speed_operand_dst (s, scratch, itch);				\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do {								\
+      function (qp, rp, tp, 2 * s->size, dp, s->size, ip, s->size, scratch); \
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\

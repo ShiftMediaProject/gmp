@@ -1,5 +1,10 @@
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mu_div): Tune MUPI_DIV_QR_THRESHOLD.
+	* tune/speed.h (struct speed_params): Allow 3 source operands.
+	(SPEED_ROUTINE_MPN_MUPI_DIV_QR): New macro.
+	* tune/common.c (speed_mpn_mupi_div_qr): New function.
+
 	* mpn/generic/tdiv_qr.c: Call mpn_mu_bdiv_qr.
 
 	* tests/mpz/t-tdiv.c: Use larger test operands.
