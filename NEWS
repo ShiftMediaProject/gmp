@@ -1,55 +1,78 @@
 Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
 2009 Free Software Foundation, Inc.
 
-This file is part of the GNU MP Library.
-
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at your
-option) any later version.
-
-The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
+Verbatim copying and distribution of this entire article is permitted
+in any medium, provided this notice is preserved.
 
 
-Changes between GMP version 4.3.X and 4.4.0
+Changes between GMP version 4.3.X and 4.4.0.
 
-  Bugs:
-  * None.
+  BUGS FIXED
+  * None (contains the same fixes as release 4.3.2).
 
-  Speedups:
-  * Multiplication has been overhauled, and the speed has been substantially
-    improved for most operand sizes.
-  * A new algorithm makes mpz_perfect_power_p asymptotically faster.
+  SPEEDUPS
+  * Multiplication has been overhauled:
+    (1) Multiplication of larger same size operands has been improved with
+        the addition of new 2 Toom functions and a new internal function
+        mpn_mulmod_bnm1 (computing U * V mod (B^n-1), B being the word base.
+    (2) Multiplication of different size operands has been improved with the
+        addition of many new Toom function, and by selecting underlying
+        function better from the main multiplicy functions.
+
+  * Division has been overhauled, for both small and large operands:
+    (1) Plain "schoolbook" division is reimplemented using faster quotient
+        approximation.
+    (2) Division Q = N/D, R = N mod D where both the quotient and remainder
+        are needed now runs in time O(M(log(N))).  This is an improvement of
+        a factor log(log(N))
+    (3) Division where just the quotient needed is now O(M(log(Q))) on
+        average.
+
   * The function mpz_powm is now faster for all sizes.  Its complexity has
     gone from O(M(n)log(n)m) to O(M(n)m) where n is the size of the modulo
     argument and m is the size of the exponent.  It is also radically
     faster for even modulus, since it now partially factors such modulus
-    and performs two smaller expod operations, then CRT.
+    and performs two smaller expod operations, then uses CRT.
+
   * The internal support for multiplication yielding just the lower n limbs
-    has been improved by using Mulder's algorithm.
-  * Division N/D where both the quotient and remainder is needed now runs
-    in time O(M(log(N))).  This is asymptotically optimal, as far as it is
-    known.
-  * Division where just the quotient is asked for is now O(M(log(Q))) on
-    average, where Q is the quotient.
+    has been improved by using Mulders' algorithm.
 
-  Features:
-  * New mpn functions: mpn_sqr, mpn_and_n, mpn_ior_n, mpn_xor_n,
-    mpn_nand_n, mpn_nior_n, mpn_xnor_n, mpn_andn_n, mpn_iorn_n.
-  * Support for fat binaries for 64-bit x86 processors.
-  * New type, mp_bitcnt_t for bignum bit counts.
+  * Computation of inverses, both plain 1/N and 1/N mod B^n have been
+    improved by using well-tuned Newton iterations, and wrap-around
+    multiplication using mpn_mulmod_bnm1.
+
+  * Exact division Q = N/D by means of mpz_divexact has been improved for
+    all sizes, and now runs in time O(M(log(N))).
+
+  * A new algorithm makes mpz_perfect_power_p asymptotically faster.
+
+  * The function mpz_remove uses a much faster algorithm, is better tuned,
+    and also benefits from the division improvements.
+
+  * Plus hundreds of smaller improvements and tweaks!
+
+  FEATURES
+  * New mpz function: mpz_powm_sec for side-channel quiet modexp
+    computations.
+
+  * New mpn functions: mpn_sqr, mpn_and_n, mpn_ior_n, mpn_xor_n, mpn_nand_n,
+    mpn_nior_n, mpn_xnor_n, mpn_andn_n, mpn_iorn_n, mpn_com, mpn_neg,
+    mpn_copyi, mpn_copyd, mpn_zero.
+
+  * Support for fat binaries for 64-bit x86 processors has been added.
+
+  * A new type, mp_bitcnt_t for bignum bit counts, has been introduced.
+
   * The cofactors of mpz_gcdext and mpn_gcdext are now more strictly
-    normalised, returning to how GMP 4.2 worked.
+    normalised, returning to how GMP 4.2 worked.  (Note that also release
+    4.3.2 has this change.)
 
-  Misc:
+  MISC
   * The mpn_bdivmod function has been removed.  We do not consider this an
     incompatible change, since the function was marked as preliminary.
+
+  * The teststuite has been enhanced in various ways.
+
 
 Changes between GMP version 4.3.1 and 4.3.2
 
@@ -485,11 +508,3 @@ INCOMPATIBILITIES BETWEEN GMP 1 AND GMP 2
 * mpz division functions round differently.
 * mpz mod functions now really compute mod.
 * mpz_powm and mpz_powm_ui now really use mod for reduction.
-
-
-
-----------------
-Local variables:
-mode: text
-fill-column: 76
-End:
