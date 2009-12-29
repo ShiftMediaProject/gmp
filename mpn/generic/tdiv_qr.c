@@ -12,7 +12,7 @@
    The time complexity of this is O(qn*qn+M(dn,qn)), where M(m,n) is the time
    complexity of multiplication.
 
-Copyright 1997, 2000, 2001, 2002, 2005 Free Software Foundation, Inc.
+Copyright 1997, 2000, 2001, 2002, 2005, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -38,13 +38,8 @@ void
 mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	     mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn)
 {
-  /* FIXME:
-     1. qxn
-     2. pass allocated storage in additional parameter?
-  */
   ASSERT_ALWAYS (qxn == 0);
 
-  ASSERT (qxn >= 0);
   ASSERT (nn >= 0);
   ASSERT (dn >= 0);
   ASSERT (dn == 0 || dp[dn - 1] != 0);
@@ -137,10 +132,18 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      }
 
 	    invert_pi1 (dinv, d2p[dn - 1], d2p[dn - 2]);
-	    if (dn < DC_DIV_QR_THRESHOLD)
+	    if (BELOW_THRESHOLD (dn, DC_DIV_QR_THRESHOLD))
 	      mpn_sbpi1_div_qr (qp, n2p, nn, d2p, dn, dinv.inv32);
-	    else
+	    else if (BELOW_THRESHOLD (dn, MU_DIV_QR_THRESHOLD))
 	      mpn_dcpi1_div_qr (qp, n2p, nn, d2p, dn, &dinv);
+	    else
+	      {
+		mp_size_t itch = mpn_mu_div_qr_itch (nn, dn, 0);
+		mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
+		rp = n2p + nn - dn;
+		mpn_mu_div_qr (qp, rp, n2p, nn, d2p, dn, scratch);
+		MPN_COPY (n2p, rp, dn);
+	      }
 
 	    if (cnt != 0)
 	      mpn_rshift (rp, n2p, dn, cnt);
@@ -258,10 +261,18 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      {
 		gmp_pi1_t dinv;
 		invert_pi1 (dinv, d2p[qn - 1], d2p[qn - 2]);
-		if (qn < DC_DIV_QR_THRESHOLD)
+		if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
 		  mpn_sbpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, dinv.inv32);
-		else
+		else if (BELOW_THRESHOLD (qn, MU_DIV_QR_THRESHOLD))
 		  mpn_dcpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, &dinv);
+		else
+		  {
+		    mp_size_t itch = mpn_mu_div_qr_itch (2 * qn, qn, 0);
+		    mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
+		    rp = n2p + 2 * qn - qn;
+		    mpn_mu_div_qr (qp, rp, n2p, 2 * qn, d2p, qn, scratch);
+		    MPN_COPY (n2p, rp, qn);
+		  }
 	      }
 
 	    rn = qn;
