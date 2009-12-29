@@ -1,5 +1,7 @@
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpz/mul.c: Call mpn_sqr directly.  Use PTR,SIZ,ALLOC.
+
 	* tune/tuneup.c (tune_mu_div): Set min_size to 6, DC functions require
 	this.
 
