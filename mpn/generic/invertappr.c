@@ -285,6 +285,14 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 mp_limb_t
 mpn_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
+  mp_limb_t res;
+  TMP_DECL;
+
+  TMP_MARK;
+
+  if (scratch == NULL)
+    scratch = TMP_ALLOC_LIMBS (mpn_invertappr_itch (n));
+
   ASSERT (n > 0);
   ASSERT (dp[n-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (ip, n, dp, n));
@@ -292,7 +300,10 @@ mpn_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   ASSERT (! MPN_OVERLAP_P (dp, n, scratch, mpn_invertappr_itch(n)));
 
   if (BELOW_THRESHOLD (n, INV_NEWTON_THRESHOLD))
-    return mpn_bc_invertappr (ip, dp, n, scratch);
+    res = mpn_bc_invertappr (ip, dp, n, scratch);
   else
-    return mpn_ni_invertappr (ip, dp, n, scratch);
+    res = mpn_ni_invertappr (ip, dp, n, scratch);
+
+  TMP_FREE;
+  return res;
 }
