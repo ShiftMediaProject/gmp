@@ -26,17 +26,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-/* We use the "misunderstanding algorithm" (MU), discovered by Paul Zimmermann
-   and Torbjorn Granlund when Torbjorn misunderstood Paul's explanation of
-   Jebelean's bidirectional exact division algorithm.
-
-   The idea of this algorithm is to compute a smaller inverted value than used
-   in the standard Barrett algorithm, and thus save time in the Newton
-   iterations, and pay just a small price when using the inverted value for
-   developing quotient bits.
-
-   Written by Torbjorn Granlund.  Paul Zimmermann suggested the use of the
-   "wrap around" trick.
+/*
+   The idea of the algorithm used herein is to compute a smaller inverted value
+   than used in the standard Barrett algorithm, and thus save time in the
+   Newton iterations, and pay just a small price when using the inverted value
+   for developing quotient bits.  This algorithm was presented at ICMS 2006.
 */
 
 #include "gmp.h"
