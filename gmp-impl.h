@@ -1186,14 +1186,14 @@ __GMP_DECLSPEC mp_limb_t mpn_dcpi1_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_si
 __GMP_DECLSPEC mp_limb_t mpn_dcpi1_divappr_q_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, gmp_pi1_t *, mp_ptr));
 
 #define   mpn_mu_div_qr __MPN(mu_div_qr)
-__GMP_DECLSPEC mp_limb_t mpn_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_limb_t mpn_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define   mpn_mu_div_qr_itch __MPN(mu_div_qr_itch)
 __GMP_DECLSPEC mp_size_t mpn_mu_div_qr_itch __GMP_PROTO ((mp_size_t, mp_size_t, int));
 #define   mpn_mu_div_qr_choose_in __MPN(mu_div_qr_choose_in)
 __GMP_DECLSPEC mp_size_t mpn_mu_div_qr_choose_in __GMP_PROTO ((mp_size_t, mp_size_t, int));
 
 #define   mpn_preinv_mu_div_qr __MPN(preinv_mu_div_qr)
-__GMP_DECLSPEC void      mpn_preinv_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_limb_t mpn_preinv_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_mu_divappr_q __MPN(mu_divappr_q)
 __GMP_DECLSPEC mp_limb_t mpn_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
@@ -1203,7 +1203,7 @@ __GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_itch __GMP_PROTO ((mp_size_t, mp_size_
 __GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_choose_in __GMP_PROTO ((mp_size_t, mp_size_t, int));
 
 #define   mpn_preinv_mu_divappr_q __MPN(preinv_mu_divappr_q)
-__GMP_DECLSPEC void      mpn_preinv_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_limb_t mpn_preinv_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_mu_div_q __MPN(mu_div_q)
 __GMP_DECLSPEC mp_limb_t mpn_mu_div_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
@@ -1794,8 +1794,8 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define MU_DIVAPPR_Q_THRESHOLD         2000
 #endif
 
-#ifndef MU_DIV_Q_THRESHOLD
-#define MU_DIV_Q_THRESHOLD             2000
+#ifndef MU_DIV_QR_THRESHOLD
+#define MU_DIV_QR_THRESHOLD            2000
 #endif
 
 #ifndef MU_BDIV_Q_THRESHOLD

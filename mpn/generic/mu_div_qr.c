@@ -11,7 +11,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2005, 2006, 2007 Free Software Foundation, Inc.
+Copyright 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,22 +29,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 
-/* We use the "misunderstanding algorithm" (MUA), discovered by Paul Zimmermann
-   and Torbjorn Granlund when Torbjorn misunderstood Paul's explanation of
-   Jebelean's bidirectional exact division algorithm.
-
-   The idea of this algorithm is to compute a smaller inverted value than used
-   in the standard Barrett algorithm, and thus save time in the Newton
-   iterations, and pay just a small price when using the inverted value for
-   developing quotient bits.
-
-   Written by Torbjorn Granlund.  Paul Zimmermann suggested the use of the
-   "wrap around" trick.  Based on the GMP divexact code and inspired by code
-   contributed to GMP by Karl Hasselstroem.
+/*
+   The idea of the algorithm used herein is to compute a smaller inverted value
+   than used in the standard Barrett algorithm, and thus save time in the
+   Newton iterations, and pay just a small price when using the inverted value
+   for developing quotient bits.  This algorithm was presented at ICMS 2006.
 */
 
-
-/* CAUTION: This code and the code in mu_divappr_q.c should be edited in lockstep.
+/* CAUTION: This code and the code in mu_divappr_q.c should be edited in sync.
 
  Things to work on:
 
@@ -63,30 +55,22 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     dividend limbs by the qn divisor limbs.
 
   * This isn't optimal when the quotient isn't needed, as it might take a lot
-    of space.  The computation is always needed, though, so there is not time
-    to save with special code.
+    of space.  The computation is always needed, though, so there is no time to
+    save with special code.
 
   * The itch/scratch scheme isn't perhaps such a good idea as it once seemed,
-    demonstrated by the fact that the mpn_inv function's scratch needs means
-    that we need to keep a large allocation long after it is needed.  Things
-    are worse as mpn_mul_fft does not accept any scratch parameter, which means
-    we'll have a large memory hole while in mpn_mul_fft.  In general, a peak
-    scratch need in the beginning of a function isn't well-handled by the
-    itch/scratch scheme.
-
-  * Some ideas from comments in divexact.c apply to this code too.
+    demonstrated by the fact that the mpn_invertappr function's scratch needs
+    mean that we need to keep a large allocation long after it is needed.
+    Things are worse as mpn_mul_fft does not accept any scratch parameter,
+    which means we'll have a large memory hole while in mpn_mul_fft.  In
+    general, a peak scratch need in the beginning of a function isn't
+    well-handled by the itch/scratch scheme.
 */
-
-/* the NOSTAT stuff handles properly the case where files are concatenated */
-#ifdef NOSTAT
-#undef STAT
-#endif
 
 #ifdef STAT
 #undef STAT
 #define STAT(x) x
 #else
-#define NOSTAT
 #define STAT(x)
 #endif
 
@@ -95,61 +79,101 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 
 
-/* In case k=0 (automatic choice), we distinguish 3 cases:
-   (a) dn < qn:         in = ceil(qn / ceil(qn/dn))
-   (b) dn/3 < qn <= dn: in = ceil(qn / 2)
-   (c) qn < dn/3:       in = qn
-   In all cases we have in <= dn.
- */
-mp_size_t
-mpn_mu_div_qr_choose_in (mp_size_t qn, mp_size_t dn, int k)
-{
-  mp_size_t in;
+/* FIXME: The MU_DIV_QR_SKEW_THRESHOLD was not analysed properly.  It gives a
+   speedup according to old measurements, but does the decision mechanism
+   really make sense?  It seem like the quotient between dn and qn might be
+   what we really should be checking.  */
+#ifndef MU_DIV_QR_SKEW_THRESHOLD
+#define MU_DIV_QR_SKEW_THRESHOLD 100	/* FIXME: somewhat arbitrary */
+#endif
 
-  if (k == 0)
+#ifdef CHECK				/* FIXME: Enable in minithres */
+#undef  MU_DIV_QR_SKEW_THRESHOLD
+#define MU_DIV_QR_SKEW_THRESHOLD 1
+#endif
+
+
+static mp_limb_t mpn_mu_div_qr2 (mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr);
+
+
+mp_limb_t
+mpn_mu_div_qr (mp_ptr qp,
+	       mp_ptr rp,
+	       mp_srcptr np,
+	       mp_size_t nn,
+	       mp_srcptr dp,
+	       mp_size_t dn,
+	       mp_ptr scratch)
+{
+  mp_size_t qn;
+  mp_limb_t cy, qh;
+
+  qn = nn - dn;
+  if (qn + MU_DIV_QR_SKEW_THRESHOLD < dn)
     {
-      mp_size_t b;
-      if (qn > dn)
-	{
-	  /* Compute an inverse size that is a nice partition of the quotient.  */
-	  b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
-	  in = (qn - 1) / b + 1;	/* ceil(qn/b) = ceil(qn / ceil(qn/dn)) */
-	}
-      else if (3 * qn > dn)
-	{
-	  in = (qn - 1) / 2 + 1;	/* b = 2 */
-	}
+      /* |______________|_ign_first__|   dividend			  nn
+		|_______|_ign_first__|   divisor			  dn
+
+		|______|	     quotient (prel)			  qn
+
+		 |___________________|   quotient * ignored-divisor-part  dn-1
+      */
+
+      /* Compute a preliminary quotient and a partial remainder by dividing the
+	 most significant limbs of each operand.  */
+      qh = mpn_mu_div_qr2 (qp, rp + nn - (2 * qn + 1),
+			   np + nn - (2 * qn + 1), 2 * qn + 1,
+			   dp + dn - (qn + 1), qn + 1,
+			   scratch);
+
+      /* Multiply the quotient by the divisor limbs ignored above.  */
+      if (dn - (qn + 1) > qn)
+	mpn_mul (scratch, dp, dn - (qn + 1), qp, qn);  /* prod is dn-1 limbs */
       else
+	mpn_mul (scratch, qp, qn, dp, dn - (qn + 1));  /* prod is dn-1 limbs */
+
+      if (qh)
+	cy = mpn_add_n (scratch + qn, scratch + qn, dp, dn - (qn + 1));
+      else
+	cy = 0;
+      scratch[dn - 1] = cy;
+
+      cy = mpn_sub_n (rp, np, scratch, nn - (2 * qn + 1));
+      cy = mpn_sub_nc (rp + nn - (2 * qn + 1),
+		       rp + nn - (2 * qn + 1),
+		       scratch + nn - (2 * qn + 1),
+		       qn + 1, cy);
+      if (cy)
 	{
-	  in = (qn - 1) / 1 + 1;	/* b = 1 */
+	  qh -= mpn_sub_1 (qp, qp, qn, 1);
+	  mpn_add_n (rp, rp, dp, dn);
 	}
     }
   else
     {
-      mp_size_t xn;
-      xn = MIN (dn, qn);
-      in = (xn - 1) / k + 1;
+      qh = mpn_mu_div_qr2 (qp, rp, np, nn, dp, dn, scratch);
     }
 
-  return in;
+  return qh;
 }
 
 static mp_limb_t
 mpn_mu_div_qr2 (mp_ptr qp,
 		mp_ptr rp,
-		mp_ptr np,
+		mp_srcptr np,
 		mp_size_t nn,
 		mp_srcptr dp,
 		mp_size_t dn,
 		mp_ptr scratch)
 {
   mp_size_t qn, in;
-  mp_limb_t cy;
+  mp_limb_t cy, qh;
   mp_ptr ip, tp;
 
   /* FIXME: We should probably not handle tiny operands, but do it for now.  */
   if (dn == 1)
     {
+      ASSERT_ALWAYS (dn > 1);
       rp[0] = mpn_divrem_1 (scratch, 0L, np, nn, dp[0]);
       MPN_COPY (qp, scratch, nn - 1);
       return scratch[nn - 1];
@@ -164,7 +188,7 @@ mpn_mu_div_qr2 (mp_ptr qp,
 #if 1
   /* This alternative inverse computation method gets slightly more accurate
      results.  FIXMEs: (1) Temp allocation needs not analysed (2) itch function
-     not adapted (3) mpn_invert scratch needs not met.  */
+     not adapted (3) mpn_invertappr scratch needs not met.  */
   ip = scratch;
   tp = scratch + in + 1;
 
@@ -173,7 +197,7 @@ mpn_mu_div_qr2 (mp_ptr qp,
     {
       MPN_COPY (tp + 1, dp, in);
       tp[0] = 1;
-      mpn_invert (ip, tp, in + 1, NULL);
+      mpn_invertappr (ip, tp, in + 1, NULL);
       MPN_COPY_INCR (ip, ip + 1, in);
     }
   else
@@ -183,7 +207,7 @@ mpn_mu_div_qr2 (mp_ptr qp,
 	MPN_ZERO (ip, in);
       else
 	{
-	  mpn_invert (ip, tp, in + 1, NULL);
+	  mpn_invertappr (ip, tp, in + 1, NULL);
 	  MPN_COPY_INCR (ip, ip + 1, in);
 	}
     }
@@ -199,11 +223,11 @@ mpn_mu_div_qr2 (mp_ptr qp,
     {
       tp[in + 1] = 0;
       MPN_COPY (tp + in + 2, dp, in);
-      mpn_invert (tp, tp + in + 1, in + 1, NULL);
+      mpn_invertappr (tp, tp + in + 1, in + 1, NULL);
     }
   else
     {
-      mpn_invert (tp, dp + dn - (in + 1), in + 1, NULL);
+      mpn_invertappr (tp, dp + dn - (in + 1), in + 1, NULL);
     }
   cy = mpn_sub_1 (tp, tp, in + 1, GMP_NUMB_HIGHBIT);
   if (UNLIKELY (cy != 0))
@@ -219,16 +243,16 @@ mpn_mu_div_qr2 (mp_ptr qp,
     mpn_sub_n (np + qn, np + qn, dp, dn);
 #endif
 
-  mpn_preinv_mu_div_qr (qp, rp, np, nn, dp, dn, ip, in, scratch + in);
+  qh = mpn_preinv_mu_div_qr (qp, rp, np, nn, dp, dn, ip, in, scratch + in);
 
 /*  return qh; */
-  return 0;
+  return qh;
 }
 
-void
+mp_limb_t
 mpn_preinv_mu_div_qr (mp_ptr qp,
 		      mp_ptr rp,
-		      mp_ptr np,
+		      mp_srcptr np,
 		      mp_size_t nn,
 		      mp_srcptr dp,
 		      mp_size_t dn,
@@ -237,24 +261,25 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 		      mp_ptr scratch)
 {
   mp_size_t qn;
-  mp_limb_t cy;
+  mp_limb_t cy, qh;
   mp_ptr tp;
   mp_limb_t r;
 
   qn = nn - dn;
 
-  if (qn == 0)
-    {
-      MPN_COPY (rp, np, dn);
-      return;
-    }
-
-  tp = scratch;
-
   np += qn;
   qp += qn;
 
-  MPN_COPY (rp, np, dn);
+  qh = mpn_cmp (np, dp, dn) >= 0;
+  if (qh != 0)
+    mpn_sub_n (rp, np, dp, dn);
+  else
+    MPN_COPY (rp, np, dn);
+
+  if (qn == 0)
+    return qh;			/* Degenerate use.  Should we allow this? */
+
+  tp = scratch;
 
   while (qn > 0)
     {
@@ -355,78 +380,46 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 
       qn -= in;
     }
+  return qh;
 }
 
-#define THRES 100		/* FIXME: somewhat arbitrary */
-
-#ifdef CHECK
-#undef THRES
-#define THRES 1
-#endif
-
-mp_limb_t
-mpn_mu_div_qr (mp_ptr qp,
-	       mp_ptr rp,
-	       mp_ptr np,
-	       mp_size_t nn,
-	       mp_srcptr dp,
-	       mp_size_t dn,
-	       mp_ptr scratch)
+/* In case k=0 (automatic choice), we distinguish 3 cases:
+   (a) dn < qn:         in = ceil(qn / ceil(qn/dn))
+   (b) dn/3 < qn <= dn: in = ceil(qn / 2)
+   (c) qn < dn/3:       in = qn
+   In all cases we have in <= dn.
+ */
+mp_size_t
+mpn_mu_div_qr_choose_in (mp_size_t qn, mp_size_t dn, int k)
 {
-  mp_size_t qn;
+  mp_size_t in;
 
-  qn = nn - dn;
-  if (qn + THRES < dn)
+  if (k == 0)
     {
-      /* |______________|________|   dividend				  nn
-		|_______|________|   divisor				  dn
-
-		|______|	     quotient (prel)			  qn
-
-		 |_______________|   quotient * ignored-part-of(divisor)  dn-1
-      */
-
-      mp_limb_t cy, x;
-
-      if (mpn_cmp (np + nn - (qn + 1), dp + dn - (qn + 1), qn + 1) >= 0)
+      mp_size_t b;
+      if (qn > dn)
 	{
-	  /* Quotient is 111...111, could optimize this rare case at some point.  */
-	  mpn_mu_div_qr2 (qp, rp, np, nn, dp, dn, scratch);
-	  return 0;
+	  /* Compute an inverse size that is a nice partition of the quotient.  */
+	  b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
+	  in = (qn - 1) / b + 1;	/* ceil(qn/b) = ceil(qn / ceil(qn/dn)) */
 	}
-
-      /* Compute a preliminary quotient and a partial remainder by dividing the
-	 most significant limbs of each operand.  */
-      mpn_mu_div_qr2 (qp, rp + nn - (2 * qn + 1),
-		      np + nn - (2 * qn + 1), 2 * qn + 1,
-		      dp + dn - (qn + 1), qn + 1,
-		      scratch);
-
-      /* Multiply the quotient by the divisor limbs ignored above.  */
-      if (dn - (qn + 1) > qn)
-	mpn_mul (scratch, dp, dn - (qn + 1), qp, qn);  /* prod is dn-1 limbs */
-      else
-	mpn_mul (scratch, qp, qn, dp, dn - (qn + 1));  /* prod is dn-1 limbs */
-
-      cy = mpn_sub_n (rp, np, scratch, nn - (2 * qn + 1));
-      cy = mpn_sub_nc (rp + nn - (2 * qn + 1),
-		       rp + nn - (2 * qn + 1),
-		       scratch + nn - (2 * qn + 1),
-		       qn, cy);
-      x = rp[dn - 1];
-      rp[dn - 1] = x - cy;
-      if (cy > x)
+      else if (3 * qn > dn)
 	{
-	  mpn_decr_u (qp, 1);
-	  mpn_add_n (rp, rp, dp, dn);
+	  in = (qn - 1) / 2 + 1;	/* b = 2 */
+	}
+      else
+	{
+	  in = (qn - 1) / 1 + 1;	/* b = 1 */
 	}
     }
   else
     {
-      return mpn_mu_div_qr2 (qp, rp, np, nn, dp, dn, scratch);
+      mp_size_t xn;
+      xn = MIN (dn, qn);
+      in = (xn - 1) / k + 1;
     }
 
-  return 0;			/* FIXME */
+  return in;
 }
 
 mp_size_t

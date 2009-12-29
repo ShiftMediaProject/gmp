@@ -1,5 +1,11 @@
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mu_div_qr.c: Rewrite to return a high quotient limb,
+	to let dividend argument be constant, and as a general cleanup.
+	* mpn/generic/mu_divappr_q.c: Likewise.
+	* mpn/generic/mu_div_q.c: Likewise.
+	* gmp-impl.h: Update declarations of changed functions.
+
 	* mpn/generic/invertappr.c (mpn_invertappr): Allocate scratch space
 	when caller passed NULL.
 
@@ -3319,12 +3325,12 @@
 
 	* mpz/get_str.c: Cast a char index to int to shut up compilers.
 
-	* dc_div_qr.c: Pass dummy scratch argument to mpn_invert.
-	* dc_divappr_q.c: Likewise.
-	* mu_div_qr.c: Likewise.
-	* mu_divappr_q.c: Likewise.
-	* mu_div_q.c: Likewise.
-	* divexact.c: Likewise.
+	* mpn/generic/dc_div_qr.c: Pass dummy scratch argument to mpn_invert.
+	* mpn/generic/dc_divappr_q.c: Likewise.
+	* mpn/generic/mu_div_qr.c: Likewise.
+	* mpn/generic/mu_divappr_q.c: Likewise.
+	* mpn/generic/mu_div_q.c: Likewise.
+	* mpn/generic/divexact.c: Likewise.
 
 	* mpn/generic/invert.c: New file, placeholder for now.
 

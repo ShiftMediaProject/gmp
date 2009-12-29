@@ -1,4 +1,4 @@
-/* mpn_mu_div_q, mpn_preinv_mu_div_q.
+/* mpn_mu_div_q.
 
    Contributed to the GNU project by Torbjorn Granlund.
 
@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GMP RELEASE.
 
-Copyright 2005, 2006, 2007 Free Software Foundation, Inc.
+Copyright 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,6 +23,13 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
+
+/*
+   The idea of the algorithm used herein is to compute a smaller inverted value
+   than used in the standard Barrett algorithm, and thus save time in the
+   Newton iterations, and pay just a small price when using the inverted value
+   for developing quotient bits.  This algorithm was presented at ICMS 2006.
+*/
 
 /*
   Things to work on:
@@ -57,7 +64,7 @@ mpn_mu_div_q (mp_ptr qp,
 {
   mp_ptr tp, rp, ip, this_ip;
   mp_size_t qn, in, this_in;
-  mp_limb_t cy;
+  mp_limb_t cy, qh;
   TMP_DECL;
 
   TMP_MARK;
@@ -88,7 +95,7 @@ mpn_mu_div_q (mp_ptr qp,
 	{
 	  MPN_COPY (scratch + 1, dp, in);
 	  scratch[0] = 1;
-	  mpn_invert (ip, scratch, in + 1, NULL);
+	  mpn_invertappr (ip, scratch, in + 1, NULL);
 	  MPN_COPY_INCR (ip, ip + 1, in);
 	}
       else
@@ -98,7 +105,7 @@ mpn_mu_div_q (mp_ptr qp,
 	    MPN_ZERO (ip, in);
 	  else
 	    {
-	      mpn_invert (ip, scratch, in + 1, NULL);
+	      mpn_invertappr (ip, scratch, in + 1, NULL);
 	      MPN_COPY_INCR (ip, ip + 1, in);
 	    }
 	}
@@ -106,21 +113,20 @@ mpn_mu_div_q (mp_ptr qp,
        /* |_______________________|   dividend
 			 |________|   divisor  */
       rp = TMP_BALLOC_LIMBS (2 * dn + 1);
-      if (dn != qn)		/* FIXME: perhaps mpn_mu_div_qr should DTRT */
+
 	{
 	  this_in = mpn_mu_div_qr_choose_in (qn - dn, dn, 0);
 	  this_ip = ip + in - this_in;
-	  mpn_preinv_mu_div_qr (tp + dn + 1, rp + dn + 1, np + dn, qn, dp, dn,
+	  qh = mpn_preinv_mu_div_qr (tp + dn + 1, rp + dn + 1, np + dn, qn, dp, dn,
 				this_ip, this_in, scratch);
 	}
-      else
-	MPN_COPY (rp + dn + 1, np + dn, dn);
+
 
       MPN_COPY (rp + 1, np, dn);
       rp[0] = 0;
       this_in = mpn_mu_divappr_q_choose_in (dn + 1, dn, 0);
       this_ip = ip + in - this_in;
-      mpn_preinv_mu_divappr_q (tp, rp, 2*dn + 1, dp, dn, this_ip, this_in, scratch);
+      mpn_preinv_mu_divappr_q (tp, rp, 2 * dn + 1, dp, dn, this_ip, this_in, scratch);
 
       /* The max error of mpn_mu_divappr_q is +4.  If the low quotient limb is
 	 greater than the max error, we cannot trust the quotient.  */
@@ -138,7 +144,8 @@ mpn_mu_div_q (mp_ptr qp,
     {
        /* |_______________________|   dividend
 		 |________________|   divisor  */
-      mpn_mu_divappr_q (tp, np + nn - (2*qn + 2), 2*qn + 2, dp + dn - (qn + 1), qn + 1, scratch);
+      qh = mpn_mu_divappr_q (tp, np + nn - (2 * qn + 2), 2 * qn + 2,
+			     dp + dn - (qn + 1), qn + 1, scratch);
 
       if (tp[0] > 4)
 	{
@@ -147,12 +154,12 @@ mpn_mu_div_q (mp_ptr qp,
       else
 	{
 	  rp = TMP_BALLOC_LIMBS (dn);
-	  mpn_mu_div_qr (qp, rp, np, nn, dp, dn, scratch);
+	  qh = mpn_mu_div_qr (qp, rp, np, nn, dp, dn, scratch);
 	}
     }
 
   TMP_FREE;
-  return 0;
+  return qh;
 }
 
 mp_size_t
