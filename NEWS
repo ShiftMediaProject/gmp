@@ -68,6 +68,9 @@ Changes between GMP version 4.3.X and 4.4.0.
     4.3.2 has this change.)
 
   MISC
+  * The mpn_mul function should no longer be used for squaring,
+    instead use the new mpn_sqr.
+
   * The mpn_bdivmod function has been removed.  We do not consider this an
     incompatible change, since the function was marked as preliminary.
 
