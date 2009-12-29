@@ -1,5 +1,7 @@
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mu_div_qr.c (mpn_mu_div_qr2): Remove code for dn==1.
+
 	* mpz/mul.c: Call mpn_sqr directly.  Use PTR,SIZ,ALLOC.
 
 	* tune/tuneup.c (tune_mu_div): Set min_size to 6, DC functions require

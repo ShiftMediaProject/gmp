@@ -84,7 +84,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    really make sense?  It seem like the quotient between dn and qn might be
    what we really should be checking.  */
 #ifndef MU_DIV_QR_SKEW_THRESHOLD
-#define MU_DIV_QR_SKEW_THRESHOLD 100	/* FIXME: somewhat arbitrary */
+#define MU_DIV_QR_SKEW_THRESHOLD 100
 #endif
 
 #ifdef CHECK				/* FIXME: Enable in minithres */
@@ -169,15 +169,6 @@ mpn_mu_div_qr2 (mp_ptr qp,
   mp_size_t qn, in;
   mp_limb_t cy, qh;
   mp_ptr ip, tp;
-
-  /* FIXME: We should probably not handle tiny operands, but do it for now.  */
-  if (dn == 1)
-    {
-      ASSERT_ALWAYS (dn > 1);
-      rp[0] = mpn_divrem_1 (scratch, 0L, np, nn, dp[0]);
-      MPN_COPY (qp, scratch, nn - 1);
-      return scratch[nn - 1];
-    }
 
   qn = nn - dn;
 
@@ -295,7 +286,7 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 	 by the upper part of the partial remainder R.  */
       mpn_mul_n (tp, rp + dn - in, ip, in);		/* mulhi  */
       cy = mpn_add_n (qp, tp + in, rp + dn - in, in);	/* I's msb implicit */
-      ASSERT_ALWAYS (cy == 0);			/* FIXME */
+      ASSERT_ALWAYS (cy == 0);
 
       /* Compute the product of the quotient block and the divisor D, to be
 	 subtracted from the partial remainder combined with new limbs from the
