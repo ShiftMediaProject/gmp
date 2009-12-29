@@ -1,5 +1,8 @@
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-div.c: Call mu_div functions with operands that generate
+	a high quotient limb.
+
 	* mpn/generic/mu_div_qr.c: Rewrite to return a high quotient limb,
 	to let dividend argument be constant, and as a general cleanup.
 	* mpn/generic/mu_divappr_q.c: Likewise.

@@ -324,7 +324,7 @@ main (int argc, char **argv)
 	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_dcpi1_div_q", 0);
 	}
 
-      if (nn - dn <= 2 || mpn_cmp (np + nn - dn, dp, dn) >= 0)
+      if (nn - dn <= 2)
 	continue;
 
       ran = random_word (rands);
