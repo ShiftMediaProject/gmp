@@ -1,5 +1,8 @@
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mu_div): Set min_size to 6, DC functions require
+	this.
+
 	* tests/mpn/t-div.c: Call mu_div functions with operands that generate
 	a high quotient limb.
 
