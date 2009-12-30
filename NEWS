@@ -12,12 +12,18 @@ Changes between GMP version 4.3.X and 4.4.0.
 
   SPEEDUPS
   * Multiplication has been overhauled:
+
     (1) Multiplication of larger same size operands has been improved with
-        the addition of new 2 Toom functions and a new internal function
+        the addition of two new Toom functions and a new internal function
         mpn_mulmod_bnm1 (computing U * V mod (B^n-1), B being the word base.
-    (2) Multiplication of different size operands has been improved with the
+        This latter function is used for the largest products, waiting for a
+        better Schoenhage-Strassen U * V mod (B^n+1) implementation.
+
+    (2) Likewise for squaring.
+
+    (3) Multiplication of different size operands has been improved with the
         addition of many new Toom function, and by selecting underlying
-        function better from the main multiply functions.
+        functions better from the main multiply functions.
 
   * Division has been overhauled, for both small and large operands:
     (1) Plain "schoolbook" division is reimplemented using faster quotient
@@ -32,7 +38,7 @@ Changes between GMP version 4.3.X and 4.4.0.
     gone from O(M(n)log(n)m) to O(M(n)m) where n is the size of the modulo
     argument and m is the size of the exponent.  It is also radically
     faster for even modulus, since it now partially factors such modulus
-    and performs two smaller expod operations, then uses CRT.
+    and performs two smaller modexp operations, then uses CRT.
 
   * The internal support for multiplication yielding just the lower n limbs
     has been improved by using Mulders' algorithm.
@@ -48,6 +54,8 @@ Changes between GMP version 4.3.X and 4.4.0.
 
   * The function mpz_remove uses a much faster algorithm, is better tuned,
     and also benefits from the division improvements.
+
+  * Intel Atom and VIA Nano specific optimisations.
 
   * Plus hundreds of smaller improvements and tweaks!
 
@@ -74,7 +82,7 @@ Changes between GMP version 4.3.X and 4.4.0.
   * The mpn_bdivmod function has been removed.  We do not consider this an
     incompatible change, since the function was marked as preliminary.
 
-  * The teststuite has been enhanced in various ways.
+  * The testsuite has been enhanced in various ways.
 
 
 Changes between GMP version 4.3.1 and 4.3.2
