@@ -36,7 +36,9 @@ Niels Möller		mpn/generic/hgcd2.c, gcd.c, gcdext.c, matrix22_mul.c,
 			dcpi1_bdiv_q.c, sbpi1_bdiv_qr.c, sbpi1_bdiv_q.c,
 			toom_eval_dgr3_pm1.c, toom_eval_dgr3_pm2.c,
 			toom_eval_pm1.c, toom_eval_pm2.c, toom_eval_pm2exp.c,
-			divexact.c, mpz/nextprime.c.
+			divexact.c, mpn/x86/invert_limb.asm,
+			mpn/x86_64/invert_limb.asm, mpz/nextprime.c,
+			mpz/divexact.c.
 
 Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			toom62_mul.c, toom43_mul.c, toom52_mul.c,
