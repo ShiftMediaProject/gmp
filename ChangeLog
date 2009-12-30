@@ -1,5 +1,8 @@
 2009-12-30  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_mu_bdiv, tune_dc_bdiv, tune_mu_div)
+	(tune_dc_div): Clear global s.r to make speed functions do 2n/n.
+
 	* tune/speed.c (routine): New entries for mpn_mu_div_qr and
 	mpn_mupi_div_qr.  Allow .r parameter for mpn_sbpi1_div_qr,
 	mpn_dcpi1_div_qr.

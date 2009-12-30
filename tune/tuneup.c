@@ -1082,6 +1082,7 @@ tune_sqr (void)
 void
 tune_dc_div (void)
 {
+  s.r = 0;		/* clear to make speed function do 2n/n */
   {
     static struct param_t  param;
     param.name = "DC_DIV_QR_THRESHOLD";
@@ -1103,6 +1104,7 @@ tune_dc_div (void)
 void
 tune_mu_div (void)
 {
+  s.r = 0;		/* clear to make speed function do 2n/n */
   {
     static struct param_t  param;
     param.name = "MU_DIV_QR_THRESHOLD";
@@ -1138,6 +1140,7 @@ tune_mu_div (void)
 void
 tune_dc_bdiv (void)
 {
+  s.r = 0;		/* clear to make speed function do 2n/n*/
   {
     static struct param_t  param;
     param.name = "DC_BDIV_QR_THRESHOLD";
@@ -1159,6 +1162,7 @@ tune_dc_bdiv (void)
 void
 tune_mu_bdiv (void)
 {
+  s.r = 0;		/* clear to make speed function do 2n/n*/
   {
     static struct param_t  param;
     param.name = "MU_BDIV_QR_THRESHOLD";
