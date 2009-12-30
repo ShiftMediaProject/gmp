@@ -1,3 +1,8 @@
+2009-12-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (speed_mpn_sbordcpi1_div_qr): New function.
+	(tune_mu_div): Use it.
+
 2009-12-30  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mu_bdiv, tune_dc_bdiv, tune_mu_div)

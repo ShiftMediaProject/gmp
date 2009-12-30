@@ -1101,6 +1101,15 @@ tune_dc_div (void)
   }
 }
 
+static double
+speed_mpn_sbordcpi1_div_qr (struct speed_params *s)
+{
+  if (s->size < DC_DIV_QR_THRESHOLD)
+    return speed_mpn_sbpi1_div_qr (s);
+  else
+    return speed_mpn_dcpi1_div_qr (s);
+}
+
 void
 tune_mu_div (void)
 {
@@ -1128,9 +1137,10 @@ tune_mu_div (void)
   {
     static struct param_t  param;
     param.name = "MUPI_DIV_QR_THRESHOLD";
-    param.function = speed_mpn_dcpi1_div_qr;
+    param.function = speed_mpn_sbordcpi1_div_qr;
     param.function2 = speed_mpn_mupi_div_qr;
     param.min_size = 6;
+    param.min_is_always = 1;
     param.max_size = 1000;
     param.step_factor = 0.02;
     one (&mupi_div_qr_threshold, &param);
