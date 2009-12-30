@@ -140,9 +140,8 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      {
 		mp_size_t itch = mpn_mu_div_qr_itch (nn, dn, 0);
 		mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
-		rp = n2p + nn - dn;
 		mpn_mu_div_qr (qp, rp, n2p, nn, d2p, dn, scratch);
-		MPN_COPY (n2p, rp, dn);
+		n2p = rp;
 	      }
 
 	    if (cnt != 0)
@@ -259,7 +258,6 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      mpn_divrem_2 (qp, 0L, n2p, 4L, d2p); /* FIXME: obsolete function */
 	    else
 	      {
-		gmp_pi1_t dinv;
 		invert_pi1 (dinv, d2p[qn - 1], d2p[qn - 2]);
 		if (BELOW_THRESHOLD (qn, DC_DIV_QR_THRESHOLD))
 		  mpn_sbpi1_div_qr (qp, n2p, 2 * qn, d2p, qn, dinv.inv32);
@@ -269,7 +267,6 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		  {
 		    mp_size_t itch = mpn_mu_div_qr_itch (2 * qn, qn, 0);
 		    mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
-		    rp = n2p + 2 * qn - qn;
 		    mpn_mu_div_qr (qp, rp, n2p, 2 * qn, d2p, qn, scratch);
 		    MPN_COPY (n2p, rp, qn);
 		  }

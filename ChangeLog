@@ -1,3 +1,8 @@
+2009-12-30  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/tdiv_qr.c: Don't overwrite rp with unnecessary temporary
+	alloc.
+
 2009-12-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (tune_mu_div): Tune MUPI_DIV_QR_THRESHOLD.
