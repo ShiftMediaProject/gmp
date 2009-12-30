@@ -18,9 +18,7 @@ Changes between GMP version 4.3.X and 4.4.0.
         mpn_mulmod_bnm1 (computing U * V mod (B^n-1), B being the word base.
         This latter function is used for the largest products, waiting for a
         better Schoenhage-Strassen U * V mod (B^n+1) implementation.
-
     (2) Likewise for squaring.
-
     (3) Multiplication of different size operands has been improved with the
         addition of many new Toom function, and by selecting underlying
         functions better from the main multiply functions.
