@@ -134,7 +134,10 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    invert_pi1 (dinv, d2p[dn - 1], d2p[dn - 2]);
 	    if (BELOW_THRESHOLD (dn, DC_DIV_QR_THRESHOLD))
 	      mpn_sbpi1_div_qr (qp, n2p, nn, d2p, dn, dinv.inv32);
-	    else if (BELOW_THRESHOLD (dn, MU_DIV_QR_THRESHOLD))
+	    else if (BELOW_THRESHOLD (dn, MUPI_DIV_QR_THRESHOLD) ||
+		     BELOW_THRESHOLD (nn, MU_DIV_QR_THRESHOLD) ||
+		     (double) MUPI_DIV_QR_THRESHOLD * (nn-dn) +
+		     (double) MU_DIV_QR_THRESHOLD * dn > (double) dn * nn)
 	      mpn_dcpi1_div_qr (qp, n2p, nn, d2p, dn, &dinv);
 	    else
 	      {
