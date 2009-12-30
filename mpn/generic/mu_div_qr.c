@@ -236,7 +236,6 @@ mpn_mu_div_qr2 (mp_ptr qp,
 
   qh = mpn_preinv_mu_div_qr (qp, rp, np, nn, dp, dn, ip, in, scratch + in);
 
-/*  return qh; */
   return qh;
 }
 
@@ -371,6 +370,7 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 
       qn -= in;
     }
+
   return qh;
 }
 
