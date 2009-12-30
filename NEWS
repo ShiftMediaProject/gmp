@@ -17,7 +17,7 @@ Changes between GMP version 4.3.X and 4.4.0.
         mpn_mulmod_bnm1 (computing U * V mod (B^n-1), B being the word base.
     (2) Multiplication of different size operands has been improved with the
         addition of many new Toom function, and by selecting underlying
-        function better from the main multiplicy functions.
+        function better from the main multiply functions.
 
   * Division has been overhauled, for both small and large operands:
     (1) Plain "schoolbook" division is reimplemented using faster quotient

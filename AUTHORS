@@ -40,8 +40,13 @@ Niels Möller		mpn/generic/hgcd2.c, gcd.c, gcdext.c, matrix22_mul.c,
 
 Marco Bodrato		mpn/generic/toom44_mul.c, toom4_sqr.c, toom53_mul.c,
 			toom62_mul.c, toom43_mul.c, toom52_mul.c,
-			toom_interpolate_6pts.c, mulmod_bnm1.c,
-			toom_eval_pm2.c, invert.c, invertappr.c.
+			toom_interpolate_6pts.c, toom_couple_handling.c,
+			toom63_mul.c, toom_interpolate_8pts.c,
+			toom6h_mul.c, toom6_sqr.c, toom_interpolate_12pts.c,
+			toom8h_mul.c, toom8_sqr.c, toom_interpolate_16pts.c,
+			mulmod_bnm1.c, sqrmod_bnm1.c, nussbaumer_mul.c,
+			toom_eval_pm2.c, toom_eval_pm2rexp.c,
+			mullo_n.c, invert.c, invertappr.c.
 
 David Harvey		mpn/x86_64/mul_basecase.asm
 
