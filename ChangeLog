@@ -1,5 +1,7 @@
 2009-12-30  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpz/t-tdiv.c: Increase operands size again.
+
 	* mpn/generic/tdiv_qr.c: Attempt to choose between DC and MU cleverer.
 
 	* mpn/generic/tdiv_qr.c: Don't overwrite rp with unnecessary temporary
