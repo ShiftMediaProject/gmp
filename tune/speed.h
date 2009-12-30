@@ -1475,36 +1475,43 @@ int speed_routine_count_zeros_setup
     mp_ptr     dp, tp, ap, qp;						\
     gmp_pi1_t  inv;							\
     double     t;							\
+    mp_size_t size1;							\
     TMP_DECL;								\
 									\
+    size1 = (s->r == 0 ? 2 * s->size : s->r);				\
+									\
     SPEED_RESTRICT_COND (s->size >= 1);					\
+    SPEED_RESTRICT_COND (size1 >= s->size);				\
 									\
     TMP_MARK;								\
-    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size, s->align_xp);			\
+    SPEED_TMP_ALLOC_LIMBS (ap, size1, s->align_xp);			\
     SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
-    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
-    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size, s->align_wp2);		\
+    SPEED_TMP_ALLOC_LIMBS (qp, size1 - s->size, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (tp, size1, s->align_wp2);			\
 									\
+    /* we don't fill in dividend completely when size1 > s->size */	\
     MPN_COPY (ap,         s->xp, s->size);				\
-    MPN_COPY (ap+s->size, s->xp, s->size);				\
+    MPN_COPY (ap + size1 - s->size, s->xp, s->size);			\
+									\
+    MPN_COPY (dp,         s->yp, s->size);				\
 									\
     /* normalize the data */						\
     dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
-    ap[2*s->size-1] = dp[s->size-1] - 1;				\
+    ap[size1 - 1] = dp[s->size - 1] - 1;				\
 									\
     invert_pi1 (inv, dp[s->size-1], dp[s->size-2]);			\
 									\
-    speed_operand_src (s, ap, 2*s->size);				\
-    speed_operand_dst (s, tp, 2*s->size);				\
+    speed_operand_src (s, ap, size1);					\
+    speed_operand_dst (s, tp, size1);					\
     speed_operand_src (s, dp, s->size);					\
-    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_dst (s, qp, size1 - s->size);				\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do {								\
-      MPN_COPY (tp, ap, 2*s->size);					\
-      function (qp, tp, 2*s->size, dp, s->size, INV);			\
+      MPN_COPY (tp, ap, size1);						\
+      function (qp, tp, size1, dp, s->size, INV);			\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\
@@ -1556,29 +1563,35 @@ int speed_routine_count_zeros_setup
     unsigned   i;							\
     mp_ptr     dp, tp, qp, rp, scratch;					\
     double     t;							\
-    mp_size_t itch;							\
+    mp_size_t size1, itch;						\
     TMP_DECL;								\
 									\
-    SPEED_RESTRICT_COND (s->size >= 2);					\
+    size1 = (s->r == 0 ? 2 * s->size : s->r);				\
 									\
-    itch = itchfn (2 * s->size, s->size, 0);				\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+    SPEED_RESTRICT_COND (size1 >= s->size);				\
+									\
+    itch = itchfn (size1, s->size, 0);					\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
-    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
-    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (qp, size1 - s->size, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (tp, size1, s->align_xp);			\
     SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
     SPEED_TMP_ALLOC_LIMBS (rp, s->size, s->align_wp2); /* alignment? */	\
 									\
+    /* we don't fill in dividend completely when size1 > s->size */	\
     MPN_COPY (tp,         s->xp, s->size);				\
-    MPN_COPY (tp+s->size, s->xp, s->size);				\
+    MPN_COPY (tp + size1 - s->size, s->xp, s->size);			\
+									\
+    MPN_COPY (dp,         s->yp, s->size);				\
 									\
     /* normalize the data */						\
     dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
-    tp[2*s->size-1] = dp[s->size-1] - 1;				\
+    tp[size1 - 1] = dp[s->size - 1] - 1;				\
 									\
-    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_dst (s, qp, size1 - s->size);				\
     speed_operand_dst (s, rp, s->size);					\
-    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_src (s, tp, size1);					\
     speed_operand_src (s, dp, s->size);					\
     speed_operand_dst (s, scratch, itch);				\
     speed_cache_fill (s);						\
@@ -1586,7 +1599,7 @@ int speed_routine_count_zeros_setup
     speed_starttime ();							\
     i = s->reps;							\
     do {								\
-      function (qp, rp, tp, 2 * s->size, dp, s->size, scratch);		\
+      function (qp, rp, tp, size1, dp, s->size, scratch);		\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\
@@ -1598,32 +1611,38 @@ int speed_routine_count_zeros_setup
     unsigned   i;							\
     mp_ptr     dp, tp, qp, rp, ip, scratch;				\
     double     t;							\
-    mp_size_t itch;							\
+    mp_size_t size1, itch;						\
     TMP_DECL;								\
 									\
-    SPEED_RESTRICT_COND (s->size >= 2);					\
+    size1 = (s->r == 0 ? 2 * s->size : s->r);				\
 									\
-    itch = itchfn (2 * s->size, s->size, 0);				\
+    SPEED_RESTRICT_COND (s->size >= 2);					\
+    SPEED_RESTRICT_COND (size1 >= s->size);				\
+									\
+    itch = itchfn (size1, s->size, 0);					\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (dp, s->size, s->align_yp);			\
-    SPEED_TMP_ALLOC_LIMBS (qp, s->size, s->align_wp);			\
-    SPEED_TMP_ALLOC_LIMBS (tp, 2 * s->size, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (qp, size1 - s->size, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (tp, size1, s->align_xp);			\
     SPEED_TMP_ALLOC_LIMBS (scratch, itch, s->align_wp2);		\
     SPEED_TMP_ALLOC_LIMBS (rp, s->size, s->align_wp2); /* alignment? */	\
     SPEED_TMP_ALLOC_LIMBS (ip, s->size, s->align_wp2); /* alignment? */	\
 									\
+    /* we don't fill in dividend completely when size1 > s->size */	\
     MPN_COPY (tp,         s->xp, s->size);				\
-    MPN_COPY (tp+s->size, s->xp, s->size);				\
+    MPN_COPY (tp + size1 - s->size, s->xp, s->size);			\
+									\
+    MPN_COPY (dp,         s->yp, s->size);				\
 									\
     /* normalize the data */						\
     dp[s->size-1] |= GMP_NUMB_HIGHBIT;					\
-    tp[2*s->size-1] = dp[s->size-1] - 1;				\
+    tp[size1 - 1] = dp[s->size-1] - 1;					\
 									\
     mpn_invert (ip, dp, s->size, NULL);					\
 									\
-    speed_operand_dst (s, qp, s->size);					\
+    speed_operand_dst (s, qp, size1 - s->size);				\
     speed_operand_dst (s, rp, s->size);					\
-    speed_operand_src (s, tp, 2 * s->size);				\
+    speed_operand_src (s, tp, size1);					\
     speed_operand_src (s, dp, s->size);					\
     speed_operand_src (s, ip, s->size);					\
     speed_operand_dst (s, scratch, itch);				\
@@ -1632,7 +1651,7 @@ int speed_routine_count_zeros_setup
     speed_starttime ();							\
     i = s->reps;							\
     do {								\
-      function (qp, rp, tp, 2 * s->size, dp, s->size, ip, s->size, scratch); \
+      function (qp, rp, tp, size1, dp, s->size, ip, s->size, scratch);	\
     } while (--i != 0);							\
     t = speed_endtime ();						\
 									\

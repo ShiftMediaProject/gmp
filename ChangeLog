@@ -1,5 +1,11 @@
 2009-12-30  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.c (routine): New entries for mpn_mu_div_qr and
+	mpn_mupi_div_qr.  Allow .r parameter for mpn_sbpi1_div_qr,
+	mpn_dcpi1_div_qr.
+	* tune/speed.h (SPEED_ROUTINE_MPN_PI1_DIV, SPEED_ROUTINE_MPN_MU_DIV_QR)
+	(SPEED_ROUTINE_MPN_MUPI_DIV_QR): Handle .r parameter.
+
 	* tests/mpz/t-tdiv.c: Increase operands size again.
 
 	* mpn/generic/tdiv_qr.c: Attempt to choose between DC and MU cleverer.
