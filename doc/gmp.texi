@@ -5245,10 +5245,10 @@ Divide @{@var{np}, @var{nn}@} by @{@var{dp}, @var{dn}@} and put the quotient
 at @{@var{qp}, @var{nn}@minus{}@var{dn}+1@} and the remainder at @{@var{rp},
 @var{dn}@}.  The quotient is rounded towards 0.
 
-No overlap is permitted between arguments.  @var{nn} must be greater than or
-equal to @var{dn}.  The most significant limb of @var{dp} must be non-zero.
-The @var{qxn} operand must be zero.
-@comment FIXME: Relax overlap requirements!
+No overlap is permitted between arguments, except that @var{np} might equal
+@var{rp}.  The dividend size @var{nn} must be greater than or equal to divisor
+size @var{dn}.  The most significant limb of the divisor must be non-zero.  The
+@var{qxn} operand must be zero.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_divrem (mp_limb_t *@var{r1p}, mp_size_t @var{qxn}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2n}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3n})
