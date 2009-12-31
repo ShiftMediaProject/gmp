@@ -33,12 +33,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #endif
 
 
-#ifdef  SQR_TOOM8_THRESHOLD
-#define SQR_TOOM6_MAX (SQR_TOOM8_THRESHOLD+6*2-1)
-#else
-#define SQR_TOOM6_MAX (SQR_FFT_THRESHOLD+6*2-1)
-#endif
-
 #if TUNE_PROGRAM_BUILD
 #define MAYBE_sqr_basecase 1
 #define MAYBE_sqr_above_basecase   1
@@ -48,20 +42,28 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MAYBE_sqr_above_toom3   1
 #define MAYBE_sqr_above_toom4   1
 #else
+#ifdef  SQR_TOOM8_THRESHOLD
+#define SQR_TOOM6_MAX ((SQR_TOOM8_THRESHOLD+6*2-1+5)/6)
+#else
+#define SQR_TOOM6_MAX					\
+  ((SQR_FFT_THRESHOLD <= MP_SIZE_T_MAX - (6*2-1+5)) ?	\
+   ((SQR_FFT_THRESHOLD+6*2-1+5)/6)			\
+   : MP_SIZE_T_MAX )
+#endif
 #define MAYBE_sqr_basecase					\
   (SQR_TOOM6_THRESHOLD < 6 * SQR_TOOM2_THRESHOLD)
 #define MAYBE_sqr_above_basecase				\
-  (SQR_TOOM6_MAX >= 6 * SQR_TOOM2_THRESHOLD)
+  (SQR_TOOM6_MAX >=  SQR_TOOM2_THRESHOLD)
 #define MAYBE_sqr_toom2						\
   (SQR_TOOM6_THRESHOLD < 6 * SQR_TOOM3_THRESHOLD)
 #define MAYBE_sqr_above_toom2					\
-  (SQR_TOOM6_MAX >= 6 * SQR_TOOM3_THRESHOLD)
+  (SQR_TOOM6_MAX >= SQR_TOOM3_THRESHOLD)
 #define MAYBE_sqr_toom3						\
   (SQR_TOOM6_THRESHOLD < 6 * SQR_TOOM4_THRESHOLD)
 #define MAYBE_sqr_above_toom3					\
-  (SQR_TOOM6_MAX >= 6 * SQR_TOOM4_THRESHOLD)
+  (SQR_TOOM6_MAX >= SQR_TOOM4_THRESHOLD)
 #define MAYBE_sqr_above_toom4					\
-  (SQR_TOOM6_MAX >= 6 * SQR_TOOM6_THRESHOLD)
+  (SQR_TOOM6_MAX >= SQR_TOOM6_THRESHOLD)
 #endif
 
 #define TOOM6_SQR_REC(p, a, n, ws)					\
