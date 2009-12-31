@@ -33,7 +33,7 @@
 	(SPEED_ROUTINE_MPN_MUPI_DIV_QR): New macro.
 	* tune/common.c (speed_mpn_mupi_div_qr): New function.
 
-	* mpn/generic/tdiv_qr.c: Call mpn_mu_bdiv_qr.
+	* mpn/generic/tdiv_qr.c: Call mpn_mu_div_qr.
 
 	* tests/mpz/t-tdiv.c: Use larger test operands.
 
