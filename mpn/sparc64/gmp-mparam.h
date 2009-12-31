@@ -23,6 +23,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 /* 500 MHz ultrasparc2 running GNU/Linux */
 
+#define DIVREM_1_NORM_THRESHOLD              3
+#define DIVREM_1_UNNORM_THRESHOLD            4
+#define MOD_1_NORM_THRESHOLD                 3
+#define MOD_1_UNNORM_THRESHOLD               3
+#define MOD_1N_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX  /* never */
+#define MOD_1U_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD     MP_SIZE_T_MAX
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD     MP_SIZE_T_MAX
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD  MP_SIZE_T_MAX  /* never */
+#define USE_PREINV_DIVREM_1                  1
+#define DIVREM_2_THRESHOLD                   7
+#define DIVEXACT_1_THRESHOLD                 0  /* always */
+#define BMOD_1_TO_MOD_1_THRESHOLD        MP_SIZE_T_MAX  /* never */
+
 #define MUL_TOOM22_THRESHOLD                30
 #define MUL_TOOM33_THRESHOLD               187
 #define MUL_TOOM44_THRESHOLD               278
@@ -69,25 +83,17 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define REDC_1_TO_REDC_2_THRESHOLD          10
 #define REDC_2_TO_REDC_N_THRESHOLD         115
 
+#define MU_DIV_QR_THRESHOLD                998
+#define MU_DIVAPPR_Q_THRESHOLD             979
+#define MUPI_DIV_QR_THRESHOLD                6
+#define MU_BDIV_QR_THRESHOLD               998
+#define MU_BDIV_Q_THRESHOLD               1142
+
 #define MATRIX22_STRASSEN_THRESHOLD         13
 #define HGCD_THRESHOLD                      53
 #define GCD_DC_THRESHOLD                   283
 #define GCDEXT_DC_THRESHOLD                186
 #define JACOBI_BASE_METHOD                   2
-
-#define DIVREM_1_NORM_THRESHOLD              3
-#define DIVREM_1_UNNORM_THRESHOLD            3
-#define MOD_1_NORM_THRESHOLD                 3
-#define MOD_1_UNNORM_THRESHOLD               4
-#define MOD_1N_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX  /* never */
-#define MOD_1U_TO_MOD_1_1_THRESHOLD      MP_SIZE_T_MAX  /* never */
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD     MP_SIZE_T_MAX  /* never */
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD     MP_SIZE_T_MAX  /* never */
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD  MP_SIZE_T_MAX  /* never */
-#define USE_PREINV_DIVREM_1                  1
-#define DIVREM_2_THRESHOLD                   6
-#define DIVEXACT_1_THRESHOLD                 0  /* always */
-#define BMOD_1_TO_MOD_1_THRESHOLD        MP_SIZE_T_MAX  /* never */
 
 #define GET_STR_DC_THRESHOLD                13
 #define GET_STR_PRECOMPUTE_THRESHOLD        16

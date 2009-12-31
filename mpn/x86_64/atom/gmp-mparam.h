@@ -21,6 +21,16 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GMP_LIMB_BITS 64
 #define BYTES_PER_MP_LIMB 8
 
+#define MOD_1_NORM_THRESHOLD                 0  /* always */
+#define MOD_1_UNNORM_THRESHOLD               0  /* always */
+#define MOD_1N_TO_MOD_1_1_THRESHOLD         19
+#define MOD_1U_TO_MOD_1_1_THRESHOLD          8
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD        16
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     69
+#define USE_PREINV_DIVREM_1                  1  /* native */
+#define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
+#define BMOD_1_TO_MOD_1_THRESHOLD           32
 
 #define MUL_TOOM22_THRESHOLD                10
 #define MUL_TOOM33_THRESHOLD                66
@@ -53,7 +63,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULLO_BASECASE_THRESHOLD             2
 #define MULLO_DC_THRESHOLD                  22
-#define MULLO_MUL_N_THRESHOLD             3913
+#define MULLO_MUL_N_THRESHOLD             6633
 
 #define DC_DIV_QR_THRESHOLD                 26
 #define DC_DIVAPPR_Q_THRESHOLD              93
@@ -68,22 +78,17 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define REDC_1_TO_REDC_2_THRESHOLD          12
 #define REDC_2_TO_REDC_N_THRESHOLD          36
 
+#define MU_DIV_QR_THRESHOLD               1078
+#define MU_DIVAPPR_Q_THRESHOLD            1057
+#define MUPI_DIV_QR_THRESHOLD              162
+#define MU_BDIV_QR_THRESHOLD               906
+#define MU_BDIV_Q_THRESHOLD                942
+
 #define MATRIX22_STRASSEN_THRESHOLD         13
 #define HGCD_THRESHOLD                      83
 #define GCD_DC_THRESHOLD                   198
 #define GCDEXT_DC_THRESHOLD                198
 #define JACOBI_BASE_METHOD                   2
-
-#define MOD_1_NORM_THRESHOLD                 0  /* always */
-#define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD         19
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          7
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        16
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     69
-#define USE_PREINV_DIVREM_1                  1  /* native */
-#define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
-#define BMOD_1_TO_MOD_1_THRESHOLD           32
 
 #define GET_STR_DC_THRESHOLD                15
 #define GET_STR_PRECOMPUTE_THRESHOLD        27
