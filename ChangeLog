@@ -1,3 +1,7 @@
+2009-12-31  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/tdiv_qr.c: Handle numerator/remainder overlap in MU case.
+
 2009-12-31  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom8_sqr.c (SQR_TOOM8_MAX): Avoid overflow.

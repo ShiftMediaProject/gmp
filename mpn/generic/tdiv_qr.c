@@ -6,8 +6,7 @@
 
    Preconditions:
    1. The most significant limb of of the divisor must be non-zero.
-   2. No argument overlap is permitted.  (??? relax this ???)
-   3. nn >= dn, even if qxn is non-zero.  (??? relax this ???)
+   2. nn >= dn, even if qxn is non-zero.  (??? relax this ???)
 
    The time complexity of this is O(qn*qn+M(dn,qn)), where M(m,n) is the time
    complexity of multiplication.
@@ -270,8 +269,11 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		  {
 		    mp_size_t itch = mpn_mu_div_qr_itch (2 * qn, qn, 0);
 		    mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
-		    mpn_mu_div_qr (qp, rp, n2p, 2 * qn, d2p, qn, scratch);
-		    MPN_COPY (n2p, rp, qn);
+		    mp_ptr r2p = rp;
+		    if (np == r2p)	/* If N and R share space, put ... */
+		      r2p += nn - qn;	/* intermediate remainder at N's upper end. */
+		    mpn_mu_div_qr (qp, r2p, n2p, 2 * qn, d2p, qn, scratch);
+		    MPN_COPY (n2p, r2p, qn);
 		  }
 	      }
 
