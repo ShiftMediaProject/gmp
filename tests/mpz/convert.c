@@ -78,12 +78,11 @@ main (int argc, char **argv)
   size_t len;
 
   tests_start ();
+  TESTS_REPS (reps, argv, argc);
+
   rands = RANDS;
 
   mpz_init (bs);
-
-  if (argc == 2)
-     reps = atoi (argv[1]);
 
   mpz_init (op1);
   mpz_init (op2);
@@ -93,8 +92,8 @@ main (int argc, char **argv)
       /* 1. Generate random mpz_t and convert to a string and back to mpz_t
 	 again.  */
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 15 + 2;	/* 2..16 */
-      mpz_urandomb (bs, rands, size_range);	/* 3..65536 bits */
+      size_range = mpz_get_ui (bs) % 17 + 2;	/* 2..18 */
+      mpz_urandomb (bs, rands, size_range);	/* 3..262144 bits */
       size = mpz_get_ui (bs);
       mpz_rrandomb (op1, rands, size);
 
@@ -127,8 +126,8 @@ main (int argc, char **argv)
       /* 2. Generate random string and convert to mpz_t and back to a string
 	 again.  */
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 14 + 1;	/* 1..14 */
-      mpz_urandomb (bs, rands, size_range);	/* 1..16384 digits */
+      size_range = mpz_get_ui (bs) % 16 + 1;	/* 1..16 */
+      mpz_urandomb (bs, rands, size_range);	/* 1..65536 digits */
       len = mpz_get_ui (bs) + 1;
       buf = (*__gmp_allocate_func) (len + 1);
       if (base == 0)

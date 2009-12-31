@@ -43,12 +43,11 @@ main (int argc, char **argv)
   unsigned long bsi, size_range;
 
   tests_start ();
+  TESTS_REPS (reps, argv, argc);
+
   rands = RANDS;
 
   mpz_init (bs);
-
-  if (argc == 2)
-     reps = atoi (argv[1]);
 
   mpz_init (dividend);
   mpz_init (divisor);

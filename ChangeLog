@@ -2,6 +2,17 @@
 
 	* mpn/generic/tdiv_qr.c: Handle numerator/remainder overlap in MU case.
 
+	* tests/tests.h (TESTS_REPS): New macro.
+	* tests/mpz/dive.c: Use larger operands, decrease default reps, use
+	TESTS_REPS.
+	* tests/mpz/convert.c: Likewise.
+	* tests/mpz/t-sqrtrem.c: Likewise.
+	* tests/mpz/reuse: Likewise.
+	* tests/mpz/t-root.c: Likewise.
+	* tests/mpz/t-tdiv.c: Likewise.
+	* tests/mpz/t-gcd.c: Likewise.
+	* tests/mpz/t-powm.c: Likewise.
+
 2009-12-31  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom8_sqr.c (SQR_TOOM8_MAX): Avoid overflow.

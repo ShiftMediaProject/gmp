@@ -180,11 +180,12 @@ char *ds_func_names[] =
 #endif
 
 
+
 int
 main (int argc, char **argv)
 {
   int i;
-  int pass, reps = 1000;
+  int pass, reps = 100;
   mpz_t in1, in2, in3;
   unsigned long int in2i;
   mp_size_t size;
@@ -198,12 +199,11 @@ main (int argc, char **argv)
   unsigned long bsi, size_range;
 
   tests_start ();
+  TESTS_REPS (reps, argv, argc);
+
   rands = RANDS;
 
   mpz_init (bs);
-
-  if (argc == 2)
-     reps = atoi (argv[1]);
 
   mpz_init (in1);
   mpz_init (in2);
@@ -219,7 +219,7 @@ main (int argc, char **argv)
   for (pass = 1; pass <= reps; pass++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 12 + 2;
+      size_range = mpz_get_ui (bs) % 17 + 2;
 
       mpz_urandomb (bs, rands, size_range);
       size = mpz_get_ui (bs);

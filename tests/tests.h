@@ -461,4 +461,33 @@ istringstream : public std::istrstream {
 #endif /* __cplusplus */
 
 
+#define TESTS_REPS(count, argv, argc)					\
+  do {									\
+  char *envval, *end;							\
+  long repfactor;							\
+  if (argc > 1)								\
+    {									\
+      count = strtol (argv[1], &end, 0);				\
+      if (*end || count <= 0)						\
+	{								\
+	  fprintf (stderr, "Invalid test count: %s.\n", argv[1]);	\
+	  exit (1);							\
+	}								\
+      argv++;								\
+      argc--;								\
+    }									\
+  envval = getenv ("GMP_CHECK_REPFACTOR");				\
+  if (envval != NULL)							\
+    {									\
+      repfactor = strtol (envval, &end, 0);				\
+      if (*end || repfactor <= 0)					\
+	{								\
+	  fprintf (stderr, "Invalid repfactor: %s.\n", repfactor);	\
+	  exit (1);							\
+	}								\
+      count *= repfactor;						\
+    }									\
+  } while (0)
+
+
 #endif /* __TESTS_H__ */

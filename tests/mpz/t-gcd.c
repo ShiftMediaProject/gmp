@@ -108,12 +108,11 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
-  int reps = 100;
-
-  if (argc == 2)
-     reps = atoi (argv[1]);
+  int reps = 200;
 
   tests_start ();
+  TESTS_REPS (reps, argv, argc);
+
   rands = RANDS;
 
   check_data ();
@@ -152,7 +151,7 @@ main (int argc, char **argv)
 	 of that other ASSERTs are triggered before it.  */
 
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 13 + 2;
+      size_range = mpz_get_ui (bs) % 17 + 2;
 
       mpz_urandomb (bs, rands, size_range);
       mpz_urandomb (op1, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);

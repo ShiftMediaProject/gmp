@@ -31,20 +31,19 @@ main (int argc, char **argv)
   mpz_t prod, quot;
   mp_size_t size;
   int i;
-  int reps = 200000;
+  int reps = 5000;
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
 
   tests_start ();
+  TESTS_REPS (reps, argv, argc);
+
   rands = RANDS;
 
   mp_trace_base = -16;
 
   mpz_init (bs);
-
-  if (argc == 2)
-     reps = atoi (argv[1]);
 
   mpz_init (op1);
   mpz_init (op2);
@@ -54,7 +53,7 @@ main (int argc, char **argv)
   for (i = 0; i < reps; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 10 + 2; /* 0..2047 bit operands */
+      size_range = mpz_get_ui (bs) % 17 + 2; /* 0..2047 bit operands */
 
       mpz_urandomb (bs, rands, size_range);
       size = mpz_get_ui (bs);
