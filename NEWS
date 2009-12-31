@@ -23,14 +23,17 @@ Changes between GMP version 4.3.X and 4.4.0.
         addition of many new Toom function, and by selecting underlying
         functions better from the main multiply functions.
 
-  * Division has been overhauled, for both small and large operands:
+  * Division and mod have been overhauled:
     (1) Plain "schoolbook" division is reimplemented using faster quotient
         approximation.
     (2) Division Q = N/D, R = N mod D where both the quotient and remainder
         are needed now runs in time O(M(log(N))).  This is an improvement of
         a factor log(log(N))
-    (3) Division where just the quotient needed is now O(M(log(Q))) on
+    (3) Division where just the quotient is needed is now O(M(log(Q))) on
         average.
+    (4) Modulo operations using Montgomery REDC form now take time O(M(n)).
+    (5) Exact division Q = N/D by means of mpz_divexact has been improved
+        for all sizes, and now runs in time O(M(log(N))).
 
   * The function mpz_powm is now faster for all sizes.  Its complexity has
     gone from O(M(n)log(n)m) to O(M(n)m) where n is the size of the modulo
@@ -44,9 +47,6 @@ Changes between GMP version 4.3.X and 4.4.0.
   * Computation of inverses, both plain 1/N and 1/N mod B^n have been
     improved by using well-tuned Newton iterations, and wrap-around
     multiplication using mpn_mulmod_bnm1.
-
-  * Exact division Q = N/D by means of mpz_divexact has been improved for
-    all sizes, and now runs in time O(M(log(N))).
 
   * A new algorithm makes mpz_perfect_power_p asymptotically faster.
 
@@ -69,6 +69,8 @@ Changes between GMP version 4.3.X and 4.4.0.
 
   * A new type, mp_bitcnt_t for bignum bit counts, has been introduced.
 
+  * Support for Windows64 through mingw64 has been added.
+
   * The cofactors of mpz_gcdext and mpn_gcdext are now more strictly
     normalised, returning to how GMP 4.2 worked.  (Note that also release
     4.3.2 has this change.)
@@ -76,6 +78,12 @@ Changes between GMP version 4.3.X and 4.4.0.
   MISC
   * The mpn_mul function should no longer be used for squaring,
     instead use the new mpn_sqr.
+
+  * The algorithm selection has been improved, the number of thresholds have
+    more than doubled, and the tuning and use of existing thresholds have
+    been improved.
+
+  * The tune/speed program can measure many of new functions.
 
   * The mpn_bdivmod function has been removed.  We do not consider this an
     incompatible change, since the function was marked as preliminary.
