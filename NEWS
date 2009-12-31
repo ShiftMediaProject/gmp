@@ -65,6 +65,8 @@ Changes between GMP version 4.3.X and 4.4.0.
     mpn_nior_n, mpn_xnor_n, mpn_andn_n, mpn_iorn_n, mpn_com, mpn_neg,
     mpn_copyi, mpn_copyd, mpn_zero.
 
+  * The function mpn_tdiv_qr now allows some argument overlap.
+
   * Support for fat binaries for 64-bit x86 processors has been added.
 
   * A new type, mp_bitcnt_t for bignum bit counts, has been introduced.
