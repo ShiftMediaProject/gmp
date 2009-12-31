@@ -86,16 +86,6 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
  *
  * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2rn + 2 log2 rn + 2
  */
-#define ALLOW_MISUSE 1
-/* If we do not allow misuse, we assume two possible uses:
- * - rn, an, and bn are almost equal: more precisely an > rn/2 and
- *   bn > rn/2
- * - rn = mpn_mulmod_bnm1_next_size(an+bn) > MUL_FFT_MODF_THRESHOLD
- *   and an >= bn
- * Within this allowed uses we will never have an<rn when basecases
- * are needed.
- */
-void
 mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr bp, mp_size_t bn, mp_ptr tp)
 {
   ASSERT (0 < bn);
@@ -219,12 +209,11 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	      bp1 = so + n + 1;
 	      MPN_COPY (so + n + 1, b0, bnp);
 	      MPN_ZERO (so + n + 1 + bnp, n + 1 - bnp);
-	    }
-	    ASSERT (ALLOW_MISUSE || ((an >= rn) && (ap1 != a0)) );
-	    if (ALLOW_MISUSE && UNLIKELY (ap1 == a0)) {
-	      ap1 = so;
-	      MPN_COPY (so, a0, anp);
-	      MPN_ZERO (so + anp, n + 1 - anp);
+	      if (UNLIKELY (ap1 == a0)) { /* bn <= an, test can be nested. */
+		ap1 = so;
+		MPN_COPY (so, a0, anp);
+		MPN_ZERO (so + anp, n + 1 - anp);
+	      }
 	    }
 	    mpn_bc_mulmod_bnp1 (xp, ap1, bp1, n, xp);
 	  }

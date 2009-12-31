@@ -1,3 +1,8 @@
+2009-12-31  Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c: Don't mention MISUSE any more,
+	simply consider UNLIKELY any unexpected size.
+
 2009-12-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (speed_mpn_sbordcpi1_div_qr): New function.
