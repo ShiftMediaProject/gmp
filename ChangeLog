@@ -1,5 +1,7 @@
 2010-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD): Default to 0.
+
 	* mpn/generic/mu_div_qr.c: Rewrite to use mpn_mulmod_bnm1.  Clean up
 	scratch usage.  Improve itch functions.
 	* mpn/generic/mu_divappr_q.c: Likewise.

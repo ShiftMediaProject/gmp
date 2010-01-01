@@ -1818,6 +1818,10 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define SQRMOD_BNM1_THRESHOLD            16
 #endif
 
+#ifndef MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD
+#define MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD 0
+#endif
+
 #if HAVE_NATIVE_mpn_addmul_2 || HAVE_NATIVE_mpn_redc_2
 
 #ifndef REDC_1_TO_REDC_2_THRESHOLD
