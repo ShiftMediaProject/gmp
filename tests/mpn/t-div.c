@@ -118,7 +118,7 @@ check_one (mp_srcptr qrefp, mp_srcptr rrefp, mp_ptr qp, mp_srcptr rp,
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
-#define COUNT 100
+#define COUNT 200
 
 mp_limb_t
 random_word (gmp_randstate_ptr rs)
@@ -255,9 +255,9 @@ main (int argc, char **argv)
       qp[nn - dn + 1] = qran1;
       rp[-1] = rran0;
 
-      if ((double) (nn - dn) * dn < 1e8)
+      if ((double) (nn - dn) * dn < 1e5)
 	{
-	  /* Test mpn_sb_div_qr */
+	  /* Test mpn_sbpi1_div_qr */
 	  if (dn > 2)
 	    {
 	      MPN_COPY (rp, np, nn);
@@ -267,7 +267,7 @@ main (int argc, char **argv)
 	      check_one (qrefp, rrefp, qp, rp, np, nn, dp, dn, "mpn_sbpi1_div_qr", 0);
 	    }
 
-	  /* Test mpn_sb_divappr_q */
+	  /* Test mpn_sbpi1_divappr_q */
 	  if (dn > 2)
 	    {
 	      MPN_COPY (rp, np, nn);
@@ -277,7 +277,7 @@ main (int argc, char **argv)
 	      check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_sbpi1_divappr_q", 1);
 	    }
 
-	  /* Test mpn_sb_div_q */
+	  /* Test mpn_sbpi1_div_q */
 	  if (dn > 2)
 	    {
 	      MPN_COPY (rp, np, nn);
@@ -288,7 +288,7 @@ main (int argc, char **argv)
 	    }
 	}
 
-      /* Test mpn_dc_div_qr */
+      /* Test mpn_dcpi1_div_qr */
       if (dn >= 6 && nn - dn >= 3)
 	{
 	  MPN_COPY (rp, np, nn);
@@ -300,7 +300,7 @@ main (int argc, char **argv)
 	  check_one (qrefp, rrefp, qp, rp, np, nn, dp, dn, "mpn_dcpi1_div_qr", 0);
 	}
 
-      /* Test mpn_dc_divappr_q */
+      /* Test mpn_dcpi1_divappr_q */
       if (dn >= 6 && nn - dn >= 3)
 	{
 	  MPN_COPY (rp, np, nn);
@@ -312,7 +312,7 @@ main (int argc, char **argv)
 	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_dcpi1_divappr_q", 1);
 	}
 
-      /* Test mpn_dc_div_q */
+      /* Test mpn_dcpi1_div_q */
       if (dn >= 6 && nn - dn >= 3)
 	{
 	  MPN_COPY (rp, np, nn);
@@ -324,13 +324,12 @@ main (int argc, char **argv)
 	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_dcpi1_div_q", 0);
 	}
 
-      if (nn - dn <= 2)
+      if (nn - dn <= 2 || dn < 2)
 	continue;
 
       ran = random_word (rands);
 
      /* Test mpn_mu_div_qr */
-      if (dn >= 2)
 	{
 	  itch = mpn_mu_div_qr_itch (nn, dn, 0);
 	  if (itch + 1 > alloc)
@@ -350,7 +349,6 @@ main (int argc, char **argv)
 	}
 
       /* Test mpn_mu_divappr_q */
-      if (dn >= 2)
 	{
 	  itch = mpn_mu_divappr_q_itch (nn, dn, 0);
 	  if (itch + 1 > alloc)
@@ -367,7 +365,6 @@ main (int argc, char **argv)
 	}
 
       /* Test mpn_mu_div_q */
-      if (dn >= 2)
 	{
 	  itch = mpn_mu_div_q_itch (nn, dn, 0); /* FIXME: wrong itch function */
 	  if (itch + 1> alloc)
