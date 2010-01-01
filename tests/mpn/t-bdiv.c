@@ -1,94 +1,151 @@
-/* Test bdiv functions
+/* Copyright 2006, 2007, 2009, 2010 Free Software Foundation, Inc.
 
-Copyright 2009 Free Software Foundation, Inc.
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option) any later
+version.
 
-This file is part of the GNU MP Library.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at your
-option) any later version.
+You should have received a copy of the GNU General Public License along with
+this program.  If not, see http://www.gnu.org/licenses/.  */
 
-The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
-
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>		/* for strtol */
+#include <stdio.h>		/* for printf */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "tests.h"
+#include "longlong.h"
+#include "tests/tests.h"
 
-static int
-bdiv_q_valid_p (mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
-		mp_srcptr qp)
+
+static void
+dumpy (mp_srcptr p, mp_size_t n)
 {
-  mp_ptr tp;
-  int c;
-  TMP_DECL;
-
-  TMP_MARK;
-  tp = TMP_ALLOC_LIMBS (dn + nn);
-  refmpn_mul (tp, qp, nn, dp, dn);
-  MPN_CMP (c, tp, np, nn);
-  TMP_FREE;
-
-  return c == 0;
+  mp_size_t i;
+  if (n > 20)
+    {
+      for (i = n - 1; i >= n - 4; i--)
+	{
+	  printf ("%0*lx", (int) (2 * sizeof (mp_limb_t)), p[i]);
+	  printf (" ");
+	}
+      printf ("... ");
+      for (i = 3; i >= 0; i--)
+	{
+	  printf ("%0*lx", (int) (2 * sizeof (mp_limb_t)), p[i]);
+	  printf (" " + (i == 0));
+	}
+    }
+  else
+    {
+      for (i = n - 1; i >= 0; i--)
+	{
+	  printf ("%0*lx", (int) (2 * sizeof (mp_limb_t)), p[i]);
+	  printf (" " + (i == 0));
+	}
+    }
+  puts ("");
 }
 
-static int
-bdiv_qr_valid_p (mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
-		 mp_srcptr qp, mp_srcptr rp, mp_limb_t rh)
+static unsigned long test;
+
+void
+check_one (mp_ptr qp, mp_srcptr rp, mp_limb_t rh,
+	   mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn, char *fname)
 {
   mp_size_t qn;
+  int cmp;
   mp_ptr tp;
-  mp_size_t cy;
-  int c;
+  mp_limb_t cy = 4711;		/* silence warnings */
   TMP_DECL;
 
-  TMP_MARK;
   qn = nn - dn;
-  tp = TMP_ALLOC_LIMBS (nn);
 
-  if (qn >= dn)
-    refmpn_mul (tp, qp, qn, dp, dn);
+  if (qn == 0)
+    return;
+
+  TMP_MARK;
+
+  tp = TMP_ALLOC_LIMBS (nn + 1);
+
+  if (dn >= qn)
+    mpn_mul (tp, dp, dn, qp, qn);
   else
-    refmpn_mul (tp, dp, dn, qp, qn);
+    mpn_mul (tp, qp, qn, dp, dn);
 
-  MPN_CMP (c, tp, np, qn);
-  if (c)
+  if (rp != NULL)
     {
-      TMP_FREE;
-      return 0;
+      cy = mpn_add_n (tp + qn, tp + qn, rp, dn);
+      cmp = cy != rh || mpn_cmp (tp, np, nn) != 0;
+    }
+  else
+      cmp = mpn_cmp (tp, np, nn - dn) != 0;
+
+  if (cmp != 0)
+    {
+      printf ("\r*******************************************************************************\n");
+      printf ("%s inconsistent in test %lu\n", fname, test);
+      printf ("N=   "); dumpy (np, nn);
+      printf ("D=   "); dumpy (dp, dn);
+      printf ("Q=   "); dumpy (qp, qn);
+      if (rp != NULL)
+	{
+	  printf ("R=   "); dumpy (rp, dn);
+	  printf ("Rb=  %d, Cy=%d\n", (int) cy, (int) rh);
+	}
+      printf ("T=   "); dumpy (tp, nn);
+      printf ("nn = %ld, dn = %ld, qn = %ld", nn, dn, qn);
+      printf ("\n*******************************************************************************\n");
+      abort ();
     }
 
-  cy = refmpn_sub_nc (tp + qn, np + qn, tp + qn, dn, 0);
-  MPN_CMP (c, tp + qn, rp, dn);
   TMP_FREE;
-
-  return cy == rh && c == 0;
 }
 
-#define SIZE_LOG 11
+
+/* These are *bit* sizes. */
+#define SIZE_LOG 16
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
-#define COUNT 500
+#define COUNT 100
+
+mp_limb_t
+random_word (gmp_randstate_ptr rs)
+{
+  mpz_t x;
+  mp_limb_t r;
+  TMP_DECL;
+  TMP_MARK;
+
+  MPZ_TMP_INIT (x, 2);
+  mpz_urandomb (x, rs, 32);
+  r = mpz_get_ui (x);
+  TMP_FREE;
+  return r;
+}
+
 int
 main (int argc, char **argv)
 {
-  mp_ptr np, dp, qp, rp, scratch;
-  mp_size_t max_qr_itch, max_q_itch, max_itch;
-  int count = COUNT;
-  int test;
   gmp_randstate_ptr rands;
+  unsigned long maxnbits, maxdbits, nbits, dbits;
+  mpz_t n, d, tz;
+  mp_size_t maxnn, maxdn, nn, dn, clearn, i;
+  mp_ptr np, dp, qp, rp;
+  mp_limb_t rh;
+  mp_limb_t t;
+  mp_limb_t dinv;
+  int count = COUNT;
+  mp_ptr scratch;
+  mp_limb_t ran;
+  mp_size_t alloc, itch;
+  mp_limb_t rran0, rran1, qran0, qran1;
   TMP_DECL;
-  TMP_MARK;
 
   if (argc > 1)
     {
@@ -101,109 +158,186 @@ main (int argc, char **argv)
 	}
     }
 
+
+  maxdbits = MAX_DN;
+  maxnbits = MAX_NN;
+
   tests_start ();
   rands = RANDS;
 
-  dp = TMP_ALLOC_LIMBS (MAX_DN + 1);
-  np = TMP_ALLOC_LIMBS (MAX_NN + 1);
-  qp = TMP_ALLOC_LIMBS (MAX_NN + 1);
-  rp = TMP_ALLOC_LIMBS (MAX_DN + 1);
+  mpz_init (n);
+  mpz_init (d);
+  mpz_init (tz);
 
-  /* Claim larger nn than we'll use, to allow for a large quotient.
-     FIXME: This probably isn't the right way. */
-  max_qr_itch = mpn_bdiv_qr_itch (MAX_NN + MAX_DN, MAX_DN);
-  max_q_itch = mpn_bdiv_q_itch (MAX_NN + MAX_DN, MAX_DN);
-  max_itch = MAX (max_qr_itch, max_q_itch);
-  scratch = 1 + TMP_ALLOC_LIMBS (max_itch + 2);
+  maxnn = maxnbits / GMP_NUMB_BITS + 1;
+  maxdn = maxdbits / GMP_NUMB_BITS + 1;
 
-  for (test = 0; test < count; test++)
+  TMP_MARK;
+
+  qp = TMP_ALLOC_LIMBS (maxnn + 2) + 1;
+  rp = TMP_ALLOC_LIMBS (maxnn + 2) + 1;
+
+  alloc = 1;
+  scratch = __GMP_ALLOCATE_FUNC_LIMBS (alloc);
+
+  for (test = 0; test < count;)
     {
-      unsigned size_range;
-      mp_size_t nn, dn;
-      mp_size_t itch;
-      mp_limb_t rh;
-      mp_limb_t s_before;
-      mp_limb_t s_after;
+      nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
+      if (maxdbits > nbits)
+	dbits = random_word (rands) % nbits + 1;
+      else
+	dbits = random_word (rands) % maxdbits + 1;
 
-      /* We generate dn in the range 1 <= dn <= (1 << size_range). */
-      size_range = 1
-	+ gmp_urandomm_ui (rands, SIZE_LOG);
+#if RAND_UNIFORM
+#define RANDFUNC mpz_urandomb
+#else
+#define RANDFUNC mpz_rrandomb
+#endif
 
-      dn = 1
-	+ gmp_urandomm_ui (rands, (1L << size_range));
-      nn = dn + 1 + gmp_urandomm_ui (rands, MAX_NN - dn);
+      do
+	{
+	  RANDFUNC (n, rands, nbits);
+	  do
+	    {
+	      RANDFUNC (d, rands, dbits);
+	    }
+	  while (mpz_sgn (d) == 0);
 
-      mpn_random2 (dp, dn);
-      mpn_random2 (np, nn);
+	  np = PTR (n);
+	  dp = PTR (d);
+	  nn = SIZ (n);
+	  dn = SIZ (d);
+	}
+      while (nn < dn);
+
       dp[0] |= 1;
 
-      itch = mpn_bdiv_q_itch (nn, dn);
-      ASSERT_ALWAYS (itch <= max_itch);
+      mpz_urandomb (tz, rands, 32);
+      t = mpz_get_ui (tz);
 
-      mpn_random (scratch - 1, itch + 2);
-      s_before = scratch[-1];
-      s_after = scratch[itch];
+      if (t % 17 == 0)
+	dp[0] = GMP_NUMB_MAX;
 
-      mpn_bdiv_q (qp, np, nn, dp, dn, scratch);
-      if (!bdiv_q_valid_p (np, nn, dp, dn, qp)
-	  || s_before != scratch[-1]
-	  || s_after != scratch[itch])
+      switch (t % 16)
 	{
-	  gmp_printf ("bdiv_q test %d failed, nn = %d, dn = %d:\n"
-		      "n = %Nx\n"
-		      "d = %Nx\n"
-		      "q = %Nx\n",
-		      test, nn, dn,
-		      np, nn, dp, dn, qp, nn);
-	  if (scratch[-1] != s_before)
-	    {
-	      printf ("before scratch:"); mpn_dump (scratch-1, 1);
-	      printf ("keep:   "); mpn_dump (&s_before, 1);
-	    }
-	  if (scratch[itch] != s_after)
-	    {
-	      printf ("after scratch:"); mpn_dump (scratch + itch, 1);
-	      printf ("keep:   "); mpn_dump (&s_after, 1);
-	    }
-
-	  abort();
+	case 0:
+	  clearn = random_word (rands) % nn;
+	  for (i = 0; i <= clearn; i++)
+	    np[i] = 0;
+	  break;
+	case 1:
+	  mpn_sub_1 (np + nn - dn, dp, dn, random_word (rands));
+	  break;
+	case 2:
+	  mpn_add_1 (np + nn - dn, dp, dn, random_word (rands));
+	  break;
 	}
 
-      itch = mpn_bdiv_qr_itch (nn, dn);
-      ASSERT_ALWAYS (itch <= max_itch);
+      test++;
 
-      mpn_random (scratch - 1, itch + 2);
-      s_before = scratch[-1];
-      s_after = scratch[itch];
+      binvert_limb (dinv, dp[0]);
 
-      rh = mpn_bdiv_qr (qp, rp, np, nn, dp, dn, scratch);
-      if (!bdiv_qr_valid_p (np,nn, dp, dn, qp, rp, rh)
-	  || s_before != scratch[-1]
-	  || s_after != scratch[itch])
+      rran0 = random_word (rands);
+      rran1 = random_word (rands);
+      qran0 = random_word (rands);
+      qran1 = random_word (rands);
+
+      qp[-1] = qran0;
+      qp[nn - dn + 1] = qran1;
+      rp[-1] = rran0;
+
+      if ((double) (nn - dn) * dn < 1e5)
 	{
-	  gmp_printf ("bdiv_qr test %d failed, nn = %d, dn = %d:\n"
-		      "n = %Nx\n"
-		      "d = %Nx\n"
-		      "q = %Nx\n"
-		      "r = %Mx %Nx\n",
-		      test, nn, dn,
-		      np, nn, dp, dn, qp, nn - dn,
-		      rh, rp, dn);
+	  if (nn > dn)
+	    {
+	      /* Test mpn_sbpi1_bdiv_qr */
+	      MPN_ZERO (qp, nn - dn);
+	      MPN_ZERO (rp, dn);
+	      MPN_COPY (rp, np, nn);
+	      rh = mpn_sbpi1_bdiv_qr (qp, rp, nn, dp, dn, -dinv);
+	      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+	      ASSERT_ALWAYS (rp[-1] == rran0);
+	      check_one (qp, rp + nn - dn, rh, np, nn, dp, dn, "mpn_sbpi1_bdiv_qr");
+	    }
 
-	  if (scratch[-1] != s_before)
+	  if (nn > dn)
 	    {
-	      printf ("before scratch:"); mpn_dump (scratch-1, 1);
-	      printf ("keep:   "); mpn_dump (&s_before, 1);
+	      /* Test mpn_sbpi1_bdiv_q */
+	      MPN_COPY (rp, np, nn);
+	      MPN_ZERO (qp, nn - dn);
+	      mpn_sbpi1_bdiv_q (qp, rp, nn - dn, dp, MIN(dn,nn-dn), -dinv);
+	      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+	      ASSERT_ALWAYS (rp[-1] == rran0);
+	      check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_sbpi1_bdiv_q");
 	    }
-	  if (scratch[itch] != s_after)
-	    {
-	      printf ("after scratch:"); mpn_dump (scratch + itch, 1);
-	      printf ("keep:   "); mpn_dump (&s_after, 1);
-	    }
-	  abort();
 	}
+
+      if (dn >= 4 && nn - dn >= 2)
+	{
+	  /* Test mpn_dcpi1_bdiv_qr */
+	  MPN_COPY (rp, np, nn);
+	  MPN_ZERO (qp, nn - dn);
+	  rh = mpn_dcpi1_bdiv_qr (qp, rp, nn, dp, dn, -dinv);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+	  ASSERT_ALWAYS (rp[-1] == rran0);
+	  check_one (qp, rp + nn - dn, rh, np, nn, dp, dn, "mpn_dcpi1_bdiv_qr");
+	}
+
+      if (dn >= 4 && nn - dn >= 2)
+	{
+	  /* Test mpn_dcpi1_bdiv_q */
+	  MPN_COPY (rp, np, nn);
+	  MPN_ZERO (qp, nn - dn);
+	  mpn_dcpi1_bdiv_q (qp, rp, nn - dn, dp, MIN(dn,nn-dn), -dinv);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+	  ASSERT_ALWAYS (rp[-1] == rran0);
+	  check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_dcpi1_bdiv_q");
+	}
+
+      if (nn - dn < 2 || dn < 2)
+	continue;
+
+      ran = random_word (rands);
+
+      /* Test mpn_mu_bdiv_qr */
+      itch = mpn_mu_bdiv_qr_itch (nn, dn);
+      if (itch + 1 > alloc)
+	{
+	  scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	  alloc = itch + 1;
+	}
+      scratch[itch] = ran;
+      MPN_ZERO (qp, nn - dn);
+      MPN_ZERO (rp, dn);
+      rp[dn] = rran1;
+      rh = mpn_mu_bdiv_qr (qp, rp, np, nn, dp, dn, scratch);
+      ASSERT_ALWAYS (ran == scratch[itch]);
+      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+      ASSERT_ALWAYS (rp[-1] == rran0);  ASSERT_ALWAYS (rp[dn] == rran1);
+      check_one (qp, rp, rh, np, nn, dp, dn, "mpn_mu_bdiv_qr");
+
+      /* Test mpn_mu_bdiv_q */
+      itch = mpn_mu_bdiv_q_itch (nn, dn);
+      if (itch + 1 > alloc)
+	{
+	  scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	  alloc = itch + 1;
+	}
+      scratch[itch] = ran;
+      MPN_ZERO (qp, nn - dn + 1);
+      mpn_mu_bdiv_q (qp, np, nn - dn, dp, dn, scratch);
+      ASSERT_ALWAYS (ran == scratch[itch]);
+      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+      check_one (qp, NULL, 0, np, nn, dp, dn, "mpn_mu_bdiv_q");
     }
+
+  __GMP_FREE_FUNC_LIMBS (scratch, alloc);
+
   TMP_FREE;
+
+  mpz_clear (n);
+  mpz_clear (d);
+  mpz_clear (tz);
 
   tests_end ();
   return 0;

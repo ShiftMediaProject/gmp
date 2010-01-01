@@ -1,5 +1,7 @@
 2010-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-bdiv.c: Replace with unit testing code, based on t-div.c.
+
 	* tests/mpn/t-div.c: Avoid generating too small test operands.
 	Move SB suppression limit downwards.  Increase COUNT to 200.
 
