@@ -12,7 +12,6 @@ Changes between GMP version 4.3.X and 4.4.0.
 
   SPEEDUPS
   * Multiplication has been overhauled:
-
     (1) Multiplication of larger same size operands has been improved with
         the addition of two new Toom functions and a new internal function
         mpn_mulmod_bnm1 (computing U * V mod (B^n-1), B being the word base.
