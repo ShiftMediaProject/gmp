@@ -189,7 +189,7 @@ main (int argc, char **argv)
 
   for (test = 0; test < count;)
     {
-      nbits = random_word (rands) % maxnbits + 1;
+      nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
       if (maxdbits > nbits)
 	dbits = random_word (rands) % nbits + 1;
       else
@@ -228,7 +228,7 @@ main (int argc, char **argv)
       switch (t % 16)
 	{
 	case 0:
-	  clearn = random_word (rands) % (nn + 1);
+	  clearn = random_word (rands) % nn;
 	  for (i = clearn; i < nn; i++)
 	    np[i] = 0;
 	  break;

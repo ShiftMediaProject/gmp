@@ -1,3 +1,7 @@
+2010-01-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tests/mpn/t-div.c: Avoid generating too small test operands.
+
 2009-12-31  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/tdiv_qr.c: Handle numerator/remainder overlap in MU case.
