@@ -112,7 +112,7 @@ check_one (mp_ptr qp, mp_srcptr rp, mp_limb_t rh,
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
-#define COUNT 100
+#define COUNT 500
 
 mp_limb_t
 random_word (gmp_randstate_ptr rs)
