@@ -1,5 +1,8 @@
 2010-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/dcpi1_bdiv_qr.c: Add parameter ASSERTs.
+	* mpn/generic/dcpi1_bdiv_q.c: Likewise.
+
 	* tests/mpn/t-bdiv.c: Replace with unit testing code, based on t-div.c.
 	Increase COUNT to 500.
 

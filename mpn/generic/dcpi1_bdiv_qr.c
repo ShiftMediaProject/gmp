@@ -92,6 +92,10 @@ mpn_dcpi1_bdiv_qr (mp_ptr qp, mp_ptr np, mp_size_t nn,
 
   TMP_MARK;
 
+  ASSERT (dn >= 2);		/* to adhere to mpn_sbpi1_div_qr's limits */
+  ASSERT (nn - dn >= 1);	/* to adhere to mpn_sbpi1_div_qr's limits */
+  ASSERT (dp[0] & 1);
+
   tp = TMP_SALLOC_LIMBS (dn);
 
   qn = nn - dn;

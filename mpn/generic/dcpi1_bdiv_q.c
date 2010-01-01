@@ -91,8 +91,9 @@ mpn_dcpi1_bdiv_q (mp_ptr qp,
 
   TMP_MARK;
 
-  ASSERT (nn >= dn);
-  ASSERT (dn > 0);
+  ASSERT (dn >= 2);
+  ASSERT (nn - dn >= 0);
+  ASSERT (dp[0] & 1);
 
   tp = TMP_SALLOC_LIMBS (dn);
 
