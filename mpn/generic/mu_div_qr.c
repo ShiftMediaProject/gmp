@@ -170,6 +170,8 @@ mpn_mu_div_qr2 (mp_ptr qp,
   mp_limb_t cy, qh;
   mp_ptr ip, tp;
 
+  ASSERT (dn > 1);
+
   qn = nn - dn;
 
   /* Compute the inverse size.  */
@@ -226,14 +228,6 @@ mpn_mu_div_qr2 (mp_ptr qp,
   MPN_COPY (ip, tp + 1, in);
 #endif
 
-/* We can't really handle qh = 1 like this since we'd here clobber N, which is
-   not allowed in the way we've defined this function's API.  */
-#if 0
-  qh = mpn_cmp (np + qn, dp, dn) >= 0;
-  if (qh != 0)
-    mpn_sub_n (np + qn, np + qn, dp, dn);
-#endif
-
   qh = mpn_preinv_mu_div_qr (qp, rp, np, nn, dp, dn, ip, in, scratch + in);
 
   return qh;
@@ -252,8 +246,11 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 {
   mp_size_t qn;
   mp_limb_t cy, qh;
-  mp_ptr tp;
   mp_limb_t r;
+  mp_size_t tn, wn;
+
+#define tp           scratch
+#define scratch_out  (scratch + tn)
 
   qn = nn - dn;
 
@@ -268,8 +265,6 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 
   if (qn == 0)
     return qh;			/* Degenerate use.  Should we allow this? */
-
-  tp = scratch;
 
   while (qn > 0)
     {
@@ -287,35 +282,27 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
       cy = mpn_add_n (qp, tp + in, rp + dn - in, in);	/* I's msb implicit */
       ASSERT_ALWAYS (cy == 0);
 
+      qn -= in;
+
       /* Compute the product of the quotient block and the divisor D, to be
 	 subtracted from the partial remainder combined with new limbs from the
 	 dividend N.  We only really need the low dn limbs.  */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
+
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	mpn_mul (tp, dp, dn, qp, in);		/* dn+in limbs, high 'in' cancels */
+      else
 	{
-	  /* Use the wrap-around trick.  */
-	  mp_size_t m, wn;
-	  int k;
-
-	  k = mpn_fft_best_k (dn + 1, 0);
-	  m = mpn_fft_next_size (dn + 1, k);
-	  wn = dn + in - m;			/* number of wrapped limbs */
-
-	  cy = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
-	  ASSERT_ALWAYS (cy == 0);
-
+	  tn = mpn_mulmod_bnm1_next_size (dn + 1);
+	  mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, in, scratch_out);
+	  wn = dn + in - tn;			/* number of wrapped limbs */
 	  if (wn > 0)
 	    {
-	      cy = mpn_add_n (tp, tp, rp + dn - wn, wn);
-	      mpn_incr_u (tp + wn, cy);
-
-	      cy = mpn_cmp (rp + dn - in, tp + dn, m - dn) < 0;
-	      mpn_decr_u (tp, cy);
+	      cy = mpn_sub_n (tp, tp, rp + dn - wn, wn);
+	      mpn_decr_u (tp + wn, cy);
+	      cy = mpn_cmp (rp + dn - in, tp + dn, tn - dn) < 0;
+	      mpn_incr_u (tp, cy);
 	    }
 	}
-      else
-#endif
-	mpn_mul (tp, dp, dn, qp, in);		/* dn+in limbs, high 'in' cancels */
 
       r = rp[dn - in] - tp[dn];
 
@@ -367,8 +354,6 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 		printf ("\n");
 	      }
 	    );
-
-      qn -= in;
     }
 
   return qh;
@@ -416,32 +401,9 @@ mpn_mu_div_qr_choose_in (mp_size_t qn, mp_size_t dn, int k)
 mp_size_t
 mpn_mu_div_qr_itch (mp_size_t nn, mp_size_t dn, int mua_k)
 {
-  mp_size_t qn, m;
-  int k;
+  mp_size_t itch_local = mpn_mulmod_bnm1_next_size (dn + 1);
+  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local);
+  mp_size_t in = mpn_mu_div_qr_choose_in (nn - dn, dn, mua_k);
 
-  /* FIXME: This isn't very carefully written, and might grossly overestimate
-     the amount of scratch needed, and might perhaps also underestimate it,
-     leading to potential buffer overruns.  In particular k=0 might lead to
-     gross overestimates.  */
-
-  if (dn == 1)
-    return nn;
-
-  qn = nn - dn;
-  if (qn >= dn)
-    {
-      k = mpn_fft_best_k (dn + 1, 0);
-      m = mpn_fft_next_size (dn + 1, k);
-      return (mua_k <= 1
-	      ? 6 * dn
-	      : m + 2 * dn);
-    }
-  else
-    {
-      k = mpn_fft_best_k (dn + 1, 0);
-      m = mpn_fft_next_size (dn + 1, k);
-      return (mua_k <= 1
-	      ? m + 4 * qn
-	      : m + 2 * qn);
-    }
+  return in + itch_local + itch_out;
 }

@@ -61,9 +61,12 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 		mp_srcptr dp, mp_size_t dn,
 		mp_ptr scratch)
 {
-  mp_ptr ip;
   mp_size_t qn;
   mp_size_t in;
+  mp_limb_t cy, c0;
+  int k;
+  mp_size_t tn, wn;
+  mp_size_t i;
 
   qn = nn - dn;
 
@@ -73,14 +76,13 @@ mpn_mu_bdiv_qr (mp_ptr qp,
   if (qn > dn)
     {
       mp_size_t b;
-      mp_ptr tp;
-      mp_limb_t cy;
-      int k;
-      mp_size_t m, wn;
-      mp_size_t i;
 
       /* |_______________________|   dividend
 			|________|   divisor  */
+
+#define ip           scratch		/* in */
+#define tp           (scratch + in)	/* dn+in or next_size(dn) or rest >= binvert_itch(in) */
+#define scratch_out  (scratch + in + tn)/* mulmod_bnm1_itch(next_size(dn)) */
 
       /* Compute an inverse size that is a nice partition of the quotient.  */
       b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
@@ -94,9 +96,6 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	 should reduce itch to perhaps 3dn.
        */
 
-      ip = scratch;		/* in limbs */
-      tp = scratch + in;	/* MAX(binvert_itch(in),next_size(dn,k),dn+in) limbs */
-
       mpn_binvert (ip, dp, in, tp);
 
       MPN_COPY (rp, np, dn);
@@ -107,34 +106,20 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	{
 	  mpn_mullo_n (qp, rp, ip, in);
 
-#if WANT_FFT
-	  if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
+	  if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	    mpn_mul (tp, dp, dn, qp, in);	/* mulhi, need tp[dn+in-1...in] */
+	  else
 	    {
-	      int c0;
-	      /* The two multiplicands are dn and 'in' limbs, with dn >= in.
-		 The relevant part of the result will typically partially wrap,
-		 and that part will come out as subtracted to the right.  The
-		 unwrapped part, m-in limbs at the high end of tp, is the lower
-		 part of the sought product.  The wrapped part, at the low end
-		 of tp, will be subtracted from the low part of the partial
-		 remainder; we undo that operation with another subtraction. */
-
-	      k = mpn_fft_best_k (dn, 0);
-	      m = mpn_fft_next_size (dn, k);
-	      c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
-	      ASSERT_ALWAYS (c0 == 0);
-	      wn = dn + in - m;			/* number of wrapped limbs */
+	      tn = mpn_mulmod_bnm1_next_size (dn);
+	      mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, in, scratch_out);
+	      wn = dn + in - tn;		/* number of wrapped limbs */
 	      if (wn > 0)
 		{
-		  c0 = mpn_sub_n (tp + m, rp, tp, wn);
-		  for (i = wn; c0 != 0 && i < in; i++)
-		    c0 = tp[i] == GMP_NUMB_MASK;
-		  mpn_incr_u (tp + in, c0);
+		  c0 = mpn_sub_n (tp + tn, tp, rp, wn);
+		  mpn_decr_u (tp + wn, c0);
 		}
 	    }
-	  else
-#endif
-	    mpn_mul (tp, dp, dn, qp, in);	/* mulhi, need tp[dn+in-1...in] */
+
 	  qp += in;
 	  qn -= in;
 
@@ -156,27 +141,19 @@ mpn_mu_bdiv_qr (mp_ptr qp,
       /* Generate last qn limbs.  */
       mpn_mullo_n (qp, rp, ip, qn);
 
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
+      if (BELOW_THRESHOLD (qn, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	mpn_mul (tp, dp, dn, qp, qn);		/* mulhi, need tp[qn+in-1...in] */
+      else
 	{
-	  int c0;
-	  k = mpn_fft_best_k (dn, 0);
-	  m = mpn_fft_next_size (dn, k);
-
-	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
-	  ASSERT_ALWAYS (c0 == 0);
-	  wn = dn + qn - m;			/* number of wrapped limbs */
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, qn, scratch_out);
+	  wn = dn + qn - tn;			/* number of wrapped limbs */
 	  if (wn > 0)
 	    {
-	      c0 = mpn_sub_n (tp + m, rp, tp, wn);
-	      for (i = wn; c0 != 0 && i < qn; i++)
-		c0 = tp[i] == GMP_NUMB_MASK;
-	      mpn_incr_u (tp + qn, c0);
+	      c0 = mpn_sub_n (tp + tn, tp, rp, wn);
+	      mpn_decr_u (tp + wn, c0);
 	    }
 	}
-      else
-#endif
-	mpn_mul (tp, dp, dn, qp, qn);		/* mulhi, need tp[qn+in-1...in] */
 
       if (dn != qn)
 	{
@@ -188,76 +165,60 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	    }
 	}
       return mpn_sub_nc (rp + dn - qn, np, tp + dn, qn, cy);
+
+#undef ip
+#undef tp
+#undef scratch_out
     }
   else
     {
-      mp_ptr tp;
-      mp_limb_t cy;
-      int k;
-      mp_size_t m, wn;
-      mp_size_t i;
-
       /* |_______________________|   dividend
 		|________________|   divisor  */
+
+#define ip           scratch		/* in */
+#define tp           (scratch + in)	/* dn+in or next_size(dn) or rest >= binvert_itch(in) */
+#define scratch_out  (scratch + in + tn)/* mulmod_bnm1_itch(next_size(dn)) */
 
       /* Compute half-sized inverse.  */
       in = qn - (qn >> 1);
 
-      ip = scratch;		/* in limbs */
-      tp = scratch + in;	/* MAX(binvert_itch(in),next_size(dn,k),dn+in) limbs */
-
       mpn_binvert (ip, dp, in, tp);
 
       mpn_mullo_n (qp, np, ip, in);		/* low `in' quotient limbs */
-#if WANT_FFT
-      /* FIXME: We might perform extremely unbalanced multiplies here, were FFT
-	 is not efficient.  */
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	{
-	  int c0;
-	  k = mpn_fft_best_k (dn, 0);
-	  m = mpn_fft_next_size (dn, k);
 
-	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
-	  ASSERT_ALWAYS (c0 == 0);
-	  wn = dn + in - m;
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	mpn_mul (tp, dp, dn, qp, in);		/* mulhigh */
+      else
+	{
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, in, scratch_out);
+	  wn = dn + in - tn;			/* number of wrapped limbs */
 	  if (wn > 0)
 	    {
-	      int c0 = mpn_sub_n (tp + m, np, tp, wn);
-	      for (i = wn; c0 != 0 && i < in; i++)
-		c0 = tp[i] == GMP_NUMB_MASK;
-	      mpn_incr_u (tp + in, c0);
+	      c0 = mpn_sub_n (tp + tn, tp, np, wn);
+	      mpn_decr_u (tp + wn, c0);
 	    }
 	}
-      else
-#endif
-	mpn_mul (tp, dp, dn, qp, in);		/* mulhigh */
+
       qp += in;
       qn -= in;
 
       cy = mpn_sub_n (rp, np + in, tp + in, dn);
       mpn_mullo_n (qp, rp, ip, qn);		/* high qn quotient limbs */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	{
-	  int c0;
-	  k = mpn_fft_best_k (dn, 0);
-	  m = mpn_fft_next_size (dn, k);
 
-          c0 = mpn_mul_fft (tp, m, dp, dn, qp, qn, k);
-	  ASSERT_ALWAYS (c0 == 0);
-	  wn = dn + qn - m;
+      if (BELOW_THRESHOLD (qn, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	mpn_mul (tp, dp, dn, qp, qn);		/* mulhigh */
+      else
+	{
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, qn, scratch_out);
+	  wn = dn + qn - tn;			/* number of wrapped limbs */
 	  if (wn > 0)
 	    {
-	      int c0 = mpn_sub_n (tp + m, rp, tp, wn);
-	      for (i = wn; c0 != 0 && i < qn; i++)
-		c0 = tp[i] == GMP_NUMB_MASK;
-	      mpn_incr_u (tp + qn, c0);
+	      c0 = mpn_sub_n (tp + tn, tp, rp, wn);
+	      mpn_decr_u (tp + wn, c0);
 	    }
 	}
-      else
-#endif
-	mpn_mul (tp, dp, dn, qp, qn);		/* mulhigh */
 
       cy += mpn_sub_n (rp, rp + qn, tp + qn, dn - qn);
       if (cy == 2)
@@ -266,13 +227,17 @@ mpn_mu_bdiv_qr (mp_ptr qp,
 	  cy = 1;
 	}
       return mpn_sub_nc (rp + dn - qn, np + dn + in, tp + dn, qn, cy);
+
+#undef ip
+#undef tp
+#undef scratch_out
     }
 }
 
 mp_size_t
 mpn_mu_bdiv_qr_itch (mp_size_t nn, mp_size_t dn)
 {
-  mp_size_t qn, in, m, itch_invert;
+  mp_size_t qn, in, tn, itch_binvert, itch_out, itches;
   mp_size_t b;
 
   qn = nn - dn;
@@ -281,21 +246,35 @@ mpn_mu_bdiv_qr_itch (mp_size_t nn, mp_size_t dn)
     {
       b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
       in = (qn - 1) / b + 1;	/* ceil(qn/b) = ceil(qn / ceil(qn/dn)) */
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	{
+	  tn = dn + in;
+	  itch_out = 0;
+	}
+      else
+	{
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  itch_out = mpn_mulmod_bnm1_itch (tn);
+	}
+      itch_binvert = mpn_binvert_itch (in);
+      itches = tn + itch_out;
+      return in + MAX (itches, itch_binvert);
     }
   else
     {
       in = qn - (qn >> 1);
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	{
+	  tn = dn + in;
+	  itch_out = 0;
+	}
+      else
+	{
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  itch_out = mpn_mulmod_bnm1_itch (tn);
+	}
     }
-
-#if WANT_FFT
-  if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-    {
-      m = mpn_fft_next_size (dn, mpn_fft_best_k (dn, 0));
-      m = MAX (dn + in, m);
-    }
-  else
-#endif
-    m = dn + in;
-  itch_invert = mpn_binvert_itch (in);
-  return in + MAX (itch_invert, m);
+  itch_binvert = mpn_binvert_itch (in);
+  itches = tn + itch_out;
+  return in + MAX (itches, itch_binvert);
 }

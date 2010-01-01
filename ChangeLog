@@ -1,5 +1,11 @@
 2010-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mu_div_qr.c: Rewrite to use mpn_mulmod_bnm1.  Clean up
+	scratch usage.  Improve itch functions.
+	* mpn/generic/mu_divappr_q.c: Likewise.
+	* mpn/generic/mu_bdiv_qr.c: Likewise.
+	* mpn/generic/mu_div_q.c: Likewise.
+
 	* mpn/generic/dcpi1_bdiv_qr.c: Add parameter ASSERTs.
 	* mpn/generic/dcpi1_bdiv_q.c: Likewise.
 

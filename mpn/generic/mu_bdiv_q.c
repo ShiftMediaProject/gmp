@@ -61,10 +61,10 @@ mpn_mu_bdiv_q (mp_ptr qp,
 	       mp_srcptr dp, mp_size_t dn,
 	       mp_ptr scratch)
 {
-  mp_ptr ip;
-  mp_ptr rp;
   mp_size_t qn;
   mp_size_t in;
+  int cy, c0;
+  mp_size_t tn, wn;
 
   qn = nn;
 
@@ -74,14 +74,14 @@ mpn_mu_bdiv_q (mp_ptr qp,
   if (qn > dn)
     {
       mp_size_t b;
-      mp_ptr tp;
-      mp_limb_t cy;
-      int k;
-      mp_size_t m, wn;
-      mp_size_t i;
 
       /* |_______________________|   dividend
 			|________|   divisor  */
+
+#define ip           scratch			/* in */
+#define rp           (scratch + in)		/* dn or rest >= binvert_itch(in) */
+#define tp           (scratch + in + dn)	/* dn+in or next_size(dn) */
+#define scratch_out  (scratch + in + dn + tn)	/* mulmod_bnm1_itch(next_size(dn)) */
 
       /* Compute an inverse size that is a nice partition of the quotient.  */
       b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
@@ -95,10 +95,6 @@ mpn_mu_bdiv_q (mp_ptr qp,
 	 should reduce itch to perhaps 3dn.
        */
 
-      ip = scratch;		/* in limbs */
-      rp = scratch + in;	/* MAX(binvert_itch(in),dn) limbs */
-      tp = scratch + in + dn;	/* MAX(next_size(dn,k),dn+in) limbs */
-
       mpn_binvert (ip, dp, in, rp);
 
       cy = 0;
@@ -108,42 +104,22 @@ mpn_mu_bdiv_q (mp_ptr qp,
       mpn_mullo_n (qp, rp, ip, in);
       qn -= in;
 
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	{
-	  k = mpn_fft_best_k (dn, 0);
-	  m = mpn_fft_next_size (dn, k);
-	  wn = dn + in - m;			/* number of wrapped limbs */
-	  ASSERT_ALWAYS (wn >= 0);		/* could handle this below */
-	}
-#endif
-
       while (qn > in)
 	{
-#if WANT_FFT
-	  if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	    {
-	      /* The two multiplicands are dn and 'in' limbs, with dn >= in.
-		 The relevant part of the result will typically partially wrap,
-		 and that part will come out as subtracted to the right.  The
-		 unwrapped part, m-in limbs at the high end of tp, is the lower
-		 part of the sought product.  The wrapped part, at the low end
-		 of tp, will be subtracted from the low part of the partial
-		 remainder; we undo that operation with another subtraction. */
-	      int c0;
-
-	      c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
-	      ASSERT_ALWAYS (c0 == 0);
-
-	      c0 = mpn_sub_n (tp + m, rp, tp, wn);
-
-	      for (i = wn; c0 != 0 && i < in; i++)
-		c0 = tp[i] == GMP_NUMB_MASK;
-	      mpn_incr_u (tp + in, c0);
-	    }
-	  else
-#endif
+	  if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
 	    mpn_mul (tp, dp, dn, qp, in);	/* mulhi, need tp[dn+in-1...in] */
+	  else
+	    {
+	      tn = mpn_mulmod_bnm1_next_size (dn);
+	      mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, in, scratch_out);
+	      wn = dn + in - tn;		/* number of wrapped limbs */
+	      if (wn > 0)
+		{
+		  c0 = mpn_sub_n (tp + tn, tp, rp, wn);
+		  mpn_decr_u (tp + wn, c0);
+		}
+	    }
+
 	  qp += in;
 	  if (dn != in)
 	    {
@@ -165,23 +141,21 @@ mpn_mu_bdiv_q (mp_ptr qp,
       /* Generate last qn limbs.
 	 FIXME: It should be possible to limit precision here, since qn is
 	 typically somewhat smaller than dn.  No big gains expected.  */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-	{
-	  int c0;
 
-	  c0 = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
-	  ASSERT_ALWAYS (c0 == 0);
-
-	  c0 = mpn_sub_n (tp + m, rp, tp, wn);
-
-	  for (i = wn; c0 != 0 && i < in; i++)
-	    c0 = tp[i] == GMP_NUMB_MASK;
-	  mpn_incr_u (tp + in, c0);
-	}
-      else
-#endif
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
 	mpn_mul (tp, dp, dn, qp, in);		/* mulhi, need tp[qn+in-1...in] */
+      else
+	{
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, in, scratch_out);
+	  wn = dn + in - tn;			/* number of wrapped limbs */
+	  if (wn > 0)
+	    {
+	      c0 = mpn_sub_n (tp + tn, tp, rp, wn);
+	      mpn_decr_u (tp + wn, c0);
+	    }
+	}
+
       qp += in;
       if (dn != in)
 	{
@@ -195,48 +169,55 @@ mpn_mu_bdiv_q (mp_ptr qp,
 
       mpn_sub_nc (rp + dn - in, np, tp + dn, qn - (dn - in), cy);
       mpn_mullo_n (qp, rp, ip, qn);
-    }
+
+#undef ip
+#undef rp
+#undef tp
+#undef scratch_out
+   }
   else
     {
       /* |_______________________|   dividend
 		|________________|   divisor  */
 
+#define ip           scratch		/* in */
+#define tp           (scratch + in)	/* qn+in or next_size(qn) or rest >= binvert_itch(in) */
+#define scratch_out  (scratch + in + tn)/* mulmod_bnm1_itch(next_size(qn)) */
+
       /* Compute half-sized inverse.  */
       in = qn - (qn >> 1);
 
-      ip = scratch;		/* in limbs */
-      rp = scratch + in;	/* MAX(binvert_itch(in),next_size(qn,k),qn+in) limbs */
-
-      mpn_binvert (ip, dp, in, rp);
+      mpn_binvert (ip, dp, in, tp);
 
       mpn_mullo_n (qp, np, ip, in);		/* low `in' quotient limbs */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (qn, MUL_FFT_MODF_THRESHOLD))
-	{
-	  int k;
-	  mp_size_t m;
-	  int c0;
 
-	  k = mpn_fft_best_k (qn, 0);
-	  m = mpn_fft_next_size (qn, k);
-	  c0 = mpn_mul_fft (rp, m, dp, qn, qp, in, k);
-	  ASSERT_ALWAYS (c0 == 0);
-	  if (mpn_cmp (np, rp, in) < 0)
-	    mpn_incr_u (rp + in, 1);
-	}
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	mpn_mul (tp, dp, qn, qp, in);		/* mulhigh */
       else
-#endif
-	mpn_mul (rp, dp, qn, qp, in);		/* mulhigh */
+	{
+	  tn = mpn_mulmod_bnm1_next_size (qn);
+	  mpn_mulmod_bnm1 (tp, tn, dp, qn, qp, in, scratch_out);
+	  wn = qn + in - tn;			/* number of wrapped limbs */
+	  if (wn > 0)
+	    {
+	      c0 = mpn_cmp (tp, np, wn) < 0;
+	      mpn_decr_u (tp + wn, c0);
+	    }
+	}
 
-      mpn_sub_n (rp, np + in, rp + in, qn - in);
-      mpn_mullo_n (qp + in, rp, ip, qn - in);	/* high qn-in quotient limbs */
+      mpn_sub_n (tp, np + in, tp + in, qn - in);
+      mpn_mullo_n (qp + in, tp, ip, qn - in);	/* high qn-in quotient limbs */
+
+#undef ip
+#undef tp
+#undef scratch_out
     }
 }
 
 mp_size_t
 mpn_mu_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
 {
-  mp_size_t qn, in, m, itch_invert;
+  mp_size_t qn, in, tn, itch_binvert, itch_out, itches;
   mp_size_t b;
 
   qn = nn;
@@ -245,31 +226,35 @@ mpn_mu_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
     {
       b = (qn - 1) / dn + 1;	/* ceil(qn/dn), number of blocks */
       in = (qn - 1) / b + 1;	/* ceil(qn/b) = ceil(qn / ceil(qn/dn)) */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
-        {
-          m = mpn_fft_next_size (dn, mpn_fft_best_k (dn, 0));
-          m = MAX (dn + in, m);
-        }
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	{
+	  tn = dn + in;
+	  itch_out = 0;
+	}
       else
-#endif
-	m = dn + in;
-      itch_invert = mpn_binvert_itch (in);
-      return in + MAX (itch_invert, dn + m);
+	{
+	  tn = mpn_mulmod_bnm1_next_size (dn);
+	  itch_out = mpn_mulmod_bnm1_itch (tn);
+	}
+      itch_binvert = mpn_binvert_itch (in);
+      itches = dn + tn + itch_out;
+      return in + MAX (itches, itch_binvert);
     }
   else
     {
       in = qn - (qn >> 1);
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (qn, MUL_FFT_MODF_THRESHOLD))
-        {
-          m = mpn_fft_next_size (qn, mpn_fft_best_k (qn, 0));
-          m = MAX (qn + in, m);
-        }
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	{
+	  tn = qn + in;
+	  itch_out = 0;
+	}
       else
-#endif
-        m = qn + in;
-      itch_invert = mpn_binvert_itch (in);
-      return in + MAX (itch_invert, m);
+	{
+	  tn = mpn_mulmod_bnm1_next_size (qn);
+	  itch_out = mpn_mulmod_bnm1_itch (tn);
+	}
+      itch_binvert = mpn_binvert_itch (in);
+      itches = tn + itch_out;
+      return in + MAX (itches, itch_binvert);
     }
 }

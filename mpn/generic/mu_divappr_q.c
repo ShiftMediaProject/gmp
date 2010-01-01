@@ -91,17 +91,7 @@ mpn_mu_divappr_q (mp_ptr qp,
   mp_limb_t cy, qh;
   mp_ptr ip, tp;
 
-  ASSERT_ALWAYS (dn > 1);
-
-#if 0
-  /* FIXME: We should probably not handle tiny operands, but do it for now.  */
-  if (dn == 1)
-    {
-      mpn_divrem_1 (scratch, 0L, np, nn, dp[0]);
-      MPN_COPY (qp, scratch, nn - 1);
-      return scratch[nn - 1];
-    }
-#endif
+  ASSERT (dn > 1);
 
   qn = nn - dn;
 
@@ -183,15 +173,16 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 			 mp_size_t in,
 			 mp_ptr scratch)
 {
-  mp_ptr rp;
-  mp_size_t qn, qnown;
+  mp_size_t qn;
   mp_limb_t cy, qh;
-  mp_ptr tp;
   mp_limb_t r;
+  mp_size_t tn, wn;
+
+#define rp           scratch
+#define tp           (scratch + dn)
+#define scratch_out  (scratch + dn + tn)
 
   qn = nn - dn;
-
-  rp = scratch;
 
   np += qn;
   qp += qn;
@@ -205,9 +196,6 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
   if (qn == 0)
     return qh;			/* Degenerate use.  Should we allow this? */
 
-  tp = scratch + dn;
-
-  qnown = 0;			/* how many limbs we've developed thus far */
   while (qn > 0)
     {
       if (qn < in)
@@ -222,42 +210,31 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 	 by the upper part of the partial remainder R.  */
       mpn_mul_n (tp, rp + dn - in, ip, in);		/* mulhi  */
       cy = mpn_add_n (qp, tp + in, rp + dn - in, in);	/* I's msb implicit */
-      ASSERT_ALWAYS (cy == 0);			/* FIXME */
+      ASSERT_ALWAYS (cy == 0);
 
       qn -= in;
-      qnown += in;
       if (qn == 0)
 	break;
 
       /* Compute the product of the quotient block and the divisor D, to be
 	 subtracted from the partial remainder combined with new limbs from the
 	 dividend N.  We only really need the low dn limbs.  */
-#if WANT_FFT
-      if (ABOVE_THRESHOLD (dn, MUL_FFT_MODF_THRESHOLD))
+
+      if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
+	mpn_mul (tp, dp, dn, qp, in);		/* dn+in limbs, high 'in' cancels */
+      else
 	{
-	  /* Use the wrap-around trick.  */
-	  mp_size_t m, wn;
-	  int k;
-
-	  k = mpn_fft_best_k (dn + 1, 0);
-	  m = mpn_fft_next_size (dn + 1, k);
-	  wn = dn + in - m;			/* number of wrapped limbs */
-
-	  cy = mpn_mul_fft (tp, m, dp, dn, qp, in, k);
-	  ASSERT_ALWAYS (cy == 0);
-
+	  tn = mpn_mulmod_bnm1_next_size (dn + 1);
+	  mpn_mulmod_bnm1 (tp, tn, dp, dn, qp, in, scratch_out);
+	  wn = dn + in - tn;			/* number of wrapped limbs */
 	  if (wn > 0)
 	    {
-	      cy = mpn_add_n (tp, tp, rp + dn - wn, wn);
-	      mpn_incr_u (tp + wn, cy);
-
-	      cy = mpn_cmp (rp + dn - in, tp + dn, m - dn) < 0;
-	      mpn_decr_u (tp, cy);
+	      cy = mpn_sub_n (tp, tp, rp + dn - wn, wn);
+	      mpn_decr_u (tp + wn, cy);
+	      cy = mpn_cmp (rp + dn - in, tp + dn, tn - dn) < 0;
+	      mpn_incr_u (tp, cy);
 	    }
 	}
-      else
-#endif
-	mpn_mul (tp, dp, dn, qp, in);		/* dn+in limbs, high 'in' cancels */
 
       r = rp[dn - in] - tp[dn];
 
@@ -284,16 +261,16 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 	  /* We loop 0 times with about 69% probability, 1 time with about 31%
 	     probability, 2 times with about 0.6% probability, if inverse is
 	     computed as recommended.  */
+	  mpn_incr_u (qp, 1);
 	  cy = mpn_sub_n (rp, rp, dp, dn);
 	  r -= cy;
-	  cy = mpn_add_1 (qp, qp, qnown, 1);
 	  STAT (err++);
 	}
       if (mpn_cmp (rp, dp, dn) >= 0)
 	{
 	  /* This is executed with about 76% probability.  */
-	  mpn_sub_n (rp, rp, dp, dn);
-	  cy = mpn_add_1 (qp, qp, qnown, 1);
+	  mpn_incr_u (qp, 1);
+	  cy = mpn_sub_n (rp, rp, dp, dn);
 	  STAT (err++);
 	}
 
@@ -368,32 +345,9 @@ mpn_mu_divappr_q_choose_in (mp_size_t qn, mp_size_t dn, int k)
 mp_size_t
 mpn_mu_divappr_q_itch (mp_size_t nn, mp_size_t dn, int mua_k)
 {
-  mp_size_t qn, m;
-  int k;
+  mp_size_t itch_local = mpn_mulmod_bnm1_next_size (dn + 1);
+  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local);
+  mp_size_t in = mpn_mu_div_qr_choose_in (nn - dn, dn, mua_k);
 
-  /* FIXME: This isn't very carefully written, and might grossly overestimate
-     the amount of scratch needed, and might perhaps also underestimate it,
-     leading to potential buffer overruns.  In particular k=0 might lead to
-     gross overestimates.  */
-
-  if (dn == 1)
-    return nn;
-
-  qn = nn - dn;
-  if (qn >= dn)
-    {
-      k = mpn_fft_best_k (dn + 1, 0);
-      m = mpn_fft_next_size (dn + 1, k);
-      return dn + (mua_k <= 1
-		   ? 6 * dn
-		   : m + 2 * dn);
-    }
-  else
-    {
-      k = mpn_fft_best_k (dn + 1, 0);
-      m = mpn_fft_next_size (dn + 1, k);
-      return dn + (mua_k <= 1
-		   ? m + 4 * qn
-		   : m + 2 * qn);
-    }
+  return in + dn + itch_local + itch_out;
 }
