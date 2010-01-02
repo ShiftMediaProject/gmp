@@ -5,6 +5,10 @@
 
 2010-01-02  Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* mpn/generic/dcpi1_div_q.c: Handle divappr approximation problem more
+	efficiently.
+	* mpn/generic/mu_div_q.c: Likewise.
+
 	* mpn/generic/invert.c: Remove duplicated code.
 
 2010-01-01  Torbjorn Granlund  <tege@gmplib.org>

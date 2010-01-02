@@ -1,6 +1,6 @@
 /* mpn_mu_div_q.
 
-   Contributed to the GNU project by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -114,13 +114,10 @@ mpn_mu_div_q (mp_ptr qp,
 			 |________|   divisor  */
       rp = TMP_BALLOC_LIMBS (2 * dn + 1);
 
-	{
-	  this_in = mpn_mu_div_qr_choose_in (qn - dn, dn, 0);
-	  this_ip = ip + in - this_in;
-	  qh = mpn_preinv_mu_div_qr (tp + dn + 1, rp + dn + 1, np + dn, qn, dp, dn,
-				this_ip, this_in, scratch);
-	}
-
+      this_in = mpn_mu_div_qr_choose_in (qn - dn, dn, 0);
+      this_ip = ip + in - this_in;
+      qh = mpn_preinv_mu_div_qr (tp + dn + 1, rp + dn + 1, np + dn, qn, dp, dn,
+				 this_ip, this_in, scratch);
 
       MPN_COPY (rp + 1, np, dn);
       rp[0] = 0;
@@ -136,8 +133,19 @@ mpn_mu_div_q (mp_ptr qp,
 	}
       else
 	{
-	  /* Fall back to plain mpn_mu_div_qr.  */
-	  mpn_mu_div_qr (qp, rp, np, nn, dp, dn, scratch);
+	  mp_limb_t cy;
+	  mp_ptr pp;
+
+	  /* FIXME: can we use already allocated space? */
+	  pp = TMP_BALLOC_LIMBS (nn);
+	  mpn_mul (pp, tp + 1, qn, dp, dn);
+
+	  cy = (qh != 0) ? mpn_add_n (pp + qn, pp + qn, dp, dn) : 0;
+
+	  if (cy || mpn_cmp (pp, np, nn) > 0) /* At most is wrong by one, no cycle. */
+	    qh -= mpn_sub_1 (qp, tp + 1, qn, 1);
+	  else /* Same as above */
+	    MPN_COPY (qp, tp + 1, qn);
 	}
     }
   else
@@ -153,8 +161,19 @@ mpn_mu_div_q (mp_ptr qp,
 	}
       else
 	{
-	  rp = TMP_BALLOC_LIMBS (dn);
-	  qh = mpn_mu_div_qr (qp, rp, np, nn, dp, dn, scratch);
+	  mp_limb_t cy;
+
+	  /* FIXME: a shorter product should be enough; we may use already
+	     allocated space... */
+	  rp = TMP_BALLOC_LIMBS (nn);
+	  mpn_mul (rp, dp, dn, tp + 1, qn);
+
+	  cy = (qh != 0) ? mpn_add_n (rp + qn, rp + qn, dp, dn) : 0;
+
+	  if (cy || mpn_cmp (rp, np, nn) > 0) /* At most is wrong by one, no cycle. */
+	    qh -= mpn_sub_1 (qp, tp + 1, qn, 1);
+	  else /* Same as above */
+	    MPN_COPY (qp, tp + 1, qn);
 	}
     }
 

@@ -1,7 +1,7 @@
 /* mpn_dc_div_q -- divide-and-conquer division, returning exact quotient
    only.
 
-   Contributed to the GNU project by Torbjorn Granlund.
+   Contributed to the GNU project by Torbjorn Granlund and Marco Bodrato.
 
    THE FUNCTION IN THIS FILE IS INTERNAL WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
@@ -53,8 +53,21 @@ mpn_dcpi1_div_q (mp_ptr qp, mp_ptr np, mp_size_t nn,
   qh = mpn_dcpi1_divappr_q (wp, tp, nn + 1, dp, dn, dinv);
 
   if (wp[0] == 0)
-    /* FIXME: Should multiply and subtract here, not recompute from scratch.  */
-    qh = mpn_dcpi1_div_qr (qp, np, nn, dp, dn, dinv);
+    {
+      mp_limb_t cy;
+
+      if (qn > dn)
+	mpn_mul (tp, wp + 1, qn, dp, dn);
+      else
+	mpn_mul (tp, dp, dn, wp + 1, qn);
+
+      cy = (qh != 0) ? mpn_add_n (tp + qn, tp + qn, dp, dn) : 0;
+
+      if (cy || mpn_cmp (tp, np, nn) > 0) /* At most is wrong by one, no cycle. */
+	qh -= mpn_sub_1 (qp, wp + 1, qn, 1);
+      else /* Same as below */
+	MPN_COPY (qp, wp + 1, qn);
+    }
   else
     MPN_COPY (qp, wp + 1, qn);
 
