@@ -1,3 +1,8 @@
+2010-01-02  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h (MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD): Default to
+	INV_MULMOD_BNM1_THRESHOLD.
+
 2010-01-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD): Default to 0.
