@@ -83,7 +83,7 @@ check_one (mp_ptr qp, mp_srcptr rp, mp_limb_t rh,
       cmp = cy != rh || mpn_cmp (tp, np, nn) != 0;
     }
   else
-      cmp = mpn_cmp (tp, np, nn - dn) != 0;
+    cmp = mpn_cmp (tp, np, nn - dn) != 0;
 
   if (cmp != 0)
     {

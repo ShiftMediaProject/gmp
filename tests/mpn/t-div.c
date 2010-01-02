@@ -140,7 +140,7 @@ main (int argc, char **argv)
 {
   gmp_randstate_ptr rands;
   unsigned long maxnbits, maxdbits, nbits, dbits;
-  mpz_t n, d, tz;
+  mpz_t n, d, q, r, tz;
   mp_size_t maxnn, maxdn, nn, dn, clearn, i;
   mp_ptr np, dp, qp, rp, qrefp, rrefp;
   mp_limb_t t;
@@ -172,6 +172,8 @@ main (int argc, char **argv)
 
   mpz_init (n);
   mpz_init (d);
+  mpz_init (q);
+  mpz_init (r);
   mpz_init (tz);
 
   maxnn = maxnbits / GMP_NUMB_BITS + 1;
@@ -189,11 +191,15 @@ main (int argc, char **argv)
 
   for (test = 0; test < count;)
     {
-      nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
-      if (maxdbits > nbits)
-	dbits = random_word (rands) % nbits + 1;
-      else
-	dbits = random_word (rands) % maxdbits + 1;
+      do
+	{
+	  nbits = random_word (rands) % (maxnbits - GMP_NUMB_BITS) + 2 * GMP_NUMB_BITS;
+	  if (maxdbits > nbits)
+	    dbits = random_word (rands) % nbits + 1;
+	  else
+	    dbits = random_word (rands) % maxdbits + 1;
+	}
+      while (nbits < dbits);
 
 #if RAND_UNIFORM
 #define RANDFUNC mpz_urandomb
@@ -202,22 +208,35 @@ main (int argc, char **argv)
 #endif
 
       do
+	RANDFUNC (d, rands, dbits);
+      while (mpz_sgn (d) == 0);
+      dn = SIZ (d);
+      dp = PTR (d);
+      dp[dn - 1] |= GMP_NUMB_HIGHBIT;
+
+      if (test % 2 == 0)
 	{
 	  RANDFUNC (n, rands, nbits);
+	  nn = SIZ (n);
+	  ASSERT_ALWAYS (nn >= dn);
+	}
+      else
+	{
 	  do
 	    {
-	      RANDFUNC (d, rands, dbits);
+	      RANDFUNC (q, rands, random_word (rands) % (nbits - dbits + 1));
+	      RANDFUNC (r, rands, random_word (rands) % mpz_sizeinbase (d, 2));
+	      mpz_mul (n, q, d);
+	      mpz_add (n, n, r);
+	      nn = SIZ (n);
 	    }
-	  while (mpz_sgn (d) == 0);
-
-	  np = PTR (n);
-	  dp = PTR (d);
-	  nn = SIZ (n);
-	  dn = SIZ (d);
+	  while (nn > maxnn || nn < dn);
 	}
-      while (nn < dn);
 
-      dp[dn - 1] |= GMP_NUMB_HIGHBIT;
+      ASSERT_ALWAYS (nn <= maxnn);
+      ASSERT_ALWAYS (dn <= maxdn);
+
+      np = PTR (n);
 
       mpz_urandomb (tz, rands, 32);
       t = mpz_get_ui (tz);
@@ -387,6 +406,8 @@ main (int argc, char **argv)
 
   mpz_clear (n);
   mpz_clear (d);
+  mpz_clear (q);
+  mpz_clear (r);
   mpz_clear (tz);
 
   tests_end ();
