@@ -32,7 +32,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "longlong.h"
 
 #ifndef INV_APPR_THRESHOLD
-#define INV_APPR_THRESHOLD (INV_NEWTON_THRESHOLD)
+#define INV_APPR_THRESHOLD INV_NEWTON_THRESHOLD
 #endif
 
 void
@@ -53,10 +53,8 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
     if (scratch == NULL)
       scratch = TMP_ALLOC_LIMBS (mpn_invert_itch (n));
 
-    if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD)) {
-      if (n == 1)
-	invert_limb (*ip, *dp);
-      else {
+    if (BELOW_THRESHOLD (n, INV_APPR_THRESHOLD))
+      {
 	/* Maximum scratch needed by this branch: 2*n */
 	mp_size_t i;
 	mp_ptr xp;
@@ -74,7 +72,7 @@ mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 	  mpn_sbpi1_div_q (ip, xp, 2 * n, dp, n, inv.inv32);
 	}
       }
-    } else { /* Use approximated inverse; correct the result if needed. */
+    else { /* Use approximated inverse; correct the result if needed. */
       mp_limb_t e; /* The possible error in the approximate inverse */
 
       ASSERT ( mpn_invert_itch (n) >= mpn_invertappr_itch (n) );

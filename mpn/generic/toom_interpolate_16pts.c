@@ -123,9 +123,9 @@ do {									\
 #define BINVERT_255x188513325H CNST_LIMB(0x06DB993A)
 #else /* GMP_NAIL_BITS != 0 */
 #define BINVERT_255x182712915H \
-  (GMP_NUMB_MASK & CNST_LIMB((0x1B649A07<<GMP_NAIL_BITS) || (0x6FC4CB25>>GMP_NUMB_BITS)))
+  (GMP_NUMB_MASK & CNST_LIMB((0x1B649A07<<GMP_NAIL_BITS) | (0x6FC4CB25>>GMP_NUMB_BITS)))
 #define BINVERT_255x188513325H \
-  (GMP_NUMB_MASK & CNST_LIMB((0x06DB993A<<GMP_NAIL_BITS) || (0x6864275B>>GMP_NUMB_BITS)))
+  (GMP_NUMB_MASK & CNST_LIMB((0x06DB993A<<GMP_NAIL_BITS) | (0x6864275B>>GMP_NUMB_BITS)))
 #endif
 #else
 #if GMP_LIMB_BITS == 64
@@ -183,8 +183,8 @@ do {									\
 
 #ifndef  mpn_divexact_by255x182712915
 #if GMP_NUMB_BITS < 36
-#if HAVE_NATIVE_mpn_bdiv_q_1_pi2 && defined(BINVERT_255x182712915H)
-/* FIXME: use mpn_bdiv_q_1_pi2 */
+#if HAVE_NATIVE_mpn_bdiv_q_2_pi2 && defined(BINVERT_255x182712915H)
+/* FIXME: use mpn_bdiv_q_2_pi2 */
 #endif
 #if HAVE_NATIVE_mpn_pi1_bdiv_q_1 && defined(BINVERT_182712915)
 #define mpn_divexact_by255x182712915(dst,src,size)				\
