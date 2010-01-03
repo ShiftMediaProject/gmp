@@ -1,3 +1,7 @@
+2010-01-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom_interpolate_6pts.c: Small reorganisation.
+
 2010-01-03  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-impl.h (MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD): Default to

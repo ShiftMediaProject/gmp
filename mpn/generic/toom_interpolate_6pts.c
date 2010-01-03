@@ -79,9 +79,9 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 
   /* Interpolate with sequence:
      W2 =(W1 - W2)>>2
-     W4 =(W3 - W4)>>1
      W1 =(W1 - W5)>>1
      W1 =(W1 - W2)>>1
+     W4 =(W3 - W4)>>1
      W2 =(W2 - W4)/3 - W0<<2
      W3 = W3 - W4 - W5
      W1 =(W1 - W3)/3
@@ -97,6 +97,18 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   else
     mpn_sub_n (w2, w1, w2, 2 * n + 1);
   mpn_rshift (w2, w2, 2 * n + 1, 2);
+
+  /* W1 =(W1 - W5)>>1 */
+  w1[2*n] -= mpn_sub_n (w1, w1, w5, 2*n);
+  mpn_rshift (w1, w1, 2 * n + 1, 1);
+
+  /* W1 =(W1 - W2)>>1 */
+#if HAVE_NATIVE_mpn_rsh1sub_n
+  mpn_rsh1sub_n (w1, w1, w2, 2 * n + 1);
+#else
+  mpn_sub_n (w1, w1, w2, 2 * n + 1);
+  mpn_rshift (w1, w1, 2 * n + 1, 1);
+#endif
 
   /* W4 =(W3 - W4)>>1 */
   if (flags & toom6_vm1_neg)
@@ -118,23 +130,15 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 #endif
     }
 
-  /* W1 =(W1 - W5)>>1 */
-  w1[2*n] -= mpn_sub_n (w1, w1, w5, 2*n);
-  mpn_rshift (w1, w1, 2 * n + 1, 1);
-
-  /* W1 =(W1 - W2)>>1 */
-#if HAVE_NATIVE_mpn_rsh1sub_n
-  mpn_rsh1sub_n (w1, w1, w2, 2 * n + 1);
-#else
-  mpn_sub_n (w1, w1, w2, 2 * n + 1);
-  mpn_rshift (w1, w1, 2 * n + 1, 1);
-#endif
-
   /* W2 =(W2 - W4)/3 - W0<<2 */
   mpn_sub_n (w2, w2, w4, 2 * n + 1);
   mpn_divexact_by3 (w2, w2, 2 * n + 1);
-#if HAVE_NATIVE_mpn_sublsh_n
+#if HAVE_NATIVE_mpn_sublsh_n || HAVE_NATIVE_mpn_sublsh2_n
+#if HAVE_NATIVE_mpn_sublsh2_n
+  cy = mpn_sublsh2_n(w2, w0, w0n);
+#else
   cy = mpn_sublsh_n(w2, w0, w0n, 2);
+#endif
   MPN_DECR_U (w2 + w0n, 2 * n + 1 - w0n, cy);
 #else
   /* the "- W0<<2" will be delayed */
@@ -172,7 +176,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   MPN_INCR_U (pp + 3 * n + 1, n, cy);
 
   /* W2 -= W0<<2 */
-#if HAVE_NATIVE_mpn_sublsh_n
+#if HAVE_NATIVE_mpn_sublsh_n || HAVE_NATIVE_mpn_sublsh2_n
   /* Computed earlier */
 #else
   /* {W4,2*n+1} is now free and can be overwritten. */
@@ -208,8 +212,8 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 
   /* embankment is a "dirty trick" to avoid carry/borrow propagation
      beyond allocated memory */
-  embankment = w0[w0n - 1];
-  w0[w0n - 1] = 0x80;
+  embankment = w0[w0n - 1] - 1;
+  w0[w0n - 1] = 1;
   if (LIKELY (w0n > n)) {
     if ( LIKELY(cy4 > cy6) )
       MPN_INCR_U (pp + 4 * n, w0n + n, cy4 - cy6);
@@ -221,7 +225,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
     MPN_INCR_U (pp + 4 * n, w0n + n, cy4);
     MPN_DECR_U (pp + 3 * n + w0n, 2 * n, cy + cy6);
   }
-  w0[w0n - 1] += embankment - 0x80;
+  w0[w0n - 1] += embankment;
 
 #undef w5
 #undef w3
