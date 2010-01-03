@@ -82,10 +82,11 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
      W1 =(W1 - W5)>>1
      W1 =(W1 - W2)>>1
      W4 =(W3 - W4)>>1
-     W2 =(W2 - W4)/3 - W0<<2
+     W2 =(W2 - W4)/3
      W3 = W3 - W4 - W5
      W1 =(W1 - W3)/3
      // Last steps are mixed with recomposition...
+     W2 = W2 - W0<<2
      W4 = W4 - W2
      W3 = W3 - W1
      W2 = W2 - W0
@@ -130,19 +131,9 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 #endif
     }
 
-  /* W2 =(W2 - W4)/3 - W0<<2 */
+  /* W2 =(W2 - W4)/3 */
   mpn_sub_n (w2, w2, w4, 2 * n + 1);
   mpn_divexact_by3 (w2, w2, 2 * n + 1);
-#if HAVE_NATIVE_mpn_sublsh_n || HAVE_NATIVE_mpn_sublsh2_n
-#if HAVE_NATIVE_mpn_sublsh2_n
-  cy = mpn_sublsh2_n(w2, w0, w0n);
-#else
-  cy = mpn_sublsh_n(w2, w0, w0n, 2);
-#endif
-  MPN_DECR_U (w2 + w0n, 2 * n + 1 - w0n, cy);
-#else
-  /* the "- W0<<2" will be delayed */
-#endif
 
   /* W3 = W3 - W4 - W5 */
   mpn_sub_n (w3, w3, w4, 2 * n + 1);
@@ -177,13 +168,17 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
 
   /* W2 -= W0<<2 */
 #if HAVE_NATIVE_mpn_sublsh_n || HAVE_NATIVE_mpn_sublsh2_n
-  /* Computed earlier */
+#if HAVE_NATIVE_mpn_sublsh2_n
+  cy = mpn_sublsh2_n(w2, w0, w0n);
+#else
+  cy = mpn_sublsh_n(w2, w0, w0n, 2);
+#endif
 #else
   /* {W4,2*n+1} is now free and can be overwritten. */
   cy = mpn_lshift(w4, w0, w0n, 2);
   cy+= mpn_sub_n(w2, w2, w4, w0n);
-  MPN_DECR_U (w2 + w0n, 2 * n + 1 - w0n, cy);
 #endif
+  MPN_DECR_U (w2 + w0n, 2 * n + 1 - w0n, cy);
 
   /* W4L = W4L - W2L */
   cy = mpn_sub_n (pp + n, pp + n, w2, n);
@@ -204,7 +199,7 @@ mpn_toom_interpolate_6pts (mp_ptr pp, mp_size_t n, enum toom6_flags flags,
   /*
     summation scheme for the next operation:
      |...____5|n_____4|n_____3|n_____2|n______|n______|pp
-     |...w0___|_w1_2__|_H w3__|_L w3__|_H w5__|_L w5__|
+     |...w0___|_w1_w2_|_H w3__|_L w3__|_H w5__|_L w5__|
 		     ...-w0___|-w1_w2 |
   */
   /* if(LIKELY(w0n>n)) the two operands below DO overlap! */
