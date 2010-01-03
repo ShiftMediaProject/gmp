@@ -37,8 +37,8 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM22_THRESHOLD                28
 #define MUL_TOOM33_THRESHOLD                37
 #define MUL_TOOM44_THRESHOLD               315
-#define MUL_TOOM6H_THRESHOLD               466
-#define MUL_TOOM8H_THRESHOLD               626
+#define MUL_TOOM6H_THRESHOLD               746
+#define MUL_TOOM8H_THRESHOLD               866
 
 #define MUL_TOOM32_TO_TOOM43_THRESHOLD      73
 #define MUL_TOOM32_TO_TOOM53_THRESHOLD     201
@@ -49,7 +49,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM2_THRESHOLD                 38
 #define SQR_TOOM3_THRESHOLD                 77
 #define SQR_TOOM4_THRESHOLD                620
-#define SQR_TOOM6_THRESHOLD                906
+#define SQR_TOOM6_THRESHOLD                996
 #define SQR_TOOM8_THRESHOLD               1138
 
 #define MULMOD_BNM1_THRESHOLD               15
@@ -76,20 +76,20 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define INV_NEWTON_THRESHOLD               163
 #define INV_APPR_THRESHOLD                 157
 
-#define BINV_NEWTON_THRESHOLD              264
-#define REDC_1_TO_REDC_2_THRESHOLD          12
-#define REDC_2_TO_REDC_N_THRESHOLD          79
+#define BINV_NEWTON_THRESHOLD              228
+#define REDC_1_TO_REDC_2_THRESHOLD          16
+#define REDC_2_TO_REDC_N_THRESHOLD          71
 
-#define MU_DIV_QR_THRESHOLD               1752
-#define MU_DIVAPPR_Q_THRESHOLD            1858
-#define MUPI_DIV_QR_THRESHOLD               74
-#define MU_BDIV_QR_THRESHOLD              1589
-#define MU_BDIV_Q_THRESHOLD               1718
+#define MU_DIV_QR_THRESHOLD               1858
+#define MU_DIVAPPR_Q_THRESHOLD            2009
+#define MUPI_DIV_QR_THRESHOLD              140
+#define MU_BDIV_QR_THRESHOLD              1387
+#define MU_BDIV_Q_THRESHOLD               1787
 
-#define MATRIX22_STRASSEN_THRESHOLD         17
-#define HGCD_THRESHOLD                     135
-#define GCD_DC_THRESHOLD                   515
-#define GCDEXT_DC_THRESHOLD                505
+#define MATRIX22_STRASSEN_THRESHOLD         21
+#define HGCD_THRESHOLD                     118
+#define GCD_DC_THRESHOLD                   416
+#define GCDEXT_DC_THRESHOLD                511
 #define JACOBI_BASE_METHOD                   1
 
 #define GET_STR_DC_THRESHOLD                13
