@@ -309,6 +309,8 @@ const struct routine_t {
   { "mpn_toom8h_mul",    speed_mpn_toom8h_mul       },
   { "mpn_toom32_mul",    speed_mpn_toom32_mul       },
   { "mpn_toom42_mul",    speed_mpn_toom42_mul       },
+  { "mpn_toom43_mul",    speed_mpn_toom43_mul       },
+  { "mpn_toom63_mul",    speed_mpn_toom63_mul       },
   { "mpn_nussbaumer_mul",    speed_mpn_nussbaumer_mul    },
   { "mpn_nussbaumer_mul_sqr",speed_mpn_nussbaumer_mul_sqr},
 #if WANT_OLD_FFT_FULL

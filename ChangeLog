@@ -1,5 +1,8 @@
 2010-01-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
+	* tune/common.c, tune/speed.c, tune/speed.h: Support measuring
+	mpn_toom43_mul.
+
 	* mpn/generic/toom_interpolate_6pts.c: Small reorganisation.
 
 2010-01-03  Torbjorn Granlund  <tege@gmplib.org>
