@@ -80,11 +80,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define REDC_1_TO_REDC_2_THRESHOLD          10
 #define REDC_2_TO_REDC_N_THRESHOLD          63
 
-#define MU_DIV_QR_THRESHOLD               1858
-#define MU_DIVAPPR_Q_THRESHOLD            1787
-#define MUPI_DIV_QR_THRESHOLD              258
-#define MU_BDIV_QR_THRESHOLD              1787
-#define MU_BDIV_Q_THRESHOLD               1718
+#define MU_DIV_QR_THRESHOLD               1334
+#define MU_DIVAPPR_Q_THRESHOLD            1334
+#define MUPI_DIV_QR_THRESHOLD              126
+#define MU_BDIV_QR_THRESHOLD              1037
+#define MU_BDIV_Q_THRESHOLD               1334
 
 #define MATRIX22_STRASSEN_THRESHOLD         18
 #define HGCD_THRESHOLD                     138
