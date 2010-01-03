@@ -47,9 +47,9 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 38
 #define SQR_TOOM3_THRESHOLD                121
-#define SQR_TOOM4_THRESHOLD                348
-#define SQR_TOOM6_THRESHOLD                462
-#define SQR_TOOM8_THRESHOLD                644
+#define SQR_TOOM4_THRESHOLD                512
+#define SQR_TOOM6_THRESHOLD                686
+#define SQR_TOOM8_THRESHOLD                686
 
 #define MULMOD_BNM1_THRESHOLD               17
 #define SQRMOD_BNM1_THRESHOLD               17

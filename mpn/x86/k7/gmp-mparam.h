@@ -47,7 +47,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 50
 #define SQR_TOOM3_THRESHOLD                 87
-#define SQR_TOOM4_THRESHOLD                148
+#define SQR_TOOM4_THRESHOLD                208
 #define SQR_TOOM6_THRESHOLD                306
 #define SQR_TOOM8_THRESHOLD                430
 
@@ -92,7 +92,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define GET_STR_DC_THRESHOLD                17
 #define GET_STR_PRECOMPUTE_THRESHOLD        34
-#define SET_STR_DC_THRESHOLD               818
+#define SET_STR_DC_THRESHOLD               542
 #define SET_STR_PRECOMPUTE_THRESHOLD      1615
 
 /* These tables need to be updated.  */
