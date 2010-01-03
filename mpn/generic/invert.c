@@ -31,10 +31,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef INV_APPR_THRESHOLD
-#define INV_APPR_THRESHOLD INV_NEWTON_THRESHOLD
-#endif
-
 void
 mpn_invert (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {

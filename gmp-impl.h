@@ -1782,6 +1782,14 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define DIVEXACT_JEB_THRESHOLD           25
 #endif
 
+#ifndef INV_MULMOD_BNM1_THRESHOLD
+#define INV_MULMOD_BNM1_THRESHOLD  (5*MULMOD_BNM1_THRESHOLD)
+#endif
+
+#ifndef INV_APPR_THRESHOLD
+#define INV_APPR_THRESHOLD         INV_NEWTON_THRESHOLD
+#endif
+
 #ifndef INV_NEWTON_THRESHOLD
 #define INV_NEWTON_THRESHOLD            200
 #endif

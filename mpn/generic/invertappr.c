@@ -37,10 +37,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef INV_MULMOD_BNM1_THRESHOLD
-#define INV_MULMOD_BNM1_THRESHOLD (5*MULMOD_BNM1_THRESHOLD)
-#endif
-
 /* FIXME: The iterative version splits the operand in two slighty unbalanced
    parts, the use of log_2 (or counting the bits) underestimate the maximum
    number of iterations.  */

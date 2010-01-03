@@ -1,5 +1,9 @@
 2010-01-03  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (INV_APPR_THRESHOLD, INV_MULMOD_BNM1_THRESHOLD): Default
+	here...
+	* mpn/generic/invert.c, mpn/generic/invertappr.c: ...not here.
+
 	* tests/mpn/t-div.c: Rewrite operand generation code.
 
 2010-01-02  Torbjorn Granlund  <tege@gmplib.org>
