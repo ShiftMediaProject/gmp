@@ -1,5 +1,11 @@
 2010-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (fft): Separate tuning of modf and full products.
+	(struct fft_param_t): New field, mul_modf_function.
+	(tune_fft_sqr): Fix typo.
+	(tune_fft_mul, tune_fft_sqr): Initialise mul_modf_function field.
+	* tune/common.c (speed_mpn_fft_mul, speed_mpn_fft_sqr): New functions.
+
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED): Clean up.
 
 	* mpn/generic/mul.c: Simplify rational expression.

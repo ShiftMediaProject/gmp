@@ -224,6 +224,8 @@ double speed_mpn_mul __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_fft_mul __GMP_PROTO ((struct speed_params *s));
+double speed_mpn_fft_sqr __GMP_PROTO ((struct speed_params *s));
 #if WANT_OLD_FFT_FULL
 double speed_mpn_mul_fft_full __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_full_sqr __GMP_PROTO ((struct speed_params *s));

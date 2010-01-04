@@ -1234,6 +1234,18 @@ speed_mpn_mul_fft_sqr (struct speed_params *s)
 }
 
 double
+speed_mpn_fft_mul (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_N_CALL (mpn_fft_mul (wp, s->xp, s->size, s->yp, s->size));
+}
+
+double
+speed_mpn_fft_sqr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQR_CALL (mpn_fft_mul (wp, s->xp, s->size, s->xp, s->size));
+}
+
+double
 speed_mpn_mullo_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MULLO_N (mpn_mullo_n);
