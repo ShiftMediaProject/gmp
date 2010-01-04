@@ -1055,27 +1055,28 @@ int speed_routine_count_zeros_setup
     mp_ptr    wp, tp;							\
     unsigned  i;							\
     double    t;							\
-    mp_size_t size;							\
+    mp_size_t size, itch;						\
     TMP_DECL;								\
 									\
     SPEED_RESTRICT_COND (s->size >= 1);					\
 									\
     size = mpn_mulmod_bnm1_next_size (s->size);				\
+    itch = mpn_mulmod_bnm1_itch (size);					\
 									\
     TMP_MARK;								\
-    SPEED_TMP_ALLOC_LIMBS (wp, 2*size, s->align_wp); /* FIXME 2* */	\
-    SPEED_TMP_ALLOC_LIMBS (tp, 3 * size + 100, s->align_wp2);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, size, s->align_wp);			\
+    SPEED_TMP_ALLOC_LIMBS (tp, itch, s->align_wp2);			\
 									\
     speed_operand_src (s, s->xp, s->size);				\
     speed_operand_src (s, s->yp, s->size);				\
-    speed_operand_dst (s, wp, 2 * size);				\
-    speed_operand_dst (s, tp, 3 * size + 100); /* FIXME: Use itch function */ \
+    speed_operand_dst (s, wp, size);					\
+    speed_operand_dst (s, tp, itch);					\
     speed_cache_fill (s);						\
 									\
     speed_starttime ();							\
     i = s->reps;							\
     do									\
-      function (wp, size, s->xp, s->size, s->yp, s->size, tp);	\
+      function (wp, size, s->xp, s->size, s->yp, s->size, tp);		\
     while (--i != 0);							\
     t = speed_endtime ();						\
 									\

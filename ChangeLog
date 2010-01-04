@@ -1,5 +1,7 @@
 2010-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED): Clean up.
+
 	* mpn/generic/mul.c: Simplify rational expression.
 
 	* gmp-impl.h: Cleanup threshold variables; remove obsolete ones and
