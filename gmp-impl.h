@@ -574,15 +574,8 @@ __GMP_DECLSPEC void  __gmp_tmp_debug_free  __GMP_PROTO ((const char *, int, int,
 /* Set various *_THRESHOLD values to be used for nails.  Thus we avoid using
    code that has not yet been qualified.  */
 
-#undef DIV_SB_PREINV_THRESHOLD
-#undef DC_DIV_QR_THRESHOLD
-#undef POWM_THRESHOLD
-#define DIV_SB_PREINV_THRESHOLD           MP_SIZE_T_MAX
+#undef  DC_DIV_QR_THRESHOLD
 #define DC_DIV_QR_THRESHOLD              50
-#define POWM_THRESHOLD                    0
-
-#undef GCD_ACCEL_THRESHOLD
-#define GCD_ACCEL_THRESHOLD               3
 
 #undef DIVREM_1_NORM_THRESHOLD
 #undef DIVREM_1_UNNORM_THRESHOLD
@@ -1758,16 +1751,12 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
 #define SQR_TOOM3_THRESHOLD_LIMIT  SQR_TOOM3_THRESHOLD
 #endif
 
-#ifndef DC_DIVAPPR_Q_THRESHOLD
-#define DC_DIVAPPR_Q_THRESHOLD          200
-#endif
-
 #ifndef DC_DIV_QR_THRESHOLD
 #define DC_DIV_QR_THRESHOLD              50
 #endif
 
-#ifndef DC_DIV_Q_THRESHOLD
-#define DC_DIV_Q_THRESHOLD              228
+#ifndef DC_DIVAPPR_Q_THRESHOLD
+#define DC_DIVAPPR_Q_THRESHOLD          200
 #endif
 
 #ifndef DC_BDIV_QR_THRESHOLD
@@ -4200,253 +4189,254 @@ mpn_zero_p (mp_srcptr ap, mp_size_t n)
    on #ifdef in the .c files.  For some this is not so (the defaults are
    instead established above), but all are done this way for consistency. */
 
-#undef  MUL_TOOM22_THRESHOLD
-#define MUL_TOOM22_THRESHOLD         mul_toom22_threshold
-extern mp_size_t                     mul_toom22_threshold;
+#undef	MUL_TOOM22_THRESHOLD
+#define MUL_TOOM22_THRESHOLD		mul_toom22_threshold
+extern mp_size_t			mul_toom22_threshold;
 
-#undef  MUL_TOOM33_THRESHOLD
-#define MUL_TOOM33_THRESHOLD         mul_toom33_threshold
-extern mp_size_t                     mul_toom33_threshold;
+#undef	MUL_TOOM33_THRESHOLD
+#define MUL_TOOM33_THRESHOLD		mul_toom33_threshold
+extern mp_size_t			mul_toom33_threshold;
 
-#undef  MUL_TOOM44_THRESHOLD
-#define MUL_TOOM44_THRESHOLD         mul_toom44_threshold
-extern mp_size_t                     mul_toom44_threshold;
+#undef	MUL_TOOM44_THRESHOLD
+#define MUL_TOOM44_THRESHOLD		mul_toom44_threshold
+extern mp_size_t			mul_toom44_threshold;
 
-#undef  MUL_TOOM6H_THRESHOLD
-#define MUL_TOOM6H_THRESHOLD         mul_toom6h_threshold
-extern mp_size_t                     mul_toom6h_threshold;
+#undef	MUL_TOOM6H_THRESHOLD
+#define MUL_TOOM6H_THRESHOLD		mul_toom6h_threshold
+extern mp_size_t			mul_toom6h_threshold;
 
-#undef  MUL_TOOM8H_THRESHOLD
-#define MUL_TOOM8H_THRESHOLD         mul_toom8h_threshold
-extern mp_size_t                     mul_toom8h_threshold;
+#undef	MUL_TOOM8H_THRESHOLD
+#define MUL_TOOM8H_THRESHOLD		mul_toom8h_threshold
+extern mp_size_t			mul_toom8h_threshold;
 
-#undef  MUL_TOOM32_TO_TOOM43_THRESHOLD
-#define MUL_TOOM32_TO_TOOM43_THRESHOLD mul_toom32_to_toom43_threshold
-extern mp_size_t                       mul_toom32_to_toom43_threshold;
+#undef	MUL_TOOM32_TO_TOOM43_THRESHOLD
+#define MUL_TOOM32_TO_TOOM43_THRESHOLD	mul_toom32_to_toom43_threshold
+extern mp_size_t			mul_toom32_to_toom43_threshold;
 
-#undef  MUL_TOOM32_TO_TOOM53_THRESHOLD
-#define MUL_TOOM32_TO_TOOM53_THRESHOLD mul_toom32_to_toom53_threshold
-extern mp_size_t                       mul_toom32_to_toom53_threshold;
+#undef	MUL_TOOM32_TO_TOOM53_THRESHOLD
+#define MUL_TOOM32_TO_TOOM53_THRESHOLD	mul_toom32_to_toom53_threshold
+extern mp_size_t			mul_toom32_to_toom53_threshold;
 
-#undef  MUL_TOOM42_TO_TOOM53_THRESHOLD
-#define MUL_TOOM42_TO_TOOM53_THRESHOLD mul_toom42_to_toom53_threshold
-extern mp_size_t                       mul_toom42_to_toom53_threshold;
+#undef	MUL_TOOM42_TO_TOOM53_THRESHOLD
+#define MUL_TOOM42_TO_TOOM53_THRESHOLD	mul_toom42_to_toom53_threshold
+extern mp_size_t			mul_toom42_to_toom53_threshold;
 
-#undef  MUL_TOOM42_TO_TOOM63_THRESHOLD
-#define MUL_TOOM42_TO_TOOM63_THRESHOLD mul_toom42_to_toom63_threshold
-extern mp_size_t                       mul_toom42_to_toom63_threshold;
+#undef	MUL_TOOM42_TO_TOOM63_THRESHOLD
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD	mul_toom42_to_toom63_threshold
+extern mp_size_t			mul_toom42_to_toom63_threshold;
 
-#undef  MUL_FFT_THRESHOLD
-#define MUL_FFT_THRESHOLD            mul_fft_threshold
-extern mp_size_t                     mul_fft_threshold;
+#undef	MUL_FFT_THRESHOLD
+#define MUL_FFT_THRESHOLD		mul_fft_threshold
+extern mp_size_t			mul_fft_threshold;
 
-#undef  MUL_FFT_MODF_THRESHOLD
-#define MUL_FFT_MODF_THRESHOLD       mul_fft_modf_threshold
-extern mp_size_t                     mul_fft_modf_threshold;
+#undef	MUL_FFT_MODF_THRESHOLD
+#define MUL_FFT_MODF_THRESHOLD		mul_fft_modf_threshold
+extern mp_size_t			mul_fft_modf_threshold;
 
-#undef  MUL_FFT_TABLE
-#define MUL_FFT_TABLE                { 0 }
+#undef	MUL_FFT_TABLE
+#define MUL_FFT_TABLE			{ 0 }
 
 /* A native mpn_sqr_basecase is not tuned and SQR_BASECASE_THRESHOLD should
    remain as zero (always use it). */
 #if ! HAVE_NATIVE_mpn_sqr_basecase
-#undef  SQR_BASECASE_THRESHOLD
-#define SQR_BASECASE_THRESHOLD       sqr_basecase_threshold
-extern mp_size_t                     sqr_basecase_threshold;
+#undef	SQR_BASECASE_THRESHOLD
+#define SQR_BASECASE_THRESHOLD		sqr_basecase_threshold
+extern mp_size_t			sqr_basecase_threshold;
 #endif
 
 #if TUNE_PROGRAM_BUILD_SQR
-#undef  SQR_TOOM2_THRESHOLD
-#define SQR_TOOM2_THRESHOLD          SQR_TOOM2_MAX_GENERIC
+#undef	SQR_TOOM2_THRESHOLD
+#define SQR_TOOM2_THRESHOLD		SQR_TOOM2_MAX_GENERIC
 #else
-#undef  SQR_TOOM2_THRESHOLD
-#define SQR_TOOM2_THRESHOLD          sqr_toom2_threshold
-extern mp_size_t                     sqr_toom2_threshold;
+#undef	SQR_TOOM2_THRESHOLD
+#define SQR_TOOM2_THRESHOLD		sqr_toom2_threshold
+extern mp_size_t			sqr_toom2_threshold;
 #endif
 
-#undef  SQR_TOOM3_THRESHOLD
-#define SQR_TOOM3_THRESHOLD          sqr_toom3_threshold
-extern mp_size_t                     sqr_toom3_threshold;
+#undef	SQR_TOOM3_THRESHOLD
+#define SQR_TOOM3_THRESHOLD		sqr_toom3_threshold
+extern mp_size_t			sqr_toom3_threshold;
 
-#undef  SQR_TOOM4_THRESHOLD
-#define SQR_TOOM4_THRESHOLD          sqr_toom4_threshold
-extern mp_size_t                     sqr_toom4_threshold;
+#undef	SQR_TOOM4_THRESHOLD
+#define SQR_TOOM4_THRESHOLD		sqr_toom4_threshold
+extern mp_size_t			sqr_toom4_threshold;
 
-#undef  SQR_TOOM6_THRESHOLD
-#define SQR_TOOM6_THRESHOLD          sqr_toom6_threshold
-extern mp_size_t                     sqr_toom6_threshold;
+#undef	SQR_TOOM6_THRESHOLD
+#define SQR_TOOM6_THRESHOLD		sqr_toom6_threshold
+extern mp_size_t			sqr_toom6_threshold;
 
-#undef  SQR_TOOM8_THRESHOLD
-#define SQR_TOOM8_THRESHOLD          sqr_toom8_threshold
-extern mp_size_t                     sqr_toom8_threshold;
+#undef	SQR_TOOM8_THRESHOLD
+#define SQR_TOOM8_THRESHOLD		sqr_toom8_threshold
+extern mp_size_t			sqr_toom8_threshold;
 
-#undef SQR_FFT_THRESHOLD
-#define SQR_FFT_THRESHOLD            sqr_fft_threshold
-extern mp_size_t                     sqr_fft_threshold;
+#undef  SQR_FFT_THRESHOLD
+#define SQR_FFT_THRESHOLD		sqr_fft_threshold
+extern mp_size_t			sqr_fft_threshold;
 
-#undef SQR_FFT_MODF_THRESHOLD
-#define SQR_FFT_MODF_THRESHOLD       sqr_fft_modf_threshold
-extern mp_size_t                     sqr_fft_modf_threshold;
+#undef  SQR_FFT_MODF_THRESHOLD
+#define SQR_FFT_MODF_THRESHOLD		sqr_fft_modf_threshold
+extern mp_size_t			sqr_fft_modf_threshold;
 
-#undef  SQR_FFT_TABLE
-#define SQR_FFT_TABLE                { 0 }
+#undef	SQR_FFT_TABLE
+#define SQR_FFT_TABLE			{ 0 }
 
-#undef  MULLO_BASECASE_THRESHOLD
-#define MULLO_BASECASE_THRESHOLD     mullo_basecase_threshold
-extern mp_size_t                     mullo_basecase_threshold;
+#undef	MULLO_BASECASE_THRESHOLD
+#define MULLO_BASECASE_THRESHOLD	mullo_basecase_threshold
+extern mp_size_t			mullo_basecase_threshold;
 
-#undef  MULLO_DC_THRESHOLD
-#define MULLO_DC_THRESHOLD           mullo_dc_threshold
-extern mp_size_t                     mullo_dc_threshold;
+#undef	MULLO_DC_THRESHOLD
+#define MULLO_DC_THRESHOLD		mullo_dc_threshold
+extern mp_size_t			mullo_dc_threshold;
 
-#undef  MULLO_MUL_N_THRESHOLD
-#define MULLO_MUL_N_THRESHOLD        mullo_mul_n_threshold
-extern mp_size_t                     mullo_mul_n_threshold;
+#undef	MULLO_MUL_N_THRESHOLD
+#define MULLO_MUL_N_THRESHOLD		mullo_mul_n_threshold
+extern mp_size_t			mullo_mul_n_threshold;
 
+#undef	DC_DIV_QR_THRESHOLD
+#define DC_DIV_QR_THRESHOLD		dc_div_qr_threshold
+extern mp_size_t			dc_div_qr_threshold;
+
+#undef	DC_DIVAPPR_Q_THRESHOLD
+#define DC_DIVAPPR_Q_THRESHOLD		dc_divappr_q_threshold
+extern mp_size_t			dc_divappr_q_threshold;
+
+#undef	DC_BDIV_Q_THRESHOLD
+#define DC_BDIV_Q_THRESHOLD		dc_bdiv_q_threshold
+extern mp_size_t			dc_bdiv_q_threshold;
+
+#undef	DC_BDIV_QR_THRESHOLD
+#define DC_BDIV_QR_THRESHOLD		dc_bdiv_qr_threshold
+extern mp_size_t			dc_bdiv_qr_threshold;
+
+#undef	MU_DIV_QR_THRESHOLD
+#define MU_DIV_QR_THRESHOLD		mu_div_qr_threshold
+extern mp_size_t			mu_div_qr_threshold;
+
+#undef	MU_DIVAPPR_Q_THRESHOLD
+#define MU_DIVAPPR_Q_THRESHOLD		mu_divappr_q_threshold
+extern mp_size_t			mu_divappr_q_threshold;
+
+#undef	MUPI_DIV_QR_THRESHOLD
+#define MUPI_DIV_QR_THRESHOLD		mupi_div_qr_threshold
+extern mp_size_t			mupi_div_qr_threshold;
+
+#undef	MU_BDIV_QR_THRESHOLD
+#define MU_BDIV_QR_THRESHOLD		mu_bdiv_qr_threshold
+extern mp_size_t			mu_bdiv_qr_threshold;
+
+#undef	MU_BDIV_Q_THRESHOLD
+#define MU_BDIV_Q_THRESHOLD		mu_bdiv_q_threshold
+extern mp_size_t			mu_bdiv_q_threshold;
+
+#undef	INV_MULMOD_BNM1_THRESHOLD
+#define INV_MULMOD_BNM1_THRESHOLD	inv_mulmod_bnm1_threshold
+extern mp_size_t			inv_mulmod_bnm1_threshold;
+
+#undef	INV_NEWTON_THRESHOLD
+#define INV_NEWTON_THRESHOLD		inv_newton_threshold
+extern mp_size_t			inv_newton_threshold;
+
+#undef	INV_APPR_THRESHOLD
+#define INV_APPR_THRESHOLD		inv_appr_threshold
+extern mp_size_t			inv_appr_threshold;
+
+#undef	BINV_NEWTON_THRESHOLD
+#define BINV_NEWTON_THRESHOLD		binv_newton_threshold
+extern mp_size_t			binv_newton_threshold;
+
+#undef	REDC_1_TO_REDC_2_THRESHOLD
+#define REDC_1_TO_REDC_2_THRESHOLD	redc_1_to_redc_2_threshold
+extern mp_size_t			redc_1_to_redc_2_threshold;
+
+#undef	REDC_2_TO_REDC_N_THRESHOLD
+#define REDC_2_TO_REDC_N_THRESHOLD	redc_2_to_redc_n_threshold
+extern mp_size_t			redc_2_to_redc_n_threshold;
+
+#undef	REDC_1_TO_REDC_N_THRESHOLD
+#define REDC_1_TO_REDC_N_THRESHOLD	redc_1_to_redc_n_threshold
+extern mp_size_t			redc_1_to_redc_n_threshold;
+
+#undef	MATRIX22_STRASSEN_THRESHOLD
+#define MATRIX22_STRASSEN_THRESHOLD	matrix22_strassen_threshold
+extern mp_size_t			matrix22_strassen_threshold;
+
+#undef	HGCD_THRESHOLD
+#define HGCD_THRESHOLD			hgcd_threshold
+extern mp_size_t			hgcd_threshold;
+
+#undef	GCD_DC_THRESHOLD
+#define GCD_DC_THRESHOLD		gcd_dc_threshold
+extern mp_size_t			gcd_dc_threshold;
+
+#undef  GCDEXT_DC_THRESHOLD
+#define GCDEXT_DC_THRESHOLD		gcdext_dc_threshold
+extern mp_size_t			gcdext_dc_threshold;
+
+#undef  DIVREM_1_NORM_THRESHOLD
+#define DIVREM_1_NORM_THRESHOLD		divrem_1_norm_threshold
+extern mp_size_t			divrem_1_norm_threshold;
+
+#undef  DIVREM_1_UNNORM_THRESHOLD
+#define DIVREM_1_UNNORM_THRESHOLD	divrem_1_unnorm_threshold
+extern mp_size_t			divrem_1_unnorm_threshold;
+
+#undef	MOD_1_NORM_THRESHOLD
+#define MOD_1_NORM_THRESHOLD		mod_1_norm_threshold
+extern mp_size_t			mod_1_norm_threshold;
+
+#undef	MOD_1_UNNORM_THRESHOLD
+#define MOD_1_UNNORM_THRESHOLD		mod_1_unnorm_threshold
+extern mp_size_t			mod_1_unnorm_threshold;
+
+#undef	MOD_1N_TO_MOD_1_1_THRESHOLD
+#define MOD_1N_TO_MOD_1_1_THRESHOLD	mod_1n_to_mod_1_1_threshold
+extern mp_size_t			mod_1n_to_mod_1_1_threshold;
+
+#undef	MOD_1U_TO_MOD_1_1_THRESHOLD
+#define MOD_1U_TO_MOD_1_1_THRESHOLD	mod_1u_to_mod_1_1_threshold
+extern mp_size_t			mod_1u_to_mod_1_1_threshold;
+
+#undef	MOD_1_1_TO_MOD_1_2_THRESHOLD
+#define MOD_1_1_TO_MOD_1_2_THRESHOLD	mod_1_1_to_mod_1_2_threshold
+extern mp_size_t			mod_1_1_to_mod_1_2_threshold;
+
+#undef	MOD_1_2_TO_MOD_1_4_THRESHOLD
+#define MOD_1_2_TO_MOD_1_4_THRESHOLD	mod_1_2_to_mod_1_4_threshold
+extern mp_size_t			mod_1_2_to_mod_1_4_threshold;
+
+#undef	PREINV_MOD_1_TO_MOD_1_THRESHOLD
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD	preinv_mod_1_to_mod_1_threshold
+extern mp_size_t			preinv_mod_1_to_mod_1_threshold;
 
 #if ! UDIV_PREINV_ALWAYS
-#undef  DIV_SB_PREINV_THRESHOLD
-#define DIV_SB_PREINV_THRESHOLD      div_sb_preinv_threshold
-extern mp_size_t                     div_sb_preinv_threshold;
+#undef	DIVREM_2_THRESHOLD
+#define DIVREM_2_THRESHOLD		divrem_2_threshold
+extern mp_size_t			divrem_2_threshold;
 #endif
 
-#undef  DC_DIV_QR_THRESHOLD
-#define DC_DIV_QR_THRESHOLD          dc_div_qr_threshold
-extern mp_size_t                     dc_div_qr_threshold;
+#undef	MULMOD_BNM1_THRESHOLD
+#define MULMOD_BNM1_THRESHOLD		mulmod_bnm1_threshold
+extern mp_size_t			mulmod_bnm1_threshold;
 
-#undef  DC_DIVAPPR_Q_THRESHOLD
-#define DC_DIVAPPR_Q_THRESHOLD       dc_divappr_q_threshold
-extern mp_size_t                     dc_divappr_q_threshold;
+#undef	SQRMOD_BNM1_THRESHOLD
+#define SQRMOD_BNM1_THRESHOLD		sqrmod_bnm1_threshold
+extern mp_size_t			sqrmod_bnm1_threshold;
 
-#undef  DC_DIV_Q_THRESHOLD
-#define DC_DIV_Q_THRESHOLD           dc_div_q_threshold
-extern mp_size_t                     dc_div_q_threshold;
+#undef	GET_STR_DC_THRESHOLD
+#define GET_STR_DC_THRESHOLD		get_str_dc_threshold
+extern mp_size_t			get_str_dc_threshold;
 
-#undef  DC_BDIV_Q_THRESHOLD
-#define DC_BDIV_Q_THRESHOLD          dc_bdiv_q_threshold
-extern mp_size_t                     dc_bdiv_q_threshold;
+#undef  GET_STR_PRECOMPUTE_THRESHOLD
+#define GET_STR_PRECOMPUTE_THRESHOLD	get_str_precompute_threshold
+extern mp_size_t			get_str_precompute_threshold;
 
-#undef  DC_BDIV_QR_THRESHOLD
-#define DC_BDIV_QR_THRESHOLD         dc_bdiv_qr_threshold
-extern mp_size_t                     dc_bdiv_qr_threshold;
+#undef	SET_STR_DC_THRESHOLD
+#define SET_STR_DC_THRESHOLD		set_str_dc_threshold
+extern mp_size_t			set_str_dc_threshold;
 
-#undef  INV_MULMOD_BNM1_THRESHOLD
-#define INV_MULMOD_BNM1_THRESHOLD    inv_mulmod_bnm1_threshold
-extern mp_size_t                     inv_mulmod_bnm1_threshold;
-
-#undef  INV_NEWTON_THRESHOLD
-#define INV_NEWTON_THRESHOLD         inv_newton_threshold
-extern mp_size_t                     inv_newton_threshold;
-
-#undef  INV_APPR_THRESHOLD
-#define INV_APPR_THRESHOLD           inv_appr_threshold
-extern mp_size_t                     inv_appr_threshold;
-
-#undef  BINV_NEWTON_THRESHOLD
-#define BINV_NEWTON_THRESHOLD        binv_newton_threshold
-extern mp_size_t                     binv_newton_threshold;
-
-#undef  REDC_1_TO_REDC_2_THRESHOLD
-#define REDC_1_TO_REDC_2_THRESHOLD   redc_1_to_redc_2_threshold
-extern mp_size_t                     redc_1_to_redc_2_threshold;
-
-#undef  REDC_2_TO_REDC_N_THRESHOLD
-#define REDC_2_TO_REDC_N_THRESHOLD   redc_2_to_redc_n_threshold
-extern mp_size_t                     redc_2_to_redc_n_threshold;
-
-#undef  REDC_1_TO_REDC_N_THRESHOLD
-#define REDC_1_TO_REDC_N_THRESHOLD   redc_1_to_redc_n_threshold
-extern mp_size_t                     redc_1_to_redc_n_threshold;
-
-#undef  POWM_THRESHOLD
-#define POWM_THRESHOLD               powm_threshold
-extern mp_size_t                     powm_threshold;
-
-#undef  MATRIX22_STRASSEN_THRESHOLD
-#define MATRIX22_STRASSEN_THRESHOLD  matrix22_strassen_threshold
-extern mp_size_t                     matrix22_strassen_threshold;
-
-#undef  HGCD_THRESHOLD
-#define HGCD_THRESHOLD               hgcd_threshold
-extern mp_size_t                     hgcd_threshold;
-
-#undef  GCD_ACCEL_THRESHOLD
-#define GCD_ACCEL_THRESHOLD          gcd_accel_threshold
-extern mp_size_t                     gcd_accel_threshold;
-
-#undef  GCD_DC_THRESHOLD
-#define GCD_DC_THRESHOLD             gcd_dc_threshold
-extern mp_size_t                     gcd_dc_threshold;
-
-#undef GCDEXT_DC_THRESHOLD
-#define GCDEXT_DC_THRESHOLD          gcdext_dc_threshold
-extern mp_size_t                     gcdext_dc_threshold;
-
-#undef DIVREM_1_NORM_THRESHOLD
-#define DIVREM_1_NORM_THRESHOLD      divrem_1_norm_threshold
-extern mp_size_t                     divrem_1_norm_threshold;
-
-#undef DIVREM_1_UNNORM_THRESHOLD
-#define DIVREM_1_UNNORM_THRESHOLD    divrem_1_unnorm_threshold
-extern mp_size_t                     divrem_1_unnorm_threshold;
-
-#undef  MOD_1_NORM_THRESHOLD
-#define MOD_1_NORM_THRESHOLD         mod_1_norm_threshold
-extern mp_size_t                     mod_1_norm_threshold;
-
-#undef  MOD_1_UNNORM_THRESHOLD
-#define MOD_1_UNNORM_THRESHOLD       mod_1_unnorm_threshold
-extern mp_size_t                     mod_1_unnorm_threshold;
-
-#undef  MOD_1N_TO_MOD_1_1_THRESHOLD
-#define MOD_1N_TO_MOD_1_1_THRESHOLD  mod_1n_to_mod_1_1_threshold
-extern mp_size_t                     mod_1n_to_mod_1_1_threshold;
-
-#undef  MOD_1U_TO_MOD_1_1_THRESHOLD
-#define MOD_1U_TO_MOD_1_1_THRESHOLD  mod_1u_to_mod_1_1_threshold
-extern mp_size_t                     mod_1u_to_mod_1_1_threshold;
-
-#undef  MOD_1_1_TO_MOD_1_2_THRESHOLD
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD mod_1_1_to_mod_1_2_threshold
-extern mp_size_t                     mod_1_1_to_mod_1_2_threshold;
-
-#undef  MOD_1_2_TO_MOD_1_4_THRESHOLD
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD mod_1_2_to_mod_1_4_threshold
-extern mp_size_t                     mod_1_2_to_mod_1_4_threshold;
-
-#if ! UDIV_PREINV_ALWAYS
-#undef  DIVREM_2_THRESHOLD
-#define DIVREM_2_THRESHOLD           divrem_2_threshold
-extern mp_size_t                     divrem_2_threshold;
-#endif
-
-#undef  MULMOD_BNM1_THRESHOLD
-#define MULMOD_BNM1_THRESHOLD        mulmod_bnm1_threshold
-extern mp_size_t                     mulmod_bnm1_threshold;
-
-#undef  SQRMOD_BNM1_THRESHOLD
-#define SQRMOD_BNM1_THRESHOLD        sqrmod_bnm1_threshold
-extern mp_size_t                     sqrmod_bnm1_threshold;
-
-#undef  GET_STR_DC_THRESHOLD
-#define GET_STR_DC_THRESHOLD         get_str_dc_threshold
-extern mp_size_t                     get_str_dc_threshold;
-
-#undef GET_STR_PRECOMPUTE_THRESHOLD
-#define GET_STR_PRECOMPUTE_THRESHOLD get_str_precompute_threshold
-extern mp_size_t                     get_str_precompute_threshold;
-
-#undef  SET_STR_DC_THRESHOLD
-#define SET_STR_DC_THRESHOLD         set_str_dc_threshold
-extern mp_size_t                     set_str_dc_threshold;
-
-#undef SET_STR_PRECOMPUTE_THRESHOLD
-#define SET_STR_PRECOMPUTE_THRESHOLD set_str_precompute_threshold
-extern mp_size_t                     set_str_precompute_threshold;
-
-#undef  SET_STR_THRESHOLD
-#define SET_STR_THRESHOLD            set_str_threshold
-extern mp_size_t                     SET_STR_THRESHOLD;
+#undef  SET_STR_PRECOMPUTE_THRESHOLD
+#define SET_STR_PRECOMPUTE_THRESHOLD	set_str_precompute_threshold
+extern mp_size_t			set_str_precompute_threshold;
 
 #undef  FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS
@@ -4482,10 +4472,10 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 /* toom22/toom2: Scratch need is 2*(an + k), k is the recursion depth.
    k is ths smallest k such that
-     ceil(an/2^k) < MUL_KARATSUBA_THRESHOLD.
+     ceil(an/2^k) < MUL_TOOM22_THRESHOLD.
    which implies that
-     k = bitsize of floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))
-       = 1 + floor (log_2 (floor ((an-1)/(MUL_KARATSUBA_THRESHOLD-1))))
+     k = bitsize of floor ((an-1)/(MUL_TOOM22_THRESHOLD-1))
+       = 1 + floor (log_2 (floor ((an-1)/(MUL_TOOM22_THRESHOLD-1))))
 */
 #define mpn_toom22_mul_itch(an, bn) \
   (2 * ((an) + GMP_NUMB_BITS))

@@ -1,3 +1,10 @@
+2010-01-04  Torbjorn Granlund  <tege@gmplib.org>
+
+	* gmp-impl.h: Cleanup threshold variables; remove obsolete ones and
+	make all possibly needed definitions for existing ones.
+	* tune/tuneup.c (tune_mul): Write fractions-compensated values to
+	threshold variables.
+
 2010-01-03 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tune/common.c, tune/speed.c, tune/speed.h: Support measuring
