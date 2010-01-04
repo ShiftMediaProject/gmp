@@ -124,7 +124,7 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
       /* Compute xm = a*b mod (B^n - 1), xp = a*b mod (B^n + 1)
 	 and crt together as
 
-         x = -xp * B^n + (B^n + 1) * [ (xp + xm)/2 mod (B^n-1)]
+	 x = -xp * B^n + (B^n + 1) * [ (xp + xm)/2 mod (B^n-1)]
       */
 
 #define a0 ap
@@ -273,11 +273,11 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
       MPN_INCR_U(rp, n, cy);
 
       /* Compute the highest half:
-         ([(xp + xm)/2 mod (B^n-1)] - xp ) * B^n 
+	 ([(xp + xm)/2 mod (B^n-1)] - xp ) * B^n
        */
       cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);
       /* cy = 1 only if {xp,n+1} is not ZERO, i.e. {rp,n} is not ZERO.
-         DECR will affect _at most_ the lowest n limbs. */
+	 DECR will affect _at most_ the lowest n limbs. */
       MPN_DECR_U (rp, 2*n, cy);
 
 #undef a0

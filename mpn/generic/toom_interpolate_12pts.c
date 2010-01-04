@@ -197,7 +197,7 @@ mpn_toom_interpolate_12pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5,
 #define   r0    (pp +11 * n)			/* s+t <= 2*n */
 
   /******************************* interpolation *****************************/
-  if (half != 0) { 
+  if (half != 0) {
     cy = mpn_sub_n (r3, r3, r0, spt);
     MPN_DECR_U (r3 + spt, n3p1 - spt, cy);
 

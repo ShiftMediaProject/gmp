@@ -286,7 +286,7 @@ mpn_toom_interpolate_16pts (mp_ptr pp, mp_ptr r1, mp_ptr r3, mp_ptr r5, mp_ptr r
 
   ASSERT( spt <= 2 * n );
   /******************************* interpolation *****************************/
-  if( half != 0) { 
+  if( half != 0) {
     cy = mpn_sub_n (r4, r4, r0, spt);
     MPN_DECR_U (r4 + spt, n3p1 - spt, cy);
 
