@@ -113,7 +113,7 @@ mpn_toom6h_mul   (mp_ptr pp,
     { p = 8; q = 5; }
   else if( an * LIMIT_denominat < LIMIT_numerator * 2 * bn )  /* is 4*... < 8*... */
     { p = 8; q = 4; }
-  else 
+  else
     { p = 9; q = 4; }
 
   half = (p ^ q) & 1;
@@ -205,7 +205,7 @@ mpn_toom6h_mul   (mp_ptr pp,
   TOOM6H_MUL_N_REC(pp, ap, bp, n, wsi);
 
   /* Infinity */
-  if( half != 0) { 
+  if( half != 0) {
     if(s>t) {
       TOOM6H_MUL_REC(r0, ap + p * n, s, bp + q * n, t, wsi);
     } else {

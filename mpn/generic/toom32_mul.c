@@ -188,7 +188,7 @@ mpn_toom32_mul (mp_ptr pp,
   if (bp1_hi != 0)
     cy += mpn_add_n (v1 + n, v1 + n, ap1, n);
   v1[2 * n] = cy;
-  
+
   TOOM32_MUL_N_REC (vm1, am1, bm1, n, scratch_out);
   if (hi)
     hi = mpn_add_n (vm1+n, vm1+n, bm1, n);

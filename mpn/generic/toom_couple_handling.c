@@ -27,7 +27,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Gets {pp,n} and (sign?-1:1)*{np,n}. Computes at once: 
+/* Gets {pp,n} and (sign?-1:1)*{np,n}. Computes at once:
      {pp,n} <- ({pp,n}+{np,n})/2^{ps+1}
      {pn,n} <- ({pp,n}-{np,n})/2^{ns+1}
    Finally recompose them obtaining:

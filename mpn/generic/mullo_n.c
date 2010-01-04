@@ -145,7 +145,7 @@ mpn_dc_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n, mp_ptr tp)
   ASSERT (MPN_SAME_OR_SEPARATE2_P(rp, n, tp, 2*n));
 
   /* Divide-and-conquer */
-  
+
   /* We need fractional approximation of the value 0 < a <= 1/2
      giving the minimum in the function k=(1-a)^e/(1-2*a^e).
   */
@@ -164,7 +164,7 @@ mpn_dc_mullo_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n, mp_ptr tp)
   n2 = n - n1;
 
   /* Split as x = x1 2^(n2 GMP_NUMB_BITS) + x0,
-              y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
+	      y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
 
   /* x0 * y0 */
   mpn_mul_n (tp, xp, yp, n2);

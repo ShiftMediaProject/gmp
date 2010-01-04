@@ -149,7 +149,7 @@ mpn_toom8h_mul   (mp_ptr pp,
       else if (GMP_NUMB_BITS <= 12*3 ||
 	       an * LIMIT_denominat < LIMIT_numerator * 3 * bn )  /* is 4*... <12*... */
 	{ p =12; q = 4; }
-      else 
+      else
 	{ p =13; q = 4; }
 
       half = (p+q)&1;
@@ -236,7 +236,7 @@ mpn_toom8h_mul   (mp_ptr pp,
   if (q == 3)
     sign ^= mpn_toom_eval_dgr3_pm1 (v3, v1, bp, n, t,    pp);
   else
-    sign ^= mpn_toom_eval_pm1 (v3, v1, q, bp, n, t,    pp); 
+    sign ^= mpn_toom_eval_pm1 (v3, v1, q, bp, n, t,    pp);
   TOOM8H_MUL_N_REC(pp, v0, v1, n + 1, wse); /* A(-1)*B(-1) */
   TOOM8H_MUL_N_REC(r4, v2, v3, n + 1, wse); /* A(1)*B(1) */
   mpn_toom_couple_handling (r4, 2 * n + 1, pp, sign, n, 0, 0);
@@ -258,7 +258,7 @@ mpn_toom8h_mul   (mp_ptr pp,
   TOOM8H_MUL_N_REC(pp, ap, bp, n, wsi);
 
   /* Infinity */
-  if( half != 0) { 
+  if( half != 0) {
     if(s>t) {
       TOOM8H_MUL_REC(r0, ap + p * n, s, bp + q * n, t, wsi);
     } else {
