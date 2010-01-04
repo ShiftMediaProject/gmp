@@ -1,5 +1,7 @@
 2010-01-04  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mul.c: Simplify rational expression.
+
 	* gmp-impl.h: Cleanup threshold variables; remove obsolete ones and
 	make all possibly needed definitions for existing ones.
 	* tune/tuneup.c (tune_mul): Write fractions-compensated values to

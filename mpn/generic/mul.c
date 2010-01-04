@@ -279,7 +279,7 @@ mpn_mul (mp_ptr prodp,
 	    {
 	      if (6 * un < 7 * vn)
 		mpn_toom33_mul (prodp, up, un, vp, vn, scratch);
-	      else if (6 * un < 9 * vn)
+	      else if (2 * un < 3 * vn)
 		{
 		  if (BELOW_THRESHOLD (vn, MUL_TOOM32_TO_TOOM43_THRESHOLD))
 		    mpn_toom32_mul (prodp, up, un, vp, vn, scratch);
