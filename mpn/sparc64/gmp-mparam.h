@@ -53,22 +53,22 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define SQR_TOOM3_THRESHOLD                116
 #define SQR_TOOM4_THRESHOLD                336
 #define SQR_TOOM6_THRESHOLD                336
-#define SQR_TOOM8_THRESHOLD                381
+#define SQR_TOOM8_THRESHOLD                454
 
-#define MULMOD_BNM1_THRESHOLD               13
-#define SQRMOD_BNM1_THRESHOLD               12
+#define MULMOD_BNM1_THRESHOLD               17
+#define SQRMOD_BNM1_THRESHOLD               23
 
 #define MUL_FFT_TABLE  { 240, 544, 1344, 2304, 7168, 12288, 81920, 196608, 0 }
-#define MUL_FFT_MODF_THRESHOLD             184
-#define MUL_FFT_THRESHOLD                10240
+#define MUL_FFT_MODF_THRESHOLD             216
+#define MUL_FFT_THRESHOLD                 2752
 
 #define SQR_FFT_TABLE  { 304, 672, 1600, 2816, 7168, 20480, 49152, 196608, 0 }
-#define SQR_FFT_MODF_THRESHOLD             184
-#define SQR_FFT_THRESHOLD                 1920
+#define SQR_FFT_MODF_THRESHOLD             216
+#define SQR_FFT_THRESHOLD                 1728
 
 #define MULLO_BASECASE_THRESHOLD            16
 #define MULLO_DC_THRESHOLD                  41
-#define MULLO_MUL_N_THRESHOLD            10292
+#define MULLO_MUL_N_THRESHOLD             5397
 
 #define DC_DIV_QR_THRESHOLD                 20
 #define DC_DIVAPPR_Q_THRESHOLD              82
@@ -83,11 +83,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define REDC_1_TO_REDC_2_THRESHOLD          10
 #define REDC_2_TO_REDC_N_THRESHOLD         115
 
-#define MU_DIV_QR_THRESHOLD                998
-#define MU_DIVAPPR_Q_THRESHOLD             979
-#define MUPI_DIV_QR_THRESHOLD                6
-#define MU_BDIV_QR_THRESHOLD               998
-#define MU_BDIV_Q_THRESHOLD               1142
+#define MU_DIV_QR_THRESHOLD                680
+#define MU_DIVAPPR_Q_THRESHOLD             618
+#define MUPI_DIV_QR_THRESHOLD                0  /* always */
+#define MU_BDIV_QR_THRESHOLD               748
+#define MU_BDIV_Q_THRESHOLD                889
 
 #define MATRIX22_STRASSEN_THRESHOLD         13
 #define HGCD_THRESHOLD                      53

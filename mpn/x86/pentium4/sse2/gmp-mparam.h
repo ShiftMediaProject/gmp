@@ -56,15 +56,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_FFT_TABLE  { 592, 928, 1920, 3584, 14336, 40960, 163840, 393216, 0 }
 #define MUL_FFT_MODF_THRESHOLD             960
-#define MUL_FFT_THRESHOLD                45056
+#define MUL_FFT_THRESHOLD                 7808
 
 #define SQR_FFT_TABLE  { 592, 928, 1920, 3584, 14336, 40960, 98304, 393216, 0 }
 #define SQR_FFT_MODF_THRESHOLD             848
-#define SQR_FFT_THRESHOLD                15360
+#define SQR_FFT_THRESHOLD                 6784
 
 #define MULLO_BASECASE_THRESHOLD            12
 #define MULLO_DC_THRESHOLD                  51
-#define MULLO_MUL_N_THRESHOLD            45192
+#define MULLO_MUL_N_THRESHOLD            13463
 
 #define DC_DIV_QR_THRESHOLD                 28
 #define DC_DIVAPPR_Q_THRESHOLD              61

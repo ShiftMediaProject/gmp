@@ -49,7 +49,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MUL_TOOM32_TO_TOOM43_THRESHOLD      89
 #define MUL_TOOM32_TO_TOOM53_THRESHOLD      91
 #define MUL_TOOM42_TO_TOOM53_THRESHOLD      90
-#define MUL_TOOM42_TO_TOOM63_THRESHOLD      56
+#define MUL_TOOM42_TO_TOOM63_THRESHOLD      88
 
 #define SQR_BASECASE_THRESHOLD               0  /* always (native) */
 #define SQR_TOOM2_THRESHOLD                 20
@@ -63,32 +63,32 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_FFT_TABLE  { 304, 672, 1152, 3584, 10240, 40960, 163840, 0 }
 #define MUL_FFT_MODF_THRESHOLD             368
-#define MUL_FFT_THRESHOLD                11264
+#define MUL_FFT_THRESHOLD                 4736
 
 #define SQR_FFT_TABLE  { 272, 672, 1152, 4608, 10240, 40960, 98304, 393216, 0 }
 #define SQR_FFT_MODF_THRESHOLD             288
-#define SQR_FFT_THRESHOLD                 7168
+#define SQR_FFT_THRESHOLD                 5504
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                  45
-#define MULLO_MUL_N_THRESHOLD            18087
+#define MULLO_MUL_N_THRESHOLD             9174
 
 #define DC_DIV_QR_THRESHOLD                 43
 #define DC_DIVAPPR_Q_THRESHOLD             170
 #define DC_BDIV_QR_THRESHOLD                43
 #define DC_BDIV_Q_THRESHOLD                113
 
-#define INV_MULMOD_BNM1_THRESHOLD          102
+#define INV_MULMOD_BNM1_THRESHOLD           54
 #define INV_NEWTON_THRESHOLD               179
 #define INV_APPR_THRESHOLD                 173
 
 #define BINV_NEWTON_THRESHOLD              197
 #define REDC_1_TO_REDC_N_THRESHOLD          47
 
-#define MU_DIV_QR_THRESHOLD               1187
+#define MU_DIV_QR_THRESHOLD               1142
 #define MU_DIVAPPR_Q_THRESHOLD            1142
 #define MUPI_DIV_QR_THRESHOLD               90
-#define MU_BDIV_QR_THRESHOLD               998
+#define MU_BDIV_QR_THRESHOLD               942
 #define MU_BDIV_Q_THRESHOLD               1017
 
 #define MATRIX22_STRASSEN_THRESHOLD         12

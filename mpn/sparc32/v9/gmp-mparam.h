@@ -58,15 +58,15 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_FFT_TABLE  { 272, 736, 1152, 3584, 10240, 24576, 98304, 917504, 0 }
 #define MUL_FFT_MODF_THRESHOLD             248
-#define MUL_FFT_THRESHOLD                 3840
+#define MUL_FFT_THRESHOLD                 2112
 
 #define SQR_FFT_TABLE  { 336, 800, 1408, 3584, 10240, 24576, 98304, 393216, 0 }
 #define SQR_FFT_MODF_THRESHOLD             248
-#define SQR_FFT_THRESHOLD                 3328
+#define SQR_FFT_THRESHOLD                 2112
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                 106
-#define MULLO_MUL_N_THRESHOLD             6675
+#define MULLO_MUL_N_THRESHOLD             3493
 
 #define DC_DIV_QR_THRESHOLD                123
 #define DC_DIVAPPR_Q_THRESHOLD             396
@@ -80,11 +80,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define BINV_NEWTON_THRESHOLD              324
 #define REDC_1_TO_REDC_N_THRESHOLD          78
 
-#define MU_DIV_QR_THRESHOLD               1142
-#define MU_DIVAPPR_Q_THRESHOLD            1334
-#define MUPI_DIV_QR_THRESHOLD              130
-#define MU_BDIV_QR_THRESHOLD               855
-#define MU_BDIV_Q_THRESHOLD               1258
+#define MU_DIV_QR_THRESHOLD               1895
+#define MU_DIVAPPR_Q_THRESHOLD            1895
+#define MUPI_DIV_QR_THRESHOLD              122
+#define MU_BDIV_QR_THRESHOLD               872
+#define MU_BDIV_Q_THRESHOLD               2801
 
 #define MATRIX22_STRASSEN_THRESHOLD         13
 #define HGCD_THRESHOLD                     144
