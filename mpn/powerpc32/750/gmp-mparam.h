@@ -1,6 +1,6 @@
 /* PowerPC-32 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 2002, 2004, 2009 Free Software Foundation, Inc.
+Copyright 2002, 2004, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
