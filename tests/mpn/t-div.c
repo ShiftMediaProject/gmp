@@ -12,11 +12,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program.  If not, see http://www.gnu.org/licenses/.  */
 
-/* FIXME: This test is too slow, even considering that it tests a lot of
-   different functions.  Over 90% is spent in refmpn_tdiv_qr.  Rewrite the test
-   code to instead verify the results with a multiplication, and as soon
-   as we have a verified result, keep that as a reference.  */
-
 #include <stdlib.h>		/* for strtol */
 #include <stdio.h>		/* for printf */
 
@@ -58,59 +53,60 @@ dumpy (mp_srcptr p, mp_size_t n)
 static unsigned long test;
 
 static void
-check_one (mp_srcptr qrefp, mp_srcptr rrefp, mp_ptr qp, mp_srcptr rp,
+check_one (mp_ptr qp, mp_srcptr rp,
 	   mp_srcptr np, mp_size_t nn, mp_srcptr dp, mp_size_t dn,
 	   char *fname, mp_limb_t q_allowed_err)
 {
   mp_size_t qn = nn - dn + 1;
-  int qcmp, rcmp;
   mp_ptr tp;
-  mp_size_t i;
+  mp_size_t tn;
+  const char *msg;
+  const char *tvalue;
+  mp_limb_t i;
   TMP_DECL;
   TMP_MARK;
 
-  qcmp = mpn_cmp (qp, qrefp, qn);
-  if (qcmp != 0 && rp == rrefp)	/* FIXME: rp=rrefp indicates we check a approx-q fn */
+  tp = TMP_ALLOC_LIMBS (nn + 1);
+  if (dn >= qn)
+    refmpn_mul (tp, dp, dn, qp, qn);
+  else
+    refmpn_mul (tp, qp, qn, dp, dn);
+
+  for (i = 0; i < q_allowed_err && (tp[nn] > 0 || mpn_cmp (tp, np, nn) > 0); i++)
+    ASSERT_NOCARRY (refmpn_sub (tp, tp, nn+1, dp, dn));
+  
+  if (tp[nn] > 0 || mpn_cmp (tp, np, nn) > 0)
     {
-      mp_limb_t qerr;
-
-      tp = TMP_ALLOC_LIMBS (qn);
-      qerr = mpn_sub_n (tp, qp, qrefp, qn);
-
-      for (i = 1; i < qn; i++)
-	qerr |= tp[i];
-
-      qcmp = qerr | (tp[0] > q_allowed_err);
+      msg = "q too large";
+      tvalue = "Q*D";
+      tn = nn + 1;
+    error:
+      printf ("\r*******************************************************************************\n");
+      printf ("%s and failed test %lu: %s\n", fname, test, msg);
+      printf ("N=    "); dumpy (np, nn);
+      printf ("D=    "); dumpy (dp, dn);
+      printf ("Q=    "); dumpy (qp, qn);
+      if (rp)
+	{ printf ("R=    "); dumpy (rp, dn); }
+      printf ("%5s=", tvalue); dumpy (tp, nn+1); 
+      printf ("nn = %ld, dn = %ld, qn = %ld\n", nn, dn, qn);
+      abort ();
     }
 
-  rcmp = mpn_cmp (rp, rrefp, dn);
-
-  if (qcmp != 0 || rcmp != 0)
+  ASSERT_NOCARRY (refmpn_sub_n (tp, np, tp, nn));
+  tvalue = "N-Q*D";
+  if (!mpn_zero_p (tp + dn, nn - dn) || mpn_cmp (tp, dp, dn) >= 0)
     {
-      mp_size_t lo, hi;
-      printf ("\r*******************************************************************************\n");
-      printf ("%s and refmpn_tdiv_qr disagree in test %lu\n", fname, test);
-      printf ("N=   "); dumpy (np, nn);
-      printf ("D=   "); dumpy (dp, dn);
-      printf ("Q=   "); dumpy (qp, qn);
-      printf ("refQ="); dumpy (qrefp, qn);
-      printf ("R=   "); dumpy (rp, dn);
-      printf ("refR="); dumpy (rrefp, dn);
-      printf ("nn = %ld, dn = %ld, qn = %ld", nn, dn, nn-dn+1);
-      if (qcmp != 0)
-	{
-	  for (lo = 0; qp[lo] == qrefp[lo]; lo++);
-	  for (hi = nn - dn; qp[hi] == qrefp[hi]; hi--);
-	  printf (", quotient bad %ld--%ld", hi, lo);
-	}
-      if (rcmp != 0)
-	{
-	  for (lo = 0; rp[lo] == rrefp[lo]; lo++);
-	  for (hi = dn - 1; rp[hi] == rrefp[hi]; hi--);
-	  printf (", remainder bad %ld--%ld", hi, lo);
-	}
-      printf ("\n*******************************************************************************\n");
-      abort ();
+      msg = "q too small";
+      MPN_NORMALIZE (tp, tn);
+      goto error;
+    }
+
+  if (rp && mpn_cmp (rp, tp, dn) != 0)
+    {
+      msg = "r incorrect";
+      tn = dn;
+      goto error;
     }
 
   TMP_FREE;
@@ -146,7 +142,7 @@ main (int argc, char **argv)
   unsigned long maxnbits, maxdbits, nbits, dbits;
   mpz_t n, d, q, r, tz;
   mp_size_t maxnn, maxdn, nn, dn, clearn, i;
-  mp_ptr np, dp, qp, rp, qrefp, rrefp;
+  mp_ptr np, dp, qp, rp;
   mp_limb_t t;
   gmp_pi1_t dinv;
   int count = COUNT;
@@ -187,8 +183,6 @@ main (int argc, char **argv)
 
   qp = TMP_ALLOC_LIMBS (maxnn + 2) + 1;
   rp = TMP_ALLOC_LIMBS (maxnn + 2) + 1;
-  qrefp = TMP_ALLOC_LIMBS (maxnn);
-  rrefp = TMP_ALLOC_LIMBS (maxdn);
 
   alloc = 1;
   scratch = __GMP_ALLOCATE_FUNC_LIMBS (alloc);
@@ -265,8 +259,6 @@ main (int argc, char **argv)
 
       test++;
 
-      refmpn_tdiv_qr (qrefp, rrefp, 0, np, nn, dp, dn);
-
       invert_pi1 (dinv, dp[dn - 1], dp[dn - 2]);
 
       rran0 = random_word (rands);
@@ -287,7 +279,7 @@ main (int argc, char **argv)
 	      if (nn > dn)
 		MPN_ZERO (qp, nn - dn);
 	      qp[nn - dn] = mpn_sbpi1_div_qr (qp, rp, nn, dp, dn, dinv.inv32);
-	      check_one (qrefp, rrefp, qp, rp, np, nn, dp, dn, "mpn_sbpi1_div_qr", 0);
+	      check_one (qp, rp, np, nn, dp, dn, "mpn_sbpi1_div_qr", 0);
 	    }
 
 	  /* Test mpn_sbpi1_divappr_q */
@@ -297,7 +289,7 @@ main (int argc, char **argv)
 	      if (nn > dn)
 		MPN_ZERO (qp, nn - dn);
 	      qp[nn - dn] = mpn_sbpi1_divappr_q (qp, rp, nn, dp, dn, dinv.inv32);
-	      check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_sbpi1_divappr_q", 1);
+	      check_one (qp, NULL, np, nn, dp, dn, "mpn_sbpi1_divappr_q", 1);
 	    }
 
 	  /* Test mpn_sbpi1_div_q */
@@ -307,7 +299,7 @@ main (int argc, char **argv)
 	      if (nn > dn)
 		MPN_ZERO (qp, nn - dn);
 	      qp[nn - dn] = mpn_sbpi1_div_q (qp, rp, nn, dp, dn, dinv.inv32);
-	      check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_sbpi1_div_q", 0);
+	      check_one (qp, NULL, np, nn, dp, dn, "mpn_sbpi1_div_q", 0);
 	    }
 	}
 
@@ -320,7 +312,7 @@ main (int argc, char **argv)
 	  qp[nn - dn] = mpn_dcpi1_div_qr (qp, rp, nn, dp, dn, &dinv);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	  ASSERT_ALWAYS (rp[-1] == rran0);
-	  check_one (qrefp, rrefp, qp, rp, np, nn, dp, dn, "mpn_dcpi1_div_qr", 0);
+	  check_one (qp, rp, np, nn, dp, dn, "mpn_dcpi1_div_qr", 0);
 	}
 
       /* Test mpn_dcpi1_divappr_q */
@@ -332,7 +324,7 @@ main (int argc, char **argv)
 	  qp[nn - dn] = mpn_dcpi1_divappr_q (qp, rp, nn, dp, dn, &dinv);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	  ASSERT_ALWAYS (rp[-1] == rran0);
-	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_dcpi1_divappr_q", 1);
+	  check_one (qp, NULL, np, nn, dp, dn, "mpn_dcpi1_divappr_q", 1);
 	}
 
       /* Test mpn_dcpi1_div_q */
@@ -344,7 +336,7 @@ main (int argc, char **argv)
 	  qp[nn - dn] = mpn_dcpi1_div_q (qp, rp, nn, dp, dn, &dinv);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	  ASSERT_ALWAYS (rp[-1] == rran0);
-	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_dcpi1_div_q", 0);
+	  check_one (qp, NULL, np, nn, dp, dn, "mpn_dcpi1_div_q", 0);
 	}
 
       ran = random_word (rands);
@@ -366,7 +358,7 @@ main (int argc, char **argv)
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	  ASSERT_ALWAYS (rp[-1] == rran0);  ASSERT_ALWAYS (rp[dn] == rran1);
-	  check_one (qrefp, rrefp, qp, rp, np, nn, dp, dn, "mpn_mu_div_qr", 0);
+	  check_one (qp, rp, np, nn, dp, dn, "mpn_mu_div_qr", 0);
 	}
 
       /* Test mpn_mu_divappr_q */
@@ -383,7 +375,7 @@ main (int argc, char **argv)
 	  qp[nn - dn] = mpn_mu_divappr_q (qp, np, nn, dp, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
-	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_mu_divappr_q", 4);
+	  check_one (qp, NULL, np, nn, dp, dn, "mpn_mu_divappr_q", 4);
 	}
 
       /* Test mpn_mu_div_q */
@@ -400,7 +392,7 @@ main (int argc, char **argv)
 	  qp[nn - dn] = mpn_mu_div_q (qp, np, nn, dp, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
-	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_mu_div_q", 0);
+	  check_one (qp, NULL, np, nn, dp, dn, "mpn_mu_div_q", 0);
 	}
 
 
@@ -416,14 +408,14 @@ main (int argc, char **argv)
 	  mpn_div_q (qp, np, nn, dp, dn, scratch);
 	  ASSERT_ALWAYS (ran == scratch[itch]);
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
-	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_div_q", 0);
+	  check_one (qp, NULL, np, nn, dp, dn, "mpn_div_q", 0);
 	}
 
       /* Finally, test mpn_div_q without msb set.  */
       dp[dn - 1] &= ~GMP_NUMB_HIGHBIT;
       if (dp[dn - 1] == 0)
 	continue;
-      refmpn_tdiv_qr (qrefp, rrefp, 0, np, nn, dp, dn);
+
       itch = nn + 1;
       if (itch + 1> alloc)
 	{
@@ -434,7 +426,7 @@ main (int argc, char **argv)
       mpn_div_q (qp, np, nn, dp, dn, scratch);
       ASSERT_ALWAYS (ran == scratch[itch]);
       ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
-      check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_div_q", 0);
+      check_one (qp, NULL, np, nn, dp, dn, "mpn_div_q", 0);
     }
 
   __GMP_FREE_FUNC_LIMBS (scratch, alloc);
