@@ -160,7 +160,7 @@ mpn_div_q (mp_ptr qp,
 	  if (cy == 0)
 	    qp[qn - 1] = qh;
 	}
-      else  /* divisior is already normalised */
+      else  /* divisor is already normalised */
 	{
 	  if (new_np != np)
 	    MPN_COPY (new_np, np, nn);
@@ -204,6 +204,7 @@ mpn_div_q (mp_ptr qp,
 	   we need to allocate separate space for new_np.  */
 	new_np = TMP_ALLOC_LIMBS (new_nn + 1);
 
+
       dh = dp[dn - 1];
       if (LIKELY ((dh & GMP_NUMB_HIGHBIT) == 0))
 	{
@@ -241,14 +242,9 @@ mpn_div_q (mp_ptr qp,
 	  if (cy == 0)
 	    tp[qn] = qh;
 	}
-      else  /* divisior is already normalised */
+      else  /* divisor is already normalised */
 	{
-	  new_nn = 2 * qn + 1;
-	  new_np = scratch;
-	  if (new_np != np)
-	    MPN_COPY (new_np, np + nn - new_nn, new_nn); /* pointless of MU will be used */
-	  else
-	    new_np += nn - new_nn;
+	  MPN_COPY (new_np, np + nn - new_nn, new_nn); /* pointless of MU will be used */
 
 	  new_dp = (mp_ptr) dp + dn - (qn + 1);
 
