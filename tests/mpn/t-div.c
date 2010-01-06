@@ -74,7 +74,7 @@ check_one (mp_ptr qp, mp_srcptr rp,
 
   for (i = 0; i < q_allowed_err && (tp[nn] > 0 || mpn_cmp (tp, np, nn) > 0); i++)
     ASSERT_NOCARRY (refmpn_sub (tp, tp, nn+1, dp, dn));
-  
+
   if (tp[nn] > 0 || mpn_cmp (tp, np, nn) > 0)
     {
       msg = "q too large";
@@ -88,7 +88,7 @@ check_one (mp_ptr qp, mp_srcptr rp,
       printf ("Q=    "); dumpy (qp, qn);
       if (rp)
 	{ printf ("R=    "); dumpy (rp, dn); }
-      printf ("%5s=", tvalue); dumpy (tp, nn+1); 
+      printf ("%5s=", tvalue); dumpy (tp, nn+1);
       printf ("nn = %ld, dn = %ld, qn = %ld\n", nn, dn, qn);
       abort ();
     }
