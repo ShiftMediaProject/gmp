@@ -2,6 +2,8 @@
 
 	* Version 5.0.0 released.
 
+	* mpn/minithres/gmp-mparam.h: Add all lately defined thresholds.
+
 	* mpn/generic/div_q.c: Use SB division for small quotients as well as
 	small divisors.  Fix typo in itch call.
 
