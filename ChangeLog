@@ -2,6 +2,10 @@
 
 	* Version 5.0.0 released.
 
+	From Niels Möller:
+	* tests/mpn/t-div.c (check_one): Get rid of the poorly managed variable
+	tn.
+
 	* mpn/minithres/gmp-mparam.h: Add all lately defined thresholds.
 
 	* mpn/generic/div_q.c: Use SB division for small quotients as well as

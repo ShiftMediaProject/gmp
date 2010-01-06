@@ -59,7 +59,6 @@ check_one (mp_ptr qp, mp_srcptr rp,
 {
   mp_size_t qn = nn - dn + 1;
   mp_ptr tp;
-  mp_size_t tn;
   const char *msg;
   const char *tvalue;
   mp_limb_t i;
@@ -79,7 +78,6 @@ check_one (mp_ptr qp, mp_srcptr rp,
     {
       msg = "q too large";
       tvalue = "Q*D";
-      tn = nn + 1;
     error:
       printf ("\r*******************************************************************************\n");
       printf ("%s and failed test %lu: %s\n", fname, test, msg);
@@ -98,14 +96,12 @@ check_one (mp_ptr qp, mp_srcptr rp,
   if (!mpn_zero_p (tp + dn, nn - dn) || mpn_cmp (tp, dp, dn) >= 0)
     {
       msg = "q too small";
-      MPN_NORMALIZE (tp, tn);
       goto error;
     }
 
   if (rp && mpn_cmp (rp, tp, dn) != 0)
     {
       msg = "r incorrect";
-      tn = dn;
       goto error;
     }
 
@@ -114,7 +110,9 @@ check_one (mp_ptr qp, mp_srcptr rp,
 
 
 /* These are *bit* sizes. */
+#ifndef SIZE_LOG
 #define SIZE_LOG 17
+#endif
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
