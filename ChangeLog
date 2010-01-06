@@ -3,6 +3,9 @@
 	* mpn/generic/div_q.c: Properly handle np=scratch.  Fix critical typo
 	in final adjustment code.  Misc cleanups.
 
+	* mpn/generic/rootrem.c: Use mpn_div_q.
+	* mpz/tdiv_q.c: Likewise.
+
 2010-01-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/toom8h_mul.c: Avoid overflows of mp_size_t.
