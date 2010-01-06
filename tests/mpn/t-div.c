@@ -12,6 +12,10 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program.  If not, see http://www.gnu.org/licenses/.  */
 
+/* FIXME: This test is too slow, even considering that it tests a lot of
+   different functions.  Over 90% is spent in refmpn_tdiv_qr.  Rewrite the test
+   code to instead verify the results with a multiplication, and as soon
+   as we have a verified result, keep that as a reference.  */
 
 #include <stdlib.h>		/* for strtol */
 #include <stdio.h>		/* for printf */
@@ -114,7 +118,7 @@ check_one (mp_srcptr qrefp, mp_srcptr rrefp, mp_ptr qp, mp_srcptr rp,
 
 
 /* These are *bit* sizes. */
-#define SIZE_LOG 16
+#define SIZE_LOG 17
 #define MAX_DN (1L << SIZE_LOG)
 #define MAX_NN (1L << (SIZE_LOG + 1))
 
@@ -343,12 +347,10 @@ main (int argc, char **argv)
 	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_dcpi1_div_q", 0);
 	}
 
-      if (nn - dn <= 2 || dn < 2)
-	continue;
-
       ran = random_word (rands);
 
      /* Test mpn_mu_div_qr */
+      if (nn - dn > 2 && dn >= 2)
 	{
 	  itch = mpn_mu_div_qr_itch (nn, dn, 0);
 	  if (itch + 1 > alloc)
@@ -368,6 +370,7 @@ main (int argc, char **argv)
 	}
 
       /* Test mpn_mu_divappr_q */
+      if (nn - dn > 2 && dn >= 2)
 	{
 	  itch = mpn_mu_divappr_q_itch (nn, dn, 0);
 	  if (itch + 1 > alloc)
@@ -384,6 +387,7 @@ main (int argc, char **argv)
 	}
 
       /* Test mpn_mu_div_q */
+      if (nn - dn > 2 && dn >= 2)
 	{
 	  itch = mpn_mu_div_q_itch (nn, dn, 0); /* FIXME: wrong itch function */
 	  if (itch + 1> alloc)
@@ -398,6 +402,39 @@ main (int argc, char **argv)
 	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
 	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_mu_div_q", 0);
 	}
+
+
+      if (1)
+	{
+	  itch = nn + 1;
+	  if (itch + 1> alloc)
+	    {
+	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	      alloc = itch + 1;
+	    }
+	  scratch[itch] = ran;
+	  mpn_div_q (qp, np, nn, dp, dn, scratch);
+	  ASSERT_ALWAYS (ran == scratch[itch]);
+	  ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+	  check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_div_q", 0);
+	}
+
+      /* Finally, test mpn_div_q without msb set.  */
+      dp[dn - 1] &= ~GMP_NUMB_HIGHBIT;
+      if (dp[dn - 1] == 0)
+	continue;
+      refmpn_tdiv_qr (qrefp, rrefp, 0, np, nn, dp, dn);
+      itch = nn + 1;
+      if (itch + 1> alloc)
+	{
+	  scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
+	  alloc = itch + 1;
+	}
+      scratch[itch] = ran;
+      mpn_div_q (qp, np, nn, dp, dn, scratch);
+      ASSERT_ALWAYS (ran == scratch[itch]);
+      ASSERT_ALWAYS (qp[-1] == qran0);  ASSERT_ALWAYS (qp[nn - dn + 1] == qran1);
+      check_one (qrefp, rrefp, qp, rrefp, np, nn, dp, dn, "mpn_div_q", 0);
     }
 
   __GMP_FREE_FUNC_LIMBS (scratch, alloc);

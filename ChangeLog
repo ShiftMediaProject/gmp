@@ -1,5 +1,8 @@
 2010-01-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tests/mpn/t-div.c: Test mpn_div_q.
+	(SIZE_LOG): Up to 17.
+
 	* mpn/generic/div_q.c: New file.
 	* configure.in (gmp_mpn_functions): Add div_q.
 
