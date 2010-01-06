@@ -43,27 +43,41 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      No overlap between the N, D, and Q areas.
 
    This division function does not clobber its input operands, since it is
-   intended to support average-O(qn) divison, and for that to be effective, it
+   intended to support average-O(qn) division, and for that to be effective, it
    cannot put requirements on callers to copy a O(nn) operand.
 
    If a caller does not care about the value of {np,nn+1} after calling this
    function, it should pass np also for the scratch argument.  This function
    will then save some time and space by avoiding allocation and copying.
-   (FIXME: Is this a good design?)
+   (FIXME: Is this a good design?  We only really save any copying for
+   already-normalised divisors, which should be rare.  It also prevents us from
+   reasonably asking for all scratch space we need.)
 
    We write nn-dn+1 limbs for the quotient, but return void.  Why not return
    the most significant quotient limb?  Look at the 4 main code blocks below
    (consisting of an outer if-else where each arm contains an if-else). It is
    tricky for the first code block, since the mpn_*_div_q calls will typically
-   generate all nn-dn+1 and return 0.  I don't see how to fix that unless we
-   generate the most significant quotient limb here, before calling
-   mpn_*_div_q.
+   generate all nn-dn+1 and return 0 or 1.  I don't see how to fix that unless
+   we generate the most significant quotient limb here, before calling
+   mpn_*_div_q, or put the quotient in a temporary area.  Since this is a
+   critical division case (the SB sub-case in particular) copying is not a good
+   idea.
+
+   It might make sense to split the if-else parts of the (qn + FUDGE
+   >= dn) blocks into separate functions, since we could promise quite
+   different things to callers in these two cases.  The 'then' case
+   benefits from np=scratch, and it could perhaps even tolerate qp=np,
+   saving some headache for many callers.
+
+   FIXME: Scratch allocation leaves a lot to be desired.  E.g., for the MU size
+   operands, we do not reuse the huge scratch for adjustments.  This can be a
+   serious waste of memory for the largest operands.
 */
 
 /* FUDGE determines when to try getting an approximate quotient from the upper
    parts of the dividend and divisor, then adjust.  N.B. FUDGE must be >= 2
    for the code to be correct.  */
-#define FUDGE 2
+#define FUDGE 5			/* FIXME: tune this */
 
 #define DC_DIV_Q_THRESHOLD      DC_DIVAPPR_Q_THRESHOLD
 #define MU_DIV_Q_THRESHOLD      MU_DIVAPPR_Q_THRESHOLD
@@ -106,18 +120,18 @@ mpn_div_q (mp_ptr qp,
     {
       /* |________________________|
                           |_______|  */
+      new_np = scratch;
+
       dh = dp[dn - 1];
       if (LIKELY ((dh & GMP_NUMB_HIGHBIT) == 0))
 	{
 	  count_leading_zeros (cnt, dh);
 
-	  new_np = scratch;
-	  new_dp = TMP_ALLOC_LIMBS (dn);
-
 	  cy = mpn_lshift (new_np, np, nn, cnt);
 	  new_np[nn] = cy;
 	  new_nn = nn + (cy != 0);
 
+	  new_dp = TMP_ALLOC_LIMBS (dn);
 	  mpn_lshift (new_dp, dp, dn, cnt);
 
 	  if (dn == 2)
@@ -148,7 +162,6 @@ mpn_div_q (mp_ptr qp,
 	}
       else  /* divisior is already normalised */
 	{
-	  new_np = scratch;
 	  if (new_np != np)
 	    MPN_COPY (new_np, np, nn);
 
@@ -184,19 +197,24 @@ mpn_div_q (mp_ptr qp,
                 |_________________|  */
       tp = TMP_ALLOC_LIMBS (qn + 1);
 
+      new_np = scratch;
+      new_nn = 2 * qn + 1;
+      if (new_np == np)
+	/* We need {np,nn} to remain untouched until the final adjustment, so
+	   we need to allocate separate space for new_np.  */
+	new_np = TMP_ALLOC_LIMBS (new_nn + 1);
+
       dh = dp[dn - 1];
       if (LIKELY ((dh & GMP_NUMB_HIGHBIT) == 0))
 	{
 	  count_leading_zeros (cnt, dh);
 
-	  new_np = scratch;
-	  new_dp = TMP_ALLOC_LIMBS (qn + 1);
-	  new_nn = 2 * qn + 1;
-
 	  cy = mpn_lshift (new_np, np + nn - new_nn, new_nn, cnt);
 	  new_np[new_nn] = cy;
+
 	  new_nn += (cy != 0);
 
+	  new_dp = TMP_ALLOC_LIMBS (qn + 1);
 	  mpn_lshift (new_dp, dp + dn - (qn + 1), qn + 1, cnt);
 	  new_dp[0] |= dp[dn - (qn + 1) - 1] >> (GMP_NUMB_BITS - cnt);
 
@@ -258,11 +276,11 @@ mpn_div_q (mp_ptr qp,
 	}
 
       MPN_COPY (qp, tp + 1, qn);
-      if (tp[0] <= 2)
+      if (tp[0] <= 4)
         {
 	  mp_size_t rn;
 
-          rp = scratch;
+          rp = TMP_ALLOC_LIMBS (dn + qn);
           mpn_mul (rp, dp, dn, tp + 1, qn);
 	  rn = dn + qn;
 	  rn -= rp[rn - 1] == 0;
