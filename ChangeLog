@@ -2,6 +2,9 @@
 
 	* Version 5.0.0 released.
 
+	* perfpow.c (mpn_perfect_power_p): Call mpn_divexact instead of mpn_bdiv_q (with
+	too little scratch space!).
+
 	From Niels Möller:
 	* tests/mpn/t-div.c (check_one): Get rid of the poorly managed variable
 	tn.

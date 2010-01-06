@@ -2,7 +2,7 @@
 
    Contributed to the GNU project by Martin Boij.
 
-Copyright 2009 Free Software Foundation, Inc.
+Copyright 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -466,8 +466,7 @@ mpn_perfect_power_p (mp_srcptr np, mp_size_t nn)
 	      goto ret;
 	    }
 
-	  /* divexact */
-	  mpn_bdiv_q (next, nc, ncn, prev, pn, tp);
+	  mpn_divexact (next, nc, ncn, prev, pn);
 	  ncn = ncn - pn;
 	  ncn += next[ncn] != 0;
 	  MPN_COPY (nc, next, ncn);
