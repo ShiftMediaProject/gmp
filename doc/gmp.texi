@@ -5376,23 +5376,27 @@ Return the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
 @var{s2limb}.  Both operands must be non-zero.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2n}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
-Calculate the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
-@{@var{s2p}, @var{s2n}@}.  Store the gcd at @{@var{r1p}, @var{retval}@} and
-the first cofactor at @{@var{r2p}, *@var{r2n}@}, with *@var{r2n} negative if
-the cofactor is negative.  @var{r1p} and @var{r2p} should each have room for
-@math{@var{s1n}+1} limbs, but the return value and value stored through
-@var{r2n} indicate the actual number produced.
+@deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{gp}, mp_limb_t *@var{sp}, mp_size_t *@var{sn}, mp_limb_t *@var{up}, mp_size_t @var{un}, mp_limb_t *@var{vp}, mp_size_t @var{vn})
+Let @m{U,@var{U}} be defined by @{@var{up}, @var{un}@} and
+let @m{V,@var{V}} be defined by @{@var{vp}, @var{vn}@}.
 
-@math{@{@var{s1p}, @var{s1n}@} @ge{} @{@var{s2p}, @var{s2n}@}} is required,
-and both must be non-zero.  The regions @{@var{s1p}, @math{@var{s1n}+1}@} and
-@{@var{s2p}, @math{@var{s2n}+1}@} are destroyed (i.e.@: the operands plus an
-extra limb past the end of each).
+Compute the greatest common divisor @math{G} of @math{U} and @math{V}.  Compute
+a cofactor @math{S} such that @math{G = US + VT}.  The second cofactor @var{T}
+is not calculated but can easily be obtained from @m{(G - US) / V, (@var{G} -
+@var{U}*@var{S}) / @var{V}} (the division will be exact).  It is required that
+@math{U @ge V > 0}.
 
-The cofactor @var{r2} will satisfy @m{r_2 s_1 + k s_2 = r_1, @var{r2}*@var{s1}
-+ @var{k}*@var{s2} = @var{r1}}.  The second cofactor @var{k} is not calculated
-but can easily be obtained from @m{(r_1 - r_2 s_1) / s_2, (@var{r1} -
-@var{r2}*@var{s1}) / @var{s2}} (this division will be exact).
+FIXME: Say something about the range of @math{S}.
+
+Store @math{G} at @var{gp} and let the return value define its limb count.
+Store @math{S} at @var{sp} and let |*@var{sn}| define its limb count.  Some
+versions of GMP will make @math{S} negative; when this happens *@var{sn} will
+be negative.  The areas at @var{gp} and @var{sp} should each have room for
+@math{@var{un}+1} limbs.
+
+The areas @{@var{up}, @math{@var{un}+1}@} and @{@var{vp}, @math{@var{vn}+1}@}
+are destroyed (i.e.@: the input operands plus an extra limb past the end of
+each).
 @end deftypefun
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
@@ -8230,7 +8234,7 @@ divide for each of the Q quotient limbs.
 @node Divide and Conquer Division, Exact Division, Basecase Division, Division Algorithms
 @subsection Divide and Conquer Division
 
-For divisors larger than @code{DIV_DC_THRESHOLD}, division is done by dividing.
+For divisors larger than @code{DC_DIV_QR_THRESHOLD}, division is done by dividing.
 Or to be precise by a recursive divide and conquer algorithm based on work by
 Moenck and Borodin, Jebelean, and Burnikel and Ziegler (@pxref{References}).
 
@@ -8248,9 +8252,9 @@ call overheads and with some subtractions separated from the multiplies.
 These overheads mean that it's only when N/2 is above
 @code{MUL_TOOM22_THRESHOLD} that divide and conquer is of use.
 
-@code{DIV_DC_THRESHOLD} is based on the divisor size N, so it will be somewhere
+@code{DC_DIV_QR_THRESHOLD} is based on the divisor size N, so it will be somewhere
 above twice @code{MUL_TOOM22_THRESHOLD}, but how much above depends on the
-CPU@.  An optimized @code{mpn_mul_basecase} can lower @code{DIV_DC_THRESHOLD} a
+CPU@.  An optimized @code{mpn_mul_basecase} can lower @code{DC_DIV_QR_THRESHOLD} a
 little by offering a ready-made advantage over repeated @code{mpn_submul_1}
 calls.
 
@@ -8674,11 +8678,7 @@ the squaring.
 The modular multiplies and squares use either a simple division or the REDC
 method by Montgomery (@pxref{References}).  REDC is a little faster,
 essentially saving N single limb divisions in a fashion similar to an exact
-remainder (@pxref{Exact Remainder}).  The current REDC has some limitations.
-It's only @math{O(N^2)} so above @code{POWM_THRESHOLD} division becomes faster
-and is used.  It doesn't attempt to detect small bases, but rather always uses
-a REDC form, which is usually a full size operand.  And lastly it's only
-applied to odd moduli.
+remainder (@pxref{Exact Remainder}).
 
 
 @node Root Extraction Algorithms, Radix Conversion Algorithms, Powering Algorithms, Algorithms
@@ -10354,13 +10354,15 @@ improvements.
 Niels M@"oller wrote the sub-quadratic GCD and extended GCD code, the
 quadratic Hensel division code, and (with Torbj@"orn) the new divide and
 conquer division code for GMP 4.3.  Niels also helped implement the new Toom
-multiply code for GMP 4.3.  He wrote the original version of mpn_mulmod_bnm1.
+multiply code for GMP 4.3 and implemented helper functions to simplify Toom
+evaluations for GMP 5.0.  He wrote the original version of mpn_mulmod_bnm1.
 
 Alberto Zanoni and Marco Bodrato suggested the unbalanced multiply strategy,
 and found the optimal strategies for evaluation and interpolation in Toom
 multiplication.
 
-Marco Bodrato helped implement the new Toom multiply code for GMP 4.3 and 4.4.
+Marco Bodrato helped implement the new Toom multiply code for GMP 4.3 and
+implemented most of the new Toom multiply and squaring code for 5.0.
 He is the main author of the current mpn_mulmod_bnm1 and mpn_mullo_n.  Marco
 also wrote the functions mpn_invert and mpn_invertappr.
 
