@@ -136,7 +136,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    else if (BELOW_THRESHOLD (dn, MUPI_DIV_QR_THRESHOLD) ||   /* fast condition */
 		     BELOW_THRESHOLD (nn, 2 * MU_DIV_QR_THRESHOLD) || /* fast condition */
 		     (double) (2 * (MU_DIV_QR_THRESHOLD - MUPI_DIV_QR_THRESHOLD)) * dn /* slow... */
-		     + (double) MUPI_DIV_QR_THRESHOLD * nn > (double) dn * nn) /* ...condition */
+		     + (double) MUPI_DIV_QR_THRESHOLD * nn > (double) dn * nn)    /* ...condition */
 	      mpn_dcpi1_div_qr (qp, n2p, nn, d2p, dn, &dinv);
 	    else
 	      {
