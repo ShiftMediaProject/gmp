@@ -26,7 +26,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
    gmp.h and mp.h to allow both to be included in an application or during
    the library build.  Use the t-gmp-mp-h.pl script to check.  */
 #ifndef __GNU_MP__
-#define __GNU_MP__ 4
+#define __GNU_MP__ 5
 
 #define __need_size_t  /* tell gcc stddef.h we only want size_t */
 #if defined (__cplusplus)
