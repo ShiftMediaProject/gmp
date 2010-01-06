@@ -1,11 +1,16 @@
+2010-01-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* Version 5.0.0 released.
+
+	* mpn/generic/div_q.c: Use SB division for small quotients as well as
+	small divisors.  Fix typo in itch call.
+
 2010-01-06  Niels Möller  <nisse@lysator.liu.se>
 
 	* tests/mpn/t-div.c (check_one): Checking based on multiplication,
 	refmpn_mul, rather than refmpn_tdiv_qr.
 
 2010-01-06  Torbjorn Granlund  <tege@gmplib.org>
-
-	* Version 5.0.0 released.
 
 	* gmp-h.in (__GNU_MP__): Bump.
 	(__GNU_MP_VERSION,__GNU_MP_VERSION_MINOR,__GNU_MP_VERSION_PATCHLEVEL):

@@ -138,7 +138,8 @@ mpn_div_q (mp_ptr qp,
 	    {
 	      qh = mpn_divrem_2 (qp, 0L, new_np, new_nn, new_dp);
 	    }
-	  else if (BELOW_THRESHOLD (dn, DC_DIV_Q_THRESHOLD))
+	  else if (BELOW_THRESHOLD (dn, DC_DIV_Q_THRESHOLD) ||
+		   BELOW_THRESHOLD (new_nn - dn, DC_DIV_Q_THRESHOLD))
 	    {
 	      invert_pi1 (dinv, new_dp[dn - 1], new_dp[dn - 2]);
 	      qh = mpn_sbpi1_div_q (qp, new_np, new_nn, new_dp, dn, dinv.inv32);
@@ -153,7 +154,7 @@ mpn_div_q (mp_ptr qp,
 	    }
 	  else
 	    {
-	      mp_size_t itch = mpn_mu_div_q_itch (nn, dn, 0);
+	      mp_size_t itch = mpn_mu_div_q_itch (new_nn, dn, 0);
 	      mp_ptr scratch = TMP_ALLOC_LIMBS (itch);
 	      qh = mpn_mu_div_q (qp, new_np, new_nn, new_dp, dn, scratch);
 	    }
@@ -169,7 +170,8 @@ mpn_div_q (mp_ptr qp,
 	    {
 	      qh = mpn_divrem_2 (qp, 0L, new_np, nn, dp);
 	    }
-	  else if (BELOW_THRESHOLD (dn, DC_DIV_Q_THRESHOLD))
+	  else if (BELOW_THRESHOLD (dn, DC_DIV_Q_THRESHOLD) ||
+		   BELOW_THRESHOLD (nn - dn, DC_DIV_Q_THRESHOLD))
 	    {
 	      invert_pi1 (dinv, dh, dp[dn - 2]);
 	      qh = mpn_sbpi1_div_q (qp, new_np, nn, dp, dn, dinv.inv32);
