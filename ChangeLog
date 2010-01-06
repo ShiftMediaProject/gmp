@@ -1,5 +1,8 @@
 2010-01-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/div_q.c: New file.
+	* configure.in (gmp_mpn_functions): Add div_q.
+
 	* mpn/generic/mu_div_q.c: Actually make dividend constant.
 
 2010-01-04  Torbjorn Granlund  <tege@gmplib.org>
