@@ -58,7 +58,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 mp_limb_t
 mpn_mu_div_q (mp_ptr qp,
-	      mp_ptr np, mp_size_t nn,
+	      mp_srcptr np, mp_size_t nn,
 	      mp_srcptr dp, mp_size_t dn,
 	      mp_ptr scratch)
 {
