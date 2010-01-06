@@ -107,19 +107,22 @@ mpn_toom8h_mul   (mp_ptr pp,
 
   /***************************** decomposition *******************************/
 
-  ASSERT( an >= bn );
+  ASSERT (an >= bn);
   /* Can not handle too small operands */
-  ASSERT( bn >= 86 );
-  /* FIXME: assert are estimated with GMP_NUMB_BITS==32 */
+  ASSERT (bn >= 86);
   /* Can not handle too much unbalancement */
-  ASSERT( an*5 <= bn*11 );
+  ASSERT (an*4 <= bn*13);
+  ASSERT (GMP_NUMB_BITS > 12*3 || an*4 <= bn*12);
+  ASSERT (GMP_NUMB_BITS > 11*3 || an*5 <= bn*11);
+  ASSERT (GMP_NUMB_BITS > 10*3 || an*6 <= bn*10);
+  ASSERT (GMP_NUMB_BITS >  9*3 || an*7 <= bn* 9);
 
   /* Limit num/den is a rational number between
      (16/15)^(log(6)/log(2*6-1)) and (16/15)^(log(8)/log(2*8-1))             */
 #define LIMIT_numerator (21)
 #define LIMIT_denominat (20)
 
-  if( LIKELY(an == bn) || an * LIMIT_denominat < LIMIT_numerator * bn ) /* is 8*... < 8*... */
+  if (LIKELY (an == bn) || an * (LIMIT_denominat>>1) < LIMIT_numerator * (bn>>1) ) /* is 8*... < 8*... */
     {
       half = 0;
       n = 1 + ((an - 1)>>3);
@@ -129,25 +132,25 @@ mpn_toom8h_mul   (mp_ptr pp,
     }
   else
     {
-      if (an * 7 * LIMIT_numerator < LIMIT_denominat * 9 * bn)
+      if (an * 13 < 16 * bn) /* (an*7*LIMIT_numerator<LIMIT_denominat*9*bn) */
 	{ p = 9; q = 8; }
       else if (GMP_NUMB_BITS <= 9*3 ||
-	       an * 7 * LIMIT_denominat < LIMIT_numerator * 9 * bn)
+	       an *(LIMIT_denominat>>1) < (LIMIT_numerator/7*9) * (bn>>1))
 	{ p = 9; q = 7; }
-      else if (an * 3 * LIMIT_numerator < LIMIT_denominat * 5 * bn)
+      else if (an * 10 < 33 * (bn>>1)) /* (an*3*LIMIT_numerator<LIMIT_denominat*5*bn) */
 	{ p =10; q = 7; }
       else if (GMP_NUMB_BITS <= 10*3 ||
-	       an * 3 * LIMIT_denominat < LIMIT_numerator * 5 * bn)
+	       an * (LIMIT_denominat/5) < (LIMIT_numerator/3) * bn)
 	{ p =10; q = 6; }
-      else if (an * 5 * LIMIT_numerator < LIMIT_denominat *11 * bn)
+      else if (an * 6 < 13 * bn) /*(an * 5 * LIMIT_numerator < LIMIT_denominat *11 * bn)*/
 	{ p =11; q = 6; }
       else if (GMP_NUMB_BITS <= 11*3 ||
-	       an * 5 * LIMIT_denominat < LIMIT_numerator *11 * bn)
+	       an * 4 < 9 * bn)
 	{ p =11; q = 5; }
-      else if (an * LIMIT_numerator < LIMIT_denominat * 3 * bn )  /* is 4*... <12*... */
+      else if (an *(LIMIT_numerator/3) < LIMIT_denominat * bn )  /* is 4*... <12*... */
 	{ p =12; q = 5; }
       else if (GMP_NUMB_BITS <= 12*3 ||
-	       an * LIMIT_denominat < LIMIT_numerator * 3 * bn )  /* is 4*... <12*... */
+	       an * 9 < 28 * bn )  /* is 4*... <12*... */
 	{ p =12; q = 4; }
       else
 	{ p =13; q = 4; }
