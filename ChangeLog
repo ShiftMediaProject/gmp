@@ -1,5 +1,14 @@
 2010-01-06  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Version 5.0.0 released.
+
+	* gmp-h.in (__GNU_MP__): Bump.
+	(__GNU_MP_VERSION,__GNU_MP_VERSION_MINOR,__GNU_MP_VERSION_PATCHLEVEL):
+	Bump version info.
+	* mp-h.in (__GNU_MP__): Bump.
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
+	Bump version info.
+
 	* doc/gmp.texi: Rewrite mpn_gcdext text.  Remove some out-of-date
 	text in Algorithms chapter.
 
