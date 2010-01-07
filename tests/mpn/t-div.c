@@ -12,6 +12,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program.  If not, see http://www.gnu.org/licenses/.  */
 
+
 #include <stdlib.h>		/* for strtol */
 #include <stdio.h>		/* for printf */
 
@@ -268,6 +269,8 @@ main (int argc, char **argv)
       qp[nn - dn + 1] = qran1;
       rp[-1] = rran0;
 
+      ran = random_word (rands);
+
       if ((double) (nn - dn) * dn < 1e5)
 	{
 	  /* Test mpn_sbpi1_div_qr */
@@ -336,8 +339,6 @@ main (int argc, char **argv)
 	  ASSERT_ALWAYS (rp[-1] == rran0);
 	  check_one (qp, NULL, np, nn, dp, dn, "mpn_dcpi1_div_q", 0);
 	}
-
-      ran = random_word (rands);
 
      /* Test mpn_mu_div_qr */
       if (nn - dn > 2 && dn >= 2)

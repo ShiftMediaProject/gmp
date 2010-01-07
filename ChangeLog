@@ -2,6 +2,9 @@
 
 	* Version 5.0.0 released.
 
+	* tests/mpn/t-bdiv.c: Move a random call for debugability.
+	* tests/mpn/t-div.c: Likewise.
+
 	* mpn/generic/mu_divappr_q.c: Rewrite quotient round-up code.
 
 	* mpn/generic/mu_div_qr.c: Handle carry-out from a carry propagation

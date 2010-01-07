@@ -246,6 +246,8 @@ main (int argc, char **argv)
       qp[nn - dn + 1] = qran1;
       rp[-1] = rran0;
 
+      ran = random_word (rands);
+
       if ((double) (nn - dn) * dn < 1e5)
 	{
 	  if (nn > dn)
@@ -296,8 +298,6 @@ main (int argc, char **argv)
 
       if (nn - dn < 2 || dn < 2)
 	continue;
-
-      ran = random_word (rands);
 
       /* Test mpn_mu_bdiv_qr */
       itch = mpn_mu_bdiv_qr_itch (nn, dn);
