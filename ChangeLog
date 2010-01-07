@@ -2,6 +2,8 @@
 
 	* Version 5.0.0 released.
 
+	* Update MUL_FFT_TABLE2 and SQR_FFT_TABLE2 for many machines.
+
 	* mpn/generic/mu_div_q.c: Account for divisor truncation error as well
 	as mpn_mu_divappr_q's error.
 
