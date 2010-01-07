@@ -2,6 +2,8 @@
 
 	* Version 5.0.0 released.
 
+	* mpn/generic/mu_divappr_q.c: Rewrite quotient round-up code.
+
 	* mpn/generic/mu_div_qr.c: Handle carry-out from a carry propagation
 	subtract.
 	* mpn/generic/mu_divappr_q.c: Likewise.

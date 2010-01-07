@@ -291,14 +291,23 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 
   /* FIXME: We should perhaps be somewhat more elegant in our rounding of the
      quotient.  For now, just make sure the returned quotient is >= the real
-     quotient.  */
+     quotient; add 3 with saturating arithmetic.  */
   qn = nn - dn;
   cy += mpn_add_1 (qp, qp, qn, 3);
   if (cy != 0)
     {
-      MPN_ZERO (qp, qn);
-      mpn_sub_1 (qp, qp, qn, 1);
-      qh = 0;
+      if (qh != 0)
+	{
+	  /* Return a quotient of just 1-bits, with qh set.  */
+	  mp_size_t i;
+	  for (i = 0; i < qn; i++)
+	    qp[i] = GMP_NUMB_MAX;
+	}
+      else
+	{
+	  /* Propagate carry into qh.  */
+	  qh = 1;
+	}
     }
 
   return qh;
