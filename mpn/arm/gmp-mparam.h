@@ -68,7 +68,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                 120
-#define MULLO_MUL_N_THRESHOLD            15203
+#define MULLO_MUL_N_THRESHOLD             3000
 
 #define DC_DIV_QR_THRESHOLD                134
 #define DC_DIVAPPR_Q_THRESHOLD             442
