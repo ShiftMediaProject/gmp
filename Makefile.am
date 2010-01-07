@@ -65,7 +65,7 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 #        4.3.0    8:0:5    5:0:1   4:14:1
 #        4.3.1    8:1:5    5:1:1   4:15:1	WRONG Really used same as 4.3.0
 #        4.3.2    8:2:5    5:2:1   4:16:1
-#        5.0.0    9:0:6    6:0:2   4:20:1	PRELIMINARY
+#        5.0.0    9:0:6    6:0:2   4:20:1
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
