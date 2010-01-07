@@ -73,7 +73,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define DC_BDIV_QR_THRESHOLD                84
 #define DC_BDIV_Q_THRESHOLD                171
 
-#define INV_MULMOD_BNM1_THRESHOLD          133
+#define INV_MULMOD_BNM1_THRESHOLD           55
 #define INV_NEWTON_THRESHOLD               234
 #define INV_APPR_THRESHOLD                 236
 

@@ -82,7 +82,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MU_DIV_QR_THRESHOLD               1858
 #define MU_DIVAPPR_Q_THRESHOLD            2009
-#define MUPI_DIV_QR_THRESHOLD              140
+#define MUPI_DIV_QR_THRESHOLD               79
 #define MU_BDIV_QR_THRESHOLD              1387
 #define MU_BDIV_Q_THRESHOLD               1787
 

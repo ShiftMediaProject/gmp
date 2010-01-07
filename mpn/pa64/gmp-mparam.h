@@ -60,33 +60,33 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MUL_FFT_TABLE  { 400, 800, 1600, 2816, 7168, 20480, 81920, 327680, 0 }
 #define MUL_FFT_MODF_THRESHOLD             360
-#define MUL_FFT_THRESHOLD                 2752
+#define MUL_FFT_THRESHOLD                 2368
 
 #define SQR_FFT_TABLE  { 368, 800, 1728, 3328, 7168, 20480, 81920, 327680, 0 }
 #define SQR_FFT_MODF_THRESHOLD             264
 #define SQR_FFT_THRESHOLD                 1856
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
-#define MULLO_DC_THRESHOLD                 113
-#define MULLO_MUL_N_THRESHOLD             5397
+#define MULLO_DC_THRESHOLD                 132
+#define MULLO_MUL_N_THRESHOLD             4275
 
-#define DC_DIV_QR_THRESHOLD                155
-#define DC_DIVAPPR_Q_THRESHOLD             442
-#define DC_BDIV_QR_THRESHOLD               155
-#define DC_BDIV_Q_THRESHOLD                369
+#define DC_DIV_QR_THRESHOLD                132
+#define DC_DIVAPPR_Q_THRESHOLD             372
+#define DC_BDIV_QR_THRESHOLD               142
+#define DC_BDIV_Q_THRESHOLD                312
 
-#define INV_MULMOD_BNM1_THRESHOLD           74
-#define INV_NEWTON_THRESHOLD               363
-#define INV_APPR_THRESHOLD                 363
+#define INV_MULMOD_BNM1_THRESHOLD           58
+#define INV_NEWTON_THRESHOLD               315
+#define INV_APPR_THRESHOLD                 318
 
-#define BINV_NEWTON_THRESHOLD              410
-#define REDC_1_TO_REDC_N_THRESHOLD         118
+#define BINV_NEWTON_THRESHOLD              360
+#define REDC_1_TO_REDC_N_THRESHOLD         101
 
-#define MU_DIV_QR_THRESHOLD                998
-#define MU_DIVAPPR_Q_THRESHOLD            1187
-#define MUPI_DIV_QR_THRESHOLD              132
-#define MU_BDIV_QR_THRESHOLD              1017
-#define MU_BDIV_Q_THRESHOLD               1334
+#define MU_DIV_QR_THRESHOLD                979
+#define MU_DIVAPPR_Q_THRESHOLD             998
+#define MUPI_DIV_QR_THRESHOLD                0  /* always */
+#define MU_BDIV_QR_THRESHOLD               889
+#define MU_BDIV_Q_THRESHOLD               1187
 
 #define MATRIX22_STRASSEN_THRESHOLD         11
 #define HGCD_THRESHOLD                     238
@@ -96,5 +96,5 @@ with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define GET_STR_DC_THRESHOLD                21
 #define GET_STR_PRECOMPUTE_THRESHOLD        24
-#define SET_STR_DC_THRESHOLD              2235
-#define SET_STR_PRECOMPUTE_THRESHOLD      4447
+#define SET_STR_DC_THRESHOLD              1877
+#define SET_STR_PRECOMPUTE_THRESHOLD      4036
