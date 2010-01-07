@@ -80,7 +80,7 @@ check_one (mp_ptr qp, mp_srcptr rp,
       tvalue = "Q*D";
     error:
       printf ("\r*******************************************************************************\n");
-      printf ("%s and failed test %lu: %s\n", fname, test, msg);
+      printf ("%s failed test %lu: %s\n", fname, test, msg);
       printf ("N=    "); dumpy (np, nn);
       printf ("D=    "); dumpy (dp, dn);
       printf ("Q=    "); dumpy (qp, qn);
