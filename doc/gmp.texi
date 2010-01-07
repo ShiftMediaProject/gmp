@@ -5386,7 +5386,8 @@ is not calculated but can easily be obtained from @m{(G - US) / V, (@var{G} -
 @var{U}*@var{S}) / @var{V}} (the division will be exact).  It is required that
 @math{U @ge V > 0}.
 
-FIXME: Say something about the range of @math{S}.
+@math{S} satisfies @math{S = 1} or @math{@GMPabs{S} < V / (2 G)}. @math{S =
+0} if and only if @math{V} divides @math{U} (i.e., @math{G = V}).
 
 Store @math{G} at @var{gp} and let the return value define its limb count.
 Store @math{S} at @var{sp} and let |*@var{sn}| define its limb count.  Some
