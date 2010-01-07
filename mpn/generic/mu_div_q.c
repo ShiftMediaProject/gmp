@@ -166,7 +166,9 @@ mpn_mu_div_q (mp_ptr qp,
       qh = mpn_mu_divappr_q (tp, np + nn - (2 * qn + 2), 2 * qn + 2,
 			     dp + dn - (qn + 1), qn + 1, scratch);
 
-      if (tp[0] > 4)
+      /* The max error of mpn_mu_divappr_q is +4, but we get an additional
+         error from the divisor truncation.  */
+      if (tp[0] > 6)
 	{
 	  MPN_COPY (qp, tp + 1, qn);
 	}

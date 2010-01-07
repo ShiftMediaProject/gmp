@@ -2,6 +2,9 @@
 
 	* Version 5.0.0 released.
 
+	* mpn/generic/mu_div_q.c: Account for divisor truncation error as well
+	as mpn_mu_divappr_q's error.
+
 	* mpn/generic/mu_div_q.c: Handle mpn_preinv_mu_divappr_q returning a
 	high limb.
 
@@ -18,8 +21,8 @@
 	(mpn_preinv_mu_divappr_q, mpn_mu_divappr_q): Declare dividend constant.
 	* gmp-impl.h: Likewise.
 
-	* perfpow.c (mpn_perfect_power_p): Call mpn_divexact instead of mpn_bdiv_q (with
-	too little scratch space!).
+	* perfpow.c (mpn_perfect_power_p): Call mpn_divexact instead of
+	mpn_bdiv_q (with too little scratch space!).
 
 	From Niels Möller:
 	* tests/mpn/t-div.c (check_one): Get rid of the poorly managed variable
