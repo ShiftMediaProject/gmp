@@ -2,6 +2,9 @@
 
 	* Version 5.0.0 released.
 
+	* mpn/generic/mu_div_q.c: Handle mpn_preinv_mu_divappr_q returning a
+	high limb.
+
 	* tests/mpn/t-bdiv.c: Move a random call for debugability.
 	* tests/mpn/t-div.c: Likewise.
 

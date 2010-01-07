@@ -123,7 +123,18 @@ mpn_mu_div_q (mp_ptr qp,
       rp[0] = 0;
       this_in = mpn_mu_divappr_q_choose_in (dn + 1, dn, 0);
       this_ip = ip + in - this_in;
-      mpn_preinv_mu_divappr_q (tp, rp, 2 * dn + 1, dp, dn, this_ip, this_in, scratch);
+      cy = mpn_preinv_mu_divappr_q (tp, rp, 2 * dn + 1, dp, dn,
+				    this_ip, this_in, scratch);
+
+      if (UNLIKELY (cy != 0))
+	{
+	  /* Since the partial remainder fed to mpn_preinv_mu_divappr_q was
+	     canonically reduced, replace the returned value of B^(qn-dn)+eps
+	     by the largest possible value.  */
+	  mp_size_t i;
+	  for (i = 0; i < dn + 1; i++)
+	    tp[i] = GMP_NUMB_MAX;
+	}
 
       /* The max error of mpn_mu_divappr_q is +4.  If the low quotient limb is
 	 greater than the max error, we cannot trust the quotient.  */
