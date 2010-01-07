@@ -2,6 +2,14 @@
 
 	* Version 5.0.0 released.
 
+	* mpn/generic/mu_div_qr.c: Handle carry-out from a carry propagation
+	subtract.
+	* mpn/generic/mu_divappr_q.c: Likewise.
+
+	* mpn/generic/mu_divappr_q.c
+	(mpn_preinv_mu_divappr_q, mpn_mu_divappr_q): Declare dividend constant.
+	* gmp-impl.h: Likewise.
+
 	* perfpow.c (mpn_perfect_power_p): Call mpn_divexact instead of mpn_bdiv_q (with
 	too little scratch space!).
 
@@ -18,6 +26,10 @@
 
 	* tests/mpn/t-div.c (check_one): Checking based on multiplication,
 	refmpn_mul, rather than refmpn_tdiv_qr.
+
+2010-01-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/toom8h_mul.c: Avoid overflows of mp_size_t.
 
 2010-01-06  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -37,19 +49,13 @@
 	* mpn/generic/rootrem.c: Use mpn_div_q.
 	* mpz/tdiv_q.c: Likewise.
 
-2010-01-06 Marco Bodrato <bodrato@mail.dm.unipi.it>
-
-	* mpn/generic/toom8h_mul.c: Avoid overflows of mp_size_t.
-
-2010-01-06  Torbjorn Granlund  <tege@gmplib.org>
-
 	* tests/mpn/t-div.c: Test mpn_div_q.
 	(SIZE_LOG): Up to 17.
 
 	* mpn/generic/div_q.c: New file.
 	* configure.in (gmp_mpn_functions): Add div_q.
 
-	* mpn/generic/mu_div_q.c: Actually make dividend constant.
+	* mpn/generic/mu_div_q.c: Actually declare dividend constant.
 
 2010-01-04  Torbjorn Granlund  <tege@gmplib.org>
 

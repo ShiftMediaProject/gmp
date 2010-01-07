@@ -81,7 +81,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 mp_limb_t
 mpn_mu_divappr_q (mp_ptr qp,
-		  mp_ptr np,
+		  mp_srcptr np,
 		  mp_size_t nn,
 		  mp_srcptr dp,
 		  mp_size_t dn,
@@ -165,7 +165,7 @@ mpn_mu_divappr_q (mp_ptr qp,
 
 mp_limb_t
 mpn_preinv_mu_divappr_q (mp_ptr qp,
-			 mp_ptr np,
+			 mp_srcptr np,
 			 mp_size_t nn,
 			 mp_srcptr dp,
 			 mp_size_t dn,
@@ -174,7 +174,7 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 			 mp_ptr scratch)
 {
   mp_size_t qn;
-  mp_limb_t cy, qh;
+  mp_limb_t cy, cx, qh;
   mp_limb_t r;
   mp_size_t tn, wn;
 
@@ -230,9 +230,10 @@ mpn_preinv_mu_divappr_q (mp_ptr qp,
 	  if (wn > 0)
 	    {
 	      cy = mpn_sub_n (tp, tp, rp + dn - wn, wn);
-	      mpn_decr_u (tp + wn, cy);
-	      cy = mpn_cmp (rp + dn - in, tp + dn, tn - dn) < 0;
-	      mpn_incr_u (tp, cy);
+	      cy = mpn_sub_1 (tp + wn, tp + wn, tn - wn, cy);
+	      cx = mpn_cmp (rp + dn - in, tp + dn, tn - dn) < 0;
+	      ASSERT_ALWAYS (cx >= cy);
+	      mpn_incr_u (tp, cx - cy);
 	    }
 	}
 

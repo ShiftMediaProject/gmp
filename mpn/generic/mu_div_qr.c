@@ -245,7 +245,7 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 		      mp_ptr scratch)
 {
   mp_size_t qn;
-  mp_limb_t cy, qh;
+  mp_limb_t cy, cx, qh;
   mp_limb_t r;
   mp_size_t tn, wn;
 
@@ -286,7 +286,7 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 
       /* Compute the product of the quotient block and the divisor D, to be
 	 subtracted from the partial remainder combined with new limbs from the
-	 dividend N.  We only really need the low dn limbs.  */
+	 dividend N.  We only really need the low dn+1 limbs.  */
 
       if (BELOW_THRESHOLD (in, MUL_TO_MULMOD_BNM1_FOR_2NXN_THRESHOLD))
 	mpn_mul (tp, dp, dn, qp, in);		/* dn+in limbs, high 'in' cancels */
@@ -298,9 +298,10 @@ mpn_preinv_mu_div_qr (mp_ptr qp,
 	  if (wn > 0)
 	    {
 	      cy = mpn_sub_n (tp, tp, rp + dn - wn, wn);
-	      mpn_decr_u (tp + wn, cy);
-	      cy = mpn_cmp (rp + dn - in, tp + dn, tn - dn) < 0;
-	      mpn_incr_u (tp, cy);
+	      cy = mpn_sub_1 (tp + wn, tp + wn, tn - wn, cy);
+	      cx = mpn_cmp (rp + dn - in, tp + dn, tn - dn) < 0;
+	      ASSERT_ALWAYS (cx >= cy);
+	      mpn_incr_u (tp, cx - cy);
 	    }
 	}
 

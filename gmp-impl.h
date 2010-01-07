@@ -1189,14 +1189,14 @@ __GMP_DECLSPEC mp_size_t mpn_mu_div_qr_choose_in __GMP_PROTO ((mp_size_t, mp_siz
 __GMP_DECLSPEC mp_limb_t mpn_preinv_mu_div_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_mu_divappr_q __MPN(mu_divappr_q)
-__GMP_DECLSPEC mp_limb_t mpn_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_limb_t mpn_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define   mpn_mu_divappr_q_itch __MPN(mu_divappr_q_itch)
 __GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_itch __GMP_PROTO ((mp_size_t, mp_size_t, int));
 #define   mpn_mu_divappr_q_choose_in __MPN(mu_divappr_q_choose_in)
 __GMP_DECLSPEC mp_size_t mpn_mu_divappr_q_choose_in __GMP_PROTO ((mp_size_t, mp_size_t, int));
 
 #define   mpn_preinv_mu_divappr_q __MPN(preinv_mu_divappr_q)
-__GMP_DECLSPEC mp_limb_t mpn_preinv_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+__GMP_DECLSPEC mp_limb_t mpn_preinv_mu_divappr_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 
 #define   mpn_mu_div_q __MPN(mu_div_q)
 __GMP_DECLSPEC mp_limb_t mpn_mu_div_q __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
