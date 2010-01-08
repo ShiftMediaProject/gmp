@@ -160,6 +160,16 @@ mpn_div_q (mp_ptr qp,
 	    }
 	  if (cy == 0)
 	    qp[qn - 1] = qh;
+	  else if (UNLIKELY (qh != 0))
+	    {
+	      /* This happens only when the quotient is close to B^n and
+		 mpn_*_divappr_q returned B^n.  */
+	      mp_size_t i, n;
+	      n = new_nn - dn;
+	      for (i = 0; i < n; i++)
+		tp[i] = GMP_NUMB_MAX;
+	      qh = 0;		/* currently ignored */
+	    }
 	}
       else  /* divisor is already normalised */
 	{
@@ -243,6 +253,16 @@ mpn_div_q (mp_ptr qp,
 	    }
 	  if (cy == 0)
 	    tp[qn] = qh;
+	  else if (UNLIKELY (qh != 0))
+	    {
+	      /* This happens only when the quotient is close to B^n and
+		 mpn_*_divappr_q returned B^n.  */
+	      mp_size_t i, n;
+	      n = new_nn - (qn + 1);
+	      for (i = 0; i < n; i++)
+		tp[i] = GMP_NUMB_MAX;
+	      qh = 0;		/* currently ignored */
+	    }
 	}
       else  /* divisor is already normalised */
 	{

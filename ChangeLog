@@ -1,6 +1,11 @@
-2010-01-07  Torbjorn Granlund  <tege@gmplib.org>
+2010-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.0.0 released.
+
+	* mpn/generic/div_q.c: Handle mpn_*_divappr_q returning high limb
+	everywhere.
+
+2010-01-07  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Update MUL_FFT_TABLE2 and SQR_FFT_TABLE2 for many machines.
 
