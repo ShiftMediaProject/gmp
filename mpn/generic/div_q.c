@@ -167,7 +167,7 @@ mpn_div_q (mp_ptr qp,
 	      mp_size_t i, n;
 	      n = new_nn - dn;
 	      for (i = 0; i < n; i++)
-		tp[i] = GMP_NUMB_MAX;
+		qp[i] = GMP_NUMB_MAX;
 	      qh = 0;		/* currently ignored */
 	    }
 	}
