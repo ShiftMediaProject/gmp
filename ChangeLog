@@ -1,5 +1,7 @@
 2010-01-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* doc/gmp.texi (Block-wise Barrett Division): New node.
+
 	* mpn/generic/powm.c: Change some #if to plain 'if' to avoid fat build
 	problems.
 
