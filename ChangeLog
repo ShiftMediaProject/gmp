@@ -1,3 +1,8 @@
+2010-01-12  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/powm.c: Change some #if to plain 'if' to avoid fat build
+	problems.
+
 2010-01-11  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_PI1_DIV): Accept arguments for size

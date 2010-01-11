@@ -300,123 +300,160 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 
 
 #if WANT_REDC_2
-#if REDC_1_TO_REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD
-  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+  if (REDC_1_TO_REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD)
     {
+      if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-      INNERLOOP;
-    }
-  else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
-    {
+	  INNERLOOP;
+	}
+      else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
-      INNERLOOP;
-    }
-#else
-  if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
-    {
-#undef MPN_MUL_N
-#undef MPN_SQR
-#undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
-#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-      INNERLOOP;
-    }
-  else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
-    {
-#undef MPN_MUL_N
-#undef MPN_SQR
-#undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
-#define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-      INNERLOOP;
-    }
-#endif  /* REDC_1_TO_REDC_2_THRESHOLD < MUL_TOOM22_THRESHOLD */
-  else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
-    {
+	  INNERLOOP;
+	}
+      else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
-      INNERLOOP;
-    }
-  else
-    {
+	  INNERLOOP;
+	}
+      else
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
-      INNERLOOP;
+	  INNERLOOP;
+	}
+    }
+  else
+    {
+      if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+	{
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	  INNERLOOP;
+	}
+      else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
+	{
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	  INNERLOOP;
+	}
+      else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
+	{
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
+	  INNERLOOP;
+	}
+      else
+	{
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
+	  INNERLOOP;
+	}
     }
 
 #else  /* WANT_REDC_2 */
-#if REDC_1_TO_REDC_N_THRESHOLD < MUL_TOOM22_THRESHOLD
-  if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+
+  if (REDC_1_TO_REDC_N_THRESHOLD < MUL_TOOM22_THRESHOLD)
     {
+      if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-      INNERLOOP;
-    }
-  else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
-    {
+	  INNERLOOP;
+	}
+      else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
-      INNERLOOP;
-    }
-#else
-  if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
-    {
-#undef MPN_MUL_N
-#undef MPN_SQR
-#undef MPN_REDUCE
-#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
-#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-      INNERLOOP;
-    }
-  else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
-    {
+	  INNERLOOP;
+	}
+      else
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
-#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-      INNERLOOP;
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
+	  INNERLOOP;
+	}
     }
-#endif
   else
     {
+      if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
+	{
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	  INNERLOOP;
+	}
+      else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
+	{
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
+#define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	  INNERLOOP;
+	}
+      else
+	{
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_n (r,a,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
-      INNERLOOP;
+	  INNERLOOP;
+	}
     }
 #endif  /* WANT_REDC_2 */
 
