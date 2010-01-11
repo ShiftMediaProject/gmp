@@ -8013,13 +8013,13 @@ The points used for the evaluation are @math{g^i} for @math{i=0} to
 @math{2^k-1} where @m{g=2^{2N'/2^k}, g=2^(2N'/2^k)}.  @math{g} is a
 @m{2^k,2^k'}th root of unity mod @m{2^{N'}+1,2^N'+1}, which produces necessary
 cancellations at the interpolation stage, and it's also a power of 2 so the
-fast fourier transforms used for the evaluation and interpolation do only
+fast Fourier transforms used for the evaluation and interpolation do only
 shifts, adds and negations.
 
 The pointwise multiplications are done modulo @m{2^{N'}+1, 2^N'+1} and either
 recurse into a further FFT or use a plain multiplication (Toom-3, Karatsuba or
 basecase), whichever is optimal at the size @math{N'}.  The interpolation is
-an inverse fast fourier transform.  The resulting set of sums of @m{x_iy_j,
+an inverse fast Fourier transform.  The resulting set of sums of @m{x_iy_j,
 x[i]*y[j]} are added at appropriate offsets to give the final result.
 
 Squaring is the same, but @math{x} is the only input so it's one transform at
@@ -8111,10 +8111,10 @@ Splitting odd and even parts through positive and negative points can be
 thought of as using @math{-1} as a square root of unity.  If a 4th root of
 unity was available then a further split and speedup would be possible, but no
 such root exists for plain integers.  Going to complex integers with
-@m{i=\sqrt{-1}, i=sqrt(-1)} doesn't help, essentially because in cartesian
+@m{i=\sqrt{-1}, i=sqrt(-1)} doesn't help, essentially because in Cartesian
 form it takes three real multiplies to do a complex multiply.  The existence
 of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets the fast
-fourier transform keep splitting and get to @m{O(N \log r), O(N*log(r))}.
+Fourier transform keep splitting and get to @m{O(N \log r), O(N*log(r))}.
 
 Floating point FFTs use complex numbers approximating Nth roots of unity.
 Some processors have special support for such FFTs.  But these are not used in
@@ -8313,7 +8313,7 @@ Q*(Q-1)/2}.  Notice the savings are complementary.  If Q is big then many
 divisions are saved, or if Q is small then the crossproducts reduce to a small
 number.
 
-The modular inverse used is calculated efficiently by @code{modlimb_invert} in
+The modular inverse used is calculated efficiently by @code{binvert_limb} in
 @file{gmp-impl.h}.  This does four multiplies for a 32-bit limb, or six for a
 64-bit limb.  @file{tune/modlinv.c} has some alternate implementations that
 might suit processors better at bit twiddling than multiplying.
@@ -8377,7 +8377,7 @@ leads to divisibility or congruence tests which are potentially more efficient
 than a normal division.
 
 The factor of @math{b^n} on @math{r} can be ignored in a GCD when @math{d} is
-odd, hencethe use of @code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and
+odd, hence the use of @code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and
 @code{mpz_kronecker_ui} etc (@pxref{Greatest Common Divisor Algorithms}).
 
 Montgomery's REDC method for modular multiplications uses operands of the form
