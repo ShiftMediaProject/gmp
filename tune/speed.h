@@ -1479,7 +1479,7 @@ int speed_routine_count_zeros_setup
     return speed_endtime ();						\
   }
 
-#define SPEED_ROUTINE_MPN_PI1_DIV(function, INV)			\
+#define SPEED_ROUTINE_MPN_PI1_DIV(function, INV, DMIN, QMIN)		\
   {									\
     unsigned   i;							\
     mp_ptr     dp, tp, ap, qp;						\
@@ -1490,8 +1490,8 @@ int speed_routine_count_zeros_setup
 									\
     size1 = (s->r == 0 ? 2 * s->size : s->r);				\
 									\
-    SPEED_RESTRICT_COND (s->size >= 1);					\
-    SPEED_RESTRICT_COND (size1 >= s->size);				\
+    SPEED_RESTRICT_COND (s->size >= DMIN);				\
+    SPEED_RESTRICT_COND (size1 - s->size >= QMIN);			\
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (ap, size1, s->align_xp);			\

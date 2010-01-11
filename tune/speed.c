@@ -337,8 +337,8 @@ const struct routine_t {
   { "mpn_dcpi1_div_qr",        speed_mpn_dcpi1_div_qr,    FLAG_R_OPTIONAL},
   { "mpn_mu_div_qr",           speed_mpn_mu_div_qr,       FLAG_R_OPTIONAL},
   { "mpn_mupi_div_qr",         speed_mpn_mupi_div_qr,     FLAG_R_OPTIONAL},
-  { "mpn_sbpi1_divappr_q",     speed_mpn_sbpi1_divappr_q     },
-  { "mpn_dcpi1_divappr_q",     speed_mpn_dcpi1_divappr_q     },
+  { "mpn_sbpi1_divappr_q",     speed_mpn_sbpi1_divappr_q, FLAG_R_OPTIONAL},
+  { "mpn_dcpi1_divappr_q",     speed_mpn_dcpi1_divappr_q, FLAG_R_OPTIONAL},
 
   { "mpn_sbpi1_bdiv_qr",       speed_mpn_sbpi1_bdiv_qr       },
   { "mpn_dcpi1_bdiv_qr",       speed_mpn_dcpi1_bdiv_qr       },

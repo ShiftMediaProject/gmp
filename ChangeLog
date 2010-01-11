@@ -1,3 +1,11 @@
+2010-01-11  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_PI1_DIV): Accept arguments for size
+	restrictions.
+	* tune/common.c (speed_mpn_sbpi1_div_qr, speed_mpn_dcpi1_div_qr,
+	(speed_mpn_sbpi1_divappr_q, speed_mpn_dcpi1_divappr_q): Pass size
+	limits for SPEED_ROUTINE_MPN_PI1_DIV.
+
 2010-01-08  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.0.0 released.
