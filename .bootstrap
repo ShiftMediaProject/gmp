@@ -9,7 +9,7 @@ rm -rf autom4te.cache
 
 # Stick to automake-1.8, since later versions require the ylwrap
 # script.
-aclocal-1.8 && autoconf && autoheader && automake-1.8
+aclocal && autoconf && autoheader && automake
 
 cat >doc/version.texi <<EOF
 @set UPDATED 19 January 2038

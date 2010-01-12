@@ -1,5 +1,9 @@
 2010-01-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* ltmain.sh: Upgrade from 1.5.24 to 2.2.6b.
+	* ylwrap: New file.
+	* .bootstrap: Remove explicit versions.
+
 	* doc/gmp.texi (Block-wise Barrett Division): New node.
 
 	* mpn/generic/powm.c: Change some #if to plain 'if' to avoid fat build
