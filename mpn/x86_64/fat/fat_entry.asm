@@ -162,36 +162,3 @@ PROLOGUE(__gmpn_cpuid)
 	mov	%r8, %rbx
 	ret
 EPILOGUE()
-
-
-C int __gmpn_cpuid_available (void);
-C
-C Return non-zero if the cpuid instruction is available, which means late
-C model 80486 and higher.  80386 and early 80486 don't have cpuid.
-C
-C The test follows Intel AP-485 application note, namely that if bit 21 is
-C modifiable then cpuid is supported.  This test is reentrant and thread
-C safe, since of course any interrupt or context switch will preserve the
-C flags while we're tinkering with them.
-C
-C This is called only once, so just something simple and compact is fine.
-
-PROLOGUE(__gmpn_cpuid_available)
-	pushf
-	pop	%ecx		C old flags
-
-	mov	%ecx, %edx
-	xor	$0x200000, %edx
-	push	%edx
-	popf
-	pushf
-	pop	%edx		C tweaked flags
-
-	mov	$1, %eax
-	cmp	%ecx, %edx
-	jne	L(available)
-	xor	%eax, %eax	C not changed, so cpuid not available
-
-L(available):
-	ret
-EPILOGUE()
