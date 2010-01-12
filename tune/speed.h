@@ -161,8 +161,6 @@ double speed_mpn_addmul_8 __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_com __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_copyd __GMP_PROTO ((struct speed_params *s));
 double speed_mpn_copyi __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_dcpi1_div_qr_n __GMP_PROTO ((struct speed_params *s));
-double speed_mpn_dc_tdiv_qr __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY_DECR __GMP_PROTO ((struct speed_params *s));
 double speed_MPN_COPY_INCR __GMP_PROTO ((struct speed_params *s));
@@ -1435,17 +1433,6 @@ int speed_routine_count_zeros_setup
     TMP_FREE;								\
     return t;								\
   }
-
-#define SPEED_ROUTINE_MPN_DC_DIVREM_N(function)				\
-  SPEED_ROUTINE_MPN_DC_DIVREM_CALL((*function) (q, a, d, s->size, &dinv, r))
-
-#define SPEED_ROUTINE_MPN_DC_DIVREM_SB(function)			\
-  SPEED_ROUTINE_MPN_DC_DIVREM_CALL					\
-    ((*function) (q, a, 2*s->size, d, s->size))
-
-#define SPEED_ROUTINE_MPN_DC_TDIV_QR(function)				\
-  SPEED_ROUTINE_MPN_DC_DIVREM_CALL					\
-    ((*function) (q, r, 0, a, 2*s->size, d, s->size))
 
 
 /* A remainder 2*s->size by s->size limbs */

@@ -1,5 +1,13 @@
 2010-01-12  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/speed.c (routine): Remove obsolete mpn_dc_tdiv_qr and
+	mpn_dc_div_qr_n.
+	* tune/common.c (speed_mpn_dc_tdiv_qr, speed_mpn_dcpi1_div_qr_n):
+	Remove now unused functions.
+	* tune/speed.h (SPEED_ROUTINE_MPN_DC_DIVREM_N,
+	SPEED_ROUTINE_MPN_DC_DIVREM_SB, SPEED_ROUTINE_MPN_DC_TDIV_QR): Remove
+	now unused macros.
+
 	* mpn/x86_64/fat/fat_entry.asm (mpn_cpuid_available): Remove function.
 
 	* ltmain.sh: Upgrade from 1.5.24 to 2.2.6b.
