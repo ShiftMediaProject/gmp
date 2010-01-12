@@ -584,7 +584,7 @@
 	* mpn/generic/mul_fft.c (mpn_mul_fft_full): Disable.
 
 	* gmp-impl.h: Define mpn_fft_mul as an alias for mpn_nussbaumer_mul.
-	* mpn/generic/mul.c: Refer Call_fft_mul.
+	* mpn/generic/mul.c: Refer mpn_fft_mul.
 	* mpn/generic/mul_n.c: Likewise.
 	* mpn/generic/sqr_n.c: Likewise.
 	* mpn/generic/mullo_n.c: Likewise.
