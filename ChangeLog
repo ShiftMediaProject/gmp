@@ -1,3 +1,10 @@
+2010-01-15  Torbjorn Granlund  <tege@gmplib.org>
+
+	With Philip McLaughlin:
+	* mpn/x86_64/gcd_1.asm (ctz_table): Don't use local prefix, but
+	use DEF_OBJECT...END_OBJECT.
+	Keep stack pointer at ABI mandated alignment over call.
+
 2010-01-12  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/speed.c (routine): Remove obsolete mpn_dc_tdiv_qr and

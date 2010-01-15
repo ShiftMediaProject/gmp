@@ -36,20 +36,18 @@ dnl  suggests 80/7*2=23
 deflit(DIV_THRESHOLD, 23)
 
 
-C table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
+C ctz_table[n] is the number of trailing zeros on n, or MAXSHIFT if n==0.
 
 
 deflit(MAXSHIFT, 6)
 deflit(MASK, eval((1<<MAXSHIFT)-1))
 
-	RODATA
-	ALIGN(64)
-L(table):
+DEF_OBJECT(ctz_table,64)
 	.byte	MAXSHIFT
 forloop(i,1,MASK,
 `	.byte	m4_count_trailing_zeros(i)
 ')
-
+END_OBJECT(ctz_table)
 
 C mp_limb_t mpn_gcd_1 (mp_srcptr up, mp_size_t n, mp_limb_t vlimb);
 
@@ -64,7 +62,6 @@ define(`vlimb', `%rdx')
 
 PROLOGUE(mpn_gcd_1)
 	mov	(%rdi), %r8		C src low limb
-	mov	%r8, %r10
 	or	%rdx, %r8		C x | y
 	mov	$-1, R32(%rcx)
 
@@ -73,7 +70,6 @@ L(twos):
 	shr	%r8
 	jnc	L(twos)
 
-	shr	R8(%rcx), %r10
 	shr	R8(%rcx), %rdx
 	mov	R32(%rcx), R32(%r8)	C common twos
 
@@ -84,9 +80,11 @@ L(divide_strip_y):
 
 	push	%r8
 	push	%rdx
+	sub	$8, %rsp		C maintain ABI required rsp alignment
 
 	CALL(	mpn_modexact_1_odd)
 
+	add	$8, %rsp
 	pop	%rdx
 	pop	%r8
 
@@ -99,7 +97,7 @@ L(divide_strip_y):
 	jmp	L(done)
 
 L(strip_x):
-	LEA(	L(table), %r9)
+	LEA(	ctz_table, %r9)
 	jmp	L(strip_x_top)
 
 	ALIGN(16)
