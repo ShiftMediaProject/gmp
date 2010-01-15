@@ -175,6 +175,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #ifndef BYTES_PER_MP_LIMB
 #define BYTES_PER_MP_LIMB  SIZEOF_MP_LIMB_T
 #endif
+#define GMP_LIMB_BYTES  BYTES_PER_MP_LIMB
 #ifndef GMP_LIMB_BITS
 #define GMP_LIMB_BITS  (8 * SIZEOF_MP_LIMB_T)
 #endif

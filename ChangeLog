@@ -1,5 +1,7 @@
 2010-01-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (GMP_LIMB_BYTES): New define.
+
 	* mpn/x86_64/darwin.m4 (LEA): New define.
 
 	* mpn/x86/invert_limb.asm (approx_tab): Use DEF_OBJECT.
