@@ -1,7 +1,9 @@
 2010-01-15  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/x86_64/darwin.m4 (LEA): New define.
+
 	* mpn/x86/invert_limb.asm (approx_tab): Use DEF_OBJECT.
-	Rename and globalize it to work around Mac OS bug.
+	Rename and globalise it to work around Mac OS bug.
 
 	With Philip McLaughlin:
 	* mpn/x86_64/gcd_1.asm (ctz_table): Don't use local prefix, but

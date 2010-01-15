@@ -18,6 +18,10 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 
 define(`DARWIN')
 
+define(`LEA',`
+	mov	$1(%rip), $2
+')
+
 dnl  Usage: CALL(funcname)
 dnl
 dnl  Simply override the definition in x86_64-defs.m4.
