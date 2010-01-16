@@ -1,3 +1,7 @@
+2010-01-16  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/darwin.m4: Fix typo in last change.
+
 2010-01-15  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (__GMP_EXTERN_INLINE): Remove "extern" for newer Sun C.

@@ -19,7 +19,7 @@ dnl  along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.
 define(`DARWIN')
 
 define(`LEA',`
-	mov	$1(%rip), $2
+	lea	$1(%rip), $2
 ')
 
 dnl  Usage: CALL(funcname)
