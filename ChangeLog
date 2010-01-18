@@ -1,3 +1,8 @@
+2010-01-18  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mul_fft.c: Handle a new FFT threshold table type ("3").
+	Misc cleanups to old table type code.
+
 2010-01-16  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/x86_64/darwin.m4: Fix typo in last change.

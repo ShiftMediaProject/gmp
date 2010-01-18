@@ -71,10 +71,61 @@ __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_pt
 
 
 /* Find the best k to use for a mod 2^(m*GMP_NUMB_BITS)+1 FFT for m >= n.
-   sqr==0 if for a multiply, sqr==1 for a square.
-   Don't declare it static since it is needed by tuneup.
-*/
-#ifdef MUL_FFT_TABLE2
+   We have sqr=0 if for a multiply, sqr=1 for a square.
+   There are three generations of this code; we keep the old ones as long as
+   some gmp-mparam.h is not updated.  */
+
+
+/*****************************************************************************/
+
+#if TUNE_PROGRAM_BUILD || (defined (MUL_FFT_TABLE3) && defined (SQR_FFT_TABLE3))
+
+#ifndef FFT_TABLE3_SIZE		/* When tuning, this is define in gmp-impl.h */
+#if defined (MUL_FFT_TABLE3_SIZE) && defined (SQR_FFT_TABLE3_SIZE)
+#if MUL_FFT_TABLE3_SIZE > SQR_FFT_TABLE3_SIZE
+#define FFT_TABLE3_SIZE MUL_FFT_TABLE3_SIZE
+#else
+#define FFT_TABLE3_SIZE SQR_FFT_TABLE3_SIZE
+#endif
+#endif
+#endif
+
+#ifndef FFT_TABLE3_SIZE
+#define FFT_TABLE3_SIZE 200
+#endif
+
+FFT_TABLE_ATTRS struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE] =
+{
+  MUL_FFT_TABLE3,
+  SQR_FFT_TABLE3
+};
+
+int
+mpn_fft_best_k (mp_size_t n, int sqr)
+{
+  FFT_TABLE_ATTRS struct fft_table_nk *fft_tab, *tab;
+  mp_size_t tab_n, thres;
+  int last_k;
+
+  fft_tab = mpn_fft_table3[sqr];
+  last_k = fft_tab->k;
+  for (tab = fft_tab + 1; ; tab++)
+    {
+      tab_n = tab->n;
+      thres = tab_n << last_k;
+      if (n <= thres)
+	break;
+      last_k = tab->k;
+    }
+  return last_k;
+}
+
+#define MPN_FFT_BEST_READY 1
+#endif
+
+/*****************************************************************************/
+
+#if !defined (MPN_FFT_BEST_READY) && defined (MUL_FFT_TABLE2) && defined (SQR_FFT_TABLE2)
 
 #if defined (MUL_FFT_TABLE2_SIZE) && defined (SQR_FFT_TABLE2_SIZE)
 #if MUL_FFT_TABLE2_SIZE > SQR_FFT_TABLE2_SIZE
@@ -88,17 +139,7 @@ __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_pt
 #define FFT_TABLE2_SIZE 200
 #endif
 
-/* FIXME: The format of this should change to need less space.
-   Perhaps put n and k in the same 32-bit word, with n shifted-down
-   (k-2) steps, and k using the 4-5 lowest bits.  That's possible since
-   n-1 is highly divisible.
-   Alternatively, separate n and k out into separate arrays.  */
-struct nk {
-  unsigned int n:27;
-  unsigned int k:5;
-};
-
-static struct nk mpn_fft_table2[2][FFT_TABLE2_SIZE] =
+FFT_TABLE_ATTRS struct fft_table_nk mpn_fft_table2[2][FFT_TABLE2_SIZE] =
 {
   MUL_FFT_TABLE2,
   SQR_FFT_TABLE2
@@ -107,7 +148,7 @@ static struct nk mpn_fft_table2[2][FFT_TABLE2_SIZE] =
 int
 mpn_fft_best_k (mp_size_t n, int sqr)
 {
-  struct nk *tab;
+  struct fft_table_nk *tab;
   int last_k;
 
   last_k = 4;
@@ -119,17 +160,19 @@ mpn_fft_best_k (mp_size_t n, int sqr)
     }
   return last_k;
 }
+
+#define MPN_FFT_BEST_READY 1
 #endif
 
-#if !defined (MUL_FFT_TABLE2) || TUNE_PROGRAM_BUILD
+/*****************************************************************************/
+
+#if ! defined (MPN_FFT_BEST_READY)
 FFT_TABLE_ATTRS mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE] =
 {
   MUL_FFT_TABLE,
   SQR_FFT_TABLE
 };
-#endif
 
-#if !defined (MUL_FFT_TABLE2)
 int
 mpn_fft_best_k (mp_size_t n, int sqr)
 {
@@ -146,6 +189,9 @@ mpn_fft_best_k (mp_size_t n, int sqr)
     return i + FFT_FIRST_K + 1;
 }
 #endif
+
+/*****************************************************************************/
+
 
 /* Returns smallest possible number of limbs >= pl for a fft of size 2^k,
    i.e. smallest multiple of 2^k >= pl.
