@@ -1,6 +1,15 @@
 2010-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (fftmes): New function
+	(fft): Rewrite.
+	(mpn_mul_fft_lcm): New function, copied from mpn/generic/mul_fft.c.
+	(fftfill): New function, code taken from mul_fft.c (mpn_mul_fft).
+	(cached_measure): New function.
+
 	* gmp-impl.h (struct fft_table_nk): Moved from mul_fft.c.
+	(MUL_FFT_TABLE3, SQR_FFT_TABLE3): Provide dummy versions for tuneup
+	builds.
+	(FFT_TABLE3_SIZE): Increase value for tuneup builds.
 
 	* mpn/generic/mul_fft.c: Handle a new FFT threshold table type ("3").
 	Misc cleanups to old table type code.

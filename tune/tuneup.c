@@ -720,81 +720,352 @@ fft_next_size (mp_size_t pl, int k)
   return pl;
 }
 
+#define NMAX_DEFAULT 1000000
+#define MAX_REPS 25
+#define MIN_REPS 5
+
+static inline size_t
+mpn_mul_fft_lcm (size_t a, unsigned int k)
+{
+  unsigned int l = k;
+
+  while (a % 2 == 0 && k > 0)
+    {
+      a >>= 1;
+      k--;
+    }
+  return a << l;
+}
+
+mp_size_t
+fftfill (mp_size_t pl, int k, int sqr)
+{
+  mp_size_t maxLK;
+  mp_bitcnt_t N, Nprime, nprime, M;
+
+  N = pl * GMP_NUMB_BITS;
+  M = N >> k;
+
+  maxLK = mpn_mul_fft_lcm ((unsigned long) GMP_NUMB_BITS, k);
+
+  Nprime = (1 + (2 * M + k + 2) / maxLK) * maxLK;
+  nprime = Nprime / GMP_NUMB_BITS;
+  if (nprime >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
+    {
+      size_t K2;
+      for (;;)
+	{
+	  K2 = 1L << mpn_fft_best_k (nprime, sqr);
+	  if ((nprime & (K2 - 1)) == 0)
+	    break;
+	  nprime = (nprime + K2 - 1) & -K2;
+	  Nprime = nprime * GMP_LIMB_BITS;
+	}
+    }
+  ASSERT_ALWAYS (nprime < pl);
+
+  return Nprime;
+}
+
+static int
+compare_double (const void *ap, const void *bp)
+{
+  double a = * (const double *) ap;
+  double b = * (const double *) bp;
+
+  if (a < b)
+    return -1;
+  else if (a > b)
+    return 1;
+  else
+    return 0;
+}
+
+double
+median (double *times, int n)
+{
+  qsort (times, n, sizeof (double), compare_double);
+  return times[n/2];
+}
+
+#define FFT_CACHE_SIZE 25
+typedef struct fft_cache
+{
+  mp_size_t n;
+  double time;
+} fft_cache_t;
+
+fft_cache_t fft_cache[FFT_CACHE_SIZE];
+
+double
+cached_measure (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n, int k,
+		int n_measurements)
+{
+  int i;
+  double t, ttab[MAX_REPS];
+
+  if (fft_cache[k].n == n)
+    return fft_cache[k].time;
+
+  for (i = 0; i < n_measurements; i++)
+    {
+      speed_starttime ();
+      mpn_mul_fft (rp, n, ap, n, bp, n, k);
+      ttab[i] = speed_endtime ();
+    }
+
+  t = median (ttab, n_measurements);
+  fft_cache[k].n = n;
+  fft_cache[k].time = t;
+  return t;
+}
+
+int
+fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, int idx, int print)
+{
+  mp_size_t n, n1, prev_n1;
+  int k, best_k, last_best_k, start_k, kmax;
+  int eff, prev_eff;
+  double t0, t1;
+  int n_measurements;
+  mp_limb_t *ap, *bp, *rp;
+  mp_size_t alloc;
+  char *linepref;
+
+  for (k = 0; k < FFT_CACHE_SIZE; k++)
+    fft_cache[k].n = 0;
+
+  if (nmin < (p->sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
+    {
+      nmin = (p->sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD);
+    }
+
+  if (print)
+    printf ("#define %s%*s", p->table_name, 38, "");
+
+  if (idx == 0)
+    {
+      mpn_fft_table3[p->sqr][0].n = nmin;
+      mpn_fft_table3[p->sqr][0].k = initial_k;
+
+      if (print)
+	{
+	  printf ("\\\n  { ");
+	  printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][0].n, mpn_fft_table3[p->sqr][0].k);
+	  linepref = "    ";
+	}
+
+      idx = 1;
+    }
+
+  ap = malloc (sizeof (mp_limb_t));
+  if (p->sqr)
+    bp = ap;
+  else
+    bp = malloc (sizeof (mp_limb_t));
+  rp = malloc (sizeof (mp_limb_t));
+  alloc = 1;
+
+  n = nmin;
+
+  n_measurements = (18 - initial_k) | 1;
+  n_measurements = MAX (n_measurements, MIN_REPS);
+  n_measurements = MIN (n_measurements, MAX_REPS);
+
+  last_best_k = initial_k;
+  best_k = initial_k;
+
+  while (n < nmax)
+    {
+      /* Assume the current best k is best until we hit its next FFT step.  */
+      t0 = 99999;
+
+      prev_n1 = n + 1;
+
+      start_k = MAX (4, best_k - 4);
+      for (k = start_k; k <= 30; k++)
+	{
+          n1 = mpn_fft_next_size (prev_n1, k);
+
+	  eff = 200 * (n1 * GMP_NUMB_BITS >> k) / fftfill (n1, k, p->sqr);
+
+	  if (eff < 70)		/* avoid measuring too slow fft:s */
+	    continue;
+
+	  if (n1 > alloc)
+	    {
+	      alloc = n1;
+	      if (p->sqr)
+		{
+		  ap = realloc (ap, sizeof (mp_limb_t));
+		  rp = realloc (rp, sizeof (mp_limb_t));
+		  ap = bp = realloc (ap, alloc * sizeof (mp_limb_t));
+		  mpn_random (ap, alloc);
+		  rp = realloc (rp, alloc * sizeof (mp_limb_t));
+		}
+	      else
+		{
+		  ap = realloc (ap, sizeof (mp_limb_t));
+		  bp = realloc (bp, sizeof (mp_limb_t));
+		  rp = realloc (rp, sizeof (mp_limb_t));
+		  ap = realloc (ap, alloc * sizeof (mp_limb_t));
+		  mpn_random (ap, alloc);
+		  bp = realloc (bp, alloc * sizeof (mp_limb_t));
+		  mpn_random (bp, alloc);
+		  rp = realloc (rp, alloc * sizeof (mp_limb_t));
+		}
+	    }
+
+	  t1 = cached_measure (rp, ap, bp, n1, k, n_measurements);
+
+	  if (t1 * n_measurements > 0.3)
+	    n_measurements -= 2;
+	  n_measurements = MAX (n_measurements, MIN_REPS);
+
+	  if (t1 < t0)
+	    {
+	      best_k = k;
+	      t0 = t1;
+	    }
+	}
+
+      n1 = mpn_fft_next_size (prev_n1, best_k);
+
+      if (last_best_k != best_k)
+	{
+	  if (last_best_k >= 0)
+	    ASSERT_ALWAYS ((prev_n1 & ((1ul << last_best_k) - 1)) == 1);
+
+	  if (idx >= FFT_TABLE3_SIZE)
+	    {
+	      printf ("FFT table exhausted, increase FFT_TABLE3_SIZE in gmp-impl.h\n");
+	      abort ();
+	    }
+	  mpn_fft_table3[p->sqr][idx].n = prev_n1 >> last_best_k;
+	  mpn_fft_table3[p->sqr][idx].k = best_k;
+
+	  if (print)
+	    {
+	      printf (", ");
+	      if (idx % 4 == 0)
+		printf ("\\\n    ");
+	      printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][idx].n, mpn_fft_table3[p->sqr][idx].k);
+	    }
+
+	  if (option_trace >= 2)
+	    printf ("{%ld,%d}\n", prev_n1, best_k);
+
+	  if (option_trace >= 2)
+	    {
+	      printf ("{%lu,%u}\n", prev_n1, best_k);
+	      fflush (stdout);
+	    }
+
+	  last_best_k = best_k;
+	  idx++;
+	}
+
+      for (;;)
+	{
+	  prev_n1 = n1;
+	  prev_eff = fftfill (prev_n1, best_k, p->sqr);
+	  n1 = mpn_fft_next_size (prev_n1 + 1, best_k);
+	  eff = fftfill (n1, best_k, p->sqr);
+
+	  if (eff != prev_eff)
+	    break;
+	}
+
+      n = prev_n1;
+    }
+
+  kmax = sizeof (mp_size_t) * 4;	/* GMP_MP_SIZE_T_BITS / 2 */
+  kmax = MIN (kmax, 25-1);
+  for (k = last_best_k + 1; k <= kmax; k++)
+    {
+      if (idx >= FFT_TABLE3_SIZE)
+	{
+	  printf ("FFT table exhausted, increase FFT_TABLE3_SIZE in gmp-impl.h\n");
+	  abort ();
+	}
+      mpn_fft_table3[p->sqr][idx].n = ((1ul << (2*k-2)) + 1) >> (k-1);
+      mpn_fft_table3[p->sqr][idx].k = k;
+
+      if (print)
+	{
+	  printf (", ");
+	  if (idx % 4 == 0)
+	    printf ("\\\n    ");
+	  printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][idx].n, mpn_fft_table3[p->sqr][idx].k);
+	}
+
+      idx++;
+    }
+
+  if (print)
+    printf (" }\n");
+
+  free (ap);
+  if (! p->sqr)
+    free (bp);
+  free (rp);
+
+  return idx;
+}
+
 void
 fft (struct fft_param_t *p)
 {
   mp_size_t  size;
-  int        i, k;
+  int        k, idx, initial_k;
 
-  for (i = 0; i < numberof (mpn_fft_table[p->sqr]); i++)
-    mpn_fft_table[p->sqr][i] = MP_SIZE_T_MAX;
+  /*** Generate MUL_FFT_MODF_THRESHOLD / SQR_FFT_MODF_THRESHOLD ***/
 
-  *p->p_threshold = MP_SIZE_T_MAX;
-  *p->p_modf_threshold = MP_SIZE_T_MAX;
+#if 1
+  {
+    /* Use plain one() mechanism, for some reasonable initial values of k.  The
+       advantage is that we don't depend on mpn_fft_table3, which can therefore
+       leave it completely uninitialized.  */
 
-  option_trace = MAX (option_trace, option_fft_trace);
+    static struct param_t param;
+    mp_size_t thres, best_thres;
+    int best_k;
+    char buf[20];
 
-  printf ("#define %s  {", p->table_name);
-  if (option_trace >= 2)
-    printf ("\n");
+    best_thres = MP_SIZE_T_MAX;
+    best_k = -1;
 
-  k = FFT_FIRST_K;
+    for (k = 5; k <= 7; k++)
+      {
+	param.name = p->modf_threshold_name;
+	param.min_size = 100;
+	param.max_size = 2000;
+	param.function  = p->mul_function;
+	param.step_factor = 0.0;
+	param.step = 4;
+	param.function2 = p->mul_modf_function;
+	param.noprint = 1;
+	s.r = k;
+	one (&thres, &param);
+	if (thres < best_thres)
+	  {
+	    best_thres = thres;
+	    best_k = k;
+	  }
+      }
+
+    *(p->p_modf_threshold) = best_thres;
+    sprintf (buf, "k = %d", best_k);
+    print_define_remark (p->modf_threshold_name, best_thres, buf);
+    initial_k = best_k;
+  }
+#else
   size = p->first_size;
-  for (;;)
-    {
-      double  tk, tk1;
-
-      size = fft_next_size (size+1, k+1);
-
-      if (size >= p->max_size)
-        break;
-      if (k >= FFT_FIRST_K + numberof (mpn_fft_table[p->sqr]))
-        break;
-
-      /* compare k to k+1 in the middle of the current k+1 step */
-      s.size = size + fft_step_size (k+1) / 2;
-      s.r = k;
-      tk = tuneup_measure (p->mul_modf_function, NULL, &s);
-      if (tk == -1.0)
-        abort ();
-
-      s.r = k+1;
-      tk1 = tuneup_measure (p->mul_modf_function, NULL, &s);
-      if (tk1 == -1.0)
-        abort ();
-
-      if (option_trace >= 2)
-        printf ("at %ld   size=%ld  k=%d  %.9f   k=%d %.9f\n",
-                (long) size, (long) s.size, k, tk, k+1, tk1);
-
-      /* declare the k+1 threshold as soon as it's faster at its midpoint */
-      if (tk1 < tk)
-        {
-          mpn_fft_table[p->sqr][k-FFT_FIRST_K] = s.size;
-          printf (" %ld,", (long) s.size);
-          if (option_trace >= 2) printf ("\n");
-          k++;
-        }
-    }
-
-  mpn_fft_table[p->sqr][k-FFT_FIRST_K] = 0;
-  printf (" 0 }\n");
-
-
-  size = p->first_size;
-
-  /* Declare an FFT faster than a plain toom4 etc multiplication found as
-     soon as one faster measurement obtained.  A multiplication in the
-     middle of the FFT step is tested.  */
   for (;;)
     {
       double  tk, tm;
 
-      /* k=7 should be the first FFT which can beat toom4 on a full
-         multiply, so jump to that threshold and save some probing after the
-         modf threshold is found.  */
-
-      size = fft_next_size (size+1, mpn_fft_best_k (size, p->sqr));
+      size = mpn_fft_next_size (size+1, mpn_fft_best_k (size+1, p->sqr));
       k = mpn_fft_best_k (size, p->sqr);
 
       if (size >= p->max_size)
@@ -823,6 +1094,15 @@ fft (struct fft_param_t *p)
 	  break;
         }
     }
+  initial_k = ?;
+#endif
+
+  /*** Generate MUL_FFT_TABLE3 / SQR_FFT_TABLE3 ***/
+
+  idx = fftmes (*p->p_modf_threshold, p->max_size, initial_k, p, 0, 1);
+  printf ("#define %s_SIZE %d\n", p->table_name, idx);
+
+  /*** Generate MUL_FFT_THRESHOLD / SQR_FFT_THRESHOLD ***/
 
   size = 2 * *p->p_modf_threshold;	/* OK? */
   for (;;)
@@ -1953,7 +2233,7 @@ tune_fft_mul (void)
   if (option_fft_max_size == 0)
     return;
 
-  param.table_name          = "MUL_FFT_TABLE";
+  param.table_name          = "MUL_FFT_TABLE3";
   param.threshold_name      = "MUL_FFT_THRESHOLD";
   param.p_threshold         = &mul_fft_threshold;
   param.modf_threshold_name = "MUL_FFT_MODF_THRESHOLD";
@@ -1976,7 +2256,7 @@ tune_fft_sqr (void)
   if (option_fft_max_size == 0)
     return;
 
-  param.table_name          = "SQR_FFT_TABLE";
+  param.table_name          = "SQR_FFT_TABLE3";
   param.threshold_name      = "SQR_FFT_THRESHOLD";
   param.p_threshold         = &sqr_fft_threshold;
   param.modf_threshold_name = "SQR_FFT_MODF_THRESHOLD";
