@@ -1890,6 +1890,12 @@ __GMP_DECLSPEC unsigned long int gmp_nextprime (gmp_primesieve_t *);
     0 }
 #endif
 
+struct fft_table_nk
+{
+  unsigned int n:27;
+  unsigned int k:5;
+};
+
 #ifndef FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS   static const
 #endif
@@ -4445,6 +4451,8 @@ extern mp_size_t			set_str_precompute_threshold;
 #undef  FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS
 extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
+#define FFT_TABLE3_SIZE 200
+extern struct fft_table_nk mpn_fft_table3[2][FFT_TABLE3_SIZE];
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #undef MUL_TOOM22_THRESHOLD_LIMIT

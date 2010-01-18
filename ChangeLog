@@ -1,5 +1,7 @@
 2010-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-impl.h (struct fft_table_nk): Moved from mul_fft.c.
+
 	* mpn/generic/mul_fft.c: Handle a new FFT threshold table type ("3").
 	Misc cleanups to old table type code.
 
