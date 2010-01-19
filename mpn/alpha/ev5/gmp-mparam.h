@@ -88,19 +88,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define GCDEXT_DC_THRESHOLD                233
 #define JACOBI_BASE_METHOD                   2
 
-#define DIVREM_1_NORM_THRESHOLD              0  /* preinv always */
-#define DIVREM_1_UNNORM_THRESHOLD            0  /* always */
-#define MOD_1_NORM_THRESHOLD                 0  /* always */
-#define MOD_1_UNNORM_THRESHOLD               0  /* always */
-#define MOD_1N_TO_MOD_1_1_THRESHOLD         33
-#define MOD_1U_TO_MOD_1_1_THRESHOLD          5
-#define MOD_1_1_TO_MOD_1_2_THRESHOLD         0
-#define MOD_1_2_TO_MOD_1_4_THRESHOLD        16
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     76
-#define USE_PREINV_DIVREM_1                  1  /* preinv always */
-#define DIVEXACT_1_THRESHOLD                 0  /* always */
-#define BMOD_1_TO_MOD_1_THRESHOLD           75
-
 #define GET_STR_DC_THRESHOLD                15
 #define GET_STR_PRECOMPUTE_THRESHOLD        25
 #define SET_STR_DC_THRESHOLD               470
