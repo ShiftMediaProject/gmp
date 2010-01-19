@@ -1,3 +1,9 @@
+2010-01-19  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (fftmes): Round up initial n according to initial k.
+	Limit k to 24 in loop.  Remove an obsolete always-true condition.
+	Remove a redundant trace printout.
+
 2010-01-18  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (fftmes): New function

@@ -866,7 +866,8 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
   rp = malloc (sizeof (mp_limb_t));
   alloc = 1;
 
-  n = nmin;
+  /* Round n to comply to initial k value */
+  n = (nmin + ((1ul << initial_k) - 1)) & (MP_SIZE_T_MAX << initial_k);
 
   n_measurements = (18 - initial_k) | 1;
   n_measurements = MAX (n_measurements, MIN_REPS);
@@ -883,7 +884,7 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
       prev_n1 = n + 1;
 
       start_k = MAX (4, best_k - 4);
-      for (k = start_k; k <= 30; k++)
+      for (k = start_k; k <= 24; k++)
 	{
           n1 = mpn_fft_next_size (prev_n1, k);
 
@@ -933,8 +934,7 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 
       if (last_best_k != best_k)
 	{
-	  if (last_best_k >= 0)
-	    ASSERT_ALWAYS ((prev_n1 & ((1ul << last_best_k) - 1)) == 1);
+	  ASSERT_ALWAYS ((prev_n1 & ((1ul << last_best_k) - 1)) == 1);
 
 	  if (idx >= FFT_TABLE3_SIZE)
 	    {
@@ -951,9 +951,6 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 		printf ("\\\n    ");
 	      printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][idx].n, mpn_fft_table3[p->sqr][idx].k);
 	    }
-
-	  if (option_trace >= 2)
-	    printf ("{%ld,%d}\n", prev_n1, best_k);
 
 	  if (option_trace >= 2)
 	    {
