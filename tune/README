@@ -73,6 +73,27 @@ SCO OpenUNIX 8 /etc/hw
     running the speed program repeatedly then set a GMP_CPU_FREQUENCY
     environment variable (see TIME BASE section below).
 
+Timing on GNU/Linux
+
+    On Linux, timing currently uses the cycle counter. This is unreliable,
+    since the counter is not saved and restored at context switches (unlike
+    FreeBSD and Solaris where the cycle counter is "virtualized").
+
+    Using the clock_gettime method with CLOCK_PROCESS_CPUTIME_ID (posix) or
+    CLOCK_VIRTUAL (BSD) should be more reliable. To get clock_gettime
+    with glibc, one has to link with -lrt (which also drags in the pthreads
+    threading library). configure.in must be hacked to detect this and
+    arrange proper linking. Something like
+
+      old_LIBS="$LIBS"
+      AC_SEARCH_LIBS(clock_gettime, rt, [AC_DEFINE(HAVE_CLOCK_GETTIME)])
+      TUNE_LIBS="$LIBS"
+      LIBS="$old_LIBS"
+
+      AC_SUBST(TUNE_LIBS)
+    
+    might work.
+
 Low resolution timebase
 
     Parameter tuning can be very time consuming if the only timebase
