@@ -1426,6 +1426,7 @@ case $host in
         #
         gcc_cflags_cpu="-mtune=pentium4 -mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium4 -march=pentium4~-mno-sse2 -march=pentiumpro -march=pentium"
+        gcc_64_cflags_cpu="-mtune=nocona"
         ;;
       viac32)
         # Not sure of the best fallbacks here for -mcpu.

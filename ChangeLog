@@ -1,5 +1,7 @@
 2010-01-21  Torbjorn Granlund  <tege@gmplib.org>
 
+	* configure.in: Use -mtune=nocona for 64-bit pentium4.
+
 	* config.guess: Recognise many more Intel processors.
 
 	* tune/common.c: Whitespace cleanup.
