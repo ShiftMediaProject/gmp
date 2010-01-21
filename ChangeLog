@@ -1,3 +1,8 @@
+2010-01-21  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/common.c: Whitespace cleanup.
+	(speed_mpn_matrix22_mul): Rewrite.
+
 2010-01-21  Niels Möller  <nisse@lysator.liu.se>
 
 	* mpn/generic/nussbaumer_mul.c (mpn_nussbaumer_mul): Take

@@ -61,9 +61,9 @@ pentium_wbinvd(void)
 
     if (fd == -2)
       {
-        fd = open ("/dev/wbinvd", O_RDWR);
-        if (fd == -1)
-          perror ("open /dev/wbinvd");
+	fd = open ("/dev/wbinvd", O_RDWR);
+	if (fd == -1)
+	  perror ("open /dev/wbinvd");
       }
 
     if (fd != -1)
@@ -122,7 +122,7 @@ double_cmp_ptr (const double *p, const double *q)
 
 double
 speed_measure (double (*fun) __GMP_PROTO ((struct speed_params *s)),
-               struct speed_params *s)
+	       struct speed_params *s)
 {
 #define TOLERANCE    1.005  /* 0.5% */
   const int max_zeros = 10;
@@ -147,74 +147,74 @@ speed_measure (double (*fun) __GMP_PROTO ((struct speed_params *s)),
   for (i = 0; i < numberof (t); i++)
     {
       for (;;)
-        {
-          s->src_num = 0;
-          s->dst_num = 0;
+	{
+	  s->src_num = 0;
+	  s->dst_num = 0;
 
-          t[i] = (*fun) (s);
+	  t[i] = (*fun) (s);
 
-          if (speed_option_verbose >= 3)
-            gmp_printf("size=%ld reps=%u r=%Md attempt=%d  %.9f\n",
-                       (long) s->size, s->reps, s->r, i, t[i]);
+	  if (speed_option_verbose >= 3)
+	    gmp_printf("size=%ld reps=%u r=%Md attempt=%d  %.9f\n",
+		       (long) s->size, s->reps, s->r, i, t[i]);
 
-          if (t[i] == 0.0)
-            {
-              zeros++;
-              if (zeros > max_zeros)
-                {
-                  fprintf (stderr, "Fatal error: too many (%d) failed measurements (0.0)\n", zeros);
-                  abort ();
-                }
-              continue;
-            }
+	  if (t[i] == 0.0)
+	    {
+	      zeros++;
+	      if (zeros > max_zeros)
+		{
+		  fprintf (stderr, "Fatal error: too many (%d) failed measurements (0.0)\n", zeros);
+		  abort ();
+		}
+	      continue;
+	    }
 
-          if (t[i] == -1.0)
-            return -1.0;
+	  if (t[i] == -1.0)
+	    return -1.0;
 
-          if (t[i] >= speed_unittime * speed_precision)
-            break;
+	  if (t[i] >= speed_unittime * speed_precision)
+	    break;
 
-          /* go to a value of reps to make t[i] >= precision */
-          reps_d = ceil (1.1 * s->reps
-                         * speed_unittime * speed_precision
-                         / MAX (t[i], speed_unittime));
-          if (reps_d > 2e9 || reps_d < 1.0)
-            {
-              fprintf (stderr, "Fatal error: new reps bad: %.2f\n", reps_d);
-              fprintf (stderr, "  (old reps %u, unittime %.4g, precision %d, t[i] %.4g)\n",
-                       s->reps, speed_unittime, speed_precision, t[i]);
-              abort ();
-            }
-          s->reps = (unsigned) reps_d;
-        }
+	  /* go to a value of reps to make t[i] >= precision */
+	  reps_d = ceil (1.1 * s->reps
+			 * speed_unittime * speed_precision
+			 / MAX (t[i], speed_unittime));
+	  if (reps_d > 2e9 || reps_d < 1.0)
+	    {
+	      fprintf (stderr, "Fatal error: new reps bad: %.2f\n", reps_d);
+	      fprintf (stderr, "  (old reps %u, unittime %.4g, precision %d, t[i] %.4g)\n",
+		       s->reps, speed_unittime, speed_precision, t[i]);
+	      abort ();
+	    }
+	  s->reps = (unsigned) reps_d;
+	}
       t[i] /= s->reps;
       t_unsorted[i] = t[i];
 
       if (speed_precision == 0)
-        return t[i];
+	return t[i];
 
       /* require 3 values within TOLERANCE when >= 2 secs, 4 when below */
       if (t[0] >= 2.0)
-        e = 3;
+	e = 3;
       else
-        e = 4;
+	e = 4;
 
       /* Look for e many t[]'s within TOLERANCE of each other to consider a
-         valid measurement.  Return smallest among them.  */
+	 valid measurement.  Return smallest among them.  */
       if (i >= e)
-        {
-          qsort (t, i+1, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
-          for (j = e-1; j < i; j++)
-            if (t[j] <= t[j-e+1] * TOLERANCE)
-              return t[j-e+1] / s->time_divisor;
-        }
+	{
+	  qsort (t, i+1, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
+	  for (j = e-1; j < i; j++)
+	    if (t[j] <= t[j-e+1] * TOLERANCE)
+	      return t[j-e+1] / s->time_divisor;
+	}
     }
 
   fprintf (stderr, "speed_measure() could not get %d results within %.1f%%\n",
-           e, (TOLERANCE-1.0)*100.0);
+	   e, (TOLERANCE-1.0)*100.0);
   fprintf (stderr, "    unsorted         sorted\n");
   fprintf (stderr, "  %.12f    %.12f    is about 0.5%%\n",
-           t_unsorted[0]*(TOLERANCE-1.0), t[0]*(TOLERANCE-1.0));
+	   t_unsorted[0]*(TOLERANCE-1.0), t[0]*(TOLERANCE-1.0));
   for (i = 0; i < numberof (t); i++)
     fprintf (stderr, "  %.09f       %.09f\n", t_unsorted[i], t[i]);
 
@@ -305,30 +305,30 @@ speed_cache_fill (struct speed_params *s)
 
       different = (s->dst_num != prev.dst_num || s->src_num != prev.src_num);
       for (i = 0; i < s->dst_num; i++)
-        different |= (s->dst[i].ptr != prev.dst[i].ptr);
+	different |= (s->dst[i].ptr != prev.dst[i].ptr);
       for (i = 0; i < s->src_num; i++)
-        different |= (s->src[i].ptr != prev.src[i].ptr);
+	different |= (s->src[i].ptr != prev.src[i].ptr);
 
       if (different)
-        {
-          if (s->dst_num != 0)
-            {
-              printf ("dst");
-              for (i = 0; i < s->dst_num; i++)
-                printf (" %08lX", (unsigned long) s->dst[i].ptr);
-              printf (" ");
-            }
+	{
+	  if (s->dst_num != 0)
+	    {
+	      printf ("dst");
+	      for (i = 0; i < s->dst_num; i++)
+		printf (" %08lX", (unsigned long) s->dst[i].ptr);
+	      printf (" ");
+	    }
 
-          if (s->src_num != 0)
-            {
-              printf ("src");
-              for (i = 0; i < s->src_num; i++)
-                printf (" %08lX", (unsigned long) s->src[i].ptr);
-              printf (" ");
-            }
-          printf ("  (cf sp approx %08lX)\n", (unsigned long) &different);
+	  if (s->src_num != 0)
+	    {
+	      printf ("src");
+	      for (i = 0; i < s->src_num; i++)
+		printf (" %08lX", (unsigned long) s->src[i].ptr);
+	      printf (" ");
+	    }
+	  printf ("  (cf sp approx %08lX)\n", (unsigned long) &different);
 
-        }
+	}
 
       memcpy (&prev, s, sizeof(prev));
     }
@@ -402,10 +402,10 @@ speed_option_set (const char *s)
    code on most CPUs, thereby minimizing overhead in the measurement.  It
    can always be assumed s->reps >= 1.
 
-          i = s->reps
-          do
-            foo();
-          while (--i != 0);
+	  i = s->reps
+	  do
+	    foo();
+	  while (--i != 0);
 
    Additional parameters might be added to "struct speed_params" in the
    future.  Routines should ignore anything they don't use.
@@ -1178,31 +1178,31 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
     unsigned   i;                                       \
     double     t;                                       \
     TMP_DECL;                                           \
-                                                        \
+							\
     SPEED_RESTRICT_COND (s->size >= 1);                 \
-                                                        \
+							\
     if (s->r != 0)                                      \
       k = s->r;                                         \
     else                                                \
       k = mpn_fft_best_k (s->size, sqr);                \
-                                                        \
+							\
     TMP_MARK;                                           \
     pl = mpn_fft_next_size (s->size, k);                \
     SPEED_TMP_ALLOC_LIMBS (wp, pl+1, s->align_wp);      \
-                                                        \
+							\
     speed_operand_src (s, s->xp, s->size);              \
     if (!sqr)                                           \
       speed_operand_src (s, s->yp, s->size);            \
     speed_operand_dst (s, wp, pl+1);                    \
     speed_cache_fill (s);                               \
-                                                        \
+							\
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
       call;                                             \
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
-                                                        \
+							\
     TMP_FREE;                                           \
     return t;                                           \
   }
@@ -1274,48 +1274,46 @@ speed_mpn_matrix22_mul (struct speed_params *s)
   /* Speed params only includes 2 inputs, so we have to invent the
      other 6. */
 
-  mp_ptr a1, a2, a3;
-  mp_ptr r0, r1, r2, r3;
-  mp_ptr b1, b2, b3;
+  mp_ptr a;
+  mp_ptr r;
+  mp_ptr b;
   mp_ptr tp;
-  mp_size_t scratch;
+  mp_size_t itch;
   unsigned i;
   double t;
   TMP_DECL;
 
   TMP_MARK;
-  SPEED_TMP_ALLOC_LIMBS (a1, s->size, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (a2, s->size, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (a3, s->size, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (a, 4 * s->size, s->align_xp);
+  SPEED_TMP_ALLOC_LIMBS (b, 4 * s->size, s->align_yp);
+  SPEED_TMP_ALLOC_LIMBS (r, 8 * s->size + 4, s->align_wp);
 
-  SPEED_TMP_ALLOC_LIMBS (b1, s->size, s->align_yp);
-  SPEED_TMP_ALLOC_LIMBS (b2, s->size, s->align_yp);
-  SPEED_TMP_ALLOC_LIMBS (b3, s->size, s->align_yp);
+  MPN_COPY (a, s->xp, s->size);
+  mpn_random (a + s->size, 3 * s->size);
+  MPN_COPY (b, s->yp, s->size);
+  mpn_random (b + s->size, 3 * s->size);
 
-  SPEED_TMP_ALLOC_LIMBS (r0, 2 * s->size +1, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (r1, 2 * s->size +1, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (r2, 2 * s->size +1, s->align_xp);
-  SPEED_TMP_ALLOC_LIMBS (r3, 2 * s->size +1, s->align_xp);
+  itch = mpn_matrix22_mul_itch (s->size, s->size);
+  SPEED_TMP_ALLOC_LIMBS (tp, itch, s->align_wp2);
 
-  mpn_random (a1, s->size);
-  mpn_random (a2, s->size);
-  mpn_random (a3, s->size);
-  mpn_random (b1, s->size);
-  mpn_random (b2, s->size);
-  mpn_random (b3, s->size);
-
-  scratch = mpn_matrix22_mul_itch (s->size, s->size);
-  SPEED_TMP_ALLOC_LIMBS (tp, scratch, s->align_wp);
+  speed_operand_src (s, a, 4 * s->size);
+  speed_operand_src (s, b, 4 * s->size);
+  speed_operand_dst (s, r, 8 * s->size + 4);
+  speed_operand_dst (s, tp, itch);
+  speed_cache_fill (s);
 
   speed_starttime ();
   i = s->reps;
   do
     {
-      MPN_COPY (r0, s->xp, s->size);
-      MPN_COPY (r1, a1, s->size);
-      MPN_COPY (r2, a2, s->size);
-      MPN_COPY (r3, a3, s->size);
-      mpn_matrix22_mul (r0, r1, r2, r3, s->size, s->yp, b1, b2, b3, s->size, tp);
+      mp_size_t sz = s->size;
+      MPN_COPY (r + 0 * sz + 0, a + 0 * sz, sz);
+      MPN_COPY (r + 2 * sz + 1, a + 1 * sz, sz);
+      MPN_COPY (r + 4 * sz + 2, a + 2 * sz, sz);
+      MPN_COPY (r + 6 * sz + 3, a + 3 * sz, sz);
+      mpn_matrix22_mul (r, r + 2 * sz + 1, r + 4 * sz + 2, r + 6 * sz + 3, sz,
+			b, b + 1 * sz,     b + 2 * sz,     b + 3 * sz,     sz,
+			tp);
     }
   while (--i != 0);
   t = speed_endtime();
@@ -1628,12 +1626,12 @@ speed_noop_wxys (struct speed_params *s)
   {                                                     \
     unsigned  i;                                        \
     variables;                                          \
-                                                        \
+							\
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
       {                                                 \
-        calls;                                          \
+	calls;                                          \
       }                                                 \
     while (--i != 0);                                   \
     return speed_endtime ();                            \
@@ -1650,8 +1648,8 @@ speed_malloc_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
-                            p = malloc (bytes);
-                            free (p));
+			    p = malloc (bytes);
+			    free (p));
 }
 
 double
@@ -1659,9 +1657,9 @@ speed_malloc_realloc_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
-                            p = malloc (BYTES_PER_MP_LIMB);
-                            p = realloc (p, bytes);
-                            free (p));
+			    p = malloc (BYTES_PER_MP_LIMB);
+			    p = realloc (p, bytes);
+			    free (p));
 }
 
 double
@@ -1669,8 +1667,8 @@ speed_gmp_allocate_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
-                            p = (*__gmp_allocate_func) (bytes);
-                            (*__gmp_free_func) (p, bytes));
+			    p = (*__gmp_allocate_func) (bytes);
+			    (*__gmp_free_func) (p, bytes));
 }
 
 double
@@ -1688,33 +1686,33 @@ double
 speed_mpz_init_clear (struct speed_params *s)
 {
   SPEED_ROUTINE_ALLOC_FREE (mpz_t z,
-                            mpz_init (z);
-                            mpz_clear (z));
+			    mpz_init (z);
+			    mpz_clear (z));
 }
 
 double
 speed_mpz_init_realloc_clear (struct speed_params *s)
 {
   SPEED_ROUTINE_ALLOC_FREE (mpz_t z,
-                            mpz_init (z);
-                            _mpz_realloc (z, s->size);
-                            mpz_clear (z));
+			    mpz_init (z);
+			    _mpz_realloc (z, s->size);
+			    mpz_clear (z));
 }
 
 double
 speed_mpq_init_clear (struct speed_params *s)
 {
   SPEED_ROUTINE_ALLOC_FREE (mpq_t q,
-                            mpq_init (q);
-                            mpq_clear (q));
+			    mpq_init (q);
+			    mpq_clear (q));
 }
 
 double
 speed_mpf_init_clear (struct speed_params *s)
 {
   SPEED_ROUTINE_ALLOC_FREE (mpf_t f,
-                            mpf_init (f);
-                            mpf_clear (f));
+			    mpf_init (f);
+			    mpf_clear (f));
 }
 
 
@@ -1810,41 +1808,41 @@ speed_mpz_bin_uiui (struct speed_params *s)
     mp_limb_t  h, l;            \
     unsigned   i;               \
     double     t;               \
-                                \
+				\
     s->time_divisor = 10;       \
-                                \
+				\
     h = s->xp[0];               \
     l = s->yp[0];               \
-                                \
+				\
     if (s->r == 1)              \
       {                         \
-        speed_starttime ();     \
-        i = s->reps;            \
-        do                      \
-          {
+	speed_starttime ();     \
+	i = s->reps;            \
+	do                      \
+	  {
 
 #define SPEED_MACRO_UMUL_PPMM_B \
-          }                     \
-        while (--i != 0);       \
-        t = speed_endtime ();   \
+	  }                     \
+	while (--i != 0);       \
+	t = speed_endtime ();   \
       }                         \
     else                        \
       {                         \
-        speed_starttime ();     \
-        i = s->reps;            \
-        do                      \
-          {
+	speed_starttime ();     \
+	i = s->reps;            \
+	do                      \
+	  {
 
 #define SPEED_MACRO_UMUL_PPMM_C                                         \
-          }                                                             \
-        while (--i != 0);                                               \
-        t = speed_endtime ();                                           \
+	  }                                                             \
+	while (--i != 0);                                               \
+	t = speed_endtime ();                                           \
       }                                                                 \
-                                                                        \
+									\
     /* stop the compiler optimizing away the whole calculation! */      \
     noop_1 (h);                                                         \
     noop_1 (l);                                                         \
-                                                                        \
+									\
     return t;                                                           \
   }
 
@@ -1980,25 +1978,25 @@ speed_mpn_umul_ppmm_r (struct speed_params *s)
     unsigned   i;                                       \
     mp_limb_t  q, r, d;                                 \
     mp_limb_t  dinv;                                    \
-                                                        \
+							\
     s->time_divisor = 10;                               \
-                                                        \
+							\
     /* divisor from "r" parameter, or a default */      \
     d = s->r;                                           \
     if (d == 0)                                         \
       d = mp_bases[10].big_base;                        \
-                                                        \
+							\
     if (normalize)                                      \
       {                                                 \
-        unsigned  norm;                                 \
-        count_leading_zeros (norm, d);                  \
-        d <<= norm;                                     \
-        invert_limb (dinv, d);                          \
+	unsigned  norm;                                 \
+	count_leading_zeros (norm, d);                  \
+	d <<= norm;                                     \
+	invert_limb (dinv, d);                          \
       }                                                 \
-                                                        \
+							\
     q = s->xp[0];                                       \
     r = s->yp[0] % d;                                   \
-                                                        \
+							\
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
@@ -2008,11 +2006,11 @@ speed_mpn_umul_ppmm_r (struct speed_params *s)
       }                                                                 \
     while (--i != 0);                                                   \
     t = speed_endtime ();                                               \
-                                                                        \
+									\
     /* stop the compiler optimizing away the whole calculation! */      \
     noop_1 (q);                                                         \
     noop_1 (r);                                                         \
-                                                                        \
+									\
     return t;                                                           \
   }
 
@@ -2236,7 +2234,7 @@ speed_operator_mod (struct speed_params *s)
 
 int
 speed_routine_count_zeros_setup (struct speed_params *s,
-                                 mp_ptr xp, int leading, int zero)
+				 mp_ptr xp, int leading, int zero)
 {
   int        i, c;
   mp_limb_t  n;
@@ -2244,26 +2242,26 @@ speed_routine_count_zeros_setup (struct speed_params *s,
   if (s->r == 0)
     {
       /* Make uniformly distributed data.  If zero isn't allowed then change
-         it to 1 for leading, or 0x800..00 for trailing.  */
+	 it to 1 for leading, or 0x800..00 for trailing.  */
       MPN_COPY (xp, s->xp_block, SPEED_BLOCK_SIZE);
       if (! zero)
-        for (i = 0; i < SPEED_BLOCK_SIZE; i++)
-          if (xp[i] == 0)
-            xp[i] = leading ? 1 : GMP_LIMB_HIGHBIT;
+	for (i = 0; i < SPEED_BLOCK_SIZE; i++)
+	  if (xp[i] == 0)
+	    xp[i] = leading ? 1 : GMP_LIMB_HIGHBIT;
     }
   else if (s->r == 1)
     {
       /* Make counts uniformly distributed.  A randomly chosen bit is set, and
-         for leading the rest above it are cleared, or for trailing then the
-         rest below.  */
+	 for leading the rest above it are cleared, or for trailing then the
+	 rest below.  */
       for (i = 0; i < SPEED_BLOCK_SIZE; i++)
-        {
-          mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % GMP_LIMB_BITS);
-          mp_limb_t  keep_below = set-1;
-          mp_limb_t  keep_above = MP_LIMB_T_MAX ^ keep_below;
-          mp_limb_t  keep = (leading ? keep_below : keep_above);
-          xp[i] = (s->xp_block[i] & keep) | set;
-        }
+	{
+	  mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % GMP_LIMB_BITS);
+	  mp_limb_t  keep_below = set-1;
+	  mp_limb_t  keep_above = MP_LIMB_T_MAX ^ keep_below;
+	  mp_limb_t  keep = (leading ? keep_below : keep_above);
+	  xp[i] = (s->xp_block[i] & keep) | set;
+	}
     }
   else
     {
@@ -2278,9 +2276,9 @@ speed_routine_count_zeros_setup (struct speed_params *s,
       xp[i] ^= c;
 
       if (leading)
-        count_leading_zeros (c, n);
+	count_leading_zeros (c, n);
       else
-        count_trailing_zeros (c, n);
+	count_trailing_zeros (c, n);
     }
 
   return 1;
@@ -2396,7 +2394,7 @@ speed_gmp_randseed_ui (struct speed_params *s)
       gmp_randseed_ui (rstate, (unsigned long) s->xp_block[j]);
       j++;
       if (j >= SPEED_BLOCK_SIZE)
-        j = 0;
+	j = 0;
     }
   while (--i != 0);
   t = speed_endtime ();
