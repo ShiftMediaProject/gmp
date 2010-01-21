@@ -1,3 +1,17 @@
+2010-01-21  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpn/generic/nussbaumer_mul.c (mpn_nussbaumer_mul): Take
+	advantage of new mpn_mulmod_bnm1 interface, to reduce allocation.
+
+	* tests/mpn/t-mulmod_bnm1.c (ref_mulmod_bnm1, main): Adapted to
+	mpn_mulmod_bnm1 interface change.
+
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Interface change,
+	in case an + bn < rn, only write an + bn output limbs. New input
+	requirement, an + bn > rn/2.
+	* mpn/generic/sqrmod_bnm1.c (mpn_sqrmod_bnm1): Corresponding
+	changes.
+
 2010-01-19  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (fftmes): Round up initial n according to initial k.

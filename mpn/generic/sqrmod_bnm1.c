@@ -68,7 +68,7 @@ mpn_bc_sqrmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_size_t rn, mp_ptr tp)
 }
 
 
-/* Computes {rp,rn} <- {ap,an}^2 Mod(B^rn-1)
+/* Computes {rp,MIN(rn,2an)} <- {ap,an}^2 Mod(B^rn-1)
  *
  * The result is expected to be ZERO if and only if the operand
  * already is. Otherwise the class [0] Mod(B^rn-1) is represented by
@@ -77,7 +77,7 @@ mpn_bc_sqrmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_size_t rn, mp_ptr tp)
  * compute the full square with an <= 2*rn, because this condition
  * implies (B^an-1)^2 < (B^rn-1) .
  *
- * Requires 0 < an <= rn
+ * Requires rn/4 < an <= rn
  * Scratch need: rn + 2 + (need for recursive call OR rn + 2). This gives
  *
  * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2rn + 2 log2 rn + 2
@@ -95,7 +95,6 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	  if (UNLIKELY (2*an <= rn))
 	    {
 	      mpn_sqr (rp, ap, an);
-	      MPN_ZERO (rp + 2*an, rn - 2*an);
 	    }
 	  else
 	    {
@@ -116,6 +115,8 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 
       n = rn >> 1;
 
+      ASSERT (2*an > n);
+      
       /* Compute xm = a^2 mod (B^n - 1), xp = a^2 mod (B^n + 1)
 	 and crt together as
 
@@ -240,11 +241,30 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
       /* Compute the highest half:
 	 ([(xp + xm)/2 mod (B^n-1)] - xp ) * B^n
        */
-      cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);
-      /* cy = 1 only if {xp,n+1} is not ZERO, i.e. {rp,n} is not ZERO.
-	 DECR will affect _at most_ the lowest n limbs. */
-      MPN_DECR_U (rp, 2*n, cy);
+      if (UNLIKELY (2*an < rn))
+	{
+	  /* Note that in this case, the only way the result can equal
+	     zero mod B^{rn} - 1 is if the input is zero, and
+	     then the output of both the recursive calls and this CRT
+	     reconstruction is zero, not B^{rn} - 1. */
+	  cy = mpn_sub_n (rp + n, rp, xp, 2*an - n);
 
+	  /* FIXME: This subtraction of the high parts is not really
+	     necessary, we do it to get the carry out, and for sanity
+	     checking. */
+	  cy = xp[n] + mpn_sub_nc (so, rp + 2*an - n, xp + 2*an - n,
+				   rn - 2*an, cy);
+	  ASSERT (mpn_zero_p (so+1, rn - 1 - 2*an));
+	  cy = mpn_sub_1 (rp, rp, 2*an, cy);
+	  ASSERT (cy == so[0]);
+	}
+      else
+	{
+	  cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);
+	  /* cy = 1 only if {xp,n+1} is not ZERO, i.e. {rp,n} is not ZERO.
+	     DECR will affect _at most_ the lowest n limbs. */
+	  MPN_DECR_U (rp, 2*n, cy);
+	}
 #undef a0
 #undef a1
 #undef xp

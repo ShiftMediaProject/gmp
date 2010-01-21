@@ -70,7 +70,7 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
 }
 
 
-/* Computes {rp,rn} <- {ap,an}*{bp,bn} Mod(B^rn-1)
+/* Computes {rp,MIN(rn,an+bn)} <- {ap,an}*{bp,bn} Mod(B^rn-1)
  *
  * The result is expected to be ZERO if and only if one of the operand
  * already is. Otherwise the class [0] Mod(B^rn-1) is represented by
@@ -81,7 +81,7 @@ mpn_bc_mulmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t rn,
  * compute the full product with an+bn <= rn, because this condition
  * implies (B^an-1)(B^bn-1) < (B^rn-1) .
  *
- * Requires both 0 < bn <= an <= rn
+ * Requires 0 < bn <= an <= rn and an + bn > rn/2
  * Scratch need: rn + 2 + (need for recursive call OR rn + 2). This gives
  *
  * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2rn + 2 log2 rn + 2
@@ -100,7 +100,6 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	  if (UNLIKELY (an + bn <= rn))
 	    {
 	      mpn_mul (rp, ap, an, bp, bn);
-	      MPN_ZERO (rp + an + bn, rn - (an + bn));
 	    }
 	  else
 	    {
@@ -121,6 +120,14 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 
       n = rn >> 1;
 
+      /* We need at least an + bn >= n, to be able to fit one of the
+	 recursive products at rp. Requiring strict inequality makes
+	 the coded slightly simpler. If desired, we could avoid this
+	 restriction by initially halving rn as long as rn is even and
+	 an + bn <= rn/2. */
+      
+      ASSERT (an + bn > n);
+
       /* Compute xm = a*b mod (B^n - 1), xp = a*b mod (B^n + 1)
 	 and crt together as
 
@@ -132,6 +139,10 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 #define b0 bp
 #define b1 (bp + n)
 
+      /* FIXME: See if the need for temporary storage can be reduced
+       * in case an <= n or bn <= n. This matters for calls from
+       * mpn_nussbaumer_mul, since then bn <= n always and an <= n for
+       * balanced products. */
 #define xp  tp	/* 2n + 2 */
       /* am1  maybe in {xp, n} */
       /* bm1  maybe in {xp + n, n} */
@@ -275,11 +286,32 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
       /* Compute the highest half:
 	 ([(xp + xm)/2 mod (B^n-1)] - xp ) * B^n
        */
-      cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);
-      /* cy = 1 only if {xp,n+1} is not ZERO, i.e. {rp,n} is not ZERO.
-	 DECR will affect _at most_ the lowest n limbs. */
-      MPN_DECR_U (rp, 2*n, cy);
+      if (UNLIKELY (an + bn < rn))
+	{
+	  /* Note that in this case, the only way the result can equal
+	     zero mod B^{rn} - 1 is if one of the inputs is zero, and
+	     then the output of both the recursive calls and this CRT
+	     reconstruction is zero, not B^{rn} - 1. Which is good,
+	     since the latter representation doesn't fit in the output
+	     area.*/
+	  cy = mpn_sub_n (rp + n, rp, xp, an + bn - n);
 
+	  /* FIXME: This subtraction of the high parts is not really
+	     necessary, we do it to get the carry out, and for sanity
+	     checking. */
+	  cy = xp[n] + mpn_sub_nc (so, rp + an + bn - n, xp + an + bn - n,
+				   rn - (an + bn), cy);
+	  ASSERT (an + bn == rn - 1 || mpn_zero_p (so+1, rn - 1 - (an + bn)));
+	  cy = mpn_sub_1 (rp, rp, an + bn, cy);
+	  ASSERT (cy == so[0]);
+ 	}
+      else
+	{
+	  cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);
+	  /* cy = 1 only if {xp,n+1} is not ZERO, i.e. {rp,n} is not ZERO.
+	     DECR will affect _at most_ the lowest n limbs. */
+	  MPN_DECR_U (rp, 2*n, cy);
+	}
 #undef a0
 #undef a1
 #undef b0

@@ -62,9 +62,7 @@ ref_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
   else
     refmpn_mul (rp, bp, bn, ap, an);
   an += bn;
-  if( UNLIKELY(an <= rn) )
-    MPN_ZERO (rp + an, rn - an);
-  else {
+  if (an > rn) {
     cy = mpn_add (rp, rp, rn, rp + rn, an - rn);
     /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
      * be no overflow when adding in the carry. */
@@ -114,7 +112,7 @@ main (int argc, char **argv)
     {
       unsigned size_min;
       unsigned size_range;
-      mp_size_t an,bn,n;
+      mp_size_t an,bn,rn,n;
       mp_size_t itch;
       mp_limb_t p_before, p_after, s_before, s_after;
 
@@ -129,17 +127,19 @@ main (int argc, char **argv)
 	+ gmp_urandomm_ui (rands, (1L << size_range) + 1 - MIN_N);
       n = mpn_mulmod_bnm1_next_size (n);
 
-      if (test & 1) {
+      if ( (test & 1) || n == 1) {
 	/* Half of the tests are done with the main scenario in mind:
 	   both an and bn >= rn/2 */
 	an = ((n+1) >> 1) + gmp_urandomm_ui (rands, (n+1) >> 1);
 	bn = ((n+1) >> 1) + gmp_urandomm_ui (rands, (n+1) >> 1);
       } else {
 	/* Second half of the tests are done using mulmod to compute a
-	   full product and an >= bn > 0; recursion make it eventually
-	   fall in the case above. */
-	an = ((n+3) >> 2) + gmp_urandomm_ui (rands, n - (n >> 2));
-	bn = 1 + ((an == 1) ? 0 : gmp_urandomm_ui (rands, an - 1));
+	   full product with n/2 < an+bn <= n. */
+	an = 1 + gmp_urandomm_ui (rands, n - 1);
+	if (an >= n/2)
+	  bn = 1 + gmp_urandomm_ui (rands, n - an);
+	else
+	  bn = n/2 + 1 - an + gmp_urandomm_ui (rands, (n+1)/2);
       }
 
       /* Make sure an >= bn */
@@ -165,9 +165,10 @@ main (int argc, char **argv)
 	/* We don't propagate carry, this means that the desired condition
 	   is not triggered all the times. A few times are enough anyway. */
       }
-      mpn_random2 (pp-1, n + 2);
+      rn = MIN(n, an + bn);
+      mpn_random2 (pp-1, rn + 2);
       p_before = pp[-1];
-      p_after = pp[n];
+      p_after = pp[rn];
 
       itch = mpn_mulmod_bnm1_itch (n);
       ASSERT_ALWAYS (itch <= mpn_mulmod_bnm1_itch (MAX_N));
@@ -177,9 +178,9 @@ main (int argc, char **argv)
 
       mpn_mulmod_bnm1 (  pp, n, ap, an, bp, bn, scratch);
       ref_mulmod_bnm1 (refp, n, ap, an, bp, bn);
-      if (pp[-1] != p_before || pp[n] != p_after
+      if (pp[-1] != p_before || pp[rn] != p_after
 	  || scratch[-1] != s_before || scratch[itch] != s_after
-	  || mpn_cmp (refp, pp, n) != 0)
+	  || mpn_cmp (refp, pp, rn) != 0)
 	{
 	  printf ("ERROR in test %d, an = %d, bn = %d, n = %d\n",
 		  test, (int) an, (int) bn, (int) n);
@@ -188,9 +189,9 @@ main (int argc, char **argv)
 	      printf ("before pp:"); mpn_dump (pp -1, 1);
 	      printf ("keep:   "); mpn_dump (&p_before, 1);
 	    }
-	  if (pp[n] != p_after)
+	  if (pp[rn] != p_after)
 	    {
-	      printf ("after pp:"); mpn_dump (pp + n, 1);
+	      printf ("after pp:"); mpn_dump (pp + rn, 1);
 	      printf ("keep:   "); mpn_dump (&p_after, 1);
 	    }
 	  if (scratch[-1] != s_before)
@@ -205,8 +206,8 @@ main (int argc, char **argv)
 	    }
 	  mpn_dump (ap, an);
 	  mpn_dump (bp, bn);
-	  mpn_dump (pp, n);
-	  mpn_dump (refp, n);
+	  mpn_dump (pp, rn);
+	  mpn_dump (refp, rn);
 
 	  abort();
 	}
