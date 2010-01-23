@@ -1,5 +1,8 @@
 2010-01-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* gmp-h.in (__GNU_MP_VERSION_PATCHLEVEL): Bump.
+	(__GMP_MP_RELEASE): New macro.
+
 	* mpf/div.c: Rewrite to use mpn_div_q.
 
 2010-01-21  Torbjorn Granlund  <tege@gmplib.org>
