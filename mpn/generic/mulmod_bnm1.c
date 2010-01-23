@@ -125,7 +125,7 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	 the coded slightly simpler. If desired, we could avoid this
 	 restriction by initially halving rn as long as rn is even and
 	 an + bn <= rn/2. */
-      
+
       ASSERT (an + bn > n);
 
       /* Compute xm = a*b mod (B^n - 1), xp = a*b mod (B^n + 1)
@@ -304,7 +304,7 @@ mpn_mulmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_srcptr 
 	  ASSERT (an + bn == rn - 1 || mpn_zero_p (so+1, rn - 1 - (an + bn)));
 	  cy = mpn_sub_1 (rp, rp, an + bn, cy);
 	  ASSERT (cy == so[0]);
- 	}
+	}
       else
 	{
 	  cy = xp[n] + mpn_sub_n (rp + n, rp, xp, n);

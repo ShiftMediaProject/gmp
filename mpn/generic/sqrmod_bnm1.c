@@ -116,7 +116,7 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
       n = rn >> 1;
 
       ASSERT (2*an > n);
-      
+
       /* Compute xm = a^2 mod (B^n - 1), xp = a^2 mod (B^n + 1)
 	 and crt together as
 
