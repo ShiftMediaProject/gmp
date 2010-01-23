@@ -1,3 +1,7 @@
+2010-01-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpf/div.c: Rewrite to use mpn_div_q.
+
 2010-01-21  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Add FFT_TABLE3 tables for a basic set of machines.
