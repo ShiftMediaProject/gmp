@@ -187,11 +187,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 #define MATRIX22_STRASSEN_THRESHOLD         17
 #define HGCD_THRESHOLD                     139
-#define GCD_DC_THRESHOLD                   555
-#define GCDEXT_DC_THRESHOLD                496
+#define GCD_DC_THRESHOLD                   501
+#define GCDEXT_DC_THRESHOLD                474
 #define JACOBI_BASE_METHOD                   1
 
-#define GET_STR_DC_THRESHOLD                 9
+#define GET_STR_DC_THRESHOLD                17
 #define GET_STR_PRECOMPUTE_THRESHOLD        23
-#define SET_STR_DC_THRESHOLD               248
+#define SET_STR_DC_THRESHOLD               266
 #define SET_STR_PRECOMPUTE_THRESHOLD      1648

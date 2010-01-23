@@ -35,7 +35,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MOD_1U_TO_MOD_1_1_THRESHOLD         12
 #define MOD_1_1_TO_MOD_1_2_THRESHOLD         0
 #define MOD_1_2_TO_MOD_1_4_THRESHOLD        11
-#define PREINV_MOD_1_TO_MOD_1_THRESHOLD  MP_SIZE_T_MAX  /* never */
+#define PREINV_MOD_1_TO_MOD_1_THRESHOLD     63
 #define USE_PREINV_DIVREM_1                  0
 #define DIVEXACT_1_THRESHOLD                 0  /* always (native) */
 #define BMOD_1_TO_MOD_1_THRESHOLD           51
@@ -61,29 +61,78 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULMOD_BNM1_THRESHOLD               11
 #define SQRMOD_BNM1_THRESHOLD               12
 
-#define MUL_FFT_TABLE  { 304, 672, 1152, 3584, 10240, 40960, 163840, 0 }
-#define MUL_FFT_MODF_THRESHOLD             368
-#define MUL_FFT_THRESHOLD                 4736
+#define MUL_FFT_MODF_THRESHOLD             364  /* k = 5 */
+#define MUL_FFT_TABLE3                                      \
+  { {    364, 5}, {     15, 6}, {      8, 5}, {     17, 6}, \
+    {      9, 5}, {     19, 6}, {     17, 7}, {      9, 6}, \
+    {     21, 7}, {     11, 6}, {     23, 7}, {     15, 6}, \
+    {     31, 7}, {     21, 8}, {     11, 7}, {     27, 8}, \
+    {     15, 7}, {     33, 8}, {     19, 7}, {     39, 8}, \
+    {     23, 7}, {     47, 8}, {     27, 9}, {     15, 8}, \
+    {     31, 7}, {     63, 8}, {     39, 9}, {     23, 8}, \
+    {     47,10}, {     15, 9}, {     31, 8}, {     67, 9}, \
+    {     39, 8}, {     79, 9}, {     47, 8}, {     95, 9}, \
+    {     55,10}, {     31, 9}, {     79,10}, {     47, 9}, \
+    {     95,11}, {     31,10}, {     63, 9}, {    135,10}, \
+    {     79, 9}, {    159, 8}, {    319, 9}, {    167,10}, \
+    {     95, 9}, {    191, 8}, {    383,11}, {     63,10}, \
+    {    127, 9}, {    255,10}, {    143, 9}, {    287,10}, \
+    {    159, 9}, {    319,11}, {     95,10}, {    191, 9}, \
+    {    383,12}, {     63,11}, {    127,10}, {    271, 9}, \
+    {    543,10}, {    287,11}, {    159,10}, {    351,11}, \
+    {    191,10}, {    415,11}, {    223,12}, {    127,11}, \
+    {    255,10}, {    511,11}, {    287,10}, {    575,11}, \
+    {    351,12}, {    191,11}, {    415,13}, {    127,12}, \
+    {    255,11}, {    575,12}, {    319,11}, {    703,12}, \
+    {    383,11}, {    831,12}, {    447,13}, {   8192,14}, \
+    {  16384,15}, {  32768,16} }
+#define MUL_FFT_TABLE3_SIZE 90
+#define MUL_FFT_THRESHOLD                 3520
 
-#define SQR_FFT_TABLE  { 272, 672, 1152, 4608, 10240, 40960, 98304, 393216, 0 }
-#define SQR_FFT_MODF_THRESHOLD             288
+#define SQR_FFT_MODF_THRESHOLD             340  /* k = 5 */
+#define SQR_FFT_TABLE3                                      \
+  { {    340, 5}, {     17, 6}, {      9, 5}, {     19, 6}, \
+    {     17, 7}, {      9, 6}, {     21, 7}, {     11, 6}, \
+    {     23, 7}, {     15, 6}, {     31, 7}, {     21, 8}, \
+    {     11, 7}, {     29, 8}, {     15, 7}, {     33, 8}, \
+    {     19, 7}, {     39, 8}, {     27, 7}, {     55, 9}, \
+    {     15, 8}, {     31, 7}, {     65, 8}, {     43, 9}, \
+    {     23, 8}, {     47,10}, {     15, 9}, {     31, 8}, \
+    {     67, 9}, {     39, 8}, {     83, 9}, {     47, 8}, \
+    {     95,10}, {     31, 9}, {     63, 8}, {    127, 9}, \
+    {     79,10}, {     47, 9}, {     95,11}, {     31,10}, \
+    {     63, 9}, {    127, 8}, {    255, 9}, {    135,10}, \
+    {     79, 9}, {    159, 8}, {    319,10}, {     95, 9}, \
+    {    191,11}, {     63,10}, {    127, 9}, {    255, 8}, \
+    {    511, 9}, {    271,10}, {    143, 9}, {    287, 8}, \
+    {    575, 9}, {    303,10}, {    159, 9}, {    319,11}, \
+    {     95,10}, {    191, 9}, {    383,10}, {    207,12}, \
+    {     63,11}, {    127,10}, {    271, 9}, {    543,10}, \
+    {    287, 9}, {    575,10}, {    303,11}, {    159,10}, \
+    {    351,11}, {    191,10}, {    415,11}, {    223,10}, \
+    {    447,12}, {    127,11}, {    255,10}, {    543,11}, \
+    {    287,10}, {    607,11}, {    351,12}, {    191,11}, \
+    {    479,13}, {    127,12}, {    255,11}, {    575,12}, \
+    {    319,11}, {    703,12}, {    383,11}, {    767,12}, \
+    {    447,13}, {   8192,14}, {  16384,15}, {  32768,16} }
+#define SQR_FFT_TABLE3_SIZE 96
 #define SQR_FFT_THRESHOLD                 5504
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
-#define MULLO_DC_THRESHOLD                  45
-#define MULLO_MUL_N_THRESHOLD             9174
+#define MULLO_DC_THRESHOLD                  48
+#define MULLO_MUL_N_THRESHOLD             6633
 
 #define DC_DIV_QR_THRESHOLD                 43
 #define DC_DIVAPPR_Q_THRESHOLD             170
 #define DC_BDIV_QR_THRESHOLD                43
-#define DC_BDIV_Q_THRESHOLD                113
+#define DC_BDIV_Q_THRESHOLD                110
 
-#define INV_MULMOD_BNM1_THRESHOLD           54
-#define INV_NEWTON_THRESHOLD               179
-#define INV_APPR_THRESHOLD                 173
+#define INV_MULMOD_BNM1_THRESHOLD           30
+#define INV_NEWTON_THRESHOLD               177
+#define INV_APPR_THRESHOLD                 171
 
-#define BINV_NEWTON_THRESHOLD              197
-#define REDC_1_TO_REDC_N_THRESHOLD          47
+#define BINV_NEWTON_THRESHOLD              194
+#define REDC_1_TO_REDC_N_THRESHOLD          50
 
 #define MU_DIV_QR_THRESHOLD               1142
 #define MU_DIVAPPR_Q_THRESHOLD            1142
@@ -91,13 +140,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MU_BDIV_QR_THRESHOLD               942
 #define MU_BDIV_Q_THRESHOLD               1017
 
-#define MATRIX22_STRASSEN_THRESHOLD         12
-#define HGCD_THRESHOLD                      88
-#define GCD_DC_THRESHOLD                   293
-#define GCDEXT_DC_THRESHOLD                233
+#define MATRIX22_STRASSEN_THRESHOLD         13
+#define HGCD_THRESHOLD                      92
+#define GCD_DC_THRESHOLD                   283
+#define GCDEXT_DC_THRESHOLD                221
 #define JACOBI_BASE_METHOD                   2
 
-#define GET_STR_DC_THRESHOLD                14
-#define GET_STR_PRECOMPUTE_THRESHOLD        26
-#define SET_STR_DC_THRESHOLD               272
-#define SET_STR_PRECOMPUTE_THRESHOLD       920
+#define GET_STR_DC_THRESHOLD                18
+#define GET_STR_PRECOMPUTE_THRESHOLD        31
+#define SET_STR_DC_THRESHOLD               490
+#define SET_STR_PRECOMPUTE_THRESHOLD       994
