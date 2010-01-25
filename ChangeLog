@@ -1,3 +1,10 @@
+2010-01-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* tune/tuneup.c (INSERT_FFTTAB): New macro, like old insertion code but
+	also inserting a sentinel.
+	(fftmes): Use INSERT_FFTTAB for inserting new measurements.
+	Limit k range to best_k - 4 ... best_k + 4.
+
 2010-01-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* gmp-h.in (__GNU_MP_VERSION_PATCHLEVEL): Bump.

@@ -820,17 +820,28 @@ cached_measure (mp_ptr rp, mp_srcptr ap, mp_srcptr bp, mp_size_t n, int k,
   return t;
 }
 
+#define INSERT_FFTTAB(idx, nval, kval)					\
+  do {									\
+    fft_tab[idx].n = nval;						\
+    fft_tab[idx].k = kval;						\
+    fft_tab[idx+1].n = -1;	/* sentinel */				\
+    fft_tab[idx+1].k = -1;						\
+  } while (0)
+
 int
 fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, int idx, int print)
 {
   mp_size_t n, n1, prev_n1;
-  int k, best_k, last_best_k, start_k, kmax;
+  int k, best_k, last_best_k, kmax;
   int eff, prev_eff;
   double t0, t1;
   int n_measurements;
   mp_limb_t *ap, *bp, *rp;
   mp_size_t alloc;
   char *linepref;
+  struct fft_table_nk *fft_tab;
+
+  fft_tab = mpn_fft_table3[p->sqr];
 
   for (k = 0; k < FFT_CACHE_SIZE; k++)
     fft_cache[k].n = 0;
@@ -845,13 +856,12 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 
   if (idx == 0)
     {
-      mpn_fft_table3[p->sqr][0].n = nmin;
-      mpn_fft_table3[p->sqr][0].k = initial_k;
+      INSERT_FFTTAB (0, nmin, initial_k);
 
       if (print)
 	{
 	  printf ("\\\n  { ");
-	  printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][0].n, mpn_fft_table3[p->sqr][0].k);
+	  printf ("{%7u,%2u}", fft_tab[0].n, fft_tab[0].k);
 	  linepref = "    ";
 	}
 
@@ -878,13 +888,16 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 
   while (n < nmax)
     {
+      int start_k, end_k;
+
       /* Assume the current best k is best until we hit its next FFT step.  */
       t0 = 99999;
 
       prev_n1 = n + 1;
 
       start_k = MAX (4, best_k - 4);
-      for (k = start_k; k <= 24; k++)
+      end_k = MIN (24, best_k + 4);
+      for (k = start_k; k <= end_k; k++)
 	{
           n1 = mpn_fft_next_size (prev_n1, k);
 
@@ -941,15 +954,14 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 	      printf ("FFT table exhausted, increase FFT_TABLE3_SIZE in gmp-impl.h\n");
 	      abort ();
 	    }
-	  mpn_fft_table3[p->sqr][idx].n = prev_n1 >> last_best_k;
-	  mpn_fft_table3[p->sqr][idx].k = best_k;
+	  INSERT_FFTTAB (idx, prev_n1 >> last_best_k, best_k);
 
 	  if (print)
 	    {
 	      printf (", ");
 	      if (idx % 4 == 0)
 		printf ("\\\n    ");
-	      printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][idx].n, mpn_fft_table3[p->sqr][idx].k);
+	      printf ("{%7u,%2u}", fft_tab[idx].n, fft_tab[idx].k);
 	    }
 
 	  if (option_trace >= 2)
@@ -985,15 +997,14 @@ fftmes (mp_size_t nmin, mp_size_t nmax, int initial_k, struct fft_param_t *p, in
 	  printf ("FFT table exhausted, increase FFT_TABLE3_SIZE in gmp-impl.h\n");
 	  abort ();
 	}
-      mpn_fft_table3[p->sqr][idx].n = ((1ul << (2*k-2)) + 1) >> (k-1);
-      mpn_fft_table3[p->sqr][idx].k = k;
+      INSERT_FFTTAB (idx, ((1ul << (2*k-2)) + 1) >> (k-1), k);
 
       if (print)
 	{
 	  printf (", ");
 	  if (idx % 4 == 0)
 	    printf ("\\\n    ");
-	  printf ("{%7u,%2u}", mpn_fft_table3[p->sqr][idx].n, mpn_fft_table3[p->sqr][idx].k);
+	  printf ("{%7u,%2u}", fft_tab[idx].n, fft_tab[idx].k);
 	}
 
       idx++;
