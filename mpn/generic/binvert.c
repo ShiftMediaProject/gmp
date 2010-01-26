@@ -52,7 +52,12 @@ mp_size_t
 mpn_binvert_itch (mp_size_t n)
 {
   mp_size_t itch_local = mpn_mulmod_bnm1_next_size (n);
-  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local);
+  /* FIXME: check for the correct estimate and remove #if */
+#if 0
+  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local, n, (n + 1) >> 1);
+#else
+  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local, itch_local, itch_local);
+#endif
   return itch_local + itch_out;
 }
 

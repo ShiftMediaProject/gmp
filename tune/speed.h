@@ -1028,7 +1028,7 @@ int speed_routine_count_zeros_setup
 									\
     SPEED_RESTRICT_COND (s->size >= 1);					\
 									\
-    itch = mpn_mulmod_bnm1_itch (s->size);				\
+    itch = mpn_mulmod_bnm1_itch (s->size, s->size, s->size);		\
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, 2 * s->size, s->align_wp);		\
@@ -1061,7 +1061,7 @@ int speed_routine_count_zeros_setup
     SPEED_RESTRICT_COND (s->size >= 1);					\
 									\
     size = mpn_mulmod_bnm1_next_size (s->size);				\
-    itch = mpn_mulmod_bnm1_itch (size);					\
+    itch = mpn_mulmod_bnm1_itch (size, size, size);			\
 									\
     TMP_MARK;								\
     SPEED_TMP_ALLOC_LIMBS (wp, size, s->align_wp);			\

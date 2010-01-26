@@ -1,3 +1,28 @@
+2010-01-26 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* mpn/generic/mulmod_bnm1.c (mpn_mulmod_bnm1): Partial rewrite to
+	reduce memory usage.
+	* mpn/generic/sqrmod_bnm1.c (mpn_sqrmod_bnm1): Likewise.
+	(mpn_sqrmod_bnm1_next_size): New function.
+
+	* gmp-impl.h (mpn_mulmod_bnm1_itch): Accepts 3 parameters now.
+	(mpn_sqrmod_bnm1_itch): New inline function.
+	(mpn_sqrmod_bnm1_next_size): Declaration and mangling.
+	* mpn/generic/nussbaumer_mul.c: Use the new functions.
+
+	* mpn/generic/invertappr.c (mpn_ni_invertappr): Use new syntax for
+	mpn_mulmod_bnm1_itch.	
+	* mpn/generic/mu_divappr_q.c (mpn_mu_divappr_q_itch): Likewise.
+	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Likewise.
+	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q_itch): Likewise.
+	* mpn/generic/mu_div_qr.c (mpn_mu_div_qr_itch): Likewise.
+	* mpn/generic/binvert.c (mpn_binvert_itch): Likewise.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1_CALL): Likewise.
+	(SPEED_ROUTINE_MPN_MULMOD_BNM1_ROUNDED): Likewise.
+
+	* tests/mpn/t-sqrmod_bnm1.c, tests/mpn/t-mulmod_bnm1.c: Test
+	reduced memory usage.
+
 2010-01-25  Torbjorn Granlund  <tege@gmplib.org>
 
 	* tune/tuneup.c (INSERT_FFTTAB): New macro, like old insertion code but

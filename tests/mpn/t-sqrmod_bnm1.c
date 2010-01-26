@@ -40,7 +40,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MIN_N 1
 
 /*
-  Reference function for multiplication modulo B^rn-1.
+  Reference function for squaring modulo B^rn-1.
 
   The result is expected to be ZERO if and only if one of the operand
   already is. Otherwise the class [0] Mod(B^rn-1) is represented by
@@ -58,9 +58,7 @@ ref_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an)
 
   refmpn_mul (rp, ap, an, ap, an);
   an *= 2;
-  if( UNLIKELY(an <= rn) )
-    MPN_ZERO (rp + an, rn - an);
-  else {
+  if (an > rn) {
     cy = mpn_add (rp, rp, rn, rp + rn, an - rn);
     /* If cy == 1, then the value of rp is at most B^rn - 2, so there can
      * be no overflow when adding in the carry. */
@@ -97,19 +95,19 @@ main (int argc, char **argv)
   tests_start ();
   rands = RANDS;
 
-  ASSERT_ALWAYS (mpn_mulmod_bnm1_next_size (MAX_N) == MAX_N);
+  ASSERT_ALWAYS (mpn_sqrmod_bnm1_next_size (MAX_N) == MAX_N);
 
   ap = TMP_ALLOC_LIMBS (MAX_N);
   refp = TMP_ALLOC_LIMBS (MAX_N * 4);
   pp = 1+TMP_ALLOC_LIMBS (MAX_N + 2);
   scratch
-    = 1+TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (MAX_N) + 2);
+    = 1+TMP_ALLOC_LIMBS (mpn_sqrmod_bnm1_itch (MAX_N, MAX_N) + 2);
 
   for (test = 0; test < count; test++)
     {
       unsigned size_min;
       unsigned size_range;
-      mp_size_t an,n;
+      mp_size_t an,rn,n;
       mp_size_t itch;
       mp_limb_t p_before, p_after, s_before, s_after;
 
@@ -122,9 +120,12 @@ main (int argc, char **argv)
 
       n = MIN_N
 	+ gmp_urandomm_ui (rands, (1L << size_range) + 1 - MIN_N);
-      n = mpn_mulmod_bnm1_next_size (n);
+      n = mpn_sqrmod_bnm1_next_size (n);
 
-      an = ((n+1) >> 1) + gmp_urandomm_ui (rands, (n+1) >> 1);
+      if (n == 1)
+	an = 1;
+      else
+	an = ((n+1) >> 1) + gmp_urandomm_ui (rands, (n+1) >> 1);
 
       mpn_random2 (ap, an);
 
@@ -138,21 +139,22 @@ main (int argc, char **argv)
 	x = (n == an) ? 0 : gmp_urandomm_ui (rands, n - an);
 	ap[x] += gmp_urandomm_ui (rands, 3) - 1;
       }
-      mpn_random2 (pp-1, n + 2);
+      rn = MIN(n, 2*an);
+      mpn_random2 (pp-1, rn + 2);
       p_before = pp[-1];
-      p_after = pp[n];
+      p_after = pp[rn];
 
-      itch = mpn_mulmod_bnm1_itch (n);
-      ASSERT_ALWAYS (itch <= mpn_mulmod_bnm1_itch (MAX_N));
+      itch = mpn_sqrmod_bnm1_itch (n, an);
+      ASSERT_ALWAYS (itch <= mpn_sqrmod_bnm1_itch (MAX_N, MAX_N));
       mpn_random2 (scratch-1, itch+2);
       s_before = scratch[-1];
       s_after = scratch[itch];
 
       mpn_sqrmod_bnm1 (  pp, n, ap, an, scratch);
       ref_sqrmod_bnm1 (refp, n, ap, an);
-      if (pp[-1] != p_before || pp[n] != p_after
+      if (pp[-1] != p_before || pp[rn] != p_after
 	  || scratch[-1] != s_before || scratch[itch] != s_after
-	  || mpn_cmp (refp, pp, n) != 0)
+	  || mpn_cmp (refp, pp, rn) != 0)
 	{
 	  printf ("ERROR in test %d, an = %d, n = %d\n",
 		  test, (int) an, (int) n);
@@ -161,9 +163,9 @@ main (int argc, char **argv)
 	      printf ("before pp:"); mpn_dump (pp -1, 1);
 	      printf ("keep:   "); mpn_dump (&p_before, 1);
 	    }
-	  if (pp[n] != p_after)
+	  if (pp[rn] != p_after)
 	    {
-	      printf ("after pp:"); mpn_dump (pp + n, 1);
+	      printf ("after pp:"); mpn_dump (pp + rn, 1);
 	      printf ("keep:   "); mpn_dump (&p_after, 1);
 	    }
 	  if (scratch[-1] != s_before)
@@ -177,8 +179,8 @@ main (int argc, char **argv)
 	      printf ("keep:   "); mpn_dump (&s_after, 1);
 	    }
 	  mpn_dump (ap, an);
-	  mpn_dump (pp, n);
-	  mpn_dump (refp, n);
+	  mpn_dump (pp, rn);
+	  mpn_dump (refp, rn);
 
 	  abort();
 	}

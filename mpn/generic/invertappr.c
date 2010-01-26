@@ -190,8 +190,10 @@ mpn_ni_invertappr (mp_ptr ip, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
   TMP_MARK;
 
   if (ABOVE_THRESHOLD (n, INV_MULMOD_BNM1_THRESHOLD))
-    tp = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (mpn_mulmod_bnm1_next_size (n + 1)));
-
+    {
+      mn = mpn_mulmod_bnm1_next_size (n + 1);
+      tp = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (mn, n, (n >> 1) + 1));
+    }
   /* Use Newton's iterations to get the desired precision.*/
 
   /* define rp scratch; 2rn + 1 limbs <= 2(n>>1 + 1) + 1 <= n + 3  limbs */

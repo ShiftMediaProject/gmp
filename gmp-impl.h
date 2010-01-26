@@ -948,10 +948,27 @@ __GMP_DECLSPEC void mpn_bc_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
 __GMP_DECLSPEC void mpn_mulmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
 #define mpn_mulmod_bnm1_next_size __MPN(mulmod_bnm1_next_size)
 __GMP_DECLSPEC mp_size_t mpn_mulmod_bnm1_next_size __GMP_PROTO ((mp_size_t)) ATTRIBUTE_CONST;
-#define mpn_mulmod_bnm1_itch(n) (2*(n) + 2*GMP_LIMB_BITS +2)
+static inline mp_size_t
+mpn_mulmod_bnm1_itch (mp_size_t rn, mp_size_t an, mp_size_t bn) {
+  mp_size_t n, itch;
+  n = rn >> 1;
+  itch = rn + 4 +
+    (an > n ? (bn > n ? rn : n) : 0);
+  return itch;
+}
 
 #define mpn_sqrmod_bnm1 __MPN(sqrmod_bnm1)
 __GMP_DECLSPEC void mpn_sqrmod_bnm1 __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_ptr));
+#define mpn_sqrmod_bnm1_next_size __MPN(sqrmod_bnm1_next_size)
+__GMP_DECLSPEC mp_size_t mpn_sqrmod_bnm1_next_size __GMP_PROTO ((mp_size_t)) ATTRIBUTE_CONST;
+static inline mp_size_t
+mpn_sqrmod_bnm1_itch (mp_size_t rn, mp_size_t an) {
+  mp_size_t n, itch;
+  n = rn >> 1;
+  itch = rn + 3 +
+    (an > n ? an : 0);
+  return itch;
+}
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
 typedef const __gmp_randstate_struct *gmp_randstate_srcptr;

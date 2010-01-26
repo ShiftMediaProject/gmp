@@ -32,8 +32,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     assumption.
 
   * Decrease scratch usage.
-
-  * Call mpn_mulmod_bnm1_itch.
 */
 
 void
@@ -47,7 +45,7 @@ mpn_redc_n (mp_ptr rp, mp_ptr up, mp_srcptr mp, mp_size_t n, mp_srcptr ip)
 
   rn = mpn_mulmod_bnm1_next_size (n);
 
-  scratch = TMP_ALLOC_LIMBS (n + 3 * rn + 100);
+  scratch = TMP_ALLOC_LIMBS (n + rn + mpn_mulmod_bnm1_itch (rn, n, n));
 
   xp = scratch;
   mpn_mullo_n (xp, up, ip, n);

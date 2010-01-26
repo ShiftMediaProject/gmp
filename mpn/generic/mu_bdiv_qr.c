@@ -254,7 +254,12 @@ mpn_mu_bdiv_qr_itch (mp_size_t nn, mp_size_t dn)
       else
 	{
 	  tn = mpn_mulmod_bnm1_next_size (dn);
-	  itch_out = mpn_mulmod_bnm1_itch (tn);
+	  /* FIXME: check for the correct estimate and remove #if */
+#if 1
+	  itch_out = mpn_mulmod_bnm1_itch (tn, dn, in);
+#else
+	  itch_out = mpn_mulmod_bnm1_itch (tn, tn, tn);
+#endif
 	}
       itch_binvert = mpn_binvert_itch (in);
       itches = tn + itch_out;
@@ -271,7 +276,12 @@ mpn_mu_bdiv_qr_itch (mp_size_t nn, mp_size_t dn)
       else
 	{
 	  tn = mpn_mulmod_bnm1_next_size (dn);
-	  itch_out = mpn_mulmod_bnm1_itch (tn);
+	  /* FIXME: check for the correct estimate and remove #if */
+#if 1
+	  itch_out = mpn_mulmod_bnm1_itch (tn, dn, in);
+#else
+	  itch_out = mpn_mulmod_bnm1_itch (tn, tn, tn);
+#endif
 	}
     }
   itch_binvert = mpn_binvert_itch (in);

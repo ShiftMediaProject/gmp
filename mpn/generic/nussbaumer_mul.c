@@ -41,15 +41,20 @@ mpn_nussbaumer_mul (mp_ptr pp,
   ASSERT (an >= bn);
   ASSERT (bn > 0);
 
-  rn = mpn_mulmod_bnm1_next_size (an + bn);
-
   TMP_MARK;
-  tp = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (rn));
 
   if ((ap == bp) && (an == bn))
-    mpn_sqrmod_bnm1 (pp, rn, ap, an, tp);
+    {
+      rn = mpn_sqrmod_bnm1_next_size (2*an);
+      tp = TMP_ALLOC_LIMBS (mpn_sqrmod_bnm1_itch (rn, an));
+      mpn_sqrmod_bnm1 (pp, rn, ap, an, tp);
+    }
   else
-    mpn_mulmod_bnm1 (pp, rn, ap, an, bp, bn, tp);
+    {
+      rn = mpn_mulmod_bnm1_next_size (an + bn);
+      tp = TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (rn, an, bn));
+      mpn_mulmod_bnm1 (pp, rn, ap, an, bp, bn, tp);
+    }
 
   TMP_FREE;
 }

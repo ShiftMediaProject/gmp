@@ -106,7 +106,7 @@ main (int argc, char **argv)
   refp = TMP_ALLOC_LIMBS (MAX_N * 4);
   pp = 1+TMP_ALLOC_LIMBS (MAX_N + 2);
   scratch
-    = 1+TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (MAX_N) + 2);
+    = 1+TMP_ALLOC_LIMBS (mpn_mulmod_bnm1_itch (MAX_N, MAX_N, MAX_N) + 2);
 
   for (test = 0; test < count; test++)
     {
@@ -170,8 +170,8 @@ main (int argc, char **argv)
       p_before = pp[-1];
       p_after = pp[rn];
 
-      itch = mpn_mulmod_bnm1_itch (n);
-      ASSERT_ALWAYS (itch <= mpn_mulmod_bnm1_itch (MAX_N));
+      itch = mpn_mulmod_bnm1_itch (n, an, bn);
+      ASSERT_ALWAYS (itch <= mpn_mulmod_bnm1_itch (MAX_N, MAX_N, MAX_N));
       mpn_random2 (scratch-1, itch+2);
       s_before = scratch[-1];
       s_after = scratch[itch];

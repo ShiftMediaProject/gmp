@@ -73,14 +73,14 @@ mpn_bc_sqrmod_bnp1 (mp_ptr rp, mp_srcptr ap, mp_size_t rn, mp_ptr tp)
  * The result is expected to be ZERO if and only if the operand
  * already is. Otherwise the class [0] Mod(B^rn-1) is represented by
  * B^rn-1.
- * Moreover it should not be a problem if sqrmod_bnm1 is used to
+ * It should not be a problem if sqrmod_bnm1 is used to
  * compute the full square with an <= 2*rn, because this condition
  * implies (B^an-1)^2 < (B^rn-1) .
  *
  * Requires rn/4 < an <= rn
- * Scratch need: rn + 2 + (need for recursive call OR rn + 2). This gives
+ * Scratch need: rn/2 + (need for recursive call OR rn + 3). This gives
  *
- * S(n) <= rn + 2 + MAX (rn + 2, S(n/2)) <= 2rn + 2 log2 rn + 2
+ * S(n) <= rn/2 + MAX (rn + 4, S(n/2)) <= 3/2 rn + 4
  */
 void
 mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
@@ -128,22 +128,28 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 
 #define xp  tp	/* 2n + 2 */
       /* am1  maybe in {xp, n} */
-#define so (tp + 2*n + 2)
-      /* ap1  maybe in {so, n + 1} */
+#define sp1 (tp + 2*n + 2)
+      /* ap1  maybe in {sp1, n + 1} */
 
       {
 	mp_srcptr am1;
 	mp_size_t anm;
+	mp_ptr so;
 
-	if( an > n ) {
-	  am1 = xp;
-	  cy = mpn_add (xp, a0, n, a1, an - n);
-	  MPN_INCR_U (xp, n, cy);
-	  anm = n;
-	} else {
-	  am1 = a0;
-	  anm = an;
-	}
+	if (LIKELY (an > n))
+	  {
+	    so = xp + n;
+	    am1 = xp;
+	    cy = mpn_add (xp, a0, n, a1, an - n);
+	    MPN_INCR_U (xp, n, cy);
+	    anm = n;
+	  }
+	else
+	  {
+	    so = xp;
+	    am1 = a0;
+	    anm = an;
+	  }
 
 	mpn_sqrmod_bnm1 (rp, n, am1, anm, so);
       }
@@ -153,11 +159,11 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	mp_srcptr ap1;
 	mp_size_t anp;
 
-	if( an > n ) {
-	  ap1 = so;
-	  cy = mpn_sub (so, a0, n, a1, an - n);
-	  so[n] = 0;
-	  MPN_INCR_U (so, n + 1, cy);
+	if (LIKELY (an > n)) {
+	  ap1 = sp1;
+	  cy = mpn_sub (sp1, a0, n, a1, an - n);
+	  sp1[n] = 0;
+	  MPN_INCR_U (sp1, n + 1, cy);
 	  anp = n + ap1[n];
 	} else {
 	  ap1 = a0;
@@ -175,15 +181,18 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	  }
 	if (k >= FFT_FIRST_K)
 	  xp[n] = mpn_mul_fft (xp, n, ap1, anp, ap1, anp, k);
-	else
+	else if (UNLIKELY (ap1 == a0))
 	  {
-	    if (UNLIKELY (ap1 == a0)) {
-	      ap1 = so;
-	      MPN_COPY (so, a0, anp);
-	      MPN_ZERO (so + anp, n + 1 - anp);
-	    }
-	    mpn_bc_sqrmod_bnp1 (xp, ap1, n, xp);
+	    ASSERT (anp <= n);
+	    ASSERT (2*anp > n);
+	    mpn_sqr (xp, a0, an);
+	    anp = 2*an - n;
+	    cy = mpn_sub (xp, xp, n, xp + n, anp);
+	    xp[n] = 0;
+	    MPN_INCR_U (xp, n+1, cy);
 	  }
+	else
+	  mpn_bc_sqrmod_bnp1 (xp, ap1, n, xp);
       }
 
       /* Here the CRT recomposition begins.
@@ -252,11 +261,11 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 	  /* FIXME: This subtraction of the high parts is not really
 	     necessary, we do it to get the carry out, and for sanity
 	     checking. */
-	  cy = xp[n] + mpn_sub_nc (so, rp + 2*an - n, xp + 2*an - n,
-				   rn - 2*an, cy);
-	  ASSERT (mpn_zero_p (so+1, rn - 1 - 2*an));
+	  cy = xp[n] + mpn_sub_nc (xp + 2*an - n, rp + 2*an - n,
+				   xp + 2*an - n, rn - 2*an, cy);
+	  ASSERT (mpn_zero_p (xp + 2*an - n+1, rn - 1 - 2*an));
 	  cy = mpn_sub_1 (rp, rp, 2*an, cy);
-	  ASSERT (cy == so[0]);
+	  ASSERT (cy == (xp + 2*an - n)[0]);
 	}
       else
 	{
@@ -268,6 +277,26 @@ mpn_sqrmod_bnm1 (mp_ptr rp, mp_size_t rn, mp_srcptr ap, mp_size_t an, mp_ptr tp)
 #undef a0
 #undef a1
 #undef xp
-#undef so
+#undef sp1
     }
+}
+
+mp_size_t
+mpn_sqrmod_bnm1_next_size (mp_size_t n)
+{
+  mp_size_t nh;
+
+  if (BELOW_THRESHOLD (n,     SQRMOD_BNM1_THRESHOLD))
+    return n;
+  if (BELOW_THRESHOLD (n, 4 * (SQRMOD_BNM1_THRESHOLD - 1) + 1))
+    return (n + (2-1)) & (-2);
+  if (BELOW_THRESHOLD (n, 8 * (SQRMOD_BNM1_THRESHOLD - 1) + 1))
+    return (n + (4-1)) & (-4);
+
+  nh = (n + 1) >> 1;
+
+  if (BELOW_THRESHOLD (nh, SQR_FFT_MODF_THRESHOLD))
+    return (n + (8-1)) & (-8);
+
+  return 2 * mpn_fft_next_size (nh, mpn_fft_best_k (nh, 1));
 }
