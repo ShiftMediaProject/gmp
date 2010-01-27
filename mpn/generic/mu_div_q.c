@@ -42,13 +42,14 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
      simply call mpn_mu_divappr_q.  Such a temporary allocation is
      unfortunately very large.
 
-  2. Instead of falling back to mpn_mu_div_qr when we detect a possible
-     mpn_mu_divappr_q rounding problem, we could multiply and compare.
+  2. We used to fall back to mpn_mu_div_qr when we detect a possible
+     mpn_mu_divappr_q rounding problem, now we multiply and compare.
      Unfortunately, since mpn_mu_divappr_q does not return the partial
-     remainder, this also doesn't become optimal.  A mpn_mu_divappr_qr
-     could solve that.
+     remainder, this also doesn't become optimal.  A mpn_mu_divappr_qr could
+     solve that.
 
-  3. The allocations done here should be made from the scratch area.
+  3. The allocations done here should be made from the scratch area, which
+     then would need to be amended.
 */
 
 #include <stdlib.h>		/* for NULL */
@@ -75,7 +76,8 @@ mpn_mu_div_q (mp_ptr qp,
 
   if (qn >= dn)			/* nn >= 2*dn + 1 */
     {
-      /* Find max inverse size needed by the two preinv calls.  */
+      /* Find max inverse size needed by the two preinv calls.  FIXME: This is
+	 not optimal, it underestimates the invariance.  */
       if (dn != qn)
 	{
 	  mp_size_t in1, in2;
@@ -163,6 +165,12 @@ mpn_mu_div_q (mp_ptr qp,
     {
        /* |_______________________|   dividend
 		 |________________|   divisor  */
+
+      /* FIXME: When nn = 2dn-1, qn becomes dn-1, and the numerator size passed
+	 here becomes 2dn, i.e., more than nn.  This shouldn't hurt, since only
+	 the most significant dn-1 limbs will actually be read, but it is not
+	 pretty.  */
+
       qh = mpn_mu_divappr_q (tp, np + nn - (2 * qn + 2), 2 * qn + 2,
 			     dp + dn - (qn + 1), qn + 1, scratch);
 
@@ -197,9 +205,18 @@ mpn_mu_div_q (mp_ptr qp,
 mp_size_t
 mpn_mu_div_q_itch (mp_size_t nn, mp_size_t dn, int mua_k)
 {
-  mp_size_t itch1, itch2;
+  mp_size_t qn, itch1, itch2;
 
-  itch1 = mpn_mu_divappr_q_itch (nn, dn, mua_k);
-  itch2 = mpn_mu_div_qr_itch (nn, dn, mua_k);
-  return MAX (itch1, itch2);
+  qn = nn - dn;
+  if (qn >= dn)
+    {
+      itch1 = mpn_mu_div_qr_itch (qn, dn, mua_k);
+      itch2 = mpn_mu_divappr_q_itch (2 * dn + 1, dn, mua_k);
+      return MAX (itch1, itch2);
+    }
+  else
+    {
+      itch1 = mpn_mu_divappr_q_itch (2 * qn + 2, qn + 1, mua_k);
+      return itch1;
+    }
 }

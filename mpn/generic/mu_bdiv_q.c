@@ -257,7 +257,7 @@ mpn_mu_bdiv_q_itch (mp_size_t nn, mp_size_t dn)
 	{
 	  tn = mpn_mulmod_bnm1_next_size (qn);
 	  /* FIXME: check for the correct estimate and remove #if */
-#if 0
+#if 1
 	  itch_out = mpn_mulmod_bnm1_itch (tn, qn, in);
 #else
 	  itch_out = mpn_mulmod_bnm1_itch (tn, tn, tn);

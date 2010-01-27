@@ -1,3 +1,12 @@
+2010-01-27  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mu_div_q.c (mpn_mu_div_q_itch): Rewrite.
+	* mpn/generic/mu_div_qr.c (mpn_mu_div_qr_itch): Re-enable
+	better mulmod itch estimate.
+	* mpn/generic/mu_divappr_q.c (mpn_mu_divappr_q_itch): Likewise.
+	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Likewise.
+	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q_itch): Likewise.
+
 2010-01-27 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* mpn/generic/mu_div_qr.c (mpn_mu_div_qr_itch): Disabled guessed
@@ -19,7 +28,7 @@
 	* mpn/generic/nussbaumer_mul.c: Use the new functions.
 
 	* mpn/generic/invertappr.c (mpn_ni_invertappr): Use new syntax for
-	mpn_mulmod_bnm1_itch.	
+	mpn_mulmod_bnm1_itch.
 	* mpn/generic/mu_divappr_q.c (mpn_mu_divappr_q_itch): Likewise.
 	* mpn/generic/mu_bdiv_qr.c (mpn_mu_bdiv_qr_itch): Likewise.
 	* mpn/generic/mu_bdiv_q.c (mpn_mu_bdiv_q_itch): Likewise.
