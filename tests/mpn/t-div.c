@@ -380,7 +380,7 @@ main (int argc, char **argv)
       /* Test mpn_mu_div_q */
       if (nn - dn > 2 && dn >= 2)
 	{
-	  itch = mpn_mu_div_q_itch (nn, dn, 0); /* FIXME: wrong itch function */
+	  itch = mpn_mu_div_q_itch (nn, dn, 0);
 	  if (itch + 1> alloc)
 	    {
 	      scratch = __GMP_REALLOCATE_FUNC_LIMBS (scratch, alloc, itch + 1);
