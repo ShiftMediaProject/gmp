@@ -355,8 +355,7 @@ mpn_mu_divappr_q_choose_in (mp_size_t qn, mp_size_t dn, int k)
 mp_size_t
 mpn_mu_divappr_q_itch (mp_size_t nn, mp_size_t dn, int mua_k)
 {
-  mp_size_t itch_local = mpn_mulmod_bnm1_next_size (dn + 1);
-  mp_size_t qn, in;
+  mp_size_t qn, in, itch_local, itch_out;
 
   qn = nn - dn;
   if (qn + 1 < dn)
@@ -365,11 +364,13 @@ mpn_mu_divappr_q_itch (mp_size_t nn, mp_size_t dn, int mua_k)
     }
   in = mpn_mu_divappr_q_choose_in (qn, dn, mua_k);
 
+  itch_local = mpn_mulmod_bnm1_next_size (dn + 1);
+
   /* FIXME: check for the correct estimate and remove #if */
 #if 1
-  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local, dn, in);
+  itch_out = mpn_mulmod_bnm1_itch (itch_local, dn, in);
 #else
-  mp_size_t itch_out = mpn_mulmod_bnm1_itch (itch_local, itch_local, itch_local);
+  itch_out = mpn_mulmod_bnm1_itch (itch_local, itch_local, itch_local);
 #endif
 
   return in + dn + itch_local + itch_out;
