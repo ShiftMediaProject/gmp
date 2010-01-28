@@ -40,20 +40,6 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
  Things to work on:
 
-  * Passing k isn't a great interface.  Either 'in' should be passed, or
-    determined by the code.
-
-  * The current mpn_mu_div_qr_itch isn't exactly scientifically written.
-    Scratch space buffer overruns are not unlikely before some analysis is
-    applied.  Since scratch requirements are expected to change, such an
-    analysis will have to wait til things settle.
-
-  * This isn't optimal when the remainder isn't needed, since the final
-    multiplication could be made special and take O(1) time on average, in that
-    case.  This is particularly bad when qn << dn.  At some level, code as in
-    GMP 4 mpn_tdiv_qr should be used, effectively dividing the leading 2qn
-    dividend limbs by the qn divisor limbs.
-
   * This isn't optimal when the quotient isn't needed, as it might take a lot
     of space.  The computation is always needed, though, so there is no time to
     save with special code.
