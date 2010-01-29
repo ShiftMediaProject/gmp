@@ -1,3 +1,14 @@
+2010-01-29  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/mul_fft.c (mpn_mul_fft_internal): Remove arguments n, m,
+	k and rec; add argument sqr.  Don't call mpn_mul_fft_decompose here,
+	instead do that in all callers.
+	(mpn_mul_fft): Trim allocation when squaring, and use TMP_ALLOC*, not
+	explicit alloc/free.
+	(mpn_fft_div_2exp_modF): Avoid a scalar division.
+	(mpn_fft_mul_modF_K): Replace some multiplies by K with shifting by k.
+	(mpn_fft_mul_2exp_modF): Make function more symmetrical.
+
 2010-01-27  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mu_div_q.c (mpn_mu_div_q_itch): Rewrite.
