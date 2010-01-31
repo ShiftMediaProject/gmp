@@ -1,5 +1,8 @@
 2010-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
+	Bump version info.
+
 	* mpn/powerpc64/mode64/gmp-mparam.h: Remove {MUL,SQR}_FFT_TABLE2.
 	* mpn/x86/p6/gmp-mparam.h: Likewise.
 	* mpn/x86/p6/mmx/gmp-mparam.h: Likewise.
