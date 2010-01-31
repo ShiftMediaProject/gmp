@@ -1,3 +1,10 @@
+2010-02-01  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/powerpc64/mode64/gmp-mparam.h: Remove {MUL,SQR}_FFT_TABLE2.
+	* mpn/x86/p6/gmp-mparam.h: Likewise.
+	* mpn/x86/p6/mmx/gmp-mparam.h: Likewise.
+	* mpn/generic/mul_fft.c: Don't depend on FFT_TABLE2, it was broken.
+
 2010-01-29  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mul_fft.c (mpn_mul_fft_internal): Remove arguments n, m,

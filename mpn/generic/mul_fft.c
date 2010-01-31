@@ -126,47 +126,6 @@ mpn_fft_best_k (mp_size_t n, int sqr)
 
 /*****************************************************************************/
 
-#if !defined (MPN_FFT_BEST_READY) && defined (MUL_FFT_TABLE2) && defined (SQR_FFT_TABLE2)
-
-#if defined (MUL_FFT_TABLE2_SIZE) && defined (SQR_FFT_TABLE2_SIZE)
-#if MUL_FFT_TABLE2_SIZE > SQR_FFT_TABLE2_SIZE
-#define FFT_TABLE2_SIZE MUL_FFT_TABLE2_SIZE
-#else
-#define FFT_TABLE2_SIZE SQR_FFT_TABLE2_SIZE
-#endif
-#endif
-
-#ifndef FFT_TABLE2_SIZE
-#define FFT_TABLE2_SIZE 200
-#endif
-
-FFT_TABLE_ATTRS struct fft_table_nk mpn_fft_table2[2][FFT_TABLE2_SIZE] =
-{
-  MUL_FFT_TABLE2,
-  SQR_FFT_TABLE2
-};
-
-int
-mpn_fft_best_k (mp_size_t n, int sqr)
-{
-  struct fft_table_nk *tab;
-  int last_k;
-
-  last_k = 4;
-  for (tab = mpn_fft_table2[sqr] + 1; ; tab++)
-    {
-      if (n < tab->n)
-	break;
-      last_k = tab->k;
-    }
-  return last_k;
-}
-
-#define MPN_FFT_BEST_READY 1
-#endif
-
-/*****************************************************************************/
-
 #if ! defined (MPN_FFT_BEST_READY)
 FFT_TABLE_ATTRS mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE] =
 {
