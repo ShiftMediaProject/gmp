@@ -5,6 +5,37 @@ Verbatim copying and distribution of this entire article is permitted
 in any medium, provided this notice is preserved.
 
 
+Changes between GMP version 5.0.0 and 5.0.1
+
+  BUGS FIXED
+  * Fat builds fixed.
+
+  * Fixed crash for huge multiplies when old FFT_TABLE2 type of parameter
+    selection tables' sentinel was smaller than multiplied operands.
+
+  SPEEDUPS
+  * Multiplicaton of large numbers has indirectly been sped up through
+    better FFT tuning and processor recognition.
+
+  FEATURES
+  * More Core i5 an Core i7 processor models are recognised.
+
+  * Fixes and workarounds for Mac OS quirks should make this GMP version
+    build using many version of "Xcode".
+
+  MISC
+  * The amount of scratch memory needed for multiplication of huge numbers
+    have decreased substantially (but is still larger than in GMP 4.3.)
+
+  * Likewise, the amount of scratch memory needed for division of large
+    numbers have decreased substantially.
+
+  * The FFT tuning code is completely rewritten, and new, large FFT
+    parameter selection tables are provided for many machines.
+
+  * Upgraded to the latest autoconf, automake, libtool.
+
+
 Changes between GMP version 4.3.X and 5.0.0
 
   BUGS FIXED
