@@ -102,7 +102,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     { 131072,18}, { 262144,19}, { 524288,20}, {1048576,21}, \
     {2097152,22}, {4194304,23}, {8388608,24} }
 #define MUL_FFT_TABLE3_SIZE 151
-#define MUL_FFT_THRESHOLD                 7552
+#define MUL_FFT_THRESHOLD                 5760
 
 #define SQR_FFT_MODF_THRESHOLD             476  /* k = 5 */
 #define SQR_FFT_TABLE3                                      \
@@ -145,7 +145,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     {  65536,17}, { 131072,18}, { 262144,19}, { 524288,20}, \
     {1048576,21}, {2097152,22}, {4194304,23}, {8388608,24} }
 #define SQR_FFT_TABLE3_SIZE 152
-#define SQR_FFT_THRESHOLD                 5248
+#define SQR_FFT_THRESHOLD                 3136
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                 130

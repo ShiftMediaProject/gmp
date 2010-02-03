@@ -58,35 +58,77 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULMOD_BNM1_THRESHOLD               21
 #define SQRMOD_BNM1_THRESHOLD               25
 
-#define MUL_FFT_TABLE  { 400, 928, 1664, 4608, 14336, 40960, 163840, 655360, 0 }
-#define MUL_FFT_MODF_THRESHOLD             416
-#define MUL_FFT_THRESHOLD                 7808
+#define MUL_FFT_MODF_THRESHOLD             404  /* k = 5 */
+#define MUL_FFT_TABLE3                                      \
+  { {    404, 5}, {     21, 6}, {     11, 5}, {     25, 6}, \
+    {     13, 5}, {     27, 6}, {     28, 7}, {     15, 6}, \
+    {     32, 7}, {     17, 6}, {     35, 7}, {     19, 6}, \
+    {     39, 7}, {     21, 6}, {     43, 7}, {     29, 8}, \
+    {     15, 7}, {     35, 8}, {     19, 7}, {     41, 8}, \
+    {     23, 7}, {     49, 8}, {     27, 7}, {     55, 9}, \
+    {     15, 8}, {     31, 7}, {     63, 8}, {     43, 9}, \
+    {     23, 8}, {     55, 9}, {     31, 8}, {     71, 9}, \
+    {     39, 8}, {     83, 9}, {     47, 8}, {     99, 9}, \
+    {     55,10}, {     31, 9}, {     63, 8}, {    127, 9}, \
+    {     79,10}, {     47, 9}, {    103,11}, {     31,10}, \
+    {     63, 9}, {    135,10}, {     95, 9}, {    191,10}, \
+    {    111,11}, {     63,10}, {    127, 9}, {    255,10}, \
+    {    143, 9}, {    287,10}, {    159, 9}, {    319,11}, \
+    {     95,10}, {    191, 9}, {    383,10}, {    207,12}, \
+    {     63,11}, {    127,10}, {    287,11}, {    159,10}, \
+    {    351,11}, {    191,10}, {    415,11}, {    223,12}, \
+    {    127,11}, {    255,10}, {    511,11}, {    319,10}, \
+    {    639,11}, {    351,12}, {    191,11}, {    415,13}, \
+    {   8192,14}, {  16384,15}, {  32768,16} }
+#define MUL_FFT_TABLE3_SIZE 79
+#define MUL_FFT_THRESHOLD                 5760
 
-#define SQR_FFT_TABLE  { 432, 928, 1920, 4608, 10240, 40960, 163840, 655360, 0 }
-#define SQR_FFT_MODF_THRESHOLD             448
-#define SQR_FFT_THRESHOLD                 5760
+#define SQR_FFT_MODF_THRESHOLD             400  /* k = 5 */
+#define SQR_FFT_TABLE3                                      \
+  { {    400, 5}, {     25, 6}, {     13, 5}, {     27, 6}, \
+    {     25, 7}, {     13, 6}, {     28, 7}, {     15, 6}, \
+    {     32, 7}, {     19, 6}, {     39, 7}, {     29, 8}, \
+    {     15, 7}, {     35, 8}, {     19, 7}, {     41, 8}, \
+    {     23, 7}, {     47, 8}, {     27, 7}, {     55, 9}, \
+    {     15, 8}, {     39, 9}, {     23, 8}, {     55,10}, \
+    {     15, 9}, {     31, 8}, {     67, 9}, {     39, 8}, \
+    {     79, 9}, {     47, 8}, {     95, 9}, {     55,10}, \
+    {     31, 9}, {     79,10}, {     47, 9}, {    103,11}, \
+    {     31,10}, {     63, 9}, {    135,10}, {     79, 9}, \
+    {    159, 8}, {    319,10}, {     95, 9}, {    191,10}, \
+    {    111,11}, {     63,10}, {    127, 9}, {    271,10}, \
+    {    143, 9}, {    303,10}, {    159,11}, {     95,10}, \
+    {    191, 9}, {    383,10}, {    207,12}, {     63,11}, \
+    {    127,10}, {    303,11}, {    159,10}, {    367,11}, \
+    {    191,10}, {    415,11}, {    223,10}, {    447,12}, \
+    {    127,11}, {    255,10}, {    511,11}, {    287,10}, \
+    {    607,11}, {    319,10}, {    639,11}, {    351,12}, \
+    {    191,11}, {    447,13}, {   8192,14}, {  16384,15}, \
+    {  32768,16} }
+#define SQR_FFT_TABLE3_SIZE 77
+#define SQR_FFT_THRESHOLD                 3136
 
 #define MULLO_BASECASE_THRESHOLD             0  /* always */
 #define MULLO_DC_THRESHOLD                 120
-#define MULLO_MUL_N_THRESHOLD             3000
+#define MULLO_MUL_N_THRESHOLD            11317
 
 #define DC_DIV_QR_THRESHOLD                134
 #define DC_DIVAPPR_Q_THRESHOLD             442
 #define DC_BDIV_QR_THRESHOLD               127
 #define DC_BDIV_Q_THRESHOLD                296
 
-#define INV_MULMOD_BNM1_THRESHOLD           78
+#define INV_MULMOD_BNM1_THRESHOLD           66
 #define INV_NEWTON_THRESHOLD               458
 #define INV_APPR_THRESHOLD                 454
 
-#define BINV_NEWTON_THRESHOLD              987
+#define BINV_NEWTON_THRESHOLD              494
 #define REDC_1_TO_REDC_N_THRESHOLD         116
 
 #define MU_DIV_QR_THRESHOLD               2914
 #define MU_DIVAPPR_Q_THRESHOLD            3091
 #define MUPI_DIV_QR_THRESHOLD              221
 #define MU_BDIV_QR_THRESHOLD              2259
-#define MU_BDIV_Q_THRESHOLD               1414
+#define MU_BDIV_Q_THRESHOLD               2747
 
 #define MATRIX22_STRASSEN_THRESHOLD         17
 #define HGCD_THRESHOLD                     109
