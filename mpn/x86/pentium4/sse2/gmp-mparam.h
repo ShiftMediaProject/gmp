@@ -135,7 +135,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
     {   1791,11}, {   3711,12}, {   1919,11}, {   3839,12}, \
     {   4096,13}, {   8192,14}, {  16384,15}, {  32768,16} }
 #define SQR_FFT_TABLE3_SIZE 148
-#define SQR_FFT_THRESHOLD                 6784
+#define SQR_FFT_THRESHOLD                 5760
 
 #define MULLO_BASECASE_THRESHOLD            12
 #define MULLO_DC_THRESHOLD                  51
