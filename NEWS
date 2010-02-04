@@ -13,9 +13,9 @@ Changes between GMP version 5.0.0 and 5.0.1
   * Fixed crash for huge multiplies when old FFT_TABLE2 type of parameter
     selection tables' sentinel was smaller than multiplied operands.
 
-  * The solib numbers now reflect the removal of the documented but mutable
+  * The solib numbers now reflect the removal of the documented but preliminary
     mpn_bdivmod function; we correctly flag incompatibility with GMP 4.3.
-    GMP 5.0.0 has this wrong, and should perhaps be deinstalled to avoid
+    GMP 5.0.0 has this wrong, and should perhaps be uninstalled to avoid
     confusion.
 
   SPEEDUPS
@@ -27,14 +27,14 @@ Changes between GMP version 5.0.0 and 5.0.1
   * More Core i3, i5 an Core i7 processor models are recognised.
 
   * Fixes and workarounds for Mac OS quirks should make this GMP version
-    build using many version of "Xcode".
+    build using many of the different versions of "Xcode".
 
   MISC
   * The amount of scratch memory needed for multiplication of huge numbers
-    have decreased substantially (but is still larger than in GMP 4.3.)
+    have been reduced substantially (but is still larger than in GMP 4.3.)
 
   * Likewise, the amount of scratch memory needed for division of large
-    numbers have decreased substantially.
+    numbers have been reduced substantially.
 
   * The FFT tuning code of tune/tuneup.c has been completely rewritten,
     and new, large FFT parameter selection tables are provided for many
