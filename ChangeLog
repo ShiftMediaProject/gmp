@@ -1,6 +1,8 @@
-2010-02-01  Torbjorn Granlund  <tege@gmplib.org>
+2010-02-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.0.1 released.
+
+2010-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
 	Bump version info.
