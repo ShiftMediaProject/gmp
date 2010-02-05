@@ -2,6 +2,9 @@
 
 	* Version 5.0.1 released.
 
+	* mpn/generic/binvert.c (mpn_binvert_itch): Enable more economical
+	mpn_mulmod_bnm1_itch call.
+
 	* mpn/generic/mu_div_qr.c: Remove always true #if.
 	* mpn/generic/mu_divappr_q.c: Likewise.
 	* mpn/generic/mu_bdiv_q.c: Likewise.
