@@ -2,6 +2,11 @@
 
 	* Version 5.0.1 released.
 
+	* mpn/generic/mu_div_qr.c: Remove always true #if.
+	* mpn/generic/mu_divappr_q.c: Likewise.
+	* mpn/generic/mu_bdiv_q.c: Likewise.
+	* mpn/generic/mu_bdiv_qr.c: Likewise.
+
 2010-02-01  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*, LIBMP_LT_*):
@@ -1700,7 +1705,7 @@
 	(mpn_mul_fft_internal): Likewise.
 
 	* mpn/generic/mulmod_bnm1.c: New file, by Niels Möller.
-	* configure.in (gmp_mpn_functions):  Add mulmod_bnm1.
+	* configure.in (gmp_mpn_functions): Add mulmod_bnm1.
 	* gmp-impl.h: Add related declarations.
 	* tune/tuneup.c: Tune MULMOD_BNM1_THRESHOLD.
 	* tune/speed.h (SPEED_ROUTINE_MPN_MULMOD_BNM1): New macro.
@@ -6142,7 +6147,7 @@
 	* tune/common.c (speed_mpn_hgcd_lehmer): Disabled function.
 
 	* mpn/generic/hgcd.c (mpn_hgcd_lehmer_itch, mpn_hgcd_lehmer)
-	(mpn_hgcd_equal):  Deleted functions.
+	(mpn_hgcd_equal): Deleted functions.
 
 	* mpn/generic/gcd.c (hgcd_start_row_p): Deleted function.
 	(gcd_schoenhage): Deleted assertion code using mpn_hgcd_lehmer.
