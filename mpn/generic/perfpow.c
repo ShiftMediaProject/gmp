@@ -271,7 +271,7 @@ perfpow (mp_srcptr np, mp_size_t nn,
 
   yp = TMP_ALLOC_LIMBS (nn);
   rp1 = TMP_ALLOC_LIMBS (nn);
-  tp = TMP_ALLOC_LIMBS (5 * nn);
+  tp = TMP_ALLOC_LIMBS (5 * nn);	/* FIXME */
   MPN_ZERO (rp1, nn);
 
   mpn_binvert (yp, np, 1 + (b - 1) / GMP_LIMB_BITS, tp);
