@@ -58,22 +58,50 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #define MULMOD_BNM1_THRESHOLD               17
 #define SQRMOD_BNM1_THRESHOLD               23
 
-#define MUL_FFT_TABLE  { 240, 544, 1344, 2304, 7168, 12288, 81920, 196608, 0 }
-#define MUL_FFT_MODF_THRESHOLD             216
-#define MUL_FFT_THRESHOLD                 2752
+#define MUL_FFT_MODF_THRESHOLD             248  /* k = 5 */
+#define MUL_FFT_TABLE3                                      \
+  { {    248, 5}, {      9, 4}, {     19, 6}, {      5, 5}, \
+    {     15, 6}, {      8, 5}, {     17, 6}, {     21, 7}, \
+    {     19, 8}, {     11, 7}, {     25, 8}, {     15, 7}, \
+    {     31, 8}, {     27, 9}, {     15, 8}, {     33, 9}, \
+    {     19, 8}, {     39, 9}, {     27,10}, {     15, 9}, \
+    {     39,10}, {     23, 9}, {     47,11}, {     15,10}, \
+    {     31, 9}, {     67,10}, {     39, 9}, {     79,10}, \
+    {     47,11}, {     31,10}, {     63, 9}, {    127, 8}, \
+    {    255,10}, {     71, 9}, {    143, 8}, {    287,10}, \
+    {     79,11}, {     47,12}, {   4096,13}, {   8192,14}, \
+    {  16384,15}, {  32768,16}, {  65536,17}, { 131072,18}, \
+    { 262144,19}, { 524288,20}, {1048576,21}, {2097152,22}, \
+    {4194304,23}, {8388608,24} }
+#define MUL_FFT_TABLE3_SIZE 50
+#define MUL_FFT_THRESHOLD                 1984
 
-#define SQR_FFT_TABLE  { 304, 672, 1600, 2816, 7168, 20480, 49152, 196608, 0 }
-#define SQR_FFT_MODF_THRESHOLD             216
-#define SQR_FFT_THRESHOLD                 1728
+#define SQR_FFT_MODF_THRESHOLD             236  /* k = 5 */
+#define SQR_FFT_TABLE3                                      \
+  { {    236, 5}, {      8, 4}, {     17, 5}, {     19, 6}, \
+    {     10, 5}, {     21, 6}, {     19, 7}, {     10, 6}, \
+    {     21, 7}, {     21, 8}, {     21, 9}, {     11, 8}, \
+    {     23, 9}, {     19, 8}, {     43, 9}, {     23,10}, \
+    {     15, 9}, {     43,10}, {     23,11}, {     15,10}, \
+    {     31, 9}, {     63,10}, {     47, 8}, {    191,11}, \
+    {     31,10}, {     63, 8}, {    255, 7}, {    511, 9}, \
+    {    135, 8}, {    271,10}, {     71, 9}, {    143, 8}, \
+    {    287, 7}, {    575,11}, {     47, 9}, {    191, 8}, \
+    {    383,12}, {   4096,13}, {   8192,14}, {  16384,15}, \
+    {  32768,16}, {  65536,17}, { 131072,18}, { 262144,19}, \
+    { 524288,20}, {1048576,21}, {2097152,22}, {4194304,23}, \
+    {8388608,24} }
+#define SQR_FFT_TABLE3_SIZE 49
+#define SQR_FFT_THRESHOLD                 1120
 
 #define MULLO_BASECASE_THRESHOLD            16
 #define MULLO_DC_THRESHOLD                  41
-#define MULLO_MUL_N_THRESHOLD             5397
+#define MULLO_MUL_N_THRESHOLD             3791
 
-#define DC_DIV_QR_THRESHOLD                 20
-#define DC_DIVAPPR_Q_THRESHOLD              82
-#define DC_BDIV_QR_THRESHOLD                34
-#define DC_BDIV_Q_THRESHOLD                111
+#define DC_DIV_QR_THRESHOLD                 27
+#define DC_DIVAPPR_Q_THRESHOLD             100
+#define DC_BDIV_QR_THRESHOLD                47
+#define DC_BDIV_Q_THRESHOLD                174
 
 #define INV_MULMOD_BNM1_THRESHOLD           58
 #define INV_NEWTON_THRESHOLD                13
