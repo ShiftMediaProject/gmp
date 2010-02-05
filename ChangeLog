@@ -2,6 +2,9 @@
 
 	* Version 5.0.1 released.
 
+	* mpn/generic/powm.c: Use rp target area for power table computation in
+	order to use less scratch.
+
 	* mpn/generic/binvert.c (mpn_binvert_itch): Enable more economical
 	mpn_mulmod_bnm1_itch call.
 

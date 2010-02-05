@@ -135,7 +135,7 @@ redcify (mp_ptr rp, mp_srcptr up, mp_size_t un, mp_srcptr mp, mp_size_t n)
 /* rp[n-1..0] = bp[bn-1..0] ^ ep[en-1..0] mod mp[n-1..0]
    Requires that mp[n-1..0] is odd.
    Requires that ep[en-1..0] is > 1.
-   Uses scratch space at tp of MAX(mpn_binvert_itch(n),3n+1) limbs.  */
+   Uses scratch space at tp of MAX(mpn_binvert_itch(n),2n) limbs.  */
 void
 mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
 	  mp_srcptr ep, mp_size_t en,
@@ -147,7 +147,6 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   int windowsize, this_windowsize;
   mp_limb_t expbits;
   mp_ptr pp, this_pp;
-  mp_ptr b2p;
   long i;
   TMP_DECL;
 
@@ -209,26 +208,24 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
   this_pp = pp;
   redcify (this_pp, bp, bn, mp, n);
 
-  b2p = tp + 2*n;
-
-  /* Store b^2 in b2.  */
+  /* Store b^2 at rp.  */
   mpn_sqr (tp, this_pp, n);
 #if WANT_REDC_2
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
-    mpn_redc_1 (b2p, tp, mp, n, mip[0]);
+    mpn_redc_1 (rp, tp, mp, n, mip[0]);
   else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
-    mpn_redc_2 (b2p, tp, mp, n, mip);
+    mpn_redc_2 (rp, tp, mp, n, mip);
 #else
   if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
-    mpn_redc_1 (b2p, tp, mp, n, mip[0]);
+    mpn_redc_1 (rp, tp, mp, n, mip[0]);
 #endif
   else
-    mpn_redc_n (b2p, tp, mp, n, mip);
+    mpn_redc_n (rp, tp, mp, n, mip);
 
   /* Precompute odd powers of b and put them in the temporary area at pp.  */
   for (i = (1 << (windowsize - 1)) - 1; i > 0; i--)
     {
-      mpn_mul_n (tp, this_pp, b2p, n);
+      mpn_mul_n (tp, this_pp, rp, n);
       this_pp += n;
 #if WANT_REDC_2
       if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
