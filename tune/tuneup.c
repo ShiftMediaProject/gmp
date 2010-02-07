@@ -1562,6 +1562,8 @@ tune_redc (void)
     param.name = "REDC_1_TO_REDC_2_THRESHOLD";
     param.function = speed_mpn_redc_1;
     param.function2 = speed_mpn_redc_2;
+    param.min_size = 1;
+    param.min_is_always = 1;
     param.max_size = TUNE_REDC_2_MAX;
     param.noprint = 1;
     one (&redc_1_to_redc_2_threshold, &param);
@@ -1825,6 +1827,7 @@ tune_mod_1 (void)
     s.r = randlimb_norm ();
     param.function = speed_mpn_preinv_mod_1;
     param.function2 = speed_mpn_mod_1_tune;
+    param.min_size = 1;
     one (&preinv_mod_1_to_mod_1_threshold, &param);
   }
 }

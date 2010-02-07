@@ -1,5 +1,9 @@
 2010-02-07  Torbjorn Granlund  <tege@gmplib.org>
 
+	* tune/tuneup.c (tune_redc): Set min_size and min_is_always when
+	measuring REDC_1_TO_REDC_2_THRESHOLD.
+	(tune_mod_1): Set min_size for PREINV_MOD_1_TO_MOD_1_THRESHOLD.
+
 	* mpn/x86_64/aorrlsh_n.asm (cnt): Fix a typo.
 	* mpn/x86_64/lshsub_n.asm: Likewise.
 
