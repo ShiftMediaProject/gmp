@@ -1,3 +1,8 @@
+2010-02-07  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/x86_64/aorrlsh_n.asm (cnt): Fix a typo.
+	* mpn/x86_64/lshsub_n.asm: Likewise.
+
 2010-02-05  Torbjorn Granlund  <tege@gmplib.org>
 
 	* Version 5.0.1 released.

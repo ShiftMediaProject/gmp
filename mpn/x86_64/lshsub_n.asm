@@ -39,7 +39,7 @@ define(`rp',	`%rdi')
 define(`up',	`%rsi')
 define(`vp',	`%rdx')
 define(`n',	`%rcx')
-define(`cnt'	`%r8')
+define(`cnt',	`%r8')
 
 ASM_START()
 	TEXT
