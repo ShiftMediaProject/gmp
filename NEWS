@@ -19,7 +19,7 @@ Changes between GMP version 5.0.0 and 5.0.1
     confusion.
 
   SPEEDUPS
-  * Multiplicaton of large numbers has indirectly been sped up through
+  * Multiplication of large numbers has indirectly been sped up through
     better FFT tuning and processor recognition.  Since many operations
     depend on multiplication, there will be a general speedup.
 
