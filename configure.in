@@ -2430,17 +2430,26 @@ GMP_C_DOUBLE_FORMAT
 #   syssgi - IRIX specific
 #   times - not in mingw
 #
-# clock_gettime is in librt on *-*-osf5.1.  We could look for it
-# there, but that's not worth bothering with unless it has a decent
-# resolution (in a quick test clock_getres said only 1 millisecond).
-#
 # AC_FUNC_STRNLEN is not used because we don't want the AC_LIBOBJ
 # replacement setups it gives.  It detects a faulty strnlen on AIX, but
 # missing out on that test is ok since our only use of strnlen is in
 # __gmp_replacement_vsnprintf which is not required on AIX since it has a
 # vsnprintf.
 #
-AC_CHECK_FUNCS(alarm attr_get clock clock_gettime cputime getpagesize getrusage gettimeofday getsysinfo localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info pstat_getprocessor raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm attr_get clock cputime getpagesize getrusage gettimeofday getsysinfo localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info pstat_getprocessor raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
+
+# clock_gettime is in librt on *-*-osf5.1 and on glibc, so att -lrt to
+# TUNE_LIBS if needed. On linux (tested on x86_32, 2.6.26),
+# clock_getres reports ns accuracy, while in a quick test on osf
+# clock_getres said only 1 millisecond.
+
+old_LIBS="$LIBS"
+AC_SEARCH_LIBS(clock_gettime, rt, [
+  AC_DEFINE([HAVE_CLOCK_GETTIME],1,[Define to 1 if you have the `clock_gettime' function])])
+TUNE_LIBS="$LIBS"
+LIBS="$old_LIBS"
+
+AC_SUBST(TUNE_LIBS)
 
 GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
