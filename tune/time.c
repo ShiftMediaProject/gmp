@@ -455,7 +455,16 @@ cycles_works_p (void)
 
   if (result != -1)
     goto done;
-
+  
+#ifdef __linux__
+  /* On linux, the cycle counter is not saved and restored over
+   * context switches, making it almost useless for precise cputime
+   * measurements. It's' better to use clock_gettime, which seems to
+   * have reasonable accuracy (tested on x86_32, linux-2.6.26,
+   * glibc-2.7). */
+  result = 0;
+  goto done;
+#endif
 #ifdef SIGILL
   {
     RETSIGTYPE (*old_handler) __GMP_PROTO ((int));
@@ -1072,7 +1081,7 @@ speed_time_init (void)
       use_cgt = 1;
       speed_unittime = cgt_unittime;
       DEFAULT (speed_precision, (cgt_unittime <= 0.1e-6 ? 10000 : 1000));
-      strcpy (speed_time_string, "microsecond accurate getrusage()");
+      strcpy (speed_time_string, "microsecond accurate clock_gettime()");
     }
   else if (have_times && clk_tck() > 1000000)
     {

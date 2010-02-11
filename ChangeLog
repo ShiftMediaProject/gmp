@@ -1,5 +1,9 @@
 2010-02-11  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/time.c (speed_time_init): Fix speed_time_string when using
+	clock_gettime.
+	(cycles_works_p): On linux, don't use the cycle counter.
+
 	* tune/Makefile.am: Add $(TUNE_LIBS) when linking programs.
 
 	* configure.in: Check if -lrt is needed for clock_gettime, and if
