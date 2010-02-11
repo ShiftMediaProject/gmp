@@ -71,7 +71,7 @@ $(top_builddir)/tests/libtests.la:
 EXTRA_PROGRAMS = speed speed-dynamic speed-ext tuneup
 
 DEPENDENCIES = libspeed.la
-LDADD = $(DEPENDENCIES)
+LDADD = $(DEPENDENCIES) $(TUNE_LIBS)
 
 speed_SOURCES = speed.c
 speed_LDFLAGS = $(STATIC)
@@ -84,7 +84,7 @@ speed_ext_LDFLAGS = $(STATIC)
 tuneup_SOURCES = tuneup.c
 nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
-tuneup_LDADD = $(tuneup_DEPENDENCIES)
+tuneup_LDADD = $(tuneup_DEPENDENCIES) $(TUNE_LIBS)
 tuneup_LDFLAGS = $(STATIC)
 
 

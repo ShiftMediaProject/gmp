@@ -1,5 +1,7 @@
 2010-02-11  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/Makefile.am: Add $(TUNE_LIBS) when linking programs.
+
 	* configure.in: Check if -lrt is needed for clock_gettime, and if
 	so, add that flag to TUNE_LIBS.
 
