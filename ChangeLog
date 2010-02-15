@@ -1,3 +1,9 @@
+2010-02-15  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/time.c (cycles_works_p): Deleted hack to disable cycle
+	counter on linux. Needs to be replaced by something more
+	selective.
+
 2010-02-11  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/time.c (speed_time_init): Fix speed_time_string when using

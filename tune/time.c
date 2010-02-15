@@ -456,15 +456,19 @@ cycles_works_p (void)
   if (result != -1)
     goto done;
   
-#ifdef __linux__
-  /* On linux, the cycle counter is not saved and restored over
+  /* FIXME: On linux, the cycle counter is not saved and restored over
    * context switches, making it almost useless for precise cputime
-   * measurements. It's' better to use clock_gettime, which seems to
-   * have reasonable accuracy (tested on x86_32, linux-2.6.26,
-   * glibc-2.7). */
-  result = 0;
-  goto done;
-#endif
+   * measurements. When available, it's better to use clock_gettime,
+   * which seems to have reasonable accuracy (tested on x86_32,
+   * linux-2.6.26, glibc-2.7). However, there are also some linux
+   * systems where clock_gettime is broken in one way or the other,
+   * like CLOCK_PROCESS_CPUTIME_ID not implemented (easy case) or
+   * kind-of implemented but broken (needs code to detect that), and
+   * on those systems a wall-clock cycle counter is the least bad
+   * fallback.
+   *
+   * So we need some code to disable the cycle counter on some but not
+   * all linux systems. */
 #ifdef SIGILL
   {
     RETSIGTYPE (*old_handler) __GMP_PROTO ((int));
