@@ -415,6 +415,7 @@ void speed_operand_dst __GMP_PROTO ((struct speed_params *, mp_ptr, mp_size_t));
 
 extern int  speed_option_addrs;
 extern int  speed_option_verbose;
+extern int  speed_option_cycles_broken;
 void speed_option_set __GMP_PROTO((const char *));
 
 mp_limb_t mpn_divrem_1_div __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));

@@ -41,6 +41,7 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 
 int   speed_option_addrs = 0;
 int   speed_option_verbose = 0;
+int   speed_option_cycles_broken = 0;
 
 
 /* Provide __clz_tab even if it's not required, for the benefit of new code
@@ -365,6 +366,10 @@ speed_option_set (const char *s)
   else if (sscanf (s, "verbose=%d", &n) == 1)
     {
       speed_option_verbose = n;
+    }
+  else if (strcmp (s, "cycles-broken") == 0)
+    {
+      speed_option_cycles_broken = 1;
     }
   else
     {

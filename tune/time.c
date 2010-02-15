@@ -455,7 +455,7 @@ cycles_works_p (void)
 
   if (result != -1)
     goto done;
-  
+
   /* FIXME: On linux, the cycle counter is not saved and restored over
    * context switches, making it almost useless for precise cputime
    * measurements. When available, it's better to use clock_gettime,
@@ -954,7 +954,7 @@ speed_time_init (void)
 
   speed_cycletime_init ();
 
-  if (have_cycles && cycles_works_p ())
+  if (!speed_option_cycles_broken && have_cycles && cycles_works_p ())
     {
       use_cycles = 1;
       DEFAULT (speed_cycletime, 1.0);

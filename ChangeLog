@@ -1,5 +1,10 @@
 2010-02-15  Niels Möller  <nisse@lysator.liu.se>
 
+	* tune/time.c (speed_time_init): Make use of cycle counter
+	configurable, via the speed_option_cycles_broken flag.
+	* tune/common.c (speed_option_cycles_broken): New global variable.
+	(speed_option_set): Recognize option "cycles-broken".
+
 	* tune/time.c (cycles_works_p): Deleted hack to disable cycle
 	counter on linux. Needs to be replaced by something more
 	selective.
