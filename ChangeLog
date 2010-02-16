@@ -1,3 +1,8 @@
+2010-02-16  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/time.c (cgt_works_p): Added rudimentary sanity check for
+	clock_gettime working.
+
 2010-02-15  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/time.c (speed_time_init): Make use of cycle counter

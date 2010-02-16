@@ -722,6 +722,8 @@ const int  have_cgt_id = 0;
 # define CGT_ID       (ASSERT_FAIL (CGT_ID not determined), -1)
 #endif
 
+#define CGT_DELAY_COUNT 1000
+
 int
 cgt_works_p (void)
 {
@@ -763,6 +765,44 @@ cgt_works_p (void)
   cgt_unittime = unit.tv_sec + unit.tv_nsec * 1e-9;
   printf ("clock_gettime is %s accurate\n",
 	  unittime_string (cgt_unittime));
+
+  if (cgt_unittime < 10e-9)
+    {
+      /* Do we believe this? */
+      struct timespec start, end;
+      static volatile int counter;
+      double duration;
+      if (clock_gettime (CGT_ID, &start))
+	{
+	  if (speed_option_verbose)
+	    printf ("clock_gettime id=%d error: %s\n", CGT_ID, strerror (errno));
+	  result = 0;
+	  return result;
+	}
+      /* Loop of at least 1000 memory accesses, ought to take at
+	 least 100 ns*/
+      for (counter = 0; counter < CGT_DELAY_COUNT; counter++)
+	;
+      if (clock_gettime (CGT_ID, &end))
+	{
+	  if (speed_option_verbose)
+	    printf ("clock_gettime id=%d error: %s\n", CGT_ID, strerror (errno));
+	  result = 0;
+	  return result;
+	}
+      duration = (end.tv_sec + end.tv_nsec * 1e-9
+		  - start.tv_sec - start.tv_nsec * 1e-9);
+      if (speed_option_verbose)
+	printf ("delay loop of %d rounds took %s (according to clock_get_time)\n",
+		CGT_DELAY_COUNT, unittime_string (duration));
+      if (duration < 100e-9)
+	{
+	  if (speed_option_verbose)
+	    printf ("clock_gettime id=%d not believable\n", CGT_ID);
+	  result = 0;
+	  return result;
+	}
+    }
   result = 1;
   return result;
 }
