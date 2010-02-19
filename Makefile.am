@@ -400,6 +400,17 @@ gen-trialdivtab_.c: gen-trialdivtab.c $(ANSI2KNR)
 	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-trialdivtab.c; then echo $(srcdir)/gen-trialdivtab.c; else echo gen-trialdivtab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-trialdivtab_.c || rm -f gen-trialdivtab_.c
 
 
+mpn/jacobitab.h: gen-jacobitab$(EXEEXT_FOR_BUILD)
+	./gen-jacobitab >mpn/jacobitab.h || (rm -f mpn/jacobitab.h; exit 1)
+BUILT_SOURCES += mpn/jacobitab.h
+
+gen-jacobitab$(EXEEXT_FOR_BUILD): gen-jacobitab$(U_FOR_BUILD).c
+	$(CC_FOR_BUILD) `test -f 'gen-jacobitab$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-jacobitab$(U_FOR_BUILD).c -o gen-jacobitab$(EXEEXT_FOR_BUILD)
+DISTCLEANFILES += gen-jacobitab$(EXEEXT_FOR_BUILD)
+EXTRA_DIST += gen-jacobitab.c
+
+gen-jacobitab_.c: gen-jacobitab.c $(ANSI2KNR)
+	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-jacobitab.c; then echo $(srcdir)/gen-jacobitab.c; else echo gen-jacobitab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-jacobitab_.c || rm -f gen-jacobitab_.c
 
 
 mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
