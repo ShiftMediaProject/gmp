@@ -6,7 +6,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2007, 2008, 2009 Free Software Foundation, Inc.
+Copyright 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -301,23 +301,51 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
 	{
+	  if (REDC_1_TO_REDC_2_THRESHOLD < SQR_BASECASE_THRESHOLD
+	      || BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+	    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	      INNERLOOP;
+	    }
+	  else
+	    {
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-	  INNERLOOP;
+	      INNERLOOP;
+	    }
 	}
       else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
 	{
+	  if (MUL_TOOM22_THRESHOLD < SQR_BASECASE_THRESHOLD
+	      || BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+	    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
+	      INNERLOOP;
+	    }
+	  else
+	    {
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_2 (rp, tp, mp, n, mip)
-	  INNERLOOP;
+	      INNERLOOP;
+	    }
 	}
       else if (BELOW_THRESHOLD (n, REDC_2_TO_REDC_N_THRESHOLD))
 	{
@@ -344,13 +372,27 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
 	{
+	  if (MUL_TOOM22_THRESHOLD < SQR_BASECASE_THRESHOLD
+	      || BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+	    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	      INNERLOOP;
+	    }
+	  else
+	    {
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-	  INNERLOOP;
+	      INNERLOOP;
+	    }
 	}
       else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_2_THRESHOLD))
 	{
@@ -390,23 +432,51 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
 	{
+	  if (REDC_1_TO_REDC_N_THRESHOLD < SQR_BASECASE_THRESHOLD
+	      || BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+	    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	      INNERLOOP;
+	    }
+	  else
+	    {
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-	  INNERLOOP;
+	      INNERLOOP;
+	    }
 	}
       else if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
 	{
+	  if (MUL_TOOM22_THRESHOLD < SQR_BASECASE_THRESHOLD
+	      || BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+	    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
+	      INNERLOOP;
+	    }
+	  else
+	    {
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_n (rp, tp, mp, n, mip)
-	  INNERLOOP;
+	      INNERLOOP;
+	    }
 	}
       else
 	{
@@ -423,13 +493,27 @@ mpn_powm (mp_ptr rp, mp_srcptr bp, mp_size_t bn,
     {
       if (BELOW_THRESHOLD (n, MUL_TOOM22_THRESHOLD))
 	{
+	  if (MUL_TOOM22_THRESHOLD < SQR_BASECASE_THRESHOLD
+	      || BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+	    {
+#undef MPN_MUL_N
+#undef MPN_SQR
+#undef MPN_REDUCE
+#define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
+#define MPN_SQR(r,a,n)			mpn_mul_basecase (r,a,n,a,n)
+#define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
+	      INNERLOOP;
+	    }
+	  else
+	    {
 #undef MPN_MUL_N
 #undef MPN_SQR
 #undef MPN_REDUCE
 #define MPN_MUL_N(r,a,b,n)		mpn_mul_basecase (r,a,n,b,n)
 #define MPN_SQR(r,a,n)			mpn_sqr_basecase (r,a,n)
 #define MPN_REDUCE(rp,tp,mp,n,mip)	mpn_redc_1 (rp, tp, mp, n, mip[0])
-	  INNERLOOP;
+	      INNERLOOP;
+	    }
 	}
       else if (BELOW_THRESHOLD (n, REDC_1_TO_REDC_N_THRESHOLD))
 	{
