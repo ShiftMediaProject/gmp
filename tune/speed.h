@@ -442,6 +442,9 @@ mp_size_t mpn_gcdext_single
   __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 mp_size_t mpn_gcdext_double
   __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
+mp_size_t mpn_hgcd_lehmer
+  __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
+#define MPN_HGCD_LEHMER_ITCH(n) (n)
 
 mp_limb_t mpn_sb_divrem_mn_div __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sb_divrem_mn_inv __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));

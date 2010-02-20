@@ -356,32 +356,6 @@ hgcd_step (mp_size_t n, mp_ptr ap, mp_ptr bp, mp_size_t s,
   return bn;
 }
 
-/* Reduces a,b until |a-b| fits in n/2 + 1 limbs. Constructs matrix M
-   with elements of size at most (n+1)/2 - 1. Returns new size of a,
-   b, or zero if no reduction is possible. */
-mp_size_t
-mpn_hgcd_lehmer (mp_ptr ap, mp_ptr bp, mp_size_t n,
-		 struct hgcd_matrix *M, mp_ptr tp)
-{
-  mp_size_t s = n/2 + 1;
-  mp_size_t nn;
-
-  ASSERT (n > s);
-  ASSERT (ap[n-1] > 0 || bp[n-1] > 0);
-
-  nn = hgcd_step (n, ap, bp, s, M, tp);
-  if (!nn)
-    return 0;
-
-  for (;;)
-    {
-      n = nn;
-      ASSERT (n > s);
-      nn = hgcd_step (n, ap, bp, s, M, tp);
-      if (!nn )
-	return n;
-    }
-}
 
 /* Multiply M by M1 from the right. Needs 3*(M->n + M1->n) + 5 limbs
    of temporary storage (see mpn_matrix22_mul_itch). */
@@ -530,15 +504,14 @@ mpn_hgcd_itch (mp_size_t n)
   mp_size_t nscaled;
 
   if (BELOW_THRESHOLD (n, HGCD_THRESHOLD))
-    return MPN_HGCD_LEHMER_ITCH (n);
+    return n;
 
   /* Get the recursion depth. */
   nscaled = (n - 1) / (HGCD_THRESHOLD - 1);
   count_leading_zeros (count, nscaled);
   k = GMP_LIMB_BITS - count;
 
-  return 20 * ((n+3) / 4) + 22 * k
-    + MPN_HGCD_LEHMER_ITCH (HGCD_THRESHOLD);
+  return 20 * ((n+3) / 4) + 22 * k + HGCD_THRESHOLD;
 }
 
 /* Reduces a,b until |a-b| fits in n/2 + 1 limbs. Constructs matrix M
@@ -550,9 +523,8 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 	  struct hgcd_matrix *M, mp_ptr tp)
 {
   mp_size_t s = n/2 + 1;
-  mp_size_t n2 = (3*n)/4 + 1;
 
-  mp_size_t p, nn;
+  mp_size_t nn;
   int success = 0;
 
   if (n <= s)
@@ -564,72 +536,73 @@ mpn_hgcd (mp_ptr ap, mp_ptr bp, mp_size_t n,
 
   ASSERT ((n+1)/2 - 1 < M->alloc);
 
-  if (BELOW_THRESHOLD (n, HGCD_THRESHOLD))
-    return mpn_hgcd_lehmer (ap, bp, n, M, tp);
-
-  p = n/2;
-  nn = mpn_hgcd (ap + p, bp + p, n - p, M, tp);
-  if (nn > 0)
+  if (ABOVE_THRESHOLD (n, HGCD_THRESHOLD))
     {
-      /* Needs 2*(p + M->n) <= 2*(floor(n/2) + ceil(n/2) - 1)
-	 = 2 (n - 1) */
-      n = mpn_hgcd_matrix_adjust (M, p + nn, ap, bp, p, tp);
-      success = 1;
-    }
-  while (n > n2)
-    {
-      /* Needs n + 1 storage */
-      nn = hgcd_step (n, ap, bp, s, M, tp);
-      if (!nn)
-	return success ? n : 0;
-      n = nn;
-      success = 1;
-    }
+      mp_size_t n2 = (3*n)/4 + 1;
+      mp_size_t p = n/2;
 
-  if (n > s + 2)
-    {
-      struct hgcd_matrix M1;
-      mp_size_t scratch;
-
-      p = 2*s - n + 1;
-      scratch = MPN_HGCD_MATRIX_INIT_ITCH (n-p);
-
-      mpn_hgcd_matrix_init(&M1, n - p, tp);
-      nn = mpn_hgcd (ap + p, bp + p, n - p, &M1, tp + scratch);
+      nn = mpn_hgcd (ap + p, bp + p, n - p, M, tp);
       if (nn > 0)
 	{
-	  /* We always have max(M) > 2^{-(GMP_NUMB_BITS + 1)} max(M1) */
-	  ASSERT (M->n + 2 >= M1.n);
-
-	  /* Furthermore, assume M ends with a quotient (1, q; 0, 1),
-	     then either q or q + 1 is a correct quotient, and M1 will
-	     start with either (1, 0; 1, 1) or (2, 1; 1, 1). This
-	     rules out the case that the size of M * M1 is much
-	     smaller than the expected M->n + M1->n. */
-
-	  ASSERT (M->n + M1.n < M->alloc);
-
-	  /* Needs 2 (p + M->n) <= 2 (2*s - n2 + 1 + n2 - s - 1)
-	     = 2*s <= 2*(floor(n/2) + 1) <= n + 2. */
-	  n = mpn_hgcd_matrix_adjust (&M1, p + nn, ap, bp, p, tp + scratch);
-
-	  /* We need a bound for of M->n + M1.n. Let n be the original
-	     input size. Then
-
-	       ceil(n/2) - 1 >= size of product >= M.n + M1.n - 2
-
-	     and it follows that
-
-	       M.n + M1.n <= ceil(n/2) + 1
-
-	     Then 3*(M.n + M1.n) + 5 <= 3 * ceil(n/2) + 8 is the
-	     amount of needed scratch space. */
-	  mpn_hgcd_matrix_mul (M, &M1, tp + scratch);
+	  /* Needs 2*(p + M->n) <= 2*(floor(n/2) + ceil(n/2) - 1)
+	     = 2 (n - 1) */
+	  n = mpn_hgcd_matrix_adjust (M, p + nn, ap, bp, p, tp);
 	  success = 1;
+	}
+      while (n > n2)
+	{
+	  /* Needs n + 1 storage */
+	  nn = hgcd_step (n, ap, bp, s, M, tp);
+	  if (!nn)
+	    return success ? n : 0;
+	  n = nn;
+	  success = 1;
+	}
+
+      if (n > s + 2)
+	{
+	  struct hgcd_matrix M1;
+	  mp_size_t scratch;
+
+	  p = 2*s - n + 1;
+	  scratch = MPN_HGCD_MATRIX_INIT_ITCH (n-p);
+
+	  mpn_hgcd_matrix_init(&M1, n - p, tp);
+	  nn = mpn_hgcd (ap + p, bp + p, n - p, &M1, tp + scratch);
+	  if (nn > 0)
+	    {
+	      /* We always have max(M) > 2^{-(GMP_NUMB_BITS + 1)} max(M1) */
+	      ASSERT (M->n + 2 >= M1.n);
+
+	      /* Furthermore, assume M ends with a quotient (1, q; 0, 1),
+		 then either q or q + 1 is a correct quotient, and M1 will
+		 start with either (1, 0; 1, 1) or (2, 1; 1, 1). This
+		 rules out the case that the size of M * M1 is much
+		 smaller than the expected M->n + M1->n. */
+
+	      ASSERT (M->n + M1.n < M->alloc);
+
+	      /* Needs 2 (p + M->n) <= 2 (2*s - n2 + 1 + n2 - s - 1)
+		 = 2*s <= 2*(floor(n/2) + 1) <= n + 2. */
+	      n = mpn_hgcd_matrix_adjust (&M1, p + nn, ap, bp, p, tp + scratch);
+
+	      /* We need a bound for of M->n + M1.n. Let n be the original
+		 input size. Then
+
+		 ceil(n/2) - 1 >= size of product >= M.n + M1.n - 2
+
+		 and it follows that
+
+		 M.n + M1.n <= ceil(n/2) + 1
+
+		 Then 3*(M.n + M1.n) + 5 <= 3 * ceil(n/2) + 8 is the
+		 amount of needed scratch space. */
+	      mpn_hgcd_matrix_mul (M, &M1, tp + scratch);
+	      success = 1;
+	    }
 	}
     }
 
-  /* This really is the base case */
   for (;;)
     {
       /* Needs s+3 < n */

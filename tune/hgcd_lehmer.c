@@ -1,7 +1,7 @@
-/* mpn/generic/gcd.c forced to use the accelerated binary algorithm. */
+/* mpn/generic/hgcd.c forced to use Lehmer's quadratic algorithm. */
 
 /*
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,8 +21,13 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#undef  GCD_SCHOENHAGE_THRESHOLD
-#define GCD_SCHOENHAGE_THRESHOLD  MP_SIZE_T_MAX
-#define __gmpn_gcd  mpn_gcd_accel
-
-#include "../mpn/generic/gcd.c"
+#undef  HGCD_THRESHOLD
+#define HGCD_THRESHOLD MP_SIZE_T_MAX
+#define __gmpn_hgcd  mpn_hgcd_lehmer
+#define __gmpn_hgcd_itch mpn_hgcd_lehmer_itch
+/* Same functions, needed to avoid linking collisions. FIXME: Move to
+ * separate file? */
+#define __gmpn_hgcd_matrix_init mpn_hgcd_lehmer_matrix_init
+#define __gmpn_hgcd_matrix_adjust mpn_hgcd_lehmer_matrix_adjust
+#define __gmpn_hgcd_matrix_mul mpn_hgcd_lehmer_matrix_mul
+#include "../mpn/generic/hgcd.c"

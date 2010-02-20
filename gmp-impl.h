@@ -3791,11 +3791,6 @@ __GMP_DECLSPEC mp_size_t mpn_hgcd_itch __GMP_PROTO ((mp_size_t));
 #define mpn_hgcd __MPN (hgcd)
 __GMP_DECLSPEC mp_size_t mpn_hgcd __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
 
-#define MPN_HGCD_LEHMER_ITCH(n) (n)
-
-#define mpn_hgcd_lehmer __MPN (hgcd_lehmer)
-__GMP_DECLSPEC mp_size_t mpn_hgcd_lehmer __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, struct hgcd_matrix *, mp_ptr));
-
 /* Needs storage for the quotient */
 #define MPN_GCD_SUBDIV_STEP_ITCH(n) (n)
 

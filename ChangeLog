@@ -1,3 +1,20 @@
+2010-02-20  Niels Möller  <nisse@lysator.liu.se>
+
+	* tune/speed.h (mpn_gcd_accel): Deleted prototype.
+	(mpn_hgcd_lehmer): New prototype.
+	(MPN_HGCD_LEHMER_ITCH): New macro (previously in gmp-impl.h).
+
+	* tune/Makefile.am (libspeed_la_SOURCES): Added hgcd_lehmer.c.
+	* tune/hgcd_lehmer.c: New file.
+	* tune/gcd_accel.c: Deleted obsolete file.
+
+	* gmp-impl.h (MPN_HGCD_LEHMER_ITCH): Deleted macro.
+
+	* mpn/generic/hgcd.c (mpn_hgcd_lehmer): Deleted function,
+	(mpn_hgcd): Don't call mpn_hgcd_lehmer, instead use inlined loop
+	around hgcd_step.
+	(mpn_hgcd_itch): Substitute n for MPN_HGCD_LEHMER_ITCH (n).
+
 2010-02-19  Niels Möller  <nisse@lysator.liu.se>
 
 	* Makefile.am (mpn/jacobitab.h): Added the rules needed to
