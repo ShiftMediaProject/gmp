@@ -1,3 +1,7 @@
+2010-02-23  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/generic/sqrtrem.c: Use CNST_LIMB.
+
 2010-02-20  Niels Möller  <nisse@lysator.liu.se>
 
 	* tune/speed.h (mpn_gcd_accel): Deleted prototype.
