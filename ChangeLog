@@ -1,5 +1,7 @@
 2010-02-23  Torbjorn Granlund  <tege@gmplib.org>
 
+	* mpn/generic/mod_1_3.c: Cast a switch index.
+
 	* mpn/generic/sqrtrem.c: Use CNST_LIMB.
 
 2010-02-20  Niels Möller  <nisse@lysator.liu.se>

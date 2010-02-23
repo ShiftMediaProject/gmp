@@ -8,7 +8,7 @@
    SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS ALMOST
    GUARANTEED THAT THEY WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
-Copyright 2008, 2009 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -85,8 +85,9 @@ mpn_mod_1s_3p (mp_srcptr ap, mp_size_t n, mp_limb_t b, mp_limb_t cps[6])
   B4modb = cps[5];
 
   /* We compute n mod 3 in a tricky way, which works except for when n is so
-     close to the maximum size that we don't need to support it.  */
-  switch ((mp_limb_t) n * MODLIMB_INVERSE_3 >> (GMP_NUMB_BITS - 2))
+     close to the maximum size that we don't need to support it.  The final
+     cast to int is a workaround for HP cc.  */
+  switch ((int) ((mp_limb_t) n * MODLIMB_INVERSE_3 >> (GMP_NUMB_BITS - 2)))
     {
     case 0:
       umul_ppmm (ph, pl, ap[n - 2], B1modb);
