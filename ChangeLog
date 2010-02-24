@@ -1,3 +1,7 @@
+2010-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/mpz/t-bin.c (data): Replace (2k,k), tested by twos ().
+
 2010-02-23  Torbjorn Granlund  <tege@gmplib.org>
 
 	* mpn/generic/mod_1_3.c: Cast a switch index.
