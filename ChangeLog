@@ -3,7 +3,7 @@
 	* tests/mpn/t-div.c: Cast a switch index to placate HP's cc.
 	* tests/mpn/t-bdiv.c: Likewise.
 
-	* mpn/pa64/aors_n.asm: Fix support of the.0n ABI.
+	* mpn/pa64/aors_n.asm: Fix support of the 2.0n ABI.
 
 2010-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
