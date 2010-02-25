@@ -1072,13 +1072,19 @@ param_init (void)
   p->src[1] = 1;
   p->data = DATA_SRC1_ODD;
   p->size2 = 1;
-  p->carry = CARRY_4;
+  p->carry = CARRY_BIT;
   p->carry_sign = 1;
   REFERENCE (refmpz_jacobi);
 
   p = &param[TYPE_MPZ_KRONECKER];
-  COPY (TYPE_MPZ_JACOBI);
-  p->data = 0;			/* clear inherited DATA_SRC1_ODD */
+  p->retval = 1;
+  p->src[0] = 1;
+  p->size = SIZE_ALLOW_ZERO;
+  p->src[1] = 1;
+  p->data = 0;
+  p->size2 = 1;
+  p->carry = CARRY_4;
+  p->carry_sign = 1;
   REFERENCE (refmpz_kronecker);
 
 
@@ -2275,6 +2281,7 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_MPZ_LEGENDRE:
+  case TYPE_MPZ_JACOBI:
     {
       mpz_t  a, b;
       PTR(a) = e->s[0].p; SIZ(a) = (carry==0 ? size : -size);
@@ -2282,7 +2289,6 @@ call (struct each_t *e, tryfun_t function)
       e->retval = CALLING_CONVENTIONS (function) (a, b);
     }
     break;
-  case TYPE_MPZ_JACOBI:
   case TYPE_MPZ_KRONECKER:
     {
       mpz_t  a, b;
