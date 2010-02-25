@@ -1,3 +1,7 @@
+2010-02-25  Torbjorn Granlund  <tege@gmplib.org>
+
+	* mpn/pa64/aors_n.asm: Fix support of the.0n ABI.
+
 2010-02-24 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* tests/mpz/t-bin.c (data): Replace (2k,k), tested by twos ().

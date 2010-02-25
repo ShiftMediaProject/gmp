@@ -1,6 +1,7 @@
 dnl  HP-PA 2.0 mpn_add_n, mpn_sub_n
 
-dnl  Copyright 1997, 2000, 2002, 2003, 2009 Free Software Foundation, Inc.
+dnl  Copyright 1997, 2000, 2002, 2003, 2009, 2010 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -49,8 +50,12 @@ ifdef(`HAVE_ABI_2_0w',
 ',`     .level  2.0
 ')
 PROLOGUE(func_nc)
-	b	L(com)
-	nop
+ifdef(`HAVE_ABI_2_0w',
+`	b		L(com)
+	ldi		0, %r22
+',`	b		L(com)
+	ldw		-52(%r30), %r22
+')
 EPILOGUE()
 PROLOGUE(func)
 	ldi		0, %r22
