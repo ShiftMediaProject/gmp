@@ -2,7 +2,7 @@
 
    Contributed to the GNU project by Torbjorn Granlund and Martin Boij.
 
-Copyright 2008, 2009 Free Software Foundation, Inc.
+Copyright 2008, 2009, 2010 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -109,7 +109,8 @@ check_random (int reps)
 {
   mpz_t n, np, temp, primes[NRP];
   int i, j, k, unique, destroy, res;
-  unsigned long int nrprimes, primebits, g, exp[NRP], e;
+  unsigned long int nrprimes, primebits;
+  mp_limb_t g, exp[NRP], e;
   gmp_randstate_ptr rands;
 
   rands = RANDS;
